@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#000000"/>
+  <rect x="0" y="0" width="512" height="512" rx="96" fill="url(#g)" opacity="0.5"/>
+  <defs>
+    <radialGradient id="g" cx="50%" cy="15%" r="70%">
+      <stop offset="0%" stop-color="#ff1744" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#ff1744" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <text x="256" y="330" font-family="Amiri, 'Noto Naskh Arabic', serif" font-size="230" font-weight="700"
+        fill="#ff1744" text-anchor="middle" direction="rtl">ب</text>
+</svg>
