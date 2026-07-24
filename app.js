@@ -18,6 +18,23 @@ function todayStr(offsetDays=0){
   return d.toISOString().slice(0,10);
 }
 
+/* ---------- Eigene Vokabeln (lokal, nicht Teil von vocab-data.js) ---------- */
+let PERSONAL_VOCAB = LS.get('vt_personalVocab', []);
+function savePersonalVocab(){ LS.set('vt_personalVocab', PERSONAL_VOCAB); }
+VOCAB_DATA.push(...PERSONAL_VOCAB);
+
+function addPersonalVocab({ar, de, sentAr, sentDe}){
+  const w = { id:'p_'+Date.now(), ar, de, chapter:'personal', type:'noun' };
+  if (sentAr) w.sentAr = sentAr;
+  if (sentDe) w.sentDe = sentDe;
+  PERSONAL_VOCAB.push(w);
+  savePersonalVocab();
+  VOCAB_DATA.push(w);
+  PROGRESS[w.id] = { box:1, nextReview: todayStr(0), correct:0, wrong:0 };
+  saveProgress();
+  return w;
+}
+
 /* Fortschritt initialisieren: Startbox aus Arabic-Roots-Daten importieren (einmalig) */
 function initProgress(){
   let progress = LS.get('vt_progress', null);
@@ -33,7 +50,7 @@ let PROGRESS = initProgress();
 function saveProgress(){ LS.set('vt_progress', PROGRESS); }
 
 let SETTINGS = Object.assign(
-  { showPlural:false, sessionSize:20, voiceURI:null, direction:'ar-de', selectedChapters:[], wrongOnly:false },
+  { showPlural:false, sessionSize:20, voiceURI:null, direction:'ar-de', selectedChapters:[], wrongOnly:false, grammarHighlight:true },
   LS.get('vt_settings', {})
 );
 function saveSettings(){ LS.set('vt_settings', SETTINGS); }
@@ -73,6 +90,10 @@ function currentPool(){
   if (sel.length) pool = pool.filter(w=>sel.includes(w.chapter));
   return pool;
 }
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
 function toast(msg){
   const el = document.getElementById('toast');
   el.textContent = msg; el.classList.add('show');
@@ -447,9 +468,24 @@ function openWordList(key){
       <span class="wl-box">Box ${PROGRESS[w.id]?PROGRESS[w.id].box:1}</span>
     </div>
   `).join('') || '<p style="color:var(--text-dim)">Keine Wörter in dieser Kategorie.</p>';
+  document.getElementById('personalVocabAddForm').style.display = key==='chapter:personal' ? 'flex' : 'none';
   showScreen('wordlist');
 }
 document.getElementById('btnWordlistBack').addEventListener('click', ()=>showScreen('categories'));
+document.getElementById('btnAddPersonalVocab').addEventListener('click', ()=>{
+  const ar = document.getElementById('pvAr').value.trim();
+  const de = document.getElementById('pvDe').value.trim();
+  const sentAr = document.getElementById('pvSentAr').value.trim();
+  const sentDe = document.getElementById('pvSentDe').value.trim();
+  if (!ar || !de){ toast('Bitte Arabisch und Deutsch ausfüllen'); return; }
+  addPersonalVocab({ar, de, sentAr, sentDe});
+  document.getElementById('pvAr').value = '';
+  document.getElementById('pvDe').value = '';
+  document.getElementById('pvSentAr').value = '';
+  document.getElementById('pvSentDe').value = '';
+  toast('Vokabel hinzugefügt ✓');
+  openWordList('chapter:personal');
+});
 
 /* ---------- Drag & Drop (Pointer Events, touch + mouse) ---------- */
 function setupDragAndDrop(){
@@ -499,36 +535,42 @@ function setupDragAndDrop(){
 }
 
 /* ===================== SENTENCES ===================== */
-let SENT = { list: VOCAB_DATA.filter(w=>w.sentAr), idx:0, mode:'alle' };
+let SENT = { list: VOCAB_DATA.filter(w=>w.sentAr), idx:0 };
 
 function openSentences(){
-  const btns = document.querySelectorAll('[data-sentstyle]');
-  btns.forEach(b=>b.addEventListener('click', ()=>{
-    btns.forEach(x=>x.classList.remove('active'));
-    b.classList.add('active');
-    SENT.mode = b.dataset.sentstyle;
-    SENT.list = SENT.mode==='quran'
-      ? VOCAB_DATA.filter(w=>w.quran)
-      : VOCAB_DATA.filter(w=>w.sentAr);
-    SENT.idx = 0;
-    renderSentence();
-  }, {once:false}));
+  SENT.list = VOCAB_DATA.filter(w=>w.sentAr);
+  if (SENT.idx >= SENT.list.length) SENT.idx = 0;
   renderSentence();
+}
+
+function buildSentenceHtml(w){
+  const tags = (typeof SENTENCE_TAGS!=='undefined') && SENTENCE_TAGS[w.id];
+  if (!SETTINGS.grammarHighlight || !tags || !tags.length) return escapeHtml(w.sentAr);
+  let html = escapeHtml(w.sentAr);
+  tags.forEach(t=>{
+    const rule = GRAMMAR_RULES.find(r=>r.id===t.ruleId);
+    if (!rule) return;
+    const needle = escapeHtml(t.matchText);
+    if (!needle || html.indexOf(needle)===-1) return;
+    html = html.replace(needle, `<span class="gram-underline" style="--gram-role:var(--gram-${rule.color})" data-rule="${rule.id}">${needle}</span>`);
+  });
+  return html;
 }
 
 function renderSentence(){
   if (SENT.list.length===0){ document.getElementById('sentAr').textContent='Keine Sätze in dieser Auswahl.'; return; }
   const w = SENT.list[SENT.idx];
   document.getElementById('sentChapter').textContent = w.chapter==='personal'?'Eigene Vokabel':`Kap. ${w.chapter}`;
-  document.getElementById('sentAr').textContent = w.sentAr;
+  document.getElementById('sentAr').innerHTML = buildSentenceHtml(w);
   document.getElementById('sentDe').textContent = w.sentDe || '';
   document.getElementById('sentPos').textContent = `${SENT.idx+1} / ${SENT.list.length}`;
 
   const qBox = document.getElementById('sentQuranBox');
-  if (w.quran && SENT.mode!=='quran'){
+  if (w.quran){
     qBox.classList.remove('hidden');
     document.getElementById('sentQuranAr').textContent = w.quran.ar;
     document.getElementById('sentQuranRef').textContent = `${w.quran.surah} ${w.quran.ayah}`;
+    document.getElementById('sentQuranDe').textContent = w.quran.de || w.quran.note || '';
   } else qBox.classList.add('hidden');
 
 }
@@ -540,6 +582,31 @@ document.getElementById('btnSentNext').addEventListener('click', ()=>{
 });
 document.getElementById('btnSentSpeak').addEventListener('click', ()=>{
   speakArabic(SENT.list[SENT.idx].sentAr);
+});
+
+document.getElementById('sentAr').addEventListener('click', (e)=>{
+  const span = e.target.closest('.gram-underline');
+  const pop = document.getElementById('gramPopover');
+  if (!span){ pop.classList.remove('show'); return; }
+  const rule = GRAMMAR_RULES.find(r=>r.id===span.dataset.rule);
+  if (!rule) return;
+  pop.innerHTML = `<div class="gp-title">${rule.name}</div><div>${rule.shortExplanation}</div><div class="gp-source">${rule.source.video} · ca. ${rule.source.approxTimestamp}</div>`;
+  const rect = span.getBoundingClientRect();
+  pop.style.left = Math.max(8, Math.min(rect.left, window.innerWidth-296))+'px';
+  pop.style.top = (rect.bottom+8)+'px';
+  pop.classList.add('show');
+});
+document.addEventListener('click', (e)=>{
+  if (!e.target.closest('.gram-underline') && !e.target.closest('#gramPopover'))
+    document.getElementById('gramPopover').classList.remove('show');
+});
+const gramToggleBtn = document.getElementById('toggleGrammarHighlight');
+gramToggleBtn.classList.toggle('on', SETTINGS.grammarHighlight);
+gramToggleBtn.addEventListener('click', ()=>{
+  SETTINGS.grammarHighlight = !SETTINGS.grammarHighlight;
+  gramToggleBtn.classList.toggle('on', SETTINGS.grammarHighlight);
+  saveSettings();
+  renderSentence();
 });
 
 /* ===================== QURAN LIST ===================== */

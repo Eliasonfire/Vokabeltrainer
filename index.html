@@ -30,6 +30,11 @@
   --text-dim:#9a9a9a;
   --text-faint:#5c5c5c;
   --green:#2ee6a6;
+  --gram-mubtada:#3ea6ff;
+  --gram-idafa:#c98bff;
+  --gram-nasab:#ffb84d;
+  --gram-fem:#2ee6a6;
+  --gram-other:#8a8fa3;
   --font-ar:'Noto Naskh Arabic','Amiri',serif;
   --font-ui:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
   --safe-top:env(safe-area-inset-top,0px);
@@ -311,6 +316,17 @@ main{
 .pool-label{font-size:.78rem;color:var(--text-faint);margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;}
 .pool-words{display:flex;flex-wrap:wrap;gap:6px;max-height:38vh;overflow-y:auto;padding-bottom:10px;}
 
+/* ---------- PERSONAL VOCAB ADD FORM ---------- */
+.personal-vocab-add{
+  display:none;flex-direction:column;gap:8px;margin-bottom:16px;
+  background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:14px;
+}
+.personal-vocab-add input{
+  background:var(--bg-elevated);border:1px solid var(--border);color:var(--text);
+  border-radius:12px;padding:10px 14px;font-size:.9rem;font-family:var(--font-ui);
+}
+.personal-vocab-add input[dir="rtl"]{font-family:var(--font-ar);font-size:1.1rem;}
+
 /* ---------- WORD LIST ---------- */
 .word-list{display:flex;flex-direction:column;gap:8px;}
 .word-list-item{
@@ -323,13 +339,6 @@ main{
 .wl-box{font-size:.68rem;font-weight:800;color:var(--red-bright);background:var(--red-dim);border-radius:10px;padding:3px 8px;}
 
 /* ---------- SENTENCES ---------- */
-.sent-style-toggle{display:flex;gap:8px;margin-bottom:16px;}
-.toggle-btn{
-  flex:1;background:var(--bg-card);border:1px solid var(--border);color:var(--text-dim);
-  padding:10px;border-radius:12px;font-weight:700;font-size:.85rem;cursor:pointer;
-}
-.toggle-btn.active{background:var(--red-dim);color:#fff;border-color:var(--red);}
-
 .sentence-card{
   background:linear-gradient(160deg,var(--bg-card),var(--bg-card-2));
   border:1px solid var(--border);border-radius:24px;
@@ -344,11 +353,22 @@ main{
   font-size:1.4rem;cursor:pointer;
 }
 .round-btn:active{background:var(--red-dim);}
-#btnSentRecord.recording{background:var(--red);animation:pulse 1.2s infinite;}
-@keyframes pulse{0%{box-shadow:0 0 0 0 var(--red-glow);}70%{box-shadow:0 0 0 16px transparent;}100%{box-shadow:0 0 0 0 transparent;}}
-.record-status{font-size:.78rem;color:var(--text-faint);margin-top:10px;min-height:16px;}
 .sent-nav{display:flex;align-items:center;justify-content:space-between;margin-top:18px;}
 .sent-nav span{color:var(--text-dim);font-size:.82rem;font-weight:600;}
+
+.gram-underline{border-bottom:2px solid var(--gram-role, var(--gram-other));padding-bottom:1px;cursor:pointer;}
+.gram-popover{
+  position:fixed;z-index:600;
+  background:var(--bg-card-2);border:1px solid var(--border);
+  border-radius:12px;padding:12px 14px;max-width:280px;
+  box-shadow:0 20px 50px -20px rgba(0,0,0,.8);
+  font-size:.82rem;color:var(--text);
+  opacity:0;pointer-events:none;transform:translateY(6px);
+  transition:all .18s ease;
+}
+.gram-popover.show{opacity:1;pointer-events:auto;transform:translateY(0);}
+.gram-popover .gp-title{font-weight:700;color:#fff;margin-bottom:4px;}
+.gram-popover .gp-source{margin-top:8px;font-size:.72rem;color:var(--text-dim);}
 
 /* ---------- QURAN LIST ---------- */
 .quran-intro{color:var(--text-dim);font-size:.82rem;line-height:1.5;margin-bottom:16px;}
@@ -532,7 +552,7 @@ main::-webkit-scrollbar-thumb{background:var(--bg-card-2);border-radius:10px;}
       <div class="due-card">
         <div class="due-number" id="dueCount">0</div>
         <div class="due-label">Karten heute fällig</div>
-        <button class="btn btn-primary btn-big" id="btnStartLearning">Jetzt lernen</button>
+        <button class="btn btn-primary btn-big" id="btnStartLearning" data-nav="learn-entry">Jetzt lernen</button>
         <div class="due-sub" id="dueSub"></div>
       </div>
 
@@ -651,6 +671,13 @@ main::-webkit-scrollbar-thumb{background:var(--bg-card-2);border-radius:10px;}
         <button class="icon-btn" id="btnWordlistBack">←</button>
         <h2 id="wordlistTitle">Wörter</h2>
       </div>
+      <div class="personal-vocab-add" id="personalVocabAddForm">
+        <input type="text" id="pvAr" placeholder="Arabisch (mit Tashkil), z.B. لَحْمٌ" lang="ar" dir="rtl">
+        <input type="text" id="pvDe" placeholder="Deutsche Übersetzung">
+        <input type="text" id="pvSentAr" placeholder="Beispielsatz Arabisch (optional)" lang="ar" dir="rtl">
+        <input type="text" id="pvSentDe" placeholder="Beispielsatz Deutsch (optional)">
+        <button class="btn btn-primary" id="btnAddPersonalVocab">+ Vokabel hinzufügen</button>
+      </div>
       <div class="word-list" id="wordList"></div>
     </section>
 
@@ -661,9 +688,12 @@ main::-webkit-scrollbar-thumb{background:var(--bg-card-2);border-radius:10px;}
         <h2>Satz-Modus</h2>
       </div>
 
-      <div class="sent-style-toggle">
-        <button class="toggle-btn active" data-sentstyle="alle">Alle</button>
-        <button class="toggle-btn" data-sentstyle="quran">☪ Religiös</button>
+      <div class="setting-row" style="padding:10px 16px;margin-bottom:12px;">
+        <div>
+          <div class="setting-title" style="font-size:.82rem;">Grammatik-Hinweise</div>
+          <div class="setting-sub">Erklärungen aus dem Unterricht, antippen für Details</div>
+        </div>
+        <button class="switch" id="toggleGrammarHighlight"><span class="knob"></span></button>
       </div>
 
       <div class="sentence-card" id="sentenceCard">
@@ -679,6 +709,7 @@ main::-webkit-scrollbar-thumb{background:var(--bg-card-2);border-radius:10px;}
           <div class="quran-label">☪ Aus dem Quran</div>
           <div class="quran-ar" id="sentQuranAr" lang="ar" dir="rtl"></div>
           <div class="quran-ref" id="sentQuranRef"></div>
+          <div class="quran-note" id="sentQuranDe"></div>
         </div>
       </div>
 
@@ -791,9 +822,11 @@ main::-webkit-scrollbar-thumb{background:var(--bg-card-2);border-radius:10px;}
 </div>
 
 <div class="toast" id="toast"></div>
+<div class="gram-popover" id="gramPopover"></div>
 
 <script src="vocab-data.js"></script>
 <script src="surah-data.js"></script>
+<script src="grammar-data.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
