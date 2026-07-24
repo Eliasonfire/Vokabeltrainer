@@ -500,7 +500,6 @@ function setupDragAndDrop(){
 
 /* ===================== SENTENCES ===================== */
 let SENT = { list: VOCAB_DATA.filter(w=>w.sentAr), idx:0, mode:'alle' };
-let mediaRecorder=null, recordedChunks=[], lastRecordingUrl=null;
 
 function openSentences(){
   const btns = document.querySelectorAll('[data-sentstyle]');
@@ -532,8 +531,6 @@ function renderSentence(){
     document.getElementById('sentQuranRef').textContent = `${w.quran.surah} ${w.quran.ayah}`;
   } else qBox.classList.add('hidden');
 
-  document.getElementById('btnSentPlay').classList.add('hidden');
-  document.getElementById('recordStatus').textContent = '';
 }
 document.getElementById('btnSentPrev').addEventListener('click', ()=>{
   SENT.idx = (SENT.idx-1+SENT.list.length)%SENT.list.length; renderSentence();
@@ -543,37 +540,6 @@ document.getElementById('btnSentNext').addEventListener('click', ()=>{
 });
 document.getElementById('btnSentSpeak').addEventListener('click', ()=>{
   speakArabic(SENT.list[SENT.idx].sentAr);
-});
-
-document.getElementById('btnSentRecord').addEventListener('click', async ()=>{
-  const btn = document.getElementById('btnSentRecord');
-  if (mediaRecorder && mediaRecorder.state==='recording'){
-    mediaRecorder.stop();
-    return;
-  }
-  try{
-    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
-    recordedChunks = [];
-    mediaRecorder = new MediaRecorder(stream);
-    mediaRecorder.ondataavailable = e => recordedChunks.push(e.data);
-    mediaRecorder.onstop = ()=>{
-      btn.classList.remove('recording');
-      const blob = new Blob(recordedChunks, {type:'audio/webm'});
-      if (lastRecordingUrl) URL.revokeObjectURL(lastRecordingUrl);
-      lastRecordingUrl = URL.createObjectURL(blob);
-      document.getElementById('btnSentPlay').classList.remove('hidden');
-      document.getElementById('recordStatus').textContent = 'Aufnahme fertig - zum Anhören ▶️ tippen';
-      stream.getTracks().forEach(t=>t.stop());
-    };
-    mediaRecorder.start();
-    btn.classList.add('recording');
-    document.getElementById('recordStatus').textContent = 'Aufnahme läuft... nochmal tippen zum Stoppen';
-  }catch(err){
-    toast('Mikrofon-Zugriff nicht möglich: '+err.message);
-  }
-});
-document.getElementById('btnSentPlay').addEventListener('click', ()=>{
-  if (lastRecordingUrl){ const a = new Audio(lastRecordingUrl); a.play(); }
 });
 
 /* ===================== QURAN LIST ===================== */
