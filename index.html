@@ -98,7 +98,12 @@ main{
 .screen.active{display:block;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
 
-.screen-header{display:flex;align-items:center;gap:10px;margin:6px 0 16px;}
+.screen-header{
+  display:flex;align-items:center;gap:10px;
+  margin:0 -18px 16px;padding:6px 18px;
+  position:sticky;top:0;z-index:30;
+  background:var(--bg);
+}
 .screen-header h2{margin:0;font-size:1.25rem;font-weight:700;}
 .icon-btn{
   background:var(--bg-card);
@@ -177,8 +182,9 @@ main{
 .box-overview{display:flex;gap:8px;margin-top:20px;}
 .box-pip{
   flex:1;background:var(--bg-card);border:1px solid var(--border);
-  border-radius:12px;padding:10px 4px;text-align:center;
+  border-radius:12px;padding:10px 4px;text-align:center;cursor:pointer;
 }
+.box-pip:active{border-color:var(--red-dim);}
 .box-pip .n{font-weight:800;font-size:1.1rem;}
 .box-pip .l{font-size:.62rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.04em;}
 
@@ -296,6 +302,7 @@ main{
 }
 .custom-cat-box.drop-hover{border-color:var(--red);background:rgba(255,23,68,.08);}
 .custom-cat-box .cat-title{font-weight:700;font-size:.88rem;margin-bottom:8px;display:flex;justify-content:space-between;}
+.custom-cat-box .cat-title span{cursor:pointer;}
 .custom-cat-box .cat-title button{background:none;border:none;color:var(--text-faint);font-size:.85rem;cursor:pointer;}
 .chips-wrap{display:flex;flex-wrap:wrap;gap:6px;}
 
@@ -656,7 +663,7 @@ main::-webkit-scrollbar-thumb{background:var(--bg-card-2);border-radius:10px;}
           <input type="text" id="newCatName" placeholder="Neue Kategorie, z.B. Schwierige Wörter" maxlength="30">
           <button class="btn btn-primary" id="btnAddCat">+ Anlegen</button>
         </div>
-        <div class="drag-hint">Wörter unten in eine Kategorie-Box ziehen (oder halten &amp; verschieben auf dem Handy)</div>
+        <div class="drag-hint">Wörter unten in eine Kategorie-Box ziehen (oder halten &amp; verschieben auf dem Handy). Zum Entfernen einfach wieder aus der Box heraus in den Pool ziehen. Antippen des Kategorie-Namens zeigt die Wortliste.</div>
         <div id="customCatList"></div>
         <div class="unassigned-pool" id="unassignedPool">
           <div class="pool-label">Alle Vokabeln</div>
@@ -796,6 +803,22 @@ main::-webkit-scrollbar-thumb{background:var(--bg-card-2);border-radius:10px;}
         </div>
       </div>
       <select id="voiceSelect" class="select-input select-full"></select>
+
+      <div class="setting-row">
+        <div>
+          <div class="setting-title">Lernfortschritt zurücksetzen</div>
+          <div class="setting-sub">Alle Karten zurück auf Box 1</div>
+        </div>
+        <button class="btn btn-secondary" id="btnResetProgress">Zurücksetzen</button>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-title">Streak zurücksetzen</div>
+          <div class="setting-sub">Tages-Streak auf 0 setzen</div>
+        </div>
+        <button class="btn btn-secondary" id="btnResetStats">Zurücksetzen</button>
+      </div>
+
       <p class="settings-note">Alle Daten (Fortschritt, Kategorien) bleiben nur auf diesem Gerät im Browser gespeichert.</p>
     </section>
 
