@@ -2,8 +2,8 @@
 /* Leitner-System: 5 Boxen. Box-Intervalle in Tagen bis zur naechsten Faelligkeit. */
 const INTERVALS = {1:0, 2:1, 3:3, 4:7, 5:16};
 const CHAPTER_NAMES = {
-  1:"Hadha", 2:"Kapitel 2", 3:"Adjektive", 4:"Genitivpartikel", 5:"Mudaf",
-  6:"Hadihi", 7:"Tilka", 8:"Länder", 9:"Kapitel 9", personal:"Eigene Vokabeln"
+  1:"هَذَا (dies)", 2:"Kapitel 2", 3:"Adjektive", 4:"Genitivpartikel", 5:"مُضَاف (Bezugswort)",
+  6:"هَذِهِ (diese)", 7:"تِلْكَ (jene)", 8:"Länder", 9:"Kapitel 9", personal:"Eigene Vokabeln"
 };
 
 /* ---------- Storage ---------- */
@@ -159,7 +159,7 @@ function renderHome(){
 
   const boxCounts = [1,2,3,4,5].map(b => VOCAB_DATA.filter(w=>PROGRESS[w.id] && PROGRESS[w.id].box===b).length);
   document.getElementById('boxOverview').innerHTML = boxCounts.map((n,i)=>`
-    <div class="box-pip"><div class="n">${n}</div><div class="l">Box ${i+1}</div></div>
+    <div class="box-pip" data-openlist="box:${i+1}"><div class="n">${n}</div><div class="l">Box ${i+1}</div></div>
   `).join('');
 
   const quranCount = VOCAB_DATA.filter(w=>w.quran).length;
@@ -405,16 +405,16 @@ function renderCustomCats(){
   const box = document.getElementById('customCatList');
   box.innerHTML = CUSTOM_CATS.map(cat => `
     <div class="custom-cat-box" data-catid="${cat.id}">
-      <div class="cat-title"><span>${cat.name} (${cat.wordIds.length})</span><button data-delcat="${cat.id}">Löschen</button></div>
+      <div class="cat-title"><span data-openlist="cat:${cat.id}">${cat.name} (${cat.wordIds.length})</span><button data-delcat="${cat.id}">Löschen</button></div>
       <div class="chips-wrap" data-dropzone="${cat.id}">
-        ${cat.wordIds.map(id=>{ const w=byId(id); if(!w) return ''; return `<span class="word-chip" draggable-id="${id}">${w.ar}${isWeak(w)?`<span class="weak-de">(${w.de})</span>`:''}</span>`; }).join('')}
+        ${cat.wordIds.map(id=>{ const w=byId(id); if(!w) return ''; return `<span class="word-chip" draggable-id="${id}">${w.ar}<span class="weak-de">(${w.de})</span></span>`; }).join('')}
       </div>
     </div>
   `).join('');
 
   const assigned = new Set(CUSTOM_CATS.flatMap(c=>c.wordIds));
   const pool = VOCAB_DATA.filter(w=>!assigned.has(w.id));
-  document.getElementById('poolWords').innerHTML = pool.map(w=>`<span class="word-chip" draggable-id="${w.id}">${w.ar}${isWeak(w)?`<span class="weak-de">(${w.de})</span>`:''}</span>`).join('');
+  document.getElementById('poolWords').innerHTML = pool.map(w=>`<span class="word-chip" draggable-id="${w.id}">${w.ar}<span class="weak-de">(${w.de})</span></span>`).join('');
 
   document.querySelectorAll('[data-delcat]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
@@ -456,6 +456,10 @@ function openWordList(key){
     const cat = CUSTOM_CATS.find(c=>c.id===key.split(':')[1]);
     words = cat ? cat.wordIds.map(byId).filter(Boolean) : [];
     title = cat ? cat.name : 'Kategorie';
+  } else if (key.startsWith('box:')){
+    const boxNum = Number(key.split(':')[1]);
+    words = VOCAB_DATA.filter(w=>PROGRESS[w.id] && PROGRESS[w.id].box===boxNum);
+    title = `Box ${boxNum}`;
   } else if (key==='quran'){
     words = VOCAB_DATA.filter(w=>w.quran);
     title = 'Vokabeln im Quran';
@@ -522,11 +526,16 @@ function setupDragAndDrop(){
     const el = document.elementFromPoint(e.clientX, e.clientY);
     const box = el && el.closest('.custom-cat-box');
     document.querySelectorAll('.custom-cat-box').forEach(b=>b.classList.remove('drop-hover'));
-    if (box && sourceId){
-      const catId = box.dataset.catid;
+    if (sourceId){
+      /* Immer zuerst aus allen Kategorien entfernen - so wird ein Wort, das aus
+         einer Kategorie-Box heraus (zurueck in den Pool oder nirgendwohin)
+         gezogen wird, automatisch wieder freigegeben. */
       CUSTOM_CATS.forEach(c=>{ c.wordIds = c.wordIds.filter(id=>id!==sourceId); });
-      const cat = CUSTOM_CATS.find(c=>c.id===catId);
-      if (cat && !cat.wordIds.includes(sourceId)) cat.wordIds.push(sourceId);
+      if (box){
+        const catId = box.dataset.catid;
+        const cat = CUSTOM_CATS.find(c=>c.id===catId);
+        if (cat && !cat.wordIds.includes(sourceId)) cat.wordIds.push(sourceId);
+      }
       saveCustomCats();
       renderCustomCats();
     }
@@ -748,6 +757,20 @@ document.getElementById('directionSelect').addEventListener('change', (e)=>{
 document.getElementById('voiceSelect').addEventListener('change', (e)=>{
   SETTINGS.voiceURI = e.target.value;
   saveSettings();
+});
+document.getElementById('btnResetProgress').addEventListener('click', ()=>{
+  if (!confirm('Wirklich den gesamten Lernfortschritt zurücksetzen? Alle Karten gehen zurück auf Box 1.')) return;
+  PROGRESS = {};
+  VOCAB_DATA.forEach(w=>{ PROGRESS[w.id] = { box:1, nextReview: todayStr(0), correct:0, wrong:0 }; });
+  saveProgress();
+  toast('Lernfortschritt zurückgesetzt');
+  renderHome();
+});
+document.getElementById('btnResetStats').addEventListener('click', ()=>{
+  if (!confirm('Wirklich den Tages-Streak zurücksetzen?')) return;
+  LS.set('vt_streak', {count:0, last:null});
+  toast('Streak zurückgesetzt');
+  renderHome();
 });
 
 /* ===================== INIT ===================== */

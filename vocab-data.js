@@ -18,7 +18,7 @@ const VOCAB_DATA = [
    "surah": "Al-Baqarah",
    "ayah": "2:125",
    "ar": "وَإِذْ جَعَلْنَا الْبَيْتَ مَثَابَةً لِلنَّاسِ وَأَمْنًا",
-   "de": "Und als Wir das Haus zu einem Sammelpunkt für die Menschen und einem sicheren Ort machten (Bubenheim & Elyas).",
+   "de": "Und als Wir das Haus zu einem Sammelpunkt für die Menschen und einem sicheren Ort machten.",
    "note": "Al-Bayt bezeichnet hier die Kaaba. Geprüft gegen quran.com."
   },
   "source": "vocabulary",
@@ -81,7 +81,7 @@ const VOCAB_DATA = [
    "surah": "Al-Baqarah",
    "ayah": "2:2",
    "ar": "ذَٰلِكَ الْكِتَابُ لَا رَيْبَ فِيهِ",
-   "de": "Dieses Buch, an dem es keinen Zweifel gibt, ist eine Rechtleitung für die Gottesfürchtigen (Bubenheim & Elyas).",
+   "de": "Dieses Buch, an dem es keinen Zweifel gibt, ist eine Rechtleitung für die Gottesfürchtigen.",
    "note": "Berühmter Vers direkt nach Al-Fatiha. Geprüft gegen quran.com."
   },
   "source": "vocabulary",
@@ -106,7 +106,7 @@ const VOCAB_DATA = [
    "surah": "Al-Qalam",
    "ayah": "68:1",
    "ar": "ن ۚ وَالْقَلَمِ وَمَا يَسْطُرُونَ",
-   "de": "Nun. Beim Schreibrohr und dem, was sie in Zeilen niederschreiben (Bubenheim & Elyas).",
+   "de": "Nun. Beim Schreibrohr und dem, was sie in Zeilen niederschreiben.",
    "note": "Eroeffnungsvers der Sure Al-Qalam. Geprueft gegen quran.com."
   },
   "source": "vocabulary",
@@ -207,7 +207,7 @@ const VOCAB_DATA = [
    "surah": "An-Najm",
    "ayah": "53:1",
    "ar": "وَالنَّجْمِ إِذَا هَوَىٰ",
-   "de": "Bei dem Stern, wenn er sinkt! (Bubenheim & Elyas)",
+   "de": "Bei dem Stern, wenn er sinkt!",
    "note": "Eroeffnungsvers der Sure An-Najm. Geprueft gegen quran.com."
   },
   "source": "vocabulary",
@@ -574,7 +574,7 @@ const VOCAB_DATA = [
    "surah": "Al-Baqarah",
    "ayah": "2:124",
    "ar": "إِنِّي جَاعِلُكَ لِلنَّاسِ إِمَامًا",
-   "de": "Ich will dich zu einem Vorbild fuer die Menschen machen (Bubenheim & Elyas).",
+   "de": "Ich will dich zu einem Vorbild fuer die Menschen machen.",
    "note": "Allah spricht zu Ibrahim (a.s.). Geprueft gegen quran.com."
   },
   "source": "vocabulary",
@@ -637,7 +637,7 @@ const VOCAB_DATA = [
    "surah": "Muhammad",
    "ayah": "47:15",
    "ar": "وَأَنْهَارٌ مِنْ لَبَنٍ لَمْ يَتَغَيَّرْ طَعْمُهُ",
-   "de": "...und Baeche mit Milch, deren Geschmack sich nicht aendert... (Bubenheim & Elyas, Ausschnitt)",
+   "de": "...und Baeche mit Milch, deren Geschmack sich nicht aendert...",
    "note": "Beschreibung der Fluesse im Paradies. Geprueft gegen quran.com."
   },
   "source": "vocabulary",
@@ -1023,7 +1023,7 @@ const VOCAB_DATA = [
    "surah": "Al-Anbiya",
    "ayah": "21:30",
    "ar": "وَجَعَلْنَا مِنَ الْمَاءِ كُلَّ شَيْءٍ حَيٍّ",
-   "de": "...und aus dem Wasser alles Lebendige gemacht (Bubenheim & Elyas, Ausschnitt).",
+   "de": "...und aus dem Wasser alles Lebendige gemacht.",
    "note": "Geprueft gegen quran.com."
   },
   "source": "vocabulary",
@@ -1447,7 +1447,7 @@ const VOCAB_DATA = [
    "surah": "Al-Baqarah (Ayat al-Kursi)",
    "ayah": "2:255",
    "ar": "لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ",
-   "de": "Ihm gehoert (alles), was in den Himmeln und was auf der Erde ist (Bubenheim & Elyas, Ausschnitt).",
+   "de": "Ihm gehoert (alles), was in den Himmeln und was auf der Erde ist.",
    "note": "Aus Ayat al-Kursi. Geprueft gegen quran.com."
   },
   "source": "vocabulary",
@@ -1510,7 +1510,7 @@ const VOCAB_DATA = [
    "surah": "Al-Fath",
    "ayah": "48:29",
    "ar": "مُحَمَّدٌ رَسُولُ اللَّهِ",
-   "de": "Muhammad ist Allahs Gesandter (Bubenheim & Elyas, Anfang des Verses).",
+   "de": "Muhammad ist Allahs Gesandter.",
    "note": "Sehr bekannter Vers. Geprueft gegen quran.com."
   },
   "source": "vocabulary",
@@ -1630,7 +1630,7 @@ const VOCAB_DATA = [
    "surah": "Al-Ma'idah",
    "ayah": "5:97",
    "ar": "جَعَلَ اللَّهُ الْكَعْبَةَ الْبَيْتَ الْحَرَامَ قِيَامًا لِلنَّاسِ",
-   "de": "Allah hat die Ka'ba, das geschuetzte Haus, zu einer Staette des Gottesdienstes fuer die Menschen gemacht (Bubenheim & Elyas).",
+   "de": "Allah hat die Ka'ba, das geschuetzte Haus, zu einer Staette des Gottesdienstes fuer die Menschen gemacht.",
    "note": "Ueber die Bedeutung der Kaaba. Geprueft gegen quran.com."
   },
   "source": "vocabulary",
@@ -1750,7 +1750,7 @@ const VOCAB_DATA = [
    "surah": "Al-'Alaq",
    "ayah": "96:1",
    "ar": "اقْرَأْ بِاسْمِ رَبِّكَ الَّذِي خَلَقَ",
-   "de": "Lies im Namen deines Herrn, Der erschaffen hat (Bubenheim & Elyas).",
+   "de": "Lies im Namen deines Herrn, Der erschaffen hat.",
    "note": "Erster offenbarter Vers - auch Ursprung von Bismillah. Geprueft gegen quran.com."
   },
   "source": "vocabulary",
@@ -2478,7 +2478,7 @@ const VOCAB_DATA = [
    "surah": "Al-Mulk",
    "ayah": "67:19",
    "ar": "أَوَلَمْ يَرَوْا إِلَى الطَّيْرِ فَوْقَهُمْ",
-   "de": "Sehen sie denn nicht auf die Voegel ueber ihnen? (Bubenheim & Elyas)",
+   "de": "Sehen sie denn nicht auf die Voegel ueber ihnen?",
    "note": "Korrigiert nach Pruefung gegen quran.com (vorher fehlerhaft zitiert)."
   },
   "source": "vocabulary",
@@ -2674,7 +2674,7 @@ const VOCAB_DATA = [
    "surah": "Al-Fatiha",
    "ayah": "1:4",
    "ar": "مَالِكِ يَوْمِ الدِّينِ",
-   "de": "Dem Herrscher am Tag des Gerichts (Bubenheim & Elyas).",
+   "de": "Dem Herrscher am Tag des Gerichts.",
    "note": "Aus Al-Fatiha - jedem Muslim vertraut. Geprueft gegen quran.com."
   },
   "source": "vocabulary",

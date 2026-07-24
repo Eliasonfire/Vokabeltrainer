@@ -10,15 +10,15 @@
 const GRAMMAR_RULES = [
   {
     id: "ismul-isara-hadha-01",
-    name: "Ismul Isara: hadha",
-    shortExplanation: "hadha (هَذَا) ist ein Demonstrativpronomen (\"Ismul Isara\" = Nomen des Zeigens) und heißt \"dies\". Es wird nur für Dinge benutzt, die (a) in der Nähe sind und (b) männlich (nicht für Personen, nicht für weibliche Wörter).",
+    name: "هَذَا (dies)",
+    shortExplanation: "هَذَا (hadha) ist ein اسْمُ الْإِشَارَة (Hinweiswort/Demonstrativpronomen). Es wird nur für Dinge benutzt, die (a) in der Nähe sind und (b) männlich (nicht für Personen, nicht für weibliche Wörter).",
     color: "mubtada",
     source: { folge: 1, video: "Folge 01", approxTimestamp: "10:07", chapter: 1 }
   },
   {
     id: "fragepartikel-alif-01",
-    name: "Fragepartikel أَ (Alif)",
-    shortExplanation: "Ein أَ vor einen vollständigen Satz gestellt macht aus einer Aussage eine Frage. Anders als \"hal\" (Entscheidungsfrage, ja/nein) wird أَ eher allgemein/rhetorisch genutzt.",
+    name: "أَ (Fragepartikel)",
+    shortExplanation: "Ein أَ vor einen vollständigen Satz gestellt macht aus einer Aussage eine Frage. Anders als هَلْ (hal, Entscheidungsfrage/ja-nein) wird أَ eher allgemein/rhetorisch genutzt.",
     color: "nasab",
     source: { folge: 1, video: "Folge 01", approxTimestamp: "22:48", chapter: 1 }
   }
