@@ -3,33 +3,33 @@
    (Folge 01-12, get_recordings via arabicroots-MCP). Jede Regel gibt exakt
    nur wieder, was der Lehrer im Video erklärt hat - keine ergänzten/erfundenen
    Regeln. Quelle (Folge, ungefährer Zeitstempel, Kapitel) ist Pflichtangabe,
-   analog zu den geprüften Quran-Zitaten in vocab-data.js.
-
-   PLATZHALTER (Stand 24.07.26): Die zwei Eintraege unten sind nur zum Testen
-   der Rendering-Pipeline (Unterstrich + Tap-Popup) angelegt und noch NICHT
-   gegen die echten Video-Transkripte geprueft. Werden ersetzt, sobald die
-   Transkript-Auswertung aller 12 Folgen abgeschlossen ist. */
+   analog zu den geprüften Quran-Zitaten in vocab-data.js. Rohtranskripte
+   (Audit-Grundlage) liegen lokal unter transcripts/ (nicht im Git, siehe
+   .gitignore - Kursmaterial-Disclaimer verbietet Weitergabe). */
 
 const GRAMMAR_RULES = [
   {
-    id: "mubtada-hadha-01",
-    name: "Mubtada mit hadha",
-    shortExplanation: "hadha/hadihi steht als Mubtada (Satzgegenstand) am Satzanfang; das folgende Nomen ist der Khabar (die Aussage darüber). [Platzhalter - noch gegen Folge 01 zu verifizieren]",
+    id: "ismul-isara-hadha-01",
+    name: "Ismul Isara: hadha",
+    shortExplanation: "hadha (هَذَا) ist ein Demonstrativpronomen (\"Ismul Isara\" = Nomen des Zeigens) und heißt \"dies\". Es wird nur für Dinge benutzt, die (a) in der Nähe sind und (b) männlich (nicht für Personen, nicht für weibliche Wörter).",
     color: "mubtada",
-    source: { folge: 1, video: "Folge 01", approxTimestamp: "TBD", chapter: 1 }
+    source: { folge: 1, video: "Folge 01", approxTimestamp: "10:07", chapter: 1 }
   },
   {
-    id: "mudaf-idafa-01",
-    name: "Idafa (Mudaf / Mudaf ilayhi)",
-    shortExplanation: "Das erste Wort einer Idafa-Konstruktion (Mudaf) verliert Tanwin und Al-; das zweite Wort (Mudaf ilayhi) steht im Genitiv. [Platzhalter - noch gegen Folge 07/08 zu verifizieren]",
-    color: "idafa",
-    source: { folge: 7, video: "Folge 07", approxTimestamp: "TBD", chapter: 5 }
+    id: "fragepartikel-alif-01",
+    name: "Fragepartikel أَ (Alif)",
+    shortExplanation: "Ein أَ vor einen vollständigen Satz gestellt macht aus einer Aussage eine Frage. Anders als \"hal\" (Entscheidungsfrage, ja/nein) wird أَ eher allgemein/rhetorisch genutzt.",
+    color: "nasab",
+    source: { folge: 1, video: "Folge 01", approxTimestamp: "22:48", chapter: 1 }
   }
 ];
 
 const SENTENCE_TAGS = {
   /* Key = vocab-data.js `id` (stabiler Join-Key, NICHT der Satztext) */
   "45751": [
-    { ruleId: "mubtada-hadha-01", matchText: "هَذَا" }
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" }
+  ],
+  "45776": [
+    { ruleId: "fragepartikel-alif-01", matchText: "أَ" }
   ]
 };
