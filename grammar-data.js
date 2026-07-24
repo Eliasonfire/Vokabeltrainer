@@ -21,6 +21,27 @@ const GRAMMAR_RULES = [
     shortExplanation: "Ein أَ vor einen vollständigen Satz gestellt macht aus einer Aussage eine Frage. Anders als هَلْ (hal, Entscheidungsfrage/ja-nein) wird أَ eher allgemein/rhetorisch genutzt.",
     color: "nasab",
     source: { folge: 1, video: "Folge 01", approxTimestamp: "22:48", chapter: 1 }
+  },
+  {
+    id: "istifham-men-01",
+    name: "مَنْ (wer)",
+    shortExplanation: "مَنْ (men) ist das Fragewort für Personen (\"wer ist dies?\"), im Unterschied zu هَذَا/Fragen nach Gegenständen. Nicht verwechseln mit مِنْ (min, \"von\") - men hat Fatha, min hat Sukun.",
+    color: "nasab",
+    source: { folge: 2, video: "Folge 02", approxTimestamp: "2:11", chapter: 2 }
+  },
+  {
+    id: "ismul-isara-dhalika-01",
+    name: "ذَلِكَ (jenes)",
+    shortExplanation: "ذَلِكَ (dhalika) ist wie هَذَا ein اسْمُ الْإِشَارَة (Hinweiswort), aber für Dinge in der Ferne statt in der Nähe. Gilt ebenfalls nur für männliche Wörter. Kann auch auf zuvor Erwähntes zurückverweisen, nicht nur auf räumlich Entferntes.",
+    color: "mubtada",
+    source: { folge: 2, video: "Folge 02", approxTimestamp: "20:07", chapter: 2 }
+  },
+  {
+    id: "al-tarif-01",
+    name: "اَلْ (bestimmter Artikel)",
+    shortExplanation: "اَلْ bestimmt ein Nomen (wie \"der/die/das\"). Regel 1: Für ein bestimmtes Wort braucht man den Artikel اَلْ. Regel 2: Das Tanwin fällt dabei weg, z.B. بَيْتٌ (ein Haus) → الْبَيْتُ (das Haus). Artikel und Tanwin schließen sich gegenseitig aus.",
+    color: "other",
+    source: { folge: 2, video: "Folge 02", approxTimestamp: "32:51", chapter: 3 }
   }
 ];
 
@@ -31,5 +52,8 @@ const SENTENCE_TAGS = {
   ],
   "45776": [
     { ruleId: "fragepartikel-alif-01", matchText: "أَ" }
+  ],
+  "45787": [
+    { ruleId: "al-tarif-01", matchText: "الْمَاءُ" }
   ]
 };
