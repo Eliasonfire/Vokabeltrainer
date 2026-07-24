@@ -377,6 +377,31 @@ main{
 .gram-popover .gp-title{font-weight:700;color:#fff;margin-bottom:4px;}
 .gram-popover .gp-source{margin-top:8px;font-size:.72rem;color:var(--text-dim);}
 
+.quran-freq-badge{
+  position:absolute;top:16px;right:16px;z-index:6;
+  background:rgba(255,23,68,.1);border:1px solid var(--red-dim);
+  border-bottom:2px solid var(--red-bright);
+  color:var(--red-bright);font-family:var(--font-ui);font-size:.72rem;font-weight:700;
+  padding:5px 10px;border-radius:20px;cursor:pointer;
+}
+.quran-freq-popover{
+  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
+  z-index:700;width:min(320px,86vw);max-height:70vh;
+  background:var(--bg-card-2);border:1px solid var(--border);border-radius:16px;
+  padding:16px;box-shadow:0 20px 60px -20px rgba(0,0,0,.9);
+  display:flex;flex-direction:column;gap:10px;
+}
+.qfp-header{display:flex;align-items:center;justify-content:space-between;}
+.qfp-title{font-weight:700;font-size:.95rem;}
+.qfp-list{overflow-y:auto;display:flex;flex-direction:column;gap:8px;}
+.qfp-item{
+  background:var(--bg-card);border:1px solid var(--border);border-radius:12px;
+  padding:10px 12px;font-size:.85rem;
+}
+.qfp-item .qfp-ref{font-weight:700;color:var(--red-bright);}
+.qfp-note{font-size:.72rem;color:var(--text-faint);text-align:center;}
+.qfp-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:650;}
+
 /* ---------- QURAN LIST ---------- */
 .quran-intro{color:var(--text-dim);font-size:.82rem;line-height:1.5;margin-bottom:16px;}
 
@@ -609,6 +634,7 @@ main::-webkit-scrollbar-thumb{background:var(--bg-card-2);border-radius:10px;}
       </div>
 
       <div class="card-stage" id="cardStage">
+        <button class="quran-freq-badge hidden" id="cardQuranFreq"></button>
         <div class="swipe-hint swipe-hint-left" id="swipeHintLeft">✕</div>
         <div class="swipe-hint swipe-hint-right" id="swipeHintRight">✓</div>
         <div class="flashcard" id="flashcard">
@@ -846,10 +872,19 @@ main::-webkit-scrollbar-thumb{background:var(--bg-card-2);border-radius:10px;}
 
 <div class="toast" id="toast"></div>
 <div class="gram-popover" id="gramPopover"></div>
+<div class="qfp-backdrop hidden" id="qfpBackdrop"></div>
+<div class="quran-freq-popover hidden" id="quranFreqPopover">
+  <div class="qfp-header">
+    <div class="qfp-title" id="qfpTitle">☪ Im Quran</div>
+    <button class="icon-btn" id="btnCloseQuranFreq">✕</button>
+  </div>
+  <div class="qfp-list" id="qfpList"></div>
+</div>
 
 <script src="vocab-data.js"></script>
 <script src="surah-data.js"></script>
 <script src="grammar-data.js"></script>
+<script src="quran-frequency-data.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

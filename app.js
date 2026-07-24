@@ -252,7 +252,36 @@ function renderCard(){
 
   document.getElementById('learnCount').textContent = `${SESSION.idx+1}/${SESSION.words.length}`;
   document.getElementById('learnProgressFill').style.width = `${(SESSION.idx/SESSION.words.length)*100}%`;
+
+  renderQuranFreqBadge(w);
 }
+
+/* ---------- Quran-Vorkommen (Wurzel-Häufigkeit, aus dem Quranic Arabic Corpus) ---------- */
+function renderQuranFreqBadge(w){
+  const badge = document.getElementById('cardQuranFreq');
+  const root = w.root && (typeof QURAN_FREQ!=='undefined') ? w.root.replace(/\s+/g,'') : null;
+  const freq = root && QURAN_FREQ[root];
+  if (!freq){ badge.classList.add('hidden'); return; }
+  badge.textContent = `☪ ${freq.count}× im Quran`;
+  badge.classList.remove('hidden');
+  badge.onclick = (e)=>{ e.stopPropagation(); openQuranFreqPopover(w, freq); };
+}
+
+function openQuranFreqPopover(w, freq){
+  const shown = freq.verses.slice(0, 10);
+  document.getElementById('qfpTitle').textContent = `☪ ${w.ar} im Quran (${freq.count}×)`;
+  document.getElementById('qfpList').innerHTML = shown.map(v=>`
+    <div class="qfp-item"><span class="qfp-ref">${v.sura}:${v.ayah}</span> — ${v.surahName}</div>
+  `).join('') + (freq.count > shown.length ? `<div class="qfp-note">Erste ${shown.length} von ${freq.count} Fundstellen</div>` : '');
+  document.getElementById('qfpBackdrop').classList.remove('hidden');
+  document.getElementById('quranFreqPopover').classList.remove('hidden');
+}
+function closeQuranFreqPopover(){
+  document.getElementById('qfpBackdrop').classList.add('hidden');
+  document.getElementById('quranFreqPopover').classList.add('hidden');
+}
+document.getElementById('qfpBackdrop').addEventListener('click', closeQuranFreqPopover);
+document.getElementById('btnCloseQuranFreq').addEventListener('click', closeQuranFreqPopover);
 
 let __suppressCardClick = false;
 document.getElementById('flashcard').addEventListener('click', (e)=>{
