@@ -878,6 +878,23 @@ document.getElementById('surahList').addEventListener('click', (e)=>{
   if (row) openSurah(Number(row.dataset.opensurah));
 });
 
+/* Der Korantext (2,3 MB) wird NICHT beim App-Start geladen, sondern erst wenn
+   der Quran-Leser das erste Mal geoeffnet wird. Danach liegt er im Speicher und
+   dank Service Worker auch im Cache - ab dann funktioniert der Leser offline. */
+let QURAN_TEXT_PROMISE = null;
+function ladeQuranText(){
+  if (typeof QURAN_TEXT !== 'undefined') return Promise.resolve(QURAN_TEXT);
+  if (QURAN_TEXT_PROMISE) return QURAN_TEXT_PROMISE;
+  QURAN_TEXT_PROMISE = new Promise((erfuellen, ablehnen)=>{
+    const s = document.createElement('script');
+    s.src = 'quran-text.js';
+    s.onload = ()=> erfuellen(typeof QURAN_TEXT !== 'undefined' ? QURAN_TEXT : null);
+    s.onerror = ()=>{ QURAN_TEXT_PROMISE = null; ablehnen(new Error('quran-text.js nicht ladbar')); };
+    document.head.appendChild(s);
+  });
+  return QURAN_TEXT_PROMISE;
+}
+
 async function openSurah(id){
   const surah = SURAH_DATA.find(s=>s.id===id);
   document.getElementById('quranFullTitle').textContent = `${id}. ${surah.name}`;
@@ -889,9 +906,9 @@ async function openSurah(id){
 
   if (VERSE_CACHE[id]){ renderVerses(id); return; }
   /* Skeleton-Platzhalter in Versform statt nackter Textzeile - die Seite
-     "steht" sofort, auch wenn quran.com noch laedt. */
+     "steht" sofort, auch waehrend der Text noch laedt. */
   vList.innerHTML =
-    '<div class="verse-loading">Lade Verse von quran.com…</div>' +
+    '<div class="verse-loading">Lade Verse…</div>' +
     Array.from({length:5}, ()=>`
       <div class="verse-skeleton">
         <div class="skeleton sk-line" style="width:54px;height:18px;"></div>
@@ -899,19 +916,30 @@ async function openSurah(id){
         <div class="skeleton sk-line sk-de"></div>
       </div>`).join('');
   try{
-    let verses = [], page = 1, totalPages = 1;
-    do{
-      const res = await fetch(`https://api.quran.com/api/v4/verses/by_chapter/${id}?language=de&translations=27&fields=text_uthmani&per_page=50&page=${page}`);
-      if (!res.ok) throw new Error('HTTP '+res.status);
-      const data = await res.json();
-      verses = verses.concat(data.verses||[]);
-      totalPages = (data.pagination && data.pagination.total_pages) || 1;
-      page++;
-    } while(page <= totalPages);
-    VERSE_CACHE[id] = verses;
+    const text = await ladeQuranText();
+    if (!text || !text[id]) throw new Error('Sure nicht im lokalen Text');
+    VERSE_CACHE[id] = text[id].map(([ar, de], i) => ({
+      verse_key: `${id}:${i+1}`, text_uthmani: ar, translations: [{ text: de }]
+    }));
     renderVerses(id);
   }catch(err){
-    vList.innerHTML = `<div class="verse-loading">Verse konnten nicht geladen werden (Internetverbindung prüfen).<br>${err.message}</div>`;
+    /* Rueckfallebene: wenn die lokale Datei fehlt oder beschaedigt ist, holt die
+       App die Verse wie frueher von quran.com. Dann braucht sie aber Internet. */
+    try{
+      let verses = [], page = 1, totalPages = 1;
+      do{
+        const res = await fetch(`https://api.quran.com/api/v4/verses/by_chapter/${id}?language=de&translations=27&fields=text_uthmani&per_page=50&page=${page}`);
+        if (!res.ok) throw new Error('HTTP '+res.status);
+        const data = await res.json();
+        verses = verses.concat(data.verses||[]);
+        totalPages = (data.pagination && data.pagination.total_pages) || 1;
+        page++;
+      } while(page <= totalPages);
+      VERSE_CACHE[id] = verses;
+      renderVerses(id);
+    }catch(err2){
+      vList.innerHTML = `<div class="verse-loading">Verse konnten nicht geladen werden.<br>${err2.message}</div>`;
+    }
   }
 }
 
