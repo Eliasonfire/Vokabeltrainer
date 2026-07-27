@@ -1,11 +1,22 @@
 /* ===================== GRAMMAR DATA ===================== */
 /* Grammatikregeln, kuratiert aus den Arabic-Roots-Unterrichtsaufzeichnungen
-   (Folge 01-12, get_recordings via arabicroots-MCP). Jede Regel gibt exakt
-   nur wieder, was der Lehrer im Video erklärt hat - keine ergänzten/erfundenen
-   Regeln. Quelle (Folge, ungefährer Zeitstempel, Kapitel) ist Pflichtangabe,
-   analog zu den geprüften Quran-Zitaten in vocab-data.js. Rohtranskripte
-   (Audit-Grundlage) liegen lokal unter transcripts/ (nicht im Git, siehe
-   .gitignore - Kursmaterial-Disclaimer verbietet Weitergabe). */
+   (Folge 01-13, get_recordings via arabicroots-MCP). Jede Regel gibt exakt
+   nur wieder, was der Lehrer im Video erklaert hat - keine ergaenzten/erfundenen
+   Regeln. Quelle (Folge, ungefaehrer Zeitstempel, Kapitel) ist Pflichtangabe,
+   analog zu den geprueften Quran-Zitaten in vocab-data.js.
+
+   Stand 27.07.2026: Alle 13 Folgen ausgewertet (vorher nur 01-02). Grundlage
+   sind (a) die YouTube-Untertitel, (b) eine Nachtranskription der Regelstellen
+   mit Whisper large-v3-turbo und (c) die Standbilder der Buchseiten samt der
+   roten Anmerkungen des Lehrers. Jede Regel wurde einzeln gegen den Rohtext
+   geprueft; wo die Erklaerung ueber das Gesagte hinausging, wurde sie auf das
+   Belegte zurueckgestutzt.
+
+   Rohmaterial (Audit-Grundlage) liegt lokal und NICHT im Git:
+     transcripts/raw/       YouTube-Untertitel je Folge
+     transcripts/whisper/   Nachtranskription der Regelstellen
+     F:\Workspace\Arabicroots-Material\  Video und Ton
+   Kursmaterial-Disclaimer verbietet die Weitergabe. */
 
 const GRAMMAR_RULES = [
   {
@@ -16,11 +27,67 @@ const GRAMMAR_RULES = [
     source: { folge: 1, video: "Folge 01", approxTimestamp: "10:07", chapter: 1 }
   },
   {
+    id: "hadha-stummes-alif-01",
+    name: "هَذَا (Alif wird gesprochen, nicht geschrieben)",
+    shortExplanation: "In هَذَا steckt ein Alif, das man nicht mitschreibt, das aber trotzdem ausgesprochen wird. Deshalb spricht man das Wort lang: hādhā. Beim Vorlesen korrigiert der Lehrer die Schüler entsprechend – هَذَا muss „ein bisschen länger\" klingen.",
+    color: "other",
+    source: { folge: 1, video: "Folge 01", approxTimestamp: "10:30", chapter: 1 }
+  },
+  {
+    id: "hadha-dies-nicht-das-01",
+    name: "هَذَا (dies – nicht „das\")",
+    shortExplanation: "هَذَا übersetzt man mit „dies\", nicht mit „das\": هَذَا بَيْتٌ (hādhā baytun) heißt „Dies ist ein Haus\", nicht „das Haus\". „Das\" wäre der bestimmte Artikel, und der kommt erst später dran. Die Wörter in Kapitel 1 sind alle noch unbestimmt, also بَيْتٌ = „ein Haus\", مَسْجِدٌ (masjidun) = „eine Moschee\".",
+    color: "other",
+    source: { folge: 1, video: "Folge 01", approxTimestamp: "13:57", chapter: 1 }
+  },
+  {
+    id: "ta-marbuta-fem-01",
+    name: "تاء مربوطة (weibliche Endung)",
+    shortExplanation: "Die تاء مربوطة (das ة am Wortende, geschrieben wie ein Kreis mit zwei Punkten) wird für Wörter benutzt, die weiblich sind. Wenn ein Wort ein ة hat, weißt du: das Wort ist weiblich – z.B. مَدْرَسَةٌ (madrasatun) „Schule“. بَيْتٌ (baytun) „Haus“ wird dagegen mit normalem ت geschrieben und ist männlich. (Das ist die Antwort auf eine Nachfrage zu بيت – dass umgekehrt jedes Wort mit normalem ت männlich sei, sagt der Lehrer nicht.)",
+    color: "fem",
+    source: { folge: 1, video: "Folge 01", approxTimestamp: "15:17", chapter: 1 }
+  },
+  {
+    id: "nominalsatz-ohne-kopula-01",
+    name: "هَذَا بَيْتٌ (Satz ohne „ist\")",
+    shortExplanation: "Im Arabischen gibt es kein Wort für „ist\" – man muss es sich beim Übersetzen selbst dazudenken. مَا heißt „was\" und هَذَا heißt „dies\", zusammen مَا هَذَا؟ (mā hādhā) also „Was ist dies?\". Genauso ist هَذَا بَيْتٌ (hādhā baytun) „Dies ist ein Haus\", obwohl im Arabischen kein „ist\" dasteht.",
+    color: "mubtada",
+    source: { folge: 1, video: "Folge 01", approxTimestamp: "20:28", chapter: 1 }
+  },
+  {
+    id: "istifham-ma-01",
+    name: "مَا (Fragewort für Dinge)",
+    shortExplanation: "Mit مَا (mā, „was\") fragt man nach Gegenständen und Objekten: مَا هَذَا؟ (mā hādhā) – „Was ist dies?\". Die Antwort ist z.B. هَذَا بَيْتٌ (hādhā baytun) – „Dies ist ein Haus\". مَا benutzt man nicht für Menschen, sondern nur für Dinge.",
+    color: "nasab",
+    source: { folge: 1, video: "Folge 01", approxTimestamp: "22:05", chapter: 1 }
+  },
+  {
     id: "fragepartikel-alif-01",
     name: "أَ (Fragepartikel)",
     shortExplanation: "Ein أَ vor einen vollständigen Satz gestellt macht aus einer Aussage eine Frage. Anders als هَلْ (hal, Entscheidungsfrage/ja-nein) wird أَ eher allgemein/rhetorisch genutzt.",
     color: "nasab",
     source: { folge: 1, video: "Folge 01", approxTimestamp: "22:48", chapter: 1 }
+  },
+  {
+    id: "fragepartikel-hal-01",
+    name: "هَلْ (Fragepartikel für Entscheidungsfragen)",
+    shortExplanation: "Es gibt im Arabischen zwei Fragepartikeln: أَ und هَلْ. هَلْ (hal) stellt man vor eine fertige Aussage und macht daraus eine Ja-Nein-Frage: هَلْ هَذَا بَيْتٌ؟ (hal hādhā baytun) – „Ist dies ein Haus?\". Auf هَلْ kann man nur mit ja oder nein antworten, deshalb ist هَلْ für Entscheidungsfragen. أَ dagegen wird eher für rhetorische Fragen benutzt, auf die man auch anders antworten kann.",
+    color: "nasab",
+    source: { folge: 1, video: "Folge 01", approxTimestamp: "23:57", chapter: 1 }
+  },
+  {
+    id: "hadha-dolch-alif-01",
+    name: "هٰذَا (kleiner Strich = nachträgliches Alif)",
+    shortExplanation: "Manchmal steht statt eines ausgeschriebenen Alif nur ein kleiner senkrechter Strich über dem Buchstaben – das kennt man aus dem Koran. Der Lehrer nennt das ein „nachträgliches Alif“: Es steht für ein Alif, das nicht als Buchstabe geschrieben ist. So ist es z. B. bei هٰذَا (hādhā) – dies.",
+    color: "other",
+    source: { folge: 2, video: "Folge 02", approxTimestamp: "11:03", chapter: 1 }
+  },
+  {
+    id: "tanwin-schreibweise-01",
+    name: "ـٌ (zwei Dammas – zweite Schreibweise)",
+    shortExplanation: "Kleine Regel am Rand: Die zwei Dammas am Wortende (ـٌ) können auch in einer anderen Form geschrieben werden – so, wie man sie oft im Koran sieht. Der Lehrer sagt dazu: Das ist dasselbe, und wenn man es einmal sieht, ist es kein Problem.",
+    color: "other",
+    source: { folge: 2, video: "Folge 02", approxTimestamp: "13:46", chapter: 1 }
   },
   {
     id: "istifham-men-01",
@@ -42,18 +109,1150 @@ const GRAMMAR_RULES = [
     shortExplanation: "اَلْ bestimmt ein Nomen (wie \"der/die/das\"). Regel 1: Für ein bestimmtes Wort braucht man den Artikel اَلْ. Regel 2: Das Tanwin fällt dabei weg, z.B. بَيْتٌ (ein Haus) → الْبَيْتُ (das Haus). Artikel und Tanwin schließen sich gegenseitig aus.",
     color: "other",
     source: { folge: 2, video: "Folge 02", approxTimestamp: "32:51", chapter: 3 }
+  },
+  {
+    id: "tanwin-01",
+    name: "تَنْوين (doppelte Endung)",
+    shortExplanation: "Die doppelte Endung am Wortende heißt تَنْوين (Tanwīn). Es gibt sie in drei Formen: zweimal Damma (ـٌ), zweimal Fatha (ـً) und zweimal Kasra (ـٍ). Beispiel des Lehrers: كِتَابٌ (kitābun) – ein Buch. Grundlage für die Artikel-Regel aus al-tarif-01, bei der genau dieses Tanwīn wegfällt.",
+    color: "nasab",
+    source: { folge: 2, video: "Folge 02", approxTimestamp: "33:15", chapter: 3 }
+  },
+  {
+    id: "hamzatul-wasl-01",
+    name: "هَمْزَةُ الوَصْل (Verbindungs-Alif)",
+    shortExplanation: "Der Lehrer erwähnt هَمْزَةُ الوَصْل (Hamzatu l-waṣl) – ein Zeichen, das man vor allem aus dem Koran kennt. Es bedeutet zwei Dinge: Bleibst du bei ihm stehen, liest du es wie ein ganz normales Alif. Liest du weiter, überspringst du es. Sein Beispiel: Beim Satz „Das Buch ist neu und der Stift ist alt“ wird nicht gestoppt, sondern verbunden – man mag im Arabischen lieber verbinden als stoppen.",
+    color: "other",
+    source: { folge: 2, video: "Folge 02", approxTimestamp: "38:24", chapter: 3 }
+  },
+  {
+    id: "satz-vs-wortgruppe-01",
+    name: "الْقَمِيصُ نَظِيفٌ (Satz, nicht Wortgruppe)",
+    shortExplanation: "Ein Satz wie الْقَمِيصُ نَظِيفٌ heißt „Das Hemd ist sauber“ – und nicht „das saubere Hemd“. Der Lehrer besteht darauf: Das sind zwei verschiedene Sachen, da müssen wir genau sein. Wie man „das saubere Hemd“ schreibt, ist eine andere Regel und kommt erst in einer späteren Lektion.",
+    color: "mubtada",
+    source: { folge: 2, video: "Folge 02", approxTimestamp: "46:05", chapter: 3 }
+  },
+  {
+    id: "mubtada-khabar-01",
+    name: "مُبْتَدَأ وخَبَر (Subjekt und Aussage)",
+    shortExplanation: "Der Lehrer führt die beiden Begriffe hier bewusst nur als Vorgeschmack ein (\"erstmal nicht viel damit machen, sondern erstmal nur wissen\"). خَبَر (khabar) ist die Information über das Nomen – in den Übungen das Wort, das die Schüler ergänzt haben, z.B. جَديدٌ (dschadīdun, neu). مُبْتَدَأ (mubtadaʾ) ist das Subjekt, also das, worum es im Satz geht, z.B. اَلْمُدَرِّسُ (al-mudarrisu, der Lehrer). Zusammen: اَلْمُدَرِّسُ جَديدٌ – der Lehrer ist neu.",
+    color: "mubtada",
+    source: { folge: 3, video: "Folge 03", approxTimestamp: "13:57", chapter: 3 }
+  },
+  {
+    id: "schams-qamar-01",
+    name: "حُروف شَمْسِيّة وقَمَرِيّة (Sonnen- & Mondbuchstaben)",
+    shortExplanation: "Von den 28 arabischen Buchstaben sind 14 Sonnenbuchstaben und 14 Mondbuchstaben. Die Regel gilt nur bei bestimmten Wörtern, also nur wenn اَلْ davorsteht. Beim Mondbuchstaben liest man das لْ ganz normal mit: بَيْتٌ (baytun, ein Haus) wird zu اَلْبَيْتُ (al-baytu, das Haus). Beim Sonnenbuchstaben steht ein Schadda auf dem ersten Buchstaben, das Lam wird übersprungen: اَلشَّمْسُ (asch-schamsu, die Sonne) – nicht \"al-schamsu\". Der Lehrer betont: Man muss die Buchstaben nicht auswendig lernen, sondern nur schauen, ob nach dem اَلْ ein Schadda steht.",
+    color: "other",
+    source: { folge: 3, video: "Folge 03", approxTimestamp: "21:42", chapter: 3 }
+  },
+  {
+    id: "madd-tabii-01",
+    name: "مَدّ (natürliche Verlängerung)",
+    shortExplanation: "Auf die Frage eines Schülers, ob man ein Wort mit Sukun anders liest als ohne, antwortet der Lehrer: gleich – das ي mit Sukun ist hier keine Pause, sondern zum Verlängern da. Seine Begründung: die Vokalzeichen haben jeweils einen zugehörigen Buchstaben – Kasra gehört zu ي ('sein kleiner Bruder'), Damma zu و, Fatha zu ا. Wenn Vokalzeichen und zugehöriger Buchstabe aufeinandertreffen, verlängern sie sich nur. Diese Fälle nennt der Lehrer die natürlichen Madd. Etwas später zeigt er dasselbe an اَلْبابُ (al-bābu, die Tür): nach der Fatha kann dort unmöglich eine Kasra kommen, das ا verlängert nur.",
+    color: "other",
+    source: { folge: 3, video: "Folge 03", approxTimestamp: "35:04", chapter: 3 }
+  },
+  {
+    id: "schams-qamar-merkhilfe-01",
+    name: "اَلْقَمَر / اَلشَّمْس (Merkhilfe für die Namen)",
+    shortExplanation: "Die beiden Gruppen heißen حُروف قَمَرِيّة (Mondbuchstaben) und حُروف شَمْسِيّة (Sonnenbuchstaben). Der Grund für die Namen steckt in den Wörtern selbst: اَلْقَمَر (al-qamar, der Mond) beginnt mit ق, einem Mondbuchstaben, und wird mit gelesenem Lam gesprochen. اَلشَّمْس (asch-schams, die Sonne) beginnt mit ش, einem Sonnenbuchstaben, und wird mit Schadda und übersprungenem Lam gesprochen. Die Beispielwörter zeigen also die Regel bereits selbst.",
+    color: "other",
+    source: { folge: 3, video: "Folge 03", approxTimestamp: "42:31", chapter: 3 }
+  },
+  {
+    id: "schakl-01",
+    name: "شَكْل (Vokalzeichen)",
+    shortExplanation: "Auf die Frage eines Schülers erklärt der Lehrer, was mit \"Schakl\" gemeint ist: die kleinen Zeichen über und unter den Buchstaben. Er nennt dabei Fatha (فَتْحة), Kasra (كَسْرة) und Sukun (سُكون). Die Hausaufgabe lautet, bei den unbekannten Wörtern die richtigen Schakl-Zeichen zu setzen – also anhand der Sonnen-/Mondbuchstaben-Liste zu entscheiden, ob ein Schadda hinkommt oder nicht.",
+    color: "other",
+    source: { folge: 3, video: "Folge 03", approxTimestamp: "45:31", chapter: 3 }
+  },
+  {
+    id: "al-gesamtheit-01",
+    name: "اَلْ (Bestimmung = die Gesamtheit)",
+    shortExplanation: "Wird ein Wort mit اَلْ bestimmt, ist damit nicht nur 'das eine' gemeint, sondern alles davon. حَمْدٌ (hamdun) ist 'ein Lob' – wie ein Stück Kuchen; اَلْحَمْدُ (al-hamdu) ist 'das Lob' – der ganze Kuchen, also alles an Lob. Deshalb reicht laut Lehrer die deutsche Übersetzung 'alles Lob gebührt Allah' nicht aus. Ergänzt die schon bekannte Regel zu اَلْ (bestimmt, Tanwin fällt weg).",
+    color: "other",
+    source: { folge: 10, video: "Folge 10", approxTimestamp: "21:19", chapter: 3 }
+  },
+  {
+    id: "jumla-ismiya-filiya-01",
+    name: "جُمْلة اسْمِيّة / جُمْلة فِعْلِيّة (Nominalsatz und Verbalsatz)",
+    shortExplanation: "Im Arabischen gibt es zwei Satzarten: Die جُمْلة اسْمِيّة (jumla ismiyya), der Nominalsatz, beginnt mit einem Nomen. Die جُمْلة فِعْلِيّة (jumla fiʿliyya), der Verbalsatz, beginnt mit einem Verb. Im Madina Buch 1 wird ausschließlich mit Nominalsätzen gearbeitet; Verben kommen erst später dran. Die beiden Satzarten unterscheiden sich auch in der grammatischen Analyse.",
+    color: "mubtada",
+    source: { folge: 4, video: "Folge 04", approxTimestamp: "12:55", chapter: 4 }
+  },
+  {
+    id: "wortstellung-fokus-01",
+    name: "تَقْديم (Wortstellung bestimmt den Fokus)",
+    shortExplanation: "Womit ein Satz beginnt, darauf liegt der Fokus. Beginnt der Satz mit dem Nomen (z.B. مُحَمَّدٌ, Muḥammadun), liegt die Betonung auf der Person, und der Satz ist – so der Lehrer – „permanent\". Beginnt er mit dem Verb, verschiebt sich die Betonung auf die Zeit, denn ein Verb ist zeitgebunden und veränderbar. Als Beispiel nennt der Lehrer den Koran: Dass Allah der Allvergebende ist, steht im Nominalsatz, weil es unabhängig von der Zeit gilt. Einen arabischen Fachbegriff für diese Regel nennt der Lehrer in dieser Folge nicht.",
+    color: "mubtada",
+    source: { folge: 4, video: "Folge 04", approxTimestamp: "16:29", chapter: 4 }
+  },
+  {
+    id: "irab-drei-faelle-01",
+    name: "اَلْإِعْراب (die drei Fälle)",
+    shortExplanation: "Es gibt drei Fälle, die wir zuerst brauchen (eigentlich sind es vier). مَرْفوع (marfūʿ) = Nominativ, Frage \"wer oder was?\", Anzeichen: Damma ـُ oder zwei Damma ـٌ. مَجْرور (majrūr) = Genitiv, Frage \"wessen?\", Anzeichen: Kasra ـِ oder zwei Kasra ـٍ. مَنْصوب (manṣūb) = Akkusativ, Frage \"wen oder was?\", Anzeichen: Fatha ـَ oder zwei Fatha ـً. Der Lehrer betont, dass es noch weitere Anzeichen gibt, dies aber die Grundzeichen sind. Die Endung zeigt also den Fall an: مُحَمَّدٌ ist marfūʿ, مُحَمَّدٍ ist majrūr, مُحَمَّدًا ist manṣūb – z.B. رَأَى مُحَمَّدٌ حامِدًا (raʾā Muḥammadun Ḥāmidan) \"Mohammed sah Hamid\": Mohammed ist der Täter, also marfūʿ, Hamid ist der Gesehene, also mit Fatha-Tanwin. Im ersten Buch begegnen uns vor allem مَرْفوع und مَجْرور. Den arabischen Fachbegriff für die Fälle nennt der Lehrer in dieser Folge nicht; er spricht nur von \"Fällen\".",
+    color: "nasab",
+    source: { folge: 4, video: "Folge 04", approxTimestamp: "18:53", chapter: 4 }
+  },
+  {
+    id: "marfu-grundfall-01",
+    name: "مَرْفوع (der Grundfall)",
+    shortExplanation: "مَرْفوع (marfūʿ, Nominativ) ist der Grundfall. Jedes Nomen steht normalerweise im Nominativ, also mit Damma am Ende: اَلْبَيْتُ (al-baytu) \"das Haus\". Erst wenn etwas dazukommt, das den Fall verändert, wird das Wort مَجْرور oder مَنْصوب.",
+    color: "nasab",
+    source: { folge: 4, video: "Folge 04", approxTimestamp: "23:18", chapter: 4 }
+  },
+  {
+    id: "harf-jarr-01",
+    name: "حَرْفُ الجَرِّ (Genitivpartikel)",
+    shortExplanation: "حَرْف (ḥarf) heißt Buchstabe oder Partikel, und اَلْجَرّ (al-jarr) kommt von مَجْرور (Genitiv). Ein حَرْفُ الجَرِّ (Plural: حُروفُ الجَرِّ) ist also eine Genitivpartikel – meistens sind das Präpositionen. Eine solche Partikel verändert den Fall des Nomens, das direkt danach kommt, von مَرْفوع zu مَجْرور: aus اَلْبَيْتُ (al-baytu) wird فِي الْبَيْتِ (fī l-bayti) \"im Haus\". Merksatz des Lehrers: Der ḥarf al-jarr macht sein Nomen (اِسْم, ism) zu majrūr.",
+    color: "nasab",
+    source: { folge: 4, video: "Folge 04", approxTimestamp: "24:07", chapter: 4 }
+  },
+  {
+    id: "harf-jarr-fi-ala-01",
+    name: "فِي und عَلَى (die ersten zwei Genitivpartikeln)",
+    shortExplanation: "In Kapitel 4 lernen wir zwei Genitivpartikeln: فِي (fī) heißt \"in\" und عَلَى (ʿalā) heißt \"auf\". Beide setzen das folgende Nomen in den Genitiv (Kasra statt Damma): اَلْبَيْتُ → فِي الْبَيْتِ (fī l-bayti) \"im Haus\", اَلْمَسْجِدُ → فِي الْمَسْجِدِ (fī l-masjidi) \"in der Moschee\", عَلَى الْمَكْتَبِ (ʿalā l-maktabi) \"auf dem Schreibtisch\". Es gibt noch viele weitere Präpositionen, die kommen später.",
+    color: "nasab",
+    source: { folge: 4, video: "Folge 04", approxTimestamp: "25:05", chapter: 4 }
+  },
+  {
+    id: "istifham-ayna-01",
+    name: "أَيْنَ (wo?)",
+    shortExplanation: "أَيْنَ (ayna) heißt \"wo?\" und fragt nach dem Ort – ein wichtiges Fragewort. Beispiel: أَيْنَ مُحَمَّدٌ؟ (ayna Muḥammadun) \"Wo ist Mohammed?\" Die Antwort enthält eine Genitivpartikel, deshalb steht das Nomen danach im Genitiv: هُوَ فِي الْغُرْفَةِ (huwa fī l-ghurfati) \"Er ist im Zimmer\" – mit Kasra wegen فِي.",
+    color: "mubtada",
+    source: { folge: 4, video: "Folge 04", approxTimestamp: "27:03", chapter: 4 }
+  },
+  {
+    id: "huwa-hiya-01",
+    name: "هُوَ / هِيَ (er / sie)",
+    shortExplanation: "هُوَ (huwa) heißt \"er\", هِيَ (hiya) heißt \"sie\". Ein eigenes Pronomen für \"es\" gibt es im Arabischen nicht: Man nimmt هُوَ für alle Wörter, die männlich sind, und هِيَ für alle Wörter, die weiblich sind. Bei Personen übersetzt man \"er/sie\", bei Sachen \"es\". Beispiel: أَيْنَ مُحَمَّدٌ؟ – هُوَ فِي الْغُرْفَةِ (ayna Muḥammadun – huwa fī l-ghurfati) \"Wo ist Mohammed? – Er ist im Zimmer.\" Weitere Pronomen kommen später.",
+    color: "fem",
+    source: { folge: 4, video: "Folge 04", approxTimestamp: "32:21", chapter: 4 }
+  },
+  {
+    id: "tanwin-eigennamen-01",
+    name: "تَنْوين bei Eigennamen (männlich / weiblich)",
+    shortExplanation: "Männliche arabische Eigennamen tragen Tanwin, also die doppelte Endung: مُحَمَّدٌ (Muḥammadun), حامِدٌ (Ḥāmidun). Weibliche arabische Eigennamen haben kein Tanwin – egal ob der Name auf ة endet wie فاطِمةُ (Fāṭima) oder nicht wie مَرْيَمُ (Maryam). Der Lehrer nennt das ausdrücklich \"keine große Regel\", aber man soll es sich merken.",
+    color: "fem",
+    source: { folge: 4, video: "Folge 04", approxTimestamp: "47:40", chapter: 4 }
+  },
+  {
+    id: "tanwin-nach-harf-jarr-01",
+    name: "تَنْوين nach حَرْف جَرّ (unbestimmtes Wort)",
+    shortExplanation: "Ist das Wort nach einem Harf Jarr unbestimmt, hat es Tanwin – nach einer Präposition also zwei Kasra statt einer: فِي رَيْبٍ fī raibin (in Zweifel). Der Lehrer zeigt das an einem Koranvers: رَيْب ist unbestimmt, deshalb Tanwin, und weil فِي davorsteht, ist es Kasra. So kann man beim Auswendiglernen die richtige Endung selbst herleiten.",
+    color: "nasab",
+    source: { folge: 5, video: "Folge 05", approxTimestamp: "16:20", chapter: 4 }
+  },
+  {
+    id: "harf-jarr-min-ila-01",
+    name: "مِنْ und إِلى (zwei neue حُروف جَرّ)",
+    shortExplanation: "Zu فِي und عَلى kommen zwei weitere Präpositionen dazu: مِنْ min heißt „von“, إِلى ilā heißt „zu“ oder „nach“. Beide sind Huruf Jarr, das folgende Wort wird also majrūr: مِنَ الْبَيْتِ mina l-baiti (vom Haus), إِلَى الْمَسْجِدِ ilā l-masjidi (zur Moschee).",
+    color: "nasab",
+    source: { folge: 5, video: "Folge 05", approxTimestamp: "22:54", chapter: 4 }
+  },
+  {
+    id: "mina-al-01",
+    name: "مِنَ الْـ (Sukun trifft Sukun)",
+    shortExplanation: "مِنْ endet auf Sukun, und der Artikel اَلْ hat wieder ein Sukun auf dem Lam. Zwei Sukun hintereinander mögen die Araber nicht („die sind faul“, sie wollen nicht stoppen), deshalb wird aus مِنْ vor dem Artikel ein مِنَ: مِنَ الْبَيْتِ mina l-baiti (vom Haus). So spricht man flüssig in einem Zug weiter. Steht kein اَلْ dahinter, bleibt es bei مِنْ.",
+    color: "other",
+    source: { folge: 5, video: "Folge 05", approxTimestamp: "23:17", chapter: 4 }
+  },
+  {
+    id: "min-ayna-01",
+    name: "مِنْ أَيْنَ (Woher-Frage)",
+    shortExplanation: "مِنْ أَيْنَ أَنْتَ؟ min aina anta – „Woher bist du?“ Dabei heißt مِنْ min „von“, أَيْنَ aina „wo“ und أَنْتَ anta „du“ (männliche Person). Geantwortet wird mit أَنا anā (ich): أَنا مِنَ الْيابانِ anā mina l-yābāni (ich bin aus Japan).",
+    color: "mubtada",
+    source: { folge: 5, video: "Folge 05", approxTimestamp: "24:31", chapter: 4 }
+  },
+  {
+    id: "verb-enthaelt-pronomen-01",
+    name: "خَرَجَ / ذَهَبَ (das „er“ steckt im Verb)",
+    shortExplanation: "Die ersten beiden Verben sind خَرَجَ kharaja (er verließ, er ging hinaus) und ذَهَبَ dhahaba (er ging) – beides Vergangenheit. Das „er“ ist kein eigenes Wort und steckt auch nicht in der Endung, sondern ist im Verb selbst versteckt.",
+    color: "mubtada",
+    source: { folge: 5, video: "Folge 05", approxTimestamp: "27:41", chapter: 4 }
+  },
+  {
+    id: "alif-maqsura-01",
+    name: "أَلِف مَقْصورة (ى am Wortende)",
+    shortExplanation: "Ein ى am Wortende ohne Punkte ist kein Ya, sondern eine أَلِف مَقْصورة alif maqṣūra – ein „kleines Alif“, gesprochen wie ein langes ā. Deshalb aufpassen: عَلى ʿalā heißt „auf“, عَلِيٌّ ʿaliyyun dagegen ist der Name Ali und endet wirklich auf ein Ya. Ohne Taschkil sehen die beiden fast gleich aus.",
+    color: "other",
+    source: { folge: 5, video: "Folge 05", approxTimestamp: "29:38", chapter: 4 }
+  },
+  {
+    id: "min-man-unterscheiden-01",
+    name: "مِنْ und مَنْ (von / wer)",
+    shortExplanation: "Ohne Taschkil sehen مِنْ min („von“) und مَنْ man („wer?“) gleich aus. Der Lehrer zeigt den Trick: einfach beides ausprobieren und schauen, was Sinn ergibt. „Von verließ das Klassenzimmer“ ergibt keinen Sinn – also ist es eine Frage: „Wer verließ das Klassenzimmer?“",
+    color: "other",
+    source: { folge: 5, video: "Folge 05", approxTimestamp: "40:54", chapter: 4 }
+  },
+  {
+    id: "idafa-01",
+    name: "إِضافة (Genitivverbindung)",
+    shortExplanation: "Mit der إِضافة verbindet man zwei Nomen (اِسْم + اِسْم) zu einem Ausdruck. Das erste Wort heißt مُضاف (der Besitz), das zweite مُضاف إِلَيْهِ (der Besitzer): كِتابُ اللهِ kitābu llāhi – das Buch Allahs, بابُ الْمَسْجِدِ bābu l-masjidi – die Tür der Moschee, سَيّارَةُ حامِدٍ sayyāratu ḥāmidin – das Auto von Hamid. Damit kann man zusammengesetzte Begriffe bilden (Hausschlüssel, Schreibtisch des Lehrers), was vorher nicht ging.",
+    color: "idafa",
+    source: { folge: 7, video: "Folge 07", approxTimestamp: "2:24", chapter: 5 }
+  },
+  {
+    id: "mudaf-01",
+    name: "مُضاف (der Besitz – erstes Wort)",
+    shortExplanation: "Der مُضاف, also das erste Wort der Verbindung, darf kein اَلْ tragen und kein Tanwin. Seinen Fall bekommt er ganz normal aus dem Satz – er kann jeden Fall annehmen: كِتابُ اللهِ kitābu llāhi (Grundfall, Damma), aber عَلى مَكْتَبِ الْمُدَرِّسِ ʿalā maktabi l-mudarrisi – auf dem Schreibtisch des Lehrers (nach حَرْف جَرّ mit Kasra).",
+    color: "idafa",
+    source: { folge: 7, video: "Folge 07", approxTimestamp: "7:00", chapter: 5 }
+  },
+  {
+    id: "mudaf-ilayh-01",
+    name: "مُضاف إِلَيْهِ (der Besitzer – zweites Wort)",
+    shortExplanation: "Der مُضاف إِلَيْهِ, also das zweite Wort, ist immer مَجْرور – daran lässt sich nichts ändern; er endet auf Kasra: كِتابُ الْمُدَرِّسِ kitābu l-mudarrisi – das Buch des Lehrers. Er darf dabei bestimmt oder unbestimmt sein: كِتابُ مُدَرِّسٍ kitābu mudarrisin – das Buch eines Lehrers.",
+    color: "idafa",
+    source: { folge: 7, video: "Folge 07", approxTimestamp: "7:39", chapter: 5 }
+  },
+  {
+    id: "ya-nida-01",
+    name: "يا (Rufpartikel)",
+    shortExplanation: "يا ist die Rufpartikel („o …“). Steht sie vor einem männlichen Namen, fällt dessen Tanwin weg: يا ياسِر yā Yāsir statt ياسِرٌ. Im Kapiteltext: أَهَذا كِتابُ مُحَمَّدٍ يا ياسِر؟ – „Ist dies Muhammads Buch, o Yasir?“",
+    color: "nasab",
+    source: { folge: 7, video: "Folge 07", approxTimestamp: "9:39", chapter: 5 }
+  },
+  {
+    id: "mudaf-ohne-al-01",
+    name: "مُضاف (bestimmt ohne اَلْ)",
+    shortExplanation: "Obwohl der مُضاف kein اَلْ tragen darf, ist er trotzdem bestimmt – denn er gehört ja jemandem, und etwas kann nicht jemandem gehören und gleichzeitig unbestimmt sein. بَيْتُ حامِدٍ baytu ḥāmidin heißt deshalb „das Haus Hamids“, nicht „ein Haus Hamids“. Baut auf al-tarif-01 auf: Bestimmtheit entsteht hier nicht durch اَلْ, sondern durch den Besitzer.",
+    color: "idafa",
+    source: { folge: 7, video: "Folge 07", approxTimestamp: "12:18", chapter: 5 }
+  },
+  {
+    id: "harf-jarr-idafa-01",
+    name: "حَرْف جَرّ + إِضافة (Verkettung)",
+    shortExplanation: "Steht ein حَرْف جَرّ (عَلى, مِنْ, في) vor einer إِضافة, greifen zwei Regeln hintereinander – der Lehrer nennt das eine „Verkettung“. Der حَرْف جَرّ macht den مُضاف مَجْرور, und der مُضاف إِلَيْهِ ist ohnehin مَجْرور: beide Wörter bekommen Kasra. عَلى مَكْتَبِ الْمُدَرِّسِ ʿalā maktabi l-mudarrisi – auf dem Schreibtisch des Lehrers; في كِتابِ اللهِ fī kitābi llāhi – im Buch Allahs (genau diesen Fall zerlegt der Lehrer: في macht كِتاب مَجْرور, und كِتاب ist zugleich مُضاف); مِنْ بَيْتِ الْمُديرِ min bayti l-mudīri – vom Haus des Direktors.",
+    color: "nasab",
+    source: { folge: 7, video: "Folge 07", approxTimestamp: "12:57", chapter: 5 }
+  },
+  {
+    id: "zarf-01",
+    name: "ظَرْف (Zeit-/Ortsangabe)",
+    shortExplanation: "Neben حَرْف جَرّ und إِضافة gibt es eine dritte Sache, die den Fall steuert: die ظَرْف – Zeit- und Ortsangaben (Adverbien). Eine Ortsangabe verhält sich wie ein مُضاف, das heißt das Nomen dahinter wird مَجْرور: تَحْتَ الْمَكْتَبِ taḥta l-maktabi – unter dem Schreibtisch. Der Lehrer hat das in dieser Stunde nur kurz angerissen und angekündigt, es später zu wiederholen.",
+    color: "nasab",
+    source: { folge: 7, video: "Folge 07", approxTimestamp: "14:46", chapter: 5 }
+  },
+  {
+    id: "lafz-al-jalala-01",
+    name: "اَللّٰه (helle und dunkle Aussprache)",
+    shortExplanation: "Kleiner Aussprache-Trick des Lehrers: Normalerweise wird der Name اَللّٰه dunkel/schwer gesprochen – اَللّٰهُ Allāhu. Steht davor aber ein Wort, das auf Kasra endet, wird er hell/leicht gesprochen – …llāhi. Beispiel aus dem Kapitel: في كِتابِ اللهِ fī kitābi llāhi – im Buch Allahs.",
+    color: "other",
+    source: { folge: 7, video: "Folge 07", approxTimestamp: "27:32", chapter: 5 }
+  },
+  {
+    id: "hadha-nicht-bestimmt-01",
+    name: "هَذا (macht nicht bestimmt)",
+    shortExplanation: "هَذا macht das folgende Wort nicht bestimmt – das ist keine Regel, die es gibt. In هَذا بَيْتُ حامِدٍ hādhā baytu ḥāmidin ist بَيْتُ nur deshalb bestimmt („das Haus“), weil es Hamid gehört, also durch die إِضافة. Ohne إِضافة wäre هَذا بَيْتٌ hādhā baytun einfach „dies ist ein Haus“. Baut auf ismul-isara-hadha-01 auf.",
+    color: "mubtada",
+    source: { folge: 7, video: "Folge 07", approxTimestamp: "46:29", chapter: 5 }
+  },
+  {
+    id: "idafa-erkennen-01",
+    name: "مُضاف erkennen (Nomen ohne Tanwin + Nomen)",
+    shortExplanation: "So erkennt man eine Genitivverbindung im Text: Wenn ein Nomen nur eine einfache Endung trägt – also z.B. nur ein Damma statt Tanwin-Damma – und direkt danach noch ein Nomen kommt, dann muss das erste Wort ein مُضاف sein. Beispiel: اِبْنُ عَمّارٍ طالِبٌ (ibnu ʿAmmārin ṭālibun) – der Sohn Ammars ist ein Student. اِبْنُ hat nur ein Damma; beide Wörter مَرْفوع zu machen wäre falsch.",
+    color: "idafa",
+    source: { folge: 8, video: "Folge 08", approxTimestamp: "22:49", chapter: 5 }
+  },
+  {
+    id: "zarf-als-mudaf-01",
+    name: "Ortsangabe als مُضاف (z.B. تَحْتَ)",
+    shortExplanation: "Auch eine Zeit- oder Ortsangabe wie تَحْتَ (taḥta) kann am Anfang einer solchen Verbindung stehen. Der Lehrer besteht hier auf der genauen Formulierung: Die Ortsangabe ist ein Nomen (اِسْم) und sie funktioniert wie ein مُضاف – sie ist aber selbst keiner. Das folgende Wort steht im Genitiv: تَحْتَ السَّيّارَةِ (taḥta s-sayyārati) – unter dem Auto. Der Lehrer betont dazu: eine kleine Änderung in der Formulierung kann die ganze Erklärung verändern.",
+    color: "idafa",
+    source: { folge: 8, video: "Folge 08", approxTimestamp: "24:27", chapter: 5 }
+  },
+  {
+    id: "wortarten-01",
+    name: "اِسْم – فِعْل – حَرْف (die drei Wortarten)",
+    shortExplanation: "Im Arabischen gibt es nur drei Wortarten: اِسْم (ism) = Nomen, فِعْل (fiʿl) = Verb, حَرْف (ḥarf) = Partikel. Alles, was kein Verb und kein Partikel ist, ist automatisch ein Nomen. Deshalb zählen im Arabischen auch Adjektive, Adverbien, Ortsangaben und die Hinweiswörter als Nomen – anders als im Deutschen gibt es keine weiteren Kategorien. Fragepartikel dagegen gehören zu حَرْف.",
+    color: "other",
+    source: { folge: 8, video: "Folge 08", approxTimestamp: "24:41", chapter: 5 }
+  },
+  {
+    id: "idafa-kein-adjektiv-01",
+    name: "إِضافة – kein Adjektiv als Zweitglied",
+    shortExplanation: "اَلرَّجُلُ مَرِيضٌ ar-rajulu marīdun »der Mann ist krank« ist ein normaler Satz und enthält keine Iḍāfa. Man kann daraus keine Genitivverbindung machen: مَرِيضٍ marīdin würde »der Mann des Kranken« bzw. »der Krankheitsmann« bedeuten – und das geht nicht.",
+    color: "idafa",
+    source: { folge: 9, video: "Folge 09", approxTimestamp: "7:29", chapter: 5 }
+  },
+  {
+    id: "idafa-verkettung-01",
+    name: "إِضافة – Verkettung (mehrgliedrige Genitivverbindung)",
+    shortExplanation: "Eine Iḍāfa kann verkettet (»verschachtelt«) werden: هَذَا اِبْنُ إِمَامِ الْمَسْجِدِ hādhā ibnu imāmi l-masjidi – »dies ist der Sohn des Imams der Moschee«. Das mittlere Wort ist gleichzeitig مُضاف إِلَيْهِ (deshalb Kasra) und مُضاف für das nächste Wort – und bekommt deshalb kein Tanwīn. Genauso im Beispiel هَذَا مَسْجِدُ رَسُولِ اللهِ hādhā masjidu rasūli llāhi: رَسُولِ müsste eigentlich رَسُولٍ heißen, weil kein اَلْ dransteht – es bleibt aber ohne Tanwīn, weil es Mudāf für اللهِ ist.",
+    color: "idafa",
+    source: { folge: 9, video: "Folge 09", approxTimestamp: "18:37", chapter: 5 }
+  },
+  {
+    id: "idafa-zweitglied-01",
+    name: "إِضافة – Zweitglied bestimmt oder unbestimmt",
+    shortExplanation: "Beim zweiten Wort der Iḍāfa entscheidest du selbst: بَيْتُ الْإِمَامِ baytu l-imāmi – »das Haus des Imams« (bestimmt mit اَلْ) oder بَيْتُ إِمَامٍ baytu imāmin – »das Haus eines Imams« (unbestimmt mit Tanwīn). Bei männlichen Eigennamen gibt es diese Wahl nicht: sie stehen immer mit Tanwīn – مُحَمَّدٍ Muhammadin, حَامِدٍ Hāmidin, عَمَّارٍ ʿAmmārin. Achtung: für weibliche Eigennamen gilt das nicht, die tragen laut Lehrer gar kein Tanwīn (51:14). (Baut auf der Regel zu اَلْ auf.)",
+    color: "idafa",
+    source: { folge: 9, video: "Folge 09", approxTimestamp: "20:49", chapter: 5 }
+  },
+  {
+    id: "ismul-isara-hadhihi-01",
+    name: "هَذِهِ (weibliches Hinweiswort, nah)",
+    shortExplanation: "هَذِهِ hādhihi ist die weibliche Form von هَذَا hādhā und zeigt wie dieses auf Nahes (der Lehrer liest die Kapitelüberschrift: »diese sind für die Nähe, diese sind für die Ferne«). Er sagt ausdrücklich: es gelten genau die gleichen Regeln wie bei هَذَا, nur eben für Begriffe, die weiblich sind. Beispiel aus der Stunde: هَذِهِ بِنْتُ يَاسِرٍ hādhihi bintu Yāsirin – »dies ist die Tochter von Yāsir«.",
+    color: "mubtada",
+    source: { folge: 9, video: "Folge 09", approxTimestamp: "22:58", chapter: 6 }
+  },
+  {
+    id: "hadha-al-kein-satz-01",
+    name: "هَذَا + اَلْ (»dieses Haus« ist kein Satz)",
+    shortExplanation: "Steht nach هَذَا / هَذِهِ ein Nomen mit اَلْ, ist das noch kein vollständiger Satz, sondern nur die Wortgruppe »dieses Haus« – da fehlt noch etwas. Es muss ein Prädikat folgen: هَذَا الْبَيْتُ جَدِيدٌ hādhā l-baytu jadīdun – »dieses Haus ist neu«. Deshalb übersetzt man هَذَا immer mit »dies«, damit man diese Konstellation überhaupt erkennt (genauso: »dieser Stift…«, »diese Moschee…« – da muss noch was kommen).",
+    color: "mubtada",
+    source: { folge: 9, video: "Folge 09", approxTimestamp: "24:42", chapter: 6 }
+  },
+  {
+    id: "istifham-liman-01",
+    name: "لِمَنْ (Fragewort »wem gehört«)",
+    shortExplanation: "لِمَنْ li-man ist das Fragewort für »wessen / wem gehört das«: لِمَنْ هَذِهِ؟ li-man hādhihi – »wem gehört diese hier?«. Die Antwort kommt dann mit لِ: لِحَامِدٍ li-Hāmidin – »[sie gehört] Hamid«. Der Lehrer nennt es ausdrücklich »ein wichtiges Fragewort«.",
+    color: "mubtada",
+    source: { folge: 9, video: "Folge 09", approxTimestamp: "35:06", chapter: 6 }
+  },
+  {
+    id: "harf-jarr-li-01",
+    name: "لِ (fünfter حرف جر, Besitz)",
+    shortExplanation: "لِ ist der fünfte Harf al-Jarr nach فِي، عَلَى، إِلَى، مِنْ – nur ein einziger Buchstabe, ein Lām mit Kasra. Es bedeutet »für« oder »gehört« und ist eine Besitzanzeige: هَذَا لِخَالِدٍ hādhā li-Khālidin – »dies gehört Khalid«. Wie bei den anderen Huruf al-Jarr wird das Wort danach مَجْرور majrūr (Kasra bzw. Kasratān).",
+    color: "nasab",
+    source: { folge: 9, video: "Folge 09", approxTimestamp: "35:14", chapter: 6 }
+  },
+  {
+    id: "mutabaqa-genus-01",
+    name: "مطابقة (Angleichung des Prädikats an das Genus)",
+    shortExplanation: "Das Wort, das über etwas Weibliches aussagt, bekommt selbst die weibliche Form mit Tāʾ marbūṭa. Beispiel des Lehrers: das Wort für »Fahrrad« ist im Arabischen weiblich, deshalb heißt es nicht جَدِيدٌ jadīdun, sondern جَدِيدَةٌ jadīdatun »neu« – und nicht قَدِيمٌ qadīmun, sondern قَدِيمَةٌ qadīmatun »alt«.",
+    color: "fem",
+    source: { folge: 9, video: "Folge 09", approxTimestamp: "40:29", chapter: 6 }
+  },
+  {
+    id: "fem-ohne-ta-marbuta-01",
+    name: "مؤنث بلا تاء (weiblich ohne Tāʾ marbūṭa)",
+    shortExplanation: "Der Lehrer nennt drei Gruppen weiblicher Wörter: solche mit Tāʾ marbūṭa, solche die von der Bedeutung her weiblich sind (Tochter, Mutter, Tante) und solche, die einfach weiblich sind – ohne erkennbaren Grund, z.B. das Wort für »Feuer«. Auch قِدْرٌ qidrun »Kochtopf« ist weiblich, obwohl kein Tāʾ marbūṭa dransteht. Die dritte Gruppe muss man auswendig lernen.",
+    color: "fem",
+    source: { folge: 9, video: "Folge 09", approxTimestamp: "42:53", chapter: 6 }
+  },
+  {
+    id: "taschkil-kontext-01",
+    name: "تشكيل und Kontext (gleiches Schriftbild)",
+    shortExplanation: "Zwei Wörter können identisch geschrieben sein und trotzdem Verschiedenes bedeuten: رَجُلٌ rajulun »Mann« und رِجْلٌ rijlun »Bein« – ohne Taschkīl sieht man keinen Unterschied. Genauso مَدْرَسَة madrasa »Schule« und مُدَرِّسَة mudarrisa »Lehrerin«. Deshalb muss man oft auf den Kontext schauen.",
+    color: "other",
+    source: { folge: 9, video: "Folge 09", approxTimestamp: "46:25", chapter: 6 }
+  },
+  {
+    id: "koerperteile-genus-01",
+    name: "أعضاء مزدوجة (doppelte Körperteile sind weiblich)",
+    shortExplanation: "Körperteile, die es doppelt gibt, sind im Arabischen weiblich: Hand, Bein, Ohr, Auge. Körperteile, die es nur einmal gibt, sind männlich – أَنْفٌ anfun »Nase« und فَمٌ famun »Mund«. Der Lehrer stellt das als Regel vor, die man sich bei Körperteilen gut merken kann.",
+    color: "fem",
+    source: { folge: 9, video: "Folge 09", approxTimestamp: "48:32", chapter: 6 }
+  },
+  {
+    id: "isara-genus-kongruenz-01",
+    name: "Hinweiswort richtet sich nach dem Genus",
+    shortExplanation: "Das Hinweiswort muss zum Geschlecht des Wortes passen, auf das gezeigt wird: هَذَا/ذَلِكَ bei männlichen Wörtern, هَذِهِ/تِلْكَ bei weiblichen. Der Lehrer erklärt es so: هَذَا ist 'er', هَذِهِ ist 'sie'. بَقَرةٌ (baqaratun, Kuh) ist weiblich, deshalb muss هَذِهِ davor stehen und nicht هَذَا; ebenso سَيّارةٌ (sayyaratun, Auto). Baut auf هَذَا und ذَلِكَ auf.",
+    color: "fem",
+    source: { folge: 10, video: "Folge 10", approxTimestamp: "19:53", chapter: 7 }
+  },
+  {
+    id: "possessiv-ya-01",
+    name: "ـي (mein)",
+    shortExplanation: "Um zu sagen, dass eine Sache 'meins' ist, hängt man ein ي ans Wort: aus رَبُّ (rabbu, Herr) wird رَبّي (rabbi) – 'mein Herr'. Im Sprachgebrauch lassen die Araber das ي oft weg und behalten nur die Kasra: رَبِّ. Der Lehrer sagt dazu, dass er das später noch vollständig erklären wird.",
+    color: "idafa",
+    source: { folge: 10, video: "Folge 10", approxTimestamp: "26:59", chapter: 7 }
+  },
+  {
+    id: "ismul-isara-tilka-01",
+    name: "تِلْكَ (jene)",
+    shortExplanation: "تِلْكَ (tilka) ist das Hinweiswort für etwas Entferntes, das weiblich ist – das weibliche Gegenstück zu ذَلِكَ (dhalika). In der Nähe steht هَذِهِ (hadhihi), in der Ferne تِلْكَ. Der Lehrer buchstabiert es als drei Buchstaben ت – ل – ك. Beispiel aus der Stunde: تِلْكَ فاطِمةُ (tilka Fatimatu) – 'jene ist Fatima'; er merkt dazu an, dass man hier im Deutschen 'jene' statt 'jenes' sagen muss, weil das Wort weiblich ist.",
+    color: "mubtada",
+    source: { folge: 10, video: "Folge 10", approxTimestamp: "29:57", chapter: 7 }
+  },
+  {
+    id: "eigennamen-fem-ohne-tanwin-01",
+    name: "Weibliche Eigennamen ohne Tanwin",
+    shortExplanation: "Weibliche Eigennamen bekommen kein Tanwin – der Lehrer erinnert beim Vorlesen der Kapitel-7-Sätze ausdrücklich daran. In den Sätzen dieses Kapitels stehen sie deshalb mit einfachem Damma: آمِنةُ (Aminatu), فاطِمةُ (Fatimatu) – nicht آمِنةٌ. Welche Endung solche Namen an anderen Satzpositionen bekommen, sagt der Lehrer hier nicht.",
+    color: "fem",
+    source: { folge: 10, video: "Folge 10", approxTimestamp: "30:50", chapter: 7 }
+  },
+  {
+    id: "li-al-lil-01",
+    name: "لِ + اَلْ = لِلـ",
+    shortExplanation: "Vor einem unbestimmten Wort heißt es لِطَبيبٍ (li-ṭabībin, \"gehört einem Arzt\"). Kommt لِ aber vor ein bestimmtes Wort, treffen لِ und اَلْ aufeinander und das أَلِف fällt weg – übrig bleiben zwei لام hintereinander: لِلطَّبيبِ. Bei einem Sonnenbuchstaben springt man beim Sprechen über das لام (liṭ-ṭabībi), bei einem Mondbuchstaben spricht man es mit: لِلْقَلَمِ (lil-qalami), لِلْبَيْتِ (lil-baiti).",
+    color: "other",
+    source: { folge: 11, video: "Folge 11", approxTimestamp: "29:57", chapter: 8 }
+  },
+  {
+    id: "lil-vs-li-01",
+    name: "لِلْ vs. لِ (bestimmt/unbestimmt)",
+    shortExplanation: "Beim لِ (\"gehört\") muss man bestimmt und unbestimmt hörbar unterscheiden: لِلْمُدَرِّسِ (li-l-mudarrisi, vom Lehrer als \"mit zwei L\" beschrieben) heißt \"dem Lehrer\" - bestimmt. لِمُدَرِّسٍ (li-mudarrisin, Kasra mit Tanwīn) heißt \"einem Lehrer\" - unbestimmt. Der Lehrer schärft ein, diese beiden Formen nicht zu verwechseln.",
+    color: "idafa",
+    source: { folge: 12, video: "Folge 12", approxTimestamp: "12:47", chapter: 8 }
+  },
+  {
+    id: "li-eigenname-01",
+    name: "لِ + Eigenname (kein لِلْ)",
+    shortExplanation: "Bei Eigennamen sagt man kein لِلْ, sondern nur لِ + Name mit Kasra und Tanwīn: لِمُحَمَّدٍ (li-Muḥammadin) \"gehört Muhammad\", لِخالِدٍ (li-Khālidin). Begründung des Lehrers: Es ist ein Name - deshalb kein لِلْ. (Sonderfall zu لِلْ / لِ, siehe Beleg 12:47.)",
+    color: "idafa",
+    source: { folge: 12, video: "Folge 12", approxTimestamp: "16:21", chapter: 8 }
+  },
+  {
+    id: "alif-maqsura-unveraenderlich-01",
+    name: "أَلِف مَقْصورة (unveränderliche Endung)",
+    shortExplanation: "Der Normalfall ist مَرْفوع (marfūʿ); wird ein Wort مَجْرور (majrūr), bekommt es Kasra. Endet ein Wort aber auf ein Alif (ـا) oder auf ein Alif maqṣūra (ـى, \"das hier ohne Punkte\"), dann sieht man den Fall an dem Wort nicht - es bleibt immer gleich. Beispiele des Lehrers: المُسْتَشْفَى (al-mustashfā, Krankenhaus), أَمْريكا (Amrīkā), أَلْمانِيا (Almāniyā, Deutschland), مُوسَى (Mūsā). \"Ob du sagst, Musa ist marfūʿ - bleibt Musa.\"",
+    color: "nasab",
+    source: { folge: 12, video: "Folge 12", approxTimestamp: "19:43", chapter: 8 }
+  },
+  {
+    id: "zuruf-makan-01",
+    name: "تَحْتَ / أَمامَ / خَلْفَ (Ortsadverbien)",
+    shortExplanation: "Der Lehrer fasst die bisher gelernten drei Adverbien zusammen: تَحْتَ (taḥta) = unter, أَمامَ (amāma) = davor/vor, خَلْفَ (khalfa) = dahinter/hinter. Beispiel aus der Stunde: بَيْتُ الإِمامِ خَلْفَ المَسْجِدِ (baytu l-imāmi khalfa l-masjidi) - \"Das Haus des Imams ist hinter der Moschee.\"",
+    color: "other",
+    source: { folge: 12, video: "Folge 12", approxTimestamp: "26:59", chapter: 8 }
+  },
+  {
+    id: "nat-bestimmtheit-01",
+    name: "نَعْت und Bestimmtheit (Wortgruppe oder Satz)",
+    shortExplanation: "Ob zwei Woerter eine Wortgruppe oder einen ganzen Satz ergeben, haengt an der Bestimmtheit: مَسْجِدٌ كَبِيرٌ (masjidun kabirun) heisst nur „eine grosse Moschee\" – hier steckt kein „ist\" drin –, und الْمَسْجِدُ الْكَبِيرُ (al-masjidu l-kabiru) heisst „die grosse Moschee\". Passen die beiden Woerter in der Bestimmtheit nicht zusammen, ist das zweite Wort kein Adjektiv, sondern die Aussage: الْمَسْجِدُ كَبِيرٌ heisst „Die Moschee ist gross\". Genauso كِتَابٌ جَدِيدٌ „ein neues Buch\" gegenueber الْكِتَابُ جَدِيدٌ „Das Buch ist neu\".",
+    color: "mubtada",
+    source: { folge: 13, video: "Folge 13", approxTimestamp: "3:11", chapter: 9 }
+  },
+  {
+    id: "nat-vier-bedingungen-01",
+    name: "نَعْت (Adjektiv): die vier Bedingungen",
+    shortExplanation: "Ein Wort, das direkt hinter einem Nomen steht, ist dessen Adjektiv (نَعْت), wenn es in vier Dingen mit ihm uebereinstimmt: Geschlecht, Bestimmtheit, Fall und Zahl. Das beschriebene Wort heisst مَنْعُوت. Beispiel: مَسْجِدٌ كَبِيرٌ (masjidun kabirun) „eine grosse Moschee\" – beide maennlich, beide unbestimmt, beide مَرْفُوع, beide Singular. Stimmt auch nur eine Bedingung nicht, ist das Wort kein Adjektiv.",
+    color: "mubtada",
+    source: { folge: 13, video: "Folge 13", approxTimestamp: "5:32", chapter: 9 }
+  },
+  {
+    id: "nat-fem-01",
+    name: "نَعْت bei weiblichen Nomen (بِنْتٌ صَغِيرَةٌ)",
+    shortExplanation: "Ist das beschriebene Nomen weiblich, muss auch das Adjektiv weiblich sein, also die تاء مَرْبُوطة bekommen. بِنْتٌ صَغِيرٌ geht nicht, richtig ist بِنْتٌ صَغِيرَةٌ (bintun saghiratun) „ein kleines Maedchen\". Genauso لُغَةٌ جَمِيلَةٌ (lughatun jamilatun) „eine schoene Sprache\".",
+    color: "fem",
+    source: { folge: 13, video: "Folge 13", approxTimestamp: "9:23", chapter: 9 }
+  },
+  {
+    id: "nat-eigenname-01",
+    name: "Name + نَعْت (Eigennamen sind bestimmt)",
+    shortExplanation: "Eigennamen gelten als bestimmt, obwohl sie ein Tanwin tragen. Deshalb ist ein unbestimmtes Wort direkt hinter einem Namen kein Adjektiv, sondern die Aussage ueber ihn: عَبَّاسٌ تَاجِرٌ ('Abbasun tajirun) heisst „Abbas ist ein Haendler\", nicht „ein Haendler Abbas\". Das Adjektiv bezieht sich dann auf das Wort davor: عَبَّاسٌ تَاجِرٌ غَنِيٌّ ('Abbasun tajirun ghaniyyun) „Abbas ist ein reicher Haendler\".",
+    color: "mubtada",
+    source: { folge: 13, video: "Folge 13", approxTimestamp: "14:52", chapter: 9 }
+  },
+  {
+    id: "ta-marbuta-grenzen-01",
+    name: "تاء مَرْبُوطة – nicht jedes Wort laesst sich weiblich machen",
+    shortExplanation: "Man kann nicht jedes Nomen einfach mit einer تاء مَرْبُوطة weiblich machen. Das geht nur dort, wo es ein weibliches Gegenstueck gibt oder wo es Sinn ergibt – der Lehrer nennt als Beispiele Personengruppen wie Handwerker/Handwerkerin und Esel/Eselin. Bei Sachwoertern geht es nicht; er vergleicht es mit „Hose\", wo es zwar „Hoeschen\", aber kein „Hosi\" gibt. Beim Wort طَائِر (ta'ir, Vogel) wuerde die تاء مَرْبُوطة sogar ein ganz anderes Wort ergeben, naemlich طَائِرَة (ta'ira, Flugzeug) – deshalb bleibt طَائِر maennlich.",
+    color: "fem",
+    source: { folge: 13, video: "Folge 13", approxTimestamp: "18:21", chapter: 9 }
+  },
+  {
+    id: "adjektive-an-ohne-tanwin-01",
+    name: "كَسْلَانُ – Adjektive auf ـانُ ohne Tanwin",
+    shortExplanation: "Adjektive, die auf ـان (Alif + Nun) enden, koennen kein Tanwin bekommen – sie haben immer nur eine Endung. Beispiel: طَالِبٌ كَسْلَانُ (talibun kaslanu) „ein fauler Student\"; كَسْلَانُ steht ohne Tanwin, ist aber trotzdem unbestimmt. Der Lehrer nennt weitere Adjektive dieser Art (faul, hungrig, durstig, wuetend, voll) und sagt ausdruecklich, die Begruendung dafuer komme erst spaeter im Buch (etwa Kapitel 20/21).",
+    color: "nasab",
+    source: { folge: 13, video: "Folge 13", approxTimestamp: "21:37", chapter: 9 }
   }
 ];
 
 const SENTENCE_TAGS = {
-  /* Key = vocab-data.js `id` (stabiler Join-Key, NICHT der Satztext) */
+  /* Key = vocab-data.js `id` (stabiler Join-Key, NICHT der Satztext).
+     Erzeugt aus den Formen, die im Satz tatsaechlich vorkommen - jede Markierung
+     wurde gegen den Satztext geprueft. Hoechstens 3 je Satz, ohne Ueberlappung,
+     damit ein Satz lesbar bleibt. */
   "45751": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" }
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "بَيْتٌ" }
+  ],
+  "45752": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "al-tarif-01", matchText: "الْبَيْتِ." },
+    { ruleId: "tanwin-01", matchText: "مَسْجِدٌ" }
+  ],
+  "45753": [
+    { ruleId: "al-tarif-01", matchText: "الْبَيْتِ" },
+    { ruleId: "tanwin-01", matchText: "جَدِيدٌ" },
+    { ruleId: "mudaf-01", matchText: "بَابُ" }
+  ],
+  "45754": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "كِتَابٌ" }
+  ],
+  "45755": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "al-tarif-01", matchText: "الْمَكْتَبِ." },
+    { ruleId: "tanwin-01", matchText: "قَلَمٌ" }
+  ],
+  "45756": [
+    { ruleId: "al-tarif-01", matchText: "الْبَابِ" },
+    { ruleId: "harf-jarr-01", matchText: "فِي الْحَقِيبَةِ." },
+    { ruleId: "mudaf-01", matchText: "مِفْتَاحُ" }
+  ],
+  "45757": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "al-tarif-01", matchText: "الْمَدْرَسَةِ." },
+    { ruleId: "tanwin-01", matchText: "مَكْتَبٌ" }
+  ],
+  "45758": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "al-tarif-01", matchText: "الْغُرْفَةِ." },
+    { ruleId: "tanwin-01", matchText: "سَرِيرٌ" }
+  ],
+  "45759": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "كُرْسِيٌ" }
+  ],
+  "45760": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "schams-qamar-01", matchText: "السَّمَاءِ." },
+    { ruleId: "tanwin-01", matchText: "نَجْمٌ" }
+  ],
+  "45761": [
+    { ruleId: "al-tarif-01", matchText: "الْمُسْتَشْفَى" },
+    { ruleId: "schams-qamar-01", matchText: "الطَّبِيبُ" }
+  ],
+  "45762": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "وَلَدٌ" }
+  ],
+  "45763": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "al-tarif-01", matchText: "الْجَامِعَةِ." },
+    { ruleId: "tanwin-01", matchText: "طَالِبٌ" }
+  ],
+  "45764": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "رَجُلٌ" }
+  ],
+  "45765": [
+    { ruleId: "al-tarif-01", matchText: "الْآنَ." },
+    { ruleId: "schams-qamar-01", matchText: "التَّاجِرُ" },
+    { ruleId: "harf-jarr-01", matchText: "فِي السُّوقِ" }
+  ],
+  "45766": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "كَلْبٌ" }
+  ],
+  "45767": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "schams-qamar-01", matchText: "السَّرِيرِ." },
+    { ruleId: "tanwin-01", matchText: "قِطٌ" }
+  ],
+  "45768": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "al-tarif-01", matchText: "الْبَيْتِ." },
+    { ruleId: "tanwin-01", matchText: "حِمَارٌ" }
+  ],
+  "45769": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "حِصَانٌ" }
+  ],
+  "45770": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "جَمَلٌ" }
+  ],
+  "45771": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "al-tarif-01", matchText: "الْبَيْتِ." },
+    { ruleId: "tanwin-01", matchText: "دِيكٌ" }
+  ],
+  "45772": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "schams-qamar-01", matchText: "الثَّانَوِيَّةِ." },
+    { ruleId: "tanwin-01", matchText: "مُدَرِّسٌ" }
+  ],
+  "45773": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "al-tarif-01", matchText: "الْحَقِيبَةِ." },
+    { ruleId: "tanwin-01", matchText: "مِنْدِيلٌ" }
+  ],
+  "45774": [
+    { ruleId: "tanwin-01", matchText: "كِتَابٌ" }
+  ],
+  "45775": [
+    { ruleId: "tanwin-01", matchText: "مَسْجِدٌ" }
   ],
   "45776": [
-    { ruleId: "fragepartikel-alif-01", matchText: "أَ" }
+    { ruleId: "tanwin-01", matchText: "قَلَمٌ" }
+  ],
+  "45777": [
+    { ruleId: "tanwin-01", matchText: "كِتَابٌ" }
+  ],
+  "45778": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "قَلَمٌ" }
+  ],
+  "45779": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "al-tarif-01", matchText: "الْمَسْجِدِ." },
+    { ruleId: "tanwin-01", matchText: "إِمَامٌ" }
+  ],
+  "45780": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "حَجَرٌ" }
+  ],
+  "45781": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "al-tarif-01", matchText: "الْقَهْوَةِ." },
+    { ruleId: "tanwin-01", matchText: "سُكَّرٌ" }
+  ],
+  "45782": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "لَبَنٌ" }
+  ],
+  "45783": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "التَّاجِرُ" },
+    { ruleId: "tanwin-01", matchText: "غَنِيٌ" }
+  ],
+  "45784": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الرَّجُلُ" },
+    { ruleId: "tanwin-01", matchText: "فَقِيرٌ" }
+  ],
+  "45785": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الشَّارِعُ" },
+    { ruleId: "tanwin-01", matchText: "طَوِيلٌ" }
+  ],
+  "45786": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الْقَلَمُ" },
+    { ruleId: "tanwin-01", matchText: "قَصِيرٌ" }
   ],
   "45787": [
-    { ruleId: "al-tarif-01", matchText: "الْمَاءُ" }
+    { ruleId: "al-tarif-01", matchText: "الْمَاءُ" },
+    { ruleId: "tanwin-01", matchText: "بَارِدٌ" }
+  ],
+  "45788": [
+    { ruleId: "schams-qamar-01", matchText: "الشَّايُ" },
+    { ruleId: "tanwin-01", matchText: "حَارٌ" }
+  ],
+  "45789": [
+    { ruleId: "al-tarif-01", matchText: "الْكُرْسِيِّ." },
+    { ruleId: "schams-qamar-01", matchText: "الطَّالِبُ" },
+    { ruleId: "tanwin-01", matchText: "جَالِسٌ" }
+  ],
+  "45790": [
+    { ruleId: "al-tarif-01", matchText: "الْوَلَدُ" },
+    { ruleId: "tanwin-01", matchText: "وَاقِفٌ" },
+    { ruleId: "harf-jarr-01", matchText: "مِنَ الْبَابِ." }
+  ],
+  "45791": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الْكِتَابُ" },
+    { ruleId: "tanwin-01", matchText: "جَدِيدٌ" }
+  ],
+  "45792": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الْمَسْجِدُ" },
+    { ruleId: "tanwin-01", matchText: "قَدِيمٌ" }
+  ],
+  "45793": [
+    { ruleId: "al-tarif-01", matchText: "الْمَدْرَسَةُ" },
+    { ruleId: "tanwin-01", matchText: "قَرِيبَةٌ" },
+    { ruleId: "harf-jarr-01", matchText: "مِنَ الْبَيْتِ." }
+  ],
+  "45794": [
+    { ruleId: "al-tarif-01", matchText: "الْجَامِعَةُ" },
+    { ruleId: "tanwin-01", matchText: "بَعِيدَةٌ" },
+    { ruleId: "harf-jarr-01", matchText: "مِنَ الْبَيْتِ." }
+  ],
+  "45795": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الْمِنْدِيلُ" },
+    { ruleId: "tanwin-01", matchText: "نَظِيفٌ" }
+  ],
+  "45796": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الْكَلْبُ" },
+    { ruleId: "tanwin-01", matchText: "وَسِخٌ" }
+  ],
+  "45797": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الْقِطُّ" },
+    { ruleId: "tanwin-01", matchText: "صَغِيرٌ" }
+  ],
+  "45798": [
+    { ruleId: "al-tarif-01", matchText: "الْمَسْجِدُ" },
+    { ruleId: "tanwin-01", matchText: "كَبِيرٌ" }
+  ],
+  "45799": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الْكِتَابُ" },
+    { ruleId: "tanwin-01", matchText: "خَفِيفٌ" }
+  ],
+  "45800": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الْحَجَرُ" },
+    { ruleId: "tanwin-01", matchText: "ثَقِيلٌ" }
+  ],
+  "45801": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "al-tarif-01", matchText: "الْمَكْتَبِ." },
+    { ruleId: "tanwin-01", matchText: "وَرَقٌ" }
+  ],
+  "45802": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "مَاءٌ" }
+  ],
+  "45803": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "تُفَّاحٌ" }
+  ],
+  "45804": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "schams-qamar-01", matchText: "السُّوقِ." },
+    { ruleId: "tanwin-01", matchText: "دُكَّانٌ" }
+  ],
+  "45805": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الْبَيْتُ" },
+    { ruleId: "tanwin-01", matchText: "جَمِيلٌ" }
+  ],
+  "45806": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الشَّايُ" },
+    { ruleId: "tanwin-01", matchText: "حُلْوٌ" }
+  ],
+  "45807": [
+    { ruleId: "al-tarif-01", matchText: "الْمَرِيضُ" },
+    { ruleId: "schams-qamar-01", matchText: "الرَّجُلُ" },
+    { ruleId: "harf-jarr-01", matchText: "فِي الْمُسْتَشْفَى" }
+  ],
+  "45808": [
+    { ruleId: "al-tarif-01", matchText: "الْيَابَانِ." },
+    { ruleId: "schams-qamar-01", matchText: "الطَّالِبُ" }
+  ],
+  "45809": [
+    { ruleId: "al-tarif-01", matchText: "الْبَيْتِ" }
+  ],
+  "45810": [
+    { ruleId: "al-tarif-01", matchText: "الْمِفْتَاحُ؟" }
+  ],
+  "45811": [
+    { ruleId: "al-tarif-01", matchText: "الْقَلَمُ" },
+    { ruleId: "harf-jarr-01", matchText: "عَلَى الْمَكْتَبِ." }
+  ],
+  "45812": [
+    { ruleId: "al-tarif-01", matchText: "الْكِتَابُ" },
+    { ruleId: "harf-jarr-01", matchText: "فِي الْحَقِيبَةِ." }
+  ],
+  "45813": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الطَّالِبُ" },
+    { ruleId: "al-tarif-01", matchText: "الْفِلِيبِّينِ." }
+  ],
+  "45814": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "al-tarif-01", matchText: "الْيَابَانِ." },
+    { ruleId: "tanwin-01", matchText: "سَيَّارَةٌ" }
+  ],
+  "45815": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الْكُرْسِيُّ" },
+    { ruleId: "schams-qamar-01", matchText: "الصِّينِ." }
+  ],
+  "45816": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الشَّايُ" },
+    { ruleId: "al-tarif-01", matchText: "الْهِنْدِ." }
+  ],
+  "45817": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "tanwin-01", matchText: "مَدْرَسَةٌ" }
+  ],
+  "45818": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "al-tarif-01", matchText: "الْبَيْتِ." },
+    { ruleId: "tanwin-01", matchText: "سُوقٌ" }
+  ],
+  "45819": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "tanwin-01", matchText: "جَامِعَةٌ" }
+  ],
+  "45820": [
+    { ruleId: "al-tarif-01", matchText: "الْمُدِيرُ" },
+    { ruleId: "harf-jarr-01", matchText: "فِي الْمَكْتَبِ" }
+  ],
+  "45821": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "tanwin-01", matchText: "غُرْفَةٌ" }
+  ],
+  "45822": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "حَمَّامٌ" }
+  ],
+  "45823": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "مَطْبَخٌ" }
+  ],
+  "45824": [
+    { ruleId: "schams-qamar-01", matchText: "النَّجْمُ" },
+    { ruleId: "harf-jarr-01", matchText: "فِي السَّمَاءِ." }
+  ],
+  "45825": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "al-tarif-01", matchText: "الْجَامِعَةِ." },
+    { ruleId: "tanwin-01", matchText: "فَصْلٌ" }
+  ],
+  "45826": [
+    { ruleId: "al-tarif-01", matchText: "الْمِرْحَاضُ؟" }
+  ],
+  "45827": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "رَسُولٌ" }
+  ],
+  "45828": [
+    { ruleId: "al-tarif-01", matchText: "الْقِطُّ" },
+    { ruleId: "schams-qamar-01", matchText: "السَّرِيرِ." }
+  ],
+  "45829": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "al-tarif-01", matchText: "الْوَلَدِ." }
+  ],
+  "45830": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "schams-qamar-01", matchText: "التَّاجِرِ." },
+    { ruleId: "mudaf-01", matchText: "ابْنُ" }
+  ],
+  "45831": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "شَارِعٌ" }
+  ],
+  "45832": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "al-tarif-01", matchText: "الْمُدِيرِ." },
+    { ruleId: "mudaf-01", matchText: "سَيَّارَةُ" }
+  ],
+  "45833": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الْكَعْبَةُ" },
+    { ruleId: "tanwin-01", matchText: "قَدِيمَةٌ" }
+  ],
+  "45834": [
+    { ruleId: "al-tarif-01", matchText: "الْمُدَرِّسُ" }
+  ],
+  "45835": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "al-tarif-01", matchText: "الْبِنْتِ." },
+    { ruleId: "mudaf-01", matchText: "خَالُ" }
+  ],
+  "45836": [
+    { ruleId: "al-tarif-01", matchText: "الْمَكْتَبَةُ" }
+  ],
+  "45837": [
+    { ruleId: "al-tarif-01", matchText: "الْآنَ." },
+    { ruleId: "schams-qamar-01", matchText: "الدُّكَّانِ" },
+    { ruleId: "tanwin-01", matchText: "مُغْلَقٌ" }
+  ],
+  "45838": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "al-tarif-01", matchText: "الْمُدَرِّسِ." },
+    { ruleId: "mudaf-01", matchText: "بِنْتُ" }
+  ],
+  "45839": [
+    { ruleId: "al-tarif-01", matchText: "الْوَلَدِ؟" }
+  ],
+  "45840": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "schams-qamar-01", matchText: "الطَّالِبِ." },
+    { ruleId: "mudaf-01", matchText: "حَقِيبَةُ" }
+  ],
+  "45841": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "al-tarif-01", matchText: "الْمَطْبَخِ." },
+    { ruleId: "tanwin-01", matchText: "مِكْوَاةٌ" }
+  ],
+  "45842": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "tanwin-01", matchText: "بَقَرَةٌ" }
+  ],
+  "45843": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "tanwin-01", matchText: "دَرَّاجَةٌ" }
+  ],
+  "45844": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "tanwin-01", matchText: "مِلْعَقَةٌ" }
+  ],
+  "45845": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "فَلَّاحٌ" }
+  ],
+  "45846": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "al-tarif-01", matchText: "الْبِنْتِ." }
+  ],
+  "45847": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "أَبٌ" }
+  ],
+  "45848": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "al-tarif-01", matchText: "الْمَطْبَخِ." },
+    { ruleId: "tanwin-01", matchText: "ثَلَّاجَةٌ" }
+  ],
+  "45849": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "شَايٌ" }
+  ],
+  "45850": [
+    { ruleId: "al-tarif-01", matchText: "الْبَيْتُ" },
+    { ruleId: "harf-jarr-01", matchText: "فِي الْغَرْبِ." }
+  ],
+  "45851": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "tanwin-01", matchText: "قَهْوَةٌ" }
+  ],
+  "45852": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "أَنْفٌ" }
+  ],
+  "45853": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "فَمٌ" }
+  ],
+  "45854": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "al-tarif-01", matchText: "الْمَطْبَخِ." },
+    { ruleId: "tanwin-01", matchText: "قِدْرٌ" }
+  ],
+  "45855": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "tanwin-01", matchText: "أُذُنٌ" }
+  ],
+  "45856": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "tanwin-01", matchText: "عَيْنٌ" }
+  ],
+  "45857": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "schams-qamar-01", matchText: "الطَّبِيبِ." },
+    { ruleId: "mudaf-01", matchText: "يَدُ" }
+  ],
+  "45858": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "al-tarif-01", matchText: "الْكُرْسِيِّ." },
+    { ruleId: "mudaf-01", matchText: "رِجْلُ" }
+  ],
+  "45859": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الْحِصَانُ" },
+    { ruleId: "tanwin-01", matchText: "سَرِيعٌ" }
+  ],
+  "45860": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "al-tarif-01", matchText: "الْغُرْفَةِ." },
+    { ruleId: "tanwin-01", matchText: "نَافِذَةٌ" }
+  ],
+  "45861": [
+    { ruleId: "al-tarif-01", matchText: "الْمَسْجِدُ" },
+    { ruleId: "schams-qamar-01", matchText: "الشَّرْقِ." }
+  ],
+  "45862": [
+    { ruleId: "ismul-isara-tilka-01", matchText: "تِلْكَ" },
+    { ruleId: "tanwin-01", matchText: "نَاقَةٌ" }
+  ],
+  "45863": [
+    { ruleId: "ismul-isara-tilka-01", matchText: "تِلْكَ" },
+    { ruleId: "tanwin-01", matchText: "بَطَّةٌ" }
+  ],
+  "45864": [
+    { ruleId: "ismul-isara-tilka-01", matchText: "تِلْكَ" },
+    { ruleId: "al-tarif-01", matchText: "الْمُسْتَشْفَى." },
+    { ruleId: "tanwin-01", matchText: "مُمَرِّضَةٌ" }
+  ],
+  "45865": [
+    { ruleId: "ismul-isara-tilka-01", matchText: "تِلْكَ" },
+    { ruleId: "tanwin-01", matchText: "بَيْضَةٌ" }
+  ],
+  "45866": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "al-tarif-01", matchText: "الْمَسْجِدِ" },
+    { ruleId: "tanwin-01", matchText: "مُؤَذِّنٌ" }
+  ],
+  "45867": [
+    { ruleId: "ismul-isara-tilka-01", matchText: "تِلْكَ" },
+    { ruleId: "tanwin-01", matchText: "دَجَاجَةٌ" }
+  ],
+  "45868": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الطَّبِيبُ" },
+    { ruleId: "harf-jarr-01", matchText: "مِنْ أَمْرِيكَا." }
+  ],
+  "45869": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "سِكِّينٌ" }
+  ],
+  "45870": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الطَّالِبُ" },
+    { ruleId: "harf-jarr-01", matchText: "مِنْ أَلْمَانِيَا." }
+  ],
+  "45871": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "السَّيَّارَةُ" },
+    { ruleId: "harf-jarr-01", matchText: "مِنْ إِنْجِلْتَرَا." }
+  ],
+  "45872": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الرَّجُلُ" },
+    { ruleId: "al-tarif-01", matchText: "الْعِرَاقِ." }
+  ],
+  "45873": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الْمُدَرِّسُ" },
+    { ruleId: "harf-jarr-01", matchText: "مِنْ سُويسْرَا." }
+  ],
+  "45874": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "مُسْتَشْفً" }
+  ],
+  "45875": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "tanwin-01", matchText: "فَاكِهَةٌ" }
+  ],
+  "45876": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "عُصْفُورٌ" }
+  ],
+  "45877": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "schams-qamar-01", matchText: "السَّمَاءِ." },
+    { ruleId: "tanwin-01", matchText: "طَائِرٌ" }
+  ],
+  "45878": [
+    { ruleId: "al-tarif-01", matchText: "الْعَرَبِيَّةُ" },
+    { ruleId: "schams-qamar-01", matchText: "اللُّغَةُ" },
+    { ruleId: "tanwin-01", matchText: "جَمِيلَةٌ" }
+  ],
+  "45879": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "tanwin-01", matchText: "لُغَةٌ" }
+  ],
+  "45880": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الْكِتَابُ" },
+    { ruleId: "tanwin-01", matchText: "سَهْلٌ" }
+  ],
+  "45881": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الطَّالِبَةُ" },
+    { ruleId: "tanwin-01", matchText: "مُجْتَهِدَةٌ" }
+  ],
+  "45882": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الْمُدَرِّسُ" },
+    { ruleId: "tanwin-01", matchText: "مَشْهُورٌ" }
+  ],
+  "45883": [
+    { ruleId: "al-tarif-01", matchText: "الْإِنْجِلِيزِيَّةُ" },
+    { ruleId: "schams-qamar-01", matchText: "اللُّغَةُ" },
+    { ruleId: "tanwin-01", matchText: "سَهْلَةٌ" }
+  ],
+  "45884": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الْكِتَابُ" },
+    { ruleId: "tanwin-01", matchText: "صَعْبٌ" }
+  ],
+  "45885": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "tanwin-01", matchText: "مَدِينَةٌ" }
+  ],
+  "45886": [
+    { ruleId: "al-tarif-01", matchText: "الْقَاهِرَةُ" },
+    { ruleId: "tanwin-01", matchText: "مَدِينَةٌ" }
+  ],
+  "45887": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "يَوْمٌ" }
+  ],
+  "45888": [
+    { ruleId: "al-tarif-01", matchText: "الْبَابُ" },
+    { ruleId: "tanwin-01", matchText: "مُغْلَقٌ" },
+    { ruleId: "harf-jarr-li-01", matchText: "لِمَاذَا" }
+  ],
+  "45889": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "كُوبٌ" }
+  ],
+  "45890": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "al-tarif-01", matchText: "الْجَامِعَةِ." },
+    { ruleId: "tanwin-01", matchText: "مَكْتَبَةٌ" }
+  ],
+  "45891": [
+    { ruleId: "al-tarif-01", matchText: "الْمُدِيرُ" },
+    { ruleId: "harf-jarr-01", matchText: "فِي الْمَكْتَبِ" }
+  ],
+  "45892": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "al-tarif-01", matchText: "الْبَيْتِ." },
+    { ruleId: "tanwin-01", matchText: "مُسْتَوْصَفٌ" }
+  ],
+  "45893": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "al-tarif-01", matchText: "الْغُرْفَةِ." },
+    { ruleId: "tanwin-01", matchText: "مِرْوَحَةٌ" }
+  ],
+  "45894": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الرَّجُلُ" },
+    { ruleId: "al-tarif-01", matchText: "الْكُوَيْتِ." }
+  ],
+  "45895": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "tanwin-01", matchText: "ثَانَوِيَّةٌ" }
+  ],
+  "45896": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "وَزِيرٌ" }
+  ],
+  "45897": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "السِّكِّينُ" },
+    { ruleId: "tanwin-01", matchText: "حَادٌ" }
+  ],
+  "45898": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الطَّالِبُ" },
+    { ruleId: "harf-jarr-01", matchText: "مِنْ إِنْدُونِيسِيَا." }
+  ],
+  "48402": [
+    { ruleId: "al-tarif-01", matchText: "الْمُدَرِّسُ" }
+  ],
+  "59e30a8a-e400-4380-8adf-89e811852a1d": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "schams-qamar-01", matchText: "الثَّلَّاجَةِ." },
+    { ruleId: "tanwin-01", matchText: "لَحْمٌ" }
+  ],
+  "0f311405-7349-450c-885e-e3abefb6fbf3": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الْكِتَابُ" },
+    { ruleId: "harf-jarr-li-01", matchText: "لِلْوَلَدِ." }
+  ],
+  "0e23a52d-e2f5-4a57-9082-58eb9f362d88": [
+    { ruleId: "al-tarif-01", matchText: "الْبَيْتُ" },
+    { ruleId: "tanwin-01", matchText: "كَبِيرٌ" }
+  ],
+  "397cfa89-5bc0-4ce7-ae45-30fe8ea64fe2": [
+    { ruleId: "al-tarif-01", matchText: "الْبَيْتِ:" },
+    { ruleId: "tanwin-01", matchText: "اسْمٌ" }
+  ],
+  "36e01b96-9367-4f09-acaf-31a82bdcf061": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-01", matchText: "مُهَنْدِسٌ" }
+  ],
+  "65699a81-0913-4e3c-9d5d-fa750d972779": [
+    { ruleId: "tanwin-01", matchText: "«بَيْتٌ" }
+  ],
+  "c73787a3-8f9c-4033-b1ff-5644f34995d3": [
+    { ruleId: "al-tarif-01", matchText: "الْبَيْتِ»:" },
+    { ruleId: "harf-jarr-01", matchText: "فِي «بَابُ" }
+  ],
+  "d3cca272-90df-4963-a3dd-2653d009a77d": [
+    { ruleId: "tanwin-01", matchText: "كِتَابٌ" }
+  ],
+  "c623f2fb-57a5-48b6-b176-55df461b2ada": [
+    { ruleId: "tanwin-01", matchText: "جَرٍ" }
   ]
 };
