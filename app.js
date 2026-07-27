@@ -1,9 +1,13 @@
 /* ===================== Vokabeltrainer - App-Logik ===================== */
 /* Leitner-System: 5 Boxen. Box-Intervalle in Tagen bis zur naechsten Faelligkeit. */
 const INTERVALS = {1:0, 2:1, 3:3, 4:7, 5:16};
+/* Kapitelnamen: wo eine kuratierte Grammatikregel fuer das Kapitel existiert, ist der
+   Name deren Thema (Kap. 2 = ذَلِكَ, belegt durch grammar-data.js `ismul-isara-dhalika-01`,
+   Quelle Folge 02). Wo keine Regel vorliegt, beschreibt der Name den tatsaechlichen
+   Wortschatz des Kapitels (wie schon bei Kap. 8 "Laender") - nichts davon ist geraten. */
 const CHAPTER_NAMES = {
-  1:"هَذَا (dies)", 2:"Kapitel 2", 3:"Adjektive", 4:"Genitivpartikel", 5:"مُضَاف (Bezugswort)",
-  6:"هَذِهِ (diese)", 7:"تِلْكَ (jene)", 8:"Länder", 9:"Kapitel 9", personal:"Eigene Vokabeln"
+  1:"هَذَا (dies)", 2:"ذَلِكَ (jenes)", 3:"Adjektive", 4:"Genitivpartikel", 5:"مُضَاف (Bezugswort)",
+  6:"هَذِهِ (diese)", 7:"تِلْكَ (jene)", 8:"Länder", 9:"Sprachen & Eigenschaften", personal:"Eigene Vokabeln"
 };
 
 /* ---------- Storage ---------- */
@@ -35,15 +39,24 @@ function addPersonalVocab({ar, de, sentAr, sentDe}){
   return w;
 }
 
-/* Fortschritt initialisieren: Startbox aus Arabic-Roots-Daten importieren (einmalig) */
+/* Fortschritt initialisieren: Startbox aus Arabic-Roots-Daten importieren.
+   WICHTIG: Laeuft NICHT nur beim allerersten Start. Frueher stieg die Funktion bei
+   vorhandenem Speicherstand sofort aus - Vokabeln, die spaeter zu VOCAB_DATA
+   dazukamen (neu freigeschaltete Kapitel, Backfill), bekamen dadurch nie einen
+   PROGRESS-Eintrag und tauchten nie in "Jetzt lernen" auf, obwohl sie in den
+   Kategorien sichtbar waren. Jetzt werden fehlende Eintraege bei jedem Start
+   nachgetragen, ohne bestehenden Fortschritt anzufassen. */
 function initProgress(){
   let progress = LS.get('vt_progress', null);
-  if (progress) return progress;
-  progress = {};
+  let changed = false;
+  if (!progress){ progress = {}; changed = true; }
   VOCAB_DATA.forEach(w=>{
-    progress[w.id] = { box: w.box || 1, nextReview: todayStr(0), correct:0, wrong:0 };
+    if (!progress[w.id]){
+      progress[w.id] = { box: w.box || 1, nextReview: todayStr(0), correct:0, wrong:0 };
+      changed = true;
+    }
   });
-  LS.set('vt_progress', progress);
+  if (changed) LS.set('vt_progress', progress);
   return progress;
 }
 let PROGRESS = initProgress();
@@ -72,10 +85,26 @@ function getStreak(){ return LS.get('vt_streak', {count:0,last:null}); }
 
 /* ---------- Vocab helpers ---------- */
 function byId(id){ return VOCAB_DATA.find(w=>w.id===id); }
+
+/* Fisher-Yates, arbeitet auf einer Kopie. */
+function shuffle(arr){
+  const a = arr.slice();
+  for (let i=a.length-1; i>0; i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* Erst mischen, dann stabil nach Box sortieren: Die Leitner-Prioritaet (niedrige
+   Box zuerst) bleibt erhalten, aber innerhalb einer Box ist die Reihenfolge
+   zufaellig. Ohne das Mischen kam die Sitzung in VOCAB_DATA-Reihenfolge heraus -
+   da alle Woerter anfangs in derselben Box liegen, bestand eine 20er-Runde
+   ausschliesslich aus Kapitel 1. */
 function dueWords(){
   const t = todayStr(0);
-  return VOCAB_DATA.filter(w => PROGRESS[w.id] && PROGRESS[w.id].nextReview <= t)
-    .sort((a,b)=> PROGRESS[a.id].box - PROGRESS[b.id].box);
+  const due = VOCAB_DATA.filter(w => PROGRESS[w.id] && PROGRESS[w.id].nextReview <= t);
+  return shuffle(due).sort((a,b)=> PROGRESS[a.id].box - PROGRESS[b.id].box);
 }
 function allRoots(){
   const map = {};
@@ -83,7 +112,9 @@ function allRoots(){
   return map;
 }
 function isWeak(w){ return !!(PROGRESS[w.id] && PROGRESS[w.id].box<=2); }
-function weakWords(){ return VOCAB_DATA.filter(isWeak); }
+function weakWords(){
+  return shuffle(VOCAB_DATA.filter(isWeak)).sort((a,b)=> PROGRESS[a.id].box - PROGRESS[b.id].box);
+}
 function currentPool(){
   let pool = SETTINGS.wrongOnly ? weakWords() : dueWords();
   const sel = SETTINGS.selectedChapters || [];
@@ -203,13 +234,30 @@ function cardDirection(idx){
 function renderCard(){
   const w = SESSION.words[SESSION.idx];
   const card = document.getElementById('flashcard');
+  const inner = document.getElementById('flashcardInner');
+
+  /* Karte ohne Animation auf die Vorderseite zuruecksetzen. Wuerde man die
+     'flipped'-Klasse einfach entfernen, drehte die Karte sichtbar zurueck - und
+     weil der neue Inhalt zu dem Zeitpunkt schon gesetzt ist, blitzte dabei die
+     Rueckseite der NAECHSTEN Vokabel auf (Spoiler). Reihenfolge ist wichtig:
+     erst Uebergaenge abschalten, dann zuruecksetzen, dann per Reflow festschreiben,
+     erst danach die Uebergaenge wieder freigeben. */
+  card.style.transition = 'none';
+  inner.style.transition = 'none';
+  card.style.transform = '';
   card.classList.remove('flipped');
-  card.style.transform = ''; card.style.transition = '';
+  void card.offsetWidth;
+  card.style.transition = '';
+  inner.style.transition = '';
+
   document.getElementById('cardChapter').textContent = w.chapter==='personal' ? 'Eigene Vokabel' : `Kap. ${w.chapter}`;
 
   const dir = cardDirection(SESSION.idx);
   const frontEl = document.getElementById('cardArabic');
   const backEl = document.getElementById('cardGerman');
+  /* lang/dir IMMER auf beiden Seiten explizit setzen. Frueher wurde beim Wechsel
+     zurueck auf ar-de nur `dir` entfernt - `lang="ar"` blieb am deutschen Text
+     haengen, was Schriftwahl und Sprachausgabe des Browsers verfaelscht hat. */
   if (dir === 'de-ar'){
     frontEl.textContent = w.de;
     frontEl.classList.add('front-as-german');
@@ -223,17 +271,21 @@ function renderCard(){
     frontEl.setAttribute('dir','rtl'); frontEl.setAttribute('lang','ar');
     backEl.textContent = w.de;
     backEl.classList.remove('back-as-arabic');
-    backEl.removeAttribute('dir');
+    backEl.setAttribute('dir','ltr'); backEl.setAttribute('lang','de');
   }
 
-  // Plural-/Femininum-Formen nur zeigen, wenn in den Einstellungen aktiviert
+  // Plural-/Femininum-Formen nur zeigen, wenn in den Einstellungen aktiviert.
+  // Label und arabische Form getrennt ausgeben: das Label bleibt klein und
+  // lateinisch, die Form selbst wird gross und arabisch gesetzt.
   let forms = [];
   if (SETTINGS.showPlural){
-    if (w.pl) forms.push('Plural: '+w.pl);
-    if (w.femSg) forms.push('Fem.: '+w.femSg);
-    if (w.femPl) forms.push('Fem. Pl.: '+w.femPl);
+    if (w.pl) forms.push({label:'Plural', value:w.pl});
+    if (w.femSg) forms.push({label:'Fem.', value:w.femSg});
+    if (w.femPl) forms.push({label:'Fem. Pl.', value:w.femPl});
   }
-  document.getElementById('cardForms').innerHTML = forms.map(f=>`<span>${f}</span>`).join('');
+  document.getElementById('cardForms').innerHTML = forms.map(f=>
+    `<span><i class="lbl">${escapeHtml(f.label)}</i>${escapeHtml(f.value)}</span>`
+  ).join('');
 
   const sentBox = document.getElementById('cardSentenceBox');
   if (w.sentAr){
