@@ -339,3 +339,114 @@ einzupflegen.
    jedem Lauf aus, liefert aber auch bei funktionierendem Export nur
    Grammatik-Input — und der ist ohnehin durch die fehlenden Transkripte
    (Folgen 03–13) limitiert. Ehrlich: erst 1 und 2.
+
+## 2026-07-27 – Abschnitt A vollständig behoben (interaktive Session)
+
+Alle sechs Punkte aus [[Vokabeltrainer-Goal-Prompt]] Abschnitt A umgesetzt, dazu
+das bisher fehlende Validierungsskript aus E.2. Geändert: `app.js`, `index.html`,
+`sw.js`, neu `validate.js`.
+
+**A.1 – PROGRESS-Bug (der wichtigste).** `initProgress()` stieg bei vorhandenem
+Speicherstand sofort aus (`if (progress) return progress;`) — Vokabeln, die
+später zu `VOCAB_DATA` dazukamen, bekamen dadurch nie einen PROGRESS-Eintrag und
+tauchten nie in „Jetzt lernen" auf. Jetzt werden fehlende Einträge bei jedem
+Start nachgetragen, ohne bestehenden Fortschritt anzufassen.
+*Nachgewiesen:* im Browser 5 Einträge künstlich aus `vt_progress` gelöscht (155
+statt 160), neu geladen → alle 5 wieder da, alle 5 in `dueWords()`. Zusätzlich
+geprüft, dass eine über das Formular neu angelegte eigene Vokabel sofort einen
+Eintrag hat und in „Jetzt lernen" erscheint.
+
+**A.2 – Lernmodus zeigte nur Kapitel 1.** Ursache war nicht der Filter, sondern
+die Reihenfolge: `dueWords()` sortierte nur nach Box, und da anfangs alle Wörter
+in derselben Box liegen, blieb die `VOCAB_DATA`-Reihenfolge erhalten — die ersten
+20 Karten waren damit immer Kapitel 1. Jetzt wird vor dem Sortieren gemischt
+(Fisher-Yates) und anschließend **stabil** nach Box sortiert: die
+Leitner-Priorität bleibt erhalten, innerhalb einer Box ist die Reihenfolge
+zufällig. `weakWords()` (Modus „nur falsche") genauso.
+*Nachgewiesen:* 5 Sitzungen hintereinander gestartet, jede enthielt 4–5
+verschiedene Kapitel, und die Zusammensetzung unterschied sich zwischen den
+Läufen.
+
+**A.3 – Karten-Flip-Spoiler.** Beim Wechsel zur nächsten Vokabel wurde nur die
+Klasse `flipped` entfernt — die Karte drehte sichtbar zurück, und weil der neue
+Inhalt zu dem Zeitpunkt schon gesetzt war, blitzte dabei die Rückseite der
+*nächsten* Karte auf. Jetzt werden die Übergänge vor dem Zurücksetzen abgeschaltet,
+der Zustand per Reflow festgeschrieben und erst danach wieder freigegeben. Dabei
+auch die Reihenfolge korrigiert: vorher wurde `transform` zurückgesetzt, während
+die Swipe-Transition noch aktiv war.
+*Nachgewiesen:* Karte umgedreht, Drehung vollständig abgewartet
+(`matrix3d(-1,…)` = rotateY(180°)), dann `renderCard()` → Transform sofort und
+eine Frame später `none`. Gegenprobe mit dem alten, naiven Weg steht direkt danach
+noch bei rotateY(180°), würde also sichtbar zurückdrehen.
+
+**A.4 – Plural-Anzeige zu klein.** War `.85rem` in arabischer Schrift, inklusive
+des deutschen Labels „Plural:" — das lief mit in RTL-Richtung. Label und Form sind
+jetzt getrennt: Label klein und lateinisch (11,2 px, Inter), die arabische Form
+groß (24,8 px statt vorher 13,6 px).
+*Nachgewiesen:* an طَبِيبٌ mit allen drei Formen gemessen; alle Chips passen in die
+420 px breite Karte, Umbruch aktiv.
+
+**A.5 – `lang="ar"` blieb am deutschen Kartentext hängen.** Im Zweig `ar-de` wurde
+nur `dir` entfernt, `lang` nicht — nach einem `de-ar`-Durchgang stand am deutschen
+Text weiterhin `lang="ar"`, was Schriftwahl und Sprachausgabe verfälscht. Jetzt
+werden `lang` und `dir` auf beiden Seiten in beiden Zweigen explizit gesetzt.
+*Nachgewiesen:* Richtung umgeschaltet und zurück; Rückseite trägt danach
+`lang="de"` / `dir="ltr"` beim deutschen Text.
+
+**A.6 – Kapitelnamen 2 und 9.** Beide waren Platzhalter („Kapitel 2" / „Kapitel 9").
+Nichts geraten: Kapitel 2 heißt jetzt **ذَلِكَ (jenes)** — belegt durch
+`grammar-data.js`, Regel `ismul-isara-dhalika-01` mit `source.chapter: 2` aus
+Folge 02. Für Kapitel 9 existiert noch keine kuratierte Regel (Folge 13 ist
+unverarbeitet), deshalb wurde der Name wie schon bei Kapitel 8 („Länder") aus dem
+tatsächlichen Wortschatz abgeleitet: **Sprachen & Eigenschaften**
+(عَرَبِيَّةٌ, إِنْجِلِيزِيَّةٌ, لُغَةٌ, سَهْلٌ, صَعْبٌ, مُجْتَهِدٌ, مَشْهُورٌ).
+Sobald Folge 13 ausgewertet ist, kann der Name auf das Grammatikthema umgestellt
+werden. Der Grund für die Namenswahl steht als Kommentar über `CHAPTER_NAMES`.
+
+**E.2 – Validierungsskript (neu: `validate.js`).** Läuft mit `node validate.js`,
+ohne Abhängigkeiten, Exitcode 1 bei Fehlern. Prüft: doppelte Vokabel-IDs,
+Pflichtfelder, Kapitel im gültigen Bereich, Box 1–5, Quran-Referenzen vollständig,
+Platzhalter in `CHAPTER_NAMES`, doppelte Regel-IDs, Quellenpflicht aus E.1,
+`SENTENCE_TAGS` in beide Richtungen (Vokabel existiert, Regel existiert, `matchText`
+kommt im Satz wirklich vor), 114 Suren mit eindeutigen IDs, `QURAN_FREQ`-Struktur
+inkl. Sura-Bereich 1–114, Existenz aller in `index.html` und `sw.js` referenzierten
+Dateien, und gültiges JSON in `manifest.json`.
+*Nicht nur „läuft durch", sondern gegengeprüft:* mit absichtlich kaputten Daten
+(doppelte ID, leeres `de`, Kapitel 99, toter Tag-Verweis) getestet — alle vier
+Fehlerklassen wurden gemeldet, Exitcode 1, danach sauber zurückgesetzt.
+Aktueller Lauf: 160 Vokabeln / 160 eindeutige IDs, 5 Regeln, 3 Markierungen,
+114 Suren, 92 Wurzeln — alles sauber.
+
+**E.6 – Regressionstest.** Gegen einen lokalen Server im echten Browser
+durchgespielt, nicht nur überflogen: Home (160 fällig, 5 Boxen, 11 Kapitel-Chips),
+Lernen (Karte, Umdrehen, Richtig stuft Box hoch, Falsch setzt auf Box 1 zurück,
+Zähler läuft), Kategorien (10 Kapitel, 10 Wurzelgruppen, 160 Pool-Wörter),
+Wortliste inkl. Box-Drilldown, Satz-Modus (Blättern, Grammatik-Markierung und
+Popover mit Quellenangabe), Quran-Bezug (13 Vokabeln), Quran lesen (114 Suren,
+Suche, Al-Fatiha live von quran.com mit 7 Versen, Hifz-Häkchen), Statistik
+(4 Kacheln, 5 Balken), Einstellungen, PWA (Manifest + Service-Worker-Registrierung).
+Zusätzlich Kapitelfilter (nur Kapitel 3 → 25 Wörter) und „nur falsche" geprüft.
+
+**Sonstiges:** `CACHE_NAME` in `sw.js` auf **v9** erhöht (app.js und index.html
+geändert). `.gitignore` bewusst nicht mitcommittet — dort liegt Elias' eigene
+offene Änderung.
+
+**Korrektur zum vorigen Eintrag (13:00, Schritt 5, dritter Punkt):** Dort steht,
+مُفَتِّشٌ aus Kapitel 12 in der Schwachliste zeige, dass Elias schon über die
+freigeschalteten Kapitel hinaus übt. **Das stimmt nicht.** Elias hat am 27.07.
+bestätigt, dass ihm diese Wörter nicht bekannt sind — die Versuche aus
+bayna-yadayk-1/2, madina-2 und madina-1 Kapitel 12 sind seinem arabicroots-Konto
+offenbar falsch zugeordnet. Damit ist auch **Vorschlag 2 des vorigen Eintrags (der
+„Dauerbrenner"-Filter) hinfällig**: er würde Wörter priorisieren, die gar nicht
+seinem Lernstand entsprechen. Konsequenzen und der offene Klärungspunkt stehen in
+[[Vokabeltrainer-Goal-Prompt]], Abschnitt Scope-Entscheidung.
+
+**Nächster sinnvoller Schritt:** Abschnitt F.2 des Goal-Prompts — der
+Design-/Animations-Pass (E.8) über alle Screens, bevor die großen Features aus
+Abschnitt C draufgesetzt werden. Zwei Dinge sprechen dafür, ihn jetzt zu machen:
+die Bugfix-Basis ist frisch regressionsgetestet, und `app.js` ist mit 880 Zeilen
+noch übersichtlich genug, dass die in E.7 geforderte Modularisierung im selben
+Zug sauber gelingt statt später gegen mehr Code. Aus Abschnitt B liegen zwei
+kleine, konkrete Punkte bereit, die gut dazu passen: Swipe-Gesten überall
+sicherstellen, wo es Richtig/Falsch-Karten gibt, und im Satz-Modus ein Knopf für
+einen anderen Beispielsatz.

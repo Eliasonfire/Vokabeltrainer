@@ -243,11 +243,19 @@ main{
 .arabic-word.front-as-german{font-family:var(--font-ui);font-size:clamp(2rem,9vw,2.8rem);direction:ltr;color:var(--red-bright);}
 .german-word{font-size:1.6rem;font-weight:800;color:var(--red-bright);text-align:center;margin-bottom:6px;}
 .german-word.back-as-arabic{font-family:var(--font-ar);direction:rtl;font-size:2.4rem;font-weight:600;color:#fff;}
-.word-forms{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:16px;}
+.word-forms{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px;}
 .word-forms span{
   background:var(--bg-elevated);border:1px solid var(--border);
-  border-radius:10px;padding:4px 10px;font-size:.85rem;
-  font-family:var(--font-ar);direction:rtl;color:var(--text-dim);
+  border-radius:12px;padding:7px 14px;
+  font-family:var(--font-ar);direction:rtl;color:#fff;
+  font-size:1.55rem;line-height:1.7;
+  display:inline-flex;align-items:baseline;gap:9px;
+}
+/* Label lateinisch und klein halten, damit die arabische Form gross wirken kann */
+.word-forms span .lbl{
+  font-family:var(--font-ui);font-style:normal;direction:ltr;
+  color:var(--text-dim);font-size:.7rem;font-weight:700;
+  letter-spacing:.03em;text-transform:uppercase;white-space:nowrap;
 }
 .example-box{
   width:100%;background:var(--bg-elevated);border:1px solid var(--border);
