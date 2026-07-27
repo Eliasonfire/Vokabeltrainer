@@ -234,8 +234,16 @@ button{font-family:inherit;color:inherit;}
   padding:var(--sp-2) var(--sp-3);border-radius:var(--r-full);
   font-weight:700;font-size:var(--fs-md);
   box-shadow:var(--sh-1);
+  /* line-height:1 ist hier Pflicht: sonst ist die Textzeile hoeher als die
+     Glyphe, das SVG daneben aber nicht - die optische Mitte faellt auseinander
+     und das Icon sitzt sichtbar zu hoch. */
+  line-height:1;
 }
-.streak-flame{color:var(--red-bright);font-size:1.05rem;display:flex;}
+.streak-flame{
+  color:var(--red-bright);font-size:1.1rem;
+  display:flex;align-items:center;justify-content:center;
+}
+#streakCount{font-variant-numeric:tabular-nums;display:block;}
 .streak.bump{animation:pulseGlow .6s var(--ease-out);}
 
 /* =====================================================================
@@ -425,7 +433,16 @@ main{
 }
 .learn-count{font-size:var(--fs-sm);color:var(--text-dim);font-weight:700;min-width:46px;text-align:right;font-variant-numeric:tabular-nums;}
 
-.card-stage{padding:var(--sp-3) var(--gutter) var(--sp-5);display:flex;justify-content:center;position:relative;}
+/* Die Buehne wird auf die Kartenbreite begrenzt und zentriert. Sonst richten
+   sich die absolut positionierten Elemente darin (Quran-Badge, Swipe-Hinweise)
+   an der vollen Bildschirmbreite aus und haengen neben der Karte statt an ihr
+   - auf einem 575px breiten Handy stand das Badge 44px rechts neben der Karte. */
+.card-stage{
+  padding:var(--sp-3) var(--gutter) var(--sp-5);
+  display:flex;justify-content:center;position:relative;
+  width:100%;max-width:calc(420px + var(--gutter) * 2);
+  margin-inline:auto;
+}
 .flashcard{
   width:100%;max-width:420px;perspective:1500px;min-height:min(62vh,460px);
   transition:transform var(--dur-3) var(--ease-spring);
@@ -707,7 +724,10 @@ main{
    QURAN-HÄUFIGKEIT
    ===================================================================== */
 .quran-freq-badge{
-  position:absolute;top:var(--sp-4);right:var(--sp-4);z-index:6;
+  /* an der Karte ausgerichtet, nicht am Bildschirmrand: Buehnen-Innenabstand
+     plus etwas Luft, damit das Badge in der Kartenecke sitzt */
+  position:absolute;top:var(--sp-6);right:calc(var(--gutter) + var(--sp-3));z-index:6;
+  max-width:calc(100% - var(--gutter) * 2 - var(--sp-6));
   background:var(--red-wash);border:1px solid var(--red-dim);
   color:var(--red-bright);font-family:var(--font-ui);font-size:var(--fs-xs);font-weight:700;
   padding:var(--sp-1) var(--sp-3);border-radius:var(--r-full);cursor:pointer;
@@ -934,7 +954,7 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
   <symbol id="ic-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
   <symbol id="ic-left" viewBox="0 0 24 24"><path d="M14.5 5.5 8 12l6.5 6.5"/></symbol>
   <symbol id="ic-right" viewBox="0 0 24 24"><path d="M9.5 5.5 16 12l-6.5 6.5"/></symbol>
-  <symbol id="ic-flame" viewBox="0 0 24 24"><path d="M12 3s5.2 4 5.2 8.6a5.2 5.2 0 0 1-10.4 0C6.8 9.4 8.2 7.7 9.4 6.6c0 2 .9 3 2 3 1 0 1.4-1 .6-6.6Z"/><path d="M12 20.8a3 3 0 0 0 3-3c0-1.6-1.5-2.9-3-4.4-1.5 1.5-3 2.8-3 4.4a3 3 0 0 0 3 3Z"/></symbol>
+  <symbol id="ic-flame" viewBox="0 0 24 24"><path d="M12 3c-.7 3-2.7 4.1-4.1 6.1A6.4 6.4 0 0 0 6.6 13a5.4 5.4 0 0 0 10.8 0c0-4-3-6.6-5.4-10Z"/><path d="M12 20.4a2.7 2.7 0 0 0 2.7-2.7c0-1.5-1.3-2.6-2.7-4.1-1.4 1.5-2.7 2.6-2.7 4.1a2.7 2.7 0 0 0 2.7 2.7Z"/></symbol>
   <symbol id="ic-plus" viewBox="0 0 24 24"><path d="M12 5.5v13"/><path d="M5.5 12h13"/></symbol>
   <symbol id="ic-trash" viewBox="0 0 24 24"><path d="M4.5 6.5h15"/><path d="M9.5 6.5V5a1.5 1.5 0 0 1 1.5-1.5h2A1.5 1.5 0 0 1 14.5 5v1.5"/><path d="M6.5 6.5 7.4 19a1.5 1.5 0 0 0 1.5 1.4h6.2a1.5 1.5 0 0 0 1.5-1.4l.9-12.5"/></symbol>
   <symbol id="ic-warning" viewBox="0 0 24 24"><path d="M10.3 4.3 2.9 17a2 2 0 0 0 1.7 3h14.8a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0Z"/><path d="M12 9.5v4"/><path d="M12 17h.01"/></symbol>
