@@ -450,3 +450,75 @@ Zug sauber gelingt statt später gegen mehr Code. Aus Abschnitt B liegen zwei
 kleine, konkrete Punkte bereit, die gut dazu passen: Swipe-Gesten überall
 sicherstellen, wo es Richtig/Falsch-Karten gibt, und im Satz-Modus ein Knopf für
 einen anderen Beispielsatz.
+
+## 2026-07-27 – Design-/Animations-Pass über alle Screens (E.8, interaktive Session)
+
+Kompletter visueller Pass gemäß Goal-Prompt E.8. Geändert: `index.html`
+(CSS-Schicht neu aufgebaut), `app.js` (generiertes Markup + Mikro-Interaktionen),
+`sw.js` (CACHE_NAME v10), `style.css` **gelöscht** (E.7: toter Code seit dem
+Inline-CSS-Fix vom 24.07., wurde nirgends mehr geladen).
+
+**Design-System statt Insel-Lösungen — was konkret neu ist:**
+- **Design-Tokens** als eine Quelle für alles: Flächen (`--surface-1..4` statt
+  wild gemischter Grautöne), Abstände (`--sp-1..8`), Radien (`--r-1..5`),
+  Schatten (`--sh-1..3`), Schriftgrößen (`--fs-xs..2xl`) und **Bewegung**
+  (`--dur-1..4` + drei Easing-Kurven, u.a. eine Feder-Kurve für Schalter,
+  Nav-Indikator und Popover). Regel im Code dokumentiert: keine losen px-Werte
+  mehr in Komponenten.
+- **Ein SVG-Icon-Set** (20 Symbole, ein Strichstil, 24er-Raster) ersetzt die
+  Emoji überall — Kacheln, Nav, Buttons, Badges, Popover, Streak-Flamme.
+  Emoji sahen je nach Gerät verschieden aus und waren der deutlichste
+  Prototyp-Look. Nachgemessen: 0 Emoji-Reste in interaktiven Elementen,
+  37 Sprite-Icons in Verwendung. Icons sind `pointer-events:none`, damit
+  Klick-Prüfungen auf `e.target` weiter funktionieren.
+- **Durchgängige Interaktions-Muster:** einheitliches Druckfeedback auf allem
+  Antippbaren, Hover-Zustände, gestaffeltes Erscheinen von Listen (`.stagger`,
+  bewusst nur die ersten ~9 Einträge verzögert), Screen-Übergang mit dezentem
+  Hochgleiten, Bottom-Nav mit Feder-Indikator, Toast mit Feder-Einflug,
+  Popover-Auf/Abgang, Drag-Ghost im Akzentverlauf.
+- **Antwort-Feedback im Lernmodus:** kurzes grünes/rotes Aufleuchten des
+  Kartenrahmens vor der nächsten Karte (210 ms, bremst den Fluss nicht).
+  Dabei einen echten Robustheitsgewinn eingebaut: `answer()` ist jetzt gegen
+  Doppelauslösung geschützt — zwei schnelle Klicks überspringen keine Karte
+  mehr (nachgemessen).
+- **Zahlen zählen hoch** (Home-Fälligkeit, alle vier Statistik-Kacheln),
+  **Box-Balken wachsen** von 0 auf ihren Wert, **Streak-Badge pulst** beim
+  Erhöhen.
+- **Lade-/Leerzustände vereinheitlicht:** Skeleton-Platzhalter in Versform beim
+  Quran-Laden (statt nackter Textzeile), eine `empty-state`-Klasse für alle
+  „nichts da"-Fälle (statt Inline-Styles pro Screen). Quran-Bezug-Liste von
+  Inline-Styles auf Klassen umgestellt.
+- **Zugänglichkeit:** `prefers-reduced-motion` wird überall respektiert (CSS
+  global + alle JS-Animationen), `:focus-visible`-Ringe, `aria-label` auf allen
+  Icon-Buttons.
+
+**Echter Bug, den der Pass gefunden hat:** Die neuen Zahl-/Balken-Animationen
+hingen an `requestAnimationFrame` — das feuert bei unsichtbarer Seite nicht
+(Hintergrund-Tab, abgedecktes PWA-Fenster). Die Statistik hätte dann dauerhaft
+0 gezeigt. Fix: bei `document.hidden` (und reduzierter Bewegung) wird der
+Endwert sofort gesetzt; der korrekte Wert hängt nie von einer Animation ab.
+Im versteckten Browser-Pane real reproduziert und nach dem Fix verifiziert
+(160/36/67 %/Balken 4-42 % trotz unsichtbarer Seite).
+
+**Regressionstest (E.6), alle neun Bereiche im Browser:** Home (5 Boxen,
+11 Chips, 5 Kacheln), Lernen (20 Karten, 5 Kapitel gemischt, Feedback-Klasse
+kommt und geht, Weiterschalten, Doppelklickschutz), Kategorien (10/10/160,
+Reiterwechsel), Wortliste (Kapitel 3 → 25), Satz-Modus (Blättern,
+Grammatik-Markierung, Popover mit Quellenzeile), Quran-Bezug (13 Einträge,
+keine Inline-Styles mehr), Quran lesen (114 Suren, Skeleton während des Ladens,
+Al-Ikhlas mit 4 Versen live), Statistik (Zahlen + Balken korrekt), Einstellungen
+(alle Schalter/Selects), PWA (Manifest + SW). Keine Laufzeitfehler in der
+Konsole. `validate.js` sauber, Exit 0.
+
+**Bewusst NICHT in diesem Pass:** die Modularisierung von `app.js` (E.7).
+Ehrlich begründet: der Pass hat `index.html` komplett neu geschrieben und
+`app.js` an ~15 Stellen angefasst — beides gleichzeitig mit einem Datei-Split
+hätte die Regressionsfläche unnötig vergrößert. Die Datei ist mit ~950 Zeilen
+weiter überschaubar; der Split ist der erste Schritt, BEVOR ein Feature aus
+Abschnitt C begonnen wird (so verlangt es E.7 ohnehin).
+
+**Nächster sinnvoller Schritt:** Die zwei kleinen UI-Punkte aus Abschnitt B
+(Swipe überall, wo Richtig/Falsch existiert; Knopf für anderen Beispielsatz im
+Satz-Modus) — beide profitieren direkt vom neuen Motion-System. Danach als
+eigener Block: `app.js` in Module aufteilen (E.7) und erst dann C.1/C.2
+(Kasus-Engine) beginnen.
