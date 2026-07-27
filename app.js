@@ -4,10 +4,16 @@ const INTERVALS = {1:0, 2:1, 3:3, 4:7, 5:16};
 /* Kapitelnamen: wo eine kuratierte Grammatikregel fuer das Kapitel existiert, ist der
    Name deren Thema (Kap. 2 = ذَلِكَ, belegt durch grammar-data.js `ismul-isara-dhalika-01`,
    Quelle Folge 02). Wo keine Regel vorliegt, beschreibt der Name den tatsaechlichen
-   Wortschatz des Kapitels (wie schon bei Kap. 8 "Laender") - nichts davon ist geraten. */
+   Wortschatz des Kapitels - nichts davon ist geraten.
+   27.07.2026, nach Auswertung aller 13 Folgen: Kap. 3 und 9 tragen jetzt ihr
+   Grammatikthema statt einer Wortschatz-Beschreibung. Kap. 3 = اَلْ mit Sonnen- und
+   Mondbuchstaben (`al-tarif-01`, `schams-qamar-01`, Folge 02/03), Kap. 9 = نَعْت
+   (`nat-vier-bedingungen-01`, Folge 13) - genau der Wechsel, den Abschnitt A.6 des
+   Ziel-Prompts vorgesehen hat. Kap. 8 bleibt "Laender": die Regeln dort drehen sich
+   um لِ, das Kapitel selbst fuehrt aber Laendernamen ein. */
 const CHAPTER_NAMES = {
-  1:"هَذَا (dies)", 2:"ذَلِكَ (jenes)", 3:"Adjektive", 4:"Genitivpartikel", 5:"مُضَاف (Bezugswort)",
-  6:"هَذِهِ (diese)", 7:"تِلْكَ (jene)", 8:"Länder", 9:"Sprachen & Eigenschaften", personal:"Eigene Vokabeln"
+  1:"هَذَا (dies)", 2:"ذَلِكَ (jenes)", 3:"اَلْ (bestimmter Artikel)", 4:"Genitivpartikel", 5:"مُضَاف (Bezugswort)",
+  6:"هَذِهِ (diese)", 7:"تِلْكَ (jene)", 8:"Länder", 9:"نَعْت (Adjektiv)", personal:"Eigene Vokabeln"
 };
 
 /* ---------- Storage ---------- */
