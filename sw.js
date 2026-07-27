@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vokabeltrainer-v11';
+const CACHE_NAME = 'vokabeltrainer-v12';
 const ASSETS = [
   './',
   './index.html',
@@ -8,7 +8,8 @@ const ASSETS = [
   './grammar-data.js',
   './quran-frequency-data.js',
   './manifest.json',
-  './icon.svg'
+  './icon.svg',
+  './icon-maskable.svg'
 ];
 
 self.addEventListener('install', (e)=>{
