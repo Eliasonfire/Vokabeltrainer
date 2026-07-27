@@ -559,700 +559,634 @@ const SENTENCE_TAGS = {
      wurde gegen den Satztext geprueft. Hoechstens 3 je Satz, ohne Ueberlappung,
      damit ein Satz lesbar bleibt. */
   "45751": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "بَيْتٌ" }
+    { ruleId: "nat-vier-bedingungen-01", matchText: "بَيْتٌ جَمِيلٌ" },
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" }
   ],
   "45752": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "al-tarif-01", matchText: "الْبَيْتِ." },
-    { ruleId: "tanwin-01", matchText: "مَسْجِدٌ" }
+    { ruleId: "mina-al-01", matchText: "مِنَ الْبَيْتِ." },
+    { ruleId: "nat-vier-bedingungen-01", matchText: "مَسْجِدٌ كَبِيرٌ" },
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" }
   ],
   "45753": [
-    { ruleId: "al-tarif-01", matchText: "الْبَيْتِ" },
-    { ruleId: "tanwin-01", matchText: "جَدِيدٌ" },
-    { ruleId: "mudaf-01", matchText: "بَابُ" }
+    { ruleId: "mudaf-ohne-al-01", matchText: "بَابُ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "الْبَيْتِ" },
+    { ruleId: "marfu-grundfall-01", matchText: "جَدِيدٌ" }
   ],
   "45754": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "كِتَابٌ" }
+    { ruleId: "nat-vier-bedingungen-01", matchText: "كِتَابٌ قَدِيمٌ" },
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" }
   ],
   "45755": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "al-tarif-01", matchText: "الْمَكْتَبِ." },
-    { ruleId: "tanwin-01", matchText: "قَلَمٌ" }
+    { ruleId: "alif-maqsura-01", matchText: "عَلَى" },
+    { ruleId: "nat-vier-bedingungen-01", matchText: "قَلَمٌ صَغِيرٌ" },
+    { ruleId: "hamzatul-wasl-01", matchText: "الْمَكْتَبِ." }
   ],
   "45756": [
-    { ruleId: "al-tarif-01", matchText: "الْبَابِ" },
-    { ruleId: "harf-jarr-01", matchText: "فِي الْحَقِيبَةِ." },
-    { ruleId: "mudaf-01", matchText: "مِفْتَاحُ" }
+    { ruleId: "mudaf-ohne-al-01", matchText: "مِفْتَاحُ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "الْبَابِ" },
+    { ruleId: "possessiv-ya-01", matchText: "فِي" }
   ],
   "45757": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "al-tarif-01", matchText: "الْمَدْرَسَةِ." },
-    { ruleId: "tanwin-01", matchText: "مَكْتَبٌ" }
+    { ruleId: "possessiv-ya-01", matchText: "فِي" },
+    { ruleId: "ta-marbuta-fem-01", matchText: "الْمَدْرَسَةِ" },
+    { ruleId: "nat-vier-bedingungen-01", matchText: "مَكْتَبٌ جَدِيدٌ" }
   ],
   "45758": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "al-tarif-01", matchText: "الْغُرْفَةِ." },
-    { ruleId: "tanwin-01", matchText: "سَرِيرٌ" }
+    { ruleId: "possessiv-ya-01", matchText: "فِي" },
+    { ruleId: "ta-marbuta-fem-01", matchText: "الْغُرْفَةِ" },
+    { ruleId: "nat-vier-bedingungen-01", matchText: "سَرِيرٌ صَغِيرٌ" }
   ],
   "45759": [
+    { ruleId: "nat-vier-bedingungen-01", matchText: "قَدِيمٌ وَثَقِيلٌ" },
     { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "كُرْسِيٌ" }
+    { ruleId: "hadha-nicht-bestimmt-01", matchText: "كُرْسِيٌّ" }
   ],
   "45760": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "possessiv-ya-01", matchText: "فِي" },
     { ruleId: "schams-qamar-01", matchText: "السَّمَاءِ." },
-    { ruleId: "tanwin-01", matchText: "نَجْمٌ" }
+    { ruleId: "nat-vier-bedingungen-01", matchText: "نَجْمٌ كَبِيرٌ" }
   ],
   "45761": [
-    { ruleId: "al-tarif-01", matchText: "الْمُسْتَشْفَى" },
+    { ruleId: "alif-maqsura-01", matchText: "الْمُسْتَشْفَى" },
+    { ruleId: "possessiv-ya-01", matchText: "فِي" },
     { ruleId: "schams-qamar-01", matchText: "الطَّبِيبُ" }
   ],
   "45762": [
     { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "وَلَدٌ" }
+    { ruleId: "hadha-nicht-bestimmt-01", matchText: "وَلَدٌ" },
+    { ruleId: "schakl-01", matchText: "مُجْتَهِدٌ." }
   ],
   "45763": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "al-tarif-01", matchText: "الْجَامِعَةِ." },
-    { ruleId: "tanwin-01", matchText: "طَالِبٌ" }
+    { ruleId: "harf-jarr-li-01", matchText: "لِبٌ" },
+    { ruleId: "possessiv-ya-01", matchText: "فِي" },
+    { ruleId: "ta-marbuta-fem-01", matchText: "الْجَامِعَةِ" }
   ],
   "45764": [
     { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "رَجُلٌ" }
+    { ruleId: "hadha-nicht-bestimmt-01", matchText: "رَجُلٌ" },
+    { ruleId: "schakl-01", matchText: "وَمَشْهُورٌ." }
   ],
   "45765": [
-    { ruleId: "al-tarif-01", matchText: "الْآنَ." },
+    { ruleId: "possessiv-ya-01", matchText: "فِي" },
     { ruleId: "schams-qamar-01", matchText: "التَّاجِرُ" },
-    { ruleId: "harf-jarr-01", matchText: "فِي السُّوقِ" }
+    { ruleId: "hamzatul-wasl-01", matchText: "الْآنَ." }
   ],
   "45766": [
     { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "كَلْبٌ" }
+    { ruleId: "hadha-nicht-bestimmt-01", matchText: "كَلْبٌ" },
+    { ruleId: "taschkil-kontext-01", matchText: "صَغِيرٌ" }
   ],
   "45767": [
+    { ruleId: "zarf-01", matchText: "تَحْتَ السَّرِيرِ." },
     { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "schams-qamar-01", matchText: "السَّرِيرِ." },
-    { ruleId: "tanwin-01", matchText: "قِطٌ" }
+    { ruleId: "hadha-nicht-bestimmt-01", matchText: "قِطٌّ" }
   ],
   "45768": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "al-tarif-01", matchText: "الْبَيْتِ." },
-    { ruleId: "tanwin-01", matchText: "حِمَارٌ" }
+    { ruleId: "mina-al-01", matchText: "مِنَ الْبَيْتِ." },
+    { ruleId: "hadha-dies-nicht-das-01", matchText: "هَذَا" },
+    { ruleId: "hadha-nicht-bestimmt-01", matchText: "حِمَارٌ" }
   ],
   "45769": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "حِصَانٌ" }
+    { ruleId: "hadha-dies-nicht-das-01", matchText: "هَذَا" },
+    { ruleId: "hadha-nicht-bestimmt-01", matchText: "حِصَانٌ" }
   ],
   "45770": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "جَمَلٌ" }
+    { ruleId: "hadha-dies-nicht-das-01", matchText: "هَذَا" },
+    { ruleId: "hadha-nicht-bestimmt-01", matchText: "جَمَلٌ" },
+    { ruleId: "taschkil-kontext-01", matchText: "طَوِيلٌ" }
   ],
   "45771": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "al-tarif-01", matchText: "الْبَيْتِ." },
-    { ruleId: "tanwin-01", matchText: "دِيكٌ" }
+    { ruleId: "mina-al-01", matchText: "مِنَ الْبَيْتِ." },
+    { ruleId: "hadha-dies-nicht-das-01", matchText: "هَذَا" },
+    { ruleId: "marfu-grundfall-01", matchText: "دِيكٌ" }
   ],
   "45772": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "possessiv-ya-01", matchText: "فِي" },
     { ruleId: "schams-qamar-01", matchText: "الثَّانَوِيَّةِ." },
-    { ruleId: "tanwin-01", matchText: "مُدَرِّسٌ" }
+    { ruleId: "hadha-dies-nicht-das-01", matchText: "هَذَا" }
   ],
   "45773": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "al-tarif-01", matchText: "الْحَقِيبَةِ." },
-    { ruleId: "tanwin-01", matchText: "مِنْدِيلٌ" }
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْحَقِيبَةِ." },
+    { ruleId: "hadha-dies-nicht-das-01", matchText: "هَذَا" },
+    { ruleId: "marfu-grundfall-01", matchText: "مِنْدِيلٌ" }
   ],
   "45774": [
-    { ruleId: "tanwin-01", matchText: "كِتَابٌ" }
+    { ruleId: "fragepartikel-alif-01", matchText: "أَ" },
+    { ruleId: "hadha-dolch-alif-01", matchText: "هَذَا" },
+    { ruleId: "marfu-grundfall-01", matchText: "كِتَابٌ" }
   ],
   "45775": [
-    { ruleId: "tanwin-01", matchText: "مَسْجِدٌ" }
+    { ruleId: "fragepartikel-alif-01", matchText: "أَ" },
+    { ruleId: "hadha-dolch-alif-01", matchText: "هَذَا" },
+    { ruleId: "marfu-grundfall-01", matchText: "بَيْتٌ" }
   ],
   "45776": [
-    { ruleId: "tanwin-01", matchText: "قَلَمٌ" }
+    { ruleId: "fragepartikel-alif-01", matchText: "أَ" },
+    { ruleId: "hadha-dolch-alif-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-schreibweise-01", matchText: "قَلَمٌ" }
   ],
   "45777": [
-    { ruleId: "tanwin-01", matchText: "كِتَابٌ" }
+    { ruleId: "istifham-ma-01", matchText: "مَا" },
+    { ruleId: "hadha-dolch-alif-01", matchText: "هَذَا" },
+    { ruleId: "marfu-grundfall-01", matchText: "كِتَابٌ" }
   ],
   "45778": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "قَلَمٌ" }
+    { ruleId: "hadha-dies-nicht-das-01", matchText: "هَذَا" },
+    { ruleId: "marfu-grundfall-01", matchText: "قَلَمٌ" },
+    { ruleId: "taschkil-kontext-01", matchText: "وَكِتَابٌ." }
   ],
   "45779": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "al-tarif-01", matchText: "الْمَسْجِدِ." },
-    { ruleId: "tanwin-01", matchText: "إِمَامٌ" }
+    { ruleId: "istifham-men-01", matchText: "مَنْ" },
+    { ruleId: "ismul-isara-dhalika-01", matchText: "ذَلِكَ" },
+    { ruleId: "marfu-grundfall-01", matchText: "إِمَامٌ" }
   ],
   "45780": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "حَجَرٌ" }
+    { ruleId: "hadha-dies-nicht-das-01", matchText: "هَذَا" },
+    { ruleId: "nominalsatz-ohne-kopula-01", matchText: "حَجَرٌ" },
+    { ruleId: "taschkil-kontext-01", matchText: "كَبِيرٌ" }
   ],
   "45781": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "al-tarif-01", matchText: "الْقَهْوَةِ." },
-    { ruleId: "tanwin-01", matchText: "سُكَّرٌ" }
+    { ruleId: "ismul-isara-dhalika-01", matchText: "ذَلِكَ" },
+    { ruleId: "hadha-dolch-alif-01", matchText: "هَذَا" },
+    { ruleId: "nominalsatz-ohne-kopula-01", matchText: "سُكَّرٌ" }
   ],
   "45782": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "لَبَنٌ" }
+    { ruleId: "hadha-dolch-alif-01", matchText: "هَذَا" },
+    { ruleId: "nominalsatz-ohne-kopula-01", matchText: "لَبَنٌ" },
+    { ruleId: "schakl-01", matchText: "حُلْوٌ" }
   ],
   "45783": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
     { ruleId: "hadha-al-kein-satz-01", matchText: "التَّاجِرُ" },
-    { ruleId: "tanwin-01", matchText: "غَنِيٌ" }
+    { ruleId: "hadha-dolch-alif-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-schreibweise-01", matchText: "غَنِيٌ" }
   ],
   "45784": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
     { ruleId: "hadha-al-kein-satz-01", matchText: "الرَّجُلُ" },
-    { ruleId: "tanwin-01", matchText: "فَقِيرٌ" }
+    { ruleId: "hadha-dolch-alif-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-schreibweise-01", matchText: "فَقِيرٌ" }
   ],
   "45785": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
     { ruleId: "hadha-al-kein-satz-01", matchText: "الشَّارِعُ" },
-    { ruleId: "tanwin-01", matchText: "طَوِيلٌ" }
+    { ruleId: "hadha-stummes-alif-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-schreibweise-01", matchText: "طَوِيلٌ" }
   ],
   "45786": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
     { ruleId: "hadha-al-kein-satz-01", matchText: "الْقَلَمُ" },
-    { ruleId: "tanwin-01", matchText: "قَصِيرٌ" }
+    { ruleId: "hadha-stummes-alif-01", matchText: "هَذَا" },
+    { ruleId: "tanwin-schreibweise-01", matchText: "قَصِيرٌ" }
   ],
   "45787": [
-    { ruleId: "al-tarif-01", matchText: "الْمَاءُ" },
-    { ruleId: "tanwin-01", matchText: "بَارِدٌ" }
+    { ruleId: "mubtada-khabar-01", matchText: "الْمَاءُ" },
+    { ruleId: "hamzatul-wasl-01", matchText: "الْيَوْمَ." },
+    { ruleId: "tanwin-schreibweise-01", matchText: "بَارِدٌ" }
   ],
   "45788": [
     { ruleId: "schams-qamar-01", matchText: "الشَّايُ" },
-    { ruleId: "tanwin-01", matchText: "حَارٌ" }
+    { ruleId: "tanwin-schreibweise-01", matchText: "حَارٌ" }
   ],
   "45789": [
-    { ruleId: "al-tarif-01", matchText: "الْكُرْسِيِّ." },
-    { ruleId: "schams-qamar-01", matchText: "الطَّالِبُ" },
-    { ruleId: "tanwin-01", matchText: "جَالِسٌ" }
+    { ruleId: "alif-maqsura-01", matchText: "عَلَى" },
+    { ruleId: "harf-jarr-li-01", matchText: "لِبُ" },
+    { ruleId: "hamzatul-wasl-01", matchText: "الْكُرْسِيِّ." }
   ],
   "45790": [
-    { ruleId: "al-tarif-01", matchText: "الْوَلَدُ" },
-    { ruleId: "tanwin-01", matchText: "وَاقِفٌ" },
-    { ruleId: "harf-jarr-01", matchText: "مِنَ الْبَابِ." }
+    { ruleId: "mubtada-khabar-01", matchText: "الْوَلَدُ" },
+    { ruleId: "mina-al-01", matchText: "مِنَ الْبَابِ." },
+    { ruleId: "tanwin-schreibweise-01", matchText: "وَاقِفٌ" }
   ],
   "45791": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
     { ruleId: "hadha-al-kein-satz-01", matchText: "الْكِتَابُ" },
+    { ruleId: "hadha-stummes-alif-01", matchText: "هَذَا" },
     { ruleId: "tanwin-01", matchText: "جَدِيدٌ" }
   ],
   "45792": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
     { ruleId: "hadha-al-kein-satz-01", matchText: "الْمَسْجِدُ" },
+    { ruleId: "hadha-stummes-alif-01", matchText: "هَذَا" },
     { ruleId: "tanwin-01", matchText: "قَدِيمٌ" }
   ],
   "45793": [
-    { ruleId: "al-tarif-01", matchText: "الْمَدْرَسَةُ" },
-    { ruleId: "tanwin-01", matchText: "قَرِيبَةٌ" },
-    { ruleId: "harf-jarr-01", matchText: "مِنَ الْبَيْتِ." }
+    { ruleId: "mubtada-khabar-01", matchText: "الْمَدْرَسَةُ" },
+    { ruleId: "mina-al-01", matchText: "مِنَ الْبَيْتِ." },
+    { ruleId: "tanwin-01", matchText: "قَرِيبَةٌ" }
   ],
   "45794": [
-    { ruleId: "al-tarif-01", matchText: "الْجَامِعَةُ" },
-    { ruleId: "tanwin-01", matchText: "بَعِيدَةٌ" },
-    { ruleId: "harf-jarr-01", matchText: "مِنَ الْبَيْتِ." }
+    { ruleId: "mubtada-khabar-01", matchText: "الْجَامِعَةُ" },
+    { ruleId: "mina-al-01", matchText: "مِنَ الْبَيْتِ." },
+    { ruleId: "tanwin-01", matchText: "بَعِيدَةٌ" }
   ],
   "45795": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
     { ruleId: "hadha-al-kein-satz-01", matchText: "الْمِنْدِيلُ" },
+    { ruleId: "hadha-stummes-alif-01", matchText: "هَذَا" },
     { ruleId: "tanwin-01", matchText: "نَظِيفٌ" }
   ],
   "45796": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
     { ruleId: "hadha-al-kein-satz-01", matchText: "الْكَلْبُ" },
+    { ruleId: "hadha-stummes-alif-01", matchText: "هَذَا" },
     { ruleId: "tanwin-01", matchText: "وَسِخٌ" }
   ],
   "45797": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "hadha-al-kein-satz-01", matchText: "الْقِطُّ" },
+    { ruleId: "hamzatul-wasl-01", matchText: "الْقِطُّ" },
+    { ruleId: "hadha-stummes-alif-01", matchText: "هَذَا" },
     { ruleId: "tanwin-01", matchText: "صَغِيرٌ" }
   ],
   "45798": [
-    { ruleId: "al-tarif-01", matchText: "الْمَسْجِدُ" },
+    { ruleId: "mubtada-khabar-01", matchText: "الْمَسْجِدُ" },
     { ruleId: "tanwin-01", matchText: "كَبِيرٌ" }
   ],
   "45799": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "hadha-al-kein-satz-01", matchText: "الْكِتَابُ" },
-    { ruleId: "tanwin-01", matchText: "خَفِيفٌ" }
+    { ruleId: "hamzatul-wasl-01", matchText: "الْكِتَابُ" },
+    { ruleId: "hadha-stummes-alif-01", matchText: "هَذَا" },
+    { ruleId: "irab-drei-faelle-01", matchText: "خَفِيفٌ" }
   ],
   "45800": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "hadha-al-kein-satz-01", matchText: "الْحَجَرُ" },
-    { ruleId: "tanwin-01", matchText: "ثَقِيلٌ" }
+    { ruleId: "hamzatul-wasl-01", matchText: "الْحَجَرُ" },
+    { ruleId: "irab-drei-faelle-01", matchText: "ثَقِيلٌ" },
+    { ruleId: "madd-tabii-01", matchText: "هَذَا" }
   ],
   "45801": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "al-tarif-01", matchText: "الْمَكْتَبِ." },
-    { ruleId: "tanwin-01", matchText: "وَرَقٌ" }
+    { ruleId: "alif-maqsura-01", matchText: "عَلَى" },
+    { ruleId: "hamzatul-wasl-01", matchText: "الْمَكْتَبِ." },
+    { ruleId: "nominalsatz-ohne-kopula-01", matchText: "وَرَقٌ" }
   ],
   "45802": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "مَاءٌ" }
+    { ruleId: "nominalsatz-ohne-kopula-01", matchText: "مَاءٌ" },
+    { ruleId: "taschkil-kontext-01", matchText: "بَارِدٌ" },
+    { ruleId: "madd-tabii-01", matchText: "هَذَا" }
   ],
   "45803": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "تُفَّاحٌ" }
+    { ruleId: "nominalsatz-ohne-kopula-01", matchText: "تُفَّاحٌ" },
+    { ruleId: "schakl-01", matchText: "حُلْوٌ." },
+    { ruleId: "madd-tabii-01", matchText: "هَذَا" }
   ],
   "45804": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "schams-qamar-01", matchText: "السُّوقِ." },
-    { ruleId: "tanwin-01", matchText: "دُكَّانٌ" }
+    { ruleId: "mina-al-01", matchText: "مِنَ السُّوقِ." },
+    { ruleId: "nominalsatz-ohne-kopula-01", matchText: "دُكَّانٌ" },
+    { ruleId: "taschkil-kontext-01", matchText: "صَغِيرٌ" }
   ],
   "45805": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "hadha-al-kein-satz-01", matchText: "الْبَيْتُ" },
-    { ruleId: "tanwin-01", matchText: "جَمِيلٌ" }
+    { ruleId: "al-tarif-01", matchText: "الْبَيْتُ" },
+    { ruleId: "irab-drei-faelle-01", matchText: "جَمِيلٌ" },
+    { ruleId: "madd-tabii-01", matchText: "هَذَا" }
   ],
   "45806": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "hadha-al-kein-satz-01", matchText: "الشَّايُ" },
-    { ruleId: "tanwin-01", matchText: "حُلْوٌ" }
+    { ruleId: "schams-qamar-01", matchText: "الشَّايُ" },
+    { ruleId: "irab-drei-faelle-01", matchText: "حُلْوٌ" },
+    { ruleId: "madd-tabii-01", matchText: "هَذَا" }
   ],
   "45807": [
-    { ruleId: "al-tarif-01", matchText: "الْمَرِيضُ" },
-    { ruleId: "schams-qamar-01", matchText: "الرَّجُلُ" },
-    { ruleId: "harf-jarr-01", matchText: "فِي الْمُسْتَشْفَى" }
+    { ruleId: "alif-maqsura-01", matchText: "الْمُسْتَشْفَى" },
+    { ruleId: "mudaf-01", matchText: "الرَّجُلُ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "الْمَرِ" }
   ],
   "45808": [
-    { ruleId: "al-tarif-01", matchText: "الْيَابَانِ." },
-    { ruleId: "schams-qamar-01", matchText: "الطَّالِبُ" }
+    { ruleId: "harf-jarr-li-01", matchText: "لِبُ" },
+    { ruleId: "mina-al-01", matchText: "مِنَ الْيَابَانِ." }
   ],
   "45809": [
-    { ruleId: "al-tarif-01", matchText: "الْبَيْتِ" }
+    { ruleId: "alif-maqsura-01", matchText: "إِلَى" },
+    { ruleId: "harf-jarr-min-ila-01", matchText: "مِنَ الْبَيْتِ" },
+    { ruleId: "ta-marbuta-fem-01", matchText: "الْجَامِعَةِ" }
   ],
   "45810": [
+    { ruleId: "istifham-ayna-01", matchText: "أَيْنَ" },
     { ruleId: "al-tarif-01", matchText: "الْمِفْتَاحُ؟" }
   ],
   "45811": [
+    { ruleId: "alif-maqsura-01", matchText: "عَلَى" },
     { ruleId: "al-tarif-01", matchText: "الْقَلَمُ" },
-    { ruleId: "harf-jarr-01", matchText: "عَلَى الْمَكْتَبِ." }
+    { ruleId: "taschkil-kontext-01", matchText: "الْمَكْتَبِ." }
   ],
   "45812": [
-    { ruleId: "al-tarif-01", matchText: "الْكِتَابُ" },
-    { ruleId: "harf-jarr-01", matchText: "فِي الْحَقِيبَةِ." }
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْحَقِيبَةِ." },
+    { ruleId: "al-tarif-01", matchText: "الْكِتَابُ" }
   ],
   "45813": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "hadha-al-kein-satz-01", matchText: "الطَّالِبُ" },
-    { ruleId: "al-tarif-01", matchText: "الْفِلِيبِّينِ." }
+    { ruleId: "harf-jarr-li-01", matchText: "لِبُ" },
+    { ruleId: "harf-jarr-min-ila-01", matchText: "مِنَ الْفِلِيبِّينِ." },
+    { ruleId: "madd-tabii-01", matchText: "هَذَا" }
   ],
   "45814": [
+    { ruleId: "harf-jarr-min-ila-01", matchText: "مِنَ الْيَابَانِ." },
     { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "al-tarif-01", matchText: "الْيَابَانِ." },
-    { ruleId: "tanwin-01", matchText: "سَيَّارَةٌ" }
+    { ruleId: "ta-marbuta-fem-01", matchText: "سَيَّارَةٌ" }
   ],
   "45815": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "hadha-al-kein-satz-01", matchText: "الْكُرْسِيُّ" },
-    { ruleId: "schams-qamar-01", matchText: "الصِّينِ." }
+    { ruleId: "harf-jarr-min-ila-01", matchText: "مِنَ الصِّينِ." },
+    { ruleId: "al-tarif-01", matchText: "الْكُرْسِيُّ" },
+    { ruleId: "madd-tabii-01", matchText: "هَذَا" }
   ],
   "45816": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "hadha-al-kein-satz-01", matchText: "الشَّايُ" },
-    { ruleId: "al-tarif-01", matchText: "الْهِنْدِ." }
+    { ruleId: "harf-jarr-min-ila-01", matchText: "مِنَ الْهِنْدِ." },
+    { ruleId: "schams-qamar-01", matchText: "الشَّايُ" },
+    { ruleId: "madd-tabii-01", matchText: "هَذَا" }
   ],
   "45817": [
+    { ruleId: "mutabaqa-genus-01", matchText: "كَبِيرَةٌ" },
     { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "tanwin-01", matchText: "مَدْرَسَةٌ" }
+    { ruleId: "ta-marbuta-fem-01", matchText: "مَدْرَسَةٌ" }
   ],
   "45818": [
-    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "al-tarif-01", matchText: "الْبَيْتِ." },
-    { ruleId: "tanwin-01", matchText: "سُوقٌ" }
+    { ruleId: "mutabaqa-genus-01", matchText: "كَبِيرَةٌ" },
+    { ruleId: "harf-jarr-min-ila-01", matchText: "مِنَ الْبَيْتِ." },
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" }
   ],
   "45819": [
+    { ruleId: "mutabaqa-genus-01", matchText: "مَشْهُورَةٌ" },
     { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "tanwin-01", matchText: "جَامِعَةٌ" }
+    { ruleId: "ta-marbuta-fem-01", matchText: "جَامِعَةٌ" }
   ],
   "45820": [
-    { ruleId: "al-tarif-01", matchText: "الْمُدِيرُ" },
-    { ruleId: "harf-jarr-01", matchText: "فِي الْمَكْتَبِ" }
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْمَكْتَبِ" },
+    { ruleId: "al-tarif-01", matchText: "الْمُدِيرُ" }
   ],
   "45821": [
+    { ruleId: "mutabaqa-genus-01", matchText: "نَظِيفَةٌ" },
     { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "tanwin-01", matchText: "غُرْفَةٌ" }
+    { ruleId: "ta-marbuta-fem-01", matchText: "غُرْفَةٌ" }
   ],
   "45822": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "حَمَّامٌ" }
+    { ruleId: "nominalsatz-ohne-kopula-01", matchText: "حَمَّامٌ" },
+    { ruleId: "taschkil-kontext-01", matchText: "نَظِيفٌ." },
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "هَذَا" }
   ],
   "45823": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "مَطْبَخٌ" }
+    { ruleId: "irab-drei-faelle-01", matchText: "مَطْبَخٌ" },
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "هَذَا" }
   ],
   "45824": [
-    { ruleId: "schams-qamar-01", matchText: "النَّجْمُ" },
-    { ruleId: "harf-jarr-01", matchText: "فِي السَّمَاءِ." }
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي السَّمَاءِ." },
+    { ruleId: "schams-qamar-01", matchText: "النَّجْمُ" }
   ],
   "45825": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "al-tarif-01", matchText: "الْجَامِعَةِ." },
-    { ruleId: "tanwin-01", matchText: "فَصْلٌ" }
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْجَامِعَةِ." },
+    { ruleId: "irab-drei-faelle-01", matchText: "فَصْلٌ" },
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "هَذَا" }
   ],
   "45826": [
+    { ruleId: "istifham-ayna-01", matchText: "أَيْنَ" },
     { ruleId: "al-tarif-01", matchText: "الْمِرْحَاضُ؟" }
   ],
   "45827": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "رَسُولٌ" }
+    { ruleId: "irab-drei-faelle-01", matchText: "رَسُولٌ" },
+    { ruleId: "schakl-01", matchText: "مَشْهُورٌ." },
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "هَذَا" }
   ],
   "45828": [
-    { ruleId: "al-tarif-01", matchText: "الْقِطُّ" },
-    { ruleId: "schams-qamar-01", matchText: "السَّرِيرِ." }
+    { ruleId: "zarf-01", matchText: "تَحْتَ السَّرِيرِ." },
+    { ruleId: "al-tarif-01", matchText: "الْقِطُّ" }
   ],
   "45829": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "al-tarif-01", matchText: "الْوَلَدِ." }
+    { ruleId: "al-gesamtheit-01", matchText: "الْوَلَدِ." },
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "هَذَا" }
   ],
   "45830": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "schams-qamar-01", matchText: "التَّاجِرِ." },
-    { ruleId: "mudaf-01", matchText: "ابْنُ" }
+    { ruleId: "mudaf-ohne-al-01", matchText: "ابْنُ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "التَّاجِرِ" },
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "هَذَا" }
   ],
   "45831": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "شَارِعٌ" }
+    { ruleId: "irab-drei-faelle-01", matchText: "شَارِعٌ" },
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "هَذَا" }
   ],
   "45832": [
-    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "al-tarif-01", matchText: "الْمُدِيرِ." },
-    { ruleId: "mudaf-01", matchText: "سَيَّارَةُ" }
+    { ruleId: "mudaf-ohne-al-01", matchText: "سَيَّارَةُ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "الْمُدِيرِ" },
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" }
   ],
   "45833": [
+    { ruleId: "nat-fem-01", matchText: "قَدِيمَةٌ وَمَشْهُورَةٌ" },
     { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "hadha-al-kein-satz-01", matchText: "الْكَعْبَةُ" },
-    { ruleId: "tanwin-01", matchText: "قَدِيمَةٌ" }
+    { ruleId: "ta-marbuta-grenzen-01", matchText: "الْكَعْبَةُ" }
   ],
   "45834": [
-    { ruleId: "al-tarif-01", matchText: "الْمُدَرِّسُ" }
+    { ruleId: "al-gesamtheit-01", matchText: "الْمُدَرِّسُ" }
   ],
   "45835": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "al-tarif-01", matchText: "الْبِنْتِ." },
-    { ruleId: "mudaf-01", matchText: "خَالُ" }
+    { ruleId: "mudaf-ohne-al-01", matchText: "خَالُ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "الْبِنْتِ" },
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "هَذَا" }
   ],
   "45836": [
-    { ruleId: "al-tarif-01", matchText: "الْمَكْتَبَةُ" }
+    { ruleId: "ta-marbuta-grenzen-01", matchText: "الْمَكْتَبَةُ" }
   ],
   "45837": [
-    { ruleId: "al-tarif-01", matchText: "الْآنَ." },
-    { ruleId: "schams-qamar-01", matchText: "الدُّكَّانِ" },
-    { ruleId: "tanwin-01", matchText: "مُغْلَقٌ" }
+    { ruleId: "mudaf-ohne-al-01", matchText: "بَابُ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "الدُّكَّانِ" },
+    { ruleId: "al-gesamtheit-01", matchText: "الْآنَ." }
   ],
   "45838": [
-    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "al-tarif-01", matchText: "الْمُدَرِّسِ." },
-    { ruleId: "mudaf-01", matchText: "بِنْتُ" }
+    { ruleId: "mudaf-ohne-al-01", matchText: "بِنْتُ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "الْمُدَرِّسِ" },
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" }
   ],
   "45839": [
-    { ruleId: "al-tarif-01", matchText: "الْوَلَدِ؟" }
+    { ruleId: "istifham-ma-01", matchText: "مَا" },
+    { ruleId: "al-gesamtheit-01", matchText: "الْوَلَدِ؟" },
+    { ruleId: "schakl-01", matchText: "اسْمُ" }
   ],
   "45840": [
-    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "schams-qamar-01", matchText: "الطَّالِبِ." },
-    { ruleId: "mudaf-01", matchText: "حَقِيبَةُ" }
+    { ruleId: "mudaf-ohne-al-01", matchText: "حَقِيبَةُ" },
+    { ruleId: "harf-jarr-li-01", matchText: "لِبِ." },
+    { ruleId: "isara-genus-kongruenz-01", matchText: "هَذِهِ" }
   ],
   "45841": [
-    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "al-tarif-01", matchText: "الْمَطْبَخِ." },
-    { ruleId: "tanwin-01", matchText: "مِكْوَاةٌ" }
+    { ruleId: "mutabaqa-genus-01", matchText: "جَدِيدَةٌ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْمَطْبَخِ." },
+    { ruleId: "isara-genus-kongruenz-01", matchText: "هَذِهِ" }
   ],
   "45842": [
-    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "tanwin-01", matchText: "بَقَرَةٌ" }
+    { ruleId: "mutabaqa-genus-01", matchText: "كَبِيرَةٌ" },
+    { ruleId: "isara-genus-kongruenz-01", matchText: "هَذِهِ" },
+    { ruleId: "ta-marbuta-grenzen-01", matchText: "بَقَرَةٌ" }
   ],
   "45843": [
-    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "tanwin-01", matchText: "دَرَّاجَةٌ" }
+    { ruleId: "mutabaqa-genus-01", matchText: "جَدِيدَةٌ" },
+    { ruleId: "isara-genus-kongruenz-01", matchText: "هَذِهِ" },
+    { ruleId: "ta-marbuta-grenzen-01", matchText: "دَرَّاجَةٌ" }
   ],
   "45844": [
-    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "tanwin-01", matchText: "مِلْعَقَةٌ" }
+    { ruleId: "mutabaqa-genus-01", matchText: "نَظِيفَةٌ" },
+    { ruleId: "isara-genus-kongruenz-01", matchText: "هَذِهِ" },
+    { ruleId: "ta-marbuta-grenzen-01", matchText: "مِلْعَقَةٌ" }
   ],
   "45845": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "فَلَّاحٌ" }
+    { ruleId: "schakl-01", matchText: "مُجْتَهِدٌ." },
+    { ruleId: "wortstellung-fokus-01", matchText: "هَذَا" }
   ],
   "45846": [
-    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "al-tarif-01", matchText: "الْبِنْتِ." }
+    { ruleId: "isara-genus-kongruenz-01", matchText: "هَذِهِ" },
+    { ruleId: "al-gesamtheit-01", matchText: "الْبِنْتِ." }
   ],
   "45847": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "أَبٌ" }
+    { ruleId: "schakl-01", matchText: "مُجْتَهِدٌ." },
+    { ruleId: "wortstellung-fokus-01", matchText: "هَذَا" }
   ],
   "45848": [
-    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "al-tarif-01", matchText: "الْمَطْبَخِ." },
-    { ruleId: "tanwin-01", matchText: "ثَلَّاجَةٌ" }
+    { ruleId: "nat-fem-01", matchText: "ثَلَّاجَةٌ كَبِيرَةٌ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْمَطْبَخِ." },
+    { ruleId: "isara-genus-kongruenz-01", matchText: "هَذِهِ" }
   ],
   "45849": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "شَايٌ" }
+    { ruleId: "wortstellung-fokus-01", matchText: "هَذَا" }
   ],
   "45850": [
-    { ruleId: "al-tarif-01", matchText: "الْبَيْتُ" },
-    { ruleId: "harf-jarr-01", matchText: "فِي الْغَرْبِ." }
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْغَرْبِ." },
+    { ruleId: "al-gesamtheit-01", matchText: "الْبَيْتُ" }
   ],
   "45851": [
-    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "tanwin-01", matchText: "قَهْوَةٌ" }
+    { ruleId: "isara-genus-kongruenz-01", matchText: "هَذِهِ" },
+    { ruleId: "ta-marbuta-grenzen-01", matchText: "قَهْوَةٌ" }
   ],
   "45852": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "أَنْفٌ" }
+    { ruleId: "koerperteile-genus-01", matchText: "أَنْفٌ" },
+    { ruleId: "wortstellung-fokus-01", matchText: "هَذَا" }
   ],
   "45853": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "فَمٌ" }
+    { ruleId: "koerperteile-genus-01", matchText: "فَمٌ" },
+    { ruleId: "wortstellung-fokus-01", matchText: "هَذَا" }
   ],
   "45854": [
-    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "al-tarif-01", matchText: "الْمَطْبَخِ." },
-    { ruleId: "tanwin-01", matchText: "قِدْرٌ" }
+    { ruleId: "ta-marbuta-grenzen-01", matchText: "كَبِيرَةٌ" },
+    { ruleId: "harf-jarr-01", matchText: "فِي الْمَطْبَخِ." },
+    { ruleId: "wortstellung-fokus-01", matchText: "هَذِهِ" }
   ],
   "45855": [
-    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "tanwin-01", matchText: "أُذُنٌ" }
+    { ruleId: "fem-ohne-ta-marbuta-01", matchText: "أُذُنٌ" },
+    { ruleId: "ta-marbuta-grenzen-01", matchText: "كَبِيرَةٌ" },
+    { ruleId: "wortstellung-fokus-01", matchText: "هَذِهِ" }
   ],
   "45856": [
-    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "tanwin-01", matchText: "عَيْنٌ" }
+    { ruleId: "fem-ohne-ta-marbuta-01", matchText: "عَيْنٌ" },
+    { ruleId: "wortstellung-fokus-01", matchText: "هَذِهِ" }
   ],
   "45857": [
-    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "schams-qamar-01", matchText: "الطَّبِيبِ." },
-    { ruleId: "mudaf-01", matchText: "يَدُ" }
+    { ruleId: "fem-ohne-ta-marbuta-01", matchText: "يَدُ" },
+    { ruleId: "idafa-zweitglied-01", matchText: "الطَّبِيبِ" },
+    { ruleId: "wortarten-01", matchText: "هَذِهِ" }
   ],
   "45858": [
-    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "al-tarif-01", matchText: "الْكُرْسِيِّ." },
-    { ruleId: "mudaf-01", matchText: "رِجْلُ" }
+    { ruleId: "fem-ohne-ta-marbuta-01", matchText: "رِجْلُ" },
+    { ruleId: "idafa-zweitglied-01", matchText: "الْكُرْسِيِ" },
+    { ruleId: "wortarten-01", matchText: "هَذِهِ" }
   ],
   "45859": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "hadha-al-kein-satz-01", matchText: "الْحِصَانُ" },
-    { ruleId: "tanwin-01", matchText: "سَرِيعٌ" }
+    { ruleId: "adjektive-an-ohne-tanwin-01", matchText: "الْحِصَانُ" },
+    { ruleId: "wortarten-01", matchText: "هَذَا" }
   ],
   "45860": [
-    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "al-tarif-01", matchText: "الْغُرْفَةِ." },
-    { ruleId: "tanwin-01", matchText: "نَافِذَةٌ" }
+    { ruleId: "nat-fem-01", matchText: "نَافِذَةٌ كَبِيرَةٌ" },
+    { ruleId: "harf-jarr-01", matchText: "فِي الْغُرْفَةِ." },
+    { ruleId: "wortarten-01", matchText: "هَذِهِ" }
   ],
   "45861": [
-    { ruleId: "al-tarif-01", matchText: "الْمَسْجِدُ" },
-    { ruleId: "schams-qamar-01", matchText: "الشَّرْقِ." }
+    { ruleId: "schams-qamar-merkhilfe-01", matchText: "الشَّرْقِ." },
+    { ruleId: "al-gesamtheit-01", matchText: "الْمَسْجِدُ" }
   ],
   "45862": [
     { ruleId: "ismul-isara-tilka-01", matchText: "تِلْكَ" },
-    { ruleId: "tanwin-01", matchText: "نَاقَةٌ" }
+    { ruleId: "nat-fem-01", matchText: "نَاقَةٌ طَوِيلَةٌ" }
   ],
   "45863": [
-    { ruleId: "ismul-isara-tilka-01", matchText: "تِلْكَ" },
-    { ruleId: "tanwin-01", matchText: "بَطَّةٌ" }
+    { ruleId: "ismul-isara-tilka-01", matchText: "تِلْكَ" }
   ],
   "45864": [
     { ruleId: "ismul-isara-tilka-01", matchText: "تِلْكَ" },
-    { ruleId: "al-tarif-01", matchText: "الْمُسْتَشْفَى." },
-    { ruleId: "tanwin-01", matchText: "مُمَرِّضَةٌ" }
+    { ruleId: "alif-maqsura-01", matchText: "الْمُسْتَشْفَى" },
+    { ruleId: "nat-fem-01", matchText: "مُمَرِّضَةٌ مُجْتَهِدَةٌ" }
   ],
   "45865": [
     { ruleId: "ismul-isara-tilka-01", matchText: "تِلْكَ" },
-    { ruleId: "tanwin-01", matchText: "بَيْضَةٌ" }
+    { ruleId: "nat-fem-01", matchText: "بَيْضَةٌ كَبِيرَةٌ" }
   ],
   "45866": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "al-tarif-01", matchText: "الْمَسْجِدِ" },
-    { ruleId: "tanwin-01", matchText: "مُؤَذِّنٌ" }
+    { ruleId: "harf-jarr-idafa-01", matchText: "فِي الْمَسْجِدِ الْقَرِيبِ" },
+    { ruleId: "wortarten-01", matchText: "هَذَا" }
   ],
   "45867": [
     { ruleId: "ismul-isara-tilka-01", matchText: "تِلْكَ" },
-    { ruleId: "tanwin-01", matchText: "دَجَاجَةٌ" }
+    { ruleId: "nat-fem-01", matchText: "دَجَاجَةٌ كَبِيرَةٌ" }
   ],
   "45868": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "hadha-al-kein-satz-01", matchText: "الطَّبِيبُ" },
-    { ruleId: "harf-jarr-01", matchText: "مِنْ أَمْرِيكَا." }
+    { ruleId: "harf-jarr-min-ila-01", matchText: "مِنْ أَمْرِيكَا." },
+    { ruleId: "schams-qamar-merkhilfe-01", matchText: "الطَّبِيبُ" },
+    { ruleId: "wortarten-01", matchText: "هَذَا" }
   ],
   "45869": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "سِكِّينٌ" }
+    { ruleId: "wortarten-01", matchText: "هَذَا" }
   ],
   "45870": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "hadha-al-kein-satz-01", matchText: "الطَّالِبُ" },
-    { ruleId: "harf-jarr-01", matchText: "مِنْ أَلْمَانِيَا." }
+    { ruleId: "harf-jarr-li-01", matchText: "لِبُ" },
+    { ruleId: "harf-jarr-min-ila-01", matchText: "مِنْ أَلْمَانِيَا." },
+    { ruleId: "wortarten-01", matchText: "هَذَا" }
   ],
   "45871": [
-    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "hadha-al-kein-satz-01", matchText: "السَّيَّارَةُ" },
+    { ruleId: "schams-qamar-merkhilfe-01", matchText: "السَّيَّارَةُ" },
     { ruleId: "harf-jarr-01", matchText: "مِنْ إِنْجِلْتَرَا." }
   ],
   "45872": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "hadha-al-kein-satz-01", matchText: "الرَّجُلُ" },
-    { ruleId: "al-tarif-01", matchText: "الْعِرَاقِ." }
+    { ruleId: "schams-qamar-merkhilfe-01", matchText: "الرَّجُلُ" },
+    { ruleId: "harf-jarr-01", matchText: "مِنَ الْعِرَاقِ." }
   ],
   "45873": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "hadha-al-kein-satz-01", matchText: "الْمُدَرِّسُ" },
-    { ruleId: "harf-jarr-01", matchText: "مِنْ سُويسْرَا." }
+    { ruleId: "harf-jarr-01", matchText: "مِنْ سُويسْرَا." },
+    { ruleId: "al-gesamtheit-01", matchText: "الْمُدَرِّسُ" }
   ],
   "45874": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "مُسْتَشْفً" }
+    { ruleId: "alif-maqsura-unveraenderlich-01", matchText: "مُسْتَشْفًى" }
   ],
   "45875": [
-    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "tanwin-01", matchText: "فَاكِهَةٌ" }
-  ],
-  "45876": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "عُصْفُورٌ" }
+    { ruleId: "nat-fem-01", matchText: "فَاكِهَةٌ حُلْوَةٌ" }
   ],
   "45877": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "schams-qamar-01", matchText: "السَّمَاءِ." },
-    { ruleId: "tanwin-01", matchText: "طَائِرٌ" }
+    { ruleId: "schams-qamar-merkhilfe-01", matchText: "السَّمَاءِ." }
   ],
   "45878": [
-    { ruleId: "al-tarif-01", matchText: "الْعَرَبِيَّةُ" },
-    { ruleId: "schams-qamar-01", matchText: "اللُّغَةُ" },
-    { ruleId: "tanwin-01", matchText: "جَمِيلَةٌ" }
-  ],
-  "45879": [
-    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "tanwin-01", matchText: "لُغَةٌ" }
-  ],
-  "45880": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "hadha-al-kein-satz-01", matchText: "الْكِتَابُ" },
-    { ruleId: "tanwin-01", matchText: "سَهْلٌ" }
+    { ruleId: "mudaf-01", matchText: "اللُّغَةُ" },
+    { ruleId: "idafa-zweitglied-01", matchText: "الْعَرَبِ" }
   ],
   "45881": [
-    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "hadha-al-kein-satz-01", matchText: "الطَّالِبَةُ" },
-    { ruleId: "tanwin-01", matchText: "مُجْتَهِدَةٌ" }
-  ],
-  "45882": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "hadha-al-kein-satz-01", matchText: "الْمُدَرِّسُ" },
-    { ruleId: "tanwin-01", matchText: "مَشْهُورٌ" }
+    { ruleId: "harf-jarr-li-01", matchText: "لِبَةُ" }
   ],
   "45883": [
-    { ruleId: "al-tarif-01", matchText: "الْإِنْجِلِيزِيَّةُ" },
-    { ruleId: "schams-qamar-01", matchText: "اللُّغَةُ" },
-    { ruleId: "tanwin-01", matchText: "سَهْلَةٌ" }
-  ],
-  "45884": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "hadha-al-kein-satz-01", matchText: "الْكِتَابُ" },
-    { ruleId: "tanwin-01", matchText: "صَعْبٌ" }
-  ],
-  "45885": [
-    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "tanwin-01", matchText: "مَدِينَةٌ" }
+    { ruleId: "harf-jarr-li-01", matchText: "لِيزِيَّةُ" },
+    { ruleId: "mudaf-01", matchText: "اللُّغَةُ" }
   ],
   "45886": [
-    { ruleId: "al-tarif-01", matchText: "الْقَاهِرَةُ" },
-    { ruleId: "tanwin-01", matchText: "مَدِينَةٌ" }
-  ],
-  "45887": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "يَوْمٌ" }
-  ],
-  "45888": [
-    { ruleId: "al-tarif-01", matchText: "الْبَابُ" },
-    { ruleId: "tanwin-01", matchText: "مُغْلَقٌ" },
-    { ruleId: "harf-jarr-li-01", matchText: "لِمَاذَا" }
-  ],
-  "45889": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "كُوبٌ" }
+    { ruleId: "mubtada-khabar-01", matchText: "الْقَاهِرَةُ" }
   ],
   "45890": [
-    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "al-tarif-01", matchText: "الْجَامِعَةِ." },
-    { ruleId: "tanwin-01", matchText: "مَكْتَبَةٌ" }
+    { ruleId: "harf-jarr-01", matchText: "مِنَ الْجَامِعَةِ." }
   ],
   "45891": [
-    { ruleId: "al-tarif-01", matchText: "الْمُدِيرُ" },
     { ruleId: "harf-jarr-01", matchText: "فِي الْمَكْتَبِ" }
   ],
   "45892": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "al-tarif-01", matchText: "الْبَيْتِ." },
-    { ruleId: "tanwin-01", matchText: "مُسْتَوْصَفٌ" }
-  ],
-  "45893": [
-    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "al-tarif-01", matchText: "الْغُرْفَةِ." },
-    { ruleId: "tanwin-01", matchText: "مِرْوَحَةٌ" }
+    { ruleId: "harf-jarr-01", matchText: "مِنَ الْبَيْتِ." }
   ],
   "45894": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "hadha-al-kein-satz-01", matchText: "الرَّجُلُ" },
-    { ruleId: "al-tarif-01", matchText: "الْكُوَيْتِ." }
-  ],
-  "45895": [
-    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "tanwin-01", matchText: "ثَانَوِيَّةٌ" }
-  ],
-  "45896": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "وَزِيرٌ" }
+    { ruleId: "schams-qamar-merkhilfe-01", matchText: "الرَّجُلُ" }
   ],
   "45897": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "hadha-al-kein-satz-01", matchText: "السِّكِّينُ" },
-    { ruleId: "tanwin-01", matchText: "حَادٌ" }
+    { ruleId: "schams-qamar-merkhilfe-01", matchText: "السِّكِّينُ" }
   ],
   "45898": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "hadha-al-kein-satz-01", matchText: "الطَّالِبُ" },
-    { ruleId: "harf-jarr-01", matchText: "مِنْ إِنْدُونِيسِيَا." }
-  ],
-  "48402": [
-    { ruleId: "al-tarif-01", matchText: "الْمُدَرِّسُ" }
-  ],
-  "59e30a8a-e400-4380-8adf-89e811852a1d": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "schams-qamar-01", matchText: "الثَّلَّاجَةِ." },
-    { ruleId: "tanwin-01", matchText: "لَحْمٌ" }
+    { ruleId: "schams-qamar-merkhilfe-01", matchText: "الطَّالِبُ" }
   ],
   "0f311405-7349-450c-885e-e3abefb6fbf3": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "hadha-al-kein-satz-01", matchText: "الْكِتَابُ" },
-    { ruleId: "harf-jarr-li-01", matchText: "لِلْوَلَدِ." }
+    { ruleId: "li-al-lil-01", matchText: "لِلْوَلَدِ." }
   ],
-  "0e23a52d-e2f5-4a57-9082-58eb9f362d88": [
-    { ruleId: "al-tarif-01", matchText: "الْبَيْتُ" },
-    { ruleId: "tanwin-01", matchText: "كَبِيرٌ" }
-  ],
-  "397cfa89-5bc0-4ce7-ae45-30fe8ea64fe2": [
-    { ruleId: "al-tarif-01", matchText: "الْبَيْتِ:" },
-    { ruleId: "tanwin-01", matchText: "اسْمٌ" }
-  ],
-  "36e01b96-9367-4f09-acaf-31a82bdcf061": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "مُهَنْدِسٌ" }
-  ],
-  "65699a81-0913-4e3c-9d5d-fa750d972779": [
-    { ruleId: "tanwin-01", matchText: "«بَيْتٌ" }
+  "69179bbf-faa9-4b2a-859c-9e5f3d76b98c": [
+    { ruleId: "ya-nida-01", matchText: "يَا وَلَدُ!" }
   ],
   "c73787a3-8f9c-4033-b1ff-5644f34995d3": [
-    { ruleId: "al-tarif-01", matchText: "الْبَيْتِ»:" },
-    { ruleId: "harf-jarr-01", matchText: "فِي «بَابُ" }
-  ],
-  "d3cca272-90df-4963-a3dd-2653d009a77d": [
-    { ruleId: "tanwin-01", matchText: "كِتَابٌ" }
+    { ruleId: "huwa-hiya-01", matchText: "هُوَ" },
+    { ruleId: "mudaf-01", matchText: "«بَابُ" },
+    { ruleId: "idafa-zweitglied-01", matchText: "الْبَيْتِ" }
   ],
   "c623f2fb-57a5-48b6-b176-55df461b2ada": [
-    { ruleId: "tanwin-01", matchText: "جَرٍ" }
+    { ruleId: "huwa-hiya-01", matchText: "هِيَ" }
+  ],
+  "0e23a52d-e2f5-4a57-9082-58eb9f362d88": [
+    { ruleId: "mubtada-khabar-01", matchText: "الْبَيْتُ" }
   ]
 };
