@@ -199,3 +199,143 @@ In diesem Lauf hatte das keine praktische Auswirkung, weil es nichts einzupflege
    Grammatik-Input ist derzeit ohnehin durch die fehlenden Transkripte (Folgen
    03–13) limitiert. Ehrlich priorisiert: erst 1 und 2, danach werden 3 und 4
    relevant.
+
+## 2026-07-27 13:00 – Wöchentliche Wartung (So-Check)
+
+(Zeitangabe = geplanter Slot der Aufgabenplanung; die Routine hat in dieser
+Umgebung keinen erlaubten Weg, die Systemuhr zu lesen.)
+
+Ergebnis vorweg: **inhaltlich keine Änderung nötig** — aber der blockierende
+Befund des Vormittagslaufs ist behoben, dieser Lauf konnte erstmals wirklich
+pullen und committen.
+
+**Schritt 0 – Repo aktualisieren: ERFOLGREICH.** `git pull --ff-only` →
+`Already up to date.` Der im 08:04-Eintrag beschriebene Berechtigungs-Blocker
+(`git -C <pfad> …` passte auf kein `allowedTools`-Muster) **tritt nicht mehr
+auf**: der Prompt schreibt Git-Befehle jetzt schlicht ohne `-C`, und das
+Arbeitsverzeichnis ist bereits `F:\Workspace\Vokabeltrainer`. Vorschlag 1 des
+letzten Laufs ist damit erledigt.
+
+**Schritt 1 – Neue Aufzeichnungen:** `get_recordings` liefert 13 Folgen, höchste
+weiterhin **Folge 13 „MB1 Kapitel 9"** (https://youtu.be/17i1khFi7GY,
+2026-07-26). Deckt sich exakt mit `transcripts/backlog.md` — **keine neue
+Folge**. Nur die Kopfzeile („Zuletzt geprüft") aktualisiert, Tabelle unverändert;
+offen bleiben Folgen 03–13. Es wurde **kein** Transkript abgerufen und **keine**
+Grammatikregel bestätigt — in dieser Umgebung technisch unmöglich (kein Browser,
+kein WebFetch); `get_recordings` liefert nur Metadaten.
+
+**Schritt 2 – Neu freigeschaltete Kapitel:** `get_unlocked_chapters` liefert
+`madina-1-chapter-1` bis `-9`, unverändert. `vocab-data.js` deckt Kapitel 1–9
+vollständig ab. **Keine neu freigeschalteten Kapitel, nichts einzupflegen.**
+
+**Schritt 3 – Wort-Diff innerhalb Kapitel 1–9 (`get_vocabulary_by_book("madina-1")`):**
+Vollständig neu durchgeführt (nicht aus dem Vormittagslauf übernommen): die
+arabicroots-Antwort wurde Eintrag für Eintrag gelesen bis Kapitel 10 beginnt,
+`vocab-data.js` komplett von Zeile 1 bis `];` gegengelesen.
+- arabicroots, Kapitel 1–9: **149 Einträge** (45751–45898 lückenlos + der
+  Nachzügler 48402 in Kapitel 9, `vocab_position` 25).
+- `vocab-data.js`: **149 Einträge mit `source: "vocabulary"`**, dieselben IDs in
+  derselben Reihenfolge, dazu 11 `personal_vocabulary`-Einträge (160 gesamt).
+- **Fehlende Wörter: keine (0).**
+- **Wörter in der App, die es in arabicroots nicht mehr gibt: keine (0).**
+- **Inhaltliche Änderungen (Übersetzung / Plural / Verbformen): keine (0).**
+  `german`↔`de`, `plural`↔`pl`, `word_type`↔`type`, `gender`,
+  `feminine_singular`↔`femSg`, `feminine_plural`↔`femPl` stimmen bei allen 149
+  Paaren überein. Verbfelder in Kapitel 1–9 durchgehend `null` (erster
+  Verb-Eintrag in madina-1 ist 45903 أَحَبَّ in Kapitel 11, außerhalb des
+  freigeschalteten Bereichs).
+- Zusatzbeleg, dass sich quellseitig nichts bewegt hat: alle 149 Einträge tragen
+  weiterhin `created_at` vom 2026-05-12.
+- Wegen des GATE wären neue Vokabeln ohnehin nicht eingepflegt worden — es gab
+  aber schlicht keine. **Die Liste „was einzupflegen wäre, sobald der
+  PROGRESS-Bug behoben ist" ist für Kapitel 1–9 weiterhin leer.**
+
+**Schritt 3b – Prüfpunkte für Elias (unverändert, bewusst NICHT angefasst):**
+Die drei im 08:04-Eintrag beschriebenen systematischen Abweichungen bestehen
+fort und sind erneut bestätigt — es sind Eigenheiten des ursprünglichen Imports,
+keine arabicroots-Änderungen: (1) `sg` fehlt bei 23 Einträgen mit echtem
+`singular` in der Quelle, echter Ausreißer bleibt لَبَنٌ (`pl: "أَلْبَان"`, aber
+`sg: null`) sowie die Gegenprobe مِكْوَاةٌ (`sg` gesetzt, `pl` leer); (2) `root`
+fehlt bei 10 Partikeln, deren „Wurzeln" in arabicroots teils maschinell aus den
+Buchstaben erzeugt wirken (م ن für مِنْ, ا ن für الآنَ) — weiter **nicht**
+übernommen, das wäre gegen E.1; (3) Plural-Trennzeichen `|` (arabicroots) vs.
+` / ` (App) bei 6 Einträgen — bewusste Anzeige-Normalisierung, kein Diff.
+Neu ergänzt zu Punkt 3: dasselbe ` / `-Muster steht auch bei بَيْتٌ, dort liefert
+arabicroots es allerdings schon selbst als `بُيُوتٌ / أَبْيَاتٌ` — die Quelle ist
+in der Wahl des Trennzeichens also selbst uneinheitlich. Für das
+Validierungsskript (E.2) heißt das: beide Trennzeichen tolerieren, nicht auf eins
+normieren wollen.
+
+**Schritt 4 – Samsung Notes:** `list_export_status` liefert weiterhin eine
+**leere Liste**. Handschrift-Abgleich übersprungen, kein Export erzeugt (in
+dieser Umgebung nicht möglich). Ursache unverändert wie im Goal-Prompt
+beschrieben: nur eine der drei PDFs in `F:\Workspace\SamsungNotes-Export\` trägt
+den erwarteten UUID-Dateinamen, `export-index.json` stammt vom 22.07.
+
+**Schritt 5 – Lernstand (nur Beobachtung, keine Code-Änderung):**
+- `get_weak_vocabulary` (<50%) ist weiterhin klar von **bayna-yadayk-2**
+  dominiert, gefolgt von bayna-yadayk-1 und madina-2 — durchweg Bücher, die die
+  App nicht abdeckt. Bestätigt die Scope-Entscheidung erneut.
+- Aus dem abgedeckten Bereich (madina-1, Kapitel 1–9) sind unverändert **6**
+  Wörter schwach — und alle sechs haben sehr hohe Versuchszahlen:
+  قَصِيرٌ (K3, 44% / 165 Versuche), جَالِسٌ (K3, 48% / 130), شَرْقٌ (K6, 47% / 93),
+  نَاقَةٌ (K7, 49% / 80), عُصْفُورٌ (K9, 48% / 56), مِرْوَحَةٌ (K9, 36% / 44).
+  Kapitel 3 und Kapitel 9 stellen wieder je zwei davon. Keine Verbesserung
+  gegenüber dem Vormittagslauf; مِرْوَحَةٌ wurde zuletzt heute früh (04:44) geübt
+  und liegt trotzdem bei 36% — der schwächste Wert im gesamten App-Bestand.
+- Zusatzbefund am Rand: **مُفَتِّشٌ** (madina-1, **Kapitel 12**, 44%) taucht
+  ebenfalls in der Schwachliste auf. Elias übt auf arabicroots also bereits
+  Kapitel über die in der App freigeschalteten 1–9 hinaus. Das ist kein
+  Handlungsauftrag für diese Routine (Kapitel 12 ist laut
+  `get_unlocked_chapters` nicht freigeschaltet, und das GATE steht), aber ein
+  Hinweis, dass die App dem tatsächlichen Lernstand hinterherhängt.
+- `get_personal_vocabulary` liefert **11 Einträge — alle 11 bereits in
+  `vocab-data.js`** (IDs identisch, `chapter: "personal"`). Keine neue eigene
+  Vokabel (jüngster `created_at`: 2026-07-12). Vier davon sind gleichzeitig
+  schwach: أَلْمُهَنْدِسٌ (0 von 7), لَحْمٌ (0 von 5), إِثْنَانِ (3 von 18),
+  اِسْمٌ مَجْرُورٌ (1 von 3). أَلْمُهَنْدِسٌ und لَحْمٌ wurden **noch nie richtig
+  beantwortet**.
+
+**Schritt 6 – QS:** Entfällt inhaltlich. Weder `vocab-data.js` noch
+`grammar-data.js` geändert, daher **kein `CACHE_NAME`-Bump** (bleibt v8). Beim
+vollständigen Lesen von `vocab-data.js` trotzdem geprüft: keine doppelten
+`id`-Werte (149 numerische IDs streng aufsteigend + 11 eindeutige UUIDs), keine
+kaputten Anführungszeichen oder Kommas aufgefallen, Datei endet sauber mit `];`.
+
+**Schritt 7 – Commit/Push: AUSGEFÜHRT.** Nur dieser Log-Eintrag; `.gitignore`
+bewusst nicht mitcommittet (dort liegt Elias' unabhängige offene Änderung). Die
+Änderung an `transcripts/backlog.md` ist per `.gitignore` ausgeschlossen und
+bleibt lokal.
+
+**GATE-Status:** Der Satz in `Automation\prompts\vokabeltrainer-wartung.md` steht
+unverändert — der **PROGRESS-Bug (Goal-Prompt A.1) gilt weiter als nicht
+behoben**. Praktische Auswirkung in diesem Lauf: keine, es gab nichts
+einzupflegen.
+
+**Vorschläge für die nächste interaktive Session (priorisiert):**
+1. **PROGRESS-Bug (A.1) + Lernmodus-Bug (A.2) — jetzt ohne Ausrede.** Der
+   Git-Blocker aus dem Vormittagslauf ist weg, die Datenseite für Kapitel 1–9 ist
+   zum zweiten Mal in Folge nachweislich vollständig und aktuell. Der Engpass ist
+   zu 100% App-Logik. Solange keine neuen Kapitel freigeschaltet werden, liefert
+   diese Wartungsroutine inhaltlich nichts Neues — jede weitere Stunde ist in
+   A.1/A.2 besser investiert als hier.
+2. **„Dauerbrenner"-Filter im Lernmodus (klein, datengetrieben, direkt nach A.2).**
+   Die sechs schwachen madina-1-Wörter haben zusammen **568 Versuche** bei
+   durchgehend <50% Trefferquote — قَصِيرٌ allein 165. Ein Filter „viele Versuche
+   UND <50% bevorzugt zeigen" ist ein paar Zeilen Code, braucht keine neuen Daten
+   und wirkt sofort messbar. Deutlich billiger als die Kasus-Engine (C.1/C.2) und
+   der beste Kandidat für „kleiner Gewinn nach den Bugfixes".
+3. **Wenn A.1 steht: Kapitel 10–12 nachziehen, bevor die volle Spiegelung
+   angegangen wird.** مُفَتِّشٌ aus Kapitel 12 in der Schwachliste zeigt, dass
+   Elias auf arabicroots schon weiter ist als die App. Kapitel 10–12 sind
+   zusammen nur ~8 Vokabeln (45899–45906) — ein sehr kleiner Schritt, der
+   zugleich den **ersten Verb-Eintrag** ins Datenmodell bringt (45903 أَحَبَّ,
+   Kapitel 11) und damit die Felder `verb_past`/`verb_present`/
+   `verb_imperative`/`verbal_noun` das erste Mal echt testet, bevor madina-2/3
+   mit hunderten Verben kommen. Achtung: diese Kapitel sind laut
+   `get_unlocked_chapters` **nicht** freigeschaltet — das ist eine bewusste
+   Entscheidung für Elias, keine Aufgabe für diese Routine.
+4. **Weiterhin nicht dringend: Samsung-Notes-Export.** Der Abgleich fällt in
+   jedem Lauf aus, liefert aber auch bei funktionierendem Export nur
+   Grammatik-Input — und der ist ohnehin durch die fehlenden Transkripte
+   (Folgen 03–13) limitiert. Ehrlich: erst 1 und 2.
