@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vokabeltrainer-v14';
+const CACHE_NAME = 'vokabeltrainer-v16';
 const ASSETS = [
   './',
   './index.html',
@@ -7,13 +7,26 @@ const ASSETS = [
   './surah-data.js',
   './grammar-data.js',
   './quran-frequency-data.js',
+  './quran-text.js',
   './manifest.json',
   './icon.svg',
   './icon-maskable.svg'
 ];
 
+/* Jede Datei einzeln ablegen statt per addAll: addAll ist alles-oder-nichts -
+   scheitert eine einzige Anfrage, bleibt der Cache komplett leer und die App
+   ist offline unbenutzbar. Einzeln abgelegt fehlt im schlechtesten Fall eine
+   Datei, der Rest steht. Was nicht geklappt hat, holt der fetch-Handler beim
+   naechsten Aufruf nach. */
 self.addEventListener('install', (e)=>{
-  e.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(ASSETS)));
+  e.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache=>Promise.allSettled(ASSETS.map(a=>cache.add(a))))
+      .then(ergebnisse=>{
+        const fehler = ergebnisse.filter(r=>r.status==='rejected').length;
+        if (fehler) console.warn(`[sw] ${fehler} von ${ASSETS.length} Dateien nicht vorab gecacht`);
+      })
+  );
   self.skipWaiting();
 });
 
