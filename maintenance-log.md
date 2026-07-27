@@ -522,3 +522,83 @@ Abschnitt C begonnen wird (so verlangt es E.7 ohnehin).
 Satz-Modus) — beide profitieren direkt vom neuen Motion-System. Danach als
 eigener Block: `app.js` in Module aufteilen (E.7) und erst dann C.1/C.2
 (Kasus-Engine) beginnen.
+
+## 2026-07-27 – Zurück-Navigation, neues Logo, zwei Layout-Fixes
+
+Alles auf Elias' Meldungen am Gerät zurückgehend, nicht aus einer Routine.
+
+**BUG (von Elias gemeldet): Zurück-Taste warf aus der Lernrunde bzw. aus der App.**
+Sein Ablauf: mitten in einer Runde in die Einstellungen wechseln, dann zurück.
+Mit dem App-Pfeil landete er auf der Startseite, die Runde war weg; mit der
+Zurück-Taste des Handys verließ er die App komplett.
+
+Ursache war für beide Symptome dieselbe: **die App führte überhaupt keine
+Navigationshistorie.** `showScreen()` schaltete nur CSS-Klassen um, der Browser
+kannte nur einen einzigen Zustand. Für die Gerätetaste bedeutete „zurück"
+deshalb „Seite verlassen", und der App-Pfeil war fest auf `data-nav="home"`
+verdrahtet statt auf „einen Schritt zurück".
+
+Behoben durch eine echte Historie:
+- Jeder Bildschirmwechsel legt einen `history.pushState`-Eintrag mit Tiefenzähler
+  an; ein `popstate`-Empfänger navigiert innerhalb der App statt sie zu verlassen.
+- Alle Zurück-Pfeile in den Kopfzeilen nutzen jetzt `data-back` und gehen einen
+  echten Schritt zurück, statt stur zur Startseite zu springen.
+- Der Lernbildschirm setzt eine laufende Runde an derselben Karte fort, statt sie
+  neu zu starten. Dafür trägt `SESSION` jetzt ein `fertig`-Kennzeichen.
+- Das X im Lernbildschirm beendet die Runde bewusst — danach startet „Lernen"
+  wieder von vorn. Eine beendete Runde ersetzt ihren Historieneintrag, damit die
+  Zurück-Taste nicht auf einer Runde landet, die es nicht mehr gibt.
+- Gleiches Verhalten im Quran-Reader: die Versliste ist eine eigene Ebene, erst
+  danach verlässt man den Bildschirm.
+
+*Gemessen nachgewiesen:* Runde starten → zwei Karten beantworten → Einstellungen →
+zurück (einmal per App-Pfeil, einmal per `history.back()` wie die Hardware-Taste)
+→ beide Male zurück im Lernbildschirm, Position 2, identische Karte, App nicht
+verlassen. Dazu Mehrfach-Verschachtelung (Home → Kategorien → Wortliste → zweimal
+zurück, Tiefenzähler 2→1→0), beendete Runde (Zurück führt nicht auf eine tote
+Runde), X beendet wirklich, und Fortsetzen nach einem Abstecher in die Statistik.
+
+**Neues App-Icon: عِلْم („Wissen") in Amiri.**
+Das alte Icon war ein `<text>`-Element mit `font-family="Amiri"` — ohne
+eingebettete Schrift, also auf jedem Gerät ohne diese Schrift ein anderer
+Buchstabe. Das neue besteht aus reinen Vektorpfaden.
+
+Technisch interessant: Arabische Buchstaben ändern je nach Position ihre Form.
+Statt eine Shaping-Engine zu brauchen, greifen die Pfade direkt auf die
+Unicode-Presentation-Forms (U+FE70–FEFF) zu, wo jede Position einen eigenen
+Codepoint hat; mit den echten Vorschubbreiten aus der `hmtx`-Tabelle
+nebeneinandergesetzt verbinden sich die Buchstaben korrekt. Der TTF-Parser dafür
+liegt im Scratchpad, nicht im Repo — im Repo landen nur die fertigen Pfade.
+
+Die Wortwahl ist kein Zufall: عِلْم ist gleichzeitig die Wurzel ع-ل-م, die in
+تَعَلَّمْ steckt und die die App als Wortstämme-Ansicht schon abbildet.
+
+Zwei Dateien statt einer: `icon.svg` ist rund mit durchsichtigen Ecken (purpose
+`any`), `icon-maskable.svg` vollflächig (purpose `maskable`), weil Launcher dort
+selbst eine Form ausschneiden und Löcher in den Ecken sonst sichtbar wären. Die
+Wortgröße ist nicht geschätzt, sondern aus dem tatsächlich äußersten Punkt der
+Buchstaben berechnet: exakt Radius 205, die Sicherheitszone maskierbarer Icons.
+
+**Layout-Fix 1 (von Elias gemeldet): Quran-Badge hing neben der Karte.**
+Auf 575 px stand „241× im Quran" 44 px rechts *neben* der Lernkarte. `.card-stage`
+spannte die volle Breite, die Karte ist aber auf 420 px begrenzt und zentriert —
+absolut positionierte Kinder richteten sich deshalb am Bildschirm aus. Bühne auf
+Kartenbreite begrenzt; gemessen bei 575 und 360 px sitzt das Badge jetzt 12 px
+innerhalb der Kartenkante, kein Querüberstand auf irgendeinem Screen.
+
+**Layout-Fix 2 (von Elias gemeldet): Streak-Badge nicht zentriert.**
+Zwei getrennte Ursachen. Senkrecht: die Textzeile war höher als die Glyphe, das
+SVG daneben nicht — `line-height:1` gesetzt, und die Flamme als Strich-Icon neu
+gezeichnet (sie war als einzige gefüllt und überlagerte sich zu einem Klumpen).
+Waagerecht: `justify-content:space-between` verteilt nach Inhaltsbreite, und der
+Schriftzug links ist mit 116 px fast dreimal so breit wie das Zahnrad rechts —
+das Badge saß 38 px rechts der Mitte. Kopfzeile auf ein Dreispalten-Raster
+umgestellt, Abweichung jetzt 0 bei 360 und 575 px.
+
+`validate.js` sauber (prüft mit, dass die neue Icon-Datei existiert),
+`CACHE_NAME` auf v12.
+
+**Nächster sinnvoller Schritt:** unverändert Abschnitt B (Swipe überall,
+Beispielsatz-Knopf), danach E.7. Offen aus dieser Session: die Wortmarke
+طالِب العِلْم für den App-Kopf ist gebaut, aber noch nicht eingebaut — Elias hat
+bisher nur über das Icon entschieden.
