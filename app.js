@@ -178,8 +178,16 @@ function animateNumber(el, to, suffix, dur){
   })(performance.now());
 }
 
-/* ===================== Navigation ===================== */
-function showScreen(name){
+/* ===================== Navigation =====================
+   Jeder Bildschirmwechsel legt einen Eintrag in der Browser-Historie ab.
+   Ohne das kannte der Browser nur EINEN Zustand: die Zurueck-Taste des Handys
+   hat dann die ganze App verlassen, statt einen Schritt zurueckzugehen - und
+   eine laufende Lernrunde war weg. */
+function zeigeBildschirm(name){
+  /* Lernbildschirm ohne laufende Runde ergibt keinen Sinn (z.B. wenn man per
+     Zurueck-Taste dorthin zurueckkehrt, nachdem die Runde beendet wurde). */
+  if (name === 'learn' && !(SESSION.words.length && !SESSION.fertig)) name = 'home';
+
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   const el = document.getElementById('screen-'+name);
   if (el) el.classList.add('active');
@@ -188,6 +196,7 @@ function showScreen(name){
   const navName = navMap[name] || name;
   document.querySelectorAll(`.nav-btn[data-nav="${navName}"]`).forEach(b=>b.classList.add('active'));
   if (name==='home') renderHome();
+  if (name==='learn') renderCard();          // laufende Runde an derselben Karte fortsetzen
   if (name==='categories') renderCategories();
   if (name==='sentences') openSentences();
   if (name==='quran') renderQuranList();
@@ -195,13 +204,50 @@ function showScreen(name){
   if (name==='stats') renderStats();
   if (name==='settings') renderSettings();
   window.scrollTo(0,0);
+  return name;
+}
+
+function showScreen(name, opt){
+  opt = opt || {};
+  const aktiv = document.querySelector('.screen.active');
+  const schonDa = !!aktiv && aktiv.id === 'screen-' + name;
+  const gezeigt = zeigeBildschirm(name);
+
+  if (opt.ausHistorie) return;               // von popstate ausgeloest, nichts ablegen
+  const tiefe = (history.state && typeof history.state.tiefe === 'number') ? history.state.tiefe : 0;
+  if (opt.ersetzen || schonDa){
+    history.replaceState({ screen: gezeigt, tiefe }, '');
+  } else {
+    history.pushState({ screen: gezeigt, tiefe: tiefe + 1 }, '');
+  }
+}
+
+/* Zurueck-Taste des Geraets: innerhalb der App navigieren statt sie zu verlassen. */
+window.addEventListener('popstate', (e)=>{
+  const ziel = (e.state && e.state.screen) || 'home';
+  showScreen(ziel, { ausHistorie: true });
+});
+
+/* Der Zurueck-Pfeil in der App verhaelt sich genauso wie die Geraetetaste -
+   er geht einen Schritt zurueck, nicht stur zur Startseite. */
+function geheZurueck(){
+  const tiefe = (history.state && history.state.tiefe) || 0;
+  if (tiefe > 0) history.back();
+  else showScreen('home', { ersetzen: true });
 }
 
 document.addEventListener('click', (e)=>{
+  if (e.target.closest('[data-back]')){ geheZurueck(); return; }
   const navBtn = e.target.closest('[data-nav]');
   if (navBtn){
     const target = navBtn.dataset.nav;
-    if (target === 'learn-entry') { startLearningSession(); return; }
+    if (target === 'learn-entry'){
+      /* Laufende Runde fortsetzen statt neu zu starten - sonst geht der
+         Fortschritt der aktuellen Runde verloren, sobald man kurz woanders war. */
+      if (SESSION.words.length && !SESSION.fertig) showScreen('learn');
+      else startLearningSession();
+      return;
+    }
     showScreen(target);
   }
   const chBtn = e.target.closest('[data-chfilter]');
@@ -257,16 +303,15 @@ function renderChapterFilterChips(){
 }
 
 /* ===================== LEARN / FLASHCARDS ===================== */
-let SESSION = { words:[], idx:0 };
+let SESSION = { words:[], idx:0, dirs:[], fertig:true };
 
 function startLearningSession(){
   let words = currentPool();
   if (words.length === 0){ toast(SETTINGS.wrongOnly ? 'Keine schwachen Wörter mit dieser Auswahl – stark!' : 'Nichts fällig – schau später wieder vorbei.'); showScreen('home'); return; }
   const size = SETTINGS.sessionSize;
   if (size < words.length) words = words.slice(0, size);
-  SESSION = { words, idx:0, dirs:[] };
+  SESSION = { words, idx:0, dirs:[], fertig:false };
   showScreen('learn');
-  renderCard();
 }
 
 function cardDirection(idx){
@@ -391,7 +436,11 @@ document.getElementById('btnSpeakWord').addEventListener('click', (e)=>{
   e.stopPropagation();
   speakArabic(SESSION.words[SESSION.idx].ar);
 });
-document.getElementById('btnExitLearn').addEventListener('click', ()=> showScreen('home'));
+/* Das X beendet die Runde bewusst - danach startet "Lernen" wieder eine neue. */
+document.getElementById('btnExitLearn').addEventListener('click', ()=>{
+  SESSION.fertig = true;
+  showScreen('home', { ersetzen: true });
+});
 
 /* ---------- Swipe-Gesten (rechts=richtig, links=falsch) ---------- */
 (function setupSwipe(){
@@ -463,8 +512,12 @@ function answer(correct){
       renderCard();
     } else {
       document.getElementById('learnProgressFill').style.width = '100%';
+      SESSION.fertig = true;
       toast('Runde geschafft!');
-      setTimeout(()=>showScreen('home'), 900);
+      /* Beendete Runde ersetzt den Lern-Eintrag in der Historie, statt einen
+         neuen anzulegen - sonst landet die Zurueck-Taste auf einer Runde,
+         die es nicht mehr gibt. */
+      setTimeout(()=>showScreen('home', { ersetzen: true }), 900);
     }
   }
 
@@ -621,7 +674,7 @@ function openWordList(key){
   document.getElementById('personalVocabAddForm').style.display = key==='chapter:personal' ? 'flex' : 'none';
   showScreen('wordlist');
 }
-document.getElementById('btnWordlistBack').addEventListener('click', ()=>showScreen('categories'));
+document.getElementById('btnWordlistBack').addEventListener('click', geheZurueck);
 document.getElementById('btnAddPersonalVocab').addEventListener('click', ()=>{
   const ar = document.getElementById('pvAr').value.trim();
   const de = document.getElementById('pvDe').value.trim();
@@ -801,8 +854,10 @@ function renderSurahList(filter){
 
 document.getElementById('surahSearch').addEventListener('input', (e)=> renderSurahList(e.target.value));
 document.getElementById('btnQuranFullBack').addEventListener('click', ()=>{
+  /* Innerhalb des Readers ist die Versliste eine eigene Ebene: erst dorthin
+     zurueck, danach erst den Bildschirm verlassen. */
   if (!document.getElementById('verseList').classList.contains('hidden')) renderSurahList(document.getElementById('surahSearch').value);
-  else showScreen('home');
+  else geheZurueck();
 });
 document.getElementById('surahList').addEventListener('click', (e)=>{
   const hifzBtn = e.target.closest('[data-hifztoggle]');
@@ -954,5 +1009,6 @@ if ('serviceWorker' in navigator){
   });
 }
 
-renderHome();
-showScreen('home');
+/* Startzustand als Wurzel der Historie festschreiben. */
+history.replaceState({ screen:'home', tiefe:0 }, '');
+showScreen('home', { ersetzen: true });
