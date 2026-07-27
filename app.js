@@ -75,10 +75,21 @@ function saveCustomCats(){ LS.set('vt_customCats', CUSTOM_CATS); }
 function touchStreak(){
   let s = LS.get('vt_streak', {count:0,last:null});
   const t = todayStr(0), y = todayStr(-1);
+  const vorher = s.count;
   if (s.last === t) { /* schon heute gezaehlt */ }
   else if (s.last === y) { s.count += 1; s.last = t; }
   else { s.count = 1; s.last = t; }
   LS.set('vt_streak', s);
+  if (s.count !== vorher){
+    const badge = document.getElementById('streakBadge');
+    const zahl = document.getElementById('streakCount');
+    if (zahl) zahl.textContent = s.count;
+    if (badge && !REDUCED_MOTION){
+      badge.classList.remove('bump');
+      void badge.offsetWidth;
+      badge.classList.add('bump');
+    }
+  }
   return s;
 }
 function getStreak(){ return LS.get('vt_streak', {count:0,last:null}); }
@@ -132,6 +143,41 @@ function toast(msg){
   toast._t = setTimeout(()=>el.classList.remove('show'), 2200);
 }
 
+/* ---------- Darstellung: Icons und Bewegung ----------
+   Alle Icons kommen aus dem einen SVG-Sprite in index.html. Nie wieder Emoji
+   in generiertem Markup - sonst sieht die Haelfte der App anders aus als die
+   andere (je nach Geraet und Emoji-Font). */
+function icon(name, extraClass){
+  return `<svg class="ic${extraClass ? ' ' + extraClass : ''}" aria-hidden="true"><use href="#ic-${name}"/></svg>`;
+}
+
+/* Nutzer, die Animationen reduziert haben wollen, bekommen ueberall sofort den
+   Endzustand. Wird von allen JS-Animationen unten geprueft, das CSS hat dafuer
+   eine eigene prefers-reduced-motion-Regel. */
+const REDUCED_MOTION = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+/* Zahlen zaehlen hoch statt umzuspringen - kleine Geste, macht Home und
+   Statistik deutlich lebendiger. */
+function animateNumber(el, to, suffix, dur){
+  if (!el) return;
+  suffix = suffix || '';
+  dur = dur || 560;
+  const from = parseInt(String(el.textContent).replace(/\D/g,''), 10) || 0;
+  /* document.hidden: requestAnimationFrame feuert bei unsichtbarer Seite nicht
+     (Hintergrund-Tab, abgedecktes PWA-Fenster) - dann muss der Endwert sofort
+     stehen, sonst zeigt die Statistik dauerhaft 0. Der korrekte Wert darf nie
+     von einer Animation abhaengen. */
+  if (REDUCED_MOTION || from === to || document.hidden){ el.textContent = to + suffix; return; }
+  const start = performance.now();
+  el.textContent = from + suffix;
+  (function step(now){
+    const p = Math.min(1, (now - start) / dur);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(from + (to - from) * eased) + suffix;
+    if (p < 1) requestAnimationFrame(step);
+  })(performance.now());
+}
+
 /* ===================== Navigation ===================== */
 function showScreen(name){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -182,7 +228,7 @@ document.addEventListener('click', (e)=>{
 /* ===================== HOME ===================== */
 function renderHome(){
   const pool = currentPool();
-  document.getElementById('dueCount').textContent = pool.length;
+  animateNumber(document.getElementById('dueCount'), pool.length);
   document.getElementById('dueSub').textContent = pool.length
     ? `Sitzungsgröße: ${SETTINGS.sessionSize===9999?'alle':SETTINGS.sessionSize} Karten pro Runde${SETTINGS.wrongOnly?' · Nur falsche Wörter':''}`
     : (SETTINGS.wrongOnly ? 'Keine schwachen Wörter mit dieser Auswahl.' : 'Alles erledigt für heute – super gemacht.');
@@ -215,7 +261,7 @@ let SESSION = { words:[], idx:0 };
 
 function startLearningSession(){
   let words = currentPool();
-  if (words.length === 0){ toast(SETTINGS.wrongOnly ? 'Keine schwachen Wörter mit dieser Auswahl 🎉' : 'Nichts fällig – schau später wieder vorbei 🌙'); showScreen('home'); return; }
+  if (words.length === 0){ toast(SETTINGS.wrongOnly ? 'Keine schwachen Wörter mit dieser Auswahl – stark!' : 'Nichts fällig – schau später wieder vorbei.'); showScreen('home'); return; }
   const size = SETTINGS.sessionSize;
   if (size < words.length) words = words.slice(0, size);
   SESSION = { words, idx:0, dirs:[] };
@@ -314,14 +360,14 @@ function renderQuranFreqBadge(w){
   const root = w.root && (typeof QURAN_FREQ!=='undefined') ? w.root.replace(/\s+/g,'') : null;
   const freq = root && QURAN_FREQ[root];
   if (!freq){ badge.classList.add('hidden'); return; }
-  badge.textContent = `☪ ${freq.count}× im Quran`;
+  badge.innerHTML = `${icon('crescent')}<span>${freq.count}× im Quran</span>`;
   badge.classList.remove('hidden');
   badge.onclick = (e)=>{ e.stopPropagation(); openQuranFreqPopover(w, freq); };
 }
 
 function openQuranFreqPopover(w, freq){
   const shown = freq.verses.slice(0, 10);
-  document.getElementById('qfpTitle').textContent = `☪ ${w.ar} im Quran (${freq.count}×)`;
+  document.getElementById('qfpTitle').innerHTML = `${icon('crescent')} <span lang="ar" dir="rtl">${escapeHtml(w.ar)}</span> im Quran (${freq.count}×)`;
   document.getElementById('qfpList').innerHTML = shown.map(v=>`
     <div class="qfp-item"><span class="qfp-ref">${v.sura}:${v.ayah}</span> — ${v.surahName}</div>
   `).join('') + (freq.count > shown.length ? `<div class="qfp-note">Erste ${shown.length} von ${freq.count} Fundstellen</div>` : '');
@@ -390,6 +436,9 @@ document.getElementById('btnExitLearn').addEventListener('click', ()=> showScree
 })();
 
 function answer(correct){
+  /* Schutz gegen Doppelauslösung: waehrend das Antwort-Feedback laeuft, wird ein
+     zweiter Klick/Swipe ignoriert - sonst ueberspringt die Runde eine Karte. */
+  if (answer._busy) return;
   const w = SESSION.words[SESSION.idx];
   const p = PROGRESS[w.id];
   if (correct){
@@ -403,14 +452,29 @@ function answer(correct){
   saveProgress();
   touchStreak();
 
-  if (SESSION.idx < SESSION.words.length-1){
-    SESSION.idx++;
-    renderCard();
-  } else {
-    document.getElementById('learnProgressFill').style.width = '100%';
-    toast('Runde geschafft! 🎉');
-    setTimeout(()=>showScreen('home'), 900);
+  const card = document.getElementById('flashcard');
+  const feedback = correct ? 'answer-right' : 'answer-wrong';
+
+  function weiter(){
+    answer._busy = false;
+    card.classList.remove('answer-right','answer-wrong');
+    if (SESSION.idx < SESSION.words.length-1){
+      SESSION.idx++;
+      renderCard();
+    } else {
+      document.getElementById('learnProgressFill').style.width = '100%';
+      toast('Runde geschafft!');
+      setTimeout(()=>showScreen('home'), 900);
+    }
   }
+
+  if (REDUCED_MOTION){ weiter(); return; }
+  /* Kurzes Farbsignal auf der Karte, bevor die naechste kommt: gruener Rahmen
+     bei richtig, roter bei falsch. Bewusst kurz gehalten, damit der Lernfluss
+     nicht ausgebremst wird. */
+  answer._busy = true;
+  card.classList.add(feedback);
+  setTimeout(weiter, 210);
 }
 document.getElementById('btnRight').addEventListener('click', ()=>answer(true));
 document.getElementById('btnWrong').addEventListener('click', ()=>answer(false));
@@ -464,8 +528,9 @@ function renderChapterCats(){
   const html = chapters.map(ch=>{
     const words = VOCAB_DATA.filter(w=>w.chapter===ch);
     const name = CHAPTER_NAMES[ch] || `Kapitel ${ch}`;
+    const label = ch==='personal' ? `${icon('note')}<span>${name}</span>` : `<span>Kap. ${ch} — ${name}</span>`;
     return `<div class="list-row" data-openlist="chapter:${ch}">
-      <div class="list-row-title">${ch==='personal'?'📝 ':`Kap. ${ch} — `}${name}</div>
+      <div class="list-row-title">${label}</div>
       <div class="list-row-count">${words.length}</div>
     </div>`;
   }).join('');
@@ -477,16 +542,16 @@ function renderRootCats(){
   const entries = Object.entries(roots).filter(([r,ids])=>ids.length>=2).sort((a,b)=>b[1].length-a[1].length);
   document.getElementById('catPane-roots').innerHTML = entries.map(([root,ids])=>`
     <div class="list-row" data-openlist="root:${root}">
-      <div class="list-row-title"><span class="ar">${root}</span>${ids.length} verwandte Wörter</div>
+      <div class="list-row-title"><span class="ar">${root}</span><span>${ids.length} verwandte Wörter</span></div>
       <div class="list-row-count">${ids.length}</div>
-    </div>`).join('') || '<p style="color:var(--text-dim)">Noch keine Wurzel-Gruppen mit mehreren Wörtern.</p>';
+    </div>`).join('') || '<div class="empty-state">Noch keine Wurzel-Gruppen mit mehreren Wörtern.</div>';
 }
 
 function renderCustomCats(){
   const box = document.getElementById('customCatList');
   box.innerHTML = CUSTOM_CATS.map(cat => `
     <div class="custom-cat-box" data-catid="${cat.id}">
-      <div class="cat-title"><span data-openlist="cat:${cat.id}">${cat.name} (${cat.wordIds.length})</span><button data-delcat="${cat.id}">Löschen</button></div>
+      <div class="cat-title"><span data-openlist="cat:${cat.id}">${cat.name} (${cat.wordIds.length})</span><button data-delcat="${cat.id}">${icon('trash')}Löschen</button></div>
       <div class="chips-wrap" data-dropzone="${cat.id}">
         ${cat.wordIds.map(id=>{ const w=byId(id); if(!w) return ''; return `<span class="word-chip" draggable-id="${id}">${w.ar}<span class="weak-de">(${w.de})</span></span>`; }).join('')}
       </div>
@@ -552,7 +617,7 @@ function openWordList(key){
       <div><div class="wl-ar">${w.ar}</div><div class="wl-de">${w.de}</div></div>
       <span class="wl-box">Box ${PROGRESS[w.id]?PROGRESS[w.id].box:1}</span>
     </div>
-  `).join('') || '<p style="color:var(--text-dim)">Keine Wörter in dieser Kategorie.</p>';
+  `).join('') || '<div class="empty-state">Keine Wörter in dieser Kategorie.</div>';
   document.getElementById('personalVocabAddForm').style.display = key==='chapter:personal' ? 'flex' : 'none';
   showScreen('wordlist');
 }
@@ -568,7 +633,7 @@ document.getElementById('btnAddPersonalVocab').addEventListener('click', ()=>{
   document.getElementById('pvDe').value = '';
   document.getElementById('pvSentAr').value = '';
   document.getElementById('pvSentDe').value = '';
-  toast('Vokabel hinzugefügt ✓');
+  toast('Vokabel hinzugefügt');
   openWordList('chapter:personal');
 });
 
@@ -703,14 +768,14 @@ gramToggleBtn.addEventListener('click', ()=>{
 function renderQuranList(){
   const words = VOCAB_DATA.filter(w=>w.quran);
   document.getElementById('quranList').innerHTML = words.map(w=>`
-    <div class="word-list-item" style="flex-direction:column;align-items:flex-start;gap:8px;">
-      <div style="display:flex;justify-content:space-between;width:100%;">
+    <div class="word-list-item quran-word-item">
+      <div class="quran-word-head">
         <div class="wl-ar">${w.ar}</div><div class="wl-de">${w.de}</div>
       </div>
-      <div style="font-family:var(--font-ar);direction:rtl;font-size:1.15rem;color:#fff;width:100%;text-align:right;">${w.quran.ar}</div>
-      <div style="font-size:.78rem;color:var(--text-dim);">${w.quran.surah} ${w.quran.ayah} — ${w.quran.de||''}</div>
+      <div class="quran-word-verse" lang="ar" dir="rtl">${w.quran.ar}</div>
+      <div class="quran-word-ref">${w.quran.surah} ${w.quran.ayah}${w.quran.de ? ' — ' + w.quran.de : ''}</div>
     </div>
-  `).join('');
+  `).join('') || '<div class="empty-state">Noch keine geprüften Quran-Bezüge.</div>';
 }
 
 /* ===================== FULL QURAN READER ===================== */
@@ -730,8 +795,8 @@ function renderSurahList(filter){
     <div class="surah-row" data-opensurah="${s.id}">
       <div class="sr-num">${s.id}</div>
       <div class="sr-mid"><div class="sr-ar">${s.ar}</div><div class="sr-name">${s.name} · ${s.verses} Verse</div></div>
-      <button class="hifz-check${HIFZ[s.id]?' on':''}" data-hifztoggle="${s.id}">✓</button>
-    </div>`).join('') || '<p style="color:var(--text-dim)">Keine Sure gefunden.</p>';
+      <button class="hifz-check${HIFZ[s.id]?' on':''}" data-hifztoggle="${s.id}" aria-label="Als auswendig markieren">${icon('check')}</button>
+    </div>`).join('') || '<div class="empty-state">Keine Sure gefunden.</div>';
 }
 
 document.getElementById('surahSearch').addEventListener('input', (e)=> renderSurahList(e.target.value));
@@ -762,7 +827,16 @@ async function openSurah(id){
   vList.classList.remove('hidden');
 
   if (VERSE_CACHE[id]){ renderVerses(id); return; }
-  vList.innerHTML = '<div class="verse-loading">Lade Verse von quran.com…</div>';
+  /* Skeleton-Platzhalter in Versform statt nackter Textzeile - die Seite
+     "steht" sofort, auch wenn quran.com noch laedt. */
+  vList.innerHTML =
+    '<div class="verse-loading">Lade Verse von quran.com…</div>' +
+    Array.from({length:5}, ()=>`
+      <div class="verse-skeleton">
+        <div class="skeleton sk-line" style="width:54px;height:18px;"></div>
+        <div class="skeleton sk-line sk-ar"></div>
+        <div class="skeleton sk-line sk-de"></div>
+      </div>`).join('');
   try{
     let verses = [], page = 1, totalPages = 1;
     do{
@@ -799,18 +873,32 @@ function renderStats(){
   const acc = (totalCorrect+totalWrong) ? Math.round(100*totalCorrect/(totalCorrect+totalWrong)) : 0;
 
   document.getElementById('statsGrid').innerHTML = `
-    <div class="stat-card"><div class="v">${total}</div><div class="l">Vokabeln gesamt</div></div>
-    <div class="stat-card"><div class="v">${mastered}</div><div class="l">In Box 5 (sicher)</div></div>
-    <div class="stat-card"><div class="v">${acc}%</div><div class="l">Trefferquote (in dieser App)</div></div>
-    <div class="stat-card"><div class="v">${getStreak().count}</div><div class="l">Tage-Streak 🔥</div></div>
+    <div class="stat-card"><div class="v" data-count="${total}">0</div><div class="l">Vokabeln gesamt</div></div>
+    <div class="stat-card"><div class="v" data-count="${mastered}">0</div><div class="l">In Box 5 (sicher)</div></div>
+    <div class="stat-card"><div class="v" data-count="${acc}" data-suffix="%">0%</div><div class="l">Trefferquote (in dieser App)</div></div>
+    <div class="stat-card"><div class="v" data-count="${getStreak().count}">0</div><div class="l">Tage-Streak ${icon('flame')}</div></div>
   `;
+  document.querySelectorAll('#statsGrid .v[data-count]').forEach(el=>{
+    animateNumber(el, Number(el.dataset.count), el.dataset.suffix || '');
+  });
+
   const boxCounts = [1,2,3,4,5].map(b => VOCAB_DATA.filter(w=>PROGRESS[w.id] && PROGRESS[w.id].box===b).length);
   document.getElementById('boxBars').innerHTML = boxCounts.map((n,i)=>`
     <div class="box-bar-row">
       <span class="bl">Box ${i+1}</span>
-      <div class="box-bar-track"><div class="box-bar-fill" style="width:${total?Math.round(100*n/total):0}%"></div></div>
+      <div class="box-bar-track"><div class="box-bar-fill" data-width="${total?Math.round(100*n/total):0}"></div></div>
       <span class="bn">${n}</span>
     </div>`).join('');
+  /* Breite erst im naechsten Frame setzen, damit die Balken sichtbar von 0
+     aufwachsen (CSS-Transition auf width). Bei unsichtbarer Seite feuert rAF
+     nicht - dann sofort setzen, der Wert darf nie von der Animation abhaengen. */
+  const setBars = ()=>{
+    document.querySelectorAll('#boxBars .box-bar-fill').forEach(el=>{
+      el.style.width = el.dataset.width + '%';
+    });
+  };
+  if (REDUCED_MOTION || document.hidden) setBars();
+  else requestAnimationFrame(()=>requestAnimationFrame(setBars));
 }
 
 /* ===================== SETTINGS ===================== */
