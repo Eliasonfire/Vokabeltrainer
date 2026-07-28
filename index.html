@@ -1224,7 +1224,7 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
       </div>
 
       <div class="session-filters">
-        <div class="filter-label">Buch</div>
+        <div class="filter-label" id="bookFilterLabel">Buch</div>
         <div class="chip-select" id="bookFilterChips"></div>
         <div class="filter-label">Kapitel</div>
         <div class="chip-select" id="chapterFilterChips"></div>
@@ -1577,6 +1577,15 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
 
       <div class="setting-row">
         <div>
+          <div class="setting-title">Vokabelpaket einlesen</div>
+          <div class="setting-sub" id="paketStand">Alle acht Lehrwerke auf dieses Gerät holen</div>
+        </div>
+        <button class="btn btn-secondary" id="btnPaketLaden">Einlesen</button>
+      </div>
+      <input type="file" id="paketDatei" accept="application/json,.json" hidden>
+
+      <div class="setting-row">
+        <div>
           <div class="setting-title">Lernfortschritt zurücksetzen</div>
           <div class="setting-sub">Alle Karten zurück auf Box 1</div>
         </div>
@@ -1654,6 +1663,7 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
      den globalen Namensraum - kein Bundler, kein Build-Schritt, die App laeuft
      als reine statische Seite auf GitHub Pages. -->
 <script src="js/kern.js"></script>
+<script src="js/vokabelpaket.js"></script>
 <script src="js/buecher.js"></script>
 <script src="js/irab.js"></script>
 <script src="js/darstellung.js"></script>
