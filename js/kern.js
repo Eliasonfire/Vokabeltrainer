@@ -93,12 +93,24 @@ let CUSTOM_CATS = LS.get('vt_customCats', []);
 function saveCustomCats(){ LS.set('vt_customCats', CUSTOM_CATS); }
 
 /* ---------- Streak ---------- */
+/* Ein verpasster Tag hat die Serie bisher hart auf 1 zurueckgesetzt. Wer nach
+   vierzig Tagen einmal krank ist oder eine Klausur schreibt, faengt bei null
+   an - das bestraft das Leben, nicht die Nachlaessigkeit. Deshalb ein
+   Gnadentag: EIN uebersprungener Tag laesst die Serie stehen, statt sie zu
+   loeschen. Sie waechst an so einem Tag aber auch nicht, und der naechste
+   Gnadentag ist erst nach einer Woche wieder zu haben - sonst waere es kein
+   Gnadentag mehr, sondern jeder zweite Tag frei. */
 function touchStreak(){
-  let s = LS.get('vt_streak', {count:0,last:null});
-  const t = todayStr(0), y = todayStr(-1);
+  let s = LS.get('vt_streak', {count:0,last:null,gnadeAm:null});
+  const t = todayStr(0), y = todayStr(-1), vy = todayStr(-2);
   const vorher = s.count;
   if (s.last === t) { /* schon heute gezaehlt */ }
   else if (s.last === y) { s.count += 1; s.last = t; }
+  else if (s.last === vy && gnadeVerfuegbar(s, t)) {
+    /* Genau ein Tag ausgelassen und die Gnade ist frei: Serie bleibt stehen. */
+    s.count += 1; s.last = t; s.gnadeAm = t;
+    toast('Gestern ausgelassen — die Serie zählt trotzdem weiter.');
+  }
   else { s.count = 1; s.last = t; }
   LS.set('vt_streak', s);
   if (s.count !== vorher){
@@ -113,7 +125,14 @@ function touchStreak(){
   }
   return s;
 }
-function getStreak(){ return LS.get('vt_streak', {count:0,last:null}); }
+/* Sieben Tage Abstand, gerechnet in Tagen statt in Millisekunden - die
+   Datumsstrings sind ohnehin schon auf den Tag genau. */
+function gnadeVerfuegbar(s, heute){
+  if (!s.gnadeAm) return true;
+  const tage = (new Date(heute) - new Date(s.gnadeAm)) / 86400000;
+  return tage >= 7;
+}
+function getStreak(){ return LS.get('vt_streak', {count:0,last:null,gnadeAm:null}); }
 
 /* ---------- Vocab helpers ---------- */
 function byId(id){ return VOCAB_DATA.find(w=>w.id===id); }
@@ -136,7 +155,16 @@ function shuffle(arr){
 function dueWords(){
   const t = todayStr(0);
   const due = VOCAB_DATA.filter(w => PROGRESS[w.id] && PROGRESS[w.id].nextReview <= t);
-  return shuffle(due).sort((a,b)=> PROGRESS[a.id].box - PROGRESS[b.id].box);
+  /* Zuerst das, was am laengsten ueberfaellig ist, danach die niedrige Box.
+     Vorher entschied allein die Box - eine Karte aus Box 4, die seit zwei
+     Wochen faellig ist, kam damit hinter jede frische Box-1-Karte, obwohl
+     genau sie am ehesten vergessen wird. Innerhalb desselben Faelligkeitstags
+     bleibt es beim Zufall (Fisher-Yates vorher), sonst bestuende eine
+     20er-Runde wieder nur aus Kapitel 1. */
+  return shuffle(due).sort((a,b)=>
+    (PROGRESS[a.id].nextReview < PROGRESS[b.id].nextReview ? -1 :
+     PROGRESS[a.id].nextReview > PROGRESS[b.id].nextReview ?  1 : 0)
+    || PROGRESS[a.id].box - PROGRESS[b.id].box);
 }
 function allRoots(){
   const map = {};
