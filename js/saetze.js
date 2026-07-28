@@ -1,13 +1,31 @@
 /* saetze.js -- Satz-Modus und Grammatik-Hervorhebung
    Teil der App-Logik; wird in index.html in fester Reihenfolge geladen und
    teilt sich mit den uebrigen js/-Dateien den globalen Namensraum. */
-/* ===================== SENTENCES ===================== */
-let SENT = { list: VOCAB_DATA.filter(w=>w.sentAr), idx:0 };
+/* ===================== SENTENCES =====================
+   Der Satz-Modus liest zwei Quellen: die Beispielsaetze der arabicroots-
+   Vokabeln und die Saetze aus dem Lehrwerk (lehrbuch-saetze.js). Letztere
+   sind noetig, weil die arabicroots-Saetze rein nominal sind - ohne sie
+   waeren 20 Grammatikregeln in der App gar nicht erreichbar. Sie liegen in
+   einer eigenen Datei, damit ein neuer Datenabzug sie nicht ueberschreibt. */
+function alleSaetze(){
+  const ausVokabeln = VOCAB_DATA.filter(w=>w.sentAr);
+  const ausLehrbuch = (typeof LEHRBUCH_SAETZE!=='undefined') ? LEHRBUCH_SAETZE : [];
+  return ausVokabeln.concat(ausLehrbuch);
+}
+let SENT = { list: alleSaetze(), idx:0 };
 
 function openSentences(){
-  SENT.list = VOCAB_DATA.filter(w=>w.sentAr);
+  SENT.list = alleSaetze();
   if (SENT.idx >= SENT.list.length) SENT.idx = 0;
   renderSentence();
+}
+
+/* Woher stammt der Satz? Bei Lehrbuchsaetzen ist die Seite die eigentliche
+   Auskunft - danach kann Elias im Buch nachschlagen. */
+function herkunft(w){
+  if (w.seite) return `Madina Buch 1, S. ${w.seite}`;
+  if (w.chapter === 'personal') return 'Eigene Vokabel';
+  return `Kap. ${w.chapter}`;
 }
 
 function buildSentenceHtml(w){
@@ -48,7 +66,7 @@ function renderSentence(){
     return;
   }
   const w = SENT.list[SENT.idx];
-  document.getElementById('sentChapter').textContent = w.chapter==='personal'?'Eigene Vokabel':`Kap. ${w.chapter}`;
+  document.getElementById('sentChapter').textContent = herkunft(w);
   document.getElementById('sentAr').innerHTML = buildSentenceHtml(w);
   document.getElementById('sentDe').textContent = w.sentDe || '';
   document.getElementById('sentPos').textContent = `${SENT.idx+1} / ${SENT.list.length}`;
