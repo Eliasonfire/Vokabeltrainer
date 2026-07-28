@@ -1104,5 +1104,93 @@ const SENTENCE_TAGS = {
   ],
   "45882": [
     { ruleId: "taschkil-kontext-01", matchText: "الْمُدَرِّسُ" }
+  ],
+
+  /* --- Saetze aus dem Lehrwerk (lehrbuch-saetze.js) ---
+     Die arabicroots-Beispielsaetze sind rein nominal; Verben, Fragewoerter,
+     Gottesname und Eigennamen kommen darin nicht vor. Diese Markierungen
+     haengen deshalb an Saetzen aus Madina Buch 1 - jeder mit Buchseite
+     belegt, keiner erfunden. */
+  "mb1-13-1": [
+    { ruleId: "fragepartikel-hal-01", matchText: "أَذَلِكَ" }
+  ],
+  "mb1-15-1": [
+    { ruleId: "satz-vs-wortgruppe-01", matchText: "الْقَمِيصُ وَسِخٌ" }
+  ],
+  "mb1-17-1": [
+    { ruleId: "idafa-kein-adjektiv-01", matchText: "الطَّالِبُ مَرِيضٌ" }
+  ],
+  "mb1-21-1": [
+    { ruleId: "eigennamen-fem-ohne-tanwin-01", matchText: "آمِنَةُ" }
+  ],
+  "mb1-24-1": [
+    { ruleId: "min-ayna-01", matchText: "مِنْ أَيْنَ" }
+  ],
+  "mb1-25-1": [
+    { ruleId: "min-man-unterscheiden-01", matchText: "مَنْ مِنَ" },
+    { ruleId: "tanwin-eigennamen-01", matchText: "عَمَّارٌ" }
+  ],
+  "mb1-25-2": [
+    { ruleId: "verb-enthaelt-pronomen-01", matchText: "خَرَجَ" }
+  ],
+  "mb1-27-1": [
+    { ruleId: "idafa-01", matchText: "كِتَابُ حَامِدٍ" }
+  ],
+  "mb1-27-2": [
+    { ruleId: "harf-jarr-idafa-01", matchText: "عَلَى مَكْتَبِ الْمُدَرِّسِ" }
+  ],
+  "mb1-27-3": [
+    { ruleId: "zuruf-makan-01", matchText: "تَحْتَ" }
+  ],
+  "mb1-28-1": [
+    { ruleId: "lafz-al-jalala-01", matchText: "اللهِ" }
+  ],
+  "mb1-30-1": [
+    { ruleId: "lafz-al-jalala-01", matchText: "اللهِ" }
+  ],
+  "mb1-30-2": [
+    { ruleId: "zuruf-makan-01", matchText: "تَحْتَ" }
+  ],
+  "mb1-34-1": [
+    { ruleId: "istifham-liman-01", matchText: "لِمَنْ" },
+    { ruleId: "tanwin-nach-harf-jarr-01", matchText: "لِخَالِدٍ" }
+  ],
+  "mb1-37-1": [
+    { ruleId: "tanwin-eigennamen-01", matchText: "مُحَمَّدٌ" }
+  ],
+  "mb1-37-2": [
+    { ruleId: "satz-vs-wortgruppe-01", matchText: "الْبَابُ مُغْلَقٌ" }
+  ],
+  "mb1-42-1": [
+    { ruleId: "lil-vs-li-01", matchText: "لِلتَّاجِرِ" },
+    { ruleId: "harf-jarr-li-01", matchText: "لِلطَّبِيبِ" }
+  ],
+  "mb1-42-2": [
+    { ruleId: "idafa-erkennen-01", matchText: "اسْمُ التَّاجِرِ" }
+  ],
+  "mb1-42-3": [
+    { ruleId: "zuruf-makan-01", matchText: "أَمَامَ" }
+  ],
+  "mb1-43-1": [
+    { ruleId: "istifham-liman-01", matchText: "لِمَنْ" },
+    { ruleId: "li-eigenname-01", matchText: "لِمُحَمَّدٍ" }
+  ],
+  "mb1-46-1": [
+    { ruleId: "li-eigenname-01", matchText: "لِعِيسَى" }
+  ],
+  "mb1-46-2": [
+    { ruleId: "zuruf-makan-01", matchText: "خَلْفَ" }
+  ],
+  "mb1-51-1": [
+    { ruleId: "nat-bestimmtheit-01", matchText: "السَّيَّارَةُ الْجَمِيلَةُ" }
+  ],
+  "mb1-51-2": [
+    { ruleId: "nat-bestimmtheit-01", matchText: "اللُّغَةُ الْعَرَبِيَّةُ" }
+  ],
+  "mb1-63-1": [
+    { ruleId: "possessiv-ya-01", matchText: "اسْمِي" }
+  ],
+  "mb1-63-2": [
+    { ruleId: "possessiv-ya-01", matchText: "عَمِّي" }
   ]
 };

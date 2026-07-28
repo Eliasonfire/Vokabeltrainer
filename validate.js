@@ -25,7 +25,7 @@ function warn(msg){ warnings.push(msg); }
 function note(msg){ info.push(msg); }
 
 /* ---------- Datendateien in einer Sandbox laden ---------- */
-const DATA_FILES = ['vocab-data.js', 'surah-data.js', 'grammar-data.js', 'quran-frequency-data.js'];
+const DATA_FILES = ['vocab-data.js', 'surah-data.js', 'grammar-data.js', 'quran-frequency-data.js', 'lehrbuch-saetze.js'];
 let DATA = {};
 try {
   let code = '';
@@ -34,7 +34,7 @@ try {
     if (!fs.existsSync(p)) { fail(`Datendatei fehlt: ${f}`); continue; }
     code += fs.readFileSync(p, 'utf8') + '\n';
   }
-  code += 'globalThis.__DATA = { VOCAB_DATA, SURAH_DATA, GRAMMAR_RULES, SENTENCE_TAGS, QURAN_FREQ };';
+  code += 'globalThis.__DATA = { VOCAB_DATA, SURAH_DATA, GRAMMAR_RULES, SENTENCE_TAGS, QURAN_FREQ, LEHRBUCH_SAETZE };';
   const ctx = {};
   vm.createContext(ctx);
   vm.runInContext(code, ctx);
@@ -43,7 +43,7 @@ try {
   fail(`Datendateien nicht ausführbar (Syntaxfehler?): ${e.message}`);
 }
 
-const { VOCAB_DATA, SURAH_DATA, GRAMMAR_RULES, SENTENCE_TAGS, QURAN_FREQ } = DATA;
+const { VOCAB_DATA, SURAH_DATA, GRAMMAR_RULES, SENTENCE_TAGS, QURAN_FREQ, LEHRBUCH_SAETZE } = DATA;
 
 /* ---------- 1. VOCAB_DATA ---------- */
 if (!Array.isArray(VOCAB_DATA) || VOCAB_DATA.length === 0){
@@ -144,7 +144,10 @@ if (!Array.isArray(GRAMMAR_RULES)){
 
   /* ---------- 4. SENTENCE_TAGS: Referenzen in beide Richtungen ---------- */
   if (SENTENCE_TAGS && typeof SENTENCE_TAGS === 'object' && Array.isArray(VOCAB_DATA)){
-    const vocabById = new Map(VOCAB_DATA.map(w => [String(w.id), w]));
+    /* Markierungen duerfen an beiden Satzquellen haengen: an den arabicroots-
+       Vokabeln und an den Saetzen aus dem Lehrwerk. */
+    const alleSaetze = VOCAB_DATA.concat(Array.isArray(LEHRBUCH_SAETZE) ? LEHRBUCH_SAETZE : []);
+    const vocabById = new Map(alleSaetze.map(w => [String(w.id), w]));
     let tagCount = 0;
     Object.entries(SENTENCE_TAGS).forEach(([vocabId, tags]) => {
       const w = vocabById.get(String(vocabId));

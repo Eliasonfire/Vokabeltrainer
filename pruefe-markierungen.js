@@ -25,9 +25,13 @@ const { GRAMMAR_RULES, SENTENCE_TAGS } =
   (new Function(fs.readFileSync(P + 'grammar-data.js', 'utf8') + ';return {GRAMMAR_RULES, SENTENCE_TAGS};'))();
 const { VOCAB_DATA } =
   (new Function(fs.readFileSync(P + 'vocab-data.js', 'utf8') + ';return {VOCAB_DATA};'))();
+/* Zweite Satzquelle: die Saetze aus dem Lehrwerk. Ohne sie faenden die
+   Pruefungen unten die Haelfte der Markierungen gar nicht erst. */
+const { LEHRBUCH_SAETZE } =
+  (new Function(fs.readFileSync(P + 'lehrbuch-saetze.js', 'utf8') + ';return {LEHRBUCH_SAETZE};'))();
 
 const satz = {};
-for (const v of VOCAB_DATA) satz[v.id] = v;
+for (const v of VOCAB_DATA.concat(LEHRBUCH_SAETZE)) satz[v.id] = v;
 const roh = x => x.replace(/[\u064B-\u0652\u0670\u0640]/g, '');   // Taschkil + Tatweel weg
 const blank = x => roh(x).replace(/[.،؟«»:]/g, '').trim();
 
@@ -63,7 +67,12 @@ const PRUEFUNG = {
   'istifham-liman-01':      w => /^لمن$/.test(blank(w)),
   'min-ayna-01':            w => /من\s*أين/.test(blank(w)),
   'fragepartikel-alif-01':  w => /^أ/.test(blank(w)),
-  'fragepartikel-hal-01':   w => /^هل$/.test(blank(w)),
+  /* Die Regel heisst nach هَلْ, handelt aber ausdruecklich von BEIDEN
+     Fragepartikeln ("Es gibt im Arabischen zwei Fragepartikeln: أَ und هَلْ").
+     Madina Buch 1 benutzt in den fruehen Lektionen durchgehend das
+     angeschriebene أ - أَذَلِكَ قِطٌّ؟ - und kein هل. Die Pruefung laesst
+     deshalb beide Formen zu, sonst schlaegt sie auf einen richtigen Beleg an. */
+  'fragepartikel-hal-01':   w => /^هل$/.test(blank(w)) || /^أ./.test(blank(w)),
   'adjektive-an-ohne-tanwin-01': w => /ان$/.test(blank(w)),
   'huwa-hiya-01':           w => /^(هو|هي)$/.test(blank(w)),
   'possessiv-ya-01':        w => /ي$/.test(blank(w)) && !/^في$/.test(blank(w)),
