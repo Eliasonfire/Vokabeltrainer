@@ -1318,10 +1318,29 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
   <div class="qfp-list" id="qfpList"></div>
 </div>
 
+<!-- Reine Daten, keine Logik (E.7). Muessen vor der App-Logik stehen. -->
 <script src="vocab-data.js"></script>
 <script src="surah-data.js"></script>
 <script src="grammar-data.js"></script>
 <script src="quran-frequency-data.js"></script>
-<script src="app.js"></script>
+
+<!-- App-Logik, thematisch getrennt (E.7). Die Reihenfolge ist bindend:
+     kern.js legt Speicher und Lernfortschritt an, darstellung.js und
+     navigation.js werden von allen Bildschirmen gebraucht, init.js laeuft
+     zuletzt und setzt den ersten Bildschirm. Die Dateien teilen sich bewusst
+     den globalen Namensraum - kein Bundler, kein Build-Schritt, die App laeuft
+     als reine statische Seite auf GitHub Pages. -->
+<script src="js/kern.js"></script>
+<script src="js/darstellung.js"></script>
+<script src="js/navigation.js"></script>
+<script src="js/start.js"></script>
+<script src="js/lernen.js"></script>
+<script src="js/sprachausgabe.js"></script>
+<script src="js/kategorien.js"></script>
+<script src="js/saetze.js"></script>
+<script src="js/quran.js"></script>
+<script src="js/statistik.js"></script>
+<script src="js/einstellungen.js"></script>
+<script src="js/init.js"></script>
 </body>
 </html>

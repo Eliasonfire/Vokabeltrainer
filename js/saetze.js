@@ -1,0 +1,163 @@
+/* saetze.js -- Satz-Modus und Grammatik-Hervorhebung
+   Teil der App-Logik; wird in index.html in fester Reihenfolge geladen und
+   teilt sich mit den uebrigen js/-Dateien den globalen Namensraum. */
+/* ===================== SENTENCES ===================== */
+let SENT = { list: VOCAB_DATA.filter(w=>w.sentAr), idx:0 };
+
+function openSentences(){
+  SENT.list = VOCAB_DATA.filter(w=>w.sentAr);
+  if (SENT.idx >= SENT.list.length) SENT.idx = 0;
+  renderSentence();
+}
+
+function buildSentenceHtml(w){
+  const tags = (typeof SENTENCE_TAGS!=='undefined') && SENTENCE_TAGS[w.id];
+  if (!SETTINGS.grammarHighlight || !tags || !tags.length) return escapeHtml(w.sentAr);
+  // Erst alle Fundstellen im Rohtext einsammeln, dann in einem Durchgang
+  // auszeichnen. Vorher lief je Markierung ein html.replace() auf dem bereits
+  // ausgezeichneten HTML. Solange sich keine zwei Markierungen ueberschneiden,
+  // faellt das nicht auf - sobald doch, greift die kuerzere in den Text der
+  // laengeren hinein und erzeugt verschachtelte Spans. Mit Positionen statt
+  // Textersetzung kann das nicht mehr passieren.
+  const text = w.sentAr;
+  const treffer = [];
+  tags.forEach(t=>{
+    const rule = GRAMMAR_RULES.find(r=>r.id===t.ruleId);
+    if (!rule || !t.matchText) return;
+    const von = text.indexOf(t.matchText);
+    if (von === -1) return;
+    treffer.push({ von, bis: von + t.matchText.length, rule });
+  });
+  // Von links nach rechts, bei gleichem Start gewinnt die laengere Markierung.
+  treffer.sort((a,b)=> a.von - b.von || (b.bis - b.von) - (a.bis - a.von));
+
+  let html = '', pos = 0;
+  for (const t of treffer){
+    if (t.von < pos) continue;                 // ueberschneidet eine gesetzte
+    html += escapeHtml(text.slice(pos, t.von));
+    html += `<span class="gram-underline" style="--gram-role:var(--gram-${t.rule.color})" data-rule="${t.rule.id}">${escapeHtml(text.slice(t.von, t.bis))}</span>`;
+    pos = t.bis;
+  }
+  return html + escapeHtml(text.slice(pos));
+}
+
+function renderSentence(){
+  if (SENT.list.length===0){
+    document.getElementById('sentAr').textContent='Keine Sätze in dieser Auswahl.';
+    aktualisiereAndererSatz();
+    return;
+  }
+  const w = SENT.list[SENT.idx];
+  document.getElementById('sentChapter').textContent = w.chapter==='personal'?'Eigene Vokabel':`Kap. ${w.chapter}`;
+  document.getElementById('sentAr').innerHTML = buildSentenceHtml(w);
+  document.getElementById('sentDe').textContent = w.sentDe || '';
+  document.getElementById('sentPos').textContent = `${SENT.idx+1} / ${SENT.list.length}`;
+
+  const qBox = document.getElementById('sentQuranBox');
+  if (w.quran){
+    qBox.classList.remove('hidden');
+    document.getElementById('sentQuranAr').textContent = w.quran.ar;
+    document.getElementById('sentQuranRef').textContent = `${w.quran.surah} ${w.quran.ayah}`;
+    document.getElementById('sentQuranDe').textContent = w.quran.de || w.quran.note || '';
+  } else qBox.classList.add('hidden');
+
+  aktualisiereAndererSatz();
+}
+document.getElementById('btnSentPrev').addEventListener('click', ()=>{
+  SENT.idx = (SENT.idx-1+SENT.list.length)%SENT.list.length; renderSentence();
+});
+document.getElementById('btnSentNext').addEventListener('click', ()=>{
+  SENT.idx = (SENT.idx+1)%SENT.list.length; renderSentence();
+});
+document.getElementById('btnSentSpeak').addEventListener('click', ()=>{
+  speakArabic(SENT.list[SENT.idx].sentAr);
+});
+
+/* ---------- Anderer Satz zum selben Wort ----------
+   Jede Vokabel bringt genau einen Beispielsatz mit; zu einem Wort gibt es
+   also nicht "noch einen". Selbst welche zu erzeugen verbietet E.1 (nichts
+   erfinden, was nicht aus dem Unterricht oder dem Lehrwerk stammt).
+   Stattdessen springt der Knopf zu den Saetzen ANDERER Vokabeln, in denen
+   dasselbe Wort oder dieselbe Wurzel vorkommt - echtes Material, das das
+   Wort in einem zweiten Zusammenhang zeigt. Gibt es keinen, sagt das die
+   Zeile unter dem Knopf, statt ihn wortlos auszugrauen. */
+function ohneTaschkil(s){ return (s||'').replace(/[ً-ْٰـ]/g,''); }
+
+/* Dasselbe Wort sieht im Satz anders aus als im Vokabeleintrag: قِطٌّ steht
+   dort als الْقِطُّ, نَظِيفٌ als وَنَظِيفٌ. Deshalb Vokalzeichen, Satzzeichen
+   und die angeschriebenen Partikeln اَلْ, وَ und فَ abziehen, bevor verglichen
+   wird. */
+function wortKern(s){
+  return ohneTaschkil(s)
+    .replace(/[.،؟!«»:]/g, '')
+    .replace(/^[وف]/, '')
+    .replace(/^ال/, '');
+}
+
+function verwandteSatzPlaetze(w){
+  const wort = wortKern(w.sg || w.ar);
+  const platz = [];
+  SENT.list.forEach((k, i)=>{
+    if (k.id === w.id) return;
+    // Wurzelgleichheit zaehlt mit: كِتَاب und كُتُب stehen im Satz in ganz
+    // verschiedener Gestalt, sind fuers Lernen aber dasselbe Wortfeld.
+    const gleicheWurzel = w.root && k.root && w.root === k.root;
+    // Ganze Woerter vergleichen, nicht Teilzeichenketten. Ein Teilstring-
+    // Vergleich braeuchte eine Mindestlaenge als Schutz vor Zufallstreffern -
+    // und die schloss ausgerechnet kurze Woerter wie قِطّ und يَد aus, zu
+    // denen es sehr wohl zweite Saetze gibt.
+    const gleichesWort = wort.length >= 2 &&
+      ohneTaschkil(k.sentAr).split(/\s+/).some(x => wortKern(x) === wort);
+    if (gleicheWurzel || gleichesWort) platz.push(i);
+  });
+  return platz;
+}
+
+function aktualisiereAndererSatz(){
+  const knopf = document.getElementById('btnSentOther');
+  const zeile = document.getElementById('sentOtherHint');
+  const w = SENT.list[SENT.idx];
+  if (!w){ knopf.disabled = true; zeile.textContent = ''; return; }
+  const n = verwandteSatzPlaetze(w).length;
+  knopf.disabled = n === 0;
+  zeile.textContent = n === 0
+    ? 'Zu diesem Wort gibt es keinen weiteren Satz im Lehrwerk.'
+    : '';
+}
+
+document.getElementById('btnSentOther').addEventListener('click', ()=>{
+  const w = SENT.list[SENT.idx];
+  const platz = verwandteSatzPlaetze(w);
+  if (!platz.length) return;
+  /* Reihum weiter, nicht zufaellig: bei zwei verwandten Saetzen wuerde Zufall
+     denselben mehrfach hintereinander zeigen und der Knopf wirkte kaputt. */
+  const naechster = platz.find(i => i > SENT.idx);
+  SENT.idx = naechster !== undefined ? naechster : platz[0];
+  renderSentence();
+});
+
+document.getElementById('sentAr').addEventListener('click', (e)=>{
+  const span = e.target.closest('.gram-underline');
+  const pop = document.getElementById('gramPopover');
+  if (!span){ pop.classList.remove('show'); return; }
+  const rule = GRAMMAR_RULES.find(r=>r.id===span.dataset.rule);
+  if (!rule) return;
+  pop.innerHTML = `<div class="gp-title">${rule.name}</div><div>${rule.shortExplanation}</div><div class="gp-source">${rule.source.video} · ca. ${rule.source.approxTimestamp}</div>`;
+  const rect = span.getBoundingClientRect();
+  pop.style.left = Math.max(8, Math.min(rect.left, window.innerWidth-296))+'px';
+  pop.style.top = (rect.bottom+8)+'px';
+  pop.classList.add('show');
+});
+document.addEventListener('click', (e)=>{
+  if (!e.target.closest('.gram-underline') && !e.target.closest('#gramPopover'))
+    document.getElementById('gramPopover').classList.remove('show');
+});
+const gramToggleBtn = document.getElementById('toggleGrammarHighlight');
+gramToggleBtn.classList.toggle('on', SETTINGS.grammarHighlight);
+gramToggleBtn.addEventListener('click', ()=>{
+  SETTINGS.grammarHighlight = !SETTINGS.grammarHighlight;
+  gramToggleBtn.classList.toggle('on', SETTINGS.grammarHighlight);
+  saveSettings();
+  renderSentence();
+});
+
