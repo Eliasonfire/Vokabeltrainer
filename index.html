@@ -1462,6 +1462,23 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
 
       <div class="setting-row">
         <div>
+          <div class="setting-title">Fortschritt sichern</div>
+          <div class="setting-sub">Alles in eine Datei — Boxen, Eselsbrücken, Hifz, eigene Vokabeln</div>
+        </div>
+        <button class="btn btn-secondary" id="btnSicherung">Sichern</button>
+      </div>
+
+      <div class="setting-row">
+        <div>
+          <div class="setting-title">Sicherung einlesen</div>
+          <div class="setting-sub">Ersetzt den aktuellen Stand auf diesem Gerät</div>
+        </div>
+        <button class="btn btn-secondary" id="btnSicherungLaden">Einlesen</button>
+      </div>
+      <input type="file" id="sicherungDatei" accept="application/json,.json" hidden>
+
+      <div class="setting-row">
+        <div>
           <div class="setting-title">Lernfortschritt zurücksetzen</div>
           <div class="setting-sub">Alle Karten zurück auf Box 1</div>
         </div>
