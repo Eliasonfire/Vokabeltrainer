@@ -178,6 +178,10 @@ document.getElementById('btnSentOther').addEventListener('click', ()=>{
   const w = SENT.list[SENT.idx];
   const platz = verwandteSatzPlaetze(w);
   if (!platz.length) return;
+  /* Wie beim Blaettern: die Luecke gehoert zum aktuellen Satz. Ohne das blieb
+     das Eingabefeld offen und wartete auf ein Wort, das im neuen Satz gar
+     nicht vorkommt. */
+  if (LUECKE.aktiv) beendeLuecke();
   /* Reihum weiter, nicht zufaellig: bei zwei verwandten Saetzen wuerde Zufall
      denselben mehrfach hintereinander zeigen und der Knopf wirkte kaputt. */
   const naechster = platz.find(i => i > SENT.idx);
@@ -231,6 +235,10 @@ function startLuecke(){
   const kasten = document.getElementById('sentLueckeBox');
   const ziel = w && findeZielwort(w);
   if (!ziel){ toast('Zu diesem Satz gibt es kein eindeutiges Zielwort.'); return; }
+  /* Die I'rab-Zerlegung listet JEDES Wort des Satzes auf, auch das gesuchte -
+     bei offener Luecke waere sie schlicht die Loesung. Beide Ansichten
+     schliessen sich deshalb gegenseitig aus. */
+  document.getElementById('sentIrabBox').classList.add('hidden');
   LUECKE = { aktiv:true, wort:ziel, geloest:false };
   document.getElementById('lueckeEingabe').value = '';
   document.getElementById('lueckeAntwort').textContent = '';
@@ -301,7 +309,12 @@ function renderIrab(){
 
 document.getElementById('btnSentIrab').addEventListener('click', ()=>{
   const kasten = document.getElementById('sentIrabBox');
-  if (kasten.classList.contains('hidden')) renderIrab();
+  if (kasten.classList.contains('hidden')){
+    /* Umgekehrt genauso: wer die Zerlegung aufmacht, bekommt das gesuchte
+       Wort darin zu sehen - dann ist die Luecke erledigt. */
+    if (LUECKE.aktiv) beendeLuecke();
+    renderIrab();
+  }
   else kasten.classList.add('hidden');
 });
 
