@@ -131,3 +131,48 @@ document.getElementById('btnResetStats').addEventListener('click', ()=>{
   renderHome();
 });
 
+
+/* ---------- Vokabelpaket ----------
+   Holt alle acht Lehrwerke auf dieses Geraet, ohne dass arabicroots'
+   Datenbankarbeit im oeffentlichen Repo stehen muss. Die Datei baut Elias
+   lokal mit `node werkzeuge/baue-vokabelpaket.mjs`; Hintergrund und
+   Speicherweg stehen in js/vokabelpaket.js.
+
+   Anders als "Sicherung einlesen" wird hier NICHTS ersetzt: das Paket bringt
+   nur Vokabeln mit, Boxen und Eselsbruecken bleiben unberuehrt. Deshalb auch
+   keine Rueckfrage und kein Neustart. */
+function zeigePaketStand(){
+  const ziel = document.getElementById('paketStand');
+  if (!ziel) return;
+  if (typeof PAKET_STAND !== 'undefined' && PAKET_STAND){
+    const wann = PAKET_STAND.erzeugt ? PAKET_STAND.erzeugt.slice(0,10) : 'unbekannt';
+    ziel.textContent = `${PAKET_STAND.buecher} Bücher, ${PAKET_STAND.vokabeln} Vokabeln — Stand ${wann}`;
+  } else {
+    ziel.textContent = 'Alle acht Lehrwerke auf dieses Gerät holen';
+  }
+}
+
+document.getElementById('btnPaketLaden').addEventListener('click', ()=>{
+  document.getElementById('paketDatei').click();
+});
+
+document.getElementById('paketDatei').addEventListener('change', async (e)=>{
+  const datei = e.target.files && e.target.files[0];
+  e.target.value = '';                        // damit dieselbe Datei erneut geht
+  if (!datei) return;
+  try {
+    toast('Lese Vokabelpaket …');
+    const paket = await paketEinlesen(datei);
+    await paketUebernehmen(paket);
+    zeigePaketStand();
+    if (typeof renderChapterFilterChips === 'function') renderChapterFilterChips();
+    if (typeof renderHome === 'function') renderHome();
+    toast(`${PAKET_STAND.buecher} Bücher, ${PAKET_STAND.vokabeln} Vokabeln eingelesen.`);
+  } catch (err){
+    toast(err.message || 'Das Vokabelpaket liess sich nicht einlesen.');
+  }
+});
+
+/* Beim Start anzeigen, was auf diesem Geraet liegt - erst wenn das Paket
+   wirklich gelesen ist, sonst stuende dort immer der Leertext. */
+if (typeof PAKET_BEREIT !== 'undefined') PAKET_BEREIT.then(zeigePaketStand);

@@ -168,10 +168,19 @@ function kapitelDesBuchs(slug){
 function renderBuchChips(){
   const ziel = document.getElementById('bookFilterChips');
   if (!ziel || typeof BUECHER === 'undefined') return;
+  /* Die Ueberschrift steht fest in index.html und muss mitverschwinden. Sonst
+     bleibt sie ueber einer leeren Zeile stehen und die Startseite sieht kaputt
+     aus - genau so war es live, solange data/ nicht ausgeliefert wird. */
+  const beschriftung = document.getElementById('bookFilterLabel');
   const aktiv = aktivesBuch();
   const sichtbar = BUECHER.filter(b => !BUCH_FEHLT.has(b.slug));
   /* Bleibt nur ein Buch uebrig, ist die Auswahlzeile ueberfluessig. */
-  if (sichtbar.length < 2){ ziel.innerHTML = ''; return; }
+  if (sichtbar.length < 2){
+    ziel.innerHTML = '';
+    if (beschriftung) beschriftung.classList.add('hidden');
+    return;
+  }
+  if (beschriftung) beschriftung.classList.remove('hidden');
   ziel.innerHTML = sichtbar.map(b=>{
     const geladen = GELADENE_BUECHER.has(b.slug);
     return `<button class="chip-toggle${b.slug===aktiv?' active':''}" data-buch="${b.slug}"
@@ -191,6 +200,11 @@ document.addEventListener('click', (e)=>{
    nichts an und sah kaputt aus. `still` unterdrueckt die Meldungen - beim
    normalen Start soll nichts aufblitzen. */
 document.addEventListener('DOMContentLoaded', async ()=>{
+  /* Erst das im Geraet abgelegte Vokabelpaket einhaengen, dann das Buch
+     aufbauen. Ohne dieses Warten liefe setzeBuch() gegen ein noch leeres
+     window.VOKABELN und meldete das Buch als fehlend - obwohl es Sekunden
+     spaeter dagewesen waere. Siehe js/vokabelpaket.js. */
+  if (typeof PAKET_BEREIT !== 'undefined') await PAKET_BEREIT;
   const slug = aktivesBuch();
   await setzeBuch(slug, true);
   /* Scheitert schon der Start, fehlt nicht dieses eine Buch, sondern der
