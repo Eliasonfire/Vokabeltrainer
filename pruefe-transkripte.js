@@ -169,7 +169,12 @@ function lautMuster(form){
   if (teile.length < 3) return null;
   /* Zwischen den Konsonanten stehen in der Umschrift Vokale, die die
      arabische Schrift nicht schreibt - beitun, Bayton, baytin. */
-  try { return new RegExp('\\b' + teile.join('[aeiou’\']{0,2}'), 'i'); }
+  /* Bindestrich und Apostroph zaehlen mit: Whisper schreibt den Artikel gern
+     abgetrennt ("El-Baytu", "Lil-amarin", "Ra'a"). Ohne sie galt
+     marfu-grundfall-01 als unbelegt, obwohl der Lehrer im selben Fenster
+     woertlich sagt "Marfu' ist immer der Grundsatz, jedes Wort ist
+     normalerweise Marfu'". */
+  try { return new RegExp('\\b' + teile.join('[aeiou’\'\\-]{0,2}'), 'i'); }
   catch { return null; }
 }
 
