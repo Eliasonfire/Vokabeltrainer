@@ -602,3 +602,47 @@ umgestellt, Abweichung jetzt 0 bei 360 und 575 px.
 Beispielsatz-Knopf), danach E.7. Offen aus dieser Session: die Wortmarke
 طالِب العِلْم für den App-Kopf ist gebaut, aber noch nicht eingebaut — Elias hat
 bisher nur über das Icon entschieden.
+
+## 2026-07-28 – Nachtschicht/Vormittag (interaktiv, nicht die Routine)
+
+Sechs Commits, alle gepusht und live geprüft. `CACHE_NAME` steht bei **v38**.
+
+| Commit | Inhalt |
+|---|---|
+| `8645b97` | 26 Beispielsätze aus Madina Buch 1 → 71 von 73 Regeln in der App erreichbar (vorher 51) |
+| `2ed3c40` | alle acht Lehrwerke, 4433 Vokabeln, nachgeladen pro Buch |
+| `597cb92` | `pruefe-transkripte.js` — jede Regel gegen zwei unabhängige Tonspur-Lesarten |
+| `702adf4` | I'rab-Erklärer (`js/irab.js`) + `pruefe-saetze.js` |
+| `cff3b35` | Quran-Vorkommen für 1038 Wurzeln statt 92 |
+| `9a804b3` | Vers-Hifz: einzelne Verse abhaken, Selbsttest durch Verdecken |
+| `48283b3` | Hörverstehen-Modus |
+| `dbfc712` | App kommt ohne die Buchdateien aus; Abzug bleibt vorerst lokal |
+
+**Für künftige Wartungsläufe wichtig — drei Dinge haben sich grundlegend
+geändert:**
+
+1. **`vocab-data.js` ist kein Vokabelspeicher mehr**, sondern die
+   Anreicherungsschicht (Beispielsätze + Quran-Belege zu Madina 1, Kap. 1–9).
+   Die eigentlichen Vokabeln stehen in `data/vokabeln-<buch>.js`, erzeugt von
+   `node werkzeuge/hole-vokabeln.mjs`. **`vocab-data.js` niemals aus dem Abzug
+   neu erzeugen** — die Sätze wären weg.
+2. **`data/vokabeln-*.js` ist per `.gitignore` ausgeschlossen.** Es sind die
+   Daten aus Elias' bezahltem arabicroots-Zugang, und das Repo ist öffentlich;
+   die Entscheidung steht bei ihm. Die App kommt ohne die Dateien zurecht: sie
+   blendet die Buchauswahl aus und arbeitet mit Madina 1, Kap. 1–9 weiter.
+3. **Der Service Worker liefert Netz zuerst** (vorher Cache zuerst). Das
+   Ritual „SW abmelden und Caches leeren vor jedem Test" ist damit erledigt.
+   Einmalig gilt noch: der erste Aufruf nach dem Update kommt aus dem alten
+   Cache, ein zweiter Aufruf zeigt den neuen Stand.
+
+**Vier Prüfskripte laufen jetzt zusätzlich zu `validate.js`** und sind in
+`routines.json` freigeschaltet: `pruefe-markierungen.js` (Pflicht nach jeder
+Änderung an `SENTENCE_TAGS`), `pruefe-saetze.js`, `pruefe-transkripte.js`,
+`pruefe-sprecher.js`. Aktueller Stand: 0 Verstöße gegen die Regelbedingung,
+0 Wortgrenzen-Fehler, 0 Überschneidungen, 0 Kasusfehler in 155 Beispielsätzen
+und in den 26 Lehrbuchsätzen der Kontrollgruppe.
+
+**Nebenbefund:** Die arabicroots-Datenbank führt **keine Beispielsätze und
+keine Quranverse** — die Felder gibt es dort nicht. Die 155 Sätze in der App
+sind also verfasst, nicht belegt. Sie sind aber kasusgeprüft (0 Fehler); was
+ihnen fehlt, ist die Quelle, nicht die Grammatik.
