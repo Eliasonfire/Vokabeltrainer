@@ -749,6 +749,13 @@ main{
   min-height:1.1em;margin-top:var(--sp-3);text-align:center;
   color:var(--text-dim);font-size:var(--fs-sm);
 }
+/* Tippfeld auf der Kartenvorderseite. Erscheint nur ab Box 4 und nur, wenn
+   der Schalter in den Einstellungen an ist. */
+.tipp-box{width:100%;max-width:320px;margin-top:var(--sp-4);}
+.tipp-antwort{margin-top:var(--sp-2);font-size:var(--fs-sm);min-height:1.3em;text-align:center;}
+.tipp-antwort.richtig{color:var(--green);}
+.tipp-antwort.falsch{color:var(--red-soft);}
+
 /* Lückentext: das Zielwort im Satz wird ausgeblendet und muss selbst
    ergänzt werden. Lesen allein bleibt Wiedererkennung; erst der aktive Abruf
    prüft, ob das Wort wirklich sitzt. */
@@ -1274,6 +1281,11 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
               <button class="speak-btn" id="btnSpeakWord" title="Vorlesen" aria-label="Vorlesen">
                 <svg class="ic"><use href="#ic-speaker"/></svg>
               </button>
+              <div class="tipp-box hidden" id="cardTippBox">
+                <input type="text" id="cardTippEingabe" class="select-input select-full" lang="ar" dir="rtl"
+                       placeholder="Wort eintippen …" autocomplete="off" autocapitalize="off" spellcheck="false">
+                <div class="tipp-antwort" id="cardTippAntwort"></div>
+              </div>
               <div class="tap-hint">Antippen zum Umdrehen</div>
             </div>
             <div class="flashcard-face flashcard-back">
@@ -1526,6 +1538,14 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
         </div>
       </div>
       <select id="voiceSelect" class="select-input select-full"></select>
+
+      <div class="setting-row">
+        <div>
+          <div class="setting-title">Ab Box 4 eintippen</div>
+          <div class="setting-sub">Statt nur umdrehen: das Wort selbst schreiben. Braucht eine arabische Tastatur.</div>
+        </div>
+        <button class="switch" id="toggleTippen" aria-label="Tippen ab Box 4 umschalten"><span class="knob"></span></button>
+      </div>
 
       <div class="setting-row">
         <div>
