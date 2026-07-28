@@ -522,6 +522,22 @@ main{
 .german-word{font-size:1.7rem;font-weight:800;color:var(--red-bright);text-align:center;margin-bottom:var(--sp-2);letter-spacing:-.01em;}
 .german-word.back-as-arabic{font-family:var(--font-ar);direction:rtl;font-size:2.4rem;font-weight:600;color:#fff;letter-spacing:0;}
 
+/* Geschlecht auf der Kartenrueckseite (arabicroots-Paritaet D).
+   Bewusst dieselben zwei Farben wie die Grammatik-Unterstreichungen: Grün
+   steht in der App schon fuer "weiblich" (--gram-fem), Blau fuer die
+   Grundform (--gram-mubtada). Wer die Sätze kennt, liest die Farbe hier
+   ohne Legende mit. */
+.gender-chip{
+  display:inline-flex;align-items:baseline;gap:var(--sp-2);
+  margin-bottom:var(--sp-4);
+  padding:5px var(--sp-3);border-radius:var(--r-full);
+  font-size:var(--fs-sm);font-weight:600;
+  color:var(--gender-role);
+  background:color-mix(in srgb, var(--gender-role) 13%, transparent);
+  border:1px solid color-mix(in srgb, var(--gender-role) 34%, transparent);
+}
+.gender-chip .ar{font-family:var(--font-ar);direction:rtl;font-size:1.05em;}
+.gender-chip .de{opacity:.72;font-weight:500;}
 .word-forms{display:flex;flex-wrap:wrap;gap:var(--sp-2);justify-content:center;margin-bottom:var(--sp-4);}
 .word-forms span{
   background:var(--surface-3);border:1px solid var(--border);
@@ -1078,6 +1094,7 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
             </div>
             <div class="flashcard-face flashcard-back">
               <div class="german-word" id="cardGerman">Haus</div>
+              <div class="gender-chip hidden" id="cardGender"></div>
               <div class="word-forms" id="cardForms"></div>
               <div class="example-box" id="cardSentenceBox">
                 <div class="example-ar" id="cardSentenceAr" lang="ar" dir="rtl"></div>
