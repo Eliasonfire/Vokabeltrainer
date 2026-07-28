@@ -3,8 +3,8 @@
    teilt sich mit den uebrigen js/-Dateien den globalen Namensraum. */
 /* ===================== STATS ===================== */
 function renderStats(){
-  const total = VOCAB_DATA.length;
-  const mastered = VOCAB_DATA.filter(w=>PROGRESS[w.id] && PROGRESS[w.id].box===5).length;
+  const total = buchVokabeln().length;
+  const mastered = buchVokabeln().filter(w=>PROGRESS[w.id] && PROGRESS[w.id].box===5).length;
   const totalCorrect = Object.values(PROGRESS).reduce((s,p)=>s+(p.correct||0),0);
   const totalWrong = Object.values(PROGRESS).reduce((s,p)=>s+(p.wrong||0),0);
   const acc = (totalCorrect+totalWrong) ? Math.round(100*totalCorrect/(totalCorrect+totalWrong)) : 0;
@@ -19,7 +19,7 @@ function renderStats(){
     animateNumber(el, Number(el.dataset.count), el.dataset.suffix || '');
   });
 
-  const boxCounts = [1,2,3,4,5].map(b => VOCAB_DATA.filter(w=>PROGRESS[w.id] && PROGRESS[w.id].box===b).length);
+  const boxCounts = [1,2,3,4,5].map(b => buchVokabeln().filter(w=>PROGRESS[w.id] && PROGRESS[w.id].box===b).length);
   document.getElementById('boxBars').innerHTML = boxCounts.map((n,i)=>`
     <div class="box-bar-row">
       <span class="bl">Box ${i+1}</span>

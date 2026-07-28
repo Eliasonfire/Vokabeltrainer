@@ -149,6 +149,12 @@ function weakWords(){
 }
 function currentPool(){
   let pool = SETTINGS.wrongOnly ? weakWords() : dueWords();
+  /* Gelernt wird immer in genau einem Lehrwerk. Ohne diesen Filter mischten
+     sich nach dem ersten Buchwechsel alle geladenen Buecher in eine Runde -
+     und die Kapitelnummern darunter meinen in jedem Buch etwas anderes.
+     Eigene Vokabeln laufen bewusst in jedem Buch mit. */
+  const buch = (typeof aktivesBuch === 'function') ? aktivesBuch() : 'madina-1';
+  pool = pool.filter(w => w.book === buch || w.chapter === 'personal');
   const sel = SETTINGS.selectedChapters || [];
   if (sel.length) pool = pool.filter(w=>sel.includes(w.chapter));
   return pool;

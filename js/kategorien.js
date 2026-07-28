@@ -18,9 +18,11 @@ function renderCategories(){
 }
 
 function renderChapterCats(){
-  const chapters = [1,2,3,4,5,6,7,8,9,'personal'];
+  /* Die Kapitelliste kommt jetzt aus dem aktiven Buch - fest 1-9 stimmte nur
+     fuer Madina 1 und auch dort nur fuer die freigeschalteten Kapitel. */
+  const chapters = [...kapitelDesBuchs(), 'personal'];
   const html = chapters.map(ch=>{
-    const words = VOCAB_DATA.filter(w=>w.chapter===ch);
+    const words = buchVokabeln().filter(w=>w.chapter===ch);
     const name = CHAPTER_NAMES[ch] || `Kapitel ${ch}`;
     const label = ch==='personal' ? `${icon('note')}<span>${name}</span>` : `<span>Kap. ${ch} — ${name}</span>`;
     return `<div class="list-row" data-openlist="chapter:${ch}">
@@ -53,7 +55,7 @@ function renderCustomCats(){
   `).join('');
 
   const assigned = new Set(CUSTOM_CATS.flatMap(c=>c.wordIds));
-  const pool = VOCAB_DATA.filter(w=>!assigned.has(w.id));
+  const pool = buchVokabeln().filter(w=>!assigned.has(w.id));
   document.getElementById('poolWords').innerHTML = pool.map(w=>`<span class="word-chip" draggable-id="${w.id}">${w.ar}<span class="weak-de">(${w.de})</span></span>`).join('');
 
   document.querySelectorAll('[data-delcat]').forEach(btn=>{
@@ -86,11 +88,15 @@ function openWordList(key){
   if (key.startsWith('chapter:')){
     const ch = key.split(':')[1];
     const chNum = ch==='personal' ? 'personal' : Number(ch);
-    words = VOCAB_DATA.filter(w=>w.chapter===chNum);
-    title = ch==='personal' ? 'Eigene Vokabeln' : `Kapitel ${ch} — ${CHAPTER_NAMES[chNum]}`;
+    words = buchVokabeln().filter(w=>w.chapter===chNum);
+    /* CHAPTER_NAMES benennt nur die neun Kapitel aus Madina 1, zu denen eine
+       belegte Grammatikregel vorliegt. Fuer alle uebrigen bleibt die Nummer -
+       einen Namen zu erfinden verbietet E.1. */
+    const kapName = CHAPTER_NAMES[chNum];
+    title = ch==='personal' ? 'Eigene Vokabeln' : (kapName ? `Kapitel ${ch} — ${kapName}` : `Kapitel ${ch}`);
   } else if (key.startsWith('root:')){
     const root = key.split(':')[1];
-    words = VOCAB_DATA.filter(w=>w.root===root);
+    words = buchVokabeln().filter(w=>w.root===root);
     title = `Wurzel ${root}`;
   } else if (key.startsWith('cat:')){
     const cat = CUSTOM_CATS.find(c=>c.id===key.split(':')[1]);
@@ -98,10 +104,10 @@ function openWordList(key){
     title = cat ? cat.name : 'Kategorie';
   } else if (key.startsWith('box:')){
     const boxNum = Number(key.split(':')[1]);
-    words = VOCAB_DATA.filter(w=>PROGRESS[w.id] && PROGRESS[w.id].box===boxNum);
+    words = buchVokabeln().filter(w=>PROGRESS[w.id] && PROGRESS[w.id].box===boxNum);
     title = `Box ${boxNum}`;
   } else if (key==='quran'){
-    words = VOCAB_DATA.filter(w=>w.quran);
+    words = buchVokabeln().filter(w=>w.quran);
     title = 'Vokabeln im Quran';
   } else { words=[]; title=''; }
 

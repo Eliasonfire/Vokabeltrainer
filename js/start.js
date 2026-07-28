@@ -10,20 +10,23 @@ function renderHome(){
     : (SETTINGS.wrongOnly ? 'Keine schwachen Wörter mit dieser Auswahl.' : 'Alles erledigt für heute – super gemacht.');
   document.getElementById('streakCount').textContent = getStreak().count;
 
-  const boxCounts = [1,2,3,4,5].map(b => VOCAB_DATA.filter(w=>PROGRESS[w.id] && PROGRESS[w.id].box===b).length);
+  const boxCounts = [1,2,3,4,5].map(b => buchVokabeln().filter(w=>PROGRESS[w.id] && PROGRESS[w.id].box===b).length);
   document.getElementById('boxOverview').innerHTML = boxCounts.map((n,i)=>`
     <div class="box-pip" data-openlist="box:${i+1}"><div class="n">${n}</div><div class="l">Box ${i+1}</div></div>
   `).join('');
 
-  const quranCount = VOCAB_DATA.filter(w=>w.quran).length;
+  const quranCount = buchVokabeln().filter(w=>w.quran).length;
   document.getElementById('quranTileSub').textContent = `${quranCount} Vokabeln`;
 
+  renderBuchChips();
   renderChapterFilterChips();
   document.getElementById('btnWrongOnly').classList.toggle('active', !!SETTINGS.wrongOnly);
 }
 
 function renderChapterFilterChips(){
-  const chapters = ['all',1,2,3,4,5,6,7,8,9,'personal'];
+  /* Die Kapitelliste haengt am aktiven Buch: Madina 1 hat 24, Madina 3 hat 35,
+     und frueher stand hier fest 1-9. */
+  const chapters = ['all', ...kapitelDesBuchs(), 'personal'];
   const sel = SETTINGS.selectedChapters || [];
   document.getElementById('chapterFilterChips').innerHTML = chapters.map(ch=>{
     const active = ch==='all' ? sel.length===0 : sel.includes(ch==='personal'?'personal':ch);
