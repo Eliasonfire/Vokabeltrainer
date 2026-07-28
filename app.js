@@ -453,25 +453,39 @@ document.getElementById('btnExitLearn').addEventListener('click', ()=>{
   const card = document.getElementById('flashcard');
   const hintR = document.getElementById('swipeHintRight');
   const hintL = document.getElementById('swipeHintLeft');
-  let startX=0, startY=0, dx=0, dragging=false;
+  let startX=0, startY=0, dx=0, dragging=false, achse=null, zeiger=null;
 
   card.addEventListener('pointerdown', (e)=>{
-    startX=e.clientX; startY=e.clientY; dx=0; dragging=true;
+    startX=e.clientX; startY=e.clientY; dx=0; dragging=true; achse=null;
+    /* Den Zeiger einfangen: sonst landet das pointerup auf dem Element, ueber
+       dem der Finger gerade ist, sobald er die Karte verlaesst - und das
+       passiert bei 90px Schwelle staendig. endDrag laeuft dann nie, die Karte
+       bleibt schraeg stehen und die naechste Beruehrung wirkt wie ein Klick. */
+    zeiger = e.pointerId;
+    try { card.setPointerCapture(zeiger); } catch(_){}
   });
   card.addEventListener('pointermove', (e)=>{
     if (!dragging) return;
-    dx = e.clientX - startX;
+    const dxRoh = e.clientX - startX;
     const dy = e.clientY - startY;
-    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 10){
-      card.classList.add('swiping');
-      card.style.transform = `translateX(${dx}px) rotate(${dx/22}deg)`;
-      hintR.classList.toggle('show', dx>40);
-      hintL.classList.toggle('show', dx<-40);
+    /* Richtung einmal festlegen und dann dabei bleiben. Vorher wurde dx auch
+       bei einer senkrechten Bewegung mitgezaehlt; eine schraege Wischbewegung
+       zum Scrollen konnte am Ende ueber der Schwelle landen und eine Vokabel
+       ungefragt als richtig oder falsch verbuchen. */
+    if (!achse && (Math.abs(dxRoh) > 10 || Math.abs(dy) > 10)){
+      achse = Math.abs(dxRoh) > Math.abs(dy) ? 'x' : 'y';
     }
+    if (achse !== 'x') return;
+    dx = dxRoh;
+    card.classList.add('swiping');
+    card.style.transform = `translateX(${dx}px) rotate(${dx/22}deg)`;
+    hintR.classList.toggle('show', dx>40);
+    hintL.classList.toggle('show', dx<-40);
   });
   function endDrag(e){
     if (!dragging) return;
     dragging=false;
+    if (zeiger !== null){ try { card.releasePointerCapture(zeiger); } catch(_){} zeiger = null; }
     card.classList.remove('swiping');
     hintR.classList.remove('show'); hintL.classList.remove('show');
     const threshold = 90;
@@ -488,6 +502,13 @@ document.getElementById('btnExitLearn').addEventListener('click', ()=>{
   }
   card.addEventListener('pointerup', endDrag);
   card.addEventListener('pointercancel', endDrag);
+  /* Zusaetzlich am Fenster, nicht nur an der Karte. setPointerCapture kann
+     fehlschlagen (aeltere WebViews, oder der Browser hat den Zeiger schon fuer
+     eine eigene Geste beansprucht). Ohne diesen zweiten Weg bliebe die Karte
+     dann schraeg stehen, weil das pointerup nie bei ihr ankommt. endDrag
+     laeuft durch das dragging-Flag hoechstens einmal. */
+  window.addEventListener('pointerup', endDrag);
+  window.addEventListener('pointercancel', endDrag);
 })();
 
 function answer(correct){
@@ -789,7 +810,11 @@ function buildSentenceHtml(w){
 }
 
 function renderSentence(){
-  if (SENT.list.length===0){ document.getElementById('sentAr').textContent='Keine Sätze in dieser Auswahl.'; return; }
+  if (SENT.list.length===0){
+    document.getElementById('sentAr').textContent='Keine Sätze in dieser Auswahl.';
+    aktualisiereAndererSatz();
+    return;
+  }
   const w = SENT.list[SENT.idx];
   document.getElementById('sentChapter').textContent = w.chapter==='personal'?'Eigene Vokabel':`Kap. ${w.chapter}`;
   document.getElementById('sentAr').innerHTML = buildSentenceHtml(w);
@@ -804,6 +829,7 @@ function renderSentence(){
     document.getElementById('sentQuranDe').textContent = w.quran.de || w.quran.note || '';
   } else qBox.classList.add('hidden');
 
+  aktualisiereAndererSatz();
 }
 document.getElementById('btnSentPrev').addEventListener('click', ()=>{
   SENT.idx = (SENT.idx-1+SENT.list.length)%SENT.list.length; renderSentence();
@@ -813,6 +839,69 @@ document.getElementById('btnSentNext').addEventListener('click', ()=>{
 });
 document.getElementById('btnSentSpeak').addEventListener('click', ()=>{
   speakArabic(SENT.list[SENT.idx].sentAr);
+});
+
+/* ---------- Anderer Satz zum selben Wort ----------
+   Jede Vokabel bringt genau einen Beispielsatz mit; zu einem Wort gibt es
+   also nicht "noch einen". Selbst welche zu erzeugen verbietet E.1 (nichts
+   erfinden, was nicht aus dem Unterricht oder dem Lehrwerk stammt).
+   Stattdessen springt der Knopf zu den Saetzen ANDERER Vokabeln, in denen
+   dasselbe Wort oder dieselbe Wurzel vorkommt - echtes Material, das das
+   Wort in einem zweiten Zusammenhang zeigt. Gibt es keinen, sagt das die
+   Zeile unter dem Knopf, statt ihn wortlos auszugrauen. */
+function ohneTaschkil(s){ return (s||'').replace(/[ً-ْٰـ]/g,''); }
+
+/* Dasselbe Wort sieht im Satz anders aus als im Vokabeleintrag: قِطٌّ steht
+   dort als الْقِطُّ, نَظِيفٌ als وَنَظِيفٌ. Deshalb Vokalzeichen, Satzzeichen
+   und die angeschriebenen Partikeln اَلْ, وَ und فَ abziehen, bevor verglichen
+   wird. */
+function wortKern(s){
+  return ohneTaschkil(s)
+    .replace(/[.،؟!«»:]/g, '')
+    .replace(/^[وف]/, '')
+    .replace(/^ال/, '');
+}
+
+function verwandteSatzPlaetze(w){
+  const wort = wortKern(w.sg || w.ar);
+  const platz = [];
+  SENT.list.forEach((k, i)=>{
+    if (k.id === w.id) return;
+    // Wurzelgleichheit zaehlt mit: كِتَاب und كُتُب stehen im Satz in ganz
+    // verschiedener Gestalt, sind fuers Lernen aber dasselbe Wortfeld.
+    const gleicheWurzel = w.root && k.root && w.root === k.root;
+    // Ganze Woerter vergleichen, nicht Teilzeichenketten. Ein Teilstring-
+    // Vergleich braeuchte eine Mindestlaenge als Schutz vor Zufallstreffern -
+    // und die schloss ausgerechnet kurze Woerter wie قِطّ und يَد aus, zu
+    // denen es sehr wohl zweite Saetze gibt.
+    const gleichesWort = wort.length >= 2 &&
+      ohneTaschkil(k.sentAr).split(/\s+/).some(x => wortKern(x) === wort);
+    if (gleicheWurzel || gleichesWort) platz.push(i);
+  });
+  return platz;
+}
+
+function aktualisiereAndererSatz(){
+  const knopf = document.getElementById('btnSentOther');
+  const zeile = document.getElementById('sentOtherHint');
+  const w = SENT.list[SENT.idx];
+  if (!w){ knopf.disabled = true; zeile.textContent = ''; return; }
+  const n = verwandteSatzPlaetze(w).length;
+  knopf.disabled = n === 0;
+  zeile.textContent = n === 0
+    ? 'Zu diesem Wort gibt es keinen weiteren Satz im Lehrwerk.'
+    : '';
+}
+
+document.getElementById('btnSentOther').addEventListener('click', ()=>{
+  const w = SENT.list[SENT.idx];
+  const platz = verwandteSatzPlaetze(w);
+  if (!platz.length) return;
+  /* Reihum weiter, nicht zufaellig: bei zwei verwandten Saetzen wuerde Zufall
+     denselben mehrfach hintereinander zeigen und der Knopf wirkte kaputt. */
+  const naechster = platz.find(i => i > SENT.idx);
+  SENT.idx = naechster !== undefined ? naechster : platz[0];
+  renderSentence();
 });
 
 document.getElementById('sentAr').addEventListener('click', (e)=>{
