@@ -17,12 +17,15 @@
      vokabelpaket.json im Repo-Wurzelverzeichnis (per .gitignore ausgeschlossen)
 */
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
+import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
 const WURZEL = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DATEN  = path.join(WURZEL, 'data');
 const ZIEL   = path.join(WURZEL, 'vokabelpaket.json');
+const STAND  = path.join(WURZEL, '.vokabelpaket-stand.json');
 
 /* Die Buchdateien sind ausfuehrbares JS (sie haengen sich in window.VOKABELN
    ein), damit der Service Worker sie ohne Sonderbehandlung cachen kann. Hier
@@ -86,4 +89,68 @@ const paket = {
 fs.writeFileSync(ZIEL, JSON.stringify(paket), 'utf8');
 const kb = (fs.statSync(ZIEL).size / 1024).toFixed(0);
 console.log(`\n${ZIEL}\n${verzeichnis.length} Buecher, ${gesamt} Vokabeln, ${kb} KB.`);
-console.log('Diese Datei aufs Handy uebertragen und in den Einstellungen einlesen.');
+
+/* ---------- Hat sich inhaltlich etwas geaendert? ----------
+   Die Wartungsroutine laeuft zweimal die Woche. Wuerde sie jedes Mal melden
+   "neues Paket, bitte einlesen", waere die Meldung nach dem dritten Mal wertlos
+   und Elias liest sie nicht mehr - dann geht die eine Meldung unter, die
+   wirklich zaehlt.
+
+   Deshalb ein Fingerabdruck NUR ueber Verzeichnis und Vokabeln. Das Feld
+   `erzeugt` darf ausdruecklich nicht hinein: es aendert sich bei jedem Lauf,
+   und damit waere jedes Paket "neu" - genau der Fehler, den diese Pruefung
+   verhindern soll. */
+const abdruck = createHash('sha256')
+  .update(JSON.stringify({ verzeichnis, buecher }))
+  .digest('hex');
+
+const vorher = fs.existsSync(STAND)
+  ? JSON.parse(fs.readFileSync(STAND, 'utf8'))
+  : null;
+const geaendert = !vorher || vorher.abdruck !== abdruck;
+
+if (!geaendert){
+  console.log('\nUNVERAENDERT - dasselbe Paket wie beim letzten Lauf. Nichts zu tun.');
+  process.exit(0);
+}
+
+/* Was genau ist anders? Ohne diese Zeilen stuende im Bericht nur "geaendert",
+   und niemand wuesste, ob eine Vokabel dazukam oder ein ganzes Buch fehlt. */
+if (vorher && vorher.buecher){
+  const alle = new Set([...Object.keys(vorher.buecher), ...Object.keys(buecher)]);
+  const zeilen = [];
+  for (const slug of [...alle].sort()){
+    const alt = vorher.buecher[slug] ?? 0;
+    const neu = buecher[slug] ? buecher[slug].length : 0;
+    if (alt !== neu) zeilen.push(`  ${slug.padEnd(16)} ${alt} -> ${neu} (${neu-alt >= 0 ? '+' : ''}${neu-alt})`);
+  }
+  console.log('\nGEAENDERT:');
+  console.log(zeilen.length ? zeilen.join('\n')
+    : '  Anzahl je Buch gleich - einzelne Eintraege wurden bearbeitet.');
+} else {
+  console.log('\nGEAENDERT: erstes Paket auf diesem Rechner.');
+}
+
+/* Eine Kopie dorthin legen, wo Elias sie ohne Suchen findet. Der Repo-Ordner
+   taugt dafuer nicht - im Dateiwaehler von Telegram ist F:\Workspace\... drei
+   Ebenen tief. Ueberschreibbar per Umgebungsvariable, damit der Pfad nicht im
+   Code festgenagelt ist. */
+const ablage = process.env.VOKABELPAKET_ABLAGE || path.join(os.homedir(), 'Downloads');
+try {
+  fs.mkdirSync(ablage, { recursive: true });
+  const kopie = path.join(ablage, 'vokabelpaket.json');
+  fs.copyFileSync(ZIEL, kopie);
+  console.log(`\nKopie abgelegt: ${kopie}`);
+} catch (e){
+  console.log(`\nKopie nach ${ablage} nicht moeglich (${e.message}) - die Datei liegt aber in ${ZIEL}.`);
+}
+
+fs.writeFileSync(STAND, JSON.stringify({
+  abdruck,
+  erzeugt: paket.erzeugt,
+  gesamt,
+  buecher: Object.fromEntries(Object.entries(buecher).map(([k,v]) => [k, v.length]))
+}, null, 1), 'utf8');
+
+console.log('\nHANDLUNGSBEDARF: neues Vokabelpaket - auf die Geraete uebertragen');
+console.log('und dort unter Einstellungen > "Vokabelpaket einlesen" auswaehlen.');
