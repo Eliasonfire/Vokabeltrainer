@@ -1,0 +1,164 @@
+/* pruefe-oberflaeche.js -- Regressionslauf durch die laufende App
+ *
+ * Aufruf: die App im Browser oeffnen, Entwicklerkonsole auf, und
+ *
+ *   fetch('pruefe-oberflaeche.js').then(r=>r.text()).then(eval)
+ *
+ * Danach steht der Bericht in der Konsole.
+ *
+ * Warum es das gibt: Goal-Prompt E.6 verlangt, dass bestehende Bildschirme
+ * nicht kaputtgehen. Geprueft wurde das bisher jedes Mal von Hand mit einem
+ * frisch getippten Konsolenschnipsel - bei neun Bildschirmen, acht Buechern
+ * und inzwischen 185 Saetzen ist das weder vollstaendig noch wiederholbar.
+ * "Keine Testcheckliste fuer Regressionen" stand seit Juli als offener Punkt
+ * im Projektgedaechtnis.
+ *
+ * Diese Datei wird NICHT von index.html geladen. Sie ist Werkzeug, kein Teil
+ * der App - im Cache des Service Workers hat sie deshalb auch nichts verloren.
+ *
+ * Was sie NICHT kann: sehen, ob etwas gut aussieht. Sie stellt fest, dass
+ * nichts wirft, dass die Zaehlwerte zusammenpassen und dass jeder Datensatz
+ * einmal durch seine Darstellung gelaufen ist. Layout, Lesbarkeit und ob eine
+ * Erklaerung inhaltlich stimmt, bleiben Augenarbeit. */
+(async function pruefeOberflaeche(){
+  const ergebnis = [];
+  const ok   = (was, zusatz) => ergebnis.push({ status:'ok',   was, zusatz: zusatz || '' });
+  const fehl = (was, zusatz) => ergebnis.push({ status:'FEHLER', was, zusatz: zusatz || '' });
+  const warn = (was, zusatz) => ergebnis.push({ status:'Hinweis', was, zusatz: zusatz || '' });
+
+  const versuch = (was, fn) => {
+    try { const r = fn(); ok(was, typeof r === 'string' ? r : ''); return true; }
+    catch (e){ fehl(was, e.message); return false; }
+  };
+  const warte = ms => new Promise(r=>setTimeout(r, ms));
+
+  /* Den Zustand des Nutzers nicht anfassen: der Lauf schaltet Bildschirme um
+     und laedt Buecher nach, aber er darf keinen Fortschritt veraendern. Was
+     er doch anfasst (aktives Buch, Kapitelauswahl), wird am Ende
+     zurueckgesetzt. */
+  const vorher = { buch: (typeof aktivesBuch==='function') ? aktivesBuch() : null,
+                   kapitel: (SETTINGS.selectedChapters || []).slice(),
+                   fortschritt: localStorage.getItem('vt_progress') };
+
+  /* ---- 1. Alle Bildschirme ---- */
+  const bildschirme = [...document.querySelectorAll('.screen')].map(s=>s.dataset.screen).filter(Boolean);
+  for (const b of bildschirme){
+    versuch(`Bildschirm "${b}" oeffnet`, ()=>{ showScreen(b); });
+    await warte(30);
+  }
+
+  /* ---- 2. Satz-Modus: jeder Satz einmal gerendert, mit I'rab ---- */
+  versuch('Satz-Modus baut alle Saetze', ()=>{
+    openSentences();
+    const n = SENT.list.length;
+    for (let i=0;i<n;i++){ SENT.idx = i; renderSentence(); }
+    return `${n} Saetze`;
+  });
+  if (typeof renderIrab === 'function'){
+    versuch("I'rab fuer jeden Satz", ()=>{
+      for (let i=0;i<SENT.list.length;i++){ SENT.idx = i; renderSentence(); renderIrab(); }
+      return `${SENT.list.length} Zerlegungen`;
+    });
+  }
+
+  /* ---- 3. Markierungen: findet jeder matchText seine Stelle? ---- */
+  versuch('Satzmarkierungen loesen auf', ()=>{
+    const alle = SENT.list.concat(VOCAB_DATA);
+    const fehlend = [];
+    Object.entries(SENTENCE_TAGS).forEach(([id, tags])=>{
+      const w = alle.find(x=>String(x.id)===id);
+      if (!w){ fehlend.push(`${id}: kein Satz`); return; }
+      tags.forEach(t=>{ if (!w.sentAr || w.sentAr.indexOf(t.matchText) === -1) fehlend.push(`${id}/${t.ruleId}`); });
+    });
+    if (fehlend.length) throw new Error(fehlend.slice(0,5).join(', ') + (fehlend.length>5 ? ` (+${fehlend.length-5})` : ''));
+    return `${Object.values(SENTENCE_TAGS).flat().length} Markierungen`;
+  });
+
+  /* ---- 4. Jede Regel erreichbar? ---- */
+  versuch('Regeln mit Beleg', ()=>{
+    const belegt = new Set(Object.values(SENTENCE_TAGS).flat().map(t=>t.ruleId));
+    const ohne = GRAMMAR_RULES.filter(r=>!belegt.has(r.id));
+    if (ohne.length) warn('Regeln ohne Beleg', ohne.map(r=>r.id).join(', '));
+    return `${GRAMMAR_RULES.length - ohne.length} von ${GRAMMAR_RULES.length} erreichbar`;
+  });
+
+  /* ---- 5. Lernkarte fuer jede Vokabel ---- */
+  versuch('Quran-Anzeige fuer jede Vokabel', ()=>{
+    let mit = 0;
+    buchVokabeln().forEach(w=>{
+      renderQuranFreqBadge(w);
+      const wurzel = w.root && w.root.replace(/\s+/g,'');
+      const f = wurzel && QURAN_FREQ[wurzel];
+      if (f){ mit++; openQuranFreqPopover(w, f); }
+    });
+    closeQuranFreqPopover();
+    return `${mit} von ${buchVokabeln().length} mit Quran-Bezug`;
+  });
+
+  /* ---- 6. Kategorien: jede Liste einmal oeffnen ---- */
+  versuch('Kategorien-Listen', ()=>{
+    showScreen('categories');
+    const zeilen = [...document.querySelectorAll('[data-openlist]')];
+    zeilen.forEach(z=>z.click());
+    return `${zeilen.length} Listen`;
+  });
+
+  /* ---- 7. Buchwechsel durch alle Buecher ---- */
+  if (typeof BUECHER !== 'undefined' && typeof setzeBuch === 'function'){
+    for (const b of BUECHER){
+      if (BUCH_FEHLT.has(b.slug)) { warn(`Buch ${b.slug}`, 'Datei nicht verfuegbar, uebersprungen'); continue; }
+      const t0 = performance.now();
+      await setzeBuch(b.slug);
+      const dauer = Math.round(performance.now() - t0);
+      const soll = b.vokabeln + VOCAB_DATA.filter(w=>w.chapter==='personal').length;
+      const ist = buchVokabeln().length;
+      if (ist !== soll) fehl(`Buch ${b.slug}`, `${ist} Vokabeln, erwartet ${soll}`);
+      else ok(`Buch ${b.slug}`, `${ist} Vokabeln, ${dauer} ms`);
+    }
+  }
+
+  /* ---- 8. Hoerverstehen: eine Runde ---- */
+  if (typeof openHoeren === 'function'){
+    versuch('Hoerverstehen: zehn Fragen', ()=>{
+      showScreen('hoeren');
+      for (let i=0;i<10;i++){
+        if (!HOER.wort) throw new Error('keine Frage aufgebaut');
+        const richtig = HOER.optionen.findIndex(w=>w.id===HOER.wort.id);
+        if (richtig < 0) throw new Error('die richtige Antwort fehlt unter den Optionen');
+        beantworteHoerfrage(richtig);
+        naechsteHoerfrage();
+      }
+      return `${HOER.richtig} von ${HOER.gesamt} richtig`;
+    });
+  }
+
+  /* ---- 9. Sicherung: Runde durch Export und Import ---- */
+  if (typeof baueSicherung === 'function'){
+    versuch('Sicherung enthaelt alle Schluessel', ()=>{
+      const s = baueSicherung();
+      const fehlend = SICHERUNGS_SCHLUESSEL.filter(k => localStorage.getItem(k) !== null && !(k in s.daten));
+      if (fehlend.length) throw new Error('fehlt in der Sicherung: ' + fehlend.join(', '));
+      return `${Object.keys(s.daten).length} Schluessel, ${Math.round(JSON.stringify(s).length/1024)} KB`;
+    });
+  }
+
+  /* ---- Zustand zuruecksetzen ---- */
+  if (vorher.buch) await setzeBuch(vorher.buch, true);
+  SETTINGS.selectedChapters = vorher.kapitel;
+  saveSettings();
+  if (vorher.fortschritt !== localStorage.getItem('vt_progress')){
+    localStorage.setItem('vt_progress', vorher.fortschritt);
+    warn('Fortschritt', 'wurde vom Lauf beruehrt und aus der Sicherung zurueckgeschrieben');
+  }
+  showScreen('home');
+
+  /* ---- Bericht ---- */
+  const fehler = ergebnis.filter(e=>e.status==='FEHLER');
+  console.log('%c--- Oberflaechenpruefung ---', 'font-weight:bold');
+  console.table(ergebnis);
+  console.log(fehler.length
+    ? `%c${fehler.length} Fehler - nicht pushen.`
+    : '%cKein Fehler. Layout und Inhalt bleiben trotzdem Augenarbeit.',
+    `color:${fehler.length ? '#f87171' : '#34d399'};font-weight:bold`);
+  return { fehler: fehler.length, ergebnis };
+})();
