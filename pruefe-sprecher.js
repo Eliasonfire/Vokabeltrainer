@@ -64,6 +64,21 @@ for (const f of fs.readdirSync(SPRECHER)) {
 const vorhanden = Object.keys(folgen).map(Number).sort((a, b) => a - b);
 console.log(`Sprecherdaten fuer Folge ${vorhanden.join(', ')} | Fenster +/- ${FENSTER}s\n`);
 
+/* "Der Lehrer ist, wer am meisten redet" traegt nur, solange es wirklich einen
+   Hauptsprecher gibt. In Folge 12 kommt der lauteste Sprecher auf 33% - dort
+   hat pyannote den Lehrer offensichtlich auf mehrere Labels verteilt, und jede
+   Prozentzahl fuer diese Folge waere eine Scheingenauigkeit. Solche Folgen
+   werden getrennt ausgewiesen statt stillschweigend mitgerechnet. */
+const SCHWELLE_HAUPTSPRECHER = 50;
+const unsicher = vorhanden.filter(n => folgen[n].anteil < SCHWELLE_HAUPTSPRECHER);
+if (unsicher.length) {
+  console.log(`Achtung: In Folge ${unsicher.join(', ')} gibt es keinen klaren Hauptsprecher ` +
+              `(staerkster Sprecher unter ${SCHWELLE_HAUPTSPRECHER}%: ` +
+              unsicher.map(n => `F${n} ${folgen[n].anteil}%`).join(', ') + ').');
+  console.log('Dort ist der Lehrer auf mehrere Labels verteilt - die Zahlen unten sagen fuer');
+  console.log('diese Folgen nichts aus und stehen deshalb in einem eigenen Block.\n');
+}
+
 const ergebnis = [];
 let ohneDaten = 0;
 for (const r of GRAMMAR_RULES) {
@@ -82,21 +97,31 @@ for (const r of GRAMMAR_RULES) {
   const gesamt = Object.values(zeit).reduce((a, b) => a + b, 0);
   const lehrerAnteil = gesamt ? (zeit[daten.lehrer] || 0) / gesamt * 100 : 0;
   ergebnis.push({ regel: r.id, folge: r.source.folge, zeit: r.source.approxTimestamp,
-                  lehrerProzent: Math.round(lehrerAnteil), stille: gesamt < 1 });
+                  lehrerProzent: Math.round(lehrerAnteil), stille: gesamt < 1,
+                  belastbar: daten.anteil >= SCHWELLE_HAUPTSPRECHER });
 }
 
 ergebnis.sort((a, b) => a.lehrerProzent - b.lehrerProzent);
-const auffaellig = ergebnis.filter(e => e.lehrerProzent < 60);
+const zeile = e => `  ${String(e.lehrerProzent).padStart(3)}%  F${String(e.folge).padStart(2)} ${e.zeit.padStart(6)}  ${e.regel}${e.stille ? '  (fast nur Stille im Fenster)' : ''}`;
 
-console.log(`${ergebnis.length} Regeln gegen die Sprecherspur gehalten, ${ohneDaten} ohne Daten (Folge fehlt noch oder kein Zeitstempel).\n`);
+const belastbar = ergebnis.filter(e => e.belastbar);
+const auffaellig = belastbar.filter(e => e.lehrerProzent < 60);
+
+console.log(`${ergebnis.length} Regeln gegen die Sprecherspur gehalten, ${ohneDaten} ohne Daten (Folge fehlt noch oder kein Zeitstempel).`);
+console.log(`Davon ${belastbar.length} aus Folgen mit klarem Hauptsprecher.\n`);
 if (!auffaellig.length) {
-  console.log('Bei jeder geprueften Regel redet im Fenster ueberwiegend der Lehrer.');
+  console.log('Bei jeder belastbar geprueften Regel redet im Fenster ueberwiegend der Lehrer.');
 } else {
   console.log(`${auffaellig.length} Regeln mit unter 60% Lehreranteil im Fenster - nachhoeren:\n`);
-  for (const e of auffaellig) {
-    console.log(`  ${String(e.lehrerProzent).padStart(3)}%  F${String(e.folge).padStart(2)} ${e.zeit.padStart(6)}  ${e.regel}${e.stille ? '  (fast nur Stille im Fenster)' : ''}`);
-  }
+  auffaellig.forEach(e => console.log(zeile(e)));
 }
-const schnitt = ergebnis.length
-  ? Math.round(ergebnis.reduce((a, e) => a + e.lehrerProzent, 0) / ergebnis.length) : 0;
-console.log(`\nDurchschnittlicher Lehreranteil ueber alle geprueften Regeln: ${schnitt}%`);
+const schnitt = belastbar.length
+  ? Math.round(belastbar.reduce((a, e) => a + e.lehrerProzent, 0) / belastbar.length) : 0;
+console.log(`\nDurchschnittlicher Lehreranteil ueber die belastbaren Regeln: ${schnitt}%`);
+
+const ohneHauptsprecher = ergebnis.filter(e => !e.belastbar);
+if (ohneHauptsprecher.length) {
+  console.log(`\n--- ${ohneHauptsprecher.length} Regeln aus Folgen ohne klaren Hauptsprecher ---`);
+  console.log('Zahlen nur zur Vollstaendigkeit, sie taugen hier nicht als Beleg:\n');
+  ohneHauptsprecher.forEach(e => console.log(zeile(e)));
+}
