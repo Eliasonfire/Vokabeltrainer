@@ -141,7 +141,14 @@ function renderQuranFreqBadge(w){
 function openQuranFreqPopover(w, freq){
   const [anzahl, verse] = freq;
   const shown = verse.slice(0, 10);
-  document.getElementById('qfpTitle').innerHTML = `${icon('crescent')} <span lang="ar" dir="rtl">${escapeHtml(w.ar)}</span> im Quran (${anzahl}×)`;
+  /* Zwei verschiedene Zahlen, und der Unterschied ist lehrreich: die Wurzel
+     ب ي ت steht 73-mal im Quran, das Wort بَيْت selbst deutlich seltener - der
+     Rest sind Haeuser, Verse und andere Ableitungen derselben Wurzel. Die
+     Wortzahl gibt es nur, wo das Schriftbild im Korpus eindeutig ist; bei
+     كتب (Buch und schrieb) steht bewusst nichts. */
+  const wortZahl = (typeof QURAN_WORT !== 'undefined') && QURAN_WORT[w.sg || w.ar];
+  const zusatz = wortZahl ? `<div class="qfp-wortzahl">Das Wort selbst: ${wortZahl}×</div>` : '';
+  document.getElementById('qfpTitle').innerHTML = `${icon('crescent')} <span lang="ar" dir="rtl">${escapeHtml(w.ar)}</span> im Quran (${anzahl}×)${zusatz}`;
   document.getElementById('qfpList').innerHTML = shown.map(([sura, ayah])=>`
     <div class="qfp-item" data-vers="${sura}:${ayah}" role="button" tabindex="0">
       <span class="qfp-pfeil">${icon('right')}</span>

@@ -59,8 +59,21 @@ for (const v of wortschatz) {
 }
 console.log(`${wortschatz.length} Vokabeln, ${gesucht.size} verschiedene Wurzeln.`);
 
+/* ---- Welche Woerter selbst? ----
+   Die Wurzelzahl beantwortet "wie oft kommt dieses Wortfeld im Quran vor" -
+   بيت zaehlt dann Haus, Haeuser und Vers mit. Der Ziel-Prompt (C.3) will
+   zusaetzlich die Haeufigkeit des WORTES. Das Korpus fuehrt dafuer je Segment
+   ein Lemma (LEM:بَيْت), also die Grundform ohne Kasusendung. */
+const ohneZeichen = s => String(s || '').replace(/[ً-ْٰـ]/g, '').replace(/[أإآٱ]/g,'ا');
+const wortGesucht = new Map();           // Lemmaskelett -> Schreibweise der App
+for (const v of wortschatz) {
+  const k = ohneZeichen(v.sg || v.ar);
+  if (k.length >= 2 && !wortGesucht.has(k)) wortGesucht.set(k, v.sg || v.ar);
+}
+
 /* ---- Korpus auswerten ---- */
-const treffer = new Map();               // normalisiert -> { count, verses:Set }
+const treffer = new Map();               // Wurzel -> { count, verses:Set }
+const wortTreffer = new Map();           // Lemmaskelett -> { count, formen:Set }
 let zeilen = 0, mitWurzel = 0;
 const text = fs.readFileSync(KORPUS, 'utf8');
 for (const zeile of text.split(/\r?\n/)) {
@@ -68,6 +81,20 @@ for (const zeile of text.split(/\r?\n/)) {
   zeilen++;
   const teile = zeile.split('\t');
   if (teile.length < 4) continue;
+
+  const lem = teile[3].match(/LEM:([^|]+)/);
+  if (lem){
+    const lk = ohneZeichen(lem[1]);
+    if (wortGesucht.has(lk)){
+      if (!wortTreffer.has(lk)) wortTreffer.set(lk, { count: 0, formen: new Set() });
+      const w = wortTreffer.get(lk);
+      w.count++;
+      /* Welche vokalisierten Lemmata hinter dem Skelett stecken - daran haengt,
+         ob die Zahl eindeutig ist. */
+      w.formen.add(lem[1]);
+    }
+  }
+
   const m = teile[3].match(/ROOT:([^|]+)/);
   if (!m) continue;
   mitWurzel++;
@@ -80,6 +107,17 @@ for (const zeile of text.split(/\r?\n/)) {
   t.verses.add(`${sura}:${ayah}`);
 }
 console.log(`${zeilen} Korpuszeilen, ${mitWurzel} mit Wurzelangabe, ${treffer.size} gesuchte Wurzeln gefunden.`);
+
+/* Ein Skelett kann mehrere vokalisierte Lemmata decken - كتب ist Buch und
+   schrieb zugleich. Eine Zahl, die beides zusammenwirft, waere schlicht
+   falsch; solche Woerter bekommen deshalb gar keine. */
+const wortZahl = {};
+let mehrdeutig = 0;
+for (const [lk, w] of wortTreffer){
+  if (w.formen.size > 1){ mehrdeutig++; continue; }
+  wortZahl[wortGesucht.get(lk)] = w.count;
+}
+console.log(`${Object.keys(wortZahl).length} Woerter mit eindeutiger Wortzahl, ${mehrdeutig} mehrdeutig (keine Zahl).`);
 
 /* ---- Ausgabedatei ---- */
 const raus = {};
@@ -99,6 +137,9 @@ for (const [key, t] of sortiert) {
   raus[gesucht.get(key)] = [t.count, verses];
 }
 
+/* Zwei Tabellen in einer Datei: QURAN_FREQ nach Wurzel (mit Fundstellen) und
+   QURAN_WORT nach Wort (nur die Anzahl). Getrennt, weil sie verschiedene
+   Fragen beantworten. */
 const kopf =
 `/* ===================== QURAN FREQUENCY DATA =====================
    Automatisch erzeugt von werkzeuge/baue-quran-frequenz.mjs - nicht von Hand
@@ -115,8 +156,23 @@ const kopf =
 
    ${Object.keys(raus).length} Wurzeln aus allen acht Lehrwerken. */
 const QURAN_FREQ = `;
+const wortKopf =
+`
+
+/* Wie oft das WORT selbst im Quran steht (Lemma laut Korpus), nicht nur seine
+   Wurzel. بَيْتٌ als Wurzel zaehlt Haus, Haeuser und Vers zusammen; als Wort
+   nur das Haus.
+
+   Nur eindeutige Faelle: wo ein Schriftbild mehrere vokalisierte Lemmata deckt
+   (كتب ist Buch und schrieb), steht hier nichts - eine Zahl, die beides
+   zusammenwirft, waere schlicht falsch.
+
+   ${Object.keys(wortZahl).length} Woerter, ${mehrdeutig} wegen Mehrdeutigkeit ausgelassen. */
+const QURAN_WORT = `;
+
 fs.writeFileSync(path.join(REPO, 'quran-frequency-data.js'),
-  kopf + JSON.stringify(raus, null, 1) + ';\n', 'utf8');
+  kopf + JSON.stringify(raus, null, 1) + ';\n'
+       + wortKopf + JSON.stringify(wortZahl, null, 1) + ';\n', 'utf8');
 
 const ohne = [...gesucht.keys()].filter(k => !treffer.has(k)).length;
 console.log(`Geschrieben: ${Object.keys(raus).length} Wurzeln mit Vorkommen, ${ohne} ohne (kommen im Quran nicht vor).`);
