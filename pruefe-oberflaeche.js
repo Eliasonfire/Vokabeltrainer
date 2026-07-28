@@ -38,7 +38,14 @@
      zurueckgesetzt. */
   const vorher = { buch: (typeof aktivesBuch==='function') ? aktivesBuch() : null,
                    kapitel: (SETTINGS.selectedChapters || []).slice(),
-                   fortschritt: localStorage.getItem('vt_progress') };
+                   fortschritt: localStorage.getItem('vt_progress'),
+                   /* Auch die laufende Lernrunde sichern: die Stufenpruefung
+                      unten baut sich eine eigene SESSION. Ohne das waere eine
+                      angefangene Runde nach dem Lauf weg. */
+                   session: (typeof SESSION !== 'undefined')
+                     ? { words: SESSION.words.slice(), idx: SESSION.idx,
+                         dirs: SESSION.dirs.slice(), fertig: SESSION.fertig }
+                     : null };
 
   /* ---- 1. Alle Bildschirme ---- */
   const bildschirme = [...document.querySelectorAll('.screen')].map(s=>s.dataset.screen).filter(Boolean);
@@ -180,8 +187,19 @@
   saveSettings();
   if (vorher.fortschritt !== localStorage.getItem('vt_progress')){
     localStorage.setItem('vt_progress', vorher.fortschritt);
-    warn('Fortschritt', 'wurde vom Lauf beruehrt und aus der Sicherung zurueckgeschrieben');
+    /* Und die Kopie im Speicher gleich mit. Sie allein zurueckzuschreiben
+       reichte NICHT: PROGRESS ist ein Objekt im Arbeitsspeicher, und das
+       naechste saveProgress() haette den veraenderten Stand wieder in den
+       localStorage geschrieben - der Lauf haette den echten Lernfortschritt
+       still ueberschrieben, obwohl er ihn "zurueckgesetzt" meldete. */
+    if (typeof PROGRESS !== 'undefined' && vorher.fortschritt){
+      const alt = JSON.parse(vorher.fortschritt);
+      Object.keys(PROGRESS).forEach(k=>{ delete PROGRESS[k]; });
+      Object.assign(PROGRESS, alt);
+    }
+    warn('Fortschritt', 'wurde vom Lauf beruehrt und vollstaendig zurueckgeschrieben');
   }
+  if (vorher.session && typeof SESSION !== 'undefined') SESSION = vorher.session;
   showScreen('home');
 
   /* ---- Bericht ---- */
