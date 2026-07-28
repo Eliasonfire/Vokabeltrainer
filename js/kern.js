@@ -77,6 +77,18 @@ let SETTINGS = Object.assign(
 );
 function saveSettings(){ LS.set('vt_settings', SETTINGS); }
 
+/* Eigene Eselsbruecken pro Vokabel (arabicroots-Paritaet D): { [vokabelId]: Text }.
+   Bewusst getrennt von PROGRESS - beim "Fortschritt zuruecksetzen" soll das,
+   was Elias sich selbst ausgedacht hat, nicht mit weggeworfen werden. */
+let NOTES = LS.get('vt_notes', {});
+function saveNotes(){ LS.set('vt_notes', NOTES); }
+function getNote(id){ return (NOTES[id] || '').trim(); }
+function setNote(id, text){
+  const t = (text || '').trim();
+  if (t) NOTES[id] = t; else delete NOTES[id];
+  saveNotes();
+}
+
 let CUSTOM_CATS = LS.get('vt_customCats', []);
 function saveCustomCats(){ LS.set('vt_customCats', CUSTOM_CATS); }
 

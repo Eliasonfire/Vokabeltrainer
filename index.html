@@ -797,6 +797,55 @@ main{
 }
 
 /* =====================================================================
+   EIGENE NOTIZ / ESELSBRÜCKE PRO VOKABEL (arabicroots-Parität D)
+   ===================================================================== */
+/* Auf der Kartenrückseite. Leer ist es eine dezente Einladung, gefüllt
+   hebt es sich ab — sonst übersieht man die eigene Eselsbrücke genau dann,
+   wenn man sie bräuchte. */
+.note-box{
+  display:flex;align-items:flex-start;gap:var(--sp-2);
+  width:100%;text-align:left;
+  margin-bottom:var(--sp-4);padding:var(--sp-3);
+  background:var(--surface-2);border:1px dashed var(--border);
+  border-radius:var(--r-2);color:var(--text-faint);
+  font-size:var(--fs-sm);line-height:1.5;cursor:pointer;
+  transition:background var(--dur-2) ease, border-color var(--dur-2) ease, color var(--dur-2) ease;
+}
+.note-box:hover{background:var(--surface-3);border-color:var(--border-strong);}
+.note-box .ic{flex:0 0 auto;margin-top:1px;}
+.note-box.hat-notiz{
+  border-style:solid;border-color:var(--red-dim);
+  background:var(--red-wash);color:var(--text);
+}
+/* Kleiner Hinweis auf der Vorderseite: "zu diesem Wort hast du dir etwas
+   notiert". Sitzt gegenüber vom Kapitel-Chip, spiegelbildlich zu dessen
+   absoluter Position. */
+.note-dot{
+  position:absolute;top:var(--sp-4);right:var(--sp-4);
+  display:inline-flex;align-items:center;justify-content:center;
+  width:26px;height:26px;border-radius:var(--r-full);
+  background:var(--red-wash);color:var(--red-bright);border:1px solid var(--red-dim);
+}
+.note-dot .ic{width:14px;height:14px;}
+
+.note-editor{
+  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
+  z-index:700;width:min(380px,90vw);
+  background:var(--surface-3);border:1px solid var(--border-strong);border-radius:var(--r-4);
+  padding:var(--sp-4);box-shadow:var(--sh-3);
+  display:flex;flex-direction:column;gap:var(--sp-3);
+  animation:popIn var(--dur-3) var(--ease-spring);
+}
+.note-editor textarea{
+  width:100%;min-height:120px;resize:vertical;
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-2);
+  padding:var(--sp-3);color:var(--text);font:inherit;font-size:var(--fs-md);line-height:1.55;
+}
+.note-editor textarea:focus{outline:none;border-color:var(--red-dim);}
+.note-editor .ne-wort{font-family:var(--font-ar);direction:rtl;font-size:1.45rem;color:#fff;}
+.note-editor .ne-aktionen{display:flex;gap:var(--sp-2);justify-content:flex-end;}
+
+/* =====================================================================
    QURAN-LISTE / READER
    ===================================================================== */
 .quran-intro{color:var(--text-dim);font-size:var(--fs-md);line-height:1.6;margin-bottom:var(--sp-4);}
@@ -1086,6 +1135,7 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
           <div class="flashcard-inner" id="flashcardInner">
             <div class="flashcard-face flashcard-front">
               <div class="chip chip-chapter" id="cardChapter">Kap. 1</div>
+              <span class="note-dot hidden" id="cardNoteDot" title="Eselsbrücke vorhanden" aria-label="Eselsbrücke vorhanden"><svg class="ic"><use href="#ic-note"/></svg></span>
               <div class="arabic-word" id="cardArabic" lang="ar" dir="rtl">بَيْتٌ</div>
               <button class="speak-btn" id="btnSpeakWord" title="Vorlesen" aria-label="Vorlesen">
                 <svg class="ic"><use href="#ic-speaker"/></svg>
@@ -1096,6 +1146,10 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
               <div class="german-word" id="cardGerman">Haus</div>
               <div class="gender-chip hidden" id="cardGender"></div>
               <div class="word-forms" id="cardForms"></div>
+              <button class="note-box" id="cardNoteBox">
+                <svg class="ic"><use href="#ic-note"/></svg>
+                <span id="cardNoteText">Eselsbrücke hinzufügen</span>
+              </button>
               <div class="example-box" id="cardSentenceBox">
                 <div class="example-ar" id="cardSentenceAr" lang="ar" dir="rtl"></div>
                 <div class="example-de" id="cardSentenceDe"></div>
@@ -1333,6 +1387,19 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
     <button class="icon-btn" id="btnCloseQuranFreq" aria-label="Schließen"><svg class="ic"><use href="#ic-close"/></svg></button>
   </div>
   <div class="qfp-list" id="qfpList"></div>
+</div>
+
+<div class="qfp-backdrop hidden" id="noteBackdrop"></div>
+<div class="note-editor hidden" id="noteEditor">
+  <div class="qfp-header">
+    <div class="ne-wort" id="neWort" lang="ar" dir="rtl"></div>
+    <button class="icon-btn" id="btnCloseNote" aria-label="Schließen"><svg class="ic"><use href="#ic-close"/></svg></button>
+  </div>
+  <textarea id="neText" placeholder="Wie merkst du dir dieses Wort? (z.B. Klangähnlichkeit, Wurzel, eigene Geschichte)" lang="de"></textarea>
+  <div class="ne-aktionen">
+    <button class="btn btn-secondary" id="btnDeleteNote"><svg class="ic"><use href="#ic-trash"/></svg>Löschen</button>
+    <button class="btn btn-primary" id="btnSaveNote"><svg class="ic"><use href="#ic-check"/></svg>Speichern</button>
+  </div>
 </div>
 
 <!-- Reine Daten, keine Logik (E.7). Muessen vor der App-Logik stehen. -->
