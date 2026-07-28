@@ -37,7 +37,11 @@ const INDEKLINABEL = ['هذا','هذه','ذلك','تلك','هو','هي','أنا'
                       /* Adverbien: stehen immer auf Fatha und bekommen nie eine
                          Endung nach ihrer Satzrolle. */
                       'الآن','الان','اليوم','غدا','جدا','أيضا','ايضا','معا','دائما','أبدا',
-                      'لماذا','ماذا','كم','أي','اي'];
+                      'لماذا','ماذا','كم','أي','اي',
+                      /* لِمَنْ ist ein festes Fragewort (istifham-liman-01), kein
+                         angeschriebenes لِ vor einem Nomen - sonst landet es in der
+                         Unklar-Schublade. */
+                      'لمن'];
 
 /* Dieselbe Zeile steht in saetze.js als `ohneTaschkil`, und das bleibt mit
    Absicht so: irab.js laeuft auch ausserhalb des Browsers (pruefe-saetze.js
@@ -346,6 +350,15 @@ function analysiereSatz(satz){
     }
 
     if (erwartet){ letzterKasus = erwartet; letzteBestimmtheit = istBestimmt(wort); }
+    /* Nach einem Punkt, Frage- oder Ausrufezeichen faengt ein neuer Satz an:
+       in مَا اسْمُكِ؟ اسْمِي آمِنَةُ. ist اسْمِي wieder ein مُبْتَدَأ und nicht der
+       خَبَر des vorigen Satzes. Ohne dieses Zuruecksetzen liefen die Rollen
+       ueber die Satzgrenze hinweg weiter. */
+    if (satzende){
+      ersteRolleVergeben = false;
+      letzterKasus = null; letzteBestimmtheit = null;
+      vorherJarr = false; vorherMudaf = false;
+    }
     const stimmt = (erwartet && gelesen && !dualOderPlural) ? (gelesen.kasus === erwartet) : null;
     out.push({ wort, rein, rolle, erwartet, gelesen, stimmt });
   });
