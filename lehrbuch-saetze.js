@@ -84,7 +84,9 @@ const LEHRBUCH_SAETZE = [
 
   { id: 'mb1-34-1', seite: 34, kapitel: 6,
     sentAr: 'لِمَنْ هَذِهِ؟ هَذِهِ لِخَالِدٍ.',
-    sentDe: 'Wem gehört diese? Diese gehört Khalid.' },
+    /* هَذِهِ steht hier ohne Nomen (im Buch zeigt ein Bild darauf). Wörtlich
+       "wem gehört diese" ergibt im Deutschen keinen Satz, deshalb "das hier". */
+    sentDe: 'Wem gehört das hier? Das gehört Khalid.' },
 
   { id: 'mb1-37-1', seite: 37, kapitel: 7,
     sentAr: 'مُحَمَّدٌ طَالِبٌ.',
@@ -132,5 +134,8 @@ const LEHRBUCH_SAETZE = [
 
   { id: 'mb1-63-2', seite: 63, kapitel: 12,
     sentAr: 'لَا. هِيَ بِنْتُ عَمِّي.',
-    sentDe: 'Nein. Sie ist die Tochter meines Onkels (väterlicherseits).' }
+    /* عَمّ ist ausdrücklich der Onkel väterlicherseits (mütterlicherseits wäre
+       خَال). "Cousine" zuerst, weil das die Bedeutung ist; die wörtliche Form
+       dahinter, weil genau sie die إِضافة zeigt, um die es im Kapitel geht. */
+    sentDe: 'Nein. Sie ist meine Cousine — die Tochter meines Onkels väterlicherseits.' }
 ];
