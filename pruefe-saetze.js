@@ -36,13 +36,24 @@ const ALLE = process.argv.includes('--alle');
 /* Wortarten aus dem vollen Datenabzug nachladen - erst damit kann die Analyse
    Verben von Nomen und Adjektive von Praedikaten unterscheiden. */
 const fenster = {};
-for (const f of fs.readdirSync(P + 'data')){
-  if (!f.startsWith('vokabeln-')) continue;
-  (new Function('window', fs.readFileSync(P + 'data' + path.sep + f, 'utf8')))(fenster);
+/* data/ ist per .gitignore lokal (der Vokabelabzug aus Elias' arabicroots-
+   Zugang). Auf einem frisch geklonten Stand gibt es den Ordner nicht - dann
+   laeuft die Pruefung ohne Wortarten weiter, statt mit einem Absturz zu
+   enden. Ohne Lexikon kann die Analyse Verben nicht von Nomen trennen und
+   meldet an den Stellen "unklar" statt zu raten; das ist der richtige
+   Rueckfall. */
+const datenOrdner = P + 'data';
+if (fs.existsSync(datenOrdner)){
+  for (const f of fs.readdirSync(datenOrdner)){
+    if (!f.startsWith('vokabeln-')) continue;
+    (new Function('window', fs.readFileSync(datenOrdner + path.sep + f, 'utf8')))(fenster);
+  }
 }
 const wortschatz = Object.values(fenster.VOKABELN || {}).flat();
 setzeLexikon(wortschatz);
-console.log(`Wortarten aus ${wortschatz.length} Vokabeln geladen.`);
+console.log(wortschatz.length
+  ? `Wortarten aus ${wortschatz.length} Vokabeln geladen.`
+  : 'Kein Vokabelabzug unter data/ - Analyse laeuft ohne Wortarten (Verben und Adjektive werden dann nicht erkannt).');
 
 /* Ein paar von Elias' eigenen Eintraegen sind keine arabischen Saetze, sondern
    Erklaerungen ueber die Sprache: «فِي الْبَيْتِ»: «الْبَيْتِ» اسْمٌ مَجْرُورٌ.
@@ -85,6 +96,11 @@ for (const q of quellen){
 
   console.log(`${geprueft} Saetze geprueft, ${mitFehler} mit mindestens einer unpassenden Endung, ` +
               `${unklar} mit mindestens einem unvokalisierten Wort.`);
+  if (!wortschatz.length && mitFehler){
+    console.log('ACHTUNG: ohne Wortarten sind diese Befunde nicht belastbar - ein Verb am');
+    console.log('Satzanfang wird dann als Nomen gelesen. Erst `node werkzeuge/hole-vokabeln.mjs`');
+    console.log('laufen lassen, dann noch einmal pruefen.');
+  }
 
   if (!ALLE && befunde.length){
     console.log('');
