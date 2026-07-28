@@ -233,6 +233,14 @@ button{font-family:inherit;color:inherit;}
 .topbar #btnSettings{justify-self:end;}
 .brand{display:flex;flex-direction:column;line-height:1.15;}
 .brand-ar{font-family:var(--font-ar);color:var(--red-bright);font-size:1.35rem;font-weight:700;}
+/* Wortmarke طالِب العِلْم statt gesetztem Text. Die Hoehe fuehrt, die Breite
+   folgt aus dem Seitenverhaeltnis - waere es umgekehrt, wuerde die Marke in
+   der 1fr-Spalte der Topbar auf schmalen Geraeten unterschiedlich hoch.
+   align-self ist hier PFLICHT, nicht Kosmetik: .brand ist ein Spalten-Flex-
+   container, dessen voreingestelltes align-items:stretch die Grafik auf die
+   volle Spaltenbreite zieht. Ohne die Zeile wurde der Schriftzug von 55 auf
+   116 px auseinandergezogen und war als Haarstrich unlesbar. */
+.brand-mark{display:block;height:2rem;width:auto;align-self:flex-start;}
 .brand-de{font-size:var(--fs-xs);color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;font-weight:600;}
 .streak{
   display:flex;align-items:center;gap:var(--sp-2);
@@ -1190,7 +1198,8 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
 
   <header class="topbar">
     <div class="brand">
-      <span class="brand-ar">تَعَلَّمْ</span>
+      <img class="brand-mark" src="wortmarke.svg" width="346" height="152"
+           alt="طالب العلم — Student des Wissens">
       <span class="brand-de">Vokabeltrainer</span>
     </div>
     <div class="streak" id="streakBadge" title="Tages-Streak">
