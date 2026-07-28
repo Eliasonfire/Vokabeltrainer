@@ -7,8 +7,17 @@ function renderSettings(){
   sw.classList.toggle('on', SETTINGS.showPlural);
   document.getElementById('sessionSizeSelect').value = String(SETTINGS.sessionSize);
   document.getElementById('directionSelect').value = SETTINGS.direction || 'ar-de';
+  document.getElementById('toggleTippen').classList.toggle('on', !!SETTINGS.tippenAbBox4);
   loadVoices();
 }
+document.getElementById('toggleTippen').addEventListener('click', ()=>{
+  SETTINGS.tippenAbBox4 = !SETTINGS.tippenAbBox4;
+  saveSettings();
+  renderSettings();
+  /* Der Hinweis erklaert, warum nach dem Einschalten erst mal nichts passiert:
+     Karten in Box 1 bis 3 bleiben unveraendert. */
+  if (SETTINGS.tippenAbBox4) toast('Ab Box 4 wird eingetippt — in Richtung Deutsch → Arabisch.');
+});
 document.getElementById('btnSettings').addEventListener('click', ()=>showScreen('settings'));
 document.getElementById('toggleShowPlural').addEventListener('click', ()=>{
   SETTINGS.showPlural = !SETTINGS.showPlural;

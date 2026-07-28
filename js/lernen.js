@@ -116,7 +116,49 @@ function renderCard(){
 
   renderQuranFreqBadge(w);
   stufenVorschau();
+  renderTippfeld(w);
 }
+
+/* ---------- Ab Box 4 eintippen ----------
+   Umdrehen und "wusste ich" denken ist Wiedererkennung. Freier Abruf ist
+   deutlich schwerer und naeher an dem, was im Unterricht verlangt wird - aber
+   fuer eine frische Vokabel waere er nur frustrierend. Deshalb erst ab Box 4:
+   dort sitzt das Wort schon, und die Frage ist, ob es auch ohne Vorlage kommt.
+
+   Bewusst standardmaessig AUS. Arabisch auf einer Handytastatur zu tippen ist
+   umstaendlich, und ob Elias eine eingerichtet hat, weiss die App nicht. Der
+   Schalter steht in den Einstellungen. */
+function renderTippfeld(w){
+  const kasten = document.getElementById('cardTippBox');
+  const p = PROGRESS[w.id];
+  const dran = SETTINGS.tippenAbBox4 && p && p.box >= 4 && cardDirection(SESSION.idx) === 'de-ar';
+  if (!dran){ kasten.classList.add('hidden'); return; }
+  document.getElementById('cardTippEingabe').value = '';
+  document.getElementById('cardTippAntwort').textContent = '';
+  document.getElementById('cardTippAntwort').className = 'tipp-antwort';
+  kasten.classList.remove('hidden');
+}
+
+function pruefeTippen(){
+  const w = SESSION.words[SESSION.idx];
+  const eingabe = document.getElementById('cardTippEingabe').value;
+  const feld = document.getElementById('cardTippAntwort');
+  if (!eingabe.trim()){ feld.className='tipp-antwort'; feld.textContent=''; return; }
+  /* Ohne Vokalzeichen vergleichen - getippt wird auf dem Handy, und die
+     Taschkil ist hier nicht der Punkt. Die richtige Schreibweise steht auf
+     der Rueckseite vollstaendig da. */
+  const roh = s => String(s||'').replace(/[ً-ْٰـ]/g,'').replace(/[.،؟!«»:؛]/g,'').trim();
+  const richtig = roh(eingabe) === roh(w.ar) || roh(eingabe) === roh(w.sg || '');
+  feld.className = 'tipp-antwort ' + (richtig ? 'richtig' : 'falsch');
+  feld.textContent = richtig ? 'Richtig — umdrehen und einordnen.' : 'Noch nicht.';
+}
+
+document.getElementById('cardTippEingabe').addEventListener('click', (e)=>e.stopPropagation());
+document.getElementById('cardTippEingabe').addEventListener('keydown', (e)=>{
+  e.stopPropagation();
+  if (e.key === 'Enter'){ e.preventDefault(); pruefeTippen(); }
+});
+document.getElementById('cardTippEingabe').addEventListener('pointerdown', (e)=>e.stopPropagation());
 
 /* ---------- Quran-Vorkommen (Wurzel-Häufigkeit, aus dem Quranic Arabic Corpus) ---------- */
 /* QURAN_FREQ[Wurzel] = [Anzahl, [[Sure, Vers], ...]]. Der Surenname stand
@@ -262,6 +304,7 @@ let __suppressCardClick = false;
 document.getElementById('flashcard').addEventListener('click', (e)=>{
   if (e.target.id === 'btnSpeakWord') return;
   if (e.target.closest('#cardNoteBox')) return;   // hat einen eigenen Klick
+  if (e.target.closest('#cardTippBox')) return;   // Tippen dreht die Karte nicht um
   if (__suppressCardClick){ __suppressCardClick = false; return; }
   document.getElementById('flashcard').classList.toggle('flipped');
 });
