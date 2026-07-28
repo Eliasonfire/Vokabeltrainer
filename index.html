@@ -842,13 +842,13 @@ main{
 .qfp-list{overflow-y:auto;display:flex;flex-direction:column;gap:var(--sp-2);}
 .qfp-item{
   background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-2);
-  padding:var(--sp-3);font-size:var(--fs-md);
+  padding:var(--sp-3);font-size:var(--fs-md);cursor:pointer;
+  transition:border-color var(--dur-2) ease, background var(--dur-2) ease;
 }
 .qfp-item .qfp-ref{font-weight:800;color:var(--red-bright);font-variant-numeric:tabular-nums;}
 /* Jede Fundstelle fuehrt in den Quran-Leser. Ohne das war die Liste eine
    Sackgasse: man sah, dass das Wort in 2:125 vorkommt, musste den Vers aber
    selbst heraussuchen. */
-.qfp-item{cursor:pointer;transition:border-color var(--dur-2) ease, background var(--dur-2) ease;}
 .qfp-item:hover{border-color:var(--red-dim);background:var(--surface-3);}
 .qfp-item:active{transform:scale(.99);}
 .qfp-pfeil{float:left;color:var(--text-faint);}

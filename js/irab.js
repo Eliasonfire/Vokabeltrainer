@@ -39,6 +39,11 @@ const INDEKLINABEL = ['هذا','هذه','ذلك','تلك','هو','هي','أنا'
                       'الآن','الان','اليوم','غدا','جدا','أيضا','ايضا','معا','دائما','أبدا',
                       'لماذا','ماذا','كم','أي','اي'];
 
+/* Dieselbe Zeile steht in saetze.js als `ohneTaschkil`, und das bleibt mit
+   Absicht so: irab.js laeuft auch ausserhalb des Browsers (pruefe-saetze.js
+   laedt es per require), wo es die uebrigen Module gar nicht gibt. Ein
+   gemeinsamer Helfer in kern.js waere die schoenere Zeile Code und die
+   schlechtere Loesung - er wuerde die Node-Nutzung brechen. */
 const ohneVokale = s => (s || '').replace(/[ً-ْٰـ]/g, '');
 
 /* ---------- Endung eines Wortes lesen ----------
