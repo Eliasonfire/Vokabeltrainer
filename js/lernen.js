@@ -118,22 +118,33 @@ function renderCard(){
 }
 
 /* ---------- Quran-Vorkommen (Wurzel-Häufigkeit, aus dem Quranic Arabic Corpus) ---------- */
+/* QURAN_FREQ[Wurzel] = [Anzahl, [[Sure, Vers], ...]]. Der Surenname stand
+   frueher bei jedem einzelnen Vers ausgeschrieben in der Datei; seit die
+   Tabelle alle acht Lehrwerke abdeckt (1038 statt 92 Wurzeln) waere das die
+   dreifache Dateigroesse fuer dieselbe Information. Er kommt jetzt aus
+   surah-data.js. */
+function surenName(nr){
+  const s = (typeof SURAH_DATA!=='undefined') && SURAH_DATA.find(x=>x.id===nr);
+  return s ? (s.name || `Sure ${nr}`) : `Sure ${nr}`;
+}
+
 function renderQuranFreqBadge(w){
   const badge = document.getElementById('cardQuranFreq');
   const root = w.root && (typeof QURAN_FREQ!=='undefined') ? w.root.replace(/\s+/g,'') : null;
   const freq = root && QURAN_FREQ[root];
   if (!freq){ badge.classList.add('hidden'); return; }
-  badge.innerHTML = `${icon('crescent')}<span>${freq.count}× im Quran</span>`;
+  badge.innerHTML = `${icon('crescent')}<span>${freq[0]}× im Quran</span>`;
   badge.classList.remove('hidden');
   badge.onclick = (e)=>{ e.stopPropagation(); openQuranFreqPopover(w, freq); };
 }
 
 function openQuranFreqPopover(w, freq){
-  const shown = freq.verses.slice(0, 10);
-  document.getElementById('qfpTitle').innerHTML = `${icon('crescent')} <span lang="ar" dir="rtl">${escapeHtml(w.ar)}</span> im Quran (${freq.count}×)`;
-  document.getElementById('qfpList').innerHTML = shown.map(v=>`
-    <div class="qfp-item"><span class="qfp-ref">${v.sura}:${v.ayah}</span> — ${v.surahName}</div>
-  `).join('') + (freq.count > shown.length ? `<div class="qfp-note">Erste ${shown.length} von ${freq.count} Fundstellen</div>` : '');
+  const [anzahl, verse] = freq;
+  const shown = verse.slice(0, 10);
+  document.getElementById('qfpTitle').innerHTML = `${icon('crescent')} <span lang="ar" dir="rtl">${escapeHtml(w.ar)}</span> im Quran (${anzahl}×)`;
+  document.getElementById('qfpList').innerHTML = shown.map(([sura, ayah])=>`
+    <div class="qfp-item"><span class="qfp-ref">${sura}:${ayah}</span> — ${escapeHtml(surenName(sura))}</div>
+  `).join('') + (anzahl > shown.length ? `<div class="qfp-note">Erste ${shown.length} von ${anzahl} Fundstellen</div>` : '');
   document.getElementById('qfpBackdrop').classList.remove('hidden');
   document.getElementById('quranFreqPopover').classList.remove('hidden');
 }

@@ -186,20 +186,32 @@ if (!Array.isArray(SURAH_DATA)){
 if (!QURAN_FREQ || typeof QURAN_FREQ !== 'object'){
   fail('QURAN_FREQ fehlt oder ist kein Objekt.');
 } else {
-  let roots = 0;
+  let roots = 0, stellen = 0;
+  /* Kompaktes Format seit der Erweiterung auf alle acht Lehrwerke:
+     QURAN_FREQ[Wurzel] = [Anzahl, [[Sure, Vers], ...]]. */
   Object.entries(QURAN_FREQ).forEach(([root, f]) => {
     roots++;
-    if (typeof f.count !== 'number') fail(`QURAN_FREQ["${root}"]: count ist keine Zahl.`);
-    if (!Array.isArray(f.verses)) { fail(`QURAN_FREQ["${root}"]: verses ist kein Array.`); return; }
-    if (f.verses.length > f.count) fail(`QURAN_FREQ["${root}"]: mehr Fundstellen (${f.verses.length}) als count (${f.count}).`);
-    f.verses.forEach((v, j) => {
-      if (v.sura === undefined || v.ayah === undefined)
-        fail(`QURAN_FREQ["${root}"].verses[${j}]: sura/ayah unvollständig.`);
-      if (v.sura !== undefined && (v.sura < 1 || v.sura > 114))
-        fail(`QURAN_FREQ["${root}"].verses[${j}]: sura ${v.sura} liegt außerhalb 1–114.`);
+    if (!Array.isArray(f) || f.length !== 2){
+      fail(`QURAN_FREQ["${root}"]: erwartet [Anzahl, Verse].`); return;
+    }
+    const [anzahl, verse] = f;
+    if (typeof anzahl !== 'number' || anzahl < 1)
+      fail(`QURAN_FREQ["${root}"]: Anzahl ist keine positive Zahl.`);
+    if (!Array.isArray(verse)){ fail(`QURAN_FREQ["${root}"]: Versliste ist kein Array.`); return; }
+    if (verse.length > anzahl)
+      fail(`QURAN_FREQ["${root}"]: mehr Fundstellen (${verse.length}) als Vorkommen (${anzahl}).`);
+    verse.forEach((v, j) => {
+      stellen++;
+      if (!Array.isArray(v) || v.length !== 2){
+        fail(`QURAN_FREQ["${root}"][${j}]: erwartet [Sure, Vers].`); return;
+      }
+      if (v[0] < 1 || v[0] > 114)
+        fail(`QURAN_FREQ["${root}"][${j}]: Sure ${v[0]} liegt ausserhalb 1-114.`);
+      if (v[1] < 1)
+        fail(`QURAN_FREQ["${root}"][${j}]: Vers ${v[1]} ist keine gueltige Nummer.`);
     });
   });
-  note(`QURAN_FREQ: ${roots} Wurzeln.`);
+  note(`QURAN_FREQ: ${roots} Wurzeln, ${stellen} Fundstellen.`);
 }
 
 /* ---------- 7. Dateien, auf die index.html und sw.js verweisen ---------- */
