@@ -127,14 +127,26 @@ const ohneTaschkil = s => (s || '').replace(/[ً-ْٰـ]/g, '');
 function kernformen(regel) {
   /* Erst die Taschkil weg, dann Woerter suchen. Andersherum zerfaellt jedes
      vokalisierte Wort in Einzelbuchstaben: اِسْم ist ا + Kasra + س + Sukun + م,
-     und eine Zeichenklasse fuer Buchstaben findet darin nie zwei am Stueck. */
-  const text = ohneTaschkil(`${regel.name} ${regel.shortExplanation}`);
-  const roh = text.match(/[ء-ي]{2,}/g) || [];
+     und eine Zeichenklasse fuer Buchstaben findet darin nie zwei am Stueck.
+     Ein angeschriebenes وَ / فَ gehoert nicht zur Form: im Regelnamen
+     "مُبْتَدَأ وخَبَر" klebt das و am خَبَر, und ein Lautmuster w-kh-b-r findet
+     "Khabar" natuerlich nie. */
+  const holen = t => (ohneTaschkil(String(t||'')).match(/[ء-ي]{2,}/g) || [])
+    .map(w => /^[وف]/.test(w) && w.length >= 4 ? w.slice(1) : w);
+
+  /* Was im NAMEN der Regel steht, ist ihr Gegenstand - auch wenn es ein
+     grammatischer Fachbegriff ist. Bei mubtada-khabar-01 ist خَبَر genau das,
+     worum es geht; als Metabegriff weggefiltert galt die Regel als unbelegt,
+     obwohl der Lehrer im Fenster woertlich "ihr habt hier den Khabar" sagt.
+     In der ERKLAERUNG dagegen sagt ein خَبَر nichts aus - solche Woerter
+     stehen in fast jeder Erklaerung. */
+  const ausName = holen(regel.name);
+  const ausText = holen(regel.shortExplanation).filter(k => !METABEGRIFFE.has(k));
+
   const gesehen = new Set();
   const out = [];
-  for (const w of roh) {
-    const k = ohneTaschkil(w);
-    if (k.length < 2 || METABEGRIFFE.has(k) || gesehen.has(k)) continue;
+  for (const k of ausName.concat(ausText)) {
+    if (k.length < 2 || gesehen.has(k)) continue;
     gesehen.add(k);
     out.push(k);
   }
