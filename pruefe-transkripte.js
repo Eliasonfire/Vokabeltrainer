@@ -186,7 +186,40 @@ function lautMuster(form){
      marfu-grundfall-01 als unbelegt, obwohl der Lehrer im selben Fenster
      woertlich sagt "Marfu' ist immer der Grundsatz, jedes Wort ist
      normalerweise Marfu'". */
-  try { return new RegExp('\\b' + teile.join('[aeiou’\'\\-]{0,2}'), 'i'); }
+  /* Jeder Konsonant darf doppelt geschrieben stehen. Die arabische Schrift
+     schreibt die Verdopplung als Schadda ueber EINEN Buchstaben (رَبِّي), die
+     Umschrift schreibt sie AUS: "Rabbi". Ohne diese Zeile suchte das Muster
+     r-b-y und fand "Rabbi" (r-b-b-i) nie - possessiv-ya-01 galt deshalb als
+     unbelegt, obwohl der Lehrer im Fenster woertlich erklaert "wenn wir sagen,
+     dass eine Sache meins ist, dann machen wir ein Ja hinten dran, das heisst
+     wir haben Rabbi". Betroffen war auch محمد: weder "Muhammad" noch
+     "Mohammed" wurden gefunden, nur das falsch geschriebene "Muhamad".
+     {1,2} statt +, weil eine Verdopplung nie mehr als zwei Zeichen ist - das
+     haelt den Ausdruck zugleich frei von ineinandergeschachtelten
+     Wiederholungen, an denen sich die Regex-Suche verschlucken koennte. */
+  const verdoppelbar = f => /\?$/.test(f) ? f : `(?:${f}){1,2}`;
+  /* Was das Arabische anhaengt, spricht der Lehrer als eigenes Wort: er sagt
+     "Li Muhammadin", geschrieben wird لِمُحَمَّدٍ. Deshalb darf GENAU EINE
+     Luecke im Muster ein Leerzeichen enthalten - die hinter einem
+     vorangestellten Ein-Buchstaben-Wort (لِ بِ كَ وَ فَ) bzw. hinter dem
+     Artikel الـ ("El Baytu"). Nur dort, nicht ueberall: ein global erlaubtes
+     Leerzeichen wuerde ein Muster ueber drei deutsche Woerter hinweg
+     zusammensuchen und staendig falsch anschlagen. So geprueft blieb die
+     Kontrollgruppe aus deutschem Fliesstext ohne einen einzigen Fehlalarm,
+     waehrend li-eigenname-01 endlich anschlaegt - der Lehrer sagt dort
+     woertlich "Ammar ist ein Name, deswegen sagt man kein Lil, sondern Li
+     Ammarin, wie bei Li Muhammadin, Li Khalidin". */
+  const PROKLITIKA = ['ل','ب','ك','و','ف'];
+  let luecke = -1;
+  if (form.startsWith('ال')) luecke = 1;
+  else if (PROKLITIKA.includes(form[0])) luecke = 0;
+  const OHNE = '[aeiou’\'\\-]{0,2}', MIT = '[aeiou’\'\\- ]{0,2}';
+  try {
+    let aus = '\\b' + verdoppelbar(teile[0]);
+    for (let i = 1; i < teile.length; i++)
+      aus += (i - 1 === luecke ? MIT : OHNE) + verdoppelbar(teile[i]);
+    return new RegExp(aus, 'i');
+  }
   catch { return null; }
 }
 
@@ -261,13 +294,31 @@ if (NUR) {
   process.exit(0);
 }
 
+/* Von Hand nachgelesene Regeln. Der Lehrer unterrichtet auf Deutsch, und
+   Whisper bildet die arabischen Woerter dann gelegentlich nicht lautschriftlich
+   ab, sondern auf ein deutsches Wort ("Välika" fuer ذَلِكَ, "Herde" fuer هَذَا).
+   Dagegen hilft kein Umschriftmuster mehr - nur Nachlesen. Was dabei woertlich
+   im Transkript stand, steht in quellen/handgepruefte-regeln.json, damit es
+   nicht bei jedem Lauf erneut als unbelegt gemeldet wird. */
+const handPfad = path.join(T, 'quellen', 'handgepruefte-regeln.json');
+const handGeprueft = fs.existsSync(handPfad)
+  ? new Map(JSON.parse(fs.readFileSync(handPfad, 'utf8')).geprueft.map(g => [g.id, g]))
+  : new Map();
+
 const mitWhisper = ergebnis.filter(e => e.hatWhisper);
 const beide   = mitWhisper.filter(e => e.inWhisper.length && e.inYoutube.length);
 const nurW    = mitWhisper.filter(e => e.inWhisper.length && !e.inYoutube.length);
 const nurY    = mitWhisper.filter(e => !e.inWhisper.length && e.inYoutube.length);
-const keine   = mitWhisper.filter(e => !e.inWhisper.length && !e.inYoutube.length && e.pruefbar);
+const offen   = mitWhisper.filter(e => !e.inWhisper.length && !e.inYoutube.length && e.pruefbar);
+const keine   = offen.filter(e => !handGeprueft.has(e.regel));
 const schleifen = mitWhisper.filter(e => e.schleife);
-const ohneForm= mitWhisper.filter(e => !e.pruefbar && !e.inWhisper.length && !e.inYoutube.length);
+/* Nachgelesen wird beides: was keine Spur findet UND was mangels Muster gar
+   nicht gesucht werden konnte. Sonst faellt die zweite Gruppe durchs Raster -
+   sie stand vorher nur als Zahl im Bericht, ohne dass je jemand die Regel
+   dahinter zu sehen bekam. */
+const ohneMuster = mitWhisper.filter(e => !e.pruefbar && !e.inWhisper.length && !e.inYoutube.length);
+const ohneForm = ohneMuster.filter(e => !handGeprueft.has(e.regel));
+const hand = offen.concat(ohneMuster).filter(e => handGeprueft.has(e.regel));
 
 const folgenMitWhisper = [...new Set(mitWhisper.map(e => e.folge))].sort((a,b)=>a-b);
 console.log(`Zweite Lesart liegt vor fuer Folge ${folgenMitWhisper.join(', ') || '(noch keine)'}`);
@@ -277,6 +328,7 @@ console.log(`  ${String(beide.length).padStart(3)}  beide Lesarten belegen die K
 console.log(`  ${String(nurW.length).padStart(3)}  nur der eigene Whisper-Lauf          (YouTube hat sie verstuemmelt)`);
 console.log(`  ${String(nurY.length).padStart(3)}  nur die YouTube-Untertitel           (ungewoehnlich - nachsehen)`);
 console.log(`  ${String(keine.length).padStart(3)}  keine von beiden                     (selbst nachhoeren)`);
+if (hand.length) console.log(`  ${String(hand.length).padStart(3)}  maschinell unsichtbar, von Hand nachgelesen und belegt`);
 console.log(`  ${String(ohneForm.length).padStart(3)}  Kernform zu kurz zum Suchen         (nicht mechanisch pruefbar)`);
 if (schleifen.length) console.log(`  ${String(schleifen.length).padStart(3)}  davon mit Whisper-Wiederholungsschleife im Fenster (Lesart dort unbrauchbar)`);
 
@@ -300,5 +352,21 @@ if (keine.length){
   keine.forEach(e => {
     const anteil = lehrerAnteil[e.folge];
     console.log(zeile(e) + (anteil ? `   (Lehreranteil der Folge ${anteil}%)` : ''));
+  });
+}
+if (ohneForm.length){
+  console.log(`\n--- Kernform zu kurz zum Suchen ---`);
+  console.log(`Zwei Buchstaben (هل, ما, أ) treffen in deutschem Text staendig; ein Muster`);
+  console.log(`dafuer wuerde mehr Fehlalarme als Belege liefern. Nur Nachhoeren hilft.\n`);
+  ohneForm.forEach(e => console.log(zeile(e)));
+}
+if (hand.length){
+  console.log(`\n--- Maschinell nicht auffindbar, von Hand nachgelesen ---`);
+  console.log(`Whisper hat die arabischen Woerter hier auf deutsche abgebildet; dagegen`);
+  console.log(`hilft kein Umschriftmuster. Fundstellen in quellen/handgepruefte-regeln.json.\n`);
+  hand.forEach(e => {
+    const g = handGeprueft.get(e.regel);
+    console.log(zeile(e));
+    console.log(`        nachgelesen am ${g.am}: "${g.fundstelle.slice(0, 110)}..."`);
   });
 }

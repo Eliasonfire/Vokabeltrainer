@@ -689,3 +689,73 @@ vier Antwortstufen aus allen fünf Boxen. Aufruf in der Browserkonsole:
 ```
 fetch('pruefe-oberflaeche.js').then(r=>r.text()).then(eval)
 ```
+
+---
+
+## 28.07.2026 (Fortsetzung) — Zweiter Whisper-Durchlauf, Abgleich abgeschlossen
+
+Der vollständige zweite Durchlauf über alle 13 Folgen (10,2 h Ton, whisper-cli
+large-v3-turbo, greedy) ist durch. Jede SRT-Datei reicht bis auf wenige
+Sekunden an das Ende ihrer Tonspur heran — nichts wurde abgeschnitten.
+Gegengeprüft an den Endzeiten aus der Sprechertrennung.
+
+### Ergebnis des Drei-Spuren-Abgleichs (Fenster ±180 s)
+
+| | Regeln |
+|---|---|
+| von **beiden** Lesarten belegt | 62 |
+| nur vom eigenen Whisper-Lauf belegt | 9 |
+| nur von den YouTube-Untertiteln | 0 |
+| von keiner Lesart gefunden | 0 |
+| maschinell unsichtbar, von Hand nachgelesen | 2 |
+| **insgesamt belegt** | **73 von 73** |
+
+Die neun, die nur der eigene Durchlauf belegt, sind genau der Fall, für den er
+gemacht wurde: YouTube verstümmelt die arabischen Fachbegriffe.
+
+### Drei Fehler im Abgleichskript, gefunden durch Nachlesen im Volltext
+
+Der Lauf meldete zunächst vier unbelegte Regeln. Alle vier waren im Transkript
+wörtlich vorhanden — es lag jedes Mal am Sucher, nicht am Beleg:
+
+1. **Verdopplung.** Die arabische Schrift schreibt die Verdopplung als Schadda
+   über *einen* Buchstaben (رَبِّي), die Umschrift schreibt sie aus: „Rabbi".
+   Das Muster suchte r-b-y und fand r-b-b-i nie. Betraf nicht nur `possessiv-ya-01`:
+   auch **محمد wurde nie gefunden** — weder „Muhammad" noch „Mohammed", nur das
+   falsch geschriebene „Muhamad". Konsonanten dürfen jetzt doppelt stehen.
+2. **Vorangestelltes Ein-Buchstaben-Wort.** Der Lehrer spricht „Li Muhammadin"
+   als zwei Wörter, geschrieben wird لِمُحَمَّدٍ. Genau eine Lücke im Muster —
+   die hinter لِ بِ كَ وَ فَ bzw. hinter dem Artikel الـ — darf jetzt ein
+   Leerzeichen enthalten. Nur dort: ein global erlaubtes Leerzeichen würde ein
+   Muster über drei deutsche Wörter hinweg zusammensuchen. An einer
+   Kontrollgruppe aus deutschem Fließtext geprüft, kein einziger Fehlalarm.
+3. **Zu kurze Kernform wurde nur gezählt, nie genannt.** `fragepartikel-alif-01`
+   (Kernform هل, zwei Buchstaben) stand als Zahl im Bericht, ohne dass die Regel
+   dahinter je sichtbar wurde. Jetzt wird sie aufgeführt.
+
+Beide verbliebenen Regeln sind von Hand nachgelesen und in
+`transcripts/quellen/handgepruefte-regeln.json` mit Fundstelle festgehalten,
+damit sie nicht bei jedem Lauf erneut als unbelegt erscheinen. Bei
+`ismul-isara-dhalika-01` hilft kein Umschriftmuster mehr: Whisper bildet die
+arabischen Wörter dort auf deutsche ab — ذَلِكَ wird durchgängig „Välika",
+هَذَا wird „Herde". ذ zusätzlich auf v/w abzubilden wurde geprüft und
+**verworfen**: dann treffen die deutschen Wörter „Volk" und „Wolke" das Muster.
+Ein Fehlalarm wäre hier schlimmer als eine Lücke — er würde eine Regel als
+belegt ausweisen, die es nicht ist.
+
+### Ein Verdacht, der sich nicht bestätigt hat
+
+Auffällig war, dass **keine einzige Regel auf Folge 6 zeigt** und nur eine auf
+Folge 11, obwohl beide dicht mit Fachbegriffen sind (Folge 6: 19,2 Treffer je
+1000 Wörter gegenüber 6,3 in Folge 1, die acht Regeln trägt). Das sah nach einer
+Lücke beim Ableiten aus. Beide Folgen im Volltext nachgelesen: **es ist keine.**
+Folge 6 ist eine reine Wiederholungs- und Ermahnungsstunde und endet mit „wir
+machen für heute nicht weiter"; Folge 11 ist Hausaufgabenkontrolle zu Kapitel
+6/7, deren grammatische Punkte alle schon als Regeln stehen.
+
+Die Kennzahl trog, weil Begriffsdichte misst, wie viel Fachvokabular
+*gesprochen* wird — und in einer Abfragestunde ist das genau deshalb hoch. Sie
+schlägt dort am stärksten aus, wo am wenigsten zu holen ist. Verteilungen zu
+zählen bleibt richtig, um Lücken zu suchen (so wurde der هَذَا-Fehler im I'rab
+gefunden), aber jeder so gefundene Verdacht muss am Volltext geprüft werden,
+bevor man ihn glaubt.
