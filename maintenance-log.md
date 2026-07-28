@@ -646,3 +646,46 @@ und in den 26 Lehrbuchsätzen der Kontrollgruppe.
 keine Quranverse** — die Felder gibt es dort nicht. Die 155 Sätze in der App
 sind also verfasst, nicht belegt. Sie sind aber kasusgeprüft (0 Fehler); was
 ihnen fehlt, ist die Quelle, nicht die Grammatik.
+
+## 2026-07-28 – Nachmittag: Lernstrategie-Ideen umgesetzt
+
+Weiter aus der Ideenliste in `Vokabeltrainer-Generalcheck.md` (Goal-Prompt G
+verlangt eigene Vorschläge, nicht nur Abarbeiten):
+
+| Idee | Stand |
+|---|---|
+| 1 Abgestufte Selbsteinschätzung | ✅ `c39ceab` — vier Stufen, mit Vorschau wann die Karte wiederkommt |
+| 2 Lücken-Test im Satz-Modus | ✅ `f7d07f1` — 170 von 186 Sätzen haben ein eindeutiges Zielwort |
+| 6 Hör-Modus ohne Schrift | ✅ `48283b3` |
+| 7 Fällige Karten nach Vergessens-Nähe | ✅ `83fea64` |
+| 8 Eigene Eselsbrücke | ✅ `3a758ef` (27./28.07.) |
+| 9 Streak mit Gnadentag | ✅ `83fea64` |
+
+### Drei Vorschläge, die NICHT umgesetzt wurden — mit Begründung
+
+**Idee 3, Verwechslungs-Duelle (Minimalpaare).** Wäre der stärkste verbliebene
+Hebel und ist mechanisch ableitbar: 285 Skelette in Elias' Wortschatz haben
+mehrere Vokalisierungen (رَجُلٌ/رِجْلٌ, وَضَعَ/وَضْعٌ, فَعَلَ/فِعْلٌ), davon betreffen 55
+Wörter aus Madina 1. **Blockiert:** Die Paare entstehen erst aus dem vollen
+Vokabelabzug, und der liegt wegen der offenen Push-Frage nicht im Repo. Mit
+nur `vocab-data.js` (160 Wörter) gäbe es praktisch keine Paare — der Modus
+wäre live leer. Sobald Elias entschieden hat, ist das ein halber Arbeitstag.
+
+**Idee 4, Wurzelfamilien als aktiver Modus.** Laut Generalcheck der größte
+ungenutzte Hebel. Hängt an derselben Frage: mit 160 Wörtern sind die
+Wurzelfamilien zu dünn, mit 4433 tragen sie.
+
+**Idee 5, Produktion statt Wiedererkennung ab Box 4.** Tippen statt Umdrehen —
+technisch machbar (die Eingabelogik gibt es seit dem Lückentext). Bewusst
+zurückgestellt: das ändert den Kernablauf des Lernens ein zweites Mal am
+selben Tag, nachdem schon die vier Antwortstufen dazugekommen sind. Erst
+sehen, wie sich die Stufen anfühlen.
+
+### Zum Stand der Prüfwerkzeuge
+
+`pruefe-oberflaeche.js` ist neu (`502f907`) und prüft 28 Punkte, inklusive der
+vier Antwortstufen aus allen fünf Boxen. Aufruf in der Browserkonsole:
+
+```
+fetch('pruefe-oberflaeche.js').then(r=>r.text()).then(eval)
+```
