@@ -70,6 +70,10 @@ const LEHRBUCH_SAETZE = [
     sentAr: 'الْقُرْآنُ كِتَابُ اللهِ.',
     sentDe: 'Der Koran ist das Buch Allahs.' },
 
+  { id: 'mb1-29-1', seite: 29, kapitel: 5,
+    sentAr: 'أَيْنَ مَسْجِدُ رَسُولِ اللهِ؟ هُوَ فِي الْمَدِينَةِ الْمُنَوَّرَةِ.',
+    sentDe: 'Wo ist die Moschee des Gesandten Allahs? Sie ist in Madina al-Munawwara.' },
+
   { id: 'mb1-30-1', seite: 30, kapitel: 5,
     sentAr: 'مُحَمَّدٌ رَسُولُ اللهِ.',
     sentDe: 'Muhammad ist der Gesandte Allahs.' },

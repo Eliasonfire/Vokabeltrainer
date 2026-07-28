@@ -250,6 +250,11 @@ function analysiereSatz(satz){
       return;
     } else if (istIndeklinabel(wort)){
       rolle = 'unveränderlich';
+      /* Ein Demonstrativpronomen faengt einen neuen Satzteil an: was danach
+         kommt, beschreibt nicht mehr das Wort davor. Ohne dieses
+         Zuruecksetzen galt in هَذَا الْبَيْتُ لِلتَّاجِرِ وَذَلِكَ الْبَيْتُ das zweite
+         الْبَيْتُ als نَعْت zu لِلتَّاجِرِ und damit als Kasusfehler. */
+      letzterKasus = null; letzteBestimmtheit = null;
     } else if (istZarf(wort)){
       rolle = 'ظَرْف (Ortsangabe)';
       vorherJarr = true; vorherMudaf = false;
@@ -286,6 +291,15 @@ function analysiereSatz(satz){
          der Lehrer Wortgruppe von Satz (nat-bestimmtheit-01). Stimmt die
          Bestimmtheit nicht ueberein, ist es kein نَعْت, sondern ein خَبَر. */
       rolle = 'نَعْت (Adjektiv zum Wort davor)';
+      erwartet = letzterKasus;
+    } else if (letzterKasus && letzteBestimmtheit && istBestimmt(wort)){
+      /* Zwei bestimmte Nomen hintereinander: das zweite beschreibt das erste
+         und stimmt mit ihm ueberein - الْمَدِينَةِ الْمُنَوَّرَةِ. Das gilt auch,
+         wenn das Wort nicht im Wortschatz steht und die Wortart deshalb
+         unbekannt ist; die Uebereinstimmung in der Bestimmtheit reicht
+         (nat-vier-bedingungen-01). Ohne diesen Zweig galt الْمُنَوَّرَةِ als
+         خَبَر und damit als Kasusfehler im Lehrbuchsatz. */
+      rolle = 'نَعْت (richtet sich nach dem Wort davor)';
       erwartet = letzterKasus;
     } else if (/^و[َ]?/.test(wort) && ersteRolleVergeben){
       /* Ein angeschriebenes وَ kann zweierlei sein, und am Schriftbild ist

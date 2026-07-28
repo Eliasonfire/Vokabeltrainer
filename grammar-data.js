@@ -1145,6 +1145,9 @@ const SENTENCE_TAGS = {
   "mb1-28-1": [
     { ruleId: "lafz-al-jalala-01", matchText: "اللهِ" }
   ],
+  "mb1-29-1": [
+    { ruleId: "idafa-verkettung-01", matchText: "مَسْجِدُ رَسُولِ اللهِ" }
+  ],
   "mb1-30-1": [
     { ruleId: "lafz-al-jalala-01", matchText: "اللهِ" }
   ],
@@ -1156,7 +1159,11 @@ const SENTENCE_TAGS = {
     { ruleId: "tanwin-nach-harf-jarr-01", matchText: "لِخَالِدٍ" }
   ],
   "mb1-37-1": [
-    { ruleId: "tanwin-eigennamen-01", matchText: "مُحَمَّدٌ" }
+    { ruleId: "tanwin-eigennamen-01", matchText: "مُحَمَّدٌ" },
+    /* Genau der Fall aus der Regel: hinter einem Eigennamen ist ein
+       unbestimmtes Wort kein Adjektiv, sondern die Aussage ueber ihn.
+       مُحَمَّدٌ طَالِبٌ heisst "Muhammad ist Student", nicht "ein Student Muhammad". */
+    { ruleId: "nat-eigenname-01", matchText: "طَالِبٌ" }
   ],
   "mb1-37-2": [
     { ruleId: "satz-vs-wortgruppe-01", matchText: "الْبَابُ مُغْلَقٌ" }
