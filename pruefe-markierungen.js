@@ -110,7 +110,9 @@ for (const k of Object.keys(SENTENCE_TAGS)) {
     if (i < 0) continue;                       // faengt validate.js ab
     // Manche Markierungen SIND ein Satzzeichen - fragepartikel-erforderlich-01
     // zeigt auf das Fragezeichen selbst. Da gibt es keine Wortgrenze zu pruefen.
-    if (!/[؀-ۿ]/.test(t.matchText)) continue;
+    // U+061F ؟ liegt selbst im arabischen Block - deshalb auf Buchstaben
+    // pruefen, nicht auf den Block.
+    if (!/[ء-ي]/.test(t.matchText)) continue;
     const j = i + t.matchText.length;
     const davor = i === 0 ? ' ' : s[i - 1];
     const danach = j >= s.length ? ' ' : s[j];
