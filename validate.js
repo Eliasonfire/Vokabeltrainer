@@ -79,12 +79,14 @@ if (!Array.isArray(VOCAB_DATA) || VOCAB_DATA.length === 0){
   note(`VOCAB_DATA: ${VOCAB_DATA.length} Einträge, ${seen.size} eindeutige IDs.`);
 }
 
-/* ---------- 2. CHAPTER_NAMES aus app.js gegen die Daten prüfen ---------- */
+/* ---------- 2. CHAPTER_NAMES aus js/kern.js gegen die Daten prüfen ---------- */
+/* Lag bis zum 28.07.26 in app.js; seit der Aufteilung nach E.7 in js/kern.js. */
+const KERN_DATEI = 'js/kern.js';
 try {
-  const appSrc = fs.readFileSync(path.join(DIR, 'app.js'), 'utf8');
+  const appSrc = fs.readFileSync(path.join(DIR, KERN_DATEI), 'utf8');
   const m = appSrc.match(/const\s+CHAPTER_NAMES\s*=\s*(\{[\s\S]*?\});/);
   if (!m){
-    warn('CHAPTER_NAMES in app.js nicht gefunden — Kapitelnamen konnten nicht geprüft werden.');
+    warn(`CHAPTER_NAMES in ${KERN_DATEI} nicht gefunden — Kapitelnamen konnten nicht geprüft werden.`);
   } else {
     const names = new Function('return ' + m[1])();
     const used = new Set(VOCAB_DATA ? VOCAB_DATA.map(w => w.chapter) : []);
@@ -95,7 +97,25 @@ try {
     note(`CHAPTER_NAMES: ${used.size} benutzte Kapitel, alle benannt.`);
   }
 } catch (e) {
-  fail(`app.js nicht lesbar: ${e.message}`);
+  fail(`${KERN_DATEI} nicht lesbar: ${e.message}`);
+}
+
+/* ---------- 2b. Jede js/-Datei muss auch eingebunden und gecacht sein ----------
+   Nach der Aufteilung in Module ist der wahrscheinlichste Fehler nicht mehr ein
+   Syntaxfehler, sondern eine neue Datei, die jemand anzulegen vergisst zu
+   verlinken - oder die in index.html steht, aber nicht in der ASSETS-Liste des
+   Service Workers. Das faellt online nicht auf und bricht erst offline. */
+try {
+  const dateien = fs.readdirSync(path.join(DIR, 'js')).filter(f => f.endsWith('.js')).sort();
+  const html = fs.readFileSync(path.join(DIR, 'index.html'), 'utf8');
+  const sw = fs.readFileSync(path.join(DIR, 'sw.js'), 'utf8');
+  dateien.forEach(f => {
+    if (!html.includes(`js/${f}`)) fail(`js/${f} liegt im Ordner, wird aber in index.html nicht geladen.`);
+    if (!sw.includes(`js/${f}`))   fail(`js/${f} fehlt in der ASSETS-Liste von sw.js — offline nicht verfügbar.`);
+  });
+  note(`js/: ${dateien.length} Module, alle eingebunden und im Offline-Cache.`);
+} catch (e) {
+  fail(`js/-Ordner nicht lesbar: ${e.message}`);
 }
 
 /* ---------- 3. GRAMMAR_RULES ---------- */
