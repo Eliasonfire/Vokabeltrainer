@@ -562,16 +562,13 @@ const SENTENCE_TAGS = {
   ],
   "45756": [
     { ruleId: "mudaf-ohne-al-01", matchText: "مِفْتَاحُ" },
-    { ruleId: "mudaf-ilayh-01", matchText: "الْبَابِ" },
-    { ruleId: "possessiv-ya-01", matchText: "فِي" }
+    { ruleId: "mudaf-ilayh-01", matchText: "الْبَابِ" }
   ],
   "45757": [
-    { ruleId: "possessiv-ya-01", matchText: "فِي" },
     { ruleId: "ta-marbuta-fem-01", matchText: "الْمَدْرَسَةِ" },
     { ruleId: "nat-vier-bedingungen-01", matchText: "مَكْتَبٌ جَدِيدٌ" }
   ],
   "45758": [
-    { ruleId: "possessiv-ya-01", matchText: "فِي" },
     { ruleId: "ta-marbuta-fem-01", matchText: "الْغُرْفَةِ" },
     { ruleId: "nat-vier-bedingungen-01", matchText: "سَرِيرٌ صَغِيرٌ" }
   ],
@@ -580,13 +577,11 @@ const SENTENCE_TAGS = {
     { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" }
   ],
   "45760": [
-    { ruleId: "possessiv-ya-01", matchText: "فِي" },
     { ruleId: "schams-qamar-01", matchText: "السَّمَاءِ." },
     { ruleId: "nat-vier-bedingungen-01", matchText: "نَجْمٌ كَبِيرٌ" }
   ],
   "45761": [
     { ruleId: "alif-maqsura-01", matchText: "الْمُسْتَشْفَى" },
-    { ruleId: "possessiv-ya-01", matchText: "فِي" },
     { ruleId: "schams-qamar-01", matchText: "الطَّبِيبُ" }
   ],
   "45762": [
@@ -595,21 +590,19 @@ const SENTENCE_TAGS = {
   ],
   "45763": [
     { ruleId: "harf-jarr-li-01", matchText: "لِبٌ" },
-    { ruleId: "possessiv-ya-01", matchText: "فِي" },
     { ruleId: "ta-marbuta-fem-01", matchText: "الْجَامِعَةِ" }
   ],
   "45764": [
     { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "schakl-01", matchText: "وَمَشْهُورٌ." }
+    { ruleId: "schakl-01", matchText: "وَمَشْهُورٌ." },
+    { ruleId: "taschkil-kontext-01", matchText: "رَجُلٌ" }
   ],
   "45765": [
-    { ruleId: "possessiv-ya-01", matchText: "فِي" },
     { ruleId: "schams-qamar-01", matchText: "التَّاجِرُ" },
     { ruleId: "hamzatul-wasl-01", matchText: "الْآنَ." }
   ],
   "45766": [
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "taschkil-kontext-01", matchText: "صَغِيرٌ" }
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" }
   ],
   "45767": [
     { ruleId: "zarf-01", matchText: "تَحْتَ السَّرِيرِ." },
@@ -623,8 +616,7 @@ const SENTENCE_TAGS = {
     { ruleId: "hadha-dies-nicht-das-01", matchText: "هَذَا" }
   ],
   "45770": [
-    { ruleId: "hadha-dies-nicht-das-01", matchText: "هَذَا" },
-    { ruleId: "taschkil-kontext-01", matchText: "طَوِيلٌ" }
+    { ruleId: "hadha-dies-nicht-das-01", matchText: "هَذَا" }
   ],
   "45771": [
     { ruleId: "mina-al-01", matchText: "مِنَ الْبَيْتِ." },
@@ -632,7 +624,6 @@ const SENTENCE_TAGS = {
     { ruleId: "marfu-grundfall-01", matchText: "دِيكٌ" }
   ],
   "45772": [
-    { ruleId: "possessiv-ya-01", matchText: "فِي" },
     { ruleId: "schams-qamar-01", matchText: "الثَّانَوِيَّةِ." },
     { ruleId: "hadha-dies-nicht-das-01", matchText: "هَذَا" },
     { ruleId: "mudarris-lesung-herkunft-01", matchText: "مُدَرِّسٌ" }
@@ -660,8 +651,7 @@ const SENTENCE_TAGS = {
   ],
   "45778": [
     { ruleId: "hadha-dies-nicht-das-01", matchText: "هَذَا" },
-    { ruleId: "marfu-grundfall-01", matchText: "قَلَمٌ" },
-    { ruleId: "taschkil-kontext-01", matchText: "وَكِتَابٌ." }
+    { ruleId: "marfu-grundfall-01", matchText: "قَلَمٌ" }
   ],
   "45779": [
     { ruleId: "istifham-men-01", matchText: "مَنْ" },
@@ -670,8 +660,7 @@ const SENTENCE_TAGS = {
   ],
   "45780": [
     { ruleId: "hadha-dies-nicht-das-01", matchText: "هَذَا" },
-    { ruleId: "nominalsatz-ohne-kopula-01", matchText: "حَجَرٌ" },
-    { ruleId: "taschkil-kontext-01", matchText: "كَبِيرٌ" }
+    { ruleId: "nominalsatz-ohne-kopula-01", matchText: "حَجَرٌ" }
   ],
   "45781": [
     { ruleId: "ismul-isara-dhalika-01", matchText: "ذَلِكَ" },
@@ -759,7 +748,6 @@ const SENTENCE_TAGS = {
   ],
   "45802": [
     { ruleId: "nominalsatz-ohne-kopula-01", matchText: "مَاءٌ" },
-    { ruleId: "taschkil-kontext-01", matchText: "بَارِدٌ" },
     { ruleId: "madd-tabii-01", matchText: "هَذَا" }
   ],
   "45803": [
@@ -769,8 +757,7 @@ const SENTENCE_TAGS = {
   ],
   "45804": [
     { ruleId: "mina-al-01", matchText: "مِنَ السُّوقِ." },
-    { ruleId: "nominalsatz-ohne-kopula-01", matchText: "دُكَّانٌ" },
-    { ruleId: "taschkil-kontext-01", matchText: "صَغِيرٌ" }
+    { ruleId: "nominalsatz-ohne-kopula-01", matchText: "دُكَّانٌ" }
   ],
   "45805": [
     { ruleId: "irab-drei-faelle-01", matchText: "جَمِيلٌ" },
@@ -799,8 +786,7 @@ const SENTENCE_TAGS = {
     { ruleId: "istifham-ayna-01", matchText: "أَيْنَ" }
   ],
   "45811": [
-    { ruleId: "alif-maqsura-01", matchText: "عَلَى" },
-    { ruleId: "taschkil-kontext-01", matchText: "الْمَكْتَبِ." }
+    { ruleId: "alif-maqsura-01", matchText: "عَلَى" }
   ],
   "45812": [
     { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْحَقِيبَةِ." }
@@ -827,7 +813,8 @@ const SENTENCE_TAGS = {
   "45817": [
     { ruleId: "mutabaqa-genus-01", matchText: "كَبِيرَةٌ" },
     { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
-    { ruleId: "ta-marbuta-fem-01", matchText: "مَدْرَسَةٌ" }
+    { ruleId: "ta-marbuta-fem-01", matchText: "مَدْرَسَةٌ" },
+    { ruleId: "taschkil-kontext-01", matchText: "مَدْرَسَةٌ" }
   ],
   "45818": [
     { ruleId: "mutabaqa-genus-01", matchText: "كَبِيرَةٌ" },
@@ -849,7 +836,6 @@ const SENTENCE_TAGS = {
   ],
   "45822": [
     { ruleId: "nominalsatz-ohne-kopula-01", matchText: "حَمَّامٌ" },
-    { ruleId: "taschkil-kontext-01", matchText: "نَظِيفٌ." },
     { ruleId: "jumla-ismiya-filiya-01", matchText: "هَذَا" }
   ],
   "45823": [
@@ -900,7 +886,8 @@ const SENTENCE_TAGS = {
     { ruleId: "ta-marbuta-grenzen-01", matchText: "الْكَعْبَةُ" }
   ],
   "45834": [
-    { ruleId: "al-gesamtheit-01", matchText: "الْمُدَرِّسُ" }
+    { ruleId: "al-gesamtheit-01", matchText: "الْمُدَرِّسُ" },
+    { ruleId: "taschkil-kontext-01", matchText: "الْمُدَرِّسُ" }
   ],
   "45835": [
     { ruleId: "mudaf-ohne-al-01", matchText: "خَالُ" },
@@ -1008,7 +995,8 @@ const SENTENCE_TAGS = {
   "45858": [
     { ruleId: "fem-ohne-ta-marbuta-01", matchText: "رِجْلُ" },
     { ruleId: "idafa-zweitglied-01", matchText: "الْكُرْسِيِ" },
-    { ruleId: "wortarten-01", matchText: "هَذِهِ" }
+    { ruleId: "wortarten-01", matchText: "هَذِهِ" },
+    { ruleId: "taschkil-kontext-01", matchText: "رِجْلُ" }
   ],
   "45859": [
     { ruleId: "adjektive-an-ohne-tanwin-01", matchText: "الْحِصَانُ" },
