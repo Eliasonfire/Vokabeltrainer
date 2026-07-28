@@ -141,6 +141,23 @@ function currentPool(){
   if (sel.length) pool = pool.filter(w=>sel.includes(w.chapter));
   return pool;
 }
+
+/* "Nur falsche Wörter" wieder abschalten, sobald keine mehr da sind
+   (arabicroots-Paritaet D). Der Schalter war bisher dauerhaft: hat man die
+   letzte schwache Vokabel geschafft, blieb er an, "Lernen" meldete jedes Mal
+   "Keine schwachen Woerter" und sprang zurueck - bis man von selbst merkt,
+   dass oben noch ein Knopf leuchtet.
+   Bewusst NICHT beim blossen Umschalten pruefen, sonst spraenge der Schalter
+   sofort wieder zurueck und wirkte kaputt. Nur nach einer Antwort und am Ende
+   einer Runde, also genau dann, wenn man die Liste wirklich leergeraeumt hat. */
+function pruefeNurFalscheModus(){
+  if (!SETTINGS.wrongOnly) return false;
+  if (currentPool().length) return false;
+  SETTINGS.wrongOnly = false;
+  saveSettings();
+  toast('Keine schwachen Wörter mehr – zurück zum normalen Modus.');
+  return true;
+}
 function escapeHtml(str){
   return String(str).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
