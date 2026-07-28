@@ -16,8 +16,26 @@ function renderQuranList(){
 }
 
 /* ===================== FULL QURAN READER ===================== */
+/* Hifz auf zwei Ebenen. `vt_hifz` merkt sich, welche SUREN Elias als auswendig
+   markiert hat - das gab es schon. Neu ist `vt_hifzVerse`: einzelne Verse,
+   Schluessel "Sure:Vers". Al-Baqarah hat 286 Verse; ein einziger Haken fuer
+   die ganze Sure bildet Auswendiglernen nicht ab, das geht Vers fuer Vers.
+   Bewusst zwei getrennte Speicher: wer eine ganze Sure abhakt, will nicht
+   286 Einzeleintraege erzeugt bekommen, und wer einzelne Verse abhakt, will
+   den Surenhaken nicht ungefragt gesetzt sehen. */
 let HIFZ = LS.get('vt_hifz', {});
 function saveHifz(){ LS.set('vt_hifz', HIFZ); }
+let HIFZ_VERSE = LS.get('vt_hifzVerse', {});
+function saveHifzVerse(){ LS.set('vt_hifzVerse', HIFZ_VERSE); }
+function kannVers(sure, vers){ return !!HIFZ_VERSE[`${sure}:${vers}`]; }
+function zaehleVerse(sure){
+  const prefix = sure + ':';
+  return Object.keys(HIFZ_VERSE).filter(k => k.startsWith(prefix) && HIFZ_VERSE[k]).length;
+}
+/* Der Verdecken-Modus gilt nur fuer die gerade offene Sure und wird bewusst
+   NICHT gespeichert - beim naechsten Aufschlagen will man erst mal lesen. */
+let HIFZ_VERDECKT = false;
+
 const VERSE_CACHE = {};
 
 function renderSurahList(filter){
@@ -28,12 +46,18 @@ function renderSurahList(filter){
   document.getElementById('surahSearch').classList.remove('hidden');
   document.getElementById('surahList').classList.remove('hidden');
   document.getElementById('verseList').classList.add('hidden');
-  document.getElementById('surahList').innerHTML = list.map(s => `
+  document.getElementById('hifzBar').classList.add('hidden');
+  document.getElementById('surahList').innerHTML = list.map(s => {
+    /* Wer einzelne Verse abgehakt hat, soll das in der Uebersicht sehen -
+       sonst wirkt die Sure unangetastet, obwohl schon die Haelfte sitzt. */
+    const einzeln = zaehleVerse(s.id);
+    const zusatz = HIFZ[s.id] ? '' : (einzeln ? ` · ${einzeln} von ${s.verses} auswendig` : '');
+    return `
     <div class="surah-row" data-opensurah="${s.id}">
       <div class="sr-num">${s.id}</div>
-      <div class="sr-mid"><div class="sr-ar">${s.ar}</div><div class="sr-name">${s.name} · ${s.verses} Verse</div></div>
-      <button class="hifz-check${HIFZ[s.id]?' on':''}" data-hifztoggle="${s.id}" aria-label="Als auswendig markieren">${icon('check')}</button>
-    </div>`).join('') || '<div class="empty-state">Keine Sure gefunden.</div>';
+      <div class="sr-mid"><div class="sr-ar">${s.ar}</div><div class="sr-name">${s.name} · ${s.verses} Verse${zusatz}</div></div>
+      <button class="hifz-check${HIFZ[s.id]?' on':''}" data-hifztoggle="${s.id}" aria-label="Ganze Sure als auswendig markieren">${icon('check')}</button>
+    </div>`; }).join('') || '<div class="empty-state">Keine Sure gefunden.</div>';
 }
 
 document.getElementById('surahSearch').addEventListener('input', (e)=> renderSurahList(e.target.value));
@@ -123,11 +147,74 @@ async function openSurah(id){
 
 function renderVerses(id){
   const verses = VERSE_CACHE[id];
-  document.getElementById('verseList').innerHTML = verses.map(v => `
-    <div class="verse-item">
-      <span class="verse-num">${v.verse_key}</span>
-      <div class="verse-ar" lang="ar" dir="rtl">${v.text_uthmani}</div>
+  const surah = SURAH_DATA.find(s=>s.id===id);
+  document.getElementById('verseList').innerHTML = verses.map((v, i) => {
+    const nr = i + 1;
+    const kann = HIFZ[id] || kannVers(id, nr);
+    /* Verdeckt wird nur, was auch als auswendig markiert ist - alles andere
+       zu verdecken waere kein Selbsttest, sondern nur laestig. */
+    const verdeckt = HIFZ_VERDECKT && kann ? ' verdeckt' : '';
+    return `
+    <div class="verse-item${kann?' auswendig':''}">
+      <div class="verse-kopf">
+        <span class="verse-num">${v.verse_key}</span>
+        <button class="hifz-check${kann?' on':''}" data-versmerk="${id}:${nr}"
+                aria-label="Vers ${nr} als auswendig markieren">${icon('check')}</button>
+      </div>
+      <div class="verse-ar${verdeckt}" lang="ar" dir="rtl">${v.text_uthmani}</div>
       <div class="verse-de">${(v.translations && v.translations[0] && v.translations[0].text) || ''}</div>
-    </div>`).join('');
+    </div>`; }).join('');
+  aktualisiereHifzLeiste(id, surah);
 }
+
+function aktualisiereHifzLeiste(id, surah){
+  const leiste = document.getElementById('hifzBar');
+  leiste.classList.remove('hidden');
+  const gesamt = surah ? surah.verses : (VERSE_CACHE[id] || []).length;
+  const kann = HIFZ[id] ? gesamt : zaehleVerse(id);
+  document.getElementById('hifzStand').textContent =
+    kann === 0 ? `${gesamt} Verse`
+    : kann >= gesamt ? `Alle ${gesamt} Verse auswendig`
+    : `${kann} von ${gesamt} Versen auswendig`;
+  const knopf = document.getElementById('btnHifzVerdecken');
+  knopf.classList.toggle('active', HIFZ_VERDECKT);
+  knopf.disabled = kann === 0;
+  document.getElementById('hifzVerdeckenText').textContent =
+    HIFZ_VERDECKT ? 'Wieder aufdecken' : 'Auswendige verdecken';
+}
+
+/* Einzelnen Vers abhaken. Kein Neuaufbau der ganzen Liste - bei Al-Baqarah
+   waeren das 286 Verse, und die Seite wuerde bei jedem Haken springen. */
+document.getElementById('verseList').addEventListener('click', (e)=>{
+  const knopf = e.target.closest('[data-versmerk]');
+  if (knopf){
+    const key = knopf.dataset.versmerk;
+    if (HIFZ_VERSE[key]) delete HIFZ_VERSE[key]; else HIFZ_VERSE[key] = 1;
+    saveHifzVerse();
+    const an = !!HIFZ_VERSE[key];
+    knopf.classList.toggle('on', an);
+    const karte = knopf.closest('.verse-item');
+    karte.classList.toggle('auswendig', an);
+    const text = karte.querySelector('.verse-ar');
+    text.classList.toggle('verdeckt', HIFZ_VERDECKT && an);
+    const id = Number(key.split(':')[0]);
+    aktualisiereHifzLeiste(id, SURAH_DATA.find(s=>s.id===id));
+    return;
+  }
+  /* Einen verdeckten Vers antippen deckt genau ihn auf - so prueft man sich
+     Vers fuer Vers, ohne den Modus zu verlassen. */
+  const text = e.target.closest('.verse-ar.verdeckt');
+  if (text) text.classList.remove('verdeckt');
+});
+
+document.getElementById('btnHifzVerdecken').addEventListener('click', ()=>{
+  HIFZ_VERDECKT = !HIFZ_VERDECKT;
+  document.querySelectorAll('#verseList .verse-item').forEach(karte=>{
+    const text = karte.querySelector('.verse-ar');
+    text.classList.toggle('verdeckt', HIFZ_VERDECKT && karte.classList.contains('auswendig'));
+  });
+  const erste = document.querySelector('#verseList [data-versmerk]');
+  const id = erste ? Number(erste.dataset.versmerk.split(':')[0]) : null;
+  if (id) aktualisiereHifzLeiste(id, SURAH_DATA.find(s=>s.id===id));
+});
 
