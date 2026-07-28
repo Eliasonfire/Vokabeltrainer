@@ -3,3 +3,6 @@
 # Lehrers verbietet unerlaubte Weitergabe). Nur die kuratierten, selbst
 # formulierten Regeln in grammar-data.js werden committet.
 transcripts/
+
+# Lokale Claude Code Projekteinstellungen/Berechtigungen (persoenlich, nicht fuers oeffentliche Repo)
+.claude/
