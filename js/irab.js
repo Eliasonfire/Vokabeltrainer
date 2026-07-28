@@ -48,6 +48,14 @@ const INDEKLINABEL = ['هذا','هذه','ذلك','تلك','هو','هي','أنا'
    laedt es per require), wo es die uebrigen Module gar nicht gibt. Ein
    gemeinsamer Helfer in kern.js waere die schoenere Zeile Code und die
    schlechtere Loesung - er wuerde die Node-Nutzung brechen. */
+/* Demonstrativ- und Personalpronomen sind zwar unveraenderlich, aber sie sind
+   das مُبْتَدَأ des Satzes - nicht das Wort dahinter. Der Lehrer sagt es
+   ausdruecklich (nominalsatz-ohne-kopula-01): هَذَا بَيْتٌ heisst "DIES ist ein
+   Haus", also هَذَا = Subjekt, بَيْتٌ = Aussage darueber.
+   Fragewoerter gehoeren NICHT dazu: in أَيْنَ الْكَلْبُ؟ ist الْكَلْبُ das
+   Subjekt, nicht أَيْنَ. */
+const PRONOMEN = ['هذا','هذه','ذلك','تلك','هو','هي','أنا','انا','أنت','انت','نحن','هم'];
+
 const ohneVokale = s => (s || '').replace(/[ً-ْٰـ]/g, '');
 
 /* ---------- Endung eines Wortes lesen ----------
@@ -258,7 +266,15 @@ function analysiereSatz(satz){
       out.push({ wort, rein, rolle, erwartet:null, gelesen, stimmt:null });
       return;
     } else if (istIndeklinabel(wort)){
-      rolle = 'unveränderlich';
+      /* Steht ein Pronomen am Anfang, ist es das Subjekt - dann wird das
+         folgende Nomen zur Aussage darueber und nicht selbst zum Subjekt. */
+      const istPronomen = istInListe(wort, PRONOMEN);
+      if (istPronomen && !ersteRolleVergeben){
+        rolle = 'مُبْتَدَأ (unveränderlich)';
+        ersteRolleVergeben = true;
+      } else {
+        rolle = 'unveränderlich';
+      }
       /* Ein Demonstrativpronomen faengt einen neuen Satzteil an: was danach
          kommt, beschreibt nicht mehr das Wort davor. Ohne dieses
          Zuruecksetzen galt in هَذَا الْبَيْتُ لِلتَّاجِرِ وَذَلِكَ الْبَيْتُ das zweite
@@ -310,7 +326,10 @@ function analysiereSatz(satz){
          خَبَر und damit als Kasusfehler im Lehrbuchsatz. */
       rolle = 'نَعْت (richtet sich nach dem Wort davor)';
       erwartet = letzterKasus;
-    } else if (/^و[َ]?/.test(wort) && ersteRolleVergeben){
+    } else if (/^و[َ]?/.test(wort) && ersteRolleVergeben && !LEXIKON_hat(wort)){
+      /* Nur wenn das Wort als Ganzes NICHT im Wortschatz steht. Sonst gilt
+         وَسِخٌ (schmutzig) als وَ + سِخ, und ein richtiger خَبَر faellt aus der
+         Pruefung heraus. */
       /* Ein angeschriebenes وَ kann zweierlei sein, und am Schriftbild ist
          nicht zu entscheiden was:
            فِي الْبَيْتِ وَالْمَسْجِدِ    -> Anschluss, Genitiv wie davor
@@ -335,7 +354,7 @@ function analysiereSatz(satz){
        auf das direkt ein weiteres Nomen folgt (idafa-erkennen-01). Nur wenn
        das naechste Wort kein Satzzeichen beendet und keine Praeposition ist. */
     const naechstes = woerter[i+1];
-    if (rolle !== 'unveränderlich' && !hatSuffix(wort)
+    if (!String(rolle).includes('unveränderlich') && !hatSuffix(wort)
         && !satzende && naechstes && !istHarfJarr(naechstes)
         /* اسْمُ هَذَا الْوَلَدِ: zwischen مُضاف und مُضاف إِلَيْه darf ein
            Demonstrativpronomen stehen - dann folgt das Nomen erst danach. */
