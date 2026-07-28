@@ -115,6 +115,7 @@ function renderCard(){
   document.getElementById('learnProgressFill').style.width = `${(SESSION.idx/SESSION.words.length)*100}%`;
 
   renderQuranFreqBadge(w);
+  stufenVorschau();
 }
 
 /* ---------- Quran-Vorkommen (Wurzel-Häufigkeit, aus dem Quranic Arabic Corpus) ---------- */
@@ -341,25 +342,63 @@ document.getElementById('btnExitLearn').addEventListener('click', ()=>{
   window.addEventListener('pointercancel', endDrag);
 })();
 
-function answer(correct){
+/* ---------- Vier Stufen statt richtig/falsch ----------
+   Ein binaeres Urteil wirft zwei sehr verschiedene Faelle zusammen: "wusste
+   ich sofort" und "hab ich mit Mueh und Not zusammengekratzt" landen beide in
+   derselben Box. Vier Stufen geben je Wiederholung mehr Information, und das
+   Leitner-System kann damit besser einteilen.
+
+   Was jede Stufe mit der Box macht:
+     nochmal  zurueck auf 1  - gar nicht gewusst, von vorn
+     schwer   eine Box runter (mindestens 1) - gewusst, aber muehsam
+     gut      eine Box rauf  - das bisherige "richtig"
+     leicht   zwei Boxen rauf - sass sofort, laenger nicht noetig
+
+   Nur "gut" verhaelt sich wie vorher; die Wischgeste bleibt deshalb bei
+   nochmal/gut. Fuer die Statistik zaehlen "nochmal" und "schwer" als
+   Fehlversuch, "gut" und "leicht" als Treffer - sonst waere die Trefferquote
+   der Statistik nicht mehr mit den frueheren Werten vergleichbar. */
+const STUFEN = {
+  nochmal: { box: () => 1,                       richtig: false, feedback: 'answer-wrong' },
+  schwer:  { box: (b) => Math.max(1, b - 1),     richtig: false, feedback: 'answer-wrong' },
+  gut:     { box: (b) => Math.min(5, b + 1),     richtig: true,  feedback: 'answer-right' },
+  leicht:  { box: (b) => Math.min(5, b + 2),     richtig: true,  feedback: 'answer-right' }
+};
+
+/* Was unter den Knoepfen steht: wann die Karte bei dieser Wahl wiederkommt.
+   Ohne das waere die Wahl zwischen "gut" und "leicht" reine Bauchsache. */
+function stufenVorschau(){
+  const w = SESSION.words[SESSION.idx];
+  const p = w && PROGRESS[w.id];
+  if (!p) return;
+  const text = (tage) => tage === 0 ? 'heute' : tage === 1 ? 'morgen' : `in ${tage} Tagen`;
+  const ziel = { nochmal:'Nochmal', schwer:'Schwer', gut:'Gut', leicht:'Leicht' };
+  Object.keys(STUFEN).forEach(k=>{
+    const el = document.getElementById('stufe' + ziel[k]);
+    if (el) el.textContent = text(INTERVALS[STUFEN[k].box(p.box)]);
+  });
+}
+
+function answer(stufe){
   /* Schutz gegen Doppelauslösung: waehrend das Antwort-Feedback laeuft, wird ein
      zweiter Klick/Swipe ignoriert - sonst ueberspringt die Runde eine Karte. */
   if (answer._busy) return;
+  /* Die Wischgeste und aeltere Aufrufe geben weiter true/false herein. */
+  if (stufe === true) stufe = 'gut';
+  if (stufe === false) stufe = 'nochmal';
+  const s = STUFEN[stufe] || STUFEN.nochmal;
+
   const w = SESSION.words[SESSION.idx];
   const p = PROGRESS[w.id];
-  if (correct){
-    p.box = Math.min(5, p.box+1);
-    p.correct = (p.correct||0)+1;
-  } else {
-    p.box = 1;
-    p.wrong = (p.wrong||0)+1;
-  }
+  p.box = s.box(p.box);
+  if (s.richtig) p.correct = (p.correct||0)+1;
+  else           p.wrong   = (p.wrong||0)+1;
   p.nextReview = todayStr(INTERVALS[p.box]);
   saveProgress();
   touchStreak();
 
   const card = document.getElementById('flashcard');
-  const feedback = correct ? 'answer-right' : 'answer-wrong';
+  const feedback = s.feedback;
 
   function weiter(){
     answer._busy = false;
@@ -389,6 +428,8 @@ function answer(correct){
   card.classList.add(feedback);
   setTimeout(weiter, 210);
 }
-document.getElementById('btnRight').addEventListener('click', ()=>answer(true));
-document.getElementById('btnWrong').addEventListener('click', ()=>answer(false));
+document.getElementById('answerButtons').addEventListener('click', (e)=>{
+  const b = e.target.closest('[data-stufe]');
+  if (b) answer(b.dataset.stufe);
+});
 

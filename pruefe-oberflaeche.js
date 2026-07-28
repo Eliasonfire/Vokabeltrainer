@@ -132,6 +132,38 @@
     });
   }
 
+  /* ---- 8b. Die vier Antwortstufen ---- */
+  if (typeof STUFEN !== 'undefined'){
+    versuch('Antwortstufen bewegen die Box richtig', ()=>{
+      const w = buchVokabeln()[0];
+      const gesichert = PROGRESS[w.id];
+      const soll = {
+        nochmal: [1,1,1,1,1],
+        schwer:  [1,1,2,3,4],
+        gut:     [2,3,4,5,5],
+        leicht:  [3,4,5,5,5]
+      };
+      const falsch = [];
+      Object.keys(soll).forEach(stufe=>{
+        [1,2,3,4,5].forEach((start, i)=>{
+          PROGRESS[w.id] = { box:start, nextReview:todayStr(0), correct:0, wrong:0 };
+          SESSION = { words:[w], idx:0, dirs:[], fertig:false };
+          answer._busy = false;
+          answer(stufe);
+          if (PROGRESS[w.id].box !== soll[stufe][i])
+            falsch.push(`${stufe} aus Box ${start} -> ${PROGRESS[w.id].box}, erwartet ${soll[stufe][i]}`);
+        });
+      });
+      /* Die Wischgeste gibt weiter true/false herein - das muss weiter gehen. */
+      PROGRESS[w.id] = { box:2, nextReview:todayStr(0), correct:0, wrong:0 };
+      SESSION = { words:[w], idx:0, dirs:[], fertig:false }; answer._busy = false; answer(true);
+      if (PROGRESS[w.id].box !== 3) falsch.push('Wisch nach rechts landet nicht auf Box 3');
+      PROGRESS[w.id] = gesichert;
+      if (falsch.length) throw new Error(falsch.join('; '));
+      return '4 Stufen x 5 Boxen + Wischgeste';
+    });
+  }
+
   /* ---- 9. Sicherung: Runde durch Export und Import ---- */
   if (typeof baueSicherung === 'function'){
     versuch('Sicherung enthaelt alle Schluessel', ()=>{
