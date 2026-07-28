@@ -8,6 +8,10 @@
    waeren 20 Grammatikregeln in der App gar nicht erreichbar. Sie liegen in
    einer eigenen Datei, damit ein neuer Datenabzug sie nicht ueberschreibt. */
 function alleSaetze(){
+  /* Bewusst NICHT aufs aktive Buch gefiltert. Beispielsaetze gibt es nur zu
+     Madina 1, Kapitel 1-9 (aus vocab-data.js) und im Lehrwerk - ein Buchfilter
+     wuerde den Satz-Modus leerraeumen, sobald Elias ein anderes Buch lernt,
+     ohne dass dafuer irgendwo Ersatz stuende. */
   const ausVokabeln = VOCAB_DATA.filter(w=>w.sentAr);
   const ausLehrbuch = (typeof LEHRBUCH_SAETZE!=='undefined') ? LEHRBUCH_SAETZE : [];
   return ausVokabeln.concat(ausLehrbuch);

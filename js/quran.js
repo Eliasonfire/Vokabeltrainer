@@ -3,7 +3,9 @@
    teilt sich mit den uebrigen js/-Dateien den globalen Namensraum. */
 /* ===================== QURAN LIST ===================== */
 function renderQuranList(){
-  const words = VOCAB_DATA.filter(w=>w.quran);
+  /* Nur das aktive Buch. Sonst stuenden hier nach dem ersten Buchwechsel
+     Vokabeln aus Buechern, die gerade nicht gelernt werden. */
+  const words = buchVokabeln().filter(w=>w.quran);
   document.getElementById('quranList').innerHTML = words.map(w=>`
     <div class="word-list-item quran-word-item">
       <div class="quran-word-head">

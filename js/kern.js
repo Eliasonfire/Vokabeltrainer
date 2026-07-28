@@ -168,11 +168,17 @@ function dueWords(){
 }
 function allRoots(){
   const map = {};
-  VOCAB_DATA.forEach(w=>{ if(w.root){ (map[w.root] = map[w.root]||[]).push(w.id); } });
+  /* Nur das aktive Buch: die Wurzelliste steht im Kategorien-Bildschirm, und
+     der zeigt sonst nach dem ersten Buchwechsel Wurzeln aus Buechern, die
+     gerade gar nicht gelernt werden. */
+  const quelle = (typeof buchVokabeln === 'function') ? buchVokabeln() : VOCAB_DATA;
+  quelle.forEach(w=>{ if(w.root){ (map[w.root] = map[w.root]||[]).push(w.id); } });
   return map;
 }
 function isWeak(w){ return !!(PROGRESS[w.id] && PROGRESS[w.id].box<=2); }
 function weakWords(){
+  /* currentPool() filtert danach ohnehin aufs aktive Buch; die Sortierung
+     bleibt hier bei der Boxnummer, weil "schwach" genau das meint. */
   return shuffle(VOCAB_DATA.filter(isWeak)).sort((a,b)=> PROGRESS[a.id].box - PROGRESS[b.id].box);
 }
 function currentPool(){
