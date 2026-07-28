@@ -6,3 +6,13 @@ transcripts/
 
 # Lokale Claude Code Projekteinstellungen/Berechtigungen (persoenlich, nicht fuers oeffentliche Repo)
 .claude/
+
+# Der Vokabelabzug aus Elias' arabicroots-Konto (4433 Eintraege, acht Buecher).
+# Vorerst NICHT im oeffentlichen Repo - dieselbe Erwaegung wie bei transcripts/:
+# es sind die Daten seines bezahlten Kurszugangs, und das Repo ist oeffentlich.
+# Erzeugen laesst er sich jederzeit neu mit
+#   node werkzeuge/hole-vokabeln.mjs
+# Die App kommt ohne die Dateien zurecht: sie blendet die Buchauswahl aus und
+# arbeitet mit Madina 1, Kapitel 1-9 aus vocab-data.js weiter.
+# Sobald Elias zustimmt, diese Zeile entfernen und die Dateien committen.
+data/vokabeln-*.js

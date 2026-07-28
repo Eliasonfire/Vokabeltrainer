@@ -39,6 +39,13 @@ function aktivesBuch(){ return SETTINGS.aktivesBuch || 'madina-1'; }
    Vokabeln. */
 const GELADENE_BUECHER = new Set();
 
+/* Buecher, deren Datei sich nicht laden liess. Sie verschwinden aus der
+   Auswahl, statt als Knopf dazustehen, der bei jedem Antippen scheitert.
+   Zwei Faelle, in denen das wirklich vorkommt: eine abgebrochene Verbindung
+   am Handy - und die Auslieferung ohne data/, solange Elias noch nicht
+   entschieden hat, ob sein Vokabelabzug ins oeffentliche Repo darf. */
+const BUCH_FEHLT = new Set();
+
 function buchInfo(slug){
   return (typeof BUECHER !== 'undefined' ? BUECHER : []).find(b=>b.slug===slug);
 }
@@ -104,7 +111,12 @@ async function setzeBuch(slug, still){
       saveProgress();
       if (!still) toast(`${buchTitel(slug)}: ${neu} neue Vokabeln.`);
     } catch (e){
-      toast('Konnte das Buch nicht laden: ' + e.message);
+      /* Nicht nur melden, sondern merken: ein Buch, dessen Datei fehlt, hat
+         in der Auswahl nichts verloren. Sonst steht dort ein Knopf, der bei
+         jedem Antippen dieselbe Fehlermeldung bringt. */
+      BUCH_FEHLT.add(slug);
+      renderBuchChips();
+      if (!still) toast(buchTitel(slug) + ' ist gerade nicht verfuegbar.');
       return;
     }
   }
@@ -143,10 +155,13 @@ function buchVokabeln(){
 function kapitelDesBuchs(slug){
   const s = slug || aktivesBuch();
   const info = buchInfo(s);
-  if (GELADENE_BUECHER.has(s)){
-    return [...new Set(VOCAB_DATA.filter(w=>w.book===s && typeof w.chapter==='number').map(w=>w.chapter))]
-      .sort((a,b)=>a-b);
-  }
+  const vorhanden = [...new Set(VOCAB_DATA.filter(w=>w.book===s && typeof w.chapter==='number')
+    .map(w=>w.chapter))].sort((a,b)=>a-b);
+  /* Was tatsaechlich geladen ist, gilt. Die Zahl aus dem Verzeichnis ist nur
+     die Vorschau fuer ein Buch, das noch nicht angetippt wurde - stuende sie
+     auch danach da, zeigte die App Kapitel an, hinter denen nichts liegt. */
+  if (vorhanden.length) return vorhanden;
+  if (GELADENE_BUECHER.has(s) || BUCH_FEHLT.has(s)) return [];
   return info ? Array.from({length: info.kapitel}, (_,i)=>i+1) : [];
 }
 
@@ -154,7 +169,10 @@ function renderBuchChips(){
   const ziel = document.getElementById('bookFilterChips');
   if (!ziel || typeof BUECHER === 'undefined') return;
   const aktiv = aktivesBuch();
-  ziel.innerHTML = BUECHER.map(b=>{
+  const sichtbar = BUECHER.filter(b => !BUCH_FEHLT.has(b.slug));
+  /* Bleibt nur ein Buch uebrig, ist die Auswahlzeile ueberfluessig. */
+  if (sichtbar.length < 2){ ziel.innerHTML = ''; return; }
+  ziel.innerHTML = sichtbar.map(b=>{
     const geladen = GELADENE_BUECHER.has(b.slug);
     return `<button class="chip-toggle${b.slug===aktiv?' active':''}" data-buch="${b.slug}"
       title="${b.vokabeln} Vokabeln, ${b.kapitel} Kapitel${geladen?'':' – wird beim Antippen geladen'}">${buchTitel(b.slug)}</button>`;
@@ -172,4 +190,17 @@ document.addEventListener('click', (e)=>{
    geladen war es aber nicht: die App zeigte dann ausser den eigenen Vokabeln
    nichts an und sah kaputt aus. `still` unterdrueckt die Meldungen - beim
    normalen Start soll nichts aufblitzen. */
-document.addEventListener('DOMContentLoaded', ()=>{ setzeBuch(aktivesBuch(), true); });
+document.addEventListener('DOMContentLoaded', async ()=>{
+  const slug = aktivesBuch();
+  await setzeBuch(slug, true);
+  /* Scheitert schon der Start, fehlt nicht dieses eine Buch, sondern der
+     ganze Ordner data/ - die Dateien werden immer zusammen ausgeliefert.
+     Dann verschwindet die Buchzeile ganz, statt sieben Knoepfe anzubieten,
+     die alle ins Leere fuehren. Die App faellt auf das zurueck, was in
+     vocab-data.js steht: Madina 1, Kapitel 1 bis 9. */
+  if (BUCH_FEHLT.has(slug)){
+    (typeof BUECHER !== 'undefined' ? BUECHER : []).forEach(b => BUCH_FEHLT.add(b.slug));
+    renderBuchChips();
+    renderChapterFilterChips();
+  }
+});
