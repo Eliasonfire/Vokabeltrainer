@@ -1079,6 +1079,8 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
       </div>
 
       <div class="session-filters">
+        <div class="filter-label">Buch</div>
+        <div class="chip-select" id="bookFilterChips"></div>
         <div class="filter-label">Kapitel</div>
         <div class="chip-select" id="chapterFilterChips"></div>
         <button class="btn btn-secondary btn-wrongonly" id="btnWrongOnly">
@@ -1404,6 +1406,7 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
 
 <!-- Reine Daten, keine Logik (E.7). Muessen vor der App-Logik stehen. -->
 <script src="vocab-data.js"></script>
+<script src="data/buecher.js"></script>
 <script src="surah-data.js"></script>
 <script src="grammar-data.js"></script>
 <script src="lehrbuch-saetze.js"></script>
@@ -1416,6 +1419,7 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
      den globalen Namensraum - kein Bundler, kein Build-Schritt, die App laeuft
      als reine statische Seite auf GitHub Pages. -->
 <script src="js/kern.js"></script>
+<script src="js/buecher.js"></script>
 <script src="js/darstellung.js"></script>
 <script src="js/navigation.js"></script>
 <script src="js/start.js"></script>

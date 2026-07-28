@@ -1,8 +1,9 @@
-const CACHE_NAME = 'vokabeltrainer-v24';
+const CACHE_NAME = 'vokabeltrainer-v29';
 const ASSETS = [
   './',
   './index.html',
   './js/kern.js',
+  './js/buecher.js',
   './js/darstellung.js',
   './js/navigation.js',
   './js/start.js',
@@ -15,6 +16,7 @@ const ASSETS = [
   './js/einstellungen.js',
   './js/init.js',
   './vocab-data.js',
+  './data/buecher.js',
   './surah-data.js',
   './grammar-data.js',
   './lehrbuch-saetze.js',
@@ -49,18 +51,36 @@ self.addEventListener('activate', (e)=>{
   self.clients.claim();
 });
 
+/* Netz zuerst, Cache als Rueckfallebene.
+ *
+ * Vorher lief hier "Cache zuerst, im Hintergrund erneuern". Das ist schnell,
+ * liefert aber grundsaetzlich den Stand von gestern - eine Aenderung wird
+ * fruehestens beim uebernaechsten Start sichtbar. Genau daran ist am 27. und
+ * 28.07.2026 mehrfach eine Fehlersuche gescheitert: die Korrektur war im
+ * Browser, wirkte aber nicht, weil der Service Worker die alte Datei
+ * ausgeliefert hat. Auf dem Handy hat Elias denselben Effekt gehabt.
+ *
+ * `cache: 'reload'` umgeht zusaetzlich den HTTP-Cache des Browsers - ohne das
+ * schiebt der noch eine zweite alte Ebene dazwischen, die der Service Worker
+ * gar nicht sieht.
+ *
+ * Offline bleibt alles benutzbar: schlaegt die Netzanfrage fehl, kommt die
+ * gecachte Fassung. Der Preis ist eine Netzanfrage je Datei beim Start - bei
+ * dieser App ein paar hundert Kilobyte, das faellt nicht ins Gewicht. */
 self.addEventListener('fetch', (e)=>{
   if (e.request.method !== 'GET') return;
   e.respondWith(
-    caches.match(e.request).then(cached=>{
-      const fetchPromise = fetch(e.request).then(resp=>{
-        if (resp && resp.status===200){
-          const clone = resp.clone();
-          caches.open(CACHE_NAME).then(cache=>cache.put(e.request, clone));
-        }
-        return resp;
-      }).catch(()=>cached);
-      return cached || fetchPromise;
-    })
+    fetch(new Request(e.request, { cache: 'reload' })).then(resp=>{
+      if (resp && resp.status===200 && resp.type !== 'opaque'){
+        const clone = resp.clone();
+        caches.open(CACHE_NAME).then(cache=>cache.put(e.request, clone));
+      }
+      return resp;
+    }).catch(()=> caches.match(e.request).then(cached=>{
+      if (cached) return cached;
+      /* Bei einem Seitenaufruf ohne Netz und ohne Treffer wenigstens die
+         Startseite zeigen statt des Browser-Fehlers. */
+      return e.request.mode === 'navigate' ? caches.match('./index.html') : Response.error();
+    }))
   );
 });
