@@ -155,6 +155,10 @@ document.getElementById('btnSpeakWord').addEventListener('click', (e)=>{
 /* Das X beendet die Runde bewusst - danach startet "Lernen" wieder eine neue. */
 document.getElementById('btnExitLearn').addEventListener('click', ()=>{
   SESSION.fertig = true;
+  /* Auch beim vorzeitigen Abbrechen pruefen - wer die letzte schwache Vokabel
+     richtig hatte und dann abbricht, soll den Modus nicht angeschaltet
+     zuruecklassen. */
+  pruefeNurFalscheModus();
   showScreen('home', { ersetzen: true });
 });
 
@@ -250,7 +254,10 @@ function answer(correct){
     } else {
       document.getElementById('learnProgressFill').style.width = '100%';
       SESSION.fertig = true;
-      toast('Runde geschafft!');
+      /* Erst pruefen, ob der "nur falsche"-Modus jetzt leer ist: dessen
+         Meldung ist die wichtigere und soll nicht vom "Runde geschafft"
+         ueberschrieben werden. */
+      if (!pruefeNurFalscheModus()) toast('Runde geschafft!');
       /* Beendete Runde ersetzt den Lern-Eintrag in der Historie, statt einen
          neuen anzulegen - sonst landet die Zurueck-Taste auf einer Runde,
          die es nicht mehr gibt. */
