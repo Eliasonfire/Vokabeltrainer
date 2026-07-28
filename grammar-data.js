@@ -76,20 +76,6 @@ const GRAMMAR_RULES = [
     source: { folge: 1, video: "Folge 01", approxTimestamp: "23:57", chapter: 1 }
   },
   {
-    id: "hadha-dolch-alif-01",
-    name: "هٰذَا (kleiner Strich = nachträgliches Alif)",
-    shortExplanation: "Manchmal steht statt eines ausgeschriebenen Alif nur ein kleiner senkrechter Strich über dem Buchstaben – das kennt man aus dem Koran. Der Lehrer nennt das ein „nachträgliches Alif“: Es steht für ein Alif, das nicht als Buchstabe geschrieben ist. So ist es z. B. bei هٰذَا (hādhā) – dies.",
-    color: "other",
-    source: { folge: 2, video: "Folge 02", approxTimestamp: "11:03", chapter: 1 }
-  },
-  {
-    id: "tanwin-schreibweise-01",
-    name: "ـٌ (zwei Dammas – zweite Schreibweise)",
-    shortExplanation: "Kleine Regel am Rand: Die zwei Dammas am Wortende (ـٌ) – der Lehrer nennt sie ضَمَّتَيْن (dammatain, „zwei Damma“) – können auch in einer anderen Form geschrieben werden, so wie man sie oft im Koran sieht. Der Lehrer sagt dazu: Das ist dasselbe, und wenn man es einmal sieht, ist es kein Problem.",
-    color: "other",
-    source: { folge: 2, video: "Folge 02", approxTimestamp: "13:46", chapter: 1 }
-  },
-  {
     id: "istifham-men-01",
     name: "مَنْ (wer)",
     shortExplanation: "مَنْ (men) ist das Fragewort für Personen (\"wer ist dies?\"), im Unterschied zu هَذَا/Fragen nach Gegenständen. Nicht verwechseln mit مِنْ (min, \"von\") - men hat Fatha, min hat Sukun.",
@@ -102,20 +88,6 @@ const GRAMMAR_RULES = [
     shortExplanation: "ذَلِكَ (dhalika) ist wie هَذَا ein اسْمُ الْإِشَارَة (Hinweiswort), aber für Dinge in der Ferne statt in der Nähe. Gilt ebenfalls nur für männliche Wörter. Kann auch auf zuvor Erwähntes zurückverweisen, nicht nur auf räumlich Entferntes.",
     color: "mubtada",
     source: { folge: 2, video: "Folge 02", approxTimestamp: "20:07", chapter: 2 }
-  },
-  {
-    id: "al-tarif-01",
-    name: "اَلْ (bestimmter Artikel)",
-    shortExplanation: "اَلْ bestimmt ein Nomen (wie \"der/die/das\"). Regel 1: Für ein bestimmtes Wort braucht man den Artikel اَلْ. Regel 2: Das Tanwin fällt dabei weg, z.B. بَيْتٌ (ein Haus) → الْبَيْتُ (das Haus). Artikel und Tanwin schließen sich gegenseitig aus.",
-    color: "other",
-    source: { folge: 2, video: "Folge 02", approxTimestamp: "32:51", chapter: 3 }
-  },
-  {
-    id: "tanwin-01",
-    name: "تَنْوين (doppelte Endung)",
-    shortExplanation: "Die doppelte Endung am Wortende heißt تَنْوين (Tanwīn). Es gibt sie in drei Formen: zweimal Damma (ـٌ), zweimal Fatha (ـً) und zweimal Kasra (ـٍ). Beispiele des Lehrers: كِتَابٌ (kitābun) – ein Buch, und جَمَلٌ (jamalun) – ein Kamel; beide tragen zwei Damma. Grundlage für die Artikel-Regel aus al-tarif-01, bei der genau dieses Tanwīn wegfällt.",
-    color: "nasab",
-    source: { folge: 2, video: "Folge 02", approxTimestamp: "33:15", chapter: 3 }
   },
   {
     id: "hamzatul-wasl-01",
@@ -330,7 +302,7 @@ const GRAMMAR_RULES = [
   {
     id: "mudaf-ohne-al-01",
     name: "مُضاف (bestimmt ohne اَلْ)",
-    shortExplanation: "Obwohl der مُضاف kein اَلْ tragen darf, ist er trotzdem bestimmt – denn er gehört ja jemandem, und etwas kann nicht jemandem gehören und gleichzeitig unbestimmt sein. بَيْتُ حامِدٍ baytu ḥāmidin heißt deshalb „das Haus Hamids“, nicht „ein Haus Hamids“. Baut auf al-tarif-01 auf: Bestimmtheit entsteht hier nicht durch اَلْ, sondern durch den Besitzer.",
+    shortExplanation: "Obwohl der مُضاف kein اَلْ tragen darf, ist er trotzdem bestimmt – denn er gehört ja jemandem, und etwas kann nicht jemandem gehören und gleichzeitig unbestimmt sein. بَيْتُ حامِدٍ baytu ḥāmidin heißt deshalb „das Haus Hamids“, nicht „ein Haus Hamids“. Die Bestimmtheit entsteht hier also nicht durch اَلْ, sondern durch den Besitzer.",
     color: "idafa",
     source: { folge: 7, video: "Folge 07", approxTimestamp: "12:18", chapter: 5 }
   },
@@ -354,13 +326,6 @@ const GRAMMAR_RULES = [
     shortExplanation: "Kleiner Aussprache-Trick des Lehrers: Normalerweise wird der Name اَللّٰه dunkel/schwer gesprochen – اَللّٰهُ Allāhu. Steht davor aber ein Wort, das auf Kasra endet, wird er hell/leicht gesprochen – …llāhi. Beispiel aus dem Kapitel: في كِتابِ اللهِ fī kitābi llāhi – im Buch Allahs.",
     color: "other",
     source: { folge: 7, video: "Folge 07", approxTimestamp: "27:32", chapter: 5 }
-  },
-  {
-    id: "hadha-nicht-bestimmt-01",
-    name: "هَذا (macht nicht bestimmt)",
-    shortExplanation: "هَذا macht das folgende Wort nicht bestimmt – das ist keine Regel, die es gibt. In هَذا بَيْتُ حامِدٍ hādhā baytu ḥāmidin ist بَيْتُ nur deshalb bestimmt („das Haus“), weil es Hamid gehört, also durch die إِضافة. Ohne إِضافة wäre هَذا بَيْتٌ hādhā baytun einfach „dies ist ein Haus“. Baut auf ismul-isara-hadha-01 auf.",
-    color: "mubtada",
-    source: { folge: 7, video: "Folge 07", approxTimestamp: "46:29", chapter: 5 }
   },
   {
     id: "idafa-erkennen-01",
@@ -612,8 +577,7 @@ const SENTENCE_TAGS = {
   ],
   "45759": [
     { ruleId: "nat-vier-bedingungen-01", matchText: "قَدِيمٌ وَثَقِيلٌ" },
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "hadha-nicht-bestimmt-01", matchText: "كُرْسِيٌّ" }
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" }
   ],
   "45760": [
     { ruleId: "possessiv-ya-01", matchText: "فِي" },
@@ -627,7 +591,6 @@ const SENTENCE_TAGS = {
   ],
   "45762": [
     { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "hadha-nicht-bestimmt-01", matchText: "وَلَدٌ" },
     { ruleId: "schakl-01", matchText: "مُجْتَهِدٌ." }
   ],
   "45763": [
@@ -637,7 +600,6 @@ const SENTENCE_TAGS = {
   ],
   "45764": [
     { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "hadha-nicht-bestimmt-01", matchText: "رَجُلٌ" },
     { ruleId: "schakl-01", matchText: "وَمَشْهُورٌ." }
   ],
   "45765": [
@@ -647,26 +609,21 @@ const SENTENCE_TAGS = {
   ],
   "45766": [
     { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "hadha-nicht-bestimmt-01", matchText: "كَلْبٌ" },
     { ruleId: "taschkil-kontext-01", matchText: "صَغِيرٌ" }
   ],
   "45767": [
     { ruleId: "zarf-01", matchText: "تَحْتَ السَّرِيرِ." },
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
-    { ruleId: "hadha-nicht-bestimmt-01", matchText: "قِطٌّ" }
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" }
   ],
   "45768": [
     { ruleId: "mina-al-01", matchText: "مِنَ الْبَيْتِ." },
-    { ruleId: "hadha-dies-nicht-das-01", matchText: "هَذَا" },
-    { ruleId: "hadha-nicht-bestimmt-01", matchText: "حِمَارٌ" }
+    { ruleId: "hadha-dies-nicht-das-01", matchText: "هَذَا" }
   ],
   "45769": [
-    { ruleId: "hadha-dies-nicht-das-01", matchText: "هَذَا" },
-    { ruleId: "hadha-nicht-bestimmt-01", matchText: "حِصَانٌ" }
+    { ruleId: "hadha-dies-nicht-das-01", matchText: "هَذَا" }
   ],
   "45770": [
     { ruleId: "hadha-dies-nicht-das-01", matchText: "هَذَا" },
-    { ruleId: "hadha-nicht-bestimmt-01", matchText: "جَمَلٌ" },
     { ruleId: "taschkil-kontext-01", matchText: "طَوِيلٌ" }
   ],
   "45771": [
@@ -687,23 +644,18 @@ const SENTENCE_TAGS = {
   ],
   "45774": [
     { ruleId: "fragepartikel-alif-01", matchText: "أَ" },
-    { ruleId: "hadha-dolch-alif-01", matchText: "هَذَا" },
     { ruleId: "marfu-grundfall-01", matchText: "كِتَابٌ" },
     { ruleId: "fragepartikel-erforderlich-01", matchText: "؟" }
   ],
   "45775": [
     { ruleId: "fragepartikel-alif-01", matchText: "أَ" },
-    { ruleId: "hadha-dolch-alif-01", matchText: "هَذَا" },
     { ruleId: "marfu-grundfall-01", matchText: "بَيْتٌ" }
   ],
   "45776": [
-    { ruleId: "fragepartikel-alif-01", matchText: "أَ" },
-    { ruleId: "hadha-dolch-alif-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-schreibweise-01", matchText: "قَلَمٌ" }
+    { ruleId: "fragepartikel-alif-01", matchText: "أَ" }
   ],
   "45777": [
     { ruleId: "istifham-ma-01", matchText: "مَا" },
-    { ruleId: "hadha-dolch-alif-01", matchText: "هَذَا" },
     { ruleId: "marfu-grundfall-01", matchText: "كِتَابٌ" }
   ],
   "45778": [
@@ -723,42 +675,32 @@ const SENTENCE_TAGS = {
   ],
   "45781": [
     { ruleId: "ismul-isara-dhalika-01", matchText: "ذَلِكَ" },
-    { ruleId: "hadha-dolch-alif-01", matchText: "هَذَا" },
     { ruleId: "nominalsatz-ohne-kopula-01", matchText: "سُكَّرٌ" }
   ],
   "45782": [
-    { ruleId: "hadha-dolch-alif-01", matchText: "هَذَا" },
     { ruleId: "nominalsatz-ohne-kopula-01", matchText: "لَبَنٌ" },
     { ruleId: "schakl-01", matchText: "حُلْوٌ" }
   ],
   "45783": [
-    { ruleId: "hadha-al-kein-satz-01", matchText: "التَّاجِرُ" },
-    { ruleId: "hadha-dolch-alif-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-schreibweise-01", matchText: "غَنِيٌ" }
+    { ruleId: "hadha-al-kein-satz-01", matchText: "التَّاجِرُ" }
   ],
   "45784": [
-    { ruleId: "hadha-al-kein-satz-01", matchText: "الرَّجُلُ" },
-    { ruleId: "hadha-dolch-alif-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-schreibweise-01", matchText: "فَقِيرٌ" }
+    { ruleId: "hadha-al-kein-satz-01", matchText: "الرَّجُلُ" }
   ],
   "45785": [
     { ruleId: "hadha-al-kein-satz-01", matchText: "الشَّارِعُ" },
-    { ruleId: "hadha-stummes-alif-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-schreibweise-01", matchText: "طَوِيلٌ" }
+    { ruleId: "hadha-stummes-alif-01", matchText: "هَذَا" }
   ],
   "45786": [
     { ruleId: "hadha-al-kein-satz-01", matchText: "الْقَلَمُ" },
-    { ruleId: "hadha-stummes-alif-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-schreibweise-01", matchText: "قَصِيرٌ" }
+    { ruleId: "hadha-stummes-alif-01", matchText: "هَذَا" }
   ],
   "45787": [
     { ruleId: "mubtada-khabar-01", matchText: "الْمَاءُ" },
-    { ruleId: "hamzatul-wasl-01", matchText: "الْيَوْمَ." },
-    { ruleId: "tanwin-schreibweise-01", matchText: "بَارِدٌ" }
+    { ruleId: "hamzatul-wasl-01", matchText: "الْيَوْمَ." }
   ],
   "45788": [
-    { ruleId: "schams-qamar-01", matchText: "الشَّايُ" },
-    { ruleId: "tanwin-schreibweise-01", matchText: "حَارٌ" }
+    { ruleId: "schams-qamar-01", matchText: "الشَّايُ" }
   ],
   "45789": [
     { ruleId: "alif-maqsura-01", matchText: "عَلَى" },
@@ -767,47 +709,38 @@ const SENTENCE_TAGS = {
   ],
   "45790": [
     { ruleId: "mubtada-khabar-01", matchText: "الْوَلَدُ" },
-    { ruleId: "mina-al-01", matchText: "مِنَ الْبَابِ." },
-    { ruleId: "tanwin-schreibweise-01", matchText: "وَاقِفٌ" }
+    { ruleId: "mina-al-01", matchText: "مِنَ الْبَابِ." }
   ],
   "45791": [
     { ruleId: "hadha-al-kein-satz-01", matchText: "الْكِتَابُ" },
-    { ruleId: "hadha-stummes-alif-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "جَدِيدٌ" }
+    { ruleId: "hadha-stummes-alif-01", matchText: "هَذَا" }
   ],
   "45792": [
     { ruleId: "hadha-al-kein-satz-01", matchText: "الْمَسْجِدُ" },
-    { ruleId: "hadha-stummes-alif-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "قَدِيمٌ" }
+    { ruleId: "hadha-stummes-alif-01", matchText: "هَذَا" }
   ],
   "45793": [
     { ruleId: "mubtada-khabar-01", matchText: "الْمَدْرَسَةُ" },
-    { ruleId: "mina-al-01", matchText: "مِنَ الْبَيْتِ." },
-    { ruleId: "tanwin-01", matchText: "قَرِيبَةٌ" }
+    { ruleId: "mina-al-01", matchText: "مِنَ الْبَيْتِ." }
   ],
   "45794": [
     { ruleId: "mubtada-khabar-01", matchText: "الْجَامِعَةُ" },
-    { ruleId: "mina-al-01", matchText: "مِنَ الْبَيْتِ." },
-    { ruleId: "tanwin-01", matchText: "بَعِيدَةٌ" }
+    { ruleId: "mina-al-01", matchText: "مِنَ الْبَيْتِ." }
   ],
   "45795": [
     { ruleId: "hadha-al-kein-satz-01", matchText: "الْمِنْدِيلُ" },
-    { ruleId: "hadha-stummes-alif-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "نَظِيفٌ" }
+    { ruleId: "hadha-stummes-alif-01", matchText: "هَذَا" }
   ],
   "45796": [
     { ruleId: "hadha-al-kein-satz-01", matchText: "الْكَلْبُ" },
-    { ruleId: "hadha-stummes-alif-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "وَسِخٌ" }
+    { ruleId: "hadha-stummes-alif-01", matchText: "هَذَا" }
   ],
   "45797": [
     { ruleId: "hamzatul-wasl-01", matchText: "الْقِطُّ" },
-    { ruleId: "hadha-stummes-alif-01", matchText: "هَذَا" },
-    { ruleId: "tanwin-01", matchText: "صَغِيرٌ" }
+    { ruleId: "hadha-stummes-alif-01", matchText: "هَذَا" }
   ],
   "45798": [
-    { ruleId: "mubtada-khabar-01", matchText: "الْمَسْجِدُ" },
-    { ruleId: "tanwin-01", matchText: "كَبِيرٌ" }
+    { ruleId: "mubtada-khabar-01", matchText: "الْمَسْجِدُ" }
   ],
   "45799": [
     { ruleId: "hamzatul-wasl-01", matchText: "الْكِتَابُ" },
@@ -840,7 +773,6 @@ const SENTENCE_TAGS = {
     { ruleId: "taschkil-kontext-01", matchText: "صَغِيرٌ" }
   ],
   "45805": [
-    { ruleId: "al-tarif-01", matchText: "الْبَيْتُ" },
     { ruleId: "irab-drei-faelle-01", matchText: "جَمِيلٌ" },
     { ruleId: "madd-tabii-01", matchText: "هَذَا" }
   ],
@@ -864,17 +796,14 @@ const SENTENCE_TAGS = {
     { ruleId: "ta-marbuta-fem-01", matchText: "الْجَامِعَةِ" }
   ],
   "45810": [
-    { ruleId: "istifham-ayna-01", matchText: "أَيْنَ" },
-    { ruleId: "al-tarif-01", matchText: "الْمِفْتَاحُ؟" }
+    { ruleId: "istifham-ayna-01", matchText: "أَيْنَ" }
   ],
   "45811": [
     { ruleId: "alif-maqsura-01", matchText: "عَلَى" },
-    { ruleId: "al-tarif-01", matchText: "الْقَلَمُ" },
     { ruleId: "taschkil-kontext-01", matchText: "الْمَكْتَبِ." }
   ],
   "45812": [
-    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْحَقِيبَةِ." },
-    { ruleId: "al-tarif-01", matchText: "الْكِتَابُ" }
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْحَقِيبَةِ." }
   ],
   "45813": [
     { ruleId: "harf-jarr-li-01", matchText: "لِبُ" },
@@ -888,7 +817,6 @@ const SENTENCE_TAGS = {
   ],
   "45815": [
     { ruleId: "harf-jarr-min-ila-01", matchText: "مِنَ الصِّينِ." },
-    { ruleId: "al-tarif-01", matchText: "الْكُرْسِيُّ" },
     { ruleId: "madd-tabii-01", matchText: "هَذَا" }
   ],
   "45816": [
@@ -912,8 +840,7 @@ const SENTENCE_TAGS = {
     { ruleId: "ta-marbuta-fem-01", matchText: "جَامِعَةٌ" }
   ],
   "45820": [
-    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْمَكْتَبِ" },
-    { ruleId: "al-tarif-01", matchText: "الْمُدِيرُ" }
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْمَكْتَبِ" }
   ],
   "45821": [
     { ruleId: "mutabaqa-genus-01", matchText: "نَظِيفَةٌ" },
@@ -939,8 +866,7 @@ const SENTENCE_TAGS = {
     { ruleId: "jumla-ismiya-filiya-01", matchText: "هَذَا" }
   ],
   "45826": [
-    { ruleId: "istifham-ayna-01", matchText: "أَيْنَ" },
-    { ruleId: "al-tarif-01", matchText: "الْمِرْحَاضُ؟" }
+    { ruleId: "istifham-ayna-01", matchText: "أَيْنَ" }
   ],
   "45827": [
     { ruleId: "irab-drei-faelle-01", matchText: "رَسُولٌ" },
@@ -948,8 +874,7 @@ const SENTENCE_TAGS = {
     { ruleId: "jumla-ismiya-filiya-01", matchText: "هَذَا" }
   ],
   "45828": [
-    { ruleId: "zarf-01", matchText: "تَحْتَ السَّرِيرِ." },
-    { ruleId: "al-tarif-01", matchText: "الْقِطُّ" }
+    { ruleId: "zarf-01", matchText: "تَحْتَ السَّرِيرِ." }
   ],
   "45829": [
     { ruleId: "al-gesamtheit-01", matchText: "الْوَلَدِ." },
