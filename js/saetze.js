@@ -80,6 +80,10 @@ function renderSentence(){
   } else qBox.classList.add('hidden');
 
   aktualisiereAndererSatz();
+  /* Beim Blaettern die Analyse mitziehen, wenn sie offen ist - sonst stuende
+     dort die Zerlegung des vorigen Satzes unter dem neuen. */
+  const irabKasten = document.getElementById('sentIrabBox');
+  if (irabKasten && !irabKasten.classList.contains('hidden')) renderIrab();
 }
 document.getElementById('btnSentPrev').addEventListener('click', ()=>{
   SENT.idx = (SENT.idx-1+SENT.list.length)%SENT.list.length; renderSentence();
@@ -152,6 +156,38 @@ document.getElementById('btnSentOther').addEventListener('click', ()=>{
   const naechster = platz.find(i => i > SENT.idx);
   SENT.idx = naechster !== undefined ? naechster : platz[0];
   renderSentence();
+});
+
+/* ---------- إِعْراب ----------
+   Zeigt je Wort, welche Rolle es im Satz hat und welchen Kasus diese Rolle
+   verlangt. Die Analyse steht in js/irab.js und arbeitet ausschliesslich mit
+   dem, was im Unterricht behandelt wurde. Wo sie sich nicht sicher ist, sagt
+   sie nichts - eine falsche Kasusangabe waere schlimmer als gar keine (E.1).
+   Die Wortarten kommen aus dem geladenen Wortschatz; ohne sie liefe die
+   Analyse zwar, koennte aber Verben nicht von Nomen unterscheiden. */
+function renderIrab(){
+  const kasten = document.getElementById('sentIrabBox');
+  const liste  = document.getElementById('sentIrabList');
+  const w = SENT.list[SENT.idx];
+  if (!w){ kasten.classList.add('hidden'); return; }
+  if (typeof setzeLexikon === 'function') setzeLexikon(VOCAB_DATA);
+  const zeilen = analysiereSatz(w.sentAr);
+  liste.innerHTML = zeilen.map(t=>{
+    const kasus = t.erwartet
+      ? `<span class="irab-kasus" data-k="${t.erwartet}">${KASUS[t.erwartet].ar} · ${KASUS[t.erwartet].de}</span>`
+      : '<span class="irab-kasus">keine Endung</span>';
+    return `<div class="irab-zeile">
+      <span class="irab-wort" lang="ar" dir="rtl">${escapeHtml(t.rein)}</span>
+      <span class="irab-rolle">${escapeHtml(t.rolle)}<br>${kasus}</span>
+    </div>`;
+  }).join('');
+  kasten.classList.remove('hidden');
+}
+
+document.getElementById('btnSentIrab').addEventListener('click', ()=>{
+  const kasten = document.getElementById('sentIrabBox');
+  if (kasten.classList.contains('hidden')) renderIrab();
+  else kasten.classList.add('hidden');
 });
 
 document.getElementById('sentAr').addEventListener('click', (e)=>{
