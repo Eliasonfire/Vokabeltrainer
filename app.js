@@ -760,15 +760,32 @@ function openSentences(){
 function buildSentenceHtml(w){
   const tags = (typeof SENTENCE_TAGS!=='undefined') && SENTENCE_TAGS[w.id];
   if (!SETTINGS.grammarHighlight || !tags || !tags.length) return escapeHtml(w.sentAr);
-  let html = escapeHtml(w.sentAr);
+  // Erst alle Fundstellen im Rohtext einsammeln, dann in einem Durchgang
+  // auszeichnen. Vorher lief je Markierung ein html.replace() auf dem bereits
+  // ausgezeichneten HTML. Solange sich keine zwei Markierungen ueberschneiden,
+  // faellt das nicht auf - sobald doch, greift die kuerzere in den Text der
+  // laengeren hinein und erzeugt verschachtelte Spans. Mit Positionen statt
+  // Textersetzung kann das nicht mehr passieren.
+  const text = w.sentAr;
+  const treffer = [];
   tags.forEach(t=>{
     const rule = GRAMMAR_RULES.find(r=>r.id===t.ruleId);
-    if (!rule) return;
-    const needle = escapeHtml(t.matchText);
-    if (!needle || html.indexOf(needle)===-1) return;
-    html = html.replace(needle, `<span class="gram-underline" style="--gram-role:var(--gram-${rule.color})" data-rule="${rule.id}">${needle}</span>`);
+    if (!rule || !t.matchText) return;
+    const von = text.indexOf(t.matchText);
+    if (von === -1) return;
+    treffer.push({ von, bis: von + t.matchText.length, rule });
   });
-  return html;
+  // Von links nach rechts, bei gleichem Start gewinnt die laengere Markierung.
+  treffer.sort((a,b)=> a.von - b.von || (b.bis - b.von) - (a.bis - a.von));
+
+  let html = '', pos = 0;
+  for (const t of treffer){
+    if (t.von < pos) continue;                 // ueberschneidet eine gesetzte
+    html += escapeHtml(text.slice(pos, t.von));
+    html += `<span class="gram-underline" style="--gram-role:var(--gram-${t.rule.color})" data-rule="${t.rule.id}">${escapeHtml(text.slice(t.von, t.bis))}</span>`;
+    pos = t.bis;
+  }
+  return html + escapeHtml(text.slice(pos));
 }
 
 function renderSentence(){
