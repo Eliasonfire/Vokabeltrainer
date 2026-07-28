@@ -1,9 +1,10 @@
-const CACHE_NAME = 'vokabeltrainer-v29';
+const CACHE_NAME = 'vokabeltrainer-v30';
 const ASSETS = [
   './',
   './index.html',
   './js/kern.js',
   './js/buecher.js',
+  './js/irab.js',
   './js/darstellung.js',
   './js/navigation.js',
   './js/start.js',
