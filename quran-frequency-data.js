@@ -1,5044 +1,32542 @@
-/* ===================== QURAN FREQUENCY DATA ===================== */
-/* Wie oft die Wurzel eines Vokabelworts im Quran vorkommt, berechnet aus dem
-   Quranic Arabic Corpus (Kais Dukes, Uni Leeds, morphologische Annotation
-   jedes Wortes im Quran inkl. Wurzel) - Quelle:
-   https://github.com/mustafa0x/quran-morphology (basiert auf
-   corpus.quran.com Morphology 0.4, GNU-Lizenz). Zaehlt eindeutige
-   Wort-Vorkommen pro Wurzel; verses-Liste ist auf 15 Eintraege gekappt
-   (in der App werden max. 10 angezeigt), count ist aber immer die echte
-   Gesamtzahl. Wurzeln ohne Vorkommen im Quran (z.B. moderne Vokabeln wie
-   'Kuehlschrank', Laenderamen) sind absichtlich NICHT enthalten - kein
-   Eintrag bedeutet 'kommt nicht vor', nicht 'ungeprueft'. */
+/* ===================== QURAN FREQUENCY DATA =====================
+   Automatisch erzeugt von werkzeuge/baue-quran-frequenz.mjs - nicht von Hand
+   aendern.
 
+   Wie oft die Wurzel eines Vokabelworts im Quran vorkommt, gezaehlt aus der
+   morphologischen Annotation des Quran (Quranic Arabic Corpus, Kais Dukes,
+   Uni Leeds; maschinenlesbare Fassung: github.com/mustafa0x/quran-morphology,
+   GNU-Lizenz). Gezaehlt werden Wortsegmente mit ROOT-Angabe; die verses-Liste
+   ist auf zehn Eintraege gekappt - genau so viele zeigt die App an.
+
+   Aufbau: QURAN_FREQ[Wurzel] = [Anzahl, [[Sure, Vers], ...]] - der Surenname
+   steht in surah-data.js und wird beim Anzeigen nachgeschlagen.
+
+   1038 Wurzeln aus allen acht Lehrwerken. */
 const QURAN_FREQ = {
- "بيت": {
-  "count": 64,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 125,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 127,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 158,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 189,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 49,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 96,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 97,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 154,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 4,
-    "ayah": 15,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 81,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 100,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 108,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 5,
-    "ayah": 2,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 5,
-    "ayah": 97,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 7,
-    "ayah": 4,
-    "surahName": "Al-A'raf"
-   }
-  ]
- },
- "سجد": {
-  "count": 73,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 34,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 58,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 114,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 125,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 144,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 149,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 150,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 187,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 191,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 196,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 217,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 43,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 113,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 4,
-    "ayah": 102,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 154,
-    "surahName": "An-Nisa"
-   }
-  ]
- },
- "بوب": {
-  "count": 18,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 58,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 189,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 4,
-    "ayah": 154,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 5,
-    "ayah": 23,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 6,
-    "ayah": 44,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 7,
-    "ayah": 40,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 161,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 12,
-    "ayah": 23,
-    "surahName": "Yusuf"
-   },
-   {
-    "sura": 12,
-    "ayah": 25,
-    "surahName": "Yusuf"
-   },
-   {
-    "sura": 12,
-    "ayah": 67,
-    "surahName": "Yusuf"
-   },
-   {
-    "sura": 13,
-    "ayah": 23,
-    "surahName": "Ar-Ra'd"
-   },
-   {
-    "sura": 15,
-    "ayah": 14,
-    "surahName": "Al-Hijr"
-   },
-   {
-    "sura": 15,
-    "ayah": 44,
-    "surahName": "Al-Hijr"
-   },
-   {
-    "sura": 16,
-    "ayah": 29,
-    "surahName": "An-Nahl"
-   },
-   {
-    "sura": 23,
-    "ayah": 77,
-    "surahName": "Al-Mu'minun"
-   }
-  ]
- },
- "كتب": {
-  "count": 241,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 2,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 44,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 53,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 78,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 79,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 85,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 87,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 89,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 101,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 105,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 109,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 113,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 121,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 129,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 144,
-    "surahName": "Al-Baqarah"
-   }
-  ]
- },
- "قلم": {
-  "count": 2,
-  "verses": [
-   {
-    "sura": 3,
-    "ayah": 44,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 31,
-    "ayah": 27,
-    "surahName": "Luqman"
-   }
-  ]
- },
- "فتح": {
-  "count": 25,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 76,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 89,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 4,
-    "ayah": 141,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 5,
-    "ayah": 52,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 6,
-    "ayah": 44,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 6,
-    "ayah": 59,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 7,
-    "ayah": 40,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 89,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 96,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 8,
-    "ayah": 19,
-    "surahName": "Al-Anfal"
-   },
-   {
-    "sura": 12,
-    "ayah": 65,
-    "surahName": "Yusuf"
-   },
-   {
-    "sura": 14,
-    "ayah": 15,
-    "surahName": "Ibrahim"
-   },
-   {
-    "sura": 15,
-    "ayah": 14,
-    "surahName": "Al-Hijr"
-   },
-   {
-    "sura": 21,
-    "ayah": 96,
-    "surahName": "Al-Anbya"
-   },
-   {
-    "sura": 23,
-    "ayah": 77,
-    "surahName": "Al-Mu'minun"
-   }
-  ]
- },
- "سرر": {
-  "count": 25,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 69,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 77,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 235,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 274,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 134,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 5,
-    "ayah": 52,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 6,
-    "ayah": 3,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 7,
-    "ayah": 95,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 9,
-    "ayah": 78,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 10,
-    "ayah": 54,
-    "surahName": "Yunus"
-   },
-   {
-    "sura": 11,
-    "ayah": 5,
-    "surahName": "Hud"
-   },
-   {
-    "sura": 12,
-    "ayah": 19,
-    "surahName": "Yusuf"
-   },
-   {
-    "sura": 12,
-    "ayah": 77,
-    "surahName": "Yusuf"
-   },
-   {
-    "sura": 13,
-    "ayah": 10,
-    "surahName": "Ar-Ra'd"
-   },
-   {
-    "sura": 13,
-    "ayah": 22,
-    "surahName": "Ar-Ra'd"
-   }
-  ]
- },
- "كرس": {
-  "count": 1,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 255,
-    "surahName": "Al-Baqarah"
-   }
-  ]
- },
- "نجم": {
-  "count": 5,
-  "verses": [
-   {
-    "sura": 6,
-    "ayah": 97,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 7,
-    "ayah": 54,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 16,
-    "ayah": 12,
-    "surahName": "An-Nahl"
-   },
-   {
-    "sura": 16,
-    "ayah": 16,
-    "surahName": "An-Nahl"
-   },
-   {
-    "sura": 22,
-    "ayah": 18,
-    "surahName": "Al-Hajj"
-   }
-  ]
- },
- "ولد": {
-  "count": 75,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 83,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 116,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 180,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 215,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 233,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 10,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 47,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 116,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 4,
-    "ayah": 7,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 11,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 12,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 33,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 36,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 75,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 98,
-    "surahName": "An-Nisa"
-   }
-  ]
- },
- "طلب": {
-  "count": 4,
-  "verses": [
-   {
-    "sura": 7,
-    "ayah": 54,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 18,
-    "ayah": 41,
-    "surahName": "Al-Kahf"
-   },
-   {
-    "sura": 22,
-    "ayah": 73,
-    "surahName": "Al-Hajj"
-   }
-  ]
- },
- "رجل": {
-  "count": 58,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 228,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 239,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 282,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 4,
-    "ayah": 1,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 7,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 12,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 32,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 34,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 75,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 98,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 176,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 5,
-    "ayah": 6,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 5,
-    "ayah": 23,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 5,
-    "ayah": 33,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 5,
-    "ayah": 66,
-    "surahName": "Al-Ma'idah"
-   }
-  ]
- },
- "تجر": {
-  "count": 5,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 16,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 282,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 4,
-    "ayah": 29,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 9,
-    "ayah": 24,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 24,
-    "ayah": 37,
-    "surahName": "An-Nur"
-   }
-  ]
- },
- "كلب": {
-  "count": 6,
-  "verses": [
-   {
-    "sura": 5,
-    "ayah": 4,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 7,
-    "ayah": 176,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 18,
-    "ayah": 18,
-    "surahName": "Al-Kahf"
-   },
-   {
-    "sura": 18,
-    "ayah": 22,
-    "surahName": "Al-Kahf"
-   }
-  ]
- },
- "حمر": {
-  "count": 3,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 259,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 16,
-    "ayah": 8,
-    "surahName": "An-Nahl"
-   },
-   {
-    "sura": 31,
-    "ayah": 19,
-    "surahName": "Luqman"
-   }
-  ]
- },
- "حصن": {
-  "count": 15,
-  "verses": [
-   {
-    "sura": 4,
-    "ayah": 24,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 25,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 5,
-    "ayah": 5,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 12,
-    "ayah": 48,
-    "surahName": "Yusuf"
-   },
-   {
-    "sura": 21,
-    "ayah": 80,
-    "surahName": "Al-Anbya"
-   },
-   {
-    "sura": 21,
-    "ayah": 91,
-    "surahName": "Al-Anbya"
-   },
-   {
-    "sura": 24,
-    "ayah": 4,
-    "surahName": "An-Nur"
-   },
-   {
-    "sura": 24,
-    "ayah": 23,
-    "surahName": "An-Nur"
-   },
-   {
-    "sura": 24,
-    "ayah": 33,
-    "surahName": "An-Nur"
-   }
-  ]
- },
- "جمل": {
-  "count": 8,
-  "verses": [
-   {
-    "sura": 7,
-    "ayah": 40,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 12,
-    "ayah": 18,
-    "surahName": "Yusuf"
-   },
-   {
-    "sura": 12,
-    "ayah": 83,
-    "surahName": "Yusuf"
-   },
-   {
-    "sura": 15,
-    "ayah": 85,
-    "surahName": "Al-Hijr"
-   },
-   {
-    "sura": 16,
-    "ayah": 6,
-    "surahName": "An-Nahl"
-   },
-   {
-    "sura": 25,
-    "ayah": 32,
-    "surahName": "Al-Furqan"
-   },
-   {
-    "sura": 33,
-    "ayah": 28,
-    "surahName": "Al-Ahzab"
-   },
-   {
-    "sura": 33,
-    "ayah": 49,
-    "surahName": "Al-Ahzab"
-   }
-  ]
- },
- "درس": {
-  "count": 4,
-  "verses": [
-   {
-    "sura": 3,
-    "ayah": 79,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 6,
-    "ayah": 105,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 6,
-    "ayah": 156,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 7,
-    "ayah": 169,
-    "surahName": "Al-A'raf"
-   }
-  ]
- },
- "أمم": {
-  "count": 95,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 78,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 124,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 128,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 134,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 141,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 143,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 213,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 7,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 20,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 75,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 104,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 110,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 113,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 4,
-    "ayah": 11,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 23,
-    "surahName": "An-Nisa"
-   }
-  ]
- },
- "حجر": {
-  "count": 16,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 24,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 60,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 74,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 4,
-    "ayah": 23,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 6,
-    "ayah": 138,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 7,
-    "ayah": 160,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 8,
-    "ayah": 32,
-    "surahName": "Al-Anfal"
-   },
-   {
-    "sura": 11,
-    "ayah": 82,
-    "surahName": "Hud"
-   },
-   {
-    "sura": 15,
-    "ayah": 74,
-    "surahName": "Al-Hijr"
-   },
-   {
-    "sura": 15,
-    "ayah": 80,
-    "surahName": "Al-Hijr"
-   },
-   {
-    "sura": 17,
-    "ayah": 50,
-    "surahName": "Al-Isra"
-   },
-   {
-    "sura": 25,
-    "ayah": 22,
-    "surahName": "Al-Furqan"
-   },
-   {
-    "sura": 25,
-    "ayah": 53,
-    "surahName": "Al-Furqan"
-   }
-  ]
- },
- "سكر": {
-  "count": 6,
-  "verses": [
-   {
-    "sura": 4,
-    "ayah": 43,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 15,
-    "ayah": 15,
-    "surahName": "Al-Hijr"
-   },
-   {
-    "sura": 15,
-    "ayah": 72,
-    "surahName": "Al-Hijr"
-   },
-   {
-    "sura": 16,
-    "ayah": 67,
-    "surahName": "An-Nahl"
-   },
-   {
-    "sura": 22,
-    "ayah": 2,
-    "surahName": "Al-Hajj"
-   }
-  ]
- },
- "لبن": {
-  "count": 1,
-  "verses": [
-   {
-    "sura": 16,
-    "ayah": 66,
-    "surahName": "An-Nahl"
-   }
-  ]
- },
- "غني": {
-  "count": 40,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 263,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 267,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 273,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 10,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 97,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 116,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 181,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 4,
-    "ayah": 6,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 130,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 131,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 135,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 6,
-    "ayah": 133,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 7,
-    "ayah": 48,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 92,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 8,
-    "ayah": 19,
-    "surahName": "Al-Anfal"
-   }
-  ]
- },
- "فقر": {
-  "count": 10,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 268,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 271,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 273,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 181,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 4,
-    "ayah": 6,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 135,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 9,
-    "ayah": 60,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 22,
-    "ayah": 28,
-    "surahName": "Al-Hajj"
-   },
-   {
-    "sura": 24,
-    "ayah": 32,
-    "surahName": "An-Nur"
-   },
-   {
-    "sura": 28,
-    "ayah": 24,
-    "surahName": "Al-Qasas"
-   }
-  ]
- },
- "طول": {
-  "count": 6,
-  "verses": [
-   {
-    "sura": 4,
-    "ayah": 25,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 9,
-    "ayah": 86,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 17,
-    "ayah": 37,
-    "surahName": "Al-Isra"
-   },
-   {
-    "sura": 20,
-    "ayah": 86,
-    "surahName": "Taha"
-   },
-   {
-    "sura": 21,
-    "ayah": 44,
-    "surahName": "Al-Anbya"
-   },
-   {
-    "sura": 28,
-    "ayah": 45,
-    "surahName": "Al-Qasas"
-   }
-  ]
- },
- "قصر": {
-  "count": 5,
-  "verses": [
-   {
-    "sura": 4,
-    "ayah": 101,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 7,
-    "ayah": 74,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 202,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 22,
-    "ayah": 45,
-    "surahName": "Al-Hajj"
-   },
-   {
-    "sura": 25,
-    "ayah": 10,
-    "surahName": "Al-Furqan"
-   }
-  ]
- },
- "برد": {
-  "count": 2,
-  "verses": [
-   {
-    "sura": 21,
-    "ayah": 69,
-    "surahName": "Al-Anbya"
-   },
-   {
-    "sura": 24,
-    "ayah": 43,
-    "surahName": "An-Nur"
-   }
-  ]
- },
- "حرر": {
-  "count": 11,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 178,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 35,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 4,
-    "ayah": 92,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 5,
-    "ayah": 89,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 9,
-    "ayah": 81,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 16,
-    "ayah": 81,
-    "surahName": "An-Nahl"
-   },
-   {
-    "sura": 22,
-    "ayah": 23,
-    "surahName": "Al-Hajj"
-   }
-  ]
- },
- "وقف": {
-  "count": 3,
-  "verses": [
-   {
-    "sura": 6,
-    "ayah": 27,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 6,
-    "ayah": 30,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 34,
-    "ayah": 31,
-    "surahName": "Saba"
-   }
-  ]
- },
- "جدد": {
-  "count": 6,
-  "verses": [
-   {
-    "sura": 13,
-    "ayah": 5,
-    "surahName": "Ar-Ra'd"
-   },
-   {
-    "sura": 14,
-    "ayah": 19,
-    "surahName": "Ibrahim"
-   },
-   {
-    "sura": 17,
-    "ayah": 49,
-    "surahName": "Al-Isra"
-   },
-   {
-    "sura": 17,
-    "ayah": 98,
-    "surahName": "Al-Isra"
-   },
-   {
-    "sura": 32,
-    "ayah": 10,
-    "surahName": "As-Sajdah"
-   },
-   {
-    "sura": 34,
-    "ayah": 7,
-    "surahName": "Saba"
-   }
-  ]
- },
- "قدم": {
-  "count": 26,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 95,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 110,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 223,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 250,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 147,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 182,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 4,
-    "ayah": 62,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 5,
-    "ayah": 80,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 7,
-    "ayah": 34,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 8,
-    "ayah": 11,
-    "surahName": "Al-Anfal"
-   },
-   {
-    "sura": 8,
-    "ayah": 51,
-    "surahName": "Al-Anfal"
-   },
-   {
-    "sura": 10,
-    "ayah": 2,
-    "surahName": "Yunus"
-   },
-   {
-    "sura": 10,
-    "ayah": 49,
-    "surahName": "Yunus"
-   },
-   {
-    "sura": 11,
-    "ayah": 98,
-    "surahName": "Hud"
-   },
-   {
-    "sura": 12,
-    "ayah": 48,
-    "surahName": "Yusuf"
-   }
-  ]
- },
- "قرب": {
-  "count": 68,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 35,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 83,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 177,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 180,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 186,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 187,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 214,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 215,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 222,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 237,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 45,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 167,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 183,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 4,
-    "ayah": 7,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 8,
-    "surahName": "An-Nisa"
-   }
-  ]
- },
- "بعد": {
-  "count": 185,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 27,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 51,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 52,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 56,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 64,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 74,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 75,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 87,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 92,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 109,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 120,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 133,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 145,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 159,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 164,
-    "surahName": "Al-Baqarah"
-   }
-  ]
- },
- "صغر": {
-  "count": 12,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 282,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 6,
-    "ayah": 124,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 7,
-    "ayah": 13,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 119,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 9,
-    "ayah": 29,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 9,
-    "ayah": 121,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 10,
-    "ayah": 61,
-    "surahName": "Yunus"
-   },
-   {
-    "sura": 12,
-    "ayah": 32,
-    "surahName": "Yusuf"
-   },
-   {
-    "sura": 17,
-    "ayah": 24,
-    "surahName": "Al-Isra"
-   },
-   {
-    "sura": 18,
-    "ayah": 49,
-    "surahName": "Al-Kahf"
-   },
-   {
-    "sura": 27,
-    "ayah": 37,
-    "surahName": "An-Naml"
-   },
-   {
-    "sura": 34,
-    "ayah": 3,
-    "surahName": "Saba"
-   }
-  ]
- },
- "كبر": {
-  "count": 106,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 34,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 45,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 87,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 143,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 185,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 217,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 219,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 266,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 282,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 40,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 118,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 4,
-    "ayah": 2,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 6,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 31,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 34,
-    "surahName": "An-Nisa"
-   }
-  ]
- },
- "خفف": {
-  "count": 13,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 86,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 162,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 178,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 88,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 4,
-    "ayah": 28,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 7,
-    "ayah": 9,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 189,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 8,
-    "ayah": 66,
-    "surahName": "Al-Anfal"
-   },
-   {
-    "sura": 9,
-    "ayah": 41,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 16,
-    "ayah": 80,
-    "surahName": "An-Nahl"
-   },
-   {
-    "sura": 16,
-    "ayah": 85,
-    "surahName": "An-Nahl"
-   },
-   {
-    "sura": 23,
-    "ayah": 103,
-    "surahName": "Al-Mu'minun"
-   },
-   {
-    "sura": 30,
-    "ayah": 60,
-    "surahName": "Ar-Rum"
-   }
-  ]
- },
- "ثقل": {
-  "count": 18,
-  "verses": [
-   {
-    "sura": 4,
-    "ayah": 40,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 7,
-    "ayah": 8,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 57,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 187,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 189,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 9,
-    "ayah": 38,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 9,
-    "ayah": 41,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 10,
-    "ayah": 61,
-    "surahName": "Yunus"
-   },
-   {
-    "sura": 13,
-    "ayah": 12,
-    "surahName": "Ar-Ra'd"
-   },
-   {
-    "sura": 16,
-    "ayah": 7,
-    "surahName": "An-Nahl"
-   },
-   {
-    "sura": 21,
-    "ayah": 47,
-    "surahName": "Al-Anbya"
-   },
-   {
-    "sura": 23,
-    "ayah": 102,
-    "surahName": "Al-Mu'minun"
-   },
-   {
-    "sura": 29,
-    "ayah": 13,
-    "surahName": "Al-'Ankabut"
-   },
-   {
-    "sura": 31,
-    "ayah": 16,
-    "surahName": "Luqman"
-   },
-   {
-    "sura": 34,
-    "ayah": 3,
-    "surahName": "Saba"
-   }
-  ]
- },
- "ورق": {
-  "count": 4,
-  "verses": [
-   {
-    "sura": 6,
-    "ayah": 59,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 7,
-    "ayah": 22,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 18,
-    "ayah": 19,
-    "surahName": "Al-Kahf"
-   },
-   {
-    "sura": 20,
-    "ayah": 121,
-    "surahName": "Taha"
-   }
-  ]
- },
- "موه": {
-  "count": 41,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 22,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 74,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 164,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 4,
-    "ayah": 43,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 5,
-    "ayah": 6,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 6,
-    "ayah": 99,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 7,
-    "ayah": 50,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 57,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 8,
-    "ayah": 11,
-    "surahName": "Al-Anfal"
-   },
-   {
-    "sura": 10,
-    "ayah": 24,
-    "surahName": "Yunus"
-   },
-   {
-    "sura": 11,
-    "ayah": 7,
-    "surahName": "Hud"
-   },
-   {
-    "sura": 11,
-    "ayah": 43,
-    "surahName": "Hud"
-   },
-   {
-    "sura": 11,
-    "ayah": 44,
-    "surahName": "Hud"
-   },
-   {
-    "sura": 13,
-    "ayah": 4,
-    "surahName": "Ar-Ra'd"
-   },
-   {
-    "sura": 13,
-    "ayah": 14,
-    "surahName": "Ar-Ra'd"
-   }
-  ]
- },
- "مرض": {
-  "count": 19,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 10,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 184,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 185,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 196,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 4,
-    "ayah": 43,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 102,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 5,
-    "ayah": 6,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 5,
-    "ayah": 52,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 8,
-    "ayah": 49,
-    "surahName": "Al-Anfal"
-   },
-   {
-    "sura": 9,
-    "ayah": 91,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 9,
-    "ayah": 125,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 22,
-    "ayah": 53,
-    "surahName": "Al-Hajj"
-   },
-   {
-    "sura": 24,
-    "ayah": 50,
-    "surahName": "An-Nur"
-   },
-   {
-    "sura": 24,
-    "ayah": 61,
-    "surahName": "An-Nur"
-   },
-   {
-    "sura": 26,
-    "ayah": 80,
-    "surahName": "Ash-Shu'ara"
-   }
-  ]
- },
- "سوق": {
-  "count": 7,
-  "verses": [
-   {
-    "sura": 7,
-    "ayah": 57,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 8,
-    "ayah": 6,
-    "surahName": "Al-Anfal"
-   },
-   {
-    "sura": 19,
-    "ayah": 86,
-    "surahName": "Maryam"
-   },
-   {
-    "sura": 25,
-    "ayah": 7,
-    "surahName": "Al-Furqan"
-   },
-   {
-    "sura": 25,
-    "ayah": 20,
-    "surahName": "Al-Furqan"
-   },
-   {
-    "sura": 27,
-    "ayah": 44,
-    "surahName": "An-Naml"
-   },
-   {
-    "sura": 32,
-    "ayah": 27,
-    "surahName": "As-Sajdah"
-   }
-  ]
- },
- "جمع": {
-  "count": 91,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 29,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 38,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 148,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 161,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 165,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 9,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 25,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 87,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 103,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 155,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 157,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 166,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 173,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 4,
-    "ayah": 23,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 71,
-    "surahName": "An-Nisa"
-   }
-  ]
- },
- "دور": {
-  "count": 43,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 84,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 85,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 94,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 243,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 246,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 282,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 195,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 4,
-    "ayah": 66,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 5,
-    "ayah": 52,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 6,
-    "ayah": 32,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 6,
-    "ayah": 127,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 6,
-    "ayah": 135,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 7,
-    "ayah": 78,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 91,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 145,
-    "surahName": "Al-A'raf"
-   }
-  ]
- },
- "غرف": {
-  "count": 4,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 249,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 25,
-    "ayah": 75,
-    "surahName": "Al-Furqan"
-   },
-   {
-    "sura": 29,
-    "ayah": 58,
-    "surahName": "Al-'Ankabut"
-   }
-  ]
- },
- "حمم": {
-  "count": 4,
-  "verses": [
-   {
-    "sura": 6,
-    "ayah": 70,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 10,
-    "ayah": 4,
-    "surahName": "Yunus"
-   },
-   {
-    "sura": 22,
-    "ayah": 19,
-    "surahName": "Al-Hajj"
-   },
-   {
-    "sura": 26,
-    "ayah": 101,
-    "surahName": "Ash-Shu'ara"
-   }
-  ]
- },
- "سمو": {
-  "count": 238,
-  "verses": [
-   {
-    "sura": 1,
-    "ayah": 1,
-    "surahName": "Al-Fatihah"
-   },
-   {
-    "sura": 2,
-    "ayah": 19,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 22,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 29,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 31,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 33,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 59,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 107,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 114,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 116,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 117,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 144,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 164,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 255,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 282,
-    "surahName": "Al-Baqarah"
-   }
-  ]
- },
- "فصل": {
-  "count": 29,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 233,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 249,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 6,
-    "ayah": 55,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 6,
-    "ayah": 57,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 6,
-    "ayah": 97,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 6,
-    "ayah": 98,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 6,
-    "ayah": 114,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 6,
-    "ayah": 119,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 6,
-    "ayah": 126,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 6,
-    "ayah": 154,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 7,
-    "ayah": 32,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 52,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 133,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 145,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 174,
-    "surahName": "Al-A'raf"
-   }
-  ]
- },
- "رسل": {
-  "count": 354,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 87,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 98,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 101,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 108,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 119,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 129,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 143,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 151,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 214,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 252,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 253,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 279,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 285,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 32,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 49,
-    "surahName": "Ali 'Imran"
-   }
-  ]
- },
- "عمم": {
-  "count": 5,
-  "verses": [
-   {
-    "sura": 4,
-    "ayah": 23,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 24,
-    "ayah": 61,
-    "surahName": "An-Nur"
-   },
-   {
-    "sura": 33,
-    "ayah": 50,
-    "surahName": "Al-Ahzab"
-   }
-  ]
- },
- "بني": {
-  "count": 141,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 22,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 40,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 47,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 49,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 83,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 87,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 122,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 132,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 133,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 146,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 177,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 211,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 215,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 246,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 253,
-    "surahName": "Al-Baqarah"
-   }
-  ]
- },
- "شرع": {
-  "count": 2,
-  "verses": [
-   {
-    "sura": 5,
-    "ayah": 48,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 7,
-    "ayah": 163,
-    "surahName": "Al-A'raf"
-   }
-  ]
- },
- "سير": {
-  "count": 19,
-  "verses": [
-   {
-    "sura": 3,
-    "ayah": 137,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 5,
-    "ayah": 96,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 6,
-    "ayah": 11,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 10,
-    "ayah": 22,
-    "surahName": "Yunus"
-   },
-   {
-    "sura": 12,
-    "ayah": 10,
-    "surahName": "Yusuf"
-   },
-   {
-    "sura": 12,
-    "ayah": 19,
-    "surahName": "Yusuf"
-   },
-   {
-    "sura": 12,
-    "ayah": 109,
-    "surahName": "Yusuf"
-   },
-   {
-    "sura": 13,
-    "ayah": 31,
-    "surahName": "Ar-Ra'd"
-   },
-   {
-    "sura": 16,
-    "ayah": 36,
-    "surahName": "An-Nahl"
-   },
-   {
-    "sura": 18,
-    "ayah": 47,
-    "surahName": "Al-Kahf"
-   },
-   {
-    "sura": 20,
-    "ayah": 21,
-    "surahName": "Taha"
-   },
-   {
-    "sura": 22,
-    "ayah": 46,
-    "surahName": "Al-Hajj"
-   },
-   {
-    "sura": 27,
-    "ayah": 69,
-    "surahName": "An-Naml"
-   },
-   {
-    "sura": 28,
-    "ayah": 29,
-    "surahName": "Al-Qasas"
-   },
-   {
-    "sura": 29,
-    "ayah": 20,
-    "surahName": "Al-'Ankabut"
-   }
-  ]
- },
- "كعب": {
-  "count": 3,
-  "verses": [
-   {
-    "sura": 5,
-    "ayah": 6,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 5,
-    "ayah": 95,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 5,
-    "ayah": 97,
-    "surahName": "Al-Ma'idah"
-   }
-  ]
- },
- "خول": {
-  "count": 6,
-  "verses": [
-   {
-    "sura": 4,
-    "ayah": 23,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 6,
-    "ayah": 94,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 24,
-    "ayah": 61,
-    "surahName": "An-Nur"
-   },
-   {
-    "sura": 33,
-    "ayah": 50,
-    "surahName": "Al-Ahzab"
-   }
-  ]
- },
- "غلق": {
-  "count": 1,
-  "verses": [
-   {
-    "sura": 12,
-    "ayah": 23,
-    "surahName": "Yusuf"
-   }
-  ]
- },
- "حقب": {
-  "count": 1,
-  "verses": [
-   {
-    "sura": 18,
-    "ayah": 60,
-    "surahName": "Al-Kahf"
-   }
-  ]
- },
- "كوي": {
-  "count": 1,
-  "verses": [
-   {
-    "sura": 9,
-    "ayah": 35,
-    "surahName": "At-Tawbah"
-   }
-  ]
- },
- "بقر": {
-  "count": 9,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 67,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 68,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 69,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 70,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 71,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 6,
-    "ayah": 144,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 6,
-    "ayah": 146,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 12,
-    "ayah": 43,
-    "surahName": "Yusuf"
-   },
-   {
-    "sura": 12,
-    "ayah": 46,
-    "surahName": "Yusuf"
-   }
-  ]
- },
- "درج": {
-  "count": 14,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 228,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 253,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 163,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 4,
-    "ayah": 95,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 96,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 6,
-    "ayah": 83,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 6,
-    "ayah": 132,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 6,
-    "ayah": 165,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 7,
-    "ayah": 182,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 8,
-    "ayah": 4,
-    "surahName": "Al-Anfal"
-   },
-   {
-    "sura": 9,
-    "ayah": 20,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 12,
-    "ayah": 76,
-    "surahName": "Yusuf"
-   },
-   {
-    "sura": 17,
-    "ayah": 21,
-    "surahName": "Al-Isra"
-   },
-   {
-    "sura": 20,
-    "ayah": 75,
-    "surahName": "Taha"
-   }
-  ]
- },
- "فلح": {
-  "count": 34,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 5,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 189,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 104,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 130,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 200,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 5,
-    "ayah": 35,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 5,
-    "ayah": 90,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 5,
-    "ayah": 100,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 6,
-    "ayah": 21,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 6,
-    "ayah": 135,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 7,
-    "ayah": 8,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 69,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 157,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 8,
-    "ayah": 45,
-    "surahName": "Al-Anfal"
-   },
-   {
-    "sura": 9,
-    "ayah": 88,
-    "surahName": "At-Tawbah"
-   }
-  ]
- },
- "أبو": {
-  "count": 95,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 133,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 170,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 200,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 4,
-    "ayah": 11,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 22,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 5,
-    "ayah": 104,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 6,
-    "ayah": 74,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 6,
-    "ayah": 87,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 6,
-    "ayah": 91,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 6,
-    "ayah": 148,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 7,
-    "ayah": 27,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 28,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 70,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 71,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 95,
-    "surahName": "Al-A'raf"
-   }
-  ]
- },
- "غرب": {
-  "count": 14,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 115,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 142,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 177,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 258,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 5,
-    "ayah": 31,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 7,
-    "ayah": 137,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 18,
-    "ayah": 17,
-    "surahName": "Al-Kahf"
-   },
-   {
-    "sura": 18,
-    "ayah": 86,
-    "surahName": "Al-Kahf"
-   },
-   {
-    "sura": 20,
-    "ayah": 130,
-    "surahName": "Taha"
-   },
-   {
-    "sura": 24,
-    "ayah": 35,
-    "surahName": "An-Nur"
-   },
-   {
-    "sura": 26,
-    "ayah": 28,
-    "surahName": "Ash-Shu'ara"
-   },
-   {
-    "sura": 28,
-    "ayah": 44,
-    "surahName": "Al-Qasas"
-   }
-  ]
- },
- "أنف": {
-  "count": 2,
-  "verses": [
-   {
-    "sura": 5,
-    "ayah": 45,
-    "surahName": "Al-Ma'idah"
-   }
-  ]
- },
- "قدر": {
-  "count": 71,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 20,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 106,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 109,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 148,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 236,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 259,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 264,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 284,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 26,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 29,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 165,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 189,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 4,
-    "ayah": 133,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 149,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 5,
-    "ayah": 17,
-    "surahName": "Al-Ma'idah"
-   }
-  ]
- },
- "أذن": {
-  "count": 84,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 19,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 97,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 102,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 213,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 221,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 249,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 251,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 255,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 279,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 49,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 145,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 152,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 166,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 4,
-    "ayah": 25,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 64,
-    "surahName": "An-Nisa"
-   }
-  ]
- },
- "عين": {
-  "count": 37,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 60,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 13,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 5,
-    "ayah": 45,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 5,
-    "ayah": 83,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 7,
-    "ayah": 116,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 160,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 179,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 195,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 8,
-    "ayah": 44,
-    "surahName": "Al-Anfal"
-   },
-   {
-    "sura": 9,
-    "ayah": 92,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 11,
-    "ayah": 31,
-    "surahName": "Hud"
-   },
-   {
-    "sura": 11,
-    "ayah": 37,
-    "surahName": "Hud"
-   },
-   {
-    "sura": 12,
-    "ayah": 84,
-    "surahName": "Yusuf"
-   },
-   {
-    "sura": 15,
-    "ayah": 45,
-    "surahName": "Al-Hijr"
-   },
-   {
-    "sura": 15,
-    "ayah": 88,
-    "surahName": "Al-Hijr"
-   }
-  ]
- },
- "يدي": {
-  "count": 80,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 66,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 79,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 95,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 97,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 195,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 237,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 249,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 255,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 3,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 26,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 50,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 73,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 182,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 4,
-    "ayah": 43,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 62,
-    "surahName": "An-Nisa"
-   }
-  ]
- },
- "سرع": {
-  "count": 20,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 202,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 19,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 114,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 133,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 176,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 199,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 5,
-    "ayah": 4,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 5,
-    "ayah": 41,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 5,
-    "ayah": 52,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 5,
-    "ayah": 62,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 6,
-    "ayah": 62,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 6,
-    "ayah": 165,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 7,
-    "ayah": 167,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 10,
-    "ayah": 21,
-    "surahName": "Yunus"
-   },
-   {
-    "sura": 13,
-    "ayah": 41,
-    "surahName": "Ar-Ra'd"
-   }
-  ]
- },
- "شرق": {
-  "count": 10,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 115,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 142,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 177,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 258,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 7,
-    "ayah": 137,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 15,
-    "ayah": 73,
-    "surahName": "Al-Hijr"
-   },
-   {
-    "sura": 19,
-    "ayah": 16,
-    "surahName": "Maryam"
-   },
-   {
-    "sura": 24,
-    "ayah": 35,
-    "surahName": "An-Nur"
-   },
-   {
-    "sura": 26,
-    "ayah": 28,
-    "surahName": "Ash-Shu'ara"
-   },
-   {
-    "sura": 26,
-    "ayah": 60,
-    "surahName": "Ash-Shu'ara"
-   }
-  ]
- },
- "نوق": {
-  "count": 5,
-  "verses": [
-   {
-    "sura": 7,
-    "ayah": 73,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 77,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 11,
-    "ayah": 64,
-    "surahName": "Hud"
-   },
-   {
-    "sura": 17,
-    "ayah": 59,
-    "surahName": "Al-Isra"
-   },
-   {
-    "sura": 26,
-    "ayah": 155,
-    "surahName": "Ash-Shu'ara"
-   }
-  ]
- },
- "بيض": {
-  "count": 9,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 187,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 106,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 107,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 7,
-    "ayah": 108,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 12,
-    "ayah": 84,
-    "surahName": "Yusuf"
-   },
-   {
-    "sura": 20,
-    "ayah": 22,
-    "surahName": "Taha"
-   },
-   {
-    "sura": 26,
-    "ayah": 33,
-    "surahName": "Ash-Shu'ara"
-   },
-   {
-    "sura": 27,
-    "ayah": 12,
-    "surahName": "An-Naml"
-   },
-   {
-    "sura": 28,
-    "ayah": 32,
-    "surahName": "Al-Qasas"
-   }
-  ]
- },
- "أمر": {
-  "count": 189,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 27,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 44,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 67,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 68,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 93,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 109,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 117,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 169,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 210,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 222,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 268,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 275,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 21,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 47,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 80,
-    "surahName": "Ali 'Imran"
-   }
-  ]
- },
- "سكن": {
-  "count": 51,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 35,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 61,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 83,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 177,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 184,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 215,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 248,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 112,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 4,
-    "ayah": 8,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 36,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 5,
-    "ayah": 89,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 5,
-    "ayah": 95,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 6,
-    "ayah": 13,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 6,
-    "ayah": 96,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 7,
-    "ayah": 19,
-    "surahName": "Al-A'raf"
-   }
-  ]
- },
- "ألم": {
-  "count": 51,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 10,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 104,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 174,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 178,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 21,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 77,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 91,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 177,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 188,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 4,
-    "ayah": 18,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 104,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 138,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 161,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 173,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 5,
-    "ayah": 36,
-    "surahName": "Al-Ma'idah"
-   }
-  ]
- },
- "شفي": {
-  "count": 5,
-  "verses": [
-   {
-    "sura": 9,
-    "ayah": 14,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 10,
-    "ayah": 57,
-    "surahName": "Yunus"
-   },
-   {
-    "sura": 16,
-    "ayah": 69,
-    "surahName": "An-Nahl"
-   },
-   {
-    "sura": 17,
-    "ayah": 82,
-    "surahName": "Al-Isra"
-   },
-   {
-    "sura": 26,
-    "ayah": 80,
-    "surahName": "Ash-Shu'ara"
-   }
-  ]
- },
- "فكه": {
-  "count": 1,
-  "verses": [
-   {
-    "sura": 23,
-    "ayah": 19,
-    "surahName": "Al-Mu'minun"
-   }
-  ]
- },
- "عصف": {
-  "count": 3,
-  "verses": [
-   {
-    "sura": 10,
-    "ayah": 22,
-    "surahName": "Yunus"
-   },
-   {
-    "sura": 14,
-    "ayah": 18,
-    "surahName": "Ibrahim"
-   },
-   {
-    "sura": 21,
-    "ayah": 81,
-    "surahName": "Al-Anbya"
-   }
-  ]
- },
- "طير": {
-  "count": 22,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 260,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 49,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 5,
-    "ayah": 110,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 6,
-    "ayah": 38,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 7,
-    "ayah": 131,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 12,
-    "ayah": 36,
-    "surahName": "Yusuf"
-   },
-   {
-    "sura": 12,
-    "ayah": 41,
-    "surahName": "Yusuf"
-   },
-   {
-    "sura": 16,
-    "ayah": 79,
-    "surahName": "An-Nahl"
-   },
-   {
-    "sura": 17,
-    "ayah": 13,
-    "surahName": "Al-Isra"
-   },
-   {
-    "sura": 21,
-    "ayah": 79,
-    "surahName": "Al-Anbya"
-   },
-   {
-    "sura": 22,
-    "ayah": 31,
-    "surahName": "Al-Hajj"
-   },
-   {
-    "sura": 24,
-    "ayah": 41,
-    "surahName": "An-Nur"
-   },
-   {
-    "sura": 27,
-    "ayah": 16,
-    "surahName": "An-Naml"
-   },
-   {
-    "sura": 27,
-    "ayah": 17,
-    "surahName": "An-Naml"
-   },
-   {
-    "sura": 27,
-    "ayah": 20,
-    "surahName": "An-Naml"
-   }
-  ]
- },
- "عرب": {
-  "count": 12,
-  "verses": [
-   {
-    "sura": 9,
-    "ayah": 90,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 9,
-    "ayah": 97,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 9,
-    "ayah": 98,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 9,
-    "ayah": 99,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 9,
-    "ayah": 101,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 9,
-    "ayah": 120,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 12,
-    "ayah": 2,
-    "surahName": "Yusuf"
-   },
-   {
-    "sura": 13,
-    "ayah": 37,
-    "surahName": "Ar-Ra'd"
-   },
-   {
-    "sura": 16,
-    "ayah": 103,
-    "surahName": "An-Nahl"
-   },
-   {
-    "sura": 20,
-    "ayah": 113,
-    "surahName": "Taha"
-   },
-   {
-    "sura": 26,
-    "ayah": 195,
-    "surahName": "Ash-Shu'ara"
-   },
-   {
-    "sura": 33,
-    "ayah": 20,
-    "surahName": "Al-Ahzab"
-   }
-  ]
- },
- "لغو": {
-  "count": 6,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 225,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 5,
-    "ayah": 89,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 19,
-    "ayah": 62,
-    "surahName": "Maryam"
-   },
-   {
-    "sura": 23,
-    "ayah": 3,
-    "surahName": "Al-Mu'minun"
-   },
-   {
-    "sura": 25,
-    "ayah": 72,
-    "surahName": "Al-Furqan"
-   },
-   {
-    "sura": 28,
-    "ayah": 55,
-    "surahName": "Al-Qasas"
-   }
-  ]
- },
- "سهل": {
-  "count": 1,
-  "verses": [
-   {
-    "sura": 7,
-    "ayah": 74,
-    "surahName": "Al-A'raf"
-   }
-  ]
- },
- "جهد": {
-  "count": 35,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 218,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 142,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 4,
-    "ayah": 95,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 5,
-    "ayah": 35,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 5,
-    "ayah": 53,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 5,
-    "ayah": 54,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 6,
-    "ayah": 109,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 8,
-    "ayah": 72,
-    "surahName": "Al-Anfal"
-   },
-   {
-    "sura": 8,
-    "ayah": 74,
-    "surahName": "Al-Anfal"
-   },
-   {
-    "sura": 8,
-    "ayah": 75,
-    "surahName": "Al-Anfal"
-   },
-   {
-    "sura": 9,
-    "ayah": 16,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 9,
-    "ayah": 19,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 9,
-    "ayah": 20,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 9,
-    "ayah": 24,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 9,
-    "ayah": 41,
-    "surahName": "At-Tawbah"
-   }
-  ]
- },
- "شهر": {
-  "count": 17,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 185,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 194,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 197,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 217,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 226,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 234,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 4,
-    "ayah": 92,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 5,
-    "ayah": 2,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 5,
-    "ayah": 97,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 9,
-    "ayah": 2,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 9,
-    "ayah": 5,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 9,
-    "ayah": 36,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 34,
-    "ayah": 12,
-    "surahName": "Saba"
-   }
-  ]
- },
- "مدن": {
-  "count": 25,
-  "verses": [
-   {
-    "sura": 7,
-    "ayah": 85,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 111,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 7,
-    "ayah": 123,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 9,
-    "ayah": 70,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 9,
-    "ayah": 101,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 9,
-    "ayah": 120,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 11,
-    "ayah": 84,
-    "surahName": "Hud"
-   },
-   {
-    "sura": 11,
-    "ayah": 95,
-    "surahName": "Hud"
-   },
-   {
-    "sura": 12,
-    "ayah": 30,
-    "surahName": "Yusuf"
-   },
-   {
-    "sura": 15,
-    "ayah": 67,
-    "surahName": "Al-Hijr"
-   },
-   {
-    "sura": 18,
-    "ayah": 19,
-    "surahName": "Al-Kahf"
-   },
-   {
-    "sura": 18,
-    "ayah": 82,
-    "surahName": "Al-Kahf"
-   },
-   {
-    "sura": 20,
-    "ayah": 40,
-    "surahName": "Taha"
-   },
-   {
-    "sura": 22,
-    "ayah": 44,
-    "surahName": "Al-Hajj"
-   },
-   {
-    "sura": 26,
-    "ayah": 36,
-    "surahName": "Ash-Shu'ara"
-   }
-  ]
- },
- "قهر": {
-  "count": 6,
-  "verses": [
-   {
-    "sura": 6,
-    "ayah": 18,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 6,
-    "ayah": 61,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 7,
-    "ayah": 127,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 12,
-    "ayah": 39,
-    "surahName": "Yusuf"
-   },
-   {
-    "sura": 13,
-    "ayah": 16,
-    "surahName": "Ar-Ra'd"
-   },
-   {
-    "sura": 14,
-    "ayah": 48,
-    "surahName": "Ibrahim"
-   }
-  ]
- },
- "يوم": {
-  "count": 268,
-  "verses": [
-   {
-    "sura": 1,
-    "ayah": 4,
-    "surahName": "Al-Fatihah"
-   },
-   {
-    "sura": 2,
-    "ayah": 8,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 48,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 62,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 80,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 85,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 113,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 123,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 126,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 174,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 177,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 184,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 185,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 196,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 203,
-    "surahName": "Al-Baqarah"
-   }
-  ]
- },
- "وصف": {
-  "count": 11,
-  "verses": [
-   {
-    "sura": 6,
-    "ayah": 100,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 6,
-    "ayah": 139,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 12,
-    "ayah": 18,
-    "surahName": "Yusuf"
-   },
-   {
-    "sura": 12,
-    "ayah": 77,
-    "surahName": "Yusuf"
-   },
-   {
-    "sura": 16,
-    "ayah": 62,
-    "surahName": "An-Nahl"
-   },
-   {
-    "sura": 16,
-    "ayah": 116,
-    "surahName": "An-Nahl"
-   },
-   {
-    "sura": 21,
-    "ayah": 18,
-    "surahName": "Al-Anbya"
-   },
-   {
-    "sura": 21,
-    "ayah": 22,
-    "surahName": "Al-Anbya"
-   },
-   {
-    "sura": 21,
-    "ayah": 112,
-    "surahName": "Al-Anbya"
-   },
-   {
-    "sura": 23,
-    "ayah": 91,
-    "surahName": "Al-Mu'minun"
-   },
-   {
-    "sura": 23,
-    "ayah": 96,
-    "surahName": "Al-Mu'minun"
-   }
-  ]
- },
- "روح": {
-  "count": 37,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 87,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 164,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 253,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 117,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 4,
-    "ayah": 171,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 5,
-    "ayah": 110,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 7,
-    "ayah": 57,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 8,
-    "ayah": 46,
-    "surahName": "Al-Anfal"
-   },
-   {
-    "sura": 10,
-    "ayah": 22,
-    "surahName": "Yunus"
-   },
-   {
-    "sura": 12,
-    "ayah": 87,
-    "surahName": "Yusuf"
-   },
-   {
-    "sura": 12,
-    "ayah": 94,
-    "surahName": "Yusuf"
-   },
-   {
-    "sura": 14,
-    "ayah": 18,
-    "surahName": "Ibrahim"
-   },
-   {
-    "sura": 15,
-    "ayah": 22,
-    "surahName": "Al-Hijr"
-   },
-   {
-    "sura": 15,
-    "ayah": 29,
-    "surahName": "Al-Hijr"
-   },
-   {
-    "sura": 16,
-    "ayah": 2,
-    "surahName": "An-Nahl"
-   }
-  ]
- },
- "ثني": {
-  "count": 22,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 60,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 4,
-    "ayah": 3,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 11,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 176,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 5,
-    "ayah": 12,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 5,
-    "ayah": 106,
-    "surahName": "Al-Ma'idah"
-   },
-   {
-    "sura": 6,
-    "ayah": 143,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 6,
-    "ayah": 144,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 7,
-    "ayah": 160,
-    "surahName": "Al-A'raf"
-   },
-   {
-    "sura": 9,
-    "ayah": 36,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 9,
-    "ayah": 40,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 11,
-    "ayah": 5,
-    "surahName": "Hud"
-   },
-   {
-    "sura": 11,
-    "ayah": 40,
-    "surahName": "Hud"
-   },
-   {
-    "sura": 13,
-    "ayah": 3,
-    "surahName": "Ar-Ra'd"
-   },
-   {
-    "sura": 15,
-    "ayah": 87,
-    "surahName": "Al-Hijr"
-   }
-  ]
- },
- "وزر": {
-  "count": 15,
-  "verses": [
-   {
-    "sura": 6,
-    "ayah": 31,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 6,
-    "ayah": 164,
-    "surahName": "Al-An'am"
-   },
-   {
-    "sura": 16,
-    "ayah": 25,
-    "surahName": "An-Nahl"
-   },
-   {
-    "sura": 17,
-    "ayah": 15,
-    "surahName": "Al-Isra"
-   },
-   {
-    "sura": 20,
-    "ayah": 29,
-    "surahName": "Taha"
-   },
-   {
-    "sura": 20,
-    "ayah": 87,
-    "surahName": "Taha"
-   },
-   {
-    "sura": 20,
-    "ayah": 100,
-    "surahName": "Taha"
-   },
-   {
-    "sura": 25,
-    "ayah": 35,
-    "surahName": "Al-Furqan"
-   }
-  ]
- },
- "حدد": {
-  "count": 17,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 187,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 229,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 230,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 4,
-    "ayah": 13,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 14,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 9,
-    "ayah": 63,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 9,
-    "ayah": 97,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 9,
-    "ayah": 112,
-    "surahName": "At-Tawbah"
-   },
-   {
-    "sura": 17,
-    "ayah": 50,
-    "surahName": "Al-Isra"
-   },
-   {
-    "sura": 18,
-    "ayah": 96,
-    "surahName": "Al-Kahf"
-   },
-   {
-    "sura": 22,
-    "ayah": 21,
-    "surahName": "Al-Hajj"
-   },
-   {
-    "sura": 33,
-    "ayah": 19,
-    "surahName": "Al-Ahzab"
-   },
-   {
-    "sura": 34,
-    "ayah": 10,
-    "surahName": "Saba"
-   }
-  ]
- },
- "دون": {
-  "count": 107,
-  "verses": [
-   {
-    "sura": 2,
-    "ayah": 23,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 94,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 107,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 2,
-    "ayah": 165,
-    "surahName": "Al-Baqarah"
-   },
-   {
-    "sura": 3,
-    "ayah": 28,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 64,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 79,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 3,
-    "ayah": 118,
-    "surahName": "Ali 'Imran"
-   },
-   {
-    "sura": 4,
-    "ayah": 48,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 116,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 117,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 119,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 123,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 139,
-    "surahName": "An-Nisa"
-   },
-   {
-    "sura": 4,
-    "ayah": 144,
-    "surahName": "An-Nisa"
-   }
-  ]
- }
+ "أبد": [
+  28,
+  [
+   [
+    2,
+    95
+   ],
+   [
+    4,
+    57
+   ],
+   [
+    4,
+    122
+   ],
+   [
+    4,
+    169
+   ],
+   [
+    5,
+    24
+   ],
+   [
+    5,
+    119
+   ],
+   [
+    9,
+    22
+   ],
+   [
+    9,
+    83
+   ],
+   [
+    9,
+    84
+   ],
+   [
+    9,
+    100
+   ]
+  ]
+ ],
+ "أبو": [
+  117,
+  [
+   [
+    2,
+    133
+   ],
+   [
+    2,
+    170
+   ],
+   [
+    2,
+    200
+   ],
+   [
+    4,
+    11
+   ],
+   [
+    4,
+    22
+   ],
+   [
+    5,
+    104
+   ],
+   [
+    6,
+    74
+   ],
+   [
+    6,
+    87
+   ],
+   [
+    6,
+    91
+   ],
+   [
+    6,
+    148
+   ]
+  ]
+ ],
+ "أبي": [
+  13,
+  [
+   [
+    2,
+    34
+   ],
+   [
+    2,
+    282
+   ],
+   [
+    9,
+    8
+   ],
+   [
+    9,
+    32
+   ],
+   [
+    15,
+    31
+   ],
+   [
+    17,
+    89
+   ],
+   [
+    17,
+    99
+   ],
+   [
+    18,
+    77
+   ],
+   [
+    20,
+    56
+   ],
+   [
+    20,
+    116
+   ]
+  ]
+ ],
+ "أتي": [
+  549,
+  [
+   [
+    2,
+    23
+   ],
+   [
+    2,
+    25
+   ],
+   [
+    2,
+    38
+   ],
+   [
+    2,
+    43
+   ],
+   [
+    2,
+    53
+   ],
+   [
+    2,
+    63
+   ],
+   [
+    2,
+    83
+   ],
+   [
+    2,
+    85
+   ],
+   [
+    2,
+    87
+   ],
+   [
+    2,
+    93
+   ]
+  ]
+ ],
+ "أثر": [
+  21,
+  [
+   [
+    5,
+    46
+   ],
+   [
+    12,
+    91
+   ],
+   [
+    18,
+    6
+   ],
+   [
+    18,
+    64
+   ],
+   [
+    20,
+    72
+   ],
+   [
+    20,
+    84
+   ],
+   [
+    20,
+    96
+   ],
+   [
+    30,
+    50
+   ],
+   [
+    36,
+    12
+   ],
+   [
+    37,
+    70
+   ]
+  ]
+ ],
+ "أثم": [
+  48,
+  [
+   [
+    2,
+    85
+   ],
+   [
+    2,
+    173
+   ],
+   [
+    2,
+    181
+   ],
+   [
+    2,
+    182
+   ],
+   [
+    2,
+    188
+   ],
+   [
+    2,
+    203
+   ],
+   [
+    2,
+    206
+   ],
+   [
+    2,
+    219
+   ],
+   [
+    2,
+    276
+   ],
+   [
+    2,
+    283
+   ]
+  ]
+ ],
+ "أجر": [
+  108,
+  [
+   [
+    2,
+    62
+   ],
+   [
+    2,
+    112
+   ],
+   [
+    2,
+    262
+   ],
+   [
+    2,
+    274
+   ],
+   [
+    2,
+    277
+   ],
+   [
+    3,
+    57
+   ],
+   [
+    3,
+    136
+   ],
+   [
+    3,
+    171
+   ],
+   [
+    3,
+    172
+   ],
+   [
+    3,
+    179
+   ]
+  ]
+ ],
+ "أجل": [
+  56,
+  [
+   [
+    2,
+    231
+   ],
+   [
+    2,
+    232
+   ],
+   [
+    2,
+    234
+   ],
+   [
+    2,
+    235
+   ],
+   [
+    2,
+    282
+   ],
+   [
+    3,
+    145
+   ],
+   [
+    4,
+    77
+   ],
+   [
+    5,
+    32
+   ],
+   [
+    6,
+    2
+   ],
+   [
+    6,
+    60
+   ]
+  ]
+ ],
+ "أحد": [
+  85,
+  [
+   [
+    2,
+    96
+   ],
+   [
+    2,
+    102
+   ],
+   [
+    2,
+    136
+   ],
+   [
+    2,
+    180
+   ],
+   [
+    2,
+    266
+   ],
+   [
+    2,
+    282
+   ],
+   [
+    2,
+    285
+   ],
+   [
+    3,
+    73
+   ],
+   [
+    3,
+    84
+   ],
+   [
+    3,
+    91
+   ]
+  ]
+ ],
+ "أخذ": [
+  273,
+  [
+   [
+    2,
+    48
+   ],
+   [
+    2,
+    51
+   ],
+   [
+    2,
+    54
+   ],
+   [
+    2,
+    55
+   ],
+   [
+    2,
+    63
+   ],
+   [
+    2,
+    67
+   ],
+   [
+    2,
+    80
+   ],
+   [
+    2,
+    83
+   ],
+   [
+    2,
+    84
+   ],
+   [
+    2,
+    92
+   ]
+  ]
+ ],
+ "أخر": [
+  250,
+  [
+   [
+    2,
+    4
+   ],
+   [
+    2,
+    8
+   ],
+   [
+    2,
+    62
+   ],
+   [
+    2,
+    86
+   ],
+   [
+    2,
+    94
+   ],
+   [
+    2,
+    102
+   ],
+   [
+    2,
+    114
+   ],
+   [
+    2,
+    126
+   ],
+   [
+    2,
+    130
+   ],
+   [
+    2,
+    177
+   ]
+  ]
+ ],
+ "أخو": [
+  96,
+  [
+   [
+    2,
+    178
+   ],
+   [
+    2,
+    220
+   ],
+   [
+    3,
+    103
+   ],
+   [
+    3,
+    156
+   ],
+   [
+    3,
+    168
+   ],
+   [
+    4,
+    11
+   ],
+   [
+    4,
+    12
+   ],
+   [
+    4,
+    23
+   ],
+   [
+    4,
+    176
+   ],
+   [
+    5,
+    25
+   ]
+  ]
+ ],
+ "أدي": [
+  6,
+  [
+   [
+    2,
+    178
+   ],
+   [
+    2,
+    283
+   ],
+   [
+    3,
+    75
+   ],
+   [
+    4,
+    58
+   ],
+   [
+    44,
+    18
+   ]
+  ]
+ ],
+ "أذن": [
+  102,
+  [
+   [
+    2,
+    19
+   ],
+   [
+    2,
+    97
+   ],
+   [
+    2,
+    102
+   ],
+   [
+    2,
+    213
+   ],
+   [
+    2,
+    221
+   ],
+   [
+    2,
+    249
+   ],
+   [
+    2,
+    251
+   ],
+   [
+    2,
+    255
+   ],
+   [
+    2,
+    279
+   ],
+   [
+    3,
+    49
+   ]
+  ]
+ ],
+ "أرض": [
+  461,
+  [
+   [
+    2,
+    11
+   ],
+   [
+    2,
+    22
+   ],
+   [
+    2,
+    27
+   ],
+   [
+    2,
+    29
+   ],
+   [
+    2,
+    30
+   ],
+   [
+    2,
+    33
+   ],
+   [
+    2,
+    36
+   ],
+   [
+    2,
+    60
+   ],
+   [
+    2,
+    61
+   ],
+   [
+    2,
+    71
+   ]
+  ]
+ ],
+ "أرك": [
+  5,
+  [
+   [
+    18,
+    31
+   ],
+   [
+    36,
+    56
+   ],
+   [
+    76,
+    13
+   ],
+   [
+    83,
+    23
+   ],
+   [
+    83,
+    35
+   ]
+  ]
+ ],
+ "أزر": [
+  2,
+  [
+   [
+    20,
+    31
+   ],
+   [
+    48,
+    29
+   ]
+  ]
+ ],
+ "أسر": [
+  6,
+  [
+   [
+    2,
+    85
+   ],
+   [
+    8,
+    67
+   ],
+   [
+    8,
+    70
+   ],
+   [
+    33,
+    26
+   ],
+   [
+    76,
+    8
+   ],
+   [
+    76,
+    28
+   ]
+  ]
+ ],
+ "أسس": [
+  3,
+  [
+   [
+    9,
+    108
+   ],
+   [
+    9,
+    109
+   ]
+  ]
+ ],
+ "أسف": [
+  5,
+  [
+   [
+    7,
+    150
+   ],
+   [
+    12,
+    84
+   ],
+   [
+    18,
+    6
+   ],
+   [
+    20,
+    86
+   ],
+   [
+    43,
+    55
+   ]
+  ]
+ ],
+ "أصل": [
+  10,
+  [
+   [
+    7,
+    205
+   ],
+   [
+    13,
+    15
+   ],
+   [
+    14,
+    24
+   ],
+   [
+    24,
+    36
+   ],
+   [
+    25,
+    5
+   ],
+   [
+    33,
+    42
+   ],
+   [
+    37,
+    64
+   ],
+   [
+    48,
+    9
+   ],
+   [
+    59,
+    5
+   ],
+   [
+    76,
+    25
+   ]
+  ]
+ ],
+ "أفك": [
+  30,
+  [
+   [
+    5,
+    75
+   ],
+   [
+    6,
+    95
+   ],
+   [
+    7,
+    117
+   ],
+   [
+    9,
+    30
+   ],
+   [
+    9,
+    70
+   ],
+   [
+    10,
+    34
+   ],
+   [
+    24,
+    11
+   ],
+   [
+    24,
+    12
+   ],
+   [
+    25,
+    4
+   ],
+   [
+    26,
+    45
+   ]
+  ]
+ ],
+ "أكل": [
+  109,
+  [
+   [
+    2,
+    35
+   ],
+   [
+    2,
+    57
+   ],
+   [
+    2,
+    58
+   ],
+   [
+    2,
+    60
+   ],
+   [
+    2,
+    168
+   ],
+   [
+    2,
+    172
+   ],
+   [
+    2,
+    174
+   ],
+   [
+    2,
+    187
+   ],
+   [
+    2,
+    188
+   ],
+   [
+    2,
+    265
+   ]
+  ]
+ ],
+ "ألف": [
+  22,
+  [
+   [
+    2,
+    96
+   ],
+   [
+    2,
+    243
+   ],
+   [
+    3,
+    103
+   ],
+   [
+    3,
+    124
+   ],
+   [
+    3,
+    125
+   ],
+   [
+    8,
+    9
+   ],
+   [
+    8,
+    63
+   ],
+   [
+    8,
+    65
+   ],
+   [
+    8,
+    66
+   ],
+   [
+    9,
+    60
+   ]
+  ]
+ ],
+ "ألم": [
+  75,
+  [
+   [
+    2,
+    10
+   ],
+   [
+    2,
+    104
+   ],
+   [
+    2,
+    174
+   ],
+   [
+    2,
+    178
+   ],
+   [
+    3,
+    21
+   ],
+   [
+    3,
+    77
+   ],
+   [
+    3,
+    91
+   ],
+   [
+    3,
+    177
+   ],
+   [
+    3,
+    188
+   ],
+   [
+    4,
+    18
+   ]
+  ]
+ ],
+ "أله": [
+  2851,
+  [
+   [
+    1,
+    1
+   ],
+   [
+    1,
+    2
+   ],
+   [
+    2,
+    7
+   ],
+   [
+    2,
+    8
+   ],
+   [
+    2,
+    9
+   ],
+   [
+    2,
+    10
+   ],
+   [
+    2,
+    15
+   ],
+   [
+    2,
+    17
+   ],
+   [
+    2,
+    19
+   ],
+   [
+    2,
+    20
+   ]
+  ]
+ ],
+ "ألو": [
+  37,
+  [
+   [
+    2,
+    226
+   ],
+   [
+    3,
+    118
+   ],
+   [
+    7,
+    69
+   ],
+   [
+    7,
+    74
+   ],
+   [
+    24,
+    22
+   ],
+   [
+    53,
+    55
+   ],
+   [
+    55,
+    13
+   ],
+   [
+    55,
+    16
+   ],
+   [
+    55,
+    18
+   ],
+   [
+    55,
+    21
+   ]
+  ]
+ ],
+ "أمر": [
+  248,
+  [
+   [
+    2,
+    27
+   ],
+   [
+    2,
+    44
+   ],
+   [
+    2,
+    67
+   ],
+   [
+    2,
+    68
+   ],
+   [
+    2,
+    93
+   ],
+   [
+    2,
+    109
+   ],
+   [
+    2,
+    117
+   ],
+   [
+    2,
+    169
+   ],
+   [
+    2,
+    210
+   ],
+   [
+    2,
+    222
+   ]
+  ]
+ ],
+ "أمل": [
+  2,
+  [
+   [
+    15,
+    3
+   ],
+   [
+    18,
+    46
+   ]
+  ]
+ ],
+ "أمم": [
+  119,
+  [
+   [
+    2,
+    78
+   ],
+   [
+    2,
+    124
+   ],
+   [
+    2,
+    128
+   ],
+   [
+    2,
+    134
+   ],
+   [
+    2,
+    141
+   ],
+   [
+    2,
+    143
+   ],
+   [
+    2,
+    213
+   ],
+   [
+    3,
+    7
+   ],
+   [
+    3,
+    20
+   ],
+   [
+    3,
+    75
+   ]
+  ]
+ ],
+ "أمن": [
+  879,
+  [
+   [
+    2,
+    3
+   ],
+   [
+    2,
+    4
+   ],
+   [
+    2,
+    6
+   ],
+   [
+    2,
+    8
+   ],
+   [
+    2,
+    9
+   ],
+   [
+    2,
+    13
+   ],
+   [
+    2,
+    14
+   ],
+   [
+    2,
+    25
+   ],
+   [
+    2,
+    26
+   ],
+   [
+    2,
+    41
+   ]
+  ]
+ ],
+ "أنث": [
+  30,
+  [
+   [
+    2,
+    178
+   ],
+   [
+    3,
+    36
+   ],
+   [
+    3,
+    195
+   ],
+   [
+    4,
+    11
+   ],
+   [
+    4,
+    117
+   ],
+   [
+    4,
+    124
+   ],
+   [
+    4,
+    176
+   ],
+   [
+    6,
+    143
+   ],
+   [
+    6,
+    144
+   ],
+   [
+    13,
+    8
+   ]
+  ]
+ ],
+ "أنف": [
+  3,
+  [
+   [
+    5,
+    45
+   ],
+   [
+    47,
+    16
+   ]
+  ]
+ ],
+ "أني": [
+  8,
+  [
+   [
+    3,
+    113
+   ],
+   [
+    20,
+    130
+   ],
+   [
+    33,
+    53
+   ],
+   [
+    39,
+    9
+   ],
+   [
+    55,
+    44
+   ],
+   [
+    57,
+    16
+   ],
+   [
+    76,
+    15
+   ],
+   [
+    88,
+    5
+   ]
+  ]
+ ],
+ "أهل": [
+  127,
+  [
+   [
+    2,
+    105
+   ],
+   [
+    2,
+    109
+   ],
+   [
+    2,
+    126
+   ],
+   [
+    2,
+    196
+   ],
+   [
+    2,
+    217
+   ],
+   [
+    3,
+    64
+   ],
+   [
+    3,
+    65
+   ],
+   [
+    3,
+    69
+   ],
+   [
+    3,
+    70
+   ],
+   [
+    3,
+    71
+   ]
+  ]
+ ],
+ "أوب": [
+  17,
+  [
+   [
+    3,
+    14
+   ],
+   [
+    13,
+    29
+   ],
+   [
+    13,
+    36
+   ],
+   [
+    17,
+    25
+   ],
+   [
+    34,
+    10
+   ],
+   [
+    38,
+    17
+   ],
+   [
+    38,
+    19
+   ],
+   [
+    38,
+    25
+   ],
+   [
+    38,
+    30
+   ],
+   [
+    38,
+    40
+   ]
+  ]
+ ],
+ "أول": [
+  125,
+  [
+   [
+    2,
+    41
+   ],
+   [
+    2,
+    49
+   ],
+   [
+    2,
+    50
+   ],
+   [
+    2,
+    248
+   ],
+   [
+    3,
+    7
+   ],
+   [
+    3,
+    11
+   ],
+   [
+    3,
+    33
+   ],
+   [
+    3,
+    96
+   ],
+   [
+    4,
+    54
+   ],
+   [
+    4,
+    59
+   ]
+  ]
+ ],
+ "أوي": [
+  36,
+  [
+   [
+    3,
+    151
+   ],
+   [
+    3,
+    162
+   ],
+   [
+    3,
+    197
+   ],
+   [
+    4,
+    97
+   ],
+   [
+    4,
+    121
+   ],
+   [
+    5,
+    72
+   ],
+   [
+    8,
+    16
+   ],
+   [
+    8,
+    26
+   ],
+   [
+    8,
+    72
+   ],
+   [
+    8,
+    74
+   ]
+  ]
+ ],
+ "أيد": [
+  11,
+  [
+   [
+    2,
+    87
+   ],
+   [
+    2,
+    253
+   ],
+   [
+    3,
+    13
+   ],
+   [
+    5,
+    110
+   ],
+   [
+    8,
+    26
+   ],
+   [
+    8,
+    62
+   ],
+   [
+    9,
+    40
+   ],
+   [
+    38,
+    17
+   ],
+   [
+    51,
+    47
+   ],
+   [
+    58,
+    22
+   ]
+  ]
+ ],
+ "أيم": [
+  1,
+  [
+   [
+    24,
+    32
+   ]
+  ]
+ ],
+ "إيي": [
+  597,
+  [
+   [
+    2,
+    21
+   ],
+   [
+    2,
+    39
+   ],
+   [
+    2,
+    41
+   ],
+   [
+    2,
+    61
+   ],
+   [
+    2,
+    73
+   ],
+   [
+    2,
+    99
+   ],
+   [
+    2,
+    104
+   ],
+   [
+    2,
+    106
+   ],
+   [
+    2,
+    118
+   ],
+   [
+    2,
+    129
+   ]
+  ]
+ ],
+ "اثث": [
+  2,
+  [
+   [
+    16,
+    80
+   ],
+   [
+    19,
+    74
+   ]
+  ]
+ ],
+ "اسو": [
+  7,
+  [
+   [
+    5,
+    26
+   ],
+   [
+    5,
+    68
+   ],
+   [
+    7,
+    93
+   ],
+   [
+    33,
+    21
+   ],
+   [
+    57,
+    23
+   ],
+   [
+    60,
+    4
+   ],
+   [
+    60,
+    6
+   ]
+  ]
+ ],
+ "اشر": [
+  2,
+  [
+   [
+    54,
+    25
+   ],
+   [
+    54,
+    26
+   ]
+  ]
+ ],
+ "افف": [
+  3,
+  [
+   [
+    17,
+    23
+   ],
+   [
+    21,
+    67
+   ],
+   [
+    46,
+    17
+   ]
+  ]
+ ],
+ "انس": [
+  338,
+  [
+   [
+    2,
+    8
+   ],
+   [
+    2,
+    13
+   ],
+   [
+    2,
+    21
+   ],
+   [
+    2,
+    24
+   ],
+   [
+    2,
+    44
+   ],
+   [
+    2,
+    60
+   ],
+   [
+    2,
+    83
+   ],
+   [
+    2,
+    94
+   ],
+   [
+    2,
+    96
+   ],
+   [
+    2,
+    102
+   ]
+  ]
+ ],
+ "اون": [
+  8,
+  [
+   [
+    2,
+    71
+   ],
+   [
+    2,
+    187
+   ],
+   [
+    4,
+    18
+   ],
+   [
+    8,
+    66
+   ],
+   [
+    10,
+    51
+   ],
+   [
+    10,
+    91
+   ],
+   [
+    12,
+    51
+   ],
+   [
+    72,
+    9
+   ]
+  ]
+ ],
+ "بأر": [
+  1,
+  [
+   [
+    22,
+    45
+   ]
+  ]
+ ],
+ "بأس": [
+  73,
+  [
+   [
+    2,
+    90
+   ],
+   [
+    2,
+    93
+   ],
+   [
+    2,
+    102
+   ],
+   [
+    2,
+    126
+   ],
+   [
+    2,
+    177
+   ],
+   [
+    2,
+    206
+   ],
+   [
+    2,
+    214
+   ],
+   [
+    3,
+    12
+   ],
+   [
+    3,
+    151
+   ],
+   [
+    3,
+    162
+   ]
+  ]
+ ],
+ "بتر": [
+  1,
+  [
+   [
+    108,
+    3
+   ]
+  ]
+ ],
+ "بثث": [
+  9,
+  [
+   [
+    2,
+    164
+   ],
+   [
+    4,
+    1
+   ],
+   [
+    12,
+    86
+   ],
+   [
+    31,
+    10
+   ],
+   [
+    42,
+    29
+   ],
+   [
+    45,
+    4
+   ],
+   [
+    56,
+    6
+   ],
+   [
+    88,
+    16
+   ],
+   [
+    101,
+    4
+   ]
+  ]
+ ],
+ "بحث": [
+  1,
+  [
+   [
+    5,
+    31
+   ]
+  ]
+ ],
+ "بحر": [
+  42,
+  [
+   [
+    2,
+    50
+   ],
+   [
+    2,
+    164
+   ],
+   [
+    5,
+    96
+   ],
+   [
+    5,
+    103
+   ],
+   [
+    6,
+    59
+   ],
+   [
+    6,
+    63
+   ],
+   [
+    6,
+    97
+   ],
+   [
+    7,
+    138
+   ],
+   [
+    7,
+    163
+   ],
+   [
+    10,
+    22
+   ]
+  ]
+ ],
+ "بخل": [
+  12,
+  [
+   [
+    3,
+    180
+   ],
+   [
+    4,
+    37
+   ],
+   [
+    9,
+    76
+   ],
+   [
+    47,
+    37
+   ],
+   [
+    47,
+    38
+   ],
+   [
+    57,
+    24
+   ],
+   [
+    92,
+    8
+   ]
+  ]
+ ],
+ "بدأ": [
+  15,
+  [
+   [
+    7,
+    29
+   ],
+   [
+    9,
+    13
+   ],
+   [
+    10,
+    4
+   ],
+   [
+    10,
+    34
+   ],
+   [
+    12,
+    76
+   ],
+   [
+    21,
+    104
+   ],
+   [
+    27,
+    64
+   ],
+   [
+    29,
+    19
+   ],
+   [
+    29,
+    20
+   ],
+   [
+    30,
+    11
+   ]
+  ]
+ ],
+ "بدر": [
+  1,
+  [
+   [
+    4,
+    6
+   ]
+  ]
+ ],
+ "بدع": [
+  4,
+  [
+   [
+    2,
+    117
+   ],
+   [
+    6,
+    101
+   ],
+   [
+    46,
+    9
+   ],
+   [
+    57,
+    27
+   ]
+  ]
+ ],
+ "بدل": [
+  44,
+  [
+   [
+    2,
+    59
+   ],
+   [
+    2,
+    61
+   ],
+   [
+    2,
+    108
+   ],
+   [
+    2,
+    181
+   ],
+   [
+    2,
+    211
+   ],
+   [
+    4,
+    2
+   ],
+   [
+    4,
+    20
+   ],
+   [
+    4,
+    56
+   ],
+   [
+    6,
+    34
+   ],
+   [
+    6,
+    115
+   ]
+  ]
+ ],
+ "بدن": [
+  2,
+  [
+   [
+    10,
+    92
+   ],
+   [
+    22,
+    36
+   ]
+  ]
+ ],
+ "بدو": [
+  31,
+  [
+   [
+    2,
+    33
+   ],
+   [
+    2,
+    271
+   ],
+   [
+    2,
+    284
+   ],
+   [
+    3,
+    29
+   ],
+   [
+    3,
+    118
+   ],
+   [
+    3,
+    154
+   ],
+   [
+    4,
+    149
+   ],
+   [
+    5,
+    99
+   ],
+   [
+    5,
+    101
+   ],
+   [
+    6,
+    28
+   ]
+  ]
+ ],
+ "بذر": [
+  3,
+  [
+   [
+    17,
+    26
+   ],
+   [
+    17,
+    27
+   ]
+  ]
+ ],
+ "برأ": [
+  31,
+  [
+   [
+    2,
+    54
+   ],
+   [
+    2,
+    166
+   ],
+   [
+    2,
+    167
+   ],
+   [
+    3,
+    49
+   ],
+   [
+    4,
+    112
+   ],
+   [
+    5,
+    110
+   ],
+   [
+    6,
+    19
+   ],
+   [
+    6,
+    78
+   ],
+   [
+    8,
+    48
+   ],
+   [
+    9,
+    1
+   ]
+  ]
+ ],
+ "برح": [
+  3,
+  [
+   [
+    12,
+    80
+   ],
+   [
+    18,
+    60
+   ],
+   [
+    20,
+    91
+   ]
+  ]
+ ],
+ "برد": [
+  5,
+  [
+   [
+    21,
+    69
+   ],
+   [
+    24,
+    43
+   ],
+   [
+    38,
+    42
+   ],
+   [
+    56,
+    44
+   ],
+   [
+    78,
+    24
+   ]
+  ]
+ ],
+ "برر": [
+  32,
+  [
+   [
+    2,
+    44
+   ],
+   [
+    2,
+    177
+   ],
+   [
+    2,
+    189
+   ],
+   [
+    2,
+    224
+   ],
+   [
+    3,
+    92
+   ],
+   [
+    3,
+    193
+   ],
+   [
+    3,
+    198
+   ],
+   [
+    5,
+    2
+   ],
+   [
+    5,
+    96
+   ],
+   [
+    6,
+    59
+   ]
+  ]
+ ],
+ "برص": [
+  2,
+  [
+   [
+    3,
+    49
+   ],
+   [
+    5,
+    110
+   ]
+  ]
+ ],
+ "برق": [
+  7,
+  [
+   [
+    2,
+    19
+   ],
+   [
+    2,
+    20
+   ],
+   [
+    13,
+    12
+   ],
+   [
+    24,
+    43
+   ],
+   [
+    30,
+    24
+   ],
+   [
+    56,
+    18
+   ],
+   [
+    75,
+    7
+   ]
+  ]
+ ],
+ "برك": [
+  32,
+  [
+   [
+    3,
+    96
+   ],
+   [
+    6,
+    92
+   ],
+   [
+    6,
+    155
+   ],
+   [
+    7,
+    54
+   ],
+   [
+    7,
+    96
+   ],
+   [
+    7,
+    137
+   ],
+   [
+    11,
+    48
+   ],
+   [
+    11,
+    73
+   ],
+   [
+    17,
+    1
+   ],
+   [
+    19,
+    31
+   ]
+  ]
+ ],
+ "بزغ": [
+  2,
+  [
+   [
+    6,
+    77
+   ],
+   [
+    6,
+    78
+   ]
+  ]
+ ],
+ "بسط": [
+  25,
+  [
+   [
+    2,
+    245
+   ],
+   [
+    2,
+    247
+   ],
+   [
+    5,
+    11
+   ],
+   [
+    5,
+    28
+   ],
+   [
+    5,
+    64
+   ],
+   [
+    6,
+    93
+   ],
+   [
+    7,
+    69
+   ],
+   [
+    13,
+    14
+   ],
+   [
+    13,
+    26
+   ],
+   [
+    17,
+    29
+   ]
+  ]
+ ],
+ "بسق": [
+  1,
+  [
+   [
+    50,
+    10
+   ]
+  ]
+ ],
+ "بسم": [
+  1,
+  [
+   [
+    27,
+    19
+   ]
+  ]
+ ],
+ "بشر": [
+  123,
+  [
+   [
+    2,
+    25
+   ],
+   [
+    2,
+    97
+   ],
+   [
+    2,
+    119
+   ],
+   [
+    2,
+    155
+   ],
+   [
+    2,
+    187
+   ],
+   [
+    2,
+    213
+   ],
+   [
+    2,
+    223
+   ],
+   [
+    3,
+    21
+   ],
+   [
+    3,
+    39
+   ],
+   [
+    3,
+    45
+   ]
+  ]
+ ],
+ "بضع": [
+  7,
+  [
+   [
+    12,
+    19
+   ],
+   [
+    12,
+    42
+   ],
+   [
+    12,
+    62
+   ],
+   [
+    12,
+    65
+   ],
+   [
+    12,
+    88
+   ],
+   [
+    30,
+    4
+   ]
+  ]
+ ],
+ "بطل": [
+  36,
+  [
+   [
+    2,
+    42
+   ],
+   [
+    2,
+    188
+   ],
+   [
+    2,
+    264
+   ],
+   [
+    3,
+    71
+   ],
+   [
+    3,
+    191
+   ],
+   [
+    4,
+    29
+   ],
+   [
+    4,
+    161
+   ],
+   [
+    7,
+    118
+   ],
+   [
+    7,
+    139
+   ],
+   [
+    7,
+    173
+   ]
+  ]
+ ],
+ "بطن": [
+  25,
+  [
+   [
+    2,
+    174
+   ],
+   [
+    3,
+    35
+   ],
+   [
+    3,
+    118
+   ],
+   [
+    4,
+    10
+   ],
+   [
+    6,
+    120
+   ],
+   [
+    6,
+    139
+   ],
+   [
+    6,
+    151
+   ],
+   [
+    7,
+    33
+   ],
+   [
+    16,
+    66
+   ],
+   [
+    16,
+    69
+   ]
+  ]
+ ],
+ "بعث": [
+  67,
+  [
+   [
+    2,
+    56
+   ],
+   [
+    2,
+    129
+   ],
+   [
+    2,
+    213
+   ],
+   [
+    2,
+    246
+   ],
+   [
+    2,
+    247
+   ],
+   [
+    2,
+    259
+   ],
+   [
+    3,
+    164
+   ],
+   [
+    4,
+    35
+   ],
+   [
+    5,
+    12
+   ],
+   [
+    5,
+    31
+   ]
+  ]
+ ],
+ "بعثر": [
+  2,
+  [
+   [
+    82,
+    4
+   ],
+   [
+    100,
+    9
+   ]
+  ]
+ ],
+ "بعد": [
+  235,
+  [
+   [
+    2,
+    27
+   ],
+   [
+    2,
+    51
+   ],
+   [
+    2,
+    52
+   ],
+   [
+    2,
+    56
+   ],
+   [
+    2,
+    64
+   ],
+   [
+    2,
+    74
+   ],
+   [
+    2,
+    75
+   ],
+   [
+    2,
+    87
+   ],
+   [
+    2,
+    92
+   ],
+   [
+    2,
+    109
+   ]
+  ]
+ ],
+ "بعض": [
+  158,
+  [
+   [
+    2,
+    26
+   ],
+   [
+    2,
+    36
+   ],
+   [
+    2,
+    73
+   ],
+   [
+    2,
+    76
+   ],
+   [
+    2,
+    85
+   ],
+   [
+    2,
+    145
+   ],
+   [
+    2,
+    251
+   ],
+   [
+    2,
+    253
+   ],
+   [
+    2,
+    259
+   ],
+   [
+    2,
+    283
+   ]
+  ]
+ ],
+ "بغي": [
+  96,
+  [
+   [
+    2,
+    90
+   ],
+   [
+    2,
+    173
+   ],
+   [
+    2,
+    187
+   ],
+   [
+    2,
+    198
+   ],
+   [
+    2,
+    207
+   ],
+   [
+    2,
+    213
+   ],
+   [
+    2,
+    265
+   ],
+   [
+    2,
+    272
+   ],
+   [
+    3,
+    7
+   ],
+   [
+    3,
+    19
+   ]
+  ]
+ ],
+ "بقر": [
+  9,
+  [
+   [
+    2,
+    67
+   ],
+   [
+    2,
+    68
+   ],
+   [
+    2,
+    69
+   ],
+   [
+    2,
+    70
+   ],
+   [
+    2,
+    71
+   ],
+   [
+    6,
+    144
+   ],
+   [
+    6,
+    146
+   ],
+   [
+    12,
+    43
+   ],
+   [
+    12,
+    46
+   ]
+  ]
+ ],
+ "بقع": [
+  1,
+  [
+   [
+    28,
+    30
+   ]
+  ]
+ ],
+ "بقل": [
+  1,
+  [
+   [
+    2,
+    61
+   ]
+  ]
+ ],
+ "بقي": [
+  21,
+  [
+   [
+    2,
+    248
+   ],
+   [
+    2,
+    278
+   ],
+   [
+    11,
+    86
+   ],
+   [
+    11,
+    116
+   ],
+   [
+    16,
+    96
+   ],
+   [
+    18,
+    46
+   ],
+   [
+    19,
+    76
+   ],
+   [
+    20,
+    71
+   ],
+   [
+    20,
+    73
+   ],
+   [
+    20,
+    127
+   ]
+  ]
+ ],
+ "بكر": [
+  12,
+  [
+   [
+    2,
+    68
+   ],
+   [
+    3,
+    41
+   ],
+   [
+    19,
+    11
+   ],
+   [
+    19,
+    62
+   ],
+   [
+    25,
+    5
+   ],
+   [
+    33,
+    42
+   ],
+   [
+    40,
+    55
+   ],
+   [
+    48,
+    9
+   ],
+   [
+    54,
+    38
+   ],
+   [
+    56,
+    36
+   ]
+  ]
+ ],
+ "بكي": [
+  7,
+  [
+   [
+    9,
+    82
+   ],
+   [
+    12,
+    16
+   ],
+   [
+    17,
+    109
+   ],
+   [
+    19,
+    58
+   ],
+   [
+    44,
+    29
+   ],
+   [
+    53,
+    43
+   ],
+   [
+    53,
+    60
+   ]
+  ]
+ ],
+ "بلد": [
+  19,
+  [
+   [
+    2,
+    126
+   ],
+   [
+    3,
+    196
+   ],
+   [
+    7,
+    57
+   ],
+   [
+    7,
+    58
+   ],
+   [
+    14,
+    35
+   ],
+   [
+    16,
+    7
+   ],
+   [
+    25,
+    49
+   ],
+   [
+    27,
+    91
+   ],
+   [
+    34,
+    15
+   ],
+   [
+    35,
+    9
+   ]
+  ]
+ ],
+ "بلع": [
+  1,
+  [
+   [
+    11,
+    44
+   ]
+  ]
+ ],
+ "بلغ": [
+  77,
+  [
+   [
+    2,
+    196
+   ],
+   [
+    2,
+    231
+   ],
+   [
+    2,
+    232
+   ],
+   [
+    2,
+    234
+   ],
+   [
+    2,
+    235
+   ],
+   [
+    3,
+    20
+   ],
+   [
+    3,
+    40
+   ],
+   [
+    4,
+    6
+   ],
+   [
+    4,
+    63
+   ],
+   [
+    5,
+    67
+   ]
+  ]
+ ],
+ "بلو": [
+  38,
+  [
+   [
+    2,
+    49
+   ],
+   [
+    2,
+    124
+   ],
+   [
+    2,
+    155
+   ],
+   [
+    2,
+    249
+   ],
+   [
+    3,
+    152
+   ],
+   [
+    3,
+    154
+   ],
+   [
+    3,
+    186
+   ],
+   [
+    4,
+    6
+   ],
+   [
+    5,
+    48
+   ],
+   [
+    5,
+    94
+   ]
+  ]
+ ],
+ "بنن": [
+  2,
+  [
+   [
+    8,
+    12
+   ],
+   [
+    75,
+    4
+   ]
+  ]
+ ],
+ "بني": [
+  184,
+  [
+   [
+    2,
+    22
+   ],
+   [
+    2,
+    40
+   ],
+   [
+    2,
+    47
+   ],
+   [
+    2,
+    49
+   ],
+   [
+    2,
+    83
+   ],
+   [
+    2,
+    87
+   ],
+   [
+    2,
+    122
+   ],
+   [
+    2,
+    132
+   ],
+   [
+    2,
+    133
+   ],
+   [
+    2,
+    146
+   ]
+  ]
+ ],
+ "بهت": [
+  8,
+  [
+   [
+    2,
+    258
+   ],
+   [
+    4,
+    20
+   ],
+   [
+    4,
+    112
+   ],
+   [
+    4,
+    156
+   ],
+   [
+    21,
+    40
+   ],
+   [
+    24,
+    16
+   ],
+   [
+    33,
+    58
+   ],
+   [
+    60,
+    12
+   ]
+  ]
+ ],
+ "بهج": [
+  3,
+  [
+   [
+    22,
+    5
+   ],
+   [
+    27,
+    60
+   ],
+   [
+    50,
+    7
+   ]
+  ]
+ ],
+ "بهل": [
+  1,
+  [
+   [
+    3,
+    61
+   ]
+  ]
+ ],
+ "بهم": [
+  3,
+  [
+   [
+    5,
+    1
+   ],
+   [
+    22,
+    28
+   ],
+   [
+    22,
+    34
+   ]
+  ]
+ ],
+ "بوأ": [
+  17,
+  [
+   [
+    2,
+    61
+   ],
+   [
+    2,
+    90
+   ],
+   [
+    3,
+    112
+   ],
+   [
+    3,
+    121
+   ],
+   [
+    3,
+    162
+   ],
+   [
+    5,
+    29
+   ],
+   [
+    7,
+    74
+   ],
+   [
+    8,
+    16
+   ],
+   [
+    10,
+    87
+   ],
+   [
+    10,
+    93
+   ]
+  ]
+ ],
+ "بوب": [
+  27,
+  [
+   [
+    2,
+    58
+   ],
+   [
+    2,
+    189
+   ],
+   [
+    4,
+    154
+   ],
+   [
+    5,
+    23
+   ],
+   [
+    6,
+    44
+   ],
+   [
+    7,
+    40
+   ],
+   [
+    7,
+    161
+   ],
+   [
+    12,
+    23
+   ],
+   [
+    12,
+    25
+   ],
+   [
+    12,
+    67
+   ]
+  ]
+ ],
+ "بول": [
+  4,
+  [
+   [
+    12,
+    50
+   ],
+   [
+    20,
+    51
+   ],
+   [
+    47,
+    2
+   ],
+   [
+    47,
+    5
+   ]
+  ]
+ ],
+ "بيت": [
+  73,
+  [
+   [
+    2,
+    125
+   ],
+   [
+    2,
+    127
+   ],
+   [
+    2,
+    158
+   ],
+   [
+    2,
+    189
+   ],
+   [
+    3,
+    49
+   ],
+   [
+    3,
+    96
+   ],
+   [
+    3,
+    97
+   ],
+   [
+    3,
+    154
+   ],
+   [
+    4,
+    15
+   ],
+   [
+    4,
+    81
+   ]
+  ]
+ ],
+ "بيد": [
+  1,
+  [
+   [
+    18,
+    35
+   ]
+  ]
+ ],
+ "بيض": [
+  12,
+  [
+   [
+    2,
+    187
+   ],
+   [
+    3,
+    106
+   ],
+   [
+    3,
+    107
+   ],
+   [
+    7,
+    108
+   ],
+   [
+    12,
+    84
+   ],
+   [
+    20,
+    22
+   ],
+   [
+    26,
+    33
+   ],
+   [
+    27,
+    12
+   ],
+   [
+    28,
+    32
+   ],
+   [
+    35,
+    27
+   ]
+  ]
+ ],
+ "بيع": [
+  15,
+  [
+   [
+    2,
+    254
+   ],
+   [
+    2,
+    275
+   ],
+   [
+    2,
+    282
+   ],
+   [
+    9,
+    111
+   ],
+   [
+    14,
+    31
+   ],
+   [
+    22,
+    40
+   ],
+   [
+    24,
+    37
+   ],
+   [
+    48,
+    10
+   ],
+   [
+    48,
+    18
+   ],
+   [
+    60,
+    12
+   ]
+  ]
+ ],
+ "بين": [
+  523,
+  [
+   [
+    2,
+    66
+   ],
+   [
+    2,
+    68
+   ],
+   [
+    2,
+    69
+   ],
+   [
+    2,
+    70
+   ],
+   [
+    2,
+    87
+   ],
+   [
+    2,
+    92
+   ],
+   [
+    2,
+    97
+   ],
+   [
+    2,
+    99
+   ],
+   [
+    2,
+    102
+   ],
+   [
+    2,
+    109
+   ]
+  ]
+ ],
+ "تبع": [
+  172,
+  [
+   [
+    2,
+    38
+   ],
+   [
+    2,
+    102
+   ],
+   [
+    2,
+    120
+   ],
+   [
+    2,
+    143
+   ],
+   [
+    2,
+    145
+   ],
+   [
+    2,
+    166
+   ],
+   [
+    2,
+    167
+   ],
+   [
+    2,
+    168
+   ],
+   [
+    2,
+    170
+   ],
+   [
+    2,
+    178
+   ]
+  ]
+ ],
+ "تجر": [
+  9,
+  [
+   [
+    2,
+    16
+   ],
+   [
+    2,
+    282
+   ],
+   [
+    4,
+    29
+   ],
+   [
+    9,
+    24
+   ],
+   [
+    24,
+    37
+   ],
+   [
+    35,
+    29
+   ],
+   [
+    61,
+    10
+   ],
+   [
+    62,
+    11
+   ]
+  ]
+ ],
+ "تحت": [
+  51,
+  [
+   [
+    2,
+    25
+   ],
+   [
+    2,
+    266
+   ],
+   [
+    3,
+    15
+   ],
+   [
+    3,
+    136
+   ],
+   [
+    3,
+    195
+   ],
+   [
+    3,
+    198
+   ],
+   [
+    4,
+    13
+   ],
+   [
+    4,
+    57
+   ],
+   [
+    4,
+    122
+   ],
+   [
+    5,
+    12
+   ]
+  ]
+ ],
+ "ترب": [
+  22,
+  [
+   [
+    2,
+    264
+   ],
+   [
+    3,
+    59
+   ],
+   [
+    13,
+    5
+   ],
+   [
+    16,
+    59
+   ],
+   [
+    18,
+    37
+   ],
+   [
+    22,
+    5
+   ],
+   [
+    23,
+    35
+   ],
+   [
+    23,
+    82
+   ],
+   [
+    27,
+    67
+   ],
+   [
+    30,
+    20
+   ]
+  ]
+ ],
+ "ترك": [
+  43,
+  [
+   [
+    2,
+    17
+   ],
+   [
+    2,
+    180
+   ],
+   [
+    2,
+    248
+   ],
+   [
+    2,
+    264
+   ],
+   [
+    4,
+    7
+   ],
+   [
+    4,
+    9
+   ],
+   [
+    4,
+    11
+   ],
+   [
+    4,
+    12
+   ],
+   [
+    4,
+    33
+   ],
+   [
+    4,
+    176
+   ]
+  ]
+ ],
+ "تسع": [
+  7,
+  [
+   [
+    17,
+    101
+   ],
+   [
+    18,
+    25
+   ],
+   [
+    27,
+    12
+   ],
+   [
+    27,
+    48
+   ],
+   [
+    38,
+    23
+   ],
+   [
+    74,
+    30
+   ]
+  ]
+ ],
+ "تقن": [
+  1,
+  [
+   [
+    27,
+    88
+   ]
+  ]
+ ],
+ "تلو": [
+  63,
+  [
+   [
+    2,
+    44
+   ],
+   [
+    2,
+    102
+   ],
+   [
+    2,
+    113
+   ],
+   [
+    2,
+    121
+   ],
+   [
+    2,
+    129
+   ],
+   [
+    2,
+    151
+   ],
+   [
+    2,
+    252
+   ],
+   [
+    3,
+    58
+   ],
+   [
+    3,
+    93
+   ],
+   [
+    3,
+    101
+   ]
+  ]
+ ],
+ "تمم": [
+  22,
+  [
+   [
+    2,
+    124
+   ],
+   [
+    2,
+    150
+   ],
+   [
+    2,
+    187
+   ],
+   [
+    2,
+    196
+   ],
+   [
+    2,
+    233
+   ],
+   [
+    5,
+    3
+   ],
+   [
+    5,
+    6
+   ],
+   [
+    6,
+    115
+   ],
+   [
+    6,
+    154
+   ],
+   [
+    7,
+    137
+   ]
+  ]
+ ],
+ "توب": [
+  87,
+  [
+   [
+    2,
+    37
+   ],
+   [
+    2,
+    54
+   ],
+   [
+    2,
+    128
+   ],
+   [
+    2,
+    160
+   ],
+   [
+    2,
+    187
+   ],
+   [
+    2,
+    222
+   ],
+   [
+    2,
+    279
+   ],
+   [
+    3,
+    89
+   ],
+   [
+    3,
+    90
+   ],
+   [
+    3,
+    128
+   ]
+  ]
+ ],
+ "تين": [
+  1,
+  [
+   [
+    95,
+    1
+   ]
+  ]
+ ],
+ "ثبت": [
+  18,
+  [
+   [
+    2,
+    250
+   ],
+   [
+    2,
+    265
+   ],
+   [
+    3,
+    147
+   ],
+   [
+    4,
+    66
+   ],
+   [
+    8,
+    11
+   ],
+   [
+    8,
+    12
+   ],
+   [
+    8,
+    30
+   ],
+   [
+    8,
+    45
+   ],
+   [
+    11,
+    120
+   ],
+   [
+    13,
+    39
+   ]
+  ]
+ ],
+ "ثبر": [
+  5,
+  [
+   [
+    17,
+    102
+   ],
+   [
+    25,
+    13
+   ],
+   [
+    25,
+    14
+   ],
+   [
+    84,
+    11
+   ]
+  ]
+ ],
+ "ثبط": [
+  1,
+  [
+   [
+    9,
+    46
+   ]
+  ]
+ ],
+ "ثعب": [
+  2,
+  [
+   [
+    7,
+    107
+   ],
+   [
+    26,
+    32
+   ]
+  ]
+ ],
+ "ثقب": [
+  2,
+  [
+   [
+    37,
+    10
+   ],
+   [
+    86,
+    3
+   ]
+  ]
+ ],
+ "ثقف": [
+  6,
+  [
+   [
+    2,
+    191
+   ],
+   [
+    3,
+    112
+   ],
+   [
+    4,
+    91
+   ],
+   [
+    8,
+    57
+   ],
+   [
+    33,
+    61
+   ],
+   [
+    60,
+    2
+   ]
+  ]
+ ],
+ "ثقل": [
+  28,
+  [
+   [
+    4,
+    40
+   ],
+   [
+    7,
+    8
+   ],
+   [
+    7,
+    57
+   ],
+   [
+    7,
+    187
+   ],
+   [
+    7,
+    189
+   ],
+   [
+    9,
+    38
+   ],
+   [
+    9,
+    41
+   ],
+   [
+    10,
+    61
+   ],
+   [
+    13,
+    12
+   ],
+   [
+    16,
+    7
+   ]
+  ]
+ ],
+ "ثلث": [
+  32,
+  [
+   [
+    2,
+    196
+   ],
+   [
+    2,
+    228
+   ],
+   [
+    3,
+    41
+   ],
+   [
+    3,
+    124
+   ],
+   [
+    4,
+    3
+   ],
+   [
+    4,
+    11
+   ],
+   [
+    4,
+    12
+   ],
+   [
+    4,
+    171
+   ],
+   [
+    4,
+    176
+   ],
+   [
+    5,
+    73
+   ]
+  ]
+ ],
+ "ثمر": [
+  24,
+  [
+   [
+    2,
+    22
+   ],
+   [
+    2,
+    25
+   ],
+   [
+    2,
+    126
+   ],
+   [
+    2,
+    155
+   ],
+   [
+    2,
+    266
+   ],
+   [
+    6,
+    99
+   ],
+   [
+    6,
+    141
+   ],
+   [
+    7,
+    57
+   ],
+   [
+    7,
+    130
+   ],
+   [
+    13,
+    3
+   ]
+  ]
+ ],
+ "ثمن": [
+  19,
+  [
+   [
+    2,
+    41
+   ],
+   [
+    2,
+    79
+   ],
+   [
+    2,
+    174
+   ],
+   [
+    3,
+    77
+   ],
+   [
+    3,
+    187
+   ],
+   [
+    3,
+    199
+   ],
+   [
+    4,
+    12
+   ],
+   [
+    5,
+    44
+   ],
+   [
+    5,
+    106
+   ],
+   [
+    6,
+    143
+   ]
+  ]
+ ],
+ "ثني": [
+  29,
+  [
+   [
+    2,
+    60
+   ],
+   [
+    4,
+    3
+   ],
+   [
+    4,
+    11
+   ],
+   [
+    4,
+    176
+   ],
+   [
+    5,
+    12
+   ],
+   [
+    5,
+    106
+   ],
+   [
+    6,
+    143
+   ],
+   [
+    6,
+    144
+   ],
+   [
+    7,
+    160
+   ],
+   [
+    9,
+    36
+   ]
+  ]
+ ],
+ "ثوب": [
+  28,
+  [
+   [
+    2,
+    103
+   ],
+   [
+    2,
+    125
+   ],
+   [
+    3,
+    145
+   ],
+   [
+    3,
+    148
+   ],
+   [
+    3,
+    153
+   ],
+   [
+    3,
+    195
+   ],
+   [
+    4,
+    134
+   ],
+   [
+    5,
+    60
+   ],
+   [
+    5,
+    85
+   ],
+   [
+    11,
+    5
+   ]
+  ]
+ ],
+ "ثور": [
+  5,
+  [
+   [
+    2,
+    71
+   ],
+   [
+    30,
+    9
+   ],
+   [
+    30,
+    48
+   ],
+   [
+    35,
+    9
+   ],
+   [
+    100,
+    4
+   ]
+  ]
+ ],
+ "ثوي": [
+  14,
+  [
+   [
+    3,
+    151
+   ],
+   [
+    6,
+    128
+   ],
+   [
+    12,
+    21
+   ],
+   [
+    12,
+    23
+   ],
+   [
+    16,
+    29
+   ],
+   [
+    28,
+    45
+   ],
+   [
+    29,
+    68
+   ],
+   [
+    39,
+    32
+   ],
+   [
+    39,
+    60
+   ],
+   [
+    39,
+    72
+   ]
+  ]
+ ],
+ "جبب": [
+  2,
+  [
+   [
+    12,
+    10
+   ],
+   [
+    12,
+    15
+   ]
+  ]
+ ],
+ "جبر": [
+  10,
+  [
+   [
+    5,
+    22
+   ],
+   [
+    11,
+    59
+   ],
+   [
+    14,
+    15
+   ],
+   [
+    19,
+    14
+   ],
+   [
+    19,
+    32
+   ],
+   [
+    26,
+    130
+   ],
+   [
+    28,
+    19
+   ],
+   [
+    40,
+    35
+   ],
+   [
+    50,
+    45
+   ],
+   [
+    59,
+    23
+   ]
+  ]
+ ],
+ "جبل": [
+  41,
+  [
+   [
+    2,
+    260
+   ],
+   [
+    7,
+    74
+   ],
+   [
+    7,
+    143
+   ],
+   [
+    7,
+    171
+   ],
+   [
+    11,
+    42
+   ],
+   [
+    11,
+    43
+   ],
+   [
+    13,
+    31
+   ],
+   [
+    14,
+    46
+   ],
+   [
+    15,
+    82
+   ],
+   [
+    16,
+    68
+   ]
+  ]
+ ],
+ "جبن": [
+  1,
+  [
+   [
+    37,
+    103
+   ]
+  ]
+ ],
+ "جحد": [
+  12,
+  [
+   [
+    6,
+    33
+   ],
+   [
+    7,
+    51
+   ],
+   [
+    11,
+    59
+   ],
+   [
+    16,
+    71
+   ],
+   [
+    27,
+    14
+   ],
+   [
+    29,
+    47
+   ],
+   [
+    29,
+    49
+   ],
+   [
+    31,
+    32
+   ],
+   [
+    40,
+    63
+   ],
+   [
+    41,
+    15
+   ]
+  ]
+ ],
+ "جحم": [
+  26,
+  [
+   [
+    2,
+    119
+   ],
+   [
+    5,
+    10
+   ],
+   [
+    5,
+    86
+   ],
+   [
+    9,
+    113
+   ],
+   [
+    22,
+    51
+   ],
+   [
+    26,
+    91
+   ],
+   [
+    37,
+    23
+   ],
+   [
+    37,
+    55
+   ],
+   [
+    37,
+    64
+   ],
+   [
+    37,
+    68
+   ]
+  ]
+ ],
+ "جدد": [
+  10,
+  [
+   [
+    13,
+    5
+   ],
+   [
+    14,
+    19
+   ],
+   [
+    17,
+    49
+   ],
+   [
+    17,
+    98
+   ],
+   [
+    32,
+    10
+   ],
+   [
+    34,
+    7
+   ],
+   [
+    35,
+    16
+   ],
+   [
+    35,
+    27
+   ],
+   [
+    50,
+    15
+   ],
+   [
+    72,
+    3
+   ]
+  ]
+ ],
+ "جدر": [
+  4,
+  [
+   [
+    9,
+    97
+   ],
+   [
+    18,
+    77
+   ],
+   [
+    18,
+    82
+   ],
+   [
+    59,
+    14
+   ]
+  ]
+ ],
+ "جذع": [
+  3,
+  [
+   [
+    19,
+    23
+   ],
+   [
+    19,
+    25
+   ],
+   [
+    20,
+    71
+   ]
+  ]
+ ],
+ "جرح": [
+  4,
+  [
+   [
+    5,
+    4
+   ],
+   [
+    5,
+    45
+   ],
+   [
+    6,
+    60
+   ],
+   [
+    45,
+    21
+   ]
+  ]
+ ],
+ "جرد": [
+  2,
+  [
+   [
+    7,
+    133
+   ],
+   [
+    54,
+    7
+   ]
+  ]
+ ],
+ "جرر": [
+  1,
+  [
+   [
+    7,
+    150
+   ]
+  ]
+ ],
+ "جرع": [
+  1,
+  [
+   [
+    14,
+    17
+   ]
+  ]
+ ],
+ "جرف": [
+  1,
+  [
+   [
+    9,
+    109
+   ]
+  ]
+ ],
+ "جرم": [
+  66,
+  [
+   [
+    5,
+    2
+   ],
+   [
+    5,
+    8
+   ],
+   [
+    6,
+    55
+   ],
+   [
+    6,
+    123
+   ],
+   [
+    6,
+    124
+   ],
+   [
+    6,
+    147
+   ],
+   [
+    7,
+    40
+   ],
+   [
+    7,
+    84
+   ],
+   [
+    7,
+    133
+   ],
+   [
+    8,
+    8
+   ]
+  ]
+ ],
+ "جري": [
+  64,
+  [
+   [
+    2,
+    25
+   ],
+   [
+    2,
+    164
+   ],
+   [
+    2,
+    266
+   ],
+   [
+    3,
+    15
+   ],
+   [
+    3,
+    136
+   ],
+   [
+    3,
+    195
+   ],
+   [
+    3,
+    198
+   ],
+   [
+    4,
+    13
+   ],
+   [
+    4,
+    57
+   ],
+   [
+    4,
+    122
+   ]
+  ]
+ ],
+ "جزا": [
+  3,
+  [
+   [
+    2,
+    260
+   ],
+   [
+    15,
+    44
+   ],
+   [
+    43,
+    15
+   ]
+  ]
+ ],
+ "جزع": [
+  2,
+  [
+   [
+    14,
+    21
+   ],
+   [
+    70,
+    20
+   ]
+  ]
+ ],
+ "جزي": [
+  118,
+  [
+   [
+    2,
+    48
+   ],
+   [
+    2,
+    85
+   ],
+   [
+    2,
+    123
+   ],
+   [
+    2,
+    191
+   ],
+   [
+    3,
+    87
+   ],
+   [
+    3,
+    136
+   ],
+   [
+    3,
+    144
+   ],
+   [
+    3,
+    145
+   ],
+   [
+    4,
+    93
+   ],
+   [
+    4,
+    123
+   ]
+  ]
+ ],
+ "جسد": [
+  4,
+  [
+   [
+    7,
+    148
+   ],
+   [
+    20,
+    88
+   ],
+   [
+    21,
+    8
+   ],
+   [
+    38,
+    34
+   ]
+  ]
+ ],
+ "جسس": [
+  1,
+  [
+   [
+    49,
+    12
+   ]
+  ]
+ ],
+ "جسم": [
+  2,
+  [
+   [
+    2,
+    247
+   ],
+   [
+    63,
+    4
+   ]
+  ]
+ ],
+ "جعل": [
+  346,
+  [
+   [
+    2,
+    19
+   ],
+   [
+    2,
+    22
+   ],
+   [
+    2,
+    30
+   ],
+   [
+    2,
+    66
+   ],
+   [
+    2,
+    124
+   ],
+   [
+    2,
+    125
+   ],
+   [
+    2,
+    126
+   ],
+   [
+    2,
+    128
+   ],
+   [
+    2,
+    143
+   ],
+   [
+    2,
+    224
+   ]
+  ]
+ ],
+ "جفو": [
+  1,
+  [
+   [
+    32,
+    16
+   ]
+  ]
+ ],
+ "جلد": [
+  13,
+  [
+   [
+    4,
+    56
+   ],
+   [
+    16,
+    80
+   ],
+   [
+    22,
+    20
+   ],
+   [
+    24,
+    2
+   ],
+   [
+    24,
+    4
+   ],
+   [
+    39,
+    23
+   ],
+   [
+    41,
+    20
+   ],
+   [
+    41,
+    21
+   ],
+   [
+    41,
+    22
+   ]
+  ]
+ ],
+ "جلس": [
+  1,
+  [
+   [
+    58,
+    11
+   ]
+  ]
+ ],
+ "جلل": [
+  2,
+  [
+   [
+    55,
+    27
+   ],
+   [
+    55,
+    78
+   ]
+  ]
+ ],
+ "جلو": [
+  5,
+  [
+   [
+    7,
+    143
+   ],
+   [
+    7,
+    187
+   ],
+   [
+    59,
+    3
+   ],
+   [
+    91,
+    3
+   ],
+   [
+    92,
+    2
+   ]
+  ]
+ ],
+ "جمع": [
+  129,
+  [
+   [
+    2,
+    29
+   ],
+   [
+    2,
+    38
+   ],
+   [
+    2,
+    148
+   ],
+   [
+    2,
+    161
+   ],
+   [
+    2,
+    165
+   ],
+   [
+    3,
+    9
+   ],
+   [
+    3,
+    25
+   ],
+   [
+    3,
+    87
+   ],
+   [
+    3,
+    103
+   ],
+   [
+    3,
+    155
+   ]
+  ]
+ ],
+ "جمل": [
+  11,
+  [
+   [
+    7,
+    40
+   ],
+   [
+    12,
+    18
+   ],
+   [
+    12,
+    83
+   ],
+   [
+    15,
+    85
+   ],
+   [
+    16,
+    6
+   ],
+   [
+    25,
+    32
+   ],
+   [
+    33,
+    28
+   ],
+   [
+    33,
+    49
+   ],
+   [
+    70,
+    5
+   ],
+   [
+    73,
+    10
+   ]
+  ]
+ ],
+ "جنب": [
+  33,
+  [
+   [
+    3,
+    191
+   ],
+   [
+    4,
+    31
+   ],
+   [
+    4,
+    36
+   ],
+   [
+    4,
+    43
+   ],
+   [
+    4,
+    103
+   ],
+   [
+    5,
+    6
+   ],
+   [
+    5,
+    90
+   ],
+   [
+    9,
+    35
+   ],
+   [
+    10,
+    12
+   ],
+   [
+    14,
+    35
+   ]
+  ]
+ ],
+ "جنح": [
+  34,
+  [
+   [
+    2,
+    158
+   ],
+   [
+    2,
+    198
+   ],
+   [
+    2,
+    229
+   ],
+   [
+    2,
+    230
+   ],
+   [
+    2,
+    233
+   ],
+   [
+    2,
+    234
+   ],
+   [
+    2,
+    235
+   ],
+   [
+    2,
+    236
+   ],
+   [
+    2,
+    240
+   ],
+   [
+    2,
+    282
+   ]
+  ]
+ ],
+ "جنن": [
+  201,
+  [
+   [
+    2,
+    25
+   ],
+   [
+    2,
+    35
+   ],
+   [
+    2,
+    82
+   ],
+   [
+    2,
+    111
+   ],
+   [
+    2,
+    214
+   ],
+   [
+    2,
+    221
+   ],
+   [
+    2,
+    265
+   ],
+   [
+    2,
+    266
+   ],
+   [
+    3,
+    15
+   ],
+   [
+    3,
+    133
+   ]
+  ]
+ ],
+ "جني": [
+  2,
+  [
+   [
+    19,
+    25
+   ],
+   [
+    55,
+    54
+   ]
+  ]
+ ],
+ "جهد": [
+  41,
+  [
+   [
+    2,
+    218
+   ],
+   [
+    3,
+    142
+   ],
+   [
+    4,
+    95
+   ],
+   [
+    5,
+    35
+   ],
+   [
+    5,
+    53
+   ],
+   [
+    5,
+    54
+   ],
+   [
+    6,
+    109
+   ],
+   [
+    8,
+    72
+   ],
+   [
+    8,
+    74
+   ],
+   [
+    8,
+    75
+   ]
+  ]
+ ],
+ "جهر": [
+  16,
+  [
+   [
+    2,
+    55
+   ],
+   [
+    4,
+    148
+   ],
+   [
+    4,
+    153
+   ],
+   [
+    6,
+    3
+   ],
+   [
+    6,
+    47
+   ],
+   [
+    7,
+    205
+   ],
+   [
+    13,
+    10
+   ],
+   [
+    16,
+    75
+   ],
+   [
+    17,
+    110
+   ],
+   [
+    20,
+    7
+   ]
+  ]
+ ],
+ "جهز": [
+  4,
+  [
+   [
+    12,
+    59
+   ],
+   [
+    12,
+    70
+   ]
+  ]
+ ],
+ "جهل": [
+  24,
+  [
+   [
+    2,
+    67
+   ],
+   [
+    2,
+    273
+   ],
+   [
+    3,
+    154
+   ],
+   [
+    4,
+    17
+   ],
+   [
+    5,
+    50
+   ],
+   [
+    6,
+    35
+   ],
+   [
+    6,
+    54
+   ],
+   [
+    6,
+    111
+   ],
+   [
+    7,
+    138
+   ],
+   [
+    7,
+    199
+   ]
+  ]
+ ],
+ "جوب": [
+  43,
+  [
+   [
+    2,
+    186
+   ],
+   [
+    3,
+    172
+   ],
+   [
+    3,
+    195
+   ],
+   [
+    5,
+    109
+   ],
+   [
+    6,
+    36
+   ],
+   [
+    7,
+    82
+   ],
+   [
+    7,
+    194
+   ],
+   [
+    8,
+    9
+   ],
+   [
+    8,
+    24
+   ],
+   [
+    10,
+    89
+   ]
+  ]
+ ],
+ "جود": [
+  2,
+  [
+   [
+    11,
+    44
+   ],
+   [
+    38,
+    31
+   ]
+  ]
+ ],
+ "جور": [
+  13,
+  [
+   [
+    4,
+    36
+   ],
+   [
+    8,
+    48
+   ],
+   [
+    9,
+    6
+   ],
+   [
+    13,
+    4
+   ],
+   [
+    16,
+    9
+   ],
+   [
+    23,
+    88
+   ],
+   [
+    33,
+    60
+   ],
+   [
+    46,
+    31
+   ],
+   [
+    67,
+    28
+   ],
+   [
+    72,
+    22
+   ]
+  ]
+ ],
+ "جوز": [
+  5,
+  [
+   [
+    2,
+    249
+   ],
+   [
+    7,
+    138
+   ],
+   [
+    10,
+    90
+   ],
+   [
+    18,
+    62
+   ],
+   [
+    46,
+    16
+   ]
+  ]
+ ],
+ "جوع": [
+  5,
+  [
+   [
+    2,
+    155
+   ],
+   [
+    16,
+    112
+   ],
+   [
+    20,
+    118
+   ],
+   [
+    88,
+    7
+   ],
+   [
+    106,
+    4
+   ]
+  ]
+ ],
+ "جوف": [
+  1,
+  [
+   [
+    33,
+    4
+   ]
+  ]
+ ],
+ "جوو": [
+  1,
+  [
+   [
+    16,
+    79
+   ]
+  ]
+ ],
+ "جيب": [
+  3,
+  [
+   [
+    24,
+    31
+   ],
+   [
+    27,
+    12
+   ],
+   [
+    28,
+    32
+   ]
+  ]
+ ],
+ "جيد": [
+  1,
+  [
+   [
+    111,
+    5
+   ]
+  ]
+ ],
+ "حبب": [
+  95,
+  [
+   [
+    2,
+    165
+   ],
+   [
+    2,
+    177
+   ],
+   [
+    2,
+    190
+   ],
+   [
+    2,
+    195
+   ],
+   [
+    2,
+    205
+   ],
+   [
+    2,
+    216
+   ],
+   [
+    2,
+    222
+   ],
+   [
+    2,
+    261
+   ],
+   [
+    2,
+    276
+   ],
+   [
+    3,
+    14
+   ]
+  ]
+ ],
+ "حبر": [
+  6,
+  [
+   [
+    5,
+    44
+   ],
+   [
+    5,
+    63
+   ],
+   [
+    9,
+    31
+   ],
+   [
+    9,
+    34
+   ],
+   [
+    30,
+    15
+   ],
+   [
+    43,
+    70
+   ]
+  ]
+ ],
+ "حبس": [
+  2,
+  [
+   [
+    5,
+    106
+   ],
+   [
+    11,
+    8
+   ]
+  ]
+ ],
+ "حبط": [
+  16,
+  [
+   [
+    2,
+    217
+   ],
+   [
+    3,
+    22
+   ],
+   [
+    5,
+    5
+   ],
+   [
+    5,
+    53
+   ],
+   [
+    6,
+    88
+   ],
+   [
+    7,
+    147
+   ],
+   [
+    9,
+    17
+   ],
+   [
+    9,
+    69
+   ],
+   [
+    11,
+    16
+   ],
+   [
+    18,
+    105
+   ]
+  ]
+ ],
+ "حتم": [
+  1,
+  [
+   [
+    19,
+    71
+   ]
+  ]
+ ],
+ "حثث": [
+  1,
+  [
+   [
+    7,
+    54
+   ]
+  ]
+ ],
+ "حجب": [
+  8,
+  [
+   [
+    7,
+    46
+   ],
+   [
+    17,
+    45
+   ],
+   [
+    19,
+    17
+   ],
+   [
+    33,
+    53
+   ],
+   [
+    38,
+    32
+   ],
+   [
+    41,
+    5
+   ],
+   [
+    42,
+    51
+   ],
+   [
+    83,
+    15
+   ]
+  ]
+ ],
+ "حجج": [
+  33,
+  [
+   [
+    2,
+    76
+   ],
+   [
+    2,
+    139
+   ],
+   [
+    2,
+    150
+   ],
+   [
+    2,
+    158
+   ],
+   [
+    2,
+    189
+   ],
+   [
+    2,
+    196
+   ],
+   [
+    2,
+    197
+   ],
+   [
+    2,
+    258
+   ],
+   [
+    3,
+    20
+   ],
+   [
+    3,
+    61
+   ]
+  ]
+ ],
+ "حجر": [
+  21,
+  [
+   [
+    2,
+    24
+   ],
+   [
+    2,
+    60
+   ],
+   [
+    2,
+    74
+   ],
+   [
+    4,
+    23
+   ],
+   [
+    6,
+    138
+   ],
+   [
+    7,
+    160
+   ],
+   [
+    8,
+    32
+   ],
+   [
+    11,
+    82
+   ],
+   [
+    15,
+    74
+   ],
+   [
+    15,
+    80
+   ]
+  ]
+ ],
+ "حجز": [
+  2,
+  [
+   [
+    27,
+    61
+   ],
+   [
+    69,
+    47
+   ]
+  ]
+ ],
+ "حدث": [
+  36,
+  [
+   [
+    2,
+    76
+   ],
+   [
+    4,
+    42
+   ],
+   [
+    4,
+    78
+   ],
+   [
+    4,
+    87
+   ],
+   [
+    4,
+    140
+   ],
+   [
+    6,
+    68
+   ],
+   [
+    7,
+    185
+   ],
+   [
+    12,
+    6
+   ],
+   [
+    12,
+    21
+   ],
+   [
+    12,
+    101
+   ]
+  ]
+ ],
+ "حدد": [
+  25,
+  [
+   [
+    2,
+    187
+   ],
+   [
+    2,
+    229
+   ],
+   [
+    2,
+    230
+   ],
+   [
+    4,
+    13
+   ],
+   [
+    4,
+    14
+   ],
+   [
+    9,
+    63
+   ],
+   [
+    9,
+    97
+   ],
+   [
+    9,
+    112
+   ],
+   [
+    17,
+    50
+   ],
+   [
+    18,
+    96
+   ]
+  ]
+ ],
+ "حدق": [
+  3,
+  [
+   [
+    27,
+    60
+   ],
+   [
+    78,
+    32
+   ],
+   [
+    80,
+    30
+   ]
+  ]
+ ],
+ "حذر": [
+  21,
+  [
+   [
+    2,
+    19
+   ],
+   [
+    2,
+    235
+   ],
+   [
+    2,
+    243
+   ],
+   [
+    3,
+    28
+   ],
+   [
+    3,
+    30
+   ],
+   [
+    4,
+    71
+   ],
+   [
+    4,
+    102
+   ],
+   [
+    5,
+    41
+   ],
+   [
+    5,
+    49
+   ],
+   [
+    5,
+    92
+   ]
+  ]
+ ],
+ "حرب": [
+  11,
+  [
+   [
+    2,
+    279
+   ],
+   [
+    3,
+    37
+   ],
+   [
+    3,
+    39
+   ],
+   [
+    5,
+    33
+   ],
+   [
+    5,
+    64
+   ],
+   [
+    8,
+    57
+   ],
+   [
+    9,
+    107
+   ],
+   [
+    19,
+    11
+   ],
+   [
+    34,
+    13
+   ],
+   [
+    38,
+    21
+   ]
+  ]
+ ],
+ "حرث": [
+  14,
+  [
+   [
+    2,
+    71
+   ],
+   [
+    2,
+    205
+   ],
+   [
+    2,
+    223
+   ],
+   [
+    3,
+    14
+   ],
+   [
+    3,
+    117
+   ],
+   [
+    6,
+    136
+   ],
+   [
+    6,
+    138
+   ],
+   [
+    21,
+    78
+   ],
+   [
+    42,
+    20
+   ],
+   [
+    56,
+    63
+   ]
+  ]
+ ],
+ "حرج": [
+  15,
+  [
+   [
+    4,
+    65
+   ],
+   [
+    5,
+    6
+   ],
+   [
+    6,
+    125
+   ],
+   [
+    7,
+    2
+   ],
+   [
+    9,
+    91
+   ],
+   [
+    22,
+    78
+   ],
+   [
+    24,
+    61
+   ],
+   [
+    33,
+    37
+   ],
+   [
+    33,
+    38
+   ],
+   [
+    33,
+    50
+   ]
+  ]
+ ],
+ "حرر": [
+  15,
+  [
+   [
+    2,
+    178
+   ],
+   [
+    3,
+    35
+   ],
+   [
+    4,
+    92
+   ],
+   [
+    5,
+    89
+   ],
+   [
+    9,
+    81
+   ],
+   [
+    16,
+    81
+   ],
+   [
+    22,
+    23
+   ],
+   [
+    35,
+    21
+   ],
+   [
+    35,
+    33
+   ],
+   [
+    58,
+    3
+   ]
+  ]
+ ],
+ "حرس": [
+  1,
+  [
+   [
+    72,
+    8
+   ]
+  ]
+ ],
+ "حرض": [
+  3,
+  [
+   [
+    4,
+    84
+   ],
+   [
+    8,
+    65
+   ],
+   [
+    12,
+    85
+   ]
+  ]
+ ],
+ "حرف": [
+  6,
+  [
+   [
+    2,
+    75
+   ],
+   [
+    4,
+    46
+   ],
+   [
+    5,
+    13
+   ],
+   [
+    5,
+    41
+   ],
+   [
+    8,
+    16
+   ],
+   [
+    22,
+    11
+   ]
+  ]
+ ],
+ "حرق": [
+  9,
+  [
+   [
+    2,
+    266
+   ],
+   [
+    3,
+    181
+   ],
+   [
+    8,
+    50
+   ],
+   [
+    20,
+    97
+   ],
+   [
+    21,
+    68
+   ],
+   [
+    22,
+    9
+   ],
+   [
+    22,
+    22
+   ],
+   [
+    29,
+    24
+   ],
+   [
+    85,
+    10
+   ]
+  ]
+ ],
+ "حرك": [
+  1,
+  [
+   [
+    75,
+    16
+   ]
+  ]
+ ],
+ "حرم": [
+  83,
+  [
+   [
+    2,
+    85
+   ],
+   [
+    2,
+    144
+   ],
+   [
+    2,
+    149
+   ],
+   [
+    2,
+    150
+   ],
+   [
+    2,
+    173
+   ],
+   [
+    2,
+    191
+   ],
+   [
+    2,
+    194
+   ],
+   [
+    2,
+    196
+   ],
+   [
+    2,
+    198
+   ],
+   [
+    2,
+    217
+   ]
+  ]
+ ],
+ "حري": [
+  1,
+  [
+   [
+    72,
+    14
+   ]
+  ]
+ ],
+ "حزب": [
+  20,
+  [
+   [
+    5,
+    56
+   ],
+   [
+    11,
+    17
+   ],
+   [
+    13,
+    36
+   ],
+   [
+    18,
+    12
+   ],
+   [
+    19,
+    37
+   ],
+   [
+    23,
+    53
+   ],
+   [
+    30,
+    32
+   ],
+   [
+    33,
+    20
+   ],
+   [
+    33,
+    22
+   ],
+   [
+    35,
+    6
+   ]
+  ]
+ ],
+ "حسب": [
+  109,
+  [
+   [
+    2,
+    202
+   ],
+   [
+    2,
+    206
+   ],
+   [
+    2,
+    212
+   ],
+   [
+    2,
+    214
+   ],
+   [
+    2,
+    273
+   ],
+   [
+    2,
+    284
+   ],
+   [
+    3,
+    19
+   ],
+   [
+    3,
+    27
+   ],
+   [
+    3,
+    37
+   ],
+   [
+    3,
+    78
+   ]
+  ]
+ ],
+ "حسد": [
+  5,
+  [
+   [
+    2,
+    109
+   ],
+   [
+    4,
+    54
+   ],
+   [
+    48,
+    15
+   ],
+   [
+    113,
+    5
+   ]
+  ]
+ ],
+ "حسر": [
+  12,
+  [
+   [
+    2,
+    167
+   ],
+   [
+    3,
+    156
+   ],
+   [
+    6,
+    31
+   ],
+   [
+    8,
+    36
+   ],
+   [
+    17,
+    29
+   ],
+   [
+    19,
+    39
+   ],
+   [
+    21,
+    19
+   ],
+   [
+    35,
+    8
+   ],
+   [
+    36,
+    30
+   ],
+   [
+    39,
+    56
+   ]
+  ]
+ ],
+ "حسس": [
+  6,
+  [
+   [
+    3,
+    52
+   ],
+   [
+    3,
+    152
+   ],
+   [
+    12,
+    87
+   ],
+   [
+    19,
+    98
+   ],
+   [
+    21,
+    12
+   ],
+   [
+    21,
+    102
+   ]
+  ]
+ ],
+ "حسن": [
+  194,
+  [
+   [
+    2,
+    58
+   ],
+   [
+    2,
+    83
+   ],
+   [
+    2,
+    112
+   ],
+   [
+    2,
+    138
+   ],
+   [
+    2,
+    178
+   ],
+   [
+    2,
+    195
+   ],
+   [
+    2,
+    201
+   ],
+   [
+    2,
+    229
+   ],
+   [
+    2,
+    236
+   ],
+   [
+    2,
+    245
+   ]
+  ]
+ ],
+ "حشر": [
+  43,
+  [
+   [
+    2,
+    203
+   ],
+   [
+    3,
+    12
+   ],
+   [
+    3,
+    158
+   ],
+   [
+    4,
+    172
+   ],
+   [
+    5,
+    96
+   ],
+   [
+    6,
+    22
+   ],
+   [
+    6,
+    38
+   ],
+   [
+    6,
+    51
+   ],
+   [
+    6,
+    72
+   ],
+   [
+    6,
+    111
+   ]
+  ]
+ ],
+ "حصد": [
+  6,
+  [
+   [
+    6,
+    141
+   ],
+   [
+    10,
+    24
+   ],
+   [
+    11,
+    100
+   ],
+   [
+    12,
+    47
+   ],
+   [
+    21,
+    15
+   ],
+   [
+    50,
+    9
+   ]
+  ]
+ ],
+ "حصل": [
+  1,
+  [
+   [
+    100,
+    10
+   ]
+  ]
+ ],
+ "حصن": [
+  18,
+  [
+   [
+    4,
+    24
+   ],
+   [
+    4,
+    25
+   ],
+   [
+    5,
+    5
+   ],
+   [
+    12,
+    48
+   ],
+   [
+    21,
+    80
+   ],
+   [
+    21,
+    91
+   ],
+   [
+    24,
+    4
+   ],
+   [
+    24,
+    23
+   ],
+   [
+    24,
+    33
+   ],
+   [
+    59,
+    2
+   ]
+  ]
+ ],
+ "حصي": [
+  11,
+  [
+   [
+    14,
+    34
+   ],
+   [
+    16,
+    18
+   ],
+   [
+    18,
+    12
+   ],
+   [
+    18,
+    49
+   ],
+   [
+    19,
+    94
+   ],
+   [
+    36,
+    12
+   ],
+   [
+    58,
+    6
+   ],
+   [
+    65,
+    1
+   ],
+   [
+    72,
+    28
+   ],
+   [
+    73,
+    20
+   ]
+  ]
+ ],
+ "حضر": [
+  25,
+  [
+   [
+    2,
+    133
+   ],
+   [
+    2,
+    180
+   ],
+   [
+    2,
+    196
+   ],
+   [
+    2,
+    282
+   ],
+   [
+    3,
+    30
+   ],
+   [
+    4,
+    8
+   ],
+   [
+    4,
+    18
+   ],
+   [
+    4,
+    128
+   ],
+   [
+    5,
+    106
+   ],
+   [
+    7,
+    163
+   ]
+  ]
+ ],
+ "حضض": [
+  3,
+  [
+   [
+    69,
+    34
+   ],
+   [
+    89,
+    18
+   ],
+   [
+    107,
+    3
+   ]
+  ]
+ ],
+ "حطب": [
+  2,
+  [
+   [
+    72,
+    15
+   ],
+   [
+    111,
+    4
+   ]
+  ]
+ ],
+ "حطط": [
+  2,
+  [
+   [
+    2,
+    58
+   ],
+   [
+    7,
+    161
+   ]
+  ]
+ ],
+ "حفد": [
+  1,
+  [
+   [
+    16,
+    72
+   ]
+  ]
+ ],
+ "حفظ": [
+  44,
+  [
+   [
+    2,
+    238
+   ],
+   [
+    2,
+    255
+   ],
+   [
+    4,
+    34
+   ],
+   [
+    4,
+    80
+   ],
+   [
+    5,
+    44
+   ],
+   [
+    5,
+    89
+   ],
+   [
+    6,
+    61
+   ],
+   [
+    6,
+    92
+   ],
+   [
+    6,
+    104
+   ],
+   [
+    6,
+    107
+   ]
+  ]
+ ],
+ "حقب": [
+  2,
+  [
+   [
+    18,
+    60
+   ],
+   [
+    78,
+    23
+   ]
+  ]
+ ],
+ "حقق": [
+  287,
+  [
+   [
+    2,
+    26
+   ],
+   [
+    2,
+    42
+   ],
+   [
+    2,
+    61
+   ],
+   [
+    2,
+    71
+   ],
+   [
+    2,
+    91
+   ],
+   [
+    2,
+    109
+   ],
+   [
+    2,
+    119
+   ],
+   [
+    2,
+    121
+   ],
+   [
+    2,
+    144
+   ],
+   [
+    2,
+    146
+   ]
+  ]
+ ],
+ "حكم": [
+  210,
+  [
+   [
+    2,
+    32
+   ],
+   [
+    2,
+    113
+   ],
+   [
+    2,
+    129
+   ],
+   [
+    2,
+    151
+   ],
+   [
+    2,
+    188
+   ],
+   [
+    2,
+    209
+   ],
+   [
+    2,
+    213
+   ],
+   [
+    2,
+    220
+   ],
+   [
+    2,
+    228
+   ],
+   [
+    2,
+    231
+   ]
+  ]
+ ],
+ "حلف": [
+  13,
+  [
+   [
+    4,
+    62
+   ],
+   [
+    5,
+    89
+   ],
+   [
+    9,
+    42
+   ],
+   [
+    9,
+    56
+   ],
+   [
+    9,
+    62
+   ],
+   [
+    9,
+    74
+   ],
+   [
+    9,
+    95
+   ],
+   [
+    9,
+    96
+   ],
+   [
+    9,
+    107
+   ],
+   [
+    58,
+    14
+   ]
+  ]
+ ],
+ "حلق": [
+  3,
+  [
+   [
+    2,
+    196
+   ],
+   [
+    48,
+    27
+   ],
+   [
+    56,
+    83
+   ]
+  ]
+ ],
+ "حلل": [
+  51,
+  [
+   [
+    2,
+    168
+   ],
+   [
+    2,
+    187
+   ],
+   [
+    2,
+    196
+   ],
+   [
+    2,
+    228
+   ],
+   [
+    2,
+    229
+   ],
+   [
+    2,
+    230
+   ],
+   [
+    2,
+    275
+   ],
+   [
+    3,
+    50
+   ],
+   [
+    3,
+    93
+   ],
+   [
+    4,
+    19
+   ]
+  ]
+ ],
+ "حلم": [
+  21,
+  [
+   [
+    2,
+    225
+   ],
+   [
+    2,
+    235
+   ],
+   [
+    2,
+    263
+   ],
+   [
+    3,
+    155
+   ],
+   [
+    4,
+    12
+   ],
+   [
+    5,
+    101
+   ],
+   [
+    9,
+    114
+   ],
+   [
+    11,
+    75
+   ],
+   [
+    11,
+    87
+   ],
+   [
+    12,
+    44
+   ]
+  ]
+ ],
+ "حلي": [
+  9,
+  [
+   [
+    7,
+    148
+   ],
+   [
+    13,
+    17
+   ],
+   [
+    16,
+    14
+   ],
+   [
+    18,
+    31
+   ],
+   [
+    22,
+    23
+   ],
+   [
+    35,
+    12
+   ],
+   [
+    35,
+    33
+   ],
+   [
+    43,
+    18
+   ],
+   [
+    76,
+    21
+   ]
+  ]
+ ],
+ "حمد": [
+  68,
+  [
+   [
+    1,
+    2
+   ],
+   [
+    2,
+    30
+   ],
+   [
+    2,
+    267
+   ],
+   [
+    3,
+    144
+   ],
+   [
+    3,
+    188
+   ],
+   [
+    4,
+    131
+   ],
+   [
+    6,
+    1
+   ],
+   [
+    6,
+    45
+   ],
+   [
+    7,
+    43
+   ],
+   [
+    9,
+    112
+   ]
+  ]
+ ],
+ "حمر": [
+  6,
+  [
+   [
+    2,
+    259
+   ],
+   [
+    16,
+    8
+   ],
+   [
+    31,
+    19
+   ],
+   [
+    35,
+    27
+   ],
+   [
+    62,
+    5
+   ],
+   [
+    74,
+    50
+   ]
+  ]
+ ],
+ "حمل": [
+  64,
+  [
+   [
+    2,
+    248
+   ],
+   [
+    2,
+    286
+   ],
+   [
+    4,
+    112
+   ],
+   [
+    6,
+    31
+   ],
+   [
+    6,
+    142
+   ],
+   [
+    6,
+    146
+   ],
+   [
+    7,
+    176
+   ],
+   [
+    7,
+    189
+   ],
+   [
+    9,
+    92
+   ],
+   [
+    11,
+    40
+   ]
+  ]
+ ],
+ "حمم": [
+  21,
+  [
+   [
+    6,
+    70
+   ],
+   [
+    10,
+    4
+   ],
+   [
+    22,
+    19
+   ],
+   [
+    26,
+    101
+   ],
+   [
+    37,
+    67
+   ],
+   [
+    38,
+    57
+   ],
+   [
+    40,
+    18
+   ],
+   [
+    40,
+    72
+   ],
+   [
+    41,
+    34
+   ],
+   [
+    44,
+    46
+   ]
+  ]
+ ],
+ "حمي": [
+  6,
+  [
+   [
+    5,
+    103
+   ],
+   [
+    9,
+    35
+   ],
+   [
+    48,
+    26
+   ],
+   [
+    88,
+    4
+   ],
+   [
+    101,
+    11
+   ]
+  ]
+ ],
+ "حنث": [
+  2,
+  [
+   [
+    38,
+    44
+   ],
+   [
+    56,
+    46
+   ]
+  ]
+ ],
+ "حنجر": [
+  2,
+  [
+   [
+    33,
+    10
+   ],
+   [
+    40,
+    18
+   ]
+  ]
+ ],
+ "حنف": [
+  12,
+  [
+   [
+    2,
+    135
+   ],
+   [
+    3,
+    67
+   ],
+   [
+    3,
+    95
+   ],
+   [
+    4,
+    125
+   ],
+   [
+    6,
+    79
+   ],
+   [
+    6,
+    161
+   ],
+   [
+    10,
+    105
+   ],
+   [
+    16,
+    120
+   ],
+   [
+    16,
+    123
+   ],
+   [
+    22,
+    31
+   ]
+  ]
+ ],
+ "حوج": [
+  3,
+  [
+   [
+    12,
+    68
+   ],
+   [
+    40,
+    80
+   ],
+   [
+    59,
+    9
+   ]
+  ]
+ ],
+ "حور": [
+  13,
+  [
+   [
+    3,
+    52
+   ],
+   [
+    5,
+    111
+   ],
+   [
+    5,
+    112
+   ],
+   [
+    18,
+    34
+   ],
+   [
+    18,
+    37
+   ],
+   [
+    44,
+    54
+   ],
+   [
+    52,
+    20
+   ],
+   [
+    55,
+    72
+   ],
+   [
+    56,
+    22
+   ],
+   [
+    58,
+    1
+   ]
+  ]
+ ],
+ "حوز": [
+  1,
+  [
+   [
+    8,
+    16
+   ]
+  ]
+ ],
+ "حوط": [
+  28,
+  [
+   [
+    2,
+    19
+   ],
+   [
+    2,
+    81
+   ],
+   [
+    2,
+    255
+   ],
+   [
+    3,
+    120
+   ],
+   [
+    4,
+    108
+   ],
+   [
+    4,
+    126
+   ],
+   [
+    8,
+    47
+   ],
+   [
+    9,
+    49
+   ],
+   [
+    10,
+    22
+   ],
+   [
+    10,
+    39
+   ]
+  ]
+ ],
+ "حول": [
+  25,
+  [
+   [
+    2,
+    17
+   ],
+   [
+    2,
+    233
+   ],
+   [
+    2,
+    240
+   ],
+   [
+    3,
+    159
+   ],
+   [
+    4,
+    98
+   ],
+   [
+    6,
+    92
+   ],
+   [
+    8,
+    24
+   ],
+   [
+    9,
+    101
+   ],
+   [
+    9,
+    120
+   ],
+   [
+    11,
+    43
+   ]
+  ]
+ ],
+ "حوي": [
+  2,
+  [
+   [
+    6,
+    146
+   ],
+   [
+    87,
+    5
+   ]
+  ]
+ ],
+ "حيث": [
+  31,
+  [
+   [
+    2,
+    35
+   ],
+   [
+    2,
+    58
+   ],
+   [
+    2,
+    144
+   ],
+   [
+    2,
+    149
+   ],
+   [
+    2,
+    150
+   ],
+   [
+    2,
+    191
+   ],
+   [
+    2,
+    199
+   ],
+   [
+    2,
+    222
+   ],
+   [
+    4,
+    89
+   ],
+   [
+    4,
+    91
+   ]
+  ]
+ ],
+ "حيد": [
+  1,
+  [
+   [
+    50,
+    19
+   ]
+  ]
+ ],
+ "حير": [
+  1,
+  [
+   [
+    6,
+    71
+   ]
+  ]
+ ],
+ "حيض": [
+  4,
+  [
+   [
+    2,
+    222
+   ],
+   [
+    65,
+    4
+   ]
+  ]
+ ],
+ "حيف": [
+  1,
+  [
+   [
+    24,
+    50
+   ]
+  ]
+ ],
+ "حيق": [
+  10,
+  [
+   [
+    6,
+    10
+   ],
+   [
+    11,
+    8
+   ],
+   [
+    16,
+    34
+   ],
+   [
+    21,
+    41
+   ],
+   [
+    35,
+    43
+   ],
+   [
+    39,
+    48
+   ],
+   [
+    40,
+    45
+   ],
+   [
+    40,
+    83
+   ],
+   [
+    45,
+    33
+   ],
+   [
+    46,
+    26
+   ]
+  ]
+ ],
+ "حين": [
+  35,
+  [
+   [
+    2,
+    36
+   ],
+   [
+    2,
+    177
+   ],
+   [
+    5,
+    101
+   ],
+   [
+    5,
+    106
+   ],
+   [
+    7,
+    24
+   ],
+   [
+    10,
+    98
+   ],
+   [
+    11,
+    5
+   ],
+   [
+    12,
+    35
+   ],
+   [
+    14,
+    25
+   ],
+   [
+    16,
+    6
+   ]
+  ]
+ ],
+ "حيي": [
+  189,
+  [
+   [
+    2,
+    26
+   ],
+   [
+    2,
+    28
+   ],
+   [
+    2,
+    49
+   ],
+   [
+    2,
+    73
+   ],
+   [
+    2,
+    85
+   ],
+   [
+    2,
+    86
+   ],
+   [
+    2,
+    96
+   ],
+   [
+    2,
+    154
+   ],
+   [
+    2,
+    164
+   ],
+   [
+    2,
+    179
+   ]
+  ]
+ ],
+ "خبر": [
+  52,
+  [
+   [
+    2,
+    234
+   ],
+   [
+    2,
+    271
+   ],
+   [
+    3,
+    153
+   ],
+   [
+    3,
+    180
+   ],
+   [
+    4,
+    35
+   ],
+   [
+    4,
+    94
+   ],
+   [
+    4,
+    128
+   ],
+   [
+    4,
+    135
+   ],
+   [
+    5,
+    8
+   ],
+   [
+    6,
+    18
+   ]
+  ]
+ ],
+ "خبز": [
+  1,
+  [
+   [
+    12,
+    36
+   ]
+  ]
+ ],
+ "خدد": [
+  2,
+  [
+   [
+    31,
+    18
+   ],
+   [
+    85,
+    4
+   ]
+  ]
+ ],
+ "خدع": [
+  5,
+  [
+   [
+    2,
+    9
+   ],
+   [
+    4,
+    142
+   ],
+   [
+    8,
+    62
+   ]
+  ]
+ ],
+ "خرج": [
+  182,
+  [
+   [
+    2,
+    22
+   ],
+   [
+    2,
+    36
+   ],
+   [
+    2,
+    61
+   ],
+   [
+    2,
+    72
+   ],
+   [
+    2,
+    74
+   ],
+   [
+    2,
+    84
+   ],
+   [
+    2,
+    85
+   ],
+   [
+    2,
+    149
+   ],
+   [
+    2,
+    150
+   ],
+   [
+    2,
+    167
+   ]
+  ]
+ ],
+ "خرق": [
+  4,
+  [
+   [
+    6,
+    100
+   ],
+   [
+    17,
+    37
+   ],
+   [
+    18,
+    71
+   ]
+  ]
+ ],
+ "خزن": [
+  13,
+  [
+   [
+    6,
+    50
+   ],
+   [
+    11,
+    31
+   ],
+   [
+    12,
+    55
+   ],
+   [
+    15,
+    21
+   ],
+   [
+    15,
+    22
+   ],
+   [
+    17,
+    100
+   ],
+   [
+    38,
+    9
+   ],
+   [
+    39,
+    71
+   ],
+   [
+    39,
+    73
+   ],
+   [
+    40,
+    49
+   ]
+  ]
+ ],
+ "خزي": [
+  26,
+  [
+   [
+    2,
+    85
+   ],
+   [
+    2,
+    114
+   ],
+   [
+    3,
+    192
+   ],
+   [
+    3,
+    194
+   ],
+   [
+    5,
+    33
+   ],
+   [
+    5,
+    41
+   ],
+   [
+    9,
+    2
+   ],
+   [
+    9,
+    14
+   ],
+   [
+    9,
+    63
+   ],
+   [
+    10,
+    98
+   ]
+  ]
+ ],
+ "خشب": [
+  1,
+  [
+   [
+    63,
+    4
+   ]
+  ]
+ ],
+ "خصص": [
+  4,
+  [
+   [
+    2,
+    105
+   ],
+   [
+    3,
+    74
+   ],
+   [
+    8,
+    25
+   ],
+   [
+    59,
+    9
+   ]
+  ]
+ ],
+ "خضر": [
+  8,
+  [
+   [
+    6,
+    99
+   ],
+   [
+    12,
+    43
+   ],
+   [
+    12,
+    46
+   ],
+   [
+    18,
+    31
+   ],
+   [
+    22,
+    63
+   ],
+   [
+    36,
+    80
+   ],
+   [
+    55,
+    76
+   ],
+   [
+    76,
+    21
+   ]
+  ]
+ ],
+ "خضع": [
+  2,
+  [
+   [
+    26,
+    4
+   ],
+   [
+    33,
+    32
+   ]
+  ]
+ ],
+ "خطأ": [
+  22,
+  [
+   [
+    2,
+    58
+   ],
+   [
+    2,
+    81
+   ],
+   [
+    2,
+    286
+   ],
+   [
+    4,
+    92
+   ],
+   [
+    4,
+    112
+   ],
+   [
+    7,
+    161
+   ],
+   [
+    12,
+    29
+   ],
+   [
+    12,
+    91
+   ],
+   [
+    12,
+    97
+   ],
+   [
+    17,
+    31
+   ]
+  ]
+ ],
+ "خطب": [
+  12,
+  [
+   [
+    2,
+    235
+   ],
+   [
+    11,
+    37
+   ],
+   [
+    12,
+    51
+   ],
+   [
+    15,
+    57
+   ],
+   [
+    20,
+    95
+   ],
+   [
+    23,
+    27
+   ],
+   [
+    25,
+    63
+   ],
+   [
+    28,
+    23
+   ],
+   [
+    38,
+    20
+   ],
+   [
+    38,
+    23
+   ]
+  ]
+ ],
+ "خطط": [
+  1,
+  [
+   [
+    29,
+    48
+   ]
+  ]
+ ],
+ "خطف": [
+  7,
+  [
+   [
+    2,
+    20
+   ],
+   [
+    8,
+    26
+   ],
+   [
+    22,
+    31
+   ],
+   [
+    28,
+    57
+   ],
+   [
+    29,
+    67
+   ],
+   [
+    37,
+    10
+   ]
+  ]
+ ],
+ "خفض": [
+  4,
+  [
+   [
+    15,
+    88
+   ],
+   [
+    17,
+    24
+   ],
+   [
+    26,
+    215
+   ],
+   [
+    56,
+    3
+   ]
+  ]
+ ],
+ "خفف": [
+  17,
+  [
+   [
+    2,
+    86
+   ],
+   [
+    2,
+    162
+   ],
+   [
+    2,
+    178
+   ],
+   [
+    3,
+    88
+   ],
+   [
+    4,
+    28
+   ],
+   [
+    7,
+    9
+   ],
+   [
+    7,
+    189
+   ],
+   [
+    8,
+    66
+   ],
+   [
+    9,
+    41
+   ],
+   [
+    16,
+    80
+   ]
+  ]
+ ],
+ "خفي": [
+  34,
+  [
+   [
+    2,
+    271
+   ],
+   [
+    2,
+    284
+   ],
+   [
+    3,
+    5
+   ],
+   [
+    3,
+    29
+   ],
+   [
+    3,
+    118
+   ],
+   [
+    3,
+    154
+   ],
+   [
+    4,
+    108
+   ],
+   [
+    4,
+    149
+   ],
+   [
+    5,
+    15
+   ],
+   [
+    6,
+    28
+   ]
+  ]
+ ],
+ "خلص": [
+  31,
+  [
+   [
+    2,
+    94
+   ],
+   [
+    2,
+    139
+   ],
+   [
+    4,
+    146
+   ],
+   [
+    6,
+    139
+   ],
+   [
+    7,
+    29
+   ],
+   [
+    7,
+    32
+   ],
+   [
+    10,
+    22
+   ],
+   [
+    12,
+    24
+   ],
+   [
+    12,
+    54
+   ],
+   [
+    12,
+    80
+   ]
+  ]
+ ],
+ "خلط": [
+  6,
+  [
+   [
+    2,
+    220
+   ],
+   [
+    6,
+    146
+   ],
+   [
+    9,
+    102
+   ],
+   [
+    10,
+    24
+   ],
+   [
+    18,
+    45
+   ],
+   [
+    38,
+    24
+   ]
+  ]
+ ],
+ "خلع": [
+  1,
+  [
+   [
+    20,
+    12
+   ]
+  ]
+ ],
+ "خلف": [
+  127,
+  [
+   [
+    2,
+    30
+   ],
+   [
+    2,
+    66
+   ],
+   [
+    2,
+    80
+   ],
+   [
+    2,
+    113
+   ],
+   [
+    2,
+    164
+   ],
+   [
+    2,
+    176
+   ],
+   [
+    2,
+    213
+   ],
+   [
+    2,
+    253
+   ],
+   [
+    2,
+    255
+   ],
+   [
+    3,
+    9
+   ]
+  ]
+ ],
+ "خلق": [
+  261,
+  [
+   [
+    2,
+    21
+   ],
+   [
+    2,
+    29
+   ],
+   [
+    2,
+    102
+   ],
+   [
+    2,
+    164
+   ],
+   [
+    2,
+    200
+   ],
+   [
+    2,
+    228
+   ],
+   [
+    3,
+    47
+   ],
+   [
+    3,
+    49
+   ],
+   [
+    3,
+    59
+   ],
+   [
+    3,
+    77
+   ]
+  ]
+ ],
+ "خلل": [
+  13,
+  [
+   [
+    2,
+    254
+   ],
+   [
+    4,
+    125
+   ],
+   [
+    9,
+    47
+   ],
+   [
+    14,
+    31
+   ],
+   [
+    17,
+    5
+   ],
+   [
+    17,
+    73
+   ],
+   [
+    17,
+    91
+   ],
+   [
+    18,
+    33
+   ],
+   [
+    24,
+    43
+   ],
+   [
+    25,
+    28
+   ]
+  ]
+ ],
+ "خلو": [
+  28,
+  [
+   [
+    2,
+    14
+   ],
+   [
+    2,
+    76
+   ],
+   [
+    2,
+    134
+   ],
+   [
+    2,
+    141
+   ],
+   [
+    2,
+    214
+   ],
+   [
+    3,
+    119
+   ],
+   [
+    3,
+    137
+   ],
+   [
+    3,
+    144
+   ],
+   [
+    5,
+    75
+   ],
+   [
+    7,
+    38
+   ]
+  ]
+ ],
+ "خمد": [
+  2,
+  [
+   [
+    21,
+    15
+   ],
+   [
+    36,
+    29
+   ]
+  ]
+ ],
+ "خمر": [
+  7,
+  [
+   [
+    2,
+    219
+   ],
+   [
+    5,
+    90
+   ],
+   [
+    5,
+    91
+   ],
+   [
+    12,
+    36
+   ],
+   [
+    12,
+    41
+   ],
+   [
+    24,
+    31
+   ],
+   [
+    47,
+    15
+   ]
+  ]
+ ],
+ "خمس": [
+  8,
+  [
+   [
+    3,
+    125
+   ],
+   [
+    8,
+    41
+   ],
+   [
+    18,
+    22
+   ],
+   [
+    24,
+    7
+   ],
+   [
+    24,
+    9
+   ],
+   [
+    29,
+    14
+   ],
+   [
+    58,
+    7
+   ],
+   [
+    70,
+    4
+   ]
+  ]
+ ],
+ "خمص": [
+  2,
+  [
+   [
+    5,
+    3
+   ],
+   [
+    9,
+    120
+   ]
+  ]
+ ],
+ "خنق": [
+  1,
+  [
+   [
+    5,
+    3
+   ]
+  ]
+ ],
+ "خوض": [
+  12,
+  [
+   [
+    4,
+    140
+   ],
+   [
+    6,
+    68
+   ],
+   [
+    6,
+    91
+   ],
+   [
+    9,
+    65
+   ],
+   [
+    9,
+    69
+   ],
+   [
+    43,
+    83
+   ],
+   [
+    52,
+    12
+   ],
+   [
+    70,
+    42
+   ],
+   [
+    74,
+    45
+   ]
+  ]
+ ],
+ "خوف": [
+  124,
+  [
+   [
+    2,
+    38
+   ],
+   [
+    2,
+    62
+   ],
+   [
+    2,
+    112
+   ],
+   [
+    2,
+    114
+   ],
+   [
+    2,
+    155
+   ],
+   [
+    2,
+    182
+   ],
+   [
+    2,
+    229
+   ],
+   [
+    2,
+    239
+   ],
+   [
+    2,
+    262
+   ],
+   [
+    2,
+    274
+   ]
+  ]
+ ],
+ "خول": [
+  8,
+  [
+   [
+    4,
+    23
+   ],
+   [
+    6,
+    94
+   ],
+   [
+    24,
+    61
+   ],
+   [
+    33,
+    50
+   ],
+   [
+    39,
+    8
+   ],
+   [
+    39,
+    49
+   ]
+  ]
+ ],
+ "خون": [
+  16,
+  [
+   [
+    2,
+    187
+   ],
+   [
+    4,
+    105
+   ],
+   [
+    4,
+    107
+   ],
+   [
+    5,
+    13
+   ],
+   [
+    8,
+    27
+   ],
+   [
+    8,
+    58
+   ],
+   [
+    8,
+    71
+   ],
+   [
+    12,
+    52
+   ],
+   [
+    22,
+    38
+   ],
+   [
+    40,
+    19
+   ]
+  ]
+ ],
+ "خير": [
+  196,
+  [
+   [
+    2,
+    54
+   ],
+   [
+    2,
+    61
+   ],
+   [
+    2,
+    103
+   ],
+   [
+    2,
+    105
+   ],
+   [
+    2,
+    106
+   ],
+   [
+    2,
+    110
+   ],
+   [
+    2,
+    148
+   ],
+   [
+    2,
+    158
+   ],
+   [
+    2,
+    180
+   ],
+   [
+    2,
+    184
+   ]
+  ]
+ ],
+ "خيط": [
+  3,
+  [
+   [
+    2,
+    187
+   ],
+   [
+    7,
+    40
+   ]
+  ]
+ ],
+ "خيل": [
+  9,
+  [
+   [
+    3,
+    14
+   ],
+   [
+    4,
+    36
+   ],
+   [
+    8,
+    60
+   ],
+   [
+    16,
+    8
+   ],
+   [
+    17,
+    64
+   ],
+   [
+    20,
+    66
+   ],
+   [
+    31,
+    18
+   ],
+   [
+    57,
+    23
+   ],
+   [
+    59,
+    6
+   ]
+  ]
+ ],
+ "خيم": [
+  1,
+  [
+   [
+    55,
+    72
+   ]
+  ]
+ ],
+ "دأب": [
+  6,
+  [
+   [
+    3,
+    11
+   ],
+   [
+    8,
+    52
+   ],
+   [
+    8,
+    54
+   ],
+   [
+    12,
+    47
+   ],
+   [
+    14,
+    33
+   ],
+   [
+    40,
+    31
+   ]
+  ]
+ ],
+ "دبب": [
+  18,
+  [
+   [
+    2,
+    164
+   ],
+   [
+    6,
+    38
+   ],
+   [
+    8,
+    22
+   ],
+   [
+    8,
+    55
+   ],
+   [
+    11,
+    6
+   ],
+   [
+    11,
+    56
+   ],
+   [
+    16,
+    49
+   ],
+   [
+    16,
+    61
+   ],
+   [
+    22,
+    18
+   ],
+   [
+    24,
+    45
+   ]
+  ]
+ ],
+ "دثر": [
+  1,
+  [
+   [
+    74,
+    1
+   ]
+  ]
+ ],
+ "دحض": [
+  4,
+  [
+   [
+    18,
+    56
+   ],
+   [
+    37,
+    141
+   ],
+   [
+    40,
+    5
+   ],
+   [
+    42,
+    16
+   ]
+  ]
+ ],
+ "دخل": [
+  126,
+  [
+   [
+    2,
+    58
+   ],
+   [
+    2,
+    111
+   ],
+   [
+    2,
+    114
+   ],
+   [
+    2,
+    208
+   ],
+   [
+    2,
+    214
+   ],
+   [
+    3,
+    37
+   ],
+   [
+    3,
+    97
+   ],
+   [
+    3,
+    142
+   ],
+   [
+    3,
+    185
+   ],
+   [
+    3,
+    192
+   ]
+  ]
+ ],
+ "دخن": [
+  2,
+  [
+   [
+    41,
+    11
+   ],
+   [
+    44,
+    10
+   ]
+  ]
+ ],
+ "درج": [
+  20,
+  [
+   [
+    2,
+    228
+   ],
+   [
+    2,
+    253
+   ],
+   [
+    3,
+    163
+   ],
+   [
+    4,
+    95
+   ],
+   [
+    4,
+    96
+   ],
+   [
+    6,
+    83
+   ],
+   [
+    6,
+    132
+   ],
+   [
+    6,
+    165
+   ],
+   [
+    7,
+    182
+   ],
+   [
+    8,
+    4
+   ]
+  ]
+ ],
+ "درس": [
+  6,
+  [
+   [
+    3,
+    79
+   ],
+   [
+    6,
+    105
+   ],
+   [
+    6,
+    156
+   ],
+   [
+    7,
+    169
+   ],
+   [
+    34,
+    44
+   ],
+   [
+    68,
+    37
+   ]
+  ]
+ ],
+ "درك": [
+  12,
+  [
+   [
+    4,
+    78
+   ],
+   [
+    4,
+    100
+   ],
+   [
+    4,
+    145
+   ],
+   [
+    6,
+    103
+   ],
+   [
+    7,
+    38
+   ],
+   [
+    10,
+    90
+   ],
+   [
+    20,
+    77
+   ],
+   [
+    26,
+    61
+   ],
+   [
+    27,
+    66
+   ],
+   [
+    36,
+    40
+   ]
+  ]
+ ],
+ "دري": [
+  29,
+  [
+   [
+    4,
+    11
+   ],
+   [
+    10,
+    16
+   ],
+   [
+    21,
+    109
+   ],
+   [
+    21,
+    111
+   ],
+   [
+    31,
+    34
+   ],
+   [
+    33,
+    63
+   ],
+   [
+    42,
+    17
+   ],
+   [
+    42,
+    52
+   ],
+   [
+    45,
+    32
+   ],
+   [
+    46,
+    9
+   ]
+  ]
+ ],
+ "دعو": [
+  212,
+  [
+   [
+    2,
+    23
+   ],
+   [
+    2,
+    61
+   ],
+   [
+    2,
+    68
+   ],
+   [
+    2,
+    69
+   ],
+   [
+    2,
+    70
+   ],
+   [
+    2,
+    171
+   ],
+   [
+    2,
+    186
+   ],
+   [
+    2,
+    221
+   ],
+   [
+    2,
+    260
+   ],
+   [
+    2,
+    282
+   ]
+  ]
+ ],
+ "دفأ": [
+  1,
+  [
+   [
+    16,
+    5
+   ]
+  ]
+ ],
+ "دفع": [
+  10,
+  [
+   [
+    2,
+    251
+   ],
+   [
+    3,
+    167
+   ],
+   [
+    4,
+    6
+   ],
+   [
+    22,
+    38
+   ],
+   [
+    22,
+    40
+   ],
+   [
+    23,
+    96
+   ],
+   [
+    41,
+    34
+   ],
+   [
+    52,
+    8
+   ],
+   [
+    70,
+    2
+   ]
+  ]
+ ],
+ "دفق": [
+  1,
+  [
+   [
+    86,
+    6
+   ]
+  ]
+ ],
+ "دلل": [
+  8,
+  [
+   [
+    7,
+    22
+   ],
+   [
+    20,
+    40
+   ],
+   [
+    20,
+    120
+   ],
+   [
+    25,
+    45
+   ],
+   [
+    28,
+    12
+   ],
+   [
+    34,
+    7
+   ],
+   [
+    34,
+    14
+   ],
+   [
+    61,
+    10
+   ]
+  ]
+ ],
+ "دلو": [
+  4,
+  [
+   [
+    2,
+    188
+   ],
+   [
+    12,
+    19
+   ],
+   [
+    53,
+    8
+   ]
+  ]
+ ],
+ "دمع": [
+  2,
+  [
+   [
+    5,
+    83
+   ],
+   [
+    9,
+    92
+   ]
+  ]
+ ],
+ "دنو": [
+  133,
+  [
+   [
+    2,
+    61
+   ],
+   [
+    2,
+    85
+   ],
+   [
+    2,
+    86
+   ],
+   [
+    2,
+    114
+   ],
+   [
+    2,
+    130
+   ],
+   [
+    2,
+    200
+   ],
+   [
+    2,
+    201
+   ],
+   [
+    2,
+    204
+   ],
+   [
+    2,
+    212
+   ],
+   [
+    2,
+    217
+   ]
+  ]
+ ],
+ "دهن": [
+  5,
+  [
+   [
+    23,
+    20
+   ],
+   [
+    55,
+    37
+   ],
+   [
+    56,
+    81
+   ],
+   [
+    68,
+    9
+   ]
+  ]
+ ],
+ "دهي": [
+  1,
+  [
+   [
+    54,
+    46
+   ]
+  ]
+ ],
+ "دور": [
+  55,
+  [
+   [
+    2,
+    84
+   ],
+   [
+    2,
+    85
+   ],
+   [
+    2,
+    94
+   ],
+   [
+    2,
+    243
+   ],
+   [
+    2,
+    246
+   ],
+   [
+    2,
+    282
+   ],
+   [
+    3,
+    195
+   ],
+   [
+    4,
+    66
+   ],
+   [
+    5,
+    52
+   ],
+   [
+    6,
+    32
+   ]
+  ]
+ ],
+ "دول": [
+  2,
+  [
+   [
+    3,
+    140
+   ],
+   [
+    59,
+    7
+   ]
+  ]
+ ],
+ "دوم": [
+  9,
+  [
+   [
+    3,
+    75
+   ],
+   [
+    5,
+    24
+   ],
+   [
+    5,
+    96
+   ],
+   [
+    5,
+    117
+   ],
+   [
+    11,
+    107
+   ],
+   [
+    11,
+    108
+   ],
+   [
+    13,
+    35
+   ],
+   [
+    19,
+    31
+   ],
+   [
+    70,
+    23
+   ]
+  ]
+ ],
+ "دون": [
+  144,
+  [
+   [
+    2,
+    23
+   ],
+   [
+    2,
+    94
+   ],
+   [
+    2,
+    107
+   ],
+   [
+    2,
+    165
+   ],
+   [
+    3,
+    28
+   ],
+   [
+    3,
+    64
+   ],
+   [
+    3,
+    79
+   ],
+   [
+    3,
+    118
+   ],
+   [
+    4,
+    48
+   ],
+   [
+    4,
+    116
+   ]
+  ]
+ ],
+ "دين": [
+  101,
+  [
+   [
+    1,
+    4
+   ],
+   [
+    2,
+    132
+   ],
+   [
+    2,
+    193
+   ],
+   [
+    2,
+    217
+   ],
+   [
+    2,
+    256
+   ],
+   [
+    2,
+    282
+   ],
+   [
+    3,
+    19
+   ],
+   [
+    3,
+    24
+   ],
+   [
+    3,
+    73
+   ],
+   [
+    3,
+    83
+   ]
+  ]
+ ],
+ "ذبب": [
+  2,
+  [
+   [
+    22,
+    73
+   ]
+  ]
+ ],
+ "ذبح": [
+  9,
+  [
+   [
+    2,
+    49
+   ],
+   [
+    2,
+    67
+   ],
+   [
+    2,
+    71
+   ],
+   [
+    5,
+    3
+   ],
+   [
+    14,
+    6
+   ],
+   [
+    27,
+    21
+   ],
+   [
+    28,
+    4
+   ],
+   [
+    37,
+    102
+   ],
+   [
+    37,
+    107
+   ]
+  ]
+ ],
+ "ذخر": [
+  1,
+  [
+   [
+    3,
+    49
+   ]
+  ]
+ ],
+ "ذرر": [
+  38,
+  [
+   [
+    2,
+    124
+   ],
+   [
+    2,
+    128
+   ],
+   [
+    2,
+    266
+   ],
+   [
+    3,
+    34
+   ],
+   [
+    3,
+    36
+   ],
+   [
+    3,
+    38
+   ],
+   [
+    4,
+    9
+   ],
+   [
+    4,
+    40
+   ],
+   [
+    6,
+    84
+   ],
+   [
+    6,
+    87
+   ]
+  ]
+ ],
+ "ذرع": [
+  5,
+  [
+   [
+    11,
+    77
+   ],
+   [
+    18,
+    18
+   ],
+   [
+    29,
+    33
+   ],
+   [
+    69,
+    32
+   ]
+  ]
+ ],
+ "ذرو": [
+  3,
+  [
+   [
+    18,
+    45
+   ],
+   [
+    51,
+    1
+   ]
+  ]
+ ],
+ "ذكر": [
+  292,
+  [
+   [
+    2,
+    40
+   ],
+   [
+    2,
+    47
+   ],
+   [
+    2,
+    63
+   ],
+   [
+    2,
+    114
+   ],
+   [
+    2,
+    122
+   ],
+   [
+    2,
+    152
+   ],
+   [
+    2,
+    198
+   ],
+   [
+    2,
+    200
+   ],
+   [
+    2,
+    203
+   ],
+   [
+    2,
+    221
+   ]
+  ]
+ ],
+ "ذمم": [
+  5,
+  [
+   [
+    9,
+    8
+   ],
+   [
+    9,
+    10
+   ],
+   [
+    17,
+    18
+   ],
+   [
+    17,
+    22
+   ],
+   [
+    68,
+    49
+   ]
+  ]
+ ],
+ "ذنب": [
+  39,
+  [
+   [
+    3,
+    11
+   ],
+   [
+    3,
+    16
+   ],
+   [
+    3,
+    31
+   ],
+   [
+    3,
+    135
+   ],
+   [
+    3,
+    147
+   ],
+   [
+    3,
+    193
+   ],
+   [
+    5,
+    18
+   ],
+   [
+    5,
+    49
+   ],
+   [
+    6,
+    6
+   ],
+   [
+    7,
+    100
+   ]
+  ]
+ ],
+ "ذهب": [
+  56,
+  [
+   [
+    2,
+    17
+   ],
+   [
+    2,
+    20
+   ],
+   [
+    3,
+    14
+   ],
+   [
+    3,
+    91
+   ],
+   [
+    4,
+    19
+   ],
+   [
+    4,
+    133
+   ],
+   [
+    5,
+    24
+   ],
+   [
+    6,
+    133
+   ],
+   [
+    8,
+    11
+   ],
+   [
+    8,
+    46
+   ]
+  ]
+ ],
+ "ذوق": [
+  63,
+  [
+   [
+    3,
+    106
+   ],
+   [
+    3,
+    181
+   ],
+   [
+    3,
+    185
+   ],
+   [
+    4,
+    56
+   ],
+   [
+    5,
+    95
+   ],
+   [
+    6,
+    30
+   ],
+   [
+    6,
+    65
+   ],
+   [
+    6,
+    148
+   ],
+   [
+    7,
+    22
+   ],
+   [
+    7,
+    39
+   ]
+  ]
+ ],
+ "ذيع": [
+  1,
+  [
+   [
+    4,
+    83
+   ]
+  ]
+ ],
+ "رأس": [
+  18,
+  [
+   [
+    2,
+    196
+   ],
+   [
+    2,
+    279
+   ],
+   [
+    5,
+    6
+   ],
+   [
+    7,
+    150
+   ],
+   [
+    12,
+    36
+   ],
+   [
+    12,
+    41
+   ],
+   [
+    14,
+    43
+   ],
+   [
+    17,
+    51
+   ],
+   [
+    19,
+    4
+   ],
+   [
+    20,
+    94
+   ]
+  ]
+ ],
+ "رأي": [
+  328,
+  [
+   [
+    2,
+    55
+   ],
+   [
+    2,
+    73
+   ],
+   [
+    2,
+    128
+   ],
+   [
+    2,
+    144
+   ],
+   [
+    2,
+    165
+   ],
+   [
+    2,
+    166
+   ],
+   [
+    2,
+    167
+   ],
+   [
+    2,
+    243
+   ],
+   [
+    2,
+    246
+   ],
+   [
+    2,
+    258
+   ]
+  ]
+ ],
+ "ربب": [
+  980,
+  [
+   [
+    1,
+    2
+   ],
+   [
+    2,
+    5
+   ],
+   [
+    2,
+    21
+   ],
+   [
+    2,
+    26
+   ],
+   [
+    2,
+    30
+   ],
+   [
+    2,
+    37
+   ],
+   [
+    2,
+    46
+   ],
+   [
+    2,
+    49
+   ],
+   [
+    2,
+    61
+   ],
+   [
+    2,
+    62
+   ]
+  ]
+ ],
+ "ربط": [
+  5,
+  [
+   [
+    3,
+    200
+   ],
+   [
+    8,
+    11
+   ],
+   [
+    8,
+    60
+   ],
+   [
+    18,
+    14
+   ],
+   [
+    28,
+    10
+   ]
+  ]
+ ],
+ "ربع": [
+  22,
+  [
+   [
+    2,
+    51
+   ],
+   [
+    2,
+    226
+   ],
+   [
+    2,
+    234
+   ],
+   [
+    2,
+    260
+   ],
+   [
+    4,
+    3
+   ],
+   [
+    4,
+    12
+   ],
+   [
+    4,
+    15
+   ],
+   [
+    5,
+    26
+   ],
+   [
+    7,
+    142
+   ],
+   [
+    9,
+    2
+   ]
+  ]
+ ],
+ "ربو": [
+  20,
+  [
+   [
+    2,
+    265
+   ],
+   [
+    2,
+    275
+   ],
+   [
+    2,
+    276
+   ],
+   [
+    2,
+    278
+   ],
+   [
+    3,
+    130
+   ],
+   [
+    4,
+    161
+   ],
+   [
+    13,
+    17
+   ],
+   [
+    16,
+    92
+   ],
+   [
+    17,
+    24
+   ],
+   [
+    22,
+    5
+   ]
+  ]
+ ],
+ "رجع": [
+  104,
+  [
+   [
+    2,
+    18
+   ],
+   [
+    2,
+    28
+   ],
+   [
+    2,
+    46
+   ],
+   [
+    2,
+    156
+   ],
+   [
+    2,
+    196
+   ],
+   [
+    2,
+    210
+   ],
+   [
+    2,
+    230
+   ],
+   [
+    2,
+    245
+   ],
+   [
+    2,
+    281
+   ],
+   [
+    3,
+    55
+   ]
+  ]
+ ],
+ "رجف": [
+  8,
+  [
+   [
+    7,
+    78
+   ],
+   [
+    7,
+    91
+   ],
+   [
+    7,
+    155
+   ],
+   [
+    29,
+    37
+   ],
+   [
+    33,
+    60
+   ],
+   [
+    73,
+    14
+   ],
+   [
+    79,
+    6
+   ]
+  ]
+ ],
+ "رجل": [
+  73,
+  [
+   [
+    2,
+    228
+   ],
+   [
+    2,
+    239
+   ],
+   [
+    2,
+    282
+   ],
+   [
+    4,
+    1
+   ],
+   [
+    4,
+    7
+   ],
+   [
+    4,
+    12
+   ],
+   [
+    4,
+    32
+   ],
+   [
+    4,
+    34
+   ],
+   [
+    4,
+    75
+   ],
+   [
+    4,
+    98
+   ]
+  ]
+ ],
+ "رجو": [
+  28,
+  [
+   [
+    2,
+    218
+   ],
+   [
+    4,
+    104
+   ],
+   [
+    7,
+    111
+   ],
+   [
+    9,
+    106
+   ],
+   [
+    10,
+    7
+   ],
+   [
+    10,
+    11
+   ],
+   [
+    10,
+    15
+   ],
+   [
+    11,
+    62
+   ],
+   [
+    17,
+    28
+   ],
+   [
+    17,
+    57
+   ]
+  ]
+ ],
+ "رحب": [
+  4,
+  [
+   [
+    9,
+    25
+   ],
+   [
+    9,
+    118
+   ],
+   [
+    38,
+    59
+   ],
+   [
+    38,
+    60
+   ]
+  ]
+ ],
+ "رحل": [
+  4,
+  [
+   [
+    12,
+    62
+   ],
+   [
+    12,
+    70
+   ],
+   [
+    12,
+    75
+   ],
+   [
+    106,
+    2
+   ]
+  ]
+ ],
+ "رحم": [
+  339,
+  [
+   [
+    1,
+    1
+   ],
+   [
+    1,
+    3
+   ],
+   [
+    2,
+    37
+   ],
+   [
+    2,
+    54
+   ],
+   [
+    2,
+    64
+   ],
+   [
+    2,
+    105
+   ],
+   [
+    2,
+    128
+   ],
+   [
+    2,
+    143
+   ],
+   [
+    2,
+    157
+   ],
+   [
+    2,
+    160
+   ]
+  ]
+ ],
+ "ردأ": [
+  1,
+  [
+   [
+    28,
+    34
+   ]
+  ]
+ ],
+ "ردد": [
+  59,
+  [
+   [
+    2,
+    85
+   ],
+   [
+    2,
+    109
+   ],
+   [
+    2,
+    217
+   ],
+   [
+    2,
+    228
+   ],
+   [
+    3,
+    100
+   ],
+   [
+    3,
+    149
+   ],
+   [
+    4,
+    47
+   ],
+   [
+    4,
+    59
+   ],
+   [
+    4,
+    83
+   ],
+   [
+    4,
+    86
+   ]
+  ]
+ ],
+ "ردف": [
+  3,
+  [
+   [
+    8,
+    9
+   ],
+   [
+    27,
+    72
+   ],
+   [
+    79,
+    7
+   ]
+  ]
+ ],
+ "ردي": [
+  6,
+  [
+   [
+    5,
+    3
+   ],
+   [
+    6,
+    137
+   ],
+   [
+    20,
+    16
+   ],
+   [
+    37,
+    56
+   ],
+   [
+    41,
+    23
+   ],
+   [
+    92,
+    11
+   ]
+  ]
+ ],
+ "رذل": [
+  4,
+  [
+   [
+    11,
+    27
+   ],
+   [
+    16,
+    70
+   ],
+   [
+    22,
+    5
+   ],
+   [
+    26,
+    111
+   ]
+  ]
+ ],
+ "رسخ": [
+  2,
+  [
+   [
+    3,
+    7
+   ],
+   [
+    4,
+    162
+   ]
+  ]
+ ],
+ "رسل": [
+  513,
+  [
+   [
+    2,
+    87
+   ],
+   [
+    2,
+    98
+   ],
+   [
+    2,
+    101
+   ],
+   [
+    2,
+    108
+   ],
+   [
+    2,
+    119
+   ],
+   [
+    2,
+    129
+   ],
+   [
+    2,
+    143
+   ],
+   [
+    2,
+    151
+   ],
+   [
+    2,
+    214
+   ],
+   [
+    2,
+    252
+   ]
+  ]
+ ],
+ "رشد": [
+  19,
+  [
+   [
+    2,
+    186
+   ],
+   [
+    2,
+    256
+   ],
+   [
+    4,
+    6
+   ],
+   [
+    7,
+    146
+   ],
+   [
+    11,
+    78
+   ],
+   [
+    11,
+    87
+   ],
+   [
+    11,
+    97
+   ],
+   [
+    18,
+    10
+   ],
+   [
+    18,
+    17
+   ],
+   [
+    18,
+    24
+   ]
+  ]
+ ],
+ "رصد": [
+  6,
+  [
+   [
+    9,
+    5
+   ],
+   [
+    9,
+    107
+   ],
+   [
+    72,
+    9
+   ],
+   [
+    72,
+    27
+   ],
+   [
+    78,
+    21
+   ],
+   [
+    89,
+    14
+   ]
+  ]
+ ],
+ "رصص": [
+  1,
+  [
+   [
+    61,
+    4
+   ]
+  ]
+ ],
+ "رعي": [
+  10,
+  [
+   [
+    2,
+    104
+   ],
+   [
+    4,
+    46
+   ],
+   [
+    20,
+    54
+   ],
+   [
+    23,
+    8
+   ],
+   [
+    28,
+    23
+   ],
+   [
+    57,
+    27
+   ],
+   [
+    70,
+    32
+   ],
+   [
+    79,
+    31
+   ],
+   [
+    87,
+    4
+   ]
+  ]
+ ],
+ "رغب": [
+  8,
+  [
+   [
+    2,
+    130
+   ],
+   [
+    4,
+    127
+   ],
+   [
+    9,
+    59
+   ],
+   [
+    9,
+    120
+   ],
+   [
+    19,
+    46
+   ],
+   [
+    21,
+    90
+   ],
+   [
+    68,
+    32
+   ],
+   [
+    94,
+    8
+   ]
+  ]
+ ],
+ "رغد": [
+  3,
+  [
+   [
+    2,
+    35
+   ],
+   [
+    2,
+    58
+   ],
+   [
+    16,
+    112
+   ]
+  ]
+ ],
+ "رغم": [
+  1,
+  [
+   [
+    4,
+    100
+   ]
+  ]
+ ],
+ "رفث": [
+  2,
+  [
+   [
+    2,
+    187
+   ],
+   [
+    2,
+    197
+   ]
+  ]
+ ],
+ "رفع": [
+  29,
+  [
+   [
+    2,
+    63
+   ],
+   [
+    2,
+    93
+   ],
+   [
+    2,
+    127
+   ],
+   [
+    2,
+    253
+   ],
+   [
+    3,
+    55
+   ],
+   [
+    4,
+    154
+   ],
+   [
+    4,
+    158
+   ],
+   [
+    6,
+    83
+   ],
+   [
+    6,
+    165
+   ],
+   [
+    7,
+    176
+   ]
+  ]
+ ],
+ "رفق": [
+  5,
+  [
+   [
+    4,
+    69
+   ],
+   [
+    5,
+    6
+   ],
+   [
+    18,
+    16
+   ],
+   [
+    18,
+    29
+   ],
+   [
+    18,
+    31
+   ]
+  ]
+ ],
+ "رقب": [
+  24,
+  [
+   [
+    2,
+    177
+   ],
+   [
+    4,
+    1
+   ],
+   [
+    4,
+    92
+   ],
+   [
+    5,
+    89
+   ],
+   [
+    5,
+    117
+   ],
+   [
+    9,
+    8
+   ],
+   [
+    9,
+    10
+   ],
+   [
+    9,
+    60
+   ],
+   [
+    11,
+    93
+   ],
+   [
+    20,
+    94
+   ]
+  ]
+ ],
+ "رقد": [
+  2,
+  [
+   [
+    18,
+    18
+   ],
+   [
+    36,
+    52
+   ]
+  ]
+ ],
+ "رقم": [
+  3,
+  [
+   [
+    18,
+    9
+   ],
+   [
+    83,
+    9
+   ],
+   [
+    83,
+    20
+   ]
+  ]
+ ],
+ "رقي": [
+  4,
+  [
+   [
+    17,
+    93
+   ],
+   [
+    38,
+    10
+   ],
+   [
+    75,
+    27
+   ]
+  ]
+ ],
+ "ركب": [
+  15,
+  [
+   [
+    2,
+    239
+   ],
+   [
+    6,
+    99
+   ],
+   [
+    8,
+    42
+   ],
+   [
+    11,
+    41
+   ],
+   [
+    11,
+    42
+   ],
+   [
+    16,
+    8
+   ],
+   [
+    18,
+    71
+   ],
+   [
+    29,
+    65
+   ],
+   [
+    36,
+    42
+   ],
+   [
+    36,
+    72
+   ]
+  ]
+ ],
+ "ركز": [
+  1,
+  [
+   [
+    19,
+    98
+   ]
+  ]
+ ],
+ "ركض": [
+  3,
+  [
+   [
+    21,
+    12
+   ],
+   [
+    21,
+    13
+   ],
+   [
+    38,
+    42
+   ]
+  ]
+ ],
+ "ركع": [
+  13,
+  [
+   [
+    2,
+    43
+   ],
+   [
+    2,
+    125
+   ],
+   [
+    3,
+    43
+   ],
+   [
+    5,
+    55
+   ],
+   [
+    9,
+    112
+   ],
+   [
+    22,
+    26
+   ],
+   [
+    22,
+    77
+   ],
+   [
+    38,
+    24
+   ],
+   [
+    48,
+    29
+   ],
+   [
+    77,
+    48
+   ]
+  ]
+ ],
+ "ركن": [
+  4,
+  [
+   [
+    11,
+    80
+   ],
+   [
+    11,
+    113
+   ],
+   [
+    17,
+    74
+   ],
+   [
+    51,
+    39
+   ]
+  ]
+ ],
+ "رمح": [
+  1,
+  [
+   [
+    5,
+    94
+   ]
+  ]
+ ],
+ "رمز": [
+  1,
+  [
+   [
+    3,
+    41
+   ]
+  ]
+ ],
+ "رمي": [
+  9,
+  [
+   [
+    4,
+    112
+   ],
+   [
+    8,
+    17
+   ],
+   [
+    24,
+    4
+   ],
+   [
+    24,
+    6
+   ],
+   [
+    24,
+    23
+   ],
+   [
+    77,
+    32
+   ],
+   [
+    105,
+    4
+   ]
+  ]
+ ],
+ "رهب": [
+  12,
+  [
+   [
+    2,
+    40
+   ],
+   [
+    5,
+    82
+   ],
+   [
+    7,
+    116
+   ],
+   [
+    7,
+    154
+   ],
+   [
+    8,
+    60
+   ],
+   [
+    9,
+    31
+   ],
+   [
+    9,
+    34
+   ],
+   [
+    16,
+    51
+   ],
+   [
+    21,
+    90
+   ],
+   [
+    28,
+    32
+   ]
+  ]
+ ],
+ "رهق": [
+  10,
+  [
+   [
+    10,
+    26
+   ],
+   [
+    10,
+    27
+   ],
+   [
+    18,
+    73
+   ],
+   [
+    18,
+    80
+   ],
+   [
+    68,
+    43
+   ],
+   [
+    70,
+    44
+   ],
+   [
+    72,
+    6
+   ],
+   [
+    72,
+    13
+   ],
+   [
+    74,
+    17
+   ],
+   [
+    80,
+    41
+   ]
+  ]
+ ],
+ "روح": [
+  57,
+  [
+   [
+    2,
+    87
+   ],
+   [
+    2,
+    164
+   ],
+   [
+    2,
+    253
+   ],
+   [
+    3,
+    117
+   ],
+   [
+    4,
+    171
+   ],
+   [
+    5,
+    110
+   ],
+   [
+    7,
+    57
+   ],
+   [
+    8,
+    46
+   ],
+   [
+    10,
+    22
+   ],
+   [
+    12,
+    87
+   ]
+  ]
+ ],
+ "رود": [
+  148,
+  [
+   [
+    2,
+    26
+   ],
+   [
+    2,
+    108
+   ],
+   [
+    2,
+    185
+   ],
+   [
+    2,
+    228
+   ],
+   [
+    2,
+    233
+   ],
+   [
+    2,
+    253
+   ],
+   [
+    3,
+    108
+   ],
+   [
+    3,
+    145
+   ],
+   [
+    3,
+    152
+   ],
+   [
+    3,
+    176
+   ]
+  ]
+ ],
+ "روض": [
+  2,
+  [
+   [
+    30,
+    15
+   ],
+   [
+    42,
+    22
+   ]
+  ]
+ ],
+ "روع": [
+  1,
+  [
+   [
+    11,
+    74
+   ]
+  ]
+ ],
+ "ريب": [
+  36,
+  [
+   [
+    2,
+    2
+   ],
+   [
+    2,
+    23
+   ],
+   [
+    2,
+    282
+   ],
+   [
+    3,
+    9
+   ],
+   [
+    3,
+    25
+   ],
+   [
+    4,
+    87
+   ],
+   [
+    5,
+    106
+   ],
+   [
+    6,
+    12
+   ],
+   [
+    9,
+    45
+   ],
+   [
+    9,
+    110
+   ]
+  ]
+ ],
+ "ريع": [
+  1,
+  [
+   [
+    26,
+    128
+   ]
+  ]
+ ],
+ "زجر": [
+  6,
+  [
+   [
+    37,
+    2
+   ],
+   [
+    37,
+    19
+   ],
+   [
+    54,
+    4
+   ],
+   [
+    54,
+    9
+   ],
+   [
+    79,
+    13
+   ]
+  ]
+ ],
+ "زخرف": [
+  4,
+  [
+   [
+    6,
+    112
+   ],
+   [
+    10,
+    24
+   ],
+   [
+    17,
+    93
+   ],
+   [
+    43,
+    35
+   ]
+  ]
+ ],
+ "زرع": [
+  14,
+  [
+   [
+    6,
+    141
+   ],
+   [
+    12,
+    47
+   ],
+   [
+    13,
+    4
+   ],
+   [
+    14,
+    37
+   ],
+   [
+    16,
+    11
+   ],
+   [
+    18,
+    32
+   ],
+   [
+    26,
+    148
+   ],
+   [
+    32,
+    27
+   ],
+   [
+    39,
+    21
+   ],
+   [
+    44,
+    26
+   ]
+  ]
+ ],
+ "زرق": [
+  1,
+  [
+   [
+    20,
+    102
+   ]
+  ]
+ ],
+ "زعم": [
+  17,
+  [
+   [
+    4,
+    60
+   ],
+   [
+    6,
+    22
+   ],
+   [
+    6,
+    94
+   ],
+   [
+    6,
+    136
+   ],
+   [
+    6,
+    138
+   ],
+   [
+    12,
+    72
+   ],
+   [
+    17,
+    56
+   ],
+   [
+    17,
+    92
+   ],
+   [
+    18,
+    48
+   ],
+   [
+    18,
+    52
+   ]
+  ]
+ ],
+ "زفف": [
+  1,
+  [
+   [
+    37,
+    94
+   ]
+  ]
+ ],
+ "زلزل": [
+  6,
+  [
+   [
+    2,
+    214
+   ],
+   [
+    22,
+    1
+   ],
+   [
+    33,
+    11
+   ],
+   [
+    99,
+    1
+   ]
+  ]
+ ],
+ "زمل": [
+  1,
+  [
+   [
+    73,
+    1
+   ]
+  ]
+ ],
+ "زني": [
+  9,
+  [
+   [
+    17,
+    32
+   ],
+   [
+    24,
+    2
+   ],
+   [
+    24,
+    3
+   ],
+   [
+    25,
+    68
+   ],
+   [
+    60,
+    12
+   ]
+  ]
+ ],
+ "زهر": [
+  1,
+  [
+   [
+    20,
+    131
+   ]
+  ]
+ ],
+ "زوج": [
+  81,
+  [
+   [
+    2,
+    25
+   ],
+   [
+    2,
+    35
+   ],
+   [
+    2,
+    102
+   ],
+   [
+    2,
+    230
+   ],
+   [
+    2,
+    232
+   ],
+   [
+    2,
+    234
+   ],
+   [
+    2,
+    240
+   ],
+   [
+    3,
+    15
+   ],
+   [
+    4,
+    1
+   ],
+   [
+    4,
+    12
+   ]
+  ]
+ ],
+ "زور": [
+  6,
+  [
+   [
+    18,
+    17
+   ],
+   [
+    22,
+    30
+   ],
+   [
+    25,
+    4
+   ],
+   [
+    25,
+    72
+   ],
+   [
+    58,
+    2
+   ],
+   [
+    102,
+    2
+   ]
+  ]
+ ],
+ "زول": [
+  4,
+  [
+   [
+    14,
+    44
+   ],
+   [
+    14,
+    46
+   ],
+   [
+    35,
+    41
+   ]
+  ]
+ ],
+ "زيت": [
+  7,
+  [
+   [
+    6,
+    99
+   ],
+   [
+    6,
+    141
+   ],
+   [
+    16,
+    11
+   ],
+   [
+    24,
+    35
+   ],
+   [
+    80,
+    29
+   ],
+   [
+    95,
+    1
+   ]
+  ]
+ ],
+ "زيد": [
+  61,
+  [
+   [
+    2,
+    10
+   ],
+   [
+    2,
+    58
+   ],
+   [
+    2,
+    247
+   ],
+   [
+    3,
+    90
+   ],
+   [
+    3,
+    173
+   ],
+   [
+    3,
+    178
+   ],
+   [
+    4,
+    137
+   ],
+   [
+    4,
+    173
+   ],
+   [
+    5,
+    64
+   ],
+   [
+    5,
+    68
+   ]
+  ]
+ ],
+ "سأل": [
+  129,
+  [
+   [
+    2,
+    61
+   ],
+   [
+    2,
+    108
+   ],
+   [
+    2,
+    119
+   ],
+   [
+    2,
+    134
+   ],
+   [
+    2,
+    141
+   ],
+   [
+    2,
+    177
+   ],
+   [
+    2,
+    186
+   ],
+   [
+    2,
+    189
+   ],
+   [
+    2,
+    211
+   ],
+   [
+    2,
+    215
+   ]
+  ]
+ ],
+ "سأم": [
+  3,
+  [
+   [
+    2,
+    282
+   ],
+   [
+    41,
+    38
+   ],
+   [
+    41,
+    49
+   ]
+  ]
+ ],
+ "سبب": [
+  11,
+  [
+   [
+    2,
+    166
+   ],
+   [
+    6,
+    108
+   ],
+   [
+    18,
+    84
+   ],
+   [
+    18,
+    85
+   ],
+   [
+    18,
+    89
+   ],
+   [
+    18,
+    92
+   ],
+   [
+    22,
+    15
+   ],
+   [
+    38,
+    10
+   ],
+   [
+    40,
+    36
+   ],
+   [
+    40,
+    37
+   ]
+  ]
+ ],
+ "سبح": [
+  92,
+  [
+   [
+    2,
+    30
+   ],
+   [
+    2,
+    32
+   ],
+   [
+    2,
+    116
+   ],
+   [
+    3,
+    41
+   ],
+   [
+    3,
+    191
+   ],
+   [
+    4,
+    171
+   ],
+   [
+    5,
+    116
+   ],
+   [
+    6,
+    100
+   ],
+   [
+    7,
+    143
+   ],
+   [
+    7,
+    206
+   ]
+  ]
+ ],
+ "سبع": [
+  28,
+  [
+   [
+    2,
+    29
+   ],
+   [
+    2,
+    196
+   ],
+   [
+    2,
+    261
+   ],
+   [
+    5,
+    3
+   ],
+   [
+    7,
+    155
+   ],
+   [
+    9,
+    80
+   ],
+   [
+    12,
+    43
+   ],
+   [
+    12,
+    46
+   ],
+   [
+    12,
+    47
+   ],
+   [
+    12,
+    48
+   ]
+  ]
+ ],
+ "سبق": [
+  37,
+  [
+   [
+    2,
+    148
+   ],
+   [
+    5,
+    48
+   ],
+   [
+    7,
+    80
+   ],
+   [
+    8,
+    59
+   ],
+   [
+    8,
+    68
+   ],
+   [
+    9,
+    100
+   ],
+   [
+    10,
+    19
+   ],
+   [
+    11,
+    40
+   ],
+   [
+    11,
+    110
+   ],
+   [
+    12,
+    17
+   ]
+  ]
+ ],
+ "سبل": [
+  176,
+  [
+   [
+    2,
+    108
+   ],
+   [
+    2,
+    154
+   ],
+   [
+    2,
+    177
+   ],
+   [
+    2,
+    190
+   ],
+   [
+    2,
+    195
+   ],
+   [
+    2,
+    215
+   ],
+   [
+    2,
+    217
+   ],
+   [
+    2,
+    218
+   ],
+   [
+    2,
+    244
+   ],
+   [
+    2,
+    246
+   ]
+  ]
+ ],
+ "ستت": [
+  8,
+  [
+   [
+    7,
+    54
+   ],
+   [
+    10,
+    3
+   ],
+   [
+    11,
+    7
+   ],
+   [
+    25,
+    59
+   ],
+   [
+    32,
+    4
+   ],
+   [
+    50,
+    38
+   ],
+   [
+    57,
+    4
+   ],
+   [
+    58,
+    4
+   ]
+  ]
+ ],
+ "ستر": [
+  3,
+  [
+   [
+    17,
+    45
+   ],
+   [
+    18,
+    90
+   ],
+   [
+    41,
+    22
+   ]
+  ]
+ ],
+ "سجد": [
+  92,
+  [
+   [
+    2,
+    34
+   ],
+   [
+    2,
+    58
+   ],
+   [
+    2,
+    114
+   ],
+   [
+    2,
+    125
+   ],
+   [
+    2,
+    144
+   ],
+   [
+    2,
+    149
+   ],
+   [
+    2,
+    150
+   ],
+   [
+    2,
+    187
+   ],
+   [
+    2,
+    191
+   ],
+   [
+    2,
+    196
+   ]
+  ]
+ ],
+ "سجل": [
+  4,
+  [
+   [
+    11,
+    82
+   ],
+   [
+    15,
+    74
+   ],
+   [
+    21,
+    104
+   ],
+   [
+    105,
+    4
+   ]
+  ]
+ ],
+ "سجن": [
+  12,
+  [
+   [
+    12,
+    25
+   ],
+   [
+    12,
+    32
+   ],
+   [
+    12,
+    33
+   ],
+   [
+    12,
+    35
+   ],
+   [
+    12,
+    36
+   ],
+   [
+    12,
+    39
+   ],
+   [
+    12,
+    41
+   ],
+   [
+    12,
+    42
+   ],
+   [
+    12,
+    100
+   ],
+   [
+    26,
+    29
+   ]
+  ]
+ ],
+ "سحب": [
+  11,
+  [
+   [
+    2,
+    164
+   ],
+   [
+    7,
+    57
+   ],
+   [
+    13,
+    12
+   ],
+   [
+    24,
+    40
+   ],
+   [
+    24,
+    43
+   ],
+   [
+    27,
+    88
+   ],
+   [
+    30,
+    48
+   ],
+   [
+    35,
+    9
+   ],
+   [
+    40,
+    71
+   ],
+   [
+    52,
+    44
+   ]
+  ]
+ ],
+ "سخر": [
+  42,
+  [
+   [
+    2,
+    164
+   ],
+   [
+    2,
+    212
+   ],
+   [
+    6,
+    10
+   ],
+   [
+    7,
+    54
+   ],
+   [
+    9,
+    79
+   ],
+   [
+    11,
+    38
+   ],
+   [
+    13,
+    2
+   ],
+   [
+    14,
+    32
+   ],
+   [
+    14,
+    33
+   ],
+   [
+    16,
+    12
+   ]
+  ]
+ ],
+ "سخط": [
+  4,
+  [
+   [
+    3,
+    162
+   ],
+   [
+    5,
+    80
+   ],
+   [
+    9,
+    58
+   ],
+   [
+    47,
+    28
+   ]
+  ]
+ ],
+ "سدد": [
+  6,
+  [
+   [
+    4,
+    9
+   ],
+   [
+    18,
+    93
+   ],
+   [
+    18,
+    94
+   ],
+   [
+    33,
+    70
+   ],
+   [
+    36,
+    9
+   ]
+  ]
+ ],
+ "سدس": [
+  5,
+  [
+   [
+    4,
+    11
+   ],
+   [
+    4,
+    12
+   ],
+   [
+    18,
+    22
+   ],
+   [
+    58,
+    7
+   ]
+  ]
+ ],
+ "سرج": [
+  4,
+  [
+   [
+    25,
+    61
+   ],
+   [
+    33,
+    46
+   ],
+   [
+    71,
+    16
+   ],
+   [
+    78,
+    13
+   ]
+  ]
+ ],
+ "سرح": [
+  7,
+  [
+   [
+    2,
+    229
+   ],
+   [
+    2,
+    231
+   ],
+   [
+    16,
+    6
+   ],
+   [
+    33,
+    28
+   ],
+   [
+    33,
+    49
+   ]
+  ]
+ ],
+ "سرر": [
+  44,
+  [
+   [
+    2,
+    69
+   ],
+   [
+    2,
+    77
+   ],
+   [
+    2,
+    235
+   ],
+   [
+    2,
+    274
+   ],
+   [
+    3,
+    134
+   ],
+   [
+    5,
+    52
+   ],
+   [
+    6,
+    3
+   ],
+   [
+    7,
+    95
+   ],
+   [
+    9,
+    78
+   ],
+   [
+    10,
+    54
+   ]
+  ]
+ ],
+ "سرع": [
+  23,
+  [
+   [
+    2,
+    202
+   ],
+   [
+    3,
+    19
+   ],
+   [
+    3,
+    114
+   ],
+   [
+    3,
+    133
+   ],
+   [
+    3,
+    176
+   ],
+   [
+    3,
+    199
+   ],
+   [
+    5,
+    4
+   ],
+   [
+    5,
+    41
+   ],
+   [
+    5,
+    52
+   ],
+   [
+    5,
+    62
+   ]
+  ]
+ ],
+ "سرف": [
+  23,
+  [
+   [
+    3,
+    147
+   ],
+   [
+    4,
+    6
+   ],
+   [
+    5,
+    32
+   ],
+   [
+    6,
+    141
+   ],
+   [
+    7,
+    31
+   ],
+   [
+    7,
+    81
+   ],
+   [
+    10,
+    12
+   ],
+   [
+    10,
+    83
+   ],
+   [
+    17,
+    33
+   ],
+   [
+    20,
+    127
+   ]
+  ]
+ ],
+ "سرق": [
+  9,
+  [
+   [
+    5,
+    38
+   ],
+   [
+    12,
+    70
+   ],
+   [
+    12,
+    73
+   ],
+   [
+    12,
+    77
+   ],
+   [
+    12,
+    81
+   ],
+   [
+    15,
+    18
+   ],
+   [
+    60,
+    12
+   ]
+  ]
+ ],
+ "سري": [
+  8,
+  [
+   [
+    11,
+    81
+   ],
+   [
+    15,
+    65
+   ],
+   [
+    17,
+    1
+   ],
+   [
+    19,
+    24
+   ],
+   [
+    20,
+    77
+   ],
+   [
+    26,
+    52
+   ],
+   [
+    44,
+    23
+   ],
+   [
+    89,
+    4
+   ]
+  ]
+ ],
+ "سطر": [
+  16,
+  [
+   [
+    6,
+    25
+   ],
+   [
+    8,
+    31
+   ],
+   [
+    16,
+    24
+   ],
+   [
+    17,
+    58
+   ],
+   [
+    23,
+    83
+   ],
+   [
+    25,
+    5
+   ],
+   [
+    27,
+    68
+   ],
+   [
+    33,
+    6
+   ],
+   [
+    46,
+    17
+   ],
+   [
+    52,
+    2
+   ]
+  ]
+ ],
+ "سعد": [
+  2,
+  [
+   [
+    11,
+    105
+   ],
+   [
+    11,
+    108
+   ]
+  ]
+ ],
+ "سعر": [
+  19,
+  [
+   [
+    4,
+    10
+   ],
+   [
+    4,
+    55
+   ],
+   [
+    17,
+    97
+   ],
+   [
+    22,
+    4
+   ],
+   [
+    25,
+    11
+   ],
+   [
+    31,
+    21
+   ],
+   [
+    33,
+    64
+   ],
+   [
+    34,
+    12
+   ],
+   [
+    35,
+    6
+   ],
+   [
+    42,
+    7
+   ]
+  ]
+ ],
+ "سعي": [
+  30,
+  [
+   [
+    2,
+    114
+   ],
+   [
+    2,
+    205
+   ],
+   [
+    2,
+    260
+   ],
+   [
+    5,
+    33
+   ],
+   [
+    5,
+    64
+   ],
+   [
+    17,
+    19
+   ],
+   [
+    18,
+    104
+   ],
+   [
+    20,
+    15
+   ],
+   [
+    20,
+    20
+   ],
+   [
+    20,
+    66
+   ]
+  ]
+ ],
+ "سفر": [
+  12,
+  [
+   [
+    2,
+    184
+   ],
+   [
+    2,
+    185
+   ],
+   [
+    2,
+    283
+   ],
+   [
+    4,
+    43
+   ],
+   [
+    5,
+    6
+   ],
+   [
+    9,
+    42
+   ],
+   [
+    18,
+    62
+   ],
+   [
+    34,
+    19
+   ],
+   [
+    62,
+    5
+   ],
+   [
+    74,
+    34
+   ]
+  ]
+ ],
+ "سفل": [
+  10,
+  [
+   [
+    4,
+    145
+   ],
+   [
+    8,
+    42
+   ],
+   [
+    9,
+    40
+   ],
+   [
+    11,
+    82
+   ],
+   [
+    15,
+    74
+   ],
+   [
+    33,
+    10
+   ],
+   [
+    37,
+    98
+   ],
+   [
+    41,
+    29
+   ],
+   [
+    95,
+    5
+   ]
+  ]
+ ],
+ "سفن": [
+  4,
+  [
+   [
+    18,
+    71
+   ],
+   [
+    18,
+    79
+   ],
+   [
+    29,
+    15
+   ]
+  ]
+ ],
+ "سفه": [
+  11,
+  [
+   [
+    2,
+    13
+   ],
+   [
+    2,
+    130
+   ],
+   [
+    2,
+    142
+   ],
+   [
+    2,
+    282
+   ],
+   [
+    4,
+    5
+   ],
+   [
+    6,
+    140
+   ],
+   [
+    7,
+    66
+   ],
+   [
+    7,
+    67
+   ],
+   [
+    7,
+    155
+   ],
+   [
+    72,
+    4
+   ]
+  ]
+ ],
+ "سقط": [
+  8,
+  [
+   [
+    6,
+    59
+   ],
+   [
+    7,
+    149
+   ],
+   [
+    9,
+    49
+   ],
+   [
+    17,
+    92
+   ],
+   [
+    19,
+    25
+   ],
+   [
+    26,
+    187
+   ],
+   [
+    34,
+    9
+   ],
+   [
+    52,
+    44
+   ]
+  ]
+ ],
+ "سقي": [
+  25,
+  [
+   [
+    2,
+    60
+   ],
+   [
+    2,
+    71
+   ],
+   [
+    7,
+    160
+   ],
+   [
+    9,
+    19
+   ],
+   [
+    12,
+    41
+   ],
+   [
+    12,
+    70
+   ],
+   [
+    13,
+    4
+   ],
+   [
+    14,
+    16
+   ],
+   [
+    15,
+    22
+   ],
+   [
+    16,
+    66
+   ]
+  ]
+ ],
+ "سكر": [
+  7,
+  [
+   [
+    4,
+    43
+   ],
+   [
+    15,
+    15
+   ],
+   [
+    15,
+    72
+   ],
+   [
+    16,
+    67
+   ],
+   [
+    22,
+    2
+   ],
+   [
+    50,
+    19
+   ]
+  ]
+ ],
+ "سكن": [
+  69,
+  [
+   [
+    2,
+    35
+   ],
+   [
+    2,
+    61
+   ],
+   [
+    2,
+    83
+   ],
+   [
+    2,
+    177
+   ],
+   [
+    2,
+    184
+   ],
+   [
+    2,
+    215
+   ],
+   [
+    2,
+    248
+   ],
+   [
+    3,
+    112
+   ],
+   [
+    4,
+    8
+   ],
+   [
+    4,
+    36
+   ]
+  ]
+ ],
+ "سلب": [
+  1,
+  [
+   [
+    22,
+    73
+   ]
+  ]
+ ],
+ "سلح": [
+  4,
+  [
+   [
+    4,
+    102
+   ]
+  ]
+ ],
+ "سلسل": [
+  3,
+  [
+   [
+    40,
+    71
+   ],
+   [
+    69,
+    32
+   ],
+   [
+    76,
+    4
+   ]
+  ]
+ ],
+ "سلط": [
+  39,
+  [
+   [
+    3,
+    151
+   ],
+   [
+    4,
+    90
+   ],
+   [
+    4,
+    91
+   ],
+   [
+    4,
+    144
+   ],
+   [
+    4,
+    153
+   ],
+   [
+    6,
+    81
+   ],
+   [
+    7,
+    33
+   ],
+   [
+    7,
+    71
+   ],
+   [
+    10,
+    68
+   ],
+   [
+    11,
+    96
+   ]
+  ]
+ ],
+ "سلق": [
+  1,
+  [
+   [
+    33,
+    19
+   ]
+  ]
+ ],
+ "سلك": [
+  12,
+  [
+   [
+    15,
+    12
+   ],
+   [
+    16,
+    69
+   ],
+   [
+    20,
+    53
+   ],
+   [
+    23,
+    27
+   ],
+   [
+    26,
+    200
+   ],
+   [
+    28,
+    32
+   ],
+   [
+    39,
+    21
+   ],
+   [
+    69,
+    32
+   ],
+   [
+    71,
+    20
+   ],
+   [
+    72,
+    17
+   ]
+  ]
+ ],
+ "سلل": [
+  3,
+  [
+   [
+    23,
+    12
+   ],
+   [
+    24,
+    63
+   ],
+   [
+    32,
+    8
+   ]
+  ]
+ ],
+ "سلم": [
+  140,
+  [
+   [
+    2,
+    71
+   ],
+   [
+    2,
+    112
+   ],
+   [
+    2,
+    128
+   ],
+   [
+    2,
+    131
+   ],
+   [
+    2,
+    132
+   ],
+   [
+    2,
+    133
+   ],
+   [
+    2,
+    136
+   ],
+   [
+    2,
+    208
+   ],
+   [
+    2,
+    233
+   ],
+   [
+    3,
+    19
+   ]
+  ]
+ ],
+ "سلو": [
+  3,
+  [
+   [
+    2,
+    57
+   ],
+   [
+    7,
+    160
+   ],
+   [
+    20,
+    80
+   ]
+  ]
+ ],
+ "سمد": [
+  1,
+  [
+   [
+    53,
+    61
+   ]
+  ]
+ ],
+ "سمر": [
+  4,
+  [
+   [
+    20,
+    85
+   ],
+   [
+    20,
+    87
+   ],
+   [
+    20,
+    95
+   ],
+   [
+    23,
+    67
+   ]
+  ]
+ ],
+ "سمع": [
+  185,
+  [
+   [
+    2,
+    7
+   ],
+   [
+    2,
+    20
+   ],
+   [
+    2,
+    75
+   ],
+   [
+    2,
+    93
+   ],
+   [
+    2,
+    104
+   ],
+   [
+    2,
+    127
+   ],
+   [
+    2,
+    137
+   ],
+   [
+    2,
+    171
+   ],
+   [
+    2,
+    181
+   ],
+   [
+    2,
+    224
+   ]
+  ]
+ ],
+ "سمم": [
+  4,
+  [
+   [
+    7,
+    40
+   ],
+   [
+    15,
+    27
+   ],
+   [
+    52,
+    27
+   ],
+   [
+    56,
+    42
+   ]
+  ]
+ ],
+ "سمن": [
+  4,
+  [
+   [
+    12,
+    43
+   ],
+   [
+    12,
+    46
+   ],
+   [
+    51,
+    26
+   ],
+   [
+    88,
+    7
+   ]
+  ]
+ ],
+ "سمو": [
+  381,
+  [
+   [
+    1,
+    1
+   ],
+   [
+    2,
+    19
+   ],
+   [
+    2,
+    22
+   ],
+   [
+    2,
+    29
+   ],
+   [
+    2,
+    31
+   ],
+   [
+    2,
+    33
+   ],
+   [
+    2,
+    59
+   ],
+   [
+    2,
+    107
+   ],
+   [
+    2,
+    114
+   ],
+   [
+    2,
+    116
+   ]
+  ]
+ ],
+ "سنبل": [
+  5,
+  [
+   [
+    2,
+    261
+   ],
+   [
+    12,
+    43
+   ],
+   [
+    12,
+    46
+   ],
+   [
+    12,
+    47
+   ]
+  ]
+ ],
+ "سنن": [
+  21,
+  [
+   [
+    3,
+    137
+   ],
+   [
+    4,
+    26
+   ],
+   [
+    5,
+    45
+   ],
+   [
+    8,
+    38
+   ],
+   [
+    15,
+    13
+   ],
+   [
+    15,
+    26
+   ],
+   [
+    15,
+    28
+   ],
+   [
+    15,
+    33
+   ],
+   [
+    17,
+    77
+   ],
+   [
+    18,
+    55
+   ]
+  ]
+ ],
+ "سنو": [
+  20,
+  [
+   [
+    2,
+    96
+   ],
+   [
+    5,
+    26
+   ],
+   [
+    7,
+    130
+   ],
+   [
+    10,
+    5
+   ],
+   [
+    12,
+    42
+   ],
+   [
+    12,
+    47
+   ],
+   [
+    17,
+    12
+   ],
+   [
+    18,
+    11
+   ],
+   [
+    18,
+    25
+   ],
+   [
+    20,
+    40
+   ]
+  ]
+ ],
+ "سهر": [
+  1,
+  [
+   [
+    79,
+    14
+   ]
+  ]
+ ],
+ "سهل": [
+  1,
+  [
+   [
+    7,
+    74
+   ]
+  ]
+ ],
+ "سهم": [
+  1,
+  [
+   [
+    37,
+    141
+   ]
+  ]
+ ],
+ "سوأ": [
+  167,
+  [
+   [
+    2,
+    49
+   ],
+   [
+    2,
+    81
+   ],
+   [
+    2,
+    169
+   ],
+   [
+    2,
+    271
+   ],
+   [
+    3,
+    30
+   ],
+   [
+    3,
+    120
+   ],
+   [
+    3,
+    174
+   ],
+   [
+    3,
+    193
+   ],
+   [
+    3,
+    195
+   ],
+   [
+    4,
+    17
+   ]
+  ]
+ ],
+ "سوح": [
+  1,
+  [
+   [
+    37,
+    177
+   ]
+  ]
+ ],
+ "سود": [
+  10,
+  [
+   [
+    2,
+    187
+   ],
+   [
+    3,
+    39
+   ],
+   [
+    3,
+    106
+   ],
+   [
+    12,
+    25
+   ],
+   [
+    16,
+    58
+   ],
+   [
+    33,
+    67
+   ],
+   [
+    35,
+    27
+   ],
+   [
+    39,
+    60
+   ],
+   [
+    43,
+    17
+   ]
+  ]
+ ],
+ "سور": [
+  17,
+  [
+   [
+    2,
+    23
+   ],
+   [
+    9,
+    64
+   ],
+   [
+    9,
+    86
+   ],
+   [
+    9,
+    124
+   ],
+   [
+    9,
+    127
+   ],
+   [
+    10,
+    38
+   ],
+   [
+    11,
+    13
+   ],
+   [
+    18,
+    31
+   ],
+   [
+    22,
+    23
+   ],
+   [
+    24,
+    1
+   ]
+  ]
+ ],
+ "سوط": [
+  1,
+  [
+   [
+    89,
+    13
+   ]
+  ]
+ ],
+ "سوع": [
+  49,
+  [
+   [
+    6,
+    31
+   ],
+   [
+    6,
+    40
+   ],
+   [
+    7,
+    34
+   ],
+   [
+    7,
+    187
+   ],
+   [
+    9,
+    117
+   ],
+   [
+    10,
+    45
+   ],
+   [
+    10,
+    49
+   ],
+   [
+    12,
+    107
+   ],
+   [
+    15,
+    85
+   ],
+   [
+    16,
+    61
+   ]
+  ]
+ ],
+ "سوغ": [
+  3,
+  [
+   [
+    14,
+    17
+   ],
+   [
+    16,
+    66
+   ],
+   [
+    35,
+    12
+   ]
+  ]
+ ],
+ "سوق": [
+  17,
+  [
+   [
+    7,
+    57
+   ],
+   [
+    8,
+    6
+   ],
+   [
+    19,
+    86
+   ],
+   [
+    25,
+    7
+   ],
+   [
+    25,
+    20
+   ],
+   [
+    27,
+    44
+   ],
+   [
+    32,
+    27
+   ],
+   [
+    35,
+    9
+   ],
+   [
+    38,
+    33
+   ],
+   [
+    39,
+    71
+   ]
+  ]
+ ],
+ "سول": [
+  4,
+  [
+   [
+    12,
+    18
+   ],
+   [
+    12,
+    83
+   ],
+   [
+    20,
+    96
+   ],
+   [
+    47,
+    25
+   ]
+  ]
+ ],
+ "سوم": [
+  15,
+  [
+   [
+    2,
+    49
+   ],
+   [
+    2,
+    273
+   ],
+   [
+    3,
+    14
+   ],
+   [
+    3,
+    125
+   ],
+   [
+    7,
+    46
+   ],
+   [
+    7,
+    48
+   ],
+   [
+    7,
+    141
+   ],
+   [
+    7,
+    167
+   ],
+   [
+    11,
+    83
+   ],
+   [
+    14,
+    6
+   ]
+  ]
+ ],
+ "سوي": [
+  83,
+  [
+   [
+    2,
+    6
+   ],
+   [
+    2,
+    29
+   ],
+   [
+    2,
+    108
+   ],
+   [
+    3,
+    64
+   ],
+   [
+    3,
+    113
+   ],
+   [
+    4,
+    42
+   ],
+   [
+    4,
+    89
+   ],
+   [
+    4,
+    95
+   ],
+   [
+    5,
+    12
+   ],
+   [
+    5,
+    60
+   ]
+  ]
+ ],
+ "سير": [
+  27,
+  [
+   [
+    3,
+    137
+   ],
+   [
+    5,
+    96
+   ],
+   [
+    6,
+    11
+   ],
+   [
+    10,
+    22
+   ],
+   [
+    12,
+    10
+   ],
+   [
+    12,
+    19
+   ],
+   [
+    12,
+    109
+   ],
+   [
+    13,
+    31
+   ],
+   [
+    16,
+    36
+   ],
+   [
+    18,
+    47
+   ]
+  ]
+ ],
+ "سيل": [
+  4,
+  [
+   [
+    13,
+    17
+   ],
+   [
+    34,
+    12
+   ],
+   [
+    34,
+    16
+   ]
+  ]
+ ],
+ "شأن": [
+  4,
+  [
+   [
+    10,
+    61
+   ],
+   [
+    24,
+    62
+   ],
+   [
+    55,
+    29
+   ],
+   [
+    80,
+    37
+   ]
+  ]
+ ],
+ "شبه": [
+  12,
+  [
+   [
+    2,
+    25
+   ],
+   [
+    2,
+    70
+   ],
+   [
+    2,
+    118
+   ],
+   [
+    3,
+    7
+   ],
+   [
+    4,
+    157
+   ],
+   [
+    6,
+    99
+   ],
+   [
+    6,
+    141
+   ],
+   [
+    13,
+    16
+   ],
+   [
+    39,
+    23
+   ]
+  ]
+ ],
+ "شتت": [
+  5,
+  [
+   [
+    20,
+    53
+   ],
+   [
+    24,
+    61
+   ],
+   [
+    59,
+    14
+   ],
+   [
+    92,
+    4
+   ],
+   [
+    99,
+    6
+   ]
+  ]
+ ],
+ "شتو": [
+  1,
+  [
+   [
+    106,
+    2
+   ]
+  ]
+ ],
+ "شجر": [
+  27,
+  [
+   [
+    2,
+    35
+   ],
+   [
+    4,
+    65
+   ],
+   [
+    7,
+    19
+   ],
+   [
+    7,
+    20
+   ],
+   [
+    7,
+    22
+   ],
+   [
+    14,
+    24
+   ],
+   [
+    14,
+    26
+   ],
+   [
+    16,
+    10
+   ],
+   [
+    16,
+    68
+   ],
+   [
+    17,
+    60
+   ]
+  ]
+ ],
+ "شحح": [
+  5,
+  [
+   [
+    4,
+    128
+   ],
+   [
+    33,
+    19
+   ],
+   [
+    59,
+    9
+   ],
+   [
+    64,
+    16
+   ]
+  ]
+ ],
+ "شحم": [
+  1,
+  [
+   [
+    6,
+    146
+   ]
+  ]
+ ],
+ "شحن": [
+  3,
+  [
+   [
+    26,
+    119
+   ],
+   [
+    36,
+    41
+   ],
+   [
+    37,
+    140
+   ]
+  ]
+ ],
+ "شخص": [
+  2,
+  [
+   [
+    14,
+    42
+   ],
+   [
+    21,
+    97
+   ]
+  ]
+ ],
+ "شدد": [
+  102,
+  [
+   [
+    2,
+    74
+   ],
+   [
+    2,
+    85
+   ],
+   [
+    2,
+    165
+   ],
+   [
+    2,
+    191
+   ],
+   [
+    2,
+    196
+   ],
+   [
+    2,
+    200
+   ],
+   [
+    2,
+    211
+   ],
+   [
+    3,
+    4
+   ],
+   [
+    3,
+    11
+   ],
+   [
+    3,
+    56
+   ]
+  ]
+ ],
+ "شرب": [
+  39,
+  [
+   [
+    2,
+    60
+   ],
+   [
+    2,
+    93
+   ],
+   [
+    2,
+    187
+   ],
+   [
+    2,
+    249
+   ],
+   [
+    2,
+    259
+   ],
+   [
+    6,
+    70
+   ],
+   [
+    7,
+    31
+   ],
+   [
+    7,
+    160
+   ],
+   [
+    10,
+    4
+   ],
+   [
+    16,
+    10
+   ]
+  ]
+ ],
+ "شرح": [
+  5,
+  [
+   [
+    6,
+    125
+   ],
+   [
+    16,
+    106
+   ],
+   [
+    20,
+    25
+   ],
+   [
+    39,
+    22
+   ],
+   [
+    94,
+    1
+   ]
+  ]
+ ],
+ "شرط": [
+  1,
+  [
+   [
+    47,
+    18
+   ]
+  ]
+ ],
+ "شرع": [
+  5,
+  [
+   [
+    5,
+    48
+   ],
+   [
+    7,
+    163
+   ],
+   [
+    42,
+    13
+   ],
+   [
+    42,
+    21
+   ],
+   [
+    45,
+    18
+   ]
+  ]
+ ],
+ "شرق": [
+  17,
+  [
+   [
+    2,
+    115
+   ],
+   [
+    2,
+    142
+   ],
+   [
+    2,
+    177
+   ],
+   [
+    2,
+    258
+   ],
+   [
+    7,
+    137
+   ],
+   [
+    15,
+    73
+   ],
+   [
+    19,
+    16
+   ],
+   [
+    24,
+    35
+   ],
+   [
+    26,
+    28
+   ],
+   [
+    26,
+    60
+   ]
+  ]
+ ],
+ "شرك": [
+  168,
+  [
+   [
+    2,
+    96
+   ],
+   [
+    2,
+    105
+   ],
+   [
+    2,
+    135
+   ],
+   [
+    2,
+    221
+   ],
+   [
+    3,
+    64
+   ],
+   [
+    3,
+    67
+   ],
+   [
+    3,
+    95
+   ],
+   [
+    3,
+    151
+   ],
+   [
+    3,
+    186
+   ],
+   [
+    4,
+    12
+   ]
+  ]
+ ],
+ "شري": [
+  25,
+  [
+   [
+    2,
+    16
+   ],
+   [
+    2,
+    41
+   ],
+   [
+    2,
+    79
+   ],
+   [
+    2,
+    86
+   ],
+   [
+    2,
+    90
+   ],
+   [
+    2,
+    102
+   ],
+   [
+    2,
+    174
+   ],
+   [
+    2,
+    175
+   ],
+   [
+    2,
+    207
+   ],
+   [
+    3,
+    77
+   ]
+  ]
+ ],
+ "شطأ": [
+  2,
+  [
+   [
+    28,
+    30
+   ],
+   [
+    48,
+    29
+   ]
+  ]
+ ],
+ "شطر": [
+  5,
+  [
+   [
+    2,
+    144
+   ],
+   [
+    2,
+    149
+   ],
+   [
+    2,
+    150
+   ]
+  ]
+ ],
+ "شعب": [
+  2,
+  [
+   [
+    49,
+    13
+   ],
+   [
+    77,
+    30
+   ]
+  ]
+ ],
+ "شعر": [
+  40,
+  [
+   [
+    2,
+    9
+   ],
+   [
+    2,
+    12
+   ],
+   [
+    2,
+    154
+   ],
+   [
+    2,
+    158
+   ],
+   [
+    2,
+    198
+   ],
+   [
+    3,
+    69
+   ],
+   [
+    5,
+    2
+   ],
+   [
+    6,
+    26
+   ],
+   [
+    6,
+    109
+   ],
+   [
+    6,
+    123
+   ]
+  ]
+ ],
+ "شعل": [
+  1,
+  [
+   [
+    19,
+    4
+   ]
+  ]
+ ],
+ "شغف": [
+  1,
+  [
+   [
+    12,
+    30
+   ]
+  ]
+ ],
+ "شغل": [
+  2,
+  [
+   [
+    36,
+    55
+   ],
+   [
+    48,
+    11
+   ]
+  ]
+ ],
+ "شفق": [
+  11,
+  [
+   [
+    18,
+    49
+   ],
+   [
+    21,
+    28
+   ],
+   [
+    21,
+    49
+   ],
+   [
+    23,
+    57
+   ],
+   [
+    33,
+    72
+   ],
+   [
+    42,
+    18
+   ],
+   [
+    42,
+    22
+   ],
+   [
+    52,
+    26
+   ],
+   [
+    58,
+    13
+   ],
+   [
+    70,
+    27
+   ]
+  ]
+ ],
+ "شفي": [
+  6,
+  [
+   [
+    9,
+    14
+   ],
+   [
+    10,
+    57
+   ],
+   [
+    16,
+    69
+   ],
+   [
+    17,
+    82
+   ],
+   [
+    26,
+    80
+   ],
+   [
+    41,
+    44
+   ]
+  ]
+ ],
+ "شقق": [
+  28,
+  [
+   [
+    2,
+    74
+   ],
+   [
+    2,
+    137
+   ],
+   [
+    2,
+    176
+   ],
+   [
+    4,
+    35
+   ],
+   [
+    4,
+    115
+   ],
+   [
+    8,
+    13
+   ],
+   [
+    9,
+    42
+   ],
+   [
+    11,
+    89
+   ],
+   [
+    13,
+    34
+   ],
+   [
+    16,
+    7
+   ]
+  ]
+ ],
+ "شقو": [
+  12,
+  [
+   [
+    11,
+    105
+   ],
+   [
+    11,
+    106
+   ],
+   [
+    19,
+    4
+   ],
+   [
+    19,
+    32
+   ],
+   [
+    19,
+    48
+   ],
+   [
+    20,
+    2
+   ],
+   [
+    20,
+    117
+   ],
+   [
+    20,
+    123
+   ],
+   [
+    23,
+    106
+   ],
+   [
+    87,
+    11
+   ]
+  ]
+ ],
+ "شكر": [
+  75,
+  [
+   [
+    2,
+    52
+   ],
+   [
+    2,
+    56
+   ],
+   [
+    2,
+    152
+   ],
+   [
+    2,
+    158
+   ],
+   [
+    2,
+    172
+   ],
+   [
+    2,
+    185
+   ],
+   [
+    2,
+    243
+   ],
+   [
+    3,
+    123
+   ],
+   [
+    3,
+    144
+   ],
+   [
+    3,
+    145
+   ]
+  ]
+ ],
+ "شكك": [
+  15,
+  [
+   [
+    4,
+    157
+   ],
+   [
+    10,
+    94
+   ],
+   [
+    10,
+    104
+   ],
+   [
+    11,
+    62
+   ],
+   [
+    11,
+    110
+   ],
+   [
+    14,
+    9
+   ],
+   [
+    14,
+    10
+   ],
+   [
+    27,
+    66
+   ],
+   [
+    34,
+    21
+   ],
+   [
+    34,
+    54
+   ]
+  ]
+ ],
+ "شكل": [
+  2,
+  [
+   [
+    17,
+    84
+   ],
+   [
+    38,
+    58
+   ]
+  ]
+ ],
+ "شكو": [
+  3,
+  [
+   [
+    12,
+    86
+   ],
+   [
+    24,
+    35
+   ],
+   [
+    58,
+    1
+   ]
+  ]
+ ],
+ "شمت": [
+  1,
+  [
+   [
+    7,
+    150
+   ]
+  ]
+ ],
+ "شمس": [
+  33,
+  [
+   [
+    2,
+    258
+   ],
+   [
+    6,
+    78
+   ],
+   [
+    6,
+    96
+   ],
+   [
+    7,
+    54
+   ],
+   [
+    10,
+    5
+   ],
+   [
+    12,
+    4
+   ],
+   [
+    13,
+    2
+   ],
+   [
+    14,
+    33
+   ],
+   [
+    16,
+    12
+   ],
+   [
+    17,
+    78
+   ]
+  ]
+ ],
+ "شمل": [
+  12,
+  [
+   [
+    6,
+    143
+   ],
+   [
+    6,
+    144
+   ],
+   [
+    7,
+    17
+   ],
+   [
+    16,
+    48
+   ],
+   [
+    18,
+    17
+   ],
+   [
+    18,
+    18
+   ],
+   [
+    34,
+    15
+   ],
+   [
+    50,
+    17
+   ],
+   [
+    56,
+    41
+   ],
+   [
+    69,
+    25
+   ]
+  ]
+ ],
+ "شهد": [
+  160,
+  [
+   [
+    2,
+    23
+   ],
+   [
+    2,
+    84
+   ],
+   [
+    2,
+    133
+   ],
+   [
+    2,
+    140
+   ],
+   [
+    2,
+    143
+   ],
+   [
+    2,
+    185
+   ],
+   [
+    2,
+    204
+   ],
+   [
+    2,
+    282
+   ],
+   [
+    2,
+    283
+   ],
+   [
+    3,
+    18
+   ]
+  ]
+ ],
+ "شهر": [
+  21,
+  [
+   [
+    2,
+    185
+   ],
+   [
+    2,
+    194
+   ],
+   [
+    2,
+    197
+   ],
+   [
+    2,
+    217
+   ],
+   [
+    2,
+    226
+   ],
+   [
+    2,
+    234
+   ],
+   [
+    4,
+    92
+   ],
+   [
+    5,
+    2
+   ],
+   [
+    5,
+    97
+   ],
+   [
+    9,
+    2
+   ]
+  ]
+ ],
+ "شهق": [
+  2,
+  [
+   [
+    11,
+    106
+   ],
+   [
+    67,
+    7
+   ]
+  ]
+ ],
+ "شهو": [
+  13,
+  [
+   [
+    3,
+    14
+   ],
+   [
+    4,
+    27
+   ],
+   [
+    7,
+    81
+   ],
+   [
+    16,
+    57
+   ],
+   [
+    19,
+    59
+   ],
+   [
+    21,
+    102
+   ],
+   [
+    27,
+    55
+   ],
+   [
+    34,
+    54
+   ],
+   [
+    41,
+    31
+   ],
+   [
+    43,
+    71
+   ]
+  ]
+ ],
+ "شور": [
+  4,
+  [
+   [
+    2,
+    233
+   ],
+   [
+    3,
+    159
+   ],
+   [
+    19,
+    29
+   ],
+   [
+    42,
+    38
+   ]
+  ]
+ ],
+ "شوك": [
+  1,
+  [
+   [
+    8,
+    7
+   ]
+  ]
+ ],
+ "شيخ": [
+  4,
+  [
+   [
+    11,
+    72
+   ],
+   [
+    12,
+    78
+   ],
+   [
+    28,
+    23
+   ],
+   [
+    40,
+    67
+   ]
+  ]
+ ],
+ "شيد": [
+  2,
+  [
+   [
+    4,
+    78
+   ],
+   [
+    22,
+    45
+   ]
+  ]
+ ],
+ "شيع": [
+  12,
+  [
+   [
+    6,
+    65
+   ],
+   [
+    6,
+    159
+   ],
+   [
+    15,
+    10
+   ],
+   [
+    19,
+    69
+   ],
+   [
+    24,
+    19
+   ],
+   [
+    28,
+    4
+   ],
+   [
+    28,
+    15
+   ],
+   [
+    30,
+    32
+   ],
+   [
+    34,
+    54
+   ],
+   [
+    37,
+    83
+   ]
+  ]
+ ],
+ "صبب": [
+  5,
+  [
+   [
+    22,
+    19
+   ],
+   [
+    44,
+    48
+   ],
+   [
+    80,
+    25
+   ],
+   [
+    89,
+    13
+   ]
+  ]
+ ],
+ "صبح": [
+  45,
+  [
+   [
+    3,
+    103
+   ],
+   [
+    5,
+    30
+   ],
+   [
+    5,
+    31
+   ],
+   [
+    5,
+    52
+   ],
+   [
+    5,
+    53
+   ],
+   [
+    5,
+    102
+   ],
+   [
+    6,
+    96
+   ],
+   [
+    7,
+    78
+   ],
+   [
+    7,
+    91
+   ],
+   [
+    11,
+    67
+   ]
+  ]
+ ],
+ "صبر": [
+  103,
+  [
+   [
+    2,
+    45
+   ],
+   [
+    2,
+    61
+   ],
+   [
+    2,
+    153
+   ],
+   [
+    2,
+    155
+   ],
+   [
+    2,
+    175
+   ],
+   [
+    2,
+    177
+   ],
+   [
+    2,
+    249
+   ],
+   [
+    2,
+    250
+   ],
+   [
+    3,
+    17
+   ],
+   [
+    3,
+    120
+   ]
+  ]
+ ],
+ "صبغ": [
+  3,
+  [
+   [
+    2,
+    138
+   ],
+   [
+    23,
+    20
+   ]
+  ]
+ ],
+ "صحب": [
+  97,
+  [
+   [
+    2,
+    39
+   ],
+   [
+    2,
+    81
+   ],
+   [
+    2,
+    82
+   ],
+   [
+    2,
+    119
+   ],
+   [
+    2,
+    217
+   ],
+   [
+    2,
+    257
+   ],
+   [
+    2,
+    275
+   ],
+   [
+    3,
+    116
+   ],
+   [
+    4,
+    36
+   ],
+   [
+    4,
+    47
+   ]
+  ]
+ ],
+ "صحف": [
+  9,
+  [
+   [
+    20,
+    133
+   ],
+   [
+    43,
+    71
+   ],
+   [
+    53,
+    36
+   ],
+   [
+    74,
+    52
+   ],
+   [
+    80,
+    13
+   ],
+   [
+    81,
+    10
+   ],
+   [
+    87,
+    18
+   ],
+   [
+    87,
+    19
+   ],
+   [
+    98,
+    2
+   ]
+  ]
+ ],
+ "صخر": [
+  3,
+  [
+   [
+    18,
+    63
+   ],
+   [
+    31,
+    16
+   ],
+   [
+    89,
+    9
+   ]
+  ]
+ ],
+ "صدد": [
+  42,
+  [
+   [
+    2,
+    217
+   ],
+   [
+    3,
+    99
+   ],
+   [
+    4,
+    55
+   ],
+   [
+    4,
+    61
+   ],
+   [
+    4,
+    160
+   ],
+   [
+    4,
+    167
+   ],
+   [
+    5,
+    2
+   ],
+   [
+    5,
+    91
+   ],
+   [
+    7,
+    45
+   ],
+   [
+    7,
+    86
+   ]
+  ]
+ ],
+ "صدر": [
+  46,
+  [
+   [
+    3,
+    29
+   ],
+   [
+    3,
+    118
+   ],
+   [
+    3,
+    119
+   ],
+   [
+    3,
+    154
+   ],
+   [
+    4,
+    90
+   ],
+   [
+    5,
+    7
+   ],
+   [
+    6,
+    125
+   ],
+   [
+    7,
+    2
+   ],
+   [
+    7,
+    43
+   ],
+   [
+    8,
+    43
+   ]
+  ]
+ ],
+ "صدع": [
+  5,
+  [
+   [
+    15,
+    94
+   ],
+   [
+    30,
+    43
+   ],
+   [
+    56,
+    19
+   ],
+   [
+    59,
+    21
+   ],
+   [
+    86,
+    12
+   ]
+  ]
+ ],
+ "صدق": [
+  155,
+  [
+   [
+    2,
+    23
+   ],
+   [
+    2,
+    31
+   ],
+   [
+    2,
+    41
+   ],
+   [
+    2,
+    89
+   ],
+   [
+    2,
+    91
+   ],
+   [
+    2,
+    94
+   ],
+   [
+    2,
+    97
+   ],
+   [
+    2,
+    101
+   ],
+   [
+    2,
+    111
+   ],
+   [
+    2,
+    177
+   ]
+  ]
+ ],
+ "صرح": [
+  4,
+  [
+   [
+    27,
+    44
+   ],
+   [
+    28,
+    38
+   ],
+   [
+    40,
+    36
+   ]
+  ]
+ ],
+ "صرخ": [
+  5,
+  [
+   [
+    14,
+    22
+   ],
+   [
+    28,
+    18
+   ],
+   [
+    35,
+    37
+   ],
+   [
+    36,
+    43
+   ]
+  ]
+ ],
+ "صرع": [
+  1,
+  [
+   [
+    69,
+    7
+   ]
+  ]
+ ],
+ "صرف": [
+  30,
+  [
+   [
+    2,
+    164
+   ],
+   [
+    3,
+    152
+   ],
+   [
+    6,
+    16
+   ],
+   [
+    6,
+    46
+   ],
+   [
+    6,
+    65
+   ],
+   [
+    6,
+    105
+   ],
+   [
+    7,
+    47
+   ],
+   [
+    7,
+    58
+   ],
+   [
+    7,
+    146
+   ],
+   [
+    9,
+    127
+   ]
+  ]
+ ],
+ "صعد": [
+  9,
+  [
+   [
+    3,
+    153
+   ],
+   [
+    4,
+    43
+   ],
+   [
+    5,
+    6
+   ],
+   [
+    6,
+    125
+   ],
+   [
+    18,
+    8
+   ],
+   [
+    18,
+    40
+   ],
+   [
+    35,
+    10
+   ],
+   [
+    72,
+    17
+   ],
+   [
+    74,
+    17
+   ]
+  ]
+ ],
+ "صغر": [
+  13,
+  [
+   [
+    2,
+    282
+   ],
+   [
+    6,
+    124
+   ],
+   [
+    7,
+    13
+   ],
+   [
+    7,
+    119
+   ],
+   [
+    9,
+    29
+   ],
+   [
+    9,
+    121
+   ],
+   [
+    10,
+    61
+   ],
+   [
+    12,
+    32
+   ],
+   [
+    17,
+    24
+   ],
+   [
+    18,
+    49
+   ]
+  ]
+ ],
+ "صفح": [
+  8,
+  [
+   [
+    2,
+    109
+   ],
+   [
+    5,
+    13
+   ],
+   [
+    15,
+    85
+   ],
+   [
+    24,
+    22
+   ],
+   [
+    43,
+    5
+   ],
+   [
+    43,
+    89
+   ],
+   [
+    64,
+    14
+   ]
+  ]
+ ],
+ "صفر": [
+  5,
+  [
+   [
+    2,
+    69
+   ],
+   [
+    30,
+    51
+   ],
+   [
+    39,
+    21
+   ],
+   [
+    57,
+    20
+   ],
+   [
+    77,
+    33
+   ]
+  ]
+ ],
+ "صفف": [
+  14,
+  [
+   [
+    18,
+    48
+   ],
+   [
+    20,
+    64
+   ],
+   [
+    22,
+    36
+   ],
+   [
+    24,
+    41
+   ],
+   [
+    37,
+    1
+   ],
+   [
+    37,
+    165
+   ],
+   [
+    52,
+    20
+   ],
+   [
+    61,
+    4
+   ],
+   [
+    67,
+    19
+   ],
+   [
+    78,
+    38
+   ]
+  ]
+ ],
+ "صفو": [
+  17,
+  [
+   [
+    2,
+    130
+   ],
+   [
+    2,
+    132
+   ],
+   [
+    2,
+    247
+   ],
+   [
+    2,
+    264
+   ],
+   [
+    3,
+    33
+   ],
+   [
+    3,
+    42
+   ],
+   [
+    7,
+    144
+   ],
+   [
+    17,
+    40
+   ],
+   [
+    22,
+    75
+   ],
+   [
+    27,
+    59
+   ]
+  ]
+ ],
+ "صلب": [
+  8,
+  [
+   [
+    4,
+    23
+   ],
+   [
+    4,
+    157
+   ],
+   [
+    5,
+    33
+   ],
+   [
+    7,
+    124
+   ],
+   [
+    12,
+    41
+   ],
+   [
+    20,
+    71
+   ],
+   [
+    26,
+    49
+   ],
+   [
+    86,
+    7
+   ]
+  ]
+ ],
+ "صلح": [
+  180,
+  [
+   [
+    2,
+    11
+   ],
+   [
+    2,
+    25
+   ],
+   [
+    2,
+    62
+   ],
+   [
+    2,
+    82
+   ],
+   [
+    2,
+    130
+   ],
+   [
+    2,
+    160
+   ],
+   [
+    2,
+    182
+   ],
+   [
+    2,
+    220
+   ],
+   [
+    2,
+    224
+   ],
+   [
+    2,
+    228
+   ]
+  ]
+ ],
+ "صلو": [
+  99,
+  [
+   [
+    2,
+    3
+   ],
+   [
+    2,
+    43
+   ],
+   [
+    2,
+    45
+   ],
+   [
+    2,
+    83
+   ],
+   [
+    2,
+    110
+   ],
+   [
+    2,
+    125
+   ],
+   [
+    2,
+    153
+   ],
+   [
+    2,
+    157
+   ],
+   [
+    2,
+    177
+   ],
+   [
+    2,
+    238
+   ]
+  ]
+ ],
+ "صلي": [
+  25,
+  [
+   [
+    4,
+    10
+   ],
+   [
+    4,
+    30
+   ],
+   [
+    4,
+    56
+   ],
+   [
+    4,
+    115
+   ],
+   [
+    14,
+    29
+   ],
+   [
+    17,
+    18
+   ],
+   [
+    19,
+    70
+   ],
+   [
+    27,
+    7
+   ],
+   [
+    28,
+    29
+   ],
+   [
+    36,
+    64
+   ]
+  ]
+ ],
+ "صنع": [
+  20,
+  [
+   [
+    5,
+    14
+   ],
+   [
+    5,
+    63
+   ],
+   [
+    7,
+    137
+   ],
+   [
+    11,
+    16
+   ],
+   [
+    11,
+    37
+   ],
+   [
+    11,
+    38
+   ],
+   [
+    13,
+    31
+   ],
+   [
+    16,
+    112
+   ],
+   [
+    18,
+    104
+   ],
+   [
+    20,
+    39
+   ]
+  ]
+ ],
+ "صهر": [
+  2,
+  [
+   [
+    22,
+    20
+   ],
+   [
+    25,
+    54
+   ]
+  ]
+ ],
+ "صوب": [
+  77,
+  [
+   [
+    2,
+    19
+   ],
+   [
+    2,
+    156
+   ],
+   [
+    2,
+    264
+   ],
+   [
+    2,
+    265
+   ],
+   [
+    2,
+    266
+   ],
+   [
+    3,
+    117
+   ],
+   [
+    3,
+    120
+   ],
+   [
+    3,
+    146
+   ],
+   [
+    3,
+    153
+   ],
+   [
+    3,
+    165
+   ]
+  ]
+ ],
+ "صوت": [
+  8,
+  [
+   [
+    17,
+    64
+   ],
+   [
+    20,
+    108
+   ],
+   [
+    31,
+    19
+   ],
+   [
+    49,
+    2
+   ],
+   [
+    49,
+    3
+   ]
+  ]
+ ],
+ "صور": [
+  19,
+  [
+   [
+    2,
+    260
+   ],
+   [
+    3,
+    6
+   ],
+   [
+    6,
+    73
+   ],
+   [
+    7,
+    11
+   ],
+   [
+    18,
+    99
+   ],
+   [
+    20,
+    102
+   ],
+   [
+    23,
+    101
+   ],
+   [
+    27,
+    87
+   ],
+   [
+    36,
+    51
+   ],
+   [
+    39,
+    68
+   ]
+  ]
+ ],
+ "صوم": [
+  14,
+  [
+   [
+    2,
+    183
+   ],
+   [
+    2,
+    184
+   ],
+   [
+    2,
+    185
+   ],
+   [
+    2,
+    187
+   ],
+   [
+    2,
+    196
+   ],
+   [
+    4,
+    92
+   ],
+   [
+    5,
+    89
+   ],
+   [
+    5,
+    95
+   ],
+   [
+    19,
+    26
+   ],
+   [
+    33,
+    35
+   ]
+  ]
+ ],
+ "صيد": [
+  6,
+  [
+   [
+    5,
+    1
+   ],
+   [
+    5,
+    2
+   ],
+   [
+    5,
+    94
+   ],
+   [
+    5,
+    95
+   ],
+   [
+    5,
+    96
+   ]
+  ]
+ ],
+ "صيف": [
+  1,
+  [
+   [
+    106,
+    2
+   ]
+  ]
+ ],
+ "ضجع": [
+  3,
+  [
+   [
+    3,
+    154
+   ],
+   [
+    4,
+    34
+   ],
+   [
+    32,
+    16
+   ]
+  ]
+ ],
+ "ضحك": [
+  10,
+  [
+   [
+    9,
+    82
+   ],
+   [
+    11,
+    71
+   ],
+   [
+    23,
+    110
+   ],
+   [
+    27,
+    19
+   ],
+   [
+    43,
+    47
+   ],
+   [
+    53,
+    43
+   ],
+   [
+    53,
+    60
+   ],
+   [
+    80,
+    39
+   ],
+   [
+    83,
+    29
+   ],
+   [
+    83,
+    34
+   ]
+  ]
+ ],
+ "ضحو": [
+  7,
+  [
+   [
+    7,
+    98
+   ],
+   [
+    20,
+    59
+   ],
+   [
+    20,
+    119
+   ],
+   [
+    79,
+    29
+   ],
+   [
+    79,
+    46
+   ],
+   [
+    91,
+    1
+   ],
+   [
+    93,
+    1
+   ]
+  ]
+ ],
+ "ضدد": [
+  1,
+  [
+   [
+    19,
+    82
+   ]
+  ]
+ ],
+ "ضرب": [
+  58,
+  [
+   [
+    2,
+    26
+   ],
+   [
+    2,
+    60
+   ],
+   [
+    2,
+    61
+   ],
+   [
+    2,
+    73
+   ],
+   [
+    2,
+    273
+   ],
+   [
+    3,
+    112
+   ],
+   [
+    3,
+    156
+   ],
+   [
+    4,
+    34
+   ],
+   [
+    4,
+    94
+   ],
+   [
+    4,
+    101
+   ]
+  ]
+ ],
+ "ضرر": [
+  74,
+  [
+   [
+    2,
+    102
+   ],
+   [
+    2,
+    126
+   ],
+   [
+    2,
+    173
+   ],
+   [
+    2,
+    177
+   ],
+   [
+    2,
+    214
+   ],
+   [
+    2,
+    231
+   ],
+   [
+    2,
+    233
+   ],
+   [
+    2,
+    282
+   ],
+   [
+    3,
+    111
+   ],
+   [
+    3,
+    120
+   ]
+  ]
+ ],
+ "ضرع": [
+  8,
+  [
+   [
+    6,
+    42
+   ],
+   [
+    6,
+    43
+   ],
+   [
+    6,
+    63
+   ],
+   [
+    7,
+    55
+   ],
+   [
+    7,
+    94
+   ],
+   [
+    7,
+    205
+   ],
+   [
+    23,
+    76
+   ],
+   [
+    88,
+    6
+   ]
+  ]
+ ],
+ "ضعف": [
+  52,
+  [
+   [
+    2,
+    245
+   ],
+   [
+    2,
+    261
+   ],
+   [
+    2,
+    265
+   ],
+   [
+    2,
+    266
+   ],
+   [
+    2,
+    282
+   ],
+   [
+    3,
+    130
+   ],
+   [
+    3,
+    146
+   ],
+   [
+    4,
+    9
+   ],
+   [
+    4,
+    28
+   ],
+   [
+    4,
+    40
+   ]
+  ]
+ ],
+ "ضلل": [
+  191,
+  [
+   [
+    1,
+    7
+   ],
+   [
+    2,
+    16
+   ],
+   [
+    2,
+    26
+   ],
+   [
+    2,
+    108
+   ],
+   [
+    2,
+    175
+   ],
+   [
+    2,
+    198
+   ],
+   [
+    2,
+    282
+   ],
+   [
+    3,
+    69
+   ],
+   [
+    3,
+    90
+   ],
+   [
+    3,
+    164
+   ]
+  ]
+ ],
+ "ضمر": [
+  1,
+  [
+   [
+    22,
+    27
+   ]
+  ]
+ ],
+ "ضمم": [
+  2,
+  [
+   [
+    20,
+    22
+   ],
+   [
+    28,
+    32
+   ]
+  ]
+ ],
+ "ضنن": [
+  1,
+  [
+   [
+    81,
+    24
+   ]
+  ]
+ ],
+ "ضوا": [
+  6,
+  [
+   [
+    2,
+    17
+   ],
+   [
+    2,
+    20
+   ],
+   [
+    10,
+    5
+   ],
+   [
+    21,
+    48
+   ],
+   [
+    24,
+    35
+   ],
+   [
+    28,
+    71
+   ]
+  ]
+ ],
+ "ضيع": [
+  10,
+  [
+   [
+    2,
+    143
+   ],
+   [
+    3,
+    171
+   ],
+   [
+    3,
+    195
+   ],
+   [
+    7,
+    170
+   ],
+   [
+    9,
+    120
+   ],
+   [
+    11,
+    115
+   ],
+   [
+    12,
+    56
+   ],
+   [
+    12,
+    90
+   ],
+   [
+    18,
+    30
+   ],
+   [
+    19,
+    59
+   ]
+  ]
+ ],
+ "ضيف": [
+  6,
+  [
+   [
+    11,
+    78
+   ],
+   [
+    15,
+    51
+   ],
+   [
+    15,
+    68
+   ],
+   [
+    18,
+    77
+   ],
+   [
+    51,
+    24
+   ],
+   [
+    54,
+    37
+   ]
+  ]
+ ],
+ "ضيق": [
+  13,
+  [
+   [
+    6,
+    125
+   ],
+   [
+    9,
+    25
+   ],
+   [
+    9,
+    118
+   ],
+   [
+    11,
+    12
+   ],
+   [
+    11,
+    77
+   ],
+   [
+    15,
+    97
+   ],
+   [
+    16,
+    127
+   ],
+   [
+    25,
+    13
+   ],
+   [
+    26,
+    13
+   ],
+   [
+    27,
+    70
+   ]
+  ]
+ ],
+ "طبع": [
+  11,
+  [
+   [
+    4,
+    155
+   ],
+   [
+    7,
+    100
+   ],
+   [
+    7,
+    101
+   ],
+   [
+    9,
+    87
+   ],
+   [
+    9,
+    93
+   ],
+   [
+    10,
+    74
+   ],
+   [
+    16,
+    108
+   ],
+   [
+    30,
+    59
+   ],
+   [
+    40,
+    35
+   ],
+   [
+    47,
+    16
+   ]
+  ]
+ ],
+ "طبق": [
+  4,
+  [
+   [
+    67,
+    3
+   ],
+   [
+    71,
+    15
+   ],
+   [
+    84,
+    19
+   ]
+  ]
+ ],
+ "طرح": [
+  1,
+  [
+   [
+    12,
+    9
+   ]
+  ]
+ ],
+ "طرف": [
+  11,
+  [
+   [
+    3,
+    127
+   ],
+   [
+    11,
+    114
+   ],
+   [
+    13,
+    41
+   ],
+   [
+    14,
+    43
+   ],
+   [
+    20,
+    130
+   ],
+   [
+    21,
+    44
+   ],
+   [
+    27,
+    40
+   ],
+   [
+    37,
+    48
+   ],
+   [
+    38,
+    52
+   ],
+   [
+    42,
+    45
+   ]
+  ]
+ ],
+ "طرق": [
+  11,
+  [
+   [
+    4,
+    168
+   ],
+   [
+    4,
+    169
+   ],
+   [
+    20,
+    63
+   ],
+   [
+    20,
+    77
+   ],
+   [
+    20,
+    104
+   ],
+   [
+    23,
+    17
+   ],
+   [
+    46,
+    30
+   ],
+   [
+    72,
+    11
+   ],
+   [
+    72,
+    16
+   ],
+   [
+    86,
+    1
+   ]
+  ]
+ ],
+ "طرو": [
+  2,
+  [
+   [
+    16,
+    14
+   ],
+   [
+    35,
+    12
+   ]
+  ]
+ ],
+ "طعم": [
+  48,
+  [
+   [
+    2,
+    61
+   ],
+   [
+    2,
+    184
+   ],
+   [
+    2,
+    249
+   ],
+   [
+    2,
+    259
+   ],
+   [
+    3,
+    93
+   ],
+   [
+    5,
+    5
+   ],
+   [
+    5,
+    75
+   ],
+   [
+    5,
+    89
+   ],
+   [
+    5,
+    93
+   ],
+   [
+    5,
+    95
+   ]
+  ]
+ ],
+ "طعن": [
+  2,
+  [
+   [
+    4,
+    46
+   ],
+   [
+    9,
+    12
+   ]
+  ]
+ ],
+ "طغي": [
+  39,
+  [
+   [
+    2,
+    15
+   ],
+   [
+    2,
+    256
+   ],
+   [
+    2,
+    257
+   ],
+   [
+    4,
+    51
+   ],
+   [
+    4,
+    60
+   ],
+   [
+    4,
+    76
+   ],
+   [
+    5,
+    60
+   ],
+   [
+    5,
+    64
+   ],
+   [
+    5,
+    68
+   ],
+   [
+    6,
+    110
+   ]
+  ]
+ ],
+ "طفأ": [
+  3,
+  [
+   [
+    5,
+    64
+   ],
+   [
+    9,
+    32
+   ],
+   [
+    61,
+    8
+   ]
+  ]
+ ],
+ "طفف": [
+  1,
+  [
+   [
+    83,
+    1
+   ]
+  ]
+ ],
+ "طفل": [
+  4,
+  [
+   [
+    22,
+    5
+   ],
+   [
+    24,
+    31
+   ],
+   [
+    24,
+    59
+   ],
+   [
+    40,
+    67
+   ]
+  ]
+ ],
+ "طلب": [
+  4,
+  [
+   [
+    7,
+    54
+   ],
+   [
+    18,
+    41
+   ],
+   [
+    22,
+    73
+   ]
+  ]
+ ],
+ "طلع": [
+  19,
+  [
+   [
+    3,
+    179
+   ],
+   [
+    5,
+    13
+   ],
+   [
+    6,
+    99
+   ],
+   [
+    18,
+    17
+   ],
+   [
+    18,
+    18
+   ],
+   [
+    18,
+    90
+   ],
+   [
+    19,
+    78
+   ],
+   [
+    20,
+    130
+   ],
+   [
+    26,
+    148
+   ],
+   [
+    28,
+    38
+   ]
+  ]
+ ],
+ "طلق": [
+  23,
+  [
+   [
+    2,
+    227
+   ],
+   [
+    2,
+    228
+   ],
+   [
+    2,
+    229
+   ],
+   [
+    2,
+    230
+   ],
+   [
+    2,
+    231
+   ],
+   [
+    2,
+    232
+   ],
+   [
+    2,
+    236
+   ],
+   [
+    2,
+    237
+   ],
+   [
+    2,
+    241
+   ],
+   [
+    18,
+    71
+   ]
+  ]
+ ],
+ "طمع": [
+  12,
+  [
+   [
+    2,
+    75
+   ],
+   [
+    5,
+    84
+   ],
+   [
+    7,
+    46
+   ],
+   [
+    7,
+    56
+   ],
+   [
+    13,
+    12
+   ],
+   [
+    26,
+    51
+   ],
+   [
+    26,
+    82
+   ],
+   [
+    30,
+    24
+   ],
+   [
+    32,
+    16
+   ],
+   [
+    33,
+    32
+   ]
+  ]
+ ],
+ "طهر": [
+  31,
+  [
+   [
+    2,
+    25
+   ],
+   [
+    2,
+    125
+   ],
+   [
+    2,
+    222
+   ],
+   [
+    2,
+    232
+   ],
+   [
+    3,
+    15
+   ],
+   [
+    3,
+    42
+   ],
+   [
+    3,
+    55
+   ],
+   [
+    4,
+    57
+   ],
+   [
+    5,
+    6
+   ],
+   [
+    5,
+    41
+   ]
+  ]
+ ],
+ "طور": [
+  11,
+  [
+   [
+    2,
+    63
+   ],
+   [
+    2,
+    93
+   ],
+   [
+    4,
+    154
+   ],
+   [
+    19,
+    52
+   ],
+   [
+    20,
+    80
+   ],
+   [
+    23,
+    20
+   ],
+   [
+    28,
+    29
+   ],
+   [
+    28,
+    46
+   ],
+   [
+    52,
+    1
+   ],
+   [
+    71,
+    14
+   ]
+  ]
+ ],
+ "طوع": [
+  129,
+  [
+   [
+    2,
+    158
+   ],
+   [
+    2,
+    184
+   ],
+   [
+    2,
+    217
+   ],
+   [
+    2,
+    273
+   ],
+   [
+    2,
+    282
+   ],
+   [
+    2,
+    285
+   ],
+   [
+    3,
+    32
+   ],
+   [
+    3,
+    50
+   ],
+   [
+    3,
+    83
+   ],
+   [
+    3,
+    97
+   ]
+  ]
+ ],
+ "طوف": [
+  41,
+  [
+   [
+    2,
+    125
+   ],
+   [
+    2,
+    158
+   ],
+   [
+    3,
+    69
+   ],
+   [
+    3,
+    72
+   ],
+   [
+    3,
+    122
+   ],
+   [
+    3,
+    154
+   ],
+   [
+    4,
+    81
+   ],
+   [
+    4,
+    102
+   ],
+   [
+    4,
+    113
+   ],
+   [
+    6,
+    156
+   ]
+  ]
+ ],
+ "طوق": [
+  4,
+  [
+   [
+    2,
+    184
+   ],
+   [
+    2,
+    249
+   ],
+   [
+    2,
+    286
+   ],
+   [
+    3,
+    180
+   ]
+  ]
+ ],
+ "طول": [
+  10,
+  [
+   [
+    4,
+    25
+   ],
+   [
+    9,
+    86
+   ],
+   [
+    17,
+    37
+   ],
+   [
+    20,
+    86
+   ],
+   [
+    21,
+    44
+   ],
+   [
+    28,
+    45
+   ],
+   [
+    40,
+    3
+   ],
+   [
+    57,
+    16
+   ],
+   [
+    73,
+    7
+   ],
+   [
+    76,
+    26
+   ]
+  ]
+ ],
+ "طوي": [
+  5,
+  [
+   [
+    20,
+    12
+   ],
+   [
+    21,
+    104
+   ],
+   [
+    39,
+    67
+   ],
+   [
+    79,
+    16
+   ]
+  ]
+ ],
+ "طيب": [
+  50,
+  [
+   [
+    2,
+    57
+   ],
+   [
+    2,
+    168
+   ],
+   [
+    2,
+    172
+   ],
+   [
+    2,
+    267
+   ],
+   [
+    3,
+    38
+   ],
+   [
+    3,
+    179
+   ],
+   [
+    4,
+    2
+   ],
+   [
+    4,
+    3
+   ],
+   [
+    4,
+    4
+   ],
+   [
+    4,
+    43
+   ]
+  ]
+ ],
+ "طير": [
+  29,
+  [
+   [
+    2,
+    260
+   ],
+   [
+    3,
+    49
+   ],
+   [
+    5,
+    110
+   ],
+   [
+    6,
+    38
+   ],
+   [
+    7,
+    131
+   ],
+   [
+    12,
+    36
+   ],
+   [
+    12,
+    41
+   ],
+   [
+    16,
+    79
+   ],
+   [
+    17,
+    13
+   ],
+   [
+    21,
+    79
+   ]
+  ]
+ ],
+ "طين": [
+  12,
+  [
+   [
+    3,
+    49
+   ],
+   [
+    5,
+    110
+   ],
+   [
+    6,
+    2
+   ],
+   [
+    7,
+    12
+   ],
+   [
+    17,
+    61
+   ],
+   [
+    23,
+    12
+   ],
+   [
+    28,
+    38
+   ],
+   [
+    32,
+    7
+   ],
+   [
+    37,
+    11
+   ],
+   [
+    38,
+    71
+   ]
+  ]
+ ],
+ "ظفر": [
+  2,
+  [
+   [
+    6,
+    146
+   ],
+   [
+    48,
+    24
+   ]
+  ]
+ ],
+ "ظلل": [
+  33,
+  [
+   [
+    2,
+    57
+   ],
+   [
+    2,
+    210
+   ],
+   [
+    4,
+    57
+   ],
+   [
+    7,
+    160
+   ],
+   [
+    7,
+    171
+   ],
+   [
+    13,
+    15
+   ],
+   [
+    13,
+    35
+   ],
+   [
+    15,
+    14
+   ],
+   [
+    16,
+    48
+   ],
+   [
+    16,
+    58
+   ]
+  ]
+ ],
+ "ظلم": [
+  315,
+  [
+   [
+    2,
+    17
+   ],
+   [
+    2,
+    19
+   ],
+   [
+    2,
+    20
+   ],
+   [
+    2,
+    35
+   ],
+   [
+    2,
+    51
+   ],
+   [
+    2,
+    54
+   ],
+   [
+    2,
+    57
+   ],
+   [
+    2,
+    59
+   ],
+   [
+    2,
+    92
+   ],
+   [
+    2,
+    95
+   ]
+  ]
+ ],
+ "ظمأ": [
+  3,
+  [
+   [
+    9,
+    120
+   ],
+   [
+    20,
+    119
+   ],
+   [
+    24,
+    39
+   ]
+  ]
+ ],
+ "ظنن": [
+  69,
+  [
+   [
+    2,
+    46
+   ],
+   [
+    2,
+    78
+   ],
+   [
+    2,
+    230
+   ],
+   [
+    2,
+    249
+   ],
+   [
+    3,
+    154
+   ],
+   [
+    4,
+    157
+   ],
+   [
+    6,
+    116
+   ],
+   [
+    6,
+    148
+   ],
+   [
+    7,
+    66
+   ],
+   [
+    7,
+    171
+   ]
+  ]
+ ],
+ "ظهر": [
+  59,
+  [
+   [
+    2,
+    85
+   ],
+   [
+    2,
+    101
+   ],
+   [
+    2,
+    189
+   ],
+   [
+    3,
+    187
+   ],
+   [
+    6,
+    31
+   ],
+   [
+    6,
+    94
+   ],
+   [
+    6,
+    120
+   ],
+   [
+    6,
+    138
+   ],
+   [
+    6,
+    146
+   ],
+   [
+    6,
+    151
+   ]
+  ]
+ ],
+ "عبا": [
+  1,
+  [
+   [
+    25,
+    77
+   ]
+  ]
+ ],
+ "عبث": [
+  2,
+  [
+   [
+    23,
+    115
+   ],
+   [
+    26,
+    128
+   ]
+  ]
+ ],
+ "عبد": [
+  275,
+  [
+   [
+    1,
+    5
+   ],
+   [
+    2,
+    21
+   ],
+   [
+    2,
+    23
+   ],
+   [
+    2,
+    83
+   ],
+   [
+    2,
+    90
+   ],
+   [
+    2,
+    133
+   ],
+   [
+    2,
+    138
+   ],
+   [
+    2,
+    172
+   ],
+   [
+    2,
+    178
+   ],
+   [
+    2,
+    186
+   ]
+  ]
+ ],
+ "عبر": [
+  9,
+  [
+   [
+    3,
+    13
+   ],
+   [
+    4,
+    43
+   ],
+   [
+    12,
+    43
+   ],
+   [
+    12,
+    111
+   ],
+   [
+    16,
+    66
+   ],
+   [
+    23,
+    21
+   ],
+   [
+    24,
+    44
+   ],
+   [
+    59,
+    2
+   ],
+   [
+    79,
+    26
+   ]
+  ]
+ ],
+ "عتق": [
+  2,
+  [
+   [
+    22,
+    29
+   ],
+   [
+    22,
+    33
+   ]
+  ]
+ ],
+ "عثر": [
+  2,
+  [
+   [
+    5,
+    107
+   ],
+   [
+    18,
+    21
+   ]
+  ]
+ ],
+ "عجب": [
+  27,
+  [
+   [
+    2,
+    204
+   ],
+   [
+    2,
+    221
+   ],
+   [
+    5,
+    100
+   ],
+   [
+    7,
+    63
+   ],
+   [
+    7,
+    69
+   ],
+   [
+    9,
+    25
+   ],
+   [
+    9,
+    55
+   ],
+   [
+    9,
+    85
+   ],
+   [
+    10,
+    2
+   ],
+   [
+    11,
+    72
+   ]
+  ]
+ ],
+ "عجز": [
+  26,
+  [
+   [
+    5,
+    31
+   ],
+   [
+    6,
+    134
+   ],
+   [
+    8,
+    59
+   ],
+   [
+    9,
+    2
+   ],
+   [
+    9,
+    3
+   ],
+   [
+    10,
+    53
+   ],
+   [
+    11,
+    20
+   ],
+   [
+    11,
+    33
+   ],
+   [
+    11,
+    72
+   ],
+   [
+    16,
+    46
+   ]
+  ]
+ ],
+ "عجف": [
+  2,
+  [
+   [
+    12,
+    43
+   ],
+   [
+    12,
+    46
+   ]
+  ]
+ ],
+ "عجل": [
+  47,
+  [
+   [
+    2,
+    51
+   ],
+   [
+    2,
+    54
+   ],
+   [
+    2,
+    92
+   ],
+   [
+    2,
+    93
+   ],
+   [
+    2,
+    203
+   ],
+   [
+    4,
+    153
+   ],
+   [
+    6,
+    57
+   ],
+   [
+    6,
+    58
+   ],
+   [
+    7,
+    148
+   ],
+   [
+    7,
+    150
+   ]
+  ]
+ ],
+ "عجم": [
+  4,
+  [
+   [
+    16,
+    103
+   ],
+   [
+    26,
+    198
+   ],
+   [
+    41,
+    44
+   ]
+  ]
+ ],
+ "عدد": [
+  57,
+  [
+   [
+    2,
+    24
+   ],
+   [
+    2,
+    80
+   ],
+   [
+    2,
+    184
+   ],
+   [
+    2,
+    185
+   ],
+   [
+    2,
+    203
+   ],
+   [
+    3,
+    24
+   ],
+   [
+    3,
+    131
+   ],
+   [
+    3,
+    133
+   ],
+   [
+    4,
+    93
+   ],
+   [
+    4,
+    102
+   ]
+  ]
+ ],
+ "عدس": [
+  1,
+  [
+   [
+    2,
+    61
+   ]
+  ]
+ ],
+ "عدل": [
+  28,
+  [
+   [
+    2,
+    48
+   ],
+   [
+    2,
+    123
+   ],
+   [
+    2,
+    282
+   ],
+   [
+    4,
+    3
+   ],
+   [
+    4,
+    58
+   ],
+   [
+    4,
+    129
+   ],
+   [
+    4,
+    135
+   ],
+   [
+    5,
+    8
+   ],
+   [
+    5,
+    95
+   ],
+   [
+    5,
+    106
+   ]
+  ]
+ ],
+ "عدو": [
+  106,
+  [
+   [
+    2,
+    36
+   ],
+   [
+    2,
+    61
+   ],
+   [
+    2,
+    65
+   ],
+   [
+    2,
+    85
+   ],
+   [
+    2,
+    97
+   ],
+   [
+    2,
+    98
+   ],
+   [
+    2,
+    168
+   ],
+   [
+    2,
+    173
+   ],
+   [
+    2,
+    178
+   ],
+   [
+    2,
+    190
+   ]
+  ]
+ ],
+ "عذب": [
+  373,
+  [
+   [
+    2,
+    7
+   ],
+   [
+    2,
+    10
+   ],
+   [
+    2,
+    49
+   ],
+   [
+    2,
+    85
+   ],
+   [
+    2,
+    86
+   ],
+   [
+    2,
+    90
+   ],
+   [
+    2,
+    96
+   ],
+   [
+    2,
+    104
+   ],
+   [
+    2,
+    114
+   ],
+   [
+    2,
+    126
+   ]
+  ]
+ ],
+ "عذر": [
+  12,
+  [
+   [
+    7,
+    164
+   ],
+   [
+    9,
+    66
+   ],
+   [
+    9,
+    90
+   ],
+   [
+    9,
+    94
+   ],
+   [
+    18,
+    76
+   ],
+   [
+    30,
+    57
+   ],
+   [
+    40,
+    52
+   ],
+   [
+    66,
+    7
+   ],
+   [
+    75,
+    15
+   ],
+   [
+    77,
+    6
+   ]
+  ]
+ ],
+ "عرب": [
+  22,
+  [
+   [
+    9,
+    90
+   ],
+   [
+    9,
+    97
+   ],
+   [
+    9,
+    98
+   ],
+   [
+    9,
+    99
+   ],
+   [
+    9,
+    101
+   ],
+   [
+    9,
+    120
+   ],
+   [
+    12,
+    2
+   ],
+   [
+    13,
+    37
+   ],
+   [
+    16,
+    103
+   ],
+   [
+    20,
+    113
+   ]
+  ]
+ ],
+ "عرج": [
+  9,
+  [
+   [
+    15,
+    14
+   ],
+   [
+    24,
+    61
+   ],
+   [
+    32,
+    5
+   ],
+   [
+    34,
+    2
+   ],
+   [
+    43,
+    33
+   ],
+   [
+    48,
+    17
+   ],
+   [
+    57,
+    4
+   ],
+   [
+    70,
+    3
+   ],
+   [
+    70,
+    4
+   ]
+  ]
+ ],
+ "عرض": [
+  79,
+  [
+   [
+    2,
+    31
+   ],
+   [
+    2,
+    83
+   ],
+   [
+    2,
+    224
+   ],
+   [
+    2,
+    235
+   ],
+   [
+    3,
+    23
+   ],
+   [
+    3,
+    133
+   ],
+   [
+    4,
+    16
+   ],
+   [
+    4,
+    63
+   ],
+   [
+    4,
+    81
+   ],
+   [
+    4,
+    94
+   ]
+  ]
+ ],
+ "عرف": [
+  71,
+  [
+   [
+    2,
+    89
+   ],
+   [
+    2,
+    146
+   ],
+   [
+    2,
+    178
+   ],
+   [
+    2,
+    180
+   ],
+   [
+    2,
+    198
+   ],
+   [
+    2,
+    228
+   ],
+   [
+    2,
+    229
+   ],
+   [
+    2,
+    231
+   ],
+   [
+    2,
+    232
+   ],
+   [
+    2,
+    233
+   ]
+  ]
+ ],
+ "عرم": [
+  1,
+  [
+   [
+    34,
+    16
+   ]
+  ]
+ ],
+ "عرو": [
+  3,
+  [
+   [
+    2,
+    256
+   ],
+   [
+    11,
+    54
+   ],
+   [
+    31,
+    22
+   ]
+  ]
+ ],
+ "عري": [
+  3,
+  [
+   [
+    20,
+    118
+   ],
+   [
+    37,
+    145
+   ],
+   [
+    68,
+    49
+   ]
+  ]
+ ],
+ "عزب": [
+  2,
+  [
+   [
+    10,
+    61
+   ],
+   [
+    34,
+    3
+   ]
+  ]
+ ],
+ "عزل": [
+  10,
+  [
+   [
+    2,
+    222
+   ],
+   [
+    4,
+    90
+   ],
+   [
+    4,
+    91
+   ],
+   [
+    11,
+    42
+   ],
+   [
+    18,
+    16
+   ],
+   [
+    19,
+    48
+   ],
+   [
+    19,
+    49
+   ],
+   [
+    26,
+    212
+   ],
+   [
+    33,
+    51
+   ],
+   [
+    44,
+    21
+   ]
+  ]
+ ],
+ "عزم": [
+  9,
+  [
+   [
+    2,
+    227
+   ],
+   [
+    2,
+    235
+   ],
+   [
+    3,
+    159
+   ],
+   [
+    3,
+    186
+   ],
+   [
+    20,
+    115
+   ],
+   [
+    31,
+    17
+   ],
+   [
+    42,
+    43
+   ],
+   [
+    46,
+    35
+   ],
+   [
+    47,
+    21
+   ]
+  ]
+ ],
+ "عزو": [
+  1,
+  [
+   [
+    70,
+    37
+   ]
+  ]
+ ],
+ "عشر": [
+  27,
+  [
+   [
+    2,
+    60
+   ],
+   [
+    2,
+    196
+   ],
+   [
+    2,
+    234
+   ],
+   [
+    4,
+    19
+   ],
+   [
+    5,
+    12
+   ],
+   [
+    5,
+    89
+   ],
+   [
+    6,
+    128
+   ],
+   [
+    6,
+    130
+   ],
+   [
+    6,
+    160
+   ],
+   [
+    7,
+    142
+   ]
+  ]
+ ],
+ "عشو": [
+  14,
+  [
+   [
+    3,
+    41
+   ],
+   [
+    6,
+    52
+   ],
+   [
+    12,
+    16
+   ],
+   [
+    18,
+    28
+   ],
+   [
+    19,
+    11
+   ],
+   [
+    19,
+    62
+   ],
+   [
+    24,
+    58
+   ],
+   [
+    30,
+    18
+   ],
+   [
+    38,
+    18
+   ],
+   [
+    38,
+    31
+   ]
+  ]
+ ],
+ "عصب": [
+  5,
+  [
+   [
+    11,
+    77
+   ],
+   [
+    12,
+    8
+   ],
+   [
+    12,
+    14
+   ],
+   [
+    24,
+    11
+   ],
+   [
+    28,
+    76
+   ]
+  ]
+ ],
+ "عصر": [
+  5,
+  [
+   [
+    2,
+    266
+   ],
+   [
+    12,
+    36
+   ],
+   [
+    12,
+    49
+   ],
+   [
+    78,
+    14
+   ],
+   [
+    103,
+    1
+   ]
+  ]
+ ],
+ "عصف": [
+  7,
+  [
+   [
+    10,
+    22
+   ],
+   [
+    14,
+    18
+   ],
+   [
+    21,
+    81
+   ],
+   [
+    55,
+    12
+   ],
+   [
+    77,
+    2
+   ],
+   [
+    105,
+    5
+   ]
+  ]
+ ],
+ "عصم": [
+  13,
+  [
+   [
+    3,
+    101
+   ],
+   [
+    3,
+    103
+   ],
+   [
+    4,
+    146
+   ],
+   [
+    4,
+    175
+   ],
+   [
+    5,
+    67
+   ],
+   [
+    10,
+    27
+   ],
+   [
+    11,
+    43
+   ],
+   [
+    12,
+    32
+   ],
+   [
+    22,
+    78
+   ],
+   [
+    33,
+    17
+   ]
+  ]
+ ],
+ "عصي": [
+  32,
+  [
+   [
+    2,
+    61
+   ],
+   [
+    2,
+    93
+   ],
+   [
+    3,
+    112
+   ],
+   [
+    3,
+    152
+   ],
+   [
+    4,
+    14
+   ],
+   [
+    4,
+    42
+   ],
+   [
+    4,
+    46
+   ],
+   [
+    5,
+    78
+   ],
+   [
+    6,
+    15
+   ],
+   [
+    10,
+    15
+   ]
+  ]
+ ],
+ "عضل": [
+  2,
+  [
+   [
+    2,
+    232
+   ],
+   [
+    4,
+    19
+   ]
+  ]
+ ],
+ "عضو": [
+  1,
+  [
+   [
+    15,
+    91
+   ]
+  ]
+ ],
+ "عطف": [
+  1,
+  [
+   [
+    22,
+    9
+   ]
+  ]
+ ],
+ "عطل": [
+  2,
+  [
+   [
+    22,
+    45
+   ],
+   [
+    81,
+    4
+   ]
+  ]
+ ],
+ "عطو": [
+  14,
+  [
+   [
+    9,
+    29
+   ],
+   [
+    9,
+    58
+   ],
+   [
+    11,
+    108
+   ],
+   [
+    17,
+    20
+   ],
+   [
+    20,
+    50
+   ],
+   [
+    38,
+    39
+   ],
+   [
+    53,
+    34
+   ],
+   [
+    54,
+    29
+   ],
+   [
+    78,
+    36
+   ],
+   [
+    92,
+    5
+   ]
+  ]
+ ],
+ "عظم": [
+  128,
+  [
+   [
+    2,
+    7
+   ],
+   [
+    2,
+    49
+   ],
+   [
+    2,
+    105
+   ],
+   [
+    2,
+    114
+   ],
+   [
+    2,
+    255
+   ],
+   [
+    2,
+    259
+   ],
+   [
+    3,
+    74
+   ],
+   [
+    3,
+    105
+   ],
+   [
+    3,
+    172
+   ],
+   [
+    3,
+    174
+   ]
+  ]
+ ],
+ "عفف": [
+  4,
+  [
+   [
+    2,
+    273
+   ],
+   [
+    4,
+    6
+   ],
+   [
+    24,
+    33
+   ],
+   [
+    24,
+    60
+   ]
+  ]
+ ],
+ "عفو": [
+  35,
+  [
+   [
+    2,
+    52
+   ],
+   [
+    2,
+    109
+   ],
+   [
+    2,
+    178
+   ],
+   [
+    2,
+    187
+   ],
+   [
+    2,
+    219
+   ],
+   [
+    2,
+    237
+   ],
+   [
+    2,
+    286
+   ],
+   [
+    3,
+    134
+   ],
+   [
+    3,
+    152
+   ],
+   [
+    3,
+    155
+   ]
+  ]
+ ],
+ "عقب": [
+  80,
+  [
+   [
+    2,
+    143
+   ],
+   [
+    2,
+    196
+   ],
+   [
+    2,
+    211
+   ],
+   [
+    3,
+    11
+   ],
+   [
+    3,
+    137
+   ],
+   [
+    3,
+    144
+   ],
+   [
+    3,
+    149
+   ],
+   [
+    5,
+    2
+   ],
+   [
+    5,
+    98
+   ],
+   [
+    6,
+    11
+   ]
+  ]
+ ],
+ "عقد": [
+  7,
+  [
+   [
+    2,
+    235
+   ],
+   [
+    2,
+    237
+   ],
+   [
+    4,
+    33
+   ],
+   [
+    5,
+    1
+   ],
+   [
+    5,
+    89
+   ],
+   [
+    20,
+    27
+   ],
+   [
+    113,
+    4
+   ]
+  ]
+ ],
+ "عقل": [
+  49,
+  [
+   [
+    2,
+    44
+   ],
+   [
+    2,
+    73
+   ],
+   [
+    2,
+    75
+   ],
+   [
+    2,
+    76
+   ],
+   [
+    2,
+    164
+   ],
+   [
+    2,
+    170
+   ],
+   [
+    2,
+    171
+   ],
+   [
+    2,
+    242
+   ],
+   [
+    3,
+    65
+   ],
+   [
+    3,
+    118
+   ]
+  ]
+ ],
+ "علق": [
+  7,
+  [
+   [
+    4,
+    129
+   ],
+   [
+    22,
+    5
+   ],
+   [
+    23,
+    14
+   ],
+   [
+    40,
+    67
+   ],
+   [
+    75,
+    38
+   ],
+   [
+    96,
+    2
+   ]
+  ]
+ ],
+ "علم": [
+  854,
+  [
+   [
+    1,
+    2
+   ],
+   [
+    2,
+    13
+   ],
+   [
+    2,
+    22
+   ],
+   [
+    2,
+    26
+   ],
+   [
+    2,
+    29
+   ],
+   [
+    2,
+    30
+   ],
+   [
+    2,
+    31
+   ],
+   [
+    2,
+    32
+   ],
+   [
+    2,
+    33
+   ],
+   [
+    2,
+    42
+   ]
+  ]
+ ],
+ "علن": [
+  16,
+  [
+   [
+    2,
+    77
+   ],
+   [
+    2,
+    274
+   ],
+   [
+    11,
+    5
+   ],
+   [
+    13,
+    22
+   ],
+   [
+    14,
+    31
+   ],
+   [
+    14,
+    38
+   ],
+   [
+    16,
+    19
+   ],
+   [
+    16,
+    23
+   ],
+   [
+    27,
+    25
+   ],
+   [
+    27,
+    74
+   ]
+  ]
+ ],
+ "علو": [
+  70,
+  [
+   [
+    2,
+    255
+   ],
+   [
+    3,
+    61
+   ],
+   [
+    3,
+    64
+   ],
+   [
+    3,
+    139
+   ],
+   [
+    3,
+    167
+   ],
+   [
+    4,
+    34
+   ],
+   [
+    4,
+    61
+   ],
+   [
+    5,
+    104
+   ],
+   [
+    6,
+    100
+   ],
+   [
+    6,
+    151
+   ]
+  ]
+ ],
+ "عمد": [
+  7,
+  [
+   [
+    4,
+    93
+   ],
+   [
+    5,
+    95
+   ],
+   [
+    13,
+    2
+   ],
+   [
+    31,
+    10
+   ],
+   [
+    33,
+    5
+   ],
+   [
+    89,
+    7
+   ],
+   [
+    104,
+    9
+   ]
+  ]
+ ],
+ "عمر": [
+  24,
+  [
+   [
+    2,
+    96
+   ],
+   [
+    2,
+    158
+   ],
+   [
+    2,
+    196
+   ],
+   [
+    9,
+    17
+   ],
+   [
+    9,
+    18
+   ],
+   [
+    9,
+    19
+   ],
+   [
+    10,
+    16
+   ],
+   [
+    11,
+    61
+   ],
+   [
+    15,
+    72
+   ],
+   [
+    16,
+    70
+   ]
+  ]
+ ],
+ "عمق": [
+  1,
+  [
+   [
+    22,
+    27
+   ]
+  ]
+ ],
+ "عمل": [
+  360,
+  [
+   [
+    2,
+    25
+   ],
+   [
+    2,
+    62
+   ],
+   [
+    2,
+    74
+   ],
+   [
+    2,
+    82
+   ],
+   [
+    2,
+    85
+   ],
+   [
+    2,
+    96
+   ],
+   [
+    2,
+    110
+   ],
+   [
+    2,
+    134
+   ],
+   [
+    2,
+    139
+   ],
+   [
+    2,
+    140
+   ]
+  ]
+ ],
+ "عمم": [
+  5,
+  [
+   [
+    4,
+    23
+   ],
+   [
+    24,
+    61
+   ],
+   [
+    33,
+    50
+   ]
+  ]
+ ],
+ "عمي": [
+  33,
+  [
+   [
+    2,
+    18
+   ],
+   [
+    2,
+    171
+   ],
+   [
+    5,
+    71
+   ],
+   [
+    6,
+    50
+   ],
+   [
+    6,
+    104
+   ],
+   [
+    7,
+    64
+   ],
+   [
+    10,
+    43
+   ],
+   [
+    11,
+    24
+   ],
+   [
+    11,
+    28
+   ],
+   [
+    13,
+    16
+   ]
+  ]
+ ],
+ "عنب": [
+  11,
+  [
+   [
+    2,
+    266
+   ],
+   [
+    6,
+    99
+   ],
+   [
+    13,
+    4
+   ],
+   [
+    16,
+    11
+   ],
+   [
+    16,
+    67
+   ],
+   [
+    17,
+    91
+   ],
+   [
+    18,
+    32
+   ],
+   [
+    23,
+    19
+   ],
+   [
+    36,
+    34
+   ],
+   [
+    78,
+    32
+   ]
+  ]
+ ],
+ "عند": [
+  201,
+  [
+   [
+    2,
+    54
+   ],
+   [
+    2,
+    62
+   ],
+   [
+    2,
+    76
+   ],
+   [
+    2,
+    79
+   ],
+   [
+    2,
+    80
+   ],
+   [
+    2,
+    89
+   ],
+   [
+    2,
+    94
+   ],
+   [
+    2,
+    101
+   ],
+   [
+    2,
+    103
+   ],
+   [
+    2,
+    109
+   ]
+  ]
+ ],
+ "عنق": [
+  9,
+  [
+   [
+    8,
+    12
+   ],
+   [
+    13,
+    5
+   ],
+   [
+    17,
+    13
+   ],
+   [
+    17,
+    29
+   ],
+   [
+    26,
+    4
+   ],
+   [
+    34,
+    33
+   ],
+   [
+    36,
+    8
+   ],
+   [
+    38,
+    33
+   ],
+   [
+    40,
+    71
+   ]
+  ]
+ ],
+ "عنكب": [
+  2,
+  [
+   [
+    29,
+    41
+   ]
+  ]
+ ],
+ "عنو": [
+  1,
+  [
+   [
+    20,
+    111
+   ]
+  ]
+ ],
+ "عهد": [
+  46,
+  [
+   [
+    2,
+    27
+   ],
+   [
+    2,
+    40
+   ],
+   [
+    2,
+    80
+   ],
+   [
+    2,
+    100
+   ],
+   [
+    2,
+    124
+   ],
+   [
+    2,
+    125
+   ],
+   [
+    2,
+    177
+   ],
+   [
+    3,
+    76
+   ],
+   [
+    3,
+    77
+   ],
+   [
+    3,
+    183
+   ]
+  ]
+ ],
+ "عود": [
+  63,
+  [
+   [
+    2,
+    275
+   ],
+   [
+    5,
+    95
+   ],
+   [
+    5,
+    114
+   ],
+   [
+    6,
+    28
+   ],
+   [
+    7,
+    29
+   ],
+   [
+    7,
+    65
+   ],
+   [
+    7,
+    74
+   ],
+   [
+    7,
+    88
+   ],
+   [
+    7,
+    89
+   ],
+   [
+    8,
+    19
+   ]
+  ]
+ ],
+ "عوذ": [
+  17,
+  [
+   [
+    2,
+    67
+   ],
+   [
+    3,
+    36
+   ],
+   [
+    7,
+    200
+   ],
+   [
+    11,
+    47
+   ],
+   [
+    12,
+    23
+   ],
+   [
+    12,
+    79
+   ],
+   [
+    16,
+    98
+   ],
+   [
+    19,
+    18
+   ],
+   [
+    23,
+    97
+   ],
+   [
+    23,
+    98
+   ]
+  ]
+ ],
+ "عور": [
+  4,
+  [
+   [
+    24,
+    31
+   ],
+   [
+    24,
+    58
+   ],
+   [
+    33,
+    13
+   ]
+  ]
+ ],
+ "عول": [
+  1,
+  [
+   [
+    4,
+    3
+   ]
+  ]
+ ],
+ "عوم": [
+  9,
+  [
+   [
+    2,
+    259
+   ],
+   [
+    9,
+    28
+   ],
+   [
+    9,
+    37
+   ],
+   [
+    9,
+    126
+   ],
+   [
+    12,
+    49
+   ],
+   [
+    29,
+    14
+   ],
+   [
+    31,
+    14
+   ]
+  ]
+ ],
+ "عون": [
+  12,
+  [
+   [
+    1,
+    5
+   ],
+   [
+    2,
+    45
+   ],
+   [
+    2,
+    68
+   ],
+   [
+    2,
+    153
+   ],
+   [
+    5,
+    2
+   ],
+   [
+    7,
+    128
+   ],
+   [
+    12,
+    18
+   ],
+   [
+    18,
+    95
+   ],
+   [
+    21,
+    112
+   ],
+   [
+    25,
+    4
+   ]
+  ]
+ ],
+ "عيب": [
+  1,
+  [
+   [
+    18,
+    79
+   ]
+  ]
+ ],
+ "عير": [
+  3,
+  [
+   [
+    12,
+    70
+   ],
+   [
+    12,
+    82
+   ],
+   [
+    12,
+    94
+   ]
+  ]
+ ],
+ "عيش": [
+  8,
+  [
+   [
+    7,
+    10
+   ],
+   [
+    15,
+    20
+   ],
+   [
+    20,
+    124
+   ],
+   [
+    28,
+    58
+   ],
+   [
+    43,
+    32
+   ],
+   [
+    69,
+    21
+   ],
+   [
+    78,
+    11
+   ],
+   [
+    101,
+    7
+   ]
+  ]
+ ],
+ "عين": [
+  65,
+  [
+   [
+    2,
+    60
+   ],
+   [
+    3,
+    13
+   ],
+   [
+    5,
+    45
+   ],
+   [
+    5,
+    83
+   ],
+   [
+    7,
+    116
+   ],
+   [
+    7,
+    160
+   ],
+   [
+    7,
+    179
+   ],
+   [
+    7,
+    195
+   ],
+   [
+    8,
+    44
+   ],
+   [
+    9,
+    92
+   ]
+  ]
+ ],
+ "غدر": [
+  2,
+  [
+   [
+    18,
+    47
+   ],
+   [
+    18,
+    49
+   ]
+  ]
+ ],
+ "غدو": [
+  16,
+  [
+   [
+    3,
+    121
+   ],
+   [
+    6,
+    52
+   ],
+   [
+    7,
+    205
+   ],
+   [
+    12,
+    12
+   ],
+   [
+    13,
+    15
+   ],
+   [
+    18,
+    23
+   ],
+   [
+    18,
+    28
+   ],
+   [
+    18,
+    62
+   ],
+   [
+    24,
+    36
+   ],
+   [
+    31,
+    34
+   ]
+  ]
+ ],
+ "غرب": [
+  19,
+  [
+   [
+    2,
+    115
+   ],
+   [
+    2,
+    142
+   ],
+   [
+    2,
+    177
+   ],
+   [
+    2,
+    258
+   ],
+   [
+    5,
+    31
+   ],
+   [
+    7,
+    137
+   ],
+   [
+    18,
+    17
+   ],
+   [
+    18,
+    86
+   ],
+   [
+    20,
+    130
+   ],
+   [
+    24,
+    35
+   ]
+  ]
+ ],
+ "غرر": [
+  27,
+  [
+   [
+    3,
+    24
+   ],
+   [
+    3,
+    185
+   ],
+   [
+    3,
+    196
+   ],
+   [
+    4,
+    120
+   ],
+   [
+    6,
+    70
+   ],
+   [
+    6,
+    112
+   ],
+   [
+    6,
+    130
+   ],
+   [
+    7,
+    22
+   ],
+   [
+    7,
+    51
+   ],
+   [
+    8,
+    49
+   ]
+  ]
+ ],
+ "غرف": [
+  7,
+  [
+   [
+    2,
+    249
+   ],
+   [
+    25,
+    75
+   ],
+   [
+    29,
+    58
+   ],
+   [
+    34,
+    37
+   ],
+   [
+    39,
+    20
+   ]
+  ]
+ ],
+ "غرق": [
+  23,
+  [
+   [
+    2,
+    50
+   ],
+   [
+    7,
+    64
+   ],
+   [
+    7,
+    136
+   ],
+   [
+    8,
+    54
+   ],
+   [
+    10,
+    73
+   ],
+   [
+    10,
+    90
+   ],
+   [
+    11,
+    37
+   ],
+   [
+    11,
+    43
+   ],
+   [
+    17,
+    69
+   ],
+   [
+    17,
+    103
+   ]
+  ]
+ ],
+ "غزل": [
+  1,
+  [
+   [
+    16,
+    92
+   ]
+  ]
+ ],
+ "غزو": [
+  1,
+  [
+   [
+    3,
+    156
+   ]
+  ]
+ ],
+ "غسل": [
+  4,
+  [
+   [
+    4,
+    43
+   ],
+   [
+    5,
+    6
+   ],
+   [
+    38,
+    42
+   ],
+   [
+    69,
+    36
+   ]
+  ]
+ ],
+ "غصب": [
+  1,
+  [
+   [
+    18,
+    79
+   ]
+  ]
+ ],
+ "غصص": [
+  1,
+  [
+   [
+    73,
+    13
+   ]
+  ]
+ ],
+ "غضب": [
+  24,
+  [
+   [
+    1,
+    7
+   ],
+   [
+    2,
+    61
+   ],
+   [
+    2,
+    90
+   ],
+   [
+    3,
+    112
+   ],
+   [
+    4,
+    93
+   ],
+   [
+    5,
+    60
+   ],
+   [
+    7,
+    71
+   ],
+   [
+    7,
+    150
+   ],
+   [
+    7,
+    152
+   ],
+   [
+    7,
+    154
+   ]
+  ]
+ ],
+ "غفر": [
+  234,
+  [
+   [
+    2,
+    58
+   ],
+   [
+    2,
+    173
+   ],
+   [
+    2,
+    175
+   ],
+   [
+    2,
+    182
+   ],
+   [
+    2,
+    192
+   ],
+   [
+    2,
+    199
+   ],
+   [
+    2,
+    218
+   ],
+   [
+    2,
+    221
+   ],
+   [
+    2,
+    225
+   ],
+   [
+    2,
+    226
+   ]
+  ]
+ ],
+ "غفل": [
+  35,
+  [
+   [
+    2,
+    74
+   ],
+   [
+    2,
+    85
+   ],
+   [
+    2,
+    140
+   ],
+   [
+    2,
+    144
+   ],
+   [
+    2,
+    149
+   ],
+   [
+    3,
+    99
+   ],
+   [
+    4,
+    102
+   ],
+   [
+    6,
+    131
+   ],
+   [
+    6,
+    132
+   ],
+   [
+    6,
+    156
+   ]
+  ]
+ ],
+ "غلب": [
+  31,
+  [
+   [
+    2,
+    249
+   ],
+   [
+    3,
+    12
+   ],
+   [
+    3,
+    160
+   ],
+   [
+    4,
+    74
+   ],
+   [
+    5,
+    23
+   ],
+   [
+    5,
+    56
+   ],
+   [
+    7,
+    113
+   ],
+   [
+    7,
+    119
+   ],
+   [
+    8,
+    36
+   ],
+   [
+    8,
+    48
+   ]
+  ]
+ ],
+ "غلظ": [
+  13,
+  [
+   [
+    3,
+    159
+   ],
+   [
+    4,
+    21
+   ],
+   [
+    4,
+    154
+   ],
+   [
+    9,
+    73
+   ],
+   [
+    9,
+    123
+   ],
+   [
+    11,
+    58
+   ],
+   [
+    14,
+    17
+   ],
+   [
+    31,
+    24
+   ],
+   [
+    33,
+    7
+   ],
+   [
+    41,
+    50
+   ]
+  ]
+ ],
+ "غلف": [
+  2,
+  [
+   [
+    2,
+    88
+   ],
+   [
+    4,
+    155
+   ]
+  ]
+ ],
+ "غلق": [
+  1,
+  [
+   [
+    12,
+    23
+   ]
+  ]
+ ],
+ "غلل": [
+  16,
+  [
+   [
+    3,
+    161
+   ],
+   [
+    5,
+    64
+   ],
+   [
+    7,
+    43
+   ],
+   [
+    7,
+    157
+   ],
+   [
+    13,
+    5
+   ],
+   [
+    15,
+    47
+   ],
+   [
+    17,
+    29
+   ],
+   [
+    34,
+    33
+   ],
+   [
+    36,
+    8
+   ],
+   [
+    40,
+    71
+   ]
+  ]
+ ],
+ "غلم": [
+  13,
+  [
+   [
+    3,
+    40
+   ],
+   [
+    12,
+    19
+   ],
+   [
+    15,
+    53
+   ],
+   [
+    18,
+    74
+   ],
+   [
+    18,
+    80
+   ],
+   [
+    18,
+    82
+   ],
+   [
+    19,
+    7
+   ],
+   [
+    19,
+    8
+   ],
+   [
+    19,
+    19
+   ],
+   [
+    19,
+    20
+   ]
+  ]
+ ],
+ "غلو": [
+  2,
+  [
+   [
+    4,
+    171
+   ],
+   [
+    5,
+    77
+   ]
+  ]
+ ],
+ "غمر": [
+  4,
+  [
+   [
+    6,
+    93
+   ],
+   [
+    23,
+    54
+   ],
+   [
+    23,
+    63
+   ],
+   [
+    51,
+    11
+   ]
+  ]
+ ],
+ "غمض": [
+  1,
+  [
+   [
+    2,
+    267
+   ]
+  ]
+ ],
+ "غنم": [
+  9,
+  [
+   [
+    4,
+    94
+   ],
+   [
+    6,
+    146
+   ],
+   [
+    8,
+    41
+   ],
+   [
+    8,
+    69
+   ],
+   [
+    20,
+    18
+   ],
+   [
+    21,
+    78
+   ],
+   [
+    48,
+    15
+   ],
+   [
+    48,
+    19
+   ],
+   [
+    48,
+    20
+   ]
+  ]
+ ],
+ "غني": [
+  73,
+  [
+   [
+    2,
+    263
+   ],
+   [
+    2,
+    267
+   ],
+   [
+    2,
+    273
+   ],
+   [
+    3,
+    10
+   ],
+   [
+    3,
+    97
+   ],
+   [
+    3,
+    116
+   ],
+   [
+    3,
+    181
+   ],
+   [
+    4,
+    6
+   ],
+   [
+    4,
+    130
+   ],
+   [
+    4,
+    131
+   ]
+  ]
+ ],
+ "غور": [
+  4,
+  [
+   [
+    9,
+    40
+   ],
+   [
+    9,
+    57
+   ],
+   [
+    18,
+    41
+   ],
+   [
+    67,
+    30
+   ]
+  ]
+ ],
+ "غوص": [
+  2,
+  [
+   [
+    21,
+    82
+   ],
+   [
+    38,
+    37
+   ]
+  ]
+ ],
+ "غوي": [
+  22,
+  [
+   [
+    2,
+    256
+   ],
+   [
+    7,
+    16
+   ],
+   [
+    7,
+    146
+   ],
+   [
+    7,
+    175
+   ],
+   [
+    7,
+    202
+   ],
+   [
+    11,
+    34
+   ],
+   [
+    15,
+    39
+   ],
+   [
+    15,
+    42
+   ],
+   [
+    19,
+    59
+   ],
+   [
+    20,
+    121
+   ]
+  ]
+ ],
+ "غيب": [
+  60,
+  [
+   [
+    2,
+    3
+   ],
+   [
+    2,
+    33
+   ],
+   [
+    3,
+    44
+   ],
+   [
+    3,
+    179
+   ],
+   [
+    4,
+    34
+   ],
+   [
+    5,
+    94
+   ],
+   [
+    5,
+    109
+   ],
+   [
+    5,
+    116
+   ],
+   [
+    6,
+    50
+   ],
+   [
+    6,
+    59
+   ]
+  ]
+ ],
+ "غير": [
+  154,
+  [
+   [
+    1,
+    7
+   ],
+   [
+    2,
+    59
+   ],
+   [
+    2,
+    61
+   ],
+   [
+    2,
+    173
+   ],
+   [
+    2,
+    212
+   ],
+   [
+    2,
+    230
+   ],
+   [
+    2,
+    240
+   ],
+   [
+    3,
+    21
+   ],
+   [
+    3,
+    27
+   ],
+   [
+    3,
+    37
+   ]
+  ]
+ ],
+ "غيض": [
+  2,
+  [
+   [
+    11,
+    44
+   ],
+   [
+    13,
+    8
+   ]
+  ]
+ ],
+ "فتح": [
+  38,
+  [
+   [
+    2,
+    76
+   ],
+   [
+    2,
+    89
+   ],
+   [
+    4,
+    141
+   ],
+   [
+    5,
+    52
+   ],
+   [
+    6,
+    44
+   ],
+   [
+    6,
+    59
+   ],
+   [
+    7,
+    40
+   ],
+   [
+    7,
+    89
+   ],
+   [
+    7,
+    96
+   ],
+   [
+    8,
+    19
+   ]
+  ]
+ ],
+ "فتر": [
+  3,
+  [
+   [
+    5,
+    19
+   ],
+   [
+    21,
+    20
+   ],
+   [
+    43,
+    75
+   ]
+  ]
+ ],
+ "فتن": [
+  60,
+  [
+   [
+    2,
+    102
+   ],
+   [
+    2,
+    191
+   ],
+   [
+    2,
+    193
+   ],
+   [
+    2,
+    217
+   ],
+   [
+    3,
+    7
+   ],
+   [
+    4,
+    91
+   ],
+   [
+    4,
+    101
+   ],
+   [
+    5,
+    41
+   ],
+   [
+    5,
+    49
+   ],
+   [
+    5,
+    71
+   ]
+  ]
+ ],
+ "فتي": [
+  21,
+  [
+   [
+    4,
+    25
+   ],
+   [
+    4,
+    127
+   ],
+   [
+    4,
+    176
+   ],
+   [
+    12,
+    30
+   ],
+   [
+    12,
+    36
+   ],
+   [
+    12,
+    41
+   ],
+   [
+    12,
+    43
+   ],
+   [
+    12,
+    46
+   ],
+   [
+    12,
+    62
+   ],
+   [
+    18,
+    10
+   ]
+  ]
+ ],
+ "فجج": [
+  3,
+  [
+   [
+    21,
+    31
+   ],
+   [
+    22,
+    27
+   ],
+   [
+    71,
+    20
+   ]
+  ]
+ ],
+ "فجر": [
+  24,
+  [
+   [
+    2,
+    60
+   ],
+   [
+    2,
+    74
+   ],
+   [
+    2,
+    187
+   ],
+   [
+    17,
+    78
+   ],
+   [
+    17,
+    90
+   ],
+   [
+    17,
+    91
+   ],
+   [
+    18,
+    33
+   ],
+   [
+    24,
+    58
+   ],
+   [
+    36,
+    34
+   ],
+   [
+    38,
+    28
+   ]
+  ]
+ ],
+ "فحش": [
+  24,
+  [
+   [
+    2,
+    169
+   ],
+   [
+    2,
+    268
+   ],
+   [
+    3,
+    135
+   ],
+   [
+    4,
+    15
+   ],
+   [
+    4,
+    19
+   ],
+   [
+    4,
+    22
+   ],
+   [
+    4,
+    25
+   ],
+   [
+    6,
+    151
+   ],
+   [
+    7,
+    28
+   ],
+   [
+    7,
+    33
+   ]
+  ]
+ ],
+ "فخر": [
+  6,
+  [
+   [
+    4,
+    36
+   ],
+   [
+    11,
+    10
+   ],
+   [
+    31,
+    18
+   ],
+   [
+    55,
+    14
+   ],
+   [
+    57,
+    20
+   ],
+   [
+    57,
+    23
+   ]
+  ]
+ ],
+ "فدي": [
+  13,
+  [
+   [
+    2,
+    85
+   ],
+   [
+    2,
+    184
+   ],
+   [
+    2,
+    196
+   ],
+   [
+    2,
+    229
+   ],
+   [
+    3,
+    91
+   ],
+   [
+    5,
+    36
+   ],
+   [
+    10,
+    54
+   ],
+   [
+    13,
+    18
+   ],
+   [
+    37,
+    107
+   ],
+   [
+    39,
+    47
+   ]
+  ]
+ ],
+ "فرج": [
+  9,
+  [
+   [
+    21,
+    91
+   ],
+   [
+    23,
+    5
+   ],
+   [
+    24,
+    30
+   ],
+   [
+    24,
+    31
+   ],
+   [
+    33,
+    35
+   ],
+   [
+    50,
+    6
+   ],
+   [
+    66,
+    12
+   ],
+   [
+    70,
+    29
+   ],
+   [
+    77,
+    9
+   ]
+  ]
+ ],
+ "فرح": [
+  22,
+  [
+   [
+    3,
+    120
+   ],
+   [
+    3,
+    170
+   ],
+   [
+    3,
+    188
+   ],
+   [
+    6,
+    44
+   ],
+   [
+    9,
+    50
+   ],
+   [
+    9,
+    81
+   ],
+   [
+    10,
+    22
+   ],
+   [
+    10,
+    58
+   ],
+   [
+    11,
+    10
+   ],
+   [
+    13,
+    26
+   ]
+  ]
+ ],
+ "فرد": [
+  5,
+  [
+   [
+    6,
+    94
+   ],
+   [
+    19,
+    80
+   ],
+   [
+    19,
+    95
+   ],
+   [
+    21,
+    89
+   ],
+   [
+    34,
+    46
+   ]
+  ]
+ ],
+ "فرر": [
+  11,
+  [
+   [
+    18,
+    18
+   ],
+   [
+    26,
+    21
+   ],
+   [
+    33,
+    13
+   ],
+   [
+    33,
+    16
+   ],
+   [
+    51,
+    50
+   ],
+   [
+    62,
+    8
+   ],
+   [
+    71,
+    6
+   ],
+   [
+    74,
+    51
+   ],
+   [
+    75,
+    10
+   ],
+   [
+    80,
+    34
+   ]
+  ]
+ ],
+ "فرش": [
+  6,
+  [
+   [
+    2,
+    22
+   ],
+   [
+    6,
+    142
+   ],
+   [
+    51,
+    48
+   ],
+   [
+    55,
+    54
+   ],
+   [
+    56,
+    34
+   ],
+   [
+    101,
+    4
+   ]
+  ]
+ ],
+ "فرض": [
+  18,
+  [
+   [
+    2,
+    68
+   ],
+   [
+    2,
+    197
+   ],
+   [
+    2,
+    236
+   ],
+   [
+    2,
+    237
+   ],
+   [
+    4,
+    7
+   ],
+   [
+    4,
+    11
+   ],
+   [
+    4,
+    24
+   ],
+   [
+    4,
+    118
+   ],
+   [
+    9,
+    60
+   ],
+   [
+    24,
+    1
+   ]
+  ]
+ ],
+ "فرط": [
+  8,
+  [
+   [
+    6,
+    31
+   ],
+   [
+    6,
+    38
+   ],
+   [
+    6,
+    61
+   ],
+   [
+    12,
+    80
+   ],
+   [
+    16,
+    62
+   ],
+   [
+    18,
+    28
+   ],
+   [
+    20,
+    45
+   ],
+   [
+    39,
+    56
+   ]
+  ]
+ ],
+ "فرع": [
+  1,
+  [
+   [
+    14,
+    24
+   ]
+  ]
+ ],
+ "فرغ": [
+  6,
+  [
+   [
+    2,
+    250
+   ],
+   [
+    7,
+    126
+   ],
+   [
+    18,
+    96
+   ],
+   [
+    28,
+    10
+   ],
+   [
+    55,
+    31
+   ],
+   [
+    94,
+    7
+   ]
+  ]
+ ],
+ "فرق": [
+  72,
+  [
+   [
+    2,
+    50
+   ],
+   [
+    2,
+    53
+   ],
+   [
+    2,
+    75
+   ],
+   [
+    2,
+    85
+   ],
+   [
+    2,
+    87
+   ],
+   [
+    2,
+    100
+   ],
+   [
+    2,
+    101
+   ],
+   [
+    2,
+    102
+   ],
+   [
+    2,
+    136
+   ],
+   [
+    2,
+    146
+   ]
+  ]
+ ],
+ "فسح": [
+  3,
+  [
+   [
+    58,
+    11
+   ]
+  ]
+ ],
+ "فسد": [
+  50,
+  [
+   [
+    2,
+    11
+   ],
+   [
+    2,
+    12
+   ],
+   [
+    2,
+    27
+   ],
+   [
+    2,
+    30
+   ],
+   [
+    2,
+    60
+   ],
+   [
+    2,
+    205
+   ],
+   [
+    2,
+    220
+   ],
+   [
+    2,
+    251
+   ],
+   [
+    3,
+    63
+   ],
+   [
+    5,
+    32
+   ]
+  ]
+ ],
+ "فسر": [
+  1,
+  [
+   [
+    25,
+    33
+   ]
+  ]
+ ],
+ "فشل": [
+  4,
+  [
+   [
+    3,
+    122
+   ],
+   [
+    3,
+    152
+   ],
+   [
+    8,
+    43
+   ],
+   [
+    8,
+    46
+   ]
+  ]
+ ],
+ "فصح": [
+  1,
+  [
+   [
+    28,
+    34
+   ]
+  ]
+ ],
+ "فصل": [
+  43,
+  [
+   [
+    2,
+    233
+   ],
+   [
+    2,
+    249
+   ],
+   [
+    6,
+    55
+   ],
+   [
+    6,
+    57
+   ],
+   [
+    6,
+    97
+   ],
+   [
+    6,
+    98
+   ],
+   [
+    6,
+    114
+   ],
+   [
+    6,
+    119
+   ],
+   [
+    6,
+    126
+   ],
+   [
+    6,
+    154
+   ]
+  ]
+ ],
+ "فصم": [
+  1,
+  [
+   [
+    2,
+    256
+   ]
+  ]
+ ],
+ "فضح": [
+  1,
+  [
+   [
+    15,
+    68
+   ]
+  ]
+ ],
+ "فضض": [
+  9,
+  [
+   [
+    3,
+    14
+   ],
+   [
+    3,
+    159
+   ],
+   [
+    9,
+    34
+   ],
+   [
+    43,
+    33
+   ],
+   [
+    62,
+    11
+   ],
+   [
+    63,
+    7
+   ],
+   [
+    76,
+    15
+   ],
+   [
+    76,
+    16
+   ],
+   [
+    76,
+    21
+   ]
+  ]
+ ],
+ "فضل": [
+  104,
+  [
+   [
+    2,
+    47
+   ],
+   [
+    2,
+    64
+   ],
+   [
+    2,
+    90
+   ],
+   [
+    2,
+    105
+   ],
+   [
+    2,
+    122
+   ],
+   [
+    2,
+    198
+   ],
+   [
+    2,
+    237
+   ],
+   [
+    2,
+    243
+   ],
+   [
+    2,
+    251
+   ],
+   [
+    2,
+    253
+   ]
+  ]
+ ],
+ "فضو": [
+  1,
+  [
+   [
+    4,
+    21
+   ]
+  ]
+ ],
+ "فطر": [
+  20,
+  [
+   [
+    6,
+    14
+   ],
+   [
+    6,
+    79
+   ],
+   [
+    11,
+    51
+   ],
+   [
+    12,
+    101
+   ],
+   [
+    14,
+    10
+   ],
+   [
+    17,
+    51
+   ],
+   [
+    19,
+    90
+   ],
+   [
+    20,
+    72
+   ],
+   [
+    21,
+    56
+   ],
+   [
+    30,
+    30
+   ]
+  ]
+ ],
+ "فعل": [
+  108,
+  [
+   [
+    2,
+    24
+   ],
+   [
+    2,
+    68
+   ],
+   [
+    2,
+    71
+   ],
+   [
+    2,
+    85
+   ],
+   [
+    2,
+    197
+   ],
+   [
+    2,
+    215
+   ],
+   [
+    2,
+    231
+   ],
+   [
+    2,
+    234
+   ],
+   [
+    2,
+    240
+   ],
+   [
+    2,
+    253
+   ]
+  ]
+ ],
+ "فقد": [
+  3,
+  [
+   [
+    12,
+    71
+   ],
+   [
+    12,
+    72
+   ],
+   [
+    27,
+    20
+   ]
+  ]
+ ],
+ "فقر": [
+  14,
+  [
+   [
+    2,
+    268
+   ],
+   [
+    2,
+    271
+   ],
+   [
+    2,
+    273
+   ],
+   [
+    3,
+    181
+   ],
+   [
+    4,
+    6
+   ],
+   [
+    4,
+    135
+   ],
+   [
+    9,
+    60
+   ],
+   [
+    22,
+    28
+   ],
+   [
+    24,
+    32
+   ],
+   [
+    28,
+    24
+   ]
+  ]
+ ],
+ "فقه": [
+  20,
+  [
+   [
+    4,
+    78
+   ],
+   [
+    6,
+    25
+   ],
+   [
+    6,
+    65
+   ],
+   [
+    6,
+    98
+   ],
+   [
+    7,
+    179
+   ],
+   [
+    8,
+    65
+   ],
+   [
+    9,
+    81
+   ],
+   [
+    9,
+    87
+   ],
+   [
+    9,
+    122
+   ],
+   [
+    9,
+    127
+   ]
+  ]
+ ],
+ "فكر": [
+  18,
+  [
+   [
+    2,
+    219
+   ],
+   [
+    2,
+    266
+   ],
+   [
+    3,
+    191
+   ],
+   [
+    6,
+    50
+   ],
+   [
+    7,
+    176
+   ],
+   [
+    7,
+    184
+   ],
+   [
+    10,
+    24
+   ],
+   [
+    13,
+    3
+   ],
+   [
+    16,
+    11
+   ],
+   [
+    16,
+    44
+   ]
+  ]
+ ],
+ "فكك": [
+  2,
+  [
+   [
+    90,
+    13
+   ],
+   [
+    98,
+    1
+   ]
+  ]
+ ],
+ "فكه": [
+  19,
+  [
+   [
+    23,
+    19
+   ],
+   [
+    36,
+    55
+   ],
+   [
+    36,
+    57
+   ],
+   [
+    37,
+    42
+   ],
+   [
+    38,
+    51
+   ],
+   [
+    43,
+    73
+   ],
+   [
+    44,
+    27
+   ],
+   [
+    44,
+    55
+   ],
+   [
+    52,
+    18
+   ],
+   [
+    52,
+    22
+   ]
+  ]
+ ],
+ "فلح": [
+  40,
+  [
+   [
+    2,
+    5
+   ],
+   [
+    2,
+    189
+   ],
+   [
+    3,
+    104
+   ],
+   [
+    3,
+    130
+   ],
+   [
+    3,
+    200
+   ],
+   [
+    5,
+    35
+   ],
+   [
+    5,
+    90
+   ],
+   [
+    5,
+    100
+   ],
+   [
+    6,
+    21
+   ],
+   [
+    6,
+    135
+   ]
+  ]
+ ],
+ "فلق": [
+  4,
+  [
+   [
+    6,
+    95
+   ],
+   [
+    6,
+    96
+   ],
+   [
+    26,
+    63
+   ],
+   [
+    113,
+    1
+   ]
+  ]
+ ],
+ "فلك": [
+  25,
+  [
+   [
+    2,
+    164
+   ],
+   [
+    7,
+    64
+   ],
+   [
+    10,
+    22
+   ],
+   [
+    10,
+    73
+   ],
+   [
+    11,
+    37
+   ],
+   [
+    11,
+    38
+   ],
+   [
+    14,
+    32
+   ],
+   [
+    16,
+    14
+   ],
+   [
+    17,
+    66
+   ],
+   [
+    21,
+    33
+   ]
+  ]
+ ],
+ "فني": [
+  1,
+  [
+   [
+    55,
+    26
+   ]
+  ]
+ ],
+ "فهم": [
+  1,
+  [
+   [
+    21,
+    79
+   ]
+  ]
+ ],
+ "فوت": [
+  5,
+  [
+   [
+    3,
+    153
+   ],
+   [
+    34,
+    51
+   ],
+   [
+    57,
+    23
+   ],
+   [
+    60,
+    11
+   ],
+   [
+    67,
+    3
+   ]
+  ]
+ ],
+ "فوج": [
+  5,
+  [
+   [
+    27,
+    83
+   ],
+   [
+    38,
+    59
+   ],
+   [
+    67,
+    8
+   ],
+   [
+    78,
+    18
+   ],
+   [
+    110,
+    2
+   ]
+  ]
+ ],
+ "فوض": [
+  1,
+  [
+   [
+    40,
+    44
+   ]
+  ]
+ ],
+ "فوق": [
+  43,
+  [
+   [
+    2,
+    26
+   ],
+   [
+    2,
+    63
+   ],
+   [
+    2,
+    93
+   ],
+   [
+    2,
+    212
+   ],
+   [
+    3,
+    55
+   ],
+   [
+    4,
+    11
+   ],
+   [
+    4,
+    154
+   ],
+   [
+    5,
+    66
+   ],
+   [
+    6,
+    18
+   ],
+   [
+    6,
+    61
+   ]
+  ]
+ ],
+ "فوه": [
+  13,
+  [
+   [
+    3,
+    118
+   ],
+   [
+    3,
+    167
+   ],
+   [
+    5,
+    41
+   ],
+   [
+    9,
+    8
+   ],
+   [
+    9,
+    30
+   ],
+   [
+    9,
+    32
+   ],
+   [
+    13,
+    14
+   ],
+   [
+    14,
+    9
+   ],
+   [
+    18,
+    5
+   ],
+   [
+    24,
+    15
+   ]
+  ]
+ ],
+ "فيض": [
+  9,
+  [
+   [
+    2,
+    198
+   ],
+   [
+    2,
+    199
+   ],
+   [
+    5,
+    83
+   ],
+   [
+    7,
+    50
+   ],
+   [
+    9,
+    92
+   ],
+   [
+    10,
+    61
+   ],
+   [
+    24,
+    14
+   ],
+   [
+    46,
+    8
+   ]
+  ]
+ ],
+ "فيل": [
+  1,
+  [
+   [
+    105,
+    1
+   ]
+  ]
+ ],
+ "قبح": [
+  1,
+  [
+   [
+    28,
+    42
+   ]
+  ]
+ ],
+ "قبر": [
+  8,
+  [
+   [
+    9,
+    84
+   ],
+   [
+    22,
+    7
+   ],
+   [
+    35,
+    22
+   ],
+   [
+    60,
+    13
+   ],
+   [
+    80,
+    21
+   ],
+   [
+    82,
+    4
+   ],
+   [
+    100,
+    9
+   ],
+   [
+    102,
+    2
+   ]
+  ]
+ ],
+ "قبض": [
+  9,
+  [
+   [
+    2,
+    245
+   ],
+   [
+    2,
+    283
+   ],
+   [
+    9,
+    67
+   ],
+   [
+    20,
+    96
+   ],
+   [
+    25,
+    46
+   ],
+   [
+    39,
+    67
+   ],
+   [
+    67,
+    19
+   ]
+  ]
+ ],
+ "قبل": [
+  294,
+  [
+   [
+    2,
+    4
+   ],
+   [
+    2,
+    21
+   ],
+   [
+    2,
+    25
+   ],
+   [
+    2,
+    48
+   ],
+   [
+    2,
+    89
+   ],
+   [
+    2,
+    91
+   ],
+   [
+    2,
+    108
+   ],
+   [
+    2,
+    118
+   ],
+   [
+    2,
+    123
+   ],
+   [
+    2,
+    127
+   ]
+  ]
+ ],
+ "قتل": [
+  170,
+  [
+   [
+    2,
+    54
+   ],
+   [
+    2,
+    61
+   ],
+   [
+    2,
+    72
+   ],
+   [
+    2,
+    85
+   ],
+   [
+    2,
+    87
+   ],
+   [
+    2,
+    91
+   ],
+   [
+    2,
+    154
+   ],
+   [
+    2,
+    178
+   ],
+   [
+    2,
+    190
+   ],
+   [
+    2,
+    191
+   ]
+  ]
+ ],
+ "قحم": [
+  2,
+  [
+   [
+    38,
+    59
+   ],
+   [
+    90,
+    11
+   ]
+  ]
+ ],
+ "قدح": [
+  1,
+  [
+   [
+    100,
+    2
+   ]
+  ]
+ ],
+ "قدر": [
+  132,
+  [
+   [
+    2,
+    20
+   ],
+   [
+    2,
+    106
+   ],
+   [
+    2,
+    109
+   ],
+   [
+    2,
+    148
+   ],
+   [
+    2,
+    236
+   ],
+   [
+    2,
+    259
+   ],
+   [
+    2,
+    264
+   ],
+   [
+    2,
+    284
+   ],
+   [
+    3,
+    26
+   ],
+   [
+    3,
+    29
+   ]
+  ]
+ ],
+ "قدس": [
+  10,
+  [
+   [
+    2,
+    30
+   ],
+   [
+    2,
+    87
+   ],
+   [
+    2,
+    253
+   ],
+   [
+    5,
+    21
+   ],
+   [
+    5,
+    110
+   ],
+   [
+    16,
+    102
+   ],
+   [
+    20,
+    12
+   ],
+   [
+    59,
+    23
+   ],
+   [
+    62,
+    1
+   ],
+   [
+    79,
+    16
+   ]
+  ]
+ ],
+ "قدم": [
+  48,
+  [
+   [
+    2,
+    95
+   ],
+   [
+    2,
+    110
+   ],
+   [
+    2,
+    223
+   ],
+   [
+    2,
+    250
+   ],
+   [
+    3,
+    147
+   ],
+   [
+    3,
+    182
+   ],
+   [
+    4,
+    62
+   ],
+   [
+    5,
+    80
+   ],
+   [
+    7,
+    34
+   ],
+   [
+    8,
+    11
+   ]
+  ]
+ ],
+ "قدو": [
+  2,
+  [
+   [
+    6,
+    90
+   ],
+   [
+    43,
+    23
+   ]
+  ]
+ ],
+ "قرأ": [
+  88,
+  [
+   [
+    2,
+    185
+   ],
+   [
+    2,
+    228
+   ],
+   [
+    4,
+    82
+   ],
+   [
+    5,
+    101
+   ],
+   [
+    6,
+    19
+   ],
+   [
+    7,
+    204
+   ],
+   [
+    9,
+    111
+   ],
+   [
+    10,
+    15
+   ],
+   [
+    10,
+    37
+   ],
+   [
+    10,
+    61
+   ]
+  ]
+ ],
+ "قرب": [
+  96,
+  [
+   [
+    2,
+    35
+   ],
+   [
+    2,
+    83
+   ],
+   [
+    2,
+    177
+   ],
+   [
+    2,
+    180
+   ],
+   [
+    2,
+    186
+   ],
+   [
+    2,
+    187
+   ],
+   [
+    2,
+    214
+   ],
+   [
+    2,
+    215
+   ],
+   [
+    2,
+    222
+   ],
+   [
+    2,
+    237
+   ]
+  ]
+ ],
+ "قرر": [
+  38,
+  [
+   [
+    2,
+    36
+   ],
+   [
+    2,
+    84
+   ],
+   [
+    3,
+    81
+   ],
+   [
+    6,
+    67
+   ],
+   [
+    6,
+    98
+   ],
+   [
+    7,
+    24
+   ],
+   [
+    7,
+    143
+   ],
+   [
+    11,
+    6
+   ],
+   [
+    14,
+    26
+   ],
+   [
+    14,
+    29
+   ]
+  ]
+ ],
+ "قرش": [
+  1,
+  [
+   [
+    106,
+    1
+   ]
+  ]
+ ],
+ "قرض": [
+  13,
+  [
+   [
+    2,
+    245
+   ],
+   [
+    5,
+    12
+   ],
+   [
+    18,
+    17
+   ],
+   [
+    57,
+    11
+   ],
+   [
+    57,
+    18
+   ],
+   [
+    64,
+    17
+   ],
+   [
+    73,
+    20
+   ]
+  ]
+ ],
+ "قرطس": [
+  2,
+  [
+   [
+    6,
+    7
+   ],
+   [
+    6,
+    91
+   ]
+  ]
+ ],
+ "قرع": [
+  5,
+  [
+   [
+    13,
+    31
+   ],
+   [
+    69,
+    4
+   ],
+   [
+    101,
+    1
+   ],
+   [
+    101,
+    2
+   ],
+   [
+    101,
+    3
+   ]
+  ]
+ ],
+ "قرن": [
+  36,
+  [
+   [
+    4,
+    38
+   ],
+   [
+    6,
+    6
+   ],
+   [
+    10,
+    13
+   ],
+   [
+    11,
+    116
+   ],
+   [
+    14,
+    49
+   ],
+   [
+    17,
+    17
+   ],
+   [
+    18,
+    83
+   ],
+   [
+    18,
+    86
+   ],
+   [
+    18,
+    94
+   ],
+   [
+    19,
+    74
+   ]
+  ]
+ ],
+ "قري": [
+  57,
+  [
+   [
+    2,
+    58
+   ],
+   [
+    2,
+    259
+   ],
+   [
+    4,
+    75
+   ],
+   [
+    6,
+    92
+   ],
+   [
+    6,
+    123
+   ],
+   [
+    6,
+    131
+   ],
+   [
+    7,
+    4
+   ],
+   [
+    7,
+    82
+   ],
+   [
+    7,
+    88
+   ],
+   [
+    7,
+    94
+   ]
+  ]
+ ],
+ "قسط": [
+  25,
+  [
+   [
+    2,
+    282
+   ],
+   [
+    3,
+    18
+   ],
+   [
+    3,
+    21
+   ],
+   [
+    4,
+    3
+   ],
+   [
+    4,
+    127
+   ],
+   [
+    4,
+    135
+   ],
+   [
+    5,
+    8
+   ],
+   [
+    5,
+    42
+   ],
+   [
+    6,
+    152
+   ],
+   [
+    7,
+    29
+   ]
+  ]
+ ],
+ "قسم": [
+  33,
+  [
+   [
+    4,
+    8
+   ],
+   [
+    5,
+    3
+   ],
+   [
+    5,
+    53
+   ],
+   [
+    5,
+    106
+   ],
+   [
+    5,
+    107
+   ],
+   [
+    6,
+    109
+   ],
+   [
+    7,
+    21
+   ],
+   [
+    7,
+    49
+   ],
+   [
+    14,
+    44
+   ],
+   [
+    15,
+    44
+   ]
+  ]
+ ],
+ "قسو": [
+  7,
+  [
+   [
+    2,
+    74
+   ],
+   [
+    5,
+    13
+   ],
+   [
+    6,
+    43
+   ],
+   [
+    22,
+    53
+   ],
+   [
+    39,
+    22
+   ],
+   [
+    57,
+    16
+   ]
+  ]
+ ],
+ "قصد": [
+  6,
+  [
+   [
+    5,
+    66
+   ],
+   [
+    9,
+    42
+   ],
+   [
+    16,
+    9
+   ],
+   [
+    31,
+    19
+   ],
+   [
+    31,
+    32
+   ],
+   [
+    35,
+    32
+   ]
+  ]
+ ],
+ "قصر": [
+  11,
+  [
+   [
+    4,
+    101
+   ],
+   [
+    7,
+    74
+   ],
+   [
+    7,
+    202
+   ],
+   [
+    22,
+    45
+   ],
+   [
+    25,
+    10
+   ],
+   [
+    37,
+    48
+   ],
+   [
+    38,
+    52
+   ],
+   [
+    48,
+    27
+   ],
+   [
+    55,
+    56
+   ],
+   [
+    55,
+    72
+   ]
+  ]
+ ],
+ "قصص": [
+  30,
+  [
+   [
+    2,
+    178
+   ],
+   [
+    2,
+    179
+   ],
+   [
+    2,
+    194
+   ],
+   [
+    3,
+    62
+   ],
+   [
+    4,
+    164
+   ],
+   [
+    5,
+    45
+   ],
+   [
+    6,
+    57
+   ],
+   [
+    6,
+    130
+   ],
+   [
+    7,
+    7
+   ],
+   [
+    7,
+    35
+   ]
+  ]
+ ],
+ "قصف": [
+  1,
+  [
+   [
+    17,
+    69
+   ]
+  ]
+ ],
+ "قضب": [
+  1,
+  [
+   [
+    80,
+    28
+   ]
+  ]
+ ],
+ "قضض": [
+  1,
+  [
+   [
+    18,
+    77
+   ]
+  ]
+ ],
+ "قضي": [
+  63,
+  [
+   [
+    2,
+    117
+   ],
+   [
+    2,
+    200
+   ],
+   [
+    2,
+    210
+   ],
+   [
+    3,
+    47
+   ],
+   [
+    4,
+    65
+   ],
+   [
+    4,
+    103
+   ],
+   [
+    6,
+    2
+   ],
+   [
+    6,
+    8
+   ],
+   [
+    6,
+    58
+   ],
+   [
+    6,
+    60
+   ]
+  ]
+ ],
+ "قطر": [
+  5,
+  [
+   [
+    14,
+    50
+   ],
+   [
+    18,
+    96
+   ],
+   [
+    33,
+    14
+   ],
+   [
+    34,
+    12
+   ],
+   [
+    55,
+    33
+   ]
+  ]
+ ],
+ "قطط": [
+  1,
+  [
+   [
+    38,
+    16
+   ]
+  ]
+ ],
+ "قطع": [
+  36,
+  [
+   [
+    2,
+    27
+   ],
+   [
+    2,
+    166
+   ],
+   [
+    3,
+    127
+   ],
+   [
+    5,
+    33
+   ],
+   [
+    5,
+    38
+   ],
+   [
+    6,
+    45
+   ],
+   [
+    6,
+    94
+   ],
+   [
+    7,
+    72
+   ],
+   [
+    7,
+    124
+   ],
+   [
+    7,
+    160
+   ]
+  ]
+ ],
+ "قعد": [
+  31,
+  [
+   [
+    2,
+    127
+   ],
+   [
+    3,
+    121
+   ],
+   [
+    3,
+    168
+   ],
+   [
+    3,
+    191
+   ],
+   [
+    4,
+    95
+   ],
+   [
+    4,
+    103
+   ],
+   [
+    4,
+    140
+   ],
+   [
+    5,
+    24
+   ],
+   [
+    6,
+    68
+   ],
+   [
+    7,
+    16
+   ]
+  ]
+ ],
+ "قفل": [
+  1,
+  [
+   [
+    47,
+    24
+   ]
+  ]
+ ],
+ "قلب": [
+  168,
+  [
+   [
+    2,
+    7
+   ],
+   [
+    2,
+    10
+   ],
+   [
+    2,
+    74
+   ],
+   [
+    2,
+    88
+   ],
+   [
+    2,
+    93
+   ],
+   [
+    2,
+    97
+   ],
+   [
+    2,
+    118
+   ],
+   [
+    2,
+    143
+   ],
+   [
+    2,
+    144
+   ],
+   [
+    2,
+    204
+   ]
+  ]
+ ],
+ "قلد": [
+  4,
+  [
+   [
+    5,
+    2
+   ],
+   [
+    5,
+    97
+   ],
+   [
+    39,
+    63
+   ],
+   [
+    42,
+    12
+   ]
+  ]
+ ],
+ "قلل": [
+  76,
+  [
+   [
+    2,
+    41
+   ],
+   [
+    2,
+    79
+   ],
+   [
+    2,
+    83
+   ],
+   [
+    2,
+    88
+   ],
+   [
+    2,
+    126
+   ],
+   [
+    2,
+    174
+   ],
+   [
+    2,
+    246
+   ],
+   [
+    2,
+    249
+   ],
+   [
+    3,
+    77
+   ],
+   [
+    3,
+    187
+   ]
+  ]
+ ],
+ "قلم": [
+  4,
+  [
+   [
+    3,
+    44
+   ],
+   [
+    31,
+    27
+   ],
+   [
+    68,
+    1
+   ],
+   [
+    96,
+    4
+   ]
+  ]
+ ],
+ "قلي": [
+  2,
+  [
+   [
+    26,
+    168
+   ],
+   [
+    93,
+    3
+   ]
+  ]
+ ],
+ "قمح": [
+  1,
+  [
+   [
+    36,
+    8
+   ]
+  ]
+ ],
+ "قمر": [
+  27,
+  [
+   [
+    6,
+    77
+   ],
+   [
+    6,
+    96
+   ],
+   [
+    7,
+    54
+   ],
+   [
+    10,
+    5
+   ],
+   [
+    12,
+    4
+   ],
+   [
+    13,
+    2
+   ],
+   [
+    14,
+    33
+   ],
+   [
+    16,
+    12
+   ],
+   [
+    21,
+    33
+   ],
+   [
+    22,
+    18
+   ]
+  ]
+ ],
+ "قمص": [
+  6,
+  [
+   [
+    12,
+    18
+   ],
+   [
+    12,
+    25
+   ],
+   [
+    12,
+    26
+   ],
+   [
+    12,
+    27
+   ],
+   [
+    12,
+    28
+   ],
+   [
+    12,
+    93
+   ]
+  ]
+ ],
+ "قنت": [
+  13,
+  [
+   [
+    2,
+    116
+   ],
+   [
+    2,
+    238
+   ],
+   [
+    3,
+    17
+   ],
+   [
+    3,
+    43
+   ],
+   [
+    4,
+    34
+   ],
+   [
+    16,
+    120
+   ],
+   [
+    30,
+    26
+   ],
+   [
+    33,
+    31
+   ],
+   [
+    33,
+    35
+   ],
+   [
+    39,
+    9
+   ]
+  ]
+ ],
+ "قنط": [
+  6,
+  [
+   [
+    15,
+    55
+   ],
+   [
+    15,
+    56
+   ],
+   [
+    30,
+    36
+   ],
+   [
+    39,
+    53
+   ],
+   [
+    41,
+    49
+   ],
+   [
+    42,
+    28
+   ]
+  ]
+ ],
+ "قنطر": [
+  4,
+  [
+   [
+    3,
+    14
+   ],
+   [
+    3,
+    75
+   ],
+   [
+    4,
+    20
+   ]
+  ]
+ ],
+ "قنع": [
+  2,
+  [
+   [
+    14,
+    43
+   ],
+   [
+    22,
+    36
+   ]
+  ]
+ ],
+ "قهر": [
+  10,
+  [
+   [
+    6,
+    18
+   ],
+   [
+    6,
+    61
+   ],
+   [
+    7,
+    127
+   ],
+   [
+    12,
+    39
+   ],
+   [
+    13,
+    16
+   ],
+   [
+    14,
+    48
+   ],
+   [
+    38,
+    65
+   ],
+   [
+    39,
+    4
+   ],
+   [
+    40,
+    16
+   ],
+   [
+    93,
+    9
+   ]
+  ]
+ ],
+ "قوت": [
+  2,
+  [
+   [
+    4,
+    85
+   ],
+   [
+    41,
+    10
+   ]
+  ]
+ ],
+ "قوع": [
+  2,
+  [
+   [
+    20,
+    106
+   ],
+   [
+    24,
+    39
+   ]
+  ]
+ ],
+ "قول": [
+  1722,
+  [
+   [
+    2,
+    8
+   ],
+   [
+    2,
+    11
+   ],
+   [
+    2,
+    13
+   ],
+   [
+    2,
+    14
+   ],
+   [
+    2,
+    25
+   ],
+   [
+    2,
+    26
+   ],
+   [
+    2,
+    30
+   ],
+   [
+    2,
+    31
+   ],
+   [
+    2,
+    32
+   ],
+   [
+    2,
+    33
+   ]
+  ]
+ ],
+ "قوم": [
+  660,
+  [
+   [
+    1,
+    6
+   ],
+   [
+    2,
+    3
+   ],
+   [
+    2,
+    20
+   ],
+   [
+    2,
+    43
+   ],
+   [
+    2,
+    54
+   ],
+   [
+    2,
+    60
+   ],
+   [
+    2,
+    67
+   ],
+   [
+    2,
+    83
+   ],
+   [
+    2,
+    85
+   ],
+   [
+    2,
+    110
+   ]
+  ]
+ ],
+ "قوي": [
+  42,
+  [
+   [
+    2,
+    63
+   ],
+   [
+    2,
+    93
+   ],
+   [
+    2,
+    165
+   ],
+   [
+    7,
+    145
+   ],
+   [
+    7,
+    171
+   ],
+   [
+    8,
+    52
+   ],
+   [
+    8,
+    60
+   ],
+   [
+    9,
+    69
+   ],
+   [
+    11,
+    52
+   ],
+   [
+    11,
+    66
+   ]
+  ]
+ ],
+ "كبب": [
+  2,
+  [
+   [
+    27,
+    90
+   ],
+   [
+    67,
+    22
+   ]
+  ]
+ ],
+ "كبر": [
+  161,
+  [
+   [
+    2,
+    34
+   ],
+   [
+    2,
+    45
+   ],
+   [
+    2,
+    87
+   ],
+   [
+    2,
+    143
+   ],
+   [
+    2,
+    185
+   ],
+   [
+    2,
+    217
+   ],
+   [
+    2,
+    219
+   ],
+   [
+    2,
+    266
+   ],
+   [
+    2,
+    282
+   ],
+   [
+    3,
+    40
+   ]
+  ]
+ ],
+ "كتب": [
+  319,
+  [
+   [
+    2,
+    2
+   ],
+   [
+    2,
+    44
+   ],
+   [
+    2,
+    53
+   ],
+   [
+    2,
+    78
+   ],
+   [
+    2,
+    79
+   ],
+   [
+    2,
+    85
+   ],
+   [
+    2,
+    87
+   ],
+   [
+    2,
+    89
+   ],
+   [
+    2,
+    101
+   ],
+   [
+    2,
+    105
+   ]
+  ]
+ ],
+ "كتم": [
+  21,
+  [
+   [
+    2,
+    33
+   ],
+   [
+    2,
+    42
+   ],
+   [
+    2,
+    72
+   ],
+   [
+    2,
+    140
+   ],
+   [
+    2,
+    146
+   ],
+   [
+    2,
+    159
+   ],
+   [
+    2,
+    174
+   ],
+   [
+    2,
+    228
+   ],
+   [
+    2,
+    283
+   ],
+   [
+    3,
+    71
+   ]
+  ]
+ ],
+ "كثر": [
+  167,
+  [
+   [
+    2,
+    26
+   ],
+   [
+    2,
+    100
+   ],
+   [
+    2,
+    109
+   ],
+   [
+    2,
+    243
+   ],
+   [
+    2,
+    245
+   ],
+   [
+    2,
+    249
+   ],
+   [
+    2,
+    269
+   ],
+   [
+    3,
+    41
+   ],
+   [
+    3,
+    110
+   ],
+   [
+    3,
+    146
+   ]
+  ]
+ ],
+ "كدح": [
+  2,
+  [
+   [
+    84,
+    6
+   ]
+  ]
+ ],
+ "كذب": [
+  282,
+  [
+   [
+    2,
+    10
+   ],
+   [
+    2,
+    39
+   ],
+   [
+    2,
+    87
+   ],
+   [
+    3,
+    11
+   ],
+   [
+    3,
+    61
+   ],
+   [
+    3,
+    75
+   ],
+   [
+    3,
+    78
+   ],
+   [
+    3,
+    94
+   ],
+   [
+    3,
+    137
+   ],
+   [
+    3,
+    184
+   ]
+  ]
+ ],
+ "كرر": [
+  6,
+  [
+   [
+    2,
+    167
+   ],
+   [
+    17,
+    6
+   ],
+   [
+    26,
+    102
+   ],
+   [
+    39,
+    58
+   ],
+   [
+    67,
+    4
+   ],
+   [
+    79,
+    12
+   ]
+  ]
+ ],
+ "كرس": [
+  2,
+  [
+   [
+    2,
+    255
+   ],
+   [
+    38,
+    34
+   ]
+  ]
+ ],
+ "كرم": [
+  47,
+  [
+   [
+    4,
+    31
+   ],
+   [
+    8,
+    4
+   ],
+   [
+    8,
+    74
+   ],
+   [
+    12,
+    21
+   ],
+   [
+    12,
+    31
+   ],
+   [
+    17,
+    23
+   ],
+   [
+    17,
+    62
+   ],
+   [
+    17,
+    70
+   ],
+   [
+    21,
+    26
+   ],
+   [
+    22,
+    18
+   ]
+  ]
+ ],
+ "كره": [
+  41,
+  [
+   [
+    2,
+    216
+   ],
+   [
+    2,
+    256
+   ],
+   [
+    3,
+    83
+   ],
+   [
+    4,
+    19
+   ],
+   [
+    7,
+    88
+   ],
+   [
+    8,
+    5
+   ],
+   [
+    8,
+    8
+   ],
+   [
+    9,
+    32
+   ],
+   [
+    9,
+    33
+   ],
+   [
+    9,
+    46
+   ]
+  ]
+ ],
+ "كسب": [
+  67,
+  [
+   [
+    2,
+    79
+   ],
+   [
+    2,
+    81
+   ],
+   [
+    2,
+    134
+   ],
+   [
+    2,
+    141
+   ],
+   [
+    2,
+    202
+   ],
+   [
+    2,
+    225
+   ],
+   [
+    2,
+    264
+   ],
+   [
+    2,
+    267
+   ],
+   [
+    2,
+    281
+   ],
+   [
+    2,
+    286
+   ]
+  ]
+ ],
+ "كسل": [
+  2,
+  [
+   [
+    4,
+    142
+   ],
+   [
+    9,
+    54
+   ]
+  ]
+ ],
+ "كشف": [
+  20,
+  [
+   [
+    6,
+    17
+   ],
+   [
+    6,
+    41
+   ],
+   [
+    7,
+    134
+   ],
+   [
+    7,
+    135
+   ],
+   [
+    10,
+    12
+   ],
+   [
+    10,
+    98
+   ],
+   [
+    10,
+    107
+   ],
+   [
+    16,
+    54
+   ],
+   [
+    17,
+    56
+   ],
+   [
+    21,
+    84
+   ]
+  ]
+ ],
+ "كعب": [
+  4,
+  [
+   [
+    5,
+    6
+   ],
+   [
+    5,
+    95
+   ],
+   [
+    5,
+    97
+   ],
+   [
+    78,
+    33
+   ]
+  ]
+ ],
+ "كفا": [
+  1,
+  [
+   [
+    112,
+    4
+   ]
+  ]
+ ],
+ "كفر": [
+  525,
+  [
+   [
+    2,
+    6
+   ],
+   [
+    2,
+    19
+   ],
+   [
+    2,
+    24
+   ],
+   [
+    2,
+    26
+   ],
+   [
+    2,
+    28
+   ],
+   [
+    2,
+    34
+   ],
+   [
+    2,
+    39
+   ],
+   [
+    2,
+    41
+   ],
+   [
+    2,
+    61
+   ],
+   [
+    2,
+    85
+   ]
+  ]
+ ],
+ "كفف": [
+  15,
+  [
+   [
+    2,
+    208
+   ],
+   [
+    4,
+    77
+   ],
+   [
+    4,
+    84
+   ],
+   [
+    4,
+    91
+   ],
+   [
+    5,
+    11
+   ],
+   [
+    5,
+    110
+   ],
+   [
+    9,
+    36
+   ],
+   [
+    9,
+    122
+   ],
+   [
+    13,
+    14
+   ],
+   [
+    18,
+    42
+   ]
+  ]
+ ],
+ "كفل": [
+  10,
+  [
+   [
+    3,
+    37
+   ],
+   [
+    3,
+    44
+   ],
+   [
+    4,
+    85
+   ],
+   [
+    16,
+    91
+   ],
+   [
+    20,
+    40
+   ],
+   [
+    21,
+    85
+   ],
+   [
+    28,
+    12
+   ],
+   [
+    38,
+    23
+   ],
+   [
+    38,
+    48
+   ],
+   [
+    57,
+    28
+   ]
+  ]
+ ],
+ "كفي": [
+  33,
+  [
+   [
+    2,
+    137
+   ],
+   [
+    3,
+    124
+   ],
+   [
+    4,
+    6
+   ],
+   [
+    4,
+    45
+   ],
+   [
+    4,
+    50
+   ],
+   [
+    4,
+    55
+   ],
+   [
+    4,
+    70
+   ],
+   [
+    4,
+    79
+   ],
+   [
+    4,
+    81
+   ],
+   [
+    4,
+    132
+   ]
+  ]
+ ],
+ "كلب": [
+  6,
+  [
+   [
+    5,
+    4
+   ],
+   [
+    7,
+    176
+   ],
+   [
+    18,
+    18
+   ],
+   [
+    18,
+    22
+   ]
+  ]
+ ],
+ "كلف": [
+  8,
+  [
+   [
+    2,
+    233
+   ],
+   [
+    2,
+    286
+   ],
+   [
+    4,
+    84
+   ],
+   [
+    6,
+    152
+   ],
+   [
+    7,
+    42
+   ],
+   [
+    23,
+    62
+   ],
+   [
+    38,
+    86
+   ],
+   [
+    65,
+    7
+   ]
+  ]
+ ],
+ "كلل": [
+  377,
+  [
+   [
+    2,
+    20
+   ],
+   [
+    2,
+    25
+   ],
+   [
+    2,
+    29
+   ],
+   [
+    2,
+    31
+   ],
+   [
+    2,
+    60
+   ],
+   [
+    2,
+    87
+   ],
+   [
+    2,
+    100
+   ],
+   [
+    2,
+    106
+   ],
+   [
+    2,
+    109
+   ],
+   [
+    2,
+    116
+   ]
+  ]
+ ],
+ "كلم": [
+  75,
+  [
+   [
+    2,
+    37
+   ],
+   [
+    2,
+    75
+   ],
+   [
+    2,
+    118
+   ],
+   [
+    2,
+    124
+   ],
+   [
+    2,
+    174
+   ],
+   [
+    2,
+    253
+   ],
+   [
+    3,
+    39
+   ],
+   [
+    3,
+    41
+   ],
+   [
+    3,
+    45
+   ],
+   [
+    3,
+    46
+   ]
+  ]
+ ],
+ "كلو": [
+  2,
+  [
+   [
+    17,
+    23
+   ],
+   [
+    18,
+    33
+   ]
+  ]
+ ],
+ "كمل": [
+  5,
+  [
+   [
+    2,
+    185
+   ],
+   [
+    2,
+    196
+   ],
+   [
+    2,
+    233
+   ],
+   [
+    5,
+    3
+   ],
+   [
+    16,
+    25
+   ]
+  ]
+ ],
+ "كمم": [
+  2,
+  [
+   [
+    41,
+    47
+   ],
+   [
+    55,
+    11
+   ]
+  ]
+ ],
+ "كنس": [
+  1,
+  [
+   [
+    81,
+    16
+   ]
+  ]
+ ],
+ "كنن": [
+  12,
+  [
+   [
+    2,
+    235
+   ],
+   [
+    6,
+    25
+   ],
+   [
+    16,
+    81
+   ],
+   [
+    17,
+    46
+   ],
+   [
+    18,
+    57
+   ],
+   [
+    27,
+    74
+   ],
+   [
+    28,
+    69
+   ],
+   [
+    37,
+    49
+   ],
+   [
+    41,
+    5
+   ],
+   [
+    52,
+    24
+   ]
+  ]
+ ],
+ "كهل": [
+  2,
+  [
+   [
+    3,
+    46
+   ],
+   [
+    5,
+    110
+   ]
+  ]
+ ],
+ "كوب": [
+  4,
+  [
+   [
+    43,
+    71
+   ],
+   [
+    56,
+    18
+   ],
+   [
+    76,
+    15
+   ],
+   [
+    88,
+    14
+   ]
+  ]
+ ],
+ "كود": [
+  24,
+  [
+   [
+    2,
+    20
+   ],
+   [
+    2,
+    71
+   ],
+   [
+    4,
+    78
+   ],
+   [
+    7,
+    150
+   ],
+   [
+    9,
+    117
+   ],
+   [
+    14,
+    17
+   ],
+   [
+    17,
+    73
+   ],
+   [
+    17,
+    74
+   ],
+   [
+    17,
+    76
+   ],
+   [
+    18,
+    93
+   ]
+  ]
+ ],
+ "كوكب": [
+  5,
+  [
+   [
+    6,
+    76
+   ],
+   [
+    12,
+    4
+   ],
+   [
+    24,
+    35
+   ],
+   [
+    37,
+    6
+   ],
+   [
+    82,
+    2
+   ]
+  ]
+ ],
+ "كون": [
+  1390,
+  [
+   [
+    2,
+    10
+   ],
+   [
+    2,
+    16
+   ],
+   [
+    2,
+    23
+   ],
+   [
+    2,
+    28
+   ],
+   [
+    2,
+    31
+   ],
+   [
+    2,
+    33
+   ],
+   [
+    2,
+    34
+   ],
+   [
+    2,
+    35
+   ],
+   [
+    2,
+    36
+   ],
+   [
+    2,
+    41
+   ]
+  ]
+ ],
+ "كوي": [
+  1,
+  [
+   [
+    9,
+    35
+   ]
+  ]
+ ],
+ "كيف": [
+  83,
+  [
+   [
+    2,
+    28
+   ],
+   [
+    2,
+    259
+   ],
+   [
+    2,
+    260
+   ],
+   [
+    3,
+    6
+   ],
+   [
+    3,
+    25
+   ],
+   [
+    3,
+    86
+   ],
+   [
+    3,
+    101
+   ],
+   [
+    3,
+    137
+   ],
+   [
+    4,
+    21
+   ],
+   [
+    4,
+    41
+   ]
+  ]
+ ],
+ "كيل": [
+  16,
+  [
+   [
+    6,
+    152
+   ],
+   [
+    7,
+    85
+   ],
+   [
+    11,
+    84
+   ],
+   [
+    11,
+    85
+   ],
+   [
+    12,
+    59
+   ],
+   [
+    12,
+    60
+   ],
+   [
+    12,
+    63
+   ],
+   [
+    12,
+    65
+   ],
+   [
+    12,
+    88
+   ],
+   [
+    17,
+    35
+   ]
+  ]
+ ],
+ "لبب": [
+  16,
+  [
+   [
+    2,
+    179
+   ],
+   [
+    2,
+    197
+   ],
+   [
+    2,
+    269
+   ],
+   [
+    3,
+    7
+   ],
+   [
+    3,
+    190
+   ],
+   [
+    5,
+    100
+   ],
+   [
+    12,
+    111
+   ],
+   [
+    13,
+    19
+   ],
+   [
+    14,
+    52
+   ],
+   [
+    38,
+    29
+   ]
+  ]
+ ],
+ "لبث": [
+  31,
+  [
+   [
+    2,
+    259
+   ],
+   [
+    10,
+    16
+   ],
+   [
+    10,
+    45
+   ],
+   [
+    11,
+    69
+   ],
+   [
+    12,
+    42
+   ],
+   [
+    17,
+    52
+   ],
+   [
+    17,
+    76
+   ],
+   [
+    18,
+    12
+   ],
+   [
+    18,
+    19
+   ],
+   [
+    18,
+    25
+   ]
+  ]
+ ],
+ "لبس": [
+  23,
+  [
+   [
+    2,
+    42
+   ],
+   [
+    2,
+    187
+   ],
+   [
+    3,
+    71
+   ],
+   [
+    6,
+    9
+   ],
+   [
+    6,
+    65
+   ],
+   [
+    6,
+    82
+   ],
+   [
+    6,
+    137
+   ],
+   [
+    7,
+    26
+   ],
+   [
+    7,
+    27
+   ],
+   [
+    16,
+    14
+   ]
+  ]
+ ],
+ "لبن": [
+  2,
+  [
+   [
+    16,
+    66
+   ],
+   [
+    47,
+    15
+   ]
+  ]
+ ],
+ "لجأ": [
+  3,
+  [
+   [
+    9,
+    57
+   ],
+   [
+    9,
+    118
+   ],
+   [
+    42,
+    47
+   ]
+  ]
+ ],
+ "لحق": [
+  6,
+  [
+   [
+    3,
+    170
+   ],
+   [
+    12,
+    101
+   ],
+   [
+    26,
+    83
+   ],
+   [
+    34,
+    27
+   ],
+   [
+    52,
+    21
+   ],
+   [
+    62,
+    3
+   ]
+  ]
+ ],
+ "لحم": [
+  12,
+  [
+   [
+    2,
+    173
+   ],
+   [
+    2,
+    259
+   ],
+   [
+    5,
+    3
+   ],
+   [
+    6,
+    145
+   ],
+   [
+    16,
+    14
+   ],
+   [
+    16,
+    115
+   ],
+   [
+    22,
+    37
+   ],
+   [
+    23,
+    14
+   ],
+   [
+    35,
+    12
+   ],
+   [
+    49,
+    12
+   ]
+  ]
+ ],
+ "لحي": [
+  1,
+  [
+   [
+    20,
+    94
+   ]
+  ]
+ ],
+ "لذذ": [
+  3,
+  [
+   [
+    37,
+    46
+   ],
+   [
+    43,
+    71
+   ],
+   [
+    47,
+    15
+   ]
+  ]
+ ],
+ "لزم": [
+  5,
+  [
+   [
+    11,
+    28
+   ],
+   [
+    17,
+    13
+   ],
+   [
+    20,
+    129
+   ],
+   [
+    25,
+    77
+   ],
+   [
+    48,
+    26
+   ]
+  ]
+ ],
+ "لسن": [
+  25,
+  [
+   [
+    3,
+    78
+   ],
+   [
+    4,
+    46
+   ],
+   [
+    5,
+    78
+   ],
+   [
+    14,
+    4
+   ],
+   [
+    16,
+    62
+   ],
+   [
+    16,
+    103
+   ],
+   [
+    16,
+    116
+   ],
+   [
+    19,
+    50
+   ],
+   [
+    19,
+    97
+   ],
+   [
+    20,
+    27
+   ]
+  ]
+ ],
+ "لعب": [
+  20,
+  [
+   [
+    5,
+    57
+   ],
+   [
+    5,
+    58
+   ],
+   [
+    6,
+    32
+   ],
+   [
+    6,
+    70
+   ],
+   [
+    6,
+    91
+   ],
+   [
+    7,
+    51
+   ],
+   [
+    7,
+    98
+   ],
+   [
+    9,
+    65
+   ],
+   [
+    12,
+    12
+   ],
+   [
+    21,
+    2
+   ]
+  ]
+ ],
+ "لغو": [
+  11,
+  [
+   [
+    2,
+    225
+   ],
+   [
+    5,
+    89
+   ],
+   [
+    19,
+    62
+   ],
+   [
+    23,
+    3
+   ],
+   [
+    25,
+    72
+   ],
+   [
+    28,
+    55
+   ],
+   [
+    41,
+    26
+   ],
+   [
+    52,
+    23
+   ],
+   [
+    56,
+    25
+   ],
+   [
+    78,
+    35
+   ]
+  ]
+ ],
+ "لفت": [
+  3,
+  [
+   [
+    10,
+    78
+   ],
+   [
+    11,
+    81
+   ],
+   [
+    15,
+    65
+   ]
+  ]
+ ],
+ "لفظ": [
+  1,
+  [
+   [
+    50,
+    18
+   ]
+  ]
+ ],
+ "لفف": [
+  3,
+  [
+   [
+    17,
+    104
+   ],
+   [
+    75,
+    29
+   ],
+   [
+    78,
+    16
+   ]
+  ]
+ ],
+ "لقم": [
+  1,
+  [
+   [
+    37,
+    142
+   ]
+  ]
+ ],
+ "لقي": [
+  146,
+  [
+   [
+    2,
+    14
+   ],
+   [
+    2,
+    37
+   ],
+   [
+    2,
+    46
+   ],
+   [
+    2,
+    76
+   ],
+   [
+    2,
+    195
+   ],
+   [
+    2,
+    223
+   ],
+   [
+    2,
+    249
+   ],
+   [
+    3,
+    13
+   ],
+   [
+    3,
+    44
+   ],
+   [
+    3,
+    119
+   ]
+  ]
+ ],
+ "لمح": [
+  2,
+  [
+   [
+    16,
+    77
+   ],
+   [
+    54,
+    50
+   ]
+  ]
+ ],
+ "لمز": [
+  4,
+  [
+   [
+    9,
+    58
+   ],
+   [
+    9,
+    79
+   ],
+   [
+    49,
+    11
+   ],
+   [
+    104,
+    1
+   ]
+  ]
+ ],
+ "لمس": [
+  5,
+  [
+   [
+    4,
+    43
+   ],
+   [
+    5,
+    6
+   ],
+   [
+    6,
+    7
+   ],
+   [
+    57,
+    13
+   ],
+   [
+    72,
+    8
+   ]
+  ]
+ ],
+ "لهب": [
+  3,
+  [
+   [
+    77,
+    31
+   ],
+   [
+    111,
+    1
+   ],
+   [
+    111,
+    3
+   ]
+  ]
+ ],
+ "لهم": [
+  1,
+  [
+   [
+    91,
+    8
+   ]
+  ]
+ ],
+ "لهو": [
+  16,
+  [
+   [
+    6,
+    32
+   ],
+   [
+    6,
+    70
+   ],
+   [
+    7,
+    51
+   ],
+   [
+    15,
+    3
+   ],
+   [
+    21,
+    3
+   ],
+   [
+    21,
+    17
+   ],
+   [
+    24,
+    37
+   ],
+   [
+    29,
+    64
+   ],
+   [
+    31,
+    6
+   ],
+   [
+    47,
+    36
+   ]
+  ]
+ ],
+ "لوح": [
+  6,
+  [
+   [
+    7,
+    145
+   ],
+   [
+    7,
+    150
+   ],
+   [
+    7,
+    154
+   ],
+   [
+    54,
+    13
+   ],
+   [
+    74,
+    29
+   ],
+   [
+    85,
+    22
+   ]
+  ]
+ ],
+ "لوم": [
+  14,
+  [
+   [
+    5,
+    54
+   ],
+   [
+    12,
+    32
+   ],
+   [
+    14,
+    22
+   ],
+   [
+    17,
+    29
+   ],
+   [
+    17,
+    39
+   ],
+   [
+    23,
+    6
+   ],
+   [
+    37,
+    142
+   ],
+   [
+    51,
+    40
+   ],
+   [
+    51,
+    54
+   ],
+   [
+    68,
+    30
+   ]
+  ]
+ ],
+ "لون": [
+  9,
+  [
+   [
+    2,
+    69
+   ],
+   [
+    16,
+    13
+   ],
+   [
+    16,
+    69
+   ],
+   [
+    30,
+    22
+   ],
+   [
+    35,
+    27
+   ],
+   [
+    35,
+    28
+   ],
+   [
+    39,
+    21
+   ]
+  ]
+ ],
+ "ليت": [
+  1,
+  [
+   [
+    49,
+    14
+   ]
+  ]
+ ],
+ "ليس": [
+  89,
+  [
+   [
+    2,
+    113
+   ],
+   [
+    2,
+    177
+   ],
+   [
+    2,
+    189
+   ],
+   [
+    2,
+    198
+   ],
+   [
+    2,
+    249
+   ],
+   [
+    2,
+    267
+   ],
+   [
+    2,
+    272
+   ],
+   [
+    2,
+    282
+   ],
+   [
+    3,
+    28
+   ],
+   [
+    3,
+    36
+   ]
+  ]
+ ],
+ "ليل": [
+  92,
+  [
+   [
+    2,
+    51
+   ],
+   [
+    2,
+    164
+   ],
+   [
+    2,
+    187
+   ],
+   [
+    2,
+    274
+   ],
+   [
+    3,
+    27
+   ],
+   [
+    3,
+    113
+   ],
+   [
+    3,
+    190
+   ],
+   [
+    6,
+    13
+   ],
+   [
+    6,
+    60
+   ],
+   [
+    6,
+    76
+   ]
+  ]
+ ],
+ "لين": [
+  5,
+  [
+   [
+    3,
+    159
+   ],
+   [
+    20,
+    44
+   ],
+   [
+    34,
+    10
+   ],
+   [
+    39,
+    23
+   ],
+   [
+    59,
+    5
+   ]
+  ]
+ ],
+ "متع": [
+  70,
+  [
+   [
+    2,
+    36
+   ],
+   [
+    2,
+    126
+   ],
+   [
+    2,
+    196
+   ],
+   [
+    2,
+    236
+   ],
+   [
+    2,
+    240
+   ],
+   [
+    2,
+    241
+   ],
+   [
+    3,
+    14
+   ],
+   [
+    3,
+    185
+   ],
+   [
+    3,
+    197
+   ],
+   [
+    4,
+    24
+   ]
+  ]
+ ],
+ "مثل": [
+  169,
+  [
+   [
+    2,
+    17
+   ],
+   [
+    2,
+    23
+   ],
+   [
+    2,
+    26
+   ],
+   [
+    2,
+    106
+   ],
+   [
+    2,
+    113
+   ],
+   [
+    2,
+    118
+   ],
+   [
+    2,
+    137
+   ],
+   [
+    2,
+    171
+   ],
+   [
+    2,
+    194
+   ],
+   [
+    2,
+    214
+   ]
+  ]
+ ],
+ "مجس": [
+  1,
+  [
+   [
+    22,
+    17
+   ]
+  ]
+ ],
+ "محل": [
+  1,
+  [
+   [
+    13,
+    13
+   ]
+  ]
+ ],
+ "محو": [
+  3,
+  [
+   [
+    13,
+    39
+   ],
+   [
+    17,
+    12
+   ],
+   [
+    42,
+    24
+   ]
+  ]
+ ],
+ "مدد": [
+  32,
+  [
+   [
+    2,
+    15
+   ],
+   [
+    3,
+    124
+   ],
+   [
+    3,
+    125
+   ],
+   [
+    7,
+    202
+   ],
+   [
+    8,
+    9
+   ],
+   [
+    9,
+    4
+   ],
+   [
+    13,
+    3
+   ],
+   [
+    15,
+    19
+   ],
+   [
+    15,
+    88
+   ],
+   [
+    17,
+    6
+   ]
+  ]
+ ],
+ "مدن": [
+  27,
+  [
+   [
+    7,
+    85
+   ],
+   [
+    7,
+    111
+   ],
+   [
+    7,
+    123
+   ],
+   [
+    9,
+    70
+   ],
+   [
+    9,
+    101
+   ],
+   [
+    9,
+    120
+   ],
+   [
+    11,
+    84
+   ],
+   [
+    11,
+    95
+   ],
+   [
+    12,
+    30
+   ],
+   [
+    15,
+    67
+   ]
+  ]
+ ],
+ "مرأ": [
+  38,
+  [
+   [
+    2,
+    102
+   ],
+   [
+    2,
+    282
+   ],
+   [
+    3,
+    35
+   ],
+   [
+    3,
+    40
+   ],
+   [
+    4,
+    4
+   ],
+   [
+    4,
+    12
+   ],
+   [
+    4,
+    128
+   ],
+   [
+    4,
+    176
+   ],
+   [
+    7,
+    83
+   ],
+   [
+    8,
+    24
+   ]
+  ]
+ ],
+ "مرج": [
+  6,
+  [
+   [
+    25,
+    53
+   ],
+   [
+    50,
+    5
+   ],
+   [
+    55,
+    15
+   ],
+   [
+    55,
+    19
+   ],
+   [
+    55,
+    22
+   ],
+   [
+    55,
+    58
+   ]
+  ]
+ ],
+ "مرر": [
+  35,
+  [
+   [
+    2,
+    229
+   ],
+   [
+    2,
+    259
+   ],
+   [
+    6,
+    94
+   ],
+   [
+    6,
+    110
+   ],
+   [
+    7,
+    189
+   ],
+   [
+    8,
+    56
+   ],
+   [
+    9,
+    13
+   ],
+   [
+    9,
+    80
+   ],
+   [
+    9,
+    83
+   ],
+   [
+    9,
+    101
+   ]
+  ]
+ ],
+ "مرض": [
+  24,
+  [
+   [
+    2,
+    10
+   ],
+   [
+    2,
+    184
+   ],
+   [
+    2,
+    185
+   ],
+   [
+    2,
+    196
+   ],
+   [
+    4,
+    43
+   ],
+   [
+    4,
+    102
+   ],
+   [
+    5,
+    6
+   ],
+   [
+    5,
+    52
+   ],
+   [
+    8,
+    49
+   ],
+   [
+    9,
+    91
+   ]
+  ]
+ ],
+ "مزج": [
+  3,
+  [
+   [
+    76,
+    5
+   ],
+   [
+    76,
+    17
+   ],
+   [
+    83,
+    27
+   ]
+  ]
+ ],
+ "مزق": [
+  4,
+  [
+   [
+    34,
+    7
+   ],
+   [
+    34,
+    19
+   ]
+  ]
+ ],
+ "مسح": [
+  15,
+  [
+   [
+    3,
+    45
+   ],
+   [
+    4,
+    43
+   ],
+   [
+    4,
+    157
+   ],
+   [
+    4,
+    171
+   ],
+   [
+    4,
+    172
+   ],
+   [
+    5,
+    6
+   ],
+   [
+    5,
+    17
+   ],
+   [
+    5,
+    72
+   ],
+   [
+    5,
+    75
+   ],
+   [
+    9,
+    30
+   ]
+  ]
+ ],
+ "مسد": [
+  1,
+  [
+   [
+    111,
+    5
+   ]
+  ]
+ ],
+ "مسس": [
+  61,
+  [
+   [
+    2,
+    80
+   ],
+   [
+    2,
+    214
+   ],
+   [
+    2,
+    236
+   ],
+   [
+    2,
+    237
+   ],
+   [
+    2,
+    275
+   ],
+   [
+    3,
+    24
+   ],
+   [
+    3,
+    47
+   ],
+   [
+    3,
+    120
+   ],
+   [
+    3,
+    140
+   ],
+   [
+    3,
+    174
+   ]
+  ]
+ ],
+ "مسك": [
+  27,
+  [
+   [
+    2,
+    229
+   ],
+   [
+    2,
+    231
+   ],
+   [
+    2,
+    256
+   ],
+   [
+    4,
+    15
+   ],
+   [
+    5,
+    4
+   ],
+   [
+    7,
+    170
+   ],
+   [
+    16,
+    59
+   ],
+   [
+    16,
+    79
+   ],
+   [
+    17,
+    100
+   ],
+   [
+    22,
+    65
+   ]
+  ]
+ ],
+ "مسو": [
+  1,
+  [
+   [
+    30,
+    17
+   ]
+  ]
+ ],
+ "مشي": [
+  23,
+  [
+   [
+    2,
+    20
+   ],
+   [
+    6,
+    122
+   ],
+   [
+    7,
+    195
+   ],
+   [
+    17,
+    37
+   ],
+   [
+    17,
+    95
+   ],
+   [
+    20,
+    40
+   ],
+   [
+    20,
+    128
+   ],
+   [
+    24,
+    45
+   ],
+   [
+    25,
+    7
+   ],
+   [
+    25,
+    20
+   ]
+  ]
+ ],
+ "مصر": [
+  5,
+  [
+   [
+    2,
+    61
+   ],
+   [
+    10,
+    87
+   ],
+   [
+    12,
+    21
+   ],
+   [
+    12,
+    99
+   ],
+   [
+    43,
+    51
+   ]
+  ]
+ ],
+ "مضي": [
+  5,
+  [
+   [
+    8,
+    38
+   ],
+   [
+    15,
+    65
+   ],
+   [
+    18,
+    60
+   ],
+   [
+    36,
+    67
+   ],
+   [
+    43,
+    8
+   ]
+  ]
+ ],
+ "مطر": [
+  15,
+  [
+   [
+    4,
+    102
+   ],
+   [
+    7,
+    84
+   ],
+   [
+    8,
+    32
+   ],
+   [
+    11,
+    82
+   ],
+   [
+    15,
+    74
+   ],
+   [
+    25,
+    40
+   ],
+   [
+    26,
+    173
+   ],
+   [
+    27,
+    58
+   ],
+   [
+    46,
+    24
+   ]
+  ]
+ ],
+ "مطو": [
+  1,
+  [
+   [
+    75,
+    33
+   ]
+  ]
+ ],
+ "مكث": [
+  7,
+  [
+   [
+    13,
+    17
+   ],
+   [
+    17,
+    106
+   ],
+   [
+    18,
+    3
+   ],
+   [
+    20,
+    10
+   ],
+   [
+    27,
+    22
+   ],
+   [
+    28,
+    29
+   ],
+   [
+    43,
+    77
+   ]
+  ]
+ ],
+ "مكن": [
+  18,
+  [
+   [
+    6,
+    6
+   ],
+   [
+    7,
+    10
+   ],
+   [
+    8,
+    71
+   ],
+   [
+    12,
+    21
+   ],
+   [
+    12,
+    54
+   ],
+   [
+    12,
+    56
+   ],
+   [
+    18,
+    84
+   ],
+   [
+    18,
+    95
+   ],
+   [
+    22,
+    41
+   ],
+   [
+    23,
+    13
+   ]
+  ]
+ ],
+ "ملأ": [
+  40,
+  [
+   [
+    2,
+    246
+   ],
+   [
+    3,
+    91
+   ],
+   [
+    7,
+    18
+   ],
+   [
+    7,
+    60
+   ],
+   [
+    7,
+    66
+   ],
+   [
+    7,
+    75
+   ],
+   [
+    7,
+    88
+   ],
+   [
+    7,
+    90
+   ],
+   [
+    7,
+    103
+   ],
+   [
+    7,
+    109
+   ]
+  ]
+ ],
+ "ملح": [
+  2,
+  [
+   [
+    25,
+    53
+   ],
+   [
+    35,
+    12
+   ]
+  ]
+ ],
+ "ملك": [
+  206,
+  [
+   [
+    1,
+    4
+   ],
+   [
+    2,
+    30
+   ],
+   [
+    2,
+    31
+   ],
+   [
+    2,
+    34
+   ],
+   [
+    2,
+    98
+   ],
+   [
+    2,
+    102
+   ],
+   [
+    2,
+    107
+   ],
+   [
+    2,
+    161
+   ],
+   [
+    2,
+    177
+   ],
+   [
+    2,
+    210
+   ]
+  ]
+ ],
+ "ملو": [
+  10,
+  [
+   [
+    3,
+    178
+   ],
+   [
+    7,
+    183
+   ],
+   [
+    13,
+    32
+   ],
+   [
+    19,
+    46
+   ],
+   [
+    22,
+    44
+   ],
+   [
+    22,
+    48
+   ],
+   [
+    25,
+    5
+   ],
+   [
+    47,
+    25
+   ],
+   [
+    68,
+    45
+   ]
+  ]
+ ],
+ "منع": [
+  17,
+  [
+   [
+    2,
+    114
+   ],
+   [
+    4,
+    141
+   ],
+   [
+    7,
+    12
+   ],
+   [
+    9,
+    54
+   ],
+   [
+    12,
+    63
+   ],
+   [
+    17,
+    59
+   ],
+   [
+    17,
+    94
+   ],
+   [
+    18,
+    55
+   ],
+   [
+    20,
+    92
+   ],
+   [
+    21,
+    43
+   ]
+  ]
+ ],
+ "مهد": [
+  16,
+  [
+   [
+    2,
+    206
+   ],
+   [
+    3,
+    12
+   ],
+   [
+    3,
+    46
+   ],
+   [
+    3,
+    197
+   ],
+   [
+    5,
+    110
+   ],
+   [
+    7,
+    41
+   ],
+   [
+    13,
+    18
+   ],
+   [
+    19,
+    29
+   ],
+   [
+    20,
+    53
+   ],
+   [
+    30,
+    44
+   ]
+  ]
+ ],
+ "مهن": [
+  4,
+  [
+   [
+    32,
+    8
+   ],
+   [
+    43,
+    52
+   ],
+   [
+    68,
+    10
+   ],
+   [
+    77,
+    20
+   ]
+  ]
+ ],
+ "موت": [
+  165,
+  [
+   [
+    2,
+    19
+   ],
+   [
+    2,
+    28
+   ],
+   [
+    2,
+    56
+   ],
+   [
+    2,
+    73
+   ],
+   [
+    2,
+    94
+   ],
+   [
+    2,
+    132
+   ],
+   [
+    2,
+    133
+   ],
+   [
+    2,
+    154
+   ],
+   [
+    2,
+    161
+   ],
+   [
+    2,
+    164
+   ]
+  ]
+ ],
+ "موج": [
+  7,
+  [
+   [
+    10,
+    22
+   ],
+   [
+    11,
+    42
+   ],
+   [
+    11,
+    43
+   ],
+   [
+    18,
+    99
+   ],
+   [
+    24,
+    40
+   ],
+   [
+    31,
+    32
+   ]
+  ]
+ ],
+ "مول": [
+  86,
+  [
+   [
+    2,
+    155
+   ],
+   [
+    2,
+    177
+   ],
+   [
+    2,
+    188
+   ],
+   [
+    2,
+    247
+   ],
+   [
+    2,
+    261
+   ],
+   [
+    2,
+    262
+   ],
+   [
+    2,
+    264
+   ],
+   [
+    2,
+    265
+   ],
+   [
+    2,
+    274
+   ],
+   [
+    2,
+    279
+   ]
+  ]
+ ],
+ "موه": [
+  63,
+  [
+   [
+    2,
+    22
+   ],
+   [
+    2,
+    74
+   ],
+   [
+    2,
+    164
+   ],
+   [
+    4,
+    43
+   ],
+   [
+    5,
+    6
+   ],
+   [
+    6,
+    99
+   ],
+   [
+    7,
+    50
+   ],
+   [
+    7,
+    57
+   ],
+   [
+    8,
+    11
+   ],
+   [
+    10,
+    24
+   ]
+  ]
+ ],
+ "ميد": [
+  5,
+  [
+   [
+    5,
+    112
+   ],
+   [
+    5,
+    114
+   ],
+   [
+    16,
+    15
+   ],
+   [
+    21,
+    31
+   ],
+   [
+    31,
+    10
+   ]
+  ]
+ ],
+ "ميز": [
+  4,
+  [
+   [
+    3,
+    179
+   ],
+   [
+    8,
+    37
+   ],
+   [
+    36,
+    59
+   ],
+   [
+    67,
+    8
+   ]
+  ]
+ ],
+ "ميل": [
+  6,
+  [
+   [
+    4,
+    27
+   ],
+   [
+    4,
+    102
+   ],
+   [
+    4,
+    129
+   ]
+  ]
+ ],
+ "ناي": [
+  3,
+  [
+   [
+    6,
+    26
+   ],
+   [
+    17,
+    83
+   ],
+   [
+    41,
+    51
+   ]
+  ]
+ ],
+ "نبأ": [
+  160,
+  [
+   [
+    2,
+    31
+   ],
+   [
+    2,
+    33
+   ],
+   [
+    2,
+    61
+   ],
+   [
+    2,
+    91
+   ],
+   [
+    2,
+    136
+   ],
+   [
+    2,
+    177
+   ],
+   [
+    2,
+    213
+   ],
+   [
+    2,
+    246
+   ],
+   [
+    2,
+    247
+   ],
+   [
+    2,
+    248
+   ]
+  ]
+ ],
+ "نبت": [
+  26,
+  [
+   [
+    2,
+    61
+   ],
+   [
+    2,
+    261
+   ],
+   [
+    3,
+    37
+   ],
+   [
+    6,
+    99
+   ],
+   [
+    7,
+    58
+   ],
+   [
+    10,
+    24
+   ],
+   [
+    15,
+    19
+   ],
+   [
+    16,
+    11
+   ],
+   [
+    18,
+    45
+   ],
+   [
+    20,
+    53
+   ]
+  ]
+ ],
+ "نبذ": [
+  12,
+  [
+   [
+    2,
+    100
+   ],
+   [
+    2,
+    101
+   ],
+   [
+    3,
+    187
+   ],
+   [
+    8,
+    58
+   ],
+   [
+    19,
+    16
+   ],
+   [
+    19,
+    22
+   ],
+   [
+    20,
+    96
+   ],
+   [
+    28,
+    40
+   ],
+   [
+    37,
+    145
+   ],
+   [
+    51,
+    40
+   ]
+  ]
+ ],
+ "نبع": [
+  2,
+  [
+   [
+    17,
+    90
+   ],
+   [
+    39,
+    21
+   ]
+  ]
+ ],
+ "نثر": [
+  3,
+  [
+   [
+    25,
+    23
+   ],
+   [
+    76,
+    19
+   ],
+   [
+    82,
+    2
+   ]
+  ]
+ ],
+ "نجم": [
+  13,
+  [
+   [
+    6,
+    97
+   ],
+   [
+    7,
+    54
+   ],
+   [
+    16,
+    12
+   ],
+   [
+    16,
+    16
+   ],
+   [
+    22,
+    18
+   ],
+   [
+    37,
+    88
+   ],
+   [
+    52,
+    49
+   ],
+   [
+    53,
+    1
+   ],
+   [
+    55,
+    6
+   ],
+   [
+    56,
+    75
+   ]
+  ]
+ ],
+ "نجو": [
+  84,
+  [
+   [
+    2,
+    49
+   ],
+   [
+    2,
+    50
+   ],
+   [
+    4,
+    114
+   ],
+   [
+    6,
+    63
+   ],
+   [
+    6,
+    64
+   ],
+   [
+    7,
+    64
+   ],
+   [
+    7,
+    72
+   ],
+   [
+    7,
+    83
+   ],
+   [
+    7,
+    89
+   ],
+   [
+    7,
+    141
+   ]
+  ]
+ ],
+ "نحب": [
+  1,
+  [
+   [
+    33,
+    23
+   ]
+  ]
+ ],
+ "نحر": [
+  1,
+  [
+   [
+    108,
+    2
+   ]
+  ]
+ ],
+ "نحل": [
+  2,
+  [
+   [
+    4,
+    4
+   ],
+   [
+    16,
+    68
+   ]
+  ]
+ ],
+ "نخل": [
+  20,
+  [
+   [
+    2,
+    266
+   ],
+   [
+    6,
+    99
+   ],
+   [
+    6,
+    141
+   ],
+   [
+    13,
+    4
+   ],
+   [
+    16,
+    11
+   ],
+   [
+    16,
+    67
+   ],
+   [
+    17,
+    91
+   ],
+   [
+    18,
+    32
+   ],
+   [
+    19,
+    23
+   ],
+   [
+    19,
+    25
+   ]
+  ]
+ ],
+ "ندد": [
+  6,
+  [
+   [
+    2,
+    22
+   ],
+   [
+    2,
+    165
+   ],
+   [
+    14,
+    30
+   ],
+   [
+    34,
+    33
+   ],
+   [
+    39,
+    8
+   ],
+   [
+    41,
+    9
+   ]
+  ]
+ ],
+ "ندم": [
+  7,
+  [
+   [
+    5,
+    31
+   ],
+   [
+    5,
+    52
+   ],
+   [
+    10,
+    54
+   ],
+   [
+    23,
+    40
+   ],
+   [
+    26,
+    157
+   ],
+   [
+    34,
+    33
+   ],
+   [
+    49,
+    6
+   ]
+  ]
+ ],
+ "نذر": [
+  130,
+  [
+   [
+    2,
+    6
+   ],
+   [
+    2,
+    119
+   ],
+   [
+    2,
+    213
+   ],
+   [
+    2,
+    270
+   ],
+   [
+    3,
+    35
+   ],
+   [
+    4,
+    165
+   ],
+   [
+    5,
+    19
+   ],
+   [
+    6,
+    19
+   ],
+   [
+    6,
+    48
+   ],
+   [
+    6,
+    51
+   ]
+  ]
+ ],
+ "نزع": [
+  20,
+  [
+   [
+    3,
+    26
+   ],
+   [
+    3,
+    152
+   ],
+   [
+    4,
+    59
+   ],
+   [
+    7,
+    27
+   ],
+   [
+    7,
+    43
+   ],
+   [
+    7,
+    108
+   ],
+   [
+    8,
+    43
+   ],
+   [
+    8,
+    46
+   ],
+   [
+    11,
+    9
+   ],
+   [
+    15,
+    47
+   ]
+  ]
+ ],
+ "نزغ": [
+  6,
+  [
+   [
+    7,
+    200
+   ],
+   [
+    12,
+    100
+   ],
+   [
+    17,
+    53
+   ],
+   [
+    41,
+    36
+   ]
+  ]
+ ],
+ "نزف": [
+  2,
+  [
+   [
+    37,
+    47
+   ],
+   [
+    56,
+    19
+   ]
+  ]
+ ],
+ "نزل": [
+  293,
+  [
+   [
+    2,
+    4
+   ],
+   [
+    2,
+    22
+   ],
+   [
+    2,
+    23
+   ],
+   [
+    2,
+    41
+   ],
+   [
+    2,
+    57
+   ],
+   [
+    2,
+    59
+   ],
+   [
+    2,
+    90
+   ],
+   [
+    2,
+    91
+   ],
+   [
+    2,
+    97
+   ],
+   [
+    2,
+    99
+   ]
+  ]
+ ],
+ "نسب": [
+  3,
+  [
+   [
+    23,
+    101
+   ],
+   [
+    25,
+    54
+   ],
+   [
+    37,
+    158
+   ]
+  ]
+ ],
+ "نسخ": [
+  4,
+  [
+   [
+    2,
+    106
+   ],
+   [
+    7,
+    154
+   ],
+   [
+    22,
+    52
+   ],
+   [
+    45,
+    29
+   ]
+  ]
+ ],
+ "نسك": [
+  7,
+  [
+   [
+    2,
+    128
+   ],
+   [
+    2,
+    196
+   ],
+   [
+    2,
+    200
+   ],
+   [
+    6,
+    162
+   ],
+   [
+    22,
+    34
+   ],
+   [
+    22,
+    67
+   ]
+  ]
+ ],
+ "نسل": [
+  4,
+  [
+   [
+    2,
+    205
+   ],
+   [
+    21,
+    96
+   ],
+   [
+    32,
+    8
+   ],
+   [
+    36,
+    51
+   ]
+  ]
+ ],
+ "نسي": [
+  45,
+  [
+   [
+    2,
+    44
+   ],
+   [
+    2,
+    106
+   ],
+   [
+    2,
+    237
+   ],
+   [
+    2,
+    286
+   ],
+   [
+    5,
+    13
+   ],
+   [
+    5,
+    14
+   ],
+   [
+    6,
+    41
+   ],
+   [
+    6,
+    44
+   ],
+   [
+    6,
+    68
+   ],
+   [
+    7,
+    51
+   ]
+  ]
+ ],
+ "نشأ": [
+  28,
+  [
+   [
+    6,
+    6
+   ],
+   [
+    6,
+    98
+   ],
+   [
+    6,
+    133
+   ],
+   [
+    6,
+    141
+   ],
+   [
+    11,
+    61
+   ],
+   [
+    13,
+    12
+   ],
+   [
+    21,
+    11
+   ],
+   [
+    23,
+    14
+   ],
+   [
+    23,
+    19
+   ],
+   [
+    23,
+    31
+   ]
+  ]
+ ],
+ "نشر": [
+  21,
+  [
+   [
+    17,
+    13
+   ],
+   [
+    18,
+    16
+   ],
+   [
+    21,
+    21
+   ],
+   [
+    25,
+    3
+   ],
+   [
+    25,
+    40
+   ],
+   [
+    25,
+    47
+   ],
+   [
+    30,
+    20
+   ],
+   [
+    33,
+    53
+   ],
+   [
+    35,
+    9
+   ],
+   [
+    42,
+    28
+   ]
+  ]
+ ],
+ "نشط": [
+  2,
+  [
+   [
+    79,
+    2
+   ]
+  ]
+ ],
+ "نصب": [
+  32,
+  [
+   [
+    2,
+    202
+   ],
+   [
+    3,
+    23
+   ],
+   [
+    4,
+    7
+   ],
+   [
+    4,
+    32
+   ],
+   [
+    4,
+    33
+   ],
+   [
+    4,
+    44
+   ],
+   [
+    4,
+    51
+   ],
+   [
+    4,
+    53
+   ],
+   [
+    4,
+    85
+   ],
+   [
+    4,
+    118
+   ]
+  ]
+ ],
+ "نصح": [
+  13,
+  [
+   [
+    7,
+    21
+   ],
+   [
+    7,
+    62
+   ],
+   [
+    7,
+    68
+   ],
+   [
+    7,
+    79
+   ],
+   [
+    7,
+    93
+   ],
+   [
+    9,
+    91
+   ],
+   [
+    11,
+    34
+   ],
+   [
+    12,
+    11
+   ],
+   [
+    28,
+    12
+   ],
+   [
+    28,
+    20
+   ]
+  ]
+ ],
+ "نصر": [
+  158,
+  [
+   [
+    2,
+    48
+   ],
+   [
+    2,
+    62
+   ],
+   [
+    2,
+    86
+   ],
+   [
+    2,
+    107
+   ],
+   [
+    2,
+    111
+   ],
+   [
+    2,
+    113
+   ],
+   [
+    2,
+    120
+   ],
+   [
+    2,
+    123
+   ],
+   [
+    2,
+    135
+   ],
+   [
+    2,
+    140
+   ]
+  ]
+ ],
+ "نصف": [
+  7,
+  [
+   [
+    2,
+    237
+   ],
+   [
+    4,
+    11
+   ],
+   [
+    4,
+    12
+   ],
+   [
+    4,
+    25
+   ],
+   [
+    4,
+    176
+   ],
+   [
+    73,
+    3
+   ],
+   [
+    73,
+    20
+   ]
+  ]
+ ],
+ "نطق": [
+  12,
+  [
+   [
+    21,
+    63
+   ],
+   [
+    21,
+    65
+   ],
+   [
+    23,
+    62
+   ],
+   [
+    27,
+    16
+   ],
+   [
+    27,
+    85
+   ],
+   [
+    37,
+    92
+   ],
+   [
+    41,
+    21
+   ],
+   [
+    45,
+    29
+   ],
+   [
+    51,
+    23
+   ],
+   [
+    53,
+    3
+   ]
+  ]
+ ],
+ "نظر": [
+  129,
+  [
+   [
+    2,
+    50
+   ],
+   [
+    2,
+    55
+   ],
+   [
+    2,
+    69
+   ],
+   [
+    2,
+    104
+   ],
+   [
+    2,
+    162
+   ],
+   [
+    2,
+    210
+   ],
+   [
+    2,
+    259
+   ],
+   [
+    2,
+    280
+   ],
+   [
+    3,
+    77
+   ],
+   [
+    3,
+    88
+   ]
+  ]
+ ],
+ "نعس": [
+  2,
+  [
+   [
+    3,
+    154
+   ],
+   [
+    8,
+    11
+   ]
+  ]
+ ],
+ "نعل": [
+  1,
+  [
+   [
+    20,
+    12
+   ]
+  ]
+ ],
+ "نعم": [
+  140,
+  [
+   [
+    1,
+    7
+   ],
+   [
+    2,
+    40
+   ],
+   [
+    2,
+    47
+   ],
+   [
+    2,
+    122
+   ],
+   [
+    2,
+    150
+   ],
+   [
+    2,
+    211
+   ],
+   [
+    2,
+    231
+   ],
+   [
+    2,
+    271
+   ],
+   [
+    3,
+    14
+   ],
+   [
+    3,
+    103
+   ]
+  ]
+ ],
+ "نفث": [
+  1,
+  [
+   [
+    113,
+    4
+   ]
+  ]
+ ],
+ "نفخ": [
+  20,
+  [
+   [
+    3,
+    49
+   ],
+   [
+    5,
+    110
+   ],
+   [
+    6,
+    73
+   ],
+   [
+    15,
+    29
+   ],
+   [
+    18,
+    96
+   ],
+   [
+    18,
+    99
+   ],
+   [
+    20,
+    102
+   ],
+   [
+    21,
+    91
+   ],
+   [
+    23,
+    101
+   ],
+   [
+    27,
+    87
+   ]
+  ]
+ ],
+ "نفد": [
+  5,
+  [
+   [
+    16,
+    96
+   ],
+   [
+    18,
+    109
+   ],
+   [
+    31,
+    27
+   ],
+   [
+    38,
+    54
+   ]
+  ]
+ ],
+ "نفذ": [
+  3,
+  [
+   [
+    55,
+    33
+   ]
+  ]
+ ],
+ "نفس": [
+  298,
+  [
+   [
+    2,
+    9
+   ],
+   [
+    2,
+    44
+   ],
+   [
+    2,
+    48
+   ],
+   [
+    2,
+    54
+   ],
+   [
+    2,
+    57
+   ],
+   [
+    2,
+    72
+   ],
+   [
+    2,
+    84
+   ],
+   [
+    2,
+    85
+   ],
+   [
+    2,
+    87
+   ],
+   [
+    2,
+    90
+   ]
+  ]
+ ],
+ "نفع": [
+  50,
+  [
+   [
+    2,
+    102
+   ],
+   [
+    2,
+    123
+   ],
+   [
+    2,
+    164
+   ],
+   [
+    2,
+    219
+   ],
+   [
+    4,
+    11
+   ],
+   [
+    5,
+    76
+   ],
+   [
+    5,
+    119
+   ],
+   [
+    6,
+    71
+   ],
+   [
+    6,
+    158
+   ],
+   [
+    7,
+    188
+   ]
+  ]
+ ],
+ "نفق": [
+  111,
+  [
+   [
+    2,
+    3
+   ],
+   [
+    2,
+    195
+   ],
+   [
+    2,
+    215
+   ],
+   [
+    2,
+    219
+   ],
+   [
+    2,
+    254
+   ],
+   [
+    2,
+    261
+   ],
+   [
+    2,
+    262
+   ],
+   [
+    2,
+    264
+   ],
+   [
+    2,
+    265
+   ],
+   [
+    2,
+    267
+   ]
+  ]
+ ],
+ "نفي": [
+  1,
+  [
+   [
+    5,
+    33
+   ]
+  ]
+ ],
+ "نقب": [
+  3,
+  [
+   [
+    5,
+    12
+   ],
+   [
+    18,
+    97
+   ],
+   [
+    50,
+    36
+   ]
+  ]
+ ],
+ "نقذ": [
+  5,
+  [
+   [
+    3,
+    103
+   ],
+   [
+    22,
+    73
+   ],
+   [
+    36,
+    23
+   ],
+   [
+    36,
+    43
+   ],
+   [
+    39,
+    19
+   ]
+  ]
+ ],
+ "نقر": [
+  4,
+  [
+   [
+    4,
+    53
+   ],
+   [
+    4,
+    124
+   ],
+   [
+    74,
+    8
+   ]
+  ]
+ ],
+ "نقص": [
+  10,
+  [
+   [
+    2,
+    155
+   ],
+   [
+    7,
+    130
+   ],
+   [
+    9,
+    4
+   ],
+   [
+    11,
+    84
+   ],
+   [
+    11,
+    109
+   ],
+   [
+    13,
+    41
+   ],
+   [
+    21,
+    44
+   ],
+   [
+    35,
+    11
+   ],
+   [
+    50,
+    4
+   ],
+   [
+    73,
+    3
+   ]
+  ]
+ ],
+ "نقض": [
+  9,
+  [
+   [
+    2,
+    27
+   ],
+   [
+    4,
+    155
+   ],
+   [
+    5,
+    13
+   ],
+   [
+    8,
+    56
+   ],
+   [
+    13,
+    20
+   ],
+   [
+    13,
+    25
+   ],
+   [
+    16,
+    91
+   ],
+   [
+    16,
+    92
+   ],
+   [
+    94,
+    3
+   ]
+  ]
+ ],
+ "نقم": [
+  17,
+  [
+   [
+    3,
+    4
+   ],
+   [
+    5,
+    59
+   ],
+   [
+    5,
+    95
+   ],
+   [
+    7,
+    126
+   ],
+   [
+    7,
+    136
+   ],
+   [
+    9,
+    74
+   ],
+   [
+    14,
+    47
+   ],
+   [
+    15,
+    79
+   ],
+   [
+    30,
+    47
+   ],
+   [
+    32,
+    22
+   ]
+  ]
+ ],
+ "نكب": [
+  2,
+  [
+   [
+    23,
+    74
+   ],
+   [
+    67,
+    15
+   ]
+  ]
+ ],
+ "نكح": [
+  23,
+  [
+   [
+    2,
+    221
+   ],
+   [
+    2,
+    230
+   ],
+   [
+    2,
+    232
+   ],
+   [
+    2,
+    235
+   ],
+   [
+    2,
+    237
+   ],
+   [
+    4,
+    3
+   ],
+   [
+    4,
+    6
+   ],
+   [
+    4,
+    22
+   ],
+   [
+    4,
+    25
+   ],
+   [
+    4,
+    127
+   ]
+  ]
+ ],
+ "نكر": [
+  37,
+  [
+   [
+    3,
+    104
+   ],
+   [
+    3,
+    110
+   ],
+   [
+    3,
+    114
+   ],
+   [
+    5,
+    79
+   ],
+   [
+    7,
+    157
+   ],
+   [
+    9,
+    67
+   ],
+   [
+    9,
+    71
+   ],
+   [
+    9,
+    112
+   ],
+   [
+    11,
+    70
+   ],
+   [
+    12,
+    58
+   ]
+  ]
+ ],
+ "نكس": [
+  3,
+  [
+   [
+    21,
+    65
+   ],
+   [
+    32,
+    12
+   ],
+   [
+    36,
+    68
+   ]
+  ]
+ ],
+ "نكل": [
+  5,
+  [
+   [
+    2,
+    66
+   ],
+   [
+    4,
+    84
+   ],
+   [
+    5,
+    38
+   ],
+   [
+    73,
+    12
+   ],
+   [
+    79,
+    25
+   ]
+  ]
+ ],
+ "نمل": [
+  4,
+  [
+   [
+    3,
+    119
+   ],
+   [
+    27,
+    18
+   ]
+  ]
+ ],
+ "نمم": [
+  1,
+  [
+   [
+    68,
+    11
+   ]
+  ]
+ ],
+ "نهج": [
+  1,
+  [
+   [
+    5,
+    48
+   ]
+  ]
+ ],
+ "نهر": [
+  113,
+  [
+   [
+    2,
+    25
+   ],
+   [
+    2,
+    74
+   ],
+   [
+    2,
+    164
+   ],
+   [
+    2,
+    249
+   ],
+   [
+    2,
+    266
+   ],
+   [
+    2,
+    274
+   ],
+   [
+    3,
+    15
+   ],
+   [
+    3,
+    27
+   ],
+   [
+    3,
+    72
+   ],
+   [
+    3,
+    136
+   ]
+  ]
+ ],
+ "نهي": [
+  56,
+  [
+   [
+    2,
+    192
+   ],
+   [
+    2,
+    193
+   ],
+   [
+    2,
+    275
+   ],
+   [
+    3,
+    104
+   ],
+   [
+    3,
+    110
+   ],
+   [
+    3,
+    114
+   ],
+   [
+    4,
+    31
+   ],
+   [
+    4,
+    161
+   ],
+   [
+    4,
+    171
+   ],
+   [
+    5,
+    63
+   ]
+  ]
+ ],
+ "نوب": [
+  18,
+  [
+   [
+    11,
+    75
+   ],
+   [
+    11,
+    88
+   ],
+   [
+    13,
+    27
+   ],
+   [
+    30,
+    31
+   ],
+   [
+    30,
+    33
+   ],
+   [
+    31,
+    15
+   ],
+   [
+    34,
+    9
+   ],
+   [
+    38,
+    24
+   ],
+   [
+    38,
+    34
+   ],
+   [
+    39,
+    8
+   ]
+  ]
+ ],
+ "نور": [
+  194,
+  [
+   [
+    2,
+    17
+   ],
+   [
+    2,
+    24
+   ],
+   [
+    2,
+    39
+   ],
+   [
+    2,
+    80
+   ],
+   [
+    2,
+    81
+   ],
+   [
+    2,
+    126
+   ],
+   [
+    2,
+    167
+   ],
+   [
+    2,
+    174
+   ],
+   [
+    2,
+    175
+   ],
+   [
+    2,
+    201
+   ]
+  ]
+ ],
+ "نوش": [
+  1,
+  [
+   [
+    34,
+    52
+   ]
+  ]
+ ],
+ "نوق": [
+  7,
+  [
+   [
+    7,
+    73
+   ],
+   [
+    7,
+    77
+   ],
+   [
+    11,
+    64
+   ],
+   [
+    17,
+    59
+   ],
+   [
+    26,
+    155
+   ],
+   [
+    54,
+    27
+   ],
+   [
+    91,
+    13
+   ]
+  ]
+ ],
+ "نوم": [
+  9,
+  [
+   [
+    2,
+    255
+   ],
+   [
+    7,
+    97
+   ],
+   [
+    8,
+    43
+   ],
+   [
+    25,
+    47
+   ],
+   [
+    30,
+    23
+   ],
+   [
+    37,
+    102
+   ],
+   [
+    39,
+    42
+   ],
+   [
+    68,
+    19
+   ],
+   [
+    78,
+    9
+   ]
+  ]
+ ],
+ "نوي": [
+  1,
+  [
+   [
+    6,
+    95
+   ]
+  ]
+ ],
+ "هات": [
+  4,
+  [
+   [
+    2,
+    111
+   ],
+   [
+    21,
+    24
+   ],
+   [
+    27,
+    64
+   ],
+   [
+    28,
+    75
+   ]
+  ]
+ ],
+ "هبط": [
+  8,
+  [
+   [
+    2,
+    36
+   ],
+   [
+    2,
+    38
+   ],
+   [
+    2,
+    61
+   ],
+   [
+    2,
+    74
+   ],
+   [
+    7,
+    13
+   ],
+   [
+    7,
+    24
+   ],
+   [
+    11,
+    48
+   ],
+   [
+    20,
+    123
+   ]
+  ]
+ ],
+ "هجر": [
+  31,
+  [
+   [
+    2,
+    218
+   ],
+   [
+    3,
+    195
+   ],
+   [
+    4,
+    34
+   ],
+   [
+    4,
+    89
+   ],
+   [
+    4,
+    97
+   ],
+   [
+    4,
+    100
+   ],
+   [
+    8,
+    72
+   ],
+   [
+    8,
+    74
+   ],
+   [
+    8,
+    75
+   ],
+   [
+    9,
+    20
+   ]
+  ]
+ ],
+ "هجع": [
+  1,
+  [
+   [
+    51,
+    17
+   ]
+  ]
+ ],
+ "هدد": [
+  1,
+  [
+   [
+    19,
+    90
+   ]
+  ]
+ ],
+ "هدي": [
+  316,
+  [
+   [
+    1,
+    6
+   ],
+   [
+    2,
+    2
+   ],
+   [
+    2,
+    5
+   ],
+   [
+    2,
+    16
+   ],
+   [
+    2,
+    26
+   ],
+   [
+    2,
+    38
+   ],
+   [
+    2,
+    53
+   ],
+   [
+    2,
+    70
+   ],
+   [
+    2,
+    97
+   ],
+   [
+    2,
+    120
+   ]
+  ]
+ ],
+ "هرب": [
+  1,
+  [
+   [
+    72,
+    12
+   ]
+  ]
+ ],
+ "هزا": [
+  34,
+  [
+   [
+    2,
+    14
+   ],
+   [
+    2,
+    15
+   ],
+   [
+    2,
+    67
+   ],
+   [
+    2,
+    231
+   ],
+   [
+    4,
+    140
+   ],
+   [
+    5,
+    57
+   ],
+   [
+    5,
+    58
+   ],
+   [
+    6,
+    5
+   ],
+   [
+    6,
+    10
+   ],
+   [
+    9,
+    64
+   ]
+  ]
+ ],
+ "هزز": [
+  5,
+  [
+   [
+    19,
+    25
+   ],
+   [
+    22,
+    5
+   ],
+   [
+    27,
+    10
+   ],
+   [
+    28,
+    31
+   ],
+   [
+    41,
+    39
+   ]
+  ]
+ ],
+ "هلك": [
+  68,
+  [
+   [
+    2,
+    195
+   ],
+   [
+    2,
+    205
+   ],
+   [
+    3,
+    117
+   ],
+   [
+    4,
+    176
+   ],
+   [
+    5,
+    17
+   ],
+   [
+    6,
+    6
+   ],
+   [
+    6,
+    26
+   ],
+   [
+    6,
+    47
+   ],
+   [
+    6,
+    131
+   ],
+   [
+    7,
+    4
+   ]
+  ]
+ ],
+ "هلل": [
+  5,
+  [
+   [
+    2,
+    173
+   ],
+   [
+    2,
+    189
+   ],
+   [
+    5,
+    3
+   ],
+   [
+    6,
+    145
+   ],
+   [
+    16,
+    115
+   ]
+  ]
+ ],
+ "همس": [
+  1,
+  [
+   [
+    20,
+    108
+   ]
+  ]
+ ],
+ "همم": [
+  9,
+  [
+   [
+    3,
+    122
+   ],
+   [
+    3,
+    154
+   ],
+   [
+    4,
+    113
+   ],
+   [
+    5,
+    11
+   ],
+   [
+    9,
+    13
+   ],
+   [
+    9,
+    74
+   ],
+   [
+    12,
+    24
+   ],
+   [
+    40,
+    5
+   ]
+  ]
+ ],
+ "هنأ": [
+  4,
+  [
+   [
+    4,
+    4
+   ],
+   [
+    52,
+    19
+   ],
+   [
+    69,
+    24
+   ],
+   [
+    77,
+    43
+   ]
+  ]
+ ],
+ "هود": [
+  30,
+  [
+   [
+    2,
+    62
+   ],
+   [
+    2,
+    111
+   ],
+   [
+    2,
+    113
+   ],
+   [
+    2,
+    120
+   ],
+   [
+    2,
+    135
+   ],
+   [
+    2,
+    140
+   ],
+   [
+    3,
+    67
+   ],
+   [
+    4,
+    46
+   ],
+   [
+    4,
+    160
+   ],
+   [
+    5,
+    18
+   ]
+  ]
+ ],
+ "هون": [
+  26,
+  [
+   [
+    2,
+    90
+   ],
+   [
+    3,
+    178
+   ],
+   [
+    4,
+    14
+   ],
+   [
+    4,
+    37
+   ],
+   [
+    4,
+    102
+   ],
+   [
+    4,
+    151
+   ],
+   [
+    6,
+    93
+   ],
+   [
+    16,
+    59
+   ],
+   [
+    19,
+    9
+   ],
+   [
+    19,
+    21
+   ]
+  ]
+ ],
+ "هوي": [
+  38,
+  [
+   [
+    2,
+    87
+   ],
+   [
+    2,
+    120
+   ],
+   [
+    2,
+    145
+   ],
+   [
+    4,
+    135
+   ],
+   [
+    5,
+    48
+   ],
+   [
+    5,
+    49
+   ],
+   [
+    5,
+    70
+   ],
+   [
+    5,
+    77
+   ],
+   [
+    6,
+    56
+   ],
+   [
+    6,
+    71
+   ]
+  ]
+ ],
+ "هيا": [
+  4,
+  [
+   [
+    3,
+    49
+   ],
+   [
+    5,
+    110
+   ],
+   [
+    18,
+    10
+   ],
+   [
+    18,
+    16
+   ]
+  ]
+ ],
+ "هيج": [
+  2,
+  [
+   [
+    39,
+    21
+   ],
+   [
+    57,
+    20
+   ]
+  ]
+ ],
+ "وأد": [
+  1,
+  [
+   [
+    81,
+    8
+   ]
+  ]
+ ],
+ "وبل": [
+  8,
+  [
+   [
+    2,
+    264
+   ],
+   [
+    2,
+    265
+   ],
+   [
+    5,
+    95
+   ],
+   [
+    59,
+    15
+   ],
+   [
+    64,
+    5
+   ],
+   [
+    65,
+    9
+   ],
+   [
+    73,
+    16
+   ]
+  ]
+ ],
+ "وثق": [
+  34,
+  [
+   [
+    2,
+    27
+   ],
+   [
+    2,
+    63
+   ],
+   [
+    2,
+    83
+   ],
+   [
+    2,
+    84
+   ],
+   [
+    2,
+    93
+   ],
+   [
+    2,
+    256
+   ],
+   [
+    3,
+    81
+   ],
+   [
+    3,
+    187
+   ],
+   [
+    4,
+    21
+   ],
+   [
+    4,
+    90
+   ]
+  ]
+ ],
+ "وثن": [
+  3,
+  [
+   [
+    22,
+    30
+   ],
+   [
+    29,
+    17
+   ],
+   [
+    29,
+    25
+   ]
+  ]
+ ],
+ "وجب": [
+  1,
+  [
+   [
+    22,
+    36
+   ]
+  ]
+ ],
+ "وجد": [
+  107,
+  [
+   [
+    2,
+    96
+   ],
+   [
+    2,
+    110
+   ],
+   [
+    2,
+    196
+   ],
+   [
+    2,
+    283
+   ],
+   [
+    3,
+    30
+   ],
+   [
+    3,
+    37
+   ],
+   [
+    4,
+    43
+   ],
+   [
+    4,
+    52
+   ],
+   [
+    4,
+    64
+   ],
+   [
+    4,
+    65
+   ]
+  ]
+ ],
+ "وجه": [
+  78,
+  [
+   [
+    2,
+    112
+   ],
+   [
+    2,
+    115
+   ],
+   [
+    2,
+    144
+   ],
+   [
+    2,
+    148
+   ],
+   [
+    2,
+    149
+   ],
+   [
+    2,
+    150
+   ],
+   [
+    2,
+    177
+   ],
+   [
+    2,
+    272
+   ],
+   [
+    3,
+    20
+   ],
+   [
+    3,
+    45
+   ]
+  ]
+ ],
+ "وحد": [
+  68,
+  [
+   [
+    2,
+    61
+   ],
+   [
+    2,
+    133
+   ],
+   [
+    2,
+    163
+   ],
+   [
+    2,
+    213
+   ],
+   [
+    4,
+    1
+   ],
+   [
+    4,
+    3
+   ],
+   [
+    4,
+    11
+   ],
+   [
+    4,
+    12
+   ],
+   [
+    4,
+    102
+   ],
+   [
+    4,
+    171
+   ]
+  ]
+ ],
+ "وحش": [
+  1,
+  [
+   [
+    81,
+    5
+   ]
+  ]
+ ],
+ "وحي": [
+  78,
+  [
+   [
+    3,
+    44
+   ],
+   [
+    4,
+    163
+   ],
+   [
+    5,
+    111
+   ],
+   [
+    6,
+    19
+   ],
+   [
+    6,
+    50
+   ],
+   [
+    6,
+    93
+   ],
+   [
+    6,
+    106
+   ],
+   [
+    6,
+    112
+   ],
+   [
+    6,
+    121
+   ],
+   [
+    6,
+    145
+   ]
+  ]
+ ],
+ "ودد": [
+  29,
+  [
+   [
+    2,
+    96
+   ],
+   [
+    2,
+    105
+   ],
+   [
+    2,
+    109
+   ],
+   [
+    2,
+    266
+   ],
+   [
+    3,
+    30
+   ],
+   [
+    3,
+    69
+   ],
+   [
+    3,
+    118
+   ],
+   [
+    4,
+    42
+   ],
+   [
+    4,
+    73
+   ],
+   [
+    4,
+    89
+   ]
+  ]
+ ],
+ "ودع": [
+  4,
+  [
+   [
+    6,
+    98
+   ],
+   [
+    11,
+    6
+   ],
+   [
+    33,
+    48
+   ],
+   [
+    93,
+    3
+   ]
+  ]
+ ],
+ "ودي": [
+  12,
+  [
+   [
+    4,
+    92
+   ],
+   [
+    9,
+    121
+   ],
+   [
+    13,
+    17
+   ],
+   [
+    14,
+    37
+   ],
+   [
+    20,
+    12
+   ],
+   [
+    26,
+    225
+   ],
+   [
+    27,
+    18
+   ],
+   [
+    28,
+    30
+   ],
+   [
+    46,
+    24
+   ],
+   [
+    79,
+    16
+   ]
+  ]
+ ],
+ "ورث": [
+  35,
+  [
+   [
+    2,
+    233
+   ],
+   [
+    3,
+    180
+   ],
+   [
+    4,
+    11
+   ],
+   [
+    4,
+    12
+   ],
+   [
+    4,
+    19
+   ],
+   [
+    4,
+    176
+   ],
+   [
+    7,
+    43
+   ],
+   [
+    7,
+    100
+   ],
+   [
+    7,
+    128
+   ],
+   [
+    7,
+    137
+   ]
+  ]
+ ],
+ "ورد": [
+  11,
+  [
+   [
+    11,
+    98
+   ],
+   [
+    12,
+    19
+   ],
+   [
+    19,
+    71
+   ],
+   [
+    19,
+    86
+   ],
+   [
+    21,
+    98
+   ],
+   [
+    21,
+    99
+   ],
+   [
+    28,
+    23
+   ],
+   [
+    50,
+    16
+   ],
+   [
+    55,
+    37
+   ]
+  ]
+ ],
+ "ورق": [
+  4,
+  [
+   [
+    6,
+    59
+   ],
+   [
+    7,
+    22
+   ],
+   [
+    18,
+    19
+   ],
+   [
+    20,
+    121
+   ]
+  ]
+ ],
+ "وزر": [
+  27,
+  [
+   [
+    6,
+    31
+   ],
+   [
+    6,
+    164
+   ],
+   [
+    16,
+    25
+   ],
+   [
+    17,
+    15
+   ],
+   [
+    20,
+    29
+   ],
+   [
+    20,
+    87
+   ],
+   [
+    20,
+    100
+   ],
+   [
+    25,
+    35
+   ],
+   [
+    35,
+    18
+   ],
+   [
+    39,
+    7
+   ]
+  ]
+ ],
+ "وزن": [
+  23,
+  [
+   [
+    6,
+    152
+   ],
+   [
+    7,
+    8
+   ],
+   [
+    7,
+    9
+   ],
+   [
+    7,
+    85
+   ],
+   [
+    11,
+    84
+   ],
+   [
+    11,
+    85
+   ],
+   [
+    15,
+    19
+   ],
+   [
+    17,
+    35
+   ],
+   [
+    18,
+    105
+   ],
+   [
+    21,
+    47
+   ]
+  ]
+ ],
+ "وسط": [
+  5,
+  [
+   [
+    2,
+    143
+   ],
+   [
+    2,
+    238
+   ],
+   [
+    5,
+    89
+   ],
+   [
+    68,
+    28
+   ],
+   [
+    100,
+    5
+   ]
+  ]
+ ],
+ "وسع": [
+  32,
+  [
+   [
+    2,
+    115
+   ],
+   [
+    2,
+    233
+   ],
+   [
+    2,
+    236
+   ],
+   [
+    2,
+    247
+   ],
+   [
+    2,
+    255
+   ],
+   [
+    2,
+    261
+   ],
+   [
+    2,
+    268
+   ],
+   [
+    2,
+    286
+   ],
+   [
+    3,
+    73
+   ],
+   [
+    4,
+    97
+   ]
+  ]
+ ],
+ "وسل": [
+  2,
+  [
+   [
+    5,
+    35
+   ],
+   [
+    17,
+    57
+   ]
+  ]
+ ],
+ "وسم": [
+  2,
+  [
+   [
+    15,
+    75
+   ],
+   [
+    68,
+    16
+   ]
+  ]
+ ],
+ "وصف": [
+  14,
+  [
+   [
+    6,
+    100
+   ],
+   [
+    6,
+    139
+   ],
+   [
+    12,
+    18
+   ],
+   [
+    12,
+    77
+   ],
+   [
+    16,
+    62
+   ],
+   [
+    16,
+    116
+   ],
+   [
+    21,
+    18
+   ],
+   [
+    21,
+    22
+   ],
+   [
+    21,
+    112
+   ],
+   [
+    23,
+    91
+   ]
+  ]
+ ],
+ "وصل": [
+  12,
+  [
+   [
+    2,
+    27
+   ],
+   [
+    4,
+    90
+   ],
+   [
+    5,
+    103
+   ],
+   [
+    6,
+    136
+   ],
+   [
+    11,
+    70
+   ],
+   [
+    11,
+    81
+   ],
+   [
+    13,
+    21
+   ],
+   [
+    13,
+    25
+   ],
+   [
+    28,
+    35
+   ],
+   [
+    28,
+    51
+   ]
+  ]
+ ],
+ "وضع": [
+  26,
+  [
+   [
+    3,
+    36
+   ],
+   [
+    3,
+    96
+   ],
+   [
+    4,
+    46
+   ],
+   [
+    4,
+    102
+   ],
+   [
+    5,
+    13
+   ],
+   [
+    5,
+    41
+   ],
+   [
+    7,
+    157
+   ],
+   [
+    9,
+    47
+   ],
+   [
+    18,
+    49
+   ],
+   [
+    21,
+    47
+   ]
+  ]
+ ],
+ "وطأ": [
+  6,
+  [
+   [
+    9,
+    37
+   ],
+   [
+    9,
+    120
+   ],
+   [
+    33,
+    27
+   ],
+   [
+    48,
+    25
+   ],
+   [
+    73,
+    6
+   ]
+  ]
+ ],
+ "وطن": [
+  1,
+  [
+   [
+    9,
+    25
+   ]
+  ]
+ ],
+ "وعد": [
+  151,
+  [
+   [
+    2,
+    51
+   ],
+   [
+    2,
+    235
+   ],
+   [
+    2,
+    268
+   ],
+   [
+    3,
+    9
+   ],
+   [
+    3,
+    152
+   ],
+   [
+    3,
+    194
+   ],
+   [
+    4,
+    95
+   ],
+   [
+    4,
+    120
+   ],
+   [
+    4,
+    122
+   ],
+   [
+    5,
+    9
+   ]
+  ]
+ ],
+ "وعظ": [
+  25,
+  [
+   [
+    2,
+    66
+   ],
+   [
+    2,
+    231
+   ],
+   [
+    2,
+    232
+   ],
+   [
+    2,
+    275
+   ],
+   [
+    3,
+    138
+   ],
+   [
+    4,
+    34
+   ],
+   [
+    4,
+    58
+   ],
+   [
+    4,
+    63
+   ],
+   [
+    4,
+    66
+   ],
+   [
+    5,
+    46
+   ]
+  ]
+ ],
+ "وعي": [
+  7,
+  [
+   [
+    12,
+    76
+   ],
+   [
+    69,
+    12
+   ],
+   [
+    70,
+    18
+   ],
+   [
+    84,
+    23
+   ]
+  ]
+ ],
+ "وفد": [
+  1,
+  [
+   [
+    19,
+    85
+   ]
+  ]
+ ],
+ "وفر": [
+  1,
+  [
+   [
+    17,
+    63
+   ]
+  ]
+ ],
+ "وفق": [
+  4,
+  [
+   [
+    4,
+    35
+   ],
+   [
+    4,
+    62
+   ],
+   [
+    11,
+    88
+   ],
+   [
+    78,
+    26
+   ]
+  ]
+ ],
+ "وفي": [
+  66,
+  [
+   [
+    2,
+    40
+   ],
+   [
+    2,
+    177
+   ],
+   [
+    2,
+    234
+   ],
+   [
+    2,
+    240
+   ],
+   [
+    2,
+    272
+   ],
+   [
+    2,
+    281
+   ],
+   [
+    3,
+    25
+   ],
+   [
+    3,
+    55
+   ],
+   [
+    3,
+    57
+   ],
+   [
+    3,
+    76
+   ]
+  ]
+ ],
+ "وقت": [
+  13,
+  [
+   [
+    2,
+    189
+   ],
+   [
+    4,
+    103
+   ],
+   [
+    7,
+    142
+   ],
+   [
+    7,
+    143
+   ],
+   [
+    7,
+    155
+   ],
+   [
+    7,
+    187
+   ],
+   [
+    15,
+    38
+   ],
+   [
+    26,
+    38
+   ],
+   [
+    38,
+    81
+   ],
+   [
+    44,
+    40
+   ]
+  ]
+ ],
+ "وقد": [
+  11,
+  [
+   [
+    2,
+    17
+   ],
+   [
+    2,
+    24
+   ],
+   [
+    3,
+    10
+   ],
+   [
+    5,
+    64
+   ],
+   [
+    13,
+    17
+   ],
+   [
+    24,
+    35
+   ],
+   [
+    28,
+    38
+   ],
+   [
+    36,
+    80
+   ],
+   [
+    66,
+    6
+   ],
+   [
+    85,
+    5
+   ]
+  ]
+ ],
+ "وقع": [
+  24,
+  [
+   [
+    4,
+    100
+   ],
+   [
+    5,
+    91
+   ],
+   [
+    7,
+    71
+   ],
+   [
+    7,
+    118
+   ],
+   [
+    7,
+    134
+   ],
+   [
+    7,
+    171
+   ],
+   [
+    10,
+    51
+   ],
+   [
+    15,
+    29
+   ],
+   [
+    18,
+    53
+   ],
+   [
+    22,
+    65
+   ]
+  ]
+ ],
+ "وقف": [
+  4,
+  [
+   [
+    6,
+    27
+   ],
+   [
+    6,
+    30
+   ],
+   [
+    34,
+    31
+   ],
+   [
+    37,
+    24
+   ]
+  ]
+ ],
+ "وقي": [
+  258,
+  [
+   [
+    2,
+    2
+   ],
+   [
+    2,
+    21
+   ],
+   [
+    2,
+    24
+   ],
+   [
+    2,
+    41
+   ],
+   [
+    2,
+    48
+   ],
+   [
+    2,
+    63
+   ],
+   [
+    2,
+    66
+   ],
+   [
+    2,
+    103
+   ],
+   [
+    2,
+    123
+   ],
+   [
+    2,
+    177
+   ]
+  ]
+ ],
+ "وكد": [
+  1,
+  [
+   [
+    16,
+    91
+   ]
+  ]
+ ],
+ "وكل": [
+  70,
+  [
+   [
+    3,
+    122
+   ],
+   [
+    3,
+    159
+   ],
+   [
+    3,
+    160
+   ],
+   [
+    3,
+    173
+   ],
+   [
+    4,
+    81
+   ],
+   [
+    4,
+    109
+   ],
+   [
+    4,
+    132
+   ],
+   [
+    4,
+    171
+   ],
+   [
+    5,
+    11
+   ],
+   [
+    5,
+    23
+   ]
+  ]
+ ],
+ "ولج": [
+  14,
+  [
+   [
+    3,
+    27
+   ],
+   [
+    7,
+    40
+   ],
+   [
+    9,
+    16
+   ],
+   [
+    22,
+    61
+   ],
+   [
+    31,
+    29
+   ],
+   [
+    34,
+    2
+   ],
+   [
+    35,
+    13
+   ],
+   [
+    57,
+    4
+   ],
+   [
+    57,
+    6
+   ]
+  ]
+ ],
+ "ولد": [
+  102,
+  [
+   [
+    2,
+    83
+   ],
+   [
+    2,
+    116
+   ],
+   [
+    2,
+    180
+   ],
+   [
+    2,
+    215
+   ],
+   [
+    2,
+    233
+   ],
+   [
+    3,
+    10
+   ],
+   [
+    3,
+    47
+   ],
+   [
+    3,
+    116
+   ],
+   [
+    4,
+    7
+   ],
+   [
+    4,
+    11
+   ]
+  ]
+ ],
+ "ولي": [
+  232,
+  [
+   [
+    2,
+    64
+   ],
+   [
+    2,
+    83
+   ],
+   [
+    2,
+    107
+   ],
+   [
+    2,
+    115
+   ],
+   [
+    2,
+    120
+   ],
+   [
+    2,
+    137
+   ],
+   [
+    2,
+    142
+   ],
+   [
+    2,
+    144
+   ],
+   [
+    2,
+    148
+   ],
+   [
+    2,
+    149
+   ]
+  ]
+ ],
+ "وهب": [
+  25,
+  [
+   [
+    3,
+    8
+   ],
+   [
+    3,
+    38
+   ],
+   [
+    6,
+    84
+   ],
+   [
+    14,
+    39
+   ],
+   [
+    19,
+    5
+   ],
+   [
+    19,
+    19
+   ],
+   [
+    19,
+    49
+   ],
+   [
+    19,
+    50
+   ],
+   [
+    19,
+    53
+   ],
+   [
+    21,
+    72
+   ]
+  ]
+ ],
+ "وهج": [
+  1,
+  [
+   [
+    78,
+    13
+   ]
+  ]
+ ],
+ "وهن": [
+  9,
+  [
+   [
+    3,
+    139
+   ],
+   [
+    3,
+    146
+   ],
+   [
+    4,
+    104
+   ],
+   [
+    8,
+    18
+   ],
+   [
+    19,
+    4
+   ],
+   [
+    29,
+    41
+   ],
+   [
+    31,
+    14
+   ],
+   [
+    47,
+    35
+   ]
+  ]
+ ],
+ "يبس": [
+  4,
+  [
+   [
+    6,
+    59
+   ],
+   [
+    12,
+    43
+   ],
+   [
+    12,
+    46
+   ],
+   [
+    20,
+    77
+   ]
+  ]
+ ],
+ "يتم": [
+  23,
+  [
+   [
+    2,
+    83
+   ],
+   [
+    2,
+    177
+   ],
+   [
+    2,
+    215
+   ],
+   [
+    2,
+    220
+   ],
+   [
+    4,
+    2
+   ],
+   [
+    4,
+    3
+   ],
+   [
+    4,
+    6
+   ],
+   [
+    4,
+    8
+   ],
+   [
+    4,
+    10
+   ],
+   [
+    4,
+    36
+   ]
+  ]
+ ],
+ "يدي": [
+  120,
+  [
+   [
+    2,
+    66
+   ],
+   [
+    2,
+    79
+   ],
+   [
+    2,
+    95
+   ],
+   [
+    2,
+    97
+   ],
+   [
+    2,
+    195
+   ],
+   [
+    2,
+    237
+   ],
+   [
+    2,
+    249
+   ],
+   [
+    2,
+    255
+   ],
+   [
+    3,
+    3
+   ],
+   [
+    3,
+    26
+   ]
+  ]
+ ],
+ "يسر": [
+  44,
+  [
+   [
+    2,
+    185
+   ],
+   [
+    2,
+    196
+   ],
+   [
+    2,
+    219
+   ],
+   [
+    2,
+    280
+   ],
+   [
+    4,
+    30
+   ],
+   [
+    4,
+    169
+   ],
+   [
+    5,
+    90
+   ],
+   [
+    5,
+    91
+   ],
+   [
+    12,
+    65
+   ],
+   [
+    17,
+    28
+   ]
+  ]
+ ],
+ "يقظ": [
+  1,
+  [
+   [
+    18,
+    18
+   ]
+  ]
+ ],
+ "يقن": [
+  28,
+  [
+   [
+    2,
+    4
+   ],
+   [
+    2,
+    118
+   ],
+   [
+    4,
+    157
+   ],
+   [
+    5,
+    50
+   ],
+   [
+    6,
+    75
+   ],
+   [
+    13,
+    2
+   ],
+   [
+    15,
+    99
+   ],
+   [
+    26,
+    24
+   ],
+   [
+    27,
+    3
+   ],
+   [
+    27,
+    14
+   ]
+  ]
+ ],
+ "يمن": [
+  71,
+  [
+   [
+    2,
+    224
+   ],
+   [
+    2,
+    225
+   ],
+   [
+    3,
+    77
+   ],
+   [
+    4,
+    3
+   ],
+   [
+    4,
+    24
+   ],
+   [
+    4,
+    25
+   ],
+   [
+    4,
+    33
+   ],
+   [
+    4,
+    36
+   ],
+   [
+    5,
+    53
+   ],
+   [
+    5,
+    89
+   ]
+  ]
+ ],
+ "يوم": [
+  475,
+  [
+   [
+    1,
+    4
+   ],
+   [
+    2,
+    8
+   ],
+   [
+    2,
+    48
+   ],
+   [
+    2,
+    62
+   ],
+   [
+    2,
+    80
+   ],
+   [
+    2,
+    85
+   ],
+   [
+    2,
+    113
+   ],
+   [
+    2,
+    123
+   ],
+   [
+    2,
+    126
+   ],
+   [
+    2,
+    174
+   ]
+  ]
+ ]
 };
