@@ -64,6 +64,23 @@ function renderCard(){
     backEl.setAttribute('dir','ltr'); backEl.setAttribute('lang','de');
   }
 
+  /* Geschlecht auf der Rueckseite (arabicroots-Paritaet D). Nur wo es etwas
+     aussagt: Partikeln wie فِي oder هَلْ haben keins, dort steht in den Daten
+     `null` - und ein leerer Platzhalter waere schlechter als gar keiner. */
+  const genusEl = document.getElementById('cardGender');
+  const GENUS = {
+    masculine: { ar: 'مُذَكَّر', de: 'männlich', farbe: 'var(--gram-mubtada)' },
+    feminine:  { ar: 'مُؤَنَّث', de: 'weiblich',  farbe: 'var(--gram-fem)' }
+  };
+  const genus = GENUS[w.gender];
+  if (genus){
+    genusEl.innerHTML = `<span class="ar" lang="ar" dir="rtl">${genus.ar}</span><span class="de">${genus.de}</span>`;
+    genusEl.style.setProperty('--gender-role', genus.farbe);
+    genusEl.classList.remove('hidden');
+  } else {
+    genusEl.classList.add('hidden');
+  }
+
   // Plural-/Femininum-Formen nur zeigen, wenn in den Einstellungen aktiviert.
   // Label und arabische Form getrennt ausgeben: das Label bleibt klein und
   // lateinisch, die Form selbst wird gross und arabisch gesetzt.
