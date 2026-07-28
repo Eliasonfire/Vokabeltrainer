@@ -156,11 +156,15 @@ function renderVerses(id){
     /* Verdeckt wird nur, was auch als auswendig markiert ist - alles andere
        zu verdecken waere kein Selbsttest, sondern nur laestig. */
     const verdeckt = HIFZ_VERDECKT && kann ? ' verdeckt' : '';
+    /* Ist die ganze Sure abgehakt, waeren die einzelnen Kaestchen eine Luege:
+       sie stuenden auf "an" und liessen sich anklicken, ohne dass sich etwas
+       aendert - der Surenhaken sticht sie. Also ausgrauen und sagen warum. */
+    const ganzeSure = !!HIFZ[id];
     return `
     <div class="verse-item${kann?' auswendig':''}">
       <div class="verse-kopf">
         <span class="verse-num">${v.verse_key}</span>
-        <button class="hifz-check${kann?' on':''}" data-versmerk="${id}:${nr}"
+        <button class="hifz-check${kann?' on':''}" ${ganzeSure?'disabled title="Die ganze Sure ist abgehakt"':`data-versmerk="${id}:${nr}"`}
                 aria-label="Vers ${nr} als auswendig markieren">${icon('check')}</button>
       </div>
       <div class="verse-ar${verdeckt}" lang="ar" dir="rtl">${v.text_uthmani}</div>
@@ -175,7 +179,8 @@ function aktualisiereHifzLeiste(id, surah){
   const gesamt = surah ? surah.verses : (VERSE_CACHE[id] || []).length;
   const kann = HIFZ[id] ? gesamt : zaehleVerse(id);
   document.getElementById('hifzStand').textContent =
-    kann === 0 ? `${gesamt} Verse`
+    HIFZ[id] ? `Ganze Sure abgehakt (${gesamt} Verse)`
+    : kann === 0 ? `${gesamt} Verse`
     : kann >= gesamt ? `Alle ${gesamt} Verse auswendig`
     : `${kann} von ${gesamt} Versen auswendig`;
   const knopf = document.getElementById('btnHifzVerdecken');

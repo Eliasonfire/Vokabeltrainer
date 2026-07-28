@@ -952,6 +952,8 @@ main{
 }
 .hifz-check:active{transform:scale(.85);}
 .hifz-check.on{background:var(--green);border-color:var(--green);color:#04241a;transform:scale(1.04);}
+.hifz-check:disabled{opacity:.45;cursor:default;}
+.hifz-check:disabled:active{transform:none;}
 /* Hifz-Leiste ueber der Versliste: Stand und der Verdecken-Schalter. */
 .hifz-bar{
   display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);
