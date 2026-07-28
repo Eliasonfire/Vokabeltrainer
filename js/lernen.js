@@ -109,6 +109,8 @@ function renderCard(){
     document.getElementById('cardQuranNote').textContent = w.quran.de || w.quran.note || '';
   } else qBox.classList.add('hidden');
 
+  renderNotiz(w);
+
   document.getElementById('learnCount').textContent = `${SESSION.idx+1}/${SESSION.words.length}`;
   document.getElementById('learnProgressFill').style.width = `${(SESSION.idx/SESSION.words.length)*100}%`;
 
@@ -142,9 +144,60 @@ function closeQuranFreqPopover(){
 document.getElementById('qfpBackdrop').addEventListener('click', closeQuranFreqPopover);
 document.getElementById('btnCloseQuranFreq').addEventListener('click', closeQuranFreqPopover);
 
+/* ---------- Eigene Eselsbruecke pro Vokabel (arabicroots-Paritaet D) ---------- */
+function renderNotiz(w){
+  const kasten = document.getElementById('cardNoteBox');
+  const text   = document.getElementById('cardNoteText');
+  const punkt  = document.getElementById('cardNoteDot');
+  const notiz  = getNote(w.id);
+  text.textContent = notiz || 'Eselsbrücke hinzufügen';
+  kasten.classList.toggle('hat-notiz', !!notiz);
+  /* Der Punkt sitzt auf der VORDERSEITE. Er verraet die Loesung nicht, sagt
+     aber "zu diesem Wort hast du dir schon etwas notiert" - genau der Hinweis,
+     den man beim Ueberlegen brauchen kann. */
+  punkt.classList.toggle('hidden', !notiz);
+}
+
+function oeffneNotizEditor(){
+  const w = SESSION.words[SESSION.idx];
+  if (!w) return;
+  document.getElementById('neWort').textContent = w.ar;
+  const feld = document.getElementById('neText');
+  feld.value = getNote(w.id);
+  document.getElementById('btnDeleteNote').style.visibility = getNote(w.id) ? 'visible' : 'hidden';
+  document.getElementById('noteBackdrop').classList.remove('hidden');
+  document.getElementById('noteEditor').classList.remove('hidden');
+  feld.focus();
+}
+function schliesseNotizEditor(){
+  document.getElementById('noteBackdrop').classList.add('hidden');
+  document.getElementById('noteEditor').classList.add('hidden');
+}
+document.getElementById('cardNoteBox').addEventListener('click', (e)=>{
+  e.stopPropagation();          // sonst dreht sich die Karte gleich mit um
+  oeffneNotizEditor();
+});
+document.getElementById('btnCloseNote').addEventListener('click', schliesseNotizEditor);
+document.getElementById('noteBackdrop').addEventListener('click', schliesseNotizEditor);
+document.getElementById('btnSaveNote').addEventListener('click', ()=>{
+  const w = SESSION.words[SESSION.idx];
+  setNote(w.id, document.getElementById('neText').value);
+  renderNotiz(w);
+  schliesseNotizEditor();
+  toast(getNote(w.id) ? 'Eselsbrücke gespeichert.' : 'Eselsbrücke entfernt.');
+});
+document.getElementById('btnDeleteNote').addEventListener('click', ()=>{
+  const w = SESSION.words[SESSION.idx];
+  setNote(w.id, '');
+  renderNotiz(w);
+  schliesseNotizEditor();
+  toast('Eselsbrücke entfernt.');
+});
+
 let __suppressCardClick = false;
 document.getElementById('flashcard').addEventListener('click', (e)=>{
   if (e.target.id === 'btnSpeakWord') return;
+  if (e.target.closest('#cardNoteBox')) return;   // hat einen eigenen Klick
   if (__suppressCardClick){ __suppressCardClick = false; return; }
   document.getElementById('flashcard').classList.toggle('flipped');
 });
