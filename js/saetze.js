@@ -28,7 +28,22 @@ function herkunft(w){
   return `Kap. ${w.chapter}`;
 }
 
+/* Im Lueckenmodus wird das Zielwort durch einen Strich ersetzt - als Element
+   mit Mindestbreite, damit die Zeile nicht springt, sobald es erscheint. Die
+   Grammatik-Unterstreichungen bleiben dabei aussen vor: sie wuerden verraten,
+   was fehlt. */
+function mitLuecke(text){
+  if (!LUECKE.aktiv || LUECKE.geloest || !LUECKE.wort) return null;
+  const von = text.indexOf(LUECKE.wort);
+  if (von === -1) return null;
+  return escapeHtml(text.slice(0, von))
+       + `<span class="satz-luecke">${escapeHtml(LUECKE.wort)}</span>`
+       + escapeHtml(text.slice(von + LUECKE.wort.length));
+}
+
 function buildSentenceHtml(w){
+  const verdeckt = mitLuecke(w.sentAr || '');
+  if (verdeckt !== null) return verdeckt;
   const tags = (typeof SENTENCE_TAGS!=='undefined') && SENTENCE_TAGS[w.id];
   if (!SETTINGS.grammarHighlight || !tags || !tags.length) return escapeHtml(w.sentAr);
   // Erst alle Fundstellen im Rohtext einsammeln, dann in einem Durchgang
@@ -85,11 +100,19 @@ function renderSentence(){
   const irabKasten = document.getElementById('sentIrabBox');
   if (irabKasten && !irabKasten.classList.contains('hidden')) renderIrab();
 }
+/* Beim Blaettern die Luecke schliessen: sie gehoert zu genau diesem Satz, und
+   das Zielwort des naechsten waere ein anderes. */
+function blaettere(schritt){
+  if (LUECKE.aktiv) beendeLuecke();
+  SENT.idx = (SENT.idx + schritt + SENT.list.length) % SENT.list.length;
+  renderSentence();
+}
+
 document.getElementById('btnSentPrev').addEventListener('click', ()=>{
-  SENT.idx = (SENT.idx-1+SENT.list.length)%SENT.list.length; renderSentence();
+  blaettere(-1);
 });
 document.getElementById('btnSentNext').addEventListener('click', ()=>{
-  SENT.idx = (SENT.idx+1)%SENT.list.length; renderSentence();
+  blaettere(1);
 });
 document.getElementById('btnSentSpeak').addEventListener('click', ()=>{
   speakArabic(SENT.list[SENT.idx].sentAr);
@@ -156,6 +179,94 @@ document.getElementById('btnSentOther').addEventListener('click', ()=>{
   const naechster = platz.find(i => i > SENT.idx);
   SENT.idx = naechster !== undefined ? naechster : platz[0];
   renderSentence();
+});
+
+/* ---------- Lückentext ----------
+   Einen Satz zu lesen und zu verstehen ist Wiedererkennung. Ob ein Wort
+   wirklich sitzt, zeigt sich erst beim aktiven Abruf - deshalb wird das
+   Zielwort ausgeblendet und muss selbst ergaenzt werden.
+
+   Welches Wort ausgeblendet wird, ist nicht beliebig:
+   - bei einem Vokabelsatz das Wort der Vokabel selbst, zu der der Satz gehoert
+   - bei einem Lehrbuchsatz die Stelle, an der eine Grammatikregel haengt -
+     also genau das, was der Satz zeigen soll
+   Findet sich keines von beidem, gibt es keine Luecke. Ein zufaellig
+   ausgeblendetes Wort waere Ratearbeit statt Abfrage. */
+let LUECKE = { aktiv:false, wort:'', geloest:false };
+
+function ohnePunkt(s){ return (s||'').replace(/[.،؟!«»:؛]/g,''); }
+
+/* Vergleich ohne Vokalzeichen: Elias tippt auf dem Handy, und ob er die
+   Taschkil mitschreibt, ist fuer diese Uebung nicht der Punkt. Die richtige
+   Schreibweise steht danach vollstaendig da. */
+function gleichesWortLose(a, b){
+  return ohneTaschkil(ohnePunkt(a)).trim() === ohneTaschkil(ohnePunkt(b)).trim();
+}
+
+function findeZielwort(w){
+  const woerter = String(w.sentAr || '').split(/\s+/);
+  /* Vokabelsatz: das Wort der Vokabel im Satz suchen. */
+  if (w.ar || w.sg){
+    const kern = wortKern(w.sg || w.ar);
+    const treffer = woerter.find(x => kern.length >= 2 && wortKern(x) === kern);
+    if (treffer) return ohnePunkt(treffer);
+  }
+  /* Lehrbuchsatz: die markierte Stelle - aber nur, wenn sie genau ein Wort
+     ist. Eine ganze Wortgruppe auszublenden waere zu viel auf einmal. */
+  const tags = (typeof SENTENCE_TAGS!=='undefined') && SENTENCE_TAGS[w.id];
+  if (tags){
+    for (const t of tags){
+      if (t.matchText && !/\s/.test(t.matchText) && w.sentAr.includes(t.matchText)) return t.matchText;
+    }
+  }
+  return null;
+}
+
+function startLuecke(){
+  const w = SENT.list[SENT.idx];
+  const kasten = document.getElementById('sentLueckeBox');
+  const ziel = w && findeZielwort(w);
+  if (!ziel){ toast('Zu diesem Satz gibt es kein eindeutiges Zielwort.'); return; }
+  LUECKE = { aktiv:true, wort:ziel, geloest:false };
+  document.getElementById('lueckeEingabe').value = '';
+  document.getElementById('lueckeAntwort').textContent = '';
+  document.getElementById('lueckeAntwort').className = 'luecke-antwort';
+  kasten.classList.remove('hidden');
+  renderSentence();
+  document.getElementById('lueckeEingabe').focus();
+}
+
+function beendeLuecke(){
+  LUECKE = { aktiv:false, wort:'', geloest:false };
+  document.getElementById('sentLueckeBox').classList.add('hidden');
+  renderSentence();
+}
+
+function pruefeLuecke(aufloesen){
+  if (!LUECKE.aktiv) return;
+  const eingabe = document.getElementById('lueckeEingabe').value;
+  const feld = document.getElementById('lueckeAntwort');
+  const richtig = !aufloesen && gleichesWortLose(eingabe, LUECKE.wort);
+  if (aufloesen || richtig){
+    LUECKE.geloest = true;
+    renderSentence();
+    feld.className = 'luecke-antwort ' + (richtig ? 'richtig' : 'falsch');
+    feld.innerHTML = richtig
+      ? `Richtig: <span class="luecke-wort" lang="ar" dir="rtl">${escapeHtml(LUECKE.wort)}</span>`
+      : `Es hiess <span class="luecke-wort" lang="ar" dir="rtl">${escapeHtml(LUECKE.wort)}</span>`;
+    return;
+  }
+  feld.className = 'luecke-antwort falsch';
+  feld.textContent = eingabe.trim() ? 'Noch nicht — versuch es nochmal.' : 'Tippe das fehlende Wort ein.';
+}
+
+document.getElementById('btnSentLuecke').addEventListener('click', ()=>{
+  if (LUECKE.aktiv) beendeLuecke(); else startLuecke();
+});
+document.getElementById('btnLueckePruefen').addEventListener('click', ()=>pruefeLuecke(false));
+document.getElementById('btnLueckeAufloesen').addEventListener('click', ()=>pruefeLuecke(true));
+document.getElementById('lueckeEingabe').addEventListener('keydown', (e)=>{
+  if (e.key === 'Enter'){ e.preventDefault(); pruefeLuecke(false); }
 });
 
 /* ---------- إِعْراب ----------
