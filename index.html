@@ -573,7 +573,21 @@ main{
 .quran-note{font-size:var(--fs-sm);color:var(--text-faint);text-align:center;margin-top:var(--sp-1);line-height:1.5;}
 .hidden{display:none !important;}
 
-.answer-buttons{display:flex;gap:var(--sp-3);padding:var(--sp-2) var(--gutter) 0;}
+/* Vier Stufen statt richtig/falsch. Auf schmalen Geraeten muessen sie
+   nebeneinander passen, also kleiner und ohne Symbol-Ballast; unter jeder
+   Stufe steht, wann die Karte wiederkommt. */
+.answer-buttons{display:flex;gap:var(--sp-2);padding:var(--sp-2) var(--gutter) 0;}
+.btn-stufe{
+  flex:1;min-width:0;flex-direction:column;gap:2px;
+  padding:var(--sp-3) var(--sp-2);font-size:var(--fs-md);border-radius:var(--r-3);
+}
+.btn-stufe .ic{width:18px;height:18px;}
+.btn-stufe em{font-style:normal;font-size:var(--fs-xs);opacity:.72;font-variant-numeric:tabular-nums;}
+.btn-schwer{background:var(--surface-2);border:1.5px solid var(--border-strong);color:var(--text);}
+.btn-schwer:hover{background:var(--surface-3);}
+.btn-leicht{background:var(--surface-2);border:1.5px solid var(--green);color:var(--green);}
+.btn-leicht:hover{background:rgba(16,185,129,.12);}
+@media (max-width: 380px){ .btn-stufe{font-size:var(--fs-sm);padding:var(--sp-3) 4px;} }
 
 /* --- Swipe-Hinweise --- */
 .swipe-hint{
@@ -1286,8 +1300,14 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
       </div>
 
       <div class="answer-buttons" id="answerButtons">
-        <button class="btn btn-wrong" id="btnWrong"><svg class="ic"><use href="#ic-close"/></svg>Falsch</button>
-        <button class="btn btn-right" id="btnRight"><svg class="ic"><use href="#ic-check"/></svg>Richtig</button>
+        <button class="btn btn-stufe btn-wrong" id="btnWrong" data-stufe="nochmal">
+          <svg class="ic"><use href="#ic-close"/></svg><span>Nochmal</span><em id="stufeNochmal"></em></button>
+        <button class="btn btn-stufe btn-schwer" id="btnSchwer" data-stufe="schwer">
+          <span>Schwer</span><em id="stufeSchwer"></em></button>
+        <button class="btn btn-stufe btn-right" id="btnRight" data-stufe="gut">
+          <svg class="ic"><use href="#ic-check"/></svg><span>Gut</span><em id="stufeGut"></em></button>
+        <button class="btn btn-stufe btn-leicht" id="btnLeicht" data-stufe="leicht">
+          <span>Leicht</span><em id="stufeLeicht"></em></button>
       </div>
     </section>
 
