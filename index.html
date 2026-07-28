@@ -824,6 +824,9 @@ main{
    langen Sure trotz Sprung wieder von Hand. */
 @keyframes versLeuchtet{from{background:var(--red-wash);}to{background:var(--surface-2);}}
 .verse-item.angesteuert{animation:versLeuchtet 2.4s var(--ease-out);}
+/* Die Wurzelzahl steht in der Ueberschrift, die Wortzahl klein darunter -
+   sie ist die genauere, aber nicht immer verfuegbare Angabe. */
+.qfp-wortzahl{font-size:var(--fs-sm);font-weight:400;color:var(--text-dim);margin-top:2px;}
 .qfp-note{font-size:var(--fs-xs);color:var(--text-faint);text-align:center;}
 .qfp-backdrop{
   position:fixed;inset:0;background:rgba(0,0,0,.66);z-index:650;

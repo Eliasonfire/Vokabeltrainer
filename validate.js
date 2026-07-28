@@ -34,7 +34,7 @@ try {
     if (!fs.existsSync(p)) { fail(`Datendatei fehlt: ${f}`); continue; }
     code += fs.readFileSync(p, 'utf8') + '\n';
   }
-  code += 'globalThis.__DATA = { VOCAB_DATA, SURAH_DATA, GRAMMAR_RULES, SENTENCE_TAGS, QURAN_FREQ, LEHRBUCH_SAETZE };';
+  code += 'globalThis.__DATA = { VOCAB_DATA, SURAH_DATA, GRAMMAR_RULES, SENTENCE_TAGS, QURAN_FREQ, QURAN_WORT, LEHRBUCH_SAETZE };';
   const ctx = {};
   vm.createContext(ctx);
   vm.runInContext(code, ctx);
@@ -43,7 +43,7 @@ try {
   fail(`Datendateien nicht ausführbar (Syntaxfehler?): ${e.message}`);
 }
 
-const { VOCAB_DATA, SURAH_DATA, GRAMMAR_RULES, SENTENCE_TAGS, QURAN_FREQ, LEHRBUCH_SAETZE } = DATA;
+const { VOCAB_DATA, SURAH_DATA, GRAMMAR_RULES, SENTENCE_TAGS, QURAN_FREQ, QURAN_WORT, LEHRBUCH_SAETZE } = DATA;
 
 /* ---------- 1. VOCAB_DATA ---------- */
 if (!Array.isArray(VOCAB_DATA) || VOCAB_DATA.length === 0){
@@ -212,6 +212,12 @@ if (!QURAN_FREQ || typeof QURAN_FREQ !== 'object'){
     });
   });
   note(`QURAN_FREQ: ${roots} Wurzeln, ${stellen} Fundstellen.`);
+  /* Die Wortzahlen sind eine zweite, unabhaengige Tabelle in derselben Datei. */
+  if (QURAN_WORT && typeof QURAN_WORT === "object"){
+    const schlecht = Object.entries(QURAN_WORT).filter(([,n]) => typeof n !== "number" || n < 1);
+    if (schlecht.length) fail(`QURAN_WORT: ${schlecht.length} Eintraege ohne positive Zahl (z.B. "${schlecht[0][0]}").`);
+    else note(`QURAN_WORT: ${Object.keys(QURAN_WORT).length} Woerter mit eindeutiger Zahl.`);
+  }
 }
 
 /* ---------- 7. Dateien, auf die index.html und sw.js verweisen ---------- */
