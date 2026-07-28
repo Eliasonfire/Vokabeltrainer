@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vokabeltrainer-v56';
+const CACHE_NAME = 'vokabeltrainer-v57';
 const ASSETS = [
   './',
   './index.html',
@@ -26,6 +26,7 @@ const ASSETS = [
   './quran-text.js',
   './manifest.json',
   './icon.svg',
+  './wortmarke.svg',
   './icon-maskable.svg'
 ];
 
