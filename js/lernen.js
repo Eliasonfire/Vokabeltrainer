@@ -143,7 +143,10 @@ function openQuranFreqPopover(w, freq){
   const shown = verse.slice(0, 10);
   document.getElementById('qfpTitle').innerHTML = `${icon('crescent')} <span lang="ar" dir="rtl">${escapeHtml(w.ar)}</span> im Quran (${anzahl}×)`;
   document.getElementById('qfpList').innerHTML = shown.map(([sura, ayah])=>`
-    <div class="qfp-item"><span class="qfp-ref">${sura}:${ayah}</span> — ${escapeHtml(surenName(sura))}</div>
+    <div class="qfp-item" data-vers="${sura}:${ayah}" role="button" tabindex="0">
+      <span class="qfp-pfeil">${icon('right')}</span>
+      <span class="qfp-ref">${sura}:${ayah}</span> — ${escapeHtml(surenName(sura))}
+    </div>
   `).join('') + (anzahl > shown.length ? `<div class="qfp-note">Erste ${shown.length} von ${anzahl} Fundstellen</div>` : '');
   document.getElementById('qfpBackdrop').classList.remove('hidden');
   document.getElementById('quranFreqPopover').classList.remove('hidden');
@@ -152,6 +155,48 @@ function closeQuranFreqPopover(){
   document.getElementById('qfpBackdrop').classList.add('hidden');
   document.getElementById('quranFreqPopover').classList.add('hidden');
 }
+/* Von der Fundstelle direkt in den Quran-Leser. Vorher war die Liste eine
+   Sackgasse: man sah, dass das Wort in 2:125 vorkommt, musste den Vers aber
+   selbst heraussuchen - genau das verlangt Goal-Prompt C.3 anders. */
+document.getElementById('qfpList').addEventListener('click', (e)=>{
+  const zeile = e.target.closest('[data-vers]');
+  if (zeile) oeffneVersImLeser(zeile.dataset.vers);
+});
+document.getElementById('qfpList').addEventListener('keydown', (e)=>{
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const zeile = e.target.closest('[data-vers]');
+  if (zeile){ e.preventDefault(); oeffneVersImLeser(zeile.dataset.vers); }
+});
+
+async function oeffneVersImLeser(schluessel){
+  const [sura, ayah] = schluessel.split(':').map(Number);
+  closeQuranFreqPopover();
+  showScreen('quranfull');
+  await openSurah(sura);
+  /* Der Leser baut die Verse erst nach dem Laden des Korantexts auf; vorher
+     gibt es das Element noch nicht. */
+  const finden = () => document.querySelector(`#verseList .verse-item:nth-of-type(${ayah})`);
+  for (let versuch = 0; versuch < 40 && !finden(); versuch++) await new Promise(r=>setTimeout(r, 50));
+  const el = finden();
+  if (!el){ toast(`${sura}:${ayah} liess sich nicht anspringen.`); return; }
+  /* Bewusst ohne weiches Scrollen: bis Vers 125 von Al-Baqarah sind es ueber
+     30.000 Pixel. So eine Fahrt bricht der Browser ab, und selbst wenn nicht,
+     dauerte sie ewig. Der kurze Leuchteffekt uebernimmt die Orientierung.
+
+     Gescrollt wird nicht das Fenster: der Rumpf steht auf `overflow:hidden`,
+     die Bildschirme rollen in #main. scrollIntoView beruecksichtigt das von
+     selbst; der Nachsatz darunter ist die Rueckfallebene, falls die Fahrt
+     nicht angekommen ist. */
+  el.scrollIntoView({ block:'center', behavior:'auto' });
+  const kasten = el.closest('#main') || document.scrollingElement;
+  if (kasten && kasten.scrollTop === 0 && el.offsetTop > kasten.clientHeight){
+    kasten.scrollTop = Math.max(0, el.offsetTop - kasten.clientHeight / 2 + el.offsetHeight / 2);
+  }
+  el.classList.remove('angesteuert');
+  void el.offsetWidth;                       // Animation neu starten
+  el.classList.add('angesteuert');
+}
+
 document.getElementById('qfpBackdrop').addEventListener('click', closeQuranFreqPopover);
 document.getElementById('btnCloseQuranFreq').addEventListener('click', closeQuranFreqPopover);
 

@@ -813,6 +813,17 @@ main{
   padding:var(--sp-3);font-size:var(--fs-md);
 }
 .qfp-item .qfp-ref{font-weight:800;color:var(--red-bright);font-variant-numeric:tabular-nums;}
+/* Jede Fundstelle fuehrt in den Quran-Leser. Ohne das war die Liste eine
+   Sackgasse: man sah, dass das Wort in 2:125 vorkommt, musste den Vers aber
+   selbst heraussuchen. */
+.qfp-item{cursor:pointer;transition:border-color var(--dur-2) ease, background var(--dur-2) ease;}
+.qfp-item:hover{border-color:var(--red-dim);background:var(--surface-3);}
+.qfp-item:active{transform:scale(.99);}
+.qfp-pfeil{float:left;color:var(--text-faint);}
+/* Der angesteuerte Vers wird kurz hervorgehoben, sonst sucht man ihn in einer
+   langen Sure trotz Sprung wieder von Hand. */
+@keyframes versLeuchtet{from{background:var(--red-wash);}to{background:var(--surface-2);}}
+.verse-item.angesteuert{animation:versLeuchtet 2.4s var(--ease-out);}
 .qfp-note{font-size:var(--fs-xs);color:var(--text-faint);text-align:center;}
 .qfp-backdrop{
   position:fixed;inset:0;background:rgba(0,0,0,.66);z-index:650;
