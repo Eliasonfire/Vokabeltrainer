@@ -127,3 +127,44 @@ for (const datei of DATEIEN) {
 console.log(gemeldet
   ? `\n${gemeldet} Stelle(n) ansehen - sie stehen NICHT in einem datierten Abschnitt und lesen sich deshalb wie der aktuelle Stand.`
   : '\nKeine widersprechende Zahl ausserhalb der Verlaufsabschnitte.');
+
+/* ---------- Zweite Pruefung: sagt die Kurzbeschreibung noch dasselbe wie der Text? ----------
+ *
+ * Zahlen sind nur die eine Haelfte. Die andere sind Zustandsaussagen: eine
+ * Datei sagt im Text "erledigt", ihre `description:` sagt weiter "offen". Nach
+ * der Beschreibung wird beim Erinnern entschieden, ob eine Datei ueberhaupt
+ * aufgeschlagen wird - eine veraltete Beschreibung traegt den Irrtum also
+ * weiter, auch wenn im Text die Wahrheit steht.
+ *
+ * Das ist am 28.07.26 ZWEIMAL passiert. Einmal bei der Sprechertrennung
+ * (Beschreibung "offen, braucht Elias' Hugging-Face-Schritt", obwohl seit dem
+ * Vortag fertig) - ich habe Elias daraufhin eine Aufgabe genannt, die er
+ * laengst erledigt hatte. Und einmal beim Tag-Audit ("Fixes noch nicht
+ * angewendet", obwohl 31 Markierungen entfernt waren). */
+const MEMDIR = 'C:/Users/abdur/.claude/projects/F--Workspace-Obsidian/memory/';
+const OFFEN  = /\boffen\b|noch nicht|ausstehend|wartet auf|steht aus|verschoben/i;
+const FERTIG = /\bERLEDIGT\b|\babgeschlossen\b|\bkomplett erledigt\b|\bist fertig\b|\bdurch\b.*\berledigt\b/;
+
+let widersprueche = 0;
+if (fs.existsSync(MEMDIR)) {
+  for (const f of fs.readdirSync(MEMDIR).filter(n => n.endsWith('.md') && n !== 'MEMORY.md')) {
+    const text = fs.readFileSync(MEMDIR + f, 'utf8');
+    const besch = (text.match(/^description:\s*"?(.*?)"?\s*$/m) || [])[1] || '';
+    if (!OFFEN.test(besch)) continue;
+    /* Eine Beschreibung, die BEIDES nennt ("Vulkan ist offen - die
+       Sprechertrennung dagegen ist fertig"), unterscheidet die Zustaende
+       bereits selbst und ist damit genau richtig. Nur wer pauschal "offen"
+       sagt, waehrend der Text "erledigt" meldet, wird gemeldet. */
+    if (/\bfertig\b|\berledigt\b|\babgeschlossen\b|\bdurch\b/i.test(besch)) continue;
+    /* Nur die ersten Absaetze nach dem Frontmatter ansehen - dort steht der
+       aktuelle Stand, weiter unten faengt der Verlauf an. */
+    const kopf = text.split(/^---\s*$/m).slice(2).join('---').split(/\n\n/).slice(0, 4).join('\n\n');
+    if (FERTIG.test(kopf)) {
+      widersprueche++;
+      console.log(`\n!! ${f}`);
+      console.log(`   description sagt sinngemaess "offen": "${besch.slice(0, 90)}..."`);
+      console.log(`   der Text darueber sagt aber "erledigt". Beschreibung nachziehen.`);
+    }
+  }
+}
+if (!widersprueche) console.log('Keine Kurzbeschreibung widerspricht ihrem eigenen Text.');
