@@ -90,5 +90,62 @@ for (const k of Object.keys(SENTENCE_TAGS)) {
     }
   }
 }
-console.log(`\n=== ${geprueft} von ${Object.values(SENTENCE_TAGS).flat().length} Markierungen mechanisch pruefbar, ${verdacht} verletzen ihre eigene Bedingung ===`);
+console.log(`\n=== Regelbedingung: ${geprueft} von ${Object.values(SENTENCE_TAGS).flat().length} Markierungen pruefbar, ${verdacht} verletzen sie ===`);
 for (const [id, v] of Object.entries(proRegel)) if (v.schlecht) console.log(`  ${id}: ${v.schlecht}/${v.n}`);
+
+// --- Pruefung 2: sitzt die Markierung an Wortgrenzen? --------------------
+// Am 28.07.26 hingen acht Markierungen von harf-jarr-li-01 an Buchstaben aus
+// der Wortmitte: >>لِبُ<< stammte aus الطَّالِبُ und hat mit der Praeposition
+// لِ nichts zu tun. In der App unterstreicht das die halbe Wortmitte.
+// Ausnahmen, die richtig sind: vorangestellte Partikeln, die mit dem Wort
+// zusammengeschrieben werden - أَ (Frage), وَ und فَ (Anknuepfung).
+const TRENNER = /[\s.،؟!«»:]/;
+const TASCHKIL = /[ً-ْٰ]/;
+let schief = 0;
+for (const k of Object.keys(SENTENCE_TAGS)) {
+  for (const t of SENTENCE_TAGS[k]) {
+    const s = (satz[k] || {}).sentAr;
+    if (!s) continue;
+    const i = s.indexOf(t.matchText);
+    if (i < 0) continue;                       // faengt validate.js ab
+    // Manche Markierungen SIND ein Satzzeichen - fragepartikel-erforderlich-01
+    // zeigt auf das Fragezeichen selbst. Da gibt es keine Wortgrenze zu pruefen.
+    if (!/[؀-ۿ]/.test(t.matchText)) continue;
+    const j = i + t.matchText.length;
+    const davor = i === 0 ? ' ' : s[i - 1];
+    const danach = j >= s.length ? ' ' : s[j];
+    // Links: Trenner, oder eine angeschriebene Partikel davor.
+    const linksOk = TRENNER.test(davor) || TASCHKIL.test(davor) && /[وفأ]/.test(s[i - 2] || '')
+                    || /[وفأ]/.test(davor);
+    // Rechts: Trenner, Taschkil - oder die Markierung IST eine solche Partikel.
+    const rechtsOk = TRENNER.test(danach) || TASCHKIL.test(danach)
+                     || blank(t.matchText).length <= 1;
+    if (!linksOk || !rechtsOk) {
+      schief++;
+      console.log(`${t.ruleId} | >>${t.matchText}<< ${linksOk ? '' : '[links mitten im Wort] '}${rechtsOk ? '' : '[rechts mitten im Wort]'}\n   Satz ${k}: ${s}`);
+    }
+  }
+}
+console.log(`\n=== Wortgrenzen: ${schief} Markierungen sitzen mitten in einem Wort ===`);
+
+// --- Pruefung 3: ueberschneiden sich zwei Markierungen? ------------------
+// buildSentenceHtml() setzt die Unterstreichungen positionsbasiert und
+// ueberspringt Ueberschneidungen still. Eine Regel waere dann in der App
+// unsichtbar, ohne dass es irgendwo auffaellt - deshalb hier melden.
+let kollision = 0;
+for (const k of Object.keys(SENTENCE_TAGS)) {
+  const s = (satz[k] || {}).sentAr;
+  if (!s) continue;
+  const sp = SENTENCE_TAGS[k]
+    .map(t => ({ t, von: s.indexOf(t.matchText) }))
+    .filter(x => x.von >= 0)
+    .map(x => ({ ...x, bis: x.von + x.t.matchText.length }))
+    .sort((a, b) => a.von - b.von);
+  for (let i = 1; i < sp.length; i++) {
+    if (sp[i].von < sp[i - 1].bis) {
+      kollision++;
+      console.log(`Satz ${k}: >>${sp[i - 1].t.matchText}<< (${sp[i - 1].t.ruleId}) und >>${sp[i].t.matchText}<< (${sp[i].t.ruleId}) ueberschneiden sich`);
+    }
+  }
+}
+console.log(`=== Ueberschneidungen: ${kollision} ===`);
