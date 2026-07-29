@@ -60,6 +60,12 @@ function setzeThema(themaId){
   SENT.list = saetzeZumThema(themaId);
   SENT.idx = 0;
   renderThemenLeiste();
+  /* Der Themenwechsel tauscht den Vorrat aus, aus dem die Uebungsaufgaben
+     gebaut werden. Eine laufende Uebung waere danach eine Aufgabe zu einem
+     Satz, der nicht mehr im Thema steht - deshalb wird sie beendet und die
+     Fragenzahlen an den Reitern neu gezaehlt (js/uebung.js). */
+  if (typeof uebungBeenden === 'function' && UEB.modus) uebungBeenden();
+  else if (typeof renderUebungsLeiste === 'function') renderUebungsLeiste();
   renderSentence();
 }
 
@@ -69,6 +75,7 @@ function openSentences(){
   SENT.list = saetzeZumThema(SATZ_THEMA);
   if (SENT.idx >= SENT.list.length) SENT.idx = 0;
   renderThemenLeiste();
+  if (typeof renderUebungsLeiste === 'function') renderUebungsLeiste();
   renderSentence();
 }
 

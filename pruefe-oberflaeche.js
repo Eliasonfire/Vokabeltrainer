@@ -117,7 +117,20 @@
       const t0 = performance.now();
       await setzeBuch(b.slug);
       const dauer = Math.round(performance.now() - t0);
-      const soll = b.vokabeln + VOCAB_DATA.filter(w=>w.chapter==='personal').length;
+      /* `b.vokabeln` ist die Zahl AUS DEM ARABICROOTS-ABZUG (data/buecher.js,
+         erzeugt von werkzeuge/hole-vokabeln.mjs). Dazu kommen die persoenlichen
+         Vokabeln - und seit dem 30.07.2026 auch von Hand nachgetragene
+         Eintraege, deren Herkunft NICHT arabicroots ist: أَخٌ und أُخْتٌ aus
+         dem Madina-Schluessel 1 (siehe Kommentar in vocab-data.js).
+         Sie werden hier mitgezaehlt, aber NICHT der Abzugszahl zugeschlagen -
+         sonst muesste man `b.vokabeln` falschen, und das ist die einzige
+         Stelle, die noch sagt, was arabicroots tatsaechlich geliefert hat.
+         Ohne diese Unterscheidung meldete die Pruefung "311 Vokabeln, erwartet
+         309" und damit einen Fehler, der keiner ist. */
+      const eigenNachgetragen = VOCAB_DATA.filter(w=>
+        w.chapter !== 'personal' && w.source && w.source !== 'vocabulary'
+        && (w.book || 'madina-1') === b.slug).length;
+      const soll = b.vokabeln + VOCAB_DATA.filter(w=>w.chapter==='personal').length + eigenNachgetragen;
       const ist = buchVokabeln().length;
       if (ist !== soll) fehl(`Buch ${b.slug}`, `${ist} Vokabeln, erwartet ${soll}`);
       else ok(`Buch ${b.slug}`, `${ist} Vokabeln, ${dauer} ms`);

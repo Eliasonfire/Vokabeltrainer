@@ -978,6 +978,103 @@ main{
 .sent-thema.active{background:var(--red-wash);border-color:var(--red-dim);color:var(--red-bright);}
 .sent-thema.active i{color:var(--red-bright);opacity:.75;}
 
+/* =====================================================================
+   ÜBUNGSMODI (js/uebung.js)
+   Elias' Wunsch vom 29.07.2026: nicht nur lesen, sondern selbst antworten.
+   Auf seine Entscheidung im Satz-Modus integriert statt auf einem eigenen
+   Bildschirm — derselbe Satzvorrat, derselbe Themenfilter.
+   ===================================================================== */
+.ueb-leiste{margin-bottom:var(--sp-4);}
+.ueb-label{
+  color:var(--text-faint);font-size:var(--fs-xs);font-weight:700;
+  text-transform:uppercase;letter-spacing:.06em;margin-bottom:var(--sp-2);
+}
+.ueb-modi{
+  display:flex;gap:var(--sp-2);overflow-x:auto;
+  margin:0 calc(var(--gutter) * -1);padding:var(--sp-1) var(--gutter);
+  scrollbar-width:none;
+}
+.ueb-modi::-webkit-scrollbar{display:none;}
+.ueb-modus{
+  flex:0 0 auto;display:flex;align-items:center;gap:6px;
+  background:var(--surface-2);border:1px solid var(--border);color:var(--text-dim);
+  border-radius:var(--r-full);padding:var(--sp-2) var(--sp-3);
+  font-size:var(--fs-sm);font-weight:700;font-family:var(--font-ui);cursor:pointer;
+  transition:background var(--dur-2) ease, border-color var(--dur-2) ease, color var(--dur-2) ease;
+}
+.ueb-modus i{
+  font-style:normal;font-size:var(--fs-xs);font-weight:700;
+  color:var(--text-faint);font-variant-numeric:tabular-nums;
+}
+.ueb-modus.active{background:var(--green-wash);border-color:var(--green-dim);color:var(--green);}
+.ueb-modus.active i{color:var(--green);opacity:.75;}
+/* Ein Modus ohne Fragen wird nicht versteckt, nur zurückgenommen: Elias soll
+   sehen, DASS es ihn gibt, und dass gerade nichts dazu da ist. */
+.ueb-modus.leer{opacity:.42;}
+
+.ueb-box{
+  background:var(--surface-1);border:1px solid var(--border);
+  border-radius:var(--r-4);padding:var(--sp-5) var(--sp-4);
+  display:flex;flex-direction:column;gap:var(--sp-3);
+}
+.ueb-kopf{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-3);}
+.ueb-name{font-weight:700;color:var(--text);font-size:var(--fs-md);}
+.ueb-stand{color:var(--text-faint);font-size:var(--fs-xs);font-variant-numeric:tabular-nums;white-space:nowrap;}
+.ueb-frage{color:var(--text);font-size:var(--fs-md);line-height:1.5;}
+.ueb-satz{
+  font-family:var(--font-ar);font-size:clamp(calc(var(--fs-lg) * var(--ar-faktor)),7vw,2.4rem);line-height:2.1;
+  color:var(--text);display:flex;flex-wrap:wrap;gap:var(--sp-2);justify-content:center;
+}
+.ueb-wort{
+  border-radius:var(--r-2);padding:2px 6px;cursor:pointer;
+  border:1px solid transparent;
+  transition:background var(--dur-2) ease, border-color var(--dur-2) ease, transform var(--dur-1) var(--ease-out);
+}
+.ueb-wort:active{transform:scale(.94);}
+/* Bei den Wahlfragen ist ein Wort hervorgehoben und der Rest nur Umgebung —
+   dann darf das Antippen auch nichts versprechen. */
+.ueb-wort.hervor{background:var(--surface-3);border-color:var(--border-strong);}
+.ueb-wort.gewaehlt{background:var(--surface-3);border-color:var(--text-dim);}
+.ueb-wort.richtig{background:var(--green-wash);border-color:var(--green-dim);color:var(--green);}
+.ueb-wort.falsch{background:var(--red-wash);border-color:var(--red-dim);color:var(--red-bright);}
+.ueb-de{color:var(--text-dim);font-size:var(--fs-sm);line-height:1.5;text-align:center;}
+.ueb-wahl{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:var(--sp-2);}
+.ueb-option{
+  background:var(--surface-2);border:1px solid var(--border);color:var(--text);
+  border-radius:var(--r-2);padding:var(--sp-3);font-size:var(--fs-sm);font-weight:700;
+  font-family:var(--font-ui);cursor:pointer;text-align:center;
+  transition:background var(--dur-2) ease, border-color var(--dur-2) ease, transform var(--dur-1) var(--ease-out);
+}
+.ueb-option:active{transform:scale(.97);}
+.ueb-option.richtig{background:var(--green-wash);border-color:var(--green-dim);color:var(--green);}
+.ueb-option.falsch{background:var(--red-wash);border-color:var(--red-dim);color:var(--red-bright);}
+.ueb-rueck{border-radius:var(--r-2);padding:var(--sp-3);font-size:var(--fs-sm);line-height:1.5;}
+.ueb-rueck.gut{background:var(--green-wash);color:var(--green);}
+.ueb-rueck.schlecht{background:var(--red-wash);color:var(--red-bright);}
+.ueb-hinweis{color:var(--text-faint);font-size:var(--fs-xs);line-height:1.5;}
+
+/* Der Fuß mit Beenden / Prüfen / Weiter steht FEST, aus demselben Grund wie
+   .sent-nav: sonst wandert er mit der Länge des Satzes. Am 30.07.2026 auf
+   375×812 gemessen — der Kasten reichte 56 px unter den Bildschirmrand, die
+   Knöpfe waren nicht zu sehen. Genau das hatte Elias am Satz-Modus gemeldet
+   („teilweise gehen sie noch weiter unter den Bildschirmende hinaus"), und
+   dieselbe Antwort gilt hier: eine feste Stelle, egal wie lang die Aufgabe ist.
+   Gleiche Geometrie wie .sent-nav, damit beide an derselben Stelle sitzen. */
+.ueb-fuss{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);
+  position:fixed;
+  bottom:calc(78px + var(--safe-bottom));
+  left:50%;transform:translateX(-50%);
+  width:calc(100% - var(--gutter) * 2);
+  max-width:calc(600px - var(--gutter) * 2);
+  z-index:20;
+  padding:var(--sp-3) 0;
+  background:linear-gradient(to top, var(--bg) 74%, transparent);
+}
+.ueb-knoepfe{display:flex;gap:var(--sp-2);margin-left:auto;}
+/* Platz für den festen Fuß, damit der Hinweis nicht darunter verschwindet. */
+.ueb-box{padding-bottom:calc(var(--sp-5) + 56px);}
+
 /* Zurück / Weiter im Satz-Modus.
    Stand bis zum 29.07.2026 unter der Satzkarte und wanderte damit bei jedem
    Blättern woanders hin — je nachdem, ob der Satz lang war oder ein Koranvers
@@ -1695,6 +1792,37 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
            vorher, wie groß das Thema ist — siehe SATZ_THEMEN in grammar-data.js. -->
       <div class="sent-themen" id="sentThemen"></div>
 
+      <!-- Übungsmodi (js/uebung.js). Elias' Wunsch vom 29.07.2026, und auf
+           seine Entscheidung hier IM Satz-Modus statt auf einem eigenen
+           Bildschirm: derselbe Satzvorrat, derselbe Themenfilter. Die Zahl an
+           jedem Reiter ist die Fragenzahl in der aktuellen Auswahl; eine 0 wird
+           bewusst gezeigt statt versteckt. -->
+      <div class="ueb-leiste">
+        <div class="ueb-label">Üben — selbst antworten statt nur lesen</div>
+        <div class="ueb-modi" id="uebModi"></div>
+      </div>
+
+      <div class="ueb-box hidden" id="uebBox">
+        <div class="ueb-kopf">
+          <span class="ueb-name" id="uebName"></span>
+          <span class="ueb-stand" id="uebStand"></span>
+        </div>
+        <div class="ueb-frage" id="uebFrage"></div>
+        <div class="ueb-satz" id="uebSatz" lang="ar" dir="rtl"></div>
+        <div class="ueb-de" id="uebDe"></div>
+        <div class="ueb-wahl hidden" id="uebWahl"></div>
+        <div class="ueb-rueck hidden" id="uebRueckmeldung"></div>
+        <div class="ueb-hinweis" id="uebHinweis"></div>
+        <div class="ueb-fuss">
+          <span class="chip chip-chapter" id="uebHerkunft"></span>
+          <div class="ueb-knoepfe">
+            <button class="btn btn-secondary btn-klein" id="btnUebBeenden">Beenden</button>
+            <button class="btn btn-secondary btn-klein hidden" id="btnUebPruefen">Prüfen</button>
+            <button class="btn btn-primary btn-klein hidden" id="btnUebWeiter">Weiter</button>
+          </div>
+        </div>
+      </div>
+
       <div class="sentence-card" id="sentenceCard">
         <div class="chip chip-chapter" id="sentChapter">Kap. 1</div>
         <div class="arabic-sentence" id="sentAr" lang="ar" dir="rtl"></div>
@@ -1988,6 +2116,7 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
 <script src="js/sprachausgabe.js"></script>
 <script src="js/kategorien.js"></script>
 <script src="js/saetze.js"></script>
+<script src="js/uebung.js"></script>
 <script src="js/quran.js"></script>
 <script src="js/hoeren.js"></script>
 <script src="js/statistik.js"></script>
