@@ -39,9 +39,31 @@ const args = process.argv.slice(2);
 const wert = n => { const i = args.indexOf(n); return i === -1 ? undefined : args[i + 1]; };
 const jetzt = () => new Date().toISOString();
 
+/* git steht bei uns NICHT im PATH von PowerShell, nur in dem der Bash. Ein
+ * blosses execFileSync('git') faellt deshalb je nach aufrufender Shell in den
+ * catch-Zweig - und dann meldet dieses Werkzeug "(git nicht verfuegbar)",
+ * obwohl uncommittete Dateien daliegen. Genau die Auskunft, fuer die man es
+ * aufruft, faellt dann still aus. Aufgefallen am 29.07.2026 in der Nachtschicht:
+ * arbeit.mjs sagte "git nicht verfuegbar", waehrend git status --short in der
+ * Bash eine geaenderte Datei zeigte.
+ *
+ * Also: erst den PATH versuchen, dann die ueblichen Windows-Ablagen. Kein
+ * fest verdrahteter Einzelpfad - der waere auf einem anderen Rechner falsch. */
+const GIT_ORTE = [
+  'git',
+  path.join(process.env.LOCALAPPDATA || '', 'Programs', 'Git', 'cmd', 'git.exe'),
+  path.join(process.env.USERPROFILE || '', '.local', 'Git', 'Git', 'cmd', 'git.exe'),
+  'C:\\Program Files\\Git\\cmd\\git.exe',
+  'C:\\Program Files (x86)\\Git\\cmd\\git.exe',
+];
+
 function gitStatus(){
-  try { return execFileSync('git', ['status', '--short'], { cwd: WURZEL, encoding: 'utf8' }).trim(); }
-  catch { return '(git nicht verfuegbar)'; }
+  for (const git of GIT_ORTE){
+    if (!git) continue;
+    try { return execFileSync(git, ['status', '--short'], { cwd: WURZEL, encoding: 'utf8' }).trim(); }
+    catch { /* naechsten Ort versuchen */ }
+  }
+  return '(git nicht verfuegbar)';
 }
 
 if (args.includes('--beginne')){
