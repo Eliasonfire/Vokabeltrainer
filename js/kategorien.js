@@ -237,23 +237,90 @@ function setupDragAndDrop(){
     document.addEventListener('pointerup', onUp, {once:true});
   }
   function moveGhost(x,y){ if(ghost){ ghost.style.left = (x-30)+'px'; ghost.style.top = (y-20)+'px'; } }
+
+  /* ---------- Mitrollen, solange gezogen wird ----------
+     Elias' zweiter Fehlerbericht vom 29.07.2026:
+
+       "Wenn ich mehrere Kategorien angelegt habe, sodass sie den gesamten
+        Bildschirm bedecken, und runterscrolle zu den Vokabeln, eine Vokabel
+        auswähle, dann kann ich diese Vokabel nicht an die oberen Kategorien
+        hinbewegen … die Seite scrollt nicht automatisch nach oben."
+
+     Stimmt, und es ist die unvermeidliche Folge davon, dass das Ziehen den
+     Finger belegt: `onMove` ruft `preventDefault`, der Browser rollt also nicht
+     mehr mit. Ohne Ersatz sind nur die Kategorien erreichbar, die gerade im
+     Bild stehen — bei sieben Kategorien also die untersten drei oder vier.
+
+     Deshalb rollt der Ziehvorgang selbst: kommt der Finger in die oberen oder
+     unteren 90 px von `main`, laeuft `main` in diese Richtung weiter, solange
+     er dort bleibt. Die Geschwindigkeit waechst mit der Naehe zum Rand — am
+     aeussersten Rand am schnellsten, damit man weite Wege nicht aussitzen muss,
+     und in der Naehe langsam, damit Zielen moeglich bleibt. */
+  const ROLL_ZONE = 90, ROLL_MAX = 17;
+  let rollen = null, letzteY = 0;
+
+  function rollePruefe(y){
+    letzteY = y;
+    const main = document.getElementById('main');
+    if (!main) return;
+    const r = main.getBoundingClientRect();
+    const schritt = ()=>{
+      const oben = letzteY - r.top, unten = r.bottom - letzteY;
+      let d = 0;
+      if (oben  < ROLL_ZONE) d = -ROLL_MAX * (1 - Math.max(0, oben)  / ROLL_ZONE);
+      if (unten < ROLL_ZONE) d =  ROLL_MAX * (1 - Math.max(0, unten) / ROLL_ZONE);
+      if (!d){ rollen = null; return; }
+      main.scrollTop += d;
+      /* Die Ablegemarkierung muss mitwandern, sonst leuchtet unter dem
+         stehenden Finger die Kategorie von vorhin. */
+      markiereZiel(letzteY);
+      rollen = requestAnimationFrame(schritt);
+    };
+    if (!rollen) rollen = requestAnimationFrame(schritt);
+  }
+  function rolleStopp(){ if (rollen){ cancelAnimationFrame(rollen); rollen = null; } }
+
+  /* Welche Kategorie liegt unter dem Finger? Der Ziehschatten selbst haengt an
+     `document.body` und steht auf `pointer-events:none`, faellt hier also nicht
+     ins Gewicht. */
+  function markiereZiel(y, x){
+    document.querySelectorAll('.custom-cat-box').forEach(b=>b.classList.remove('drop-hover'));
+    const el = document.elementFromPoint(x !== undefined ? x : letzteX, y);
+    const box = el && el.closest && el.closest('.custom-cat-box');
+    if (box) box.classList.add('drop-hover');
+    return box;
+  }
+  let letzteX = 0;
+
   function onMove(e){
     /* Erst AB HIER unterdruecken, also nachdem der lange Druck durch ist.
        Waehrend des Wartens wuerde dasselbe preventDefault genau den Fehler
        zurueckholen, den der lange Druck behebt. */
     e.preventDefault();
+    letzteX = e.clientX;
     moveGhost(e.clientX, e.clientY);
-    document.querySelectorAll('.custom-cat-box').forEach(b=>b.classList.remove('drop-hover'));
-    const el = document.elementFromPoint(e.clientX, e.clientY);
-    const box = el && el.closest('.custom-cat-box');
-    if (box) box.classList.add('drop-hover');
+    markiereZiel(e.clientY, e.clientX);
+    rollePruefe(e.clientY);
   }
   function onUp(e){
     document.removeEventListener('pointermove', onMove);
+    rolleStopp();
     if (ghost) ghost.remove();
     if (sourceEl) sourceEl.classList.remove('dragging','haltend');
-    const el = document.elementFromPoint(e.clientX, e.clientY);
-    const box = el && el.closest('.custom-cat-box');
+    /* Ablegen grosszuegiger machen (Elias: "kann ich jetzt nur noch schwer die
+       Vokabel in die Kategorie reinpacken"): Trifft der Finger keine Box, wird
+       im Umkreis von 44 px nachgesehen, bevor der Zug als "nirgendwohin"
+       gewertet wird. Genau in die Box zu treffen ist auf einem Handy mit einem
+       verdeckenden Finger schwer — die Kategorie-Boxen haben nur 64 px Hoehe. */
+    let el = document.elementFromPoint(e.clientX, e.clientY);
+    let box = el && el.closest && el.closest('.custom-cat-box');
+    if (!box){
+      for (const dy of [-22, 22, -44, 44]){
+        const nah = document.elementFromPoint(e.clientX, e.clientY + dy);
+        box = nah && nah.closest && nah.closest('.custom-cat-box');
+        if (box) break;
+      }
+    }
     document.querySelectorAll('.custom-cat-box').forEach(b=>b.classList.remove('drop-hover'));
     if (sourceId){
       /* Immer zuerst aus allen Kategorien entfernen - so wird ein Wort, das aus

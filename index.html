@@ -288,8 +288,11 @@ button{font-family:inherit;color:inherit;}
   line-height:1;
 }
 .streak-flame{
-  color:var(--red-bright);font-size:1.1rem;
+  font-size:1.05rem;line-height:1;
   display:flex;align-items:center;justify-content:center;
+  /* Emoji bringen ihre eigene Farbe mit, `color` wirkt hier also nicht mehr.
+     Die Zeilenhoehe muss trotzdem 1 bleiben, sonst sitzt die Flamme wieder
+     hoeher als die Zahl daneben - derselbe Grund wie bei `.streak`. */
 }
 #streakCount{font-variant-numeric:tabular-nums;display:block;}
 .streak.bump{animation:pulseGlow .6s var(--ease-out);}
@@ -919,7 +922,24 @@ main{
 .irab-kasus[data-k="nasb"]{color:var(--gram-nasab);}
 .irab-hinweis{color:var(--text-dim);font-size:var(--fs-sm);margin-top:var(--sp-3);line-height:1.5;}
 
-.sent-nav{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);margin-top:var(--sp-5);}
+/* Zurück / Weiter im Satz-Modus.
+   Stand bis zum 29.07.2026 unter der Satzkarte und wanderte damit bei jedem
+   Blättern woanders hin — je nachdem, ob der Satz lang war oder ein Koranvers
+   darunter stand. Elias: "Ich würde gerne, dass die Zurück- und Weitertaste
+   immer fest an einem Ort bleibt, damit ich nicht immer wieder suchen muss."
+
+   Jetzt am unteren Rand festgemacht, direkt über der Navigationsleiste. `sticky`
+   statt `fixed`, damit die Leiste im Rollbereich bleibt und die Breite von main
+   erbt — `fixed` müsste die Zentrierung und die 600-px-Grenze von Hand
+   nachbauen. Der Abstand nach unten hält sie über der Bottom-Leiste, deren Höhe
+   in `main` schon als Polsterung steckt. */
+.sent-nav{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);
+  position:sticky;bottom:calc(var(--sp-2) + var(--safe-bottom));
+  z-index:20;margin-top:var(--sp-5);
+  padding:var(--sp-3) 0;
+  background:linear-gradient(to top, var(--bg) 62%, transparent);
+}
 .sent-nav span{color:var(--text-dim);font-size:var(--fs-sm);font-weight:700;font-variant-numeric:tabular-nums;}
 
 .gram-underline{
@@ -944,6 +964,16 @@ main{
   border-radius:var(--r-2);padding:var(--sp-3) var(--sp-4);max-width:290px;
   box-shadow:var(--sh-3);
   font-size:var(--fs-md);color:var(--text);line-height:1.55;
+  /* Elias am 29.07.2026: "bei den Sonn- und Mondbuchstaben ist die Erklärung
+     länger, als mein Bildschirm es überhaupt anzeigen kann. Ich kann auch nicht
+     runterscrollen." Stimmt — `schams-qamar-01` ist mit Abstand die längste
+     Erklärung. Das Feld hatte weder eine Höhengrenze noch einen Rollbalken, der
+     Rest stand also ausserhalb des Bildschirms und war unerreichbar.
+     `overscroll-behavior:contain` verhindert, dass das Rollen am Ende auf den
+     Bildschirm dahinter überspringt. */
+  max-height:min(58vh, 420px);
+  overflow-y:auto;
+  overscroll-behavior:contain;
   opacity:0;pointer-events:none;transform:translateY(8px) scale(.97);
   transition:opacity var(--dur-2) var(--ease-out), transform var(--dur-2) var(--ease-out);
 }
@@ -1085,9 +1115,23 @@ main{
 .hifz-check:disabled{opacity:.45;cursor:default;}
 .hifz-check:disabled:active{transform:none;}
 /* Hifz-Leiste ueber der Versliste: Stand und der Verdecken-Schalter. */
+/* Elias am 29.07.2026: "Die Funktion mit dem Verdecken finde ich sehr gut. Sie
+   sollte jedoch dauerhaft zu sehen sein, weil man bei einer langen Sure, wenn
+   man sehr weit unten ist, nicht den ganzen Weg nach oben scrollen muss, nur um
+   es aufzudecken. Man vergisst dann vielleicht sogar, wo man stehen geblieben
+   ist."
+
+   Al-Baqarah hat 286 Verse — der Weg nach oben ist real, nicht theoretisch.
+   Die Leiste klebt jetzt direkt unter der Kopfzeile; deren `top:0` und `z-index:30`
+   geben den Bezug vor, deshalb hier ein größerer Abstand und ein kleinerer
+   z-index: die Kopfzeile mit der Zurück-Taste muss oben bleiben, wenn beide
+   aufeinandertreffen. */
 .hifz-bar{
   display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);
-  margin-bottom:var(--sp-3);
+  position:sticky;top:52px;z-index:25;
+  margin:0 calc(var(--gutter) * -1) var(--sp-3);
+  padding:var(--sp-2) var(--gutter) var(--sp-3);
+  background:linear-gradient(to bottom, var(--bg) 72%, transparent);
 }
 .hifz-stand{color:var(--text-dim);font-size:var(--fs-sm);font-variant-numeric:tabular-nums;}
 .btn-klein{padding:var(--sp-2) var(--sp-3);font-size:var(--fs-sm);}
@@ -1175,6 +1219,15 @@ main{
   width:0;transition:width var(--dur-4) var(--ease-out);
 }
 .box-bar-row .bn{width:34px;text-align:right;font-size:var(--fs-sm);font-weight:700;font-variant-numeric:tabular-nums;}
+/* Box 1 = eben erst falsch gehabt, Box 5 = sitzt. Dieselben zwei Farben wie das
+   Antwort-Feedback auf der Lernkarte, damit man die Bedeutung ohne Legende
+   mitliest (Elias' Wunsch vom 29.07.2026). */
+.box-bar-row.box-schlecht .box-bar-track{border-color:var(--red);box-shadow:0 0 0 1px var(--red-wash);}
+.box-bar-row.box-schlecht .box-bar-fill{background:var(--red);}
+.box-bar-row.box-schlecht .bl,.box-bar-row.box-schlecht .bn{color:var(--red-bright);}
+.box-bar-row.box-gut .box-bar-track{border-color:var(--green);box-shadow:0 0 0 1px var(--green-wash);}
+.box-bar-row.box-gut .box-bar-fill{background:var(--green);}
+.box-bar-row.box-gut .bl,.box-bar-row.box-gut .bn{color:var(--green);}
 
 /* =====================================================================
    BOTTOM-NAV
@@ -1215,6 +1268,30 @@ main{
 /* =====================================================================
    TOAST
    ===================================================================== */
+/* =====================================================================
+   ZIEHEN ZUM AKTUALISIEREN (Eigenbau, siehe js/darstellung.js)
+   ===================================================================== */
+.zieh-anzeige{
+  position:absolute;top:calc(var(--safe-top) + 4px);left:50%;
+  transform:translateX(-50%);
+  width:34px;height:34px;border-radius:var(--r-full);
+  background:var(--surface-3);border:1px solid var(--border-strong);
+  box-shadow:var(--sh-2);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;z-index:400;
+}
+.zieh-anzeige.zieht{opacity:1;}
+.zieh-ring{
+  width:16px;height:16px;border-radius:var(--r-full);
+  border:2px solid var(--text-faint);border-top-color:var(--red-bright);
+}
+/* Ab hier löst Loslassen wirklich aus - das muss man sehen, bevor man loslässt. */
+.zieh-anzeige.bereit{border-color:var(--red);}
+.zieh-anzeige.bereit .zieh-ring{border-color:var(--red-dim);border-top-color:var(--red-bright);}
+.zieh-anzeige.laedt{opacity:1;transform:translateX(-50%) translateY(52px);}
+.zieh-anzeige.laedt .zieh-ring{animation:ziehDreht .7s linear infinite;}
+@keyframes ziehDreht{to{transform:rotate(360deg);}}
+
 .toast{
   position:fixed;bottom:104px;left:50%;transform:translateX(-50%) translateY(16px) scale(.96);
   background:var(--surface-3);border:1px solid var(--border-strong);color:#fff;
@@ -1325,7 +1402,13 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
       <span class="brand-de">Vokabeltrainer</span>
     </div>
     <div class="streak" id="streakBadge" title="Tages-Streak">
-      <span class="streak-flame"><svg class="ic ic-fill"><use href="#ic-flame"/></svg></span><span id="streakCount">0</span>
+      <!-- Emoji statt Strich-Symbol, und das ist die EINE bewusste Ausnahme von
+           der Regel „nie wieder Emoji in der App" (js/darstellung.js). Elias am
+           29.07.2026: "die Tagestreak, so wie sie bildlich dargestellt wird mit
+           dieser Flamme, finde ich nicht schön — da finde ich einfach das Emoji
+           als Flamme schöner." Seine App, seine Wahl. Überall sonst bleibt es
+           beim Sprite, damit die Oberfläche nicht zweigeteilt aussieht. -->
+      <span class="streak-flame" aria-hidden="true">🔥</span><span id="streakCount">0</span>
     </div>
     <button class="icon-btn" id="btnSettings" title="Einstellungen" aria-label="Einstellungen">
       <svg class="ic"><use href="#ic-settings"/></svg>
@@ -1714,15 +1797,13 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
         </div>
         <button class="btn btn-secondary" id="btnResetProgress">Zurücksetzen</button>
       </div>
-      <div class="setting-row">
-        <div>
-          <div class="setting-title">Streak zurücksetzen</div>
-          <div class="setting-sub">Tages-Streak auf 0 setzen</div>
-        </div>
-        <button class="btn btn-secondary" id="btnResetStats">Zurücksetzen</button>
-      </div>
+      <!-- „Streak zurücksetzen" ist am 29.07.2026 auf Elias' Wunsch entfernt
+           worden: "die Einstellung Tagestreak auf null setzen sollte entfernt
+           werden". Ein Knopf, der die eigene Serie löscht, hat keinen
+           Anwendungsfall — und die Gnadentag-Regel fängt den einen Fall
+           (versehentlich hochgezählt) ohnehin nicht ab. -->
 
-      <p class="settings-note">Alle Daten (Fortschritt, Kategorien) bleiben nur auf diesem Gerät im Browser gespeichert.</p>
+      <p class="settings-note">Alle Daten (Fortschritt, Kategorien) bleiben nur auf diesem Gerät im Browser gespeichert. Eine Sicherung wird beim Verlassen automatisch im Gerät abgelegt; die Datei oben brauchst du für den Wechsel auf ein anderes Gerät.</p>
     </section>
 
   </main>

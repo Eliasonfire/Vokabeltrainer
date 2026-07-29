@@ -124,12 +124,55 @@ document.getElementById('btnResetProgress').addEventListener('click', ()=>{
   toast('Lernfortschritt zurückgesetzt');
   renderHome();
 });
-document.getElementById('btnResetStats').addEventListener('click', ()=>{
-  if (!confirm('Wirklich den Tages-Streak zurücksetzen?')) return;
-  LS.set('vt_streak', {count:0, last:null});
-  toast('Streak zurückgesetzt');
-  renderHome();
+/* HIER STAND „Streak zurücksetzen". Am 29.07.2026 auf Elias' Wunsch entfernt.
+   Der Schlüssel `vt_streak` bleibt selbstverständlich — nur der Knopf ist weg. */
+
+/* ---------- Automatische Sicherung ----------
+   Elias am 29.07.2026: "Außerdem sollte die Fortschrittssicherung automatisch
+   immer passieren."
+
+   Was hier automatisch geht und was nicht, ist wichtig zu trennen:
+   Eine DATEI kann die App nicht von sich aus schreiben — jeder Download braucht
+   eine Nutzergeste, sonst blockt der Browser. Automatisch geht deshalb eine
+   Sicherung IM GERÄT: derselbe Datenstand, unter einem eigenen Schlüssel im
+   IndexedDB, unabhängig von den laufenden localStorage-Einträgen.
+
+   Was das rettet und was nicht — ehrlich, damit niemand sich in falscher
+   Sicherheit wiegt:
+     ✓ versehentliches „Fortschritt zurücksetzen"
+     ✓ ein kaputtgeschriebener localStorage-Eintrag
+     ✗ geleerte Browserdaten, neues Handy, anderer Browser
+   Für den zweiten Fall braucht es weiterhin die Datei — deshalb bleibt der
+   Knopf „Fortschritt sichern" stehen und die Notiz darunter sagt es. */
+const AUTO_SICHERUNG_KEY = 'auto-sicherung';
+
+async function sichereAutomatisch(grund){
+  try {
+    const db = await paketDbOeffnen();
+    await new Promise((fertig, fehler)=>{
+      const t = db.transaction(PAKET_STORE, 'readwrite');
+      t.objectStore(PAKET_STORE).put(
+        Object.assign(baueSicherung(), { grund, automatisch: true }), AUTO_SICHERUNG_KEY);
+      t.oncomplete = ()=>{ fertig(); db.close(); };
+      t.onerror    = ()=>{ fehler(t.error); db.close(); };
+    });
+  } catch (e) {
+    /* Bewusst still: eine fehlgeschlagene Hintergrundsicherung darf den
+       Lernfluss nicht mit einer Meldung unterbrechen. Sie steht in der Konsole,
+       falls jemand nachsieht. */
+    console.warn('Automatische Sicherung nicht möglich:', e);
+  }
+}
+
+/* `visibilitychange` statt `beforeunload`: Auf Android wird eine App oft gar
+   nicht "verlassen", sondern nur weggewischt — `beforeunload` feuert dann
+   nicht. `hidden` ist das einzige Ereignis, auf das bei mobilen Browsern
+   Verlass ist. Zusätzlich beim Rundenende, weil dort der meiste Fortschritt
+   auf einmal entsteht. */
+document.addEventListener('visibilitychange', ()=>{
+  if (document.visibilityState === 'hidden') sichereAutomatisch('App in den Hintergrund');
 });
+window.addEventListener('pagehide', ()=>sichereAutomatisch('Seite verlassen'));
 
 
 /* ---------- Vokabelpaket ----------

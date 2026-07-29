@@ -13,19 +13,33 @@ function renderStats(){
     <div class="stat-card"><div class="v" data-count="${total}">0</div><div class="l">Vokabeln gesamt</div></div>
     <div class="stat-card"><div class="v" data-count="${mastered}">0</div><div class="l">In Box 5 (sicher)</div></div>
     <div class="stat-card"><div class="v" data-count="${acc}" data-suffix="%">0%</div><div class="l">Trefferquote (in dieser App)</div></div>
-    <div class="stat-card"><div class="v" data-count="${getStreak().count}">0</div><div class="l">Tage-Streak ${icon('flame')}</div></div>
+    <div class="stat-card"><div class="v" data-count="${getStreak().count}">0</div><div class="l">Tage-Streak <span aria-hidden="true">🔥</span></div></div>
   `;
   document.querySelectorAll('#statsGrid .v[data-count]').forEach(el=>{
     animateNumber(el, Number(el.dataset.count), el.dataset.suffix || '');
   });
 
+  /* Elias am 29.07.2026: "man könnte bei den Boxen auch noch klarer darstellen,
+     dass Box 1 schlecht ist und Box 5 sehr gut ist … Box 5 mit so einem
+     grünlichen Rahmen wie wenn ich bei den Karteikarten etwas richtig
+     beantworte, Box 1 so rot umrahmt wie bei falsch."
+
+     Deshalb dieselben zwei Farben wie das Antwort-Feedback auf der Lernkarte
+     (`.flashcard.answer-right` / `.answer-wrong`) — nicht zwei neue. Wer die
+     Karte kennt, liest die Bedeutung hier ohne Legende mit.
+     Box 2 bis 4 bleiben neutral: eine fünfstufige Farbskala würde behaupten,
+     dass Box 3 schon „halb gut" ist, und das sagt das Leitner-System nicht. */
+  const BOX_TON = { 1:'schlecht', 5:'gut' };
   const boxCounts = [1,2,3,4,5].map(b => buchVokabeln().filter(w=>PROGRESS[w.id] && PROGRESS[w.id].box===b).length);
-  document.getElementById('boxBars').innerHTML = boxCounts.map((n,i)=>`
-    <div class="box-bar-row">
+  document.getElementById('boxBars').innerHTML = boxCounts.map((n,i)=>{
+    const ton = BOX_TON[i+1] ? ` box-${BOX_TON[i+1]}` : '';
+    return `
+    <div class="box-bar-row${ton}">
       <span class="bl">Box ${i+1}</span>
       <div class="box-bar-track"><div class="box-bar-fill" data-width="${total?Math.round(100*n/total):0}"></div></div>
       <span class="bn">${n}</span>
-    </div>`).join('');
+    </div>`;
+  }).join('');
   /* Breite erst im naechsten Frame setzen, damit die Balken sichtbar von 0
      aufwachsen (CSS-Transition auf width). Bei unsichtbarer Seite feuert rAF
      nicht - dann sofort setzen, der Wert darf nie von der Animation abhaengen. */
