@@ -86,18 +86,30 @@ function renderCard(){
   // lateinisch, die Form selbst wird gross und arabisch gesetzt.
   let forms = [];
   if (SETTINGS.showPlural){
-    if (w.pl) forms.push({label:'Plural', value:w.pl});
-    if (w.femSg) forms.push({label:'Fem.', value:w.femSg});
-    if (w.femPl) forms.push({label:'Fem. Pl.', value:w.femPl});
+    /* formenAnzeige vereinheitlicht das Trennzeichen: der naechste
+       arabicroots-Abzug bringt "|" mit, angezeigt wird immer " / ". */
+    if (w.pl) forms.push({label:'Plural', value:formenAnzeige(w.pl)});
+    if (w.femSg) forms.push({label:'Fem.', value:formenAnzeige(w.femSg)});
+    if (w.femPl) forms.push({label:'Fem. Pl.', value:formenAnzeige(w.femPl)});
   }
   document.getElementById('cardForms').innerHTML = forms.map(f=>
     `<span><i class="lbl">${escapeHtml(f.label)}</i>${escapeHtml(f.value)}</span>`
   ).join('');
 
+  /* Beispielsatz mit denselben farbigen Grammatik-Unterstreichungen wie im
+     Satz-Modus (js/saetze.js). 284 der 316 Markierungen haengen an
+     Vokabelsaetzen - ohne das blieb die Farbe ausgerechnet dort aus, wo Elias
+     die meiste Zeit verbringt.
+     `ohneLuecke`, weil LUECKE zum Satz-Bildschirm gehoert: sonst verschwaende
+     eine dort offene Luecke ein Wort auch auf der Karte.
+     `passiv`, weil ein Klick auf der Karte die Karte umdreht - siehe CSS zu
+     `.gram-passiv`. Deshalb innerHTML statt textContent; buildSentenceHtml
+     maskiert den Text selbst mit escapeHtml (js/kern.js). */
   const sentBox = document.getElementById('cardSentenceBox');
   if (w.sentAr){
     sentBox.classList.remove('hidden');
-    document.getElementById('cardSentenceAr').textContent = w.sentAr;
+    document.getElementById('cardSentenceAr').innerHTML =
+      buildSentenceHtml(w, { ohneLuecke:true, passiv:true });
     document.getElementById('cardSentenceDe').textContent = w.sentDe || '';
   } else sentBox.classList.add('hidden');
 
