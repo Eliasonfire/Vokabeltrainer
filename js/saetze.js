@@ -381,7 +381,14 @@ document.getElementById('sentAr').addEventListener('click', (e)=>{
   if (!span){ pop.classList.remove('show'); return; }
   const rule = GRAMMAR_RULES.find(r=>r.id===span.dataset.rule);
   if (!rule) return;
-  pop.innerHTML = `<div class="gp-title">${rule.name}</div><div>${rule.shortExplanation}</div><div class="gp-source">${rule.source.video} · ca. ${rule.source.approxTimestamp}</div>`;
+  /* Quellenzeile. Elias' Auflage bei der Freigabe des zweiten Feldes (29.07.26):
+     "sollte die quellenangabe in der app sein dann soll beide sehr kurz sein
+     damit nicht viel text dafuer drauf geht". Deshalb bleibt es EINE Zeile in
+     Kleinschrift, der Buchbeleg wird abgekuerzt (Schl. 1 L5 S. 18) und steht
+     nur da, wo es ihn gibt. */
+  const quelle = [`${rule.source.video} · ca. ${rule.source.approxTimestamp}`];
+  if (rule.source2) quelle.push(`Schl. ${rule.source2.schluessel} L${rule.source2.lektion} S. ${rule.source2.seite}`);
+  pop.innerHTML = `<div class="gp-title">${rule.name}</div><div>${rule.shortExplanation}</div><div class="gp-source">${quelle.join(' · ')}</div>`;
   const rect = span.getBoundingClientRect();
   pop.style.left = Math.max(8, Math.min(rect.left, window.innerWidth-296))+'px';
   pop.style.top = (rect.bottom+8)+'px';

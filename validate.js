@@ -236,8 +236,30 @@ if (!Array.isArray(GRAMMAR_RULES)){
       if (!r.source.approxTimestamp) fail(`${where} (${r.id}): source.approxTimestamp fehlt.`);
       if (r.source.chapter === undefined) fail(`${where} (${r.id}): source.chapter fehlt.`);
     }
+    /* source2 ist FREIWILLIG — der gedruckte Zweitbeleg aus einem der deutschen
+       Madina-Schluessel. Er steht nur an Regeln, bei denen Buch und Unterricht
+       dasselbe sagen; wo sie abweichen, entscheidet Elias und es bleibt leer.
+       Wenn das Feld aber da ist, muss es vollstaendig und plausibel sein —
+       eine halbe Fundstelle ist schlimmer als keine, weil man ihr glaubt. */
+    if (r.source2 !== undefined){
+      const w2 = `${where} (${r.id}): source2`;
+      if (typeof r.source2 !== 'object' || r.source2 === null) fail(`${w2} ist kein Objekt.`);
+      else {
+        const { schluessel, lektion, seite } = r.source2;
+        if (![1,2,3].includes(schluessel)) fail(`${w2}.schluessel muss 1, 2 oder 3 sein (ist: ${schluessel}).`);
+        /* Lektionszahl je Band: Schluessel 1 hat 23, Band 2 hat 31, Band 3 hat 34. */
+        const maxLektion = { 1: 23, 2: 31, 3: 34 }[schluessel];
+        if (!Number.isInteger(lektion) || lektion < 1 || (maxLektion && lektion > maxLektion))
+          fail(`${w2}.lektion "${lektion}" liegt ausserhalb von 1-${maxLektion} (Schluessel ${schluessel}).`);
+        /* Seitenzahl je Band: 73, 141, 272 Seiten. */
+        const maxSeite = { 1: 73, 2: 141, 3: 272 }[schluessel];
+        if (!Number.isInteger(seite) || seite < 1 || (maxSeite && seite > maxSeite))
+          fail(`${w2}.seite "${seite}" liegt ausserhalb von 1-${maxSeite} (Schluessel ${schluessel}).`);
+      }
+    }
   });
-  note(`GRAMMAR_RULES: ${GRAMMAR_RULES.length} Regeln, alle mit Quelle.`);
+  const mitBuch = GRAMMAR_RULES.filter(r => r.source2).length;
+  note(`GRAMMAR_RULES: ${GRAMMAR_RULES.length} Regeln, alle mit Quelle; ${mitBuch} zusaetzlich mit gedrucktem Beleg.`);
 
   /* ---------- 4. SENTENCE_TAGS: Referenzen in beide Richtungen ---------- */
   if (SENTENCE_TAGS && typeof SENTENCE_TAGS === 'object' && Array.isArray(VOCAB_DATA)){
