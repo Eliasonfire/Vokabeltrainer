@@ -925,7 +925,7 @@ const SENTENCE_TAGS = {
     { ruleId: "jumla-ismiya-filiya-01", matchText: "هَذَا" }
   ],
   "45830": [
-    { ruleId: "mudaf-ohne-al-01", matchText: "ابْنُ" },
+    { ruleId: "mudaf-ohne-al-01", matchText: "اِبْنُ" },
     { ruleId: "mudaf-ilayh-01", matchText: "التَّاجِرِ" },
     { ruleId: "jumla-ismiya-filiya-01", matchText: "هَذَا" }
   ],
@@ -967,7 +967,7 @@ const SENTENCE_TAGS = {
   "45839": [
     { ruleId: "istifham-ma-01", matchText: "مَا" },
     { ruleId: "al-gesamtheit-01", matchText: "الْوَلَدِ؟" },
-    { ruleId: "schakl-01", matchText: "اسْمُ" }
+    { ruleId: "schakl-01", matchText: "اِسْمُ" }
   ],
   "45840": [
     { ruleId: "mudaf-ohne-al-01", matchText: "حَقِيبَةُ" },

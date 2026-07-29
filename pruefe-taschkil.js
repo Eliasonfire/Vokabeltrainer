@@ -84,9 +84,15 @@ const AUSNAHMEN = [
        Fehlalarme liefert, ist schlimmer als keiner. */
     name: 'لام des Artikels vor Sonnenbuchstabe (richtig so)',
     trifft: (wort, i) => {
-      if (i !== 1 || wort[0] !== 'ا' || wort[1] !== 'ل') return false;
+      /* Das لام des Artikels steht nicht immer an Stelle 1. Bei angeschriebenem
+         لِ verschmelzen لِ und اَلْ zu لِلـ (`lil-verschmelzung-01`), dann sitzt
+         es an Stelle 2: لِلتَّاجِرِ. Beim ersten Bau war nur Stelle 1 geprueft,
+         und لِلتَّاجِرِ und لِلطَّبِيبِ standen faelschlich in der Fehlerliste. */
+      if (wort[i] !== 'ل') return false;
+      const davor = wort.slice(0, i).replace(new RegExp(`[${'ًٌٍَُِّْٰ'}]`, 'g'), '');
+      if (davor !== 'ا' && davor !== 'ل' && davor !== 'لل' && davor !== '') return false;
       /* Naechster Buchstabe nach dem Lam - traegt er eine Schadda? */
-      let j = 2;
+      let j = i + 1;
       while (j < wort.length && (HARAKA.test(wort[j]) || wort[j] === SCHADDA)) j++;
       let k = j + 1;
       while (k < wort.length && (HARAKA.test(wort[k]) || wort[k] === SCHADDA)){
@@ -95,6 +101,15 @@ const AUSNAHMEN = [
       }
       return false;
     }
+  },
+  {
+    /* لَفْظُ الْجَلَالَةِ - der Gottesname اللّٰه hat eine eigene, feststehende
+       Schreibung: das erste لام traegt kein Zeichen, das zweite eine Schadda
+       mit dem kleinen Alif darueber. Die App hat dazu eine eigene Regel
+       (`lafz-al-jalala-01`). Das ist keine Luecke und darf nicht "korrigiert"
+       werden - an einem Gottesnamen wird nicht herumgebastelt. */
+    name: 'Gottesname اللّٰه (eigene Schreibung)',
+    trifft: (wort) => /^(وَ|فَ|بِ|لِ|تَ)?ال[لّ]/.test(wort) && /لل/.test(wort.replace(/[ًٌٍَُِّْٰ]/g, ''))
   },
   {
     /* Hamzat al-wasl in اِبْنٌ, اِسْمٌ, اِسْتَمَعَ: der Abzug laesst die Kasra

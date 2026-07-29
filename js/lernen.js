@@ -40,6 +40,18 @@ function renderCard(){
   card.style.transition = '';
   inner.style.transition = '';
 
+  /* Offenes Grammatik-Popover schliessen. Es haengt an `position:fixed` am
+     Bildschirm, nicht an der Karte - beim Kartenwechsel blieb es deshalb
+     stehen und verdeckte die naechste Karte. Elias' Meldung vom 30.07.2026:
+     "wenn die Karte umgedreht ist und man auf den Satzbauhinweis drueckt und
+     die Karte weg wischt, dann bleibt der Satzbau-Hinweis bestehen ... ich
+     sehe schon die naechste Karte doch sie wird teilweise von dem Hinweis
+     verdeckt."
+     Hier statt im Wisch-Code, weil `renderCard` ALLE Wege abdeckt: Wischen,
+     die vier Antwortknoepfe und den Rundenstart. */
+  const pop = document.getElementById('gramPopover');
+  if (pop) pop.classList.remove('show');
+
   document.getElementById('cardChapter').textContent = w.chapter==='personal' ? 'Eigene Vokabel' : `Kap. ${w.chapter}`;
 
   const dir = cardDirection(SESSION.idx);
@@ -481,6 +493,13 @@ document.getElementById('btnExitLearn').addEventListener('click', ()=>{
   let startX=0, startY=0, dx=0, dragging=false, achse=null, zeiger=null;
 
   card.addEventListener('pointerdown', (e)=>{
+    /* Sobald die Karte angefasst wird, verschwindet eine offene Erklaerung.
+       `renderCard` schliesst sie ebenfalls - das hier ist der frueher wirkende
+       Weg: das Popover soll schon beim Anfassen weg sein und nicht erst, wenn
+       die naechste Karte steht. Ein Wisch ist kein Klick, der globale
+       Klick-Handler in js/saetze.js greift also nicht. */
+    const pop = document.getElementById('gramPopover');
+    if (pop && !e.target.closest('.gram-underline')) pop.classList.remove('show');
     startX=e.clientX; startY=e.clientY; dx=0; dragging=true; achse=null;
     /* Den Zeiger einfangen: sonst landet das pointerup auf dem Element, ueber
        dem der Finger gerade ist, sobald er die Karte verlaesst - und das
