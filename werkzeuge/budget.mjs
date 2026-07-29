@@ -54,9 +54,17 @@ function stand(){
   const budget = b.budgetProzent * PRO_PROZENT;
   const rest = budget - gebucht;
 
+  /* Der Anlagezeitpunkt ist zugleich der Schichtbeginn. Elias hat am 29.07.26
+     eine Obergrenze von 10 Stunden gesetzt - nicht weil die Uhr der Engpass
+     waere (das Budget laeuft meist frueher aus), sondern damit der Loop nicht
+     in den naechsten Tag hineinfeuert, waehrend er in der Uni ist. */
+  const GRENZE_H = 10;
+  const stunden = (Date.now() - new Date(b.start).getTime()) / 3600000;
+
   console.log(`Haushaltsbuch, angelegt ${b.start}`);
   console.log(`  Stand bei Anlage      ${b.startProzent} %`);
   console.log(`  Budget fuer den Lauf  ${b.budgetProzent} Punkte = ${budget.toLocaleString('de-DE')} Token`);
+  console.log(`  Schicht laeuft seit   ${stunden.toFixed(1)} h  (Grenze ${GRENZE_H} h)`);
   console.log('');
   for (const p of b.posten)
     console.log(`  ${String(p.token).padStart(9)}  ${pz(p.token).padStart(7)}  ${p.was}`);
@@ -64,6 +72,12 @@ function stand(){
   console.log(`  gebucht  ${String(gebucht).padStart(9)}  = ${(100*gebucht/budget).toFixed(0)} % des Budgets`);
   console.log(`  frei     ${String(rest).padStart(9)}  = ${pz(rest)} des Gesamtlimits`);
   console.log('');
+  if (stunden > GRENZE_H){
+    console.log(`  ⏹  SCHICHTENDE — ${stunden.toFixed(1)} h sind mehr als die vereinbarten ${GRENZE_H}.`);
+    console.log('     Stand sichern, Abschlusszeile in die To-Do, Loops mit CronDelete beenden.');
+    console.log('     Elias trotzdem nicht schreiben - er meldet sich selbst.');
+    console.log('');
+  }
   if (rest <= 0)                console.log('  ❌ Budget aufgebraucht. Nichts Teures mehr starten, Stand sichern.');
   else if (rest < 200_000)      console.log('  ⚠️  Unter 200k frei: keine Agenten mehr, nur noch selbst arbeiten.');
   else if (rest < AGENT.pruefer * 3) console.log(`  ⚠️  Reicht nicht mehr fuer drei Pruefer (${(3*AGENT.pruefer).toLocaleString('de-DE')}).`);
