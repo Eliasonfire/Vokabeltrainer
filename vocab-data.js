@@ -3308,5 +3308,75 @@ const VOCAB_DATA = [
   "note": null,
   "book": "madina-1",
   "source": "vocabulary"
+ },
+
+ /* ===== Aus dem Madina-Schluessel 1, nicht aus dem arabicroots-Abzug =====
+    Die ersten zwei Eintraege dieser Herkunft. Elias hat sie am 30.07.2026
+    freigegeben, nachdem aufgefallen war, dass sein Abzug اِبْنٌ und بِنْتٌ
+    fuehrt, die beiden zugehoerigen Geschwister-Woerter aber nicht — obwohl sie
+    im Schluessel in derselben Zeile stehen.
+
+    Beleg, Schluessel 1, Lektion 6, Seite 22, woertlich:
+      "Manche Substantive haben eine gesonderte weibliche Form z. B.
+       اِبْن Sohn — أَخ Bruder / بِنْت Tochter — أُخْت Schwester"
+
+    Warum "source": "madina-schluessel-1" und eine sprechende id: an der id muss
+    man sehen, dass hier KEINE arabicroots-Nummer steht. Sonst sucht der naechste
+    Abzugsvergleich nach einem Eintrag 50305, den es dort nie gab.
+
+    Warum chapter 6 belegt ist und nicht geraten: dieselbe Seite 22 fuehrt die
+    doppelten Koerperteile (يَد, رِجْل, عَيْن, أُذُن) ein, und die stehen im
+    arabicroots-Abzug alle in Kapitel 6. Die Nummerierung von Schluessel und
+    Abzug stimmt hier also ueberein.
+
+    ⚠️ Die Vokalisierung ist am gerenderten Seitenbild abgelesen, nicht an der
+    Textebene des PDF — die ist bei Schluessel 1 defekt und liefert falsch
+    vokalisierte Woerter. Gelesen wurde: أَخٌ mit Fatha ueber dem Hamza und
+    Dammatan auf dem خ · أُخْتٌ mit Damma ueber dem Hamza, Sukun auf dem خ und
+    Dammatan auf dem ت.
+
+    ⚠️ pl, root und Beispielsatz bleiben leer. Der Schluessel nennt sie an dieser
+    Stelle nicht, und eine erfundene Pluralform waere ein Verstoss gegen E.1 —
+    auch wenn sie "offensichtlich" scheint. Kommen sie in einer spaeteren Lektion
+    vor, gehoeren sie belegt nachgetragen. */
+ {
+  "id": "madina1-l6-ach",
+  "ar": "أَخٌ",
+  "de": "Bruder",
+  "type": "noun",
+  "chapter": 6,
+  "gender": "masculine",
+  "sg": "أَخٌ",
+  "pl": null,
+  "femSg": "أُخْتٌ",
+  "femPl": null,
+  "root": null,
+  "sentAr": null,
+  "sentDe": null,
+  "quran": null,
+  "note": null,
+  "book": "madina-1",
+  "source": "madina-schluessel-1",
+  "beleg": "Madina-Schluessel 1, Lektion 6, S. 22"
+ },
+ {
+  "id": "madina1-l6-ucht",
+  "ar": "أُخْتٌ",
+  "de": "Schwester",
+  "type": "noun",
+  "chapter": 6,
+  "gender": "feminine",
+  "sg": "أُخْتٌ",
+  "pl": null,
+  "femSg": null,
+  "femPl": null,
+  "root": null,
+  "sentAr": null,
+  "sentDe": null,
+  "quran": null,
+  "note": null,
+  "book": "madina-1",
+  "source": "madina-schluessel-1",
+  "beleg": "Madina-Schluessel 1, Lektion 6, S. 22"
  }
 ];
