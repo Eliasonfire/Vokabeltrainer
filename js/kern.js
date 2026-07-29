@@ -217,21 +217,39 @@ function wortfeldTreffer(text, woerter){
   });
 }
 
+/* Steht dieses Wort buchstabengenau in einer Formenliste? */
+function istEineDerFormen(w, formen){
+  const form = wortfeldForm(w.sg || w.ar);
+  return formen.some(f => wortfeldForm(f) === form);
+}
+
+/* Ein Feld kann mehrere Merkmale nennen; sie wirken als ODER. Gebraucht seit
+   dem 29.07.2026 fuer „Adverbien": die Wortart deckt nur einen Teil ab, أَيْضاً
+   „auch" steht im Abzug als `vocab` und waere sonst durchgefallen. */
 function passtInsFeld(w, feld){
-  /* Sperrwoerter zuerst: sie kippen den Treffer, egal wodurch er zustande kam.
-     Gebraucht fuer echte Doppeldeutigkeiten des Deutschen - "ich weiss nicht"
-     ist keine Farbe. */
+  /* Zwei Arten von Sperren, beide kippen einen Treffer unabhaengig davon,
+     wodurch er zustande kam:
+     `nicht`       - deutsche Doppeldeutigkeit ("ich weiss nicht" ist keine Farbe)
+     `nichtFormen` - einzelne Woerter, die die Wortart des Abzugs falsch einordnet.
+                     Siehe die Begruendung zu تَحْتَ und هُنَا in wortfelder-data.js:
+                     Elias' Unterricht nennt sie Nomen, der Abzug nennt sie
+                     Partikeln. Der Abzug bleibt unangetastet, die Ansicht folgt
+                     dem Unterricht. */
   if (feld.nicht && wortfeldTreffer(w.de, feld.nicht)) return false;
+  if (feld.nichtFormen && istEineDerFormen(w, feld.nichtFormen)) return false;
+
   if (feld.typ){
     const typen = Array.isArray(feld.typ) ? feld.typ : [feld.typ];
-    return typen.includes(w.type);
+    if (typen.includes(w.type)) return true;
   }
-  if (feld.formen){
-    if (w.type !== 'particle') return false;
-    const form = wortfeldForm(w.sg || w.ar);
-    return feld.formen.some(f => wortfeldForm(f) === form);
-  }
-  if (feld.woerter) return wortfeldTreffer(w.de, feld.woerter);
+  /* `formen` nimmt Partikeln UND Grammatik-Eintraege: لِ steht im Abzug als
+     `grammar`, ist aber dieselbe Genitivpraeposition wie فِي. Ein Nomen kann
+     hier nicht hineinrutschen, weil buchstabengenau mit Taschkil verglichen
+     wird. */
+  if (feld.formen && ['particle', 'grammar'].includes(w.type)
+      && istEineDerFormen(w, feld.formen)) return true;
+
+  if (feld.woerter && wortfeldTreffer(w.de, feld.woerter)) return true;
   return false;
 }
 
