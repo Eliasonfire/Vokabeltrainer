@@ -175,6 +175,87 @@ function allRoots(){
   quelle.forEach(w=>{ if(w.root){ (map[w.root] = map[w.root]||[]).push(w.id); } });
   return map;
 }
+
+/* ---------- Wortfelder statt Wurzeln ----------
+   Ersetzt seit dem 29.07.2026 die Wurzelliste im Kategorien-Bildschirm. Elias:
+   "3 random arabische Buchstaben machen fuer mich als Wortstamm keinen Sinn."
+   Die Tabelle steht in wortfelder-data.js, dort auch die Begruendung, warum
+   das keine erfundene Sprachinformation ist.
+
+   Ein Wort kann in mehreren Feldern liegen - ausdruecklich gewuenscht. */
+
+/* Nur Tatweel und Leerraum weg - die Vokalzeichen bleiben AUSDRUECKLICH stehen.
+   Sie wegzuwerfen war der erste Versuch und ein Fehler, der beim Nachmessen am
+   29.07.2026 auffiel: ohne Taschkil ist مِنْ min ("von") nicht mehr von مَنْ man
+   ("wer") zu unterscheiden, und beide sind Partikeln - der Wortart-Filter
+   trennt sie also auch nicht. مَنْ landete dadurch unter den
+   Genitivpraepositionen. Deshalb wird hier buchstabengenau verglichen, und
+   Schreibvarianten stehen einzeln in der Tabelle. */
+function wortfeldForm(s){
+  return String(s || '').replace(/ـ/g, '').trim();
+}
+
+/* Die deutsche Uebersetzung in einzelne Woerter zerlegen. Bewusst ueber die
+   Zeichenklasse und nicht ueber \b: \w kennt kein ä, ö, ü, ß, und "Füße"
+   haette damit Wortgrenzen mitten im Wort. */
+const WORTFELD_TRENNER = /[^A-Za-zÀ-ÿ]+/;
+
+/* Verglichen wird nur GANZ oder mit ausdruecklichem Stern am Anfang.
+   Ein Versuch, deutsche Komposita ueber die Wortendung mitzunehmen ("Klassen-
+   zimmer" zu "Zimmer"), stand hier kurz und wurde nach der Messung wieder
+   entfernt: er zog "durchbohren" zu Ohren, "unterdruecken" und "druecken" zu
+   Ruecken, "staubsaugen" und "saugen" zu Augen, "gottesfuerchtiger" zu Tiger.
+   Auch eine Mindestlaenge half nicht - "praktisch" endet auf "tisch". Eine
+   falsche Einordnung ist schlimmer als eine fehlende, weil man ihr glaubt;
+   Komposita gehoeren deshalb ausgeschrieben in die Tabelle. */
+function wortfeldTreffer(text, woerter){
+  const teile = String(text || '').toLowerCase().split(WORTFELD_TRENNER).filter(Boolean);
+  return woerter.some(roh => {
+    const suche = roh.toLowerCase();
+    if (suche.endsWith('*')) return teile.some(t => t.startsWith(suche.slice(0, -1)));
+    return teile.includes(suche);
+  });
+}
+
+function passtInsFeld(w, feld){
+  /* Sperrwoerter zuerst: sie kippen den Treffer, egal wodurch er zustande kam.
+     Gebraucht fuer echte Doppeldeutigkeiten des Deutschen - "ich weiss nicht"
+     ist keine Farbe. */
+  if (feld.nicht && wortfeldTreffer(w.de, feld.nicht)) return false;
+  if (feld.typ){
+    const typen = Array.isArray(feld.typ) ? feld.typ : [feld.typ];
+    return typen.includes(w.type);
+  }
+  if (feld.formen){
+    if (w.type !== 'particle') return false;
+    const form = wortfeldForm(w.sg || w.ar);
+    return feld.formen.some(f => wortfeldForm(f) === form);
+  }
+  if (feld.woerter) return wortfeldTreffer(w.de, feld.woerter);
+  return false;
+}
+
+const OHNE_WORTFELD = 'Noch ohne Wortfeld';
+
+function wortfelder(){
+  const quelle = (typeof buchVokabeln === 'function') ? buchVokabeln() : VOCAB_DATA;
+  const tabelle = (typeof WORTFELDER !== 'undefined') ? WORTFELDER : [];
+  const map = {};
+  const rest = [];
+  quelle.forEach(w => {
+    let getroffen = false;
+    tabelle.forEach(feld => {
+      if (!passtInsFeld(w, feld)) return;
+      (map[feld.name] = map[feld.name] || []).push(w.id);
+      getroffen = true;
+    });
+    if (!getroffen) rest.push(w.id);
+  });
+  /* Der Rest steht bewusst mit drin und bewusst ganz unten: eine Vokabel darf
+     durch diese Ansicht nicht unauffindbar werden. */
+  if (rest.length) map[OHNE_WORTFELD] = rest;
+  return map;
+}
 function isWeak(w){ return !!(PROGRESS[w.id] && PROGRESS[w.id].box<=2); }
 function weakWords(){
   /* currentPool() filtert danach ohnehin aufs aktive Buch; die Sortierung
