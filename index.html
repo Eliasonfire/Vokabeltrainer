@@ -117,7 +117,23 @@
    BASIS
    ===================================================================== */
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;}
+/* overflow:hidden ist hier KEINE Kosmetik, sondern die Ursache eines Fehlers,
+   den Elias am 29.07.2026 gemeldet hat: "die untere Leiste wird gar nicht
+   angezeigt, nur wenn ich ganz nach unten scrolle".
+
+   Warum das passierte: `height:100%` bemisst sich am initialen Rahmen, und den
+   legen mobile Browser auf die KLEINE Ansichtshoehe (Adressleiste sichtbar).
+   #app stand aber auf `100dvh` - der DYNAMISCHEN Hoehe, die beim Wegblenden der
+   Adressleiste groesser wird. Damit war #app hoeher als der Rumpf, das Dokument
+   selbst bekam einen Rollbalken, und die Leiste am unteren Rand von #app stand
+   unterhalb des Sichtbaren. Sie tauchte erst auf, wenn nach dem Ende von main
+   die Rollbewegung an das Dokument weitergereicht wurde - genau die Beobachtung
+   aus der Meldung.
+
+   Der Rumpf rollt jetzt gar nicht mehr, und #app haengt mit position:fixed am
+   Ansichtsfenster statt am Dokument. Damit ist die Leiste immer da, egal wie
+   weit main gerollt ist. */
+html,body{height:100%;overflow:hidden;overscroll-behavior:none;}
 body{
   margin:0;
   background:var(--bg);
@@ -140,14 +156,17 @@ button{font-family:inherit;color:inherit;}
   border-radius:var(--r-1);
 }
 
+/* position:fixed mit inset:0 statt height:100dvh - siehe Begruendung bei
+   html,body oben. `margin:0 auto` zentriert auch ein festes Element, solange
+   left und right auf 0 stehen und eine max-width gesetzt ist; die Hoehe kommt
+   aus top/bottom und braucht deshalb keine vh-Einheit mehr. */
 #app{
   display:flex;
   flex-direction:column;
-  height:100vh;
-  height:100dvh;
+  position:fixed;
+  inset:0;
   max-width:600px;
   margin:0 auto;
-  position:relative;
   background:
     radial-gradient(ellipse 130% 42% at 50% -4%, rgba(255,23,68,.10), transparent 62%),
     radial-gradient(ellipse 90% 50% at 50% 104%, rgba(255,23,68,.04), transparent 60%),
@@ -489,6 +508,15 @@ main{
   transition:transform var(--dur-4) var(--ease-in-out);
 }
 .flashcard.flipped .flashcard-inner{transform:rotateY(180deg);}
+/* Die abgewandte Seite muss AUSDRUECKLICH unberuehrbar gestellt werden.
+   `backface-visibility:hidden` blendet sie nur optisch aus - fuer die
+   Trefferpruefung liegt sie weiter obenauf. Am 29.07.2026 im Browser
+   nachgemessen: bei gedrehter Karte lieferte `document.elementFromPoint` in der
+   Kartenmitte `cardArabic`, also die unsichtbare Vorderseite. Damit erreichte
+   kein Klick die Rueckseite; er fiel auf die Karte durch und drehte sie um -
+   genau Elias' Meldung "ich kann die Satzbau-Hinweise nicht anklicken, es wird
+   einfach nur direkt die Karte wieder umgedreht". Betraf ebenso den
+   Eselsbruecken-Knopf. */
 .flashcard-face{
   position:absolute;inset:0;
   backface-visibility:hidden;
@@ -500,7 +528,16 @@ main{
   box-shadow:var(--sh-3), inset 0 1px 0 var(--hairline);
   transition:border-color var(--dur-2) ease, box-shadow var(--dur-2) ease;
 }
-.flashcard-back{transform:rotateY(180deg);overflow-y:auto;justify-content:flex-start;padding-top:var(--sp-8);}
+.flashcard-back{transform:rotateY(180deg);overflow-y:auto;justify-content:flex-start;padding-top:var(--sp-8);
+  /* pan-y hier nochmal ausdruecklich, obwohl die Karte es schon setzt: DIESES
+     Element ist der Rollbereich. Steht die Einschraenkung nur am Vorfahren, ist
+     sie zwar wirksam, aber wer die Wischgeste spaeter anfasst, sieht sie an der
+     Stelle nicht, an der sie zaehlt. */
+  touch-action:pan-y;overscroll-behavior:contain;}
+.flashcard-front{pointer-events:auto;}
+.flashcard-back{pointer-events:none;}
+.flashcard.flipped .flashcard-front{pointer-events:none;}
+.flashcard.flipped .flashcard-back{pointer-events:auto;}
 
 /* Kurzes Farb-Feedback beim Beantworten, bevor die nächste Karte kommt */
 .flashcard.answer-right .flashcard-face{border-color:var(--green);box-shadow:var(--sh-3), 0 0 0 1px var(--green), 0 0 34px -6px var(--green-wash);}
@@ -575,6 +612,34 @@ main{
   letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;
 }
 
+/* Verbformen (Elias' Wunsch vom 29.07.2026: "Was ich brauche ist fuer Verben
+   die Zeitformen - Vergangenheit, Gegenwart, Befehlsform, Verbalsubstantiv").
+   Die Beschriftungen sind woertlich seine; die vier Formen stehen im
+   arabicroots-Abzug als past/present/imperative/masdar und werden nur
+   angezeigt, nicht gebildet - eine selbst konjugierte Form verbietet E.1.
+
+   Zweispaltiges Raster statt der freien Zeile von .word-forms: vier Formen
+   nebeneinander umbrechen unkontrolliert, und beim Lernen soll die Vergangenheit
+   immer an derselben Stelle stehen. */
+.verb-forms{
+  width:100%;display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-2);
+  margin-bottom:var(--sp-4);
+}
+.verb-forms div{
+  background:var(--surface-3);border:1px solid var(--border);
+  border-radius:var(--r-2);padding:var(--sp-2) var(--sp-3);
+  display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0;
+}
+.verb-forms .lbl{
+  font-family:var(--font-ui);direction:ltr;color:var(--text-dim);
+  font-size:var(--fs-xs);font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;
+}
+.verb-forms .frm{
+  font-family:var(--font-ar);direction:rtl;color:#fff;
+  font-size:1.4rem;line-height:1.75;
+}
+
 .example-box{
   width:100%;background:var(--surface-3);border:1px solid var(--border);
   border-radius:var(--r-3);padding:var(--sp-4);margin-top:var(--sp-1);
@@ -593,6 +658,21 @@ main{
 }
 /* 1,35rem gegen --fs-sm ergab 1,73. Gilt fuer Lernkarte UND Satz-Modus. */
 .quran-ar{font-family:var(--font-ar);font-size:calc(var(--fs-sm) * var(--ar-faktor));direction:rtl;text-align:center;line-height:2;color:#fff;}
+/* Das Wort, wegen dem der Vers ueberhaupt dasteht.
+   Elias' Wunsch vom 29.07.2026: "es waere nuetzlich, wenn bei den Koranbezuegen
+   das Wort auf das bezogen wird hervorgehoben wird, indem es zum Beispiel
+   unterstrichen wird. Einfach weiss oder so."
+   Deshalb weiss und unterstrichen - keine zusaetzliche Farbe: der Kasten ist
+   schon rot getoent, und die Farben in dieser App sind mit den
+   Grammatik-Rollen belegt. Eine dritte Bedeutung fuer Rot waere hier irrefuehrend.
+   Der Rest des Verses wird leicht gedaempft, damit die Hervorhebung wirkt, ohne
+   dass etwas blinkt. */
+.quran-ar{color:rgba(255,255,255,.72);}
+.quran-treffer{
+  color:#fff;font-weight:600;
+  border-bottom:2px solid rgba(255,255,255,.55);
+  padding-bottom:2px;border-radius:3px;
+}
 .quran-ref{font-size:var(--fs-sm);color:var(--text-dim);text-align:center;margin-top:var(--sp-2);font-weight:700;}
 .quran-note{font-size:var(--fs-sm);color:var(--text-faint);text-align:center;margin-top:var(--sp-1);line-height:1.5;}
 .hidden{display:none !important;}
@@ -655,6 +735,8 @@ main{
   padding:var(--sp-1) var(--sp-3);border-radius:var(--r-full);flex-shrink:0;
   font-variant-numeric:tabular-nums;
 }
+/* "Noch ohne Wortfeld" - gehoert dazu, soll aber nicht wie ein Thema aussehen. */
+.list-row-rest .list-row-title{color:var(--text-dim);font-weight:600;}
 
 .custom-cat-add{display:flex;gap:var(--sp-2);margin-bottom:var(--sp-3);}
 .custom-cat-add input{
@@ -685,11 +767,22 @@ main{
   font-family:var(--font-ar);direction:rtl;
   background:var(--surface-3);border:1px solid var(--border);
   border-radius:var(--r-2);padding:7px var(--sp-3);font-size:1.15rem;color:#fff;
-  cursor:grab;touch-action:none;
+  cursor:grab;
+  /* Stand bis zum 29.07.2026 auf `none` - die zweite Ursache dafuer, dass sich
+     die Wortliste auf dem Handy nicht rollen liess. `none` verbietet dem
+     Browser JEDE Fingerbewegung ueber diesem Element, also auch das senkrechte
+     Rollen; kein preventDefault-Umbau haette daran etwas geaendert. `pan-y`
+     laesst das Rollen zu und behaelt die waagerechte Bewegung fuer uns. Das
+     Ziehen selbst unterdrueckt seit dem langen Druck ohnehin selbst
+     (`onMove` in js/kategorien.js). */
+  touch-action:pan-y;
   transition:opacity var(--dur-2) ease, transform var(--dur-1) var(--ease-out), border-color var(--dur-2) ease;
 }
 .word-chip:hover{border-color:var(--border-strong);}
 .word-chip.dragging{opacity:.35;transform:scale(.94);}
+/* Sichtbare Rueckmeldung waehrend der 400 ms, damit man merkt, dass Halten
+   etwas bewirkt - sonst fuehlt sich der lange Druck wie eine tote Stelle an. */
+.word-chip.haltend{border-color:var(--red);transform:scale(1.06);}
 .word-chip .weak-de{font-family:var(--font-ui);direction:ltr;color:var(--text-dim);font-size:var(--fs-sm);margin-inline-start:var(--sp-1);}
 .list-row-title .weak-de{font-family:var(--font-ui);color:var(--text-dim);font-size:var(--fs-md);}
 .drag-ghost{
@@ -836,14 +929,15 @@ main{
   border-radius:3px;
 }
 .gram-underline:hover{background:color-mix(in srgb, var(--gram-role, var(--gram-other)) 18%, transparent);}
-/* Auf der Lernkarte ist die Unterstreichung nur ein Hinweis, kein Knopf: die
-   ganze Karte reagiert dort auf den Klick, indem sie sich umdreht. Ein Wort,
-   das diesen Klick schluckt, liesse das Umdrehen kaputt wirken - und auf dem
-   Handy gibt es kein Hover, an dem man erkennen koennte, welches Wort anders
-   reagiert. Die anklickbare Erklaerung steht im Satz-Modus, wo sie mit nichts
-   konkurriert. */
-.gram-passiv{cursor:inherit;}
-.gram-passiv:hover{background:transparent;}
+/* HIER STAND bis zum 29.07.2026 `.gram-passiv`: auf der Lernkarte war die
+   Unterstreichung bewusst nur ein Hinweis, kein Knopf - Begruendung damals, ein
+   Wort, das den Klick schluckt, liesse das Umdrehen kaputt wirken.
+
+   Elias hat das Gegenteil gemeldet: "Ich kann bei den Karteikarten die
+   Satzbau-Hinweise nicht anklicken, es wird einfach nur direkt die Karte wieder
+   umgedreht." Die Markierungen sind jetzt auch auf der Karte anklickbar; das
+   Umdrehen bleibt fuer den ganzen Rest der Karte zustaendig (js/lernen.js
+   nimmt `.gram-underline` vom Umdreh-Klick aus). */
 .gram-popover{
   position:fixed;z-index:600;
   background:var(--surface-3);border:1px solid var(--border-strong);
@@ -1331,6 +1425,7 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
               <div class="german-word" id="cardGerman">Haus</div>
               <div class="gender-chip hidden" id="cardGender"></div>
               <div class="word-forms" id="cardForms"></div>
+              <div class="verb-forms hidden" id="cardVerbForms"></div>
               <button class="note-box" id="cardNoteBox">
                 <svg class="ic"><use href="#ic-note"/></svg>
                 <span id="cardNoteText">Eselsbrücke hinzufügen</span>
@@ -1371,7 +1466,7 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
 
       <div class="cat-tabs" id="catTabs">
         <button class="cat-tab active" data-cattab="chapters">Kapitel</button>
-        <button class="cat-tab" data-cattab="roots">Wortstämme</button>
+        <button class="cat-tab" data-cattab="roots">Wortfelder</button>
         <button class="cat-tab" data-cattab="custom">Eigene</button>
       </div>
 
@@ -1382,7 +1477,7 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
           <input type="text" id="newCatName" placeholder="Neue Kategorie, z.B. Schwierige Wörter" maxlength="30">
           <button class="btn btn-primary" id="btnAddCat"><svg class="ic"><use href="#ic-plus"/></svg>Anlegen</button>
         </div>
-        <div class="drag-hint">Wörter unten in eine Kategorie-Box ziehen (oder halten &amp; verschieben auf dem Handy). Zum Entfernen einfach wieder aus der Box heraus in den Pool ziehen. Antippen des Kategorie-Namens zeigt die Wortliste.</div>
+        <div class="drag-hint">Wort kurz <strong>gedrückt halten</strong>, dann in eine Kategorie-Box ziehen. Nur Wischen rollt die Liste. Zum Entfernen wieder aus der Box heraus in den Pool ziehen. Antippen des Kategorie-Namens zeigt die Wortliste.</div>
         <div id="customCatList"></div>
         <div class="unassigned-pool" id="unassignedPool">
           <div class="pool-label">Alle Vokabeln</div>
@@ -1681,6 +1776,7 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
 <script src="data/buecher.js"></script>
 <script src="surah-data.js"></script>
 <script src="grammar-data.js"></script>
+<script src="wortfelder-data.js"></script>
 <script src="lehrbuch-saetze.js"></script>
 <script src="quran-frequency-data.js"></script>
 

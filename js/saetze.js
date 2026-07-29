@@ -72,11 +72,14 @@ function anWortgrenze(text, von, matchText){
 }
 
 /* Baut den Satz mit farbigen Grammatik-Unterstreichungen.
-   `opts.ohneLuecke` uebergeht den Lueckenmodus, `opts.passiv` nimmt den
-   Unterstreichungen ihre Klickbarkeit - beides braucht die Lernkarte
-   (siehe renderCard in js/lernen.js). */
+   `opts.ohneLuecke` uebergeht den Lueckenmodus - das braucht die Lernkarte
+   (siehe renderCard in js/lernen.js), weil eine im Satz-Modus offene Luecke
+   sonst auch auf der Karte ein Wort verdecken wuerde.
+
+   Ein frueheres `opts.passiv` machte die Unterstreichungen auf der Karte
+   unklickbar. Es ist am 29.07.2026 entfallen: Elias wollte sie ausdruecklich
+   anklicken koennen. */
 function buildSentenceHtml(w, opts){
-  const passiv     = !!(opts && opts.passiv);
   const ohneLuecke = !!(opts && opts.ohneLuecke);
   if (!ohneLuecke){
     const verdeckt = mitLuecke(w.sentAr || '');
@@ -95,6 +98,10 @@ function buildSentenceHtml(w, opts){
   tags.forEach(t=>{
     const rule = GRAMMAR_RULES.find(r=>r.id===t.ruleId);
     if (!rule || !t.matchText) return;
+    /* Von Elias abbestellte Regeln bleiben in den Daten (ihr Beleg aus dem
+       Unterricht ist ja nicht falsch geworden), werden aber nicht mehr
+       angezeigt. Siehe `ausgeblendet` in grammar-data.js. */
+    if (rule.ausgeblendet) return;
     /* Frueher nur die erste Fundstelle. In «أَهَذَا كِتَابٌ؟ نَعَمْ، هَذَا
        كِتَابٌ.» war damit das erste كِتَابٌ unterstrichen und das zweite nicht -
        dieselbe Regel, willkuerlich nur einmal gezeigt.
@@ -129,7 +136,7 @@ function buildSentenceHtml(w, opts){
   for (const t of treffer){
     if (t.von < pos) continue;                 // ueberschneidet eine gesetzte
     html += escapeHtml(text.slice(pos, t.von));
-    html += `<span class="gram-underline${passiv ? ' gram-passiv' : ''}" style="--gram-role:var(--gram-${t.rule.color})" data-rule="${t.rule.id}">${escapeHtml(text.slice(t.von, t.bis))}</span>`;
+    html += `<span class="gram-underline" style="--gram-role:var(--gram-${t.rule.color})" data-rule="${t.rule.id}">${escapeHtml(text.slice(t.von, t.bis))}</span>`;
     pos = t.bis;
   }
   return html + escapeHtml(text.slice(pos));
@@ -375,10 +382,12 @@ document.getElementById('btnSentIrab').addEventListener('click', ()=>{
   else kasten.classList.add('hidden');
 });
 
-document.getElementById('sentAr').addEventListener('click', (e)=>{
-  const span = e.target.closest('.gram-underline');
+/* Oeffnet die Erklaerung zu einer Markierung. Seit dem 29.07.2026 eine eigene
+   Funktion, weil die Lernkarte sie ebenfalls aufruft (js/lernen.js): Elias
+   konnte die Satzbau-Hinweise auf der Karte nicht anklicken. Zwei Fassungen
+   derselben Erklaerung waeren die naheliegende und die falsche Loesung. */
+function zeigeGrammatikPopover(span){
   const pop = document.getElementById('gramPopover');
-  if (!span){ pop.classList.remove('show'); return; }
   const rule = GRAMMAR_RULES.find(r=>r.id===span.dataset.rule);
   if (!rule) return;
   /* Quellenzeile. Elias' Auflage bei der Freigabe des zweiten Feldes (29.07.26):
@@ -391,13 +400,22 @@ document.getElementById('sentAr').addEventListener('click', (e)=>{
   pop.innerHTML = `<div class="gp-title">${rule.name}</div><div>${rule.shortExplanation}</div><div class="gp-source">${quelle.join(' · ')}</div>`;
   const rect = span.getBoundingClientRect();
   pop.style.left = Math.max(8, Math.min(rect.left, window.innerWidth-296))+'px';
-  pop.style.top = (rect.bottom+8)+'px';
+  /* Nach unten, wenn darunter Platz ist, sonst darueber. Auf der Lernkarte
+     steht der Beispielsatz weit unten; ein Popover, das immer nach unten
+     aufgeht, staende dort halb unter dem Bildschirmrand. */
+  const platzUnten = window.innerHeight - rect.bottom;
+  pop.style.top = platzUnten > 170 ? (rect.bottom+8)+'px' : 'auto';
+  pop.style.bottom = platzUnten > 170 ? 'auto' : (window.innerHeight - rect.top + 8)+'px';
   pop.classList.add('show');
+}
+
+document.getElementById('sentAr').addEventListener('click', (e)=>{
+  const span = e.target.closest('.gram-underline');
+  if (!span){ document.getElementById('gramPopover').classList.remove('show'); return; }
+  zeigeGrammatikPopover(span);
 });
 document.addEventListener('click', (e)=>{
-  /* `.gram-passiv` ausgenommen: die Unterstreichungen auf der Lernkarte oeffnen
-     kein Popover, also duerfen sie ein offenes auch nicht offen halten. */
-  if (!e.target.closest('.gram-underline:not(.gram-passiv)') && !e.target.closest('#gramPopover'))
+  if (!e.target.closest('.gram-underline') && !e.target.closest('#gramPopover'))
     document.getElementById('gramPopover').classList.remove('show');
 });
 const gramToggleBtn = document.getElementById('toggleGrammarHighlight');

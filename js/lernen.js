@@ -96,6 +96,8 @@ function renderCard(){
     `<span><i class="lbl">${escapeHtml(f.label)}</i>${escapeHtml(f.value)}</span>`
   ).join('');
 
+  renderVerbFormen(w);
+
   /* Beispielsatz mit denselben farbigen Grammatik-Unterstreichungen wie im
      Satz-Modus (js/saetze.js). 284 der 316 Markierungen haengen an
      Vokabelsaetzen - ohne das blieb die Farbe ausgerechnet dort aus, wo Elias
@@ -109,14 +111,14 @@ function renderCard(){
   if (w.sentAr){
     sentBox.classList.remove('hidden');
     document.getElementById('cardSentenceAr').innerHTML =
-      buildSentenceHtml(w, { ohneLuecke:true, passiv:true });
+      buildSentenceHtml(w, { ohneLuecke:true });
     document.getElementById('cardSentenceDe').textContent = w.sentDe || '';
   } else sentBox.classList.add('hidden');
 
   const qBox = document.getElementById('cardQuranBox');
   if (w.quran){
     qBox.classList.remove('hidden');
-    document.getElementById('cardQuranAr').textContent = w.quran.ar;
+    document.getElementById('cardQuranAr').innerHTML = quranMitTreffer(w.quran.ar, w);
     document.getElementById('cardQuranRef').textContent = `${w.quran.surah} ${w.quran.ayah}`;
     document.getElementById('cardQuranNote').textContent = w.quran.de || w.quran.note || '';
   } else qBox.classList.add('hidden');
@@ -129,6 +131,111 @@ function renderCard(){
   renderQuranFreqBadge(w);
   stufenVorschau();
   renderTippfeld(w);
+}
+
+/* ---------- Verbformen (Elias' Wunsch vom 29.07.2026) ----------
+   "Was ich brauche ist (für Verben) die (Zeit)formen (Vergangenheit,
+    Gegenwart, Befehlsform, Verbalsubstantiv (laut arabicroots))"
+
+   Die vier Formen liegen im arabicroots-Abzug an jedem Verb als
+   past / present / imperative / masdar. Sie werden hier NUR angezeigt, nie
+   gebildet: eine selbst konjugierte Form waere erfundene Grammatik (E.1).
+   Fehlt eine Form im Abzug, bleibt ihr Platz weg statt geraten zu werden.
+
+   Die Beschriftungen sind woertlich Elias' eigene aus der Meldung.
+
+   Die ausgelieferte vocab-data.js (Madina 1, Kapitel 1-9) enthaelt kein
+   einziges Verb - der Kasten bleibt dort also immer verborgen. Sichtbar wird
+   er mit dem Vokabelpaket: dort stehen 1606 Verben mit allen vier Formen. */
+const VERB_FORMEN = [
+  { feld:'past',       label:'Vergangenheit' },
+  { feld:'present',    label:'Gegenwart' },
+  { feld:'imperative', label:'Befehlsform' },
+  { feld:'masdar',     label:'Verbalsubstantiv' }
+];
+
+function renderVerbFormen(w){
+  const kasten = document.getElementById('cardVerbForms');
+  const vorhanden = VERB_FORMEN.filter(f => w[f.feld]);
+  if (!vorhanden.length){ kasten.classList.add('hidden'); return; }
+  kasten.innerHTML = vorhanden.map(f =>
+    `<div><span class="lbl">${escapeHtml(f.label)}</span>` +
+    `<span class="frm" lang="ar" dir="rtl">${escapeHtml(formenAnzeige(w[f.feld]))}</span></div>`
+  ).join('');
+  kasten.classList.remove('hidden');
+}
+
+/* ---------- Das Wort im Koranvers hervorheben ----------
+   Elias am 29.07.2026: "Es wäre nützlich, wenn bei den Koranbezügen das Wort
+   auf das bezogen wird hervorgehoben wird, indem es zum Beispiel unterstrichen
+   wird. Einfach weiß oder so."
+
+   Das Wort steht im Vers fast nie so da wie im Vokabeleintrag: aus بَيْتٌ wird
+   الْبَيْتَ, aus كِتَابٌ wird الْكِتَابُ. Verglichen wird deshalb der Wortkern -
+   ohne Vokalzeichen, ohne اَلْ und ohne angeschriebene Partikel. Dieselbe Idee
+   wie `wortKern` in js/saetze.js.
+
+   Findet sich nichts, wird NICHTS hervorgehoben. Lieber keine Markierung als
+   eine falsche - eine hervorgehobene Stelle behauptet "das ist dein Wort", und
+   das muss stimmen. Auch die Wurzel wird bewusst NICHT als Rueckfallebene
+   benutzt: sie traefe bei بَيْت auch أَبْيَات und bei كِتَاب auch كَتَبَ - dann
+   waere etwas anderes markiert als angekuendigt. */
+function quranKern(s){
+  return String(s || '')
+    /* Das Alif des Akkusativ-Tanwins gehoert nicht zum Wort: إِمَامًا ist
+       dasselbe Wort wie إِمَامٌ, nur im Akkusativ - geschrieben mit einem
+       zusaetzlichen Alif. Ohne diese Zeile blieb الإمام in 2:124 unmarkiert
+       (im Browser am 29.07.2026 gemessen: 10 von 13 Versen getroffen, dieser
+       war der einzige echte Fehltreffer). Muss VOR dem Entfernen der
+       Vokalzeichen stehen, sonst ist das Fathatan schon weg und das Alif nicht
+       mehr als Tanwin-Alif erkennbar. */
+    .replace(/ًا$/, '')
+    .replace(/[ً-ْٰـ]/g, '')                 // Taschkil und Tatweel
+    .replace(/[.،؟!«»:؛]/g, '')              // Satzzeichen
+    .replace(/[ٱآأإ]/g, 'ا')                 // Alif in allen Schreibungen gleich lesen
+    .trim();
+}
+
+/* Ein Wort im Vers kann angeschriebene Zeichen vor sich haben, das gesuchte
+   Wort selbst hat sie nie. Deshalb werden die Vorsilben AUSSCHLIESSLICH vom
+   Vers-Wort abgezogen, und zwar als Auswahl moeglicher Lesarten - nicht als
+   eine feste Kette von Ersetzungen.
+
+   Der Unterschied ist nicht theoretisch. Der erste Versuch zog auch dem
+   gesuchten Wort ein fuehrendes و/ف/ب/ك/ل ab. Damit wurde aus بَيْتٌ "Haus" der
+   Rest يت - das ب wurde fuer die Praeposition bi- gehalten. Im Browser
+   nachgemessen am 29.07.2026: quranKern('بَيْتٌ') gab "يت". Getroffen haette
+   das dann jedes Wort mit dem Rest "يت".
+
+   Das Wort selbst wird also nur von اَلْ befreit (falls es ueberhaupt bestimmt
+   im Abzug steht); alles andere bleibt Buchstabe fuer Buchstabe stehen. */
+function quranLesarten(wortImVers){
+  const k = quranKern(wortImVers);
+  const lesarten = [k];
+  if (k.startsWith('ال')) lesarten.push(k.slice(2));
+  if (/^[وفبكل]/.test(k)){
+    const ohnePartikel = k.slice(1);
+    lesarten.push(ohnePartikel);
+    if (ohnePartikel.startsWith('ال')) lesarten.push(ohnePartikel.slice(2));
+  }
+  return lesarten;
+}
+
+function quranMitTreffer(vers, w){
+  const text = String(vers || '');
+  const ziel = quranKern(w.sg || w.ar).replace(/^ال/, '');
+  if (ziel.length < 2) return escapeHtml(text);
+  /* Ueber die Wortgrenzen des Verses gehen statt eine Zeichenkette zu suchen:
+     so kann die Markierung nie mitten in einem Wort anfangen. */
+  let getroffen = false;
+  const html = text.split(/(\s+)/).map(stueck => {
+    if (!getroffen && /\S/.test(stueck) && quranLesarten(stueck).includes(ziel)){
+      getroffen = true;
+      return `<span class="quran-treffer">${escapeHtml(stueck)}</span>`;
+    }
+    return escapeHtml(stueck);
+  }).join('');
+  return getroffen ? html : escapeHtml(text);
 }
 
 /* ---------- Ab Box 4 eintippen ----------
@@ -313,11 +420,43 @@ document.getElementById('btnDeleteNote').addEventListener('click', ()=>{
 });
 
 let __suppressCardClick = false;
+
+/* Welche Satzbau-Markierung liegt unter diesem Klick?
+
+   `e.target` allein reicht hier NICHT, und das ist der Kern von Elias' Meldung
+   vom 29.07.2026 ("ich kann die Satzbau-Hinweise nicht anklicken, es wird
+   einfach nur direkt die Karte wieder umgedreht"). Die Karte ist eine
+   3D-Drehung: `.flashcard-inner` steht auf `transform-style:preserve-3d`, die
+   Rueckseite auf `rotateY(180deg)`. In dieser Anordnung benennt Chrome als
+   Klickziel nicht immer das Element, das man sieht - im Browser nachgemessen
+   ergab `document.elementFromPoint` auf der Markierung mal `flashcard-inner`,
+   mal die abgewandte Vorderseite.
+
+   Deshalb wird zusaetzlich der ganze Stapel unter dem Zeiger befragt.
+   `elementsFromPoint` liefert die Markierung auch dann, wenn `elementFromPoint`
+   nur den Behaelter nennt. Das kommt ohne Annahme darueber aus, wie ein
+   bestimmter Browser 3D-Ebenen trifft - und genau darum geht es hier. */
+function markierungUnterKlick(e){
+  const direkt = e.target.closest && e.target.closest('.gram-underline');
+  if (direkt) return direkt;
+  if (typeof e.clientX !== 'number' || !document.elementsFromPoint) return null;
+  for (const el of document.elementsFromPoint(e.clientX, e.clientY)){
+    const treffer = el.closest && el.closest('.gram-underline');
+    if (treffer) return treffer;
+  }
+  return null;
+}
+
 document.getElementById('flashcard').addEventListener('click', (e)=>{
   if (e.target.id === 'btnSpeakWord') return;
   if (e.target.closest('#cardNoteBox')) return;   // hat einen eigenen Klick
   if (e.target.closest('#cardTippBox')) return;   // Tippen dreht die Karte nicht um
   if (__suppressCardClick){ __suppressCardClick = false; return; }
+  /* Satzbau-Markierung oeffnet ihre Erklaerung, statt die Karte umzudrehen.
+     Die Erklaerung selbst kommt aus js/saetze.js, damit Satz-Modus und
+     Lernkarte dieselbe zeigen und nicht zwei Fassungen auseinanderlaufen. */
+  const markierung = markierungUnterKlick(e);
+  if (markierung){ zeigeGrammatikPopover(markierung); return; }
   document.getElementById('flashcard').classList.toggle('flipped');
 });
 document.getElementById('btnSpeakWord').addEventListener('click', (e)=>{
@@ -362,6 +501,17 @@ document.getElementById('btnExitLearn').addEventListener('click', ()=>{
       achse = Math.abs(dxRoh) > Math.abs(dy) ? 'x' : 'y';
     }
     if (achse !== 'x') return;
+    /* Sobald feststeht, dass gewischt wird, dem Browser die Geste wegnehmen.
+       Ohne das kann er sie auf der GEDREHTEN Karte noch an sich ziehen: die
+       Rueckseite ist ein eigener Rollbereich (`.flashcard-back` steht auf
+       overflow-y:auto), und eine leicht schraege Bewegung darauf wird dann als
+       Rollen ausgelegt - der Zeiger kommt als pointercancel zurueck, die Karte
+       federt zurueck und das Wischen wirkt kaputt. Genau Elias' Meldung vom
+       29.07.2026: "wenn die Vokabelkarte umgedreht ist kann ich sie nicht nach
+       links oder rechts wischen".
+       Auf der Vorderseite aendert die Zeile nichts - dort gibt es nichts zu
+       rollen. `pointermove` ist nicht passiv, preventDefault greift also. */
+    if (e.cancelable) e.preventDefault();
     dx = dxRoh;
     card.classList.add('swiping');
     card.style.transform = `translateX(${dx}px) rotate(${dx/22}deg)`;

@@ -48,7 +48,21 @@ const GRAMMAR_RULES = [
     shortExplanation: "Die تاء مربوطة (das ة am Wortende, geschrieben wie ein Kreis mit zwei Punkten) wird für Wörter benutzt, die weiblich sind. Wenn ein Wort ein ة hat, weißt du: das Wort ist weiblich – z.B. مَدْرَسَةٌ (madrasatun) „Schule“. بَيْتٌ (baytun) „Haus“ wird dagegen mit normalem ت geschrieben und ist männlich. (Das ist die Antwort auf eine Nachfrage zu بيت – dass umgekehrt jedes Wort mit normalem ت männlich sei, sagt der Lehrer nicht.)",
     color: "fem",
     source: { folge: 1, video: "Folge 01", approxTimestamp: "15:17", chapter: 1 },
-    source2: { schluessel: 1, lektion: 6, seite: 22 }
+    source2: { schluessel: 1, lektion: 6, seite: 22 },
+    /* Von Elias am 29.07.2026 abbestellt: "Die Regel für weibliche Endungen
+       brauche ich nicht. Ta marbuta ist ja schon als Zeichen genug um das fest
+       zu stellen."
+
+       Der Eintrag bleibt trotzdem stehen, und das ist Absicht: Er ist aus
+       Folge 01 belegt und steht so auch im Madina-Schluessel 1, Lektion 6.
+       Der Beleg wird nicht dadurch falsch, dass Elias die Regel nicht mehr
+       angezeigt bekommen will - und geloescht waere er beim Regel-Durchgang,
+       den er sich noch vorbehalten hat, unauffindbar.
+
+       Was `ausgeblendet` bewirkt: die 8 Markierungen dieser Regel werden in
+       Saetzen nicht mehr unterstrichen (js/saetze.js, buildSentenceHtml).
+       Rueckgaengig zu machen, indem diese eine Zeile entfernt wird. */
+    ausgeblendet: true
   },
   {
     id: "nominalsatz-ohne-kopula-01",
@@ -594,7 +608,7 @@ const SENTENCE_TAGS = {
   ],
   "45752": [
     { ruleId: "mina-al-01", matchText: "مِنَ الْبَيْتِ." },
-    { ruleId: "nat-vier-bedingungen-01", matchText: "مَسْجِدٌ كَبِيرٌ" },
+    { ruleId: "nat-vier-bedingungen-01", matchText: "مَسْجِدٌ جَدِيدٌ" },
     { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" }
   ],
   "45753": [
@@ -629,7 +643,7 @@ const SENTENCE_TAGS = {
   ],
   "45760": [
     { ruleId: "schams-qamar-01", matchText: "السَّمَاءِ." },
-    { ruleId: "nat-vier-bedingungen-01", matchText: "نَجْمٌ كَبِيرٌ" }
+    { ruleId: "nat-vier-bedingungen-01", matchText: "نَجْمٌ بَعِيدٌ" }
   ],
   "45761": [
     { ruleId: "alif-maqsura-01", matchText: "الْمُسْتَشْفَى" },
@@ -856,12 +870,12 @@ const SENTENCE_TAGS = {
     { ruleId: "madd-tabii-01", matchText: "هَذَا" }
   ],
   "45817": [
-    { ruleId: "mutabaqa-genus-01", matchText: "كَبِيرَةٌ" },
+    { ruleId: "mutabaqa-genus-01", matchText: "نَظِيفَةٌ" },
     { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
     { ruleId: "ta-marbuta-fem-01", matchText: "مَدْرَسَةٌ" }
   ],
   "45818": [
-    { ruleId: "mutabaqa-genus-01", matchText: "كَبِيرَةٌ" },
+    { ruleId: "mutabaqa-genus-01", matchText: "قَدِيمَةٌ" },
     { ruleId: "harf-jarr-min-ila-01", matchText: "مِنَ الْبَيْتِ." },
     { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" }
   ],
@@ -993,7 +1007,7 @@ const SENTENCE_TAGS = {
     { ruleId: "wortstellung-fokus-01", matchText: "هَذَا" }
   ],
   "45848": [
-    { ruleId: "nat-fem-01", matchText: "ثَلَّاجَةٌ كَبِيرَةٌ" },
+    { ruleId: "nat-fem-01", matchText: "ثَلَّاجَةٌ جَدِيدَةٌ" },
     { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْمَطْبَخِ." },
     { ruleId: "isara-genus-kongruenz-01", matchText: "هَذِهِ" }
   ],
@@ -1017,13 +1031,13 @@ const SENTENCE_TAGS = {
     { ruleId: "wortstellung-fokus-01", matchText: "هَذَا" }
   ],
   "45854": [
-    { ruleId: "ta-marbuta-grenzen-01", matchText: "كَبِيرَةٌ" },
+    { ruleId: "ta-marbuta-grenzen-01", matchText: "ثَقِيلَةٌ" },
     { ruleId: "harf-jarr-01", matchText: "فِي الْمَطْبَخِ." },
     { ruleId: "wortstellung-fokus-01", matchText: "هَذِهِ" }
   ],
   "45855": [
     { ruleId: "fem-ohne-ta-marbuta-01", matchText: "أُذُنٌ" },
-    { ruleId: "ta-marbuta-grenzen-01", matchText: "كَبِيرَةٌ" },
+    { ruleId: "ta-marbuta-grenzen-01", matchText: "صَغِيرَةٌ" },
     { ruleId: "wortstellung-fokus-01", matchText: "هَذِهِ" }
   ],
   "45856": [
@@ -1045,7 +1059,7 @@ const SENTENCE_TAGS = {
     { ruleId: "wortarten-01", matchText: "هَذَا" }
   ],
   "45860": [
-    { ruleId: "nat-fem-01", matchText: "نَافِذَةٌ كَبِيرَةٌ" },
+    { ruleId: "nat-fem-01", matchText: "نَافِذَةٌ مُغْلَقَةٌ" },
     { ruleId: "harf-jarr-01", matchText: "فِي الْغُرْفَةِ." },
     { ruleId: "wortarten-01", matchText: "هَذِهِ" }
   ],
@@ -1067,14 +1081,14 @@ const SENTENCE_TAGS = {
   ],
   "45865": [
     { ruleId: "ismul-isara-tilka-01", matchText: "تِلْكَ" },
-    { ruleId: "nat-fem-01", matchText: "بَيْضَةٌ كَبِيرَةٌ" }
+    { ruleId: "nat-fem-01", matchText: "بَيْضَةٌ بَارِدَةٌ" }
   ],
   "45866": [
     { ruleId: "wortarten-01", matchText: "هَذَا" }
   ],
   "45867": [
     { ruleId: "ismul-isara-tilka-01", matchText: "تِلْكَ" },
-    { ruleId: "nat-fem-01", matchText: "دَجَاجَةٌ كَبِيرَةٌ" }
+    { ruleId: "nat-fem-01", matchText: "دَجَاجَةٌ صَغِيرَةٌ" }
   ],
   "45868": [
     { ruleId: "harf-jarr-min-ila-01", matchText: "مِنْ أَمْرِيكَا." },
