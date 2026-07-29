@@ -397,6 +397,29 @@ try {
   fail(`manifest.json ist kein gültiges JSON: ${e.message}`);
 }
 
+/* ---------- 9. Wortfelder ----------
+   Bewusst nur ein HINWEIS und niemals ein Fehler: ein frischer Abzug von
+   arabicroots bringt zwangslaeufig Woerter mit, fuer die noch kein deutsches
+   Suchwort in wortfelder-data.js steht. Das darf keinen Push aufhalten — die
+   Woerter sind in der App auffindbar, nur nicht einsortiert. Die Messung selbst
+   steht in pruefe-wortfelder.js, damit sie nicht zweimal existiert und
+   auseinanderlaeuft.
+
+   Gemeldet wird ausschliesslich der LERNBESTAND (vocab-data.js). Die Buchabzuege
+   unter data/ liegen wegen der arabicroots-AGB nicht im Repo, und ihre Zahlen
+   waeren hier auch keine Auskunft: Elias lernt mit den 169. */
+try {
+  const wf = require('./pruefe-wortfelder.js');
+  wf.tabellenFehler.forEach(m => fail(`wortfelder-data.js: ${m}`));
+  const lern = wf.ohneFeld.find(g => g.quelle.startsWith('vocab-data.js'));
+  const nomen = lern ? lern.woerter.filter(w => w.type === 'noun') : [];
+  if (nomen.length)
+    warn(`${nomen.length} Nomen im Lernbestand stehen in keinem Bedeutungsfeld — deutsches Suchwort in wortfelder-data.js ergaenzen (node pruefe-wortfelder.js --alle): ${nomen.slice(0,5).map(w => `${w.ar} (${w.de})`).join(', ')}${nomen.length>5?' …':''}`);
+  note(`Wortfelder: ${wf.WORTFELDER.length} Felder, ${lern ? lern.woerter.length : 0} von ${VOCAB_DATA ? VOCAB_DATA.length : 0} Lernwoertern nur mit Wortart (davon ${nomen.length} Nomen).`);
+} catch (e) {
+  warn(`Wortfelder nicht messbar: ${e.message}`);
+}
+
 /* ---------- Ausgabe ---------- */
 console.log('--- Validierung Vokabeltrainer ---');
 info.forEach(m => console.log('  ok   ' + m));

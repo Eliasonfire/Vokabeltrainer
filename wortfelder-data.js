@@ -39,15 +39,23 @@
 
    `nicht: [...]` kippt einen Treffer wieder. Gebraucht fuer Doppeldeutigkeiten
    des Deutschen: "ich weiss nicht" ist keine Farbe.
+
+   `wortart: true` markiert die Felder der ersten Sorte. Auf die Anzeige hat das
+   keine Wirkung — es sagt `pruefe-wortfelder.js`, welche Felder beim Zaehlen
+   NICHT mitzaehlen duerfen. Denn jede Vokabel hat eine Wortart, also traegt
+   jede Vokabel mindestens ein Feld, und "0 Woerter ohne Wortfeld" waere eine
+   Zahl, die immer stimmt und darum nichts misst. Gesucht ist die andere Zahl:
+   welche Vokabel hat kein BEDEUTUNGSFELD — steht also nur unter "Nomen" und
+   sonst nirgends. Das ist der Fall, den Elias gemeint hat.
    ===================================================================== */
 const WORTFELDER = [
   /* ---- Aus dem Abzug, ohne Auslegung ---- */
-  { name: 'Nomen',       typ: 'noun' },
-  { name: 'Verben',      typ: 'verb' },
-  { name: 'Adjektive',   typ: 'adjective' },
-  { name: 'Adverbien',   typ: 'adverb', woerter: ['auch', 'ebenfalls', 'sehr', 'immer', 'nie', 'oft', 'manchmal'] },
-  { name: 'Wendungen',   typ: ['expression', 'phrase'] },
-  { name: 'Grammatik-Begriffe', typ: 'grammar' },
+  { name: 'Nomen',       typ: 'noun',      wortart: true },
+  { name: 'Verben',      typ: 'verb',      wortart: true },
+  { name: 'Adjektive',   typ: 'adjective', wortart: true },
+  { name: 'Adverbien',   typ: 'adverb', wortart: true, woerter: ['auch', 'ebenfalls', 'sehr', 'immer', 'nie', 'oft', 'manchmal'] },
+  { name: 'Wendungen',   typ: ['expression', 'phrase'], wortart: true },
+  { name: 'Grammatik-Begriffe', typ: 'grammar', wortart: true },
 
   /* ---- Partikeln, mit einer Ausnahmeliste ----
      ⭐ Elias hat am 29.07.2026 von sich aus gefragt: "bist du dir sicher, dass
@@ -69,7 +77,7 @@ const WORTFELDER = [
 
      نَعَمْ (ja) und لَا (nein) behandelt der Unterricht NICHT. Sie bleiben
      deshalb dort, wo der Abzug sie hat — nichts anderes wäre belegbar. */
-  { name: 'Partikeln',   typ: 'particle', nichtFormen: ['تَحْتَ', 'هُنَا', 'هُنَاكَ', 'الآنَ', 'أَمَامَ', 'خَلْفَ', 'فَوْقَ'] },
+  { name: 'Partikeln',   typ: 'particle', wortart: true, nichtFormen: ['تَحْتَ', 'هُنَا', 'هُنَاكَ', 'الآنَ', 'أَمَامَ', 'خَلْفَ', 'فَوْقَ'] },
   { name: 'Zeit- & Ortsangaben (ظَرْف)', formen: ['تَحْتَ', 'هُنَا', 'هُنَاكَ', 'الآنَ', 'أَمَامَ', 'خَلْفَ', 'فَوْقَ', 'بَيْنَ', 'عِنْدَ', 'بَعْدَ', 'قَبْلَ'] },
 
   /* ---- Genitivpräpositionen ----
