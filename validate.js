@@ -77,6 +77,64 @@ if (!Array.isArray(VOCAB_DATA) || VOCAB_DATA.length === 0){
     }
   });
   note(`VOCAB_DATA: ${VOCAB_DATA.length} Einträge, ${seen.size} eindeutige IDs.`);
+
+  /* ---------- 1b. Singular- und Pluralfeld ----------
+     Am 29.07.26 nachgemessen, bevor diese Pruefung entstand: `sg` ist in ALLEN
+     111 gefuellten Faellen wortgleich mit `ar` - das Feld traegt nirgends eine
+     eigene Information. Deshalb ist keiner der beiden Faelle unten ein Fehler,
+     der einen Push aufhalten duerfte; beide sind Hinweise auf eine Luecke im
+     Abzug. Und beide bedeuten NICHT dasselbe:
+
+       pl gefuellt, sg leer  -> harmlos. `ar` ist der Singular, `sg` waere nur
+                                seine Wiederholung (so bei لَبَنٌ / أَلْبَان).
+       sg gefuellt, pl leer  -> inhaltliche Luecke. Bei مِكْوَاةٌ „Buegeleisen"
+                                gibt es sehr wohl einen Plural, arabicroots
+                                liefert ihn nur nicht mit.
+
+     Die fehlende Form wird NICHT ergaenzt: erfundene Grammatik verbietet E.1.
+     Der Hinweis sagt, wo nachzuschlagen ist - mehr darf er nicht. */
+  const plOhneSg = VOCAB_DATA.filter(w => w && w.pl && !w.sg);
+  const sgOhnePl = VOCAB_DATA.filter(w => w && w.sg && !w.pl);
+  const sgUngleichAr = VOCAB_DATA.filter(w => w && w.sg && w.ar && w.sg !== w.ar);
+
+  if (plOhneSg.length)
+    warn(`${plOhneSg.length} Vokabel(n) mit Plural, aber ohne sg-Feld — unkritisch, "ar" ist dort der Singular: ${plOhneSg.slice(0,5).map(w => `${w.ar} (id ${w.id})`).join(', ')}${plOhneSg.length>5?' …':''}`);
+  if (sgOhnePl.length)
+    warn(`${sgOhnePl.length} Vokabel(n) mit sg-Feld, aber ohne Plural — im Abzug nachsehen, nicht selbst bilden (E.1): ${sgOhnePl.slice(0,5).map(w => `${w.ar} (id ${w.id})`).join(', ')}${sgOhnePl.length>5?' …':''}`);
+  /* Kommt bisher nie vor. Traete es auf, stuende die Vokabel unter ihrem Plural
+     und `w.sg || w.ar` in js/saetze.js suchte im Satz nach einer anderen Form
+     als bisher - das gehoert gesehen, bevor es still das Verhalten aendert. */
+  if (sgUngleichAr.length)
+    warn(`${sgUngleichAr.length} Vokabel(n) mit sg ≠ ar (bisher gab es das nicht; js/saetze.js sucht dann eine andere Form im Satz): ${sgUngleichAr.slice(0,5).map(w => `${w.ar} → sg ${w.sg} (id ${w.id})`).join(', ')}`);
+  note(`sg/pl: ${VOCAB_DATA.filter(w => w && w.sg && w.pl).length} Einträge mit beiden Formen, ${plOhneSg.length} nur Plural, ${sgOhnePl.length} nur Singular.`);
+
+  /* ---------- 1c. Trennzeichen in Mehrfachformen ----------
+     Manche Vokabeln haben zwei gueltige Plurale (بُيُوتٌ / أَبْيَاتٌ). arabicroots
+     trennt sie im Abzug mit "|", in der App steht " / ". Beide muessen hier
+     durchgehen, sonst schlaegt die Pruefung beim naechsten Abzug auf lauter
+     korrekten Daten an. Geprueft wird nur, dass jede Teilform fuer sich etwas
+     Arabisches enthaelt - ein Wert wie "بُيُوتٌ / " waere sonst unauffaellig.
+     Stand 29.07.26: 7 Werte mit " / ", kein einziger mit "|". */
+  const MEHRFACH = /\s*[|/]\s*/;
+  const FORMFELDER = ['sg', 'pl', 'femSg', 'femPl'];
+  let mehrfach = 0, mitPipe = 0;
+  VOCAB_DATA.forEach((w, i) => {
+    if (!w || typeof w !== 'object') return;
+    FORMFELDER.forEach(f => {
+      const v = w[f];
+      if (typeof v !== 'string' || !MEHRFACH.test(v)) return;
+      mehrfach++;
+      if (v.includes('|')) mitPipe++;
+      const teile = v.split(MEHRFACH);
+      teile.forEach(teil => {
+        if (!teil.trim()) fail(`VOCAB_DATA[${i}] (id ${w.id}): Feld "${f}" hat eine leere Teilform ("${v}").`);
+        else if (!/[ء-ي]/.test(teil)) fail(`VOCAB_DATA[${i}] (id ${w.id}): Teilform "${teil}" in "${f}" enthält keine arabischen Buchstaben.`);
+      });
+    });
+  });
+  if (mitPipe)
+    warn(`${mitPipe} Formfeld(er) trennen mit "|" statt " / ". Die App zeigt beides gleich an (formenAnzeige in js/kern.js) — in den Daten trotzdem vereinheitlichen, damit Suchen darüber nicht zwei Schreibweisen kennen müssen.`);
+  if (mehrfach) note(`Mehrfachformen: ${mehrfach} Feld(er) mit zwei Formen, alle Teilformen gefüllt.`);
 }
 
 /* ---------- 2. CHAPTER_NAMES aus js/kern.js gegen die Daten prüfen ---------- */
@@ -118,6 +176,45 @@ try {
   fail(`js/-Ordner nicht lesbar: ${e.message}`);
 }
 
+/* ---------- 2c. Laedt js/irab.js noch ausserhalb des Browsers? ----------
+   Am 29.07.26 wurde hier eine Luecke sichtbar, die teuer haette werden koennen:
+   `js/irab.js` bekam einen Aufruf von `formen()` aus `js/kern.js`. Im Browser
+   ging das gut, weil index.html kern.js vorher laedt - und genau das prueft der
+   Block darueber ja auch ab. `node pruefe-saetze.js` aber laedt irab.js per
+   require ALLEIN und starb sofort mit "ReferenceError: formen is not defined".
+   validate.js meldete trotzdem "Push ist in Ordnung".
+
+   Das ist der schlimmste Fehlertyp fuer dieses Skript: Es hat seine Zusage
+   gegeben, waehrend das zweite Pflichtskript des Projekts komplett tot war. Die
+   Verdrahtungspruefung oben kann das strukturell nicht sehen - sie vergleicht
+   Dateilisten, sie fuehrt nichts aus.
+
+   Deshalb hier der einzige Test in dieser Datei, der Code wirklich AUSFUEHRT:
+   irab.js wird in einer leeren Sandbox geladen, so wie Node es tut. Faellt es
+   dort auf die Nase, ist das ein FEHLER und kein Hinweis. Der Kopfkommentar von
+   irab.js (Z. 46-58) erklaert, warum diese Eigenstaendigkeit Absicht ist. */
+try {
+  const irabSrc = fs.readFileSync(path.join(DIR, 'js', 'irab.js'), 'utf8');
+  const sandbox = { module: { exports: {} }, exports: {}, require, console };
+  vm.createContext(sandbox);
+  vm.runInContext(irabSrc, sandbox);
+  /* Nicht nur laden, sondern die Funktion auch benutzen - der Fehler von damals
+     steckte im Rumpf von setzeLexikon und waere beim blossen Laden unbemerkt
+     geblieben. Ein Eintrag mit Doppelform trifft genau die betroffene Zeile. */
+  if (typeof sandbox.setzeLexikon === 'function'){
+    sandbox.setzeLexikon([
+      { ar: 'بَيْتٌ', type: 'noun', pl: 'بُيُوتٌ / أَبْيَاتٌ', sg: null, femSg: null, femPl: null }
+    ]);
+    note('js/irab.js: laedt und laeuft auch ohne Browser (setzeLexikon getestet).');
+  } else {
+    fail('js/irab.js laedt zwar, stellt aber kein setzeLexikon bereit — pruefe-saetze.js braucht es.');
+  }
+} catch (e) {
+  fail(`js/irab.js laeuft ausserhalb des Browsers nicht mehr: ${e.message}. `
+     + `Ursache ist fast immer ein Aufruf in ein anderes Modul (z.B. js/kern.js), `
+     + `das Node nie laedt — siehe Kopfkommentar von irab.js. node pruefe-saetze.js waere damit tot.`);
+}
+
 /* ---------- 3. GRAMMAR_RULES ---------- */
 const RULE_COLORS = ['mubtada', 'idafa', 'nasab', 'fem', 'other'];
 if (!Array.isArray(GRAMMAR_RULES)){
@@ -149,10 +246,17 @@ if (!Array.isArray(GRAMMAR_RULES)){
     const alleSaetze = VOCAB_DATA.concat(Array.isArray(LEHRBUCH_SAETZE) ? LEHRBUCH_SAETZE : []);
     const vocabById = new Map(alleSaetze.map(w => [String(w.id), w]));
     let tagCount = 0;
+    const leer = [];
     Object.entries(SENTENCE_TAGS).forEach(([vocabId, tags]) => {
       const w = vocabById.get(String(vocabId));
       if (!w){ fail(`SENTENCE_TAGS verweist auf unbekannte Vokabel-ID "${vocabId}".`); return; }
       if (!Array.isArray(tags)){ fail(`SENTENCE_TAGS["${vocabId}"] ist kein Array.`); return; }
+      /* Leergebliebene Eintraege stammen aus dem Markierungs-Audit vom 28.07.26:
+         wurden ALLE Markierungen eines Satzes entfernt, blieb der Schluessel mit
+         leerem Array zurueck. Schadet nichts, laesst aber jede Zaehlung ueber
+         Object.keys(SENTENCE_TAGS) zu hoch ausfallen - 169 "markierte Saetze",
+         von denen 3 keine einzige Markierung haben. */
+      if (!tags.length){ leer.push(vocabId); return; }
       tags.forEach((t, j) => {
         tagCount++;
         if (!ruleIds.has(t.ruleId)) fail(`SENTENCE_TAGS["${vocabId}"][${j}] verweist auf unbekannte Regel "${t.ruleId}".`);
@@ -161,7 +265,9 @@ if (!Array.isArray(GRAMMAR_RULES)){
         else if (!w.sentAr.includes(t.matchText)) fail(`SENTENCE_TAGS["${vocabId}"][${j}]: matchText "${t.matchText}" kommt im Satz nicht vor.`);
       });
     });
-    note(`SENTENCE_TAGS: ${tagCount} Markierungen, alle Referenzen auflösbar.`);
+    if (leer.length)
+      warn(`${leer.length} Satz-Schlüssel in SENTENCE_TAGS haben ein leeres Array (id ${leer.join(', ')}) — Rest des Markierungs-Audits, verfälscht jede Zählung über Object.keys().`);
+    note(`SENTENCE_TAGS: ${tagCount} Markierungen auf ${Object.keys(SENTENCE_TAGS).length - leer.length} Sätzen, alle Referenzen auflösbar.`);
   }
 }
 

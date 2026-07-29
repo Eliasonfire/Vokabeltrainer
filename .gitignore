@@ -33,3 +33,5 @@ __pycache__/
 # in diesem Ordner gearbeitet wird. Belegt am Gegenbeispiel F:\Workspace\CLAUDE.md
 # - dieser Ordner ist gar kein Git-Repo und wird trotzdem jedes Mal gelesen.
 CLAUDE.md
+.budget.json
+.arbeit.json

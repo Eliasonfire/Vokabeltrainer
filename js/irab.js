@@ -48,6 +48,20 @@ const INDEKLINABEL = ['هذا','هذه','ذلك','تلك','هو','هي','أنا'
    laedt es per require), wo es die uebrigen Module gar nicht gibt. Ein
    gemeinsamer Helfer in kern.js waere die schoenere Zeile Code und die
    schlechtere Loesung - er wuerde die Node-Nutzung brechen. */
+
+/* Zweiter Fall derselben Regel, und der Beweis, dass der Absatz darueber kein
+   Zierrat ist: Am 29.07.2026 wurde `formen()` aus js/kern.js hier aufgerufen -
+   genau der "gemeinsame Helfer", vor dem oben gewarnt wird. Im Browser lief es,
+   weil index.html kern.js vor irab.js laedt; `node pruefe-saetze.js` starb
+   sofort mit "ReferenceError: formen is not defined". Aufgefallen ist es erst
+   einem Pruefer, nicht dem Browsertest - der konnte es gar nicht sehen.
+   Deshalb steht die Zerlegung hier noch einmal eigenstaendig. Sie muss
+   inhaltlich mit formen() in js/kern.js uebereinstimmen; aendert sich eine der
+   beiden, gehoert die andere mitgezogen. */
+function einzelformen(wert){
+  if (typeof wert !== 'string') return [];
+  return wert.split(/\s*[|/]\s*/).map(s => s.trim()).filter(Boolean);
+}
 /* Demonstrativ- und Personalpronomen sind zwar unveraenderlich, aber sie sind
    das مُبْتَدَأ des Satzes - nicht das Wort dahinter. Der Lehrer sagt es
    ausdruecklich (nominalsatz-ohne-kopula-01): هَذَا بَيْتٌ heisst "DIES ist ein
@@ -198,8 +212,10 @@ function setzeLexikon(eintraege){
   };
   for (const v of eintraege || []){
     merke(v.ar, v.type, true);
+    /* Doppelformen einzeln merken - sonst steht "بُيُوتٌ / أَبْيَاتٌ" als EIN
+       Eintrag im Lexikon und passt auf kein Wort im Satz. */
     [v.sg, v.pl, v.femSg, v.femPl, v.past, v.present, v.imperative, v.masdar]
-      .forEach(f => merke(f, v.type, false));
+      .forEach(f => einzelformen(f).forEach(einzel => merke(einzel, v.type, false)));
   }
 }
 /* Steht das Wort als Ganzes im Wortschatz? Dann faengt es nicht mit einer

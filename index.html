@@ -816,6 +816,14 @@ main{
   border-radius:3px;
 }
 .gram-underline:hover{background:color-mix(in srgb, var(--gram-role, var(--gram-other)) 18%, transparent);}
+/* Auf der Lernkarte ist die Unterstreichung nur ein Hinweis, kein Knopf: die
+   ganze Karte reagiert dort auf den Klick, indem sie sich umdreht. Ein Wort,
+   das diesen Klick schluckt, liesse das Umdrehen kaputt wirken - und auf dem
+   Handy gibt es kein Hover, an dem man erkennen koennte, welches Wort anders
+   reagiert. Die anklickbare Erklaerung steht im Satz-Modus, wo sie mit nichts
+   konkurriert. */
+.gram-passiv{cursor:inherit;}
+.gram-passiv:hover{background:transparent;}
 .gram-popover{
   position:fixed;z-index:600;
   background:var(--surface-3);border:1px solid var(--border-strong);

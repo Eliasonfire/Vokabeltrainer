@@ -45,9 +45,43 @@ function mitLuecke(text){
        + escapeHtml(text.slice(von + LUECKE.wort.length));
 }
 
-function buildSentenceHtml(w){
-  const verdeckt = mitLuecke(w.sentAr || '');
-  if (verdeckt !== null) return verdeckt;
+/* Sitzt eine Fundstelle an einer Wortgrenze, oder mitten in einem Wort?
+   Inhaltlich dieselbe Regel wie in pruefe-markierungen.js (Z. 128-133) - beide
+   muessen dasselbe sagen, sonst behauptet das Pruefskript "0 Markierungen mitten
+   im Wort", waehrend die App welche zeigt. Richtig sind auch angeschriebene
+   Partikeln davor: أَ (Frage), وَ und فَ (Anknuepfung).
+   NICHT wortgleich, und das ist Absicht: dort heisst der Helfer `blank()`, hier
+   `ohneTaschkil()`. Beide entfernen `[ً-ْٰـ]`, sind also gleichwertig - aber wer
+   die Stellen vergleicht, soll nicht ueber verschiedene Namen stolpern. Aendert
+   sich eine der beiden Definitionen, gehoert die andere mitgezogen. */
+const GRENZ_TRENNER  = /[\s.،؟!«»:]/;
+const GRENZ_TASCHKIL = /[ً-ْٰ]/;
+function anWortgrenze(text, von, matchText){
+  /* Manche Markierungen SIND ein Satzzeichen - fragepartikel-erforderlich-01
+     zeigt auf das Fragezeichen selbst. Da gibt es keine Wortgrenze zu pruefen. */
+  if (!/[ء-ي]/.test(matchText)) return true;
+  const bis = von + matchText.length;
+  const davor  = von === 0 ? ' ' : text[von - 1];
+  const danach = bis >= text.length ? ' ' : text[bis];
+  const linksOk = GRENZ_TRENNER.test(davor)
+    || (GRENZ_TASCHKIL.test(davor) && /[وفأ]/.test(text[von - 2] || ''))
+    || /[وفأ]/.test(davor);
+  const rechtsOk = GRENZ_TRENNER.test(danach) || GRENZ_TASCHKIL.test(danach)
+    || ohneTaschkil(matchText).length <= 1;
+  return linksOk && rechtsOk;
+}
+
+/* Baut den Satz mit farbigen Grammatik-Unterstreichungen.
+   `opts.ohneLuecke` uebergeht den Lueckenmodus, `opts.passiv` nimmt den
+   Unterstreichungen ihre Klickbarkeit - beides braucht die Lernkarte
+   (siehe renderCard in js/lernen.js). */
+function buildSentenceHtml(w, opts){
+  const passiv     = !!(opts && opts.passiv);
+  const ohneLuecke = !!(opts && opts.ohneLuecke);
+  if (!ohneLuecke){
+    const verdeckt = mitLuecke(w.sentAr || '');
+    if (verdeckt !== null) return verdeckt;
+  }
   const tags = (typeof SENTENCE_TAGS!=='undefined') && SENTENCE_TAGS[w.id];
   if (!SETTINGS.grammarHighlight || !tags || !tags.length) return escapeHtml(w.sentAr);
   // Erst alle Fundstellen im Rohtext einsammeln, dann in einem Durchgang
@@ -61,9 +95,32 @@ function buildSentenceHtml(w){
   tags.forEach(t=>{
     const rule = GRAMMAR_RULES.find(r=>r.id===t.ruleId);
     if (!rule || !t.matchText) return;
-    const von = text.indexOf(t.matchText);
-    if (von === -1) return;
-    treffer.push({ von, bis: von + t.matchText.length, rule });
+    /* Frueher nur die erste Fundstelle. In «أَهَذَا كِتَابٌ؟ نَعَمْ، هَذَا
+       كِتَابٌ.» war damit das erste كِتَابٌ unterstrichen und das zweite nicht -
+       dieselbe Regel, willkuerlich nur einmal gezeigt.
+       Die ERSTE Fundstelle bleibt ungeprueft durch: sie ist die von Hand
+       gesetzte, pruefe-markierungen.js hat sie gegengelesen. Jede WEITERE
+       findet die App selbst, die pruefe ich auf Wortgrenzen, weil sie niemand
+       gesehen hat.
+
+       HIER STAND: "So kann diese Aenderung nur hinzufuegen, nie eine bestehende
+       Unterstreichung entfernen." Das war zu absolut und wurde am 29.07.2026
+       widerlegt. Der Gegenfall: Ueberschneiden sich zwei Markierungen, kann ein
+       neu gefundener ZWEITtreffer der laengeren `pos` ueber die kuerzere
+       hinausschieben - und `if (t.von < pos) continue` weiter unten laesst die
+       kuerzere dann aus. Eine heute sichtbare Unterstreichung koennte so
+       verschwinden.
+       Auf dem heutigen Datenbestand tritt das NICHT ein: pruefe-markierungen.js
+       meldet 0 Ueberschneidungen bei 316 Markierungen, und die 3 zusaetzlichen
+       Treffer beruehren keine. Die Zusage gilt also fuer die Daten, nicht fuer
+       den Code - und genau deshalb steht die Ueberschneidungspruefung dort. */
+    let erste = true;
+    for (let von = text.indexOf(t.matchText); von !== -1;
+             von = text.indexOf(t.matchText, von + 1)){
+      if (erste || anWortgrenze(text, von, t.matchText))
+        treffer.push({ von, bis: von + t.matchText.length, rule });
+      erste = false;
+    }
   });
   // Von links nach rechts, bei gleichem Start gewinnt die laengere Markierung.
   treffer.sort((a,b)=> a.von - b.von || (b.bis - b.von) - (a.bis - a.von));
@@ -72,7 +129,7 @@ function buildSentenceHtml(w){
   for (const t of treffer){
     if (t.von < pos) continue;                 // ueberschneidet eine gesetzte
     html += escapeHtml(text.slice(pos, t.von));
-    html += `<span class="gram-underline" style="--gram-role:var(--gram-${t.rule.color})" data-rule="${t.rule.id}">${escapeHtml(text.slice(t.von, t.bis))}</span>`;
+    html += `<span class="gram-underline${passiv ? ' gram-passiv' : ''}" style="--gram-role:var(--gram-${t.rule.color})" data-rule="${t.rule.id}">${escapeHtml(text.slice(t.von, t.bis))}</span>`;
     pos = t.bis;
   }
   return html + escapeHtml(text.slice(pos));
@@ -331,7 +388,9 @@ document.getElementById('sentAr').addEventListener('click', (e)=>{
   pop.classList.add('show');
 });
 document.addEventListener('click', (e)=>{
-  if (!e.target.closest('.gram-underline') && !e.target.closest('#gramPopover'))
+  /* `.gram-passiv` ausgenommen: die Unterstreichungen auf der Lernkarte oeffnen
+     kein Popover, also duerfen sie ein offenes auch nicht offen halten. */
+  if (!e.target.closest('.gram-underline:not(.gram-passiv)') && !e.target.closest('#gramPopover'))
     document.getElementById('gramPopover').classList.remove('show');
 });
 const gramToggleBtn = document.getElementById('toggleGrammarHighlight');

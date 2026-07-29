@@ -214,6 +214,22 @@ function escapeHtml(str){
   return String(str).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
+/* Manche Vokabeln haben zwei gueltige Plurale: بُيُوتٌ / أَبْيَاتٌ. arabicroots
+   trennt sie im Abzug mit "|", in der App steht " / ". Beide Schreibweisen
+   muessen ueberall gleich behandelt werden - bisher nirgends:
+   - die Lernkarte zeigte den Rohwert, ein "|" waere also sichtbar geblieben
+   - js/irab.js legte "بُيُوتٌ / أَبْيَاتٌ" als EINEN Lexikoneintrag ab, der auf
+     kein einzelnes Wort im Satz passt. Die 7 doppelten Plurale waren fuer die
+     Satzanalyse damit unsichtbar.
+   `formen()` gibt die Einzelformen, `formenAnzeige()` die vereinheitlichte
+   Schreibweise fuer die Anzeige. */
+const FORM_TRENNER = /\s*[|/]\s*/;
+function formen(wert){
+  if (typeof wert !== 'string') return [];
+  return wert.split(FORM_TRENNER).map(s => s.trim()).filter(Boolean);
+}
+function formenAnzeige(wert){ return formen(wert).join(' / '); }
+
 function toast(msg){
   const el = document.getElementById('toast');
   el.textContent = msg; el.classList.add('show');
