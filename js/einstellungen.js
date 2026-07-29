@@ -127,6 +127,42 @@ document.getElementById('btnResetProgress').addEventListener('click', ()=>{
 /* HIER STAND „Streak zurücksetzen". Am 29.07.2026 auf Elias' Wunsch entfernt.
    Der Schlüssel `vt_streak` bleibt selbstverständlich — nur der Knopf ist weg. */
 
+/* ---------- App aktualisieren ----------
+   Notausgang aus einem Kreislauf, in dem Elias am 30.07.2026 festhing: Die
+   Ziehgeste zum Aktualisieren war kaputt, also kam kein neuer Stand an — auch
+   nicht der Fix für die Geste. In der installierten App gibt es weder
+   Adressleiste noch Neuladen-Knopf des Browsers.
+
+   Es reicht NICHT, einfach `location.reload()` zu rufen: der Service Worker
+   liefert seit v27 zwar Netz zuerst, aber der HTTP-Cache des Browsers ist eine
+   zweite, stillere Ebene darunter. Genau daran ist beim Prüfen zweimal ein
+   scheinbar alter Stand entstanden, obwohl der Server längst das Neue auslieferte.
+   Deshalb wird jede eingebundene Datei einzeln mit `cache:'reload'` geholt —
+   das entwertet ihren HTTP-Cache-Eintrag — und danach neu geladen. */
+document.getElementById('btnAktualisieren').addEventListener('click', async ()=>{
+  const knopf = document.getElementById('btnAktualisieren');
+  knopf.disabled = true;
+  knopf.textContent = 'lädt …';
+  try {
+    const dateien = [...document.querySelectorAll('script[src]')]
+      .map(s => s.getAttribute('src'))
+      .filter(s => s && !/^https?:/.test(s))
+      .concat(['index.html', 'manifest.json']);
+    /* Einzeln und mit abgefangenem Fehler: eine Datei, die gerade nicht
+       erreichbar ist, darf das Aktualisieren nicht verhindern. */
+    for (const d of dateien){ try { await fetch(d, { cache: 'reload' }); } catch(_){} }
+    /* Den Service-Worker-Cache mitnehmen, sonst liefert er beim nächsten
+       Offline-Start weiter den alten Stand. */
+    if ('caches' in window){
+      const namen = await caches.keys();
+      await Promise.all(namen.map(n => caches.delete(n)));
+    }
+  } catch (e) {
+    console.warn('Aktualisieren nur teilweise möglich:', e);
+  }
+  location.reload();
+});
+
 /* ---------- Automatische Sicherung ----------
    Elias am 29.07.2026: "Außerdem sollte die Fortschrittssicherung automatisch
    immer passieren."

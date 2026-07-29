@@ -33,7 +33,28 @@ const REDUCED_MOTION = !!(window.matchMedia && window.matchMedia('(prefers-reduc
    Ausgeloest wird nur, wenn `main` ganz oben steht UND der Finger weit genug
    nach unten wandert. Waagerechte Bewegungen und alles, was auf einer
    Lernkarte oder einem Wortchip beginnt, sind ausgenommen - dort gibt es schon
-   Wischen und Halten, und zwei Gesten am selben Ort schlagen sich. */
+   Wischen und Halten, und zwei Gesten am selben Ort schlagen sich.
+
+   ⚠️ ZWEITER VERSUCH — der erste war mit Pointer-Events gebaut und hat auf
+   Elias' Handy NICHT funktioniert ("das ist nicht wieder da", 30.07.2026).
+
+   Warum Pointer-Events hier der falsche Weg sind: `main` ist selbst ein
+   Rollbereich. Geht der Finger bei `scrollTop 0` nach unten, versucht der
+   Browser sofort seine eigene Rollgeste - und sobald er die uebernimmt,
+   schickt er ein `pointercancel` und stellt `pointermove` ein. Der alte Code
+   beendete die Geste an dieser Stelle, bevor ueberhaupt Weg zusammengekommen
+   war. Auf dem Schreibtisch mit der Maus fiel das nicht auf, weil dort keine
+   Rollgeste beginnt.
+
+   Touch-Events koennen das, was hier gebraucht wird: `touchmove` laeuft
+   weiter, und mit `{ passive: false }` darf `preventDefault()` die Geste
+   uebernehmen, bevor der Browser rollt. Das ist der uebliche Bau fuer
+   Ziehen-zum-Aktualisieren, und er haengt an keiner Annahme darueber, wie ein
+   Browser Zeiger waehrend einer Rollgeste behandelt.
+
+   ⚠️ `{ passive: false }` ist bei `touchmove` PFLICHT. Ohne das ignoriert der
+   Browser das preventDefault und rollt trotzdem - dann ist man wieder beim
+   alten Fehler. */
 const ZIEH_SCHWELLE = 78;
 
 (function ziehenZumAktualisieren(){
@@ -45,46 +66,58 @@ const ZIEH_SCHWELLE = 78;
   anzeige.innerHTML = '<span class="zieh-ring"></span>';
   document.getElementById('app').appendChild(anzeige);
 
-  let startY = 0, startX = 0, aktiv = false, weg = 0;
+  let startY = 0, startX = 0, aktiv = false, uebernommen = false, weg = 0;
 
-  main.addEventListener('pointerdown', (e)=>{
-    if (e.pointerType === 'mouse') return;          // mit der Maus gibt es F5
-    if (main.scrollTop > 0) return;                 // nur am oberen Anschlag
+  function abbrechen(){
+    aktiv = false; uebernommen = false; weg = 0;
+    anzeige.classList.remove('zieht','bereit');
+    anzeige.style.transform = '';
+  }
+
+  main.addEventListener('touchstart', (e)=>{
+    if (e.touches.length !== 1){ abbrechen(); return; }   // zwei Finger: Zoom
+    if (main.scrollTop > 0) return;                       // nur am oberen Anschlag
     if (e.target.closest('#flashcard, .word-chip, input, textarea')) return;
-    startY = e.clientY; startX = e.clientX; aktiv = true; weg = 0;
+    startY = e.touches[0].clientY;
+    startX = e.touches[0].clientX;
+    aktiv = true; uebernommen = false; weg = 0;
   }, { passive: true });
 
-  main.addEventListener('pointermove', (e)=>{
+  main.addEventListener('touchmove', (e)=>{
     if (!aktiv) return;
-    const dy = e.clientY - startY;
-    /* Sobald die Bewegung eher waagerecht ist oder nach oben geht, gehoert sie
-       nicht uns. Ebenso, wenn main inzwischen doch gerollt ist. */
-    if (dy <= 0 || Math.abs(e.clientX - startX) > Math.abs(dy) || main.scrollTop > 0){
-      aktiv = false; anzeige.classList.remove('zieht','bereit'); anzeige.style.transform = '';
-      return;
+    const dy = e.touches[0].clientY - startY;
+    const dx = e.touches[0].clientX - startX;
+
+    /* Nach oben, eher waagerecht, oder main rollt doch: nicht unsere Geste. */
+    if (dy <= 0 || Math.abs(dx) > Math.abs(dy) || main.scrollTop > 0){
+      if (!uebernommen){ abbrechen(); return; }
     }
+    /* Erst ab 12 px uebernehmen. Vorher koennte es noch ein Tippen sein, und
+       ein preventDefault darauf wuerde Klicks verschlucken. */
+    if (!uebernommen && dy < 12) return;
+    uebernommen = true;
+    e.preventDefault();                 // ab hier gehoert die Geste uns
+
     /* Gedaempft: 140 px Finger ergeben etwa 78 px Weg. Ohne die Daempfung
        fuehlt es sich an, als klebe die Seite am Finger. */
-    weg = Math.min(ZIEH_SCHWELLE + 26, dy * 0.55);
+    weg = Math.max(0, Math.min(ZIEH_SCHWELLE + 26, dy * 0.55));
     anzeige.classList.add('zieht');
     anzeige.classList.toggle('bereit', weg >= ZIEH_SCHWELLE);
     anzeige.style.transform = `translateX(-50%) translateY(${weg}px) rotate(${weg * 3}deg)`;
-  }, { passive: true });
+  }, { passive: false });
 
   function loslassen(){
     if (!aktiv) return;
-    aktiv = false;
     const ausloesen = weg >= ZIEH_SCHWELLE;
-    anzeige.classList.remove('zieht','bereit');
-    anzeige.style.transform = '';
+    abbrechen();
     if (!ausloesen) return;
     anzeige.classList.add('laedt');
     /* Der Service Worker holt seit v27 Netz zuerst, ein normales Neuladen
        bringt also wirklich den neuen Stand. */
     setTimeout(()=>location.reload(), 220);
   }
-  main.addEventListener('pointerup', loslassen, { passive: true });
-  main.addEventListener('pointercancel', loslassen, { passive: true });
+  main.addEventListener('touchend', loslassen, { passive: true });
+  main.addEventListener('touchcancel', ()=>abbrechen(), { passive: true });
 })();
 
 /* Zahlen zaehlen hoch statt umzuspringen - kleine Geste, macht Home und

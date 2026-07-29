@@ -977,13 +977,36 @@ main{
    erbt — `fixed` müsste die Zentrierung und die 600-px-Grenze von Hand
    nachbauen. Der Abstand nach unten hält sie über der Bottom-Leiste, deren Höhe
    in `main` schon als Polsterung steckt. */
+/* ⚠️ ZWEITER VERSUCH. Der erste stand auf `position:sticky` — das genügt NICHT,
+   und Elias hat den Grund genau benannt (30.07.2026): „es soll bei jedem Satz
+   immer an einer Stelle sein, egal wie groß der Satz ist. Aktuell wenn es einen
+   Quran-Bezug gibt, ist Weiter/Zurück viel weiter unten wie wenn kein
+   Quran-Bezug ist."
+
+   `sticky` klebt erst, wenn das Element aus dem Bild geschoben WÜRDE. Ist der
+   Inhalt kürzer als der Bildschirm, passiert gar nichts und die Leiste sitzt
+   direkt unter der Satzkarte — also je nach Kartenhöhe woanders. Genau das war
+   die Beschwerde.
+
+   `fixed` hängt dagegen am Ansichtsfenster und steht immer an derselben Stelle.
+   Weil `#app` selbst `position:fixed` ist, bezieht sich das Kind auf das
+   Ansichtsfenster und nicht auf #app — Breite und Zentrierung müssen deshalb von
+   Hand nachgebaut werden, so wie es die Bottom-Leiste im Tablet-Fall auch tut.
+   78 px Abstand: die Bottom-Leiste ist gemessen 66 px hoch, dazu Luft. */
 .sent-nav{
   display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);
-  position:sticky;bottom:calc(var(--sp-2) + var(--safe-bottom));
-  z-index:20;margin-top:var(--sp-5);
+  position:fixed;
+  bottom:calc(78px + var(--safe-bottom));
+  left:50%;transform:translateX(-50%);
+  width:calc(100% - var(--gutter) * 2);
+  max-width:calc(600px - var(--gutter) * 2);
+  z-index:20;
   padding:var(--sp-3) 0;
-  background:linear-gradient(to top, var(--bg) 62%, transparent);
+  background:linear-gradient(to top, var(--bg) 74%, transparent);
 }
+/* Platz, damit der letzte Inhalt des Satz-Bildschirms nicht hinter der festen
+   Leiste verschwindet. Nur dieser Bildschirm braucht das. */
+#screen-sentences{padding-bottom:96px;}
 .sent-nav span{color:var(--text-dim);font-size:var(--fs-sm);font-weight:700;font-variant-numeric:tabular-nums;}
 
 .gram-underline{
@@ -1822,6 +1845,21 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
           <div class="setting-sub">Statt nur umdrehen: das Wort selbst schreiben. Braucht eine arabische Tastatur.</div>
         </div>
         <button class="switch" id="toggleTippen" aria-label="Tippen ab Box 4 umschalten"><span class="knob"></span></button>
+      </div>
+
+      <!-- ⭐ Neu am 30.07.2026, und der Anlass war ein Kreislauf, in dem Elias
+           festhing: Das Ziehen zum Aktualisieren war kaputt, also kam kein neuer
+           Stand an — auch nicht der Fix für das Ziehen. Er hat drei Änderungen
+           als "nicht drin" gemeldet, die nachweislich gepusht waren. In der
+           installierten App gibt es keine Adressleiste und keinen
+           Neuladen-Knopf des Browsers; ohne diesen Knopf hier ist man dann
+           eingeschlossen. Er hängt an keiner Geste und an keinem Cache. -->
+      <div class="setting-row">
+        <div>
+          <div class="setting-title">App aktualisieren</div>
+          <div class="setting-sub">Holt die neueste Fassung vom Server. Fortschritt bleibt erhalten.</div>
+        </div>
+        <button class="btn btn-secondary" id="btnAktualisieren">Jetzt laden</button>
       </div>
 
       <div class="setting-row">

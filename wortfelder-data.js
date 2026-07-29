@@ -170,7 +170,8 @@ const WORTFELDER = [
     'Tisch', 'Schreibtisch', 'Schrank', 'Teppich', 'Lampe', 'Spiegel', 'Uhr',
     'Kissen', 'Decke', 'Garten', 'Hof', 'Balkon', 'Keller', 'Möbel', 'Kühlschrank',
     'Ofen', 'Waschmaschine', 'Vorhang', 'Wohnzimmer', 'Schlafzimmer' ,
-    'Badezimmer', 'Toilette', 'WC', 'Waschraum', 'Flur', 'Wohnort', 'Unterkunft', 'Stockwerk' ] },
+    'Badezimmer', 'Toilette', 'WC', 'Waschraum', 'Flur', 'Wohnort', 'Unterkunft', 'Stockwerk' ,
+    'Kochtopf', 'Ventilator', 'Bügeleisen', 'Kühlschrank', 'Wecker' ] },
 
   { name: 'Essen & Trinken', woerter: [
     'Essen', 'Speise', 'Nahrung', 'Brot', 'Reis', 'Fleisch', 'Fisch', 'Ei',
