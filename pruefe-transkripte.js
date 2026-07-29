@@ -89,12 +89,39 @@ function ladeYoutube(datei) {
   return out;
 }
 
-function segmenteImFenster(spur, mitte) {
+function segmenteImFenster(spur, mitte, weite = FENSTER) {
   if (!spur) return [];
-  return spur.filter(s => s.bis >= mitte - FENSTER && s.von <= mitte + FENSTER);
+  return spur.filter(s => s.bis >= mitte - weite && s.von <= mitte + weite);
 }
-function imFenster(spur, mitte) {
-  return segmenteImFenster(spur, mitte).map(s => s.text).join(' ');
+function imFenster(spur, mitte, weite = FENSTER) {
+  return segmenteImFenster(spur, mitte, weite).map(s => s.text).join(' ');
+}
+
+/* Wie weit muesste das Fenster sein, damit die Kernform doch auftaucht?
+
+   Der Zeitstempel einer Regel ist ausdruecklich ein Naeherungswert - er zeigt
+   auf den Anfang der Erklaerung, waehrend der arabische Begriff oft erst
+   spaeter faellt. Genau daran ist am 29.07.26 ismul-isara-hadha-01 gescheitert:
+   Der Lehrer erklaert die Regel im Fenster woertlich ("herde ist fuer Dinge,
+   auf die man zeigt, die in deiner Naehe sind, und maennlich"), aber Whisper
+   schreibt هذا dort als "herde" - mit einem R, das das Muster h-d-a nicht
+   trifft. Das saubere "hada" faellt erst rund zwei Minuten spaeter, bei der
+   Koranstelle. Ergebnis: bei +/-90s galt die Regel als unbelegt, ab +/-120s
+   nicht mehr.
+
+   Die Voreinstellung deshalb aufzuweichen waere falsch - ein weites Fenster
+   belegt irgendwann alles, weil der Lehrer denselben Begriff in der halben
+   Folge benutzt. Stattdessen wird nur BERICHTET, ab wann er auftaucht. Aus
+   "kein Beleg" wird damit "Beleg 100 Sekunden weiter", und das ist etwas ganz
+   anderes: eine Zeitstempel-Ungenauigkeit statt einer fehlenden Aussage. */
+const WEITERE_FENSTER = [120, 150, 200, 300];
+function abWelchemFenster(spur, mitte, formen) {
+  if (!spur || mitte === null) return null;
+  for (const weite of WEITERE_FENSTER) {
+    if (weite <= FENSTER) continue;
+    if (enthaelt(imFenster(spur, mitte, weite), formen).length) return weite;
+  }
+  return null;
 }
 
 /* Whisper haengt gelegentlich in einer Schleife und wiederholt denselben Satz
@@ -280,6 +307,11 @@ for (const r of GRAMMAR_RULES) {
     inYoutube: enthaelt(yText, formen),
     hatWhisper: !!spur.whisper, schleife,
     hatYoutube: !!spur.youtube,
+    /* Nur ausrechnen, wenn im regulaeren Fenster nichts gefunden wurde -
+       sonst ist es verschenkte Rechenzeit ueber 73 Regeln. */
+    weiterAb: (enthaelt(wText, formen).length || enthaelt(yText, formen).length)
+      ? null
+      : (abWelchemFenster(spur.whisper, t, formen) || abWelchemFenster(spur.youtube, t, formen)),
     wText, yText
   });
 }
@@ -352,6 +384,14 @@ if (keine.length){
   keine.forEach(e => {
     const anteil = lehrerAnteil[e.folge];
     console.log(zeile(e) + (anteil ? `   (Lehreranteil der Folge ${anteil}%)` : ''));
+    /* Der wichtigste Zusatz: Steht der Begriff nur etwas weiter weg, ist das
+       eine Ungenauigkeit des Zeitstempels und keine fehlende Aussage. Ohne
+       diese Zeile sieht beides gleich aus, und man hoert unnoetig nach. */
+    if (e.weiterAb) {
+      console.log(`        ^ Kernform steht bei +/-${e.weiterAb}s doch da — der Zeitstempel zeigt`);
+      console.log(`          auf den Anfang der Erklaerung, der Begriff faellt spaeter.`);
+      console.log(`          Zum Nachlesen: node pruefe-transkripte.js ${e.weiterAb} ${e.regel}`);
+    }
   });
 }
 if (ohneForm.length){
