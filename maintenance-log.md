@@ -759,3 +759,50 @@ schlägt dort am stärksten aus, wo am wenigsten zu holen ist. Verteilungen zu
 zählen bleibt richtig, um Lücken zu suchen (so wurde der هَذَا-Fehler im I'rab
 gefunden), aber jeder so gefundene Verdacht muss am Volltext geprüft werden,
 bevor man ihn glaubt.
+
+## 29.07.2026 — Ein Werkzeug statt eines Umbaus: `werkzeuge/vers.mjs`
+
+`quran-text.js` ist 2,3 MB gross und kostet beim vollstaendigen Einlesen rund
+635.000 Tokens. Ueberlegt wurde deshalb, sie in 114 Einzeldateien je Sure zu
+zerlegen, damit niemand mehr aus Versehen alles liest.
+
+**Verworfen, und zwar wegen des Offline-Betriebs.** Heute cacht `sw.js` genau
+eine Datei vorab. Scheitert das, fehlt der Quran ganz und man merkt es sofort.
+Bei 114 Dateien wuerde daraus ein **stiller Teilausfall**: Der Worker nutzt
+`Promise.allSettled` und schreibt bei einzelnen Fehlschlaegen nur eine
+Konsolenwarnung. Man merkt nichts, bis unterwegs eine Sure leer bleibt — genau
+in der Lage, fuer die die Datei ueberhaupt angelegt wurde. Dazu haette der Lader
+in `js/quran.js` (Z. 88–99) von „einmal laden, fertig" auf Zustandsverwaltung je
+Sure umgebaut werden muessen.
+
+**Die Groesse war fuer die App nie ein Problem** — 2,3 MB sind fuer eine PWA
+normal, gehostet gehen davon rund 0,63 MB ueber die Leitung. Das Problem lag
+ausschliesslich im Werkzeug drumherum. Also wurde das Werkzeug geaendert.
+
+`werkzeuge/vers.mjs` liest die Datei selbst und gibt nur das Verlangte aus:
+
+    node werkzeuge/vers.mjs 2:255            ein Vers
+    node werkzeuge/vers.mjs 2:255-257        ein Bereich
+    node werkzeuge/vers.mjs 112              kurze Sure ganz (ab 21 Versen --alles noetig)
+    node werkzeuge/vers.mjs --suche "هذا"    im Text suchen, --max fuer mehr Treffer
+
+Die Suche vergleicht **ohne Vokalzeichen** und vereinheitlicht Alif-Varianten
+sowie Ta marbuta — noetig, weil der Uthmani-Text durchgehend vokalisiert ist und
+eine Suche nach هذا sonst nichts faende. Gemessen: 208 Fundstellen, darunter
+هَٰذَا und بِهَٰذَا. Der deutsche Text wird mitdurchsucht. Umschrift trifft sie
+bewusst nicht — „hada" liefert nur deutsche Treffer, alles andere waere geraten.
+
+Geprueft: Einzelvers, Bereich, Suche, der Schutz vor Riesenausgabe (Sure 2 mit
+286 Versen bricht mit Hinweis ab) und der Fehlerfall (Sure 115 existiert nicht).
+
+**Der eigentliche Gewinn ist struktureller Art.** Die Regel „grosse Dateien
+nicht in Subagenten einlesen" steht seit dem Vorfall mit 4,16 Mio. Tokens in
+`CLAUDE.md` — aber Regeln, die auf Disziplin beruhen, werden irgendwann
+uebergangen. Wer den Vers bequem einzeln bekommt, oeffnet die grosse Datei gar
+nicht erst. Der Aufruf steht jetzt in `CLAUDE.md` und ist **ausdruecklich auch
+fuer Subagenten freigegeben**, weil die Ausgabe klein bleibt, egal wie gross die
+Quelle ist.
+
+Nebenbei berichtigt: Die Kopfzeile von `surah-data.js` behauptete noch
+„Verstext wird live von quran.com API geladen". Das stimmt seit dem 27./28.07.
+nicht mehr — quran.com ist nur noch Rueckfallebene.

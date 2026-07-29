@@ -1,4 +1,6 @@
-// Sure-Metadaten (Name, Verszahl) - Verstext wird live von quran.com API geladen
+// Sure-Metadaten (Name, Verszahl). Der Verstext liegt seit dem 27./28.07.2026
+// vollstaendig offline in quran-text.js; quran.com ist nur noch Rueckfallebene.
+// Einzelne Verse ohne die 2,3-MB-Datei zu oeffnen: node werkzeuge/vers.mjs 2:255
 const SURAH_DATA = [
  {
   "id": 1,
