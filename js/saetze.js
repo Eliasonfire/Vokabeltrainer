@@ -16,13 +16,66 @@ function alleSaetze(){
   const ausLehrbuch = (typeof LEHRBUCH_SAETZE!=='undefined') ? LEHRBUCH_SAETZE : [];
   return ausVokabeln.concat(ausLehrbuch);
 }
+
+/* ---------- Themenfilter (Elias' Wunsch vom 29.07.2026) ----------
+   Die Themen und die dahinterliegende Zaehlung stehen in grammar-data.js
+   (`SATZ_THEMEN`). Hier nur die Anwendung: welche Saetze tragen mindestens
+   eine Markierung, deren Regel zu diesem Thema gehoert?
+
+   Regeln, die AUSGEBLENDET sind, zaehlen nicht mit - sonst stuende ein Satz in
+   einem Thema, das in ihm gar nicht mehr unterstrichen wird. */
+let SATZ_THEMA = 'alle';
+
+function themaRegelIds(themaId){
+  const t = (typeof SATZ_THEMEN !== 'undefined') && SATZ_THEMEN.find(x=>x.id===themaId);
+  if (!t || !t.muster) return null;
+  return new Set(GRAMMAR_RULES.filter(r=>t.muster.test(r.id) && !r.ausgeblendet).map(r=>r.id));
+}
+
+function saetzeZumThema(themaId){
+  const alle = alleSaetze();
+  const ids = themaRegelIds(themaId);
+  if (!ids) return alle;
+  return alle.filter(w=>{
+    const tags = (typeof SENTENCE_TAGS!=='undefined') && SENTENCE_TAGS[w.id];
+    return tags && tags.some(t=>ids.has(t.ruleId));
+  });
+}
+
+function renderThemenLeiste(){
+  const leiste = document.getElementById('sentThemen');
+  if (!leiste || typeof SATZ_THEMEN === 'undefined') return;
+  leiste.innerHTML = SATZ_THEMEN.map(t=>{
+    const n = saetzeZumThema(t.id).length;
+    /* Die Zahl steht dran, weil sie die Erwartung setzt: "Iḍāfa 16" sagt
+       vorher, dass es ein kleines Thema ist, statt es hinterher zu zeigen. */
+    return `<button class="sent-thema${t.id===SATZ_THEMA?' active':''}" data-thema="${t.id}">`
+         + `${escapeHtml(t.name)}<i>${n}</i></button>`;
+  }).join('');
+}
+
+function setzeThema(themaId){
+  SATZ_THEMA = themaId;
+  if (LUECKE.aktiv) beendeLuecke();
+  SENT.list = saetzeZumThema(themaId);
+  SENT.idx = 0;
+  renderThemenLeiste();
+  renderSentence();
+}
+
 let SENT = { list: alleSaetze(), idx:0 };
 
 function openSentences(){
-  SENT.list = alleSaetze();
+  SENT.list = saetzeZumThema(SATZ_THEMA);
   if (SENT.idx >= SENT.list.length) SENT.idx = 0;
+  renderThemenLeiste();
   renderSentence();
 }
+
+document.getElementById('sentThemen').addEventListener('click', (e)=>{
+  const knopf = e.target.closest('[data-thema]');
+  if (knopf) setzeThema(knopf.dataset.thema);
+});
 
 /* Woher stammt der Satz? Bei Lehrbuchsaetzen ist die Seite die eigentliche
    Auskunft - danach kann Elias im Buch nachschlagen. */
