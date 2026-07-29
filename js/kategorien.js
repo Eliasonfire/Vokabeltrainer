@@ -65,9 +65,43 @@ function renderCustomCats(){
     </div>
   `).join('');
 
-  const assigned = new Set(CUSTOM_CATS.flatMap(c=>c.wordIds));
-  const pool = buchVokabeln().filter(w=>!assigned.has(w.id));
-  document.getElementById('poolWords').innerHTML = pool.map(w=>`<span class="word-chip" draggable-id="${w.id}">${w.ar}<span class="weak-de">(${w.de})</span></span>`).join('');
+  /* ---------- Zwei Listen: offen und schon einsortiert ----------
+     Elias' Entwurf vom 29.07.2026, in seinen Worten:
+
+       "Die beste Lösung wäre, wenn man diese Vokabelliste in bereits
+        einkategorisierte und nicht einkategorisierte Vokabeln unterteilt und
+        jedes Wort aber in der Vokabelliste permanent lässt. … Mein Gedanke
+        dahinter ist, dass ich dann nicht die ganze Zeit die Vokabeln suchen
+        muss, die ich noch nicht einkategorisiert habe."
+
+     Der springende Punkt ist das PERMANENT. Vorher verschwand ein Wort aus der
+     Liste, sobald es irgendwo lag — damit war es unmöglich, „Lehrer" sowohl
+     unter Schule als auch unter Berufe zu legen, obwohl beides stimmt.
+
+     Beide Listen werden BERECHNET, nicht gespeichert. Das erledigt nebenbei
+     Elias' letzte Bedingung von selbst: liegt ein Wort in drei Kategorien und
+     man löscht sie alle, taucht es genau EINMAL wieder oben auf — eine
+     Mengenberechnung kann gar keine Dubletten erzeugen. */
+  const zugeordnet = new Map();          // Vokabel-ID -> Anzahl Kategorien
+  CUSTOM_CATS.forEach(c => c.wordIds.forEach(id =>
+    zugeordnet.set(id, (zugeordnet.get(id) || 0) + 1)));
+
+  const alle   = buchVokabeln();
+  const offen  = alle.filter(w => !zugeordnet.has(w.id));
+  const fertig = alle.filter(w =>  zugeordnet.has(w.id));
+
+  const chip = (w, n) => `<span class="word-chip" draggable-id="${w.id}">${w.ar}` +
+    `<span class="weak-de">(${w.de})</span>` +
+    (n ? `<span class="in-kat" title="in ${n} Kategorie${n>1?'n':''}">${n}×</span>` : '') +
+    `</span>`;
+
+  document.getElementById('poolWords').innerHTML =
+    offen.map(w => chip(w, 0)).join('') ||
+    '<div class="empty-state">Alles einsortiert.</div>';
+  document.getElementById('poolWordsFertig').innerHTML =
+    fertig.map(w => chip(w, zugeordnet.get(w.id))).join('');
+  document.getElementById('poolOffenZahl').textContent  = `(${offen.length})`;
+  document.getElementById('poolFertigZahl').textContent = `(${fertig.length})`;
 
   document.querySelectorAll('[data-delcat]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
@@ -183,6 +217,9 @@ const HALTEN_WEG = 10;
 function setupDragAndDrop(){
   let ghost=null, sourceEl=null, sourceId=null;
   let warten=null, startX=0, startY=0;
+  /* Woher kam das Wort? Aus einer Kategorie-Box oder aus einer der beiden
+     Listen unten. Davon haengt ab, was das Ablegen bedeutet — siehe onUp. */
+  let herkunftCat=null;
 
   document.querySelectorAll('.word-chip').forEach(chip=>{
     chip.addEventListener('pointerdown', druckBeginnt);
@@ -207,6 +244,8 @@ function setupDragAndDrop(){
     startX = e.clientX; startY = e.clientY;
     sourceEl = chip;
     sourceId = chip.getAttribute('draggable-id');
+    const box = chip.closest('.custom-cat-box');
+    herkunftCat = box ? box.dataset.catid : null;
     chip.classList.add('haltend');
     /* KEIN preventDefault hier - sonst rollt die Liste wieder nicht. */
     document.addEventListener('pointermove', beobachte);
@@ -323,19 +362,54 @@ function setupDragAndDrop(){
     }
     document.querySelectorAll('.custom-cat-box').forEach(b=>b.classList.remove('drop-hover'));
     if (sourceId){
-      /* Immer zuerst aus allen Kategorien entfernen - so wird ein Wort, das aus
-         einer Kategorie-Box heraus (zurueck in den Pool oder nirgendwohin)
-         gezogen wird, automatisch wieder freigegeben. */
-      CUSTOM_CATS.forEach(c=>{ c.wordIds = c.wordIds.filter(id=>id!==sourceId); });
-      if (box){
-        const catId = box.dataset.catid;
-        const cat = CUSTOM_CATS.find(c=>c.id===catId);
-        if (cat && !cat.wordIds.includes(sourceId)) cat.wordIds.push(sourceId);
+      /* HIER STAND bis zum 29.07.2026 abends: "Immer zuerst aus allen
+         Kategorien entfernen". Das war VERSCHIEBEN, und genau daran ist Elias'
+         eigentliches Vorhaben gescheitert — ein Wort konnte nur an einer Stelle
+         liegen. Seine Begründung, warum das nicht reicht: "Lehrer kann ich
+         sowohl in Schule und Studium als auch in Berufe reinpacken."
+
+         Jetzt entscheidet die HERKUNFT, was das Ablegen bedeutet:
+           aus einer Liste  → HINZUFÜGEN (das Wort bleibt in der Liste stehen
+                              und kann in weitere Kategorien)
+           aus Kategorie A
+             … auf Kategorie B → verschieben (A verliert es, B bekommt es)
+             … ins Leere       → nur aus A entfernen
+
+         Damit ist Ziehen aus der Liste beliebig oft wiederholbar, und ein Wort
+         wieder loszuwerden geht dort, wo man es sieht: in seiner Kategorie. */
+      const wort = byId(sourceId);
+      const name = wort ? wort.de : 'Das Wort';
+      const zielCat = box && CUSTOM_CATS.find(c => c.id === box.dataset.catid);
+
+      if (zielCat){
+        const schonDrin = zielCat.wordIds.includes(sourceId);
+        if (!schonDrin) zielCat.wordIds.push(sourceId);
+        if (herkunftCat && herkunftCat !== zielCat.id){
+          const quelle = CUSTOM_CATS.find(c => c.id === herkunftCat);
+          if (quelle) quelle.wordIds = quelle.wordIds.filter(id => id !== sourceId);
+        }
+        toast(schonDrin ? `${name} liegt dort schon.` : `${name} → ${zielCat.name}`);
+      } else if (herkunftCat){
+        const quelle = CUSTOM_CATS.find(c => c.id === herkunftCat);
+        if (quelle){
+          quelle.wordIds = quelle.wordIds.filter(id => id !== sourceId);
+          toast(`${name} aus „${quelle.name}" entfernt.`);
+        }
       }
       saveCustomCats();
       renderCustomCats();
     }
-    sourceEl=null; sourceId=null; ghost=null;
+    sourceEl=null; sourceId=null; ghost=null; herkunftCat=null;
   }
 }
+
+/* Aufklapper für die schon einsortierten Wörter. Die Liste haengt am Ende des
+   Bildschirms; sie standardmaessig zuzuklappen ist der halbe Zweck der
+   Trennung — offen waere es wieder die eine lange Liste von vorher. */
+document.getElementById('btnPoolFertig').addEventListener('click', ()=>{
+  const knopf = document.getElementById('btnPoolFertig');
+  const liste = document.getElementById('poolWordsFertig');
+  const auf = liste.classList.toggle('hidden');
+  knopf.setAttribute('aria-expanded', String(!auf));
+});
 
