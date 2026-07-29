@@ -942,6 +942,30 @@ main{
 .irab-kasus[data-k="nasb"]{color:var(--gram-nasab);}
 .irab-hinweis{color:var(--text-dim);font-size:var(--fs-sm);margin-top:var(--sp-3);line-height:1.5;}
 
+/* Themenreiter über der Satzkarte. Waagerecht rollbar statt umbrechend: neun
+   Themen in zwei Zeilen würden die Satzkarte nach unten drücken, und die soll
+   ohne Rollen sichtbar bleiben. */
+.sent-themen{
+  display:flex;gap:var(--sp-2);overflow-x:auto;
+  margin:0 calc(var(--gutter) * -1) var(--sp-4);
+  padding:var(--sp-1) var(--gutter);
+  scrollbar-width:none;
+}
+.sent-themen::-webkit-scrollbar{display:none;}
+.sent-thema{
+  flex:0 0 auto;display:flex;align-items:center;gap:6px;
+  background:var(--surface-2);border:1px solid var(--border);color:var(--text-dim);
+  border-radius:var(--r-full);padding:var(--sp-2) var(--sp-3);
+  font-size:var(--fs-sm);font-weight:700;font-family:var(--font-ui);cursor:pointer;
+  transition:background var(--dur-2) ease, border-color var(--dur-2) ease, color var(--dur-2) ease;
+}
+.sent-thema i{
+  font-style:normal;font-size:var(--fs-xs);font-weight:700;
+  color:var(--text-faint);font-variant-numeric:tabular-nums;
+}
+.sent-thema.active{background:var(--red-wash);border-color:var(--red-dim);color:var(--red-bright);}
+.sent-thema.active i{color:var(--red-bright);opacity:.75;}
+
 /* Zurück / Weiter im Satz-Modus.
    Stand bis zum 29.07.2026 unter der Satzkarte und wanderte damit bei jedem
    Blättern woanders hin — je nachdem, ob der Satz lang war oder ein Koranvers
@@ -1631,6 +1655,10 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
         </div>
         <button class="switch" id="toggleGrammarHighlight" aria-label="Grammatik-Hinweise umschalten"><span class="knob"></span></button>
       </div>
+
+      <!-- Themenfilter. Die Zahl an jedem Reiter kommt aus den Daten und sagt
+           vorher, wie groß das Thema ist — siehe SATZ_THEMEN in grammar-data.js. -->
+      <div class="sent-themen" id="sentThemen"></div>
 
       <div class="sentence-card" id="sentenceCard">
         <div class="chip chip-chapter" id="sentChapter">Kap. 1</div>

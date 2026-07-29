@@ -1266,3 +1266,42 @@ const SENTENCE_TAGS = {
     { ruleId: "possessiv-ya-01", matchText: "عَمِّي" }
   ]
 };
+
+/* ===================== Satz-Themen =====================
+   Elias am 29.07.2026: "Man müsste den Satzmodus vielleicht auch nochmal in
+   mehreren Abteilen aufteilen: der eine behandelt den Kasus, der andere die
+   Adjektive, der andere مُضاف / مُضاف إِلَيْهِ, der andere den Genitiv …
+   Dann könnte man vielleicht noch einen Satzmodus haben, der alle mischt."
+
+   Gebaut als FILTER auf dem bestehenden Satz-Modus, nicht als sechs getrennte
+   Bildschirme: derselbe Nutzen, ein Bruchteil des Codes, und der Lückentext,
+   die I'rab-Zerlegung und der Vorlesen-Knopf funktionieren in jedem Thema
+   weiter, ohne dreimal gebaut zu werden.
+
+   VOR dem Bauen gezählt (29.07.2026, `zaehle-themen.mjs`), weil sechs Modi
+   nichts nützen, von denen vier leer sind. Ergebnis über 186 Sätze:
+
+     Hinweiswörter   49   ·   Genitiv        37   ·   Nominalsatz  30
+     Kasus           28   ·   Adjektiv       28   ·   Weiblich     26
+     Bestimmtheit    24   ·   Iḍāfa          16
+
+   Zwei von Elias' Wünschen sind damit NICHT als eigenes Thema gebaut:
+   „Fragen" hätte 4 Sätze, „Wortarten" 10 — das wäre ein Reiter, der nach
+   zwei Sätzen leer ist. Sie bleiben über „Alle" erreichbar. Ebenso Akkusativ:
+   den behandelt der Unterricht bisher nur als Erwähnung, es gibt keine Regel
+   und keinen Satz dazu (Elias selbst: „die Regeln zum Akkusativ kenne ich
+   auch nicht, unser Lehrer hatte es nur erwähnt").
+
+   Zugeordnet wird über die Regel-ID, nicht über die Anzeigefarbe: die Farbe
+   ist eine Gestaltungsentscheidung und deckt sich nicht mit den Themen. */
+const SATZ_THEMEN = [
+  { id: 'alle',        name: 'Alle' },
+  { id: 'isara',       name: 'Hinweiswörter',  muster: /^(ismul-isara|hadha|isara|tilka)/ },
+  { id: 'jarr',        name: 'Genitiv',        muster: /^(harf-jarr|min-ila|fi-ala|mina-al|li-|lil-)/ },
+  { id: 'nominalsatz', name: 'Nominalsatz',    muster: /^(mubtada|nominalsatz|jumla|wortstellung)/ },
+  { id: 'kasus',       name: 'Kasus',          muster: /^(irab|kasus|marfu|majrur|mansub|tanwin|alif-maqsura)/ },
+  { id: 'nat',         name: 'Adjektiv',       muster: /^(nat|adjektive|mutabaqa)/ },
+  { id: 'fem',         name: 'Weiblich',       muster: /^(ta-marbuta|fem-|nat-fem|eigennamen-fem)/ },
+  { id: 'al',          name: 'اَلْ',            muster: /^(al-|schams|qamar|adjektive-an)/ },
+  { id: 'idafa',       name: 'إِضافة',          muster: /^(idafa|mudaf|zarf-als-mudaf)/ }
+];
