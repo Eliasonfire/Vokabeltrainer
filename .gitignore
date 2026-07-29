@@ -24,3 +24,12 @@ vokabelpaket.json
 # Python-Zwischenstand der Sprechertrennung
 __pycache__/
 .vokabelpaket-stand.json
+
+# Projektkontext fuer Claude Code. Bleibt bewusst lokal (Entscheidung Elias,
+# 29.07.26): Die Datei verweist auf Pfade in seinem Obsidian-Tresor, die es nur
+# auf seinem Rechner gibt - fuer jeden anderen Leser zeigen sie ins Leere.
+# WICHTIG: Das aendert NICHTS daran, dass Claude Code sie liest. .gitignore
+# steuert nur, was Git hochlaedt; gelesen wird die Datei von der Platte, sobald
+# in diesem Ordner gearbeitet wird. Belegt am Gegenbeispiel F:\Workspace\CLAUDE.md
+# - dieser Ordner ist gar kein Git-Repo und wird trotzdem jedes Mal gelesen.
+CLAUDE.md
