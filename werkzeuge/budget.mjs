@@ -3,6 +3,7 @@
  *   node werkzeuge/budget.mjs                       Stand anzeigen
  *   node werkzeuge/budget.mjs --buche 368432 "3 Pruef-Agenten"
  *   node werkzeuge/budget.mjs --schaetze 3 pruefer  Was wuerde das kosten?
+ *   node werkzeuge/budget.mjs --stand 63            Elias hat 63 % abgelesen
  *
  * WARUM ES DAS GIBT (29.07.2026)
  * ------------------------------
@@ -20,7 +21,36 @@
  *
  * Genau fuer den teuersten Posten ist das aber exakt: Agentenlaeufe melden ihre
  * `subagent_tokens` am Ende selbst. Die gehoeren gebucht, sobald sie dastehen.
- * Der eigene Gespraechsverbrauch bleibt Schaetzung. */
+ *
+ * --stand SCHLIESST GENAU DIESE LUECKE (nachgetragen 29.07.2026)
+ * -------------------------------------------------------------
+ * Nennt Elias von sich aus einen Prozentstand ("du hast jetzt 63% erreicht"),
+ * war das bisher eine Zahl ohne Ablage - sie stand im Chat und war nach dem
+ * naechsten Komprimieren weg. Dabei ist sie die einzige echte Messung, die es
+ * ueberhaupt gibt: sie umfasst auch den eigenen Gespraechsverbrauch, den das
+ * Buch strukturell nicht kennt.
+ *
+ * Aus zwei Ablesungen faellt deshalb der Wert heraus, der vorher nirgends stand:
+ *
+ *   eigenes Arbeiten = (Ablesung - Startstand) x 42.000 - gebuchte Posten
+ *
+ * Am 29.07. ergab das 597.568 Token in 2,23 h, also rund 267.500 je Stunde.
+ * Damit laesst sich zum ersten Mal ausrechnen, ob eine Schicht ihr Budget
+ * ueberhaupt erreicht - und was ein Agent im Vergleich zur eigenen Arbeitszeit
+ * kostet (ein Pruefer ~28 min, drei ~1,4 h).
+ *
+ * ⚠️ UND GENAU HIER HAT DAS SKRIPT SEINEN ERSTEN FEHLER GEFANGEN - meinen.
+ * Ich hatte den Zeitraum von Hand als "4,24 h" gerechnet, weil ich den
+ * gespeicherten Zeitstempel 03:10:49Z als Ortszeit gelesen habe. Er ist aber
+ * UTC; Elias' Uhr steht auf UTC+2, die Schicht begann also um 05:10 Ortszeit.
+ * Die Haelfte des Zeitraums war frei erfunden - und der Stundensatz damit halb
+ * so hoch, wie er ist. Das Skript rechnet die Differenz aus dem Zeitstempel
+ * selbst und kann diesen Fehler nicht machen. Merksatz: Zeitspannen nie im Kopf
+ * aus ISO-Stempeln bilden, wenn die Anzeige daneben sie schon ausrechnet.
+ *
+ * ⚠️ Das Ergebnis ist ein STUNDENSATZ, kein Preis je Loop-Ausloesung. In der
+ * gemessenen Zeit steckten Ausloesungen UND lange eigene Strecken, ungetrennt.
+ * Wer daraus einen Ausloesungspreis teilt, erfindet eine Zahl. */
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -87,9 +117,65 @@ function stand(){
   else if (rest < AGENT.pruefer * 3) console.log(`  ⚠️  Reicht nicht mehr fuer drei Pruefer (${(3*AGENT.pruefer).toLocaleString('de-DE')}).`);
   else console.log(`  ✅ Reicht noch fuer ~${Math.floor(rest / AGENT.pruefer)} Pruef-Agenten.`);
   console.log('');
-  console.log('  Was NICHT drinsteht: der eigene Gespraechsverbrauch. Das Buch ist');
-  console.log('  eine Untergrenze, keine Messung - den echten Stand sieht nur Elias.');
+  ablesungenZeigen(b, gebucht);
   return rest <= 0 ? 1 : 0;
+}
+
+/* Die von Elias abgelesenen Prozentstaende auswerten. Ohne Ablesung bleibt es
+   beim alten Hinweis; mit Ablesung wird daraus die einzige echte Messung. */
+function ablesungenZeigen(b, gebucht){
+  const a = b.ablesungen || [];
+  if (!a.length){
+    console.log('  Was NICHT drinsteht: der eigene Gespraechsverbrauch. Das Buch ist');
+    console.log('  eine Untergrenze, keine Messung - den echten Stand sieht nur Elias.');
+    console.log('  Nennt er einen Stand, gehoert er hier hinein:  --stand <prozent>');
+    return;
+  }
+
+  const letzte = a[a.length - 1];
+  const stunden = (new Date(letzte.zeit).getTime() - new Date(b.start).getTime()) / 3600000;
+  const punkte = letzte.prozent - b.startProzent;
+
+  console.log(`  Letzte Ablesung von Elias:  ${letzte.prozent} %  (${letzte.zeit})`);
+  console.log(`  gegen ${b.startProzent} % bei Anlage, ${stunden.toFixed(2)} h vorher`);
+
+  /* Ein Reset macht die Differenz sinnlos - er senkt den Stand, statt ihn zu
+     heben. Dann lieber gar nichts rechnen als etwas Falsches ausgeben. */
+  if (punkte <= 0){
+    console.log('');
+    console.log('  ⚠️  Die Ablesung liegt NICHT ueber dem Startstand. Dazwischen lag');
+    console.log('     vermutlich ein Reset des Nutzungslimits. Aus solchen Werten');
+    console.log('     laesst sich kein Verbrauch ableiten - neu anfangen mit --start.');
+    return;
+  }
+
+  const echt   = punkte * PRO_PROZENT;
+  const eigen  = echt - gebucht;
+  console.log('');
+  console.log(`  echter Verbrauch     ${String(echt).padStart(9)}  = ${punkte} Punkte`);
+  console.log(`  davon gebucht        ${String(gebucht).padStart(9)}  (Agenten u. a.)`);
+  console.log(`  => eigenes Arbeiten  ${String(eigen).padStart(9)}`);
+
+  if (eigen <= 0){
+    console.log('');
+    console.log('  ⚠️  Gebucht ist mehr als abgelesen. Entweder ist ein Posten doppelt');
+    console.log('     gebucht, oder die Ablesung ist aelter als der letzte Lauf.');
+    return;
+  }
+  if (stunden < 0.25){
+    console.log('');
+    console.log('  (Zu kurz seit Anlage fuer einen belastbaren Stundensatz.)');
+    return;
+  }
+
+  const proStunde = eigen / stunden;
+  console.log(`     das sind          ${String(Math.round(proStunde)).padStart(9)}  je Stunde = ${(100*proStunde/GESAMT).toFixed(1)} Punkte/h`);
+  console.log('');
+  console.log(`  Hochrechnung: 10 h Schicht ≈ ${(10*proStunde/PRO_PROZENT).toFixed(0)} Punkte allein durchs Arbeiten.`);
+  console.log(`  Ein Pruef-Agent (${AGENT.pruefer.toLocaleString('de-DE')}) entspricht ${(60*AGENT.pruefer/proStunde).toFixed(0)} Minuten davon.`);
+  console.log('');
+  console.log('  ⚠️  Das ist ein Stundensatz, KEIN Preis je Loop-Ausloesung - in der');
+  console.log('     Zeit steckten Ausloesungen und lange eigene Strecken, ungetrennt.');
 }
 
 const args = process.argv.slice(2);
@@ -115,6 +201,26 @@ if (args.includes('--buche')){
   b.posten.push({ token, was });
   sichern(b);
   console.log(`Gebucht: ${token.toLocaleString('de-DE')} (${pz(token)}) - ${was}\n`);
+  process.exit(stand());
+}
+
+if (args.includes('--stand')){
+  const b = laden();
+  if (!b){ console.error('Kein Haushaltsbuch. Erst --start.'); process.exit(1); }
+  const prozent = Number(wert('--stand'));
+  if (!Number.isFinite(prozent) || prozent < 0 || prozent > 100){
+    console.error('--stand braucht einen Prozentwert zwischen 0 und 100, so wie Elias ihn abliest.');
+    process.exit(1);
+  }
+  /* Ein Zeitstempel darf mitgegeben werden, falls die Ablesung schon eine Weile
+     her ist - sonst zaehlt jetzt. Sonst verschiebt sich der Stundensatz. */
+  const zeit = wert('--zeit') || new Date().toISOString();
+  if (Number.isNaN(new Date(zeit).getTime())){
+    console.error(`--zeit "${zeit}" ist kein lesbares Datum.`); process.exit(1);
+  }
+  (b.ablesungen ||= []).push({ zeit, prozent });
+  sichern(b);
+  console.log(`Notiert: Elias liest ${prozent} % ab (${zeit}).\n`);
   process.exit(stand());
 }
 
