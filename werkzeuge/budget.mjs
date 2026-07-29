@@ -73,9 +73,13 @@ function stand(){
   console.log(`  frei     ${String(rest).padStart(9)}  = ${pz(rest)} des Gesamtlimits`);
   console.log('');
   if (stunden > GRENZE_H){
-    console.log(`  ⏹  SCHICHTENDE — ${stunden.toFixed(1)} h sind mehr als die vereinbarten ${GRENZE_H}.`);
-    console.log('     Stand sichern, Abschlusszeile in die To-Do, Loops mit CronDelete beenden.');
-    console.log('     Elias trotzdem nicht schreiben - er meldet sich selbst.');
+    console.log(`  ⏹  AUFNAHMESTOPP — ${stunden.toFixed(1)} h sind mehr als die vereinbarten ${GRENZE_H}.`);
+    console.log('     KEIN Abbruch: keinen NEUEN Punkt mehr anfangen, den laufenden bis zum');
+    console.log('     naechsten sicheren Haltepunkt bringen (keine halbe Mehrdatei-Aenderung,');
+    console.log('     validate.js gruen, committet und gepusht, Marke geschlossen oder mit Stand).');
+    console.log('     Ist der Haltepunkt weit weg: erreichten Teil sichern und pausieren.');
+    console.log('     Reissleine 30 min. Dann: Gedaechtnis FINAL vollstaendig, Abschlusszeile,');
+    console.log('     Loops mit CronDelete beenden. Elias nicht schreiben - er meldet sich selbst.');
     console.log('');
   }
   if (rest <= 0)                console.log('  ❌ Budget aufgebraucht. Nichts Teures mehr starten, Stand sichern.');
