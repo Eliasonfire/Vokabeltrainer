@@ -65,6 +65,20 @@
   /* --- Schrift --- */
   --font-ar:'Noto Naskh Arabic','Amiri',serif;
   --font-ui:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  /* Arabisch zu Deutsch: EINE Stellschraube fuer die ganze App.
+     Elias' Vorgabe (29.07.2026): "mir ist einfach wichtig, dass arabisch gut
+     leserlich ist weil normalerweise ist es einfach sehr klein geschrieben wenn
+     es die gleiche groesse hat wie deutsch, das mag ich nicht."
+     Bei gleicher Punktgroesse WIRKT Arabisch kleiner - die Buchstabenformen und
+     erst recht die Vokalzeichen tragen mehr Detail auf gleicher Hoehe. Der
+     Faktor ist also kein Geschmack, sondern der Ausgleich dafuer.
+     Vorbild sind die deutschen Madina-Schluessel (gerendert und ausgemessen,
+     ~1,8-2,0). Die App lag vorher uneinheitlich zwischen 1,70 und 2,00 -
+     deshalb haengen alle Paare jetzt hier dran statt an eigenen Zahlen.
+     AUSGENOMMEN: .arabic-word, das grosse Wort auf der Lernkarte. Es ist
+     absichtlich groesser als jeder Faktor und bleibt, wie es ist ("schoen gross
+     leserlich, das ist sehr gut"). */
+  --ar-faktor:2;
   --fs-xs:.7rem;
   --fs-sm:.78rem;
   --fs-md:.88rem;
@@ -565,7 +579,8 @@ main{
   width:100%;background:var(--surface-3);border:1px solid var(--border);
   border-radius:var(--r-3);padding:var(--sp-4);margin-top:var(--sp-1);
 }
-.example-ar{font-family:var(--font-ar);font-size:1.5rem;direction:rtl;text-align:center;line-height:2;color:#fff;}
+/* 1,5rem gegen --fs-md ergab 1,70 - jetzt aus dem deutschen Partner abgeleitet. */
+.example-ar{font-family:var(--font-ar);font-size:calc(var(--fs-md) * var(--ar-faktor));direction:rtl;text-align:center;line-height:2;color:#fff;}
 .example-de{font-size:var(--fs-md);color:var(--text-dim);text-align:center;margin-top:var(--sp-2);}
 
 .quran-box{
@@ -576,7 +591,8 @@ main{
   font-size:var(--fs-xs);font-weight:700;color:var(--red-bright);margin-bottom:var(--sp-2);
   display:flex;align-items:center;gap:var(--sp-2);letter-spacing:.04em;text-transform:uppercase;
 }
-.quran-ar{font-family:var(--font-ar);font-size:1.35rem;direction:rtl;text-align:center;line-height:2;color:#fff;}
+/* 1,35rem gegen --fs-sm ergab 1,73. Gilt fuer Lernkarte UND Satz-Modus. */
+.quran-ar{font-family:var(--font-ar);font-size:calc(var(--fs-sm) * var(--ar-faktor));direction:rtl;text-align:center;line-height:2;color:#fff;}
 .quran-ref{font-size:var(--fs-sm);color:var(--text-dim);text-align:center;margin-top:var(--sp-2);font-weight:700;}
 .quran-note{font-size:var(--fs-sm);color:var(--text-faint);text-align:center;margin-top:var(--sp-1);line-height:1.5;}
 .hidden{display:none !important;}
@@ -736,7 +752,11 @@ main{
   padding:var(--sp-8) var(--sp-5) var(--sp-6);position:relative;text-align:center;min-height:300px;
   box-shadow:var(--sh-2), inset 0 1px 0 var(--hairline);
 }
-.arabic-sentence{font-family:var(--font-ar);font-size:clamp(2rem,8vw,2.8rem);direction:rtl;line-height:2.1;color:#fff;margin-top:var(--sp-5);}
+/* Traf das Verhaeltnis schon (2rem gegen --fs-lg = 2,00), stand aber als feste
+   Zahl da. Jetzt am selben Faktor - sonst laeuft es beim naechsten Anfassen
+   wieder auseinander. Das clamp bleibt: auf breiten Schirmen darf der Satz
+   groesser werden, unter 2,0 aber nie fallen. */
+.arabic-sentence{font-family:var(--font-ar);font-size:clamp(calc(var(--fs-lg) * var(--ar-faktor)),8vw,2.8rem);direction:rtl;line-height:2.1;color:#fff;margin-top:var(--sp-5);}
 .german-sentence{color:var(--text-dim);font-size:var(--fs-lg);margin-top:var(--sp-4);line-height:1.55;}
 .sent-controls{display:flex;justify-content:center;gap:var(--sp-4);margin-top:var(--sp-6);}
 .round-btn{
