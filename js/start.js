@@ -11,8 +11,12 @@ function renderHome(){
   document.getElementById('streakCount').textContent = getStreak().count;
 
   const boxCounts = [1,2,3,4,5].map(b => buchVokabeln().filter(w=>PROGRESS[w.id] && PROGRESS[w.id].box===b).length);
+  /* Box 1 rot, Box 5 gruen - Elias' Wunsch vom 29.07.2026. Dieselbe Tabelle wie
+     in js/statistik.js; 2-4 bleiben neutral, weil eine fuenfstufige Farbskala
+     behaupten wuerde, Box 3 sei "halb gut". */
+  const BOX_TON = { 1:'schlecht', 5:'gut' };
   document.getElementById('boxOverview').innerHTML = boxCounts.map((n,i)=>`
-    <div class="box-pip" data-openlist="box:${i+1}"><div class="n">${n}</div><div class="l">Box ${i+1}</div></div>
+    <div class="box-pip${BOX_TON[i+1] ? ' box-'+BOX_TON[i+1] : ''}" data-openlist="box:${i+1}"><div class="n">${n}</div><div class="l">Box ${i+1}</div></div>
   `).join('');
 
   const quranCount = buchVokabeln().filter(w=>w.quran).length;
