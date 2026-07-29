@@ -16,7 +16,13 @@ const INTERVALS = {1:0, 2:1, 3:3, 4:7, 5:16};
    um لِ, das Kapitel selbst fuehrt aber Laendernamen ein. */
 const CHAPTER_NAMES = {
   1:"هَذَا (dies)", 2:"ذَلِكَ (jenes)", 3:"اَلْ (bestimmter Artikel)", 4:"Genitivpartikel", 5:"مُضَاف (Bezugswort)",
-  6:"هَذِهِ (diese)", 7:"تِلْكَ (jene)", 8:"Länder", 9:"نَعْت (Adjektiv)", personal:"Eigene Vokabeln"
+  6:"هَذِهِ (diese)", 7:"تِلْكَ (jene)", 8:"Länder", 9:"نَعْت (Adjektiv)",
+  /* Kapitel 24 ist bei arabicroots kein Lektionskapitel - Madina Buch 1 hat 23
+     Lektionen (Madina-Schluessel 1). Es ist ein Anhang: Pronomen, Fragewoerter,
+     Zahlen, Grammatik-Fachbegriffe und vermischter Wortschatz. Der Name ist am
+     Inhalt abgelesen, nicht geraten - Elias hat am 30.07.26 die neun Zahlen
+     daraus angefordert. */
+  24:"Anhang (Pronomen, Zahlen, Fachbegriffe)", personal:"Eigene Vokabeln"
 };
 
 /* ---------- Storage ---------- */

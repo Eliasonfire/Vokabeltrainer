@@ -449,6 +449,18 @@ main{
 .box-pip:active{transform:scale(.95);border-color:var(--red-dim);}
 .box-pip .n{font-weight:800;font-size:var(--fs-xl);font-variant-numeric:tabular-nums;}
 .box-pip .l{font-size:.6rem;color:var(--text-faint);text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-top:2px;}
+/* Box 1 = eben falsch gehabt, Box 5 = sitzt. Dieselben zwei Farben wie das
+   Antwort-Feedback auf der Lernkarte.
+   ⚠️ Diese Kacheln auf der STARTSEITE hatte ich beim ersten Bau übersehen — nur
+   die Balken in der Statistik waren gefärbt. Elias sieht die Startseite als
+   erstes und hat deshalb zweimal gemeldet, die Farben seien nicht da. Sie waren
+   da, nur an der Stelle, die er selten aufmacht. */
+.box-pip.box-schlecht{border-color:var(--red);background:var(--red-wash);}
+.box-pip.box-schlecht .n{color:var(--red-bright);}
+.box-pip.box-schlecht .l{color:var(--red-bright);opacity:.8;}
+.box-pip.box-gut{border-color:var(--green);background:var(--green-wash);}
+.box-pip.box-gut .n{color:var(--green);}
+.box-pip.box-gut .l{color:var(--green);opacity:.8;}
 
 /* --- Sitzungsfilter --- */
 .session-filters{margin-top:var(--sp-5);}
