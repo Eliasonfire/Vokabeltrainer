@@ -17,9 +17,18 @@
  * die bekannten Bloecke (Woerter, Uebungen) abschneiden - was bleibt, ist die
  * Grammatik. Ergebnis Band 1: 704 Zeilen ueber 23 Lektionen.
  *
- * BELEGT: Lektion N des Buchs entspricht Kapitel N unserer Regeln. Geprueft an
- * Lektion 1 (hadha, kein "ist", Fragepartikel) und Lektion 3 (Artikel al,
- * 14 Sonnen- und 14 Mondbuchstaben, Assimilation) gegen grammar-data.js.
+ * ZUORDNUNG - und Vorsicht damit. Fuer die Lektionen 1 bis 7 und 9 deckt sich
+ * die Lektionsnummer des Buchs mit unserer Kapitelnummer; geprueft an Lektion 1
+ * (hadha, kein "ist", Fragepartikel), 3 (Artikel al, Sonnen-/Mondbuchstaben),
+ * 5 (Mudaf / Mudaf ilaihi) und 9 (Nat) gegen grammar-data.js.
+ *
+ * NICHT bei Lektion 8: Das Buch behandelt dort "hadha l-kitaabu" (dies Buch ist
+ * kein Satz) - bei uns steht diese Regel in Kapitel 6. Unser Kapitel 8 (lil-,
+ * Ortsadverbien) steht im Buch an anderer Stelle. Der Lehrer hat umsortiert.
+ *
+ * Am 29.07.2026 stand hier zuerst "Lektion N entspricht Kapitel N", belegt an
+ * zwei Lektionen und auf alle verallgemeinert. Das war zu stark. Vor einer
+ * Zuordnung also den Inhalt vergleichen, nicht die Nummer.
  *
  * ARABISCH WIRD BEWUSST NICHT UEBERNOMMEN. Die Textebene dieser PDFs ist
  * defekt (Meldung "Illegal entry in bfchar block") und liefert falsch
