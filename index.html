@@ -797,6 +797,26 @@ main{
 }
 .unassigned-pool{margin-top:var(--sp-5);}
 .pool-label{font-size:var(--fs-xs);color:var(--text-faint);margin-bottom:var(--sp-2);font-weight:700;text-transform:uppercase;letter-spacing:.08em;}
+.pool-zahl{color:var(--text-dim);font-variant-numeric:tabular-nums;}
+/* Aufklapper für die schon einsortierten Wörter. Standardmäßig zu: die Liste
+   ist der Grund, warum die Trennung überhaupt gebraucht wird. */
+.pool-schalter{
+  display:flex;align-items:center;gap:var(--sp-2);width:100%;
+  background:none;border:none;cursor:pointer;
+  margin-top:var(--sp-4);padding:var(--sp-2) 0;
+  font-size:var(--fs-xs);color:var(--text-faint);font-weight:700;
+  text-transform:uppercase;letter-spacing:.08em;text-align:start;
+}
+.pool-schalter .ic{transition:transform var(--dur-2) var(--ease-out);}
+.pool-schalter[aria-expanded="true"] .ic{transform:rotate(90deg);}
+/* Ein Wort, das schon in Kategorien liegt, zeigt an, in wie vielen — sonst
+   sieht man der Liste nicht an, warum ein Wort dort steht. */
+.word-chip .in-kat{
+  font-family:var(--font-ui);direction:ltr;
+  background:var(--red-wash);color:var(--red-bright);
+  border-radius:var(--r-full);padding:0 6px;margin-inline-start:var(--sp-2);
+  font-size:var(--fs-xs);font-weight:700;
+}
 .pool-words{display:flex;flex-wrap:wrap;gap:var(--sp-2);max-height:38vh;overflow-y:auto;padding-bottom:var(--sp-3);}
 
 /* =====================================================================
@@ -1562,9 +1582,21 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
         </div>
         <div class="drag-hint">Wort kurz <strong>gedrückt halten</strong>, dann in eine Kategorie-Box ziehen. Nur Wischen rollt die Liste. Zum Entfernen wieder aus der Box heraus in den Pool ziehen. Antippen des Kategorie-Namens zeigt die Wortliste.</div>
         <div id="customCatList"></div>
+        <!-- Zwei Listen statt einer. Elias am 29.07.2026: "Ich möchte, dass ich
+             nicht bei allen Vokabeln eine riesige lange Vokabelliste habe und
+             die ganze Zeit die Vokabeln suchen muss, die ich noch nicht
+             einkategorisiert habe." Oben also, was noch offen ist; darunter
+             einklappbar, was schon irgendwo liegt — und zwar dauerhaft, damit
+             ein Wort in mehreren Kategorien landen kann. -->
         <div class="unassigned-pool" id="unassignedPool">
-          <div class="pool-label">Alle Vokabeln</div>
+          <div class="pool-label">Noch nicht einsortiert <span class="pool-zahl" id="poolOffenZahl"></span></div>
           <div class="pool-words" id="poolWords"></div>
+
+          <button class="pool-schalter" id="btnPoolFertig" aria-expanded="false">
+            <svg class="ic"><use href="#ic-right"/></svg>
+            <span>Schon einsortiert <span class="pool-zahl" id="poolFertigZahl"></span></span>
+          </button>
+          <div class="pool-words hidden" id="poolWordsFertig"></div>
         </div>
       </div>
     </section>
