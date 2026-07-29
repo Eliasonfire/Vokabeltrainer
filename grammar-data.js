@@ -1301,7 +1301,18 @@ const SATZ_THEMEN = [
   { id: 'nominalsatz', name: 'Nominalsatz',    muster: /^(mubtada|nominalsatz|jumla|wortstellung)/ },
   { id: 'kasus',       name: 'Kasus',          muster: /^(irab|kasus|marfu|majrur|mansub|tanwin|alif-maqsura)/ },
   { id: 'nat',         name: 'Adjektiv',       muster: /^(nat|adjektive|mutabaqa)/ },
-  { id: 'fem',         name: 'Weiblich',       muster: /^(ta-marbuta|fem-|nat-fem|eigennamen-fem)/ },
+  /* HIER STAND ein Thema „Weiblich" (18 Sätze, Regel-Muster
+     /^(ta-marbuta|fem-|nat-fem|eigennamen-fem)/). Elias am 29.07.2026, direkt
+     nachdem er die Themenliste gesehen hat: „das will ich glaube ich nicht."
+     Passt zu seiner Ansage vom selben Abend, die Regel zu den weiblichen
+     Endungen nicht zu brauchen — تاء مربوطة sei als Zeichen schon genug.
+
+     ⚠️ Was das NICHT tut: Die Regeln dahinter bleiben alle in der App und
+     werden in den Sätzen weiter unterstrichen — `nat-fem-01` (das Adjektiv muss
+     weiblich werden), `fem-ohne-ta-marbuta-01`, `ta-marbuta-grenzen-01`,
+     `eigennamen-fem-ohne-tanwin-01`. Nur der Reiter ist weg; über „Alle" sind
+     die Sätze weiter erreichbar. Wieder da ist er, indem diese eine Zeile
+     zurückkommt. */
   { id: 'al',          name: 'اَلْ',            muster: /^(al-|schams|qamar|adjektive-an)/ },
   { id: 'idafa',       name: 'إِضافة',          muster: /^(idafa|mudaf|zarf-als-mudaf)/ }
 ];
