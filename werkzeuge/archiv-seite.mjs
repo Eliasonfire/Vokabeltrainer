@@ -91,19 +91,29 @@ const entwandeln = s => s
   .replace(/&lt;/g, '<').replace(/&gt;/g, '>')
   .replace(/&amp;/g, '&');
 
+/* Mehrwortsuche muss ueber die zusammengefuegte Zeile laufen, NICHT ueber die
+   einzelnen <WORD>-Elemente. Die erste Fassung dieses Skripts hat je Wort
+   geprueft; eine Suche nach "قواعد اللغة" konnte damit NIE anschlagen und
+   meldete stattdessen seelenruhig "0 Seiten mit Treffer". Ein Werkzeug, das
+   bei falscher Benutzung nichts findet statt sich zu beschweren, ist
+   gefaehrlicher als gar keines - deshalb sucht es jetzt im Fliesstext der
+   Seite und rechnet die Wortposition zurueck. */
 const treffer = [];
 bloecke.forEach((block, seite) => {
   if (seite === 0) return;                 // alles vor dem ersten <OBJECT>
   const woerter = [...block.matchAll(/<WORD[^>]*>([^<]*)<\/WORD>/g)].map(m => entwandeln(m[1]));
-  woerter.forEach((w, i) => {
-    if (!w.includes(suchwort)) return;
-    /* Nur den ERSTEN Treffer je Seite melden - sonst steht dieselbe Seite
-       fuenfmal da, wenn ein Wort im Fliesstext oft vorkommt. */
-    if (treffer.length && treffer[treffer.length - 1].seite === seite) return;
-    treffer.push({
-      seite,
-      umfeld: woerter.slice(Math.max(0, i - 2), i + UMFELD).join(' ').replace(/\s+/g, ' ').trim(),
-    });
+  if (!woerter.length) return;
+
+  const zeile = woerter.join(' ');
+  const stelle = zeile.indexOf(suchwort);
+  if (stelle === -1) return;
+
+  /* Vom Zeichen-Offset zurueck auf den Wortindex: wie viele Leerzeichen liegen
+     davor? Das ist der Index, weil join(' ') genau eines je Luecke setzt. */
+  const wortIndex = zeile.slice(0, stelle).split(' ').length - 1;
+  treffer.push({
+    seite,
+    umfeld: woerter.slice(Math.max(0, wortIndex - 2), wortIndex + UMFELD).join(' ').replace(/\s+/g, ' ').trim(),
   });
 });
 
