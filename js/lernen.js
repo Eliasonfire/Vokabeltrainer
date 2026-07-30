@@ -202,10 +202,38 @@ function quranKern(s){
        Vokalzeichen stehen, sonst ist das Fathatan schon weg und das Alif nicht
        mehr als Tanwin-Alif erkennbar. */
     .replace(/ًا$/, '')
+    /* ⚠️ Drei Sorten Zeichen, die der Uthmani-Korantext traegt und ein
+       Vokabeleintrag nie. Am 30.07.2026 an den Codepoints der Verse abgelesen,
+       nicht vermutet - vorher blieben genau daran drei Verse unmarkiert:
+
+         U+0653-U+0655  Hamza und Madda als EIGENES Zeichen ueber dem Alif.
+                        فَأَيْنَ in 81:26 ist dort nicht ف+أ, sondern ف+ا+U+0654.
+                        Ebenso أُذُنٌ in 69:12. Der Alif-Abgleich unten greift
+                        deshalb nicht, das Zeichen bleibt stehen.
+         U+06D6-U+06ED  Koranische Lesezeichen. رَجُلُۢ in 23:25 endet auf
+                        U+06E2, und "رجلۢ" ist nicht "رجل".
+         U+200E/U+200F  Richtungsmarken, unsichtbar und zaehlen doch mit.
+
+       Alle drei sind reine Zutat: sie zu entfernen kann nie einen Treffer
+       kosten, nur welche hinzufuegen. Als \u-Folgen geschrieben, weil ein
+       arabischer Bereich mitten in einer Zeichenklasse sich zu leicht falsch
+       liest - beim Bauen der Suche ist genau das passiert und hatte alle
+       Buchstaben mitgeloescht. */
+    .replace(/[ٓ-ٕۖ-ۭ‎‏]/g, '')
     .replace(/[ً-ْٰـ]/g, '')                 // Taschkil und Tatweel
     .replace(/[.،؟!«»:؛]/g, '')              // Satzzeichen
     .replace(/[ٱآأإ]/g, 'ا')                 // Alif in allen Schreibungen gleich lesen
     .trim();
+}
+
+/* Das hochgestellte Alif (U+0670) ist der zweite Uthmani-Sonderfall, und der
+   einzige, bei dem "wegwerfen" und "als Alif lesen" BEIDE vorkommen koennen:
+   ٱلْكِتَٰبُ meint كِتَاب (langes aa ohne eigenes Alif), aber اللّٰه meint الله.
+   Deshalb wird hier nicht entschieden, sondern beides als Lesart angeboten -
+   quranKern loescht das Zeichen, diese Fassung ersetzt es. Wer beide Lesarten
+   vergleicht, kann nur mehr treffen als vorher, nie weniger. */
+function quranKernMitAlif(s){
+  return quranKern(String(s || '').replace(/ٰ/g, 'ا'));
 }
 
 /* Ein Wort im Vers kann angeschriebene Zeichen vor sich haben, das gesuchte
@@ -222,26 +250,37 @@ function quranKern(s){
    Das Wort selbst wird also nur von اَلْ befreit (falls es ueberhaupt bestimmt
    im Abzug steht); alles andere bleibt Buchstabe fuer Buchstabe stehen. */
 function quranLesarten(wortImVers){
-  const k = quranKern(wortImVers);
-  const lesarten = [k];
-  if (k.startsWith('ال')) lesarten.push(k.slice(2));
-  if (/^[وفبكل]/.test(k)){
-    const ohnePartikel = k.slice(1);
-    lesarten.push(ohnePartikel);
-    if (ohnePartikel.startsWith('ال')) lesarten.push(ohnePartikel.slice(2));
+  const lesarten = [];
+  /* Beide Deutungen des hochgestellten Alifs, siehe quranKernMitAlif. Bei einem
+     Wort ohne dieses Zeichen sind die zwei Fassungen gleich und die Menge
+     bleibt so gross wie vorher. */
+  for (const k of new Set([quranKern(wortImVers), quranKernMitAlif(wortImVers)])){
+    lesarten.push(k);
+    if (k.startsWith('ال')) lesarten.push(k.slice(2));
+    if (/^[وفبكل]/.test(k)){
+      const ohnePartikel = k.slice(1);
+      lesarten.push(ohnePartikel);
+      if (ohnePartikel.startsWith('ال')) lesarten.push(ohnePartikel.slice(2));
+    }
   }
   return lesarten;
 }
 
 function quranMitTreffer(vers, w){
   const text = String(vers || '');
-  const ziel = quranKern(w.sg || w.ar).replace(/^ال/, '');
-  if (ziel.length < 2) return escapeHtml(text);
+  /* Auch das gesuchte Wort in beiden Lesarten des hochgestellten Alifs - sonst
+     waere die Normalisierung einseitig, und einseitig war jeder der bisherigen
+     Fehlgriffe. */
+  const ziele = [...new Set([quranKern(w.sg || w.ar), quranKernMitAlif(w.sg || w.ar)])]
+    .map(z => z.replace(/^ال/, ''))
+    .filter(z => z.length >= 2);
+  if (!ziele.length) return escapeHtml(text);
   /* Ueber die Wortgrenzen des Verses gehen statt eine Zeichenkette zu suchen:
      so kann die Markierung nie mitten in einem Wort anfangen. */
   let getroffen = false;
   const html = text.split(/(\s+)/).map(stueck => {
-    if (!getroffen && /\S/.test(stueck) && quranLesarten(stueck).includes(ziel)){
+    if (!getroffen && /\S/.test(stueck)
+        && quranLesarten(stueck).some(l => ziele.includes(l))){
       getroffen = true;
       return `<span class="quran-treffer">${escapeHtml(stueck)}</span>`;
     }

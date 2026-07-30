@@ -58,7 +58,13 @@ const VOCAB_DATA = [
   "root": "ب و ب",
   "sentAr": "بَابُ الْبَيْتِ جَدِيدٌ.",
   "sentDe": "Die Tür des Hauses ist neu.",
-  "quran": null,
+  "quran": {
+   "surah": "Al-Hijr",
+   "ayah": "15:44",
+   "ar": "لَهَا سَبْعَةُ أَبْوَٰبٍ لِّكُلِّ بَابٍ مِّنْهُمْ جُزْءٌ مَّقْسُومٌ",
+   "de": "Sie hat sieben Tore, und jedem Tor wird ein Teil von ihnen zugewiesen",
+   "note": null
+  },
   "source": "vocabulary",
   "box": 5,
   "acc": 97
@@ -285,7 +291,13 @@ const VOCAB_DATA = [
   "root": "ر ج ل",
   "sentAr": "هَذَا رَجُلٌ غَنِيٌّ وَمَشْهُورٌ.",
   "sentDe": "Dies ist ein reicher und berühmter Mann.",
-  "quran": null,
+  "quran": {
+   "surah": "Al-Mu'minun",
+   "ayah": "23:25",
+   "ar": "إِنْ هُوَ إِلَّا رَجُلُۢ بِهِۦ جِنَّةٌ فَتَرَبَّصُواْ بِهِۦ حَتَّىٰ حِينٍ‏",
+   "de": "Er ist nur ein Mann, der an Besessenheit leidet; so wartet mit ihm für eine gewisse Zeit ab",
+   "note": null
+  },
   "source": "vocabulary",
   "box": 5,
   "acc": 91
@@ -475,7 +487,13 @@ const VOCAB_DATA = [
   "root": null,
   "sentAr": "أَهَذَا كِتَابٌ؟ نَعَمْ، هَذَا كِتَابٌ.",
   "sentDe": "Ist dies ein Buch? Ja, dies ist ein Buch.",
-  "quran": null,
+  "quran": {
+   "surah": "As-Saffat",
+   "ayah": "37:18",
+   "ar": "قُلْ نَعَمْ وَأَنتُمْ دَٰخِرُونَ",
+   "de": "Sag: Ja, und ihr werdet euch demütig verhalten",
+   "note": null
+  },
   "source": "vocabulary",
   "box": 5,
   "acc": 98
@@ -696,7 +714,13 @@ const VOCAB_DATA = [
   "root": "ط و ل",
   "sentAr": "هَذَا الشَّارِعُ طَوِيلٌ.",
   "sentDe": "Diese Straße ist lang.",
-  "quran": null,
+  "quran": {
+   "surah": "Al-Muzzammil",
+   "ayah": "73:7",
+   "ar": "إِنَّ لَكَ فِي ٱلنَّهَارِ سَبْحًا طَوِيلًا",
+   "de": "Du hast ja am Tage lange Zeit für Beschäftigung",
+   "note": null
+  },
   "source": "vocabulary",
   "box": 3,
   "acc": 63
@@ -734,7 +758,13 @@ const VOCAB_DATA = [
   "root": "ب ر د",
   "sentAr": "الْمَاءُ بَارِدٌ الْيَوْمَ.",
   "sentDe": "Das Wasser ist heute kalt.",
-  "quran": null,
+  "quran": {
+   "surah": "Al-Waqi'ah",
+   "ayah": "56:44",
+   "ar": "لَّا بَارِدٍ وَلَا كَرِيمٍ",
+   "de": "(der) weder kühl noch trefflich (ist)",
+   "note": null
+  },
   "source": "vocabulary",
   "box": 3,
   "acc": 61
@@ -829,7 +859,13 @@ const VOCAB_DATA = [
   "root": "ق د م",
   "sentAr": "هَذَا الْمَسْجِدُ قَدِيمٌ وَمَشْهُورٌ.",
   "sentDe": "Diese Moschee ist alt und berühmt.",
-  "quran": null,
+  "quran": {
+   "surah": "Yusuf",
+   "ayah": "12:95",
+   "ar": "قَالُواْ تَٱللَّهِ إِنَّكَ لَفِي ضَلَٰلِكَ ٱلْقَدِيمِ",
+   "de": "Sie sagten: Bei Allah, du befindest dich fürwahr in deinem alten Irrtum",
+   "note": null
+  },
   "source": "vocabulary",
   "box": 3,
   "acc": 61
@@ -848,7 +884,13 @@ const VOCAB_DATA = [
   "root": "ق ر ب",
   "sentAr": "الْمَدْرَسَةُ قَرِيبَةٌ مِنَ الْبَيْتِ.",
   "sentDe": "Die Schule ist nahe am Haus.",
-  "quran": null,
+  "quran": {
+   "surah": "Al-Ma'arij",
+   "ayah": "70:7",
+   "ar": "وَنَرَىٰهُ قَرِيبًا",
+   "de": "Wir aber sehen sie nahe",
+   "note": null
+  },
   "source": "vocabulary",
   "box": 3,
   "acc": 55
@@ -867,7 +909,13 @@ const VOCAB_DATA = [
   "root": "ب ع د",
   "sentAr": "الْجَامِعَةُ بَعِيدَةٌ مِنَ الْبَيْتِ.",
   "sentDe": "Die Universität ist weit vom Haus entfernt.",
-  "quran": null,
+  "quran": {
+   "surah": "Al-Ma'arij",
+   "ayah": "70:6",
+   "ar": "إِنَّهُمْ يَرَوْنَهُۥ بَعِيدًا",
+   "de": "Gewiß, sie sehen sie weit entfernt",
+   "note": null
+  },
   "source": "vocabulary",
   "box": 3,
   "acc": 58
@@ -924,7 +972,13 @@ const VOCAB_DATA = [
   "root": "ص غ ر",
   "sentAr": "هَذَا الْقِطُّ صَغِيرٌ وَجَمِيلٌ.",
   "sentDe": "Diese Katze ist klein und schön.",
-  "quran": null,
+  "quran": {
+   "surah": "Al-Qamar",
+   "ayah": "54:53",
+   "ar": "وَكُلُّ صَغِيرٍ وَكَبِيرٍ مُّسْتَطَرٌ",
+   "de": "Alles, ob klein oder groß, wird in Zeilen niedergeschrieben",
+   "note": null
+  },
   "source": "vocabulary",
   "box": 3,
   "acc": 60
@@ -943,7 +997,13 @@ const VOCAB_DATA = [
   "root": "ك ب ر",
   "sentAr": "الْمَسْجِدُ كَبِيرٌ وَجَمِيلٌ.",
   "sentDe": "Die Moschee ist groß und schön.",
-  "quran": null,
+  "quran": {
+   "surah": "Al-Qamar",
+   "ayah": "54:53",
+   "ar": "وَكُلُّ صَغِيرٍ وَكَبِيرٍ مُّسْتَطَرٌ",
+   "de": "Alles, ob klein oder groß, wird in Zeilen niedergeschrieben",
+   "note": null
+  },
   "source": "vocabulary",
   "box": 4,
   "acc": 80
@@ -1082,7 +1142,13 @@ const VOCAB_DATA = [
   "root": "ج م ل",
   "sentAr": "هَذَا الْبَيْتُ جَمِيلٌ.",
   "sentDe": "Dieses Haus ist schön.",
-  "quran": null,
+  "quran": {
+   "surah": "Al-Muzzammil",
+   "ayah": "73:10",
+   "ar": "وَٱصْبِرْ عَلَىٰ مَا يَقُولُونَ وَٱهْجُرْهُمْ هَجْرًا جَمِيلًا",
+   "de": "Und ertrage standhaft, was sie sagen, und meide sie auf schöne Weise",
+   "note": null
+  },
   "source": "vocabulary",
   "box": 5,
   "acc": 91
@@ -1177,7 +1243,13 @@ const VOCAB_DATA = [
   "root": null,
   "sentAr": "أَيْنَ الْمِفْتَاحُ؟",
   "sentDe": "Wo ist der Schlüssel?",
-  "quran": null,
+  "quran": {
+   "surah": "At-Takwir",
+   "ayah": "81:26",
+   "ar": "فَأَيْنَ تَذْهَبُونَ",
+   "de": "Wo geht ihr denn hin",
+   "note": null
+  },
   "source": "vocabulary",
   "box": 5,
   "acc": 90
@@ -1196,7 +1268,13 @@ const VOCAB_DATA = [
   "root": null,
   "sentAr": "الْقَلَمُ عَلَى الْمَكْتَبِ.",
   "sentDe": "Der Stift ist auf dem Schreibtisch.",
-  "quran": null,
+  "quran": {
+   "surah": "As-Saffat",
+   "ayah": "37:181",
+   "ar": "وَسَلَٰمٌ عَلَى ٱلْمُرْسَلِينَ",
+   "de": "Und Friede sei auf den Gesandten",
+   "note": null
+  },
   "source": "vocabulary",
   "box": 5,
   "acc": 95
@@ -1444,11 +1522,11 @@ const VOCAB_DATA = [
   "sentAr": "النَّجْمُ فِي السَّمَاءِ.",
   "sentDe": "Der Stern ist am Himmel.",
   "quran": {
-   "surah": "Al-Baqarah (Ayat al-Kursi)",
-   "ayah": "2:255",
-   "ar": "لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ",
-   "de": "Ihm gehoert (alles), was in den Himmeln und was auf der Erde ist.",
-   "note": "Aus Ayat al-Kursi. Geprueft gegen quran.com."
+   "surah": "At-Tariq",
+   "ayah": "86:1",
+   "ar": "وَٱلسَّمَآءِ وَٱلطَّارِقِ",
+   "de": "Beim Himmel und dem Pochenden",
+   "note": null
   },
   "source": "vocabulary",
   "box": 4,
@@ -1569,7 +1647,13 @@ const VOCAB_DATA = [
   "root": "ب ن ي",
   "sentAr": "هَذَا اِبْنُ التَّاجِرِ.",
   "sentDe": "Dies ist der Sohn des Händlers.",
-  "quran": null,
+  "quran": {
+   "surah": "Maryam",
+   "ayah": "19:34",
+   "ar": "ذَٰلِكَ عِيسَى ٱبْنُ مَرْيَمَۖ قَوْلَ ٱلْحَقِّ ٱلَّذِي فِيهِ يَمْتَرُونَ",
+   "de": "Das ist ’Isa, der Sohn Maryams: (Es ist) das Wort der Wahrheit, woran sie zweifeln",
+   "note": null
+  },
   "source": "vocabulary",
   "box": 4,
   "acc": 88
@@ -2056,7 +2140,13 @@ const VOCAB_DATA = [
   "root": "أ ذ ن",
   "sentAr": "هَذِهِ أُذُنٌ صَغِيرَةٌ.",
   "sentDe": "Dies ist ein kleines Ohr.",
-  "quran": null,
+  "quran": {
+   "surah": "Al-Haqqah",
+   "ayah": "69:12",
+   "ar": "لِنَجْعَلَهَا لَكُمْ تَذْكِرَةً وَتَعِيَهَآ أُذُنٌ وَٰعِيَةٌ‏",
+   "de": "um es für euch zu einer Erinnerung zu machen, und damit es von einem jeden aufnahmefähigen Ohr aufgenommen wird",
+   "note": null
+  },
   "source": "vocabulary",
   "box": 4,
   "acc": 80
@@ -2132,7 +2222,13 @@ const VOCAB_DATA = [
   "root": "س ر ع",
   "sentAr": "هَذَا الْحِصَانُ سَرِيعٌ.",
   "sentDe": "Dieses Pferd ist schnell.",
-  "quran": null,
+  "quran": {
+   "surah": "Al-Baqarah",
+   "ayah": "2:202",
+   "ar": "أُوْلَٰٓئِكَ لَهُمْ نَصِيبٌ مِّمَّا كَسَبُواْۚ وَٱللَّهُ سَرِيعُ ٱلْحِسَابِ",
+   "de": "Für jene gibt es einen Anteil an dem, was sie verdient haben. Und Allah ist schnell im Abrechnen",
+   "note": null
+  },
   "source": "vocabulary",
   "box": 3,
   "acc": 65
@@ -2189,7 +2285,13 @@ const VOCAB_DATA = [
   "root": "ن و ق",
   "sentAr": "تِلْكَ نَاقَةٌ طَوِيلَةٌ.",
   "sentDe": "Das dort ist eine hohe Kamelstute.",
-  "quran": null,
+  "quran": {
+   "surah": "Ash-Shams",
+   "ayah": "91:13",
+   "ar": "فَقَالَ لَهُمْ رَسُولُ ٱللَّهِ نَاقَةَ ٱللَّهِ وَسُقْيَٰهَا",
+   "de": "Allahs Gesandter sagte zu ihnen: (Achtet auf) Allahs Kamelstute und ihre Trinkzeit",
+   "note": null
+  },
   "source": "vocabulary",
   "box": 3,
   "acc": 62
@@ -2436,7 +2538,13 @@ const VOCAB_DATA = [
   "root": "ف ك ه",
   "sentAr": "هَذِهِ فَاكِهَةٌ حُلْوَةٌ.",
   "sentDe": "Dies ist süßes Obst.",
-  "quran": null,
+  "quran": {
+   "surah": "Al-Waqi'ah",
+   "ayah": "56:32",
+   "ar": "وَفَٰكِهَةٍ كَثِيرَةٍ‏",
+   "de": "(bei) vielen Früchten",
+   "note": null
+  },
   "source": "vocabulary",
   "box": 3,
   "acc": 64
@@ -2632,7 +2740,13 @@ const VOCAB_DATA = [
   "root": "م د ن",
   "sentAr": "هَذِهِ مَدِينَةٌ بَعِيدَةٌ وَمَشْهُورَةٌ.",
   "sentDe": "Dies ist eine ferne und berühmte Stadt.",
-  "quran": null,
+  "quran": {
+   "surah": "Al-Hijr",
+   "ayah": "15:67",
+   "ar": "وَجَآءَ أَهْلُ ٱلْمَدِينَةِ يَسْتَبْشِرُونَ",
+   "de": "Und die Bewohner der Stadt kamen voller Freude",
+   "note": null
+  },
   "source": "vocabulary",
   "box": 4,
   "acc": 85
@@ -2923,7 +3037,13 @@ const VOCAB_DATA = [
   "root": null,
   "sentAr": "هَذَا لَحْمٌ فِي الثَّلَّاجَةِ.",
   "sentDe": "Dies ist Fleisch im Kühlschrank.",
-  "quran": null,
+  "quran": {
+   "surah": "Al-Waqi'ah",
+   "ayah": "56:21",
+   "ar": "وَلَحْمِ طَيْرٍ مِّمَّا يَشْتَهُونَ",
+   "de": "und Fleisch von Geflügel von dem, was sie begehren",
+   "note": null
+  },
   "source": "personal_vocabulary",
   "note": null,
   "box": 1,
@@ -3145,6 +3265,13 @@ const VOCAB_DATA = [
   "present": null,
   "imperative": null,
   "masdar": null,
+  "quran": {
+   "surah": "Al-Furqan",
+   "ayah": "25:14",
+   "ar": "لَّا تَدْعُواْ ٱلْيَوْمَ ثُبُورًا وَٰحِدًا وَٱدْعُواْ ثُبُورًا كَثِيرًا",
+   "de": "„Ruft heute nicht nach (nur) einer einzigen Vernichtung, sondern ruft nach vielen Vernichtungen",
+   "note": null
+  },
   "note": null,
   "book": "madina-1",
   "source": "vocabulary"
@@ -3245,6 +3372,13 @@ const VOCAB_DATA = [
   "present": null,
   "imperative": null,
   "masdar": null,
+  "quran": {
+   "surah": "Al-Hijr",
+   "ayah": "15:44",
+   "ar": "لَهَا سَبْعَةُ أَبْوَٰبٍ لِّكُلِّ بَابٍ مِّنْهُمْ جُزْءٌ مَّقْسُومٌ",
+   "de": "Sie hat sieben Tore, und jedem Tor wird ein Teil von ihnen zugewiesen",
+   "note": null
+  },
   "note": null,
   "book": "madina-1",
   "source": "vocabulary"
@@ -3285,6 +3419,13 @@ const VOCAB_DATA = [
   "present": null,
   "imperative": null,
   "masdar": null,
+  "quran": {
+   "surah": "Al-Muddaththir",
+   "ayah": "74:30",
+   "ar": "عَلَيْهَا تِسْعَةَ عَشَرَ",
+   "de": "Über ihr gibt es neunzehn (Wächter)",
+   "note": null
+  },
   "note": null,
   "book": "madina-1",
   "source": "vocabulary"
