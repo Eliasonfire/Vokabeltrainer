@@ -470,23 +470,57 @@ document.getElementById('btnSentIrab').addEventListener('click', ()=>{
    es nur eine Fassung des Textes, und die stammt aus dem Unterricht.
 
    Am 30.07.2026 an grammar-data.js gemessen: 73 Erklaerungen, Median 418
-   Zeichen, laengste 912. Nach dem Schnitt: 56 von 73 haben einen ersten Satz
-   unter 140 Zeichen, der laengste erste Satz hat 265. */
+   Zeichen, laengste 912.
+
+   ⚠️⚠️ NACHGEBESSERT AM 30.07.2026, weil die erste Fassung den Hinweis
+   SCHLECHTER gemacht hat statt kuerzer. Sie nahm genau EINEN Satz - und der
+   erste Satz einer Erklaerung ist oft nur der Vorspann. Elias hat vier Faelle
+   hintereinander gemeldet, jeder davon eine leere Kurzfassung:
+
+     irab-drei-faelle-01  "Es gibt drei Fälle, die wir zuerst brauchen
+                          (eigentlich sind es vier)."  -> nennt die Faelle nicht
+     hamzatul-wasl-01     "Der Lehrer erwähnt هَمْزَةُ الوَصْل … das hatten wir
+                          schon im Buchstabenkurs."    -> erklaert nichts
+     madd-tabii-01        "Ein Schüler fragt, ob …"     -> erzaehlt die Stunde
+     schakl-01            "Auf die Frage eines Schülers …"
+
+   Sein Urteil dazu, woertlich: "die erklärung hilft auch überhaupt nicht
+   weiter" und "es hat auch nichts erklärt".
+
+   Deshalb wird jetzt nach LAENGE geschnitten, nicht nach Satzanzahl: es kommen
+   ganze Saetze dazu, solange KERN_BUDGET nicht ueberschritten ist, mindestens
+   aber einer. Damit ueberspringt die Kurzfassung den Vorspann von selbst, denn
+   ein Vorspann ist kurz - und der Satz mit der Regel folgt direkt darauf. */
 const KERN_ABKUERZUNGEN = ['z.B.','ca.','bzw.','usw.','d.h.','u.a.','S.','L.','Nr.','vgl.','ggf.'];
-function kernSatz(text){
-  const t = String(text || '').trim();
-  /* Satzende suchen: Punkt/Frage/Ausruf, dem Leerraum folgt. Abkuerzungen
-     ueberspringen - sonst endet die Kurzfassung von fem-ohne-ta-marbuta-01
-     mitten im Satz bei "z.B." und sagt gar nichts. */
+/* Rund die Haelfte des Medians. Gross genug, dass nach einem kurzen Vorspann der
+   tragende Satz mitkommt, klein genug, dass das Fenster auf dem Handy passt -
+   beides am 30.07.2026 nachgemessen. */
+const KERN_BUDGET = 240;
+
+/* Alle Satzenden eines Textes, Abkuerzungen uebersprungen - sonst endet die
+   Kurzfassung von fem-ohne-ta-marbuta-01 mitten im Satz bei "z.B." und sagt gar
+   nichts. */
+function satzEnden(t){
   const RE = /[.!?](?=\s|$)/g;
+  const enden = [];
   let m;
   while ((m = RE.exec(t)) !== null){
     const bis = m.index + 1;
-    const stueck = t.slice(0, bis);
-    if (KERN_ABKUERZUNGEN.some(a => stueck.endsWith(a))) continue;
-    return stueck;
+    if (KERN_ABKUERZUNGEN.some(a => t.slice(0, bis).endsWith(a))) continue;
+    enden.push(bis);
   }
-  return t;
+  return enden;
+}
+
+function kernSatz(text){
+  const t = String(text || '').trim();
+  const enden = satzEnden(t);
+  if (!enden.length) return t;
+  /* Den letzten Schnitt nehmen, der noch ins Budget passt - aber immer
+     mindestens den ersten Satz, auch wenn der allein schon laenger ist. */
+  let bis = enden[0];
+  for (const e of enden) if (e <= KERN_BUDGET) bis = e;
+  return t.slice(0, bis);
 }
 
 function zeigeGrammatikPopover(span){
