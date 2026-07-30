@@ -44,14 +44,51 @@ function renderWortfeldCats(){
   const reihenfolge = (typeof WORTFELDER !== 'undefined') ? WORTFELDER.map(f=>f.name) : [];
   const namen = reihenfolge.filter(n => felder[n] && felder[n].length);
   if (felder[OHNE_WORTFELD]) namen.push(OHNE_WORTFELD);
-  document.getElementById('catPane-roots').innerHTML = namen.map(name=>{
+
+  /* Elias' eigene Kategorien stehen GANZ OBEN und mit Stern - er hat am
+     29.07.2026 zwischen zwei Moeglichkeiten die hier gewaehlt ("Moeglichkeit
+     B"). Warum oben und nicht unten: seine eigenen sind ihm wichtiger als die
+     automatischen, denn er hat sie ja gerade deshalb angelegt, weil ihm bei den
+     automatischen etwas fehlte.
+
+     Eine eigene Kategorie mit demselben Namen wie ein Wortfeld ("Tiere") ist
+     KEIN Fehlerfall - der Stern unterscheidet sie, und die Zeilen zeigen auf
+     verschiedene Schluessel (cat: gegen feld:).
+
+     Leere eigene Kategorien werden mitgezeigt, im Unterschied zu leeren
+     Wortfeldern: ein leeres Wortfeld ist nur eine Luecke in der Tabelle, eine
+     leere eigene Kategorie hat Elias absichtlich angelegt und wartet darauf,
+     gefuellt zu werden. Sie zu verstecken saehe aus wie ein Datenverlust. */
+  const eigene = (typeof CUSTOM_CATS !== 'undefined' ? CUSTOM_CATS : []).map(cat=>
+    `<div class="list-row list-row-eigen" data-openlist="cat:${cat.id}">
+      <div class="list-row-title"><span class="eigen-stern">★</span><span>${escapeHtml(cat.name)}</span></div>
+      <div class="list-row-count">${cat.wordIds.length}</div>
+    </div>`).join('');
+
+  const felderHtml = namen.map(name=>{
     const ids = felder[name];
     const rest = name === OHNE_WORTFELD;
     return `<div class="list-row${rest ? ' list-row-rest' : ''}" data-openlist="feld:${name}">
       <div class="list-row-title"><span>${escapeHtml(name)}</span></div>
       <div class="list-row-count">${ids.length}</div>
     </div>`;
-  }).join('') || '<div class="empty-state">Für dieses Buch sind noch keine Wortfelder belegt.</div>';
+  }).join('');
+
+  document.getElementById('catPane-roots').innerHTML =
+    (eigene || felderHtml)
+      ? eigene + felderHtml
+      : '<div class="empty-state">Für dieses Buch sind noch keine Wortfelder belegt.</div>';
+}
+
+/* Jede Aenderung an den eigenen Kategorien muss BEIDE Ansichten auffrischen:
+   die Werkbank im Reiter "Eigene" und die Sternzeilen oben in der
+   Wortfelder-Liste (Moeglichkeit B, Elias' Wahl vom 29.07.2026). Ohne das zeigt
+   die Wortfelder-Liste eine gerade geloeschte Kategorie weiter an, bis der
+   Bildschirm neu aufgebaut wird. Deshalb rufen alle Stellen, die CUSTOM_CATS
+   aendern, diese Funktion und nicht mehr renderCustomCats() allein. */
+function frischeEigeneAuf(){
+  renderCustomCats();
+  renderWortfeldCats();
 }
 
 function renderCustomCats(){
@@ -106,7 +143,7 @@ function renderCustomCats(){
   document.querySelectorAll('[data-delcat]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       CUSTOM_CATS = CUSTOM_CATS.filter(c=>c.id!==btn.dataset.delcat);
-      saveCustomCats(); renderCustomCats();
+      saveCustomCats(); frischeEigeneAuf();
     });
   });
   setupDragAndDrop();
@@ -119,7 +156,7 @@ document.getElementById('btnAddCat').addEventListener('click', ()=>{
   CUSTOM_CATS.push({ id: 'cat_'+Date.now(), name, wordIds: [] });
   saveCustomCats();
   input.value = '';
-  renderCustomCats();
+  frischeEigeneAuf();
 });
 
 document.querySelectorAll('[data-openlist]').forEach(()=>{}); // delegated below
@@ -397,7 +434,7 @@ function setupDragAndDrop(){
         }
       }
       saveCustomCats();
-      renderCustomCats();
+      frischeEigeneAuf();
     }
     sourceEl=null; sourceId=null; ghost=null; herkunftCat=null;
   }

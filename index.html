@@ -753,6 +753,15 @@ main{
 /* "Noch ohne Wortfeld" - gehoert dazu, soll aber nicht wie ein Thema aussehen. */
 .list-row-rest .list-row-title{color:var(--text-dim);font-weight:600;}
 
+/* Elias' eigene Kategorien, oben in der Wortfelder-Liste mit Stern
+   („Möglichkeit B", seine Wahl vom 29.07.2026). Bewusst nur ein Stern und ein
+   leiser Randstreifen, keine zweite Farbwelt: die Zeilen stehen mitten unter
+   den Wortfeldern und sollen als dieselbe Sorte Sache erkennbar bleiben — nur
+   als seine. */
+.list-row-eigen{border-color:var(--red-dim);}
+.list-row-eigen .list-row-title{display:flex;align-items:center;gap:var(--sp-2);}
+.eigen-stern{color:var(--red-bright);font-size:var(--fs-sm);line-height:1;}
+
 .custom-cat-add{display:flex;gap:var(--sp-2);margin-bottom:var(--sp-3);}
 .custom-cat-add input{
   flex:1;background:var(--surface-2);border:1px solid var(--border);color:var(--text);
