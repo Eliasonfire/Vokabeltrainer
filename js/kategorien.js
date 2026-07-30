@@ -74,10 +74,19 @@ function renderWortfeldCats(){
     </div>`;
   }).join('');
 
-  document.getElementById('catPane-roots').innerHTML =
-    (eigene || felderHtml)
+  /* Sagen, WORAUS die Felder gebaut sind. Ohne diese Zeile ist nicht zu sehen,
+     warum unter "Tiere" nur ein Teil der Tiere des Buchs steht - und genau so
+     eine unsichtbare Einschraenkung hat Elias heute schon einmal als Fehler
+     gemeldet. */
+  const umfang = (typeof freigeschalteteBeschriftung === 'function') ? freigeschalteteBeschriftung() : null;
+  const kopf = umfang
+    ? `<div class="pane-hinweis">Nur Wörter, die du kennst: ${escapeHtml(umfang)} und deine eigenen.</div>`
+    : '';
+
+  document.getElementById('catPane-roots').innerHTML = kopf +
+    ((eigene || felderHtml)
       ? eigene + felderHtml
-      : '<div class="empty-state">Für dieses Buch sind noch keine Wortfelder belegt.</div>';
+      : '<div class="empty-state">Für dieses Buch sind noch keine Wortfelder belegt.</div>');
 }
 
 /* Jede Aenderung an den eigenen Kategorien muss BEIDE Ansichten auffrischen:
@@ -123,7 +132,18 @@ function renderCustomCats(){
   CUSTOM_CATS.forEach(c => c.wordIds.forEach(id =>
     zugeordnet.set(id, (zugeordnet.get(id) || 0) + 1)));
 
-  const alle   = buchVokabeln();
+  /* Nur die Woerter, die Elias kennt - seine Vorgabe vom 30.07.2026: "auch bei
+     den eigenen kategorien sollen nur woerter sein die ich auch kenne."
+     Vorher standen hier alle 24 Kapitel des geladenen Buchs, also rund 300
+     Woerter, davon die meisten aus Kapiteln, die er im Kurs noch nicht hatte -
+     und das war zugleich der Grund, warum die Liste so lang war, dass er sie
+     kaum durchwischen konnte.
+
+     ⚠️ Die schon ZUGEORDNETEN Chips in den Kategorien oben werden NICHT
+     beschnitten. Was er selbst einsortiert hat, bleibt stehen, auch wenn es aus
+     einem spaeteren Kapitel kommt - stillschweigend etwas aus seinen eigenen
+     Kategorien zu entfernen waere Datenverlust. */
+  const alle   = (typeof bekannteVokabeln === 'function') ? bekannteVokabeln() : buchVokabeln();
   const offen  = alle.filter(w => !zugeordnet.has(w.id));
   const fertig = alle.filter(w =>  zugeordnet.has(w.id));
 
@@ -139,6 +159,13 @@ function renderCustomCats(){
     fertig.map(w => chip(w, zugeordnet.get(w.id))).join('');
   document.getElementById('poolOffenZahl').textContent  = `(${offen.length})`;
   document.getElementById('poolFertigZahl').textContent = `(${fertig.length})`;
+  const hinweis = document.getElementById('poolHinweis');
+  if (hinweis){
+    const umfang = (typeof freigeschalteteBeschriftung === 'function') ? freigeschalteteBeschriftung() : null;
+    hinweis.textContent = umfang
+      ? `Nur Wörter, die du kennst: ${umfang} und deine eigenen.` : '';
+    hinweis.classList.toggle('hidden', !umfang);
+  }
 
   document.querySelectorAll('[data-delcat]').forEach(btn=>{
     btn.addEventListener('click', ()=>{

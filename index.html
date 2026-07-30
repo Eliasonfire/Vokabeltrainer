@@ -903,6 +903,12 @@ main{
 }
 .unassigned-pool{margin-top:var(--sp-5);}
 .pool-label{font-size:var(--fs-xs);color:var(--text-faint);margin-bottom:var(--sp-2);font-weight:700;text-transform:uppercase;letter-spacing:.08em;}
+/* Sagt, woraus eine Liste gebaut ist. Bewusst leise gesetzt: eine Auskunft,
+   keine Warnung. */
+.pane-hinweis{
+  color:var(--text-faint);font-size:var(--fs-xs);line-height:1.5;
+  margin-bottom:var(--sp-3);
+}
 .pool-zahl{color:var(--text-dim);font-variant-numeric:tabular-nums;}
 /* Aufklapper für die schon einsortierten Wörter. Standardmäßig zu: die Liste
    ist der Grund, warum die Trennung überhaupt gebraucht wird. */
@@ -1853,6 +1859,11 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
              einklappbar, was schon irgendwo liegt — und zwar dauerhaft, damit
              ein Wort in mehreren Kategorien landen kann. -->
         <div class="unassigned-pool" id="unassignedPool">
+          <!-- Elias am 30.07.2026: „auch bei den eigenen kategorien sollen nur
+               wörter sein die ich auch kenne." Die Zeile sagt, was das heißt —
+               eine unsichtbare Einschränkung hat er heute schon einmal als
+               Fehler gemeldet. Text kommt aus js/kategorien.js. -->
+          <div class="pane-hinweis" id="poolHinweis"></div>
           <div class="pool-label">Noch nicht einsortiert <span class="pool-zahl" id="poolOffenZahl"></span></div>
           <div class="pool-words" id="poolWords"></div>
 
