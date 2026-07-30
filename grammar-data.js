@@ -29,7 +29,7 @@ const GRAMMAR_RULES = [
   {
     id: "hadha-stummes-alif-01",
     name: "هَذَا (Alif wird gesprochen, nicht geschrieben)",
-    shortExplanation: "In هَذَا steckt ein Alif, das man nicht mitschreibt, das aber trotzdem ausgesprochen wird. Deshalb spricht man das Wort lang: hādhā. Beim Vorlesen korrigiert der Lehrer die Schüler entsprechend: هَذَا „schön lang machen\" – er zeigt dabei auf zwei Alif im Wort und sagt, die beiden dürfen nicht vergessen werden. Beispiel aus der Übung: هَذَا بَيْتٌ (hādhā baytun) – „Dies ist ein Haus\".",
+    shortExplanation: "In هَذَا steckt ein Alif, das man nicht mitschreibt, das aber trotzdem ausgesprochen wird. Deshalb spricht man das Wort lang: hādhā. Beim Vorlesen wird entsprechend korrigiert: هَذَا „schön lang machen\" – er zeigt dabei auf zwei Alif im Wort und sagt, die beiden dürfen nicht vergessen werden. Beispiel aus der Übung: هَذَا بَيْتٌ (hādhā baytun) – „Dies ist ein Haus\".",
     color: "other",
     source: { folge: 1, video: "Folge 01", approxTimestamp: "10:30", chapter: 1 },
     source2: { schluessel: 1, lektion: 1, seite: 6 }
@@ -45,7 +45,7 @@ const GRAMMAR_RULES = [
   {
     id: "ta-marbuta-fem-01",
     name: "تاء مربوطة (weibliche Endung)",
-    shortExplanation: "Die تاء مربوطة (das ة am Wortende, geschrieben wie ein Kreis mit zwei Punkten) wird für Wörter benutzt, die weiblich sind. Wenn ein Wort ein ة hat, weißt du: das Wort ist weiblich – z.B. مَدْرَسَةٌ (madrasatun) „Schule“. بَيْتٌ (baytun) „Haus“ wird dagegen mit normalem ت geschrieben und ist männlich. (Das ist die Antwort auf eine Nachfrage zu بيت – dass umgekehrt jedes Wort mit normalem ت männlich sei, sagt der Lehrer nicht.)",
+    shortExplanation: "Die تاء مربوطة (das ة am Wortende, geschrieben wie ein Kreis mit zwei Punkten) wird für Wörter benutzt, die weiblich sind. Wenn ein Wort ein ة hat, weißt du: das Wort ist weiblich – z.B. مَدْرَسَةٌ (madrasatun) „Schule“. بَيْتٌ (baytun) „Haus“ wird dagegen mit normalem ت geschrieben und ist männlich. (Umgekehrt gilt bei بيت NICHT, dass jedes Wort mit normalem ت männlich sei, sagt der Lehrer nicht.)",
     color: "fem",
     source: { folge: 1, video: "Folge 01", approxTimestamp: "15:17", chapter: 1 },
     source2: { schluessel: 1, lektion: 6, seite: 22 },
@@ -113,7 +113,7 @@ const GRAMMAR_RULES = [
   {
     id: "hamzatul-wasl-01",
     name: "هَمْزَةُ الوَصْل (Verbindungs-Alif)",
-    shortExplanation: "Der Lehrer erwähnt هَمْزَةُ الوَصْل (Hamzatu l-waṣl), das Verbindungs-Alif – das hatten wir schon im Buchstabenkurs. Es bedeutet zwei Dinge: Bleibst du bei ihm stehen, liest du es wie ein ganz normales Alif. Liest du weiter, überspringst du es. Sein Beispiel: الْكِتَابُ جَدِيدٌ وَالْقَلَمُ قَدِيمٌ (al-kitābu jadīdun wa-l-qalamu qadīmun) – „Das Buch ist neu und der Stift ist alt.“ Hier wird nicht gestoppt, sondern verbunden: die Araber seien faul, sie mögen das Stoppen nicht und verbinden lieber.",
+    shortExplanation: "هَمْزَةُ الوَصْل (Hamzatu l-waṣl), das Verbindungs-Alif, wird auf zwei Weisen gelesen. Bleibst du bei ihm stehen, liest du es wie ein ganz normales Alif. Liest du weiter, überspringst du es. Beispiel: الْكِتَابُ جَدِيدٌ وَالْقَلَمُ قَدِيمٌ (al-kitābu jadīdun wa-l-qalamu qadīmun) – „Das Buch ist neu und der Stift ist alt.“ Hier wird nicht gestoppt, sondern verbunden: die Araber seien faul, sie mögen das Stoppen nicht und verbinden lieber.",
     color: "other",
     source: { folge: 2, video: "Folge 02", approxTimestamp: "38:24", chapter: 3 },
     source2: { schluessel: 1, lektion: 3, seite: 10 }
@@ -129,7 +129,7 @@ const GRAMMAR_RULES = [
   {
     id: "mubtada-khabar-01",
     name: "مُبْتَدَأ وخَبَر (Subjekt und Aussage)",
-    shortExplanation: "Der Lehrer führt die beiden Begriffe hier bewusst nur als Vorgeschmack ein (\"erstmal nicht viel damit machen, sondern erstmal nur wissen\"). خَبَر (khabar) ist die Information über das Nomen – in den Übungen das Wort, das die Schüler ergänzt haben, z.B. جَديدٌ (dschadīdun, neu). مُبْتَدَأ (mubtadaʾ) ist das Subjekt, also das, worum es im Satz geht, z.B. اَلْمُدَرِّسُ (al-mudarrisu, der Lehrer). Zusammen: اَلْمُدَرِّسُ جَديدٌ – der Lehrer ist neu.",
+    shortExplanation: "Die beiden Begriffe kommen hier zunächst nur als Vorgeschmack (\"erstmal nicht viel damit machen, sondern erstmal nur wissen\"). خَبَر (khabar) ist die Information über das Nomen – in den Übungen das ergänzte Wort, z.B. جَديدٌ (dschadīdun, neu). مُبْتَدَأ (mubtadaʾ) ist das Subjekt, also das, worum es im Satz geht, z.B. اَلْمُدَرِّسُ (al-mudarrisu, der Lehrer). Zusammen: اَلْمُدَرِّسُ جَديدٌ – der Lehrer ist neu.",
     color: "mubtada",
     source: { folge: 3, video: "Folge 03", approxTimestamp: "13:57", chapter: 3 }
   },
@@ -144,7 +144,7 @@ const GRAMMAR_RULES = [
   {
     id: "madd-tabii-01",
     name: "مَدّ (natürliche Verlängerung)",
-    shortExplanation: "Ein Schüler fragt, ob man لَذيذٌ (ladhīdhun, lecker) anders liest, wenn auf dem ي ein Sukun steht. Der Lehrer antwortet: gleich – das ي mit Sukun ist hier keine Pause, sondern zum Verlängern da. Seine Begründung: Zu jedem Vokalzeichen gehört ein Buchstabe – Kasra gehört zu ي („sein kleiner Bruder\"), Damma zu و, Fatha zu ا. Wenn Vokalzeichen und zugehöriger Buchstabe aufeinandertreffen, verlängern sie sich nur. Seine Beispiele: اَلتُّفّاحُ (at-tuffāḥu, der Apfel) – dort trifft Fatha auf ا, deshalb wird lang gelesen; مَفْتوحٌ (maftūḥun) – dort trifft Damma auf و. Diese Fälle nennt der Lehrer die natürlichen مَدّ (Madd). Etwas später zeigt er dasselbe an اَلْبابُ (al-bābu, die Tür): nach der Fatha kann dort unmöglich eine Kasra kommen, das ا verlängert nur.",
+    shortExplanation: "Zu jedem Vokalzeichen gehört ein Buchstabe – Kasra gehört zu ي („sein kleiner Bruder\"), Damma zu و, Fatha zu ا. Wenn Vokalzeichen und zugehöriger Buchstabe aufeinandertreffen, verlängern sie sich nur – das ist das natürliche مَدّ (Madd). Ein ي mit Sukūn ist deshalb keine Pause: لَذِيذٌ (ladhīdhun, lecker) wird lang gelesen. Weitere Beispiele: اَلتُّفّاحُ (at-tuffāḥu, der Apfel) – dort trifft Fatha auf ا, deshalb wird lang gelesen; مَفْتوحٌ (maftūḥun) – dort trifft Damma auf و. Ebenso اَلْبَابُ (al-bābu, die Tür): nach der Fatha kann dort unmöglich eine Kasra kommen, das ا verlängert nur.",
     color: "other",
     source: { folge: 3, video: "Folge 03", approxTimestamp: "35:04", chapter: 3 }
   },
@@ -159,7 +159,7 @@ const GRAMMAR_RULES = [
   {
     id: "schakl-01",
     name: "شَكْل (Vokalzeichen)",
-    shortExplanation: "Auf die Frage eines Schülers erklärt der Lehrer, was mit „Schakl\" gemeint ist: die kleinen Zeichen über und unter den Buchstaben. Er zählt auf: فَتْحة (Fatha), كَسْرة (Kasra), سُكون (Sukun), ضَمّة (Damma) und شَدّة (Schadda). Alle zusammen heißen تَشْكيل (taschkīl), ein einzelnes Zeichen ist ein شَكْل (schakl). Die Hausaufgabe lautet, bei den unbekannten Wörtern die richtigen Schakl-Zeichen zu setzen – also anhand der Sonnen-/Mondbuchstaben-Liste zu entscheiden, ob ein Schadda hinkommt oder nicht.",
+    shortExplanation: "شَكْل (schakl) sind die kleinen Zeichen über und unter den Buchstaben. Es gibt fünf: فَتْحة (Fatha), كَسْرة (Kasra), سُكون (Sukun), ضَمّة (Damma) und شَدّة (Schadda). Alle zusammen heißen تَشْكيل (taschkīl), ein einzelnes Zeichen ist ein شَكْل (schakl). Bei einem unbekannten Wort entscheidet die Sonnen-/Mondbuchstaben-Liste, ob ein Schadda hinkommt oder nicht.",
     color: "other",
     source: { folge: 3, video: "Folge 03", approxTimestamp: "45:31", chapter: 3 }
   },
@@ -187,7 +187,7 @@ const GRAMMAR_RULES = [
   {
     id: "irab-drei-faelle-01",
     name: "اَلْإِعْراب (die drei Fälle)",
-    shortExplanation: "Es gibt drei Fälle, die wir zuerst brauchen (eigentlich sind es vier). مَرْفوع (marfūʿ) = Nominativ, Frage \"wer oder was?\", Anzeichen: Damma ـُ oder zwei Damma ـٌ. مَجْرور (majrūr) = Genitiv, Frage \"wessen?\", Anzeichen: Kasra ـِ oder zwei Kasra ـٍ. مَنْصوب (manṣūb) = Akkusativ, Frage \"wen oder was?\", Anzeichen: Fatha ـَ oder zwei Fatha ـً. Der Lehrer betont, dass es noch weitere Anzeichen gibt, dies aber die Grundzeichen sind. Die Endung zeigt also den Fall an: مُحَمَّدٌ ist marfūʿ, مُحَمَّدٍ ist majrūr, مُحَمَّدًا ist manṣūb – z.B. رَأَى مُحَمَّدٌ حامِدًا (raʾā Muḥammadun Ḥāmidan) \"Mohammed sah Hamid\": Mohammed ist der Täter, also marfūʿ, Hamid ist der Gesehene, also mit Fatha-Tanwin. Im ersten Buch begegnen uns vor allem مَرْفوع und مَجْرور. Den arabischen Fachbegriff für die Fälle nennt der Lehrer in dieser Folge nicht; er spricht nur von \"Fällen\".",
+    shortExplanation: "Das Arabische hat vier Fälle; drei davon werden zuerst gebraucht. مَرْفوع (marfūʿ) = Nominativ, Frage \"wer oder was?\", Anzeichen: Damma ـُ oder zwei Damma ـٌ. مَجْرور (majrūr) = Genitiv, Frage \"wessen?\", Anzeichen: Kasra ـِ oder zwei Kasra ـٍ. مَنْصوب (manṣūb) = Akkusativ, Frage \"wen oder was?\", Anzeichen: Fatha ـَ oder zwei Fatha ـً. Der Lehrer betont, dass es noch weitere Anzeichen gibt, dies aber die Grundzeichen sind. Die Endung zeigt also den Fall an: مُحَمَّدٌ ist marfūʿ, مُحَمَّدٍ ist majrūr, مُحَمَّدًا ist manṣūb – z.B. رَأَى مُحَمَّدٌ حامِدًا (raʾā Muḥammadun Ḥāmidan) \"Mohammed sah Hamid\": Mohammed ist der Täter, also marfūʿ, Hamid ist der Gesehene, also mit Fatha-Tanwin. Im ersten Buch begegnen uns vor allem مَرْفوع und مَجْرور. Den arabischen Fachbegriff für die Fälle nennt der Lehrer in dieser Folge nicht; er spricht nur von \"Fällen\".",
     color: "nasab",
     source: { folge: 4, video: "Folge 04", approxTimestamp: "18:53", chapter: 4 },
     source2: { schluessel: 1, lektion: 11, seite: 39 }
@@ -442,7 +442,7 @@ const GRAMMAR_RULES = [
   {
     id: "harf-jarr-li-01",
     name: "لِ (fünfter حرف جر, Besitz)",
-    shortExplanation: "لِ ist der fünfte Harf al-Jarr nach فِي، عَلَى، إِلَى، مِنْ – nur ein einziger Buchstabe, ein Lām mit Kasra. Es bedeutet »für« oder »gehört« und ist eine Besitzanzeige: هَذَا لِخَالِدٍ hādhā li-Khālidin – »dies gehört Khalid«. Auf die Nachfrage, ob لِ nur Besitz ausdrückt, sagt der Lehrer »fürs Erste« – weitere Bedeutungen kommen später dazu. Wie bei den anderen Huruf al-Jarr wird das Wort danach مَجْرور majrūr (Kasra bzw. Kasratān): لِ ist حَرْف جَرّ, خَالِدٍ ist اِسْم مَجْرور.",
+    shortExplanation: "لِ ist der fünfte Harf al-Jarr nach فِي، عَلَى، إِلَى، مِنْ – nur ein einziger Buchstabe, ein Lām mit Kasra. Es bedeutet »für« oder »gehört« und ist eine Besitzanzeige: هَذَا لِخَالِدٍ hādhā li-Khālidin – »dies gehört Khalid«. Fürs Erste steht لِ nur für Besitz; weitere Bedeutungen kommen später dazu. Wie bei den anderen Huruf al-Jarr wird das Wort danach مَجْرور majrūr (Kasra bzw. Kasratān): لِ ist حَرْف جَرّ, خَالِدٍ ist اِسْم مَجْرور.",
     color: "nasab",
     source: { folge: 9, video: "Folge 09", approxTimestamp: "35:14", chapter: 6 },
     source2: { schluessel: 1, lektion: 6, seite: 23 }
@@ -458,7 +458,7 @@ const GRAMMAR_RULES = [
   {
     id: "fem-ohne-ta-marbuta-01",
     name: "مؤنث بلا تاء (weiblich ohne Tāʾ marbūṭa)",
-    shortExplanation: "Der Lehrer nennt drei Gruppen weiblicher Wörter: solche mit Tāʾ marbūṭa, solche die von der Bedeutung her weiblich sind (Tochter, Mutter, Tante) und solche, die einfach weiblich sind – ohne erkennbaren Grund, z.B. اَلنَّار an-nār »das Feuer«. Auch قِدْرٌ qidrun »Kochtopf« ist weiblich, obwohl kein Tāʾ marbūṭa dransteht. Die dritte Gruppe muss man auswendig lernen.",
+    shortExplanation: "Es gibt drei Gruppen weiblicher Wörter: solche mit Tāʾ marbūṭa, solche die von der Bedeutung her weiblich sind (Tochter, Mutter, Tante) und solche, die einfach weiblich sind – ohne erkennbaren Grund, z.B. اَلنَّار an-nār »das Feuer«. Auch قِدْرٌ qidrun »Kochtopf« ist weiblich, obwohl kein Tāʾ marbūṭa dransteht. Die dritte Gruppe muss man auswendig lernen.",
     color: "fem",
     source: { folge: 9, video: "Folge 09", approxTimestamp: "42:53", chapter: 6 },
     source2: { schluessel: 1, lektion: 6, seite: 22 }
@@ -505,7 +505,7 @@ const GRAMMAR_RULES = [
   {
     id: "eigennamen-fem-ohne-tanwin-01",
     name: "Weibliche Eigennamen ohne Tanwin",
-    shortExplanation: "Weibliche Eigennamen bekommen kein Tanwin – der Lehrer erinnert beim Vorlesen der Kapitel-7-Sätze ausdrücklich daran. In den Sätzen dieses Kapitels stehen sie deshalb mit einfachem Damma: آمِنةُ (Aminatu), فاطِمةُ (Fatimatu) – nicht آمِنةٌ. Welche Endung solche Namen an anderen Satzpositionen bekommen, sagt der Lehrer hier nicht.",
+    shortExplanation: "Weibliche Eigennamen bekommen kein Tanwin. In den Sätzen dieses Kapitels stehen sie deshalb mit einfachem Damma: آمِنةُ (Aminatu), فاطِمةُ (Fatimatu) – nicht آمِنةٌ. Welche Endung solche Namen an anderen Satzpositionen bekommen, sagt der Lehrer hier nicht.",
     color: "fem",
     source: { folge: 10, video: "Folge 10", approxTimestamp: "30:50", chapter: 7 },
     source2: { schluessel: 1, lektion: 4, seite: 15 }
@@ -529,7 +529,7 @@ const GRAMMAR_RULES = [
   {
     id: "li-eigenname-01",
     name: "لِ + Eigenname (kein لِلْ)",
-    shortExplanation: "Bei Eigennamen sagt man kein لِلْ, sondern nur لِ + Name mit Kasra und Tanwīn. Anlass in der Stunde: Ein Schüler liest beim Satz ueber den Stuhl لِلْعَمّار (li-l-ʿAmmār), der Lehrer korrigiert sofort zu لِعَمّارٍ (li-ʿAmmārin) und begründet: \"Weil Ammar ist ein Name - und deswegen sagt man auch kein لِلْ.\" Genauso لِمُحَمَّدٍ (li-Muḥammadin) \"gehört Muhammad\" und لِخالِدٍ (li-Khālidin) \"gehört Khalid\". Der Satz übersetzt: \"Wem gehört der Stuhl? - Dieser Stuhl gehört Ammar.\" (Sonderfall zu لِلْ / لِ, siehe Beleg 12:47.)",
+    shortExplanation: "Bei Eigennamen sagt man kein لِلْ, sondern nur لِ + Name mit Kasra und Tanwīn. Beim Satz über den Stuhl wird oft لِلْعَمّار (li-l-ʿAmmār) gelesen, der Lehrer korrigiert sofort zu لِعَمّارٍ (li-ʿAmmārin) und begründet: \"Weil Ammar ist ein Name - und deswegen sagt man auch kein لِلْ.\" Genauso لِمُحَمَّدٍ (li-Muḥammadin) \"gehört Muhammad\" und لِخالِدٍ (li-Khālidin) \"gehört Khalid\". Der Satz übersetzt: \"Wem gehört der Stuhl? - Dieser Stuhl gehört Ammar.\" (Sonderfall zu لِلْ / لِ, siehe Beleg 12:47.)",
     color: "idafa",
     source: { folge: 12, video: "Folge 12", approxTimestamp: "16:21", chapter: 8 },
     source2: { schluessel: 1, lektion: 6, seite: 23 }
@@ -545,7 +545,7 @@ const GRAMMAR_RULES = [
   {
     id: "zuruf-makan-01",
     name: "تَحْتَ / أَمامَ / خَلْفَ (Ortsadverbien)",
-    shortExplanation: "Der Lehrer fasst die bisher gelernten drei ظَرْف (ẓarf, Zeit- und Ortsangaben - er selbst sagt dazu \"Adverbien\") zusammen: تَحْتَ (taḥta) = unter, أَمامَ (amāma) = davor/vor, خَلْفَ (khalfa) = dahinter/hinter. Das Wort dahinter steht im Genitiv, endet also auf Kasra - genau daran korrigiert der Lehrer die Schüler: أَمامَ الطّالِبِ (amāma ṭ-ṭālibi, \"vor dem Studenten\", nicht ṭālibu) und خَلْفَ الْمَسْجِدِ (khalfa l-masjidi, nicht masjidu). Beispiele aus der Stunde: \"Die Tafel ist vor dem Studenten und sie ist hinter dem Lehrer\" sowie بَيْتُ الإِمامِ خَلْفَ الْمَسْجِدِ (baytu l-imāmi khalfa l-masjidi) - \"Das Haus des Imams ist hinter der Moschee.\"",
+    shortExplanation: "Die bisher gelernten drei ظَرْف (ẓarf, Zeit- und Ortsangaben - der Lehrer sagt dazu \"Adverbien\") sind: تَحْتَ (taḥta) = unter, أَمامَ (amāma) = davor/vor, خَلْفَ (khalfa) = dahinter/hinter. Das Wort dahinter steht im Genitiv, endet also auf Kasra - genau daran wird im Unterricht korrigiert: أَمامَ الطّالِبِ (amāma ṭ-ṭālibi, \"vor dem Studenten\", nicht ṭālibu) und خَلْفَ الْمَسْجِدِ (khalfa l-masjidi, nicht masjidu). Beispiele aus der Stunde: \"Die Tafel ist vor dem Studenten und sie ist hinter dem Lehrer\" sowie بَيْتُ الإِمامِ خَلْفَ الْمَسْجِدِ (baytu l-imāmi khalfa l-masjidi) - \"Das Haus des Imams ist hinter der Moschee.\"",
     color: "other",
     source: { folge: 12, video: "Folge 12", approxTimestamp: "26:59", chapter: 8 },
     source2: { schluessel: 1, lektion: 8, seite: 28 }
@@ -1112,7 +1112,7 @@ const SENTENCE_TAGS = {
     { ruleId: "harf-jarr-01", matchText: "مِنَ الْعِرَاقِ." }
   ],
   "45873": [
-    { ruleId: "harf-jarr-01", matchText: "مِنْ سُويسْرَا." },
+    { ruleId: "harf-jarr-01", matchText: "مِنْ سُوِيسْرَا." },
     { ruleId: "al-gesamtheit-01", matchText: "الْمُدَرِّسُ" }
   ],
   "45874": [
@@ -1166,6 +1166,15 @@ const SENTENCE_TAGS = {
     { ruleId: "idafa-zweitglied-01", matchText: "الْبَيْتِ" }
   ],
   "c623f2fb-57a5-48b6-b176-55df461b2ada": [
+    /* Elias am 30.07.2026 zu dieser Karte: "das sind keine genitiv praepositionen.
+       und da fehlt noch Li als genitiv praepositionen." Beides stimmte:
+       - Die Aufzaehlung nannte nur vier.  sagt woertlich, لِ sei
+         "der fuenfte Harf al-Jarr nach فِي، عَلَى، إِلَى، مِنْ" (Folge 09 ca. 35:14,
+         Schl. 1 L6 S. 23) - der Satz ist also ergaenzt, nicht erfunden.
+       - Unterstrichen war einzig هِيَ. In einem Satz, dessen ganzer Zweck die
+         Aufzaehlung der Genitivpartikeln ist, war damit das Pronomen markiert und
+         die Partikeln nicht. Jetzt steht die Markierung auf der Aufzaehlung. */
+    { ruleId: "harf-jarr-01", matchText: "فِي، عَلَى، إِلَى، مِنْ، لِ" },
     { ruleId: "huwa-hiya-01", matchText: "هِيَ" }
   ],
   "0e23a52d-e2f5-4a57-9082-58eb9f362d88": [
