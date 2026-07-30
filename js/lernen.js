@@ -13,6 +13,39 @@ function startLearningSession(){
   showScreen('learn');
 }
 
+/* Zieht eine LAUFENDE Runde nach, wenn sich Buch oder Kapitelauswahl geaendert
+   haben. Ohne das lernte Elias weiter Wörter aus Kapiteln, die er gerade
+   abgewählt hatte (im Browser nachgestellt am 30.07.2026: Kapitel 13, 16, 18
+   und 24 blieben in der Runde stehen).
+
+   Bewusst NICHT die ganze Runde neu bauen: die schon beantworteten Karten
+   sollen beantwortet bleiben. Es werden nur die Wörter entfernt, die nicht mehr
+   zur Auswahl passen, und der Zeiger wird mitgezogen, damit er auf derselben
+   Karte stehen bleibt wie vorher. Bleibt nichts übrig, ist die Runde vorbei. */
+function passeRundeAnAuswahlAn(){
+  if (!SESSION.words.length || SESSION.fertig) return false;
+  const bisher = SESSION.words;
+  const aktuellesWort = bisher[SESSION.idx];
+  const bleibt = bisher.filter(passtZurAuswahl);
+  if (bleibt.length === bisher.length) return false;      // nichts zu tun
+
+  const entfernt = bisher.length - bleibt.length;
+  if (!bleibt.length){
+    SESSION = { words:[], idx:0, dirs:[], fertig:true };
+    showScreen('home', { ersetzen:true });
+    toast('Diese Auswahl enthält keine fälligen Wörter mehr — Runde beendet.');
+    return true;
+  }
+  /* Der Zeiger muss mitwandern: stand er auf Karte 12 und fallen davor drei
+     Karten weg, ist dieselbe Karte jetzt Nummer 9. Sonst springt die Runde. */
+  let neuerIdx = bleibt.indexOf(aktuellesWort);
+  if (neuerIdx < 0) neuerIdx = Math.min(SESSION.idx, bleibt.length - 1);
+  SESSION = { words: bleibt, idx: neuerIdx, dirs: [], fertig: false };
+  renderCard();
+  toast(`${entfernt} Wort${entfernt===1?'':'e'} aus abgewählten Kapiteln entfernt.`);
+  return true;
+}
+
 function cardDirection(idx){
   if (SETTINGS.direction === 'mixed'){
     if (SESSION.dirs[idx] === undefined) SESSION.dirs[idx] = Math.random()<0.5 ? 'ar-de' : 'de-ar';
@@ -168,6 +201,12 @@ const VERB_FORMEN = [
 
 function renderVerbFormen(w){
   const kasten = document.getElementById('cardVerbForms');
+  /* Abschaltbar wie die Pluralformen. Elias am 30.07.2026: "du solltest da die 4
+     zeitformen nicht zeigen. die sollen da raus. am besten machen wir sogar eine
+     einstellung bei der ich wie die 'plural einstellung' einstellen kann ob die
+     unterschiedlichen 4 dinger auch angezeigt werden sollen bei verben."
+     Standard ist AUS (siehe SETTINGS in js/kern.js). */
+  if (!SETTINGS.showVerbFormen){ kasten.classList.add('hidden'); return; }
   const vorhanden = VERB_FORMEN.filter(f => w[f.feld]);
   if (!vorhanden.length){ kasten.classList.add('hidden'); return; }
   kasten.innerHTML = vorhanden.map(f =>

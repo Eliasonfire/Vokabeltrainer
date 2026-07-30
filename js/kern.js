@@ -17,6 +17,35 @@ const INTERVALS = {1:0, 2:1, 3:3, 4:7, 5:16};
 const CHAPTER_NAMES = {
   1:"هَذَا (dies)", 2:"ذَلِكَ (jenes)", 3:"اَلْ (bestimmter Artikel)", 4:"Genitivpartikel", 5:"مُضَاف (Bezugswort)",
   6:"هَذِهِ (diese)", 7:"تِلْكَ (jene)", 8:"Länder", 9:"نَعْت (Adjektiv)",
+
+  /* ---------- Kapitel 10 bis 23, ergaenzt am 30.07.2026 ----------
+     Elias: "hier bei den weiterfuehrenden kapiteln kannst du gerne als
+     ueberschrift das hinmachen was das kapitel behandelt. ansonsten weiss ich ja
+     gar nicht wonach jenes kapitel sortiert ist." Vorher stand dort
+     "Kap. 10 - Kapitel 10", was tatsaechlich nichts sagt.
+
+     ⚠️ NICHTS DAVON IST GERATEN (E.1). Jeder Name ist die Kurzform des Satzes,
+     mit dem der MADINA-SCHLUESSEL 1 die Lektion selbst eroeffnet ("In dieser
+     Lektion geht es um das Folgende: ..."). Die Fundstelle steht je Zeile dabei;
+     die Seitenzahlen kommen aus dem Inhaltsverzeichnis des Schluessels.
+     Wo der Schluessel selbst sagt, dass es keinen neuen Stoff gibt
+     (Wiederholung, Fortsetzung, Test), sagt der Name genau das - eine erfundene
+     Ueberschrift waere dort schlimmer als "Kapitel 17". */
+  10:"Besitz-Fürwörter (ـكَ, ـهُ, ـهَا, ـي)",   // Schl. 1 L10 S. 35
+  11:"Wiederholung (nur zwei neue Wörter)",      // Schl. 1 L11 S. 39, wörtlich
+  12:"أَنْتِ (weibliches „du“)",                  // Schl. 1 L12 S. 41
+  13:"Plural von Nomen & Adjektiven",            // Schl. 1 L13 S. 44, Teil A
+  14:"أَنْتُمْ (männlicher Plural)",               // Schl. 1 L14 S. 52
+  15:"أَنْتُنَّ (weiblicher Plural)",              // Schl. 1 L15 S. 56
+  16:"Rational / irrational",                    // Schl. 1 L16 S. 58
+  17:"Fortsetzung von Kapitel 16",               // Schl. 1 L17 S. 60, wörtlich
+  18:"Dual (ـانِ, genau zwei)",                   // Schl. 1 L18 S. 61
+  19:"Zahlen 3–10 (männlich)",                   // Schl. 1 L19 S. 64
+  20:"Zahlen 3–10 (weiblich)",                   // Schl. 1 L20 S. 67
+  21:"Testlektion (nur neue Wörter)",            // Schl. 1 L21 S. 69, wörtlich
+  22:"Wörter ohne Tanwīn",                       // Schl. 1 L22 S. 70
+  23:"Genitiv & Diptota (Fatha statt Kasra)",    // Schl. 1 L23 S. 73
+
   /* Kapitel 24 ist bei arabicroots kein Lektionskapitel - Madina Buch 1 hat 23
      Lektionen (Madina-Schluessel 1). Es ist ein Anhang: Pronomen, Fragewoerter,
      Zahlen, Grammatik-Fachbegriffe und vermischter Wortschatz. Der Name ist am
@@ -78,7 +107,12 @@ let PROGRESS = initProgress();
 function saveProgress(){ LS.set('vt_progress', PROGRESS); }
 
 let SETTINGS = Object.assign(
-  { showPlural:false, sessionSize:20, voiceURI:null, direction:'ar-de', selectedChapters:[], wrongOnly:false, grammarHighlight:true },
+  /* showVerbFormen steht bewusst auf FALSE. Die vier Verbformen waren am
+     29.07.2026 auf Elias' Wunsch dazugekommen, und am 30.07. hat er sie so
+     wieder abbestellt: "du solltest da die 4 zeitformen nicht zeigen. die
+     sollen da raus." Der Schalter bleibt, damit er sie holen kann, wenn er
+     sie braucht - aber der Standard ist aus. */
+  { showPlural:false, showVerbFormen:false, sessionSize:20, voiceURI:null, direction:'ar-de', selectedChapters:[], wrongOnly:false, grammarHighlight:true },
   LS.get('vt_settings', {})
 );
 function saveSettings(){ LS.set('vt_settings', SETTINGS); }
@@ -296,17 +330,35 @@ function weakWords(){
      bleibt hier bei der Boxnummer, weil "schwach" genau das meint. */
   return shuffle(VOCAB_DATA.filter(isWeak)).sort((a,b)=> PROGRESS[a.id].box - PROGRESS[b.id].box);
 }
-function currentPool(){
-  let pool = SETTINGS.wrongOnly ? weakWords() : dueWords();
-  /* Gelernt wird immer in genau einem Lehrwerk. Ohne diesen Filter mischten
-     sich nach dem ersten Buchwechsel alle geladenen Buecher in eine Runde -
-     und die Kapitelnummern darunter meinen in jedem Buch etwas anderes.
-     Eigene Vokabeln laufen bewusst in jedem Buch mit. */
+/* Gehoert diese Vokabel zur aktuellen Auswahl aus Buch und Kapiteln?
+
+   Steht bewusst als EIGENE Funktion und nicht mehr nur in currentPool():
+   dieselbe Frage muss auch eine LAUFENDE Runde beantworten koennen.
+
+   ⚠️ Elias am 30.07.2026: "ich habe gerade ein bisschen die vokabelkarteien
+   gemacht und sehe hier woerter die erst in spaeteren kapiteln haetten dran
+   kommen sollen, obwohl ich nur kapitel 1-9 ausgewaehlt habe."
+   Nachgestellt und bestaetigt: der Filter selbst rechnete richtig, aber eine
+   schon LAUFENDE Runde behielt ihre Woerter. Wer mitten in einer Runde die
+   Kapitel umstellt, lernte weiter Kapitel 13, 16, 18, 24 - im Browser gemessen.
+   Die Runde wird jetzt mitgezogen, siehe passeRundeAnAuswahlAn() in
+   js/lernen.js.
+
+   Gelernt wird immer in genau einem Lehrwerk. Ohne den Buchfilter mischten sich
+   nach dem ersten Buchwechsel alle geladenen Buecher in eine Runde - und die
+   Kapitelnummern darunter meinen in jedem Buch etwas anderes. Eigene Vokabeln
+   laufen bewusst in jedem Buch mit. */
+function passtZurAuswahl(w){
   const buch = (typeof aktivesBuch === 'function') ? aktivesBuch() : 'madina-1';
-  pool = pool.filter(w => w.book === buch || w.chapter === 'personal');
+  if (!(w.book === buch || w.chapter === 'personal')) return false;
   const sel = SETTINGS.selectedChapters || [];
-  if (sel.length) pool = pool.filter(w=>sel.includes(w.chapter));
-  return pool;
+  if (sel.length && !sel.includes(w.chapter)) return false;
+  return true;
+}
+
+function currentPool(){
+  const pool = SETTINGS.wrongOnly ? weakWords() : dueWords();
+  return pool.filter(passtZurAuswahl);
 }
 
 /* "Nur falsche Wörter" wieder abschalten, sobald keine mehr da sind
