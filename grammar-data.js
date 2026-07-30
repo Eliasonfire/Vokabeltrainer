@@ -1104,7 +1104,8 @@ const SENTENCE_TAGS = {
   ],
   "45871": [
     { ruleId: "schams-qamar-merkhilfe-01", matchText: "السَّيَّارَةُ" },
-    { ruleId: "harf-jarr-01", matchText: "مِنْ إِنْجِلْتَرَا." }
+    { ruleId: "harf-jarr-01", matchText: "مِنْ إِنْجِلْتَرَا." },
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" }
   ],
   "45872": [
     { ruleId: "schams-qamar-merkhilfe-01", matchText: "الرَّجُلُ" },
@@ -1118,7 +1119,8 @@ const SENTENCE_TAGS = {
     { ruleId: "alif-maqsura-unveraenderlich-01", matchText: "مُسْتَشْفًى" }
   ],
   "45875": [
-    { ruleId: "nat-fem-01", matchText: "فَاكِهَةٌ حُلْوَةٌ" }
+    { ruleId: "nat-fem-01", matchText: "فَاكِهَةٌ حُلْوَةٌ" },
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" }
   ],
   "45877": [
     { ruleId: "schams-qamar-merkhilfe-01", matchText: "السَّمَاءِ." }
@@ -1126,6 +1128,7 @@ const SENTENCE_TAGS = {
   "45878": [
   ],
   "45881": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" }
   ],
   "45883": [
   ],
@@ -1133,7 +1136,8 @@ const SENTENCE_TAGS = {
     { ruleId: "mubtada-khabar-01", matchText: "الْقَاهِرَةُ" }
   ],
   "45890": [
-    { ruleId: "harf-jarr-01", matchText: "مِنَ الْجَامِعَةِ." }
+    { ruleId: "harf-jarr-01", matchText: "مِنَ الْجَامِعَةِ." },
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" }
   ],
   "45891": [
     { ruleId: "harf-jarr-01", matchText: "فِي الْمَكْتَبِ" }
@@ -1186,7 +1190,9 @@ const SENTENCE_TAGS = {
     { ruleId: "idafa-kein-adjektiv-01", matchText: "الطَّالِبُ مَرِيضٌ" }
   ],
   "mb1-21-1": [
-    { ruleId: "eigennamen-fem-ohne-tanwin-01", matchText: "آمِنَةُ" }
+    { ruleId: "eigennamen-fem-ohne-tanwin-01", matchText: "آمِنَةُ" },
+    { ruleId: "istifham-ayna-01", matchText: "أَيْنَ" },
+    { ruleId: "huwa-hiya-01", matchText: "هِيَ" }
   ],
   "mb1-24-1": [
     { ruleId: "min-ayna-01", matchText: "مِنْ أَيْنَ" }
@@ -1202,26 +1208,35 @@ const SENTENCE_TAGS = {
     { ruleId: "idafa-01", matchText: "كِتَابُ حَامِدٍ" }
   ],
   "mb1-27-2": [
-    { ruleId: "harf-jarr-idafa-01", matchText: "عَلَى مَكْتَبِ الْمُدَرِّسِ" }
+    { ruleId: "harf-jarr-idafa-01", matchText: "عَلَى مَكْتَبِ الْمُدَرِّسِ" },
+    { ruleId: "istifham-ayna-01", matchText: "أَيْنَ" },
+    { ruleId: "huwa-hiya-01", matchText: "هُوَ" }
   ],
   "mb1-27-3": [
-    { ruleId: "zuruf-makan-01", matchText: "تَحْتَ" }
+    { ruleId: "zuruf-makan-01", matchText: "تَحْتَ" },
+    { ruleId: "istifham-ayna-01", matchText: "أَيْنَ" },
+    { ruleId: "huwa-hiya-01", matchText: "هِيَ" }
   ],
   "mb1-28-1": [
     { ruleId: "lafz-al-jalala-01", matchText: "اللهِ" }
   ],
   "mb1-29-1": [
-    { ruleId: "idafa-verkettung-01", matchText: "مَسْجِدُ رَسُولِ اللهِ" }
+    { ruleId: "idafa-verkettung-01", matchText: "مَسْجِدُ رَسُولِ اللهِ" },
+    { ruleId: "istifham-ayna-01", matchText: "أَيْنَ" },
+    { ruleId: "huwa-hiya-01", matchText: "هُوَ" }
   ],
   "mb1-30-1": [
     { ruleId: "lafz-al-jalala-01", matchText: "اللهِ" }
   ],
   "mb1-30-2": [
-    { ruleId: "zuruf-makan-01", matchText: "تَحْتَ" }
+    { ruleId: "zuruf-makan-01", matchText: "تَحْتَ" },
+    { ruleId: "istifham-ayna-01", matchText: "أَيْنَ" },
+    { ruleId: "huwa-hiya-01", matchText: "هُوَ" }
   ],
   "mb1-34-1": [
     { ruleId: "istifham-liman-01", matchText: "لِمَنْ" },
-    { ruleId: "tanwin-nach-harf-jarr-01", matchText: "لِخَالِدٍ" }
+    { ruleId: "tanwin-nach-harf-jarr-01", matchText: "لِخَالِدٍ" },
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" }
   ],
   "mb1-37-1": [
     { ruleId: "tanwin-eigennamen-01", matchText: "مُحَمَّدٌ" },
@@ -1235,7 +1250,8 @@ const SENTENCE_TAGS = {
   ],
   "mb1-42-1": [
     { ruleId: "lil-vs-li-01", matchText: "لِلتَّاجِرِ" },
-    { ruleId: "harf-jarr-li-01", matchText: "لِلطَّبِيبِ" }
+    { ruleId: "harf-jarr-li-01", matchText: "لِلطَّبِيبِ" },
+    { ruleId: "ismul-isara-dhalika-01", matchText: "ذَلِكَ" }
   ],
   "mb1-42-2": [
     { ruleId: "idafa-erkennen-01", matchText: "اسْمُ التَّاجِرِ" }
@@ -1248,22 +1264,39 @@ const SENTENCE_TAGS = {
     { ruleId: "li-eigenname-01", matchText: "لِمُحَمَّدٍ" }
   ],
   "mb1-46-1": [
-    { ruleId: "li-eigenname-01", matchText: "لِعِيسَى" }
+    { ruleId: "li-eigenname-01", matchText: "لِعِيسَى" },
+    { ruleId: "ismul-isara-dhalika-01", matchText: "ذَلِكَ" }
   ],
   "mb1-46-2": [
     { ruleId: "zuruf-makan-01", matchText: "خَلْفَ" }
   ],
   "mb1-51-1": [
-    { ruleId: "nat-bestimmtheit-01", matchText: "السَّيَّارَةُ الْجَمِيلَةُ" }
+    { ruleId: "nat-bestimmtheit-01", matchText: "السَّيَّارَةُ الْجَمِيلَةُ" },
+    { ruleId: "istifham-liman-01", matchText: "لِمَنْ" },
+    { ruleId: "ismul-isara-tilka-01", matchText: "تِلْكَ" }
   ],
   "mb1-51-2": [
     { ruleId: "nat-bestimmtheit-01", matchText: "اللُّغَةُ الْعَرَبِيَّةُ" }
   ],
   "mb1-63-1": [
-    { ruleId: "possessiv-ya-01", matchText: "اسْمِي" }
+    { ruleId: "possessiv-ya-01", matchText: "اسْمِي" },
+    { ruleId: "istifham-ma-01", matchText: "مَا" }
   ],
   "mb1-63-2": [
-    { ruleId: "possessiv-ya-01", matchText: "عَمِّي" }
+    { ruleId: "possessiv-ya-01", matchText: "عَمِّي" },
+    { ruleId: "huwa-hiya-01", matchText: "هِيَ" }
+  ],
+  "45879": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" }
+  ],
+  "45885": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" }
+  ],
+  "45893": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" }
+  ],
+  "45895": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" }
   ]
 };
 
