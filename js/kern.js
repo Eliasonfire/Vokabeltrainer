@@ -128,6 +128,16 @@ function touchStreak(){
       void badge.offsetWidth;
       badge.classList.add('bump');
     }
+    /* Serien-Meilenstein (js/feier.js). Elias' ausdruecklicher Wunsch: "Wenn man
+       zum Beispiel eine Woche lang dauerhaft gelernt hat, dann kommt zum
+       Beispiel Konfetti."
+       Nur INNERHALB dieses Zweigs, also nur wenn die Serie sich heute wirklich
+       geaendert hat - sonst feuerte der Meilenstein bei jeder Karte des siebten
+       Tages neu. Die Einmaligkeit steckt zusaetzlich in feiere() selbst; hier
+       stehen also zwei Sperren hintereinander, und das ist Absicht. */
+    if (typeof feiere === 'function' && typeof SERIE_MEILEN !== 'undefined'
+        && SERIE_MEILEN.includes(s.count))
+      feiere('serie-meilenstein', { tage: s.count });
   }
   return s;
 }

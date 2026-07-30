@@ -653,12 +653,33 @@ function answer(stufe){
 
   const w = SESSION.words[SESSION.idx];
   const p = PROGRESS[w.id];
+  const boxVorher = p.box;
   p.box = s.box(p.box);
   if (s.richtig) p.correct = (p.correct||0)+1;
   else           p.wrong   = (p.wrong||0)+1;
   p.nextReview = todayStr(INTERVALS[p.box]);
   saveProgress();
   touchStreak();
+
+  /* ---------- Meilensteine (js/feier.js) ----------
+     Erst gespeichert, DANN gefeiert. Ein Effekt darf den Endzustand nie tragen:
+     bei unsichtbarer Seite feuert requestAnimationFrame nicht, und dann waere
+     der Fortschritt weg. Fehlt js/feier.js ganz, passiert hier gar nichts.
+
+     Die Serie richtiger Antworten haengt an SESSION und nicht am Fortschritt:
+     sie meint "fuenf hintereinander in DIESER Runde", nicht "fuenf richtige
+     ueberhaupt". */
+  if (typeof feiere === 'function'){
+    SESSION.serie = s.richtig ? (SESSION.serie || 0) + 1 : 0;
+    if (p.box !== boxVorher)
+      feiere(p.box > boxVorher ? 'box-auf' : 'box-ab', { von: boxVorher, nach: p.box });
+    if (p.box === 5 && boxVorher !== 5) feiere('box-5', { id: w.id, wort: w.ar });
+    /* Alle fuenf, nicht nur beim fuenften: eine Serie von zehn soll zweimal
+       etwas sagen. Aber bewusst nicht bei jeder Karte - genau das hat Elias
+       abgelehnt. */
+    if (SESSION.serie >= 5 && SESSION.serie % 5 === 0)
+      feiere('fuenf-richtig', { serie: SESSION.serie });
+  }
 
   const card = document.getElementById('flashcard');
   const feedback = s.feedback;
@@ -675,7 +696,19 @@ function answer(stufe){
       /* Erst pruefen, ob der "nur falsche"-Modus jetzt leer ist: dessen
          Meldung ist die wichtigere und soll nicht vom "Runde geschafft"
          ueberschrieben werden. */
-      if (!pruefeNurFalscheModus()) toast('Runde geschafft!');
+      const anderes = pruefeNurFalscheModus();
+      /* ⭐ Zwei verschiedene Anlaesse, und der Unterschied ist Absicht (Elias am
+         30.07.): RUNDE FERTIG sind die 20 Karten einer Sitzung, ALLES FAELLIG
+         ist das Tagesziel. Bei 148 faelligen Karten sind das sieben Runden -
+         das Tagesziel ist der seltenere und deshalb groessere Anlass. Waeren
+         beide gleich, wuerde der grosse entwertet.
+         Gemessen wird das Tagesziel an currentPool(): ist der Vorrat nach dieser
+         Runde leer, ist fuer heute nichts mehr faellig. */
+      const restVorrat = (typeof currentPool === 'function') ? currentPool().length : 0;
+      if (typeof feiere === 'function'){
+        feiere('runde-fertig', { karten: SESSION.words.length });
+        if (!restVorrat) feiere('alles-faellig', { zahl: SESSION.words.length });
+      } else if (!anderes) toast('Runde geschafft!');
       /* Beendete Runde ersetzt den Lern-Eintrag in der Historie, statt einen
          neuen anzulegen - sonst landet die Zurueck-Taste auf einer Runde,
          die es nicht mehr gibt. */
