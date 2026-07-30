@@ -54,6 +54,69 @@ const CHAPTER_NAMES = {
   24:"Anhang (Pronomen, Zahlen, Fachbegriffe)", personal:"Eigene Vokabeln"
 };
 
+/* ---------- Welche Kapitel kennt Elias? ----------
+   Elias am 30.07.2026: "bei den wortfeldern sollen erstmal nur woerter von mir
+   drinnen sein, die ich auch kenne. sprich bis jetzt woerter aus kapitel 1-9 und
+   meine eigenen" - und gleich danach: "auch bei den eigenen kategorien sollen
+   nur woerter sein die ich auch kenne."
+
+   ⚠️ Die Liste ist NICHT geraten und nicht aus "1-9" abgeschrieben, sondern am
+   30.07.2026 bei arabicroots abgefragt: `get_unlocked_chapters` gab genau
+   madina-1-chapter-1 bis -9 zurueck, kein weiteres Buch. Das ist die
+   maszgebliche Auskunft darueber, was er im Kurs schon hatte.
+
+   Warum die Zahlen hier im Code stehen und nicht zur Laufzeit geholt werden: die
+   App hat keinen Zugang zu arabicroots - sie ist ohne Backend gebaut und laeuft
+   offline. Die Wartungsroutine darf `get_unlocked_chapters` aufrufen und traegt
+   neue Freischaltungen hier nach.
+
+   Ein Buch, das hier NICHT steht, wird auch nicht beschnitten: dann ist
+   unbekannt, was freigeschaltet ist, und etwas zu verbergen waere schlimmer als
+   zu viel zu zeigen. */
+const FREIGESCHALTET = {
+  'madina-1': [1,2,3,4,5,6,7,8,9]      // arabicroots, abgefragt am 30.07.2026
+};
+
+/* Die Woerter, die Elias kennt. Drei Quellen, und die dritte ist der Grund,
+   warum das nicht einfach "Kapitel 1 bis 9" heisst:
+
+   1. die freigeschalteten Kapitel des aktiven Buchs (Tabelle oben)
+   2. seine eigenen Vokabeln (chapter 'personal')
+   3. der LERNBESTAND - alles, was in vocab-data.js steht
+
+   ⚠️ Punkt 3 ist keine Bequemlichkeit, sondern behebt einen Widerspruch: Elias
+   hat am 30.07.2026 die neun Zahlen aus Kapitel 24 ausdruecklich angefordert
+   ("ja will sie drin haben"), und ebenso أَخٌ und أُخْتٌ aus dem
+   Madina-Schluessel. Kapitel 24 ist NICHT freigeschaltet - ein reiner
+   Kapitelfilter haette genau die Woerter wieder verschwinden lassen, um die er
+   gebeten hat.
+
+   vocab-data.js ist sein handverlesener Lernbestand (171 Woerter, Beispielsaetze,
+   Koranbezuege). Was dort steht, kennt er - unabhaengig von der Kapitelnummer.
+   Alles Weitere kommt aus dem arabicroots-Paket und ist Vorrat fuer spaeter. */
+const LERNBESTAND_IDS = new Set(VOCAB_DATA.map(w => w.id));
+
+function bekannteVokabeln(){
+  const alle = (typeof buchVokabeln === 'function') ? buchVokabeln() : VOCAB_DATA;
+  const buch = (typeof aktivesBuch === 'function') ? aktivesBuch() : 'madina-1';
+  const frei = FREIGESCHALTET[buch];
+  if (!frei) return alle;
+  return alle.filter(w => w.chapter === 'personal'
+                       || frei.includes(w.chapter)
+                       || LERNBESTAND_IDS.has(w.id));
+}
+
+/* Für die Beschriftung: "Kapitel 1–9" statt einer Aufzählung, wenn die Kapitel
+   lückenlos aufeinander folgen. */
+function freigeschalteteBeschriftung(){
+  const buch = (typeof aktivesBuch === 'function') ? aktivesBuch() : 'madina-1';
+  const frei = FREIGESCHALTET[buch];
+  if (!frei || !frei.length) return null;
+  const s = [...frei].sort((a,b)=>a-b);
+  const lueckenlos = s.every((n,i)=> i===0 || n === s[i-1]+1);
+  return lueckenlos && s.length > 1 ? `Kapitel ${s[0]}–${s[s.length-1]}` : `Kapitel ${s.join(', ')}`;
+}
+
 /* ---------- Storage ---------- */
 const LS = {
   get(key, fallback){ try{ const v = localStorage.getItem(key); return v?JSON.parse(v):fallback; }catch(e){ return fallback; } },
@@ -306,7 +369,11 @@ function passtInsFeld(w, feld){
 const OHNE_WORTFELD = 'Noch ohne Wortfeld';
 
 function wortfelder(){
-  const quelle = (typeof buchVokabeln === 'function') ? buchVokabeln() : VOCAB_DATA;
+  /* Nur die Woerter, die Elias kennt - seine Vorgabe vom 30.07.2026. Vorher stand
+     hier buchVokabeln(), also alle 24 Kapitel des geladenen Buchs; unter "Tiere"
+     standen dadurch Tiere aus Kapiteln, die er im Kurs noch nicht hatte. */
+  const quelle = (typeof bekannteVokabeln === 'function') ? bekannteVokabeln()
+               : (typeof buchVokabeln === 'function') ? buchVokabeln() : VOCAB_DATA;
   const tabelle = (typeof WORTFELDER !== 'undefined') ? WORTFELDER : [];
   const map = {};
   const rest = [];
