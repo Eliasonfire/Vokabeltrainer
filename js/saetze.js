@@ -453,6 +453,42 @@ document.getElementById('btnSentIrab').addEventListener('click', ()=>{
    Funktion, weil die Lernkarte sie ebenfalls aufruft (js/lernen.js): Elias
    konnte die Satzbau-Hinweise auf der Karte nicht anklicken. Zwei Fassungen
    derselben Erklaerung waeren die naheliegende und die falsche Loesung. */
+/* ---------- Kurzfassung einer Erklaerung ----------
+   Elias am 30.07.2026: "die satzhinweise insgesamt kuerzer von ihrer laenge sein
+   sollen. teilweise gehen sie noch weiter unter den bildschirmende hinaus"
+
+   ⚠️ Nicht geloescht wird nichts. Die Erklaerungen tragen Zitate mit Fundstelle,
+   und seine eigene stehende Vorgabe verlangt genau diesen Wortlaut - an manchen
+   Stellen besteht der Lehrer ausdruecklich auf der Formulierung (عَلَى heisst
+   "auf", nicht "ueber"). Gekuerzt wird also nur die SICHTBARE Laenge: der erste
+   Satz steht sofort da, der Rest hinter einem Schalter, Wort fuer Wort
+   unveraendert.
+
+   ⚠️ Und der Schnitt ist BERECHNET, nicht in die Daten geschrieben. Ein neues
+   Feld `kern` haette 73 handverfasste Eintraege gebraucht, davon 17 mit Urteil -
+   erfundene Formulierungen im Datenbestand, ohne dass jemand gegenliest. So gibt
+   es nur eine Fassung des Textes, und die stammt aus dem Unterricht.
+
+   Am 30.07.2026 an grammar-data.js gemessen: 73 Erklaerungen, Median 418
+   Zeichen, laengste 912. Nach dem Schnitt: 56 von 73 haben einen ersten Satz
+   unter 140 Zeichen, der laengste erste Satz hat 265. */
+const KERN_ABKUERZUNGEN = ['z.B.','ca.','bzw.','usw.','d.h.','u.a.','S.','L.','Nr.','vgl.','ggf.'];
+function kernSatz(text){
+  const t = String(text || '').trim();
+  /* Satzende suchen: Punkt/Frage/Ausruf, dem Leerraum folgt. Abkuerzungen
+     ueberspringen - sonst endet die Kurzfassung von fem-ohne-ta-marbuta-01
+     mitten im Satz bei "z.B." und sagt gar nichts. */
+  const RE = /[.!?](?=\s|$)/g;
+  let m;
+  while ((m = RE.exec(t)) !== null){
+    const bis = m.index + 1;
+    const stueck = t.slice(0, bis);
+    if (KERN_ABKUERZUNGEN.some(a => stueck.endsWith(a))) continue;
+    return stueck;
+  }
+  return t;
+}
+
 function zeigeGrammatikPopover(span){
   const pop = document.getElementById('gramPopover');
   const rule = GRAMMAR_RULES.find(r=>r.id===span.dataset.rule);
@@ -464,22 +500,71 @@ function zeigeGrammatikPopover(span){
      nur da, wo es ihn gibt. */
   const quelle = [`${rule.source.video} · ca. ${rule.source.approxTimestamp}`];
   if (rule.source2) quelle.push(`Schl. ${rule.source2.schluessel} L${rule.source2.lektion} S. ${rule.source2.seite}`);
-  pop.innerHTML = `<div class="gp-title">${rule.name}</div><div>${rule.shortExplanation}</div><div class="gp-source">${quelle.join(' · ')}</div>`;
+  const voll = String(rule.shortExplanation || '');
+  const kern = kernSatz(voll);
+  const rest = voll.slice(kern.length).trim();
+  pop.innerHTML = `<div class="gp-title">${escapeHtml(rule.name)}</div>`
+    + `<div class="gp-kern">${escapeHtml(kern)}</div>`
+    + (rest
+        ? `<button class="gp-mehr" type="button">ausführlich</button>`
+          + `<div class="gp-rest hidden">${escapeHtml(rest)}</div>`
+        : '')
+    + `<div class="gp-source">${escapeHtml(quelle.join(' · '))}</div>`;
+  pop._anker = span;
+  platzierePopover();
+  pop.classList.add('show');
+}
+
+/* Die Platzierung steht getrennt, weil sie ZWEIMAL gebraucht wird: beim Oeffnen
+   und nach dem Aufklappen von „ausführlich".
+
+   ⚠️ Ohne den zweiten Aufruf war Elias' Beschwerde nur halb behoben. Im Browser
+   auf 375x812 gemessen: zugeklappt 162 px hoch und vollstaendig im Bild,
+   aufgeklappt 407 px - und damit wieder unter dem Bildschirmrand, weil das
+   Fenster von seinem festen oberen Rand nach unten waechst. Genau das hatte er
+   gemeldet ("teilweise gehen sie noch weiter unter den bildschirmende hinaus").
+   Jetzt wird nach jeder Groessenaenderung neu entschieden, ob es nach unten oder
+   nach oben aufgeht. */
+function platzierePopover(){
+  const pop = document.getElementById('gramPopover');
+  const span = pop && pop._anker;
+  if (!span || !span.isConnected) return;
   const rect = span.getBoundingClientRect();
   pop.style.left = Math.max(8, Math.min(rect.left, window.innerWidth-296))+'px';
-  /* Nach unten, wenn darunter Platz ist, sonst darueber. Auf der Lernkarte
-     steht der Beispielsatz weit unten; ein Popover, das immer nach unten
-     aufgeht, staende dort halb unter dem Bildschirmrand. */
-  const platzUnten = window.innerHeight - rect.bottom;
-  pop.style.top = platzUnten > 170 ? (rect.bottom+8)+'px' : 'auto';
-  pop.style.bottom = platzUnten > 170 ? 'auto' : (window.innerHeight - rect.top + 8)+'px';
-  pop.classList.add('show');
+  /* Nach unten, wenn darunter Platz fuer die TATSAECHLICHE Hoehe ist, sonst
+     darueber. Frueher stand hier die feste Zahl 170 - die stimmte fuer die
+     zugeklappte Fassung und war fuer die aufgeklappte zu klein. */
+  pop.style.top = '0px'; pop.style.bottom = 'auto';
+  const hoehe = pop.offsetHeight || 170;
+  const platzUnten = window.innerHeight - rect.bottom - 8;
+  const platzOben  = rect.top - 8;
+  if (platzUnten >= hoehe || platzUnten >= platzOben){
+    pop.style.top = Math.max(8, Math.min(rect.bottom + 8, window.innerHeight - hoehe - 8)) + 'px';
+    pop.style.bottom = 'auto';
+  } else {
+    pop.style.top = 'auto';
+    pop.style.bottom = (window.innerHeight - rect.top + 8) + 'px';
+  }
 }
 
 document.getElementById('sentAr').addEventListener('click', (e)=>{
   const span = e.target.closest('.gram-underline');
   if (!span){ document.getElementById('gramPopover').classList.remove('show'); return; }
   zeigeGrammatikPopover(span);
+});
+/* „ausführlich" klappt den Rest auf. Muss VOR dem Zumachen unten stehen und den
+   Klick anhalten - sonst schliesst der Zuklapp-Handler das Popover, waehrend man
+   gerade mehr lesen will. */
+document.getElementById('gramPopover').addEventListener('click', (e)=>{
+  const knopf = e.target.closest('.gp-mehr');
+  if (!knopf) return;
+  e.stopPropagation();
+  const rest = knopf.parentElement.querySelector('.gp-rest');
+  if (!rest) return;
+  const zu = rest.classList.toggle('hidden');
+  knopf.textContent = zu ? 'ausführlich' : 'weniger';
+  /* Neu platzieren, sonst waechst das Fenster unter den Bildschirmrand. */
+  platzierePopover();
 });
 document.addEventListener('click', (e)=>{
   if (!e.target.closest('.gram-underline') && !e.target.closest('#gramPopover'))

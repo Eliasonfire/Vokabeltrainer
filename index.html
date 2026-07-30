@@ -1251,6 +1251,20 @@ main{
 .gram-popover .gp-title{font-weight:700;color:#fff;margin-bottom:var(--sp-1);}
 .gram-popover .gp-source{margin-top:var(--sp-2);font-size:var(--fs-xs);color:var(--text-faint);}
 
+/* Elias am 30.07.2026: „die satzhinweise insgesamt kürzer von ihrer länge sein
+   sollen. teilweise gehen sie noch weiter unter den bildschirmende hinaus."
+   Gemessen: 73 Erklärungen, Median 418 Zeichen, längste 912. Der erste Satz
+   steht jetzt sofort da, der Rest hinter „ausführlich" — Wort für Wort
+   unverändert, weil die Texte Zitate mit Fundstelle tragen. */
+.gram-popover .gp-mehr{
+  margin-top:var(--sp-2);
+  background:none;border:none;padding:0;cursor:pointer;
+  color:var(--red-bright);font-family:var(--font-ui);
+  font-size:var(--fs-xs);font-weight:700;
+  text-decoration:underline;text-underline-offset:3px;
+}
+.gram-popover .gp-rest{margin-top:var(--sp-2);color:var(--text-dim);}
+
 /* =====================================================================
    QURAN-HÄUFIGKEIT
    ===================================================================== */
