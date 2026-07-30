@@ -758,6 +758,91 @@ main{
    leiser Randstreifen, keine zweite Farbwelt: die Zeilen stehen mitten unter
    den Wortfeldern und sollen als dieselbe Sorte Sache erkennbar bleiben — nur
    als seine. */
+/* =====================================================================
+   FEIER-EFFEKTE (js/feier.js)
+   Elias' Wunsch nach Animationen — mit seiner eigenen Auflage: „in dieser App
+   soll nichts nerven. Im Gegenteil, sie soll Spaß machen." Deshalb nur
+   Meilensteine und Rückmeldung am Ort der Antwort, kein Effekt je Karte.
+
+   Die Bühne liegt über allem und fängt KEINE Klicks ab — ein Effekt darf das
+   Bedienen nicht blockieren, auch nicht für 300 ms.
+   ===================================================================== */
+.feier-buehne{
+  position:fixed;inset:0;z-index:900;
+  pointer-events:none;overflow:hidden;
+}
+.feier-canvas{position:absolute;inset:0;}
+.feier-banner{
+  position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);
+  text-align:center;color:#fff;
+  text-shadow:0 2px 18px rgba(0,0,0,.75);
+  animation:feierAuf 1.7s var(--ease-out) forwards;
+}
+.feier-banner .fb-text{font-weight:800;letter-spacing:-.01em;line-height:1.15;}
+.feier-banner .fb-sub{margin-top:var(--sp-2);color:var(--text-dim);font-size:var(--fs-sm);}
+.feier-klein  .fb-text{font-size:1.35rem;}
+.feier-mittel .fb-text{font-size:1.9rem;}
+.feier-gross  .fb-text{font-size:2.5rem;}
+.feier-gross{animation-duration:2.6s;}
+@keyframes feierAuf{
+  0%   {opacity:0;transform:translate(-50%,-50%) scale(.82);}
+  14%  {opacity:1;transform:translate(-50%,-50%) scale(1.04);}
+  24%  {transform:translate(-50%,-50%) scale(1);}
+  78%  {opacity:1;}
+  100% {opacity:0;transform:translate(-50%,-58%) scale(1);}
+}
+
+/* Der Chip für die Boxänderung. Steigt auf und verblasst — kurz genug, dass er
+   den Lernfluss nicht bremst. */
+.feier-chip{
+  position:absolute;transform:translate(-50%,-50%);
+  background:var(--surface-3);border:1px solid var(--border-strong);
+  color:var(--text);font-family:var(--font-ui);font-size:var(--fs-sm);font-weight:700;
+  padding:var(--sp-1) var(--sp-3);border-radius:var(--r-full);
+  white-space:nowrap;
+  animation:feierChipAuf 1.2s var(--ease-out) forwards;
+}
+.feier-chip-gut{border-color:var(--green);color:var(--green);}
+.feier-chip-schlecht{border-color:var(--red-bright);color:var(--red-bright);}
+@keyframes feierChipAuf{
+  0%   {opacity:0;transform:translate(-50%,-30%) scale(.9);}
+  18%  {opacity:1;transform:translate(-50%,-50%) scale(1);}
+  100% {opacity:0;transform:translate(-50%,-150%) scale(1);}
+}
+
+/* Rückmeldung an der Karte und im Übungsmodus. */
+.feier-rand{animation:feierRand .9s var(--ease-out);}
+@keyframes feierRand{
+  0%,100%{box-shadow:var(--sh-3);}
+  35%    {box-shadow:var(--sh-3), 0 0 0 2px var(--green), 0 0 40px -4px var(--green-wash);}
+}
+.feier-gut{animation:feierGut .62s var(--ease-out);}
+@keyframes feierGut{
+  0%,100%{background:transparent;}
+  30%    {background:var(--green-wash);}
+}
+.feier-zittern{animation:feierZittern .42s ease-in-out;}
+@keyframes feierZittern{
+  0%,100%{transform:translateX(0);}
+  20%    {transform:translateX(-6px);}
+  45%    {transform:translateX(5px);}
+  70%    {transform:translateX(-3px);}
+}
+.feier-aufleuchten{animation:feierLeuchten .9s var(--ease-out);}
+@keyframes feierLeuchten{
+  0%  {color:var(--green);text-shadow:0 0 22px var(--green-wash);}
+  100%{color:inherit;text-shadow:none;}
+}
+
+/* Wer Animationen reduziert haben will, bekommt keine — zusätzlich zur Prüfung
+   in js/feier.js, damit auch ein vergessener Aufruf nichts bewegt. */
+@media (prefers-reduced-motion: reduce){
+  .feier-banner,.feier-chip,.feier-rand,.feier-gut,.feier-zittern,.feier-aufleuchten{
+    animation:none;
+  }
+  .feier-canvas{display:none;}
+}
+
 .list-row-eigen{border-color:var(--red-dim);}
 .list-row-eigen .list-row-title{display:flex;align-items:center;gap:var(--sp-2);}
 .eigen-stern{color:var(--red-bright);font-size:var(--fs-sm);line-height:1;}
@@ -2119,6 +2204,7 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
 <script src="js/buecher.js"></script>
 <script src="js/irab.js"></script>
 <script src="js/darstellung.js"></script>
+<script src="js/feier.js"></script>
 <script src="js/navigation.js"></script>
 <script src="js/start.js"></script>
 <script src="js/lernen.js"></script>

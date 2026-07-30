@@ -393,6 +393,10 @@ function pruefeLuecke(aufloesen){
     feld.innerHTML = richtig
       ? `Richtig: <span class="luecke-wort" lang="ar" dir="rtl">${escapeHtml(LUECKE.wort)}</span>`
       : `Es hiess <span class="luecke-wort" lang="ar" dir="rtl">${escapeHtml(LUECKE.wort)}</span>`;
+    /* Nach dem Schreiben des Feldes, nicht davor: der Effekt greift auf das
+       Wort darin zu (js/feier.js). Elias hat den Lueckentext ausdruecklich
+       gelobt - hier lohnt die Rueckmeldung. */
+    if (richtig && typeof feiere === 'function') feiere('luecke-richtig');
     return;
   }
   feld.className = 'luecke-antwort falsch';
