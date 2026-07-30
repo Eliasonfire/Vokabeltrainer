@@ -159,24 +159,24 @@ function buchVokabeln(){
 function kapitelDesBuchs(slug){
   const s = slug || aktivesBuch();
   const info = buchInfo(s);
-  /* ⚠️ Nur die FREIGESCHALTETEN Kapitel, wenn fuer das Buch bekannt ist, welche
-     das sind. Elias am 30.07.2026: "ich habe auf meinem handy bisher nur kapitel
-     1 bis 9 und meine eigenen freigeschaltet gehabt … ich weiss nicht warum aber
-     ich habe jetzt ploetzlich die moeglichkeit auch auf kapitel 24 zuzugreifen.
-     das ist ein fehler."
+  /* ⚠️ ALLE Kapitel, die geladen sind - hier wird NICHT auf die freigeschalteten
+     eingeengt. Am 30.07.2026 stand hier kurz eine solche Sperre, und Elias hat
+     sie sofort zurueckgenommen: "es sollten alle kapitel zur verfuegung stehen."
 
-     Die Ursache war NICHT ein Uebertrag, sondern ich: die neun Zahlen, die er
-     angefordert hatte, trugen `chapter: 24`, und damit galt Kapitel 24 als
-     vorhanden. Die Zahlen stehen jetzt auf 'personal'.
+     Warum sie ueberhaupt entstand: Er hatte gemeldet, dass Kapitel 24 ploetzlich
+     auftauchte. Die Ursache war aber NICHT die Kapitelliste, sondern ich - die
+     neun Zahlen, die er angefordert hatte, trugen `chapter: 24`, und damit galt
+     das Kapitel als vorhanden. Das ist behoben (die Zahlen stehen auf
+     'personal'); die Sperre hier war die falsche zweite Haelfte und ist weg.
 
-     Diese Sperre hier ist die zweite Haelfte: auch wenn das Vokabelpaket die
-     Kapitel 10 bis 24 mitbringt, werden sie nicht angeboten, solange arabicroots
-     sie nicht freigeschaltet hat. Nichts wird geloescht - die Woerter liegen
-     weiter im Paket und erscheinen, sobald ein Kapitel dazukommt (Tabelle
-     FREIGESCHALTET in js/kern.js). */
-  const frei = (typeof FREIGESCHALTET !== 'undefined') ? FREIGESCHALTET[s] : null;
+     Die Lehre: erst die Ursache beheben, dann pruefen, ob die zweite Massnahme
+     noch gebraucht wird. Hier wurde beides gleichzeitig gemacht, und die zweite
+     hat ihm etwas weggenommen, was er wollte.
+
+     FREIGESCHALTET (js/kern.js) gilt weiterhin - aber nur fuer die Frage, welche
+     WOERTER in den Wortfeldern und im Vorrat der eigenen Kategorien stehen. Das
+     ist eine andere Frage als die, welche Kapitel er lernen darf. */
   const vorhanden = [...new Set(VOCAB_DATA.filter(w=>w.book===s && typeof w.chapter==='number')
-    .filter(w=>!frei || frei.includes(w.chapter))
     .map(w=>w.chapter))].sort((a,b)=>a-b);
   /* Was tatsaechlich geladen ist, gilt. Die Zahl aus dem Verzeichnis ist nur
      die Vorschau fuer ein Buch, das noch nicht angetippt wurde - stuende sie
