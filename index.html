@@ -876,31 +876,24 @@ main{
   font-family:var(--font-ar);direction:rtl;
   background:var(--surface-3);border:1px solid var(--border);
   border-radius:var(--r-2);padding:7px var(--sp-3);font-size:1.15rem;color:#fff;
-  cursor:grab;
-  /* Stand bis zum 29.07.2026 auf `none` - die zweite Ursache dafuer, dass sich
-     die Wortliste auf dem Handy nicht rollen liess. `none` verbietet dem
-     Browser JEDE Fingerbewegung ueber diesem Element, also auch das senkrechte
-     Rollen; kein preventDefault-Umbau haette daran etwas geaendert. `pan-y`
-     laesst das Rollen zu und behaelt die waagerechte Bewegung fuer uns. Das
-     Ziehen selbst unterdrueckt seit dem langen Druck ohnehin selbst
-     (`onMove` in js/kategorien.js). */
-  touch-action:pan-y;
+  cursor:pointer;
+  /* Die Geschichte dieser einen Zeile ist die Geschichte des Fehlers, den Elias
+     dreimal melden musste. Sie stand auf `none` — das verbietet dem Browser JEDE
+     Fingerbewegung über dem Element, also auch das Rollen der Liste. Dann auf
+     `pan-y`, was das Rollen zuließ und die waagerechte Bewegung für das Ziehen
+     behielt. Seit dem 30.07.2026 gibt es kein Ziehen mehr (siehe
+     js/kategorien.js), also braucht der Browser auch nichts abzugeben:
+     `manipulation` erlaubt Rollen und Zoomen und nimmt nur die 300 ms
+     Doppeltipp-Verzögerung weg. */
+  touch-action:manipulation;
   transition:opacity var(--dur-2) ease, transform var(--dur-1) var(--ease-out), border-color var(--dur-2) ease;
 }
 .word-chip:hover{border-color:var(--border-strong);}
 .word-chip.dragging{opacity:.35;transform:scale(.94);}
 /* Sichtbare Rueckmeldung waehrend der 400 ms, damit man merkt, dass Halten
    etwas bewirkt - sonst fuehlt sich der lange Druck wie eine tote Stelle an. */
-.word-chip.haltend{border-color:var(--red);transform:scale(1.06);}
 .word-chip .weak-de{font-family:var(--font-ui);direction:ltr;color:var(--text-dim);font-size:var(--fs-sm);margin-inline-start:var(--sp-1);}
 .list-row-title .weak-de{font-family:var(--font-ui);color:var(--text-dim);font-size:var(--fs-md);}
-.drag-ghost{
-  position:fixed;z-index:999;pointer-events:none;
-  font-family:var(--font-ar);direction:rtl;
-  background:var(--accent-grad);border-radius:var(--r-2);padding:7px var(--sp-3);font-size:1.15rem;color:#fff;
-  box-shadow:var(--sh-2);
-  transform:scale(1.06);
-}
 .unassigned-pool{margin-top:var(--sp-5);}
 .pool-label{font-size:var(--fs-xs);color:var(--text-faint);margin-bottom:var(--sp-2);font-weight:700;text-transform:uppercase;letter-spacing:.08em;}
 /* Sagt, woraus eine Liste gebaut ist. Bewusst leise gesetzt: eine Auskunft,
@@ -921,6 +914,45 @@ main{
 }
 .pool-schalter .ic{transition:transform var(--dur-2) var(--ease-out);}
 .pool-schalter[aria-expanded="true"] .ic{transform:rotate(90deg);}
+
+/* Einsortieren durch Antippen. Die Leiste sitzt FEST über der unteren
+   Navigation — dieselbe Geometrie wie .sent-nav und .ueb-fuss, damit sie immer
+   an derselben Stelle ist, egal wie weit die Wortliste gerollt ist. */
+.kat-zielleiste{
+  position:fixed;
+  bottom:calc(78px + var(--safe-bottom));
+  left:50%;transform:translateX(-50%);
+  width:calc(100% - var(--gutter) * 2);
+  max-width:calc(600px - var(--gutter) * 2);
+  z-index:30;
+  background:var(--surface-3);border:1px solid var(--border-strong);
+  border-radius:var(--r-3);padding:var(--sp-3);
+  box-shadow:var(--sh-3);
+  display:flex;flex-direction:column;gap:var(--sp-2);
+}
+.kat-zeile{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);}
+.kat-zahl{font-size:var(--fs-sm);font-weight:700;color:var(--text);}
+.kat-aus{
+  background:none;border:none;padding:0;cursor:pointer;
+  color:var(--text-dim);font-family:var(--font-ui);font-size:var(--fs-xs);font-weight:700;
+  text-decoration:underline;text-underline-offset:3px;
+}
+.kat-ziele{display:flex;gap:var(--sp-2);overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
+.kat-ziele::-webkit-scrollbar{display:none;}
+.kat-ziel{
+  flex:0 0 auto;
+  background:var(--red-wash);border:1px solid var(--red-dim);color:var(--red-bright);
+  border-radius:var(--r-full);padding:var(--sp-2) var(--sp-4);
+  font-size:var(--fs-sm);font-weight:700;font-family:var(--font-ui);cursor:pointer;
+  transition:transform var(--dur-1) var(--ease-out);
+}
+.kat-ziel:active{transform:scale(.95);}
+.kat-ziel-leer{color:var(--text-faint);font-size:var(--fs-xs);}
+/* Ein markiertes Wort. Deutlich, aber nicht schreiend — man markiert oft
+   mehrere hintereinander. */
+.word-chip.gewaehlt{
+  background:var(--red-wash);border-color:var(--red-bright);color:#fff;
+}
 /* Ein Wort, das schon in Kategorien liegt, zeigt an, in wie vielen — sonst
    sieht man der Liste nicht an, warum ein Wort dort steht. */
 .word-chip .in-kat{
@@ -1872,6 +1904,18 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
             <span>Schon einsortiert <span class="pool-zahl" id="poolFertigZahl"></span></span>
           </button>
           <div class="pool-words hidden" id="poolWordsFertig"></div>
+
+          <!-- Zielleiste für das Einsortieren durch ANTIPPEN. Ersetzt das Ziehen
+               und Ablegen, das Elias dreimal als Fehler gemeldet hat — zuletzt
+               nach meinem Gesten-Fix: „ich kann das wort nicht vernünftig in die
+               kategorie packen." Begründung in js/kategorien.js. -->
+          <div class="kat-zielleiste hidden" id="katZielLeiste">
+            <div class="kat-zeile">
+              <span class="kat-zahl" id="katAuswahlZahl"></span>
+              <button class="kat-aus" id="btnKatAuswahlAus" aria-label="Auswahl aufheben">Auswahl aufheben</button>
+            </div>
+            <div class="kat-ziele" id="katZiele"></div>
+          </div>
         </div>
       </div>
     </section>

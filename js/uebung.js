@@ -148,9 +148,9 @@ const uebungIstBestimmt = w => /^(ال|وال|فال|بال|كال|لل)/
 /* ---------- Antwortvorraete ----------
    Einmal hier, damit dieselbe Frage in mehreren Modi gleich heisst. */
 const KASUS_WAHL = [
-  { wert:'raf',  text:'مَرْفوع · Nominativ' },
-  { wert:'jarr', text:'مَجْرور · Genitiv' },
-  { wert:'nasb', text:'مَنْصوب · Akkusativ' }
+  { wert:'raf',  text:'مَرْفُوع · Nominativ' },
+  { wert:'jarr', text:'مَجْرُور · Genitiv' },
+  { wert:'nasb', text:'مَنْصُوب · Akkusativ' }
 ];
 /* Die sechs Endzeichen, die in den Daten wirklich vorkommen (an vocab-data.js
    ausgezaehlt). Bewusst MIT Tanwin-Unterscheidung: genau daran korrigiert der
@@ -171,12 +171,23 @@ const HARAKA_WAHL = [
    Zusaetzlich moeglich: `verdeckt:true` (Wort wird als Strich gezeigt, weil es
    selbst die Antwort waere) und `aufloesung` (ein Satz nach der Antwort).
    Eine leere Liste ist erlaubt und heisst: dieser Satz taugt dafuer nicht. */
+/* ⚠️ Jeder Reiter traegt den arabischen Fachbegriff UND eine deutsche
+   Bezeichnung. Elias am 30.07.2026: "im satzmodus bei den uebungen die ich
+   selbst beantworten kann da sind die kategorien nur auf arabisch betitelt. es
+   sollte arabisch und die deutsche uebersetzung dazu sein."
+   Der deutsche Teil ist absichtlich KURZ - die Leiste rollt waagerecht, und ein
+   langer Zusatz macht aus zwei sichtbaren Reitern einen. Er benennt die Sache,
+   er erklaert sie nicht; die Erklaerung steht im Hinweis unter der Aufgabe.
+
+   Und alle arabischen Begriffe hier sind voll vokalisiert - seine stehende
+   Vorgabe. مَجْرُور, مُضَاف, مَرْفُوع und مَنْصُوب standen vorher ohne die
+   Damma auf dem dritten Buchstaben da. */
 const UEBUNGEN = [
   {
-    id:'mubtada-khabar', nr:1, name:'مُبْتَدَأ / خَبَر', art:'tippen',
+    id:'mubtada-khabar', nr:1, name:'مُبْتَدَأ / خَبَر — Satzteile', art:'tippen',
     /* ⭐ Dieser Modus ist aus Elias' eigener Rueckfrage vom 30.07. entstanden:
        "war es nicht so, dass mubtadi (nomen) und baat (adjektiv) zusammen
-       sind?" Er hatte مُبْتَدَأ+خَبَر mit مَنْعوت+نَعْت verwechselt. Der
+       sind?" Er hatte مُبْتَدَأ+خَبَر mit مَنْعُوت+نَعْت verwechselt. Der
        Unterschied: das erste Paar ist ein ganzer SATZ ("der Lehrer IST neu"),
        das zweite nur eine Wortgruppe ("eine grosse Moschee"), und entscheidend
        ist die Bestimmtheit (`nat-bestimmtheit-01`, Folge 13 ca. 3:11,
@@ -193,7 +204,7 @@ const UEBUNGEN = [
     }
   },
   {
-    id:'nat', nr:2, name:'نَعْت', art:'tippen',
+    id:'nat', nr:2, name:'نَعْت — Adjektiv zum Nomen', art:'tippen',
     hinweis:'Das نَعْت stimmt mit seinem Wort in Fall, Zahl, Geschlecht UND Bestimmtheit überein.',
     baue(z){
       return z.map((t,i)=>t.rolle.includes('نَعْت')
@@ -201,22 +212,22 @@ const UEBUNGEN = [
     }
   },
   {
-    id:'idafa', nr:3, name:'مُضاف / مُضاف إِلَيْهِ', art:'tippen',
-    hinweis:'Der مُضاف trägt weder Tanwīn noch Artikel; das مُضاف إِلَيْهِ steht im Genitiv.',
+    id:'idafa', nr:3, name:'مُضَاف / مُضَاف إِلَيْهِ — Besitz', art:'tippen',
+    hinweis:'Der مُضَاف trägt weder Tanwīn noch Artikel; das مُضَاف إِلَيْهِ steht im Genitiv.',
     baue(z){
-      const mudaf = z.findIndex(t=>t.rolle.includes('(مُضاف)'));
-      const zu    = z.findIndex(t=>t.rolle.startsWith('مُضاف إِلَيْه'));
+      const mudaf = z.findIndex(t=>t.rolle.includes('(مُضَاف)'));
+      const zu    = z.findIndex(t=>t.rolle.startsWith('مُضَاف إِلَيْه'));
       if (mudaf < 0 || zu < 0) return [];
       /* Zwei Aufgaben statt einer mit zwei Antippen: so sagt die Rueckmeldung,
          WELCHER Teil sass und welcher nicht. */
       return [
-        { frage:'Tippe den مُضاف an — das Wort, das besessen wird.', ziele:[mudaf] },
-        { frage:'Tippe das مُضاف إِلَيْهِ an — den Besitzer.', ziele:[zu] }
+        { frage:'Tippe den مُضَاف an — das Wort, das besessen wird.', ziele:[mudaf] },
+        { frage:'Tippe das مُضَاف إِلَيْهِ an — den Besitzer.', ziele:[zu] }
       ];
     }
   },
   {
-    id:'jarr-paar', nr:4, name:'حَرْف جَرّ + مَجْرور', art:'tippen',
+    id:'jarr-paar', nr:4, name:'حَرْف جَرّ + مَجْرُور — Präposition', art:'tippen',
     hinweis:'Der حَرْف جَرّ setzt das Nomen dahinter in den Genitiv.',
     baue(z){
       const out = [];
@@ -225,14 +236,14 @@ const UEBUNGEN = [
         const n = z[i+1];
         if (!n || n.erwartet !== 'jarr') return;
         out.push({ frage:'Tippe den حَرْف جَرّ an.', ziele:[i] });
-        out.push({ frage:'Welches Wort steht dadurch im Genitiv (مَجْرور)?', ziele:[i+1] });
+        out.push({ frage:'Welches Wort steht dadurch im Genitiv (مَجْرُور)?', ziele:[i+1] });
       });
       return out;
     }
   },
   {
-    id:'alle-majrur', nr:5, name:'Alle مَجْرور', art:'mehrfach',
-    hinweis:'Genitiv steht nach حَرْف جَرّ, nach ظَرْف, als مُضاف إِلَيْهِ — und als نَعْت zu einem Wort im Genitiv.',
+    id:'alle-majrur', nr:5, name:'Alle مَجْرُور — Genitiv', art:'mehrfach',
+    hinweis:'Genitiv steht nach حَرْف جَرّ, nach ظَرْف, als مُضَاف إِلَيْهِ — und als نَعْت zu einem Wort im Genitiv.',
     baue(z){
       const ziele = z.map((t,i)=>t.erwartet==='jarr' ? i : -1).filter(i=>i>=0);
       if (!ziele.length) return [];
@@ -273,7 +284,7 @@ const UEBUNGEN = [
     }
   },
   {
-    id:'wortart', nr:8, name:'اِسْم / فِعْل / حَرْف', art:'wahl',
+    id:'wortart', nr:8, name:'اِسْم / فِعْل / حَرْف — Wortart', art:'wahl',
     hinweis:'Im Arabischen zählen auch Adjektive, Adverbien und Ortsangaben als اِسْم — تَحْتَ und هُنَا also auch.',
     baue(z){
       return z.map((t,i)=>{
@@ -349,7 +360,7 @@ const UEBUNGEN = [
     }
   },
   {
-    id:'genus', nr:11, name:'مُذَكَّر / مُؤَنَّث', art:'wahl',
+    id:'genus', nr:11, name:'مُذَكَّر / مُؤَنَّث — Geschlecht', art:'wahl',
     /* ⭐ Elias' Widerspruch vom 30.07., als ich den Reiter "Weiblich" aus dem
        Themenfilter genommen hatte: "nein das soll rein, es gibt ja auch
        Ausnahmen und Verkettungen von maennlichen und weiblichen Begriffen, das
@@ -376,7 +387,7 @@ const UEBUNGEN = [
     }
   },
   {
-    id:'isara', nr:12, name:'هَذَا / هَذِهِ', art:'wahl',
+    id:'isara', nr:12, name:'هَذَا / هَذِهِ — Hinweiswort', art:'wahl',
     hinweis:'Das Hinweiswort richtet sich nach dem Geschlecht des Wortes danach (isara-genus-kongruenz-01).',
     baue(z){
       /* Vier Schreibungen, zwei Paare. `istFem` sagt, welche der beiden im
@@ -406,7 +417,7 @@ const UEBUNGEN = [
     }
   },
   {
-    id:'fem-form', nr:13, name:'صَغِيرٌ / صَغِيرَةٌ', art:'wahl',
+    id:'fem-form', nr:13, name:'صَغِيرٌ / صَغِيرَةٌ — weibliche Form', art:'wahl',
     hinweis:'Männliche oder weibliche Form? Die Antwort steht im Wort davor — oder im Hinweiswort.',
     baue(z){
       return z.map((t,i)=>{

@@ -159,7 +159,24 @@ function buchVokabeln(){
 function kapitelDesBuchs(slug){
   const s = slug || aktivesBuch();
   const info = buchInfo(s);
+  /* ⚠️ Nur die FREIGESCHALTETEN Kapitel, wenn fuer das Buch bekannt ist, welche
+     das sind. Elias am 30.07.2026: "ich habe auf meinem handy bisher nur kapitel
+     1 bis 9 und meine eigenen freigeschaltet gehabt … ich weiss nicht warum aber
+     ich habe jetzt ploetzlich die moeglichkeit auch auf kapitel 24 zuzugreifen.
+     das ist ein fehler."
+
+     Die Ursache war NICHT ein Uebertrag, sondern ich: die neun Zahlen, die er
+     angefordert hatte, trugen `chapter: 24`, und damit galt Kapitel 24 als
+     vorhanden. Die Zahlen stehen jetzt auf 'personal'.
+
+     Diese Sperre hier ist die zweite Haelfte: auch wenn das Vokabelpaket die
+     Kapitel 10 bis 24 mitbringt, werden sie nicht angeboten, solange arabicroots
+     sie nicht freigeschaltet hat. Nichts wird geloescht - die Woerter liegen
+     weiter im Paket und erscheinen, sobald ein Kapitel dazukommt (Tabelle
+     FREIGESCHALTET in js/kern.js). */
+  const frei = (typeof FREIGESCHALTET !== 'undefined') ? FREIGESCHALTET[s] : null;
   const vorhanden = [...new Set(VOCAB_DATA.filter(w=>w.book===s && typeof w.chapter==='number')
+    .filter(w=>!frei || frei.includes(w.chapter))
     .map(w=>w.chapter))].sort((a,b)=>a-b);
   /* Was tatsaechlich geladen ist, gilt. Die Zahl aus dem Verzeichnis ist nur
      die Vorschau fuer ein Buch, das noch nicht angetippt wurde - stuende sie

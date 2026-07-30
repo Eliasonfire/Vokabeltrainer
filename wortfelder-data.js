@@ -53,7 +53,19 @@ const WORTFELDER = [
   { name: 'Nomen',       typ: 'noun',      wortart: true },
   { name: 'Verben',      typ: 'verb',      wortart: true },
   { name: 'Adjektive',   typ: 'adjective', wortart: true },
-  { name: 'Adverbien',   typ: 'adverb', wortart: true, woerter: ['auch', 'ebenfalls', 'sehr', 'immer', 'nie', 'oft', 'manchmal'] },
+  /* ⚠️ Die deutsche Wortliste ist am 30.07.2026 ENTFERNT. Elias: "bei der
+     kategorie wortfelder ist im ordner ‚adverbien' das wort ‚auch' drinnen und
+     das ist einfach falsch. im gegensatz dazu ist ordner zeit und ortsangaben
+     die eigentliche adverbien kategorie."
+     Er hat recht, und die Messung dazu ist eindeutig: das Feld enthielt genau EIN
+     Wort, أَيْضاً „auch / ebenfalls", und das nur, weil die deutsche Liste es
+     gefangen hat - im Abzug steht es als `vocab`. Kein einziges Wort seines
+     Lernbestands traegt die Wortart `adverb`.
+     Das Feld bleibt als Wortart-Fach stehen, falls ein spaeterer Abzug echte
+     `adverb`-Eintraege bringt; solange es leer ist, wird es nicht angezeigt.
+     أَيْضاً faellt damit unter "Noch ohne Wortfeld" - das ist ehrlich, denn sein
+     Unterricht hat das Wort keiner Wortart zugeordnet. */
+  { name: 'Adverbien (aus dem Abzug)', typ: 'adverb', wortart: true },
   { name: 'Wendungen',   typ: ['expression', 'phrase'], wortart: true },
   { name: 'Grammatik-Begriffe', typ: 'grammar', wortart: true },
 
@@ -76,9 +88,15 @@ const WORTFELDER = [
      Ortsangaben" statt unter „Partikeln".
 
      نَعَمْ (ja) und لَا (nein) behandelt der Unterricht NICHT. Sie bleiben
-     deshalb dort, wo der Abzug sie hat — nichts anderes wäre belegbar. */
+     deshalb dort, wo der Abzug sie hat — nichts anderes wäre belegbar.
+
+     ⭐ Am 30.07.2026 hat Elias das Feld umbenannt: es heißt jetzt „Adverbien
+     (Zeit- & Ortsangaben, ظَرْف)". Seine Begründung: „ordner zeit und
+     ortsangaben [ist] die eigentliche adverbien kategorie". Das deckt sich mit
+     dem Unterricht — in `zuruf-makan-01` sagt der Lehrer zu den ظَرْف
+     ausdrücklich selbst „Adverbien". */
   { name: 'Partikeln',   typ: 'particle', wortart: true, nichtFormen: ['تَحْتَ', 'هُنَا', 'هُنَاكَ', 'الآنَ', 'أَمَامَ', 'خَلْفَ', 'فَوْقَ'] },
-  { name: 'Zeit- & Ortsangaben (ظَرْف)', formen: ['تَحْتَ', 'هُنَا', 'هُنَاكَ', 'الآنَ', 'أَمَامَ', 'خَلْفَ', 'فَوْقَ', 'بَيْنَ', 'عِنْدَ', 'بَعْدَ', 'قَبْلَ'] },
+  { name: 'Adverbien (Zeit- & Ortsangaben, ظَرْف)', formen: ['تَحْتَ', 'هُنَا', 'هُنَاكَ', 'الآنَ', 'أَمَامَ', 'خَلْفَ', 'فَوْقَ', 'بَيْنَ', 'عِنْدَ', 'بَعْدَ', 'قَبْلَ'] },
 
   /* ---- Genitivpräpositionen ----
      Bewusst KEINE eigene Liste von Praepositionen, sondern genau die, die der
