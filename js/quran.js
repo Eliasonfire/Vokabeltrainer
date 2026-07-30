@@ -6,13 +6,20 @@ function renderQuranList(){
   /* Nur das aktive Buch. Sonst stuenden hier nach dem ersten Buchwechsel
      Vokabeln aus Buechern, die gerade nicht gelernt werden. */
   const words = buchVokabeln().filter(w=>w.quran);
+  /* Das gesuchte Wort wird auch HIER hervorgehoben, nicht nur auf der Lernkarte.
+     Elias' Wunsch vom 29.07.2026 lautete "beim Koranbezug soll das Wort, um das
+     es geht, hervorgehoben oder unterstrichen werden" - er hat dabei keinen
+     Bildschirm ausgenommen. Am 30.07. nachgemessen: in dieser Liste stand kein
+     einziges `.quran-treffer`-Element, die Hervorhebung gab es nur auf der
+     Karte. Nebenwirkung, die einen Fehler mitnimmt: quranMitTreffer maskiert
+     den Text, vorher stand `${w.quran.ar}` unmaskiert im innerHTML. */
   document.getElementById('quranList').innerHTML = words.map(w=>`
     <div class="word-list-item quran-word-item">
       <div class="quran-word-head">
-        <div class="wl-ar">${w.ar}</div><div class="wl-de">${w.de}</div>
+        <div class="wl-ar">${escapeHtml(w.ar)}</div><div class="wl-de">${escapeHtml(w.de)}</div>
       </div>
-      <div class="quran-word-verse" lang="ar" dir="rtl">${w.quran.ar}</div>
-      <div class="quran-word-ref">${w.quran.surah} ${w.quran.ayah}${w.quran.de ? ' — ' + w.quran.de : ''}</div>
+      <div class="quran-word-verse" lang="ar" dir="rtl">${quranMitTreffer(w.quran.ar, w)}</div>
+      <div class="quran-word-ref">${escapeHtml(w.quran.surah)} ${escapeHtml(w.quran.ayah)}${w.quran.de ? ' — ' + escapeHtml(w.quran.de) : ''}</div>
     </div>
   `).join('') || '<div class="empty-state">Noch keine geprüften Quran-Bezüge.</div>';
 }

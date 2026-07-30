@@ -217,7 +217,10 @@ function renderSentence(){
   const qBox = document.getElementById('sentQuranBox');
   if (w.quran){
     qBox.classList.remove('hidden');
-    document.getElementById('sentQuranAr').textContent = w.quran.ar;
+    /* Auch hier hervorheben, nicht nur auf der Lernkarte - siehe die
+       Begruendung in js/quran.js. `innerHTML` ist hier ungefaehrlich, weil
+       quranMitTreffer selbst maskiert. */
+    document.getElementById('sentQuranAr').innerHTML = quranMitTreffer(w.quran.ar, w);
     document.getElementById('sentQuranRef').textContent = `${w.quran.surah} ${w.quran.ayah}`;
     document.getElementById('sentQuranDe').textContent = w.quran.de || w.quran.note || '';
   } else qBox.classList.add('hidden');
