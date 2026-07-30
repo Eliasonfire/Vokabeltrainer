@@ -126,6 +126,10 @@ async function setzeBuch(slug, still){
   if (vorher !== slug) SETTINGS.selectedChapters = [];
   saveSettings();
   renderHome();
+  /* Dieselbe Nachbesserung wie beim Kapitelfilter: eine laufende Runde gehoert
+     zum alten Buch und muss mitgezogen werden. Sonst lernt man in Madina 3
+     weiter die Karten aus Madina 1 (js/lernen.js). */
+  if (typeof passeRundeAnAuswahlAn === 'function') passeRundeAnAuswahlAn();
   if (typeof renderCategories === 'function') renderCategories();
   if (typeof openSentences === 'function' && document.querySelector('[data-screen="sentences"].active')) openSentences();
 }

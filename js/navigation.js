@@ -86,6 +86,9 @@ document.addEventListener('click', (e)=>{
     SETTINGS.selectedChapters = sel;
     saveSettings();
     renderHome();
+    /* Eine laufende Runde mitziehen, sonst laeuft sie mit der ALTEN Auswahl
+       weiter - genau der Fehler, den Elias am 30.07.2026 gemeldet hat. */
+    if (typeof passeRundeAnAuswahlAn === 'function') passeRundeAnAuswahlAn();
     return;
   }
   if (e.target.closest('#btnWrongOnly')){

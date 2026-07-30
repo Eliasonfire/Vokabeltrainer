@@ -5,6 +5,7 @@
 function renderSettings(){
   const sw = document.getElementById('toggleShowPlural');
   sw.classList.toggle('on', SETTINGS.showPlural);
+  document.getElementById('toggleVerbFormen').classList.toggle('on', !!SETTINGS.showVerbFormen);
   document.getElementById('sessionSizeSelect').value = String(SETTINGS.sessionSize);
   document.getElementById('directionSelect').value = SETTINGS.direction || 'ar-de';
   document.getElementById('toggleTippen').classList.toggle('on', !!SETTINGS.tippenAbBox4);
@@ -21,6 +22,13 @@ document.getElementById('toggleTippen').addEventListener('click', ()=>{
 document.getElementById('btnSettings').addEventListener('click', ()=>showScreen('settings'));
 document.getElementById('toggleShowPlural').addEventListener('click', ()=>{
   SETTINGS.showPlural = !SETTINGS.showPlural;
+  saveSettings();
+  renderSettings();
+});
+/* Verbformen ein- und ausschalten (Elias' Wunsch vom 30.07.2026). Genau wie bei
+   den Pluralformen: eine Umschaltung, kein eigener Bildschirm. */
+document.getElementById('toggleVerbFormen').addEventListener('click', ()=>{
+  SETTINGS.showVerbFormen = !SETTINGS.showVerbFormen;
   saveSettings();
   renderSettings();
 });
