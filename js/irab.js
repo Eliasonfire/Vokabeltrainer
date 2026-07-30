@@ -12,23 +12,23 @@
    eine falsche Kasusangabe waere schlimmer als gar keine (E.1).
 
    Grundlage im Unterricht:
-   - mubtada-khabar-01, nominalsatz-ohne-kopula-01  (beide مَرْفوع)
-   - harf-jarr-fi-ala-01, harf-jarr-min-ila-01, harf-jarr-li-01  (danach مَجْرور)
-   - idafa-01, idafa-zweitglied-01  (مُضاف ohne Tanwin, مُضاف إِلَيْه مَجْرور)
-   - nat-vier-bedingungen-01  (نَعْت folgt dem مَنْعوت in Kasus, Zahl,
+   - mubtada-khabar-01, nominalsatz-ohne-kopula-01  (beide مَرْفُوع)
+   - harf-jarr-fi-ala-01, harf-jarr-min-ila-01, harf-jarr-li-01  (danach مَجْرُور)
+   - idafa-01, idafa-zweitglied-01  (مُضَاف ohne Tanwin, مُضَاف إِلَيْه مَجْرُور)
+   - nat-vier-bedingungen-01  (نَعْت folgt dem مَنْعُوت in Kasus, Zahl,
      Geschlecht und Bestimmtheit)
-   - zuruf-makan-01  (ظَرْف, danach folgt ein مَجْرور wie bei der Idafa) */
+   - zuruf-makan-01  (ظَرْف, danach folgt ein مَجْرُور wie bei der Idafa) */
 
 const KASUS = {
-  raf:  { ar: 'مَرْفوع', de: 'Nominativ' },
-  jarr: { ar: 'مَجْرور', de: 'Genitiv'   },
-  nasb: { ar: 'مَنْصوب', de: 'Akkusativ' }
+  raf:  { ar: 'مَرْفُوع', de: 'Nominativ' },
+  jarr: { ar: 'مَجْرُور', de: 'Genitiv'   },
+  nasb: { ar: 'مَنْصُوب', de: 'Akkusativ' }
 };
 
 /* Die fuenf Praepositionen aus Madina 1, in der Reihenfolge des Lehrers. */
 const HURUF_JARR = ['في', 'على', 'إلى', 'الى', 'من', 'ل'];
 /* Ortsangaben. Der Lehrer nennt sie ظَرْف und sagt ausdruecklich, sie
-   funktionierten "wie ein مُضاف" - das folgende Wort steht im Genitiv. */
+   funktionierten "wie ein مُضَاف" - das folgende Wort steht im Genitiv. */
 const ZURUF = ['تحت', 'أمام', 'امام', 'خلف', 'فوق', 'عند', 'بين', 'وراء'];
 /* Woerter, die nie eine Kasusendung tragen. */
 const INDEKLINABEL = ['هذا','هذه','ذلك','تلك','هو','هي','أنا','انا','أنت','انت',
@@ -253,7 +253,7 @@ function analysiereSatz(satz){
 
   const out = [];
   let vorherJarr = false;      // das Wort davor war Praeposition oder Zarf
-  let vorherMudaf = false;     // das Wort davor war ein مُضاف
+  let vorherMudaf = false;     // das Wort davor war ein مُضَاف
   let ersteRolleVergeben = false;
   let letzterKasus = null;        // Kasus des zuletzt bewerteten Nomens
   let letzteBestimmtheit = null;  // und ob es bestimmt war - fuers نَعْت
@@ -306,14 +306,14 @@ function analysiereSatz(satz){
       erwartet = 'jarr';
       vorherJarr = false;
     } else if (vorherMudaf && istIndeklinabel(wort)){
-      /* اسْمُ هَذَا الْوَلَدِ - zwischen مُضاف und مُضاف إِلَيْه kann ein
+      /* اسْمُ هَذَا الْوَلَدِ - zwischen مُضَاف und مُضَاف إِلَيْه kann ein
          Demonstrativpronomen stehen. Es traegt selbst keine Endung, die
          Erwartung an das folgende Nomen bleibt bestehen. */
-      rolle = 'unveränderlich (im مُضاف إِلَيْه)';
+      rolle = 'unveränderlich (im مُضَاف إِلَيْه)';
       out.push({ wort, rein, rolle, erwartet:null, gelesen, stimmt:null });
       return;
     } else if (vorherMudaf){
-      rolle = 'مُضاف إِلَيْه';
+      rolle = 'مُضَاف إِلَيْه';
       erwartet = 'jarr';
       vorherMudaf = false;
     } else if (hatAngeschriebenesJarr(wort)){
@@ -327,7 +327,7 @@ function analysiereSatz(satz){
       rolle = 'unklar (لِ + Wort oder eigenes Wort?)';
     } else if (wortart(wort) === 'adjective' && letzterKasus
                && istBestimmt(wort) === letzteBestimmtheit){
-      /* نَعْت: ein Adjektiv direkt hinter seinem مَنْعوت stimmt in Kasus,
+      /* نَعْت: ein Adjektiv direkt hinter seinem مَنْعُوت stimmt in Kasus,
          Zahl, Geschlecht UND Bestimmtheit mit ihm ueberein - so unterscheidet
          der Lehrer Wortgruppe von Satz (nat-bestimmtheit-01). Stimmt die
          Bestimmtheit nicht ueberein, ist es kein نَعْت, sondern ein خَبَر. */
@@ -354,7 +354,7 @@ function analysiereSatz(satz){
          Das Wort steht trotzdem in der Liste, damit die Zerlegung vollstaendig
          bleibt. */
       rolle = 'Anschluss mit وَ (Kasus nicht eindeutig)';
-      /* Kein vorzeitiges Ende: das Wort kann trotzdem ein مُضاف sein
+      /* Kein vorzeitiges Ende: das Wort kann trotzdem ein مُضَاف sein
          (وَبَيْتُ الطَّبِيبِ), und dann haengt die Endung des naechsten
          Wortes daran. */
     } else if (!ersteRolleVergeben){
@@ -366,21 +366,21 @@ function analysiereSatz(satz){
       erwartet = 'raf';
     }
 
-    /* مُضاف erkennen: ein bestimmtes oder endungsloses Nomen ohne Tanwin,
+    /* مُضَاف erkennen: ein bestimmtes oder endungsloses Nomen ohne Tanwin,
        auf das direkt ein weiteres Nomen folgt (idafa-erkennen-01). Nur wenn
        das naechste Wort kein Satzzeichen beendet und keine Praeposition ist. */
     const naechstes = woerter[i+1];
     if (!String(rolle).includes('unveränderlich') && !hatSuffix(wort)
         && !satzende && naechstes && !istHarfJarr(naechstes)
-        /* اسْمُ هَذَا الْوَلَدِ: zwischen مُضاف und مُضاف إِلَيْه darf ein
+        /* اسْمُ هَذَا الْوَلَدِ: zwischen مُضَاف und مُضَاف إِلَيْه darf ein
            Demonstrativpronomen stehen - dann folgt das Nomen erst danach. */
         && (!istIndeklinabel(naechstes)
             || (istInListe(naechstes, ['هذا','هذه','ذلك','تلك']) && woerter[i+2]))
         && gelesen && !gelesen.tanwin && !istBestimmt(wort)){
-      /* Ein مُضاف kann selbst im Genitiv stehen: عَلى مَكْتَبِ الْمُدَرِّسِ.
+      /* Ein مُضَاف kann selbst im Genitiv stehen: عَلى مَكْتَبِ الْمُدَرِّسِ.
          Die Bedingung \"nicht im Genitiv\" hat genau diese Verkettung
          verworfen (harf-jarr-idafa-01). */
-      rolle += ' (مُضاف)';
+      rolle += ' (مُضَاف)';
       vorherMudaf = true;
     }
 

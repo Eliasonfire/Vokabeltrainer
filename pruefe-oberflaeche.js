@@ -127,10 +127,32 @@
          Stelle, die noch sagt, was arabicroots tatsaechlich geliefert hat.
          Ohne diese Unterscheidung meldete die Pruefung "311 Vokabeln, erwartet
          309" und damit einen Fehler, der keiner ist. */
-      const eigenNachgetragen = VOCAB_DATA.filter(w=>
-        w.chapter !== 'personal' && w.source && w.source !== 'vocabulary'
-        && (w.book || 'madina-1') === b.slug).length;
-      const soll = b.vokabeln + VOCAB_DATA.filter(w=>w.chapter==='personal').length + eigenNachgetragen;
+      /* ⚠️ Gezaehlt wird nach HERKUNFT, nicht nach chapter. Am 30.07.2026 sind
+         die neun Zahlen von `chapter: 24` auf `chapter: 'personal'` umgestellt
+         worden (Elias: "ich habe jetzt ploetzlich die moeglichkeit auch auf
+         kapitel 24 zuzugreifen. das ist ein fehler."). Sie stammen aber weiter
+         aus dem Abzug und stecken damit schon in `b.vokabeln` - wer sie
+         zusaetzlich als "persoenlich" zaehlt, zaehlt sie doppelt und erwartet
+         320 statt 311. Genau das hat diese Pruefung gemeldet.
+         `source: 'vocabulary'` heisst: aus dem Abzug. Alles andere ist
+         zusaetzlich - Elias' eigene Vokabeln (`personal_vocabulary`) und was von
+         Hand nachgetragen wurde (`madina-schluessel-1`). */
+      /* Drei Gruppen, und die dritte ist der Grund, warum es nicht eine Summe
+         sein kann:
+           mitreisend  alles mit chapter 'personal' - buchVokabeln() haengt das
+                       BEWUSST an jedes Buch an, damit eigene Woerter immer da
+                       sind (siehe js/buecher.js).
+           schonDrin   die davon, die AUS DEM ABZUG DIESES BUCHS stammen. Fuer
+                       madina-1 sind das die neun Zahlen; sie stecken bereits in
+                       b.vokabeln und duerfen nicht doppelt gezaehlt werden.
+           vonHand     zusaetzliche Eintraege, die zu diesem Buch gehoeren, aber
+                       nicht aus dem Abzug kommen (أَخٌ, أُخْتٌ aus dem
+                       Madina-Schluessel). */
+      const mitreisend = VOCAB_DATA.filter(w=>w.chapter === 'personal');
+      const schonDrin  = mitreisend.filter(w=>w.source === 'vocabulary' && (w.book || 'madina-1') === b.slug).length;
+      const vonHand    = VOCAB_DATA.filter(w=>w.chapter !== 'personal'
+                          && w.source !== 'vocabulary' && (w.book || 'madina-1') === b.slug).length;
+      const soll = b.vokabeln + mitreisend.length - schonDrin + vonHand;
       const ist = buchVokabeln().length;
       if (ist !== soll) fehl(`Buch ${b.slug}`, `${ist} Vokabeln, erwartet ${soll}`);
       else ok(`Buch ${b.slug}`, `${ist} Vokabeln, ${dauer} ms`);

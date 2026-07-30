@@ -112,7 +112,12 @@ function beantworteHoerfrage(i){
   const w = HOER.wort;
   const l = document.getElementById('hoerLoesung');
   l.innerHTML = `<div class="hl-ar" lang="ar" dir="rtl">${escapeHtml(w.sg || w.ar)}</div>`
-    + `<div class="hl-de">${escapeHtml(w.de)}${w.root ? ` · Wurzel ${escapeHtml(w.root)}` : ''}</div>`;
+    /* ⚠️ Die Wurzel stand hier bis zum 30.07.2026 dahinter. Elias: "bei dem
+       hoerverstehen sollen die wurzeln weg, da soll einfach nur die uebersetzung
+       stehen." Dieselbe Entscheidung wie bei den Wortfeldern, wo er den
+       Wurzel-Reiter abgewaehlt hat: "3 random arabische Buchstaben machen fuer
+       mich als Wortstamm keinen Sinn." Die Wurzel bleibt in den Daten. */
+    + `<div class="hl-de">${escapeHtml(w.de)}</div>`;
   l.classList.remove('hidden');
   document.getElementById('hoerStand').textContent = `${HOER.richtig} von ${HOER.gesamt} richtig`;
   document.getElementById('hoerHinweis').textContent = richtig

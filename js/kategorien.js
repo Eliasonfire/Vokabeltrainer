@@ -173,7 +173,8 @@ function renderCustomCats(){
       saveCustomCats(); frischeEigeneAuf();
     });
   });
-  setupDragAndDrop();
+  /* Die Markierung ueberlebt den Neuaufbau der Listen. */
+  if (typeof zeichneKatAuswahl === "function") zeichneKatAuswahl();
 }
 
 document.getElementById('btnAddCat').addEventListener('click', ()=>{
@@ -250,222 +251,107 @@ document.getElementById('btnAddPersonalVocab').addEventListener('click', ()=>{
   openWordList('chapter:personal');
 });
 
-/* ---------- Drag & Drop (Pointer Events, touch + mouse) ----------
+/* ---------- Einsortieren durch ANTIPPEN, nicht durch Ziehen ----------
 
-   Seit dem 29.07.2026 mit HALTEN statt Sofortstart. Elias' Meldung:
+   ⚠️ Hier stand bis zum 30.07.2026 ein Ziehen-und-Ablegen ueber Pointer-Events,
+   zuletzt mit 400 ms Halten davor. Elias hat den Fehler DREIMAL gemeldet, das
+   letzte Mal nach meinem Gesten-Fix: "bei der kategorie eigene ist der bug immer
+   noch vorhanden. ich kann das wort nicht vernuenftig in die kategorie packen."
 
-     "Bei den eigenen Kategorien kann ich kaum die Liste runter wischen auf
-      meinem Handy weil ich dauernd auf die Wörter klicke und sie so automatisch
-      auswähle. Es wäre gut, wenn ich die Wörter für einen Moment halten muss
-      und erst dann wird das Wort ausgewählt, sonst kann man nicht runter
-      wischen die Wörter Liste."
+   Deshalb ist die Geste ganz weg. Der Grund ist nicht ein Fehler im Code, sondern
+   die Aufgabe selbst: Die Wortliste ist auf 38vh gedeckelt und muss rollen. Auf
+   einer rollenden Flaeche muessen sich Ziehen und Wischen dieselbe Beruehrung
+   teilen, und die Entscheidung faellt aus Zeit und Weg - also aus einer Schaetzung,
+   was gemeint war. Jede Verbesserung an dieser Schaetzung verschiebt nur, welcher
+   der beiden Faelle daneben liegt. Antippen braucht diese Entscheidung nicht.
 
-   Warum das vorher unvermeidlich war: `startDrag` lief am `pointerdown` und
-   rief sofort `e.preventDefault()`. Damit war JEDE Beruehrung eines Worts ein
-   Ziehvorgang - und weil preventDefault dem Browser das Rollen verbietet, blieb
-   die Liste stehen. Die Wortliste ist auf 38vh gedeckelt und rollt, es gibt
-   also gar keinen Weg daran vorbei.
+   So geht es jetzt:
+     1. Woerter antippen - sie werden markiert, mehrere gleichzeitig moeglich.
+     2. Unten erscheint eine Leiste mit den Kategorien.
+     3. Kategorie antippen - alle markierten Woerter landen dort.
+   Ein Wort IN einer Kategorie antippen nimmt es wieder heraus.
 
-   Jetzt: Der Zeiger wird zwar sofort verfolgt, aber erst nach HALTEN_MS
-   wird daraus ein Ziehvorgang. Wer vorher mehr als HALTEN_WEG Pixel bewegt,
-   wollte rollen - der Zeitgeber wird verworfen und der Browser behaelt die
-   Geste. Bis dahin wird NICHTS unterdrueckt.
+   Mehrfachauswahl ist kein Beiwerk: Elias sortiert 171 Woerter ein. Einzeln
+   waeren das 171 mal zwei Tipper, mit Auswahl deutlich weniger. */
 
-   400 ms ist der Wert, den Android fuer den langen Druck selbst benutzt
-   (ViewConfiguration.getLongPressTimeout); wer das Geraet kennt, kennt das
-   Gefuehl. 10 Pixel entsprechen der Achsenschwelle der Wischgeste in
-   js/lernen.js - dieselbe Frage, dieselbe Antwort. */
-const HALTEN_MS = 400;
-const HALTEN_WEG = 10;
+let KAT_AUSWAHL = new Set();
 
-function setupDragAndDrop(){
-  let ghost=null, sourceEl=null, sourceId=null;
-  let warten=null, startX=0, startY=0;
-  /* Woher kam das Wort? Aus einer Kategorie-Box oder aus einer der beiden
-     Listen unten. Davon haengt ab, was das Ablegen bedeutet — siehe onUp. */
-  let herkunftCat=null;
-
-  document.querySelectorAll('.word-chip').forEach(chip=>{
-    chip.addEventListener('pointerdown', druckBeginnt);
-  });
-
-  function druckAbbrechen(){
-    if (warten){ clearTimeout(warten); warten = null; }
-    if (sourceEl && !ghost) sourceEl.classList.remove('haltend');
-    document.removeEventListener('pointermove', beobachte);
-    document.removeEventListener('pointerup', druckAbbrechen);
-    document.removeEventListener('pointercancel', druckAbbrechen);
-    if (!ghost){ sourceEl = null; sourceId = null; }
-  }
-
-  function beobachte(e){
-    if (Math.abs(e.clientX-startX) > HALTEN_WEG || Math.abs(e.clientY-startY) > HALTEN_WEG)
-      druckAbbrechen();                 // das war Rollen, kein Auswaehlen
-  }
-
-  function druckBeginnt(e){
-    const chip = e.currentTarget;
-    startX = e.clientX; startY = e.clientY;
-    sourceEl = chip;
-    sourceId = chip.getAttribute('draggable-id');
-    const box = chip.closest('.custom-cat-box');
-    herkunftCat = box ? box.dataset.catid : null;
-    chip.classList.add('haltend');
-    /* KEIN preventDefault hier - sonst rollt die Liste wieder nicht. */
-    document.addEventListener('pointermove', beobachte);
-    document.addEventListener('pointerup', druckAbbrechen);
-    document.addEventListener('pointercancel', druckAbbrechen);
-    warten = setTimeout(()=>{
-      warten = null;
-      document.removeEventListener('pointermove', beobachte);
-      document.removeEventListener('pointerup', druckAbbrechen);
-      document.removeEventListener('pointercancel', druckAbbrechen);
-      startDrag(e.clientX, e.clientY);
-    }, HALTEN_MS);
-  }
-
-  function startDrag(x, y){
-    if (!sourceEl) return;
-    ghost = document.createElement('div');
-    ghost.className = 'drag-ghost';
-    ghost.textContent = sourceEl.textContent;
-    document.body.appendChild(ghost);
-    moveGhost(x, y);
-    sourceEl.classList.remove('haltend');
-    sourceEl.classList.add('dragging');
-    /* Kurzes Rueckmelden, dass der Druck angekommen ist - auf dem Handy sieht
-       man den Ziehschatten sonst erst, wenn man sich schon bewegt. */
-    if (navigator.vibrate) { try { navigator.vibrate(12); } catch(_){} }
-    document.addEventListener('pointermove', onMove);
-    document.addEventListener('pointerup', onUp, {once:true});
-  }
-  function moveGhost(x,y){ if(ghost){ ghost.style.left = (x-30)+'px'; ghost.style.top = (y-20)+'px'; } }
-
-  /* ---------- Mitrollen, solange gezogen wird ----------
-     Elias' zweiter Fehlerbericht vom 29.07.2026:
-
-       "Wenn ich mehrere Kategorien angelegt habe, sodass sie den gesamten
-        Bildschirm bedecken, und runterscrolle zu den Vokabeln, eine Vokabel
-        auswähle, dann kann ich diese Vokabel nicht an die oberen Kategorien
-        hinbewegen … die Seite scrollt nicht automatisch nach oben."
-
-     Stimmt, und es ist die unvermeidliche Folge davon, dass das Ziehen den
-     Finger belegt: `onMove` ruft `preventDefault`, der Browser rollt also nicht
-     mehr mit. Ohne Ersatz sind nur die Kategorien erreichbar, die gerade im
-     Bild stehen — bei sieben Kategorien also die untersten drei oder vier.
-
-     Deshalb rollt der Ziehvorgang selbst: kommt der Finger in die oberen oder
-     unteren 90 px von `main`, laeuft `main` in diese Richtung weiter, solange
-     er dort bleibt. Die Geschwindigkeit waechst mit der Naehe zum Rand — am
-     aeussersten Rand am schnellsten, damit man weite Wege nicht aussitzen muss,
-     und in der Naehe langsam, damit Zielen moeglich bleibt. */
-  const ROLL_ZONE = 90, ROLL_MAX = 17;
-  let rollen = null, letzteY = 0;
-
-  function rollePruefe(y){
-    letzteY = y;
-    const main = document.getElementById('main');
-    if (!main) return;
-    const r = main.getBoundingClientRect();
-    const schritt = ()=>{
-      const oben = letzteY - r.top, unten = r.bottom - letzteY;
-      let d = 0;
-      if (oben  < ROLL_ZONE) d = -ROLL_MAX * (1 - Math.max(0, oben)  / ROLL_ZONE);
-      if (unten < ROLL_ZONE) d =  ROLL_MAX * (1 - Math.max(0, unten) / ROLL_ZONE);
-      if (!d){ rollen = null; return; }
-      main.scrollTop += d;
-      /* Die Ablegemarkierung muss mitwandern, sonst leuchtet unter dem
-         stehenden Finger die Kategorie von vorhin. */
-      markiereZiel(letzteY);
-      rollen = requestAnimationFrame(schritt);
-    };
-    if (!rollen) rollen = requestAnimationFrame(schritt);
-  }
-  function rolleStopp(){ if (rollen){ cancelAnimationFrame(rollen); rollen = null; } }
-
-  /* Welche Kategorie liegt unter dem Finger? Der Ziehschatten selbst haengt an
-     `document.body` und steht auf `pointer-events:none`, faellt hier also nicht
-     ins Gewicht. */
-  function markiereZiel(y, x){
-    document.querySelectorAll('.custom-cat-box').forEach(b=>b.classList.remove('drop-hover'));
-    const el = document.elementFromPoint(x !== undefined ? x : letzteX, y);
-    const box = el && el.closest && el.closest('.custom-cat-box');
-    if (box) box.classList.add('drop-hover');
-    return box;
-  }
-  let letzteX = 0;
-
-  function onMove(e){
-    /* Erst AB HIER unterdruecken, also nachdem der lange Druck durch ist.
-       Waehrend des Wartens wuerde dasselbe preventDefault genau den Fehler
-       zurueckholen, den der lange Druck behebt. */
-    e.preventDefault();
-    letzteX = e.clientX;
-    moveGhost(e.clientX, e.clientY);
-    markiereZiel(e.clientY, e.clientX);
-    rollePruefe(e.clientY);
-  }
-  function onUp(e){
-    document.removeEventListener('pointermove', onMove);
-    rolleStopp();
-    if (ghost) ghost.remove();
-    if (sourceEl) sourceEl.classList.remove('dragging','haltend');
-    /* Ablegen grosszuegiger machen (Elias: "kann ich jetzt nur noch schwer die
-       Vokabel in die Kategorie reinpacken"): Trifft der Finger keine Box, wird
-       im Umkreis von 44 px nachgesehen, bevor der Zug als "nirgendwohin"
-       gewertet wird. Genau in die Box zu treffen ist auf einem Handy mit einem
-       verdeckenden Finger schwer — die Kategorie-Boxen haben nur 64 px Hoehe. */
-    let el = document.elementFromPoint(e.clientX, e.clientY);
-    let box = el && el.closest && el.closest('.custom-cat-box');
-    if (!box){
-      for (const dy of [-22, 22, -44, 44]){
-        const nah = document.elementFromPoint(e.clientX, e.clientY + dy);
-        box = nah && nah.closest && nah.closest('.custom-cat-box');
-        if (box) break;
-      }
-    }
-    document.querySelectorAll('.custom-cat-box').forEach(b=>b.classList.remove('drop-hover'));
-    if (sourceId){
-      /* HIER STAND bis zum 29.07.2026 abends: "Immer zuerst aus allen
-         Kategorien entfernen". Das war VERSCHIEBEN, und genau daran ist Elias'
-         eigentliches Vorhaben gescheitert — ein Wort konnte nur an einer Stelle
-         liegen. Seine Begründung, warum das nicht reicht: "Lehrer kann ich
-         sowohl in Schule und Studium als auch in Berufe reinpacken."
-
-         Jetzt entscheidet die HERKUNFT, was das Ablegen bedeutet:
-           aus einer Liste  → HINZUFÜGEN (das Wort bleibt in der Liste stehen
-                              und kann in weitere Kategorien)
-           aus Kategorie A
-             … auf Kategorie B → verschieben (A verliert es, B bekommt es)
-             … ins Leere       → nur aus A entfernen
-
-         Damit ist Ziehen aus der Liste beliebig oft wiederholbar, und ein Wort
-         wieder loszuwerden geht dort, wo man es sieht: in seiner Kategorie. */
-      const wort = byId(sourceId);
-      const name = wort ? wort.de : 'Das Wort';
-      const zielCat = box && CUSTOM_CATS.find(c => c.id === box.dataset.catid);
-
-      if (zielCat){
-        const schonDrin = zielCat.wordIds.includes(sourceId);
-        if (!schonDrin) zielCat.wordIds.push(sourceId);
-        if (herkunftCat && herkunftCat !== zielCat.id){
-          const quelle = CUSTOM_CATS.find(c => c.id === herkunftCat);
-          if (quelle) quelle.wordIds = quelle.wordIds.filter(id => id !== sourceId);
-        }
-        toast(schonDrin ? `${name} liegt dort schon.` : `${name} → ${zielCat.name}`);
-      } else if (herkunftCat){
-        const quelle = CUSTOM_CATS.find(c => c.id === herkunftCat);
-        if (quelle){
-          quelle.wordIds = quelle.wordIds.filter(id => id !== sourceId);
-          toast(`${name} aus „${quelle.name}" entfernt.`);
-        }
-      }
-      saveCustomCats();
-      frischeEigeneAuf();
-    }
-    sourceEl=null; sourceId=null; ghost=null; herkunftCat=null;
-  }
+function katAuswahlLeer(){
+  KAT_AUSWAHL = new Set();
+  zeichneKatAuswahl();
 }
+
+/* Markierung an den Chips und die Leiste unten. Bewusst OHNE die Listen neu zu
+   bauen: renderCustomCats() wuerde die Rollposition auf den Anfang setzen, und
+   dann sucht man nach jedem Tipp die Stelle wieder, an der man war. */
+function zeichneKatAuswahl(){
+  document.querySelectorAll('#poolWords .word-chip, #poolWordsFertig .word-chip')
+    .forEach(chip => chip.classList.toggle('gewaehlt', KAT_AUSWAHL.has(chip.getAttribute('draggable-id'))));
+
+  const leiste = document.getElementById('katZielLeiste');
+  if (!leiste) return;
+  const n = KAT_AUSWAHL.size;
+  leiste.classList.toggle('hidden', n === 0);
+  if (!n) return;
+
+  document.getElementById('katAuswahlZahl').textContent =
+    n === 1 ? '1 Wort ausgewählt' : `${n} Wörter ausgewählt`;
+  const ziele = document.getElementById('katZiele');
+  ziele.innerHTML = CUSTOM_CATS.length
+    ? CUSTOM_CATS.map(c => `<button class="kat-ziel" data-katziel="${c.id}">${escapeHtml(c.name)}</button>`).join('')
+    : '<span class="kat-ziel-leer">Erst oben eine Kategorie anlegen.</span>';
+}
+
+/* Ein Tipp auf ein Wort im Vorrat: markieren oder Markierung wegnehmen. */
+document.getElementById('unassignedPool').addEventListener('click', (e)=>{
+  const chip = e.target.closest('.word-chip');
+  if (!chip) return;
+  const id = chip.getAttribute('draggable-id');
+  if (!id) return;
+  if (KAT_AUSWAHL.has(id)) KAT_AUSWAHL.delete(id); else KAT_AUSWAHL.add(id);
+  zeichneKatAuswahl();
+});
+
+/* Ein Tipp auf ein Wort INNERHALB einer Kategorie nimmt es dort heraus. Das ist
+   der Weg, der beim Ziehen "aus der Box herausziehen" war. */
+document.getElementById('customCatList').addEventListener('click', (e)=>{
+  const chip = e.target.closest('.word-chip');
+  if (!chip) return;
+  const box = chip.closest('[data-catid]');
+  const id = chip.getAttribute('draggable-id');
+  if (!box || !id) return;
+  const cat = CUSTOM_CATS.find(c => c.id === box.dataset.catid);
+  const w = byId(id);
+  if (!cat) return;
+  cat.wordIds = cat.wordIds.filter(x => x !== id);
+  saveCustomCats();
+  frischeEigeneAuf();
+  zeichneKatAuswahl();
+  toast(`${w ? w.ar : 'Wort'} aus „${cat.name}" entfernt.`);
+});
+
+/* Kategorie antippen: alle markierten Woerter hinein. */
+document.getElementById('katZiele').addEventListener('click', (e)=>{
+  const knopf = e.target.closest('[data-katziel]');
+  if (!knopf) return;
+  const cat = CUSTOM_CATS.find(c => c.id === knopf.dataset.katziel);
+  if (!cat || !KAT_AUSWAHL.size) return;
+  let neu = 0, schonDrin = 0;
+  KAT_AUSWAHL.forEach(id => {
+    if (cat.wordIds.includes(id)) { schonDrin++; return; }
+    cat.wordIds.push(id);
+    neu++;
+  });
+  saveCustomCats();
+  katAuswahlLeer();
+  frischeEigeneAuf();
+  const teile = [];
+  if (neu) teile.push(`${neu} Wort${neu===1?'':'e'} → „${cat.name}"`);
+  if (schonDrin) teile.push(`${schonDrin} lag${schonDrin===1?'':'en'} dort schon`);
+  toast(teile.join(' · '));
+});
+
+document.getElementById('btnKatAuswahlAus').addEventListener('click', katAuswahlLeer);
 
 /* Aufklapper für die schon einsortierten Wörter. Die Liste haengt am Ende des
    Bildschirms; sie standardmaessig zuzuklappen ist der halbe Zweck der
