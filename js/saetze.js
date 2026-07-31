@@ -215,7 +215,7 @@ function renderSentence(){
   document.getElementById('sentPos').textContent = `${SENT.idx+1} / ${SENT.list.length}`;
 
   const qBox = document.getElementById('sentQuranBox');
-  if (w.quran){
+  if (w.quran && SETTINGS.showQuran){
     qBox.classList.remove('hidden');
     /* Auch hier hervorheben, nicht nur auf der Lernkarte - siehe die
        Begruendung in js/quran.js. `innerHTML` ist hier ungefaehrlich, weil

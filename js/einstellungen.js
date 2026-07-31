@@ -6,6 +6,7 @@ function renderSettings(){
   const sw = document.getElementById('toggleShowPlural');
   sw.classList.toggle('on', SETTINGS.showPlural);
   document.getElementById('toggleVerbFormen').classList.toggle('on', !!SETTINGS.showVerbFormen);
+  document.getElementById('toggleQuran').classList.toggle('on', !!SETTINGS.showQuran);
   document.getElementById('sessionSizeSelect').value = String(SETTINGS.sessionSize);
   document.getElementById('directionSelect').value = SETTINGS.direction || 'ar-de';
   document.getElementById('toggleTippen').classList.toggle('on', !!SETTINGS.tippenAbBox4);
@@ -31,6 +32,15 @@ document.getElementById('toggleVerbFormen').addEventListener('click', ()=>{
   SETTINGS.showVerbFormen = !SETTINGS.showVerbFormen;
   saveSettings();
   renderSettings();
+});
+/* Quran-Bezuege ein- und ausschalten (Elias' Wunsch vom 31.07.2026).
+   renderHome() muss mit, weil die Kachel auf dem Startbildschirm daran haengt —
+   ohne den Aufruf erschiene sie erst beim naechsten Start. */
+document.getElementById('toggleQuran').addEventListener('click', ()=>{
+  SETTINGS.showQuran = !SETTINGS.showQuran;
+  saveSettings();
+  renderSettings();
+  if (typeof renderHome === 'function') renderHome();
 });
 document.getElementById('sessionSizeSelect').addEventListener('change', (e)=>{
   SETTINGS.sessionSize = Number(e.target.value);

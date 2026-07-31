@@ -174,8 +174,17 @@ let SETTINGS = Object.assign(
      29.07.2026 auf Elias' Wunsch dazugekommen, und am 30.07. hat er sie so
      wieder abbestellt: "du solltest da die 4 zeitformen nicht zeigen. die
      sollen da raus." Der Schalter bleibt, damit er sie holen kann, wenn er
-     sie braucht - aber der Standard ist aus. */
-  { showPlural:false, showVerbFormen:false, sessionSize:20, voiceURI:null, direction:'ar-de', selectedChapters:[], wrongOnly:false, grammarHighlight:true },
+     sie braucht - aber der Standard ist aus.
+
+     showQuran genauso, seit dem 31.07.2026: "blende die quran bezuege in der
+     app aus". Betroffen ist der KURATIERTE Beleg (das Feld `quran` an einer
+     Vokabel, ein Vers, in dem genau dieses Wort vorkommt) - nicht der
+     Quran-Leser und nicht die Haeufigkeitsangabe aus dem Quranic Arabic
+     Corpus; das sind eigene Sachen mit eigenen Namen in der Oberflaeche.
+     Die Belege bleiben in vocab-data.js stehen, sie werden nur nicht
+     angezeigt: geprueft und belegt ist Arbeit, die man nicht wegwirft, nur
+     weil sie gerade nicht auf dem Bildschirm sein soll. */
+  { showPlural:false, showVerbFormen:false, showQuran:false, sessionSize:20, voiceURI:null, direction:'ar-de', selectedChapters:[], wrongOnly:false, grammarHighlight:true },
   LS.get('vt_settings', {})
 );
 function saveSettings(){ LS.set('vt_settings', SETTINGS); }
