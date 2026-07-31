@@ -19,7 +19,11 @@ function renderHome(){
     <div class="box-pip${BOX_TON[i+1] ? ' box-'+BOX_TON[i+1] : ''}" data-openlist="box:${i+1}"><div class="n">${n}</div><div class="l">Box ${i+1}</div></div>
   `).join('');
 
+  /* Die Kachel haengt an der Einstellung (Elias, 31.07.2026). Sie zeigt genau
+     die Woerter mit kuratiertem Beleg — ohne die Belege waere sie eine Liste
+     ohne Inhalt, deshalb geht sie mit weg statt leer stehenzubleiben. */
   const quranCount = buchVokabeln().filter(w=>w.quran).length;
+  document.getElementById('quranTile').classList.toggle('hidden', !SETTINGS.showQuran);
   document.getElementById('quranTileSub').textContent = `${quranCount} Vokabeln`;
 
   renderBuchChips();

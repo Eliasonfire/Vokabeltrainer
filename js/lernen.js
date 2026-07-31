@@ -161,7 +161,7 @@ function renderCard(){
   } else sentBox.classList.add('hidden');
 
   const qBox = document.getElementById('cardQuranBox');
-  if (w.quran){
+  if (w.quran && SETTINGS.showQuran){
     qBox.classList.remove('hidden');
     document.getElementById('cardQuranAr').innerHTML = quranMitTreffer(w.quran.ar, w);
     document.getElementById('cardQuranRef').textContent = `${w.quran.surah} ${w.quran.ayah}`;

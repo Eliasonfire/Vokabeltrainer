@@ -1776,7 +1776,10 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
           <span class="tile-title">Kategorien</span>
           <span class="tile-sub">Kapitel, Wurzeln, eigene</span>
         </button>
-        <button class="tile" data-nav="quran">
+        <!-- Seit 31.07.2026 an die Einstellung "Quran-Bezüge anzeigen" gehängt
+             und standardmäßig aus. Die Kachel daneben ("Quran lesen") bleibt
+             sichtbar — der Leser ist eine eigene Sache. -->
+        <button class="tile hidden" data-nav="quran" id="quranTile">
           <span class="tile-icon"><svg class="ic"><use href="#ic-crescent"/></svg></span>
           <span class="tile-title">Quran-Bezug</span>
           <span class="tile-sub" id="quranTileSub">Vokabeln im Quran</span>
@@ -2122,6 +2125,16 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
           <div class="setting-sub">Vergangenheit, Gegenwart, Befehlsform &amp; Verbalsubstantiv auf der Karte</div>
         </div>
         <button class="switch" id="toggleVerbFormen" aria-label="Verbformen umschalten"><span class="knob"></span></button>
+      </div>
+      <!-- Elias am 31.07.2026: "blende die quran bezüge in der app aus."
+           Standard AUS. Gemeint ist der Beleg-Vers zu einer Vokabel — der
+           Quran-Leser und die Häufigkeitsangabe bleiben unberührt. -->
+      <div class="setting-row">
+        <div>
+          <div class="setting-title">Quran-Bezüge anzeigen</div>
+          <div class="setting-sub">Der Vers, in dem das Wort vorkommt — auf der Karte, im Satz-Modus und als Kachel</div>
+        </div>
+        <button class="switch" id="toggleQuran" aria-label="Quran-Bezüge umschalten"><span class="knob"></span></button>
       </div>
       <div class="setting-row">
         <div>
