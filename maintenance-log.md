@@ -806,3 +806,161 @@ Quelle ist.
 Nebenbei berichtigt: Die Kopfzeile von `surah-data.js` behauptete noch
 „Verstext wird live von quran.com API geladen". Das stimmt seit dem 27./28.07.
 nicht mehr — quran.com ist nur noch Rueckfallebene.
+
+## 2026-08-02 13:16 – Wöchentliche Wartung (So-Check)
+
+Ergebnis vorweg: **eine einzige echte Neuigkeit — Folge 14 ist erschienen.**
+Sonst nichts zu tun: Vokabelabzug unverändert, Vokabelpaket unverändert, alle
+sieben Prüfskripte ohne neuen Befund. Am Code wurde nichts geändert, `CACHE_NAME`
+bleibt bei **v85**.
+
+**Schritt 0 – Repo aktualisieren:** `git pull --ff-only` → `Already up to date.`
+Arbeitsverzeichnis sauber (`git status --short` leer).
+
+**Schritt 1 – Neue Aufzeichnungen: 🆕 Folge 14.** `get_recordings` liefert jetzt
+**14** statt 13 Einträge. Neu:
+
+| Folge | Titel | URL | eingestellt |
+|---|---|---|---|
+| 14 | Folge 14 \| MB1 Kapitel 9 (B) | https://youtu.be/5c9ckLbGvas | 2026-08-02, 09:56 UTC |
+
+In `transcripts/backlog.md` nachgetragen (Tabellenzeile + Hinweis, dass der Satz
+„alle 13 Folgen sind ausgewertet" damit nicht mehr vollständig ist). Der Ordner
+ist per `.gitignore` ausgeschlossen — kein Commit daraus. **Es wurde kein
+Transkript abgerufen und keine Regel bestätigt**; das Nachziehen macht die
+Routine `arabicroots-backfill-retry` (eine Folge pro Lauf). Folge 14 ist damit
+die erste offene Folge seit dem 27.07.
+
+**Schritt 2 – Vokabelabzug (`node werkzeuge/hole-vokabeln.mjs`):** 4433 Einträge,
+**Zahl je Buch identisch mit dem letzten Lauf**, keine einzige Abweichung:
+
+| Buch | Vokabeln | Kapitel | KB | Δ zum letzten Lauf |
+|---|---|---|---|---|
+| bayna-yadayk-1 | 231 | 17 | 90 | – |
+| bayna-yadayk-2 | 552 | 17 | 216 | – |
+| bayna-yadayk-3 | 445 | 17 | 174 | – |
+| bayna-yadayk-4 | 881 | 16 | 344 | – |
+| madina-1 | 298 | 24 | 112 | – |
+| madina-2 | 445 | 29 | 169 | – |
+| madina-3 | 1238 | 35 | 484 | – |
+| quran | 343 | 23 | 122 | – |
+
+`data/buecher.js` blieb dadurch unverändert (nach dem Lauf steht `git status`
+weiter auf leer) — es gibt also nichts zu committen.
+
+**Vokabelpaket (`node werkzeuge/baue-vokabelpaket.mjs`):** 8 Bücher, 4433
+Vokabeln, 1382 KB → **`UNVERAENDERT` — dasselbe Paket wie beim letzten Lauf.**
+Kein Handlungsbedarf, Elias muss auf seinen Geräten nichts neu einlesen.
+
+`get_unlocked_chapters`: `madina-1-chapter-1` bis `-9`, **unverändert seit dem
+27.07.** Der Kurs steht also weiter bei Kapitel 9 — was zu Folge 14 („Kapitel 9,
+Teil B") passt.
+
+**Schritt 3 – `vocab-data.js`:** nicht angefasst. Stand laut `validate.js`
+171 Einträge / 342 Markierungen; die 11 eigenen Vokabeln aus arabicroots sind
+alle enthalten (Abgleich über die UUIDs, 11 von 11 gefunden). Zur Beobachtung
+aus dem Routinen-Prompt: Quran-Belege fehlen weiterhin für die Kapitel 6, 7
+und 8 — **nicht eigenmächtig aufgefüllt** (E.1), bleibt Elias' Entscheidung.
+
+**Schritt 4 – Samsung Notes:** `list_export_status` meldet alle drei Notizen mit
+Cache, eine davon als `stale` („Madina Buch 1 (Beschriftet)"). Deshalb wie
+vorgeschrieben `node werkzeuge/export-index.mjs --pruefen`:
+
+```
+Madina Buch 1 (Beschriftet)   pageCount 142 = PDF   geaendert 2026-07-28T01:19:20Z
+Grammatik Heft Medina Buch 1  pageCount  14 = PDF   geaendert 2026-07-27T20:57:42Z
+Madina Buch 1 Vokabelheft     pageCount  17 = PDF   geaendert 2026-07-27T01:21:48Z
+=== 0 Beanstandung(en) bei 3 Eintraegen ===
+```
+
+Alle drei nur „zur Info": die Notiz wurde nach dem Export **angefasst**, was
+nichts über neuen Inhalt sagt — von Elias am 29.07. geklärt. Die Seitenzahlen
+stimmen mit den PDFs überein. **Der Index ist also in Ordnung, der stille
+Ausfall vom 28./29.07. wiederholt sich nicht.** Ein Handschrift-Abgleich stand
+diesmal inhaltlich nicht an: keine neuen Vokabeln, keine neuen Kapitel, keine
+neue ausgewertete Folge. Der Index wurde nicht von Hand angefasst.
+
+**Schritt 5 – Lernstand (ohne Buch-/Kapitelfilter, Sperre seit 28.07. aufgehoben):**
+`get_weak_vocabulary` liefert 92 Einträge unter 50 % Trefferquote.
+
+- **Elias hat zwischen dem 31.07. und heute viel geübt**, und zwar breit: 41 der
+  92 schwachen Wörter tragen einen `lastSeenAt` vom **01.08.**, weitere 12 vom
+  31.07., zwei von **heute, 02.08.** (قَصِيرٌ 10:32, مِرْوَحَةٌ 10:41).
+- **Schwerpunkt liegt klar auf bayna-yadayk-2** (rund zwei Drittel der Liste),
+  gefolgt von bayna-yadayk-1 und madina-2. Das deckt sich mit Elias'
+  Richtigstellung vom 28.07. („das sind meine") — er übt über die neun
+  freigeschalteten Kapitel hinaus.
+- **Die schwächsten drei:** أَهْمَلَ (vernachlässigen, 6/42 = 14 %),
+  مُهْمِلٌ (nachlässig, 6/28 = 21 %), وَقَعَ (geschehen, 7/27 = 26 %) — alle drei
+  aus bayna-yadayk-2. Auffällig: أَهْمَلَ und مُهْمِلٌ sind **dieselbe Wurzel
+  ه‑م‑ل** und liegen beide ganz unten. Das ist genau das Muster, das ein
+  Wurzelfamilien- oder Verwechslungs-Modus abfangen würde (siehe Vorschlag unten).
+- **Aus Madina 1 nur zwei Einträge** in der ganzen Liste: قَصِيرٌ (85/178 = 48 %,
+  weiterhin das meistgeübte Wort überhaupt) und مِرْوَحَةٌ (32/66 = 48 %). Sein
+  eigener Kernstoff sitzt also deutlich besser als der Rest.
+- **Vier eigene Vokabeln stehen unter 50 %:** أَلْمُهَنْدِسٌ (0/7), لَحْمٌ (0/5),
+  إِثْنَانِ (3/18), اِسْمٌ مَجْرُورٌ (1/3). أَلْمُهَنْدِسٌ und لَحْمٌ wurden **noch nie
+  richtig beantwortet**.
+- `get_personal_vocabulary`: **11 Einträge, unverändert**, jüngste Änderung
+  18.07. **Keine neue eigene Vokabel, in der App fehlt keine.**
+
+**Schritt 6 – Qualitätssicherung:**
+
+| Skript | Ergebnis |
+|---|---|
+| `validate.js` | **Exit 0** – „Alles sauber (3 Hinweise)". 171 Vokabeln, 73 Regeln (alle mit Quelle, 51 mit gedrucktem Beleg), 342 Markierungen, 114 Suren, 1038 Wurzeln, `CACHE_NAME = vokabeltrainer-v85` |
+| `pruefe-markierungen.js` | 196 von 342 Markierungen prüfbar, **0** Verstöße gegen die Regelbedingung, **0** Wortgrenzen-Fehler, **0** Überschneidungen |
+| `pruefe-saetze.js` | 155 verfasste Sätze: **0 unpassende Endungen**, 10 mit unvokalisiertem Wort. Kontrollgruppe 27 Lehrbuchsätze: **0 Endungsfehler**, 1 mit unvokalisiertem Wort |
+| `pruefe-transkripte.js` | 73 von 73 Regeln belegt: 59 von beiden Lesarten, 11 nur vom eigenen Whisper-Lauf, 2 von Hand nachgelesen, **1** von keiner Lesart im Fenster (`ismul-isara-hadha-01`, F1 10:07 — steht bei ±120 s doch da, der Zeitstempel zeigt auf den Anfang der Erklärung) |
+| `pruefe-sprecher.js` | 73 Regeln gegen die Sprecherspur, durchschnittlich **85 %** Lehreranteil; 9 Regeln unter 60 % (Nachhör-Kandidaten), 4 weitere aus Folge 12, die keinen klaren Hauptsprecher hat |
+| `pruefe-taschkil.js` | **7 Befunde in 6 Wörtern** (Exit 1, aber kein Push-Tor) — siehe unten |
+| `pruefe-wortfelder.js` | Tabelle in Ordnung, 27 Felder. **Lernbestand: 131 von 171 (77 %) mit Bedeutungsfeld, 40 nur mit Wortart — davon 0 Nomen.** Also keine echte Lücke: es sind Partikeln und Adjektive, bei denen die Wortart schon die Kategorie ist. **Kein Suchwort ergänzt** |
+
+**Die drei `validate.js`-Hinweise sind unverändert bekannt:** لَبَنٌ hat Plural
+ohne `sg` (unkritisch), مِكْوَاةٌ / أَخٌ / أُخْتٌ haben `sg` ohne Plural (im Abzug
+nachsehen, nicht selbst bilden), und zwei Satz-Schlüssel (45878, 45883) haben ein
+leeres Markierungs-Array.
+
+**`pruefe-taschkil.js` im Einzelnen — nichts davon ist neu, und nichts davon
+wurde selbst gesetzt:**
+
+| Wort | Stelle | Feld | Herkunft |
+|---|---|---|---|
+| أَيْضاً | ض (4) | `ar` + `sentAr` | Elias' eigene arabicroots-Notiz |
+| الإِسْمُ | ل (1) | `ar` | Elias' eigene arabicroots-Notiz |
+| أَلْبَان | ن (7) | `pl` | Datenabzug (id 45782) |
+| اسْمُ / اسْمُكِ / اسْمِي | ا (0), Hamzat al-wasl | `sentAr` | `lehrbuch-saetze.js`, mb1-42-2 und mb1-63-1 |
+
+Das sind exakt die Punkte, die seit dem 31.07. auf Elias warten („drei Wörter mit
+unbelegter Vokalisierung" + „die drei اسم-Zitate"). **Eine Ḥaraka ohne Beleg ist
+genauso erfunden wie eine erfundene Regel (E.1)** — deshalb unverändert gelassen.
+Zwei Anmerkungen zur Einordnung, damit Elias schneller entscheiden kann:
+أَيْضاً ist eine gängige Schreibvariante von أَيْضًا (Tanwīn auf dem Alif statt auf
+dem ض) und dürfte kein Fehler sein; bei den drei اسم-Zitaten geht es um die
+Hamzat al-wasl, die im Lehrbuch traditionell ohne Kasra steht.
+
+**Schritt 7 – Commit:** nur dieser Log-Eintrag. Am Code, an `vocab-data.js`,
+`grammar-data.js` und `sw.js` wurde nichts geändert, also **kein CACHE_NAME-Bump**
+(bleibt v85). `data/vokabeln-*.js`, `vokabelpaket.json` und `transcripts/` sind
+per `.gitignore` ausgeschlossen und wurden **nicht** mit `-f` erzwungen.
+
+**Nichts war blockiert.** Kein abgelehnter Befehl, keine Datei, die sich nicht
+schreiben ließ.
+
+### Vorschläge für den nächsten Schritt (ehrlich priorisiert)
+
+1. **Folge 14 auswerten** — der einzige Punkt mit echtem Zeitbezug. Sie behandelt
+   Kapitel 9 (Teil B), also genau das Kapitel, an dem Elias gerade steht, und die
+   Regeln daraus könnten `نَعْت` in der App noch belegter machen. Läuft
+   automatisch über `arabicroots-backfill-retry`; wenn das Fenster geschlossen
+   bleibt, in einer interaktiven Session mit `yt-dlp` + `whisper-cli` nachholen.
+2. **Verwechslungs-Duelle (Generalcheck-Idee 3) sind reif geworden.** Sie waren
+   am 28.07. blockiert, weil der Vokabelabzug nicht im Repo liegt — das gilt
+   weiterhin, **aber das Paket liegt jetzt auf Elias' Geräten**, der Modus wäre
+   dort also nicht leer. Der heutige Lernstand liefert das Argument gleich mit:
+   أَهْمَلَ und مُهْمِلٌ, dieselbe Wurzel, stehen beide ganz unten in der
+   Schwachliste. Das ist eine Entscheidung für Elias, keine Routinen-Änderung.
+3. **Nichts Dringendes darüber hinaus.** Die Prüfskripte sind sauber, der Abzug
+   steht still, die offenen Ḥarakāt-Fragen sind bewusst offen und brauchen ihn,
+   nicht mich. Die höchste Projekt-Priorität bleibt laut Gedächtnis der Umzug auf
+   eigene Domain mit Login — und der ist ausdrücklich kein Routinen-Thema.
