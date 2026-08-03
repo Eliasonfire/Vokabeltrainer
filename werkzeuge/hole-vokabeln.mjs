@@ -21,7 +21,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.join(HIER, '..');
-const MCP  = 'F:/Workspace/MCP-Servers/arabicroots';
+const MCP  = 'G:/1. Workspace/MCP-Servers/arabicroots';
 
 const { loadEnvFile }   = await import(pathToFileURL(`${MCP}/dist/loadEnv.js`));
 const { SupabaseAuth }  = await import(pathToFileURL(`${MCP}/dist/auth.js`));

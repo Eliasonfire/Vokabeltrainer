@@ -50,7 +50,7 @@ console.log(`   ${'erreichbar'.padEnd(16)} ${erreichbar} von ${IST.Regeln}`);
 if (erreichbar !== IST.Regeln)
   console.log(`   !! ${IST.Regeln - erreichbar} Regel(n) ohne Markierung - in der App unsichtbar.`);
 
-const VAULT = 'F:/Workspace/Obsidian/Gedächtnis/Elias Gedächtnis/';
+const VAULT = 'G:/1. Workspace/Obsidian/Gedächtnis/Elias Gedächtnis/';
 const MEM   = 'C:/Users/abdur/.claude/projects/F--Workspace-Obsidian/memory/';
 const DATEIEN = [
   VAULT + '03 - Projekte/Vokabeltrainer-Arabisch.md',

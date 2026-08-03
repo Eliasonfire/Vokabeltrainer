@@ -23,7 +23,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-const TRESOR = 'F:\\Workspace\\Obsidian\\Gedächtnis\\Elias Gedächtnis';
+const TRESOR = 'G:\\1. Workspace\\Obsidian\\Gedächtnis\\Elias Gedächtnis';
 /* Nicht `Number(x) || 15` - das schluckt eine ausdrueckliche 0 und nimmt
    stillschweigend 15. Beim ersten Test genau so aufgetreten. */
 const roh = process.argv[2];

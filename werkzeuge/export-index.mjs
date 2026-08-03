@@ -40,7 +40,7 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 
 const ORDNER = process.env.SAMSUNG_NOTES_EXPORT_DIR
-  || 'F:\\Workspace\\SamsungNotes-Export';
+  || 'G:\\1. Workspace\\SamsungNotes-Export';
 const INDEX = path.join(ORDNER, 'export-index.json');
 
 const args = process.argv.slice(2);

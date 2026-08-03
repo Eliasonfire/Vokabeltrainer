@@ -15,7 +15,7 @@
    Rohmaterial (Audit-Grundlage) liegt lokal und NICHT im Git:
      transcripts/raw/       YouTube-Untertitel je Folge
      transcripts/whisper/   Nachtranskription der Regelstellen
-     F:\Workspace\Arabicroots-Material\  Video und Ton
+     G:\1. Workspace\Arabicroots-Material\  Video und Ton
    Kursmaterial-Disclaimer verbietet die Weitergabe. */
 
 const GRAMMAR_RULES = [

@@ -132,7 +132,7 @@ if (vorher && vorher.buecher){
 }
 
 /* Eine Kopie dorthin legen, wo Elias sie ohne Suchen findet. Der Repo-Ordner
-   taugt dafuer nicht - im Dateiwaehler von Telegram ist F:\Workspace\... drei
+   taugt dafuer nicht - im Dateiwaehler von Telegram ist G:\1. Workspace\... drei
    Ebenen tief. Ueberschreibbar per Umgebungsvariable, damit der Pfad nicht im
    Code festgenagelt ist. */
 const ablage = process.env.VOKABELPAKET_ABLAGE || path.join(os.homedir(), 'Downloads');

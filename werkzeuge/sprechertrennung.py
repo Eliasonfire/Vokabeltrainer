@@ -20,8 +20,8 @@
 # braucht sie erneut (siehe Gedaechtnisnotiz vulkan-whisper-offen).
 import os, sys, time, json, glob
 
-AUDIO = r"F:\Workspace\Arabicroots-Material\audio"
-OUT   = r"F:\Workspace\Vokabeltrainer\transcripts\sprecher"
+AUDIO = r"G:\1. Workspace\Arabicroots-Material\audio"
+OUT   = r"G:\1. Workspace\Vokabeltrainer\transcripts\sprecher"
 os.makedirs(OUT, exist_ok=True)
 
 import wave
