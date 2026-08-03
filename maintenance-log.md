@@ -62,13 +62,13 @@ umgestellt am 27.07.26). Ergebnis vorweg: **keine inhaltliche Änderung nötig**
 aber ein blockierender Befund an der Routine selbst (siehe Schritt 0/7).
 
 **Schritt 0 – Repo aktualisieren: FEHLGESCHLAGEN (Berechtigung).**
-`git -C F:\Workspace\Vokabeltrainer pull --ff-only` wurde abgelehnt. Ursache: die
-`allowedTools`-Liste in `F:\Workspace\Automation\routines.json` erlaubt
+`git -C G:\1. Workspace\Vokabeltrainer pull --ff-only` wurde abgelehnt. Ursache: die
+`allowedTools`-Liste in `G:\1. Workspace\Automation\routines.json` erlaubt
 `Bash(git pull:*)`, `Bash(git add:*)`, `Bash(git commit:*)`, `Bash(git push:*)` —
 diese Muster greifen aber nur, wenn der Befehl *wörtlich* mit `git pull` / `git add`
 usw. beginnt. Alle Befehle im Prompt beginnen mit `git -C <pfad> …` und passen
 deshalb auf kein einziges Muster. Ohne `cd` (ebenfalls nicht erlaubt) und mit
-`cwd = F:\Workspace` (kein Git-Repo) ist Git in diesem Lauf **komplett unbenutzbar**.
+`cwd = G:\1. Workspace` (kein Git-Repo) ist Git in diesem Lauf **komplett unbenutzbar**.
 Gegengeprüft: `git pull --ff-only` ohne `-C` wird zwar erlaubt, scheitert aber mit
 `fatal: not a git repository`. Der Arbeitsstand konnte also weder aktualisiert noch
 committet werden — alle folgenden Prüfungen liefen gegen den lokal vorliegenden
@@ -141,7 +141,7 @@ konservativ" gilt, wurde nichts angefasst:
 **Schritt 4 – Samsung Notes:** `list_export_status` liefert weiterhin eine **leere
 Liste**. Handschrift-Abgleich übersprungen, kein Export erzeugt (in dieser Umgebung
 nicht möglich). Ursache ist unverändert die im Goal-Prompt beschriebene: nur eine
-der drei PDFs in `F:\Workspace\SamsungNotes-Export\` trägt den erwarteten
+der drei PDFs in `G:\1. Workspace\SamsungNotes-Export\` trägt den erwarteten
 UUID-Dateinamen, und `export-index.json` stammt vom 22.07. Solange das nicht
 korrigiert ist, fällt der Handschrift-Abgleich in **jedem** Lauf aus.
 
@@ -179,7 +179,7 @@ In diesem Lauf hatte das keine praktische Auswirkung, weil es nichts einzupflege
    Routinen jemals — der Befund trifft `vokabeltrainer-wartung` und
    `arabicroots-backfill-retry` gleichermaßen, beide nutzen `git -C`. Sauberste
    Variante: die vier Git-Muster durch
-   `"Bash(git -C F:\\Workspace\\Vokabeltrainer:*)"` ersetzen — eng auf das eine Repo
+   `"Bash(git -C G:\\1. Workspace\\Vokabeltrainer:*)"` ersetzen — eng auf das eine Repo
    begrenzt und passt zum bestehenden Prompt-Wortlaut. Alternativen: `"Bash(git:*)"`
    (bequem, aber weit) oder die Prompts auf ein vorangestelltes `cd` umstellen und
    `Bash(cd:*)` freigeben. Reihenfolge ist wichtig: solange das offen ist, ist jeder
@@ -213,7 +213,7 @@ pullen und committen.
 `Already up to date.` Der im 08:04-Eintrag beschriebene Berechtigungs-Blocker
 (`git -C <pfad> …` passte auf kein `allowedTools`-Muster) **tritt nicht mehr
 auf**: der Prompt schreibt Git-Befehle jetzt schlicht ohne `-C`, und das
-Arbeitsverzeichnis ist bereits `F:\Workspace\Vokabeltrainer`. Vorschlag 1 des
+Arbeitsverzeichnis ist bereits `G:\1. Workspace\Vokabeltrainer`. Vorschlag 1 des
 letzten Laufs ist damit erledigt.
 
 **Schritt 1 – Neue Aufzeichnungen:** `get_recordings` liefert 13 Folgen, höchste
@@ -269,7 +269,7 @@ normieren wollen.
 **Schritt 4 – Samsung Notes:** `list_export_status` liefert weiterhin eine
 **leere Liste**. Handschrift-Abgleich übersprungen, kein Export erzeugt (in
 dieser Umgebung nicht möglich). Ursache unverändert wie im Goal-Prompt
-beschrieben: nur eine der drei PDFs in `F:\Workspace\SamsungNotes-Export\` trägt
+beschrieben: nur eine der drei PDFs in `G:\1. Workspace\SamsungNotes-Export\` trägt
 den erwarteten UUID-Dateinamen, `export-index.json` stammt vom 22.07.
 
 **Schritt 5 – Lernstand (nur Beobachtung, keine Code-Änderung):**
