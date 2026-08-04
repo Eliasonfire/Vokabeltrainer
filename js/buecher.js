@@ -71,9 +71,42 @@ function ladeBuchDatei(slug){
 /* Rohdaten in VOCAB_DATA einhaengen. Ruecklaeufig ist die Zahl der wirklich
    neuen Eintraege - bei Madina 1 ist sie klein, weil die ersten neun Kapitel
    schon aus vocab-data.js dastehen. */
+/* ---------- Wann eine rohe Angabe KEINE Angabe ist ----------
+
+   Elias am 04.08.2026: "Vokabel Schweiz fehlt Taschkil." Die Ursache lag nicht
+   dort, wo man sie sucht. In vocab-data.js steht die am 30.07. belegte Fassung
+   سُوِيسْرَا (Madina-Schluessel 1, L7, S. 29) - und die ist auch nie ueberschrieben
+   worden, denn `ar` ist belegt und Vorhandenes gewinnt.
+
+   Ueberschrieben wurde ein Feld, das GAR NICHT gefuellt war: `sg` stand auf
+   null, und der Abzug traegt dort سُويسْرَا nach - dasselbe Wort, aber ohne die
+   Kasra unter dem و. Weil fast alles im Code auf `w.sg || w.ar` zugreift,
+   gewinnt ab da die schlechtere Schreibung. Bei Japan genauso: `ar` ist
+   الْيَابَانُ, der Abzug schiebt ueber `sg` das artikellose اليَابَانُ nach.
+
+   Deshalb diese Pruefung: Ein arabisches Feld aus dem Abzug wird NICHT
+   nachgetragen, wenn es - ohne Vokalzeichen betrachtet - dasselbe Wort ist wie
+   das schon vorhandene `ar`, aber weniger Taschkil traegt. Dann ist es keine
+   neue Angabe, sondern eine schlechtere Schreibung derselben.
+
+   Warum nicht nachtragen statt korrigieren: `w.sg || w.ar` faellt dann von
+   selbst auf die belegte Fassung zurueck. Es wird also kein einziges
+   Vokalzeichen von mir gesetzt - E.1 bleibt unangetastet.
+
+   Ein echter Plural kann hier nicht hineinlaufen: entvokalisiert ist بُيُوتٌ
+   nicht dasselbe wie بَيْتٌ, die erste Bedingung greift also gar nicht. */
+const ROH_ARAB_FELDER = new Set(['ar','sg','pl','femSg','femPl','past','present','imperative','masdar']);
+function rohOhneHarakat(s){ return String(s == null ? '' : s).replace(/[ً-ْٰـ]/g, ''); }
+function rohZaehleHarakat(s){ return (String(s == null ? '' : s).match(/[ً-ْٰ]/g) || []).length; }
+function istSchlechtereSchreibung(feld, wert, da){
+  if (!ROH_ARAB_FELDER.has(feld) || !da.ar) return false;
+  if (rohOhneHarakat(wert) !== rohOhneHarakat(da.ar)) return false;
+  return rohZaehleHarakat(wert) < rohZaehleHarakat(da.ar);
+}
+
 function einhaengen(liste){
   const nachId = new Map(VOCAB_DATA.map(w=>[String(w.id), w]));
-  let neu = 0, ergaenzt = 0;
+  let neu = 0, ergaenzt = 0, verworfen = 0;
   liste.forEach(roh=>{
     const da = nachId.get(String(roh.id));
     if (!da){ VOCAB_DATA.push(Object.assign({}, roh)); neu++; return; }
@@ -83,12 +116,13 @@ function einhaengen(liste){
     let hatErgaenzt = false;
     Object.entries(roh).forEach(([k,v])=>{
       if (v !== null && v !== undefined && (da[k] === null || da[k] === undefined)){
+        if (istSchlechtereSchreibung(k, v, da)){ verworfen++; return; }
         da[k] = v; hatErgaenzt = true;
       }
     });
     if (hatErgaenzt) ergaenzt++;
   });
-  return { neu, ergaenzt };
+  return { neu, ergaenzt, verworfen };
 }
 
 /* Buch umschalten. Laedt bei Bedarf nach, traegt fehlende Fortschritts-
