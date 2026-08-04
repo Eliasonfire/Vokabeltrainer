@@ -197,6 +197,15 @@ button{font-family:inherit;color:inherit;}
   from{opacity:0;transform:translate(-50%,-50%) scale(.94);}
   to{opacity:1;transform:translate(-50%,-50%) scale(1);}
 }
+/* Fuer Kaesten, die NICHT in der Fenstermitte sitzen, sondern eine gemessene
+   Lage haben (`.quran-ansicht`). `popIn` traegt das `translate(-50%,-50%)` der
+   Mittelpunkt-Fenster mit — an einem Kasten mit eigenem top/left schiebt das
+   ihn waehrend der Animation um seine halbe Groesse nach links oben und laesst
+   ihn am Ende an seine Stelle springen. */
+@keyframes klappAuf{
+  from{opacity:0;transform:scale(.97);}
+  to{opacity:1;transform:scale(1);}
+}
 @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
 @keyframes shimmer{
   from{background-position:-360px 0;}
@@ -1774,7 +1783,8 @@ main{
   background:var(--surface-3);border:1px solid var(--border-strong);border-radius:var(--r-3);
   padding:var(--sp-3) var(--sp-4);box-shadow:var(--sh-3);
   display:flex;flex-direction:column;gap:var(--sp-3);
-  animation:popIn var(--dur-2) var(--ease-out);
+  transform-origin:top center;
+  animation:klappAuf var(--dur-2) var(--ease-out);
 }
 .qa-zeile{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);}
 .qa-titel{font-size:var(--fs-sm);font-weight:700;color:var(--text-dim);}
