@@ -641,30 +641,42 @@ function schliesseAyahListe(){
    genau in dieser Sekunde laeuft der gruene Puls (1,9 s) ausserhalb des
    Bildes ab. Man tippt eine Ayah an und sieht erst einmal etwas anderes.
 
-   Deshalb wird nachgezogen: einmal nach zwei Frames, einmal wenn die
-   Schriften geladen sind, einmal nach 600 ms. */
+   ⚠️ Ein zweiter und dritter Anlauf reichen NICHT - auch das ist gemessen, nicht
+   vermutet. Ein Versuch mit "nachziehen nach zwei Frames, bei fonts.ready und
+   nach 600 ms" ergab exakt dieselben Zahlen wie ohne (19497 / 6556 / 425 px
+   nach 100 / 500 / 1200 ms). Grund: nach JEDEM Ansteuern waechst der Inhalt
+   darueber weiter, das Ziel rutscht also gleich wieder weg.
+
+   Deshalb wird das Ziel GEHALTEN statt angesteuert: bis zu 1,2 s lang wird je
+   Frame geprueft, ob es noch mittig steht, und sonst nachgefasst. Das kostet
+   rund 70 Aufrufe von getBoundingClientRect - fuer EIN Element, nicht fuer 286.
+   Sobald selbst gerollt oder getippt wird, hoert das Halten sofort auf; ohne
+   das arbeitete die Seite gegen den eigenen Finger. */
 function hebeVersHervor(el){
-  const holen = () => el.scrollIntoView({ block:'center', behavior:'auto' });
-  /* Nur nachziehen, wenn der Vers wirklich nicht zu sehen ist. Sonst risse es
-     den Blick weg, falls in der Zwischenzeit selbst weitergerollt wurde. */
-  const pulsen = () => {
-    el.classList.remove('angesteuert');
-    void el.offsetWidth;                     // Animation neu starten
-    el.classList.add('angesteuert');
-  };
-  const nachziehen = () => {
+  const mitte = () => el.scrollIntoView({ block:'center', behavior:'auto' });
+  mitte();
+  el.classList.remove('angesteuert');
+  void el.offsetWidth;                       // Animation neu starten
+  el.classList.add('angesteuert');
+
+  let halten = true;
+  const aufhoeren = () => { halten = false; };
+  const wege = ['wheel', 'touchstart', 'pointerdown', 'keydown'];
+  wege.forEach(w => window.addEventListener(w, aufhoeren, { once:true, passive:true }));
+  const abraeumen = () => wege.forEach(w => window.removeEventListener(w, aufhoeren));
+
+  const ende = performance.now() + 1200;
+  const schritt = (jetzt) => {
+    if (!halten){ abraeumen(); return; }
     const r = el.getBoundingClientRect();
-    if (r.bottom >= 0 && r.top <= window.innerHeight) return;
-    holen();
-    /* Der Puls faengt von vorne an, wenn nachgezogen werden musste - sonst
-       waere er abgelaufen, bevor der Vers ueberhaupt zu sehen war. */
-    pulsen();
+    /* Bei sehr langen Versen ist die Sollhoehe 0 statt negativ - sonst zielte
+       die Regelung auf eine Stelle oberhalb des Fensters und faende nie Ruhe. */
+    const soll = Math.max(0, (window.innerHeight - r.height) / 2);
+    if (Math.abs(r.top - soll) > 40) mitte();
+    if (jetzt < ende) requestAnimationFrame(schritt);
+    else abraeumen();
   };
-  holen();
-  requestAnimationFrame(() => requestAnimationFrame(nachziehen));
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(nachziehen);
-  setTimeout(nachziehen, 600);
-  pulsen();
+  requestAnimationFrame(schritt);
 }
 
 /* ---------- Vorherige / naechste Sure am Sura-Ende (Punkt 12) ----------
