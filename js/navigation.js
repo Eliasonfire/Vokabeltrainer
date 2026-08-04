@@ -48,8 +48,15 @@ function showScreen(name, opt){
 
 /* Zurueck-Taste des Geraets: innerhalb der App navigieren statt sie zu verlassen. */
 window.addEventListener('popstate', (e)=>{
-  const ziel = (e.state && e.state.screen) || 'home';
+  const st = e.state || {};
+  const ziel = st.screen || 'home';
   showScreen(ziel, { ausHistorie: true });
+  /* Der Quran-Leser hat Ebenen INNERHALB seines Bildschirms - eine geoeffnete
+     Sure und eine laufende Suche. showScreen() stellt immer die Surenliste her;
+     was darueber lag, zieht js/quran.js nach. Ohne das spraenge die
+     Zurueck-Taste aus einer Sure ueber die ganze Liste hinweg zur Startseite
+     (Elias, 04.08.2026). */
+  if (ziel === 'quranfull' && typeof stelleQuranEbeneHer === 'function') stelleQuranEbeneHer(st);
 });
 
 /* Der Zurueck-Pfeil in der App verhaelt sich genauso wie die Geraetetaste -

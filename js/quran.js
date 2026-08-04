@@ -106,13 +106,64 @@ function renderSurahList(filter){
     list.map(surahZeile).join('') || '<div class="empty-state">Keine Sure gefunden.</div>';
 }
 
-document.getElementById('surahSearch').addEventListener('input', (e)=> renderSurahList(e.target.value));
-document.getElementById('btnQuranFullBack').addEventListener('click', ()=>{
-  /* Innerhalb des Readers ist die Versliste eine eigene Ebene: erst dorthin
-     zurueck, danach erst den Bildschirm verlassen. */
-  if (!document.getElementById('verseList').classList.contains('hidden')) renderSurahList(document.getElementById('surahSearch').value);
-  else geheZurueck();
+/* ---------- Der Quran-Leser hat Ebenen INNERHALB seines Bildschirms ----------
+
+   Elias am 04.08.2026: "wenn ich in einer Sura bin und auf meinem Handy die
+   zurück Taste drücke, dann komme ich immer zum Startbildschirm der app zurück,
+   eigentlich möchte ich aber wieder die Liste mit all den suren im Quran sehen."
+   Und weiter, als allgemeine Regel: "Grundsätzlich soll mich meine Handy zurück
+   Taste immer nur auf das vorherige Menü zurück bringen."
+
+   Warum das vorher nicht ging: navigation.js legt je BILDSCHIRM einen
+   Historie-Eintrag an. Eine geoeffnete Sure ist aber kein eigener Bildschirm,
+   sondern ein Zustand innerhalb von `screen-quranfull` - openSurah() versteckt
+   nur #surahList und zeigt #verseList. Fuer die Historie sah das aus, als waere
+   man die ganze Zeit auf derselben Seite geblieben; die Zurueck-Taste sprang
+   deshalb ueber die ganze Surenliste hinweg zum vorigen Bildschirm.
+
+   Der App-Pfeil hatte dafuer eine Sonderbehandlung, die Geraetetaste nicht -
+   zwei Wege, die sich unterschiedlich verhielten. Statt die Sonderbehandlung zu
+   verdoppeln, bekommen die Ebenen jetzt echte Historie-Eintraege. Dadurch tut
+   `geheZurueck()` fuer beide Wege von selbst das Richtige, und der App-Pfeil
+   braucht gar keine Sonderbehandlung mehr.
+
+   Drei Zustaende, alle unter screen 'quranfull':
+     { tiefe }                -> Surenliste
+     { tiefe, suche:true }    -> Suche laeuft
+     { tiefe, sure:<id> }     -> eine Sure ist offen */
+function quranEbeneMerken(zusatz){
+  const st = history.state || {};
+  const tiefe = typeof st.tiefe === 'number' ? st.tiefe : 0;
+  history.pushState(Object.assign({ screen:'quranfull', tiefe: tiefe + 1 }, zusatz), '');
+}
+
+/* Wird aus dem popstate-Handler in navigation.js gerufen. showScreen() stellt
+   immer die Surenliste her - was darueber liegt, muss hier nachgezogen werden. */
+function stelleQuranEbeneHer(st){
+  st = st || {};
+  const feld = document.getElementById('surahSearch');
+  if (st.sure){ openSurah(Number(st.sure), { ausHistorie:true }); return; }
+  /* Weder Sure noch Suche: das Suchfeld wird geleert. Sonst kaeme man aus einer
+     gefilterten Liste nie zur vollstaendigen zurueck - die Zurueck-Taste haette
+     die Suche zwar verlassen, aber derselbe Filter stuende noch im Feld. */
+  if (!st.suche && feld.value) feld.value = '';
+  renderSurahList(feld.value);
+}
+
+document.getElementById('surahSearch').addEventListener('input', (e)=>{
+  const wert = e.target.value;
+  const st = history.state || {};
+  /* Nur beim UEBERGANG von "keine Suche" zu "Suche" einen Eintrag anlegen.
+     Bei jedem Tastendruck einen zu setzen hiesse, dass man nach "ikhlas"
+     sechsmal zurueck druecken muesste, um die Liste wiederzusehen. */
+  if (wert.trim() && !st.suche && !st.sure) quranEbeneMerken({ suche:true });
+  renderSurahList(wert);
 });
+
+/* Der App-Pfeil verhaelt sich jetzt genau wie die Geraetetaste - beide gehen
+   eine Ebene zurueck. Das ist Elias' ausdrueckliche Vorgabe und ersetzt die
+   fruehere Sonderbehandlung, die nur hier galt. */
+document.getElementById('btnQuranFullBack').addEventListener('click', geheZurueck);
 /* Ein Klick auf eine Surenzeile - derselbe Ablauf in beiden Listen.
    ⚠️ Eine Sure kann GLEICHZEITIG in beiden stehen (im Favoritenblock oben und
    in der Gesamtliste unten). Ein Zustand darf deshalb nie nur an dem Knopf
@@ -166,8 +217,14 @@ function ladeQuranText(){
   return QURAN_TEXT_PROMISE;
 }
 
-async function openSurah(id){
+async function openSurah(id, opt){
+  opt = opt || {};
   const surah = SURAH_DATA.find(s=>s.id===id);
+  /* Eine geoeffnete Sure ist eine eigene Ebene. Ohne diesen Eintrag springt die
+     Zurueck-Taste ueber die ganze Surenliste hinweg. `ausHistorie` kommt vom
+     popstate-Handler - dort wird der Zustand wiederhergestellt, nicht neu
+     betreten, sonst waechst die Historie bei jedem Zurueck weiter an. */
+  if (!opt.ausHistorie) quranEbeneMerken({ sure:id });
   document.getElementById('quranFullTitle').textContent = `${id}. ${surah.name}`;
   document.getElementById('quranFullIntro').classList.add('hidden');
   document.getElementById('surahSearch').classList.add('hidden');
