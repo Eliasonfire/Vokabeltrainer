@@ -30,8 +30,30 @@ function renderQuranList(){
    Schluessel "Sure:Vers". Al-Baqarah hat 286 Verse; ein einziger Haken fuer
    die ganze Sure bildet Auswendiglernen nicht ab, das geht Vers fuer Vers.
    Bewusst zwei getrennte Speicher: wer eine ganze Sure abhakt, will nicht
-   286 Einzeleintraege erzeugt bekommen, und wer einzelne Verse abhakt, will
-   den Surenhaken nicht ungefragt gesetzt sehen. */
+   286 Einzeleintraege erzeugt bekommen.
+
+   ⚠️ Der zweite Teil dieser Begruendung stand bis zum 04.08.2026 hier: "und wer
+   einzelne Verse abhakt, will den Surenhaken nicht ungefragt gesetzt sehen."
+   Elias hat ausdruecklich das Gegenteil verlangt: "wenn ich in der sura alle
+   Kaestchen anklicke und dadurch die ganze sura auswendig kann, dass dann in der
+   Liste der suren diese spezifische sura nicht automatisch auch abgehackt ist.
+   […] Das muss gefixt werden."
+
+   Die beiden Speicher bleiben trotzdem getrennt, und der erste Teil der
+   Begruendung gilt weiter. Der Abgleich laeuft ueber zwei Bewegungen:
+
+     vollstaendig  →  `gleicheSurenhakenAb`: sind alle Verse einzeln abgehakt,
+                      wird daraus der Surenhaken, und die Einzeleintraege
+                      fallen weg - sie sagen dann nichts mehr, was der Haken
+                      nicht schon sagt.
+     abweichend    →  `materialisiereSure`: hakt jemand INNERHALB einer ganz
+                      abgehakten Sure einen Vers ab, wird der Surenhaken in
+                      Einzelverse aufgeloest. Erst hier entstehen die 286
+                      Eintraege - also genau in dem Moment, in dem sie etwas
+                      aussagen, und nicht vorher.
+
+   Beides ist verlustfrei umkehrbar: der Haken traegt dieselbe Auskunft wie die
+   vollstaendige Einzelliste. */
 let HIFZ = LS.get('vt_hifz', {});
 function saveHifz(){ LS.set('vt_hifz', HIFZ); }
 let HIFZ_VERSE = LS.get('vt_hifzVerse', {});
@@ -41,6 +63,40 @@ function zaehleVerse(sure){
   const prefix = sure + ':';
   return Object.keys(HIFZ_VERSE).filter(k => k.startsWith(prefix) && HIFZ_VERSE[k]).length;
 }
+function versZahl(sure){
+  const s = SURAH_DATA.find(x => x.id === Number(sure));
+  return s ? s.verses : (VERSE_CACHE[sure] || []).length;
+}
+
+/* Surenhaken in Einzelverse aufloesen. Danach steht dieselbe Auskunft da, nur
+   feiner - der Aufrufer kann anschliessend einen einzelnen Vers wegnehmen. */
+function materialisiereSure(sure){
+  const id = Number(sure);
+  const gesamt = versZahl(id);
+  if (!gesamt) return false;
+  for (let v = 1; v <= gesamt; v++) HIFZ_VERSE[`${id}:${v}`] = 1;
+  delete HIFZ[id];
+  delete HIFZ[String(id)];
+  saveHifz();
+  saveHifzVerse();
+  return true;
+}
+
+/* Gegenrichtung: sind alle Verse einzeln abgehakt, wird daraus der Surenhaken.
+   Gibt zurueck, ob sich der Surenhaken dabei geaendert hat - der Aufrufer muss
+   dann die Zeile in der Surenliste nachziehen. */
+function gleicheSurenhakenAb(sure){
+  const id = Number(sure);
+  const gesamt = versZahl(id);
+  if (!gesamt || HIFZ[id]) return false;
+  if (zaehleVerse(id) < gesamt) return false;
+  for (let v = 1; v <= gesamt; v++) delete HIFZ_VERSE[`${id}:${v}`];
+  HIFZ[id] = true;
+  saveHifz();
+  saveHifzVerse();
+  return true;
+}
+
 /* Der Verdecken-Modus gilt nur fuer die gerade offene Sure und wird bewusst
    NICHT gespeichert - beim naechsten Aufschlagen will man erst mal lesen. */
 let HIFZ_VERDECKT = false;
@@ -383,15 +439,19 @@ function renderVerses(id){
     /* Verdeckt wird nur, was auch als auswendig markiert ist - alles andere
        zu verdecken waere kein Selbsttest, sondern nur laestig. */
     const verdeckt = HIFZ_VERDECKT && kann ? ' verdeckt' : '';
-    /* Ist die ganze Sure abgehakt, waeren die einzelnen Kaestchen eine Luege:
-       sie stuenden auf "an" und liessen sich anklicken, ohne dass sich etwas
-       aendert - der Surenhaken sticht sie. Also ausgrauen und sagen warum. */
-    const ganzeSure = !!HIFZ[id];
+    /* Bis zum 04.08.2026 waren diese Kaestchen gesperrt, sobald die ganze Sure
+       abgehakt war - mit der Begruendung, sie stuenden sonst auf "an", ohne
+       dass ein Klick etwas aendert. Das stimmte damals, weil der Surenhaken die
+       Einzelverse stach. Seit `materialisiereSure` loest ein Klick den Haken in
+       Einzelverse auf, der Klick aendert also sehr wohl etwas. Elias hatte die
+       Sperre ausdruecklich als Fehler gemeldet: "dann kann ich innerhalb der
+       sura nicht mehr die jeweiligen einzelnen ayaht anklicken um sie dann doch
+       vom auswendig gelernt weg zu machen". */
     return `
     <div class="verse-item${kann?' auswendig':''}">
       <div class="verse-kopf">
         <span class="verse-num">${v.verse_key}</span>
-        <button class="hifz-check${kann?' on':''}" ${ganzeSure?'disabled title="Die ganze Sure ist abgehakt"':`data-versmerk="${id}:${nr}"`}
+        <button class="hifz-check${kann?' on':''}" data-versmerk="${id}:${nr}"
                 aria-label="Vers ${nr} als auswendig markieren">${icon('check')}</button>
       </div>
       <div class="verse-ar${verdeckt}" lang="ar" dir="rtl">${v.text_uthmani}</div>
@@ -524,9 +584,21 @@ document.getElementById('verseList').addEventListener('click', (e)=>{
   const knopf = e.target.closest('[data-versmerk]');
   if (knopf){
     const key = knopf.dataset.versmerk;
+    const [sureStr, versStr] = key.split(':');
+    const id = Number(sureStr);
+    const hakenVorher = !!HIFZ[id];
+    /* War die ganze Sure abgehakt, muss sie erst in Einzelverse aufgeloest
+       werden - sonst haette das Wegnehmen dieses einen Verses keinen Ort, an
+       dem es stehen koennte. */
+    if (hakenVorher) materialisiereSure(id);
     if (HIFZ_VERSE[key]) delete HIFZ_VERSE[key]; else HIFZ_VERSE[key] = 1;
     saveHifzVerse();
-    const an = !!HIFZ_VERSE[key];
+    /* Und die Gegenrichtung: war das der letzte fehlende Vers, wird daraus der
+       Surenhaken. Danach ist `HIFZ_VERSE[key]` weg, der Vers gilt aber weiter
+       als gekonnt - deshalb wird der Anzeigezustand aus BEIDEN Speichern
+       gebildet und nicht aus dem Einzeleintrag allein. */
+    gleicheSurenhakenAb(id);
+    const an = !!HIFZ[id] || !!HIFZ_VERSE[key];
     knopf.classList.toggle('on', an);
     const karte = knopf.closest('.verse-item');
     karte.classList.toggle('auswendig', an);
@@ -535,9 +607,19 @@ document.getElementById('verseList').addEventListener('click', (e)=>{
     /* Die Sprungleiste zeigt dieselbe Auskunft und wird hier gleich
        mitgezogen - sonst behauptet sie bis zum naechsten Aufbau der Sure das
        Gegenteil von dem, was direkt darunter steht. */
-    const chip = document.querySelector(`#ayahLeiste [data-ayah="${key.split(':')[1]}"]`);
+    const chip = document.querySelector(`#ayahLeiste [data-ayah="${versStr}"]`);
     if (chip) chip.classList.toggle('auswendig', an);
-    const id = Number(key.split(':')[0]);
+    /* Hat sich der Surenhaken durch diesen einen Klick geaendert - in die eine
+       oder die andere Richtung -, muss die Zeile in der Surenliste mit. Sie
+       steht gerade nicht im Bild, aber der Haken bliebe sonst stehen, bis sie
+       neu gebaut wird. Beide Richtungen, nicht nur das Setzen: wer in einer ganz
+       abgehakten Sure einen Vers wegnimmt, darf sie in der Liste nicht weiter
+       als vollstaendig markiert vorfinden. */
+    const hakenNachher = !!HIFZ[id];
+    if (hakenNachher !== hakenVorher){
+      document.querySelectorAll(`[data-hifztoggle="${id}"]`)
+        .forEach(b=>b.classList.toggle('on', hakenNachher));
+    }
     aktualisiereHifzLeiste(id, SURAH_DATA.find(s=>s.id===id));
     return;
   }
