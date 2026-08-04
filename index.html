@@ -1526,6 +1526,38 @@ main{
   padding:var(--sp-2) var(--gutter) var(--sp-3);
   background:linear-gradient(to bottom, var(--bg) 72%, transparent);
 }
+/* Am Ende der Sure. „Nächste" steht LINKS — Elias' ausdrücklicher Wunsch, und
+   es folgt der Leserichtung des Arabischen: vorwärts heißt hier nach links.
+   Deshalb `direction:rtl` auf dem Kasten statt zweier vertauschter Knöpfe: die
+   Reihenfolge im Markup bleibt die logische (vorher, nachher), nur die Achse
+   dreht sich. Wer später einen dritten Knopf einfügt, muss nichts umsortieren. */
+.sura-nav{
+  display:flex;direction:rtl;gap:var(--sp-3);
+  margin:var(--sp-5) 0 var(--sp-7);
+}
+.sura-nav .sn-knopf{
+  flex:1;min-width:0;direction:ltr;
+  display:flex;align-items:center;gap:var(--sp-2);
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-3);
+  padding:var(--sp-3) var(--sp-4);cursor:pointer;text-align:left;
+  transition:background var(--dur-2) ease, border-color var(--dur-2) ease, transform var(--dur-1) var(--ease-out);
+}
+.sura-nav .sn-knopf:hover{background:var(--surface-3);border-color:var(--border-strong);}
+.sura-nav .sn-knopf:active{transform:scale(.985);}
+/* Der Pfeil sitzt jeweils an der Außenkante: „Nächste" steht links und zeigt
+   nach links, „Vorherige" steht rechts und zeigt nach rechts. Beim rechten
+   Knopf muss der Pfeil dafür ans Ende der Zeile. */
+.sura-nav .sn-knopf.sn-zurueck{flex-direction:row-reverse;text-align:right;justify-content:flex-start;}
+.sura-nav .sn-knopf.sn-zurueck .sn-text{margin-inline-start:auto;}
+.sura-nav .ic{width:18px;height:18px;flex-shrink:0;color:var(--text-faint);}
+.sura-nav .sn-text{min-width:0;}
+.sura-nav .sn-label{display:block;font-size:var(--fs-xs);color:var(--text-faint);font-weight:700;}
+.sura-nav .sn-sure{display:block;font-size:var(--fs-sm);color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* Am Anfang und am Ende des Quran fehlt eine Seite. Ein leerer Platzhalter
+   statt eines gesperrten Knopfes: die verbleibende Richtung behält so ihre
+   halbe Breite und springt nicht über die ganze Zeile. */
+.sura-nav .sn-leer{flex:1;}
+
 /* Waagerechte Rollfläche. Bewusst OHNE `touch-action`: jede Vorgabe dort hat in
    diesem Projekt schon einmal das senkrechte Rollen der Seite mitgenommen. Der
    Browser trennt waagerecht und senkrecht von selbst richtig, solange man ihn
@@ -2268,6 +2300,13 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
         <div class="ayah-leiste hidden" id="ayahLeiste" aria-label="Zu einer Ayah springen"></div>
       </div>
       <div class="word-list hidden" id="verseList"></div>
+      <!-- Elias am 04.08.2026: "Wenn man beim Quran beim Ende einer Sura ist
+           dann kann man auch so zwei Buttons hinzufügen, die einen zur nächsten
+           oder zur vorherigen sura führt. Der 'nächste' bottun sollte links
+           sein."  Eigener Kasten NEBEN #verseList, nicht darin: die
+           Ayah-Sprungliste greift über `:nth-of-type` auf die Versblöcke zu, und
+           ein zusätzliches div dazwischen würde jede Nummer um eins verschieben. -->
+      <div class="sura-nav hidden" id="suraNav"></div>
     </section>
 
     <!-- ============ HÖRVERSTEHEN ============ -->
