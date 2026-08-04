@@ -953,6 +953,21 @@ main{
 .word-chip.gewaehlt{
   background:var(--red-wash);border-color:var(--red-bright);color:#fff;
 }
+/* Dasselbe in der Wortliste, wo eine Zeile in eine andere Leitner-Box verlegt
+   wird. Die Zeile ist viel größer als ein Chip, deshalb trägt hier der Rand die
+   Markierung und nicht die Füllung — eine vollflächig eingefärbte Zeile würde
+   den arabischen Text schlechter lesbar machen. */
+.word-list-item.waehlbar{cursor:pointer;}
+.word-list-item.gewaehlt{
+  border-color:var(--red-bright);background:var(--red-wash);
+}
+/* Die Fälligkeit am Box-Knopf: leiser als die Boxnummer, denn sie erklärt sie
+   nur. Ohne sie wäre „Box 4" eine bloße Nummer. */
+.box-ziel-tage{font-weight:600;opacity:.75;}
+/* Die Zielleiste liegt fest über der Navigation und würde sonst die letzten
+   Zeilen der Wortliste verdecken — auf einer gerollten Liste genau die, die
+   man gerade markiert hat. */
+#screen-wordlist.leiste-offen .word-list{padding-bottom:140px;}
 /* Ein Wort, das schon in Kategorien liegt, zeigt an, in wie vielen — sonst
    sieht man der Liste nicht an, warum ein Wort dort steht. */
 .word-chip .in-kat{
@@ -1937,6 +1952,17 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
         <button class="btn btn-primary" id="btnAddPersonalVocab"><svg class="ic"><use href="#ic-plus"/></svg>Vokabel hinzufügen</button>
       </div>
       <div class="word-list stagger" id="wordList"></div>
+      <!-- Wörter in eine andere Leitner-Box verlegen. Dieselbe Bauform wie die
+           Kategorie-Zielleiste darüber: antippen statt ziehen. Begründung dort
+           und in js/kategorien.js — Ziehen und Ablegen ist auf einer rollenden
+           Liste eine Schätzung, was gemeint war, und die geht regelmäßig daneben. -->
+      <div class="kat-zielleiste hidden" id="boxZielLeiste">
+        <div class="kat-zeile">
+          <span class="kat-zahl" id="boxAuswahlZahl"></span>
+          <button class="kat-aus" id="btnBoxAuswahlAus" aria-label="Auswahl aufheben">Auswahl aufheben</button>
+        </div>
+        <div class="kat-ziele" id="boxZiele"></div>
+      </div>
     </section>
 
     <!-- ============ SENTENCES (Hören & Verstehen) ============ -->
