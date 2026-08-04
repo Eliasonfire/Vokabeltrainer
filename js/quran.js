@@ -120,6 +120,7 @@ function renderSurahList(filter){
   document.getElementById('verseList').classList.add('hidden');
   document.getElementById('hifzBar').classList.add('hidden');
   document.getElementById('ayahLeiste').classList.add('hidden');
+  document.getElementById('suraNav').classList.add('hidden');
   renderFavListe(!!q);
   document.getElementById('surahList').innerHTML =
     list.map(surahZeile).join('') || '<div class="empty-state">Keine Sure gefunden.</div>';
@@ -332,6 +333,7 @@ async function openSurah(id, opt){
      die Versnummern der VORIGEN Sure in der Leiste - und ein Tippen darauf
      traefe ins Leere. renderVerses() zeigt sie gleich wieder. */
   document.getElementById('ayahLeiste').classList.add('hidden');
+  document.getElementById('suraNav').classList.add('hidden');
 
   if (VERSE_CACHE[id]){ renderVerses(id); return; }
   /* Skeleton-Platzhalter in Versform statt nackter Textzeile - die Seite
@@ -397,6 +399,7 @@ function renderVerses(id){
     </div>`; }).join('');
   aktualisiereHifzLeiste(id, surah);
   renderAyahLeiste(id);
+  renderSuraNav(id);
   /* Modus und Groessen gelten auch fuer frisch gebaute Verse. Die Klassen sitzen
      zwar am Container und ueberleben den Neuaufbau - die Knopfzustaende im
      Ansicht-Menue aber nicht, wenn es zwischendurch geoeffnet wurde. */
@@ -467,6 +470,42 @@ function hebeVersHervor(el){
   void el.offsetWidth;                       // Animation neu starten
   el.classList.add('angesteuert');
 }
+
+/* ---------- Vorherige / naechste Sure am Sura-Ende (Punkt 12) ----------
+
+   Elias am 04.08.2026: "Wenn man beim Quran beim Ende einer Sura ist dann kann
+   man auch so zwei Buttons hinzufuegen, die einen zur naechsten oder zur
+   vorherigen sura fuehrt. Der 'naechste' bottun sollte links sein."
+
+   Die Reihenfolge im Markup bleibt die logische - erst zurueck, dann weiter.
+   Dass "weiter" links landet, macht `direction:rtl` am Kasten, nicht ein
+   Vertauschen der beiden Bloecke hier. */
+function renderSuraNav(id){
+  const kasten = document.getElementById('suraNav');
+  const zurueck = SURAH_DATA.find(s => s.id === id - 1);
+  const weiter  = SURAH_DATA.find(s => s.id === id + 1);
+  const knopf = (s, richtung) => s
+    ? `<button class="sn-knopf sn-${richtung}" data-suranav="${s.id}">
+         ${icon(richtung === 'weiter' ? 'left' : 'right')}
+         <span class="sn-text">
+           <span class="sn-label">${richtung === 'weiter' ? 'Nächste' : 'Vorherige'}</span>
+           <span class="sn-sure">${s.id}. ${escapeHtml(s.name)}</span>
+         </span>
+       </button>`
+    : '<span class="sn-leer"></span>';
+  kasten.innerHTML = knopf(zurueck, 'zurueck') + knopf(weiter, 'weiter');
+  kasten.classList.remove('hidden');
+}
+
+document.getElementById('suraNav').addEventListener('click', (e)=>{
+  const knopf = e.target.closest('[data-suranav]');
+  if (!knopf) return;
+  openSurah(Number(knopf.dataset.suranav));
+  /* Ohne das stuende man in der neuen Sure sofort wieder ganz unten - die
+     Rollhoehe bleibt beim Austausch des Inhalts erhalten. */
+  const kasten = document.getElementById('main');
+  if (kasten) kasten.scrollTop = 0;
+});
 
 document.getElementById('ayahLeiste').addEventListener('click', (e)=>{
   const knopf = e.target.closest('[data-ayah]');
