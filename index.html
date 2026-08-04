@@ -1516,7 +1516,10 @@ main{
    und dann daneben halt das deutsche." Jetzt trägt der arabische Name die
    Zeile; Nummer und Umschrift stehen klein und gedämpft dabei. */
 #quranFullTitle{display:flex;align-items:baseline;gap:var(--sp-2);min-width:0;}
-#quranFullTitle .qt-nr{font-size:var(--fs-sm);font-weight:800;color:var(--text-faint);
+/* Elias: „die zahl sollte gleich mit dem arabischen sein also weiß und größer.
+   nicht wie das deutsche." Die Nummer gehört zum Namen, nicht zur Umschrift —
+   also dieselbe Größe und dieselbe Farbe wie der arabische Name. */
+#quranFullTitle .qt-nr{font-size:1.45rem;font-weight:700;color:#fff;
   font-variant-numeric:tabular-nums;flex-shrink:0;}
 #quranFullTitle .qt-ar{font-family:var(--font-ar);font-size:1.45rem;font-weight:600;color:#fff;
   line-height:1.6;flex-shrink:0;}
@@ -1728,6 +1731,16 @@ main{
   font-family:var(--font-ar);font-size:calc(1.35rem * var(--quran-ar, 1));
   text-align:center;line-height:2.2;color:var(--text-dim);
   padding:var(--sp-3) var(--sp-4) var(--sp-5);
+}
+/* Die Kalligrafie-Ligatur U+FDFD. Sie kann nicht umbrechen und ist rund das
+   Zwölffache ihrer Schriftgröße breit — die Startgröße hier ist deshalb nur
+   die OBERGRENZE; `passeBasmalaAn()` misst nach dem Aufbau und verkleinert,
+   wenn der Platz nicht reicht. Heller als der einfache Text, weil sie hier die
+   Zierde ist und nicht eine Zeile Text unter vielen. */
+.basmala.ligatur{
+  font-size:calc(2.4rem * var(--quran-ar, 1));
+  white-space:nowrap;line-height:2.6;color:var(--text);
+  padding:var(--sp-2) var(--sp-4) var(--sp-6);
 }
 .verse-ar{font-family:var(--font-ar);font-size:calc(1.55rem * var(--quran-ar, 1));direction:rtl;text-align:right;line-height:2.15;color:#fff;}
 .verse-de{font-size:calc(var(--fs-md) * var(--quran-de, 1));color:var(--text-dim);margin-top:var(--sp-2);line-height:1.6;}
