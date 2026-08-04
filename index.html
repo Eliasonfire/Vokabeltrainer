@@ -75,6 +75,13 @@
      Vorbild sind die deutschen Madina-Schluessel (gerendert und ausgemessen,
      ~1,8-2,0). Die App lag vorher uneinheitlich zwischen 1,70 und 2,00 -
      deshalb haengen alle Paare jetzt hier dran statt an eigenen Zahlen.
+     ⚠️ Am 29.07.2026 hat genau dieser Satz schon hier gestanden und war
+     trotzdem falsch: sieben Paare hingen weiter an festen rem-Werten
+     (1,15 bis 2,00), weil damals nur die vier offensichtlichen umgestellt
+     wurden. Am 04.08. nachgezogen - gefunden nur, weil ALLE Regeln mit
+     `--font-ar` durchgezaehlt wurden statt der erinnerten Liste.
+     Der Nenner ist je Paar der deutsche Partner daneben, nicht immer
+     --fs-md: `.word-chip` und `.quran-ar` haengen an --fs-sm.
      AUSGENOMMEN: .arabic-word, das grosse Wort auf der Lernkarte. Es ist
      absichtlich groesser als jeder Faktor und bleibt, wie es ist ("schoen gross
      leserlich, das ist sehr gut"). */
@@ -744,7 +751,7 @@ main{
 .list-row:hover{background:var(--surface-3);border-color:var(--border-strong);}
 .list-row:active{transform:scale(.985);border-color:var(--red-dim);}
 .list-row-title{font-weight:700;font-size:var(--fs-md);display:flex;align-items:center;gap:var(--sp-2);min-width:0;}
-.list-row-title .ar{font-family:var(--font-ar);direction:rtl;color:var(--red-bright);font-size:1.35rem;}
+.list-row-title .ar{font-family:var(--font-ar);direction:rtl;color:var(--red-bright);font-size:calc(var(--fs-md) * var(--ar-faktor));}
 .list-row-count{
   background:var(--surface-4);color:var(--text-dim);font-size:var(--fs-xs);font-weight:700;
   padding:var(--sp-1) var(--sp-3);border-radius:var(--r-full);flex-shrink:0;
@@ -875,7 +882,10 @@ main{
 .word-chip{
   font-family:var(--font-ar);direction:rtl;
   background:var(--surface-3);border:1px solid var(--border);
-  border-radius:var(--r-2);padding:7px var(--sp-3);font-size:1.15rem;color:#fff;
+  /* Der deutsche Partner ist hier `.weak-de` mit --fs-sm, nicht --fs-md wie
+     sonst - der Faktor haengt deshalb an --fs-sm. Sonst waere der Chip 2,25x
+     statt 2x so gross wie das Deutsche daneben. */
+  border-radius:var(--r-2);padding:7px var(--sp-3);font-size:calc(var(--fs-sm) * var(--ar-faktor));color:#fff;
   cursor:pointer;
   /* Die Geschichte dieser einen Zeile ist die Geschichte des Fehlers, den Elias
      dreimal melden musste. Sie stand auf `none` — das verbietet dem Browser JEDE
@@ -992,7 +1002,7 @@ main{
   transition:border-color var(--dur-2) ease, background var(--dur-2) ease;
 }
 .personal-vocab-add input:focus{border-color:var(--red-dim);outline:none;}
-.personal-vocab-add input[dir="rtl"]{font-family:var(--font-ar);font-size:1.15rem;}
+.personal-vocab-add input[dir="rtl"]{font-family:var(--font-ar);font-size:calc(var(--fs-md) * var(--ar-faktor));}
 
 /* =====================================================================
    WORTLISTE
@@ -1005,7 +1015,7 @@ main{
   transition:border-color var(--dur-2) ease, background var(--dur-2) ease;
 }
 .word-list-item:hover{background:var(--surface-3);}
-.word-list-item .wl-ar{font-family:var(--font-ar);direction:rtl;text-align:left;font-size:1.6rem;line-height:1.6;}
+.word-list-item .wl-ar{font-family:var(--font-ar);direction:rtl;text-align:left;font-size:calc(var(--fs-md) * var(--ar-faktor));line-height:1.6;}
 .word-list-item .wl-de{color:var(--text-dim);font-size:var(--fs-md);}
 .wl-box{
   font-size:var(--fs-xs);font-weight:800;color:var(--red-bright);background:var(--red-wash);
@@ -1066,10 +1076,13 @@ main{
 .luecke-frage{color:var(--text-dim);font-size:var(--fs-sm);font-weight:700;margin-bottom:var(--sp-3);}
 .luecke-knoepfe{display:flex;gap:var(--sp-2);margin-top:var(--sp-3);}
 .luecke-knoepfe .btn{flex:1;}
-.luecke-antwort{margin-top:var(--sp-3);font-size:var(--fs-md);min-height:1.4em;}
+/* min-height in rem statt em: das arabische Loesungswort darin ist doppelt so
+   gross wie die Zeile, 1.4em waeren zu wenig und die Zeile spraenge beim
+   Erscheinen genau so, wie es die Regel darunter verhindern soll. */
+.luecke-antwort{margin-top:var(--sp-3);font-size:var(--fs-md);min-height:2.6rem;}
 .luecke-antwort.richtig{color:var(--green);}
 .luecke-antwort.falsch{color:var(--red-bright);}
-.luecke-antwort .luecke-wort{font-family:var(--font-ar);font-size:1.3rem;}
+.luecke-antwort .luecke-wort{font-family:var(--font-ar);font-size:calc(var(--fs-md) * var(--ar-faktor));}
 /* Die Lücke im Satz selbst: gleiche Höhe wie der Text, damit die Zeile nicht
    springt, sobald das Wort erscheint. */
 .satz-luecke{
@@ -1416,7 +1429,7 @@ main{
   padding:var(--sp-3);color:var(--text);font:inherit;font-size:var(--fs-md);line-height:1.55;
 }
 .note-editor textarea:focus{outline:none;border-color:var(--red-dim);}
-.note-editor .ne-wort{font-family:var(--font-ar);direction:rtl;font-size:1.45rem;color:#fff;}
+.note-editor .ne-wort{font-family:var(--font-ar);direction:rtl;font-size:calc(var(--fs-md) * var(--ar-faktor));color:#fff;}
 .note-editor .ne-aktionen{display:flex;gap:var(--sp-2);justify-content:flex-end;}
 
 /* =====================================================================
@@ -1599,7 +1612,7 @@ main{
 .hoer-option.richtig{border-color:var(--green);background:rgba(16,185,129,.14);}
 .hoer-option.falsch{border-color:var(--red-bright);background:var(--red-wash);}
 .hoer-loesung{margin-top:var(--sp-5);}
-.hoer-loesung .hl-ar{font-family:var(--font-ar);font-size:2rem;direction:rtl;line-height:2;color:#fff;}
+.hoer-loesung .hl-ar{font-family:var(--font-ar);font-size:calc(var(--fs-md) * var(--ar-faktor));direction:rtl;line-height:2;color:#fff;}
 .hoer-loesung .hl-de{color:var(--text-dim);font-size:var(--fs-md);margin-top:var(--sp-2);}
 .hoer-leer{color:var(--text-dim);text-align:center;padding:var(--sp-7) var(--sp-4);line-height:1.6;}
 
