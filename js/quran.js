@@ -210,13 +210,27 @@ function surahZeile(s){
   /* Wer einzelne Verse abgehakt hat, soll das in der Uebersicht sehen -
      sonst wirkt die Sure unangetastet, obwohl schon die Haelfte sitzt. */
   const einzeln = zaehleVerse(s.id);
-  const zusatz = HIFZ[s.id] ? '' : (einzeln ? ` · ${einzeln} von ${s.verses} auswendig` : '');
+  const zusatz = HIFZ[s.id] ? '' : (einzeln ? `${einzeln} von ${s.verses} auswendig` : '');
   const fav = istFavorit(s.id);
+  /* Elias am 04.08.2026 abends, mit Bild: "es sieht besser aus, wenn man die
+     juz da hinpackt wo der strich ist und die verse und die umlaut da wo der
+     kasten ist." Also: Umschrift und Verszahl in die OBERE Zeile neben den
+     arabischen Namen, der Juz in die untere.
+     Damit faellt die eigene Juz-Spalte weg. Ihre frühere Begruendung war, dass
+     die Namenszeile bei angefangenen Suren schon "12 von 286 auswendig" traegt
+     - das steht jetzt unten beim Juz, wo Platz ist. Der alte Grund gilt also
+     nicht mehr, statt ihn zu umgehen. */
+  const unten = [juzText(s), zusatz].filter(Boolean).join(' · ');
   return `
     <div class="surah-row" data-opensurah="${s.id}">
       <div class="sr-num">${s.id}</div>
-      <div class="sr-mid"><div class="sr-ar">${surenTitel(s)}</div><div class="sr-name">${s.name} · ${s.verses} Verse${zusatz}</div></div>
-      <div class="sr-juz">${juzText(s)}</div>
+      <div class="sr-mid">
+        <div class="sr-kopf">
+          <div class="sr-name">${s.name} · ${s.verses} Verse</div>
+          <div class="sr-ar">${surenTitel(s)}</div>
+        </div>
+        <div class="sr-unten">${unten}</div>
+      </div>
       <div class="sr-knoepfe">
         <button class="fav-stern${fav?' on':''}" data-favtoggle="${s.id}"
                 aria-pressed="${fav}" aria-label="${s.name} zu den Favoriten">${icon('stern')}</button>

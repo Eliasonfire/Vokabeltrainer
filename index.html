@@ -1504,18 +1504,30 @@ main{
   font-variant-numeric:tabular-nums;
 }
 .surah-row .sr-mid{flex:1;min-width:0;}
-.surah-row .sr-ar{font-family:var(--font-ar);direction:rtl;font-size:1.3rem;color:#fff;line-height:1.7;}
+/* Obere Zeile: Umschrift links, arabischer Name rechts. `baseline`, damit beide
+   auf derselben Schriftlinie sitzen — bei zwei so verschiedenen Schriftgrößen
+   sähe `center` verrutscht aus. Gekürzt wird die Umschrift, nie der arabische
+   Name: der ist die Hauptangabe. */
+.surah-row .sr-kopf{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-3);}
+.surah-row .sr-ar{font-family:var(--font-ar);direction:rtl;font-size:1.3rem;color:#fff;line-height:1.7;flex-shrink:0;}
 /* Arabischer Surenname im Kopf der geoeffneten Sure. Etwas kleiner als die
    Umschrift daneben und in gedaempftem Weiss: er ergaenzt den Titel, er
    ersetzt ihn nicht. */
 #quranFullTitle .qt-ar{font-family:var(--font-ar);font-size:1.05em;font-weight:600;color:var(--text-dim);margin-inline-start:var(--sp-2);}
-.surah-row .sr-name{font-size:var(--fs-sm);color:var(--text-dim);}
-/* Der Juz steht rechts neben dem Namen, vor den Knöpfen. Eigene Spalte statt
-   angehängt an die Namenszeile: die trägt bei angefangenen Suren schon
-   „12 von 286 auswendig" und würde auf dem Handy sonst umbrechen. */
-.surah-row .sr-juz{
-  flex-shrink:0;font-size:var(--fs-xs);font-weight:700;color:var(--text-faint);
-  font-variant-numeric:tabular-nums;white-space:nowrap;letter-spacing:.02em;
+.surah-row .sr-name{
+  font-size:var(--fs-sm);color:var(--text-dim);
+  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+/* ⚠️ Der Juz hatte bis zum 04.08.2026 abends eine eigene Spalte rechts neben
+   dem Namen. Begründung damals: die Namenszeile trage bei angefangenen Suren
+   schon „12 von 286 auswendig" und würde sonst umbrechen. Elias wollte den Juz
+   nach unten — und damit stimmt die alte Begründung nicht mehr, statt umgangen
+   zu werden: „12 von 286 auswendig" steht jetzt hier mit, wo Platz ist. Die
+   obere Zeile trägt nur noch Umschrift, Verszahl und den arabischen Namen. */
+.surah-row .sr-unten{
+  font-size:var(--fs-xs);font-weight:700;color:var(--text-faint);
+  font-variant-numeric:tabular-nums;letter-spacing:.02em;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
 .hifz-check{
   width:28px;height:28px;border-radius:var(--r-1);border:2px solid var(--border-strong);
