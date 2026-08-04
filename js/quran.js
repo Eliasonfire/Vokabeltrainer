@@ -189,7 +189,7 @@ function renderSurahList(filter){
   document.getElementById('surahList').classList.remove('hidden');
   document.getElementById('verseList').classList.add('hidden');
   document.getElementById('hifzBar').classList.add('hidden');
-  document.getElementById('ayahLeiste').classList.add('hidden');
+  document.getElementById('btnAyahListe').classList.add('hidden');
   document.getElementById('suraNav').classList.add('hidden');
   OFFENE_SURE = null;
   renderFavListe(!!q);
@@ -410,7 +410,7 @@ async function openSurah(id, opt){
   /* Erst verstecken, dann neu bauen: sonst stuenden waehrend des Ladens noch
      die Versnummern der VORIGEN Sure in der Leiste - und ein Tippen darauf
      traefe ins Leere. renderVerses() zeigt sie gleich wieder. */
-  document.getElementById('ayahLeiste').classList.add('hidden');
+  document.getElementById('btnAyahListe').classList.add('hidden');
   document.getElementById('suraNav').classList.add('hidden');
 
   if (VERSE_CACHE[id]){ renderVerses(id); return; }
@@ -480,7 +480,7 @@ function renderVerses(id){
       <div class="verse-de">${(v.translations && v.translations[0] && v.translations[0].text) || ''}</div>
     </div>`; }).join('');
   aktualisiereHifzLeiste(id, surah);
-  renderAyahLeiste(id);
+  renderAyahListe(id);
   renderSuraNav(id);
   /* Modus und Groessen gelten auch fuer frisch gebaute Verse. Die Klassen sitzen
      zwar am Container und ueberleben den Neuaufbau - die Knopfzustaende im
@@ -507,25 +507,45 @@ function aktualisiereHifzLeiste(id, surah){
 
 /* ---------- Sprungliste der Ayat (Elias' Punkt 8 vom 04.08.2026) ----------
 
-   Eine Zeile mit allen Versnummern, waagerecht rollbar, oben angeheftet. Bei
-   Al-Baqarah sind das 286 Knoepfe - das klingt nach viel, ist aber genau so
-   viel wie die 286 Versblöcke darunter, die ohnehin gebaut werden.
+   ⚠️ Erste Fassung war eine waagerechte Leiste im angehefteten Kopf. Falsch,
+   und der Wunsch sagte es schon: "die Nummern der ayaht runter scrollen".
+   Bei At-Tawbah (129 Verse) waren 13 Nummern gleichzeitig sichtbar, alles
+   andere lag hinter einer langen Wischbewegung - und die Leiste nahm dauerhaft
+   Hoehe weg fuer etwas, das man selten braucht.
 
-   Bewusst KEINE Beobachtung des Rollens, die den gerade sichtbaren Vers in der
-   Leiste mitfuehrt: das haette bei jedem Fingerstrich Arbeit gekostet und die
-   Leiste unter dem Daumen wegbewegt, waehrend man sie bedient. Die Markierung
+   Jetzt: ein Knopf im Kopf, der eine Liste aufklappt. Senkrecht rollbar, und
+   die Nummern laufen von rechts nach links wie die Schrift (direction:rtl an
+   .ap-grid - Reihenfolge im Markup bleibt 1..n).
+
+   Bewusst KEINE Beobachtung des Rollens, die den gerade sichtbaren Vers
+   mitfuehrt: das haette bei jedem Fingerstrich Arbeit gekostet. Die Markierung
    setzt nur, wer wirklich springt. */
-function renderAyahLeiste(id){
-  const leiste = document.getElementById('ayahLeiste');
+function renderAyahListe(id){
+  const knopf = document.getElementById('btnAyahListe');
+  const gitter = document.getElementById('ayahGrid');
   const anzahl = (VERSE_CACHE[id] || []).length;
-  if (!anzahl){ leiste.innerHTML = ''; leiste.classList.add('hidden'); return; }
-  leiste.innerHTML = Array.from({ length: anzahl }, (_, i) => {
+  if (!anzahl){ gitter.innerHTML = ''; knopf.classList.add('hidden'); return; }
+  gitter.innerHTML = Array.from({ length: anzahl }, (_, i) => {
     const nr = i + 1;
     const kann = HIFZ[id] || kannVers(id, nr);
     return `<button class="ayah-sprung${kann?' auswendig':''}" data-ayah="${nr}"
                     aria-label="Zu Ayah ${nr} springen">${nr}</button>`;
   }).join('');
-  leiste.classList.remove('hidden');
+  document.getElementById('ayahPopoverTitel').textContent = `Ayah 1–${anzahl}`;
+  knopf.classList.remove('hidden');
+}
+
+function oeffneAyahListe(){
+  document.getElementById('ayahBackdrop').classList.remove('hidden');
+  document.getElementById('ayahPopover').classList.remove('hidden');
+  /* Zur zuletzt angesteuerten Ayah rollen, statt immer bei 1 zu beginnen: wer
+     die Liste zum zweiten Mal oeffnet, ist meistens in der Naehe geblieben. */
+  const aktiv = document.querySelector('#ayahGrid .ayah-sprung.aktiv');
+  if (aktiv) aktiv.scrollIntoView({ block:'center' });
+}
+function schliesseAyahListe(){
+  document.getElementById('ayahBackdrop').classList.add('hidden');
+  document.getElementById('ayahPopover').classList.add('hidden');
 }
 
 /* Zum Vers fahren und ihn kurz aufleuchten lassen.
@@ -589,14 +609,21 @@ document.getElementById('suraNav').addEventListener('click', (e)=>{
   if (kasten) kasten.scrollTop = 0;
 });
 
-document.getElementById('ayahLeiste').addEventListener('click', (e)=>{
+document.getElementById('btnAyahListe').addEventListener('click', oeffneAyahListe);
+document.getElementById('btnCloseAyah').addEventListener('click', schliesseAyahListe);
+document.getElementById('ayahBackdrop').addEventListener('click', schliesseAyahListe);
+
+document.getElementById('ayahGrid').addEventListener('click', (e)=>{
   const knopf = e.target.closest('[data-ayah]');
   if (!knopf) return;
   const nr = Number(knopf.dataset.ayah);
   const ziel = document.querySelector(`#verseList .verse-item:nth-of-type(${nr})`);
   if (!ziel){ toast(`Ayah ${nr} liess sich nicht anspringen.`); return; }
-  document.querySelectorAll('#ayahLeiste .ayah-sprung.aktiv').forEach(k=>k.classList.remove('aktiv'));
+  document.querySelectorAll('#ayahGrid .ayah-sprung.aktiv').forEach(k=>k.classList.remove('aktiv'));
   knopf.classList.add('aktiv');
+  /* Erst zumachen, dann springen: solange die Liste offen ist, liegt sie ueber
+     dem Vers, und scrollIntoView traefe eine verdeckte Stelle. */
+  schliesseAyahListe();
   hebeVersHervor(ziel);
 });
 
@@ -629,7 +656,7 @@ document.getElementById('verseList').addEventListener('click', (e)=>{
     /* Die Sprungleiste zeigt dieselbe Auskunft und wird hier gleich
        mitgezogen - sonst behauptet sie bis zum naechsten Aufbau der Sure das
        Gegenteil von dem, was direkt darunter steht. */
-    const chip = document.querySelector(`#ayahLeiste [data-ayah="${versStr}"]`);
+    const chip = document.querySelector(`#ayahGrid [data-ayah="${versStr}"]`);
     if (chip) chip.classList.toggle('auswendig', an);
     /* Hat sich der Surenhaken durch diesen einen Klick geaendert - in die eine
        oder die andere Richtung -, muss die Zeile in der Surenliste mit. Sie

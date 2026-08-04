@@ -1603,20 +1603,39 @@ main{
    halbe Breite und springt nicht über die ganze Zeile. */
 .sura-nav .sn-leer{flex:1;}
 
-/* Waagerechte Rollfläche. Bewusst OHNE `touch-action`: jede Vorgabe dort hat in
-   diesem Projekt schon einmal das senkrechte Rollen der Seite mitgenommen. Der
-   Browser trennt waagerecht und senkrecht von selbst richtig, solange man ihn
-   lässt. */
-.ayah-leiste{
-  display:flex;gap:var(--sp-2);
-  overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;
-  margin:0 calc(var(--gutter) * -1) var(--sp-3);
-  padding:0 var(--gutter) var(--sp-2);
-  scrollbar-width:none;
+/* ⚠️ Hier stand bis zum 04.08.2026 abends eine WAAGERECHTE Rollfläche. Das war
+   ein Lesefehler von mir: Elias' Wunsch sagte schon beim ersten Mal „die
+   Nummern der ayaht runter scrollen". Er hat es danach noch einmal gesagt —
+   „ein Zeichen welches man drücken kann und dann öffnet sich so eine kleine
+   Liste mit den ayaht und dann kann man das so runter drehen".
+   Zwei Gründe, warum die Leiste auch sachlich falsch war: bei At-Tawbah mit
+   129 Versen waren 13 Nummern gleichzeitig zu sehen, der Rest lag hinter einer
+   langen Wischbewegung. Und sie hat dauerhaft Höhe aus dem angehefteten Kopf
+   genommen, obwohl man sie fast nie braucht.
+   Jetzt: ein Knopf, der eine Liste aufklappt. Die Nummern laufen von RECHTS
+   nach links, wie die Schrift — das war Elias' zweiter Punkt („genau
+   andersherum"). */
+.ayah-popover{
+  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
+  z-index:700;width:min(340px,88vw);max-height:72vh;
+  background:var(--surface-3);border:1px solid var(--border-strong);border-radius:var(--r-4);
+  padding:var(--sp-4);box-shadow:var(--sh-3);
+  display:flex;flex-direction:column;gap:var(--sp-3);
+  animation:popIn var(--dur-3) var(--ease-spring);
 }
-.ayah-leiste::-webkit-scrollbar{display:none;}
+.ap-header{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);}
+.ap-title{font-weight:700;font-size:var(--fs-lg);}
+/* direction:rtl dreht nur die sichtbare Reihenfolge um — im Markup bleibt
+   Ayah 1 das erste Kind. Dieselbe Technik wie bei .sura-nav; wichtig, weil
+   sonst die Tastatur-Reihenfolge und der Aufbau der Liste auseinanderlaufen. */
+.ap-grid{
+  direction:rtl;
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:var(--sp-2);
+  overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+  padding-inline-end:var(--sp-1);
+}
 .ayah-sprung{
-  flex:0 0 auto;min-width:38px;padding:5px var(--sp-2);
+  min-width:38px;padding:5px var(--sp-2);text-align:center;
   background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-full);
   color:var(--text-dim);font-family:var(--font-ui);font-size:var(--fs-sm);font-weight:700;
   font-variant-numeric:tabular-nums;cursor:pointer;
@@ -2345,15 +2364,18 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
       <div class="quran-sticky" id="quranSticky">
         <div class="hifz-bar hidden" id="hifzBar">
           <div class="hifz-stand" id="hifzStand"></div>
+          <!-- Elias am 04.08.2026: "innerhalb einer Sura […] eine Liste […] und
+               bei dieser Liste kann ich dann die Nummern der ayaht runter
+               scrollen und kann die die ayaht antippen die ich brauche", und
+               abends noch einmal: "so ein zeichen welches man drücken kann und
+               dann öffnet sich so eine kleine liste mit den ayaht". -->
+          <button class="btn btn-secondary btn-klein" id="btnAyahListe" aria-haspopup="dialog">
+            <svg class="ic"><use href="#ic-luecke"/></svg><span id="ayahListeText">Ayah</span>
+          </button>
           <button class="btn btn-secondary btn-klein" id="btnHifzVerdecken">
             <svg class="ic"><use href="#ic-auge"/></svg><span id="hifzVerdeckenText">Auswendige verdecken</span>
           </button>
         </div>
-        <!-- Elias am 04.08.2026: "innerhalb einer Sura (am besten ganz oben
-             befestigt) eine Liste […] es beginnt mit Ayah 1 und bis zum Ende und
-             bei dieser Liste kann ich dann die Nummern der ayaht runter scrollen
-             und kann die die ayaht antippen die ich brauche". -->
-        <div class="ayah-leiste hidden" id="ayahLeiste" aria-label="Zu einer Ayah springen"></div>
       </div>
       <div class="word-list hidden" id="verseList"></div>
       <!-- Elias am 04.08.2026: "Wenn man beim Quran beim Ende einer Sura ist
@@ -2550,6 +2572,14 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
 
 <div class="toast" id="toast"></div>
 <div class="gram-popover" id="gramPopover"></div>
+<div class="qfp-backdrop hidden" id="ayahBackdrop"></div>
+<div class="ayah-popover hidden" id="ayahPopover" role="dialog" aria-label="Zu einer Ayah springen">
+  <div class="ap-header">
+    <div class="ap-title" id="ayahPopoverTitel">Ayah wählen</div>
+    <button class="icon-btn" id="btnCloseAyah" aria-label="Schließen"><svg class="ic"><use href="#ic-close"/></svg></button>
+  </div>
+  <div class="ap-grid" id="ayahGrid"></div>
+</div>
 <div class="qfp-backdrop hidden" id="qfpBackdrop"></div>
 <div class="quran-freq-popover hidden" id="quranFreqPopover">
   <div class="qfp-header">
