@@ -626,15 +626,45 @@ function schliesseAyahListe(){
    Bildschirme rollen in #main. scrollIntoView beruecksichtigt das von selbst;
    der Nachsatz darunter ist die Rueckfallebene, falls die Fahrt nicht
    angekommen ist. */
+/* ⚠️ Ein einziges scrollIntoView reicht NICHT, und das war bis zum 04.08.2026
+   abends nicht gemessen. Nachgemessen an At-Tawbah, Sprung auf Ayah 42, Fenster
+   780 px hoch — Abstand des Ziels zur Fensteroberkante:
+
+       nach  100 ms   19495 px   nicht im Bild
+       nach  500 ms    6505 px   nicht im Bild
+       nach 1200 ms     354 px   im Bild
+       nach 2500 ms      84 px   steht
+
+   Der Inhalt ÜBER dem Ziel waechst noch, waehrend gerollt wird: die Verse
+   werden hoeher, sobald die arabische Schrift steht. Der Browser zieht das
+   ueber Scroll-Anchoring selbst nach, aber eben ueber eine Sekunde lang - und
+   genau in dieser Sekunde laeuft der gruene Puls (1,9 s) ausserhalb des
+   Bildes ab. Man tippt eine Ayah an und sieht erst einmal etwas anderes.
+
+   Deshalb wird nachgezogen: einmal nach zwei Frames, einmal wenn die
+   Schriften geladen sind, einmal nach 600 ms. */
 function hebeVersHervor(el){
-  el.scrollIntoView({ block:'center', behavior:'auto' });
-  const kasten = el.closest('#main') || document.scrollingElement;
-  if (kasten && kasten.scrollTop === 0 && el.offsetTop > kasten.clientHeight){
-    kasten.scrollTop = Math.max(0, el.offsetTop - kasten.clientHeight / 2 + el.offsetHeight / 2);
-  }
-  el.classList.remove('angesteuert');
-  void el.offsetWidth;                       // Animation neu starten
-  el.classList.add('angesteuert');
+  const holen = () => el.scrollIntoView({ block:'center', behavior:'auto' });
+  /* Nur nachziehen, wenn der Vers wirklich nicht zu sehen ist. Sonst risse es
+     den Blick weg, falls in der Zwischenzeit selbst weitergerollt wurde. */
+  const pulsen = () => {
+    el.classList.remove('angesteuert');
+    void el.offsetWidth;                     // Animation neu starten
+    el.classList.add('angesteuert');
+  };
+  const nachziehen = () => {
+    const r = el.getBoundingClientRect();
+    if (r.bottom >= 0 && r.top <= window.innerHeight) return;
+    holen();
+    /* Der Puls faengt von vorne an, wenn nachgezogen werden musste - sonst
+       waere er abgelaufen, bevor der Vers ueberhaupt zu sehen war. */
+    pulsen();
+  };
+  holen();
+  requestAnimationFrame(() => requestAnimationFrame(nachziehen));
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(nachziehen);
+  setTimeout(nachziehen, 600);
+  pulsen();
 }
 
 /* ---------- Vorherige / naechste Sure am Sura-Ende (Punkt 12) ----------
