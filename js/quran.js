@@ -59,6 +59,23 @@ let QURAN_FAV = LS.get('vt_quranFav', {});
 function saveQuranFav(){ LS.set('vt_quranFav', QURAN_FAV); }
 function istFavorit(id){ return !!QURAN_FAV[id]; }
 
+/* Der Juz einer Sure, als kurzer Text.
+   Elias am 04.08.2026: "wäre es gut wenn bei der listenansicht der suren auch
+   daneben stehen würde […] die jeweilige Juz die man mit der surah hat."
+
+   19 der 114 Suren liegen ueber mehr als einem Juz - dann steht eine Spanne da
+   ("Juz 1–3"), nicht nur der erste. Dass die Spannen wirklich zusammenhaengend
+   sind, prueft werkzeuge/juz-holen.mjs beim Erzeugen der Daten; sonst waere
+   "1–3" fuer 1 und 3 ohne 2 schlicht falsch.
+
+   Die Rueckfallebene fuer eine Sure ohne Juz-Angabe ist ein leerer Text und
+   kein Platzhalter: lieber nichts anzeigen als etwas behaupten. */
+function juzText(s){
+  const l = Array.isArray(s.juz) ? s.juz : [];
+  if (!l.length) return '';
+  return l.length === 1 ? `Juz ${l[0]}` : `Juz ${l[0]}–${l[l.length-1]}`;
+}
+
 /* Eine Zeile der Surenliste. Als eigene Funktion, damit Favoritenblock und
    Gesamtliste garantiert gleich aussehen - zwei Vorlagen waeren zwei Stellen,
    die auseinanderlaufen koennen. */
@@ -72,6 +89,7 @@ function surahZeile(s){
     <div class="surah-row" data-opensurah="${s.id}">
       <div class="sr-num">${s.id}</div>
       <div class="sr-mid"><div class="sr-ar">${s.ar}</div><div class="sr-name">${s.name} · ${s.verses} Verse${zusatz}</div></div>
+      <div class="sr-juz">${juzText(s)}</div>
       <div class="sr-knoepfe">
         <button class="fav-stern${fav?' on':''}" data-favtoggle="${s.id}"
                 aria-pressed="${fav}" aria-label="${s.name} zu den Favoriten">${icon('stern')}</button>
