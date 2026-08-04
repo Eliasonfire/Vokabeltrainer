@@ -101,6 +101,7 @@ function renderSurahList(filter){
   document.getElementById('surahList').classList.remove('hidden');
   document.getElementById('verseList').classList.add('hidden');
   document.getElementById('hifzBar').classList.add('hidden');
+  document.getElementById('ayahLeiste').classList.add('hidden');
   renderFavListe(!!q);
   document.getElementById('surahList').innerHTML =
     list.map(surahZeile).join('') || '<div class="empty-state">Keine Sure gefunden.</div>';
@@ -309,6 +310,10 @@ async function openSurah(id, opt){
   document.getElementById('surahFavBlock').classList.add('hidden');
   const vList = document.getElementById('verseList');
   vList.classList.remove('hidden');
+  /* Erst verstecken, dann neu bauen: sonst stuenden waehrend des Ladens noch
+     die Versnummern der VORIGEN Sure in der Leiste - und ein Tippen darauf
+     traefe ins Leere. renderVerses() zeigt sie gleich wieder. */
+  document.getElementById('ayahLeiste').classList.add('hidden');
 
   if (VERSE_CACHE[id]){ renderVerses(id); return; }
   /* Skeleton-Platzhalter in Versform statt nackter Textzeile - die Seite
@@ -373,6 +378,7 @@ function renderVerses(id){
       <div class="verse-de">${(v.translations && v.translations[0] && v.translations[0].text) || ''}</div>
     </div>`; }).join('');
   aktualisiereHifzLeiste(id, surah);
+  renderAyahLeiste(id);
   /* Modus und Groessen gelten auch fuer frisch gebaute Verse. Die Klassen sitzen
      zwar am Container und ueberleben den Neuaufbau - die Knopfzustaende im
      Ansicht-Menue aber nicht, wenn es zwischendurch geoeffnet wurde. */
@@ -396,6 +402,65 @@ function aktualisiereHifzLeiste(id, surah){
     HIFZ_VERDECKT ? 'Wieder aufdecken' : 'Auswendige verdecken';
 }
 
+/* ---------- Sprungliste der Ayat (Elias' Punkt 8 vom 04.08.2026) ----------
+
+   Eine Zeile mit allen Versnummern, waagerecht rollbar, oben angeheftet. Bei
+   Al-Baqarah sind das 286 Knoepfe - das klingt nach viel, ist aber genau so
+   viel wie die 286 Versblöcke darunter, die ohnehin gebaut werden.
+
+   Bewusst KEINE Beobachtung des Rollens, die den gerade sichtbaren Vers in der
+   Leiste mitfuehrt: das haette bei jedem Fingerstrich Arbeit gekostet und die
+   Leiste unter dem Daumen wegbewegt, waehrend man sie bedient. Die Markierung
+   setzt nur, wer wirklich springt. */
+function renderAyahLeiste(id){
+  const leiste = document.getElementById('ayahLeiste');
+  const anzahl = (VERSE_CACHE[id] || []).length;
+  if (!anzahl){ leiste.innerHTML = ''; leiste.classList.add('hidden'); return; }
+  leiste.innerHTML = Array.from({ length: anzahl }, (_, i) => {
+    const nr = i + 1;
+    const kann = HIFZ[id] || kannVers(id, nr);
+    return `<button class="ayah-sprung${kann?' auswendig':''}" data-ayah="${nr}"
+                    aria-label="Zu Ayah ${nr} springen">${nr}</button>`;
+  }).join('');
+  leiste.classList.remove('hidden');
+}
+
+/* Zum Vers fahren und ihn kurz aufleuchten lassen.
+   Stand vorher wortgleich in js/lernen.js (Sprung aus der Haeufigkeitsliste).
+   Seit dem 04.08.2026 gibt es zwei Wege zum selben Vers - die Leiste hier und
+   die Haeufigkeitsliste dort -, und zwei Kopien waeren zwei Fassungen, sobald
+   eine davon angefasst wird.
+
+   Bewusst ohne weiches Scrollen: bis Vers 125 von Al-Baqarah sind es ueber
+   30.000 Pixel. So eine Fahrt bricht der Browser ab, und selbst wenn nicht,
+   dauerte sie ewig. Der kurze Leuchteffekt uebernimmt die Orientierung.
+
+   Gescrollt wird nicht das Fenster: der Rumpf steht auf `overflow:hidden`, die
+   Bildschirme rollen in #main. scrollIntoView beruecksichtigt das von selbst;
+   der Nachsatz darunter ist die Rueckfallebene, falls die Fahrt nicht
+   angekommen ist. */
+function hebeVersHervor(el){
+  el.scrollIntoView({ block:'center', behavior:'auto' });
+  const kasten = el.closest('#main') || document.scrollingElement;
+  if (kasten && kasten.scrollTop === 0 && el.offsetTop > kasten.clientHeight){
+    kasten.scrollTop = Math.max(0, el.offsetTop - kasten.clientHeight / 2 + el.offsetHeight / 2);
+  }
+  el.classList.remove('angesteuert');
+  void el.offsetWidth;                       // Animation neu starten
+  el.classList.add('angesteuert');
+}
+
+document.getElementById('ayahLeiste').addEventListener('click', (e)=>{
+  const knopf = e.target.closest('[data-ayah]');
+  if (!knopf) return;
+  const nr = Number(knopf.dataset.ayah);
+  const ziel = document.querySelector(`#verseList .verse-item:nth-of-type(${nr})`);
+  if (!ziel){ toast(`Ayah ${nr} liess sich nicht anspringen.`); return; }
+  document.querySelectorAll('#ayahLeiste .ayah-sprung.aktiv').forEach(k=>k.classList.remove('aktiv'));
+  knopf.classList.add('aktiv');
+  hebeVersHervor(ziel);
+});
+
 /* Einzelnen Vers abhaken. Kein Neuaufbau der ganzen Liste - bei Al-Baqarah
    waeren das 286 Verse, und die Seite wuerde bei jedem Haken springen. */
 document.getElementById('verseList').addEventListener('click', (e)=>{
@@ -410,6 +475,11 @@ document.getElementById('verseList').addEventListener('click', (e)=>{
     karte.classList.toggle('auswendig', an);
     const text = karte.querySelector('.verse-ar');
     text.classList.toggle('verdeckt', HIFZ_VERDECKT && an);
+    /* Die Sprungleiste zeigt dieselbe Auskunft und wird hier gleich
+       mitgezogen - sonst behauptet sie bis zum naechsten Aufbau der Sure das
+       Gegenteil von dem, was direkt darunter steht. */
+    const chip = document.querySelector(`#ayahLeiste [data-ayah="${key.split(':')[1]}"]`);
+    if (chip) chip.classList.toggle('auswendig', an);
     const id = Number(key.split(':')[0]);
     aktualisiereHifzLeiste(id, SURAH_DATA.find(s=>s.id===id));
     return;

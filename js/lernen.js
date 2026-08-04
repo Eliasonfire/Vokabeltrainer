@@ -438,22 +438,12 @@ async function oeffneVersImLeser(schluessel){
   for (let versuch = 0; versuch < 40 && !finden(); versuch++) await new Promise(r=>setTimeout(r, 50));
   const el = finden();
   if (!el){ toast(`${sura}:${ayah} liess sich nicht anspringen.`); return; }
-  /* Bewusst ohne weiches Scrollen: bis Vers 125 von Al-Baqarah sind es ueber
-     30.000 Pixel. So eine Fahrt bricht der Browser ab, und selbst wenn nicht,
-     dauerte sie ewig. Der kurze Leuchteffekt uebernimmt die Orientierung.
-
-     Gescrollt wird nicht das Fenster: der Rumpf steht auf `overflow:hidden`,
-     die Bildschirme rollen in #main. scrollIntoView beruecksichtigt das von
-     selbst; der Nachsatz darunter ist die Rueckfallebene, falls die Fahrt
-     nicht angekommen ist. */
-  el.scrollIntoView({ block:'center', behavior:'auto' });
-  const kasten = el.closest('#main') || document.scrollingElement;
-  if (kasten && kasten.scrollTop === 0 && el.offsetTop > kasten.clientHeight){
-    kasten.scrollTop = Math.max(0, el.offsetTop - kasten.clientHeight / 2 + el.offsetHeight / 2);
-  }
-  el.classList.remove('angesteuert');
-  void el.offsetWidth;                       // Animation neu starten
-  el.classList.add('angesteuert');
+  /* Fahrt und Leuchteffekt stehen seit dem 04.08.2026 in js/quran.js
+     (`hebeVersHervor`) - die Ayah-Sprungleiste dort braucht genau dasselbe, und
+     zwei Kopien waeren zwei Fassungen, sobald eine angefasst wird. Die
+     Begruendungen, warum nicht weich gescrollt wird und warum #main statt des
+     Fensters rollt, stehen dort bei der Funktion. */
+  hebeVersHervor(el);
 }
 
 document.getElementById('qfpBackdrop').addEventListener('click', closeQuranFreqPopover);
