@@ -562,8 +562,15 @@ async function openSurah(id, opt){
      textContent ist noetig, weil der arabische Teil eigene Schrift und
      Laufrichtung braucht; escapeHtml bleibt trotzdem drum, damit die Regel
      "kein ungeprueftes innerHTML" nicht an einer Ausnahme aufweicht. */
+  /* Elias am 04.08.2026 abends, mit Bild: "hier sollte lieber das arabische
+     gross sein (bzw die prioritaet) und dann daneben halt das deutsche."
+     Also andersherum als zuvor: der arabische Name traegt die Zeile, die
+     Umschrift steht klein daneben. Die Nummer bleibt vorn - sie ist die
+     Ordnung, nach der er sucht. */
   document.getElementById('quranFullTitle').innerHTML =
-    `${id}. ${escapeHtml(surah.name)} <span class="qt-ar" lang="ar" dir="rtl">${escapeHtml(surenTitel(surah))}</span>`;
+    `<span class="qt-nr">${id}.</span>` +
+    `<span class="qt-ar" lang="ar" dir="rtl">${escapeHtml(surenTitel(surah))}</span>` +
+    `<span class="qt-um">${escapeHtml(surah.name)}</span>`;
   document.getElementById('quranFullIntro').classList.add('hidden');
   document.getElementById('surahSearch').classList.add('hidden');
   document.getElementById('surahList').classList.add('hidden');
@@ -624,10 +631,48 @@ async function openSurah(id, opt){
   }
 }
 
+/* ---------- Basmala vor der Sure (Elias, 04.08.2026 abends) ----------
+
+   "und vor jeder sura sollte noch wie bei quran.com die basmala stehen"
+
+   ZWEI AUSNAHMEN, und beide sind belegt, nicht angenommen:
+     Sure 1 (Al-Fatiha)  - dort IST die Basmala der erste Vers, sie stuende sonst
+                           doppelt da.
+     Sure 9 (At-Tawba)   - traegt als einzige Sure gar keine.
+   Gegengeprueft an api.quran.com/api/v4/chapters, Feld `bismillah_pre`: genau
+   diese beiden stehen auf false, die uebrigen 112 auf true. Das deckt sich mit
+   der bekannten Regel - beides musste zusammenpassen, sonst waere hier nichts
+   gebaut worden.
+
+   DER TEXT wird nicht getippt, sondern GENOMMEN: es ist woertlich Vers 1:1 aus
+   quran-text.js, also aus der Datei, die die App ohnehin ausliefert
+   (`node werkzeuge/vers.mjs 1:1`). Damit ist die Schreibung dieselbe wie im
+   uebrigen Verstext - Uthmani mit ٱ und ٰ - und kein einziges Vokalzeichen
+   stammt von mir.
+
+   ⚠️ Sie steht IM #verseList, aber ohne `.verse-item`: die Basmala ist kein
+   Vers dieser Sure, sie darf also weder abhakbar sein noch beim Lesestand oder
+   in der Ayah-Liste mitzaehlen. Frueher waere schon ihre blosse Anwesenheit ein
+   Fehler gewesen, weil die Ayah-Liste ueber `:nth-of-type` zaehlte und jedes
+   zusaetzliche Element alle Nummern verschoben haette. Deshalb im selben Zug
+   auf `[data-versnr]` umgestellt - das zaehlt nicht, sondern benennt. */
+function basmalaHtml(id){
+  if (id === 1 || id === 9) return '';
+  /* Zuerst aus QURAN_TEXT, weil das beim Oeffnen einer Sure ohnehin geladen
+     ist - der Zwischenspeicher enthaelt Sure 1 nur, wenn sie schon einmal offen
+     war. Faellt beides aus (Rueckfallebene ueber quran.com ohne lokale Datei),
+     steht lieber KEINE Basmala da als eine selbst getippte. */
+  const text =
+    (typeof QURAN_TEXT !== 'undefined' && QURAN_TEXT[1] && QURAN_TEXT[1][0] && QURAN_TEXT[1][0][0]) ||
+    (VERSE_CACHE[1] && VERSE_CACHE[1][0] && VERSE_CACHE[1][0].text_uthmani);
+  if (!text) return '';
+  return `<div class="basmala" lang="ar" dir="rtl" aria-label="Basmala">${escapeHtml(text)}</div>`;
+}
+
 function renderVerses(id){
   const verses = VERSE_CACHE[id];
   const surah = SURAH_DATA.find(s=>s.id===id);
-  document.getElementById('verseList').innerHTML = verses.map((v, i) => {
+  document.getElementById('verseList').innerHTML = basmalaHtml(id) + verses.map((v, i) => {
     const nr = i + 1;
     const kann = HIFZ[id] || kannVers(id, nr);
     /* Verdeckt wird nur, was auch als auswendig markiert ist - alles andere
@@ -846,7 +891,7 @@ document.getElementById('ayahGrid').addEventListener('click', (e)=>{
   const knopf = e.target.closest('[data-ayah]');
   if (!knopf) return;
   const nr = Number(knopf.dataset.ayah);
-  const ziel = document.querySelector(`#verseList .verse-item:nth-of-type(${nr})`);
+  const ziel = document.querySelector(`#verseList .verse-item[data-versnr="${nr}"]`);
   if (!ziel){ toast(`Ayah ${nr} liess sich nicht anspringen.`); return; }
   document.querySelectorAll('#ayahGrid .ayah-sprung.aktiv').forEach(k=>k.classList.remove('aktiv'));
   knopf.classList.add('aktiv');

@@ -459,7 +459,7 @@ async function oeffneVersImLeser(schluessel){
   await openSurah(sura);
   /* Der Leser baut die Verse erst nach dem Laden des Korantexts auf; vorher
      gibt es das Element noch nicht. */
-  const finden = () => document.querySelector(`#verseList .verse-item:nth-of-type(${ayah})`);
+  const finden = () => document.querySelector(`#verseList .verse-item[data-versnr="${ayah}"]`);
   for (let versuch = 0; versuch < 40 && !finden(); versuch++) await new Promise(r=>setTimeout(r, 50));
   const el = finden();
   if (!el){ toast(`${sura}:${ayah} liess sich nicht anspringen.`); return; }
