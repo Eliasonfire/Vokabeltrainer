@@ -602,6 +602,12 @@ main{
 .arabic-word.front-as-german{font-family:var(--font-ui);font-size:clamp(2rem,9vw,2.8rem);direction:ltr;color:var(--red-bright);text-shadow:none;font-weight:800;letter-spacing:-.01em;}
 .german-word{font-size:1.7rem;font-weight:800;color:var(--red-bright);text-align:center;margin-bottom:var(--sp-2);letter-spacing:-.01em;}
 .german-word.back-as-arabic{font-family:var(--font-ar);direction:rtl;font-size:2.4rem;font-weight:600;color:#fff;letter-spacing:0;}
+/* Bedeutung, die es wirklich gibt, aber nicht in der Lektion steht. Leise
+   gesetzt: sie soll auffindbar sein, nicht mitgelernt werden. */
+.neben-bedeutung{
+  font-size:var(--fs-sm);color:var(--text-faint);text-align:center;
+  margin:calc(var(--sp-2) * -1) 0 var(--sp-3);
+}
 
 /* Geschlecht auf der Kartenrueckseite (arabicroots-Paritaet D).
    Bewusst dieselben zwei Farben wie die Grammatik-Unterstreichungen: Grün
@@ -2045,6 +2051,10 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
             </div>
             <div class="flashcard-face flashcard-back">
               <div class="german-word" id="cardGerman">Haus</div>
+              <!-- Zweitbedeutung, die nicht zur Lektion gehört. Steht bewusst
+                   unter der Antwort und nicht in ihr — siehe Begründung an
+                   „deNeben" in vocab-data.js. -->
+              <div class="neben-bedeutung hidden" id="cardNebenbedeutung"></div>
               <div class="gender-chip hidden" id="cardGender"></div>
               <div class="word-forms" id="cardForms"></div>
               <div class="verb-forms hidden" id="cardVerbForms"></div>
