@@ -656,6 +656,55 @@ async function openSurah(id, opt){
    Fehler gewesen, weil die Ayah-Liste ueber `:nth-of-type` zaehlte und jedes
    zusaetzliche Element alle Nummern verschoben haette. Deshalb im selben Zug
    auf `[data-versnr]` umgestellt - das zaehlt nicht, sondern benennt. */
+/* Kann die Schrift die Bismillah-Ligatur U+FDFD (﷽)? Das ist EIN Zeichen, das
+   den ganzen Satz als Kalligrafie zeichnet - Elias' Wunsch: "sie soll so schoen
+   sein". Es ist kein selbst gemaltes Bild und keine erfundene Schreibung: das
+   Zeichen ist in Unicode genau als dieser Satz definiert.
+
+   Geprueft wird es, nicht angenommen. Eine Schrift ohne das Zeichen zeigt ein
+   Ersatzkaestchen von etwa einer Buchstabenbreite; die echte Ligatur ist ein
+   Vielfaches davon. Gemessen am 04.08.2026 bei 100 px Schriftgroesse:
+     Noto Naskh Arabic  1221 px gegen 48,9 px fuer م   -> Faktor 25,0
+     Amiri               667 px gegen 33,8 px          -> Faktor 19,7
+   Die Schwelle 3 liegt weit von beiden Faellen entfernt.
+
+   Faellt die Pruefung negativ aus, kommt der einfache Verstext - Elias
+   ausdruecklich: "das jetzt kannst du als back up plan halten". */
+let BISMILLAH_LIGATUR = null;
+function hatBismillahLigatur(){
+  if (BISMILLAH_LIGATUR !== null) return BISMILLAH_LIGATUR;
+  const miss = (t) => {
+    const s = document.createElement('span');
+    s.textContent = t;
+    s.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;font-size:100px;font-family:var(--font-ar);';
+    document.body.appendChild(s);
+    const b = s.getBoundingClientRect().width;
+    s.remove();
+    return b;
+  };
+  const einzeln = miss('م');
+  BISMILLAH_LIGATUR = einzeln > 0 && miss('﷽') / einzeln > 3;
+  return BISMILLAH_LIGATUR;
+}
+
+/* Die Ligatur ist rund das Zwoelffache ihrer Schriftgroesse breit und kann
+   nicht umbrechen - bei 360 px Fensterbreite lief sie in der ersten Fassung
+   442 px breit in einen 316 px breiten Platz. Statt eine Groesse zu raten oder
+   sie an vw zu haengen (was auf dem Desktop wieder falsch waere, weil die App
+   dort auf 600 px begrenzt ist), wird sie GEMESSEN und eingepasst. */
+function passeBasmalaAn(){
+  const b = document.querySelector('#verseList .basmala.ligatur');
+  if (!b) return;
+  b.style.fontSize = '';
+  const platz = b.clientWidth;
+  const breite = b.scrollWidth;
+  if (platz > 0 && breite > platz){
+    const jetzt = parseFloat(getComputedStyle(b).fontSize);
+    b.style.fontSize = (jetzt * platz / breite * 0.97) + 'px';
+  }
+}
+window.addEventListener('resize', passeBasmalaAn);
+
 function basmalaHtml(id){
   if (id === 1 || id === 9) return '';
   /* Zuerst aus QURAN_TEXT, weil das beim Oeffnen einer Sure ohnehin geladen
@@ -666,6 +715,11 @@ function basmalaHtml(id){
     (typeof QURAN_TEXT !== 'undefined' && QURAN_TEXT[1] && QURAN_TEXT[1][0] && QURAN_TEXT[1][0][0]) ||
     (VERSE_CACHE[1] && VERSE_CACHE[1][0] && VERSE_CACHE[1][0].text_uthmani);
   if (!text) return '';
+  /* Der belegte Verstext bleibt in beiden Faellen die Grundlage: als Inhalt,
+     wenn die Ligatur fehlt, und sonst als Beschriftung fuer die Sprachausgabe -
+     ein einzelnes Zeichen vorzulesen ist nicht dasselbe wie der Satz. */
+  if (hatBismillahLigatur())
+    return `<div class="basmala ligatur" lang="ar" dir="rtl" aria-label="${escapeHtml(text)}">&#xFDFD;</div>`;
   return `<div class="basmala" lang="ar" dir="rtl" aria-label="Basmala">${escapeHtml(text)}</div>`;
 }
 
@@ -700,6 +754,7 @@ function renderVerses(id){
   renderAyahListe(id);
   renderSuraNav(id);
   beobachteLesestand(id);
+  passeBasmalaAn();
   /* Modus und Groessen gelten auch fuer frisch gebaute Verse. Die Klassen sitzen
      zwar am Container und ueberleben den Neuaufbau - die Knopfzustaende im
      Ansicht-Menue aber nicht, wenn es zwischendurch geoeffnet wurde. */
