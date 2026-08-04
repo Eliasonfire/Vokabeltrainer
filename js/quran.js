@@ -313,9 +313,12 @@ function wendeQuranAnsichtAn(){
   });
 }
 
+/* Das Menue klappt OBERHALB der Liste auf und schiebt sie sonst nach unten -
+   dieselbe Ursache wie beim Favoriten-Stern, siehe `ohneSprung`. */
 document.getElementById('btnQuranAnsicht').addEventListener('click', ()=>{
   const feld = document.getElementById('quranAnsicht');
-  const auf = feld.classList.toggle('hidden');
+  let auf;
+  ohneSprung(()=>{ auf = feld.classList.toggle('hidden'); });
   document.getElementById('btnQuranAnsicht').setAttribute('aria-expanded', String(!auf));
   if (!auf) wendeQuranAnsichtAn();
 });
@@ -407,6 +410,38 @@ function anDenAnfang(){
   if (kasten) kasten.scrollTo({ top: 0, behavior: 'instant' });
 }
 
+/* ---------- Aenderungen oberhalb der Liste, ohne dass sie springt ----------
+
+   Elias am 04.08.2026 abends: "wenn ich eine sura als favoriert auswaehle dann
+   springt die liste so zwei suren nach unten, beim auswendig lernen button in
+   gruen ist das nicht so. es soll nichts runter springen." Dasselbe beim
+   Einstellungs-Menue.
+
+   Der Unterschied erklaert den Fehler: der Hifz-Haken aendert nur eine Farbe,
+   der Favoriten-Stern baut den Favoritenblock OBERHALB der Liste neu, und das
+   Einstellungs-Menue klappt ebenfalls oberhalb auf. Beide aendern die Hoehe
+   ueber der Liste, also rutscht alles darunter - die Zeile, die man gerade
+   angetippt hat, ist danach eine andere.
+
+   Statt jede dieser Hoehen einzeln auszurechnen, wird der Versatz GEMESSEN:
+   Position eines Ankers vor und nach der Aenderung, Differenz auf den
+   Rollstand. Das stimmt auch dann, wenn sich Aussenabstaende oder die Anzahl
+   der Zeilen im Block aendern - Werte, die man sonst von Hand nachpflegen
+   muesste und die beim naechsten CSS-Umbau falsch waeren. */
+function ohneSprung(aendern){
+  const kasten = document.getElementById('main');
+  const anker = [document.getElementById('surahList'), document.getElementById('verseList')]
+    .find(e => e && !e.classList.contains('hidden'));
+  if (!kasten || !anker){ aendern(); return; }
+  const vor = anker.getBoundingClientRect().top;
+  aendern();
+  const versatz = anker.getBoundingClientRect().top - vor;
+  /* Unter einem halben Pixel lohnt der Eingriff nicht und wuerde nur runden. */
+  if (Math.abs(versatz) > 0.5){
+    kasten.scrollTo({ top: Math.max(0, kasten.scrollTop + versatz), behavior: 'instant' });
+  }
+}
+
 function quranEbeneMerken(zusatz){
   const st = history.state || {};
   const tiefe = typeof st.tiefe === 'number' ? st.tiefe : 0;
@@ -458,8 +493,11 @@ function surahKlick(e){
     });
     /* Nur den Favoritenblock neu bauen, nicht die Gesamtliste: die ist 114
        Zeilen lang, und ein Neuaufbau wuerfe die Rollposition weg - genau dann,
-       wenn man gerade weit unten bei den kurzen Suren steht. */
-    renderFavListe(!!document.getElementById('surahSearch').value.trim());
+       wenn man gerade weit unten bei den kurzen Suren steht.
+       `ohneSprung`, weil der Block OBERHALB der Liste liegt: waechst er, rutscht
+       alles darunter nach unten und man hat plaetzlich eine andere Zeile unter
+       dem Finger. */
+    ohneSprung(()=> renderFavListe(!!document.getElementById('surahSearch').value.trim()));
     return;
   }
   const hifzBtn = e.target.closest('[data-hifztoggle]');
