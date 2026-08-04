@@ -225,12 +225,10 @@ function surahZeile(s){
     <div class="surah-row" data-opensurah="${s.id}">
       <div class="sr-num">${s.id}</div>
       <div class="sr-mid">
-        <div class="sr-kopf">
-          <div class="sr-name">${s.name} · ${s.verses} Verse</div>
-          <div class="sr-ar">${surenTitel(s)}</div>
-        </div>
+        <div class="sr-name">${s.name} · ${s.verses} Verse</div>
         <div class="sr-unten">${unten}</div>
       </div>
+      <div class="sr-ar">${surenTitel(s)}</div>
       <div class="sr-knoepfe">
         <button class="fav-stern${fav?' on':''}" data-favtoggle="${s.id}"
                 aria-pressed="${fav}" aria-label="${s.name} zu den Favoriten">${icon('stern')}</button>

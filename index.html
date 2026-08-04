@@ -1504,11 +1504,15 @@ main{
   font-variant-numeric:tabular-nums;
 }
 .surah-row .sr-mid{flex:1;min-width:0;}
-/* Obere Zeile: Umschrift links, arabischer Name rechts. `baseline`, damit beide
-   auf derselben Schriftlinie sitzen — bei zwei so verschiedenen Schriftgrößen
-   sähe `center` verrutscht aus. Gekürzt wird die Umschrift, nie der arabische
-   Name: der ist die Hauptangabe. */
-.surah-row .sr-kopf{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-3);}
+/* ⚠️ Der arabische Name stand kurz IN der oberen Zeile neben der Umschrift.
+   Elias: „die namen der sura sollte auf der gleichen höhe sein wie der stern
+   usw. es soll so mittig sein." Er ist deshalb eine eigene Spalte der Zeile —
+   `.surah-row` steht auf `align-items:center`, damit sitzt er automatisch auf
+   derselben Höhe wie Stern und Kästchen.
+   Nebenwirkung, die ein zweites Problem löst: die Umschrift teilt sich die
+   Breite nicht mehr mit ihm und wird dadurch seltener abgeschnitten
+   („Al-Baqarah · 28…" im Bild).
+   `flex-shrink:0`, weil bei Enge die Umschrift weichen soll, nie der Name. */
 .surah-row .sr-ar{font-family:var(--font-ar);direction:rtl;font-size:1.3rem;color:#fff;line-height:1.7;flex-shrink:0;}
 /* Kopf der geöffneten Sure. ⚠️ Bis zum 04.08.2026 abends stand hier die
    Umschrift groß und der arabische Name klein daneben. Elias wollte es
