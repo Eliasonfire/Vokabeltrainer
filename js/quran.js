@@ -106,6 +106,81 @@ function renderSurahList(filter){
     list.map(surahZeile).join('') || '<div class="empty-state">Keine Sure gefunden.</div>';
 }
 
+/* ---------- Lesemodus und Schriftgroessen ----------
+
+   Elias am 04.08.2026: "wäre es auch gut wenn ich einen Modus hätte, wo ich nur
+   den arabischen Text lesen kann (deutsch wird gar nicht angezeigt) und anders
+   herum wo ich nur die deutsche Übersetzung habe. Ebenso wäre es gut, wenn ich
+   die schriftgröße vergrößern und verkleinern könnte in jedem Modus. […] Es wäre
+   auch gut wenn ich das arabische und das deutsche seperat einstellen kann."
+
+   Die Groesse wird als FAKTOR auf die Grundgroesse gegeben, nicht als fester
+   Punktwert. Grund: line-height ist in em angegeben; ein Faktor laesst den
+   Zeilenabstand mitwachsen, ein fester Wert wuerde arabische Zeilen mit
+   Vokalzeichen uebereinanderschieben. */
+const QURAN_MIN = 70, QURAN_MAX = 200, QURAN_SCHRITT = 10;
+
+function quranAnsicht(){
+  return {
+    modus: SETTINGS.quranModus || 'beide',
+    ar: Number(SETTINGS.quranAr) || 100,
+    de: Number(SETTINGS.quranDe) || 100
+  };
+}
+
+function wendeQuranAnsichtAn(){
+  const a = quranAnsicht();
+  const wurzel = document.documentElement;
+  wurzel.style.setProperty('--quran-ar', (a.ar / 100).toFixed(2));
+  wurzel.style.setProperty('--quran-de', (a.de / 100).toFixed(2));
+
+  const liste = document.getElementById('verseList');
+  liste.classList.toggle('nur-ar', a.modus === 'ar');
+  liste.classList.toggle('nur-de', a.modus === 'de');
+
+  document.querySelectorAll('[data-quranmodus]').forEach(b =>
+    b.classList.toggle('active', b.dataset.quranmodus === a.modus));
+  document.getElementById('qaWertAr').textContent = a.ar + ' %';
+  document.getElementById('qaWertDe').textContent = a.de + ' %';
+  /* Was gerade nicht angezeigt wird, laesst sich auch nicht sinnvoll groesser
+     stellen - die Zeile verschwindet, statt ins Leere zu wirken. */
+  document.getElementById('qaZeileAr').classList.toggle('hidden', a.modus === 'de');
+  document.getElementById('qaZeileDe').classList.toggle('hidden', a.modus === 'ar');
+  document.querySelectorAll('[data-qurangroesse]').forEach(b=>{
+    const [feld, richtung] = b.dataset.qurangroesse.split(':');
+    const wert = feld === 'ar' ? a.ar : a.de;
+    b.disabled = Number(richtung) < 0 ? wert <= QURAN_MIN : wert >= QURAN_MAX;
+  });
+}
+
+document.getElementById('btnQuranAnsicht').addEventListener('click', ()=>{
+  const feld = document.getElementById('quranAnsicht');
+  const auf = feld.classList.toggle('hidden');
+  document.getElementById('btnQuranAnsicht').setAttribute('aria-expanded', String(!auf));
+  if (!auf) wendeQuranAnsichtAn();
+});
+
+document.getElementById('quranModi').addEventListener('click', (e)=>{
+  const knopf = e.target.closest('[data-quranmodus]');
+  if (!knopf) return;
+  SETTINGS.quranModus = knopf.dataset.quranmodus;
+  saveSettings();
+  wendeQuranAnsichtAn();
+});
+
+document.getElementById('quranAnsicht').addEventListener('click', (e)=>{
+  const knopf = e.target.closest('[data-qurangroesse]');
+  if (!knopf) return;
+  const [feld, richtung] = knopf.dataset.qurangroesse.split(':');
+  const schluessel = feld === 'ar' ? 'quranAr' : 'quranDe';
+  const jetzt = Number(SETTINGS[schluessel]) || 100;
+  const neu = Math.min(QURAN_MAX, Math.max(QURAN_MIN, jetzt + Number(richtung) * QURAN_SCHRITT));
+  if (neu === jetzt) return;
+  SETTINGS[schluessel] = neu;
+  saveSettings();
+  wendeQuranAnsichtAn();
+});
+
 /* ---------- Der Quran-Leser hat Ebenen INNERHALB seines Bildschirms ----------
 
    Elias am 04.08.2026: "wenn ich in einer Sura bin und auf meinem Handy die
@@ -298,6 +373,10 @@ function renderVerses(id){
       <div class="verse-de">${(v.translations && v.translations[0] && v.translations[0].text) || ''}</div>
     </div>`; }).join('');
   aktualisiereHifzLeiste(id, surah);
+  /* Modus und Groessen gelten auch fuer frisch gebaute Verse. Die Klassen sitzen
+     zwar am Container und ueberleben den Neuaufbau - die Knopfzustaende im
+     Ansicht-Menue aber nicht, wenn es zwischendurch geoeffnet wurde. */
+  wendeQuranAnsichtAn();
 }
 
 function aktualisiereHifzLeiste(id, surah){
@@ -352,3 +431,8 @@ document.getElementById('btnHifzVerdecken').addEventListener('click', ()=>{
   if (id) aktualisiereHifzLeiste(id, SURAH_DATA.find(s=>s.id===id));
 });
 
+
+/* Die gespeicherte Ansicht gilt ab dem ersten Bildaufbau, nicht erst, wenn das
+   Menue einmal geoeffnet wurde. Sonst startet der Leser immer in 100 % und
+   springt erst um, sobald man die Einstellung anfasst. */
+wendeQuranAnsichtAn();

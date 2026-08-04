@@ -1515,8 +1515,52 @@ main{
   display:inline-block;border-radius:var(--r-full);padding:2px var(--sp-2);margin-bottom:var(--sp-2);
   font-variant-numeric:tabular-nums;
 }
-.verse-ar{font-family:var(--font-ar);font-size:1.55rem;direction:rtl;text-align:right;line-height:2.15;color:#fff;}
-.verse-de{font-size:var(--fs-md);color:var(--text-dim);margin-top:var(--sp-2);line-height:1.6;}
+/* Die beiden Skalen sind getrennt — Elias am 04.08.2026: "Es wäre auch gut wenn
+   ich das arabische und das deutsche seperat einstellen kann wie groß sie sein
+   sollten beim Quran lesen." Als Faktor auf die Grundgröße und nicht als fester
+   Wert, damit die Zeilenhöhe (em-basiert) von selbst mitwächst. */
+.verse-ar{font-family:var(--font-ar);font-size:calc(1.55rem * var(--quran-ar, 1));direction:rtl;text-align:right;line-height:2.15;color:#fff;}
+.verse-de{font-size:calc(var(--fs-md) * var(--quran-de, 1));color:var(--text-dim);margin-top:var(--sp-2);line-height:1.6;}
+/* Lesemodus. display:none und nicht nur Ausblenden: wer "nur Arabisch" wählt,
+   will den Platz auch zurück, sonst bliebe zwischen den Versen eine Lücke. */
+#verseList.nur-ar .verse-de{display:none;}
+#verseList.nur-de .verse-ar{display:none;}
+/* Im Deutsch-Modus gibt es nichts zu verdecken - ein Ḥifẓ-Selbsttest ohne
+   arabischen Text wäre sinnlos. */
+#verseList.nur-de .verse-ar.verdeckt{display:none;}
+
+/* ---- Ansicht-Menü des Quran-Lesers ---- */
+.quran-ansicht-knopf{margin-left:auto;}
+.quran-ansicht{
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-3);
+  padding:var(--sp-3) var(--sp-4);margin-bottom:var(--sp-4);
+  display:flex;flex-direction:column;gap:var(--sp-3);
+}
+.qa-zeile{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);}
+.qa-titel{font-size:var(--fs-sm);font-weight:700;color:var(--text-dim);}
+.qa-modi{display:flex;gap:var(--sp-1);background:var(--surface-3);border-radius:var(--r-full);padding:3px;}
+.qa-modus{
+  border:none;background:none;border-radius:var(--r-full);
+  padding:var(--sp-2) var(--sp-3);cursor:pointer;
+  font-family:var(--font-ui);font-size:var(--fs-xs);font-weight:700;color:var(--text-dim);
+  transition:background var(--dur-2) ease, color var(--dur-2) ease;
+}
+.qa-modus.active{background:var(--red);color:#fff;}
+.qa-stufen{display:flex;align-items:center;gap:var(--sp-2);}
+.qa-stufe{
+  width:32px;height:32px;border-radius:var(--r-full);
+  border:1px solid var(--border-strong);background:var(--surface-3);color:var(--text);
+  font-size:1.1rem;font-weight:700;line-height:1;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform var(--dur-1) var(--ease-spring), border-color var(--dur-2) ease;
+}
+.qa-stufe:active{transform:scale(.88);}
+.qa-stufe:disabled{opacity:.4;cursor:default;}
+.qa-stufe:disabled:active{transform:none;}
+.qa-wert{
+  min-width:56px;text-align:center;font-size:var(--fs-sm);font-weight:700;
+  font-variant-numeric:tabular-nums;color:var(--text);
+}
 .verse-loading{color:var(--text-dim);font-size:var(--fs-md);text-align:center;padding:var(--sp-7) 0;}
 /* Ladeplatzhalter statt nackter Textzeile */
 .verse-skeleton{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-3);padding:var(--sp-4);margin-bottom:var(--sp-2);}
@@ -2107,6 +2151,36 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
       <div class="screen-header">
         <button class="icon-btn" id="btnQuranFullBack" aria-label="Zurück"><svg class="ic"><use href="#ic-left"/></svg></button>
         <h2 id="quranFullTitle">Quran lesen</h2>
+        <!-- Ansicht-Menü oben rechts, wie Elias es von quran.com kennt. -->
+        <button class="icon-btn quran-ansicht-knopf" id="btnQuranAnsicht" aria-label="Ansicht einstellen" aria-expanded="false"><svg class="ic"><use href="#ic-settings"/></svg></button>
+      </div>
+      <!-- Lesemodus und Schriftgrößen. Arabisch und Deutsch werden GETRENNT
+           eingestellt — Elias' ausdrücklicher Wunsch vom 04.08.2026. -->
+      <div class="quran-ansicht hidden" id="quranAnsicht">
+        <div class="qa-zeile">
+          <span class="qa-titel">Anzeigen</span>
+          <div class="qa-modi" id="quranModi">
+            <button class="qa-modus" data-quranmodus="beide">Beides</button>
+            <button class="qa-modus" data-quranmodus="ar" lang="ar">عربي</button>
+            <button class="qa-modus" data-quranmodus="de">Deutsch</button>
+          </div>
+        </div>
+        <div class="qa-zeile" id="qaZeileAr">
+          <span class="qa-titel">Arabisch</span>
+          <div class="qa-stufen">
+            <button class="qa-stufe" data-qurangroesse="ar:-1" aria-label="Arabisch kleiner">−</button>
+            <span class="qa-wert" id="qaWertAr">100 %</span>
+            <button class="qa-stufe" data-qurangroesse="ar:1" aria-label="Arabisch größer">+</button>
+          </div>
+        </div>
+        <div class="qa-zeile" id="qaZeileDe">
+          <span class="qa-titel">Deutsch</span>
+          <div class="qa-stufen">
+            <button class="qa-stufe" data-qurangroesse="de:-1" aria-label="Deutsch kleiner">−</button>
+            <span class="qa-wert" id="qaWertDe">100 %</span>
+            <button class="qa-stufe" data-qurangroesse="de:1" aria-label="Deutsch größer">+</button>
+          </div>
+        </div>
       </div>
       <p class="quran-source" id="quranFullIntro">Vollständiger Quran, offline in der App (Uthmani-Arabisch + Bubenheim &amp; Elyas Deutsch). Hake einzelne Verse ab, wenn du sie auswendig kannst — oder gleich die ganze Sure.</p>
       <input type="text" id="surahSearch" class="select-input select-full" placeholder="Sure suchen (Name oder Nummer)…">
