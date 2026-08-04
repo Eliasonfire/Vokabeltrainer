@@ -1433,10 +1433,27 @@ main{
   min-height:26px;
   /* Über dem Abzeichen, falls ein langer Kapitelname bis in dessen Ecke reicht. */
   z-index:7;
+  /* ⚠️ Das Verlegen nach links allein hat NICHT gereicht. Am 04.08.2026 bei
+     360 px Breite nachgemessen: „Eigene Vokabel" plus Notiz-Zeichen reichte
+     10 px unter das Abzeichen (Notiz endet bei 203, Abzeichen beginnt bei 193).
+     Bei 375 px blieben nur 5 px Luft — deshalb ist es vorher niemandem
+     aufgefallen. Die Reihe bekommt jetzt eine harte Grenze.
+     Die Breite des Abzeichens hängt an der Zahl (bis 2851×, gemessen 127 px)
+     und steht erst zur Laufzeit fest; renderQuranFreqBadge misst sie und setzt
+     --abzeichen-breite. Ohne Abzeichen ist die Variable 0 und die Reihe darf
+     die ganze Karte nutzen — dann wird auch nichts abgeschnitten.
+     Der letzte Summand ist reine Sicherheitsluft. Er steht bewusst auf --sp-1
+     und nicht höher: bei --sp-2 wurde auf 320 px selbst „Kap. 1" um 2 px
+     beschnitten, obwohl dort gar nichts kollidiert. Die Luft soll Überlappung
+     verhindern, nicht Abstand gestalten. */
+  max-width:calc(100% - var(--sp-4) - var(--sp-3) - var(--sp-1) - var(--abzeichen-breite, 0px));
 }
 /* Der Chip positioniert sich sonst selbst absolut — in der Reihe muss er mit
-   den anderen fließen. Nur hier, die beiden anderen Chips bleiben unberührt. */
-.front-marken .chip{position:static;}
+   den anderen fließen. Nur hier, die beiden anderen Chips bleiben unberührt.
+   min-width:0 ist nötig, damit er unter die Grenze oben schrumpfen DARF:
+   ein Flex-Kind gibt sonst seine Inhaltsbreite nicht her. Gekürzt wird der
+   Kapitelname, nie das Notiz-Zeichen — das hat flex-shrink:0. */
+.front-marken .chip{position:static;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .note-dot{
   display:inline-flex;align-items:center;justify-content:center;
   width:26px;height:26px;border-radius:var(--r-full);flex-shrink:0;

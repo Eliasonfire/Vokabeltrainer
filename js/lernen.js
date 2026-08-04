@@ -384,9 +384,27 @@ function renderQuranFreqBadge(w){
   const badge = document.getElementById('cardQuranFreq');
   const root = w.root && (typeof QURAN_FREQ!=='undefined') ? w.root.replace(/\s+/g,'') : null;
   const freq = root && QURAN_FREQ[root];
-  if (!freq){ badge.classList.add('hidden'); return; }
+  /* Die Marken links oben duerfen nicht unter das Abzeichen laufen. Wie viel
+     Platz es braucht, haengt an der Zahl - deshalb wird es gemessen und als
+     --abzeichen-breite an die Buehne gehaengt; die CSS-Regel .front-marken
+     rechnet damit. Ohne Abzeichen ist der Wert 0. */
+  const buehne = document.getElementById('cardStage');
+  if (!freq){
+    badge.classList.add('hidden');
+    buehne.style.setProperty('--abzeichen-breite', '0px');
+    return;
+  }
   badge.innerHTML = `${icon('crescent')}<span>${freq[0]}× im Quran</span>`;
   badge.classList.remove('hidden');
+  /* Beim ersten Aufruf kann die Lernansicht noch ausgeblendet sein, dann ist
+     offsetWidth 0. Der Vorbehalt von 140px deckt das breiteste gemessene
+     Abzeichen (127px bei 2851x) ab; der naechste Frame ersetzt ihn durch die
+     echte Breite. */
+  const merkeBreite = () => {
+    buehne.style.setProperty('--abzeichen-breite', (badge.offsetWidth || 140) + 'px');
+  };
+  merkeBreite();
+  requestAnimationFrame(merkeBreite);
   badge.onclick = (e)=>{ e.stopPropagation(); openQuranFreqPopover(w, freq); };
 }
 
