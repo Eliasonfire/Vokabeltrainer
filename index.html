@@ -1510,10 +1510,18 @@ main{
    Name: der ist die Hauptangabe. */
 .surah-row .sr-kopf{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-3);}
 .surah-row .sr-ar{font-family:var(--font-ar);direction:rtl;font-size:1.3rem;color:#fff;line-height:1.7;flex-shrink:0;}
-/* Arabischer Surenname im Kopf der geoeffneten Sure. Etwas kleiner als die
-   Umschrift daneben und in gedaempftem Weiss: er ergaenzt den Titel, er
-   ersetzt ihn nicht. */
-#quranFullTitle .qt-ar{font-family:var(--font-ar);font-size:1.05em;font-weight:600;color:var(--text-dim);margin-inline-start:var(--sp-2);}
+/* Kopf der geöffneten Sure. ⚠️ Bis zum 04.08.2026 abends stand hier die
+   Umschrift groß und der arabische Name klein daneben. Elias wollte es
+   umgekehrt: „hier sollte lieber das arabische groß sein (bzw die priorität)
+   und dann daneben halt das deutsche." Jetzt trägt der arabische Name die
+   Zeile; Nummer und Umschrift stehen klein und gedämpft dabei. */
+#quranFullTitle{display:flex;align-items:baseline;gap:var(--sp-2);min-width:0;}
+#quranFullTitle .qt-nr{font-size:var(--fs-sm);font-weight:800;color:var(--text-faint);
+  font-variant-numeric:tabular-nums;flex-shrink:0;}
+#quranFullTitle .qt-ar{font-family:var(--font-ar);font-size:1.45rem;font-weight:600;color:#fff;
+  line-height:1.6;flex-shrink:0;}
+#quranFullTitle .qt-um{font-size:var(--fs-sm);font-weight:600;color:var(--text-dim);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
 .surah-row .sr-name{
   font-size:var(--fs-sm);color:var(--text-dim);
   min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
@@ -1712,6 +1720,15 @@ main{
    ich das arabische und das deutsche seperat einstellen kann wie groß sie sein
    sollten beim Quran lesen." Als Faktor auf die Grundgröße und nicht als fester
    Wert, damit die Zeilenhöhe (em-basiert) von selbst mitwächst. */
+/* Basmala über der Sure. Bewusst mittig, ohne Kasten und ohne Versnummer: sie
+   ist kein Vers dieser Sure, sondern ihre Überschrift. Größe folgt derselben
+   Stellschraube wie der Verstext (--quran-ar), damit sie beim Vergrößern
+   mitwächst statt stehenzubleiben. */
+.basmala{
+  font-family:var(--font-ar);font-size:calc(1.35rem * var(--quran-ar, 1));
+  text-align:center;line-height:2.2;color:var(--text-dim);
+  padding:var(--sp-3) var(--sp-4) var(--sp-5);
+}
 .verse-ar{font-family:var(--font-ar);font-size:calc(1.55rem * var(--quran-ar, 1));direction:rtl;text-align:right;line-height:2.15;color:#fff;}
 .verse-de{font-size:calc(var(--fs-md) * var(--quran-de, 1));color:var(--text-dim);margin-top:var(--sp-2);line-height:1.6;}
 /* Lesemodus. display:none und nicht nur Ausblenden: wer "nur Arabisch" wählt,
