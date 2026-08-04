@@ -3,7 +3,17 @@ const VOCAB_DATA = [
  {
   "id": "45751",
   "ar": "بَيْتٌ",
-  "de": "(1) Haus; (2) Vers (Poesie)",
+  "de": "Haus",
+  /* Elias am 04.08.2026: „Vers (Poesie)" sei falsch. Es ist nicht falsch — die
+     Angabe steht wortgleich in seinem eigenen arabicroots-Abzug
+     (data/vokabeln-madina-1.js Z. 9) und wird dort vom zweiten Plural
+     أَبْيَاتٌ gestützt, genau dem Plural für Verszeilen. Gelöscht wird sie
+     deshalb nicht (Regel 7a: bezahlter Abzug wird nicht still überschrieben).
+     Sie steht jetzt aber nicht mehr in der Antwortzeile, sondern als
+     Nebenbedeutung darunter — in Lektion 1 heißt بَيْتٌ schlicht „Haus".
+     Nebenbei war das (1)…(2)-Muster die einzige Ausnahme unter 171 Vokabeln;
+     alle anderen Mehrfachbedeutungen schreiben „A / B". */
+  "deNeben": "Vers (Poesie)",
   "type": "noun",
   "chapter": 1,
   "gender": "masculine",

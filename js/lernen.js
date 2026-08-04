@@ -109,6 +109,13 @@ function renderCard(){
     backEl.setAttribute('dir','ltr'); backEl.setAttribute('lang','de');
   }
 
+  /* Nebenbedeutung: steht auf der Rueckseite, egal in welche Richtung abgefragt
+     wird. Bei de-ar steht vorne nur die Lektionsbedeutung - die zweite waere
+     dort ein Ratehinweis auf ein Wort, das man noch nennen soll. */
+  const nebenEl = document.getElementById('cardNebenbedeutung');
+  nebenEl.textContent = w.deNeben ? `auch: ${w.deNeben}` : '';
+  nebenEl.classList.toggle('hidden', !w.deNeben);
+
   /* Geschlecht auf der Rueckseite (arabicroots-Paritaet D). Nur wo es etwas
      aussagt: Partikeln wie فِي oder هَلْ haben keins, dort steht in den Daten
      `null` - und ein leerer Platzhalter waere schlechter als gar keiner. */
