@@ -605,7 +605,10 @@ function oeffneAyahListe(){
   /* Zur zuletzt angesteuerten Ayah rollen, statt immer bei 1 zu beginnen: wer
      die Liste zum zweiten Mal oeffnet, ist meistens in der Naehe geblieben. */
   const aktiv = document.querySelector('#ayahGrid .ayah-sprung.aktiv');
-  if (aktiv) aktiv.scrollIntoView({ block:'center' });
+  /* 'instant' ausdruecklich: .ap-grid erbt zwar kein scroll-behavior, aber die
+     Angabe wegzulassen ist genau der Fehler, der bei hebeVersHervor eine
+     Stunde gekostet hat. */
+  if (aktiv) aktiv.scrollIntoView({ block:'center', behavior:'instant' });
 }
 function schliesseAyahListe(){
   document.getElementById('ayahBackdrop').classList.add('hidden');
@@ -621,6 +624,8 @@ function schliesseAyahListe(){
    Bewusst ohne weiches Scrollen: bis Vers 125 von Al-Baqarah sind es ueber
    30.000 Pixel. So eine Fahrt bricht der Browser ab, und selbst wenn nicht,
    dauerte sie ewig. Der kurze Leuchteffekt uebernimmt die Orientierung.
+   ⚠️ Dieser Absatz stand hier schon, WAEHREND die Fahrt weich war - siehe
+   unten. Ein Kommentar ist keine Zusicherung.
 
    Gescrollt wird nicht das Fenster: der Rumpf steht auf `overflow:hidden`, die
    Bildschirme rollen in #main. scrollIntoView beruecksichtigt das von selbst;
@@ -641,42 +646,33 @@ function schliesseAyahListe(){
    genau in dieser Sekunde laeuft der gruene Puls (1,9 s) ausserhalb des
    Bildes ab. Man tippt eine Ayah an und sieht erst einmal etwas anderes.
 
-   ⚠️ Ein zweiter und dritter Anlauf reichen NICHT - auch das ist gemessen, nicht
-   vermutet. Ein Versuch mit "nachziehen nach zwei Frames, bei fonts.ready und
-   nach 600 ms" ergab exakt dieselben Zahlen wie ohne (19497 / 6556 / 425 px
-   nach 100 / 500 / 1200 ms). Grund: nach JEDEM Ansteuern waechst der Inhalt
-   darueber weiter, das Ziel rutscht also gleich wieder weg.
+   ⭐ Die Ursache war NICHT das Nachwachsen des Inhalts, wie zwei verworfene
+   Anläufe annahmen (erst ein zweiter/dritter Anlauf, dann ein Halten ueber
+   1,2 s - beide brachten exakt dieselben Zahlen, 19497/6556/425 bzw.
+   19589/6977/461). Die Werte sind eine Beschleunigungskurve, keine
+   Verschiebung: `#main` traegt `scroll-behavior:smooth`, und
+   `behavior:'auto'` heisst NICHT "sofort", sondern "nimm den CSS-Wert".
+   Die Fahrt war also weich - genau das, was der Kommentar hier seit jeher
+   ausschliessen wollte. Die Absicht stimmte, die Umsetzung nicht.
 
-   Deshalb wird das Ziel GEHALTEN statt angesteuert: bis zu 1,2 s lang wird je
-   Frame geprueft, ob es noch mittig steht, und sonst nachgefasst. Das kostet
-   rund 70 Aufrufe von getBoundingClientRect - fuer EIN Element, nicht fuer 286.
-   Sobald selbst gerollt oder getippt wird, hoert das Halten sofort auf; ohne
-   das arbeitete die Seite gegen den eigenen Finger. */
+   `behavior:'instant'` uebergeht die CSS-Angabe. Nachgemessen, gleiche Stelle:
+   Ziel 156 px unter der Oberkante nach 0 ms statt 19589 px.
+
+   Danach wandert es noch auf 419 px, weil die Verse mit der Schrift hoeher
+   werden - das bleibt aber die ganze Zeit im Bild und braucht kein Nachfassen.
+   Nur falls es doch ganz herausrutscht, greift der eine Nachschlag unten. */
 function hebeVersHervor(el){
-  const mitte = () => el.scrollIntoView({ block:'center', behavior:'auto' });
+  const mitte = () => el.scrollIntoView({ block:'center', behavior:'instant' });
   mitte();
   el.classList.remove('angesteuert');
   void el.offsetWidth;                       // Animation neu starten
   el.classList.add('angesteuert');
-
-  let halten = true;
-  const aufhoeren = () => { halten = false; };
-  const wege = ['wheel', 'touchstart', 'pointerdown', 'keydown'];
-  wege.forEach(w => window.addEventListener(w, aufhoeren, { once:true, passive:true }));
-  const abraeumen = () => wege.forEach(w => window.removeEventListener(w, aufhoeren));
-
-  const ende = performance.now() + 1200;
-  const schritt = (jetzt) => {
-    if (!halten){ abraeumen(); return; }
+  /* Ein einziger Nachschlag, und nur wenn der Vers wirklich aus dem Bild ist -
+     sonst risse es den Blick weg, falls inzwischen selbst gerollt wurde. */
+  setTimeout(() => {
     const r = el.getBoundingClientRect();
-    /* Bei sehr langen Versen ist die Sollhoehe 0 statt negativ - sonst zielte
-       die Regelung auf eine Stelle oberhalb des Fensters und faende nie Ruhe. */
-    const soll = Math.max(0, (window.innerHeight - r.height) / 2);
-    if (Math.abs(r.top - soll) > 40) mitte();
-    if (jetzt < ende) requestAnimationFrame(schritt);
-    else abraeumen();
-  };
-  requestAnimationFrame(schritt);
+    if (r.bottom < 0 || r.top > window.innerHeight) mitte();
+  }, 500);
 }
 
 /* ---------- Vorherige / naechste Sure am Sura-Ende (Punkt 12) ----------
