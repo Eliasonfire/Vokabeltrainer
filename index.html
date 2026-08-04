@@ -1758,10 +1758,23 @@ main{
 
 /* ---- Ansicht-Menü des Quran-Lesers ---- */
 .quran-ansicht-knopf{margin-left:auto;}
+/* ⚠️ Der Kasten stand bis zum 04.08.2026 abends IN der Seite, gleich unter der
+   Kopfzeile. Elias: „wenn ich hier die einstellungen öffne dann wird sie mir
+   nur ganz oben angezeigt, ich will aber auch mitten in der sura die
+   möglichkeit haben die dinge umzustellen." Der Zahnrad-Knopf klebt schon oben
+   mit (`.screen-header` ist sticky) — nur der Kasten blieb beim Rollen zurück.
+   Jetzt hängt er am Fenster. Position und Breite werden beim Öffnen aus der
+   Kopfzeile und der Inhaltsspalte GEMESSEN, statt sie zu raten: die Spalte ist
+   auf dem Handy randbreit und auf dem Desktop auf 600 px begrenzt.
+   ⚠️ Bewusst OHNE abdunkelnden Hintergrund: man stellt hier Schriftgrößen ein
+   und muss dabei sehen, was mit dem Verstext passiert. Zum Schließen genügt ein
+   Tipp daneben. */
 .quran-ansicht{
-  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-3);
-  padding:var(--sp-3) var(--sp-4);margin-bottom:var(--sp-4);
+  position:fixed;z-index:660;
+  background:var(--surface-3);border:1px solid var(--border-strong);border-radius:var(--r-3);
+  padding:var(--sp-3) var(--sp-4);box-shadow:var(--sh-3);
   display:flex;flex-direction:column;gap:var(--sp-3);
+  animation:popIn var(--dur-2) var(--ease-out);
 }
 .qa-zeile{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);}
 .qa-titel{font-size:var(--fs-sm);font-weight:700;color:var(--text-dim);}
