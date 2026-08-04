@@ -166,16 +166,16 @@ function luecke(wort, i){
 }
 
 /* ---------- Datendateien laden ---------- */
-let VOCAB_DATA = null, LEHRBUCH_SAETZE = null;
+let VOCAB_DATA = null, LEHRBUCH_SAETZE = null, SURAH_DATA = null;
 try {
   let code = '';
-  for (const f of ['vocab-data.js', 'lehrbuch-saetze.js'])
+  for (const f of ['vocab-data.js', 'lehrbuch-saetze.js', 'surah-data.js'])
     code += fs.readFileSync(path.join(DIR, f), 'utf8') + '\n';
-  code += 'globalThis.__D = { VOCAB_DATA, LEHRBUCH_SAETZE };';
+  code += 'globalThis.__D = { VOCAB_DATA, LEHRBUCH_SAETZE, SURAH_DATA };';
   const ctx = {};
   vm.createContext(ctx);
   vm.runInContext(code, ctx);
-  ({ VOCAB_DATA, LEHRBUCH_SAETZE } = ctx.__D);
+  ({ VOCAB_DATA, LEHRBUCH_SAETZE, SURAH_DATA } = ctx.__D);
 } catch (e) {
   console.error('Datendateien nicht ausfuehrbar: ' + e.message);
   process.exit(1);
@@ -212,6 +212,44 @@ function pruefeEintrag(eintrag, quelle){
 
 VOCAB_DATA.forEach(w => pruefeEintrag(w, 'vocab-data.js'));
 (LEHRBUCH_SAETZE || []).forEach(s => pruefeEintrag(s, 'lehrbuch-saetze.js'));
+
+/* Surentitel, seit 04.08.2026 (Elias' Punkt 5). Geprueft wird NUR
+   `arTaschkil` - das Feld `ar` daneben ist absichtlich unvokalisiert, es ist
+   der Suchname und die Rueckfallebene. Deshalb eine eigene Runde mit eigenem
+   Feld statt surah-data.js in FELDER aufzunehmen: sonst meldete das Skript
+   114 Luecken, die keine sind. */
+const SURAH_FELDER = ['arTaschkil'];
+(SURAH_DATA || []).forEach(s => {
+  SURAH_FELDER.forEach(feld => {
+    const wert = s[feld];
+    if (typeof wert !== 'string' || !wert.trim()) return;
+    woerterAus(wert).forEach(wort => {
+      woerterGeprueft++;
+      for (let i = 0; i < wort.length; i++){
+        const grund = luecke(wort, i);
+        if (!grund) continue;
+        /* Ein Surentitel steht fuer sich und traegt deshalb KEINE Kasusendung
+           (Pausalform). "Endung fehlt" ist hier also kein Befund, sondern die
+           richtige Schreibung — genau darum wird die Endung beim Holen ja
+           entfernt, siehe werkzeuge/surennamen-holen.mjs. Ohne diese Zeile
+           meldete das Skript 48 Luecken, die keine sind. */
+        if (grund === 'Endung fehlt') continue;
+        /* Die Muqattaʿat-Suren heissen nach den Buchstaben selbst (طه, يسٓ, صٓ,
+           قٓ). Buchstabennamen tragen keine Harakat - auch die Quelle liefert
+           sie ohne, und der Korantext schreibt sie ebenso. Kein Befund. */
+        if (/^[طيصقنهرالمكعسحدذ]{1,3}[ٓ]?$/.test(wort)) continue;
+        const ausnahme = AUSNAHMEN.find(a => a.trifft(wort, i));
+        if (ausnahme && !ausnahme.nurMelden) continue;
+        befunde.push({
+          quelle: 'surah-data.js', id: s.id, feld, wort,
+          stelle: i, zeichen: wort[i], grund,
+          gruppe: ausnahme ? ausnahme.name : grund
+        });
+        break;
+      }
+    });
+  });
+});
 
 /* ---------- Ausgabe ---------- */
 console.log('--- Vollstaendigkeit der Vokalisierung ---');
