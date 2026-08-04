@@ -1646,6 +1646,21 @@ main{
    selbst, damit man beim Springen schon sieht, was man kann. */
 .ayah-sprung.auswendig{color:var(--green);border-color:var(--green-dim);background:var(--green-wash);}
 .ayah-sprung.aktiv{border-color:var(--green);color:var(--green);}
+/* Weiterlesen-Zeile über der Surenliste. Grün wie „auswendig" wäre falsch —
+   gelesen ist nicht gekonnt; deshalb die neutrale Fläche mit rotem Symbol. */
+.weiterlesen{
+  display:flex;align-items:center;gap:var(--sp-3);width:100%;
+  margin-bottom:var(--sp-4);padding:var(--sp-3) var(--sp-4);
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-3);
+  color:var(--text);text-align:start;cursor:pointer;
+  transition:border-color var(--dur-2) ease, background var(--dur-2) ease;
+}
+.weiterlesen:hover{border-color:var(--border-strong);background:var(--surface-3);}
+.weiterlesen > .ic{color:var(--red-bright);flex-shrink:0;}
+.weiterlesen .wl-text{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1;}
+.weiterlesen .wl-label{font-size:var(--fs-xs);color:var(--text-faint);text-transform:uppercase;letter-spacing:.06em;}
+.weiterlesen .wl-stelle{font-weight:700;font-size:var(--fs-md);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.weiterlesen .wl-pfeil{color:var(--text-faint);flex-shrink:0;}
 .hifz-stand{color:var(--text-dim);font-size:var(--fs-sm);font-variant-numeric:tabular-nums;}
 .btn-klein{padding:var(--sp-2) var(--sp-3);font-size:var(--fs-sm);}
 .verse-kopf{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);}
@@ -2352,6 +2367,15 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
       <!-- Favoriten stehen ÜBER der vollständigen Liste. Elias' Wunsch vom
            04.08.2026: die kurzen Suren, die er gerade braucht, stehen im Quran
            ganz hinten — er musste jedes Mal durch 114 Zeilen scrollen. -->
+      <!-- Lesefortschritt (Elias' Punkt 10). Bewusst EINE Zeile und kein
+           Balkendiagramm: er war selbst unsicher, was er will, also die
+           kleinste Fassung, die wirklich etwas spart — dorthin zurück, wo man
+           aufgehört hat. Lässt sich mit dieser einen Zeile wieder entfernen. -->
+      <button class="weiterlesen hidden" id="weiterlesen">
+        <svg class="ic"><use href="#ic-book"/></svg>
+        <span class="wl-text"><span class="wl-label">Weiterlesen</span><span class="wl-stelle" id="weiterlesenStelle"></span></span>
+        <svg class="ic wl-pfeil"><use href="#ic-right"/></svg>
+      </button>
       <div class="surah-fav hidden" id="surahFavBlock">
         <div class="surah-fav-kopf">Favoriten</div>
         <div class="word-list" id="surahFavList"></div>
