@@ -47,6 +47,51 @@ let HIFZ_VERDECKT = false;
 
 const VERSE_CACHE = {};
 
+/* Favoriten-Suren. Elias am 04.08.2026: "Es waere gut wenn ich beim Quran lesen
+   eine Favoriten Liste ueber der normalen Quran Liste haette. Dann muesste ich
+   nicht immer ganz nach unten scrollen fuer die kleineren suren die fuer mich
+   aktuell relevant sind."
+
+   Eigener Speicher, nicht in HIFZ mit hineingerechnet: "ich lerne das gerade"
+   und "ich kann das auswendig" sind zwei verschiedene Aussagen. Eine kurze Sure
+   kann Favorit sein, WEIL sie noch nicht sitzt. */
+let QURAN_FAV = LS.get('vt_quranFav', {});
+function saveQuranFav(){ LS.set('vt_quranFav', QURAN_FAV); }
+function istFavorit(id){ return !!QURAN_FAV[id]; }
+
+/* Eine Zeile der Surenliste. Als eigene Funktion, damit Favoritenblock und
+   Gesamtliste garantiert gleich aussehen - zwei Vorlagen waeren zwei Stellen,
+   die auseinanderlaufen koennen. */
+function surahZeile(s){
+  /* Wer einzelne Verse abgehakt hat, soll das in der Uebersicht sehen -
+     sonst wirkt die Sure unangetastet, obwohl schon die Haelfte sitzt. */
+  const einzeln = zaehleVerse(s.id);
+  const zusatz = HIFZ[s.id] ? '' : (einzeln ? ` · ${einzeln} von ${s.verses} auswendig` : '');
+  const fav = istFavorit(s.id);
+  return `
+    <div class="surah-row" data-opensurah="${s.id}">
+      <div class="sr-num">${s.id}</div>
+      <div class="sr-mid"><div class="sr-ar">${s.ar}</div><div class="sr-name">${s.name} · ${s.verses} Verse${zusatz}</div></div>
+      <div class="sr-knoepfe">
+        <button class="fav-stern${fav?' on':''}" data-favtoggle="${s.id}"
+                aria-pressed="${fav}" aria-label="${s.name} zu den Favoriten">${icon('stern')}</button>
+        <button class="hifz-check${HIFZ[s.id]?' on':''}" data-hifztoggle="${s.id}" aria-label="Ganze Sure als auswendig markieren">${icon('check')}</button>
+      </div>
+    </div>`;
+}
+
+/* Der Favoritenblock wird bei einer Suche ausgeblendet: wer sucht, will die
+   Treffer sehen: ein Block darueber, der nicht mitfiltert, waere dann nur eine
+   zweite Liste im Weg. */
+function renderFavListe(suchend){
+  const block = document.getElementById('surahFavBlock');
+  if (!block) return;
+  const favs = SURAH_DATA.filter(s => istFavorit(s.id));
+  block.classList.toggle('hidden', suchend || !favs.length);
+  if (suchend || !favs.length) return;
+  document.getElementById('surahFavList').innerHTML = favs.map(surahZeile).join('');
+}
+
 function renderSurahList(filter){
   const q = (filter||'').trim().toLowerCase();
   const list = SURAH_DATA.filter(s => !q || s.name.toLowerCase().includes(q) || s.ar.includes(q) || String(s.id)===q);
@@ -56,17 +101,9 @@ function renderSurahList(filter){
   document.getElementById('surahList').classList.remove('hidden');
   document.getElementById('verseList').classList.add('hidden');
   document.getElementById('hifzBar').classList.add('hidden');
-  document.getElementById('surahList').innerHTML = list.map(s => {
-    /* Wer einzelne Verse abgehakt hat, soll das in der Uebersicht sehen -
-       sonst wirkt die Sure unangetastet, obwohl schon die Haelfte sitzt. */
-    const einzeln = zaehleVerse(s.id);
-    const zusatz = HIFZ[s.id] ? '' : (einzeln ? ` · ${einzeln} von ${s.verses} auswendig` : '');
-    return `
-    <div class="surah-row" data-opensurah="${s.id}">
-      <div class="sr-num">${s.id}</div>
-      <div class="sr-mid"><div class="sr-ar">${s.ar}</div><div class="sr-name">${s.name} · ${s.verses} Verse${zusatz}</div></div>
-      <button class="hifz-check${HIFZ[s.id]?' on':''}" data-hifztoggle="${s.id}" aria-label="Ganze Sure als auswendig markieren">${icon('check')}</button>
-    </div>`; }).join('') || '<div class="empty-state">Keine Sure gefunden.</div>';
+  renderFavListe(!!q);
+  document.getElementById('surahList').innerHTML =
+    list.map(surahZeile).join('') || '<div class="empty-state">Keine Sure gefunden.</div>';
 }
 
 document.getElementById('surahSearch').addEventListener('input', (e)=> renderSurahList(e.target.value));
@@ -76,18 +113,41 @@ document.getElementById('btnQuranFullBack').addEventListener('click', ()=>{
   if (!document.getElementById('verseList').classList.contains('hidden')) renderSurahList(document.getElementById('surahSearch').value);
   else geheZurueck();
 });
-document.getElementById('surahList').addEventListener('click', (e)=>{
+/* Ein Klick auf eine Surenzeile - derselbe Ablauf in beiden Listen.
+   ⚠️ Eine Sure kann GLEICHZEITIG in beiden stehen (im Favoritenblock oben und
+   in der Gesamtliste unten). Ein Zustand darf deshalb nie nur an dem Knopf
+   nachgezogen werden, den man gerade getroffen hat - sonst zeigt dieselbe Sure
+   oben einen Haken und unten keinen. Darum immer ueber alle passenden Knoepfe. */
+function surahKlick(e){
+  const favBtn = e.target.closest('[data-favtoggle]');
+  if (favBtn){
+    const id = favBtn.dataset.favtoggle;
+    if (QURAN_FAV[id]) delete QURAN_FAV[id]; else QURAN_FAV[id] = 1;
+    saveQuranFav();
+    const an = istFavorit(id);
+    document.querySelectorAll(`[data-favtoggle="${id}"]`).forEach(b=>{
+      b.classList.toggle('on', an);
+      b.setAttribute('aria-pressed', String(an));
+    });
+    /* Nur den Favoritenblock neu bauen, nicht die Gesamtliste: die ist 114
+       Zeilen lang, und ein Neuaufbau wuerfe die Rollposition weg - genau dann,
+       wenn man gerade weit unten bei den kurzen Suren steht. */
+    renderFavListe(!!document.getElementById('surahSearch').value.trim());
+    return;
+  }
   const hifzBtn = e.target.closest('[data-hifztoggle]');
   if (hifzBtn){
     const id = hifzBtn.dataset.hifztoggle;
     HIFZ[id] = !HIFZ[id];
     saveHifz();
-    hifzBtn.classList.toggle('on', !!HIFZ[id]);
+    document.querySelectorAll(`[data-hifztoggle="${id}"]`).forEach(b=>b.classList.toggle('on', !!HIFZ[id]));
     return;
   }
   const row = e.target.closest('[data-opensurah]');
   if (row) openSurah(Number(row.dataset.opensurah));
-});
+}
+document.getElementById('surahList').addEventListener('click', surahKlick);
+document.getElementById('surahFavList').addEventListener('click', surahKlick);
 
 /* Der Korantext (2,3 MB) wird NICHT beim App-Start geladen, sondern erst wenn
    der Quran-Leser das erste Mal geoeffnet wird. Danach liegt er im Speicher und
@@ -112,6 +172,9 @@ async function openSurah(id){
   document.getElementById('quranFullIntro').classList.add('hidden');
   document.getElementById('surahSearch').classList.add('hidden');
   document.getElementById('surahList').classList.add('hidden');
+  /* Der Favoritenblock gehoert zur Surenliste und muss mitverschwinden - sonst
+     steht er ueber den Versen der geoeffneten Sure. */
+  document.getElementById('surahFavBlock').classList.add('hidden');
   const vList = document.getElementById('verseList');
   vList.classList.remove('hidden');
 

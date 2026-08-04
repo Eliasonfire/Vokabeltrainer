@@ -1451,6 +1451,28 @@ main{
 .hifz-check.on{background:var(--green);border-color:var(--green);color:#04241a;transform:scale(1.04);}
 .hifz-check:disabled{opacity:.45;cursor:default;}
 .hifz-check:disabled:active{transform:none;}
+/* Favoriten ganz oben. Elias am 04.08.2026: die kurzen Suren, die er gerade
+   braucht, stehen im Quran hinten — er musste jedes Mal durch 114 Zeilen
+   scrollen. */
+.surah-fav{margin-bottom:var(--sp-5);}
+.surah-fav-kopf{
+  font-size:var(--fs-xs);font-weight:800;color:var(--text-dim);
+  text-transform:uppercase;letter-spacing:.08em;margin-bottom:var(--sp-2);
+}
+.sr-knoepfe{display:flex;align-items:center;gap:var(--sp-2);flex-shrink:0;}
+/* Der Stern ist rot, nicht grün: Grün heißt in dieser Liste „auswendig", und
+   zwei grüne Zeichen nebeneinander wären nicht auseinanderzuhalten. Den Zustand
+   trägt die Füllung, nicht die Farbe allein — ein bloß andersfarbiger Umriss
+   ist am Handy im Dunkeln kaum zu unterscheiden. */
+.fav-stern{
+  width:28px;height:28px;border:none;background:none;padding:0;
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  font-size:1.15rem;color:var(--text-faint);cursor:pointer;
+  transition:color var(--dur-2) ease, transform var(--dur-1) var(--ease-spring);
+}
+.fav-stern:active{transform:scale(.85);}
+.fav-stern.on{color:var(--red-bright);}
+.fav-stern.on .ic{fill:currentColor;}
 /* Hifz-Leiste ueber der Versliste: Stand und der Verdecken-Schalter. */
 /* Elias am 29.07.2026: "Die Funktion mit dem Verdecken finde ich sehr gut. Sie
    sollte jedoch dauerhaft zu sehen sein, weil man bei einer langen Sure, wenn
@@ -1719,6 +1741,7 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
   <symbol id="ic-right" viewBox="0 0 24 24"><path d="M9.5 5.5 16 12l-6.5 6.5"/></symbol>
   <symbol id="ic-flame" viewBox="0 0 24 24"><path d="M12 3c-.7 3-2.7 4.1-4.1 6.1A6.4 6.4 0 0 0 6.6 13a5.4 5.4 0 0 0 10.8 0c0-4-3-6.6-5.4-10Z"/><path d="M12 20.4a2.7 2.7 0 0 0 2.7-2.7c0-1.5-1.3-2.6-2.7-4.1-1.4 1.5-2.7 2.6-2.7 4.1a2.7 2.7 0 0 0 2.7 2.7Z"/></symbol>
   <symbol id="ic-plus" viewBox="0 0 24 24"><path d="M12 5.5v13"/><path d="M5.5 12h13"/></symbol>
+  <symbol id="ic-stern" viewBox="0 0 24 24"><path d="m12 3.6 2.6 5.3 5.85.85-4.23 4.12 1 5.83L12 16.98l-5.22 2.75 1-5.83L3.55 9.75 9.4 8.9z"/></symbol>
   <symbol id="ic-trash" viewBox="0 0 24 24"><path d="M4.5 6.5h15"/><path d="M9.5 6.5V5a1.5 1.5 0 0 1 1.5-1.5h2A1.5 1.5 0 0 1 14.5 5v1.5"/><path d="M6.5 6.5 7.4 19a1.5 1.5 0 0 0 1.5 1.4h6.2a1.5 1.5 0 0 0 1.5-1.4l.9-12.5"/></symbol>
   <symbol id="ic-warning" viewBox="0 0 24 24"><path d="M10.3 4.3 2.9 17a2 2 0 0 0 1.7 3h14.8a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0Z"/><path d="M12 9.5v4"/><path d="M12 17h.01"/></symbol>
   <symbol id="ic-note" viewBox="0 0 24 24"><path d="M4.5 5.5A2 2 0 0 1 6.5 3.5h7L19.5 9.5v9a2 2 0 0 1-2 2h-11a2 2 0 0 1-2-2Z"/><path d="M13.5 3.5v6h6"/></symbol>
@@ -2087,6 +2110,13 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
       </div>
       <p class="quran-source" id="quranFullIntro">Vollständiger Quran, offline in der App (Uthmani-Arabisch + Bubenheim &amp; Elyas Deutsch). Hake einzelne Verse ab, wenn du sie auswendig kannst — oder gleich die ganze Sure.</p>
       <input type="text" id="surahSearch" class="select-input select-full" placeholder="Sure suchen (Name oder Nummer)…">
+      <!-- Favoriten stehen ÜBER der vollständigen Liste. Elias' Wunsch vom
+           04.08.2026: die kurzen Suren, die er gerade braucht, stehen im Quran
+           ganz hinten — er musste jedes Mal durch 114 Zeilen scrollen. -->
+      <div class="surah-fav hidden" id="surahFavBlock">
+        <div class="surah-fav-kopf">Favoriten</div>
+        <div class="word-list" id="surahFavList"></div>
+      </div>
       <div class="word-list stagger" id="surahList"></div>
       <div class="hifz-bar hidden" id="hifzBar">
         <div class="hifz-stand" id="hifzStand"></div>
