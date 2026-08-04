@@ -239,6 +239,10 @@ function renderFavListe(suchend){
 
 function renderSurahList(filter){
   const q = (filter||'').trim().toLowerCase();
+  /* Vor dem Aufbau festhalten, ob wir aus einer offenen Sure kommen - nur dann
+     wird der Rollstand wiederhergestellt. Beim Tippen in der Suche steht
+     OFFENE_SURE ohnehin auf null, dort waere ein Sprung falsch. */
+  const kamAusSure = OFFENE_SURE !== null;
   const list = SURAH_DATA.filter(s => !q || s.name.toLowerCase().includes(q) || s.ar.includes(q) || String(s.id)===q);
   document.getElementById('quranFullTitle').textContent = 'Quran lesen';
   document.getElementById('quranFullIntro').classList.remove('hidden');
@@ -257,6 +261,9 @@ function renderSurahList(filter){
   renderFavListe(!!q);
   document.getElementById('surahList').innerHTML =
     list.map(surahZeile).join('') || '<div class="empty-state">Keine Sure gefunden.</div>';
+  /* Nach dem Aufbau, sonst ist der Kasten noch zu kurz und der Wert wird
+     auf die alte Hoehe beschnitten. */
+  if (kamAusSure && !q) stelleListenRollstandHer();
 }
 
 /* ---------- Lesemodus und Schriftgroessen ----------
@@ -359,6 +366,35 @@ document.getElementById('quranAnsicht').addEventListener('click', (e)=>{
      { tiefe }                -> Surenliste
      { tiefe, suche:true }    -> Suche laeuft
      { tiefe, sure:<id> }     -> eine Sure ist offen */
+/* ---------- Rollstand der Surenliste (Elias, 04.08.2026 abends) ----------
+
+   "wenn ich jetzt aus der sura raus gehe dann lande ich zwar bei der sura
+   liste, jedoch ganz oben am anfang. ich will eigentlich da wieder raus kommen
+   wo ich davor war."
+
+   Die Liste wird beim Zurueckgehen neu gebaut, und ein neu gebauter Kasten
+   steht oben. Bei 114 Zeilen heisst das: wer eine der kurzen Suren hinten
+   angesehen hat, rollt jedes Mal wieder den ganzen Weg.
+
+   ⚠️ `scrollTo({behavior:'instant'})` und nicht `scrollTop = x`: #main traegt
+   `scroll-behavior:smooth`, und das gilt auch fuer eine Zuweisung an
+   scrollTop - die Liste faehrt dann sichtbar von oben nach unten, statt
+   einfach dort zu stehen. Derselbe Fallstrick wie beim Ayah-Sprung. */
+let LISTEN_ROLLSTAND = 0;
+function merkeListenRollstand(){
+  /* Nur wenn die LISTE zu sehen ist. Beim Blaettern von Sure zu Sure steht in
+     scrollTop die Stelle im Verstext - die hier zu merken hiesse, die Liste
+     spaeter an einer voellig fremden Stelle aufzuschlagen. */
+  if (OFFENE_SURE !== null) return;
+  const kasten = document.getElementById('main');
+  if (kasten) LISTEN_ROLLSTAND = kasten.scrollTop;
+}
+function stelleListenRollstandHer(){
+  const kasten = document.getElementById('main');
+  if (!kasten || !LISTEN_ROLLSTAND) return;
+  kasten.scrollTo({ top: LISTEN_ROLLSTAND, behavior: 'instant' });
+}
+
 function quranEbeneMerken(zusatz){
   const st = history.state || {};
   const tiefe = typeof st.tiefe === 'number' ? st.tiefe : 0;
@@ -448,6 +484,9 @@ function ladeQuranText(){
 async function openSurah(id, opt){
   opt = opt || {};
   const surah = SURAH_DATA.find(s=>s.id===id);
+  /* VOR dem Setzen von OFFENE_SURE: danach wuesste merkeListenRollstand nicht
+     mehr, dass gerade noch die Liste zu sehen war. */
+  merkeListenRollstand();
   OFFENE_SURE = id;
   /* Eine geoeffnete Sure ist eine eigene Ebene. Ohne diesen Eintrag springt die
      Zurueck-Taste ueber die ganze Surenliste hinweg. `ausHistorie` kommt vom
@@ -708,9 +747,12 @@ document.getElementById('suraNav').addEventListener('click', (e)=>{
   if (!knopf) return;
   openSurah(Number(knopf.dataset.suranav));
   /* Ohne das stuende man in der neuen Sure sofort wieder ganz unten - die
-     Rollhoehe bleibt beim Austausch des Inhalts erhalten. */
+     Rollhoehe bleibt beim Austausch des Inhalts erhalten.
+     ⚠️ `scrollTo({behavior:'instant'})` statt `scrollTop = 0`: #main traegt
+     scroll-behavior:smooth, und das gilt auch fuer die Zuweisung. Vorher fuhr
+     die neue Sure sichtbar von unten nach oben. */
   const kasten = document.getElementById('main');
-  if (kasten) kasten.scrollTop = 0;
+  if (kasten) kasten.scrollTo({ top: 0, behavior: 'instant' });
 });
 
 /* Weiterlesen: Sure oeffnen und zur gemerkten Ayah fahren. Der Sprung muss
