@@ -141,6 +141,14 @@ function juzText(s){
 /* Eine Zeile der Surenliste. Als eigene Funktion, damit Favoritenblock und
    Gesamtliste garantiert gleich aussehen - zwei Vorlagen waeren zwei Stellen,
    die auseinanderlaufen koennen. */
+/* Der angezeigte Surenname. `arTaschkil` seit 04.08.2026 (Elias' Punkt 5),
+   erzeugt von werkzeuge/surennamen-holen.mjs aus api.alquran.cloud und gegen
+   quran-text.js gestuetzt. Das blanke `ar` bleibt daneben stehen und bleibt
+   auch die Grundlage der SUCHE: wer "البقرة" ohne Vokalzeichen eintippt, muss
+   die Sure finden, und ein Vergleich gegen die vokalisierte Fassung faende
+   nichts. Faellt das Feld einmal aus, zeigt die App weiter das blanke `ar`. */
+function surenTitel(s){ return s.arTaschkil || s.ar; }
+
 function surahZeile(s){
   /* Wer einzelne Verse abgehakt hat, soll das in der Uebersicht sehen -
      sonst wirkt die Sure unangetastet, obwohl schon die Haelfte sitzt. */
@@ -150,7 +158,7 @@ function surahZeile(s){
   return `
     <div class="surah-row" data-opensurah="${s.id}">
       <div class="sr-num">${s.id}</div>
-      <div class="sr-mid"><div class="sr-ar">${s.ar}</div><div class="sr-name">${s.name} · ${s.verses} Verse${zusatz}</div></div>
+      <div class="sr-mid"><div class="sr-ar">${surenTitel(s)}</div><div class="sr-name">${s.name} · ${s.verses} Verse${zusatz}</div></div>
       <div class="sr-juz">${juzText(s)}</div>
       <div class="sr-knoepfe">
         <button class="fav-stern${fav?' on':''}" data-favtoggle="${s.id}"
@@ -384,7 +392,13 @@ async function openSurah(id, opt){
      popstate-Handler - dort wird der Zustand wiederhergestellt, nicht neu
      betreten, sonst waechst die Historie bei jedem Zurueck weiter an. */
   if (!opt.ausHistorie) quranEbeneMerken({ sure:id });
-  document.getElementById('quranFullTitle').textContent = `${id}. ${surah.name}`;
+  /* Der Kopf der geoeffneten Sure traegt den arabischen Namen mit, nicht nur
+     die Umschrift — auch das gehoert zu Elias' Punkt 5. innerHTML statt
+     textContent ist noetig, weil der arabische Teil eigene Schrift und
+     Laufrichtung braucht; escapeHtml bleibt trotzdem drum, damit die Regel
+     "kein ungeprueftes innerHTML" nicht an einer Ausnahme aufweicht. */
+  document.getElementById('quranFullTitle').innerHTML =
+    `${id}. ${escapeHtml(surah.name)} <span class="qt-ar" lang="ar" dir="rtl">${escapeHtml(surenTitel(surah))}</span>`;
   document.getElementById('quranFullIntro').classList.add('hidden');
   document.getElementById('surahSearch').classList.add('hidden');
   document.getElementById('surahList').classList.add('hidden');
