@@ -1543,7 +1543,10 @@ main{
 .fav-stern{
   width:28px;height:28px;border:none;background:none;padding:0;
   flex-shrink:0;display:flex;align-items:center;justify-content:center;
-  font-size:1.15rem;color:var(--text-faint);cursor:pointer;
+  /* Elias am 04.08.2026: „einen Tick größer". 1.15 → 1.35rem, das Symbol wächst
+     damit von 18,4 auf 21,6 px. Die Knopffläche bleibt bei 28 px, also ändert
+     sich weder die Zeilenhöhe noch die Trefferfläche — nur das Sichtbare. */
+  font-size:1.35rem;color:var(--text-faint);cursor:pointer;
   transition:color var(--dur-2) ease, transform var(--dur-1) var(--ease-spring);
 }
 .fav-stern:active{transform:scale(.85);}
