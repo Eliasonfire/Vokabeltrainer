@@ -394,6 +394,18 @@ function stelleListenRollstandHer(){
   if (!kasten || !LISTEN_ROLLSTAND) return;
   kasten.scrollTo({ top: LISTEN_ROLLSTAND, behavior: 'instant' });
 }
+/* ⚠️ Gegenstueck, und es ist Pflicht, nicht Kosmetik. Der Rollkasten ist fuer
+   Liste und Verse DERSELBE - beim Umschalten bleibt sein scrollTop stehen. Wer
+   also weit unten in der Liste eine Sure oeffnet, steht sofort mitten in ihr
+   drin, weil der Verstext viel laenger ist als die Liste.
+   Das ist am 04.08.2026 abends genau so passiert: das Merken des Rollstands
+   hat den Fehler nicht erzeugt, aber sichtbar gemacht - vorher wurde der Wert
+   beim Wechsel meist auf eine kleine Zahl beschnitten. Elias: "dann komme ich
+   immer automatisch ans ende jeder sura". */
+function anDenAnfang(){
+  const kasten = document.getElementById('main');
+  if (kasten) kasten.scrollTo({ top: 0, behavior: 'instant' });
+}
 
 function quranEbeneMerken(zusatz){
   const st = history.state || {};
@@ -514,8 +526,12 @@ async function openSurah(id, opt){
      traefe ins Leere. renderVerses() zeigt sie gleich wieder. */
   document.getElementById('btnAyahListe').classList.add('hidden');
   document.getElementById('suraNav').classList.add('hidden');
+  /* Zweimal an den Anfang: einmal jetzt, damit schon der Ladeplatzhalter oben
+     steht, und einmal nach dem Aufbau - erst dann ist der Kasten so hoch, dass
+     ein alter Wert ueberhaupt stehenbleiben koennte. */
+  anDenAnfang();
 
-  if (VERSE_CACHE[id]){ renderVerses(id); return; }
+  if (VERSE_CACHE[id]){ renderVerses(id); anDenAnfang(); return; }
   /* Skeleton-Platzhalter in Versform statt nackter Textzeile - die Seite
      "steht" sofort, auch waehrend der Text noch laedt. */
   vList.innerHTML =
@@ -533,6 +549,7 @@ async function openSurah(id, opt){
       verse_key: `${id}:${i+1}`, text_uthmani: ar, translations: [{ text: de }]
     }));
     renderVerses(id);
+    anDenAnfang();
   }catch(err){
     /* Rueckfallebene: wenn die lokale Datei fehlt oder beschaedigt ist, holt die
        App die Verse wie frueher von quran.com. Dann braucht sie aber Internet. */
@@ -548,6 +565,7 @@ async function openSurah(id, opt){
       } while(page <= totalPages);
       VERSE_CACHE[id] = verses;
       renderVerses(id);
+      anDenAnfang();
     }catch(err2){
       vList.innerHTML = `<div class="verse-loading">Verse konnten nicht geladen werden.<br>${err2.message}</div>`;
     }
@@ -745,14 +763,11 @@ function renderSuraNav(id){
 document.getElementById('suraNav').addEventListener('click', (e)=>{
   const knopf = e.target.closest('[data-suranav]');
   if (!knopf) return;
+  /* Hier stand bis zum 04.08.2026 abends ein eigenes Zuruecksetzen der
+     Rollhoehe. Es ist weg, weil openSurah das jetzt selbst tut - und zwar auf
+     ALLEN Wegen, nicht nur auf diesem einen. Genau die fehlende Abdeckung war
+     der Fehler: aus der Liste heraus geoeffnet, blieb die Rollhoehe stehen. */
   openSurah(Number(knopf.dataset.suranav));
-  /* Ohne das stuende man in der neuen Sure sofort wieder ganz unten - die
-     Rollhoehe bleibt beim Austausch des Inhalts erhalten.
-     ⚠️ `scrollTo({behavior:'instant'})` statt `scrollTop = 0`: #main traegt
-     scroll-behavior:smooth, und das gilt auch fuer die Zuweisung. Vorher fuhr
-     die neue Sure sichtbar von unten nach oben. */
-  const kasten = document.getElementById('main');
-  if (kasten) kasten.scrollTo({ top: 0, behavior: 'instant' });
 });
 
 /* Weiterlesen: Sure oeffnen und zur gemerkten Ayah fahren. Der Sprung muss
