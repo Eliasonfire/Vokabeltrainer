@@ -449,9 +449,26 @@ function merkeListenRollstand(){
   const kasten = document.getElementById('main');
   if (kasten) LISTEN_ROLLSTAND = kasten.scrollTop;
 }
+/* ⚠️ Hier stand `if (!kasten || !LISTEN_ROLLSTAND) return;` - und genau die
+   Null war der Fehler, den Elias am 04.08.2026 gemeldet hat: "wenn ich bei den
+   oberen suren rein gehe also so alle favorieten und die ersten zehn suren so.
+   wenn ich da raus gehe aus der sura dann gelange ich zurück zu ungefähr der
+   15ten sura obwohl ich eigentlich in der liste davor ganz oben war."
+
+   Rollstand 0 ist ein GUELTIGER Stand - "ganz oben" -, aber `!0` ist wahr, also
+   wurde ausgerechnet dann nicht zurueckgesprungen. Und weil Liste und Verstext
+   sich denselben Rollkasten teilen, blieb dann die Stelle stehen, an der man im
+   Verstext war: gemessen im Browser (375x812) 471 px statt 0, also mitten in der
+   Liste bei Sure 3 statt bei Sure 1.
+
+   Das erklaert auch, warum es "irgendwie nur manchmal" auftrat: bei einem
+   Rollstand ungleich null greift der Sprung, gemessen 4000 -> 4000 (Sure 112 aus
+   der Liste bei 4000 geoeffnet, im Verstext ans Ende gerollt, zurueck). Kaputt
+   war ausschliesslich der Weg von ganz oben - also Favoriten und die ersten
+   Suren, genau die, die er nennt. */
 function stelleListenRollstandHer(){
   const kasten = document.getElementById('main');
-  if (!kasten || !LISTEN_ROLLSTAND) return;
+  if (!kasten) return;
   kasten.scrollTo({ top: LISTEN_ROLLSTAND, behavior: 'instant' });
 }
 /* ⚠️ Gegenstueck, und es ist Pflicht, nicht Kosmetik. Der Rollkasten ist fuer
