@@ -1923,8 +1923,21 @@ main{
 /* =====================================================================
    SCROLLBALKEN
    ===================================================================== */
-main::-webkit-scrollbar,.pool-words::-webkit-scrollbar,.qfp-list::-webkit-scrollbar{width:5px;}
-main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-webkit-scrollbar-thumb{background:var(--surface-4);border-radius:var(--r-full);}
+/* Elias am 04.08.2026: „der regler für die liste rechts an der seite ist
+   manchmal etwas fehlerhaft."
+   Nachgemessen an der Surenliste: sichtbarer Anteil 3,8 % von 10967 px, der
+   Daumen war damit **16 px hoch und 5 px breit** — und ein Pixel Daumenweg
+   entsprach **26 px Rollweg**, also einem Drittel einer Zeile. Das ist kein
+   Wackeln, sondern eine Bedienfläche weit unter jeder Fingerbreite: schon ein
+   Verrutschen um einen Pixel verschiebt die Liste sichtbar.
+   Deshalb 8 statt 5 px breit und eine Mindesthöhe von 44 px — die übliche
+   Größe für etwas, das mit dem Finger getroffen werden soll. Der Rollweg je
+   Daumenpixel ändert sich dadurch kaum (26 → 28), die Trefferfläche aber um
+   das Viereinhalbfache. */
+main::-webkit-scrollbar,.pool-words::-webkit-scrollbar,.qfp-list::-webkit-scrollbar{width:8px;}
+main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-webkit-scrollbar-thumb{
+  background:var(--surface-4);border-radius:var(--r-full);min-height:44px;
+}
 
 /* =====================================================================
    TABLET / DESKTOP
