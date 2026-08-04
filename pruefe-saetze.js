@@ -70,6 +70,59 @@ const quellen = [
     saetze: LEHRBUCH_SAETZE.map(s=>({ id:s.id, ar:s.sentAr, de:s.sentDe, seite:s.seite })) }
 ];
 
+/* ---------- Satzlaenge (Elias' Punkt 16 vom 04.08.2026) ----------
+ *
+ * "Die Beispiel Saetze sollen relativ kurz gehalten sein."
+ *
+ * "Kurz" braucht einen Massstab, und der wird hier NICHT erfunden: die
+ * Kontrollgruppe aus dem Lehrwerk liefert ihn. Das sind belegte Saetze aus dem
+ * Buch, mit dem Elias lernt - laenger als die duerfen die verfassten nicht
+ * sein, kuerzer gern.
+ *
+ * Gemessen am 04.08.2026, bevor irgendetwas geaendert wurde:
+ *
+ *   verfasst    155 Saetze   Median 4   Mittel 3,7   max 6
+ *   Lehrbuch     27 Saetze   Median 5   Mittel 4,9   max 8
+ *
+ * Die verfassten Saetze waren also bereits KUERZER als die des Lehrwerks, in
+ * jedem Kennwert. Kein einziger lag ueber dem laengsten Buchsatz. Deshalb wurde
+ * kein Satz umgeschrieben - es gab nichts zu kuerzen, und Elias hatte die 155
+ * Saetze am 29.07.2026 bewusst behalten. Was fehlte, war die Zusicherung, dass
+ * es so bleibt. Genau die steht jetzt hier.
+ *
+ * Die Regelerklaerungen in Metasprache («…») zaehlen nicht mit: sie erklaeren
+ * eine Regel und duerfen dafuer laenger sein. */
+function wortzahl(satz){ return String(satz || '').trim().split(/\s+/).filter(Boolean).length; }
+function kennwerte(saetze){
+  const n = saetze.map(wortzahl).sort((a, b) => a - b);
+  if (!n.length) return null;
+  return { anzahl:n.length, min:n[0], median:n[Math.floor(n.length/2)],
+           mittel:(n.reduce((a,b)=>a+b,0)/n.length), max:n[n.length-1] };
+}
+
+console.log('\n=== Satzlaenge (Woerter) ===');
+const eigeneSaetze = VOCAB_DATA.filter(v=>v.sentAr && !istMetasprache(v.sentAr)).map(v=>v.sentAr);
+const buchSaetze   = LEHRBUCH_SAETZE.map(s=>s.sentAr);
+const kEigen = kennwerte(eigeneSaetze), kBuch = kennwerte(buchSaetze);
+const zeile = (name, k) => console.log(
+  `  ${name.padEnd(34)} n=${String(k.anzahl).padStart(4)}   Median ${k.median}   ` +
+  `Mittel ${k.mittel.toFixed(1)}   max ${k.max}`);
+zeile('verfasst (vocab-data.js)', kEigen);
+zeile('Lehrwerk (belegt, Massstab)', kBuch);
+
+const zuLang = VOCAB_DATA.filter(v =>
+  v.sentAr && !istMetasprache(v.sentAr) && wortzahl(v.sentAr) > kBuch.max);
+if (zuLang.length){
+  console.log(`\n  ⚠ ${zuLang.length} verfasste(r) Satz/Saetze laenger als der laengste Buchsatz (${kBuch.max} Woerter):`);
+  zuLang.forEach(v => console.log(`     ${v.id}  ${wortzahl(v.sentAr)} Woerter  ${v.sentAr}`));
+  console.log('  Kuerzen - oder begruenden, warum dieser Satz laenger sein muss.');
+} else {
+  console.log(`\n  ok  Kein verfasster Satz laenger als der laengste Buchsatz (${kBuch.max} Woerter).`);
+}
+if (kEigen.median > kBuch.median){
+  console.log(`  ⚠ Der Median der verfassten Saetze (${kEigen.median}) liegt ueber dem des Lehrwerks (${kBuch.median}).`);
+}
+
 for (const q of quellen){
   console.log(`\n=== ${q.name} ===`);
   let geprueft = 0, mitFehler = 0, unklar = 0;
