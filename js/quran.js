@@ -290,7 +290,12 @@ function renderSurahList(filter){
    Punktwert. Grund: line-height ist in em angegeben; ein Faktor laesst den
    Zeilenabstand mitwachsen, ein fester Wert wuerde arabische Zeilen mit
    Vokalzeichen uebereinanderschieben. */
-const QURAN_MIN = 70, QURAN_MAX = 200, QURAN_SCHRITT = 10;
+/* Obergrenze am 04.08.2026 abends von 200 auf 300 % gesetzt - Elias: "ich will
+   bei den einstellungen die option auch haben auf 300% zu gehen bei den
+   beiden", also fuer Arabisch UND Deutsch. Die Schrittweite bleibt bei 10 %;
+   von 100 auf 300 sind das 20 Tipper, aber ein groeberer Schritt naehme unten
+   herum die feine Einstellung weg, die er beim Lesen eher braucht. */
+const QURAN_MIN = 70, QURAN_MAX = 300, QURAN_SCHRITT = 10;
 
 function quranAnsicht(){
   return {
@@ -325,14 +330,47 @@ function wendeQuranAnsichtAn(){
   });
 }
 
-/* Das Menue klappt OBERHALB der Liste auf und schiebt sie sonst nach unten -
-   dieselbe Ursache wie beim Favoriten-Stern, siehe `ohneSprung`. */
+/* Der Kasten haengt am Fenster, nicht in der Seite - siehe .quran-ansicht in
+   index.html. Deshalb braucht er beim Oeffnen seine Lage: unter die Kopfzeile,
+   ueber die Breite der Inhaltsspalte. Beides wird GEMESSEN, weil die Kopfzeile
+   je nach Schriftgroesse unterschiedlich hoch ist und die Spalte auf dem Handy
+   randbreit, auf dem Desktop 600 px breit ist.
+   `ohneSprung` ist hier nicht mehr noetig: ein Kasten am Fenster nimmt der
+   Seite keine Hoehe weg, also kann auch nichts mehr rutschen. */
+function lageQuranAnsicht(){
+  const feld = document.getElementById('quranAnsicht');
+  const kopf = document.querySelector('#screen-quranfull .screen-header');
+  const spalte = document.getElementById('screen-quranfull');
+  if (!feld || !kopf || !spalte) return;
+  const k = kopf.getBoundingClientRect(), s = spalte.getBoundingClientRect();
+  feld.style.top = Math.round(k.bottom) + 'px';
+  feld.style.left = Math.round(s.left) + 'px';
+  feld.style.width = Math.round(s.width) + 'px';
+}
+function schliesseQuranAnsicht(){
+  const feld = document.getElementById('quranAnsicht');
+  if (feld.classList.contains('hidden')) return;
+  feld.classList.add('hidden');
+  document.getElementById('btnQuranAnsicht').setAttribute('aria-expanded', 'false');
+  document.removeEventListener('pointerdown', ausserhalbGetippt, true);
+}
+/* Tippen daneben schliesst. In der Erfassungsphase, damit ein Tipp auf einen
+   Vers nicht erst den Vers trifft und dann den Kasten stehen laesst. */
+function ausserhalbGetippt(e){
+  if (e.target.closest('#quranAnsicht') || e.target.closest('#btnQuranAnsicht')) return;
+  schliesseQuranAnsicht();
+}
 document.getElementById('btnQuranAnsicht').addEventListener('click', ()=>{
   const feld = document.getElementById('quranAnsicht');
-  let auf;
-  ohneSprung(()=>{ auf = feld.classList.toggle('hidden'); });
-  document.getElementById('btnQuranAnsicht').setAttribute('aria-expanded', String(!auf));
-  if (!auf) wendeQuranAnsichtAn();
+  if (!feld.classList.contains('hidden')){ schliesseQuranAnsicht(); return; }
+  lageQuranAnsicht();
+  feld.classList.remove('hidden');
+  document.getElementById('btnQuranAnsicht').setAttribute('aria-expanded', 'true');
+  wendeQuranAnsichtAn();
+  document.addEventListener('pointerdown', ausserhalbGetippt, true);
+});
+window.addEventListener('resize', ()=>{
+  if (!document.getElementById('quranAnsicht').classList.contains('hidden')) lageQuranAnsicht();
 });
 
 document.getElementById('quranModi').addEventListener('click', (e)=>{
