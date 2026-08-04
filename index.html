@@ -1628,11 +1628,20 @@ main{
 }
 .ap-header{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);}
 .ap-title{font-weight:700;font-size:var(--fs-lg);}
-/* direction:rtl dreht nur die sichtbare Reihenfolge um — im Markup bleibt
-   Ayah 1 das erste Kind. Dieselbe Technik wie bei .sura-nav; wichtig, weil
-   sonst die Tastatur-Reihenfolge und der Aufbau der Liste auseinanderlaufen. */
+/* ⚠️ Diese Liste lief zwischenzeitlich von RECHTS nach links (`direction:rtl`),
+   weil Elias „genau andersherum" gewünscht hatte. Nachdem er es gesehen hat,
+   war es doch falsch: „da stehen die zahlen auf deutsch, sind aber von rechts
+   nach links, sieht etwas komisch aus."
+   Er hat recht, und der Grund ist benennbar: die Ziffern sind westlich
+   (1, 2, 3…), nicht ostarabisch (١، ٢، ٣). Westliche Ziffern liest man von
+   links, also muss auch ihre Reihenfolge von links laufen — die Laufrichtung
+   gehört zur Schrift, die dasteht, nicht zur Sprache des Textes drumherum.
+   Bliebe es bei rtl, stünde in jeder Zeile die höhere Zahl links von der
+   niedrigeren.
+   ⚠️ NICHT mit umgestellt: `.sura-nav`. Dort steht „Nächste" links, weil Elias
+   das ausdrücklich so verlangt hat („Der 'naechste' bottun sollte links
+   sein") — das sind Knöpfe mit Text, keine Zahlenreihe. */
 .ap-grid{
-  direction:rtl;
   display:grid;grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:var(--sp-2);
   overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
   padding-inline-end:var(--sp-1);

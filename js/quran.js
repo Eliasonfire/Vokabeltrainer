@@ -577,9 +577,11 @@ function aktualisiereHifzLeiste(id, surah){
    andere lag hinter einer langen Wischbewegung - und die Leiste nahm dauerhaft
    Hoehe weg fuer etwas, das man selten braucht.
 
-   Jetzt: ein Knopf im Kopf, der eine Liste aufklappt. Senkrecht rollbar, und
-   die Nummern laufen von rechts nach links wie die Schrift (direction:rtl an
-   .ap-grid - Reihenfolge im Markup bleibt 1..n).
+   Jetzt: ein Knopf im Kopf, der eine Liste aufklappt, senkrecht rollbar.
+   Die Nummern laufen von LINKS nach rechts. Sie liefen kurz andersherum, weil
+   Elias "genau andersherum" gewuenscht hatte - nachdem er es gesehen hatte,
+   war es doch falsch: die Ziffern sind westlich, und westliche Ziffern liest
+   man von links. Begruendung steht bei .ap-grid in index.html.
 
    Bewusst KEINE Beobachtung des Rollens, die den gerade sichtbaren Vers
    mitfuehrt: das haette bei jedem Fingerstrich Arbeit gekostet. Die Markierung
