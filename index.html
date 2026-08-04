@@ -1465,6 +1465,13 @@ main{
 .surah-row .sr-mid{flex:1;min-width:0;}
 .surah-row .sr-ar{font-family:var(--font-ar);direction:rtl;font-size:1.3rem;color:#fff;line-height:1.7;}
 .surah-row .sr-name{font-size:var(--fs-sm);color:var(--text-dim);}
+/* Der Juz steht rechts neben dem Namen, vor den Knöpfen. Eigene Spalte statt
+   angehängt an die Namenszeile: die trägt bei angefangenen Suren schon
+   „12 von 286 auswendig" und würde auf dem Handy sonst umbrechen. */
+.surah-row .sr-juz{
+  flex-shrink:0;font-size:var(--fs-xs);font-weight:700;color:var(--text-faint);
+  font-variant-numeric:tabular-nums;white-space:nowrap;letter-spacing:.02em;
+}
 .hifz-check{
   width:28px;height:28px;border-radius:var(--r-1);border:2px solid var(--border-strong);
   background:var(--surface-3);flex-shrink:0;display:flex;align-items:center;justify-content:center;
