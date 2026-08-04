@@ -315,6 +315,13 @@ function wendeQuranAnsichtAn(){
   liste.classList.toggle('nur-ar', a.modus === 'ar');
   liste.classList.toggle('nur-de', a.modus === 'de');
 
+  /* ⚠️ Die Basmala-Ligatur muss nach JEDER Groessenaenderung neu eingepasst
+     werden, nicht nur beim Aufbau der Sure. Bei 300 % lief sie sonst ueber den
+     Rand hinaus - nachgemessen, nachdem die Obergrenze auf 300 stand.
+     Sie waechst dadurch nur bis zur Bildschirmbreite mit; breiter geht nicht,
+     weil ein einzelnes Zeichen nicht umbrechen kann. */
+  passeBasmalaAn();
+
   document.querySelectorAll('[data-quranmodus]').forEach(b =>
     b.classList.toggle('active', b.dataset.quranmodus === a.modus));
   document.getElementById('qaWertAr').textContent = a.ar + ' %';
