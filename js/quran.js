@@ -103,6 +103,12 @@ let HIFZ_VERDECKT = false;
 
 const VERSE_CACHE = {};
 
+/* Welche Sure gerade offen ist. Steht hier als eigene Angabe, statt sie bei
+   Bedarf aus dem DOM zurueckzurechnen - genau diese Rueckrechnung war die
+   Ursache von Punkt 14 (siehe dort). `null`, solange die Surenliste zu sehen
+   ist. */
+let OFFENE_SURE = null;
+
 /* Favoriten-Suren. Elias am 04.08.2026: "Es waere gut wenn ich beim Quran lesen
    eine Favoriten Liste ueber der normalen Quran Liste haette. Dann muesste ich
    nicht immer ganz nach unten scrollen fuer die kleineren suren die fuer mich
@@ -177,6 +183,7 @@ function renderSurahList(filter){
   document.getElementById('hifzBar').classList.add('hidden');
   document.getElementById('ayahLeiste').classList.add('hidden');
   document.getElementById('suraNav').classList.add('hidden');
+  OFFENE_SURE = null;
   renderFavListe(!!q);
   document.getElementById('surahList').innerHTML =
     list.map(surahZeile).join('') || '<div class="empty-state">Keine Sure gefunden.</div>';
@@ -371,6 +378,7 @@ function ladeQuranText(){
 async function openSurah(id, opt){
   opt = opt || {};
   const surah = SURAH_DATA.find(s=>s.id===id);
+  OFFENE_SURE = id;
   /* Eine geoeffnete Sure ist eine eigene Ebene. Ohne diesen Eintrag springt die
      Zurueck-Taste ueber die ganze Surenliste hinweg. `ausHistorie` kommt vom
      popstate-Handler - dort wird der Zustand wiederhergestellt, nicht neu
@@ -635,9 +643,23 @@ document.getElementById('btnHifzVerdecken').addEventListener('click', ()=>{
     const text = karte.querySelector('.verse-ar');
     text.classList.toggle('verdeckt', HIFZ_VERDECKT && karte.classList.contains('auswendig'));
   });
-  const erste = document.querySelector('#verseList [data-versmerk]');
-  const id = erste ? Number(erste.dataset.versmerk.split(':')[0]) : null;
-  if (id) aktualisiereHifzLeiste(id, SURAH_DATA.find(s=>s.id===id));
+  /* Elias am 04.08.2026: "Das 'wieder aufdecken' Symbol wird nicht immer gezeigt
+     wenn man auf 'auswendig verbergen' drueckt. Oft kommt das 'wieder
+     aufdecken' gar nicht und da steht nur 'auswendig verbergen'. Nichts desto
+     trotz tut es seinen job."
+
+     Genau so sah der Fehler aus, und hier stand seine Ursache: die Surennummer
+     wurde aus dem ersten `[data-versmerk]` im DOM zurueckgerechnet. War die
+     ganze Sure abgehakt, trug KEIN Vers dieses Attribut - die Kaestchen waren
+     damals gesperrt. Also blieb `id` leer, `aktualisiereHifzLeiste` lief nicht,
+     und die Beschriftung blieb stehen. Verdeckt wurde trotzdem, weil das die
+     Schleife darueber erledigt - deshalb "tut es seinen job".
+
+     Punkt 13 hat die Sperre entfernt und damit auch diesen Fall repariert. Die
+     Rueckrechnung bleibt trotzdem falsch: sie macht die Beschriftung davon
+     abhaengig, wie die Verse gerade gebaut sind. Die offene Sure merkt sich die
+     App jetzt direkt. */
+  if (OFFENE_SURE) aktualisiereHifzLeiste(OFFENE_SURE, SURAH_DATA.find(s=>s.id===OFFENE_SURE));
 });
 
 
