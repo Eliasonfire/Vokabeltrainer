@@ -225,16 +225,126 @@ function openWordList(key){
     title = 'Vokabeln im Quran';
   } else { words=[]; title=''; }
 
+  AKTUELLE_LISTE = key;
+  BOX_AUSWAHL = new Set();
   document.getElementById('wordlistTitle').textContent = title;
+  /* escapeHtml auch hier. Bis zum 04.08.2026 stand `${w.ar}` unmaskiert im
+     innerHTML. Bei den Buchvokabeln faellt das nicht auf, aber eigene Vokabeln
+     tippt Elias selbst ein - ein '<' darin haette die Liste zerlegt. Im
+     Quran-Teil war derselbe Fehler am 30.07. schon behoben, hier nicht. */
   document.getElementById('wordList').innerHTML = words.map(w=>`
-    <div class="word-list-item">
-      <div><div class="wl-ar">${w.ar}</div><div class="wl-de">${w.de}</div></div>
+    <div class="word-list-item waehlbar" data-wordid="${escapeHtml(String(w.id))}">
+      <div><div class="wl-ar">${escapeHtml(w.ar)}</div><div class="wl-de">${escapeHtml(w.de)}</div></div>
       <span class="wl-box">Box ${PROGRESS[w.id]?PROGRESS[w.id].box:1}</span>
     </div>
   `).join('') || '<div class="empty-state">Keine Wörter in dieser Kategorie.</div>';
   document.getElementById('personalVocabAddForm').style.display = key==='chapter:personal' ? 'flex' : 'none';
+  zeichneBoxAuswahl();
   showScreen('wordlist');
 }
+
+/* ---------- Woerter in eine andere Leitner-Box verlegen ----------
+
+   Elias' Wunsch vom 04.08.2026: "Ich will Woerter aus den Boxen selbstaendig in
+   andere Boxen verlegen koennen."
+
+   Dieselbe Geste wie beim Einsortieren in eigene Kategorien: antippen,
+   markieren, unten das Ziel antippen. Bewusst KEIN Ziehen und Ablegen - die
+   ausfuehrliche Begruendung steht weiter unten bei KAT_AUSWAHL und gilt hier
+   unveraendert, denn die Wortliste rollt genauso.
+
+   ⚠️ Warum nextReview mitgesetzt werden MUSS: Die Box allein bestimmt nicht,
+   wann eine Karte wieder drankommt - das tut nextReview (siehe dueWords() in
+   kern.js). Ohne die zweite Zeile laege ein Wort in Box 5 und waere trotzdem
+   morgen wieder faellig; der Umzug waere dann nur ein anderes Etikett.
+   INTERVALS[1] ist 0, ein Wort zurueck in Box 1 ist also sofort wieder dran -
+   genau so ist "ich kann das doch nicht" gemeint. */
+let BOX_AUSWAHL = new Set();
+let AKTUELLE_LISTE = '';
+
+function boxAuswahlLeer(){
+  BOX_AUSWAHL = new Set();
+  zeichneBoxAuswahl();
+}
+
+function zeichneBoxAuswahl(){
+  document.querySelectorAll('#wordList .word-list-item').forEach(zeile =>
+    zeile.classList.toggle('gewaehlt', BOX_AUSWAHL.has(zeile.dataset.wordid)));
+
+  const leiste = document.getElementById('boxZielLeiste');
+  if (!leiste) return;
+  const n = BOX_AUSWAHL.size;
+  leiste.classList.toggle('hidden', n === 0);
+  /* Platz unter der Liste schaffen, solange die Leiste steht - sie liegt fest
+     ueber der Navigation und verdeckt sonst genau die Zeilen, die man gerade
+     markiert hat. */
+  const bildschirm = document.getElementById('screen-wordlist');
+  if (bildschirm) bildschirm.classList.toggle('leiste-offen', n > 0);
+  if (!n) return;
+
+  document.getElementById('boxAuswahlZahl').textContent =
+    n === 1 ? '1 Wort ausgewählt' : `${n} Wörter ausgewählt`;
+
+  /* Die Faelligkeit steht mit am Knopf. Ohne sie ist "Box 4" eine blosse
+     Nummer - mit "in 7 Tagen" sagt der Knopf, was er bewirkt. */
+  const tage = t => t === 0 ? 'sofort' : t === 1 ? 'morgen' : `in ${t} Tagen`;
+  document.getElementById('boxZiele').innerHTML =
+    [1,2,3,4,5].map(b =>
+      `<button class="kat-ziel" data-boxziel="${b}">Box ${b}<span class="box-ziel-tage"> · ${tage(INTERVALS[b])}</span></button>`
+    ).join('');
+}
+
+/* Ein Tipp auf eine Zeile: markieren oder Markierung wegnehmen. */
+document.getElementById('wordList').addEventListener('click', (e)=>{
+  const zeile = e.target.closest('.word-list-item');
+  if (!zeile || !zeile.dataset.wordid) return;
+  const id = zeile.dataset.wordid;
+  if (BOX_AUSWAHL.has(id)) BOX_AUSWAHL.delete(id); else BOX_AUSWAHL.add(id);
+  zeichneBoxAuswahl();
+});
+
+document.getElementById('boxZiele').addEventListener('click', (e)=>{
+  const knopf = e.target.closest('[data-boxziel]');
+  if (!knopf || !BOX_AUSWAHL.size) return;
+  const ziel = Number(knopf.dataset.boxziel);
+  let bewegt = 0, schonDrin = 0;
+
+  BOX_AUSWAHL.forEach(id => {
+    /* Ein Wort ohne Fortschrittseintrag gibt es (die Liste zeigt dann "Box 1"
+       als Anzeige). Beim Verlegen wird der Eintrag angelegt, sonst ginge der
+       Umzug ins Leere. */
+    if (!PROGRESS[id]) PROGRESS[id] = { box:1, nextReview: todayStr(0), correct:0, wrong:0 };
+    if (PROGRESS[id].box === ziel){ schonDrin++; return; }
+    PROGRESS[id].box = ziel;
+    PROGRESS[id].nextReview = todayStr(INTERVALS[ziel]);
+    bewegt++;
+  });
+  saveProgress();
+
+  /* Die Liste NICHT neu aufbauen - das setzt die Rollposition auf den Anfang
+     zurueck, und dann sucht man nach jedem Umzug die Stelle wieder. Stattdessen
+     nur die Etiketten nachziehen. Einzige Ausnahme: In einer Box-Liste gehoert
+     ein verlegtes Wort nicht mehr dazu, dort verschwindet die Zeile. */
+  const istBoxListe = AKTUELLE_LISTE.startsWith('box:');
+  BOX_AUSWAHL.forEach(id => {
+    const zeile = document.querySelector(`#wordList .word-list-item[data-wordid="${CSS.escape(id)}"]`);
+    if (!zeile) return;
+    if (istBoxListe && Number(AKTUELLE_LISTE.split(':')[1]) !== ziel){ zeile.remove(); return; }
+    const etikett = zeile.querySelector('.wl-box');
+    if (etikett) etikett.textContent = `Box ${ziel}`;
+  });
+
+  boxAuswahlLeer();
+  const teile = [];
+  if (bewegt)    teile.push(`${bewegt} Wort${bewegt===1?'':'e'} → Box ${ziel}`);
+  if (schonDrin) teile.push(`${schonDrin} lag${schonDrin===1?'':'en'} dort schon`);
+  toast(teile.join(' · '));
+  /* Die Startseite zeigt die Boxstaende - sonst stimmen sie nach einem Umzug
+     nicht mehr mit dem ueberein, was die Wortliste gerade gezeigt hat. */
+  if (typeof renderHome === 'function') renderHome();
+});
+
+document.getElementById('btnBoxAuswahlAus').addEventListener('click', boxAuswahlLeer);
 document.getElementById('btnWordlistBack').addEventListener('click', geheZurueck);
 document.getElementById('btnAddPersonalVocab').addEventListener('click', ()=>{
   const ar = document.getElementById('pvAr').value.trim();
