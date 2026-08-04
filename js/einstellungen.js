@@ -67,7 +67,12 @@ document.getElementById('voiceSelect').addEventListener('change', (e)=>{
    blaehte die Sicherung von wenigen Kilobyte auf ueber ein Megabyte auf. */
 const SICHERUNGS_SCHLUESSEL = [
   'vt_progress', 'vt_notes', 'vt_settings', 'vt_streak',
-  'vt_personalVocab', 'vt_customCats', 'vt_hifz', 'vt_hifzVerse'
+  'vt_personalVocab', 'vt_customCats', 'vt_hifz', 'vt_hifzVerse',
+  /* Beide am 04.08.2026 nachgetragen. `vt_quranFav` (Favoriten-Suren) war seit
+     seiner Einfuehrung am selben Tag nicht dabei - aufgefallen erst, als
+     `vt_lesestand` dazukam und die Liste noch einmal gelesen wurde. Wer eine
+     Sicherung einspielte, verlor die Favoriten lautlos. */
+  'vt_quranFav', 'vt_lesestand'
 ];
 
 function baueSicherung(){

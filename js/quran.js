@@ -109,6 +109,63 @@ const VERSE_CACHE = {};
    ist. */
 let OFFENE_SURE = null;
 
+/* ---------- Lesefortschritt (Elias' Punkt 10 vom 04.08.2026) ----------
+
+   Er war bei diesem Punkt selbst unsicher ("idk, bin mir da noch unsicher"),
+   deshalb die kleinste Fassung, die wirklich etwas spart: eine Zeile ueber der
+   Surenliste, die dorthin zurueckfuehrt, wo er aufgehoert hat.
+
+   ⚠️ Ausdruecklich NICHT gebaut, weil es ohne seine Vorgabe geraten waere:
+   ein Prozentbalken je Sure, eine "gelesen"-Markierung in der Liste, ein
+   Tagesziel. Gelesen und auswendig sind zwei verschiedene Aussagen - die
+   gruene Farbe gehoert schon Hifz, und eine zweite Bedeutung daneben haette
+   beide unklar gemacht.
+
+   Die Stelle wird ueber einen IntersectionObserver mitgefuehrt, nicht ueber
+   einen Roll-Handler: bei Al-Baqarah muesste der bei jedem Fingerstrich 286
+   Rechtecke ausmessen. Der Beobachter meldet nur Aenderungen, und die Zahl
+   steht danach ohne Rechnen bereit. Geschrieben wird verzoegert - sonst
+   entstuende bei jedem Rollen ein localStorage-Schreibvorgang. */
+let LESESTAND = LS.get('vt_lesestand', null);
+let LESE_BEOBACHTER = null;
+let LESE_SICHTBAR = new Set();
+let LESE_SCHREIBUHR = null;
+
+function merkeLesestand(sure, vers){
+  if (LESESTAND && LESESTAND.sure === sure && LESESTAND.vers === vers) return;
+  LESESTAND = { sure, vers };
+  clearTimeout(LESE_SCHREIBUHR);
+  LESE_SCHREIBUHR = setTimeout(() => LS.set('vt_lesestand', LESESTAND), 800);
+}
+
+function beobachteLesestand(id){
+  if (LESE_BEOBACHTER) LESE_BEOBACHTER.disconnect();
+  LESE_SICHTBAR = new Set();
+  const verse = document.querySelectorAll('#verseList .verse-item');
+  if (!verse.length) return;
+  LESE_BEOBACHTER = new IntersectionObserver(eintraege => {
+    for (const e of eintraege){
+      const nr = Number(e.target.dataset.versnr);
+      if (e.isIntersecting) LESE_SICHTBAR.add(nr); else LESE_SICHTBAR.delete(nr);
+    }
+    if (!LESE_SICHTBAR.size) return;
+    /* Der oberste sichtbare Vers ist die Stelle, an der man steht - nicht der
+       unterste: wer wieder einsteigt, will den Vers noch einmal sehen, mit dem
+       er aufgehoert hat, und nicht den ersten, den er noch nicht kennt. */
+    merkeLesestand(id, Math.min(...LESE_SICHTBAR));
+  }, { rootMargin: '-64px 0px -60% 0px' });
+  verse.forEach(v => LESE_BEOBACHTER.observe(v));
+}
+
+function renderWeiterlesen(){
+  const knopf = document.getElementById('weiterlesen');
+  const s = LESESTAND && SURAH_DATA.find(x => x.id === LESESTAND.sure);
+  if (!s){ knopf.classList.add('hidden'); return; }
+  document.getElementById('weiterlesenStelle').textContent =
+    `${s.id}. ${s.name} · Ayah ${LESESTAND.vers}`;
+  knopf.classList.remove('hidden');
+}
+
 /* Favoriten-Suren. Elias am 04.08.2026: "Es waere gut wenn ich beim Quran lesen
    eine Favoriten Liste ueber der normalen Quran Liste haette. Dann muesste ich
    nicht immer ganz nach unten scrollen fuer die kleineren suren die fuer mich
@@ -192,6 +249,11 @@ function renderSurahList(filter){
   document.getElementById('btnAyahListe').classList.add('hidden');
   document.getElementById('suraNav').classList.add('hidden');
   OFFENE_SURE = null;
+  /* Wie der Favoritenblock verschwindet auch die Weiterlesen-Zeile bei einer
+     Suche: sie filtert nicht mit und stuende sonst ueber Treffern, zu denen
+     sie nicht gehoert. */
+  if (q) document.getElementById('weiterlesen').classList.add('hidden');
+  else renderWeiterlesen();
   renderFavListe(!!q);
   document.getElementById('surahList').innerHTML =
     list.map(surahZeile).join('') || '<div class="empty-state">Keine Sure gefunden.</div>';
@@ -405,6 +467,7 @@ async function openSurah(id, opt){
   /* Der Favoritenblock gehoert zur Surenliste und muss mitverschwinden - sonst
      steht er ueber den Versen der geoeffneten Sure. */
   document.getElementById('surahFavBlock').classList.add('hidden');
+  document.getElementById('weiterlesen').classList.add('hidden');
   const vList = document.getElementById('verseList');
   vList.classList.remove('hidden');
   /* Erst verstecken, dann neu bauen: sonst stuenden waehrend des Ladens noch
@@ -470,7 +533,7 @@ function renderVerses(id){
        sura nicht mehr die jeweiligen einzelnen ayaht anklicken um sie dann doch
        vom auswendig gelernt weg zu machen". */
     return `
-    <div class="verse-item${kann?' auswendig':''}">
+    <div class="verse-item${kann?' auswendig':''}" data-versnr="${nr}">
       <div class="verse-kopf">
         <span class="verse-num">${v.verse_key}</span>
         <button class="hifz-check${kann?' on':''}" data-versmerk="${id}:${nr}"
@@ -482,6 +545,7 @@ function renderVerses(id){
   aktualisiereHifzLeiste(id, surah);
   renderAyahListe(id);
   renderSuraNav(id);
+  beobachteLesestand(id);
   /* Modus und Groessen gelten auch fuer frisch gebaute Verse. Die Klassen sitzen
      zwar am Container und ueberleben den Neuaufbau - die Knopfzustaende im
      Ansicht-Menue aber nicht, wenn es zwischendurch geoeffnet wurde. */
@@ -607,6 +671,22 @@ document.getElementById('suraNav').addEventListener('click', (e)=>{
      Rollhoehe bleibt beim Austausch des Inhalts erhalten. */
   const kasten = document.getElementById('main');
   if (kasten) kasten.scrollTop = 0;
+});
+
+/* Weiterlesen: Sure oeffnen und zur gemerkten Ayah fahren. Der Sprung muss
+   warten, bis die Verse im DOM stehen - bei einer noch nicht geladenen Sure
+   holt openSurah sie erst. Deshalb der kleine Warteschritt statt eines festen
+   Timeouts, der bei langsamer Verbindung zu frueh kaeme. */
+document.getElementById('weiterlesen').addEventListener('click', async ()=>{
+  if (!LESESTAND) return;
+  const { sure, vers } = LESESTAND;
+  await openSurah(sure);
+  for (let versuch = 0; versuch < 40; versuch++){
+    const ziel = document.querySelector(`#verseList .verse-item[data-versnr="${vers}"]`);
+    if (ziel){ hebeVersHervor(ziel); return; }
+    await new Promise(r => requestAnimationFrame(r));
+  }
+  toast(`Ayah ${vers} liess sich nicht anspringen.`);
 });
 
 document.getElementById('btnAyahListe').addEventListener('click', oeffneAyahListe);
