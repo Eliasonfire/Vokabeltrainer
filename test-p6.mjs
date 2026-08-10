@@ -175,5 +175,43 @@ ctx.SETTINGS = {};
 ok('ohne Einstellung gilt die bisherige Ansicht',
    vm.runInContext('quranAnsicht().darstellung', ctx) === 'kaesten');
 
+/* ---------- Elias' drei Meldungen vom 10.08.2026 vormittags ---------- */
+console.log('\n— Die Stelle geht nicht mehr verloren —');
+/* 1. Die Ausrichtung liegt am BLOCK, nicht an den Versen. */
+const css = fs.readFileSync('index.html', 'utf8');
+const block = css.slice(css.indexOf('#verseList.liste{'), css.indexOf('#verseList.liste .verse-item'));
+ok('der Listenmodus schaltet die Flexbox ab', /display:\s*block/.test(block), block.trim().split('\n')[0]);
+ok('Laufrichtung steht am Block', /direction:\s*rtl/.test(block));
+ok('und die Ausrichtung ebenfalls', /text-align:\s*center/.test(block));
+
+/* 2. Umschalten merkt sich die Ayah, nicht den Rollstand. */
+const umschalter = vm.runInContext(
+  "document.getElementById.toString && (function(){return null})()", ctx);
+const quelleQ = fs.readFileSync('js/quran.js', 'utf8');
+ok('der Darstellungswechsel laeuft ueber ohneStellenverlust',
+   /qurandarstellung[\s\S]{0,600}ohneStellenverlust\(wendeQuranAnsichtAn\)/.test(quelleQ));
+ok('gemerkt wird die AYAH, nicht der Rollstand',
+   /function sichtbarerVers\(\)[\s\S]{0,300}Math\.min\(\.\.\.LESE_SICHTBAR\)/.test(quelleQ));
+
+/* 3. Rueckkehr aus der Historie springt nicht mehr an den Anfang. */
+ok('openSurah unterscheidet Rueckkehr von Neuoeffnen',
+   /opt\.ausHistorie && LESESTAND && LESESTAND\.sure === id/.test(quelleQ));
+ok('nur ohne Rueckkehrziel wird an den Anfang gesprungen',
+   (quelleQ.match(/if \(!zurueckZu \|\| !zeigeVers\(zurueckZu\)\) anDenAnfang\(\);/g) || []).length === 2,
+   'beide Ladewege (Cache und Nachladen)');
+ok('die Kopfhoehe wird gemessen, nicht geraten',
+   /quran-sticky[\s\S]{0,200}getBoundingClientRect\(\)\.height/.test(quelleQ));
+
+/* sichtbarerVers() gegen echte Zustaende */
+vm.runInContext('LESE_SICHTBAR = new Set([7,9,12]); OFFENE_SURE = 2; LESESTAND = null;', ctx);
+ok('sichtbarerVers nimmt den OBERSTEN sichtbaren Vers',
+   vm.runInContext('sichtbarerVers()', ctx) === 7, `= ${vm.runInContext('sichtbarerVers()', ctx)}`);
+vm.runInContext('LESE_SICHTBAR = new Set(); LESESTAND = { sure:2, vers:23 };', ctx);
+ok('ohne sichtbare Verse gilt der gespeicherte Lesestand',
+   vm.runInContext('sichtbarerVers()', ctx) === 23);
+vm.runInContext('LESESTAND = { sure:114, vers:3 };', ctx);
+ok('ein Lesestand aus einer ANDEREN Sure zaehlt nicht',
+   vm.runInContext('sichtbarerVers()', ctx) === null);
+
 console.log(`\n${geprueft - fehler}/${geprueft} Zusicherungen erfuellt.`);
 process.exit(fehler ? 1 : 0);
