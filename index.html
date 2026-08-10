@@ -124,6 +124,27 @@
    BASIS
    ===================================================================== */
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+
+/* ---------- Bildlaufleisten ausblenden (Elias' Punkt 2, 10.08.2026) ----------
+
+   „Diese leiste zum runter scrollen soll nicht angezeigt sein" — mit Bild aus
+   dem Satz-Modus, in dem der Balken am rechten Rand markiert war. Auf die
+   Rückfrage, wo genau: **überall in der App**, nicht nur dort.
+
+   ⚠️ Das ist ausdrücklich NICHT `overflow:hidden`. Beides sieht auf dem
+   Bildschirm gleich aus, tut aber Verschiedenes: `overflow:hidden` verbietet
+   das Rollen selbst und hat am 29.07.2026 die Ziehgeste zum Aktualisieren
+   mitgenommen — ein Fix, der den nächsten Fehler erzeugt hat. Die beiden
+   Regeln hier ändern nur, ob der Balken GEZEICHNET wird; gerollt wird
+   unverändert, mit Finger, Rad, Tastatur und Ziehgeste.
+
+   Zwei Regeln, weil sich die Browser nicht einig sind: `scrollbar-width` ist
+   der Standard (Firefox, neuere Chromium), `::-webkit-scrollbar` der ältere
+   Weg, den Android-Chrome und Safari verstehen. Beide sind nötig, keine
+   ersetzt die andere. `scrollbar-width` vererbt sich nicht — daher `*` und
+   nicht nur `html`. */
+*{scrollbar-width:none;}
+*::-webkit-scrollbar{width:0;height:0;display:none;}
 /* overflow:hidden ist hier KEINE Kosmetik, sondern die Ursache eines Fehlers,
    den Elias am 29.07.2026 gemeldet hat: "die untere Leiste wird gar nicht
    angezeigt, nur wenn ich ganz nach unten scrolle".
