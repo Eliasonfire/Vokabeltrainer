@@ -303,9 +303,66 @@ const QURAN_MIN = 70, QURAN_MAX = 300, QURAN_SCHRITT = 10;
 function quranAnsicht(){
   return {
     modus: SETTINGS.quranModus || 'beide',
+    /* Elias' Punkt 6 vom 10.08.2026. Vorgabe ist die BISHERIGE Ansicht: eine
+       neue Darstellung darf sich nicht selbst einschalten, sonst findet er
+       seinen Leser nach dem Update nicht wieder. */
+    darstellung: SETTINGS.quranDarstellung || 'kaesten',
     ar: Number(SETTINGS.quranAr) || 100,
     de: Number(SETTINGS.quranDe) || 100
   };
+}
+
+/* ---------- Seitengrenzen des Muṣḥaf ----------
+   QURAN_SEITEN[n] = [sure, ayah] = wo Seite n+1 anfaengt (604 Paare, erzeugt
+   und geprueft von werkzeuge/seiten-holen.mjs). Fehlt die Datei - etwa weil
+   ein alter Cache sie noch nicht hat -, gibt es einfach keine Trennlinien
+   statt eines Fehlers: der Leser funktioniert ohne sie vollstaendig. */
+function seiteVon(sure, ayah){
+  if (typeof QURAN_SEITEN === 'undefined' || !Array.isArray(QURAN_SEITEN)) return 0;
+  /* Rueckwaerts suchen: die gesuchte Seite ist die letzte, die nicht hinter
+     (sure, ayah) anfaengt. Bei 604 Eintraegen ist das billig genug, um ohne
+     Zwischenspeicher auszukommen. */
+  for (let i = QURAN_SEITEN.length - 1; i >= 0; i--){
+    const [s, a] = QURAN_SEITEN[i];
+    if (s < sure || (s === sure && a <= ayah)) return i + 1;
+  }
+  return 1;
+}
+
+/* ---------- Das Versschlusszeichen ۝ ----------
+   U+06DD ist als "END OF AYAH" definiert und legt die FOLGENDEN Ziffern in
+   sein Inneres - aber nur, wenn die Schrift das kann. Ob sie es kann, wird
+   gemessen und nicht angenommen, genau wie bei der Bismillah-Ligatur:
+   liegen die Ziffern drin, aendert sich die Breite kaum; stehen sie daneben,
+   waechst sie um deren volle Breite. Faellt die Probe negativ aus, kommt ein
+   gezeichneter Kreis mit der Nummer darin (.ayah-schluss.ersatz) - das ist
+   ein Ersatz fuer die DARSTELLUNG, keine erfundene Schreibung. */
+let AYAH_ZEICHEN = null;
+function hatAyahZeichen(){
+  if (AYAH_ZEICHEN !== null) return AYAH_ZEICHEN;
+  const miss = (t) => {
+    const s = document.createElement('span');
+    s.textContent = t;
+    s.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;font-size:100px;font-family:var(--font-ar);';
+    document.body.appendChild(s);
+    const b = s.getBoundingClientRect().width;
+    s.remove();
+    return b;
+  };
+  const ohne = miss('۝');
+  const mit  = miss('۝١٢٣');   // ۝ + ١٢٣
+  AYAH_ZEICHEN = ohne > 0 && mit / ohne < 1.25;
+  return AYAH_ZEICHEN;
+}
+function arabischeZiffern(n){
+  return String(n).replace(/\d/g, d => String.fromCharCode(0x0660 + Number(d)));
+}
+function ayahSchlussHtml(sure, nr){
+  const marke = `data-versmerk="${sure}:${nr}"`;
+  const label = `aria-label="Vers ${nr} als auswendig markieren"`;
+  if (hatAyahZeichen())
+    return `<button class="ayah-schluss" ${marke} ${label}>۝${arabischeZiffern(nr)}</button>`;
+  return `<button class="ayah-schluss ersatz" ${marke} ${label}>${nr}</button>`;
 }
 
 function wendeQuranAnsichtAn(){
@@ -317,6 +374,10 @@ function wendeQuranAnsichtAn(){
   const liste = document.getElementById('verseList');
   liste.classList.toggle('nur-ar', a.modus === 'ar');
   liste.classList.toggle('nur-de', a.modus === 'de');
+  /* Der Listenmodus ist reines CSS - die Zusatzelemente stehen ohnehin im
+     Markup. Deshalb kein renderVerses() hier: Umschalten kostet nichts, und
+     der Lesestand bleibt genau da, wo er war. */
+  liste.classList.toggle('liste', a.darstellung === 'liste');
 
   /* ⚠️ Die Basmala-Ligatur muss nach JEDER Groessenaenderung neu eingepasst
      werden, nicht nur beim Aufbau der Sure. Bei 300 % lief sie sonst ueber den
@@ -327,12 +388,19 @@ function wendeQuranAnsichtAn(){
 
   document.querySelectorAll('[data-quranmodus]').forEach(b =>
     b.classList.toggle('active', b.dataset.quranmodus === a.modus));
+  document.querySelectorAll('[data-qurandarstellung]').forEach(b =>
+    b.classList.toggle('active', b.dataset.qurandarstellung === a.darstellung));
   document.getElementById('qaWertAr').textContent = a.ar + ' %';
   document.getElementById('qaWertDe').textContent = a.de + ' %';
   /* Was gerade nicht angezeigt wird, laesst sich auch nicht sinnvoll groesser
-     stellen - die Zeile verschwindet, statt ins Leere zu wirken. */
-  document.getElementById('qaZeileAr').classList.toggle('hidden', a.modus === 'de');
-  document.getElementById('qaZeileDe').classList.toggle('hidden', a.modus === 'ar');
+     stellen - die Zeile verschwindet, statt ins Leere zu wirken.
+     Im Listenmodus laeuft nur Arabisch durch, also faellt die Deutsch-Zeile
+     dort ebenfalls weg - und der Hinweis daneben sagt, warum. */
+  const nurListe = a.darstellung === 'liste';
+  document.getElementById('qaHinweisListe').classList.toggle('hidden', !nurListe);
+  document.getElementById('qaZeileAr').classList.toggle('hidden', a.modus === 'de' && !nurListe);
+  document.getElementById('qaZeileDe').classList.toggle('hidden', a.modus === 'ar' || nurListe);
+  document.getElementById('qaZeileModus').classList.toggle('hidden', nurListe);
   document.querySelectorAll('[data-qurangroesse]').forEach(b=>{
     const [feld, richtung] = b.dataset.qurangroesse.split(':');
     const wert = feld === 'ar' ? a.ar : a.de;
@@ -387,6 +455,14 @@ document.getElementById('quranModi').addEventListener('click', (e)=>{
   const knopf = e.target.closest('[data-quranmodus]');
   if (!knopf) return;
   SETTINGS.quranModus = knopf.dataset.quranmodus;
+  saveSettings();
+  wendeQuranAnsichtAn();
+});
+
+document.getElementById('quranDarstellung').addEventListener('click', (e)=>{
+  const knopf = e.target.closest('[data-qurandarstellung]');
+  if (!knopf) return;
+  SETTINGS.quranDarstellung = knopf.dataset.qurandarstellung;
   saveSettings();
   wendeQuranAnsichtAn();
 });
@@ -863,6 +939,17 @@ function renderVerses(id){
        Sperre ausdruecklich als Fehler gemeldet: "dann kann ich innerhalb der
        sura nicht mehr die jeweiligen einzelnen ayaht anklicken um sie dann doch
        vom auswendig gelernt weg zu machen". */
+    /* Seitenende NACH diesem Vers, wenn der naechste auf einer neuen Seite
+       steht. Die Zahl ist die der Seite, die man gerade zu Ende gelesen hat -
+       deshalb "Seitenende" und nicht "Seitenanfang". Nach dem LETZTEN Vers
+       einer Sure steht keine: dort endet die Sure, nicht die Seite - die
+       naechste Sure laeuft im Muṣḥaf auf derselben Seite weiter. */
+    let trenner = '';
+    if (nr < verses.length){
+      const hier = seiteVon(id, nr), naechste = seiteVon(id, nr + 1);
+      if (hier && naechste && naechste !== hier)
+        trenner = `<div class="seiten-ende" aria-hidden="true">Seite ${hier}</div>`;
+    }
     return `
     <div class="verse-item${kann?' auswendig':''}" data-versnr="${nr}">
       <div class="verse-kopf">
@@ -870,9 +957,9 @@ function renderVerses(id){
         <button class="hifz-check${kann?' on':''}" data-versmerk="${id}:${nr}"
                 aria-label="Vers ${nr} als auswendig markieren">${icon('check')}</button>
       </div>
-      <div class="verse-ar${verdeckt}" lang="ar" dir="rtl">${v.text_uthmani}</div>
+      <div class="verse-ar${verdeckt}" lang="ar" dir="rtl">${v.text_uthmani}</div>${ayahSchlussHtml(id, nr)}
       <div class="verse-de">${(v.translations && v.translations[0] && v.translations[0].text) || ''}</div>
-    </div>`; }).join('');
+    </div>${trenner}`; }).join('');
   aktualisiereHifzLeiste(id, surah);
   renderAyahListe(id);
   renderSuraNav(id);
@@ -1100,8 +1187,14 @@ document.getElementById('verseList').addEventListener('click', (e)=>{
        gebildet und nicht aus dem Einzeleintrag allein. */
     gleicheSurenhakenAb(id);
     const an = !!HIFZ[id] || !!HIFZ_VERSE[key];
-    knopf.classList.toggle('on', an);
     const karte = knopf.closest('.verse-item');
+    /* Seit dem Listenmodus (Punkt 6, 10.08.2026) tragen ZWEI Elemente je Vers
+       dieselbe Marke: das Haken-Kaestchen der Kaestchen-Ansicht und das
+       Versschlusszeichen der Liste. Nur das angeklickte umzuschalten hiesse,
+       das andere stehen zu lassen - beim Wechsel der Darstellung staende dann
+       ein falscher Haken da, bis die Sure neu gebaut wird. */
+    (karte || document).querySelectorAll(`[data-versmerk="${key}"]`)
+      .forEach(b => b.classList.toggle('on', an));
     karte.classList.toggle('auswendig', an);
     const text = karte.querySelector('.verse-ar');
     text.classList.toggle('verdeckt', HIFZ_VERDECKT && an);

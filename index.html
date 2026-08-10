@@ -1800,6 +1800,80 @@ main{
   background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-3);
   padding:var(--sp-4);margin-bottom:var(--sp-2);
 }
+
+/* ===================== LISTENMODUS (Elias' Punkt 6, 10.08.2026) ===========
+   „reines OLED-Schwarz, Ayah direkt an Ayah ohne Unterbrechung, jede Ayah
+   endet mit dem Versschlusszeichen … Dazu Seitentrennung: am Seitenende die
+   Seitenzahl mittig, wie bei quran.com."
+
+   Der Kniff ist `display:inline` an den Versen: dadurch fliesst der Text der
+   ganzen Sure als EIN Absatz, und der Zeilenumbruch fällt dorthin, wo er im
+   Muṣḥaf auch fiele — nicht an jede Verskante. Die Kästchen bleiben im
+   Markup dieselben, damit Abhaken, Ayah-Sprung, Verdecken und Lesestand
+   unverändert weiterarbeiten; sie hören nur auf, wie Kästchen auszusehen.
+   ⚠️ Genau deshalb wird `.verse-item` NICHT umbenannt und nichts zusätzlich
+   eingefügt: die Ayah-Leiste adressiert über `[data-versnr]`. */
+#verseList.liste{ background:var(--bg); }
+#verseList.liste .verse-item{
+  display:inline; background:none; border:0; border-radius:0;
+  padding:0; margin:0;
+}
+/* Kopfzeile mit Nummer und Haken hat im Fliesstext keinen Platz — der Haken
+   wandert in das Versschlusszeichen selbst (siehe .ayah-schluss unten). */
+#verseList.liste .verse-kopf{ display:none; }
+#verseList.liste .verse-de{ display:none; }
+#verseList.liste .verse-ar{
+  display:inline; line-height:2.35;
+}
+/* Das Versschlusszeichen ist zugleich der Abhak-Knopf: es steht ohnehin am
+   Ende jeder Ayah, und ein zweites Bedienelement würde den Fluss brechen. */
+/* ⚠️ Beide Zusatzelemente stehen IMMER im Markup und werden nur ein- und
+   ausgeblendet. Das ist Absicht: so ist der DOM in beiden Ansichten derselbe,
+   das Umschalten braucht keinen Neuaufbau, und nichts, was #verseList
+   abfragt (Ayah-Sprung, Lesestand, Verdecken, Abhaken), kann davon kaputt
+   gehen. Der Unterschied zwischen den Ansichten ist reines CSS. */
+.ayah-schluss{ display:none; }
+.seiten-ende{ display:none; }
+#verseList.liste .ayah-schluss{ display:inline-block; }
+#verseList.liste .seiten-ende{ display:flex; }
+
+.ayah-schluss{
+  font-family:var(--font-ar);background:none;border:0;padding:0 .12em;
+  color:var(--text-dim);font-size:calc(var(--fs-lg) * var(--quran-ar, 1) * 1.5);
+  line-height:1;vertical-align:-.1em;cursor:pointer;
+  transition:color var(--dur-2) ease, transform var(--dur-1) var(--ease-out);
+}
+.ayah-schluss:active{ transform:scale(.9); }
+.verse-item.auswendig .ayah-schluss{ color:var(--green); }
+/* Rückfall, wenn die Schrift die Ziffern NICHT ins Zeichen legt (gemessen,
+   nicht angenommen — siehe hatAyahZeichen() in js/quran.js): dann ein
+   gezeichneter Kreis mit der Nummer darin, statt Zeichen und Ziffern
+   nebeneinander stehen zu lassen. */
+.ayah-schluss.ersatz{
+  font-family:var(--font-ui);font-size:calc(var(--fs-xs) * var(--quran-ar, 1));
+  font-weight:800;font-variant-numeric:tabular-nums;
+  min-width:2.1em;height:2.1em;border-radius:var(--r-full);
+  border:1px solid var(--border-strong);display:inline-grid;place-items:center;
+  vertical-align:.15em;padding:0 .3em;
+}
+.verse-item.auswendig .ayah-schluss.ersatz{ border-color:var(--green); }
+
+/* Seitenende: die Zahl mittig auf einer Haarlinie, wie im Muṣḥaf. Sie steht
+   NACH der letzten Ayah der Seite, nicht vor der ersten der nächsten —
+   deshalb heisst sie „Seitenende" und trägt die Nummer der Seite, die man
+   gerade zu Ende gelesen hat. */
+.seiten-ende{
+  align-items:center;gap:var(--sp-3);
+  margin:var(--sp-5) 0;color:var(--text-faint);
+  font-size:var(--fs-xs);font-weight:700;font-variant-numeric:tabular-nums;
+  letter-spacing:.1em;
+}
+.seiten-ende::before,.seiten-ende::after{
+  content:"";flex:1;height:1px;background:var(--hairline);
+}
+.qa-hinweis{
+  margin:0 0 var(--sp-3);color:var(--text-faint);font-size:var(--fs-xs);line-height:1.45;
+}
 .verse-num{
   font-size:var(--fs-xs);font-weight:800;color:var(--red-bright);background:var(--red-wash);
   border:1px solid var(--red-dim);
@@ -2505,7 +2579,25 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
       <!-- Lesemodus und Schriftgrößen. Arabisch und Deutsch werden GETRENNT
            eingestellt — Elias' ausdrücklicher Wunsch vom 04.08.2026. -->
       <div class="quran-ansicht hidden" id="quranAnsicht">
+        <!-- Elias' Punkt 6 vom 10.08.2026: zwei Ansichten. „Kästchen" ist die
+             bisherige, „Liste" die neue — Ayah an Ayah ohne Unterbrechung,
+             mit Seitentrennung wie bei quran.com. Die Zeile steht ganz oben,
+             weil sie über allen anderen liegt: sie entscheidet, wie der Text
+             überhaupt gebaut ist, die übrigen nur, wie groß er ist. -->
         <div class="qa-zeile">
+          <span class="qa-titel">Darstellung</span>
+          <div class="qa-modi" id="quranDarstellung">
+            <button class="qa-modus" data-qurandarstellung="kaesten">Kästchen</button>
+            <button class="qa-modus" data-qurandarstellung="liste">Liste</button>
+          </div>
+        </div>
+        <!-- Sichtbar NUR im Listenmodus. Kein stiller Sonderfall: dort läuft
+             der arabische Text durch, die Übersetzung würde den Fluss genau
+             zerschneiden, um den es geht. Statt Elias' Einstellung heimlich zu
+             übergehen, steht der Satz da und die Einstellung bleibt erhalten. -->
+        <p class="qa-hinweis hidden" id="qaHinweisListe">Im Listenmodus läuft nur
+          der arabische Text durch — für die Übersetzung auf „Kästchen" wechseln.</p>
+        <div class="qa-zeile" id="qaZeileModus">
           <span class="qa-titel">Anzeigen</span>
           <div class="qa-modi" id="quranModi">
             <button class="qa-modus" data-quranmodus="beide">Beides</button>
@@ -2798,6 +2890,9 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
 <script src="vocab-data.js"></script>
 <script src="data/buecher.js"></script>
 <script src="surah-data.js"></script>
+<!-- Seitengrenzen des Muṣḥaf, erzeugt von werkzeuge/seiten-holen.mjs und dort
+     gegen surah-data.js geprüft (114/114 Verszahlen, 604 Seiten lückenlos). -->
+<script src="quran-seiten.js"></script>
 <script src="grammar-data.js"></script>
 <script src="wortfelder-data.js"></script>
 <script src="lehrbuch-saetze.js"></script>
