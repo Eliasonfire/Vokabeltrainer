@@ -480,11 +480,22 @@ function renderNotiz(w){
   const text   = document.getElementById('cardNoteText');
   const punkt  = document.getElementById('cardNoteDot');
   const notiz  = getNote(w.id);
-  text.textContent = notiz || 'Eselsbrücke hinzufügen';
+  /* ⭐ Elias' Punkt 8 (10.08.2026). Vorgeschlagene Eselsbruecken duerfen seine
+     eigenen NIE ueberschreiben - das Feld war und bleibt sein Eingabefeld.
+     Deshalb die harte Rangfolge: eigene Notiz schlaegt Vorschlag, immer. Der
+     Vorschlag erscheint nur, solange nichts Eigenes dasteht, und ist als
+     Vorschlag beschriftet, damit er nicht wie eigene Arbeit aussieht.
+     Er liegt in `w.mnemo` (vocab-data.js), also NICHT in `vt_notes` - eine
+     Uebernahme kann er also gar nicht versehentlich ausloesen. */
+  const vorschlag = (!notiz && w.mnemo) ? String(w.mnemo).trim() : '';
+  text.textContent = notiz || vorschlag || 'Eselsbrücke hinzufügen';
   kasten.classList.toggle('hat-notiz', !!notiz);
+  kasten.classList.toggle('ist-vorschlag', !!vorschlag);
   /* Der Punkt sitzt auf der VORDERSEITE. Er verraet die Loesung nicht, sagt
      aber "zu diesem Wort hast du dir schon etwas notiert" - genau der Hinweis,
-     den man beim Ueberlegen brauchen kann. */
+     den man beim Ueberlegen brauchen kann.
+     Ein VORSCHLAG loest ihn bewusst nicht aus: der Punkt ist die Auskunft
+     "davon weiss ich selbst schon etwas", und die waere sonst gelogen. */
   punkt.classList.toggle('hidden', !notiz);
 }
 
@@ -493,7 +504,14 @@ function oeffneNotizEditor(){
   if (!w) return;
   document.getElementById('neWort').textContent = w.ar;
   const feld = document.getElementById('neText');
+  /* ⚠️ Hier steht IMMER nur seine eigene Notiz, nie der Vorschlag. Ein
+     vorgefuelltes Feld waere die stille Uebernahme, die Punkt 8 ausschliesst -
+     er soll den Vorschlag lesen und dann entscheiden. */
   feld.value = getNote(w.id);
+  const vorschlagKasten = document.getElementById('neVorschlag');
+  const vorschlag = (!getNote(w.id) && w.mnemo) ? String(w.mnemo).trim() : '';
+  document.getElementById('neVorschlagText').textContent = vorschlag;
+  vorschlagKasten.classList.toggle('hidden', !vorschlag);
   document.getElementById('btnDeleteNote').style.visibility = getNote(w.id) ? 'visible' : 'hidden';
   document.getElementById('noteBackdrop').classList.remove('hidden');
   document.getElementById('noteEditor').classList.remove('hidden');
@@ -506,6 +524,15 @@ function schliesseNotizEditor(){
 document.getElementById('cardNoteBox').addEventListener('click', (e)=>{
   e.stopPropagation();          // sonst dreht sich die Karte gleich mit um
   oeffneNotizEditor();
+});
+/* „Übernehmen" fuellt nur das Feld. Gespeichert wird weiterhin ausschliesslich
+   ueber „Speichern" - der Vorschlag wird also erst dann zu seiner Notiz, wenn
+   er das zweimal bestaetigt und dazwischen aendern kann. */
+document.getElementById('btnVorschlagUebernehmen').addEventListener('click', ()=>{
+  const feld = document.getElementById('neText');
+  feld.value = document.getElementById('neVorschlagText').textContent;
+  document.getElementById('neVorschlag').classList.add('hidden');
+  feld.focus();
 });
 document.getElementById('btnCloseNote').addEventListener('click', schliesseNotizEditor);
 document.getElementById('noteBackdrop').addEventListener('click', schliesseNotizEditor);
