@@ -7,7 +7,7 @@
 <title>Gestaltungs-Vorschau · Vokabeltrainer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Amiri+Quran&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Scheherazade+New:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <!--
   ============================================================================
@@ -374,6 +374,20 @@ body{
 [data-v="c"] .balken i{background:linear-gradient(90deg,var(--red),var(--red-bright));
   box-shadow:0 0 14px var(--red-glow);}
 
+/* --- Schriftvergleich (Punkt 7) --- */
+.schrift-kopf{padding:var(--sp-4);}
+.schrift-kopf p{margin:0;color:var(--text-dim);font-size:var(--fs-sm);}
+.schrift-block{padding:var(--sp-4);border-top:1px solid var(--border);}
+.schrift-name{font-size:var(--fs-xs);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--red-bright);font-weight:700;margin-bottom:var(--sp-3);
+  display:flex;align-items:baseline;gap:var(--sp-2);flex-wrap:wrap;}
+.schrift-name span{color:var(--text-faint);letter-spacing:.04em;text-transform:none;font-weight:600;}
+.schrift-probe{direction:rtl;text-align:right;line-height:2.15;font-size:1.55rem;
+  margin-bottom:var(--sp-2);}
+.schrift-probe:last-child{margin-bottom:0;}
+.schrift-quelle{font-size:var(--fs-xs);color:var(--text-faint);padding:var(--sp-4);
+  border-top:1px solid var(--border);line-height:1.5;}
+
 /* Wer Bewegung nicht will, bekommt keine. */
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms !important;transition-duration:.01ms !important;}
@@ -421,6 +435,7 @@ body{
     <button class="vp-knopf" data-sets="lern" aria-pressed="true">Lernkarte</button>
     <button class="vp-knopf" data-sets="quran" aria-pressed="false">Quran-Leser</button>
     <button class="vp-knopf" data-sets="start" aria-pressed="false">Startseite</button>
+    <button class="vp-knopf" data-sets="schrift" aria-pressed="false">Schriften</button>
   </div>
 </div>
 
@@ -518,6 +533,52 @@ body{
       </div>
     </section>
 
+    <!-- ---------------- Schriften (Elias' Punkt 7) ----------------
+         Andere Frage als die Gestaltung, deshalb ein eigener Bildschirm statt
+         einer fünften Variante: Hier geht es nicht um Farbe und Form, sondern
+         nur darum, wie die Ḥarakāt sitzen — besonders das Dolch-Alif.
+         ⚠️ Die Proben sind NICHT getippt. Sie werden von
+         werkzeuge/schriftproben.mjs wörtlich aus quran-text.js eingesetzt;
+         eine erste, aus dem Kopf geschriebene Fassung hatte ٱلْحَىُّ statt
+         ٱلْحَيُّ — genau der Fehler, den E.1 verbietet. -->
+    <section class="bildschirm" data-b="schrift">
+      <div class="schrift-kopf" data-stand="proben-eingesetzt">
+        <p>Alle Blöcke zeigen <b>denselben Text</b>. Was sich unterscheidet, ist
+           allein die Schrift. Achte auf das kleine hochgestellte Alif in
+           عَلَىٰ und هَٰذَا — das ist das Dolch-Alif, das dir aufgefallen ist.</p>
+      </div>
+      <div id="schriftProben">
+      <div class="schrift-block">
+        <div class="schrift-name">Noto Naskh Arabic <span>so sieht die App heute aus</span></div>
+        <div class="schrift-probe" style="font-family:'Noto Naskh Arabic'" lang="ar" dir="rtl">قُلْ هُوَ ٱللَّهُ أَحَدٌ</div>
+        <div class="schrift-probe" style="font-family:'Noto Naskh Arabic'" lang="ar" dir="rtl">ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱلْحَيُّ</div>
+        <div class="schrift-probe" style="font-family:'Noto Naskh Arabic'" lang="ar" dir="rtl">عَلَىٰ   ذَٰلِكَ   إِلَىٰ   ٱلسَّمَٰوَٰتِ   هَٰذَا</div>
+      </div>
+      <div class="schrift-block">
+        <div class="schrift-name">Amiri <span>heute die Rueckfallebene</span></div>
+        <div class="schrift-probe" style="font-family:'Amiri'" lang="ar" dir="rtl">قُلْ هُوَ ٱللَّهُ أَحَدٌ</div>
+        <div class="schrift-probe" style="font-family:'Amiri'" lang="ar" dir="rtl">ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱلْحَيُّ</div>
+        <div class="schrift-probe" style="font-family:'Amiri'" lang="ar" dir="rtl">عَلَىٰ   ذَٰلِكَ   إِلَىٰ   ٱلسَّمَٰوَٰتِ   هَٰذَا</div>
+      </div>
+      <div class="schrift-block">
+        <div class="schrift-name">Amiri Quran <span>eigens fuer Korantext gezeichnet</span></div>
+        <div class="schrift-probe" style="font-family:'Amiri Quran'" lang="ar" dir="rtl">قُلْ هُوَ ٱللَّهُ أَحَدٌ</div>
+        <div class="schrift-probe" style="font-family:'Amiri Quran'" lang="ar" dir="rtl">ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱلْحَيُّ</div>
+        <div class="schrift-probe" style="font-family:'Amiri Quran'" lang="ar" dir="rtl">عَلَىٰ   ذَٰلِكَ   إِلَىٰ   ٱلسَّمَٰوَٰتِ   هَٰذَا</div>
+      </div>
+      <div class="schrift-block">
+        <div class="schrift-name">Scheherazade New <span>von SIL, sehr vollstaendige Zeichen</span></div>
+        <div class="schrift-probe" style="font-family:'Scheherazade New'" lang="ar" dir="rtl">قُلْ هُوَ ٱللَّهُ أَحَدٌ</div>
+        <div class="schrift-probe" style="font-family:'Scheherazade New'" lang="ar" dir="rtl">ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱلْحَيُّ</div>
+        <div class="schrift-probe" style="font-family:'Scheherazade New'" lang="ar" dir="rtl">عَلَىٰ   ذَٰلِكَ   إِلَىٰ   ٱلسَّمَٰوَٰتِ   هَٰذَا</div>
+      </div>
+      <p class="schrift-quelle">Alle Zeilen stehen wörtlich so in
+        <code>quran-text.js</code> und sind von
+        <code>werkzeuge/schriftproben.mjs</code> eingesetzt, nicht abgetippt.
+        Zeile 1: Sure 112, Vers 1. Zeile 2: Sure 2, Vers 255 (Anfang). Zeile 3: die fuenf haeufigsten Woerter mit Dolch-Alif: 347×, 279×, 211×, 175×, 156×.</p>
+      <!--ENDE-PROBEN--></div>
+    </section>
+
   </div>
 </div>
 
@@ -602,10 +663,29 @@ function zahlenHoch(){
   });
 }
 
+/* Der Schriftvergleich ist eine ANDERE Frage als die Gestaltung — deshalb
+   bekommt er seinen eigenen Text unter der Nachbildung, statt den der gerade
+   gewählten Variante stehen zu lassen. */
+const TEXT_SCHRIFT = {
+  unter: 'Punkt 7 · Dolch-Alif',
+  titel: 'Welche Schrift?',
+  text: [
+    'Du hattest gesagt: „die jetzigen sehen etwas komisch aus und sind halt auf den Buchstaben vorallem das Dolch alif. Ich möchte es aber lieber neben dem Buchstaben haben zwischen dem anderen halt, wie bei Quran.com."',
+    'Das ist keine Frage von CSS, sondern der <b>Schrift</b> — wo ein Vokalzeichen sitzt, entscheidet die Schriftdatei, nicht die App. Deshalb hier vier Schriften mit demselben Text. <b>Sag mir die Nummer, die für dich am besten aussieht</b>, dann wird sie eingebaut.',
+    'Ich habe bewusst <b>nicht</b> selbst entschieden: welche Ḥarakāt „richtig" aussehen, ist genau die Frage, die du gestellt hast — und am Bildschirm deines Handys sieht es anders aus als hier.'
+  ]
+};
+
 function zeigeBildschirm(s){
   app.dataset.s = s;
   app.querySelectorAll('.bildschirm').forEach(el =>
     el.classList.toggle('an', el.dataset.b === s));
+  if (s === 'schrift'){
+    feld.innerHTML = '<p class="vp-unter">' + TEXT_SCHRIFT.unter + '</p><h2>' +
+      TEXT_SCHRIFT.titel + '</h2>' + TEXT_SCHRIFT.text.map(p => '<p>' + p + '</p>').join('');
+  } else {
+    schreibeText(app.dataset.v);
+  }
   zahlenHoch();
 }
 
