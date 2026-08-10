@@ -18,8 +18,13 @@
    Falsche.
 
    Aufruf:   node pruefe-taschkil.js
-             node pruefe-taschkil.js --alle     jeden Befund einzeln
-   Rueckgabe: 0 = alles vokalisiert, 1 = mindestens eine Luecke.
+             node pruefe-taschkil.js --alle       jeden Befund einzeln
+             node pruefe-taschkil.js --buecher    dazu die data/vokabeln-*.js
+   Rueckgabe: 0 = alles vokalisiert, 1 = mindestens eine Luecke IM REPO.
+   Die Buchdateien faerben den Rueckgabewert nicht — Begruendung unten beim
+   Abschnitt "Die acht Buchdateien". Ihr Umfang steht aber in JEDEM Lauf in
+   der Ausgabe, damit ein gruenes Ergebnis nicht mehr nach "alles geprueft"
+   aussieht, als nur drei von elf Dateien angesehen wurden.
 
    ⚠️ Das Skript findet LUECKEN, es fuellt sie nicht. Eine Haraka ohne Beleg aus
    dem Madina-Schluessel oder dem Lehrbuch ist genauso erfunden wie eine
@@ -33,6 +38,7 @@ const vm = require('vm');
 
 const DIR = __dirname;
 const ALLE = process.argv.includes('--alle');
+const BUECHER = process.argv.includes('--buecher');
 
 /* ---------- Zeichenklassen ----------
    Der Vorrat ist am 29.07.2026 aus vocab-data.js ausgezaehlt, nicht geraten:
@@ -188,18 +194,19 @@ const FELDER = ['ar', 'sg', 'pl', 'femSg', 'femPl', 'sentAr'];
 const befunde = [];
 let woerterGeprueft = 0;
 
-function pruefeEintrag(eintrag, quelle){
+function pruefeEintrag(eintrag, quelle, ziel = befunde){
+  let gezaehlt = 0;
   FELDER.forEach(feld => {
     const wert = eintrag[feld];
     if (typeof wert !== 'string' || !wert.trim()) return;
     woerterAus(wert).forEach(wort => {
-      woerterGeprueft++;
+      gezaehlt++;
       for (let i = 0; i < wort.length; i++){
         const grund = luecke(wort, i);
         if (!grund) continue;
         const ausnahme = AUSNAHMEN.find(a => a.trifft(wort, i));
         if (ausnahme && !ausnahme.nurMelden) continue;
-        befunde.push({
+        ziel.push({
           quelle, id: eintrag.id, feld, wort,
           stelle: i, zeichen: wort[i], grund,
           gruppe: ausnahme ? ausnahme.name : grund
@@ -208,10 +215,11 @@ function pruefeEintrag(eintrag, quelle){
       }
     });
   });
+  return gezaehlt;
 }
 
-VOCAB_DATA.forEach(w => pruefeEintrag(w, 'vocab-data.js'));
-(LEHRBUCH_SAETZE || []).forEach(s => pruefeEintrag(s, 'lehrbuch-saetze.js'));
+VOCAB_DATA.forEach(w => { woerterGeprueft += pruefeEintrag(w, 'vocab-data.js'); });
+(LEHRBUCH_SAETZE || []).forEach(s => { woerterGeprueft += pruefeEintrag(s, 'lehrbuch-saetze.js'); });
 
 /* Surentitel, seit 04.08.2026 (Elias' Punkt 5). Geprueft wird NUR
    `arTaschkil` - das Feld `ar` daneben ist absichtlich unvokalisiert, es ist
@@ -251,13 +259,105 @@ const SURAH_FELDER = ['arTaschkil'];
   });
 });
 
+/* ---------- Die acht Buchdateien: der Bestand, den das GERAET hat ----------
+   Gefunden am 10.08.2026 bei Elias' Punkt 11 ("Schweiz hat kein Taschkil").
+   Bis dahin las dieses Skript genau drei Dateien — vocab-data.js,
+   lehrbuch-saetze.js, surah-data.js. Auf Elias' Geraet kommen aber alle
+   Kapitel ab 10 und alle sieben anderen Lehrwerke aus `data/vokabeln-*.js`;
+   allein bei Madina 1 sind davon 140 Eintraege neu. "Der Pruefer ist gruen"
+   hat also ueber einen anderen Bestand geurteilt als den, den Elias vor sich
+   hat — und genau diese stille Luecke erzeugt eine Meldung wie seine.
+
+   Warum die Buchbefunde den Rueckgabewert NICHT rot faerben:
+   Die Dateien sind Elias' bezahlter arabicroots-Abzug. Sie liegen nicht im
+   Repo (AGB Ziffer 9), sie sind nicht unsere Daten, und eine fehlende Haraka
+   darin darf nicht selbst ergaenzt werden — das waere erfunden (E.1). Ein
+   Tor, das man nicht passieren kann, ist kein Tor, sondern kaputt. Also:
+   berichten statt sperren.
+
+   Geprueft wird der ROHBESTAND der Dateien, nicht das Ergebnis von
+   `einhaengen()`. Das ist Absicht und deckt mehr ab, nicht weniger: der
+   Zusammenbau verwirft nur schlechtere Schreibungen und fuellt leere Felder,
+   er erfindet nie eine Haraka. Jede Zeichenfolge, die aufs Geraet kommt,
+   steht also schon hier. */
+const BUCH_DIR = path.join(DIR, 'data');
+const buchBefunde = [];
+let buchWoerter = 0, buchEintraege = 0;
+let buchDateien = [];
+try {
+  buchDateien = fs.readdirSync(BUCH_DIR).filter(f => /^vokabeln-.*\.js$/.test(f)).sort();
+} catch { /* kein data/ — frischer Klon, siehe Ausgabe unten */ }
+
+buchDateien.forEach(f => {
+  let liste = null;
+  try {
+    const ctx = { window: {} };
+    vm.createContext(ctx);
+    vm.runInContext(fs.readFileSync(path.join(BUCH_DIR, f), 'utf8') +
+      '\nglobalThis.__V = (typeof VOKABELN !== "undefined") ? VOKABELN : (window.VOKABELN || null);',
+      ctx, { filename: f });
+    liste = Array.isArray(ctx.__V) ? ctx.__V
+          : (ctx.__V ? Object.values(ctx.__V).flat() : null);
+  } catch (e) {
+    console.error(`  ! ${f} nicht ausfuehrbar: ${e.message}`);
+    return;
+  }
+  if (!liste) { console.error(`  ! ${f}: kein VOKABELN gefunden`); return; }
+  buchEintraege += liste.length;
+  liste.forEach(w => { buchWoerter += pruefeEintrag(w, f, buchBefunde); });
+});
+
 /* ---------- Ausgabe ---------- */
 console.log('--- Vollstaendigkeit der Vokalisierung ---');
 console.log(`${woerterGeprueft} arabische Woerter geprueft ` +
             `(Felder: ${FELDER.join(', ')}; quran.ar ausgenommen).`);
 
+/* Der Geltungsbereich kommt IMMER mit — auch und gerade im gruenen Fall.
+   Ein "alles vokalisiert" ohne diesen Satz war die eigentliche Falle. */
+console.log(`\nGeltungsbereich: vocab-data.js, lehrbuch-saetze.js, surah-data.js` +
+            ` (${VOCAB_DATA.length} Lernwoerter).`);
+if (!buchDateien.length){
+  console.log('Die acht data/vokabeln-*.js liegen hier nicht — auf Elias\' Geraet' +
+              ' kommen von dort alle Kapitel ab 10 und sieben weitere Lehrwerke.' +
+              ' Dieser Lauf sagt also NICHTS ueber deren Vokalisierung.');
+} else {
+  console.log(`Dazu ${buchDateien.length} Buchdateien mit ${buchEintraege} Eintraegen` +
+              ` und ${buchWoerter} arabischen Woertern: ${buchBefunde.length} Luecken.` +
+              ' Sie zaehlen NICHT zum Rueckgabewert (fremde Daten, nicht selbst' +
+              ' zu vokalisieren) — mit --buecher stehen sie unten aufgeschluesselt.');
+}
+
+function zeigeBuchBericht(){
+  if (!BUECHER || !buchBefunde.length) return;
+  const nachBuch = {};
+  buchBefunde.forEach(b => (nachBuch[b.gruppe] = nachBuch[b.gruppe] || []).push(b));
+  console.log('\n--- Buchdateien (Bericht, kein Tor) ---');
+  Object.entries(nachBuch).sort((a, b) => b[1].length - a[1].length)
+    .forEach(([gruppe, liste]) => {
+      const jeDatei = {};
+      liste.forEach(b => jeDatei[b.quelle] = (jeDatei[b.quelle] || 0) + 1);
+      console.log(`\n=== ${gruppe}: ${liste.length} ===`);
+      console.log('  je Datei: ' + Object.entries(jeDatei)
+        .sort((a, b) => b[1] - a[1])
+        .map(([d, n]) => `${d.replace(/^vokabeln-|\.js$/g, '')} ${n}`).join(', '));
+      (ALLE ? liste : liste.slice(0, 8)).forEach(b => console.log(
+        `  ${b.wort.padEnd(18)} Stelle ${String(b.stelle).padStart(2)} ` +
+        `(${b.zeichen})  ${b.feld}  id ${b.id}`));
+      if (!ALLE && liste.length > 8)
+        console.log(`  … ${liste.length - 8} weitere (--alle zeigt sie)`);
+    });
+  console.log('\n⚠️  Diese Luecken sind NICHT hier zu schliessen. Die Dateien sind' +
+              '\n   Elias\' arabicroots-Abzug; eine selbst gesetzte Haraka waere' +
+              '\n   erfunden (E.1). Belegen oder Elias vorlegen.');
+  console.log('⚠️  "Endung fehlt" ist in einer Vokabelliste meist KEIN Fehler: das' +
+              '\n   Stichwort steht in Pausalform, wie im Woerterbuch. Aussagekraeftig' +
+              '\n   sind "Haraka fehlt" und die Hamzat-al-wasl-Gruppe.');
+}
+
 if (!befunde.length){
-  console.log('\nKeine Luecke gefunden — alles vokalisiert.');
+  console.log('\nKeine Luecke in den Repo-Dateien — dort ist alles vokalisiert.' +
+    (buchBefunde.length ? ` (Die Buchdateien haben ${buchBefunde.length}.)` : ''));
+  zeigeBuchBericht();
   process.exit(0);
 }
 
@@ -282,4 +382,5 @@ const woerter = new Set(befunde.map(b => b.wort));
 console.log(`\n${befunde.length} Befunde in ${woerter.size} verschiedenen Woertern.`);
 console.log('⚠️  Nicht selbst vokalisieren: Beleg aus dem Madina-Schluessel oder');
 console.log('   dem Lehrbuch holen, sonst Elias vorlegen (E.1 gilt auch fuer Harakat).');
+zeigeBuchBericht();
 process.exit(1);
