@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Vorschau: Wurzelbuchstaben hervorheben</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#000; --surface-1:#0b0b0c; --surface-2:#131315; --surface-3:#1b1b1e;
+  --border:#26262b; --border-strong:#33333a;
+  --red:#ff1744; --red-bright:#ff4d6a; --red-wash:rgba(255,23,68,.09);
+  --text:#f4f4f5; --text-dim:#a1a1a8; --text-faint:#66666e;
+  --green:#2ee6a6;
+  --font-ar:'Noto Naskh Arabic','Amiri',serif;
+  --font-ui:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-ui);
+     padding:16px 14px calc(28px + env(safe-area-inset-bottom));max-width:640px;margin:0 auto;}
+h1{font-size:1.05rem;font-weight:600;margin:0 0 2px;}
+.unter{color:var(--text-dim);font-size:.8rem;line-height:1.5;margin:0 0 16px;}
+
+/* ---- Umschalter ---- */
+.schalter{position:sticky;top:0;z-index:5;background:var(--bg);padding:8px 0 12px;
+          border-bottom:1px solid var(--border);margin-bottom:16px;}
+.knopfreihe{display:flex;gap:6px;}
+.knopfreihe button{flex:1;background:var(--surface-2);color:var(--text-dim);
+  border:1px solid var(--border);border-radius:9px;padding:9px 4px;font-size:.74rem;
+  font-family:inherit;font-weight:500;cursor:pointer;}
+.knopfreihe button[aria-pressed="true"]{background:var(--red-wash);border-color:var(--red);color:var(--text);}
+
+.block{background:var(--surface-1);border:1px solid var(--border);border-radius:14px;
+       padding:16px;margin-bottom:14px;}
+.titel{font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);margin-bottom:12px;}
+
+/* ---- ARABISCHE ANZEIGE ----
+   Die farbigen Spans MUESSEN inline bleiben. Steht ein Elternteil auf
+   display:flex, werden sie blockifiziert und die Schrift reisst auseinander
+   (gemessen: +23 % Breite). Deshalb ist hier bewusst KEIN Flex-Container um
+   arabischen Text herum - auch nicht zum Zentrieren. */
+.ar{font-family:var(--font-ar);direction:rtl;text-align:center;line-height:2;display:block;}
+.ar-gross{font-size:2.6rem;}
+.ar-satz{font-size:1.5rem;line-height:2.2;}
+.ar-klein{font-size:1.25rem;}
+.wz,.fm{display:inline;}
+
+body[data-v="dim"]  .fm{color:var(--text-faint);}
+body[data-v="rot"]  .wz{color:var(--red-bright);}
+body[data-v="beide"] .wz{color:var(--red-bright);}
+body[data-v="beide"] .fm{color:var(--text-faint);}
+
+.de{color:var(--text-dim);font-size:.95rem;text-align:center;margin-top:6px;}
+.wurzelchip{display:inline-block;font-family:var(--font-ar);direction:rtl;
+  background:var(--surface-3);border:1px solid var(--border-strong);border-radius:999px;
+  padding:3px 12px;font-size:1.05rem;color:var(--text-dim);margin-top:10px;}
+.mitte{text-align:center;}
+.warn{color:#ffb84d;font-size:.74rem;text-align:center;margin-top:8px;}
+
+.steuer{display:flex;gap:6px;margin-top:14px;}
+.steuer button{flex:1;background:var(--surface-2);color:var(--text);border:1px solid var(--border);
+  border-radius:9px;padding:10px;font-size:.8rem;font-family:inherit;cursor:pointer;}
+.steuer button:active{background:var(--surface-3);}
+
+/* ---- Wurzelmodus-Karte ---- */
+.fam{border:1px solid var(--border);border-radius:11px;padding:9px 11px;margin-top:7px;}
+.fam .fam-de{color:var(--text-dim);font-size:.82rem;text-align:center;margin-top:2px;}
+.fam.kennst{border-color:rgba(46,230,166,.35);background:rgba(46,230,166,.06);}
+.fam-neu{color:var(--text-faint);font-size:.68rem;text-align:center;margin-top:3px;}
+.frage{color:var(--text-dim);font-size:.85rem;text-align:center;margin:14px 0 4px;line-height:1.6;}
+
+.liste-zeile{border-bottom:1px solid var(--border);padding:9px 2px;}
+.liste-zeile:last-child{border-bottom:0;}
+.liste-de{color:var(--text-faint);font-size:.74rem;text-align:right;margin-top:-2px;}
+
+.zahl{color:var(--text-faint);font-size:.72rem;text-align:center;margin-top:10px;line-height:1.6;}
+.laden{background:var(--surface-2);color:var(--text-dim);border:1px dashed var(--border-strong);
+  border-radius:9px;padding:10px;width:100%;font-size:.78rem;font-family:inherit;cursor:pointer;margin-top:10px;}
+</style>
+</head>
+<body data-v="dim">
+
+<h1>Wurzelbuchstaben hervorheben</h1>
+<p class="unter">Vier Varianten am echten Wortbestand. Oben umschalten, unten durchblättern.
+Diese Seite fasst die App nicht an.</p>
+
+<div class="schalter">
+  <div class="knopfreihe" id="schalter">
+    <button data-v="aus">aus</button>
+    <button data-v="dim" aria-pressed="true">Form gedimmt</button>
+    <button data-v="rot">Wurzel rot</button>
+    <button data-v="beide">beides</button>
+  </div>
+</div>
+
+<div class="block">
+  <div class="titel">Einzelwort</div>
+  <div class="ar ar-gross" id="wortAr">…</div>
+  <div class="de" id="wortDe"></div>
+  <div class="mitte"><span class="wurzelchip" id="wortWurzel"></span></div>
+  <div class="warn" id="wortWarn" hidden></div>
+  <div class="steuer">
+    <button id="bZurueck">zurück</button>
+    <button id="bZufall">zufällig</button>
+    <button id="bWeiter">weiter</button>
+  </div>
+</div>
+
+<div class="block">
+  <div class="titel">Im Beispielsatz</div>
+  <div class="ar ar-satz" id="satzAr">…</div>
+  <div class="de" id="satzDe"></div>
+  <div class="zahl">Hier wird <em>jedes</em> Wort markiert, dessen Wurzel bekannt ist —
+  der dichteste Fall, den es gibt.</div>
+</div>
+
+<div class="block">
+  <div class="titel">Wurzelmodus</div>
+  <div class="ar ar-gross" id="famAnker">…</div>
+  <div class="de" id="famAnkerDe"></div>
+  <div class="mitte"><span class="wurzelchip" id="famWurzel"></span></div>
+  <div id="famVorne">
+    <div class="frage">Welche Wörter aus dieser<br>Wurzel kennst du noch?</div>
+    <div class="steuer"><button id="bAufdecken">aufdecken</button></div>
+  </div>
+  <div id="famHinten" hidden></div>
+  <button class="laden" id="bLaden">volle Familien aus den Büchern laden</button>
+  <div class="zahl" id="famZahl"></div>
+</div>
+
+<div class="block">
+  <div class="titel">In einer Wortliste</div>
+  <div id="listeBox"></div>
+</div>
+
+<div class="zahl" id="bilanz"></div>
+
+<script src="vocab-data.js"></script>
+<script>
+/* ---------- Wurzelbuchstaben im Wort finden ----------
+   Gleiches Verfahren wie werkzeuge-seitig gemessen: die Wurzelbuchstaben
+   werden der Reihe nach in der vokalisierten Form gesucht. Geht das nicht auf
+   (schwache Wurzel wie ب و ب in بَابٌ), wird BEWUSST nicht markiert statt
+   geraten. */
+var HARAKA = /[ً-ْٰٓ-ٕ]/;
+
+function gf(b){
+  if ('أإآٱا'.indexOf(b) >= 0) return 'ا';
+  if (b === 'ى') return 'ي';
+  if (b === 'ؤ') return 'و';
+  if (b === 'ئ') return 'ي';
+  if (b === 'ة') return 'ه';
+  return b;
+}
+function zerlege(wort){
+  var t = [], i, z;
+  for (i = 0; i < wort.length; i++){
+    z = wort[i];
+    if (HARAKA.test(z)){ if (t.length) t[t.length-1].d += z; }
+    else t.push({ b: z, d: '' });
+  }
+  return t;
+}
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+/* ---------- Lehnwörter ----------
+   In den Daten tragen auch entlehnte Namen eine Wurzelangabe. Sie ist dort
+   Zufall der Buchstaben, keine Bedeutung: أَمْرِيكَا bekaeme أ م ر, und davon
+   kommen أَمَرَ "befehlen" und أَمِير "Emir" - eine Verbindung, die es nicht
+   gibt. Solche Woerter werden NICHT markiert.
+   ⚠️ Die Liste ist mein Vorschlag und nicht belegt; ob الْعِرَاقُ dazugehoert,
+   ist umstritten und deshalb hier bewusst NICHT entschieden. */
+var LEHNWORT = ['الفليبين','اليابان','الصين','الهند','امريكا',
+                'المانيا','انجلترا','سويسرا','اندونيسيا','انجليزية'];
+
+/* Vergleichsform: Vokalzeichen weg UND Hamza-/Alif-Varianten vereinheitlicht.
+   Ohne den zweiten Schritt geht أَمْرِيكَا an der Liste vorbei, weil dort ein
+   plain ا steht und im Wort ein أ. */
+function vergleichsform(s){
+  return String(s).replace(/[ً-ْٰٓ-ٕ]/g,'').replace(/[^ء-ي]/g,'')
+                  .split('').map(gf).join('');
+}
+var LEHNWORT_N = LEHNWORT.map(vergleichsform);
+
+function markiere(wort, wurzel){
+  if (!wort) return { html:'', ok:false };
+  if (!wurzel || !String(wurzel).trim()) return { html: esc(wort), ok:false, grund:'keine Wurzel' };
+  if (LEHNWORT_N.indexOf(vergleichsform(wort)) >= 0)
+    return { html: esc(wort), ok:false, grund:'Lehnwort — die Wurzelangabe trägt hier keine Bedeutung' };
+  var teile = zerlege(wort);
+  var wz = String(wurzel).trim().split(/\s+/);
+  var wi = 0, idx = {}, i;
+  for (i = 0; i < teile.length && wi < wz.length; i++){
+    if (gf(teile[i].b) === gf(wz[wi])){ idx[i] = true; wi++; }
+  }
+  if (wi < wz.length)
+    return { html: esc(wort), ok:false, grund:'Wurzel steckt nicht sichtbar im Wort' };
+
+  var html = '', aktuell = null, puffer = '';
+  function schliesse(){
+    if (puffer === '') return;
+    html += '<span class="' + (aktuell ? 'wz' : 'fm') + '">' + esc(puffer) + '</span>';
+    puffer = '';
+  }
+  for (i = 0; i < teile.length; i++){
+    var ist = !!idx[i];
+    if (aktuell === null) aktuell = ist;
+    if (ist !== aktuell){ schliesse(); aktuell = ist; }
+    puffer += teile[i].b + teile[i].d;
+  }
+  schliesse();
+  return { html: html, ok:true };
+}
+
+/* ---------- Nachschlagewerk: Wortform -> Wurzel ---------- */
+function ohneZeichen(s){ return String(s).replace(/[ً-ْٰٓ-ٕ]/g,'').trim(); }
+var NACHSCHLAG = {};
+VOCAB_DATA.forEach(function(w){
+  if (w.root && String(w.root).trim()) NACHSCHLAG[ohneZeichen(w.ar)] = String(w.root).trim();
+});
+function wurzelFuer(rohWort){
+  var k = ohneZeichen(rohWort).replace(/[^ء-ي]/g,'');
+  if (NACHSCHLAG[k]) return NACHSCHLAG[k];
+  var praefixe = ['ال','وال','بال','لل','و','ب','ل','ف','ك'];
+  for (var i = 0; i < praefixe.length; i++){
+    var p = praefixe[i];
+    if (k.indexOf(p) === 0 && NACHSCHLAG[k.slice(p.length)]) return NACHSCHLAG[k.slice(p.length)];
+  }
+  return null;
+}
+function markiereSatz(satz){
+  if (!satz) return '';
+  return String(satz).split(/(\s+)/).map(function(stueck){
+    if (/^\s+$/.test(stueck)) return stueck;
+    var kern = stueck.replace(/[.,!?;:،؟]+$/,'');
+    var rest = stueck.slice(kern.length);
+    var r = wurzelFuer(kern);
+    if (!r) return esc(stueck);
+    var m = markiere(kern, r);
+    return (m.ok ? m.html : esc(kern)) + esc(rest);
+  }).join('');
+}
+
+/* ---------- Umschalter ---------- */
+document.getElementById('schalter').addEventListener('click', function(e){
+  var b = e.target.closest('button');
+  if (!b) return;
+  document.body.dataset.v = b.dataset.v;
+  [].forEach.call(this.querySelectorAll('button'), function(x){
+    if (x === b) x.setAttribute('aria-pressed','true'); else x.removeAttribute('aria-pressed');
+  });
+});
+
+/* ---------- Einzelwort + Satz ---------- */
+var MIT_WURZEL = VOCAB_DATA.filter(function(w){ return w.root && String(w.root).trim(); });
+
+/* Startwort bewusst NICHT das erste: بَيْتٌ besteht ganz aus seiner Wurzel,
+   da ist nichts zu dimmen und der Effekt waere am Einstieg unsichtbar.
+   Gesucht wird das Wort mit den meisten Formbuchstaben. */
+var pos = (function(){
+  /* Erste Wahl ist ein Lehrbeispiel: Vorsilbe + Wurzel + Endung, alle drei
+     sichtbar. Der Automat allein waehlt sonst das laengste Wort, und das ist
+     im Bestand regelmaessig ein Eigenname. */
+  var wunsch = ['مكتبة','مدرسة','مطبخ','مدرس','مكتب'];
+  for (var k = 0; k < wunsch.length; k++){
+    for (var i = 0; i < MIT_WURZEL.length; i++){
+      if (vergleichsform(MIT_WURZEL[i].ar) === vergleichsform(wunsch[k])
+          && markiere(MIT_WURZEL[i].ar, MIT_WURZEL[i].root).ok) return i;
+    }
+  }
+  return 0;
+})();
+
+function zeigeWort(){
+  var w = MIT_WURZEL[pos];
+  var m = markiere(w.ar, w.root);
+  document.getElementById('wortAr').innerHTML = m.html;
+  document.getElementById('wortDe').textContent = w.de || '';
+  document.getElementById('wortWurzel').textContent = w.root;
+  var warn = document.getElementById('wortWarn');
+  if (m.ok){ warn.hidden = true; }
+  else { warn.hidden = false; warn.textContent = 'nicht markierbar — ' + m.grund; }
+
+  document.getElementById('satzAr').innerHTML = markiereSatz(w.sentAr);
+  document.getElementById('satzDe').textContent = w.sentDe || '';
+  zeigeFamilie(w);
+}
+document.getElementById('bWeiter').onclick  = function(){ pos = (pos+1) % MIT_WURZEL.length; zeigeWort(); };
+document.getElementById('bZurueck').onclick = function(){ pos = (pos-1+MIT_WURZEL.length) % MIT_WURZEL.length; zeigeWort(); };
+document.getElementById('bZufall').onclick  = function(){ pos = Math.floor(Math.random()*MIT_WURZEL.length); zeigeWort(); };
+
+/* ---------- Wurzelmodus ---------- */
+var BUCHWOERTER = [];
+function familieVon(w){
+  var r = String(w.root).trim();
+  var eigen = ohneZeichen(w.ar);
+  var gesehen = {}, raus = [];
+  VOCAB_DATA.concat(BUCHWOERTER).forEach(function(x){
+    if (!x.root || String(x.root).trim() !== r) return;
+    var k = ohneZeichen(x.ar);
+    if (k === eigen || gesehen[k]) return;
+    gesehen[k] = true;
+    raus.push({ ar:x.ar, de:x.de, kennst: !!NACHSCHLAG[k] });
+  });
+  return raus;
+}
+function zeigeFamilie(w){
+  var m = markiere(w.ar, w.root);
+  document.getElementById('famAnker').innerHTML = m.html;
+  document.getElementById('famAnkerDe').textContent = w.de || '';
+  document.getElementById('famWurzel').textContent = w.root;
+  document.getElementById('famVorne').hidden = false;
+  document.getElementById('famHinten').hidden = true;
+  var f = familieVon(w);
+  document.getElementById('famZahl').textContent =
+    f.length ? (f.length + ' verwandte Wörter gefunden') : 'zu diesem Wort sind keine Verwandten geladen';
+}
+document.getElementById('bAufdecken').onclick = function(){
+  var w = MIT_WURZEL[pos], f = familieVon(w), box = document.getElementById('famHinten');
+  if (!f.length){
+    box.innerHTML = '<div class="frage">Keine Verwandten im geladenen Bestand.</div>';
+  } else {
+    box.innerHTML = f.map(function(x){
+      var mm = markiere(x.ar, w.root);
+      return '<div class="fam' + (x.kennst ? ' kennst' : '') + '">' +
+             '<div class="ar ar-klein">' + (mm.ok ? mm.html : esc(x.ar)) + '</div>' +
+             '<div class="fam-de">' + esc(x.de || '') + '</div>' +
+             '<div class="fam-neu">' + (x.kennst ? 'kennst du schon' : 'neu — im Modus mit einem Plus dazu') + '</div>' +
+             '</div>';
+    }).join('');
+  }
+  document.getElementById('famVorne').hidden = true;
+  box.hidden = false;
+};
+
+/* ---------- Buchwörter nachladen ----------
+   Zwei Wege, und die Reihenfolge ist wichtig:
+
+   1. IndexedDB. Auf dem Handy liegen die Buchvokabeln NICHT als Dateien,
+      sondern als eingelesenes Paket (js/vokabelpaket.js, DB `vokabeltrainer`,
+      Store `pakete`, Schluessel `vokabelpaket`). Wer nur nach Dateien sucht,
+      findet dort nichts und meldet faelschlich "keine Buecher".
+   2. data/vokabeln-*.js als Rueckfall - so liegt es lokal am Rechner.
+
+   Auf der veroeffentlichten Fassung schlaegt Weg 2 fehl, und das ist richtig
+   so: die Dateien gehoeren nach arabicroots' AGB nicht auf einen Server. */
+function ausPaket(){
+  return new Promise(function(fertig){
+    if (!('indexedDB' in window)) return fertig(null);
+    var a;
+    try { a = indexedDB.open('vokabeltrainer', 1); } catch(e){ return fertig(null); }
+    a.onupgradeneeded = function(){
+      /* Nur lesen wollen wir. Entsteht der Store hier erst, ist nichts da. */
+      var db = a.result;
+      if (!db.objectStoreNames.contains('pakete')) db.createObjectStore('pakete');
+    };
+    a.onerror = function(){ fertig(null); };
+    a.onsuccess = function(){
+      var db = a.result;
+      try {
+        var g = db.transaction('pakete','readonly').objectStore('pakete').get('vokabelpaket');
+        g.onsuccess = function(){ fertig(g.result || null); db.close(); };
+        g.onerror   = function(){ fertig(null); db.close(); };
+      } catch(e){ fertig(null); db.close(); }
+    };
+  });
+}
+function ausDateien(){
+  return new Promise(function(fertig){
+    var slugs = ['madina-1','madina-2','madina-3','bayna-yadayk-1','bayna-yadayk-2',
+                 'bayna-yadayk-3','bayna-yadayk-4','quran'];
+    var offen = slugs.length;
+    slugs.forEach(function(s){
+      var sc = document.createElement('script');
+      sc.src = 'data/vokabeln-' + s + '.js';
+      sc.onload = sc.onerror = function(){ if (--offen === 0) fertig(); };
+      document.head.appendChild(sc);
+    });
+  });
+}
+function einsammeln(){
+  BUCHWOERTER = [];
+  var V = window.VOKABELN || {};
+  Object.keys(V).forEach(function(k){ if (Array.isArray(V[k])) BUCHWOERTER = BUCHWOERTER.concat(V[k]); });
+}
+
+document.getElementById('bLaden').onclick = function(){
+  var b = this, quelle = '';
+  b.disabled = true; b.textContent = 'lade …';
+  ausPaket().then(function(paket){
+    if (paket && paket.buecher){
+      window.VOKABELN = window.VOKABELN || {};
+      Object.keys(paket.buecher).forEach(function(slug){
+        if (Array.isArray(paket.buecher[slug]) && !window.VOKABELN[slug])
+          window.VOKABELN[slug] = paket.buecher[slug];
+      });
+      einsammeln();
+      if (BUCHWOERTER.length){ quelle = 'aus dem Paket'; return; }
+    }
+    return ausDateien().then(function(){ einsammeln(); quelle = 'aus data/'; });
+  }).then(function(){
+    b.textContent = BUCHWOERTER.length
+      ? (BUCHWOERTER.length + ' Buchwörter geladen ' + quelle)
+      : 'keine Buchwörter gefunden — weder Paket noch data/';
+    zeigeWort();
+    bilanz();
+  });
+};
+
+/* ---------- Wortliste ---------- */
+document.getElementById('listeBox').innerHTML = MIT_WURZEL.slice(0, 12).map(function(w){
+  var m = markiere(w.ar, w.root);
+  return '<div class="liste-zeile"><div class="ar ar-klein" style="text-align:right">' +
+         (m.ok ? m.html : esc(w.ar)) + '</div><div class="liste-de">' + esc(w.de || '') + '</div></div>';
+}).join('');
+
+/* ---------- Bilanz ---------- */
+function bilanz(){
+  var ok = 0, schwach = 0, lehn = 0;
+  MIT_WURZEL.forEach(function(w){
+    var m = markiere(w.ar, w.root);
+    if (m.ok) ok++;
+    else if (m.grund && m.grund.indexOf('Lehnwort') === 0) lehn++;
+    else schwach++;
+  });
+  document.getElementById('bilanz').textContent =
+    VOCAB_DATA.length + ' Wörter · ' + MIT_WURZEL.length + ' mit Wurzelangabe · ' +
+    ok + ' markiert · ' + schwach + ' schwache Wurzeln (unmarkiert) · ' +
+    lehn + ' Lehnwörter (bewusst ausgenommen)' +
+    (BUCHWOERTER.length ? ' · ' + BUCHWOERTER.length + ' Buchwörter geladen' : '');
+}
+zeigeWort();
+bilanz();
+</script>
+</body>
+</html>
