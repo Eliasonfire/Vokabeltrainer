@@ -265,6 +265,9 @@ function renderSurahList(filter){
   document.getElementById('btnAyahListe').classList.add('hidden');
   document.getElementById('suraNav').classList.add('hidden');
   OFFENE_SURE = null;
+  /* Zurueck in der Liste ist der Kopf immer da - sonst stuende man ohne
+     Zurueck-Pfeil vor 114 Zeilen. Siehe kopfZuruecksetzen weiter unten. */
+  kopfZuruecksetzen();
   /* Wie der Favoritenblock verschwindet auch die Weiterlesen-Zeile bei einer
      Suche: sie filtert nicht mit und stuende sonst ueber Treffern, zu denen
      sie nicht gehoert. */
@@ -484,6 +487,63 @@ function anDenAnfang(){
   if (kasten) kasten.scrollTo({ top: 0, behavior: 'instant' });
 }
 
+/* ---------- Kopf einklappen beim Weiterlesen (Elias' Punkt 1, 10.08.2026) ----
+
+   „Ich will das dieser Bereich sich ein klappt wenn ich nach unten weiter lese
+   und nach unten scrolle, wenn ich aber hoch scrolle und nach oben gehe dann
+   soll sich das wieder öffnen und runter kommen."
+
+   Gemessen wird die RICHTUNG, nicht die Stelle. Deshalb steht hier kein
+   Vergleich gegen eine feste Hoehe, sondern ein Weg seit dem letzten
+   Richtungswechsel: KOPF_STAND wird bei jedem Umschalten neu gesetzt, und erst
+   ein Weg von KOPF_SCHWELLE in die andere Richtung schaltet zurueck. Ohne diese
+   Schwelle wuerde die Leiste bei jedem Zittern des Daumens auf- und zuklappen.
+
+   ⚠️ Nur in der geoeffneten Sure. In der Surenliste bleibt der Kopf stehen —
+   Elias' Bild zeigt den Leser, und in der Liste ist die Ḥifẓ-Zeile ohnehin
+   leer. Faellt ihm das spaeter auf, ist es die Zeile `OFFENE_SURE === null`.
+
+   ⚠️ Ganz oben wird immer ausgeklappt. Sonst gaebe es einen Zustand, aus dem
+   man die Leiste nicht mehr hervorholen kann: bei scrollTop 0 laesst sich nicht
+   weiter nach oben rollen, also kaeme nie ein Aufwaerts-Weg zustande. */
+const KOPF_SCHWELLE = 24;   /* px Weg, bevor umgeschaltet wird */
+const KOPF_RUHE     = 64;   /* px von oben, in denen immer ausgeklappt ist */
+let   KOPF_STAND    = 0;    /* scrollTop beim letzten Umschalten */
+let   KOPF_EIN      = false;/* ist gerade eingeklappt? */
+
+function setzeKopf(einklappen){
+  if (einklappen === KOPF_EIN) return;
+  KOPF_EIN = einklappen;
+  const screen = document.getElementById('screen-quranfull');
+  if (screen) screen.classList.toggle('kopf-eingeklappt', einklappen);
+}
+
+function pruefeLeseRichtung(){
+  if (OFFENE_SURE === null){ setzeKopf(false); return; }
+  const kasten = document.getElementById('main');
+  if (!kasten) return;
+  const y = kasten.scrollTop;
+  /* Ueberrollen (das Gummiband auf iOS) liefert Werte ausserhalb des Bereichs.
+     Das ist keine Lesegeste, sondern das Ende der Liste - sonst klappt die
+     Leiste am Sure-Ende von selbst zu und beim Zurueckfedern wieder auf. */
+  const max = kasten.scrollHeight - kasten.clientHeight;
+  if (y < 0 || y > max) return;
+
+  if (y <= KOPF_RUHE){ KOPF_STAND = y; setzeKopf(false); return; }
+
+  const weg = y - KOPF_STAND;
+  if (weg > KOPF_SCHWELLE){ setzeKopf(true);  KOPF_STAND = y; }
+  else if (weg < -KOPF_SCHWELLE){ setzeKopf(false); KOPF_STAND = y; }
+}
+
+/* Beim Betreten und Verlassen einer Sure aufklappen und den Weg zuruecksetzen.
+   Ohne das stuende man nach einem Sprung mitten im Text mit weggefahrener
+   Leiste da, ohne zu wissen, in welcher Sure man ist. */
+function kopfZuruecksetzen(){
+  KOPF_STAND = 0;
+  setzeKopf(false);
+}
+
 /* ---------- Aenderungen oberhalb der Liste, ohne dass sie springt ----------
 
    Elias am 04.08.2026 abends: "wenn ich eine sura als favoriert auswaehle dann
@@ -612,6 +672,9 @@ async function openSurah(id, opt){
      mehr, dass gerade noch die Liste zu sehen war. */
   merkeListenRollstand();
   OFFENE_SURE = id;
+  /* Eine frisch geoeffnete Sure faengt mit sichtbarem Kopf an, egal wie der
+     Stand beim Verlassen der vorigen war. */
+  kopfZuruecksetzen();
   /* Eine geoeffnete Sure ist eine eigene Ebene. Ohne diesen Eintrag springt die
      Zurueck-Taste ueber die ganze Surenliste hinweg. `ausHistorie` kommt vom
      popstate-Handler - dort wird der Zustand wiederhergestellt, nicht neu
@@ -1092,6 +1155,32 @@ document.getElementById('btnHifzVerdecken').addEventListener('click', ()=>{
   if (OFFENE_SURE) aktualisiereHifzLeiste(OFFENE_SURE, SURAH_DATA.find(s=>s.id===OFFENE_SURE));
 });
 
+
+/* Ein einziger Zuhoerer auf dem Rollkasten, nicht einer je geoeffneter Sure -
+   `#main` ist fuer Liste und Verse derselbe und bleibt ueber die ganze Laufzeit
+   bestehen. pruefeLeseRichtung steigt selbst aus, wenn gerade keine Sure offen
+   ist.
+
+   Gedrosselt auf ein Bild: Ein Bildlauf feuert je nach Geraet dutzende Male je
+   Sekunde, und jeder Durchlauf liest scrollHeight/clientHeight - das erzwingt
+   ein Nachrechnen der Seite. Mit requestAnimationFrame passiert das hoechstens
+   einmal je gezeichnetem Bild, also genau so oft, wie man es ueberhaupt sehen
+   koennte.
+
+   `passive:true`, weil hier nie `preventDefault` aufgerufen wird - damit darf
+   der Browser weiterrollen, ohne auf diesen Zuhoerer zu warten. */
+(function beobachteLeseRichtung(){
+  const kasten = document.getElementById('main');
+  if (!kasten) return;
+  let angefordert = false;
+  kasten.addEventListener('scroll', ()=>{
+    if (angefordert) return;
+    angefordert = true;
+    const gleich = typeof requestAnimationFrame === 'function'
+      ? requestAnimationFrame : (f)=>setTimeout(f, 16);
+    gleich(()=>{ angefordert = false; pruefeLeseRichtung(); });
+  }, { passive:true });
+})();
 
 /* Die gespeicherte Ansicht gilt ab dem ersten Bildaufbau, nicht erst, wenn das
    Menue einmal geoeffnet wurde. Sonst startet der Leser immer in 100 % und
