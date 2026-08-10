@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>Gestaltungs-Vorschau · Vokabeltrainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!--
+  ============================================================================
+  GESTALTUNGS-VORSCHAU — zum Aussuchen, nicht zum Benutzen
+  ============================================================================
+
+  Elias am 10.08.2026, 03:58:
+    "du kannst mir auch erstmal mehrere vorlagen machen zu dem design in der
+     app und dann kann ich entscheiden welche am besten ist. am coolsten waere
+     es wenn man diese designs auf meine app simulieren koennte sodass ich eine
+     realistische darstellung habe."
+
+  Deshalb diese Datei. Sie ist EIGENSTAENDIG und fasst index.html nicht an —
+  der Checkpoint `stand-2026-08-10-vor-neuem-design` bleibt unberuehrt gueltig.
+  Sie steht auch NICHT im Offline-Cache von sw.js: eine Auswahlseite muss nicht
+  offline funktionieren, und eine Aufnahme dort haette eine Cache-Erhoehung
+  erzwungen, ohne dass sich an der App etwas geaendert haette.
+
+  DER TRICK, UND ZUGLEICH DIE EIGENTLICHE AUSSAGE:
+  Alle Varianten benutzen DASSELBE Markup. Umgeschaltet wird nur ein Attribut
+  am Rahmen (`data-v`). Was du hier siehst, ist damit kein gemaltes Bild und
+  keine Neubau-Ankuendigung, sondern der Beweis, dass die Umstellung eine
+  Sache der Formatvorlagen ist. Was du aussuchst, wandert als CSS in
+  index.html — die 18 Module bleiben, wie sie sind.
+
+  INHALTE SIND ECHT, NICHT ERFUNDEN:
+  - Vokabel بَيْتٌ / Haus samt Beispielsatz stammt unveraendert aus
+    vocab-data.js (id 45751).
+  - Sure 112 kommt aus quran-text.js, geholt mit `node werkzeuge/vers.mjs 112`.
+  - Keine gesperrten Daten: aus data/vokabeln-*.js steht hier nichts.
+
+  Die Farbwerte sind die der App. Elias' Entscheidung vom 10.08., 03:50:
+  Formensprache von den Plakaten, Farbaufteilung vom Dunklen. Schwarz bleibt
+  Grund, Rot ist Licht, Weiss ist Schrift und duenne Linie — grosse weisse
+  Flaechen blenden nachts und brechen die eigene OLED-Vorgabe.
+  ============================================================================
+-->
+
+<style>
+/* ============================ Grundwerte der App ==========================
+   Uebernommen aus index.html, damit die Vorschau nicht "aehnlich" aussieht,
+   sondern gleich. Wer hier einen Wert aendert, aendert nur die Vorschau. */
+:root{
+  --bg:#000000;
+  --surface-1:#0b0b0c; --surface-2:#131315; --surface-3:#1b1b1e; --surface-4:#242428;
+  --border:#26262b; --border-strong:#33333a; --hairline:rgba(255,255,255,.06);
+
+  --red:#ff1744; --red-bright:#ff4d6a; --red-soft:#ff8095; --red-dim:#5e0b1c;
+  --red-glow:rgba(255,23,68,.34); --red-wash:rgba(255,23,68,.09);
+
+  --text:#f4f4f5; --text-dim:#a1a1a8; --text-faint:#66666e;
+  --green:#2ee6a6; --green-dim:#0c3a2c; --green-wash:rgba(46,230,166,.12);
+
+  --font-ar:'Noto Naskh Arabic','Amiri',serif;
+  --font-ui:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+
+  --fs-xs:.7rem; --fs-sm:.78rem; --fs-md:.88rem; --fs-lg:1rem;
+  --fs-xl:1.25rem; --fs-2xl:1.75rem;
+
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px;
+  --sp-5:20px; --sp-6:24px; --sp-7:32px; --sp-8:40px;
+
+  --r-1:10px; --r-2:14px; --r-3:18px; --r-4:22px; --r-5:28px; --r-full:999px;
+  --dur-1:130ms; --dur-2:220ms; --dur-3:340ms; --dur-4:520ms;
+  --ease-out:cubic-bezier(.22,1,.36,1);
+
+  /* Diese drei steuern die Varianten. Jede Variante setzt sie neu — deshalb
+     reicht ein Attribut am Rahmen, um alles umzuschalten. */
+  --v-radius:var(--r-3);
+  --v-cut:0px;             /* Groesse der abgeschnittenen Ecke */
+  --v-card-bg:var(--surface-2);
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--font-ui);font-size:var(--fs-md);line-height:1.55;
+  overscroll-behavior-y:none;
+}
+/* Wie in der App seit v121: keine Bildlaufleisten. */
+*{scrollbar-width:none;}
+*::-webkit-scrollbar{display:none;}
+
+/* Strichzeichen: eine Klasse, überall gleich. Sie erben die Textfarbe, damit
+   eine Variante sie über `color` mitfärben kann, ohne jedes Zeichen anzufassen. */
+.z{width:1em;height:1em;display:inline-block;vertical-align:-.13em;fill:none;
+  stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ============================ Rahmen der Vorschau ======================== */
+.vp-kopf{padding:var(--sp-5) var(--sp-4) var(--sp-3);border-bottom:1px solid var(--border);}
+.vp-kopf h1{margin:0 0 var(--sp-2);font-size:var(--fs-xl);font-weight:800;letter-spacing:-.02em;}
+.vp-kopf p{margin:0;color:var(--text-dim);font-size:var(--fs-sm);max-width:52ch;}
+
+.vp-schalter{position:sticky;top:0;z-index:20;background:rgba(0,0,0,.92);
+  backdrop-filter:blur(12px);border-bottom:1px solid var(--border);
+  padding:var(--sp-3) var(--sp-4);}
+.vp-reihe{display:flex;gap:var(--sp-2);overflow-x:auto;padding-bottom:var(--sp-1);}
+.vp-reihe + .vp-reihe{margin-top:var(--sp-2);}
+.vp-marke{font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.12em;
+  color:var(--text-faint);font-weight:700;margin-bottom:var(--sp-1);}
+.vp-knopf{
+  flex:0 0 auto;background:var(--surface-2);color:var(--text-dim);
+  border:1px solid var(--border);border-radius:var(--r-full);
+  padding:var(--sp-2) var(--sp-4);font:inherit;font-size:var(--fs-sm);font-weight:600;
+  cursor:pointer;transition:transform var(--dur-1) var(--ease-out),
+    background var(--dur-2) ease,color var(--dur-2) ease,border-color var(--dur-2) ease;
+}
+.vp-knopf:active{transform:scale(.95);}
+.vp-knopf[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff;}
+
+.vp-text{padding:var(--sp-5) var(--sp-4);border-top:1px solid var(--border);}
+.vp-text h2{margin:0 0 var(--sp-1);font-size:var(--fs-lg);font-weight:800;}
+.vp-text .vp-unter{margin:0 0 var(--sp-3);color:var(--red-bright);font-size:var(--fs-xs);
+  text-transform:uppercase;letter-spacing:.14em;font-weight:700;}
+.vp-text p{margin:0 0 var(--sp-3);color:var(--text-dim);font-size:var(--fs-sm);max-width:60ch;}
+.vp-text p:last-child{margin-bottom:0;}
+.vp-text b{color:var(--text);font-weight:700;}
+
+.vp-buehne{padding:var(--sp-4);}
+.vp-hinweis{color:var(--text-faint);font-size:var(--fs-xs);padding:0 var(--sp-4) var(--sp-6);
+  max-width:60ch;}
+
+/* ====================== Die App-Nachbildung selbst ======================= */
+.app{
+  max-width:420px;margin:0 auto;background:var(--bg);
+  border:1px solid var(--border);border-radius:var(--r-4);overflow:hidden;
+  position:relative;
+}
+.app .bildschirm{display:none;}
+.app .bildschirm.an{display:block;animation:reinKommen var(--dur-3) var(--ease-out);}
+@keyframes reinKommen{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+
+/* --- Kopfleiste --- */
+.topbar{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:var(--sp-3);
+  padding:var(--sp-3) var(--sp-4);border-bottom:1px solid var(--border);}
+.marke{font-family:var(--font-ar);font-size:1.15rem;line-height:1.2;}
+.marke small{display:block;font-family:var(--font-ui);font-size:var(--fs-xs);
+  color:var(--text-faint);letter-spacing:.08em;text-transform:uppercase;font-weight:700;}
+.serie{display:flex;align-items:center;gap:var(--sp-1);font-weight:800;
+  font-variant-numeric:tabular-nums;background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--r-full);padding:var(--sp-1) var(--sp-3);font-size:var(--fs-sm);}
+.zahnrad{width:34px;height:34px;display:grid;place-items:center;border-radius:var(--r-full);
+  background:var(--surface-2);border:1px solid var(--border);color:var(--text-dim);
+  font-size:var(--fs-md);}
+
+/* --- Lernkarte --- */
+.lern-kopf{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-3) var(--sp-4);}
+.lern-x{width:30px;height:30px;flex:0 0 auto;display:grid;place-items:center;
+  border-radius:var(--r-full);background:var(--surface-2);border:1px solid var(--border);
+  color:var(--text-dim);font-size:var(--fs-sm);}
+.balken{flex:1;height:6px;border-radius:var(--r-full);background:var(--surface-3);overflow:hidden;}
+.balken i{display:block;height:100%;width:55%;background:var(--red);border-radius:inherit;
+  transition:width 900ms var(--ease-out);}
+.zaehler{font-size:var(--fs-sm);color:var(--text-dim);font-variant-numeric:tabular-nums;font-weight:700;}
+
+.karte{
+  position:relative;margin:var(--sp-3) var(--sp-4) var(--sp-4);
+  background:var(--v-card-bg);border:1px solid var(--border);
+  border-radius:var(--v-radius);padding:var(--sp-6) var(--sp-5) var(--sp-7);
+  min-height:290px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;overflow:hidden;
+  transition:transform var(--dur-1) var(--ease-out),border-color var(--dur-2) ease,
+    box-shadow var(--dur-2) ease;
+}
+.karte:active{transform:scale(.985);}
+.karte-marken{position:absolute;top:var(--sp-4);left:var(--sp-4);display:flex;gap:var(--sp-2);}
+.chip{font-size:var(--fs-xs);font-weight:700;color:var(--text-dim);background:var(--surface-3);
+  border:1px solid var(--border);border-radius:var(--r-full);padding:2px var(--sp-3);}
+.wort-ar{font-family:var(--font-ar);font-size:3.2rem;line-height:1.5;direction:rtl;
+  font-weight:600;margin:var(--sp-2) 0 var(--sp-4);}
+.hoerknopf{width:44px;height:44px;border-radius:var(--r-full);display:grid;place-items:center;
+  background:var(--surface-3);border:1px solid var(--border);color:var(--text-dim);
+  font-size:var(--fs-lg);margin-bottom:var(--sp-4);}
+.tipp{font-size:var(--fs-xs);color:var(--text-faint);letter-spacing:.1em;text-transform:uppercase;
+  font-weight:700;}
+
+.stufen{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-2);
+  padding:0 var(--sp-4) var(--sp-5);}
+.stufe{
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--v-radius);
+  padding:var(--sp-3) var(--sp-1);text-align:center;color:var(--text);
+  font:inherit;font-size:var(--fs-xs);font-weight:700;cursor:pointer;overflow:hidden;
+  transition:transform var(--dur-1) var(--ease-out),background var(--dur-2) ease,
+    border-color var(--dur-2) ease;
+}
+.stufe:active{transform:scale(.94);}
+.stufe span{display:block;margin-bottom:var(--sp-1);}
+.stufe b{display:block;font-size:var(--fs-xs);font-weight:800;}
+.stufe i{display:block;font-style:normal;font-size:.62rem;color:var(--text-faint);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.stufe.nochmal{border-color:var(--red-dim);}
+.stufe.gut{border-color:var(--green-dim);}
+
+/* --- Quran-Leser --- */
+.quran-kopf{position:sticky;top:0;background:rgba(0,0,0,.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);padding:var(--sp-3) var(--sp-4);z-index:2;}
+.quran-zeile{display:flex;align-items:center;gap:var(--sp-3);}
+.quran-titel{flex:1;font-family:var(--font-ar);font-size:1.3rem;direction:rtl;text-align:right;}
+.quran-werkzeuge{display:flex;gap:var(--sp-2);margin-top:var(--sp-3);}
+.wz{flex:1;font-size:var(--fs-xs);font-weight:700;color:var(--text-dim);background:var(--surface-2);
+  border:1px solid var(--border);border-radius:var(--r-full);padding:var(--sp-2);text-align:center;}
+/* Die Ligatur U+FDFD ist EIN Zeichen und sehr breit. Bei 2rem misst sie 407 px
+   gegen 341 px Platz und wird abgeschnitten — im Browser nachgemessen
+   (scrollWidth gegen clientWidth). 1,6rem passt mit Rand. */
+.basmala{font-family:var(--font-ar);font-size:1.6rem;text-align:center;direction:rtl;
+  padding:var(--sp-5) var(--sp-4) var(--sp-3);color:var(--text);}
+.verse{padding:0 var(--sp-4) var(--sp-6);}
+.vers{background:var(--v-card-bg);border:1px solid var(--border);border-radius:var(--v-radius);
+  padding:var(--sp-4);margin-bottom:var(--sp-2);position:relative;overflow:hidden;
+  transition:transform var(--dur-1) var(--ease-out),border-color var(--dur-2) ease;}
+.vers:active{transform:scale(.99);}
+.vers-nr{font-size:var(--fs-xs);font-weight:800;color:var(--red-bright);background:var(--red-wash);
+  border:1px solid var(--red-dim);display:inline-block;border-radius:var(--r-full);
+  padding:2px var(--sp-2);margin-bottom:var(--sp-2);font-variant-numeric:tabular-nums;}
+.vers-ar{font-family:var(--font-ar);font-size:1.7rem;line-height:2;direction:rtl;text-align:right;}
+.vers-de{color:var(--text-dim);font-size:var(--fs-sm);margin-top:var(--sp-2);}
+/* Das Häkchen sitzt RECHTS, nicht links — links steht die Versnummer, und bei
+   `left` überlagern sich beide (im Browser gemessen: die Rechtecke schneiden
+   sich). Rechts ist außerdem der Platz, den es in der App hat. */
+.vers.gekonnt .haken{position:absolute;top:var(--sp-3);right:var(--sp-3);width:20px;height:20px;
+  border-radius:6px;background:var(--green);display:grid;place-items:center;color:#04140f;
+  font-size:.7rem;font-weight:900;z-index:1;}
+
+/* --- Startseite --- */
+.faellig{margin:var(--sp-4);background:var(--v-card-bg);border:1px solid var(--border);
+  border-radius:var(--v-radius);padding:var(--sp-6) var(--sp-5);text-align:center;
+  position:relative;overflow:hidden;}
+.faellig-zahl{font-size:3.6rem;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;
+  letter-spacing:-.03em;}
+.faellig-text{color:var(--text-dim);font-size:var(--fs-sm);margin-top:var(--sp-1);}
+.knopf-gross{margin-top:var(--sp-5);width:100%;background:var(--red);color:#fff;border:0;
+  border-radius:var(--v-radius);padding:var(--sp-4);font:inherit;font-weight:800;
+  font-size:var(--fs-md);cursor:pointer;
+  transition:transform var(--dur-1) var(--ease-out),filter var(--dur-2) ease;}
+.knopf-gross:active{transform:scale(.97);filter:brightness(1.12);}
+.kacheln{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-2);padding:0 var(--sp-4);}
+.kachel{background:var(--v-card-bg);border:1px solid var(--border);border-radius:var(--v-radius);
+  padding:var(--sp-4);text-align:left;color:var(--text);font:inherit;cursor:pointer;
+  overflow:hidden;position:relative;
+  transition:transform var(--dur-1) var(--ease-out),border-color var(--dur-2) ease;}
+.kachel:active{transform:scale(.96);}
+.kachel-zeichen{font-size:1.3rem;display:block;margin-bottom:var(--sp-2);color:var(--red-bright);}
+.kachel b{display:block;font-weight:700;font-size:var(--fs-md);}
+.kachel small{color:var(--text-faint);font-size:var(--fs-xs);}
+.boxen{display:flex;gap:var(--sp-2);padding:var(--sp-5) var(--sp-4) var(--sp-6);}
+.box{flex:1;background:var(--v-card-bg);border:1px solid var(--border);border-radius:var(--v-radius);
+  padding:var(--sp-3) var(--sp-1);text-align:center;position:relative;overflow:hidden;}
+.box em{display:block;font-style:normal;font-size:var(--fs-xs);color:var(--text-faint);
+  text-transform:uppercase;letter-spacing:.08em;font-weight:700;}
+.box strong{display:block;font-size:var(--fs-xl);font-weight:800;font-variant-numeric:tabular-nums;}
+
+/* =========================================================================
+   VARIANTE A — „Schnitt"
+   Die Plakat-Diagonale als Bauprinzip: keine Flaeche ist ein reines Rechteck,
+   jede traegt oben rechts einen Schnitt. Rot kommt nicht als Flaeche, sondern
+   als Lichtkeil dahinter. Gross-Klein bis zum Anschlag.
+   ========================================================================= */
+[data-v="a"]{
+  --v-radius:0px;
+  --v-cut:22px;
+  --v-card-bg:var(--surface-1);
+}
+[data-v="a"] .karte,[data-v="a"] .vers,[data-v="a"] .faellig,
+[data-v="a"] .kachel,[data-v="a"] .box,[data-v="a"] .stufe,[data-v="a"] .knopf-gross{
+  clip-path:polygon(0 0,calc(100% - var(--v-cut)) 0,100% var(--v-cut),100% 100%,0 100%);
+  border-radius:0;
+}
+[data-v="a"] .karte::before{
+  content:"";position:absolute;inset:auto -30% -55% -30%;height:120%;
+  background:linear-gradient(115deg,transparent 38%,var(--red-glow) 52%,transparent 66%);
+  transform:translateY(30%) rotate(-8deg);pointer-events:none;
+  animation:keilRein 900ms var(--ease-out) both;
+}
+@keyframes keilRein{from{transform:translateY(85%) rotate(-8deg);opacity:0;}
+  to{transform:translateY(30%) rotate(-8deg);opacity:1;}}
+[data-v="a"] .karte:active::before{animation:none;transform:translateY(18%) rotate(-8deg);}
+[data-v="a"] .wort-ar{font-size:4.1rem;font-weight:700;}
+[data-v="a"] .chip,[data-v="a"] .tipp,[data-v="a"] .vers-de,[data-v="a"] .kachel small{
+  font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;}
+[data-v="a"] .vers-nr{border-radius:0;clip-path:polygon(0 0,100% 0,100% 100%,6px 100%);
+  padding-left:var(--sp-3);}
+[data-v="a"] .faellig-zahl{font-size:5rem;}
+[data-v="a"] .balken i{background:linear-gradient(90deg,var(--red-dim),var(--red));}
+[data-v="a"] .kachel-zeichen{font-size:1.7rem;}
+[data-v="a"] .serie{border-radius:0;clip-path:polygon(0 0,100% 0,100% 100%,8px 100%);}
+
+/* =========================================================================
+   VARIANTE B — „Stempel"
+   Plakatsprache ueber Typografie statt ueber Formen: uebergrosse Ziffern als
+   Bild, winzige Versalien als Beschriftung, duenne weisse Linien teilen die
+   Flaeche in Felder. Karten bleiben schwarz — Struktur kommt aus Linien, nicht
+   aus gefuellten Kaesten. Rot markiert NUR, was gerade lebt.
+   ========================================================================= */
+[data-v="b"]{
+  --v-radius:2px;
+  --v-card-bg:transparent;
+}
+[data-v="b"] .karte,[data-v="b"] .vers,[data-v="b"] .faellig,
+[data-v="b"] .kachel,[data-v="b"] .box{
+  background:transparent;border:0;border-top:1px solid var(--hairline);
+  border-bottom:1px solid var(--hairline);border-radius:0;
+}
+[data-v="b"] .kachel,[data-v="b"] .box{border-left:1px solid var(--hairline);}
+[data-v="b"] .karte{border-left:2px solid var(--red);}
+[data-v="b"] .stufe{background:transparent;border:1px solid var(--hairline);border-radius:2px;}
+[data-v="b"] .stufe.gut{border-color:var(--green-dim);}
+[data-v="b"] .chip,[data-v="b"] .tipp,[data-v="b"] .box em,[data-v="b"] .kachel small,
+[data-v="b"] .faellig-text,[data-v="b"] .vers-de{
+  text-transform:uppercase;letter-spacing:.2em;font-size:.6rem;font-weight:700;
+  color:var(--text-faint);}
+[data-v="b"] .chip{background:transparent;border:0;padding:0;}
+[data-v="b"] .faellig-zahl,[data-v="b"] .box strong{
+  font-weight:800;letter-spacing:-.05em;}
+[data-v="b"] .faellig-zahl{font-size:6rem;line-height:.85;}
+[data-v="b"] .vers-nr{background:transparent;border:0;padding:0;color:var(--text-faint);
+  font-size:1.4rem;font-weight:800;letter-spacing:-.04em;}
+[data-v="b"] .vers.gekonnt .vers-nr{color:var(--red);}
+[data-v="b"] .wort-ar{font-size:3.4rem;}
+[data-v="b"] .knopf-gross{border-radius:2px;}
+[data-v="b"] .serie{background:transparent;border:0;border-left:2px solid var(--red);
+  border-radius:0;padding-left:var(--sp-2);}
+[data-v="b"] .balken{height:2px;background:var(--hairline);border-radius:0;}
+[data-v="b"] .balken i{border-radius:0;}
+[data-v="b"] .kachel-zeichen{color:var(--text-faint);}
+[data-v="b"] .zahnrad,[data-v="b"] .lern-x,[data-v="b"] .hoerknopf,[data-v="b"] .wz{
+  background:transparent;border:1px solid var(--hairline);}
+
+/* =========================================================================
+   VARIANTE C — „Glut"
+   Am naechsten an den dunklen Vorlagen: Tiefe statt Kanten. Hinter dem Inhalt
+   glimmt Rot, die Flaechen liegen wirklich uebereinander, Ecken sind weich.
+   Der Gross-Klein-Kontrast der Plakate bleibt, die harte Diagonale nicht.
+   Ehrlich gesagt: das ist die Variante, die AM WENIGSTEN der Entscheidung
+   „Formensprache von den Plakaten" folgt — sie steht hier, damit du das
+   andere Ende der Spannweite siehst und nicht nur zwischen zwei Nachbarn
+   waehlst.
+   ========================================================================= */
+[data-v="c"]{
+  --v-radius:var(--r-5);
+  --v-card-bg:var(--surface-2);
+}
+[data-v="c"] .karte,[data-v="c"] .faellig{
+  box-shadow:0 18px 50px -20px var(--red-glow),0 1px 0 rgba(255,255,255,.04) inset;
+  border-color:var(--border-strong);
+}
+[data-v="c"] .karte::after,[data-v="c"] .faellig::after{
+  content:"";position:absolute;left:50%;top:12%;width:min(360px,110%);aspect-ratio:1;
+  transform:translateX(-50%);pointer-events:none;
+  background:radial-gradient(circle at 50% 50%,var(--red-glow) 0%,transparent 62%);
+  opacity:.75;transition:opacity var(--dur-2) ease,transform var(--dur-2) ease;
+}
+[data-v="c"] .karte:active::after{opacity:1;transform:translateX(-50%) scale(1.12);}
+[data-v="c"] .wort-ar{font-size:3.6rem;text-shadow:0 0 34px var(--red-glow);}
+[data-v="c"] .vers,[data-v="c"] .kachel,[data-v="c"] .box,[data-v="c"] .stufe{
+  background:linear-gradient(180deg,var(--surface-3),var(--surface-2));
+  border-color:var(--border-strong);}
+[data-v="c"] .knopf-gross{
+  background:linear-gradient(135deg,var(--red) 0%,var(--red-bright) 100%);
+  box-shadow:0 10px 30px -12px var(--red-glow);}
+[data-v="c"] .faellig-zahl{font-size:4.4rem;text-shadow:0 0 40px var(--red-glow);}
+[data-v="c"] .serie{background:linear-gradient(180deg,var(--surface-3),var(--surface-2));
+  border-color:var(--border-strong);}
+[data-v="c"] .balken i{background:linear-gradient(90deg,var(--red),var(--red-bright));
+  box-shadow:0 0 14px var(--red-glow);}
+
+/* Wer Bewegung nicht will, bekommt keine. */
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important;transition-duration:.01ms !important;}
+}
+</style>
+</head>
+<body>
+
+<!-- Strichzeichen statt Emoji. Die App hat dafür eine eigene Regel
+     (js/darstellung.js: „nie wieder Emoji"), und die EINE bewusste Ausnahme ist
+     die Flamme der Tagesserie — Elias' ausdrückliche Wahl vom 29.07.2026.
+     Bunte Emoji würden hier ausgerechnet das kaputt machen, worum es geht:
+     eine strenge Farbwelt aus Schwarz, Rot und Weiß. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="z-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4V5Z"/></symbol>
+  <!-- Kopfhörer statt Ohr: die Ohrform las sich bei 21 px wie ein Fragezeichen. -->
+  <symbol id="z-ohr" viewBox="0 0 24 24"><path d="M5 15v-3a7 7 0 0 1 14 0v3"/><path d="M5 14h2.2a.9.9 0 0 1 .9.9v3.2a.9.9 0 0 1-.9.9H5zM19 14h-2.2a.9.9 0 0 0-.9.9v3.2a.9.9 0 0 0 .9.9H19z"/></symbol>
+  <symbol id="z-buch" viewBox="0 0 24 24"><path d="M4 4h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4V4Z"/><path d="M20 4h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6V4Z"/></symbol>
+  <symbol id="z-chart" viewBox="0 0 24 24"><path d="M5 20V11M12 20V4M19 20v-6"/></symbol>
+  <symbol id="z-laut" viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4V9Z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/></symbol>
+  <symbol id="z-zahnrad" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M18.4 5.6l-1.6 1.6M7.2 16.8l-1.6 1.6"/></symbol>
+  <symbol id="z-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="z-zurueck" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7"/></symbol>
+  <symbol id="z-haken" viewBox="0 0 24 24"><path d="m5 13 4.5 4.5L19 7"/></symbol>
+</svg>
+
+<div class="vp-kopf">
+  <h1>Gestaltungs-Vorschau</h1>
+  <p>Vier Stände, drei Bildschirme, <b>dasselbe Markup</b> — umgeschaltet wird nur
+     die Formatvorlage. Was du aussuchst, wandert genau so in die App. Der jetzige
+     Stand steht als erster daneben, damit du gegen etwas vergleichen kannst.
+     Am besten am Handy ansehen, dafür ist es gebaut.</p>
+</div>
+
+<div class="vp-schalter">
+  <div class="vp-marke">Variante</div>
+  <div class="vp-reihe" id="reiheV">
+    <button class="vp-knopf" data-setv="ist" aria-pressed="true">Jetzt</button>
+    <button class="vp-knopf" data-setv="a" aria-pressed="false">A · Schnitt</button>
+    <button class="vp-knopf" data-setv="b" aria-pressed="false">B · Stempel</button>
+    <button class="vp-knopf" data-setv="c" aria-pressed="false">C · Glut</button>
+  </div>
+  <div class="vp-marke" style="margin-top:12px">Bildschirm</div>
+  <div class="vp-reihe" id="reiheS">
+    <button class="vp-knopf" data-sets="lern" aria-pressed="true">Lernkarte</button>
+    <button class="vp-knopf" data-sets="quran" aria-pressed="false">Quran-Leser</button>
+    <button class="vp-knopf" data-sets="start" aria-pressed="false">Startseite</button>
+  </div>
+</div>
+
+<div class="vp-buehne">
+  <div class="app" id="app" data-v="ist" data-s="lern">
+
+    <header class="topbar">
+      <div class="marke">طَالِبُ الْعِلْمِ<small>Vokabeltrainer</small></div>
+      <div class="serie"><span aria-hidden="true">🔥</span><span data-zahl="12">0</span></div>
+      <div class="zahnrad" aria-hidden="true"><svg class="z"><use href="#z-zahnrad"/></svg></div>
+    </header>
+
+    <!-- ---------------- Lernkarte ---------------- -->
+    <section class="bildschirm an" data-b="lern">
+      <div class="lern-kopf">
+        <div class="lern-x" aria-hidden="true"><svg class="z"><use href="#z-x"/></svg></div>
+        <div class="balken"><i></i></div>
+        <div class="zaehler">11/20</div>
+      </div>
+
+      <div class="karte">
+        <div class="karte-marken"><span class="chip">Kap. 1</span></div>
+        <div class="wort-ar" lang="ar" dir="rtl">بَيْتٌ</div>
+        <div class="hoerknopf" aria-hidden="true"><svg class="z"><use href="#z-laut"/></svg></div>
+        <div class="tipp">Antippen zum Umdrehen</div>
+      </div>
+
+      <div class="stufen">
+        <button class="stufe nochmal"><span>Nochmal</span><b>Box 1</b><i>heute</i></button>
+        <button class="stufe"><span>Schwer</span><b>Box 1</b><i>heute</i></button>
+        <button class="stufe gut"><span>Gut</span><b>Box 3</b><i>3 Tage</i></button>
+        <button class="stufe"><span>Leicht</span><b>Box 4</b><i>7 Tage</i></button>
+      </div>
+    </section>
+
+    <!-- ---------------- Quran-Leser ---------------- -->
+    <section class="bildschirm" data-b="quran">
+      <div class="quran-kopf">
+        <div class="quran-zeile">
+          <div class="lern-x" aria-hidden="true"><svg class="z"><use href="#z-zurueck"/></svg></div>
+          <div class="quran-titel" lang="ar" dir="rtl">الْإِخْلَاص</div>
+          <div class="zahnrad" aria-hidden="true"><svg class="z"><use href="#z-zahnrad"/></svg></div>
+        </div>
+        <div class="quran-werkzeuge">
+          <div class="wz">Ganze Sure abgehakt</div>
+          <div class="wz">Ayah</div>
+          <div class="wz">Verdecken</div>
+        </div>
+      </div>
+      <div class="basmala" lang="ar" dir="rtl">﷽</div>
+      <div class="verse">
+        <div class="vers gekonnt">
+          <div class="haken" aria-hidden="true"><svg class="z" style="stroke-width:2.6"><use href="#z-haken"/></svg></div>
+          <div class="vers-nr">1</div>
+          <div class="vers-ar" lang="ar" dir="rtl">قُلْ هُوَ ٱللَّهُ أَحَدٌ</div>
+          <div class="vers-de">Sag: Er ist Allah, Einer</div>
+        </div>
+        <div class="vers">
+          <div class="vers-nr">2</div>
+          <div class="vers-ar" lang="ar" dir="rtl">ٱللَّهُ ٱلصَّمَدُ</div>
+          <div class="vers-de">Allah, der Überlegene</div>
+        </div>
+        <div class="vers">
+          <div class="vers-nr">3</div>
+          <div class="vers-ar" lang="ar" dir="rtl">لَمْ يَلِدْ وَلَمْ يُولَدْ</div>
+          <div class="vers-de">Er hat nicht gezeugt und ist nicht gezeugt worden</div>
+        </div>
+        <div class="vers">
+          <div class="vers-nr">4</div>
+          <div class="vers-ar" lang="ar" dir="rtl">وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدُۢ</div>
+          <div class="vers-de">und niemand ist Ihm jemals gleich</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------------- Startseite ---------------- -->
+    <section class="bildschirm" data-b="start">
+      <div class="faellig">
+        <div class="faellig-zahl" data-zahl="24">0</div>
+        <div class="faellig-text">Karten heute fällig</div>
+        <button class="knopf-gross">Jetzt lernen</button>
+      </div>
+      <div class="kacheln">
+        <button class="kachel"><span class="kachel-zeichen"><svg class="z"><use href="#z-chat"/></svg></span><b>Satz-Modus</b><small>Hören &amp; Verstehen</small></button>
+        <button class="kachel"><span class="kachel-zeichen"><svg class="z"><use href="#z-ohr"/></svg></span><b>Hörverstehen</b><small>Nur hören, dann wählen</small></button>
+        <button class="kachel"><span class="kachel-zeichen"><svg class="z"><use href="#z-buch"/></svg></span><b>Quran lesen</b><small>Alle 114 Suren</small></button>
+        <button class="kachel"><span class="kachel-zeichen"><svg class="z"><use href="#z-chart"/></svg></span><b>Statistik</b><small>Fortschritt</small></button>
+      </div>
+      <div class="boxen">
+        <div class="box"><em>Box 1</em><strong data-zahl="18">0</strong></div>
+        <div class="box"><em>Box 2</em><strong data-zahl="31">0</strong></div>
+        <div class="box"><em>Box 3</em><strong data-zahl="44">0</strong></div>
+        <div class="box"><em>Box 4</em><strong data-zahl="52">0</strong></div>
+        <div class="box"><em>Box 5</em><strong data-zahl="26">0</strong></div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<!-- Die Beschreibung steht UNTER der Nachbildung, nicht darüber. Elias' Wunsch
+     war, nicht abstrakt zu lesen, sondern neben dem, was er gerade ansieht —
+     am Handy heisst das: erst Schalter, dann Bild, dann Text. Stünde sie oben,
+     müsste er nach jedem Umschalten erst an ihr vorbeiscrollen. -->
+<div class="vp-text" id="beschreibung"></div>
+
+<p class="vp-hinweis">
+  Die Vokabel بَيْتٌ samt Kapitelangabe steht so in <code>vocab-data.js</code>
+  (id 45751), Sure 112 kommt aus <code>quran-text.js</code>
+  (<code>node werkzeuge/vers.mjs 112</code>). Nichts davon ist für die Vorschau
+  erfunden, und aus den gesperrten Buchdateien steht hier nichts.
+  Die Zahlen auf der Startseite sind Platzhalter — sie zeigen die Bewegung,
+  nicht deinen Lernstand.
+</p>
+
+<script>
+/* Kein Bauwerk, nur drei Handgriffe:
+   Variante umschalten, Bildschirm umschalten, Zahlen hochlaufen lassen.
+   Das Hochlaufen ist Absicht und gehoert zur Sache: „verspielt" heisst hier
+   Bewegung, nicht Verzierung — es ist derselbe Zaehler, nur sichtbar. */
+const app = document.getElementById('app');
+const feld = document.getElementById('beschreibung');
+
+const TEXTE = {
+  ist: {
+    titel: 'Jetzt · der Stand von heute',
+    unter: 'Zum Vergleichen',
+    text: [
+      'So sieht die App gerade aus: schwarze Karten mit weichen Ecken, dünne graue Ränder, Rot als Akzent auf Knöpfen und Versnummern. Alles ist ruhig und ordentlich — und genau das ist der Punkt, an dem du „hochwertig" und „gamifiziert" vermisst.',
+      'Was schon da ist und nur leise auftritt: die Flamme mit deiner Serie, der Fortschrittsbalken 11/20, die Boxen 1–5, das grüne Häkchen an der gekonnten Ayah. <b>Keine der drei Varianten fügt ein zweites Punktesystem hinzu.</b> Sie machen dieses eine sichtbar.'
+    ]
+  },
+  a: {
+    titel: 'A · Schnitt',
+    unter: 'Die Diagonale als Bauprinzip',
+    text: [
+      'Die Plakate wörtlich genommen: <b>keine Fläche ist mehr ein reines Rechteck.</b> Jede Karte, jede Kachel, jeder Knopf trägt oben rechts einen Schnitt. Ecken sind hart, Radien gibt es nicht.',
+      'Rot kommt nicht als Fläche, sondern als <b>Lichtkeil hinter dem Inhalt</b> — er fährt beim Erscheinen der Karte einmal von unten herein und rückt näher, wenn du die Karte drückst. Das ist die Bewegung, die du meinst: sie antwortet, sie schmückt nicht.',
+      'Das Groß-Klein-Spiel geht hier am weitesten. Das arabische Wort ist riesig, alles Beschriftende schrumpft auf winzige gesperrte Versalien. <b>Der stärkste Bruch mit heute</b> — und die Variante, die am ehesten nach Plakat aussieht.'
+    ]
+  },
+  b: {
+    titel: 'B · Stempel',
+    unter: 'Typografie statt Kästen',
+    text: [
+      'Dieselbe Plakatsprache, aber über Schrift statt über Formen. <b>Die Karten verschwinden.</b> Was bleibt, sind dünne weiße Haarlinien, die die schwarze Fläche in Felder teilen — wie ein Rasterplakat.',
+      'Zahlen werden zum Bild: die fällige Kartenzahl steht riesig, die Versnummer ist keine rote Pille mehr, sondern eine große graue Ziffer. Beschriftungen sind winzige gesperrte Versalien.',
+      '<b>Rot markiert nur noch, was gerade lebt</b> — die laufende Karte, deine Serie, die Ayah, die du kannst. Dadurch wirkt es am ruhigsten und zugleich am teuersten. Der Preis: es ist am wenigsten „verspielt", die Bewegung steckt fast nur in den hochlaufenden Zahlen.'
+    ]
+  },
+  c: {
+    titel: 'C · Glut',
+    unter: 'Tiefe statt Kanten',
+    text: [
+      'Am nächsten an deinen dunklen Vorlagen. Hinter dem Inhalt <b>glimmt Rot</b>, die Flächen liegen wirklich übereinander statt nebeneinander, die Ecken sind weicher als heute, nicht härter.',
+      'Die Reaktion sitzt im Licht: Drückst du die Karte, wird der Schein hinter ihr heller und größer. Das arabische Wort trägt einen leichten Lichtsaum.',
+      '<b>Ehrlich gesagt folgt diese Variante deiner eigenen Entscheidung am wenigsten</b> — du hattest „Formensprache von den Plakaten" gewählt, und hier gibt es keine Diagonale. Sie steht trotzdem hier, damit du das andere Ende der Spannweite siehst und nicht nur zwischen zwei Nachbarn wählst.'
+    ]
+  }
+};
+
+function schreibeText(v){
+  const t = TEXTE[v];
+  feld.innerHTML = '<p class="vp-unter">' + t.unter + '</p><h2>' + t.titel + '</h2>' +
+                   t.text.map(p => '<p>' + p + '</p>').join('');
+}
+
+function zahlenHoch(){
+  app.querySelectorAll('[data-zahl]').forEach(el => {
+    const ziel = +el.dataset.zahl;
+    const start = performance.now();
+    const dauer = 700;
+    el.textContent = '0';
+    (function schritt(t){
+      const p = Math.min(1, (t - start) / dauer);
+      el.textContent = Math.round(ziel * (1 - Math.pow(1 - p, 3)));
+      if (p < 1) requestAnimationFrame(schritt);
+    })(start);
+  });
+}
+
+function zeigeBildschirm(s){
+  app.dataset.s = s;
+  app.querySelectorAll('.bildschirm').forEach(el =>
+    el.classList.toggle('an', el.dataset.b === s));
+  zahlenHoch();
+}
+
+document.getElementById('reiheV').addEventListener('click', e => {
+  const b = e.target.closest('[data-setv]'); if (!b) return;
+  document.querySelectorAll('[data-setv]').forEach(x =>
+    x.setAttribute('aria-pressed', String(x === b)));
+  app.dataset.v = b.dataset.setv;
+  schreibeText(b.dataset.setv);
+  /* Bildschirm neu zeichnen, damit die Einlauf-Bewegung der Variante laeuft. */
+  zeigeBildschirm(app.dataset.s);
+});
+
+document.getElementById('reiheS').addEventListener('click', e => {
+  const b = e.target.closest('[data-sets]'); if (!b) return;
+  document.querySelectorAll('[data-sets]').forEach(x =>
+    x.setAttribute('aria-pressed', String(x === b)));
+  zeigeBildschirm(b.dataset.sets);
+});
+
+schreibeText('ist');
+zahlenHoch();
+</script>
+</body>
+</html>
