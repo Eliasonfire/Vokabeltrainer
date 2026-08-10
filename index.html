@@ -1461,6 +1461,26 @@ main{
 }
 .note-box:hover{background:var(--surface-3);border-color:var(--border-strong);}
 .note-box .ic{flex:0 0 auto;margin-top:1px;}
+/* Ein VORSCHLAG (Punkt 8) sieht anders aus als eine eigene Notiz: gestrichelter
+   Rand bleibt, aber der Text ist lesbar statt blass, und das Wort „Vorschlag"
+   steht davor. Er darf nicht wie eigene Arbeit aussehen — und auch nicht wie
+   ein leeres Feld, sonst uebersieht man ihn. */
+.note-box.ist-vorschlag{ color:var(--text-dim); border-color:var(--border-strong); }
+.note-box.ist-vorschlag #cardNoteText::before{
+  content:"Vorschlag: ";color:var(--red-soft);font-weight:700;
+}
+.ne-vorschlag{
+  margin-bottom:var(--sp-3);padding:var(--sp-3);
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-2);
+  color:var(--text-dim);font-size:var(--fs-sm);line-height:1.5;
+}
+.ne-vorschlag-marke{
+  font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.12em;
+  color:var(--red-soft);font-weight:700;margin-bottom:var(--sp-1);
+}
+.ne-vorschlag .btn-klein{
+  margin-top:var(--sp-3);width:100%;padding:var(--sp-2);font-size:var(--fs-xs);
+}
 .note-box.hat-notiz{
   border-style:solid;border-color:var(--red-dim);
   background:var(--red-wash);color:var(--text);
@@ -2878,6 +2898,16 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
   <div class="qfp-header">
     <div class="ne-wort" id="neWort" lang="ar" dir="rtl"></div>
     <button class="icon-btn" id="btnCloseNote" aria-label="Schließen"><svg class="ic"><use href="#ic-close"/></svg></button>
+  </div>
+  <!-- Punkt 8, 10.08.2026: ein Vorschlag steht NEBEN dem Eingabefeld, nie darin.
+       Er ist sichtbar, solange nichts Eigenes da ist, und wandert nur ins Feld,
+       wenn Elias „Übernehmen" tippt — gespeichert wird er erst mit dem üblichen
+       „Speichern". Damit kann eine vorgeschlagene Eselsbrücke seine eigene weder
+       überschreiben noch heimlich zu seiner werden. -->
+  <div class="ne-vorschlag hidden" id="neVorschlag">
+    <div class="ne-vorschlag-marke">Vorschlag</div>
+    <div id="neVorschlagText"></div>
+    <button class="btn btn-secondary btn-klein" id="btnVorschlagUebernehmen">Übernehmen und bearbeiten</button>
   </div>
   <textarea id="neText" placeholder="Wie merkst du dir dieses Wort? (z.B. Klangähnlichkeit, Wurzel, eigene Geschichte)" lang="de"></textarea>
   <div class="ne-aktionen">
