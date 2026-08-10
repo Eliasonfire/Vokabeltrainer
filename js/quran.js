@@ -1283,9 +1283,23 @@ document.getElementById('verseList').addEventListener('click', (e)=>{
     return;
   }
   /* Einen verdeckten Vers antippen deckt genau ihn auf - so prueft man sich
-     Vers fuer Vers, ohne den Modus zu verlassen. */
-  const text = e.target.closest('.verse-ar.verdeckt');
-  if (text) text.classList.remove('verdeckt');
+     Vers fuer Vers, ohne den Modus zu verlassen. Ein zweiter Tipp verdeckt ihn
+     wieder. Elias am 10.08.2026: „damit ich nicht die ganze zeit der verdecken
+     button drücken muss … im prinzip das gleiche wie wenn ich einmal eine ayah
+     antipppe um sie wieder sichtbar zu machen, so halt nur andersherum."
+
+     ⚠️ Das Zurueckverdecken darf NUR greifen, solange der Verdecken-Modus
+     laeuft UND der Vers als auswendig markiert ist - sonst liesse sich jeder
+     beliebige Vers durch Antippen unlesbar machen. Genau diese zwei
+     Bedingungen entscheiden auch beim Umschalten des Modus, was verdeckt wird
+     (siehe btnHifzVerdecken weiter unten); sie stehen hier absichtlich in
+     derselben Form, damit nicht zwei Stellen dasselbe verschieden beantworten. */
+  const text = e.target.closest('.verse-ar');
+  if (!text) return;
+  if (text.classList.contains('verdeckt')){ text.classList.remove('verdeckt'); return; }
+  const karte = text.closest('.verse-item');
+  if (HIFZ_VERDECKT && karte && karte.classList.contains('auswendig'))
+    text.classList.add('verdeckt');
 });
 
 document.getElementById('btnHifzVerdecken').addEventListener('click', ()=>{

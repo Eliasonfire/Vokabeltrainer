@@ -75,6 +75,14 @@ const ctx = vm.createContext({
   fetch:()=>Promise.reject(new Error('kein Netz im Pruefstand')),
 });
 
+/* Den Klick-Zuhoerer von #verseList abfangen, damit er im Pruefstand wirklich
+   AUFGERUFEN werden kann. Der DOM-Stub verschluckt addEventListener sonst, und
+   dann liesse sich nur die Quelltextform pruefen, nicht das Verhalten.
+   Muss VOR dem Laden von quran.js stehen. */
+const VERSLISTE = hole('verseList');
+const KLICK_ZUHOERER = [];
+VERSLISTE.addEventListener = (typ, fn) => { if (typ === 'click') KLICK_ZUHOERER.push(fn); };
+
 try { vm.runInContext(fs.readFileSync('js/quran.js','utf8'), ctx, { filename:'js/quran.js' }); }
 catch (e) { console.log('\n❌ js/quran.js liess sich nicht laden:', e.message); process.exit(1); }
 
@@ -212,6 +220,42 @@ ok('ohne sichtbare Verse gilt der gespeicherte Lesestand',
 vm.runInContext('LESESTAND = { sure:114, vers:3 };', ctx);
 ok('ein Lesestand aus einer ANDEREN Sure zaehlt nicht',
    vm.runInContext('sichtbarerVers()', ctx) === null);
+
+/* ---------- Verdecken: zweiter Tipp verdeckt wieder (10.08.2026) ---------- */
+console.log('\n— Verdeckte Ayah an- und wieder zutippen —');
+
+function klassen(anfang){
+  const s = new Set(anfang);
+  return { add:(...c)=>c.forEach(x=>s.add(x)), remove:(...c)=>c.forEach(x=>s.delete(x)),
+           contains:c=>s.has(c), toggle:(c,an)=>{ const soll = an===undefined?!s.has(c):!!an;
+             soll ? s.add(c) : s.delete(c); return soll; } };
+}
+/* Ein Vers, wie ihn der Zuhoerer sieht: Kaestchen + Textelement. */
+function tippe({ auswendig, verdeckt }){
+  const karte = { classList: klassen(auswendig ? ['verse-item','auswendig'] : ['verse-item']) };
+  const text  = { classList: klassen(verdeckt ? ['verse-ar','verdeckt'] : ['verse-ar']),
+                  closest: sel => sel === '.verse-item' ? karte : null };
+  const ev = { target: { closest: sel => sel === '.verse-ar' ? text : null } };
+  KLICK_ZUHOERER.forEach(fn => fn(ev));
+  return text.classList.contains('verdeckt');
+}
+
+ok('der Klick-Zuhoerer wurde abgefangen', KLICK_ZUHOERER.length >= 1,
+   `${KLICK_ZUHOERER.length} Zuhoerer`);
+
+vm.runInContext('HIFZ_VERDECKT = true;', ctx);
+ok('verdeckt + angetippt → sichtbar', tippe({ auswendig:true, verdeckt:true }) === false);
+ok('sichtbar + auswendig + angetippt → wieder verdeckt',
+   tippe({ auswendig:true, verdeckt:false }) === true);
+ok('ein NICHT auswendiger Vers laesst sich nicht verdecken',
+   tippe({ auswendig:false, verdeckt:false }) === false);
+
+vm.runInContext('HIFZ_VERDECKT = false;', ctx);
+ok('ohne Verdecken-Modus verdeckt ein Tipp nichts',
+   tippe({ auswendig:true, verdeckt:false }) === false);
+ok('ein noch verdeckter Vers laesst sich trotzdem immer aufdecken',
+   tippe({ auswendig:true, verdeckt:true }) === false,
+   'sonst bliebe er nach dem Ausschalten des Modus unlesbar');
 
 console.log(`\n${geprueft - fehler}/${geprueft} Zusicherungen erfuellt.`);
 process.exit(fehler ? 1 : 0);
