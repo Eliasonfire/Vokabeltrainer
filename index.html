@@ -1604,6 +1604,40 @@ main{
    Ḥifẓ-Leiste selbst — sonst hätte die Ayah-Leiste darunter ein `top` gebraucht,
    das die Höhe der Ḥifẓ-Leiste kennt. */
 .quran-sticky{position:sticky;top:52px;z-index:25;background:var(--bg);}
+
+/* ---------- Kopf einklappen beim Weiterlesen (Elias' Punkt 1, 10.08.2026) ----
+
+   Sein Wunsch, mit Bild der rot umkreisten Fläche: „Ich will das dieser Bereich
+   sich ein klappt wenn ich nach unten weiter lese und nach unten scrolle, wenn
+   ich aber hoch scrolle und nach oben gehe dann soll sich das wieder öffnen und
+   runter kommen."
+
+   Umkreist waren BEIDE Leisten: die Kopfzeile mit Zurück-Pfeil, Surentitel und
+   Zahnrad, und darunter die Ḥifẓ-Zeile mit „Ganze Sure abgehakt", „Ayah" und
+   „Auswendige verdecken". Also fahren beide weg.
+
+   ⚠️ Verschoben wird mit `transform`, NICHT mit `top` oder `height`. Beide
+   Leisten kleben; ein wanderndes `top` würde die Klebekante mitziehen, und eine
+   schrumpfende Höhe würde den Text darunter bei jedem Bildlauf umbrechen
+   lassen. `transform` bewegt nur das Bild und lässt den Platz stehen — genau
+   deshalb springt der Verstext beim Ein- und Ausklappen nicht.
+
+   Die zweite Zeile braucht `-100% - 52px`: `-100%` ist ihre eigene Höhe, die
+   52 px sind ihr Abstand von oben (ihr `top` oben in dieser Regel). Ohne den
+   Zuschlag bliebe ein Streifen stehen. Der Wert steht bewusst hier direkt unter
+   dem `top`, das er ausgleicht — wer das eine ändert, sieht das andere. */
+#screen-quranfull .screen-header,
+#screen-quranfull .quran-sticky{
+  transition:transform var(--dur-3) var(--ease-out);
+  will-change:transform;
+}
+#screen-quranfull.kopf-eingeklappt .screen-header{transform:translateY(-100%);}
+#screen-quranfull.kopf-eingeklappt .quran-sticky{transform:translateY(calc(-100% - 52px));}
+/* Wer Bewegung abgestellt hat, bekommt denselben Nutzen ohne die Fahrt. */
+@media (prefers-reduced-motion: reduce){
+  #screen-quranfull .screen-header,
+  #screen-quranfull .quran-sticky{transition:none;}
+}
 .hifz-bar{
   display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);
   margin:0 calc(var(--gutter) * -1) var(--sp-3);
