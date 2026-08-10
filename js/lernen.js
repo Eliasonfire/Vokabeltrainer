@@ -682,17 +682,40 @@ const STUFEN = {
   leicht:  { box: (b) => Math.min(5, b + 2),     richtig: true,  feedback: 'answer-right' }
 };
 
-/* Was unter den Knoepfen steht: wann die Karte bei dieser Wahl wiederkommt.
-   Ohne das waere die Wahl zwischen "gut" und "leicht" reine Bauchsache. */
+/* Was unter den Knoepfen steht: in welche Box die Vokabel wandert und wann sie
+   dann wiederkommt. Ohne das waere die Wahl zwischen "gut" und "leicht" reine
+   Bauchsache.
+
+   Die Box-Zeile kam am 10.08.2026 dazu, Elias' Wunsch war "sehen zu koennen in
+   welche box die vokabel rein geht". Sie steht bewusst SCHON VOR dem Tippen auf
+   allen vier Knoepfen und nicht als Meldung danach - der Zweck ist die
+   Entscheidung, nicht die Rueckmeldung. Die Feier "Box 1 -> 2" nach dem Tippen
+   bleibt daneben bestehen; sie ist der Belohnungsmoment, nicht die Auskunft.
+
+   Beide Zeilen kommen aus DERSELBEN Rechnung: erst `STUFEN[k].box(...)`, dann
+   `INTERVALS[box]`. Waeren es zwei Rechnungen, koennte auf einem Knopf "Box 4"
+   und darunter das Intervall von Box 3 stehen.
+
+   Fehlt der Fortschrittseintrag, wird von Box 1 ausgegangen - so haelt es die
+   ganze App (js/kategorien.js). Frueher brach die Funktion hier ab; seit die
+   Box mit angezeigt wird, waere das schlimmer als eine Annahme: auf den
+   Knoepfen stuenden dann die Zahlen der VORIGEN Karte. */
 function stufenVorschau(){
   const w = SESSION.words[SESSION.idx];
-  const p = w && PROGRESS[w.id];
-  if (!p) return;
-  const text = (tage) => tage === 0 ? 'heute' : tage === 1 ? 'morgen' : `in ${tage} Tagen`;
+  if (!w) return;
+  const box = (PROGRESS[w.id] && PROGRESS[w.id].box) || 1;
+  /* Kurzform statt "in 16 Tagen". Gemessen am 10.08.2026: bei 375 px sind die
+     vier Knoepfe je 69,4 px breit, davon rund 58 px Innenraum - "in 16 Tagen"
+     wird dort abgeschnitten. Vor der Box-Zeile brach es einfach um, jetzt waere
+     das die dritte Zeile im Knopf. Die Boxliste unter "Woerter verschieben"
+     (js/kategorien.js) behaelt die lange Form, ihre Knoepfe sind breit genug. */
+  const text = (tage) => tage === 0 ? 'heute' : tage === 1 ? 'morgen' : `${tage} Tage`;
   const ziel = { nochmal:'Nochmal', schwer:'Schwer', gut:'Gut', leicht:'Leicht' };
   Object.keys(STUFEN).forEach(k=>{
     const el = document.getElementById('stufe' + ziel[k]);
-    if (el) el.textContent = text(INTERVALS[STUFEN[k].box(p.box)]);
+    if (!el) return;
+    const nachher = STUFEN[k].box(box);
+    el.innerHTML = `<b>Box ${nachher}</b><i>${text(INTERVALS[nachher])}</i>`;
   });
 }
 
