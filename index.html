@@ -1775,7 +1775,12 @@ main{
   transition:filter var(--dur-2) ease;
 }
 .verse-ar.verdeckt:hover{filter:blur(5px);}
-.verse-item.auswendig{border-color:var(--green);}
+/* Auswendige Verse haben BEWUSST keinen grünen Rahmen mehr (10.08.2026).
+   Elias: "dass die ayaht nicht mit einem grünen Rahmen sind, sondern einfach
+   nur mit diesem grünen Kästchen sind, dass einfach grün ist. Ansonsten diese
+   grüne Umrahmung Lenkt irgendwie ab." Der Zustand steht weiterhin am
+   gefüllten Häkchen oben rechts (`.hifz-check.on`) — die Klasse `auswendig`
+   bleibt am Kasten, weil der Verdecken-Modus sie liest. Nicht "reparieren". */
 
 .verse-item{
   background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-3);
