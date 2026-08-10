@@ -1833,7 +1833,18 @@ main{
    unverändert weiterarbeiten; sie hören nur auf, wie Kästchen auszusehen.
    ⚠️ Genau deshalb wird `.verse-item` NICHT umbenannt und nichts zusätzlich
    eingefügt: die Ayah-Leiste adressiert über `[data-versnr]`. */
-#verseList.liste{ background:var(--bg); }
+/* ⚠️ `#verseList` traegt die Klasse `.word-list`, und die ist ein FLEX-Container
+   (`display:flex; flex-direction:column`). In einer Flexbox wird `display:inline`
+   an den Kindern zu `block` umgeformt — der Fliesstext ist deshalb nie geflossen,
+   jede Ayah blieb ihre eigene Zeile. Und weil die Laufrichtung am BLOCK haengt
+   und nicht am `dir`-Attribut der Inline-Elemente, standen die Zeilen links.
+   Elias am 10.08.: „dann stehen die ganzen sätze alle nach links gerückt. die
+   sollen zentriert sein." Also erst die Flexbox abschalten, dann Laufrichtung
+   und Ausrichtung dorthin setzen, wo sie hingehoeren: an den Block. */
+#verseList.liste{
+  display:block; direction:rtl; text-align:center;
+  background:var(--bg);
+}
 #verseList.liste .verse-item{
   display:inline; background:none; border:0; border-radius:0;
   padding:0; margin:0;

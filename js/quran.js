@@ -464,7 +464,11 @@ document.getElementById('quranDarstellung').addEventListener('click', (e)=>{
   if (!knopf) return;
   SETTINGS.quranDarstellung = knopf.dataset.qurandarstellung;
   saveSettings();
-  wendeQuranAnsichtAn();
+  /* ⚠️ Nicht `ohneSprung`: das gleicht eine Hoehenaenderung OBERHALB der Liste
+     aus. Hier aendert sich die Hoehe der Liste SELBST — im Listenmodus fliesst
+     der Text und ist um ein Vielfaches kuerzer. Ein Pixelausgleich ginge
+     zwangslaeufig daneben, die Ayah dagegen stimmt in beiden Darstellungen. */
+  ohneStellenverlust(wendeQuranAnsichtAn);
 });
 
 document.getElementById('quranAnsicht').addEventListener('click', (e)=>{
@@ -652,6 +656,52 @@ function ohneSprung(aendern){
   }
 }
 
+/* ---------- Die Stelle behalten (Elias' drei Meldungen vom 10.08.2026) -------
+
+   „wenn ich von liste und kästchen wechsel dann komme ich nicht zur gleichen
+    ayah zurück wie ich davor war" · „wenn ich die allgemeinen einstellungen
+    öffne während ich lese dann komme ich immer wieder an den anfang der sura,
+    das will ich auch nicht."
+
+   Beides ist dieselbe Aufgabe: eine Stelle merken, die sich NICHT in Pixeln
+   ausdruecken laesst. Der Rollstand taugt dafuer nicht — beim Wechsel der
+   Darstellung aendert sich die ganze Hoehe des Textes, und nach einem
+   Bildschirmwechsel wird die Sure neu aufgebaut. Gemerkt wird deshalb die
+   AYAH, nicht die Pixelzahl. Sie steht ohnehin schon zur Verfuegung:
+   `LESE_SICHTBAR` fuehrt der IntersectionObserver mit.
+
+   ⚠️ `scrollIntoView` mit `block:'start'` schoebe den Vers unter die
+   angeheftete Kopfleiste. Deshalb wird die Hoehe des Kopfes GEMESSEN und
+   abgezogen, statt eine Zahl zu raten — der Kopf ist je nach Schriftgroesse
+   und Einklappzustand verschieden hoch. */
+function sichtbarerVers(){
+  if (LESE_SICHTBAR && LESE_SICHTBAR.size) return Math.min(...LESE_SICHTBAR);
+  if (LESESTAND && LESESTAND.sure === OFFENE_SURE) return LESESTAND.vers;
+  return null;
+}
+
+function zeigeVers(nr){
+  if (!nr) return false;
+  const kasten = document.getElementById('main');
+  const ziel = document.querySelector(`#verseList .verse-item[data-versnr="${nr}"]`);
+  if (!kasten || !ziel) return false;
+  const kopf = document.querySelector('#screen-quranfull .quran-sticky');
+  const kopfHoehe = kopf ? kopf.getBoundingClientRect().height : 0;
+  const versatz = ziel.getBoundingClientRect().top - kasten.getBoundingClientRect().top;
+  kasten.scrollTo({ top: Math.max(0, kasten.scrollTop + versatz - kopfHoehe - 8),
+                    behavior: 'instant' });
+  return true;
+}
+
+/* Eine Aenderung durchfuehren und danach dieselbe Ayah wieder zeigen. Der Vers
+   wird VOR der Aenderung gelesen — danach kann der Beobachter schon andere
+   Werte liefern, weil sich das Layout verschoben hat. */
+function ohneStellenverlust(aendern){
+  const vorher = sichtbarerVers();
+  aendern();
+  if (vorher) zeigeVers(vorher);
+}
+
 function quranEbeneMerken(zusatz){
   const st = history.state || {};
   const tiefe = typeof st.tiefe === 'number' ? st.tiefe : 0;
@@ -786,10 +836,25 @@ async function openSurah(id, opt){
   document.getElementById('suraNav').classList.add('hidden');
   /* Zweimal an den Anfang: einmal jetzt, damit schon der Ladeplatzhalter oben
      steht, und einmal nach dem Aufbau - erst dann ist der Kasten so hoch, dass
-     ein alter Wert ueberhaupt stehenbleiben koennte. */
-  anDenAnfang();
+     ein alter Wert ueberhaupt stehenbleiben koennte.
 
-  if (VERSE_CACHE[id]){ renderVerses(id); anDenAnfang(); return; }
+     ⚠️ AUSSER beim Zurueckkommen aus der Historie. `showScreen()` stellt immer
+     die Surenliste her, danach baut `stelleQuranEbeneHer` die offene Sure neu
+     auf - fuer die App ist das ein Neuaufbau, fuer Elias nur ein Blick in die
+     Einstellungen und zurueck. Er am 10.08.2026: „wenn ich die allgemeinen
+     einstellungen öffne während ich lese dann komme ich immer wieder an den
+     anfang der sura, das will ich auch nicht."
+     Zurueckgesprungen wird auf die AYAH aus dem Lesestand, nicht auf einen
+     Pixelwert - der waere nach dem Neuaufbau bedeutungslos. */
+  const zurueckZu = (opt.ausHistorie && LESESTAND && LESESTAND.sure === id)
+    ? LESESTAND.vers : null;
+  if (!zurueckZu) anDenAnfang();
+
+  if (VERSE_CACHE[id]){
+    renderVerses(id);
+    if (!zurueckZu || !zeigeVers(zurueckZu)) anDenAnfang();
+    return;
+  }
   /* Skeleton-Platzhalter in Versform statt nackter Textzeile - die Seite
      "steht" sofort, auch waehrend der Text noch laedt. */
   vList.innerHTML =
@@ -807,7 +872,7 @@ async function openSurah(id, opt){
       verse_key: `${id}:${i+1}`, text_uthmani: ar, translations: [{ text: de }]
     }));
     renderVerses(id);
-    anDenAnfang();
+    if (!zurueckZu || !zeigeVers(zurueckZu)) anDenAnfang();
   }catch(err){
     /* Rueckfallebene: wenn die lokale Datei fehlt oder beschaedigt ist, holt die
        App die Verse wie frueher von quran.com. Dann braucht sie aber Internet. */
