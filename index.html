@@ -927,6 +927,11 @@ main{
   transition:color var(--dur-2) ease, background var(--dur-2) ease;
 }
 .custom-cat-box .cat-title button:hover{color:var(--red-soft);background:var(--red-wash);}
+/* ⚠️ Bewusst LTR, also von links laufend — obwohl der Inhalt arabisch ist.
+   Elias am 10.08.2026 erst „sollten die wörter rechts orientiert sein", dann
+   direkt danach „vergiss was ich eben gesagt habe, ist schon gut das sie links
+   orientiert sind". Nicht wieder umstellen. Der Chip selbst bleibt `direction:rtl`,
+   damit innerhalb der Kachel Arabisch rechts und die deutsche Lesart links steht. */
 .chips-wrap{display:flex;flex-wrap:wrap;gap:var(--sp-2);}
 
 .word-chip{
@@ -2072,6 +2077,29 @@ main{
   border-top:1px solid var(--border);
   padding:var(--sp-2) var(--sp-1) calc(var(--sp-2) + var(--safe-bottom));
   flex-shrink:0;
+}
+/* Der Streifen unter den Knoepfen, in dem der Home-Balken des Geraets liegt.
+   Elias am 10.08.2026: „das die app so weit nach unten geht das da nicht mehr
+   diese blaue leiste mehr zu sehen ist halt wie eine normale app."
+
+   Die App reicht bereits bis zur Unterkante — `viewport-fit=cover`, `#app` auf
+   `inset:0`, und die Leiste zieht `safe-area-inset-bottom` als Innenabstand
+   mit, damit die Beschriftungen nicht unter dem Home-Balken liegen. Sichtbar
+   wird der Streifen trotzdem, weil die Leiste DURCHSCHEINEND ist
+   (`rgba(8,8,9,.86)` plus `saturate(140%)`): darunter liegt der rote
+   Lichtschein von `#app`, und die Saettigung verstaerkt ihn genau dort. Das
+   ist der Farbunterschied, der wie eine zweite Leiste aussieht.
+
+   Deshalb wird nur dieser Streifen deckend schwarz uebermalt — die
+   Milchglas-Wirkung der Knopfreihe bleibt, die Kante darunter verschwindet.
+   ⚠️ Was CSS nicht erreicht: zeichnet Android dort seine EIGENE Navigations-
+   leiste (Drei-Knopf-Bedienung statt Gestensteuerung), liegt sie ausserhalb
+   der Seite. Dann hilft nur die Geraeteeinstellung. */
+.bottombar::before{
+  content:"";position:absolute;left:0;right:0;bottom:0;
+  height:var(--safe-bottom);
+  background:var(--bg);
+  pointer-events:none;
 }
 .nav-btn{
   flex:1;background:none;border:none;color:var(--text-faint);
