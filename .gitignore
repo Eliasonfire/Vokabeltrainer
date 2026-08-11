@@ -28,6 +28,13 @@ vokabelpaket.json
 # Arbeitsordner von Wrangler (Zwischenstaende, Zugangsdaten des lokalen Logins)
 .wrangler/
 
+# Der Access-Nachweis, den veroeffentlichen.mjs --mit-daten verlangt.
+# ⛔ BLEIBT LOKAL. Waere er im Repo, koennte jeder Klon den arabicroots-Abzug
+# ausliefern, ohne dass je geprueft wurde, ob der Zugangsschutz wirklich steht -
+# die Sperre waere damit wertlos. Sie muss auf JEDEM Rechner neu erarbeitet
+# werden, mit einer echten Messung.
+.access-geprueft.json
+
 # Python-Zwischenstand der Sprechertrennung
 __pycache__/
 .vokabelpaket-stand.json

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vokabeltrainer-v129';
+const CACHE_NAME = 'vokabeltrainer-v130';
 const ASSETS = [
   './',
   './index.html',
@@ -75,10 +75,38 @@ self.addEventListener('activate', (e)=>{
  * Offline bleibt alles benutzbar: schlaegt die Netzanfrage fehl, kommt die
  * gecachte Fassung. Der Preis ist eine Netzanfrage je Datei beim Start - bei
  * dieser App ein paar hundert Kilobyte, das faellt nicht ins Gewicht. */
+/* ---------- Anmeldeseite erkennen (seit dem Umzug hinter Cloudflare Access) ----------
+ *
+ * ⚠️ Der gefaehrliche Fall ist NICHT "offline". Offline schlaegt fetch fehl,
+ * der catch-Zweig greift und der Cache liefert - das hat immer funktioniert.
+ *
+ * Gefaehrlich ist "online mit abgelaufener Sitzung": Access antwortet mit einer
+ * Weiterleitung auf cloudflareaccess.com, fetch FOLGT ihr, und heraus kommt die
+ * Anmeldeseite mit HTTP 200. Ohne diese Pruefung landete die unter index.html,
+ * js/kern.js und jeder anderen Adresse im Cache - die App wuerde danach
+ * Anmelde-HTML ausliefern, wo sie JavaScript erwartet, und zwar auch offline
+ * und auch nach erfolgreicher Anmeldung. Der Cache waere dauerhaft vergiftet.
+ *
+ * Erkennungsmerkmal: die Antwort kommt von einer anderen Adresse als der
+ * angefragten. */
+function istAnmeldeAntwort(resp){
+  if (!resp) return false;
+  if (resp.redirected) return true;
+  try { return new URL(resp.url).origin !== self.location.origin; }
+  catch(err){ return false; }
+}
+
 self.addEventListener('fetch', (e)=>{
   if (e.request.method !== 'GET') return;
   e.respondWith(
     fetch(new Request(e.request, { cache: 'reload' })).then(resp=>{
+      if (istAnmeldeAntwort(resp)){
+        /* Bei einem Seitenaufruf muss die Anmeldeseite durch - sonst koennte
+           Elias sich nie wieder anmelden. Bei allem anderen (Skripte, Daten)
+           lieber die gecachte Fassung als HTML an einer JS-Adresse. */
+        if (e.request.mode === 'navigate') return resp;
+        return caches.match(e.request).then(cached=> cached || resp);
+      }
       if (resp && resp.status===200 && resp.type !== 'opaque'){
         const clone = resp.clone();
         caches.open(CACHE_NAME).then(cache=>cache.put(e.request, clone));
