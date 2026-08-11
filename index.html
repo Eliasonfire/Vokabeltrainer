@@ -301,6 +301,47 @@ button{font-family:inherit;color:inherit;}
 .topbar .brand{justify-self:start;min-width:0;}
 .topbar .streak{justify-self:center;}
 .topbar #btnSettings{justify-self:end;}
+
+/* Warnband auf der ALTEN Adresse (eliasonfire.github.io).
+   Seit dem Umzug am 11.08.2026 laeuft die App auf vokabeltrainer.elias-lueck.de.
+   Die alte Adresse bleibt vorerst erreichbar - absichtlich, damit ein Fehler auf
+   der neuen nicht alles blockiert. Genau daraus entsteht aber eine stille Falle:
+   dort liegt eine vollstaendige, benutzbare App mit EIGENEM localStorage und OHNE
+   Geraeteabgleich. Wer dort eine Runde lernt, verliert sie - ohne Fehlermeldung,
+   ohne dass irgendwo etwas rot wird. Ein Hinweis in den Einstellungen haette das
+   nicht verhindert, weil niemand dort nachsieht; deshalb ein Band ueber allem.
+   Auf der neuen Adresse wird es nie eingeblendet (js/sync.js prueft den Host).
+
+   ⚠️ ZWEITER ANLAUF - der erste war im Browser nachweislich kaputt. Er stand als
+   schmales Band im normalen Fluss von #app. Auf dem Handy waere das gutgegangen;
+   ab 700 px Breite steht #app aber auf `flex-direction:row` (Abschnitt
+   TABLET/DESKTOP ganz unten). Das Band wurde damit zur SPALTE - gemessen 798 px
+   hoch und 828 px breit bei 761 px Fensterbreite, der Inhalt seitlich
+   hinausgeschoben. Eine Ueberlagerung mit position:fixed haengt an gar keinem
+   Layout mehr, weil ein fixiertes Kind kein Flex-Element ist. */
+.altbanner{
+  position:fixed; inset:0; z-index:9000;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:var(--sp-5);
+  padding:calc(var(--gutter) + var(--safe-top)) var(--gutter);
+  background:var(--bg);
+  text-align:center;
+}
+.altbanner[hidden]{display:none;}
+.altbanner-titel{font-size:var(--fs-2xl);font-weight:700;color:var(--red-bright);line-height:1.2;}
+.altbanner-text{max-width:34ch;color:var(--text-dim);font-size:var(--fs-md);line-height:1.6;}
+.altbanner-text b{color:var(--text);}
+.altbanner .btn{min-width:14rem;}
+/* Der Ausweg bleibt offen: wer hier noch eine Sicherung ziehen will, kommt an
+   die App. Bewusst klein und ohne Rahmen - moeglich, aber nicht einladend. */
+/* min-height 44px, nicht nur Innenabstand: gemessen kam der Knopf sonst auf
+   31 px und lag damit unter der Trefferflaeche, die im Rest der App gilt. */
+.altbanner-bleiben{
+  background:none;border:0;padding:0 var(--sp-4);font-family:inherit;cursor:pointer;
+  min-height:44px;display:inline-flex;align-items:center;
+  color:var(--text-faint);font-size:var(--fs-sm);text-decoration:underline;
+}
+
 .brand{display:flex;flex-direction:column;line-height:1.15;}
 .brand-ar{font-family:var(--font-ar);color:var(--red-bright);font-size:1.35rem;font-weight:700;}
 /* Wortmarke طالِب العِلْم statt gesetztem Text. Die Hoehe fuehrt, die Breite
@@ -2269,6 +2310,20 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
 
 <div id="app">
 
+  <!-- Eingeblendet nur auf eliasonfire.github.io - siehe .altbanner im Stil oben
+       und die Host-Pruefung in js/sync.js. Der Weg nach drueben ist bewusst ein
+       <a> und kein Knopf: er muss auch dann funktionieren, wenn ein Skript der
+       Seite nicht laedt. -->
+  <div class="altbanner" id="altAdresse" hidden>
+    <div class="altbanner-titel">Diese Adresse ist veraltet</div>
+    <p class="altbanner-text">
+      Der Vokabeltrainer ist umgezogen. Hier wird <b>nichts</b> mit deinen anderen
+      Geräten abgeglichen — was du auf dieser Adresse lernst, bleibt liegen.
+    </p>
+    <a class="btn btn-primary" href="https://vokabeltrainer.elias-lueck.de/">Zur aktuellen App</a>
+    <button class="altbanner-bleiben" id="altAdresseBleiben" type="button">Trotzdem hier bleiben</button>
+  </div>
+
   <header class="topbar">
     <div class="brand">
       <img class="brand-mark" src="wortmarke.svg" width="346" height="152"
@@ -2849,6 +2904,22 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
         <button class="btn btn-secondary" id="btnAktualisieren">Jetzt laden</button>
       </div>
 
+      <!-- Geraeteabgleich. Er laeuft von selbst: beim Start, zehn Sekunden nach
+           der letzten Aenderung und beim Weglegen der App.
+           ⚠️ Diese Zeile gibt es trotzdem, und zwar aus einem konkreten Anlass:
+           am 11.08.2026 meldete Elias "mein lernstand ist bei mir noch nicht
+           angekommen" - und es gab keine Moeglichkeit zu sehen, WORAN es lag.
+           Fragt die App gar nicht? Ist die Anmeldung abgelaufen? War nichts zu
+           holen? Ein lautloser Abgleich ist im Normalfall angenehm und im
+           Fehlerfall undiagnostizierbar. Deshalb Stand + Knopf. -->
+      <div class="setting-row" id="syncZeile" hidden>
+        <div>
+          <div class="setting-title">Geräteabgleich</div>
+          <div class="setting-sub" id="syncStand">Noch nicht abgeglichen</div>
+        </div>
+        <button class="btn btn-secondary" id="btnAbgleich">Jetzt abgleichen</button>
+      </div>
+
       <div class="setting-row">
         <div>
           <div class="setting-title">Fortschritt sichern</div>
@@ -2888,7 +2959,12 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
            Anwendungsfall — und die Gnadentag-Regel fängt den einen Fall
            (versehentlich hochgezählt) ohnehin nicht ab. -->
 
-      <p class="settings-note">Alle Daten (Fortschritt, Kategorien) bleiben nur auf diesem Gerät im Browser gespeichert. Eine Sicherung wird beim Verlassen automatisch im Gerät abgelegt; die Datei oben brauchst du für den Wechsel auf ein anderes Gerät.</p>
+      <!-- ⚠️ Dieser Absatz war bis zum 11.08.2026 schlicht falsch geworden: er
+           sagte weiterhin "bleiben nur auf diesem Gerät", obwohl der Abgleich
+           den Stand seit dem Umzug an dein Konto bindet. Ein Hinweistext, der
+           mehr Datensparsamkeit verspricht als die App einhaelt, ist der eine
+           Fehler, der hier nicht stehenbleiben darf. -->
+      <p class="settings-note">Dein Fortschritt liegt auf diesem Gerät und — solange du angemeldet bist — zusätzlich in deinem eigenen Speicher bei Cloudflare, damit Handy und PC denselben Stand haben. Er ist an deine Anmeldung gebunden; niemand sonst kommt daran. Die Sicherungsdatei oben brauchst du dafür nicht mehr, sie bleibt als zweites Netz.</p>
     </section>
 
   </main>
