@@ -96,19 +96,30 @@ const FREIGESCHALTET = {
    Alles Weitere kommt aus dem arabicroots-Paket und ist Vorrat fuer spaeter. */
 const LERNBESTAND_IDS = new Set(VOCAB_DATA.map(w => w.id));
 
+/* ⚠️ Seit dem 11.08.2026 wird je WORT nach seinem eigenen Buch gefragt, nicht
+   einmal nach "dem" aktiven Buch. Bei mehreren gewaehlten Buechern waere das
+   sonst falsch in beide Richtungen: die Freischaltung von Madina 1 haette ueber
+   Madina 2 entschieden, und ein Buch ohne hinterlegte Freischaltung haette die
+   Einschraenkung fuer alle anderen aufgehoben. */
 function bekannteVokabeln(){
   const alle = (typeof buchVokabeln === 'function') ? buchVokabeln() : VOCAB_DATA;
-  const buch = (typeof aktivesBuch === 'function') ? aktivesBuch() : 'madina-1';
-  const frei = FREIGESCHALTET[buch];
-  if (!frei) return alle;
-  return alle.filter(w => w.chapter === 'personal'
-                       || frei.includes(w.chapter)
-                       || LERNBESTAND_IDS.has(w.id));
+  return alle.filter(w => {
+    if (w.chapter === 'personal') return true;
+    if (LERNBESTAND_IDS.has(w.id)) return true;
+    const frei = FREIGESCHALTET[w.book];
+    if (!frei) return true;              /* fuer dieses Buch ist nichts hinterlegt */
+    return frei.includes(w.chapter);
+  });
 }
 
 /* Für die Beschriftung: "Kapitel 1–9" statt einer Aufzählung, wenn die Kapitel
    lückenlos aufeinander folgen. */
 function freigeschalteteBeschriftung(){
+  /* ⚠️ Bei mehreren gewaehlten Buechern gibt es keinen einen Bereich mehr.
+     "Kapitel 1–9" waere dann schlicht falsch - es stuende ueber einer Liste,
+     die auch Woerter aus Madina 2 enthaelt. Lieber gar keine Beschriftung als
+     eine, die eine Grenze behauptet, die es nicht gibt. */
+  if (typeof aktiveBuecher === 'function' && aktiveBuecher().length > 1) return null;
   const buch = (typeof aktivesBuch === 'function') ? aktivesBuch() : 'madina-1';
   const frei = FREIGESCHALTET[buch];
   if (!frei || !frei.length) return null;
@@ -443,15 +454,27 @@ function weakWords(){
    Die Runde wird jetzt mitgezogen, siehe passeRundeAnAuswahlAn() in
    js/lernen.js.
 
-   Gelernt wird immer in genau einem Lehrwerk. Ohne den Buchfilter mischten sich
-   nach dem ersten Buchwechsel alle geladenen Buecher in eine Runde - und die
-   Kapitelnummern darunter meinen in jedem Buch etwas anderes. Eigene Vokabeln
-   laufen bewusst in jedem Buch mit. */
+   Seit dem 11.08.2026 koennen MEHRERE Lehrwerke gleichzeitig gewaehlt sein,
+   jedes mit seiner eigenen Kapitelauswahl (js/buecher.js). Der Buchfilter
+   bleibt trotzdem noetig: ohne ihn mischten sich alle geladenen Buecher in
+   eine Runde, auch die abgewaehlten - und die Kapitelnummern darunter meinen
+   in jedem Buch etwas anderes.
+
+   Eigene Vokabeln laufen bewusst in jeder Auswahl mit. Sie gehoeren zu keinem
+   Buch, deshalb entscheidet ueber sie ein eigener Schalter - und zwar mit
+   genau der Bedeutung, die der alte 'personal'-Eintrag in selectedChapters
+   hatte: solange nirgends eingeengt wurde, sind sie dabei; sobald irgendwo
+   Kapitel gewaehlt sind, nur noch wenn ihr Schalter an ist. */
 function passtZurAuswahl(w){
-  const buch = (typeof aktivesBuch === 'function') ? aktivesBuch() : 'madina-1';
-  if (!(w.book === buch || w.chapter === 'personal')) return false;
-  const sel = SETTINGS.selectedChapters || [];
-  if (sel.length && !sel.includes(w.chapter)) return false;
+  const karte = (SETTINGS.buecher && typeof SETTINGS.buecher === 'object')
+    ? SETTINGS.buecher : { 'madina-1': [] };
+  if (w.chapter === 'personal'){
+    const eng = (typeof irgendwoEingeengt === 'function') ? irgendwoEingeengt() : false;
+    return !eng || !!SETTINGS.eigeneGewaehlt;
+  }
+  const kapitel = karte[w.book];
+  if (!Array.isArray(kapitel)) return false;         /* Buch nicht gewaehlt */
+  if (kapitel.length && kapitel.indexOf(w.chapter) < 0) return false;
   return true;
 }
 

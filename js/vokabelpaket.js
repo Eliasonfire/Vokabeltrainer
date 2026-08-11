@@ -126,5 +126,12 @@ function paketUebernehmen(paket){
   paketEinhaengen(paket);
   if (typeof BUCH_FEHLT !== 'undefined') BUCH_FEHLT.clear();
   if (typeof renderBuchChips === 'function') renderBuchChips();
-  if (typeof setzeBuch === 'function') return setzeBuch(typeof aktivesBuch === 'function' ? aktivesBuch() : 'madina-1', true);
+  /* ⚠️ ALLE gewaehlten Buecher, nicht nur das erste: seit dem 11.08.2026 koennen
+     mehrere gleichzeitig aktiv sein, und nach dem Einlesen eines Pakets muessen
+     sie alle wieder eingehaengt werden - sonst faellt die Auswahl still auf ein
+     Buch zusammen. */
+  if (typeof setzeBuch === 'function'){
+    const slugs = (typeof aktiveBuecher === 'function') ? aktiveBuecher() : ['madina-1'];
+    return slugs.reduce((kette, s) => kette.then(()=> setzeBuch(s, true)), Promise.resolve());
+  }
 }

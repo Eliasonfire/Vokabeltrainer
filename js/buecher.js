@@ -20,9 +20,70 @@
    Beispielsaetze noch Verse). Beim Nachladen wird deshalb angereichert, nicht
    ersetzt: gleiche ID -> die vorhandenen Zusatzfelder bleiben stehen. */
 
-/* Welches Buch gerade gelernt wird. Steht in den Einstellungen, damit es
-   einen Neustart ueberlebt. */
-function aktivesBuch(){ return SETTINGS.aktivesBuch || 'madina-1'; }
+/* ---------- Welche Buecher gerade gelernt werden ----------
+
+   Bis zum 11.08.2026 war es genau EINES (`SETTINGS.aktivesBuch`). Elias:
+   "eigentlich will ich auch die option haben mehrere bücher gleichzeitig
+   auszuwählen weil wenn wir dann mit medina buch 2 anfangen dann brauche ich
+   ja trotzdem die vokabeln von 1."
+
+   ⭐ Mein erster Entwurf dazu war falsch, und seine Rueckfrage hat ihn
+   entlarvt: "wie erkenne ich oder betimme ich denn welches das hauptbuch ist
+   und wie viele oder welche kapitel ich beim zusatzbuch freigeschalten haben
+   möchte". Ich hatte "ein Hauptbuch mit Kapitelauswahl, Zusatzbuecher laufen
+   vollstaendig mit" vorgeschlagen - das haette ihm alle 24 Kapitel von
+   Madina 1 gegeben statt der neun, die er gelernt hat.
+
+   Richtig ist deshalb: KEIN Hauptbuch. Jedes gewaehlte Buch traegt seine
+   EIGENE Kapitelauswahl. Die Einstellung ist eine Zuordnung
+
+       SETTINGS.buecher = { 'madina-1': [1,2,3], 'madina-2': [] }
+
+   Ein leeres Feld heisst "alle Kapitel dieses Buchs" - dieselbe Bedeutung, die
+   die leere `selectedChapters`-Liste vorher hatte. */
+
+function aktiveBuecher(){
+  const karte = SETTINGS.buecher;
+  const slugs = (karte && typeof karte === 'object') ? Object.keys(karte) : [];
+  /* Nie leer: ohne Buch zeigt die App gar nichts an und sieht kaputt aus. */
+  return slugs.length ? slugs : ['madina-1'];
+}
+
+/* Die Kapitelauswahl EINES Buchs. Leer = alle. */
+function kapitelAuswahl(slug){
+  const karte = SETTINGS.buecher || {};
+  return Array.isArray(karte[slug]) ? karte[slug] : [];
+}
+
+function buchGewaehlt(slug){ return aktiveBuecher().indexOf(slug) >= 0; }
+
+/* Ist irgendwo eine Kapitelauswahl gesetzt? Diese Frage entscheidet, ob die
+   eigenen Vokabeln mitlaufen - siehe passtZurAuswahl() in js/kern.js. */
+function irgendwoEingeengt(){
+  const karte = SETTINGS.buecher || {};
+  return Object.keys(karte).some(s => (karte[s] || []).length > 0);
+}
+
+/* ⚠️ Bleibt bestehen, hat aber nur noch EINEN Zweck: Beschriftungen, die
+   nun einmal einen einzelnen Namen brauchen. Wer damit filtert, baut die
+   Mehrfachauswahl wieder aus - dafuer gibt es aktiveBuecher(). */
+function aktivesBuch(){ return aktiveBuecher()[0]; }
+
+/* Einmalige Umstellung des alten Standes. Ohne sie stuende nach dem Update
+   ploetzlich Madina 1 mit allen Kapiteln da, obwohl Elias auf Kapitel 3
+   eingestellt war - ein stiller Rueckschritt mitten in seiner Lernrunde. */
+function stelleBuchauswahlUm(){
+  if (SETTINGS.buecher && typeof SETTINGS.buecher === 'object') return false;
+  const slug = SETTINGS.aktivesBuch || 'madina-1';
+  const alt  = Array.isArray(SETTINGS.selectedChapters) ? SETTINGS.selectedChapters : [];
+  /* 'personal' war frueher ein Eintrag in derselben Liste wie die Kapitel.
+     Eigene Vokabeln gehoeren aber zu keinem Buch, deshalb bekommt der Schalter
+     jetzt ein eigenes Feld. */
+  SETTINGS.buecher = {};
+  SETTINGS.buecher[slug] = alt.filter(k => k !== 'personal');
+  SETTINGS.eigeneGewaehlt = alt.indexOf('personal') >= 0;
+  return true;
+}
 
 /* Die Eintraege aus vocab-data.js kennen kein `book`-Feld - sie stammen alle
    aus Madina 1. Ohne das Feld faende der Buchfilter sie nicht wieder. */
@@ -125,11 +186,43 @@ function einhaengen(liste){
   return { neu, ergaenzt, verworfen };
 }
 
-/* Buch umschalten. Laedt bei Bedarf nach, traegt fehlende Fortschritts-
-   eintraege nach und baut die Oberflaeche neu auf. */
+/* Ein Buch in die Auswahl aufnehmen oder herausnehmen. Das ist der Weg, den
+   die Knoepfe auf der Startseite gehen.
+
+   ⚠️ Das letzte Buch laesst sich nicht abwaehlen. Sonst stuende die App ohne
+   jede Vokabel da - und der Weg zurueck waere derselbe Knopf, den man gerade
+   ausgeschaltet hat. */
+async function schalteBuch(slug){
+  if (!buchInfo(slug)) { toast(`Buch "${slug}" gibt es nicht.`); return; }
+  const karte = SETTINGS.buecher || (SETTINGS.buecher = {});
+  if (buchGewaehlt(slug)){
+    if (aktiveBuecher().length < 2){
+      toast('Mindestens ein Buch muss ausgewaehlt bleiben.');
+      return;
+    }
+    delete karte[slug];
+    saveSettings();
+    nachAuswahlwechsel();
+    return;
+  }
+  await setzeBuch(slug);
+}
+
+/* Alles, was nach einer Aenderung der Buch- oder Kapitelauswahl nachgezogen
+   werden muss. Frueher stand diese Folge dreimal fast gleich im Code; beim
+   Kapitelfilter fehlte dabei einmal das Mitziehen der laufenden Runde, was
+   Elias am 30.07.2026 gemeldet hat. */
+function nachAuswahlwechsel(){
+  renderHome();
+  if (typeof passeRundeAnAuswahlAn === 'function') passeRundeAnAuswahlAn();
+  if (typeof renderCategories === 'function') renderCategories();
+  if (typeof openSentences === 'function' && document.querySelector('[data-screen="sentences"].active')) openSentences();
+}
+
+/* Buch laden und in die Auswahl aufnehmen. Laedt bei Bedarf nach, traegt
+   fehlende Fortschrittseintraege nach und baut die Oberflaeche neu auf. */
 async function setzeBuch(slug, still){
   if (!buchInfo(slug)) { toast(`Buch "${slug}" gibt es nicht.`); return; }
-  const vorher = aktivesBuch();
   if (!GELADENE_BUECHER.has(slug)){
     if (!still) toast('Lade ' + buchTitel(slug) + ' …');
     try {
@@ -154,18 +247,16 @@ async function setzeBuch(slug, still){
       return;
     }
   }
-  SETTINGS.aktivesBuch = slug;
-  /* Die Kapitelauswahl gilt immer nur innerhalb eines Buchs - Kapitel 3 in
-     Madina 1 hat mit Kapitel 3 in Bayna Yadayk nichts zu tun. */
-  if (vorher !== slug) SETTINGS.selectedChapters = [];
+  /* Neu in der Auswahl heisst: alle Kapitel dieses Buchs. Die Kapitelauswahl
+     gilt immer nur innerhalb eines Buchs - Kapitel 3 in Madina 1 hat mit
+     Kapitel 3 in Bayna Yadayk nichts zu tun.
+     ⚠️ Eine schon vorhandene Auswahl wird NICHT ueberschrieben: setzeBuch()
+     laeuft auch beim Start ueber jedes gemerkte Buch, und dabei duerfen seine
+     Kapitel nicht verlorengehen. */
+  if (!SETTINGS.buecher || typeof SETTINGS.buecher !== 'object') SETTINGS.buecher = {};
+  if (!Array.isArray(SETTINGS.buecher[slug])) SETTINGS.buecher[slug] = [];
   saveSettings();
-  renderHome();
-  /* Dieselbe Nachbesserung wie beim Kapitelfilter: eine laufende Runde gehoert
-     zum alten Buch und muss mitgezogen werden. Sonst lernt man in Madina 3
-     weiter die Karten aus Madina 1 (js/lernen.js). */
-  if (typeof passeRundeAnAuswahlAn === 'function') passeRundeAnAuswahlAn();
-  if (typeof renderCategories === 'function') renderCategories();
-  if (typeof openSentences === 'function' && document.querySelector('[data-screen="sentences"].active')) openSentences();
+  if (!still) nachAuswahlwechsel();
 }
 
 /* Anzeigenamen. Die Datenbank fuehrt nur Kuerzel wie "bayna-yadayk-2"; das
@@ -178,13 +269,13 @@ const BUCH_TITEL = {
 };
 function buchTitel(slug){ return BUCH_TITEL[slug] || slug; }
 
-/* Alle Vokabeln des aktiven Buchs plus die eigenen. Ueberall dort zu benutzen,
-   wo frueher direkt ueber VOCAB_DATA gelaufen wurde - sonst zaehlen Kategorien
-   und Statistik nach dem ersten Buchwechsel Woerter mit, die gerade gar nicht
-   gelernt werden. */
+/* Alle Vokabeln der gewaehlten Buecher plus die eigenen. Ueberall dort zu
+   benutzen, wo frueher direkt ueber VOCAB_DATA gelaufen wurde - sonst zaehlen
+   Kategorien und Statistik Woerter mit, die gerade gar nicht gelernt werden.
+   Eigene Vokabeln laufen bewusst in jeder Auswahl mit. */
 function buchVokabeln(){
-  const buch = aktivesBuch();
-  return VOCAB_DATA.filter(w => w.book === buch || w.chapter === 'personal');
+  const gewaehlt = new Set(aktiveBuecher());
+  return VOCAB_DATA.filter(w => gewaehlt.has(w.book) || w.chapter === 'personal');
 }
 
 /* Alle Kapitelnummern des aktiven Buchs, aufsteigend. Fuer Madina 1 tragen
@@ -227,7 +318,6 @@ function renderBuchChips(){
      bleibt sie ueber einer leeren Zeile stehen und die Startseite sieht kaputt
      aus - genau so war es live, solange data/ nicht ausgeliefert wird. */
   const beschriftung = document.getElementById('bookFilterLabel');
-  const aktiv = aktivesBuch();
   const sichtbar = BUECHER.filter(b => !BUCH_FEHLT.has(b.slug));
   /* Bleibt nur ein Buch uebrig, ist die Auswahlzeile ueberfluessig. */
   if (sichtbar.length < 2){
@@ -238,14 +328,18 @@ function renderBuchChips(){
   if (beschriftung) beschriftung.classList.remove('hidden');
   ziel.innerHTML = sichtbar.map(b=>{
     const geladen = GELADENE_BUECHER.has(b.slug);
-    return `<button class="chip-toggle${b.slug===aktiv?' active':''}" data-buch="${b.slug}"
+    const an = buchGewaehlt(b.slug);
+    /* aria-pressed statt nur einer Klasse: die Knoepfe schalten jetzt
+       mehrere Zustaende gleichzeitig, das ist keine Auswahl aus einer Reihe
+       mehr, sondern eine Ansammlung von Schaltern. */
+    return `<button class="chip-toggle${an?' active':''}" data-buch="${b.slug}" aria-pressed="${an}"
       title="${b.vokabeln} Vokabeln, ${b.kapitel} Kapitel${geladen?'':' – wird beim Antippen geladen'}">${buchTitel(b.slug)}</button>`;
   }).join('');
 }
 
 document.addEventListener('click', (e)=>{
   const b = e.target.closest('[data-buch]');
-  if (b) setzeBuch(b.dataset.buch);
+  if (b) schalteBuch(b.dataset.buch);
 });
 
 /* Beim Start das zuletzt gewaehlte Buch nachladen - auch Madina 1, denn
@@ -260,8 +354,16 @@ document.addEventListener('DOMContentLoaded', async ()=>{
      window.VOKABELN und meldete das Buch als fehlend - obwohl es Sekunden
      spaeter dagewesen waere. Siehe js/vokabelpaket.js. */
   if (typeof PAKET_BEREIT !== 'undefined') await PAKET_BEREIT;
-  const slug = aktivesBuch();
-  await setzeBuch(slug, true);
+  if (stelleBuchauswahlUm()) saveSettings();
+  /* ALLE gemerkten Buecher laden, nicht nur eines. Nacheinander und nicht
+     ueber Promise.all: einhaengen() schreibt in dieselbe Liste VOCAB_DATA und
+     baut sich dafuer jedes Mal einen Index darueber auf - zwei gleichzeitige
+     Laeufe wuerden mit einem veralteten Index arbeiten. */
+  const slugs = aktiveBuecher();
+  for (const s of slugs) await setzeBuch(s, true);
+  renderBuchChips();
+  if (typeof renderHome === 'function') renderHome();
+  const slug = slugs[0];
   /* Scheitert schon der Start, fehlt nicht dieses eine Buch, sondern der
      ganze Ordner data/ - die Dateien werden immer zusammen ausgeliefert.
      Dann verschwindet die Buchzeile ganz, statt sieben Knoepfe anzubieten,
