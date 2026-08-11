@@ -103,6 +103,44 @@ body[data-farbe="aus"]    .fm{color:var(--text);text-shadow:none;}
 .rueckmeldung{text-align:center;font-size:.82rem;margin-top:12px;min-height:1.3em;color:var(--text-dim);}
 .rueckmeldung b{color:var(--text);}
 
+/* ---------- Die Übung (A / C / B nacheinander) ---------- */
+.uebkopf{display:flex;justify-content:space-between;align-items:center;
+  font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);
+  margin-bottom:10px;position:relative;}
+.punkte i{display:inline-block;width:7px;height:7px;border-radius:50%;
+  background:var(--surface-3);border:1px solid var(--border-strong);margin-left:5px;}
+.punkte i.an{background:var(--red);border-color:var(--red);}
+.schrittname{font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--red-bright);text-align:center;margin:18px 0 10px;}
+.schrittname.fertig{color:var(--green);}
+.frage{color:var(--text-dim);font-size:.86rem;text-align:center;margin:0 0 12px;line-height:1.6;}
+.ar-mittel{font-size:2.3rem;text-align:center;}
+
+/* A: aufgedeckte Wörter */
+.karte{border:1px solid var(--border);border-radius:11px;padding:9px 11px;margin-top:7px;
+  background:var(--surface-2);}
+.karte .ar{font-size:1.6rem;text-align:center;}
+.karte .de{color:var(--text-dim);font-size:.82rem;text-align:center;margin-top:-2px;}
+.karte.neu{border-color:rgba(46,230,166,.3);background:rgba(46,230,166,.05);}
+
+/* C: antippbare Buchstaben.
+   ⚠️ .ein MUSS inline bleiben. Gemessen: jeder Buchstabe als eigenes Element
+   aendert die Wortbreite um 0,01 px - auf inline-block reisst die Schrift um
+   23 %. Deshalb wird hier nur die FARBE geschaltet, nie die Darstellungsart. */
+.tippwort{font-size:2.6rem;text-align:center;cursor:pointer;}
+.ein{display:inline;transition:color .15s;}
+.ein.tr{color:var(--green);text-shadow:0 0 18px rgba(46,230,166,.5);}
+.ein.fl{color:var(--red);}
+
+/* B: Auswahl der Bedeutung */
+.wahl{display:block;width:100%;text-align:center;background:var(--surface-2);
+  border:1px solid var(--border);border-radius:11px;padding:12px 10px;margin-top:7px;
+  color:var(--text);font-size:.92rem;font-family:inherit;cursor:pointer;}
+.wahl:active{background:var(--surface-3);}
+.wahl.richtig{border-color:var(--green);background:rgba(46,230,166,.12);}
+.wahl.falsch{border-color:var(--red);background:var(--red-wash);}
+.schlusszahl{text-align:center;color:var(--text-dim);font-size:.9rem;line-height:1.7;margin:8px 0;}
+
 .ladezeile{color:var(--text-faint);font-size:.72rem;text-align:center;margin:2px 0 14px;}
 .fuss{color:var(--text-faint);font-size:.72rem;line-height:1.7;text-align:center;margin-top:6px;}
 </style>
@@ -135,19 +173,61 @@ Sortierspiel. Diese Seite fasst die App nicht an.</p>
 
 <div class="block">
   <div class="glut"></div>
-  <div class="titel">Die Familie</div>
+  <div class="uebkopf">
+    <span id="famFortschritt">…</span>
+    <span class="punkte" id="schrittPunkte"></span>
+  </div>
   <div class="wurzelkopf">
     <div class="zeichen" id="kopfWurzel">…</div>
     <div class="zahl" id="kopfZahl"></div>
   </div>
-  <div class="stapel" id="stapel"></div>
-  <div class="blaettern">
-    <button id="bVor">‹ vorige</button>
-    <button id="bZufallFam">zufällig</button>
-    <button id="bNach">nächste ›</button>
+
+  <!-- A ---------------------------------------------------------------- -->
+  <div id="schritt1" hidden>
+    <div class="schrittname">1 — Erinnern</div>
+    <div class="frage" id="s1Frage"></div>
+    <div id="s1Liste"></div>
+    <div class="blaettern"><button id="s1Knopf">aufdecken</button></div>
   </div>
-  <div class="hinweis">Genau das ist der Unterschied zur alten Vorschau: eine Färbung
-  braucht ein zweites Wort zum Vergleichen. An einem einzelnen Wort sagt sie nichts.</div>
+
+  <!-- C ---------------------------------------------------------------- -->
+  <div id="schritt2" hidden>
+    <div class="schrittname">2 — Finden</div>
+    <div class="frage" id="s2Frage">Tippe die Wurzelbuchstaben an.</div>
+    <div class="ar tippwort" id="s2Wort"></div>
+    <div class="de" id="s2De"></div>
+    <div class="rueckmeldung" id="s2Meldung">&nbsp;</div>
+    <div class="blaettern" id="s2Weiter" hidden><button>weiter ›</button></div>
+  </div>
+
+  <!-- B ---------------------------------------------------------------- -->
+  <div id="schritt3" hidden>
+    <div class="schrittname">3 — Erraten</div>
+    <div class="frage">Dieses Wort ist neu, aber aus derselben Wurzel.<br>Was heißt es?</div>
+    <div class="ar ar-mittel" id="s3Wort"></div>
+    <div id="s3Auswahl"></div>
+    <div class="rueckmeldung" id="s3Meldung">&nbsp;</div>
+    <div class="blaettern" id="s3Weiter" hidden><button>weiter ›</button></div>
+  </div>
+
+  <!-- Belohnung: jetzt erst die ganze Familie ---------------------------- -->
+  <div id="schrittFertig" hidden>
+    <div class="schrittname fertig">Familie geschafft</div>
+    <div class="stapel" id="stapel"></div>
+    <div class="blaettern"><button id="bNaechsteFam">weiter ›</button></div>
+  </div>
+
+  <!-- Abschluss der Sitzung --------------------------------------------- -->
+  <div id="schlussbild" hidden>
+    <div class="schrittname fertig">Fertig für heute</div>
+    <div class="schlusszahl" id="schlussZahl"></div>
+    <div class="blaettern"><button id="bNochmal">noch eine Runde</button></div>
+  </div>
+
+  <div class="blaettern" style="margin-top:8px">
+    <button id="bUeberspringen">diese Familie überspringen</button>
+    <button id="bZufallFam">neue Sitzung</button>
+  </div>
 </div>
 
 <div class="block">
@@ -319,23 +399,12 @@ function baueFamilien(){
   });
 }
 
-/* ================= Familienansicht ================= */
-var famPos = 0;
-function zeigeFamilie(){
-  var f = FAMILIEN[famPos];
-  var kopf = document.getElementById('kopfWurzel');
-  var zahl = document.getElementById('kopfZahl');
+/* ================= Die gestapelte Familie =================
+   Steht jetzt NICHT mehr am Anfang, sondern am Ende der Uebung - man bekommt
+   sie erst zu sehen, wenn die drei Schritte durch sind. Genau Elias' Einwand:
+   nur anschauen heisst nicht damit arbeiten. */
+function zeigeStapel(f){
   var stapel = document.getElementById('stapel');
-  if (!f){
-    kopf.textContent = '—';
-    zahl.textContent = 'keine Familie mit mehr als einem Wort gefunden';
-    stapel.innerHTML = '';
-    return;
-  }
-  kopf.textContent = f.wurzel;
-  zahl.textContent = f.woerter.length + ' Wörter · davon ' + f.eigene + ' aus deiner Kartei'
-    + '   (' + (famPos+1) + ' von ' + FAMILIEN.length + ')';
-
   stapel.innerHTML = f.woerter.map(function(x){
     var m = markiere(x.ar, f.wurzel);
     return '<div class="zeile' + (x.kennst ? ' kennst' : '') + (m.ok ? '' : ' nichtok') + '">' +
@@ -373,18 +442,223 @@ function ausrichten(){
   });
 }
 
-document.getElementById('bNach').onclick = function(){
-  if (!FAMILIEN.length) return;
-  famPos = (famPos + 1) % FAMILIEN.length; zeigeFamilie();
+/* ================= Die Übung =================
+   Drei Schritte je Familie, in dieser Reihenfolge:
+     1 Erinnern  - abrufen, was schon da ist          (Auswendiglernen)
+     2 Finden    - die Wurzel IM Wort antippen        (Fertigkeit, produktiv)
+     3 Erraten   - ein neues Wort aus derselben Wurzel (der Ertrag)
+   Danach die ganze Familie als Abschluss. Drei Familien sind eine Sitzung -
+   eine kurze Einheit mit sichtbarem Ende, nicht endloses Blaettern.
+
+   ⛔ Diese Seite schreibt NICHTS in den Speicher der App. Das Plus ist hier
+   nur eine Anzeige - der echte Lernstand wird nicht angefasst. */
+var SITZUNG = { reihe: [], i: 0, richtig: 0, gesamt: 0 };
+
+/* Einheiten eines Wortes mit der Angabe, welche zur Wurzel gehoeren.
+   Gleiche Logik wie markiere(), nur wird hier die Zuordnung gebraucht. */
+function einheiten(wort, wurzel){
+  var teile = zerlege(String(wort));
+  var wz = String(wurzel).trim().split(/\s+/);
+  var wi = 0, istWz = [], i;
+  for (i = 0; i < teile.length; i++) istWz.push(false);
+  for (i = 0; i < teile.length && wi < wz.length; i++)
+    if (gf(teile[i].b) === gf(wz[wi])){ istWz[i] = true; wi++; }
+  return { teile: teile, istWz: istWz, ok: wi >= wz.length };
+}
+
+function schrittZeigen(nr){
+  ['schritt1','schritt2','schritt3','schrittFertig','schlussbild'].forEach(function(id, k){
+    document.getElementById(id).hidden = (k !== nr);
+  });
+  var p = '';
+  for (var k = 0; k < 3; k++) p += '<i class="' + (k < nr ? 'an' : '') + '"></i>';
+  document.getElementById('schrittPunkte').innerHTML = nr < 3 ? p : '<i class="an"></i><i class="an"></i><i class="an"></i>';
+}
+
+/* --- Auswahl der Familien für eine Sitzung ---
+   Bevorzugt werden Familien, die alle drei Schritte hergeben: mindestens ein
+   eigenes markierbares Wort (Schritt 2) und mindestens ein neues (Schritt 3). */
+function taugtFuerUebung(f){
+  var eigenMark = f.woerter.filter(function(x){ return x.kennst && markiere(x.ar, f.wurzel).ok; });
+  return eigenMark.length >= 1;
+}
+function starteSitzung(){
+  var gut = FAMILIEN.filter(taugtFuerUebung);
+  var mitNeu = gut.filter(function(f){ return f.woerter.some(function(x){ return !x.kennst; }); });
+  var quelle = mitNeu.length >= 3 ? mitNeu : gut;
+  /* Mindestens eine Familie, in der Elias schon ZWEI Wörter hat - mit einem
+     einzigen ist Schritt 1 ("welche kennst du?") keine Übung. Gemessen gibt es
+     davon im ganzen Bestand nur 9, deshalb wird mit dem Rest aufgefüllt. */
+  var stark = mische(quelle.filter(function(f){ return f.eigene >= 2; }));
+  var rest  = mische(quelle.filter(function(f){ return f.eigene <  2; }));
+  var reihe = mische(stark.slice(0, 2).concat(rest).slice(0, 3));
+  SITZUNG.reihe = reihe.map(function(f){ return FAMILIEN.indexOf(f); });
+  SITZUNG.i = 0; SITZUNG.richtig = 0; SITZUNG.gesamt = 0;
+  starteFamilie();
+}
+function aktuelleFamilie(){ return FAMILIEN[SITZUNG.reihe[SITZUNG.i]]; }
+
+function starteFamilie(){
+  var f = aktuelleFamilie();
+  if (!f){ schluss(); return; }
+  document.getElementById('famFortschritt').textContent =
+    'Familie ' + (SITZUNG.i + 1) + ' von ' + SITZUNG.reihe.length;
+  document.getElementById('kopfWurzel').textContent = f.wurzel;
+  document.getElementById('kopfZahl').textContent =
+    f.eigene + ' kennst du · ' + (f.woerter.length - f.eigene) + ' neu';
+  schritt1();
+}
+
+/* --- 1 Erinnern --- */
+var s1Rest = [];
+function schritt1(){
+  var f = aktuelleFamilie();
+  s1Rest = f.woerter.filter(function(x){ return x.kennst; });
+  document.getElementById('s1Liste').innerHTML = '';
+  document.getElementById('s1Frage').innerHTML =
+    'Du kennst <b>' + s1Rest.length + '</b> Wort' + (s1Rest.length === 1 ? '' : 'e')
+    + ' aus dieser Wurzel.<br>Welche? Erst überlegen, dann aufdecken.';
+  document.getElementById('s1Knopf').textContent = 'aufdecken';
+  schrittZeigen(0);
+}
+document.getElementById('s1Knopf').onclick = function(){
+  var f = aktuelleFamilie();
+  if (!s1Rest.length){ schritt2(); return; }
+  var x = s1Rest.shift();
+  var m = markiere(x.ar, f.wurzel);
+  var d = document.createElement('div');
+  d.className = 'karte';
+  d.innerHTML = '<div class="ar">' + (m.ok ? m.html : esc(x.ar)) + '</div>' +
+                '<div class="de">' + esc(x.de) + '</div>';
+  document.getElementById('s1Liste').appendChild(d);
+  this.textContent = s1Rest.length ? ('noch ' + s1Rest.length + ' aufdecken') : 'weiter ›';
 };
-document.getElementById('bVor').onclick = function(){
-  if (!FAMILIEN.length) return;
-  famPos = (famPos - 1 + FAMILIEN.length) % FAMILIEN.length; zeigeFamilie();
+
+/* --- 2 Finden: die Wurzelbuchstaben im Wort antippen --- */
+var s2Ziel = 0, s2Getroffen = 0;
+function schritt2(){
+  var f = aktuelleFamilie();
+  /* Mehrwortige Eintraege ("قَلَمُ حِبْرٍ" = Füller) taugen nicht als Aufgabe. */
+  var alle = f.woerter.filter(function(x){
+    return x.kennst && !/\s/.test(String(x.ar).trim()) && markiere(x.ar, f.wurzel).ok;
+  });
+  /* Bevorzugt ein Wort, das AUCH Formbuchstaben hat. Sonst lautet die Aufgabe
+     "tippe alle drei an" und traegt nichts - 32 von 113 Woertern bestehen
+     restlos aus ihrer Wurzel (gemessen). */
+  var mitForm = alle.filter(function(x){
+    return einheiten(x.ar, f.wurzel).istWz.some(function(v){ return !v; });
+  });
+  var kandidaten = mitForm.length ? mitForm : alle;
+  if (!kandidaten.length){ schritt3(); return; }
+  var x = mische(kandidaten)[0];
+  var e = einheiten(x.ar, f.wurzel);
+  var nurWurzel = !e.istWz.some(function(v){ return !v; });
+  s2Ziel = e.istWz.filter(Boolean).length;
+  s2Getroffen = 0;
+  document.getElementById('s2Wort').innerHTML = e.teile.map(function(t, i){
+    return '<span class="ein" data-i="' + i + '" data-wz="' + (e.istWz[i] ? 1 : 0) + '">'
+         + esc(t.b + t.d) + '</span>';
+  }).join('');
+  document.getElementById('s2De').textContent = x.de;
+  /* Der Sonderfall ist kein Fehler, sondern eine Lehre: manche Woerter SIND
+     ihre Wurzel. Dann wird das auch so gesagt. */
+  document.getElementById('s2Frage').innerHTML = nurWurzel
+    ? 'Dieses Wort <b>ist</b> seine Wurzel — nichts kommt dazu.<br>Tippe die ' + s2Ziel + ' Buchstaben an.'
+    : 'Tippe die <b>' + s2Ziel + '</b> Buchstaben an, die zur Wurzel gehören.';
+  document.getElementById('s2Meldung').innerHTML = '&nbsp;';
+  document.getElementById('s2Weiter').hidden = true;
+  schrittZeigen(1);
+}
+document.getElementById('s2Wort').addEventListener('click', function(e){
+  var s = e.target.closest('.ein');
+  if (!s || s.classList.contains('tr')) return;
+  if (s.dataset.wz === '1'){
+    s.classList.add('tr'); s2Getroffen++;
+    SITZUNG.gesamt++; SITZUNG.richtig++;
+    if (s2Getroffen >= s2Ziel){
+      document.getElementById('s2Meldung').innerHTML = '<b>Alle gefunden.</b>';
+      document.getElementById('s2Weiter').hidden = false;
+    }
+  } else {
+    SITZUNG.gesamt++;
+    s.classList.add('fl');
+    document.getElementById('s2Meldung').textContent = 'Der gehört zur Form, nicht zur Wurzel.';
+    setTimeout(function(){ s.classList.remove('fl'); }, 600);
+  }
+});
+document.getElementById('s2Weiter').onclick = function(){ schritt3(); };
+
+/* --- 3 Erraten: neues Wort aus derselben Wurzel --- */
+function schritt3(){
+  var f = aktuelleFamilie();
+  var neu = f.woerter.filter(function(x){
+    return !x.kennst && x.de && !/\s/.test(String(x.ar).trim());
+  });
+  if (!neu.length){ fertig(); return; }
+  var x = mische(neu)[0];
+  var m = markiere(x.ar, f.wurzel);
+  document.getElementById('s3Wort').innerHTML = m.ok ? m.html : esc(x.ar);
+
+  /* Ablenker aus ANDEREN Wurzeln - sonst koennten sie zufaellig auch stimmen */
+  var fremd = [];
+  FAMILIEN.forEach(function(g){
+    if (g.wurzel === f.wurzel) return;
+    g.woerter.forEach(function(y){ if (y.de && y.de !== x.de) fremd.push(y.de); });
+  });
+  var auswahl = mische([x.de].concat(mische(fremd).slice(0, 2)));
+  document.getElementById('s3Auswahl').innerHTML = auswahl.map(function(t){
+    return '<button class="wahl" data-de="' + esc(t) + '">' + esc(t) + '</button>';
+  }).join('');
+  document.getElementById('s3Auswahl').dataset.richtig = x.de;
+  document.getElementById('s3Auswahl').dataset.fertig = '';
+  document.getElementById('s3Meldung').innerHTML = '&nbsp;';
+  document.getElementById('s3Weiter').hidden = true;
+  schrittZeigen(2);
+}
+document.getElementById('s3Auswahl').addEventListener('click', function(e){
+  var b = e.target.closest('.wahl');
+  if (!b || this.dataset.fertig === '1') return;
+  this.dataset.fertig = '1';
+  var richtig = this.dataset.richtig;
+  SITZUNG.gesamt++;
+  if (b.dataset.de === richtig){ SITZUNG.richtig++; b.classList.add('richtig'); }
+  else {
+    b.classList.add('falsch');
+    [].forEach.call(this.querySelectorAll('.wahl'), function(x){
+      if (x.dataset.de === richtig) x.classList.add('richtig');
+    });
+  }
+  document.getElementById('s3Meldung').innerHTML =
+    'Das Wort gehört zu <b>' + esc(aktuelleFamilie().wurzel) + '</b> — deshalb passt es dazu.';
+  document.getElementById('s3Weiter').hidden = false;
+});
+document.getElementById('s3Weiter').onclick = function(){
+  document.getElementById('s3Auswahl').dataset.fertig = '';
+  fertig();
 };
-document.getElementById('bZufallFam').onclick = function(){
-  if (!FAMILIEN.length) return;
-  famPos = Math.floor(Math.random() * FAMILIEN.length); zeigeFamilie();
+
+/* --- Abschluss der Familie: jetzt erst die ganze Familie --- */
+function fertig(){
+  zeigeStapel(aktuelleFamilie());
+  schrittZeigen(3);
+}
+document.getElementById('bNaechsteFam').onclick = function(){
+  SITZUNG.i++;
+  if (SITZUNG.i >= SITZUNG.reihe.length) schluss(); else starteFamilie();
 };
+function schluss(){
+  document.getElementById('schlussZahl').innerHTML =
+    '<b>' + SITZUNG.richtig + ' von ' + SITZUNG.gesamt + '</b> auf Anhieb richtig.<br>'
+    + SITZUNG.reihe.length + ' Wurzelfamilien durchgearbeitet.';
+  schrittZeigen(4);
+  document.getElementById('famFortschritt').textContent = 'Sitzung beendet';
+}
+document.getElementById('bNochmal').onclick = starteSitzung;
+document.getElementById('bUeberspringen').onclick = function(){
+  SITZUNG.i++;
+  if (SITZUNG.i >= SITZUNG.reihe.length) schluss(); else starteFamilie();
+};
+document.getElementById('bZufallFam').onclick = starteSitzung;
 
 /* ================= Einstellungen ================= */
 document.getElementById('farbschalter').addEventListener('click', function(e){
@@ -470,7 +744,10 @@ function zeigeStueck(){
      ⚠️ NICHT class="fm" nehmen: die Klasse wird im Normalfall gedimmt, dann
      stuende das Raetselwort grau da. Hier braucht es eine neutrale Klasse. */
   ar.innerHTML = '<span class="roh">' + esc(s.ar) + '</span>';
-  document.getElementById('spielDe').textContent = '';
+  /* Die Uebersetzung steht schon VOR der Antwort da - Elias' Wunsch, damit das
+     Spiel nebenbei Vokabeln zeigt. Sie verraet die Wurzel nicht direkt, macht
+     den semantischen Loesungsweg aber gangbar. Das ist gewollt. */
+  document.getElementById('spielDe').textContent = s.de;
   document.getElementById('spielMeldung').textContent = 'Welche drei Buchstaben tragen dieses Wort?';
   SPIEL.offen = true;
 }
@@ -507,8 +784,7 @@ function fertigAufbauen(){
       ? (BUCHWOERTER.length + ' Buchwörter geladen ' + QUELLE + ' · ' + FAMILIEN.length + ' Familien')
       : 'nur deine ' + VOCAB_DATA.length + ' Lernwörter — keine Buchwörter gefunden (' + FAMILIEN.length + ' Familien)';
   document.getElementById('spielPool').textContent = spielbareFamilien().length + ' Wurzeln spielbar';
-  famPos = 0;
-  zeigeFamilie();
+  starteSitzung();
   neueRunde();
   document.getElementById('fuss').textContent =
     VOCAB_DATA.length + ' Lernwörter · ' + FAMILIEN.length + ' Familien mit mindestens einem davon'
