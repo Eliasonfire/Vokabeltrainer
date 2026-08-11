@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Vorschau: Wurzelmodus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#000; --surface-1:#0b0b0c; --surface-2:#131315; --surface-3:#1b1b1e;
+  --border:#26262b; --border-strong:#33333a;
+  --red:#ff1744; --red-bright:#ff4d6a; --red-wash:rgba(255,23,68,.09);
+  --text:#f4f4f5; --text-dim:#a1a1a8; --text-faint:#66666e;
+  --green:#2ee6a6; --amber:#ffb84d;
+  --font-ar:'Noto Naskh Arabic','Amiri',serif;
+  --font-ui:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{margin:0 auto;background:var(--bg);color:var(--text);font-family:var(--font-ui);
+     padding:16px 14px calc(32px + env(safe-area-inset-bottom));max-width:640px;}
+h1{font-size:1.05rem;font-weight:600;margin:0 0 3px;}
+.unter{color:var(--text-dim);font-size:.8rem;line-height:1.55;margin:0 0 16px;}
+
+/* ---------- ARABISCHE ANZEIGE ----------
+   ⚠️ Die farbigen Spans MUESSEN inline bleiben. Steht ein Elternteil auf
+   display:flex, werden sie blockifiziert und die verbundene Schrift reisst
+   auseinander (gemessen: +23 % Breite). Deshalb steht um arabischen Text
+   herum hier NIRGENDS ein Flex-Container - auch nicht zum Zentrieren.
+   Genau daran ist der Listenmodus im Koranleser einmal gescheitert. */
+.ar{font-family:var(--font-ar);direction:rtl;line-height:2;display:block;}
+.wz,.fm,.roh{display:inline;}
+/* Neutral - wird von keiner Farbeinstellung angefasst (Raetselwort im Spiel) */
+.roh{color:var(--text);}
+
+/* Grundeinstellung: die Wurzel leuchtet, der Rest tritt zurueck.
+   [data-farbe="um"] dreht das um - fuer spaeter, wenn mehr abgeleitete
+   Formen im Bestand sind (heute sind 32 von 113 Woertern RESTLOS Wurzel,
+   die waeren dann komplett grau). */
+body[data-farbe="normal"] .wz{color:var(--text);text-shadow:0 0 18px rgba(255,77,106,.45);}
+body[data-farbe="normal"] .fm{color:var(--text-faint);}
+body[data-farbe="um"]     .wz{color:var(--text-faint);text-shadow:none;}
+body[data-farbe="um"]     .fm{color:var(--text);text-shadow:0 0 18px rgba(255,77,106,.35);}
+body[data-farbe="aus"]    .wz,
+body[data-farbe="aus"]    .fm{color:var(--text);text-shadow:none;}
+
+/* ---------- Bausteine ---------- */
+.block{background:var(--surface-1);border:1px solid var(--border);border-radius:16px;
+       padding:16px 14px;margin-bottom:14px;position:relative;overflow:hidden;}
+.titel{font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;
+       color:var(--text-faint);margin-bottom:12px;}
+.hinweis{color:var(--text-faint);font-size:.72rem;line-height:1.6;margin-top:12px;}
+.warn{color:var(--amber);font-size:.74rem;line-height:1.55;margin-top:10px;}
+
+.reihe{display:flex;gap:6px;}
+.reihe button{flex:1;background:var(--surface-2);color:var(--text-dim);
+  border:1px solid var(--border);border-radius:10px;padding:9px 4px;font-size:.74rem;
+  font-family:inherit;font-weight:500;cursor:pointer;}
+.reihe button[aria-pressed="true"]{background:var(--red-wash);border-color:var(--red);color:var(--text);}
+.reihe button:active{background:var(--surface-3);}
+
+/* ---------- Familienansicht ---------- */
+.glut{position:absolute;left:50%;top:-70px;width:280px;height:180px;transform:translateX(-50%);
+      background:radial-gradient(ellipse at center,rgba(255,23,68,.16),transparent 70%);
+      pointer-events:none;}
+.wurzelkopf{text-align:center;position:relative;}
+.wurzelkopf .zeichen{font-family:var(--font-ar);direction:rtl;font-size:2.1rem;
+  letter-spacing:.16em;color:var(--text);text-shadow:0 0 26px rgba(255,77,106,.5);}
+.wurzelkopf .zahl{color:var(--text-faint);font-size:.72rem;margin-top:4px;}
+
+/* Die gestapelte Familie. Rechtsbuendig, damit die Verschiebung unten eine
+   feste Bezugskante hat - zentriert waere jede Zeile anders versetzt. */
+.stapel{margin-top:18px;padding-left:34px;}
+.zeile{padding:7px 0;border-bottom:1px solid rgba(38,38,43,.7);}
+.zeile:last-child{border-bottom:0;}
+.zeile .ar{font-size:2.05rem;text-align:right;white-space:nowrap;
+           transition:transform .28s cubic-bezier(.2,.7,.3,1);}
+.zeile .de{color:var(--text-dim);font-size:.84rem;text-align:right;margin-top:-4px;}
+.zeile .mrk{font-size:.66rem;text-align:right;margin-top:2px;color:var(--text-faint);}
+.zeile.kennst .mrk{color:var(--green);}
+.zeile.nichtok .ar{opacity:.75;}
+
+.blaettern{display:flex;gap:6px;margin-top:16px;}
+.blaettern button{flex:1;background:var(--surface-2);color:var(--text);border:1px solid var(--border);
+  border-radius:10px;padding:11px;font-size:.8rem;font-family:inherit;cursor:pointer;}
+.blaettern button:active{background:var(--surface-3);}
+
+/* ---------- Mini-Spiel ---------- */
+.spielwort{text-align:center;padding:14px 0 6px;}
+.spielwort .ar{font-size:2.7rem;}
+.spielwort .de{color:var(--text-dim);font-size:.9rem;margin-top:2px;min-height:1.2em;}
+.koerbe{display:flex;gap:8px;margin-top:16px;}
+/* Der Knopf ist bewusst KEIN Flex-Container - er traegt arabische Schrift. */
+.korb{flex:1;display:block;text-align:center;background:var(--surface-2);
+  border:1px solid var(--border-strong);border-radius:12px;padding:13px 4px;cursor:pointer;
+  font-family:var(--font-ar);direction:rtl;font-size:1.35rem;letter-spacing:.1em;color:var(--text);}
+.korb:active{background:var(--surface-3);}
+.korb.richtig{border-color:var(--green);background:rgba(46,230,166,.12);}
+.korb.falsch{border-color:var(--red);background:var(--red-wash);}
+.stand{display:flex;justify-content:space-between;color:var(--text-faint);
+       font-size:.72rem;margin-top:14px;}
+.rueckmeldung{text-align:center;font-size:.82rem;margin-top:12px;min-height:1.3em;color:var(--text-dim);}
+.rueckmeldung b{color:var(--text);}
+
+.ladezeile{color:var(--text-faint);font-size:.72rem;text-align:center;margin:2px 0 14px;}
+.fuss{color:var(--text-faint);font-size:.72rem;line-height:1.7;text-align:center;margin-top:6px;}
+</style>
+</head>
+<body data-farbe="normal">
+
+<h1>Wurzelmodus</h1>
+<p class="unter">Die Familie gestapelt, die Wurzel in einer Spalte — und darunter das
+Sortierspiel. Diese Seite fasst die App nicht an.</p>
+
+<div class="block">
+  <div class="titel">Einstellung (später unter „Einstellungen")</div>
+  <div class="reihe" id="farbschalter">
+    <button data-farbe="normal" aria-pressed="true">Wurzel leuchtet</button>
+    <button data-farbe="um">umgekehrt</button>
+    <button data-farbe="aus">aus</button>
+  </div>
+  <div class="reihe" style="margin-top:6px">
+    <button id="bAusrichten" aria-pressed="true">Wurzel ausrichten</button>
+  </div>
+  <div class="warn" id="umWarn" hidden>
+    ⚠️ Umgekehrt heißt: die Wurzel tritt zurück, der Rest leuchtet.
+    Bei deinem heutigen Bestand sind <b>32 von 113</b> Wörtern restlos Wurzel
+    (بَيْتٌ، قَلَمٌ، وَلَدٌ …) — die stehen dann komplett grau da.
+    Sinnvoll wird das erst mit mehr abgeleiteten Formen.
+  </div>
+</div>
+
+<div class="ladezeile" id="ladezeile">lade Wortbestand …</div>
+
+<div class="block">
+  <div class="glut"></div>
+  <div class="titel">Die Familie</div>
+  <div class="wurzelkopf">
+    <div class="zeichen" id="kopfWurzel">…</div>
+    <div class="zahl" id="kopfZahl"></div>
+  </div>
+  <div class="stapel" id="stapel"></div>
+  <div class="blaettern">
+    <button id="bVor">‹ vorige</button>
+    <button id="bZufallFam">zufällig</button>
+    <button id="bNach">nächste ›</button>
+  </div>
+  <div class="hinweis">Genau das ist der Unterschied zur alten Vorschau: eine Färbung
+  braucht ein zweites Wort zum Vergleichen. An einem einzelnen Wort sagt sie nichts.</div>
+</div>
+
+<div class="block">
+  <div class="titel">Mini-Spiel — welche Wurzel?</div>
+  <div class="spielwort">
+    <div class="ar" id="spielAr">…</div>
+    <div class="de" id="spielDe"></div>
+  </div>
+  <div class="koerbe" id="koerbe"></div>
+  <div class="rueckmeldung" id="spielMeldung">Tipp den Korb an, in den das Wort gehört.</div>
+  <div class="stand">
+    <span id="spielStand"></span>
+    <span id="spielPool"></span>
+  </div>
+  <div class="blaettern">
+    <button id="bNeueRunde">neue Runde</button>
+  </div>
+  <div class="hinweis">Hier wird das Wort <em>ohne</em> Hervorhebung gezeigt — das Finden
+  ist die Aufgabe. Nach dem Tippen siehst du die Auflösung markiert.</div>
+</div>
+
+<div class="fuss" id="fuss"></div>
+
+<script src="vocab-data.js"></script>
+<script>
+/* ================= Grundlagen =================
+   Verfahren identisch zur gemessenen Fassung: die Wurzelbuchstaben werden der
+   Reihe nach in der vokalisierten Form gesucht. Geht das nicht auf (schwache
+   Wurzel wie ب و ب in بَابٌ, verdoppelte wie أ م م in أُمٌّ), wird BEWUSST
+   nicht markiert statt geraten. */
+var HARAKA = /[ً-ْٰٓ-ٕ]/;
+
+function gf(b){
+  if ('أإآٱا'.indexOf(b) >= 0) return 'ا';
+  if (b === 'ى') return 'ي';
+  if (b === 'ؤ') return 'و';
+  if (b === 'ئ') return 'ي';
+  if (b === 'ة') return 'ه';
+  return b;
+}
+function zerlege(wort){
+  var t = [], i, z;
+  for (i = 0; i < wort.length; i++){
+    z = wort[i];
+    if (HARAKA.test(z)){ if (t.length) t[t.length-1].d += z; }
+    else t.push({ b: z, d: '' });
+  }
+  return t;
+}
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+function ohneZeichen(s){ return String(s).replace(/[ً-ْٰٓ-ٕ]/g,'').trim(); }
+function vergleichsform(s){
+  return String(s).replace(/[ً-ْٰٓ-ٕ]/g,'')
+                  .replace(/[^ء-ي]/g,'').split('').map(gf).join('');
+}
+
+/* Lehnwoerter: dort ist die Wurzelangabe Zufall der Buchstaben.
+   أَمْرِيكَا bekaeme أ م ر - davon kommt أَمَرَ "befehlen". Bewusst raus.
+   ⚠️ Ob الْعِرَاقُ dazugehoert, ist umstritten und hier NICHT entschieden. */
+var LEHNWORT_N = ['الفليبين','اليابان','الصين','الهند','امريكا',
+                  'المانيا','انجلترا','سويسرا','اندونيسيا','انجليزية'].map(vergleichsform);
+
+function markiere(wort, wurzel){
+  if (!wort) return { html:'', ok:false };
+  if (!wurzel || !String(wurzel).trim()) return { html: esc(wort), ok:false, grund:'keine Wurzel' };
+  if (LEHNWORT_N.indexOf(vergleichsform(wort)) >= 0)
+    return { html: esc(wort), ok:false, grund:'Lehnwort' };
+  var teile = zerlege(wort);
+  var wz = String(wurzel).trim().split(/\s+/);
+  var wi = 0, idx = {}, i;
+  for (i = 0; i < teile.length && wi < wz.length; i++)
+    if (gf(teile[i].b) === gf(wz[wi])){ idx[i] = true; wi++; }
+  if (wi < wz.length) return { html: esc(wort), ok:false, grund:'Wurzel steckt nicht sichtbar im Wort' };
+
+  var html = '', aktuell = null, puffer = '';
+  function schliesse(){
+    if (puffer === '') return;
+    html += '<span class="' + (aktuell ? 'wz' : 'fm') + '">' + esc(puffer) + '</span>';
+    puffer = '';
+  }
+  for (i = 0; i < teile.length; i++){
+    var ist = !!idx[i];
+    if (aktuell === null) aktuell = ist;
+    if (ist !== aktuell){ schliesse(); aktuell = ist; }
+    puffer += teile[i].b + teile[i].d;
+  }
+  schliesse();
+  return { html: html, ok:true };
+}
+
+/* ================= Bestand laden =================
+   Reihenfolge ist wichtig: auf dem Handy liegen die Buchvokabeln NICHT als
+   Dateien, sondern als eingelesenes Paket in IndexedDB. Wer nur nach Dateien
+   sucht, meldet dort faelschlich "keine Buecher". */
+var BUCHWOERTER = [], QUELLE = '';
+var KENNE = {};
+VOCAB_DATA.forEach(function(w){ KENNE[ohneZeichen(w.ar)] = true; });
+
+function ausPaket(){
+  return new Promise(function(fertig){
+    if (!('indexedDB' in window)) return fertig(null);
+    var a;
+    try { a = indexedDB.open('vokabeltrainer', 1); } catch(e){ return fertig(null); }
+    a.onupgradeneeded = function(){
+      var db = a.result;
+      if (!db.objectStoreNames.contains('pakete')) db.createObjectStore('pakete');
+    };
+    a.onerror = function(){ fertig(null); };
+    a.onsuccess = function(){
+      var db = a.result;
+      try {
+        var g = db.transaction('pakete','readonly').objectStore('pakete').get('vokabelpaket');
+        g.onsuccess = function(){ fertig(g.result || null); db.close(); };
+        g.onerror   = function(){ fertig(null); db.close(); };
+      } catch(e){ fertig(null); try{ db.close(); }catch(e2){} }
+    };
+  });
+}
+function ausDateien(){
+  return new Promise(function(fertig){
+    var slugs = ['madina-1','madina-2','madina-3','bayna-yadayk-1','bayna-yadayk-2',
+                 'bayna-yadayk-3','bayna-yadayk-4','quran'];
+    var offen = slugs.length;
+    slugs.forEach(function(s){
+      var sc = document.createElement('script');
+      sc.src = 'data/vokabeln-' + s + '.js';
+      sc.onload = sc.onerror = function(){ if (--offen === 0) fertig(); };
+      document.head.appendChild(sc);
+    });
+  });
+}
+function einsammeln(){
+  BUCHWOERTER = [];
+  var V = window.VOKABELN || {};
+  Object.keys(V).forEach(function(k){ if (Array.isArray(V[k])) BUCHWOERTER = BUCHWOERTER.concat(V[k]); });
+}
+
+/* ================= Familien bauen ================= */
+var FAMILIEN = [];
+function baueFamilien(){
+  var nachWurzel = {};
+  function rein(w, eigen){
+    var r = w.root && String(w.root).trim();
+    if (!r) return;
+    if (LEHNWORT_N.indexOf(vergleichsform(w.ar)) >= 0) return;
+    var k = ohneZeichen(w.ar);
+    var f = nachWurzel[r] || (nachWurzel[r] = { wurzel:r, woerter:[], gesehen:{}, eigene:0 });
+    if (f.gesehen[k]) return;
+    f.gesehen[k] = true;
+    var kennst = eigen || !!KENNE[k];
+    if (kennst) f.eigene++;
+    f.woerter.push({ ar:w.ar, de:w.de || '', kennst:kennst });
+  }
+  VOCAB_DATA.forEach(function(w){ rein(w, true); });
+  BUCHWOERTER.forEach(function(w){ rein(w, false); });
+
+  FAMILIEN = Object.keys(nachWurzel).map(function(r){ return nachWurzel[r]; })
+    .filter(function(f){ return f.eigene > 0 && f.woerter.length >= 2; });
+
+  /* Eigene Woerter zuerst - die kennt er, daran erklaert sich die Familie.
+     Danach die neuen. Familien mit den meisten eigenen Woertern nach vorn. */
+  FAMILIEN.forEach(function(f){
+    f.woerter.sort(function(a,b){ return (b.kennst?1:0) - (a.kennst?1:0); });
+    if (f.woerter.length > 7) f.woerter = f.woerter.slice(0, 7);
+  });
+  FAMILIEN.sort(function(a,b){
+    if (b.eigene !== a.eigene) return b.eigene - a.eigene;
+    return b.woerter.length - a.woerter.length;
+  });
+}
+
+/* ================= Familienansicht ================= */
+var famPos = 0;
+function zeigeFamilie(){
+  var f = FAMILIEN[famPos];
+  var kopf = document.getElementById('kopfWurzel');
+  var zahl = document.getElementById('kopfZahl');
+  var stapel = document.getElementById('stapel');
+  if (!f){
+    kopf.textContent = '—';
+    zahl.textContent = 'keine Familie mit mehr als einem Wort gefunden';
+    stapel.innerHTML = '';
+    return;
+  }
+  kopf.textContent = f.wurzel;
+  zahl.textContent = f.woerter.length + ' Wörter · davon ' + f.eigene + ' aus deiner Kartei'
+    + '   (' + (famPos+1) + ' von ' + FAMILIEN.length + ')';
+
+  stapel.innerHTML = f.woerter.map(function(x){
+    var m = markiere(x.ar, f.wurzel);
+    return '<div class="zeile' + (x.kennst ? ' kennst' : '') + (m.ok ? '' : ' nichtok') + '">' +
+           '<div class="ar">' + (m.ok ? m.html : esc(x.ar)) + '</div>' +
+           '<div class="de">' + esc(x.de) + '</div>' +
+           '<div class="mrk">' + (x.kennst ? 'kennst du' : 'neu')
+             + (m.ok ? '' : ' · Wurzel nicht sichtbar, deshalb unmarkiert') + '</div>' +
+           '</div>';
+  }).join('');
+  ausrichten();
+}
+
+/* Die Wurzel in eine Spalte bringen.
+   Gemessen wird die rechte Kante des ERSTEN Wurzel-Spans; im RTL-Satz ist das
+   die Stelle, an der der erste Wurzelbuchstabe sitzt. Alle Zeilen werden so
+   weit nach links geschoben, dass diese Kanten uebereinanderliegen.
+   Die Verschiebung ist eine transform - sie aendert am Textfluss und damit an
+   der Verbindung der Buchstaben nichts. */
+var AUSRICHTEN = true;
+function ausrichten(){
+  var zeilen = [].slice.call(document.querySelectorAll('#stapel .ar'));
+  zeilen.forEach(function(z){ z.style.transform = 'none'; });
+  if (!AUSRICHTEN || !zeilen.length) return;
+  var messwerte = zeilen.map(function(z){
+    var erst = z.querySelector('.wz');
+    if (!erst) return null;
+    return z.getBoundingClientRect().right - erst.getBoundingClientRect().right;
+  });
+  var max = 0;
+  messwerte.forEach(function(v){ if (v !== null && v > max) max = v; });
+  zeilen.forEach(function(z, i){
+    var v = messwerte[i];
+    if (v === null) return;                 /* unmarkierte Zeile bleibt stehen */
+    z.style.transform = 'translateX(' + (-(max - v)).toFixed(2) + 'px)';
+  });
+}
+
+document.getElementById('bNach').onclick = function(){
+  if (!FAMILIEN.length) return;
+  famPos = (famPos + 1) % FAMILIEN.length; zeigeFamilie();
+};
+document.getElementById('bVor').onclick = function(){
+  if (!FAMILIEN.length) return;
+  famPos = (famPos - 1 + FAMILIEN.length) % FAMILIEN.length; zeigeFamilie();
+};
+document.getElementById('bZufallFam').onclick = function(){
+  if (!FAMILIEN.length) return;
+  famPos = Math.floor(Math.random() * FAMILIEN.length); zeigeFamilie();
+};
+
+/* ================= Einstellungen ================= */
+document.getElementById('farbschalter').addEventListener('click', function(e){
+  var b = e.target.closest('button');
+  if (!b) return;
+  document.body.dataset.farbe = b.dataset.farbe;
+  [].forEach.call(this.querySelectorAll('button'), function(x){
+    if (x === b) x.setAttribute('aria-pressed','true'); else x.removeAttribute('aria-pressed');
+  });
+  document.getElementById('umWarn').hidden = (b.dataset.farbe !== 'um');
+});
+document.getElementById('bAusrichten').onclick = function(){
+  AUSRICHTEN = !AUSRICHTEN;
+  if (AUSRICHTEN) this.setAttribute('aria-pressed','true'); else this.removeAttribute('aria-pressed');
+  ausrichten();
+};
+
+/* ================= Mini-Spiel =================
+   Spielsteine muessen markierbar sein - eine schwache Wurzel waere nicht
+   loesbar und damit unfair. Deshalb hier der Filter auf markiere().ok. */
+var SPIEL = { stuecke:[], i:0, richtig:0, wurzeln:[], offen:true };
+
+function spielbareFamilien(){
+  return FAMILIEN.filter(function(f){
+    return f.woerter.filter(function(x){ return markiere(x.ar, f.wurzel).ok; }).length >= 1;
+  });
+}
+function mische(a){
+  var b = a.slice(), i, j, t;
+  for (i = b.length - 1; i > 0; i--){ j = Math.floor(Math.random()*(i+1)); t=b[i]; b[i]=b[j]; b[j]=t; }
+  return b;
+}
+var ERSTE_RUNDE = true;
+function neueRunde(){
+  var spielbar = spielbareFamilien();
+  /* Die allererste Runde nimmt die staerksten Familien und daraus die Woerter,
+     die Elias schon kennt - FAMILIEN ist nach eigenen Woertern sortiert.
+     Sonst startet das Spiel mit drei wildfremden Wurzeln und wirkt beliebig. */
+  var erste = ERSTE_RUNDE; ERSTE_RUNDE = false;
+  var pool = erste ? spielbar.slice(0, 3) : mische(spielbar).slice(0, 3);
+  if (pool.length < 2){
+    document.getElementById('spielMeldung').textContent =
+      'Zu wenig Material für eine Runde — es fehlen die Buchwörter.';
+    document.getElementById('koerbe').innerHTML = '';
+    document.getElementById('spielAr').textContent = '—';
+    return;
+  }
+  SPIEL.wurzeln = pool.map(function(f){ return f.wurzel; });
+  var stuecke = [];
+  pool.forEach(function(f){
+    var loesbar = f.woerter.filter(function(x){ return markiere(x.ar, f.wurzel).ok; });
+    var wahl = erste ? loesbar.slice(0, 2) : mische(loesbar).slice(0, 2);
+    wahl.forEach(function(x){ stuecke.push({ ar:x.ar, de:x.de, wurzel:f.wurzel }); });
+  });
+  SPIEL.stuecke = mische(stuecke);
+  SPIEL.i = 0; SPIEL.richtig = 0; SPIEL.offen = true;
+  zeichneKoerbe();
+  zeigeStueck();
+}
+function zeichneKoerbe(){
+  document.getElementById('koerbe').innerHTML = SPIEL.wurzeln.map(function(r){
+    return '<button class="korb" data-wurzel="' + esc(r) + '">' + esc(r) + '</button>';
+  }).join('');
+}
+function zeigeStueck(){
+  var s = SPIEL.stuecke[SPIEL.i];
+  var ar = document.getElementById('spielAr');
+  [].forEach.call(document.querySelectorAll('.korb'), function(k){
+    k.classList.remove('richtig','falsch');
+  });
+  document.getElementById('spielStand').textContent =
+    'Wort ' + Math.min(SPIEL.i + 1, SPIEL.stuecke.length) + ' von ' + SPIEL.stuecke.length
+    + ' · richtig: ' + SPIEL.richtig;
+  if (!s){
+    ar.innerHTML = '<span class="fm">✓</span>';
+    document.getElementById('spielDe').textContent = '';
+    document.getElementById('spielMeldung').innerHTML =
+      '<b>' + SPIEL.richtig + ' von ' + SPIEL.stuecke.length + '</b> richtig zugeordnet.';
+    SPIEL.offen = false;
+    return;
+  }
+  /* Ohne Hervorhebung - das Finden ist ja die Aufgabe.
+     ⚠️ NICHT class="fm" nehmen: die Klasse wird im Normalfall gedimmt, dann
+     stuende das Raetselwort grau da. Hier braucht es eine neutrale Klasse. */
+  ar.innerHTML = '<span class="roh">' + esc(s.ar) + '</span>';
+  document.getElementById('spielDe').textContent = '';
+  document.getElementById('spielMeldung').textContent = 'Welche drei Buchstaben tragen dieses Wort?';
+  SPIEL.offen = true;
+}
+document.getElementById('koerbe').addEventListener('click', function(e){
+  var k = e.target.closest('.korb');
+  if (!k || !SPIEL.offen) return;
+  var s = SPIEL.stuecke[SPIEL.i];
+  if (!s) return;
+  SPIEL.offen = false;
+  var stimmt = k.dataset.wurzel === s.wurzel;
+  if (stimmt){ SPIEL.richtig++; k.classList.add('richtig'); }
+  else {
+    k.classList.add('falsch');
+    [].forEach.call(document.querySelectorAll('.korb'), function(x){
+      if (x.dataset.wurzel === s.wurzel) x.classList.add('richtig');
+    });
+  }
+  /* Auflösung: dasselbe Wort, jetzt markiert. Das ist der Lernmoment. */
+  var m = markiere(s.ar, s.wurzel);
+  document.getElementById('spielAr').innerHTML = m.ok ? m.html : esc(s.ar);
+  document.getElementById('spielDe').textContent = s.de;
+  document.getElementById('spielMeldung').innerHTML = stimmt
+    ? 'Richtig — <b>' + esc(s.wurzel) + '</b>'
+    : 'Das gehört zu <b>' + esc(s.wurzel) + '</b>';
+  setTimeout(function(){ SPIEL.i++; zeigeStueck(); }, 1500);
+});
+document.getElementById('bNeueRunde').onclick = neueRunde;
+
+/* ================= Start ================= */
+function fertigAufbauen(){
+  baueFamilien();
+  document.getElementById('ladezeile').textContent =
+    BUCHWOERTER.length
+      ? (BUCHWOERTER.length + ' Buchwörter geladen ' + QUELLE + ' · ' + FAMILIEN.length + ' Familien')
+      : 'nur deine ' + VOCAB_DATA.length + ' Lernwörter — keine Buchwörter gefunden (' + FAMILIEN.length + ' Familien)';
+  document.getElementById('spielPool').textContent = spielbareFamilien().length + ' Wurzeln spielbar';
+  famPos = 0;
+  zeigeFamilie();
+  neueRunde();
+  document.getElementById('fuss').textContent =
+    VOCAB_DATA.length + ' Lernwörter · ' + FAMILIEN.length + ' Familien mit mindestens einem davon'
+    + (BUCHWOERTER.length ? ' · ' + BUCHWOERTER.length + ' Buchwörter' : '');
+}
+
+ausPaket().then(function(paket){
+  if (paket && paket.buecher){
+    window.VOKABELN = window.VOKABELN || {};
+    Object.keys(paket.buecher).forEach(function(slug){
+      if (Array.isArray(paket.buecher[slug]) && !window.VOKABELN[slug])
+        window.VOKABELN[slug] = paket.buecher[slug];
+    });
+    einsammeln();
+    if (BUCHWOERTER.length){ QUELLE = 'aus dem Paket'; return; }
+  }
+  return ausDateien().then(function(){ einsammeln(); QUELLE = 'aus data/'; });
+}).then(function(){
+  /* Erst rechnen, wenn die arabische Schrift wirklich da ist - sonst misst
+     die Ausrichtung die Ersatzschrift und sitzt danach schief. */
+  if (document.fonts && document.fonts.ready) return document.fonts.ready.then(fertigAufbauen);
+  fertigAufbauen();
+});
+window.addEventListener('resize', ausrichten);
+</script>
+</body>
+</html>
