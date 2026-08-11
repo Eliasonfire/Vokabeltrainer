@@ -88,7 +88,12 @@ function stand(){
      eine Obergrenze von 10 Stunden gesetzt - nicht weil die Uhr der Engpass
      waere (das Budget laeuft meist frueher aus), sondern damit der Loop nicht
      in den naechsten Tag hineinfeuert, waehrend er in der Uni ist. */
-  const GRENZE_H = 10;
+  /* Die Grenze steht seit dem 11.08.2026 im Buch statt fest im Code: Elias hat
+     die Schicht an diesem Abend ausdruecklich auf die Laenge SEINES laufenden
+     5-h-Fensters begrenzt ("laenger als das sollst du auch nicht arbeiten").
+     Eine fest verdrahtete 10 haette das nie gemeldet - und ein Ausloeser ohne
+     Gespraechsverlauf haette munter weitergearbeitet. */
+  const GRENZE_H = Number.isFinite(b.grenzeStunden) ? b.grenzeStunden : 10;
   const stunden = (Date.now() - new Date(b.start).getTime()) / 3600000;
 
   console.log(`Haushaltsbuch, angelegt ${b.start}`);
@@ -185,10 +190,15 @@ if (args.includes('--start')){
   const i = args.indexOf('--start');
   const startProzent = Number(args[i + 1]), budgetProzent = Number(args[i + 2]);
   if (!Number.isFinite(startProzent) || !Number.isFinite(budgetProzent)){
-    console.error('Aufruf: --start <Stand in %> <Budget in Punkten>'); process.exit(1);
+    console.error('Aufruf: --start <Stand in %> <Budget in Punkten> [Grenze in Stunden]'); process.exit(1);
   }
-  sichern({ start: new Date().toISOString(), startProzent, budgetProzent, posten: [] });
+  /* Dritter Wert optional: die Schichtlaenge. Ohne Angabe bleibt es bei den 10 h
+     aus Elias' Vorgabe vom 29.07.2026. */
+  const grenzeRoh = Number(args[i + 3]);
+  const grenzeStunden = Number.isFinite(grenzeRoh) && grenzeRoh > 0 ? grenzeRoh : 10;
+  sichern({ start: new Date().toISOString(), startProzent, budgetProzent, grenzeStunden, posten: [] });
   console.log(`Angelegt: Stand ${startProzent} %, Budget ${budgetProzent} Punkte = ${(budgetProzent*PRO_PROZENT).toLocaleString('de-DE')} Token.`);
+  console.log(`Schichtgrenze: ${grenzeStunden} h.`);
   process.exit(0);
 }
 

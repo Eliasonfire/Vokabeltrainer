@@ -36,6 +36,12 @@ const SYNC_SCHLUESSEL = [
    nicht entschieden werden, welche Seite neuer ist. */
 const STEMPEL_SCHLUESSEL = 'vt_syncStempel';
 
+/* Was der letzte Abgleich ergeben hat - nur zum Anzeigen, nie zum Rechnen.
+   ⚠️ Bewusst NICHT ueber LS.set gespeichert: das meldet jede Speicherung an
+   syncGeaendert() zurueck, und ein Statusfeld, das einen neuen Abgleich
+   ausloest, waere eine Schleife. */
+const STATUS_SCHLUESSEL = 'vt_syncStatus';
+
 let SYNC_LAEUFT = false;
 let SYNC_GEPLANT = null;
 
@@ -47,6 +53,48 @@ function merkeAenderung(schluessel){
   const s = syncStempel();
   s[schluessel] = Date.now();
   localStorage.setItem(STEMPEL_SCHLUESSEL, JSON.stringify(s));
+}
+
+/* ---------- Wo der Abgleich ueberhaupt moeglich ist ---------- */
+
+/* Die App laeuft an zwei Adressen: der neuen (Cloudflare, mit /api/stand) und
+   vorerst noch der alten auf github.io, wo es diesen Endpunkt nicht gibt. Dort
+   wuerde jeder Versuch mit 404 enden und die Anzeige mit einer Fehlermeldung
+   fuellen, die nach einem Defekt aussieht - obwohl dort schlicht kein Abgleich
+   vorgesehen ist. Deshalb vorher fragen, statt hinterher zu deuten. */
+function aufAlterAdresse(){
+  return /(^|\.)github\.io$/i.test(location.hostname);
+}
+function syncMoeglich(){
+  return /^https?:$/.test(location.protocol) && !aufAlterAdresse();
+}
+
+/* ---------- Anzeigen, was los ist ---------- */
+
+function merkeStatus(ok, text){
+  try {
+    localStorage.setItem(STATUS_SCHLUESSEL, JSON.stringify({ ok, text, zeit: Date.now() }));
+  } catch (e){ /* voller Speicher darf den Abgleich nicht kippen */ }
+  zeigeStatus();
+}
+
+function zeigeStatus(){
+  const feld = document.getElementById('syncStand');
+  if (!feld) return;
+  let s = null;
+  try { s = JSON.parse(localStorage.getItem(STATUS_SCHLUESSEL) || 'null'); } catch (e){}
+  if (!s){ feld.textContent = 'Noch nicht abgeglichen'; return; }
+  const d = new Date(s.zeit);
+  const wann = d.toLocaleDateString('de-DE', { day:'2-digit', month:'2-digit' }) +
+               ', ' + d.toLocaleTimeString('de-DE', { hour:'2-digit', minute:'2-digit' });
+  feld.textContent = (s.ok ? '✓ ' : '⚠ ') + wann + ' — ' + s.text;
+}
+
+/* Wie viele Woerter nach dem Abgleich lokal stehen. Das ist die Zahl, an der
+   Elias erkennt, ob etwas angekommen ist - "abgeglichen" allein sagt nichts. */
+function wortzahl(){
+  try { return Object.keys(JSON.parse(localStorage.getItem('vt_progress') || '{}')).length; }
+  catch (e){ return 0; }
 }
 
 /* ---------- Zusammenfuehren ---------- */
@@ -139,11 +187,18 @@ async function schickeZumServer(){
 
 async function gleicheAb(still){
   if (SYNC_LAEUFT) return;
+  if (!syncMoeglich()){
+    merkeStatus(false, aufAlterAdresse()
+      ? 'auf dieser alten Adresse nicht vorgesehen'
+      : 'nur ueber das Netz moeglich');
+    return;
+  }
   SYNC_LAEUFT = true;
   try {
     const fern = await holeVomServer();
     const geaendert = fuehreZusammen(fern);
     await schickeZumServer();
+    merkeStatus(true, wortzahl() + ' Wörter' + (geaendert ? ', Stand aktualisiert' : ''));
     if (geaendert){
       /* Die App haelt PROGRESS und SETTINGS im Speicher - nach einer Aenderung
          von aussen muessen sie neu eingelesen werden, sonst ueberschreibt der
@@ -153,9 +208,14 @@ async function gleicheAb(still){
     }
   } catch (e){
     /* Offline oder abgemeldet ist kein Fehler, sondern der Normalfall
-       unterwegs. Es wird nichts gemeldet und nichts kaputtgemacht - beim
-       naechsten Start laeuft es erneut. */
-    if (!still && typeof toast === 'function') toast('Abgleich gerade nicht moeglich.');
+       unterwegs. Es wird nichts kaputtgemacht - beim naechsten Start laeuft es
+       erneut. Gemeldet wird es aber sehr wohl, nur eben leise in die Statuszeile
+       statt als Meldung mitten ins Lernen. */
+    const grund = /nicht angemeldet|401|403/.test(e.message) ? 'nicht angemeldet — App neu laden'
+                : (navigator.onLine === false)               ? 'offline'
+                : 'nicht erreichbar (' + e.message + ')';
+    merkeStatus(false, grund);
+    if (!still && typeof toast === 'function') toast('Abgleich gerade nicht moeglich: ' + grund);
   } finally {
     SYNC_LAEUFT = false;
   }
@@ -184,6 +244,33 @@ function syncGeaendert(schluessel){
 }
 
 document.addEventListener('DOMContentLoaded', ()=>{
+  /* Das Warnband auf der alten Adresse. Es haengt bewusst hier und nicht an
+     einem eigenen Skript: sync.js ist genau das Modul, das auf der alten
+     Adresse nichts tun kann - der Hinweis gehoert an dieselbe Stelle wie der
+     Grund dafuer. */
+  const band = document.getElementById('altAdresse');
+  if (band && aufAlterAdresse()) band.hidden = false;
+  const bleiben = document.getElementById('altAdresseBleiben');
+  /* Nur fuer diesen Besuch weggeklickt, nicht dauerhaft: wer hier eine Sicherung
+     zieht, soll das koennen - aber beim naechsten Start steht der Hinweis wieder
+     da. Eine dauerhafte Abschaltung waere genau die Falle, die er verhindert. */
+  if (bleiben && band) bleiben.addEventListener('click', ()=>{ band.hidden = true; });
+
+  /* Die Abgleich-Zeile in den Einstellungen erscheint nur, wo es den Endpunkt
+     gibt. Eine Zeile, die dauerhaft "nicht verfuegbar" sagt, ist schlechter als
+     keine - sie sieht nach einem Defekt aus. */
+  const zeile = document.getElementById('syncZeile');
+  if (zeile && syncMoeglich()) zeile.hidden = false;
+  zeigeStatus();
+
+  const knopf = document.getElementById('btnAbgleich');
+  if (knopf) knopf.addEventListener('click', async ()=>{
+    const alt = knopf.textContent;
+    knopf.disabled = true; knopf.textContent = 'Läuft …';
+    await gleicheAb(false);          /* nicht still: hier will er eine Antwort */
+    knopf.textContent = alt; knopf.disabled = false;
+  });
+
   /* Beim Start einmal holen - damit ein Geraetewechsel sofort greift. */
   gleicheAb(true);
 });
