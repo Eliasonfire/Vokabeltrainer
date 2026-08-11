@@ -2990,6 +2990,9 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
 <script src="js/hoeren.js"></script>
 <script src="js/statistik.js"></script>
 <script src="js/einstellungen.js"></script>
+<!-- Geraeteabgleich. Bewusst NACH kern.js (braucht LS und PROGRESS) und vor
+     init.js, damit der erste Abgleich vor dem Aufbau der Oberflaeche laeuft. -->
+<script src="js/sync.js"></script>
 <script src="js/init.js"></script>
 </body>
 </html>

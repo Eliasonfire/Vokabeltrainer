@@ -762,6 +762,13 @@ function answer(stufe){
   if (s.richtig) p.correct = (p.correct||0)+1;
   else           p.wrong   = (p.wrong||0)+1;
   p.nextReview = todayStr(INTERVALS[p.box]);
+  /* Zeitstempel fuer den Geraeteabgleich (js/sync.js). Er ist der einzige
+     verlaessliche Weg zu entscheiden, welche von zwei Fassungen desselben
+     Wortes die juengere ist - ohne ihn wuerde ein Geraet mit altem Stand die
+     Arbeit des anderen ueberschreiben. Bewusst pro WORT und nicht pro Datei:
+     morgens am Handy und abends am PC gelernt heisst, dass beide Seiten
+     Aenderungen haben, die erhalten bleiben muessen. */
+  p.ts = Date.now();
   saveProgress();
   touchStreak();
 

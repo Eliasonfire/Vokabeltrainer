@@ -1,0 +1,17 @@
+# Cloudflare-Konfiguration fuer das Pages-Projekt.
+#
+# Gebraucht wird sie fuer genau eine Sache: die Bindung des KV-Speichers, in dem
+# der Lernstand liegt. Ohne diesen Eintrag kennt functions/api/stand.js das
+# env.STAND nicht und der Abgleich schlaegt fehl.
+#
+# ⚠️ Der Ordner .deploy wird von werkzeuge/veroeffentlichen.mjs gebaut und
+# enthaelt NUR die Dateien der Weissliste. Er ist bewusst nicht das
+# Projektverzeichnis - dort liegen 268 MB Transkripte und der arabicroots-Abzug.
+
+name = "vokabeltrainer"
+pages_build_output_dir = ".deploy"
+compatibility_date = "2026-08-11"
+
+[[kv_namespaces]]
+binding = "STAND"
+id = "3bdaa890a2ef4cf382edf335da1067df"

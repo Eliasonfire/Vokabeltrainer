@@ -100,9 +100,19 @@ fs.readdirSync(WURZEL).filter(f => /^vorschau.*\.html$/.test(f)).forEach(f => li
 /* ⚠️ Pages Functions: die Host-Sperre in functions/_middleware.js MUSS mit.
    Fehlt sie, sind die pages.dev-Adressen wieder offen - und zwar lautlos.
    Deshalb wird ihr Fehlen weiter unten als Fehler behandelt, nicht ignoriert. */
+/* ⚠️ Rekursiv: unter functions/api/ liegt der Geraeteabgleich. Ein flaches
+   readdir haette nur _middleware.js gefunden und stand.js stillschweigend
+   weggelassen - die App haette dann bei jedem Abgleich 404 bekommen. */
 const fnDir = path.join(WURZEL, 'functions');
-if (fs.existsSync(fnDir))
-  fs.readdirSync(fnDir).filter(f => f.endsWith('.js')).forEach(f => liste.add('functions/' + f));
+if (fs.existsSync(fnDir)){
+  (function sammle(ordner, praefix){
+    fs.readdirSync(ordner, { withFileTypes: true }).forEach(e => {
+      const rel = praefix + '/' + e.name;
+      if (e.isDirectory()) sammle(path.join(ordner, e.name), rel);
+      else if (e.name.endsWith('.js')) liste.add(rel);
+    });
+  })(fnDir, 'functions');
+}
 
 /* Der arabicroots-Abzug nur auf ausdruecklichen Wunsch. */
 if (mitDaten){
