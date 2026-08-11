@@ -97,6 +97,13 @@ const liste = new Set([
    verlinkt - Elias ruft sie von Hand auf. Trotzdem ausliefern. */
 fs.readdirSync(WURZEL).filter(f => /^vorschau.*\.html$/.test(f)).forEach(f => liste.add(f));
 
+/* ⚠️ Pages Functions: die Host-Sperre in functions/_middleware.js MUSS mit.
+   Fehlt sie, sind die pages.dev-Adressen wieder offen - und zwar lautlos.
+   Deshalb wird ihr Fehlen weiter unten als Fehler behandelt, nicht ignoriert. */
+const fnDir = path.join(WURZEL, 'functions');
+if (fs.existsSync(fnDir))
+  fs.readdirSync(fnDir).filter(f => f.endsWith('.js')).forEach(f => liste.add('functions/' + f));
+
 /* Der arabicroots-Abzug nur auf ausdruecklichen Wunsch. */
 if (mitDaten){
   const d = path.join(WURZEL, 'data');
@@ -146,6 +153,15 @@ if (zuGross.length){
 }
 if (dabei.length > 20000){
   console.error('⛔ Mehr als 20.000 Dateien - das laesst der Gratistarif nicht zu.');
+  process.exit(1);
+}
+
+/* Die Host-Sperre ist keine Kuer. Ohne sie liefert jede pages.dev-Adresse und
+   jede Vorschau-Adresse denselben Inhalt aus - beim naechsten --mit-daten waere
+   der arabicroots-Abzug damit offen im Netz. */
+if (!dabei.some(d => d.rel === 'functions/_middleware.js')){
+  console.error('⛔ functions/_middleware.js fehlt in der Ausliefer-Liste.');
+  console.error('   Das ist die Host-Sperre. Ohne sie sind die pages.dev-Adressen offen.');
   process.exit(1);
 }
 
