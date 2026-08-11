@@ -10,8 +10,41 @@ function renderSettings(){
   document.getElementById('sessionSizeSelect').value = String(SETTINGS.sessionSize);
   document.getElementById('directionSelect').value = SETTINGS.direction || 'ar-de';
   document.getElementById('toggleTippen').classList.toggle('on', !!SETTINGS.tippenAbBox4);
+  /* Wurzelmodus. Die Ausrichtung ist standardmaessig AN, deshalb wird auf
+     `!== false` geprueft und nicht auf Wahrheit - ein fehlender Eintrag ist
+     hier "an", nicht "aus". */
+  document.getElementById('wurzelFarbeSelect').value = SETTINGS.wurzelFarbe || 'normal';
+  document.getElementById('wurzelNiveauSelect').value = SETTINGS.wurzelNiveau || 'stand';
+  document.getElementById('toggleWurzelAusrichten')
+    .classList.toggle('on', SETTINGS.wurzelAusrichten !== false);
   loadVoices();
 }
+
+/* Faerbung der Wurzel. Wirkt ueber ein Attribut am <body>, nicht ueber eine
+   Klasse an jedem Wort: so laesst sie sich umschalten, ohne irgendetwas neu
+   aufzubauen - und der Lesestand einer laufenden Uebung bleibt stehen. */
+document.getElementById('wurzelFarbeSelect').addEventListener('change', (e)=>{
+  SETTINGS.wurzelFarbe = e.target.value;
+  saveSettings();
+  document.body.dataset.wurzelfarbe = SETTINGS.wurzelFarbe;
+  if (SETTINGS.wurzelFarbe === 'um'){
+    toast('Umgekehrt: 32 von 113 Wörtern bestehen restlos aus ihrer Wurzel und stehen dann ganz grau da.');
+  }
+});
+document.getElementById('toggleWurzelAusrichten').addEventListener('click', ()=>{
+  SETTINGS.wurzelAusrichten = (SETTINGS.wurzelAusrichten === false);
+  saveSettings();
+  renderSettings();
+  if (typeof wzAusrichten === 'function') wzAusrichten();
+});
+/* ⚠️ Das Niveau baut den ganzen Bestand neu auf. Danach MUSS eine frische
+   Sitzung beginnen - die laufende zeigte sonst noch Woerter vom alten Stand,
+   und der Hinweis darunter naennte eine Zahl, die zu ihr nicht passt. */
+document.getElementById('wurzelNiveauSelect').addEventListener('change', (e)=>{
+  SETTINGS.wurzelNiveau = e.target.value;
+  saveSettings();
+  if (typeof oeffneWurzeln === 'function') oeffneWurzeln();
+});
 document.getElementById('toggleTippen').addEventListener('click', ()=>{
   SETTINGS.tippenAbBox4 = !SETTINGS.tippenAbBox4;
   saveSettings();

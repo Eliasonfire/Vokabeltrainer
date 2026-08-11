@@ -15,7 +15,7 @@ function zeigeBildschirm(name){
   const el = document.getElementById('screen-'+name);
   if (el) el.classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  const navMap = {home:'home', learn:'learn-entry', categories:'categories', sentences:'sentences', stats:'stats', wordlist:'categories', quran:'home', quranfull:'home', hoeren:'home', settings:'home'};
+  const navMap = {home:'home', learn:'learn-entry', categories:'categories', sentences:'sentences', stats:'stats', wordlist:'categories', quran:'home', quranfull:'home', hoeren:'home', wurzeln:'home', settings:'home'};
   const navName = navMap[name] || name;
   document.querySelectorAll(`.nav-btn[data-nav="${navName}"]`).forEach(b=>b.classList.add('active'));
 
@@ -53,6 +53,7 @@ function zeigeBildschirm(name){
   if (name==='sentences') openSentences();
   if (name==='quran') renderQuranList();
   if (name==='hoeren') openHoeren();
+  if (name==='wurzeln') oeffneWurzeln();
   if (name==='quranfull') renderSurahList(document.getElementById('surahSearch').value);
   if (name==='stats') renderStats();
   if (name==='settings') renderSettings();

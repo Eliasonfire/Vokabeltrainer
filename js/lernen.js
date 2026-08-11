@@ -144,8 +144,17 @@ function renderCard(){
     if (w.femSg) forms.push({label:'Fem.', value:formenAnzeige(w.femSg)});
     if (w.femPl) forms.push({label:'Fem. Pl.', value:formenAnzeige(w.femPl)});
   }
+  /* ⚠️ Die arabische Form steht in einem EIGENEN inline-Element, nicht als
+     nackter Text im Chip. Der Chip selbst ist `display:inline-flex` (er stellt
+     Beschriftung und Form nebeneinander), und in einem Flex-Kasten wird jedes
+     Kindelement zu einem eigenen Kasten. Solange die Form ein einziger
+     Textknoten ist, faellt das nicht auf. Sobald aber Teile davon eingefaerbt
+     werden - genau das kommt mit dem Wurzelmodus -, waeren es mehrere
+     Elemente, und die verbundene arabische Schrift risse auseinander
+     (gemessen +23 % Breite). Innerhalb von .wf-ar gilt wieder der normale
+     Textfluss, dort ist das Einfaerben gefahrlos. */
   document.getElementById('cardForms').innerHTML = forms.map(f=>
-    `<span><i class="lbl">${escapeHtml(f.label)}</i>${escapeHtml(f.value)}</span>`
+    `<span><i class="lbl">${escapeHtml(f.label)}</i><span class="wf-ar">${escapeHtml(f.value)}</span></span>`
   ).join('');
 
   renderVerbFormen(w);

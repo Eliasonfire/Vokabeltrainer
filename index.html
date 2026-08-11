@@ -714,15 +714,27 @@ main{
 .gender-chip .ar{font-family:var(--font-ar);direction:rtl;font-size:1.05em;}
 .gender-chip .de{opacity:.72;font-weight:500;}
 .word-forms{display:flex;flex-wrap:wrap;gap:var(--sp-2);justify-content:center;margin-bottom:var(--sp-4);}
-.word-forms span{
+/* ⚠️ `>` und nicht nur ein Leerzeichen. `.word-forms span` traf JEDEN
+   verschachtelten span - auch die Huelle um die arabische Form, die deshalb
+   selbst Rahmen, Polster und inline-flex bekam. Im Browser gemessen: der Chip
+   wurde dadurch 26 px breiter, und eingefaerbte Teilstuecke rissen die Schrift
+   trotz Huelle um 116 px auseinander. Erst der Kindselektor macht die Huelle zu
+   dem, was sie sein soll. */
+.word-forms > span{
   background:var(--surface-3);border:1px solid var(--border);
   border-radius:var(--r-2);padding:7px var(--sp-3);
   font-family:var(--font-ar);direction:rtl;color:#fff;
   font-size:1.55rem;line-height:1.7;
   display:inline-flex;align-items:baseline;gap:9px;
 }
+/* Die arabische Form bekommt einen eigenen inline-Kasten. Der Chip darueber ist
+   inline-flex; jedes Kind darin wird ein eigener Flex-Kasten. Wird die Form
+   eingefaerbt (Wurzelmodus), waeren das ohne diese Huelle mehrere Kinder des
+   Flex-Kastens - und die verbundene arabische Schrift risse auseinander.
+   Innerhalb von .wf-ar gilt wieder normaler Textfluss. */
+.word-forms .wf-ar{display:inline;}
 /* Label lateinisch und klein halten, damit die arabische Form gross wirken kann */
-.word-forms span .lbl{
+.word-forms > span .lbl{
   font-family:var(--font-ui);font-style:normal;direction:ltr;
   color:var(--text-dim);font-size:var(--fs-xs);font-weight:700;
   letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;
@@ -2274,6 +2286,129 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
 }
 
 /* =====================================================================
+   WURZELMODUS
+   =====================================================================
+   ⚠️ DIE WICHTIGSTE REGEL DIESES ABSCHNITTS: um arabischen Text steht hier
+   NIRGENDS ein Flex-Container - auch nicht zum Zentrieren. Die farbigen Spans
+   (.wz für die Wurzel, .fm für die Form) müssen `display:inline` bleiben.
+   Wird ihr Elternteil zu einem Flex-Kasten, werden sie blockifiziert und die
+   verbundene arabische Schrift reißt auseinander; gemessen +23 % Breite.
+   Genau daran ist der Listenmodus im Koranleser einmal gescheitert, und genau
+   deshalb ist `.word-forms > span` weiter oben ein KINDselektor geworden. */
+.wz-ar{font-family:var(--font-ar);direction:rtl;line-height:2;display:block;}
+.wz-ar .wz,.wz-ar .fm,.wz-ar .roh,.wz-ein{display:inline;}
+.wz-ar .roh{color:var(--text);}
+
+/* Grundeinstellung: die Wurzel leuchtet, der Rest tritt zurück.
+   "um" dreht das um — Elias' Vorschlag ("es geht ja um den rest, die wurzel
+   hebt sich so oder so immer ab"). Er ist NICHT die Voreinstellung, und der
+   Grund steht gemessen daneben: 32 von 113 Wörtern bestehen restlos aus ihrer
+   Wurzel, die stünden dann komplett grau da. */
+body[data-wurzelfarbe="normal"] .wz-ar .wz{color:var(--text);text-shadow:0 0 18px rgba(255,77,106,.45);}
+body[data-wurzelfarbe="normal"] .wz-ar .fm{color:var(--text-faint);}
+body[data-wurzelfarbe="um"]     .wz-ar .wz{color:var(--text-faint);text-shadow:none;}
+body[data-wurzelfarbe="um"]     .wz-ar .fm{color:var(--text);text-shadow:0 0 18px rgba(255,77,106,.35);}
+body[data-wurzelfarbe="aus"]    .wz-ar .wz,
+body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
+
+.wz-block{
+  background:var(--surface-1);border:1px solid var(--border);border-radius:var(--r-4);
+  padding:var(--sp-4) var(--sp-3);margin-bottom:var(--sp-4);
+  position:relative;overflow:hidden;
+}
+.wz-glut{
+  position:absolute;left:50%;top:-70px;width:280px;height:180px;transform:translateX(-50%);
+  background:radial-gradient(ellipse at center,rgba(255,23,68,.16),transparent 70%);
+  pointer-events:none;
+}
+.wz-titel{font-size:var(--fs-xs);letter-spacing:.09em;text-transform:uppercase;
+  color:var(--text-faint);margin-bottom:var(--sp-3);}
+.wz-kopfzeile{display:flex;justify-content:space-between;align-items:center;
+  font-size:var(--fs-xs);letter-spacing:.06em;text-transform:uppercase;
+  color:var(--text-faint);margin-bottom:var(--sp-2);position:relative;}
+.wz-punkte i{display:inline-block;width:7px;height:7px;border-radius:var(--r-full);
+  background:var(--surface-3);border:1px solid var(--border-strong);margin-left:5px;}
+.wz-punkte i.an{background:var(--red);border-color:var(--red);}
+
+.wz-wurzelkopf{text-align:center;position:relative;}
+.wz-wurzelkopf .wz-zeichen{font-family:var(--font-ar);direction:rtl;font-size:2.1rem;
+  letter-spacing:.16em;color:var(--text);text-shadow:0 0 26px rgba(255,77,106,.5);}
+.wz-wurzelkopf .wz-zahl{color:var(--text-faint);font-size:var(--fs-sm);margin-top:4px;}
+
+.wz-schrittname{font-size:var(--fs-xs);letter-spacing:.09em;text-transform:uppercase;
+  color:var(--red-bright);text-align:center;margin:var(--sp-4) 0 var(--sp-2);}
+.wz-schrittname.fertig{color:var(--green,#2ee6a6);}
+.wz-frage{color:var(--text-dim);font-size:var(--fs-md);text-align:center;
+  margin:0 0 var(--sp-3);line-height:1.6;}
+.wz-de{color:var(--text-dim);font-size:var(--fs-sm);text-align:center;}
+.wz-meldung{text-align:center;font-size:var(--fs-sm);margin-top:var(--sp-3);
+  min-height:1.3em;color:var(--text-dim);}
+.wz-meldung b{color:var(--text);}
+.wz-mittel{font-size:2.3rem;text-align:center;}
+.wz-reihe{display:flex;gap:var(--sp-2);margin-top:var(--sp-4);}
+.wz-reihe .btn{flex:1;}
+.wz-reihe-fuss{margin-top:var(--sp-3);}
+
+/* 1 Erinnern: aufgedeckte Wörter */
+.wz-karte{border:1px solid var(--border);border-radius:var(--r-2);
+  padding:var(--sp-2) var(--sp-3);margin-top:var(--sp-2);background:var(--surface-2);}
+.wz-karte .wz-ar{font-size:1.6rem;text-align:center;}
+.wz-karte .wz-de{margin-top:-2px;}
+
+/* 2 Finden: antippbare Buchstaben.
+   ⚠️ .wz-ein MUSS inline bleiben. Gemessen: jeder Buchstabe als eigenes
+   Element ändert die Wortbreite um 0,01 px — auf inline-block reißt die
+   Schrift um 23 %. Hier wird deshalb NUR die Farbe geschaltet, nie die
+   Darstellungsart. */
+.wz-tippwort{font-size:2.6rem;text-align:center;cursor:pointer;}
+.wz-ein{transition:color .15s;}
+.wz-ein.tr{color:var(--green,#2ee6a6);text-shadow:0 0 18px rgba(46,230,166,.5);}
+.wz-ein.fl{color:var(--red);}
+
+/* 3 Erraten */
+.wz-wahl{display:block;width:100%;text-align:center;background:var(--surface-2);
+  border:1px solid var(--border);border-radius:var(--r-2);
+  padding:var(--sp-3) var(--sp-2);margin-top:var(--sp-2);min-height:44px;
+  color:var(--text);font-size:var(--fs-lg);font-family:var(--font-ui);cursor:pointer;}
+.wz-wahl:active{background:var(--surface-3);}
+.wz-wahl.richtig{border-color:var(--green,#2ee6a6);background:rgba(46,230,166,.12);}
+.wz-wahl.falsch{border-color:var(--red);background:var(--red-wash,rgba(255,23,68,.09));}
+.wz-schlusszahl{text-align:center;color:var(--text-dim);font-size:var(--fs-lg);
+  line-height:1.7;margin:var(--sp-2) 0;}
+
+/* Die gestapelte Familie. Rechtsbündig, damit die Verschiebung eine feste
+   Bezugskante hat — zentriert wäre jede Zeile anders versetzt. */
+.wz-stapel{margin-top:var(--sp-4);padding-left:34px;}
+.wz-zeile{padding:7px 0;border-bottom:1px solid rgba(38,38,43,.7);}
+.wz-zeile:last-child{border-bottom:0;}
+.wz-zeile .wz-ar{font-size:2.05rem;text-align:right;white-space:nowrap;
+  transition:transform .28s var(--ease-out,cubic-bezier(.2,.7,.3,1));}
+.wz-zeile .wz-de{text-align:right;margin-top:-4px;}
+.wz-zeile .wz-mrk{font-size:var(--fs-xs);text-align:right;margin-top:2px;color:var(--text-faint);}
+.wz-zeile.kennst .wz-mrk{color:var(--green,#2ee6a6);}
+.wz-zeile.nichtok .wz-ar{opacity:.75;}
+
+/* Mini-Spiel */
+.wz-spielwort{text-align:center;padding:var(--sp-3) 0 var(--sp-2);}
+.wz-spielwort .wz-ar{font-size:2.7rem;}
+.wz-spielwort .wz-de{margin-top:2px;min-height:1.2em;}
+.wz-koerbe{display:flex;gap:var(--sp-2);margin-top:var(--sp-4);}
+/* ⚠️ Der Korb trägt arabische Schrift und ist deshalb bewusst KEIN
+   Flex-Container — `display:block` mit text-align, nicht flex mit center. */
+.wz-korb{flex:1;display:block;text-align:center;background:var(--surface-2);
+  border:1px solid var(--border-strong);border-radius:var(--r-3);
+  padding:13px 4px;min-height:44px;cursor:pointer;
+  font-family:var(--font-ar);direction:rtl;font-size:1.35rem;
+  letter-spacing:.1em;color:var(--text);}
+.wz-korb:active{background:var(--surface-3);}
+.wz-korb.richtig{border-color:var(--green,#2ee6a6);background:rgba(46,230,166,.12);}
+.wz-korb.falsch{border-color:var(--red);background:var(--red-wash,rgba(255,23,68,.09));}
+.wz-stand{display:flex;justify-content:space-between;color:var(--text-faint);
+  font-size:var(--fs-sm);margin-top:var(--sp-3);}
+.wz-hinweis{color:var(--text-faint);font-size:var(--fs-sm);line-height:1.7;
+  margin:0 0 var(--sp-4);}
+
+/* =====================================================================
    TABLET / DESKTOP
    ===================================================================== */
 @media (min-width:700px){
@@ -2394,6 +2529,15 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
           <span class="tile-icon"><svg class="ic"><use href="#ic-ohr"/></svg></span>
           <span class="tile-title">Hörverstehen</span>
           <span class="tile-sub">Nur hören, dann wählen</span>
+        </button>
+        <!-- ⚠️ NICHT #ic-folder: das trägt die Kachel „Kategorien" direkt
+             daneben, und zwei gleiche Zeichen nebeneinander sind nicht
+             auseinanderzuhalten. #ic-irab steht im Bestand für das Zerlegen
+             eines Wortes — genau das ist hier die Aufgabe. -->
+        <button class="tile" data-nav="wurzeln">
+          <span class="tile-icon"><svg class="ic"><use href="#ic-irab"/></svg></span>
+          <span class="tile-title">Wurzeln</span>
+          <span class="tile-sub">Wortfamilien üben</span>
         </button>
         <button class="tile" data-nav="categories">
           <span class="tile-icon"><svg class="ic"><use href="#ic-folder"/></svg></span>
@@ -2822,6 +2966,88 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
       <div class="hoer-leer hidden" id="hoerLeer"></div>
     </section>
 
+    <!-- ============ WURZELMODUS ============
+         Drei Schritte je Wortfamilie, dann die Familie als Abschluss, darunter
+         das Sortierspiel. Elias, 10.08.2026: "ich hab halt adhs und ich brauche
+         so spiele artig mein lernen" — deshalb eine Übung und keine Ansicht.
+         Die Schalter (Färbung, Ausrichtung, Niveau) stehen unter Einstellungen. -->
+    <section class="screen" id="screen-wurzeln" data-screen="wurzeln">
+      <div class="screen-header">
+        <button class="icon-btn" data-back aria-label="Zurück"><svg class="ic"><use href="#ic-left"/></svg></button>
+        <h2>Wurzeln</h2>
+      </div>
+
+      <div class="wz-block">
+        <div class="wz-glut" aria-hidden="true"></div>
+        <div class="wz-kopfzeile">
+          <span id="wzFortschritt">…</span>
+          <span class="wz-punkte" id="wzPunkte"></span>
+        </div>
+        <div class="wz-wurzelkopf">
+          <div class="wz-zeichen" id="wzKopfWurzel">…</div>
+          <div class="wz-zahl" id="wzKopfZahl"></div>
+        </div>
+
+        <div id="wzSchritt1" hidden>
+          <div class="wz-schrittname">1 — Erinnern</div>
+          <div class="wz-frage" id="wzS1Frage"></div>
+          <div id="wzS1Liste"></div>
+          <div class="wz-reihe"><button class="btn btn-secondary" id="wzS1Knopf">Aufdecken</button></div>
+        </div>
+
+        <div id="wzSchritt2" hidden>
+          <div class="wz-schrittname">2 — Finden</div>
+          <div class="wz-frage" id="wzS2Frage">Tippe die Wurzelbuchstaben an.</div>
+          <div class="wz-ar wz-tippwort" id="wzS2Wort"></div>
+          <div class="wz-de" id="wzS2De"></div>
+          <div class="wz-meldung" id="wzS2Meldung">&nbsp;</div>
+          <div class="wz-reihe" id="wzS2Weiter" hidden><button class="btn btn-secondary">Weiter</button></div>
+        </div>
+
+        <div id="wzSchritt3" hidden>
+          <div class="wz-schrittname">3 — Erraten</div>
+          <div class="wz-frage">Dieses Wort ist neu, aber aus derselben Wurzel.<br>Was heißt es?</div>
+          <div class="wz-ar wz-mittel" id="wzS3Wort"></div>
+          <div id="wzS3Auswahl"></div>
+          <div class="wz-meldung" id="wzS3Meldung">&nbsp;</div>
+          <div class="wz-reihe" id="wzS3Weiter" hidden><button class="btn btn-secondary">Weiter</button></div>
+        </div>
+
+        <div id="wzSchrittFertig" hidden>
+          <div class="wz-schrittname fertig">Familie geschafft</div>
+          <div class="wz-stapel" id="wzStapel"></div>
+          <div class="wz-reihe"><button class="btn btn-secondary" id="wzNaechste">Weiter</button></div>
+        </div>
+
+        <div id="wzSchluss" hidden>
+          <div class="wz-schrittname fertig">Fertig für heute</div>
+          <div class="wz-schlusszahl" id="wzSchlussZahl"></div>
+          <div class="wz-reihe"><button class="btn btn-primary" id="wzNochmal">Noch eine Runde</button></div>
+        </div>
+
+        <div class="wz-reihe wz-reihe-fuss">
+          <button class="btn btn-secondary" id="wzUeberspringen">Familie überspringen</button>
+          <button class="btn btn-secondary" id="wzNeueSitzung">Neue Sitzung</button>
+        </div>
+      </div>
+
+      <p class="wz-hinweis" id="wzNiveauInfo"></p>
+
+      <div class="wz-block">
+        <div class="wz-titel">Mini-Spiel — welche Wurzel?</div>
+        <div class="wz-spielwort">
+          <div class="wz-ar" id="wzSpielAr">…</div>
+          <div class="wz-de" id="wzSpielDe"></div>
+        </div>
+        <div class="wz-koerbe" id="wzKoerbe"></div>
+        <div class="wz-meldung" id="wzSpielMeldung">Tipp den Korb an, in den das Wort gehört.</div>
+        <div class="wz-stand"><span id="wzSpielStand"></span></div>
+        <div class="wz-reihe"><button class="btn btn-secondary" id="wzNeueRunde">Neue Runde</button></div>
+        <p class="wz-hinweis">Hier steht das Wort <em>ohne</em> Hervorhebung — das Finden ist die
+          Aufgabe. Nach dem Tippen siehst du die Auflösung markiert.</p>
+      </div>
+    </section>
+
     <!-- ============ STATS ============ -->
     <section class="screen" id="screen-stats" data-screen="stats">
       <div class="screen-header">
@@ -2867,6 +3093,49 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
         </div>
         <button class="switch" id="toggleQuran" aria-label="Quran-Bezüge umschalten"><span class="knob"></span></button>
       </div>
+      <!-- ============ WURZELMODUS ============
+           Elias am 10.08.2026 zur Umkehrung: "vielleicht könnte man auch
+           umgekehrt die wurzeln ausgrauen und den rest weiß lassen … es geht ja
+           um den rest, die wurzel hebt sich so oder so immer ab" — und danach:
+           "in den einstellungen eine option machen, in der wir das umkehren
+           können". Deshalb ein Schalter und nicht die neue Voreinstellung:
+           gemessen bestehen 32 von 113 Wörtern restlos aus ihrer Wurzel, die
+           stünden umgekehrt komplett grau da. -->
+      <div class="setting-row">
+        <div>
+          <div class="setting-title">Wurzel hervorheben</div>
+          <div class="setting-sub">Was leuchtet: die Wurzel oder der Rest des Wortes</div>
+        </div>
+        <select id="wurzelFarbeSelect" class="select-input">
+          <option value="normal">Wurzel leuchtet</option>
+          <option value="um">Umgekehrt: der Rest leuchtet</option>
+          <option value="aus">Nichts hervorheben</option>
+        </select>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-title">Wurzel ausrichten</div>
+          <div class="setting-sub">Die Wurzelbuchstaben stehen in der Familienansicht untereinander</div>
+        </div>
+        <button class="switch" id="toggleWurzelAusrichten" aria-label="Wurzel ausrichten umschalten"><span class="knob"></span></button>
+      </div>
+      <!-- Elias' Vorgabe war "nur neue wörter … die sich mit meinem aktuellen
+           wissenstand decken". Gemessen gibt es auf genau diesem Stand NULL neue
+           Wörter — eine still gesetzte Grenze hätte Schritt 3 dauerhaft
+           verschwinden lassen, ohne dass irgendwo stünde warum. Deshalb ein
+           sichtbarer Schalter; der Hinweis im Wurzelmodus nennt die Zahl. -->
+      <div class="setting-row">
+        <div>
+          <div class="setting-title">Neue Wörter im Wurzelmodus</div>
+          <div class="setting-sub">Woher die unbekannten Wörter für Schritt 3 kommen dürfen</div>
+        </div>
+        <select id="wurzelNiveauSelect" class="select-input">
+          <option value="stand">Nur mein Stand</option>
+          <option value="buch">Ganze Bücher</option>
+          <option value="alles">Alles Geladene</option>
+        </select>
+      </div>
+
       <div class="setting-row">
         <div>
           <div class="setting-title">Lernrichtung</div>
@@ -3081,6 +3350,7 @@ main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-w
 <script src="js/uebung.js"></script>
 <script src="js/quran.js"></script>
 <script src="js/hoeren.js"></script>
+<script src="js/wurzel.js"></script>
 <script src="js/statistik.js"></script>
 <script src="js/einstellungen.js"></script>
 <!-- Geraeteabgleich. Bewusst NACH kern.js (braucht LS und PROGRESS) und vor
