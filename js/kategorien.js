@@ -317,6 +317,10 @@ document.getElementById('boxZiele').addEventListener('click', (e)=>{
     if (PROGRESS[id].box === ziel){ schonDrin++; return; }
     PROGRESS[id].box = ziel;
     PROGRESS[id].nextReview = todayStr(INTERVALS[ziel]);
+    /* Auch ein Verschieben von Hand ist eine Aenderung am Wort und braucht
+       einen Stempel - sonst gewinnt beim Abgleich die aeltere Fassung des
+       anderen Geraets. Siehe js/sync.js. */
+    PROGRESS[id].ts = Date.now();
     bewegt++;
   });
   saveProgress();

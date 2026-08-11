@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vokabeltrainer-v130';
+const CACHE_NAME = 'vokabeltrainer-v131';
 const ASSETS = [
   './',
   './index.html',
@@ -19,6 +19,7 @@ const ASSETS = [
   './js/hoeren.js',
   './js/statistik.js',
   './js/einstellungen.js',
+  './js/sync.js',
   './js/init.js',
   './vocab-data.js',
   './data/buecher.js',
@@ -98,6 +99,12 @@ function istAnmeldeAntwort(resp){
 
 self.addEventListener('fetch', (e)=>{
   if (e.request.method !== 'GET') return;
+  /* ⚠️ /api/ NIE anfassen. Dort liegt der Geraeteabgleich (js/sync.js). Wuerde
+     der Service Worker die Antwort cachen, bekaeme das Geraet beim naechsten
+     Start den Stand von gestern statt den vom anderen Geraet - und wuerde ihn
+     danach als "aktuell" wieder hochladen. Der Abgleich haette dann die Arbeit
+     zerstoert, die er schuetzen soll. */
+  if (new URL(e.request.url).pathname.startsWith('/api/')) return;
   e.respondWith(
     fetch(new Request(e.request, { cache: 'reload' })).then(resp=>{
       if (istAnmeldeAntwort(resp)){

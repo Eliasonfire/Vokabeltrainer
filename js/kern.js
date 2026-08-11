@@ -120,7 +120,16 @@ function freigeschalteteBeschriftung(){
 /* ---------- Storage ---------- */
 const LS = {
   get(key, fallback){ try{ const v = localStorage.getItem(key); return v?JSON.parse(v):fallback; }catch(e){ return fallback; } },
-  set(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){} }
+  /* Jede Aenderung wird dem Geraeteabgleich gemeldet (js/sync.js). Das
+     geschieht bewusst HIER und nicht an den sechs Aufrufstellen: eine neue
+     Speicherstelle waere sonst still vom Abgleich ausgenommen, ohne dass es
+     jemandem auffiele. sync.js entscheidet selbst, welche Schluessel es
+     betreffen. Der typeof-Test haelt die App lauffaehig, falls js/sync.js
+     einmal nicht geladen ist. */
+  set(key, val){
+    try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){}
+    if (typeof syncGeaendert === 'function') syncGeaendert(key);
+  }
 };
 
 function todayStr(offsetDays=0){
@@ -188,6 +197,20 @@ let SETTINGS = Object.assign(
   LS.get('vt_settings', {})
 );
 function saveSettings(){ LS.set('vt_settings', SETTINGS); }
+
+/* Nach einem Abgleich mit einem anderen Geraet steht der neue Stand zwar im
+   localStorage, aber PROGRESS und SETTINGS haelt die App im Arbeitsspeicher.
+   Ohne dieses Neueinlesen wuerde der naechste lokale Schreibvorgang das gerade
+   Geholte sofort wieder ueberschreiben - der Abgleich saehe aus, als haette er
+   nicht stattgefunden. Aufgerufen von js/sync.js. */
+function ladeStandNeu(){
+  PROGRESS = initProgress();
+  const frisch = LS.get('vt_settings', null);
+  if (frisch) Object.assign(SETTINGS, frisch);
+  if (typeof renderHome === 'function') renderHome();
+  if (typeof renderCategories === 'function') renderCategories();
+  if (typeof passeRundeAnAuswahlAn === 'function') passeRundeAnAuswahlAn();
+}
 
 /* Eigene Eselsbruecken pro Vokabel (arabicroots-Paritaet D): { [vokabelId]: Text }.
    Bewusst getrennt von PROGRESS - beim "Fortschritt zuruecksetzen" soll das,
