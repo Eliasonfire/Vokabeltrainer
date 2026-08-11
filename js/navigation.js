@@ -18,6 +18,35 @@ function zeigeBildschirm(name){
   const navMap = {home:'home', learn:'learn-entry', categories:'categories', sentences:'sentences', stats:'stats', wordlist:'categories', quran:'home', quranfull:'home', hoeren:'home', settings:'home'};
   const navName = navMap[name] || name;
   document.querySelectorAll(`.nav-btn[data-nav="${navName}"]`).forEach(b=>b.classList.add('active'));
+
+  /* ⚠️ Jeder Bildschirmwechsel faengt oben an - und das musste erst repariert
+     werden, obwohl unten seit jeher `window.scrollTo(0,0)` stand.
+
+     Der Rollkasten dieser App ist NICHT das Fenster, sondern #main. Im Browser
+     nachgemessen: `body{overflow:hidden}`, das Dokument ist gar nicht rollbar
+     (scrollHeight = innerHeight), #main dagegen sehr wohl (2588 gegen 798 px
+     sichtbar). Die Zeile am Ende hat also nie etwas bewirkt - sie sah nur so
+     aus, als taete sie es.
+
+     Weil sich ALLE Bildschirme denselben Kasten teilen, blieb dessen Stand
+     beim Wechsel stehen. Gemessen: Kategorien auf 600 px gerollt, dann zur
+     Surenliste - die oeffnete bei 600, die erste Sure stand 224 px oberhalb
+     des sichtbaren Bereichs. Genau das hat Elias am 11.08.2026 gemeldet:
+     "wenn ich den quran öffne um zu lesen und bei den suren komme, dann bin
+     ich nicht ganz oben in der liste sondern etwas weiter drunter und muss
+     immer manuell nach oben scrollen".
+
+     ⚠️ VOR den Render-Aufrufen darunter, nicht danach: renderSurahList()
+     stellt beim Rueckweg aus einer Sure den gemerkten Listenstand wieder her.
+     Stuende der Sprung nach oben danach, wuerde er genau diese Wiederherstellung
+     wieder kaputtmachen - also den Fehler von v119 ein zweites Mal einbauen.
+
+     ⚠️ scrollTo({behavior:'instant'}) und nicht `scrollTop = 0`: #main traegt
+     `scroll-behavior:smooth`, das gilt auch fuer eine Zuweisung. Sonst faehrt
+     die Liste bei jedem Wechsel sichtbar nach oben. */
+  const rollkasten = document.getElementById('main');
+  if (rollkasten) rollkasten.scrollTo({ top: 0, behavior: 'instant' });
+
   if (name==='home') renderHome();
   if (name==='learn') renderCard();          // laufende Runde an derselben Karte fortsetzen
   if (name==='categories') renderCategories();
@@ -27,7 +56,9 @@ function zeigeBildschirm(name){
   if (name==='quranfull') renderSurahList(document.getElementById('surahSearch').value);
   if (name==='stats') renderStats();
   if (name==='settings') renderSettings();
-  window.scrollTo(0,0);
+  /* Hier stand `window.scrollTo(0,0)`. Ersatzlos gestrichen: das Fenster rollt
+     in dieser App nicht, die Zeile war ohne Wirkung. Der wirksame Sprung steht
+     jetzt weiter oben, vor den Render-Aufrufen. */
   return name;
 }
 
