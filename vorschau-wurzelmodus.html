@@ -161,6 +161,13 @@ Sortierspiel. Diese Seite fasst die App nicht an.</p>
   <div class="reihe" style="margin-top:6px">
     <button id="bAusrichten" aria-pressed="true">Wurzel ausrichten</button>
   </div>
+  <div class="titel" style="margin:16px 0 8px">Welche neuen Wörter dürfen vorkommen?</div>
+  <div class="reihe" id="niveauschalter">
+    <button data-n="stand" aria-pressed="true">nur mein Stand<br><small>Madina 1, bis Kap. 9</small></button>
+    <button data-n="buch">Madina 1 ganz<br><small>bis Kap. 24</small></button>
+    <button data-n="alles">alles<br><small>alle 8 Bücher</small></button>
+  </div>
+  <div class="warn" id="niveauInfo"></div>
   <div class="warn" id="umWarn" hidden>
     ⚠️ Umgekehrt heißt: die Wurzel tritt zurück, der Rest leuchtet.
     Bei deinem heutigen Bestand sind <b>32 von 113</b> Wörtern restlos Wurzel
@@ -362,7 +369,28 @@ function ausDateien(){
 function einsammeln(){
   BUCHWOERTER = [];
   var V = window.VOKABELN || {};
-  Object.keys(V).forEach(function(k){ if (Array.isArray(V[k])) BUCHWOERTER = BUCHWOERTER.concat(V[k]); });
+  Object.keys(V).forEach(function(k){
+    if (!Array.isArray(V[k])) return;
+    /* Buchzugehoerigkeit aus dem SCHLUESSEL mitnehmen. Das Feld w.book gibt es
+       zwar, aber der Schluessel ist die verlaessliche Angabe - nach dem
+       Zusammenschuetten waere die Herkunft sonst weg. */
+    V[k].forEach(function(w){ w._buch = k; BUCHWOERTER.push(w); });
+  });
+}
+
+/* ---------- Niveaufilter ----------
+   Elias' Vorgabe: "es sollten auch wirklich nur neue wörter dabei sein die
+   sich mit meinem aktuellen wissenstand decken also stand jetzt bis kapitel 9".
+   ⚠️ Gemessen: bis Madina 1 Kapitel 9 gibt es NULL neue Woerter - seine Kartei
+   enthaelt dort schon alles mit Wurzel. Deshalb ein Schalter statt einer still
+   gesetzten Grenze; bei "nur mein Stand" faellt Schritt 3 einfach weg. */
+var NIVEAU = 'stand';
+var NIVEAUS = { stand: { buch:'madina-1', bis:9 }, buch: { buch:'madina-1', bis:24 }, alles: null };
+function imNiveau(w){
+  var n = NIVEAUS[NIVEAU];
+  if (!n) return true;
+  if (w._buch !== n.buch) return false;
+  return w.chapter == null || w.chapter <= n.bis;
 }
 
 /* ================= Familien bauen ================= */
@@ -372,6 +400,9 @@ function baueFamilien(){
   function rein(w, eigen){
     var r = w.root && String(w.root).trim();
     if (!r) return;
+    /* Eigene Wörter kommen IMMER rein - sie sind ja sein Stand. Gefiltert wird
+       nur, was zusaetzlich aus den Buechern dazukaeme. */
+    if (!eigen && !imNiveau(w)) return;
     if (LEHNWORT_N.indexOf(vergleichsform(w.ar)) >= 0) return;
     var k = ohneZeichen(w.ar);
     var f = nachWurzel[r] || (nachWurzel[r] = { wurzel:r, woerter:[], gesehen:{}, eigene:0 });
@@ -670,6 +701,36 @@ document.getElementById('farbschalter').addEventListener('click', function(e){
   });
   document.getElementById('umWarn').hidden = (b.dataset.farbe !== 'um');
 });
+function niveauInfo(){
+  var mitNeu = FAMILIEN.filter(function(f){
+    return f.woerter.some(function(x){ return !x.kennst; });
+  }).length;
+  var el = document.getElementById('niveauInfo');
+  el.hidden = false;
+  if (!mitNeu){
+    el.innerHTML = '⚠️ Auf diesem Stand gibt es <b>kein einziges neues Wort</b> — '
+      + 'deine Kartei enthält Madina 1 bis Kapitel 9 bereits vollständig, soweit '
+      + 'die Wörter eine Wurzel haben. Es bleiben <b>' + FAMILIEN.length
+      + ' Familien</b> aus deinen eigenen Wörtern, und <b>Schritt 3 (Erraten) '
+      + 'entfällt</b> — die Übung läuft mit Erinnern und Finden. '
+      + 'Eine Stufe weiter bringt Schritt 3 zurück.';
+  } else {
+    el.innerHTML = FAMILIEN.length + ' Familien, davon <b>' + mitNeu
+      + '</b> mit mindestens einem neuen Wort für Schritt 3.';
+  }
+}
+document.getElementById('niveauschalter').addEventListener('click', function(e){
+  var b = e.target.closest('button');
+  if (!b) return;
+  NIVEAU = b.dataset.n;
+  [].forEach.call(this.querySelectorAll('button'), function(x){
+    if (x === b) x.setAttribute('aria-pressed','true'); else x.removeAttribute('aria-pressed');
+  });
+  /* Der ganze Bestand wird neu gruppiert - danach beginnt eine frische Sitzung,
+     sonst zeigte die laufende noch Woerter vom alten Niveau. */
+  baueFamilien(); niveauInfo(); starteSitzung(); neueRunde();
+  document.getElementById('spielPool').textContent = spielbareFamilien().length + ' Wurzeln spielbar';
+});
 document.getElementById('bAusrichten').onclick = function(){
   AUSRICHTEN = !AUSRICHTEN;
   if (AUSRICHTEN) this.setAttribute('aria-pressed','true'); else this.removeAttribute('aria-pressed');
@@ -784,6 +845,7 @@ function fertigAufbauen(){
       ? (BUCHWOERTER.length + ' Buchwörter geladen ' + QUELLE + ' · ' + FAMILIEN.length + ' Familien')
       : 'nur deine ' + VOCAB_DATA.length + ' Lernwörter — keine Buchwörter gefunden (' + FAMILIEN.length + ' Familien)';
   document.getElementById('spielPool').textContent = spielbareFamilien().length + ' Wurzeln spielbar';
+  niveauInfo();
   starteSitzung();
   neueRunde();
   document.getElementById('fuss').textContent =
