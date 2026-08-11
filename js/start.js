@@ -31,15 +31,44 @@ function renderHome(){
   document.getElementById('btnWrongOnly').classList.toggle('active', !!SETTINGS.wrongOnly);
 }
 
+/* Die Kapitelliste haengt am Buch: Madina 1 hat 24, Madina 3 hat 35, und
+   frueher stand hier fest 1-9.
+
+   Seit dem 11.08.2026 koennen mehrere Buecher gleichzeitig gewaehlt sein, und
+   jedes traegt seine eigene Kapitelauswahl. Die Anzeige unterscheidet deshalb
+   zwei Faelle:
+
+   - EIN Buch: genau wie vorher, eine Reihe Chips ohne Ueberschrift. Der haeufige
+     Fall soll nicht umstaendlicher werden, nur weil es jetzt auch anders geht.
+   - MEHRERE: je Buch eine eigene Reihe mit dem Buchnamen davor. Ohne den Namen
+     waere "3" nicht mehr eindeutig - Kapitel 3 gibt es dann mehrfach, und in
+     jedem Buch bedeutet es etwas anderes.
+
+   Der "Eigene"-Chip steht genau einmal ganz unten. Eigene Vokabeln gehoeren zu
+   keinem Buch; ihn je Buch anzubieten waere dieselbe Einstellung mehrfach. */
 function renderChapterFilterChips(){
-  /* Die Kapitelliste haengt am aktiven Buch: Madina 1 hat 24, Madina 3 hat 35,
-     und frueher stand hier fest 1-9. */
-  const chapters = ['all', ...kapitelDesBuchs(), 'personal'];
-  const sel = SETTINGS.selectedChapters || [];
-  document.getElementById('chapterFilterChips').innerHTML = chapters.map(ch=>{
-    const active = ch==='all' ? sel.length===0 : sel.includes(ch==='personal'?'personal':ch);
-    const label = ch==='all' ? 'Alle' : (ch==='personal' ? 'Eigene' : ch);
-    return `<button class="chip-toggle${active?' active':''}" data-chfilter="${ch}">${label}</button>`;
+  const ziel = document.getElementById('chapterFilterChips');
+  if (!ziel) return;
+  const buecher = (typeof aktiveBuecher === 'function') ? aktiveBuecher() : ['madina-1'];
+  const mehrere = buecher.length > 1;
+
+  const chip = (buch, wert, text, an) =>
+    `<button class="chip-toggle${an?' active':''}" data-chfilter="${wert}"`
+    + (buch ? ` data-chbuch="${buch}"` : '') + `>${text}</button>`;
+
+  const reihen = buecher.map(slug=>{
+    const sel = (typeof kapitelAuswahl === 'function') ? kapitelAuswahl(slug) : [];
+    const chips = [chip(slug, 'all', 'Alle', sel.length === 0)]
+      .concat(kapitelDesBuchs(slug).map(n => chip(slug, n, n, sel.indexOf(n) >= 0)))
+      .join('');
+    if (!mehrere) return chips;
+    return `<div class="chapter-book"><span class="chapter-book-name">${buchTitel(slug)}</span>`
+         + `<div class="chip-row">${chips}</div></div>`;
   }).join('');
+
+  const eigene = chip(null, 'personal', 'Eigene', !!SETTINGS.eigeneGewaehlt);
+  ziel.innerHTML = mehrere
+    ? reihen + `<div class="chapter-book"><div class="chip-row">${eigene}</div></div>`
+    : reihen + eigene;
 }
 

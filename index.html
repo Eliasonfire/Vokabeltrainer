@@ -547,6 +547,23 @@ main{
   text-transform:uppercase;letter-spacing:.08em;margin-bottom:var(--sp-2);
 }
 .chip-select{display:flex;flex-wrap:wrap;gap:var(--sp-2);margin-bottom:var(--sp-3);}
+
+/* Kapitel je Buch, seit dem 11.08.2026 (Mehrfachauswahl der Buecher).
+   ⚠️ Nur wenn MEHR ALS EIN Buch gewaehlt ist, sonst bleibt die Zeile genau so,
+   wie sie war - der haeufige Fall soll nicht umstaendlicher werden. Bei einem
+   Buch erzeugt js/start.js gar keine .chapter-book-Kaesten.
+   `flex-basis:100%` erzwingt eine eigene Zeile je Buch: ohne das liefen die
+   Kapitel zweier Buecher im flex-wrap ineinander, und "3" waere nicht mehr
+   dem richtigen Buch zuzuordnen - genau die Verwechslung, die die
+   Ueberschrift verhindern soll. */
+.chapter-book{flex:0 0 100%;}
+.chapter-book + .chapter-book{margin-top:var(--sp-2);}
+.chapter-book-name{
+  display:block;margin-bottom:var(--sp-2);
+  font-size:var(--fs-xs);font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--text-faint);
+}
+.chapter-book .chip-row{display:flex;flex-wrap:wrap;gap:var(--sp-2);}
 .chip-toggle{
   background:var(--surface-2);border:1px solid var(--border);color:var(--text-dim);
   border-radius:var(--r-full);padding:var(--sp-2) var(--sp-3);

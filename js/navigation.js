@@ -114,14 +114,24 @@ document.addEventListener('click', (e)=>{
   }
   const chBtn = e.target.closest('[data-chfilter]');
   if (chBtn){
-    const val = chBtn.dataset.chfilter;
-    let sel = SETTINGS.selectedChapters || [];
-    if (val === 'all'){ sel = []; }
-    else{
-      const key = val==='personal' ? 'personal' : Number(val);
-      sel = sel.includes(key) ? sel.filter(x=>x!==key) : [...sel, key];
+    const val  = chBtn.dataset.chfilter;
+    /* Seit dem 11.08.2026 traegt jeder Kapitel-Chip sein Buch mit sich. Ohne
+       das waere "3" bei mehreren gewaehlten Buechern nicht mehr eindeutig. Der
+       "Eigene"-Chip hat bewusst kein Buch - eigene Vokabeln gehoeren zu keinem. */
+    const buch = chBtn.dataset.chbuch;
+    if (val === 'personal'){
+      SETTINGS.eigeneGewaehlt = !SETTINGS.eigeneGewaehlt;
+    } else {
+      if (!SETTINGS.buecher || typeof SETTINGS.buecher !== 'object') SETTINGS.buecher = {};
+      const slug = buch || (typeof aktivesBuch === 'function' ? aktivesBuch() : 'madina-1');
+      let sel = Array.isArray(SETTINGS.buecher[slug]) ? SETTINGS.buecher[slug] : [];
+      if (val === 'all') sel = [];
+      else {
+        const nr = Number(val);
+        sel = sel.indexOf(nr) >= 0 ? sel.filter(x => x !== nr) : sel.concat([nr]);
+      }
+      SETTINGS.buecher[slug] = sel;
     }
-    SETTINGS.selectedChapters = sel;
     saveSettings();
     renderHome();
     /* Eine laufende Runde mitziehen, sonst laeuft sie mit der ALTEN Auswahl

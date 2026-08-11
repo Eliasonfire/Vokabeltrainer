@@ -27,9 +27,16 @@ function hoerbareVokabeln(){
      halbe Buch, obwohl oben "Kapitel 3" eingestellt ist. Nur wenn dabei zu
      wenig uebrig bleibt, um vier Antworten zu bilden, wird sie ignoriert;
      eine leere Karte waere unbrauchbarer als ein Ablenker aus Kapitel 4. */
-  const sel = SETTINGS.selectedChapters || [];
-  if (sel.length){
-    const eng = pool.filter(w => sel.includes(w.chapter));
+  /* ⚠️ Seit dem 11.08.2026 je Buch: ein Wort zaehlt, wenn SEIN Buch keine
+     Kapitel eingeengt hat oder sein Kapitel darin steht. Eine gemeinsame Liste
+     waere hier falsch - Kapitel 3 aus Madina 1 wuerde sonst Kapitel 3 aus
+     Bayna Yadayk freischalten. */
+  if (typeof irgendwoEingeengt === 'function' && irgendwoEingeengt()){
+    const eng = pool.filter(w => {
+      if (w.chapter === 'personal') return true;
+      const sel = kapitelAuswahl(w.book);
+      return !sel.length || sel.indexOf(w.chapter) >= 0;
+    });
     if (eng.length >= 4) pool = eng;
   }
   return pool;
@@ -63,8 +70,12 @@ function naechsteHoerfrage(){
   if (pool.length < 4){
     karte.classList.add('hidden');
     leer.classList.remove('hidden');
-    leer.textContent = `In ${buchTitel(aktivesBuch())} stehen zu wenige Vokabeln mit Bedeutung `
-      + `(${pool.length}), um vier Antworten anzubieten. Wechsle oben auf der Startseite das Buch.`;
+    /* Alle gewaehlten Buecher nennen, nicht nur das erste - sonst sucht man in
+       einem Buch nach der Ursache, waehrend die Auswahl aus dreien besteht. */
+    const namen = (typeof aktiveBuecher === 'function' ? aktiveBuecher() : [aktivesBuch()])
+      .map(buchTitel).join(', ');
+    leer.textContent = `In ${namen} stehen zu wenige Vokabeln mit Bedeutung `
+      + `(${pool.length}), um vier Antworten anzubieten. Waehle oben auf der Startseite mehr aus.`;
     return;
   }
   karte.classList.remove('hidden');
