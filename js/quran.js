@@ -277,8 +277,22 @@ function renderSurahList(filter){
   document.getElementById('surahList').innerHTML =
     list.map(surahZeile).join('') || '<div class="empty-state">Keine Sure gefunden.</div>';
   /* Nach dem Aufbau, sonst ist der Kasten noch zu kurz und der Wert wird
-     auf die alte Hoehe beschnitten. */
+     auf die alte Hoehe beschnitten.
+
+     ⚠️ Der else-Zweig ist am 11.08.2026 dazugekommen und behebt einen zweiten,
+     eigenstaendigen Fehler: Wer weit unten in der Liste steht und dann sucht,
+     bekam die Treffer NICHT zu sehen. Gemessen (375x812): von Rollstand 2500
+     aus nach "Fatiha" gesucht - ein Treffer, und der stand 716 px OBERHALB des
+     sichtbaren Bereichs. Auf dem Bildschirm war nichts als leere Flaeche; das
+     sieht aus wie "nichts gefunden", obwohl die Sure da ist.
+     Bei einer Suche und beim Leeren des Feldes aendert sich die Liste
+     vollstaendig - dann ist oben der einzig richtige Platz. Nur der Rueckweg
+     aus einer Sure behaelt seinen gemerkten Stand. */
   if (kamAusSure && !q) stelleListenRollstandHer();
+  else {
+    const kasten = document.getElementById('main');
+    if (kasten) kasten.scrollTo({ top: 0, behavior: 'instant' });
+  }
 }
 
 /* ---------- Lesemodus und Schriftgroessen ----------
