@@ -21,6 +21,13 @@ data/vokabeln-*.js
 # Gebaut mit: node werkzeuge/baue-vokabelpaket.mjs
 vokabelpaket.json
 
+# Der von werkzeuge/veroeffentlichen.mjs gebaute Ausliefer-Ordner. Wird bei
+# jedem Lauf neu erzeugt und kann den arabicroots-Abzug enthalten (--mit-daten).
+.deploy/
+
+# Arbeitsordner von Wrangler (Zwischenstaende, Zugangsdaten des lokalen Logins)
+.wrangler/
+
 # Python-Zwischenstand der Sprechertrennung
 __pycache__/
 .vokabelpaket-stand.json
