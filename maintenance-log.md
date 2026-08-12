@@ -1165,3 +1165,242 @@ schreiben ließ.
    steht seit drei Läufen still, die offenen Ḥarakāt-Fragen brauchen Elias, nicht
    mich. Höchste Projekt-Priorität bleibt laut Gedächtnis der Umzug auf eigene
    Domain mit Login — ausdrücklich kein Routinen-Thema.
+
+## 2026-08-12 22:03 – Wöchentliche Wartung (Mi-Check)
+
+Ergebnis vorweg: **der eigentliche Befund dieses Laufs ist ein stiller Ausfall der
+Routine selbst.** Der Sonntagslauf vom **09.08. ist mittendrin abgebrochen** — er
+hat den Backlog noch geschrieben, aber weder einen Log-Eintrag hinterlassen noch
+das 24-h-Fenster geöffnet. Folge davon: `arabicroots-backfill-retry` steht seit
+dem **06.08.** still, und **Folge 16 liegt seit dreieinhalb Tagen ohne
+Rohmaterial**. Inhaltlich sonst nichts zu tun: Vokabelabzug unverändert,
+Vokabelpaket `UNVERAENDERT`, alle sieben Prüfskripte ohne neuen eigenen Befund.
+Am Code wurde nichts geändert, `CACHE_NAME` bleibt bei **v135**.
+
+**Vorbemerkung zum Zwischenstand:** Zwischen diesem und dem letzten
+*dokumentierten* Lauf (05.08.) liegen Elias' interaktive Sitzungen mit dem Umzug
+auf **Cloudflare Pages per Direktupload**, dem Geräteabgleich über Cloudflare KV,
+dem Wurzelmodus und zwölf nachgetragenen Beispielsätzen. `CACHE_NAME` ist dabei
+von v119 auf **v135** gestiegen. Das ist Elias' Arbeit, nicht die der Routine;
+es steht hier nur, damit die Zahlen unten einzuordnen sind.
+
+### ⚠️ Der Ausfall vom 09.08. — belegt, nicht vermutet
+
+Im `maintenance-log.md` fehlt ein Eintrag für Sonntag, den 09.08. Das ist kein
+Versäumnis beim Schreiben, sondern ein abgebrochener Lauf. Vier Belege, die
+zusammen nur eine Lesart zulassen:
+
+| Beleg | Befund |
+|---|---|
+| `Automation\logs\vokabeltrainer-wartung_2026-08-09_171443.out.log` | existiert, ist **0 Byte** — ebenso die `.err.log` |
+| `Automation\logs\routines.log` | enthält **keine Zeile** für den 09.08.-Wartungslauf (die letzte ist der `mcp-health-check` vom 10.08.) |
+| `Automation\.state\backfill-window.txt` | steht auf **`2026-08-06T22:07:14`**, geschrieben nach dem Lauf vom 05.08. — am 09.08. **nicht** neu geschrieben |
+| `transcripts\backlog.md` | enthält sehr wohl den Eintrag „Folge 16" mit Datum 09.08. |
+
+Der Lauf ist also gestartet (17:14 statt 13:00 — `StartWhenAvailable` hat ihn
+nachgeholt, der PC lief mittags nicht), kam bis Schritt 1 und schrieb den
+Backlog, und endete dann, ohne Schritt 7 und 8 zu erreichen. `run-routine.ps1`
+schreibt die Abschlusszeile in `routines.log` und das Backfill-Fenster erst
+**nach** einem sauber beendeten Lauf — beides fehlt.
+
+**Die teure Folge ist nicht der fehlende Log-Eintrag, sondern das geschlossene
+Fenster.** `arabicroots-backfill-retry` prüft als Erstes
+`backfill-window.txt`; steht dort eine vergangene Zeit, beendet sie sich in
+Millisekunden. Genau das tut sie seit dem **06.08. 22:07**. Der letzte Retry-Lauf
+in `routines.log` ist dementsprechend der vom **06.08. 22:05**. Folge 16 kam am
+09.08. heraus — und niemand hat sie abgeholt.
+
+✅ **Das heilt sich mit diesem Lauf von selbst**, sofern er sauber durchläuft:
+dann schreibt `run-routine.ps1` das Fenster auf jetzt + 24 h, und die
+Retry-Routine holt Folge 16 in der Nacht. **Nachsehen lohnt trotzdem** — wenn
+`backfill-window.txt` morgen früh immer noch auf dem 06.08. steht, ist es kein
+Einzelfall, sondern ein Muster.
+
+⚠️ **Warum der Lauf abbrach, lässt sich von hier aus nicht sagen.** Ein 0-Byte-Log
+verrät nichts über die Ursache. Standby, Abmeldung oder Neustart um kurz nach
+17:14 wären die naheliegenden Kandidaten — geraten wird hier nichts.
+
+**Schritt 0 – Repo aktualisieren:** `git pull --ff-only` → `Already up to date.`
+Arbeitsverzeichnis sauber (`git status --short` leer), HEAD auf `d684871`.
+
+**Schritt 1 – Neue Aufzeichnungen: keine neue Folge, aber die Freischaltung ist
+gewachsen.** `get_recordings` liefert **16** Einträge — dieselben wie am 09.08.
+Folge 16 („MB1 Kapitel 10 & 11", 09.08.2026, 09:52 UTC,
+https://youtu.be/CHc959CPp64) stand bereits im Backlog, eingetragen vom
+abgebrochenen Lauf. Nur die Kopfzeile „Zuletzt geprüft" wurde auf den 12.08.
+gesetzt und der Grund für das fehlende Rohmaterial ergänzt.
+
+⭐ **`get_unlocked_chapters` steht jetzt auf `madina-1-chapter-1` bis `-11`** —
+vorher 1–9, unverändert seit dem 27.07. Die am 05.08. notierte Vermutung („die
+Freischaltung dürfte sich demnächst bewegen") hat sich damit bestätigt;
+Unterricht und Freischaltung sind wieder gleichauf. Für die App ändert das
+nichts, sie zeigt seit dem 28.07. ohnehin alle Kapitel der Datenbank.
+
+**Der Rückstand steht bei drei Folgen (14, 15, 16).** Von 14 und 15 liegt das
+Rohmaterial fertig da, von 16 nichts. **Es wurde kein Transkript abgerufen und
+keine Regel bestätigt.** `transcripts/` ist per `.gitignore` ausgeschlossen —
+kein Commit daraus.
+
+**Schritt 2 – Vokabelabzug (`node werkzeuge/hole-vokabeln.mjs`):** 4433 Einträge,
+**Zahl je Buch identisch mit den letzten drei Läufen**, keine einzige Abweichung:
+
+| Buch | Vokabeln | Kapitel | KB | Δ zum letzten Lauf |
+|---|---|---|---|---|
+| bayna-yadayk-1 | 231 | 17 | 90 | – |
+| bayna-yadayk-2 | 552 | 17 | 216 | – |
+| bayna-yadayk-3 | 445 | 17 | 174 | – |
+| bayna-yadayk-4 | 881 | 16 | 344 | – |
+| madina-1 | 298 | 24 | 112 | – |
+| madina-2 | 445 | 29 | 169 | – |
+| madina-3 | 1238 | 35 | 484 | – |
+| quran | 343 | 23 | 122 | – |
+
+⭐ **Bemerkenswert, weil es der Erwartung widerspricht:** Die Freischaltung ist um
+zwei Kapitel gewachsen, der Abzug **nicht um eine Vokabel**. Das passt zusammen —
+`get_vocabulary_by_book` liefert unabhängig von der Freischaltung alle Kapitel,
+madina-1 stand schon immer bei 24 Kapiteln / 298 Vokabeln. Die Freischaltung
+sagt etwas über Elias' Kursfortschritt, nichts über den Datenbestand.
+
+`data/buecher.js` blieb unverändert (`git status` nach dem Lauf weiter leer) —
+nichts zu committen.
+
+**Vokabelpaket (`node werkzeuge/baue-vokabelpaket.mjs`):** 8 Bücher, 4433
+Vokabeln, 1382 KB → **`UNVERAENDERT` — dasselbe Paket wie beim letzten Lauf.**
+Kein Handlungsbedarf, Elias muss auf seinen Geräten nichts neu einlesen.
+
+**Schritt 3 – `vocab-data.js`:** von der Routine nicht angefasst. Stand laut
+`validate.js` weiterhin 171 Einträge / 342 Markierungen, aber **167 statt 155
+Beispielsätze** — die zwölf dazugekommenen sind Elias' Commit `f378ab0` („die
+zwölf Lernwörter ohne Beispielsatz haben einen"), nicht die Routine. Sie sind
+vollständig vokalisiert: `pruefe-taschkil.js` steht trotz der zwölf neuen Sätze
+unverändert bei 15 Befunden. Die 11 eigenen arabicroots-Vokabeln sind alle
+enthalten. Quran-Belege fehlen weiterhin für die Kapitel 6, 7 und 8 — **nicht
+eigenmächtig aufgefüllt** (E.1), bleibt Elias' Entscheidung.
+
+**Schritt 4 – Samsung Notes:** `list_export_status` meldet alle drei Notizen mit
+Cache, eine davon als `stale` („Madina Buch 1 (Beschriftet)") — dieselbe Lage wie
+am 02.08. und 05.08. Deshalb wie vorgeschrieben
+`node werkzeuge/export-index.mjs --pruefen`:
+
+```
+Madina Buch 1 (Beschriftet)   pageCount 142 = PDF   geaendert 2026-07-28T01:19:20Z
+Grammatik Heft Medina Buch 1  pageCount  14 = PDF   geaendert 2026-07-27T20:57:42Z
+Madina Buch 1 Vokabelheft     pageCount  17 = PDF   geaendert 2026-07-27T01:21:48Z
+=== 0 Beanstandung(en) bei 3 Eintraegen ===
+```
+
+Alle drei Zeitstempel unverändert gegenüber dem 02.08. und 05.08., alle drei nur
+„zur Info": die Notiz wurde nach dem Export **angefasst**, was nichts über neuen
+Inhalt sagt (von Elias am 29.07. geklärt). Die Seitenzahlen stimmen mit den PDFs.
+**Der Index ist in Ordnung, der stille Ausfall vom 28./29.07. wiederholt sich
+nicht.** Ein Handschrift-Abgleich stand inhaltlich nicht an: keine neuen
+Vokabeln, keine neu ausgewertete Folge. Der Index wurde nicht von Hand angefasst.
+
+**Schritt 5 – Lernstand (ohne Buch-/Kapitelfilter):** `get_weak_vocabulary`
+liefert **88 Einträge** unter 50 % — einer weniger als am 05.08. (89).
+
+- ✅ **Die Zahl vom 05.08., die „so nicht entstehen kann", hat sich nicht
+  wiederholt.** قَصِيرٌ war von 85/178 auf 82/175 **gefallen**; heute steht es bei
+  **91/184**, also genau +9 Versuche und +9 richtige gegenüber dem 05.08. Das ist
+  eine ganz normale Bewegung: neun Versuche, alle richtig. Der Einbruch bleibt
+  ein einmaliger Vorfall bei arabicroots und **kein laufender Fehler** — die
+  Zählweise selbst arbeitet korrekt weiter.
+- 🆕 **Elias hat wieder geübt, und zwar heute.** Der jüngste Zeitstempel der
+  ganzen Liste ist der **12.08. 07:52** (قَصِيرٌ). Davor eine deutliche Sitzung am
+  **10.08. gegen 15:29** (rund ein Dutzend Wörter im Sekundenabstand) und am
+  **06.08. gegen 11:27** (madina-2). Nach der M14-Abgabe ist das Üben also wieder
+  angelaufen.
+- ✅ **مِرْوَحَةٌ ist aus der Schwachliste heraus.** Am 05.08. stand es bei 32/67
+  = 48 %, heute steht es nicht mehr unter der 50-%-Marke. Es ist der einzige
+  Abgang, neue Einträge sind keine dazugekommen (89 − 1 = 88).
+- **Aus Madina 1 stehen damit nur noch zwei Wörter in der Liste:** قَصِيرٌ
+  (91/184 = 49,5 %, knapp unter der Schwelle) und مُفَتِّشٌ (21/45 = 47 %,
+  unverändert seit dem 04.08.).
+- **Schwerpunkt unverändert bayna-yadayk-2** (rund zwei Drittel der Liste), dann
+  bayna-yadayk-1 und madina-2.
+- **Die schwächsten drei sind dieselben wie am 02.08. und 05.08.:** أَهْمَلَ
+  (6/42 = 14 %), مُهْمِلٌ (6/28 = 21 %), نَالَ (6/23 = 26 %) — die ersten beiden
+  weiterhin **dieselbe Wurzel ه‑م‑ل**. ⚠️ **Und sie werden nicht von allein
+  besser:** أَهْمَلَ hat seit dem **28.07.** keinen Versuch mehr, مُهْمِلٌ seit dem
+  **31.07.** Elias hat am 10.08. eine ganze Runde bayna-yadayk-2 geübt — diese
+  beiden waren nicht dabei. Das ist inzwischen das dritte Log in Folge mit
+  demselben Befund.
+- **Vier eigene Vokabeln unter 50 %, unverändert:** أَلْمُهَنْدِسٌ (0/7), لَحْمٌ (0/5),
+  إِثْنَانِ (3/18), اِسْمٌ مَجْرُورٌ (1/3). Die ersten beiden wurden **noch nie richtig
+  beantwortet** und haben seit dem 17.07. bzw. 24.07. keinen Versuch mehr.
+- `get_personal_vocabulary`: **11 Einträge, unverändert**, jüngste Änderung
+  18.07. **Keine neue eigene Vokabel, in der App fehlt keine.**
+
+**Schritt 6 – Qualitätssicherung:**
+
+| Skript | Ergebnis |
+|---|---|
+| `validate.js` | **Exit 0** – „Alles sauber (3 Hinweise)". 171 Vokabeln, 73 Regeln (alle mit Quelle, 51 mit gedrucktem Beleg), 342 Markierungen, 114 Suren, 1038 Wurzeln, 1157 Wörter mit Zahl, **20 Module** (vorher 18), `CACHE_NAME = vokabeltrainer-v135` |
+| `pruefe-markierungen.js` | 196 von 342 Markierungen prüfbar, **0** Verstöße gegen die Regelbedingung, **0** Wortgrenzen-Fehler, **0** Überschneidungen |
+| `pruefe-saetze.js` | **167** verfasste Sätze (vorher 155): **0 unpassende Endungen**, 10 mit unvokalisiertem Wort. Kontrollgruppe 27 Lehrbuchsätze: **0 Endungsfehler**, 1 mit unvokalisiertem Wort. Satzlänge: kein verfasster Satz länger als der längste Buchsatz (8 Wörter) |
+| `pruefe-transkripte.js` | 73 von 73 Regeln belegt: 59 von beiden Lesarten, 11 nur vom eigenen Whisper-Lauf, 2 von Hand nachgelesen, **1** von keiner Lesart im Fenster (`ismul-isara-hadha-01`, F1 10:07 — steht bei ±120 s doch da) |
+| `pruefe-sprecher.js` | 73 Regeln gegen die Sprecherspur, durchschnittlich **85 %** Lehreranteil; 9 Regeln unter 60 %, 4 weitere aus Folge 12 ohne klaren Hauptsprecher |
+| `pruefe-taschkil.js` | **15 Befunde in 14 Wörtern — unverändert gegenüber dem 05.08.** |
+| `pruefe-wortfelder.js` | Tabelle in Ordnung, 27 Felder. **Lernbestand: 131 von 171 (77 %) mit Bedeutungsfeld, 40 nur mit Wortart — davon 0 Nomen.** Also keine echte Lücke. **Kein Suchwort ergänzt** |
+
+**Die drei `validate.js`-Hinweise sind unverändert bekannt:** لَبَنٌ hat Plural
+ohne `sg` (unkritisch), مِكْوَاةٌ / أَخٌ / أُخْتٌ haben `sg` ohne Plural (im Abzug
+nachsehen, nicht selbst bilden), und zwei Satz-Schlüssel (45878, 45883) haben ein
+leeres Markierungs-Array.
+
+**`pruefe-taschkil.js`: unverändert 15 Befunde, keiner davon neuer Schaden.** Die
+acht offenen Surennamen aus `surah-data.js` (الْأَنفَال, الْأَنبِيَاء, الْعَنكَبُوت,
+الْمُجَادلَة, الْمُمْتَحنَة, الْإِنسَان, الانفِطَار, الانشِقَاق) stehen seit dem 04.08.
+bewusst offen. Dazu wie gehabt أَيْضاً und الإِسْمُ aus Elias' eigenen
+arabicroots-Notizen, أَلْبَان aus dem Abzug (id 45782) und die drei اسم-Zitate in
+`lehrbuch-saetze.js` (mb1-42-2, mb1-63-1). **Nichts davon wurde selbst
+vokalisiert** — eine Ḥaraka ohne Beleg ist genauso erfunden wie eine erfundene
+Regel (E.1).
+
+**Schritt 7 – Commit:** nur dieser Log-Eintrag. Am Code, an `vocab-data.js`,
+`grammar-data.js` und `sw.js` wurde nichts geändert, also **kein
+CACHE_NAME-Bump** (bleibt v135). `data/vokabeln-*.js`, `vokabelpaket.json` und
+`transcripts/` sind per `.gitignore` ausgeschlossen und wurden **nicht** mit `-f`
+erzwungen.
+
+ℹ️ **Zur Cloudflare-Regel aus `CLAUDE.md`:** Ein `node werkzeuge/veroeffentlichen.mjs`
+war hier nicht nötig und wäre auch nicht möglich gewesen — es steht nicht auf der
+Werkzeugliste dieser Routine. Nötig ist es auch nicht: `maintenance-log.md` wird
+nicht ausgeliefert, und an den ausgelieferten Dateien hat dieser Lauf nichts
+geändert. **Für spätere Läufe bleibt das ein offener Punkt** — sobald eine
+Wartung einmal etwas Ausgelieferbares ändert, pusht sie ins Repo und die Seite
+bleibt alt. Genau der Fehler, vor dem `CLAUDE.md` warnt.
+
+**Nichts war blockiert.** Kein abgelehnter Befehl, keine Datei, die sich nicht
+schreiben ließ.
+
+### Vorschläge für den nächsten Schritt (ehrlich priorisiert)
+
+1. ⚠️ **Morgen früh `Automation\.state\backfill-window.txt` ansehen — das ist der
+   einzige Punkt mit echtem Zeitbezug.** Steht dort ein Datum vom 12./13.08., hat
+   sich der Ausfall von selbst geheilt und Folge 16 wird in der Nacht abgeholt.
+   Steht dort weiterhin `2026-08-06T22:07:14`, bricht auch dieser Lauf ab, und
+   dann ist es kein Einzelfall, sondern ein Muster — mit der unangenehmen
+   Eigenschaft, dass **beide Routinen gleichzeitig verstummen**: die Wartung
+   schreibt keinen Log-Eintrag, und der Backfill hält sich für gesperrt. Vier
+   Tage sind so unbemerkt vergangen.
+2. ⭐ **Das Fenster sollte nicht am Erfolg des ganzen Laufs hängen.** Auch wenn es
+   sich diesmal von selbst heilt, bleibt die Bauart heikel: ein Wartungslauf, der
+   in Schritt 5 stirbt, legt eine völlig unabhängige Routine für Tage still. Ein
+   Fenster, das `run-routine.ps1` gleich **beim Start** öffnet, hätte denselben
+   Zweck erfüllt (die Retry-Routine soll rund um die Wartungstermine arbeiten)
+   und wäre gegen Abbrüche unempfindlich. Kleine Änderung, außerhalb dieses
+   Repos — **Entscheidung für Elias**, keine Routinen-Änderung von hier aus.
+3. **Drei Folgen Rückstand, und Folge 16 deckt Kapitel 10 & 11 — genau die beiden
+   frisch freigeschalteten.** Die Regelauswertung gehört nach E.1 ohnehin in eine
+   echte Sitzung. Der Abstand wächst weiter: am 02.08. war es eine Folge, am
+   05.08. zwei, heute drei.
+4. **Die acht offenen Surennamen wären in einer halben Stunde zu belegen** —
+   unverändert gegenüber dem 05.08. Es braucht **eine** Entscheidung von Elias,
+   welche Ausgabe als Maßstab gilt, danach trägt das Skript den Rest. Solange
+   acht bekannte Befunde mitlaufen, geht ein neunter, echter leicht darin unter.
+5. **Verwechslungs-Duelle: das Argument ist heute am stärksten von allen drei
+   Läufen.** أَهْمَلَ und مُهْمِلٌ, dieselbe Wurzel ه‑م‑ل, stehen unverändert ganz
+   unten — und Elias hat am 10.08. nachweislich eine Runde bayna-yadayk-2 geübt,
+   **ohne dass die beiden dabei waren**. Sie sind nicht vergessen, sie werden
+   umgangen. Entscheidung für Elias, keine Routinen-Änderung.
