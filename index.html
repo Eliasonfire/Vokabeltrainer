@@ -2451,7 +2451,31 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
   #app{max-width:100%;flex-direction:row;}
   .topbar{position:absolute;top:0;left:0;right:0;max-width:var(--inhalt-max);margin:0 auto;}
   main{max-width:var(--inhalt-max);margin:0 auto;width:100%;padding-top:88px;}
-  .bottombar{max-width:var(--inhalt-max);left:50%;transform:translateX(-50%);border-radius:var(--r-5) var(--r-5) 0 0;bottom:0;}
+
+  /* ⚠️ Am 15.08.2026 neu gefasst, nachdem Elias am Tablet-Bild sagte: "das ist
+     nicht mal eine leiste unten, bei beiden". Er hatte recht, und zwar
+     buchstaeblich - gemessen war der Hintergrund der Leiste rgb(0,0,0) und
+     dahinter ebenfalls rgb(0,0,0), Schatten none. Das Einzige, was sie vom
+     Rest trennte, war eine 1px-Linie. Am Handy faellt das nicht auf, weil die
+     Leiste dort ueber die volle Breite am Bildschirmrand klebt; auf dem Tablet
+     schwebte sie mittig im Schwarzen und war schlicht unsichtbar.
+
+     Frueher stand hier `left:50%` bei `right:0` aus der Grundregel - die
+     Breite war damit "von der Mitte bis zum rechten Rand", also immer die
+     halbe Fensterbreite (bei 1100px: 550) und nie die Inhaltsbreite.
+     Jetzt: volle Breite am unteren Rand, wie es eine Leiste tut. */
+  .bottombar{
+    left:0;right:0;bottom:0;max-width:none;transform:none;
+    border-radius:0;
+    background:var(--surface-1);
+    border-top:1px solid var(--border-strong);
+    justify-content:center;
+  }
+  /* .nav-btn hat `flex:1` - ueber die volle Fensterbreite wuerde das die fuenf
+     Knoepfe bis in die Ecken ziehen. Feste Breite plus zentrierte Leiste haelt
+     sie in Daumennaehe beisammen. */
+  .nav-btn{flex:0 0 auto;min-width:104px;font-size:.72rem;}
+  .nav-btn .nav-icon{font-size:1.5rem;}
 }
 
 /* Ab hier echtes Tablet. 1024px statt der frueheren 1000, damit die Grenze auf
@@ -2470,6 +2494,14 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
   /* Drei Kacheln nebeneinander statt zwei - bei 860px Inhaltsbreite sind zwei
      Kacheln so breit, dass Titel und Untertitel verloren darin schwimmen. */
   .home-grid{grid-template-columns:repeat(3,1fr);}
+
+  /* ⚠️ .nav-btn und .nav-icon haengen an FESTEN rem-Werten (.62rem / 1.3rem),
+     nicht an --fs-*. Die Token-Anhebung weiter oben erreicht sie deshalb
+     nicht - gemessen blieb die Beschriftung bei 9,92px, auch auf dem Tablet.
+     Wer hier eine Groesse aendert, muss beide Zeilen anfassen; ueber die
+     Variablen geht es nicht. */
+  .nav-btn{min-width:124px;font-size:.82rem;}
+  .nav-btn .nav-icon{font-size:1.7rem;}
 }
 </style>
 </head>
