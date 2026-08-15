@@ -183,7 +183,42 @@ function einhaengen(liste){
     });
     if (hatErgaenzt) ergaenzt++;
   });
-  return { neu, ergaenzt, verworfen };
+  const eselsbruecken = eselsbrueckenNachtragen(liste);
+  return { neu, ergaenzt, verworfen, eselsbruecken };
+}
+
+/* ---------- Eselsbruecken fuer die Buchvokabeln nachtragen ----------
+
+   Die 171 Lernwoerter aus vocab-data.js tragen ihr `mnemo` direkt am Eintrag.
+   Fuer die Buchvokabeln geht das nicht: data/vokabeln-*.js wird von
+   hole-vokabeln.mjs neu erzeugt (alles Handgeschriebene waere beim naechsten
+   Abzug weg), und vocab-data.js scheidet aus, weil LERNBESTAND_IDS
+   (js/kern.js) daran die Kapitelfreischaltung haengt - 140 neue Eintraege
+   dort wuerden als "kennt er schon" gelten.
+
+   Deshalb liegen sie getrennt in data/eselsbruecken.js und werden hier
+   angewandt, gleich nachdem ein Buch eingehaengt wurde.
+
+   ⚠️ NUR wo noch keine steht. Dieselbe Regel wie oben in einhaengen():
+   Vorhandenes gewinnt. Sonst koennte eine Buch-Eselsbruecke die handverlesene
+   aus vocab-data.js ueberschreiben - und zwar unbemerkt, weil beide Felder
+   gleich heissen und gleich aussehen.
+
+   ⚠️ Die Karte wird NACH dem Einhaengen gebaut, nicht davor: die frisch per
+   VOCAB_DATA.push() dazugekommenen Woerter sollen ihre Eselsbruecke ja auch
+   bekommen. Mit einer vorher gebauten Karte waeren genau die leer ausgegangen -
+   also gerade die 140, um die es geht. */
+function eselsbrueckenNachtragen(liste){
+  if (typeof BUCH_ESELSBRUECKEN === 'undefined') return 0;
+  const nachId = new Map(VOCAB_DATA.map(w=>[String(w.id), w]));
+  let n = 0;
+  liste.forEach(roh=>{
+    const w = nachId.get(String(roh.id));
+    if (!w || w.mnemo) return;
+    const text = BUCH_ESELSBRUECKEN[String(roh.id)];
+    if (text){ w.mnemo = text; n++; }
+  });
+  return n;
 }
 
 /* Ein Buch in die Auswahl aufnehmen oder herausnehmen. Das ist der Weg, den

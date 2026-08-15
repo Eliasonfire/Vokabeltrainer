@@ -3396,6 +3396,10 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 <!-- Reine Daten, keine Logik (E.7). Muessen vor der App-Logik stehen. -->
 <script src="vocab-data.js"></script>
 <script src="data/buecher.js"></script>
+<!-- Eselsbruecken fuer die Buchvokabeln. Klein (nur Text, keine Vokabeln), und
+     bewusst NICHT nachgeladen: sie werden gebraucht, sobald das erste Buch
+     einhaengt - und das passiert schon beim Start. -->
+<script src="data/eselsbruecken.js"></script>
 <script src="surah-data.js"></script>
 <!-- Seitengrenzen des Muṣḥaf, erzeugt von werkzeuge/seiten-holen.mjs und dort
      gegen surah-data.js geprüft (114/114 Verszahlen, 604 Seiten lückenlos). -->
