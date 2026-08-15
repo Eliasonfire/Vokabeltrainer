@@ -31,9 +31,13 @@
    bezahltem arabicroots-Zugang. Es ist keine Vokabelliste: ohne die Buchdatei
    danebengelegt sind das Zahlen und deutscher Fliesstext.
 
-   📌 Sollte Elias das anders sehen, ist die Aenderung klein: Zeile
-   `data/eselsbruecken.js` in die .gitignore, Datei bleibt lokal und faehrt bei
-   `veroeffentlichen.mjs` trotzdem mit. Der Punkt liegt ihm zur Entscheidung vor.
+   ✅ ENTSCHIEDEN am 15.08.2026. Elias auf die Frage, ob die Datei ins
+   oeffentliche Repo darf: "ja darf". Die .gitignore bleibt unveraendert.
+
+   ⭐ Damit ist die Trennlinie bestaetigt und gilt allgemein fuer dieses Repo:
+   selbst geschriebene, kuratierte Inhalte werden committet - Auszuege aus
+   Elias' bezahltem arabicroots-Zugang nicht. Genau so steht es schon in der
+   .gitignore bei grammar-data.js.
 
    ---------------------------------------------------------------------------
    WIE DIE TEXTE GEBAUT SIND (Stil bestaetigt von Elias am 15.08.2026 zum
