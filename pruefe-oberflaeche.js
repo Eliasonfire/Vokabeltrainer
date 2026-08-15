@@ -36,7 +36,16 @@
      und laedt Buecher nach, aber er darf keinen Fortschritt veraendern. Was
      er doch anfasst (aktives Buch, Kapitelauswahl), wird am Ende
      zurueckgesetzt. */
-  const vorher = { buch: (typeof aktivesBuch==='function') ? aktivesBuch() : null,
+  /* ⚠️ Am 15.08.2026 nachgezogen. Vorher stand hier nur `buch` (ein einziger
+     Slug) und `kapitel` aus SETTINGS.selectedChapters - beides aus dem alten
+     Modell mit GENAU EINEM aktiven Buch. Seit der Mehrfachauswahl fuehrt
+     SETTINGS.buecher eine Karte { slug: [kapitel] }, und selectedChapters
+     steuert nichts mehr. Die Wiederherstellung am Ende griff damit ins Leere:
+     der Lauf liess ALLE acht Buecher ausgewaehlt zurueck und meldete trotzdem,
+     er habe zurueckgesetzt. Wer das in seiner echten App laufen liess, hatte
+     danach eine andere Buchauswahl als vorher - ohne Hinweis. */
+  const vorher = { buecher: JSON.parse(JSON.stringify(SETTINGS.buecher || {})),
+                   eigene: !!SETTINGS.eigeneGewaehlt,
                    kapitel: (SETTINGS.selectedChapters || []).slice(),
                    fortschritt: localStorage.getItem('vt_progress'),
                    /* Auch die laufende Lernrunde sichern: die Stufenpruefung
@@ -114,6 +123,15 @@
   if (typeof BUECHER !== 'undefined' && typeof setzeBuch === 'function'){
     for (const b of BUECHER){
       if (BUCH_FEHLT.has(b.slug)) { warn(`Buch ${b.slug}`, 'Datei nicht verfuegbar, uebersprungen'); continue; }
+      /* ⚠️ Erst leeren, dann setzen. setzeBuch() FUEGT HINZU, seit es mehrere
+         Buecher gleichzeitig geben kann - es schaltet nicht mehr um. Ohne das
+         Leeren summiert die Schleife alle acht Buecher auf, und ab dem zweiten
+         Durchgang meldet jede Zeile "4446 Vokabeln, erwartet 311". Genau so
+         standen hier am 15.08.2026 acht Fehler, die keine waren: der Pruefer
+         hatte die Umstellung auf Mehrfachauswahl nicht mitbekommen und pruefte
+         seitdem nicht mehr, was er behauptet. */
+      SETTINGS.buecher = {};
+      SETTINGS.eigeneGewaehlt = false;
       const t0 = performance.now();
       await setzeBuch(b.slug);
       const dauer = Math.round(performance.now() - t0);
@@ -217,9 +235,16 @@
   }
 
   /* ---- Zustand zuruecksetzen ---- */
-  if (vorher.buch) await setzeBuch(vorher.buch, true);
+  /* ⚠️ Die Karte direkt zuruecksetzen, NICHT ueber setzeBuch(): setzeBuch fuegt
+     hinzu und loescht bewusst nichts (der Start laeuft damit ueber jedes
+     gemerkte Buch). Wiederherstellen heisst hier aber "genau der Zustand von
+     vorher", einschliesslich der Buecher, die NICHT gewaehlt waren. */
+  SETTINGS.buecher = JSON.parse(JSON.stringify(vorher.buecher));
+  SETTINGS.eigeneGewaehlt = vorher.eigene;
   SETTINGS.selectedChapters = vorher.kapitel;
   saveSettings();
+  if (typeof renderBuchChips === 'function') renderBuchChips();
+  if (typeof renderHome === 'function') renderHome();
   if (vorher.fortschritt !== localStorage.getItem('vt_progress')){
     localStorage.setItem('vt_progress', vorher.fortschritt);
     /* Und die Kopie im Speicher gleich mit. Sie allein zurueckzuschreiben
