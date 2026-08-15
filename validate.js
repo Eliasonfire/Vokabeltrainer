@@ -276,8 +276,12 @@ if (!Array.isArray(GRAMMAR_RULES)){
       /* Leergebliebene Eintraege stammen aus dem Markierungs-Audit vom 28.07.26:
          wurden ALLE Markierungen eines Satzes entfernt, blieb der Schluessel mit
          leerem Array zurueck. Schadet nichts, laesst aber jede Zaehlung ueber
-         Object.keys(SENTENCE_TAGS) zu hoch ausfallen - 169 "markierte Saetze",
-         von denen 3 keine einzige Markierung haben. */
+         Object.keys(SENTENCE_TAGS) zu hoch ausfallen.
+
+         ✅ Am 15.08.2026 aufgeraeumt: die letzten zwei (45878, 45883) sind
+         entfernt, die Warnung feuert seitdem nicht mehr. Sie bleibt trotzdem
+         stehen - der naechste Audit erzeugt dieselben Reste wieder, und dann
+         soll es auffallen statt still in der Zaehlung zu verschwinden. */
       if (!tags.length){ leer.push(vocabId); return; }
       tags.forEach((t, j) => {
         tagCount++;

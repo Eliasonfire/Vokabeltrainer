@@ -601,7 +601,31 @@ const SENTENCE_TAGS = {
   /* Key = vocab-data.js `id` (stabiler Join-Key, NICHT der Satztext).
      Erzeugt aus den Formen, die im Satz tatsaechlich vorkommen - jede Markierung
      wurde gegen den Satztext geprueft. Hoechstens 3 je Satz, ohne Ueberlappung,
-     damit ein Satz lesbar bleibt. */
+     damit ein Satz lesbar bleibt.
+
+     ⛔ EIN SATZ OHNE MARKIERUNG BEKOMMT KEINEN SCHLUESSEL - auch kein leeres
+     Array. Das ist keine Formsache:
+
+     Beim Markierungs-Audit am 28.07.2026 wurden 31 falsche Markierungen
+     entfernt. Wo ALLE Markierungen eines Satzes wegfielen, blieb der Schluessel
+     mit `[]` zurueck. Funktional harmlos - jeder Aufrufer sichert mit
+     `tags && tags.length` oder `|| []` ab. Aber jede Zaehlung ueber
+     Object.keys(SENTENCE_TAGS) faellt dadurch zu hoch aus.
+
+     Gemessen am 15.08.2026, vorher gegen nachher:
+       vorher   173 Schluessel, davon 2 leer, 342 Markierungen
+       nachher  171 Schluessel, davon 0 leer, 342 Markierungen
+
+     Wer also ueber Object.keys() zaehlte, bekam 173 "markierte Saetze" statt
+     171. validate.js zog die leeren bereits ab und meldete richtig - aber
+     pruefe-markierungen.js und jedes kuenftige Skript taten es nicht. Genau so
+     eine Zahl wird spaeter zitiert und niemand rechnet sie nach.
+
+     Entfernt wurden 45878 عَرَبِيَّةٌ und 45883 إِنْجِلِيزِيَّةٌ.
+
+     ⚠️ Das heisst NICHT "zu diesen Saetzen passt keine Regel". Es heisst nur:
+     hier ist keine belegt. Neue Markierungen kommen nur mit Beleg dazu (E.1),
+     und die Regeln selbst gibt Elias frei. */
   "45751": [
     { ruleId: "nat-vier-bedingungen-01", matchText: "بَيْتٌ جَمِيلٌ" },
     { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" }
@@ -1125,12 +1149,8 @@ const SENTENCE_TAGS = {
   "45877": [
     { ruleId: "schams-qamar-merkhilfe-01", matchText: "السَّمَاءِ." }
   ],
-  "45878": [
-  ],
   "45881": [
     { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" }
-  ],
-  "45883": [
   ],
   "45886": [
     { ruleId: "mubtada-khabar-01", matchText: "الْقَاهِرَةُ" }
