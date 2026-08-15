@@ -48,7 +48,28 @@
   /* --- Text --- */
   --text:#f4f4f5;
   --text-dim:#a1a1a8;
-  --text-faint:#66666e;
+  /* ⭐ Am 15.08.2026 von #66666e auf #82828a angehoben. Der alte Wert bestand
+     als einziges Textkuerzel den WCAG-AA-Kontrast NIRGENDS:
+
+       gegen              alt    neu
+       --bg      #000000  3.69   5.51
+       --surface-1 #0b0b0c 3.46  5.16
+       --surface-2 #131315 3.26  4.87
+       --surface-3 #1b1b1e 3.02  4.51     <- der eigentliche Engpass
+
+     ⚠️ Die Messung vom 07.08. rechnete nur gegen #000 und war damit zu milde.
+     Bei heller Schrift auf dunklem Grund sinkt der Kontrast, je HELLER der
+     Grund wird - der schwerste Fall ist also die hellste Flaeche, nicht die
+     dunkelste. Im laufenden Browser nachgesehen: 23 Elemente tragen diese
+     Farbe, verteilt auf vier Flaechen, alle unter 13 px. Damit gilt 4,5;
+     die Erleichterung auf 3,0 greift erst ab 18,66 px fett.
+
+     Der Blaustich (B = R + 8) ist absichtlich mitgewandert - er gehoert zum
+     Farbsystem, und ihn beim Reparieren zu verlieren waere eine zweite,
+     ungewollte Aenderung. Der Abstand zu --text-dim bleibt deutlich
+     (4,51 gegen 6,69 auf --surface-3), die Abstufung traegt also weiter.
+     Nachrechnen: scratchpad/kontrast.mjs */
+  --text-faint:#82828a;
 
   /* --- Semantisch --- */
   --green:#2ee6a6;
