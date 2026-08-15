@@ -2,6 +2,8 @@
 const VOCAB_DATA = [
  {
   "id": "45751",
+
+  "mnemo": "بَيْتُ اللهِ heißt „Haus Allahs\" — die كَعْبَةٌ, die du auch in deinen Vokabeln hast. Wer بَيْت als „Haus Allahs\" abspeichert, hat das Wort und einen Begriff aus dem Glauben in einem.",
   "ar": "بَيْتٌ",
   "de": "Haus",
   /* Elias am 04.08.2026: „Vers (Poesie)" sei falsch. Es ist nicht falsch — die
@@ -37,6 +39,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45752",
+
+  "mnemo": "Wurzel س ج د — dieselbe wie im سُجُود, der Niederwerfung. Die مَسْجِد ist der ORT, an dem man sich niederwirft. Das مَـ am Anfang macht aus einer Handlung einen Ort: مَكْتَبٌ (Ort des Schreibens), مَدْرَسَةٌ (Ort des Lernens) — beide hast du schon.",
   "ar": "مَسْجِدٌ",
   "de": "Moschee",
   "type": "noun",
@@ -56,6 +60,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45753",
+
+  "mnemo": "Klanghilfe: „bāb\" ist ein Lallwort wie „Baba\" — zwei gleiche Lippenlaute, leicht zu behalten. Nur der Klang, über die Herkunft wird nichts behauptet. Der Plural أَبْوَابٌ klingt wie „ab-wāb\": viele Türen zum Abgehen.",
   "ar": "بَابٌ",
   "de": "Tür",
   "type": "noun",
@@ -81,6 +87,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45754",
+
+  "mnemo": "⭐ Drei deiner Wörter, eine Wurzel ك ت ب (schreiben): كِتَابٌ (Buch), مَكْتَبٌ (Schreibtisch/Büro), مَكْتَبَةٌ (Bibliothek). Zusammen lernen — drei zum Preis von einem.",
   "ar": "كِتَابٌ",
   "de": "Buch",
   "type": "noun",
@@ -106,6 +114,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45755",
+
+  "mnemo": "Der قَلَمٌ schreibt — und Sure 68 heißt الْقَلَم, „der Stift\". Die Wurzel ق ل م steckt auch im Beschneiden/Zuschneiden: ein Rohrstift wurde zugeschnitten.",
   "ar": "قَلَمٌ",
   "de": "Stift",
   "type": "noun",
@@ -131,6 +141,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45756",
+
+  "mnemo": "Werkzeug-مِـ wie مِكْوَاةٌ (Bügeleisen), مِرْوَحَةٌ (Ventilator), مِلْعَقَةٌ (Löffel) — alle hast du. Wurzel ف ت ح = öffnen: das Ding zum Öffnen.",
   "ar": "مِفْتَاحٌ",
   "de": "Schlüssel",
   "type": "noun",
@@ -150,6 +162,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45757",
+
+  "mnemo": "Wurzel ك ت ب wie كِتَابٌ (Buch) — nur mit مَـ davor, also der ORT des Schreibens. Deshalb heißt es Schreibtisch UND Büro UND Amt: alles Orte, an denen geschrieben wird.",
   "ar": "مَكْتَبٌ",
   "de": "Schreibtisch / Büro / Amt",
   "type": "noun",
@@ -169,6 +183,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45758",
+
+  "mnemo": "Wurzel س ر ر mit doppeltem ر. Im Koran stehen die Betten des Paradieses genau mit diesem Wort: عَلَىٰ سُرُرٍ مُتَقَابِلِينَ — „auf Liegen, einander gegenüber\" (Sure 15:47). Der Plural أَسِرَّةٌ ist unregelmäßig: sprich ihn laut, a-si-rra.",
   "ar": "سَرِيرٌ",
   "de": "Bett",
   "type": "noun",
@@ -188,6 +204,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45759",
+
+  "mnemo": "⭐ آيَةُ الْكُرْسِيِّ, der Thronvers (2:255), trägt genau dieses Wort. Ein كُرْسِيّ ist etwas zum Sitzen — Stuhl wie Thron.",
   "ar": "كُرْسِيٌّ",
   "de": "Stuhl",
   "type": "noun",
@@ -207,6 +225,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45760",
+
+  "mnemo": "Wurzel ن ج م. Die نُجُوم stehen im Koran, Sure 53 heißt النَّجْم, „der Stern\". Klanghilfe: „nadschm\" — nachts am Himmel. Nur der Klang.",
   "ar": "نَجْمٌ",
   "de": "Stern",
   "type": "noun",
@@ -232,6 +252,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45761",
+
+  "mnemo": "Wurzel ط ب ب (Heilkunde). ⚠️ Verwechslungsgefahr: طَبِيبٌ (Arzt) hat ط ب ب, aber مَطْبَخٌ (Küche) hat ط ب خ — mit خ am Ende. Arzt heilt, Küche kocht. Ein Buchstabe entscheidet.",
   "ar": "طَبِيبٌ",
   "de": "Arzt",
   "type": "noun",
@@ -251,6 +273,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45762",
+
+  "mnemo": "Wurzel و ل د = gebären. Ein وَلَدٌ ist ein Geborener. Im Koran: لَمْ يَلِدْ وَلَمْ يُولَدْ — „Er zeugt nicht und wurde nicht gezeugt\" (Sure 112:3), dieselbe Wurzel. Die kennst du aus dem Gebet.",
   "ar": "وَلَدٌ",
   "de": "Junge",
   "type": "noun",
@@ -270,6 +294,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45763",
+
+  "mnemo": "Wurzel ط ل ب = suchen, verlangen. Ein طَالِبٌ ist wörtlich ein Suchender — der Student sucht Wissen. Das Muster فَاعِل macht den Handelnden: جَالِسٌ (sitzend), وَاقِفٌ (stehend), تَاجِرٌ (Händler) — alle in deinen Vokabeln.",
   "ar": "طَالِبٌ",
   "de": "Student",
   "type": "noun",
@@ -289,6 +315,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45764",
+
+  "mnemo": "⚠️ Verwechslungsfall: رَجُلٌ (Mann) und رِجْلٌ (Bein) haben dieselben Buchstaben ر ج ل — nur die Vokale trennen sie. raDSCHul mit u, riDSCHl kurz. Immer laut sprechen.",
   "ar": "رَجُلٌ",
   "de": "Mann",
   "type": "noun",
@@ -314,6 +342,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45765",
+
+  "mnemo": "Muster فَاعِل, der Handelnde — wie طَالِبٌ (Student) und جَالِسٌ (sitzend). Wurzel ت ج ر = Handel; im Koran steht تِجَارَة für Handelsware. Der تَاجِر ist der, der Handel treibt.",
   "ar": "تَاجِرٌ",
   "de": "Händler",
   "type": "noun",
@@ -333,6 +363,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45766",
+
+  "mnemo": "Klanghilfe: „kalb\" klingt fast wie „Kalb\" — aber es ist ein HUND, kein Kalb. Genau dieser Stolperer macht es merkbar: Achtung, kein Kalb, ein Hund! Nur der Klang, keine Herkunft. (Die Kuh heißt بَقَرَةٌ, auch in deinen Vokabeln.)",
   "ar": "كَلْبٌ",
   "de": "Hund",
   "type": "noun",
@@ -352,6 +384,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45767",
+
+  "mnemo": "Klanghilfe: „qiṭṭ\" — kurz und schnippisch wie ein Katzenlaut. Fast alle Sprachen haben für die Katze etwas mit K/Q-Laut. Nur als Klanghaken benutzen.",
   "ar": "قِطٌّ",
   "de": "Katze",
   "type": "noun",
@@ -371,6 +405,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45768",
+
+  "mnemo": "Wurzel ح م ر — dieselben Buchstaben wie in أَحْمَر (rot). ⚠️ Nicht verwechseln: حِمَارٌ (Esel) und حِصَانٌ (Pferd) fangen beide mit حِـ an. Merkhilfe: Esel hat das M wie „Maultier\", Pferd das ص wie in „Sattel\".",
   "ar": "حِمَارٌ",
   "de": "Esel",
   "type": "noun",
@@ -390,6 +426,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45769",
+
+  "mnemo": "Wurzel ح ص ن = befestigen, schützen (ein حِصْن ist eine Festung). Das Pferd war das Schutztier des Reiters. ⚠️ Gegen حِمَارٌ (Esel) abgrenzen: beide beginnen mit حِـ.",
   "ar": "حِصَانٌ",
   "de": "Pferd",
   "type": "noun",
@@ -409,6 +447,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45770",
+
+  "mnemo": "⭐ Zwei deiner Wörter, eine Wurzel ج م ل: جَمَلٌ (Kamel) und جَمِيلٌ (schön). Merksatz zum Schmunzeln: Für den Beduinen war das Kamel das schönste Tier. Ob das sprachlich zusammenhängt, wird hier nicht behauptet — es ist ein Merkhaken, und ein guter.",
   "ar": "جَمَلٌ",
   "de": "Kamel",
   "type": "noun",
@@ -428,6 +468,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45771",
+
+  "mnemo": "Klanghilfe: „dīk\" — kurz und laut wie ein Hahnenschrei am Morgen. Nur der Klang. Merke ihn zusammen mit دَجَاجَةٌ (Henne), die du auch hast: دِيكٌ ist der Hahn, دَجَاجَةٌ die Henne.",
   "ar": "دِيكٌ",
   "de": "Hahn",
   "type": "noun",
@@ -447,6 +489,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45772",
+
+  "mnemo": "Muster مُفَعِّل, der aktiv Handelnde — wie مُهَنْدِسٌ (Ingenieur) in deinen Vokabeln. Wurzel د ر س = lernen. Der مُدَرِّس ist der, der lernen LÄSST, also lehrt. Dazu passt مَدْرَسَةٌ (Schule), der Ort des Lernens — auch bei dir.",
   "ar": "مُدَرِّسٌ",
   "de": "Lehrer",
   "type": "noun",
@@ -466,6 +510,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45773",
+
+  "mnemo": "Werkzeug-مِـ wie مِفْتَاحٌ (Schlüssel), مِكْوَاةٌ (Bügeleisen) und مِلْعَقَةٌ (Löffel) — alle drei hast du. Das Tuch ist auch ein Ding zum Benutzen, kein Ort und kein Handelnder. Wenn du مِـ am Wortanfang siehst, frag zuerst: Ist das ein Gerät?",
   "ar": "مِنْدِيلٌ",
   "de": "Tuch",
   "type": "noun",
@@ -485,6 +531,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45774",
+
+  "mnemo": "نَعَمْ (ja) und لَا (nein) NUR als Paar lernen, nie einzeln. Klanghilfe: „na'am\" hat ein weiches M am Ende wie ein Nicken; لَا ist kurz und schneidet ab.",
   "ar": "نَعَمْ",
   "de": "ja",
   "type": "particle",
@@ -510,6 +558,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45775",
+
+  "mnemo": "لَا ist das kürzeste Nein — ein Laut, ein Strich. Du kennst es aus لَا إِلَٰهَ إِلَّا اللهُ. Immer im Paar mit نَعَمْ (ja) lernen.",
   "ar": "لَا",
   "de": "nein",
   "type": "particle",
@@ -529,6 +579,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45776",
+
+  "mnemo": "أَ hängt sich VORNE an und macht aus einer Aussage eine Frage: أَهَذَا بَيْتٌ؟ Ein Buchstabe kippt den Satz. Gegen مَا (was) abgrenzen: أَ fragt ja/nein, مَا nach der Sache.",
   "ar": "أَ",
   "de": "Fragepartikel",
   "type": "particle",
@@ -548,6 +600,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45777",
+
+  "mnemo": "مَا fragt nach der SACHE („was?\"), أَ fragt nach ja/nein. Beide hast du — lerne sie als Gegensatzpaar, dann verwechselst du sie nicht.",
   "ar": "مَا",
   "de": "was",
   "type": "particle",
@@ -567,6 +621,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45778",
+
+  "mnemo": "وَ ist das kürzeste Wort deiner Liste und das häufigste im Koran. Es wird am folgenden Wort festgeschrieben, nie getrennt: بَيْتٌ وَقَلَمٌ. Merke: وَ klebt.",
   "ar": "وَ",
   "de": "und",
   "type": "particle",
@@ -586,6 +642,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45779",
+
+  "mnemo": "⭐ Gleiche Wurzel أ م م wie أُمٌّ (Mutter), das du auch hast. Ein إِمَام geht VORAN wie أَمَام (vor). Merkhilfe: Der Imam steht vorne, die Mutter ist der Ursprung — beide sind der Anfang von etwas.",
   "ar": "إِمَامٌ",
   "de": "Imam",
   "type": "noun",
@@ -611,6 +669,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45780",
+
+  "mnemo": "Wurzel ح ج ر. Du kennst الْحَجَرُ الْأَسْوَد, den Schwarzen Stein an der كَعْبَة — die hast du in deinen Vokabeln. Ein Wort, zwei Anker.",
   "ar": "حَجَرٌ",
   "de": "Stein",
   "type": "noun",
@@ -630,6 +690,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45781",
+
+  "mnemo": "Klanghilfe: „sukkar\" klingt wie Zucker — hier ist die Ähnlichkeit auffällig, aber gemerkt wird nur der Klang; über den Weg des Wortes wird nichts behauptet. Doppeltes ك sprechen: suk-kar.",
   "ar": "سُكَّرٌ",
   "de": "Zucker",
   "type": "noun",
@@ -649,6 +711,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45782",
+
+  "mnemo": "Getränkegruppe: لَبَنٌ (Milch), شَايٌ (Tee), قَهْوَةٌ (Kaffee), مَاءٌ (Wasser) — alle vier hast du. Als Gruppe lernen, dann stützen sie sich gegenseitig.",
   "ar": "لَبَنٌ",
   "de": "Milch",
   "type": "noun",
@@ -674,6 +738,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45783",
+
+  "mnemo": "Gegenpaar zu فَقِيرٌ (arm), das du auch hast — NIE einzeln lernen. Wurzel غ ن ي: الْغَنِيّ ist einer der Namen Allahs, „der Reiche, der auf niemanden Angewiesene\".",
   "ar": "غَنِيٌّ",
   "de": "reich",
   "type": "adjective",
@@ -693,6 +759,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45784",
+
+  "mnemo": "Gegenpaar zu غَنِيٌّ (reich). Wurzel ف ق ر. Die فُقَرَاء kennst du aus den acht Empfängern der Zakāh (Sure 9:60) — dort steht لِلْفُقَرَاءِ, „für die Armen\".",
   "ar": "فَقِيرٌ",
   "de": "arm",
   "type": "adjective",
@@ -712,6 +780,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45785",
+
+  "mnemo": "Gegenpaar zu قَصِيرٌ (kurz), das schon eine Eselsbrücke hat. Wurzel ط و ل: طَوِيل ist lang in Zeit UND Raum — deshalb heißt es für Menschen „groß\" und für Dinge „lang\".",
   "ar": "طَوِيلٌ",
   "de": "groß (lang)",
   "type": "adjective",
@@ -757,6 +827,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45787",
+
+  "mnemo": "Gegenpaar zu حَارٌّ (heiß). Klanghilfe: „bārid\" — wer im Kalten steht, wird ganz „barsch\". Nur der Klang. Beide immer zusammen abfragen.",
   "ar": "بَارِدٌ",
   "de": "kalt",
   "type": "adjective",
@@ -782,6 +854,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45788",
+
+  "mnemo": "Gegenpaar zu بَارِدٌ (kalt). Wurzel ح ر ر mit doppeltem ر — die Hitze verdoppelt sich. Sprich das Schadda: ḥār-r.",
   "ar": "حَارٌّ",
   "de": "heiß",
   "type": "adjective",
@@ -801,6 +875,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45789",
+
+  "mnemo": "Gegenpaar zu وَاقِفٌ (stehend). Muster فَاعِل wie طَالِبٌ und تَاجِرٌ. Wurzel ج ل س — dieselbe wie in مَجْلِس, dem Sitzungsort. Sitzen und Sitzung, ein Wortstamm.",
   "ar": "جَالِسٌ",
   "de": "sitzend",
   "type": "adjective",
@@ -820,6 +896,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45790",
+
+  "mnemo": "Gegenpaar zu جَالِسٌ (sitzend). Wurzel و ق ف — dieselbe wie in وَقْف, der Stiftung, die „stehen bleibt\". Auch die Pausenzeichen beim Koranlesen heißen وَقْف: dort bleibt man stehen.",
   "ar": "وَاقِفٌ",
   "de": "stehend",
   "type": "adjective",
@@ -839,6 +917,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45791",
+
+  "mnemo": "Gegenpaar zu قَدِيمٌ (alt). Wurzel ج د د mit doppeltem د. Klanghilfe: „dschadīd\" — was neu ist, ist „gerade da\". Nur der Klang.",
   "ar": "جَدِيدٌ",
   "de": "neu",
   "type": "adjective",
@@ -858,6 +938,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45792",
+
+  "mnemo": "Gegenpaar zu جَدِيدٌ (neu). Wurzel ق د م — dieselbe wie in قَدَم (Fuß) und تَقَدَّمَ (voranschreiten): was vorangegangen ist, ist alt.",
   "ar": "قَدِيمٌ",
   "de": "alt",
   "type": "adjective",
@@ -883,6 +965,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45793",
+
+  "mnemo": "Gegenpaar zu بَعِيدٌ (fern). Wurzel ق ر ب — dieselbe wie in قَرِيب im Koran und in أَقْرَب (näher). Merke die Wurzel, dann trägt sie viele Wörter.",
   "ar": "قَرِيبٌ",
   "de": "nah",
   "type": "adjective",
@@ -908,6 +992,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45794",
+
+  "mnemo": "Gegenpaar zu قَرِيبٌ (nah). Klanghilfe: „ba'īd\" hat ein langes ī in der Mitte — der Vokal zieht sich in die Ferne. Nur als Klanghaken.",
   "ar": "بَعِيدٌ",
   "de": "fern",
   "type": "adjective",
@@ -933,6 +1019,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45795",
+
+  "mnemo": "Gegenpaar zu وَسِخٌ (schmutzig). Wurzel ن ظ ف — نَظَافَة (Reinlichkeit) ist ein Begriff, den du im Islam oft hörst. Ein Wort, ein Wert.",
   "ar": "نَظِيفٌ",
   "de": "sauber",
   "type": "adjective",
@@ -952,6 +1040,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45796",
+
+  "mnemo": "Gegenpaar zu نَظِيفٌ (sauber). Klanghilfe: „wasich\" — der raue خ-Laut am Ende klingt selbst schon schmutzig. Nur der Klang, aber er sitzt.",
   "ar": "وَسِخٌ",
   "de": "schmutzig",
   "type": "adjective",
@@ -971,6 +1061,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45797",
+
+  "mnemo": "Gegenpaar zu كَبِيرٌ (groß). Wurzel ص غ ر. Du kennst أَصْغَر (kleiner) aus Vergleichen — dieselbe Wurzel.",
   "ar": "صَغِيرٌ",
   "de": "klein",
   "type": "adjective",
@@ -996,6 +1088,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45798",
+
+  "mnemo": "Gegenpaar zu صَغِيرٌ (klein). ⭐ Du sagst es täglich: اللهُ أَكْبَر — „Allah ist größer\". Genau diese Wurzel ك ب ر. Ein Wort, das du schon hundertmal gesprochen hast.",
   "ar": "كَبِيرٌ",
   "de": "groß",
   "type": "adjective",
@@ -1021,6 +1115,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45799",
+
+  "mnemo": "Gegenpaar zu ثَقِيلٌ (schwer). Wurzel خ ف ف mit doppeltem ف. Klanghilfe: „chafīf\" ist selbst ein leichtes, hauchiges Wort — der Klang macht die Bedeutung vor.",
   "ar": "خَفِيفٌ",
   "de": "leicht",
   "type": "adjective",
@@ -1040,6 +1136,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45800",
+
+  "mnemo": "Gegenpaar zu خَفِيفٌ (leicht). Wurzel ث ق ل — dieselbe wie in مِثْقَال (Gewichtsmaß), das im Koran vorkommt: مِثْقَالَ ذَرَّةٍ, „das Gewicht eines Stäubchens\" (Sure 99:7).",
   "ar": "ثَقِيلٌ",
   "de": "schwer",
   "type": "adjective",
@@ -1059,6 +1157,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45801",
+
+  "mnemo": "Wurzel و ر ق — ein وَرَق ist auch das Blatt am Baum. Blatt Papier, Blatt am Baum: dasselbe Bild, dasselbe Wort. Das trägt.",
   "ar": "وَرَقٌ",
   "de": "Papier",
   "type": "noun",
@@ -1078,6 +1178,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45802",
+
+  "mnemo": "مَاءٌ ist eines der kürzesten und häufigsten Wörter. Im Koran: وَجَعَلْنَا مِنَ الْمَاءِ كُلَّ شَيْءٍ حَيٍّ — „Und Wir machten aus dem Wasser alles Lebendige\" (Sure 21:30). Lerne es mit den anderen Getränken: شَايٌ, قَهْوَةٌ, لَبَنٌ.",
   "ar": "مَاءٌ",
   "de": "Wasser",
   "type": "noun",
@@ -1103,6 +1205,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45803",
+
+  "mnemo": "Klanghilfe: „tuffāḥ\" mit doppeltem ف — sprich es aus, es klingt wie das Abbeißen. Nur der Klang. Merke es mit فَاكِهَةٌ (Obst), das du auch hast: der Apfel ist eine Frucht.",
   "ar": "تُفَّاحٌ",
   "de": "Apfel",
   "type": "noun",
@@ -1122,6 +1226,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45804",
+
+  "mnemo": "Paar mit سُوقٌ (Markt), das du auch hast: دُكَّانٌ ist der EINE Laden, سُوقٌ der ganze Markt aus vielen Läden. Klein und groß zusammen lernen. Das doppelte ك sprechen: duk-kān.",
   "ar": "دُكَّانٌ",
   "de": "Geschäft",
   "type": "noun",
@@ -1141,6 +1247,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45805",
+
+  "mnemo": "⭐ Gleiche Wurzel ج م ل wie جَمَلٌ (Kamel). Merksatz: Das Kamel ist schön. Ein Merkhaken, keine Herkunftsbehauptung — aber du vergisst ihn nicht mehr. Im Hadith: إِنَّ اللهَ جَمِيلٌ يُحِبُّ الْجَمَالَ.",
   "ar": "جَمِيلٌ",
   "de": "schön",
   "type": "adjective",
@@ -1166,6 +1274,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45806",
+
+  "mnemo": "Wurzel ح ل و. Klanghilfe: „ḥulw\" steckt in „Halva\", der Süßigkeit — die kennst du vielleicht. Merke es gegen مُرّ (bitter) ab, auch wenn das noch nicht in deinen Vokabeln steht.",
   "ar": "حُلْوٌ",
   "de": "süß",
   "type": "adjective",
@@ -1185,6 +1295,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45807",
+
+  "mnemo": "⭐ Gleiche Wurzel م ر ض wie مُمَرِّضَةٌ (Krankenschwester), die du auch hast. Der مَرِيض ist der Kranke, die مُمَرِّضَة die, die den Kranken pflegt. Zwei Wörter, ein Stamm — zusammen lernen.",
   "ar": "مَرِيضٌ",
   "de": "krank",
   "type": "adjective",
@@ -1204,6 +1316,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45808",
+
+  "mnemo": "Gegenpaar zu إِلَى (nach/zu) — Herkunft gegen Ziel, immer zusammen lernen. Nach مِنْ steht das Nomen im Genitiv (اِسْمٌ مَجْرُورٌ), genau wie du es bei حَرْفُ الْجَرِّ gelernt hast: مِنَ الْبَيْتِ.",
   "ar": "مِنْ",
   "de": "von / aus",
   "type": "particle",
@@ -1223,6 +1337,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45809",
+
+  "mnemo": "Gegenpaar zu مِنْ (von/aus). Klanghilfe: إِلَى zeigt mit dem langen ā nach vorn, auf ein Ziel. Nach إِلَى steht Genitiv: إِلَى الْمَسْجِدِ, „zur Moschee\".",
   "ar": "إِلَى",
   "de": "nach / zu",
   "type": "particle",
@@ -1242,6 +1358,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45810",
+
+  "mnemo": "أَيْنَ fragt nach dem ORT — die Antwort ist dann فِي, عَلَى, تَحْتَ, هُنَا oder هُنَاكَ. Alle fünf hast du. Merke أَيْنَ als Kopf dieser kleinen Familie: eine Frage, fünf mögliche Antworten.",
   "ar": "أَيْنَ",
   "de": "wo",
   "type": "particle",
@@ -1267,6 +1385,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45811",
+
+  "mnemo": "Nach عَلَى steht immer Genitiv — dazu hast du schon die Eselsbrücke bei عَلَى طَعَامٍ. Bildhilfe: Das lange ā legt sich oben drauf wie ein Deckel. Gegenpaar: تَحْتَ (unter), auch bei dir.",
   "ar": "عَلَى",
   "de": "auf",
   "type": "particle",
@@ -1292,6 +1412,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45812",
+
+  "mnemo": "فِي ist das Innen-Wort: zwei Buchstaben, ein Bild — etwas steckt drin. Nach فِي steht Genitiv: فِي الْبَيْتِ. Gegen عَلَى (auf) abgrenzen: drin gegen drauf.",
   "ar": "فِي",
   "de": "in",
   "type": "particle",
@@ -1311,6 +1433,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45813",
+
+  "mnemo": "Länder erkennst du am Klang, hier braucht es keine Wurzel: „al-Filibbīn\" = Philippinen. Achte nur auf das doppelte ب — das ist die einzige Stelle, an der man stolpert.",
   "ar": "الْفِلِيبِّينُ",
   "de": "Philippinen",
   "type": "noun",
@@ -1330,6 +1454,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45814",
+
+  "mnemo": "„al-Yābān\" = Japan. Klanghilfe: Das J wird im Arabischen zu Y — genau wie bei يُوسُف (Josef). Diese eine Regel öffnet dir viele Namen.",
   "ar": "الْيَابَانُ",
   "de": "Japan",
   "type": "noun",
@@ -1349,6 +1475,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45815",
+
+  "mnemo": "„aṣ-Ṣīn\" = China. Kurz und nah am deutschen Klang. Merke: Der Artikel الـ wird vor ص zu aṣ-ṣ, weil ص ein Sonnenbuchstabe ist — hier hörst du diese Regel in einem Wort, das du sowieso lernst.",
   "ar": "الصِّينُ",
   "de": "China",
   "type": "noun",
@@ -1368,6 +1496,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45816",
+
+  "mnemo": "„al-Hind\" = Indien. Auch im Deutschen steckt „Hind\" in „Hindu\" und „Hindi\". Der Klang trägt fast von selbst.",
   "ar": "الْهِنْدُ",
   "de": "Indien",
   "type": "noun",
@@ -1387,6 +1517,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45817",
+
+  "mnemo": "Wurzel د ر س wie مُدَرِّسٌ (Lehrer), das du auch hast. مَـ macht den Ort: مَدْرَسَة = Ort des Lernens. Genau wie مَكْتَبٌ (Ort des Schreibens) und مَطْبَخٌ (Ort des Kochens) — die Familie der Orte.",
   "ar": "مَدْرَسَةٌ",
   "de": "Schule",
   "type": "noun",
@@ -1406,6 +1538,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45818",
+
+  "mnemo": "Klanghilfe: „sūq\" kennst du vielleicht schon aus Reiseberichten — der Suk. Merke es zusammen mit دُكَّانٌ (Geschäft): der große Markt und der kleine Laden.",
   "ar": "سُوقٌ",
   "de": "Markt",
   "type": "noun",
@@ -1425,6 +1559,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45819",
+
+  "mnemo": "Wurzel ج م ع = sammeln, versammeln. ⭐ Dieselbe Wurzel wie in الْجُمُعَة (Freitag) und جَامِع (Freitagsmoschee) — der Tag und der Ort der Versammlung. Die Universität ist der Ort, an dem sich alle Fächer versammeln.",
   "ar": "جَامِعَةٌ",
   "de": "Universität",
   "type": "noun",
@@ -1444,6 +1580,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45820",
+
+  "mnemo": "Muster مُفْعِل. Klanghilfe: „mudīr\" — er dirigiert. Nur der Klang, keine Herkunftsbehauptung. Die Wurzel د و ر hat mit Drehen/Kreisen zu tun: der Direktor ist der, um den sich alles dreht.",
   "ar": "مُدِيرٌ",
   "de": "Direktor",
   "type": "noun",
@@ -1463,6 +1601,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45821",
+
+  "mnemo": "Wurzel غ ر ف. Klanghilfe: „ghurfa\" — nur der Klang. Merke es mit den anderen Räumen, die du hast: حَمَّامٌ (Bad), مَطْبَخٌ (Küche), مِرْحَاضٌ (Toilette). Vier Räume, ein Haus (بَيْتٌ).",
   "ar": "غُرْفَةٌ",
   "de": "Zimmer",
   "type": "noun",
@@ -1482,6 +1622,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45822",
+
+  "mnemo": "Wurzel ح م م — dieselbe Wurzel steckt in „heiß baden\". Klanghilfe: der Hammam, das Dampfbad, ist auch im Deutschen bekannt. Doppeltes م sprechen: ḥam-mām.",
   "ar": "حَمَّامٌ",
   "de": "Badezimmer",
   "type": "noun",
@@ -1501,6 +1643,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45823",
+
+  "mnemo": "Ort-مَـ wie مَكْتَبٌ und مَدْرَسَةٌ. Wurzel ط ب خ = kochen. ⚠️ Nicht mit طَبِيبٌ (Arzt, ط ب ب) verwechseln — der Unterschied ist der letzte Buchstabe: خ kocht, ب heilt.",
   "ar": "مَطْبَخٌ",
   "de": "Küche",
   "type": "noun",
@@ -1520,6 +1664,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45824",
+
+  "mnemo": "⭐ Gleiche Wurzel س م و wie اِسْمٌ (Name), das du auch hast. Beide haben mit „hoch/erhaben\" zu tun. Im Koran hörst du سَمَاوَات ständig: رَبُّ السَّمَاوَاتِ وَالْأَرْضِ.",
   "ar": "سَمَاءٌ",
   "de": "Himmel",
   "type": "noun",
@@ -1545,6 +1691,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45825",
+
+  "mnemo": "Ein فَصْل ist ein Abschnitt — deshalb heißt es Klassenzimmer UND Kapitel: beides ein abgetrennter Teil. Die Wurzel ف ص ل bedeutet trennen. Ein Wort, zwei Bedeutungen, ein Bild.",
   "ar": "فَصْلٌ",
   "de": "Klassenzimmer / Kapitel",
   "type": "noun",
@@ -1564,6 +1712,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45826",
+
+  "mnemo": "Werkzeug-/Ort-مِـ wie مِفْتَاحٌ. Wurzel ر ح ض = waschen. Merke es mit den anderen Räumen: حَمَّامٌ (Bad), مَطْبَخٌ (Küche), غُرْفَةٌ (Zimmer).",
   "ar": "مِرْحَاضٌ",
   "de": "Toilette",
   "type": "noun",
@@ -1583,6 +1733,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45827",
+
+  "mnemo": "Wurzel ر س ل = senden. Ein رَسُول ist der Gesandte. Du sprichst es täglich: مُحَمَّدٌ رَسُولُ اللهِ. Der Plural رُسُل steht oft im Koran für alle Gesandten.",
   "ar": "رَسُولٌ",
   "de": "Gesandter",
   "type": "noun",
@@ -1608,6 +1760,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45828",
+
+  "mnemo": "Gegenpaar zu عَلَى (auf), das du auch hast: drunter gegen drauf. Nach تَحْتَ steht Genitiv. ⚠️ Merke dir: In deinem Unterricht zählt تَحْتَ als Nomen, nicht als Partikel — die App zeigt es anders, aber der Unterricht hat Vorrang.",
   "ar": "تَحْتَ",
   "de": "unter",
   "type": "particle",
@@ -1627,6 +1781,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45829",
+
+  "mnemo": "⚠️ عَمٌّ ist der Onkel VÄTERLICHERSEITS, خَالٌ der mütterlicherseits — beide hast du. Den Unterschied gibt es im Deutschen nicht, also bewusst lernen: „ʿamm\" kurz und hart, „chāl\" weich und lang.",
   "ar": "عَمٌّ",
   "de": "Onkel väterlicherseits",
   "type": "noun",
@@ -1646,6 +1802,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45830",
+
+  "mnemo": "Gegenpaar zu بِنْتٌ (Tochter). Wurzel ب ن ي = bauen. Merke: Kinder bauen die Familie weiter. Achte auf die Hamzat al-waṣl in اِبْنٌ — sie fällt im Satz weg.",
   "ar": "اِبْنٌ",
   "de": "Sohn",
   "type": "noun",
@@ -1671,6 +1829,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45831",
+
+  "mnemo": "Wurzel ش ر ع. Klanghilfe: dieselben Buchstaben wie in شَرِيعَة — der Weg. Eine Straße ist ein Weg, die Scharia ist der Weg. Ein Bild, zwei Wörter.",
   "ar": "شَارِعٌ",
   "de": "Straße",
   "type": "noun",
@@ -1690,6 +1850,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45832",
+
+  "mnemo": "Muster فَعَّالَة für Maschinen — genau wie ثَلَّاجَةٌ (Kühlschrank) und دَرَّاجَةٌ (Fahrrad), die du beide hast. Wurzel س ي ر = gehen, fahren. Die سَيَّارَة ist „die viel Fahrende\". ⭐ Drei Maschinen, ein Muster.",
   "ar": "سَيَّارَةٌ",
   "de": "Auto",
   "type": "noun",
@@ -1709,6 +1871,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45833",
+
+  "mnemo": "Die كَعْبَة kennst du. Die Wurzel ك ع ب hat mit „Würfel\" zu tun — daher der Name für den würfelförmigen Bau. Merke es mit بَيْتُ اللهِ zusammen, der Eselsbrücke bei بَيْتٌ.",
   "ar": "كَعْبَةٌ",
   "de": "Kaaba",
   "type": "noun",
@@ -1734,6 +1898,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45834",
+
+  "mnemo": "Gegenpaar zu هُنَاكَ (dort) — beide hast du, immer zusammen lernen. Das كَ am Ende von هُنَاكَ zeigt in die Ferne: ohne كَ hier, mit كَ dort. Ein Buchstabe macht den Abstand.",
   "ar": "هُنَا",
   "de": "hier",
   "type": "particle",
@@ -1753,6 +1919,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45835",
+
+  "mnemo": "⚠️ Gegenstück zu عَمٌّ (Onkel väterlicherseits). خَالٌ ist der Bruder der MUTTER. Wurzel خ و ل. Merkhilfe über den Klang: „chāl\" ist weich und lang — die Mutterseite. Diesen Unterschied gibt es im Deutschen nicht, also bewusst einprägen.",
   "ar": "خَالٌ",
   "de": "Onkel mütterlicherseits",
   "type": "noun",
@@ -1772,6 +1940,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45836",
+
+  "mnemo": "Gegenpaar zu هُنَا (hier). Das angehängte كَ ist der Zeigefinger in die Ferne: هُنَا hier, هُنَاكَ dort. Merke beide als ein Wortpaar, nie einzeln.",
   "ar": "هُنَاكَ",
   "de": "dort",
   "type": "particle",
@@ -1791,6 +1961,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45837",
+
+  "mnemo": "Muster مُفْعَل — das PASSIVE Partizip: etwas, das geschlossen WURDE. Wurzel غ ل ق. Gegenpaar wäre مَفْتُوح (offen) von ف ت ح, der Wurzel deines مِفْتَاحٌ (Schlüssel). Schlüssel öffnet, مُغْلَق ist zu.",
   "ar": "مُغْلَقٌ",
   "de": "geschlossen",
   "type": "adjective",
@@ -1810,6 +1982,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45838",
+
+  "mnemo": "Gegenpaar zu اِبْنٌ (Sohn). ⚠️ Achte auf das ت am Ende: بِنْتٌ endet auf تْ, nicht auf die Tā' marbūṭa ةٌ, die du sonst bei weiblichen Wörtern siehst. Das ist die Ausnahme, die man sich merken muss.",
   "ar": "بِنْتٌ",
   "de": "Tochter / Mädchen",
   "type": "noun",
@@ -1829,6 +2003,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45839",
+
+  "mnemo": "⭐ Gleiche Wurzel س م و wie سَمَاءٌ (Himmel), das du auch hast. Du sprichst es bei jedem بِسْمِ اللهِ — „im Namen Allahs\". Ein Wort, das du täglich benutzt.",
   "ar": "اِسْمٌ",
   "de": "Name",
   "type": "noun",
@@ -1854,6 +2030,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45840",
+
+  "mnemo": "Wurzel ح ق ب. Klanghilfe: „ḥaqība\" — nur der Klang, keine Herkunft. Der Plural حَقَائِبُ hat eine Hamzah in der Mitte: ḥa-qā-'ib. Den sprich dir laut vor, er ist unregelmäßig.",
   "ar": "حَقِيبَةٌ",
   "de": "Tasche / Rucksack",
   "type": "noun",
@@ -1873,6 +2051,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45841",
+
+  "mnemo": "Werkzeug-مِـ wie مِفْتَاحٌ (Schlüssel) und مِلْعَقَةٌ (Löffel), die du beide hast. Wurzel ك و ي = bügeln, brennen — das Ding zum Bügeln.",
   "ar": "مِكْوَاةٌ",
   "de": "Bügeleisen",
   "type": "noun",
@@ -1892,6 +2072,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45842",
+
+  "mnemo": "⭐ Sure 2 heißt الْبَقَرَة, „die Kuh\" — die längste Sure des Korans. Dieses Wort kennst du also schon, du hast es nur noch nicht als Vokabel gesehen.",
   "ar": "بَقَرَةٌ",
   "de": "Kuh",
   "type": "noun",
@@ -1911,6 +2093,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45843",
+
+  "mnemo": "Maschinen-Muster فَعَّالَة wie سَيَّارَةٌ (Auto) und ثَلَّاجَةٌ (Kühlschrank). Wurzel د ر ج = Stufe, Grad — das Rad mit den Gängen.",
   "ar": "دَرَّاجَةٌ",
   "de": "Fahrrad",
   "type": "noun",
@@ -1930,6 +2114,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45844",
+
+  "mnemo": "Werkzeug-مِـ wie مِفْتَاحٌ und مِكْوَاةٌ. Wurzel ل ع ق = lecken — das Ding zum Lecken. Der Plural مَلَاعِقُ ist unregelmäßig, sprich ihn laut.",
   "ar": "مِلْعَقَةٌ",
   "de": "Löffel",
   "type": "noun",
@@ -1949,6 +2135,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45845",
+
+  "mnemo": "Muster فَعَّال für Berufe. Wurzel ف ل ح = pflügen, Erfolg haben. ⭐ Du hörst sie fünfmal am Tag im Adhān: حَيَّ عَلَى الْفَلَاحِ — „auf zum Erfolg\".",
   "ar": "فَلَّاحٌ",
   "de": "Bauer",
   "type": "noun",
@@ -1968,6 +2156,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45846",
+
+  "mnemo": "Gegenpaar zu أَبٌ (Vater). Gleiche Wurzel أ م م wie إِمَامٌ (Imam), das du auch hast — beide sind ein Ursprung, an dem man sich ausrichtet.",
   "ar": "أُمٌّ",
   "de": "Mutter",
   "type": "noun",
@@ -1987,6 +2177,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45847",
+
+  "mnemo": "Gegenpaar zu أُمٌّ (Mutter). ⚠️ Merke: أَبٌ und أَخٌ (Bruder) verlängern sich beide, wenn etwas folgt — أَبُو und أَخُو. Sie verhalten sich gleich, also zusammen lernen.",
   "ar": "أَبٌ",
   "de": "Vater",
   "type": "noun",
@@ -2006,6 +2198,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45848",
+
+  "mnemo": "⭐ Maschinen-Muster فَعَّالَة wie سَيَّارَةٌ und دَرَّاجَةٌ. Die Wurzel ist ث ل ج = Schnee! Der Kühlschrank ist wörtlich „die Schneemacherin\". Bild und Wort passen zusammen.",
   "ar": "ثَلَّاجَةٌ",
   "de": "Kühlschrank",
   "type": "noun",
@@ -2025,6 +2219,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45849",
+
+  "mnemo": "Getränkegruppe: شَايٌ (Tee), قَهْوَةٌ (Kaffee), لَبَنٌ (Milch), مَاءٌ (Wasser) — alle vier hast du. Lerne sie als Gruppe, dann stützen sie sich gegenseitig.",
   "ar": "شَايٌ",
   "de": "Tee",
   "type": "noun",
@@ -2044,6 +2240,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45850",
+
+  "mnemo": "Gegenpaar zu شَرْقٌ (Osten), das schon eine Eselsbrücke hat. Wurzel غ ر ب — dieselbe wie in مَغْرِب, dem Ort/der Zeit des Sonnenuntergangs. Das Gebet kennst du.",
   "ar": "غَرْبٌ",
   "de": "Westen",
   "type": "noun",
@@ -2063,6 +2261,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45851",
+
+  "mnemo": "Klanghilfe: „qahwa\" und Kaffee klingen gleich — nur der Klang, über den Weg des Wortes wird nichts behauptet. Gehört zur Getränkegruppe mit شَايٌ und لَبَنٌ.",
   "ar": "قَهْوَةٌ",
   "de": "Kaffee",
   "type": "noun",
@@ -2082,6 +2282,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45852",
+
+  "mnemo": "Wudū'-Gruppe: أَنْفٌ (Nase), فَمٌ (Mund), يَدٌ (Hand), رِجْلٌ (Fuß), أُذُنٌ (Ohr) — alle fünf hast du, und alle fünf kommen bei der Gebetswaschung vor. Geh sie in der Reihenfolge des Wudū' durch.",
   "ar": "أَنْفٌ",
   "de": "Nase",
   "type": "noun",
@@ -2101,6 +2303,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45853",
+
+  "mnemo": "Das kürzeste Körperteil-Wort: nur ف und م. Gehört zur Wudū'-Gruppe mit أَنْفٌ, يَدٌ, رِجْلٌ, أُذُنٌ. ⚠️ Der Plural أَفْوَاهٌ sieht ganz anders aus — den extra merken.",
   "ar": "فَمٌ",
   "de": "Mund",
   "type": "noun",
@@ -2120,6 +2324,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45854",
+
+  "mnemo": "Wurzel ق د ر = Maß, Vermögen — dieselbe wie in قَدَر (Vorherbestimmung) und لَيْلَةُ الْقَدْرِ. Der Topf ist das Gefäß mit einem bestimmten Maß.",
   "ar": "قِدْرٌ",
   "de": "Kochtopf",
   "type": "noun",
@@ -2139,6 +2345,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45855",
+
+  "mnemo": "⭐ Die beste Verknüpfung deiner Liste: أُذُنٌ (Ohr) und مُؤَذِّنٌ (Gebetsrufer) haben dieselbe Wurzel أ ذ ن. Der Muezzin ruft in die Ohren. Beide Wörter hast du — nie einzeln lernen.",
   "ar": "أُذُنٌ",
   "de": "Ohr",
   "type": "noun",
@@ -2164,6 +2372,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45856",
+
+  "mnemo": "عَيْنٌ heißt Auge UND Quelle — beides Dinge, aus denen Wasser kommt. Ein Bild, zwei Bedeutungen. Gehört zur Wudū'-Gruppe.",
   "ar": "عَيْنٌ",
   "de": "Auge",
   "type": "noun",
@@ -2183,6 +2393,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45857",
+
+  "mnemo": "Kurz und häufig. ⚠️ Der Plural أَيْدٍ endet auf Tanwīn ohne sichtbaren Buchstaben — das ist die Stolperstelle, nicht das Wort selbst. Gehört zur Wudū'-Gruppe.",
   "ar": "يَدٌ",
   "de": "Hand",
   "type": "noun",
@@ -2202,6 +2414,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45858",
+
+  "mnemo": "⚠️ Dein wichtigster Verwechslungsfall: رِجْلٌ (Bein) und رَجُلٌ (Mann) haben dieselben Buchstaben ر ج ل. Nur die Vokale trennen sie — riDSCHl kurz, raDSCHul mit u. Immer laut sprechen, nie nur lesen.",
   "ar": "رِجْلٌ",
   "de": "Bein / Fuß",
   "type": "noun",
@@ -2221,6 +2435,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45859",
+
+  "mnemo": "Wurzel س ر ع — dieselbe wie in سَرِيع und أَسْرَعَ (sich beeilen). Im Koran: سَرِيعُ الْحِسَابِ, „schnell im Abrechnen\". Ein Wort, das du im Koran wiederfindest.",
   "ar": "سَرِيعٌ",
   "de": "schnell",
   "type": "adjective",
@@ -2246,6 +2462,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45860",
+
+  "mnemo": "Wurzel ن ف ذ = durchdringen. Das Fenster ist die Stelle, durch die Licht und Luft durchgehen. Der Plural نَوَافِذُ ist unregelmäßig — laut sprechen.",
   "ar": "نَافِذَةٌ",
   "de": "Fenster",
   "type": "noun",
@@ -2285,6 +2503,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45862",
+
+  "mnemo": "⭐ Die نَاقَة des Propheten Ṣāliḥ steht im Koran: نَاقَةُ اللهِ (Sure 7:73). Merke sie gegen جَمَلٌ (Kamel) ab, das du auch hast: جَمَلٌ männlich, نَاقَةٌ weiblich.",
   "ar": "نَاقَةٌ",
   "de": "Kamelstute",
   "type": "noun",
@@ -2310,6 +2530,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45863",
+
+  "mnemo": "Tiergruppe der weiblichen Formen auf ةٌ: بَطَّةٌ (Ente), دَجَاجَةٌ (Henne), بَقَرَةٌ (Kuh), نَاقَةٌ (Kamelstute) — alle vier hast du. Das ةٌ macht hier das Einzeltier aus der Art.",
   "ar": "بَطَّةٌ",
   "de": "Ente",
   "type": "noun",
@@ -2329,6 +2551,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45864",
+
+  "mnemo": "⭐ Gleiche Wurzel م ر ض wie مَرِيضٌ (krank), das du auch hast. Die مُمَرِّضَة ist die, die sich um den مَرِيض kümmert. Zwei Wörter, ein Stamm.",
   "ar": "مُمَرِّضَةٌ",
   "de": "Krankenschwester",
   "type": "noun",
@@ -2348,6 +2572,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45865",
+
+  "mnemo": "Wurzel ب ي ض = weiß. Das Ei ist das Weiße. Dieselbe Wurzel steckt in أَبْيَض (weiß) — ein Wort, das dir noch oft begegnet.",
   "ar": "بَيْضَةٌ",
   "de": "Ei",
   "type": "noun",
@@ -2367,6 +2593,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45866",
+
+  "mnemo": "⭐ Gleiche Wurzel أ ذ ن wie أُذُنٌ (Ohr). Der مُؤَذِّن ruft in die Ohren — deshalb heißt der Ruf أَذَان. Drei Wörter, eine Wurzel: Ohr, Ruf, Rufer.",
   "ar": "مُؤَذِّنٌ",
   "de": "Gebetsrufer",
   "type": "noun",
@@ -2386,6 +2614,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45867",
+
+  "mnemo": "Paar mit دِيكٌ (Hahn), das du auch hast: دِيكٌ männlich, دَجَاجَةٌ weiblich. Wurzel د ج ج mit doppeltem د — sprich es aus: da-dschā-dscha.",
   "ar": "دَجَاجَةٌ",
   "de": "Henne",
   "type": "noun",
@@ -2405,6 +2635,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45868",
+
+  "mnemo": "Ländernamen gehen über den Klang, nicht über die Wurzel: „Amrīkā\". Merke nur, dass das ر vor dem ي steht — das ist die einzige Stolperstelle.",
   "ar": "أَمْرِيكَا",
   "de": "Amerika",
   "type": "noun",
@@ -2424,6 +2656,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45869",
+
+  "mnemo": "Wurzel س ك ن = wohnen, ruhen — dieselbe wie in سَكِينَة (innere Ruhe) und مِسْكِين. Das Messer bringt zur Ruhe; nimm es als Merkhaken, nicht als Herkunftsbehauptung. Doppeltes ك: sik-kīn.",
   "ar": "سِكِّينٌ",
   "de": "Messer",
   "type": "noun",
@@ -2443,6 +2677,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45870",
+
+  "mnemo": "„Almāniyā\" = Deutschland — dein eigenes Land, das sitzt schnell. Achte auf das lange ā in der Mitte.",
   "ar": "أَلْمَانِيَا",
   "de": "Deutschland",
   "type": "noun",
@@ -2462,6 +2698,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45871",
+
+  "mnemo": "„Ingiltarā\" = England. Klanghilfe: Das englische „Eng-\" wird zu إِنْجـ. Dieselbe Anfangssilbe wie bei إِنْجِلِيزِيَّةٌ (Englisch), das du auch hast — die zwei zusammen lernen.",
   "ar": "إِنْجِلْتَرَا",
   "de": "England",
   "type": "noun",
@@ -2481,6 +2719,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45872",
+
+  "mnemo": "„al-'Irāq\" = Irak. Der Artikel الـ gehört fest dazu, wie bei الصِّينُ (China) und الْهِنْدُ (Indien). Merke: manche Länder tragen ihn, andere nicht.",
   "ar": "الْعِرَاقُ",
   "de": "Irak",
   "type": "noun",
@@ -2500,6 +2740,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45873",
+
+  "mnemo": "„Suwīsrā\" = Schweiz. Die Stolperstelle ist das و mitten im Wort — sprich es als „w\", nicht als langes u.",
   "ar": "سُوِيسْرَا",
   "de": "Schweiz",
   "type": "noun",
@@ -2519,6 +2761,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45874",
+
+  "mnemo": "⭐ Muster مُسْتَفْعَل: das سْتَـ heißt „suchen nach\". Wurzel ش ف ي = Heilung — das Krankenhaus ist der Ort, wo man Heilung SUCHT. Du kennst شِفَاء aus dem Koran (Sure 17:82).",
   "ar": "مُسْتَشْفًى",
   "de": "Krankenhaus",
   "type": "noun",
@@ -2538,6 +2782,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45875",
+
+  "mnemo": "Oberbegriff zu تُفَّاحٌ (Apfel), das du auch hast: der Apfel ist eine فَاكِهَة. Im Koran steht فَاكِهَة oft für die Früchte des Paradieses.",
   "ar": "فَاكِهَةٌ",
   "de": "Obst",
   "type": "noun",
@@ -2563,6 +2809,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45876",
+
+  "mnemo": "Wurzel ع ص ف — dieselbe wie in عَاصِفَة (Sturm). Der kleine Spatz und der Sturm teilen sich einen Stamm; nimm es als Merkhaken. Merke ihn mit طَائِرٌ (Vogel): der Spatz ist ein Vogel.",
   "ar": "عُصْفُورٌ",
   "de": "Spatz",
   "type": "noun",
@@ -2582,6 +2830,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45877",
+
+  "mnemo": "Oberbegriff zu عُصْفُورٌ (Spatz). Wurzel ط ي ر = fliegen — im Koran steht طَيْر für die Vögel, etwa bei أَصْحَابِ الْفِيل. Muster فَاعِل: der Fliegende.",
   "ar": "طَائِرٌ",
   "de": "Vogel",
   "type": "noun",
@@ -2607,6 +2857,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45878",
+
+  "mnemo": "Wurzel ع ر ب. Zusammen mit لُغَةٌ (Sprache), das du auch hast, ergibt es اللُّغَةُ الْعَرَبِيَّةُ — genau das, was du gerade lernst.",
   "ar": "عَرَبِيَّةٌ",
   "de": "Arabisch",
   "type": "noun",
@@ -2626,6 +2878,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45879",
+
+  "mnemo": "Paar mit عَرَبِيَّةٌ (Arabisch): اللُّغَةُ الْعَرَبِيَّةُ. Merke beide zusammen, dann hast du gleich eine ganze Wortverbindung statt zweier Einzelwörter.",
   "ar": "لُغَةٌ",
   "de": "Sprache",
   "type": "noun",
@@ -2645,6 +2899,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45880",
+
+  "mnemo": "Gegenpaar zu صَعْبٌ (schwierig), das du auch hast — nie einzeln lernen. Klanghilfe: „sahl\" ist selbst ein leichtes, kurzes Wort.",
   "ar": "سَهْلٌ",
   "de": "leicht",
   "type": "adjective",
@@ -2664,6 +2920,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45881",
+
+  "mnemo": "⭐ Wurzel ج ه د — dieselbe wie in جِهَاد und اِجْتِهَاد, dem Bemühen. Der مُجْتَهِد ist wörtlich der, der sich müht. Das Wort kennst du also im Kern schon.",
   "ar": "مُجْتَهِدٌ",
   "de": "fleißig",
   "type": "adjective",
@@ -2683,6 +2941,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45882",
+
+  "mnemo": "Wurzel ش ه ر — dieselbe wie in شَهْر (Monat). Merkhaken: Ramadan ist der berühmteste Monat. Muster مَفْعُول, das Passiv: bekannt gemacht.",
   "ar": "مَشْهُورٌ",
   "de": "berühmt",
   "type": "adjective",
@@ -2702,6 +2962,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45883",
+
+  "mnemo": "Gleiche Anfangssilbe wie إِنْجِلْتَرَا (England), das du auch hast — Land und Sprache zusammen lernen. Die Endung ـِيَّةٌ macht aus dem Land die Sprache, genau wie bei عَرَبِيَّةٌ.",
   "ar": "إِنْجِلِيزِيَّةٌ",
   "de": "Englisch",
   "type": "noun",
@@ -2721,6 +2983,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45884",
+
+  "mnemo": "Gegenpaar zu سَهْلٌ (leicht). Klanghilfe: „ṣa'b\" hat den harten ص-Laut — es klingt selbst schwierig. Immer als Paar abfragen.",
   "ar": "صَعْبٌ",
   "de": "schwierig",
   "type": "adjective",
@@ -2740,6 +3004,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45885",
+
+  "mnemo": "⭐ Wurzel م د ن. Du kennst الْمَدِينَة, die Stadt des Propheten — und dein Lehrbuch heißt danach. Der Plural مُدُنٌ ist kurz: mu-dun.",
   "ar": "مَدِينَةٌ",
   "de": "Stadt",
   "type": "noun",
@@ -2765,6 +3031,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45886",
+
+  "mnemo": "Wurzel ق ه ر = bezwingen — dieselbe wie in الْقَهَّار, einem der Namen Allahs. Kairo heißt wörtlich „die Bezwingerin\".",
   "ar": "الْقَاهِرَةُ",
   "de": "Kairo",
   "type": "noun",
@@ -2784,6 +3052,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45887",
+
+  "mnemo": "Paar mit الْيَوْمُ (heute), das du auch hast: derselbe Stamm, nur mit Artikel — „der Tag\" ist „heute\". Im Koran: يَوْمُ الدِّينِ, der Tag des Gerichts.",
   "ar": "يَوْمٌ",
   "de": "Tag",
   "type": "noun",
@@ -2809,6 +3079,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45888",
+
+  "mnemo": "Zerlegen hilft: لِـ (für) + مَاذَا (was) = „wofür?\" — also warum. Das لِـ kennst du schon als eigene Vokabel mit eigener Eselsbrücke.",
   "ar": "لِمَاذَا",
   "de": "warum",
   "type": "particle",
@@ -2828,6 +3100,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45889",
+
+  "mnemo": "Wurzel ك و ب. Klanghilfe: „kūb\" und Kübel/cup klingen ähnlich — nur als Klanghaken, keine Herkunftsbehauptung. Merke es mit den Getränken: شَايٌ, قَهْوَةٌ, مَاءٌ.",
   "ar": "كُوبٌ",
   "de": "Tasse / Becher / Trinkglas",
   "type": "noun",
@@ -2847,6 +3121,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45890",
+
+  "mnemo": "⭐ Dritte im Bunde der Wurzel ك ت ب: كِتَابٌ (Buch), مَكْتَبٌ (Schreibtisch/Büro), مَكْتَبَةٌ (Bibliothek). Alle drei hast du — der Ort der Bücher.",
   "ar": "مَكْتَبَةٌ",
   "de": "Bibliothek / Buchladen",
   "type": "noun",
@@ -2866,6 +3142,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45891",
+
+  "mnemo": "Merke die Schreibweise, nicht die Bedeutung: الْآنَ trägt ein Madda-Alif آ. Sprich es lang: al-ān. Gegenpaar im Alltag: الْيَوْمُ (heute), das du auch hast.",
   "ar": "الْآنَ",
   "de": "jetzt",
   "type": "particle",
@@ -2885,6 +3163,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45892",
+
+  "mnemo": "Muster مُسْتَفْعَل wie مُسْتَشْفًى (Krankenhaus), das du auch hast. Wurzel و ص ف = beschreiben — die Klinik ist der Ort, wo eine Verschreibung gemacht wird. Kleiner als das Krankenhaus.",
   "ar": "مُسْتَوْصَفٌ",
   "de": "Klinik / kleines Krankenhaus",
   "type": "noun",
@@ -2924,6 +3204,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45894",
+
+  "mnemo": "„al-Kuwait\" = Kuwait. Mit Artikel wie الْعِرَاقُ (Irak), das du auch hast — die beiden Nachbarländer tragen beide الـ.",
   "ar": "الْكُوَيْتُ",
   "de": "Kuwait",
   "type": "noun",
@@ -2943,6 +3225,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45895",
+
+  "mnemo": "Wurzel ث ن ي = zwei, zweiter — dieselbe Zahl steckt in إِثْنَانِ (zwei), das schon eine Eselsbrücke hat. Die ثَانَوِيَّة ist die ZWEITE Schulstufe nach der مَدْرَسَة.",
   "ar": "ثَانَوِيَّةٌ",
   "de": "weiterführende Schule",
   "type": "noun",
@@ -2962,6 +3246,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45896",
+
+  "mnemo": "⭐ Im Koran bittet Mūsā: وَاجْعَل لِّي وَزِيرًا مِّنْ أَهْلِي — „und gib mir einen Helfer aus meiner Familie\" (Sure 20:29). Ein وَزِير ist ein Lastenträger, der mitträgt.",
   "ar": "وَزِيرٌ",
   "de": "Minister",
   "type": "noun",
@@ -2981,6 +3267,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45897",
+
+  "mnemo": "Wurzel ح د د — dieselbe wie in حَدِيد (Eisen), dem Namen von Sure 57. Was scharf ist, ist aus Eisen. Doppeltes د: ḥād-d.",
   "ar": "حَادٌّ",
   "de": "scharf",
   "type": "adjective",
@@ -3000,6 +3288,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "45898",
+
+  "mnemo": "„Indūnīsiyā\" = Indonesien. Lang und lautgetreu — sprich es in Silben: in-dū-nī-si-yā. Merke es mit den anderen asiatischen Ländern: الْيَابَانُ, الصِّينُ, الْهِنْدُ.",
   "ar": "إِنْدُونِيسِيَا",
   "de": "Indonesien",
   "type": "noun",
@@ -3019,6 +3309,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "48402",
+
+  "mnemo": "Paar mit يَوْمٌ (Tag): derselbe Stamm mit Artikel. „Der Tag\" ist „heute\" — das ist im Deutschen genauso, wenn man „am Tage\" sagt. Merke beide zusammen.",
   "ar": "الْيَوْمُ",
   "de": "heute",
   "type": "adjective",
@@ -3275,6 +3567,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "50296",
+
+  "mnemo": "⭐ Wurzel و ح د — dieselbe wie in تَوْحِيد und أَحَد. Du sprichst sie in Sure 112: قُلْ هُوَ اللهُ أَحَدٌ. Die Eins ist die Zahl, die du im Glauben täglich sagst.",
   "ar": "وَاحِدٌ",
   "de": "eins",
   "type": "noun",
@@ -3304,6 +3598,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "50297",
+
+  "mnemo": "Klanghilfe: „thalātha\" — drei Silben für die Drei. Sprich sie beim Lernen mit den Fingern mit, dann sitzt die Reihenfolge.",
   "ar": "ثَلَاثَةٌ",
   "de": "drei",
   "type": "noun",
@@ -3326,6 +3622,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "50298",
+
+  "mnemo": "Wurzel ر ب ع — dieselbe wie in رُبْع (Viertel). Vier und Viertel gehören zusammen, im Arabischen wie im Deutschen.",
   "ar": "أَرْبَعَةٌ",
   "de": "vier",
   "type": "noun",
@@ -3348,6 +3646,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "50299",
+
+  "mnemo": "⭐ خَمْسَة — die fünf Gebete heißen الصَّلَوَاتُ الْخَمْسُ. Die Zahl kennst du also schon aus dem Glauben, du musst sie nur als Wort abrufen.",
   "ar": "خَمْسَةٌ",
   "de": "fünf",
   "type": "noun",
@@ -3370,6 +3670,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "50300",
+
+  "mnemo": "Wurzel س ت ت mit doppeltem ت. Klanghilfe: „sitta\" und „six\" klingen ähnlich — nur als Klanghaken. Sechs Glaubensartikel (أَرْكَانُ الْإِيمَان) sind auch سِتَّة.",
   "ar": "سِتَّةٌ",
   "de": "sechs",
   "type": "noun",
@@ -3392,6 +3694,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "50301",
+
+  "mnemo": "⭐ Im Koran sind es سَبْع سَمَاوَات, sieben Himmel — und سَبْعٌ مِنَ الْمَثَانِي heißt die Fātiḥa. Die Sieben begegnet dir im Glauben ständig.",
   "ar": "سَبْعَةٌ",
   "de": "sieben",
   "type": "noun",
@@ -3421,6 +3725,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "50302",
+
+  "mnemo": "Wurzel ث م ن — dieselbe wie in ثُمُن (Achtel). Klanghilfe: „thamāniya\" ist die längste der kleinen Zahlen; die lange Zahl für die große Zahl.",
   "ar": "ثَمَانِيَةٌ",
   "de": "acht",
   "type": "noun",
@@ -3443,6 +3749,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "50303",
+
+  "mnemo": "Klanghilfe: „tis'a\" — kurz vor der Zehn. Merke sie als Paar mit عَشَرَةٌ (zehn): neun und zehn kommen im Zählen immer zusammen.",
   "ar": "تِسْعَةٌ",
   "de": "neun",
   "type": "noun",
@@ -3472,6 +3780,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "50304",
+
+  "mnemo": "⭐ Wurzel ع ش ر — dieselbe wie in عَاشُورَاء, dem zehnten Tag des Muḥarram, und in عُشْر (Zehntel). Die Zehn kennst du aus dem Kalender.",
   "ar": "عَشَرَةٌ",
   "de": "zehn",
   "type": "noun",
@@ -3524,6 +3834,8 @@ const VOCAB_DATA = [
     vor, gehoeren sie belegt nachgetragen. */
  {
   "id": "madina1-l6-ach",
+
+  "mnemo": "⚠️ Gegenpaar zu أُخْتٌ (Schwester) — der einzige Unterschied im Klang ist der Vokal: aCH für den Bruder, uCHT für die Schwester. Wie أَبٌ (Vater) verlängert sich أَخٌ zu أَخُو, wenn etwas folgt.",
   "ar": "أَخٌ",
   "de": "Bruder",
   "type": "noun",
@@ -3544,6 +3856,8 @@ const VOCAB_DATA = [
  },
  {
   "id": "madina1-l6-ucht",
+
+  "mnemo": "⚠️ Gegenpaar zu أَخٌ (Bruder): أَخٌ mit Fatḥah, أُخْتٌ mit Ḍammah und ت am Ende. Wie بِنْتٌ (Tochter) endet auch أُخْتٌ auf ein echtes ت, nicht auf ةٌ — beide sind Ausnahmen, die man zusammen merkt.",
   "ar": "أُخْتٌ",
   "de": "Schwester",
   "type": "noun",
