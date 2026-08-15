@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Untere Leiste — drei Untergründe bei 1100 px</title>
+<style>
+  /* Drei echte App-Fenster nebeneinander, jedes mit einem Ansichtsfenster von
+     genau 1100 px Breite (Elias' Tablet im Hochformat). Verkleinert wird nur
+     die DARSTELLUNG per transform - die Media Queries im Rahmen rechnen
+     weiterhin mit 1100 px. Ein einfaches "Fenster schmal machen" haette die
+     Tablet-Regeln ausgeschaltet und damit das Falsche gezeigt.
+
+     ⚠️ --h bewusst niedrig: die Leiste sitzt `position:absolute; bottom:0` im
+     fixierten #app, also am UNTEREN RAND DES RAHMENS. Bei voller Hoehe faellt
+     sie aus dem Bild - und dann zeigt der Vergleich alles ausser dem, worum
+     es geht. Die Hoehe aendert an den Media Queries nichts, die haengen an
+     der Breite. */
+  :root{ --w:1100px; --h:760px; --f:.55; }
+  *{box-sizing:border-box;}
+  body{margin:0;background:#0a0a0b;color:#f4f4f5;
+       font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+       padding:14px 14px 24px;}
+  h1{font-size:1rem;margin:0 0 4px;font-weight:700;}
+  .unter{color:#a1a1aa;font-size:.8rem;margin:0 0 14px;}
+  .reihe{display:flex;gap:14px;align-items:flex-start;}
+  .fall{flex:0 0 auto;}
+  .kopf{margin:0 0 6px;font-size:.86rem;font-weight:700;}
+  .kopf small{display:block;font-weight:400;color:#a1a1aa;font-size:.74rem;margin-top:2px;}
+  .a .kopf{color:#ff4d6a;} .b .kopf{color:#f5c542;} .c .kopf{color:#2ee6a6;}
+  .rahmen{width:calc(var(--w) * var(--f));height:calc(var(--h) * var(--f));
+          overflow:hidden;border:1px solid #26262b;border-radius:8px;background:#000;}
+  iframe{width:var(--w);height:var(--h);border:0;display:block;
+         transform:scale(var(--f));transform-origin:0 0;}
+</style>
+</head>
+<body>
+<h1>Untere Navigationsleiste — drei Untergründe</h1>
+<p class="unter">Alle drei rechnen mit <strong>1100&nbsp;px</strong> Breite (Galaxy Tab S9 Ultra, Hochformat).
+Breite, Schriftgröße und Symbolgröße sind überall gleich — <strong>nur der Untergrund der Leiste unterscheidet sich</strong>.</p>
+
+<div class="reihe">
+  <div class="fall a">
+    <p class="kopf">A — wie jetzt gebaut
+      <small>schwarz, nur die Linie trennt</small></p>
+    <div class="rahmen"><iframe id="a" src="/index.html"></iframe></div>
+  </div>
+  <div class="fall b">
+    <p class="kopf">B — so hell wie die Karten
+      <small>#131315</small></p>
+    <div class="rahmen"><iframe id="b" src="/index.html"></iframe></div>
+  </div>
+  <div class="fall c">
+    <p class="kopf">C — deutlich abgesetzt
+      <small>#1b1b1e</small></p>
+    <div class="rahmen"><iframe id="c" src="/index.html"></iframe></div>
+  </div>
+</div>
+
+<script>
+/* Nur der Untergrund wird nachtraeglich gesetzt. `!important`, weil die
+   App-Regel dieselbe Eigenschaft am selben Selektor setzt und sonst gewinnt -
+   hier geht es nur um die Vorschau, in der App waere das der falsche Weg. */
+const faelle = { b:'#131315', c:'#1b1b1e' };
+for (const [id, farbe] of Object.entries(faelle)){
+  const rahmen = document.getElementById(id);
+  rahmen.addEventListener('load', () => {
+    const d = rahmen.contentDocument;
+    const s = d.createElement('style');
+    s.textContent = '@media (min-width:700px){ .bottombar{ background:' + farbe + ' !important; } }';
+    d.head.appendChild(s);
+  });
+}
+</script>
+</body>
+</html>
