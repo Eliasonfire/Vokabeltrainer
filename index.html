@@ -98,6 +98,18 @@
   --sp-5:20px; --sp-6:24px; --sp-7:32px; --sp-8:40px;
   --gutter:18px;
 
+  /* --- Breiten ---
+     ⚠️ Am 15.08.2026 eingefuehrt. Vorher stand die Inhaltsbreite als feste
+     600px an DREI Stellen (Suchleiste, zwei Sticky-Koepfe) und 420px an ZWEI
+     (Kartenstapel, Lernkarte) - alle ausserhalb der Media Queries. Wer die
+     Breite im Tablet-Block hochgesetzt hat, verschob `main`, waehrend die
+     schwebenden Leisten auf 600 stehenblieben. Kein Fehler, keine Meldung,
+     nur eine Leiste, die nicht mehr ueber ihrem Inhalt sitzt.
+     Die Werte hier sind exakt die alten, damit sich am Handy NICHTS aendert;
+     hochgesetzt wird nur in den Bloecken ab 700px ganz unten. */
+  --inhalt-max:600px;
+  --karte-max:420px;
+
   /* --- Radien --- */
   --r-1:10px; --r-2:14px; --r-3:18px; --r-4:22px; --r-5:28px; --r-full:999px;
 
@@ -598,11 +610,11 @@ main{
 .card-stage{
   padding:var(--sp-3) var(--gutter) var(--sp-5);
   display:flex;justify-content:center;position:relative;
-  width:100%;max-width:calc(420px + var(--gutter) * 2);
+  width:100%;max-width:calc(var(--karte-max) + var(--gutter) * 2);
   margin-inline:auto;
 }
 .flashcard{
-  width:100%;max-width:420px;perspective:1500px;min-height:min(62vh,460px);
+  width:100%;max-width:var(--karte-max);perspective:1500px;min-height:min(62vh,460px);
   transition:transform var(--dur-3) var(--ease-spring);
   /* pan-y, nicht none: Ohne diese Zeile darf der Browser eine waagerechte
      Fingerbewegung selbst als Scrollen deuten und schickt uns mitten in der
@@ -1058,7 +1070,7 @@ main{
   bottom:calc(78px + var(--safe-bottom));
   left:50%;transform:translateX(-50%);
   width:calc(100% - var(--gutter) * 2);
-  max-width:calc(600px - var(--gutter) * 2);
+  max-width:calc(var(--inhalt-max) - var(--gutter) * 2);
   z-index:30;
   background:var(--surface-3);border:1px solid var(--border-strong);
   border-radius:var(--r-3);padding:var(--sp-3);
@@ -1351,7 +1363,7 @@ main{
   bottom:calc(78px + var(--safe-bottom));
   left:50%;transform:translateX(-50%);
   width:calc(100% - var(--gutter) * 2);
-  max-width:calc(600px - var(--gutter) * 2);
+  max-width:calc(var(--inhalt-max) - var(--gutter) * 2);
   z-index:20;
   padding:var(--sp-3) 0;
   background:linear-gradient(to top, var(--bg) 74%, transparent);
@@ -1393,7 +1405,7 @@ main{
   bottom:calc(78px + var(--safe-bottom));
   left:50%;transform:translateX(-50%);
   width:calc(100% - var(--gutter) * 2);
-  max-width:calc(600px - var(--gutter) * 2);
+  max-width:calc(var(--inhalt-max) - var(--gutter) * 2);
   z-index:20;
   padding:var(--sp-3) 0;
   background:linear-gradient(to top, var(--bg) 74%, transparent);
@@ -2411,21 +2423,53 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 /* =====================================================================
    TABLET / DESKTOP
    ===================================================================== */
+/* ⚠️ ALLES HIER UNTEN GILT ERST AB 700px BREITE.
+   Der Handy-Zustand liegt darunter und wird davon nicht beruehrt - `min-width`
+   Regeln existieren unterhalb ihrer Grenze nicht. Elias' Frage vom 15.08.2026
+   ("wird daraus die handy ansicht nicht scheisse gemacht") ist damit strukturell
+   beantwortet, und es wurde zusaetzlich gemessen: Schnappschuss aller Tokens und
+   der Layout-Werte bei 390px, vor und nach dieser Aenderung, Unterschied null.
+
+   ⚠️ VORGESCHICHTE, damit niemand die alte Regel "repariert":
+   Bis zum 15.08. wurde die App ab 1000px ABSICHTLICH SCHMALER - `max-width:480px`
+   mit Rahmen und Schimmer, also "Handy auf dem Schreibtisch". Auf Elias' Galaxy
+   Tab S9 Ultra griff genau das: ein schmaler Streifen mit viel Schwarz daneben.
+   Er wollte es groesser. Die 480px sind deshalb weg - bewusst, nicht vergessen. */
 @media (min-width:700px){
-  #app{max-width:100%;flex-direction:row;}
-  .topbar{position:absolute;top:0;left:0;right:0;max-width:600px;margin:0 auto;}
-  main{max-width:600px;margin:0 auto;width:100%;padding-top:82px;}
-  .bottombar{max-width:600px;left:50%;transform:translateX(-50%);border-radius:var(--r-5) var(--r-5) 0 0;bottom:0;}
-}
-@media (min-width:1000px){
-  body{background:#000;}
-  #app{
-    max-width:480px;margin:0 auto;
-    border-inline:1px solid var(--border);
-    box-shadow:0 0 90px rgba(255,23,68,.07);
+  :root{
+    /* Eine halbe Stufe groesser. Die Abstaende --sp-1 und --sp-2 bleiben, wie
+       sie sind: sie sitzen in Chips und Icon-Abstaenden, wo mehr Luft die
+       Bauteile nur auseinanderzieht, ohne dass etwas lesbarer wird. */
+    --fs-xs:.75rem; --fs-sm:.84rem; --fs-md:.95rem;
+    --fs-lg:1.08rem; --fs-xl:1.35rem; --fs-2xl:1.9rem;
+    --sp-3:14px; --sp-4:18px; --sp-5:22px;
+    --sp-6:28px; --sp-7:36px; --sp-8:46px;
+    --gutter:24px;
+    --inhalt-max:680px;
+    --karte-max:480px;
   }
-  .topbar,.bottombar{max-width:480px;}
-  main{max-width:480px;}
+  #app{max-width:100%;flex-direction:row;}
+  .topbar{position:absolute;top:0;left:0;right:0;max-width:var(--inhalt-max);margin:0 auto;}
+  main{max-width:var(--inhalt-max);margin:0 auto;width:100%;padding-top:88px;}
+  .bottombar{max-width:var(--inhalt-max);left:50%;transform:translateX(-50%);border-radius:var(--r-5) var(--r-5) 0 0;bottom:0;}
+}
+
+/* Ab hier echtes Tablet. 1024px statt der frueheren 1000, damit die Grenze auf
+   die uebliche Tablet-Querformat-Breite faellt statt knapp darunter. */
+@media (min-width:1024px){
+  :root{
+    --fs-xs:.8rem; --fs-sm:.9rem; --fs-md:1.02rem;
+    --fs-lg:1.18rem; --fs-xl:1.5rem; --fs-2xl:2.1rem;
+    --sp-3:16px; --sp-4:20px; --sp-5:26px;
+    --sp-6:32px; --sp-7:42px; --sp-8:54px;
+    --gutter:32px;
+    --inhalt-max:860px;
+    --karte-max:560px;
+  }
+  main{padding-top:96px;}
+  /* Drei Kacheln nebeneinander statt zwei - bei 860px Inhaltsbreite sind zwei
+     Kacheln so breit, dass Titel und Untertitel verloren darin schwimmen. */
+  .home-grid{grid-template-columns:repeat(3,1fr);}
 }
 </style>
 </head>
