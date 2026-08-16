@@ -1404,3 +1404,229 @@ schreiben ließ.
    unten — und Elias hat am 10.08. nachweislich eine Runde bayna-yadayk-2 geübt,
    **ohne dass die beiden dabei waren**. Sie sind nicht vergessen, sie werden
    umgangen. Entscheidung für Elias, keine Routinen-Änderung.
+
+## 2026-08-16 13:00 – Wöchentliche Wartung (So-Check)
+
+Ergebnis vorweg: **ein ruhiger Lauf ohne eigenen Befund — und das erste Mal seit
+dem 02.08., dass nichts an der Routine selbst kaputt war.** Der Ausfall vom
+09.08. hat sich, wie am 12.08. vorhergesagt, von selbst geheilt: das 24-h-Fenster
+wurde geschrieben, `arabicroots-backfill-retry` hat Folge 16 am 13.08. abgeholt.
+Vokabelabzug unverändert, Vokabelpaket `UNVERAENDERT`, alle sieben Prüfskripte
+ohne neuen eigenen Befund. Am Code wurde von der Routine nichts geändert.
+
+**Vorbemerkung: zwischen dem 12.08. und heute hat Elias viel gearbeitet.**
+Dreizehn Commits am 15. und 16.08., alle interaktiv, keiner von der Routine. Der
+Reihe nach: Tablet-Layout (breiterer Inhalt und größere Schrift ab 700 px, untere
+Leiste auf volle Breite), **297 Eselsbrücken** in zwei Schritten (157 für den
+Lernbestand, danach 140 für Madina 1 in der eigenen Datei
+`data/eselsbruecken.js`, die Elias ausdrücklich fürs Repo freigegeben hat),
+`--text-faint` von `#66666e` auf `#82828a` angehoben (WCAG-AA), und zuletzt fünf
+Commits zur Typografie der Kartenrückseite. `CACHE_NAME` ist dabei von **v135 auf
+v144** gestiegen, die Modulzahl steht unverändert bei 20. Das steht hier nur,
+damit die Zahlen unten einzuordnen sind.
+
+ℹ️ **Ein Nebeneffekt davon ist in den Prüfzahlen sichtbar:** `validate.js` meldet
+nur noch **2 statt 3 Hinweise**. Der weggefallene dritte waren die beiden
+Satz-Schlüssel 45878 und 45883 mit leerem Markierungs-Array — Elias hat sie am
+15.08. entfernt (`2805266`). Ein bekannter Hinweis weniger, der seit dem 28.07.
+mitlief.
+
+**Schritt 0 – Repo aktualisieren:** `git pull --ff-only` → `Already up to date.`
+Arbeitsverzeichnis sauber (`git status --short` leer), HEAD auf `037213e`.
+
+**Zur Nachschau aus dem letzten Lauf — der Punkt mit echtem Zeitbezug ist
+erledigt.** `Automation\.state\backfill-window.txt` steht auf
+**`2026-08-13T22:08:44`**, also 12.08. 22:08 plus 24 Stunden. Der Wartungslauf vom
+12.08. ist damit sauber zu Ende gelaufen und `run-routine.ps1` hat das Fenster
+geöffnet; `arabicroots-backfill-retry` hat es genutzt und **Folge 16 noch am
+13.08. abgeholt** (Backlog-Eintrag dort). Der Ausfall vom 09.08. war ein
+**Einzelfall, kein Muster** — die am 12.08. formulierte Prüffrage ist damit
+beantwortet. Dass das Fenster inzwischen wieder zu ist, ist keine Störung,
+sondern die vorgesehene 24-h-Mechanik.
+
+⚠️ **Der zweite Vorschlag vom 12.08. bleibt davon unberührt und gilt weiter:** dass
+sich der Ausfall diesmal geheilt hat, macht die Bauart nicht besser. Ein
+Wartungslauf, der in Schritt 5 stirbt, legt weiterhin eine völlig unabhängige
+Routine für Tage still. Das ist Glück gewesen, kein Schutz.
+
+**Schritt 1 – Neue Aufzeichnungen: keine.** `get_recordings` liefert **16**
+Einträge, unverändert seit dem 09.08. Damit liegen **sieben Tage ohne neue Folge**
+hinter uns.
+
+Das ist ausdrücklich **kein Anlass zur Sorge, sondern genau der bisherige
+Höchstabstand**: 10.06.→17.06. und 26.07.→02.08. lagen ebenfalls sieben Tage
+auseinander, der übliche Takt sind drei bis vier. Der Abstand ist damit
+eingestellt, nicht überschritten. Im Backlog nachgetragen, damit der nächste Lauf
+denselben Vergleich nicht neu anstellen muss.
+
+⭐ `get_unlocked_chapters` steht unverändert auf `madina-1-chapter-1` bis **`-11`**
+— dieselbe Lage wie am 13.08. Freischaltung und Unterricht sind weiter gleichauf.
+
+**Der Rückstand steht unverändert bei drei Folgen (14, 15, 16), aber die Lage hat
+sich verbessert:** von allen dreien liegt inzwischen Rohmaterial da (Folge 16 seit
+dem 13.08.), offen ist nur noch die **Regelauswertung**. Am 12.08. fehlte von
+Folge 16 noch alles. **Es wurde kein Transkript abgerufen und keine Regel
+bestätigt.** `transcripts/` ist per `.gitignore` ausgeschlossen — kein Commit
+daraus.
+
+**Schritt 2 – Vokabelabzug (`node werkzeuge/hole-vokabeln.mjs`):** 4433 Einträge,
+**Zahl je Buch identisch mit den letzten vier Läufen**, keine einzige Abweichung:
+
+| Buch | Vokabeln | Kapitel | KB | Δ zum letzten Lauf |
+|---|---|---|---|---|
+| bayna-yadayk-1 | 231 | 17 | 90 | – |
+| bayna-yadayk-2 | 552 | 17 | 216 | – |
+| bayna-yadayk-3 | 445 | 17 | 174 | – |
+| bayna-yadayk-4 | 881 | 16 | 344 | – |
+| madina-1 | 298 | 24 | 112 | – |
+| madina-2 | 445 | 29 | 169 | – |
+| madina-3 | 1238 | 35 | 484 | – |
+| quran | 343 | 23 | 122 | – |
+
+`data/buecher.js` blieb unverändert (`git status` nach dem Lauf weiter leer) —
+nichts zu committen.
+
+**Vokabelpaket (`node werkzeuge/baue-vokabelpaket.mjs`):** 8 Bücher, 4433
+Vokabeln, 1382 KB → **`UNVERAENDERT` — dasselbe Paket wie beim letzten Lauf.**
+Kein Handlungsbedarf, Elias muss auf seinen Geräten nichts neu einlesen.
+
+**Schritt 3 – `vocab-data.js`:** von der Routine nicht angefasst. Stand laut
+`validate.js` unverändert **171 Einträge, 167 Beispielsätze, 342 Markierungen**.
+Die 11 eigenen arabicroots-Vokabeln sind alle enthalten. Quran-Belege fehlen
+weiterhin für die Kapitel 6, 7 und 8 — **nicht eigenmächtig aufgefüllt** (E.1),
+bleibt Elias' Entscheidung.
+
+**Schritt 4 – Samsung Notes:** `list_export_status` meldet alle drei Notizen mit
+Cache, eine davon als `stale` („Madina Buch 1 (Beschriftet)") — dieselbe Lage wie
+am 02.08., 05.08. und 12.08. Deshalb wie vorgeschrieben
+`node werkzeuge/export-index.mjs --pruefen`:
+
+```
+Madina Buch 1 (Beschriftet)   pageCount 142 = PDF   geaendert 2026-07-28T01:19:20Z
+Grammatik Heft Medina Buch 1  pageCount  14 = PDF   geaendert 2026-07-27T20:57:42Z
+Madina Buch 1 Vokabelheft     pageCount  17 = PDF   geaendert 2026-07-27T01:21:48Z
+=== 0 Beanstandung(en) bei 3 Eintraegen ===
+```
+
+Alle drei Zeitstempel unverändert seit dem 02.08., alle drei nur „zur Info": die
+Notiz wurde nach dem Export **angefasst**, was nichts über neuen Inhalt sagt (von
+Elias am 29.07. geklärt). Die Seitenzahlen stimmen mit den PDFs. **Der Index ist
+in Ordnung, der stille Ausfall vom 28./29.07. wiederholt sich nicht.** Ein
+Handschrift-Abgleich stand inhaltlich nicht an: keine neuen Vokabeln, keine neu
+ausgewertete Folge. Der Index wurde nicht von Hand angefasst.
+
+**Schritt 5 – Lernstand (ohne Buch-/Kapitelfilter):** `get_weak_vocabulary`
+liefert **88 Einträge** unter 50 % — dieselbe Zahl wie am 12.08.
+
+⭐ **Die gleiche Zahl verdeckt hier eine Bewegung, und beide Hälften sind
+belegbar:** ein Wort ist raus, ein anderes ist rein.
+
+- ✅ **قَصِيرٌ hat es über die 50-%-Marke geschafft.** Am 12.08. stand es bei
+  91/184 = 49,5 % und war damit das stärkste Wort der ganzen Liste; heute steht
+  es nicht mehr darin. Damit ist **aus Madina 1 nur noch ein einziges Wort in der
+  Schwachliste**: مُفَتِّشٌ (21/45 = 46,7 %, unverändert seit dem 04.08.). قَصِيرٌ
+  war über Wochen Elias' meistgeübtes Wort überhaupt — dass es jetzt oben raus
+  ist, ist der sichtbarste Lernerfolg dieses Logs.
+- 🆕 **Neu in der Liste ist سَمَحَ** („erlauben", madina-2 Kapitel 17), heute bei
+  **5/11 = 45,5 %**. Es ist nicht schlechter geworden, sondern **knapp unter die
+  Schwelle gerutscht**: vor dem heutigen Versuch stand es bei 5/10 = genau 50 %
+  und lag damit gerade eben noch außerhalb. Ein falscher Versuch hat gereicht.
+  (Hergeleitet, nicht geraten: es ist der einzige Eintrag der Liste, dessen Stand
+  ohne den heutigen Versuch nicht unter 50 % läge.)
+- 🆕 **Elias hat heute Morgen geübt, aber nur kurz.** Sieben Wörter zwischen
+  **09:47 und 09:49 UTC**, davon **zwei richtig** (نَالَ, مُكَافَأَةٌ) und fünf falsch
+  (أَدَّى, مَنَحَ, سَابَقَ, شَجَّعَ, سَمَحَ). Das ist eher ein Reinschauen als eine
+  Sitzung — zum Vergleich die Runde am 10.08. gegen 15:29 mit rund einem Dutzend
+  Wörtern.
+- ⚠️ **أَهْمَلَ und مُهْمِلٌ werden weiterhin umgangen — das ist jetzt das vierte Log
+  in Folge mit demselben Befund.** أَهْمَلَ (6/42 = 14 %) hat seit dem **28.07.**
+  keinen Versuch mehr, مُهْمِلٌ (6/28 = 21 %) seit dem **31.07.** Beide gehören zur
+  Wurzel ه‑م‑ل, beide stehen ganz unten, und die heutige Runde aus
+  bayna-yadayk-2 hat sie wieder nicht erwischt. Sie sind nicht vergessen, sie
+  kommen schlicht nicht dran.
+- **Die schwächsten fünf:** أَهْمَلَ (14 %), إِثْنَانِ (17 %, eigene Vokabel),
+  مُهْمِلٌ (21 %), أَدَّى (25 %), نَالَ (29 %).
+- **Schwerpunkt unverändert bayna-yadayk-2** (rund zwei Drittel der Liste), dann
+  bayna-yadayk-1 und madina-2.
+- **Vier eigene Vokabeln unter 50 %, unverändert:** أَلْمُهَنْدِسٌ (0/7), لَحْمٌ (0/5),
+  إِثْنَانِ (3/18), اِسْمٌ مَجْرُورٌ (1/3). Die ersten beiden wurden **noch nie richtig
+  beantwortet** und haben seit dem 17.07. bzw. 24.07. keinen Versuch mehr.
+- `get_personal_vocabulary`: **11 Einträge, unverändert**, jüngste Änderung
+  18.07. **Keine neue eigene Vokabel, in der App fehlt keine.**
+
+**Schritt 6 – Qualitätssicherung:**
+
+| Skript | Ergebnis |
+|---|---|
+| `validate.js` | **Exit 0** – „Alles sauber (2 Hinweise)". 171 Vokabeln, 73 Regeln (alle mit Quelle, 51 mit gedrucktem Beleg), 342 Markierungen, 114 Suren, 1038 Wurzeln, 1157 Wörter mit Zahl, 20 Module, **`CACHE_NAME = vokabeltrainer-v144`** |
+| `pruefe-markierungen.js` | 196 von 342 Markierungen prüfbar, **0** Verstöße gegen die Regelbedingung, **0** Wortgrenzen-Fehler, **0** Überschneidungen |
+| `pruefe-saetze.js` | 167 verfasste Sätze: **0 unpassende Endungen**, 10 mit unvokalisiertem Wort. Kontrollgruppe 27 Lehrbuchsätze: **0 Endungsfehler**, 1 mit unvokalisiertem Wort. Kein verfasster Satz länger als der längste Buchsatz (8 Wörter) |
+| `pruefe-transkripte.js` | 73 von 73 Regeln belegt: 59 von beiden Lesarten, 11 nur vom eigenen Whisper-Lauf, 2 von Hand nachgelesen, **1** von keiner Lesart im Fenster (`ismul-isara-hadha-01`, F1 10:07 — steht bei ±120 s doch da) |
+| `pruefe-sprecher.js` | 73 Regeln gegen die Sprecherspur, durchschnittlich **85 %** Lehreranteil; 9 Regeln unter 60 %, 4 weitere aus Folge 12 ohne klaren Hauptsprecher |
+| `pruefe-taschkil.js` | **15 Befunde in 14 Wörtern — unverändert seit dem 05.08.** |
+| `pruefe-wortfelder.js` | Tabelle in Ordnung, 27 Felder. **Lernbestand: 131 von 171 (77 %) mit Bedeutungsfeld, 40 nur mit Wortart — davon 0 Nomen.** Also keine echte Lücke. **Kein Suchwort ergänzt** |
+
+**Die zwei verbliebenen `validate.js`-Hinweise sind unverändert bekannt:** لَبَنٌ
+hat Plural ohne `sg` (unkritisch), und مِكْوَاةٌ / أَخٌ / أُخْتٌ haben `sg` ohne Plural
+(im Abzug nachsehen, nicht selbst bilden).
+
+**`pruefe-taschkil.js`: unverändert 15 Befunde, keiner davon neuer Schaden.** Die
+acht offenen Surennamen aus `surah-data.js` (الْأَنفَال, الْأَنبِيَاء, الْعَنكَبُوت,
+الْمُجَادلَة, الْمُمْتَحنَة, الْإِنسَان, الانفِطَار, الانشِقَاق) stehen seit dem 04.08.
+bewusst offen. Dazu wie gehabt أَيْضاً und الإِسْمُ aus Elias' eigenen
+arabicroots-Notizen, أَلْبَان aus dem Abzug (id 45782) und die drei اسم-Zitate in
+`lehrbuch-saetze.js` (mb1-42-2, mb1-63-1). ⭐ **Bemerkenswert: Elias hat seit dem
+12.08. 297 Eselsbrücken angelegt, und der Zähler steht trotzdem still.** Das
+arabische Material darin ist also durchgehend vollständig vokalisiert — 297 neue
+Texte ohne eine einzige neue Lücke. **Nichts wurde selbst vokalisiert** — eine
+Ḥaraka ohne Beleg ist genauso erfunden wie eine erfundene Regel (E.1).
+
+**Schritt 7 – Commit:** nur dieser Log-Eintrag. Am Code, an `vocab-data.js`,
+`grammar-data.js` und `sw.js` wurde von der Routine nichts geändert, also **kein
+CACHE_NAME-Bump** (bleibt bei Elias' v144). `data/vokabeln-*.js`,
+`vokabelpaket.json` und `transcripts/` sind per `.gitignore` ausgeschlossen und
+wurden **nicht** mit `-f` erzwungen.
+
+⚠️ **Zur Cloudflare-Regel aus `CLAUDE.md` — diesmal ist sie nicht nur theoretisch.**
+Für diesen Lauf selbst gilt weiter das Bekannte: `maintenance-log.md` wird nicht
+ausgeliefert, die Routine hat an ausgelieferten Dateien nichts geändert, und
+`node werkzeuge/veroeffentlichen.mjs` steht ohnehin nicht auf ihrer Werkzeugliste.
+**Aber Elias hat heute früh um 06:57 fünf Commits an genau solchen Dateien
+gemacht.** Ob danach veröffentlicht wurde, ist von hier aus **nicht feststellbar**
+— es gibt kein `.deploy/` und keine Zustandsdatei, an der man das ablesen könnte,
+und die Seite selbst kann diese Routine nicht abrufen. Das ist **keine Behauptung,
+dass etwas fehlt**, sondern die ehrliche Auskunft, dass die Frage von hier aus
+offen bleibt. Für Elias ist es ein Ein-Befehl-Check.
+
+**Nichts war blockiert.** Kein abgelehnter Befehl, keine Datei, die sich nicht
+schreiben ließ.
+
+### Vorschläge für den nächsten Schritt (ehrlich priorisiert)
+
+1. ⭐ **Verwechslungs-Duelle — das Argument ist jetzt so stark, wie es aus einem
+   Routinenlauf werden kann.** Vierter Lauf in Folge mit demselben Befund: أَهْمَلَ
+   und مُهْمِلٌ, dieselbe Wurzel ه‑م‑ل, ganz unten in der Liste, seit dem 28.07.
+   bzw. 31.07. ohne einen einzigen Versuch — obwohl Elias am 10.08. **und heute**
+   bayna-yadayk-2 geübt hat. Das ist kein Vergessen, das ist ein Auswahlproblem:
+   die Wörter kommen bei zufälliger Ziehung schlicht zu selten dran, um sich zu
+   bewegen. Ein Modus, der zwei Wörter derselben Wurzel gegeneinander stellt,
+   trifft genau diesen Fall. Der frühere Blocker („Dauerbrenner-Filter") ist seit
+   dem 28.07. aufgehoben. **Entscheidung für Elias, keine Routinen-Änderung.**
+2. **Die acht offenen Surennamen wären in einer halben Stunde zu belegen** —
+   unverändert seit dem 05.08. Es braucht **eine** Entscheidung von Elias, welche
+   Ausgabe als Maßstab gilt, danach trägt das Skript den Rest. Solange acht
+   bekannte Befunde mitlaufen, geht ein neunter, echter leicht darin unter. Der
+   Punkt gewinnt dadurch an Gewicht, dass `pruefe-taschkil.js` sonst inzwischen
+   sauber ist: 297 neue Eselsbrücken haben keine einzige Lücke erzeugt.
+3. **Drei Folgen Rückstand — aber die Dringlichkeit hat abgenommen, nicht
+   zugenommen.** Seit dem 13.08. liegt für alle drei das Rohmaterial vollständig
+   vor; offen ist allein die Regelauswertung, und die gehört nach E.1 ohnehin in
+   eine echte Sitzung. Folge 16 deckt Kapitel 10 & 11 — genau die beiden, die seit
+   dem 13.08. freigeschaltet sind. ⚠️ Beim Auswerten die zwei
+   Whisper-Wiederholungsschleifen in Folge 16 beachten (ca. 21:34–26:20 und
+   40:00–46:57, dort nur die YouTube-Fassung brauchbar), sie stehen im Backlog
+   beschrieben.
+4. **Nichts Dringendes darüber hinaus.** Der Abzug steht seit vier Läufen still,
+   die Prüfskripte sind sauber, die offenen Ḥarakāt-Fragen brauchen Elias' Beleg
+   und nicht meine Vermutung, und die Routine selbst hat diesmal ohne Störung
+   durchgearbeitet.
