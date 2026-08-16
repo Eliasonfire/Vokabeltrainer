@@ -1598,6 +1598,23 @@ und die Seite selbst kann diese Routine nicht abrufen. Das ist **keine Behauptun
 dass etwas fehlt**, sondern die ehrliche Auskunft, dass die Frage von hier aus
 offen bleibt. Für Elias ist es ein Ein-Befehl-Check.
 
+⭐ **Nachtrag, weil es sich erst beim Push gezeigt hat: Elias' fünf Commits von
+heute früh waren noch gar nicht auf GitHub.** Der Push ging von `2039026`
+(15.08.) auf `5250669` — er hat also `ecbfde0`, `559cd0a`, `9895aac`, `7d9ae96`
+und `037213e` **mitgenommen**. Das war nicht beabsichtigt und ist auch nicht
+vermeidbar: `git push` schiebt den ganzen Zweig, nicht einzelne Commits. Die
+Vorschrift „nur selbst geänderte Dateien, mit explizitem Pfad" bezieht sich auf
+`git add` und wurde eingehalten — gestaged war ausschließlich
+`maintenance-log.md`.
+
+Schaden entsteht dadurch keiner (es ist Elias' eigene Arbeit auf seinem eigenen
+`main`), aber **zwei Dinge sind dadurch anders, als es oben steht**: Erstens war
+`git pull --ff-only` → „Already up to date" **kein** Beleg dafür, dass lokal und
+GitHub gleichauf waren — `pull` sagt nichts darüber, ob man voraus ist. Zweitens
+ist der Cloudflare-Punkt darüber damit **wahrscheinlicher geworden**: wer seine
+Commits noch nicht gepusht hat, hat mit einiger Sicherheit auch noch nicht
+veröffentlicht. Feststellen lässt sich das von hier aus weiterhin nicht.
+
 **Nichts war blockiert.** Kein abgelehnter Befehl, keine Datei, die sich nicht
 schreiben ließ.
 
