@@ -114,23 +114,32 @@ function renderCard(){
      landete auf der falschen Seite (`margin-right:12,16px`, links 0), und
      „weiß" klebte an der Klammer. Die Klassenpruefung war dabei gruen; gesehen
      hat es erst das Bildschirmfoto. Ein Leerzeichen kennt keine Richtung und
-     erlaubt nebenbei den Zeilenumbruch auf schmalen Geraeten. */
+     erlaubt nebenbei den Zeilenumbruch auf schmalen Geraeten.
+
+     ⭐ Das Echo steht in BEIDEN Richtungen rechts (Elias am 16.08.: „die
+     ‚(fünf)' sollte auf der rechten seite sein"). Dafuer dreht sich die
+     Reihenfolge im Markup: in einem `dir="rtl"`-Kasten steht das ERSTE Element
+     ganz rechts, also kommt dort das Echo zuerst und die Antwort danach. Bei
+     `ltr` genau umgekehrt. Wer beide Zweige gleich baut, bekommt das Echo je
+     nach Abfragerichtung auf einer anderen Seite - und genau so sah es aus. */
   const echo = (roh, sprache) =>
-    ` <span class="vs-echo ist-${sprache}" lang="${sprache==='ar'?'ar':'de'}"` +
+    `<span class="vs-echo ist-${sprache}" lang="${sprache==='ar'?'ar':'de'}"` +
     `${sprache==='ar'?' dir="rtl"':''}>(${escapeHtml(roh)})</span>`;
 
   if (dir === 'de-ar'){
     frontEl.textContent = w.de;
     frontEl.classList.add('front-as-german');
     frontEl.setAttribute('dir','ltr'); frontEl.setAttribute('lang','de');
-    backEl.innerHTML = escapeHtml(w.ar) + echo(w.de, 'de');
+    /* rtl: erstes Element = ganz rechts, also Echo zuerst. */
+    backEl.innerHTML = echo(w.de, 'de') + ' ' + escapeHtml(w.ar);
     backEl.classList.add('back-as-arabic');
     backEl.setAttribute('dir','rtl'); backEl.setAttribute('lang','ar');
   } else {
     frontEl.textContent = w.ar;
     frontEl.classList.remove('front-as-german');
     frontEl.setAttribute('dir','rtl'); frontEl.setAttribute('lang','ar');
-    backEl.innerHTML = escapeHtml(w.de) + echo(w.ar, 'ar');
+    /* ltr: letztes Element = ganz rechts, also Antwort zuerst. */
+    backEl.innerHTML = escapeHtml(w.de) + ' ' + echo(w.ar, 'ar');
     backEl.classList.remove('back-as-arabic');
     backEl.setAttribute('dir','ltr'); backEl.setAttribute('lang','de');
   }
