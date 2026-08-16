@@ -732,20 +732,48 @@ main{
    Die Sprache steht als eigene Klasse am Span (ist-ar / ist-de), damit nicht
    zwei Regeln um denselben Selektor konkurrieren. */
 .vs-echo{
-  /* Weiss statt --text-dim seit dem 16.08.2026, Elias: „vielleicht sollte dann
-     das was in den klammern ist jeweils in weißer farbe sein und nicht in
-     grau". Auf der Rueckseite ist ohnehin alles offen — das Echo muss nicht
-     zurueckgenommen werden, es muss lesbar sein.
-     Andere Faerbungen stehen zum Vergleich in vorschau-kartenrueckseite.html. */
-  unicode-bidi:isolate;font-weight:600;color:#fff;letter-spacing:0;
+  /* ⚠️ HIER STEHT ABSICHTLICH KEINE `color`. Die Farbe haengt an der Sprache
+     (siehe die beiden Regeln unten) — eine Grundfarbe hier waere eine zweite
+     Regel fuer denselben Selektor, und welche gewinnt, entscheidet dann die
+     Reihenfolge statt die Absicht. */
+  unicode-bidi:isolate;font-weight:600;letter-spacing:0;
 }
 /* ⭐ Groesse: Elias am 16.08.2026 — das Echo „sollte … so gross sein wie das
-   arabische". Beide Werte sind deshalb auf optische Gleichheit mit der Antwort
-   daneben gesetzt, nicht auf gleiche Punktgroesse: bei gleicher Punktgroesse
-   WIRKT Arabisch kleiner, dafuer gibt es in dieser App den `--ar-faktor`.
-   Zum Nachstellen und Aendern: vorschau-kartenrueckseite.html. */
-.vs-echo.ist-ar{font-family:var(--font-ar);font-size:2.72rem;}   /* neben 1,7rem deutsch */
-.vs-echo.ist-de{font-family:var(--font-ui);font-size:1.5rem;letter-spacing:-.01em;}  /* neben 2,4rem arabisch */
+   arabische". Also optische Gleichheit mit der Antwort daneben, nicht gleiche
+   Punktgroesse: bei gleicher Punktgroesse WIRKT Arabisch kleiner.
+
+   ⭐⭐ JEDE SCHRIFT HAT HIER GENAU EINE ANZEIGEGROESSE, egal ob sie gerade
+   Antwort oder Echo ist: Arabisch 2,4rem, Deutsch 1,7rem — dieselben Werte,
+   die `.german-word` und `.german-word.back-as-arabic` schon tragen. Dadurch
+   sieht dasselbe Wort in beiden Abfragerichtungen gleich aus.
+
+   ⚠️ Der erste Versuch rechnete mit 1,6 (aus `--ar-faktor` 2 hergeleitet) und
+   ergab 2,72rem / 1,5rem. Elias, mit BEIDEN Karten nebeneinander vor sich:
+   „das linke arabisch ist etwas zu gross im vergleich zum deutschen und rechts
+   ist es umgekehrt, da ist das deutsche etwas zu klein." Zwei Beobachtungen,
+   die unabhängig voneinander in dieselbe Richtung zeigen — der Faktor musste
+   runter. Jetzt 2,4 / 1,7 = **1,41**.
+
+   ⭐ Daraus die allgemeine Erkenntnis: `--ar-faktor` 2 gilt fuer FLIESSTEXT,
+   wo die Harakat den Ausschlag geben. Je groesser die Schrift, desto kleiner
+   der noetige Ausgleich — im Vorschlagstext waren es 1,67, hier 1,41. Ein
+   fester Faktor fuer alle Groessen ist zu grob.
+   Zum Nachstellen: vorschau-kartenrueckseite.html. */
+/* ⭐⭐ EINE REGEL JE SCHRIFT, fuer Groesse UND Farbe, unabhaengig von der Rolle:
+   Arabisch 2,4rem weiss · Deutsch 1,7rem rot. Damit sieht dasselbe Wort in
+   beiden Abfragerichtungen gleich aus — die Werte sind genau die von
+   `.german-word` und `.german-word.back-as-arabic` oben. Freigegeben von Elias
+   am 16.08.2026: „deutsch rot arabisch weiß, nimm deinen vorschlag".
+
+   ⚠️ Warum das Arabische NIE rot wird, auch wenn es dort die Antwort ist:
+   auf der Kartenflaeche `--surface-1` gemessen betraegt der Kontrast von
+   `--red-bright` **6,11:1**, von Weiss **19,67:1** — Rot liegt damit sogar
+   unter dem `--text-dim` (7,66:1), das hier gerade ersetzt wurde. Bei Latein
+   faellt das nicht auf; bei Arabisch verliert man zuerst die Harakat, also
+   genau das, was Elias lesen lernt. Fuer Deutsch bleibt Rot unbedenklich,
+   6,11 besteht die AA-Schwelle deutlich. */
+.vs-echo.ist-ar{font-family:var(--font-ar);font-size:2.4rem;color:#fff;}
+.vs-echo.ist-de{font-family:var(--font-ui);font-size:1.7rem;color:var(--red-bright);letter-spacing:-.01em;}
 /* Bedeutung, die es wirklich gibt, aber nicht in der Lektion steht. Leise
    gesetzt: sie soll auffindbar sein, nicht mitgelernt werden. */
 .neben-bedeutung{
