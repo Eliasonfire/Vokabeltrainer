@@ -140,10 +140,10 @@ button[aria-pressed="true"]{
 <fieldset>
   <legend>Farbe der Klammer</legend>
   <div class="reihe" id="klammerwahl">
-    <button data-w="weiss" aria-pressed="true">Weiß <span class="jetzt">· eingebaut</span></button>
+    <button data-w="sprache" aria-pressed="true">Deutsch rot, Arabisch weiß <span class="jetzt">· mein Vorschlag</span></button>
+    <button data-w="weiss" aria-pressed="false">Immer weiß</button>
     <button data-w="grau" aria-pressed="false">Grau</button>
-    <button data-w="rot" aria-pressed="false">Rot</button>
-    <button data-w="sprache" aria-pressed="false">Wie die Antwort, nur andersherum</button>
+    <button data-w="rot" aria-pressed="false">Immer rot</button>
   </div>
 </fieldset>
 
@@ -187,25 +187,41 @@ const ANTWORT = {
   'rot':     { ar:ROT,   de:ROT   },
   'weiss':   { ar:WEISS, de:WEISS }
 };
-/* „Wie die Antwort, nur andersherum" heißt: trägt die Antwort Rot, wird die
-   Klammer weiß — und umgekehrt. Dann ist immer genau EIN Teil rot. */
+/* ⭐ „Nach Sprache" ist die empfohlene Fassung: JEDE SCHRIFT BEHÄLT IHRE FARBE,
+   egal ob sie gerade Antwort oder Klammer ist — Arabisch weiß, Deutsch rot.
+   Dieselbe Regel, die auch die Größen ordnet. Damit sieht dasselbe Wort in
+   beiden Abfragerichtungen gleich aus, und genau das war Elias' Ausgangspunkt
+   („bei ar→de ist das deutsche rot, hier nicht").
+
+   ⚠️ Gemessen auf der Kartenfläche --surface-1: weiß 19,67:1 · grau 7,66:1 ·
+   rot 6,11:1. Rot ist also KONTRASTÄRMER als das Grau, das gerade ersetzt
+   wurde. Für Arabisch fällt das ins Gewicht (die Ḥarakāt sind dünne Striche),
+   für Latein nicht. Deshalb nie das Arabische rot. */
 const KLAMMER = {
+  'sprache': () => ({ ar:WEISS, de:ROT   }),
   'weiss':   () => ({ ar:WEISS, de:WEISS }),
   'grau':    () => ({ ar:GRAU,  de:GRAU  }),
-  'rot':     () => ({ ar:ROT,   de:ROT   }),
-  'sprache': (a) => ({ ar:(a.de===ROT?WEISS:ROT), de:(a.ar===ROT?WEISS:ROT) })
+  'rot':     () => ({ ar:ROT,   de:ROT   })
 };
 /* Warum die arabische Klammer größer ist als die deutsche, obwohl beide
    „gleich" heißen: bei gleicher Punktgröße wirkt Arabisch kleiner. Die App
    gleicht das überall mit --ar-faktor (2) aus; hier steckt derselbe Ausgleich
    drin, sonst wäre „gleich groß" nur auf dem Papier gleich. */
 const GROESSE = {
-  'gleich': { de:'1.5rem',  ar:'2.72rem' },
-  'mittel': { de:'1.35rem', ar:'2.4rem'  },
-  'klein':  { de:'1rem',    ar:'1.76rem' }
+  /* ⭐ Jede Schrift bekommt EINE Anzeigegröße, egal ob Antwort oder Klammer:
+     Arabisch 2,4rem, Deutsch 1,7rem. Faktor 1,41.
+     ⚠️ Der erste Versuch stand auf 2,72/1,5 (Faktor 1,6, aus --ar-faktor 2
+     hergeleitet). Elias mit beiden Karten nebeneinander: links das Arabische
+     „etwas zu groß", rechts das Deutsche „etwas zu klein" — zwei Beobachtungen,
+     die unabhängig in dieselbe Richtung zeigen. Der alte Wert steht unten als
+     „Größer" noch zum Vergleich. */
+  'gleich':  { de:'1.7rem',  ar:'2.4rem'  },
+  'groesser':{ de:'1.5rem',  ar:'2.72rem' },
+  'mittel':  { de:'1.35rem', ar:'2.05rem' },
+  'klein':   { de:'1rem',    ar:'1.76rem' }
 };
 
-let wahl = { antwort:'sprache', klammer:'weiss', groesse:'gleich' };
+let wahl = { antwort:'sprache', klammer:'sprache', groesse:'gleich' };
 
 function anwenden(){
   const s = document.documentElement.style;
