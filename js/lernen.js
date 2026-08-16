@@ -93,18 +93,44 @@ function renderCard(){
   /* lang/dir IMMER auf beiden Seiten explizit setzen. Frueher wurde beim Wechsel
      zurueck auf ar-de nur `dir` entfernt - `lang="ar"` blieb am deutschen Text
      haengen, was Schriftwahl und Sprachausgabe des Browsers verfaelscht hat. */
+  /* ⭐ Der Begriff der VORDERSEITE steht auf der Rueckseite noch einmal klein in
+     Klammern daneben. Elias am 16.08.2026: "manchmal sehe ich dann den begriff
+     auf der rückseite und hab schon vergessen wie er auf der vorderseite heißt
+     weil ich ihn halt noch nicht kenne."
+
+     Genau da liegt der Punkt: Bei einem Wort, das man SCHON kann, traegt man
+     die Frage im Kopf mit. Bei einem neuen nicht - und die Karte dreht die
+     Frage beim Umdrehen weg. Man sieht die Loesung dann ohne das, wozu sie die
+     Loesung ist, und der Abgleich, auf dem das Lernen beruht, faellt aus.
+
+     Es verraet nichts: auf der Rueckseite sind ohnehin beide Seiten offen.
+     Der Echo-Span traegt seine Sprache als eigene Klasse und nicht ueber den
+     Elternzustand `back-as-arabic` - sonst haengen zwei Regeln an einem
+     Selektor und die spaetere gewinnt still.
+
+     ⚠️ Der Abstand steht als echtes Leerzeichen VOR dem Span, nicht als
+     `margin-inline-start` im CSS. Am 16.08. gemessen: der Span traegt
+     `dir="rtl"`, und damit zeigt sein „inline-start" nach RECHTS — der Abstand
+     landete auf der falschen Seite (`margin-right:12,16px`, links 0), und
+     „weiß" klebte an der Klammer. Die Klassenpruefung war dabei gruen; gesehen
+     hat es erst das Bildschirmfoto. Ein Leerzeichen kennt keine Richtung und
+     erlaubt nebenbei den Zeilenumbruch auf schmalen Geraeten. */
+  const echo = (roh, sprache) =>
+    ` <span class="vs-echo ist-${sprache}" lang="${sprache==='ar'?'ar':'de'}"` +
+    `${sprache==='ar'?' dir="rtl"':''}>(${escapeHtml(roh)})</span>`;
+
   if (dir === 'de-ar'){
     frontEl.textContent = w.de;
     frontEl.classList.add('front-as-german');
     frontEl.setAttribute('dir','ltr'); frontEl.setAttribute('lang','de');
-    backEl.textContent = w.ar;
+    backEl.innerHTML = escapeHtml(w.ar) + echo(w.de, 'de');
     backEl.classList.add('back-as-arabic');
     backEl.setAttribute('dir','rtl'); backEl.setAttribute('lang','ar');
   } else {
     frontEl.textContent = w.ar;
     frontEl.classList.remove('front-as-german');
     frontEl.setAttribute('dir','rtl'); frontEl.setAttribute('lang','ar');
-    backEl.textContent = w.de;
+    backEl.innerHTML = escapeHtml(w.de) + echo(w.ar, 'ar');
     backEl.classList.remove('back-as-arabic');
     backEl.setAttribute('dir','ltr'); backEl.setAttribute('lang','de');
   }
@@ -497,7 +523,12 @@ function renderNotiz(w){
      Er liegt in `w.mnemo` (vocab-data.js), also NICHT in `vt_notes` - eine
      Uebernahme kann er also gar nicht versehentlich ausloesen. */
   const vorschlag = (!notiz && w.mnemo) ? String(w.mnemo).trim() : '';
-  text.textContent = notiz || vorschlag || 'Eselsbrücke hinzufügen';
+  /* innerHTML statt textContent, damit die arabischen Woerter im Text gross
+     gesetzt werden koennen (arabischHervorheben, js/kern.js). Die Funktion
+     maskiert selbst - `notiz` ist Elias' eigener Text und darf nicht roh in
+     den Zusammenhang. Gilt fuer den Vorschlag UND seine eigene Notiz: das
+     Leseproblem ist in beiden Faellen dasselbe. */
+  text.innerHTML = arabischHervorheben(notiz || vorschlag || 'Eselsbrücke hinzufügen');
   kasten.classList.toggle('hat-notiz', !!notiz);
   kasten.classList.toggle('ist-vorschlag', !!vorschlag);
   /* Der Punkt sitzt auf der VORDERSEITE. Er verraet die Loesung nicht, sagt
@@ -519,7 +550,7 @@ function oeffneNotizEditor(){
   feld.value = getNote(w.id);
   const vorschlagKasten = document.getElementById('neVorschlag');
   const vorschlag = (!getNote(w.id) && w.mnemo) ? String(w.mnemo).trim() : '';
-  document.getElementById('neVorschlagText').textContent = vorschlag;
+  document.getElementById('neVorschlagText').innerHTML = arabischHervorheben(vorschlag);
   vorschlagKasten.classList.toggle('hidden', !vorschlag);
   document.getElementById('btnDeleteNote').style.visibility = getNote(w.id) ? 'visible' : 'hidden';
   document.getElementById('noteBackdrop').classList.remove('hidden');
