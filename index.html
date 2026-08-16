@@ -107,6 +107,24 @@
      absichtlich groesser als jeder Faktor und bleibt, wie es ist ("schoen gross
      leserlich, das ist sehr gut"). */
   --ar-faktor:2;
+
+  /* ⭐⭐ Die zwei Groessen der KARTENRUECKSEITE, je Schrift eine — und zwar
+     unabhaengig davon, ob das Wort dort gerade die Antwort ist oder in der
+     Klammer daneben steht. Vier Stellen haengen daran: `.german-word`,
+     `.german-word.back-as-arabic`, `.vs-echo.ist-de`, `.vs-echo.ist-ar`.
+
+     ⚠️ WARUM HIER UND NICHT VIERMAL EINZELN: Genau dieses Paar ist am
+     16.08.2026 dreimal nachjustiert worden (1,60 → 1,41 → 1,29). Bei vier
+     verstreuten Werten waere spaetestens beim zweiten Mal einer stehen
+     geblieben, und die Rueckseite saehe je nach Abfragerichtung anders aus —
+     der Fehler, den Elias ueberhaupt erst gemeldet hat.
+
+     Das Verhaeltnis 1,29 ist ERTASTET, nicht gerechnet: Elias hat dreimal mit
+     beiden Karten nebeneinander gesagt, wohin es soll. Der aus `--ar-faktor`
+     hergeleitete Wert 1,60 war deutlich zu weit auseinander. */
+  --rueck-ar:2.3rem;
+  --rueck-de:1.78rem;
+
   --fs-xs:.7rem;
   --fs-sm:.78rem;
   --fs-md:.88rem;
@@ -721,8 +739,8 @@ main{
 }
 
 .arabic-word.front-as-german{font-family:var(--font-ui);font-size:clamp(2rem,9vw,2.8rem);direction:ltr;color:var(--red-bright);text-shadow:none;font-weight:800;letter-spacing:-.01em;}
-.german-word{font-size:1.7rem;font-weight:800;color:var(--red-bright);text-align:center;margin-bottom:var(--sp-2);letter-spacing:-.01em;}
-.german-word.back-as-arabic{font-family:var(--font-ar);direction:rtl;font-size:2.4rem;font-weight:600;color:#fff;letter-spacing:0;}
+.german-word{font-size:var(--rueck-de);font-weight:800;color:var(--red-bright);text-align:center;margin-bottom:var(--sp-2);letter-spacing:-.01em;}
+.german-word.back-as-arabic{font-family:var(--font-ar);direction:rtl;font-size:var(--rueck-ar);font-weight:600;color:#fff;letter-spacing:0;}
 /* Der Begriff der Vorderseite, klein in Klammern neben der Loesung (16.08.2026).
    `unicode-bidi:isolate` ist hier keine Zierde: die Klammern sind
    RICHTUNGSNEUTRALE Zeichen. Ohne Abschottung uebernehmen sie die Richtung des
@@ -772,8 +790,8 @@ main{
    faellt das nicht auf; bei Arabisch verliert man zuerst die Harakat, also
    genau das, was Elias lesen lernt. Fuer Deutsch bleibt Rot unbedenklich,
    6,11 besteht die AA-Schwelle deutlich. */
-.vs-echo.ist-ar{font-family:var(--font-ar);font-size:2.4rem;color:#fff;}
-.vs-echo.ist-de{font-family:var(--font-ui);font-size:1.7rem;color:var(--red-bright);letter-spacing:-.01em;}
+.vs-echo.ist-ar{font-family:var(--font-ar);font-size:var(--rueck-ar);color:#fff;}
+.vs-echo.ist-de{font-family:var(--font-ui);font-size:var(--rueck-de);color:var(--red-bright);letter-spacing:-.01em;}
 /* Bedeutung, die es wirklich gibt, aber nicht in der Lektion steht. Leise
    gesetzt: sie soll auffindbar sein, nicht mitgelernt werden. */
 .neben-bedeutung{
