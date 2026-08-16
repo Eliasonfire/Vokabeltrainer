@@ -723,6 +723,24 @@ main{
 .arabic-word.front-as-german{font-family:var(--font-ui);font-size:clamp(2rem,9vw,2.8rem);direction:ltr;color:var(--red-bright);text-shadow:none;font-weight:800;letter-spacing:-.01em;}
 .german-word{font-size:1.7rem;font-weight:800;color:var(--red-bright);text-align:center;margin-bottom:var(--sp-2);letter-spacing:-.01em;}
 .german-word.back-as-arabic{font-family:var(--font-ar);direction:rtl;font-size:2.4rem;font-weight:600;color:#fff;letter-spacing:0;}
+/* Der Begriff der Vorderseite, klein in Klammern neben der Loesung (16.08.2026).
+   `unicode-bidi:isolate` ist hier keine Zierde: die Klammern sind
+   RICHTUNGSNEUTRALE Zeichen. Ohne Abschottung uebernehmen sie die Richtung des
+   Nachbarn — die schliessende Klammer einer arabischen Einblendung rutschte
+   dann vor das Wort statt dahinter. Isolate schneidet den Span aus dem
+   Bidi-Lauf der Umgebung heraus, in BEIDE Abfragerichtungen.
+   Die Sprache steht als eigene Klasse am Span (ist-ar / ist-de), damit nicht
+   zwei Regeln um denselben Selektor konkurrieren. */
+.vs-echo{
+  unicode-bidi:isolate;font-weight:600;color:var(--text-dim);letter-spacing:0;
+}
+/* Arabisch neben einer deutschen Loesung: dieselbe Groessenregel wie ueberall
+   sonst in der App (--ar-faktor), sonst waere es wieder das kleine Arabisch,
+   um das es hier ueberhaupt geht. */
+.vs-echo.ist-ar{font-family:var(--font-ar);font-size:calc(var(--fs-md) * var(--ar-faktor));}
+/* Deutsch neben einer arabischen Loesung: die Loesung steht auf 2,4rem, das
+   Echo bleibt deutlich darunter. */
+.vs-echo.ist-de{font-family:var(--font-ui);font-size:var(--fs-lg);letter-spacing:-.01em;}
 /* Bedeutung, die es wirklich gibt, aber nicht in der Lektion steht. Leise
    gesetzt: sie soll auffindbar sein, nicht mitgelernt werden. */
 .neben-bedeutung{
@@ -1564,7 +1582,10 @@ main{
   margin-bottom:var(--sp-4);padding:var(--sp-3);
   background:var(--surface-2);border:1px dashed var(--border);
   border-radius:var(--r-2);color:var(--text-faint);
-  font-size:var(--fs-sm);line-height:1.5;cursor:pointer;
+  /* 1,75 statt 1,5 seit dem 16.08.2026: in diesem Kasten stehen jetzt
+     doppelt so grosse arabische Woerter mitten im deutschen Text (.mn-ar).
+     Bei 1,5 stiessen deren Harakat in die Zeile darueber. */
+  font-size:var(--fs-sm);line-height:1.75;cursor:pointer;
   transition:background var(--dur-2) ease, border-color var(--dur-2) ease, color var(--dur-2) ease;
 }
 .note-box:hover{background:var(--surface-3);border-color:var(--border-strong);}
@@ -1580,7 +1601,7 @@ main{
 .ne-vorschlag{
   margin-bottom:var(--sp-3);padding:var(--sp-3);
   background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-2);
-  color:var(--text-dim);font-size:var(--fs-sm);line-height:1.5;
+  color:var(--text-dim);font-size:var(--fs-sm);line-height:1.75; /* wie .note-box, siehe dort */
 }
 .ne-vorschlag-marke{
   font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.12em;
@@ -1588,6 +1609,21 @@ main{
 }
 .ne-vorschlag .btn-klein{
   margin-top:var(--sp-3);width:100%;padding:var(--sp-2);font-size:var(--fs-xs);
+}
+/* Arabisch im deutschen Fliesstext der Eselsbruecken (16.08.2026, Elias:
+   "so klein ... muss immer nah ran gehen"). Erzeugt von arabischHervorheben()
+   in js/kern.js.
+   `1em` statt einer festen Stufe: der Kasten auf der Karte steht auf --fs-sm,
+   der Editor daneben ebenfalls — beide bekommen so von selbst das Verhaeltnis
+   1:2, das der Beispielsatz weiter unten auch hat.
+   ⚠️ `display` bleibt `inline`. Auf `inline-block` reisst die verbundene
+   arabische Schrift auseinander (am 10.08.2026 mit +23,3 % Breite gemessen).
+   Die groessere Zeilenhoehe ist Absicht: die Harakat sitzen ueber und unter
+   dem Wort und stiessen sonst in die Zeile darueber. */
+.mn-ar{
+  font-family:var(--font-ar);
+  font-size:calc(1em * var(--ar-faktor));
+  line-height:1.45;
 }
 .note-box.hat-notiz{
   border-style:solid;border-color:var(--red-dim);

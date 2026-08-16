@@ -503,6 +503,46 @@ function escapeHtml(str){
   return String(str).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
+/* ---------- Arabisch mitten im deutschen Fliesstext lesbar machen ----------
+
+   Elias am 16.08.2026 zum Vorschlagstext auf der Lernkarte: "es ist so klein
+   und deswegen kann ich es schlecht lesen und muss immer nah ran gehen und
+   mich behuemen ... unten beim beispielsatz da hast du das arabische auch viel
+   groesser als das deutsche, das kann man gut lesen."
+
+   ⭐ Das ist kein Versehen im CSS, sondern eine Eigenart der Schrift: bei
+   GLEICHER Punktgroesse traegt Naskh viel weniger Hoehe als die Lateinschrift,
+   und die Harakat teilen sich diese Hoehe auch noch. Deshalb rechnet die ganze
+   App Arabisch ueberall mit `--ar-faktor` (steht auf 2) hoch - `.example-ar`,
+   `.wl-ar`, `.hl-ar` und ein Dutzend weitere Stellen.
+
+   Nur im Fliesstext ging das bisher nicht: dort stecken beide Schriften in
+   EINEM Textknoten, und `font-size` gilt immer fuer das ganze Element. Genau
+   das loest diese Funktion - die arabischen Laeufe bekommen beim Anzeigen
+   einen eigenen Span und damit dieselbe Regel wie ueberall sonst.
+
+   Der gespeicherte Text aendert sich nicht. Es ist reine Darstellung, und der
+   Rueckweg ist `textContent` statt `innerHTML`.
+
+   ⚠️ ZUSAMMENHAENGENDE arabische Woerter bleiben EIN Lauf, samt der
+   Leerzeichen dazwischen. Zerlegte man هَذَا وَلَدٌ in zwei Spans, laege
+   zwischen ihnen ein deutsches Leerzeichen - halb so breit wie die Schrift
+   daneben, und der Satz sieht aus, als klebten die Woerter aneinander.
+
+   ⚠️ KEIN `dir="rtl"` am Span. Der Bidi-Algorithmus des Browsers dreht einen
+   arabischen Lauf von selbst richtig herum; ein gesetztes `dir` wuerde
+   zusaetzlich die angrenzenden Satzzeichen an sich ziehen (die Klammer nach
+   قَرِيبٌ landete dann auf der falschen Seite). */
+const AR_BEREICH = '\\u0600-\\u06FF\\u0750-\\u077F\\u08A0-\\u08FF\\uFB50-\\uFDFF\\uFE70-\\uFEFF';
+const AR_LAUF = new RegExp(
+  '[' + AR_BEREICH + ']+(?:[ \\u00A0\\u200E\\u200F]+[' + AR_BEREICH + ']+)*', 'g');
+
+function arabischHervorheben(text){
+  /* Erst maskieren, dann verpacken - nie umgekehrt. Der Kasten zeigt auch
+     Elias' EIGENE Notizen an, also fremden Text im HTML-Zusammenhang. */
+  return escapeHtml(text).replace(AR_LAUF, lauf => `<span class="mn-ar" lang="ar">${lauf}</span>`);
+}
+
 /* Manche Vokabeln haben zwei gueltige Plurale: بُيُوتٌ / أَبْيَاتٌ. arabicroots
    trennt sie im Abzug mit "|", in der App steht " / ". Beide Schreibweisen
    muessen ueberall gleich behandelt werden - bisher nirgends:
