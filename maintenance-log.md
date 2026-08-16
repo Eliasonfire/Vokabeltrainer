@@ -1592,11 +1592,16 @@ Für diesen Lauf selbst gilt weiter das Bekannte: `maintenance-log.md` wird nich
 ausgeliefert, die Routine hat an ausgelieferten Dateien nichts geändert, und
 `node werkzeuge/veroeffentlichen.mjs` steht ohnehin nicht auf ihrer Werkzeugliste.
 **Aber Elias hat heute früh um 06:57 fünf Commits an genau solchen Dateien
-gemacht.** Ob danach veröffentlicht wurde, ist von hier aus **nicht feststellbar**
-— es gibt kein `.deploy/` und keine Zustandsdatei, an der man das ablesen könnte,
-und die Seite selbst kann diese Routine nicht abrufen. Das ist **keine Behauptung,
-dass etwas fehlt**, sondern die ehrliche Auskunft, dass die Frage von hier aus
-offen bleibt. Für Elias ist es ein Ein-Befehl-Check.
+gemacht.** Im Repo selbst ist nicht ablesbar, ob danach veröffentlicht wurde — es
+gibt kein `.deploy/` und keine Zustandsdatei, und die Seite kann diese Routine
+nicht abrufen.
+
+✅ **In [[Vokabeltrainer-Arabisch]] steht die Antwort aber, und sie ist gut:** für
+den 16.08. sind **vier Cloudflare-Deployments** protokolliert — `099b6d59`,
+`9927881f`, `f632b8ba` und `6def2ab9`, alle **Production** auf `main`, das letzte
+zum Stand `037213e` / Cache v144, mit Elias' Abnahme „ja so ist gut." **Die
+ausgelieferte Seite ist also aktuell.** Der Fehler, vor dem `CLAUDE.md` warnt, ist
+hier nicht eingetreten.
 
 ⭐ **Nachtrag, weil es sich erst beim Push gezeigt hat: Elias' fünf Commits von
 heute früh waren noch gar nicht auf GitHub.** Der Push ging von `2039026`
@@ -1608,12 +1613,19 @@ Vorschrift „nur selbst geänderte Dateien, mit explizitem Pfad" bezieht sich a
 `maintenance-log.md`.
 
 Schaden entsteht dadurch keiner (es ist Elias' eigene Arbeit auf seinem eigenen
-`main`), aber **zwei Dinge sind dadurch anders, als es oben steht**: Erstens war
-`git pull --ff-only` → „Already up to date" **kein** Beleg dafür, dass lokal und
-GitHub gleichauf waren — `pull` sagt nichts darüber, ob man voraus ist. Zweitens
-ist der Cloudflare-Punkt darüber damit **wahrscheinlicher geworden**: wer seine
-Commits noch nicht gepusht hat, hat mit einiger Sicherheit auch noch nicht
-veröffentlicht. Feststellen lässt sich das von hier aus weiterhin nicht.
+`main`). Zu lernen ist daraus eines: **`git pull --ff-only` → „Already up to date"
+ist kein Beleg dafür, dass lokal und GitHub gleichauf sind.** `pull` sagt nichts
+darüber, ob man *voraus* ist. Wer das wissen will, braucht `git status` (dort
+steht „Your branch is ahead") oder `git log origin/main..main`.
+
+⭐⭐ **Und die Lage ist genau spiegelverkehrt zu der, vor der `CLAUDE.md` warnt.**
+Die Warnung dort lautet: „Wer nur pusht, hat ein aktuelles Repo und eine alte
+Seite." Heute war es umgekehrt — **die Seite war den ganzen Tag aktuell (vier
+Production-Deployments), das Repo hing hinterher.** Das ist die harmlosere der
+beiden Richtungen, aber es ist derselbe Riss: seit Repo und Auslieferung
+entkoppelt sind, kann jede der beiden Seiten allein vorlaufen, und keine der
+beiden merkt es von selbst. Der Wartungslauf hat den Rückstand hier zufällig
+eingesammelt, weil er ohnehin pusht — verlassen sollte man sich darauf nicht.
 
 **Nichts war blockiert.** Kein abgelehnter Befehl, keine Datei, die sich nicht
 schreiben ließ.
@@ -1643,7 +1655,21 @@ schreiben ließ.
    Whisper-Wiederholungsschleifen in Folge 16 beachten (ca. 21:34–26:20 und
    40:00–46:57, dort nur die YouTube-Fassung brauchbar), sie stehen im Backlog
    beschrieben.
-4. **Nichts Dringendes darüber hinaus.** Der Abzug steht seit vier Läufen still,
+4. **Kleiner Zusatz zu Schritt 0, kostet nichts:** Der Lauf sollte künftig nicht
+   nur `git pull --ff-only`, sondern auch `git log origin/main..main` machen. Heute
+   wäre damit gleich zu Anfang sichtbar gewesen, dass fünf Commits lokal liegen —
+   statt es erst an der Push-Ausgabe zu bemerken. Ein Befehl, eine Zeile im Log,
+   und die Richtung „Repo hängt hinterher" wird künftig gesehen statt gefunden.
+   Das ist eine Änderung am Routinen-Prompt, also **Elias' Entscheidung**, nicht
+   meine.
+5. **Nichts Dringendes darüber hinaus.** Der Abzug steht seit vier Läufen still,
    die Prüfskripte sind sauber, die offenen Ḥarakāt-Fragen brauchen Elias' Beleg
    und nicht meine Vermutung, und die Routine selbst hat diesmal ohne Störung
    durchgearbeitet.
+
+ℹ️ **Kleinigkeit am Rande, nicht angefasst:** In [[Vokabeltrainer-Arabisch]] steht
+die Tabellenzeile „Commits am 16.08." zweimal untereinander (einmal mit vier,
+einmal mit fünf Commits) — ein Bearbeitungsrest aus Elias' Sitzung. Die zweite
+Zeile ist die vollständige. Ich habe die Notiz nicht korrigiert: sie ist heute von
+ihm selbst geführt worden und aktuell, und in einer unbeaufsichtigten Routine an
+seinem Gedächtnis herumzuräumen ist die falsche Reihenfolge.
