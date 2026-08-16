@@ -732,15 +732,20 @@ main{
    Die Sprache steht als eigene Klasse am Span (ist-ar / ist-de), damit nicht
    zwei Regeln um denselben Selektor konkurrieren. */
 .vs-echo{
-  unicode-bidi:isolate;font-weight:600;color:var(--text-dim);letter-spacing:0;
+  /* Weiss statt --text-dim seit dem 16.08.2026, Elias: „vielleicht sollte dann
+     das was in den klammern ist jeweils in weißer farbe sein und nicht in
+     grau". Auf der Rueckseite ist ohnehin alles offen — das Echo muss nicht
+     zurueckgenommen werden, es muss lesbar sein.
+     Andere Faerbungen stehen zum Vergleich in vorschau-kartenrueckseite.html. */
+  unicode-bidi:isolate;font-weight:600;color:#fff;letter-spacing:0;
 }
-/* Arabisch neben einer deutschen Loesung: dieselbe Groessenregel wie ueberall
-   sonst in der App (--ar-faktor), sonst waere es wieder das kleine Arabisch,
-   um das es hier ueberhaupt geht. */
-.vs-echo.ist-ar{font-family:var(--font-ar);font-size:calc(var(--fs-md) * var(--ar-faktor));}
-/* Deutsch neben einer arabischen Loesung: die Loesung steht auf 2,4rem, das
-   Echo bleibt deutlich darunter. */
-.vs-echo.ist-de{font-family:var(--font-ui);font-size:var(--fs-lg);letter-spacing:-.01em;}
+/* ⭐ Groesse: Elias am 16.08.2026 — das Echo „sollte … so gross sein wie das
+   arabische". Beide Werte sind deshalb auf optische Gleichheit mit der Antwort
+   daneben gesetzt, nicht auf gleiche Punktgroesse: bei gleicher Punktgroesse
+   WIRKT Arabisch kleiner, dafuer gibt es in dieser App den `--ar-faktor`.
+   Zum Nachstellen und Aendern: vorschau-kartenrueckseite.html. */
+.vs-echo.ist-ar{font-family:var(--font-ar);font-size:2.72rem;}   /* neben 1,7rem deutsch */
+.vs-echo.ist-de{font-family:var(--font-ui);font-size:1.5rem;letter-spacing:-.01em;}  /* neben 2,4rem arabisch */
 /* Bedeutung, die es wirklich gibt, aber nicht in der Lektion steht. Leise
    gesetzt: sie soll auffindbar sein, nicht mitgelernt werden. */
 .neben-bedeutung{
