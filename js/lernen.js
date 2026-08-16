@@ -733,18 +733,33 @@ document.getElementById('btnExitLearn').addEventListener('click', ()=>{
    Leitner-System kann damit besser einteilen.
 
    Was jede Stufe mit der Box macht:
-     nochmal  zurueck auf 1  - gar nicht gewusst, von vorn
-     schwer   eine Box runter (mindestens 1) - gewusst, aber muehsam
+     nochmal  eine Box runter (mindestens 1) - nicht gewusst
+     schwer   bleibt in derselben Box         - gewusst, aber muehsam
      gut      eine Box rauf  - das bisherige "richtig"
      leicht   zwei Boxen rauf - sass sofort, laenger nicht noetig
 
+   ⭐ Umgestellt am 16.08.2026 auf Elias' Wunsch: "nochmal sollte die selbe
+   funktion haben wie schwer, also dass man einfach nur eine einzige box weiter
+   runter geht. und schwer sollte die funktion haben, dass man in der selben
+   box bleibt."
+
+   Vorher warf "nochmal" die Vokabel IMMER auf Box 1 zurueck - aus Box 5 also
+   sechzehn Tage Fortschritt in einem Tippen. Jetzt ist die Reihe durchgehend
+   gleichmaessig: -1 / 0 / +1 / +2. Damit ist auch die Reue billiger, wenn man
+   den falschen der vier Knoepfe erwischt.
+
+   ⚠️ Eine Folge, die man kennen muss: "schwer" haelt die Box UND damit deren
+   Abstand. Ein muehsames Wort aus Box 5 kommt also erst in 16 Tagen wieder,
+   nicht in 7 wie vorher. Wer es frueher wiedersehen will, nimmt "nochmal".
+
    Nur "gut" verhaelt sich wie vorher; die Wischgeste bleibt deshalb bei
-   nochmal/gut. Fuer die Statistik zaehlen "nochmal" und "schwer" als
-   Fehlversuch, "gut" und "leicht" als Treffer - sonst waere die Trefferquote
-   der Statistik nicht mehr mit den frueheren Werten vergleichbar. */
+   nochmal/gut. Fuer die Statistik zaehlen "nochmal" und "schwer" weiterhin als
+   Fehlversuch, "gut" und "leicht" als Treffer - daran wurde bewusst NICHTS
+   geaendert, sonst waere die Trefferquote nicht mehr mit den frueheren Werten
+   vergleichbar. */
 const STUFEN = {
-  nochmal: { box: () => 1,                       richtig: false, feedback: 'answer-wrong' },
-  schwer:  { box: (b) => Math.max(1, b - 1),     richtig: false, feedback: 'answer-wrong' },
+  nochmal: { box: (b) => Math.max(1, b - 1),     richtig: false, feedback: 'answer-wrong' },
+  schwer:  { box: (b) => b,                      richtig: false, feedback: 'answer-wrong' },
   gut:     { box: (b) => Math.min(5, b + 1),     richtig: true,  feedback: 'answer-right' },
   leicht:  { box: (b) => Math.min(5, b + 2),     richtig: true,  feedback: 'answer-right' }
 };

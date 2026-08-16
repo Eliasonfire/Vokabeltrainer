@@ -1622,7 +1622,13 @@ main{
    dem Wort und stiessen sonst in die Zeile darueber. */
 .mn-ar{
   font-family:var(--font-ar);
-  font-size:calc(1em * var(--ar-faktor));
+  /* 1⅔ statt der doppelten Groesse. Erst stand hier `1em * --ar-faktor`, also
+     genau das Verhaeltnis des Beispielsatzes; Elias nach dem Ansehen: "kannst
+     du das arabische bei den vorschlägen vielleicht nur so 2/3 größer machen
+     als das deutsche". Im FLIESSTEXT ist das der Unterschied - ein
+     freistehender Beispielsatz vertraegt das Doppelte, mitten im Satz sprengt
+     es die Zeile. */
+  font-size:calc(1em * 5 / 3);
   line-height:1.45;
 }
 .note-box.hat-notiz{
