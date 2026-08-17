@@ -1179,7 +1179,7 @@ const VOCAB_DATA = [
  {
   "id": "45802",
 
-  "mnemo": "مَاءٌ ist eines der kürzesten und häufigsten Wörter. Im Koran: وَجَعَلْنَا مِنَ الْمَاءِ كُلَّ شَيْءٍ حَيٍّ — „Und Wir machten aus dem Wasser alles Lebendige\" (Sure 21:30). Lerne es mit den anderen Getränken: شَايٌ, قَهْوَةٌ, لَبَنٌ.",
+  "mnemo": "مَاءٌ ist eines der kürzesten und häufigsten Wörter. Im Koran heißt es, Allah habe مِنَ الْمَاءِ — „aus dem Wasser“ — alles Lebendige gemacht (Sure 21:30). Lerne es mit den anderen Getränken: شَايٌ, قَهْوَةٌ, لَبَنٌ.",
   "ar": "مَاءٌ",
   "de": "Wasser",
   "type": "noun",
@@ -1248,7 +1248,7 @@ const VOCAB_DATA = [
  {
   "id": "45805",
 
-  "mnemo": "⭐ Gleiche Wurzel ج م ل wie جَمَلٌ (Kamel). Merksatz: Das Kamel ist schön. Ein Merkhaken, keine Herkunftsbehauptung — aber du vergisst ihn nicht mehr. Im Hadith: إِنَّ اللهَ جَمِيلٌ يُحِبُّ الْجَمَالَ.",
+  "mnemo": "⭐ Gleiche Wurzel ج م ل wie جَمَلٌ (Kamel). Merksatz: Das Kamel ist schön. Ein Merkhaken, keine Herkunftsbehauptung — aber du vergisst ihn nicht mehr. Im Hadith: إِنَّ اللهَ جَمِيلٌ — „Allah ist schön“, und Er liebt das Schöne.",
   "ar": "جَمِيلٌ",
   "de": "schön",
   "type": "adjective",
@@ -3247,7 +3247,7 @@ const VOCAB_DATA = [
  {
   "id": "45896",
 
-  "mnemo": "⭐ Im Koran bittet Mūsā: وَاجْعَل لِّي وَزِيرًا مِّنْ أَهْلِي — „und gib mir einen Helfer aus meiner Familie\" (Sure 20:29). Ein وَزِير ist ein Lastenträger, der mitträgt.",
+  "mnemo": "⭐ Im Koran bittet Mūsā um وَزِيرًا مِّنْ أَهْلِي — „einen Helfer aus meiner Familie“ (Sure 20:29). Ein وَزِير ist ein Lastenträger, der mitträgt.",
   "ar": "وَزِيرٌ",
   "de": "Minister",
   "type": "noun",
