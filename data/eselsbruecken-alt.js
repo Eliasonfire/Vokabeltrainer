@@ -528,6 +528,92 @@ const ESELSBRUECKEN_ALT = {
   '45826': [
     'Werkzeug- und Ort-مِـ wie bei مِفْتَاحٌ (Schlüssel) und مِنْدِيلٌ (Tuch), die du hast: erst مِـ, dann die Wurzel, dann ein langes ā vor dem letzten Buchstaben. Die Wurzel ر ح ض heißt waschen — der مِرْحَاض ist der Ort zum Waschen.',
     'Der praktische Satz steht schon bei dir: أَيْنَ الْمِرْحَاضُ؟ — „Wo ist die Toilette?" Das ist die Sorte Satz, die man auf einer Reise wirklich braucht, und er besteht aus zwei Vokabeln, die du beide in diesem Kapitel lernst. Sprich ihn ein paarmal, dann sitzt er.'
+  ],
+
+  /* ===================== Kapitel 5 — Familie, Orte, Hinweiswörter ==== */
+
+  /* رَسُولٌ - Gesandter */
+  '45827': [
+    'In Sūrat al-Bayyina, die du auswendig kannst, steht das Wort genau in deiner Form: رَسُولٌ مِّنَ ٱللَّهِ (98:2) — „ein Gesandter von Allah". Mit Tanwīn, unbestimmt, wie im Vokabelheft. Und in Sūrat al-Fīl steckt dieselbe Wurzel im Verb: وَأَرْسَلَ عَلَيْهِمْ (105:3), „und Er sandte gegen sie".',
+    'Die Wurzel ر س ل („senden") trägt eine ganze Familie: رَسُول der Gesandte, رِسَالَة die Botschaft, أَرْسَلَ er sandte. ⚠️ Der Plural ist unregelmäßig kurz: رَسُولٌ → رُسُلٌ, ru-sul. Genau diese Form hörst du im Koran, wenn von allen Gesandten die Rede ist.'
+  ],
+
+  /* تَحْتَ - unter */
+  '45828': [
+    'Die berühmteste Wendung des Korans über das Paradies trägt dein Wort, und sie steht in einer Sure, die du auswendig kannst: تَجْرِي مِن تَحْتِهَا (98:8) — „durcheilt von Bächen", wörtlich „es fließt von unter ihnen". تَحْتِهَا ist dein تَحْتَ mit „ihnen" daran.',
+    '⚠️ Der Fachbegriff dazu ist ظَرْف, und dein Lehrer stellt ausdrücklich klar: تَحْتَ ist KEIN حَرْفُ الْجَرِّ, obwohl das Wort danach genauso in den Genitiv kommt — تَحْتَ الْمَكْتَبِ. Es wirkt wie eine Genitivpartikel, gehört aber in eine eigene Kategorie. Das ist der Unterschied, den man kennen muss.'
+  ],
+
+  /* عَمٌّ - Onkel väterlicherseits */
+  '45829': [
+    'Der Trick gegen das Verwechseln liegt im Klang: „ʿamm" ist kurz und hart, „chāl" weich und lang. Sprich beide direkt hintereinander — ʿamm, chāl — dann trennt sich das Paar von selbst. Und häng die Frauen gleich an: عَمَّة gehört zur Vaterseite, خَالَة zur Mutterseite.',
+    'Die شَدَّة verrät die Wurzel: ع م م, zwei م, im Singular zu einem zusammengezogen. Im Plural rücken sie auseinander: عَمٌّ → أَعْمَامٌ. Dasselbe siehst du bei أُمٌّ → أُمَّهَاتٌ und bei قِطٌّ. ⚠️ Und der Plural folgt dem Muster أَفْعَال, das du von أَبْوَابٌ und أَقْلَامٌ kennst.'
+  ],
+
+  /* اِبْنٌ - Sohn */
+  '45830': [
+    'Die Hamzat al-waṣl ist hier zum Anfassen: اِبْن steht allein mit dem اِ, aber im Satz verschwindet es — هَذَا ابْنُ التَّاجِرِ, gesprochen „hādha bnu…". Genau die Regel هَمْزَةُ الوَصْل aus deinem Unterricht, an einem Wort, das du oft brauchst.',
+    'Die Wurzel ب ن ي heißt bauen — Kinder bauen die Familie weiter. ⚠️ Achte auf den Unterschied zum Gegenstück: اِبْنٌ (Sohn) hat die Wurzel ب ن ي, بِنْتٌ (Tochter) die Wurzel ب ن ت. Die Plurale gehen deshalb auseinander: أَبْنَاءٌ gegen بَنَاتٌ.'
+  ],
+
+  /* شَارِعٌ - Straße */
+  '45831': [
+    'Die Wurzel ش ر ع steckt auch in شَرِيعَة — und das Bild ist dasselbe: ein Weg, den man geht. Die Straße ist der Weg unter den Füßen, die Scharia der Weg des Lebens. Wer die Wurzel einmal so gesehen hat, hat zwei Wörter statt einem.',
+    'Muster فَاعِل wie جَالِسٌ, وَاقِفٌ, طَالِبٌ, تَاجِرٌ — alle vier hast du. ⚠️ Der Plural bricht auf zu شَوَارِعُ, mit einem و, das im Singular gar nicht vorkommt. Sprich beide: shā-riʿ, sha-wā-riʿ.'
+  ],
+
+  /* سَيَّارَةٌ - Auto */
+  '45832': [
+    'Drei deiner Wörter folgen demselben Maschinenmuster فَعَّالَة: سَيَّارَةٌ (Auto), ثَلَّاجَةٌ (Kühlschrank), دَرَّاجَةٌ (Fahrrad). Immer eine شَدَّة in der Mitte und eine تاء مَرْبُوطة am Ende. Das Muster heißt so viel wie „das, was viel tut" — die سَيَّارَة ist „die viel Fahrende".',
+    'Die Wurzel س ي ر heißt gehen und reisen — daher سَيْر (der Gang) und سِيرَة, die Lebensbeschreibung: der Weg, den einer gegangen ist. السِّيرَة النَّبَوِيَّة, die Prophetenbiographie, ist derselbe Stamm. Ein Auto und eine Lebensgeschichte aus einer Wurzel — das vergisst man nicht.'
+  ],
+
+  /* كَعْبَةٌ - Kaaba */
+  '45833': [
+    'Nimm die Verbindung, die du schon hast: بَيْتُ اللهِ — das Haus Allahs — ist die كَعْبَة. Damit hängen zwei Vokabeln aneinander (بَيْتٌ aus Kapitel 1 und كَعْبَةٌ hier), und beide an einem Begriff, den du seit jeher kennst.',
+    'Die Wurzel ك ع ب hat mit „Würfel" zu tun — daher der Name für den würfelförmigen Bau. ⚠️ Und das Wort ist weiblich (تاء مَرْبُوطة): deshalb heißt es هَذِهِ الْكَعْبَةُ قَدِيمَةٌ mit ة am Adjektiv, nicht قَدِيمٌ. Ein gutes Beispiel für die vier Bedingungen des نَعْت.'
+  ],
+
+  /* هُنَا - hier */
+  '45834': [
+    'Denk es dir als Zeigefinger: هُنَا zeigt auf den Boden vor dir, هُنَاكَ zeigt weg. Der Unterschied ist EIN Buchstabe, das كَ am Ende. Genau dieselbe Nah-Fern-Ordnung hast du bei den Hinweiswörtern aus deinen Regeln: هَذَا für Nahes, ذَلِكَ für Fernes.',
+    '⚠️ In deinem Unterricht zählt هُنَا als Nomen, nicht als Partikel — die App zeigt es anders, aber der Unterricht hat Vorrang. Das ist derselbe Fall wie bei تَحْتَ: Wörter, die wie kleine Partikeln aussehen und grammatisch Nomen sind.'
+  ],
+
+  /* خَالٌ - Onkel mütterlicherseits */
+  '45835': [
+    'Merke es über die Plurale, sie klingen sehr verschieden: خَالٌ → أَخْوَالٌ gegen عَمٌّ → أَعْمَامٌ. Im Plural taucht bei خَال das و der Wurzel خ و ل wieder auf, das im Singular im langen ā verschwunden ist. Sprich alle vier hintereinander, dann sitzt das Paar.',
+    'Diesen Unterschied gibt es im Deutschen nicht, und genau deshalb muss man ihn bewusst lernen: خَال ist der Bruder der MUTTER, عَمّ der Bruder des VATERS. Eine Eselsbrücke, die trägt: خَال und die خَالَة (Tante mütterlicherseits) gehören zur selben Seite — wer eines weiß, weiß beide.'
+  ],
+
+  /* هُنَاكَ - dort */
+  '45836': [
+    'Das كَ am Ende ist derselbe Zeigefinger, den du bei ذَلِكَ siehst — auch dort steht ein كَ für die Ferne. Sammle die Ferne-Wörter: هُنَاكَ (dort), ذَلِكَ (jenes), تِلْكَ (jene). Alle drei tragen dasselbe كَ, alle drei zeigen weg.',
+    'Übe es im Satzpaar, dann ist der Abstand hörbar: الْمُدَرِّسُ هُنَا الْآنَ gegen الْمَكْتَبَةُ هُنَاكَ. Beide Sätze kommen ohne „ist" aus — das ist die Regel des Nominalsatzes, die du schon hast, und hier arbeitet sie mit einem Ortswort statt einem Adjektiv.'
+  ],
+
+  /* مُغْلَقٌ - geschlossen */
+  '45837': [
+    'Das Muster ist der Gewinn: مُفْعَل ist das PASSIVE Partizip — etwas, das geschlossen WURDE. Vergleiche es mit مُدَرِّس (der lehrt, aktiv) und مُدِير (der leitet, aktiv), die du beide hast. Ein مُـ am Anfang, und der Unterschied steckt allein in den Vokalen dazwischen.',
+    'Das Gegenteil kennst du über die Wurzel, auch wenn das Wort noch nicht in deinen Vokabeln steht: مَفْتُوح („offen") kommt von ف ت ح — genau der Wurzel deines مِفْتَاحٌ (Schlüssel). Der Schlüssel öffnet, مُغْلَق ist zu. Ein Bild, und du musst dir nur eine Wurzel merken.'
+  ],
+
+  /* بِنْتٌ - Tochter / Mädchen */
+  '45838': [
+    '⚠️ Die Ausnahme, die man sich merken muss: بِنْتٌ endet auf ein normales ت mit Sukūn, NICHT auf die تاء مَرْبُوطة ة, die sonst weibliche Wörter kennzeichnet. Das Wort ist trotzdem weiblich — dein Lehrer nennt solche Fälle مؤنث بلا تاء, „weiblich ohne Tāʾ".',
+    'Der Satz aus deinen Regeln zeigt gleich die Folge daraus: بِنْتٌ صَغِيرَةٌ ist richtig, بِنْتٌ صَغِيرٌ nicht. Obwohl das Nomen kein ة hat, muss das Adjektiv eines bekommen — das Geschlecht entscheidet, nicht die Schreibung. Genau das ist die zweite der vier Bedingungen des نَعْت.'
+  ],
+
+  /* اِسْمٌ - Name */
+  '45839': [
+    'Der allererste Vers, der herabgesandt wurde, trägt dein Wort — und du kannst die Sure auswendig: ٱقْرَأْ بِٱسْمِ رَبِّكَ (96:1), „Lies im Namen deines Herrn". Dasselbe بِٱسْمِ sprichst du bei jedem بِسْمِ اللهِ. ⚠️ Auch hier fällt das اِ im Satz weg, weil es eine Hamzat al-waṣl ist.',
+    'اِسْم ist außerdem einer der drei Fachbegriffe für die Wortarten aus deinem Unterricht: اِسْم – فِعْل – حَرْف. Alles, was kein Verb und keine Partikel ist, ist ein اِسْم. Damit hat dein Vokabelwort „Name" gleichzeitig eine grammatische Bedeutung — merke beide zusammen.'
+  ],
+
+  /* حَقِيبَةٌ - Tasche / Rucksack */
+  '45840': [
+    'Nimm den Satz, er verbindet drei Vokabeln: هَذِهِ حَقِيبَةُ الطَّالِبِ — „das ist die Tasche des Studenten". Und er ist eine إِضافة zum Anfassen: حَقِيبَةُ ohne اَلْ und ohne Tanwīn, الطَّالِبِ im Genitiv dahinter. Was in الْكِتَابُ فِي الْحَقِيبَةِ steckt, hast du damit gleich mit.',
+    '⚠️ Der Plural hat eine Hamzah mitten im Wort: حَقِيبَةٌ → حَقَائِبُ, ḥa-qā-ʾib. Genau dasselbe Muster wie bei دُكَّانٌ → دَكَاكِينُ und مَطْبَخٌ → مَطَابِخُ: langes ā nach dem ersten Buchstaben, dann ein Kasra vor dem letzten. Und alle drei ohne Tanwīn.'
   ]
 
 };
