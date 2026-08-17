@@ -172,7 +172,21 @@ console.log('=== 4. „das hast du auch" — steht das Wort wirklich im Lernbest
      ausdruecklichen Zusatz, dass es noch nicht in seinen Vokabeln steht). */
   const arab = '[\\u0600-\\u06FF]';
   const muster = new RegExp('(' + arab + '+)\\s*\\(([^)]{2,30})\\)', 'g');
-  const bekannt = new Set(VOCAB_DATA.map(w => flach(w.ar)));
+  /* ⚠️ Auch die PLURAL- und Singularformen zaehlen als bekannt. Sie stehen an
+     seinen Vokabeln (Feld `pl` / `sg`) und werden auf der Lernkarte angezeigt -
+     „أُنُوفٌ (Nasen)" ist also keine Behauptung ueber ein fremdes Wort, sondern
+     ueber die Mehrzahl von أَنْفٌ, das er hat. Ohne diese Zeile meldet die
+     Pruefung genau die Stellen, an denen Muster erklaert werden. */
+  const bekannt = new Set();
+  VOCAB_DATA.forEach(w => {
+    [w.ar, w.pl, w.sg, w.femSg, w.femPl].forEach(feld => {
+      if (!feld) return;
+      String(feld).split('/').forEach(teil => {
+        const t = flach(teil).trim();
+        if (t) bekannt.add(t);
+      });
+    });
+  });
   /* Fachbegriffe aus dem Unterricht zaehlen mit - sie sind seit v157 Vokabeln. */
   try {
     ladeAusSkript('data/fachbegriffe.js', 'FACHBEGRIFF_VOKABELN')
