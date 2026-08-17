@@ -87,6 +87,7 @@ function hoerbareVokabeln(){
   if (typeof irgendwoEingeengt === 'function' && irgendwoEingeengt()){
     const eng = pool.filter(w => {
       if (w.chapter === 'personal') return true;
+      if (w.chapter === 'grammar')  return true;   /* Fachbegriffe: kein Buch, kein Kapitel */
       const sel = kapitelAuswahl(w.book);
       return !sel.length || sel.indexOf(w.chapter) >= 0;
     });
@@ -134,7 +135,13 @@ function naechsteHoerfrage(){
   karte.classList.remove('hidden');
   leer.classList.add('hidden');
 
-  HOER.wort = shuffle(pool)[0];
+  /* „Kenne ich schon" gilt auch hier - aber nur fuer die FRAGE, nicht fuer die
+     Ablenker. Ein Wort, das Elias sicher kann, ist als falsche Antwort sogar
+     besonders brauchbar: er erkennt es und schliesst es aus. Wuerde man es aus
+     dem ganzen Pool nehmen, verloere der Modus die besten Ablenker und
+     schrumpfte womoeglich unter die vier noetigen Antworten. */
+  const fragbar = pool.filter(w => !(typeof kennErSchon === 'function' && kennErSchon(w)));
+  HOER.wort = shuffle(fragbar.length ? fragbar : pool)[0];
   HOER.optionen = shuffle([HOER.wort, ...waehleAblenker(HOER.wort, pool, 3)]);
   HOER.beantwortet = false;
   HOER.fertig = false;

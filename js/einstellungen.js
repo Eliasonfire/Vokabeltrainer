@@ -17,8 +17,59 @@ function renderSettings(){
   document.getElementById('wurzelNiveauSelect').value = SETTINGS.wurzelNiveau || 'stand';
   document.getElementById('toggleWurzelAusrichten')
     .classList.toggle('on', SETTINGS.wurzelAusrichten !== false);
+  zeichneKenneSchonListe();
   loadVoices();
 }
+
+/* ---------- Der Rückweg aus „Kenne ich schon" (17.08.2026) ----------
+
+   Ohne diese Liste wäre der Knopf auf der Lernkarte eine Einbahnstraße: ein
+   Fehlgriff, und das Wort wäre für immer weg - und nirgends stünde, welches.
+   Genau daran ist die Idee beim Aufschreiben der Anleitung gescheitert („dann
+   holst du es dir zurück, indem du …" - es gab kein Indem).
+
+   Die Liste steht bewusst offen da und nicht hinter einem Aufklapper: sie ist
+   normalerweise leer und stört dann nicht (`:empty{display:none}`), und wenn
+   sie etwas enthält, ist genau das die Auskunft, die man sucht. */
+function zeichneKenneSchonListe(){
+  const kasten = document.getElementById('kenneSchonListe');
+  const stand  = document.getElementById('kenneSchonStand');
+  const alle   = document.getElementById('btnKenneSchonAlle');
+  if (!kasten || !stand) return;
+  const woerter = (typeof bekannteMarkierungen === 'function') ? bekannteMarkierungen() : [];
+
+  stand.textContent = woerter.length
+    ? `${woerter.length} ${woerter.length===1?'Wort wird':'Wörter werden'} nicht mehr abgefragt`
+    : 'Noch keins ausgeblendet';
+  if (alle) alle.disabled = !woerter.length;
+
+  kasten.innerHTML = woerter.map(w =>
+    `<div class="kenne-schon-eintrag">
+       <div class="kenne-schon-wort">
+         <span class="ar" lang="ar" dir="rtl">${escapeHtml(w.ar)}</span>
+         <span class="de">${escapeHtml(w.de)}</span>
+       </div>
+       <button class="kenne-schon-zurueck" data-zurueck="${escapeHtml(String(w.id))}">Wieder abfragen</button>
+     </div>`).join('');
+}
+
+document.getElementById('kenneSchonListe').addEventListener('click', (e)=>{
+  const knopf = e.target.closest('[data-zurueck]');
+  if (!knopf) return;
+  const id = knopf.dataset.zurueck;
+  setzeKennErSchon(id, false);
+  zeichneKenneSchonListe();
+  const w = VOCAB_DATA.find(x => String(x.id) === id);
+  toast(w ? `${w.de} wird wieder abgefragt.` : 'Wieder in der Abfrage.');
+});
+
+document.getElementById('btnKenneSchonAlle').addEventListener('click', ()=>{
+  const woerter = bekannteMarkierungen();
+  if (!woerter.length) return;
+  woerter.forEach(w => setzeKennErSchon(w.id, false));
+  zeichneKenneSchonListe();
+  toast(`${woerter.length} ${woerter.length===1?'Wort kommt':'Wörter kommen'} wieder in die Abfrage.`);
+});
 
 /* Faerbung der Wurzel. Wirkt ueber ein Attribut am <body>, nicht ueber eine
    Klasse an jedem Wort: so laesst sie sich umschalten, ohne irgendetwas neu
@@ -102,6 +153,7 @@ const SICHERUNGS_SCHLUESSEL = [
   'vt_progress', 'vt_notes', 'vt_settings', 'vt_streak',
   'vt_personalVocab', 'vt_customCats', 'vt_hifz', 'vt_hifzVerse',
   'vt_hoerTag',   /* Tageszaehler Hoermodus, 17.08.2026 */
+  'vt_bekannt',   /* „Kenne ich schon" — seine Auswahl, nicht wiederherstellbar */
   /* Beide am 04.08.2026 nachgetragen. `vt_quranFav` (Favoriten-Suren) war seit
      seiner Einfuehrung am selben Tag nicht dabei - aufgefallen erst, als
      `vt_lesestand` dazukam und die Liste noch einmal gelesen wurde. Wer eine

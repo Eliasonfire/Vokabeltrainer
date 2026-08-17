@@ -88,8 +88,7 @@ document.getElementById('sentThemen').addEventListener('click', (e)=>{
    Auskunft - danach kann Elias im Buch nachschlagen. */
 function herkunft(w){
   if (w.seite) return `Madina Buch 1, S. ${w.seite}`;
-  if (w.chapter === 'personal') return 'Eigene Vokabel';
-  return `Kap. ${w.chapter}`;
+  return kapitelBeschriftung(w);
 }
 
 /* Im Lueckenmodus wird das Zielwort durch einen Strich ersetzt - als Element

@@ -20,11 +20,17 @@ function renderCategories(){
 function renderChapterCats(){
   /* Die Kapitelliste kommt jetzt aus dem aktiven Buch - fest 1-9 stimmte nur
      fuer Madina 1 und auch dort nur fuer die freigeschalteten Kapitel. */
-  const chapters = [...kapitelDesBuchs(), 'personal'];
+  /* 'grammar' sind die zehn Fachbegriffe aus dem Unterricht
+     (data/fachbegriffe.js). Sie stehen neben „Eigene Vokabeln" und nicht
+     darin: sie gehoeren zu keinem Kapitel, und Elias soll sie als eigene
+     Gruppe durchsehen koennen. */
+  const chapters = [...kapitelDesBuchs(), 'personal', 'grammar'];
   const html = chapters.map(ch=>{
     const words = buchVokabeln().filter(w=>w.chapter===ch);
     const name = CHAPTER_NAMES[ch] || `Kapitel ${ch}`;
-    const label = ch==='personal' ? `${icon('note')}<span>${name}</span>` : `<span>Kap. ${ch} — ${name}</span>`;
+    const label = (ch==='personal' || ch==='grammar')
+      ? `${icon('note')}<span>${name}</span>`
+      : `<span>Kap. ${ch} — ${name}</span>`;
     return `<div class="list-row" data-openlist="chapter:${ch}">
       <div class="list-row-title">${label}</div>
       <div class="list-row-count">${words.length}</div>
@@ -197,13 +203,15 @@ function openWordList(key){
   let words, title;
   if (key.startsWith('chapter:')){
     const ch = key.split(':')[1];
-    const chNum = ch==='personal' ? 'personal' : Number(ch);
+    const chNum = (ch==='personal' || ch==='grammar') ? ch : Number(ch);
     words = buchVokabeln().filter(w=>w.chapter===chNum);
     /* CHAPTER_NAMES benennt nur die neun Kapitel aus Madina 1, zu denen eine
        belegte Grammatikregel vorliegt. Fuer alle uebrigen bleibt die Nummer -
        einen Namen zu erfinden verbietet E.1. */
     const kapName = CHAPTER_NAMES[chNum];
-    title = ch==='personal' ? 'Eigene Vokabeln' : (kapName ? `Kapitel ${ch} — ${kapName}` : `Kapitel ${ch}`);
+    title = (ch==='personal' || ch==='grammar')
+      ? (kapName || ch)
+      : (kapName ? `Kapitel ${ch} — ${kapName}` : `Kapitel ${ch}`);
   } else if (key.startsWith('feld:')){
     /* Nicht an ':' zerlegen und das zweite Stueck nehmen - Feldnamen duerfen
        ein '&' und theoretisch auch weitere Zeichen enthalten ("Familie &

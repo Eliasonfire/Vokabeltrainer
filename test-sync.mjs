@@ -127,6 +127,55 @@ console.log('=== Zusammenfuehren der uebrigen Schluessel ===');
 }
 
 console.log('');
+console.log('=== „Kenne ich schon" (vt_bekannt) ===');
+{
+  /* Der Schluessel wird JE WORT zusammengefuehrt. Die drei Faelle unten sind
+     genau die, an denen eine blosse Vereinigung der markierten Ids
+     stillschweigend falsch waere. */
+  const { ctx, speicher } = baueUmgebung();
+  const fuehreZusammen = vm.runInContext('fuehreZusammen', ctx);
+
+  /* 1. Jedes Geraet hat eigene Markierungen - keine darf verlorengehen. */
+  speicher['vt_bekannt'] = JSON.stringify({ a: { an:true, zeit:100 } });
+  fuehreZusammen({ stempel: {}, daten: { vt_bekannt: JSON.stringify({ b: { an:true, zeit:200 } }) } });
+  let r = JSON.parse(speicher['vt_bekannt']);
+  pruefe('Markierungen beider Geräte bleiben erhalten',
+    r.a && r.a.an && r.b && r.b.an, speicher['vt_bekannt']);
+
+  /* 2. Der eigentliche Grund fuer die Zeitstempel: eine RUECKNAHME muss
+        ankommen. Bei einer Vereinigung der markierten Ids waere das Wort hier
+        wieder markiert - ohne Fehlermeldung. */
+  const { ctx: c2, speicher: s2 } = baueUmgebung();
+  const fz2 = vm.runInContext('fuehreZusammen', c2);
+  s2['vt_bekannt'] = JSON.stringify({ x: { an:true, zeit:100 } });
+  fz2({ stempel: {}, daten: { vt_bekannt: JSON.stringify({ x: { an:false, zeit:900 } }) } });
+  pruefe('spätere Rücknahme vom anderen Gerät gewinnt',
+    JSON.parse(s2['vt_bekannt']).x.an === false, s2['vt_bekannt']);
+
+  /* 3. Andersherum: die aeltere Ruecknahme darf die neuere Markierung nicht
+        umwerfen. */
+  const { ctx: c3, speicher: s3 } = baueUmgebung();
+  const fz3 = vm.runInContext('fuehreZusammen', c3);
+  s3['vt_bekannt'] = JSON.stringify({ x: { an:true, zeit:900 } });
+  fz3({ stempel: {}, daten: { vt_bekannt: JSON.stringify({ x: { an:false, zeit:100 } }) } });
+  pruefe('ältere Rücknahme verliert gegen neuere Markierung',
+    JSON.parse(s3['vt_bekannt']).x.an === true, s3['vt_bekannt']);
+
+  /* 4. Kaputtes JSON darf die eigene Auswahl nicht wegwerfen. */
+  const { ctx: c4, speicher: s4 } = baueUmgebung();
+  const fz4 = vm.runInContext('fuehreZusammen', c4);
+  s4['vt_bekannt'] = JSON.stringify({ x: { an:true, zeit:1 } });
+  fz4({ stempel: { vt_bekannt: 9999 }, daten: { vt_bekannt: 'kein json {{{' } });
+  pruefe('kaputtes JSON zerstört die eigene Auswahl nicht',
+    JSON.parse(s4['vt_bekannt']).x.an === true, s4['vt_bekannt']);
+
+  /* 5. Der Schluessel steht ueberhaupt in SYNC_SCHLUESSEL - ohne das liefe
+        alles oben ins Leere, und zwar unsichtbar. */
+  const liste = vm.runInContext('SYNC_SCHLUESSEL', ctx);
+  pruefe('vt_bekannt steht in SYNC_SCHLUESSEL', liste.indexOf('vt_bekannt') >= 0, liste.join(', '));
+}
+
+console.log('');
 console.log('=== Filter: was wird ueberhaupt abgeglichen ===');
 {
   const { ctx, speicher } = baueUmgebung();

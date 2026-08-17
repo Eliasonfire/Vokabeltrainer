@@ -40,7 +40,13 @@ const SYNC_SCHLUESSEL = [
      `vt_progress` wird er als ein Block gemergt - der juengere Stempel gewinnt.
      Bei einem Zaehler, der ohnehin nur waehrend des Uebens waechst, ist das
      tragbar: gewinnt das Geraet, an dem gerade geuebt wurde. */
-  'vt_hoerTag'
+  'vt_hoerTag',
+  /* „Kenne ich schon" (17.08.2026). ⚠️ Wird JE WORT zusammengefuehrt, nicht als
+     Block - siehe den eigenen Zweig in fuehreZusammen(). Als Block waere er ein
+     Rueckschritt hinter genau den Fehler, der heute Nacht bei den Einstellungen
+     behoben wurde: markiert Elias auf dem Handy drei Woerter und auf dem Tablet
+     eins, verlöre der aeltere Stempel alle drei. */
+  'vt_bekannt'
 ];
 
 /* Je Schluessel merken, wann er zuletzt lokal geaendert wurde. Ohne das kann
@@ -185,6 +191,26 @@ function fuehreZusammen(fern){
         const neu = JSON.stringify(raus);
         if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
       } catch (e){ }
+      return;
+    }
+
+    /* „Kenne ich schon": je Wort die SPAETERE Entscheidung. Der Eintrag ist
+       {an:true|false, zeit:…}, das Zurücknehmen ist also eine Tatsache mit
+       Datum und keine Luecke. Eine blosse Vereinigung der markierten Ids waere
+       einfacher gewesen und stillschweigend falsch: sie holt ein
+       zurueckgenommenes Wort vom anderen Geraet sofort wieder herein. */
+    if (k === 'vt_bekannt'){
+      try {
+        const a = JSON.parse(hierRoh) || {}, b = JSON.parse(dortRoh) || {};
+        const raus = Object.assign({}, a);
+        Object.keys(b).forEach(id => {
+          const hier = raus[id], dort = b[id];
+          if (!dort || typeof dort !== 'object') return;
+          if (!hier || (dort.zeit || 0) > (hier.zeit || 0)) raus[id] = dort;
+        });
+        const neu = JSON.stringify(raus);
+        if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
+      } catch (e){ /* kaputtes JSON auf einer Seite: lokal behalten */ }
       return;
     }
 

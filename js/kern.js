@@ -51,8 +51,25 @@ const CHAPTER_NAMES = {
      Zahlen, Grammatik-Fachbegriffe und vermischter Wortschatz. Der Name ist am
      Inhalt abgelesen, nicht geraten - Elias hat am 30.07.26 die neun Zahlen
      daraus angefordert. */
-  24:"Anhang (Pronomen, Zahlen, Fachbegriffe)", personal:"Eigene Vokabeln"
+  24:"Anhang (Pronomen, Zahlen, Fachbegriffe)", personal:"Eigene Vokabeln",
+
+  /* Die zehn arabischen Fachbegriffe seines Lehrers (data/fachbegriffe.js,
+     17.08.2026). Eigenes Kapitel, NICHT 'personal' - siehe die Begruendung
+     dort und bei istBekannt(). */
+  grammar:"Fachbegriffe aus dem Unterricht"
 };
+
+/* Die kurze Herkunftszeile auf der Lernkarte und unter den Beispielsaetzen.
+   Bewusst an EINER Stelle: die beiden Aufrufer schrieben bisher jeder fuer
+   sich `chapter==='personal' ? 'Eigene Vokabel' : 'Kap. '+chapter`, und beim
+   dritten Kapitelwert ('grammar') haette genau einer davon „Kap. grammar"
+   angezeigt - ohne dass es irgendwo aufgefallen waere. */
+function kapitelBeschriftung(w){
+  if (!w) return '';
+  if (w.chapter === 'personal') return 'Eigene Vokabel';
+  if (w.chapter === 'grammar')  return 'Fachbegriff';
+  return `Kap. ${w.chapter}`;
+}
 
 /* ---------- Welche Kapitel kennt Elias? ----------
    Elias am 30.07.2026: "bei den wortfeldern sollen erstmal nur woerter von mir
@@ -116,6 +133,11 @@ const LERNBESTAND_IDS = new Set(VOCAB_DATA.map(w => w.id));
 function istBekannt(w){
   if (!w) return false;
   if (w.chapter === 'personal') return true;
+  /* ⭐ Die Fachbegriffe seines Lehrers (data/fachbegriffe.js). Sie sind
+     definitionsgemaess bekannt: sie stammen aus SEINEN 73 Regeln, also aus dem
+     Unterricht, den er schon hatte. Ohne diese Zeile fielen sie durch den
+     Buchfilter unten, weil 'grammar' in FREIGESCHALTET nicht vorkommt. */
+  if (w.chapter === 'grammar') return true;
   if (LERNBESTAND_IDS.has(w.id)) return true;
   const frei = FREIGESCHALTET[w.book];
   if (!frei) return true;                /* fuer dieses Buch ist nichts hinterlegt */
@@ -169,6 +191,23 @@ let PERSONAL_VOCAB = LS.get('vt_personalVocab', []);
 function savePersonalVocab(){ LS.set('vt_personalVocab', PERSONAL_VOCAB); }
 VOCAB_DATA.push(...PERSONAL_VOCAB);
 
+/* ---------- Fachbegriffe aus dem Unterricht (17.08.2026) ----------
+
+   Elias: „die müssen inkludiert werden und als eigene vokabeln hinzugefügt
+   werden. mach das alles für mich."
+
+   Sie kommen hier dazu und nicht in vocab-data.js, weil diese Datei aus dem
+   arabicroots-Abzug erzeugt wird - ein Eintrag von Hand darin waere beim
+   naechsten Backfill still weg. Der Zeitpunkt ist bewusst VOR initProgress():
+   die Funktion legt fuer jedes Wort ohne Eintrag eine Startbox an, und ohne
+   sie taeuchten die zehn nie in „Jetzt lernen" auf.
+
+   Der typeof-Test haelt die App lauffaehig, falls data/fachbegriffe.js einmal
+   nicht geladen ist - dann fehlen zehn Vokabeln, statt dass gar nichts geht. */
+if (typeof FACHBEGRIFF_VOKABELN !== 'undefined' && Array.isArray(FACHBEGRIFF_VOKABELN)){
+  VOCAB_DATA.push(...FACHBEGRIFF_VOKABELN);
+}
+
 function addPersonalVocab({ar, de, sentAr, sentDe}){
   const w = { id:'p_'+Date.now(), ar, de, chapter:'personal', type:'noun' };
   if (sentAr) w.sentAr = sentAr;
@@ -179,6 +218,50 @@ function addPersonalVocab({ar, de, sentAr, sentDe}){
   PROGRESS[w.id] = { box:1, nextReview: todayStr(0), correct:0, wrong:0 };
   saveProgress();
   return w;
+}
+
+/* ---------- „Kenne ich schon" (17.08.2026) ----------
+
+   Elias: „so sachen wie ja auf arabisch oder nein oder imam oder sowas was
+   irgendwie selbstverständlich oder auch sehr einfach oder mit grundwissen ist
+   brauche ich nicht wie moschee oder ja oder sowas halt."
+
+   ⛔ Die Auswahl trifft ER. Hier steht bewusst KEINE Liste „zu leichter"
+   Woerter von mir - was fuer ihn selbstverstaendlich ist, waere fuer einen
+   anderen Lerner neu, und andersherum. Der Knopf auf der Lernkarte ist der
+   einzige Weg hinein, die Liste in den Einstellungen der einzige hinaus.
+
+   ⭐ Warum ein Zeitstempel je Wort und nicht einfach eine Id-Liste: Beim
+   Geraeteabgleich muss auch das ZURUECKNEHMEN ankommen. Bei zwei nackten
+   Listen waere die Vereinigung das Naheliegende - und die holt ein
+   zurueckgenommenes Wort vom anderen Geraet sofort wieder herein, ohne dass
+   irgendwo ein Fehler auftraete. Mit `{an:false, zeit:…}` bleibt die Ruecknahme
+   eine Tatsache mit Datum, und die spaetere Entscheidung gewinnt. */
+const BEKANNT_SCHLUESSEL = 'vt_bekannt';
+let BEKANNT = LS.get(BEKANNT_SCHLUESSEL, {});
+if (!BEKANNT || typeof BEKANNT !== 'object' || Array.isArray(BEKANNT)) BEKANNT = {};
+
+function kennErSchon(w){
+  if (!w) return false;
+  const e = BEKANNT[w.id];
+  return !!(e && e.an);
+}
+
+function setzeKennErSchon(id, an){
+  BEKANNT[id] = { an: !!an, zeit: Date.now() };
+  LS.set(BEKANNT_SCHLUESSEL, BEKANNT);
+}
+
+/* Die Woerter hinter den Markierungen - fuer die Liste in den Einstellungen.
+   ⚠️ Ueber VOCAB_DATA und nicht ueber buchVokabeln(): ein ausgeblendetes Wort
+   aus einem gerade abgewaehlten Buch waere sonst unsichtbar UND weiterhin
+   ausgeblendet. Genau die Falle, gegen die die Liste ueberhaupt gebaut ist. */
+function bekannteMarkierungen(){
+  return Object.keys(BEKANNT)
+    .filter(id => BEKANNT[id] && BEKANNT[id].an)
+    .map(id => VOCAB_DATA.find(w => w.id === id))
+    .filter(Boolean)
+    .sort((a,b) => (BEKANNT[b.id].zeit || 0) - (BEKANNT[a.id].zeit || 0));
 }
 
 /* Fortschritt initialisieren: Startbox aus Arabic-Roots-Daten importieren.
@@ -296,6 +379,15 @@ function ladeStandNeu(){
   PROGRESS = initProgress();
   const frisch = LS.get('vt_settings', null);
   if (frisch) Object.assign(SETTINGS, frisch);
+  /* ⚠️ BEKANNT liegt als Variable im Speicher, nicht nur im localStorage. Ohne
+     dieses Nachlesen haette der Abgleich die Markierungen zwar geholt, die
+     laufende Seite arbeitete aber weiter mit dem alten Stand - und der naechste
+     Griff an den Knopf schriebe ihn zurueck. Dieselbe Falle wie bei SETTINGS
+     eine Zeile darueber. */
+  const bekanntFrisch = LS.get(BEKANNT_SCHLUESSEL, null);
+  if (bekanntFrisch && typeof bekanntFrisch === 'object' && !Array.isArray(bekanntFrisch)){
+    BEKANNT = bekanntFrisch;
+  }
   if (typeof renderHome === 'function') renderHome();
   if (typeof renderCategories === 'function') renderCategories();
   /* ⚠️ Auch den Einstellungs-Bildschirm nachziehen (17.08.2026). Ohne das zeigt
@@ -567,8 +659,19 @@ function passtZurAuswahl(w){
      Karten, "nur falsche Woerter" und - ueber passeRundeAnAuswahlAn() - auch
      eine schon laufende Runde. */
   if (typeof istBekannt === 'function' && !istBekannt(w)) return false;
+  /* ⛔ „Kenne ich schon" steht GANZ VORNE, vor jedem anderen Ja. Weiter unten
+     geben mehrere Zweige ein bedingungsloses `return true` zurueck (eigene
+     Vokabeln, Fachbegriffe) - stuende die Pruefung dahinter, waere sie fuer
+     genau die Woerter wirkungslos, ohne dass es je auffiele. */
+  if (typeof kennErSchon === 'function' && kennErSchon(w)) return false;
   const karte = (SETTINGS.buecher && typeof SETTINGS.buecher === 'object')
     ? SETTINGS.buecher : { 'madina-1': [] };
+  /* ⛔ Die Fachbegriffe stehen VOR dem Eigene-Schalter und haben keinen
+     eigenen. Elias hat sie ausdruecklich bestellt; ein Schalter, der sie
+     wieder verschwinden laesst, waere genau der Fehler, den der Punkt in der
+     To-Do benennt: „Nicht hinter Eigene verstecken." Wer einen einzelnen
+     Begriff nicht mehr sehen will, nimmt den „Kenne ich schon"-Knopf. */
+  if (w.chapter === 'grammar') return true;
   if (w.chapter === 'personal'){
     const eng = (typeof irgendwoEingeengt === 'function') ? irgendwoEingeengt() : false;
     return !eng || !!SETTINGS.eigeneGewaehlt;
