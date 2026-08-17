@@ -17,12 +17,65 @@
    soll eine sicher gelesene Vokabel nicht zurueckwerfen. Der Modus zaehlt
    nur seine eigene Runde. */
 
-const HOER = { wort: null, optionen: [], beantwortet: false, richtig: 0, gesamt: 0 };
+const HOER = { wort: null, optionen: [], beantwortet: false, richtig: 0, gesamt: 0, fertig: false };
+
+/* ---------- Tagesziel (Elias, 17.08.2026) ----------
+
+   "es sollte beim hören auch ein tagesziel geben wie auch bei den wurzeln oder
+   auch bei den karteikarten. einfach so ein paar machen ums tagesziel zu machen
+   und es reicht. aktuell sieht es aus als gäbe es da kein ende."
+
+   Er hatte recht: `naechsteHoerfrage()` rief sich schlicht immer weiter auf, es
+   gab keinen Punkt, an dem man fertig war.
+
+   ⭐ TAG, nicht Runde - und das ist der Unterschied zu den Karteikarten, wo
+   beides existiert (20 Karten = Runde, leerer Vorrat = Tagesziel). Hier gibt es
+   keinen "Vorrat", der leer werden koennte: die Fragen werden aus dem ganzen
+   Wortschatz gewuerfelt und gingen nie aus. Deshalb ist die Zahl selbst das
+   Ziel.
+
+   ⚠️ Nach dem Ziel wird NICHT gesperrt. "es reicht" heisst: er soll wissen,
+   wann genug ist - nicht, dass ihm die Uebung weggenommen wird. Der Zaehler
+   laeuft weiter ("12 von 10"), der Zustand sieht nur deutlich anders aus. */
+const HOER_TAGESZIEL = 10;
+
+function hoerTag(){
+  const heute = todayStr(0);
+  let t = LS.get('vt_hoerTag', null);
+  if (!t || t.tag !== heute) t = { tag: heute, gesamt: 0, richtig: 0 };
+  return t;
+}
+function hoerTagSpeichern(t){ LS.set('vt_hoerTag', t); }
+
+/* Die Standzeile fuehrt das Tagesziel mit - vorher stand dort nur "x von y
+   richtig", also die Trefferquote der laufenden Sitzung. Die sagt nichts
+   darueber, wie weit man ist. */
+function hoerStandSchreiben(){
+  const t = hoerTag();
+  const geschafft = t.gesamt >= HOER_TAGESZIEL;
+  document.getElementById('hoerStand').textContent = geschafft
+    ? `Tagesziel geschafft — ${t.gesamt} Wörter, ${t.richtig} richtig`
+    : `Tagesziel ${t.gesamt} von ${HOER_TAGESZIEL}` + (t.gesamt ? ` · ${t.richtig} richtig` : '');
+}
 
 /* Nur Vokabeln mit brauchbarer deutscher Bedeutung - ohne die gaebe es keine
    Antwortmoeglichkeiten. */
 function hoerbareVokabeln(){
-  let pool = buchVokabeln().filter(w => w.ar && w.de && String(w.de).trim().length > 1);
+  /* ⚠️ `bekannteVokabeln()` und nicht `buchVokabeln()` — seit dem 17.08.2026.
+     Elias: "sind beim hörmodus wirklich mit allen wörtern die ich aktuell
+     lerne? es wäre wichtig das er alle hat aber auch immer mehr unlockt mit den
+     kapiteln die ich dann auch kann. halt nur das was ich bereits weiß."
+
+     Gemessen war der Vorrat **311** Wörter, davon **140 ausserhalb seines
+     Lernbestands** — allein Kapitel 24 steuerte 67 bei, Kapitel 12–23 weitere.
+     Der Modus fragte also Wörter ab, die er nie gesehen hat, und zwar sowohl
+     als Frage wie als Ablenker. Beim Hören ist das schlimmer als beim Lesen:
+     man kann nicht einmal raten, wenn man das Wort nie gehört hat.
+
+     `bekannteVokabeln()` (js/kern.js) ist genau die gesuchte Menge und waechst
+     von selbst mit: freigeschaltete Kapitel des jeweiligen Buchs + eigene
+     Wörter + der handverlesene Lernbestand aus vocab-data.js. */
+  let pool = bekannteVokabeln().filter(w => w.ar && w.de && String(w.de).trim().length > 1);
   /* Die Kapitelauswahl von der Startseite gilt auch hier - sonst uebt man das
      halbe Buch, obwohl oben "Kapitel 3" eingestellt ist. Nur wenn dabei zu
      wenig uebrig bleibt, um vier Antworten zu bilden, wird sie ignoriert;
@@ -84,10 +137,9 @@ function naechsteHoerfrage(){
   HOER.wort = shuffle(pool)[0];
   HOER.optionen = shuffle([HOER.wort, ...waehleAblenker(HOER.wort, pool, 3)]);
   HOER.beantwortet = false;
+  HOER.fertig = false;
 
-  document.getElementById('hoerStand').textContent = HOER.gesamt
-    ? `${HOER.richtig} von ${HOER.gesamt} richtig`
-    : 'Tippe auf den Lautsprecher.';
+  hoerStandSchreiben();
   document.getElementById('hoerHinweis').textContent = 'Was bedeutet das Wort?';
   document.getElementById('hoerLoesung').classList.add('hidden');
   document.getElementById('hoerOptionen').innerHTML = HOER.optionen.map((w, i)=>
@@ -130,10 +182,29 @@ function beantworteHoerfrage(i){
        mich als Wortstamm keinen Sinn." Die Wurzel bleibt in den Daten. */
     + `<div class="hl-de">${escapeHtml(w.de)}</div>`;
   l.classList.remove('hidden');
-  document.getElementById('hoerStand').textContent = `${HOER.richtig} von ${HOER.gesamt} richtig`;
-  document.getElementById('hoerHinweis').textContent = richtig
-    ? 'Richtig — tippe für das nächste Wort.'
-    : 'Nicht ganz — tippe für das nächste Wort.';
+
+  /* Tageszaehler fortschreiben, BEVOR die Standzeile neu geschrieben wird -
+     sonst zeigt sie den Stand von vor dieser Antwort. */
+  const t = hoerTag();
+  const vorher = t.gesamt;
+  t.gesamt++;
+  if (richtig) t.richtig++;
+  hoerTagSpeichern(t);
+  hoerStandSchreiben();
+
+  const zielJetztErreicht = vorher < HOER_TAGESZIEL && t.gesamt >= HOER_TAGESZIEL;
+  if (zielJetztErreicht){
+    HOER.fertig = true;
+    document.getElementById('hoerHinweis').textContent =
+      'Tagesziel geschafft — tippe, wenn du trotzdem weitermachen willst.';
+    /* Der Anlass ist `einmalig` je Tag, siehe js/feier.js - zweimal am selben
+       Tag zu feiern wuerde die Feier entwerten. */
+    if (typeof feiere === 'function') feiere('hoer-tagesziel', { zahl: t.gesamt, richtig: t.richtig });
+  } else {
+    document.getElementById('hoerHinweis').textContent = richtig
+      ? 'Richtig — tippe für das nächste Wort.'
+      : 'Nicht ganz — tippe für das nächste Wort.';
+  }
 
   /* Nach der Antwort noch einmal vorsprechen: jetzt sieht man die Schrift
      dazu, und genau dabei praegt sich der Klang ein. */
@@ -142,13 +213,39 @@ function beantworteHoerfrage(i){
 
 document.getElementById('hoerOptionen').addEventListener('click', (e)=>{
   const b = e.target.closest('[data-hoerwahl]');
-  if (b) beantworteHoerfrage(Number(b.dataset.hoerwahl));
+  if (!b || HOER.beantwortet) return;
+  /* ⚠️ Diesen einen Klick markieren. Er blubbert gleich weiter zur Karte, und
+     dort steht `beantwortet` dann schon auf true - ohne die Marke wuerde
+     derselbe Fingertipp erst antworten und sofort weiterschalten, die Loesung
+     waere nie zu sehen. Am ZIEL des Klicks ist das nicht zu unterscheiden: nach
+     dem Antworten liegt der Knopf am selben Fleck und ist dann abgeschaltet. */
+  e._hatBeantwortet = true;
+  beantworteHoerfrage(Number(b.dataset.hoerwahl));
 });
-document.getElementById('btnHoerPlay').addEventListener('click', ()=>{
-  if (HOER.beantwortet) naechsteHoerfrage(); else hoerAbspielen();
-});
-document.getElementById('hoerHinweis').addEventListener('click', ()=>{
-  if (HOER.beantwortet) naechsteHoerfrage();
+/* ---------- Weiter durch Tippen auf die Karte (Elias, 17.08.2026) ----------
+
+   "ich will aber eigentlich sobald ich eine antwort gegeben habe auf dem grauen
+   feld auf der karte einfach klicken damit das nächste kommt."
+
+   Vorher hoerten nur zwei kleine Ziele darauf: der Lautsprecher und die
+   Hinweiszeile. Der Hinweis sagte zwar schon "tippe für das nächste Wort", die
+   Flaeche dazu war aber nur die Textzeile selbst - man tippt aber dorthin, wo
+   man gerade hinschaut, und das sind die Antwortfelder.
+
+   ⚠️ EIN Zuhoerer an der Karte statt drei einzelne. Der Lautsprecher liegt auf
+   der Karte; ein eigener Zuhoerer dort wuerde zusaetzlich hochblubbern und
+   naechsteHoerfrage() zweimal ausloesen - also ein Wort ueberspringen, ohne
+   dass es wie ein Fehler aussieht. Deshalb entscheidet eine Stelle, was der
+   Klick bedeutet.
+
+   ⚠️ Ein Klick auf ein Antwortfeld ist KEIN Weiter: `#hoerOptionen` beantwortet
+   die Frage, danach setzt der Browser die Knoepfe auf `disabled`. Damit die
+   Karte darunter den Klick trotzdem bekommt, tragen abgeschaltete Knoepfe
+   `pointer-events:none` (siehe index.html). */
+document.getElementById('hoerKarte').addEventListener('click', (e)=>{
+  if (e._hatBeantwortet) return;                        /* genau dieser Klick war die Antwort */
+  if (HOER.beantwortet){ naechsteHoerfrage(); return; } /* egal wo auf der Karte, auch nach dem Tagesziel */
+  if (e.target.closest('#btnHoerPlay')) hoerAbspielen();
 });
 
 function openHoeren(){

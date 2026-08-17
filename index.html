@@ -720,6 +720,22 @@ main{
   line-height:1.5;
   direction:rtl;
   text-shadow:0 4px 40px rgba(255,255,255,.08);
+  /* ⚠️ Luft fuer die Vokalzeichen. Elias am 17.08.2026 mit Bild vom Tablet:
+     "beim arabischen sieht man nicht mehr das dumma, man müsste das ein klein
+     wenig nach unten machen".
+
+     Im Browser nachgemessen (Canvas actualBoundingBoxAscent gegen den Platz
+     ueber der Grundlinie): أُخْتٌ baut bei 83,2 px Schriftgroesse **97 px**
+     ueber die Grundlinie, der Zeilenkasten bietet nur **80** - also 17 px
+     Ueberstand. `line-height:1.5` reicht nicht, weil die Grundlinie im Kasten
+     tief sitzt; die Zeilenhoehe verteilt den Zuwachs auf beide Seiten.
+
+     ⭐ Es haengt am ZEICHEN, nicht am Wort: dasselbe Wort mit Fatḥah (أَخٌ)
+     passt genau (24 gegen 24 px). Die Ḍammah baut hoeher - deshalb sah es
+     "nur manchmal" kaputt aus.
+
+     `em` und nicht `px`, damit es bei jeder Groesse der clamp()-Spanne traegt. */
+  padding-top:.22em;
 }
 .speak-btn{
   margin-top:var(--sp-4);
@@ -739,7 +755,11 @@ main{
 }
 
 .arabic-word.front-as-german{font-family:var(--font-ui);font-size:clamp(2rem,9vw,2.8rem);direction:ltr;color:var(--red-bright);text-shadow:none;font-weight:800;letter-spacing:-.01em;}
-.german-word{font-size:var(--rueck-de);font-weight:800;color:var(--red-bright);text-align:center;margin-bottom:var(--sp-2);letter-spacing:-.01em;}
+/* padding-top: dieselbe Messung wie bei .arabic-word oben. Das Echo in
+   Klammern ist ein INLINE-Element - eine Polsterung dort wuerde die Zeile
+   nicht verschieben, sie muss also an den Block. Gemessen: 43 px Tinte gegen
+   39 px Platz, macht 4 px Ueberstand; .22em deckt das bei beiden Schriften. */
+.german-word{font-size:var(--rueck-de);font-weight:800;color:var(--red-bright);text-align:center;margin-bottom:var(--sp-2);letter-spacing:-.01em;padding-top:.22em;}
 .german-word.back-as-arabic{font-family:var(--font-ar);direction:rtl;font-size:var(--rueck-ar);font-weight:600;color:#fff;letter-spacing:0;}
 /* Der Begriff der Vorderseite, klein in Klammern neben der Loesung (16.08.2026).
    `unicode-bidi:isolate` ist hier keine Zierde: die Klammern sind
@@ -1661,6 +1681,18 @@ main{
 .ne-vorschlag .btn-klein{
   margin-top:var(--sp-3);width:100%;padding:var(--sp-2);font-size:var(--fs-xs);
 }
+/* Die zwei Blätter-Knöpfe nebeneinander. ⚠️ Ohne `min-width:0` sprengen sie
+   die Zeile, sobald die Beschriftung nicht mehr passt — die Regel darüber gibt
+   ihnen `width:100%`, und in einer Flexbox ist die Grundbreite sonst der
+   Inhalt. Siehe die alte Lehre zum quer rollenden Layout. */
+.ne-vorschlag-blaettern{display:flex;gap:var(--sp-2);}
+.ne-vorschlag-blaettern .btn-klein{min-width:0;flex:1 1 0;}
+/* Zähler „2 von 3" hinter der Marke. Ohne ihn wäre nicht zu sehen, wie viele
+   es überhaupt gibt — und ob man beim Blättern schon herum ist. */
+#neVorschlagZaehler{
+  margin-inline-start:.6em;color:var(--text-faint);
+  font-weight:600;letter-spacing:.04em;text-transform:none;
+}
 /* Arabisch im deutschen Fliesstext der Eselsbruecken (16.08.2026, Elias:
    "so klein ... muss immer nah ran gehen"). Erzeugt von arabischHervorheben()
    in js/kern.js.
@@ -1680,7 +1712,10 @@ main{
      freistehender Beispielsatz vertraegt das Doppelte, mitten im Satz sprengt
      es die Zeile. */
   font-size:calc(1em * 5 / 3);
-  line-height:1.45;
+  /* 1,45 -> 1,65 am 17.08.2026: bei 22,4 px baute أُخْتٌ 26 px ueber die
+     Grundlinie, der Kasten bot 24. Hier hilft die Zeilenhoehe wirklich, denn
+     .mn-ar ist inline und traegt den Zeilenkasten selbst mit. */
+  line-height:1.65;
 }
 .note-box.hat-notiz{
   border-style:solid;border-color:var(--red-dim);
@@ -2225,7 +2260,13 @@ main{
   font-size:var(--fs-md);text-align:left;
   transition:background var(--dur-2) ease, border-color var(--dur-2) ease;
 }
-.hoer-option:disabled{cursor:default;}
+/* ⚠️ `pointer-events:none` ist hier kein Beiwerk, sondern Bedingung dafuer, dass
+   der Klick auf die KARTE weiterschaltet (17.08.2026). Ein abgeschalteter Knopf
+   loest gar kein click-Ereignis aus - auch nicht am Elternteil. Ohne diese Zeile
+   waeren die vier Antwortfelder nach dem Beantworten eine tote Flaeche mitten
+   auf der Karte, und ausgerechnet dort tippt man hin. Die Faerbung
+   richtig/falsch bleibt sichtbar, nur die Beruehrung geht hindurch. */
+.hoer-option:disabled{cursor:default;pointer-events:none;}
 .hoer-option.richtig{border-color:var(--green);background:rgba(16,185,129,.14);}
 .hoer-option.falsch{border-color:var(--red-bright);background:var(--red-wash);}
 .hoer-loesung{margin-top:var(--sp-5);}
@@ -2602,8 +2643,21 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
     --sp-6:32px; --sp-7:42px; --sp-8:54px;
     --gutter:32px;
     --inhalt-max:860px;
-    --karte-max:560px;
+    /* 560 -> 680 am 17.08.2026. Elias mit zwei Tablet-Aufnahmen: "vielleicht
+       sollte man auch einfach insgesamt die karten beim tablet etwas größer
+       machen." Die Messung gab ihm recht und zeigte zugleich einen Fehler:
+       bei 1280x860 war die Karte 560x460, der Inhalt der Rueckseite brauchte
+       552 px bei 458 sichtbaren - **94 px abgeschnitten**, waehrend unter der
+       Karte **232 px leer** blieben. Auf seinem Bild ist das der Beispielsatz,
+       dem unten die Haelfte fehlt. */
+    --karte-max:680px;
   }
+  /* ⚠️ Die eigentliche Ursache war nicht die Breite, sondern `min-height:
+     min(62vh,460px)` weiter oben: die 460 px deckeln die Karte auf JEDEM
+     grossen Bildschirm, auch auf einem 1249 px hohen Tablet, wo 62vh = 774 px
+     waeren. Ein min() mit fester Obergrenze macht aus einer relativen Angabe
+     stillschweigend eine feste. */
+  .flashcard{min-height:min(74vh,640px);}
   main{padding-top:96px;}
   /* Drei Kacheln nebeneinander statt zwei - bei 860px Inhaltsbreite sind zwei
      Kacheln so breit, dass Titel und Untertitel verloren darin schwimmen. */
@@ -2720,32 +2774,37 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
           <span class="tile-title">Hörverstehen</span>
           <span class="tile-sub">Nur hören, dann wählen</span>
         </button>
-        <!-- ⚠️ NICHT #ic-folder: das trägt die Kachel „Kategorien" direkt
-             daneben, und zwei gleiche Zeichen nebeneinander sind nicht
-             auseinanderzuhalten. #ic-irab steht im Bestand für das Zerlegen
-             eines Wortes — genau das ist hier die Aufgabe. -->
+        <!-- ⚠️ NICHT #ic-folder: das trägt die Kachel „Kategorien". Die stand
+             bis zum 16.08.2026 direkt daneben und steht seitdem direkt
+             DARUNTER — nah genug, dass zwei gleiche Zeichen weiterhin nicht
+             auseinanderzuhalten wären. #ic-irab steht im Bestand für das
+             Zerlegen eines Wortes — genau das ist hier die Aufgabe. -->
         <button class="tile" data-nav="wurzeln">
           <span class="tile-icon"><svg class="ic"><use href="#ic-irab"/></svg></span>
           <span class="tile-title">Wurzeln</span>
           <span class="tile-sub">Wortfamilien üben</span>
         </button>
-        <button class="tile" data-nav="categories">
-          <span class="tile-icon"><svg class="ic"><use href="#ic-folder"/></svg></span>
-          <span class="tile-title">Kategorien</span>
-          <span class="tile-sub">Kapitel, Wurzeln, eigene</span>
+        <!-- „Quran lesen" und „Kategorien" haben am 16.08.2026 auf Elias' Wunsch
+             die Plätze getauscht: der Leser steht jetzt in der zweiten Reihe
+             rechts, die Kategorien in der dritten links. Die Reihenfolge im
+             Markup IST die Anordnung — das Raster füllt zeilenweise. -->
+        <button class="tile" data-nav="quranfull">
+          <span class="tile-icon"><svg class="ic"><use href="#ic-book"/></svg></span>
+          <span class="tile-title">Quran lesen</span>
+          <span class="tile-sub">Alle 114 Suren</span>
         </button>
         <!-- Seit 31.07.2026 an die Einstellung "Quran-Bezüge anzeigen" gehängt
-             und standardmäßig aus. Die Kachel daneben ("Quran lesen") bleibt
-             sichtbar — der Leser ist eine eigene Sache. -->
+             und standardmäßig aus. Die Kachel "Quran lesen" darüber bleibt davon
+             unberührt — der Leser ist eine eigene Sache. -->
         <button class="tile hidden" data-nav="quran" id="quranTile">
           <span class="tile-icon"><svg class="ic"><use href="#ic-crescent"/></svg></span>
           <span class="tile-title">Quran-Bezug</span>
           <span class="tile-sub" id="quranTileSub">Vokabeln im Quran</span>
         </button>
-        <button class="tile" data-nav="quranfull">
-          <span class="tile-icon"><svg class="ic"><use href="#ic-book"/></svg></span>
-          <span class="tile-title">Quran lesen</span>
-          <span class="tile-sub">Alle 114 Suren</span>
+        <button class="tile" data-nav="categories">
+          <span class="tile-icon"><svg class="ic"><use href="#ic-folder"/></svg></span>
+          <span class="tile-title">Kategorien</span>
+          <span class="tile-sub">Kapitel, Wurzeln, eigene</span>
         </button>
         <button class="tile" data-nav="stats">
           <span class="tile-icon"><svg class="ic"><use href="#ic-chart"/></svg></span>
@@ -3496,8 +3555,16 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
        „Speichern". Damit kann eine vorgeschlagene Eselsbrücke seine eigene weder
        überschreiben noch heimlich zu seiner werden. -->
   <div class="ne-vorschlag hidden" id="neVorschlag">
-    <div class="ne-vorschlag-marke">Vorschlag</div>
+    <div class="ne-vorschlag-marke">Vorschlag<span id="neVorschlagZaehler"></span></div>
     <div id="neVorschlagText"></div>
+    <!-- Blättern durch die Vorschläge (Elias, 16.08.2026). Zwei Knöpfe statt
+         einem: „Anderer" allein wäre eine Einbahnstraße, und er hat den Rückweg
+         ausdrücklich verlangt — „ob man den alten wieder zurück haben will".
+         Bleibt verborgen, solange es für das Wort nur einen Vorschlag gibt. -->
+    <div class="ne-vorschlag-blaettern hidden" id="neVorschlagBlaettern">
+      <button class="btn btn-secondary btn-klein" id="btnVorschlagZurueck">← Vorherigen</button>
+      <button class="btn btn-secondary btn-klein" id="btnVorschlagWeiter">Anderer Vorschlag →</button>
+    </div>
     <button class="btn btn-secondary btn-klein" id="btnVorschlagUebernehmen">Übernehmen und bearbeiten</button>
   </div>
   <textarea id="neText" placeholder="Wie merkst du dir dieses Wort? (z.B. Klangähnlichkeit, Wurzel, eigene Geschichte)" lang="de"></textarea>
@@ -3514,6 +3581,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
      bewusst NICHT nachgeladen: sie werden gebraucht, sobald das erste Buch
      einhaengt - und das passiert schon beim Start. -->
 <script src="data/eselsbruecken.js"></script>
+<script src="data/eselsbruecken-alt.js"></script>
 <script src="surah-data.js"></script>
 <!-- Seitengrenzen des Muṣḥaf, erzeugt von werkzeuge/seiten-holen.mjs und dort
      gegen surah-data.js geprüft (114/114 Verszahlen, 604 Seiten lückenlos). -->

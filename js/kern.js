@@ -73,8 +73,16 @@ const CHAPTER_NAMES = {
    Ein Buch, das hier NICHT steht, wird auch nicht beschnitten: dann ist
    unbekannt, was freigeschaltet ist, und etwas zu verbergen waere schlimmer als
    zu viel zu zeigen. */
+/* ⚠️ Diese Tabelle wird NICHT von selbst aktuell. Sie stand vom 30.07. bis zum
+   17.08.2026 auf 1–9, waehrend arabicroots laengst 1–11 freigegeben hatte —
+   Elias hat es gemerkt, nicht ich: "es wäre wichtig das er alle hat aber auch
+   immer mehr unlockt mit den kapiteln die ich dann auch kann."
+   Nachgefragt wird mit dem arabicroots-MCP:  get_unlocked_chapters
+   Ein stehengebliebener Wert faellt hier nie durch eine Pruefung auf — er
+   sieht schlicht wie eine bewusste Grenze aus. Siehe die Lehre zum
+   eingefrorenen Feld. */
 const FREIGESCHALTET = {
-  'madina-1': [1,2,3,4,5,6,7,8,9]      // arabicroots, abgefragt am 30.07.2026
+  'madina-1': [1,2,3,4,5,6,7,8,9,10,11]   // arabicroots, abgefragt am 17.08.2026
 };
 
 /* Die Woerter, die Elias kennt. Drei Quellen, und die dritte ist der Grund,
@@ -101,15 +109,22 @@ const LERNBESTAND_IDS = new Set(VOCAB_DATA.map(w => w.id));
    sonst falsch in beide Richtungen: die Freischaltung von Madina 1 haette ueber
    Madina 2 entschieden, und ein Buch ohne hinterlegte Freischaltung haette die
    Einschraenkung fuer alle anderen aufgehoben. */
+/* Die Regel als eigene Pruefung, damit sie auch dort gilt, wo nicht ueber eine
+   Liste gegangen wird - vor allem in passtZurAuswahl() weiter unten. Vorher
+   steckte sie nur im Filter von bekannteVokabeln(), und genau deshalb hat der
+   Lernmodus sie nie angewandt. */
+function istBekannt(w){
+  if (!w) return false;
+  if (w.chapter === 'personal') return true;
+  if (LERNBESTAND_IDS.has(w.id)) return true;
+  const frei = FREIGESCHALTET[w.book];
+  if (!frei) return true;                /* fuer dieses Buch ist nichts hinterlegt */
+  return frei.includes(w.chapter);
+}
+
 function bekannteVokabeln(){
   const alle = (typeof buchVokabeln === 'function') ? buchVokabeln() : VOCAB_DATA;
-  return alle.filter(w => {
-    if (w.chapter === 'personal') return true;
-    if (LERNBESTAND_IDS.has(w.id)) return true;
-    const frei = FREIGESCHALTET[w.book];
-    if (!frei) return true;              /* fuer dieses Buch ist nichts hinterlegt */
-    return frei.includes(w.chapter);
-  });
+  return alle.filter(istBekannt);
 }
 
 /* Für die Beschriftung: "Kapitel 1–9" statt einer Aufzählung, wenn die Kapitel
@@ -207,7 +222,70 @@ let SETTINGS = Object.assign(
   { showPlural:false, showVerbFormen:false, showQuran:false, sessionSize:20, voiceURI:null, direction:'ar-de', selectedChapters:[], wrongOnly:false, grammarHighlight:true },
   LS.get('vt_settings', {})
 );
-function saveSettings(){ LS.set('vt_settings', SETTINGS); }
+/* ---------- Zeitstempel JE EINSTELLUNG (17.08.2026) ----------
+
+   Elias: "lernrichtung ist bei mir wieder von arabisch zu deutsch automatisch
+   gewechselt, das ist ein echtes problem. ich will gemischt haben."
+
+   ⛔ Die Ursache war der Abgleich, und sie ist am Datenstand belegt: im KV lag
+   `direction: "mixed"` mit Stempel **16.08. 23:42**, auf dem Handy stand
+   „gemischt", auf dem Tablet „ar-de". `vt_settings` wurde bis dahin als EIN
+   BLOCK zusammengefuehrt - der juengere Stempel gewinnt und bringt ALLE seine
+   Werte mit.
+
+   ⭐ Der Haken daran: In `SETTINGS` liegen auch Buch- und Kapitelauswahl. Ein
+   Tippen auf einen Kapitel-Chip stempelt damit den **ganzen** Block frisch -
+   und dieser frische Stempel verteidigt anschliessend eine ALTE Lernrichtung
+   gegen die neuere vom anderen Geraet. Kein Fehler in der Richtungslogik, kein
+   Fehler beim Speichern: eine Einstellung wird von einer voellig anderen
+   ueberfahren, nur weil sie zufaellig im selben JSON steht.
+
+   Deshalb bekommt jedes Feld seinen eigenen Stempel, und der Abgleich mischt
+   feldweise - genau wie er den Fortschritt wortweise mischt. */
+const SETTINGS_FELD_SCHLUESSEL = 'vt_settingsFeld';
+
+function settingsFeldStempel(){
+  let karte = {};
+  try { karte = JSON.parse(localStorage.getItem(SETTINGS_FELD_SCHLUESSEL) || '{}'); }
+  catch (e){ karte = {}; }
+  if (karte && Object.keys(karte).length) return karte;
+
+  /* ⚠️ Erstbelegung, und sie ist keine Kosmetik. Ohne Startwert haben beide
+     Geraete fuer jedes Feld die Stempelzeit 0 - dann gewinnt bei jedem
+     Vergleich das Lokale, und der feldweise Abgleich taete gar nichts. Genau
+     das war am 17.08.2026 zu sehen: `direction` stand im KV richtig auf
+     "mixed", die Stempelkarte war aber leer, weil Elias' Umstellung auf dem
+     Geraet keinen Unterschied erzeugt hatte (dort stand der Wert schon so).
+
+     Als Startwert dient der alte BLOCK-Stempel: er sagt zwar nur, wann
+     irgendetwas an den Einstellungen zuletzt geschrieben wurde, ist aber die
+     einzige echte Zeitangabe, die es fuer diesen Stand gibt. Ab der ersten
+     bewussten Aenderung ueberschreibt saveSettings() ihn feldgenau. */
+  let block = 0;
+  try {
+    const s = JSON.parse(localStorage.getItem('vt_syncStempel') || '{}');
+    block = s['vt_settings'] || 0;
+  } catch (e){ }
+  if (!block) return {};                    /* nie abgeglichen: nichts zu erben */
+  const gesetzt = {};
+  Object.keys(SETTINGS).forEach(f => { gesetzt[f] = block; });
+  try { localStorage.setItem(SETTINGS_FELD_SCHLUESSEL, JSON.stringify(gesetzt)); } catch (e){ }
+  return gesetzt;
+}
+
+function saveSettings(){
+  /* Nur die WIRKLICH geaenderten Felder stempeln. Wer alle stempelt, hat den
+     Blockfehler nur eine Ebene tiefer wiederholt. */
+  let alt = {};
+  try { alt = JSON.parse(localStorage.getItem('vt_settings') || '{}'); } catch (e){}
+  const stempel = settingsFeldStempel();
+  const jetzt = Date.now();
+  Object.keys(SETTINGS).forEach(f => {
+    if (JSON.stringify(SETTINGS[f]) !== JSON.stringify(alt[f])) stempel[f] = jetzt;
+  });
+  try { localStorage.setItem(SETTINGS_FELD_SCHLUESSEL, JSON.stringify(stempel)); } catch (e){}
+  LS.set('vt_settings', SETTINGS);
+}
 
 /* Nach einem Abgleich mit einem anderen Geraet steht der neue Stand zwar im
    localStorage, aber PROGRESS und SETTINGS haelt die App im Arbeitsspeicher.
@@ -220,6 +298,14 @@ function ladeStandNeu(){
   if (frisch) Object.assign(SETTINGS, frisch);
   if (typeof renderHome === 'function') renderHome();
   if (typeof renderCategories === 'function') renderCategories();
+  /* ⚠️ Auch den Einstellungs-Bildschirm nachziehen (17.08.2026). Ohne das zeigt
+     das Auswahlfeld weiter den alten Wert, obwohl SETTINGS schon den neuen
+     traegt - und der naechste Griff dorthin schreibt den angezeigten, also
+     falschen, Wert zurueck. Genau so haette sich die Lernrichtung selbst nach
+     dem Merge wieder umgestellt. */
+  if (typeof renderSettings === 'function' &&
+      document.getElementById('screen-settings') &&
+      document.getElementById('screen-settings').classList.contains('active')) renderSettings();
   if (typeof passeRundeAnAuswahlAn === 'function') passeRundeAnAuswahlAn();
 }
 
@@ -466,6 +552,21 @@ function weakWords(){
    hatte: solange nirgends eingeengt wurde, sind sie dabei; sobald irgendwo
    Kapitel gewaehlt sind, nur noch wenn ihr Schalter an ist. */
 function passtZurAuswahl(w){
+  /* ⚠️ Seit dem 17.08.2026 steht die WISSENSGRENZE vor der Auswahl. Elias:
+     "die wurzeln, hörmodus und so die sollen je nach meinem wissensstand (also
+     den kapiteln) sich erweitern oder begrenzen. die sollen daran verknüpft
+     sein."
+
+     Vorher entschieden hier nur Buch und Kapitel-Chips. Mit "Alle" angehakt
+     kamen deshalb alle 311 Woerter des geladenen Buchs in die Kartei - im
+     Browser gemessen, davon **140 ausserhalb seines Lernbestands**, allein
+     Kapitel 24 mit 67. Die Chips sind eine Einengung von Hand; sie waren nie
+     als Wissensgrenze gedacht, haben sie aber faktisch ersetzt.
+
+     Diese eine Zeile wirkt auf ALLES, was ueber currentPool() laeuft: faellige
+     Karten, "nur falsche Woerter" und - ueber passeRundeAnAuswahlAn() - auch
+     eine schon laufende Runde. */
+  if (typeof istBekannt === 'function' && !istBekannt(w)) return false;
   const karte = (SETTINGS.buecher && typeof SETTINGS.buecher === 'object')
     ? SETTINGS.buecher : { 'madina-1': [] };
   if (w.chapter === 'personal'){

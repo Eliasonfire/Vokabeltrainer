@@ -287,8 +287,17 @@ function renderSurahList(filter){
      sieht aus wie "nichts gefunden", obwohl die Sure da ist.
      Bei einer Suche und beim Leeren des Feldes aendert sich die Liste
      vollstaendig - dann ist oben der einzig richtige Platz. Nur der Rueckweg
-     aus einer Sure behaelt seinen gemerkten Stand. */
-  if (kamAusSure && !q) stelleListenRollstandHer();
+     aus einer Sure behaelt seinen gemerkten Stand.
+
+     ⚠️ Hier stand `kamAusSure && !q`, und das `!q` war zu vorsichtig: es hat
+     zwei verschiedene Vorgaenge zusammengeworfen - das AENDERN der Suche (die
+     Liste ist eine andere, oben ist richtig) und die RUECKKEHR aus einer Sure in
+     eine unveraendert gefilterte Liste (der Stand gehoert wiederhergestellt).
+     Auseinanderhalten tut das `kamAusSure` schon von selbst, denn beim Tippen
+     ins Suchfeld ist OFFENE_SURE immer null. Gemessen am 16.08.2026 (375x812):
+     nach "al" gefiltert, auf 600 gerollt, Sure 6 geoeffnet, Zurueck-Taste - der
+     Stand kam als 0 zurueck statt als 600. */
+  if (kamAusSure) stelleListenRollstandHer();
   else {
     const kasten = document.getElementById('main');
     if (kasten) kasten.scrollTo({ top: 0, behavior: 'instant' });
@@ -707,6 +716,35 @@ function zeigeVers(nr){
   return true;
 }
 
+/* ---------- Rueckkehr an die Lesestelle: einmal springen reicht nicht ----------
+
+   Beim Zurueckkommen aus einem anderen Bildschirm wird die ganze Sure neu
+   aufgebaut, und der Inhalt UEBER dem Ziel waechst noch, waehrend schon
+   gesprungen wird - die Verse werden hoeher, sobald die arabische Schrift
+   steht. Derselbe Grund wie bei hebeVersHervor() weiter unten.
+
+   Gemessen am 16.08.2026 in Al-Baqarah, Lesestand Ayah 11: beim Zurueckkommen
+   aus den Einstellungen landete der Sprung bei Ayah 14, also 502 px zu tief.
+   **Derselbe Aufruf von Hand, mit fertigem Layout, traf auf 64 px genau** -
+   der Aufruf war also richtig, nur zu frueh.
+
+   ⚠️ Nachgefasst wird nur, wenn der Vers wirklich AUS DEM BILD ist. Sonst risse
+   es den Blick weg, falls Elias inzwischen selbst weitergerollt hat. Dieselbe
+   Regel wie beim Nachschlag in hebeVersHervor(). */
+function zeigeVersNachAufbau(nr){
+  if (!zeigeVers(nr)) return false;
+  setTimeout(() => {
+    if (OFFENE_SURE === null) return;                 // schon wieder weg
+    const el = document.querySelector(`#verseList .verse-item[data-versnr="${nr}"]`);
+    const kasten = document.getElementById('main');
+    if (!el || !kasten) return;
+    const k = kasten.getBoundingClientRect();
+    const r = el.getBoundingClientRect();
+    if (r.bottom < k.top || r.top > k.bottom) zeigeVers(nr);
+  }, 500);
+  return true;
+}
+
 /* Eine Aenderung durchfuehren und danach dieselbe Ayah wieder zeigen. Der Vers
    wird VOR der Aenderung gelesen — danach kann der Beobachter schon andere
    Werte liefern, weil sich das Layout verschoben hat. */
@@ -731,8 +769,28 @@ function stelleQuranEbeneHer(st){
   /* Weder Sure noch Suche: das Suchfeld wird geleert. Sonst kaeme man aus einer
      gefilterten Liste nie zur vollstaendigen zurueck - die Zurueck-Taste haette
      die Suche zwar verlassen, aber derselbe Filter stuende noch im Feld. */
-  if (!st.suche && feld.value) feld.value = '';
-  renderSurahList(feld.value);
+  if (!st.suche && feld.value){
+    feld.value = '';
+    renderSurahList('');
+  }
+  /* ⚠️ Sonst wird hier NICHT neu gebaut, und genau das ist der Inhalt dieser
+     Zeilen. zeigeBildschirm() hat die Liste eben schon gebaut, samt Ruecksprung
+     auf den gemerkten Rollstand. Ein zweiter Aufruf faende OFFENE_SURE bereits
+     auf null vor - `kamAusSure` waere falsch, und der am 11.08.2026
+     dazugekommene else-Zweig in renderSurahList() springt dann nach ganz oben.
+     Er wirft also genau die Wiederherstellung weg, die der erste Aufruf gerade
+     gemacht hat.
+
+     Im Browser gemessen (16.08.2026, 375x812): Liste auf 4000 gerollt, Sure 47
+     geoeffnet, Zurueck-Taste gedrueckt. Erster Aufruf 0 -> 4000, zweiter Aufruf
+     4000 -> 0. Elias: "als ich wieder auf meinem handy zurück knopf gedrückt
+     habe war ich wieder ganz ganz oben, obwohl ich eigentlich wieder unten raus
+     kommen wollte."
+
+     ⚠️ Der Fehler wurde nicht am 04.08. eingebaut, sondern am 11.08.: vorher tat
+     der zweite Aufruf nichts Sichtbares, weil renderSurahList() ohne else-Zweig
+     den Rollstand einfach stehen liess. Die Suchkorrektur hat die alte
+     Wiederherstellung still ueberfahren. */
 }
 
 document.getElementById('surahSearch').addEventListener('input', (e)=>{
@@ -866,7 +924,7 @@ async function openSurah(id, opt){
 
   if (VERSE_CACHE[id]){
     renderVerses(id);
-    if (!zurueckZu || !zeigeVers(zurueckZu)) anDenAnfang();
+    if (!zurueckZu || !zeigeVersNachAufbau(zurueckZu)) anDenAnfang();
     return;
   }
   /* Skeleton-Platzhalter in Versform statt nackter Textzeile - die Seite
@@ -886,7 +944,7 @@ async function openSurah(id, opt){
       verse_key: `${id}:${i+1}`, text_uthmani: ar, translations: [{ text: de }]
     }));
     renderVerses(id);
-    if (!zurueckZu || !zeigeVers(zurueckZu)) anDenAnfang();
+    if (!zurueckZu || !zeigeVersNachAufbau(zurueckZu)) anDenAnfang();
   }catch(err){
     /* Rueckfallebene: wenn die lokale Datei fehlt oder beschaedigt ist, holt die
        App die Verse wie frueher von quran.com. Dann braucht sie aber Internet. */

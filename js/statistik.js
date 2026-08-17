@@ -3,8 +3,12 @@
    teilt sich mit den uebrigen js/-Dateien den globalen Namensraum. */
 /* ===================== STATS ===================== */
 function renderStats(){
-  const total = buchVokabeln().length;
-  const mastered = buchVokabeln().filter(w=>PROGRESS[w.id] && PROGRESS[w.id].box===5).length;
+  /* ⚠️ `bekannteVokabeln()` statt `buchVokabeln()` seit dem 17.08.2026 — Elias'
+     Vorgabe, dass sich die Modi an seinem Wissensstand ausrichten. Die
+     Gesamtzahl war vorher der geladene Buchbestand (311), nicht das, was er
+     lernt (176). Eine Quote gegen einen fremden Nenner sagt nichts. */
+  const total = bekannteVokabeln().length;
+  const mastered = bekannteVokabeln().filter(w=>PROGRESS[w.id] && PROGRESS[w.id].box===5).length;
   const totalCorrect = Object.values(PROGRESS).reduce((s,p)=>s+(p.correct||0),0);
   const totalWrong = Object.values(PROGRESS).reduce((s,p)=>s+(p.wrong||0),0);
   const acc = (totalCorrect+totalWrong) ? Math.round(100*totalCorrect/(totalCorrect+totalWrong)) : 0;
@@ -30,7 +34,7 @@ function renderStats(){
      Box 2 bis 4 bleiben neutral: eine fünfstufige Farbskala würde behaupten,
      dass Box 3 schon „halb gut" ist, und das sagt das Leitner-System nicht. */
   const BOX_TON = { 1:'schlecht', 5:'gut' };
-  const boxCounts = [1,2,3,4,5].map(b => buchVokabeln().filter(w=>PROGRESS[w.id] && PROGRESS[w.id].box===b).length);
+  const boxCounts = [1,2,3,4,5].map(b => bekannteVokabeln().filter(w=>PROGRESS[w.id] && PROGRESS[w.id].box===b).length);
   document.getElementById('boxBars').innerHTML = boxCounts.map((n,i)=>{
     const ton = BOX_TON[i+1] ? ` box-${BOX_TON[i+1]}` : '';
     return `
