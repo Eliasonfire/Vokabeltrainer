@@ -412,6 +412,122 @@ const ESELSBRUECKEN_ALT = {
   '45807': [
     'مَرَض ist die Krankheit selbst, مَرِيض der Kranke, مُمَرِّضَة die Pflegerin — drei Wörter aus der Wurzel م ر ض, und zwei davon hast du schon. Dazu passt مُسْتَشْفًى (Krankenhaus) aus einer anderen Wurzel: der Ort, an dem der مَرِيض Heilung sucht.',
     '⚠️ Der Plural fällt aus jedem Muster dieses Kapitels: مَرِيضٌ → مَرْضَى, mit أَلِف مَقْصورة am Ende. Das ist das ى ohne Punkte, das du als Fachbegriff kennst — gesprochen wie ein langes ā: mar-ḍā. Ein guter Ort, um beides zusammen zu merken.'
+  ],
+
+  /* ===================== Kapitel 4 — Präpositionen, Länder, Orte ===== */
+
+  /* مِنْ - von / aus */
+  '45808': [
+    '⚠️ Die wichtigste Verwechslung im ganzen Kapitel: مِنْ („von") und مَنْ („wer?") sehen ohne Taschkīl gleich aus. Dein Lehrer gibt dafür den Trick: beides ausprobieren, und was Sinn ergibt, ist richtig. „Von verließ das Klassenzimmer" ergibt keinen — also ist es die Frage مَنْ خَرَجَ.',
+    'مِنَ الْبَيْتِ statt مِنْ الْبَيْتِ: trifft das Sukūn auf مِنْ das Sukūn des Artikels, wird aus dem Sukūn ein Kasra. Das ist kein Sonderfall des Wortes, sondern eine Ausspracheregel — man kann zwei stumme Konsonanten nicht hintereinander sprechen. Sag es einmal laut, dann hörst du, warum.'
+  ],
+
+  /* إِلَى - nach / zu */
+  '45809': [
+    'Der letzte Vers der Fātiḥa und Sūrat al-Mulk sind voll davon: صِرَٰطَ ٱلَّذِينَ (1:7) folgt die Richtung, und in 67:15 heißt es وَإِلَيْهِ ٱلنُّشُورُ — „und zu Ihm ist die Auferstehung". إِلَيْهِ ist dein إِلَى mit „ihm" daran. Sechsmal allein in al-Mulk.',
+    'Das Paar arbeitet mit einem Satz zusammen, den du selbst hast: مِنَ الْبَيْتِ إِلَى الْجَامِعَةِ — vom Haus zur Universität. ⚠️ Nach BEIDEN steht Genitiv, deshalb الْبَيْتِ und الْجَامِعَةِ mit Kasra. Herkunft und Ziel wechseln die Bedeutung, nicht den Fall.'
+  ],
+
+  /* أَيْنَ - wo */
+  '45810': [
+    '⚠️ Nicht mit مِنْ أَيْنَ verwechseln, das du im selben Kapitel triffst: أَيْنَ fragt „wo?" (der Ort selbst), مِنْ أَيْنَ fragt „woher?" (die Herkunft). Ein Wort davor, und die Frage kippt. Dein Satz أَيْنَ الْمِفْتَاحُ؟ fragt nach dem Ort, nicht nach der Herkunft des Schlüssels.',
+    'Merke die Antwortform mit: auf أَيْنَ folgt kein Verb, sondern gleich das Gesuchte — أَيْنَ الْمِفْتَاحُ؟ ist ein vollständiger Satz aus zwei Wörtern. Das Deutsche braucht ein „ist", das Arabische nicht. Dieselbe Regel wie bei هَذَا بَيْتٌ.'
+  ],
+
+  /* عَلَى - auf */
+  '45811': [
+    'Du sprichst es in jedem Gebet: أَنْعَمْتَ عَلَيْهِمْ (1:7) — „denen Du Gunst erwiesen hast". عَلَيْهِمْ ist dein عَلَى mit „ihnen" daran, und genau diese Form kommt in der Fātiḥa zweimal vor. In Sūrat al-Mulk steht es sechsmal.',
+    '⚠️ Am Ende steht eine أَلِف مَقْصورة — das ى ohne Punkte, gesprochen wie langes ā: ʿalā. Sobald ein Anhängsel kommt, verwandelt es sich in ein echtes ي: عَلَى → عَلَيْهِ. Dasselbe passiert bei إِلَى → إِلَيْهِ. Zwei Wörter, eine Verwandlung.'
+  ],
+
+  /* فِي - in */
+  '45812': [
+    'Zwei Buchstaben, und dahinter steht immer Genitiv: فِي الْبَيْتِ, فِي الْمَكْتَبِ, فِي السَّمَاءِ. Genau das meint der Fachbegriff حَرْفُ الْجَرِّ, den dein Lehrer benutzt — die Partikel zieht das Nomen in den Genitiv. فِي ist das einfachste Beispiel dafür, das es gibt.',
+    'Sortiere die Ortswörter nach dem Bild, dann verwechselst du sie nie: فِي ist DRIN, عَلَى ist DRAUF, تَحْتَ ist DRUNTER. Alle drei hast du. Und تَحْتَ ist trotzdem etwas anderes — dein Lehrer stellt ausdrücklich klar, dass es kein حَرْف جَرّ ist, sondern eine ظَرْف.'
+  ],
+
+  /* الْفِلِيبِّينُ - Philippinen */
+  '45813': [
+    'Der Artikel ist Teil des Namens und fällt nie weg: es heißt الْفِلِيبِّين, nicht فِلِيبِّين. Dasselbe gilt für الْيَابَان, الصِّين, الْهِنْد — alle vier Länder dieses Kapitels tragen ihn fest. Wer den Artikel weglässt, sagt keinen Ländernamen.',
+    'Das doppelte ب ist die einzige Stolperstelle: al-Fi-lib-bīn. Vergleiche mit deinen anderen Wörtern, bei denen eine شَدَّة den Rhythmus macht — سُكَّرٌ, دُكَّانٌ, حَمَّامٌ. Immer derselbe kurze Stau in der Mitte.'
+  ],
+
+  /* الْيَابَانُ - Japan */
+  '45814': [
+    'Die Regel dahinter öffnet dir viele Namen: das deutsche J wird im Arabischen zu ي. Deshalb الْيَابَان für Japan — und deshalb heißt Josef يُوسُف und Jesus عِيسَى. Wenn dir ein Name fremd vorkommt, probier das J-zu-ي zurück.',
+    'Länder lernst du am besten als Gruppe, weil sie im selben Satzmuster stehen: هَذَا الطَّالِبُ مِنَ الْيَابَانِ. Setz die vier Länder dieses Kapitels reihum ein — الْيَابَان, الصِّين, الْهِنْد, الْفِلِيبِّين. Ein Satz, vier Vokabeln, und nebenbei übst du مِنْ mit Genitiv.'
+  ],
+
+  /* الصِّينُ - China */
+  '45815': [
+    'Hier hörst du eine Regel in einem Wort, das du sowieso lernst: ص ist ein Sonnenbuchstabe, deshalb wird اَلْصِّين zu aṣ-Ṣīn — das ل verschwindet im Klang, das ص verdoppelt sich. Sprich es einmal falsch (al-Ṣīn) und einmal richtig (aṣ-Ṣīn), dann sitzt der Unterschied.',
+    '⚠️ Das ص ist der dunkle, satte s-Laut, nicht das leichte س aus سُوقٌ. Dieselbe Unterscheidung wie bei قَصِيرٌ aus Kapitel 3. Zwei Buchstaben, die im Deutschen beide „s" heißen und im Arabischen zwei verschiedene Wörter machen können.'
+  ],
+
+  /* الْهِنْدُ - Indien */
+  '45816': [
+    'Der Klang trägt fast von selbst: al-Hind — darin steckt, was du aus „Hindu" und „Hindi" kennst. ⚠️ Achte nur auf das ه: das ist der gehauchte h-Laut, nicht das kratzige ح aus حَمَّامٌ. Beide heißen im Deutschen „h", im Arabischen sind es zwei Buchstaben.',
+    'Nimm den Satz statt des Worts: هَذَا الشَّايُ مِنَ الْهِنْدِ — dieser Tee ist aus Indien. Darin steckt شَايٌ aus Kapitel 6, مِنْ aus diesem Kapitel und das Hinweiswort هَذَا. Ein Satz, drei Vokabeln und eine Regel.'
+  ],
+
+  /* مَدْرَسَةٌ - Schule */
+  '45817': [
+    'Sieh dir die Familie an, dann hast du drei Wörter statt einem: د ر س ist die Wurzel des Lernens. مُدَرِّس ist der, der lehrt, مَدْرَسَة der Ort, an dem gelernt wird, und دَرْس die Lektion selbst. Beide ersten hast du schon als Vokabel.',
+    'Das مَـ macht aus einer Handlung einen ORT — und du hast die ganze Reihe: مَسْجِدٌ (Ort der Niederwerfung), مَكْتَبٌ (Ort des Schreibens), مَطْبَخٌ (Ort des Kochens), مَدْرَسَةٌ (Ort des Lernens). ⚠️ Bei مَدْرَسَة kommt eine تاء مَرْبُوطة dazu — deshalb ist sie weiblich, und Adjektive brauchen ein ة: مَدْرَسَةٌ نَظِيفَةٌ.'
+  ],
+
+  /* سُوقٌ - Markt */
+  '45818': [
+    '⚠️ Achtung, dein Beispielsatz verrät es: هَذِهِ سُوقٌ قَدِيمَةٌ — mit هَذِهِ und قَدِيمَةٌ, also WEIBLICH, obwohl das Wort keine تاء مَرْبُوطة trägt. سُوق gehört zu den Wörtern, die weiblich sind, ohne es zu zeigen. Genau die Sorte, vor der dein Lehrer warnt.',
+    'Der Plural ist أَسْوَاقٌ, dasselbe Muster wie بَابٌ → أَبْوَابٌ und وَرَقٌ → أَوْرَاقٌ, die du beide hast. ⚠️ Im Singular steht ein langes ū (sūq), im Plural wird daraus ein و mit Sukūn (as-wāq) — der schwache Wurzelbuchstabe wechselt seine Gestalt.'
+  ],
+
+  /* جَامِعَةٌ - Universität */
+  '45819': [
+    'Die Wurzel ج م ع („sammeln") trägt drei Wörter, die du kennst: الْجُمُعَة ist der Tag der Versammlung, der جَامِع die Freitagsmoschee, in der sich alle versammeln — und die جَامِعَة der Ort, an dem sich alle Fächer versammeln. Ein Stamm, drei Versammlungen.',
+    'Im Koran begegnet dir die Wurzel in deinem auswendigen Bereich: ٱلَّذِي جَمَعَ مَالًا (104:2) — „der Besitz zusammenträgt", in Sūrat al-Humaza. Dasselbe جَمَعَ, das in جَامِعَة steckt. Wer den Vers spricht, hat das Wort.'
+  ],
+
+  /* مُدِيرٌ - Direktor */
+  '45820': [
+    'Die Wurzel د و ر hat mit Drehen und Kreisen zu tun — der مُدِير ist der, um den sich der Betrieb dreht. ⭐ Von derselben Wurzel kommt دَار, das Haus im Sinne von „Anwesen", und دَوْر, die Runde oder Rolle. Wer die Wurzel hat, erkennt sie in allen dreien wieder.',
+    'Der Plural läuft nicht wie bei den Dingen, sondern wie bei Menschen: مُدِيرٌ → مُدِيرُونَ, mit ـُونَ am Ende. Genauso bei جَالِسُونَ, وَاقِفُونَ, نَظِيفُونَ aus Kapitel 3. ⚠️ Das ist der Plural für männliche PERSONEN; Dinge brechen stattdessen auf, wie بَابٌ → أَبْوَابٌ.'
+  ],
+
+  /* غُرْفَةٌ - Zimmer */
+  '45821': [
+    'Bau dir das Haus aus deinen eigenen Vokabeln: ein بَيْت hat eine غُرْفَة (Zimmer), einen مَطْبَخ (Küche), ein حَمَّام (Bad) und einen مِرْحَاض (Toilette). Alle fünf Wörter hast du. Geh das Haus einmal in Gedanken ab und benenne die Räume — das hält besser als fünf einzelne Karten.',
+    'Der Plural ist غُرَفٌ und damit kürzer als der Singular — das ist selten und deshalb merkbar. ⚠️ Die تاء مَرْبُوطة fällt im Plural weg: غُرْفَة → غُرَف. Sprich beide hintereinander: ghur-fa, ghu-raf.'
+  ],
+
+  /* حَمَّامٌ - Badezimmer */
+  '45822': [
+    'Das Wort ist auch im Deutschen angekommen: der Hammam, das Dampfbad. Wer es einmal so eingeordnet hat, braucht keine weitere Brücke — nur die Aussprache: das doppelte م muss man hören, ḥam-mām.',
+    '⚠️ Der erste Buchstabe ist ح, der kratzige Kehllaut, nicht das gehauchte ه aus الْهِنْد. Übe die beiden im Paar: ḥammām gegen al-Hind. Im Deutschen klingt beides wie „h", im Arabischen sind es zwei Buchstaben und zwei Wörter.'
+  ],
+
+  /* مَطْبَخٌ - Küche */
+  '45823': [
+    'Ort-مَـ wie مَدْرَسَةٌ, مَكْتَبٌ und مَسْجِدٌ, die du alle hast: die Wurzel ط ب خ heißt kochen, also ist مَطْبَخ der Ort des Kochens. ⚠️ Nicht mit طَبِيبٌ (Arzt) verwechseln — der hat die Wurzel ط ب ب. Der letzte Buchstabe entscheidet: خ kocht, ب heilt.',
+    'Der Plural bricht nach einem Muster auf, das du bei den Ort-Wörtern immer wieder siehst: مَطْبَخٌ → مَطَابِخُ, wie مَدْرَسَةٌ → مَدَارِسُ. Erst ein langes ā, dann ein Kasra vor dem letzten Buchstaben. ⚠️ Beide ohne Tanwīn am Ende.'
+  ],
+
+  /* سَمَاءٌ - Himmel */
+  '45824': [
+    'In Sūrat al-Mulk, die du auswendig kannst, steht das Wort gleich mehrfach — am schönsten in 67:5: زَيَّنَّا ٱلسَّمَآءَ ٱلدُّنْيَا, „Wir haben den untersten Himmel geschmückt", nämlich بِمَصَٰبِيحَ, mit Lampen. Und in 67:16 fragt der Vers nach مَّن فِي ٱلسَّمَآءِ. Sechs Stellen allein in dieser einen Sure.',
+    'Der Plural ist سَمَاوَاتٌ, und dort taucht das و der Wurzel س م و wieder auf, das im Singular verschwunden ist. ⚠️ Achte auf die Endung ـَات: das ist der Plural für weibliche Wörter, denselben hat جَامِعَةٌ → جَامِعَاتٌ und حَمَّامٌ → حَمَّامَاتٌ.'
+  ],
+
+  /* فَصْلٌ - Klassenzimmer / Kapitel */
+  '45825': [
+    'Ein فَصْل ist ein abgetrennter Teil — deshalb heißt dasselbe Wort Klassenzimmer UND Kapitel. Die Wurzel ف ص ل bedeutet trennen. Auch die Jahreszeit heißt so: ein فَصْل des Jahres. Drei Bedeutungen, ein einziges Bild.',
+    'Merke es über den Satz deines Lehrers zu مَنْ und مِنْ: dort geht es um خَرَجَ مِنَ الْفَصْلِ, „er verließ das Klassenzimmer". Genau dein Wort, im Genitiv nach مِنْ. Wer diesen Beispielsatz kann, hat Vokabel und Regel zusammen.'
+  ],
+
+  /* مِرْحَاضٌ - Toilette */
+  '45826': [
+    'Werkzeug- und Ort-مِـ wie bei مِفْتَاحٌ (Schlüssel) und مِنْدِيلٌ (Tuch), die du hast: erst مِـ, dann die Wurzel, dann ein langes ā vor dem letzten Buchstaben. Die Wurzel ر ح ض heißt waschen — der مِرْحَاض ist der Ort zum Waschen.',
+    'Der praktische Satz steht schon bei dir: أَيْنَ الْمِرْحَاضُ؟ — „Wo ist die Toilette?" Das ist die Sorte Satz, die man auf einer Reise wirklich braucht, und er besteht aus zwei Vokabeln, die du beide in diesem Kapitel lernst. Sprich ihn ein paarmal, dann sitzt er.'
   ]
 
 };
