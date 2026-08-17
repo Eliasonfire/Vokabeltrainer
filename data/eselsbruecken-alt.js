@@ -838,6 +838,158 @@ const ESELSBRUECKEN_ALT = {
   '45874': [
     '⭐ Das Muster ist der ganze Gewinn: مُسْتَفْعَل, und das سْتَـ in der Mitte heißt „nach etwas SUCHEN". Die Wurzel ش ف ي ist Heilung — das Krankenhaus ist der Ort, an dem man Heilung sucht. Wenn dir dieses سْتَـ wieder begegnet, weißt du schon die halbe Bedeutung.',
     '⚠️ Am Ende steht eine أَلِف مَقْصورة — das ى ohne Punkte, gesprochen wie langes ā: mus-tasch-fā. Genau der Fachbegriff, den du gelernt hast. Und im Plural wird daraus wieder ein echtes ي: مُسْتَشْفَيَاتٌ. Dasselbe Verhalten wie bei عَلَى → عَلَيْهِ.'
+  ],
+
+  /* ===================== Kapitel 9 — Sprache, Stadt, Alltag ========= */
+
+  /* فَاكِهَةٌ - Obst */
+  '45875': [
+    'Im Koran steht فَاكِهَة für die Früchte des Paradieses — ein Wort, das immer im Zusammenhang mit Belohnung fällt. ⚠️ Der Plural ist فَوَاكِهُ, mit einem و, das im Singular fehlt: fa-wā-kih. Dasselbe Muster wie نَافِذَةٌ → نَوَافِذُ, das du auch hast.',
+    'Setz es über dein تُفَّاحٌ (Apfel): der Apfel ist die Sorte, das Obst der Oberbegriff. Dasselbe Verhältnis hast du zweimal in diesem Kapitel — عُصْفُورٌ (Spatz) steht unter طَائِرٌ (Vogel). Oberbegriff und Beispiel zusammen zu lernen ist leichter als jedes für sich.'
+  ],
+
+  /* عُصْفُورٌ - Spatz */
+  '45876': [
+    '⭐ Sūrat al-Fīl, die du auswendig kannst, endet mit deiner Wurzel: كَعَصْفٍ مَّأْكُولٍ (105:5) — „wie abgefressene Halme". عَصْف sind die zerfressenen Blätter; dieselbe Wurzel ع ص ف trägt عَاصِفَة, den Sturm, und deinen عُصْفُور. Alles, was klein, leicht und weggeweht ist.',
+    '⚠️ Der Plural bricht weit auf: عُصْفُورٌ → عَصَافِيرُ. Das ist das Vierbuchstaben-Muster, das du von دُكَّانٌ → دَكَاكِينُ und سِكِّينٌ → سَكَاكِينُ kennst: langes ā vorne, langes ī vor dem letzten Buchstaben, und kein Tanwīn.'
+  ],
+
+  /* طَائِرٌ - Vogel */
+  '45877': [
+    'In derselben Sure steht das Wort selbst: وَأَرْسَلَ عَلَيْهِمْ طَيْرًا (105:3) — „und Er sandte gegen sie Vögel". طَيْر ist die Sammelform, طَائِر der einzelne Vogel. Wer al-Fīl spricht, hat zwei Vokabeln dieses Kapitels auf einmal: den Vogel und den Spatz.',
+    'Muster فَاعِل — „der Fliegende", von der Wurzel ط ي ر (fliegen). Dieselbe Form wie جَالِسٌ (sitzend), وَاقِفٌ (stehend), شَارِعٌ (Straße), die du alle hast. ⚠️ Die Hamzah auf dem أ steht dort, weil ein schwacher Wurzelbuchstabe ي in der Mitte sitzt — dasselbe siehst du bei نَافِذَة nicht, weil deren Wurzel stark ist.'
+  ],
+
+  /* عَرَبِيَّةٌ - Arabisch */
+  '45878': [
+    'Die Endung ـِيَّة macht aus einem Namen eine Zugehörigkeit, und du hast drei Beispiele: عَرَبِيَّةٌ (arabisch), إِنْجِلِيزِيَّةٌ (englisch), ثَانَوِيَّةٌ (die zweite Stufe). Immer ein ي mit شَدَّة, dann eine تاء مَرْبُوطة. Wer das Muster hat, bildet jede weitere Sprache selbst.',
+    'Zusammen mit لُغَةٌ (Sprache) ergibt es اللُّغَةُ الْعَرَبِيَّةُ — genau das, was du gerade lernst. ⚠️ Und es ist eine Wortgruppe mit نَعْت, keine إِضافة: BEIDE Wörter tragen اَلْ, und beide stehen im selben Fall. Bei einer إِضافة hätte nur das zweite den Artikel.'
+  ],
+
+  /* لُغَةٌ - Sprache */
+  '45879': [
+    'Merke es nie allein, sondern als Wortgruppe: اللُّغَةُ الْعَرَبِيَّةُ, die arabische Sprache. Beide Wörter hast du in diesem Kapitel — zusammen sind sie ein Ausdruck, den du täglich brauchst, einzeln zwei Karteikarten.',
+    '⚠️ Das erste ل wird verschluckt, weil ل ein Sonnenbuchstabe ist: geschrieben اَللُّغَة, gesprochen al-lugha mit doppeltem l. Dasselbe hörst du bei اللَّبَن und اللهُ. Ein guter Ort, um die Sonnenbuchstaben-Regel an einem Wort zu prüfen, das du oft sagst.'
+  ],
+
+  /* سَهْلٌ - leicht */
+  '45880': [
+    'Das Gegenpaar arbeitet auch im Klang: „sahl" ist kurz und weich, „ṣaʿb" hart und stockend. Sprich beide hintereinander, dann trägt dich der Laut. ⚠️ Und pass auf die zweite Bedeutung auf: سَهْل heißt auch die Ebene, das flache Land — was eben ist, ist leicht zu gehen.',
+    'Beide sind kurze Adjektive nach dem Muster فَعْل, nicht فَعِيل wie das halbe Kapitel 3. ⚠️ Ihre Plurale gehen trotzdem denselben Weg: سَهْلٌ → سُهُولٌ und صَعْبٌ → صِعَابٌ. Sprich alle vier, dann hörst du, dass die Plurale länger sind als die Singulare.'
+  ],
+
+  /* مُجْتَهِدٌ - fleißig */
+  '45881': [
+    '⭐ Die Wurzel ج ه د kennst du längst — aus جِهَاد (Anstrengung) und اِجْتِهَاد (das eigenständige Bemühen um ein Urteil). Der مُجْتَهِد ist wörtlich „der, der sich müht". Ein Wort, das im Glauben und im Klassenzimmer dasselbe meint.',
+    'Muster مُفْتَعِل mit einem eingeschobenen ت — vergleiche مُجْتَهِد mit اِجْتِهَاد: derselbe Baustein. ⚠️ Nicht mit مُفَعِّل verwechseln (مُدَرِّس, مُؤَذِّن, مُمَرِّضَة), das eine شَدَّة hat statt eines ت. Zwei Muster, beide mit مُـ, beide „der, der etwas tut".'
+  ],
+
+  /* مَشْهُورٌ - berühmt */
+  '45882': [
+    'In Sūrat al-Qadr, die du auswendig kannst, steht die Wurzel: خَيْرٌ مِّنْ أَلْفِ شَهْرٍ (97:3) — „besser als tausend Monate". شَهْر ist der Monat, und ش ه ر ist dieselbe Wurzel wie in مَشْهُور: was in aller Munde ist, ist bekannt gemacht.',
+    'Muster مَفْعُول, das PASSIVE Partizip: „bekannt GEMACHT". ⚠️ Vergleiche mit مُغْلَقٌ (geschlossen), das du hast — auch ein Passiv, aber nach dem Muster مُفْعَل. Zwei Wege zu derselben Idee; am Muster erkennst du, dass etwas mit dem Wort geschieht, nicht dass es selbst handelt.'
+  ],
+
+  /* إِنْجِلِيزِيَّةٌ - Englisch */
+  '45883': [
+    'Land und Sprache gehören zusammen: إِنْجِلْتَرَا (England) und إِنْجِلِيزِيَّةٌ (Englisch), beide hast du. Die Endung ـِيَّة macht aus dem Ort die Sprache — genau wie bei عَرَبِيَّةٌ. Zwei Karten, ein Gedanke.',
+    'Sprich es in Silben, dann verliert es den Schrecken: in-ǧi-lī-ziy-ya. ⚠️ Das ي vor der Endung trägt eine شَدَّة und muss doppelt klingen. Dasselbe gilt für عَرَبِيَّة und ثَانَوِيَّة — bei allen drei liegt die Betonung auf dieser doppelten Silbe.'
+  ],
+
+  /* صَعْبٌ - schwierig */
+  '45884': [
+    '⚠️ Zwei schwere Laute in einem kurzen Wort: ص ist der dunkle s-Laut, ع der tiefe Kehllaut. Sprich es einmal übertrieben — ṣaʿb. Genau diese beiden Buchstaben machen das Wort schwierig, und das ist die Eselsbrücke.',
+    'Gegenpaar mit سَهْلٌ, und beide beschreiben nicht nur Aufgaben: صَعْب ist auch das schwer Zugängliche, سَهْل die Ebene. Nimm dazu deinen eigenen Satzbau: اللُّغَةُ الْعَرَبِيَّةُ سَهْلَةٌ — mit ة, weil لُغَة weiblich ist. Ein Satz, an dem du das نَعْت gleich mitübst.'
+  ],
+
+  /* مَدِينَةٌ - Stadt */
+  '45885': [
+    '⭐ Dein ganzes Lehrbuch heißt danach: الْمَدِينَة, die Stadt des Propheten — und die Madina-Bücher sind nach ihr benannt. Ein Wort, das auf dem Umschlag steht, den du jeden Tag ansiehst.',
+    '⚠️ Der Plural ist unerwartet kurz: مَدِينَةٌ → مُدُنٌ, mu-dun. Aus einem langen ī wird ein kurzes u, und die تاء مَرْبُوطة fällt weg. Vergleiche mit غُرْفَةٌ → غُرَفٌ, das du auch hast — auch dort wird der Plural kürzer als der Singular.'
+  ],
+
+  /* الْقَاهِرَةُ - Kairo */
+  '45886': [
+    '⭐ In Sūrat aḍ-Ḍuḥā, die du auswendig kannst, steht die Wurzel als Verb: فَلَا تَقْهَرْ (93:9) — „so unterjoche sie nicht", über die Waise. Dieselbe Wurzel ق ه ر trägt الْقَهَّار, einen der Namen Allahs, und den Namen der Stadt: الْقَاهِرَة, „die Bezwingerin".',
+    'Muster فَاعِلَة, also die weibliche Form von فَاعِل — dasselbe wie نَافِذَةٌ (Fenster). Städtenamen sind im Arabischen oft weiblich. ⚠️ Und der Artikel gehört fest dazu: الْقَاهِرَة, nie قَاهِرَة allein.'
+  ],
+
+  /* يَوْمٌ - Tag */
+  '45887': [
+    'Du sprichst es in jedem Gebet: مَٰلِكِ يَوْمِ ٱلدِّينِ (1:4) — „dem Herrscher am Tag des Gerichts". Das ist zugleich eine إِضافة in einer إِضافة: مَالِكِ zu يَوْمِ, und يَوْمِ zu الدِّينِ. Deine Vokabel steht mitten in einem Satz, den du auswendig kannst.',
+    '⚠️ Der Plural verdoppelt das ي: يَوْمٌ → أَيَّامٌ, ay-yām. Und mit Artikel wird aus dem Tag „heute": الْيَوْمُ. Beide hast du als eigene Vokabel — merke sie als ein Paar, dann ist die zweite Karte fast geschenkt.'
+  ],
+
+  /* لِمَاذَا - warum */
+  '45888': [
+    'Zerlegen ist hier die ganze Eselsbrücke: لِـ („für") + مَاذَا („was") = „wofür?", also warum. Beide Teile kennst du — لِ aus deinen Regeln und مَا als eigene Vokabel. Ein zusammengesetztes Wort, das man nicht auswendig lernen muss, wenn man es einmal auseinandergenommen hat.',
+    'Sortiere es zu den Fragewörtern, die du schon hast: مَا (was), أَيْنَ (wo), لِمَاذَا (warum) — dazu aus deinen Regeln مَنْ (wer), هَلْ und أَ (ja/nein). ⚠️ Alle außer هَلْ und أَ verlangen eine Antwort mit Inhalt, nicht mit ja oder nein.'
+  ],
+
+  /* كُوبٌ - Tasse / Becher */
+  '45889': [
+    'Bau den Tisch aus deinen Vokabeln: ein كُوب (Becher) mit شَاي oder قَهْوَة oder مَاء darin, dazu مِلْعَقَة (Löffel) und سُكَّر (Zucker). Sechs Wörter, eine Szene — und alle sechs hast du.',
+    'Der Plural ist أَكْوَابٌ, dasselbe Muster wie بَابٌ → أَبْوَابٌ und وَرَقٌ → أَوْرَاقٌ. ⚠️ Achte auf das و der Wurzel ك و ب: im Singular ist es ein langes ū, im Plural wird es zum sichtbaren و mit Sukūn. Derselbe Wechsel wie bei سُوقٌ → أَسْوَاقٌ.'
+  ],
+
+  /* مَكْتَبَةٌ - Bibliothek */
+  '45890': [
+    '⭐ Drei Wörter, eine Wurzel ك ت ب, und du hast alle drei: كِتَابٌ (das Buch), مَكْتَبٌ (der Schreibtisch, der Ort des Schreibens), مَكْتَبَةٌ (die Bibliothek, der Ort der Bücher). Das مَـ macht den Ort, die تاء مَرْبُوطة macht daraus die Sammlung.',
+    'Im Koran steht dieselbe Wurzel als أَهْلِ ٱلْكِتَٰبِ (98:1) — „die Leute der Schrift", in Sūrat al-Bayyina, die du auswendig kannst. Wer den Vers spricht, hat den ganzen Stamm: Buch, Schreibtisch, Bibliothek, Schrift.'
+  ],
+
+  /* الْآنَ - jetzt */
+  '45891': [
+    'Das Madda-Alif آ ist die eigentliche Vokabel: es steht für zwei Alif hintereinander und wird lang gesprochen — al-ān. ⚠️ Du siehst dasselbe Zeichen im Plural von أُذُنٌ: آذَانٌ. Ein Zeichen, das man einmal bewusst ansehen sollte, dann erkennt man es überall.',
+    'Nimm die Zeitwörter zusammen, die du hast: الْآنَ (jetzt), الْيَوْمُ (heute), يَوْمٌ (Tag). ⚠️ Alle drei stehen im Satz meist am ENDE: الْمُدَرِّسُ هُنَا الْآنَ, الْمَاءُ بَارِدٌ الْيَوْمَ. Das ist kein Zufall, sondern die übliche Stellung von Zeitangaben.'
+  ],
+
+  /* مُسْتَوْصَفٌ - Klinik */
+  '45892': [
+    'Zwei Wörter, ein Bauplan مُسْتَفْعَل, und beide hast du: مُسْتَشْفًى (Krankenhaus, wo man Heilung SUCHT) und مُسْتَوْصَف (Klinik, wo man eine Beschreibung SUCHT, also eine Verschreibung). Das سْتَـ in der Mitte heißt immer „nach etwas suchen" — merk dir den Baustein, nicht die zwei Wörter.',
+    'Die Wurzel و ص ف heißt beschreiben — daher وَصْف (die Beschreibung) und صِفَة (die Eigenschaft). ⚠️ Das و am Wortanfang der Wurzel ist schwach und verschwindet in vielen Formen; hier bleibt es sichtbar, weil das Muster es festhält.'
+  ],
+
+  /* مِرْوَحَةٌ - Ventilator */
+  '45893': [
+    'Werkzeug-مِـ, und du hast die ganze Reihe: مِفْتَاحٌ (Schlüssel), مِكْوَاةٌ (Bügeleisen), مِلْعَقَةٌ (Löffel), مِرْوَحَةٌ (Ventilator). Immer مِـ, dann die Wurzel, dann das Gerät. Wenn dir ein neues Ding mit مِـ begegnet, kennst du schon die halbe Bedeutung.',
+    '⭐ Die Wurzel ر و ح trägt رِيح (Wind) und رُوح (Geist, Seele) — und in Sūrat al-Qadr steht وَٱلرُّوحُ (97:4), „und der Geist". Der Ventilator macht Wind aus derselben Wurzel, aus der der Geist kommt. Ein Bild, das größer ist als das Gerät.'
+  ],
+
+  /* الْكُوَيْتُ - Kuwait */
+  '45894': [
+    'Zwei Nachbarländer, beide mit Artikel: الْكُوَيْتُ und الْعِرَاقُ, die du beide hast. ⚠️ Bei beiden ist der erste Buchstabe ein Mondbuchstabe (ك und ع), deshalb hörst du das ل: al-Kuwait, al-ʿIrāq. Bei الصِّين dagegen verschwindet es.',
+    'Der Name selbst ist eine Verkleinerung — „das kleine Fort". ⚠️ Für dich zählt vor allem die Schreibung: الْكُوَيْت hat ein و UND ein ي hintereinander, gesprochen „uway". Sprich es langsam: al-Ku-wayt.'
+  ],
+
+  /* ثَانَوِيَّةٌ - weiterführende Schule */
+  '45895': [
+    'Die Zahl steckt drin: ث ن ي ist die Wurzel von „zwei" — dieselbe wie in إِثْنَانِ, das du als eigene Vokabel hast. Die ثَانَوِيَّة ist die ZWEITE Stufe nach der مَدْرَسَة. Und ثَانِي heißt schlicht „der zweite".',
+    'Wieder die Endung ـِيَّة, die du von عَرَبِيَّةٌ und إِنْجِلِيزِيَّةٌ kennst — sie macht aus einer Grundbedeutung eine Zugehörigkeit. ⚠️ Sprich die doppelte Silbe: thā-na-wiy-ya. Drei Wörter, ein Muster; wer eines kann, kann alle drei.'
+  ],
+
+  /* وَزِيرٌ - Minister */
+  '45896': [
+    '⭐ Es gibt eine Stelle aus deinem auswendigen Bereich, und sie ist besser als die bekannte: وَوَضَعْنَا عَنكَ وِزْرَكَ (94:2) — „und dir deine Last abgenommen", in Sūrat ash-Sharḥ. وِزْر ist die Last; ein وَزِير ist der, der sie mitträgt. Damit hängt die Vokabel an einer Sure, die du sprichst.',
+    'Muster فَعِيل wie كَبِيرٌ, قَرِيبٌ, سَرِيعٌ. ⚠️ Der Plural bricht auf zu وُزَرَاءُ — dasselbe Muster wie فَقِيرٌ → فُقَرَاءُ und غَنِيٌّ → أَغْنِيَاءُ, die du beide hast. Alle drei enden auf ُ ohne Tanwīn.'
+  ],
+
+  /* حَادٌّ - scharf */
+  '45897': [
+    'Die شَدَّة ist der halbe Wortstamm: die Wurzel ist ح د د, zwei د auf eines zusammengezogen. Sprich es hörbar: ḥād-d. Dasselbe hast du bei حَارٌّ (heiß) — beide Adjektive, beide mit doppeltem letzten Wurzelbuchstaben, beide kurz.',
+    'Von derselben Wurzel kommt حَدِيد (Eisen) — der Name von Sure 57 — und حَدّ, die Grenze. Was scharf ist, hat eine Kante. ⚠️ Und es passt zu deinem سِكِّينٌ (Messer): سِكِّينٌ حَادٌّ, ein scharfes Messer. Zwei Vokabeln, ein Satz.'
+  ],
+
+  /* إِنْدُونِيسِيَا - Indonesien */
+  '45898': [
+    'Sprich es in Silben, dann ist es leicht: in-dū-nī-si-yā. ⚠️ Kein Artikel, wie bei أَمْرِيكَا, أَلْمَانِيَا, إِنْجِلْتَرَا und سُوِيسْرَا — die fremden Namen tragen keinen. Merke die Länder in zwei Haufen: mit اَلْ und ohne.',
+    'Ordne es zu den asiatischen Ländern, die du hast: الْيَابَانُ (Japan), الصِّينُ (China), الْهِنْدُ (Indien), الْفِلِيبِّينُ (Philippinen), إِنْدُونِيسِيَا. ⭐ Und merke dabei mit: Indonesien ist das Land mit den meisten Muslimen der Welt.'
+  ],
+
+  /* الْيَوْمُ - heute */
+  '48402': [
+    'Der Artikel macht den Unterschied: يَوْمٌ ist „ein Tag", الْيَوْمُ ist „der Tag" — und damit „heute". Genau dieselbe Verschiebung gibt es im Deutschen bei „heute" und „am Tage". Zwei Vokabeln, die zusammengehören und einzeln nur halb so viel wert sind.',
+    '⚠️ Im Satz steht es meist am ENDE und trägt dort ein Fatḥah: الْمَاءُ بَارِدٌ الْيَوْمَ, nicht الْيَوْمُ. Das ist kein Tippfehler — Zeitangaben stehen im Akkusativ. Dir muss das noch nicht erklärt sein; merk dir vorerst nur, dass die Endung wechselt, wenn das Wort eine Zeitangabe ist.'
   ]
 
 };
