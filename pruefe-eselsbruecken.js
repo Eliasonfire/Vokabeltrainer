@@ -48,6 +48,10 @@ const ALT        = ladeAusSkript('data/eselsbruecken-alt.js', 'ESELSBRUECKEN_ALT
 
 /* Sein auswendiger Bereich. Belegt aus vt_hifz (seine eigenen Haekchen im
    Quran-Leser) plus "und ein paar mehr noch bis sura duha". */
+const ZEICHEN = /[ؐ-ًؚ-ٰٟۖ-ࣰۭ-ࣳ]/g;
+const flach = s => String(s).replace(ZEICHEN, '').replace(/ـ/g, '')
+  .replace(/[آأإٱ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي');
+
 const AUSWENDIG = new Set([1, 67, ...Array.from({length: 22}, (_, i) => 93 + i)]);
 const MAX_ZITAT = 4;
 
@@ -151,7 +155,73 @@ console.log('=== 3. Ids, Anzahl und Doppelungen ===');
 }
 
 console.log('');
-console.log('=== 4. Wie weit ist der Vorrat? ===');
+console.log('=== 4. „das hast du auch" — steht das Wort wirklich im Lernbestand? ===');
+{
+  /* ⭐ Der Anlass ist ein echter Fehlgriff vom 17.08.2026: In der Eselsbruecke
+     zu تُفَّاحٌ stand „مَوْزٌ (Banane), بُرْتُقَالٌ (Orange)" als Gruppe seiner
+     eigenen Woerter - beide hat er gar nicht. Das ist die gefaehrlichste Sorte
+     Fehler in dieser Datei: Der Satz liest sich richtig, und der Merkhaken
+     haengt an etwas, das es bei ihm nicht gibt.
+
+     Geprueft wird das Muster ARABISCHES WORT (deutsche Bedeutung) - genau die
+     Schreibweise, mit der ein Wort als bekannt VORGESTELLT wird. Ein Zitat aus
+     dem Koran sieht anders aus und faellt nicht darunter.
+
+     ⚠️ Nur der alt-Vorrat, nicht die alten mnemo-Texte: dort stehen bewusst
+     auch Woerter, die er noch nicht hat (z. B. مُرّ „bitter" mit dem
+     ausdruecklichen Zusatz, dass es noch nicht in seinen Vokabeln steht). */
+  const arab = '[\\u0600-\\u06FF]';
+  const muster = new RegExp('(' + arab + '+)\\s*\\(([^)]{2,30})\\)', 'g');
+  const bekannt = new Set(VOCAB_DATA.map(w => flach(w.ar)));
+  /* Fachbegriffe aus dem Unterricht zaehlen mit - sie sind seit v157 Vokabeln. */
+  try {
+    ladeAusSkript('data/fachbegriffe.js', 'FACHBEGRIFF_VOKABELN')
+      .forEach(w => bekannt.add(flach(w.ar)));
+  } catch (e){ /* Datei fehlt: dann eben ohne */ }
+
+  let behauptungen = 0;
+  texte.filter(t => t.quelle !== 'mnemo').forEach(t => {
+    let m;
+    muster.lastIndex = 0;
+    while ((m = muster.exec(t.text))){
+      const wort = m[1], glosse = m[2];
+      /* Klammern mit Erklaerungen statt Bedeutungen ueberspringen. */
+      if (/kapitel|sure|vers|wurzel|form|plural|muster|arabisch|deutsch|\d/i.test(glosse)) continue;
+      /* ⭐ ENTSCHEIDEND, und beim ersten Versuch falsch gemacht: Die Klammer
+         allein ist KEINE Behauptung. „أَبْوَابٌ (Türen)" nennt eine Pluralform,
+         „أَقْرَب (näher)" eine abgeleitete Form, „بَعْدَ (nach)" eine
+         Verwechslungsgefahr - nichts davon behauptet, dass er das Wort hat.
+         Von sieben Meldungen der ersten Fassung waren sechs falsch.
+
+         Die Behauptung steckt im BESITZWORT daneben: „hast du", „deine
+         Vokabeln", „du hast". Erst der Satz mit einem solchen Wort sagt: das
+         gehoert dir schon. Genau daran haengt die Pruefung jetzt - und der
+         eine echte Fund bleibt drin (مُهَنْدِسٌ „aus deinen Vokabeln", das er
+         nie hatte). */
+      /* Nur der SATZ, in dem die Klammer steht - nicht ein Zeichenfenster
+         darum herum. Mit ±160 Zeichen fing die Pruefung ein „Dein Satz zeigt
+         …" zwei Saetze weiter ein und meldete einen Fehler, den es nicht gab. */
+      const vorher = t.text.slice(0, m.index);
+      const nachher = t.text.slice(m.index + m[0].length);
+      const satz = vorher.slice(vorher.lastIndexOf('. ') + 1)
+                 + m[0]
+                 + nachher.slice(0, (nachher.indexOf('. ') + 1) || nachher.length);
+      /* „aus deinen REGELN" ist etwas anderes als „aus deinen VOKABELN": die
+         73 Grammatikregeln enthalten Woerter, die nicht im Lernbestand stehen,
+         und sie dort zu nennen ist richtig. */
+      if (/deine[nrm]?\s+(Regeln?|Folgen|Unterricht|Stunden?)/i.test(satz)) continue;
+      if (!/\bhast du\b|\bdu hast\b|\bdeine[nr]?\b|\bdein\b/i.test(satz)) continue;
+      behauptungen++;
+      if (!bekannt.has(flach(wort)))
+        melde(`${t.wort} (${t.quelle}): „${wort} (${glosse})" wird als bekanntes Wort vorgestellt, steht aber NICHT im Lernbestand`);
+    }
+  });
+  console.log(`  ${behauptungen} Behauptung(en) „das hast du" geprueft.`);
+  geprueft += behauptungen;
+}
+
+console.log('');
+console.log('=== 5. Wie weit ist der Vorrat? ===');
 {
   const ohne = VOCAB_DATA.filter(w => !ALT[w.id]);
   const nachKap = {};
