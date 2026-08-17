@@ -216,6 +216,46 @@ const ESELSBRUECKEN_ALT = {
   '45776': [
     'Genau diese Partikel eröffnet al-Māʿūn, die du auswendig kannst: أَرَأَيْتَ — „Siehst du …?" (107:1). Ohne das أَ vorne wäre رَأَيْتَ nur „du hast gesehen".',
     '⚠️ Gegen مَا abgrenzen, das du auch hast: أَ fragt nach ja oder nein, مَا nach der Sache. أَهَذَا بَيْتٌ؟ — „Ist das ein Haus?" gegen مَا هَذَا؟ — „Was ist das?"'
+  ],
+
+  /* ===================== Kapitel 1, Nachzügler ===================== */
+
+  /* مَا - was */
+  '45777': [
+    'Sūrat al-Qāriʿa kannst du auswendig — und sie besteht fast aus diesem einen Wort: مَا ٱلْقَارِعَةُ (101:2), gleich darauf وَمَآ أَدْرَىٰكَ مَا (101:3). Dreimal مَا in drei kurzen Versen, jedes Mal „was". Wenn dir das Wort nicht einfällt, sprich die Sure innerlich an.',
+    'Sortiere deine Fragewörter in zwei Sorten, dann verwechselst du nie wieder: مَا (was) und aus deinen Regeln مَنْ (wer), أَيْنَ (wo), لِمَنْ (wem gehört) fragen nach einer SACHE oder PERSON — die Antwort ist ein Wort. أَ und هَلْ fragen nach JA ODER NEIN. Der Unterschied liegt nicht am Wort, sondern an der Art der Antwort.'
+  ],
+
+  /* وَ - und */
+  '45778': [
+    'Zähl die Suren, die du auswendig kannst und die mit genau diesem Buchstaben anfangen: وَٱلضُّحَىٰ (93:1), وَٱلْعَصْرِ (103:1), وَٱلتِّينِ (95:1). ⚠️ Dort heißt وَ aber nicht „und", sondern ist das Schwur-Wāw: „bei der Morgenhelle". Dasselbe Zeichen, zwei Aufgaben — und beide begegnen dir längst.',
+    'وَ wird NIE getrennt geschrieben, es klebt am folgenden Wort: قَلَمٌ وَكِتَابٌ, niemals وَ كِتَابٌ. Das ist keine Schreibmarotte, sondern die Art dieser kurzen حُرُوف — dasselbe tut لِ aus deinen Regeln, das mit اَلْ sogar zu لِلـ verschmilzt.'
+  ],
+
+  /* ===================== Kapitel 2 ===================== */
+
+  /* إِمَامٌ - Imam */
+  '45779': [
+    'إِمَامُ الْمَسْجِدِ — das ist genau die إِضافة, die du gerade gelernt hast: das erste Wort ohne اَلْ und ohne Tanwīn (إِمَامُ), das zweite bestimmt und im Genitiv (الْمَسْجِدِ). Eine Vokabel und eine Regel im selben Ausdruck, und مَسْجِدٌ hast du seit Kapitel 1.',
+    'Der Plural lohnt sich extra, weil er die Wurzel sichtbar macht: إِمَامٌ → أَئِمَّةٌ. Im Singular stehen die beiden م weit auseinander (أ-م-ا-م), im Plural rücken sie zusammen und bekommen eine شَدَّة. Wer den Plural einmal geschrieben hat, sieht أ م م im Singular sofort wieder.'
+  ],
+
+  /* حَجَرٌ - Stein */
+  '45780': [
+    'Sūrat al-Fīl kannst du auswendig, und der Plural steht mitten darin: تَرْمِيهِم بِحِجَارَةٍ (105:4) — „bewarfen sie mit Steinen". حِجَارَةٌ ist genau die Mehrzahl, die bei deiner Vokabel steht. Ein Vers, und Einzahl und Mehrzahl sitzen zusammen.',
+    'Dein eigener Beispielsatz ist die zweite Brücke: حَجَرٌ قَدِيمٌ وَثَقِيلٌ. قَدِيمٌ (alt) und ثَقِيلٌ (schwer) hast du beide aus Kapitel 3 — und beide tragen dasselbe Tanwīn wie حَجَرٌ. Das ist die Regel نَعْت zum Anfassen: das Adjektiv macht dem Nomen alles nach.'
+  ],
+
+  /* سُكَّرٌ - Zucker */
+  '45781': [
+    'Das doppelte ك ist eine شَدَّة — eines der fünf شَكْل aus deinen Regeln. Sprich es hörbar: suk-kar, nicht su-kar. Eine شَدَّة ist im Arabischen nie Zierde; sie zählt wie ein eigener Buchstabe, und wer sie weglässt, spricht ein anderes Wort.',
+    'Stell dir deine anderen Wörter mit شَدَّة daneben: قِطٌّ (Katze), كُرْسِيٌّ (Stuhl), تُفَّاحٌ (Apfel), حَمَّامٌ (Badezimmer), سَيَّارَةٌ (Auto). Sprich sie hintereinander — du hörst denselben Doppelschlag in der Mitte, und سُكَّرٌ reiht sich ein, statt allein zu stehen.'
+  ],
+
+  /* لَبَنٌ - Milch */
+  '45782': [
+    'Nimm den ganzen Satz statt des einzelnen Worts: لَبَنٌ حُلْوٌ وَبَارِدٌ — süße und kalte Milch. حُلْوٌ und بَارِدٌ hast du beide aus Kapitel 3, beide hängen als نَعْت an لَبَنٌ und tragen dasselbe Tanwīn. Drei Vokabeln und eine Regel in einem Bild.',
+    'Der Plural bricht das Wort auf: لَبَنٌ → أَلْبَان. Dasselbe Muster hast du schon dreimal: بَابٌ → أَبْوَابٌ, قَلَمٌ → أَقْلَامٌ, وَلَدٌ → أَوْلَادٌ. Ein أَ vorne, ein langes ا vor dem letzten Buchstaben — wer das Muster erkennt, muss den Plural nicht einzeln lernen.'
   ]
 
 };
