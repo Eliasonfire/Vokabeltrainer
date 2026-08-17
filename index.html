@@ -931,6 +931,50 @@ main{
    nebeneinander passen, also kleiner und ohne Symbol-Ballast; unter jeder
    Stufe steht, in welche Box die Vokabel wandert und wann sie wiederkommt. */
 .answer-buttons{display:flex;gap:var(--sp-2);padding:var(--sp-2) var(--gutter) 0;}
+
+/* „Kenne ich schon" — leise unter den vier Stufen, damit es nicht wie eine
+   fuenfte Bewertung aussieht. `font:inherit` ist Pflicht: ein <button> erbt
+   die Schrift der Seite NICHT, er faellt sonst auf die Browser-Voreinstellung
+   zurueck und sieht kleiner und grau aus, ohne dass es jemand angeordnet hat. */
+.kenne-schon-zeile{display:flex;justify-content:center;padding:var(--sp-2) var(--gutter) 0;}
+.kenne-schon-btn{
+  font:inherit;font-size:var(--fs-sm);
+  display:inline-flex;align-items:center;gap:6px;
+  background:none;border:none;cursor:pointer;
+  color:var(--text-dim);padding:var(--sp-2) var(--sp-3);border-radius:var(--r-2);
+  min-height:40px;   /* Daumenflaeche: mit dem blossen Text waeren es 32 px */
+}
+.kenne-schon-btn:hover{color:var(--text);background:var(--surface-2);}
+.kenne-schon-btn .ic{width:16px;height:16px;}
+/* Gruen und nicht rot: „ich kann das schon" ist eine Erledigung, keine
+   Warnung. Rot ist in dieser App die Markenfarbe UND die Farbe von
+   „Nochmal" - beides waere hier die falsche Botschaft. */
+.kenne-schon-btn.ist-markiert{color:var(--green);}
+
+.kenne-schon-liste{padding:0 var(--gutter);}
+.kenne-schon-liste:empty{display:none;}
+.kenne-schon-eintrag{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--sp-2);
+  padding:var(--sp-2) 0;border-bottom:1px solid var(--hairline);
+}
+.kenne-schon-eintrag:last-child{border-bottom:none;}
+/* ⚠️ min-width:0 am Flex-KIND, nicht am Elternteil: ohne das laeuft die
+   Ellipsis unten ins Leere und die ganze Seite rollt quer. */
+.kenne-schon-wort{display:flex;align-items:baseline;gap:var(--sp-2);min-width:0;}
+.kenne-schon-wort .ar{
+  font-family:var(--font-ar);direction:rtl;color:#fff;
+  font-size:calc(var(--fs-sm) * var(--ar-faktor));flex:0 0 auto;
+}
+.kenne-schon-wort .de{color:var(--text-dim);font-size:var(--fs-sm);
+  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* min-height 36px: mit `padding:4px 10px` war der Knopf gemessene 25 px hoch —
+   fuer einen Daumen neben einer rollenden Liste zu wenig. */
+.kenne-schon-zurueck{
+  font:inherit;font-size:var(--fs-sm);flex:0 0 auto;
+  background:none;border:1px solid var(--border);border-radius:var(--r-2);
+  color:var(--text-dim);padding:4px 12px;min-height:36px;cursor:pointer;
+}
+.kenne-schon-zurueck:hover{color:var(--text);border-color:var(--border-strong);}
 .btn-stufe{
   flex:1;min-width:0;flex-direction:column;gap:2px;
   padding:var(--sp-3) var(--sp-2);font-size:var(--fs-md);border-radius:var(--r-3);
@@ -2891,6 +2935,25 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         <button class="btn btn-stufe btn-leicht" id="btnLeicht" data-stufe="leicht">
           <span>Leicht</span><em id="stufeLeicht"></em></button>
       </div>
+
+      <!-- ⭐ „Kenne ich schon" (17.08.2026). Elias: „so sachen wie ja auf
+           arabisch oder nein oder imam oder sowas was irgendwie
+           selbstverständlich oder auch sehr einfach oder mit grundwissen ist
+           brauche ich nicht wie moschee oder ja oder sowas halt."
+
+           ⛔ Die Auswahl trifft ER. Es gibt bewusst KEINE von mir angelegte
+           Liste „zu leichter" Wörter — was für ihn selbstverständlich ist, ist
+           es für einen anderen Lerner nicht.
+
+           Bewusst leise gestaltet und UNTER den vier Stufen: es ist keine
+           fünfte Bewertung. Wer es versehentlich trifft, findet alles in den
+           Einstellungen wieder. -->
+      <div class="kenne-schon-zeile">
+        <button class="kenne-schon-btn" id="btnKenneSchon">
+          <svg class="ic"><use href="#ic-auge"/></svg>
+          <span>Kenne ich schon — nicht mehr abfragen</span>
+        </button>
+      </div>
     </section>
 
     <!-- ============ CATEGORIES ============ -->
@@ -3424,6 +3487,18 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         <button class="switch" id="toggleTippen" aria-label="Tippen ab Box 4 umschalten"><span class="knob"></span></button>
       </div>
 
+      <!-- Der Rückweg zum „Kenne ich schon"-Knopf auf der Lernkarte. Ohne diese
+           Liste wäre der Knopf eine Einbahnstraße: ein Fehlgriff, und das Wort
+           wäre für immer weg, ohne dass irgendwo stünde welches. -->
+      <div class="setting-row">
+        <div>
+          <div class="setting-title">Wörter, die du schon kannst</div>
+          <div class="setting-sub" id="kenneSchonStand">Noch keins ausgeblendet</div>
+        </div>
+        <button class="btn btn-secondary" id="btnKenneSchonAlle">Alle zurück</button>
+      </div>
+      <div class="kenne-schon-liste" id="kenneSchonListe"></div>
+
       <!-- ⭐ Neu am 30.07.2026, und der Anlass war ein Kreislauf, in dem Elias
            festhing: Das Ziehen zum Aktualisieren war kaputt, also kam kein neuer
            Stand an — auch nicht der Fix für das Ziehen. Er hat drei Änderungen
@@ -3582,6 +3657,11 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
      einhaengt - und das passiert schon beim Start. -->
 <script src="data/eselsbruecken.js"></script>
 <script src="data/eselsbruecken-alt.js"></script>
+<!-- Die zehn Fachbegriffe seines Lehrers als eigene Vokabeln (17.08.2026).
+     Muss VOR grammar-data.js nicht stehen - die Datei verweist nur ueber
+     Regel-Ids darauf und liest nichts daraus. Sie muss aber vor js/kern.js
+     kommen, weil kern.js sie in VOCAB_DATA einhaengt. -->
+<script src="data/fachbegriffe.js"></script>
 <script src="surah-data.js"></script>
 <!-- Seitengrenzen des Muṣḥaf, erzeugt von werkzeuge/seiten-holen.mjs und dort
      gegen surah-data.js geprüft (114/114 Verszahlen, 604 Seiten lückenlos). -->

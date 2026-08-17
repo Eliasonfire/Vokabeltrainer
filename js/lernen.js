@@ -4,11 +4,60 @@
 /* ===================== LEARN / FLASHCARDS ===================== */
 let SESSION = { words:[], idx:0, dirs:[], fertig:true };
 
+/* ---------- Jede sechste Karte ein Fachbegriff (17.08.2026) ----------
+
+   Elias: „und da ist es auch wichtig, dass auch vorallem begriffe genutzt
+   werden, die in meinem unterricht häufiger verwendet werden wie harfuljar
+   oder so", und zum Umfang: „einen guten Teil von der Übung geben, nicht zu
+   viel". Bei einer 20er-Runde sind das drei Karten (Platz 6, 12, 18).
+
+   ⭐ Warum das aktiv gebaut werden muss und sich nicht von selbst einstellt:
+   `currentPool()` ist nach Ueberfaelligkeit sortiert und wird danach auf die
+   Rundengroesse ABGESCHNITTEN. Zehn Fachbegriffe unter 181 Woertern landen
+   dabei fast nie in den ersten zwanzig - gemessen war ihr Anteil vorher
+   **6 von 171 = 3,5 %**, und diese sechs lagen unter „Eigene".
+
+   ⛔ Nicht faellige Fachbegriffe werden NICHT hereingezwungen. Das waere die
+   naheliegende Abkuerzung („dann sind es garantiert immer drei"), sie wuerde
+   aber die Leitner-Abstaende aushebeln: ein Wort, das erst in acht Tagen
+   drankommen soll, wuerde jeden Tag wieder abgefragt. Solange die zehn frisch
+   sind, sind sie ohnehin alle faellig; spaeter ruecken sie auseinander, und
+   dann sind zwei Fachbegriffe in einer Runde die richtige Zahl, nicht drei. */
+const FACH_TAKT = 6;
+
+function fachbegriffTakt(pool, size){
+  const laenge = Math.min(size, pool.length);
+  const fach = pool.filter(w => w.chapter === 'grammar');
+  if (!fach.length) return pool.slice(0, laenge);
+  const rest = pool.filter(w => w.chapter !== 'grammar');
+
+  /* Platz 6, 12, 18 … also Index 5, 11, 17. */
+  const plaetze = [];
+  for (let i = FACH_TAKT - 1; i < laenge; i += FACH_TAKT) plaetze.push(i);
+  const nimm = Math.min(plaetze.length, fach.length);
+  if (!nimm) return pool.slice(0, laenge);
+
+  const gewaehlt = fach.slice(0, nimm);
+  /* Uebrige Fachbegriffe hinten anhaengen statt wegwerfen: sind zufaellig
+     mehr faellig als Plaetze da sind, duerfen sie ganz normal mitlaufen. */
+  const fueller  = rest.concat(fach.slice(nimm)).slice(0, laenge - nimm);
+
+  const runde = [];
+  let fi = 0, ri = 0;
+  for (let i = 0; i < laenge; i++){
+    if (fi < nimm && plaetze[fi] === i) runde.push(gewaehlt[fi++]);
+    else runde.push(fueller[ri++]);
+  }
+  return runde;
+}
+
 function startLearningSession(){
   let words = currentPool();
   if (words.length === 0){ toast(SETTINGS.wrongOnly ? 'Keine schwachen Wörter mit dieser Auswahl – stark!' : 'Nichts fällig – schau später wieder vorbei.'); showScreen('home'); return; }
   const size = SETTINGS.sessionSize;
-  if (size < words.length) words = words.slice(0, size);
+  /* Auch wenn die ganze Auswahl in eine Runde passt: der Takt sortiert die
+     Fachbegriffe auf die Plaetze 6/12/18, statt sie irgendwo zu lassen. */
+  words = fachbegriffTakt(words, size);
   SESSION = { words, idx:0, dirs:[], fertig:false };
   showScreen('learn');
 }
@@ -85,7 +134,8 @@ function renderCard(){
   const pop = document.getElementById('gramPopover');
   if (pop) pop.classList.remove('show');
 
-  document.getElementById('cardChapter').textContent = w.chapter==='personal' ? 'Eigene Vokabel' : `Kap. ${w.chapter}`;
+  document.getElementById('cardChapter').textContent = kapitelBeschriftung(w);
+  zeichneKenneSchonKnopf();
 
   const dir = cardDirection(SESSION.idx);
   const frontEl = document.getElementById('cardArabic');
@@ -699,6 +749,42 @@ document.getElementById('btnSpeakWord').addEventListener('click', (e)=>{
   e.stopPropagation();
   speakArabic(SESSION.words[SESSION.idx].ar);
 });
+/* ---------- „Kenne ich schon" ----------
+
+   Ein Tipp, und das Wort kommt nicht mehr. Bewusst OHNE Rueckfrage: eine
+   Sicherheitsabfrage bei jedem Wort waere bei einem Knopf, den man mehrmals
+   pro Runde braucht, laestiger als der Fehlgriff selbst - und der Fehlgriff
+   ist folgenlos, weil derselbe Knopf ihn sofort zuruecknimmt und die Liste in
+   den Einstellungen ihn dauerhaft zurueckholt.
+
+   ⚠️ Die Karte wird NICHT weggeschaltet. Wer gerade auf der Rueckseite steht,
+   will die Antwort noch zu Ende lesen; und die Runde umzubauen, waehrend man
+   mitten darin steht, hat schon einmal den Zeiger springen lassen (siehe
+   passeRundeAnAuswahlAn). Das Wort verschwindet ab der NAECHSTEN Runde. */
+function zeichneKenneSchonKnopf(){
+  const b = document.getElementById('btnKenneSchon');
+  if (!b) return;
+  const w = SESSION.words[SESSION.idx];
+  const markiert = (typeof kennErSchon === 'function') && kennErSchon(w);
+  b.classList.toggle('ist-markiert', markiert);
+  b.querySelector('span').textContent = markiert
+    ? 'Ausgeblendet — wieder abfragen'
+    : 'Kenne ich schon — nicht mehr abfragen';
+}
+
+document.getElementById('btnKenneSchon').addEventListener('click', (e)=>{
+  e.stopPropagation();
+  const w = SESSION.words[SESSION.idx];
+  if (!w) return;
+  const jetztAn = !kennErSchon(w);
+  setzeKennErSchon(w.id, jetztAn);
+  zeichneKenneSchonKnopf();
+  if (typeof zeichneKenneSchonListe === 'function') zeichneKenneSchonListe();
+  toast(jetztAn
+    ? `${w.de} kommt nicht mehr — zurückholen in den Einstellungen.`
+    : `${w.de} wird wieder abgefragt.`);
+});
+
 /* Das X beendet die Runde bewusst - danach startet "Lernen" wieder eine neue. */
 document.getElementById('btnExitLearn').addEventListener('click', ()=>{
   SESSION.fertig = true;
