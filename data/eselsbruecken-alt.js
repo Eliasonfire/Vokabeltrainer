@@ -756,6 +756,88 @@ const ESELSBRUECKEN_ALT = {
   'madina1-l6-ucht': [
     '⚠️ Wie بِنْتٌ endet auch أُخْتٌ auf ein echtes ت mit Sukūn, NICHT auf die تاء مَرْبُوطة ة. Beide sind weiblich, ohne es zu zeigen — dein Lehrer nennt solche Wörter مؤنث بلا تاء. Merke die zwei als Paar, dann ist die Ausnahme nur einmal zu lernen.',
     'Der Unterschied zum Bruder steckt allein im Vokal und im ت: أَخٌ mit Fatḥah, أُخْتٌ mit Ḍammah. Sprich sie hintereinander — ach, ucht. Und die Anrede läuft parallel: يَا أَخِي für den Bruder, يَا أُخْتِي für die Schwester.'
+  ],
+
+  /* ===================== Kapitel 7 — Tiere und Berufe =============== */
+
+  /* نَاقَةٌ - Kamelstute */
+  '45862': [
+    '⚠️ Der Punkt ist nicht das Tier, sondern das Geschlecht: جَمَلٌ ist das männliche Kamel, نَاقَةٌ das weibliche. Dieselbe Ordnung hast du bei دِيكٌ (Hahn) und دَجَاجَةٌ (Henne). Im Deutschen sagt man „Kamel" für beide — im Arabischen sind es zwei Vokabeln, und du hast beide.',
+    'Die تاء مَرْبُوطة macht hier das WEIBLICHE Tier, nicht das einzelne Stück. ⚠️ Vergleiche mit بَقَرَةٌ und بَطَّةٌ, wo dasselbe ة das Einzeltier aus der Art heraushebt (بَقَرٌ ist das Rindvieh, بَقَرَةٌ die eine Kuh). Dasselbe Zeichen, zwei Aufgaben — hinsehen, welche gemeint ist.'
+  ],
+
+  /* بَطَّةٌ - Ente */
+  '45863': [
+    'Die شَدَّة verrät die Wurzel ب ط ط: zwei ط, im Singular zusammengezogen. Dasselbe siehst du bei قِطٌّ (Katze), عَمٌّ (Onkel) und أُمٌّ (Mutter) — alle vier hast du. Sprich sie hintereinander, dann hörst du den Doppelschlag am Wortende.',
+    'Bau dir den Hof aus deinen eigenen Vokabeln: بَطَّةٌ (Ente), دَجَاجَةٌ (Henne), دِيكٌ (Hahn), بَقَرَةٌ (Kuh), حِمَارٌ (Esel), حِصَانٌ (Pferd), جَمَلٌ (Kamel). Sieben Tiere, die du alle hast — als Bild eines Hofes leichter zu behalten als sieben einzelne Karten.'
+  ],
+
+  /* مُمَرِّضَةٌ - Krankenschwester */
+  '45864': [
+    'Drei Wörter aus der Wurzel م ر ض, und der Weg ist logisch: مَرَض ist die Krankheit, مَرِيض der Kranke, مُمَرِّضَة die, die ihn pflegt. ⚠️ Und das Muster مُفَعِّل beschreibt den, der etwas AKTIV tut — dieselbe Form wie مُدَرِّسٌ (Lehrer) und مُؤَذِّنٌ (Gebetsrufer), die du beide hast.',
+    'Die männliche Form heißt مُمَرِّضٌ, ohne das ة — und beides gibt es. ⚠️ Bei Berufen entscheidet die تاء مَرْبُوطة über das Geschlecht der Person, nicht über die Sache: مُدَرِّسٌ / مُدَرِّسَةٌ, مُمَرِّضٌ / مُمَرِّضَةٌ. Ein Zeichen, und der Beruf wechselt die Person.'
+  ],
+
+  /* بَيْضَةٌ - Ei */
+  '45865': [
+    'Die Wurzel ب ي ض heißt weiß — das Ei ist „das Weiße". ⭐ Von derselben Wurzel kommt أَبْيَض (weiß), und das gehört zum Farbmuster أَفْعَل, dem auch أَسْوَد (schwarz) folgt — das du aus الْحَجَرُ الْأَسْوَد kennst. Farben und Ei aus einem Stamm.',
+    'Auch hier trennt die تاء مَرْبُوطة das Einzelne von der Menge: بَيْضٌ sind Eier als Sache, بَيْضَةٌ ist das eine Ei. Dieselbe Ordnung wie بَقَرٌ / بَقَرَةٌ und دَجَاجٌ / دَجَاجَةٌ. Drei Paare, eine Regel — wer sie einmal sieht, braucht die Plurale nicht einzeln.'
+  ],
+
+  /* مُؤَذِّنٌ - Gebetsrufer */
+  '45866': [
+    'In Sūrat al-Qadr, die du auswendig kannst, steht die Wurzel: بِإِذْنِ رَبِّهِم (97:4) — „mit der Erlaubnis ihres Herrn". Dieselbe Wurzel أ ذ ن wie in أُذُنٌ (Ohr) und أَذَان (Gebetsruf). Hören, erlauben, rufen — ein Stamm, drei Bedeutungen, alle mit „Ohr" im Kern.',
+    'Muster مُفَعِّل für den, der etwas aktiv tut: مُؤَذِّنٌ, مُدَرِّسٌ, مُمَرِّضَةٌ — alle drei hast du. ⚠️ Die Hamzah sitzt auf einem و: مُؤَذِّن. Das ist keine Laune, sondern folgt der Aussprache; sprich es langsam: mu-ʾadh-dhin, mit hörbarer شَدَّة auf dem ذ.'
+  ],
+
+  /* دَجَاجَةٌ - Henne */
+  '45867': [
+    'Merke es im Paar mit دِيكٌ (Hahn), das du auch hast: دِيك männlich, دَجَاجَة weiblich. ⚠️ Und in der Küche begegnet dir دَجَاج als Sammelwort für Hühnerfleisch — ohne das ة. Wer im arabischen Restaurant دَجَاج liest, weiß jetzt, was kommt.',
+    'Das doppelte د der Wurzel د ج ج hörst du nicht sofort, weil ein langes ā dazwischen liegt: da-ǧā-ǧa. Sprich es einmal Silbe für Silbe. ⚠️ Nicht mit دَرَّاجَةٌ (Fahrrad) verwechseln — beide fangen mit د an und haben ein ā in der Mitte, aber dort steht ein ر.'
+  ],
+
+  /* ===================== Kapitel 8 — Länder und Dinge =============== */
+
+  /* أَمْرِيكَا - Amerika */
+  '45868': [
+    '⚠️ Ländernamen aus fremden Sprachen haben KEINE arabische Wurzel — sie sind nur nachgeschrieben. Such also nicht nach einer Bedeutung, sondern achte auf die Buchstabenfolge: أَمْرِيكَا, mit ر vor dem ي. Das ist die einzige Stelle, an der man stolpert.',
+    'Diese Ländergruppe trägt KEINEN Artikel: أَمْرِيكَا, أَلْمَانِيَا, إِنْجِلْتَرَا, سُوِيسْرَا. Die andere Gruppe trägt ihn fest: الْيَابَان, الصِّين, الْهِنْد, الْعِرَاق, الْفِلِيبِّين. ⚠️ Es gibt keine Regel dafür — merke sie in zwei Haufen, mit und ohne اَلْ.'
+  ],
+
+  /* سِكِّينٌ - Messer */
+  '45869': [
+    '⭐ In Sūrat al-Māʿūn, die du auswendig kannst, steht ein Wort mit derselben Wurzel س ك ن: طَعَامِ ٱلْمِسْكِينِ (107:3) — „die Speisung des Armen". Der مِسْكِين ist der, der still bleibt; سَكِينَة ist die innere Ruhe. Der Merkhaken zum Messer ist frei gewählt, die Wurzelverwandtschaft der beiden anderen nicht.',
+    'Das doppelte ك muss man hören: sik-kīn. ⚠️ Der Plural bricht auf zu سَكَاكِينُ — dasselbe Muster wie دُكَّانٌ → دَكَاكِينُ, das du schon hast. Beide haben eine شَدَّة im Singular und verlieren sie im Plural, dafür kommt ein langes ī vor dem letzten Buchstaben.'
+  ],
+
+  /* أَلْمَانِيَا - Deutschland */
+  '45870': [
+    'Dein eigenes Land — das sitzt am schnellsten, wenn du den Satz einmal sagst: أَنَا مِنْ أَلْمَانِيَا. Damit übst du gleich مِنْ mit seinem Genitiv und hast einen Satz, den du auf Arabisch wirklich brauchen wirst.',
+    '⚠️ Nicht mit dem Artikel versehen: es heißt أَلْمَانِيَا, nicht الْأَلْمَانِيَا. Das أَ am Anfang gehört zum Namen und ist KEIN اَلْ. Genau dieselbe Falle wie bei أَمْرِيكَا. Zum Vergleich: الْعِرَاق trägt den Artikel wirklich, und dort verschmilzt er im Klang.'
+  ],
+
+  /* إِنْجِلْتَرَا - England */
+  '45871': [
+    'Zwei deiner Vokabeln teilen den Anfang: إِنْجِلْتَرَا (England) und إِنْجِلِيزِيَّةٌ (Englisch). Lern sie als Paar — Land und Sprache, dieselbe Anfangssilbe إِنْجـ. ⚠️ Und die Sprache trägt die Endung ـِيَّة, die aus einem Namen eine Zugehörigkeit macht.',
+    'Die Endung ـِيَّة ist ein Muster, das dir überall begegnet, und du hast drei davon: إِنْجِلِيزِيَّةٌ (Englisch), عَرَبِيَّةٌ (Arabisch), ثَانَوِيَّةٌ (weiterführende Schule). Immer ein ي mit شَدَّة und eine تاء مَرْبُوطة. Wer das Muster kennt, bildet neue Sprachnamen selbst.'
+  ],
+
+  /* الْعِرَاقُ - Irak */
+  '45872': [
+    'Der Artikel gehört fest zum Namen, wie bei الصِّين, الْهِنْد, الْيَابَان und الْفِلِيبِّين — vier Länder, die du schon hast. ⚠️ Und ع ist ein Mondbuchstabe, deshalb hörst du das ل: al-ʿIrāq, nicht aʿ-ʿIrāq. Vergleiche mit الصِّين, wo das ل verschwindet, weil ص ein Sonnenbuchstabe ist.',
+    '⚠️ Der erste Buchstabe ist ع, der tiefe Kehllaut — nicht أ. Sprich beide hintereinander: al-ʿIrāq gegen أَلْمَانِيَا. Im Deutschen klingt der Anfang von „Irak" wie ein normales i; im Arabischen ist es ein eigener Buchstabe, den man üben muss.'
+  ],
+
+  /* سُوِيسْرَا - Schweiz */
+  '45873': [
+    'Nimm es zur Ländergruppe ohne Artikel: سُوِيسْرَا, أَمْرِيكَا, أَلْمَانِيَا, إِنْجِلْتَرَا. Vier Namen, die aus fremden Sprachen kommen und deshalb weder Wurzel noch اَلْ haben. ⚠️ Die Stolperstelle ist das و in der Mitte — es steht für „w", nicht für ein langes u.',
+    'Übe alle Länder in einem Satzmuster, statt sie einzeln abzufragen: هَذَا الطَّالِبُ مِنْ سُوِيسْرَا. Setz reihum ein anderes Land ein — du hast neun davon. Ein Satz, neun Vokabeln, und nebenbei sitzt مِنْ.'
+  ],
+
+  /* مُسْتَشْفًى - Krankenhaus */
+  '45874': [
+    '⭐ Das Muster ist der ganze Gewinn: مُسْتَفْعَل, und das سْتَـ in der Mitte heißt „nach etwas SUCHEN". Die Wurzel ش ف ي ist Heilung — das Krankenhaus ist der Ort, an dem man Heilung sucht. Wenn dir dieses سْتَـ wieder begegnet, weißt du schon die halbe Bedeutung.',
+    '⚠️ Am Ende steht eine أَلِف مَقْصورة — das ى ohne Punkte, gesprochen wie langes ā: mus-tasch-fā. Genau der Fachbegriff, den du gelernt hast. Und im Plural wird daraus wieder ein echtes ي: مُسْتَشْفَيَاتٌ. Dasselbe Verhalten wie bei عَلَى → عَلَيْهِ.'
   ]
 
 };
