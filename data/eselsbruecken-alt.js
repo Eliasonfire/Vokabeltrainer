@@ -990,6 +990,133 @@ const ESELSBRUECKEN_ALT = {
   '48402': [
     'Der Artikel macht den Unterschied: يَوْمٌ ist „ein Tag", الْيَوْمُ ist „der Tag" — und damit „heute". Genau dieselbe Verschiebung gibt es im Deutschen bei „heute" und „am Tage". Zwei Vokabeln, die zusammengehören und einzeln nur halb so viel wert sind.',
     '⚠️ Im Satz steht es meist am ENDE und trägt dort ein Fatḥah: الْمَاءُ بَارِدٌ الْيَوْمَ, nicht الْيَوْمُ. Das ist kein Tippfehler — Zeitangaben stehen im Akkusativ. Dir muss das noch nicht erklärt sein; merk dir vorerst nur, dass die Endung wechselt, wenn das Wort eine Zeitangabe ist.'
+  ],
+
+  /* ===================== Eigene Vokabeln ============================
+     Elias' selbst angelegte Wörter: Zahlen, Grammatikbegriffe und ein paar
+     Einzelstücke. ⚠️ Die Schreibungen stammen von IHM und werden hier nicht
+     angefasst — auch dort nicht, wo sie fehlerhaft aussehen (أَلْمُهَنْدِسٌ
+     mit أَلْ statt الْـ, مُضَافْ إِلَيْهِ mit Sukūn auf dem ف). Das gehört auf
+     die Liste für ihn, nicht in eine stille Korrektur. */
+
+  /* لَحْمٌ - Fleisch */
+  '59e30a8a-e400-4380-8adf-89e811852a1d': [
+    'Der Begriff aus dem Glauben trägt es: لَحْم حَلَال — das erlaubte Fleisch. Wer nach Halal-Fleisch fragt, sagt genau dein Wort. ⚠️ Und die Wurzel ل ح م steckt auch in لَحْمَة, dem Zusammenhalt: was zusammengewachsen ist. Fleisch und Verbundenheit aus einem Stamm.',
+    'Setz es an den Tisch, den du schon hast: لَحْمٌ (Fleisch), تُفَّاحٌ (Apfel), فَاكِهَةٌ (Obst), لَبَنٌ (Milch), سُكَّرٌ (Zucker), مَاءٌ (Wasser). Sechs Wörter, eine Mahlzeit — und zu jedem hast du ein Adjektiv aus Kapitel 3.'
+  ],
+
+  /* لِ - für / gehört */
+  '0f311405-7349-450c-885e-e3abefb6fbf3': [
+    '⭐ Du sprichst es im zweiten Vers der Fātiḥa: ٱلْحَمْدُ لِلَّهِ (1:2) — „(alles) Lob gehört Allah". Das لِلَّهِ ist dein لِ + اللهُ, und genau daran siehst du die Regel: لِ + اَلْ verschmilzt zu لِلـ. Ein Vers, den du täglich sprichst, mit deiner Vokabel und ihrer Regel darin.',
+    '⚠️ Vor einem Eigennamen wird NICHT verschmolzen: لِمُحَمَّدٍ, nicht لِلْمُحَمَّدٍ. Die Regel لِ + اَلْ = لِلـ gilt nur, wenn das Wort wirklich einen Artikel trägt. Und nach لِ steht immer Genitiv — es ist ein حَرْفُ الْجَرِّ, wie du selbst notiert hast.'
+  ],
+
+  /* أَيْضاً - auch / ebenfalls */
+  '0e23a52d-e2f5-4a57-9082-58eb9f362d88': [
+    '⚠️ Die Endung ist das Merkwürdige: أَيْضاً trägt ein Fatḥah-Tanwīn auf einem Alif — gesprochen „aiḍan", geschrieben mit ا am Ende. Solche Wörter stehen im Akkusativ, weil sie eine Art Umstandsangabe sind. Dieselbe Endung siehst du bei شُكْرًا.',
+    'Merke die Stellung mit: أَيْضاً steht meist am ENDE des Satzes, wie الْيَوْمَ und الْآنَ. هَذَا الْكِتَابُ جَدِيدٌ أَيْضاً — „dieses Buch ist auch neu". Drei kleine Wörter, die dieselbe Stelle im Satz besetzen; wer eines platzieren kann, kann alle drei.'
+  ],
+
+  /* اِسْمٌ مَجْرُورٌ - Nomen im Genitiv */
+  '397cfa89-5bc0-4ce7-ae45-30fe8ea64fe2': [
+    'Merke es NIE einzeln, sondern immer als Zweiergespann: erst der حَرْفُ الْجَرِّ, dann das اِسْمٌ مَجْرُورٌ. فِي الْبَيْتِ, مِنَ الْمَسْجِدِ, عَلَى الْمَكْتَبِ — dreimal dasselbe Muster mit deinen eigenen Vokabeln. Die Partikel zieht, das Nomen folgt.',
+    'Das Anzeichen ist sichtbar: مَجْرُور heißt Kasra ـِ am Ende, oder zwei Kasra ـٍ beim unbestimmten Wort. ⚠️ Und drei Dinge lösen es aus, nicht nur eines: ein حَرْف جَرّ, eine إِضافة, oder eine ظَرْف wie تَحْتَ. Wer die drei Auslöser kennt, erkennt den Fall am Satz statt an der Endung.'
+  ],
+
+  /* أَلْمُهَنْدِسٌ - Ingenieur */
+  '36e01b96-9367-4f09-acaf-31a82bdcf061': [
+    '⚠️ Das Wort ist länger gebaut als die anderen Berufe: die Wurzel hat VIER Buchstaben, ه ن د س. Deshalb passt es nicht zu مُدَرِّس und مُؤَذِّن, die drei haben — dort steht eine شَدَّة, hier nicht. Sprich es in Silben: mu-han-dis.',
+    'Die Berufe deiner Liste als Gruppe: مُدَرِّسٌ (Lehrer), مُدِيرٌ (Direktor), مُمَرِّضَةٌ (Krankenschwester), مُؤَذِّنٌ (Gebetsrufer), طَبِيبٌ (Arzt), تَاجِرٌ (Händler), فَلَّاحٌ (Bauer), وَزِيرٌ (Minister) — und der Ingenieur dazu. Alle fangen mit مُـ an oder folgen einem eigenen Berufsmuster.'
+  ],
+
+  /* الإِسْمُ - Nomen */
+  '65699a81-0913-4e3c-9d5d-fa750d972779': [
+    'Es ist eines von genau DREI Wörtern, die es im Arabischen überhaupt gibt: اِسْم (Nomen), فِعْل (Verb), حَرْف (Partikel). Alles, was kein Verb und keine Partikel ist, ist automatisch ein اِسْم — auch Adjektive und Zahlen. Drei Kästen, mehr braucht die Wortartenlehre nicht.',
+    'Dasselbe Wort ist deine Vokabel „Name" aus Kapitel 5 — اِسْمٌ. Grammatik und Alltag fallen hier zusammen: ein Nomen ist der NAME einer Sache. Wer das einmal sieht, muss nur ein Wort lernen statt zwei.'
+  ],
+
+  /* يَا - Rufpartikel */
+  '69179bbf-faa9-4b2a-859c-9e5f3d76b98c': [
+    'Du hörst es in jeder Anrede: يَا أَخِي („o mein Bruder"), يَا اللهُ, يَا مُحَمَّدُ. Das يَا macht aus einem Namen einen Anruf — im Deutschen fällt es meist weg, im Arabischen steht es fast immer da.',
+    '⚠️ Nach يَا verliert der Name sein Tanwīn: يَا مُحَمَّدُ, nicht يَا مُحَمَّدٌ. Das ist kein Zufall — die Rufform hat ihre eigene Endung. Merke fürs Erste nur: nach يَا wird es kürzer, nicht länger.'
+  ],
+
+  /* مُضَافْ إِلَيْهِ - Besitzer */
+  'c73787a3-8f9c-4033-b1ff-5644f34995d3': [
+    'Die Reihenfolge ist im Deutschen umgekehrt, und genau daran verrutscht es: كِتَابُ اللهِ heißt „das Buch Allahs" — das ERSTE Wort ist der Besitz, das ZWEITE der Besitzer. Im Deutschen steht der Besitzer hinten mit „-s" oder „von", im Arabischen ebenfalls hinten, aber im Genitiv.',
+    'Woran du den مُضَاف إِلَيْهِ erkennst: er steht im Genitiv und darf einen Artikel tragen — الْمَسْجِدِ in بَابُ الْمَسْجِدِ. Der مُضَاف davor darf beides NICHT: kein اَلْ, kein Tanwīn. ⚠️ Zwei Wörter, zwei entgegengesetzte Regeln — deshalb immer als Paar prüfen.'
+  ],
+
+  /* إِثْنَانِ - Zwei */
+  'd3cca272-90df-4963-a3dd-2653d009a77d': [
+    'Die Endung ـَانِ ist der Dual — die eigene Form für GENAU ZWEI, die es im Deutschen nicht gibt. ⭐ Du hast sie schon gelesen: يَدَا أَبِي لَهَبٍ (111:1) sind genau zwei Hände. Wer إِثْنَانِ kann, erkennt die Zweizahl überall am ـَانِ.',
+    'Dieselbe Wurzel ث ن ي steckt in ثَانَوِيَّةٌ (weiterführende Schule), das du als Vokabel hast — die ZWEITE Schulstufe. Und ثَانِي heißt „der zweite". Eine Wurzel, drei Wörter, und alle mit „zwei" im Kern.'
+  ],
+
+  /* صِفْرٌ - Null */
+  'a540cdfa-cbaf-4d63-8250-b0b664d3b2b9': [
+    'Das Wort bedeutet ursprünglich „leer" — und genau das ist die Null: die leere Stelle. Wer das Bild hat, braucht die Klanghilfe nicht mehr. ⚠️ Und sprich das ص als dunklen s-Laut, nicht als leichtes س: ṣifr.',
+    'Nimm die Zahlen als Reihe statt einzeln — sprich sie einmal am Stück: صِفْر, وَاحِد, إِثْنَانِ, ثَلَاثَة, أَرْبَعَة, خَمْسَة, سِتَّة, سَبْعَة, ثَمَانِيَة, تِسْعَة, عَشَرَة. Elf Wörter, die du alle hast. Eine Reihe lernt sich als Melodie, einzelne Karten nicht.'
+  ],
+
+  /* حَرْفُ الْجَرِّ - Genitiv-Präposition */
+  'c623f2fb-57a5-48b6-b176-55df461b2ada': [
+    'Der Name erklärt sich selbst, wenn man ihn zerlegt: حَرْف heißt Partikel, und اَلْجَرّ kommt von مَجْرُور, dem Genitiv. Ein حَرْفُ الْجَرِّ ist also wörtlich „die Partikel des Ziehens" — sie zieht das folgende Nomen in den Genitiv. Merksatz deines Lehrers: der ḥarf al-jarr macht sein Nomen zu majrūr.',
+    'Du hast fünf davon als eigene Vokabeln: مِنْ (von), إِلَى (zu), فِي (in), عَلَى (auf), لِ (für). ⚠️ تَحْتَ gehört NICHT dazu, auch wenn es genauso wirkt — dein Lehrer stellt das ausdrücklich klar; das ist eine ظَرْف. Fünf Partikeln und eine Ausnahme, die man kennen muss.'
+  ],
+
+  /* وَاحِدٌ - eins */
+  '50296': [
+    'Du sprichst die Wurzel in Sūrat al-Ikhlāṣ, die du auswendig kannst: قُلْ هُوَ ٱللَّهُ أَحَدٌ (112:1). أَحَد und وَاحِد kommen beide von و ح د — und daher auch تَوْحِيد, das Bekenntnis zur Einheit. Die Eins ist die Zahl, die im Glauben ganz oben steht.',
+    'Muster فَاعِل wie جَالِسٌ, وَاقِفٌ, طَائِرٌ, شَارِعٌ — alle hast du. ⚠️ Und die Zahl verhält sich wie ein Adjektiv: sie steht HINTER dem Gezählten und richtet sich nach ihm — كِتَابٌ وَاحِدٌ, „ein Buch". Das ist bei den anderen Zahlen anders, deshalb hier merken.'
+  ],
+
+  /* ثَلَاثَةٌ - drei */
+  '50297': [
+    '⭐ Drei ist die Zahl der Wurzelbuchstaben — jedes arabische Wort, das du lernst, steht auf ثَلَاثَة Buchstaben. Wer die Drei sagt, sagt zugleich das Grundprinzip der Sprache. Ein Merkhaken, der bei jeder neuen Vokabel wieder auftaucht.',
+    '⚠️ Achte auf die تاء مَرْبُوطة am Ende: ثَلَاثَةٌ hat sie, obwohl damit männliche Dinge gezählt werden. Das ist die berühmte Umkehrung bei den Zahlen 3 bis 10 — sie steht in deinem Lehrbuch als eigene Lektion. Fürs Erste nur merken: die Endung sieht weiblich aus und ist es nicht.'
+  ],
+
+  /* أَرْبَعَةٌ - vier */
+  '50298': [
+    'Die Wurzel ر ب ع trägt رُبْع, das Viertel — und أَرْبَعِين, die Vierzig. ⭐ Und der Begriff الْأَرْبَعِينَ النَّوَوِيَّة, die vierzig Hadithe an-Nawawis, kommt dir sicher unter. Eine Wurzel, drei Wörter, alle mit der Vier.',
+    'Nimm die Zahlen in Zweierschritten, das hält besser als die Reihe am Stück: ثَلَاثَة–أَرْبَعَة, خَمْسَة–سِتَّة, سَبْعَة–ثَمَانِيَة, تِسْعَة–عَشَرَة. Sprich jedes Paar zusammen. ⚠️ Alle acht tragen die تاء مَرْبُوطة, die hier nichts über das Geschlecht sagt.'
+  ],
+
+  /* خَمْسَةٌ - fünf */
+  '50299': [
+    '⭐ Die Fünf ist im Islam überall: الصَّلَوَاتُ الْخَمْسُ, die fünf Gebete, und أَرْكَانُ الْإِسْلَام, die fünf Säulen. Du zählst sie ohnehin jeden Tag — jetzt hast du das Wort dazu.',
+    '⚠️ Verwechslungsgefahr im Klang mit خَمِيس (Donnerstag), das wörtlich „der fünfte" ist — der fünfte Tag der Woche, wenn man am Sonntag anfängt. Zahl und Wochentag aus derselben Wurzel: wer die Fünf hat, versteht auch den Donnerstag.'
+  ],
+
+  /* سِتَّةٌ - sechs */
+  '50300': [
+    '⭐ أَرْكَانُ الْإِيمَان, die Glaubensartikel, sind سِتَّة — sechs. Damit hast du die Zahl an einem Begriff, den du kennst, statt an einer Klanghilfe. Und die fünf Säulen daneben geben dir gleich die Fünf mit.',
+    'Die شَدَّة auf dem ت ist Pflicht: sit-ta. ⚠️ Die Wurzel ist eigentlich س د س — daher سُدُس, das Sechstel, und سَادِس, „der sechste". Das د ist im gesprochenen Wort zum ت geworden; deshalb sieht die Zahl anders aus als ihre Verwandten.'
+  ],
+
+  /* سَبْعَةٌ - sieben */
+  '50301': [
+    '⭐ In Sūrat al-Mulk, die du auswendig kannst, steht die Zahl gleich im dritten Vers: خَلَقَ سَبْعَ سَمَٰوَٰتٍ (67:3) — „Der sieben Himmel erschaffen hat". Deine Zahl und deine Vokabel سَمَاءٌ in einem Halbvers, den du sprichst.',
+    '⚠️ Beachte die Form: im Vers steht سَبْعَ ohne تاء مَرْبُوطة, in deiner Vokabel سَبْعَةٌ mit. Beides ist richtig — die Endung richtet sich nach dem, was gezählt wird. سَمَاوَات ist weiblich, deshalb fällt das ة weg. Genau die Umkehrung, die dein Lehrbuch in einer eigenen Lektion behandelt.'
+  ],
+
+  /* ثَمَانِيَةٌ - acht */
+  '50302': [
+    'Die Wurzel ث م ن trägt ثُمُن, das Achtel, und ثَمِين, „wertvoll". ⚠️ Und sie ist die einzige der kleinen Zahlen mit einem langen ā in der Mitte: tha-mā-ni-ya, vier Silben. Die längste Zahl der Reihe — das allein macht sie unverwechselbar.',
+    'Merke sie im Paar mit سَبْعَة: sieben und acht liegen im Zählen nebeneinander und klingen völlig verschieden — sab-ʿa gegen tha-mā-ni-ya. Wer beide hintereinander spricht, verwechselt sie nicht mehr.'
+  ],
+
+  /* تِسْعَةٌ - neun */
+  '50303': [
+    'Kurz vor der Zehn und ihr im Bau sehr ähnlich: تِسْعَة und عَشَرَة teilen sich das ع. ⚠️ Sprich beide hintereinander — tis-ʿa, ʿa-scha-ra. Beim einen steht das ع in der Mitte, beim anderen am Anfang.',
+    'Die Zahl begegnet dir in تَاسِع, „der neunte", und in تِسْعِين, „neunzig". Dieselbe Bildung wie bei den anderen: aus der Grundzahl wird mit dem Muster فَاعِل die Ordnungszahl. ⭐ Vergleiche mit وَاحِد, das selbst schon diesem Muster folgt.'
+  ],
+
+  /* عَشَرَةٌ - zehn */
+  '50304': [
+    '⭐ Die Wurzel ع ش ر kennst du aus dem Kalender: عَاشُورَاء ist der ZEHNTE Tag des Muḥarram, und die ersten zehn Tage von Dhū l-Ḥiddscha heißen الْعَشْر. Dazu عُشْر, das Zehntel. Die Zehn steht im Glaubensjahr an mehreren Stellen.',
+    'Sie ist die Grenze der kleinen Zahlen: ab elf ändert sich der Bau vollständig. ⚠️ Bis dahin gilt die Umkehrung mit der تاء مَرْبُوطة, die du bei ثَلَاثَة bis عَشَرَة siehst — zehn Zahlen, eine Regel, und du hast alle zehn als Vokabel.'
   ]
 
 };
