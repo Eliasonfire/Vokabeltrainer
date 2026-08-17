@@ -191,7 +191,7 @@ const ESELSBRUECKEN_ALT = {
   /* مُدَرِّسٌ - Lehrer */
   '45772': [
     'Wurzel د ر س steckt auch in مَدْرَسَةٌ, der Schule — dem Ort, an dem der مُدَرِّس steht. Ein Wortpaar, das sich gegenseitig hält.',
-    'Muster مُفَعِّل wie مُهَنْدِسٌ (Ingenieur) aus deinen Vokabeln. Das Schadda auf dem mittleren Buchstaben ist das Kennzeichen: mu-dar-ris, mit doppeltem r.'
+    'Muster مُفَعِّل, und du hast drei davon: مُدَرِّسٌ (Lehrer), مُمَرِّضَةٌ (Krankenschwester), مُؤَذِّنٌ (Gebetsrufer). Alle drei sind Berufe, alle drei haben ein مُـ vorne und eine شَدَّة auf dem mittleren Buchstaben. Sprich es hörbar doppelt: mu-dar-ris.'
   ],
 
   /* مِنْدِيلٌ - Tuch */
@@ -256,6 +256,162 @@ const ESELSBRUECKEN_ALT = {
   '45782': [
     'Nimm den ganzen Satz statt des einzelnen Worts: لَبَنٌ حُلْوٌ وَبَارِدٌ — süße und kalte Milch. حُلْوٌ und بَارِدٌ hast du beide aus Kapitel 3, beide hängen als نَعْت an لَبَنٌ und tragen dasselbe Tanwīn. Drei Vokabeln und eine Regel in einem Bild.',
     'Der Plural bricht das Wort auf: لَبَنٌ → أَلْبَان. Dasselbe Muster hast du schon dreimal: بَابٌ → أَبْوَابٌ, قَلَمٌ → أَقْلَامٌ, وَلَدٌ → أَوْلَادٌ. Ein أَ vorne, ein langes ا vor dem letzten Buchstaben — wer das Muster erkennt, muss den Plural nicht einzeln lernen.'
+  ],
+
+  /* ===================== Kapitel 3 — Eigenschaften =====================
+     Fast das ganze Kapitel besteht aus Gegenpaaren in der Form فَعِيل. Der
+     erste Vorschlag nennt bei den meisten schon das Gegenwort; die
+     Alternativen gehen deshalb bewusst woanders hin: Vers, Muster, Plural,
+     Aussprache. */
+
+  /* غَنِيٌّ - reich */
+  '45783': [
+    'Sūrat aḍ-Ḍuḥā kannst du auswendig, und dein ganzes Gegenpaar steht dort in EINEM Vers: وَوَجَدَكَ عَآئِلًا فَأَغْنَىٰ (93:8) — „und dich arm gefunden und dann reich gemacht". فَأَغْنَىٰ trägt genau deine Wurzel غ ن ي. ⚠️ Für „arm" steht dort عَآئِلًا und nicht فَقِيرًا — dieselbe Aussage, ein anderes Wort.',
+    'Sieh dir das Muster an, dann hast du halb Kapitel 3 geschenkt: غَنِيّ, فَقِير, كَبِير, صَغِير, قَرِيب, بَعِيد, جَدِيد, نَظِيف, ثَقِيل, جَمِيل — alle in der Form فَعِيل. Drei Wurzelbuchstaben, davor ein a, dazwischen ein langes ī vor dem letzten. Wer die Wurzel kennt, kann das Adjektiv bilden, ohne es je gesehen zu haben.'
+  ],
+
+  /* فَقِيرٌ - arm */
+  '45784': [
+    'Die فُقَرَاء stehen an erster Stelle der acht Gruppen, denen die Zakāh zusteht — den Begriff hörst du in jedem Ramadan. Nimm den Plural gleich mit: فَقِيرٌ → فُقَرَاءُ. ⚠️ Am Ende steht ein ُ und KEIN Tanwīn — das ist kein Tippfehler, sondern eine eigene Wortsorte, die dir später als Regel begegnet.',
+    'Die beiden gehören zusammen wie zwei Seiten einer Münze, und der Unterschied liegt nicht im Besitz: غَنِيّ ist der, der auf niemanden angewiesen ist, فَقِير der, der angewiesen ist. Deshalb heißt الْغَنِيّ auch ein Name Allahs, aber الْفَقِير nie.'
+  ],
+
+  /* طَوِيلٌ - lang / groß */
+  '45785': [
+    'Nimm die Doppelbedeutung ernst, sie ist der Merkhaken: طَوِيل ist lang in der ZEIT und im RAUM. Deshalb ist ein Mensch طَوِيل („groß") und eine Straße ebenso (dein Satz: الشَّارِعُ طَوِيلٌ). Im Deutschen brauchst du zwei Wörter, im Arabischen reicht eines — such also nicht nach einem zweiten.',
+    'Die Plurale zeigen das Paar noch einmal: طَوِيلٌ → طِوَالٌ und قَصِيرٌ → قِصَارٌ, beide nach dem Muster فِعَال. Sprich die vier hintereinander: ṭawīl – ṭiwāl, qaṣīr – qiṣār. Zwei Wörter, zwei Plurale, ein Muster.'
+  ],
+
+  /* قَصِيرٌ - kurz */
+  '45786': [
+    'Deine eigenen Beispielsätze halten das Paar fest: الْقَلَمُ قَصِيرٌ gegen الشَّارِعُ طَوِيلٌ. Nimm beide als ein Bild — ein kurzer Stift in der Hand, eine lange Straße davor. Zwei Sätze aus Wörtern, die du alle hast.',
+    '⚠️ Achte auf das ص: das ist der satte, dunkle s-Laut, nicht das leichte س aus سُوقٌ. Im Arabischen sind das zwei verschiedene Buchstaben, keine Schreibvarianten — sprich es einmal langsam und übertrieben: qa-ṣīr, mit rundem Mund.'
+  ],
+
+  /* بَارِدٌ - kalt */
+  '45787': [
+    'Das Muster ist hier der eigentliche Gewinn: بَارِد folgt NICHT der Form فَعِيل wie die meisten Adjektive dieses Kapitels, sondern فَاعِل — dieselbe Form wie جَالِسٌ (sitzend), وَاقِفٌ (stehend), طَالِبٌ (Student), تَاجِرٌ (Händler). Alle vier hast du. فَاعِل beschreibt den, der gerade etwas tut oder in einem Zustand ist.',
+    'Der Unterschied zum Gegenwort springt ins Auge, sobald man hinsieht: بَارِد zeigt seine drei Wurzelbuchstaben offen (ب ر د), حَارّ nur zwei — die beiden ر sind zu einer شَدَّة zusammengezogen. Sprich beide: bā-rid gegen ḥārr.'
+  ],
+
+  /* حَارٌّ - heiß */
+  '45788': [
+    'Die شَدَّة ist hier kein Zierrat, sondern der halbe Wortstamm: die Wurzel ist ح ر ر, und die beiden ر sind auf ein Zeichen zusammengefallen. Genau dasselbe siehst du bei قِطٌّ (ط ط) und أُمٌّ (م م), die du beide hast. Wer die شَدَّة verschluckt, verschluckt einen Wurzelbuchstaben.',
+    'Zwei Sätze aus deinen eigenen Vokabeln halten das Paar: الشَّايُ حَارٌّ und الْمَاءُ بَارِدٌ. Tee heiß, Wasser kalt. Sag sie einmal hintereinander laut — dann hast du zwei Adjektive, zwei Nomen und die Wortstellung des Nominalsatzes in einem Zug.'
+  ],
+
+  /* جَالِسٌ - sitzend */
+  '45789': [
+    'مَجْلِس ist der Ort des Sitzens — der Begriff für eine Lernrunde oder Versammlung, den du kennst. Dieselbe Wurzel ج ل س. Und das مَـ davor ist dasselbe wie in مَسْجِدٌ (Ort der Niederwerfung) und مَكْتَبٌ (Ort des Schreibens): مَـ macht aus einer Handlung einen ORT.',
+    'جَالِسٌ und وَاقِفٌ sind beide Form فَاعِل — der, der gerade sitzt, und der, der gerade steht. Das ist der Unterschied zu فَعِيل: فَاعِل ist eine Momentaufnahme, فَعِيل eine Eigenschaft. كَبِير ist man dauerhaft, جَالِس nur, solange man sitzt.'
+  ],
+
+  /* وَاقِفٌ - stehend */
+  '45790': [
+    'Beim Koranlesen begegnet dir das Wort ständig: die Pausenzeichen heißen وَقْف — die Stelle, an der man stehen bleibt. Dieselbe Wurzel و ق ف. Und ein وَقْف ist auch die Stiftung, die „stehen bleibt", weil sie nie verkauft wird. Ein Stamm, drei Bedeutungen, alle mit „anhalten und bleiben".',
+    'Achte auf den ersten Buchstaben: و am Wortanfang ist selten und macht das Wort unverwechselbar. Zusammen mit وَرَقٌ (Papier) und وَسِخٌ (schmutzig) aus deinen Vokabeln hast du drei davon — sprich sie hintereinander, dann sitzt der weiche w-Anlaut.'
+  ],
+
+  /* جَدِيدٌ - neu */
+  '45791': [
+    'Die Wurzel ج د د trägt „neu machen, erneuern". Deshalb heißt تَجْدِيد die Erneuerung — ein Begriff, der dir in Vorträgen begegnet. Wer das einmal verknüpft hat, braucht die Klanghilfe nicht mehr.',
+    'Gegenpaar mit قَدِيمٌ, und beide sind Form فَعِيل. Der Plural bricht anders auf als sonst in diesem Kapitel: جَدِيدٌ → جُدُدٌ, ganz ohne langen Vokal. Sprich ihn einmal: ju-dud. Bei قَدِيمٌ → قُدَمَاءُ läuft es wieder wie bei فُقَرَاءُ.'
+  ],
+
+  /* قَدِيمٌ - alt */
+  '45792': [
+    'قَدَم ist der Fuß, تَقَدَّمَ heißt voranschreiten — dieselbe Wurzel ق د م. Was VORANGEGANGEN ist, ist alt. Damit hast du auch مُقَدِّمَة (die Einleitung, das Vorangestellte) mit einem Schlag verstanden.',
+    '⚠️ Nicht mit كَبِير verwechseln. Beide heißen im Deutschen manchmal „alt", meinen aber Verschiedenes: قَدِيم ist alt im Sinne von LANGE DA (dein Satz: الْمَسْجِدُ قَدِيمٌ), كَبِير ist groß, und bei Menschen „älter" im Sinne von größer. Ein alter Stein ist قَدِيم, ein großer Stein كَبِير.'
+  ],
+
+  /* قَرِيبٌ - nah */
+  '45793': [
+    'Der letzte Vers von Sūrat al-ʿAlaq, die du auswendig kannst, endet mit deiner Wurzel: وَٱسْجُدْ وَٱقْتَرِب (96:19) — „wirf dich nieder und sei nah". اِقْتَرِب ist ein Befehl von ق ر ب. Nähe zu Allah durch die Niederwerfung — ein Bild, das das Wort trägt.',
+    'Dieselbe Wurzel steckt in أَقْرَب (näher) und in قَرِيب als „Verwandter" — wer nah ist, im Raum wie in der Familie. Dein Satz zeigt die räumliche Seite: الْمَدْرَسَةُ قَرِيبَةٌ مِنَ الْبَيْتِ. ⚠️ Beachte das ة an قَرِيبَة: مَدْرَسَة ist weiblich, also muss das Adjektiv es auch sein.'
+  ],
+
+  /* بَعِيدٌ - fern */
+  '45794': [
+    'Merke es über die Präposition, die du schon hast: مِنَ heißt „von, aus" — und بَعِيدٌ مِنْ heißt „weit weg VON". Dein Satz sagt es vollständig: الْجَامِعَةُ بَعِيدَةٌ مِنَ الْبَيْتِ. Nah und fern arbeiten im Arabischen mit derselben Präposition; nur das Adjektiv dreht die Bedeutung um.',
+    '⚠️ Nicht mit بَعْدَ („nach, danach") verwechseln — dieselben drei Buchstaben ب ع د, aber ein anderes Wort. Der Unterschied ist hörbar: ba-ʿīd mit langem ī gegen baʿ-da. Wenn du im Koran بَعْدُ liest, ist damit die Zeit gemeint und nicht die Entfernung.'
+  ],
+
+  /* نَظِيفٌ - sauber */
+  '45795': [
+    'نَظَافَة (Reinlichkeit) ist ein Begriff, den du aus dem Glauben kennst — die Wurzel ن ظ ف steckt in beiden. Das Adjektiv beschreibt den Zustand, das Nomen benennt ihn. Wer die Wurzel hat, hat beide Wörter.',
+    'Dein eigener Satz verbindet zwei Vokabeln: هَذَا الْمِنْدِيلُ نَظِيفٌ — dieses Tuch ist sauber. Und das Gegenwort steht ebenso griffbereit: هَذَا الْكَلْبُ وَسِخٌ. Zwei Sätze, vier Vokabeln, ein Gegensatz.'
+  ],
+
+  /* وَسِخٌ - schmutzig */
+  '45796': [
+    'Das Muster fällt aus der Reihe und genau das macht es merkbar: وَسِخ ist NICHT فَعِيل wie نَظِيف, sondern فَعِل — kurz, ohne langen Vokal. Sprich beide hintereinander: na-ẓīf gegen wa-six. Das saubere Wort ist lang und rund, das schmutzige kurz und rau.',
+    'Drei deiner Vokabeln fangen mit و an: وَسِخٌ, وَرَقٌ (Papier), وَاقِفٌ (stehend). Dazu kommt وَ (und) selbst. Übe sie als kleine Gruppe — der w-Anlaut ist im Arabischen selten genug, dass er als eigener Haken taugt.'
+  ],
+
+  /* صَغِيرٌ - klein */
+  '45797': [
+    'Du kennst die Wurzel aus dem Vergleich: أَصْغَر heißt „kleiner, am kleinsten" — dieselben drei Buchstaben ص غ ر. Und genauso läuft es beim Gegenwort: كَبِير → أَكْبَر. Das Muster أَفْعَل für den Vergleich ist bei beiden dasselbe.',
+    '⚠️ Wenn das beschriebene Wort weiblich ist, bekommt das Adjektiv eine تاء مَرْبُوطة: بِنْتٌ صَغِيرَةٌ, nicht بِنْتٌ صَغِيرٌ. Das ist die Regel نَعْت — vier Dinge müssen übereinstimmen, und das Geschlecht ist eines davon. Dein Satz mit dem Kätzchen zeigt es: هَذَا الْقِطُّ صَغِيرٌ, männlich, also ohne ة.'
+  ],
+
+  /* كَبِيرٌ - groß */
+  '45798': [
+    'In Sūrat al-Mulk, die du auswendig kannst, steht das Wort unverändert: وَأَجْرٌ كَبِيرٌ (67:12) — „und großer Lohn". Genau deine Vokabel, genau diese Form, mit Tanwīn wie im Buch. Es lohnt sich, den Vers einmal daraufhin zu lesen: du kennst ihn längst, nur nicht als Vokabel.',
+    'Von derselben Wurzel kommt تَكْبِير — das Sprechen von اللهُ أَكْبَر. Und der Vergleich أَكْبَر („größer") ist dasselbe Muster أَفْعَل wie أَصْغَر bei صَغِير. Drei Wörter, eine Wurzel ك ب ر, und eines davon sagst du jeden Tag.'
+  ],
+
+  /* خَفِيفٌ - leicht */
+  '45799': [
+    'Die Wurzel خ ف ف steckt auch in تَخْفِيف, der Erleichterung — ein Begriff, der im Zusammenhang mit Erlaubnissen und Ausnahmen fällt. Wer den kennt, hat das Adjektiv gratis.',
+    'Doppelter Wurzelbuchstabe wie bei حَارّ und جَدِيد: خ ف ف, wobei das zweite ف im langen ī steckt (خَفِيف). ⚠️ Der Plural macht es wieder sichtbar: خِفَافٌ. Der Wechsel zwischen خَفِيف und خِفَاف ist genau der von طَوِيل → طِوَال und قَصِير → قِصَار.'
+  ],
+
+  /* ثَقِيلٌ - schwer */
+  '45800': [
+    'Sūrat al-Qāriʿa kannst du auswendig, und deine Wurzel trägt dort den entscheidenden Satz: مَن ثَقُلَتْ مَوَٰزِينُهُ (101:6) — „wessen Waagschalen schwer sind". Schwer ist im Koran das Gute, das wiegt. Ein Bild, das man nicht mehr los wird.',
+    'Von derselben Wurzel ث ق ل kommt مِثْقَال, das Gewichtsmaß. Und das مِـ davor ist dasselbe wie in مِفْتَاحٌ (Schlüssel) und مِنْدِيلٌ (Tuch), die du hast: مِـ macht aus einer Handlung ein WERKZEUG oder ein Maß. Ein Muster, das dir immer wieder begegnet.'
+  ],
+
+  /* وَرَقٌ - Papier */
+  '45801': [
+    'Ein وَرَق ist auch das Blatt am Baum — Blatt Papier und Blatt am Baum sind dasselbe Wort, weil es dasselbe Bild ist: etwas Dünnes, Flaches. Wer das einmal so sieht, verwechselt es nie mit كِتَابٌ.',
+    'Der Plural läuft nach dem Muster, das du schon dreimal hast: وَرَقٌ → أَوْرَاقٌ, wie بَابٌ → أَبْوَابٌ, قَلَمٌ → أَقْلَامٌ und وَلَدٌ → أَوْلَادٌ. Ein أَ vorne, ein langes ا vor dem letzten Buchstaben. ⚠️ Beachte das و als ersten Wurzelbuchstaben: im Plural bleibt es stehen, أَوْرَاق.'
+  ],
+
+  /* مَاءٌ - Wasser */
+  '45802': [
+    'Es gibt eine Stelle aus deinem auswendigen Bereich, und sie ist eindringlicher als die bekannte: أَصْبَحَ مَآؤُكُمْ غَوْرًا — „wenn euer Wasser versickert wäre" (67:30, Sūrat al-Mulk). مَآؤُكُمْ ist dein Wort mit „euer" daran. Der Vers endet mit بِمَآءٍ مَّعِينٍ, „mit hervorquellendem Wasser".',
+    '⚠️ Das Wort ist kürzer, als es aussieht: م + ا + ء, drei Zeichen. Die Wurzel م و ه sieht man ihm nicht mehr an — das و ist im langen ā verschwunden. Solche Wörter nennt man später „schwach"; fürs Erste reicht: مَاء ist eine Ausnahme und muss auswendig gelernt werden, nicht hergeleitet.'
+  ],
+
+  /* تُفَّاحٌ - Apfel */
+  '45803': [
+    'Ordne es in die Gruppe ein, statt es allein zu lernen: تُفَّاحٌ ist eine فَاكِهَة (Obst, Kapitel 9), er ist حُلْو (süß, dieses Kapitel), und dazu passen لَحْمٌ (Fleisch) und لَبَنٌ (Milch) aus deinen übrigen Wörtern. Ein Essenstisch aus fünf Vokabeln, die du alle hast — leichter als fünf einzelne Karten.',
+    'Die شَدَّة auf dem ف ist Pflicht: tuf-fāḥ, nicht tu-fāḥ. Deine anderen Wörter mit doppeltem Mittelbuchstaben: سُكَّرٌ (Zucker), دُكَّانٌ (Geschäft), حَمَّامٌ (Badezimmer). Sprich sie hintereinander — es ist immer derselbe kurze Stau in der Mitte des Wortes.'
+  ],
+
+  /* دُكَّانٌ - Geschäft */
+  '45804': [
+    'Der Plural ist der interessante Teil: دُكَّانٌ → دَكَاكِينُ. Das ist ein Vierbuchstaben-Muster, das dir bei تُفَّاحٌ → تَفَافِيحُ genauso begegnet — beide Male ein langes ā nach dem ersten Buchstaben und ein langes ī vor dem letzten. ⚠️ Und beide enden ohne Tanwīn.',
+    'Zwei Vokabeln, eine Szene: du gehst in den سُوق (Markt) und stehst vor einem دُكَّان (Laden). Dein eigener Satz sagt es schon: دُكَّانٌ صَغِيرٌ — ein kleiner Laden — قَرِيبٌ مِنَ السُّوقِ, nahe am Markt. Darin stecken vier Wörter aus Kapitel 1 bis 3; nimm den Satz als Ganzes, nicht das Wort allein.'
+  ],
+
+  /* جَمِيلٌ - schön */
+  '45805': [
+    'Von derselben Wurzel ج م ل kommt جَمَال, die Schönheit — das Nomen zum Adjektiv. Und im selben Hadith stehen beide: إِنَّ اللهَ جَمِيلٌ, und Er liebt الْجَمَال. Ein Satz, zwei Wortformen, eine Wurzel.',
+    'Form فَعِيل wie fast alles in diesem Kapitel. ⚠️ Beim weiblichen Nomen wird daraus جَمِيلَةٌ — dein Satz mit der Katze zeigt es beinahe: هَذَا الْقِطُّ صَغِيرٌ وَجَمِيلٌ ist männlich, بِنْتٌ جَمِيلَةٌ wäre weiblich. Das Adjektiv folgt dem Nomen, immer.'
+  ],
+
+  /* حُلْوٌ - süß */
+  '45806': [
+    'Das Wort ist kürzer als die anderen hier und folgt einem eigenen Muster: فُعْل — حُلْو, mit Sukūn auf dem ل. Kein langer Vokal, keine drei Silben. Sprich es einmal gegen نَظِيف: ḥulw ist ein Schlag, na-ẓīf sind zwei. Kurze Adjektive gibt es, sie sind nur seltener.',
+    'Deine eigenen Sätze bringen es dreimal: الشَّايُ حُلْوٌ (der Tee), تُفَّاحٌ حُلْوٌ (der Apfel), لَبَنٌ حُلْوٌ (die Milch). Immer dasselbe Adjektiv an einem anderen Nomen. Sprich alle drei — dann hast du das Wort in drei Zusammenhängen statt einmal auf einer Karte.'
+  ],
+
+  /* مَرِيضٌ - krank */
+  '45807': [
+    'مَرَض ist die Krankheit selbst, مَرِيض der Kranke, مُمَرِّضَة die Pflegerin — drei Wörter aus der Wurzel م ر ض, und zwei davon hast du schon. Dazu passt مُسْتَشْفًى (Krankenhaus) aus einer anderen Wurzel: der Ort, an dem der مَرِيض Heilung sucht.',
+    '⚠️ Der Plural fällt aus jedem Muster dieses Kapitels: مَرِيضٌ → مَرْضَى, mit أَلِف مَقْصورة am Ende. Das ist das ى ohne Punkte, das du als Fachbegriff kennst — gesprochen wie ein langes ā: mar-ḍā. Ein guter Ort, um beides zusammen zu merken.'
   ]
 
 };
