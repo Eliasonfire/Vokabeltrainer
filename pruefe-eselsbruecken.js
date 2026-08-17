@@ -46,6 +46,15 @@ function ladeAusSkript(datei, name){
 const VOCAB_DATA = ladeAusSkript('vocab-data.js', 'VOCAB_DATA');
 const ALT        = ladeAusSkript('data/eselsbruecken-alt.js', 'ESELSBRUECKEN_ALT');
 
+/* Die Fachbegriffe aus dem Unterricht sind seit v157 echte Vokabeln (eigenes
+   Kapitel 'grammar') und stehen in einer eigenen Datei. Sie gehoeren hier
+   dazu - sonst meldet die Pruefung ihre Alternativen als "gehoert zu keiner
+   Vokabel", und die Merkhaken, die er auf jeder sechsten Karte sieht, waeren
+   die einzigen ohne Kontrolle. */
+try {
+  VOCAB_DATA.push(...ladeAusSkript('data/fachbegriffe.js', 'FACHBEGRIFF_VOKABELN'));
+} catch (e){ console.log('  hinw data/fachbegriffe.js nicht lesbar — ohne sie geprueft.'); }
+
 /* Sein auswendiger Bereich. Belegt aus vt_hifz (seine eigenen Haekchen im
    Quran-Leser) plus "und ein paar mehr noch bis sura duha". */
 const ZEICHEN = /[ؐ-ًؚ-ٰٟۖ-ࣰۭ-ࣳ]/g;

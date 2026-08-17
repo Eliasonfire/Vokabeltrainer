@@ -1117,6 +1117,71 @@ const ESELSBRUECKEN_ALT = {
   '50304': [
     '⭐ Die Wurzel ع ش ر kennst du aus dem Kalender: عَاشُورَاء ist der ZEHNTE Tag des Muḥarram, und die ersten zehn Tage von Dhū l-Ḥiddscha heißen الْعَشْر. Dazu عُشْر, das Zehntel. Die Zehn steht im Glaubensjahr an mehreren Stellen.',
     'Sie ist die Grenze der kleinen Zahlen: ab elf ändert sich der Bau vollständig. ⚠️ Bis dahin gilt die Umkehrung mit der تاء مَرْبُوطة, die du bei ثَلَاثَة bis عَشَرَة siehst — zehn Zahlen, eine Regel, und du hast alle zehn als Vokabel.'
+  ],
+
+  /* ===================== Die Fachbegriffe aus dem Unterricht =========
+     Zu data/fachbegriffe.js (17.08.2026). Der erste Vorschlag steht dort im
+     Feld `mnemo`; hier stehen die zwei Alternativen dazu. Alle Aussagen sind
+     aus seinen eigenen 73 Regeln in grammar-data.js belegt. */
+
+  /* مُضَاف - der Besitz, erstes Wort */
+  'gram-mudaf': [
+    'So erkennst du ihn beim Lesen, ohne die Regel aufzusagen: ein Nomen OHNE Tanwīn, direkt gefolgt von einem zweiten Nomen — das ist eine إِضافة, und das erste ist der مُضَاف. Sieh dir بَابُ الْمَسْجِدِ an: بَابُ hat kein Tanwīn, obwohl es unbestimmt aussieht. Genau das ist das Zeichen.',
+    '⚠️ Der مُضَاف kann jeden Fall annehmen — er bekommt ihn aus dem Satz, nicht aus der Verbindung: كِتَابُ اللهِ im Grundfall, aber عَلَى مَكْتَبِ الْمُدَرِّسِ mit Kasra nach dem حَرْف جَرّ. Nur اَلْ und Tanwīn sind ihm verboten; die Endung selbst ist frei.'
+  ],
+
+  /* مَجْرُور - Genitiv */
+  'gram-majrur': [
+    'Drei Dinge lösen den Genitiv aus, und nur drei — merke sie als Liste, dann erkennst du den Fall am SATZ statt an der Endung: (1) ein حَرْفُ الْجَرِّ davor, (2) eine إِضافة, (3) eine ظَرْف wie تَحْتَ. Alle drei hast du als eigene Fachbegriffe.',
+    'Das Anzeichen ist sichtbar und leicht zu prüfen: Kasra ـِ beim bestimmten Wort, zwei Kasra ـٍ beim unbestimmten. فِي الْبَيْتِ gegen فِي بَيْتٍ. ⚠️ Es gibt Wörter, die stattdessen ein Fatḥah bekommen — die begegnen dir später als eigene Regel; wundere dich vorerst nicht darüber.'
+  ],
+
+  /* مَرْفُوع - Nominativ */
+  'gram-marfu': [
+    'Im Nominalsatz stehen BEIDE Teile im Grundfall: اَلْبَيْتُ جَمِيلٌ — مُبْتَدَأ und خَبَر, beide مَرْفُوع, beide mit Ḍammah. Das ist der Normalfall des Arabischen; alles andere braucht einen Auslöser.',
+    'Das Anzeichen: Ḍammah ـُ beim bestimmten Wort, zwei Ḍammah ـٌ beim unbestimmten. اَلْبَيْتُ gegen بَيْتٌ. ⚠️ Und die Frage dazu lautet „wer oder was?" — wenn du im Satz das Wort suchst, das die Frage beantwortet, hast du das مَرْفُوع gefunden.'
+  ],
+
+  /* نَعْت - Adjektiv */
+  'gram-nat': [
+    'Vier Bedingungen, und du prüfst sie an einem Beispiel schneller als du sie aufzählst: بِنْتٌ صَغِيرَةٌ. Geschlecht (beide weiblich), Bestimmtheit (beide unbestimmt), Fall (beide Ḍammah), Zahl (beide Einzahl). Stimmt eines nicht, ist es kein نَعْت.',
+    '⚠️ Genau hier entscheidet sich, ob ein SATZ dasteht oder nur eine Wortgruppe: اَلْبَيْتُ جَمِيلٌ heißt „das Haus ist schön" — eine Aussage. اَلْبَيْتُ الْجَمِيلُ heißt nur „das schöne Haus" — kein Satz, nur eine Benennung. Der Unterschied ist ein einziges اَلْ.'
+  ],
+
+  /* إِضافة - Genitivverbindung */
+  'gram-idafa': [
+    '⚠️ Das zweite Glied darf KEIN Adjektiv sein — nur ein Nomen. كِتَابُ اللهِ geht, كِتَابُ الْجَمِيلِ als „das schöne Buch" nicht. Wer ein Adjektiv anhängen will, braucht ein نَعْت, keine إِضافة. Zwei Regeln, die gleich aussehen und Verschiedenes tun.',
+    'Die Verbindung lässt sich verketten: بَابُ بَيْتِ الْمُدَرِّسِ — „die Tür des Hauses des Lehrers". Das mittlere Wort ist gleichzeitig مُضَاف إِلَيْهِ zum ersten und مُضَاف zum letzten. ⚠️ Nur das LETZTE Glied darf اَلْ tragen; alle davor stehen nackt.'
+  ],
+
+  /* ظَرْف - Zeit-/Ortsangabe */
+  'gram-zarf': [
+    'Du hast schon zwei davon als Vokabeln: تَحْتَ (unter) und die Ortsangaben aus deinen Regeln أَمَامَ (vor) und خَلْفَ (hinter). Alle drei setzen das folgende Nomen in den Genitiv — تَحْتَ الْمَكْتَبِ, أَمَامَ الْمَسْجِدِ, خَلْفَ الْمَدْرَسَةِ.',
+    '⚠️ Der Punkt, den dein Lehrer ausdrücklich betont: تَحْتَ zählt NICHT zu den حُرُوف الْجَرّ, obwohl es genauso wirkt. Es ist eine eigene Kategorie. Merke es als Ausnahme, sonst zählst du beim Aufsagen der Genitivpartikeln eine zu viel.'
+  ],
+
+  /* شَكْل - Vokalzeichen */
+  'gram-schakl': [
+    'Fünf Stück, und du kennst sie alle vom Sehen: فَتْحة (der Strich oben, a), كَسْرة (der Strich unten, i), ضَمّة (das Häkchen oben, u), سُكون (der kleine Kreis, kein Vokal), شَدّة (die Verdopplung). Zähl sie einmal an einem Wort ab, das du kennst — مُدَرِّسٌ hat vier davon.',
+    '⚠️ Einzahl und Gesamtheit heißen verschieden: EIN Zeichen ist ein شَكْل, ALLE zusammen heißen تَشْكيل. Wenn jemand sagt „schreib es mit Taschkīl", meint er die vollständige Vokalisierung — nicht ein einzelnes Zeichen.'
+  ],
+
+  /* اسْمُ الْإِشَارَة - Hinweiswort */
+  'gram-ismul-isara': [
+    'Vier Stück, geordnet nach zwei Fragen — nah oder fern, männlich oder weiblich: هَذَا (nah, m), هَذِهِ (nah, w), ذَلِكَ (fern, m), تِلْكَ (fern, w). ⚠️ Das كَ in ذَلِكَ und تِلْكَ ist der Zeigefinger in die Ferne, genau wie in هُنَاكَ, das du als Vokabel hast.',
+    '⚠️ Ein اسْمُ الْإِشَارَة plus Nomen ergibt noch KEINEN Satz, sobald das Nomen ein اَلْ trägt: هَذَا بَيْتٌ ist „dies ist ein Haus" — eine Aussage. هَذَا الْبَيْتُ ist nur „dieses Haus" — kein Satz. Derselbe Unterschied wie beim نَعْت, und er hängt wieder an einem einzigen اَلْ.'
+  ],
+
+  /* تاء مَرْبُوطة - weibliche Endung */
+  'gram-ta-marbuta': [
+    '⚠️ Der Umkehrschluss stimmt NICHT: ein ة bedeutet weiblich, aber weiblich bedeutet nicht immer ة. Drei deiner Vokabeln beweisen es — بِنْتٌ (Tochter), أُخْتٌ (Schwester) und سُوقٌ (Markt) sind weiblich und tragen keines. Dein Lehrer nennt sie مؤنث بلا تاء.',
+    'Sie kann noch mehr als „weiblich": bei Tieren und Sachen trennt sie das EINZELNE Stück von der Menge — بَقَرٌ ist das Rindvieh, بَقَرَةٌ die eine Kuh; دَجَاجٌ ist Hühnerfleisch, دَجَاجَةٌ die eine Henne. ⚠️ Und nicht jedes Wort lässt sich damit weiblich machen; das geht nur, wo es ein Gegenstück gibt.'
+  ],
+
+  /* أَلِف مَقْصورة - das ى am Wortende */
+  'gram-alif-maqsura': [
+    'Du hast vier Wörter damit: عَلَى (auf), إِلَى (zu), مُسْتَشْفًى (Krankenhaus) und den Plural مَرْضَى (Kranke). ⚠️ Alle vier enden auf ein langes ā, obwohl dort ein ى steht. Sprich sie hintereinander, dann trennt sich das Schriftbild vom Klang.',
+    '⚠️ Sobald etwas angehängt wird, verwandelt sich das ى in ein echtes ي: عَلَى → عَلَيْهِ, إِلَى → إِلَيْهِ, مُسْتَشْفًى → مُسْتَشْفَيَاتٌ. Daran erkennst du, dass es nie ein bloßes Alif war — der Buchstabe darunter ist ein ي, das nur allein am Wortende seine Punkte verliert.'
   ]
 
 };
