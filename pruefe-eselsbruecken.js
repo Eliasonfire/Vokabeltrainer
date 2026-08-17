@@ -64,6 +64,28 @@ const flach = s => String(s).replace(ZEICHEN, '').replace(/ـ/g, '')
 const AUSWENDIG = new Set([1, 67, ...Array.from({length: 22}, (_, i) => 93 + i)]);
 const MAX_ZITAT = 4;
 
+/* Die Woerter aus den Buchabzuegen. ⚠️ Sie stehen NICHT in vocab-data.js, und
+   Eselsbruecken duerfen es auch fuer sie geben (data/eselsbruecken.js deckt
+   300 von 300 Madina-1-Woertern ab). Ohne diese Liste meldete Abschnitt 3
+   jede Alternative zu einem Buchwort als "gehoert zu keiner Vokabel".
+   ⛔ Die Abzugsdateien werden nur GELESEN — sie duerfen nach arabicroots' AGB
+   nicht ins Repo, und nichts davon steht hier im Quelltext. Fehlen sie,
+   arbeitet die Pruefung ohne sie weiter. */
+const BUCH_WOERTER = [];
+(function ladeBuecher(){
+  const ordner = path.join(WURZEL, 'data');
+  if (!fs.existsSync(ordner)) return;
+  fs.readdirSync(ordner).filter(n => /^vokabeln-.*\.js$/.test(n)).forEach(n => {
+    try {
+      const fenster = {};
+      new Function('window', fs.readFileSync(path.join(ordner, n), 'utf8'))(fenster);
+      Object.keys(fenster.VOKABELN || {}).forEach(slug => {
+        (fenster.VOKABELN[slug] || []).forEach(w => BUCH_WOERTER.push(Object.assign({ book: slug }, w)));
+      });
+    } catch (e){ /* eine kaputte Abzugsdatei darf die Pruefung nicht kippen */ }
+  });
+})();
+
 let fehler = 0, geprueft = 0;
 const hinweise = [];
 const melde = (was) => { fehler++; console.log('  FEHL ' + was); };
@@ -146,7 +168,8 @@ console.log('');
 console.log('=== 3. Ids, Anzahl und Doppelungen ===');
 {
   Object.keys(ALT).forEach(id => {
-    const w = VOCAB_DATA.find(x => String(x.id) === id);
+    const w = VOCAB_DATA.find(x => String(x.id) === id)
+           || BUCH_WOERTER.find(x => String(x.id) === id);
     if (!w){ melde(`Id ${id} gehoert zu keiner Vokabel`); return; }
     const liste = ALT[id] || [];
     if (!liste.length) melde(`${w.ar}: leere Liste`);
@@ -266,6 +289,62 @@ console.log('=== 5. Wie weit ist der Vorrat? ===');
   ohne.forEach(w => { nachKap[w.chapter] = (nachKap[w.chapter] || 0) + 1; });
   console.log(`  ${VOCAB_DATA.length - ohne.length} von ${VOCAB_DATA.length} Woertern haben Alternativen.`);
   if (ohne.length) console.log('  offen je Kapitel: ' + JSON.stringify(nachKap));
+}
+
+console.log('');
+console.log('=== 6. Dauerauftrag: neu freigeschaltete Kapitel ===');
+{
+  /* ⭐ Elias am 17.08.2026: "für später wäre auch wichtig die nachfolgenden
+     kapiteln auch damit auszurüsten aber das müsstest du dich später einfach
+     dran erinnern."
+
+     ⛔ "Dran erinnern" ist genau das, was ein Mensch nicht kann und ein Skript
+     umsonst tut. Deshalb steht es hier: Sobald FREIGESCHALTET in js/kern.js
+     waechst, meldet diese Pruefung die neuen Woerter ohne Alternativen — auch
+     Monate spaeter und auch, wenn niemand mehr an das Versprechen denkt.
+
+     ⚠️ Der Buchabzug (data/vokabeln-*.js) darf nach arabicroots' AGB nicht ins
+     Repo. Er wird hier nur GELESEN, nichts davon steht im Quelltext. Fehlt die
+     Datei, wird der Abschnitt uebersprungen statt zu scheitern. */
+  const kern = fs.readFileSync(path.join(WURZEL, 'js/kern.js'), 'utf8');
+  const block = kern.match(/const FREIGESCHALTET = \{([\s\S]*?)\};/);
+  if (!block){ console.log('  FREIGESCHALTET in js/kern.js nicht gefunden — uebersprungen.'); }
+  else {
+    const frei = {};
+    block[1].split('\n').forEach(z => {
+      const m = z.match(/'([^']+)'\s*:\s*\[([^\]]*)\]/);
+      if (m) frei[m[1]] = m[2].split(',').map(x => Number(x.trim())).filter(n => !Number.isNaN(n));
+    });
+    const buecher = Object.keys(frei);
+    console.log('  freigeschaltet: ' + buecher.map(b => `${b} ${frei[b].join(',')}`).join(' | '));
+
+    let gesamtOffen = 0, gesamtGeprueft = 0;
+    buecher.forEach(slug => {
+      const datei = `data/vokabeln-${slug}.js`;
+      if (!fs.existsSync(path.join(WURZEL, datei))){
+        console.log(`  ${datei} liegt nicht vor — ${slug} nicht pruefbar.`);
+        return;
+      }
+      const fenster = {};
+      new Function('window', fs.readFileSync(path.join(WURZEL, datei), 'utf8'))(fenster);
+      const liste = (fenster.VOKABELN && fenster.VOKABELN[slug]) || [];
+      const bekannteKapitel = liste.filter(w => frei[slug].includes(w.chapter));
+      const fehlen = bekannteKapitel.filter(w => !ALT[w.id]);
+      gesamtGeprueft += bekannteKapitel.length;
+      gesamtOffen += fehlen.length;
+      if (fehlen.length){
+        const je = {};
+        fehlen.forEach(w => { je[w.chapter] = (je[w.chapter] || 0) + 1; });
+        console.log(`  ⬜ ${slug}: ${fehlen.length} von ${bekannteKapitel.length} Woertern aus freigeschalteten Kapiteln ohne Alternative — ${JSON.stringify(je)}`);
+      } else {
+        console.log(`  ✅ ${slug}: alle ${bekannteKapitel.length} Woerter aus freigeschalteten Kapiteln haben Alternativen.`);
+      }
+    });
+    if (gesamtOffen){
+      hinweise.push(`Dauerauftrag: ${gesamtOffen} von ${gesamtGeprueft} Woertern aus FREIGESCHALTETEN Kapiteln haben noch keine zweite Eselsbruecke.`);
+    }
+    geprueft += gesamtGeprueft;
+  }
 }
 
 console.log('');

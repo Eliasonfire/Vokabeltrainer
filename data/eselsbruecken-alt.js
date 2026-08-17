@@ -1178,6 +1178,45 @@ const ESELSBRUECKEN_ALT = {
     'Sie kann noch mehr als „weiblich": bei Tieren und Sachen trennt sie das EINZELNE Stück von der Menge — بَقَرٌ ist das Rindvieh, بَقَرَةٌ die eine Kuh; دَجَاجٌ ist Hühnerfleisch, دَجَاجَةٌ die eine Henne. ⚠️ Und nicht jedes Wort lässt sich damit weiblich machen; das geht nur, wo es ein Gegenstück gibt.'
   ],
 
+  /* ===================== Kapitel 10 und 11 (Buchabzug) ==============
+     ⭐ Diese fünf sind KEINE Vorratsarbeit für später: Kapitel 10 und 11 sind
+     seit dem 17.08.2026 freigeschaltet, die Wörter stehen also schon in seiner
+     Kartei. Gefunden hat sie `pruefe-eselsbruecken.js` Abschnitt 6 — der Punkt,
+     der den Dauerauftrag „auch die nachfolgenden Kapitel" maschinell wach hält.
+     ⚠️ Für keines der fünf gibt es eine Koranstelle in seinem auswendigen
+     Bereich; die einzige Kandidatin (93:5 für ف ت ي) ist فَتَرْضَىٰ und gehört
+     zur Wurzel ر ض ي. Also Begriff und Muster statt Vers. */
+
+  /* زَمِيلٌ - Kollege / Mitschüler */
+  '45899': [
+    'Der Plural lohnt sich, weil du das Muster schon dreimal hast: زَمِيلٌ → زُمَلَاءُ, wie فَقِيرٌ → فُقَرَاءُ, غَنِيٌّ → أَغْنِيَاءُ und وَزِيرٌ → وُزَرَاءُ. ⚠️ Alle vier enden auf ُ **ohne Tanwīn** — das ist kein Tippfehler, sondern eine eigene Wortsorte.',
+    '⚠️ Ein زَمِيل ist an einen ORT gebunden, nicht an Freundschaft: der, der in derselben مَدْرَسَة, derselben جَامِعَة oder am selben مَكْتَب sitzt. Alle drei Orte hast du als Vokabel. Wer den Ort mitdenkt, trifft die Bedeutung genauer als mit „Freund".'
+  ],
+
+  /* زَوْجَةٌ - Ehefrau */
+  '45900': [
+    '⭐ Die Wurzel ز و ج heißt „Paar" — deshalb heißen die Frauen des Propheten أَزْوَاجُ النَّبِيِّ, und sie tragen den Titel أُمَّهَاتُ الْمُؤْمِنِينَ, „Mütter der Gläubigen". Das أُمَّهَات darin ist der Plural von أُمّ, den du als Vokabel hast. Ein Begriff, zwei bekannte Wörter.',
+    'Die تاء مَرْبُوطة macht aus dem Mann die Frau, und du hast das Muster schon: مُدَرِّسٌ → مُدَرِّسَةٌ, مُمَرِّضٌ → مُمَرِّضَةٌ. Genauso زَوْجٌ → زَوْجَةٌ. ⚠️ Merke aber: das ة ist hier eine echte Geschlechtsendung — bei بَقَرَة oder بَطَّة trennt dasselbe Zeichen nur das Einzeltier von der Art.'
+  ],
+
+  /* طِفْلٌ - Kind */
+  '45901': [
+    'Der Plural folgt dem Muster, das du von vier eigenen Wörtern kennst: طِفْلٌ → أَطْفَالٌ, wie بَابٌ → أَبْوَابٌ, قَلَمٌ → أَقْلَامٌ, وَلَدٌ → أَوْلَادٌ, وَرَقٌ → أَوْرَاقٌ. Ein أَ vorne, ein langes ا vor dem letzten Buchstaben.',
+    'Setz es in die Familie, die du schon vollständig hast: أَبٌ, أُمٌّ, اِبْنٌ, بِنْتٌ, أَخٌ, أُخْتٌ, عَمٌّ, خَالٌ. Alle acht sagen, WER jemand ist; طِفْلٌ sagt nur, WIE ALT — und lässt das Geschlecht offen. ⚠️ Achte auf das ط: der satte, dunkle t-Laut, nicht das leichte ت aus بِنْتٌ.'
+  ],
+
+  /* فَتًى - junger Mann */
+  '45902': [
+    '⭐ Du kennst den Begriff aus der Geschichte der Höhlengefährten: die أَصْحَابُ الْكَهْف werden im Koran als فِتْيَة bezeichnet — junge Männer, die für ihren Glauben fortgingen. Dasselbe Wort, ein Plural davon. Wer die Geschichte kennt, hat die Vokabel.',
+    '⚠️ Am Ende steht eine أَلِف مَقْصورة — das ى ohne Punkte, gesprochen wie ein kurzes a mit Tanwīn: fa-tan. Genau der Fachbegriff, den du gelernt hast, und dasselbe Wortende wie bei مُسْتَشْفًى. Sobald die Frau gemeint ist, wird ein echtes ت daraus: فَتَاةٌ.'
+  ],
+
+  /* أَحَبَّ - lieben */
+  '45903': [
+    '⭐ Die Wurzel ح ب ب trägt Wörter, die du täglich hörst: مَحَبَّة (Liebe), حَبِيب (der Geliebte) — und der Prophet ﷺ heißt الْحَبِيب. Dazu der Anfang eines bekannten Hadith: أَحَبُّ الْأَعْمَالِ إِلَى اللهِ, „die beliebtesten Taten bei Allah". Ein Stamm, vier Anläufe, ihn zu behalten.',
+    '⚠️ Das ist ein VERB und verhält sich anders als deine übrigen Wörter: أَحَبَّ heißt „er liebte", die Grundform steht also schon in der Vergangenheit und in der dritten Person. Das „er" steckt im Wort — genau wie bei خَرَجَ und ذَهَبَ aus deinen Regeln. Und die شَدَّة auf dem بّ zeigt die beiden ب der Wurzel.'
+  ],
+
   /* أَلِف مَقْصورة - das ى am Wortende */
   'gram-alif-maqsura': [
     'Du hast vier Wörter damit: عَلَى (auf), إِلَى (zu), مُسْتَشْفًى (Krankenhaus) und den Plural مَرْضَى (Kranke). ⚠️ Alle vier enden auf ein langes ā, obwohl dort ein ى steht. Sprich sie hintereinander, dann trennt sich das Schriftbild vom Klang.',
