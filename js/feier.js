@@ -266,6 +266,20 @@ const FEIER_ANLAESSE = {
     }
   },
 
+  /* Hoerverstehen hat keinen Vorrat, der leer werden koennte - die Fragen
+     werden gewuerfelt. Deshalb ist die Zahl selbst das Tagesziel, und der
+     Anlass ist bewusst `einmalig` je Tag: er darf weiteruben, soll aber nicht
+     bei jeder weiteren Antwort wieder gefeiert werden. Kleiner als
+     'alles-faellig' - Hoeren ist ein Zusatzmodus, nicht die Hauptarbeit. */
+  'hoer-tagesziel': {
+    einmalig: () => `hoer-${todayStr(0)}`,
+    effekt: d => {
+      feierKonfetti(90);
+      feierBanner('Hören: Tagesziel geschafft',
+        `${d.zahl} Wörter gehört, ${d.richtig} richtig.`, 'mittel');
+    }
+  },
+
   /* Rueckmeldung genau dort, wo man hinsieht. Kein Meilenstein, darf oft. */
   'luecke-richtig': {
     /* Nicht der Satz: nach dem Loesen baut renderSentence() den Satz neu auf

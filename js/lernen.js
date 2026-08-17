@@ -548,6 +548,58 @@ function renderNotiz(w){
   punkt.classList.toggle('hidden', !notiz);
 }
 
+/* ---------- Mehrere Vorschlaege je Wort (Elias, 16.08.2026) ----------
+
+   "so einen knopf hat der einen neuen vorschlag von dir machen lässt, jedoch
+   den alten noch speichert und man auswählen kann ob der neue besser ist oder
+   ob man den alten wieder zurück haben will."
+
+   ⛔ Erzeugt wird nichts - die App hat keine KI. Geblaettert wird durch einen
+   VORRAT aus data/eselsbruecken-alt.js. Elias' Wahl aus drei vorgelegten Wegen
+   ("mach A"), weil das offline funktioniert und nichts kostet.
+
+   Der ERSTE Eintrag ist immer `w.mnemo`, danach kommen die Alternativen. Nichts
+   wird gespeichert: Geblaettert wird nur im offenen Fenster, und erst
+   "Uebernehmen" + "Speichern" macht daraus seine Notiz. Damit bleibt die alte
+   Regel unangetastet, dass es keine stille Uebernahme gibt - und der Rueckweg
+   zum alten Vorschlag ist einfach ein Schritt zurueck. */
+function vorschlagsListe(w){
+  const liste = [];
+  if (w && w.mnemo){
+    const s = String(w.mnemo).trim();
+    if (s) liste.push(s);
+  }
+  const alt = (typeof ESELSBRUECKEN_ALT !== 'undefined') && w && ESELSBRUECKEN_ALT[String(w.id)];
+  if (Array.isArray(alt)){
+    alt.forEach(t => {
+      const s = String(t || '').trim();
+      /* Doppelte aussortieren: sonst zeigt der Knopf zweimal dasselbe, und es
+         sieht aus, als haette er nicht funktioniert. */
+      if (s && liste.indexOf(s) < 0) liste.push(s);
+    });
+  }
+  return liste;
+}
+
+let VORSCHLAEGE = [];
+let VORSCHLAG_NR = 0;
+
+function zeigeVorschlag(){
+  const text = VORSCHLAEGE[VORSCHLAG_NR] || '';
+  document.getElementById('neVorschlagText').innerHTML = arabischHervorheben(text);
+  const mehrere = VORSCHLAEGE.length > 1;
+  document.getElementById('neVorschlagBlaettern').classList.toggle('hidden', !mehrere);
+  document.getElementById('neVorschlagZaehler').textContent =
+    mehrere ? ` ${VORSCHLAG_NR + 1} von ${VORSCHLAEGE.length}` : '';
+}
+
+function blaettereVorschlag(schritt){
+  if (VORSCHLAEGE.length < 2) return;
+  /* Rundherum statt am Ende anzustossen: er soll nie in eine Sackgasse tippen. */
+  VORSCHLAG_NR = (VORSCHLAG_NR + schritt + VORSCHLAEGE.length) % VORSCHLAEGE.length;
+  zeigeVorschlag();
+}
+
 function oeffneNotizEditor(){
   const w = SESSION.words[SESSION.idx];
   if (!w) return;
@@ -558,9 +610,10 @@ function oeffneNotizEditor(){
      er soll den Vorschlag lesen und dann entscheiden. */
   feld.value = getNote(w.id);
   const vorschlagKasten = document.getElementById('neVorschlag');
-  const vorschlag = (!getNote(w.id) && w.mnemo) ? String(w.mnemo).trim() : '';
-  document.getElementById('neVorschlagText').innerHTML = arabischHervorheben(vorschlag);
-  vorschlagKasten.classList.toggle('hidden', !vorschlag);
+  VORSCHLAEGE = getNote(w.id) ? [] : vorschlagsListe(w);
+  VORSCHLAG_NR = 0;
+  zeigeVorschlag();
+  vorschlagKasten.classList.toggle('hidden', !VORSCHLAEGE.length);
   document.getElementById('btnDeleteNote').style.visibility = getNote(w.id) ? 'visible' : 'hidden';
   document.getElementById('noteBackdrop').classList.remove('hidden');
   document.getElementById('noteEditor').classList.remove('hidden');
@@ -583,6 +636,8 @@ document.getElementById('btnVorschlagUebernehmen').addEventListener('click', ()=
   document.getElementById('neVorschlag').classList.add('hidden');
   feld.focus();
 });
+document.getElementById('btnVorschlagWeiter').addEventListener('click', ()=> blaettereVorschlag(1));
+document.getElementById('btnVorschlagZurueck').addEventListener('click', ()=> blaettereVorschlag(-1));
 document.getElementById('btnCloseNote').addEventListener('click', schliesseNotizEditor);
 document.getElementById('noteBackdrop').addEventListener('click', schliesseNotizEditor);
 document.getElementById('btnSaveNote').addEventListener('click', ()=>{

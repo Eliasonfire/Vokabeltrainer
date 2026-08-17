@@ -10,7 +10,12 @@ function renderHome(){
     : (SETTINGS.wrongOnly ? 'Keine schwachen Wörter mit dieser Auswahl.' : 'Alles erledigt für heute – super gemacht.');
   document.getElementById('streakCount').textContent = getStreak().count;
 
-  const boxCounts = [1,2,3,4,5].map(b => buchVokabeln().filter(w=>PROGRESS[w.id] && PROGRESS[w.id].box===b).length);
+  /* ⚠️ `bekannteVokabeln()` statt `buchVokabeln()` seit dem 17.08.2026: die
+     Box-Zahlen zaehlten alle 311 Woerter des geladenen Buchs, also auch die
+     140, die Elias nie hatte. Auf der Startseite stand damit ein Lernstand
+     ueber einem Bestand, den er gar nicht lernt. Dieselbe Umstellung wie in
+     js/statistik.js und in passtZurAuswahl(). */
+  const boxCounts = [1,2,3,4,5].map(b => bekannteVokabeln().filter(w=>PROGRESS[w.id] && PROGRESS[w.id].box===b).length);
   /* Box 1 rot, Box 5 gruen - Elias' Wunsch vom 29.07.2026. Dieselbe Tabelle wie
      in js/statistik.js; 2-4 bleiben neutral, weil eine fuenfstufige Farbskala
      behaupten wuerde, Box 3 sei "halb gut". */
@@ -22,7 +27,7 @@ function renderHome(){
   /* Die Kachel haengt an der Einstellung (Elias, 31.07.2026). Sie zeigt genau
      die Woerter mit kuratiertem Beleg — ohne die Belege waere sie eine Liste
      ohne Inhalt, deshalb geht sie mit weg statt leer stehenzubleiben. */
-  const quranCount = buchVokabeln().filter(w=>w.quran).length;
+  const quranCount = bekannteVokabeln().filter(w=>w.quran).length;
   document.getElementById('quranTile').classList.toggle('hidden', !SETTINGS.showQuran);
   document.getElementById('quranTileSub').textContent = `${quranCount} Vokabeln`;
 

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Tonprüfung – Vokabeltrainer</title>
+<!--
+  Prüfseite für Elias' Meldung vom 16.08.2026: "beim tablet funktioniert es
+  irgendwie nicht" (Sprachausgabe auf der Lernkarte).
+
+  Warum eine eigene Seite und kein Fix auf Verdacht: die Sprachausgabe gehört
+  dem GERÄT. Von hier aus ist nicht messbar, welche Stimmen sein Tablet hat,
+  ob Android die Ausgabe pausiert zurückgelassen hat oder ob überhaupt Ton
+  herauskommt. Diese Seite misst das auf dem Gerät und schreibt das Ergebnis
+  in einen Text, den er mir schicken kann.
+
+  Sie liegt bewusst NICHT im Service-Worker-Cache und wird über die Weißliste
+  `vorschau*.html` in veroeffentlichen.mjs mit ausgeliefert. Gleicher Ursprung
+  wie die App, deshalb liest sie `vt_settings` aus demselben localStorage.
+-->
+<style>
+  :root{
+    --bg:#000; --flaeche:#111114; --rand:#26262c;
+    --text:#f4f4f6; --leise:#9a9aa4; --rot:#ff4d5e; --gruen:#2fd27a; --gelb:#ffc44d;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+       font-size:17px;line-height:1.55;padding:20px 16px 64px;}
+  .huelle{max-width:760px;margin:0 auto;}
+  h1{font-size:1.5rem;margin:0 0 4px;}
+  h2{font-size:1.05rem;margin:28px 0 10px;color:var(--leise);
+     text-transform:uppercase;letter-spacing:.06em;}
+  p.hinweis{color:var(--leise);margin:0 0 20px;}
+  .karte{background:var(--flaeche);border:1px solid var(--rand);border-radius:14px;
+         padding:14px 16px;margin-bottom:12px;}
+  .zeile{display:flex;justify-content:space-between;gap:14px;padding:5px 0;
+         border-bottom:1px solid #1c1c21;}
+  .zeile:last-child{border-bottom:0;}
+  .zeile .wert{text-align:right;color:var(--leise);
+               font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9rem;
+               word-break:break-all;}
+  .ja{color:var(--gruen);} .nein{color:var(--rot);} .vielleicht{color:var(--gelb);}
+  button{font:inherit;font-weight:600;width:100%;padding:16px;margin:8px 0 0;
+         background:#1b1b20;color:var(--text);border:1px solid var(--rand);
+         border-radius:12px;cursor:pointer;text-align:left;}
+  button:active{background:#26262c;}
+  button.wichtig{background:var(--rot);border-color:var(--rot);color:#fff;text-align:center;}
+  .stimme{font-size:.86rem;color:var(--leise);display:block;margin-top:3px;font-weight:400;}
+  #protokoll{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.82rem;
+             white-space:pre-wrap;word-break:break-word;color:var(--leise);
+             max-height:260px;overflow:auto;}
+  #bericht{width:100%;height:190px;background:#08080a;color:var(--leise);
+           border:1px solid var(--rand);border-radius:12px;padding:12px;
+           font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.78rem;}
+</style>
+</head>
+<body>
+<div class="huelle">
+
+<h1>Tonprüfung</h1>
+<p class="hinweis">Auf dem Gerät öffnen, auf dem der Ton fehlt. Die drei Knöpfe
+der Reihe nach antippen, dann den Bericht unten kopieren und schicken.</p>
+
+<h2>Was dieses Gerät hat</h2>
+<div class="karte" id="befund"></div>
+
+<h2>Arabische Stimmen auf diesem Gerät</h2>
+<div class="karte" id="stimmen"></div>
+
+<h2>1 · Kommt überhaupt Ton heraus?</h2>
+<div class="karte">
+  <button id="btnPiep" class="wichtig">Kurzen Ton abspielen</button>
+  <p class="hinweis" style="margin:10px 0 0;font-size:.88rem;">
+    Ein einfacher Piepton, ohne Sprachausgabe. Hörst du ihn nicht, liegt es an
+    der Lautstärke oder am Stummschalter — dann ist die Sprachausgabe unschuldig.</p>
+</div>
+
+<h2>2 · Genau das, was die Lernkarte tut</h2>
+<div class="karte">
+  <button id="btnWieApp" class="wichtig">كِتَابٌ sprechen (wie in der App)</button>
+  <p class="hinweis" style="margin:10px 0 0;font-size:.88rem;">
+    Derselbe Ablauf wie beim Lautsprecher-Knopf: gespeicherte Stimme, sonst die
+    erste arabische, <code>ar-SA</code>, Tempo 0,85.</p>
+</div>
+
+<h2>3 · Jede Stimme einzeln</h2>
+<div class="karte" id="einzeln"></div>
+
+<h2>Protokoll</h2>
+<div class="karte"><div id="protokoll">–</div></div>
+
+<h2>Bericht zum Schicken</h2>
+<div class="karte">
+  <textarea id="bericht" readonly></textarea>
+  <button id="btnKopieren">Bericht kopieren</button>
+</div>
+
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var WORT = 'كِتَابٌ';   /* كِتَابٌ */
+  var protokoll = [];
+  var start = Date.now();
+
+  function log(text){
+    protokoll.push('[' + String(Date.now() - start).padStart(6) + ' ms] ' + text);
+    document.getElementById('protokoll').textContent = protokoll.join('\n');
+    berichtBauen();
+  }
+
+  function zeile(name, wert, klasse){
+    return '<div class="zeile"><span>' + name + '</span>' +
+           '<span class="wert ' + (klasse||'') + '">' + wert + '</span></div>';
+  }
+
+  function gespeicherteStimme(){
+    try{
+      var roh = localStorage.getItem('vt_settings');
+      if (!roh) return null;
+      var s = JSON.parse(roh);
+      return (s && s.voiceURI) || null;
+    }catch(e){ return null; }
+  }
+
+  function arabische(){
+    if (!('speechSynthesis' in window)) return [];
+    var alle = speechSynthesis.getVoices() || [];
+    return alle.filter(function(v){
+      return v.lang && v.lang.toLowerCase().indexOf('ar') === 0;
+    });
+  }
+
+  var LETZTE = { stimmen: 0, arabisch: 0, gemerkt: null, gemerktDa: false };
+
+  function befundZeichnen(){
+    var hatApi = ('speechSynthesis' in window);
+    var alle = hatApi ? (speechSynthesis.getVoices() || []) : [];
+    var ar = arabische();
+    var gemerkt = gespeicherteStimme();
+    var gemerktDa = !!gemerkt && ar.some(function(v){ return v.voiceURI === gemerkt; });
+
+    LETZTE = { stimmen: alle.length, arabisch: ar.length,
+               gemerkt: gemerkt, gemerktDa: gemerktDa };
+
+    document.getElementById('befund').innerHTML =
+      zeile('Sprachausgabe vorhanden', hatApi ? 'ja' : 'nein', hatApi ? 'ja' : 'nein') +
+      zeile('Stimmen insgesamt', alle.length, alle.length ? '' : 'nein') +
+      zeile('davon arabisch', ar.length, ar.length ? 'ja' : 'nein') +
+      zeile('gerade am Sprechen', hatApi && speechSynthesis.speaking ? 'ja' : 'nein') +
+      zeile('pausiert', hatApi && speechSynthesis.paused ? 'JA — das erklärt Stille' : 'nein',
+            hatApi && speechSynthesis.paused ? 'nein' : 'ja') +
+      zeile('gespeicherte Stimme', gemerkt ? gemerkt : '– keine –') +
+      zeile('… gibt es hier', gemerkt ? (gemerktDa ? 'ja' : 'NEIN') : 'entfällt',
+            gemerkt ? (gemerktDa ? 'ja' : 'nein') : '') +
+      zeile('Bildschirm', window.innerWidth + ' × ' + window.innerHeight) +
+      zeile('Browser', navigator.userAgent.slice(0, 70));
+
+    document.getElementById('stimmen').innerHTML = ar.length
+      ? ar.map(function(v){
+          return zeile(v.name, v.lang + ' · ' + (v.localService ? 'auf dem Gerät' : 'aus dem Netz'));
+        }).join('')
+      : '<div class="zeile"><span class="nein">Keine arabische Stimme installiert.</span>' +
+        '<span class="wert">Einstellungen → Sprache → Text-in-Sprache</span></div>';
+
+    document.getElementById('einzeln').innerHTML = ar.length
+      ? ar.map(function(v, i){
+          return '<button data-stimme="' + i + '">' + v.name +
+                 '<span class="stimme">' + v.lang +
+                 (v.localService ? ' · auf dem Gerät' : ' · aus dem Netz') + '</span></button>';
+        }).join('')
+      : '<span class="hinweis">Nichts zu testen — keine arabische Stimme vorhanden.</span>';
+
+    berichtBauen();
+  }
+
+  function sprich(stimme, wienApp){
+    if (!('speechSynthesis' in window)){ log('KEINE Sprachausgabe in diesem Browser'); return; }
+    speechSynthesis.cancel();
+    if (speechSynthesis.paused){ speechSynthesis.resume(); log('war pausiert → resume()'); }
+
+    var u = new SpeechSynthesisUtterance(WORT);
+    u.lang = 'ar-SA';
+    u.rate = 0.85;
+    if (stimme) u.voice = stimme;
+    log('speak() mit Stimme: ' + (stimme ? stimme.name : '– keine gesetzt –') +
+        (wienApp ? '  (wie in der App)' : ''));
+
+    var kam = false, begonnen = 0;
+    u.onstart = function(){ kam = true; begonnen = Date.now(); log('  → onstart (es läuft)'); };
+    u.onend   = function(){
+      kam = true;
+      var dauer = begonnen ? (Date.now() - begonnen) : -1;
+      log('  → onend nach ' + dauer + ' ms');
+      /* Der entscheidende Punkt: fehlt die Stimme, meldet der Browser trotzdem
+         Erfolg — nur eben in wenigen Millisekunden. Gesprochen werden kann das
+         nicht. Genau daran ist der Fehler zu erkennen. */
+      if (dauer >= 0 && dauer < 250){
+        log('  ⛔ ZU KURZ zum Sprechen — es kam KEIN Ton heraus, obwohl der Browser Erfolg meldet.');
+      }
+    };
+    u.onerror = function(e){ kam = true; log('  → onerror: ' + (e && e.error ? e.error : 'ohne Angabe')); };
+    speechSynthesis.speak(u);
+
+    setTimeout(function(){
+      if (kam) return;
+      log('  → nach 1,5 s NICHTS passiert. speaking=' + speechSynthesis.speaking +
+          ' pending=' + speechSynthesis.pending + ' paused=' + speechSynthesis.paused);
+    }, 1500);
+  }
+
+  function berichtBauen(){
+    var t = [];
+    t.push('TONPRUEFUNG VOKABELTRAINER');
+    t.push('Browser : ' + navigator.userAgent);
+    t.push('Schirm  : ' + window.innerWidth + 'x' + window.innerHeight +
+           '  dpr ' + (window.devicePixelRatio || 1));
+    t.push('Stimmen : ' + LETZTE.stimmen + ' insgesamt, ' + LETZTE.arabisch + ' arabisch');
+    t.push('Gemerkt : ' + (LETZTE.gemerkt || '- keine -') +
+           (LETZTE.gemerkt ? (LETZTE.gemerktDa ? '  (hier vorhanden)' : '  (HIER NICHT VORHANDEN)') : ''));
+    if ('speechSynthesis' in window){
+      var ar = arabische();
+      ar.forEach(function(v){
+        t.push('   - ' + v.name + ' | ' + v.lang + ' | ' +
+               (v.localService ? 'lokal' : 'netz') + ' | ' + v.voiceURI);
+      });
+    }
+    t.push('');
+    t.push('PROTOKOLL');
+    t.push(protokoll.length ? protokoll.join('\n') : '(noch nichts getestet)');
+    document.getElementById('bericht').value = t.join('\n');
+  }
+
+  /* --- Knöpfe --- */
+  document.getElementById('btnPiep').addEventListener('click', function(){
+    try{
+      var Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx){ log('Piepton: keine WebAudio-Unterstützung'); return; }
+      var ctx = new Ctx();
+      /* Nach einer Berührung darf der Zusammenhang laufen; auf iOS/Android
+         startet er sonst im Zustand "suspended" und bleibt still. */
+      if (ctx.state === 'suspended') ctx.resume();
+      var o = ctx.createOscillator(), g = ctx.createGain();
+      o.frequency.value = 660; g.gain.value = 0.14;
+      o.connect(g); g.connect(ctx.destination);
+      o.start(); o.stop(ctx.currentTime + 0.45);
+      log('Piepton gespielt (Zustand: ' + ctx.state + ') — gehört?');
+    }catch(e){ log('Piepton fehlgeschlagen: ' + e.message); }
+  });
+
+  document.getElementById('btnWieApp').addEventListener('click', function(){
+    var ar = arabische();
+    var gemerkt = gespeicherteStimme();
+    var gewaehlt = null;
+    for (var i = 0; i < ar.length; i++){ if (ar[i].voiceURI === gemerkt){ gewaehlt = ar[i]; break; } }
+    if (!gewaehlt) gewaehlt = ar[0] || null;
+    sprich(gewaehlt, true);
+  });
+
+  document.getElementById('einzeln').addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('[data-stimme]') : null;
+    if (!b) return;
+    sprich(arabische()[Number(b.dataset.stimme)], false);
+  });
+
+  document.getElementById('btnKopieren').addEventListener('click', function(){
+    var f = document.getElementById('bericht');
+    f.select(); f.setSelectionRange(0, 999999);
+    var ok = false;
+    try{ ok = document.execCommand('copy'); }catch(e){}
+    if (navigator.clipboard && !ok){
+      navigator.clipboard.writeText(f.value).then(function(){ log('Bericht kopiert.'); },
+                                                   function(){ log('Kopieren ging nicht — Text von Hand markieren.'); });
+    } else {
+      log(ok ? 'Bericht kopiert.' : 'Kopieren ging nicht — Text von Hand markieren.');
+    }
+  });
+
+  /* Android füllt die Stimmenliste verzögert — deshalb noch einmal nachziehen. */
+  if ('speechSynthesis' in window){
+    speechSynthesis.onvoiceschanged = function(){ log('Stimmenliste nachgeladen'); befundZeichnen(); };
+  }
+  befundZeichnen();
+  setTimeout(befundZeichnen, 800);
+  setTimeout(befundZeichnen, 2500);
+})();
+</script>
+</body>
+</html>

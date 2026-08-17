@@ -63,17 +63,44 @@ function zeigeBildschirm(name){
   return name;
 }
 
+/* ---------- Rollstand je Historieneintrag (Elias, 16.08.2026) ----------
+
+   "wenn ich auf zurück drücke will ich da raus kommen wo ich davor war."
+
+   Das gab es bis dahin NUR in der Surenliste, als Sonderloesung mit einer
+   eigenen Variablen. Ueberall sonst fing jeder Bildschirm nach der
+   Zurueck-Taste wieder oben an. Gemessen am 16.08.2026 (375x812): Kategorien
+   auf 900 gerollt, ein Kapitel geoeffnet, Zurueck-Taste - Stand 0.
+
+   Der Stand gehoert an den HISTORIENEINTRAG, nicht an den Bildschirm: derselbe
+   Bildschirm kann mehrfach in der Historie liegen, jedes Mal mit einem anderen
+   Stand. Deshalb wird er beim Verlassen in den noch aktuellen Eintrag
+   nachgetragen (replaceState) und beim popstate von dort gelesen.
+
+   ⚠️ Der Quran-Leser ist ausgenommen, siehe popstate-Handler unten. Er hat mit
+   LISTEN_ROLLSTAND eine eigene, feiner gebaute Loesung - sie unterscheidet
+   Liste, Suche und offene Sure. Zwei Mechanismen auf demselben Rollkasten
+   wuerden sich gegenseitig ueberschreiben; genau dieser Fehler war an
+   demselben Morgen zu beheben. */
 function showScreen(name, opt){
   opt = opt || {};
   const aktiv = document.querySelector('.screen.active');
   const schonDa = !!aktiv && aktiv.id === 'screen-' + name;
+  /* VOR zeigeBildschirm() ablesen - das springt als Erstes nach oben. */
+  const kasten = document.getElementById('main');
+  const standVorher = kasten ? kasten.scrollTop : 0;
   const gezeigt = zeigeBildschirm(name);
 
   if (opt.ausHistorie) return;               // von popstate ausgeloest, nichts ablegen
-  const tiefe = (history.state && typeof history.state.tiefe === 'number') ? history.state.tiefe : 0;
+  const alt = history.state || {};
+  const tiefe = (typeof alt.tiefe === 'number') ? alt.tiefe : 0;
   if (opt.ersetzen || schonDa){
     history.replaceState({ screen: gezeigt, tiefe }, '');
   } else {
+    /* Erst den verlassenen Eintrag um seinen Stand ergaenzen, dann den neuen
+       anlegen. Object.assign, damit `sure` und `suche` des Quran-Lesers dabei
+       nicht verlorengehen. */
+    history.replaceState(Object.assign({}, alt, { rollstand: standVorher }), '');
     history.pushState({ screen: gezeigt, tiefe: tiefe + 1 }, '');
   }
 }
@@ -82,13 +109,41 @@ function showScreen(name, opt){
 window.addEventListener('popstate', (e)=>{
   const st = e.state || {};
   const ziel = st.screen || 'home';
+  /* VOR showScreen() ablesen: renderSurahList() setzt OFFENE_SURE gleich auf
+     null, danach waere nicht mehr zu erkennen, ob wir aus einer Sure kommen. */
+  const kamAusSure = (typeof OFFENE_SURE !== 'undefined' && OFFENE_SURE !== null);
   showScreen(ziel, { ausHistorie: true });
   /* Der Quran-Leser hat Ebenen INNERHALB seines Bildschirms - eine geoeffnete
      Sure und eine laufende Suche. showScreen() stellt immer die Surenliste her;
      was darueber lag, zieht js/quran.js nach. Ohne das spraenge die
      Zurueck-Taste aus einer Sure ueber die ganze Liste hinweg zur Startseite
      (Elias, 04.08.2026). */
-  if (ziel === 'quranfull' && typeof stelleQuranEbeneHer === 'function') stelleQuranEbeneHer(st);
+  if (ziel === 'quranfull' && typeof stelleQuranEbeneHer === 'function'){
+    stelleQuranEbeneHer(st);
+    /* Drei Wege enden hier, und nur einer braucht den allgemeinen Rollstand:
+       - aus einer Sure zurueck in die Liste: LISTEN_ROLLSTAND hat das schon
+         erledigt, und zwar feiner - er unterscheidet Liste, Suche und Sure;
+       - zurueck in eine OFFENE Sure: openSurah() springt ueber LESESTAND auf
+         die Ayah, nicht auf einen Pixelwert. Der waere nach dem Neuaufbau der
+         Verse ohnehin bedeutungslos;
+       - von einem ANDEREN Bildschirm zurueck in die Surenliste: da stellt
+         niemand etwas wieder her. Gemessen am 16.08.2026: Liste auf 400,
+         Statistik geoeffnet, Zurueck-Taste -> Stand 0. Genau dieser Weg faellt
+         deshalb unten durch. */
+    if (kamAusSure || st.sure) return;
+  }
+  /* Ueberall sonst: den beim Verlassen gemerkten Rollstand wiederherstellen.
+     NACH showScreen(), denn zeigeBildschirm() springt zuerst nach oben und baut
+     den Bildschirm neu auf - davor waere der Kasten noch zu kurz und der Wert
+     wuerde auf die alte Hoehe beschnitten.
+
+     ⚠️ scrollTo({behavior:'instant'}) und nicht `scrollTop = x`: #main traegt
+     `scroll-behavior:smooth`, das gilt auch fuer eine Zuweisung. Sonst faehrt
+     der Bildschirm bei jedem Zurueck sichtbar von oben nach unten. */
+  if (typeof st.rollstand === 'number' && st.rollstand > 0){
+    const kasten = document.getElementById('main');
+    if (kasten) kasten.scrollTo({ top: st.rollstand, behavior: 'instant' });
+  }
 });
 
 /* Der Zurueck-Pfeil in der App verhaelt sich genauso wie die Geraetetaste -

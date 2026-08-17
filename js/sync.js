@@ -27,9 +27,20 @@
  */
 
 const SYNC_SCHLUESSEL = [
-  'vt_progress', 'vt_notes', 'vt_settings', 'vt_streak',
+  /* ⚠️ Reihenfolge zaehlt: 'vt_settingsFeld' MUSS nach 'vt_settings' stehen.
+     Der Einstellungs-Merge liest den lokalen Feldstempel; wuerde der vorher
+     schon mit dem fremden vereinigt, gaebe es keinen Unterschied mehr zu
+     messen und das andere Geraet gewaenne immer. */
+  'vt_progress', 'vt_notes', 'vt_settings', 'vt_settingsFeld', 'vt_streak',
   'vt_personalVocab', 'vt_customCats', 'vt_hifz', 'vt_hifzVerse',
-  'vt_quranFav', 'vt_lesestand'
+  'vt_quranFav', 'vt_lesestand',
+  /* Der Tageszaehler des Hoermodus (17.08.2026). Er gehoert dazu, weil Elias
+     auf Tablet UND Handy uebt: ohne Abgleich haette er zwei getrennte
+     Tagesziele und muesste jedes doppelt machen. ⚠️ Wie alles ausser
+     `vt_progress` wird er als ein Block gemergt - der juengere Stempel gewinnt.
+     Bei einem Zaehler, der ohnehin nur waehrend des Uebens waechst, ist das
+     tragbar: gewinnt das Geraet, an dem gerade geuebt wurde. */
+  'vt_hoerTag'
 ];
 
 /* Je Schluessel merken, wann er zuletzt lokal geaendert wurde. Ohne das kann
@@ -116,6 +127,23 @@ function fuehreFortschrittZusammen(hier, dort){
   return raus;
 }
 
+/* Einstellungen feldweise mischen. Für jedes Feld entscheidet SEIN eigener
+   Stempel, nicht der des ganzen Blocks.
+
+   ⚠️ Kennt eine Seite ein Feld gar nicht, wird der fremde Wert uebernommen -
+   sonst kaeme eine neu hinzugekommene Einstellung nie auf das andere Geraet.
+   Bei Gleichstand bleibt das Lokale stehen: lieber nichts anfassen. */
+function fuehreEinstellungenZusammen(hier, dort, stempelHier, stempelDort){
+  const raus = Object.assign({}, hier || {});
+  Object.keys(dort || {}).forEach(f => {
+    const a = (stempelHier && stempelHier[f]) || 0;
+    const b = (stempelDort && stempelDort[f]) || 0;
+    if (b > a) raus[f] = dort[f];
+    else if (!(f in raus)) raus[f] = dort[f];
+  });
+  return raus;
+}
+
 function fuehreZusammen(fern){
   const meine = syncStempel();
   const fremde = (fern && fern.stempel) || {};
@@ -132,6 +160,33 @@ function fuehreZusammen(fern){
       return;
     }
     if (hierRoh === dortRoh) return;
+
+    /* ⭐ Einstellungen FELDWEISE, nicht als Block - siehe die lange Begruendung
+       bei saveSettings() in js/kern.js. Ohne das verteidigt ein Kapitel-Chip
+       die alte Lernrichtung gegen die neuere vom anderen Geraet. */
+    if (k === 'vt_settings'){
+      try {
+        const zusammen = fuehreEinstellungenZusammen(
+          JSON.parse(hierRoh), JSON.parse(dortRoh),
+          (typeof settingsFeldStempel === 'function') ? settingsFeldStempel() : {},
+          JSON.parse(fernDaten['vt_settingsFeld'] || '{}'));
+        const neu = JSON.stringify(zusammen);
+        if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
+      } catch (e){ /* kaputtes JSON auf einer Seite: lokal behalten */ }
+      return;
+    }
+    /* Die Stempelkarte selbst: je Feld der spaetere gewinnt. Sie steht in
+       SYNC_SCHLUESSEL NACH vt_settings, damit oben noch der eigene Stand gilt. */
+    if (k === 'vt_settingsFeld'){
+      try {
+        const a = JSON.parse(hierRoh), b = JSON.parse(dortRoh);
+        const raus = Object.assign({}, a);
+        Object.keys(b).forEach(f => { if ((b[f]||0) > (raus[f]||0)) raus[f] = b[f]; });
+        const neu = JSON.stringify(raus);
+        if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
+      } catch (e){ }
+      return;
+    }
 
     if (k === 'vt_progress'){
       try {

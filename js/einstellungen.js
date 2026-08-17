@@ -101,6 +101,7 @@ document.getElementById('voiceSelect').addEventListener('change', (e)=>{
 const SICHERUNGS_SCHLUESSEL = [
   'vt_progress', 'vt_notes', 'vt_settings', 'vt_streak',
   'vt_personalVocab', 'vt_customCats', 'vt_hifz', 'vt_hifzVerse',
+  'vt_hoerTag',   /* Tageszaehler Hoermodus, 17.08.2026 */
   /* Beide am 04.08.2026 nachgetragen. `vt_quranFav` (Favoriten-Suren) war seit
      seiner Einfuehrung am selben Tag nicht dabei - aufgefallen erst, als
      `vt_lesestand` dazukam und die Liste noch einmal gelesen wurde. Wer eine
