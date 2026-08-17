@@ -614,6 +614,148 @@ const ESELSBRUECKEN_ALT = {
   '45840': [
     'Nimm den Satz, er verbindet drei Vokabeln: هَذِهِ حَقِيبَةُ الطَّالِبِ — „das ist die Tasche des Studenten". Und er ist eine إِضافة zum Anfassen: حَقِيبَةُ ohne اَلْ und ohne Tanwīn, الطَّالِبِ im Genitiv dahinter. Was in الْكِتَابُ فِي الْحَقِيبَةِ steckt, hast du damit gleich mit.',
     '⚠️ Der Plural hat eine Hamzah mitten im Wort: حَقِيبَةٌ → حَقَائِبُ, ḥa-qā-ʾib. Genau dasselbe Muster wie bei دُكَّانٌ → دَكَاكِينُ und مَطْبَخٌ → مَطَابِخُ: langes ā nach dem ersten Buchstaben, dann ein Kasra vor dem letzten. Und alle drei ohne Tanwīn.'
+  ],
+
+  /* ===================== Kapitel 6 — Haushalt, Familie, Körper ====== */
+
+  /* مِكْوَاةٌ - Bügeleisen */
+  '45841': [
+    'Das Werkzeug-مِـ ist hier das ganze Wort: مِفْتَاحٌ (Schlüssel), مِلْعَقَةٌ (Löffel), مِنْدِيلٌ (Tuch), مِرْحَاضٌ (Toilette) — alle hast du, alle fangen mit مِـ an. Das Muster heißt „das Ding, mit dem man …". Wer die Wurzel kennt, rät das Werkzeug richtig.',
+    'Die Wurzel ك و ي bedeutet brennen und bügeln — ein Bügeleisen ist heiß. ⚠️ Das و in der Mitte ist schwach: im Wort selbst ist es sichtbar (مِكْوَاة), aber es verhält sich anders als ein normaler Buchstabe. Solche Wurzeln kommen dir noch öfter unter; hier siehst du eine zum ersten Mal.'
+  ],
+
+  /* بَقَرَةٌ - Kuh */
+  '45842': [
+    'Du kennst das Wort seit Jahren, nur nie als Vokabel: Sure 2 heißt الْبَقَرَة — „die Kuh", die längste Sure des Korans. Jedes Mal, wenn du sie im Inhaltsverzeichnis siehst, siehst du deine Vokabel.',
+    '⚠️ Die تاء مَرْبُوطة macht hier nicht nur „weiblich", sondern das EINZELNE Stück: بَقَرٌ ist das Rindvieh als Gattung, بَقَرَةٌ die eine Kuh. Dasselbe Paar siehst du bei حَجَرٌ → حِجَارَةٌ mitgedacht. Merke: das ة kann auch „eine einzelne davon" heißen.'
+  ],
+
+  /* دَرَّاجَةٌ - Fahrrad */
+  '45843': [
+    'Drei Maschinen, ein Muster فَعَّالَة, und du hast alle drei: سَيَّارَةٌ (Auto), دَرَّاجَةٌ (Fahrrad), ثَلَّاجَةٌ (Kühlschrank). Immer eine شَدَّة in der Mitte, immer eine تاء مَرْبُوطة am Ende. Wenn dir ein neues Gerät begegnet, ist die Chance groß, dass es genauso gebaut ist.',
+    'Die Wurzel د ر ج heißt Stufe und Grad — daher دَرَجَة, die Stufe oder Note. Ein Fahrrad ist „das mit den Stufen", also den Gängen. ⭐ Und im Glauben begegnet dir dieselbe Wurzel als دَرَجَات, die Rangstufen im Paradies.'
+  ],
+
+  /* مِلْعَقَةٌ - Löffel */
+  '45844': [
+    'Werkzeug-مِـ, und die Wurzel ل ع ق heißt lecken — der Löffel ist wörtlich „das Ding zum Lecken". ⭐ Zusammen mit مِفْتَاحٌ (das Ding zum Öffnen) und مِكْوَاةٌ (das Ding zum Bügeln) hast du drei Werkzeuge nach demselben Bauplan. Das Muster ist die Vokabel, nicht das Einzelwort.',
+    '⚠️ Der Plural bricht auf und verliert das مِـ-Muster nicht, aber die Vokale wechseln alle: مِلْعَقَةٌ → مَلَاعِقُ, ma-lā-ʿiq. Dasselbe Muster wie مَطْبَخٌ → مَطَابِخُ und حَقِيبَةٌ → حَقَائِبُ. Drei Wörter, ein Pluralmuster — sprich sie hintereinander.'
+  ],
+
+  /* فَلَّاحٌ - Bauer */
+  '45845': [
+    'Du hörst die Wurzel fünfmal am Tag: حَيَّ عَلَى الْفَلَاحِ im Adhān — „auf zum Erfolg". Dieselbe Wurzel ف ل ح steckt im فَلَّاح. Der Bauer pflügt, und wer pflügt, hat Erfolg — das Bild trägt beide Bedeutungen.',
+    'Muster فَعَّال für Berufe: der, der etwas VIEL tut. ⚠️ Nicht mit dem Maschinenmuster فَعَّالَة verwechseln — der Unterschied ist nur die تاء مَرْبُوطة: فَلَّاحٌ ist ein Mensch, ثَلَّاجَةٌ ein Gerät. Ein Buchstabe entscheidet, ob es jemand oder etwas ist.'
+  ],
+
+  /* أُمٌّ - Mutter */
+  '45846': [
+    'Der bekannteste Ausdruck damit ist einer, den du kennst: أُمُّ الْقُرَى, „die Mutter der Städte" — Mekka. Und die Fātiḥa heißt أُمُّ الْكِتَابِ, die Mutter des Buches. „Mutter" heißt im Arabischen also auch „Ursprung, Hauptsache". Beides sind إِضافة-Verbindungen, wie du sie gerade lernst.',
+    '⚠️ Der Plural ist besonders und lohnt sich: أُمٌّ → أُمَّهَاتٌ, mit einem ه, das im Singular nirgends steht. Sprich ihn laut: um-ma-hāt. Und die شَدَّة verrät die Wurzel أ م م — zwei م, im Singular zu einem zusammengezogen, genau wie bei عَمٌّ.'
+  ],
+
+  /* أَبٌ - Vater */
+  '45847': [
+    'In Sūrat al-Masad, die du auswendig kannst, steht das Wort als Namensteil: أَبِي لَهَبٍ (111:1) — „Abū Lahab". Das أَبِي ist dein أَبٌ im Genitiv, weil es Teil einer إِضافة ist. Ein Vers, den du sowieso sprichst, mit deiner Vokabel darin.',
+    '⚠️ Zwei Wörter deiner Liste verhalten sich gleich und gehören zusammen gelernt: أَبٌ und أَخٌ verlängern sich zu أَبُو und أَخُو, sobald etwas folgt — أَبُو بَكْرٍ, أَخُو مُحَمَّدٍ. Allein stehen sie kurz, in einer إِضافة werden sie lang. Das ist keine Ausnahme, das ist ihre Art.'
+  ],
+
+  /* ثَلَّاجَةٌ - Kühlschrank */
+  '45848': [
+    'Die Wurzel ist das Beste an diesem Wort: ث ل ج heißt Schnee. Der Kühlschrank ist wörtlich „die Schneemacherin". Wenn du das Bild einmal hast, brauchst du die Vokabel nicht mehr — du leitest sie her.',
+    'Maschinenmuster فَعَّالَة, dritter im Bunde mit سَيَّارَةٌ und دَرَّاجَةٌ. ⚠️ Alle drei sind weiblich (تاء مَرْبُوطة), also brauchen ihre Adjektive auch ein ة: ثَلَّاجَةٌ جَدِيدَةٌ, nicht جَدِيدٌ. Die vier Bedingungen des نَعْت gelten hier ganz praktisch.'
+  ],
+
+  /* شَايٌ - Tee */
+  '45849': [
+    'Das Wort ist in fast allen Sprachen ähnlich — Tee, chai, شَاي. ⚠️ Achte auf die Endung: شَايٌ endet auf ي mit Tanwīn, nicht auf ة. Es ist männlich, deshalb heißt es الشَّايُ حَارٌّ und nicht حَارَّةٌ.',
+    'Die Getränke stehen bei dir über die Kapitel verstreut: لَبَنٌ (K2), مَاءٌ (K3), شَايٌ und قَهْوَةٌ (K6). Bau daraus einen Satz mit deinen Adjektiven: شَايٌ حَارٌّ, مَاءٌ بَارِدٌ, لَبَنٌ حُلْوٌ. Vier Getränke, drei Eigenschaften — und du übst nebenbei die Angleichung.'
+  ],
+
+  /* غَرْبٌ - Westen */
+  '45850': [
+    'Das Gebet trägt das Wort: الْمَغْرِب ist der Ort und die Zeit des Sonnenuntergangs, also des Westens — dieselbe Wurzel غ ر ب. Wenn du an Maghrib denkst, hast du die Himmelsrichtung. ⭐ Und der Staat Marokko heißt الْمَغْرِب, weil er ganz im Westen liegt.',
+    'Merke das Paar über die Sonne: die Sonne kommt aus dem شَرْق (Osten) — dieselbe Wurzel wie in إِشْرَاق, dem Aufgehen — und geht im غَرْب unter. Zwei Wörter, eine Bewegung über den Himmel. Beide hast du als Vokabel.'
+  ],
+
+  /* قَهْوَةٌ - Kaffee */
+  '45851': [
+    '⚠️ Der zweite Buchstabe ist ه, der gehauchte Laut, nicht das kratzige ح: qah-wa. Sprich es einmal übertrieben mit Ausatmen in der Mitte. Wer stattdessen ح sagt, sagt ein anderes Wort — dieselbe Falle wie bei حَمَّامٌ gegen الْهِنْد.',
+    'Das Wort ist weiblich (تاء مَرْبُوطة), also: قَهْوَةٌ حَارَّةٌ mit ة am Adjektiv. Vergleiche mit شَايٌ حَارٌّ ohne ة — dasselbe Adjektiv, zwei Formen, weil die Getränke verschiedenes Geschlecht haben. Ein Paar, an dem man die Regel نَعْت sofort sieht.'
+  ],
+
+  /* أَنْفٌ - Nase */
+  '45852': [
+    'Geh die Wuḍūʾ-Reihenfolge durch, dann hast du fünf Vokabeln in einer Bewegung: يَدٌ (Hände), فَمٌ (Mund), أَنْفٌ (Nase), وَجْه, يَدٌ, رَأْس, أُذُنٌ (Ohren), رِجْلٌ (Füße). Die fünf, die du als Vokabel hast, kommen dabei alle vor — üb sie in der Reihenfolge, nicht alphabetisch.',
+    'Der Plural ist unerwartet: أَنْفٌ → أُنُوفٌ, mit ū statt ā. Vergleiche mit عَيْنٌ → عُيُونٌ und قِدْرٌ → قُدُورٌ — dasselbe Muster فُعُول. Drei Körper- und Haushaltswörter, ein Plural. ⚠️ Und أَفْوَاهٌ zu فَمٌ fällt genau NICHT darunter.'
+  ],
+
+  /* فَمٌ - Mund */
+  '45853': [
+    'Das kürzeste Wort deiner Liste: nur ف und م. ⚠️ Und der Plural sieht aus wie von einem anderen Wort: فَمٌ → أَفْوَاهٌ, mit einem و, das im Singular gar nicht vorkommt. Das ist kein Fehler — der Singular hat den Buchstaben verloren, nicht der Plural ihn dazuerfunden.',
+    'Merke es in der Wuḍūʾ-Gruppe mit أَنْفٌ (Nase): beim Waschen kommen Mund und Nase direkt nacheinander. Zwei Vokabeln, eine Handbewegung, die du ohnehin jeden Tag machst.'
+  ],
+
+  /* قِدْرٌ - Kochtopf */
+  '45854': [
+    '⭐ Die Wurzel ق د ر trägt eine der bekanntesten Suren, die du auswendig kannst: لَيْلَةِ ٱلْقَدْرِ (97:1) — die Nacht der Bestimmung. Ein قَدَر ist ein Maß, eine Bestimmung; ein قِدْر ist das Gefäß mit einem bestimmten Maß. Küchentopf und Schicksal aus derselben Wurzel — das vergisst man nicht.',
+    'Der Plural قُدُورٌ folgt dem Muster فُعُول wie أُنُوفٌ (Nasen) und عُيُونٌ (Augen), die du beide hast. ⚠️ Und nicht mit قَدِيمٌ (alt) verwechseln — das hat die Wurzel ق د م mit م am Ende, nicht ر.'
+  ],
+
+  /* أُذُنٌ - Ohr */
+  '45855': [
+    '⭐ Die stärkste Verknüpfung deiner ganzen Liste: أُذُنٌ (Ohr) und مُؤَذِّنٌ (Gebetsrufer) haben dieselbe Wurzel أ ذ ن. Der Muezzin ruft in die Ohren. Und derselbe Stamm heißt auch „Erlaubnis" — in Sūrat al-Qadr steht بِإِذْنِ رَبِّهِم (97:4), „mit der Erlaubnis ihres Herrn". Wer zuhört, gehorcht.',
+    'Der Plural ist آذَانٌ mit einem Madda-Alif am Anfang. ⚠️ Verwechslungsgefahr: أَذَان (der Gebetsruf) und آذَان (Ohren) sehen fast gleich aus und unterscheiden sich nur im ersten Zeichen. Beides gehört zur selben Wurzel — der Ruf und das, was ihn hört.'
+  ],
+
+  /* عَيْنٌ - Auge */
+  '45856': [
+    'In Sūrat at-Takāthur, die du auswendig kannst, steht dein Wort wörtlich: عَيْنَ ٱلْيَقِينِ (102:7) — „mit dem Auge der Gewissheit". Eine إِضافة, wie du sie gerade lernst: erstes Wort ohne Tanwīn, zweites im Genitiv.',
+    'عَيْنٌ heißt Auge UND Quelle — beides Stellen, aus denen Wasser kommt. ⭐ Genau das steht am Ende von 67:30, das du kennst: بِمَآءٍ مَّعِينٍ, „mit hervorquellendem Wasser". Dieselbe Wurzel ع ي ن. Ein Wort, zwei Bilder, und der Koran benutzt beide.'
+  ],
+
+  /* يَدٌ - Hand */
+  '45857': [
+    'Sūrat al-Masad beginnt damit, und du kannst sie auswendig: تَبَّتْ يَدَآ أَبِي لَهَبٍ (111:1) — „zugrunde gehen sollen die Hände Abū Lahabs". يَدَا ist der Dual, also genau ZWEI Hände. Dein Wort, dein Vers, und nebenbei die Dualform.',
+    '⚠️ Der Plural أَيْدٍ endet auf ein Tanwīn ohne sichtbaren Buchstaben — das ist die Stolperstelle, nicht das kurze Wort selbst. Sprich ihn: ay-din. Solche Endungen kommen bei Wörtern vor, deren letzter Wurzelbuchstabe schwach ist; يَدٌ hat die Wurzel ي د ي.'
+  ],
+
+  /* رِجْلٌ - Bein / Fuß */
+  '45858': [
+    '⚠️ Dein wichtigster Verwechslungsfall überhaupt: رِجْلٌ (Bein) und رَجُلٌ (Mann) bestehen aus denselben drei Buchstaben ر ج ل. Nur die Vokale trennen sie: RIDSCH-l gegen RA-DSCHUL. Deshalb immer laut sprechen, nie nur lesen — ohne Taschkīl sieht man den Unterschied nicht.',
+    'Der Plural hilft beim Trennen, weil er ganz verschieden ist: رِجْلٌ → أَرْجُلٌ (Beine), رَجُلٌ → رِجَالٌ (Männer). Sprich alle vier hintereinander: riǧl – arǧul – raǧul – riǧāl. Wer die Plurale kann, verwechselt die Singulare nicht mehr.'
+  ],
+
+  /* سَرِيعٌ - schnell */
+  '45859': [
+    'Muster فَعِيل wie das halbe Kapitel 3 — كَبِير, صَغِير, قَرِيب, جَمِيل. ⭐ Und der Plural läuft wie dort: سَرِيعٌ → سِرَاعٌ, genau wie طَوِيلٌ → طِوَالٌ und قَصِيرٌ → قِصَارٌ. Ein Muster für Singular und Plural gleichzeitig.',
+    'Von derselben Wurzel س ر ع kommt أَسْرَعَ (sich beeilen) und سُرْعَة (die Geschwindigkeit) — das Wort, das auf Verkehrsschildern steht. Wer die Wurzel hat, liest auch das Schild.'
+  ],
+
+  /* نَافِذَةٌ - Fenster */
+  '45860': [
+    'Die Wurzel ن ف ذ heißt durchdringen — ein Fenster ist die Stelle, durch die Licht und Luft DURCHGEHEN. ⭐ Von derselben Wurzel kommt نُفُوذ, der Einfluss: etwas, das durchdringt. Bild und Wort passen so genau zusammen, dass man es nicht mehr auswendig lernen muss.',
+    'Muster فَاعِلَة, also die weibliche Form von فَاعِل — dasselbe Muster wie جَالِسٌ und وَاقِفٌ, nur mit تاء مَرْبُوطة. ⚠️ Der Plural bricht auf zu نَوَافِذُ, mit einem و, das im Singular fehlt. Sprich beide: nā-fi-dha, na-wā-fidh.'
+  ],
+
+  /* شَرْقٌ - Osten */
+  '45861': [
+    'Die Sonne macht die Eselsbrücke: sie geht im شَرْق auf und im غَرْب unter. Von شَرْق kommt إِشْرَاق, das Aufgehen — und der Name اَلشَّرْق الْأَوْسَط, der Nahe Osten, wörtlich „der mittlere Osten". Ein Wort, das dir in jeder Nachrichtensendung begegnet.',
+    '⚠️ Der erste Buchstabe ش hat drei Punkte und wird „sch" gesprochen — nicht zu verwechseln mit س. Im Paar mit غَرْب: das غ ist der Gurgellaut hinten im Hals. Zwei Himmelsrichtungen, zwei Laute, die es im Deutschen so nicht gibt. Beide einmal übertrieben sprechen.'
+  ],
+
+  /* أَخٌ - Bruder. ⚠️ Die beiden letzten Woerter dieses Kapitels tragen KEINE
+     Zahl als Id, sondern einen sprechenden Schluessel - sie stammen aus dem
+     Madina-Schluessel und nicht aus dem arabicroots-Abzug. */
+  'madina1-l6-ach': [
+    '⚠️ أَبٌ und أَخٌ verhalten sich gleich und gehören zusammen gelernt: beide verlängern sich, sobald etwas folgt — أَبُو بَكْرٍ, أَخُو مُحَمَّدٍ. Allein stehen sie kurz (أَبٌ, أَخٌ), in einer إِضافة werden sie lang. Wer eines kann, kann beide.',
+    'Der Begriff, der es festhält, ist einer, den du oft hörst: أَخٌ فِي الْإِسْلَام, der Bruder im Islam — und die Anrede يَا أَخِي, „o mein Bruder". Das يَا davor ist die Rufpartikel aus deinen Regeln, das ـِي am Ende heißt „mein". Ein Ausdruck, drei Bausteine.'
+  ],
+
+  /* أُخْتٌ - Schwester */
+  'madina1-l6-ucht': [
+    '⚠️ Wie بِنْتٌ endet auch أُخْتٌ auf ein echtes ت mit Sukūn, NICHT auf die تاء مَرْبُوطة ة. Beide sind weiblich, ohne es zu zeigen — dein Lehrer nennt solche Wörter مؤنث بلا تاء. Merke die zwei als Paar, dann ist die Ausnahme nur einmal zu lernen.',
+    'Der Unterschied zum Bruder steckt allein im Vokal und im ت: أَخٌ mit Fatḥah, أُخْتٌ mit Ḍammah. Sprich sie hintereinander — ach, ucht. Und die Anrede läuft parallel: يَا أَخِي für den Bruder, يَا أُخْتِي für die Schwester.'
   ]
 
 };
