@@ -210,7 +210,22 @@ console.log('=== 4. „das hast du auch" — steht das Wort wirklich im Lernbest
          73 Grammatikregeln enthalten Woerter, die nicht im Lernbestand stehen,
          und sie dort zu nennen ist richtig. */
       if (/deine[nrm]?\s+(Regeln?|Folgen|Unterricht|Stunden?)/i.test(satz)) continue;
-      if (!/\bhast du\b|\bdu hast\b|\bdeine[nr]?\b|\bdein\b/i.test(satz)) continue;
+      /* Ein ausdruecklicher Vorbehalt hebt die Behauptung auf. Genau so ist
+         der Fall مَفْتُوح gemeint: „auch wenn das Wort noch nicht in deinen
+         Vokabeln steht". Ohne diese Zeile kann man einen ehrlichen Hinweis
+         gar nicht schreiben, ohne dass die Pruefung Alarm schlaegt - und eine
+         Pruefung, die korrektes Verhalten bestraft, wird abgeschaltet. */
+      if (/noch nicht|nicht in deinen|hast du nicht|steht (das )?(wort )?nicht/i.test(satz)) continue;
+      /* ⚠️ Die erste Fassung hiess `\bdeine[nr]?\b|\bhast du\b` und liess
+         „deines" und „das du auch hast" durch - beides kommt in echten Texten
+         staendig vor. Aufgefallen ist es nur an der GEGENPROBE: den Vorbehalt
+         aus einem Text herausgenommen, und die Pruefung blieb gruen. Eine
+         Pruefung, die man nicht absichtlich zum Ausschlagen bringt, misst
+         moeglicherweise nichts. */
+      const besitz = /\bdein(e|er|es|en|em)?\b/i.test(satz)
+                  || /\bhast du\b/i.test(satz)
+                  || /\bdu\b[^.]{0,40}\bhast\b/i.test(satz);
+      if (!besitz) continue;
       behauptungen++;
       if (!bekannt.has(flach(wort)))
         melde(`${t.wort} (${t.quelle}): „${wort} (${glosse})" wird als bekanntes Wort vorgestellt, steht aber NICHT im Lernbestand`);
