@@ -172,16 +172,18 @@ function luecke(wort, i){
 }
 
 /* ---------- Datendateien laden ---------- */
-let VOCAB_DATA = null, LEHRBUCH_SAETZE = null, SURAH_DATA = null;
+let VOCAB_DATA = null, LEHRBUCH_SAETZE = null, SURAH_DATA = null,
+    GRAMMAR_RULES = null;
 try {
   let code = '';
-  for (const f of ['vocab-data.js', 'lehrbuch-saetze.js', 'surah-data.js'])
+  for (const f of ['vocab-data.js', 'lehrbuch-saetze.js', 'surah-data.js',
+                   'grammar-data.js'])
     code += fs.readFileSync(path.join(DIR, f), 'utf8') + '\n';
-  code += 'globalThis.__D = { VOCAB_DATA, LEHRBUCH_SAETZE, SURAH_DATA };';
+  code += 'globalThis.__D = { VOCAB_DATA, LEHRBUCH_SAETZE, SURAH_DATA, GRAMMAR_RULES };';
   const ctx = {};
   vm.createContext(ctx);
   vm.runInContext(code, ctx);
-  ({ VOCAB_DATA, LEHRBUCH_SAETZE, SURAH_DATA } = ctx.__D);
+  ({ VOCAB_DATA, LEHRBUCH_SAETZE, SURAH_DATA, GRAMMAR_RULES } = ctx.__D);
 } catch (e) {
   console.error('Datendateien nicht ausfuehrbar: ' + e.message);
   process.exit(1);
@@ -226,6 +228,85 @@ VOCAB_DATA.forEach(w => { woerterGeprueft += pruefeEintrag(w, 'vocab-data.js'); 
    der Suchname und die Rueckfallebene. Deshalb eine eigene Runde mit eigenem
    Feld statt surah-data.js in FELDER aufzunehmen: sonst meldete das Skript
    114 Luecken, die keine sind. */
+/* ---------- Grammatikregeln, seit 18.08.2026 ----------
+ *
+ * ⭐ Warum das ueberhaupt dazukam: Ein Pruefagent hat am 18.08.2026 in
+ * `nakira-marifa-01` neun unvokalisierte Woerter gefunden - in gewoehnlichen
+ * Beispiellisten, direkt neben vollvokalisiertem Buchzitat im selben Satz. Der
+ * Fehler war unsichtbar, obwohl es dieses Skript gibt: grammar-data.js stand
+ * einfach nicht in seinem Geltungsbereich. **Ein Pruefskript, das die Datei
+ * nicht kennt, ist kein Schutz - es ist eine Beruhigung.**
+ *
+ * ⚠️ NUR "Haraka fehlt" wird gemeldet, "Endung fehlt" NICHT. Grund: Der
+ * Bestand zitiert Fachbegriffe in der Pausalform ohne Kasusendung
+ * (مُبْتَدَأ, خَبَر, ظَرْف, نَعْت) - gemessen in 19,5 % der arabischen Woerter
+ * der 73 Unterrichtsregeln. Das ist Hauskonvention, kein Mangel. Wuerde die
+ * Endung mitgemeldet, kaeme eine dreistellige Zahl von Nichtbefunden heraus -
+ * und eine Meldung, die immer erscheint, liest bald niemand mehr.
+ */
+const REGEL_FELDER = ['name', 'shortExplanation'];
+const HARAKA_IRGENDEINE = /[ً-ْٰ]/;
+
+/* ⚠️ GEMESSEN am 18.08.2026, bevor der Massstab festgelegt wurde - genau das
+ * war noetig, denn der erste Entwurf war unbrauchbar:
+ *
+ *   Massstab "irgendwo fehlt eine Haraka"      -> 223 Meldungen in 61 von 84 Regeln
+ *   Massstab "Wortkoerper voellig unvokalisiert" ->  41 Meldungen
+ *   Ein-Buchstabe-Token (Buchstabenzitate)      ->  48, muessen raus
+ *
+ * Die 223 waren zum groessten Teil keine Fehler: Der ganze Bestand schreibt
+ * lange Vokale ohne Haraka davor (حُروف statt حُرُوف) - in 63 verschiedenen
+ * Woertern, teils in Regeln, die genau davon handeln. Das ist Hauskonvention.
+ * Eine Meldung, die bei 61 von 84 Regeln anschlaegt, wird nicht gelesen; sie
+ * haette die Pruefung wertlos gemacht, statt sie einzufuehren.
+ *
+ * Gemeldet wird deshalb nur der eindeutige Fall: ein Wort, dessen Koerper
+ * KEIN EINZIGES Vokalzeichen traegt. Das war der Befund vom 18.08. (بيتٌ،
+ * قلمٌ، رجلٌ، بنتٌ in nakira-marifa-01) und er ist ohne Auslegung erkennbar.
+ */
+const REGEL_AUSNAHMEN = [
+  { name: 'Buchstabenzitat',
+    /* "ة", "ت", "و" - ein einzelner Buchstabe wird als Buchstabe genannt, nicht
+       als Wort. Er kann gar keine Haraka tragen. 48 Vorkommen. */
+    trifft: w => [...w].filter(c => KONSONANT.test(c)).length < 2 },
+  { name: 'Lafz al-Jalala',
+    /* الله / اللهِ wird herkoemmlich ohne vollstaendige Vokalisierung
+       geschrieben; so steht es auch in den Lehrbuchsaetzen. */
+    trifft: w => /^ا?ل?ل[هﻪ]/.test(w.replace(HARAKA_IRGENDEINE, '')) },
+  { name: 'Artikel als Zitat',
+    /* "اَلْ" / "الْ" - der Artikel wird als Baustein genannt. Sein Sukun sitzt
+       auf dem letzten Zeichen, das der Koerper-Test nicht ansieht. */
+    trifft: w => w.replace(HARAKA_IRGENDEINE, '') === 'ال' },
+];
+
+const regelBefunde = [];
+let regelWoerter = 0, regelAusgenommen = 0;
+(GRAMMAR_RULES || []).forEach(r => {
+  REGEL_FELDER.forEach(feld => {
+    const wert = r[feld];
+    if (typeof wert !== 'string' || !wert.trim()) return;
+    woerterAus(wert).forEach(rohwort => {
+      /* ⚠️ woerterAus trennt nicht an Klammern und ASCII-Komma - in deutschem
+         Fliesstext stehen arabische Woerter aber genau so: "(في)" und "جر,".
+         Ohne diesen Schritt melden sie eine Luecke, die nur ein Satzzeichen ist.
+         Nicht in woerterAus selbst geaendert: dort haengen die anderen Runden
+         dran, und die sind an ihren Zahlen geeicht. */
+      const wort = rohwort.replace(/^[\s(«"'‹„]+|[\s),.;:!?«»"'›“]+$/g, '');
+      if (!wort) return;
+      regelWoerter++;
+      const a = REGEL_AUSNAHMEN.find(x => x.trifft(wort));
+      if (a) { regelAusgenommen++; return; }
+      /* Der Koerper ist alles ausser dem letzten Zeichen: die Kasusendung
+         allein macht ein Wort nicht vokalisiert. */
+      if (HARAKA_IRGENDEINE.test(wort.slice(0, -1))) return;
+      regelBefunde.push({
+        quelle: 'grammar-data.js', id: r.id, feld, wort,
+        grund: 'Wortkoerper ohne jedes Vokalzeichen',
+      });
+    });
+  });
+});
+
 const SURAH_FELDER = ['arTaschkil'];
 (SURAH_DATA || []).forEach(s => {
   SURAH_FELDER.forEach(feld => {
@@ -316,6 +397,26 @@ console.log(`${woerterGeprueft} arabische Woerter geprueft ` +
    Ein "alles vokalisiert" ohne diesen Satz war die eigentliche Falle. */
 console.log(`\nGeltungsbereich: vocab-data.js, lehrbuch-saetze.js, surah-data.js` +
             ` (${VOCAB_DATA.length} Lernwoerter).`);
+
+/* Die Regeln bekommen eine eigene Zeile mit eigener Zahl - nicht in die Summe
+   oben gemischt. Sonst waere nach dem naechsten gruenen Lauf wieder unklar,
+   ob sie ueberhaupt geprueft wurden. */
+console.log(`Dazu grammar-data.js: ${(GRAMMAR_RULES || []).length} Regeln, ` +
+            `${regelWoerter} arabische Woerter in ${REGEL_FELDER.join(' + ')}, ` +
+            `${regelBefunde.length} Luecken` +
+            ` (Zitierform ohne Kasusendung zaehlt NICHT als Luecke).`);
+if (regelBefunde.length){
+  const nachRegel = {};
+  for (const b of regelBefunde) (nachRegel[b.id] = nachRegel[b.id] || []).push(b.wort);
+  console.log('=== Regeln mit unvokalisierten Woertern: ' +
+              Object.keys(nachRegel).length + ' ===');
+  for (const [id, w] of Object.entries(nachRegel)){
+    console.log(`  ${id}: ${[...new Set(w)].join(' · ')}`);
+  }
+  console.log('  ⚠️ Nicht selbst vokalisieren (E.1) - die Form im vorhandenen');
+  console.log('     Bestand nachschlagen: vocab-data.js und lehrbuch-saetze.js');
+  console.log('     kennen die meisten dieser Woerter voll vokalisiert.');
+}
 if (!buchDateien.length){
   console.log('Die acht data/vokabeln-*.js liegen hier nicht — auf Elias\' Geraet' +
               ' kommen von dort alle Kapitel ab 10 und sieben weitere Lehrwerke.' +

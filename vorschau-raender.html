@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ränder & Abgrenzung — Entwürfe</title>
+<!--
+  Gebaut am 18.08.2026 aus einer Messung im laufenden Browser, nicht aus dem CSS.
+
+  BEFUND: WCAG 1.4.11 verlangt, dass die Abgrenzung eines Bedienelements
+  mindestens 3,0 Kontrast zu seiner Umgebung hat. Über alle 11 Bildschirme
+  gemessen: 139 Bedienelemente in 6 Klassen erreichen das nicht.
+
+  ⚠️ Zwei Klassen sind AUSDRÜCKLICH KEIN Befund: .fav-stern (Symbol bei 4,87)
+  und .icon-btn (19,11) erfüllen die Regel über das Symbol, nicht über einen
+  Rand. Beim ersten Messlauf waren sie mitgezählt — 116 von 260 Meldungen waren
+  damit falsch.
+
+  ⭐ WARUM DIE ZAHLEN HIER NICHT IM QUELLTEXT STEHEN:
+  Die erste Fassung dieser Seite trug handgeschriebene Kontrastwerte in den
+  Merkern. Nachgemessen waren 12 von 20 falsch — Fassung B behauptete 3,06 und
+  erreichte 1,72, weil ich die Farben gegen die falsche Fläche gerechnet hatte.
+  Jetzt rechnet die Seite jeden Wert beim Laden aus dem GERENDERTEN Zustand.
+  Eine Zahl, die daneben steht, ist damit keine Behauptung mehr, sondern eine
+  Messung — und sie kann nicht mehr veralten, wenn jemand eine Farbe ändert.
+
+  ⭐ UND DIE BÜHNE HAT JE KLASSE DEN GRUND DER ECHTEN APP. Auch das war falsch:
+  .btn-secondary sitzt in der App auf --surface-1, die Vorschau zeigte ihn auf
+  --surface-2, und der "Ist"-Wert stimmte deshalb nicht (1,23 statt 1,31).
+  Eine Vorschau mit anderem Untergrund ist kein Vergleich.
+
+  Nichts hiervon ist eingebaut. Elias entscheidet.
+-->
+<style>
+  :root{
+    --bg:#000; --surface-1:#0b0b0c; --surface-2:#131315; --surface-3:#1b1b1e;
+    --text:#f4f4f5; --text-dim:#a1a1a8; --text-faint:#82828a;
+    --border:#26262b; --border-strong:#33333a;
+    --gruen:#3fa860;
+    /* GERECHNET, nicht geschätzt: erreicht 3,0 auf der jeweiligen Fläche */
+    --rand30-s1:#5d5d65; --rand30-s2:#616169;
+    --komp-s1:#48484f;   --komp-s2:#4a4a52;   /* rund 2,0 — bewusst unter AA */
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font:16px/1.55 'Inter',system-ui,sans-serif;padding:0 0 60px}
+  header{position:sticky;top:0;z-index:5;background:#000;
+         border-bottom:1px solid var(--border);padding:16px 20px}
+  h1{margin:0 0 6px;font-size:20px;font-weight:650;letter-spacing:-.01em}
+  .unter{color:var(--text-dim);font-size:14px;max-width:72ch}
+  main{max-width:1000px;margin:0 auto;padding:0 16px}
+  .hinweis{background:#0f1408;border:1px solid #2c3a12;border-left:3px solid var(--gruen);
+           padding:13px 16px;margin:18px 0;border-radius:7px;font-size:14px;color:#c8d3bb}
+  .hinweis b{color:#8fd67a}
+  h2{margin:34px 0 4px;font-size:17px;font-weight:600}
+  h2 span{color:var(--text-faint);font-weight:400;font-size:14px}
+  .wo{color:var(--text-faint);font-size:13px;margin-bottom:12px}
+
+  .reihe{display:grid;gap:12px;grid-template-columns:repeat(4,minmax(0,1fr))}
+  @media (max-width:820px){ .reihe{grid-template-columns:repeat(2,minmax(0,1fr))} }
+  @media (max-width:460px){ .reihe{grid-template-columns:1fr} }
+  .zelle{background:var(--surface-1);border-radius:9px;padding:13px;
+         display:flex;flex-direction:column;gap:9px;min-width:0}
+  .kopf{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+  .name{font-size:13px;font-weight:650;letter-spacing:.02em;text-transform:uppercase}
+  .k{font-size:13px;font-variant-numeric:tabular-nums;padding:1px 7px;border-radius:99px;
+     font-weight:650;white-space:nowrap}
+  .k.schlecht{background:#2a0f12;color:#ff8b9c}
+  .k.gut{background:#0f2416;color:#7fd89a}
+  .k.mittel{background:#2a2007;color:#e8c46a}
+  /* Grund je Bauteil — genau der, auf dem es in der App sitzt */
+  .buehne{border-radius:7px;padding:14px 12px;display:flex;flex-direction:column;
+          gap:10px;align-items:stretch}
+  .g-s1 .buehne{background:var(--surface-1)}
+  .g-s2 .buehne{background:var(--surface-2)}
+  .zelle.g-s1{background:#08080a}
+  .notiz{font-size:12.5px;color:var(--text-faint);min-height:3.2em}
+
+  .btn{font:inherit;font-size:14px;padding:8px 14px;border-radius:7px;
+       background:var(--surface-2);color:var(--text);cursor:pointer;
+       border:1px solid var(--border)}
+  .sel{font:inherit;font-size:14px;padding:8px 10px;border-radius:7px;width:100%;
+       background:var(--surface-3);color:var(--text);border:1px solid var(--border)}
+  .chk{width:22px;height:22px;border-radius:6px;background:var(--surface-3);
+       border:2px solid var(--border-strong);display:inline-block;flex:0 0 auto}
+  .opt{font:inherit;font-size:14px;padding:9px 12px;border-radius:7px;text-align:left;
+       background:var(--surface-3);color:var(--text);border:1px solid var(--border);
+       cursor:pointer;width:100%}
+  .tab{font:inherit;font-size:13.5px;padding:6px 13px;border-radius:99px;
+       background:var(--surface-3);color:var(--text-dim);border:1px solid transparent;
+       cursor:pointer}
+
+  /* A — Abgrenzung über den RAND */
+  .v-a.g-s1 .btn,.v-a.g-s1 .sel,.v-a.g-s1 .opt,.v-a.g-s1 .chk,.v-a.g-s1 .tab
+    {border-color:var(--rand30-s1);border-style:solid;border-width:1px}
+  .v-a.g-s2 .btn,.v-a.g-s2 .sel,.v-a.g-s2 .opt,.v-a.g-s2 .tab
+    {border-color:var(--rand30-s2);border-style:solid;border-width:1px}
+  .v-a.g-s2 .chk{border-color:var(--rand30-s2)}
+
+  /* B — Abgrenzung über die FLÄCHE, Rand verschwindet.
+     Die Füllung MUSS denselben Wert haben wie der Rand in A, sonst erreicht sie
+     die 3,0 nicht — genau das war der Fehler der ersten Fassung. */
+  .v-b.g-s1 .btn,.v-b.g-s1 .sel,.v-b.g-s1 .opt,.v-b.g-s1 .chk,.v-b.g-s1 .tab
+    {background:var(--rand30-s1);border-color:transparent;color:#08080a}
+  .v-b.g-s2 .btn,.v-b.g-s2 .sel,.v-b.g-s2 .opt,.v-b.g-s2 .chk,.v-b.g-s2 .tab
+    {background:var(--rand30-s2);border-color:transparent;color:#0b0b0c}
+
+  /* C — Kompromiss um 2,0: unter AA, aber deutlich besser als heute */
+  .v-c.g-s1 .btn,.v-c.g-s1 .sel,.v-c.g-s1 .opt,.v-c.g-s1 .chk,.v-c.g-s1 .tab
+    {border-color:var(--komp-s1);border-style:solid;border-width:1px}
+  .v-c.g-s2 .btn,.v-c.g-s2 .sel,.v-c.g-s2 .opt,.v-c.g-s2 .tab
+    {border-color:var(--komp-s2);border-style:solid;border-width:1px}
+  .v-c.g-s2 .chk{border-color:var(--komp-s2)}
+
+  footer{max-width:1000px;margin:40px auto 0;padding:0 16px;color:var(--text-dim);
+         font-size:14px}
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+  th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--border)}
+  th{color:var(--text-faint);font-weight:600;font-size:13px}
+  td.z{font-variant-numeric:tabular-nums}
+  code{background:var(--surface-2);padding:1px 5px;border-radius:4px;font-size:.92em}
+  #pruefung{margin:18px 0;padding:12px 15px;border-radius:7px;font-size:14px}
+</style>
+
+<header>
+  <h1>Ränder und Abgrenzung — vier Fassungen nebeneinander</h1>
+  <div class="unter">Gemessen am 18.08.2026 im laufenden Browser über alle elf
+    Bildschirme. <b>139 Bedienelemente in 6 Klassen</b> haben keine Abgrenzung,
+    die WCAG 1.4.11 (3,0) erreicht. Nichts davon ist eingebaut.</div>
+</header>
+
+<main>
+  <div class="hinweis">
+    <b>Jede Zahl auf dieser Seite ist gemessen, nicht geschrieben.</b>
+    Sie wird beim Laden aus dem gerenderten Zustand berechnet. Die erste Fassung
+    trug handgeschriebene Werte — <b>12 von 20 waren falsch</b>, Fassung B
+    behauptete 3,06 und erreichte 1,72. Und die Bühne hat je Bauteil den Grund,
+    auf dem es in der App wirklich sitzt: <code>.btn-secondary</code> auf
+    <code>--surface-1</code>, die Kästchen auf <code>--surface-2</code>.
+  </div>
+  <div id="pruefung"></div>
+
+  <h2>Sekundärer Knopf <span>· .btn-secondary · 11× · auf --surface-1</span></h2>
+  <div class="wo">Wurzelmodus („Aufdecken", „Familie überspringen"), Einstellungen</div>
+  <div class="reihe" data-grund="g-s1">
+    <div class="zelle"><div class="kopf"><span class="name">Ist</span><span class="k"></span></div>
+      <div class="buehne"><button class="btn">Aufdecken</button></div>
+      <div class="notiz">Rand <code>#26262b</code>. Der Knopf ist da, seine Grenze kaum.</div></div>
+    <div class="zelle v-a"><div class="kopf"><span class="name">A · Rand</span><span class="k"></span></div>
+      <div class="buehne"><button class="btn">Aufdecken</button></div>
+      <div class="notiz">Rand <code>#5d5d65</code>. Erfüllt AA. Deutlich heller als heute — der OLED-Eindruck wird flächiger.</div></div>
+    <div class="zelle v-b"><div class="kopf"><span class="name">B · Fläche</span><span class="k"></span></div>
+      <div class="buehne"><button class="btn">Aufdecken</button></div>
+      <div class="notiz">Kein Rand, dafür helle Füllung. Erfüllt AA, verändert den Charakter aber am stärksten.</div></div>
+    <div class="zelle v-c"><div class="kopf"><span class="name">C · Kompromiss</span><span class="k"></span></div>
+      <div class="buehne"><button class="btn">Aufdecken</button></div>
+      <div class="notiz"><b>Unter AA.</b> Ehrlich benannt: besser als heute, erfüllt die Regel aber nicht.</div></div>
+  </div>
+
+  <h2>Auswahlfeld <span>· .select-input · 4× · auf --surface-2</span></h2>
+  <div class="wo">Einstellungen — Richtung, Abgleich, Wurzelanzeige</div>
+  <div class="reihe" data-grund="g-s2">
+    <div class="zelle"><div class="kopf"><span class="name">Ist</span><span class="k"></span></div>
+      <div class="buehne"><select class="sel"><option>Arabisch → Deutsch</option></select></div>
+      <div class="notiz">Auf <code>--surface-2</code> ist der Rand fast unsichtbar.</div></div>
+    <div class="zelle v-a"><div class="kopf"><span class="name">A · Rand</span><span class="k"></span></div>
+      <div class="buehne"><select class="sel"><option>Arabisch → Deutsch</option></select></div>
+      <div class="notiz">Rand <code>#616169</code>. Das Feld liest sich sofort als Feld.</div></div>
+    <div class="zelle v-b"><div class="kopf"><span class="name">B · Fläche</span><span class="k"></span></div>
+      <div class="buehne"><select class="sel"><option>Arabisch → Deutsch</option></select></div>
+      <div class="notiz">Helle Füllung. Bei mehreren Feldern untereinander wird die Seite sehr hell.</div></div>
+    <div class="zelle v-c"><div class="kopf"><span class="name">C · Kompromiss</span><span class="k"></span></div>
+      <div class="buehne"><select class="sel"><option>Arabisch → Deutsch</option></select></div>
+      <div class="notiz"><b>Unter AA.</b></div></div>
+  </div>
+
+  <h2>Kästchen zum Abhaken <span>· .hifz-check · 114× · auf --surface-2</span></h2>
+  <div class="wo">Quran-Leser, je Sure eines — das häufigste betroffene Element</div>
+  <div class="reihe" data-grund="g-s2">
+    <div class="zelle"><div class="kopf"><span class="name">Ist</span><span class="k"></span></div>
+      <div class="buehne"><span class="chk"></span></div>
+      <div class="notiz">Ungehakt ist das Symbol durchsichtig — nur der 2-px-Rand sagt, dass hier etwas anzutippen ist.</div></div>
+    <div class="zelle v-a"><div class="kopf"><span class="name">A · Rand</span><span class="k"></span></div>
+      <div class="buehne"><span class="chk"></span></div>
+      <div class="notiz">Bei 114 Kästchen der sichtbarste Unterschied der ganzen App.</div></div>
+    <div class="zelle v-b"><div class="kopf"><span class="name">B · Fläche</span><span class="k"></span></div>
+      <div class="buehne"><span class="chk"></span></div>
+      <div class="notiz">⚠️ Ein gefülltes Kästchen sieht aus wie „schon abgehakt". Hier ist B vermutlich die schlechtere Wahl.</div></div>
+    <div class="zelle v-c"><div class="kopf"><span class="name">C · Kompromiss</span><span class="k"></span></div>
+      <div class="buehne"><span class="chk"></span></div>
+      <div class="notiz"><b>Unter AA.</b></div></div>
+  </div>
+
+  <h2>Antwortmöglichkeit <span>· .hoer-option · 4× · auf --surface-2</span></h2>
+  <div class="wo">Hörverstehen — die vier Antworten zur Auswahl</div>
+  <div class="reihe" data-grund="g-s2">
+    <div class="zelle"><div class="kopf"><span class="name">Ist</span><span class="k"></span></div>
+      <div class="buehne"><button class="opt">schmutzig</button><button class="opt">groß</button></div>
+      <div class="notiz">Zwei Antworten untereinander verschwimmen zu einem Block.</div></div>
+    <div class="zelle v-a"><div class="kopf"><span class="name">A · Rand</span><span class="k"></span></div>
+      <div class="buehne"><button class="opt">schmutzig</button><button class="opt">groß</button></div>
+      <div class="notiz">Jede Antwort ist als eigene Fläche erkennbar.</div></div>
+    <div class="zelle v-b"><div class="kopf"><span class="name">B · Fläche</span><span class="k"></span></div>
+      <div class="buehne"><button class="opt">schmutzig</button><button class="opt">groß</button></div>
+      <div class="notiz">⚠️ Konkurriert mit der Markierung der richtigen Antwort — die braucht selbst Aufmerksamkeit.</div></div>
+    <div class="zelle v-c"><div class="kopf"><span class="name">C · Kompromiss</span><span class="k"></span></div>
+      <div class="buehne"><button class="opt">schmutzig</button><button class="opt">groß</button></div>
+      <div class="notiz"><b>Unter AA.</b></div></div>
+  </div>
+
+  <h2>Reiter <span>· .cat-tab · 3× · auf --surface-2 · schwächster Wert der Messung</span></h2>
+  <div class="wo">Kategorien-Bildschirm; die Körbe im Wurzelmodus (.wz-korb, 1,57) liegen gleich</div>
+  <div class="reihe" data-grund="g-s2">
+    <div class="zelle"><div class="kopf"><span class="name">Ist</span><span class="k"></span></div>
+      <div class="buehne" style="flex-direction:row;flex-wrap:wrap"><button class="tab">Themen</button><button class="tab">Bücher</button></div>
+      <div class="notiz">Gar kein Rand, nur ein Flächensprung — 1,14 war der schwächste Wert der ganzen Messung.</div></div>
+    <div class="zelle v-a"><div class="kopf"><span class="name">A · Rand</span><span class="k"></span></div>
+      <div class="buehne" style="flex-direction:row;flex-wrap:wrap"><button class="tab">Themen</button><button class="tab">Bücher</button></div>
+      <div class="notiz">Runde Ränder wirken bei Reitern schnell nach „Pille" — Geschmacksfrage.</div></div>
+    <div class="zelle v-b"><div class="kopf"><span class="name">B · Fläche</span><span class="k"></span></div>
+      <div class="buehne" style="flex-direction:row;flex-wrap:wrap"><button class="tab">Themen</button><button class="tab">Bücher</button></div>
+      <div class="notiz">Für Reiter vermutlich die natürlichere Lösung — sie sind ohnehin Flächen.</div></div>
+    <div class="zelle v-c"><div class="kopf"><span class="name">C · Kompromiss</span><span class="k"></span></div>
+      <div class="buehne" style="flex-direction:row;flex-wrap:wrap"><button class="tab">Themen</button><button class="tab">Bücher</button></div>
+      <div class="notiz"><b>Unter AA.</b></div></div>
+  </div>
+</main>
+
+<footer>
+  <h2 style="margin-top:36px">Die Messung in der App</h2>
+  <table>
+    <tr><th>Klasse</th><th>Anzahl</th><th>Fläche</th><th>Rand</th><th>beste</th><th>Bildschirm</th></tr>
+    <tr><td><code>.cat-tab</code></td><td class="z">3</td><td class="z">1,14</td><td class="z">—</td><td class="z">1,14</td><td>Kategorien</td></tr>
+    <tr><td><code>.hoer-option</code></td><td class="z">4</td><td class="z">1,08</td><td class="z">1,23</td><td class="z">1,23</td><td>Hörverstehen</td></tr>
+    <tr><td><code>.select-input</code></td><td class="z">4</td><td class="z">1,08</td><td class="z">1,23</td><td class="z">1,23</td><td>Einstellungen</td></tr>
+    <tr><td><code>.btn-secondary</code></td><td class="z">11</td><td class="z">1,06</td><td class="z">1,31</td><td class="z">1,31</td><td>Wurzeln, Einstellungen</td></tr>
+    <tr><td><code>.hifz-check</code></td><td class="z">114</td><td class="z">1,08</td><td class="z">1,48</td><td class="z">1,48</td><td>Quran-Leser</td></tr>
+    <tr><td><code>.wz-korb</code></td><td class="z">3</td><td class="z">1,06</td><td class="z">1,57</td><td class="z">1,57</td><td>Wurzeln</td></tr>
+  </table>
+  <p>Zum Vergleich, was der Bestand kennt: <code>--border</code>
+    <code>#26262b</code> erreicht auf <code>--surface-2</code> nur <b>1,23</b>,
+    <code>--border-strong</code> <code>#33333a</code> nur <b>1,48</b>.
+    Für 3,0 braucht es <code>#616169</code> — und das ist fast genau die Farbe,
+    die am 15.08. als <code>--text-faint</code> verworfen wurde, weil sie
+    <em>für Text</em> zu dunkel war. Für einen Rand ist sie richtig.</p>
+  <p><b>Eine Antwort für alle sechs Klassen muss es nicht sein.</b> Für die 114
+    Kästchen spricht A (gefüllte Kästchen sehen abgehakt aus), für die Reiter
+    eher B (sie sind ohnehin Flächen). Gemischt ist hier vermutlich besser als
+    einheitlich.</p>
+</footer>
+
+<script>
+/* Jeden Merker aus dem GERENDERTEN Zustand berechnen. Handgeschriebene Werte
+   waren in der ersten Fassung zu 12 von 20 falsch. */
+const lum = ([r,g,b]) => { const f=v=>{v/=255;return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4);};
+  return 0.2126*f(r)+0.7152*f(g)+0.0722*f(b); };
+const rgb = s => { const m=String(s).match(/\d+(\.\d+)?/g); return m?m.slice(0,3).map(Number):null; };
+const alpha = s => { const m=String(s).match(/[\d.]+/g); return m&&m.length>3?+m[3]:1; };
+const K = (a,b)=>{const l1=lum(a),l2=lum(b);return (Math.max(l1,l2)+0.05)/(Math.min(l1,l2)+0.05);};
+
+let gemessen = 0;
+for (const reihe of document.querySelectorAll('.reihe')) {
+  const grundKlasse = reihe.dataset.grund;
+  for (const z of reihe.querySelectorAll('.zelle')) {
+    z.classList.add(grundKlasse);
+    const b = z.querySelector('.buehne');
+    const grund = rgb(getComputedStyle(b).backgroundColor);
+    const el = b.querySelector('.btn,.sel,.chk,.opt,.tab');
+    if (!el || !grund) continue;
+    const c = getComputedStyle(el);
+    const eigen = rgb(c.backgroundColor), eigenA = alpha(c.backgroundColor);
+    const rand = rgb(c.borderTopColor), randA = alpha(c.borderTopColor);
+    const bw = parseFloat(c.borderTopWidth) || 0;
+    const kF = (eigen && eigenA > 0.05) ? K(eigen, grund) : 1;
+    const kR = (rand && randA > 0.05 && bw >= 0.5) ? K(rand, grund) : 1;
+    const beste = Math.max(kF, kR);
+    const merker = z.querySelector('.k');
+    merker.textContent = beste.toFixed(2).replace('.', ',');
+    merker.className = 'k ' + (beste >= 3 ? 'gut' : beste >= 1.9 ? 'mittel' : 'schlecht');
+    merker.title = 'Fläche ' + kF.toFixed(2) + ' · Rand ' + kR.toFixed(2);
+    gemessen++;
+  }
+}
+
+/* Selbstprüfung: erfüllen A und B wirklich 3,0? Wenn nicht, steht das oben —
+   eine Entwurfsseite, die ihr eigenes Versprechen bricht, muss das sagen. */
+const soll3 = [...document.querySelectorAll('.zelle.v-a .k, .zelle.v-b .k')]
+  .map(e => parseFloat(e.textContent.replace(',', '.')));
+const durchgefallen = soll3.filter(v => v < 3).length;
+const p = document.getElementById('pruefung');
+if (durchgefallen) {
+  p.style.cssText = 'background:#210d0c;border:1px solid #5a1f1c;border-left:3px solid #c4483f;color:#e0a29c;padding:12px 15px';
+  p.innerHTML = '<b>⛔ ' + durchgefallen + ' von ' + soll3.length + ' Feldern der '
+    + 'Fassungen A und B erreichen die 3,0 NICHT.</b> Die Farbwerte im CSS '
+    + 'stimmen dann nicht mit dem Anspruch überein — bitte melden.';
+} else {
+  p.style.cssText = 'background:#0f2416;border:1px solid #23502f;border-left:3px solid #3fa860;color:#a9d6b8;padding:12px 15px';
+  p.innerHTML = '<b>✅ Selbstprüfung bestanden:</b> alle ' + soll3.length
+    + ' Felder der Fassungen A und B erreichen 3,0 oder mehr; '
+    + gemessen + ' Werte insgesamt gemessen.';
+}
+</script>
+</html>

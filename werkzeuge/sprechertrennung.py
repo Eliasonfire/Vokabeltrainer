@@ -3,9 +3,19 @@
 # Der Lehrer wird nicht benannt, sondern spaeter ueber die Redezeit erkannt -
 # er redet mit Abstand am meisten.
 #
-# Aufruf (python liegt NICHT im PATH der Claude-Prozesse):
-#   "C:\Users\abdur\AppData\Local\Programs\Python\Python312\python.exe" werkzeuge/sprechertrennung.py
+# Aufruf:
+#   python werkzeuge/sprechertrennung.py
 # Ueberspringt Folgen, die in transcripts/sprecher/ schon ein .rttm haben.
+#
+# ⚠️ Korrigiert am 18.08.2026: Hier stand jahrelang "python liegt NICHT im PATH
+# der Claude-Prozesse" samt vollem Pfad zur exe. Nachgemessen stimmt das nicht -
+# "python" und "py" sind Python 3.12.10, nur "python3" ist der
+# Microsoft-Store-Platzhalter und tut lautlos gar nichts.
+#
+# ⚠️ Beim Import meldet pyannote "torchcodec is not installed correctly so
+# built-in audio decoding will fail". Das ist fuer dieses Skript belanglos -
+# lade_wav() liest die WAV selbst (siehe dort). Nicht darauf hereinfallen und
+# etwas nachinstallieren wollen.
 #
 # Warum die Datei hier liegt und nicht mehr im Scratchpad (verschoben 28.07.26):
 # Die Wartungsroutine darf seit dem 28.07. python aufrufen, damit sie fuer eine
@@ -20,8 +30,17 @@
 # braucht sie erneut (siehe Gedaechtnisnotiz vulkan-whisper-offen).
 import os, sys, time, json, glob
 
-AUDIO = r"G:\1. Workspace\Arabicroots-Material\audio"
-OUT   = r"G:\1. Workspace\Vokabeltrainer\transcripts\sprecher"
+# Die Tonspuren liegen an ZWEI Orten, und das ist kein Versehen: Folge 01-13
+# kamen ueber den Materialordner herein, ab Folge 14 legt die Download-Routine
+# sie direkt ins Projekt. Weil hier nur der erste Ordner stand, blieben 14, 15
+# und 16 seit dem 02.08.2026 unbemerkt liegen - das Skript meldete brav
+# "13 Tonspuren gefunden" und war zufrieden.
+# Nicht kopieren, um das zu umgehen: je Folge sind das rund 90 MB.
+AUDIO_ORDNER = [
+    r"G:\1. Workspace\Arabicroots-Material\audio",
+    r"G:\1. Workspace\Vokabeltrainer\transcripts\audio",
+]
+OUT = r"G:\1. Workspace\Vokabeltrainer\transcripts\sprecher"
 os.makedirs(OUT, exist_ok=True)
 
 import wave
@@ -62,7 +81,32 @@ print("Lade Modell ...", flush=True)
 pipe = Pipeline.from_pretrained("pyannote/speaker-diarization-3.1")
 print("Modell geladen.", flush=True)
 
-dateien = sorted(glob.glob(os.path.join(AUDIO, "folge-*.wav")))
+def tonspuren():
+    """Sammelt die WAV-Dateien aus allen bekannten Ordnern.
+
+    Liegt dieselbe Folge in mehreren Ordnern, gewinnt der zuerst genannte -
+    sonst haengt das Ergebnis davon ab, in welcher Reihenfolge das Dateisystem
+    antwortet, und das ist keine Grundlage fuer eine Quellenangabe.
+    Ein fehlender Ordner ist kein Fehler, wird aber GEMELDET: ein stilles
+    Ueberspringen ist genau die Falle, die diesen Rueckstand erzeugt hat."""
+    gefunden, woher = {}, {}
+    for ordner in AUDIO_ORDNER:
+        if not os.path.isdir(ordner):
+            print(f"⚠️  Ordner fehlt, wird uebersprungen: {ordner}", flush=True)
+            continue
+        treffer = sorted(glob.glob(os.path.join(ordner, "folge-*.wav")))
+        print(f"    {len(treffer):>3} in {ordner}", flush=True)
+        for wav in treffer:
+            name = os.path.splitext(os.path.basename(wav))[0]
+            if name not in gefunden:
+                gefunden[name], woher[name] = wav, ordner
+            elif woher[name] != ordner:
+                print(f"    Hinweis: {name} liegt doppelt, genommen wird "
+                      f"{woher[name]}", flush=True)
+    return [gefunden[k] for k in sorted(gefunden)]
+
+print("Suche Tonspuren ...", flush=True)
+dateien = tonspuren()
 print(f"{len(dateien)} Tonspuren gefunden.\n", flush=True)
 
 for i, wav in enumerate(dateien, 1):
