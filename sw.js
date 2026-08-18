@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vokabeltrainer-v180';
+const CACHE_NAME = 'vokabeltrainer-v181';
 
 /* ⚠️ In diese Liste gehoeren KEINE Kommentare zwischen die Eintraege.
    validate.js liest sie zeilenweise und hat am 18.08.2026 einen erklaerenden
@@ -39,6 +39,39 @@ const ASSETS = [
   './data/eselsbruecken-alt.js',
   './data/fachbegriffe.js',
   './data/vokabeln-eigene.js',
+
+  /* Die Schriften, seit 18.08.2026 lokal (C7). Sie MUESSEN hier stehen —
+     genau ihr Fehlen war der Anlass: ohne Cache-Eintrag haengt die Schrift
+     offline am Browser-Cache, und ein weggeworfener Cache laesst die
+     Harakat verrutschen, ohne einen Fehler zu melden. */
+  './fonts/amiri-400-ar.woff2',
+  './fonts/amiri-400-latext.woff2',
+  './fonts/amiri-400-lat.woff2',
+  './fonts/amiri-700-ar.woff2',
+  './fonts/amiri-700-latext.woff2',
+  './fonts/amiri-700-lat.woff2',
+  './fonts/inter-400-latext.woff2',
+  './fonts/inter-400-lat.woff2',
+  './fonts/inter-500-latext.woff2',
+  './fonts/inter-500-lat.woff2',
+  './fonts/inter-600-latext.woff2',
+  './fonts/inter-600-lat.woff2',
+  './fonts/inter-700-latext.woff2',
+  './fonts/inter-700-lat.woff2',
+  './fonts/inter-800-latext.woff2',
+  './fonts/inter-800-lat.woff2',
+  './fonts/noto-naskh-arabic-400-ar.woff2',
+  './fonts/noto-naskh-arabic-400-latext.woff2',
+  './fonts/noto-naskh-arabic-400-lat.woff2',
+  './fonts/noto-naskh-arabic-500-ar.woff2',
+  './fonts/noto-naskh-arabic-500-latext.woff2',
+  './fonts/noto-naskh-arabic-500-lat.woff2',
+  './fonts/noto-naskh-arabic-600-ar.woff2',
+  './fonts/noto-naskh-arabic-600-latext.woff2',
+  './fonts/noto-naskh-arabic-600-lat.woff2',
+  './fonts/noto-naskh-arabic-700-ar.woff2',
+  './fonts/noto-naskh-arabic-700-latext.woff2',
+  './fonts/noto-naskh-arabic-700-lat.woff2',
   './surah-data.js',
   './quran-seiten.js',
   './grammar-data.js',
