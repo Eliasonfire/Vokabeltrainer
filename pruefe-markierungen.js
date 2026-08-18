@@ -33,7 +33,12 @@ const { LEHRBUCH_SAETZE } =
 const satz = {};
 for (const v of VOCAB_DATA.concat(LEHRBUCH_SAETZE)) satz[v.id] = v;
 const roh = x => x.replace(/[\u064B-\u0652\u0670\u0640]/g, '');   // Taschkil + Tatweel weg
-const blank = x => roh(x).replace(/[.،؟«»:]/g, '').trim();
+/* Satzzeichen raus, sonst scheitert jede Bedingung mit $ still. Am 18.08.2026
+   nachgemessen: von 371 matchText-Werten trugen 53 ein Satzzeichen. 52 davon
+   fing diese Liste ab, eines nicht — das Ausrufezeichen in يَا وَلَدُ!
+   (ya-nida-01). Dessen Bedingung prueft nur den Wortanfang, deshalb war es
+   folgenlos; bei der naechsten Bedingung mit $ waere es das nicht. */
+const blank = x => roh(x).replace(/[.،؟!«»:؛]/g, '').trim();
 
 // Sonnenbuchstaben nach der Lehrerliste
 const SONNE = 'تثدذرزسشصضطظلن';
