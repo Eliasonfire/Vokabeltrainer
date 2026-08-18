@@ -60,7 +60,23 @@ console.log(wortschatz.length
    Darin steht ein Wort als Zitat, nicht in seiner Satzrolle - eine
    Kasusanalyse waere hier sinnlos. Erkennbar an den arabischen
    Anfuehrungszeichen. */
-const istMetasprache = ar => /[«»]/.test(ar || '');
+/* Metasprache: Saetze, die ueber Sprache reden statt etwas zu sagen. Am
+   18.08.2026 um den Doppelpunkt erweitert. Nachgemessen: von 208 Beispielsaetzen
+   tragen genau 6 einen, und alle 6 sind Aufzaehlungen oder Zitate
+   («كِتَابٌ، قَلَمٌ: اِثْنَانِ.»). Kein echter Satz benutzt ihn. Eine
+   Kasusanalyse einer Aufzaehlung ist keine Aussage ueber die Daten. */
+const istMetasprache = ar => /[«»:]/.test(ar || '') || istAufzaehlung(ar);
+
+/* Reine Aufzaehlungen — «صِفْرٌ، وَاحِدٌ، اِثْنَانِ.» ist die Zahlenreihe, kein
+   Satz. Erkennungsmerkmal: fast jedes Wort endet auf ein Komma. Zweiseitig
+   geeicht am 18.08.2026 ueber alle 208 Beispielsaetze: erkannt werden genau 7,
+   und alle 7 sind Zahlenreihen. Saetze, die ein Komma nur als Satzzeichen
+   fuehren — «أَهَذَا كِتَابٌ؟ نَعَمْ، هَذَا كِتَابٌ.» — bleiben drin. */
+function istAufzaehlung(ar){
+  const w = String(ar || '').trim().split(/\s+/).filter(Boolean);
+  if (w.length < 2) return false;
+  return w.filter(x => /،$/.test(x)).length >= w.length - 1;
+}
 
 const quellen = [
   { name: 'Beispielsaetze aus vocab-data.js (verfasst, nicht belegt)',
