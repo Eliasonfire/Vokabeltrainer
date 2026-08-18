@@ -72,6 +72,42 @@ const PRONOMEN = ['هذا','هذه','ذلك','تلك','هو','هي','أنا','ا
 
 const ohneVokale = s => (s || '').replace(/[ً-ْٰـ]/g, '');
 
+/* ---------- Skelettform fuer das Nachschlagen (C2, 18.08.2026) ------------
+
+   Elias' Entscheidung: „اِبْنٌ bleibt, und ich mache den Vergleich fuer die
+   Hamzatu-l-waṣl tolerant — dann ist die Frage fuer alle Woerter weg, nicht
+   nur fuer dieses."
+
+   Der Anlass war اِبْنٌ (vocab-data.js, wie der Madina-Schluessel) gegen ابْنٌ
+   (arabicroots-Abzug, 2× in data/vokabeln-madina-1.js gemessen). Dieser
+   Unterschied ist eine Kasra und faellt schon durch `ohneVokale` weg — im
+   Browser nachgemessen: beide Schreibungen liefern bereits `noun`.
+
+   Was NICHT wegfaellt, ist die eigentliche Hamzatu-l-waṣl **ٱ** (U+0671). Sie
+   steht 18× in vocab-data.js und 24× in data/eselsbruecken-alt.js, praktisch
+   immer in zitierten Koranversen — der Korantext schreibt sie so, die
+   Lehrbuecher schreiben dasselbe Wort mit schlichtem ا. Fuer das Lexikon waren
+   das bisher zwei verschiedene Woerter.
+
+   ⚠️ Die Zeichenklasse steht als `\u`-Folgen und nicht als sichtbare Buchstaben.
+   Am 18.08. hat eine sichtbar kopierte Klasse Zeichen fuer Zeichen gleich
+   ausgesehen und andere Codepoints gehabt; das Werkzeug fand danach nichts mehr
+   und meldete trotzdem Erfolg.
+
+   ⛔ Bewusst NUR die Alif-Varianten. ى→ي und ة→ه wuerden weitere Woerter zu
+   einer Skelettform zusammenziehen; wo zwei Wortarten dieselbe Form
+   beanspruchen, meldet das Lexikon „mehrdeutig" und sagt dann GAR nichts mehr.
+   Toleranz kostet hier Aussagen, deshalb so wenig wie noetig.
+
+   ⚠️ Wird an drei Stellen gebraucht, und alle drei muessen dieselbe Funktion
+   benutzen: beim AUFBAU von LEXIKON_ROH und bei den beiden Abfragen. Nimmt der
+   Aufbau eine andere Normalisierung als die Abfrage, findet das Lexikon nichts
+   mehr — ohne eine einzige Fehlermeldung. */
+/* أ U+0623 · إ U+0625 · آ U+0622 · ٱ U+0671  werden alle zu  ا U+0627.
+   Als \u-Folgen geschrieben: eine sichtbar kopierte Zeichenklasse sah am
+   18.08.2026 Zeichen fuer Zeichen richtig aus und hatte andere Codepoints. */
+const skelett = s => ohneVokale(s).replace(/[\u0623\u0625\u0622\u0671]/g, '\u0627');
+
 /* ---------- Endung eines Wortes lesen ----------
    Zurueck kommt, was am Wortende steht: Damma/Dammatan (raf), Kasra/Kasratan
    (jarr), Fatha/Fathatan (nasb) - oder null, wenn das Wort unvokalisiert ist.
@@ -195,7 +231,7 @@ function setzeLexikon(eintraege){
     const genau = putz(form);
     if (!genau) return;
     if (!LEXIKON.has(genau)) LEXIKON.set(genau, typ);
-    const roh = ohneVokale(genau);
+    const roh = skelett(genau);
     /* Ohne Vokalzeichen faellt عَمٌّ (Onkel) mit عَمَّ (verbreitete sich)
        zusammen. Wo zwei Wortarten dieselbe Skelettform beanspruchen, wird
        KEINE gemeldet - lieber "unbekannt" als eine falsche Kasusaussage.
@@ -223,7 +259,7 @@ function setzeLexikon(eintraege){
 function LEXIKON_hat(w){
   if (!LEXIKON) return false;
   const genau = String(w).replace(/[.،؟!«»:؛]/g, '').trim();
-  return LEXIKON.has(genau) || (LEXIKON_ROH && LEXIKON_ROH.has(ohneVokale(genau)));
+  return LEXIKON.has(genau) || (LEXIKON_ROH && LEXIKON_ROH.has(skelett(genau)));
 }
 
 function wortart(w){
@@ -233,7 +269,7 @@ function wortart(w){
   for (const v of [genau, genau.replace(/^[وف][َُِ]?/, '')]){
     if (LEXIKON.has(v)) return LEXIKON.get(v);
   }
-  const roh = ohneVokale(genau);
+  const roh = skelett(genau);
   for (const v of [roh, roh.replace(/^[وف]/, ''), roh.replace(/^[وف]?ال/, '')]){
     const t = LEXIKON_ROH && LEXIKON_ROH.get(v);
     if (t && t.typ !== 'mehrdeutig') return t.typ;

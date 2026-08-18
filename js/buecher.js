@@ -165,6 +165,43 @@ function istSchlechtereSchreibung(feld, wert, da){
   return rohZaehleHarakat(wert) < rohZaehleHarakat(da.ar);
 }
 
+/* ---------- Erfundene Wurzeln nicht uebernehmen (C9, 18.08.2026) ----------
+
+   Elias' Entscheidung: „alle leer lassen — eine erfundene Wurzel täuscht im
+   Wurzelmodus eine Familie vor. Ausnahmen عَلَى und تَحْتَ, die belegbar sind."
+
+   Nachgemessen (`vocab-data.js` gegen alle `data/vokabeln-*.js`):
+   28 Woerter haben dort keine Wurzel, **10** davon bekaemen aus dem Abzug eine.
+   Zwei davon sind echt und bleiben:
+
+   | Wort | Abzug | echt? |
+   |---|---|---|
+   | عَلَى | ع ل و | **ja** — عَلَا/يَعْلُو „hoch sein", dazu عَلِيّ, أَعْلَى |
+   | تَحْتَ | ت ح ت | **ja** — als Wurzel in den Lexika belegt |
+   | مِنْ | م ن | nein, zwei Buchstaben des Wortes |
+   | إِلَى | ا ل ى | nein |
+   | أَيْنَ | ا ي ن | nein |
+   | فِي | ف ي | nein |
+   | هُنَا | ه ن ا | nein |
+   | هُنَاكَ | ه ن ك | nein |
+   | لِمَاذَا | ل م ذ | nein — das Wort ist لِ + مَا + ذَا |
+   | الْآنَ | ا ن | nein |
+
+   Bleiben **8** zu sperrende. ⚠️ In der To-Do stand „9 davon"; gemessen sind es
+   10, und Elias' „8 erfundene" ist die richtige Zahl — 10 minus die zwei
+   echten. Die 9 war schlicht falsch.
+
+   ⭐ Gesperrt wird ueber die Id, nicht ueber eine Regel wie „Partikeln kriegen
+   keine Wurzel". Eine Regel waere eine Behauptung ueber alle kuenftigen
+   Woerter; diese Liste ist eine Aussage ueber zehn nachgesehene Faelle.
+   Kommt ein neues Funktionswort dazu, faellt es auf, weil im Wurzelmodus eine
+   Familie erscheint, die es nicht gibt - und dann wird es hier eingetragen. */
+const KEINE_WURZEL_UEBERNEHMEN = new Set([
+  '45808', /* مِنْ    */ '45809', /* إِلَى   */ '45810', /* أَيْنَ  */
+  '45812', /* فِي     */ '45834', /* هُنَا   */ '45836', /* هُنَاكَ */
+  '45888', /* لِمَاذَا */ '45891'  /* الْآنَ  */
+]);
+
 function einhaengen(liste){
   const nachId = new Map(VOCAB_DATA.map(w=>[String(w.id), w]));
   let neu = 0, ergaenzt = 0, verworfen = 0;
@@ -178,6 +215,11 @@ function einhaengen(liste){
     Object.entries(roh).forEach(([k,v])=>{
       if (v !== null && v !== undefined && (da[k] === null || da[k] === undefined)){
         if (istSchlechtereSchreibung(k, v, da)){ verworfen++; return; }
+        /* C9: acht Funktionswoerter bekommen im Abzug eine aus ihren eigenen
+           Buchstaben gebaute „Wurzel". Die bleibt draussen - siehe die Tabelle
+           bei KEINE_WURZEL_UEBERNEHMEN. Alle uebrigen Felder dieser Woerter
+           werden ganz normal ergaenzt. */
+        if (k === 'root' && KEINE_WURZEL_UEBERNEHMEN.has(String(roh.id))){ verworfen++; return; }
         da[k] = v; hatErgaenzt = true;
       }
     });
