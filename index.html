@@ -137,6 +137,15 @@
   --sp-5:20px; --sp-6:24px; --sp-7:32px; --sp-8:40px;
   --gutter:18px;
 
+  /* Höhe der Titelzeile im Quran-Leser. Sie steht hier als Variable, weil DREI
+     Stellen sie kennen müssen: die Zeile selbst (über ihre Polsterung), das
+     `top` der Ḥifẓ-Leiste darunter und deren Wegfahr-Weg beim Einklappen.
+     Solange die Zahl dreimal getippt war, konnte sie auseinanderlaufen — und
+     eine Abweichung von 4 px sieht man als genau den Spalt, den Elias am
+     18.08.2026 zweimal gemeldet hat. Wer die Polsterung unten ändert, ändert
+     diesen Wert mit; im Browser nachgemessen: 40 px Knopfhöhe + 2 × 4 px. */
+  --quran-kopf-h:48px;
+
   /* --- Breiten ---
      ⚠️ Am 15.08.2026 eingefuehrt. Vorher stand die Inhaltsbreite als feste
      600px an DREI Stellen (Suchleiste, zwei Sticky-Koepfe) und 420px an ZWEI
@@ -2115,7 +2124,7 @@ main{
 /* Das Kleben sitzt seit dem 04.08.2026 am gemeinsamen Kasten, nicht mehr an der
    Ḥifẓ-Leiste selbst — sonst hätte die Ayah-Leiste darunter ein `top` gebraucht,
    das die Höhe der Ḥifẓ-Leiste kennt. */
-.quran-sticky{position:sticky;top:52px;z-index:25;background:var(--bg);}
+.quran-sticky{position:sticky;top:var(--quran-kopf-h);z-index:25;background:var(--bg);}
 
 /* ---------- Titelzeile und Ḥifẓ-Leiste sind EIN Block (18.08.2026) ----------
 
@@ -2138,11 +2147,30 @@ main{
 #screen-quranfull .screen-header{
   margin-bottom:0;
   background:var(--bg);
-  /* Gemessener sichtbarer Abstand zwischen Titelunterkante und dem Text der
-     Leiste: 30,4 px, zusammengesetzt aus 12 px Polsterung hier, 8 px dort und
-     dem Rest Zeilenluft. Elias wollte ihn „so einen tick kleiner" — beide
-     Polsterungen auf 4 px, damit landet er bei rund 18 px. Weiter herunter
-     wäre keine Luft mehr, sondern ein Druckfehler. */
+  /* Der Abstand zur Ḥifẓ-Leiste ist in drei Schritten geschrumpft, jeder von
+     Elias angestoßen und jeder im Browser nachgemessen:
+
+     | Stand | Polsterung hier | dort | sichtbar zwischen Titel und Leiste |
+     |---|---|---|---|
+     | vorher              | 8 / 12 | 8 | 30,4 px |
+     | „so einen tick kleiner" | 8 / 4  | 4 | 9,5 px |
+     | „sieht aus als wär's ein Teil" | 4 / 4 | 0 | **5,4 px** |
+
+     Der letzte Schritt kam aus: „mach diesen schatten sehr sehr klein und
+     schieb die untere leiste nach oben so, damit es zumindest so aussieht als
+     wäre es ein teil und nicht das der schatten mega viel platz einnimmt."
+
+     ⚠️ Mit „Schatten" ist NICHT das `box-shadow` unten gemeint — das malt
+     Schwarz auf Schwarz und kann keinen Platz einnehmen. Gemeint ist der
+     dunkle Streifen, den er zwischen den beiden Zeilen SIEHT; das Wort stammt
+     aus meiner eigenen Erklärung an ihn. Beide Lesarten führen ohnehin zur
+     selben Handlung — Abstand zu, Leiste hoch —, deshalb ist hier nichts
+     geraten worden.
+
+     Die Polsterung ist jetzt symmetrisch (4 oben, 4 unten). Vorher stand oben
+     8 und unten 0: gleiche Höhe, aber der Zurück-Pfeil klebte an der Unterkante.
+     Über der Zeile bleiben so 8 px Luft zur App-Kopfzeile — gemessen. */
+  padding-top:var(--sp-1);
   padding-bottom:var(--sp-1);
   /* ⭐ Der Streifen ÜBER der Titelzeile (18.08.2026, zweites Bildschirmfoto).
      Gemessen: genau 4 px, und was dort durchrollte, war `verse-ar` — der
@@ -2157,10 +2185,20 @@ main{
 
      Stattdessen ein Schatten, der nach OBEN in derselben Farbe malt. Er deckt
      die 4 px zu und rührt am Aufbau nichts an: kein Platzbedarf, keine
-     Klebekante, nichts, was sich verschieben könnte. */
+     Klebekante, nichts, was sich verschieben könnte.
+
+     ⛔ Er darf NICHT kleiner werden. Am 18.08.2026 nachgemessen: die klebende
+     Zeile hält bei 76,9 px, die Innenkante von `main` liegt bei 72,9 px — die
+     Differenz ist exakt 4 px. Jeder Pixel weniger legt genau so viel vom
+     Verstext wieder frei. Belegt im Bildschirmfoto bei scrollTop 420 mit
+     ausgeklapptem Kopf; beim vorigen Versuch war der Kopf eingeklappt, deshalb
+     zeigte das Foto damals nichts. */
   box-shadow:0 calc(var(--sp-1) * -1) 0 var(--bg);
 }
-#screen-quranfull .hifz-bar{ padding-top:var(--sp-1); }
+/* 0 statt 4 px: den Rest des Abstands trägt schon die Zeilenluft der Leiste.
+   Ihre Höhe fällt damit von 64 auf 60 px — die Klebekante bleibt unberührt,
+   weil sie an `--quran-kopf-h` hängt und nicht an dieser Leiste. */
+#screen-quranfull .hifz-bar{ padding-top:0; }
 
 /* ---------- Kopf einklappen beim Weiterlesen (Elias' Punkt 1, 10.08.2026) ----
 
@@ -2179,17 +2217,22 @@ main{
    lassen. `transform` bewegt nur das Bild und lässt den Platz stehen — genau
    deshalb springt der Verstext beim Ein- und Ausklappen nicht.
 
-   Die zweite Zeile braucht `-100% - 52px`: `-100%` ist ihre eigene Höhe, die
-   52 px sind ihr Abstand von oben (ihr `top` oben in dieser Regel). Ohne den
-   Zuschlag bliebe ein Streifen stehen. Der Wert steht bewusst hier direkt unter
-   dem `top`, das er ausgleicht — wer das eine ändert, sieht das andere. */
+   Die zweite Zeile braucht `-100% - var(--quran-kopf-h)`: `-100%` ist ihre
+   eigene Höhe, der Zuschlag ihr Abstand von oben (ihr `top` weiter oben in
+   dieser Datei). Ohne ihn bliebe ein Streifen stehen.
+
+   ⭐ Seit dem 18.08.2026 steht der Zuschlag als Variable statt als getippte
+   Zahl. Vorher war die 52 an zwei Stellen von Hand geschrieben; wer die
+   Polsterung der Titelzeile änderte, musste an beide denken. Beim Verkleinern
+   auf 48 px wäre genau daraus wieder der Spalt entstanden, den die Änderung
+   beseitigen sollte. */
 #screen-quranfull .screen-header,
 #screen-quranfull .quran-sticky{
   transition:transform var(--dur-3) var(--ease-out);
   will-change:transform;
 }
 #screen-quranfull.kopf-eingeklappt .screen-header{transform:translateY(-100%);}
-#screen-quranfull.kopf-eingeklappt .quran-sticky{transform:translateY(calc(-100% - 52px));}
+#screen-quranfull.kopf-eingeklappt .quran-sticky{transform:translateY(calc(-100% - var(--quran-kopf-h)));}
 /* Wer Bewegung abgestellt hat, bekommt denselben Nutzen ohne die Fahrt. */
 @media (prefers-reduced-motion: reduce){
   #screen-quranfull .screen-header,
