@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — عِلْم mit Ḥarakah">
+<title>Entwurf H — عِلْم mit rotem Vokalzeichen</title>
+<!-- ⭐ Der Schriftzug ist NICHT von mir gezeichnet: es ist genau der Pfad aus
+     dem bisherigen Icon, also aus einer echten Schrift abgeleitet und
+     nachweislich richtig. Ein selbst gemaltes arabisches Wort wäre der eine
+     Fehler, der sich nie von allein meldet — beim Korantrainer waren 10 von 28
+     Mundbildern falsch, und keine einzige maschinelle Prüfung hat es gemerkt.
+
+     Der Gedanke: das eine Rote ist ein VOKALZEICHEN. Genau daran arbeitet
+     Elias jeden Tag, und genau das unterscheidet diese App vom Korantrainer —
+     dort geht es ums Lesen, hier um die Ḥarakāt, die das Wort erst eindeutig
+     machen.
+
+     ⚠️ Der Punkt sitzt bewusst NICHT über einem bestimmten Buchstaben. Ein
+     echtes Vokalzeichen an der falschen Stelle wäre eine falsche Aussage über
+     die Sprache; ein freistehender Akzent darüber ist Gestaltung. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+<!-- Der rote Akzent, hoch gesetzt wie eine Ḍammah über der Zeile -->
+<circle cx="256" cy="118" r="26" fill="#ff2d4f"/>
+<g fill="#f3ecef" transform="translate(407.31 300) scale(0.25302 -0.25302)"><path d="M-54 248L-74 167Q-77 155 -99 145Q-109 141 -146 126Q-183 111 -245 86L-477 -15Q-512 -15 -522 34Q-532 83 -483 104Q-463 112 -448.5 118.5Q-434 125 -424 129Q-477 173 -462 238Q-431 372 -318 425Q-290 438 -251 420Q-213 402 -172 360Q-151 338 -157 325Q-162 313 -207 325Q-253 338 -316 323Q-382 308 -402 264Q-408 253 -374 222Q-289 149 -130 250Q-119 257 -109.5 263Q-100 269 -93 273Q-39 307 -54 248ZM-581 115Q-602 -15 -674 -15Q-693 -15 -699 6Q-723 89 -674 104Q-616 122 -616 182L-633 615Q-634 638 -626 646L-589 688Q-570 710 -570 663L-559 432Q-551 248 -544 207Q-526 116 -476 104Q-452 98 -449 59Q-446 21 -457 -4Q-463 -15 -476 -15Q-545 -15 -581 115ZM-924 213Q-837 111 -674 105Q-624 103 -635 44Q-646 -15 -674 -15Q-718 -16 -757.5 -7Q-797 2 -832 18Q-832 -77 -876 -112Q-896 -127 -915 -111Q-973 -59 -987 41Q-1041 34 -1084 -11Q-1089 -33 -1074 -130Q-1020 -491 -1033 -550Q-1042 -588 -1063 -588Q-1083 -588 -1085 -543Q-1086 -508 -1095.5 -438Q-1105 -368 -1122 -262Q-1157 -48 -1120 43Q-1083 135 -973 185Q-952 246 -924 213Z"/></g>
+</svg>

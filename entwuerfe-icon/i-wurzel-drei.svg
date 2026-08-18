@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — die drei Wurzelplätze">
+<title>Entwurf I — die drei Wurzelplätze</title>
+<!-- Der Gedanke: die arabische Wurzel hat drei Plätze. Aus ihnen wird jedes
+     Wort gebaut, und der Wurzelmodus dieser App macht genau das sichtbar.
+
+     ⭐ Bewusst OHNE Buchstaben. Drei gezeichnete Radikale wären drei
+     Gelegenheiten für einen Fehler, den keine Prüfung findet — und in einem
+     Icon bei 48 px wäre ein arabischer Buchstabe ohnehin nicht mehr lesbar.
+     Die drei Felder sind die Idee, nicht die Schrift.
+
+     Gelesen wird von RECHTS: der erste Radikal steht rechts, deshalb ist das
+     rechte Feld das volle und die beiden anderen sind Umrisse. Wer arabisch
+     liest, sieht sofort, wo angefangen wird.
+
+     Die drei Verbindungslinien darunter zeigen, dass die Plätze
+     zusammengehören: eine Wurzel, nicht drei Kästchen. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+
+<!-- Die drei Plätze. Kantenlänge 96, Abstand 34 — zusammen 358 px breit,
+     also innerhalb der 80 %, die ein maskable Icon sicher behält. -->
+<g>
+  <!-- rechts: der erste Radikal, gefüllt und rot -->
+  <rect x="333" y="168" width="96" height="96" rx="22" fill="#ff2d4f"/>
+  <!-- Mitte -->
+  <rect x="208" y="168" width="96" height="96" rx="22" fill="none" stroke="#f3ecef" stroke-width="16"/>
+  <!-- links: der dritte Radikal -->
+  <rect x="83" y="168" width="96" height="96" rx="22" fill="none" stroke="#f3ecef" stroke-width="16"/>
+</g>
+
+<!-- Der Bogen darunter: die drei gehören zu einem Wort zusammen. -->
+<path d="M107 316 Q256 396 405 316" fill="none" stroke="#9c9095" stroke-width="16" stroke-linecap="round"/>
+
+<!-- Zwei Wortformen, die aus derselben Wurzel wachsen — als Striche angedeutet,
+     der obere länger als der untere. Kein Text, nur die Bewegung. -->
+<g fill="none" stroke="#f3ecef" stroke-width="16" stroke-linecap="round" opacity=".85">
+  <path d="M168 384h176"/>
+  <path d="M216 428h128"/>
+</g>
+</svg>

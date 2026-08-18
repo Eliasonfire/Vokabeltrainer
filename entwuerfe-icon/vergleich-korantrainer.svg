@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Quran lesen lernen">
+<title>Quran lesen lernen</title>
+<!--
+  ⭐ Selbst gezeichnet, kein fremdes Material. Ein aufgeschlagenes Buch als
+     geometrische Form — bewusst KEIN religiöses Zeichen: ein falsch
+     gezeichnetes wäre schlimmer als keines, und ein Icon ist Gestaltung, nicht
+     Lehrinhalt.
+
+  ⛔⛔ NEUTRAL GEHALTEN, WEIL DIE AKZENTFARBE WÄHLBAR IST. Seit dem 14.08.2026
+     kann Elias zwischen sieben Akzentfarben wählen. Ein Icon in Rosa würde
+     nach der Wahl von Blau nicht mehr passen — und ein installiertes Symbol
+     ändert sich nicht mehr, ohne die App neu abzulegen. Also weiß auf
+     OLED-Schwarz: das passt zu jeder Wahl.
+-->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+<g fill="none" stroke="#f3ecef" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Die zwei aufgeschlagenen Seiten -->
+  <path d="M256 150c-30-26-74-38-124-38-14 0-22 8-22 20v196c0 12 8 20 22 20 50 0 94 12 124 38"/>
+  <path d="M256 150c30-26 74-38 124-38 14 0 22 8 22 20v196c0 12-8 20-22 20-50 0-94 12-124 38"/>
+  <!-- Der Bund in der Mitte -->
+  <path d="M256 150v236"/>
+</g>
+<!-- Drei Zeilen je Seite, angedeutet. Rechts (arabische Leserichtung) kürzer
+     werdend, damit das Bild nicht symmetrisch-steif wirkt. -->
+<g fill="none" stroke="#9c9095" stroke-width="14" stroke-linecap="round">
+  <path d="M296 196h72M296 244h72M296 292h48"/>
+  <path d="M144 196h72M144 244h72M168 292h48"/>
+</g>
+</svg>
