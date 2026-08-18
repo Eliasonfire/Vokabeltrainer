@@ -454,7 +454,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "mutabaqa-genus-01",
-    name: "مطابقة (Angleichung des Prädikats an das Genus)",
+    name: "مُطَابَقَة (Angleichung des Prädikats an das Genus)",
     shortExplanation: "Das Wort, das über etwas Weibliches aussagt, bekommt selbst die weibliche Form mit Tāʾ marbūṭa. Beispiel des Lehrers: das Wort für »Fahrrad« ist im Arabischen weiblich, deshalb heißt es nicht جَدِيدٌ jadīdun, sondern جَدِيدَةٌ jadīdatun »neu« – und nicht قَدِيمٌ qadīmun, sondern قَدِيمَةٌ qadīmatun »alt«.",
     color: "fem",
     source: { folge: 9, video: "Folge 09", approxTimestamp: "40:29", chapter: 6 },
@@ -462,7 +462,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "fem-ohne-ta-marbuta-01",
-    name: "مؤنث بلا تاء (weiblich ohne Tāʾ marbūṭa)",
+    name: "مُؤَنَّث بلا تاء (weiblich ohne Tāʾ marbūṭa)",
     shortExplanation: "Es gibt drei Gruppen weiblicher Wörter: solche mit Tāʾ marbūṭa, solche die von der Bedeutung her weiblich sind (Tochter, Mutter, Tante) und solche, die einfach weiblich sind – ohne erkennbaren Grund, z.B. اَلنَّار an-nār »das Feuer«. Auch قِدْرٌ qidrun »Kochtopf« ist weiblich, obwohl kein Tāʾ marbūṭa dransteht. Die dritte Gruppe muss man auswendig lernen.",
     color: "fem",
     source: { folge: 9, video: "Folge 09", approxTimestamp: "42:53", chapter: 6 },
@@ -477,7 +477,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "koerperteile-genus-01",
-    name: "أعضاء مزدوجة (doppelte Körperteile sind weiblich)",
+    name: "أَعْضَاء مزدوجة (doppelte Körperteile sind weiblich)",
     shortExplanation: "Körperteile, die es doppelt gibt, sind im Arabischen weiblich: يَدٌ yadun »Hand«, رِجْلٌ rijlun »Bein«, أُذُنٌ udhunun »Ohr«, عَيْنٌ ʿaynun »Auge«. Körperteile, die es nur einmal gibt, sind männlich – أَنْفٌ anfun »Nase« und فَمٌ famun »Mund«. Der Lehrer nennt das eine »Ausnahmeregel«, die man sich bei Körperteilen gut merken kann.",
     color: "fem",
     source: { folge: 9, video: "Folge 09", approxTimestamp: "48:32", chapter: 6 },
@@ -897,7 +897,7 @@ const GRAMMAR_RULES = [
   {
     "id": "asma-khamsa-vollstaendig-01",
     "name": "الأَسْمَاءُ الخَمْسَةُ — alle fünf, und wann sie gelten",
-    "shortExplanation": "Dein Lehrer nennt in Folge 16 nur أَبٌ und أَخٌ und sagt ausdrücklich, die drei übrigen kämen erst im zweiten Buch (asma-khamsa-01). Der deutsche Madina-Schlüssel 3 nennt sie vollständig: أَبٌ، أَخٌ، حَمٌ، فَمٌ، ذُو. ⭐ Und er nennt die Bedingung, unter der die besonderen Endungen überhaupt gelten — im Wortlaut des Buchs: «Diese Nomen bekommen die Sekundären Endungen nur, wenn sie مُضافٌ sind und der مُضافٌ إليه nicht ein Pronomen der ersten Person Singular ist. In dieser Gruppe ist die rafʿ-Endung wāw, die naṣb-Endung alif und die jarr-Endung ist yāʾ.» Damit sind beide Ausnahmen deines Lehrers erklärt: أَبِي (mein Vater) hat kein Wāw, weil dort das Ich-Pronomen steht — und هُوَ أَخٌ hat keins, weil أَخٌ dort gar kein مُضَاف ist. حَمٌ ist laut Fußnote des Buchs «der männliche Verwandte des Ehemanns so wie sein Bruder oder sein Vater». فَمٌ (Mund) geht auf zwei Arten: mit مـ wird es normal dekliniert (فَمُكَ نَظِيفٌ), ohne مـ wie die fünf (فُوكَ صَغِيرٌ).",
+    "shortExplanation": "Dein Lehrer nennt in Folge 16 nur أَبٌ und أَخٌ und sagt ausdrücklich, die drei übrigen kämen erst im zweiten Buch (asma-khamsa-01). Der deutsche Madina-Schlüssel 3 nennt sie vollständig: أَبٌ، أَخٌ، حَمٌ، فَمٌ، ذُو. ⭐ Und er nennt die Bedingung, unter der die besonderen Endungen überhaupt gelten — im Wortlaut des Buchs: «Diese Nomen bekommen die Sekundären Endungen nur, wenn sie مُضافٌ sind und der مُضافٌ إِلَيْهِ nicht ein Pronomen der ersten Person Singular ist. In dieser Gruppe ist die rafʿ-Endung wāw, die naṣb-Endung alif und die jarr-Endung ist yāʾ.» Damit sind beide Ausnahmen deines Lehrers erklärt: أَبِي (mein Vater) hat kein Wāw, weil dort das Ich-Pronomen steht — und هُوَ أَخٌ hat keins, weil أَخٌ dort gar kein مُضَاف ist. حَمٌ ist laut Fußnote des Buchs «der männliche Verwandte des Ehemanns so wie sein Bruder oder sein Vater». فَمٌ (Mund) geht auf zwei Arten: mit مـ wird es normal dekliniert (فَمُكَ نَظِيفٌ), ohne مـ wie die fünf (فُوكَ صَغِيرٌ).",
     "color": "idafa",
     "ergaenzung": true,
     "kapitel": 10,
