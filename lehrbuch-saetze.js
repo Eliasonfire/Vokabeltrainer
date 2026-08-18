@@ -137,5 +137,66 @@ const LEHRBUCH_SAETZE = [
     /* عَمّ ist ausdrücklich der Onkel väterlicherseits (mütterlicherseits wäre
        خَال). "Cousine" zuerst, weil das die Bedeutung ist; die wörtliche Form
        dahinter, weil genau sie die إِضافة zeigt, um die es im Kapitel geht. */
-    sentDe: 'Nein. Sie ist meine Cousine — die Tochter meines Onkels väterlicherseits.' }
+    sentDe: 'Nein. Sie ist meine Cousine — die Tochter meines Onkels väterlicherseits.' },
+
+  /* ===== Nachtrag 18.08.2026: die Saetze zu den unerreichbaren Regeln ======
+   *
+   * Neun Regeln aus Folge 14/15/16 lagen in grammar-data.js, ohne dass ein
+   * einziger der 198 vorhandenen Saetze sie zeigt - keiner enthaelt عِنْدَ,
+   * لِي, فِيهِ, أَبُو/أَخُو oder eine Besitzendung. Gemessen, nicht geschaetzt:
+   * die Suche nach jedem Ausloeser ergab 0 Treffer.
+   *
+   * Gefunden wurden sie auf Buchseite 61 (Lektion 11, بَيْتِي) und 53. Die
+   * Lektion 11 traegt gleich fuenf davon auf einer Seite.
+   *
+   * ⚠️ ZUR VOKALISATION - hier steckt die eigentliche Sorgfalt:
+   * Das Buch druckt in Lektion 11 NUR die Kasusendungen. Das ist bei 600 dpi
+   * nachgemessen; bei 110 dpi war nicht zu unterscheiden, ob ueber dem Alif
+   * von اسمه eine Maddah oder eine Waslah steht. Alles andere ist ergaenzt,
+   * deshalb `vokalisationErgaenzt: true` - und `gedruckt` sagt bei jedem Satz,
+   * was tatsaechlich im Buch steht.
+   *
+   * Jedes Wort wurde gegen den vorhandenen Bestand geprueft (vocab-data.js,
+   * diese Datei UND grammar-data.js, wo die Regeln ihre eigenen belegten
+   * Formen mitfuehren). Belegt gefunden: فِيهِ, لِي, مَاذَا, الَّذِي,
+   * لِلْمُدَرِّسِ, عِنْدَ. Nicht im Bestand und damit neu: أُسَامَةُ, سُعَادُ,
+   * دَفْتَر, حَدِيقَة - sie stehen auf der Liste fuer Elias.
+   */
+  { id: 'mb1-61-1', seite: 61, kapitel: 11, vokalisationErgaenzt: true,
+    gedruckt: 'ohne jedes Zeichen',
+    sentAr: 'هَذَا بَيْتِي. بَيْتِي أَمَامَ الْمَسْجِدِ.',
+    sentDe: 'Dies ist mein Haus. Mein Haus ist vor der Moschee.' },
+
+  /* Der Satz, an dem أُسَامَةُ haengt: das Buch setzt dort eine einzelne
+     Dammah, waehrend أَخٌ, وَاحِدٌ, أُخْتٌ und وَاحِدَةٌ in derselben Zeile
+     das Tanwin tragen. Der Gegensatz ist gedruckt und musste nicht ergaenzt
+     werden - genau er ist die Regel. */
+  { id: 'mb1-61-2', seite: 61, kapitel: 11, vokalisationErgaenzt: true,
+    gedruckt: 'أَخٌ وَاحِدٌ أُخْتٌ وَاحِدَةٌ mit Tanwin, أُسَامَةُ und سُعَادُ mit einfacher Dammah',
+    sentAr: 'لِي أَخٌ وَاحِدٌ اسْمُهُ أُسَامَةُ، وَلِي أُخْتٌ وَاحِدَةٌ اسْمُهَا سُعَادُ.',
+    sentDe: 'Ich habe einen Bruder, sein Name ist Usāma, und ich habe eine Schwester, ihr Name ist Suʿād.' },
+
+  /* Hier druckt das Buch فِيْهِ vollstaendig vokalisiert - die Kasrah unter
+     dem هـ ist also BELEGT und nicht ergaenzt. Das ist der bessere Beleg fuer
+     hu-nach-kasra-01 als der Lektionstext, wo فيه ohne Zeichen steht.
+     Abweichung vom Druck: das Buch setzt ein Sukun auf das ي (فِيْهِ). Diese
+     Datei schreibt Langvokale sonst ohne Sukun (فِي in mb1-21-1), deshalb hier
+     فِيهِ - dieselbe Form, die auch grammar-data.js fuehrt. */
+  { id: 'mb1-61-3', seite: 61, kapitel: 11, vokalisationErgaenzt: true,
+    gedruckt: 'فِيْهِ vollstaendig; der Rest ohne Zeichen',
+    sentAr: 'مَنْ فِي هَذَا الْبَيْتِ؟ فِيهِ حَامِدٌ.',
+    sentDe: 'Wer ist in diesem Haus? In ihm ist Hamid.' },
+
+  { id: 'mb1-61-4', seite: 61, kapitel: 11, vokalisationErgaenzt: true,
+    gedruckt: 'فِيْهَا vollstaendig; der Rest ohne Zeichen',
+    sentAr: 'مَاذَا فِي الْحَقِيبَةِ؟ فِيهَا كِتَابِي وَقَلَمِي وَدَفْتَرِي.',
+    sentDe: 'Was ist in der Tasche? In ihr sind mein Buch, mein Stift und mein Heft.' },
+
+  /* Buchseite 53, Uebung اِقْرَأْ - dort ist الذي in allen fuenf Saetzen
+     unterstrichen. Ohne jedes Vokalzeichen gedruckt, aber jedes der fuenf
+     Woerter ist im Bestand vokalisiert belegt. */
+  { id: 'mb1-53-1', seite: 53, kapitel: 10, vokalisationErgaenzt: true,
+    gedruckt: 'ohne jedes Zeichen',
+    sentAr: 'الْكِتَابُ الَّذِي عَلَى الْمَكْتَبِ لِلْمُدَرِّسِ.',
+    sentDe: 'Das Buch, das auf dem Schreibtisch ist, gehört dem Lehrer.' }
 ];

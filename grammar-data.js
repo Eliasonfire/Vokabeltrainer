@@ -649,7 +649,6 @@ const GRAMMAR_RULES = [
        Ohne markierten Satz hat eine Regel keinen Zugang in der App — sie
        taucht dann nur als FALSCHE Antwort im Uebungsmodus auf. Sobald ein
        Beispielsatz aus dem Buch dazukommt, faellt diese Zeile weg. */
-    ausgeblendet: true
   },
   {
     id: "iltiqa-sakinain-01",
@@ -673,7 +672,6 @@ const GRAMMAR_RULES = [
        Ohne markierten Satz hat eine Regel keinen Zugang in der App — sie
        taucht dann nur als FALSCHE Antwort im Uebungsmodus auf. Sobald ein
        Beispielsatz aus dem Buch dazukommt, faellt diese Zeile weg. */
-    ausgeblendet: true
   },
   {
     id: "hurufu-jarr-bedeutungen-01",
@@ -697,7 +695,6 @@ const GRAMMAR_RULES = [
        Ohne markierten Satz hat eine Regel keinen Zugang in der App — sie
        taucht dann nur als FALSCHE Antwort im Uebungsmodus auf. Sobald ein
        Beispielsatz aus dem Buch dazukommt, faellt diese Zeile weg. */
-    ausgeblendet: true
   },
   {
     id: "badal-01",
@@ -729,7 +726,6 @@ const GRAMMAR_RULES = [
        Ohne markierten Satz hat eine Regel keinen Zugang in der App — sie
        taucht dann nur als FALSCHE Antwort im Uebungsmodus auf. Sobald ein
        Beispielsatz aus dem Buch dazukommt, faellt diese Zeile weg. */
-    ausgeblendet: true
   },
   {
     id: "zarf-makan-rollenname-01",
@@ -744,7 +740,6 @@ const GRAMMAR_RULES = [
        Ohne markierten Satz hat eine Regel keinen Zugang in der App — sie
        taucht dann nur als FALSCHE Antwort im Uebungsmodus auf. Sobald ein
        Beispielsatz aus dem Buch dazukommt, faellt diese Zeile weg. */
-    ausgeblendet: true
   },
   {
     id: "zarf-mansub-01",
@@ -759,7 +754,6 @@ const GRAMMAR_RULES = [
        Ohne markierten Satz hat eine Regel keinen Zugang in der App — sie
        taucht dann nur als FALSCHE Antwort im Uebungsmodus auf. Sobald ein
        Beispielsatz aus dem Buch dazukommt, faellt diese Zeile weg. */
-    ausgeblendet: true
   },
   {
     id: "zuruf-makan-weitere-01",
@@ -841,8 +835,7 @@ const GRAMMAR_RULES = [
       "video": "Folge 15",
       "approxTimestamp": "49:15",
       "chapter": 10
-    },
-    "ausgeblendet": true
+    }
   },
   {
     "id": "tanwin-maennername-ta-01",
@@ -855,8 +848,7 @@ const GRAMMAR_RULES = [
       "video": "Folge 15",
       "approxTimestamp": "16:15",
       "chapter": 10
-    },
-    "ausgeblendet": true
+    }
   },
   {
     "id": "asma-khamsa-01",
@@ -883,8 +875,7 @@ const GRAMMAR_RULES = [
       "video": "Folge 16",
       "approxTimestamp": "26:45",
       "chapter": 10
-    },
-    "ausgeblendet": true
+    }
   },
   {
     "id": "possessiv-ist-idafa-01",
@@ -897,8 +888,7 @@ const GRAMMAR_RULES = [
       "video": "Folge 16",
       "approxTimestamp": "33:15",
       "chapter": 10
-    },
-    "ausgeblendet": true
+    }
   },
 ];
 
@@ -1000,7 +990,8 @@ const SENTENCE_TAGS = {
   ],
   "45767": [
     { ruleId: "zarf-01", matchText: "تَحْتَ السَّرِيرِ." },
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" }
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "nakira-marifa-01", matchText: "قِطٌّ" }
   ],
   "45768": [
     { ruleId: "mina-al-01", matchText: "مِنَ الْبَيْتِ." },
@@ -1104,7 +1095,8 @@ const SENTENCE_TAGS = {
   ],
   "45793": [
     { ruleId: "mubtada-khabar-01", matchText: "الْمَدْرَسَةُ" },
-    { ruleId: "mina-al-01", matchText: "مِنَ الْبَيْتِ." }
+    { ruleId: "mina-al-01", matchText: "مِنَ الْبَيْتِ." },
+    { ruleId: "mubtada-khabar-genus-01", matchText: "قَرِيبَةٌ" }
   ],
   "45794": [
     { ruleId: "mubtada-khabar-01", matchText: "الْجَامِعَةُ" },
@@ -1250,7 +1242,8 @@ const SENTENCE_TAGS = {
     { ruleId: "jumla-ismiya-filiya-01", matchText: "هَذَا" }
   ],
   "45828": [
-    { ruleId: "zarf-als-mudaf-01", matchText: "تَحْتَ السَّرِيرِ." }
+    { ruleId: "zarf-als-mudaf-01", matchText: "تَحْتَ السَّرِيرِ." },
+    { ruleId: "nakira-marifa-01", matchText: "الْقِطُّ" }
   ],
   "45829": [
     { ruleId: "al-gesamtheit-01", matchText: "الْوَلَدِ." },
@@ -1602,7 +1595,8 @@ const SENTENCE_TAGS = {
     { ruleId: "idafa-erkennen-01", matchText: "اسْمُ التَّاجِرِ" }
   ],
   "mb1-42-3": [
-    { ruleId: "zuruf-makan-01", matchText: "أَمَامَ" }
+    { ruleId: "zuruf-makan-01", matchText: "أَمَامَ" },
+    { ruleId: "zarf-mansub-01", matchText: "خَلْفَ" }
   ],
   "mb1-43-1": [
     { ruleId: "istifham-liman-01", matchText: "لِمَنْ" },
@@ -1613,11 +1607,11 @@ const SENTENCE_TAGS = {
     { ruleId: "ismul-isara-dhalika-01", matchText: "ذَلِكَ" }
   ],
   "mb1-46-2": [
-    { ruleId: "zuruf-makan-01", matchText: "خَلْفَ" }
+    { ruleId: "zuruf-makan-01", matchText: "خَلْفَ" },
+    { ruleId: "zarf-makan-rollenname-01", matchText: "أَمَامَ" }
   ],
   "mb1-51-1": [
     { ruleId: "nat-bestimmtheit-01", matchText: "السَّيَّارَةُ الْجَمِيلَةُ" },
-    { ruleId: "istifham-liman-01", matchText: "لِمَنْ" },
     { ruleId: "ismul-isara-tilka-01", matchText: "تِلْكَ" },
     { ruleId: "nat-wen-beschreibt-01", matchText: "لِلْمُدِيرِ الْجَدِيدِ" }
   ],
@@ -1644,6 +1638,23 @@ const SENTENCE_TAGS = {
   ],
   "45895": [
     { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" }
+  ],
+  "mb1-61-1": [
+    { ruleId: "possessiv-ist-idafa-01", matchText: "بَيْتِي" }
+  ],
+  "mb1-61-2": [
+    { ruleId: "tanwin-maennername-ta-01", matchText: "أُسَامَةُ" },
+    { ruleId: "li-vs-inda-01", matchText: "لِي" }
+  ],
+  "mb1-61-3": [
+    { ruleId: "hu-nach-kasra-01", matchText: "فِيهِ" }
+  ],
+  "mb1-61-4": [
+    { ruleId: "istifham-madha-01", matchText: "مَاذَا" },
+    { ruleId: "possessiv-ist-idafa-01", matchText: "كِتَابِي" }
+  ],
+  "mb1-53-1": [
+    { ruleId: "ismun-mawsul-alladhi-01", matchText: "الَّذِي" }
   ]
 };
 
