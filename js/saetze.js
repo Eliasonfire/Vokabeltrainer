@@ -531,7 +531,21 @@ function zeigeGrammatikPopover(span){
      damit nicht viel text dafuer drauf geht". Deshalb bleibt es EINE Zeile in
      Kleinschrift, der Buchbeleg wird abgekuerzt (Schl. 1 L5 S. 18) und steht
      nur da, wo es ihn gibt. */
-  const quelle = [`${rule.source.video} · ca. ${rule.source.approxTimestamp}`];
+  /* ⭐ Seit dem 18.08.2026 gibt es Regeln OHNE Unterrichtsquelle: die elf
+     Lehrbuch-Ergaenzungen aus Block B. Ohne diese Fallunterscheidung stuerzte
+     die Popup-Anzeige hier ab (`rule.source.video` an einem undefined).
+     Sie bekommen stattdessen ihre Buchfundstelle — und davor den Hinweis, dass
+     sie NICHT vom Lehrer stammen. Genau dafuer hat Elias die Kennzeichnung
+     gewollt: bei der Regelfreigabe muss auf einen Blick klar sein, was aus dem
+     Unterricht kommt und was aus einem Buch. */
+  const WERK_KURZ = { 'sharh-madinah-1': 'Sharḥ Madīnah 1', 'bayna-yadayk-2': 'Bayna Yadayk 2' };
+  const quelle = [];
+  if (rule.ergaenzung && rule.buchQuelle){
+    const b = rule.buchQuelle;
+    quelle.push(`📖 ${WERK_KURZ[b.werk] || b.werk} · L${b.lektion} S. ${b.seite} — im Unterricht nicht gesagt`);
+  } else if (rule.source){
+    quelle.push(`${rule.source.video} · ca. ${rule.source.approxTimestamp}`);
+  }
   if (rule.source2) quelle.push(`Schl. ${rule.source2.schluessel} L${rule.source2.lektion} S. ${rule.source2.seite}`);
   const voll = String(rule.shortExplanation || '');
   const kern = kernSatz(voll);

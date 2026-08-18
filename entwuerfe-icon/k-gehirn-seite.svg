@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — Gehirn">
+<title>Entwurf K — Gehirn von der Seite, Strichzeichnung</title>
+<!--
+  Auf Elias' Zuruf am 18.08.2026: "vielleicht kannst du so ein gehirn machen
+  aber mit der roten farbe und so auf korantrainer angelehnt".
+
+  Angelehnt heißt hier konkret: dieselbe Bauweise wie
+  entwuerfe-icon/vergleich-korantrainer.svg — schwarzes Feld mit rx=112,
+  reine Strichzeichnung, stroke-linecap/linejoin round, zwei Strichstärken
+  (22 für den Umriss, 14 für das Innere). Nur die Farbe ist Rot statt Weiß.
+
+  Inhalt sitzt zwischen x/y 96 und 416, also innerhalb der maskable-Zone
+  (innere 80 % = 51…461). Android darf den Rand wegschneiden, ohne dass etwas
+  vom Bild fehlt.
+-->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+
+<!-- Der Umriss: Stirn links, Hinterkopf rechts, Kleinhirn unten rechts. -->
+<g fill="none" stroke="#ff3355" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M168 300
+           C 132 286 126 244 152 220
+           C 140 182 172 148 210 158
+           C 230 126 286 122 306 152
+           C 350 146 380 178 368 216
+           C 398 238 396 292 360 306
+           C 356 344 312 362 282 344
+           C 244 362 192 348 182 318 Z"/>
+</g>
+
+<!-- Die Windungen. Blasser und dünner, damit der Umriss die Form trägt und
+     das Innere nur andeutet — bei 48 px verschmilzt sonst alles. -->
+<g fill="none" stroke="#b00b2a" stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M212 158 C 226 186 214 208 190 216"/>
+  <path d="M306 152 C 300 190 274 202 250 194"/>
+  <path d="M368 216 C 340 226 330 254 344 276"/>
+  <path d="M182 318 C 206 300 214 274 202 252"/>
+  <path d="M282 344 C 276 314 290 292 314 284"/>
+</g>
+</svg>

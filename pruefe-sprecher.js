@@ -82,6 +82,9 @@ if (unsicher.length) {
 const ergebnis = [];
 let ohneDaten = 0;
 for (const r of GRAMMAR_RULES) {
+  /* Buch-Ergaenzungen haben keine Videofundstelle — hier gibt es nichts zu
+     pruefen, und ohne diese Zeile stuerzt der Lauf an `r.source.folge` ab. */
+  if (r.ergaenzung || !r.source) { ohneDaten++; continue; }
   const daten = folgen[r.source.folge];
   if (!daten) { ohneDaten++; continue; }
   const t = sekunden(r.source.approxTimestamp);

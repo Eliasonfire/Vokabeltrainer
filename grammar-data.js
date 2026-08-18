@@ -595,7 +595,179 @@ const GRAMMAR_RULES = [
     color: "nasab",
     source: { folge: 13, video: "Folge 13", approxTimestamp: "21:37", chapter: 9 },
     source2: { schluessel: 1, lektion: 9, seite: 31 }
-  }
+  },
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     ELF ERGÄNZUNGEN AUS DEN LEHRBÜCHERN — freigegeben von Elias am 18.08.2026
+
+     Seine Worte: „also wenn das aus den büchern ist dann kannst du das machen."
+     Das ist die Antwort auf Block B des Entscheidungsbogens vom 16.08.
+
+     ⭐ Diese elf Regeln stammen NICHT aus dem Unterricht. Sie schließen Lücken,
+        die beim Abgleich mit Sharḥ Madīnah Buch 1 und Bayna Yadayk Band 2
+        aufgefallen sind. Keine davon widerspricht dem Lehrer — er sagt zu
+        diesen Punkten nichts.
+
+     ⛔ DESHALB HABEN SIE KEIN `source`, SONDERN `buchQuelle` UND `ergaenzung`.
+        Eine erfundene Videofundstelle wäre genau das, was Goal-Prompt E.1
+        verbietet. `validate.js` kennt die neue Form seit dem 18.08.2026 und
+        verlangt bei `ergaenzung: true` statt `source` eine `buchQuelle`.
+        Die Oberfläche schreibt an solche Regeln sichtbar dazu, dass sie aus
+        dem Buch stammen — damit Elias bei der Regelfreigabe immer weiß, was
+        von seinem Lehrer kommt und was nicht.
+
+     ⚠️ Umkehrbar: `ausgeblendet: true` an einer Regel nimmt sie wieder heraus,
+        ohne sie zu löschen (js/saetze.js filtert danach).
+
+     ⚠️ NICHT mit aufgenommen: die Frage, ob ein ظَرْف ein مُضاف ist. Sharḥ
+        Madīnah beschriftet خَلْفَ als مُضاف, Elias' Lehrer besteht ausdrücklich
+        auf dem Gegenteil („funktioniert wie ein مُضاف, ist aber selbst
+        keiner", zarf-als-mudaf-01). Das ist ein echter Widerspruch und keine
+        Lücke — er bleibt, wie der Lehrer ihn gesagt hat.
+     ═══════════════════════════════════════════════════════════════════════ */
+
+  {
+    id: "al-tanwin-tilgung-01",
+    name: "اَلْ tilgt das Tanwīn",
+    shortExplanation: "Sobald اَلْ vor ein Wort tritt, fällt das Tanwīn weg — beides zusammen geht nicht. Sharḥ Madīnah sagt es in fünf Wörtern: يُحْذَفُ التَّنْوِينُ عِنْدَ دُخُولِ اَلْ („das Tanwīn wird getilgt, wenn اَلْ hinzutritt\"). Richtig: الْقَلَمُ مَكْسُورٌ · الْبَابُ مَفْتُوحٌ · الْوَلَدُ جَالِسٌ. Falsch: القلمٌ (اَلْ und Tanwīn zugleich) · قلمُ (Damma ohne beides) · الولدٌ جالسٌ. Diese Regel setzen sechs andere Regeln bei uns stillschweigend voraus: al-gesamtheit-01 schließt sogar mit dem Satz „Ergänzt die schon bekannte Regel zu اَلْ (bestimmt, Tanwin fällt weg)\" — nur stand sie bis heute nirgends als eigener Eintrag.",
+    color: "other",
+    kapitel: 3,
+    ergaenzung: true,
+    buchQuelle: { werk: "sharh-madinah-1", lektion: 3, seite: 6 }
+  },
+  {
+    id: "nakira-marifa-01",
+    name: "نَكِرَة / مَعْرِفَة (unbestimmt / bestimmt)",
+    shortExplanation: "Das Begriffspaar, das dreizehn unserer Regeln berühren, ohne es je zu erklären. Sharḥ Madīnah: النَّكِرَةُ: شَيْءٌ غَيْرُ مُعَيَّنٍ — das Unbestimmte ist „eine Sache, die nicht bestimmt ist\" (بيتٌ، قلمٌ، رجلٌ، بنتٌ); المعرفةُ: شَيْءٌ مُعَيَّنٌ — das Bestimmte ist „eine bestimmte Sache\" (البيتُ، القلمُ، الرجلُ، البنتُ). Der Kern steht in zwei Zeilen: بيتٌ: يَشْمَلُ كُلَّ الْبُيُوتِ، وَلَيْسَ بَيْتاً مُعَيَّناً — „ein Haus\" umfasst alle Häuser und ist kein bestimmtes; الْبَيْتُ: يَدُلُّ عَلَى بَيْتٍ مُعَيَّنٍ بِذَاتِهِ — „das Haus\" weist auf ein bestimmtes Haus als solches. Das ist dieselbe Einsicht wie in al-gesamtheit-01, nur vom unbestimmten Wort her gedacht: der Lehrer erklärt die Gesamtheit am bestimmten Wort, das Buch am unbestimmten.",
+    color: "other",
+    kapitel: 3,
+    ergaenzung: true,
+    buchQuelle: { werk: "sharh-madinah-1", lektion: 3, seite: 6 },
+    /* Ausgeblendet am 18.08.2026, NICHT weil die Regel schlecht waere:
+       Rollenregel — am Schriftbild nicht auffindbar.
+       Ohne markierten Satz hat eine Regel keinen Zugang in der App — sie
+       taucht dann nur als FALSCHE Antwort im Uebungsmodus auf. Sobald ein
+       Beispielsatz aus dem Buch dazukommt, faellt diese Zeile weg. */
+    ausgeblendet: true
+  },
+  {
+    id: "iltiqa-sakinain-01",
+    name: "اِلْتِقَاءُ السَّاكِنَيْنِ (zwei Vokallose treffen sich)",
+    shortExplanation: "Der Fachbegriff zu deiner Regel mina-al-01. Du kennst den Sachverhalt schon — „zwei Sukūn hintereinander mögen die Araber nicht\" — und die Erklärung deines Lehrers ist die bessere zum Behalten. Was fehlte, ist der Name, unter dem es in jeder arabischen Grammatik steht: اِلْتِقَاءُ السَّاكِنَيْنِ, „das Zusammentreffen der beiden Vokallosen\". Sharḥ Madīnah zeigt es an مِنَ الْبَيْتِ: أَصْلُهُ مِنْ الْبَيْتِ — die Grundform ist مِنْ + الْ; dann حُرِّكَتِ النُّونُ بِالْفَتْحَةِ مَنْعاً لالْتِقَاءِ السَّاكِنَيْنِ — „das Nūn wurde mit Fatḥa bewegt, um das Zusammentreffen zweier Vokalloser zu verhindern\". Mit diesem Namen findest du die Regel auch außerhalb dieser App wieder.",
+    color: "other",
+    kapitel: 4,
+    ergaenzung: true,
+    buchQuelle: { werk: "sharh-madinah-1", lektion: 4, seite: 8 }
+  },
+  {
+    id: "istifham-madha-01",
+    name: "مَاذَا؟ (was?)",
+    shortExplanation: "Du hast مَا, aber nicht مَاذَا — die Form, die im Gespräch tatsächlich vorkommt. Sharḥ Madīnah: مَاذَا؟ = مَا هَذَا؟ لِغَيْرِ العاقِلِ — مَاذَا ist dasselbe wie مَا هَذَا und fragt nach dem Nicht-Vernunftbegabten, also nach Sachen, nicht nach Personen. Richtig: مَاذَا عَلَى الْمَكْتَبِ؟ — الْقَلَمُ عَلَى الْمَكْتَبِ. Falsch wäre als Antwort مُحَمَّدٌ عَلَى الْمَكْتَبِ, denn nach einer Person fragt man nicht mit مَاذَا, sondern mit مَنْ.",
+    color: "nasab",
+    kapitel: 4,
+    ergaenzung: true,
+    buchQuelle: { werk: "sharh-madinah-1", lektion: 4, seite: 8 },
+    /* Ausgeblendet am 18.08.2026, NICHT weil die Regel schlecht waere:
+       مَاذَا kommt in keinem der 198 Saetze vor (der eine Treffer war لِمَاذَا, also „warum").
+       Ohne markierten Satz hat eine Regel keinen Zugang in der App — sie
+       taucht dann nur als FALSCHE Antwort im Uebungsmodus auf. Sobald ein
+       Beispielsatz aus dem Buch dazukommt, faellt diese Zeile weg. */
+    ausgeblendet: true
+  },
+  {
+    id: "hurufu-jarr-bedeutungen-01",
+    name: "Was die حُرُوفُ الْجَرِّ bedeuten",
+    shortExplanation: "Deine Regeln sagen, was die حُرُوفُ الْجَرِّ mit dem Kasus machen — sie ziehen das folgende Wort in den Genitiv. Sie sagen nicht, was die Präpositionen bedeuten. Sharḥ Madīnah stellt es als Liste: مِنْ: تُفِيدُ الْبِدَايَةَ (bezeichnet den Anfang) · إِلَى: تُفِيدُ النِّهَايَةَ (das Ende) · فِي: تُفِيدُ الظَّرْفِيَّةَ (das Enthaltensein) · عَلَى: تُفِيدُ الاسْتِعْلاَءَ (das Daraufsein) · اللاَّمُ: تُفِيدُ الْمِلْكَ (den Besitz). Fürs Koranlesen ist das der nützlichere Teil: den Kasus siehst du am Wortende ohnehin, die Bedeutung nicht.",
+    color: "nasab",
+    kapitel: 4,
+    ergaenzung: true,
+    buchQuelle: { werk: "sharh-madinah-1", lektion: 8, seite: 12 }
+  },
+  {
+    id: "mubtada-khabar-genus-01",
+    name: "مُبْتَدَأ und خَبَر müssen im Geschlecht übereinstimmen",
+    shortExplanation: "Im Nominalsatz richtet sich das Prädikat im Geschlecht nach dem Subjekt. Sharḥ Madīnah setzt es als Gegensatzpaar: الْغُرْفَةُ مفتوحٌ ist falsch, الْغُرْفَةُ مَفْتُوحَةٌ ist richtig — غُرْفَة ist weiblich, also muss auch مَفْتُوحَة weiblich sein. Ebenso in seiner Beispielreihe: مُحَمَّدٌ طَالِبٌ neben فَاطِمَةُ طَالِبَةٌ, الْبَابُ مُغْلَقٌ neben النَّافِذَةُ مَفْتُوحَةٌ. Du hast nat-vier-bedingungen-01 für das Adjektiv am Nomen (مَسْجِدٌ كَبِيرٌ), aber der Nominalsatz ist ein anderer Bau — satz-vs-wortgruppe-01 unterscheidet die beiden sogar ausdrücklich („Das Hemd ist sauber\" ≠ „das saubere Hemd\"), ohne die Kongruenz für den Satzfall zu nennen.",
+    color: "mubtada",
+    kapitel: 6,
+    ergaenzung: true,
+    buchQuelle: { werk: "sharh-madinah-1", lektion: 6, seite: 10 },
+    /* Ausgeblendet am 18.08.2026, NICHT weil die Regel schlecht waere:
+       Rollenregel — welches Wort خَبَر ist, steht in keinem Zeichen.
+       Ohne markierten Satz hat eine Regel keinen Zugang in der App — sie
+       taucht dann nur als FALSCHE Antwort im Uebungsmodus auf. Sobald ein
+       Beispielsatz aus dem Buch dazukommt, faellt diese Zeile weg. */
+    ausgeblendet: true
+  },
+  {
+    id: "badal-01",
+    name: "بَدَل (die Ersatzangabe)",
+    shortExplanation: "Der Begriff, der eine Frage beantwortet, die deine Regeln offenlassen: warum ist هَذَا الرَّجُلُ تَاجِرٌ ein vollständiger Satz und هَذَا الرَّجُلُ التَّاجِرُ keiner? Sharḥ Madīnah zerlegt den Satz in drei Rollen — هَذَا ist مُبْتَدَأ, الرَّجُلُ ist بَدَل dazu, تَاجِرٌ ist خَبَر. Der بَدَل steht anstelle des Wortes davor und bestimmt es näher; das Prädikat kommt erst danach. Nimmt man dem خَبَر die Unbestimmtheit, wird es zum zweiten بَدَل — und es bleibt kein Prädikat übrig, also auch kein Satz. Ebenso: ذَلِكَ الرَّجُلُ طَبِيبٌ ✔ · ذَلِكَ الرَّجُلُ الطَّبِيبُ ✘. Deine satz-vs-wortgruppe-01 beschreibt genau diesen Unterschied — ohne den Begriff, der ihn erklärt.",
+    color: "mubtada",
+    kapitel: 6,
+    ergaenzung: true,
+    buchQuelle: { werk: "sharh-madinah-1", lektion: 8, seite: 12 }
+  },
+  {
+    id: "ismun-mawsul-alladhi-01",
+    name: "الَّذِي (welcher, der)",
+    shortExplanation: "Das Relativpronomen — bei dir bisher in keiner einzigen Regel. Sharḥ Madīnah stellt es in Lektion 9 direkt neben das نَعْت, weil beide dasselbe leisten: sie bestimmen ein Nomen näher. الَّذِي: اِسْمٌ مَوْصُولٌ لِلْمُفْرَدِ الْمُذَكَّرِ الْعَاقِلِ، وَغَيْرِ الْعَاقِلِ — ein Verbindungswort für das männliche Einzelne, ob vernunftbegabt oder nicht. Für Personen: الطَّالِبُ الَّذِي خَرَجَ مِنَ الْهِنْدِ · الْمُدَرِّسُ الَّذِي جَلَسَ عَلَى الْكُرْسِيِّ جَدِيدٌ. Für Sachen: الْكِتَابُ الَّذِي عَلَى الْمَكْتَبِ لِلْمُدَرِّسِ · الْبَيْتُ الْكَبِيرُ الَّذِي فِي الشَّارِعِ لِلْوَزِيرِ. Bayna Yadayk Band 2 führt es in Einheit 7 ebenfalls neben der الصِّفَة — zwei Lehrwerke stellen denselben Zusammenhang her.",
+    color: "other",
+    kapitel: 9,
+    ergaenzung: true,
+    buchQuelle: { werk: "sharh-madinah-1", lektion: 9, seite: 13 },
+    /* Ausgeblendet am 18.08.2026, NICHT weil die Regel schlecht waere:
+       الَّذِي kommt in keinem der 198 Saetze vor.
+       Ohne markierten Satz hat eine Regel keinen Zugang in der App — sie
+       taucht dann nur als FALSCHE Antwort im Uebungsmodus auf. Sobald ein
+       Beispielsatz aus dem Buch dazukommt, faellt diese Zeile weg. */
+    ausgeblendet: true
+  },
+  {
+    id: "zarf-makan-rollenname-01",
+    name: "ظَرْفُ مَكَانٍ (der Rollenname der Ortsangabe)",
+    shortExplanation: "Deine zuruf-makan-01 zählt die Wörter auf — تَحْتَ, أَمَامَ, خَلْفَ — nennt aber nicht die Rolle, die sie im Satz spielen. Sie heißt ظَرْفُ مَكَانٍ, „Umstandsangabe des Ortes\". Sharḥ Madīnah beschriftet أَمَامَ und خَلْفَ in seinen Satzzerlegungen genau so, und Bayna Yadayk Band 2 nennt denselben Begriff — zwei unabhängige Quellen. Beispiele des Buchs: السَّبُّورَةُ أَمَامَ الطُّلَّابِ · السَّبُّورَةُ خَلْفَ الْمُدَرِّسِ. Mit dem Rollennamen kannst du im I'rāb sagen, was das Wort IST, statt nur, was danach passiert.",
+    color: "nasab",
+    kapitel: 8,
+    ergaenzung: true,
+    buchQuelle: { werk: "sharh-madinah-1", lektion: 8, seite: 12 },
+    /* Ausgeblendet am 18.08.2026, NICHT weil die Regel schlecht waere:
+       die Stelle تَحْتَ السَّرِيرِ ist schon von zarf-01 markiert.
+       Ohne markierten Satz hat eine Regel keinen Zugang in der App — sie
+       taucht dann nur als FALSCHE Antwort im Uebungsmodus auf. Sobald ein
+       Beispielsatz aus dem Buch dazukommt, faellt diese Zeile weg. */
+    ausgeblendet: true
+  },
+  {
+    id: "zarf-mansub-01",
+    name: "Das ظَرْف ist selbst مَنْصُوب",
+    shortExplanation: "Warum enden أَمَامَ, خَلْفَ, تَحْتَ eigentlich immer auf Fatḥa? Du siehst diese Endung in jedem Beispiel, und deine drei Ortsangaben-Regeln erklären nur, was mit dem Wort DAHINTER passiert (es wird مَجْرُور). Bayna Yadayk Band 2 beantwortet den Rest in zwei Wörtern: ظَرْفُ المَكانِ: اسْمٌ مَنْصُوبٌ يَدُلُّ عَلَى مَكانِ وُقُوعِ الفِعْلِ — „ein Nomen im Akkusativ, das auf den Ort des Geschehens hinweist\". Die Fatḥa ist also kein Zufall, sondern der Kasus des Wortes selbst. Kein Widerspruch zum Unterricht: dein Lehrer besteht darauf, dass das ظَرْف ein اِسْم ist, und genau das sagt Bayna Yadayk auch — er sagt zum Kasus nur nichts.",
+    color: "nasab",
+    kapitel: 8,
+    ergaenzung: true,
+    buchQuelle: { werk: "bayna-yadayk-2", lektion: 13, seite: 231 },
+    /* Ausgeblendet am 18.08.2026, NICHT weil die Regel schlecht waere:
+       dieselbe Stelle, schon von zarf-als-mudaf-01 markiert.
+       Ohne markierten Satz hat eine Regel keinen Zugang in der App — sie
+       taucht dann nur als FALSCHE Antwort im Uebungsmodus auf. Sobald ein
+       Beispielsatz aus dem Buch dazukommt, faellt diese Zeile weg. */
+    ausgeblendet: true
+  },
+  {
+    id: "zuruf-makan-weitere-01",
+    name: "Zehn weitere Ortswörter",
+    shortExplanation: "Deine Kapitel-8-Regel nennt drei Ortswörter, Bayna Yadayk Band 2 zählt dreizehn auf: أَمامَ, وَراءَ, خَلْفَ, يَمِين, يَسار, بَيْنَ, عِنْدَ, فَوْقَ, تَحْتَ, شَمال, جَنُوب, شَرْق, غَرْب. Alle verhalten sich gleich — sie sind selbst مَنْصُوب und ziehen das folgende Wort in den Genitiv. Beispiele aus dem Buch: تَقَعُ المَدِينَةُ شَمالَ مَكَّةَ · يُصَلِّي الإمامُ أَمامَ المَأْمُومِينَ، وَهُمْ خَلْفَهُ · القَلَمُ فَوْقَ الكِتابِ · الكِتابُ تَحْتَ الحَقِيبَةِ · أُصَلِّي خَلْفَ مَقامِ إِبْراهِيمَ · السَّيّارَةُ وَراءَ الشَّجَرَةِ · الطَّبِيبُ عِنْدَ البابِ.",
+    color: "other",
+    kapitel: 8,
+    ergaenzung: true,
+    buchQuelle: { werk: "bayna-yadayk-2", lektion: 13, seite: 231 },
+    /* Ausgeblendet am 18.08.2026, NICHT weil die Regel schlecht waere:
+       keines der zehn Woerter kommt in einem Satz vor.
+       Ohne markierten Satz hat eine Regel keinen Zugang in der App — sie
+       taucht dann nur als FALSCHE Antwort im Uebungsmodus auf. Sobald ein
+       Beispielsatz aus dem Buch dazukommt, faellt diese Zeile weg. */
+    ausgeblendet: true
+  },
+
 ];
 
 const SENTENCE_TAGS = {
@@ -652,7 +824,8 @@ const SENTENCE_TAGS = {
   ],
   "45756": [
     { ruleId: "mudaf-ohne-al-01", matchText: "مِفْتَاحُ" },
-    { ruleId: "mudaf-ilayh-01", matchText: "الْبَابِ" }
+    { ruleId: "mudaf-ilayh-01", matchText: "الْبَابِ" },
+    { ruleId: "hurufu-jarr-bedeutungen-01", matchText: "فِي الْحَقِيبَةِ" }
   ],
   "45757": [
     { ruleId: "ta-marbuta-fem-01", matchText: "الْمَدْرَسَةِ" },
@@ -782,7 +955,8 @@ const SENTENCE_TAGS = {
   ],
   "45789": [
     { ruleId: "alif-maqsura-01", matchText: "عَلَى" },
-    { ruleId: "hamzatul-wasl-01", matchText: "الْكُرْسِيِّ." }
+    { ruleId: "hamzatul-wasl-01", matchText: "الْكُرْسِيِّ." },
+    { ruleId: "al-tanwin-tilgung-01", matchText: "الطَّالِبُ" }
   ],
   "45790": [
     { ruleId: "mubtada-khabar-01", matchText: "الْوَلَدُ" },
@@ -849,7 +1023,8 @@ const SENTENCE_TAGS = {
   ],
   "45805": [
     { ruleId: "irab-drei-faelle-01", matchText: "جَمِيلٌ" },
-    { ruleId: "madd-tabii-01", matchText: "هَذَا" }
+    { ruleId: "madd-tabii-01", matchText: "هَذَا" },
+    { ruleId: "al-tanwin-tilgung-01", matchText: "الْبَيْتُ" }
   ],
   "45806": [
     { ruleId: "schams-qamar-01", matchText: "الشَّايُ" },
@@ -1166,8 +1341,15 @@ const SENTENCE_TAGS = {
   "45892": [
     { ruleId: "harf-jarr-01", matchText: "مِنَ الْبَيْتِ." }
   ],
+  "45880": [
+    { ruleId: "badal-01", matchText: "هَذَا الْكِتَابُ" }
+  ],
+  "45884": [
+    { ruleId: "badal-01", matchText: "هَذَا الْكِتَابُ" }
+  ],
   "45894": [
-    { ruleId: "schams-qamar-merkhilfe-01", matchText: "الرَّجُلُ" }
+    { ruleId: "schams-qamar-merkhilfe-01", matchText: "الرَّجُلُ" },
+    { ruleId: "iltiqa-sakinain-01", matchText: "مِنَ الْكُوَيْتِ" }
   ],
   "45897": [
     { ruleId: "schams-qamar-merkhilfe-01", matchText: "السِّكِّينُ" }
