@@ -185,6 +185,23 @@
    ===================================================================== */
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 
+/* ---------- `hidden` muss wirken (18.08.2026) ----------
+
+   ⚠️ Das HTML-Attribut `hidden` setzt nur `display:none` als
+   Browser-VOREINSTELLUNG. Jede eigene `display`-Regel auf demselben Element
+   schlägt sie — lautlos, und `element.hidden` meldet weiterhin `true`. Wer die
+   Eigenschaft prüft, bekommt „ist versteckt" und sieht den Knopf trotzdem.
+
+   Gefunden beim Bauen des Duells: `.wz-reihe{display:flex}` hat
+   `#wzS3Weiter` ausgehebelt. Im Wurzelmodus stand der Weiter-Knopf von
+   Schritt 3 also die ganze Zeit da, BEVOR die Frage beantwortet war — man
+   konnte an der Übung vorbeiklicken, und die Runde zählte nicht mit.
+   Im Browser nachgemessen: `hidden:true`, `display:flex`, Höhe **43 px**.
+
+   Deshalb hier einmal für alles. `!important` ist hier richtig und nicht faul:
+   es geht nicht um Gestaltung, sondern darum, dass eine Zusage des HTML gilt. */
+[hidden]{display:none !important;}
+
 /* ---------- Bildlaufleisten ausblenden (Elias' Punkt 2, 10.08.2026) ----------
 
    „Diese leiste zum runter scrollen soll nicht angezeigt sein" — mit Bild aus
@@ -2858,6 +2875,27 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 .wz-wahl:active{background:var(--surface-3);}
 .wz-wahl.richtig{border-color:var(--green,#2ee6a6);background:rgba(46,230,166,.12);}
 .wz-wahl.falsch{border-color:var(--red);background:var(--red-wash,rgba(255,23,68,.09));}
+/* ---------- Das Duell (C5, 18.08.2026) ----------
+   Zwei Wörter, die ohne Ḥarakāt gleich aussehen, stehen NEBENEINANDER statt
+   untereinander. Das ist der ganze Punkt der Übung: der Unterschied ist im
+   Vergleich zu sehen, nicht im Nacheinander.
+
+   ⚠️ `min-width:0` an den Kindern, sonst schiebt ein langes Wort die Zeile
+   breiter als den Bildschirm — bei Flex ist der TÄTER immer der Elternteil,
+   und `max-width` am Kind läuft ins Leere. */
+.wz-duell{display:flex;gap:var(--sp-2);margin-top:var(--sp-3);}
+.wz-duell .wz-wahl{flex:1;min-width:0;margin-top:0;display:flex;
+  flex-direction:column;align-items:center;gap:var(--sp-1);}
+/* Das arabische Wort trägt die eigene Schrift und Richtung. `unicode-bidi:isolate`
+   hält es von der deutschen Zeile darunter getrennt — ohne das ordnet die
+   Bidi-Regel bei manchen Wörtern die Klammern um. */
+.wz-duell .du-ar{font-family:var(--font-ar);font-size:var(--fs-2xl);
+  line-height:1.9;direction:rtl;unicode-bidi:isolate;}
+.wz-duell .du-de{font-size:var(--fs-sm);color:var(--text-dim);line-height:1.35;}
+/* Das gemeinsame Skelett über dem Duell: das, was man ohne Ḥarakāt sieht. */
+.wz-skelett{font-family:var(--font-ar);font-size:var(--fs-xl);
+  direction:rtl;unicode-bidi:isolate;text-align:center;
+  color:var(--text-dim);letter-spacing:.06em;margin-top:var(--sp-2);}
 .wz-schlusszahl{text-align:center;color:var(--text-dim);font-size:var(--fs-lg);
   line-height:1.7;margin:var(--sp-2) 0;}
 
@@ -3627,6 +3665,20 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
           <div id="wzS3Auswahl"></div>
           <div class="wz-meldung" id="wzS3Meldung">&nbsp;</div>
           <div class="wz-reihe" id="wzS3Weiter" hidden><button class="btn btn-secondary">Weiter</button></div>
+        </div>
+
+        <!-- ⭐ 4 — Duell (C5, 18.08.2026). Elias' Entscheidung: „als Zusatzrunde
+             im Wurzelmodus, nicht als zwölfter Bildschirm. Die App hat schon
+             elf." Der Schritt erscheint NUR, wenn ein Wort dieser Familie
+             wirklich einen Verwechslungspartner hat — sonst geht es direkt
+             weiter. Ein Schritt, der bei den meisten Familien leer wäre, wäre
+             schlimmer als keiner. -->
+        <div id="wzSchritt4" hidden>
+          <div class="wz-schrittname">4 — Duell</div>
+          <div class="wz-frage" id="wzS4Frage"></div>
+          <div class="wz-duell" id="wzS4Auswahl"></div>
+          <div class="wz-meldung" id="wzS4Meldung">&nbsp;</div>
+          <div class="wz-reihe" id="wzS4Weiter" hidden><button class="btn btn-secondary">Weiter</button></div>
         </div>
 
         <div id="wzSchrittFertig" hidden>
