@@ -73,7 +73,14 @@ const PRUEFUNG = {
      angeschriebene أ - أَذَلِكَ قِطٌّ؟ - und kein هل. Die Pruefung laesst
      deshalb beide Formen zu, sonst schlaegt sie auf einen richtigen Beleg an. */
   'fragepartikel-hal-01':   w => /^هل$/.test(blank(w)) || /^أ./.test(blank(w)),
-  'adjektive-an-ohne-tanwin-01': w => /ان$/.test(blank(w)),
+  /* ⛔ Die Bedingung war bis zum 18.08.2026 nur /ان$/ - und liess damit
+     الْحِصَانُ durch, "das Pferd" aus هَذَا الْحِصَانُ سَرِيعٌ. Kein Adjektiv,
+     und sein fehlendes Tanwin kommt vom ARTIKEL, nicht vom Schema فَعْلان.
+     Die Markierung war die einzige dieser Regel und hat den Markierungs-Audit
+     vom 28.07.2026 ueberlebt: mechanisch stimmte sie, inhaltlich war sie das
+     Gegenteil dessen, was die Regel lehrt.
+     Ein bestimmtes Wort kann diese Regel NIE zeigen. */
+  'adjektive-an-ohne-tanwin-01': w => /ان$/.test(blank(w)) && !/^ال/.test(blank(w)),
   'huwa-hiya-01':           w => /^(هو|هي)$/.test(blank(w)),
   'possessiv-ya-01':        w => /ي$/.test(blank(w)) && !/^في$/.test(blank(w)),
   'mutabaqa-genus-01':      w => /ة$/.test(blank(w)),
@@ -101,6 +108,35 @@ for (const k of Object.keys(SENTENCE_TAGS)) {
 }
 console.log(`\n=== Regelbedingung: ${geprueft} von ${Object.values(SENTENCE_TAGS).flat().length} Markierungen pruefbar, ${verdacht} verletzen sie ===`);
 for (const [id, v] of Object.entries(proRegel)) if (v.schlecht) console.log(`  ${id}: ${v.schlecht}/${v.n}`);
+
+// --- Pruefung 1b: Regeln ueber FEHLENDES Tanwin an bestimmten Woertern? ---
+//
+// Neu am 18.08.2026, aus dem Fall الْحِصَانُ heraus verallgemeinert. Diese
+// Regeln erklaeren alle, warum ein UNBESTIMMTES Wort ausnahmsweise kein Tanwin
+// traegt. Ein Wort mit اَلْ traegt nie eines - es kann die Regel also nicht
+// zeigen, sondern nur einen ganz anderen Grund vortaeuschen.
+//
+// ⚠️ Bewusst eine kurze, benannte Liste statt einer Textsuche nach "Tanwin".
+// Der erste Versuch suchte in Namen und Erklaerungen danach und meldete elf
+// Stellen - alle falsch, weil al-gesamtheit-01 und idafa-zweitglied-01 das
+// Wort nur nebenbei erwaehnen und zu Recht an bestimmten Woertern haengen.
+// Eine Kandidatenliste ist keine Fehlerliste.
+const OHNE_TANWIN = ['adjektive-an-ohne-tanwin-01', 'tanwin-eigennamen-01',
+  'tanwin-maennername-ta-01', 'eigennamen-fem-ohne-tanwin-01',
+  'tanwin-nach-harf-jarr-01', 'mamnu-min-as-sarf-01', 'mudaf-ohne-al-01'];
+let bestimmt = 0, gesehen = 0;
+for (const k of Object.keys(SENTENCE_TAGS)) {
+  for (const t of SENTENCE_TAGS[k]) {
+    if (!OHNE_TANWIN.includes(t.ruleId)) continue;
+    gesehen++;
+    if (!/^و?ال/.test(blank(t.matchText))) continue;
+    bestimmt++;
+    console.log(`${t.ruleId} | markiert ein BESTIMMTES Wort: >>${t.matchText}<<`
+      + `\n   (Satz ${k}: ${(satz[k] || {}).sentAr}) — mit اَلْ faellt das Tanwin ohnehin weg,`
+      + `\n   die Stelle zeigt also nicht, was die Regel behauptet.`);
+  }
+}
+console.log(`\n=== Regeln ueber fehlendes Tanwin: ${gesehen} Markierungen, ${bestimmt} an einem bestimmten Wort ===`);
 
 // --- Pruefung 2: sitzt die Markierung an Wortgrenzen? --------------------
 // Am 28.07.26 hingen acht Markierungen von harf-jarr-li-01 an Buchstaben aus
