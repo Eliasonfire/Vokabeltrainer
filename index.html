@@ -1424,6 +1424,15 @@ main{
 .wk-formen .lbl{color:var(--text-faint);font-style:normal;}
 .wk-formen .wf-ar{font-family:var(--font-ar);direction:rtl;font-size:calc(var(--fs-sm) * var(--ar-faktor));}
 .wk-aktionen{display:flex;gap:var(--sp-2);flex-wrap:wrap;justify-content:flex-end;}
+/* Erklärzeile unter den Knöpfen der Wortkarte. Sie steht dort, wo sonst ein
+   „Bearbeiten" wäre, und sagt, warum es hier keines gibt (Pluralkarten). */
+.wk-hinweis{
+  margin-top:var(--sp-2);
+  color:var(--text-dim);
+  font-size:var(--fs-sm);
+  line-height:1.45;
+  text-align:right;
+}
 .wk-aktionen .btn{min-height:40px;}   /* Daumenflaeche, nicht die 32 px des Kleinknopfs */
 .wk-loeschen{color:var(--red-bright);border-color:var(--red-dim);}
 .wk-feld{display:flex;flex-direction:column;gap:4px;min-width:0;}
@@ -3677,6 +3686,20 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
           <div class="setting-sub">Plural &amp; Femininum-Formen auf der Karte zeigen</div>
         </div>
         <button class="switch" id="toggleShowPlural" aria-label="Pluralformen umschalten"><span class="knob"></span></button>
+      </div>
+      <!-- Elias am 18.08.2026, zweimal und scheinbar gegensätzlich: „ich finde
+           eigentlich, dass die plural formen eigene karteikarten bekommen
+           sollten aber noch nicht jetzt" — und wenige Stunden später „du kannst
+           sie schonmal bauen."
+           Zusammen ergeben die beiden Sätze genau diesen Schalter: gebaut, aber
+           aus. Ohne ihn stünden 120 zusätzliche Karten in Kasten 1, die er
+           ausdrücklich noch nicht wollte. -->
+      <div class="setting-row">
+        <div>
+          <div class="setting-title">Plural als eigene Karten</div>
+          <div class="setting-sub">Jede Pluralform bekommt eine eigene Karteikarte mit eigenem Kasten</div>
+        </div>
+        <button class="switch" id="togglePluralKarten" aria-label="Pluralkarten umschalten"><span class="knob"></span></button>
       </div>
       <!-- Elias am 30.07.2026: „du solltest da die 4 zeitformen nicht zeigen.
            die sollen da raus. am besten machen wir sogar eine einstellung bei
