@@ -215,29 +215,49 @@ console.log('\n=== LEXIKON-VERGLEICH: sieht die App dasselbe wie diese Pruefung?
     setzeLexikon(lexikon);
     return alleSaetze.map(s => analysiereSatz(s.ar).map(t => t.wort + '\u0000' + t.rolle).join('\u0001'));
   };
-  const mitAbzug = zerlege(wortschatz);
-  const mitApp   = zerlege(VOCAB_DATA);
-  const abweichend = [];
-  alleSaetze.forEach((s, i) => { if (mitAbzug[i] !== mitApp[i]) abweichend.push({ s, a: mitAbzug[i], b: mitApp[i] }); });
+  const grund = zerlege(VOCAB_DATA);   // der kleinste Stand: vocab-data.js allein
 
-  console.log(`  Abzug:  ${wortschatz.length} Eintraege, ${wortschatz.filter(v => v.type === 'verb').length} Verben`);
-  console.log(`  App:    ${VOCAB_DATA.length} Eintraege, ${VOCAB_DATA.filter(v => v.type === 'verb').length} Verben`);
-  if (!abweichend.length){
-    console.log(`  ok  Alle ${alleSaetze.length} Saetze werden gleich zerlegt — die Pruefung oben gilt auch fuer die App.`);
+  /* Jeder Stand, den Elias mit einem Buchhaken herstellen kann. Ein einzelner
+     Vergleich gegen den vollen Abzug reicht NICHT: bei فَوْقَ war der Fehler
+     im vollen Abzug unsichtbar, weil madina-3 dort die Grundform beisteuert. */
+  const staende = [['nur vocab-data.js', []]];
+  for (const b of Object.keys(fenster.VOKABELN || {})) staende.push(['+ ' + b, [b]]);
+  staende.push(['+ ALLE Buecher (voller Abzug)', Object.keys(fenster.VOKABELN || {})]);
+
+  const habenId = new Set(VOCAB_DATA.map(w => String(w.id)));
+  const schlimm = [];
+  for (const [name, buecher] of staende){
+    const lex = VOCAB_DATA.slice();
+    const gesehen = new Set(habenId);
+    for (const b of buecher) for (const w of (fenster.VOKABELN || {})[b] || [])
+      if (!gesehen.has(String(w.id))){ gesehen.add(String(w.id)); lex.push(w); }
+    const r = zerlege(lex);
+    const anders = [];
+    alleSaetze.forEach((s, i) => { if (r[i] !== grund[i]) anders.push({ s, a: r[i], b: grund[i] }); });
+    const marke = anders.length ? '  ⚠' : '  ok';
+    console.log(`${marke} ${name.padEnd(30)} ${String(lex.length).padStart(5)} Eintraege, ${String(lex.filter(v => v.type === 'verb').length).padStart(4)} Verben → ${anders.length} Saetze anders`);
+    if (anders.length) schlimm.push({ name, anders });
+  }
+
+  if (!schlimm.length){
+    console.log(`  ok  Alle ${alleSaetze.length} Saetze werden in JEDEM Buchstand gleich zerlegt.`);
   } else {
-    console.log(`  ⚠ ${abweichend.length} von ${alleSaetze.length} Saetzen werden UNTERSCHIEDLICH zerlegt.`);
+    console.log('\n  ⚠ Die Zerlegung haengt davon ab, welche Buecher ausgewaehlt sind.');
     console.log('    Was hier steht, sieht Elias anders als diese Pruefung. Feste Listen in');
-    console.log('    js/irab.js (VERBEN, NICHT_VERB, FUENF_NOMEN) machen die Zerlegung unabhaengig.');
-    for (const x of abweichend.slice(0, 12)){
-      console.log('    ── ' + x.s.id + '  ' + x.s.ar);
-      const A = x.a.split('\u0001'), B = x.b.split('\u0001');
-      A.forEach((w, i) => {
-        if (w === B[i]) return;
-        const [wort, r1] = w.split('\u0000'), r2 = (B[i] || '').split('\u0000')[1];
-        console.log('        ' + wort.padEnd(14) + 'Abzug: ' + String(r1).padEnd(30) + '| App: ' + r2);
-      });
+    console.log('    js/irab.js (VERBEN, NICHT_VERB, ADJEKTIVE, FUENF_NOMEN) machen sie unabhaengig.');
+    for (const s of schlimm){
+      console.log('    ══ ' + s.name);
+      for (const x of s.anders.slice(0, 6)){
+        console.log('    ── ' + x.s.id + '  ' + x.s.ar);
+        const A = x.a.split('\u0001'), B = x.b.split('\u0001');
+        A.forEach((w, i) => {
+          if (w === B[i]) return;
+          const [wort, r1] = w.split('\u0000'), r2 = (B[i] || '').split('\u0000')[1];
+          console.log('        ' + wort.padEnd(14) + 'mit Buch: ' + String(r1).padEnd(30) + '| ohne: ' + r2);
+        });
+      }
+      if (s.anders.length > 6) console.log('        … und ' + (s.anders.length - 6) + ' weitere.');
     }
-    if (abweichend.length > 12) console.log('    … und ' + (abweichend.length - 12) + ' weitere.');
   }
   /* Das Lexikon so zuruecklassen, wie der Rest der Datei es erwartet. */
   setzeLexikon(wortschatz);
