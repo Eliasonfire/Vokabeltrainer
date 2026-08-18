@@ -27,6 +27,37 @@ const KASUS = {
 
 /* Die fuenf Praepositionen aus Madina 1, in der Reihenfolge des Lehrers. */
 const HURUF_JARR = ['في', 'على', 'إلى', 'الى', 'من', 'ل'];
+/* Praeposition MIT angehaengtem Pronomen - فِيهِ, عَلَيْهَا, مِنْهُ. Das ist
+   bereits ein vollstaendiges جَارّ وَمَجْرُور: das Pronomen IST der Genitiv,
+   es folgt nichts mehr, und die Endung ist مَبْنِيّ, also keine Kasusendung.
+ *
+ * ⚠️ Warum das hier stehen muss (18.08.2026): Ohne diesen Fall zerlegte der
+ * Erklaerer فِيهِ حَامِدٌ ("in ihm ist Hamid") als إِضافة und behauptete, فِيهِ
+ * muesse Nominativ sein und حَامِدٌ Genitiv - beides falsch. Aufgefallen ist es
+ * an einem Satz aus dem Lehrwerk (Madina 1, S. 61); die Kontrollgruppe in
+ * pruefe-saetze.js ist genau dafuer da. Das war KEIN Fehler des Pruefskripts:
+ * dieselbe Zerlegung haette Elias in der App zu sehen bekommen.
+ *
+ * Bewusst NICHT behauptet wird die Satzrolle. In فِيهِ حَامِدٌ ist فِيهِ ein
+ * خَبَر مُقَدَّم, in الْبَيْتُ فِيهِ حَدِيقَةٌ dagegen nicht - am Schriftbild
+ * ist das nicht zu entscheiden. Lieber keine Aussage als eine falsche.
+ *
+ * Aufgenommen sind nur Formen, die mit keinem Wort des Wortschatzes
+ * zusammenfallen. لَهُ fehlt deshalb bewusst: das angeschriebene ل ist schon
+ * bei hatAngeschriebenesJarr aus demselben Grund draussen. */
+const JARR_MIT_PRONOMEN = [
+  'فيه','فيها','فيهم','فيهما','فيك','فيكم','فينا',
+  'عليه','عليها','عليهم','عليك','علينا',
+  'إليه','اليه','إليها','اليها','إليك','اليك','إلينا','الينا',
+  'منه','منها','منهم','منك',
+  'به','بها','بهم'
+];
+/* ⛔ NICHT ueber kernWort vergleichen. Das stutzt ein fuehrendes و/ف als
+   Anschlusspartikel weg, und bei فِيهِ ist das ف Teil des Wortes: kernWort
+   liefert dort 'يه'. Der erste Entwurf am 18.08. tat genau das - die Zerlegung
+   blieb unveraendert falsch, ohne jede Fehlermeldung. istInListe prueft beide
+   Schreibweisen, ohne das Wort zu verstuemmeln. */
+const istJarrMitPronomen = w => istInListe(w, JARR_MIT_PRONOMEN);
 /* Ortsangaben. Der Lehrer nennt sie ظَرْف und sagt ausdruecklich, sie
    funktionierten "wie ein مُضَاف" - das folgende Wort steht im Genitiv. */
 const ZURUF = ['تحت', 'أمام', 'امام', 'خلف', 'فوق', 'عند', 'بين', 'وراء'];
@@ -304,7 +335,16 @@ function analysiereSatz(satz){
     const dualOderPlural = /(انِ|َيْنِ|ُونَ|ِينَ)$/.test(wort.replace(/[.،؟!«»:؛]/g, ''));
     let rolle = null, erwartet = null;
 
-    if (istHarfJarr(wort)){
+    if (istJarrMitPronomen(wort)){
+      /* Vollstaendige Einheit: das Pronomen ist der Genitiv, es folgt nichts.
+         Deshalb wird vorherJarr NICHT gesetzt - das naechste Wort haengt nicht
+         an dieser Praeposition. */
+      rolle = 'جَارّ وَمَجْرُور (مَبْنِيّ)';
+      vorherJarr = false; vorherMudaf = false;
+      out.push({ wort, rein, rolle, erwartet:null, gelesen, stimmt:null });
+      if (satzende){ ersteRolleVergeben = false; letzterKasus = null; }
+      return;
+    } else if (istHarfJarr(wort)){
       rolle = 'حَرْف جَرّ';
       vorherJarr = true; vorherMudaf = false;
       out.push({ wort, rein, rolle, erwartet:null, gelesen, stimmt:null });
