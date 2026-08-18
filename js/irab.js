@@ -282,6 +282,14 @@ const VERBEN = ['خرج', 'ذهب', 'قال'];
    Praeposition. Ohne diese Liste macht die Zerlegung daraus einen Verbalsatz
    und das naechste Wort zum فَاعِل. */
 const NICHT_VERB = ['صفر', 'عمي', 'جر', 'ل'];
+/* Adjektive, die in den Beispielsaetzen vorkommen und deren Wortart nicht
+   verlaesslich aus dem Lexikon kommt: كسلان und مجرور fehlen im kleinen
+   Bestand ganz, حار steht im grossen ZWEIMAL (adjective und verb حَارَ) und
+   welcher Eintrag gewinnt, entscheidet die Reihenfolge.
+   ⛔ Nicht aufgenommen sind واحد und اثنان: der Abzug fuehrt sie als
+   Adjektive, in «صِفْرٌ، وَاحِدٌ، اِثْنَانِ.» sind sie aber eine Aufzaehlung
+   und kein نَعْت. */
+const ADJEKTIVE = ['حار', 'كسلان', 'مجرور'];
 const istVerb = w => !istInListe(w, NICHT_VERB) && istInListe(w, VERBEN);
 const giltAlsVerb = w => !istInListe(w, NICHT_VERB) && (wortart(w) === 'verb' || istInListe(w, VERBEN));
 
@@ -491,7 +499,7 @@ function analysiereSatz(satz){
          Am Schriftbild ist das nicht zu entscheiden - also keine
          Kasusaussage statt einer falschen. */
       rolle = 'unklar (لِ + Wort oder eigenes Wort?)';
-    } else if (wortart(wort) === 'adjective' && letzterKasus
+    } else if ((istInListe(wort, ADJEKTIVE) || wortart(wort) === 'adjective') && letzterKasus
                && istBestimmt(wort) === letzteBestimmtheit){
       /* نَعْت: ein Adjektiv direkt hinter seinem مَنْعُوت stimmt in Kasus,
          Zahl, Geschlecht UND Bestimmtheit mit ihm ueberein - so unterscheidet
