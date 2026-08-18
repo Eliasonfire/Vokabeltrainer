@@ -1714,6 +1714,12 @@ const SENTENCE_TAGS = {
   ],
   "48402": [
     { ruleId: "mudarris-lesung-herkunft-01", matchText: "الْمُدَرِّسُ" }
+  ],
+  "45888": [
+    { ruleId: "mubtada-khabar-genus-01", matchText: "الْبَابُ مُغْلَقٌ" }
+  ],
+  "45878": [
+    { ruleId: "mubtada-khabar-genus-01", matchText: "جَمِيلَةٌ" }
   ]
 };
 
