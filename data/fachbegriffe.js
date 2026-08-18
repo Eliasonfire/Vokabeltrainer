@@ -86,7 +86,7 @@ const FACHBEGRIFF_VOKABELN = [
     book: 'grammar',
     regel: 'nat-vier-bedingungen-01',
     belegt: 5,
-    mnemo: 'Steht direkt hinter dem Nomen und macht ihm alles nach — vier Bedingungen: Geschlecht, Bestimmtheit, Fall und Zahl. In deinem eigenen Beispielsatz steht es schon: هَذَا بَيْتٌ جَمِيلٌ — بَيْتٌ und جَمِيلٌ tragen beide dasselbe Tanwīn, deshalb passt es. Das beschriebene Wort heißt مَنْعُوت.'
+    mnemo: 'نَعْت kommt von „beschreiben“ — und das Wort tut selbst, was es heißt: es steht hinter dem Nomen und macht ihm alles nach. Vier Bedingungen: Geschlecht, Bestimmtheit, Fall und Zahl. Das beschriebene Wort heißt مَنْعُوت, also „das Beschriebene“ — dieselbe Wurzel ن ع ت, einmal aktiv, einmal passiv. Wer den einen Namen hat, hat den anderen.'
   },
   {
     id: 'gram-idafa',
