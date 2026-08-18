@@ -946,7 +946,8 @@ const SENTENCE_TAGS = {
      und die Regeln selbst gibt Elias frei. */
   "45751": [
     { ruleId: "nat-vier-bedingungen-01", matchText: "بَيْتٌ جَمِيلٌ" },
-    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" }
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "madd-tabii-01", matchText: "وَنَظِيفٌ" }
   ],
   "45752": [
     { ruleId: "mina-al-01", matchText: "مِنَ الْبَيْتِ." },
@@ -1695,6 +1696,9 @@ const SENTENCE_TAGS = {
   ],
   "mb1-48-1": [
     { ruleId: "adjektive-an-ohne-tanwin-01", matchText: "كَسْلَانُ" }
+  ],
+  "45876": [
+    { ruleId: "madd-tabii-01", matchText: "عُصْفُورٌ" }
   ]
 };
 
