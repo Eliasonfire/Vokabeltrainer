@@ -266,6 +266,25 @@ const istZarf = w => istInListe(w, ZURUF);
 const FUENF_NOMEN = ['أبو', 'أخو', 'حمو', 'أبا', 'أخا', 'حما', 'أبي', 'أخي', 'حمي'];
 const istFuenfNomen = w => istInListe(w, FUENF_NOMEN);
 
+/* Verben, die in den Beispielsaetzen dieses Repos vorkommen. Ohne diese Liste
+   haengt ihre Erkennung am geladenen Vokabelbestand — und der ist bei Elias
+   kleiner als beim Pruefwerkzeug: am 18.08.2026 im laufenden Browser gemessen
+   321 Eintraege mit 5 Verben, waehrend pruefe-saetze.js 4433 mit 1606 laedt.
+   In «خَرَجَ الْمُدَرِّسُ مِنَ الْفَصْلِ» stand deshalb bei ihm خَرَجَ als
+   مُبْتَدَأ und الْمُدَرِّسُ als مُضَاف إِلَيْه — „der Ausgang des Lehrers".
+   ⛔ Nicht ueber ein Konsonantengeruest erweitern: مِنْ trifft dann مَنَّ,
+   صِفْر trifft صَفَرَ, عَمِّي trifft عَمَّ. Jeder Eintrag hier ist an einem
+   Satz nachgeschlagen. */
+const VERBEN = ['خرج', 'ذهب', 'قال'];
+/* Und die Gegenrichtung: der Vokabelabzug haelt diese vier fuer Verben, weil
+   ihr Konsonantengeruest mit einem Verb zusammenfaellt. Im Satz sind sie
+   keines — صِفْرٌ ist die Null, عَمِّي mein Onkel, جَرٍّ der Genitiv, لِ eine
+   Praeposition. Ohne diese Liste macht die Zerlegung daraus einen Verbalsatz
+   und das naechste Wort zum فَاعِل. */
+const NICHT_VERB = ['صفر', 'عمي', 'جر', 'ل'];
+const istVerb = w => !istInListe(w, NICHT_VERB) && istInListe(w, VERBEN);
+const giltAlsVerb = w => !istInListe(w, NICHT_VERB) && (wortart(w) === 'verb' || istInListe(w, VERBEN));
+
 /* Warum bei manchen Woertern KEINE Kasusendung zu lesen ist — und das kein
    Mangel ist, sondern die Regel. Zwei Faelle, beide in dieser Datei schon
    behandelt, hier nur benannt:
@@ -385,6 +404,7 @@ function analysiereSatz(satz){
   let vorherMudaf = false;     // das Wort davor war ein مُضَاف
   let ersteRolleVergeben = false;
   let nachNida = false;   /* steht das naechste Wort hinter يا? */
+  let nachVerb = false;   /* steht das naechste Wort hinter einem Verb? */
   let letzterKasus = null;        // Kasus des zuletzt bewerteten Nomens
   let letzteBestimmtheit = null;  // und ob es bestimmt war - fuers نَعْت
 
@@ -412,12 +432,13 @@ function analysiereSatz(satz){
       vorherJarr = true; vorherMudaf = false;
       out.push({ wort, rein, rolle, erwartet:null, gelesen, stimmt:null });
       return;
-    } else if (wortart(wort) === 'verb'){
+    } else if (giltAlsVerb(wort)){
       /* Verben sind مَبْنِيّ - ihre Endung ist keine Kasusendung und wird
          hier nicht bewertet. Nach einem Verb faengt der Satz strukturell neu
          an, das folgende Wort ist فَاعِل und steht im Nominativ. */
       rolle = 'فِعْل';
       vorherJarr = false; vorherMudaf = false; ersteRolleVergeben = false;
+      nachVerb = true;
       out.push({ wort, rein, rolle, erwartet:null, gelesen, stimmt:null });
       return;
     } else if (istHarfNida(wort)){
@@ -502,6 +523,14 @@ function analysiereSatz(satz){
       /* Kein vorzeitiges Ende: das Wort kann trotzdem ein مُضَاف sein
          (وَبَيْتُ الطَّبِيبِ), und dann haengt die Endung des naechsten
          Wortes daran. */
+    } else if (nachVerb){
+      /* Das Subjekt eines Verbalsatzes. Belegt in Schluessel 2, Lektion 5,
+         S. 24: «Das Subjekt eines Verbalsatzes wird fā'il genannt ... Der
+         fā'il ist marfū'.» */
+      rolle = 'فَاعِل';
+      erwartet = 'raf';
+      nachVerb = false;
+      ersteRolleVergeben = true;
     } else if (nachNida){
       /* Der Angerufene steht auf Damma und ohne Tanwin — genau der Fall, den
          Elias' Regel ya-nida-01 am Namen ياسِرُ zeigt. */
@@ -547,7 +576,7 @@ function analysiereSatz(satz){
     if (satzende){
       ersteRolleVergeben = false;
       letzterKasus = null; letzteBestimmtheit = null;
-      vorherJarr = false; vorherMudaf = false;
+      vorherJarr = false; vorherMudaf = false; nachVerb = false; nachNida = false;
     }
     const stimmt = (erwartet && gelesen && !dualOderPlural) ? (gelesen.kasus === erwartet) : null;
     out.push({ wort, rein, rolle, erwartet, gelesen, stimmt });
