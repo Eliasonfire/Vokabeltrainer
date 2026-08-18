@@ -170,7 +170,17 @@
       const schonDrin  = mitreisend.filter(w=>w.source === 'vocabulary' && (w.book || 'madina-1') === b.slug).length;
       const vonHand    = VOCAB_DATA.filter(w=>w.chapter !== 'personal'
                           && w.source !== 'vocabulary' && (w.book || 'madina-1') === b.slug).length;
-      const soll = b.vokabeln + mitreisend.length - schonDrin + vonHand;
+      /* ⚠️ Die zehn Fachbegriffe (chapter und book beide 'grammar') fehlten
+         hier bis zum 19.08.2026. js/kern.js schiebt sie seit dem 17.08. in
+         VOCAB_DATA, und buchVokabeln() gibt sie bei JEDEM Buch mit heraus -
+         Elias wollte sie ausdruecklich als eigene Karteikarten ("die muessen
+         inkludiert werden"). In die Soll-Rechnung fielen sie durch: ihr `book`
+         ist 'grammar' und passt auf keinen Buch-Slug, ihr `chapter` ist nicht
+         'personal'. Folge: JEDES der acht Buecher meldete +10 und damit einen
+         Fehler, den es nicht gab. Gemessen an 'quran': 373 = 343 Abzug + 20
+         mitreisend + 10 grammar. */
+      const fachbegriffe = VOCAB_DATA.filter(w => w.chapter === 'grammar').length;
+      const soll = b.vokabeln + mitreisend.length - schonDrin + vonHand + fachbegriffe;
       const ist = buchVokabeln().length;
       if (ist !== soll) fehl(`Buch ${b.slug}`, `${ist} Vokabeln, erwartet ${soll}`);
       else ok(`Buch ${b.slug}`, `${ist} Vokabeln, ${dauer} ms`);
@@ -197,11 +207,19 @@
     versuch('Antwortstufen bewegen die Box richtig', ()=>{
       const w = buchVokabeln()[0];
       const gesichert = PROGRESS[w.id];
+      /* ⛔ Diese Tabelle stand bis zum 19.08.2026 auf der Fassung VOR dem
+         16.08. und meldete deshalb sieben Fehler, die keine waren. Elias am
+         16.08.2026: "nochmal sollte die selbe funktion haben wie schwer, also
+         dass man einfach nur eine einzige box weiter runter geht. und schwer
+         sollte die funktion haben, dass man in der selben box bleibt."
+         Seitdem ist die Reihe gleichmaessig -1 / 0 / +1 / +2, siehe STUFEN in
+         js/lernen.js. ⚠️ Wer diesen Lauf "gruen macht", indem er die App
+         anpasst, nimmt ihm genau das zurueck, worum er gebeten hat. */
       const soll = {
-        nochmal: [1,1,1,1,1],
-        schwer:  [1,1,2,3,4],
-        gut:     [2,3,4,5,5],
-        leicht:  [3,4,5,5,5]
+        nochmal: [1,1,2,3,4],   // max(1, b-1)
+        schwer:  [1,2,3,4,5],   // b
+        gut:     [2,3,4,5,5],   // min(5, b+1)
+        leicht:  [3,4,5,5,5]    // min(5, b+2)
       };
       const falsch = [];
       Object.keys(soll).forEach(stufe=>{
