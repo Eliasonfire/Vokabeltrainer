@@ -61,6 +61,12 @@ const istJarrMitPronomen = w => istInListe(w, JARR_MIT_PRONOMEN);
 /* Ortsangaben. Der Lehrer nennt sie ظَرْف und sagt ausdruecklich, sie
    funktionierten "wie ein مُضَاف" - das folgende Wort steht im Genitiv. */
 const ZURUF = ['تحت', 'أمام', 'امام', 'خلف', 'فوق', 'عند', 'بين', 'وراء'];
+/* Rufpartikel. Sie war bis zum 18.08.2026 unbekannt, und ein unbekanntes Wort
+   bekommt in dieser Zerlegung die naechste freie Nomen-Rolle — in
+   «أَيْنَ أَبُوكَ يَا خَالِدُ؟» wurde يَا damit zum خَبَر ueber den Vater.
+   Was danach kommt, ist der مُنَادَى: Damma OHNE Tanwin (ya-nida-01). */
+const HURUF_NIDA = ['يا'];
+const istHarfNida = w => istInListe(w, HURUF_NIDA);
 /* Woerter, die nie eine Kasusendung tragen. */
 const INDEKLINABEL = ['هذا','هذه','ذلك','تلك','هو','هي','أنا','انا','أنت','انت',
                       'نحن','هم','ما','من','أين','اين','متى','كيف','هل','نعم','لا','بلى',
@@ -347,6 +353,7 @@ function analysiereSatz(satz){
   let vorherJarr = false;      // das Wort davor war Praeposition oder Zarf
   let vorherMudaf = false;     // das Wort davor war ein مُضَاف
   let ersteRolleVergeben = false;
+  let nachNida = false;   /* steht das naechste Wort hinter يا? */
   let letzterKasus = null;        // Kasus des zuletzt bewerteten Nomens
   let letzteBestimmtheit = null;  // und ob es bestimmt war - fuers نَعْت
 
@@ -380,6 +387,12 @@ function analysiereSatz(satz){
          an, das folgende Wort ist فَاعِل und steht im Nominativ. */
       rolle = 'فِعْل';
       vorherJarr = false; vorherMudaf = false; ersteRolleVergeben = false;
+      out.push({ wort, rein, rolle, erwartet:null, gelesen, stimmt:null });
+      return;
+    } else if (istHarfNida(wort)){
+      rolle = 'حَرْف نِدَاء';
+      nachNida = true;
+      vorherJarr = false; vorherMudaf = false;
       out.push({ wort, rein, rolle, erwartet:null, gelesen, stimmt:null });
       return;
     } else if (istIndeklinabel(wort)){
@@ -458,6 +471,12 @@ function analysiereSatz(satz){
       /* Kein vorzeitiges Ende: das Wort kann trotzdem ein مُضَاف sein
          (وَبَيْتُ الطَّبِيبِ), und dann haengt die Endung des naechsten
          Wortes daran. */
+    } else if (nachNida){
+      /* Der Angerufene steht auf Damma und ohne Tanwin — genau der Fall, den
+         Elias' Regel ya-nida-01 am Namen ياسِرُ zeigt. */
+      rolle = 'مُنَادَى';
+      erwartet = 'raf';
+      nachNida = false;
     } else if (!ersteRolleVergeben){
       rolle = 'مُبْتَدَأ';
       erwartet = 'raf';
