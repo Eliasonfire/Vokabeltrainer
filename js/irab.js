@@ -239,7 +239,28 @@ function istHarfJarr(w){
   if (k === 'من') return false;    // unvokalisiert nicht entscheidbar
   return HURUF_JARR.includes(k) && k.length > 1;
 }
-const istZarf = w => istInListe(w, ZURUF);
+/* Ein ظَرْف kann eine Besitzendung tragen: عِنْدِي, عِنْدَهُ, فَوْقَهُ, بَيْنَهُمْ.
+   istInListe vergleicht das GANZE Wort, deshalb fiel عِنْدِي bis zum 19.08.2026
+   durch und bekam die naechste freie Nomen-Rolle: in «عِنْدِي قَلَمٌ» stand
+   عِنْدِي als مُبْتَدَأ da. Ein ظَرْف kann nie مُبْتَدَأ sein, es ist immer
+   مَنْصُوب. In der laufenden App nachgemessen, nicht im Quelltext vermutet.
+   ⛔ Nur die BEKANNTEN Pronomen-Endungen abschneiden, nicht "irgendetwas" -
+   sonst traefe عَنْدَلِيب (Nachtigall) dieselbe Regel. Laengste zuerst, damit
+   عندها nicht als عندهـ + a zerfaellt. */
+const ZARF_PRONOMEN = /(ها|نا|كم|هم|كن|هن|ي|ك|ه)$/;
+/* Traegt das ظَرْف schon eine Besitzendung? Dann ist seine Ergaenzung
+   vergeben — das ـي in عِنْدِي IST der مُضَاف إِلَيْه. */
+const zarfMitPronomen = w => {
+  const roh = ohneFragepartikel(w).replace(/^[وف]/, '');
+  const ohnePron = roh.replace(ZARF_PRONOMEN, '');
+  return ohnePron !== roh && ZURUF.includes(ohnePron);
+};
+const istZarf = w => {
+  if (istInListe(w, ZURUF)) return true;
+  const roh = ohneFragepartikel(w).replace(/^[وف]/, '');
+  const ohnePron = roh.replace(ZARF_PRONOMEN, '');
+  return ohnePron !== roh && ZURUF.includes(ohnePron);
+};
 
 /* الأَسْمَاءُ الخَمْسَةُ in ihrer إِضَافَة-Form. Ihre Kasusendung ist ein
  * BUCHSTABE (Wāw im Nominativ, Alif im Akkusativ, Yāʾ im Genitiv) und keine
@@ -472,7 +493,11 @@ function analysiereSatz(satz){
       letzterKasus = null; letzteBestimmtheit = null;
     } else if (istZarf(wort)){
       rolle = 'ظَرْف (Ortsangabe)';
-      vorherJarr = true; vorherMudaf = false;
+      /* ⛔ Nur ein ظَرْف OHNE Besitzendung zieht das naechste Wort in den
+         Genitiv. عِنْدِي hat seine Ergaenzung schon; in «عِنْدِي قَلَمٌ» steht
+         قَلَمٌ mit Tanwin-Damma, also im Nominativ. Am 19.08.2026 in der
+         laufenden App gemessen. */
+      vorherJarr = !zarfMitPronomen(wort); vorherMudaf = false;
       out.push({ wort, rein, rolle, erwartet:null, gelesen, stimmt:null });
       return;
     } else if (vorherJarr){
