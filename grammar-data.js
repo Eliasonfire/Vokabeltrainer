@@ -899,6 +899,19 @@ const GRAMMAR_RULES = [
       "lektion": 1,
       "seite": 7
     }
+  },
+  {
+    "id": "mamnu-min-as-sarf-01",
+    "name": "المَمْنُوعُ مِنَ الصَّرْفِ — warum manche Wörter kein Tanwīn haben",
+    "shortExplanation": "Drei deiner Regeln beschreiben dasselbe Phänomen, ohne es zu benennen: كَسْلَانُ ohne Tanwīn (adjektive-an-ohne-tanwin-01), weibliche Eigennamen ohne Tanwīn (tanwin-eigennamen-01) und männliche Namen auf ة wie أُسَامَةُ (tanwin-maennername-ta-01). Der Name dafür ist المَمْنُوعُ مِنَ الصَّرْفِ — im Wortlaut des Madina-Schlüssels 3: «Es ist ein muʿrab Nomen, welches kein tanwīn akzeptiert.» ⭐ Und bei zweien davon hat dein Lehrer die Begründung ausdrücklich vertagt («die Begründung dafür komme erst später im Buch, etwa Kapitel 20/21»). Hier ist sie, jeweils nur der Teil, der deine Regeln betrifft. **Adjektive:** kein Tanwīn, «wenn sie das Schema فَعْلانُ haben» — das Buch nennt جَوْعانُ، شَبْعانُ، عَطْشانُ، مَلْآنُ, also genau die Reihe deines Lehrers (faul, hungrig, durstig, wütend, voll). **Eigennamen:** kein Tanwīn, «wenn sie weiblich sind» — und dazu der Satz, der أُسَامَةُ erklärt: das Buch nennt Ḥamza als Beispiel und schreibt daneben, es sei «der Name eines Mannes, aber das Wort ist weiblich, da es auf tāʾ marbūṭah (ة) endet». ⚠️ Das ist bewusst nur ein Ausschnitt. Der Schlüssel behandelt in Lektion 34 neun weitere Gründe (Alif der Weiblichkeit, der Plural nach مَفَاعِل, nichtarabische Namen, verbähnliche Formen und andere) — die brauchst du erst, wenn du dort ankommst.",
+    "color": "fem",
+    "kapitel": 9,
+    "ergaenzung": true,
+    "buchQuelle": {
+      "werk": "madina-schluessel-3",
+      "lektion": 34,
+      "seite": 265
+    }
   }
 ];
 
@@ -1654,7 +1667,8 @@ const SENTENCE_TAGS = {
   ],
   "mb1-61-2": [
     { ruleId: "tanwin-maennername-ta-01", matchText: "أُسَامَةُ" },
-    { ruleId: "li-vs-inda-01", matchText: "لِي" }
+    { ruleId: "li-vs-inda-01", matchText: "لِي" },
+    { ruleId: "mamnu-min-as-sarf-01", matchText: "سُعَادُ" }
   ],
   "mb1-61-3": [
     { ruleId: "hu-nach-kasra-01", matchText: "فِيهِ" }
