@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Gehirn-Icon — Entwürfe zur Auswahl</title>
+<!--
+  Gebaut am 18.08.2026 auf Elias' Zuruf: erst "vielleicht kannst du so ein
+  gehirn machen aber mit der roten farbe und so auf korantrainer angelehnt",
+  dann zwei Vorlagenbilder und "du kannst ja mal alle von ihnen bauen".
+
+  Die fünf Bauformen decken beide Vorlagen ab:
+    M  gefüllt mit dunkler Kontur und Funkeln, heller Grund   (Vorlage 1)
+    N  dasselbe auf OLED-Schwarz                              (Vorlage 1, App-Welt)
+    O  Umriss: helle Fläche, dunkle Kontur                    (Vorlage 2 links)
+    P  Silhouette, eine einzige Farbe                         (Vorlage 2 Mitte)
+    Q  flach, ohne Kontur, nur zarte Faltenlinien             (Vorlage 2 rechts)
+
+  ⭐ Die Form ist selbst gezeichnet, nicht aus den Vorlagen übernommen — die
+     Vorlagen sind fremde Illustrationen und geben die Richtung vor, nicht die
+     Kurven.
+
+  Die Form liegt EINMAL in <defs> und wird per <use> wiederverwendet. Grund:
+  fünf Kopien derselben Pfaddaten laufen beim Nachbessern auseinander, und man
+  sieht es erst, wenn eine Variante anders aussieht als die anderen.
+
+  Inhalt sitzt zwischen x/y 92 und 420 — die maskable-Zone (innere 80 % =
+  51…461) hält das aus, die Funkeln außen dürfen angeschnitten werden.
+-->
+<style>
+  :root{
+    --bg:#000; --flaeche:#111114; --rand:#26262c;
+    --text:#f4f4f6; --leise:#9a9aa4; --sehr-leise:#6b6b75;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+       font-size:17px;line-height:1.55;padding:22px 16px 64px;}
+  .huelle{max-width:820px;margin:0 auto;}
+  h1{font-size:1.5rem;margin:0 0 4px;letter-spacing:-.02em;}
+  p.hinweis{color:var(--leise);margin:0 0 24px;max-width:58ch;}
+  h2{font-size:1rem;margin:30px 0 4px;letter-spacing:.05em;}
+  h2 .buchstabe{font-family:ui-monospace,Menlo,Consolas,monospace;
+                color:var(--sehr-leise);margin-right:8px;}
+  p.was{color:var(--leise);font-size:.9rem;margin:0 0 12px;max-width:56ch;}
+
+  .karte{background:var(--flaeche);border:1px solid var(--rand);
+         border-radius:16px;padding:16px;overflow-x:auto;}
+  .reihe{display:flex;align-items:flex-end;gap:22px;min-width:min-content;}
+  .probe{display:flex;flex-direction:column;align-items:center;gap:7px;
+         font-family:ui-monospace,Menlo,Consolas,monospace;
+         font-size:.68rem;color:var(--sehr-leise);white-space:nowrap;}
+  .probe svg{display:block;border-radius:22%;}
+
+  .fuss{color:var(--sehr-leise);font-size:.86rem;margin-top:34px;
+        border-top:1px solid var(--rand);padding-top:14px;max-width:60ch;}
+  .fuss code{color:var(--leise);}
+</style>
+</head>
+<body>
+<div class="huelle">
+
+<h1>Gehirn als App-Icon</h1>
+<p class="hinweis">Fünf Bauformen derselben Form. Sieh sie dir bei
+<strong>48 px</strong> an — so groß ist das Icon auf dem Startbildschirm
+wirklich. Was dort noch als Gehirn zu erkennen ist, taugt; alles andere ist
+nur am Bildschirm hier schön.</p>
+
+<!-- ═══ Die Form, einmal. Ohne fill/stroke, damit jede Variante sie setzt. ═══ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+  <!-- Der Hirnstamm: kurz und stämmig, unter dem Kleinhirn. ⚠️ Zwei Versuche
+       vorher waren ein LANGES, dünnes Rohr weit links — das las sich wie ein
+       Bein, nicht wie ein Hirnstamm. Kurz und dick ist hier richtig. -->
+  <path id="hirn-stamm" d="M316 318 C 324 342 318 366 306 378
+                           C 296 388 278 382 286 370
+                           C 298 352 300 336 296 316 Z"/>
+
+  <!-- Die Kuppe. ⭐ Sie ist eine Kette von KREISBÖGEN, kein Bezier-Klumpen:
+       jeder Bogen IST eine Wölbung. Die zehn Ankerpunkte liegen auf einer
+       Ellipse (Mitte 256/245, 140 × 105); dazwischen spannt je ein Bogen nach
+       außen. Oben und vorne kleine Radien = deutliche Lappen, unten große
+       Radien = flach. Der erste Versuch war eine Bezierkurve mit sanften
+       Übergängen — daraus wurde ein runder Klumpen ohne erkennbare Lappen. -->
+  <path id="hirn-kuppe" d="M102 240
+      A 37 37 0 0 1 133 185
+      A 45 45 0 0 1 204 154
+      A 52 52 0 0 1 296 154
+      A 45 45 0 0 1 367 185
+      A 33 33 0 0 1 397 232
+      A 28 28 0 0 1 384 278
+      A 42 42 0 0 1 324 318
+      A 260 260 0 0 1 212 327
+      A 90 90 0 0 1 122 285
+      A 30 30 0 0 1 102 240 Z"/>
+
+  <!-- Das Kleinhirn, eigene Form unten rechts — es sitzt bewusst als zweiter
+       Körper davor, so wie in der Vorlage, und ragt unten heraus. -->
+  <path id="hirn-klein" d="M298 286 C 324 276 352 290 354 314
+                           C 356 338 336 352 316 344
+                           C 296 336 286 296 298 286 Z"/>
+
+  <!-- Die Windungen. Jede beginnt in einem Tal zwischen zwei Lappen und rollt
+       nach innen ein — dadurch lesen sie als Furchen und nicht als Kritzel. -->
+  <g id="hirn-falten" fill="none" stroke-linecap="round">
+    <path d="M133 185 C 156 204 148 232 120 240"/>
+    <path d="M204 154 C 212 186 190 206 162 200"/>
+    <path d="M296 154 C 292 190 266 204 240 194"/>
+    <path d="M367 185 C 348 208 356 236 378 246"/>
+    <path d="M397 232 C 368 240 354 264 362 284"/>
+    <path d="M324 318 C 314 292 324 270 344 262"/>
+    <path d="M212 327 C 210 298 226 280 250 274"/>
+    <path d="M122 285 C 148 280 162 262 158 240"/>
+    <path d="M176 216 C 206 200 236 214 244 242"/>
+    <path d="M258 226 C 286 216 310 230 314 254"/>
+    <path d="M196 262 C 222 250 250 262 258 286"/>
+  </g>
+  <!-- Ein Funkeln -->
+  <path id="funke" d="M0-12 Q2.4-2.4 12 0 Q2.4 2.4 0 12 Q-2.4 2.4-12 0 Q-2.4-2.4 0-12Z"/>
+</defs>
+</svg>
+
+
+<h2><span class="buchstabe">M</span>Gefüllt mit Kontur und Funkeln, heller Grund</h2>
+<p class="was">Deine erste Vorlage. Der helle Grund hebt sich auf dem
+Startbildschirm gut ab, die dunkle Kontur hält die Form auch klein zusammen.</p>
+<div class="karte"><div class="reihe">
+  <div class="probe">
+    <svg viewBox="0 0 512 512" width="176" height="176" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Entwurf M">
+      <defs><linearGradient id="mG" x1="0" y1="0" x2=".55" y2="1">
+        <stop offset="0" stop-color="#ff4d6a"/><stop offset="1" stop-color="#d81f45"/></linearGradient></defs>
+      <rect width="512" height="512" fill="#f6f2f3"/>
+      <g fill="url(#mG)" stroke="#2a0a12" stroke-width="11" stroke-linejoin="round" stroke-linecap="round">
+        <use href="#hirn-stamm"/><use href="#hirn-kuppe"/><use href="#hirn-klein"/>
+      </g>
+      <use href="#hirn-falten" stroke="#b21334" stroke-width="9"/>
+      <g fill="#ff8fa3" opacity=".5">
+        <ellipse cx="228" cy="158" rx="26" ry="14" transform="rotate(-18 228 158)"/>
+        <ellipse cx="336" cy="176" rx="18" ry="10" transform="rotate(20 336 176)"/>
+      </g>
+      <g fill="#ff8fa3">
+        <use href="#funke" transform="translate(438 128) scale(1.5)"/>
+        <use href="#funke" transform="translate(414 238) scale(.95)"/>
+        <use href="#funke" transform="translate(86 318) scale(1.25)"/>
+        <use href="#funke" transform="translate(98 200) scale(.85)"/>
+      </g>
+    </svg><span>176</span></div>
+  <div class="probe">
+    <svg viewBox="0 0 512 512" width="96" height="96" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="512" height="512" fill="#f6f2f3"/>
+      <g fill="url(#mG)" stroke="#2a0a12" stroke-width="11" stroke-linejoin="round" stroke-linecap="round">
+        <use href="#hirn-stamm"/><use href="#hirn-kuppe"/><use href="#hirn-klein"/></g>
+      <use href="#hirn-falten" stroke="#b21334" stroke-width="9"/>
+      <g fill="#ff8fa3">
+        <use href="#funke" transform="translate(438 128) scale(1.5)"/>
+        <use href="#funke" transform="translate(86 318) scale(1.25)"/></g>
+    </svg><span>96</span></div>
+  <div class="probe">
+    <svg viewBox="0 0 512 512" width="48" height="48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="512" height="512" fill="#f6f2f3"/>
+      <g fill="url(#mG)" stroke="#2a0a12" stroke-width="11" stroke-linejoin="round" stroke-linecap="round">
+        <use href="#hirn-stamm"/><use href="#hirn-kuppe"/><use href="#hirn-klein"/></g>
+      <use href="#hirn-falten" stroke="#b21334" stroke-width="9"/>
+      <g fill="#ff8fa3">
+        <use href="#funke" transform="translate(438 128) scale(1.5)"/>
+        <use href="#funke" transform="translate(86 318) scale(1.25)"/></g>
+    </svg><span>48</span></div>
+  <div class="probe">
+    <svg viewBox="0 0 512 512" width="32" height="32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="512" height="512" fill="#f6f2f3"/>
+      <g fill="url(#mG)" stroke="#2a0a12" stroke-width="11" stroke-linejoin="round" stroke-linecap="round">
+        <use href="#hirn-stamm"/><use href="#hirn-kuppe"/><use href="#hirn-klein"/></g>
+      <use href="#hirn-falten" stroke="#b21334" stroke-width="9"/>
+    </svg><span>32</span></div>
+</div></div>
+
+
+<h2><span class="buchstabe">N</span>Dasselbe auf OLED-Schwarz</h2>
+<p class="was">Gleiche Zeichnung, aber im Schwarz deiner App. Die Kontur wird
+hier heller statt dunkler — eine schwarze Kontur auf schwarzem Grund gäbe es
+nicht.</p>
+<div class="karte"><div class="reihe">
+  <div class="probe">
+    <svg viewBox="0 0 512 512" width="176" height="176" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Entwurf N">
+      <defs><linearGradient id="nG" x1="0" y1="0" x2=".55" y2="1">
+        <stop offset="0" stop-color="#ff4d6a"/><stop offset="1" stop-color="#c01536"/></linearGradient></defs>
+      <rect width="512" height="512" fill="#000000"/>
+      <g fill="url(#nG)" stroke="#ffd7de" stroke-width="9" stroke-linejoin="round" stroke-linecap="round">
+        <use href="#hirn-stamm"/><use href="#hirn-kuppe"/><use href="#hirn-klein"/></g>
+      <use href="#hirn-falten" stroke="#8f0f28" stroke-width="9"/>
+      <g fill="#ff8fa3">
+        <use href="#funke" transform="translate(438 128) scale(1.5)"/>
+        <use href="#funke" transform="translate(414 238) scale(.95)"/>
+        <use href="#funke" transform="translate(86 318) scale(1.25)"/>
+        <use href="#funke" transform="translate(98 200) scale(.85)"/></g>
+    </svg><span>176</span></div>
+  <div class="probe">
+    <svg viewBox="0 0 512 512" width="96" height="96" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="512" height="512" fill="#000000"/>
+      <g fill="url(#nG)" stroke="#ffd7de" stroke-width="9" stroke-linejoin="round" stroke-linecap="round">
+        <use href="#hirn-stamm"/><use href="#hirn-kuppe"/><use href="#hirn-klein"/></g>
+      <use href="#hirn-falten" stroke="#8f0f28" stroke-width="9"/>
+      <g fill="#ff8fa3">
+        <use href="#funke" transform="translate(438 128) scale(1.5)"/>
+        <use href="#funke" transform="translate(86 318) scale(1.25)"/></g>
+    </svg><span>96</span></div>
+  <div class="probe">
+    <svg viewBox="0 0 512 512" width="48" height="48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="512" height="512" fill="#000000"/>
+      <g fill="url(#nG)" stroke="#ffd7de" stroke-width="9" stroke-linejoin="round" stroke-linecap="round">
+        <use href="#hirn-stamm"/><use href="#hirn-kuppe"/><use href="#hirn-klein"/></g>
+      <use href="#hirn-falten" stroke="#8f0f28" stroke-width="9"/>
+      <g fill="#ff8fa3">
+        <use href="#funke" transform="translate(438 128) scale(1.5)"/>
+        <use href="#funke" transform="translate(86 318) scale(1.25)"/></g>
+    </svg><span>48</span></div>
+  <div class="probe">
+    <svg viewBox="0 0 512 512" width="32" height="32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="512" height="512" fill="#000000"/>
+      <g fill="url(#nG)" stroke="#ffd7de" stroke-width="9" stroke-linejoin="round" stroke-linecap="round">
+        <use href="#hirn-stamm"/><use href="#hirn-kuppe"/><use href="#hirn-klein"/></g>
+      <use href="#hirn-falten" stroke="#8f0f28" stroke-width="9"/>
+    </svg><span>32</span></div>
+</div></div>
+
+
+<h2><span class="buchstabe">O</span>Umriss — helle Fläche, dunkle Kontur</h2>
+<p class="was">Deine zweite Vorlage, linkes Bild. Am ruhigsten von allen, und die
+Form trägt sich allein durch die Linie. Wenig Farbe heißt: es passt zu jeder
+Akzentfarbe der App.</p>
+<div class="karte"><div class="reihe">
+  <div class="probe">
+    <svg viewBox="0 0 512 512" width="176" height="176" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Entwurf O">
+      <rect width="512" height="512" fill="#000000"/>
+      <g fill="#f4f4f6" stroke="#000000" stroke-width="12" stroke-linejoin="round" stroke-linecap="round">
+        <use href="#hirn-stamm"/><use href="#hirn-kuppe"/><use href="#hirn-klein"/></g>
+      <use href="#hirn-falten" stroke="#000000" stroke-width="11"/>
+    </svg><span>176</span></div>
+  <div class="probe">
+    <svg viewBox="0 0 512 512" width="96" height="96" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="512" height="512" fill="#000000"/>
+      <g fill="#f4f4f6" stroke="#000000" stroke-width="12" stroke-linejoin="round" stroke-linecap="round">
+        <use href="#hirn-stamm"/><use href="#hirn-kuppe"/><use href="#hirn-klein"/></g>
+      <use href="#hirn-falten" stroke="#000000" stroke-width="11"/>
+    </svg><span>96</span></div>
+  <div class="probe">
+    <svg viewBox="0 0 512 512" width="48" height="48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="512" height="512" fill="#000000"/>
+      <g fill="#f4f4f6" stroke="#000000" stroke-width="12" stroke-linejoin="round" stroke-linecap="round">
+        <use href="#hirn-stamm"/><use href="#hirn-kuppe"/><use href="#hirn-klein"/></g>
+      <use href="#hirn-falten" stroke="#000000" stroke-width="11"/>
+    </svg><span>48</span></div>
+  <div class="probe">
+    <svg viewBox="0 0 512 512" width="32" height="32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="512" height="512" fill="#000000"/>
+      <g fill="#f4f4f6" stroke="#000000" stroke-width="12" stroke-linejoin="round" stroke-linecap="round">
+        <use href="#hirn-stamm"/><use href="#hirn-kuppe"/><use href="#hirn-klein"/></g>
+      <use href="#hirn-falten" stroke="#000000" stroke-width="11"/>
+    </svg><span>32</span></div>
+</div></div>
+
+
+<h2><span class="buchstabe">P</span>Silhouette — eine einzige Farbe</h2>
+<p class="was">Deine zweite Vorlage, mittleres Bild, nur in Rot statt Schwarz.
+Die Windungen sind hier <em>Aussparungen</em>, keine Linien — sie schneiden bis
+zum Grund durch. Das ist die Form, die bei 32 px am längsten lesbar bleibt.</p>
+<div class="karte"><div class="reihe">
+  <div class="probe">
+    <svg viewBox="0 0 512 512" width="176" height="176" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Entwurf P">
+      <rect width="512" height="512" fill="#000000"/>
+      <g fill="#ff3355"><use href="#hirn-stamm"/><use href="#hirn-kuppe"/><use href="#hirn-klein"/></g>
+      <use href="#hirn-falten" stroke="#000000" stroke-width="13"/>
+    </svg><span>176</span></div>
+  <div class="probe">
+    <svg viewBox="0 0 512 512" width="96" height="96" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="512" height="512" fill="#000000"/>
+      <g fill="#ff3355"><use href="#hirn-stamm"/><use href="#hirn-kuppe"/><use href="#hirn-klein"/></g>
+      <use href="#hirn-falten" stroke="#000000" stroke-width="13"/>
+    </svg><span>96</span></div>
+  <div class="probe">
+    <svg viewBox="0 0 512 512" width="48" height="48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="512" height="512" fill="#000000"/>
+      <g fill="#ff3355"><use href="#hirn-stamm"/><use href="#hirn-kuppe"/><use href="#hirn-klein"/></g>
+      <use href="#hirn-falten" stroke="#000000" stroke-width="13"/>
+    </svg><span>48</span></div>
+  <div class="probe">
+    <svg viewBox="0 0 512 512" width="32" height="32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="512" height="512" fill="#000000"/>
+      <g fill="#ff3355"><use href="#hirn-stamm"/><use href="#hirn-kuppe"/><use href="#hirn-klein"/></g>
+      <use href="#hirn-falten" stroke="#000000" stroke-width="13"/>
+    </svg><span>32</span></div>
+</div></div>
+
+
+<h2><span class="buchstabe">Q</span>Flach — ohne Kontur, nur zarte Falten</h2>
+<p class="was">Deine zweite Vorlage, rechtes Bild. Keine harte Umrandung; die
+Windungen sind nur eine Spur dunkler als die Fläche. Am modernsten, aber auch am
+empfindlichsten: bei 32 px wird daraus fast ein roter Fleck.</p>
+<div class="karte"><div class="reihe">
+  <div class="probe">
+    <svg viewBox="0 0 512 512" width="176" height="176" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Entwurf Q">
+      <rect width="512" height="512" fill="#000000"/>
+      <g fill="#f2596b"><use href="#hirn-stamm"/><use href="#hirn-kuppe"/><use href="#hirn-klein"/></g>
+      <use href="#hirn-falten" stroke="#c93b4d" stroke-width="10"/>
+    </svg><span>176</span></div>
+  <div class="probe">
+    <svg viewBox="0 0 512 512" width="96" height="96" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="512" height="512" fill="#000000"/>
+      <g fill="#f2596b"><use href="#hirn-stamm"/><use href="#hirn-kuppe"/><use href="#hirn-klein"/></g>
+      <use href="#hirn-falten" stroke="#c93b4d" stroke-width="10"/>
+    </svg><span>96</span></div>
+  <div class="probe">
+    <svg viewBox="0 0 512 512" width="48" height="48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="512" height="512" fill="#000000"/>
+      <g fill="#f2596b"><use href="#hirn-stamm"/><use href="#hirn-kuppe"/><use href="#hirn-klein"/></g>
+      <use href="#hirn-falten" stroke="#c93b4d" stroke-width="10"/>
+    </svg><span>48</span></div>
+  <div class="probe">
+    <svg viewBox="0 0 512 512" width="32" height="32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="512" height="512" fill="#000000"/>
+      <g fill="#f2596b"><use href="#hirn-stamm"/><use href="#hirn-kuppe"/><use href="#hirn-klein"/></g>
+      <use href="#hirn-falten" stroke="#c93b4d" stroke-width="10"/>
+    </svg><span>32</span></div>
+</div></div>
+
+
+<div class="fuss">
+<p>Sag einen Buchstaben, dann baue ich daraus <code>icon.svg</code>,
+<code>icon-maskable.svg</code> und den Eintrag in <code>manifest.json</code>.
+Farbe, Kontur und Funkeln lassen sich einzeln noch drehen — die Form bleibt
+dieselbe, sie liegt nur einmal in der Datei.</p>
+<p>⚠️ Damit ein neues Icon am Handy erscheint, muss die
+Startbildschirm-Verknüpfung einmal entfernt und über Chrome neu angelegt
+werden. Android merkt sich das alte sonst.</p>
+</div>
+
+</div>
+</body>
+</html>

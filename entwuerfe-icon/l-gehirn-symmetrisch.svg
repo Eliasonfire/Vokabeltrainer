@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — Gehirn">
+<title>Entwurf L — Gehirn von oben, zwei Hälften</title>
+<!--
+  Zweite Bauform zu Elias' Gehirn-Idee (18.08.2026). Gleiche Bauweise wie
+  vergleich-korantrainer.svg: schwarzes Feld rx=112, reine Strichzeichnung,
+  22 außen / 14 innen, runde Enden.
+
+  Warum diese Variante daneben steht: Von OBEN ist das Gehirn symmetrisch, und
+  Symmetrie hält bei 48 px besser zusammen als der Seitenriss — die Mittelfurche
+  gibt der Form eine Achse, an der das Auge sie festmacht. Der Preis ist, dass
+  sie einer Walnuss ähneln kann. Genau das soll er nebeneinander sehen und
+  entscheiden, statt es von mir beschrieben zu bekommen.
+
+  Inhalt zwischen 112 und 400, also gut innerhalb der maskable-Zone (51…461).
+-->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+
+<!-- Die beiden Hälften und die Furche dazwischen. -->
+<g fill="none" stroke="#ff3355" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M256 124 C 186 118 122 168 122 236 C 122 316 182 388 256 392"/>
+  <path d="M256 124 C 326 118 390 168 390 236 C 390 316 330 388 256 392"/>
+  <path d="M256 124 V 392"/>
+</g>
+
+<!-- Je drei Windungen. Sie enden vor der Mittelfurche, damit die Achse frei
+     bleibt — laufen sie durch, wird das Bild bei kleiner Größe ein Gitter. -->
+<g fill="none" stroke="#b00b2a" stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M160 186 C 190 168 206 204 232 188"/>
+  <path d="M146 258 C 180 238 200 280 232 260"/>
+  <path d="M164 330 C 192 312 208 348 232 332"/>
+
+  <path d="M352 186 C 322 168 306 204 280 188"/>
+  <path d="M366 258 C 332 238 312 280 280 260"/>
+  <path d="M348 330 C 320 312 304 348 280 332"/>
+</g>
+</svg>

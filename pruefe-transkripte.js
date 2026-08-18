@@ -289,6 +289,9 @@ function spurFuer(folge) {
 const ergebnis = [];
 for (const r of GRAMMAR_RULES) {
   if (NUR && r.id !== NUR) continue;
+  /* Buch-Ergaenzungen stehen in keinem Transkript — sie kommen ja gerade nicht
+     aus dem Unterricht. Ohne diese Zeile stirbt der Lauf an `r.source`. */
+  if (r.ergaenzung || !r.source) continue;
   const t = sekunden(r.source.approxTimestamp);
   const spur = spurFuer(r.source.folge);
   const formen = kernformen(r);

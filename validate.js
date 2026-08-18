@@ -229,13 +229,36 @@ if (!Array.isArray(GRAMMAR_RULES)){
     if (!r.name) fail(`${where} (${r.id}): name fehlt.`);
     if (!r.shortExplanation) fail(`${where} (${r.id}): shortExplanation fehlt.`);
     if (!RULE_COLORS.includes(r.color)) fail(`${where} (${r.id}): unbekannte color "${r.color}" (erlaubt: ${RULE_COLORS.join(', ')}).`);
-    /* Quellenpflicht aus Goal-Prompt E.1 — ohne belegbare Quelle darf keine Regel rein. */
-    if (!r.source) fail(`${where} (${r.id}): source fehlt (Quellenpflicht E.1).`);
-    else {
+    /* Quellenpflicht aus Goal-Prompt E.1 — ohne belegbare Quelle darf keine Regel rein.
+       ⭐ Seit dem 18.08.2026 gibt es ZWEI erlaubte Quellenarten, nicht mehr nur eine:
+          - der Unterricht  -> `source` mit Video und Zeitmarke (der Normalfall)
+          - ein Lehrbuch    -> `ergaenzung: true` + `buchQuelle` + `kapitel`
+       Anlass war Elias' Freigabe von Block B ("wenn das aus den büchern ist dann
+       kannst du das machen"): elf Lücken werden aus Sharḥ Madīnah und Bayna Yadayk
+       geschlossen. Die haben naturgemäß KEINE Videofundstelle — eine zu erfinden
+       wäre genau das, was E.1 verbietet. Die Pflicht bleibt also bestehen, sie
+       kennt nur einen zweiten Beleg-Typ. Ohne beides fällt die Regel weiterhin durch. */
+    const BUCHWERKE = ['sharh-madinah-1', 'bayna-yadayk-2'];
+    if (r.ergaenzung){
+      if (r.source) fail(`${where} (${r.id}): hat ergaenzung:true UND source — eine Regel ist entweder aus dem Unterricht oder aus dem Buch, nicht beides.`);
+      if (!r.buchQuelle) fail(`${where} (${r.id}): ergaenzung:true, aber buchQuelle fehlt (Quellenpflicht E.1).`);
+      else {
+        const wb = `${where} (${r.id}): buchQuelle`;
+        if (!BUCHWERKE.includes(r.buchQuelle.werk)) fail(`${wb}.werk "${r.buchQuelle.werk}" unbekannt (erlaubt: ${BUCHWERKE.join(', ')}).`);
+        if (!Number.isInteger(r.buchQuelle.lektion) || r.buchQuelle.lektion < 1) fail(`${wb}.lektion fehlt oder ist keine Zahl.`);
+        if (!Number.isInteger(r.buchQuelle.seite) || r.buchQuelle.seite < 1) fail(`${wb}.seite fehlt oder ist keine Zahl.`);
+      }
+      /* `kapitel` ersetzt hier `source.chapter` — ohne das weiss die Oberflaeche nicht,
+         wo die Regel hingehoert, und sie taucht in keiner Kapitelauswahl auf. */
+      if (!Number.isInteger(r.kapitel)) fail(`${where} (${r.id}): ergaenzung:true, aber kapitel fehlt oder ist keine Zahl.`);
+    } else if (!r.source) {
+      fail(`${where} (${r.id}): source fehlt (Quellenpflicht E.1).`);
+    } else {
       if (!r.source.video) fail(`${where} (${r.id}): source.video fehlt.`);
       if (!r.source.approxTimestamp) fail(`${where} (${r.id}): source.approxTimestamp fehlt.`);
       if (r.source.chapter === undefined) fail(`${where} (${r.id}): source.chapter fehlt.`);
     }
+    if (r.buchQuelle && !r.ergaenzung) fail(`${where} (${r.id}): buchQuelle ohne ergaenzung:true — dann waere die Herkunft in der App nicht gekennzeichnet.`);
     /* source2 ist FREIWILLIG — der gedruckte Zweitbeleg aus einem der deutschen
        Madina-Schluessel. Er steht nur an Regeln, bei denen Buch und Unterricht
        dasselbe sagen; wo sie abweichen, entscheidet Elias und es bleibt leer.
@@ -258,8 +281,14 @@ if (!Array.isArray(GRAMMAR_RULES)){
       }
     }
   });
-  const mitBuch = GRAMMAR_RULES.filter(r => r.source2).length;
-  note(`GRAMMAR_RULES: ${GRAMMAR_RULES.length} Regeln, alle mit Quelle; ${mitBuch} zusaetzlich mit gedrucktem Beleg.`);
+  const mitBuch   = GRAMMAR_RULES.filter(r => r.source2).length;
+  const ausBuch   = GRAMMAR_RULES.filter(r => r.ergaenzung).length;
+  const ausLehrer = GRAMMAR_RULES.length - ausBuch;
+  /* Die beiden Herkuenfte werden GETRENNT genannt. Eine Sammelzahl "alle mit
+     Quelle" wuerde verdecken, dass elf davon nicht vom Lehrer stammen — und
+     genau das will Elias bei der Regelfreigabe sehen. */
+  note(`GRAMMAR_RULES: ${GRAMMAR_RULES.length} Regeln — ${ausLehrer} aus dem Unterricht, `
+     + `${ausBuch} aus den Lehrbuechern (gekennzeichnet); ${mitBuch} mit gedrucktem Zweitbeleg.`);
 
   /* ---------- 4. SENTENCE_TAGS: Referenzen in beide Richtungen ---------- */
   if (SENTENCE_TAGS && typeof SENTENCE_TAGS === 'object' && Array.isArray(VOCAB_DATA)){
