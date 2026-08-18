@@ -34,7 +34,7 @@ try {
     if (!fs.existsSync(p)) { fail(`Datendatei fehlt: ${f}`); continue; }
     code += fs.readFileSync(p, 'utf8') + '\n';
   }
-  code += 'globalThis.__DATA = { VOCAB_DATA, SURAH_DATA, GRAMMAR_RULES, SENTENCE_TAGS, QURAN_FREQ, QURAN_WORT, LEHRBUCH_SAETZE };';
+  code += 'globalThis.__DATA = { VOCAB_DATA, SURAH_DATA, GRAMMAR_RULES, SENTENCE_TAGS, SATZ_THEMEN, QURAN_FREQ, QURAN_WORT, LEHRBUCH_SAETZE };';
   const ctx = {};
   vm.createContext(ctx);
   vm.runInContext(code, ctx);
@@ -43,7 +43,7 @@ try {
   fail(`Datendateien nicht ausführbar (Syntaxfehler?): ${e.message}`);
 }
 
-const { VOCAB_DATA, SURAH_DATA, GRAMMAR_RULES, SENTENCE_TAGS, QURAN_FREQ, QURAN_WORT, LEHRBUCH_SAETZE } = DATA;
+const { VOCAB_DATA, SURAH_DATA, GRAMMAR_RULES, SENTENCE_TAGS, SATZ_THEMEN, QURAN_FREQ, QURAN_WORT, LEHRBUCH_SAETZE } = DATA;
 
 /* ---------- 1. VOCAB_DATA ---------- */
 if (!Array.isArray(VOCAB_DATA) || VOCAB_DATA.length === 0){
@@ -456,6 +456,45 @@ try {
   note(`Wortfelder: ${wf.WORTFELDER.length} Felder, ${lern ? lern.woerter.length : 0} von ${VOCAB_DATA ? VOCAB_DATA.length : 0} Lernwoertern nur mit Wortart (davon ${nomen.length} Nomen).`);
 } catch (e) {
   warn(`Wortfelder nicht messbar: ${e.message}`);
+}
+
+/* ---------- 10. Satzmodus-Kategorien ----------
+   Elias am 19.08.2026: „man müsste auch da eine routine einführen, dass das
+   immer aktuell bleibt … sogar eben ist naat dazu kommen eine neue
+   grammatikregel die ich in der app üben sollte."
+
+   Am selben Tag gemessen: 45 der 95 Regeln fielen durch JEDE Kategorie in
+   SATZ_THEMEN und waren nur ueber „Alle" erreichbar. Das war niemandem
+   aufgefallen, weil nichts danach gefragt hat.
+
+   ⚠️ Es trifft mehr als den Filter: js/uebung.js waehlt mit derselben
+   Tabelle die ABLENKER im Uebungsmodus. Eine Regel ohne Kategorie bekommt
+   zufaellige statt thematisch naher.
+
+   ⚠️ Nur ein HINWEIS, nie ein Fehler: die Regel ist ueber „Alle" weiter da,
+   nur nicht gezielt uebbar. Das haelt keine Auslieferung auf.
+
+   ⛔ SIEBEN Regeln stehen ABSICHTLICH ohne Kategorie und werden hier nicht
+   gemeldet: fuenf zum Thema „weiblich" (Elias am 29.07.2026 zu einem Reiter
+   dafuer: „das will ich glaube ich nicht"), dazu ya-nida-01 und badal-01,
+   die in keine Gruppe passen, ohne dass man eine erfindet. Wer eine davon
+   doch einsortiert, nimmt sie hier aus der Liste. */
+const THEMENLOS_GEWOLLT = new Set([
+  'ta-marbuta-fem-01', 'fem-ohne-ta-marbuta-01', 'koerperteile-genus-01',
+  'eigennamen-fem-ohne-tanwin-01', 'ta-marbuta-grenzen-01',
+  'ya-nida-01', 'badal-01',
+]);
+try {
+  const themen = (typeof SATZ_THEMEN !== 'undefined' ? SATZ_THEMEN : []).filter(x => x.muster);
+  if (!themen.length) warn('SATZ_THEMEN nicht lesbar — Kategorien ungeprueft.');
+  else {
+    const ohne = GRAMMAR_RULES.filter(r => !THEMENLOS_GEWOLLT.has(r.id) && !themen.some(x => x.muster.test(r.id)));
+    if (ohne.length)
+      warn(`${ohne.length} Regel(n) fallen durch jede Satzmodus-Kategorie und sind nur ueber „Alle" erreichbar — Muster in SATZ_THEMEN ergaenzen: ${ohne.slice(0,6).map(r => r.id).join(', ')}${ohne.length>6?' …':''}`);
+    note(`SATZ_THEMEN: ${themen.length} Kategorien, ${GRAMMAR_RULES.length - ohne.length - THEMENLOS_GEWOLLT.size} von ${GRAMMAR_RULES.length} Regeln einsortiert, ${THEMENLOS_GEWOLLT.size} absichtlich ohne.`);
+  }
+} catch (e) {
+  warn(`Satzmodus-Kategorien nicht messbar: ${e.message}`);
 }
 
 /* ---------- Ausgabe ---------- */
