@@ -5,6 +5,7 @@
 function renderSettings(){
   const sw = document.getElementById('toggleShowPlural');
   sw.classList.toggle('on', SETTINGS.showPlural);
+  document.getElementById('togglePluralKarten').classList.toggle('on', !!SETTINGS.pluralKarten);
   document.getElementById('toggleVerbFormen').classList.toggle('on', !!SETTINGS.showVerbFormen);
   document.getElementById('toggleQuran').classList.toggle('on', !!SETTINGS.showQuran);
   document.getElementById('sessionSizeSelect').value = String(SETTINGS.sessionSize);
@@ -111,6 +112,36 @@ document.getElementById('toggleShowPlural').addEventListener('click', ()=>{
   SETTINGS.showPlural = !SETTINGS.showPlural;
   saveSettings();
   renderSettings();
+});
+/* ---------- Pluralkarten ein- und ausschalten (18.08.2026) ----------
+
+   Anders als die Schalter darueber aendert dieser nicht nur die Anzeige,
+   sondern den BESTAND: beim Einschalten kommen rund 120 Karten dazu, beim
+   Ausschalten verschwinden sie wieder. Deshalb drei Dinge, die die anderen
+   Schalter nicht brauchen:
+
+   1. `wendePluralKartenAn` baut VOCAB_DATA um.
+   2. `initProgress()` traegt fuer die neuen Karten eine Startbox nach - ohne
+      das saehe man sie in den Kategorien, aber nie in „Jetzt lernen".
+   3. Der Startbildschirm und die Kategorien zeigen Zaehlungen, die sich
+      dadurch aendern; ohne den Neuaufbau stimmten sie bis zum naechsten Start
+      nicht.
+
+   ⭐ Der Fortschritt bleibt beim Ausschalten erhalten. initProgress loescht
+   nichts, es traegt nur Fehlendes nach - wer die Karten wieder einschaltet,
+   findet seine Kaesten so vor, wie er sie verlassen hat. */
+document.getElementById('togglePluralKarten').addEventListener('click', ()=>{
+  SETTINGS.pluralKarten = !SETTINGS.pluralKarten;
+  saveSettings();
+  const stand = wendePluralKartenAn(SETTINGS.pluralKarten);
+  PROGRESS = initProgress();
+  renderSettings();
+  if (typeof renderHome === 'function') renderHome();
+  if (typeof renderChapterCats === 'function') renderChapterCats();
+  const dazu = Math.abs(stand.nachher - stand.vorher);
+  toast(SETTINGS.pluralKarten
+    ? `${dazu} Pluralkarten sind dazugekommen — sie starten in Kasten 1.`
+    : `${dazu} Pluralkarten ausgeblendet. Ihr Fortschritt bleibt gespeichert.`);
 });
 /* Verbformen ein- und ausschalten (Elias' Wunsch vom 30.07.2026). Genau wie bei
    den Pluralformen: eine Umschaltung, kein eigener Bildschirm. */

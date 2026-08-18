@@ -66,6 +66,20 @@ const CHAPTER_NAMES = {
    angezeigt - ohne dass es irgendwo aufgefallen waere. */
 function kapitelBeschriftung(w){
   if (!w) return '';
+  /* Pluralkarten zuerst: bei ihnen ist die Herkunft die interessantere Angabe.
+     „Kap. 1" stuende auf der Singularkarte genauso und sagte nicht, wovon der
+     Plural ueberhaupt der Plural ist.
+
+     ⭐ Das arabische Wort steht am ENDE der Zeile, nicht in der Mitte. In einem
+     deutschen (linkslaeufigen) Satz bleibt ein arabischer Schluss dort, wo er
+     hingehoert; steht Arabisches mittendrin, ordnet die Bidi-Regel den Rest
+     darum herum um, und die Zeile kommt zerrissen an. Genau das ist am
+     18.08.2026 bei der Unterzeile der Fachbegriffe passiert - dort half nur,
+     den arabischen Teil ganz herauszunehmen.
+
+     ⛔ Keine unsichtbaren Steuerzeichen (U+2068/U+2069) als Loesung. Die sieht
+     man im Quelltext nicht, und was man nicht sieht, prueft man auch nicht. */
+  if (w.istPlural && w.sgAr) return `Plural von ${w.sgAr}`;
   if (w.chapter === 'personal') return 'Eigene Vokabel';
   if (w.chapter === 'grammar')  return 'Fachbegriff';
   return `Kap. ${w.chapter}`;
@@ -213,6 +227,111 @@ if (typeof FACHBEGRIFF_VOKABELN !== 'undefined' && Array.isArray(FACHBEGRIFF_VOK
   const weg = (wegRoh && typeof wegRoh === 'object' && !Array.isArray(wegRoh)) ? wegRoh : {};
   VOCAB_DATA.push(...FACHBEGRIFF_VOKABELN.filter(w => !(weg[w.id] && weg[w.id].an)));
 }
+
+/* ---------- Pluralformen als eigene Karteikarten (18.08.2026) -------------
+
+   Elias am 18.08. um 04:xx: „ich finde eigentlich, dass die plural formen
+   eigene karteikarten bekommen sollten aber noch nicht jetzt, jetzt arbeite
+   ich nicht mal mit ihnen und brauche sie deswegen noch nicht."
+   Und um 06:0x, mitten in der Nachtschicht: „du kannst sie schonmal bauen."
+
+   ⭐ Aus diesen zwei Saetzen zusammen folgt die Bauform: die Faehigkeit ist da,
+   der Schalter steht auf AUS. Waere sie sofort an, staenden ueber Nacht 120
+   zusaetzliche Karten in Kasten 1 - genau das, was er mit „brauche sie noch
+   nicht" ausgeschlossen hat.
+
+   Die Karten sind ABGELEITET, nicht gespeichert: sie entstehen bei jedem Start
+   aus dem `pl`-Feld der Grundvokabel. Damit kann nichts veralten, wenn der
+   arabicroots-Abzug einen Plural korrigiert.
+
+   ⚠️ Die deutsche Seite bekommt „(Plural)" fest in den Text statt nur ein
+   Abzeichen in der Oberflaeche. Grund: derselbe Text laeuft durch die
+   Lernkarte, die Wortlisten, die Suche und den Hoermodus. Ein Abzeichen haette
+   an jeder dieser Stellen einzeln nachgebaut werden muessen - und in der
+   Abfragerichtung Deutsch→Arabisch waere aus „Haus" sonst بَيْتٌ statt بُيُوتٌ
+   geworden, ohne dass die Karte etwas falsch macht.
+
+   ⛔ Der deutsche Plural wird NICHT gebildet. „Haus" → „Häuser" ginge, „Lehrer"
+   → „Lehrer" auch, aber es gibt keinen Weg, das ohne Raten zu tun (Regel 6,
+   Goal-Prompt E.1). Die Karte fragt die arabische Form ab, und dafuer genuegt
+   die Bedeutung mit dem Vermerk.
+
+   ⛔ Kein Beispielsatz, kein Koranbeleg, keine Eselsbruecke wird uebernommen -
+   die stehen alle im Singular und waeren auf einer Pluralkarte irrefuehrend.
+   (Notiz am Rande fuer spaeter: ein Teil der `alt2`-Eselsbruecken erklaert
+   ohnehin nur den Plural. Genau die gehoerten HIERHER statt auf die
+   Singularkarte. Das ist eine Einzelfallentscheidung je Text und deshalb
+   nichts fuer einen Automatismus.) */
+const PLURAL_MARKE = '#pl';
+function istPluralKarte(id){
+  return typeof id === 'string' && id.endsWith(PLURAL_MARKE);
+}
+
+/* Was die Sprachausgabe von einem Wort vorlesen soll.
+
+   ⚠️ Sieben Woerter haben zwei Pluralformen, im Abzug mit Schraegstrich
+   geschrieben („بُيُوتٌ / أَبْيَاتٌ"). Auf der Karte gehoeren beide hin - der
+   Vorleser wuerde daraus aber einen Satz mit Trennzeichen machen. Er bekommt
+   deshalb nur die erste Form.
+
+   ⭐ Steht an EINER Stelle, weil vier Aufrufer sie brauchen (Lernkarte,
+   Wortkarte, Hoermodus zweimal). Vorher schrieb jeder `w.sg || w.ar` fuer
+   sich hin, und einer davon liess das `sg` sogar weg - solche Abweichungen
+   faellt niemandem auf, solange kein Wort sie sichtbar macht. */
+function sprechText(w){
+  if (!w) return '';
+  const roh = w.sg || w.ar || '';
+  return roh.split('/')[0].trim() || roh;
+}
+
+/* Aus einer Grundvokabel die Pluralkarte bauen - oder null, wenn es keinen
+   Plural gibt. Sieben Woerter haben zwei Pluralformen („بُيُوتٌ / أَبْيَاتٌ");
+   die stehen bewusst zusammen auf EINER Karte. Zwei Karten daraus zu machen
+   haette eine Reihenfolge behauptet, die im Abzug nicht steht. */
+function bauePluralKarte(w){
+  if (!w || !w.pl || istPluralKarte(w.id)) return null;
+  return {
+    id: w.id + PLURAL_MARKE,
+    ar: w.pl,
+    de: (w.de || '') + ' (Plural)',
+    chapter: w.chapter,
+    type: w.type,
+    gender: w.gender,
+    root: w.root,
+    /* Die Herkunft bleibt am Datensatz haengen: die Oberflaeche zeigt darueber
+       „Plural von بَيْتٌ", und ein spaeterer Sprung zur Grundkarte braucht
+       keine Zerlegung der Id. */
+    istPlural: true,
+    plVon: w.id,
+    sgAr: w.ar
+  };
+}
+
+/* Schaltet die Pluralkarten an oder aus. Wird beim Start EINMAL aufgerufen und
+   danach bei jedem Umlegen des Schalters.
+
+   ⚠️ Beim Start liest der Aufrufer den Wert aus dem Speicher, NICHT aus
+   SETTINGS: SETTINGS ist ein `let` und entsteht erst rund 270 Zeilen weiter
+   unten. Derselbe Fallstrick hat am 18.08. schon die Fachbegriffe erwischt -
+   ein Zugriff waere in der zeitlichen Totzone und stuerzte ab.
+
+   Der Fortschritt der Pluralkarten bleibt beim Ausschalten stehen. initProgress
+   loescht nichts, es traegt nur Fehlendes nach; wer die Karten wieder
+   einschaltet, findet seine Kaesten so vor, wie er sie verlassen hat. */
+function wendePluralKartenAn(an){
+  const vorher = VOCAB_DATA.length;
+  for (let i = VOCAB_DATA.length - 1; i >= 0; i--){
+    if (istPluralKarte(VOCAB_DATA[i].id)) VOCAB_DATA.splice(i, 1);
+  }
+  if (an){
+    const neu = [];
+    VOCAB_DATA.forEach(w => { const p = bauePluralKarte(w); if (p) neu.push(p); });
+    VOCAB_DATA.push(...neu);
+  }
+  return { vorher, nachher: VOCAB_DATA.length };
+}
+
+wendePluralKartenAn(!!(LS.get('vt_settings', {}) || {}).pluralKarten);
 
 function addPersonalVocab({ar, de, sentAr, sentDe}){
   const w = { id:'p_'+Date.now(), ar, de, chapter:'personal', type:'noun' };
@@ -496,7 +615,12 @@ let SETTINGS = Object.assign(
      Die Belege bleiben in vocab-data.js stehen, sie werden nur nicht
      angezeigt: geprueft und belegt ist Arbeit, die man nicht wegwirft, nur
      weil sie gerade nicht auf dem Bildschirm sein soll. */
-  { showPlural:false, showVerbFormen:false, showQuran:false, sessionSize:20, voiceURI:null, direction:'ar-de', selectedChapters:[], wrongOnly:false, grammarHighlight:true },
+  /* pluralKarten steht aus demselben Grund auf FALSE wie showVerbFormen: Elias
+     hat die Pluralkarten am 18.08.2026 ausdruecklich bestellt UND ausdruecklich
+     noch nicht in Betrieb genommen („brauche sie deswegen noch nicht" /
+     „du kannst sie schonmal bauen"). Der Schalter liegt in den Einstellungen
+     unter „Lernkarte". */
+  { showPlural:false, pluralKarten:false, showVerbFormen:false, showQuran:false, sessionSize:20, voiceURI:null, direction:'ar-de', selectedChapters:[], wrongOnly:false, grammarHighlight:true },
   LS.get('vt_settings', {})
 );
 /* ---------- Zeitstempel JE EINSTELLUNG (17.08.2026) ----------

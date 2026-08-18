@@ -650,6 +650,22 @@ function baueWortKarte(w){
      fertig war. Aufgefallen nur, weil ich es im Browser durchgeklickt habe. */
   const eigen = w.chapter === 'personal' || w.chapter === 'grammar';
   const geaendert = (typeof WORT_AENDERUNGEN !== 'undefined') && !!WORT_AENDERUNGEN[w.id];
+
+  /* ⭐ Pluralkarten sind ABGELEITET (18.08.2026). Sie werden bei jedem Start aus
+     dem `pl`-Feld der Grundvokabel neu gebaut; eine Aenderung hier waere beim
+     naechsten Start weg, ohne dass irgendetwas meldet, dass sie verlorenging.
+     Statt einen Knopf anzubieten, der still nichts tut, fuehrt die Karte zur
+     Grundvokabel - dort wird der Plural geaendert, und die Karte folgt.
+     Die eigene Eselsbruecke bleibt hier trotzdem moeglich: die haengt an der
+     Id und nicht am Datensatz. */
+  if (w.istPlural){
+    t.push(`<div class="wk-aktionen">
+      <button class="btn btn-secondary btn-klein" data-wkgrundwort="${escapeHtml(w.plVon)}">Zur Grundvokabel</button>
+    </div>
+    <div class="wk-hinweis">Diese Karte entsteht aus dem Plural der Grundvokabel. Ändern lässt sich der Plural dort.</div>`);
+    return t.join('');
+  }
+
   t.push(`<div class="wk-aktionen">
     <button class="btn btn-secondary btn-klein" data-wkbearbeiten>${icon('note')}Bearbeiten</button>
     ${eigen ? `<button class="btn btn-secondary btn-klein wk-loeschen" data-wkloeschen>${icon('trash')}Löschen</button>` : ''}
@@ -730,8 +746,18 @@ function schliesseWortKarte(){
 document.getElementById('wortKarteBackdrop').addEventListener('click', schliesseWortKarte);
 document.getElementById('wortKarte').addEventListener('click', (e)=>{
   if (e.target.closest('#btnCloseWortKarte')) { schliesseWortKarte(); return; }
-  if (e.target.closest('[data-wksprich]') && WK_WORT){ speakArabic(WK_WORT.sg || WK_WORT.ar); return; }
+  if (e.target.closest('[data-wksprich]') && WK_WORT){ speakArabic(sprechText(WK_WORT)); return; }
   const karte = document.getElementById('wortKarte');
+
+  /* Von der Pluralkarte zur Grundvokabel. `zeigeWortKarte` baut die offene
+     Karte um, statt eine zweite darueberzulegen - zwei Fenster uebereinander
+     sind auf dem Handy kaum noch wegzutippen. */
+  const zurGrund = e.target.closest('[data-wkgrundwort]');
+  if (zurGrund){
+    const zielId = zurGrund.getAttribute('data-wkgrundwort');
+    if (zielId && VOCAB_DATA.some(x => x.id === zielId)) zeigeWortKarte(zielId);
+    return;
+  }
 
   if (e.target.closest('[data-wkbearbeiten]') && WK_WORT){
     karte.innerHTML = baueWortFormular(WK_WORT);

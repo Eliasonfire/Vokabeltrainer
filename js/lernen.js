@@ -763,7 +763,7 @@ document.getElementById('flashcard').addEventListener('click', (e)=>{
 });
 document.getElementById('btnSpeakWord').addEventListener('click', (e)=>{
   e.stopPropagation();
-  speakArabic(SESSION.words[SESSION.idx].ar);
+  speakArabic(sprechText(SESSION.words[SESSION.idx]));
 });
 /* ⛔ „Kenne ich schon" saß bis zum 18.08.2026 hier, als Zeile unter den vier
    Stufen. Elias: „das ist an der falschen stelle, das sollte eigentlich beim

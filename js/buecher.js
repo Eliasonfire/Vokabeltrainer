@@ -403,6 +403,30 @@ document.addEventListener('DOMContentLoaded', async ()=>{
      Laeufe wuerden mit einem veralteten Index arbeiten. */
   const slugs = aktiveBuecher();
   for (const s of slugs) await setzeBuch(s, true);
+
+  /* ---------- Pluralkarten NACH den Buechern neu bauen (18.08.2026) --------
+
+     ⚠️ Ein Fehler, den nur die Zahl verraten hat. `wendePluralKartenAn` laeuft
+     in kern.js beim Laden - da stehen aber erst die 171 Woerter aus
+     vocab-data.js in der Liste. Die Buchvokabeln kommen erst hier dazu, weil
+     ihre Dateien nachgeladen werden.
+
+     Gemessen: nach dem Neuladen 120 Pluralkarten, nach einem Umlegen des
+     Schalters im laufenden Betrieb 190. Dieselbe Einstellung, zwei Ergebnisse
+     - je nachdem, ob man die App neu gestartet oder den Schalter angefasst
+     hatte. Aufgefallen ist es nur, weil beide Zahlen im selben Protokoll
+     standen; einzeln sah jede plausibel aus.
+
+     Der Aufruf ist gefahrlos, wenn der Schalter aus ist: dann raeumt er die
+     Liste auf und legt nichts an. */
+  if (typeof wendePluralKartenAn === 'function' && typeof SETTINGS !== 'undefined'){
+    wendePluralKartenAn(!!SETTINGS.pluralKarten);
+    VOCAB_DATA.forEach(w=>{
+      if (!PROGRESS[w.id]) PROGRESS[w.id] = { box: w.box || 1, nextReview: todayStr(0), correct:0, wrong:0 };
+    });
+    saveProgress();
+  }
+
   renderBuchChips();
   if (typeof renderHome === 'function') renderHome();
   const slug = slugs[0];

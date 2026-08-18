@@ -166,7 +166,7 @@ function hoerAbspielen(){
   setTimeout(()=>knopf.classList.remove('spielt'), 600);
   /* Die Vollform mit Endung sprechen, nicht die nackte Schreibweise - so
      hoert Elias das Wort, wie es im Satz klingt. */
-  speakArabic(HOER.wort.sg || HOER.wort.ar);
+  speakArabic(sprechText(HOER.wort));
 }
 
 function beantworteHoerfrage(i){
@@ -220,7 +220,7 @@ function beantworteHoerfrage(i){
 
   /* Nach der Antwort noch einmal vorsprechen: jetzt sieht man die Schrift
      dazu, und genau dabei praegt sich der Klang ein. */
-  setTimeout(()=>speakArabic(w.sg || w.ar), 320);
+  setTimeout(()=>speakArabic(sprechText(w)), 320);
 }
 
 document.getElementById('hoerOptionen').addEventListener('click', (e)=>{
