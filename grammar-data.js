@@ -133,7 +133,8 @@ const GRAMMAR_RULES = [
     name: "مُبْتَدَأ وخَبَر (Subjekt und Aussage)",
     shortExplanation: "Die beiden Begriffe kommen hier zunächst nur als Vorgeschmack (\"erstmal nicht viel damit machen, sondern erstmal nur wissen\"). خَبَر (khabar) ist die Information über das Nomen – in den Übungen das ergänzte Wort, z.B. جَديدٌ (dschadīdun, neu). مُبْتَدَأ (mubtadaʾ) ist das Subjekt, also das, worum es im Satz geht, z.B. اَلْمُدَرِّسُ (al-mudarrisu, der Lehrer). Zusammen: اَلْمُدَرِّسُ جَديدٌ – der Lehrer ist neu.",
     color: "mubtada",
-    source: { folge: 3, video: "Folge 03", approxTimestamp: "13:57", chapter: 3 }
+    source: { folge: 3, video: "Folge 03", approxTimestamp: "13:57", chapter: 3 },
+    source2: { schluessel: 2, lektion: 1, seite: 5 }
   },
   {
     id: "schams-qamar-01",
@@ -177,7 +178,8 @@ const GRAMMAR_RULES = [
     name: "جُمْلة اسْمِيّة / جُمْلة فِعْلِيّة (Nominalsatz und Verbalsatz)",
     shortExplanation: "Im Arabischen gibt es zwei Satzarten: Die جُمْلة اسْمِيّة (jumla ismiyya), der Nominalsatz, beginnt mit einem Nomen. Die جُمْلة فِعْلِيّة (jumla fiʿliyya), der Verbalsatz, beginnt mit einem Verb. Im Madina Buch 1 wird ausschließlich mit Nominalsätzen gearbeitet; Verben kommen erst später dran. Die beiden Satzarten unterscheiden sich auch in der grammatischen Analyse.",
     color: "mubtada",
-    source: { folge: 4, video: "Folge 04", approxTimestamp: "12:55", chapter: 4 }
+    source: { folge: 4, video: "Folge 04", approxTimestamp: "12:55", chapter: 4 },
+    source2: { schluessel: 2, lektion: 1, seite: 5 }
   },
   {
     id: "wortstellung-fokus-01",
@@ -393,7 +395,8 @@ const GRAMMAR_RULES = [
     name: "اِسْم – فِعْل – حَرْف (die drei Wortarten)",
     shortExplanation: "Im Arabischen gibt es nur drei Wortarten: اِسْم (ism) = Nomen, فِعْل (fiʿl) = Verb, حَرْف (ḥarf) = Partikel. Alles, was kein Verb und kein Partikel ist, ist automatisch ein Nomen. Deshalb zählen im Arabischen auch Adjektive, Adverbien, Ortsangaben und die Hinweiswörter – اِسْمُ الإِشارَةِ (ismu l-ishārati), wörtlich „das Nomen des Zeigens“ – als Nomen; anders als im Deutschen gibt es keine weiteren Kategorien. Fragepartikel dagegen gehören zu حَرْف.",
     color: "other",
-    source: { folge: 8, video: "Folge 08", approxTimestamp: "24:41", chapter: 5 }
+    source: { folge: 8, video: "Folge 08", approxTimestamp: "24:41", chapter: 5 },
+    source2: { schluessel: 2, lektion: 21, seite: 94 }
   },
   {
     id: "idafa-kein-adjektiv-01",
@@ -565,7 +568,8 @@ const GRAMMAR_RULES = [
     name: "نَعْت (Adjektiv): die vier Bedingungen",
     shortExplanation: "Ein Wort, das direkt hinter einem Nomen steht, ist dessen Adjektiv (نَعْت), wenn es in vier Dingen mit ihm uebereinstimmt: Geschlecht, Bestimmtheit, Fall und Zahl. Das beschriebene Wort heisst مَنْعُوت. Beispiel: مَسْجِدٌ كَبِيرٌ (masjidun kabirun) „eine grosse Moschee\" – beide maennlich, beide unbestimmt, beide مَرْفُوع, beide Singular. Stimmt auch nur eine Bedingung nicht, ist das Wort kein Adjektiv.",
     color: "mubtada",
-    source: { folge: 13, video: "Folge 13", approxTimestamp: "5:32", chapter: 9 }
+    source: { folge: 13, video: "Folge 13", approxTimestamp: "5:32", chapter: 9 },
+    source2: { schluessel: 2, lektion: 31, seite: 140 }
   },
   {
     id: "nat-fem-01",
@@ -781,7 +785,8 @@ const GRAMMAR_RULES = [
       "video": "Folge 14",
       "approxTimestamp": "21:15",
       "chapter": 9
-    }
+    },
+    source2: { schluessel: 3, lektion: 1, seite: 15 }
   },
   {
     "id": "kaf-der-entfernung-01",
@@ -846,7 +851,8 @@ const GRAMMAR_RULES = [
       "video": "Folge 15",
       "approxTimestamp": "16:15",
       "chapter": 10
-    }
+    },
+    source2: { schluessel: 3, lektion: 34, seite: 265 }
   },
   {
     "id": "asma-khamsa-01",
@@ -872,7 +878,8 @@ const GRAMMAR_RULES = [
       "video": "Folge 16",
       "approxTimestamp": "26:45",
       "chapter": 10
-    }
+    },
+    source2: { schluessel: 2, lektion: 7, seite: 34 }
   },
   {
     "id": "possessiv-ist-idafa-01",
