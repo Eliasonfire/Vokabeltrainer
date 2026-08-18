@@ -262,5 +262,20 @@ const LEHRBUCH_SAETZE = [
   { id: 'sk3-7-1', werk: 'madina-schluessel-3', seite: 7, lektion: 1, kapitel: 12,
     gedruckt: 'vollstaendig vokalisiert',
     sentAr: 'مَاذَا قَالَ أَبُو بِلَالٍ؟',
-    sentDe: 'Was hat Bilāls Vater gesagt?' }
+    sentDe: 'Was hat Bilāls Vater gesagt?' },
+
+  /* Buchseite 48, Lektionstext zu Kapitel 9 (النَّعْت).
+   *
+   * ⭐ Der Satz ist deshalb wertvoll, weil er den Gegensatz in EINER Zeile
+   * druckt: مُجْتَهِدٌ traegt das Tanwin, كَسْلَانُ daneben nur eine einfache
+   * Dammah - und beide stehen an demselben Wort طَالِبٌ. Genau das ist
+   * adjektive-an-ohne-tanwin-01, und seit dem 18.08. auch der Beleg fuer die
+   * Adjektivhaelfte von mamnu-min-as-sarf-01 (Schema فَعْلانُ).
+   *
+   * Vollstaendig vokalisiert gedruckt, bei 600 dpi nachgemessen - jedes der
+   * fuenf Woerter steht zeichengleich schon im Bestand. */
+  { id: 'mb1-48-1', seite: 48, kapitel: 9,
+    gedruckt: 'vollstaendig vokalisiert',
+    sentAr: 'عَمَّارٌ طَالِبٌ مُجْتَهِدٌ، وَمَحْمُودٌ طَالِبٌ كَسْلَانُ.',
+    sentDe: 'Ammar ist ein fleißiger Student, und Mahmud ist ein fauler Student.' }
 ];

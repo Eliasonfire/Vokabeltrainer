@@ -1404,7 +1404,6 @@ const SENTENCE_TAGS = {
     { ruleId: "taschkil-kontext-01", matchText: "رِجْلُ" }
   ],
   "45859": [
-    { ruleId: "adjektive-an-ohne-tanwin-01", matchText: "الْحِصَانُ" },
     { ruleId: "wortarten-01", matchText: "هَذَا" }
   ],
   "45860": [
@@ -1693,6 +1692,9 @@ const SENTENCE_TAGS = {
   "sk3-7-1": [
     { ruleId: "asma-khamsa-vollstaendig-01", matchText: "أَبُو" },
     { ruleId: "istifham-madha-01", matchText: "مَاذَا" }
+  ],
+  "mb1-48-1": [
+    { ruleId: "adjektive-an-ohne-tanwin-01", matchText: "كَسْلَانُ" }
   ]
 };
 
