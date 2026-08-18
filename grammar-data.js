@@ -1720,6 +1720,30 @@ const SENTENCE_TAGS = {
   ],
   "45878": [
     { ruleId: "mubtada-khabar-genus-01", matchText: "جَمِيلَةٌ" }
+  ],
+  "45883": [
+    { ruleId: "nat-bestimmtheit-01", matchText: "اللُّغَةُ الْإِنْجِلِيزِيَّةُ" }
+  ],
+  "45887": [
+    { ruleId: "nat-vier-bedingungen-01", matchText: "يَوْمٌ جَمِيلٌ" }
+  ],
+  "45889": [
+    { ruleId: "nat-vier-bedingungen-01", matchText: "كُوبٌ صَغِيرٌ" }
+  ],
+  "45896": [
+    { ruleId: "nat-vier-bedingungen-01", matchText: "وَزِيرٌ مَشْهُورٌ" }
+  ],
+  "36e01b96-9367-4f09-acaf-31a82bdcf061": [
+    { ruleId: "nat-vier-bedingungen-01", matchText: "مُهَنْدِسٌ مَشْهُورٌ" }
+  ],
+  "59e30a8a-e400-4380-8adf-89e811852a1d": [
+    { ruleId: "hurufu-jarr-bedeutungen-01", matchText: "فِي الثَّلَّاجَةِ" }
+  ],
+  "madina1-l6-ucht": [
+    { ruleId: "hurufu-jarr-bedeutungen-01", matchText: "فِي الْبَيْتِ" }
+  ],
+  "madina1-l6-ach": [
+    { ruleId: "nominalsatz-ohne-kopula-01", matchText: "أَخٌ" }
   ]
 };
 
