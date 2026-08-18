@@ -135,6 +135,30 @@
   --border-strong:#33333a;
   --hairline:rgba(255,255,255,.06);
 
+  /* --- Randkontrast der Bedienelemente (Fassung A, 18.08.2026) ---
+     WCAG 1.4.11 verlangt 3,0 zwischen einem Bedienelement und seiner Umgebung.
+     Ueber alle elf Bildschirme gemessen: 139 Elemente in 6 Klassen erreichten
+     das nicht, die beste Abgrenzung lag bei 1,57. Elias hat am 18.08. Fassung A
+     gewaehlt - Abgrenzung ueber den RAND.
+
+     #5d5d65 erreicht 3,02 auf --surface-1, #616169 erreicht 3,02 auf
+     --surface-2. Welche Klasse auf welchem Grund sitzt, ist nachgesehen und
+     nicht geraten: .wz-korb z.B. im laufenden Browser - sein Elternteil
+     .wz-block hat rgb(11,11,12), also --surface-1.
+
+     ⭐ ZURUECKNEHMEN: node werkzeuge/rand.mjs --ist
+     Das setzt jede Zeile auf den Wert im Kommentar dahinter. Von Hand geht es
+     genauso: es sind sechs Werte, sonst aendert sich nichts.
+     ⚠️ .cat-tab hatte vorher gar keinen Rand. Damit das Zuruecknehmen die
+     Groesse nicht veraendert, steht dort immer ein 1-px-Rand - im Ist-Zustand
+     durchsichtig. */
+  --rand-tab:#616169;          /* IST: transparent          .cat-tab */
+  --rand-option:#616169;       /* IST: var(--border)        .hoer-option */
+  --rand-select:#616169;       /* IST: var(--border)        .select-input */
+  --rand-btn2:#5d5d65;         /* IST: var(--border)        .btn-secondary */
+  --rand-check:#616169;        /* IST: var(--border-strong) .hifz-check */
+  --rand-korb:#5d5d65;         /* IST: var(--border-strong) .wz-korb */
+
   /* --- Akzent --- */
   --red:#ff1744;
   --red-bright:#ff4d6a;
@@ -649,7 +673,7 @@ main{
 .btn-big{width:100%;}
 .btn-secondary{
   background:var(--surface-2);
-  border:1px solid var(--border);
+  border:1px solid var(--rand-btn2);
   color:var(--text);
   padding:var(--sp-3) var(--sp-4);font-size:var(--fs-md);
 }
@@ -1151,7 +1175,7 @@ main{
    ===================================================================== */
 .cat-tabs{display:flex;gap:var(--sp-2);margin-bottom:var(--sp-4);background:var(--surface-1);padding:var(--sp-1);border-radius:var(--r-3);border:1px solid var(--border);}
 .cat-tab{
-  flex:1;background:transparent;border:none;color:var(--text-dim);
+  flex:1;background:transparent;border:1px solid var(--rand-tab);color:var(--text-dim);
   padding:var(--sp-3) var(--sp-2);border-radius:var(--r-2);font-size:var(--fs-sm);font-weight:700;cursor:pointer;
   transition:background var(--dur-2) var(--ease-out), color var(--dur-2) ease, transform var(--dur-1) var(--ease-out);
 }
@@ -2201,7 +2225,7 @@ main{
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
 .hifz-check{
-  width:28px;height:28px;border-radius:var(--r-1);border:2px solid var(--border-strong);
+  width:28px;height:28px;border-radius:var(--r-1);border:2px solid var(--rand-check);
   background:var(--surface-3);flex-shrink:0;display:flex;align-items:center;justify-content:center;
   font-size:.85rem;color:transparent;cursor:pointer;
   transition:background var(--dur-2) var(--ease-out), border-color var(--dur-2) ease, color var(--dur-2) ease, transform var(--dur-1) var(--ease-spring);
@@ -2691,7 +2715,7 @@ main{
 .hoer-optionen{display:flex;flex-direction:column;gap:var(--sp-2);margin-top:var(--sp-5);}
 .hoer-option{
   padding:var(--sp-3) var(--sp-4);border-radius:var(--r-2);cursor:pointer;
-  background:var(--surface-3);border:1px solid var(--border);color:var(--text);
+  background:var(--surface-3);border:1px solid var(--rand-option);color:var(--text);
   font-size:var(--fs-md);text-align:left;
   transition:background var(--dur-2) ease, border-color var(--dur-2) ease;
 }
@@ -2860,7 +2884,7 @@ main{
 .switch.on{background:var(--red-dim);border-color:var(--red);}
 .switch.on .knob{transform:translateX(21px);background:var(--red-bright);}
 .select-input{
-  background:var(--surface-3);border:1px solid var(--border);color:var(--text);
+  background:var(--surface-3);border:1px solid var(--rand-select);color:var(--text);
   border-radius:var(--r-2);padding:var(--sp-2) var(--sp-3);font-family:var(--font-ui);font-size:var(--fs-md);
   transition:border-color var(--dur-2) ease;
 }
@@ -3019,7 +3043,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 /* ⚠️ Der Korb trägt arabische Schrift und ist deshalb bewusst KEIN
    Flex-Container — `display:block` mit text-align, nicht flex mit center. */
 .wz-korb{flex:1;display:block;text-align:center;background:var(--surface-2);
-  border:1px solid var(--border-strong);border-radius:var(--r-3);
+  border:1px solid var(--rand-korb);border-radius:var(--r-3);
   padding:13px 4px;min-height:44px;cursor:pointer;
   font-family:var(--font-ar);direction:rtl;font-size:1.35rem;
   letter-spacing:.1em;color:var(--text);}
