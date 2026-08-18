@@ -35,7 +35,7 @@
  * Gemeldet wird hier der Rohwert; die Aussage ("systematisch verschoben")
  * traegt in beiden Faellen.
  *
- * ⛔⛔ EIN NULLTREFFER AUF ARABISCH BELEGT NICHTS (gemessen 19.08.2026). Nicht
+ * ⛔⛔ EIN NULLTREFFER AUF ARABISCH BELEGT NICHTS (gemessen 18.08.2026). Nicht
  * nur die Vokalzeichen sind verschoben, ganze Woerter sind unauffindbar:
  *
  *   الأسماء  0 Treffer     أسماء  0 Treffer     إضافة  0 Treffer
