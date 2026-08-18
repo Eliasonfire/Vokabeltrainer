@@ -35,6 +35,24 @@
  * Gemeldet wird hier der Rohwert; die Aussage ("systematisch verschoben")
  * traegt in beiden Faellen.
  *
+ * ⛔⛔ EIN NULLTREFFER AUF ARABISCH BELEGT NICHTS (gemessen 19.08.2026). Nicht
+ * nur die Vokalzeichen sind verschoben, ganze Woerter sind unauffindbar:
+ *
+ *   الأسماء  0 Treffer     أسماء  0 Treffer     إضافة  0 Treffer
+ *   تنوين    0 Treffer     هناك   0 Treffer     الخمسة 3 Treffer (S. 7, 8, 17)
+ *
+ * Alle fuenf Nulltreffer stehen nachweislich im Buch - الأسماء الخمسة z.B. auf
+ * Band-3-Seite 7, wo asma-khamsa-vollstaendig-01 herkommt. Auch die
+ * Hamza-Gleichsetzung aus schluessel_zeile.py hilft kaum weiter (مبتدأ 0 -> 1,
+ * der Rest bleibt 0). ⭐ Also: DEUTSCH suchen. Das Arabische ist ein Bonus,
+ * keine Auskunft ueber Abwesenheit.
+ *
+ * ⚠️ DIE PDF-SEITE IST NICHT DIE GEDRUCKTE SEITE, und der Versatz ist nicht
+ * konstant. Band 2: PDF 5 = gedruckt 1, PDF 34 = gedruckt 30, PDF 96 =
+ * gedruckt 93, PDF 140 = gedruckt 137 - vorne 4, hinten 3. Dieses Werkzeug
+ * meldet die PDF-Seite, und source2.seite in grammar-data.js fuehrt sie auch;
+ * validate.js begrenzt entsprechend auf 73 / 141 / 272.
+ *
  * ⭐ Der Weg ist also: hier suchen -> Seitenzahl bekommen -> genau diese Seite
  * mit `pdftoppm -r 600 -f N -l N` rendern -> von dort abschreiben. Das ist
  * derselbe Grundsatz wie bei den Buchseiten: die Textebene sagt WO, das Bild
