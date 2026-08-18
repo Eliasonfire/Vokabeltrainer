@@ -1670,7 +1670,8 @@ const SENTENCE_TAGS = {
     { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" }
   ],
   "mb1-61-1": [
-    { ruleId: "possessiv-ist-idafa-01", matchText: "بَيْتِي" }
+    { ruleId: "possessiv-ist-idafa-01", matchText: "بَيْتِي" },
+    { ruleId: "zarf-makan-rollenname-01", matchText: "أَمَامَ" }
   ],
   "mb1-61-2": [
     { ruleId: "tanwin-maennername-ta-01", matchText: "أُسَامَةُ" },
@@ -1678,11 +1679,13 @@ const SENTENCE_TAGS = {
     { ruleId: "mamnu-min-as-sarf-01", matchText: "سُعَادُ" }
   ],
   "mb1-61-3": [
-    { ruleId: "hu-nach-kasra-01", matchText: "فِيهِ" }
+    { ruleId: "hu-nach-kasra-01", matchText: "فِيهِ" },
+    { ruleId: "istifham-men-01", matchText: "مَنْ" }
   ],
   "mb1-61-4": [
     { ruleId: "istifham-madha-01", matchText: "مَاذَا" },
-    { ruleId: "possessiv-ist-idafa-01", matchText: "كِتَابِي" }
+    { ruleId: "possessiv-ist-idafa-01", matchText: "كِتَابِي" },
+    { ruleId: "hurufu-jarr-bedeutungen-01", matchText: "فِي الْحَقِيبَةِ" }
   ],
   "mb1-53-1": [
     { ruleId: "ismun-mawsul-alladhi-01", matchText: "الَّذِي" }
@@ -1702,7 +1705,8 @@ const SENTENCE_TAGS = {
     { ruleId: "istifham-madha-01", matchText: "مَاذَا" }
   ],
   "mb1-48-1": [
-    { ruleId: "adjektive-an-ohne-tanwin-01", matchText: "كَسْلَانُ" }
+    { ruleId: "adjektive-an-ohne-tanwin-01", matchText: "كَسْلَانُ" },
+    { ruleId: "nat-eigenname-01", matchText: "عَمَّارٌ طَالِبٌ" }
   ],
   "45876": [
     { ruleId: "madd-tabii-01", matchText: "عُصْفُورٌ" }
