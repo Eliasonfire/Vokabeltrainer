@@ -136,6 +136,17 @@ function pruefe(auftrag) {
   const { quelle, GRAMMAR_RULES, SENTENCE_TAGS } = ladeGD();
   const saetze = ladeSaetze();
   const regeln = new Map(GRAMMAR_RULES.filter(Boolean).map(r => [r.id, r]));
+  /* ⛔ Der Bestand VOR diesem Lauf, als eigene Menge festgehalten.
+     Ohne sie meldete die Pruefung "Regel gibt es schon" fuer jede neue Regel:
+     sie lag da schon in derselben Karte, weil die naechste Zeile sie
+     hineinlegt. Ein Werkzeug, das seine eigene Eingabe fuer den Bestand
+     haelt, kann nur ablehnen. */
+  const vorhandeneIds = new Set(regeln.keys());
+  /* Regeln, die DIESER Lauf erst anlegt, gelten fuer die Markierungspruefung
+     schon als vorhanden - sonst koennte man eine neue Regel nie im selben
+     Auftrag sichtbar machen und muesste sie zwischendurch ausgeblendet
+     lassen. */
+  for (const r of (auftrag.regeln || [])) if (r && r.id) regeln.set(r.id, r);
   const fehler = [], hinweise = [], gut = [];
 
   for (const m of (auftrag.markierungen || [])) {
@@ -165,6 +176,48 @@ function pruefe(auftrag) {
       fehler.push(wo + ': der Satz hat schon 3 Markierungen (Hoechstzahl)'); continue;
     }
     gut.push({ ...m, matchText: text, satz: s, belegt: vorhanden.length });
+  }
+
+  /* Neue Regeln pruefen.
+     ⚠️ Warum das hier steht und nicht in uebernehmen.mjs: jenes Werkzeug baut
+     Entwuerfe aus der Kandidatenkette und kennt nur `source` (Folge +
+     Zeitmarke). Eine BUCHREGEL braucht `ergaenzung: true` + `buchQuelle` und
+     entsteht beim Lesen, nicht beim Auswerten eines Transkripts. Bis zum
+     18.08.2026 gab es dafuer gar keinen gepruefen Weg - die zehn vorhandenen
+     Buchregeln stehen von Hand in der Datei. */
+  const neueRegeln = [];
+  for (const r of (auftrag.regeln || [])) {
+    const wo = 'Regel ' + (r.id || '(ohne id)');
+    if (!r.id) { fehler.push(wo + ': keine id'); continue; }
+    if (vorhandeneIds.has(r.id)) { fehler.push(wo + ': gibt es schon'); continue; }
+    for (const f of ['name', 'shortExplanation', 'color'])
+      if (!r[f]) fehler.push(wo + ': Feld ' + f + ' fehlt');
+    /* ⛔ validate.js weist eine Regel zurueck, die `ergaenzung` UND `source`
+       traegt. Beides zugleich behauptet, der Lehrer habe gesagt, was im Buch
+       steht - genau die Verwechslung, die Goal-Prompt E.1 verbietet. */
+    const hatBuch = r.ergaenzung === true && r.buchQuelle;
+    const hatFolge = !!r.source;
+    if (hatBuch && hatFolge) fehler.push(wo + ': hat ergaenzung UND source - nur eines von beiden');
+    if (!hatBuch && !hatFolge) fehler.push(wo + ': weder source noch ergaenzung+buchQuelle');
+    /* ⛔ Diese Bedingungen sind aus validate.js abgeschrieben, nicht erfunden.
+       Der erste Lauf am 18.08. schrieb eine Regel, die hier durchkam und
+       danach an validate.js scheiterte: `kapitel` fehlte, und das Werk stand
+       nicht in dessen Liste. Eine Vorabpruefung, die das eigentliche Tor nicht
+       kennt, laesst genau das durch, wogegen sie gebaut ist. Aendert sich
+       validate.js, gehoert es hier nachgezogen. */
+    const BUCHWERKE = ['sharh-madinah-1', 'bayna-yadayk-2',
+                       'madina-schluessel-1', 'madina-schluessel-2', 'madina-schluessel-3'];
+    if (hatBuch) {
+      if (!Number.isInteger(r.kapitel) || r.kapitel < 1)
+        fehler.push(wo + ': ergaenzung braucht ein `kapitel` als Zahl (validate.js besteht darauf)');
+      if (!BUCHWERKE.includes(r.buchQuelle.werk))
+        fehler.push(wo + ': buchQuelle.werk "' + r.buchQuelle.werk + '" kennt validate.js nicht '
+          + '(erlaubt: ' + BUCHWERKE.join(', ') + ')');
+      for (const f of ['lektion', 'seite'])
+        if (!Number.isInteger(r.buchQuelle[f]) || r.buchQuelle[f] < 1)
+          fehler.push(wo + ': buchQuelle.' + f + ' fehlt oder ist keine Zahl');
+    }
+    neueRegeln.push(r);
   }
 
   /* Entfernen pruefen. Eine Markierung abzunehmen kann eine Regel unerreichbar
@@ -218,11 +271,11 @@ function pruefe(auftrag) {
     hinweise.push('  ⚠️ ' + k + ' hat schon vor diesem Lauf '
       + SENTENCE_TAGS[k].length + ' Markierungen (erlaubt sind 3)');
 
-  return { quelle, GRAMMAR_RULES, SENTENCE_TAGS, gut, weg, entsperren, fehler, hinweise, vorherZuViel };
+  return { quelle, GRAMMAR_RULES, SENTENCE_TAGS, neueRegeln, gut, weg, entsperren, fehler, hinweise, vorherZuViel };
 }
 
 function zeige(p) {
-  console.log('Auftrag: ' + p.gut.length + ' Markierung(en) tragbar, '
+  console.log('Auftrag: ' + p.neueRegeln.length + ' neue Regel(n), ' + p.gut.length + ' Markierung(en) tragbar, '
     + p.weg.length + ' abzunehmen, ' + p.entsperren.length + ' Regel(n) zu entsperren, '
     + p.fehler.length + ' Fehler.\n');
   for (const g of p.gut) {
@@ -247,12 +300,27 @@ function einbauen(p) {
     for (const e of p.fehler) console.log('   ' + e);
     process.exitCode = 2; return;
   }
-  if (!p.gut.length && !p.weg.length && !p.entsperren.length) { console.log('Nichts zu tun.'); return; }
+  if (!p.gut.length && !p.weg.length && !p.entsperren.length && !p.neueRegeln.length) { console.log('Nichts zu tun.'); return; }
 
   let quelle = p.quelle;
   const ze = /\r\n/.test(quelle) ? '\r\n' : '\n';   /* Zeilenende der Zieldatei MESSEN, nicht annehmen */
   const markenVorher = Object.values(p.SENTENCE_TAGS).flat().length;
   const listenVorher = Object.keys(p.SENTENCE_TAGS).length;
+
+  /* Neue Regeln ans Ende von GRAMMAR_RULES. Zuerst, damit die Markierungen
+     danach auf eine Regel zeigen, die schon dasteht. */
+  for (const r of p.neueRegeln) {
+    const start = quelle.indexOf('const GRAMMAR_RULES');
+    const ende = quelle.indexOf(ze + '];', start);
+    if (ende < 0) { console.log('⛔ Ende von GRAMMAR_RULES nicht gefunden'); process.exitCode = 2; return; }
+    const davor = ohneKommentare(quelle.slice(0, ende)).slice(-200);
+    const komma = /,\s*$/.test(davor) ? '' : ',';
+    /* JSON.stringify erzeugt immer LF. Die Zeilen einzeln einruecken und mit
+       dem Zeilenende der ZIELDATEI zusammensetzen - sonst mischt die Datei
+       CRLF und LF, und jede spaetere Suche nach ze + '];' geht daneben. */
+    const text = JSON.stringify(r, null, 2).split('\n').map(l => '  ' + l).join(ze);
+    quelle = quelle.slice(0, ende) + komma + ze + text + quelle.slice(ende);
+  }
 
   /* Erst abnehmen, dann anhaengen. Andersherum koennte eine gerade gesetzte
      Markierung von der Entfernung wieder getroffen werden. */
@@ -354,7 +422,11 @@ function einbauen(p) {
       + ', gezaehlt ' + markenNachher + (markenNachher < erwartet
         ? ' - es sind welche verschwunden (doppelter Schluessel?)' : ''));
   if (Object.keys(nT).length < listenVorher) probleme.push('eine Satz-Liste ist verschwunden');
-  if (nR.length !== p.GRAMMAR_RULES.length) probleme.push('Regelzahl hat sich geaendert');
+  if (nR.length !== p.GRAMMAR_RULES.length + p.neueRegeln.length)
+    probleme.push('Regelzahl: erwartet ' + (p.GRAMMAR_RULES.length + p.neueRegeln.length)
+      + ', gezaehlt ' + nR.length);
+  for (const r of p.neueRegeln)
+    if (!nR.some(x => x && x.id === r.id)) probleme.push(r.id + ' steht nicht in GRAMMAR_RULES');
   const markNeu = new Set(Object.values(nT).flat().map(t => t.ruleId));
   for (const r of nR)
     if (r && !markNeu.has(r.id) && !r.ausgeblendet)
@@ -374,8 +446,8 @@ function einbauen(p) {
   fs.copyFileSync(GD, sicherung);
   fs.writeFileSync(GD, quelle, 'utf8');
 
-  console.log('Eingetragen: ' + p.gut.length + ' Markierung(en), '
-    + p.entsperren.length + ' entsperrt.');
+  console.log('Eingetragen: ' + p.neueRegeln.length + ' Regel(n), ' + p.gut.length
+    + ' Markierung(en), ' + p.weg.length + ' abgenommen, ' + p.entsperren.length + ' entsperrt.');
   console.log('  Regeln ' + nR.length + ' | Markierungen ' + markenVorher + ' -> ' + markenNachher
     + ' | ausgeblendet ' + nR.filter(r => r && r.ausgeblendet).length);
   console.log('  Sicherung: ' + path.basename(sicherung));
