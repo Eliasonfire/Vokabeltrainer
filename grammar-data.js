@@ -1688,7 +1688,8 @@ const SENTENCE_TAGS = {
     { ruleId: "hurufu-jarr-bedeutungen-01", matchText: "فِي الْحَقِيبَةِ" }
   ],
   "mb1-53-1": [
-    { ruleId: "ismun-mawsul-alladhi-01", matchText: "الَّذِي" }
+    { ruleId: "ismun-mawsul-alladhi-01", matchText: "الَّذِي" },
+    { ruleId: "li-al-lil-01", matchText: "لِلْمُدَرِّسِ" }
   ],
   "by2-231-1": [
     { ruleId: "inda-ort-und-zeit-01", matchText: "عِنْدَ" }
@@ -1710,6 +1711,9 @@ const SENTENCE_TAGS = {
   ],
   "45876": [
     { ruleId: "madd-tabii-01", matchText: "عُصْفُورٌ" }
+  ],
+  "48402": [
+    { ruleId: "mudarris-lesung-herkunft-01", matchText: "الْمُدَرِّسُ" }
   ]
 };
 
