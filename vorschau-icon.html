@@ -1,0 +1,969 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>App-Icon — Entwürfe zur Auswahl</title>
+<style>
+  :root{ --bg:#000; --flaeche:#111014; --linie:#26222a; --text:#f3ecef; --dim:#9c9095; --rot:#ff2d4f; --sp:16px; }
+  *{box-sizing:border-box}
+  body{ margin:0; background:var(--bg); color:var(--text);
+        font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+        line-height:1.5; padding:var(--sp); }
+  h1{font-size:1.35rem; margin:.2em 0 .1em}
+  p.hinweis{color:var(--dim); margin:.2em 0 1.4em; max-width:60ch}
+  .netz{display:grid; gap:var(--sp); grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+  .karte{ background:var(--flaeche); border:1px solid var(--linie); border-radius:16px; padding:var(--sp); }
+  .karte.vergleich{border-color:var(--rot)}
+  .name{font-weight:600; margin-bottom:.15em}
+  .idee{color:var(--dim); font-size:.87rem; margin-bottom:.9em; min-height:3.2em}
+  /* Die drei Groessen, in denen er es wirklich sieht. Ein Icon, das nur bei
+     512 px gut aussieht, ist kein Icon. */
+  .groessen{display:flex; align-items:flex-end; gap:18px; flex-wrap:wrap}
+  .groessen figure{margin:0; text-align:center}
+  .huelle{overflow:hidden; border-radius:22%}
+  .huelle svg{display:block; width:100%; height:100%}
+  .g192{width:112px;height:112px}
+  .g96 {width:64px; height:64px}
+  .g48 {width:40px; height:40px}
+  .groessen figcaption{color:var(--dim); font-size:.72rem; margin-top:.35em}
+  /* Der Zuschnitt, den Android macht. Wer hier etwas verliert, verliert es
+     auf dem Handy wirklich. */
+  .rund .huelle{border-radius:50%}
+  .fuss{color:var(--dim); font-size:.85rem; margin-top:2em; max-width:70ch}
+  code{background:#1a171c; padding:.1em .35em; border-radius:5px}
+</style>
+</head>
+<body>
+<h1>App-Icon — Entwürfe zur Auswahl</h1>
+<p class="hinweis">
+  OLED-Schwarz wie beim Korantrainer, Akzent in knalligem Rot
+  (<code>#ff2d4f</code>), klar unterscheidbar vom aufgeschlagenen Buch.
+  <b>A bis C sind verworfen</b> (Karteikarten, Umdrehen, Leitner-Boxen).
+  Jede Reihe zeigt dieselbe Zeichnung in <b>112, 64 und 40 px</b> — und ganz
+  rechts rund zugeschnitten, so wie Android es tut.
+</p>
+
+<div class="netz">
+  <div class="karte vergleich">
+    <div class="name">Zum Vergleich: Korantrainer</div>
+    <div class="idee">Das aufgeschlagene Buch. Davon soll sich das neue Icon deutlich unterscheiden — daneben halten, nicht einzeln ansehen.</div>
+    <div class="groessen">
+      <figure><div class="huelle g192"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Quran lesen lernen">
+<title>Quran lesen lernen</title>
+<!--
+  ⭐ Selbst gezeichnet, kein fremdes Material. Ein aufgeschlagenes Buch als
+     geometrische Form — bewusst KEIN religiöses Zeichen: ein falsch
+     gezeichnetes wäre schlimmer als keines, und ein Icon ist Gestaltung, nicht
+     Lehrinhalt.
+
+  ⛔⛔ NEUTRAL GEHALTEN, WEIL DIE AKZENTFARBE WÄHLBAR IST. Seit dem 14.08.2026
+     kann Elias zwischen sieben Akzentfarben wählen. Ein Icon in Rosa würde
+     nach der Wahl von Blau nicht mehr passen — und ein installiertes Symbol
+     ändert sich nicht mehr, ohne die App neu abzulegen. Also weiß auf
+     OLED-Schwarz: das passt zu jeder Wahl.
+-->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+<g fill="none" stroke="#f3ecef" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Die zwei aufgeschlagenen Seiten -->
+  <path d="M256 150c-30-26-74-38-124-38-14 0-22 8-22 20v196c0 12 8 20 22 20 50 0 94 12 124 38"/>
+  <path d="M256 150c30-26 74-38 124-38 14 0 22 8 22 20v196c0 12-8 20-22 20-50 0-94 12-124 38"/>
+  <!-- Der Bund in der Mitte -->
+  <path d="M256 150v236"/>
+</g>
+<!-- Drei Zeilen je Seite, angedeutet. Rechts (arabische Leserichtung) kürzer
+     werdend, damit das Bild nicht symmetrisch-steif wirkt. -->
+<g fill="none" stroke="#9c9095" stroke-width="14" stroke-linecap="round">
+  <path d="M296 196h72M296 244h72M296 292h48"/>
+  <path d="M144 196h72M144 244h72M168 292h48"/>
+</g>
+</svg></div><figcaption>112</figcaption></figure>
+      <figure><div class="huelle g96"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Quran lesen lernen">
+<title>Quran lesen lernen</title>
+<!--
+  ⭐ Selbst gezeichnet, kein fremdes Material. Ein aufgeschlagenes Buch als
+     geometrische Form — bewusst KEIN religiöses Zeichen: ein falsch
+     gezeichnetes wäre schlimmer als keines, und ein Icon ist Gestaltung, nicht
+     Lehrinhalt.
+
+  ⛔⛔ NEUTRAL GEHALTEN, WEIL DIE AKZENTFARBE WÄHLBAR IST. Seit dem 14.08.2026
+     kann Elias zwischen sieben Akzentfarben wählen. Ein Icon in Rosa würde
+     nach der Wahl von Blau nicht mehr passen — und ein installiertes Symbol
+     ändert sich nicht mehr, ohne die App neu abzulegen. Also weiß auf
+     OLED-Schwarz: das passt zu jeder Wahl.
+-->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+<g fill="none" stroke="#f3ecef" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Die zwei aufgeschlagenen Seiten -->
+  <path d="M256 150c-30-26-74-38-124-38-14 0-22 8-22 20v196c0 12 8 20 22 20 50 0 94 12 124 38"/>
+  <path d="M256 150c30-26 74-38 124-38 14 0 22 8 22 20v196c0 12-8 20-22 20-50 0-94 12-124 38"/>
+  <!-- Der Bund in der Mitte -->
+  <path d="M256 150v236"/>
+</g>
+<!-- Drei Zeilen je Seite, angedeutet. Rechts (arabische Leserichtung) kürzer
+     werdend, damit das Bild nicht symmetrisch-steif wirkt. -->
+<g fill="none" stroke="#9c9095" stroke-width="14" stroke-linecap="round">
+  <path d="M296 196h72M296 244h72M296 292h48"/>
+  <path d="M144 196h72M144 244h72M168 292h48"/>
+</g>
+</svg></div><figcaption>64</figcaption></figure>
+      <figure><div class="huelle g48"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Quran lesen lernen">
+<title>Quran lesen lernen</title>
+<!--
+  ⭐ Selbst gezeichnet, kein fremdes Material. Ein aufgeschlagenes Buch als
+     geometrische Form — bewusst KEIN religiöses Zeichen: ein falsch
+     gezeichnetes wäre schlimmer als keines, und ein Icon ist Gestaltung, nicht
+     Lehrinhalt.
+
+  ⛔⛔ NEUTRAL GEHALTEN, WEIL DIE AKZENTFARBE WÄHLBAR IST. Seit dem 14.08.2026
+     kann Elias zwischen sieben Akzentfarben wählen. Ein Icon in Rosa würde
+     nach der Wahl von Blau nicht mehr passen — und ein installiertes Symbol
+     ändert sich nicht mehr, ohne die App neu abzulegen. Also weiß auf
+     OLED-Schwarz: das passt zu jeder Wahl.
+-->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+<g fill="none" stroke="#f3ecef" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Die zwei aufgeschlagenen Seiten -->
+  <path d="M256 150c-30-26-74-38-124-38-14 0-22 8-22 20v196c0 12 8 20 22 20 50 0 94 12 124 38"/>
+  <path d="M256 150c30-26 74-38 124-38 14 0 22 8 22 20v196c0 12-8 20-22 20-50 0-94 12-124 38"/>
+  <!-- Der Bund in der Mitte -->
+  <path d="M256 150v236"/>
+</g>
+<!-- Drei Zeilen je Seite, angedeutet. Rechts (arabische Leserichtung) kürzer
+     werdend, damit das Bild nicht symmetrisch-steif wirkt. -->
+<g fill="none" stroke="#9c9095" stroke-width="14" stroke-linecap="round">
+  <path d="M296 196h72M296 244h72M296 292h48"/>
+  <path d="M144 196h72M144 244h72M168 292h48"/>
+</g>
+</svg></div><figcaption>40</figcaption></figure>
+      <figure class="rund"><div class="huelle g96"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Quran lesen lernen">
+<title>Quran lesen lernen</title>
+<!--
+  ⭐ Selbst gezeichnet, kein fremdes Material. Ein aufgeschlagenes Buch als
+     geometrische Form — bewusst KEIN religiöses Zeichen: ein falsch
+     gezeichnetes wäre schlimmer als keines, und ein Icon ist Gestaltung, nicht
+     Lehrinhalt.
+
+  ⛔⛔ NEUTRAL GEHALTEN, WEIL DIE AKZENTFARBE WÄHLBAR IST. Seit dem 14.08.2026
+     kann Elias zwischen sieben Akzentfarben wählen. Ein Icon in Rosa würde
+     nach der Wahl von Blau nicht mehr passen — und ein installiertes Symbol
+     ändert sich nicht mehr, ohne die App neu abzulegen. Also weiß auf
+     OLED-Schwarz: das passt zu jeder Wahl.
+-->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+<g fill="none" stroke="#f3ecef" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Die zwei aufgeschlagenen Seiten -->
+  <path d="M256 150c-30-26-74-38-124-38-14 0-22 8-22 20v196c0 12 8 20 22 20 50 0 94 12 124 38"/>
+  <path d="M256 150c30-26 74-38 124-38 14 0 22 8 22 20v196c0 12-8 20-22 20-50 0-94 12-124 38"/>
+  <!-- Der Bund in der Mitte -->
+  <path d="M256 150v236"/>
+</g>
+<!-- Drei Zeilen je Seite, angedeutet. Rechts (arabische Leserichtung) kürzer
+     werdend, damit das Bild nicht symmetrisch-steif wirkt. -->
+<g fill="none" stroke="#9c9095" stroke-width="14" stroke-linecap="round">
+  <path d="M296 196h72M296 244h72M296 292h48"/>
+  <path d="M144 196h72M144 244h72M168 292h48"/>
+</g>
+</svg></div><figcaption>rund</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="karte">
+    <div class="name">Jetzige Fassung</div>
+    <div class="idee">Rote Scheibe mit عِلْم. Sie ist nicht schlecht — aber sie hat keinen schwarzen Grund und wirkt neben dem Korantrainer laut.</div>
+    <div class="groessen">
+      <figure><div class="huelle g192"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer">
+<title>Vokabeltrainer — عِلْم (Wissen)</title>
+<defs>
+<linearGradient id="e1-scheibe" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3355"/><stop offset="1" stop-color="#b00b2a"/></linearGradient>
+<radialGradient id="e1-glanz" cx="30%" cy="18%" r="70%"><stop offset="0" stop-color="#ffffff" stop-opacity=".18"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient>
+</defs>
+<circle cx="256" cy="256" r="256" fill="url(#e1-scheibe)"/>
+<circle cx="256" cy="256" r="256" fill="url(#e1-glanz)"/>
+<g fill="#ffffff" transform="translate(407.31 271.43) scale(0.25302 -0.25302)"><path d="M-54 248L-74 167Q-77 155 -99 145Q-109 141 -146 126Q-183 111 -245 86L-477 -15Q-512 -15 -522 34Q-532 83 -483 104Q-463 112 -448.5 118.5Q-434 125 -424 129Q-477 173 -462 238Q-431 372 -318 425Q-290 438 -251 420Q-213 402 -172 360Q-151 338 -157 325Q-162 313 -207 325Q-253 338 -316 323Q-382 308 -402 264Q-408 253 -374 222Q-289 149 -130 250Q-119 257 -109.5 263Q-100 269 -93 273Q-39 307 -54 248ZM-581 115Q-602 -15 -674 -15Q-693 -15 -699 6Q-723 89 -674 104Q-616 122 -616 182L-633 615Q-634 638 -626 646L-589 688Q-570 710 -570 663L-559 432Q-551 248 -544 207Q-526 116 -476 104Q-452 98 -449 59Q-446 21 -457 -4Q-463 -15 -476 -15Q-545 -15 -581 115ZM-924 213Q-837 111 -674 105Q-624 103 -635 44Q-646 -15 -674 -15Q-718 -16 -757.5 -7Q-797 2 -832 18Q-832 -77 -876 -112Q-896 -127 -915 -111Q-973 -59 -987 41Q-1041 34 -1084 -11Q-1089 -33 -1074 -130Q-1020 -491 -1033 -550Q-1042 -588 -1063 -588Q-1083 -588 -1085 -543Q-1086 -508 -1095.5 -438Q-1105 -368 -1122 -262Q-1157 -48 -1120 43Q-1083 135 -973 185Q-952 246 -924 213Z"/></g>
+</svg></div><figcaption>112</figcaption></figure>
+      <figure><div class="huelle g96"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer">
+<title>Vokabeltrainer — عِلْم (Wissen)</title>
+<defs>
+<linearGradient id="e1-scheibe" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3355"/><stop offset="1" stop-color="#b00b2a"/></linearGradient>
+<radialGradient id="e1-glanz" cx="30%" cy="18%" r="70%"><stop offset="0" stop-color="#ffffff" stop-opacity=".18"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient>
+</defs>
+<circle cx="256" cy="256" r="256" fill="url(#e1-scheibe)"/>
+<circle cx="256" cy="256" r="256" fill="url(#e1-glanz)"/>
+<g fill="#ffffff" transform="translate(407.31 271.43) scale(0.25302 -0.25302)"><path d="M-54 248L-74 167Q-77 155 -99 145Q-109 141 -146 126Q-183 111 -245 86L-477 -15Q-512 -15 -522 34Q-532 83 -483 104Q-463 112 -448.5 118.5Q-434 125 -424 129Q-477 173 -462 238Q-431 372 -318 425Q-290 438 -251 420Q-213 402 -172 360Q-151 338 -157 325Q-162 313 -207 325Q-253 338 -316 323Q-382 308 -402 264Q-408 253 -374 222Q-289 149 -130 250Q-119 257 -109.5 263Q-100 269 -93 273Q-39 307 -54 248ZM-581 115Q-602 -15 -674 -15Q-693 -15 -699 6Q-723 89 -674 104Q-616 122 -616 182L-633 615Q-634 638 -626 646L-589 688Q-570 710 -570 663L-559 432Q-551 248 -544 207Q-526 116 -476 104Q-452 98 -449 59Q-446 21 -457 -4Q-463 -15 -476 -15Q-545 -15 -581 115ZM-924 213Q-837 111 -674 105Q-624 103 -635 44Q-646 -15 -674 -15Q-718 -16 -757.5 -7Q-797 2 -832 18Q-832 -77 -876 -112Q-896 -127 -915 -111Q-973 -59 -987 41Q-1041 34 -1084 -11Q-1089 -33 -1074 -130Q-1020 -491 -1033 -550Q-1042 -588 -1063 -588Q-1083 -588 -1085 -543Q-1086 -508 -1095.5 -438Q-1105 -368 -1122 -262Q-1157 -48 -1120 43Q-1083 135 -973 185Q-952 246 -924 213Z"/></g>
+</svg></div><figcaption>64</figcaption></figure>
+      <figure><div class="huelle g48"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer">
+<title>Vokabeltrainer — عِلْم (Wissen)</title>
+<defs>
+<linearGradient id="e1-scheibe" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3355"/><stop offset="1" stop-color="#b00b2a"/></linearGradient>
+<radialGradient id="e1-glanz" cx="30%" cy="18%" r="70%"><stop offset="0" stop-color="#ffffff" stop-opacity=".18"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient>
+</defs>
+<circle cx="256" cy="256" r="256" fill="url(#e1-scheibe)"/>
+<circle cx="256" cy="256" r="256" fill="url(#e1-glanz)"/>
+<g fill="#ffffff" transform="translate(407.31 271.43) scale(0.25302 -0.25302)"><path d="M-54 248L-74 167Q-77 155 -99 145Q-109 141 -146 126Q-183 111 -245 86L-477 -15Q-512 -15 -522 34Q-532 83 -483 104Q-463 112 -448.5 118.5Q-434 125 -424 129Q-477 173 -462 238Q-431 372 -318 425Q-290 438 -251 420Q-213 402 -172 360Q-151 338 -157 325Q-162 313 -207 325Q-253 338 -316 323Q-382 308 -402 264Q-408 253 -374 222Q-289 149 -130 250Q-119 257 -109.5 263Q-100 269 -93 273Q-39 307 -54 248ZM-581 115Q-602 -15 -674 -15Q-693 -15 -699 6Q-723 89 -674 104Q-616 122 -616 182L-633 615Q-634 638 -626 646L-589 688Q-570 710 -570 663L-559 432Q-551 248 -544 207Q-526 116 -476 104Q-452 98 -449 59Q-446 21 -457 -4Q-463 -15 -476 -15Q-545 -15 -581 115ZM-924 213Q-837 111 -674 105Q-624 103 -635 44Q-646 -15 -674 -15Q-718 -16 -757.5 -7Q-797 2 -832 18Q-832 -77 -876 -112Q-896 -127 -915 -111Q-973 -59 -987 41Q-1041 34 -1084 -11Q-1089 -33 -1074 -130Q-1020 -491 -1033 -550Q-1042 -588 -1063 -588Q-1083 -588 -1085 -543Q-1086 -508 -1095.5 -438Q-1105 -368 -1122 -262Q-1157 -48 -1120 43Q-1083 135 -973 185Q-952 246 -924 213Z"/></g>
+</svg></div><figcaption>40</figcaption></figure>
+      <figure class="rund"><div class="huelle g96"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer">
+<title>Vokabeltrainer — عِلْم (Wissen)</title>
+<defs>
+<linearGradient id="e1-scheibe" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3355"/><stop offset="1" stop-color="#b00b2a"/></linearGradient>
+<radialGradient id="e1-glanz" cx="30%" cy="18%" r="70%"><stop offset="0" stop-color="#ffffff" stop-opacity=".18"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient>
+</defs>
+<circle cx="256" cy="256" r="256" fill="url(#e1-scheibe)"/>
+<circle cx="256" cy="256" r="256" fill="url(#e1-glanz)"/>
+<g fill="#ffffff" transform="translate(407.31 271.43) scale(0.25302 -0.25302)"><path d="M-54 248L-74 167Q-77 155 -99 145Q-109 141 -146 126Q-183 111 -245 86L-477 -15Q-512 -15 -522 34Q-532 83 -483 104Q-463 112 -448.5 118.5Q-434 125 -424 129Q-477 173 -462 238Q-431 372 -318 425Q-290 438 -251 420Q-213 402 -172 360Q-151 338 -157 325Q-162 313 -207 325Q-253 338 -316 323Q-382 308 -402 264Q-408 253 -374 222Q-289 149 -130 250Q-119 257 -109.5 263Q-100 269 -93 273Q-39 307 -54 248ZM-581 115Q-602 -15 -674 -15Q-693 -15 -699 6Q-723 89 -674 104Q-616 122 -616 182L-633 615Q-634 638 -626 646L-589 688Q-570 710 -570 663L-559 432Q-551 248 -544 207Q-526 116 -476 104Q-452 98 -449 59Q-446 21 -457 -4Q-463 -15 -476 -15Q-545 -15 -581 115ZM-924 213Q-837 111 -674 105Q-624 103 -635 44Q-646 -15 -674 -15Q-718 -16 -757.5 -7Q-797 2 -832 18Q-832 -77 -876 -112Q-896 -127 -915 -111Q-973 -59 -987 41Q-1041 34 -1084 -11Q-1089 -33 -1074 -130Q-1020 -491 -1033 -550Q-1042 -588 -1063 -588Q-1083 -588 -1085 -543Q-1086 -508 -1095.5 -438Q-1105 -368 -1122 -262Q-1157 -48 -1120 43Q-1083 135 -973 185Q-952 246 -924 213Z"/></g>
+</svg></div><figcaption>rund</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="karte">
+    <div class="name">D — عِلْم mit rotem Strich</div>
+    <div class="idee">Das Wort auf Schwarz, darunter eine rote Grundlinie wie eine Unterstreichung im Heft.</div>
+    <div class="groessen">
+      <figure><div class="huelle g192"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — عِلْم">
+<title>Entwurf D — عِلْم auf OLED-Schwarz</title>
+<!-- ⭐ Der Schriftzug ist NICHT von mir gezeichnet: es ist genau der Pfad aus
+     dem bisherigen Icon, also aus einer echten Schrift abgeleitet und
+     nachweislich richtig. Ein selbst gemaltes arabisches Wort wäre der eine
+     Fehler, der sich nie von allein meldet.
+     Neu ist nur der Rahmen: OLED-Schwarz statt roter Scheibe, und der Akzent
+     wandert vom Hintergrund auf eine einzige rote Linie darunter. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+<g fill="#f3ecef" transform="translate(407.31 285) scale(0.25302 -0.25302)"><path d="M-54 248L-74 167Q-77 155 -99 145Q-109 141 -146 126Q-183 111 -245 86L-477 -15Q-512 -15 -522 34Q-532 83 -483 104Q-463 112 -448.5 118.5Q-434 125 -424 129Q-477 173 -462 238Q-431 372 -318 425Q-290 438 -251 420Q-213 402 -172 360Q-151 338 -157 325Q-162 313 -207 325Q-253 338 -316 323Q-382 308 -402 264Q-408 253 -374 222Q-289 149 -130 250Q-119 257 -109.5 263Q-100 269 -93 273Q-39 307 -54 248ZM-581 115Q-602 -15 -674 -15Q-693 -15 -699 6Q-723 89 -674 104Q-616 122 -616 182L-633 615Q-634 638 -626 646L-589 688Q-570 710 -570 663L-559 432Q-551 248 -544 207Q-526 116 -476 104Q-452 98 -449 59Q-446 21 -457 -4Q-463 -15 -476 -15Q-545 -15 -581 115ZM-924 213Q-837 111 -674 105Q-624 103 -635 44Q-646 -15 -674 -15Q-718 -16 -757.5 -7Q-797 2 -832 18Q-832 -77 -876 -112Q-896 -127 -915 -111Q-973 -59 -987 41Q-1041 34 -1084 -11Q-1089 -33 -1074 -130Q-1020 -491 -1033 -550Q-1042 -588 -1063 -588Q-1083 -588 -1085 -543Q-1086 -508 -1095.5 -438Q-1105 -368 -1122 -262Q-1157 -48 -1120 43Q-1083 135 -973 185Q-952 246 -924 213Z"/></g>
+<!-- Der rote Strich: eine Grundlinie unter dem Wort, wie eine Unterstreichung
+     im Heft. Kurz gehalten, damit er Akzent bleibt und nicht Balken wird. -->
+<rect x="176" y="366" width="160" height="18" rx="9" fill="#ff2d4f"/>
+</svg></div><figcaption>112</figcaption></figure>
+      <figure><div class="huelle g96"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — عِلْم">
+<title>Entwurf D — عِلْم auf OLED-Schwarz</title>
+<!-- ⭐ Der Schriftzug ist NICHT von mir gezeichnet: es ist genau der Pfad aus
+     dem bisherigen Icon, also aus einer echten Schrift abgeleitet und
+     nachweislich richtig. Ein selbst gemaltes arabisches Wort wäre der eine
+     Fehler, der sich nie von allein meldet.
+     Neu ist nur der Rahmen: OLED-Schwarz statt roter Scheibe, und der Akzent
+     wandert vom Hintergrund auf eine einzige rote Linie darunter. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+<g fill="#f3ecef" transform="translate(407.31 285) scale(0.25302 -0.25302)"><path d="M-54 248L-74 167Q-77 155 -99 145Q-109 141 -146 126Q-183 111 -245 86L-477 -15Q-512 -15 -522 34Q-532 83 -483 104Q-463 112 -448.5 118.5Q-434 125 -424 129Q-477 173 -462 238Q-431 372 -318 425Q-290 438 -251 420Q-213 402 -172 360Q-151 338 -157 325Q-162 313 -207 325Q-253 338 -316 323Q-382 308 -402 264Q-408 253 -374 222Q-289 149 -130 250Q-119 257 -109.5 263Q-100 269 -93 273Q-39 307 -54 248ZM-581 115Q-602 -15 -674 -15Q-693 -15 -699 6Q-723 89 -674 104Q-616 122 -616 182L-633 615Q-634 638 -626 646L-589 688Q-570 710 -570 663L-559 432Q-551 248 -544 207Q-526 116 -476 104Q-452 98 -449 59Q-446 21 -457 -4Q-463 -15 -476 -15Q-545 -15 -581 115ZM-924 213Q-837 111 -674 105Q-624 103 -635 44Q-646 -15 -674 -15Q-718 -16 -757.5 -7Q-797 2 -832 18Q-832 -77 -876 -112Q-896 -127 -915 -111Q-973 -59 -987 41Q-1041 34 -1084 -11Q-1089 -33 -1074 -130Q-1020 -491 -1033 -550Q-1042 -588 -1063 -588Q-1083 -588 -1085 -543Q-1086 -508 -1095.5 -438Q-1105 -368 -1122 -262Q-1157 -48 -1120 43Q-1083 135 -973 185Q-952 246 -924 213Z"/></g>
+<!-- Der rote Strich: eine Grundlinie unter dem Wort, wie eine Unterstreichung
+     im Heft. Kurz gehalten, damit er Akzent bleibt und nicht Balken wird. -->
+<rect x="176" y="366" width="160" height="18" rx="9" fill="#ff2d4f"/>
+</svg></div><figcaption>64</figcaption></figure>
+      <figure><div class="huelle g48"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — عِلْم">
+<title>Entwurf D — عِلْم auf OLED-Schwarz</title>
+<!-- ⭐ Der Schriftzug ist NICHT von mir gezeichnet: es ist genau der Pfad aus
+     dem bisherigen Icon, also aus einer echten Schrift abgeleitet und
+     nachweislich richtig. Ein selbst gemaltes arabisches Wort wäre der eine
+     Fehler, der sich nie von allein meldet.
+     Neu ist nur der Rahmen: OLED-Schwarz statt roter Scheibe, und der Akzent
+     wandert vom Hintergrund auf eine einzige rote Linie darunter. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+<g fill="#f3ecef" transform="translate(407.31 285) scale(0.25302 -0.25302)"><path d="M-54 248L-74 167Q-77 155 -99 145Q-109 141 -146 126Q-183 111 -245 86L-477 -15Q-512 -15 -522 34Q-532 83 -483 104Q-463 112 -448.5 118.5Q-434 125 -424 129Q-477 173 -462 238Q-431 372 -318 425Q-290 438 -251 420Q-213 402 -172 360Q-151 338 -157 325Q-162 313 -207 325Q-253 338 -316 323Q-382 308 -402 264Q-408 253 -374 222Q-289 149 -130 250Q-119 257 -109.5 263Q-100 269 -93 273Q-39 307 -54 248ZM-581 115Q-602 -15 -674 -15Q-693 -15 -699 6Q-723 89 -674 104Q-616 122 -616 182L-633 615Q-634 638 -626 646L-589 688Q-570 710 -570 663L-559 432Q-551 248 -544 207Q-526 116 -476 104Q-452 98 -449 59Q-446 21 -457 -4Q-463 -15 -476 -15Q-545 -15 -581 115ZM-924 213Q-837 111 -674 105Q-624 103 -635 44Q-646 -15 -674 -15Q-718 -16 -757.5 -7Q-797 2 -832 18Q-832 -77 -876 -112Q-896 -127 -915 -111Q-973 -59 -987 41Q-1041 34 -1084 -11Q-1089 -33 -1074 -130Q-1020 -491 -1033 -550Q-1042 -588 -1063 -588Q-1083 -588 -1085 -543Q-1086 -508 -1095.5 -438Q-1105 -368 -1122 -262Q-1157 -48 -1120 43Q-1083 135 -973 185Q-952 246 -924 213Z"/></g>
+<!-- Der rote Strich: eine Grundlinie unter dem Wort, wie eine Unterstreichung
+     im Heft. Kurz gehalten, damit er Akzent bleibt und nicht Balken wird. -->
+<rect x="176" y="366" width="160" height="18" rx="9" fill="#ff2d4f"/>
+</svg></div><figcaption>40</figcaption></figure>
+      <figure class="rund"><div class="huelle g96"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — عِلْم">
+<title>Entwurf D — عِلْم auf OLED-Schwarz</title>
+<!-- ⭐ Der Schriftzug ist NICHT von mir gezeichnet: es ist genau der Pfad aus
+     dem bisherigen Icon, also aus einer echten Schrift abgeleitet und
+     nachweislich richtig. Ein selbst gemaltes arabisches Wort wäre der eine
+     Fehler, der sich nie von allein meldet.
+     Neu ist nur der Rahmen: OLED-Schwarz statt roter Scheibe, und der Akzent
+     wandert vom Hintergrund auf eine einzige rote Linie darunter. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+<g fill="#f3ecef" transform="translate(407.31 285) scale(0.25302 -0.25302)"><path d="M-54 248L-74 167Q-77 155 -99 145Q-109 141 -146 126Q-183 111 -245 86L-477 -15Q-512 -15 -522 34Q-532 83 -483 104Q-463 112 -448.5 118.5Q-434 125 -424 129Q-477 173 -462 238Q-431 372 -318 425Q-290 438 -251 420Q-213 402 -172 360Q-151 338 -157 325Q-162 313 -207 325Q-253 338 -316 323Q-382 308 -402 264Q-408 253 -374 222Q-289 149 -130 250Q-119 257 -109.5 263Q-100 269 -93 273Q-39 307 -54 248ZM-581 115Q-602 -15 -674 -15Q-693 -15 -699 6Q-723 89 -674 104Q-616 122 -616 182L-633 615Q-634 638 -626 646L-589 688Q-570 710 -570 663L-559 432Q-551 248 -544 207Q-526 116 -476 104Q-452 98 -449 59Q-446 21 -457 -4Q-463 -15 -476 -15Q-545 -15 -581 115ZM-924 213Q-837 111 -674 105Q-624 103 -635 44Q-646 -15 -674 -15Q-718 -16 -757.5 -7Q-797 2 -832 18Q-832 -77 -876 -112Q-896 -127 -915 -111Q-973 -59 -987 41Q-1041 34 -1084 -11Q-1089 -33 -1074 -130Q-1020 -491 -1033 -550Q-1042 -588 -1063 -588Q-1083 -588 -1085 -543Q-1086 -508 -1095.5 -438Q-1105 -368 -1122 -262Q-1157 -48 -1120 43Q-1083 135 -973 185Q-952 246 -924 213Z"/></g>
+<!-- Der rote Strich: eine Grundlinie unter dem Wort, wie eine Unterstreichung
+     im Heft. Kurz gehalten, damit er Akzent bleibt und nicht Balken wird. -->
+<rect x="176" y="366" width="160" height="18" rx="9" fill="#ff2d4f"/>
+</svg></div><figcaption>rund</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="karte">
+    <div class="name">E — das Schreibrohr (قَلَم)</div>
+    <div class="idee">„Der mit dem Schreibrohr gelehrt hat“ (96:4). Die Spitze ist das Rote.</div>
+    <div class="groessen">
+      <figure><div class="huelle g192"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — Schreibrohr">
+<title>Entwurf E — das Schreibrohr (قَلَم)</title>
+<!-- „Der mit dem Schreibrohr gelehrt hat" — الَّذِي عَلَّمَ بِالْقَلَمِ (96:4), aus der
+     ersten Offenbarung und in Elias' auswendigem Bereich. Das Rohr steht für
+     das Lernen selbst und ist vom aufgeschlagenen Buch des Korantrainers weit
+     genug entfernt.
+     Schräg von oben rechts nach unten links: die arabische Schreibrichtung. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+<g transform="rotate(-45 256 256)">
+  <!-- Der Schaft -->
+  <rect x="228" y="112" width="56" height="228" rx="12" fill="none" stroke="#f3ecef" stroke-width="22"/>
+  <!-- Die abgeschrägte Spitze, rot -->
+  <path d="M228 340h56l-28 60z" fill="#ff2d4f"/>
+  <!-- Der Schnitt oberhalb der Spitze -->
+  <path d="M228 306h56" fill="none" stroke="#f3ecef" stroke-width="18" stroke-linecap="round"/>
+</g>
+<!-- Drei Zeilen, die das Rohr hinterlässt — von rechts kürzer werdend -->
+<g fill="none" stroke="#9c9095" stroke-width="16" stroke-linecap="round">
+  <path d="M300 372h84M240 412h144M312 452h72"/>
+</g>
+</svg></div><figcaption>112</figcaption></figure>
+      <figure><div class="huelle g96"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — Schreibrohr">
+<title>Entwurf E — das Schreibrohr (قَلَم)</title>
+<!-- „Der mit dem Schreibrohr gelehrt hat" — الَّذِي عَلَّمَ بِالْقَلَمِ (96:4), aus der
+     ersten Offenbarung und in Elias' auswendigem Bereich. Das Rohr steht für
+     das Lernen selbst und ist vom aufgeschlagenen Buch des Korantrainers weit
+     genug entfernt.
+     Schräg von oben rechts nach unten links: die arabische Schreibrichtung. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+<g transform="rotate(-45 256 256)">
+  <!-- Der Schaft -->
+  <rect x="228" y="112" width="56" height="228" rx="12" fill="none" stroke="#f3ecef" stroke-width="22"/>
+  <!-- Die abgeschrägte Spitze, rot -->
+  <path d="M228 340h56l-28 60z" fill="#ff2d4f"/>
+  <!-- Der Schnitt oberhalb der Spitze -->
+  <path d="M228 306h56" fill="none" stroke="#f3ecef" stroke-width="18" stroke-linecap="round"/>
+</g>
+<!-- Drei Zeilen, die das Rohr hinterlässt — von rechts kürzer werdend -->
+<g fill="none" stroke="#9c9095" stroke-width="16" stroke-linecap="round">
+  <path d="M300 372h84M240 412h144M312 452h72"/>
+</g>
+</svg></div><figcaption>64</figcaption></figure>
+      <figure><div class="huelle g48"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — Schreibrohr">
+<title>Entwurf E — das Schreibrohr (قَلَم)</title>
+<!-- „Der mit dem Schreibrohr gelehrt hat" — الَّذِي عَلَّمَ بِالْقَلَمِ (96:4), aus der
+     ersten Offenbarung und in Elias' auswendigem Bereich. Das Rohr steht für
+     das Lernen selbst und ist vom aufgeschlagenen Buch des Korantrainers weit
+     genug entfernt.
+     Schräg von oben rechts nach unten links: die arabische Schreibrichtung. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+<g transform="rotate(-45 256 256)">
+  <!-- Der Schaft -->
+  <rect x="228" y="112" width="56" height="228" rx="12" fill="none" stroke="#f3ecef" stroke-width="22"/>
+  <!-- Die abgeschrägte Spitze, rot -->
+  <path d="M228 340h56l-28 60z" fill="#ff2d4f"/>
+  <!-- Der Schnitt oberhalb der Spitze -->
+  <path d="M228 306h56" fill="none" stroke="#f3ecef" stroke-width="18" stroke-linecap="round"/>
+</g>
+<!-- Drei Zeilen, die das Rohr hinterlässt — von rechts kürzer werdend -->
+<g fill="none" stroke="#9c9095" stroke-width="16" stroke-linecap="round">
+  <path d="M300 372h84M240 412h144M312 452h72"/>
+</g>
+</svg></div><figcaption>40</figcaption></figure>
+      <figure class="rund"><div class="huelle g96"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — Schreibrohr">
+<title>Entwurf E — das Schreibrohr (قَلَم)</title>
+<!-- „Der mit dem Schreibrohr gelehrt hat" — الَّذِي عَلَّمَ بِالْقَلَمِ (96:4), aus der
+     ersten Offenbarung und in Elias' auswendigem Bereich. Das Rohr steht für
+     das Lernen selbst und ist vom aufgeschlagenen Buch des Korantrainers weit
+     genug entfernt.
+     Schräg von oben rechts nach unten links: die arabische Schreibrichtung. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+<g transform="rotate(-45 256 256)">
+  <!-- Der Schaft -->
+  <rect x="228" y="112" width="56" height="228" rx="12" fill="none" stroke="#f3ecef" stroke-width="22"/>
+  <!-- Die abgeschrägte Spitze, rot -->
+  <path d="M228 340h56l-28 60z" fill="#ff2d4f"/>
+  <!-- Der Schnitt oberhalb der Spitze -->
+  <path d="M228 306h56" fill="none" stroke="#f3ecef" stroke-width="18" stroke-linecap="round"/>
+</g>
+<!-- Drei Zeilen, die das Rohr hinterlässt — von rechts kürzer werdend -->
+<g fill="none" stroke="#9c9095" stroke-width="16" stroke-linecap="round">
+  <path d="M300 372h84M240 412h144M312 452h72"/>
+</g>
+</svg></div><figcaption>rund</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="karte">
+    <div class="name">F — die Lampe</div>
+    <div class="idee">Wissen als Licht. Der Docht ist das einzige Rote.</div>
+    <div class="groessen">
+      <figure><div class="huelle g192"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — Lampe">
+<title>Entwurf F — die Lampe (Wissen als Licht)</title>
+<!-- Die Moscheelampe: ein Bild, das im Islam für Wissen und Rechtleitung steht
+     und das Elias aus jeder Moschee kennt. Rein geometrisch gezeichnet, kein
+     religiöses Zeichen im engeren Sinn — dieselbe Zurückhaltung wie beim
+     Korantrainer.
+     Der Docht ist das einzige Rote: der Akzent sitzt dort, wo das Licht
+     entsteht. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+<g fill="none" stroke="#f3ecef" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Die Aufhängung -->
+  <path d="M256 92v42"/>
+  <!-- Der Korpus: oben eng, in der Mitte weit, unten wieder eng -->
+  <path d="M180 134h152l-26 62c34 22 54 54 54 92 0 58-45 100-104 100S152 346 152 288c0-38 20-70 54-92z"/>
+  <!-- Der Fuß -->
+  <path d="M224 404h64"/>
+</g>
+<!-- Die Flamme, rot -->
+<path d="M256 250c22 18 32 34 32 50a32 32 0 0 1-64 0c0-16 10-32 32-50z" fill="#ff2d4f"/>
+</svg></div><figcaption>112</figcaption></figure>
+      <figure><div class="huelle g96"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — Lampe">
+<title>Entwurf F — die Lampe (Wissen als Licht)</title>
+<!-- Die Moscheelampe: ein Bild, das im Islam für Wissen und Rechtleitung steht
+     und das Elias aus jeder Moschee kennt. Rein geometrisch gezeichnet, kein
+     religiöses Zeichen im engeren Sinn — dieselbe Zurückhaltung wie beim
+     Korantrainer.
+     Der Docht ist das einzige Rote: der Akzent sitzt dort, wo das Licht
+     entsteht. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+<g fill="none" stroke="#f3ecef" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Die Aufhängung -->
+  <path d="M256 92v42"/>
+  <!-- Der Korpus: oben eng, in der Mitte weit, unten wieder eng -->
+  <path d="M180 134h152l-26 62c34 22 54 54 54 92 0 58-45 100-104 100S152 346 152 288c0-38 20-70 54-92z"/>
+  <!-- Der Fuß -->
+  <path d="M224 404h64"/>
+</g>
+<!-- Die Flamme, rot -->
+<path d="M256 250c22 18 32 34 32 50a32 32 0 0 1-64 0c0-16 10-32 32-50z" fill="#ff2d4f"/>
+</svg></div><figcaption>64</figcaption></figure>
+      <figure><div class="huelle g48"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — Lampe">
+<title>Entwurf F — die Lampe (Wissen als Licht)</title>
+<!-- Die Moscheelampe: ein Bild, das im Islam für Wissen und Rechtleitung steht
+     und das Elias aus jeder Moschee kennt. Rein geometrisch gezeichnet, kein
+     religiöses Zeichen im engeren Sinn — dieselbe Zurückhaltung wie beim
+     Korantrainer.
+     Der Docht ist das einzige Rote: der Akzent sitzt dort, wo das Licht
+     entsteht. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+<g fill="none" stroke="#f3ecef" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Die Aufhängung -->
+  <path d="M256 92v42"/>
+  <!-- Der Korpus: oben eng, in der Mitte weit, unten wieder eng -->
+  <path d="M180 134h152l-26 62c34 22 54 54 54 92 0 58-45 100-104 100S152 346 152 288c0-38 20-70 54-92z"/>
+  <!-- Der Fuß -->
+  <path d="M224 404h64"/>
+</g>
+<!-- Die Flamme, rot -->
+<path d="M256 250c22 18 32 34 32 50a32 32 0 0 1-64 0c0-16 10-32 32-50z" fill="#ff2d4f"/>
+</svg></div><figcaption>40</figcaption></figure>
+      <figure class="rund"><div class="huelle g96"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — Lampe">
+<title>Entwurf F — die Lampe (Wissen als Licht)</title>
+<!-- Die Moscheelampe: ein Bild, das im Islam für Wissen und Rechtleitung steht
+     und das Elias aus jeder Moschee kennt. Rein geometrisch gezeichnet, kein
+     religiöses Zeichen im engeren Sinn — dieselbe Zurückhaltung wie beim
+     Korantrainer.
+     Der Docht ist das einzige Rote: der Akzent sitzt dort, wo das Licht
+     entsteht. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+<g fill="none" stroke="#f3ecef" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Die Aufhängung -->
+  <path d="M256 92v42"/>
+  <!-- Der Korpus: oben eng, in der Mitte weit, unten wieder eng -->
+  <path d="M180 134h152l-26 62c34 22 54 54 54 92 0 58-45 100-104 100S152 346 152 288c0-38 20-70 54-92z"/>
+  <!-- Der Fuß -->
+  <path d="M224 404h64"/>
+</g>
+<!-- Die Flamme, rot -->
+<path d="M256 250c22 18 32 34 32 50a32 32 0 0 1-64 0c0-16 10-32 32-50z" fill="#ff2d4f"/>
+</svg></div><figcaption>rund</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="karte">
+    <div class="name">G — die Wurzel</div>
+    <div class="idee">Drei Buchstaben, aus denen die Wortfamilie wächst.</div>
+    <div class="groessen">
+      <figure><div class="huelle g192"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — Wortwurzel">
+<title>Entwurf G — die Wortwurzel (drei Radikale)</title>
+<!-- Das eine, was Arabisch von den Sprachen unterscheidet, die Elias kennt:
+     drei Wurzelbuchstaben tragen eine ganze Wortfamilie. Genau das ist auch
+     ein eigener Modus der App.
+     Drei Punkte auf einer Linie, aus denen Äste wachsen — der mittlere rot,
+     weil dort die Familie ansetzt. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+<g fill="none" stroke="#f3ecef" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Die drei Äste nach oben -->
+  <path d="M256 300V196"/>
+  <path d="M256 232 154 150"/>
+  <path d="M256 232 358 150"/>
+</g>
+<!-- Die drei Radikale als Punkte, der Ansatzpunkt rot -->
+<g fill="#f3ecef">
+  <circle cx="154" cy="150" r="30"/>
+  <circle cx="358" cy="150" r="30"/>
+</g>
+<circle cx="256" cy="196" r="30" fill="#ff2d4f"/>
+<!-- Der Stamm steht auf einer Grundlinie -->
+<g fill="none" stroke="#9c9095" stroke-width="20" stroke-linecap="round">
+  <path d="M168 348h176"/>
+  <path d="M196 396h120"/>
+</g>
+<g fill="none" stroke="#f3ecef" stroke-width="22" stroke-linecap="round">
+  <path d="M256 300v48"/>
+</g>
+</svg></div><figcaption>112</figcaption></figure>
+      <figure><div class="huelle g96"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — Wortwurzel">
+<title>Entwurf G — die Wortwurzel (drei Radikale)</title>
+<!-- Das eine, was Arabisch von den Sprachen unterscheidet, die Elias kennt:
+     drei Wurzelbuchstaben tragen eine ganze Wortfamilie. Genau das ist auch
+     ein eigener Modus der App.
+     Drei Punkte auf einer Linie, aus denen Äste wachsen — der mittlere rot,
+     weil dort die Familie ansetzt. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+<g fill="none" stroke="#f3ecef" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Die drei Äste nach oben -->
+  <path d="M256 300V196"/>
+  <path d="M256 232 154 150"/>
+  <path d="M256 232 358 150"/>
+</g>
+<!-- Die drei Radikale als Punkte, der Ansatzpunkt rot -->
+<g fill="#f3ecef">
+  <circle cx="154" cy="150" r="30"/>
+  <circle cx="358" cy="150" r="30"/>
+</g>
+<circle cx="256" cy="196" r="30" fill="#ff2d4f"/>
+<!-- Der Stamm steht auf einer Grundlinie -->
+<g fill="none" stroke="#9c9095" stroke-width="20" stroke-linecap="round">
+  <path d="M168 348h176"/>
+  <path d="M196 396h120"/>
+</g>
+<g fill="none" stroke="#f3ecef" stroke-width="22" stroke-linecap="round">
+  <path d="M256 300v48"/>
+</g>
+</svg></div><figcaption>64</figcaption></figure>
+      <figure><div class="huelle g48"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — Wortwurzel">
+<title>Entwurf G — die Wortwurzel (drei Radikale)</title>
+<!-- Das eine, was Arabisch von den Sprachen unterscheidet, die Elias kennt:
+     drei Wurzelbuchstaben tragen eine ganze Wortfamilie. Genau das ist auch
+     ein eigener Modus der App.
+     Drei Punkte auf einer Linie, aus denen Äste wachsen — der mittlere rot,
+     weil dort die Familie ansetzt. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+<g fill="none" stroke="#f3ecef" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Die drei Äste nach oben -->
+  <path d="M256 300V196"/>
+  <path d="M256 232 154 150"/>
+  <path d="M256 232 358 150"/>
+</g>
+<!-- Die drei Radikale als Punkte, der Ansatzpunkt rot -->
+<g fill="#f3ecef">
+  <circle cx="154" cy="150" r="30"/>
+  <circle cx="358" cy="150" r="30"/>
+</g>
+<circle cx="256" cy="196" r="30" fill="#ff2d4f"/>
+<!-- Der Stamm steht auf einer Grundlinie -->
+<g fill="none" stroke="#9c9095" stroke-width="20" stroke-linecap="round">
+  <path d="M168 348h176"/>
+  <path d="M196 396h120"/>
+</g>
+<g fill="none" stroke="#f3ecef" stroke-width="22" stroke-linecap="round">
+  <path d="M256 300v48"/>
+</g>
+</svg></div><figcaption>40</figcaption></figure>
+      <figure class="rund"><div class="huelle g96"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — Wortwurzel">
+<title>Entwurf G — die Wortwurzel (drei Radikale)</title>
+<!-- Das eine, was Arabisch von den Sprachen unterscheidet, die Elias kennt:
+     drei Wurzelbuchstaben tragen eine ganze Wortfamilie. Genau das ist auch
+     ein eigener Modus der App.
+     Drei Punkte auf einer Linie, aus denen Äste wachsen — der mittlere rot,
+     weil dort die Familie ansetzt. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+<g fill="none" stroke="#f3ecef" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Die drei Äste nach oben -->
+  <path d="M256 300V196"/>
+  <path d="M256 232 154 150"/>
+  <path d="M256 232 358 150"/>
+</g>
+<!-- Die drei Radikale als Punkte, der Ansatzpunkt rot -->
+<g fill="#f3ecef">
+  <circle cx="154" cy="150" r="30"/>
+  <circle cx="358" cy="150" r="30"/>
+</g>
+<circle cx="256" cy="196" r="30" fill="#ff2d4f"/>
+<!-- Der Stamm steht auf einer Grundlinie -->
+<g fill="none" stroke="#9c9095" stroke-width="20" stroke-linecap="round">
+  <path d="M168 348h176"/>
+  <path d="M196 396h120"/>
+</g>
+<g fill="none" stroke="#f3ecef" stroke-width="22" stroke-linecap="round">
+  <path d="M256 300v48"/>
+</g>
+</svg></div><figcaption>rund</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="karte">
+    <div class="name">H — عِلْم mit rotem Vokalzeichen</div>
+    <div class="idee">Das Rote ist eine Ḥarakah. Genau daran arbeitest du — und genau das unterscheidet die App vom Korantrainer.</div>
+    <div class="groessen">
+      <figure><div class="huelle g192"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — عِلْم mit Ḥarakah">
+<title>Entwurf H — عِلْم mit rotem Vokalzeichen</title>
+<!-- ⭐ Der Schriftzug ist NICHT von mir gezeichnet: es ist genau der Pfad aus
+     dem bisherigen Icon, also aus einer echten Schrift abgeleitet und
+     nachweislich richtig. Ein selbst gemaltes arabisches Wort wäre der eine
+     Fehler, der sich nie von allein meldet — beim Korantrainer waren 10 von 28
+     Mundbildern falsch, und keine einzige maschinelle Prüfung hat es gemerkt.
+
+     Der Gedanke: das eine Rote ist ein VOKALZEICHEN. Genau daran arbeitet
+     Elias jeden Tag, und genau das unterscheidet diese App vom Korantrainer —
+     dort geht es ums Lesen, hier um die Ḥarakāt, die das Wort erst eindeutig
+     machen.
+
+     ⚠️ Der Punkt sitzt bewusst NICHT über einem bestimmten Buchstaben. Ein
+     echtes Vokalzeichen an der falschen Stelle wäre eine falsche Aussage über
+     die Sprache; ein freistehender Akzent darüber ist Gestaltung. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+<!-- Der rote Akzent, hoch gesetzt wie eine Ḍammah über der Zeile -->
+<circle cx="256" cy="118" r="26" fill="#ff2d4f"/>
+<g fill="#f3ecef" transform="translate(407.31 300) scale(0.25302 -0.25302)"><path d="M-54 248L-74 167Q-77 155 -99 145Q-109 141 -146 126Q-183 111 -245 86L-477 -15Q-512 -15 -522 34Q-532 83 -483 104Q-463 112 -448.5 118.5Q-434 125 -424 129Q-477 173 -462 238Q-431 372 -318 425Q-290 438 -251 420Q-213 402 -172 360Q-151 338 -157 325Q-162 313 -207 325Q-253 338 -316 323Q-382 308 -402 264Q-408 253 -374 222Q-289 149 -130 250Q-119 257 -109.5 263Q-100 269 -93 273Q-39 307 -54 248ZM-581 115Q-602 -15 -674 -15Q-693 -15 -699 6Q-723 89 -674 104Q-616 122 -616 182L-633 615Q-634 638 -626 646L-589 688Q-570 710 -570 663L-559 432Q-551 248 -544 207Q-526 116 -476 104Q-452 98 -449 59Q-446 21 -457 -4Q-463 -15 -476 -15Q-545 -15 -581 115ZM-924 213Q-837 111 -674 105Q-624 103 -635 44Q-646 -15 -674 -15Q-718 -16 -757.5 -7Q-797 2 -832 18Q-832 -77 -876 -112Q-896 -127 -915 -111Q-973 -59 -987 41Q-1041 34 -1084 -11Q-1089 -33 -1074 -130Q-1020 -491 -1033 -550Q-1042 -588 -1063 -588Q-1083 -588 -1085 -543Q-1086 -508 -1095.5 -438Q-1105 -368 -1122 -262Q-1157 -48 -1120 43Q-1083 135 -973 185Q-952 246 -924 213Z"/></g>
+</svg></div><figcaption>112</figcaption></figure>
+      <figure><div class="huelle g96"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — عِلْم mit Ḥarakah">
+<title>Entwurf H — عِلْم mit rotem Vokalzeichen</title>
+<!-- ⭐ Der Schriftzug ist NICHT von mir gezeichnet: es ist genau der Pfad aus
+     dem bisherigen Icon, also aus einer echten Schrift abgeleitet und
+     nachweislich richtig. Ein selbst gemaltes arabisches Wort wäre der eine
+     Fehler, der sich nie von allein meldet — beim Korantrainer waren 10 von 28
+     Mundbildern falsch, und keine einzige maschinelle Prüfung hat es gemerkt.
+
+     Der Gedanke: das eine Rote ist ein VOKALZEICHEN. Genau daran arbeitet
+     Elias jeden Tag, und genau das unterscheidet diese App vom Korantrainer —
+     dort geht es ums Lesen, hier um die Ḥarakāt, die das Wort erst eindeutig
+     machen.
+
+     ⚠️ Der Punkt sitzt bewusst NICHT über einem bestimmten Buchstaben. Ein
+     echtes Vokalzeichen an der falschen Stelle wäre eine falsche Aussage über
+     die Sprache; ein freistehender Akzent darüber ist Gestaltung. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+<!-- Der rote Akzent, hoch gesetzt wie eine Ḍammah über der Zeile -->
+<circle cx="256" cy="118" r="26" fill="#ff2d4f"/>
+<g fill="#f3ecef" transform="translate(407.31 300) scale(0.25302 -0.25302)"><path d="M-54 248L-74 167Q-77 155 -99 145Q-109 141 -146 126Q-183 111 -245 86L-477 -15Q-512 -15 -522 34Q-532 83 -483 104Q-463 112 -448.5 118.5Q-434 125 -424 129Q-477 173 -462 238Q-431 372 -318 425Q-290 438 -251 420Q-213 402 -172 360Q-151 338 -157 325Q-162 313 -207 325Q-253 338 -316 323Q-382 308 -402 264Q-408 253 -374 222Q-289 149 -130 250Q-119 257 -109.5 263Q-100 269 -93 273Q-39 307 -54 248ZM-581 115Q-602 -15 -674 -15Q-693 -15 -699 6Q-723 89 -674 104Q-616 122 -616 182L-633 615Q-634 638 -626 646L-589 688Q-570 710 -570 663L-559 432Q-551 248 -544 207Q-526 116 -476 104Q-452 98 -449 59Q-446 21 -457 -4Q-463 -15 -476 -15Q-545 -15 -581 115ZM-924 213Q-837 111 -674 105Q-624 103 -635 44Q-646 -15 -674 -15Q-718 -16 -757.5 -7Q-797 2 -832 18Q-832 -77 -876 -112Q-896 -127 -915 -111Q-973 -59 -987 41Q-1041 34 -1084 -11Q-1089 -33 -1074 -130Q-1020 -491 -1033 -550Q-1042 -588 -1063 -588Q-1083 -588 -1085 -543Q-1086 -508 -1095.5 -438Q-1105 -368 -1122 -262Q-1157 -48 -1120 43Q-1083 135 -973 185Q-952 246 -924 213Z"/></g>
+</svg></div><figcaption>64</figcaption></figure>
+      <figure><div class="huelle g48"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — عِلْم mit Ḥarakah">
+<title>Entwurf H — عِلْم mit rotem Vokalzeichen</title>
+<!-- ⭐ Der Schriftzug ist NICHT von mir gezeichnet: es ist genau der Pfad aus
+     dem bisherigen Icon, also aus einer echten Schrift abgeleitet und
+     nachweislich richtig. Ein selbst gemaltes arabisches Wort wäre der eine
+     Fehler, der sich nie von allein meldet — beim Korantrainer waren 10 von 28
+     Mundbildern falsch, und keine einzige maschinelle Prüfung hat es gemerkt.
+
+     Der Gedanke: das eine Rote ist ein VOKALZEICHEN. Genau daran arbeitet
+     Elias jeden Tag, und genau das unterscheidet diese App vom Korantrainer —
+     dort geht es ums Lesen, hier um die Ḥarakāt, die das Wort erst eindeutig
+     machen.
+
+     ⚠️ Der Punkt sitzt bewusst NICHT über einem bestimmten Buchstaben. Ein
+     echtes Vokalzeichen an der falschen Stelle wäre eine falsche Aussage über
+     die Sprache; ein freistehender Akzent darüber ist Gestaltung. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+<!-- Der rote Akzent, hoch gesetzt wie eine Ḍammah über der Zeile -->
+<circle cx="256" cy="118" r="26" fill="#ff2d4f"/>
+<g fill="#f3ecef" transform="translate(407.31 300) scale(0.25302 -0.25302)"><path d="M-54 248L-74 167Q-77 155 -99 145Q-109 141 -146 126Q-183 111 -245 86L-477 -15Q-512 -15 -522 34Q-532 83 -483 104Q-463 112 -448.5 118.5Q-434 125 -424 129Q-477 173 -462 238Q-431 372 -318 425Q-290 438 -251 420Q-213 402 -172 360Q-151 338 -157 325Q-162 313 -207 325Q-253 338 -316 323Q-382 308 -402 264Q-408 253 -374 222Q-289 149 -130 250Q-119 257 -109.5 263Q-100 269 -93 273Q-39 307 -54 248ZM-581 115Q-602 -15 -674 -15Q-693 -15 -699 6Q-723 89 -674 104Q-616 122 -616 182L-633 615Q-634 638 -626 646L-589 688Q-570 710 -570 663L-559 432Q-551 248 -544 207Q-526 116 -476 104Q-452 98 -449 59Q-446 21 -457 -4Q-463 -15 -476 -15Q-545 -15 -581 115ZM-924 213Q-837 111 -674 105Q-624 103 -635 44Q-646 -15 -674 -15Q-718 -16 -757.5 -7Q-797 2 -832 18Q-832 -77 -876 -112Q-896 -127 -915 -111Q-973 -59 -987 41Q-1041 34 -1084 -11Q-1089 -33 -1074 -130Q-1020 -491 -1033 -550Q-1042 -588 -1063 -588Q-1083 -588 -1085 -543Q-1086 -508 -1095.5 -438Q-1105 -368 -1122 -262Q-1157 -48 -1120 43Q-1083 135 -973 185Q-952 246 -924 213Z"/></g>
+</svg></div><figcaption>40</figcaption></figure>
+      <figure class="rund"><div class="huelle g96"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — عِلْم mit Ḥarakah">
+<title>Entwurf H — عِلْم mit rotem Vokalzeichen</title>
+<!-- ⭐ Der Schriftzug ist NICHT von mir gezeichnet: es ist genau der Pfad aus
+     dem bisherigen Icon, also aus einer echten Schrift abgeleitet und
+     nachweislich richtig. Ein selbst gemaltes arabisches Wort wäre der eine
+     Fehler, der sich nie von allein meldet — beim Korantrainer waren 10 von 28
+     Mundbildern falsch, und keine einzige maschinelle Prüfung hat es gemerkt.
+
+     Der Gedanke: das eine Rote ist ein VOKALZEICHEN. Genau daran arbeitet
+     Elias jeden Tag, und genau das unterscheidet diese App vom Korantrainer —
+     dort geht es ums Lesen, hier um die Ḥarakāt, die das Wort erst eindeutig
+     machen.
+
+     ⚠️ Der Punkt sitzt bewusst NICHT über einem bestimmten Buchstaben. Ein
+     echtes Vokalzeichen an der falschen Stelle wäre eine falsche Aussage über
+     die Sprache; ein freistehender Akzent darüber ist Gestaltung. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+<!-- Der rote Akzent, hoch gesetzt wie eine Ḍammah über der Zeile -->
+<circle cx="256" cy="118" r="26" fill="#ff2d4f"/>
+<g fill="#f3ecef" transform="translate(407.31 300) scale(0.25302 -0.25302)"><path d="M-54 248L-74 167Q-77 155 -99 145Q-109 141 -146 126Q-183 111 -245 86L-477 -15Q-512 -15 -522 34Q-532 83 -483 104Q-463 112 -448.5 118.5Q-434 125 -424 129Q-477 173 -462 238Q-431 372 -318 425Q-290 438 -251 420Q-213 402 -172 360Q-151 338 -157 325Q-162 313 -207 325Q-253 338 -316 323Q-382 308 -402 264Q-408 253 -374 222Q-289 149 -130 250Q-119 257 -109.5 263Q-100 269 -93 273Q-39 307 -54 248ZM-581 115Q-602 -15 -674 -15Q-693 -15 -699 6Q-723 89 -674 104Q-616 122 -616 182L-633 615Q-634 638 -626 646L-589 688Q-570 710 -570 663L-559 432Q-551 248 -544 207Q-526 116 -476 104Q-452 98 -449 59Q-446 21 -457 -4Q-463 -15 -476 -15Q-545 -15 -581 115ZM-924 213Q-837 111 -674 105Q-624 103 -635 44Q-646 -15 -674 -15Q-718 -16 -757.5 -7Q-797 2 -832 18Q-832 -77 -876 -112Q-896 -127 -915 -111Q-973 -59 -987 41Q-1041 34 -1084 -11Q-1089 -33 -1074 -130Q-1020 -491 -1033 -550Q-1042 -588 -1063 -588Q-1083 -588 -1085 -543Q-1086 -508 -1095.5 -438Q-1105 -368 -1122 -262Q-1157 -48 -1120 43Q-1083 135 -973 185Q-952 246 -924 213Z"/></g>
+</svg></div><figcaption>rund</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="karte">
+    <div class="name">I — die drei Wurzelplätze</div>
+    <div class="idee">Ohne Buchstaben: drei Felder, von rechts gelesen, das erste rot. Darunter wachsen zwei Wortformen heraus.</div>
+    <div class="groessen">
+      <figure><div class="huelle g192"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — die drei Wurzelplätze">
+<title>Entwurf I — die drei Wurzelplätze</title>
+<!-- Der Gedanke: die arabische Wurzel hat drei Plätze. Aus ihnen wird jedes
+     Wort gebaut, und der Wurzelmodus dieser App macht genau das sichtbar.
+
+     ⭐ Bewusst OHNE Buchstaben. Drei gezeichnete Radikale wären drei
+     Gelegenheiten für einen Fehler, den keine Prüfung findet — und in einem
+     Icon bei 48 px wäre ein arabischer Buchstabe ohnehin nicht mehr lesbar.
+     Die drei Felder sind die Idee, nicht die Schrift.
+
+     Gelesen wird von RECHTS: der erste Radikal steht rechts, deshalb ist das
+     rechte Feld das volle und die beiden anderen sind Umrisse. Wer arabisch
+     liest, sieht sofort, wo angefangen wird.
+
+     Die drei Verbindungslinien darunter zeigen, dass die Plätze
+     zusammengehören: eine Wurzel, nicht drei Kästchen. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+
+<!-- Die drei Plätze. Kantenlänge 96, Abstand 34 — zusammen 358 px breit,
+     also innerhalb der 80 %, die ein maskable Icon sicher behält. -->
+<g>
+  <!-- rechts: der erste Radikal, gefüllt und rot -->
+  <rect x="333" y="168" width="96" height="96" rx="22" fill="#ff2d4f"/>
+  <!-- Mitte -->
+  <rect x="208" y="168" width="96" height="96" rx="22" fill="none" stroke="#f3ecef" stroke-width="16"/>
+  <!-- links: der dritte Radikal -->
+  <rect x="83" y="168" width="96" height="96" rx="22" fill="none" stroke="#f3ecef" stroke-width="16"/>
+</g>
+
+<!-- Der Bogen darunter: die drei gehören zu einem Wort zusammen. -->
+<path d="M107 316 Q256 396 405 316" fill="none" stroke="#9c9095" stroke-width="16" stroke-linecap="round"/>
+
+<!-- Zwei Wortformen, die aus derselben Wurzel wachsen — als Striche angedeutet,
+     der obere länger als der untere. Kein Text, nur die Bewegung. -->
+<g fill="none" stroke="#f3ecef" stroke-width="16" stroke-linecap="round" opacity=".85">
+  <path d="M168 384h176"/>
+  <path d="M216 428h128"/>
+</g>
+</svg></div><figcaption>112</figcaption></figure>
+      <figure><div class="huelle g96"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — die drei Wurzelplätze">
+<title>Entwurf I — die drei Wurzelplätze</title>
+<!-- Der Gedanke: die arabische Wurzel hat drei Plätze. Aus ihnen wird jedes
+     Wort gebaut, und der Wurzelmodus dieser App macht genau das sichtbar.
+
+     ⭐ Bewusst OHNE Buchstaben. Drei gezeichnete Radikale wären drei
+     Gelegenheiten für einen Fehler, den keine Prüfung findet — und in einem
+     Icon bei 48 px wäre ein arabischer Buchstabe ohnehin nicht mehr lesbar.
+     Die drei Felder sind die Idee, nicht die Schrift.
+
+     Gelesen wird von RECHTS: der erste Radikal steht rechts, deshalb ist das
+     rechte Feld das volle und die beiden anderen sind Umrisse. Wer arabisch
+     liest, sieht sofort, wo angefangen wird.
+
+     Die drei Verbindungslinien darunter zeigen, dass die Plätze
+     zusammengehören: eine Wurzel, nicht drei Kästchen. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+
+<!-- Die drei Plätze. Kantenlänge 96, Abstand 34 — zusammen 358 px breit,
+     also innerhalb der 80 %, die ein maskable Icon sicher behält. -->
+<g>
+  <!-- rechts: der erste Radikal, gefüllt und rot -->
+  <rect x="333" y="168" width="96" height="96" rx="22" fill="#ff2d4f"/>
+  <!-- Mitte -->
+  <rect x="208" y="168" width="96" height="96" rx="22" fill="none" stroke="#f3ecef" stroke-width="16"/>
+  <!-- links: der dritte Radikal -->
+  <rect x="83" y="168" width="96" height="96" rx="22" fill="none" stroke="#f3ecef" stroke-width="16"/>
+</g>
+
+<!-- Der Bogen darunter: die drei gehören zu einem Wort zusammen. -->
+<path d="M107 316 Q256 396 405 316" fill="none" stroke="#9c9095" stroke-width="16" stroke-linecap="round"/>
+
+<!-- Zwei Wortformen, die aus derselben Wurzel wachsen — als Striche angedeutet,
+     der obere länger als der untere. Kein Text, nur die Bewegung. -->
+<g fill="none" stroke="#f3ecef" stroke-width="16" stroke-linecap="round" opacity=".85">
+  <path d="M168 384h176"/>
+  <path d="M216 428h128"/>
+</g>
+</svg></div><figcaption>64</figcaption></figure>
+      <figure><div class="huelle g48"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — die drei Wurzelplätze">
+<title>Entwurf I — die drei Wurzelplätze</title>
+<!-- Der Gedanke: die arabische Wurzel hat drei Plätze. Aus ihnen wird jedes
+     Wort gebaut, und der Wurzelmodus dieser App macht genau das sichtbar.
+
+     ⭐ Bewusst OHNE Buchstaben. Drei gezeichnete Radikale wären drei
+     Gelegenheiten für einen Fehler, den keine Prüfung findet — und in einem
+     Icon bei 48 px wäre ein arabischer Buchstabe ohnehin nicht mehr lesbar.
+     Die drei Felder sind die Idee, nicht die Schrift.
+
+     Gelesen wird von RECHTS: der erste Radikal steht rechts, deshalb ist das
+     rechte Feld das volle und die beiden anderen sind Umrisse. Wer arabisch
+     liest, sieht sofort, wo angefangen wird.
+
+     Die drei Verbindungslinien darunter zeigen, dass die Plätze
+     zusammengehören: eine Wurzel, nicht drei Kästchen. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+
+<!-- Die drei Plätze. Kantenlänge 96, Abstand 34 — zusammen 358 px breit,
+     also innerhalb der 80 %, die ein maskable Icon sicher behält. -->
+<g>
+  <!-- rechts: der erste Radikal, gefüllt und rot -->
+  <rect x="333" y="168" width="96" height="96" rx="22" fill="#ff2d4f"/>
+  <!-- Mitte -->
+  <rect x="208" y="168" width="96" height="96" rx="22" fill="none" stroke="#f3ecef" stroke-width="16"/>
+  <!-- links: der dritte Radikal -->
+  <rect x="83" y="168" width="96" height="96" rx="22" fill="none" stroke="#f3ecef" stroke-width="16"/>
+</g>
+
+<!-- Der Bogen darunter: die drei gehören zu einem Wort zusammen. -->
+<path d="M107 316 Q256 396 405 316" fill="none" stroke="#9c9095" stroke-width="16" stroke-linecap="round"/>
+
+<!-- Zwei Wortformen, die aus derselben Wurzel wachsen — als Striche angedeutet,
+     der obere länger als der untere. Kein Text, nur die Bewegung. -->
+<g fill="none" stroke="#f3ecef" stroke-width="16" stroke-linecap="round" opacity=".85">
+  <path d="M168 384h176"/>
+  <path d="M216 428h128"/>
+</g>
+</svg></div><figcaption>40</figcaption></figure>
+      <figure class="rund"><div class="huelle g96"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — die drei Wurzelplätze">
+<title>Entwurf I — die drei Wurzelplätze</title>
+<!-- Der Gedanke: die arabische Wurzel hat drei Plätze. Aus ihnen wird jedes
+     Wort gebaut, und der Wurzelmodus dieser App macht genau das sichtbar.
+
+     ⭐ Bewusst OHNE Buchstaben. Drei gezeichnete Radikale wären drei
+     Gelegenheiten für einen Fehler, den keine Prüfung findet — und in einem
+     Icon bei 48 px wäre ein arabischer Buchstabe ohnehin nicht mehr lesbar.
+     Die drei Felder sind die Idee, nicht die Schrift.
+
+     Gelesen wird von RECHTS: der erste Radikal steht rechts, deshalb ist das
+     rechte Feld das volle und die beiden anderen sind Umrisse. Wer arabisch
+     liest, sieht sofort, wo angefangen wird.
+
+     Die drei Verbindungslinien darunter zeigen, dass die Plätze
+     zusammengehören: eine Wurzel, nicht drei Kästchen. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+
+<!-- Die drei Plätze. Kantenlänge 96, Abstand 34 — zusammen 358 px breit,
+     also innerhalb der 80 %, die ein maskable Icon sicher behält. -->
+<g>
+  <!-- rechts: der erste Radikal, gefüllt und rot -->
+  <rect x="333" y="168" width="96" height="96" rx="22" fill="#ff2d4f"/>
+  <!-- Mitte -->
+  <rect x="208" y="168" width="96" height="96" rx="22" fill="none" stroke="#f3ecef" stroke-width="16"/>
+  <!-- links: der dritte Radikal -->
+  <rect x="83" y="168" width="96" height="96" rx="22" fill="none" stroke="#f3ecef" stroke-width="16"/>
+</g>
+
+<!-- Der Bogen darunter: die drei gehören zu einem Wort zusammen. -->
+<path d="M107 316 Q256 396 405 316" fill="none" stroke="#9c9095" stroke-width="16" stroke-linecap="round"/>
+
+<!-- Zwei Wortformen, die aus derselben Wurzel wachsen — als Striche angedeutet,
+     der obere länger als der untere. Kein Text, nur die Bewegung. -->
+<g fill="none" stroke="#f3ecef" stroke-width="16" stroke-linecap="round" opacity=".85">
+  <path d="M168 384h176"/>
+  <path d="M216 428h128"/>
+</g>
+</svg></div><figcaption>rund</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="karte">
+    <div class="name">J — عِلْم im Fortschrittsbogen</div>
+    <div class="idee">Der Ring ist der Lernstand und schliesst sich bewusst nicht — beim Vokabellernen ist man nie fertig.</div>
+    <div class="groessen">
+      <figure><div class="huelle g192"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — عِلْم im Fortschrittsbogen">
+<title>Entwurf J — عِلْم im Fortschrittsbogen</title>
+<!-- ⭐ Der Schriftzug ist NICHT von mir gezeichnet: derselbe Pfad wie im
+     bisherigen Icon, aus einer echten Schrift abgeleitet. Selbst gemaltes
+     Arabisch ist der eine Fehler, der sich nie von allein meldet.
+
+     Der Gedanke: der Ring ist der Lernstand. Er läuft NICHT ganz herum — ein
+     geschlossener Kreis hiesse „fertig", und beim Vokabellernen ist man das
+     nie. Das rote Stück ist der Teil, der schon sitzt.
+
+     Der Bogen beginnt oben und läuft nach RECHTS herum, also im Uhrzeigersinn
+     wie eine Uhr — nicht in Leserichtung. Das ist Absicht: hier geht es um
+     Zeit und Wiederholung, nicht um Schrift.
+
+     ⚠️ Der Ring liegt bei r=196 und damit VOLLSTÄNDIG in der inneren Zone,
+     die ein maskable Icon behält (80 % von 512 = 410 px Durchmesser um die
+     Mitte, also r ≤ 205). Ein Ring, der bis an den Rand geht, wäre auf Android
+     angeschnitten — und zwar auf jedem Gerät ein bisschen anders. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+
+<!-- Der graue Rest des Rings: die offene Strecke -->
+<circle cx="256" cy="256" r="196" fill="none" stroke="#3a3236" stroke-width="26"
+        stroke-linecap="round" stroke-dasharray="1078 153" transform="rotate(-90 256 256)"/>
+<!-- Das rote Stück: 45 % des Umfangs, oben beginnend -->
+<circle cx="256" cy="256" r="196" fill="none" stroke="#ff2d4f" stroke-width="26"
+        stroke-linecap="round" stroke-dasharray="485 746" transform="rotate(-90 256 256)"/>
+
+<g fill="#f3ecef" transform="translate(361.5 291) scale(0.19 -0.19)"><path d="M-54 248L-74 167Q-77 155 -99 145Q-109 141 -146 126Q-183 111 -245 86L-477 -15Q-512 -15 -522 34Q-532 83 -483 104Q-463 112 -448.5 118.5Q-434 125 -424 129Q-477 173 -462 238Q-431 372 -318 425Q-290 438 -251 420Q-213 402 -172 360Q-151 338 -157 325Q-162 313 -207 325Q-253 338 -316 323Q-382 308 -402 264Q-408 253 -374 222Q-289 149 -130 250Q-119 257 -109.5 263Q-100 269 -93 273Q-39 307 -54 248ZM-581 115Q-602 -15 -674 -15Q-693 -15 -699 6Q-723 89 -674 104Q-616 122 -616 182L-633 615Q-634 638 -626 646L-589 688Q-570 710 -570 663L-559 432Q-551 248 -544 207Q-526 116 -476 104Q-452 98 -449 59Q-446 21 -457 -4Q-463 -15 -476 -15Q-545 -15 -581 115ZM-924 213Q-837 111 -674 105Q-624 103 -635 44Q-646 -15 -674 -15Q-718 -16 -757.5 -7Q-797 2 -832 18Q-832 -77 -876 -112Q-896 -127 -915 -111Q-973 -59 -987 41Q-1041 34 -1084 -11Q-1089 -33 -1074 -130Q-1020 -491 -1033 -550Q-1042 -588 -1063 -588Q-1083 -588 -1085 -543Q-1086 -508 -1095.5 -438Q-1105 -368 -1122 -262Q-1157 -48 -1120 43Q-1083 135 -973 185Q-952 246 -924 213Z"/></g>
+</svg></div><figcaption>112</figcaption></figure>
+      <figure><div class="huelle g96"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — عِلْم im Fortschrittsbogen">
+<title>Entwurf J — عِلْم im Fortschrittsbogen</title>
+<!-- ⭐ Der Schriftzug ist NICHT von mir gezeichnet: derselbe Pfad wie im
+     bisherigen Icon, aus einer echten Schrift abgeleitet. Selbst gemaltes
+     Arabisch ist der eine Fehler, der sich nie von allein meldet.
+
+     Der Gedanke: der Ring ist der Lernstand. Er läuft NICHT ganz herum — ein
+     geschlossener Kreis hiesse „fertig", und beim Vokabellernen ist man das
+     nie. Das rote Stück ist der Teil, der schon sitzt.
+
+     Der Bogen beginnt oben und läuft nach RECHTS herum, also im Uhrzeigersinn
+     wie eine Uhr — nicht in Leserichtung. Das ist Absicht: hier geht es um
+     Zeit und Wiederholung, nicht um Schrift.
+
+     ⚠️ Der Ring liegt bei r=196 und damit VOLLSTÄNDIG in der inneren Zone,
+     die ein maskable Icon behält (80 % von 512 = 410 px Durchmesser um die
+     Mitte, also r ≤ 205). Ein Ring, der bis an den Rand geht, wäre auf Android
+     angeschnitten — und zwar auf jedem Gerät ein bisschen anders. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+
+<!-- Der graue Rest des Rings: die offene Strecke -->
+<circle cx="256" cy="256" r="196" fill="none" stroke="#3a3236" stroke-width="26"
+        stroke-linecap="round" stroke-dasharray="1078 153" transform="rotate(-90 256 256)"/>
+<!-- Das rote Stück: 45 % des Umfangs, oben beginnend -->
+<circle cx="256" cy="256" r="196" fill="none" stroke="#ff2d4f" stroke-width="26"
+        stroke-linecap="round" stroke-dasharray="485 746" transform="rotate(-90 256 256)"/>
+
+<g fill="#f3ecef" transform="translate(361.5 291) scale(0.19 -0.19)"><path d="M-54 248L-74 167Q-77 155 -99 145Q-109 141 -146 126Q-183 111 -245 86L-477 -15Q-512 -15 -522 34Q-532 83 -483 104Q-463 112 -448.5 118.5Q-434 125 -424 129Q-477 173 -462 238Q-431 372 -318 425Q-290 438 -251 420Q-213 402 -172 360Q-151 338 -157 325Q-162 313 -207 325Q-253 338 -316 323Q-382 308 -402 264Q-408 253 -374 222Q-289 149 -130 250Q-119 257 -109.5 263Q-100 269 -93 273Q-39 307 -54 248ZM-581 115Q-602 -15 -674 -15Q-693 -15 -699 6Q-723 89 -674 104Q-616 122 -616 182L-633 615Q-634 638 -626 646L-589 688Q-570 710 -570 663L-559 432Q-551 248 -544 207Q-526 116 -476 104Q-452 98 -449 59Q-446 21 -457 -4Q-463 -15 -476 -15Q-545 -15 -581 115ZM-924 213Q-837 111 -674 105Q-624 103 -635 44Q-646 -15 -674 -15Q-718 -16 -757.5 -7Q-797 2 -832 18Q-832 -77 -876 -112Q-896 -127 -915 -111Q-973 -59 -987 41Q-1041 34 -1084 -11Q-1089 -33 -1074 -130Q-1020 -491 -1033 -550Q-1042 -588 -1063 -588Q-1083 -588 -1085 -543Q-1086 -508 -1095.5 -438Q-1105 -368 -1122 -262Q-1157 -48 -1120 43Q-1083 135 -973 185Q-952 246 -924 213Z"/></g>
+</svg></div><figcaption>64</figcaption></figure>
+      <figure><div class="huelle g48"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — عِلْم im Fortschrittsbogen">
+<title>Entwurf J — عِلْم im Fortschrittsbogen</title>
+<!-- ⭐ Der Schriftzug ist NICHT von mir gezeichnet: derselbe Pfad wie im
+     bisherigen Icon, aus einer echten Schrift abgeleitet. Selbst gemaltes
+     Arabisch ist der eine Fehler, der sich nie von allein meldet.
+
+     Der Gedanke: der Ring ist der Lernstand. Er läuft NICHT ganz herum — ein
+     geschlossener Kreis hiesse „fertig", und beim Vokabellernen ist man das
+     nie. Das rote Stück ist der Teil, der schon sitzt.
+
+     Der Bogen beginnt oben und läuft nach RECHTS herum, also im Uhrzeigersinn
+     wie eine Uhr — nicht in Leserichtung. Das ist Absicht: hier geht es um
+     Zeit und Wiederholung, nicht um Schrift.
+
+     ⚠️ Der Ring liegt bei r=196 und damit VOLLSTÄNDIG in der inneren Zone,
+     die ein maskable Icon behält (80 % von 512 = 410 px Durchmesser um die
+     Mitte, also r ≤ 205). Ein Ring, der bis an den Rand geht, wäre auf Android
+     angeschnitten — und zwar auf jedem Gerät ein bisschen anders. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+
+<!-- Der graue Rest des Rings: die offene Strecke -->
+<circle cx="256" cy="256" r="196" fill="none" stroke="#3a3236" stroke-width="26"
+        stroke-linecap="round" stroke-dasharray="1078 153" transform="rotate(-90 256 256)"/>
+<!-- Das rote Stück: 45 % des Umfangs, oben beginnend -->
+<circle cx="256" cy="256" r="196" fill="none" stroke="#ff2d4f" stroke-width="26"
+        stroke-linecap="round" stroke-dasharray="485 746" transform="rotate(-90 256 256)"/>
+
+<g fill="#f3ecef" transform="translate(361.5 291) scale(0.19 -0.19)"><path d="M-54 248L-74 167Q-77 155 -99 145Q-109 141 -146 126Q-183 111 -245 86L-477 -15Q-512 -15 -522 34Q-532 83 -483 104Q-463 112 -448.5 118.5Q-434 125 -424 129Q-477 173 -462 238Q-431 372 -318 425Q-290 438 -251 420Q-213 402 -172 360Q-151 338 -157 325Q-162 313 -207 325Q-253 338 -316 323Q-382 308 -402 264Q-408 253 -374 222Q-289 149 -130 250Q-119 257 -109.5 263Q-100 269 -93 273Q-39 307 -54 248ZM-581 115Q-602 -15 -674 -15Q-693 -15 -699 6Q-723 89 -674 104Q-616 122 -616 182L-633 615Q-634 638 -626 646L-589 688Q-570 710 -570 663L-559 432Q-551 248 -544 207Q-526 116 -476 104Q-452 98 -449 59Q-446 21 -457 -4Q-463 -15 -476 -15Q-545 -15 -581 115ZM-924 213Q-837 111 -674 105Q-624 103 -635 44Q-646 -15 -674 -15Q-718 -16 -757.5 -7Q-797 2 -832 18Q-832 -77 -876 -112Q-896 -127 -915 -111Q-973 -59 -987 41Q-1041 34 -1084 -11Q-1089 -33 -1074 -130Q-1020 -491 -1033 -550Q-1042 -588 -1063 -588Q-1083 -588 -1085 -543Q-1086 -508 -1095.5 -438Q-1105 -368 -1122 -262Q-1157 -48 -1120 43Q-1083 135 -973 185Q-952 246 -924 213Z"/></g>
+</svg></div><figcaption>40</figcaption></figure>
+      <figure class="rund"><div class="huelle g96"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — عِلْم im Fortschrittsbogen">
+<title>Entwurf J — عِلْم im Fortschrittsbogen</title>
+<!-- ⭐ Der Schriftzug ist NICHT von mir gezeichnet: derselbe Pfad wie im
+     bisherigen Icon, aus einer echten Schrift abgeleitet. Selbst gemaltes
+     Arabisch ist der eine Fehler, der sich nie von allein meldet.
+
+     Der Gedanke: der Ring ist der Lernstand. Er läuft NICHT ganz herum — ein
+     geschlossener Kreis hiesse „fertig", und beim Vokabellernen ist man das
+     nie. Das rote Stück ist der Teil, der schon sitzt.
+
+     Der Bogen beginnt oben und läuft nach RECHTS herum, also im Uhrzeigersinn
+     wie eine Uhr — nicht in Leserichtung. Das ist Absicht: hier geht es um
+     Zeit und Wiederholung, nicht um Schrift.
+
+     ⚠️ Der Ring liegt bei r=196 und damit VOLLSTÄNDIG in der inneren Zone,
+     die ein maskable Icon behält (80 % von 512 = 410 px Durchmesser um die
+     Mitte, also r ≤ 205). Ein Ring, der bis an den Rand geht, wäre auf Android
+     angeschnitten — und zwar auf jedem Gerät ein bisschen anders. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+
+<!-- Der graue Rest des Rings: die offene Strecke -->
+<circle cx="256" cy="256" r="196" fill="none" stroke="#3a3236" stroke-width="26"
+        stroke-linecap="round" stroke-dasharray="1078 153" transform="rotate(-90 256 256)"/>
+<!-- Das rote Stück: 45 % des Umfangs, oben beginnend -->
+<circle cx="256" cy="256" r="196" fill="none" stroke="#ff2d4f" stroke-width="26"
+        stroke-linecap="round" stroke-dasharray="485 746" transform="rotate(-90 256 256)"/>
+
+<g fill="#f3ecef" transform="translate(361.5 291) scale(0.19 -0.19)"><path d="M-54 248L-74 167Q-77 155 -99 145Q-109 141 -146 126Q-183 111 -245 86L-477 -15Q-512 -15 -522 34Q-532 83 -483 104Q-463 112 -448.5 118.5Q-434 125 -424 129Q-477 173 -462 238Q-431 372 -318 425Q-290 438 -251 420Q-213 402 -172 360Q-151 338 -157 325Q-162 313 -207 325Q-253 338 -316 323Q-382 308 -402 264Q-408 253 -374 222Q-289 149 -130 250Q-119 257 -109.5 263Q-100 269 -93 273Q-39 307 -54 248ZM-581 115Q-602 -15 -674 -15Q-693 -15 -699 6Q-723 89 -674 104Q-616 122 -616 182L-633 615Q-634 638 -626 646L-589 688Q-570 710 -570 663L-559 432Q-551 248 -544 207Q-526 116 -476 104Q-452 98 -449 59Q-446 21 -457 -4Q-463 -15 -476 -15Q-545 -15 -581 115ZM-924 213Q-837 111 -674 105Q-624 103 -635 44Q-646 -15 -674 -15Q-718 -16 -757.5 -7Q-797 2 -832 18Q-832 -77 -876 -112Q-896 -127 -915 -111Q-973 -59 -987 41Q-1041 34 -1084 -11Q-1089 -33 -1074 -130Q-1020 -491 -1033 -550Q-1042 -588 -1063 -588Q-1083 -588 -1085 -543Q-1086 -508 -1095.5 -438Q-1105 -368 -1122 -262Q-1157 -48 -1120 43Q-1083 135 -973 185Q-952 246 -924 213Z"/></g>
+</svg></div><figcaption>rund</figcaption></figure>
+    </div>
+  </div>
+</div>
+
+<p class="fuss">
+  ⚠️ Der arabische Schriftzug in D, H und J ist <b>nicht gezeichnet</b>, sondern
+  derselbe Pfad wie im bisherigen Icon — aus einer echten Schrift abgeleitet.
+  Ein selbst gemaltes arabisches Wort wäre der eine Fehler, der sich nie von
+  allein meldet.<br>
+  Sag mir einfach den Buchstaben. Dann baue ich daraus <code>icon.svg</code>,
+  <code>icon-maskable.svg</code> und den Eintrag im <code>manifest.json</code>.
+</p>
+</body>
+</html>
