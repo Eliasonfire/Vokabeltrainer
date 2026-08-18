@@ -859,8 +859,7 @@ const GRAMMAR_RULES = [
       "video": "Folge 16",
       "approxTimestamp": "16:15",
       "chapter": 10
-    },
-    "ausgeblendet": true
+    }
   },
   {
     "id": "hu-nach-kasra-01",
@@ -1659,6 +1658,10 @@ const SENTENCE_TAGS = {
   ],
   "by2-231-2": [
     { ruleId: "zuruf-makan-weitere-01", matchText: "فَوْقَ" }
+  ],
+  "mb1-65-1": [
+    { ruleId: "asma-khamsa-01", matchText: "أَبُوكَ" },
+    { ruleId: "ya-nida-01", matchText: "يَا" }
   ]
 };
 

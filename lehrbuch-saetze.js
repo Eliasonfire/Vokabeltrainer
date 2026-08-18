@@ -224,5 +224,26 @@ const LEHRBUCH_SAETZE = [
     vokalisationErgaenzt: true,
     gedruckt: 'الكِتابِ im Zitat nur teilvokalisiert',
     sentAr: 'الْقَلَمُ فَوْقَ الْكِتَابِ.',
-    sentDe: 'Der Stift ist über dem Buch.' }
+    sentDe: 'Der Stift ist über dem Buch.' },
+
+  /* Buchseite 65, Uebung (٢) Nr. 5 - der einzige Beleg fuer die Waw-Form.
+   *
+   * ⭐ Neun Seiten des Buchs waren vorher abgesucht (45, 53, 61, 62, 69, 73,
+   * 77, 85, 93) und zeigten ausschliesslich أَبِي und أَخِي, also die
+   * Yaa-Form. Genau die ist die AUSNAHME, die asma-khamsa-01 nennt („Ausser
+   * bei mein. Da kommt das Yaa direkt hinten dran") - sie zu markieren waere
+   * das Gegenteil der Regel gewesen.
+   *
+   * Was gedruckt ist: nur die Fatha auf dem كَ. Die ist der Beleg, dass hier
+   * die Besitzendung -ka steht und nicht etwa ein Wortteil; der Lehrer nennt
+   * ihren Vokal ausdruecklich („Kev, mit Fetha", possessiv-endungen-01).
+   * Das Waw selbst steht ohnehin als Buchstabe da und ist nicht zu ergaenzen.
+   *
+   * Abweichung vom Druck: das Buch setzt ياخالد ohne Leerzeichen. Hier steht
+   * يَا خَالِدُ getrennt, wie يَا وَلَدُ! in vocab-data.js - sonst faende die
+   * Markierung von ya-nida-01 die Rufpartikel nicht als eigenes Wort. */
+  { id: 'mb1-65-1', seite: 65, kapitel: 12, vokalisationErgaenzt: true,
+    gedruckt: 'nur die Fatha auf dem كَ von أبوكَ',
+    sentAr: 'أَيْنَ أَبُوكَ يَا خَالِدُ؟',
+    sentDe: 'Wo ist dein Vater, Khalid?' }
 ];
