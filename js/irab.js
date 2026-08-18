@@ -281,7 +281,7 @@ const VERBEN = ['خرج', 'ذهب', 'قال'];
    keines — صِفْرٌ ist die Null, عَمِّي mein Onkel, جَرٍّ der Genitiv, لِ eine
    Praeposition. Ohne diese Liste macht die Zerlegung daraus einen Verbalsatz
    und das naechste Wort zum فَاعِل. */
-const NICHT_VERB = ['صفر', 'عمي', 'جر', 'ل'];
+const NICHT_VERB = ['صفر', 'عمي', 'جر', 'ل', 'فوق'];
 /* Adjektive, die in den Beispielsaetzen vorkommen und deren Wortart nicht
    verlaesslich aus dem Lexikon kommt: كسلان und مجرور fehlen im kleinen
    Bestand ganz, حار steht im grossen ZWEIMAL (adjective und verb حَارَ) und
