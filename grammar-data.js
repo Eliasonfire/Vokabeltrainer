@@ -1783,11 +1783,11 @@ const SENTENCE_TAGS = {
    ist eine Gestaltungsentscheidung und deckt sich nicht mit den Themen. */
 const SATZ_THEMEN = [
   { id: 'alle',        name: 'Alle' },
-  { id: 'isara',       name: 'Hinweiswörter',  muster: /^(ismul-isara|hadha|isara|tilka)/ },
-  { id: 'jarr',        name: 'Genitiv',        muster: /^(harf-jarr|min-ila|fi-ala|mina-al|li-|lil-)/ },
-  { id: 'nominalsatz', name: 'Nominalsatz',    muster: /^(mubtada|nominalsatz|jumla|wortstellung)/ },
-  { id: 'kasus',       name: 'Kasus',          muster: /^(irab|kasus|marfu|majrur|mansub|tanwin|alif-maqsura)/ },
-  { id: 'nat',         name: 'Adjektiv',       muster: /^(nat|adjektive|mutabaqa)/ },
+  { id: 'isara',       name: 'Hinweiswörter',  muster: /^(ismul-isara|hadha|isara|tilka|kaf-der-entfernung)/ },
+  { id: 'jarr',        name: 'Genitiv',        muster: /^(harf-jarr|min-ila|fi-ala|mina-al|li-|lil-|hurufu-jarr)/ },
+  { id: 'nominalsatz', name: 'Nominalsatz',    muster: /^(mubtada|nominalsatz|jumla|wortstellung|satz-vs-wortgruppe)/ },
+  { id: 'kasus',       name: 'Kasus',          muster: /^(irab|kasus|marfu|majrur|mansub|tanwin|alif-maqsura|mamnu-min-as-sarf)/ },
+  { id: 'nat',         name: 'Adjektiv',       muster: /^(nat|adjektive|mutabaqa|ismun-mawsul)/ },
   /* HIER STAND ein Thema „Weiblich" (18 Sätze, Regel-Muster
      /^(ta-marbuta|fem-|nat-fem|eigennamen-fem)/). Elias am 29.07.2026, direkt
      nachdem er die Themenliste gesehen hat: „das will ich glaube ich nicht."
@@ -1800,6 +1800,30 @@ const SATZ_THEMEN = [
      `eigennamen-fem-ohne-tanwin-01`. Nur der Reiter ist weg; über „Alle" sind
      die Sätze weiter erreichbar. Wieder da ist er, indem diese eine Zeile
      zurückkommt. */
-  { id: 'al',          name: 'اَلْ',            muster: /^(al-|schams|qamar|adjektive-an)/ },
-  { id: 'idafa',       name: 'إِضافة',          muster: /^(idafa|mudaf|zarf-als-mudaf)/ }
+  { id: 'al',          name: 'اَلْ',            muster: /^(al-|schams|qamar|adjektive-an|nakira-marifa)/ },
+  { id: 'idafa',       name: 'إِضافة',          muster: /^(idafa|mudaf|zarf-als-mudaf|possessiv-ist-idafa)/ },
+
+  /* ===== Fuenf neue Reiter, 19.08.2026 =========================
+     Elias: „da müssen auch die kategorien aktualisiert werden aufs neueste
+     bezogen auf die regeln … sogar eben ist naat dazu kommen eine neue
+     grammatikregel die ich in der app üben sollte."
+
+     Gemessen: vorher fielen 45 der 95 Regeln durch JEDE Kategorie und waren
+     nur ueber „Alle" erreichbar. Nachher sind es 7.
+
+     ⚠️ Das trifft mehr als den Filter: js/uebung.js waehlt mit derselben
+     Tabelle die ABLENKER im Uebungsmodus (Zeile 462). Eine Regel ohne
+     Kategorie bekam zufaellige statt thematisch naher — die Frage wurde
+     dadurch leichter, aber weniger lehrreich.
+
+     ⛔ Eine Kategorie „Weiblich" kommt NICHT zurueck (Elias, 29.07.2026:
+     „das will ich glaube ich nicht"). Fuenf der sieben ohne Reiter sind
+     genau diese Regeln. Die restlichen zwei — ya-nida-01 und badal-01 —
+     passen in keine Gruppe, ohne dass man eine erfindet; sie bleiben
+     bewusst bei „Alle". */
+  { id: 'fragen',      name: 'Fragen',         muster: /^(istifham|fragepartikel|min-ayna|min-man)/ },
+  { id: 'zarf',        name: 'Ortsangaben',    muster: /^(zarf-|zuruf-makan|inda-ort)/ },
+  { id: 'besitz',      name: 'Besitz',         muster: /^(possessiv-ya|possessiv-endungen|asma-khamsa|hu-nach-kasra)/ },
+  { id: 'schrift',     name: 'Schrift',        muster: /^(madd|schakl|hamzatul|lafz-al|taschkil|iltiqa|mudarris-lesung)/ },
+  { id: 'wortarten',   name: 'Wortarten',      muster: /^(wortarten|huwa-hiya|verb-enthaelt)/ }
 ];
