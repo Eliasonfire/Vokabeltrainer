@@ -235,6 +235,31 @@ function istHarfJarr(w){
 }
 const istZarf = w => istInListe(w, ZURUF);
 
+/* الأَسْمَاءُ الخَمْسَةُ in ihrer إِضَافَة-Form. Ihre Kasusendung ist ein
+ * BUCHSTABE (Wāw im Nominativ, Alif im Akkusativ, Yāʾ im Genitiv) und keine
+ * Ḥaraka - `endung()` liest dort nichts.
+ *
+ * ⚠️ Warum das hier stehen muss (18.08.2026): Die Erkennung eines مُضَاف
+ * verlangt `gelesen && !gelesen.tanwin`, also eine lesbare Endung. Bei أَبُو
+ * ist `gelesen` null, der Erklaerer sah keine إِضَافَة - und verlangte in
+ * مَاذَا قَالَ أَبُو بِلَالٍ؟ von بِلَالٍ einen Nominativ. Richtig ist Genitiv,
+ * denn بِلَال ist das مُضَاف إِلَيْه. Beleg: Madina-Schluessel 3, Lektion 1,
+ * S. 7 (asma-khamsa-vollstaendig-01).
+ *
+ * ⛔ Bewusst NUR أَب, أَخ und حَم. فُو/فَا/فِي und ذُو/ذَا/ذِي fehlen, weil sie
+ * mit der Praeposition فِي und mit Formen von هَذَا zusammenfallen - eine
+ * falsche Zerlegung waere schlimmer als eine fehlende. Lieber keine Aussage
+ * als eine falsche, wie schon bei hatAngeschriebenesJarr.
+ *
+ * ⛔ Ebenfalls NICHT dabei: أَبِي/أَخِي als "mein Vater/Bruder". Dort steht das
+ * Ich-Pronomen, und genau dann greifen die Sekundaerendungen nach dem Buch
+ * NICHT ("und der مُضافٌ إليه nicht ein Pronomen der ersten Person Singular
+ * ist"). Am Schriftbild ist أَبِي بِلَالٍ von أَبِي "mein Vater" nicht zu
+ * unterscheiden - deshalb zaehlt hier nur, ob ein Nomen folgt; das prueft die
+ * Bedingung an der Fundstelle ohnehin. */
+const FUENF_NOMEN = ['أبو', 'أخو', 'حمو', 'أبا', 'أخا', 'حما', 'أبي', 'أخي', 'حمي'];
+const istFuenfNomen = w => istInListe(w, FUENF_NOMEN);
+
 /* Ein vorangestelltes Fragepartikel-أ gehoert nicht zum Wort: أَهَذَا ist
    أ + هَذَا und damit genauso unveraenderlich wie هَذَا allein. */
 function ohneFragepartikel(w){
@@ -452,7 +477,11 @@ function analysiereSatz(satz){
            Demonstrativpronomen stehen - dann folgt das Nomen erst danach. */
         && (!istIndeklinabel(naechstes)
             || (istInListe(naechstes, ['هذا','هذه','ذلك','تلك']) && woerter[i+2]))
-        && gelesen && !gelesen.tanwin && !istBestimmt(wort)){
+        /* Entweder eine lesbare Endung ohne Tanwin - oder eines der fuenf
+           Nomen, deren Endung ein Buchstabe ist und die `endung()` deshalb
+           gar nicht sieht. */
+        && ((gelesen && !gelesen.tanwin) || istFuenfNomen(wort))
+        && !istBestimmt(wort)){
       /* Ein مُضَاف kann selbst im Genitiv stehen: عَلى مَكْتَبِ الْمُدَرِّسِ.
          Die Bedingung \"nicht im Genitiv\" hat genau diese Verkettung
          verworfen (harf-jarr-idafa-01). */

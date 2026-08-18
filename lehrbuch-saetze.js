@@ -245,5 +245,22 @@ const LEHRBUCH_SAETZE = [
   { id: 'mb1-65-1', seite: 65, kapitel: 12, vokalisationErgaenzt: true,
     gedruckt: 'nur die Fatha auf dem كَ von أبوكَ',
     sentAr: 'أَيْنَ أَبُوكَ يَا خَالِدُ؟',
-    sentDe: 'Wo ist dein Vater, Khalid?' }
+    sentDe: 'Wo ist dein Vater, Khalid?' },
+
+  /* Aus dem deutschen Madina-Schluessel 3, Lektion 1, Seite 7 - dort steht der
+   * Abschnitt "c) Die Fuenf Nomen". Der Satz ist das Beispiel des Buchs fuer
+   * die Waw-Endung, und daneben steht ausdruecklich: "Beachte es ist أَبُو
+   * (abu) mit waw, nicht أَبُ (abu)."
+   *
+   * ⛔ Der Wortlaut kommt aus dem GERENDERTEN Bild (300 dpi), nicht aus der
+   * Textebene. Die liefert an dieser Stelle ‫ماذا قالَ ا َُٔبو بلالٍ؟‬ - die
+   * Hamza ist zerlegt und die Zeichen sind verschoben. Gemessen ueber Band 3:
+   * kein Extraktionsweg ist zitierfaehig, der beste hat 3,6 % Widersprueche.
+   * Deshalb `python werkzeuge/schluessel_zeile.py <wort>`, dann ablesen.
+   *
+   * Vollstaendig vokalisiert gedruckt, deshalb KEIN vokalisationErgaenzt. */
+  { id: 'sk3-7-1', werk: 'madina-schluessel-3', seite: 7, lektion: 1, kapitel: 12,
+    gedruckt: 'vollstaendig vokalisiert',
+    sentAr: 'مَاذَا قَالَ أَبُو بِلَالٍ؟',
+    sentDe: 'Was hat Bilāls Vater gesagt?' }
 ];

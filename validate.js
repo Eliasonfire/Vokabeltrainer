@@ -238,7 +238,12 @@ if (!Array.isArray(GRAMMAR_RULES)){
        geschlossen. Die haben naturgemäß KEINE Videofundstelle — eine zu erfinden
        wäre genau das, was E.1 verbietet. Die Pflicht bleibt also bestehen, sie
        kennt nur einen zweiten Beleg-Typ. Ohne beides fällt die Regel weiterhin durch. */
-    const BUCHWERKE = ['sharh-madinah-1', 'bayna-yadayk-2'];
+    /* Die deutschen Madina-Schluessel am 18.08.2026 ergaenzt. Sie sind seit
+       dem 29.07.2026 Elias' Goldstandard ("sie sind der goldene standart und
+       sollte auch so angesehen werden") und standen trotzdem nicht in dieser
+       Liste - die erste Regel daraus fiel deshalb durch. */
+    const BUCHWERKE = ['sharh-madinah-1', 'bayna-yadayk-2',
+                       'madina-schluessel-1', 'madina-schluessel-2', 'madina-schluessel-3'];
     if (r.ergaenzung){
       if (r.source) fail(`${where} (${r.id}): hat ergaenzung:true UND source — eine Regel ist entweder aus dem Unterricht oder aus dem Buch, nicht beides.`);
       if (!r.buchQuelle) fail(`${where} (${r.id}): ergaenzung:true, aber buchQuelle fehlt (Quellenpflicht E.1).`);

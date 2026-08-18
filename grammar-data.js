@@ -887,6 +887,19 @@ const GRAMMAR_RULES = [
       "chapter": 10
     }
   },
+  {
+    "id": "asma-khamsa-vollstaendig-01",
+    "name": "الأَسْمَاءُ الخَمْسَةُ — alle fünf, und wann sie gelten",
+    "shortExplanation": "Dein Lehrer nennt in Folge 16 nur أَبٌ und أَخٌ und sagt ausdrücklich, die drei übrigen kämen erst im zweiten Buch (asma-khamsa-01). Der deutsche Madina-Schlüssel 3 nennt sie vollständig: أَبٌ، أَخٌ، حَمٌ، فَمٌ، ذُو. ⭐ Und er nennt die Bedingung, unter der die besonderen Endungen überhaupt gelten — im Wortlaut des Buchs: «Diese Nomen bekommen die Sekundären Endungen nur, wenn sie مُضافٌ sind und der مُضافٌ إليه nicht ein Pronomen der ersten Person Singular ist. In dieser Gruppe ist die rafʿ-Endung wāw, die naṣb-Endung alif und die jarr-Endung ist yāʾ.» Damit sind beide Ausnahmen deines Lehrers erklärt: أَبِي (mein Vater) hat kein Wāw, weil dort das Ich-Pronomen steht — und هُوَ أَخٌ hat keins, weil أَخٌ dort gar kein مُضَاف ist. حَمٌ ist laut Fußnote des Buchs «der männliche Verwandte des Ehemanns so wie sein Bruder oder sein Vater». فَمٌ (Mund) geht auf zwei Arten: mit مـ wird es normal dekliniert (فَمُكَ نَظِيفٌ), ohne مـ wie die fünf (فُوكَ صَغِيرٌ).",
+    "color": "idafa",
+    "ergaenzung": true,
+    "kapitel": 12,
+    "buchQuelle": {
+      "werk": "madina-schluessel-3",
+      "lektion": 1,
+      "seite": 7
+    }
+  }
 ];
 
 const SENTENCE_TAGS = {
@@ -1662,6 +1675,10 @@ const SENTENCE_TAGS = {
   "mb1-65-1": [
     { ruleId: "asma-khamsa-01", matchText: "أَبُوكَ" },
     { ruleId: "ya-nida-01", matchText: "يَا" }
+  ],
+  "sk3-7-1": [
+    { ruleId: "asma-khamsa-vollstaendig-01", matchText: "أَبُو" },
+    { ruleId: "istifham-madha-01", matchText: "مَاذَا" }
   ]
 };
 
