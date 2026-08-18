@@ -198,5 +198,31 @@ const LEHRBUCH_SAETZE = [
   { id: 'mb1-53-1', seite: 53, kapitel: 10, vokalisationErgaenzt: true,
     gedruckt: 'ohne jedes Zeichen',
     sentAr: 'الْكِتَابُ الَّذِي عَلَى الْمَكْتَبِ لِلْمُدَرِّسِ.',
-    sentDe: 'Das Buch, das auf dem Schreibtisch ist, gehört dem Lehrer.' }
+    sentDe: 'Das Buch, das auf dem Schreibtisch ist, gehört dem Lehrer.' },
+
+  /* ===== Zwei Saetze aus Bayna Yadayk Band 2, Lektion 13, Seite 231 ========
+   *
+   * Erstmals stammt hier etwas nicht aus Madina 1, deshalb das Feld `werk`.
+   * Der Anlass: عِنْدَ und فَوْقَ kommen in KEINEM der 203 anderen Saetze vor,
+   * und damit lagen inda-ort-und-zeit-01 und zuruf-makan-weitere-01
+   * unerreichbar in grammar-data.js.
+   *
+   * ⭐ Gesucht werden musste dafuer nichts: zuruf-makan-weitere-01 zitiert
+   * beide Saetze schon woertlich, mit Fundstelle. Es lohnt sich, vor der
+   * PDF-Arbeit erst nachzusehen, was die Regeln selbst mitbringen - sie
+   * fuehren ihre Belege bei sich.
+   *
+   * Abweichung vom Zitat: dort steht الكِتابِ ohne Sukun am Lam und ohne
+   * Alif-Zeichen, wie Bayna Yadayk teilvokalisiert druckt. Hier steht die
+   * volle Form الْكِتَابِ, die auch vocab-data.js fuehrt. */
+  { id: 'by2-231-1', werk: 'bayna-yadayk-2', seite: 231, lektion: 13, kapitel: 8,
+    gedruckt: 'vollstaendig vokalisiert im Zitat',
+    sentAr: 'الطَّبِيبُ عِنْدَ الْبَابِ.',
+    sentDe: 'Der Arzt ist bei der Tür.' },
+
+  { id: 'by2-231-2', werk: 'bayna-yadayk-2', seite: 231, lektion: 13, kapitel: 8,
+    vokalisationErgaenzt: true,
+    gedruckt: 'الكِتابِ im Zitat nur teilvokalisiert',
+    sentAr: 'الْقَلَمُ فَوْقَ الْكِتَابِ.',
+    sentDe: 'Der Stift ist über dem Buch.' }
 ];

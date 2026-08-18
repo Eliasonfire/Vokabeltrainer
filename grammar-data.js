@@ -768,7 +768,6 @@ const GRAMMAR_RULES = [
        Ohne markierten Satz hat eine Regel keinen Zugang in der App — sie
        taucht dann nur als FALSCHE Antwort im Uebungsmodus auf. Sobald ein
        Beispielsatz aus dem Buch dazukommt, faellt diese Zeile weg. */
-    ausgeblendet: true
   },
 
   {
@@ -808,8 +807,7 @@ const GRAMMAR_RULES = [
       "video": "Folge 14",
       "approxTimestamp": "17:15",
       "chapter": 9
-    },
-    "ausgeblendet": true
+    }
   },
   {
     "id": "possessiv-endungen-01",
@@ -1655,6 +1653,12 @@ const SENTENCE_TAGS = {
   ],
   "mb1-53-1": [
     { ruleId: "ismun-mawsul-alladhi-01", matchText: "الَّذِي" }
+  ],
+  "by2-231-1": [
+    { ruleId: "inda-ort-und-zeit-01", matchText: "عِنْدَ" }
+  ],
+  "by2-231-2": [
+    { ruleId: "zuruf-makan-weitere-01", matchText: "فَوْقَ" }
   ]
 };
 
