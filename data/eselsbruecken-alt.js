@@ -107,13 +107,15 @@ const ESELSBRUECKEN_ALT = {
   /* سَرِيرٌ - Bett */
   '45758': [
     'Muster فَعِيل — dieselbe Form wie طَبِيبٌ (Arzt) und جَمِيلٌ (schön) aus deinem Bestand. Sprich alle drei hintereinander: sa-rīr, ṭa-bīb, ǧa-mīl.',
-    'Dieselbe Wurzel س ر ر trägt سُرُور, die Freude, und سِرّ, das Geheimnis. Das Bett ist der Ort, an den man sich zurückzieht und zur Ruhe kommt — daher der Name. (Aus den Wörterbüchern, nicht aus dem Unterricht.)'
+    'Dieselbe Wurzel س ر ر trägt سُرُور, die Freude, und سِرّ, das Geheimnis. Das Bett ist der Ort, an den man sich zurückzieht und zur Ruhe kommt — daher der Name. (Aus den Wörterbüchern, nicht aus dem Unterricht.)',
+    'Zwei Möbel, ein Bauprinzip: سَرِيرٌ und كُرْسِيٌّ hast du beide, beide tragen ein langes ī vor der letzten Silbe, und beide sagen, was man darauf tut — auf dem einen liegt man, auf dem anderen sitzt man. Wer sie als Paar lernt, verwechselt sie nicht mit مَكْتَبٌ, dem dritten Möbel in deiner Liste.'
   ],
 
   /* كُرْسِيٌّ - Stuhl */
   '45759': [
     'Du kennst den Namen آيَةُ الْكُرْسِيِّ, den Thronvers — genau dieses Wort steht darin. Was dort der Thron ist, ist hier der ganz gewöhnliche Stuhl.',
-    'Das doppelte ي am Ende ist kein Zierrat, es ist eine Silbe: kur-siyy, mit hörbarem Nachschlag. Wer kur-si sagt, lässt sie weg — und genau daran hört man, ob jemand das Wort gelesen oder gehört hat.'
+    'Das doppelte ي am Ende ist kein Zierrat, es ist eine Silbe: kur-siyy, mit hörbarem Nachschlag. Wer kur-si sagt, lässt sie weg — und genau daran hört man, ob jemand das Wort gelesen oder gehört hat.',
+    'Denk ihn dir als Teil deiner Zimmereinrichtung, nicht als Einzelwort: مَكْتَبٌ zum Arbeiten, كُرْسِيٌّ zum Sitzen, سَرِيرٌ zum Schlafen. Alle drei stehen in deinem Bestand, und alle drei kommen im Buch im selben Zusammenhang vor — ein Wort davon ruft die anderen mit auf.'
   ],
 
   /* نَجْمٌ - Stern */
@@ -273,7 +275,8 @@ const ESELSBRUECKEN_ALT = {
   /* فَقِيرٌ - arm */
   '45784': [
     'Die فُقَرَاء stehen an erster Stelle der acht Gruppen, denen die Zakāh zusteht — den Begriff hörst du in jedem Ramadan. Nimm den Plural gleich mit: فَقِيرٌ → فُقَرَاءُ. ⚠️ Am Ende steht ein ُ und KEIN Tanwīn — das ist kein Tippfehler, sondern eine eigene Wortsorte, die dir später als Regel begegnet.',
-    'Die beiden gehören zusammen wie zwei Seiten einer Münze, und der Unterschied liegt nicht im Besitz: غَنِيّ ist der, der auf niemanden angewiesen ist, فَقِير der, der angewiesen ist. Deshalb heißt الْغَنِيّ auch ein Name Allahs, aber الْفَقِير nie.'
+    'Die beiden gehören zusammen wie zwei Seiten einer Münze, und der Unterschied liegt nicht im Besitz: غَنِيّ ist der, der auf niemanden angewiesen ist, فَقِير der, der angewiesen ist. Deshalb heißt الْغَنِيّ auch ein Name Allahs, aber الْفَقِير nie.',
+    '⭐ Eine Stelle aus deinem auswendigen Bereich, und sie trifft genau das Gegenpaar: وَوَجَدَكَ عَآئِلًا فَأَغْنَىٰ — «und dich arm gefunden und dann reich gemacht» (93:8, aḍ-Ḍuḥā). Das Wort dort ist عَآئِلًا, nicht فَقِير — aber فَأَغْنَىٰ ist dieselbe Wurzel wie dein غَنِيٌّ. Wer den Vers kann, hat das Paar arm/reich schon im Ohr, und فَقِيرٌ hängt sich daran.'
   ],
 
   /* طَوِيلٌ - lang / groß */
@@ -763,7 +766,8 @@ const ESELSBRUECKEN_ALT = {
   /* نَاقَةٌ - Kamelstute */
   '45862': [
     '⚠️ Der Punkt ist nicht das Tier, sondern das Geschlecht: جَمَلٌ ist das männliche Kamel, نَاقَةٌ das weibliche. Dieselbe Ordnung hast du bei دِيكٌ (Hahn) und دَجَاجَةٌ (Henne). Im Deutschen sagt man „Kamel" für beide — im Arabischen sind es zwei Vokabeln, und du hast beide.',
-    'Die تاء مَرْبُوطة macht hier das WEIBLICHE Tier, nicht das einzelne Stück. ⚠️ Vergleiche mit بَقَرَةٌ und بَطَّةٌ, wo dasselbe ة das Einzeltier aus der Art heraushebt (بَقَرٌ ist das Rindvieh, بَقَرَةٌ die eine Kuh). Dasselbe Zeichen, zwei Aufgaben — hinsehen, welche gemeint ist.'
+    'Die تاء مَرْبُوطة macht hier das WEIBLICHE Tier, nicht das einzelne Stück. ⚠️ Vergleiche mit بَقَرَةٌ und بَطَّةٌ, wo dasselbe ة das Einzeltier aus der Art heraushebt (بَقَرٌ ist das Rindvieh, بَقَرَةٌ die eine Kuh). Dasselbe Zeichen, zwei Aufgaben — hinsehen, welche gemeint ist.',
+    'Nimm sie über die Wurzel: ن و ق. Aus derselben Wurzel kommt أَنِيقٌ, «gepflegt, elegant» — die نَاقَة galt als das schöne, sorgsam gehaltene Tier. ⚠️ Das ist eine Wörterbuchangabe, kein Beleg aus deinem Unterricht; nimm sie nur, wenn sie dir hilft.'
   ],
 
   /* بَطَّةٌ - Ente */
@@ -837,7 +841,8 @@ const ESELSBRUECKEN_ALT = {
   /* مُسْتَشْفًى - Krankenhaus */
   '45874': [
     '⭐ Das Muster ist der ganze Gewinn: مُسْتَفْعَل, und das سْتَـ in der Mitte heißt „nach etwas SUCHEN". Die Wurzel ش ف ي ist Heilung — das Krankenhaus ist der Ort, an dem man Heilung sucht. Wenn dir dieses سْتَـ wieder begegnet, weißt du schon die halbe Bedeutung.',
-    '⚠️ Am Ende steht eine أَلِف مَقْصورة — das ى ohne Punkte, gesprochen wie langes ā: mus-tasch-fā. Genau der Fachbegriff, den du gelernt hast. Und im Plural wird daraus wieder ein echtes ي: مُسْتَشْفَيَاتٌ. Dasselbe Verhalten wie bei عَلَى → عَلَيْهِ.'
+    '⚠️ Am Ende steht eine أَلِف مَقْصورة — das ى ohne Punkte, gesprochen wie langes ā: mus-tasch-fā. Genau der Fachbegriff, den du gelernt hast. Und im Plural wird daraus wieder ein echtes ي: مُسْتَشْفَيَاتٌ. Dasselbe Verhalten wie bei عَلَى → عَلَيْهِ.',
+    'مُسْتَشْفًى ist ein ORT, und du hast schon einen: مَكْتَبٌ, das Büro — der Ort des Schreibens (ك ت ب). Genauso ist مُسْتَشْفًى der Ort des Heilung-Suchens (ش ف ي). Arabisch baut Orte aus der Wurzel, statt ein neues Wort zu erfinden: wer die Wurzel kennt, errät den Ort.'
   ],
 
   /* ===================== Kapitel 9 — Sprache, Stadt, Alltag ========= */
