@@ -22,9 +22,10 @@ const GRAMMAR_RULES = [
   {
     id: "ismul-isara-hadha-01",
     name: "هَذَا (dies)",
-    shortExplanation: "هَذَا (hadha) ist ein اسْمُ الْإِشَارَة (Hinweiswort/Demonstrativpronomen). Es wird nur für Dinge benutzt, die (a) in der Nähe sind und (b) männlich (nicht für Personen, nicht für weibliche Wörter). Die Nähe muss nicht räumlich sein: der Lehrer erklärt am Beispiel يَوْمُ الْقِيامَة (der Tag der Auferstehung), dass dieser Tag im Koran mit هَذَا bezeichnet wird und nicht mit ذَلِكَ (jenes) – weil er als nah empfunden wird, nicht als fern.",
+    shortExplanation: "هَذَا (hadha) ist ein اسْمُ الْإِشَارَة (Hinweiswort/Demonstrativpronomen). Es wird für das benutzt, was (a) in der Nähe ist und (b) männlich – nicht für weibliche Wörter, dafür steht هَذِهِ. Menschen und Dinge gleichermaßen: Sharḥ Madīnah S. 3 definiert es als لِلْمُفْرَدِ الْمُذَكَّرِ الْقَرِيبِ الْعَاقِلِ، وَغَيْرِ الْعَاقِلِ – für das männliche Einzelne in der Nähe, ob vernunftbegabt oder nicht. Die Nähe muss nicht räumlich sein: der Lehrer erklärt am Beispiel يَوْمُ الْقِيامَة (der Tag der Auferstehung), dass dieser Tag im Koran mit هَذَا bezeichnet wird und nicht mit ذَلِكَ (jenes) – weil er als nah empfunden wird, nicht als fern.",
     color: "mubtada",
-    source: { folge: 1, video: "Folge 01", approxTimestamp: "10:07", chapter: 1 }
+    source: { folge: 1, video: "Folge 01", approxTimestamp: "10:07", chapter: 1 },
+    source2: { schluessel: 1, lektion: 1, seite: 3 }
   },
   {
     id: "hadha-stummes-alif-01",
