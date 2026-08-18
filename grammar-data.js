@@ -84,9 +84,10 @@ const GRAMMAR_RULES = [
   {
     id: "fragepartikel-alif-01",
     name: "أَ (Fragepartikel)",
-    shortExplanation: "Ein أَ vor einen vollständigen Satz gestellt macht aus einer Aussage eine Frage. Anders als هَلْ (hal, Entscheidungsfrage/ja-nein) wird أَ eher allgemein/rhetorisch genutzt.",
+    shortExplanation: "Ein أَ vor einen vollständigen Satz gestellt macht aus einer Aussage eine Frage. Zuerst und vor allem ist es eine Ja/Nein-Frage — der Madina-Schlüssel zeigt es in Lektion 1 genau so: أَهَذَا بَيْتٌ؟ „Ist dies ein Haus?\", Antwort نَعَمْ، هَذَا بَيْتٌ. „Ja, dies ist ein Haus.\" oder لَا، هَذَا مَسْجِدٌ. „Nein, dies ist eine Moschee.\" Die Wörterliste des Schlüssels sagt dasselbe: أَ steht vor Entscheidungsfragen, direkt vor dem Folgewort. Dein Lehrer stellt أَ zusätzlich dem هَلْ gegenüber und ordnet أَ dabei eher der allgemeinen oder rhetorischen Frage zu — das ist eine Vereinfachung zur Unterscheidung der beiden Partikeln, kein Widerspruch: أَ kann beides, und darüber hinaus in Alternativfragen mit أَمْ stehen. هَلْ kommt in Lektion 1 des Buchs gar nicht vor, es ist eine Ergänzung des Unterrichts.",
     color: "nasab",
-    source: { folge: 1, video: "Folge 01", approxTimestamp: "22:48", chapter: 1 }
+    source: { folge: 1, video: "Folge 01", approxTimestamp: "22:48", chapter: 1 },
+    source2: { schluessel: 1, lektion: 1, seite: 7 }
   },
   {
     id: "fragepartikel-hal-01",
