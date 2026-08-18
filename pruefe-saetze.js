@@ -180,3 +180,49 @@ for (const q of quellen){
     });
   }
 }
+
+/* ===================== Lexikon-Vergleich =====================
+   ⛔ Der Befund vom 18.08.2026: dieses Werkzeug laedt data/vokabeln-*.js
+   VOLLSTAENDIG (4433 Eintraege, 1606 Verben). Die App laedt nur, was Elias
+   freigeschaltet hat — im Browser gemessen 321 Eintraege mit 5 Verben. Die
+   Zerlegung haengt daran, und 9 der 208 Saetze kamen dadurch verschieden
+   heraus. Jedes "0 Fehler" oben galt fuer einen Zustand, den es bei ihm nicht
+   gibt.
+
+   Deshalb laeuft hier zum Schluss beides gegeneinander. Das kleine Lexikon ist
+   vocab-data.js allein — der unguenstigste Fall, also die richtige Untergrenze
+   ([[milder-bezugspunkt-verdeckt-mangel]]). */
+console.log('\n=== LEXIKON-VERGLEICH: sieht die App dasselbe wie diese Pruefung? ===');
+{
+  const alleSaetze = [].concat(...quellen.map(q => q.saetze));
+  const zerlege = (lexikon) => {
+    setzeLexikon(lexikon);
+    return alleSaetze.map(s => analysiereSatz(s.ar).map(t => t.wort + '\u0000' + t.rolle).join('\u0001'));
+  };
+  const mitAbzug = zerlege(wortschatz);
+  const mitApp   = zerlege(VOCAB_DATA);
+  const abweichend = [];
+  alleSaetze.forEach((s, i) => { if (mitAbzug[i] !== mitApp[i]) abweichend.push({ s, a: mitAbzug[i], b: mitApp[i] }); });
+
+  console.log(`  Abzug:  ${wortschatz.length} Eintraege, ${wortschatz.filter(v => v.type === 'verb').length} Verben`);
+  console.log(`  App:    ${VOCAB_DATA.length} Eintraege, ${VOCAB_DATA.filter(v => v.type === 'verb').length} Verben`);
+  if (!abweichend.length){
+    console.log(`  ok  Alle ${alleSaetze.length} Saetze werden gleich zerlegt — die Pruefung oben gilt auch fuer die App.`);
+  } else {
+    console.log(`  ⚠ ${abweichend.length} von ${alleSaetze.length} Saetzen werden UNTERSCHIEDLICH zerlegt.`);
+    console.log('    Was hier steht, sieht Elias anders als diese Pruefung. Feste Listen in');
+    console.log('    js/irab.js (VERBEN, NICHT_VERB, FUENF_NOMEN) machen die Zerlegung unabhaengig.');
+    for (const x of abweichend.slice(0, 12)){
+      console.log('    ── ' + x.s.id + '  ' + x.s.ar);
+      const A = x.a.split('\u0001'), B = x.b.split('\u0001');
+      A.forEach((w, i) => {
+        if (w === B[i]) return;
+        const [wort, r1] = w.split('\u0000'), r2 = (B[i] || '').split('\u0000')[1];
+        console.log('        ' + wort.padEnd(14) + 'Abzug: ' + String(r1).padEnd(30) + '| App: ' + r2);
+      });
+    }
+    if (abweichend.length > 12) console.log('    … und ' + (abweichend.length - 12) + ' weitere.');
+  }
+  /* Das Lexikon so zuruecklassen, wie der Rest der Datei es erwartet. */
+  setzeLexikon(wortschatz);
+}
