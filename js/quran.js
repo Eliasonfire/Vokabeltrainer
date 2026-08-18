@@ -609,7 +609,19 @@ function anDenAnfang(){
    ⚠️ Ganz oben wird immer ausgeklappt. Sonst gaebe es einen Zustand, aus dem
    man die Leiste nicht mehr hervorholen kann: bei scrollTop 0 laesst sich nicht
    weiter nach oben rollen, also kaeme nie ein Aufwaerts-Weg zustande. */
-const KOPF_SCHWELLE = 24;   /* px Weg, bevor umgeschaltet wird */
+/* ⭐ Zwei verschiedene Schwellen seit dem 18.08.2026. Elias: „ebenfalls möchte
+   ich, dass wenn ich im quran hoch scrolle und diese leiste wieder erscheint,
+   das es ein kleinen ticken länger dauert bis diese leiste erscheint. bedeutet
+   ich kann ein klein wenig länger hoch scrollen und erst dann soll diese leiste
+   auftauchen."
+
+   Vorher war beides derselbe Wert (24 px), und das war der Fehler: die zwei
+   Richtungen sind nicht gleich wichtig. Nach UNTEN soll die Leiste schnell weg,
+   sie stört beim Lesen. Nach OBEN darf sie sich Zeit lassen — wer ein Stück
+   zurückrollt, um ein Wort noch einmal zu sehen, will nicht sofort die halbe
+   Ansicht zugestellt bekommen. */
+const KOPF_SCHWELLE     = 24;   /* px Weg nach unten, bevor eingeklappt wird */
+const KOPF_SCHWELLE_AUF = 110;  /* px Weg nach oben, bevor sie wieder erscheint */
 const KOPF_RUHE     = 64;   /* px von oben, in denen immer ausgeklappt ist */
 let   KOPF_STAND    = 0;    /* scrollTop beim letzten Umschalten */
 let   KOPF_EIN      = false;/* ist gerade eingeklappt? */
@@ -636,7 +648,7 @@ function pruefeLeseRichtung(){
 
   const weg = y - KOPF_STAND;
   if (weg > KOPF_SCHWELLE){ setzeKopf(true);  KOPF_STAND = y; }
-  else if (weg < -KOPF_SCHWELLE){ setzeKopf(false); KOPF_STAND = y; }
+  else if (weg < -KOPF_SCHWELLE_AUF){ setzeKopf(false); KOPF_STAND = y; }
 }
 
 /* Beim Betreten und Verlassen einer Sure aufklappen und den Weg zuruecksetzen.

@@ -135,7 +135,6 @@ function renderCard(){
   if (pop) pop.classList.remove('show');
 
   document.getElementById('cardChapter').textContent = kapitelBeschriftung(w);
-  zeichneKenneSchonKnopf();
 
   const dir = cardDirection(SESSION.idx);
   const frontEl = document.getElementById('cardArabic');
@@ -580,8 +579,16 @@ function renderNotiz(w){
      Vorschlag erscheint nur, solange nichts Eigenes dasteht, und ist als
      Vorschlag beschriftet, damit er nicht wie eigene Arbeit aussieht.
      Er liegt in `w.mnemo` (vocab-data.js), also NICHT in `vt_notes` - eine
-     Uebernahme kann er also gar nicht versehentlich ausloesen. */
-  const vorschlag = (!notiz && w.mnemo) ? String(w.mnemo).trim() : '';
+     Uebernahme kann er also gar nicht versehentlich ausloesen.
+
+     ⭐ Seit dem 18.08.2026 steht hier NICHT mehr fest `w.mnemo`, sondern der
+     Vorschlag, zu dem er zuletzt geblaettert hat (js/kern.js). Ohne Blaettern
+     ist das Nummer 0 - und die ist `w.mnemo`, das Verhalten aendert sich fuer
+     alle unberuehrten Woerter also nicht. */
+  const liste = vorschlagsListe(w);
+  const vorschlag = (!notiz && liste.length)
+    ? liste[gewaehlterVorschlag(w.id, liste.length)]
+    : '';
   /* innerHTML statt textContent, damit die arabischen Woerter im Text gross
      gesetzt werden koennen (arabischHervorheben, js/kern.js). Die Funktion
      maskiert selbst - `notiz` ist Elias' eigener Text und darf nicht roh in
@@ -648,6 +655,12 @@ function blaettereVorschlag(schritt){
   /* Rundherum statt am Ende anzustossen: er soll nie in eine Sackgasse tippen. */
   VORSCHLAG_NR = (VORSCHLAG_NR + schritt + VORSCHLAEGE.length) % VORSCHLAEGE.length;
   zeigeVorschlag();
+  /* Die Wahl ueberdauert das Fenster (18.08.2026). Das ist KEINE Uebernahme -
+     siehe den langen Kommentar an setzeGewaehltenVorschlag() in js/kern.js. */
+  const w = SESSION.words[SESSION.idx];
+  if (!w) return;
+  setzeGewaehltenVorschlag(w.id, VORSCHLAG_NR);
+  renderNotiz(w);   /* die Karte dahinter sofort mitziehen, nicht erst beim naechsten Aufbau */
 }
 
 function oeffneNotizEditor(){
@@ -661,7 +674,10 @@ function oeffneNotizEditor(){
   feld.value = getNote(w.id);
   const vorschlagKasten = document.getElementById('neVorschlag');
   VORSCHLAEGE = getNote(w.id) ? [] : vorschlagsListe(w);
-  VORSCHLAG_NR = 0;
+  /* Dort weitermachen, wo er stehengeblieben ist - sonst faengt das Blaettern
+     bei jedem Oeffnen wieder bei Nummer 1 an, waehrend die Karte dahinter
+     laengst Nummer 3 zeigt. */
+  VORSCHLAG_NR = gewaehlterVorschlag(w.id, VORSCHLAEGE.length);
   zeigeVorschlag();
   vorschlagKasten.classList.toggle('hidden', !VORSCHLAEGE.length);
   document.getElementById('btnDeleteNote').style.visibility = getNote(w.id) ? 'visible' : 'hidden';
@@ -749,41 +765,12 @@ document.getElementById('btnSpeakWord').addEventListener('click', (e)=>{
   e.stopPropagation();
   speakArabic(SESSION.words[SESSION.idx].ar);
 });
-/* ---------- „Kenne ich schon" ----------
-
-   Ein Tipp, und das Wort kommt nicht mehr. Bewusst OHNE Rueckfrage: eine
-   Sicherheitsabfrage bei jedem Wort waere bei einem Knopf, den man mehrmals
-   pro Runde braucht, laestiger als der Fehlgriff selbst - und der Fehlgriff
-   ist folgenlos, weil derselbe Knopf ihn sofort zuruecknimmt und die Liste in
-   den Einstellungen ihn dauerhaft zurueckholt.
-
-   ⚠️ Die Karte wird NICHT weggeschaltet. Wer gerade auf der Rueckseite steht,
-   will die Antwort noch zu Ende lesen; und die Runde umzubauen, waehrend man
-   mitten darin steht, hat schon einmal den Zeiger springen lassen (siehe
-   passeRundeAnAuswahlAn). Das Wort verschwindet ab der NAECHSTEN Runde. */
-function zeichneKenneSchonKnopf(){
-  const b = document.getElementById('btnKenneSchon');
-  if (!b) return;
-  const w = SESSION.words[SESSION.idx];
-  const markiert = (typeof kennErSchon === 'function') && kennErSchon(w);
-  b.classList.toggle('ist-markiert', markiert);
-  b.querySelector('span').textContent = markiert
-    ? 'Ausgeblendet — wieder abfragen'
-    : 'Kenne ich schon — nicht mehr abfragen';
-}
-
-document.getElementById('btnKenneSchon').addEventListener('click', (e)=>{
-  e.stopPropagation();
-  const w = SESSION.words[SESSION.idx];
-  if (!w) return;
-  const jetztAn = !kennErSchon(w);
-  setzeKennErSchon(w.id, jetztAn);
-  zeichneKenneSchonKnopf();
-  if (typeof zeichneKenneSchonListe === 'function') zeichneKenneSchonListe();
-  toast(jetztAn
-    ? `${w.de} kommt nicht mehr — zurückholen in den Einstellungen.`
-    : `${w.de} wird wieder abgefragt.`);
-});
+/* ⛔ „Kenne ich schon" saß bis zum 18.08.2026 hier, als Zeile unter den vier
+   Stufen. Elias: „das ist an der falschen stelle, das sollte eigentlich beim
+   hörmodus doch sein." Er hat recht: die Karteikarte hat mit „Leicht" schon
+   eine Stufe für „das kann ich", der Hörmodus hatte keine. Der Knopf steht
+   jetzt in js/hoeren.js; die WIRKUNG ist unverändert global (kern.js
+   `passtZurAuswahl`, deshalb greift sie hier weiterhin). */
 
 /* Das X beendet die Runde bewusst - danach startet "Lernen" wieder eine neue. */
 document.getElementById('btnExitLearn').addEventListener('click', ()=>{

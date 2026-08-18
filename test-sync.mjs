@@ -176,6 +176,47 @@ console.log('=== „Kenne ich schon" (vt_bekannt) ===');
 }
 
 console.log('');
+console.log('=== Gewaehlter Eselsbruecken-Vorschlag (vt_vorschlagNr) ===');
+{
+  /* Laeuft ueber DENSELBEN Zweig wie vt_bekannt (js/sync.js). Genau deshalb
+     eigene Faelle: teilt sich zwei Schluessel einen Zweig, faellt es nicht auf,
+     wenn die Bedingung dort spaeter einmal umgebaut wird und den zweiten
+     Schluessel verliert. */
+  const { ctx, speicher } = baueUmgebung();
+  const fuehreZusammen = vm.runInContext('fuehreZusammen', ctx);
+
+  /* 1. Zwei Geraete, zwei verschiedene Woerter - beide Wahlen bleiben. */
+  speicher['vt_vorschlagNr'] = JSON.stringify({ a: { nr:2, zeit:100 } });
+  fuehreZusammen({ stempel: {}, daten: { vt_vorschlagNr: JSON.stringify({ b: { nr:1, zeit:200 } }) } });
+  const r = JSON.parse(speicher['vt_vorschlagNr']);
+  pruefe('Vorschlagswahl beider Geräte bleibt erhalten',
+    r.a && r.a.nr === 2 && r.b && r.b.nr === 1, speicher['vt_vorschlagNr']);
+
+  /* 2. Dasselbe Wort auf beiden Geraeten: die SPAETERE Wahl gilt. */
+  const { ctx: c2, speicher: s2 } = baueUmgebung();
+  const fz2 = vm.runInContext('fuehreZusammen', c2);
+  s2['vt_vorschlagNr'] = JSON.stringify({ x: { nr:1, zeit:100 } });
+  fz2({ stempel: {}, daten: { vt_vorschlagNr: JSON.stringify({ x: { nr:2, zeit:900 } }) } });
+  pruefe('spätere Vorschlagswahl gewinnt',
+    JSON.parse(s2['vt_vorschlagNr']).x.nr === 2, s2['vt_vorschlagNr']);
+
+  /* 3. Andersherum: die aeltere Wahl darf die neuere nicht umwerfen. Das ist
+        der Fall, der Elias' Beschwerde wieder herstellen wuerde - die Karte
+        zeigte dann nach dem Abgleich wieder den urspruenglichen Vorschlag. */
+  const { ctx: c3, speicher: s3 } = baueUmgebung();
+  const fz3 = vm.runInContext('fuehreZusammen', c3);
+  s3['vt_vorschlagNr'] = JSON.stringify({ x: { nr:2, zeit:900 } });
+  fz3({ stempel: {}, daten: { vt_vorschlagNr: JSON.stringify({ x: { nr:0, zeit:100 } }) } });
+  pruefe('ältere Wahl wirft die neuere nicht um',
+    JSON.parse(s3['vt_vorschlagNr']).x.nr === 2, s3['vt_vorschlagNr']);
+
+  /* 4. Der Schluessel steht ueberhaupt in SYNC_SCHLUESSEL. */
+  const liste = vm.runInContext('SYNC_SCHLUESSEL', ctx);
+  pruefe('vt_vorschlagNr steht in SYNC_SCHLUESSEL',
+    liste.indexOf('vt_vorschlagNr') >= 0, liste.join(', '));
+}
+
+console.log('');
 console.log('=== Filter: was wird ueberhaupt abgeglichen ===');
 {
   const { ctx, speicher } = baueUmgebung();

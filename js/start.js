@@ -20,8 +20,25 @@ function renderHome(){
      in js/statistik.js; 2-4 bleiben neutral, weil eine fuenfstufige Farbskala
      behaupten wuerde, Box 3 sei "halb gut". */
   const BOX_TON = { 1:'schlecht', 5:'gut' };
+  /* ⭐ Das Intervall steht seit dem 18.08.2026 an der Kachel. Elias: „am besten
+     schreibst du auch dazu bei den boxen in welchem intervall das abgefragt
+     wird weil das ist aktuell nicht sichtbar und nicht transparent."
+
+     Er hat recht: die Zahlen 1 bis 5 sagen von sich aus gar nichts. Erst mit
+     „heute / 1 Tag / 3 Tage / 7 Tage / 16 Tage" wird sichtbar, was das
+     Hochwandern eigentlich bewirkt — und warum eine Vokabel in Box 5 wochenlang
+     nicht auftaucht.
+
+     ⚠️ Die Zahlen kommen aus INTERVALS (js/kern.js) und werden NICHT hier noch
+     einmal hingeschrieben. Zwei Listen derselben Zahlen laufen sonst
+     auseinander, sobald jemand eine davon ändert — und die Anzeige log dann,
+     ohne dass es auffällt. */
+  const intervallText = b => {
+    const t = INTERVALS[b];
+    return t === 0 ? 'heute' : t === 1 ? '1 Tag' : `${t} Tage`;
+  };
   document.getElementById('boxOverview').innerHTML = boxCounts.map((n,i)=>`
-    <div class="box-pip${BOX_TON[i+1] ? ' box-'+BOX_TON[i+1] : ''}" data-openlist="box:${i+1}"><div class="n">${n}</div><div class="l">Box ${i+1}</div></div>
+    <div class="box-pip${BOX_TON[i+1] ? ' box-'+BOX_TON[i+1] : ''}" data-openlist="box:${i+1}"><div class="n">${n}</div><div class="l">Box ${i+1}</div><div class="iv">${intervallText(i+1)}</div></div>
   `).join('');
 
   /* Die Kachel haengt an der Einstellung (Elias, 31.07.2026). Sie zeigt genau

@@ -20,19 +20,47 @@ function renderCategories(){
 function renderChapterCats(){
   /* Die Kapitelliste kommt jetzt aus dem aktiven Buch - fest 1-9 stimmte nur
      fuer Madina 1 und auch dort nur fuer die freigeschalteten Kapitel. */
-  /* 'grammar' sind die zehn Fachbegriffe aus dem Unterricht
-     (data/fachbegriffe.js). Sie stehen neben „Eigene Vokabeln" und nicht
-     darin: sie gehoeren zu keinem Kapitel, und Elias soll sie als eigene
-     Gruppe durchsehen koennen. */
-  const chapters = [...kapitelDesBuchs(), 'personal', 'grammar'];
+  /* ⭐ „Eigene Vokabeln" und die Fachbegriffe stehen seit dem 18.08.2026 GANZ
+     OBEN, mit Stern - vorher hingen sie hinter allen 24 Kapiteln.
+
+     Elias: „in der vokabeltrainer app kann ich anscheinend keine eigenen
+     begriffe rein machen. die funktion ging mal aber ich finde sie nirgends."
+
+     ⭐ Nachgemessen: die Funktion war die ganze Zeit da. „Eigene Vokabeln" war
+     die **26. von 27 Zeilen**, und das Eingabefeld darin (348 px, fuenf Felder)
+     erscheint erst, wenn man die Liste geoeffnet hat. Nicht kaputt, sondern
+     unauffindbar - und unauffindbar ist fuer ihn dasselbe wie kaputt.
+
+     Dieselbe Entscheidung wie am 29.07.2026 bei den eigenen Kategorien, die er
+     ausdruecklich oben haben wollte: seine eigenen sind ihm wichtiger als die
+     automatischen, denn er hat sie ja gerade deshalb angelegt. */
+  const eigeneOben = ['personal', 'grammar'];
+  const chapters = [...eigeneOben, ...kapitelDesBuchs()];
   const html = chapters.map(ch=>{
     const words = buchVokabeln().filter(w=>w.chapter===ch);
     const name = CHAPTER_NAMES[ch] || `Kapitel ${ch}`;
-    const label = (ch==='personal' || ch==='grammar')
-      ? `${icon('note')}<span>${name}</span>`
+    const eigen = eigeneOben.includes(ch);
+    /* Die Unterzeile sagt, was man dort TUN kann. Ohne sie ist „Eigene
+       Vokabeln" nur eine Liste, und dass das Eingabefeld dahinter liegt, steht
+       nirgends - genau daran ist er gescheitert. */
+    const unterzeile = ch === 'personal'
+      ? `<div class="list-row-sub">Hier trägst du eigene Wörter ein</div>`
+      /* ⚠️ Hier standen erst zwei arabische Begriffe als Beispiel. Im
+         Bildschirmfoto zerfiel die Zeile: arabischer Text mitten in einem
+         deutschen Satz kehrt die Reihenfolge um, und das Komma dazwischen ist
+         richtungsneutral und wandert. Rein deutsch ist hier das Richtige - die
+         Begriffe selbst stehen ja eine Zeile weiter in der Liste. */
+      : ch === 'grammar'
+        ? `<div class="list-row-sub">Die Grammatikbegriffe deines Lehrers</div>`
+        : '';
+    const label = eigen
+      ? `<span class="eigen-stern">★</span><span>${name}</span>`
       : `<span>Kap. ${ch} — ${name}</span>`;
-    return `<div class="list-row" data-openlist="chapter:${ch}">
-      <div class="list-row-title">${label}</div>
+    return `<div class="list-row${eigen ? ' list-row-eigen' : ''}" data-openlist="chapter:${ch}">
+      <div class="list-row-haupt">
+        <div class="list-row-title">${label}</div>
+        ${unterzeile}
+      </div>
       <div class="list-row-count">${words.length}</div>
     </div>`;
   }).join('');
@@ -227,7 +255,10 @@ function openWordList(key){
   } else if (key.startsWith('box:')){
     const boxNum = Number(key.split(':')[1]);
     words = buchVokabeln().filter(w=>PROGRESS[w.id] && PROGRESS[w.id].box===boxNum);
-    title = `Box ${boxNum}`;
+    /* Das Intervall gehört in die Überschrift (18.08.2026, Elias' Wunsch nach
+       Transparenz). Aus INTERVALS gelesen, nicht hier noch einmal getippt. */
+    const t = INTERVALS[boxNum];
+    title = `Box ${boxNum} — ${t === 0 ? 'heute fällig' : t === 1 ? 'nach 1 Tag' : `nach ${t} Tagen`}`;
   } else if (key==='quran'){
     words = buchVokabeln().filter(w=>w.quran);
     title = 'Vokabeln im Quran';
@@ -240,9 +271,17 @@ function openWordList(key){
      innerHTML. Bei den Buchvokabeln faellt das nicht auf, aber eigene Vokabeln
      tippt Elias selbst ein - ein '<' darin haette die Liste zerlegt. Im
      Quran-Teil war derselbe Fehler am 30.07. schon behoben, hier nicht. */
+  /* ⚠️ Seit dem 18.08.2026 hat das Auswaehlen ein EIGENES Kaestchen. Vorher war
+     die ganze Zeile der Schalter; jetzt oeffnet ein Tipp auf die Zeile die
+     Wortkarte, und beides braucht getrennte Flaechen. Bewusst zwei feste
+     Bedeutungen statt eines Auswahl-Modus: „mal dies, mal das, je nachdem ob
+     schon etwas markiert ist" waere an derselben Stelle unvorhersehbar. */
   document.getElementById('wordList').innerHTML = words.map(w=>`
     <div class="word-list-item waehlbar" data-wordid="${escapeHtml(String(w.id))}">
-      <div><div class="wl-ar">${escapeHtml(w.ar)}</div><div class="wl-de">${escapeHtml(w.de)}</div></div>
+      <button class="wl-wahl" data-wahl aria-label="Zum Verlegen auswählen">
+        <span class="kasten"><svg class="ic"><use href="#ic-check"/></svg></span>
+      </button>
+      <div class="wl-text"><div class="wl-ar">${escapeHtml(w.ar)}</div><div class="wl-de">${escapeHtml(w.de)}</div></div>
       <span class="wl-box">Box ${PROGRESS[w.id]?PROGRESS[w.id].box:1}</span>
     </div>
   `).join('') || '<div class="empty-state">Keine Wörter in dieser Kategorie.</div>';
@@ -302,13 +341,18 @@ function zeichneBoxAuswahl(){
     ).join('');
 }
 
-/* Ein Tipp auf eine Zeile: markieren oder Markierung wegnehmen. */
+/* Ein Tipp auf das Kaestchen markiert, ein Tipp auf den Rest der Zeile oeffnet
+   die Wortkarte. */
 document.getElementById('wordList').addEventListener('click', (e)=>{
   const zeile = e.target.closest('.word-list-item');
   if (!zeile || !zeile.dataset.wordid) return;
   const id = zeile.dataset.wordid;
-  if (BOX_AUSWAHL.has(id)) BOX_AUSWAHL.delete(id); else BOX_AUSWAHL.add(id);
-  zeichneBoxAuswahl();
+  if (e.target.closest('[data-wahl]')){
+    if (BOX_AUSWAHL.has(id)) BOX_AUSWAHL.delete(id); else BOX_AUSWAHL.add(id);
+    zeichneBoxAuswahl();
+    return;
+  }
+  zeigeWortKarte(id);
 });
 
 document.getElementById('boxZiele').addEventListener('click', (e)=>{
@@ -485,3 +529,422 @@ document.getElementById('btnPoolFertig').addEventListener('click', ()=>{
   knopf.setAttribute('aria-expanded', String(!auf));
 });
 
+
+/* ---------- Die Wortkarte zum Nachschlagen (Elias, 18.08.2026) ----------
+
+   „ich will wenn ich in einer box bin oder auch in den kategorien, dass sich
+   die karteikarte öffnet damit ich da auch die vorschläge und den satz sehen
+   kann. natürlich soll die box weiterhin frei in andere boxen ver[schieben]
+   können … möchte aber im selben modus bleiben. also einfach nur im prinzip
+   wie ein pop up der karteikarte."
+
+   ⛔ Sie ruehrt den Leitner-Stand NICHT an - keine Bewertung, keine neue
+   Faelligkeit, kein Zaehler. Nachschlagen ist kein Ueben; sonst verschoebe
+   jedes Nachsehen den Rhythmus einer Karte. Verlegt wird weiterhin ausschliess-
+   lich ueber die Kaestchen und die Leiste unten, genau wie vorher.
+
+   ⚠️ Beide Seiten der Lernkarte stehen untereinander statt hintereinander. Zum
+   Nachschlagen ist Umdrehen sinnlos - er weiss ja, welches Wort er angetippt
+   hat, er will die Rueckseite sehen. */
+let WK_WORT = null;
+
+function baueWortKarte(w){
+  const t = [];
+  const box = PROGRESS[w.id] ? PROGRESS[w.id].box : 1;
+
+  t.push(`<div class="wk-kopfzeile">
+    <div class="wk-marken">
+      <span class="chip chip-chapter">${escapeHtml(kapitelBeschriftung(w))}</span>
+      <span class="wl-box">Box ${box}</span>
+    </div>
+    <button class="icon-btn" id="btnCloseWortKarte" aria-label="Schließen"><svg class="ic"><use href="#ic-close"/></svg></button>
+  </div>`);
+
+  /* ⚠️ Reihenfolge auf Elias' Ansage vom 18.08.2026: „die deutsche übersetzung
+     sollte direkt unter dem arabischen sein … die deutsche übersetzung sollte
+     über dem ton zeichen sein." Vorher stand der Lautsprecher dazwischen und
+     trennte Wort und Bedeutung. */
+  t.push(`<div class="wk-ar" lang="ar" dir="rtl">${escapeHtml(w.sg || w.ar)}</div>`);
+  t.push(`<div class="wk-de">${escapeHtml(w.de)}</div>`);
+  if (w.deNeben) t.push(`<div class="wk-neben">auch: ${escapeHtml(w.deNeben)}</div>`);
+  t.push(`<div class="wk-ton">
+    <button class="speak-btn" data-wksprich aria-label="Vorlesen"><svg class="ic"><use href="#ic-speaker"/></svg></button>
+  </div>`);
+
+  /* Formen unabhaengig von SETTINGS.showPlural: dieser Kasten ist zum
+     Nachschlagen da, und wer hier hersieht, will alles sehen. Auf der Lernkarte
+     bleibt der Schalter, was er ist - dort waere die Form ein Ratehinweis. */
+  const formen = [];
+  if (w.pl)    formen.push(['Plural',   formenAnzeige(w.pl)]);
+  if (w.femSg) formen.push(['Fem.',     formenAnzeige(w.femSg)]);
+  if (w.femPl) formen.push(['Fem. Pl.', formenAnzeige(w.femPl)]);
+  if (w.root)  formen.push(['Wurzel',   w.root]);
+  if (formen.length) t.push(`<div class="wk-formen">` + formen.map(([l,v])=>
+    `<span><i class="lbl">${escapeHtml(l)}</i><span class="wf-ar">${escapeHtml(v)}</span></span>`).join('') + `</div>`);
+
+  /* Eselsbruecke: seine eigene Notiz schlaegt jeden Vorschlag - dieselbe harte
+     Rangfolge wie auf der Lernkarte (Punkt 8 vom 10.08.2026). */
+  /* ⭐ Elias, 18.08.2026: „abgesehen davon kann ich die vorschläge nicht mehr
+     abändern wenn ich das wollte." Stimmte: auf der Lernkarte öffnet ein Tipp
+     auf den Eselsbrücken-Kasten den Notizeditor, hier gab es nichts dergleichen
+     — man konnte nur blättern. Jetzt steht in beiden Fällen ein Stift daneben. */
+  const notiz = getNote(w.id);
+  if (notiz){
+    t.push(`<div class="wk-abschnitt">
+      <div class="wk-marke"><span>Deine Eselsbrücke</span>
+        <button class="wk-stift" data-wkmerk aria-label="Eselsbrücke ändern">${icon('note')}ändern</button></div>
+      <div class="de">${arabischHervorheben(notiz)}</div>
+    </div>`);
+  } else {
+    const liste = (typeof vorschlagsListe === 'function') ? vorschlagsListe(w) : [];
+    if (liste.length){
+      const nr = gewaehlterVorschlag(w.id, liste.length);
+      t.push(`<div class="wk-abschnitt">
+        <div class="wk-marke"><span>Vorschlag</span>
+          <span>${liste.length>1?`${nr+1} von ${liste.length}`:''}
+          <button class="wk-stift" data-wkmerk aria-label="Eigene Eselsbrücke schreiben">${icon('note')}eigene</button></span></div>
+        <div class="de">${arabischHervorheben(liste[nr])}</div>
+        ${liste.length>1?`<div class="wk-blaettern">
+          <button class="btn btn-secondary btn-klein" data-wkblatt="-1">← Vorheriger</button>
+          <button class="btn btn-secondary btn-klein" data-wkblatt="1">Anderer →</button>
+        </div>`:''}
+      </div>`);
+    } else {
+      t.push(`<div class="wk-abschnitt">
+        <div class="wk-marke"><span>Eselsbrücke</span>
+          <button class="wk-stift" data-wkmerk aria-label="Eselsbrücke schreiben">${icon('note')}schreiben</button></div>
+        <div class="de" style="color:var(--text-faint)">Noch keine — schreib dir eine.</div>
+      </div>`);
+    }
+  }
+
+  if (w.sentAr){
+    t.push(`<div class="wk-abschnitt">
+      <div class="wk-marke"><span>Beispielsatz</span></div>
+      <div class="ar" lang="ar" dir="rtl">${buildSentenceHtml(w, { ohneLuecke:true })}</div>
+      <div class="de">${escapeHtml(w.sentDe || '')}</div>
+    </div>`);
+  }
+
+  if (w.quran){
+    t.push(`<div class="wk-abschnitt">
+      <div class="wk-marke"><span>Quran-Bezug</span><span>${escapeHtml(`${w.quran.surah} ${w.quran.ayah}`)}</span></div>
+      <div class="ar" lang="ar" dir="rtl">${quranMitTreffer(w.quran.ar, w)}</div>
+      <div class="de">${escapeHtml(w.quran.de || w.quran.note || '')}</div>
+    </div>`);
+  }
+
+  /* Bearbeiten und Loeschen (Elias, 18.08.2026): „ich will auch die vokabeln
+     bearbeiten können, alle. aber vorallem will ich auch die möglichkeit haben
+     meine eigenen vokabeln auch wieder zu löschen. das kann ich aktuell nicht."
+
+     ⛔ Geloescht wird nur, was ihm gehoert. Eine Buchvokabel zu loeschen waere
+     eine Scheinfunktion: der naechste arabicroots-Abzug brachte sie zurueck,
+     und niemand wuesste warum. Fuer die gibt es stattdessen das Zuruecksetzen
+     auf den Abzug, sobald er etwas geaendert hat. */
+  /* ⚠️ Auch die Fachbegriffe (18.08.2026, Elias: „fachbegriffe möchte ich auch
+     löschen können"). Sie liegen in einer ausgelieferten Datei und werden nicht
+     wirklich gelöscht, sondern beim Laden übersprungen — für ihn ist das
+     dasselbe. ⛔ Diese Zeile stand zuerst nur auf 'personal', während kern.js
+     schon beide erlaubte: der Knopf erschien nie, obwohl die Funktion dahinter
+     fertig war. Aufgefallen nur, weil ich es im Browser durchgeklickt habe. */
+  const eigen = w.chapter === 'personal' || w.chapter === 'grammar';
+  const geaendert = (typeof WORT_AENDERUNGEN !== 'undefined') && !!WORT_AENDERUNGEN[w.id];
+  t.push(`<div class="wk-aktionen">
+    <button class="btn btn-secondary btn-klein" data-wkbearbeiten>${icon('note')}Bearbeiten</button>
+    ${eigen ? `<button class="btn btn-secondary btn-klein wk-loeschen" data-wkloeschen>${icon('trash')}Löschen</button>` : ''}
+    ${(!eigen && geaendert) ? `<button class="btn btn-secondary btn-klein" data-wkzuruecksetzen>Auf Original zurück</button>` : ''}
+  </div>`);
+
+  return t.join('');
+}
+
+/* Das Bearbeitungsformular liegt IN der Wortkarte, nicht in einem zweiten
+   Fenster: ein Fenster ueber einem Fenster ist auf dem Handy kaum noch
+   wegzutippen, und er soll beim Aendern sehen, was daneben steht. */
+function baueWortFormular(w){
+  const feld = (id, beschriftung, wert, arabisch) => `
+    <label class="wk-feld">
+      <span>${escapeHtml(beschriftung)}</span>
+      <input type="text" id="${id}" value="${escapeHtml(wert || '')}"
+             ${arabisch ? 'lang="ar" dir="rtl"' : ''} autocomplete="off" spellcheck="false">
+    </label>`;
+  return `<div class="wk-kopfzeile">
+      <div class="wk-marken"><span class="chip chip-chapter">Bearbeiten</span></div>
+      <button class="icon-btn" id="btnCloseWortKarte" aria-label="Schließen"><svg class="ic"><use href="#ic-close"/></svg></button>
+    </div>
+    ${feld('wkAr', 'Arabisch', w.ar, true)}
+    ${feld('wkDe', 'Deutsch', w.de, false)}
+    ${feld('wkPl', 'Plural (optional)', w.pl, true)}
+    ${feld('wkSentAr', 'Beispielsatz Arabisch (optional)', w.sentAr, true)}
+    ${feld('wkSentDe', 'Beispielsatz Deutsch (optional)', w.sentDe, false)}
+    <div class="wk-aktionen">
+      <button class="btn btn-secondary btn-klein" data-wkabbrechen>Abbrechen</button>
+      <button class="btn btn-primary btn-klein" data-wkspeichern>${icon('check')}Speichern</button>
+    </div>`;
+}
+
+/* ---------- Eselsbrücke schreiben oder ändern ----------
+
+   ⛔ Ein LEERES Feld löscht die eigene Notiz und lässt den Vorschlag wieder
+   erscheinen. Das ist der Rückweg, ohne den die Funktion eine Einbahnstraße
+   wäre — derselbe Gedanke wie bei der Liste in den Einstellungen.
+
+   ⚠️ Vorgefüllt wird ausschließlich mit SEINEM Text, nie mit dem Vorschlag.
+   Punkt 8 vom 10.08.2026: ein vorgefüllter Vorschlag wäre die stille
+   Übernahme, die es nicht geben soll. Wer den Vorschlag als Grundlage will,
+   kopiert ihn bewusst — er steht direkt darüber. */
+function baueMerkFormular(w){
+  return `<div class="wk-kopfzeile">
+      <div class="wk-marken"><span class="chip chip-chapter">Eselsbrücke</span></div>
+      <button class="icon-btn" id="btnCloseWortKarte" aria-label="Schließen"><svg class="ic"><use href="#ic-close"/></svg></button>
+    </div>
+    <div class="wk-ar" lang="ar" dir="rtl" style="font-size:clamp(1.8rem,8vw,2.6rem)">${escapeHtml(w.sg || w.ar)}</div>
+    <label class="wk-feld">
+      <span>Deine eigene Eselsbrücke — leer lassen, um wieder den Vorschlag zu sehen</span>
+      <textarea id="wkMerkText" rows="5" lang="de" placeholder="Wie merkst du dir dieses Wort?">${escapeHtml(getNote(w.id))}</textarea>
+    </label>
+    <div class="wk-aktionen">
+      <button class="btn btn-secondary btn-klein" data-wkabbrechen>Abbrechen</button>
+      <button class="btn btn-primary btn-klein" data-wkmerkspeichern>${icon('check')}Speichern</button>
+    </div>`;
+}
+
+function zeigeWortKarte(id){
+  const w = byId(id);
+  if (!w) return;
+  WK_WORT = w;
+  const karte = document.getElementById('wortKarte');
+  karte.innerHTML = baueWortKarte(w);
+  karte.scrollTop = 0;                       /* nicht dort anfangen, wo das letzte Wort aufhoerte */
+  karte.classList.remove('hidden');
+  document.getElementById('wortKarteBackdrop').classList.remove('hidden');
+}
+
+function schliesseWortKarte(){
+  WK_WORT = null;
+  document.getElementById('wortKarte').classList.add('hidden');
+  document.getElementById('wortKarteBackdrop').classList.add('hidden');
+}
+
+document.getElementById('wortKarteBackdrop').addEventListener('click', schliesseWortKarte);
+document.getElementById('wortKarte').addEventListener('click', (e)=>{
+  if (e.target.closest('#btnCloseWortKarte')) { schliesseWortKarte(); return; }
+  if (e.target.closest('[data-wksprich]') && WK_WORT){ speakArabic(WK_WORT.sg || WK_WORT.ar); return; }
+  const karte = document.getElementById('wortKarte');
+
+  if (e.target.closest('[data-wkbearbeiten]') && WK_WORT){
+    karte.innerHTML = baueWortFormular(WK_WORT);
+    karte.scrollTop = 0;
+    return;
+  }
+  if (e.target.closest('[data-wkmerk]') && WK_WORT){
+    karte.innerHTML = baueMerkFormular(WK_WORT);
+    karte.scrollTop = 0;
+    document.getElementById('wkMerkText').focus();
+    return;
+  }
+  if (e.target.closest('[data-wkmerkspeichern]') && WK_WORT){
+    const text = (document.getElementById('wkMerkText')?.value || '').trim();
+    setNote(WK_WORT.id, text);
+    karte.innerHTML = baueWortKarte(WK_WORT);
+    toast(text ? 'Eselsbrücke gespeichert' : 'Eigene Eselsbrücke entfernt — der Vorschlag steht wieder da.');
+    return;
+  }
+  if (e.target.closest('[data-wkabbrechen]') && WK_WORT){
+    karte.innerHTML = baueWortKarte(WK_WORT);
+    return;
+  }
+  if (e.target.closest('[data-wkspeichern]') && WK_WORT){
+    const wert = id => (document.getElementById(id)?.value || '').trim();
+    const ok = speichereWortAenderung(WK_WORT.id, {
+      ar: wert('wkAr'), de: wert('wkDe'), pl: wert('wkPl'),
+      sentAr: wert('wkSentAr'), sentDe: wert('wkSentDe')
+    });
+    if (!ok){ toast('Arabisch und Deutsch dürfen nicht leer sein'); return; }
+    karte.innerHTML = baueWortKarte(WK_WORT);
+    openWordList(AKTUELLE_LISTE);          /* die Liste dahinter zeigt sonst den alten Text */
+    toast('Gespeichert');
+    return;
+  }
+  if (e.target.closest('[data-wkzuruecksetzen]') && WK_WORT){
+    /* Nur die eigene Fassung wegwerfen; das Original steht in vocab-data.js und
+       ist nach dem Neuladen wieder da. Ohne Neuladen bliebe die geaenderte
+       Fassung im Speicher stehen - deshalb der ausdrueckliche Hinweis. */
+    verwirfWortAenderung(WK_WORT.id);
+    schliesseWortKarte();
+    toast('Zurückgesetzt — beim nächsten Start steht wieder das Original da.');
+    return;
+  }
+  if (e.target.closest('[data-wkloeschen]') && WK_WORT){
+    /* ⚠️ HIER eine Rueckfrage, anders als beim „Kenne ich schon"-Knopf. Der
+       Unterschied ist die Umkehrbarkeit: dort holt derselbe Knopf das Wort
+       sofort zurueck, hier ist es endgueltig weg - mitsamt Fortschritt, Notiz
+       und Zuordnung. Eine Sicherheitsfrage bei etwas Unwiederbringlichem ist
+       keine Belaestigung. */
+    const w = WK_WORT;
+    if (!confirm(`„${w.ar}" (${w.de}) wirklich löschen? Das lässt sich nicht rückgängig machen.`)) return;
+    if (loeschePersonalVocab(w.id)){
+      schliesseWortKarte();
+      openWordList(AKTUELLE_LISTE);
+      if (typeof renderCategories === 'function') renderCategories();
+      toast('Vokabel gelöscht');
+    } else {
+      toast('Nur eigene Vokabeln lassen sich löschen');
+    }
+    return;
+  }
+
+  const blatt = e.target.closest('[data-wkblatt]');
+  if (blatt && WK_WORT){
+    const liste = vorschlagsListe(WK_WORT);
+    if (liste.length < 2) return;
+    const jetzt = gewaehlterVorschlag(WK_WORT.id, liste.length);
+    const neu = (jetzt + Number(blatt.dataset.wkblatt) + liste.length) % liste.length;
+    /* Dieselbe Ablage wie im Notizfenster (js/kern.js). Wer hier blaettert,
+       aendert damit auch, was auf der Lernkarte steht - genau so ist Elias'
+       Wunsch vom selben Tag gemeint, und es ist weiterhin KEINE Uebernahme. */
+    setzeGewaehltenVorschlag(WK_WORT.id, neu);
+    const stand = karte.scrollTop;
+    karte.innerHTML = baueWortKarte(WK_WORT);
+    karte.scrollTop = stand;                 /* sonst springt die Karte bei jedem Blaettern nach oben */
+  }
+});
+/* Escape schliesst - dieselbe Erwartung wie bei jedem anderen Fenster. */
+document.addEventListener('keydown', (e)=>{
+  if (e.key === 'Escape' && !document.getElementById('wortKarte').classList.contains('hidden')) schliesseWortKarte();
+});
+
+/* ---------- Suche ueber den ganzen Wortschatz (Elias, 18.08.2026) ----------
+
+   „außerdem möchte ich auch eine funktion haben, wo ich nach einem begriff
+   suchen kann. das fehlt uns aktuell noch sehr. am besten soll mir das dann
+   auch die karteikarte anzeigen wenn ich drauf drücke und soll auch anzeigen
+   wie oft es dieses wort im quran gibt. … ich will wegen der suche sowas
+   ähnliches wie arabic roots."
+
+   ⭐ Arabisch wird OHNE Vokalzeichen verglichen. Wer „كتاب" eintippt, hat keine
+   Ḥarakāt getippt — mit einem strengen Vergleich faende er كِتَابٌ nie, und die
+   Suche saehe kaputt aus, obwohl das Wort da ist.
+
+   ⛔ Die Zeichenklasse steht als \u-Folgen da und wird NIE sichtbar kopiert.
+   Eine kopierte Klasse sieht Zeichen fuer Zeichen gleich aus und trifft etwas
+   anderes; am 17.08.2026 hat genau das ein Werkzeug lautlos unbrauchbar
+   gemacht. Danach an bekannten Faellen geeicht (siehe pruefe-suche.js).
+
+   ⭐ Gesucht wird ueber VOCAB_DATA, nicht ueber bekannteVokabeln(): wer sucht,
+   will wissen, OB es das Wort gibt. Treffer aus gesperrten Kapiteln werden
+   angezeigt und als „noch nicht dran" markiert - weglassen waere eine
+   unsichtbare Einschraenkung, und genau die hat Elias schon einmal als Fehler
+   gemeldet. */
+const SUCH_ZEICHEN = /[ؐ-ًؚ-ٰٟۖ-ࣰۭ-ࣳ]/g;
+function suchFlach(s){
+  return String(s || '')
+    .replace(SUCH_ZEICHEN, '')
+    .replace(/ـ/g, '')                       /* Tatwīl, reine Streckung */
+    .replace(/[آأإٱ]/g, 'ا')  /* آ أ إ ٱ -> ا */
+    .replace(/ى/g, 'ي')                 /* ى -> ي */
+    .replace(/ة/g, 'ه')                 /* ة -> ه */
+    .trim();
+}
+
+function sucheTreffer(begriff){
+  const roh = String(begriff || '').trim();
+  if (roh.length < 2) return [];
+  const de = roh.toLowerCase();
+  const ar = suchFlach(roh);
+  const arWurzel = ar.replace(/\s+/g, '');
+  return VOCAB_DATA.filter(w => {
+    if ((w.de || '').toLowerCase().includes(de)) return true;
+    if ((w.deNeben || '').toLowerCase().includes(de)) return true;
+    if (suchFlach(w.ar).includes(ar)) return true;
+    if (w.sg && suchFlach(w.sg).includes(ar)) return true;
+    if (w.pl && suchFlach(w.pl).includes(ar)) return true;
+    if (w.root && suchFlach(w.root).replace(/\s+/g, '').includes(arWurzel)) return true;
+    return false;
+  }).sort((a, b) => {
+    /* Was er lernt, zuerst - dann die Wörter aus noch gesperrten Kapiteln. */
+    const ka = istBekannt(a) ? 0 : 1, kb = istBekannt(b) ? 0 : 1;
+    if (ka !== kb) return ka - kb;
+    /* Ein Treffer, der GENAU das Gesuchte ist, steht vor einem, der es nur
+       enthält: wer „باب" tippt, will بَابٌ oben sehen, nicht أَبْوَاب. */
+    const ga = (suchFlach(a.ar) === ar || (a.de || '').toLowerCase() === de) ? 0 : 1;
+    const gb = (suchFlach(b.ar) === ar || (b.de || '').toLowerCase() === de) ? 0 : 1;
+    return ga - gb;
+  });
+}
+
+/* Wie oft die WURZEL im Quran steht. Dieselbe Quelle wie das Abzeichen auf der
+   Lernkarte (js/lernen.js), damit nicht zwei Stellen verschiedene Zahlen
+   nennen. */
+function quranHaeufigkeit(w){
+  if (!w.root || typeof QURAN_FREQ === 'undefined') return null;
+  const eintrag = QURAN_FREQ[w.root.replace(/\s+/g, '')];
+  return eintrag ? eintrag[0] : null;
+}
+
+function zeichneSuche(){
+  const feld    = document.getElementById('sucheEingabe');
+  const treffer = document.getElementById('sucheTreffer');
+  const hinweis = document.getElementById('sucheHinweis');
+  const leeren  = document.getElementById('btnSucheLeeren');
+  const tabs    = document.getElementById('catTabs');
+  if (!feld) return;
+  const begriff = feld.value.trim();
+
+  leeren.classList.toggle('hidden', !begriff);
+  /* Bei leerer Suche sind die Reiter wieder da. Sie zu verstecken, solange
+     nichts gesucht wird, nähme ihm den normalen Weg durch die Kategorien. */
+  const sucht = begriff.length >= 2;
+  tabs.classList.toggle('hidden', sucht);
+  document.querySelectorAll('.cat-pane').forEach(p => p.classList.toggle('such-aus', sucht));
+  treffer.classList.toggle('hidden', !sucht);
+  hinweis.classList.toggle('hidden', !begriff);
+
+  if (!sucht){
+    hinweis.textContent = begriff ? 'Mindestens zwei Zeichen eingeben.' : '';
+    treffer.innerHTML = '';
+    return;
+  }
+
+  const liste = sucheTreffer(begriff);
+  hinweis.textContent = liste.length
+    ? `${liste.length} Treffer für „${begriff}“`
+    : `Nichts gefunden für „${begriff}“. Arabisch geht auch ohne Ḥarakāt.`;
+
+  treffer.innerHTML = liste.slice(0, 60).map(w => {
+    const freq = quranHaeufigkeit(w);
+    const fremd = !istBekannt(w);
+    return `<div class="word-list-item" data-suchwort="${escapeHtml(String(w.id))}">
+      <div class="wl-text">
+        <div class="wl-ar">${escapeHtml(w.sg || w.ar)}</div>
+        <div class="wl-de">${escapeHtml(w.de)} · ${escapeHtml(kapitelBeschriftung(w))}</div>
+      </div>
+      <div class="wl-marken">
+        ${freq ? `<span class="wl-quran">${icon('crescent')}${freq}×</span>` : ''}
+        ${fremd ? `<span class="wl-fremd">noch nicht dran</span>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  /* Sagen, dass gekürzt wurde. Eine stille Obergrenze sieht aus wie „mehr gibt
+     es nicht" — und das wäre gelogen. */
+  if (liste.length > 60){
+    hinweis.textContent += ` — die ersten 60 werden gezeigt.`;
+  }
+}
+
+document.getElementById('sucheEingabe').addEventListener('input', zeichneSuche);
+document.getElementById('btnSucheLeeren').addEventListener('click', ()=>{
+  document.getElementById('sucheEingabe').value = '';
+  zeichneSuche();
+  document.getElementById('sucheEingabe').focus();
+});
+/* Ein Tipp auf einen Treffer öffnet die Wortkarte — Elias' ausdrücklicher
+   Wunsch: „am besten soll mir das dann auch die karteikarte anzeigen wenn ich
+   drauf drücke." Kein Kästchen zum Auswählen: hier wird nachgeschlagen, nicht
+   einsortiert. */
+document.getElementById('sucheTreffer').addEventListener('click', (e)=>{
+  const zeile = e.target.closest('[data-suchwort]');
+  if (zeile) zeigeWortKarte(zeile.dataset.suchwort);
+});

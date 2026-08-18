@@ -46,7 +46,17 @@ const SYNC_SCHLUESSEL = [
      Rueckschritt hinter genau den Fehler, der heute Nacht bei den Einstellungen
      behoben wurde: markiert Elias auf dem Handy drei Woerter und auf dem Tablet
      eins, verlöre der aeltere Stempel alle drei. */
-  'vt_bekannt'
+  'vt_bekannt',
+  /* Welcher Eselsbruecken-Vorschlag auf der Karte steht (18.08.2026). Ebenfalls
+     JE WORT, aus demselben Grund und ueber denselben Zweig. */
+  'vt_vorschlagNr',
+  /* Seine Korrekturen an Buchvokabeln (18.08.2026). Auch je Wort: aendert er auf
+     dem Handy zwei Woerter und am Rechner eins, duerfen die zwei nicht durch
+     den aelteren Blockstempel verschwinden. */
+  'vt_wortAenderungen',
+  /* Ausgeblendete Fachbegriffe (18.08.2026). Je Wort, damit auch das
+     Zurückholen auf dem anderen Gerät ankommt. */
+  'vt_geloescht'
 ];
 
 /* Je Schluessel merken, wann er zuletzt lokal geaendert wurde. Ohne das kann
@@ -198,8 +208,13 @@ function fuehreZusammen(fern){
        {an:true|false, zeit:…}, das Zurücknehmen ist also eine Tatsache mit
        Datum und keine Luecke. Eine blosse Vereinigung der markierten Ids waere
        einfacher gewesen und stillschweigend falsch: sie holt ein
-       zurueckgenommenes Wort vom anderen Geraet sofort wieder herein. */
-    if (k === 'vt_bekannt'){
+       zurueckgenommenes Wort vom anderen Geraet sofort wieder herein.
+
+       ⭐ `vt_vorschlagNr` (18.08.2026) laeuft ueber denselben Zweig: der Eintrag
+       ist {nr:…, zeit:…}, und gebraucht wird genau dasselbe - je Id gewinnt der
+       spaetere Zeitstempel. Der Zweig liest ausser `zeit` nichts aus dem
+       Eintrag, deshalb reicht die zweite Bedingung statt einer Kopie. */
+    if (k === 'vt_bekannt' || k === 'vt_vorschlagNr' || k === 'vt_wortAenderungen' || k === 'vt_geloescht'){
       try {
         const a = JSON.parse(hierRoh) || {}, b = JSON.parse(dortRoh) || {};
         const raus = Object.assign({}, a);
