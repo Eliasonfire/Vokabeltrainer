@@ -16,7 +16,37 @@
  * Lauf ignoriert.
  *
  * Was es NICHT kann: pruefen, ob eine Aussage inhaltlich stimmt. Es vergleicht
- * Zahlen, sonst nichts. */
+ * Zahlen, sonst nichts.
+ *
+ * ⛔⛔ EICHUNG 19.08.2026 -- DAS HIER IST EIN KANDIDATENFINDER
+ *
+ * Der Lauf meldete 14 Stellen. Jede einzeln gelesen: VIER waren echte Fehler,
+ * zehn nicht. Die zehn zerfallen in zwei Sorten:
+ *
+ *   1. Korrekter Verlauf im Praeteritum. "Lektion 1-9 waren zwar schon gegen
+ *      die 73 Regeln gehalten" war damals richtig und ist als Satz ueber die
+ *      Vergangenheit weiter richtig. NICHT umschreiben.
+ *   2. Fehltreffer des Musters. "an 13 Regeln war es der Platzhalter" und
+ *      "mb1-51-1 hatte 4 Markierungen" sind Zahlen INNERHALB eines Befundes,
+ *      keine Aussagen ueber die Gesamtzahl. Das Muster "<n> Regeln" kann das
+ *      nicht unterscheiden.
+ *
+ * Echte Fehler waren: der Kurzstand oben in Vokabeltrainer-Arabisch.md (stand
+ * auf v181 und nannte erledigte Aufgaben), eine Zahl im Ziel-Prompt, und zwei
+ * Saetze im Praesens ("tragen jetzt", "die App hat"). Wo Verlauf im Praesens
+ * steht, wird er NICHT umgeschrieben - er bekommt eine datierte Marke daneben.
+ *
+ * ⛔ FEHLVERSUCH, NICHT WIEDERHOLEN: Die Ueberschriftenerkennung unten sieht
+ * nur Zeilenanfaenge. In Vokabeltrainer-Arabisch.md stehen die Kurzstaende
+ * aber als ZITATBLOCK ("> ## Davor: Kurzstand 18.08.2026"), also unsichtbar.
+ * Der naheliegende Fix - ein Zitat-Praefix in der Ueberschriften-Regex - wurde
+ * am 19.08. gebaut und WIEDER ZURUECKGENOMMEN: er raeumte eine Fehlmeldung weg
+ * und erzeugte FUENF neue (13 -> 17). Ursache: sobald zitierte Ueberschriften
+ * mitzaehlen, hebt eine UNDATIERTE zitierte Ueberschrift die vererbte
+ * Verlaufsmarkierung auf, und ganze Abschnitte darunter gelten wieder als
+ * Gegenwart.
+ * ⭐ Die Lehre gilt allgemein: nach so einer Aenderung die GESAMTZAHL
+ * vergleichen, nicht nur den Fall, den man beheben wollte. */
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
