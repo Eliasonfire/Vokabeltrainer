@@ -196,3 +196,40 @@ for (const k of Object.keys(SENTENCE_TAGS)) {
   }
 }
 console.log(`=== Ueberschneidungen: ${kollision} ===`);
+
+// --- Pruefung 4: wie trennscharf sind die Bedingungen ueberhaupt? --------
+//
+// Neu am 18.08.2026. Anlass war الْحِصَانُ: die Bedingung /ان$/ hat eine
+// falsche Markierung durchgelassen, weil sie zu weit war. Die Frage
+// dahinter ist allgemeiner - eine Bedingung, die fast jedes Wort erfuellt,
+// meldet nie etwas und sieht trotzdem nach Pruefung aus.
+//
+// Gemessen wird gegen die Woerter, die in den Saetzen wirklich vorkommen:
+// welcher Anteil davon erfuellt die Bedingung? Ueber 25 % heisst, dass die
+// Bedingung kaum trennt und die betroffenen Markierungen praktisch von Hand
+// nachgesehen werden muessen.
+//
+// Gemessen beim ersten Lauf: madd-tabii-01 77,6 % (die Bedingung ist nur
+// /[اوي]/) und fem-ohne-ta-marbuta-01 77,3 %. Beide wurden daraufhin von
+// Hand geprueft und waren inhaltlich in Ordnung - die Zahl ist also kein
+// Fehler, sondern eine Ansage, wo die Maschine aufhoert zu helfen.
+const woerterImBestand = new Set();
+for (const s of VOCAB_DATA.concat(LEHRBUCH_SAETZE)) {
+  if (!s.sentAr) continue;
+  for (const w of s.sentAr.split(TRENNER)) if (/[\u0621-\u064A]/.test(w)) woerterImBestand.add(w);
+}
+const alleW = [...woerterImBestand];
+const stumpf = [];
+for (const [id, p] of Object.entries(PRUEFUNG)) {
+  if (!proRegel[id] || !proRegel[id].n) continue;      // nur benutzte Bedingungen
+  let treffer = 0;
+  for (const w of alleW) { try { if (p(w)) treffer++; } catch (e) { /* egal */ } }
+  const anteil = 100 * treffer / alleW.length;
+  if (anteil >= 25) stumpf.push({ id, anteil, n: proRegel[id].n });
+}
+stumpf.sort((a, b) => b.anteil - a.anteil);
+for (const s of stumpf)
+  console.log(`${s.id}: die Bedingung erfuellen ${s.anteil.toFixed(1)} % aller `
+    + `${alleW.length} Woerter — sie prueft die ${s.n} Markierung(en) kaum, von Hand ansehen`);
+console.log(`\n=== Trennschaerfe: ${stumpf.length} von ${Object.keys(PRUEFUNG).filter(id => proRegel[id] && proRegel[id].n).length} `
+  + `benutzten Bedingungen lassen ueber ein Viertel aller Woerter durch ===`);
