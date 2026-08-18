@@ -582,7 +582,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* خَالٌ - Onkel mütterlicherseits */
   '45835': [
-    'Merke es über die Plurale, sie klingen sehr verschieden: خَالٌ → أَخْوَالٌ gegen عَمٌّ → أَعْمَامٌ. Im Plural taucht bei خَال das و der Wurzel خ و ل wieder auf, das im Singular im langen ā verschwunden ist. Sprich alle vier hintereinander, dann sitzt das Paar.',
+    '⭐ Ein Hadith hält die Seite fest, auf die das Wort gehört: الْخَالَةُ بِمَنْزِلَةِ الْأُمِّ — „die Chāla steht an der Stelle der Mutter“. خَالَة ist die Schwester der Mutter, also ist خَال ihr Bruder. Wer den Satz einmal gehört hat, verwechselt خَال und عَمّ nicht mehr.',
     'Diesen Unterschied gibt es im Deutschen nicht, und genau deshalb muss man ihn bewusst lernen: خَال ist der Bruder der MUTTER, عَمّ der Bruder des VATERS. Eine Eselsbrücke, die trägt: خَال und die خَالَة (Tante mütterlicherseits) gehören zur selben Seite — wer eines weiß, weiß beide.'
   ],
 
