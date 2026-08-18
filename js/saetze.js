@@ -426,8 +426,16 @@ function renderIrab(){
   if (typeof setzeLexikon === 'function') setzeLexikon(VOCAB_DATA);
   const zeilen = analysiereSatz(w.sentAr);
   liste.innerHTML = zeilen.map(t=>{
+    /* Warum am Wort keine Endung zu sehen ist, obwohl der Fall feststeht:
+       das Possessiv-Yāʾ, die fuenf Nomen, ein اِسْم مَقْصُور, ein Name auf Alif.
+       Ohne diesen Zusatz sucht man an اسْمِي nach einer Damma, die es nach der
+       Regel gar nicht geben kann. */
+    const unsichtbar = (t.erwartet && !t.gelesen && typeof endungUnsichtbar === 'function')
+      ? endungUnsichtbar(t.wort) : null;
     const kasus = t.erwartet
-      ? `<span class="irab-kasus" data-k="${t.erwartet}">${KASUS[t.erwartet].ar} · ${KASUS[t.erwartet].de}</span>`
+      ? `<span class="irab-kasus" data-k="${t.erwartet}">${KASUS[t.erwartet].ar} · ${KASUS[t.erwartet].de}` +
+        (unsichtbar ? `<span class="irab-unsichtbar">nicht sichtbar — ${escapeHtml(unsichtbar)}</span>` : '') +
+        '</span>'
       : '<span class="irab-kasus">keine Endung</span>';
     return `<div class="irab-zeile">
       <span class="irab-wort" lang="ar" dir="rtl">${escapeHtml(t.rein)}</span>

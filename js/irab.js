@@ -266,6 +266,37 @@ const istZarf = w => istInListe(w, ZURUF);
 const FUENF_NOMEN = ['أبو', 'أخو', 'حمو', 'أبا', 'أخا', 'حما', 'أبي', 'أخي', 'حمي'];
 const istFuenfNomen = w => istInListe(w, FUENF_NOMEN);
 
+/* Warum bei manchen Woertern KEINE Kasusendung zu lesen ist — und das kein
+   Mangel ist, sondern die Regel. Zwei Faelle, beide in dieser Datei schon
+   behandelt, hier nur benannt:
+     ـِي   das Possessiv-Yāʾ verschmilzt mit der Endung (siehe ohneSuffix())
+     أَبُو  die fuenf Nomen tragen ihre Endung als BUCHSTABEN (siehe FUENF_NOMEN)
+   Gibt den Grund zurueck oder null. */
+function endungUnsichtbar(w){
+  const rein = String(w).replace(/[.،؟!«»:؛]/g, '');
+  const ohne = ohneVokale(rein).replace(/^[و]/, '');
+  /* Die fuenf Nomen — auch mit angehaengtem Pronomen: أَبُوكَ ist أبو + كَ,
+     und die Liste kennt nur die nackte Form. */
+  if (istFuenfNomen(rein)) return 'الأَسْمَاءُ الخَمْسَةُ (Endung ist ein Buchstabe)';
+  for (const n of FUENF_NOMEN)
+    if (ohne.startsWith(n) && ohne.length > n.length)
+      return 'الأَسْمَاءُ الخَمْسَةُ (Endung ist ein Buchstabe)';
+  /* Das Yāʾ des Sprechers. Die Ausnahmen sind Woerter, deren Yāʾ zum Wort
+     gehoert — sie stehen ohnehin schon in INDEKLINABEL bzw. HURUF_JARR, aber
+     eine Auskunft, die von der Reihenfolge der Pruefungen abhaengt, ist keine.
+     ⚠️ Zwei Zeichen reichen: لِي ist ohne Vokale nur لي. */
+  if (ohne.length >= 2 && ohne.endsWith('ي')
+      && !['في','التي','الذي','الذين','هي','اي','الي'].includes(ohne))
+    return 'Yāʾ des Sprechers (Endung verschmilzt)';
+  /* اِسْم مَقْصُور: endet auf أَلِف مَقْصُورة und aendert sich in keinem Fall —
+     الْمُسْتَشْفَى sieht im rafʿ, naṣb und jarr gleich aus. */
+  if (ohne.endsWith('ى')) return 'اِسْم مَقْصُور (unveraenderlich)';
+  /* Fremde Ortsnamen auf Alif: أَمْرِيكَا, أَلْمَانِيَا, سُوِيسْرَا. Steht so
+     schon weiter oben in dieser Datei, dort aber nur fuer die Endungspruefung. */
+  if (ohne.endsWith('ا')) return 'endet auf Alif (unveraenderlich)';
+  return null;
+}
+
 /* Ein vorangestelltes Fragepartikel-أ gehoert nicht zum Wort: أَهَذَا ist
    أ + هَذَا und damit genauso unveraenderlich wie هَذَا allein. */
 function ohneFragepartikel(w){
@@ -539,5 +570,6 @@ function irabZeilen(satz){
 }
 
 if (typeof module !== 'undefined' && module.exports){
-  module.exports = { analysiereSatz, irabZeilen, endung, setzeLexikon, wortart, KASUS };
+  module.exports = { analysiereSatz, irabZeilen, endung, setzeLexikon, wortart, KASUS,
+                     endungUnsichtbar };
 }

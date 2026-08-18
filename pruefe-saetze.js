@@ -23,7 +23,7 @@
  * ist der Pruefer zu streng und nicht das Buch falsch. */
 const fs = require('fs');
 const path = require('path');
-const { analysiereSatz, setzeLexikon } = require('./js/irab.js');
+const { analysiereSatz, setzeLexikon, endungUnsichtbar } = require('./js/irab.js');
 
 const P = __dirname + path.sep;
 const { VOCAB_DATA } =
@@ -126,12 +126,18 @@ if (kEigen.median > kBuch.median){
 for (const q of quellen){
   console.log(`\n=== ${q.name} ===`);
   let geprueft = 0, mitFehler = 0, unklar = 0;
+  const unsichtbarGesamt = [];
   const befunde = [];
 
   for (const s of q.saetze){
     const teile = analysiereSatz(s.ar);
     const fehler = teile.filter(t => t.stimmt === false);
-    const offen  = teile.filter(t => t.erwartet && !t.gelesen);
+    /* „keine Endung zu lesen" hat zwei ganz verschiedene Gruende. Bis zum
+       18.08.2026 standen beide in einer Zahl, und die klang wie ein Mangel. */
+    const ohneEndung = teile.filter(t => t.erwartet && !t.gelesen);
+    const offen      = ohneEndung.filter(t => !endungUnsichtbar(t.wort));
+    const unsichtbar = ohneEndung.filter(t => endungUnsichtbar(t.wort));
+    if (unsichtbar.length) unsichtbarGesamt.push(...unsichtbar.map(t => t.wort + '  — ' + endungUnsichtbar(t.wort)));
     geprueft++;
     if (offen.length) unklar++;
     if (fehler.length){
@@ -148,7 +154,13 @@ for (const q of quellen){
   }
 
   console.log(`${geprueft} Saetze geprueft, ${mitFehler} mit mindestens einer unpassenden Endung, ` +
-              `${unklar} mit mindestens einem unvokalisierten Wort.`);
+              `${unklar} mit einem Wort, dessen Kasusendung fehlt, obwohl sie sichtbar sein muesste.`);
+  if (unsichtbarGesamt.length){
+    const einmalig = [...new Set(unsichtbarGesamt)];
+    console.log(`  dazu ${unsichtbarGesamt.length} Wort/Woerter, deren Endung nach arabischer Regel ` +
+                `gar nicht sichtbar ist — KEIN Mangel:`);
+    einmalig.forEach(x => console.log('     ' + x));
+  }
   if (!wortschatz.length && mitFehler){
     console.log('ACHTUNG: ohne Wortarten sind diese Befunde nicht belastbar - ein Verb am');
     console.log('Satzanfang wird dann als Nomen gelesen. Erst `node werkzeuge/hole-vokabeln.mjs`');
