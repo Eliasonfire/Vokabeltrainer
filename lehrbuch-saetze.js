@@ -213,6 +213,17 @@ const LEHRBUCH_SAETZE = [
     sentAr: 'أَعِنْدَكَ قَلَمٌ؟ نَعَمْ. عِنْدِي قَلَمٌ.',
     sentDe: 'Hast du einen Stift? Ja. Ich habe einen Stift.' },
 
+  /* Buchseite 58, Musterzeile des Possessiv-Paradigmas:
+     قَلَمٌ · هذا قَلَمِي · هذا قَلَمُكَ · هذا قَلَمُهُ · هذا قَلَمُهَا
+     Genommen ist die zweite Zelle. Die erste doppelt mb1-61-1 (هَذَا بَيْتِي),
+     und possessiv-endungen-01 haengt bisher an اسْمُكِ, also der WEIBLICHEN
+     Endung — قَلَمُكَ bringt die maennliche ـكَ dazu.
+     ⛔ Gedruckt ist قَلَمُكَ voll vokalisiert, هذا ohne Zeichen. */
+  { id: 'mb1-58-1', seite: 58, kapitel: 10, vokalisationErgaenzt: true,
+    gedruckt: 'هذا ohne Zeichen, قَلَمُكَ voll vokalisiert',
+    sentAr: 'هَذَا قَلَمُكَ.',
+    sentDe: 'Dies ist dein Stift.' },
+
   /* ===== Zwei Saetze aus Bayna Yadayk Band 2, Lektion 13, Seite 231 ========
    *
    * Erstmals stammt hier etwas nicht aus Madina 1, deshalb das Feld `werk`.

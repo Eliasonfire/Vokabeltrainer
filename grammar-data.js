@@ -1748,6 +1748,9 @@ const SENTENCE_TAGS = {
   "mb1-57-1": [
     { ruleId: "li-vs-inda-01", matchText: "عِنْدِي" },
     { ruleId: "fragepartikel-alif-01", matchText: "أَ" }
+  ],
+  "mb1-58-1": [
+    { ruleId: "possessiv-endungen-01", matchText: "قَلَمُكَ" }
   ]
 };
 
