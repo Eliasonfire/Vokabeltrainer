@@ -1,0 +1,51 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Icon-Entwürfe Vokabeltrainer</title>
+<style>
+  :root{ color-scheme:dark; }
+  body{ background:#0b0b0d; color:#e8e6e7; font-family:system-ui,sans-serif; margin:0; padding:24px; }
+  h1{ font-size:18px; margin:0 0 4px; }
+  p.sub{ color:#9c9095; font-size:13px; margin:0 0 24px; }
+  .reihe{ display:flex; align-items:flex-end; gap:28px; margin-bottom:28px; flex-wrap:wrap; }
+  .eintrag{ text-align:center; }
+  .eintrag .name{ font-size:12px; color:#9c9095; margin-top:8px; letter-spacing:.04em; }
+  .gross img{ width:132px; height:132px; border-radius:29px; display:block; }
+  .mittel img{ width:64px; height:64px; border-radius:14px; display:block; }
+  .klein img{ width:40px; height:40px; border-radius:9px; display:block; }
+  /* Ein echter Startbildschirm ist das Maß: dort steht das Icon klein, auf
+     schwarzem Grund, neben anderen. Alles andere schmeichelt. */
+  .homescreen{ background:#000; padding:20px; border-radius:24px; display:inline-block; }
+  .homescreen .gitter{ display:grid; grid-template-columns:repeat(4,64px); gap:22px 20px; }
+  .homescreen .zelle{ text-align:center; }
+  .homescreen .zelle span{ display:block; font-size:10px; color:#c9c4c6; margin-top:6px; }
+  .fremd{ width:64px; height:64px; border-radius:14px; display:block; }
+</style>
+<h1>Icon-Entwürfe — Vokabeltrainer</h1>
+<p class="sub">OLED-Schwarz, <code>rx 112</code>, Linienzeichnung wie beim Korantrainer · Akzent <code>#ff2d4f</code></p>
+
+<div class="reihe">
+  <div class="eintrag gross"><img src="d-ilm.svg" alt=""><div class="name">D — عِلْم</div></div>
+  <div class="eintrag gross"><img src="e-qalam.svg" alt=""><div class="name">E — Schreibrohr</div></div>
+  <div class="eintrag gross"><img src="f-lampe.svg" alt=""><div class="name">F — Lampe</div></div>
+  <div class="eintrag gross"><img src="g-wurzel.svg" alt=""><div class="name">G — Wurzel</div></div>
+  <div class="eintrag gross"><img src="../../Quran Trainer/web/icon.svg" alt=""><div class="name">Korantrainer</div></div>
+</div>
+
+<div class="reihe">
+  <div class="eintrag klein"><img src="d-ilm.svg" alt=""><div class="name">D</div></div>
+  <div class="eintrag klein"><img src="e-qalam.svg" alt=""><div class="name">E</div></div>
+  <div class="eintrag klein"><img src="f-lampe.svg" alt=""><div class="name">F</div></div>
+  <div class="eintrag klein"><img src="g-wurzel.svg" alt=""><div class="name">G</div></div>
+  <div class="eintrag klein"><img src="../../Quran Trainer/web/icon.svg" alt=""><div class="name">QT</div></div>
+</div>
+
+<div class="homescreen">
+  <div class="gitter">
+    <div class="zelle"><img class="fremd" src="d-ilm.svg" alt=""><span>Vokabeln</span></div>
+    <div class="zelle"><img class="fremd" src="e-qalam.svg" alt=""><span>Vokabeln</span></div>
+    <div class="zelle"><img class="fremd" src="f-lampe.svg" alt=""><span>Vokabeln</span></div>
+    <div class="zelle"><img class="fremd" src="g-wurzel.svg" alt=""><span>Vokabeln</span></div>
+    <div class="zelle"><img class="fremd" src="../../Quran Trainer/web/icon.svg" alt=""><span>Quran</span></div>
+    <div class="zelle"><img class="fremd" src="../icon.svg" alt=""><span>bisher</span></div>
+  </div>
+</div>

@@ -64,8 +64,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* بَيْتٌ - Haus */
   '45751': [
-    'Du sprichst es in Quraysh mit: فَلْيَعْبُدُوا رَبَّ هَٰذَا الْبَيْتِ — „So sollen sie dem Herrn dieses Hauses dienen" (106:3). Gemeint ist die كَعْبَةٌ, das Wort ist dasselbe wie für dein Haus.',
-    'Plural بُيُوتٌ. Du kennst das Wort auch aus أَهْلُ الْبَيْتِ, „die Leute des Hauses" — dieselbe Form, nur mit Artikel.'
+    'Du sprichst es in Quraysh mit: فَلْيَعْبُدُوا رَبَّ هَٰذَا الْبَيْتِ — „So sollen sie dem Herrn dieses Hauses dienen“ (106:3). Gemeint ist die كَعْبَةٌ, das Wort ist dasselbe wie für dein Haus.',
+    'أَهْلُ الْبَيْتِ — „die Leute des Hauses“ — kennst du als feststehenden Ausdruck für die Familie des Propheten ﷺ. Dasselbe بَيْت, nur mit Artikel. Wer den Ausdruck kennt, hat die Vokabel schon im Kopf.'
   ],
 
   /* مَسْجِدٌ - Moschee */
@@ -77,7 +77,7 @@ const ESELSBRUECKEN_ALT = {
   /* بَابٌ - Tür */
   '45753': [
     'أَبْوَابُ الْجَنَّةِ — die Tore des Paradieses, acht an der Zahl. Ein Begriff, den du kennst, und die Vokabel steckt mitten drin.',
-    'Plural أَبْوَابٌ, Muster أَفْعَال — dasselbe wie أَقْلَامٌ zu قَلَمٌ und أَوْلَادٌ zu وَلَدٌ. Drei Wörter aus Kapitel 1 mit demselben Plural.'
+    'Wer die Tür bewacht, heißt بَوَّاب — der Pförtner. Dieselbe Wurzel, und ein Beruf, den es in jedem größeren arabischen Haus gibt: die Tür und ihr Mann tragen denselben Namen.'
   ],
 
   /* كِتَابٌ - Buch */
@@ -88,8 +88,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* قَلَمٌ - Stift */
   '45755': [
-    'Aus al-ʿAlaq, der ersten Offenbarung: الَّذِي عَلَّمَ بِالْقَلَمِ — „Der mit dem Schreibrohr gelehrt hat" (96:4). Das Wort steht ganz am Anfang.',
-    'Plural أَقْلَامٌ, Muster أَفْعَال wie أَبْوَابٌ (Türen). Und كِتَابٌ ist der Partner: der قَلَم schreibt, das كِتَاب ist das Ergebnis.'
+    'Aus al-ʿAlaq, der ersten Offenbarung: الَّذِي عَلَّمَ بِالْقَلَمِ — „Der mit dem Schreibrohr gelehrt hat“ (96:4). Das Wort steht ganz am Anfang.',
+    'تَقْلِيمُ الْأَظْفَارِ, das Schneiden der Nägel, gehört zu den fünf Dingen der فِطْرَة — und es ist dieselbe Wurzel ق ل م: zuschneiden. Ein Rohr wurde zugeschnitten, damit man damit schreiben konnte; daher heißt der Stift قَلَم. (Buḫārī und Muslim.)'
   ],
 
   /* مِفْتَاحٌ - Schlüssel */
@@ -107,19 +107,19 @@ const ESELSBRUECKEN_ALT = {
   /* سَرِيرٌ - Bett */
   '45758': [
     'Muster فَعِيل — dieselbe Form wie طَبِيبٌ (Arzt) und جَمِيلٌ (schön) aus deinem Bestand. Sprich alle drei hintereinander: sa-rīr, ṭa-bīb, ǧa-mīl.',
-    'Plural أَسِرَّةٌ, unregelmäßig und mit doppeltem ر. Laut sprechen: a-si-rra — die Verdopplung ist das Merkmal, wie bei قِطٌّ.'
+    'Dieselbe Wurzel س ر ر trägt سُرُور, die Freude, und سِرّ, das Geheimnis. Das Bett ist der Ort, an den man sich zurückzieht und zur Ruhe kommt — daher der Name. (Aus den Wörterbüchern, nicht aus dem Unterricht.)'
   ],
 
   /* كُرْسِيٌّ - Stuhl */
   '45759': [
     'Du kennst den Namen آيَةُ الْكُرْسِيِّ, den Thronvers — genau dieses Wort steht darin. Was dort der Thron ist, ist hier der ganz gewöhnliche Stuhl.',
-    'Plural كَرَاسِيّ. Das doppelte ي am Ende ist derselbe Anhang wie in einer Zugehörigkeitsform — sprich es lang: kur-siyy, nicht kur-si.'
+    'Das doppelte ي am Ende ist kein Zierrat, es ist eine Silbe: kur-siyy, mit hörbarem Nachschlag. Wer kur-si sagt, lässt sie weg — und genau daran hört man, ob jemand das Wort gelesen oder gehört hat.'
   ],
 
   /* نَجْمٌ - Stern */
   '45760': [
     'Sure 53 trägt diesen Namen: النَّجْم. Wenn dir der Surenname begegnet, hast du die Vokabel — Stern.',
-    'Plural نُجُوم. Klanghilfe: „naǧm" — nachts am Himmel. Nur der Klang, über die Herkunft wird nichts behauptet.'
+    'Deutsch und Arabisch machen dasselbe Bild: ein berühmter Mensch heißt im Deutschen „Star“, im Arabischen نَجْم. Beide Sprachen nehmen dafür den Himmelskörper. Wer نَجْم als „Star“ hört, hat beide Bedeutungen auf einmal.'
   ],
 
   /* طَبِيبٌ - Arzt */
@@ -142,7 +142,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* رَجُلٌ - Mann */
   '45764': [
-    'Der Plural رِجَال ist die Form, die dir überall begegnet, wo von den Männern die Rede ist. Eine Vokabel, zwei Gestalten: رَجُلٌ einer, رِجَالٌ viele.',
+    'Im Ḥadīth von den Sieben, die Allah in Seinen Schatten nimmt, beginnt fast jede Zeile mit رَجُلٌ — „ein Mann, der …“. Einer davon ist «رَجُلٌ قَلْبُهُ مُعَلَّقٌ بِالْمَسَاجِدِ», dessen Herz an den Moscheen hängt. Wer den Ḥadīth einmal gehört hat, hat das Wort siebenmal gehört. (Buḫārī und Muslim.)',
     '⚠️ Dieselben drei Buchstaben ر ج ل tragen auch رِجْلٌ (Bein). Nur die Vokale trennen sie: ra-ǧul mit u in der Mitte, riǧl ohne. Immer laut sprechen.'
   ],
 
@@ -179,7 +179,7 @@ const ESELSBRUECKEN_ALT = {
   /* جَمَلٌ - Kamel */
   '45770': [
     'Zwei deiner Wörter teilen ج م ل: جَمَلٌ (Kamel) und جَمِيلٌ (schön). Für den Beduinen war das Kamel das schönste Tier — ob das sprachlich zusammengehört, wird nicht behauptet, als Merkhaken hält es trotzdem.',
-    'Plural جِمَال, Muster فِعَال — dieselbe Form wie كِتَابٌ und حِمَارٌ. Das Kamel bildet seinen Plural also wie das Buch.'
+    'Das Bild vom Kamel und dem Nadelöhr kennst du aus dem Deutschen — es steht fast wörtlich auch im Koran: «حَتَّىٰ يَلِجَ الْجَمَلُ» — „bis das Kamel hindurchgeht“ — «فِي سَمِّ الْخِيَاطِ», „durch das Nadelöhr“. Dasselbe Tier, dasselbe Bild, zwei Sprachen.'
   ],
 
   /* دِيكٌ - Hahn */
@@ -237,13 +237,13 @@ const ESELSBRUECKEN_ALT = {
   /* إِمَامٌ - Imam */
   '45779': [
     'إِمَامُ الْمَسْجِدِ — das ist genau die إِضافة, die du gerade gelernt hast: das erste Wort ohne اَلْ und ohne Tanwīn (إِمَامُ), das zweite bestimmt und im Genitiv (الْمَسْجِدِ). Eine Vokabel und eine Regel im selben Ausdruck, und مَسْجِدٌ hast du seit Kapitel 1.',
-    'Der Plural lohnt sich extra, weil er die Wurzel sichtbar macht: إِمَامٌ → أَئِمَّةٌ. Im Singular stehen die beiden م weit auseinander (أ-م-ا-م), im Plural rücken sie zusammen und bekommen eine شَدَّة. Wer den Plural einmal geschrieben hat, sieht أ م م im Singular sofort wieder.'
+    'Der إِمَام ist der, der vorne steht — im Gebet buchstäblich. Wer hinter ihm steht, heißt مَأْمُوم. Zwei Rollen aus demselben Stamm أ م م: der Führende und der Geführte, und du bist jeden Freitag einer von beiden.'
   ],
 
   /* حَجَرٌ - Stein */
   '45780': [
-    'Sūrat al-Fīl kannst du auswendig, und der Plural steht mitten darin: تَرْمِيهِم بِحِجَارَةٍ (105:4) — „bewarfen sie mit Steinen". حِجَارَةٌ ist genau die Mehrzahl, die bei deiner Vokabel steht. Ein Vers, und Einzahl und Mehrzahl sitzen zusammen.',
-    'Dein eigener Beispielsatz ist die zweite Brücke: حَجَرٌ قَدِيمٌ وَثَقِيلٌ. قَدِيمٌ (alt) und ثَقِيلٌ (schwer) hast du beide aus Kapitel 3 — und beide tragen dasselbe Tanwīn wie حَجَرٌ. Das ist die Regel نَعْت zum Anfassen: das Adjektiv macht dem Nomen alles nach.'
+    'Sūrat al-Fīl kannst du auswendig, und das Wort steht mitten darin: تَرْمِيهِم بِحِجَارَةٍ (105:4) — „sie bewarfen sie mit Steinen“. Eine Sure, die du jederzeit im Kopf hast.',
+    'Über den Schwarzen Stein ist überliefert, er sei aus dem Paradies gekommen und «أَشَدُّ بَيَاضًا مِنَ اللَّبَنِ» — weißer als Milch. In diesem einen Satz stecken zwei deiner Vokabeln: الْحَجَر und اللَّبَن. (Tirmiḏī.)'
   ],
 
   /* سُكَّرٌ - Zucker */
@@ -254,8 +254,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* لَبَنٌ - Milch */
   '45782': [
-    'Nimm den ganzen Satz statt des einzelnen Worts: لَبَنٌ حُلْوٌ وَبَارِدٌ — süße und kalte Milch. حُلْوٌ und بَارِدٌ hast du beide aus Kapitel 3, beide hängen als نَعْت an لَبَنٌ und tragen dasselbe Tanwīn. Drei Vokabeln und eine Regel in einem Bild.',
-    'Der Plural bricht das Wort auf: لَبَنٌ → أَلْبَان. Dasselbe Muster hast du schon dreimal: بَابٌ → أَبْوَابٌ, قَلَمٌ → أَقْلَامٌ, وَلَدٌ → أَوْلَادٌ. Ein أَ vorne, ein langes ا vor dem letzten Buchstaben — wer das Muster erkennt, muss den Plural nicht einzeln lernen.'
+    'In der Nacht der Himmelfahrt wurden dem Propheten ﷺ zwei Becher gereicht, Wein und Milch. Er nahm die Milch, und Jibrīl sagte: «اخْتَرْتَ الْفِطْرَةَ» — „du hast die Fiṭra gewählt“. لَبَن ist das Wort in dieser Geschichte. (Buḫārī und Muslim.)',
+    'Für Milch allein ist ein eigenes Bittgebet überliefert, für kein anderes Getränk: «اللَّهُمَّ بَارِكْ لَنَا فِيهِ» — „o Allah, segne es uns“ — «وَزِدْنَا مِنْهُ», „und gib uns mehr davon“. Wer es einmal spricht, hat لَبَن verankert. (Abū Dāwūd und Tirmiḏī.)'
   ],
 
   /* ===================== Kapitel 3 — Eigenschaften =====================
@@ -278,8 +278,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* طَوِيلٌ - lang / groß */
   '45785': [
-    'Nimm die Doppelbedeutung ernst, sie ist der Merkhaken: طَوِيل ist lang in der ZEIT und im RAUM. Deshalb ist ein Mensch طَوِيل („groß") und eine Straße ebenso (dein Satz: الشَّارِعُ طَوِيلٌ). Im Deutschen brauchst du zwei Wörter, im Arabischen reicht eines — such also nicht nach einem zweiten.',
-    'Die Plurale zeigen das Paar noch einmal: طَوِيلٌ → طِوَالٌ und قَصِيرٌ → قِصَارٌ, beide nach dem Muster فِعَال. Sprich die vier hintereinander: ṭawīl – ṭiwāl, qaṣīr – qiṣār. Zwei Wörter, zwei Plurale, ein Muster.'
+    'Die Doppelbedeutung ist selbst der Haken: طَوِيل ist lang in der ZEIT und im RAUM. Deshalb ist ein Mensch طَوِيل („groß“) und eine Straße ebenso („lang“). Deutsch braucht zwei Wörter, Arabisch kommt mit einem aus — such also nicht nach einem zweiten.',
+    'Der Prophet ﷺ sagte seinen Frauen, die mit der längsten Hand — أَطْوَلُكُنَّ يَدًا — werde ihm zuerst folgen; gemeint war die freigebigste. Dieselbe Wurzel ط و ل, und يَد steht gleich daneben. (Buḫārī und Muslim.)'
   ],
 
   /* قَصِيرٌ - kurz */
@@ -302,8 +302,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* جَالِسٌ - sitzend */
   '45789': [
-    'مَجْلِس ist der Ort des Sitzens — der Begriff für eine Lernrunde oder Versammlung, den du kennst. Dieselbe Wurzel ج ل س. Und das مَـ davor ist dasselbe wie in مَسْجِدٌ (Ort der Niederwerfung) und مَكْتَبٌ (Ort des Schreibens): مَـ macht aus einer Handlung einen ORT.',
-    'جَالِسٌ und وَاقِفٌ sind beide Form فَاعِل — der, der gerade sitzt, und der, der gerade steht. Das ist der Unterschied zu فَعِيل: فَاعِل ist eine Momentaufnahme, فَعِيل eine Eigenschaft. كَبِير ist man dauerhaft, جَالِس nur, solange man sitzt.'
+    'Im Gebet wechseln sich genau diese beiden Haltungen ab: قِيَام, das Stehen, und جُلُوس, das Sitzen zwischen den Niederwerfungen. جَالِس ist der Sitzende dieser Haltung — jeden Tag siebzehnmal geübt, nur ohne den Namen.',
+    'Das erste Wort, das man in jedem arabischen Haus hört: اِجْلِسْ — „setz dich!". Dieselbe Wurzel, dieselbe Bedeutung, nur als Aufforderung. Wer اِجْلِسْ versteht, versteht جَالِس ohne Umweg.'
   ],
 
   /* وَاقِفٌ - stehend */
@@ -321,19 +321,19 @@ const ESELSBRUECKEN_ALT = {
   /* قَدِيمٌ - alt */
   '45792': [
     'قَدَم ist der Fuß, تَقَدَّمَ heißt voranschreiten — dieselbe Wurzel ق د م. Was VORANGEGANGEN ist, ist alt. Damit hast du auch مُقَدِّمَة (die Einleitung, das Vorangestellte) mit einem Schlag verstanden.',
-    '⚠️ Nicht mit كَبِير verwechseln. Beide heißen im Deutschen manchmal „alt", meinen aber Verschiedenes: قَدِيم ist alt im Sinne von LANGE DA (dein Satz: الْمَسْجِدُ قَدِيمٌ), كَبِير ist groß, und bei Menschen „älter" im Sinne von größer. Ein alter Stein ist قَدِيم, ein großer Stein كَبِير.'
+    '⚠️ Nicht mit كَبِير verwechseln. Beide heißen im Deutschen manchmal „alt“, meinen aber Verschiedenes: قَدِيم ist alt im Sinne von LANGE DA, كَبِير ist groß und bei Menschen „älter“ im Sinne von größer. Ein alter Stein ist قَدِيم, ein großer Stein كَبِير.'
   ],
 
   /* قَرِيبٌ - nah */
   '45793': [
-    'Der letzte Vers von Sūrat al-ʿAlaq, die du auswendig kannst, endet mit deiner Wurzel: وَٱسْجُدْ وَٱقْتَرِب (96:19) — „wirf dich nieder und sei nah". اِقْتَرِب ist ein Befehl von ق ر ب. Nähe zu Allah durch die Niederwerfung — ein Bild, das das Wort trägt.',
-    'Dieselbe Wurzel steckt in أَقْرَب (näher) und in قَرِيب als „Verwandter" — wer nah ist, im Raum wie in der Familie. Dein Satz zeigt die räumliche Seite: الْمَدْرَسَةُ قَرِيبَةٌ مِنَ الْبَيْتِ. ⚠️ Beachte das ة an قَرِيبَة: مَدْرَسَة ist weiblich, also muss das Adjektiv es auch sein.'
+    'Der letzte Vers von Sūrat al-ʿAlaq, die du auswendig kannst, endet mit deiner Wurzel: وَٱسْجُدْ وَٱقْتَرِب (96:19) — „wirf dich nieder und sei nah“. اِقْتَرِب ist ein Befehl von ق ر ب. Nähe zu Allah durch die Niederwerfung — ein Bild, das das Wort trägt.',
+    'Dieselbe Wurzel trägt أَقْرَب („näher“) und قَرِيب im Sinne von „Verwandter“ — wer nah ist, im Raum wie in der Familie. Im Deutschen sagt man „ein naher Angehöriger“ und meint dasselbe.'
   ],
 
   /* بَعِيدٌ - fern */
   '45794': [
-    'Merke es über die Präposition, die du schon hast: مِنَ heißt „von, aus" — und بَعِيدٌ مِنْ heißt „weit weg VON". Dein Satz sagt es vollständig: الْجَامِعَةُ بَعِيدَةٌ مِنَ الْبَيْتِ. Nah und fern arbeiten im Arabischen mit derselben Präposition; nur das Adjektiv dreht die Bedeutung um.',
-    '⚠️ Nicht mit بَعْدَ („nach, danach") verwechseln — dieselben drei Buchstaben ب ع د, aber ein anderes Wort. Der Unterschied ist hörbar: ba-ʿīd mit langem ī gegen baʿ-da. Wenn du im Koran بَعْدُ liest, ist damit die Zeit gemeint und nicht die Entfernung.'
+    'Merke es über die Präposition, die du schon hast: مِنَ heißt „von, aus“ — und بَعِيدٌ مِنْ heißt „weit weg VON“. Nah und fern arbeiten im Arabischen mit derselben Präposition; nur das Adjektiv dreht die Richtung um.',
+    '⚠️ Nicht mit بَعْدَ („nach, danach“) verwechseln — dieselben drei Buchstaben ب ع د, aber ein anderes Wort. Der Unterschied ist hörbar: ba-ʿīd mit langem ī gegen baʿ-da. Wenn du im Koran بَعْدُ liest, ist die Zeit gemeint und nicht die Entfernung.'
   ],
 
   /* نَظِيفٌ - sauber */
@@ -350,8 +350,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* صَغِيرٌ - klein */
   '45797': [
-    'Du kennst die Wurzel aus dem Vergleich: أَصْغَر heißt „kleiner, am kleinsten" — dieselben drei Buchstaben ص غ ر. Und genauso läuft es beim Gegenwort: كَبِير → أَكْبَر. Das Muster أَفْعَل für den Vergleich ist bei beiden dasselbe.',
-    '⚠️ Wenn das beschriebene Wort weiblich ist, bekommt das Adjektiv eine تاء مَرْبُوطة: بِنْتٌ صَغِيرَةٌ, nicht بِنْتٌ صَغِيرٌ. Das ist die Regel نَعْت — vier Dinge müssen übereinstimmen, und das Geschlecht ist eines davon. Dein Satz mit dem Kätzchen zeigt es: هَذَا الْقِطُّ صَغِيرٌ, männlich, also ohne ة.'
+    'Die Sünden werden in zwei Gruppen geteilt: كَبَائِر, die großen, und صَغَائِر, die kleinen. Der Gegensatz, den du im Deutschen als „groß und klein“ lernst, ist im Glauben ein feststehendes Begriffspaar — كَبِير und صَغِير sind seine Bausteine.',
+    '⚠️ Wenn das beschriebene Wort weiblich ist, bekommt das Adjektiv eine تاء مَرْبُوطة: بِنْتٌ صَغِيرَةٌ, nicht بِنْتٌ صَغِيرٌ. Das ist die Regel نَعْت — vier Dinge müssen übereinstimmen, und das Geschlecht ist eines davon.'
   ],
 
   /* كَبِيرٌ - groß */
@@ -362,8 +362,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* خَفِيفٌ - leicht */
   '45799': [
-    'Die Wurzel خ ف ف steckt auch in تَخْفِيف, der Erleichterung — ein Begriff, der im Zusammenhang mit Erlaubnissen und Ausnahmen fällt. Wer den kennt, hat das Adjektiv gratis.',
-    'Doppelter Wurzelbuchstabe wie bei حَارّ und جَدِيد: خ ف ف, wobei das zweite ف im langen ī steckt (خَفِيف). ⚠️ Der Plural macht es wieder sichtbar: خِفَافٌ. Der Wechsel zwischen خَفِيف und خِفَاف ist genau der von طَوِيل → طِوَال und قَصِير → قِصَار.'
+    'Dieselbe Wurzel steht in einer Regel, unter der du selbst betest: wer die Leute im Gebet leitet, soll es leicht machen — فَلْيُخَفِّفْ. Ein Imam, der kurz macht, macht es خَفِيف. (Buḫārī und Muslim.)',
+    'Sprich beide laut: خَفِيف läuft durch, die Luft hört nie auf — خ und ف sind Reibelaute ohne Verschluss. ثَقِيل stoppt hart, das ق setzt tief im Rachen ab. Den Unterschied hörst du selbst, du musst ihn dir nicht merken.'
   ],
 
   /* ثَقِيلٌ - schwer */
@@ -392,8 +392,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* دُكَّانٌ - Geschäft */
   '45804': [
-    'Der Plural ist der interessante Teil: دُكَّانٌ → دَكَاكِينُ. Das ist ein Vierbuchstaben-Muster, das dir bei تُفَّاحٌ → تَفَافِيحُ genauso begegnet — beide Male ein langes ā nach dem ersten Buchstaben und ein langes ī vor dem letzten. ⚠️ Und beide enden ohne Tanwīn.',
-    'Zwei Vokabeln, eine Szene: du gehst in den سُوق (Markt) und stehst vor einem دُكَّان (Laden). Dein eigener Satz sagt es schon: دُكَّانٌ صَغِيرٌ — ein kleiner Laden — قَرِيبٌ مِنَ السُّوقِ, nahe am Markt. Darin stecken vier Wörter aus Kapitel 1 bis 3; nimm den Satz als Ganzes, nicht das Wort allein.'
+    'Das Wort ist weit gereist: von Marokko bis Pakistan heißt der Laden دُكَّان — in Urdu geschrieben wie im Arabischen. Wer je einen Basar gesehen hat, hat das Bild schon; es fehlt nur der Name.',
+    'Das doppelte ك ist kein Schmuck, es ist die Aussprache: duk-kān, mit Halt auf dem ك. Ohne den Halt wird ein anderes Wort daraus. Sprich es zweimal langsam, dann sitzt es.'
   ],
 
   /* جَمِيلٌ - schön */
@@ -478,8 +478,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* سُوقٌ - Markt */
   '45818': [
-    '⚠️ Achtung, dein Beispielsatz verrät es: هَذِهِ سُوقٌ قَدِيمَةٌ — mit هَذِهِ und قَدِيمَةٌ, also WEIBLICH, obwohl das Wort keine تاء مَرْبُوطة trägt. سُوق gehört zu den Wörtern, die weiblich sind, ohne es zu zeigen. Genau die Sorte, vor der dein Lehrer warnt.',
-    'Der Plural ist أَسْوَاقٌ, dasselbe Muster wie بَابٌ → أَبْوَابٌ und وَرَقٌ → أَوْرَاقٌ, die du beide hast. ⚠️ Im Singular steht ein langes ū (sūq), im Plural wird daraus ein و mit Sukūn (as-wāq) — der schwache Wurzelbuchstabe wechselt seine Gestalt.'
+    'سُوق ist weiblich, obwohl es keine تاء مَرْبُوطة trägt — man sagt هَذِهِ السُّوقُ und hängt قَدِيمَةٌ daran. Genau die Sorte Wort, vor der dein Lehrer warnt: das Geschlecht steht nicht immer am Wort.',
+    'Das Wort ist auch im Deutschen angekommen — der „Souk“ in Marrakesch oder Damaskus ist dasselbe سُوق. Und im Ḥadīth heißt es, die liebsten Orte bei Allah seien مَسَاجِدُهَا, die verhasstesten أَسْوَاقُهَا. (Muslim.)'
   ],
 
   /* جَامِعَةٌ - Universität */
@@ -534,8 +534,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* رَسُولٌ - Gesandter */
   '45827': [
-    'In Sūrat al-Bayyina, die du auswendig kannst, steht das Wort genau in deiner Form: رَسُولٌ مِّنَ ٱللَّهِ (98:2) — „ein Gesandter von Allah". Mit Tanwīn, unbestimmt, wie im Vokabelheft. Und in Sūrat al-Fīl steckt dieselbe Wurzel im Verb: وَأَرْسَلَ عَلَيْهِمْ (105:3), „und Er sandte gegen sie".',
-    'Die Wurzel ر س ل („senden") trägt eine ganze Familie: رَسُول der Gesandte, رِسَالَة die Botschaft, أَرْسَلَ er sandte. ⚠️ Der Plural ist unregelmäßig kurz: رَسُولٌ → رُسُلٌ, ru-sul. Genau diese Form hörst du im Koran, wenn von allen Gesandten die Rede ist.'
+    'In Sūrat al-Bayyina, die du auswendig kannst, steht das Wort genau in deiner Form: رَسُولٌ مِّنَ ٱللَّهِ (98:2) — „ein Gesandter von Allah“. Mit Tanwīn, unbestimmt, wie im Vokabelheft. Und in Sūrat al-Fīl steckt dieselbe Wurzel im Verb: وَأَرْسَلَ عَلَيْهِمْ (105:3), „und Er sandte gegen sie“.',
+    'Die Wurzel ر س ل heißt senden und trägt eine ganze Familie: رَسُول der Gesandte, رِسَالَة die Botschaft, أَرْسَلَ „er sandte“. Wer eines davon erkennt, erkennt die anderen mit.'
   ],
 
   /* تَحْتَ - unter */
@@ -612,8 +612,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* حَقِيبَةٌ - Tasche / Rucksack */
   '45840': [
-    'Nimm den Satz, er verbindet drei Vokabeln: هَذِهِ حَقِيبَةُ الطَّالِبِ — „das ist die Tasche des Studenten". Und er ist eine إِضافة zum Anfassen: حَقِيبَةُ ohne اَلْ und ohne Tanwīn, الطَّالِبِ im Genitiv dahinter. Was in الْكِتَابُ فِي الْحَقِيبَةِ steckt, hast du damit gleich mit.',
-    '⚠️ Der Plural hat eine Hamzah mitten im Wort: حَقِيبَةٌ → حَقَائِبُ, ḥa-qā-ʾib. Genau dasselbe Muster wie bei دُكَّانٌ → دَكَاكِينُ und مَطْبَخٌ → مَطَابِخُ: langes ā nach dem ersten Buchstaben, dann ein Kasra vor dem letzten. Und alle drei ohne Tanwīn.'
+    'Im ganzen Wortschatz gibt es genau ein zweites Wort mit diesem Rhythmus: مَدِينَةٌ, ma-dī-na, der Name des Lehrbuchs. حَقِيبَةٌ läuft gleich — ḥa-qī-ba, kurz–lang–kurz, hinten das ة.',
+    'Warum auf der Karte zwei deutsche Wörter stehen: حَقِيبَة allein ist die Tasche. Der Rucksack heißt حَقِيبَةُ الظَّهْرِ, die Tasche des Rückens. Ein Wort deckt beides, weil erst der Zusatz die Art bestimmt.'
   ],
 
   /* ===================== Kapitel 6 — Haushalt, Familie, Körper ====== */
@@ -638,8 +638,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* مِلْعَقَةٌ - Löffel */
   '45844': [
-    'Werkzeug-مِـ, und die Wurzel ل ع ق heißt lecken — der Löffel ist wörtlich „das Ding zum Lecken". ⭐ Zusammen mit مِفْتَاحٌ (das Ding zum Öffnen) und مِكْوَاةٌ (das Ding zum Bügeln) hast du drei Werkzeuge nach demselben Bauplan. Das Muster ist die Vokabel, nicht das Einzelwort.',
-    '⚠️ Der Plural bricht auf und verliert das مِـ-Muster nicht, aber die Vokale wechseln alle: مِلْعَقَةٌ → مَلَاعِقُ, ma-lā-ʿiq. Dasselbe Muster wie مَطْبَخٌ → مَطَابِخُ und حَقِيبَةٌ → حَقَائِبُ. Drei Wörter, ein Pluralmuster — sprich sie hintereinander.'
+    'Werkzeug-مِـ, und die Wurzel ل ع ق heißt lecken — der Löffel ist wörtlich „das Ding zum Lecken“. ⭐ Zusammen mit مِفْتَاحٌ (das Ding zum Öffnen) und مِكْوَاةٌ (das Ding zum Bügeln) hast du drei Werkzeuge nach demselben Bauplan. Das Muster ist die Vokabel, nicht das Einzelwort.',
+    'Das Wort sagt selbst, wozu es da ist: ل ع ق ist das Lecken, مِلْعَقَة das Gerät dafür. Kein Bild, keine Eselsbrücke im engeren Sinn — die Bedeutung steht im Wort.'
   ],
 
   /* فَلَّاحٌ - Bauer */
@@ -692,7 +692,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* فَمٌ - Mund */
   '45853': [
-    'Das kürzeste Wort deiner Liste: nur ف und م. ⚠️ Und der Plural sieht aus wie von einem anderen Wort: فَمٌ → أَفْوَاهٌ, mit einem و, das im Singular gar nicht vorkommt. Das ist kein Fehler — der Singular hat den Buchstaben verloren, nicht der Plural ihn dazuerfunden.',
+    'فَمٌ und يَدٌ sind die beiden kürzesten Wörter im ganzen Bestand: zwei Buchstaben und ein Tanwīn. Kurze Wörter für Dinge, die man ständig braucht — das ist in jeder Sprache so, und es hilft beim Wiedererkennen.',
     'Merke es in der Wuḍūʾ-Gruppe mit أَنْفٌ (Nase): beim Waschen kommen Mund und Nase direkt nacheinander. Zwei Vokabeln, eine Handbewegung, die du ohnehin jeden Tag machst.'
   ],
 
@@ -716,8 +716,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* يَدٌ - Hand */
   '45857': [
-    'Sūrat al-Masad beginnt damit, und du kannst sie auswendig: تَبَّتْ يَدَآ أَبِي لَهَبٍ (111:1) — „zugrunde gehen sollen die Hände Abū Lahabs". يَدَا ist der Dual, also genau ZWEI Hände. Dein Wort, dein Vers, und nebenbei die Dualform.',
-    '⚠️ Der Plural أَيْدٍ endet auf ein Tanwīn ohne sichtbaren Buchstaben — das ist die Stolperstelle, nicht das kurze Wort selbst. Sprich ihn: ay-din. Solche Endungen kommen bei Wörtern vor, deren letzter Wurzelbuchstabe schwach ist; يَدٌ hat die Wurzel ي د ي.'
+    'Sūrat al-Masad beginnt damit, und du kannst sie auswendig: تَبَّتْ يَدَآ أَبِي لَهَبٍ (111:1) — „zugrunde gehen sollen die Hände Abū Lahabs“. يَدَا ist der Dual, also genau ZWEI Hände. Dein Wort, dein Vers, und nebenbei die Dualform.',
+    'Über das Geben heißt es: «الْيَدُ الْعُلْيَا» — die obere Hand — «خَيْرٌ مِنَ الْيَدِ السُّفْلَى», besser als die untere; die gebende besser als die nehmende. Zweimal dasselbe Wort in einem Satz, den man nicht vergisst. (Buḫārī und Muslim.)'
   ],
 
   /* رِجْلٌ - Bein / Fuß */
@@ -735,7 +735,7 @@ const ESELSBRUECKEN_ALT = {
   /* نَافِذَةٌ - Fenster */
   '45860': [
     'Die Wurzel ن ف ذ heißt durchdringen — ein Fenster ist die Stelle, durch die Licht und Luft DURCHGEHEN. ⭐ Von derselben Wurzel kommt نُفُوذ, der Einfluss: etwas, das durchdringt. Bild und Wort passen so genau zusammen, dass man es nicht mehr auswendig lernen muss.',
-    'Muster فَاعِلَة, also die weibliche Form von فَاعِل — dasselbe Muster wie جَالِسٌ und وَاقِفٌ, nur mit تاء مَرْبُوطة. ⚠️ Der Plural bricht auf zu نَوَافِذُ, mit einem و, das im Singular fehlt. Sprich beide: nā-fi-dha, na-wā-fidh.'
+    'Dieselbe Wurzel steckt in تَنْفِيذ, der „Durchführung“: einen Plan تَنْفِيذ heißt, ihn durchgehen zu lassen. Wer das Wort in den Nachrichten hört, hört das Fenster mit.'
   ],
 
   /* شَرْقٌ - Osten */
@@ -940,14 +940,14 @@ const ESELSBRUECKEN_ALT = {
 
   /* الْآنَ - jetzt */
   '45891': [
-    'Das Madda-Alif آ ist die eigentliche Vokabel: es steht für zwei Alif hintereinander und wird lang gesprochen — al-ān. ⚠️ Du siehst dasselbe Zeichen im Plural von أُذُنٌ: آذَانٌ. Ein Zeichen, das man einmal bewusst ansehen sollte, dann erkennt man es überall.',
-    'Nimm die Zeitwörter zusammen, die du hast: الْآنَ (jetzt), الْيَوْمُ (heute), يَوْمٌ (Tag). ⚠️ Alle drei stehen im Satz meist am ENDE: الْمُدَرِّسُ هُنَا الْآنَ, الْمَاءُ بَارِدٌ الْيَوْمَ. Das ist kein Zufall, sondern die übliche Stellung von Zeitangaben.'
+    'Das Madda-Alif آ ist die eigentliche Vokabel: es steht für zwei Alif hintereinander und wird lang gesprochen — al-ān. Dasselbe Zeichen steht mitten in الْقُرْآن, das du täglich schreibst und sprichst. Einmal bewusst ansehen, dann erkennst du es überall.',
+    'الْآنَ hörst du nie ohne اَلْ. Es gibt kein blankes آن für „jetzt“ — das Wort kommt immer im Ganzen. Deshalb lohnt es sich, es als ein einziges Stück zu lernen: al-ān, nicht al + ān.'
   ],
 
   /* مُسْتَوْصَفٌ - Klinik */
   '45892': [
-    'Zwei Wörter, ein Bauplan مُسْتَفْعَل, und beide hast du: مُسْتَشْفًى (Krankenhaus, wo man Heilung SUCHT) und مُسْتَوْصَف (Klinik, wo man eine Beschreibung SUCHT, also eine Verschreibung). Das سْتَـ in der Mitte heißt immer „nach etwas suchen" — merk dir den Baustein, nicht die zwei Wörter.',
-    'Die Wurzel و ص ف heißt beschreiben — daher وَصْف (die Beschreibung) und صِفَة (die Eigenschaft). ⚠️ Das و am Wortanfang der Wurzel ist schwach und verschwindet in vielen Formen; hier bleibt es sichtbar, weil das Muster es festhält.'
+    'Zwei Wörter, ein Bauplan مُسْتَفْعَل, und beide hast du: مُسْتَشْفًى (Krankenhaus, wo man Heilung SUCHT) und مُسْتَوْصَف (Klinik, wo man eine Beschreibung SUCHT, also eine Verschreibung). Das سْتَـ in der Mitte heißt immer „nach etwas suchen“ — merk dir den Baustein, nicht die zwei Wörter.',
+    'Die Wurzel و ص ف heißt beschreiben — daher وَصْف (die Beschreibung) und صِفَة (die Eigenschaft). In der Klinik beschreibt der Arzt, was fehlt, und schreibt danach das Mittel auf: der Ort ist nach dieser Handlung benannt.'
   ],
 
   /* مِرْوَحَةٌ - Ventilator */

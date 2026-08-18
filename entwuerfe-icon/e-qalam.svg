@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — Schreibrohr">
+<title>Entwurf E — das Schreibrohr (قَلَم)</title>
+<!-- „Der mit dem Schreibrohr gelehrt hat" — الَّذِي عَلَّمَ بِالْقَلَمِ (96:4), aus der
+     ersten Offenbarung und in Elias' auswendigem Bereich. Das Rohr steht für
+     das Lernen selbst und ist vom aufgeschlagenen Buch des Korantrainers weit
+     genug entfernt.
+     Schräg von oben rechts nach unten links: die arabische Schreibrichtung. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+<g transform="rotate(-45 256 256)">
+  <!-- Der Schaft -->
+  <rect x="228" y="112" width="56" height="228" rx="12" fill="none" stroke="#f3ecef" stroke-width="22"/>
+  <!-- Die abgeschrägte Spitze, rot -->
+  <path d="M228 340h56l-28 60z" fill="#ff2d4f"/>
+  <!-- Der Schnitt oberhalb der Spitze -->
+  <path d="M228 306h56" fill="none" stroke="#f3ecef" stroke-width="18" stroke-linecap="round"/>
+</g>
+<!-- Drei Zeilen, die das Rohr hinterlässt — von rechts kürzer werdend -->
+<g fill="none" stroke="#9c9095" stroke-width="16" stroke-linecap="round">
+  <path d="M300 372h84M240 412h144M312 452h72"/>
+</g>
+</svg>

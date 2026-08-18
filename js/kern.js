@@ -205,7 +205,13 @@ VOCAB_DATA.push(...PERSONAL_VOCAB);
    Der typeof-Test haelt die App lauffaehig, falls data/fachbegriffe.js einmal
    nicht geladen ist - dann fehlen zehn Vokabeln, statt dass gar nichts geht. */
 if (typeof FACHBEGRIFF_VOKABELN !== 'undefined' && Array.isArray(FACHBEGRIFF_VOKABELN)){
-  VOCAB_DATA.push(...FACHBEGRIFF_VOKABELN);
+  /* ⚠️ Die ausgeblendeten ueberspringen (18.08.2026). Die Liste wird hier
+     DIREKT aus dem Speicher gelesen und nicht ueber istGeloescht(): GELOESCHT
+     ist ein `let` und wird erst weiter unten angelegt - ein Zugriff hier waere
+     in der zeitlichen Totzone und stuerzte ab. */
+  const wegRoh = LS.get('vt_geloescht', {});
+  const weg = (wegRoh && typeof wegRoh === 'object' && !Array.isArray(wegRoh)) ? wegRoh : {};
+  VOCAB_DATA.push(...FACHBEGRIFF_VOKABELN.filter(w => !(weg[w.id] && weg[w.id].an)));
 }
 
 function addPersonalVocab({ar, de, sentAr, sentDe}){
@@ -219,6 +225,152 @@ function addPersonalVocab({ar, de, sentAr, sentDe}){
   saveProgress();
   return w;
 }
+
+/* ---------- Eigene Vokabel wieder loswerden (Elias, 18.08.2026) ----------
+
+   „vorallem will ich auch die möglichkeit haben meine eigenen vokabeln auch
+   wieder zu löschen. das kann ich aktuell nicht."
+
+   Er hatte recht: es gab `addPersonalVocab`, aber kein Gegenstueck. Wer sich
+   vertippte, hatte das Wort fuer immer im Stapel.
+
+   ⚠️ An FUENF Stellen aufraeumen, nicht nur in der Liste. Ein Wort, das nur aus
+   PERSONAL_VOCAB verschwindet, hinterlaesst einen Fortschrittseintrag (der in
+   die Statistik zaehlt), eine Notiz, eine Markierung und womoeglich einen Chip
+   in einer eigenen Kategorie - lauter Reste, die niemand mehr zuordnen kann,
+   weil das Wort dazu fehlt.
+
+   ⛔ NUR fuer eigene Vokabeln. Ein Wort aus dem arabicroots-Abzug zu loeschen
+   waere sinnlos: der naechste Abzug brachte es zurueck. */
+/* ---------- Ausgeblendete Fachbegriffe (18.08.2026) ----------
+
+   Elias: „fachbegriffe möchte ich auch löschen können."
+
+   ⚠️ Sie lassen sich nicht wie eigene Vokabeln loeschen: sie stehen in
+   data/fachbegriffe.js, einer ausgelieferten Datei. Was dort steht, ist beim
+   naechsten Laden wieder da. Deshalb eine Liste der Ids, die beim Einhaengen
+   uebersprungen werden - das Loeschen ist aus seiner Sicht dasselbe, nur dass
+   es die Datei nicht anfasst.
+
+   Der Zeitstempel je Id ist wie bei BEKANNT: beim Geraeteabgleich muss auch das
+   ZURUECKHOLEN ankommen, nicht nur das Loeschen. */
+const GELOESCHT_SCHLUESSEL = 'vt_geloescht';
+let GELOESCHT = LS.get(GELOESCHT_SCHLUESSEL, {});
+if (!GELOESCHT || typeof GELOESCHT !== 'object' || Array.isArray(GELOESCHT)) GELOESCHT = {};
+function istGeloescht(id){ const e = GELOESCHT[id]; return !!(e && e.an); }
+
+function loeschePersonalVocab(id){
+  const w = VOCAB_DATA.find(x => x.id === id);
+  if (!w || (w.chapter !== 'personal' && w.chapter !== 'grammar')) return false;
+
+  if (w.chapter === 'personal'){
+    PERSONAL_VOCAB = PERSONAL_VOCAB.filter(x => x.id !== id);
+    savePersonalVocab();
+  } else {
+    GELOESCHT[id] = { an: true, zeit: Date.now() };
+    LS.set(GELOESCHT_SCHLUESSEL, GELOESCHT);
+  }
+
+  const i = VOCAB_DATA.findIndex(x => x.id === id);
+  if (i >= 0) VOCAB_DATA.splice(i, 1);
+
+  delete PROGRESS[id];
+  saveProgress();
+
+  if (typeof NOTES !== 'undefined' && NOTES && NOTES[id] !== undefined){
+    delete NOTES[id];
+    if (typeof saveNotes === 'function') saveNotes();
+  }
+  if (typeof BEKANNT !== 'undefined' && BEKANNT && BEKANNT[id] !== undefined){
+    delete BEKANNT[id];
+    LS.set(BEKANNT_SCHLUESSEL, BEKANNT);
+  }
+  if (typeof VORSCHLAG_WAHL !== 'undefined' && VORSCHLAG_WAHL && VORSCHLAG_WAHL[id] !== undefined){
+    delete VORSCHLAG_WAHL[id];
+    LS.set(VORSCHLAG_SCHLUESSEL, VORSCHLAG_WAHL);
+  }
+  if (typeof CUSTOM_CATS !== 'undefined' && Array.isArray(CUSTOM_CATS)){
+    let beruehrt = false;
+    CUSTOM_CATS.forEach(c => {
+      const vorher = c.wordIds.length;
+      c.wordIds = c.wordIds.filter(x => x !== id);
+      if (c.wordIds.length !== vorher) beruehrt = true;
+    });
+    if (beruehrt && typeof saveCustomCats === 'function') saveCustomCats();
+  }
+  return true;
+}
+
+/* ---------- Vokabeln bearbeiten (Elias, 18.08.2026) ----------
+
+   „ich will auch die vokabeln bearbeiten können, alle."
+
+   ⭐ Zwei verschiedene Wege, und der Unterschied ist wichtig:
+
+   - EIGENE Vokabeln stehen in `vt_personalVocab` und werden dort direkt
+     geaendert. Sie gehoeren ihm, es gibt keine zweite Fassung.
+   - BUCHVOKABELN kommen aus dem arabicroots-Abzug. Sie direkt zu aendern waere
+     wirkungslos: `hole-vokabeln.mjs` schreibt vocab-data.js beim naechsten Lauf
+     neu, und die Aenderung waere stillschweigend weg. Deshalb liegt seine
+     Fassung DANEBEN, in `vt_wortAenderungen`, und wird beim Start darueber
+     gelegt. Der Abzug bleibt der Abzug, seine Korrektur bleibt seine.
+
+   Das ist dieselbe Trennung wie bei den Eselsbruecken: sein Text schlaegt den
+   vorgeschlagenen, ohne ihn zu ueberschreiben. */
+const AENDERUNGS_SCHLUESSEL = 'vt_wortAenderungen';
+let WORT_AENDERUNGEN = LS.get(AENDERUNGS_SCHLUESSEL, {});
+if (!WORT_AENDERUNGEN || typeof WORT_AENDERUNGEN !== 'object' || Array.isArray(WORT_AENDERUNGEN)) WORT_AENDERUNGEN = {};
+
+/* Welche Felder er ueberhaupt anfassen darf. Bewusst eine feste Liste und kein
+   Object.assign: sonst koennte ein alter oder kaputter Eintrag `id`, `chapter`
+   oder `book` ueberschreiben und das Wort aus jeder Auswahl fallen lassen. */
+const AENDERBAR = ['ar','de','sentAr','sentDe','pl','root'];
+
+function wendeWortAenderungenAn(){
+  Object.keys(WORT_AENDERUNGEN).forEach(id => {
+    const w = VOCAB_DATA.find(x => x.id === id);
+    if (!w) return;
+    const a = WORT_AENDERUNGEN[id];
+    if (!a || typeof a !== 'object') return;
+    AENDERBAR.forEach(f => { if (typeof a[f] === 'string') w[f] = a[f]; });
+  });
+}
+
+function speichereWortAenderung(id, felder){
+  const w = VOCAB_DATA.find(x => x.id === id);
+  if (!w) return false;
+  const sauber = {};
+  AENDERBAR.forEach(f => { if (typeof felder[f] === 'string') sauber[f] = felder[f].trim(); });
+  if (!sauber.ar || !sauber.de) return false;      /* ohne die beiden ist es keine Vokabel */
+
+  if (w.chapter === 'personal'){
+    /* Seine eigene Vokabel: direkt am Original aendern, kein Zweitspeicher. */
+    const eigen = PERSONAL_VOCAB.find(x => x.id === id);
+    if (eigen) AENDERBAR.forEach(f => { if (sauber[f] !== undefined) eigen[f] = sauber[f]; });
+    savePersonalVocab();
+  } else {
+    WORT_AENDERUNGEN[id] = Object.assign({}, WORT_AENDERUNGEN[id], sauber, { zeit: Date.now() });
+    LS.set(AENDERUNGS_SCHLUESSEL, WORT_AENDERUNGEN);
+  }
+  AENDERBAR.forEach(f => { if (sauber[f] !== undefined) w[f] = sauber[f]; });
+  return true;
+}
+
+/* Zurueck auf den Abzug - nur bei Buchvokabeln sinnvoll. Ohne diesen Weg waere
+   jede Korrektur eine Einbahnstrasse, derselbe Fehler wie beim
+   „Kenne ich schon"-Knopf ohne seine Liste in den Einstellungen. */
+function verwirfWortAenderung(id){
+  if (!WORT_AENDERUNGEN[id]) return false;
+  delete WORT_AENDERUNGEN[id];
+  LS.set(AENDERUNGS_SCHLUESSEL, WORT_AENDERUNGEN);
+  return true;
+}
+
+/* ⚠️ Hier und nicht oben bei den Fachbegriffen: `WORT_AENDERUNGEN` ist ein
+   `let` und liegt bis zu seiner Zeile in der zeitlichen Totzone - ein Aufruf
+   davor stuerzte mit ReferenceError ab. Es genuegt, dass es VOR initProgress()
+   steht (Zeile ~447), und das tut es. */
+wendeWortAenderungenAn();
 
 /* ---------- „Kenne ich schon" (17.08.2026) ----------
 
@@ -262,6 +414,48 @@ function bekannteMarkierungen(){
     .map(id => VOCAB_DATA.find(w => w.id === id))
     .filter(Boolean)
     .sort((a,b) => (BEKANNT[b.id].zeit || 0) - (BEKANNT[a.id].zeit || 0));
+}
+
+/* ---------- Welcher Eselsbruecken-Vorschlag gilt (18.08.2026) ----------
+
+   Elias: „wenn ich einen anderen vorschlag durchlese und der gut ist, ihn aber
+   nicht speichere dann wird der ursprüngliche vorschlag wieder angezeigt. ich
+   will aber erstmal noch nicht speichern. die vorschläge sollten mir bei der
+   karte das anzeigen die ich auch ausgewählt habe auch wenn ich nicht
+   gespeichert habe."
+
+   Vorher war das Blaettern rein fluechtig: `VORSCHLAG_NR` lebte nur, solange
+   das Notizfenster offen war, und die Karte zeigte danach wieder `w.mnemo`.
+   Wer den dritten Vorschlag gut fand, hatte nur die Wahl zwischen „uebernehmen
+   und speichern" und „vergessen".
+
+   ⛔ Das ist AUSDRUECKLICH keine Uebernahme. Punkt 8 (10.08.2026) bleibt
+   unangetastet: gespeichert wird nur, was er selbst ins Feld schreibt und mit
+   „Speichern" bestaetigt. Hier wird lediglich gemerkt, WELCHEN der vorgelegten
+   Texte er sehen will - `vt_notes` wird nicht angefasst, der Text bleibt als
+   „Vorschlag:" beschriftet, und der Punkt auf der Vorderseite geht nicht an.
+
+   ⭐ Gespeichert wird die NUMMER, nicht der Text. Wird eine Eselsbruecke in
+   data/eselsbruecken-alt.js spaeter verbessert, sieht er die verbesserte
+   Fassung - beim Text stuende seine alte Kopie fuer immer da, ohne dass es je
+   auffiele. Zeitstempel wie bei BEKANNT, damit der Geraeteabgleich je Wort die
+   spaetere Entscheidung nehmen kann. */
+const VORSCHLAG_SCHLUESSEL = 'vt_vorschlagNr';
+let VORSCHLAG_WAHL = LS.get(VORSCHLAG_SCHLUESSEL, {});
+if (!VORSCHLAG_WAHL || typeof VORSCHLAG_WAHL !== 'object' || Array.isArray(VORSCHLAG_WAHL)) VORSCHLAG_WAHL = {};
+
+/* ⚠️ `anzahl` ist Pflicht und wird geprueft: die Liste kann schrumpfen, wenn
+   ein Wort seine Alternativen verliert. Eine Nummer ins Leere wuerde sonst
+   einen leeren Vorschlagskasten zeigen - sichtbar kaputt, aber ohne Fehler. */
+function gewaehlterVorschlag(id, anzahl){
+  const e = VORSCHLAG_WAHL[id];
+  const nr = (e && typeof e.nr === 'number') ? e.nr : 0;
+  return (nr > 0 && nr < anzahl) ? nr : 0;
+}
+
+function setzeGewaehltenVorschlag(id, nr){
+  VORSCHLAG_WAHL[id] = { nr: Number(nr) || 0, zeit: Date.now() };
+  LS.set(VORSCHLAG_SCHLUESSEL, VORSCHLAG_WAHL);
 }
 
 /* Fortschritt initialisieren: Startbox aus Arabic-Roots-Daten importieren.
@@ -387,6 +581,18 @@ function ladeStandNeu(){
   const bekanntFrisch = LS.get(BEKANNT_SCHLUESSEL, null);
   if (bekanntFrisch && typeof bekanntFrisch === 'object' && !Array.isArray(bekanntFrisch)){
     BEKANNT = bekanntFrisch;
+  }
+  /* Dieselbe Falle wie eine Zeile darueber, aus demselben Grund. */
+  const wahlFrisch = LS.get(VORSCHLAG_SCHLUESSEL, null);
+  if (wahlFrisch && typeof wahlFrisch === 'object' && !Array.isArray(wahlFrisch)){
+    VORSCHLAG_WAHL = wahlFrisch;
+  }
+  /* Seine Korrekturen ebenso - und danach neu ueberlegen, sonst zeigt die
+     laufende Seite weiter den Text aus dem Abzug. */
+  const aendFrisch = LS.get(AENDERUNGS_SCHLUESSEL, null);
+  if (aendFrisch && typeof aendFrisch === 'object' && !Array.isArray(aendFrisch)){
+    WORT_AENDERUNGEN = aendFrisch;
+    wendeWortAenderungenAn();
   }
   if (typeof renderHome === 'function') renderHome();
   if (typeof renderCategories === 'function') renderCategories();

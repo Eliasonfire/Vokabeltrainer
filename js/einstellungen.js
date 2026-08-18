@@ -23,8 +23,10 @@ function renderSettings(){
 
 /* ---------- Der Rückweg aus „Kenne ich schon" (17.08.2026) ----------
 
-   Ohne diese Liste wäre der Knopf auf der Lernkarte eine Einbahnstraße: ein
-   Fehlgriff, und das Wort wäre für immer weg - und nirgends stünde, welches.
+   Ohne diese Liste wäre der Knopf eine Einbahnstraße: ein Fehlgriff, und das
+   Wort wäre für immer weg - und nirgends stünde, welches. (Der Knopf steht
+   seit dem 18.08.2026 im Hörmodus, vorher auf der Lernkarte. Hier ändert das
+   nichts: die Liste ist der Rückweg für beide Fälle.)
    Genau daran ist die Idee beim Aufschreiben der Anleitung gescheitert („dann
    holst du es dir zurück, indem du …" - es gab kein Indem).
 
@@ -154,6 +156,9 @@ const SICHERUNGS_SCHLUESSEL = [
   'vt_personalVocab', 'vt_customCats', 'vt_hifz', 'vt_hifzVerse',
   'vt_hoerTag',   /* Tageszaehler Hoermodus, 17.08.2026 */
   'vt_bekannt',   /* „Kenne ich schon" — seine Auswahl, nicht wiederherstellbar */
+  'vt_vorschlagNr', /* welcher Eselsbrücken-Vorschlag gilt (18.08.2026) — dito */
+  'vt_wortAenderungen', /* seine Korrekturen an Buchvokabeln (18.08.2026) */
+  'vt_geloescht',   /* ausgeblendete Fachbegriffe (18.08.2026) */
   /* Beide am 04.08.2026 nachgetragen. `vt_quranFav` (Favoriten-Suren) war seit
      seiner Einfuehrung am selben Tag nicht dabei - aufgefallen erst, als
      `vt_lesestand` dazukam und die Liste noch einmal gelesen wurde. Wer eine

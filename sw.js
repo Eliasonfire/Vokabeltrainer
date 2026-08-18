@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vokabeltrainer-v160';
+const CACHE_NAME = 'vokabeltrainer-v170';
 const ASSETS = [
   './',
   './index.html',

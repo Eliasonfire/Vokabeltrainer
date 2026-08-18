@@ -578,6 +578,11 @@ main{
 .box-pip:active{transform:scale(.95);border-color:var(--red-dim);}
 .box-pip .n{font-weight:800;font-size:var(--fs-xl);font-variant-numeric:tabular-nums;}
 .box-pip .l{font-size:.6rem;color:var(--text-faint);text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-top:2px;}
+/* Das Wiederhol-Intervall (18.08.2026). Kleiner und blasser als die
+   Box-Nummer: es ist die Erklärung zur Zahl, nicht die Zahl selbst.
+   `white-space:nowrap`, damit „16 Tage" auf fünf Kacheln nebeneinander nicht
+   umbricht — bei 375 px Breite ist jede Kachel nur rund 66 px breit. */
+.box-pip .iv{font-size:.56rem;color:var(--text-faint);opacity:.75;font-weight:600;margin-top:1px;white-space:nowrap;}
 /* Box 1 = eben falsch gehabt, Box 5 = sitzt. Dieselben zwei Farben wie das
    Antwort-Feedback auf der Lernkarte.
    ⚠️ Diese Kacheln auf der STARTSEITE hatte ich beim ersten Bau übersehen — nur
@@ -932,10 +937,12 @@ main{
    Stufe steht, in welche Box die Vokabel wandert und wann sie wiederkommt. */
 .answer-buttons{display:flex;gap:var(--sp-2);padding:var(--sp-2) var(--gutter) 0;}
 
-/* „Kenne ich schon" — leise unter den vier Stufen, damit es nicht wie eine
-   fuenfte Bewertung aussieht. `font:inherit` ist Pflicht: ein <button> erbt
-   die Schrift der Seite NICHT, er faellt sonst auf die Browser-Voreinstellung
-   zurueck und sieht kleiner und grau aus, ohne dass es jemand angeordnet hat. */
+/* „Kenne ich schon" — leise gestaltet, damit es nicht wie eine weitere
+   Bewertung aussieht. Steht seit dem 18.08.2026 unter der Hoerkarte, nicht
+   mehr unter den vier Stufen der Lernkarte. `font:inherit` ist Pflicht: ein
+   <button> erbt die Schrift der Seite NICHT, er faellt sonst auf die
+   Browser-Voreinstellung zurueck und sieht kleiner und grau aus, ohne dass es
+   jemand angeordnet hat. */
 .kenne-schon-zeile{display:flex;justify-content:center;padding:var(--sp-2) var(--gutter) 0;}
 .kenne-schon-btn{
   font:inherit;font-size:var(--fs-sm);
@@ -1045,6 +1052,10 @@ main{
 }
 /* "Noch ohne Wortfeld" - gehoert dazu, soll aber nicht wie ein Thema aussehen. */
 .list-row-rest .list-row-title{color:var(--text-dim);font-weight:600;}
+/* ⚠️ min-width:0 am Flex-KIND, sonst schiebt die Unterzeile die Zeile breiter
+   als den Bildschirm und die Seite rollt quer. */
+.list-row-haupt{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.list-row-sub{color:var(--text-dim);font-size:var(--fs-sm);font-weight:400;line-height:1.4;}
 
 /* Elias' eigene Kategorien, oben in der Wortfelder-Liste mit Stern
    („Möglichkeit B", seine Wahl vom 29.07.2026). Bewusst nur ein Stern und ein
@@ -1308,10 +1319,172 @@ main{
 .word-list-item:hover{background:var(--surface-3);}
 .word-list-item .wl-ar{font-family:var(--font-ar);direction:rtl;text-align:left;font-size:calc(var(--fs-md) * var(--ar-faktor));line-height:1.6;}
 .word-list-item .wl-de{color:var(--text-dim);font-size:var(--fs-md);}
+/* ⚠️ min-width:0 am Flex-KIND. Ohne das schiebt ein langer deutscher Text die
+   Zeile breiter als den Bildschirm, und `overflow-x` am Elternteil laeuft ins
+   Leere - dieselbe Falle wie in der „Kenne ich schon"-Liste. */
+.word-list-item .wl-text{min-width:0;flex:1;}
+/* Das Kaestchen zum Auswaehlen (18.08.2026). Es gibt der Auswahl eine eigene
+   Flaeche, seit ein Tipp auf die ZEILE die Wortkarte oeffnet. 40 px, damit ein
+   Daumen es trifft; das Haekchen selbst ist kleiner. */
+.wl-wahl{
+  flex:0 0 auto;width:40px;height:40px;margin:-8px 0 -8px -8px;
+  display:flex;align-items:center;justify-content:center;
+  background:none;border:none;padding:0;cursor:pointer;color:var(--text-faint);font:inherit;
+}
+.wl-wahl .kasten{
+  width:22px;height:22px;border-radius:var(--r-1);
+  border:1.5px solid var(--border-strong);
+  display:flex;align-items:center;justify-content:center;
+  transition:background var(--dur-2) ease, border-color var(--dur-2) ease;
+}
+.wl-wahl .ic{width:14px;height:14px;opacity:0;transition:opacity var(--dur-1) ease;}
+.word-list-item.gewaehlt .wl-wahl .kasten{background:var(--red-dim);border-color:var(--red-bright);}
+.word-list-item.gewaehlt .wl-wahl .ic{opacity:1;color:#fff;}
 .wl-box{
   font-size:var(--fs-xs);font-weight:800;color:var(--red-bright);background:var(--red-wash);
   border:1px solid var(--red-dim);border-radius:var(--r-full);padding:3px var(--sp-2);flex-shrink:0;
 }
+
+/* ---------- Die Wortkarte als Ueberblendung (Elias, 18.08.2026) ----------
+
+   „ich will wenn ich in einer box bin oder auch in den kategorien, dass sich
+   die karteikarte öffnet damit ich da auch die vorschläge und den satz sehen
+   kann … möchte aber im selben modus bleiben. also einfach nur im prinzip wie
+   ein pop up der karteikarte."
+
+   Deshalb eine Ueberblendung und kein Bildschirmwechsel: Zumachen bringt ihn
+   genau dorthin zurueck, wo er war - Rollposition und Auswahl inbegriffen.
+
+   ⚠️ Sie zeigt BEIDE Seiten der Lernkarte untereinander. Zum Nachschlagen ist
+   Umdrehen sinnlos: er weiss ja, welches Wort er angetippt hat. */
+.wortkarte{
+  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
+  z-index:700;width:min(400px,92vw);max-height:86vh;overflow-y:auto;
+  background:var(--surface-3);border:1px solid var(--border-strong);border-radius:var(--r-4);
+  padding:var(--sp-4);box-shadow:var(--sh-3);
+  display:flex;flex-direction:column;gap:var(--sp-3);
+  animation:popIn var(--dur-3) var(--ease-spring);
+}
+.wk-kopfzeile{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-2);}
+.wk-marken{display:flex;align-items:center;gap:var(--sp-2);flex-wrap:wrap;min-width:0;}
+/* ⛔ `.chip` ist von Haus aus `position:absolute` (Zeile 712) — in einer Reihe
+   positioniert er sich selbst und legt sich über den Nachbarn. Genau das ist am
+   18.08.2026 passiert: „Eigene Vokabel" lag auf „Box 1". Die Lernkarte
+   neutralisiert das seit dem 04.08. mit derselben Zeile in `.front-marken`; ich
+   hatte die Regel übernommen, ihre Begründung aber nicht. */
+.wk-marken .chip{position:static;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* ⭐ Die Größen kommen von der Lernkarte, nicht neu erfunden (Elias,
+   18.08.2026: „das arabische wort ist viel zu klein"). Dort steht
+   `clamp(3.2rem,15vw,5.2rem)`; hier eine Stufe kleiner, weil unter dem Wort
+   noch Vorschlag, Satz und Quran-Bezug Platz brauchen — aber in derselben
+   Größenordnung, nicht als Beschriftung.
+   ⛔ Arabisch WEISS, Deutsch ROT. Elias am 16.08.2026: „deutsch rot arabisch
+   weiß, nimm deinen vorschlag." Umgekehrt gemessen: Arabisch auf Rot kommt auf
+   6,11:1 statt 19,67:1, und die Ḥarakāt verschwinden zuerst. */
+.wk-ar{
+  font-family:var(--font-ar);direction:rtl;color:#fff;text-align:center;
+  font-size:clamp(2.6rem,12vw,4rem);font-weight:600;line-height:1.5;
+  text-shadow:0 4px 40px rgba(255,255,255,.08);
+}
+.wk-de{
+  text-align:center;font-size:var(--rueck-de);font-weight:800;
+  color:var(--red-bright);letter-spacing:-.01em;
+}
+.wk-neben{text-align:center;color:var(--text-dim);font-size:var(--fs-sm);}
+/* Der Lautsprecher steht UNTER der Übersetzung. Elias: „die deutsche
+   übersetzung sollte über dem ton zeichen sein." */
+.wk-ton{display:flex;justify-content:center;}
+.wk-abschnitt{
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-3);
+  padding:var(--sp-3);display:flex;flex-direction:column;gap:6px;min-width:0;
+}
+.wk-marke{
+  font-size:var(--fs-xs);font-weight:800;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--text-faint);display:flex;align-items:center;justify-content:space-between;gap:var(--sp-2);
+}
+.wk-abschnitt .ar{font-family:var(--font-ar);direction:rtl;font-size:calc(var(--fs-md) * var(--ar-faktor));line-height:1.9;}
+.wk-abschnitt .de{color:var(--text-dim);font-size:var(--fs-sm);line-height:1.55;}
+.wk-blaettern{display:flex;gap:var(--sp-2);}
+.wk-blaettern .btn{flex:1;min-width:0;}
+.wk-formen{display:flex;flex-wrap:wrap;gap:var(--sp-2);justify-content:center;}
+.wk-formen span{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-full);
+  padding:2px var(--sp-2);font-size:var(--fs-xs);
+}
+.wk-formen .lbl{color:var(--text-faint);font-style:normal;}
+.wk-formen .wf-ar{font-family:var(--font-ar);direction:rtl;font-size:calc(var(--fs-sm) * var(--ar-faktor));}
+.wk-aktionen{display:flex;gap:var(--sp-2);flex-wrap:wrap;justify-content:flex-end;}
+.wk-aktionen .btn{min-height:40px;}   /* Daumenflaeche, nicht die 32 px des Kleinknopfs */
+.wk-loeschen{color:var(--red-bright);border-color:var(--red-dim);}
+.wk-feld{display:flex;flex-direction:column;gap:4px;min-width:0;}
+.wk-feld > span{color:var(--text-dim);font-size:var(--fs-xs);font-weight:700;}
+/* `font:inherit` ist Pflicht - ein <input> erbt die Schrift der Seite NICHT und
+   faellt sonst auf die Browser-Voreinstellung zurueck. */
+.wk-feld input{
+  width:100%;font:inherit;font-size:var(--fs-md);
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-2);
+  padding:var(--sp-2) var(--sp-3);color:var(--text);min-height:44px;
+}
+.wk-feld input[dir="rtl"]{font-family:var(--font-ar);font-size:calc(var(--fs-md) * var(--ar-faktor));}
+.wk-feld input:focus{outline:none;border-color:var(--red-dim);}
+/* `font:inherit` auch am textarea — ein <textarea> erbt die Schrift der Seite
+   ebenso wenig wie ein <input>. */
+.wk-feld textarea{
+  width:100%;font:inherit;font-size:var(--fs-md);line-height:1.55;resize:vertical;
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-2);
+  padding:var(--sp-2) var(--sp-3);color:var(--text);
+}
+.wk-feld textarea:focus{outline:none;border-color:var(--red-dim);}
+/* Der Stift neben der Abschnittsmarke. Klein im Aussehen, aber mit voller
+   Daumenfläche: `padding` statt Höhe, damit die Marke nicht auseinanderrückt. */
+.wk-stift{
+  font:inherit;font-size:var(--fs-xs);font-weight:700;text-transform:none;letter-spacing:0;
+  display:inline-flex;align-items:center;gap:4px;
+  background:none;border:none;cursor:pointer;color:var(--red-bright);
+  padding:8px 6px;margin:-8px -6px;
+}
+.wk-stift .ic{width:13px;height:13px;}
+.wk-stift:hover{color:var(--text);}
+
+/* =====================================================================
+   SUCHE (18.08.2026)
+   ===================================================================== */
+.suche-feld{
+  display:flex;align-items:center;gap:var(--sp-2);
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-3);
+  padding:0 var(--sp-2) 0 var(--sp-3);margin-bottom:var(--sp-3);
+}
+.suche-feld > .ic{width:18px;height:18px;color:var(--text-faint);flex:0 0 auto;}
+/* `font:inherit` — ein <input> erbt die Schrift der Seite nicht.
+   `min-width:0` am Flex-KIND: ohne das gibt das Feld seine Standardbreite nicht
+   her und schiebt die Zeile über den Bildschirmrand hinaus. */
+.suche-feld input{
+  flex:1;min-width:0;font:inherit;font-size:var(--fs-md);
+  background:none;border:none;color:var(--text);padding:var(--sp-3) 0;
+}
+.suche-feld input:focus{outline:none;}
+.suche-hinweis{color:var(--text-dim);font-size:var(--fs-sm);margin-bottom:var(--sp-3);line-height:1.5;}
+/* Die Häufigkeit im Quran je Trefferzeile. Elias: „soll auch anzeigen wie oft
+   es dieses wort im quran gibt." */
+.wl-quran{
+  display:inline-flex;align-items:center;gap:4px;flex:0 0 auto;
+  font-size:var(--fs-xs);font-weight:700;
+  color:var(--red-bright);background:var(--red-wash);border:1px solid var(--red-dim);
+  border-radius:var(--r-full);padding:3px var(--sp-2);white-space:nowrap;
+}
+.wl-quran .ic{width:12px;height:12px;}
+.wl-marken{display:flex;align-items:center;gap:6px;flex:0 0 auto;flex-wrap:wrap;justify-content:flex-end;}
+/* Ein Treffer aus einem Kapitel, das noch nicht freigeschaltet ist. Gedämpft
+   statt versteckt — er soll sehen, dass es das Wort gibt. */
+.wl-fremd{font-size:var(--fs-xs);color:var(--text-faint);border:1px solid var(--border);
+  border-radius:var(--r-full);padding:3px var(--sp-2);white-space:nowrap;}
+/* ⚠️ Solange gesucht wird, sind die Reiter-Flächen weg — aber NICHT über die
+   Klasse `hidden`: die schaltet der Reiter-Umschalter selbst, und beide würden
+   sich gegenseitig überschreiben. Zwei Regeln für dieselbe Sichtbarkeit sind
+   schon zweimal schiefgegangen. Deshalb ein eigener Name mit !important, damit
+   er auch gegen ein `display` aus `.cat-pane` gewinnt. */
+.cat-pane.such-aus{display:none !important;}
 
 /* Quran-Bezug: eigene Karte statt Inline-Styles im JS */
 .quran-word-item{flex-direction:column;align-items:stretch;gap:var(--sp-2);}
@@ -1871,7 +2044,11 @@ main{
   font-variant-numeric:tabular-nums;flex-shrink:0;}
 #quranFullTitle .qt-ar{font-family:var(--font-ar);font-size:1.45rem;font-weight:600;color:#fff;
   line-height:1.6;flex-shrink:0;}
-#quranFullTitle .qt-um{font-size:var(--fs-sm);font-weight:600;color:var(--text-dim);
+/* Eine Stufe größer seit dem 18.08.2026 („die deutsche übersetzung beim titel
+   soll noch ein kleines bisschen größer sein"). --fs-md statt --fs-sm, also
+   gemessene 15,2 statt 12,5 px. Bewusst nur eine Stufe: der arabische Name
+   trägt die Zeile weiterhin, das war Elias' Entscheidung vom 04.08.2026. */
+#quranFullTitle .qt-um{font-size:var(--fs-md);font-weight:600;color:var(--text-dim);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
 .surah-row .sr-name{
   font-size:var(--fs-sm);color:var(--text-dim);
@@ -1939,6 +2116,51 @@ main{
    Ḥifẓ-Leiste selbst — sonst hätte die Ayah-Leiste darunter ein `top` gebraucht,
    das die Höhe der Ḥifẓ-Leiste kennt. */
 .quran-sticky{position:sticky;top:52px;z-index:25;background:var(--bg);}
+
+/* ---------- Titelzeile und Ḥifẓ-Leiste sind EIN Block (18.08.2026) ----------
+
+   Elias, mit Bild des rot markierten Streifens: „hier ist diese ganz kleine
+   lücke und die soll nicht da sein. die beiden teile sollen zu einem teil
+   werden und sich verbinden."
+
+   ⭐ Nachgemessen waren es zwei verschiedene Ursachen, nicht eine:
+
+   1. `.screen-header` hat `margin-bottom: var(--sp-5)` — im ungerollten
+      Zustand, also genau dem seines Bildschirmfotos, klaffen dadurch **20 px**
+      zwischen Titelzeile und Leiste.
+   2. Der Hintergrund der Kopfzeile ist ein Verlauf, der unten auf
+      `transparent` ausläuft (`var(--bg) 68%, transparent`). Die Leiste darunter
+      ist deckend. Beim Rollen kommt der Verstext im durchsichtigen Drittel
+      durch und trifft auf eine harte Kante — der zweite sichtbare Streifen.
+
+   Beides gilt NUR im Leser. Auf den übrigen Bildschirmen bleibt der weiche
+   Verlauf, dort rollt Inhalt bewusst weich unter die Überschrift. */
+#screen-quranfull .screen-header{
+  margin-bottom:0;
+  background:var(--bg);
+  /* Gemessener sichtbarer Abstand zwischen Titelunterkante und dem Text der
+     Leiste: 30,4 px, zusammengesetzt aus 12 px Polsterung hier, 8 px dort und
+     dem Rest Zeilenluft. Elias wollte ihn „so einen tick kleiner" — beide
+     Polsterungen auf 4 px, damit landet er bei rund 18 px. Weiter herunter
+     wäre keine Luft mehr, sondern ein Druckfehler. */
+  padding-bottom:var(--sp-1);
+  /* ⭐ Der Streifen ÜBER der Titelzeile (18.08.2026, zweites Bildschirmfoto).
+     Gemessen: genau 4 px, und was dort durchrollte, war `verse-ar` — der
+     Verstext selbst. Ursache ist `main`s eigene `padding-top:var(--sp-1)`:
+     die klebende Zeile hält bei `top:0` an der Innenkante, die 4 px Polsterung
+     darüber bleiben durchsichtig.
+
+     ⛔ Der naheliegende Weg war falsch. Erst stand hier `top:-4px` mit
+     negativem `margin-top` — danach klebte die Zeile **57 px zu tief**, im
+     Browser nachgemessen. Ein `top` ins Negative verschiebt bei zwei
+     benachbarten klebenden Zeilen mehr als die eine, die man meint.
+
+     Stattdessen ein Schatten, der nach OBEN in derselben Farbe malt. Er deckt
+     die 4 px zu und rührt am Aufbau nichts an: kein Platzbedarf, keine
+     Klebekante, nichts, was sich verschieben könnte. */
+  box-shadow:0 calc(var(--sp-1) * -1) 0 var(--bg);
+}
+#screen-quranfull .hifz-bar{ padding-top:var(--sp-1); }
 
 /* ---------- Kopf einklappen beim Weiterlesen (Elias' Punkt 1, 10.08.2026) ----
 
@@ -2936,24 +3158,11 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
           <span>Leicht</span><em id="stufeLeicht"></em></button>
       </div>
 
-      <!-- ⭐ „Kenne ich schon" (17.08.2026). Elias: „so sachen wie ja auf
-           arabisch oder nein oder imam oder sowas was irgendwie
-           selbstverständlich oder auch sehr einfach oder mit grundwissen ist
-           brauche ich nicht wie moschee oder ja oder sowas halt."
-
-           ⛔ Die Auswahl trifft ER. Es gibt bewusst KEINE von mir angelegte
-           Liste „zu leichter" Wörter — was für ihn selbstverständlich ist, ist
-           es für einen anderen Lerner nicht.
-
-           Bewusst leise gestaltet und UNTER den vier Stufen: es ist keine
-           fünfte Bewertung. Wer es versehentlich trifft, findet alles in den
-           Einstellungen wieder. -->
-      <div class="kenne-schon-zeile">
-        <button class="kenne-schon-btn" id="btnKenneSchon">
-          <svg class="ic"><use href="#ic-auge"/></svg>
-          <span>Kenne ich schon — nicht mehr abfragen</span>
-        </button>
-      </div>
+      <!-- ⛔ Hier stand bis zum 18.08.2026 der „Kenne ich schon"-Knopf. Er ist
+           in den Hörmodus umgezogen — Elias: „das ist an der falschen stelle,
+           das sollte eigentlich beim hörmodus doch sein." Die Karteikarten
+           haben mit „Leicht" bereits eine Stufe für „das kann ich"; der
+           Hörmodus hatte gar keine. Siehe #screen-hoeren. -->
     </section>
 
     <!-- ============ CATEGORIES ============ -->
@@ -2962,6 +3171,24 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         <button class="icon-btn" data-back aria-label="Zurück"><svg class="ic"><use href="#ic-left"/></svg></button>
         <h2>Kategorien</h2>
       </div>
+
+      <!-- ⭐ Die Suche steht GANZ OBEN, über den Reitern. Elias, 18.08.2026:
+           „mach das am besten bei den kategorien, einfach über kapitel,
+           wortfelder und eigene. einfach so ganz oben halt."
+
+           Gesucht wird über den GANZEN geladenen Bestand, nicht nur über die
+           freigeschalteten Kapitel: wer sucht, will wissen, OB es das Wort
+           gibt — auch wenn es aus einem Kapitel stammt, das noch zu ist. Solche
+           Treffer werden gefunden UND als „noch nicht dran" markiert, statt zu
+           fehlen. -->
+      <div class="suche-feld">
+        <svg class="ic"><use href="#ic-search"/></svg>
+        <input type="text" id="sucheEingabe" placeholder="Wort, Bedeutung oder Wurzel suchen …"
+               autocomplete="off" autocapitalize="off" spellcheck="false">
+        <button class="icon-btn hidden" id="btnSucheLeeren" aria-label="Suche leeren"><svg class="ic"><use href="#ic-close"/></svg></button>
+      </div>
+      <div class="suche-hinweis hidden" id="sucheHinweis"></div>
+      <div class="word-list hidden" id="sucheTreffer"></div>
 
       <div class="cat-tabs" id="catTabs">
         <button class="cat-tab active" data-cattab="chapters">Kapitel</button>
@@ -3273,6 +3500,31 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         <div class="hoer-hinweis" id="hoerHinweis">Antippen zum Hören</div>
         <div class="hoer-optionen" id="hoerOptionen"></div>
         <div class="hoer-loesung hidden" id="hoerLoesung"></div>
+      </div>
+
+      <!-- ⭐ „Kenne ich schon" (hier seit 18.08.2026). Elias: „so sachen wie ja
+           auf arabisch oder nein oder imam oder sowas was irgendwie
+           selbstverständlich oder auch sehr einfach oder mit grundwissen ist
+           brauche ich nicht wie moschee oder ja oder sowas halt."
+
+           ⛔ Die Auswahl trifft ER. Es gibt bewusst KEINE von mir angelegte
+           Liste „zu leichter" Wörter — was für ihn selbstverständlich ist, ist
+           es für einen anderen Lerner nicht.
+
+           ⚠️ AUSSERHALB der Karte, nicht darin. Ein Tipp auf `#hoerKarte`
+           schaltet nach der Antwort zum nächsten Wort weiter (siehe
+           js/hoeren.js); ein Knopf innerhalb der Karte würde also markieren
+           UND weiterschalten, und das Ergebnis wäre nur einen Sekundenbruchteil
+           zu sehen.
+
+           ⚠️ Erst NACH der Antwort sichtbar: vorher ist das Wort nur zu hören
+           und steht nirgends. „Kenne ich schon" über ein Wort zu sagen, das man
+           noch nicht gesehen hat, wäre geraten statt entschieden. -->
+      <div class="kenne-schon-zeile hidden" id="hoerKenneSchonZeile">
+        <button class="kenne-schon-btn" id="btnHoerKenneSchon">
+          <svg class="ic"><use href="#ic-auge"/></svg>
+          <span>Kenne ich schon — nicht mehr abfragen</span>
+        </button>
       </div>
 
       <div class="hoer-leer hidden" id="hoerLeer"></div>
@@ -3648,6 +3900,18 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
     <button class="btn btn-primary" id="btnSaveNote"><svg class="ic"><use href="#ic-check"/></svg>Speichern</button>
   </div>
 </div>
+
+<!-- ⭐ Die Wortkarte zum Nachschlagen (Elias, 18.08.2026). Öffnet sich aus der
+     Wortliste — also aus einer Box, einem Kapitel, einer eigenen Kategorie oder
+     einem Wortfeld — und legt sich ÜBER die Liste, statt den Bildschirm zu
+     wechseln. Der Inhalt wird in js/kategorien.js gebaut.
+
+     ⛔ Sie fasst den Leitner-Stand nicht an: kein „Gut", kein „Nochmal", keine
+     Fälligkeit. Nachschlagen ist kein Üben — sonst würde jedes Nachsehen den
+     Rhythmus einer Karte verschieben. Verlegt wird weiterhin nur über die
+     Kästchen in der Liste und die Leiste unten. -->
+<div class="qfp-backdrop hidden" id="wortKarteBackdrop"></div>
+<div class="wortkarte hidden" id="wortKarte" role="dialog" aria-label="Wortkarte"></div>
 
 <!-- Reine Daten, keine Logik (E.7). Muessen vor der App-Logik stehen. -->
 <script src="vocab-data.js"></script>

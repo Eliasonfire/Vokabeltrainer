@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer — Lampe">
+<title>Entwurf F — die Lampe (Wissen als Licht)</title>
+<!-- Die Moscheelampe: ein Bild, das im Islam für Wissen und Rechtleitung steht
+     und das Elias aus jeder Moschee kennt. Rein geometrisch gezeichnet, kein
+     religiöses Zeichen im engeren Sinn — dieselbe Zurückhaltung wie beim
+     Korantrainer.
+     Der Docht ist das einzige Rote: der Akzent sitzt dort, wo das Licht
+     entsteht. -->
+<rect width="512" height="512" rx="112" fill="#000000"/>
+<g fill="none" stroke="#f3ecef" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Die Aufhängung -->
+  <path d="M256 92v42"/>
+  <!-- Der Korpus: oben eng, in der Mitte weit, unten wieder eng -->
+  <path d="M180 134h152l-26 62c34 22 54 54 54 92 0 58-45 100-104 100S152 346 152 288c0-38 20-70 54-92z"/>
+  <!-- Der Fuß -->
+  <path d="M224 404h64"/>
+</g>
+<!-- Die Flamme, rot -->
+<path d="M256 250c22 18 32 34 32 50a32 32 0 0 1-64 0c0-16 10-32 32-50z" fill="#ff2d4f"/>
+</svg>

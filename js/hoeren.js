@@ -121,6 +121,10 @@ function naechsteHoerfrage(){
   const pool = hoerbareVokabeln();
   const leer = document.getElementById('hoerLeer');
   const karte = document.getElementById('hoerKarte');
+  /* Der „Kenne ich schon"-Knopf gehoert zum GERADE GELOESTEN Wort. Er wird
+     deshalb bei jeder neuen Frage weggeschaltet, auch im Leer-Fall - sonst
+     zeigte er auf das Wort davor und wuerde das Falsche ausblenden. */
+  document.getElementById('hoerKenneSchonZeile').classList.add('hidden');
   if (pool.length < 4){
     karte.classList.add('hidden');
     leer.classList.remove('hidden');
@@ -189,6 +193,7 @@ function beantworteHoerfrage(i){
        mich als Wortstamm keinen Sinn." Die Wurzel bleibt in den Daten. */
     + `<div class="hl-de">${escapeHtml(w.de)}</div>`;
   l.classList.remove('hidden');
+  zeichneHoerKenneSchon();
 
   /* Tageszaehler fortschreiben, BEVOR die Standzeile neu geschrieben wird -
      sonst zeigt sie den Stand von vor dieser Antwort. */
@@ -253,6 +258,75 @@ document.getElementById('hoerKarte').addEventListener('click', (e)=>{
   if (e._hatBeantwortet) return;                        /* genau dieser Klick war die Antwort */
   if (HOER.beantwortet){ naechsteHoerfrage(); return; } /* egal wo auf der Karte, auch nach dem Tagesziel */
   if (e.target.closest('#btnHoerPlay')) hoerAbspielen();
+});
+
+/* ---------- „Kenne ich schon" (hier seit 18.08.2026) ----------
+
+   Elias: „das ist an der falschen stelle, das sollte eigentlich beim hörmodus
+   doch sein." Vorher stand der Knopf unter den vier Stufen der Lernkarte.
+
+   ⭐ Warum der Hoermodus die richtige Stelle ist: die Karteikarte hat mit
+   „Leicht" laengst eine Stufe fuer „das kann ich" - dort war der Knopf eine
+   fuenfte Bewertung neben vier bestehenden. Der Hoermodus hat gar keine
+   Bewertung (er fasst den Leitner-Stand bewusst nicht an), und man hoert einem
+   Wort sofort an, ob es selbstverstaendlich ist.
+
+   Ein Tipp, und das Wort wird nicht mehr GEFRAGT - weder hier noch bei den
+   Karteikarten, denn `kennErSchon` haengt in kern.js `passtZurAuswahl`. Als
+   Ablenker bleibt es (siehe naechsteHoerfrage). Bewusst OHNE Rueckfrage: der
+   Fehlgriff ist folgenlos, weil derselbe Knopf ihn sofort zuruecknimmt und die
+   Liste in den Einstellungen ihn dauerhaft zurueckholt.
+
+   ⚠️ Es wird NICHT weitergeschaltet. Wer gerade die Loesung liest, will sie zu
+   Ende lesen; das Wort faellt ab der naechsten Frage weg. */
+function zeichneHoerKenneSchon(){
+  const zeile = document.getElementById('hoerKenneSchonZeile');
+  const b     = document.getElementById('btnHoerKenneSchon');
+  if (!zeile || !b || !HOER.wort) return;
+  const markiert = (typeof kennErSchon === 'function') && kennErSchon(HOER.wort);
+  zeile.classList.remove('hidden');
+  b.classList.toggle('ist-markiert', markiert);
+  b.querySelector('span').textContent = markiert
+    ? 'Ausgeblendet — wieder abfragen'
+    : 'Kenne ich schon — nicht mehr abfragen';
+  freiRollen(zeile);
+}
+
+/* ⚠️ Gemessen am 18.08.2026: bei den vier laengsten Bedeutungen aus seinem
+   eigenen Hoervorrat (186 Woerter; die Fachbegriffe haben lange deutsche
+   Erklaerungen wie „Genitivverbindung — zwei Nomen werden ein Ausdruck") wird
+   die Karte so hoch, dass die Knopfzeile **54 px unter der unteren Leiste**
+   landet. Der Bildschirm laesst sich zwar rollen - 78 px Weg -, er sieht aber
+   nicht danach aus.
+
+   ⛔ `scrollIntoView({block:'nearest'})` hilft hier NICHT, und zwar ohne
+   Fehlermeldung: fuer den Browser liegt die Zeile im sichtbaren Bereich von
+   `main`. Die `.bottombar` ist `position:fixed`, also ein Ueberzug DARUEBER und
+   kein Teil des Rollbereichs - gemessen blieb `scrollTop` auf 0. Deshalb wird
+   der verdeckte Teil hier selbst ausgerechnet.
+
+   Gerollt wird nur, wenn wirklich etwas verdeckt ist. Ein Bildschirm, der nach
+   jeder Antwort springt, waere derselbe Fehler wie der Hinweis, der frueher die
+   naechste Lernkarte verdeckt hat. */
+function freiRollen(el){
+  const roller = el.closest('main');
+  const leiste = document.querySelector('.bottombar');
+  if (!roller) return;
+  const grenze = leiste ? leiste.getBoundingClientRect().top : window.innerHeight;
+  const zuviel = el.getBoundingClientRect().bottom - grenze;
+  if (zuviel > 0) roller.scrollTop += zuviel + 8;   /* 8 px Luft, nicht auf Kante */
+}
+
+document.getElementById('btnHoerKenneSchon').addEventListener('click', ()=>{
+  const w = HOER.wort;
+  if (!w) return;
+  const jetztAn = !kennErSchon(w);
+  setzeKennErSchon(w.id, jetztAn);
+  zeichneHoerKenneSchon();
+  if (typeof zeichneKenneSchonListe === 'function') zeichneKenneSchonListe();
+  toast(jetztAn
+    ? `${w.de} kommt nicht mehr — zurückholen in den Einstellungen.`
+    : `${w.de} wird wieder abgefragt.`);
 });
 
 function openHoeren(){

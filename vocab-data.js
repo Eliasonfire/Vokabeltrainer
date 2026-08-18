@@ -61,7 +61,7 @@ const VOCAB_DATA = [
  {
   "id": "45753",
 
-  "mnemo": "Klanghilfe: „bāb\" ist ein Lallwort wie „Baba\" — zwei gleiche Lippenlaute, leicht zu behalten. Nur der Klang, über die Herkunft wird nichts behauptet. Der Plural أَبْوَابٌ klingt wie „ab-wāb\": viele Türen zum Abgehen.",
+  "mnemo": "بَابُ التَّوْبَةِ — die Tür der Reue, von der es heißt, sie bleibe offen, bis die Sonne im Westen aufgeht. Wo im Deutschen „Tür“ steht, steht dort بَاب, ohne Umweg.",
   "ar": "بَابٌ",
   "de": "Tür",
   "type": "noun",
@@ -876,7 +876,7 @@ const VOCAB_DATA = [
  {
   "id": "45789",
 
-  "mnemo": "Gegenpaar zu وَاقِفٌ (stehend). Muster فَاعِل wie طَالِبٌ und تَاجِرٌ. Wurzel ج ل س — dieselbe wie in مَجْلِس, dem Sitzungsort. Sitzen und Sitzung, ein Wortstamm.",
+  "mnemo": "Ein مَجْلِس ist wörtlich der Ort des Sitzens — die Lernrunde heißt so, weil man sich dazusetzt. Wer darin sitzt, ist جَالِس. Kein Bild und kein Vergleich: dasselbe Wort, dieselbe Wurzel ج ل س.",
   "ar": "جَالِسٌ",
   "de": "sitzend",
   "type": "adjective",
@@ -1062,7 +1062,7 @@ const VOCAB_DATA = [
  {
   "id": "45797",
 
-  "mnemo": "Gegenpaar zu كَبِيرٌ (groß). Wurzel ص غ ر. Du kennst أَصْغَر (kleiner) aus Vergleichen — dieselbe Wurzel.",
+  "mnemo": "Das Wort steht in dem Bittgebet für die Eltern, das du kennst: «كَمَا رَبَّيَانِي صَغِيرًا» — „wie sie mich aufzogen, als ich klein war“. Genau diese Vokabel, an einer Stelle, die du ohnehin sprichst.",
   "ar": "صَغِيرٌ",
   "de": "klein",
   "type": "adjective",
@@ -1116,7 +1116,7 @@ const VOCAB_DATA = [
  {
   "id": "45799",
 
-  "mnemo": "Gegenpaar zu ثَقِيلٌ (schwer). Wurzel خ ف ف mit doppeltem ف. Klanghilfe: „chafīf\" ist selbst ein leichtes, hauchiges Wort — der Klang macht die Bedeutung vor.",
+  "mnemo": "Du kennst den Ḥadīth: كَلِمَتَانِ خَفِيفَتَانِ عَلَى اللِّسَانِ — „zwei Worte, leicht auf der Zunge, schwer (ثَقِيلَتَانِ) in der Waage“: سُبْحَانَ اللهِ وَبِحَمْدِهِ. Genau dieses Wort, in genau dieser Bedeutung, und das Gegenstück gleich daneben. (Buḫārī und Muslim.)",
   "ar": "خَفِيفٌ",
   "de": "leicht",
   "type": "adjective",
@@ -1734,7 +1734,7 @@ const VOCAB_DATA = [
  {
   "id": "45827",
 
-  "mnemo": "Wurzel ر س ل = senden. Ein رَسُول ist der Gesandte. Du sprichst es täglich: مُحَمَّدٌ رَسُولُ اللهِ. Der Plural رُسُل steht oft im Koran für alle Gesandten.",
+  "mnemo": "Du sprichst es in der Šahāda: مُحَمَّدٌ رَسُولُ اللهِ. Das ist kein Beispiel für die Vokabel — das IST die Vokabel, an der Stelle, an der du sie am häufigsten sagst.",
   "ar": "رَسُولٌ",
   "de": "Gesandter",
   "type": "noun",
@@ -1803,7 +1803,7 @@ const VOCAB_DATA = [
  {
   "id": "45830",
 
-  "mnemo": "Gegenpaar zu بِنْتٌ (Tochter). Wurzel ب ن ي = bauen. Merke: Kinder bauen die Familie weiter. Achte auf die Hamzat al-waṣl in اِبْنٌ — sie fällt im Satz weg.",
+  "mnemo": "عِيسَى ابْنُ مَرْيَمَ — in dieser Verbindung begegnet dir das Wort am häufigsten, im Koran wie im Alltag. اِبْن heißt Sohn, und du hast es hundertmal gehört, ohne es zu übersetzen.",
   "ar": "اِبْنٌ",
   "de": "Sohn",
   "type": "noun",
@@ -2031,7 +2031,7 @@ const VOCAB_DATA = [
  {
   "id": "45840",
 
-  "mnemo": "Wurzel ح ق ب. Klanghilfe: „ḥaqība\" — nur der Klang, keine Herkunft. Der Plural حَقَائِبُ hat eine Hamzah in der Mitte: ḥa-qā-'ib. Den sprich dir laut vor, er ist unregelmäßig.",
+  "mnemo": "Warum dieser Klang „Tasche\" heißt: die Wurzel ح ق ب meint das Festschnallen. حَقَب ist der Gurt am Kamelsattel, und eine حَقِيبَة ist das, was hinten am Sattel festgemacht wird — also wörtlich das, was mitgetragen wird. (Aus den Wörterbüchern, nicht aus dem Unterricht.)",
   "ar": "حَقِيبَةٌ",
   "de": "Tasche / Rucksack",
   "type": "noun",
@@ -2115,7 +2115,7 @@ const VOCAB_DATA = [
  {
   "id": "45844",
 
-  "mnemo": "Werkzeug-مِـ wie مِفْتَاحٌ und مِكْوَاةٌ. Wurzel ل ع ق = lecken — das Ding zum Lecken. Der Plural مَلَاعِقُ ist unregelmäßig, sprich ihn laut.",
+  "mnemo": "Im Ḥadīth wird empfohlen, nach dem Essen die Finger abzulecken: «فَلْيَلْعَقْ أَصَابِعَهُ». Genau diese Wurzel ل ع ق steckt im Löffel — das Gerät zum Lecken. (Buḫārī und Muslim.)",
   "ar": "مِلْعَقَةٌ",
   "de": "Löffel",
   "type": "noun",
@@ -2304,7 +2304,7 @@ const VOCAB_DATA = [
  {
   "id": "45853",
 
-  "mnemo": "Das kürzeste Körperteil-Wort: nur ف und م. Gehört zur Wudū'-Gruppe mit أَنْفٌ, يَدٌ, رِجْلٌ, أُذُنٌ. ⚠️ Der Plural أَفْوَاهٌ sieht ganz anders aus — den extra merken.",
+  "mnemo": "Der Siwāk ist «مَطْهَرَةٌ لِلْفَمِ» — „eine Reinigung für den Mund“. In diesem Satz, den du kennst, steht das Wort mit Artikel: لِلْفَمِ. (Buḫārī und Muslim.)",
   "ar": "فَمٌ",
   "de": "Mund",
   "type": "noun",
@@ -2394,7 +2394,7 @@ const VOCAB_DATA = [
  {
   "id": "45857",
 
-  "mnemo": "Kurz und häufig. ⚠️ Der Plural أَيْدٍ endet auf Tanwīn ohne sichtbaren Buchstaben — das ist die Stolperstelle, nicht das Wort selbst. Gehört zur Wudū'-Gruppe.",
+  "mnemo": "بَيْنَ يَدَيْ heißt wörtlich „zwischen den Händen“ und meint „vor jemandem“ — so wie man vor Allah steht. Die Wendung hörst du ständig, und darin steckt genau diese Vokabel.",
   "ar": "يَدٌ",
   "de": "Hand",
   "type": "noun",
@@ -2463,7 +2463,7 @@ const VOCAB_DATA = [
  {
   "id": "45860",
 
-  "mnemo": "Wurzel ن ف ذ = durchdringen. Das Fenster ist die Stelle, durch die Licht und Luft durchgehen. Der Plural نَوَافِذُ ist unregelmäßig — laut sprechen.",
+  "mnemo": "Im Alltag hörst du meist شُبَّاك für das Fenster. نَافِذَة ist das hochsprachliche Wort — es steht im Buch, in Zeitungen und im Unterricht. Beide meinen dasselbe; gelernt wird نَافِذَة.",
   "ar": "نَافِذَةٌ",
   "de": "Fenster",
   "type": "noun",
