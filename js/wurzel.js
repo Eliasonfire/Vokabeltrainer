@@ -10,11 +10,16 @@
    interaktives sonst gucke ich mir das einfach nur an ... ich hab halt adhs
    und ich brauche so spiele artig mein lernen".
 
-   Deshalb drei Schritte je Familie, in dieser Reihenfolge:
+   Deshalb vier Schritte je Familie, in dieser Reihenfolge:
 
      1 Erinnern - abrufen, was schon da ist            (Auswendiglernen)
      2 Finden   - die Wurzel IM Wort antippen          (Fertigkeit, produktiv)
      3 Erraten  - ein neues Wort aus derselben Wurzel  (der Ertrag)
+     4 Duell    - zwei Woerter, die ohne Ḥarakāt gleich aussehen (C5, 18.08.26)
+
+   Schritt 4 erscheint NUR, wenn diese Familie ein echtes Verwechslungspaar
+   hergibt - sonst geht es still weiter. Ein Schritt, der bei den meisten
+   Familien leer waere, waere schlimmer als keiner.
 
    Die gestapelte Familie kommt erst DANACH, als Abschluss. Drei Familien sind
    eine Sitzung - eine kurze Einheit mit sichtbarem Ende statt endlosem
@@ -227,20 +232,36 @@ function wzAusrichten(){
 }
 
 /* ================= Die Uebung ================= */
-var WZ_SITZUNG = { reihe: [], i: 0, richtig: 0, gesamt: 0 };
+var WZ_SITZUNG = { reihe: [], i: 0, richtig: 0, gesamt: 0, duelle: {} };
 var WZ_S1_REST = [];
 var WZ_S2_ZIEL = 0, WZ_S2_TREFFER = 0;
 
+/* ⚠️ Die Reihenfolge dieser Liste IST die Nummerierung. Als am 18.08.2026 der
+   vierte Schritt (Duell) dazukam, musste jede Zahl dahinter mitwandern:
+   „Familie geschafft" von 3 auf 4, der Schluss von 4 auf 5. Wer nur die Liste
+   ergaenzt und die Aufrufe vergisst, bekommt keinen Fehler - nur den falschen
+   Bildschirm, und zwar den, der zufaellig an der Stelle steht. */
+var WZ_SCHRITTE = ['wzSchritt1','wzSchritt2','wzSchritt3','wzSchritt4','wzSchrittFertig','wzSchluss'];
+var WZ_PUNKTE   = 4;   /* so viele Uebungsschritte hat eine Familie */
+
 function wzSchrittZeigen(nr){
-  ['wzSchritt1','wzSchritt2','wzSchritt3','wzSchrittFertig','wzSchluss']
-    .forEach(function(id, k){
-      var el = document.getElementById(id);
-      if (el) el.hidden = (k !== nr);
-    });
+  WZ_SCHRITTE.forEach(function(id, k){
+    var el = document.getElementById(id);
+    if (el) el.hidden = (k !== nr);
+  });
   var p = '', k;
-  for (k = 0; k < 3; k++) p += '<i class="' + (k < nr ? 'an' : '') + '"></i>';
+  for (k = 0; k < WZ_PUNKTE; k++) p += '<i class="' + (k < nr ? 'an' : '') + '"></i>';
   var pk = document.getElementById('wzPunkte');
-  if (pk) pk.innerHTML = nr < 3 ? p : '<i class="an"></i><i class="an"></i><i class="an"></i>';
+  if (pk){
+    /* Ab „Familie geschafft" sind alle Punkte an - auch wenn das Duell
+       uebersprungen wurde, weil es kein Paar gab. Sonst saehe eine Familie
+       ohne Verwechslungspartner nach einem abgebrochenen Durchgang aus. */
+    if (nr >= WZ_PUNKTE){
+      p = '';
+      for (k = 0; k < WZ_PUNKTE; k++) p += '<i class="an"></i>';
+    }
+    pk.innerHTML = p;
+  }
 }
 
 /* Bevorzugt Familien, die alle drei Schritte hergeben. */
@@ -259,6 +280,9 @@ function wzStarteSitzung(){
   var reihe = wzMische(stark.slice(0, 2).concat(rest).slice(0, 3));
   WZ_SITZUNG.reihe = reihe.map(function(f){ return WZ_FAMILIEN.indexOf(f); });
   WZ_SITZUNG.i = 0; WZ_SITZUNG.richtig = 0; WZ_SITZUNG.gesamt = 0;
+  /* Jede Sitzung faengt mit allen Paaren neu an - sonst waere die Uebung nach
+     der ersten Sitzung fuer immer leer. */
+  WZ_SITZUNG.duelle = {};
   wzStarteFamilie();
 }
 function wzFamilie(){ return WZ_FAMILIEN[WZ_SITZUNG.reihe[WZ_SITZUNG.i]]; }
@@ -351,9 +375,169 @@ function wzSchritt3(){
   wzSchrittZeigen(2);
 }
 
+/* ================= 4 Duell: die Ḥarakāt entscheiden =================
+
+   Elias' Entscheidung (C5, 18.08.2026): „als Zusatzrunde im Wurzelmodus, nicht
+   als zwölfter Bildschirm. Die App hat schon elf."
+
+   Die Uebung: zwei Woerter, die OHNE Vokalzeichen genau gleich aussehen, stehen
+   nebeneinander. Gefragt ist eine Bedeutung. Entscheiden kann man nur an den
+   Ḥarakāt - und genau das ist die Fertigkeit, um die es geht.
+
+   ⚠️ ZUR ZAHL 219 IM ENTSCHEIDUNGSBOGEN
+
+   Sie haelt der Nachmessung nicht stand. Gemessen am 18.08.2026 (gleiches
+   Skelett ohne Ḥarakāt, verschiedene Vokalisierung, verschiedene Bedeutung,
+   Bedeutungsdubletten wie „Buch" gegen „Buch (Pl. Buecher)" herausgefiltert):
+
+     nur die 171 Lernwoerter ................  1 Paar (رَجُلٌ gegen رِجْلٌ)
+     Lernwoerter + alle Buchabzuege .........  373 Paare
+     davon beruehrt eines die 171 ...........  34 Paare
+
+   Die 34 sind die brauchbare Menge, und nur die kommen hier vor: ein Duell aus
+   zwei Woertern, die er beide nicht hat, uebt nichts.
+
+   ⭐ Die Paare werden BEI BEDARF berechnet, nicht als Datei gepflegt. VOCAB_DATA
+   waechst beim Umschalten der Buecher; eine erzeugte Liste waere danach
+   unvollstaendig, ohne dass irgendetwas meldet, dass sie es ist. */
+
+var WZ_DUELLE = null;      /* erst beim ersten Bedarf gefuellt */
+
+/* Skelett: das, was ohne Vokalzeichen uebrigbleibt. Alif-Varianten und die
+   Endungen ى/ة werden vereinheitlicht - sonst gaelte أَخٌ nicht als dasselbe
+   Schriftbild wie اخ, und genau darum geht es hier.
+   ⚠️ Die Klassen stehen als \u-Folgen. Eine sichtbar kopierte Ḥarakāt-Klasse
+   sah am 18.08. Zeichen fuer Zeichen richtig aus und hatte andere Codepoints;
+   das Werkzeug fand danach nichts und meldete trotzdem Erfolg. */
+function wzSkelett(s){
+  return String(s || '')
+    .replace(/[ؐ-ًؚ-ٰٟۖ-ۭـ]/g, '')
+    .replace(/[أإآٱ]/g, 'ا')
+    .replace(/ى/g, 'ي')
+    .replace(/ة/g, 'ه')
+    .trim();
+}
+
+/* Zwei Bedeutungen zaehlen als „dasselbe", wenn eine in der anderen steckt.
+   Ohne diesen Filter stuenden كِتَابٌ und كِتَاب („Buch" gegen „Buch (Pl.
+   Buecher)") als Duell da - zwei Schreibungen desselben Wortes, bei denen es
+   keine richtige Antwort gibt. Gemessen: dieser Filter nimmt 437 Paare auf
+   373 herunter. */
+function wzBedeutungGleich(a, b){
+  var x = String(a || '').toLowerCase().replace(/\([^)]*\)/g, '').replace(/[\/,;-]/g, ' ').replace(/\s+/g, ' ').trim();
+  var y = String(b || '').toLowerCase().replace(/\([^)]*\)/g, '').replace(/[\/,;-]/g, ' ').replace(/\s+/g, ' ').trim();
+  if (!x || !y) return true;
+  return x === y || x.indexOf(y) >= 0 || y.indexOf(x) >= 0;
+}
+
+function wzBaueDuelle(){
+  var nach = {};
+  var lern = {};
+  (typeof LERNBESTAND_IDS !== 'undefined' ? LERNBESTAND_IDS : []).forEach(function(id){ lern[String(id)] = true; });
+
+  VOCAB_DATA.forEach(function(w){
+    if (!w || !w.ar || !w.de || w.istPlural) return;
+    var k = wzSkelett(w.sg || w.ar);
+    if (k.length < 2) return;
+    (nach[k] = nach[k] || []).push(w);
+  });
+
+  var raus = [];
+  Object.keys(nach).forEach(function(k){
+    var liste = nach[k];
+    if (liste.length < 2) return;
+    /* Gleiche Schreibung UND gleiche Bedeutung nur einmal. */
+    var uniq = [], gesehen = {};
+    liste.forEach(function(w){
+      var s = (w.sg || w.ar) + '|' + w.de;
+      if (!gesehen[s]){ gesehen[s] = true; uniq.push(w); }
+    });
+    for (var i = 0; i < uniq.length; i++){
+      for (var j = i + 1; j < uniq.length; j++){
+        var a = uniq[i], b = uniq[j];
+        if ((a.sg || a.ar) === (b.sg || b.ar)) continue;
+        if (wzBedeutungGleich(a.de, b.de)) continue;
+        /* Mindestens eines muss zu seinem Lernbestand gehoeren. */
+        if (!lern[String(a.id)] && !lern[String(b.id)]) continue;
+        raus.push({ skelett: k, a: a, b: b });
+      }
+    }
+  });
+  return raus;
+}
+
+function wzDuelle(){
+  if (!WZ_DUELLE) WZ_DUELLE = wzBaueDuelle();
+  return WZ_DUELLE;
+}
+
+/* Das Duell zur laufenden Familie - oder null.
+
+   Zuerst wird ein Paar gesucht, in dem ein Wort DIESER Familie steckt; das
+   haelt die Runde beim Thema.
+
+   ⚠️ Ohne die zweite Stufe waere die Uebung fast unsichtbar. Der
+   Entscheidungsbogen ging von 219 Paaren aus; im laufenden Bestand (Madina 1)
+   sind es **zwei** - رَجُلٌ gegen رِجْلٌ und مِنْ gegen مَنْ. Mit nur
+   familieneigenen Paaren erschiene der Schritt in ganzen Sitzungen kein
+   einziges Mal, und niemand wuesste, dass es ihn gibt. Deshalb: findet die
+   Familie nichts, kommt irgendein noch nicht benutztes Paar dran.
+
+   Benutzte Paare werden je Sitzung gemerkt - sonst kaeme bei zwei Paaren in
+   drei Familien zwangslaeufig eine Wiederholung. */
+function wzDuellFuer(f){
+  var ids = {};
+  f.woerter.forEach(function(x){ if (x.id != null) ids[String(x.id)] = true; });
+  var benutzt = WZ_SITZUNG.duelle || (WZ_SITZUNG.duelle = {});
+  var frei = wzDuelle().filter(function(d){
+    return !benutzt[String(d.a.id) + '#' + String(d.b.id)];
+  });
+  if (!frei.length) return null;
+  var eigen = frei.filter(function(d){ return ids[String(d.a.id)] || ids[String(d.b.id)]; });
+  var d = wzMische(eigen.length ? eigen : frei)[0];
+  benutzt[String(d.a.id) + '#' + String(d.b.id)] = true;
+  return d;
+}
+
+function wzSchritt4(){
+  var f = wzFamilie();
+  var d = wzDuellFuer(f);
+  /* Kein Paar in dieser Familie: der Schritt entfaellt still. Ein leerer
+     vierter Schritt waere schlimmer als keiner. */
+  if (!d){ wzFertig(); return; }
+
+  /* Gefragt wird nach EINEM der beiden, zufaellig. Immer nach dem ersten zu
+     fragen waere nach drei Runden durchschaut. */
+  var gefragt = Math.random() < 0.5 ? d.a : d.b;
+
+  document.getElementById('wzS4Frage').innerHTML =
+    'Ohne Vokalzeichen sehen diese beiden gleich aus:'
+    + '<div class="wz-skelett">' + wzEsc(d.skelett) + '</div>'
+    + 'Welches heißt <b>' + wzEsc(gefragt.de) + '</b>?';
+
+  var beide = wzMische([d.a, d.b]);
+  var feld = document.getElementById('wzS4Auswahl');
+  feld.innerHTML = beide.map(function(w){
+    return '<button class="wz-wahl" data-id="' + wzEsc(String(w.id)) + '">'
+         + '<span class="du-ar" lang="ar" dir="rtl">' + wzEsc(w.sg || w.ar) + '</span>'
+         + '</button>';
+  }).join('');
+  feld.dataset.richtig = String(gefragt.id);
+  feld.dataset.fertig = '';
+  /* Beide Bedeutungen fuer die Aufloesung mitgeben - nach dem Klick sollen
+     BEIDE dastehen, nicht nur die richtige. Wer nur die Loesung sieht, lernt
+     das Paar nicht, sondern nur die eine Karte. */
+  feld.dataset.aufloesung = JSON.stringify(beide.map(function(w){
+    return { ar: (w.sg || w.ar), de: w.de };
+  }));
+  document.getElementById('wzS4Meldung').innerHTML = '&nbsp;';
+  document.getElementById('wzS4Weiter').hidden = true;
+  wzSchrittZeigen(3);
+}
+
 function wzFertig(){
   wzZeigeStapel(wzFamilie());
-  wzSchrittZeigen(3);
+  wzSchrittZeigen(4);
 }
 function wzNaechsteFamilie(){
   WZ_SITZUNG.i++;
@@ -363,7 +547,7 @@ function wzSchluss(){
   document.getElementById('wzSchlussZahl').innerHTML =
     '<b>' + WZ_SITZUNG.richtig + ' von ' + WZ_SITZUNG.gesamt + '</b> auf Anhieb richtig.<br>'
     + WZ_SITZUNG.reihe.length + ' Wurzelfamilien durchgearbeitet.';
-  wzSchrittZeigen(4);
+  wzSchrittZeigen(5);
   document.getElementById('wzFortschritt').textContent = 'Sitzung beendet';
 }
 
@@ -539,6 +723,38 @@ document.addEventListener('click', function(e){
   }
   if (t.closest && t.closest('#wzS3Weiter')){
     document.getElementById('wzS3Auswahl').dataset.fertig = '';
+    wzSchritt4(); return;
+  }
+
+  /* --- 4 Duell --- */
+  var duell = t.closest && t.closest('#wzS4Auswahl .wz-wahl');
+  if (duell){
+    var df = document.getElementById('wzS4Auswahl');
+    if (df.dataset.fertig === '1') return;
+    df.dataset.fertig = '1';
+    WZ_SITZUNG.gesamt++;
+    if (duell.dataset.id === df.dataset.richtig){
+      WZ_SITZUNG.richtig++;
+      duell.classList.add('richtig');
+    } else {
+      duell.classList.add('falsch');
+      [].forEach.call(df.querySelectorAll('.wz-wahl'), function(x){
+        if (x.dataset.id === df.dataset.richtig) x.classList.add('richtig');
+      });
+    }
+    /* ⭐ Die Aufloesung zeigt BEIDE Bedeutungen. Wer nur die richtige sieht,
+       lernt eine Karte; wer das Paar sieht, lernt den Unterschied - und der
+       ist der ganze Zweck dieser Runde. */
+    var paar = [];
+    try { paar = JSON.parse(df.dataset.aufloesung || '[]'); } catch (e){ paar = []; }
+    document.getElementById('wzS4Meldung').innerHTML = paar.map(function(w){
+      return '<span class="du-ar" lang="ar" dir="rtl">' + wzEsc(w.ar) + '</span> — ' + wzEsc(w.de);
+    }).join('<br>');
+    document.getElementById('wzS4Weiter').hidden = false;
+    return;
+  }
+  if (t.closest && t.closest('#wzS4Weiter')){
+    document.getElementById('wzS4Auswahl').dataset.fertig = '';
     wzFertig(); return;
   }
 
