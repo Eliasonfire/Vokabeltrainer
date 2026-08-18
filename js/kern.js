@@ -382,7 +382,19 @@ function loeschePersonalVocab(id){
   const w = VOCAB_DATA.find(x => x.id === id);
   if (!w || (w.chapter !== 'personal' && w.chapter !== 'grammar')) return false;
 
-  if (w.chapter === 'personal'){
+  /* ⚠️ Seit C8 (18.08.2026) stehen unter 'personal' ZWEI Herkuenfte: was Elias
+     hier im Trainer angelegt hat (PERSONAL_VOCAB im Geraetespeicher) und was er
+     sich auf arabicroots eingetragen hat (data/vokabeln-eigene.js, erkennbar an
+     `source:'personal_vocabulary'`). Nur das Erste laesst sich wirklich
+     loeschen; das Zweite kommt aus einer Datei und wird - wie die Fachbegriffe -
+     ausgeblendet.
+
+     Ohne diese Unterscheidung waere das Loeschen eines arabicroots-Wortes eine
+     Scheinfunktion: es verschwaende aus der Liste und stuende beim naechsten
+     Start wieder da. Genau diese Art Fehler faellt niemandem auf, weil sie im
+     Moment des Klickens richtig aussieht. */
+  const ausDatei = w.source === 'personal_vocabulary';
+  if (w.chapter === 'personal' && !ausDatei){
     PERSONAL_VOCAB = PERSONAL_VOCAB.filter(x => x.id !== id);
     savePersonalVocab();
   } else {

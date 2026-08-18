@@ -1,4 +1,15 @@
-const CACHE_NAME = 'vokabeltrainer-v173';
+const CACHE_NAME = 'vokabeltrainer-v175';
+
+/* ⚠️ In diese Liste gehoeren KEINE Kommentare zwischen die Eintraege.
+   validate.js liest sie zeilenweise und hat am 18.08.2026 einen erklaerenden
+   Mehrzeiler als Dateipfad gelesen ("sw.js cacht ' eigene Woerter von …'").
+   Erklaerungen deshalb hier oben, nicht dazwischen.
+
+   Zu './data/vokabeln-eigene.js' (C8, 18.08.2026): Elias' elf eigene Woerter
+   von arabicroots. Sie stehen hier und die grossen Buch-Abzuege nicht - die
+   laedt js/buecher.js erst beim Umschalten nach, diese elf dagegen stehen bei
+   JEDEM Start unter „Eigene Vokabeln". Ohne den Eintrag waeren offline
+   ausgerechnet die Woerter weg, die er selbst eingetragen hat. */
 const ASSETS = [
   './',
   './index.html',
@@ -27,6 +38,7 @@ const ASSETS = [
   './data/eselsbruecken.js',
   './data/eselsbruecken-alt.js',
   './data/fachbegriffe.js',
+  './data/vokabeln-eigene.js',
   './surah-data.js',
   './quran-seiten.js',
   './grammar-data.js',

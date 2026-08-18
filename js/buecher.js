@@ -446,6 +446,33 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   const slugs = aktiveBuecher();
   for (const s of slugs) await setzeBuch(s, true);
 
+  /* ---------- Eigene Vokabeln von arabicroots (C8, 18.08.2026) ------------
+
+     Sie stehen in data/vokabeln-eigene.js und tragen `chapter:'personal'`, also
+     erscheinen sie in der Kapitelliste ganz oben unter „Eigene Vokabeln" -
+     genau dort, wo er sie sucht. Die Datei wird nachgeladen wie die Buecher;
+     fehlt sie (Deploy ohne --mit-daten), laeuft die App unveraendert weiter.
+
+     ⚠️ Die ausgeblendeten ueberspringen. Ohne diese Zeile kaeme ein geloeschtes
+     Wort beim naechsten Start wieder - und das Loeschen waere eine
+     Scheinfunktion, die niemandem auffaellt, weil sie im Moment des Klickens
+     richtig aussieht. */
+  await new Promise(fertig => {
+    if (window.EIGENE_VOKABELN) return fertig();
+    const s = document.createElement('script');
+    s.src = 'data/vokabeln-eigene.js';
+    s.onload = fertig; s.onerror = fertig;
+    document.head.appendChild(s);
+  });
+  if (Array.isArray(window.EIGENE_VOKABELN)){
+    const wegRoh = LS.get('vt_geloescht', {});
+    const weg = (wegRoh && typeof wegRoh === 'object' && !Array.isArray(wegRoh)) ? wegRoh : {};
+    const da = new Set(VOCAB_DATA.map(w => String(w.id)));
+    const neu = window.EIGENE_VOKABELN.filter(w =>
+      !da.has(String(w.id)) && !(weg[w.id] && weg[w.id].an));
+    if (neu.length) VOCAB_DATA.push(...neu.map(w => Object.assign({}, w)));
+  }
+
   /* ---------- Pluralkarten NACH den Buechern neu bauen (18.08.2026) --------
 
      ⚠️ Ein Fehler, den nur die Zahl verraten hat. `wendePluralKartenAn` laeuft

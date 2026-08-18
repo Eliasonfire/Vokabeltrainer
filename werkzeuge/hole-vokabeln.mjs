@@ -81,6 +81,84 @@ for (const [buch, liste] of Object.entries(nachBuch)) {
   uebersicht.push({ buch, vokabeln: liste.length, kapitel: kapitel.length, kb });
 }
 
+/* ---------- Eigene Vokabeln aus arabicroots (C8, 18.08.2026) --------------
+
+   Elias' Entscheidung: „ja."
+
+   Bis hierher hat das Skript nur die Tabelle `vocabulary` geholt - also den
+   Lehrbuchstoff. Was Elias sich auf arabicroots SELBST eingetragen hat, lag in
+   `personal_vocabulary` und kam im Abzug gar nicht vor. Er hat es also nur
+   dort, nirgends sonst; ein verlorener Zugang haette es mitgenommen.
+
+   Sie landen in einer eigenen Datei und NICHT unter window.VOKABELN. Sonst
+   waeren sie ein „Buch" und stuenden mit einem Auswahlknopf neben Madina 1 -
+   sie sind aber kein Buch, sondern seine eigene Liste.
+
+   ⚠️ Diese Datei faellt unter dieselbe Sperre wie die uebrigen data/vokabeln-*
+   Dateien: arabicroots-AGB Ziffer 3.7 und 9, also .gitignore, niemals ins Repo.
+   Ausgeliefert wird sie nur ueber veroeffentlichen.mjs --mit-daten, und das
+   verlangt den Beleg, dass beide Adressen hinter dem Login liegen. */
+console.log('Hole personal_vocabulary ...');
+let eigene = [];
+try {
+  eigene = await db.select('personal_vocabulary', { order: 'created_at.desc' });
+} catch (e) {
+  /* Kein Abbruch: der Lehrbuchstoff ist schon geschrieben, und der ist der
+     Hauptzweck. Aber sichtbar melden - eine leere Datei saehe hinterher aus
+     wie „er hat keine eigenen Woerter". */
+  console.error('  FEHLGESCHLAGEN:', e.message);
+  eigene = null;
+}
+if (Array.isArray(eigene)) {
+  console.log(`  ${eigene.length} eigene Vokabeln.`);
+  const eigenSchlank = eigene.map(v => ({
+    /* ⛔ Die Id bleibt die nackte UUID - KEIN Praefix.
+
+       Ich hatte zuerst 'ar_' davorgesetzt, mit dem Argument, eine Zahlen-Id
+       des Lehrbuchstoffs koennte auf eine UUID treffen. Das Argument war
+       theoretisch (eine UUID ist nie eine Zahl), und der Preis war real:
+       im Browser nachgemessen standen danach **22 statt 11** Woerter da.
+       Dieselben elf zweimal.
+
+       Der Grund: die elf sind laengst in der App - ueber das Vokabelpaket im
+       Geraetespeicher (js/vokabelpaket.js), mit der nackten UUID als Id. Und
+       die dortige Fassung ist die BESSERE: „Zwei (2)" statt „Zwei 2",
+       „Genitiv-Praeposition" statt „Genitiv Praeposition", مُضَافْ إِلَيْهِ mit
+       dem Sukun auf dem Ya. Das sind Elias' eigene Korrekturen.
+
+       Mit derselben Id greift die Doppelpruefung beim Einhaengen, die Fassung
+       aus dem Paket gewinnt, und die Datei ist das, was sie sein soll: der
+       Rueckhalt, falls der Geraetespeicher einmal weg ist. */
+    id: String(v.id),
+    ar: v.arabic,
+    de: v.german,
+    type: v.word_type,
+    chapter: 'personal',             /* zeigt sie in der App unter „Eigene
+                                        Vokabeln" - dort sucht er sie. */
+    gender: v.gender,
+    sg: v.singular,
+    pl: v.plural,
+    femSg: v.feminine_singular,
+    femPl: v.feminine_plural,
+    past: v.verb_past,
+    present: v.verb_present,
+    imperative: v.verb_imperative,
+    masdar: v.verbal_noun,
+    note: v.notes,
+    source: 'personal_vocabulary'    /* damit spaeter unterscheidbar bleibt, was
+                                        aus arabicroots kommt und was er im
+                                        Trainer selbst angelegt hat. */
+  }));
+  fs.writeFileSync(path.join(DATA, 'vokabeln-eigene.js'),
+`/* Automatisch erzeugt von werkzeuge/hole-vokabeln.mjs - nicht von Hand aendern.
+   Quelle: arabicroots-Tabelle "personal_vocabulary", ${eigenSchlank.length} Eintraege.
+   Bewusst NICHT unter window.VOKABELN: das sind keine Buchvokabeln und sollen
+   in der Buchauswahl nicht als achtes Buch erscheinen. */
+window.EIGENE_VOKABELN = ${JSON.stringify(eigenSchlank, null, 1)};
+`, 'utf8');
+  console.log(`  Geschrieben: data/vokabeln-eigene.js`);
+}
+
 /* Ein kleines Verzeichnis, damit die App weiss, was es gibt, ohne alles zu laden. */
 fs.writeFileSync(path.join(DATA, 'buecher.js'),
 `/* Automatisch erzeugt von werkzeuge/hole-vokabeln.mjs.
