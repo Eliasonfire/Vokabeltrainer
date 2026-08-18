@@ -200,6 +200,19 @@ const LEHRBUCH_SAETZE = [
     sentAr: 'الْكِتَابُ الَّذِي عَلَى الْمَكْتَبِ لِلْمُدَرِّسِ.',
     sentDe: 'Das Buch, das auf dem Schreibtisch ist, gehört dem Lehrer.' },
 
+  /* Buchseite 57, Uebung (3) — Frage und Antwort stehen dort als Muster.
+     Die Lektion beginnt auf Buchseite 54 mit der Ueberschrift
+     (١٠) الدَّرْسُ الْعَاشِرُ, deshalb kapitel 10.
+     ⛔ Gedruckt ist أَعِنْـدَك mit Kaschida und OHNE Zeichen auf dem Kaf
+     (Pausalform); die Endung ـكَ zaehlt der Lehrer in
+     possessiv-endungen-01 mit ihrem Vokal auf, und mb1-65-1 fuehrt أَبُوكَ
+     genauso. نعم steht ohne Zeichen und ist als نَعَمْ im Bestand belegt.
+     Alles Uebrige steht so im Buch, bei 600 dpi nachgesehen. */
+  { id: 'mb1-57-1', seite: 57, kapitel: 10, vokalisationErgaenzt: true,
+    gedruckt: 'أَعِنْـدَك ohne Zeichen auf dem Kaf, نعم ganz ohne Zeichen',
+    sentAr: 'أَعِنْدَكَ قَلَمٌ؟ نَعَمْ. عِنْدِي قَلَمٌ.',
+    sentDe: 'Hast du einen Stift? Ja. Ich habe einen Stift.' },
+
   /* ===== Zwei Saetze aus Bayna Yadayk Band 2, Lektion 13, Seite 231 ========
    *
    * Erstmals stammt hier etwas nicht aus Madina 1, deshalb das Feld `werk`.

@@ -1744,6 +1744,10 @@ const SENTENCE_TAGS = {
   ],
   "madina1-l6-ach": [
     { ruleId: "nominalsatz-ohne-kopula-01", matchText: "أَخٌ" }
+  ],
+  "mb1-57-1": [
+    { ruleId: "li-vs-inda-01", matchText: "عِنْدِي" },
+    { ruleId: "fragepartikel-alif-01", matchText: "أَ" }
   ]
 };
 
