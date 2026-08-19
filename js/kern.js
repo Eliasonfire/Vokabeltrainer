@@ -153,6 +153,35 @@ function istBekannt(w){
      Buchfilter unten, weil 'grammar' in FREIGESCHALTET nicht vorkommt. */
   if (w.chapter === 'grammar') return true;
   if (LERNBESTAND_IDS.has(w.id)) return true;
+
+  /* ⭐⭐ SEINE EIGENE AUSWAHL GEHT VOR — am 19.08.2026 dazu.
+     Elias: „die neuen vokabeln müssen auch automatisch in den satzmodus und in
+     die kategorien direkt automatisch eingetragen werden … das muss auch immer
+     automatisch passieren."
+
+     Bis dahin entschied allein FREIGESCHALTET, eine von Hand gepflegte Zeile
+     weiter oben. Gemessen am selben Tag: hakte er Kapitel 12 in der App an,
+     waren die 9 Woerter zwar GELADEN (buchVokabeln), aber
+       im Lernvorrat        0
+       in bekannteVokabeln  0
+       in den Wortfeldern   0
+     Erst wenn die Routine gelaufen UND veroeffentlicht war, kamen sie an — bis
+     zu dreieinhalb Tage spaeter.
+
+     ⭐ Mit dieser Zeile wirkt sein Antippen SOFORT, und drei weitere Dinge
+     kommen umsonst mit: Karteikarten, Kategorien und Wortfelder haengen alle
+     an dieser einen Pruefung. Gemessen: die 9 Woerter ordnen sich von selbst
+     ein (عَمَّةٌ → „Familie & Menschen", شَجَرَةٌ → „Natur & Wetter"), und von
+     195 bekannten Woertern steht danach KEINES ohne Feld da.
+
+     ⚠️ Nur wenn seine Liste fuer dieses Buch etwas enthaelt. Eine leere Liste
+     heisst „nichts ausgewaehlt", nicht „alles gesperrt" — dann gilt weiter
+     FREIGESCHALTET. Sonst raeumte ein versehentliches Abwaehlen den Lernvorrat
+     leer. */
+  const eigene = (typeof SETTINGS !== 'undefined') && SETTINGS.buecher && SETTINGS.buecher[w.book];
+  if (Array.isArray(eigene) && eigene.length)
+    return eigene.map(Number).includes(Number(w.chapter));
+
   const frei = FREIGESCHALTET[w.book];
   if (!frei) return true;                /* fuer dieses Buch ist nichts hinterlegt */
   return frei.includes(w.chapter);
