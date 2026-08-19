@@ -359,6 +359,17 @@ function bauePluralKarte(w){
     id: w.id + PLURAL_MARKE,
     ar: w.pl,
     de: (w.de || '') + ' (Plural)',
+    /* ⛔ `book` MUSS mit. Ohne das Feld faellt jede Pluralkarte in
+       passtZurAuswahl() durch:  `const kapitel = karte[w.book]` liefert bei
+       undefined nichts, und `if (!Array.isArray(kapitel)) return false` wirft
+       sie hinaus. Am 20.08.2026 im Browser gemessen: 192 Pluralkarten, alle
+       bekannt und alle heute faellig, in dueWords() vollstaendig drin — und in
+       currentPool() NULL. Sie erschienen in den Kategorien, aber nie in
+       „Jetzt lernen"; der Schalter meldete „192 Pluralkarten sind
+       dazugekommen — sie starten in Kasten 1", und keine einzige kam je dran.
+       Genau der Fall, den der Kommentar in js/einstellungen.js zu verhindern
+       glaubte. */
+    book: w.book,
     chapter: w.chapter,
     type: w.type,
     gender: w.gender,
