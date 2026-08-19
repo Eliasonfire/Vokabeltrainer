@@ -1,0 +1,200 @@
+<title>Regelauswahl Satzmodus</title>
+<style>
+/* Bewusst nur DUNKEL. Elias arbeitet nachts und die App ist OLED-schwarz;
+   ein heller Zwilling waere hier eine Ueberraschung, kein Dienst. Alle Farben
+   stehen deshalb ausdruecklich da, damit die Seite auf jedem Untergrund haelt. */
+:root{
+  --grund:#0a0d0c; --flaeche:#121614; --flaeche2:#181e1b; --rand:#252d29;
+  --text:#eef2f0; --dim:#98a29d; --faint:#6d7873;
+  --ja:#3ddc97; --ja-wash:rgba(61,220,151,.10); --ja-rand:#1d5e42;
+  --nein:#ff6b6b; --nein-wash:rgba(255,107,107,.09);
+  --ui:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --ar:'Amiri','Traditional Arabic','Segoe UI',serif;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--grund);color:var(--text);font-family:var(--ui);
+     font-size:15px;line-height:1.65;padding:0 0 80px;}
+.wrap{max-width:62ch;margin:0 auto;padding:0 18px;}
+header{padding:30px 0 18px;}
+h1{font-size:1.45rem;line-height:1.25;margin:0 0 10px;letter-spacing:-.01em;}
+.lead{color:var(--dim);font-size:.92rem;margin:0 0 4px;}
+.lead b{color:var(--text);}
+.zitat{border-left:2px solid var(--ja-rand);padding:2px 0 2px 14px;margin:16px 0 0;
+       color:var(--dim);font-size:.86rem;font-style:italic;}
+
+/* Zaehler bleibt oben stehen — sonst weiss er nach 40 Regeln nicht mehr, wo er steht. */
+.stand{position:sticky;top:0;z-index:5;background:var(--grund);
+       border-bottom:1px solid var(--rand);padding:12px 0;margin:22px 0 0;}
+.stand .zahl{font-size:1.5rem;font-weight:800;font-variant-numeric:tabular-nums;
+             color:var(--ja);line-height:1;}
+.stand .von{color:var(--faint);font-size:.82rem;}
+.balken{height:5px;background:var(--flaeche2);border-radius:99px;margin-top:9px;overflow:hidden;}
+.balken div{height:100%;background:var(--ja);border-radius:99px;transition:width .2s;}
+
+.knopfreihe{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 0;}
+.mini{background:var(--flaeche);border:1px solid var(--rand);color:var(--dim);
+      border-radius:99px;padding:6px 13px;font:inherit;font-size:.78rem;font-weight:600;
+      cursor:pointer;}
+.mini:hover{border-color:var(--faint);color:var(--text);}
+.mini.an{background:var(--ja-wash);border-color:var(--ja-rand);color:var(--ja);}
+
+h2{font-size:.78rem;text-transform:uppercase;letter-spacing:.09em;color:var(--faint);
+   margin:34px 0 10px;font-weight:700;display:flex;align-items:baseline;gap:9px;}
+h2 em{font-style:normal;color:var(--dim);font-size:.9em;font-weight:600;
+      font-variant-numeric:tabular-nums;}
+h2 button{margin-left:auto;background:none;border:none;color:var(--faint);
+          font:inherit;font-size:.75rem;text-transform:none;letter-spacing:0;
+          cursor:pointer;text-decoration:underline;padding:0;}
+h2 button:hover{color:var(--text);}
+
+.regel{display:flex;gap:12px;align-items:flex-start;background:var(--flaeche);
+       border:1px solid var(--rand);border-radius:13px;padding:12px 13px;margin-bottom:8px;
+       cursor:pointer;transition:border-color .15s,background .15s;}
+.regel:hover{border-color:var(--faint);}
+.regel.aus{background:var(--nein-wash);border-color:#3a2020;}
+.regel.aus .name{color:var(--faint);text-decoration:line-through;text-decoration-thickness:1px;}
+.regel.aus .erkl{opacity:.45;}
+.haken{flex:0 0 22px;height:22px;margin-top:2px;border-radius:7px;
+       border:1.5px solid var(--ja-rand);background:var(--ja-wash);
+       display:flex;align-items:center;justify-content:center;
+       font-size:13px;color:var(--ja);font-weight:900;}
+.regel.aus .haken{border-color:#5a2a2a;background:transparent;color:var(--nein);}
+.mitte{min-width:0;flex:1;}
+.name{font-weight:700;font-size:.93rem;line-height:1.35;font-family:var(--ar);}
+.erkl{color:var(--dim);font-size:.81rem;line-height:1.5;margin-top:3px;}
+.meta{color:var(--faint);font-size:.72rem;margin-top:5px;display:flex;gap:10px;
+      flex-wrap:wrap;font-variant-numeric:tabular-nums;}
+.meta code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.95em;}
+.wenig{color:#e8b04b;}
+
+.aus-kasten{margin:40px 0 0;background:var(--flaeche);border:1px solid var(--rand);
+            border-radius:15px;padding:16px;}
+.aus-kasten h3{margin:0 0 6px;font-size:.95rem;}
+.aus-kasten p{margin:0 0 12px;color:var(--dim);font-size:.84rem;}
+textarea{width:100%;min-height:110px;background:var(--grund);color:var(--text);
+         border:1px solid var(--rand);border-radius:10px;padding:11px;
+         font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;
+         line-height:1.55;resize:vertical;}
+.gross{background:var(--ja-wash);border:1px solid var(--ja-rand);color:var(--ja);
+       border-radius:11px;padding:10px 18px;font:inherit;font-weight:700;font-size:.86rem;
+       cursor:pointer;margin-top:10px;}
+.gross:hover{background:rgba(61,220,151,.17);}
+footer{color:var(--faint);font-size:.78rem;margin-top:34px;padding-top:16px;
+       border-top:1px solid var(--rand);}
+</style>
+
+<div class="wrap">
+<header>
+  <h1>Welche Regeln willst du im Satzmodus üben?</h1>
+  <p class="lead">Alle <b>95</b> Grammatikregeln der App. <b>Standard ist „drin"</b> —
+     tipp die an, die du <b>nicht</b> im Satzmodus haben willst.</p>
+  <p class="zitat">„sobald neue regel gibt, soll sie automatisch in den satzmodus rein gehen
+     … und dann sammeln und ich entscheide dann was wirklich bleibt."</p>
+
+  <div class="stand">
+    <div><span class="zahl" id="zahl">95</span> <span class="von">von 95 im Satzmodus</span></div>
+    <div class="balken"><div id="balken" style="width:100%"></div></div>
+  </div>
+
+  <div class="knopfreihe">
+    <button class="mini" data-filter="alle">Alle zeigen</button>
+    <button class="mini" data-filter="wenig">nur mit 1–2 Sätzen</button>
+    <button class="mini" data-filter="ohnekat">nur ohne Kategorie</button>
+    <button class="mini" data-filter="aus">nur die aussortierten</button>
+  </div>
+</header>
+
+<main id="liste"></main>
+
+<div class="aus-kasten">
+  <h3>Deine Auswahl zum Schicken</h3>
+  <p>⛔ Ich kann deine Häkchen <b>nicht lesen</b> — sie liegen in deinem Browser.
+     Kopier den Text hier und schick ihn mir, dann trage ich es ein.</p>
+  <textarea id="ausgabe" readonly></textarea>
+  <button class="gross" id="kopieren">In die Zwischenablage</button>
+</div>
+
+<footer>
+  Erzeugt aus <code>grammar-data.js</code> — bei neuen Regeln neu bauen mit
+  <code>node werkzeuge/regelauswahl-seite.mjs</code>. Deine Häkchen bleiben dabei
+  erhalten, sie hängen an der Regel-ID.
+</footer>
+</div>
+
+<script>
+const REGELN = [{"id":"ismul-isara-hadhihi-01","name":"هَذِهِ (weibliches Hinweiswort, nah)","kat":"Hinweiswörter","n":17,"q":"Folge 9 · Schlüssel 1","e":"هَذِهِ hādhihi ist die weibliche Form von هَذَا hādhā und zeigt wie dieses auf Nahes (der Lehrer liest die Kapitelüberschrift: »diese sind für die Nähe, diese sind …"},{"id":"ismul-isara-hadha-01","name":"هَذَا (dies)","kat":"Hinweiswörter","n":8,"q":"Folge 1 · Schlüssel 1","e":"هَذَا (hadha) ist ein اسْمُ الْإِشَارَة (Hinweiswort/Demonstrativpronomen). Es wird für das benutzt, was (a) in der Nähe ist und (b) männlich – nicht für weibliche …"},{"id":"hadha-stummes-alif-01","name":"هَذَا (Alif wird gesprochen, nicht geschrieben)","kat":"Hinweiswörter","n":8,"q":"Folge 1 · Schlüssel 1","e":"In هَذَا steckt ein Alif, das man nicht mitschreibt, das aber trotzdem ausgesprochen wird. Deshalb spricht man das Wort lang: hādhā. Beim Vorlesen wird entsprechend …"},{"id":"hadha-dies-nicht-das-01","name":"هَذَا (dies – nicht „das\")","kat":"Hinweiswörter","n":8,"q":"Folge 1 · Schlüssel 1","e":"هَذَا übersetzt man mit „dies\", nicht mit „das\": هَذَا بَيْتٌ (hādhā baytun) heißt „Dies ist ein Haus\", nicht „das Haus\". „Das\" wäre der bestimmte Artikel, und der …"},{"id":"hadha-al-kein-satz-01","name":"هَذَا + اَلْ (»dieses Haus« ist kein Satz)","kat":"Hinweiswörter","n":8,"q":"Folge 9","e":"Steht nach هَذَا / هَذِهِ ein Nomen mit اَلْ, ist das noch kein vollständiger Satz, sondern nur die Wortgruppe »dieses Haus« – da fehlt noch etwas. Es muss ein …"},{"id":"isara-genus-kongruenz-01","name":"Hinweiswort richtet sich nach dem Genus","kat":"Hinweiswörter","n":8,"q":"Folge 10 · Schlüssel 1","e":"Das Hinweiswort muss zum Geschlecht des Wortes passen, auf das gezeigt wird: هَذَا/ذَلِكَ bei männlichen Wörtern, هَذِهِ/تِلْكَ bei weiblichen. Der Lehrer erklärt …"},{"id":"ismul-isara-tilka-01","name":"تِلْكَ (jene)","kat":"Hinweiswörter","n":6,"q":"Folge 10 · Schlüssel 1","e":"تِلْكَ (tilka) ist das Hinweiswort für etwas Entferntes, das weiblich ist – das weibliche Gegenstück zu ذَلِكَ (dhalika). In der Nähe steht هَذِهِ (hadhihi), in der …"},{"id":"ismul-isara-dhalika-01","name":"ذَلِكَ (jenes)","kat":"Hinweiswörter","n":4,"q":"Folge 2 · Schlüssel 1","e":"ذَلِكَ (dhalika) ist wie هَذَا ein اسْمُ الْإِشَارَة (Hinweiswort), aber für Dinge in der Ferne statt in der Nähe. Gilt ebenfalls nur für männliche Wörter. Kann …"},{"id":"kaf-der-entfernung-01","name":"Das كَ der Entfernung: ذَلِكَ · تِلْكَ · هُنَاكَ","kat":"Hinweiswörter","n":1,"q":"Folge 14","e":"Ein angehängtes كَ bedeutet Entfernung. Der Lehrer zeigt es an drei Wörtern, die Elias schon kennt: هُنَا heißt „hier\", هُنَاكَ heißt „dort\" — und dasselbe كَ …"},{"id":"harf-jarr-01","name":"حَرْفُ الجَرِّ (Genitivpartikel)","kat":"Genitiv","n":9,"q":"Folge 4 · Schlüssel 1","e":"حَرْف (ḥarf) heißt Buchstabe oder Partikel, und اَلْجَرّ (al-jarr) kommt von مَجْرُور (Genitiv). Ein حَرْفُ الجَرِّ (Plural: حُروفُ الجَرِّ) ist also eine …"},{"id":"harf-jarr-fi-ala-01","name":"فِي und عَلَى (die ersten zwei Genitivpartikeln)","kat":"Genitiv","n":8,"q":"Folge 4 · Schlüssel 1","e":"In Kapitel 4 lernen wir zwei Genitivpartikeln: فِي (fī) heißt \"in\" und عَلَى (ʿalā) heißt \"auf\". Beide setzen das folgende Nomen in den Genitiv (Kasra statt Damma) …"},{"id":"harf-jarr-min-ila-01","name":"مِنْ und إِلى (zwei neue حُروف جَرّ)","kat":"Genitiv","n":8,"q":"Folge 5 · Schlüssel 1","e":"Zu فِي und عَلى kommen zwei weitere Präpositionen dazu: مِنْ min heißt „von“, إِلى ilā heißt „zu“ oder „nach“. Beide sind Huruf Jarr, das folgende Wort wird also …"},{"id":"mina-al-01","name":"مِنَ الْـ (Sukun trifft Sukun)","kat":"Genitiv","n":8,"q":"Folge 5 · Schlüssel 1","e":"مِنْ endet auf Sukun, und der Artikel اَلْ hat wieder ein Sukun auf dem Lam. Zwei Sukun hintereinander mögen die Araber nicht („das sind faule Säcke“, sie hassen es …"},{"id":"hurufu-jarr-bedeutungen-01","name":"Was die حُرُوفُ الْجَرِّ bedeuten","kat":"Genitiv","n":4,"q":"[object Object]","e":"Deine Regeln sagen, was die حُرُوفُ الْجَرِّ mit dem Kasus machen — sie ziehen das folgende Wort in den Genitiv. Sie sagen nicht, was die Präpositionen bedeuten …"},{"id":"li-al-lil-01","name":"لِ + اَلْ = لِلـ","kat":"Genitiv","n":2,"q":"Folge 11 · Schlüssel 1","e":"لِ ist ein حَرْف جَرّ (ḥarf jarr, Präposition). Vor einem unbestimmten Wort heißt es لِطَبيبٍ (li-ṭabībin, „gehört einem Arzt\"). Kommt لِ aber vor ein bestimmtes …"},{"id":"li-eigenname-01","name":"لِ + Eigenname (kein لِلْ)","kat":"Genitiv","n":2,"q":"Folge 12 · Schlüssel 1","e":"Bei Eigennamen sagt man kein لِلْ, sondern nur لِ + Name mit Kasra und Tanwīn. Beim Satz über den Stuhl wird oft لِلْعَمّار (li-l-ʿAmmār) gelesen, der Lehrer …"},{"id":"li-vs-inda-01","name":"لِ oder عِنْدَ? Untrennbar gegen trennbar","kat":"Genitiv","n":2,"q":"Folge 15","e":"Beide heißen auf Deutsch „ich habe\", aber sie sind nicht austauschbar — der Lehrer nennt das ausdrücklich „eine wichtige Regel\". **لِ steht für Dinge, die …"},{"id":"harf-jarr-idafa-01","name":"حَرْف جَرّ + إِضافة (Verkettung)","kat":"Genitiv","n":1,"q":"Folge 7 · Schlüssel 1","e":"Steht ein حَرْف جَرّ (عَلى, مِنْ, فِي) vor einer إِضافة, greifen zwei Regeln hintereinander – der Lehrer nennt das eine „Verkettung\". Der حَرْف جَرّ macht den …"},{"id":"harf-jarr-li-01","name":"لِ (fünfter حَرْف جَرّ, Besitz)","kat":"Genitiv","n":1,"q":"Folge 9 · Schlüssel 1","e":"لِ ist der fünfte Harf al-Jarr nach فِي، عَلَى، إِلَى، مِنْ – nur ein einziger Buchstabe, ein Lām mit Kasra. Es bedeutet »für« oder »gehört« und ist eine …"},{"id":"lil-vs-li-01","name":"لِلْ vs. لِ (bestimmt/unbestimmt)","kat":"Genitiv","n":1,"q":"Folge 12 · Schlüssel 1","e":"Beim لِ (\"gehört\") muss man bestimmt und unbestimmt hörbar unterscheiden: لِلْمُدَرِّسِ (li-l-mudarrisi, vom Lehrer als \"mit zwei L\" beschrieben) heißt \"dem Lehrer\" …"},{"id":"nominalsatz-ohne-kopula-01","name":"هَذَا بَيْتٌ (Satz ohne „ist\")","kat":"Nominalsatz","n":9,"q":"Folge 1 · Schlüssel 1","e":"Im Arabischen gibt es kein Wort für „ist\" – man muss es sich beim Übersetzen selbst dazudenken. مَا heißt „was\" und هَذَا heißt „dies\", zusammen مَا هَذَا؟ (mā …"},{"id":"jumla-ismiya-filiya-01","name":"جُمْلة اسْمِيّة / جُمْلة فِعْلِيّة (Nominalsatz und Verbalsatz)","kat":"Nominalsatz","n":8,"q":"Folge 4 · Schlüssel 2","e":"Im Arabischen gibt es zwei Satzarten: Die جُمْلة اسْمِيّة (jumla ismiyya), der Nominalsatz, beginnt mit einem Nomen. Die جُمْلة فِعْلِيّة (jumla fiʿliyya), der …"},{"id":"wortstellung-fokus-01","name":"تَقْديم (Wortstellung bestimmt den Fokus)","kat":"Nominalsatz","n":8,"q":"Folge 4","e":"Womit ein Satz beginnt, darauf liegt der Fokus. Der Lehrer dreht dasselbe Satzpaar um: مُحَمَّدٌ ذَهَبَ (Muḥammadun dhahaba) und ذَهَبَ مُحَمَّدٌ (dhahaba …"},{"id":"mubtada-khabar-01","name":"مُبْتَدَأ وخَبَر (Subjekt und Aussage)","kat":"Nominalsatz","n":7,"q":"Folge 3 · Schlüssel 2","e":"Die beiden Begriffe kommen hier zunächst nur als Vorgeschmack (\"erstmal nicht viel damit machen, sondern erstmal nur wissen\"). خَبَر (khabar) ist die Information …"},{"id":"mubtada-khabar-genus-01","name":"مُبْتَدَأ und خَبَر müssen im Geschlecht übereinstimmen","kat":"Nominalsatz","n":3,"q":"[object Object]","e":"Im Nominalsatz richtet sich das Prädikat im Geschlecht nach dem Subjekt. Sharḥ Madīnah setzt es als Gegensatzpaar: الْغُرْفَةُ مَفْتُوحٌ ist falsch, الْغُرْفَةُ …"},{"id":"satz-vs-wortgruppe-01","name":"الْقَمِيصُ نَظِيفٌ (Satz, nicht Wortgruppe)","kat":"Nominalsatz","n":2,"q":"Folge 2 · Schlüssel 1","e":"Ein Satz wie الْقَمِيصُ نَظِيفٌ heißt „Das Hemd ist sauber“ – und nicht „das saubere Hemd“. Der Lehrer besteht darauf: Das sind zwei verschiedene Sachen, da müssen …"},{"id":"irab-drei-faelle-01","name":"اَلْإِعْراب (die drei Fälle)","kat":"Kasus","n":8,"q":"Folge 4 · Schlüssel 1","e":"Das Arabische hat vier Fälle; drei davon werden zuerst gebraucht. مَرْفُوع (marfūʿ) = Nominativ, Frage \"wer oder was?\", Anzeichen: Damma ـُ oder zwei Damma ـٌ …"},{"id":"marfu-grundfall-01","name":"مَرْفُوع (der Grundfall)","kat":"Kasus","n":8,"q":"Folge 4 · Schlüssel 1","e":"مَرْفُوع (marfūʿ, Nominativ) ist der Grundfall. Jedes Nomen steht normalerweise im Nominativ, also mit Damma am Ende: اَلْبَيْتُ (al-baytu) \"das Haus\". Erst wenn …"},{"id":"alif-maqsura-01","name":"أَلِف مَقْصورة (ى am Wortende)","kat":"Kasus","n":8,"q":"Folge 5","e":"Ein ى am Wortende ohne Punkte ist kein Ya, sondern eine أَلِف مَقْصورة alif maqṣūra – ein „kleines Alif“, gesprochen wie ein langes ā. Deshalb aufpassen: عَلى ʿalā …"},{"id":"tanwin-eigennamen-01","name":"تَنْوين bei Eigennamen (männlich / weiblich)","kat":"Kasus","n":2,"q":"Folge 4 · Schlüssel 1","e":"Männliche arabische Eigennamen tragen Tanwin, also die doppelte Endung: مُحَمَّدٌ (Muḥammadun), خالِدٌ (Khālidun), حامِدٌ (Ḥāmidun), ياسِرٌ (Yāsirun), عَمّارٌ …"},{"id":"tanwin-nach-harf-jarr-01","name":"تَنْوين nach حَرْف جَرّ (unbestimmtes Wort)","kat":"Kasus","n":1,"q":"Folge 5 · Schlüssel 1","e":"Ist das Wort nach einem حَرْف جَرّ (harf jarr, Präposition) unbestimmt, hat es Tanwin – nach einer Präposition also zwei Kasra statt einer: فِي رَيْبٍ fī raibin (in …"},{"id":"alif-maqsura-unveraenderlich-01","name":"أَلِف مَقْصورة (unveränderliche Endung)","kat":"Kasus","n":1,"q":"Folge 12 · Schlüssel 1","e":"Der Normalfall ist مَرْفُوع (marfūʿ): اَلْبَيْتُ (al-baytu, das Haus). Wird ein Wort مَجْرُور (majrūr), bekommt es Kasra: فِي الْبَيْتِ (fī l-bayti, im Haus), مِنَ …"},{"id":"tanwin-maennername-ta-01","name":"Männliche Namen auf Tāʾ marbūṭa tragen kein تَنْوين","kat":"Kasus","n":1,"q":"Folge 15 · Schlüssel 3","e":"Die dritte und letzte Regel zum Tanwīn bei Eigennamen — der Lehrer baut sie ausdrücklich auf den zwei bekannten auf: „Wir hatten erstmal gesagt, männliche Namen …"},{"id":"mamnu-min-as-sarf-01","name":"المَمْنُوعُ مِنَ الصَّرْفِ — warum manche Wörter kein Tanwīn haben","kat":"Kasus","n":1,"q":"[object Object]","e":"Drei deiner Regeln beschreiben dasselbe Phänomen, ohne es zu benennen: كَسْلَانُ ohne Tanwīn (adjektive-an-ohne-tanwin-01), weibliche Eigennamen ohne Tanwīn …"},{"id":"nat-vier-bedingungen-01","name":"نَعْت (Adjektiv): die vier Bedingungen","kat":"Adjektiv","n":12,"q":"Folge 13 · Schlüssel 2","e":"Ein Wort, das direkt hinter einem Nomen steht, ist dessen Adjektiv (نَعْت), wenn es in vier Dingen mit ihm uebereinstimmt: Geschlecht, Bestimmtheit, Fall und Zahl …"},{"id":"mutabaqa-genus-01","name":"مُطَابَقَة (Angleichung des Prädikats an das Genus)","kat":"Adjektiv","n":8,"q":"Folge 9 · Schlüssel 1","e":"Das Wort, das über etwas Weibliches aussagt, bekommt selbst die weibliche Form mit Tāʾ marbūṭa. Beispiel des Lehrers: das Wort für »Fahrrad« ist im Arabischen …"},{"id":"nat-fem-01","name":"نَعْت bei weiblichen Nomen (بِنْتٌ صَغِيرَةٌ)","kat":"Adjektiv","n":8,"q":"Folge 13 · Schlüssel 1","e":"Ist das beschriebene Nomen weiblich, muss auch das Adjektiv weiblich sein, also die تاء مَرْبُوطة bekommen. بِنْتٌ صَغِيرٌ geht nicht, richtig ist بِنْتٌ صَغِيرَةٌ …"},{"id":"nat-bestimmtheit-01","name":"نَعْت und Bestimmtheit (Wortgruppe oder Satz)","kat":"Adjektiv","n":3,"q":"Folge 13 · Schlüssel 1","e":"Ob zwei Wörter eine Wortgruppe oder einen ganzen Satz ergeben, hängt an der Bestimmtheit: مَسْجِدٌ كَبِيرٌ (masjidun kabirun) heißt nur „eine große Moschee\" – hier …"},{"id":"nat-eigenname-01","name":"Name + نَعْت (Eigennamen sind bestimmt)","kat":"Adjektiv","n":2,"q":"Folge 13","e":"Eigennamen gelten als bestimmt, obwohl sie ein Tanwin tragen. Deshalb ist ein unbestimmtes Wort direkt hinter einem Namen kein Adjektiv, sondern die Aussage ueber …"},{"id":"adjektive-an-ohne-tanwin-01","name":"كَسْلَانُ – Adjektive auf ـانُ ohne Tanwin","kat":"Adjektiv","n":1,"q":"Folge 13 · Schlüssel 1","e":"Adjektive, die auf ـان (Alif + Nun) enden, koennen kein Tanwin bekommen – sie haben immer nur eine Endung. Beispiel: طَالِبٌ كَسْلَانُ (talibun kaslanu) „ein fauler …"},{"id":"ismun-mawsul-alladhi-01","name":"الَّذِي (welcher, der)","kat":"Adjektiv","n":1,"q":"Folge 14 · Schlüssel 1","e":"Das Relativpronomen — bei dir bisher in keiner einzigen Regel. Sharḥ Madīnah stellt es in Lektion 9 direkt neben das نَعْت, weil beide dasselbe leisten: sie …"},{"id":"nat-wen-beschreibt-01","name":"نَعْت: die Endung zeigt, WEN es beschreibt","kat":"Adjektiv","n":1,"q":"Folge 14 · Schlüssel 3","e":"Stehen zwei Nomen hintereinander, entscheidet die Endung des نَعْت, welches der beiden es beschreibt — es muss in allen vier Punkten mit ihm übereinstimmen. Der …"},{"id":"schams-qamar-01","name":"حُروف شَمْسِيّة وقَمَرِيّة (Sonnen- & Mondbuchstaben)","kat":"اَلْ","n":8,"q":"Folge 3 · Schlüssel 1","e":"Von den 28 arabischen Buchstaben (die Hamza nicht mitgezählt) sind 14 Sonnenbuchstaben und 14 Mondbuchstaben – genau Hälfte/Hälfte. Die Regel gilt nur bei …"},{"id":"schams-qamar-merkhilfe-01","name":"اَلْقَمَر / اَلشَّمْس (Merkhilfe für die Namen)","kat":"اَلْ","n":8,"q":"Folge 3 · Schlüssel 1","e":"Die beiden Gruppen heißen حُروف قَمَرِيّة (Mondbuchstaben) und حُروف شَمْسِيّة (Sonnenbuchstaben). Der Grund für die Namen steckt in den Wörtern selbst: اَلْقَمَر …"},{"id":"al-gesamtheit-01","name":"اَلْ (Bestimmung = die Gesamtheit)","kat":"اَلْ","n":8,"q":"Folge 10","e":"Wird ein Wort mit اَلْ bestimmt, ist damit nicht nur „das eine\" gemeint, sondern alles davon. حَمْدٌ (hamdun) ist „ein Lob\" – wie ein Stück Kuchen; اَلْحَمْدُ …"},{"id":"al-tanwin-tilgung-01","name":"اَلْ tilgt das Tanwīn","kat":"اَلْ","n":2,"q":"[object Object]","e":"Sobald اَلْ vor ein Wort tritt, fällt das Tanwīn weg — beides zusammen geht nicht. Sharḥ Madīnah sagt es in fünf Wörtern: يُحْذَفُ التَّنْوِينُ عِنْدَ دُخُولِ اَلْ …"},{"id":"nakira-marifa-01","name":"نَكِرَة / مَعْرِفَة (unbestimmt / bestimmt)","kat":"اَلْ","n":2,"q":"[object Object]","e":"Das Begriffspaar, das dreizehn unserer Regeln berühren, ohne es je zu erklären. Sharḥ Madīnah: النَّكِرَةُ: شَيْءٌ غَيْرُ مُعَيَّنٍ — das Unbestimmte ist „eine …"},{"id":"mudaf-ilayh-01","name":"مُضَاف إِلَيْهِ (der Besitzer – zweites Wort)","kat":"إِضافة","n":8,"q":"Folge 7 · Schlüssel 1","e":"Der مُضَاف إِلَيْهِ, also das zweite Wort, ist immer مَجْرُور – daran lässt sich nichts ändern; er endet auf Kasra: كِتابُ الْمُدَرِّسِ kitābu l-mudarrisi – das …"},{"id":"mudaf-ohne-al-01","name":"مُضَاف (bestimmt ohne اَلْ)","kat":"إِضافة","n":8,"q":"Folge 7 · Schlüssel 1","e":"Obwohl der مُضَاف kein اَلْ tragen darf, ist er trotzdem bestimmt – denn er gehört ja jemandem, und etwas kann nicht jemandem gehören und gleichzeitig unbestimmt …"},{"id":"idafa-zweitglied-01","name":"إِضافة – Zweitglied bestimmt oder unbestimmt","kat":"إِضافة","n":3,"q":"Folge 9 · Schlüssel 1","e":"Beim zweiten Wort der Iḍāfa entscheidest du selbst: بَيْتُ الْإِمَامِ baytu l-imāmi – »das Haus des Imams« (bestimmt mit اَلْ) oder بَيْتُ إِمَامٍ baytu imāmin – …"},{"id":"possessiv-ist-idafa-01","name":"Die Besitzendung IST ein مُضَاف إِلَيْهِ","kat":"إِضافة","n":2,"q":"Folge 16","e":"Das ist der Satz, der die Besitzendungen mit etwas verbindet, das du schon kennst. Der Lehrer nimmt كِتَاب + كَ auseinander: das Nomen ist مُضَاف, die Endung ist …"},{"id":"idafa-01","name":"إِضافة (Genitivverbindung)","kat":"إِضافة","n":1,"q":"Folge 7 · Schlüssel 1","e":"Mit der إِضافة verbindet man zwei Nomen (اِسْم + اِسْم) zu einem Ausdruck. Das erste Wort heißt مُضَاف (der Besitz), das zweite مُضَاف إِلَيْهِ (der Besitzer) …"},{"id":"mudaf-01","name":"مُضَاف (der Besitz – erstes Wort)","kat":"إِضافة","n":1,"q":"Folge 7 · Schlüssel 1","e":"Der مُضَاف, also das erste Wort der Verbindung, darf kein اَلْ tragen und kein Tanwin. Seinen Fall bekommt er ganz normal aus dem Satz – er kann jeden Fall …"},{"id":"idafa-erkennen-01","name":"مُضَاف erkennen (Nomen ohne Tanwin + Nomen)","kat":"إِضافة","n":1,"q":"Folge 8 · Schlüssel 1","e":"So erkennt man eine Genitivverbindung im Text: Wenn ein Nomen nur eine einfache Endung trägt – also z.B. nur ein Damma statt Tanwin-Damma – und direkt danach noch …"},{"id":"zarf-als-mudaf-01","name":"Ortsangabe als مُضَاف (z.B. تَحْتَ)","kat":"إِضافة","n":1,"q":"Folge 8 · Schlüssel 1","e":"Auch eine Zeit- oder Ortsangabe wie تَحْتَ (taḥta) kann am Anfang einer solchen Verbindung stehen. Der Lehrer besteht hier auf der genauen Formulierung: Die …"},{"id":"idafa-kein-adjektiv-01","name":"إِضافة – kein Adjektiv als Zweitglied","kat":"إِضافة","n":1,"q":"Folge 9","e":"اَلرَّجُلُ مَرِيضٌ ar-rajulu marīdun »der Mann ist krank« ist ein normaler Satz und enthält keine Iḍāfa. Man kann daraus keine Genitivverbindung machen: مَرِيضٍ …"},{"id":"idafa-verkettung-01","name":"إِضافة – Verkettung (mehrgliedrige Genitivverbindung)","kat":"إِضافة","n":1,"q":"Folge 9 · Schlüssel 1","e":"Eine Iḍāfa kann verkettet (»verschachtelt«) werden: هَذَا اِبْنُ إِمَامِ الْمَسْجِدِ hādhā ibnu imāmi l-masjidi – »dies ist der Sohn des Imams der Moschee«. Das …"},{"id":"istifham-ayna-01","name":"أَيْنَ (wo?)","kat":"Fragen","n":7,"q":"Folge 4 · Schlüssel 1","e":"أَيْنَ (ayna) heißt \"wo?\" und fragt nach dem Ort – ein wichtiges Fragewort. Beispiel: أَيْنَ مُحَمَّدٌ؟ (ayna Muḥammadun) \"Wo ist Mohammed?\" Die Antwort enthält …"},{"id":"fragepartikel-alif-01","name":"أَ (Fragepartikel)","kat":"Fragen","n":4,"q":"Folge 1 · Schlüssel 1","e":"Ein أَ vor einen vollständigen Satz gestellt macht aus einer Aussage eine Frage. Zuerst und vor allem ist es eine Ja/Nein-Frage — der Madina-Schlüssel zeigt es in …"},{"id":"istifham-ma-01","name":"مَا (Fragewort für Dinge)","kat":"Fragen","n":3,"q":"Folge 1 · Schlüssel 1","e":"Mit مَا (mā, „was\") fragt man nach Gegenständen und Objekten: مَا هَذَا؟ (mā hādhā) – „Was ist dies?\". Die Antwort ist z.B. هَذَا بَيْتٌ (hādhā baytun) – „Dies ist …"},{"id":"istifham-men-01","name":"مَنْ (wer)","kat":"Fragen","n":2,"q":"Folge 2 · Schlüssel 1","e":"مَنْ (men) ist das Fragewort für Personen (\"wer ist dies?\"), im Unterschied zu هَذَا/Fragen nach Gegenständen. Nicht verwechseln mit مِنْ (min, \"von\") - men hat …"},{"id":"istifham-liman-01","name":"لِمَنْ (Fragewort »wem gehört«)","kat":"Fragen","n":2,"q":"Folge 9 · Schlüssel 1","e":"لِمَنْ li-man ist das Fragewort für »wessen / von wem / wem gehört das«: لِمَنْ هَذِهِ؟ li-man hādhihi – »wem gehört diese hier?«. Die Antwort kommt dann mit لِ …"},{"id":"istifham-madha-01","name":"مَاذَا؟ (was?)","kat":"Fragen","n":2,"q":"[object Object]","e":"Du hast مَا, aber nicht مَاذَا — die Form, die im Gespräch tatsächlich vorkommt. Sharḥ Madīnah: مَاذَا؟ = مَا هَذَا؟ لِغَيْرِ العاقِلِ — مَاذَا ist dasselbe wie مَا …"},{"id":"fragepartikel-hal-01","name":"هَلْ (Fragepartikel für Entscheidungsfragen)","kat":"Fragen","n":1,"q":"Folge 1","e":"Es gibt im Arabischen zwei Fragepartikeln: أَ und هَلْ. هَلْ (hal) stellt man vor eine fertige Aussage und macht daraus eine Ja-Nein-Frage: هَلْ هَذَا بَيْتٌ؟ (hal …"},{"id":"fragepartikel-erforderlich-01","name":"Ohne Fragepartikel keine Frage","kat":"Fragen","n":1,"q":"Folge 4 · Schlüssel 1","e":"Anders als im Deutschen macht im Arabischen eine andere Wortstellung allein noch keine Frage. مُحَمَّدٌ ذَهَبَ (Muḥammadun dhahaba) und ذَهَبَ مُحَمَّدٌ (dhahaba …"},{"id":"min-ayna-01","name":"مِنْ أَيْنَ (Woher-Frage)","kat":"Fragen","n":1,"q":"Folge 5","e":"مِنْ أَيْنَ أَنْتَ؟ min aina anta – „Woher bist du?“ Dabei heißt مِنْ min „von“ und ist ein حَرْف جَرّ (harf jarr), أَيْنَ aina heißt „wo“ und أَنْتَ anta „du“ …"},{"id":"min-man-unterscheiden-01","name":"مِنْ und مَنْ (von / wer)","kat":"Fragen","n":1,"q":"Folge 5","e":"Ohne Taschkil sehen مِنْ min („von“) und مَنْ man („wer?“) gleich aus. Der Lehrer zeigt den Trick: einfach beides ausprobieren und schauen, was Sinn ergibt. In der …"},{"id":"zuruf-makan-01","name":"تَحْتَ / أَمامَ / خَلْفَ (Ortsadverbien)","kat":"Ortsangaben","n":4,"q":"Folge 12 · Schlüssel 1","e":"Die bisher gelernten drei ظَرْف (ẓarf, Zeit- und Ortsangaben - der Lehrer sagt dazu \"Adverbien\") sind: تَحْتَ (taḥta) = unter, أَمامَ (amāma) = davor/vor, خَلْفَ …"},{"id":"zarf-makan-rollenname-01","name":"ظَرْفُ مَكَانٍ (der Rollenname der Ortsangabe)","kat":"Ortsangaben","n":2,"q":"[object Object]","e":"Deine zuruf-makan-01 zählt die Wörter auf — تَحْتَ, أَمَامَ, خَلْفَ — nennt aber nicht die Rolle, die sie im Satz spielen. Sie heißt ظَرْفُ مَكَانٍ, „Umstandsangabe …"},{"id":"zarf-01","name":"ظَرْف (Zeit-/Ortsangabe)","kat":"Ortsangaben","n":1,"q":"Folge 7 · Schlüssel 1","e":"Neben حَرْف جَرّ und إِضافة gibt es eine dritte Sache, die den Fall steuert: die ظَرْف – Zeit- und Ortsangaben (Adverbien). Eine Ortsangabe verhält sich wie ein …"},{"id":"zarf-mansub-01","name":"Das ظَرْف ist selbst مَنْصُوب","kat":"Ortsangaben","n":1,"q":"[object Object]","e":"Warum enden أَمَامَ, خَلْفَ, تَحْتَ eigentlich immer auf Fatḥa? Du siehst diese Endung in jedem Beispiel, und deine drei Ortsangaben-Regeln erklären nur, was mit …"},{"id":"zuruf-makan-weitere-01","name":"Zehn weitere Ortswörter","kat":"Ortsangaben","n":1,"q":"[object Object]","e":"Deine Kapitel-8-Regel nennt drei Ortswörter, Bayna Yadayk Band 2 zählt dreizehn auf: أَمامَ, وَراءَ, خَلْفَ, يَمِين, يَسار, بَيْنَ, عِنْدَ, فَوْقَ, تَحْتَ, شَمال …"},{"id":"inda-ort-und-zeit-01","name":"عِنْدَ ist ein ظَرْف — für Ort UND für Zeit","kat":"Ortsangaben","n":1,"q":"Folge 14","e":"عِنْدَ heißt „bei\" und ist ein ظَرْف. Der Lehrer betont, dass es beides kann: „عِنْدَ kann sowohl Ortsangabe sein, als auch Zeitangabe.\" Örtlich in seinem Beispiel …"},{"id":"possessiv-ya-01","name":"ـي (mein)","kat":"Besitz","n":2,"q":"Folge 10 · Schlüssel 1","e":"Um zu sagen, dass eine Sache 'meins' ist, hängt man ein ي ans Wort: aus رَبُّ (rabbu, Herr) wird رَبّي (rabbi) – 'mein Herr'. Im Sprachgebrauch lassen die Araber …"},{"id":"possessiv-endungen-01","name":"Die Besitzendungen ـِي · ـكَ · ـكِ · ـهُ · ـهَا","kat":"Besitz","n":2,"q":"Folge 15","e":"Besitz wird durch eine Endung am Nomen ausgedrückt, nicht durch ein eigenes Wort. Der Lehrer geht sie der Reihe nach durch und nennt jede mit ihrem Vokal: ـِي …"},{"id":"asma-khamsa-01","name":"Die fünf Ausnahmewörter: أَبٌ und أَخٌ nehmen ein Wāw","kat":"Besitz","n":1,"q":"Folge 16","e":"Normalerweise hängt die Besitzendung direkt ans Wort. Bei fünf Wörtern nicht — der Lehrer: „es gibt in der arabischen Sprache fünf Ausnahmewörter … bei أَبٌ und bei …"},{"id":"hu-nach-kasra-01","name":"Nach كَسْرة wird das هُ zu هِ — فِيهِ statt fīhu","kat":"Besitz","n":1,"q":"Folge 16 · Schlüssel 2","e":"Eine Regel, die man hört, bevor man sie versteht: Auf eine كَسْرة folgt nur schwer eine ضَمّة. Der Lehrer beschreibt es an فِي + هُ: „Weil auf ein Kasra auf einmal …"},{"id":"asma-khamsa-vollstaendig-01","name":"الأَسْمَاءُ الخَمْسَةُ — alle fünf, und wann sie gelten","kat":"Besitz","n":1,"q":"[object Object]","e":"Dein Lehrer nennt in Folge 16 nur أَبٌ und أَخٌ und sagt ausdrücklich, die drei übrigen kämen erst im zweiten Buch (asma-khamsa-01). Der deutsche Madina-Schlüssel 3 …"},{"id":"madd-tabii-01","name":"مَدّ (natürliche Verlängerung)","kat":"Schrift","n":10,"q":"Folge 3","e":"Zu jedem Vokalzeichen gehört ein Buchstabe – Kasra gehört zu ي („sein kleiner Bruder\"), Damma zu و, Fatha zu ا. Wenn Vokalzeichen und zugehöriger Buchstabe …"},{"id":"hamzatul-wasl-01","name":"هَمْزَةُ الوَصْل (Verbindungs-Alif)","kat":"Schrift","n":8,"q":"Folge 2 · Schlüssel 1","e":"هَمْزَةُ الوَصْل (Hamzatu l-waṣl), das Verbindungs-Alif, wird auf zwei Weisen gelesen. Bleibst du bei ihm stehen, liest du es wie ein ganz normales Alif. Liest du …"},{"id":"schakl-01","name":"شَكْل (Vokalzeichen)","kat":"Schrift","n":8,"q":"Folge 3","e":"شَكْل (schakl) sind die kleinen Zeichen über und unter den Buchstaben. Es gibt fünf: فَتْحة (Fatha), كَسْرة (Kasra), سُكون (Sukun), ضَمّة (Damma) und شَدّة …"},{"id":"taschkil-kontext-01","name":"تشكيل und Kontext (gleiches Schriftbild)","kat":"Schrift","n":3,"q":"Folge 9","e":"Zwei Wörter können identisch geschrieben sein und trotzdem Verschiedenes bedeuten: رَجُلٌ rajulun »Mann« und رِجْلٌ rijlun »Bein« – ohne Taschkīl sieht man keinen …"},{"id":"mudarris-lesung-herkunft-01","name":"مُدَرِّس (richtige Lesung und Herkunft)","kat":"Schrift","n":2,"q":"Folge 2","e":"Achtung bei der Aussprache: Der Strich unter dem Schadda ist eine Kasra, nicht wie erwartet eine Fatha – also نِّس nicht رَّس. Das Wort heißt deshalb مُدَرِّسٌ …"},{"id":"lafz-al-jalala-01","name":"اَللّٰه (helle und dunkle Aussprache)","kat":"Schrift","n":2,"q":"Folge 7","e":"Kleiner Aussprache-Trick des Lehrers: Normalerweise wird der Name اَللّٰه dunkel/schwer gesprochen – اَللّٰهُ Allāhu. Steht davor aber ein Wort, das auf Kasra …"},{"id":"iltiqa-sakinain-01","name":"اِلْتِقَاءُ السَّاكِنَيْنِ (zwei Vokallose treffen sich)","kat":"Schrift","n":1,"q":"[object Object]","e":"Der Fachbegriff zu deiner Regel mina-al-01. Du kennst den Sachverhalt schon — „zwei Sukūn hintereinander mögen die Araber nicht\" — und die Erklärung deines Lehrers …"},{"id":"huwa-hiya-01","name":"هُوَ / هِيَ (er / sie)","kat":"Wortarten","n":8,"q":"Folge 4 · Schlüssel 1","e":"هُوَ (huwa) heißt \"er\", هِيَ (hiya) heißt \"sie\". Ein eigenes Pronomen für \"es\" gibt es im Arabischen nicht: Man nimmt هُوَ für alle Wörter, die männlich sind, und …"},{"id":"wortarten-01","name":"اِسْم – فِعْل – حَرْف (die drei Wortarten)","kat":"Wortarten","n":8,"q":"Folge 8 · Schlüssel 2","e":"Im Arabischen gibt es nur drei Wortarten: اِسْم (ism) = Nomen, فِعْل (fiʿl) = Verb, حَرْف (ḥarf) = Partikel. Alles, was kein Verb und kein Partikel ist, ist …"},{"id":"verb-enthaelt-pronomen-01","name":"خَرَجَ / ذَهَبَ (das „er“ steckt im Verb)","kat":"Wortarten","n":1,"q":"Folge 5 · Schlüssel 1","e":"Die ersten beiden Verben sind خَرَجَ kharaja (er verließ, er ging hinaus) und ذَهَبَ dhahaba (er ging) – beides Vergangenheit. Das „er“ ist kein eigenes Wort und …"},{"id":"ta-marbuta-fem-01","name":"تاء مربوطة (weibliche Endung)","kat":"—","n":8,"q":"Folge 1 · Schlüssel 1","e":"Die تاء مربوطة (das ة am Wortende, geschrieben wie ein Kreis mit zwei Punkten) wird für Wörter benutzt, die weiblich sind. Wenn ein Wort ein ة hat, weißt du: das …"},{"id":"ta-marbuta-grenzen-01","name":"تاء مَرْبُوطة – nicht jedes Wort laesst sich weiblich machen","kat":"—","n":8,"q":"Folge 13","e":"Man kann nicht jedes Nomen einfach mit einer تاء مَرْبُوطة weiblich machen. Das geht nur dort, wo es ein weibliches Gegenstueck gibt oder wo es Sinn ergibt – der …"},{"id":"fem-ohne-ta-marbuta-01","name":"مُؤَنَّث بلا تاء (weiblich ohne Tāʾ marbūṭa)","kat":"—","n":3,"q":"Folge 9 · Schlüssel 1","e":"Es gibt drei Gruppen weiblicher Wörter: solche mit Tāʾ marbūṭa, solche die von der Bedeutung her weiblich sind (Tochter, Mutter, Tante) und solche, die einfach …"},{"id":"ya-nida-01","name":"يَا (Rufpartikel)","kat":"—","n":2,"q":"Folge 7","e":"يَا ist die Rufpartikel („o …\"). Steht sie vor einem männlichen Namen, fällt dessen Tanwin weg und es bleibt eine Damma: nicht يَا ياسِرٌ yā Yāsirun, sondern يَا …"},{"id":"koerperteile-genus-01","name":"أَعْضَاء مزدوجة (doppelte Körperteile sind weiblich)","kat":"—","n":2,"q":"Folge 9 · Schlüssel 1","e":"Körperteile, die es doppelt gibt, sind im Arabischen weiblich: يَدٌ yadun »Hand«, رِجْلٌ rijlun »Bein«, أُذُنٌ udhunun »Ohr«, عَيْنٌ ʿaynun »Auge«. Körperteile, die …"},{"id":"badal-01","name":"بَدَل (die Ersatzangabe)","kat":"—","n":2,"q":"[object Object]","e":"Der Begriff, der eine Frage beantwortet, die deine Regeln offenlassen: warum ist هَذَا الرَّجُلُ تَاجِرٌ ein vollständiger Satz und هَذَا الرَّجُلُ التَّاجِرُ …"},{"id":"eigennamen-fem-ohne-tanwin-01","name":"Weibliche Eigennamen ohne Tanwin","kat":"—","n":1,"q":"Folge 10 · Schlüssel 1","e":"Weibliche Eigennamen bekommen kein Tanwin. In den Sätzen dieses Kapitels stehen sie deshalb mit einfachem Damma: آمِنةُ (Aminatu), فاطِمةُ (Fatimatu) – nicht …"}];
+const SPEICHER = 'satzmodus-auswahl-v1';
+let aus = new Set();
+try { aus = new Set(JSON.parse(localStorage.getItem(SPEICHER) || '[]')); } catch(e){}
+let filter = 'alle';
+
+const sichtbar = r =>
+  filter === 'alle'    ? true :
+  filter === 'wenig'   ? r.n <= 2 :
+  filter === 'ohnekat' ? r.kat === '—' :
+  filter === 'aus'     ? aus.has(r.id) : true;
+
+function zeichne(){
+  const liste = document.getElementById('liste');
+  const gezeigt = REGELN.filter(sichtbar);
+  let html = '', letzteKat = null;
+  for (const r of gezeigt){
+    if (r.kat !== letzteKat){
+      letzteKat = r.kat;
+      const inKat = REGELN.filter(x => x.kat === r.kat);
+      const drin = inKat.filter(x => !aus.has(x.id)).length;
+      html += '<h2>' + (r.kat === '—' ? 'ohne Kategorie' : r.kat)
+            + ' <em>' + drin + '/' + inKat.length + '</em>'
+            + '<button data-kat="' + r.kat + '">' + (drin ? 'alle raus' : 'alle rein') + '</button></h2>';
+    }
+    const off = aus.has(r.id);
+    html += '<div class="regel' + (off ? ' aus' : '') + '" data-id="' + r.id + '">'
+          + '<div class="haken">' + (off ? '\u2715' : '\u2713') + '</div>'
+          + '<div class="mitte">'
+          + '<div class="name">' + r.name + '</div>'
+          + '<div class="erkl">' + r.e + '</div>'
+          + '<div class="meta"><span class="' + (r.n <= 2 ? 'wenig' : '') + '">'
+          + r.n + ' Satz' + (r.n === 1 ? '' : 'e') + '</span><span>' + r.q + '</span>'
+          + '<code>' + r.id + '</code></div>'
+          + '</div></div>';
+  }
+  liste.innerHTML = html || '<p style="color:var(--faint)">Nichts in dieser Ansicht.</p>';
+
+  const drin = REGELN.length - aus.size;
+  document.getElementById('zahl').textContent = drin;
+  document.getElementById('balken').style.width = (drin / REGELN.length * 100) + '%';
+  document.getElementById('ausgabe').value = aus.size
+    ? 'Nicht im Satzmodus (' + aus.size + ' von ' + REGELN.length + '):\n'
+      + [...aus].sort().join('\n')
+    : 'Alle ' + REGELN.length + ' Regeln bleiben im Satzmodus.';
+  document.querySelectorAll('.mini').forEach(b =>
+    b.classList.toggle('an', b.dataset.filter === filter));
+}
+
+function sichern(){ try { localStorage.setItem(SPEICHER, JSON.stringify([...aus])); } catch(e){} }
+
+document.addEventListener('click', e => {
+  const f = e.target.closest('[data-filter]');
+  if (f){ filter = f.dataset.filter; zeichne(); return; }
+  const k = e.target.closest('[data-kat]');
+  if (k){
+    const inKat = REGELN.filter(x => x.kat === k.dataset.kat);
+    const allesRaus = inKat.every(x => aus.has(x.id));
+    inKat.forEach(x => allesRaus ? aus.delete(x.id) : aus.add(x.id));
+    sichern(); zeichne(); return;
+  }
+  const r = e.target.closest('.regel');
+  if (r){
+    aus.has(r.dataset.id) ? aus.delete(r.dataset.id) : aus.add(r.dataset.id);
+    sichern(); zeichne(); return;
+  }
+  if (e.target.id === 'kopieren'){
+    const t = document.getElementById('ausgabe');
+    t.select();
+    navigator.clipboard.writeText(t.value).then(
+      () => { e.target.textContent = 'kopiert \u2713'; setTimeout(() => e.target.textContent = 'In die Zwischenablage', 1600); },
+      () => { e.target.textContent = 'markiert \u2014 jetzt kopieren'; });
+  }
+});
+zeichne();
+</script>

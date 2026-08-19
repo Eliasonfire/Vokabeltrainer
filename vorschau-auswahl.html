@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Themenauswahl — drei Entwürfe</title>
+<!--
+  Elias am 19.08.2026: „außerdem finde ich sollte man überarbeiten welche modi
+  man da wählen kann, einfach nach links zu wischen ist so unübersichtlich weil
+  es ewig dauert bis man ans ende kommt."
+
+  Anlass: die Themenleiste ist am selben Tag von 8 auf 13 Reiter gewachsen,
+  weil 45 der 95 Regeln in keiner Kategorie waren. Damit wird sein Problem
+  groesser, nicht kleiner.
+
+  ⛔ Diese Seite baut NICHTS ein. Sie legt drei Fassungen nebeneinander, mit
+  den echten Namen und den echten Satzzahlen, damit er aussucht.
+-->
+<style>
+:root{
+  --bg:#000; --surface-1:#0b0b0c; --surface-2:#131315; --surface-3:#1b1b1e;
+  --border:#26262b; --rand:#616169;
+  --text:#f4f4f5; --text-dim:#a1a1a8; --text-faint:#82828a;
+  --red-bright:#ff4d6a; --red-dim:#5e0b1c; --red-wash:rgba(255,23,68,.09);
+  --font-ui:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --r-2:14px; --r-3:18px; --r-full:999px;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-ui);
+     font-size:15px;line-height:1.6;padding:20px 16px 60px;}
+h1{font-size:1.3rem;margin:0 0 6px;}
+.vor{color:var(--text-dim);font-size:.9rem;margin:0 0 28px;max-width:52ch;}
+.vor b{color:var(--text);}
+.reihe{display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start;}
+/* ⛔ min-width:0 ist Pflicht: die rollende Leiste in A sprengt sonst ihre
+   Karte auf volle Breite, obwohl flex:0 0 340px dasteht. Genau die Falle aus
+   layout_min_width_falle — ein Flex-Kind ist per Voreinstellung so breit wie
+   sein Inhalt, nicht wie seine Basis. */
+.karte{flex:0 0 340px;min-width:0;max-width:100%;background:var(--surface-1);
+       border:1px solid var(--border);border-radius:var(--r-3);padding:16px;}
+.karte h2{font-size:1rem;margin:0 0 2px;color:var(--red-bright);}
+.karte .was{color:var(--text-dim);font-size:.82rem;margin:0 0 4px;min-height:3.4em;}
+.karte .zahl{color:var(--text-faint);font-size:.76rem;margin:0 0 14px;
+             font-variant-numeric:tabular-nums;}
+.buehne{background:var(--bg);border:1px solid var(--border);border-radius:var(--r-2);
+        padding:12px;min-width:0;}
+
+/* ---------- gemeinsame Pille ---------- */
+.p{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;
+   background:var(--surface-2);border:1px solid var(--rand);color:var(--text-dim);
+   border-radius:var(--r-full);padding:7px 12px;font-size:.8rem;font-weight:700;
+   font-family:inherit;cursor:pointer;white-space:nowrap;}
+.p i{font-style:normal;font-size:.72rem;color:var(--text-faint);
+     font-variant-numeric:tabular-nums;}
+.p.an{background:var(--red-wash);border-color:var(--red-dim);color:var(--red-bright);}
+.p.an i{color:var(--red-bright);opacity:.75;}
+
+/* ---------- A: wie heute, waagerecht rollen ---------- */
+#a .leiste{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px;}
+#a .leiste::-webkit-scrollbar{display:none;}
+.kante{position:relative;}
+.kante::after{content:'';position:absolute;top:0;right:0;bottom:0;width:34px;
+              background:linear-gradient(90deg,transparent,var(--bg));pointer-events:none;}
+
+/* ---------- B: Umbruch statt Rollen ---------- */
+#b .leiste{display:flex;gap:8px;flex-wrap:wrap;padding:2px;}
+
+/* ---------- C: aufklappen ---------- */
+#c .knopf{width:100%;display:flex;align-items:center;justify-content:space-between;
+          gap:8px;background:var(--surface-2);border:1px solid var(--rand);
+          color:var(--text);border-radius:var(--r-2);padding:11px 14px;
+          font-size:.88rem;font-weight:700;font-family:inherit;cursor:pointer;}
+#c .knopf span.kat{color:var(--red-bright);}
+#c .knopf span.pfeil{color:var(--text-faint);font-size:.75rem;transition:transform .18s;}
+#c.offen .knopf span.pfeil{transform:rotate(180deg);}
+#c .raster{display:none;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+#c.offen .raster{display:grid;}
+#c .raster .p{justify-content:space-between;width:100%;border-radius:var(--r-2);}
+
+.fuss{margin-top:12px;color:var(--text-faint);font-size:.76rem;}
+.fuss b{color:var(--text-dim);}
+.hinw{margin:34px 0 0;padding:14px 16px;background:var(--surface-1);
+      border:1px solid var(--border);border-left:3px solid var(--red-dim);
+      border-radius:var(--r-2);color:var(--text-dim);font-size:.84rem;max-width:62ch;}
+.hinw b{color:var(--text);}
+</style>
+</head>
+<body>
+
+<h1>Themenauswahl im Satzmodus — drei Entwürfe</h1>
+<p class="vor">Die Leiste ist heute von <b>8 auf 13 Reiter</b> gewachsen, weil
+45 der 95 Regeln in keiner Kategorie waren. Damit wird das Wischen schlimmer,
+nicht besser. Echte Namen, echte Satzzahlen — <b>eingebaut ist noch nichts</b>.<br><br>Die Zahlen unten sind bei 375 px Fensterbreite <b>gemessen</b>, nicht geschätzt.</p>
+
+<div class="reihe">
+
+  <div class="karte">
+    <h2>A · wie heute</h2>
+    <p class="was">Waagerecht rollen. Sichtbar sind zwei bis drei Reiter, der
+      Rest liegt hinter der Kante.</p>
+    <p class="zahl">61 px hoch · 0 Tipp · aber <b>4,6 Fensterbreiten wischen</b> (1288 px Inhalt in 280 px Fenster)</p>
+    <div class="buehne kante" id="a"><div class="leiste"></div></div>
+    <p class="fuss">⛔ Das ist der Zustand, den du meinst. Steht hier nur zum
+      Vergleich.</p>
+  </div>
+
+  <div class="karte">
+    <h2>B · Umbruch statt Rollen</h2>
+    <p class="was">Dieselben Pillen, aber sie brechen um. Alles auf einen Blick,
+      kein Wischen, kein zusätzliches Tippen.</p>
+    <p class="zahl"><b>256 px hoch</b> · 0 Tipp · 0× wischen — viermal so hoch wie A</p>
+    <div class="buehne" id="b"><div class="leiste"></div></div>
+    <p class="fuss">Die Satzkarte rutscht dadurch nach unten. Auf dem Handy
+      merkst du das.</p>
+  </div>
+
+  <div class="karte">
+    <h2>C · aufklappen</h2>
+    <p class="was">Eine Zeile mit dem aktuellen Thema. Antippen zeigt alle
+      dreizehn als Raster, Auswahl klappt wieder zu.</p>
+    <p class="zahl">66 px hoch zugeklappt · <b>1 Tipp</b> · 0× wischen</p>
+    <div class="buehne" id="c">
+      <button class="knopf" id="cKnopf">
+        <span>Thema: <span class="kat" id="cName">Alle</span></span>
+        <span class="pfeil">▼</span>
+      </button>
+      <div class="raster"></div>
+    </div>
+    <p class="fuss">Am sparsamsten mit Platz, und es wächst mit: bei 20 Themen
+      sieht es genauso aus.</p>
+  </div>
+
+</div>
+
+<p class="hinw"><b>Womit ich rechne:</b> <b>C</b> passt am besten zu dem, was du
+beschrieben hast — du siehst sofort, wo du bist, und kommst mit einem Tipp an
+jedes Thema, egal wie viele es werden. <b>B</b> ist ehrlicher, wenn du die Liste
+lieber immer offen hättest und die drei Zeilen Höhe verschmerzt.
+<br><br>⛔ Ich baue keins davon ein, bis du sagst, welches. Sag einfach
+<b>A</b>, <b>B</b> oder <b>C</b>.</p>
+
+<script>
+/* Echte Zahlen, am 19.08.2026 mit scratchpad/themen-messen.mjs gemessen. */
+const THEMEN = [
+  ['Alle', 197], ['Hinweiswörter', 62], ['Genitiv', 45], ['Nominalsatz', 35],
+  ['Kasus', 29], ['Adjektiv', 34], ['اَلْ', 28], ['إِضافة', 18],
+  ['Fragen', 23], ['Ortsangaben', 9], ['Besitz', 6], ['Schrift', 31],
+  ['Wortarten', 17]
+];
+let gewaehlt = 0;
+
+const pille = (i, block) =>
+  `<button class="p${i === gewaehlt ? ' an' : ''}" data-i="${i}" data-block="${block}">`
+  + `${THEMEN[i][0]}<i>${THEMEN[i][1]}</i></button>`;
+
+function zeichne(){
+  document.querySelector('#a .leiste').innerHTML = THEMEN.map((_, i) => pille(i, 'a')).join('');
+  document.querySelector('#b .leiste').innerHTML = THEMEN.map((_, i) => pille(i, 'b')).join('');
+  document.querySelector('#c .raster').innerHTML = THEMEN.map((_, i) => pille(i, 'c')).join('');
+  document.getElementById('cName').textContent = THEMEN[gewaehlt][0];
+}
+zeichne();
+
+document.addEventListener('click', e => {
+  const p = e.target.closest('.p');
+  if (p){
+    gewaehlt = Number(p.dataset.i);
+    if (p.dataset.block === 'c') document.getElementById('c').classList.remove('offen');
+    zeichne();
+    return;
+  }
+  if (e.target.closest('#cKnopf')) document.getElementById('c').classList.toggle('offen');
+});
+</script>
+</body>
+</html>
