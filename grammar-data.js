@@ -24,8 +24,13 @@ const GRAMMAR_RULES = [
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
-       Der Beleg bleibt deshalb stehen; nur die Anzeige faellt weg. */
-    ausgeblendet: true,
+       Der Beleg bleibt deshalb stehen; nur die Karteikarte faellt weg.
+
+       ⭐ Elias am 19.08.2026, 03:05: "genau die regeln die ich eben
+       bearbeitet habe galten nur den karteikarten ... seperat mache ich
+       das mit dem satzmodus bzw uebungsmodus." Deshalb NICHT
+       `ausgeblendet` - das naehme sie auch aus Satz- und Uebungsmodus. */
+    nichtAufKarteikarten: true,
     name: "هَذَا (dies)",
     shortExplanation: "هَذَا (hadha) ist ein اسْمُ الْإِشَارَة (Hinweiswort/Demonstrativpronomen). Es wird für das benutzt, was (a) in der Nähe ist und (b) männlich – nicht für weibliche Wörter, dafür steht هَذِهِ. Menschen und Dinge gleichermaßen: Sharḥ Madīnah S. 3 definiert es als لِلْمُفْرَدِ الْمُذَكَّرِ الْقَرِيبِ الْعَاقِلِ، وَغَيْرِ الْعَاقِلِ – für das männliche Einzelne in der Nähe, ob vernunftbegabt oder nicht. Die Nähe muss nicht räumlich sein: der Lehrer erklärt am Beispiel يَوْمُ الْقِيامَة (der Tag der Auferstehung), dass dieser Tag im Koran mit هَذَا bezeichnet wird und nicht mit ذَلِكَ (jenes) – weil er als nah empfunden wird, nicht als fern.",
     color: "mubtada",
@@ -37,8 +42,13 @@ const GRAMMAR_RULES = [
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
-       Der Beleg bleibt deshalb stehen; nur die Anzeige faellt weg. */
-    ausgeblendet: true,
+       Der Beleg bleibt deshalb stehen; nur die Karteikarte faellt weg.
+
+       ⭐ Elias am 19.08.2026, 03:05: "genau die regeln die ich eben
+       bearbeitet habe galten nur den karteikarten ... seperat mache ich
+       das mit dem satzmodus bzw uebungsmodus." Deshalb NICHT
+       `ausgeblendet` - das naehme sie auch aus Satz- und Uebungsmodus. */
+    nichtAufKarteikarten: true,
     name: "هَذَا (Alif wird gesprochen, nicht geschrieben)",
     shortExplanation: "In هَذَا steckt ein Alif, das man nicht mitschreibt, das aber trotzdem ausgesprochen wird. Deshalb spricht man das Wort lang: hādhā. Beim Vorlesen wird entsprechend korrigiert: هَذَا „schön lang machen\" – er zeigt dabei auf zwei Alif im Wort und sagt, die beiden dürfen nicht vergessen werden. Beispiel aus der Übung: هَذَا بَيْتٌ (hādhā baytun) – „Dies ist ein Haus\".",
     color: "other",
@@ -50,8 +60,13 @@ const GRAMMAR_RULES = [
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
-       Der Beleg bleibt deshalb stehen; nur die Anzeige faellt weg. */
-    ausgeblendet: true,
+       Der Beleg bleibt deshalb stehen; nur die Karteikarte faellt weg.
+
+       ⭐ Elias am 19.08.2026, 03:05: "genau die regeln die ich eben
+       bearbeitet habe galten nur den karteikarten ... seperat mache ich
+       das mit dem satzmodus bzw uebungsmodus." Deshalb NICHT
+       `ausgeblendet` - das naehme sie auch aus Satz- und Uebungsmodus. */
+    nichtAufKarteikarten: true,
     name: "هَذَا (dies – nicht „das\")",
     shortExplanation: "هَذَا übersetzt man mit „dies\", nicht mit „das\": هَذَا بَيْتٌ (hādhā baytun) heißt „Dies ist ein Haus\", nicht „das Haus\". „Das\" wäre der bestimmte Artikel, und der kommt erst später dran. Die Wörter in Kapitel 1 sind alle noch unbestimmt, also بَيْتٌ = „ein Haus\", مَسْجِدٌ (masjidun) = „eine Moschee\".",
     color: "other",
@@ -85,8 +100,13 @@ const GRAMMAR_RULES = [
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
-       Der Beleg bleibt deshalb stehen; nur die Anzeige faellt weg. */
-    ausgeblendet: true,
+       Der Beleg bleibt deshalb stehen; nur die Karteikarte faellt weg.
+
+       ⭐ Elias am 19.08.2026, 03:05: "genau die regeln die ich eben
+       bearbeitet habe galten nur den karteikarten ... seperat mache ich
+       das mit dem satzmodus bzw uebungsmodus." Deshalb NICHT
+       `ausgeblendet` - das naehme sie auch aus Satz- und Uebungsmodus. */
+    nichtAufKarteikarten: true,
     name: "هَذَا بَيْتٌ (Satz ohne „ist\")",
     shortExplanation: "Im Arabischen gibt es kein Wort für „ist\" – man muss es sich beim Übersetzen selbst dazudenken. مَا heißt „was\" und هَذَا heißt „dies\", zusammen مَا هَذَا؟ (mā hādhā) also „Was ist dies?\". Genauso ist هَذَا بَيْتٌ (hādhā baytun) „Dies ist ein Haus\", obwohl im Arabischen kein „ist\" dasteht.",
     color: "mubtada",
@@ -114,8 +134,13 @@ const GRAMMAR_RULES = [
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
-       Der Beleg bleibt deshalb stehen; nur die Anzeige faellt weg. */
-    ausgeblendet: true,
+       Der Beleg bleibt deshalb stehen; nur die Karteikarte faellt weg.
+
+       ⭐ Elias am 19.08.2026, 03:05: "genau die regeln die ich eben
+       bearbeitet habe galten nur den karteikarten ... seperat mache ich
+       das mit dem satzmodus bzw uebungsmodus." Deshalb NICHT
+       `ausgeblendet` - das naehme sie auch aus Satz- und Uebungsmodus. */
+    nichtAufKarteikarten: true,
     name: "هَلْ (Fragepartikel für Entscheidungsfragen)",
     shortExplanation: "Es gibt im Arabischen zwei Fragepartikeln: أَ und هَلْ. هَلْ (hal) stellt man vor eine fertige Aussage und macht daraus eine Ja-Nein-Frage: هَلْ هَذَا بَيْتٌ؟ (hal hādhā baytun) – „Ist dies ein Haus?\". Auf هَلْ kann man nur mit ja oder nein antworten, deshalb ist هَلْ für Entscheidungsfragen. Beispiel des Lehrers aus dem Koran: هَلْ أَتاكَ حَديثُ مُوسى (hal atāka ḥadīthu mūsā) – „Kam zu dir die Geschichte von Musa?\"; darauf antwortet man نَعَمْ (naʿam) – „ja\". أَ dagegen wird eher für rhetorische Fragen benutzt, auf die man auch anders antworten kann – der Lehrer nimmt als Beispiel eine Frage vom Typ „ist dem nicht so?\", auf die man „doch\", „nein\" oder „ich weiß nicht\" sagen kann.",
     color: "nasab",
@@ -142,8 +167,13 @@ const GRAMMAR_RULES = [
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
-       Der Beleg bleibt deshalb stehen; nur die Anzeige faellt weg. */
-    ausgeblendet: true,
+       Der Beleg bleibt deshalb stehen; nur die Karteikarte faellt weg.
+
+       ⭐ Elias am 19.08.2026, 03:05: "genau die regeln die ich eben
+       bearbeitet habe galten nur den karteikarten ... seperat mache ich
+       das mit dem satzmodus bzw uebungsmodus." Deshalb NICHT
+       `ausgeblendet` - das naehme sie auch aus Satz- und Uebungsmodus. */
+    nichtAufKarteikarten: true,
     name: "هَمْزَةُ الوَصْل (Verbindungs-Alif)",
     shortExplanation: "هَمْزَةُ الوَصْل (Hamzatu l-waṣl), das Verbindungs-Alif, wird auf zwei Weisen gelesen. Bleibst du bei ihm stehen, liest du es wie ein ganz normales Alif. Liest du weiter, überspringst du es. Beispiel: الْكِتَابُ جَدِيدٌ وَالْقَلَمُ قَدِيمٌ (al-kitābu jadīdun wa-l-qalamu qadīmun) – „Das Buch ist neu und der Stift ist alt.“ Hier wird nicht gestoppt, sondern verbunden: die Araber seien faul, sie mögen das Stoppen nicht und verbinden lieber.",
     color: "other",
@@ -155,8 +185,13 @@ const GRAMMAR_RULES = [
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
-       Der Beleg bleibt deshalb stehen; nur die Anzeige faellt weg. */
-    ausgeblendet: true,
+       Der Beleg bleibt deshalb stehen; nur die Karteikarte faellt weg.
+
+       ⭐ Elias am 19.08.2026, 03:05: "genau die regeln die ich eben
+       bearbeitet habe galten nur den karteikarten ... seperat mache ich
+       das mit dem satzmodus bzw uebungsmodus." Deshalb NICHT
+       `ausgeblendet` - das naehme sie auch aus Satz- und Uebungsmodus. */
+    nichtAufKarteikarten: true,
     name: "الْقَمِيصُ نَظِيفٌ (Satz, nicht Wortgruppe)",
     shortExplanation: "Ein Satz wie الْقَمِيصُ نَظِيفٌ heißt „Das Hemd ist sauber“ – und nicht „das saubere Hemd“. Der Lehrer besteht darauf: Das sind zwei verschiedene Sachen, da müssen wir genau sein. Wie man „das saubere Hemd“ schreibt, ist eine andere Regel und kommt erst in einer späteren Lektion.",
     color: "mubtada",
@@ -214,8 +249,13 @@ const GRAMMAR_RULES = [
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
-       Der Beleg bleibt deshalb stehen; nur die Anzeige faellt weg. */
-    ausgeblendet: true,
+       Der Beleg bleibt deshalb stehen; nur die Karteikarte faellt weg.
+
+       ⭐ Elias am 19.08.2026, 03:05: "genau die regeln die ich eben
+       bearbeitet habe galten nur den karteikarten ... seperat mache ich
+       das mit dem satzmodus bzw uebungsmodus." Deshalb NICHT
+       `ausgeblendet` - das naehme sie auch aus Satz- und Uebungsmodus. */
+    nichtAufKarteikarten: true,
     name: "شَكْل (Vokalzeichen)",
     shortExplanation: "شَكْل (schakl) sind die kleinen Zeichen über und unter den Buchstaben. Es gibt fünf: فَتْحة (Fatha), كَسْرة (Kasra), سُكون (Sukun), ضَمّة (Damma) und شَدّة (Schadda). Alle zusammen heißen تَشْكيل (taschkīl), ein einzelnes Zeichen ist ein شَكْل (schakl). Bei einem unbekannten Wort entscheidet die Sonnen-/Mondbuchstaben-Liste, ob ein Schadda hinkommt oder nicht.",
     color: "other",
@@ -226,8 +266,13 @@ const GRAMMAR_RULES = [
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
-       Der Beleg bleibt deshalb stehen; nur die Anzeige faellt weg. */
-    ausgeblendet: true,
+       Der Beleg bleibt deshalb stehen; nur die Karteikarte faellt weg.
+
+       ⭐ Elias am 19.08.2026, 03:05: "genau die regeln die ich eben
+       bearbeitet habe galten nur den karteikarten ... seperat mache ich
+       das mit dem satzmodus bzw uebungsmodus." Deshalb NICHT
+       `ausgeblendet` - das naehme sie auch aus Satz- und Uebungsmodus. */
+    nichtAufKarteikarten: true,
     name: "اَلْ (Bestimmung = die Gesamtheit)",
     shortExplanation: "Wird ein Wort mit اَلْ bestimmt, ist damit nicht nur „das eine\" gemeint, sondern alles davon. حَمْدٌ (hamdun) ist „ein Lob\" – wie ein Stück Kuchen; اَلْحَمْدُ (al-hamdu) ist „das Lob\" – der ganze Kuchen, also alles an Lob. Der Lehrer formuliert die Regel so: „Wenn wir eine Sache definieren, dann meinen wir alles von ihr\" – wie beim Wort „das Vermögen\", wo man ja auch das ganze Vermögen meint. Genau diese Bedeutung, sagt er, gibt es im Deutschen nicht; deshalb hörten die Araber im اَلْحَمْدُ لِلّٰهِ (al-hamdu lillahi) etwas, das ihre Sprache vorher nicht kannte. Ergänzt die schon bekannte Regel zu اَلْ (bestimmt, Tanwin fällt weg).",
     color: "other",
@@ -238,8 +283,13 @@ const GRAMMAR_RULES = [
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
-       Der Beleg bleibt deshalb stehen; nur die Anzeige faellt weg. */
-    ausgeblendet: true,
+       Der Beleg bleibt deshalb stehen; nur die Karteikarte faellt weg.
+
+       ⭐ Elias am 19.08.2026, 03:05: "genau die regeln die ich eben
+       bearbeitet habe galten nur den karteikarten ... seperat mache ich
+       das mit dem satzmodus bzw uebungsmodus." Deshalb NICHT
+       `ausgeblendet` - das naehme sie auch aus Satz- und Uebungsmodus. */
+    nichtAufKarteikarten: true,
     name: "جُمْلة اسْمِيّة / جُمْلة فِعْلِيّة (Nominalsatz und Verbalsatz)",
     shortExplanation: "Im Arabischen gibt es zwei Satzarten: Die جُمْلة اسْمِيّة (jumla ismiyya), der Nominalsatz, beginnt mit einem Nomen. Die جُمْلة فِعْلِيّة (jumla fiʿliyya), der Verbalsatz, beginnt mit einem Verb. Im Madina Buch 1 wird ausschließlich mit Nominalsätzen gearbeitet; Verben kommen erst später dran. Die beiden Satzarten unterscheiden sich auch in der grammatischen Analyse.",
     color: "mubtada",
@@ -251,8 +301,13 @@ const GRAMMAR_RULES = [
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
-       Der Beleg bleibt deshalb stehen; nur die Anzeige faellt weg. */
-    ausgeblendet: true,
+       Der Beleg bleibt deshalb stehen; nur die Karteikarte faellt weg.
+
+       ⭐ Elias am 19.08.2026, 03:05: "genau die regeln die ich eben
+       bearbeitet habe galten nur den karteikarten ... seperat mache ich
+       das mit dem satzmodus bzw uebungsmodus." Deshalb NICHT
+       `ausgeblendet` - das naehme sie auch aus Satz- und Uebungsmodus. */
+    nichtAufKarteikarten: true,
     name: "تَقْديم (Wortstellung bestimmt den Fokus)",
     shortExplanation: "Womit ein Satz beginnt, darauf liegt der Fokus. Der Lehrer dreht dasselbe Satzpaar um: مُحَمَّدٌ ذَهَبَ (Muḥammadun dhahaba) und ذَهَبَ مُحَمَّدٌ (dhahaba Muḥammadun) – beide heißen „Mohammed ging“ und stehen in der Vergangenheit, es sind dieselben Wörter in anderer Reihenfolge. Beginnt der Satz mit dem Nomen, liegt die Betonung auf der Person, und der Satz ist – so der Lehrer – „permanent“: man teilt dem Zuhörer mit, dass Mohammed nicht da ist. Beginnt er mit dem Verb, verschiebt sich die Betonung auf die Zeit, denn ein Verb ist zeitgebunden und veränderbar. Als Beispiel nennt der Lehrer den Koran: Dass Allah der Allvergebende und Barmherzige ist, steht in einem Nominalsatz, weil es unabhängig von der Zeit gilt und sich nicht verändern kann. Einen arabischen Fachbegriff für diese Regel nennt der Lehrer in dieser Folge nicht.",
     color: "mubtada",
@@ -263,8 +318,13 @@ const GRAMMAR_RULES = [
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
-       Der Beleg bleibt deshalb stehen; nur die Anzeige faellt weg. */
-    ausgeblendet: true,
+       Der Beleg bleibt deshalb stehen; nur die Karteikarte faellt weg.
+
+       ⭐ Elias am 19.08.2026, 03:05: "genau die regeln die ich eben
+       bearbeitet habe galten nur den karteikarten ... seperat mache ich
+       das mit dem satzmodus bzw uebungsmodus." Deshalb NICHT
+       `ausgeblendet` - das naehme sie auch aus Satz- und Uebungsmodus. */
+    nichtAufKarteikarten: true,
     name: "اَلْإِعْراب (die drei Fälle)",
     shortExplanation: "Das Arabische hat vier Fälle; drei davon werden zuerst gebraucht. مَرْفُوع (marfūʿ) = Nominativ, Frage \"wer oder was?\", Anzeichen: Damma ـُ oder zwei Damma ـٌ. مَجْرُور (majrūr) = Genitiv, Frage \"wessen?\", Anzeichen: Kasra ـِ oder zwei Kasra ـٍ. مَنْصُوب (manṣūb) = Akkusativ, Frage \"wen oder was?\", Anzeichen: Fatha ـَ oder zwei Fatha ـً. Der Lehrer betont, dass es noch weitere Anzeichen gibt, dies aber die Grundzeichen sind. Die Endung zeigt also den Fall an: مُحَمَّدٌ ist marfūʿ, مُحَمَّدٍ ist majrūr, مُحَمَّدًا ist manṣūb – z.B. رَأَى مُحَمَّدٌ حامِدًا (raʾā Muḥammadun Ḥāmidan) \"Mohammed sah Hamid\": Mohammed ist der Täter, also marfūʿ, Hamid ist der Gesehene, also mit Fatha-Tanwin. Im ersten Buch begegnen uns vor allem مَرْفُوع und مَجْرُور. Den arabischen Fachbegriff für die Fälle nennt der Lehrer in dieser Folge nicht; er spricht nur von \"Fällen\".",
     color: "nasab",
@@ -276,8 +336,13 @@ const GRAMMAR_RULES = [
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
-       Der Beleg bleibt deshalb stehen; nur die Anzeige faellt weg. */
-    ausgeblendet: true,
+       Der Beleg bleibt deshalb stehen; nur die Karteikarte faellt weg.
+
+       ⭐ Elias am 19.08.2026, 03:05: "genau die regeln die ich eben
+       bearbeitet habe galten nur den karteikarten ... seperat mache ich
+       das mit dem satzmodus bzw uebungsmodus." Deshalb NICHT
+       `ausgeblendet` - das naehme sie auch aus Satz- und Uebungsmodus. */
+    nichtAufKarteikarten: true,
     name: "مَرْفُوع (der Grundfall)",
     shortExplanation: "مَرْفُوع (marfūʿ, Nominativ) ist der Grundfall. Jedes Nomen steht normalerweise im Nominativ, also mit Damma am Ende: اَلْبَيْتُ (al-baytu) \"das Haus\". Erst wenn etwas dazukommt, das den Fall verändert, wird das Wort مَجْرُور oder مَنْصُوب.",
     color: "nasab",
@@ -305,8 +370,13 @@ const GRAMMAR_RULES = [
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
-       Der Beleg bleibt deshalb stehen; nur die Anzeige faellt weg. */
-    ausgeblendet: true,
+       Der Beleg bleibt deshalb stehen; nur die Karteikarte faellt weg.
+
+       ⭐ Elias am 19.08.2026, 03:05: "genau die regeln die ich eben
+       bearbeitet habe galten nur den karteikarten ... seperat mache ich
+       das mit dem satzmodus bzw uebungsmodus." Deshalb NICHT
+       `ausgeblendet` - das naehme sie auch aus Satz- und Uebungsmodus. */
+    nichtAufKarteikarten: true,
     name: "مُدَرِّس (richtige Lesung und Herkunft)",
     shortExplanation: "Achtung bei der Aussprache: Der Strich unter dem Schadda ist eine Kasra, nicht wie erwartet eine Fatha – also نِّس nicht رَّس. Das Wort heißt deshalb مُدَرِّسٌ (mudarrisun), nicht مُدَرَّسٌ. مُدَرِّس kommt von دَرَّسَ (darrasa, \"er hat unterrichtet/studiert\") und heißt wörtlich \"Lehrer von Studierenden\". Der Lehrer stellt daneben مُعَلِّمٌ (muʿallimun) vor, das von عَلَّمَ (ʿallama) kommt: ein allgemeiner Lehrer für allgemeines Lernen, während مُدَرِّس eher für strukturiertes Lernen steht.",
     color: "other",
@@ -317,8 +387,13 @@ const GRAMMAR_RULES = [
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
-       Der Beleg bleibt deshalb stehen; nur die Anzeige faellt weg. */
-    ausgeblendet: true,
+       Der Beleg bleibt deshalb stehen; nur die Karteikarte faellt weg.
+
+       ⭐ Elias am 19.08.2026, 03:05: "genau die regeln die ich eben
+       bearbeitet habe galten nur den karteikarten ... seperat mache ich
+       das mit dem satzmodus bzw uebungsmodus." Deshalb NICHT
+       `ausgeblendet` - das naehme sie auch aus Satz- und Uebungsmodus. */
+    nichtAufKarteikarten: true,
     name: "Ohne Fragepartikel keine Frage",
     shortExplanation: "Anders als im Deutschen macht im Arabischen eine andere Wortstellung allein noch keine Frage. مُحَمَّدٌ ذَهَبَ (Muḥammadun dhahaba) und ذَهَبَ مُحَمَّدٌ (dhahaba Muḥammadun) sind beides Aussagen (\"Mohammed ging\"), nur mit verschobenem Fokus – keine davon ist eine Frage. Um im Arabischen wirklich zu fragen, braucht man zwingend eine Fragepartikel wie أَ oder هَلْ vor dem Satz; ohne sie bleibt es eine Aussage.",
     color: "nasab",
@@ -330,8 +405,13 @@ const GRAMMAR_RULES = [
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen — erklaert keine neue Grammatik, nur die Uebersetzung.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
-       Der Beleg bleibt deshalb stehen; nur die Anzeige faellt weg. */
-    ausgeblendet: true,
+       Der Beleg bleibt deshalb stehen; nur die Karteikarte faellt weg.
+
+       ⭐ Elias am 19.08.2026, 03:05: "genau die regeln die ich eben
+       bearbeitet habe galten nur den karteikarten ... seperat mache ich
+       das mit dem satzmodus bzw uebungsmodus." Deshalb NICHT
+       `ausgeblendet` - das naehme sie auch aus Satz- und Uebungsmodus. */
+    nichtAufKarteikarten: true,
     name: "أَيْنَ (wo?)",
     shortExplanation: "أَيْنَ (ayna) heißt \"wo?\" und fragt nach dem Ort – ein wichtiges Fragewort. Beispiel: أَيْنَ مُحَمَّدٌ؟ (ayna Muḥammadun) \"Wo ist Mohammed?\" Die Antwort enthält eine Genitivpartikel, deshalb steht das Nomen danach im Genitiv: هُوَ فِي الْغُرْفَةِ (huwa fī l-ghurfati) \"Er ist im Zimmer\" – mit Kasra wegen فِي. أَيْنَ deckt auch \"wohin\" ab, nicht nur \"wo\": أَيْنَ ذَهَبَ؟ (ayna dhahaba) \"Wohin ging er?\" – zusammen mit ذَهَبَ اِلَى الْمُديرِ (dhahaba ilā l-mudīri) \"er ging zum Direktor\".",
     color: "mubtada",
@@ -343,8 +423,13 @@ const GRAMMAR_RULES = [
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen — erklaert keine neue Grammatik, nur die Uebersetzung.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
-       Der Beleg bleibt deshalb stehen; nur die Anzeige faellt weg. */
-    ausgeblendet: true,
+       Der Beleg bleibt deshalb stehen; nur die Karteikarte faellt weg.
+
+       ⭐ Elias am 19.08.2026, 03:05: "genau die regeln die ich eben
+       bearbeitet habe galten nur den karteikarten ... seperat mache ich
+       das mit dem satzmodus bzw uebungsmodus." Deshalb NICHT
+       `ausgeblendet` - das naehme sie auch aus Satz- und Uebungsmodus. */
+    nichtAufKarteikarten: true,
     name: "هُوَ / هِيَ (er / sie)",
     shortExplanation: "هُوَ (huwa) heißt \"er\", هِيَ (hiya) heißt \"sie\". Ein eigenes Pronomen für \"es\" gibt es im Arabischen nicht: Man nimmt هُوَ für alle Wörter, die männlich sind, und هِيَ für alle Wörter, die weiblich sind. Bei Personen übersetzt man \"er/sie\", bei Sachen \"es\". Beispiel: أَيْنَ مُحَمَّدٌ؟ – هُوَ فِي الْغُرْفَةِ (ayna Muḥammadun – huwa fī l-ghurfati) \"Wo ist Mohammed? – Er ist im Zimmer.\" Weitere Pronomen kommen später.",
     color: "fem",
@@ -388,8 +473,13 @@ const GRAMMAR_RULES = [
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
-       Der Beleg bleibt deshalb stehen; nur die Anzeige faellt weg. */
-    ausgeblendet: true,
+       Der Beleg bleibt deshalb stehen; nur die Karteikarte faellt weg.
+
+       ⭐ Elias am 19.08.2026, 03:05: "genau die regeln die ich eben
+       bearbeitet habe galten nur den karteikarten ... seperat mache ich
+       das mit dem satzmodus bzw uebungsmodus." Deshalb NICHT
+       `ausgeblendet` - das naehme sie auch aus Satz- und Uebungsmodus. */
+    nichtAufKarteikarten: true,
     name: "مِنْ أَيْنَ (Woher-Frage)",
     shortExplanation: "مِنْ أَيْنَ أَنْتَ؟ min aina anta – „Woher bist du?“ Dabei heißt مِنْ min „von“ und ist ein حَرْف جَرّ (harf jarr), أَيْنَ aina heißt „wo“ und أَنْتَ anta „du“ (männliche Person). Geantwortet wird mit أَنا anā (ich): أَنا مِنَ الْيابانِ anā mina l-yābāni – „Ich bin aus Japan“. الْيابان al-yābān ist Japan und steht nach dem Harf Jarr als اِسْم مَجْرُور (ism majrūr), endet also auf Kasra.",
     color: "mubtada",
@@ -415,8 +505,13 @@ const GRAMMAR_RULES = [
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
-       Der Beleg bleibt deshalb stehen; nur die Anzeige faellt weg. */
-    ausgeblendet: true,
+       Der Beleg bleibt deshalb stehen; nur die Karteikarte faellt weg.
+
+       ⭐ Elias am 19.08.2026, 03:05: "genau die regeln die ich eben
+       bearbeitet habe galten nur den karteikarten ... seperat mache ich
+       das mit dem satzmodus bzw uebungsmodus." Deshalb NICHT
+       `ausgeblendet` - das naehme sie auch aus Satz- und Uebungsmodus. */
+    nichtAufKarteikarten: true,
     name: "مِنْ und مَنْ (von / wer)",
     shortExplanation: "Ohne Taschkil sehen مِنْ min („von“) und مَنْ man („wer?“) gleich aus. Der Lehrer zeigt den Trick: einfach beides ausprobieren und schauen, was Sinn ergibt. In der Übung geht es um das Verb خَرَجَ kharaja (er verließ) und um الْفَصْل al-faṣl (das Klassenzimmer). „Von verließ das Klassenzimmer“ ergibt keinen Sinn – also ist es eine Frage: مَنْ خَرَجَ man kharaja – „Wer verließ das Klassenzimmer?“",
     color: "other",
@@ -482,8 +577,13 @@ const GRAMMAR_RULES = [
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
-       Der Beleg bleibt deshalb stehen; nur die Anzeige faellt weg. */
-    ausgeblendet: true,
+       Der Beleg bleibt deshalb stehen; nur die Karteikarte faellt weg.
+
+       ⭐ Elias am 19.08.2026, 03:05: "genau die regeln die ich eben
+       bearbeitet habe galten nur den karteikarten ... seperat mache ich
+       das mit dem satzmodus bzw uebungsmodus." Deshalb NICHT
+       `ausgeblendet` - das naehme sie auch aus Satz- und Uebungsmodus. */
+    nichtAufKarteikarten: true,
     name: "اَللّٰه (helle und dunkle Aussprache)",
     shortExplanation: "Kleiner Aussprache-Trick des Lehrers: Normalerweise wird der Name اَللّٰه dunkel/schwer gesprochen – اَللّٰهُ Allāhu. Steht davor aber ein Wort, das auf Kasra endet, wird er hell/leicht gesprochen – …llāhi. Beispiel aus dem Kapitel: فِي كِتابِ اللهِ fī kitābi llāhi – im Buch Allahs.",
     color: "other",
@@ -510,8 +610,13 @@ const GRAMMAR_RULES = [
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
-       Der Beleg bleibt deshalb stehen; nur die Anzeige faellt weg. */
-    ausgeblendet: true,
+       Der Beleg bleibt deshalb stehen; nur die Karteikarte faellt weg.
+
+       ⭐ Elias am 19.08.2026, 03:05: "genau die regeln die ich eben
+       bearbeitet habe galten nur den karteikarten ... seperat mache ich
+       das mit dem satzmodus bzw uebungsmodus." Deshalb NICHT
+       `ausgeblendet` - das naehme sie auch aus Satz- und Uebungsmodus. */
+    nichtAufKarteikarten: true,
     name: "اِسْم – فِعْل – حَرْف (die drei Wortarten)",
     shortExplanation: "Im Arabischen gibt es nur drei Wortarten: اِسْم (ism) = Nomen, فِعْل (fiʿl) = Verb, حَرْف (ḥarf) = Partikel. Alles, was kein Verb und kein Partikel ist, ist automatisch ein Nomen. Deshalb zählen im Arabischen auch Adjektive, Adverbien, Ortsangaben und die Hinweiswörter – اِسْمُ الإِشارَةِ (ismu l-ishārati), wörtlich „das Nomen des Zeigens“ – als Nomen; anders als im Deutschen gibt es keine weiteren Kategorien. Fragepartikel dagegen gehören zu حَرْف.",
     color: "other",
@@ -538,8 +643,13 @@ const GRAMMAR_RULES = [
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
-       Der Beleg bleibt deshalb stehen; nur die Anzeige faellt weg. */
-    ausgeblendet: true,
+       Der Beleg bleibt deshalb stehen; nur die Karteikarte faellt weg.
+
+       ⭐ Elias am 19.08.2026, 03:05: "genau die regeln die ich eben
+       bearbeitet habe galten nur den karteikarten ... seperat mache ich
+       das mit dem satzmodus bzw uebungsmodus." Deshalb NICHT
+       `ausgeblendet` - das naehme sie auch aus Satz- und Uebungsmodus. */
+    nichtAufKarteikarten: true,
     name: "إِضافة – Zweitglied bestimmt oder unbestimmt",
     shortExplanation: "Beim zweiten Wort der Iḍāfa entscheidest du selbst: بَيْتُ الْإِمَامِ baytu l-imāmi – »das Haus des Imams« (bestimmt mit اَلْ) oder بَيْتُ إِمَامٍ baytu imāmin – »das Haus eines Imams« (unbestimmt mit Tanwīn). Bei männlichen Eigennamen gibt es diese Wahl nicht: sie stehen immer mit Tanwīn – مُحَمَّدٍ Muhammadin, حَامِدٍ Hāmidin, عَمَّارٍ ʿAmmārin. Achtung: für weibliche Eigennamen gilt das nicht, die tragen laut Lehrer gar kein Tanwīn (51:14). (Baut auf der Regel zu اَلْ auf.)",
     color: "idafa",
@@ -770,8 +880,13 @@ const GRAMMAR_RULES = [
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
-       Der Beleg bleibt deshalb stehen; nur die Anzeige faellt weg. */
-    ausgeblendet: true,
+       Der Beleg bleibt deshalb stehen; nur die Karteikarte faellt weg.
+
+       ⭐ Elias am 19.08.2026, 03:05: "genau die regeln die ich eben
+       bearbeitet habe galten nur den karteikarten ... seperat mache ich
+       das mit dem satzmodus bzw uebungsmodus." Deshalb NICHT
+       `ausgeblendet` - das naehme sie auch aus Satz- und Uebungsmodus. */
+    nichtAufKarteikarten: true,
     name: "نَكِرَة / مَعْرِفَة (unbestimmt / bestimmt)",
     shortExplanation: "Das Begriffspaar, das dreizehn unserer Regeln berühren, ohne es je zu erklären. Sharḥ Madīnah: النَّكِرَةُ: شَيْءٌ غَيْرُ مُعَيَّنٍ — das Unbestimmte ist „eine Sache, die nicht bestimmt ist\" (بَيْتٌ، قَلَمٌ، رَجُلٌ، بِنْتٌ); الْمَعْرِفَةُ: شَيْءٌ مُعَيَّنٌ — das Bestimmte ist „eine bestimmte Sache\" (الْبَيْتُ، الْقَلَمُ، الرَّجُلُ، الْبِنْتُ). Der Kern steht in zwei Zeilen: بَيْتٌ: يَشْمَلُ كُلَّ الْبُيُوتِ، وَلَيْسَ بَيْتاً مُعَيَّناً — „ein Haus\" umfasst alle Häuser und ist kein bestimmtes; الْبَيْتُ: يَدُلُّ عَلَى بَيْتٍ مُعَيَّنٍ بِذَاتِهِ — „das Haus\" weist auf ein bestimmtes Haus als solches. Das ist dieselbe Einsicht wie in al-gesamtheit-01, nur vom unbestimmten Wort her gedacht: der Lehrer erklärt die Gesamtheit am bestimmten Wort, das Buch am unbestimmten.",
     color: "other",
@@ -798,8 +913,13 @@ const GRAMMAR_RULES = [
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
-       Der Beleg bleibt deshalb stehen; nur die Anzeige faellt weg. */
-    ausgeblendet: true,
+       Der Beleg bleibt deshalb stehen; nur die Karteikarte faellt weg.
+
+       ⭐ Elias am 19.08.2026, 03:05: "genau die regeln die ich eben
+       bearbeitet habe galten nur den karteikarten ... seperat mache ich
+       das mit dem satzmodus bzw uebungsmodus." Deshalb NICHT
+       `ausgeblendet` - das naehme sie auch aus Satz- und Uebungsmodus. */
+    nichtAufKarteikarten: true,
     name: "مَاذَا؟ (was?)",
     shortExplanation: "Du hast مَا, aber nicht مَاذَا — die Form, die im Gespräch tatsächlich vorkommt. Sharḥ Madīnah: مَاذَا؟ = مَا هَذَا؟ لِغَيْرِ العاقِلِ — مَاذَا ist dasselbe wie مَا هَذَا und fragt nach dem Nicht-Vernunftbegabten, also nach Sachen, nicht nach Personen. Richtig: مَاذَا عَلَى الْمَكْتَبِ؟ — الْقَلَمُ عَلَى الْمَكْتَبِ. Falsch wäre als Antwort مُحَمَّدٌ عَلَى الْمَكْتَبِ, denn nach einer Person fragt man nicht mit مَاذَا, sondern mit مَنْ.",
     color: "nasab",
