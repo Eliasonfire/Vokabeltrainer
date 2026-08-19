@@ -304,6 +304,50 @@ if (iStand >= 0){
   console.log('  FREIGESCHALTET nachgezogen:');
   aenderungen.forEach(z => console.log(z));
   console.log('  ⛔ js/kern.js ist eine ausgelieferte Datei — CACHE_NAME in sw.js hoch!');
+
+  /* ⭐⭐ DER ZUWACHS SAGT, OB ER WEITERGERUECKT IST — oder ob die Schule
+     etwas fuer die ganze Klasse geoeffnet hat.
+
+     Elias' eigene Zahl gibt die Grenze: „1-3 kapitel sind realistisch."
+     Ein Zuwachs in dieser Groesse in einem Buch, an dem er ohnehin arbeitet,
+     IST sein Fortschritt — dann darf `angabe` mitwachsen, und die Routine
+     arbeitet die neuen Woerter ohne Rueckfrage ab.
+     Alles darueber ist etwas anderes: am 19.08.2026 stand madina-2 mit 24
+     Kapiteln auf einmal offen, waehrend er bei madina-1 Kapitel 11 war. So
+     etwas wird GEMELDET, nicht uebernommen.
+     ⛔ Und ein Buch, fuer das noch gar keine `angabe` existiert, waechst nie
+     automatisch — dort weiss niemand, wo er steht. */
+  const l = lernstandLesen() || { angabe: {} };
+  l.angabe = l.angabe || {};
+  const gewachsen = [], zurueckgestellt = [];
+  Object.keys(neu).forEach(b => {
+    const jetzt = Math.max(0, ...neu[b]);
+    const vorher = Math.max(0, ...(alt[b] || [0]));
+    const zuwachs = jetzt - vorher;
+    if (zuwachs <= 0) return;
+    if (typeof l.angabe[b] !== 'number'){
+      zurueckgestellt.push(`${b}: +${zuwachs} Kapitel, aber keine Angabe von Elias — nicht uebernommen`);
+    } else if (zuwachs <= FENSTER){
+      const altAngabe = l.angabe[b];
+      l.angabe[b] = jetzt;
+      gewachsen.push(`${b}: Angabe ${altAngabe} → ${jetzt} (+${zuwachs}, im Rahmen)`);
+    } else {
+      zurueckgestellt.push(`${b}: +${zuwachs} Kapitel auf einmal — zu viel fuer einen Lernschritt, NICHT uebernommen`);
+    }
+  });
+  if (gewachsen.length){
+    l.angabeVom = heute;
+    l._angabeWortlaut = (l._angabeWortlaut || '') + ` | automatisch fortgeschrieben am ${heute} (Zuwachs ≤ ${FENSTER} Kapitel)`;
+    fs.writeFileSync(p(LERNDATEI), JSON.stringify(l, null, 2), 'utf8');
+    console.log('');
+    console.log('  ⭐ Lernstand automatisch mitgewachsen:');
+    gewachsen.forEach(z => console.log('    ' + z));
+  }
+  if (zurueckgestellt.length){
+    console.log('');
+    console.log('  ⚠️ NICHT uebernommen — das gehoert in den Bericht an Elias:');
+    zurueckgestellt.forEach(z => console.log('    ' + z));
+  }
   process.exit(0);
 }
 
