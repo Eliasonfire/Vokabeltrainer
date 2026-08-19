@@ -205,6 +205,30 @@ let PERSONAL_VOCAB = LS.get('vt_personalVocab', []);
 function savePersonalVocab(){ LS.set('vt_personalVocab', PERSONAL_VOCAB); }
 VOCAB_DATA.push(...PERSONAL_VOCAB);
 
+/* ---------- Fortschritt je GRAMMATIKREGEL (19.08.2026) ----------
+
+   Elias: „vorallem aktuellere und die die ich noch nicht so gut kann wie
+   andere." Bis heute war das nicht zu beantworten — PROGRESS zaehlt je
+   Vokabel, zu einer Regel wurde gar nichts gemerkt.
+
+   Aufbau: { <regel-id>: { gestellt, richtig, zuletzt } }. Mehr braucht es
+   nicht; die Trefferquote ergibt sich daraus und altert nicht.
+
+   ⚠️ Gespeist wird das NUR aus dem Uebungsmodus „Welche Regel?" — die
+   anderen zwoelf fragen Rollen und Faelle ab, keine benannte Regel. Und
+   dieser eine erreicht 73 der 95 Regeln. Wer die Zahlen liest, muss das
+   wissen, sonst haelt er 22 nicht abfragbare Regeln fuer ungeuebte. */
+let REGEL_STAND = LS.get('vt_regelStand', {});
+function merkeRegel(regelId, richtig){
+  if (!regelId) return;
+  const e = REGEL_STAND[regelId] || { gestellt:0, richtig:0, zuletzt:null };
+  e.gestellt++;
+  if (richtig) e.richtig++;
+  e.zuletzt = todayStr(0);
+  REGEL_STAND[regelId] = e;
+  LS.set('vt_regelStand', REGEL_STAND);
+}
+
 /* ---------- Fachbegriffe aus dem Unterricht (17.08.2026) ----------
 
    Elias: „die müssen inkludiert werden und als eigene vokabeln hinzugefügt

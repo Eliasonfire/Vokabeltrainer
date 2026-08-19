@@ -353,7 +353,13 @@ const UEBUNGEN = [
         out.push({
           frage:'Welche Regel wird am hervorgehobenen Wort sichtbar?',
           wortIdx:idx, optionen, loesung:rule.id,
-          aufloesung:rule.name
+          aufloesung:rule.name,
+          /* Fuer den Fortschritt je Regel (19.08.2026). Steht ausdruecklich
+             als eigenes Feld da und nicht als `loesung`: `loesung` ist die
+             richtige ANTWORT dieser Aufgabe, `regelId` die Regel, die hier
+             geuebt wird. In diesem Modus sind sie dasselbe — in einem
+             kuenftigen Modus muessen sie es nicht sein. */
+          regelId:rule.id
         });
       });
       return out;
@@ -617,6 +623,14 @@ function uebungAuswerten(richtig){
   UEB.zuletztRichtig = richtig;
   UEB.gestellt++;
   if (richtig) UEB.richtig++;
+  /* Fortschritt je Regel. Bewusst HIER und nicht in den drei Auswertern
+     darueber — derselbe Grund, aus dem UEB.gestellt hier steht: kein Modus
+     kann es vergessen. Aufgaben ohne regelId (zwoelf der dreizehn Modi)
+     laufen wirkungslos durch, merkeRegel prueft das selbst. */
+  if (typeof merkeRegel === 'function'){
+    const a = uebungAktuell();
+    if (a && a.regelId) merkeRegel(a.regelId, richtig);
+  }
   renderUebung();
   /* Haken fuer die Feier-Effekte (Nachtplan Punkt 8). Solange es js/feier.js
      nicht gibt, passiert hier nichts - der Aufruf ist bewusst wegoptional. */
