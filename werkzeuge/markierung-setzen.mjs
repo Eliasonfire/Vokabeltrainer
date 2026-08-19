@@ -98,6 +98,29 @@ function ladeSaetze() {
     for (const v of o) if (v && v.sentAr)
       aus.set(String(v.id), { ar: nfc(v.sentAr), de: v.sentDe || '', woher: 'arabicroots' });
   }
+  /* ⛔⛔ DRITTE QUELLE, am 19.08.2026 dazu — und ihr Fehlen war kein Schoenheits-
+     fehler. Die fuenf an dem Tag verfassten Saetze liegen in
+     data/beispielsaetze.js. Dieses Werkzeug kannte sie nicht und meldete
+     "Satz nicht gefunden (weder Lehrbuch noch arabicroots)" — es liess sich
+     also gar KEINE Markierung an sie haengen. Damit standen sie nur unter
+     "Alle", in keinem Thema, und erzeugten keine einzige Uebungsaufgabe.
+
+     ⚠️ Dieselbe Luecke hatte am selben Tag pruefe-saetze.js. Wer eine vierte
+     Satzquelle anlegt, muss BEIDE Werkzeuge mitnehmen — und vorrat.mjs, das
+     die Vollstaendigkeit misst.
+
+     Reihenfolge: zuletzt geladen gewinnt nicht, denn beispielsaetze.js traegt
+     nur Saetze zu Woertern, die in vocab-data.js KEINEN haben. Ueberschneidung
+     gibt es nicht; stuende doch eine da, waere die handverlesene aus
+     vocab-data.js die aeltere und richtige — deshalb wird hier nur ergaenzt. */
+  const bs = path.join(REPO, 'data', 'beispielsaetze.js');
+  if (fs.existsSync(bs)) {
+    const o = (new Function(fs.readFileSync(bs, 'utf8')
+      + ';return typeof BEISPIELSAETZE!=="undefined"?BEISPIELSAETZE:{};'))();
+    for (const [id, s] of Object.entries(o || {}))
+      if (s && s.sentAr && !aus.has(String(id)))
+        aus.set(String(id), { ar: nfc(s.sentAr), de: s.sentDe || '', woher: 'verfasst' });
+  }
   return aus;
 }
 

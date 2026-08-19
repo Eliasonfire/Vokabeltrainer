@@ -305,9 +305,41 @@ if (!Array.isArray(GRAMMAR_RULES)){
 
   /* ---------- 4. SENTENCE_TAGS: Referenzen in beide Richtungen ---------- */
   if (SENTENCE_TAGS && typeof SENTENCE_TAGS === 'object' && Array.isArray(VOCAB_DATA)){
-    /* Markierungen duerfen an beiden Satzquellen haengen: an den arabicroots-
-       Vokabeln und an den Saetzen aus dem Lehrwerk. */
-    const alleSaetze = VOCAB_DATA.concat(Array.isArray(LEHRBUCH_SAETZE) ? LEHRBUCH_SAETZE : []);
+    /* Markierungen duerfen an ALLEN DREI Satzquellen haengen: an den
+       arabicroots-Vokabeln, an den Saetzen aus dem Lehrwerk — und seit dem
+       19.08.2026 an den verfassten Saetzen in data/beispielsaetze.js.
+
+       ⛔ Die dritte fehlte hier, und das war kein Formfehler: die fuenf an dem
+       Tag verfassten Saetze haengen an BUCHVOKABELN (madina-1, Kapitel 10/11).
+       Deren Kennungen stehen nicht in vocab-data.js, also meldete diese
+       Pruefung "unbekannte Vokabel-ID" und verhinderte jede Markierung an
+       ihnen. Ohne Markierung kein Thema und keine Uebungsaufgabe.
+
+       ⚠️ Geprueft wird gegen die Kennungen in beispielsaetze.js selbst, nicht
+       gegen den Buchabzug: der darf nach den AGB nicht ins Repo, und eine
+       Pruefung, die ohne ihn nicht laeuft, waere auf einem frischen Klon rot.
+       [[vorabpruefung_kennt_ihr_tor_nicht]] — genau umgekehrt aufgetreten:
+       markierung-setzen.mjs sagte "tragbar", dieses Tor sagte nein. */
+    /* ⚠️ `DIR`, nicht `P` — validate.js kennt kein P. Der erste Anlauf schrieb
+       `P + 'data'`, warf einen ReferenceError, und das try/catch schluckte ihn:
+       die Quelle blieb leer und die Pruefung meldete weiter "unbekannte
+       Vokabel-ID". Ein Fangnetz, das ALLES faengt, versteckt auch den eigenen
+       Tippfehler — deshalb wird der Fehler jetzt genannt. */
+    let VERFASSTE_SAETZE = {};
+    {
+      const d = path.join(DIR, 'data', 'beispielsaetze.js');
+      if (fs.existsSync(d)){
+        try {
+          VERFASSTE_SAETZE = (new Function(fs.readFileSync(d, 'utf8')
+            + ';return typeof BEISPIELSAETZE!=="undefined"?BEISPIELSAETZE:{};'))();
+        } catch (e) { fail('data/beispielsaetze.js nicht lesbar: ' + e.message); }
+      }
+    }
+    const alleSaetze = VOCAB_DATA
+      .concat(Array.isArray(LEHRBUCH_SAETZE) ? LEHRBUCH_SAETZE : [])
+      .concat(Object.entries(VERFASSTE_SAETZE)
+        .filter(([, s]) => s && s.sentAr)
+        .map(([id, s]) => ({ id, sentAr: s.sentAr, sentDe: s.sentDe })));
     const vocabById = new Map(alleSaetze.map(w => [String(w.id), w]));
     let tagCount = 0;
     const leer = [];
