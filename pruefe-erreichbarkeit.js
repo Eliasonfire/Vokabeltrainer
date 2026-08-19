@@ -120,6 +120,74 @@ if (!dep) {
   }
 }
 
+
+/* =========================================================================
+   ERREICHBAR — UND ERREICHBAR HEUTE SIND ZWEI FRAGEN
+   =========================================================================
+   Oben wird gefragt: hat die Regel ueberhaupt eine Markierung? Fuer Elias
+   zaehlt aber nur, ob diese Markierung in einem Satz sitzt, den er SIEHT.
+
+   ⛔ Am 19./20.08.2026 sind 31 vorausgeschriebene Beispielsaetze dazugekommen
+   (Kapitel 12 bis 15). `nichtVorausgeschrieben()` in js/saetze.js blendet sie
+   aus, bis er das Kapitel anhakt. Saesse die EINZIGE Markierung einer Regel in
+   so einem Satz, waere die Regel heute unerreichbar — und die Zaehlung oben
+   meldete trotzdem gruen, weil die Markierung ja existiert.
+
+   ⚠️ Massstab ist seine eigene ANGABE aus data/lernstand.json, nicht was
+   arabicroots freigeschaltet hat. Freigeschaltet ist nicht gelernt.
+
+   ⛔ WAS DIESES GRUEN HEUTE NICHT BEDEUTET.
+   Am 20.08.2026 nachgemessen: KEINE einzige Regel haengt ausschliesslich an
+   Beispielsaetzen -- jede hat mindestens eine Markierung in vocab-data.js oder
+   in lehrbuch-saetze.js, und die sind immer sichtbar. Der Abschnitt kann heute
+   also gar nicht durchfallen; er ist VORSORGE fuer den Tag, an dem eine Regel
+   nur ueber einen vorausgeschriebenen Satz erreichbar gemacht wird. Genau das
+   liegt beim naechsten Vorschreiben nahe.
+   Gegengeprueft, dass der Meldeweg funktioniert: mit `sichtbar => false`
+   meldet er alle 95 Regeln. [[pruefwerkzeug-mit-eingebauter-antwort]] */
+try {
+  const lsPfad = P + 'data' + path.sep + 'lernstand.json';
+  const bsPfad = P + 'data' + path.sep + 'beispielsaetze.js';
+  const vkPfad = P + 'data' + path.sep + 'vokabeln-madina-1.js';
+  if (fs.existsSync(lsPfad) && fs.existsSync(bsPfad) && fs.existsSync(vkPfad)) {
+    const ls = JSON.parse(fs.readFileSync(lsPfad, 'utf8'));
+    const a1 = (ls.angabe && ls.angabe['madina-1']) || {};
+    const stand = Number(a1.kapitel ?? a1 ?? 0);
+    const fen = {};
+    new Function('window', fs.readFileSync(vkPfad, 'utf8'))(fen);
+    const M1 = (fen.VOKABELN && fen.VOKABELN['madina-1']) || [];
+    const kapVon = new Map(M1.map(w => [String(w.id), Number(w.chapter)]));
+    const { BEISPIELSAETZE } =
+      (new Function(fs.readFileSync(bsPfad, 'utf8') + ';return {BEISPIELSAETZE};'))();
+
+    /* Nur Beispielsaetze zu Buchvokabeln koennen ausgeblendet sein. */
+    const sichtbar = id => {
+      const k = BEISPIELSAETZE[String(id)] ? kapVon.get(String(id)) : undefined;
+      return BEISPIELSAETZE[String(id)] ? (k !== undefined && k <= stand) : true;
+    };
+
+    const versteckt = [];
+    for (const r of repo.GRAMMAR_RULES) {
+      const traeger = Object.entries(repo.SENTENCE_TAGS)
+        .filter(([, tags]) => tags.some(t => t.ruleId === r.id)).map(([id]) => id);
+      if (traeger.length && !traeger.some(sichtbar)) versteckt.push([r.id, traeger]);
+    }
+    console.log('\n=== Erreichbar HEUTE (Lernstand madina-1 Kapitel ' + stand + ') ===');
+    if (!versteckt.length) {
+      console.log('  ✅ Jede Regel hat mindestens eine Markierung in einem Satz, den er sieht.');
+    } else {
+      befunde++;
+      console.log('  ⛔ ' + versteckt.length + ' Regel(n) nur in vorausgeschriebenen Saetzen markiert:');
+      for (const [id, t] of versteckt) console.log('     ' + id.padEnd(30) + 'nur in ' + t.join(', '));
+      console.log('   Abhilfe: eine Markierung in einem Satz setzen, den er heute schon sieht.');
+    }
+  }
+} catch (e) {
+  /* ⛔ Kein stummes catch: ein Ausfall dieser Pruefung darf nicht wie ein
+     bestandener Test aussehen. [[ausfall-ist-unsichtbar-gebaut]] */
+  console.log('\n⚠️ Abschnitt "Erreichbar HEUTE" nicht lauffaehig: ' + e.message);
+}
+
 console.log('\n' + (befunde
   ? '⛔ ' + befunde + ' Befund(e) — siehe oben.'
   : '✅ Jede Regel ist erreichbar, und der ausgelieferte Stand ist aktuell.'));
