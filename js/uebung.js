@@ -586,6 +586,10 @@ function uebungStarten(modusId){
   document.getElementById('gramPopover').classList.remove('show');
   uebungAnsicht(true);
   renderUebungsLeiste();
+  /* ⛔ Auch den Lesemodus-Knopf: er zeigt jetzt „Modus wählen", weil geuebt
+     wird. Ohne diese Zeile bliebe er auf dem Thema stehen und beide Waehler
+     saehen gleich aktiv aus. */
+  if (typeof renderThemenLeiste === "function") renderThemenLeiste();
   renderUebung();
 }
 
@@ -594,6 +598,7 @@ function uebungBeenden(){
   UEB.modus = null;
   uebungAnsicht(false);
   renderUebungsLeiste();
+  if (typeof renderThemenLeiste === "function") renderThemenLeiste();
   renderSentence();
   if (stand) toast(stand);
 }
