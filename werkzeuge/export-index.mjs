@@ -2,6 +2,9 @@
  *
  * Aufruf:
  *   node werkzeuge/export-index.mjs --pruefen
+ *   node werkzeuge/export-index.mjs --live <list_notes.json>
+ *       Haelt den Index gegen die LEBENDE Datenbank. Exitcode 2, wenn eine
+ *       Notiz neuer ist als ihr Export.
  *       Vergleicht jeden Eintrag mit dem echten PDF. Schreibt nichts.
  *
  *   node werkzeuge/export-index.mjs --schreiben <uuid> --geaendert <unix-sekunden> [--titel "..."]
@@ -184,7 +187,100 @@ function schreiben(){
   console.log(`Geschrieben nach ${INDEX}.`);
 }
 
+
+/* ---------------------------------------------------------------------------
+   --live <datei>: den Index gegen die LEBENDE Samsung-Notes-Datenbank halten
+
+   ⛔ WARUM DAS FEHLTE, UND WAS ES GEKOSTET HAT (19.08.2026)
+
+   `--pruefen` vergleicht den Index mit sich selbst und mit der PDF. Beides
+   sind Werte VOM EXPORTZEITPUNKT. Damit kann diese Pruefung eine spaetere
+   Aenderung an der Notiz gar nicht sehen — sie meldet „0 Beanstandungen",
+   solange der eingefrorene Stand in sich stimmig ist.
+   [[eingefrorenes_feld_ist_kein_zustand]]
+
+   Am 19.08.2026 gemessen: der Index sagt fuer „Madina Buch 1 (Beschriftet)"
+   28.07., die Datenbank sagt **09.08.** — die Notiz ist **12,4 Tage** neuer
+   als ihr eigener Eintrag, und das Export-PDF stammt vom 27.07. Genau in
+   diesem Zeitraum hat Elias die handschriftlichen Notizen ergaenzt, um die er
+   heute gebeten hat. `--pruefen` meldete trotzdem gruen.
+
+   ⚠️ Die Datei kommt von aussen, weil nur eine Claude-Sitzung den
+   samsung-notes-MCP erreicht — dasselbe Verfahren wie bei
+   `vorrat.mjs --stand`. Die Sitzung ruft `list_notes`, schreibt das Ergebnis
+   weg, dieses Skript rechnet. So bleibt das Werkzeug offline pruefbar und
+   sagt ehrlich, wie alt sein Wissen ist.
+
+   Erwartet wird die Ausgabe von `list_notes` unveraendert: ein Array mit
+   `uuid` und `lastModifiedAt` (ISO-Zeichenkette).
+
+   ⭐ Der Schwellwert ist bewusst KEIN Zeitwert. Elias am 29.07.2026: Samsung
+   Notes stempelt auch beim blossen Oeffnen, ein spaeterer Zeitstempel heisst
+   „angefasst", nicht „Inhalt dazugekommen". Deshalb ist die Meldung hier eine
+   FRAGE an ihn und kein Auftrag — ausser er hat gesagt, dass er etwas
+   ergaenzt hat. Dann ist sie die Liste, was neu exportiert gehoert.
+   --------------------------------------------------------------------------- */
+function live(){
+  const datei = wert('--live');
+  if (!datei){ console.error('--live braucht eine Datei mit der list_notes-Ausgabe.'); return 1; }
+  if (!fs.existsSync(datei)){ console.error(`${datei} gibt es nicht.`); return 1; }
+
+  let notizen;
+  try { notizen = JSON.parse(fs.readFileSync(datei, 'utf8')); }
+  catch (e){ console.error(`${datei} ist kein gueltiges JSON: ${e.message}`); return 1; }
+  if (!Array.isArray(notizen)){
+    console.error('Erwartet wird das Array aus list_notes.'); return 1;
+  }
+
+  const index = ladeIndex();
+  const beiUuid = new Map(notizen.map(n => [String(n.uuid), n]));
+  const alter = fs.statSync(datei).mtimeMs;
+  console.log(`Abgleich gegen list_notes vom ${new Date(alter).toLocaleString('de-DE')}`);
+  console.log(`  ${notizen.length} Notizen in der Datei, ${Object.keys(index).length} im Index`);
+
+  let veraltet = 0, unbekannt = 0;
+  for (const [uuid, e] of Object.entries(index)){
+    const n = beiUuid.get(uuid);
+    console.log(`\n${e.title || '(ohne Titel)'}  [${uuid}]`);
+    if (!n){
+      console.log('  ⚠️ In der list_notes-Ausgabe nicht enthalten — Titel geaendert oder Notiz geloescht?');
+      unbekannt++; continue;
+    }
+    const dbSek = Math.floor(new Date(n.lastModifiedAt).getTime() / 1000);
+    if (!Number.isFinite(dbSek)){
+      console.log(`  ⚠️ lastModifiedAt nicht lesbar: ${JSON.stringify(n.lastModifiedAt)}`);
+      unbekannt++; continue;
+    }
+    const iso = d => new Date(d * 1000).toLocaleString('de-DE');
+    console.log(`  Export      ${iso(e.exportedAt)}`);
+    console.log(`  Index sagt  ${iso(e.noteLastModifiedAt)}`);
+    console.log(`  Datenbank   ${iso(dbSek)}`);
+    if (dbSek > e.noteLastModifiedAt){
+      const tage = ((dbSek - e.noteLastModifiedAt) / 86400).toFixed(1);
+      console.log(`  ⛔ Die Notiz ist ${tage} Tage neuer als ihr Indexeintrag.`);
+      console.log('     Der Export zeigt diesen Stand NICHT. Handschrift, die danach dazukam, fehlt.');
+      veraltet++;
+    } else {
+      console.log('  ✅ Index und Datenbank stimmen ueberein.');
+    }
+  }
+
+  console.log('');
+  if (veraltet){
+    console.log(`⛔ ${veraltet} Notiz(en) sind neuer als ihr Export.`);
+    console.log('   Neu exportieren kann dieses Skript NICHT: Samsung Notes laesst sich nicht');
+    console.log('   fernsteuern (MCP-Samsung-Notes-PageRender.md). Der Weg ist „Als Datei');
+    console.log('   speichern → PDF" nach G:\\1. Workspace\\SamsungNotes-Export\\<uuid>.pdf,');
+    console.log('   danach `--schreiben <uuid> --geaendert <sek>` mit dem Wert aus list_notes.');
+  } else {
+    console.log('✅ Kein Export ist hinter seiner Notiz zurueck.');
+  }
+  if (unbekannt) console.log(`⚠️ ${unbekannt} Eintrag/Eintraege konnten nicht zugeordnet werden.`);
+  return veraltet || unbekannt ? 2 : 0;
+}
+
 if (args.includes('--pruefen')) process.exit(pruefen());
+if (args.includes('--live')) process.exit(live());
 if (args.includes('--schreiben')) { schreiben(); process.exit(0); }
 
 console.log(fs.readFileSync(new URL(import.meta.url), 'utf8').split('*/')[0].replace(/^\/\*|^ \* ?|^ \*/gm, ''));
