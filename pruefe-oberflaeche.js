@@ -470,6 +470,59 @@
     return `${vorhanden.size} Sprite-Symbole, ${benutzt.size} davon in Gebrauch, Wortmarke geladen`;
   });
 
+
+  /* ================= KETTE: kommt jede Wortgruppe bis in die Kartei? ========
+     ⛔ ANLASS, 20.08.2026: Der Schalter "Pluralformen als eigene Karteikarten"
+     meldete "192 Pluralkarten sind dazugekommen - sie starten in Kasten 1", und
+     KEINE EINZIGE erschien je in "Jetzt lernen". `bauePluralKarte()` uebernahm
+     chapter, type, gender und root - aber nicht `book`. In passtZurAuswahl()
+     steht `const kapitel = karte[w.book]`, und bei undefined faellt die Karte
+     durch. Alle Zwischenstufen waren in Ordnung: bekannt, Fortschritt, faellig,
+     in dueWords() alle 192 - nur currentPool() lieferte 0.
+
+     Kein bestehendes Pruefwerkzeug konnte das sehen: validate.js laeuft unter
+     node und kennt die Pluralkarten gar nicht, weil sie erst im Browser
+     entstehen. Deshalb steht die Pruefung hier.
+
+     ⭐ Die Frage ist nicht "gibt es Karten?", sondern "wieviel PROZENT einer
+     Gruppe kommt durch?". Ein Absturz von 100 auf 0 ist der Befund; eine
+     Gruppe, von der nur ein Teil durchkommt, ist der Normalfall (Kapitel
+     ausserhalb der Auswahl). */
+  versuch('Kette: Wortgruppen bis in die Kartei', () => {
+    const gruppen = [
+      ['Buchvokabeln', VOCAB_DATA.filter(w => w.book && !(typeof istPluralKarte === 'function' && istPluralKarte(w.id)))],
+      ['Pluralkarten', VOCAB_DATA.filter(w => typeof istPluralKarte === 'function' && istPluralKarte(w.id))],
+      ['Fachbegriffe', VOCAB_DATA.filter(w => w.chapter === 'grammar')]
+    ];
+    const teile = [];
+    for (const [name, liste] of gruppen){
+      if (!liste.length) continue;
+      const bekannt = liste.filter(w => typeof istBekannt === 'function' ? istBekannt(w) : true).length;
+      const durch   = liste.filter(w => passtZurAuswahl(w)).length;
+      teile.push(`${name} ${durch}/${liste.length}`);
+      /* Der Befund: bekannt, aber NICHTS kommt durch. Das ist kein Filter mehr,
+         das ist ein Abriss. */
+      if (bekannt > 0 && durch === 0)
+        throw new Error(`${name}: ${bekannt} von ${liste.length} sind bekannt, aber KEINE kommt durch passtZurAuswahl() `
+                      + `- fehlt ein Pflichtfeld (book/chapter)?`);
+    }
+    /* ⚠️ Die eigenen Vokabeln stehen BEWUSST nicht in der Liste: sie fallen
+       gewollt heraus, solange eingeengt ist und der Schalter "Eigene" aus ist.
+       Ein Abriss waere dort der Normalzustand und wuerde die Pruefung stumpf
+       machen. */
+    return teile.join(' · ');
+  });
+
+  /* Pflichtfelder je Datensatz - dieselbe Ursache, eine Ebene tiefer.
+     Ein Wort ohne `book` und ohne Sonderkapitel kann nirgends ankommen. */
+  versuch('Kette: kein Datensatz ohne Herkunft', () => {
+    const ohne = VOCAB_DATA.filter(w => !w.book && w.chapter !== 'personal' && w.chapter !== 'grammar');
+    if (ohne.length)
+      throw new Error(`${ohne.length} Datensaetze ohne book und ohne Sonderkapitel, z.B. `
+                    + ohne.slice(0, 3).map(w => `${w.id} (${w.ar})`).join(', '));
+    return `${VOCAB_DATA.length} Datensaetze, jeder mit Herkunft`;
+  });
+
   saveSettings();
   if (typeof renderBuchChips === 'function') renderBuchChips();
   if (typeof renderHome === 'function') renderHome();
