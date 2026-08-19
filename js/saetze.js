@@ -59,12 +59,23 @@ function renderThemenLeiste(){
          + `<span class="n">${n}</span></button>`;
   }).join('');
   /* Der Knopf muss ohne Aufklappen sagen, was gerade gilt — sonst hat man
-     eine Ebene gewonnen und eine Auskunft verloren. */
+     eine Ebene gewonnen und eine Auskunft verloren.
+
+     ⭐ Elias am 19.08.2026: „wenn bei einem modus etwas gewählt ist sollte beim
+     jeweils anderem modus stehen ‚Modus wählen'." Die beiden Wähler zeigen
+     damit, WO er gerade ist: der aktive trägt seinen Wert, der andere die
+     Aufforderung. Vorher standen beide auf einem Wert und keiner sagte, welcher
+     davon gerade zählt.
+
+     Läuft eine Übung, ist der Lesemodus nicht aktiv — das Thema filtert zwar
+     weiter den Vorrat, aber gelesen wird gerade nicht. */
+  const uebtGerade = (typeof UEB !== 'undefined') && !!UEB.modus;
   const jetzt = SATZ_THEMEN.find(t=>t.id===SATZ_THEMA);
   const wert = document.getElementById('themenWert');
   const zahl = document.getElementById('themenZahl');
-  if (wert) wert.textContent = jetzt ? jetzt.name : 'Thema wählen';
-  if (zahl) zahl.textContent = jetzt ? `${saetzeZumThema(jetzt.id).length} Sätze` : '';
+  if (wert) wert.textContent = uebtGerade ? 'Modus wählen' : (jetzt ? jetzt.name : 'Modus wählen');
+  if (zahl) zahl.textContent = uebtGerade ? `${SATZ_THEMEN.length} Themen`
+                                          : (jetzt ? `${saetzeZumThema(jetzt.id).length} Sätze` : '');
 }
 
 /* Auf- und zuklappen. `aria-expanded` traegt zugleich den Pfeil (CSS) — ein
