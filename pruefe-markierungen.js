@@ -232,9 +232,37 @@ for (const [id, p] of Object.entries(PRUEFUNG)) {
   const anteil = 100 * treffer / alleW.length;
   if (anteil >= 25) stumpf.push({ id, anteil, n: proRegel[id].n });
 }
+/* Was beim Nachsehen von Hand herauskam (19.08.2026).
+   Eine stumpfe Bedingung ist kein Fehler an sich — sie heisst nur, dass
+   das Werkzeug diese Markierungen nicht gegenlesen kann. Ob sie richtig
+   sitzen, entscheidet ein Mensch. Hier steht, was der Mensch gefunden hat,
+   damit die Meldung beim naechsten Lauf nicht wie eine offene Aufgabe
+   aussieht, die sie nicht mehr ist. */
+const HANDGEPRUEFT = {
+  'fem-ohne-ta-marbuta-01':
+    '19.08.2026 — FEHLER GEFUNDEN. Die drei Markierungen sassen auf أُذُنٌ, '
+    + 'عَيْنٌ und يَدُ, also auf PAARIGEN Koerperteilen. Genau diese Woerter '
+    + 'nennt der Lehrer sechs Minuten spaeter in koerperteile-genus-01 '
+    + '(F09 48:32). Diese Regel hier ist fuer Woerter, die OHNE Grund '
+    + 'weiblich sind — ihre eigenen Beispiele sind اَلنَّار und قِدْرٌ. Die '
+    + 'drei sind umgehaengt; die Regel steht jetzt auf قِدْرٌ (45854), wo '
+    + 'هَذِهِ und ثَقِيلَةٌ die Weiblichkeit zeigen, obwohl das Wort kein '
+    + 'Taʾ marbuta hat. Bedingung bleibt stumpf: die Regel heisst '
+    + 'ausdruecklich "muss man auswendig lernen", es GIBT kein Merkmal.',
+  'madd-tabii-01':
+    '19.08.2026 — kein Fehler, aber gegenstandslos geworden: Elias hat die '
+    + 'Regel von den Karteikarten genommen (nichtAufKarteikarten). Im '
+    + 'Satzmodus bleibt sie auf seinen Wunsch. Die Bedingung ist stumpf, '
+    + 'weil fast jedes arabische Wort einen langen Vokal enthaelt.',
+  'hamzatul-wasl-01':
+    '19.08.2026 — ebenfalls von den Karteikarten genommen. Bedingung stumpf, '
+    + 'weil jedes Wort mit اَلْ die Bedingung erfuellt.',
+};
+
 stumpf.sort((a, b) => b.anteil - a.anteil);
 for (const s of stumpf)
   console.log(`${s.id}: die Bedingung erfuellen ${s.anteil.toFixed(1)} % aller `
-    + `${alleW.length} Woerter — sie prueft die ${s.n} Markierung(en) kaum, von Hand ansehen`);
+    + `${alleW.length} Woerter — sie prueft die ${s.n} Markierung(en) kaum`
+    + (HANDGEPRUEFT[s.id] ? `\n    ✔ von Hand geprueft: ${HANDGEPRUEFT[s.id]}` : `, von Hand ansehen`));
 console.log(`\n=== Trennschaerfe: ${stumpf.length} von ${Object.keys(PRUEFUNG).filter(id => proRegel[id] && proRegel[id].n).length} `
   + `benutzten Bedingungen lassen ueber ein Viertel aller Woerter durch ===`);

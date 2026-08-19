@@ -1645,19 +1645,19 @@ const SENTENCE_TAGS = {
   "45854": [
     { ruleId: "ta-marbuta-grenzen-01", matchText: "ثَقِيلَةٌ" },
     { ruleId: "harf-jarr-01", matchText: "فِي الْمَطْبَخِ" },
-    { ruleId: "wortstellung-fokus-01", matchText: "هَذِهِ" }
+    { ruleId: "fem-ohne-ta-marbuta-01", matchText: "قِدْرٌ" }
   ],
   "45855": [
-    { ruleId: "fem-ohne-ta-marbuta-01", matchText: "أُذُنٌ" },
+    { ruleId: "koerperteile-genus-01", matchText: "أُذُنٌ" },
     { ruleId: "ta-marbuta-grenzen-01", matchText: "صَغِيرَةٌ" },
     { ruleId: "wortstellung-fokus-01", matchText: "هَذِهِ" }
   ],
   "45856": [
-    { ruleId: "fem-ohne-ta-marbuta-01", matchText: "عَيْنٌ" },
+    { ruleId: "koerperteile-genus-01", matchText: "عَيْنٌ" },
     { ruleId: "wortstellung-fokus-01", matchText: "هَذِهِ" }
   ],
   "45857": [
-    { ruleId: "fem-ohne-ta-marbuta-01", matchText: "يَدُ" },
+    { ruleId: "koerperteile-genus-01", matchText: "يَدُ" },
     { ruleId: "idafa-zweitglied-01", matchText: "الطَّبِيبِ" },
     { ruleId: "wortarten-01", matchText: "هَذِهِ" }
   ],
