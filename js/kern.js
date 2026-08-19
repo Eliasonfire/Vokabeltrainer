@@ -215,9 +215,20 @@ VOCAB_DATA.push(...PERSONAL_VOCAB);
    nicht; die Trefferquote ergibt sich daraus und altert nicht.
 
    ⚠️ Gespeist wird das NUR aus dem Uebungsmodus „Welche Regel?" — die
-   anderen zwoelf fragen Rollen und Faelle ab, keine benannte Regel. Und
-   dieser eine erreicht 73 der 95 Regeln. Wer die Zahlen liest, muss das
-   wissen, sonst haelt er 22 nicht abfragbare Regeln fuer ungeuebte. */
+   anderen zwoelf fragen Rollen und Faelle ab, keine benannte Regel.
+
+   ⭐ Am 19.08.2026 nachgemessen: dieser eine Modus erreicht **94 der 95
+   Regeln**. Hier stand vorher 73, und das war der Stand VOR der
+   Wortfolgen-Aenderung vom selben Tag (js/uebung.js: eine Markierung ueber
+   mehrere Woerter wurde bis dahin uebersprungen, damit fielen 21 Regeln aus
+   dem Modus heraus). 73 + 21 = 94 — die Zahl im Kommentar war also nicht
+   falsch gemessen, sondern nur nicht mitgezogen worden. Genau daran erkennt
+   man, warum eine Zahl im Kommentar ein Verfallsdatum braucht.
+
+   Die eine fehlende ist `ta-marbuta-fem-01`: sie hat acht Markierungen und
+   ist trotzdem `ausgeblendet` — Elias' Abbestellung vom 29.07. Wer die Zahlen
+   liest, muss das wissen, sonst haelt er sie fuer ungeuebt. Die Ansicht in
+   js/statistik.js sagt es deshalb ausdruecklich dazu. */
 let REGEL_STAND = LS.get('vt_regelStand', {});
 function merkeRegel(regelId, richtig){
   if (!regelId) return;

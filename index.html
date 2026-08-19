@@ -2755,6 +2755,34 @@ main{
 }
 .stat-card .v{font-size:var(--fs-2xl);font-weight:800;color:var(--red-bright);line-height:1.1;font-variant-numeric:tabular-nums;}
 .stat-card .l{font-size:var(--fs-sm);color:var(--text-dim);margin-top:var(--sp-1);line-height:1.4;}
+/* ---------- Regelfortschritt in der Statistik (Nachtplan 9) ---------- */
+.stats-titel{margin:var(--sp-5) 0 var(--sp-2);font-size:var(--fs-md);}
+.regel-sortierung{display:flex;gap:var(--sp-2);flex-wrap:wrap;margin-bottom:var(--sp-3);}
+.rs{
+  background:var(--surface-2);border:1px solid var(--border);color:var(--text-dim);
+  border-radius:var(--r-full);padding:var(--sp-2) var(--sp-3);
+  font:inherit;font-size:var(--fs-sm);font-weight:700;cursor:pointer;
+}
+.rs[aria-pressed="true"]{background:var(--red-wash);border-color:var(--red-dim);color:var(--red-bright);}
+.regel-stand{display:flex;flex-direction:column;gap:var(--sp-2);}
+.rz{
+  display:flex;align-items:center;gap:var(--sp-3);
+  background:var(--surface-1);border:1px solid var(--border);
+  border-radius:var(--r-2);padding:var(--sp-2) var(--sp-3);
+}
+/* ⚠️ min-width:0 am Flex-Kind, sonst schiebt ein langer Regelname die Zahlen
+   rechts aus dem Kasten — das Kind waechst dann ueber den Elternteil hinaus.  */
+.rz .rn{flex:1;min-width:0;font-size:var(--fs-sm);font-weight:700;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rz .rq{font-size:var(--fs-sm);font-weight:700;font-variant-numeric:tabular-nums;flex:0 0 auto;}
+.rz .rd{font-size:var(--fs-xs);color:var(--text-faint);flex:0 0 auto;
+  font-variant-numeric:tabular-nums;min-width:58px;text-align:right;}
+.rz.schwach{border-color:var(--red-dim);}
+.rz.schwach .rq{color:var(--red-bright);}
+.rz.stark .rq{color:var(--green);}
+.rz.leer{opacity:.6;}
+.rz.leer .rq{color:var(--text-faint);}
+.regel-hinweis{font-size:var(--fs-xs);color:var(--text-faint);margin-top:var(--sp-2);}
 .box-bars{display:flex;flex-direction:column;gap:var(--sp-3);}
 .box-bar-row{display:flex;align-items:center;gap:var(--sp-3);}
 .box-bar-row .bl{width:58px;font-size:var(--fs-sm);color:var(--text-dim);font-weight:700;}
@@ -3860,6 +3888,17 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
       </div>
       <div class="stats-grid stagger" id="statsGrid"></div>
       <div class="box-bars" id="boxBars"></div>
+      <!-- Nachtplan 9, Elias' Auflage: der Regelfortschritt wird seit v209
+           gemessen (`vt_regelStand`), war aber NIRGENDS zu sehen. Gemessen und
+           unsichtbar ist so gut wie nicht gemessen — und seine Regelauswahl
+           soll sich darauf stützen. -->
+      <h3 class="stats-titel">Wie gut sitzen die Regeln?</h3>
+      <div class="regel-sortierung" id="regelSortierung" role="group" aria-label="Sortierung">
+        <button class="rs" data-sort="schwach" aria-pressed="true">schwächste zuerst</button>
+        <button class="rs" data-sort="neu" aria-pressed="false">zuletzt geübt</button>
+        <button class="rs" data-sort="nie" aria-pressed="false">nie geübt</button>
+      </div>
+      <div class="regel-stand" id="regelStand"></div>
     </section>
 
     <!-- ============ SETTINGS ============ -->
