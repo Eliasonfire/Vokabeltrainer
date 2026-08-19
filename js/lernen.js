@@ -648,8 +648,21 @@ function zeigeVorschlag(){
   document.getElementById('neVorschlagText').innerHTML = arabischHervorheben(text);
   const mehrere = VORSCHLAEGE.length > 1;
   document.getElementById('neVorschlagBlaettern').classList.toggle('hidden', !mehrere);
+  /* ⭐ Am 19.08.2026 gemessen: 135 der 321 geladenen Woerter haben genau EINEN
+     Vorschlag — alle in madina-1, Kapitel 12 bis 24. Freigeschaltet ist davon
+     heute noch keines, aber mit dem naechsten Kapitel werden es neun.
+
+     Vorher stand am Knopf immer „Taugt nicht — bitte ersetzen". Bei diesen 135
+     wird nichts ersetzt: der Vorschlag bleibt stehen und ist nur als „taugt
+     nicht" markiert. Der Knopf versprach also etwas, das die App nicht halten
+     kann — und die App kann es grundsaetzlich nicht, sie hat keine KI und kein
+     Backend, sie blaettert nur durch einen Vorrat.
+
+     Deshalb sagt sie jetzt beides ehrlich: die Marke nennt „einziger", und der
+     Knopf verspricht keinen Ersatz mehr, sondern merkt sich nur die Ablehnung.
+     Elias sieht damit VOR dem Tippen, woran er ist. */
   document.getElementById('neVorschlagZaehler').textContent =
-    mehrere ? ` ${VORSCHLAG_NR + 1} von ${VORSCHLAEGE.length}` : '';
+    mehrere ? ` ${VORSCHLAG_NR + 1} von ${VORSCHLAEGE.length}` : ' · einziger';
   /* Den Zustand des „Taugt nicht"-Knopfs mitziehen. Ohne das zeigte er beim
      Blaettern noch die Antwort des vorigen Vorschlags an — und man haette
      zweimal getippt, um einen zu verwerfen, den man gar nicht meinte. */
@@ -658,7 +671,10 @@ function zeigeVorschlag(){
   const knopf = document.getElementById('btnVorschlagWeg');
   if (knopf){
     knopf.setAttribute('aria-pressed', String(weg));
-    knopf.textContent = weg ? 'Als „taugt nicht" gemerkt ✓' : 'Taugt nicht — bitte ersetzen';
+    knopf.textContent = weg
+      ? 'Als „taugt nicht" gemerkt ✓'
+      : (mehrere ? 'Taugt nicht — bitte ersetzen' : 'Taugt nicht — merken');
+    knopf.title = mehrere ? '' : 'Für dieses Wort gibt es nur diesen einen Vorschlag.';
   }
   document.getElementById('neVorschlag').classList.toggle('ist-weg', weg);
 }
