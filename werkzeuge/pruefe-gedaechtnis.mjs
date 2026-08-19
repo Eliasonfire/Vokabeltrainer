@@ -60,6 +60,16 @@ const auswerten = (quelle, namen) =>
 const { GRAMMAR_RULES, SENTENCE_TAGS } = auswerten(lies('grammar-data.js'), ['GRAMMAR_RULES', 'SENTENCE_TAGS']);
 const { VOCAB_DATA }      = auswerten(lies('vocab-data.js'), ['VOCAB_DATA']);
 const { LEHRBUCH_SAETZE } = auswerten(lies('lehrbuch-saetze.js'), ['LEHRBUCH_SAETZE']);
+/* ⛔ ES GIBT VIER SATZQUELLEN, NICHT ZWEI.
+   Bis zum 19.08.2026 zaehlte dieses Werkzeug nur VOCAB_DATA + LEHRBUCH_SAETZE
+   und meldete 210, waehrend die App 251 Saetze fuehrte. `alleSaetze()` in
+   js/saetze.js liest ausserdem data/beispielsaetze.js und data/fachbegriffe.js
+   — genau die beiden, die schon einmal drei Werkzeugen unbekannt waren und
+   105 Uebungsaufgaben verschwinden liessen. [[dritte-satzquelle]]
+   Ein Zaehlwerkzeug, das nicht alle Wege kennt, meldet eine Zahl, der man
+   glaubt. [[vor-dem-eintragen-messen]] */
+const { BEISPIELSAETZE }  = auswerten(lies('data/beispielsaetze.js'), ['BEISPIELSAETZE']);
+const { FACHBEGRIFF_VOKABELN } = auswerten(lies('data/fachbegriffe.js'), ['FACHBEGRIFF_VOKABELN']);
 
 const markierungen = Object.values(SENTENCE_TAGS).flat();
 const belegteIds = new Set(markierungen.map(t => t.ruleId));
@@ -69,7 +79,10 @@ const IST = {
   Markierungen:   markierungen.length,
   Module:         fs.readdirSync(V + 'js').filter(f => f.endsWith('.js')).length,
   Lehrbuchsaetze: LEHRBUCH_SAETZE.length,
-  Saetze:         VOCAB_DATA.filter(v => v.sentAr).length + LEHRBUCH_SAETZE.length,
+  Saetze:         VOCAB_DATA.filter(v => v.sentAr).length + LEHRBUCH_SAETZE.length
+                  + Object.keys(BEISPIELSAETZE).length
+                  + FACHBEGRIFF_VOKABELN.filter(v => v.sentAr).length,
+  Beispielsaetze: Object.keys(BEISPIELSAETZE).length,
   CACHE:          Number((lies('sw.js').match(/vokabeltrainer-v(\d+)/) || [])[1])
 };
 const erreichbar = GRAMMAR_RULES.filter(r => belegteIds.has(r.id)).length;
