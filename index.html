@@ -306,7 +306,11 @@
   --ease-spring:cubic-bezier(.34,1.4,.64,1);
 
   --safe-top:env(safe-area-inset-top,0px);
-  --safe-bottom:env(safe-area-inset-bottom,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+  /* Hoehe der unteren App-Leiste. Vorgabe fuer den ersten Bildaufbau;
+     danach misst js/darstellung.js sie und setzt sie genau. Die drei
+     schwebenden Leisten (.sent-nav, .ueb-fuss, .wz-nav) sitzen darauf. */
+  --leiste-unten:66px;
 }
 
 /* =====================================================================
@@ -1387,7 +1391,7 @@ main{
    an derselben Stelle ist, egal wie weit die Wortliste gerollt ist. */
 .kat-zielleiste{
   position:fixed;
-  bottom:calc(78px + var(--safe-bottom));
+  bottom:var(--leiste-unten);
   left:50%;transform:translateX(-50%);
   width:calc(100% - var(--gutter) * 2);
   max-width:calc(var(--inhalt-max) - var(--gutter) * 2);
@@ -1952,7 +1956,7 @@ main{
 .ueb-fuss{
   display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);
   position:fixed;
-  bottom:calc(78px + var(--safe-bottom));
+  bottom:var(--leiste-unten);
   left:50%;transform:translateX(-50%);
   width:calc(100% - var(--gutter) * 2);
   max-width:calc(var(--inhalt-max) - var(--gutter) * 2);
@@ -1994,7 +1998,7 @@ main{
 .sent-nav{
   display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);
   position:fixed;
-  bottom:calc(78px + var(--safe-bottom));
+  bottom:var(--leiste-unten);
   left:50%;transform:translateX(-50%);
   width:calc(100% - var(--gutter) * 2);
   max-width:calc(var(--inhalt-max) - var(--gutter) * 2);
