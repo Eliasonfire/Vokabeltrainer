@@ -78,16 +78,38 @@
   }
 
   /* ---- 3. Markierungen: findet jeder matchText seine Stelle? ---- */
+  /* ⛔ ZWEI URSACHEN, EINE MELDUNG — und das machte die Pruefung unbrauchbar.
+     Am 19.08.2026 gemessen: direkt nach dem Laden meldete dieser Abschnitt
+     „45899: kein Satz" fuer alle fuenf verfassten Beispielsaetze, ein zweiter
+     Lauf auf DERSELBEN Seite meldete null Fehler.
+
+     Grund: js/buecher.js haengt die Buchvokabeln erst nach dem Laden ein, und
+     mit ihnen die Saetze aus data/beispielsaetze.js. Wer vorher prueft, findet
+     die Kennungen nicht.
+
+     Eine Pruefung, die grundlos Alarm schlaegt, wird beim naechsten echten
+     Fehler weggeklickt. Deshalb wird jetzt unterschieden, statt zu melden.
+     [[kennzeichen_mit_zwei_ursachen]] */
   versuch('Satzmarkierungen loesen auf', ()=>{
     const alle = SENT.list.concat(VOCAB_DATA);
-    const fehlend = [];
+    const ausBeispielen = (typeof BEISPIELSAETZE !== 'undefined') ? Object.keys(BEISPIELSAETZE) : [];
+    const fehlend = [], nochNichtDa = [];
     Object.entries(SENTENCE_TAGS).forEach(([id, tags])=>{
       const w = alle.find(x=>String(x.id)===id);
-      if (!w){ fehlend.push(`${id}: kein Satz`); return; }
+      if (!w){
+        if (ausBeispielen.includes(id)) nochNichtDa.push(id); else fehlend.push(`${id}: kein Satz`);
+        return;
+      }
       tags.forEach(t=>{ if (!w.sentAr || w.sentAr.indexOf(t.matchText) === -1) fehlend.push(`${id}/${t.ruleId}`); });
     });
+    if (nochNichtDa.length){
+      warn('Buchvokabeln noch nicht eingehaengt',
+        `${nochNichtDa.length} Beispielsatz-Kennung(en) fehlen noch (${nochNichtDa.slice(0,3).join(', ')}). ` +
+        'js/buecher.js haengt sie erst nach dem Laden ein — Pruefung gleich noch einmal starten.');
+    }
     if (fehlend.length) throw new Error(fehlend.slice(0,5).join(', ') + (fehlend.length>5 ? ` (+${fehlend.length-5})` : ''));
-    return `${Object.values(SENTENCE_TAGS).flat().length} Markierungen`;
+    return `${Object.values(SENTENCE_TAGS).flat().length} Markierungen` +
+      (nochNichtDa.length ? `, ${nochNichtDa.length} noch ohne Satz (Buch nicht geladen)` : '');
   });
 
   /* ---- 4. Jede Regel erreichbar? ---- */
