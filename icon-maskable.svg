@@ -1,10 +1,37 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vokabeltrainer">
-<title>Vokabeltrainer — عِلْم (Wissen)</title>
-<defs>
-<linearGradient id="scheibe" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3355"/><stop offset="1" stop-color="#b00b2a"/></linearGradient>
-<radialGradient id="glanz" cx="30%" cy="18%" r="70%"><stop offset="0" stop-color="#ffffff" stop-opacity=".18"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient>
-</defs>
-<rect width="512" height="512" fill="url(#scheibe)"/>
-<rect width="512" height="512" fill="url(#glanz)"/>
-<g fill="#ffffff" transform="translate(407.31 271.43) scale(0.25302 -0.25302)"><path d="M-54 248L-74 167Q-77 155 -99 145Q-109 141 -146 126Q-183 111 -245 86L-477 -15Q-512 -15 -522 34Q-532 83 -483 104Q-463 112 -448.5 118.5Q-434 125 -424 129Q-477 173 -462 238Q-431 372 -318 425Q-290 438 -251 420Q-213 402 -172 360Q-151 338 -157 325Q-162 313 -207 325Q-253 338 -316 323Q-382 308 -402 264Q-408 253 -374 222Q-289 149 -130 250Q-119 257 -109.5 263Q-100 269 -93 273Q-39 307 -54 248ZM-581 115Q-602 -15 -674 -15Q-693 -15 -699 6Q-723 89 -674 104Q-616 122 -616 182L-633 615Q-634 638 -626 646L-589 688Q-570 710 -570 663L-559 432Q-551 248 -544 207Q-526 116 -476 104Q-452 98 -449 59Q-446 21 -457 -4Q-463 -15 -476 -15Q-545 -15 -581 115ZM-924 213Q-837 111 -674 105Q-624 103 -635 44Q-646 -15 -674 -15Q-718 -16 -757.5 -7Q-797 2 -832 18Q-832 -77 -876 -112Q-896 -127 -915 -111Q-973 -59 -987 41Q-1041 34 -1084 -11Q-1089 -33 -1074 -130Q-1020 -491 -1033 -550Q-1042 -588 -1063 -588Q-1083 -588 -1085 -543Q-1086 -508 -1095.5 -438Q-1105 -368 -1122 -262Q-1157 -48 -1120 43Q-1083 135 -973 185Q-952 246 -924 213Z"/></g>
+<title>Vokabeltrainer — Gehirn (Ausgangsgroesse), maskable</title>
+<!-- Gehirn, Fassung P mit Stamm "kuerzer und dicker" (Elias, 19.08.2026).
+     Massstab 1, Furchenbreite 13. Gebaut von werkzeuge/icon-bauen.mjs —
+     dort steht auch, wie man umschaltet und warum die Masse so sind. -->
+<rect width="512" height="512" fill="#000000"/>
+<g transform="translate(256,256) scale(1) translate(-249.5,-264)">
+  <g fill="#ff3355"><path d="M318 316 C 329 336 327 357 313 367
+    C 303 374 288 369 294 359
+    C 303 346 305 332 301 314 Z"/><path d="M102 240
+    A 37 37 0 0 1 133 185
+    A 45 45 0 0 1 204 154
+    A 52 52 0 0 1 296 154
+    A 45 45 0 0 1 367 185
+    A 33 33 0 0 1 397 232
+    A 28 28 0 0 1 384 278
+    A 42 42 0 0 1 324 318
+    A 260 260 0 0 1 212 327
+    A 90 90 0 0 1 122 285
+    A 30 30 0 0 1 102 240 Z"/><path d="M298 286 C 324 276 352 290 354 314
+    C 356 338 336 352 316 344
+    C 296 336 286 296 298 286 Z"/></g>
+  <g fill="none" stroke="#000" stroke-width="13" stroke-linecap="round">
+    <path d="M133 185 C 156 204 148 232 120 240"/>
+    <path d="M204 154 C 212 186 190 206 162 200"/>
+    <path d="M296 154 C 292 190 266 204 240 194"/>
+    <path d="M367 185 C 348 208 356 236 378 246"/>
+    <path d="M397 232 C 368 240 354 264 362 284"/>
+    <path d="M324 318 C 314 292 324 270 344 262"/>
+    <path d="M212 327 C 210 298 226 280 250 274"/>
+    <path d="M122 285 C 148 280 162 262 158 240"/>
+    <path d="M176 216 C 206 200 236 214 244 242"/>
+    <path d="M258 226 C 286 216 310 230 314 254"/>
+    <path d="M196 262 C 222 250 250 262 258 286"/>
+  </g>
+</g>
 </svg>
