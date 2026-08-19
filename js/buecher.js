@@ -379,7 +379,7 @@ function buchTitel(slug){ return BUCH_TITEL[slug] || slug; }
    Eigene Vokabeln laufen bewusst in jeder Auswahl mit. */
 function buchVokabeln(){
   const gewaehlt = new Set(aktiveBuecher());
-  /* 'grammar' sind die zehn Fachbegriffe aus dem Unterricht
+  /* 'grammar' sind die fuenfzehn Fachbegriffe und Endungen aus dem Unterricht
      (data/fachbegriffe.js). Sie gehoeren zu keinem Lehrwerk und laufen
      deshalb - wie die eigenen Vokabeln - in jeder Buchauswahl mit. Ohne
      diese Bedingung waeren sie unsichtbar, denn 'grammar' steht in keiner

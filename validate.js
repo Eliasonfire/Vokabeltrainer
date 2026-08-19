@@ -335,8 +335,27 @@ if (!Array.isArray(GRAMMAR_RULES)){
         } catch (e) { fail('data/beispielsaetze.js nicht lesbar: ' + e.message); }
       }
     }
+    /* ⛔⛔ VIERTE SATZQUELLE (19.08.2026): data/fachbegriffe.js.
+       Die fuenf Besitzendungen sind Karteikarten MIT eigenem Satz. Weil
+       js/kern.js sie in VOCAB_DATA schiebt und js/saetze.js
+       `VOCAB_DATA.filter(w => w.sentAr)` liest, sind ihre Saetze in der
+       laufenden App echte Satzmodus-Saetze — dieses Tor hier kannte sie nicht
+       und haette jede Markierung an ihnen als "unbekannte Vokabel-ID"
+       zurueckgewiesen. Genau die Luecke, an der am selben Tag schon
+       data/beispielsaetze.js haengengeblieben ist. [[dritte_satzquelle]] */
+    let FACHBEGRIFFE = [];
+    {
+      const d = path.join(DIR, 'data', 'fachbegriffe.js');
+      if (fs.existsSync(d)){
+        try {
+          FACHBEGRIFFE = (new Function(fs.readFileSync(d, 'utf8')
+            + ';return typeof FACHBEGRIFF_VOKABELN!=="undefined"?FACHBEGRIFF_VOKABELN:[];'))();
+        } catch (e) { fail('data/fachbegriffe.js nicht lesbar: ' + e.message); }
+      }
+    }
     const alleSaetze = VOCAB_DATA
       .concat(Array.isArray(LEHRBUCH_SAETZE) ? LEHRBUCH_SAETZE : [])
+      .concat(FACHBEGRIFFE.filter(w => w && w.sentAr))
       .concat(Object.entries(VERFASSTE_SAETZE)
         .filter(([, s]) => s && s.sentAr)
         .map(([id, s]) => ({ id, sentAr: s.sentAr, sentDe: s.sentDe })));

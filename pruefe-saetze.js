@@ -51,6 +51,22 @@ try {
     ({ BEISPIELSAETZE } = (new Function(fs.readFileSync(d, 'utf8') + ';return {BEISPIELSAETZE};'))());
 } catch (e) { console.log('  data/beispielsaetze.js nicht lesbar: ' + e.message); }
 
+/* ⛔⛔ Und die VIERTE Quelle (19.08.2026): data/fachbegriffe.js.
+   Die fuenf Besitzendungen sind Karteikarten mit eigenem `sentAr`. js/kern.js
+   schiebt sie in VOCAB_DATA, js/saetze.js liest `VOCAB_DATA.filter(w =>
+   w.sentAr)` — in der App sind das echte Satzmodus-Saetze. Eine Pruefung, die
+   sie nicht kennt, sieht wieder WENIGER als die App und meldet trotzdem
+   gruen. [[pruefwerkzeug_laedt_mehr_als_die_app]] */
+let FACHBEGRIFF_VOKABELN = [];
+try {
+  const d = P + 'data' + path.sep + 'fachbegriffe.js';
+  if (fs.existsSync(d))
+    ({ FACHBEGRIFF_VOKABELN } = (new Function(fs.readFileSync(d, 'utf8') + ';return {FACHBEGRIFF_VOKABELN};'))());
+} catch (e) { console.log('  data/fachbegriffe.js nicht lesbar: ' + e.message); }
+for (const v of FACHBEGRIFF_VOKABELN)
+  if (v && v.sentAr && !BEISPIELSAETZE[v.id])
+    BEISPIELSAETZE[v.id] = { sentAr: v.sentAr, sentDe: v.sentDe || '' };
+
 const ALLE = process.argv.includes('--alle');
 
 /* Wortarten aus dem vollen Datenabzug nachladen - erst damit kann die Analyse

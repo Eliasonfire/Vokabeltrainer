@@ -1658,5 +1658,36 @@ const ESELSBRUECKEN_ALT = {
   '45971': [
     '⭐ Die Stadt aus der Sīra: dorthin ging der Prophet ﷺ, als Mekka sich verschloss, und wurde abgewiesen — dort sprach er das Bittgebet, das viele auswendig kennen. Der Name hängt an einem Ereignis, nicht an einem Klang.',
     'الطَّائِف ist ein Partizip: „der Umherziehende", von der Wurzel ط و ف — dieselbe wie im طَوَاف um die كَعْبَةٌ aus Kapitel 5. Und الطَّائِفَةُ, die Gruppe, gehört ebenfalls dazu.'
+  ],
+
+  /* --- Die fuenf Besitzendungen, je zwei weitere Wege (19.08.2026) --- */
+  /* ـِي - die Besitzendung „mein“ — 1. Person */
+  'gram-suffix-i': [
+    'Im Koran hörst du sie am Ende von al-Kāfirūn: لَكُمْ دِينُكُمْ وَلِيَ دِينِ (109:6). ⭐ Und dort siehst du zugleich, was dein Lehrer über den Sprachgebrauch sagt: beim letzten Wort ist das Yāʾ weggelassen, geblieben ist nur die Kasra. Genau das meint er mit „sie behalten nur die Kasra“.',
+    'Die Endung ist keine neue Grammatik: كِتَابِي ist eine إِضَافَة in einem einzigen Wort — das Nomen ist مُضَاف, die Endung ist مُضَاف إِلَيْهِ. Du kennst das aus Kapitel 5, hier steht es nur zusammengeschrieben.'
+  ],
+
+  /* ـكَ - die Besitzendung „dein“ — zu einem Mann */
+  'gram-suffix-ka': [
+    'Im Koran gleich im ersten Vers von aš-Šarḥ: أَلَمْ نَشْرَحْ لَكَ صَدْرَكَ (94:1) — „deine Brust“. Dieselbe Endung an einem Nomen; du sprichst sie im Gebet, ohne darüber nachzudenken.',
+    'Merke sie zusammen mit ihrer Ausnahme: normalerweise hängt sie direkt an, aber bei „Vater“ und „Bruder“ schiebt sich erst ein Wāw dazwischen — Seite 65 fragt أَبُوكَ „dein Vater“, nicht die erwartete Form ohne Wāw.'
+  ],
+
+  /* ـكِ - die Besitzendung „dein“ — zu einer Frau */
+  'gram-suffix-ki': [
+    'Hier steht bewusst KEIN Vers: In dem Bereich, den du auswendig kannst, kommt diese Endung nicht vor. Nimm stattdessen das Paar aus dem Buch — dieselbe Frage einmal an einen Mann, einmal an eine Frau, und nur der Vokal am Ende unterscheidet sie.',
+    'Ein Zeichen, das man beim Schreiben leicht weglässt, entscheidet hier über die Bedeutung. Wer اسْمُكِ ohne die Kasra schreibt, hat aus der Frau einen Mann gemacht — gerade diese Endung ist ein Grund, das Taschīl mitzuschreiben.'
+  ],
+
+  /* ـهُ - die Besitzendung „sein“ */
+  'gram-suffix-hu': [
+    'Im Koran in al-Qāriʿah: فَأَمَّا مَن ثَقُلَتْ مَوَٰزِينُهُۥ (101:6) — „seine Waagschalen“. Die Endung hängt am Nomen und sagt „ihm gehörend“; du sprichst sie, ohne darüber nachzudenken.',
+    '⚠️ Eine Falle, die du auf Seite 61 selbst schon gelesen hast: nach einer Kasra wird aus ـهُ ein هِ. Deshalb heißt es dort فِيهِ und nicht die Form mit Ḍamma. Der Vokal davor zieht den Vokal danach zu sich.'
+  ],
+
+  /* ـهَا - die Besitzendung „ihr“ */
+  'gram-suffix-ha': [
+    'Im Koran in az-Zalzalah: وَأَخْرَجَتِ ٱلْأَرْضُ أَثْقَالَهَا (99:2) — „ihre Lasten“. Die Erde ist im Arabischen weiblich, deshalb ـهَا.',
+    'Sie ist die einzige der fünf, die zwei Buchstaben lang ist — und die einzige, die sich nach einer Kasra NICHT ändert. Auf Seite 61 steht فِيهَا „in ihr“ mit Kasra davor, und das Alif bleibt stehen.'
   ]
 };

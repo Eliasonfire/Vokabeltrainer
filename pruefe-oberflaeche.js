@@ -170,7 +170,7 @@
       const schonDrin  = mitreisend.filter(w=>w.source === 'vocabulary' && (w.book || 'madina-1') === b.slug).length;
       const vonHand    = VOCAB_DATA.filter(w=>w.chapter !== 'personal'
                           && w.source !== 'vocabulary' && (w.book || 'madina-1') === b.slug).length;
-      /* ⚠️ Die zehn Fachbegriffe (chapter und book beide 'grammar') fehlten
+      /* ⚠️ Die fuenfzehn Fachbegriffe (chapter und book beide 'grammar') fehlten
          hier bis zum 19.08.2026. js/kern.js schiebt sie seit dem 17.08. in
          VOCAB_DATA, und buchVokabeln() gibt sie bei JEDEM Buch mit heraus -
          Elias wollte sie ausdruecklich als eigene Karteikarten ("die muessen
