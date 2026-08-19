@@ -628,6 +628,64 @@ try {
   warn(`Kategoriebesetzung nicht messbar: ${e.message}`);
 }
 
+/* ---------- 11. WURZELN ----------
+   Eine Wurzelangabe behauptet: diese drei (selten vier) Konsonanten stecken in
+   diesem Wort. Beides ist nachpruefbar -- die Form und der Inhalt. Bis zum
+   20.08.2026 hat das niemand gemessen; 145 der 171 Woerter tragen eine Wurzel.
+
+   ⛔ DIE SCHADDA VERDOPPELT, SIE LOESCHT NICHT.
+   Der erste Lauf meldete acht Woerter als falsch -- qitt, harr, 'amm, umm,
+   batta, hadd, sitta -- und alle acht sind Verdopplungswurzeln: das doppelte
+   Radikal steht als Schadda, nicht als zwei Buchstaben. Wer die Schadda mit den
+   uebrigen Zeichen wegwirft, macht aus q-t-t ein q-t und findet die Wurzel
+   nicht mehr. Ein Fehler des Werkzeugs, kein Fehler der Daten.
+
+   ⚠️ Schwache Wurzeln: bei Waw/Ya/Alif verschwindet ein Radikal im Wort
+   (q-w-l -> qala). Deshalb ein zweiter Anlauf ohne die schwachen Radikale --
+   und beides wird GETRENNT gezaehlt, damit die Lockerung sichtbar bleibt. */
+try {
+  const nfcW = x => String(x).normalize('NFC');
+  const buchst = x => nfcW(x)
+    .replace(/([ء-ي])[ً-ِ]*ّ/g, '$1$1')
+    .replace(/[ً-ٰٓـۖ-ۭ]/g, '')
+    .replace(/[أإآٱ]/g, 'ا')
+    .replace(/[^ء-ي]/g, '');
+  const SCHWACH = new Set(['و', 'ي', 'ا']);
+  const drin = (wort, rad) => {
+    let i = 0;
+    for (const r of rad){ const p = wort.indexOf(r, i); if (p < 0) return false; i = p + 1; }
+    return true;
+  };
+  /* ⛔ Zwei echte Sonderfaelle des Arabischen, namentlich und mit Grund --
+     nicht stumm gefiltert. Beide Wurzelangaben sind RICHTIG, das Wort zeigt sie
+     nur nicht mehr:
+       45802  ماء (Wasser)  m-w-h   das Ha ist verschwunden (ma' < mawah)
+       45853  فم  (Mund)    f-m     zweiradikalig, urspruenglich f-w-h */
+  const WURZEL_SONDERFALL = new Set(['45802', '45853']);
+  let wOk = 0, wStreng = 0, wSchwach = 0, wSonder = 0;
+  const wBefunde = [];
+  for (const w of VOCAB_DATA){
+    if (!w.root) continue;
+    if (WURZEL_SONDERFALL.has(String(w.id))){ wSonder++; continue; }
+    const rad = nfcW(w.root).split(/\s+/).filter(Boolean).map(buchst);
+    if (rad.length < 3 || rad.length > 4 || rad.some(r => r.length !== 1)){
+      wBefunde.push(`${w.ar} (${w.de}): Wurzel "${w.root}" hat nicht drei oder vier Buchstaben`);
+      continue;
+    }
+    const wort = buchst(w.ar);
+    if (drin(wort, rad)){ wOk++; wStreng++; continue; }
+    const fest = rad.filter(r => !SCHWACH.has(r));
+    if (fest.length && drin(wort, fest)){ wOk++; wSchwach++; continue; }
+    wBefunde.push(`${w.ar} (${w.de}): die Wurzel ${w.root} steckt nicht im Wort`);
+  }
+  if (wBefunde.length)
+    warn(`${wBefunde.length} Wurzelangabe(n) gehen nicht auf: ${wBefunde.slice(0,4).join(' | ')}${wBefunde.length>4?' …':''}`);
+  else
+    note(`Wurzeln: ${wOk} gehen auf (${wStreng} streng, ${wSchwach} erst ohne die schwachen Radikale), ${wSonder} benannte Sonderfaelle`);
+} catch (e){
+  warn(`Wurzeln nicht messbar: ${e.message}`);
+}
+
 /* ---------- Ausgabe ---------- */
 console.log('--- Validierung Vokabeltrainer ---');
 info.forEach(m => console.log('  ok   ' + m));
