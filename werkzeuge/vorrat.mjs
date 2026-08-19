@@ -1,0 +1,281 @@
+/* vorrat.mjs -- Haelt Eselsbruecken und Beispielsaetze fuer die Kapitel
+ * aktuell, die Elias WIRKLICH schon hat. Nicht fuer alle 4.446 Woerter.
+ * =====================================================================
+ *
+ * WARUM ES DIESES WERKZEUG GIBT
+ *
+ * Elias am 19.08.2026: „es sollen erstmal nur die vokabeln vorschläge
+ * bekommen, mit denen ich bereits zu tun habe. es macht keinen sinn alle 4000
+ * wörter einen vorschlag zu machen weil wir wissen ja nicht wie in 2 jahren
+ * mein wissenstand ist und da könnte einen aktueller vorschlag viel mehr bei
+ * mir bewirken als ein uralter."
+ *
+ * ⭐ Das ist der Kern: eine Eselsbruecke ist kein Datensatz, sondern eine
+ * BRUECKE — und sie traegt nur, wenn das andere Ufer schon steht. Wer heute
+ * fuer Kapitel 20 schreibt, baut auf ein Ufer, das es noch nicht gibt.
+ *
+ * ⛔ DIE LUECKE, DIE DIESES WERKZEUG SCHLIESST
+ *
+ * Der Freischaltstand steht in `js/kern.js` als FREIGESCHALTET — von Hand
+ * eingetragen, mit Datum im Kommentar. Am 19.08.2026 nachgemessen: KEIN
+ * einziges Werkzeug und keine Routine zieht ihn nach. `grep -rn FREIGESCHALTET
+ * werkzeuge/ Automation/prompts/` findet nichts.
+ *
+ * Damit haengt die ganze Kette an einer Zeile, die jemand von Hand pflegen
+ * muesste — und genau das ist die Sorte Aufgabe, an die sich niemand erinnert.
+ * `pruefe-eselsbruecken.js` Abschnitt 6 prueft zwar gegen FREIGESCHALTET, aber
+ * es prueft gegen einen Stand, der veralten kann, ohne dass es auffaellt.
+ * [[eingefrorenes_feld_ist_kein_zustand]]
+ *
+ * WAS ES TUT
+ *
+ *   node werkzeuge/vorrat.mjs                  Uebersicht, Exitcode 2 bei Rueckstand
+ *   node werkzeuge/vorrat.mjs --knapp          eine Zeile, fuer Routinen
+ *   node werkzeuge/vorrat.mjs --stand <datei>  FREIGESCHALTET aus get_unlocked_chapters nachziehen
+ *   node werkzeuge/vorrat.mjs --auftrag <datei> Arbeitsauftrag fuer die Sitzung schreiben
+ *
+ * ⚠️ `--stand` braucht eine Datei, weil nur eine Claude-Sitzung den
+ * arabicroots-MCP erreichen kann. Die Sitzung ruft get_unlocked_chapters,
+ * schreibt das Ergebnis weg, das Skript zieht nach. So bleibt das Werkzeug
+ * offline pruefbar und sagt ehrlich, wie alt sein Wissen ist.
+ *
+ * ⚠️ Der Buchabzug (data/vokabeln-*.js) darf nach arabicroots' AGB nicht ins
+ * Repo. Er wird hier nur GELESEN.
+ */
+import fs from 'node:fs';
+import path from 'node:path';
+import vm from 'node:vm';
+import { fileURLToPath } from 'node:url';
+
+/* fileURLToPath, nicht von Hand zerlegen: der Ordner heisst "1. Workspace"
+   mit Leerzeichen, das steht in import.meta.url als %20. */
+const HIER   = path.dirname(fileURLToPath(import.meta.url));
+const WURZEL = path.resolve(HIER, '..');
+const p      = (...t) => path.join(WURZEL, ...t);
+
+const ARG    = process.argv.slice(2);
+const KNAPP  = ARG.includes('--knapp');
+const iStand = ARG.indexOf('--stand');
+const iAuftr = ARG.indexOf('--auftrag');
+
+/* ---------- Dateien in einer Kiste laden ---------- */
+const kiste = { window: {} };
+kiste.globalThis = kiste;
+vm.createContext(kiste);
+function laden(rel, pflicht = true){
+  const datei = p(rel);
+  if (!fs.existsSync(datei)){
+    if (pflicht) { console.error('  FEHLT: ' + rel); process.exit(1); }
+    return false;
+  }
+  vm.runInContext(fs.readFileSync(datei, 'utf8'), kiste, { filename: rel });
+  return true;
+}
+/* ⛔ `const` in einer vm-Kiste landet im lexikalischen Bereich, NICHT als
+   Eigenschaft am Kontextobjekt. kiste.VOCAB_DATA ist deshalb undefined,
+   obwohl die Datei sauber gelaufen ist. Abholen nur ueber einen Ausdruck. */
+const hol = (name) =>
+  vm.runInContext('typeof ' + name + ' !== "undefined" ? ' + name + ' : null', kiste);
+
+/* ---------- FREIGESCHALTET lesen und schreiben ---------- */
+const KERN = p('js/kern.js');
+
+function freischaltungLesen(){
+  const q = fs.readFileSync(KERN, 'utf8');
+  const block = q.match(/const FREIGESCHALTET = \{([\s\S]*?)\};/);
+  if (!block) { console.error('  FREIGESCHALTET in js/kern.js nicht gefunden.'); process.exit(1); }
+  const frei = {};
+  block[1].split(/\r?\n/).forEach(z => {
+    const m = z.match(/'([^']+)'\s*:\s*\[([^\]]*)\]/);
+    if (m) frei[m[1]] = m[2].split(',').map(x => Number(x.trim()))
+                            .filter(n => !Number.isNaN(n)).sort((a, b) => a - b);
+  });
+  const datum = (block[1].match(/abgefragt am ([0-9.]+)/) || [])[1] || 'unbekannt';
+  return { frei, datum };
+}
+
+/* Aus get_unlocked_chapters kommt eine Liste wie
+     [{ chapter_id: "madina-1-chapter-11" }, ...]
+   Daraus wird { 'madina-1': [1,...,11] }. */
+function freischaltungAusJson(text){
+  let roh;
+  try { roh = JSON.parse(text); }
+  catch (e) { console.error('  Datei ist kein JSON: ' + e.message); process.exit(1); }
+  const liste = Array.isArray(roh) ? roh : (roh.chapters || roh.data || []);
+  const frei = {};
+  liste.forEach(e => {
+    const id = String(e.chapter_id || e.chapterId || e || '');
+    const m = id.match(/^(.*)-chapter-(\d+)$/);
+    if (!m) return;
+    (frei[m[1]] = frei[m[1]] || []).push(Number(m[2]));
+  });
+  Object.keys(frei).forEach(b => frei[b] = [...new Set(frei[b])].sort((a, b) => a - b));
+  return frei;
+}
+
+function freischaltungSchreiben(neu, heute){
+  const q = fs.readFileSync(KERN, 'utf8');
+  const nl = (q.match(/\r\n/g) || []).length > (q.match(/\n/g) || []).length / 2 ? '\r\n' : '\n';
+  const zeilen = Object.keys(neu).sort().map(b =>
+    `  '${b}': [${neu[b].join(',')}]`);
+  const block = 'const FREIGESCHALTET = {' + nl
+    + zeilen.join(',' + nl) + '   // arabicroots, abgefragt am ' + heute + nl
+    + '};';
+  const raus = q.replace(/const FREIGESCHALTET = \{[\s\S]*?\};/, block);
+  if (raus === q) { console.error('  Ersetzung hat nichts geaendert.'); process.exit(1); }
+  fs.writeFileSync(KERN, raus, 'utf8');
+}
+
+/* ---------- Bestand einsammeln ---------- */
+laden('vocab-data.js');
+laden('data/eselsbruecken.js');
+laden('data/eselsbruecken-alt.js');
+laden('data/buecher.js');
+const hatSaetze = laden('data/beispielsaetze.js', false);
+
+const VOCAB   = hol('VOCAB_DATA') || [];
+const BUCH_EB = hol('BUCH_ESELSBRUECKEN') || {};
+const ALT     = hol('ESELSBRUECKEN_ALT') || {};
+const BUECHER = hol('BUECHER') || [];
+const SAETZE  = hol('BEISPIELSAETZE') || {};
+
+const eigen = new Map(VOCAB.map(w => [String(w.id), w]));
+
+/* ⛔ Drei Wege zu einer Eselsbruecke, und ein Zaehlwerkzeug muss ALLE kennen.
+   Am 19.08.2026 meldete eine dateibasierte Zaehlung NULL, waehrend die
+   laufende App 135 sah — sie kannte den Weg ueber VOCAB_DATA.push() nicht.
+   [[vor_dem_eintragen_messen]] */
+function vorschlagsZahl(id, wortAusBuch){
+  const e = eigen.get(id);
+  const liste = [];
+  const erst = (e && e.mnemo) || (wortAusBuch && wortAusBuch.mnemo) || BUCH_EB[id];
+  if (erst && String(erst).trim()) liste.push(String(erst).trim());
+  (ALT[id] || []).forEach(t => {
+    const s = String(t || '').trim();
+    if (s && liste.indexOf(s) < 0) liste.push(s);   /* wie vorschlagsListe() */
+  });
+  return liste.length;
+}
+function hatSatz(id){
+  const e = eigen.get(id);
+  if (e && e.sentAr && String(e.sentAr).trim()) return true;
+  const s = SAETZE[id];
+  return !!(s && s.sentAr && String(s.sentAr).trim());
+}
+
+/* ---------- Hauptteil ---------- */
+const { frei, datum } = freischaltungLesen();
+
+if (iStand >= 0){
+  const quelle = ARG[iStand + 1];
+  if (!quelle){ console.error('  --stand braucht eine Datei.'); process.exit(1); }
+  const neu = freischaltungAusJson(fs.readFileSync(quelle, 'utf8'));
+  /* ⛔ Nur Buecher nachziehen, die auch als Datei vorliegen — sonst traegt
+     sich ein Buch ein, dessen Woerter niemand pruefen kann, und der
+     Rueckstand meldet ploetzlich Tausende. */
+  const bekannt = new Set(BUECHER.map(b => b.slug));
+  const ueber = Object.keys(neu).filter(b => !bekannt.has(b));
+  ueber.forEach(b => delete neu[b]);
+
+  const alt = frei;
+  const aenderungen = [];
+  new Set([...Object.keys(alt), ...Object.keys(neu)]).forEach(b => {
+    const a = (alt[b] || []).join(','), n = (neu[b] || []).join(',');
+    if (a !== n) aenderungen.push(`  ${b}: [${a || '—'}] → [${n || '—'}]`);
+  });
+  if (ueber.length) console.log('  uebersprungen (keine Vokabeldatei): ' + ueber.join(', '));
+  if (!aenderungen.length){
+    console.log('  FREIGESCHALTET war schon aktuell (Stand ' + datum + ').');
+    process.exit(0);
+  }
+  const heute = new Date().toLocaleDateString('de-DE');
+  freischaltungSchreiben(neu, heute);
+  console.log('  FREIGESCHALTET nachgezogen:');
+  aenderungen.forEach(z => console.log(z));
+  console.log('  ⛔ js/kern.js ist eine ausgelieferte Datei — CACHE_NAME in sw.js hoch!');
+  process.exit(0);
+}
+
+/* Messen. */
+const offen = [];      /* { slug, kapitel, id, ar, de, fehltEB, fehltSatz } */
+let geprueft = 0;
+BUECHER.forEach(b => {
+  const kapitel = frei[b.slug];
+  if (!kapitel || !kapitel.length) return;
+  const datei = p(b.datei);
+  if (!fs.existsSync(datei)) return;
+  vm.runInContext(fs.readFileSync(datei, 'utf8'), kiste, { filename: b.datei });
+  const liste = (kiste.window.VOKABELN && kiste.window.VOKABELN[b.slug]) || [];
+  liste.filter(w => kapitel.includes(Number(w.chapter))).forEach(w => {
+    geprueft++;
+    const id = String(w.id);
+    const n = vorschlagsZahl(id, w);
+    const s = hatSatz(id);
+    if (n < 3 || !s)
+      offen.push({ slug: b.slug, kapitel: Number(w.chapter), id, ar: w.ar, de: w.de,
+                   hat: n, fehltEB: Math.max(0, 3 - n), fehltSatz: !s,
+                   root: w.root, pl: w.plural });
+  });
+});
+
+const fehlendeEB   = offen.reduce((s, w) => s + w.fehltEB, 0);
+const fehlendeSatz = offen.filter(w => w.fehltSatz).length;
+
+if (KNAPP){
+  console.log(offen.length
+    ? `Vorrat: ${offen.length} von ${geprueft} freigeschalteten Woertern unvollstaendig — ${fehlendeEB} Eselsbruecken, ${fehlendeSatz} Beispielsaetze fehlen. (Freischaltstand ${datum})`
+    : `Vorrat: alle ${geprueft} freigeschalteten Woerter haben drei Eselsbruecken und einen Beispielsatz. (Freischaltstand ${datum})`);
+  process.exit(offen.length ? 2 : 0);
+}
+
+console.log('  Freischaltstand aus js/kern.js: '
+  + Object.entries(frei).map(([b, k]) => `${b} Kap. ${k.join(',')}`).join(' | ')
+  + '   (abgefragt am ' + datum + ')');
+if (!hatSaetze) console.log('  data/beispielsaetze.js liegt noch nicht vor — Saetze zaehlen als fehlend.');
+console.log('');
+console.log('  geprueft:                 ' + geprueft + ' Woerter aus freigeschalteten Kapiteln');
+console.log('  vollstaendig:             ' + (geprueft - offen.length));
+console.log('  unvollstaendig:           ' + offen.length);
+console.log('    fehlende Eselsbruecken: ' + fehlendeEB);
+console.log('    fehlende Beispielsaetze:' + fehlendeSatz);
+
+if (offen.length){
+  const jeKap = {};
+  offen.forEach(w => {
+    const s = w.slug + ' K' + w.kapitel;
+    jeKap[s] = jeKap[s] || { eb: 0, satz: 0, n: 0 };
+    jeKap[s].n++; jeKap[s].eb += w.fehltEB; jeKap[s].satz += w.fehltSatz ? 1 : 0;
+  });
+  console.log('');
+  console.log('  je Kapitel:');
+  Object.entries(jeKap).forEach(([k, z]) =>
+    console.log('    ' + k.padEnd(16) + z.n + ' Woerter, ' + z.eb + ' Eselsbruecken, ' + z.satz + ' Saetze'));
+}
+
+if (iAuftr >= 0){
+  const ziel = ARG[iAuftr + 1];
+  if (!ziel){ console.error('  --auftrag braucht eine Datei.'); process.exit(1); }
+  const z = [];
+  z.push('# Arbeitsauftrag Vorrat — erzeugt von werkzeuge/vorrat.mjs');
+  z.push('');
+  z.push('Freischaltstand: ' + Object.entries(frei).map(([b, k]) => `${b} Kap. ${k.join(',')}`).join(' | '));
+  z.push('Offen: ' + offen.length + ' Woerter, ' + fehlendeEB + ' Eselsbruecken, ' + fehlendeSatz + ' Beispielsaetze.');
+  z.push('');
+  offen.forEach(w => {
+    z.push('## ' + w.id + '  ' + w.ar + '  — ' + String(w.de || '').replace(/\s+/g, ' '));
+    z.push('   ' + w.slug + ' Kapitel ' + w.kapitel
+      + (w.root ? ' · Wurzel ' + w.root : '') + (w.pl ? ' · Pl. ' + w.pl : ''));
+    z.push('   Eselsbruecken: hat ' + w.hat + ', braucht ' + w.fehltEB + ' mehr');
+    const e = eigen.get(w.id);
+    const erst = (e && e.mnemo) || w.mnemoRoh || BUCH_EB[w.id];
+    if (erst) z.push('   vorhanden: ' + String(erst).replace(/\s+/g, ' '));
+    (ALT[w.id] || []).forEach((t, i) => z.push('   alt ' + (i + 2) + ': ' + String(t).replace(/\s+/g, ' ')));
+    z.push('   Beispielsatz: ' + (w.fehltSatz ? 'FEHLT' : 'vorhanden'));
+    z.push('');
+  });
+  fs.writeFileSync(ziel, z.join('\n'), 'utf8');
+  console.log('');
+  console.log('  Arbeitsauftrag geschrieben: ' + ziel);
+}
+
+process.exit(offen.length ? 2 : 0);
