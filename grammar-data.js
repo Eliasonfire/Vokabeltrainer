@@ -2168,6 +2168,9 @@ const SENTENCE_TAGS = {
   "45934": [
     { ruleId: "hadha-al-kein-satz-01", matchText: "هَذَا الْأُسْبُوعُ" },
     { ruleId: "mubtada-khabar-01", matchText: "طَوِيلٌ" }
+  ],
+  "gram-zarf": [
+    { ruleId: "zarf-01", matchText: "تَحْتَ الْبَابِ" }
   ]
 };
 

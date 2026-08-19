@@ -108,7 +108,14 @@ const FACHBEGRIFF_VOKABELN = [
     book: 'grammar',
     regel: 'zarf-01',
     belegt: 3,
-    mnemo: 'Die DRITTE Sache, die den Fall steuert — neben حَرْف جَرّ und إِضافة. تَحْتَ الْمَكْتَبِ: تَحْتَ hast du als Vokabel, und das Wort dahinter wird مَجْرُور, genau wie hinter einem مُضَاف. Dein Lehrer stellt ausdrücklich klar: تَحْتَ selbst ist KEIN حَرْف جَرّ — es wirkt nur so.'
+    mnemo: 'Die DRITTE Sache, die den Fall steuert — neben حَرْف جَرّ und إِضافة. تَحْتَ الْمَكْتَبِ: تَحْتَ hast du als Vokabel, und das Wort dahinter wird مَجْرُور, genau wie hinter einem مُضَاف. Dein Lehrer stellt ausdrücklich klar: تَحْتَ selbst ist KEIN حَرْف جَرّ — es wirkt nur so.',
+    /* ⛔ Der EINZIGE Fachbegriff, der einen Satz bekommt -- und zwar mit Grund.
+       Von den zehn Begriffen ohne Beispielsatz haben neun eine Regel mit 3 bis 13
+       Markierungen, ihr Konzept ist also erreichbar. `zarf-01` stand bei EINER.
+       Ein zweiter Beleg in einem vorhandenen Satz ging nicht: alle acht Saetze mit
+       einem Ortsadverb haben ihres bereits belegt. */
+    sentAr: 'الْمِفْتَاحُ تَحْتَ الْبَابِ.',
+    sentDe: 'Der Schlüssel ist unter der Tür.',
   },
   {
     id: 'gram-schakl',
