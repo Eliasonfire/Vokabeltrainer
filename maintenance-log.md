@@ -1872,6 +1872,12 @@ PDF" nach `G:\1. Workspace\SamsungNotes-Export\<uuid>.pdf` und danach
 angefasst. Ein Handschrift-Abgleich stand inhaltlich nicht an: keine neuen
 Vokabeln, keine neu ausgewertete Folge.
 
+✅ **Nachgesehen, bevor ich etwas doppelt eintrage:** Der Punkt steht bereits als
+**N2** unter „Wartet auf Elias" in `03 - Projekte\To-Do Vokabeltrainer.md`, mit
+denselben 12,4 Tagen und dem genauen Ablageweg — dort seit dem 19.08.
+vormittags. **Kein zweiter Eintrag angelegt.** Dieser Lauf bestätigt nur, dass
+sich seitdem nichts bewegt hat.
+
 **Schritt 5 – Lernstand (ohne Buch-/Kapitelfilter).** `get_weak_vocabulary`
 liefert **82 Einträge** unter 50 % — am 16.08. waren es 88. **Sechs Wörter sind
 über die Marke gekommen**, keines ist neu abgerutscht, das ist die beste
@@ -1983,14 +1989,14 @@ Werkzeugen, keine Datei, die sich nicht schreiben ließ.
 
 ### Vorschläge für den nächsten Schritt (ehrlich priorisiert)
 
-1. ⭐ **Die eine Frage, die diesen Lauf blockiert hat, ist eine Ja/Nein-Frage
-   an Elias: hast du in „Madina Buch 1 (Beschriftet)" zwischen dem 27.07. und
-   dem 09.08. etwas ergänzt?** Der Export ist 12,4 Tage älter als die Notiz. Bei
-   „nein" ist der Punkt für immer erledigt und der Zeitstempel darf
-   nachgeschrieben werden; bei „ja" fehlt dem Projekt seit zwei Wochen
-   handschriftliches Material, das nur er exportieren kann. **Kosten: ein Wort.
-   Nutzen: entweder ein dauerhaft stiller Befund weniger oder eine echte Lücke
-   gefunden.**
+1. ⭐ **Die billigste offene Frage im ganzen Projekt steht als N2 in der To-Do
+   und wartet auf ein einziges Wort: hast du in „Madina Buch 1 (Beschriftet)"
+   zwischen dem 27.07. und dem 09.08. etwas ergänzt?** Der Export ist 12,4 Tage
+   älter als die Notiz. Bei „nein" ist der Punkt für immer erledigt und der
+   Zeitstempel darf nachgeschrieben werden; bei „ja" fehlt dem Projekt seit zwei
+   Wochen handschriftliches Material, das nur er exportieren kann. Er steht seit
+   heute vormittag dort — ich hänge ihn hier nur an, weil er ohne diese eine
+   Antwort in **jedem** künftigen Lauf als Exitcode 2 wieder auftaucht.
 2. ⭐ **`pruefe-eselsbruecken.js` Abschnitt 6 auf `angabe` umstellen, so wie
    `vorrat.mjs` es macht.** Seit heute meldet er 224 madina-2-Wörter ohne
    zweite Eselsbrücke — Wörter, die Elias nicht lernt. Der Prompt sagt selbst,
