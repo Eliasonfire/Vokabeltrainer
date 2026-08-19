@@ -235,10 +235,18 @@ if (iLern >= 0){
     console.log('  Keine geuebten Vokabeln in der Datei gefunden — nichts geaendert.');
     process.exit(0);
   }
-  const alt = lernstandLesen() || { buecher: {} };
+  const alt = lernstandLesen() || {};
+  /* ⚠️ Gelesen werden MUSS `gemessen` — genau das schreibt diese Funktion
+     weiter unten. Bis zum 19.08.2026 stand hier `alt.buecher`, der Feldname aus
+     der allerersten Fassung der Datei. Solange die alte Datei noch danebenlag,
+     stimmte der Vergleich zufaellig; ab dem ersten neu geschriebenen Stand war
+     `alt.buecher` undefined und JEDES Buch waere als „Kapitel — → N" gemeldet
+     worden. Eine Meldung, die bei jedem Lauf anschlaegt, sagt nichts mehr.
+     `buecher` bleibt als Rueckfall stehen, damit ein alter Stand noch passt. */
+  const altGemessen = alt.gemessen || alt.buecher || {};
   const aenderungen = [];
   Object.entries(neu).forEach(([b, z]) => {
-    const a = (alt.buecher && alt.buecher[b] && alt.buecher[b].hoechstesKapitel) || 0;
+    const a = (altGemessen[b] && altGemessen[b].hoechstesKapitel) || 0;
     if (a !== z.hoechstesKapitel) aenderungen.push(`  ${b}: Kapitel ${a || '—'} → ${z.hoechstesKapitel}`);
   });
   /* ⛔⛔ DIE GEMESSENE ZAHL IST NICHT SEIN LERNSTAND.
@@ -259,6 +267,14 @@ if (iLern >= 0){
             + 'die Zahl misst, womit abgefragt wurde, nicht wo er im Kurs steht.',
     angabe: (vorher && vorher.angabe) || {},
     angabeVom: (vorher && vorher.angabeVom) || null,
+    /* ⛔ Der Wortlaut ist der BELEG fuer `angabe` und muss mit ihr zusammen
+       ueberleben. Bis zum 19.08.2026 fehlte diese Zeile: `--lernstand` baute
+       das Objekt neu auf und liess `_angabeWortlaut` dabei jedes Mal fallen.
+       Beim Wartungslauf am 19.08. 22:00 ist genau das passiert — Elias' Satz
+       „nein, ich bin bei madina-1 kapitel 11, madina-2 ist nur freigeschaltet"
+       war nach einem einzigen Aufruf weg. Uebrig blieb eine Zahl ohne Quelle,
+       und die ist nach E.1 nichts wert. */
+    _angabeWortlaut: (vorher && vorher._angabeWortlaut) || null,
     gemessenAm: new Date().toISOString().slice(0, 10),
     gemessen: neu
   }, null, 2), 'utf8');

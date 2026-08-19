@@ -1,7 +1,12 @@
 {
-  "_hinweis": "Abgeleitet aus get_learning_progress. Nur das hoechste Kapitel je Buch, in dem wirklich geuebt wurde — NICHT was freigeschaltet ist. Erzeugt von werkzeuge/vorrat.mjs --lernstand.",
-  "gemessen": "2026-08-19",
-  "buecher": {
+  "_hinweis": "angabe = was Elias selbst gesagt hat, MASSGEBLICH fuer das Fenster. gemessen = abgeleitet aus get_learning_progress, nur Gegenprobe — die Zahl misst, womit abgefragt wurde, nicht wo er im Kurs steht.",
+  "angabe": {
+    "madina-1": 11
+  },
+  "angabeVom": "19.08.2026",
+  "_angabeWortlaut": "Elias am 19.08.2026: \"nein, ich bin bei madina-1 kapitel 11, madina-2 ist nur freigeschaltet\"",
+  "gemessenAm": "2026-08-19",
+  "gemessen": {
     "madina-1": {
       "hoechstesKapitel": 23,
       "geuebteWoerter": 222
@@ -26,10 +31,5 @@
       "hoechstesKapitel": 31,
       "geuebteWoerter": 250
     }
-  },
-  "angabe": {
-    "madina-1": 11
-  },
-  "angabeVom": "19.08.2026",
-  "_angabeWortlaut": "Elias am 19.08.2026: \"nein, ich bin bei madina-1 kapitel 11, madina-2 ist nur freigeschaltet\""
+  }
 }
