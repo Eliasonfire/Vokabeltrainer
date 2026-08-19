@@ -113,7 +113,8 @@ function kapitelBeschriftung(w){
    sieht schlicht wie eine bewusste Grenze aus. Siehe die Lehre zum
    eingefrorenen Feld. */
 const FREIGESCHALTET = {
-  'madina-1': [1,2,3,4,5,6,7,8,9,10,11]   // arabicroots, abgefragt am 17.08.2026
+  'madina-1': [1,2,3,4,5,6,7,8,9,10,11],
+  'madina-2': [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]   // arabicroots, abgefragt am 19.8.2026
 };
 
 /* Die Woerter, die Elias kennt. Drei Quellen, und die dritte ist der Grund,
