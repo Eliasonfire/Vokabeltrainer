@@ -1179,8 +1179,10 @@ function oeffneAyahListe(){
      Angabe wegzulassen ist genau der Fehler, der bei hebeVersHervor eine
      Stunde gekostet hat. */
   if (aktiv) aktiv.scrollIntoView({ block:'center', behavior:'instant' });
+  overlayAuf('ayahPopover');
 }
 function schliesseAyahListe(){
+  if (overlayZuUeberHistorie('ayahPopover')) return;
   document.getElementById('ayahBackdrop').classList.add('hidden');
   document.getElementById('ayahPopover').classList.add('hidden');
 }

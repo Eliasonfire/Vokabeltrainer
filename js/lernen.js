@@ -527,8 +527,10 @@ function openQuranFreqPopover(w, freq){
   `).join('') + (anzahl > shown.length ? `<div class="qfp-note">Erste ${shown.length} von ${anzahl} Fundstellen</div>` : '');
   document.getElementById('qfpBackdrop').classList.remove('hidden');
   document.getElementById('quranFreqPopover').classList.remove('hidden');
+  overlayAuf('quranFreqPopover');
 }
 function closeQuranFreqPopover(){
+  if (overlayZuUeberHistorie('quranFreqPopover')) return;
   document.getElementById('qfpBackdrop').classList.add('hidden');
   document.getElementById('quranFreqPopover').classList.add('hidden');
 }
@@ -695,8 +697,10 @@ function oeffneNotizEditor(){
   document.getElementById('noteBackdrop').classList.remove('hidden');
   document.getElementById('noteEditor').classList.remove('hidden');
   feld.focus();
+  overlayAuf('noteEditor');
 }
 function schliesseNotizEditor(){
+  if (overlayZuUeberHistorie('noteEditor')) return;
   document.getElementById('noteBackdrop').classList.add('hidden');
   document.getElementById('noteEditor').classList.add('hidden');
 }

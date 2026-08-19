@@ -735,9 +735,11 @@ function zeigeWortKarte(id){
   karte.scrollTop = 0;                       /* nicht dort anfangen, wo das letzte Wort aufhoerte */
   karte.classList.remove('hidden');
   document.getElementById('wortKarteBackdrop').classList.remove('hidden');
+  overlayAuf('wortKarte');
 }
 
 function schliesseWortKarte(){
+  if (overlayZuUeberHistorie('wortKarte')) return;
   WK_WORT = null;
   document.getElementById('wortKarte').classList.add('hidden');
   document.getElementById('wortKarteBackdrop').classList.add('hidden');

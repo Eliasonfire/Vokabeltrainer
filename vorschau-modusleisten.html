@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Modus-Leisten — Entwürfe</title>
+<!--
+  ENTWÜRFE, NICHT EINGEBAUT.
+
+  Elias, dreimal gesagt, zuletzt am 19.08.2026:
+    „ich finds sehr unübersichtlich einfach 1000 modis nach links zu wischen,
+     da braucht man was übersichtlicheres"
+
+  ⚠️ Es sind ZWEI Leisten, nicht eine. Sein Bildschirmfoto zeigte den
+  ÜBUNGS-Streifen (js/uebung.js), nicht die Satzmodus-Themen (js/saetze.js).
+  Hätte man nur die Themen umgebaut, wäre die Beschwerde geblieben.
+
+  Alle Zahlen hier sind im Browser bei 375 px gemessen, nicht geschätzt:
+    document.getElementById('sentThemen').scrollWidth  -> 1345
+    document.getElementById('uebModi').scrollWidth     -> 2436
+    beide clientWidth                                  ->  375
+  Die Reiterzahlen (210, 62, 45 … / 423, 115, 54 …) stammen aus demselben
+  Lauf, also aus den echten Daten — nicht aus dem Kopf.
+-->
+<style>
+:root{
+  --bg:#000000; --surface-1:#0b0b0c; --surface-2:#131315; --surface-3:#1b1b1e;
+  --border:#26262b; --border-strong:#33333a;
+  --red:#ff1744; --red-bright:#ff4d6a; --red-dim:#5e0b1c; --red-wash:rgba(255,23,68,.09);
+  --green:#2ee6a6; --green-dim:#0c3a2c; --green-wash:rgba(46,230,166,.12);
+  --text:#f4f4f5; --text-dim:#a1a1a8; --text-faint:#82828a;
+  --font-ui:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fs-xs:.7rem; --fs-sm:.78rem; --fs-md:.88rem; --fs-lg:1rem; --fs-xl:1.25rem;
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:20px; --sp-6:24px;
+  --gutter:18px;
+  --r-1:10px; --r-2:14px; --r-3:18px; --r-full:999px;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:var(--font-ui); font-size:var(--fs-md); line-height:1.5;
+  padding:var(--sp-6) var(--sp-4) 80px;
+}
+h1{font-size:var(--fs-xl); margin:0 0 var(--sp-2);}
+h2{font-size:var(--fs-lg); margin:var(--sp-6) 0 var(--sp-2); color:var(--red-bright);}
+p{color:var(--text-dim); margin:0 0 var(--sp-3); max-width:62ch;}
+.klein{font-size:var(--fs-sm); color:var(--text-faint);}
+code{background:var(--surface-2); border:1px solid var(--border); border-radius:6px;
+     padding:1px 5px; font-size:var(--fs-xs);}
+
+/* Messtabelle oben */
+table{border-collapse:collapse; margin:0 0 var(--sp-4); font-size:var(--fs-sm);}
+th,td{border:1px solid var(--border); padding:6px 10px; text-align:left;}
+th{color:var(--text-faint); font-weight:700;}
+td.zahl{font-variant-numeric:tabular-nums; text-align:right;}
+.warn{color:var(--red-bright); font-weight:700;}
+
+/* Telefonrahmen — alle Entwürfe stehen in derselben Breite nebeneinander,
+   sonst vergleicht man Äpfel mit Birnen. */
+.reihe{display:flex; gap:var(--sp-4); flex-wrap:wrap; align-items:flex-start;}
+.karte{flex:0 0 auto; width:375px; max-width:100%;}
+.kopf{display:flex; align-items:baseline; gap:var(--sp-2); margin-bottom:var(--sp-2);}
+.kopf b{font-size:var(--fs-md);}
+.kopf .mess{font-size:var(--fs-xs); color:var(--text-faint); font-variant-numeric:tabular-nums;}
+.rahmen{
+  border:1px solid var(--border-strong); border-radius:var(--r-3);
+  background:var(--surface-1); padding:var(--sp-4) var(--gutter);
+  overflow:hidden;
+}
+.urteil{font-size:var(--fs-sm); color:var(--text-dim); margin-top:var(--sp-2);}
+.urteil b{color:var(--text);}
+
+/* ---------- IST: der heutige Rollstreifen ---------- */
+.streifen{
+  display:flex; gap:var(--sp-2); overflow-x:auto;
+  margin:0 calc(var(--gutter) * -1); padding:var(--sp-1) var(--gutter);
+  scrollbar-width:none;
+}
+.streifen::-webkit-scrollbar{display:none;}
+.chip{
+  flex:0 0 auto; display:flex; align-items:center; gap:6px;
+  background:var(--surface-2); border:1px solid var(--border); color:var(--text-dim);
+  border-radius:var(--r-full); padding:var(--sp-2) var(--sp-3);
+  font-size:var(--fs-sm); font-weight:700; cursor:pointer; font-family:inherit;
+}
+.chip i{font-style:normal; font-size:var(--fs-xs); color:var(--text-faint);
+        font-variant-numeric:tabular-nums;}
+.chip.aktiv{background:var(--red-wash); border-color:var(--red-dim); color:var(--red-bright);}
+.chip.aktiv i{color:var(--red-bright); opacity:.75;}
+.chip.gruen.aktiv{background:var(--green-wash); border-color:var(--green-dim); color:var(--green);}
+.chip.gruen.aktiv i{color:var(--green); opacity:.75;}
+.chip.leer{opacity:.42;}
+
+/* ---------- A1 / B1: Umbruch statt Rollen ---------- */
+.umbruch{display:flex; flex-wrap:wrap; gap:var(--sp-2);}
+
+/* ---------- A2: die großen zuerst, Rest hinter „mehr" ---------- */
+.mehr-knopf{
+  flex:0 0 auto; background:transparent; border:1px dashed var(--border-strong);
+  color:var(--text-faint); border-radius:var(--r-full);
+  padding:var(--sp-2) var(--sp-3); font-size:var(--fs-sm); font-weight:700;
+  cursor:pointer; font-family:inherit;
+}
+.versteckt{display:none;}
+
+/* ---------- B2: Raster mit Kurzname + Untertitel ---------- */
+.raster{display:grid; grid-template-columns:1fr 1fr; gap:var(--sp-2);}
+.kachel{
+  display:flex; flex-direction:column; gap:2px; text-align:right;
+  background:var(--surface-2); border:1px solid var(--border);
+  border-radius:var(--r-1); padding:var(--sp-2) var(--sp-3);
+  cursor:pointer; font-family:inherit; min-width:0;
+}
+.kachel .ar{font-size:var(--fs-md); color:var(--text); font-weight:700;
+            white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+            direction:rtl; unicode-bidi:isolate;}
+.kachel .de{display:flex; justify-content:space-between; align-items:baseline;
+            direction:ltr; font-size:var(--fs-xs); color:var(--text-faint); font-weight:700;}
+.kachel .de b{color:var(--text-dim); font-weight:700; font-variant-numeric:tabular-nums;}
+.kachel.aktiv{background:var(--green-wash); border-color:var(--green-dim);}
+.kachel.aktiv .ar{color:var(--green);}
+.kachel.leer{opacity:.42;}
+
+/* ---------- B3 / A3: ein Knopf, der ein Blatt öffnet ---------- */
+.waehler{
+  display:flex; align-items:center; justify-content:space-between; width:100%;
+  background:var(--surface-2); border:1px solid var(--border-strong);
+  border-radius:var(--r-2); padding:var(--sp-3) var(--sp-4);
+  color:var(--text); font-size:var(--fs-md); font-weight:700;
+  cursor:pointer; font-family:inherit;
+}
+.waehler .wert{color:var(--text-dim); font-weight:700; display:flex; gap:8px; align-items:baseline;}
+.waehler .wert i{font-style:normal; font-size:var(--fs-xs); color:var(--text-faint);
+                 font-variant-numeric:tabular-nums;}
+.blatt{
+  margin-top:var(--sp-2); border:1px solid var(--border); border-radius:var(--r-2);
+  background:var(--surface-1); overflow:hidden;
+}
+.blatt .gruppe{
+  font-size:var(--fs-xs); text-transform:uppercase; letter-spacing:.06em;
+  color:var(--text-faint); font-weight:700;
+  padding:var(--sp-3) var(--sp-4) var(--sp-1);
+}
+.zeile{
+  display:flex; align-items:center; justify-content:space-between; gap:var(--sp-3);
+  width:100%; background:transparent; border:0; border-top:1px solid var(--border);
+  padding:var(--sp-3) var(--sp-4); cursor:pointer; font-family:inherit;
+  color:var(--text-dim); font-size:var(--fs-sm); text-align:left;
+}
+.zeile:first-of-type{border-top:0;}
+.zeile .links{display:flex; flex-direction:column; gap:1px; min-width:0;}
+.zeile .ar{color:var(--text); font-weight:700; direction:rtl; unicode-bidi:isolate;
+           text-align:left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.zeile .de{font-size:var(--fs-xs); color:var(--text-faint); font-weight:700;}
+.zeile .n{font-size:var(--fs-xs); color:var(--text-faint); font-variant-numeric:tabular-nums;
+          flex:0 0 auto;}
+.zeile.aktiv{background:var(--green-wash);}
+.zeile.aktiv .ar{color:var(--green);}
+.zeile.leer{opacity:.42;}
+
+.label{
+  color:var(--text-faint); font-size:var(--fs-xs); font-weight:700;
+  text-transform:uppercase; letter-spacing:.06em; margin-bottom:var(--sp-2);
+}
+</style>
+</head>
+<body>
+
+<h1>Modus-Leisten — Entwürfe</h1>
+<p><b>Nichts davon ist eingebaut.</b> Das hier ist zum Ansehen und Entscheiden.
+Elias, dreimal gesagt: <i>„ich finds sehr unübersichtlich einfach 1000 modis nach
+links zu wischen, da braucht man was übersichtlicheres"</i>.</p>
+
+<p class="klein">⚠️ Es sind <b>zwei</b> Leisten, nicht eine. Dein Bildschirmfoto
+zeigte den Übungs-Streifen; die Themenreiter darüber sind eine eigene Leiste mit
+eigenen Zahlen. Beide stehen hier.</p>
+
+<h2>Was heute gemessen wurde</h2>
+<table>
+  <tr><th>Leiste</th><th>Reiter</th><th>Breite</th><th>Schirm</th><th>Bildschirme</th><th>ohne Wischen sichtbar</th></tr>
+  <tr><td>Themen</td><td class="zahl">13</td><td class="zahl">1345 px</td><td class="zahl">375 px</td><td class="zahl">3,6×</td><td class="zahl">3</td></tr>
+  <tr><td><b>Üben</b></td><td class="zahl">13</td><td class="zahl">2436 px</td><td class="zahl">375 px</td><td class="zahl warn">6,5×</td><td class="zahl warn">1</td></tr>
+</table>
+<p class="klein">Gemessen am 19.08.2026 mit
+<code>document.getElementById('uebModi').scrollWidth</code> bei 375 px Fensterbreite.
+Die Zahl an jedem Reiter kommt aus den echten Daten desselben Laufs.</p>
+
+<p><b>Der Befund ist nicht „beide sind zu lang".</b> Die Themen sind grenzwertig,
+der Übungs-Streifen ist kaputt: <b>ein einziger Knopf passt auf den Schirm.</b>
+Die Ursache ist unterschiedlich — bei den Themen die <b>Anzahl</b>, beim Üben die
+<b>Beschriftungslänge</b> (170–226 px je Knopf). Deshalb passt nicht dieselbe
+Lösung auf beide.</p>
+
+<!-- ================= LEISTE 1: THEMEN ================= -->
+<h2>Leiste 1 — Themen über der Satzkarte</h2>
+
+<div class="reihe">
+
+  <div class="karte">
+    <div class="kopf"><b>IST</b><span class="mess" id="m-ist-themen"></span></div>
+    <div class="rahmen">
+      <div class="streifen" id="ist-themen"></div>
+    </div>
+    <div class="urteil">Rollt waagerecht. <b>3 von 13</b> sichtbar, der Rest
+      hinter 970 px Wischweg.</div>
+  </div>
+
+  <div class="karte">
+    <div class="kopf"><b>A1 · Umbruch</b><span class="mess" id="m-a1"></span></div>
+    <div class="rahmen">
+      <div class="umbruch" id="a1"></div>
+    </div>
+    <div class="urteil">Nichts Neues zu bedienen, kein Wischen mehr — <b>alle 13
+      auf einen Blick</b>. Preis: die Satzkarte rutscht nach unten.</div>
+  </div>
+
+  <div class="karte">
+    <div class="kopf"><b>A2 · Große zuerst</b><span class="mess" id="m-a2"></span></div>
+    <div class="rahmen">
+      <div class="umbruch" id="a2"></div>
+    </div>
+    <div class="urteil">Die sechs größten stehen, der Rest kommt auf Antippen.
+      Ruhiger im Normalfall, ein Tipp mehr für die kleinen Themen.</div>
+  </div>
+
+  <div class="karte">
+    <div class="kopf"><b>A3 · Ein Wähler</b><span class="mess" id="m-a3"></span></div>
+    <div class="rahmen">
+      <div class="label">Thema</div>
+      <button class="waehler" id="a3-knopf">
+        <span>Alle</span><span class="wert">210 Sätze <i>▾</i></span>
+      </button>
+      <div class="blatt versteckt" id="a3-blatt"></div>
+    </div>
+    <div class="urteil">Am ruhigsten, aber das gewählte Thema ist das einzige,
+      das man noch sieht. <b>Der Vergleich der Größen geht verloren.</b></div>
+  </div>
+
+</div>
+
+<!-- ================= LEISTE 2: ÜBEN ================= -->
+<h2>Leiste 2 — Üben (die aus deinem Bildschirmfoto)</h2>
+
+<div class="reihe">
+
+  <div class="karte">
+    <div class="kopf"><b>IST</b><span class="mess" id="m-ist-ueb"></span></div>
+    <div class="rahmen">
+      <div class="label">Üben — selbst antworten statt nur lesen</div>
+      <div class="streifen" id="ist-ueb"></div>
+    </div>
+    <div class="urteil"><b>1 von 13</b> sichtbar. Um den letzten Modus zu
+      erreichen, muss man 2061 px wischen — <b>fünfeinhalb Schirmbreiten</b>.</div>
+  </div>
+
+  <div class="karte">
+    <div class="kopf"><b>B1 · Umbruch</b><span class="mess" id="m-b1"></span></div>
+    <div class="rahmen">
+      <div class="label">Üben</div>
+      <div class="umbruch" id="b1"></div>
+    </div>
+    <div class="urteil">Dasselbe Mittel wie A1 — hier aber <b>zu wenig</b>: die
+      langen Namen bleiben lang, es werden nur viele Zeilen daraus.</div>
+  </div>
+
+  <div class="karte">
+    <div class="kopf"><b>B2 · Raster, Kurzname</b><span class="mess" id="m-b2"></span></div>
+    <div class="rahmen">
+      <div class="label">Üben</div>
+      <div class="raster" id="b2"></div>
+    </div>
+    <div class="urteil">Der arabische Fachbegriff steht groß, die deutsche
+      Erklärung klein darunter. Alle 13 ohne Wischen — aber <b>443 px, also
+      praktisch genauso hoch wie B1</b>. Der Gewinn ist die Lesbarkeit, nicht
+      der Platz.</div>
+  </div>
+
+  <div class="karte">
+    <div class="kopf"><b>B3 · Wähler + Gruppen</b><span class="mess" id="m-b3"></span></div>
+    <div class="rahmen">
+      <div class="label">Üben</div>
+      <button class="waehler" id="b3-knopf">
+        <span>Modus wählen</span><span class="wert">13 Modi <i>▾</i></span>
+      </button>
+      <div class="blatt versteckt" id="b3-blatt"></div>
+    </div>
+    <div class="urteil">Gruppiert nach der Antwortart, die schon in den Daten
+      steht (<code>art</code>: tippen · mehrfach · wahl). Ein Tipp mehr, dafür
+      <b>steht nie etwas Halbes am Rand</b>.</div>
+  </div>
+
+</div>
+
+<h2>Was die Höhen sagen</h2>
+<table id="hoehen">
+  <tr><th>Entwurf</th><th>Höhe</th><th>gegen heute</th><th>Wischen</th><th>ohne Wischen sichtbar</th></tr>
+</table>
+<p class="klein">Vom Browser selbst abgelesen
+(<code>rahmen.getBoundingClientRect().height</code>), nicht aus der Zeichnung
+geschätzt. Die Tabelle darunter wird beim Öffnen der Seite aus denselben
+Messungen gebaut — klappst du A2, A3 oder B3 auf, zählt sie neu, und die
+Spalte „ohne Wischen sichtbar" springt auf den dann sichtbaren Stand.</p>
+
+<h2>Was ich empfehlen würde</h2>
+<p><b>Nicht eine Lösung für beide</b> — die Ursachen sind verschieden.</p>
+<p><b>Themen → A2.</b> Sechs Reiter stehen, sieben kommen auf Antippen: 146 px
+statt 74, und kein Wischen mehr. <b>A1</b> zeigt alle dauerhaft, kostet aber
+226 px — 152 px, die der Satzkarte fehlen.</p>
+<p class="klein">Genau genommen <b>A2 gleich A1 mit einem Deckel</b>:
+aufgeklappt misst es dieselben 226 px. Der Unterschied ist nicht die
+Bauweise, sondern was im Normalfall dasteht — und im Normalfall willst du
+die sechs großen Themen, nicht „Besitz" mit 6 Sätzen.</p>
+<p><b>Üben → B3.</b> Zugeklappt <b>101 px gegen heute 99</b>, also zwei
+Pixel, und dafür stehen alle 13 lesbar und gruppiert bereit statt hinter
+2061 px Wischweg.</p>
+<p>⚠️ <b>Aber der zugeklappte Stand ist der milde Vergleich.</b> Aufgeklappt
+ist B3 <b>884 px</b> hoch — mehr als ein Handybildschirm (rund 812 px). Du
+müsstest im Blatt scrollen, um die letzte Gruppe zu sehen. A3 hat dasselbe
+in kleiner: <b>617 px</b>. Das ist immer noch besser als heute, weil
+<b>senkrecht scrollen die Geste ist, die man ohnehin macht</b>, und weil
+nichts halb am Rand abgeschnitten steht. Aber „zwei Pixel" wäre nur die
+halbe Wahrheit.</p>
+<p class="klein">Wenn dir B3 zusagt, ist der naheliegende nächste Griff ein
+Deckel auf dem Blatt (etwa <code>max-height:60vh</code> mit eigenem
+Rollbereich), damit der Knopf beim Zumachen noch am selben Fleck steht.
+⛔ Das habe ich <b>nicht</b> eingebaut — es wäre schon die Ausführung, und
+die Entscheidung ist deine.</p>
+<p>⚠️ <b>Meine erste Empfehlung war B2, und die Messung hat sie widerlegt.</b>
+Ich hielt das Raster für die kompakte Lösung — gemessen sind es <b>443 px
+gegen 451 px bei B1</b>, also acht Pixel Unterschied. B2 liest sich besser als
+B1, aber es löst das Platzproblem nicht. Es bleibt hier stehen, falls dir
+Sichtbarkeit ohne zweiten Tipp mehr wert ist als die 344 px.</p>
+<p class="klein">⛔ Eingebaut wird nichts, bis du entschieden hast.</p>
+
+<script>
+/* Die echten Daten. Themenzahlen und Fragenzahlen sind am 19.08.2026 im
+   Browser aus der laufenden App gelesen, nicht ausgedacht. */
+const THEMEN = [
+  ['Alle', 210], ['Hinweiswörter', 62], ['Genitiv', 45], ['Nominalsatz', 34],
+  ['Kasus', 29], ['Adjektiv', 34], ['اَلْ', 28], ['إِضافة', 18],
+  ['Fragen', 23], ['Ortsangaben', 9], ['Besitz', 6], ['Schrift', 31],
+  ['Wortarten', 17]
+];
+
+/* voll = wie es heute dasteht · ar/de = der Vorschlag, den Namen zu teilen.
+   Der arabische Teil ist ZEICHENGLEICH aus js/uebung.js übernommen, samt
+   Taschkīl — nicht neu getippt. */
+const UEB = [
+  {voll:'مُبْتَدَأ / خَبَر — Satzteile',            ar:'مُبْتَدَأ / خَبَر',       de:'Satzteile',    n:423, art:'tippen'},
+  {voll:'نَعْت — Adjektiv zum Nomen',               ar:'نَعْت',                   de:'Adjektiv',     n:115, art:'tippen'},
+  {voll:'مُضَاف / مُضَاف إِلَيْهِ — Besitz',         ar:'مُضَاف / مُضَاف إِلَيْهِ', de:'Besitz',       n:54,  art:'tippen'},
+  {voll:'حَرْف جَرّ + مَجْرُور — Präposition',        ar:'حَرْف جَرّ + مَجْرُور',    de:'Präposition',  n:136, art:'tippen'},
+  {voll:'Alle مَجْرُور — Genitiv',                  ar:'مَجْرُور',                de:'alle, Genitiv',n:97,  art:'mehrfach'},
+  {voll:'Welcher Fall?',                            ar:'إِعْرَاب',                de:'Welcher Fall?',n:529, art:'wahl'},
+  {voll:'Welche Endung?',                           ar:'حَرَكَة',                 de:'Welche Endung?',n:507,art:'wahl'},
+  {voll:'اِسْم / فِعْل / حَرْف — Wortart',            ar:'اِسْم / فِعْل / حَرْف',    de:'Wortart',      n:765, art:'wahl'},
+  {voll:'Bestimmt?',                                ar:'مَعْرِفَة',               de:'Bestimmt?',    n:461, art:'wahl'},
+  {voll:'Welche Regel?',                            ar:'قَاعِدَة',                de:'Welche Regel?',n:382, art:'wahl'},
+  {voll:'مُذَكَّر / مُؤَنَّث — Geschlecht',           ar:'مُذَكَّر / مُؤَنَّث',      de:'Geschlecht',   n:460, art:'wahl'},
+  {voll:'هَذَا / هَذِهِ — Hinweiswort',              ar:'هَذَا / هَذِهِ',          de:'Hinweiswort',  n:140, art:'wahl'},
+  {voll:'صَغِيرٌ / صَغِيرَةٌ — weibliche Form',       ar:'صَغِيرٌ / صَغِيرَةٌ',      de:'weibliche Form',n:196,art:'wahl'}
+];
+
+/* ⚠️ Die arabischen Kurznamen für die vier Modi ohne arabischen Titel
+   (إِعْرَاب, حَرَكَة, مَعْرِفَة, قَاعِدَة) sind ein VORSCHLAG von mir, kein Beleg
+   aus dem Unterricht. Sie stehen hier, damit das Raster einheitlich aussieht —
+   ob sie bleiben, entscheidet Elias, nicht ich. Ohne sie zeigt die Kachel nur
+   den deutschen Namen, das funktioniert genauso. */
+
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function chip(text, n, gruen, aktiv){
+  return '<button class="chip' + (gruen ? ' gruen' : '') + (aktiv ? ' aktiv' : '')
+       + (n === 0 ? ' leer' : '') + '">' + esc(text) + '<i>' + n + '</i></button>';
+}
+
+/* --- IST --- */
+document.getElementById('ist-themen').innerHTML =
+  THEMEN.map(([t, n], i) => chip(t, n, false, i === 0)).join('');
+document.getElementById('ist-ueb').innerHTML =
+  UEB.map(m => chip(m.voll, m.n, true, false)).join('');
+
+/* --- A1 Umbruch --- */
+document.getElementById('a1').innerHTML =
+  THEMEN.map(([t, n], i) => chip(t, n, false, i === 0)).join('');
+
+/* --- A2 Große zuerst --- */
+const sortiert = THEMEN.map((x, i) => [...x, i]).sort((a, b) => b[1] - a[1]);
+const oben = sortiert.slice(0, 6), unten = sortiert.slice(6);
+document.getElementById('a2').innerHTML =
+  oben.map(([t, n, i]) => chip(t, n, false, i === 0)).join('')
+  + '<button class="mehr-knopf" id="a2-mehr">+' + unten.length + ' weitere</button>'
+  + '<span class="versteckt" id="a2-rest" style="display:none;">'
+  + unten.map(([t, n]) => chip(t, n, false, false)).join('') + '</span>';
+document.getElementById('a2-mehr').onclick = function(){
+  const r = document.getElementById('a2-rest');
+  const auf = r.style.display === 'none';
+  r.style.display = auf ? 'contents' : 'none';
+  this.textContent = auf ? 'weniger' : '+' + unten.length + ' weitere';
+  miss();
+};
+
+/* --- A3 Wähler --- */
+document.getElementById('a3-blatt').innerHTML =
+  THEMEN.map(([t, n], i) =>
+    '<button class="zeile' + (i === 0 ? ' aktiv' : '') + (n === 0 ? ' leer' : '') + '">'
+    + '<span class="links"><span class="ar" style="direction:ltr;">' + esc(t) + '</span></span>'
+    + '<span class="n">' + n + ' Sätze</span></button>').join('');
+document.getElementById('a3-knopf').onclick = () => {
+  document.getElementById('a3-blatt').classList.toggle('versteckt'); miss();
+};
+
+/* --- B1 Umbruch mit den VOLLEN Namen — bewusst, um zu zeigen, dass es nicht reicht --- */
+document.getElementById('b1').innerHTML =
+  UEB.map(m => chip(m.voll, m.n, true, false)).join('');
+
+/* --- B2 Raster mit Kurzname --- */
+document.getElementById('b2').innerHTML = UEB.map((m, i) =>
+  '<button class="kachel' + (i === 0 ? ' aktiv' : '') + (m.n === 0 ? ' leer' : '') + '">'
+  + '<span class="ar">' + esc(m.ar) + '</span>'
+  + '<span class="de">' + esc(m.de) + '<b>' + m.n + '</b></span></button>').join('');
+
+/* --- B3 Wähler mit Gruppen aus dem Feld `art` --- */
+const GRUPPEN = [
+  ['Antippen',          'tippen'],
+  ['Mehrere antippen',  'mehrfach'],
+  ['Auswählen',         'wahl']
+];
+document.getElementById('b3-blatt').innerHTML = GRUPPEN.map(([titel, art]) => {
+  const teil = UEB.filter(m => m.art === art);
+  if (!teil.length) return '';
+  return '<div class="gruppe">' + esc(titel) + '</div>'
+    + teil.map(m =>
+      '<button class="zeile' + (m.n === 0 ? ' leer' : '') + '">'
+      + '<span class="links"><span class="ar">' + esc(m.ar) + '</span>'
+      + '<span class="de">' + esc(m.de) + '</span></span>'
+      + '<span class="n">' + m.n + '</span></button>').join('');
+}).join('');
+document.getElementById('b3-knopf').onclick = () => {
+  document.getElementById('b3-blatt').classList.toggle('versteckt'); miss();
+};
+
+/* Jeder Entwurf sagt seine eigene Höhe — sonst ist „übersichtlicher" eine
+   Behauptung. Gemessen wird der RAHMEN, nicht die Leiste allein, damit
+   Beschriftung und Aufklapper mitzählen. */
+const ENTWUERFE = [
+  {mess:'m-ist-themen', nabe:'ist-themen', liste:'ist-themen', name:'Themen — heute',       leiste:'themen', ist:true},
+  {mess:'m-a1',         nabe:'a1',         liste:'a1',         name:'A1 · Umbruch',          leiste:'themen'},
+  {mess:'m-a2',         nabe:'a2',         liste:'a2',         name:'A2 · Große zuerst',     leiste:'themen', klappe:'a2-rest'},
+  {mess:'m-a3',         nabe:'a3-knopf',   liste:'a3-blatt',   name:'A3 · Ein Wähler',       leiste:'themen', klappe:'a3-blatt'},
+  {mess:'m-ist-ueb',    nabe:'ist-ueb',    liste:'ist-ueb',    name:'Üben — heute',          leiste:'ueb', ist:true},
+  {mess:'m-b1',         nabe:'b1',         liste:'b1',         name:'B1 · Umbruch',          leiste:'ueb'},
+  {mess:'m-b2',         nabe:'b2',         liste:'b2',         name:'B2 · Raster',           leiste:'ueb'},
+  {mess:'m-b3',         nabe:'b3-knopf',   liste:'b3-blatt',   name:'B3 · Wähler + Gruppen', leiste:'ueb', klappe:'b3-blatt'}
+];
+
+/* Sichtbar heißt: der Knopf steht ganz im Rahmen, ohne dass man wischt oder
+   etwas aufklappt. getClientRects().length ist 0, sobald ein Vorfahr
+   display:none hat — genau das ist bei zugeklapptem Blatt und bei A2s
+   verstecktem Rest der Fall. Deshalb zählt die Zahl von selbst richtig,
+   auch nachdem du etwas aufgeklappt hast. */
+function zaehleSichtbar(behaelter){
+  if (!behaelter) return 0;
+  const stuecke = behaelter.querySelectorAll('.chip, .kachel, .zeile');
+  const kasten = behaelter.getBoundingClientRect();
+  let n = 0;
+  stuecke.forEach(b => {
+    if (!b.getClientRects().length) return;
+    const r = b.getBoundingClientRect();
+    if (r.left >= kasten.left - 1 && r.right <= kasten.right + 1) n++;
+  });
+  return n;
+}
+
+function messeOffen(e){
+  const k = document.getElementById(e.klappe);
+  if (!k) return null;
+  const rahmen = document.getElementById(e.nabe).closest('.rahmen');
+  const warZu = !k.getClientRects().length;
+  if (!warZu) return Math.round(rahmen.getBoundingClientRect().height);
+  const istRest = e.klappe.endsWith('-rest');
+  if (istRest) k.style.display = 'contents'; else k.classList.remove('versteckt');
+  const h = Math.round(rahmen.getBoundingClientRect().height);
+  if (istRest) k.style.display = 'none'; else k.classList.add('versteckt');
+  return h;
+}
+
+function miss(){
+  const gemessen = {};
+  ENTWUERFE.forEach(e => {
+    const el = document.getElementById(e.nabe);
+    if (!el) return;
+    const rahmen = el.closest('.rahmen');
+    const h = Math.round(rahmen.getBoundingClientRect().height);
+    const rollt = el.scrollWidth > el.clientWidth + 1;
+    const faktor = rollt ? el.scrollWidth / el.clientWidth : 1;
+    const sicht = zaehleSichtbar(document.getElementById(e.liste));
+    const zu = !!document.getElementById(e.liste) && !document.getElementById(e.liste).getClientRects().length;
+    const offen = e.klappe ? messeOffen(e) : null;
+    gemessen[e.mess] = {h, rollt, faktor, sicht, zu, offen};
+    document.getElementById(e.mess).textContent =
+      h + ' px hoch' + (rollt ? ' · rollt ' + faktor.toFixed(1) + '×' : ' · rollt nicht');
+  });
+
+  /* Und dieselben Zahlen noch einmal nebeneinander — sonst muss man acht
+     Karten abfahren, um zwei Höhen zu vergleichen. */
+  const grund = {themen: gemessen['m-ist-themen'], ueb: gemessen['m-ist-ueb']};
+  const zeilen = ENTWUERFE.map(e => {
+    const g = gemessen[e.mess];
+    if (!g) return '';
+    const b = grund[e.leiste];
+    let delta = '—';
+    if (!e.ist && b) {
+      const d = g.h - b.h;
+      delta = (d > 0 ? '+' : d < 0 ? '−' : '±') + Math.abs(d) + ' px';
+    }
+    const wisch = g.rollt ? g.faktor.toFixed(1) + '× wischen' : 'kein Wischen';
+    const sicht = g.sicht + ' von 13' + (g.zu ? ' · zugeklappt' : '');
+    const offen = g.offen ? g.offen + ' px' : '—';
+    return '<tr><td>' + (e.ist ? '<b>' + e.name + '</b>' : e.name) + '</td>'
+      + '<td class="zahl">' + g.h + ' px</td>'
+      + '<td class="zahl' + (g.offen > 812 ? ' warn' : '') + '">' + offen + '</td>'
+      + '<td class="zahl' + (!e.ist && b && g.h > b.h * 2 ? ' warn' : '') + '">' + delta + '</td>'
+      + '<td class="zahl' + (g.rollt ? ' warn' : '') + '">' + wisch + '</td>'
+      + '<td class="zahl' + (g.sicht < 13 ? ' warn' : '') + '">' + sicht + '</td></tr>';
+  }).join('');
+
+  document.getElementById('hoehen').innerHTML =
+    '<tr><th>Entwurf</th><th>Höhe</th><th>aufgeklappt</th><th>gegen heute</th><th>Wischen</th>'
+    + '<th>ohne Wischen sichtbar</th></tr>' + zeilen;
+}
+miss();
+addEventListener('resize', miss);
+</script>
+</body>
+</html>
