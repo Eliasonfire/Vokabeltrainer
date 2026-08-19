@@ -161,3 +161,28 @@ function animateNumber(el, to, suffix, dur){
   })(performance.now());
 }
 
+
+/* ---------- Hoehe der unteren App-Leiste messen ----------
+   Elias am 19.08.2026: „hier ist so eine lücke und die sieht nicht schön
+   aus … damit wir mehr platz raus holen."
+
+   Die schwebenden Leisten sassen auf einer geratenen 78 px, die App-Leiste
+   ist 66 px hoch — 12 px Luft, die niemand wollte. Statt die Zahl zu
+   ersetzen, wird sie hier gemessen: ihre Hoehe haengt an Schriftgroesse und
+   Geraeterand, und beides kann sich aendern.
+
+   ⚠️ `getBoundingClientRect().height` enthaelt den Safe-Area-Rand bereits —
+   die Leiste rechnet ihn in ihr eigenes Padding. Wer hier nochmal
+   `--safe-bottom` addiert, baut die Luecke wieder ein. */
+(function leisteMessen(){
+  const leiste = document.querySelector('.bottombar');
+  if (!leiste) return;
+  const setzen = ()=>{
+    const h = Math.round(leiste.getBoundingClientRect().height);
+    if (h > 0) document.documentElement.style.setProperty('--leiste-unten', h + 'px');
+  };
+  setzen();
+  addEventListener('resize', setzen);
+  /* Nach dem Laden der Schriften kann sie eine Spur anders sein. */
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(setzen);
+})();
