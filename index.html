@@ -1800,6 +1800,89 @@ main{
 /* Ein Modus ohne Fragen wird nicht versteckt, nur zurückgenommen: Elias soll
    sehen, DASS es ihn gibt, und dass gerade nichts dazu da ist. */
 .ueb-modus.leer{opacity:.42;}
+/* =====================================================================
+   MODUS-WÄHLER — Elias' Entscheidung vom 19.08.2026: A3 und B3
+
+   Sein Grund war nicht die heutige Größe, sondern die künftige: „gerade auch
+   für die zukunft wenn mehr und mehr sachen dazu kommen ist das die beste
+   lösung. es ist auch sehr übersichtlich."
+
+   ⭐ Das trifft den Kern der alten Leisten: sie waren waagerechte Streifen mit
+   `overflow-x:auto`. Jeder neue Modus verlängerte den Wischweg, ohne dass
+   irgendwo mehr zu sehen war — gemessen 2061 px bei 13 Modi. Ein Blatt wächst
+   dagegen nach UNTEN, und senkrecht zu rollen ist die Geste, die man ohnehin
+   macht.
+
+   ⛔ DER DECKEL IST PFLICHT, NICHT FEINSCHLIFF
+   Aufgeklappt maß B3 in der Entwurfsseite 884 px — mehr als sein Handy hoch
+   ist (375 × 812). Ohne Begrenzung stünde die letzte Gruppe unter dem
+   Bildschirmrand, und beim Zumachen wäre der Knopf weggesprungen. Deshalb
+   `max-height` mit eigenem Rollbereich: das Blatt rollt in sich, die Seite
+   nicht.
+   ===================================================================== */
+.waehler-block{margin-bottom:var(--sp-4);}
+.waehler-block .ueb-label{margin-bottom:var(--sp-2);}
+
+.waehler{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);
+  width:100%;background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--r-2);padding:var(--sp-3) var(--sp-4);
+  color:var(--text);font-size:var(--fs-md);font-weight:700;
+  font-family:var(--font-ui);cursor:pointer;text-align:left;
+  transition:border-color var(--dur-2) ease;
+}
+.waehler:hover{border-color:var(--border-strong);}
+.waehler .wert{
+  display:flex;align-items:baseline;gap:8px;min-width:0;
+  color:var(--text-dim);font-weight:700;
+}
+/* Der gewählte Name kann arabisch sein — isolieren, sonst wandert bei
+   gemischtem Text die Zahl daneben an die falsche Seite. */
+.waehler .wert b{font-weight:700;unicode-bidi:isolate;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap;}
+.waehler .wert i{font-style:normal;font-size:var(--fs-xs);color:var(--text-faint);
+  font-variant-numeric:tabular-nums;flex:0 0 auto;}
+.waehler .pfeil{flex:0 0 auto;color:var(--text-faint);font-size:var(--fs-xs);
+  transition:transform var(--dur-2) ease;}
+.waehler[aria-expanded="true"] .pfeil{transform:rotate(180deg);}
+
+.blatt{
+  margin-top:var(--sp-2);border:1px solid var(--border);border-radius:var(--r-2);
+  background:var(--surface-1);overflow-y:auto;overscroll-behavior:contain;
+  max-height:min(60vh,520px);
+}
+.blatt .gruppe{
+  font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.06em;
+  color:var(--text-faint);font-weight:700;
+  padding:var(--sp-3) var(--sp-4) var(--sp-1);
+  position:sticky;top:0;background:var(--surface-1);
+}
+.blatt .zeile{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);
+  width:100%;background:transparent;border:0;border-top:1px solid var(--border);
+  padding:var(--sp-3) var(--sp-4);cursor:pointer;font-family:var(--font-ui);
+  color:var(--text-dim);font-size:var(--fs-sm);text-align:left;
+}
+.blatt .gruppe + .zeile{border-top:0;}
+.blatt .zeile:first-child{border-top:0;}
+.blatt .zeile .links{display:flex;flex-direction:column;gap:1px;min-width:0;}
+.blatt .zeile .ar{
+  color:var(--text);font-weight:700;unicode-bidi:isolate;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.blatt .zeile .de{font-size:var(--fs-xs);color:var(--text-faint);font-weight:700;}
+.blatt .zeile .n{
+  font-size:var(--fs-xs);color:var(--text-faint);
+  font-variant-numeric:tabular-nums;flex:0 0 auto;
+}
+/* Ein Modus ohne Fragen wird nicht versteckt, nur zurückgenommen — dieselbe
+   Auflage wie bei der alten Leiste: er soll sehen, dass es ihn gibt. */
+.blatt .zeile.leer{opacity:.42;}
+.blatt .zeile.aktiv{background:var(--red-wash);}
+.blatt .zeile.aktiv .ar{color:var(--red-bright);}
+.blatt.ueben .zeile.aktiv{background:var(--green-wash);}
+.blatt.ueben .zeile.aktiv .ar{color:var(--green);}
+
 
 .ueb-box{
   background:var(--surface-1);border:1px solid var(--border);
@@ -1905,6 +1988,24 @@ main{
 /* Platz, damit der letzte Inhalt des Satz-Bildschirms nicht hinter der festen
    Leiste verschwindet. Nur dieser Bildschirm braucht das. */
 #screen-sentences{padding-bottom:96px;}
+/* Elias am 19.08.2026 mit Bildschirmfoto: „diese lücke hier kannst du auch
+   viel kleiner machen, wir brauchen diesen platz."
+
+   Gemessen unter der Überschrift „Satz-Modus": 12 px Innenabstand plus 20 px
+   Außenabstand = 32 px leere Fläche. Hier bleiben 12 px.
+
+   ⛔ Bewusst NUR auf diesem Bildschirm. `.screen-header` trägt alle zehn
+   Bildschirme; dort ist der Abstand kein Problem, sondern Luft. Auf dem
+   Satz-Modus stehen dagegen Kopf, Grammatik-Schalter, zwei Wähler und die
+   Satzkarte übereinander — und genau um diesen Platz ging die ganze
+   Umstellung auf A3/B3. */
+#screen-sentences .screen-header{
+  margin-bottom:var(--sp-2);
+  padding-bottom:var(--sp-1);
+}
+
+
+
 .sent-nav span{color:var(--text-dim);font-size:var(--fs-sm);font-weight:700;font-variant-numeric:tabular-nums;}
 
 .gram-underline{
@@ -3529,17 +3630,16 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         <h2>Satz-Modus</h2>
       </div>
 
-      <div class="setting-row" style="padding:var(--sp-3) var(--sp-4);margin-bottom:var(--sp-3);">
-        <div>
-          <div class="setting-title" style="font-size:var(--fs-sm);">Grammatik-Hinweise</div>
-          <div class="setting-sub">Erklärungen aus dem Unterricht, antippen für Details</div>
-        </div>
-        <button class="switch" id="toggleGrammarHighlight" aria-label="Grammatik-Hinweise umschalten"><span class="knob"></span></button>
-      </div>
 
       <!-- Themenfilter. Die Zahl an jedem Reiter kommt aus den Daten und sagt
            vorher, wie groß das Thema ist — siehe SATZ_THEMEN in grammar-data.js. -->
-      <div class="sent-themen" id="sentThemen"></div>
+      <div class="waehler-block">
+        <button class="waehler" id="themenWaehler" type="button" aria-expanded="false" aria-controls="themenBlatt">
+          <span class="wert"><b id="themenWert">Alle</b><i id="themenZahl"></i></span>
+          <span class="pfeil">▾</span>
+        </button>
+        <div class="blatt hidden" id="themenBlatt"></div>
+      </div>
 
       <!-- Übungsmodi (js/uebung.js). Elias' Wunsch vom 29.07.2026, und auf
            seine Entscheidung hier IM Satz-Modus statt auf einem eigenen
@@ -3548,7 +3648,11 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
            bewusst gezeigt statt versteckt. -->
       <div class="ueb-leiste">
         <div class="ueb-label">Üben — selbst antworten statt nur lesen</div>
-        <div class="ueb-modi" id="uebModi"></div>
+        <button class="waehler" id="uebWaehler" type="button" aria-expanded="false" aria-controls="uebBlatt">
+          <span class="wert"><b id="uebWert">Modus wählen</b><i id="uebZahl"></i></span>
+          <span class="pfeil">▾</span>
+        </button>
+        <div class="blatt ueben hidden" id="uebBlatt"></div>
       </div>
 
       <div class="ueb-box hidden" id="uebBox">
@@ -3906,6 +4010,17 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
       <div class="screen-header">
         <button class="icon-btn" data-back aria-label="Zurück"><svg class="ic"><use href="#ic-left"/></svg></button>
         <h2>Einstellungen</h2>
+      </div>
+      <!-- Grammatik-Hinweise: am 19.08.2026 aus dem Satz-Modus hierher
+           verschoben. Elias: „das kannst du in die einstellungen verschieben."
+           Auf dem Satz-Modus kostete die Zeile 78 px plus Abstand — Platz,
+           den dort die Satzkarte braucht. -->
+      <div class="setting-row">
+        <div>
+          <div class="setting-title">Grammatik-Hinweise</div>
+          <div class="setting-sub">Erklärungen aus dem Unterricht, antippen für Details</div>
+        </div>
+        <button class="switch" id="toggleGrammarHighlight" aria-label="Grammatik-Hinweise umschalten"><span class="knob"></span></button>
       </div>
       <div class="setting-row">
         <div>
