@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Neun Befunde</title>
+<style>
+/* Dieselbe Palette wie verschmelzung.html und wortmarke-entwuerfe.html —
+   bewusst eine Familie, nicht fuenf verschiedene Seiten. OLED-Schwarz,
+   einthemig: die App ist es auch, und Elias liest nachts am Handy. */
+:root{
+  --bg:#0a0a0b; --karte:#141416; --karte2:#1c1c1f; --rand:#2a2a2e; --rand2:#3a3a40;
+  --text:#f2f2f3; --dim:#a8a8ae; --faint:#76767c;
+  --rot:#ff4d5e; --rot-w:rgba(255,77,94,.12);
+  --gruen:#2fd07a; --gruen-w:rgba(47,208,122,.12);
+  --gelb:#f5b942; --gelb-w:rgba(245,185,66,.12);
+  --blau:#5aa9ff; --blau-w:rgba(90,169,255,.12);
+  --ar:1.5em;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  padding:20px 16px 80px;}
+.huelle{max-width:940px;margin:0 auto}
+h1{font-size:1.5rem;margin:0 0 6px;text-wrap:balance}
+.vorwort{color:var(--dim);font-size:.94rem;margin:0 0 6px}
+.vorwort b{color:var(--text)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em}
+
+/* Die drei Abschnitte sind keine Deko: sie sagen, WER am Zug ist. */
+.abschnitt{margin:30px 0 0}
+.abschnitt > header{border-block-end:1px solid var(--rand);padding-block-end:8px;margin-block-end:18px}
+.abschnitt h2{margin:0;font-size:1.05rem}
+.abschnitt p{margin:4px 0 0;color:var(--faint);font-size:.88rem}
+.du h2{color:var(--gelb)} .lehrer h2{color:var(--blau)} .fertig h2{color:var(--gruen)}
+
+.fall{background:var(--karte);border:1px solid var(--rand);border-radius:14px;
+  padding:16px;margin:0 0 18px}
+.fall.beantwortet{border-color:var(--rand2)}
+.fkopf{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.nr{font-size:.72rem;color:var(--faint);text-transform:uppercase;letter-spacing:.07em}
+.fkopf h3{margin:2px 0 0;font-size:1.22rem;text-wrap:balance}
+.rid{font-size:.76rem;color:var(--faint);font-family:ui-monospace,monospace;margin:3px 0 0}
+.fall > p{margin:12px 0 0;color:var(--dim);font-size:.92rem}
+.fall > p b,.fall li b{color:var(--text)}
+.fall ul{margin:10px 0 0;padding-inline-start:20px;color:var(--dim);font-size:.9rem}
+.fall li{margin:0 0 5px}
+
+.merk{border-radius:10px;padding:11px 13px;margin:13px 0 0;font-size:.89rem}
+.merk h4{margin:0 0 4px;font-size:.72rem;text-transform:uppercase;letter-spacing:.07em}
+.merk p{margin:0;color:var(--dim)}
+.fund{background:var(--gruen-w);border:1px solid var(--gruen)} .fund h4{color:var(--gruen)}
+.warn{background:var(--gelb-w);border:1px solid var(--gelb)} .warn h4{color:var(--gelb)}
+.stop{background:var(--rot-w);border:1px solid var(--rot)} .stop h4{color:var(--rot)}
+
+.zitat{border-inline-start:2px solid var(--rand2);padding:2px 0 2px 12px;margin:12px 0 0;
+  color:var(--dim);font-size:.9rem}
+.zitat b{color:var(--text)}
+
+.tab{overflow-x:auto;margin:13px 0 0}
+table{border-collapse:collapse;width:100%;font-size:.86rem;font-variant-numeric:tabular-nums}
+th,td{text-align:start;padding:6px 10px 6px 0;border-block-end:1px solid var(--rand);vertical-align:top}
+th{color:var(--faint);font-weight:600;font-size:.76rem;text-transform:uppercase;letter-spacing:.05em}
+td b{color:var(--text)}
+tr:last-child td{border-block-end:0}
+
+.wahl{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0 0}
+.w{background:var(--karte2);border:1px solid var(--rand2);color:var(--dim);
+  border-radius:999px;padding:8px 14px;font:inherit;font-size:.84rem;font-weight:600;cursor:pointer;
+  text-align:start}
+.w:hover{border-color:var(--faint);color:var(--text)}
+.w:focus-visible{outline:2px solid var(--blau);outline-offset:2px}
+.w.an{background:var(--gruen-w);border-color:var(--gruen);color:var(--gruen)}
+.w .tipp{display:block;font-weight:400;font-size:.78rem;color:var(--faint);margin-block-start:2px}
+.w.an .tipp{color:var(--gruen)}
+.empf{display:inline-block;font-size:.66rem;font-weight:700;letter-spacing:.05em;
+  background:var(--blau-w);color:var(--blau);border:1px solid var(--blau);
+  border-radius:999px;padding:1px 6px;margin-inline-start:6px;vertical-align:1px}
+
+.notiz{display:block;margin-block-start:12px;font-size:.79rem;color:var(--faint)}
+.notiz textarea{display:block;width:100%;margin-block-start:5px;background:var(--karte2);
+  border:1px solid var(--rand);border-radius:8px;color:var(--text);
+  padding:8px 10px;font:inherit;font-size:.88rem;resize:vertical}
+.notiz textarea:focus-visible{outline:2px solid var(--blau);outline-offset:1px}
+
+[lang=ar]{font-size:var(--ar);line-height:1.9}
+
+.fuss{background:var(--karte);border:1px solid var(--rand);border-radius:14px;padding:16px;margin-block-start:30px}
+.fuss h2{margin:0 0 8px;font-size:1.1rem}
+.stand{color:var(--dim);font-size:.9rem;margin:0 0 10px}
+#ausgabe{width:100%;height:140px;background:var(--bg);border:1px solid var(--rand);
+  border-radius:8px;color:var(--text);padding:10px;font:12px/1.5 ui-monospace,monospace;resize:vertical}
+.knoepfe{display:flex;gap:8px;margin-block-start:10px;flex-wrap:wrap}
+.kopier{background:var(--rot);border:0;color:#fff;border-radius:999px;padding:9px 16px;
+  font:inherit;font-weight:700;cursor:pointer}
+.zuruecksetzen{background:transparent;border:1px solid var(--rand2);color:var(--faint);
+  border-radius:999px;padding:9px 16px;font:inherit;cursor:pointer}
+.kopier:focus-visible,.zuruecksetzen:focus-visible{outline:2px solid var(--blau);outline-offset:2px}
+</style></head><body><div class="huelle">
+
+<h1>Neun Befunde aus der Nacht</h1>
+<p class="vorwort">Das sind die Punkte des Nachtplans, bei denen <b>gemessen und
+nichts geändert</b> wurde. Gearbeitet zwischen <b>05:21 und 07:23</b> am
+19.08.2026. An der App ist von allem hier <b>nichts</b> angekommen — genau das
+war der Auftrag.</p>
+<p class="vorwort">Fünf brauchen eine Entscheidung von dir, eine braucht deinen
+Lehrer, drei sind abgeschlossen und stehen nur zum Nachlesen da.</p>
+
+<!-- ══════════ TEIL 1 ══════════ -->
+<section class="abschnitt du">
+  <header>
+    <h2>Fünf brauchen deine Entscheidung</h2>
+    <p>Jeweils mit den Zahlen, aus denen die Wahl folgt. Wo ich einen Vorschlag habe, steht er dabei.</p>
+  </header>
+
+  <!-- ── Punkt 2 ── -->
+  <article class="fall" data-fall="P2">
+    <div class="fkopf">
+      <div>
+        <div class="nr">Nachtplan Punkt 2</div>
+        <h3>Dein Zweifel war berechtigt — aber der Widerspruch liegt beim Lehrer</h3>
+        <div class="rid">mudaf-ohne-al-01</div>
+      </div>
+    </div>
+
+    <p>Du hattest gesagt: <i>„ich weiß nicht ob das so genau stimmt, müsste man
+    nochmals nachgucken"</i>. Der Regeltext gibt den Lehrer <b>wörtlich richtig</b>
+    wieder — die Zeitmarke in <code>grammar-data.js</code> stimmt auf die Sekunde.</p>
+
+    <div class="zitat">Folge 07, 12:25 — <b>„Ähm, der Mudaf, er ist bestimmt, weil
+    er jemandem gehört."</b></div>
+
+    <div class="merk stop">
+      <h4>Der Widerspruch — derselbe Lehrer, dieselbe Folge, vier Minuten früher</h4>
+      <p>Bei 08:42 sagt er: <b>„kitabu mudarisin ist ja unbestimmt, hier heißt das
+      buch eines lehrers"</b>. Die Regel behauptet pauschal, der
+      <span lang="ar">مُضَاف</span> sei bestimmt — das gilt aber nur, wenn der
+      <span lang="ar">مُضَاف إِلَيْهِ</span> bestimmt ist. Bei
+      <span lang="ar">كِتَابُ مُدَرِّسٍ</span> ist er es nicht.</p>
+    </div>
+
+    <p>Warum das bisher niemandem aufgefallen ist: die Beispiele der Regel
+    (<span lang="ar">بَيْتُ حَامِدٍ</span>) sind <b>Eigennamen</b> — die sind
+    immer bestimmt. Die Lücke kann sich in den eigenen Beispielen gar nicht zeigen.</p>
+
+    <div class="wahl">
+      <button class="w" data-w="A" type="button">A — so lassen
+        <span class="tipp">gibt den Lehrer wörtlich wieder</span></button>
+      <button class="w" data-w="B" type="button">B — Bedingung ergänzen<span class="empf">mein Vorschlag</span>
+        <span class="tipp">„…wenn der مُضَاف إِلَيْهِ bestimmt ist", dazu sein Gegenbeispiel</span></button>
+    </div>
+
+    <div class="merk warn">
+      <h4>Was ich nicht prüfen konnte</h4>
+      <p><code>source2</code> verweist auf Madina-Schlüssel Band 1, Lektion 5,
+      Seite 18. Von Band 1 gibt es kein Digitalisat im Projekt. Der Zweitbeleg ist
+      damit <b>ungeprüft</b> — nicht widerlegt.</p>
+    </div>
+
+    <label class="notiz">Notiz
+      <textarea rows="2" placeholder="…"></textarea></label>
+  </article>
+
+  <!-- ── Punkt 3 ── -->
+  <article class="fall" data-fall="P3">
+    <div class="fkopf">
+      <div>
+        <div class="nr">Nachtplan Punkt 3</div>
+        <h3>Die unscharfe Stelle ist „nur eine einfache Endung"</h3>
+        <div class="rid">idafa-erkennen-01</div>
+      </div>
+    </div>
+
+    <p>Du wolltest die Regel <i>„etwas präziser oder ausgeschmückter"</i>. Der Beleg
+    stimmt wörtlich (Folge 08, 22:59: <b>„Es muss Modaf sein. Anders, anders geht's
+    gar nicht."</b>), und der Popup-Schnitt sitzt sauber: von 671 Zeichen sind
+    <b>247 sichtbar</b>, ohne Abbruch mitten im Satz. Das war meine erste Vermutung
+    und sie war falsch.</p>
+
+    <div class="merk warn">
+      <h4>Wo es wirklich unpräzise ist</h4>
+      <p>Der Lehrer stockt an dieser Stelle selbst („hat nur ein, hat nur ein, äh,
+      Endung") — <b>die Regel hat seine Unschärfe übernommen</b>. Es geht um das
+      <b>fehlende Tanwin</b>, nicht um „einfach". Und es gilt in <b>allen drei
+      Fällen</b>: <span lang="ar">مَرْفُوع</span>, <span lang="ar">مَنْصُوب</span>,
+      <span lang="ar">مَجْرُور</span> — immer ohne Tanwin. Die Regel nennt nur
+      Damma, und wer sie so liest, sucht später vergeblich danach.</p>
+    </div>
+
+    <div class="wahl">
+      <button class="w" data-w="A" type="button">A — nah am Lehrer, nur geschärft
+        <span class="tipp">„kein Tanwin" statt „einfache Endung" · 232 Zeichen im Popup</span></button>
+      <button class="w" data-w="B" type="button">B — mit dem zweiten Merkmal
+        <span class="tipp">zusätzlich „ohne اَلْ" · 246 Zeichen im Popup</span></button>
+    </div>
+
+    <div class="merk stop">
+      <h4>Der Unterschied, und warum du entscheidest</h4>
+      <p>Fassung B nimmt ein Merkmal auf, das der Lehrer <b>an dieser Stelle nicht
+      nennt</b> — es steht in <code>mudaf-ohne-al-01</code> (Folge 07, 12:25). Es
+      ist also belegt, aber aus einer anderen Stunde.</p>
+    </div>
+
+    <label class="notiz">Notiz
+      <textarea rows="2" placeholder="…"></textarea></label>
+  </article>
+
+  <!-- ── Punkt 4 ── -->
+  <article class="fall" data-fall="P4">
+    <div class="fkopf">
+      <div>
+        <div class="nr">Nachtplan Punkt 4</div>
+        <h3>Nicht die Regel kommt zu früh — ihr Beleg</h3>
+        <div class="rid">mubtada-khabar-01</div>
+      </div>
+    </div>
+
+    <p>Du hattest vermutet, die Regel komme nach Kapitel 9 besser. Verschmelzen mit
+    <code>mutabaqa-genus-01</code> fällt weg, und zwar mit Zahlen:</p>
+
+    <div class="tab"><table>
+      <tr><th></th><th>mubtada-khabar-01</th><th>mutabaqa-genus-01</th></tr>
+      <tr><td>Kategorie</td><td><b>Nominalsatz</b></td><td><b>Adjektiv</b></td></tr>
+      <tr><td>markierte Sätze</td><td>7</td><td>8</td></tr>
+      <tr><td>gemeinsame Sätze</td><td colspan="2"><b>0 — bei 15 Markierungen</b></td></tr>
+      <tr><td>markiert wird</td><td>das Subjekt</td><td>das Prädikat in weiblicher Form</td></tr>
+    </table></div>
+
+    <div class="merk fund">
+      <h4>Der eigentliche Fund</h4>
+      <p>Der Regeltext <b>nennt die bessere Stelle selbst</b> — Folge 14, 45:15 —
+      und schreibt dazu, in Folge 03 seien die Begriffe „nur angekündigt" worden.
+      Im Datenfeld <code>source</code> steht trotzdem <b>Folge 3 @ 13:57</b>. Wer
+      auf den Beleg tippt, landet bei der Ankündigung statt bei der Definition.
+      <b>Das ist vermutlich der Grund für deinen Eindruck</b> — im Datenfeld kommt
+      sie tatsächlich zu früh.</p>
+    </div>
+
+    <div class="wahl">
+      <button class="w" data-w="A" type="button">A — Beleg auf Folge 14 @ 45:15<span class="empf">mein Vorschlag</span>
+        <span class="tipp">Folge 03 bleibt als Zweitbeleg · löst die Ursache</span></button>
+      <button class="w" data-w="B" type="button">B — behalten wie sie ist
+        <span class="tipp">Kapitel-3-Stoff, steht in Schlüssel 2 · Beleg bleibt irreführend</span></button>
+      <button class="w" data-w="C" type="button">C — von den Karteikarten nehmen
+        <span class="tipp">bleibt im Satzmodus</span></button>
+    </div>
+
+    <div class="merk stop">
+      <h4>C wäre der teuerste Irrtum</h4>
+      <p>Die Regel trägt die Kategorie „Nominalsatz" mit — 7 Sätze hängen daran.
+      Fällt sie von den Karteikarten, bleibt <span lang="ar">مُبْتَدَأ</span> im
+      Satzmodus stehen, <b>ohne dass er je erklärt wurde</b>.</p>
+    </div>
+
+    <div class="merk warn">
+      <h4>Nebenbefund: Whisper ist an dieser Stelle unbrauchbar</h4>
+      <p><code>folge-14.srt</code> enthält von 45:00 bis 45:24 <b>fünfzehnmal
+      denselben Satz</b> — die bekannte Whisper-Schleife. Der Beleg steht nur im
+      rohen YouTube-Untertitel. Wer nur Whisper prüft, hält ihn für erfunden.</p>
+    </div>
+
+    <label class="notiz">Notiz
+      <textarea rows="2" placeholder="…"></textarea></label>
+  </article>
+
+  <!-- ── Punkt 16 ── -->
+  <article class="fall" data-fall="P16">
+    <div class="fkopf">
+      <div>
+        <div class="nr">Nachtplan Punkt 16</div>
+        <h3>Die Größenskala kippt bei 700 px — auf deinem Handy aber nie</h3>
+      </div>
+    </div>
+
+    <p>Schritt 1 und 2 des Gestaltungsdurchgangs sind nachgeprüft erledigt:
+    Schriften liegen <b>lokal</b> als <code>@font-face</code> (28 Einträge im
+    Cache), der zu blasse Grauton ist weg. Schritt 3 misst, wo Werte am
+    Token-System vorbeigehen:</p>
+
+    <div class="tab"><table>
+      <tr><th>gemessen</th><th>Zahl</th></tr>
+      <tr><td><code>font-size</code> ohne Token</td><td><b>50 Stellen, 37 verschiedene Werte</b></td></tr>
+      <tr><td>Abstände ohne Token</td><td>44 — davon 37 außerhalb des Rasters</td></tr>
+      <tr><td>davon wirklich Kandidaten</td><td><b>9</b> (die Zwischenwerte 3, 5, 6, 9 px)</td></tr>
+    </table></div>
+
+    <p>Die übrigen sind berechtigt — <code>gap:2px</code> liegt <b>unter</b> der
+    Rasterauflösung, <code>padding-bottom:96px</code> ist der Platz für die
+    Navigationsleiste. Gelesen, nicht nur gezählt.</p>
+
+    <div class="merk fund">
+      <h4>Der eigentliche Fund</h4>
+      <p><code>1.35rem</code> steht sechsmal fest im CSS — und ab 700 px ist
+      <code>--fs-xl</code> <b>genau 1.35rem</b>. Bei 375 px sind die
+      hartkodierten Stellen <b>größer</b> (21,6 gegen 20 px), bei 900 px
+      <b>gleich groß</b>: dort tragen 35 Elemente denselben Wert, darunter neun
+      <code>h2</code> und sieben Kacheln, die auf dem Handy noch verschieden groß
+      sind. Das Verhältnis kippt beim Breitenwechsel, unbeabsichtigt.</p>
+    </div>
+
+    <div class="merk warn">
+      <h4>Und der Maßstab dazu</h4>
+      <p>Dein Handy hat <b>375 px</b>. Dort greift die Media Query <b>nie</b>. Der
+      Befund ist echt und messbar — für deinen Alltag ohne Wirkung.</p>
+    </div>
+
+    <div class="wahl">
+      <button class="w" data-w="a" type="button">a — nichts tun
+        <span class="tipp">auf deinem Gerät ändert sich ohnehin nichts</span></button>
+      <button class="w" data-w="b" type="button">b — die vier arabischen Stellen auf einen Token
+        <span class="tipp">Wartbarkeit, kein sichtbarer Unterschied</span></button>
+      <button class="w" data-w="c" type="button">c — zusätzlich --fs-xl auf 1.4rem
+        <span class="tipp">löst das Kippen · sichtbar nur ab 700 px</span></button>
+    </div>
+
+    <div class="merk stop">
+      <h4>Warum ich es nicht einfach umgebaut habe</h4>
+      <p>Die sechs Stellen meinen <b>nicht dasselbe</b>: vier sind arabisch, eine
+      ist Fließtext, und eine ist ein Symbol mit <b>deiner eigenen Begründung</b>
+      im Kommentar („einen Tick größer"). Ein pauschaler Umbau hätte genau diese
+      Entscheidung von dir überschrieben.</p>
+    </div>
+
+    <label class="notiz">Notiz
+      <textarea rows="2" placeholder="…"></textarea></label>
+  </article>
+
+  <!-- ── Punkt 18 ── -->
+  <article class="fall" data-fall="P18">
+    <div class="fkopf">
+      <div>
+        <div class="nr">Nachtplan Punkt 18</div>
+        <h3>34 Regeln ohne gedruckten Zweitbeleg — aber nur 22 davon sind erreichbar</h3>
+      </div>
+    </div>
+
+    <p>Die deutschen Madina-Schlüssel als vierte Regelquelle: <b>61 von 95</b> Regeln
+    haben schon einen gedruckten Zweitbeleg. Die fehlenden 34 zerfallen in zwei sehr
+    verschiedene Hälften:</p>
+
+    <div class="tab"><table>
+      <tr><th></th><th>Zahl</th><th></th></tr>
+      <tr><td>mit Kapitelangabe</td><td><b>22</b></td><td>in Band 1 nachschlagbar — die Lektionsnummer führt direkt zur Seite</td></tr>
+      <tr><td>ohne Kapitelangabe</td><td><b>12</b></td><td>haben <b>gar kein</b> <code>source</code> — reine Buchregeln ohne Videostelle</td></tr>
+    </table></div>
+
+    <div class="tab"><table>
+      <tr><th>Kapitel</th><th>1</th><th>3</th><th>4</th><th>5</th><th>6</th><th>9</th><th>10</th></tr>
+      <tr><td>Regeln</td><td>2</td><td>3</td><td>4</td><td>3</td><td>2</td><td>4</td><td>4</td></tr>
+    </table></div>
+
+    <div class="merk stop">
+      <h4>Warum ich die 22 nicht abgearbeitet habe</h4>
+      <p>Ein Beleg heißt: die Seite <b>rendern, lesen, abschreiben</b>. Das ist bei
+      22 Regeln Stundenarbeit — und es darf nicht abgekürzt werden. In Band 3
+      beginnen <b>38 % der arabischen Wörter mit einer Ḥaraka</b>, was im Arabischen
+      unmöglich ist: die PDF gibt die Zeichen in falscher Reihenfolge heraus. Wer
+      maschinell übernimmt, trägt Unsinn ein, der plausibel aussieht.</p>
+    </div>
+
+    <p>Die Quelle ist stark: der deutsche Schlüssel stammt von <b>Dr. V. Abdur
+    Rahim</b> selbst — dem Autor der Madina-Bücher —, übersetzt von Lina Nang. Laut
+    Vorwort erklärt jede Lektion zuerst alle Regeln, dann die Übungen, dann das
+    Vokabular. <b>Dieselbe Struktur wie deine Regeln.</b></p>
+
+    <div class="wahl">
+      <button class="w" data-w="a" type="button">a — alle 22 nachtragen
+        <span class="tipp">Stundenarbeit, dafür jede Regel mit Beleg vom Buchautor</span></button>
+      <button class="w" data-w="b" type="button">b — nur deine aktuellen Kapitel
+        <span class="tipp">kleiner Zuschnitt, sofort nützlich</span></button>
+      <button class="w" data-w="c" type="button">c — so lassen
+        <span class="tipp">61 von 95 haben einen, die Videobelege stehen ohnehin</span></button>
+    </div>
+
+    <label class="notiz">Notiz
+      <textarea rows="2" placeholder="…"></textarea></label>
+  </article>
+</section>
+
+<!-- ══════════ TEIL 2 ══════════ -->
+<section class="abschnitt lehrer">
+  <header>
+    <h2>Eine braucht deinen Lehrer</h2>
+    <p>Kein neuer Punkt — die elf Formen gehören zu den sechs Fachbegriffen, die ohnehin schon auf dich warten.</p>
+  </header>
+
+  <article class="fall" data-fall="P15">
+    <div class="fkopf">
+      <div>
+        <div class="nr">Nachtplan Punkt 15</div>
+        <h3>16 Taschkīl-Lücken in 8 Regeln — und keine davon steht im Bestand</h3>
+      </div>
+    </div>
+
+    <p>Gemessen über alle 95 Regeln: <b>1.215 arabische Wörter</b> in Name und
+    Kurzerklärung, darin <b>16 Lücken in 8 Regeln</b>. Nichts vokalisiert —
+    gemeldet, nicht gefüllt.</p>
+
+    <div class="tab"><table>
+      <tr><th>Regel</th><th>fehlt bei</th></tr>
+      <tr><td><code>ta-marbuta-fem-01</code> <span style="color:var(--faint)">(ausgeblendet)</span></td><td lang="ar">تاء · مربوطة</td></tr>
+      <tr><td><code>fem-ohne-ta-marbuta-01</code></td><td lang="ar">بلا · تاء</td></tr>
+      <tr><td><code>taschkil-kontext-01</code></td><td lang="ar">تشكيل</td></tr>
+      <tr><td><code>koerperteile-genus-01</code></td><td lang="ar">مزدوجة</td></tr>
+      <tr><td><code>li-al-lil-01</code></td><td lang="ar">لام</td></tr>
+      <tr><td><code>nat-fem-01</code></td><td lang="ar">تاء</td></tr>
+      <tr><td><code>ta-marbuta-grenzen-01</code></td><td lang="ar">تاء</td></tr>
+      <tr><td><code>adjektive-an-ohne-tanwin-01</code></td><td lang="ar">انُ · ان</td></tr>
+    </table></div>
+
+    <div class="merk stop">
+      <h4>Der Rat des Prüfwerkzeugs stimmt nicht</h4>
+      <p>Es schreibt, die Formen ließen sich „im vorhandenen Bestand nachschlagen".
+      Nachgemessen: <b>1</b> Treffer, davon <b>0</b> brauchbar. <b>Alle elf</b>
+      brauchen dich oder deinen Lehrer.</p>
+    </div>
+
+    <div class="merk warn">
+      <h4>Und der eine Treffer war ein Fehltreffer</h4>
+      <p>Das Skelett <span lang="ar">لام</span> fand <span lang="ar">لَامَ</span>
+      in madina-3 — das ist aber das <b>Verb „tadeln"</b>. Gemeint ist der
+      <b>Buchstabenname</b>. Hätte ich ihn übernommen, stünde ein Verb im
+      Regeltext, wo ein Buchstabenname hingehört — und es hätte plausibel
+      ausgesehen.</p>
+    </div>
+
+    <p>Der Grund, warum nichts belegt ist, liegt offen, sobald man die Liste ansieht:
+    es sind fast alles <b>Fachbegriffe</b>. Die stehen naturgemäß nicht in einer
+    Vokabelliste — sie sind Metasprache, keine Lernwörter.</p>
+
+    <p>Zwei Einschränkungen, damit die Liste nicht größer aussieht als sie ist:
+    <code>ta-marbuta-fem-01</code> ist <b>ausgeblendet</b> (deine Abbestellung vom
+    29.07.), ihre zwei Lücken siehst du gar nicht. Und die weiteren <b>2.540
+    Lücken in den neun Buchdateien</b> zählen ausdrücklich nicht — das sind fremde
+    Daten, die nicht selbst zu vokalisieren sind.</p>
+
+    <label class="notiz">Notiz — oder die elf Formen, sobald du sie hast
+      <textarea rows="3" placeholder="…"></textarea></label>
+  </article>
+</section>
+
+<!-- ══════════ TEIL 3 ══════════ -->
+<section class="abschnitt fertig">
+  <header>
+    <h2>Drei sind abgeschlossen</h2>
+    <p>Nichts zu entscheiden. Sie stehen hier, weil zwei davon eine Falle enthalten, die beim nächsten Mal Zeit spart.</p>
+  </header>
+
+  <article class="fall" data-fall="P11">
+    <div class="fkopf">
+      <div>
+        <div class="nr">Nachtplan Punkt 11</div>
+        <h3>Baustein E geeicht — der bequeme Nachweis wäre wertlos gewesen</h3>
+      </div>
+    </div>
+
+    <p>Zuerst hatte ich nur nachgesehen, ob die drei bereits eingetragenen Entwürfe
+    Regel <b>und</b> Markierung haben. Haben sie. <b>Der Nachweis war trotzdem
+    wertlos:</b> in <code>entwuerfe.json</code> steht bei allen dreien ein
+    <b>leeres</b> Markierungsfeld — ihre Markierungen kamen also von einem anderen
+    Werkzeug. Am Ergebnis abzulesen, ob ein Werkzeug funktioniert, geht nur, wenn
+    man weiß, dass das Ergebnis von ihm stammt.</p>
+
+    <div class="tab"><table>
+      <tr><th>Fall</th><th>Entwurf</th><th>Ergebnis</th></tr>
+      <tr><td>A</td><td>mit gültiger Markierung</td><td>1 Regel und 1 Markierung eingetragen · 390 + 1 = 391 ✓</td></tr>
+      <tr><td>B</td><td>ohne Markierung</td><td>wird <b>ausgeblendet</b> eingetragen — das Netz greift und meldet</td></tr>
+      <tr><td>C</td><td>Markierung überschneidet sich</td><td><b>abgelehnt</b>, mit Angabe der kollidierenden Regel</td></tr>
+    </table></div>
+
+    <div class="merk fund">
+      <h4>Fall C war ein Unfall und der beste Teil</h4>
+      <p>Mein erstes Testwort <span lang="ar">طَالِبٌ</span> steht in mehreren
+      Sätzen — das Werkzeug prüft <b>satzübergreifend</b> und wies es zurück. Für
+      Fall A musste ich ein Wort suchen, das in <b>genau einem</b> Satz vorkommt
+      und dort frei ist. Es gibt 79 solche Wörter.</p>
+    </div>
+
+    <p>Der Bestand steht wortgleich wie vorher: 95 Regeln, Repo sauber. <b>Für den
+    nächsten echten Einbau wichtig:</b> der Suchtext wird gegen <b>alle 210
+    Sätze</b> geprüft, nicht nur gegen den angegebenen. Ein häufiges Wort scheitert
+    deshalb selbst dann, wenn im Zielsatz Platz wäre.</p>
+  </article>
+
+  <article class="fall" data-fall="P12">
+    <div class="fkopf">
+      <div>
+        <div class="nr">Nachtplan Punkt 12</div>
+        <h3>Meine eigene Notiz war zur Hälfte falsch</h3>
+      </div>
+    </div>
+
+    <p>Sie sagte, in der Wartungsroutine fehle sowohl die Meldung als auch der
+    To-Do-Eintrag. <b>Die Meldung kommt sehr wohl vor</b> — Schritt 10 beschreibt
+    sie vollständig. Und die Statusdatei lässt sich gar nicht direkt beschreiben:
+    sie wird nach jedem Lauf <b>komplett neu geschrieben</b>. Wer das nicht weiß,
+    baut eine Schreiboperation, die beim nächsten Lauf spurlos verschwindet.</p>
+
+    <p>Wirklich gefehlt hat der <b>To-Do-Eintrag</b>. Ergänzt in Schritt 1b.1: bei
+    Rückstand jetzt beides — Statuszeile <b>und</b> eine Zeile in der To-Do, mit
+    Folgennummer, Zahl der wartenden Stellen und Datum. Ausgeführt: heute kein
+    Rückstand, der Schritt greift beim nächsten Lauf.</p>
+
+    <div class="merk warn">
+      <h4>Eine Mehrdeutigkeit, die die Anleitung ins Falsche geführt hätte</h4>
+      <p>In der To-Do stehen <b>zwei</b> ähnlich benannte Überschriften: eine
+      gehört zum Nachtplan und verschwindet mit ihm, die andere ist dauerhaft.
+      Meine erste Fassung nannte die temporäre. Ein Wartungslauf ist keine
+      Nachtschicht — sein Eintrag muss den Nachtplan überleben.</p>
+    </div>
+
+    <p>Warum die Statuszeile allein nicht reicht: sie steuert den Wochenbericht,
+    und das sind <b>Berichte über Läufe</b>, keine Arbeitsliste. Du arbeitest aus
+    der To-Do; was dort nicht steht, kommt nicht dran.</p>
+  </article>
+
+  <article class="fall" data-fall="P17">
+    <div class="fkopf">
+      <div>
+        <div class="nr">Nachtplan Punkt 17</div>
+        <h3>Die Schlüssel benutzen deutsche Fachbegriffe, nicht die Umschrift</h3>
+      </div>
+    </div>
+
+    <p>Band 2 und 3 sind erschlossen: <b>65 Lektionen mit 4.843 Zeilen</b>
+    deutscher Grammatikerklärung (Band 2: 31 Lektionen, 1.780 Zeilen; Band 3: 34
+    Lektionen, 3.063 Zeilen, keine dünne Stelle darunter).</p>
+
+    <div class="merk fund">
+      <h4>Der eigentliche Ertrag ist eine Suchanleitung</h4>
+      <p>Bei der Stichprobe fielen die arabischen Fachbegriffe komplett durch:</p>
+    </div>
+
+    <div class="tab"><table>
+      <tr><th>Suchwort</th><th>Band 2</th><th>Band 3</th></tr>
+      <tr><td>Mubtada</td><td>0</td><td>0</td></tr>
+      <tr><td>Majrur</td><td>0</td><td>0</td></tr>
+      <tr><td><b>Subjekt</b></td><td><b>5</b></td><td><b>6</b></td></tr>
+      <tr><td><b>Genitiv</b></td><td><b>1</b></td><td><b>3</b></td></tr>
+      <tr><td><b>Adjektiv</b></td><td><b>8</b></td><td><b>10</b></td></tr>
+    </table></div>
+
+    <p>Wer mit „Mubtada" sucht, bekommt null Treffer und schließt daraus, der Stoff
+    stehe dort nicht — dabei steht er unter „Subjekt". <b>Der Fehltreffer trügt
+    genauso wie der Treffer.</b></p>
+
+    <p>Genutzt wird von den 4.843 Zeilen bisher fast nichts: von 61 Zweitbelegen
+    kommen <b>54 aus Band 1</b>, nur 5 aus Band 2 und 2 aus Band 3. Das ist kein
+    Versäumnis, sondern dein Stand — deine 95 Regeln decken Kapitel 1–10 ab, und
+    Band 2 beginnt erst nach Buch 1. <b>Ein Vorrat für später, kein ungehobener
+    Schatz für heute.</b></p>
+  </article>
+</section>
+
+<div class="fuss">
+  <h2>Deine Antworten</h2>
+  <p class="stand" id="stand">Noch nichts beantwortet.</p>
+  <textarea id="ausgabe" readonly aria-label="Zusammenfassung deiner Antworten"></textarea>
+  <div class="knoepfe">
+    <button class="kopier" id="btnKopieren" type="button">In die Zwischenablage</button>
+    <button class="zuruecksetzen" id="btnZuruecksetzen" type="button">Alles zurücksetzen</button>
+  </div>
+  <p class="stand" style="margin-top:10px">Deine Antworten liegen nur in diesem
+  Browser (<code>befunde-v1</code>). Ich kann sie nicht lesen — ohne diesen Kasten
+  bliebe deine Arbeit hier gefangen.</p>
+</div>
+
+</div><script>
+/* ⛔ Eigener Schluessel. regelpruefung-v1, satzmodus-auswahl-v1,
+   regelkandidaten-v1, verschmelzung-v1 und wortmarke-v1 liegen im selben
+   localStorage — wer einen davon wiederverwendet, loescht Elias die Antworten
+   aus dem anderen Artefakt. */
+const SCHLUESSEL = 'befunde-v1';
+
+/* ⛔ localStorage kann WERFEN, nicht nur leer sein — bei geblocktem Speicher
+   (strenge Datenschutzeinstellung, sandboxed iframe, data:-Herkunft) wirft
+   schon der erste Zugriff einen SecurityError. Ungeschuetzt stirbt damit das
+   ganze Skript in Zeile 2: kein Knopf reagiert mehr, und in der Konsole steht
+   nichts, weil die Seite ja fehlerfrei GELADEN ist.
+   Am 19.08.2026 im Pruefbrowser genau so gemessen. Lieber ohne Gedaechtnis
+   bedienbar als tot. */
+function lesen(){
+  try { return JSON.parse(localStorage.getItem(SCHLUESSEL) || '{}'); }
+  catch { return {}; }
+}
+function schreiben(){
+  try { localStorage.setItem(SCHLUESSEL, JSON.stringify(stand)); return true; }
+  catch { return false; }
+}
+const stand = lesen();
+
+/* Nur die Faelle mit Wahlknoepfen zaehlen in den Nenner — die drei
+   abgeschlossenen haben keine, und "3 von 9" waere dann nie erreichbar. */
+const ZUR_WAHL = [...document.querySelectorAll('.fall')].filter(f => f.querySelector('.w'));
+
+/* Einmal beim Laden pruefen, statt erst beim ersten Klick — sonst erfaehrt er
+   von der Sperre erst, nachdem er schon Antworten gegeben hat. */
+let gemerkt = schreiben();
+function sichern(){
+  gemerkt = schreiben();
+  zeichnen();
+}
+function zeichnen(){
+  document.querySelectorAll('.fall').forEach(sec => {
+    const f = sec.dataset.fall;
+    const e = stand[f] || {};
+    sec.classList.toggle('beantwortet', !!(e.wahl || e.notiz));
+    sec.querySelectorAll('.w').forEach(b => {
+      const an = b.dataset.w === e.wahl;
+      b.classList.toggle('an', an);
+      b.setAttribute('aria-pressed', an ? 'true' : 'false');
+    });
+    const t = sec.querySelector('textarea');
+    if (t && document.activeElement !== t) t.value = e.notiz || '';
+  });
+  const n = ZUR_WAHL.filter(sec => (stand[sec.dataset.fall] || {}).wahl).length;
+  /* ⛔ Wenn nicht gespeichert werden konnte, muss das DASTEHEN. Sonst klickt
+     er zwanzig Antworten, sieht sie brav markiert, und beim naechsten Oeffnen
+     ist alles weg — eine Erfolgsmeldung ohne Wirkung. */
+  document.getElementById('stand').textContent = (n === 0
+    ? 'Noch nichts beantwortet.'
+    : n + ' von ' + ZUR_WAHL.length + ' Entscheidungen getroffen'
+      + (n === ZUR_WAHL.length ? ' — fertig.' : '.'))
+    + (gemerkt ? '' : ' ⛔ Dieser Browser lässt kein Speichern zu — kopier den'
+      + ' Kasten unten, bevor du die Seite schließt.');
+
+  const zeilen = [...document.querySelectorAll('.fall')].map(sec => {
+    const f = sec.dataset.fall, e = stand[f] || {};
+    if (!e.wahl && !e.notiz) return null;
+    const titel = sec.querySelector('h3').textContent.trim();
+    return '- ' + f + ' (' + titel.slice(0, 52) + '): '
+      + (e.wahl || '—') + (e.notiz ? '  // ' + e.notiz : '');
+  }).filter(Boolean);
+  document.getElementById('ausgabe').value = zeilen.length
+    ? 'BEFUNDE ' + n + '/' + ZUR_WAHL.length + '\n' + zeilen.join('\n')
+    : '';
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('.w');
+  if (!b) return;
+  const f = b.closest('.fall').dataset.fall;
+  stand[f] = stand[f] || {};
+  /* Nochmal auf dieselbe Antwort tippen nimmt sie zurueck — sonst kaeme man
+     aus einer versehentlichen Wahl nicht mehr heraus. */
+  stand[f].wahl = stand[f].wahl === b.dataset.w ? null : b.dataset.w;
+  sichern();
+});
+document.addEventListener('input', e => {
+  if (!e.target.matches('.notiz textarea')) return;
+  const f = e.target.closest('.fall').dataset.fall;
+  stand[f] = stand[f] || {};
+  stand[f].notiz = e.target.value;
+  gemerkt = schreiben();
+  zeichnen();
+});
+document.getElementById('btnKopieren').addEventListener('click', async () => {
+  const t = document.getElementById('ausgabe');
+  if (!t.value) return;
+  const knopf = document.getElementById('btnKopieren');
+  try { await navigator.clipboard.writeText(t.value); knopf.textContent = 'Kopiert'; }
+  catch { t.select(); document.execCommand('copy'); knopf.textContent = 'Kopiert'; }
+  setTimeout(() => { knopf.textContent = 'In die Zwischenablage'; }, 1600);
+});
+document.getElementById('btnZuruecksetzen').addEventListener('click', () => {
+  if (!confirm('Alle Antworten auf dieser Seite löschen?')) return;
+  Object.keys(stand).forEach(k => delete stand[k]);
+  sichern();
+});
+zeichnen();
+</script></body></html>
