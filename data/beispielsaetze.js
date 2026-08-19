@@ -99,6 +99,92 @@ const BEISPIELSAETZE = {
   '45903': {
     sentAr: 'أَحَبَّ الْوَلَدُ أُمَّهُ.',
     sentDe: 'Der Junge liebte seine Mutter.'
+  },
+
+  /* ------------------------------------------------------------------------
+     KAPITEL 12 — VORGESCHRIEBEN (19.08.2026)
+
+     Elias steht bei Kapitel 11. Gemessen an dem Tag: Kapitel 12 bis 15 haben
+     ALLE ihre drei Eselsbruecken, aber ZUSAMMEN NULL Beispielsaetze. Hakt er
+     Kapitel 12 an, kaemen die neun Woerter ohne einen einzigen Satz an — und
+     damit ohne Markierung und ohne eine einzige Uebungsaufgabe.
+
+     ⭐ Sichtbar werden sie erst, wenn er das Kapitel anhakt:
+     `nichtVorausgeschrieben()` in js/saetze.js blendet jeden Satz aus, dessen
+     Wort er noch nicht hat. Vorschreiben, nicht vorzeigen — genau das meint
+     das Fenster Lernstand+3 in werkzeuge/vorrat.mjs.
+
+     ⛔ HERKUNFT: kein Zeichen ist hier von Hand vokalisiert.
+     Grundformen und weibliche Formen stehen so im arabicroots-Abzug (`ar`,
+     `femSg`). Dazu kommen genau zwei Umformungen — unbestimmt → bestimmt und
+     das erste Wort einer Idafa — und beide sind an **359 wirklich
+     vorkommenden Wortformen** geeicht worden, bevor sie benutzt wurden.
+     Die Eichung hat drei Fehler gefunden, die alle kaputtes Arabisch ergeben
+     haetten: Tanwin vor einem Alif maqsura, Tanwin hinter einer Schadda, und
+     Fathatan, die zur Fatha werden muss statt zu verschwinden.
+     ------------------------------------------------------------------------ */
+
+  /* عَمَّةٌ — Tante väterlicherseits (madina-1, Kapitel 12)
+     Idafa: das erste Wort traegt kein Tanwin, das zweite steht im Genitiv. */
+  '45904': {
+    sentAr: 'عَمَّةُ الْوَلَدِ فِي الْبَيْتِ.',
+    sentDe: 'Die Tante des Jungen ist im Haus.'
+  },
+
+  /* خَالَةٌ — Tante mütterlicherseits (madina-1, Kapitel 12)
+     Idafa als Subjekt, Beruf als unbestimmtes Praedikat. */
+  '45905': {
+    sentAr: 'خَالَةُ الْبِنْتِ مُمَرِّضَةٌ.',
+    sentDe: 'Die Tante des Mädchens ist Krankenschwester.'
+  },
+
+  /* شَجَرَةٌ — Baum (madina-1, Kapitel 12)
+     Nomen mit Adjektiv, beide bestimmt und weiblich; Sonnenbuchstabe zweimal. */
+  '45906': {
+    sentAr: 'الشَّجَرَةُ الْكَبِيرَةُ فِي الشَّارِعِ.',
+    sentDe: 'Der große Baum ist in der Straße.'
+  },
+
+  /* سُورِيَا — Syrien (madina-1, Kapitel 12)
+     Laendername nach einer Praeposition, unveraenderlich. */
+  '45907': {
+    sentAr: 'الْمُدَرِّسُ مِنْ سُورِيَا.',
+    sentDe: 'Der Lehrer ist aus Syrien.'
+  },
+
+  /* مَدْرَسَةٌ مُتَوَسِّطَةٌ — Mittelschule (madina-1, Kapitel 12)
+     Zweiteiliger Begriff: Nomen und Adjektiv beide bestimmt. */
+  '45908': {
+    sentAr: 'الْمَدْرَسَةُ الْمُتَوَسِّطَةُ قَرِيبَةٌ.',
+    sentDe: 'Die Mittelschule ist nah.'
+  },
+
+  /* مُفَتِّشٌ — Inspektor (madina-1, Kapitel 12)
+     Einfacher Nominalsatz mit Ortsangabe. */
+  '45909': {
+    sentAr: 'الْمُفَتِّشُ فِي الْمَدْرَسَةِ.',
+    sentDe: 'Der Inspektor ist in der Schule.'
+  },
+
+  /* فَتَاةٌ — junge Frau (madina-1, Kapitel 12)
+     Gegenstueck zum Satz von fata aus Kapitel 10 — dieselbe Form, weiblich. */
+  '45910': {
+    sentAr: 'الْفَتَاةُ طَالِبَةٌ فِي الْجَامِعَةِ.',
+    sentDe: 'Die junge Frau ist Studentin an der Universität.'
+  },
+
+  /* مَالِيزِيَا — Malaysia (madina-1, Kapitel 12)
+     Nomen mit Adjektiv, dann Praeposition mit Laendernamen. */
+  '45911': {
+    sentAr: 'الطَّالِبُ الْجَدِيدُ مِنْ مَالِيزِيَا.',
+    sentDe: 'Der neue Student ist aus Malaysia.'
+  },
+
+  /* مَمْلَكَةٌ — Königreich (madina-1, Kapitel 12)
+     Nomen mit bestimmtem Adjektiv, danach das unbestimmte Praedikat. */
+  '45912': {
+    sentAr: 'الْمَمْلَكَةُ الْجَدِيدَةُ بَعِيدَةٌ.',
+    sentDe: 'Das neue Königreich ist fern.'
   }
 
 };
