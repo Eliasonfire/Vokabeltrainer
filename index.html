@@ -1878,6 +1878,21 @@ main{
 /* Ein Modus ohne Fragen wird nicht versteckt, nur zurückgenommen — dieselbe
    Auflage wie bei der alten Leiste: er soll sehen, dass es ihn gibt. */
 .blatt .zeile.leer{opacity:.42;}
+/* Ein offenes Blatt darf über Zurück/Weiter laufen — Elias am 19.08.2026:
+   „ich möchte, dass die listen über die zurück und weiter tasten gehen, so
+   kann ich dann mehr modis sehen."
+
+   Der z-index hebt es über die schwebende Leiste (die liegt auf 20). Die
+   Leiste selbst tritt zurück, statt nur überdeckt zu werden: ein halb
+   verdeckter Knopf sieht kaputt aus, und solange die Liste offen ist,
+   blättert man ohnehin nicht.
+
+   ⚠️ `opacity` statt `display:none` — so bleibt die Höhe erhalten und der
+   Inhalt darunter springt beim Auf- und Zuklappen nicht. */
+.blatt{position:relative;z-index:40;}
+.sent-nav.blatt-verdeckt,
+.ueb-fuss.blatt-verdeckt{opacity:0;pointer-events:none;}
+
 .blatt .zeile.aktiv{background:var(--red-wash);}
 .blatt .zeile.aktiv .ar{color:var(--red-bright);}
 .blatt.ueben .zeile.aktiv{background:var(--green-wash);}

@@ -100,6 +100,7 @@ function blattUmschalten(knopfId, blattId, offen){
   }
   blatt.classList.toggle('hidden', !auf);
   knopf.setAttribute('aria-expanded', auf ? 'true' : 'false');
+  navLeisteAnpassen();
   if (!auf) return;
   blatt.scrollTop = 0;
   /* ⛔ Der Deckel muss aus dem PLATZ kommen, nicht aus einer festen Zahl —
@@ -119,15 +120,32 @@ function blattUmschalten(knopfId, blattId, offen){
      [[milder_bezugspunkt_verdeckt_mangel]]: „passt auf den Schirm" war die
      falsche Frage, „passt ueber die Leiste" ist die richtige. */
   const oben = blatt.getBoundingClientRect().top;
+  /* ⭐ Elias am 19.08.2026: „ich möchte, dass die listen über die zurück und
+     weiter tasten gehen, so kann ich dann mehr modis sehen."
+
+     Also NICHT mehr an der Oberkante von .sent-nav aufhoeren, sondern erst an
+     der unteren App-Leiste. Die bleibt stehen — sie ist der Weg aus dem
+     Bildschirm heraus. Zurueck/Weiter werden solange ausgeblendet statt nur
+     ueberdeckt: ein halb verdeckter Knopf sieht kaputt aus, und waehrend die
+     Liste offen ist, blaettert man ohnehin nicht. */
   let grenze = window.innerHeight;
-  document.querySelectorAll('.sent-nav, .ueb-fuss').forEach(el=>{
-    const r = el.getBoundingClientRect();
-    /* Hoehe 0 heisst versteckt — waehrend einer Uebung steht .ueb-fuss statt
-       .sent-nav, und umgekehrt. */
-    if (r.height > 0 && r.top > oben && r.top < grenze) grenze = r.top;
-  });
+  const leiste = document.querySelector('.bottombar');
+  if (leiste){
+    const r = leiste.getBoundingClientRect();
+    if (r.height > 0 && r.top > oben) grenze = r.top;
+  }
   const platz = Math.max(200, Math.round(grenze - oben - 12));
   blatt.style.maxHeight = platz + 'px';
+}
+
+/* Zurueck/Weiter treten zurueck, solange ein Blatt offen ist — und kommen
+   zurueck, sobald das letzte zu ist. Ein Zustand, aus dem DOM gelesen, nicht
+   mitgezaehlt: eine eigene Zaehlung liefe irgendwann aus dem Tritt.
+   [[zweiter_aufruf_ueberschreibt_still]] */
+function navLeisteAnpassen(){
+  const offen = [...document.querySelectorAll('.blatt')].some(b=>!b.classList.contains('hidden'));
+  document.querySelectorAll('#screen-sentences .sent-nav, #screen-sentences .ueb-fuss')
+    .forEach(el=>el.classList.toggle('blatt-verdeckt', offen));
 }
 
 function setzeThema(themaId){
