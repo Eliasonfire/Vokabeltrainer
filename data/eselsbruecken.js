@@ -65,11 +65,11 @@ const BUCH_ESELSBRUECKEN = {
 
   "45899": "Gleiche Form wie جَمِيلٌ (schön) und قَصِيرٌ (kurz): فَعِيلٌ. Ein زَمِيلٌ ist der, der neben dir am selben مَكْتَبٌ (Schreibtisch) sitzt — Kollege oder Mitschüler. Plural زُمَلَاءُ.",
 
-  "45900": "Ein Paar, das du zusammen lernst: زَوْجٌ ist der Ehemann, زَوْجَةٌ mit dem ـة die Ehefrau. Dieselbe Wurzel ز و ج, die auch „Paar“ bedeutet. Ein Wort, zwei Endungen — mehr musst du nicht behalten.",
+  "45900": "Die Wurzel ز و ج heißt „Paar“ — die Ehefrau ist die eine Hälfte davon. ⚠️ Das و in der Mitte bleibt stehen, der Plural hängt nur an: زَوْجَةٌ → زَوْجَاتٌ, wie سَيَّارَةٌ → سَيَّارَاتٌ und جَامِعَةٌ → جَامِعَاتٌ. Ein weiblicher Plural, der nichts umbaut.",
 
   "45901": "Zwischen وَلَدٌ (Junge) und بِنْتٌ (Tochter) steht طِفْلٌ: das Kind, ohne dass das Geschlecht mitgesagt wird. Genau dann brauchst du es. Plural أَطْفَالٌ.",
 
-  "45902": "Ein Paar aus einer Wurzel ف ت ي: فَتًى ist der junge Mann, فَتَاةٌ die junge Frau. Beide sind älter als وَلَدٌ (Junge) und jünger als رَجُلٌ (Mann). Das ـً am Ende von فَتًى ist die Besonderheit.",
+  "45902": "Eine Altersleiter, ganz aus Wörtern, die du hast: طِفْلٌ (Kind, dieses Kapitel), dann وَلَدٌ (Junge), dann فَتًى (junger Mann), dann رَجُلٌ (Mann). Vier Stufen, vier Vokabeln. Das ـً am Ende von فَتًى ist die Besonderheit — dazu der dritte Vorschlag.",
 
   /* ---------- Kapitel 11 ---------- */
 

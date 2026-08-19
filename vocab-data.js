@@ -406,7 +406,7 @@ const VOCAB_DATA = [
  {
   "id": "45768",
 
-  "mnemo": "Wurzel ح م ر — dieselben Buchstaben wie in أَحْمَر (rot). ⚠️ Nicht verwechseln: حِمَارٌ (Esel) und حِصَانٌ (Pferd) fangen beide mit حِـ an. Merkhilfe: Esel hat das M wie „Maultier\", Pferd das ص wie in „Sattel\".",
+  "mnemo": "Wurzel ح م ر. Der Plural bricht auf ein ganz anderes Muster um: حِمَارٌ → حُمُرٌ, genau wie كِتَابٌ → كُتُبٌ aus demselben Kapitel. ⚠️ Nicht verwechseln: حِمَارٌ (Esel) und حِصَانٌ (Pferd) fangen beide mit حِـ an. Merkhilfe: Esel hat das M wie „Maultier\", Pferd das ص wie in „Sattel\".",
   "ar": "حِمَارٌ",
   "de": "Esel",
   "type": "noun",
@@ -2573,7 +2573,7 @@ const VOCAB_DATA = [
  {
   "id": "45865",
 
-  "mnemo": "Wurzel ب ي ض = weiß. Das Ei ist das Weiße. Dieselbe Wurzel steckt in أَبْيَض (weiß) — ein Wort, das dir noch oft begegnet.",
+  "mnemo": "Wurzel ب ي ض = weiß. Das Ei heißt also schlicht „das Weiße“ — die Farbe steckt im Namen. Im selben Kapitel stehen die Tiere dazu: دَجَاجَةٌ legt sie, بَطَّةٌ auch.",
   "ar": "بَيْضَةٌ",
   "de": "Ei",
   "type": "noun",

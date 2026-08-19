@@ -169,7 +169,7 @@ const ESELSBRUECKEN_ALT = {
   /* حِمَارٌ - Esel */
   '45768': [
     'Muster فِعَال — genau wie كِتَابٌ (Buch) und حِصَانٌ (Pferd), beide aus diesem Kapitel. Der Rhythmus ist derselbe: ki-tāb, ḥi-mār, ḥi-ṣān.',
-    '⚠️ Esel und Pferd fangen beide mit حِـ an. Der Unterschied sitzt in der Mitte: م beim Esel (حِمَار), ص beim Pferd (حِصَان). Und die Wurzel ح م ر steckt auch in أَحْمَر, rot.'
+    '⚠️ Esel und Pferd fangen beide mit حِـ an. Der Unterschied sitzt in der Mitte: م beim Esel (حِمَار), ص beim Pferd (حِصَان). Und im Plural trennen sich die beiden vollends: حُمُرٌ gegen أَحْصِنَةٌ.'
   ],
 
   /* حِصَانٌ - Pferd */
@@ -475,7 +475,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* مَدْرَسَةٌ - Schule */
   '45817': [
-    'Sieh dir die Familie an, dann hast du drei Wörter statt einem: د ر س ist die Wurzel des Lernens. مُدَرِّس ist der, der lehrt, مَدْرَسَة der Ort, an dem gelernt wird, und دَرْس die Lektion selbst. Beide ersten hast du schon als Vokabel.',
+    'Die Mehrzahl verrät die ganze Gruppe: مَدْرَسَةٌ → مَدَارِسُ, und genauso مَكْتَبٌ → مَكَاتِبُ, مَسْجِدٌ → مَسَاجِدُ, مَطْبَخٌ → مَطَابِخُ. Vier Orte, ein Bruchmuster مَفَاعِل. ⭐ Und alle vier enden ohne Tanwīn — das ist المَمْنُوعُ مِنَ الصَّرْفِ, die Regel steht in deiner App.',
     'Das مَـ macht aus einer Handlung einen ORT — und du hast die ganze Reihe: مَسْجِدٌ (Ort der Niederwerfung), مَكْتَبٌ (Ort des Schreibens), مَطْبَخٌ (Ort des Kochens), مَدْرَسَةٌ (Ort des Lernens). ⚠️ Bei مَدْرَسَة kommt eine تاء مَرْبُوطة dazu — deshalb ist sie weiblich, und Adjektive brauchen ein ة: مَدْرَسَةٌ نَظِيفَةٌ.'
   ],
 
@@ -549,7 +549,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* عَمٌّ - Onkel väterlicherseits */
   '45829': [
-    'Der Trick gegen das Verwechseln liegt im Klang: „ʿamm" ist kurz und hart, „chāl" weich und lang. Sprich beide direkt hintereinander — ʿamm, chāl — dann trennt sich das Paar von selbst. Und häng die Frauen gleich an: عَمَّة gehört zur Vaterseite, خَالَة zur Mutterseite.',
+    'Der Trick gegen das Verwechseln liegt im Klang: „ʿamm" ist kurz und hart, „chāl" weich und lang. Sprich beide direkt hintereinander — ʿamm, chāl — dann trennt sich das Paar von selbst. Beide stehen in demselben Kapitel wie ابْنٌ und بِنْتٌ: die Verwandtschaftswörter kommen zusammen und lernen sich zusammen.',
     'Die شَدَّة verrät die Wurzel: ع م م, zwei م, im Singular zu einem zusammengezogen. Im Plural rücken sie auseinander: عَمٌّ → أَعْمَامٌ. Dasselbe siehst du bei أُمٌّ → أُمَّهَاتٌ und bei قِطٌّ. ⚠️ Und der Plural folgt dem Muster أَفْعَال, das du von أَبْوَابٌ und أَقْلَامٌ kennst.'
   ],
 
@@ -585,8 +585,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* خَالٌ - Onkel mütterlicherseits */
   '45835': [
-    '⭐ Ein Hadith hält die Seite fest, auf die das Wort gehört: الْخَالَةُ بِمَنْزِلَةِ الْأُمِّ — „die Chāla steht an der Stelle der Mutter“. خَالَة ist die Schwester der Mutter, also ist خَال ihr Bruder. Wer den Satz einmal gehört hat, verwechselt خَال und عَمّ nicht mehr.',
-    'Diesen Unterschied gibt es im Deutschen nicht, und genau deshalb muss man ihn bewusst lernen: خَال ist der Bruder der MUTTER, عَمّ der Bruder des VATERS. Eine Eselsbrücke, die trägt: خَال und die خَالَة (Tante mütterlicherseits) gehören zur selben Seite — wer eines weiß, weiß beide.'
+    'Die Wurzel خ و ل trägt ein و in der Mitte, und im Plural kommt es zurück: خَالٌ → أَخْوَالٌ. Sein Gegenstück geht im Gleichschritt: عَمٌّ → أَعْمَامٌ. Dasselbe Muster أَفْعَال kennst du von أَبْوَابٌ und أَقْلَامٌ — die beiden Onkel sind also auch grammatisch ein Paar.',
+    'Diesen Unterschied gibt es im Deutschen nicht, und genau deshalb muss man ihn bewusst lernen: خَال ist der Bruder der MUTTER, عَمّ der Bruder des VATERS. Eine Eselsbrücke, die trägt: das خ von خَال und das م von أُمّ liegen beide auf der Mutterseite — عَمّ dagegen hat kein خ und gehört zum Vater.'
   ],
 
   /* هُنَاكَ - dort */
@@ -784,7 +784,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* بَيْضَةٌ - Ei */
   '45865': [
-    'Die Wurzel ب ي ض heißt weiß — das Ei ist „das Weiße". ⭐ Von derselben Wurzel kommt أَبْيَض (weiß), und das gehört zum Farbmuster أَفْعَل, dem auch أَسْوَد (schwarz) folgt — das du aus الْحَجَرُ الْأَسْوَد kennst. Farben und Ei aus einem Stamm.',
+    'Die Wurzel ب ي ض heißt weiß — das Ei ist „das Weiße“. ⭐ Das ist kein Einzelfall: Sprachen benennen Dinge oft nach ihrer Farbe, und im Arabischen liegt die Farbe hier offen in der Wurzel. Die Farbwörter selbst kommen in einem späteren Kapitel; die Wurzel dazu hast du schon hier.',
     'Auch hier trennt die تاء مَرْبُوطة das Einzelne von der Menge: بَيْضٌ sind Eier als Sache, بَيْضَةٌ ist das eine Ei. Dieselbe Ordnung wie بَقَرٌ / بَقَرَةٌ und دَجَاجٌ / دَجَاجَةٌ. Drei Paare, eine Regel — wer sie einmal sieht, braucht die Plurale nicht einzeln.'
   ],
 
@@ -1201,7 +1201,7 @@ const ESELSBRUECKEN_ALT = {
   /* زَوْجَةٌ - Ehefrau */
   '45900': [
     '⭐ Die Wurzel ز و ج heißt „Paar" — deshalb heißen die Frauen des Propheten أَزْوَاجُ النَّبِيِّ, und sie tragen den Titel أُمَّهَاتُ الْمُؤْمِنِينَ, „Mütter der Gläubigen". Das أُمَّهَات darin ist der Plural von أُمّ, den du als Vokabel hast. Ein Begriff, zwei bekannte Wörter.',
-    'Die تاء مَرْبُوطة macht aus dem Mann die Frau, und du hast das Muster schon: مُدَرِّسٌ → مُدَرِّسَةٌ, مُمَرِّضٌ → مُمَرِّضَةٌ. Genauso زَوْجٌ → زَوْجَةٌ. ⚠️ Merke aber: das ة ist hier eine echte Geschlechtsendung — bei بَقَرَة oder بَطَّة trennt dasselbe Zeichen nur das Einzeltier von der Art.'
+    'Die تاء مَرْبُوطة macht aus dem Mann die Frau, und du hast das Muster schon: مُدَرِّسٌ → مُدَرِّسَةٌ, مُمَرِّضٌ → مُمَرِّضَةٌ. Und genau dieses ة steht auch am Ende von زَوْجَةٌ. ⚠️ Merke aber: das ة ist hier eine echte Geschlechtsendung — bei بَقَرَة oder بَطَّة trennt dasselbe Zeichen nur das Einzeltier von der Art.'
   ],
 
   /* طِفْلٌ - Kind */
@@ -1213,7 +1213,7 @@ const ESELSBRUECKEN_ALT = {
   /* فَتًى - junger Mann */
   '45902': [
     '⭐ Du kennst den Begriff aus der Geschichte der Höhlengefährten: die أَصْحَابُ الْكَهْف werden im Koran als فِتْيَة bezeichnet — junge Männer, die für ihren Glauben fortgingen. Dasselbe Wort, ein Plural davon. Wer die Geschichte kennt, hat die Vokabel.',
-    '⚠️ Am Ende steht eine أَلِف مَقْصورة — das ى ohne Punkte, gesprochen wie ein kurzes a mit Tanwīn: fa-tan. Genau der Fachbegriff, den du gelernt hast, und dasselbe Wortende wie bei مُسْتَشْفًى. Sobald die Frau gemeint ist, wird ein echtes ت daraus: فَتَاةٌ.'
+    '⚠️ Am Ende steht eine أَلِف مَقْصورة — das ى ohne Punkte, gesprochen wie ein kurzes a mit Tanwīn: fa-tan. Genau der Fachbegriff, den du gelernt hast, und dasselbe Wortende wie bei مُسْتَشْفًى. Die weibliche Form dazu lernst du im nächsten Kapitel — dort wird aus dem ى ein echtes ت.'
   ],
 
   /* أَحَبَّ - lieben */
