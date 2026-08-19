@@ -161,6 +161,11 @@ function buildSentenceHtml(w, opts){
        Unterricht ist ja nicht falsch geworden), werden aber nicht mehr
        angezeigt. Siehe `ausgeblendet` in grammar-data.js. */
     if (rule.ausgeblendet) return;
+    /* Elias am 19.08.2026: drei Regeln sollen "im satzmodus gerne bleiben aber
+       nicht bei den karteikarten als erklaerung". Deshalb wird hier nur
+       unterdrueckt, wenn der Aufrufer eine Karteikarte zeichnet - die
+       Satzansicht (Zeile 212) uebergibt `karteikarte` nicht und zeigt sie. */
+    if (rule.nichtAufKarteikarten && opts.karteikarte) return;
     /* Frueher nur die erste Fundstelle. In «أَهَذَا كِتَابٌ؟ نَعَمْ، هَذَا
        كِتَابٌ.» war damit das erste كِتَابٌ unterstrichen und das zweite nicht -
        dieselbe Regel, willkuerlich nur einmal gezeigt.

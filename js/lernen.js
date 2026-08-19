@@ -256,7 +256,7 @@ function renderCard(){
   if (w.sentAr){
     sentBox.classList.remove('hidden');
     document.getElementById('cardSentenceAr').innerHTML =
-      buildSentenceHtml(w, { ohneLuecke:true });
+      buildSentenceHtml(w, { ohneLuecke:true, karteikarte:true });
     document.getElementById('cardSentenceDe').textContent = w.sentDe || '';
   } else sentBox.classList.add('hidden');
 
