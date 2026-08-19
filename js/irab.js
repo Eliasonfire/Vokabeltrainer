@@ -307,7 +307,17 @@ const VERBEN = ['خرج', 'ذهب', 'قال', 'أحب'];
    keines — صِفْرٌ ist die Null, عَمِّي mein Onkel, جَرٍّ der Genitiv, لِ eine
    Praeposition. Ohne diese Liste macht die Zerlegung daraus einen Verbalsatz
    und das naechste Wort zum فَاعِل. */
-const NICHT_VERB = ['صفر', 'عمي', 'جر', 'ل', 'فوق'];
+const NICHT_VERB = ['صفر', 'عمي', 'جر', 'ل', 'فوق',
+  /* ⛔ 19.08.2026, von pruefe-saetze.js an den neuen Kapitel-13/14-Sätzen
+     gefunden: dieselben drei Wörter wurden je nach BUCHAUSWAHL anders
+     gelesen. Gemessen im vollen Abzug:
+       شيخ  bayna-yadayk-4 führt شَيخٌ als masdar des Verbs „alt werden“
+       زوج  madina-3 führt زَوَّجَ „verheiraten“
+       طب   madina-3 führt طِبْ als Imperativ von „gut sein“
+     Im Satz sind alle drei Nomen: der Gelehrte, der Ehemann, die Medizin.
+     Beide Schreibungen nötig — istInListe() trennt و und ف ab, aber NICHT
+     den Artikel. */
+  'شيخ', 'الشيخ', 'زوج', 'الزوج', 'طب', 'الطب'];
 /* Adjektive, die in den Beispielsaetzen vorkommen und deren Wortart nicht
    verlaesslich aus dem Lexikon kommt: كسلان und مجرور fehlen im kleinen
    Bestand ganz, حار steht im grossen ZWEIMAL (adjective und verb حَارَ) und
