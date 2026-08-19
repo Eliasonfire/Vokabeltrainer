@@ -686,6 +686,66 @@ try {
   warn(`Wurzeln nicht messbar: ${e.message}`);
 }
 
+/* ---------- 12. QURAN-FUNDSTELLEN ----------
+   QURAN_FREQ[wurzel] = [anzahl, [[sure,vers], …]] -- die App zeigt daraus
+   „dieses Wort kommt N-mal im Koran vor" und listet Fundstellen. Der Abschnitt
+   oben zaehlt sie nur; ob es die genannten Verse ueberhaupt GIBT, hat bis zum
+   20.08.2026 niemand geprueft.
+
+   ⛔ Was hier NICHT geprueft wird: ob die Wurzel im genannten Vers wirklich
+   steckt. Dafuer braeuchte es eine morphologische Analyse -- die Buchstaben
+   stehen im Wort oft nicht nebeneinander. Ein Skelettvergleich erzeugte
+   massenhaft Fehltreffer und damit eine Liste, die niemand liest.
+   Gemessen wird deshalb nur, was sich sicher messen laesst:
+     1. gibt es jede Fundstelle?
+     2. ist die Zahl mindestens so gross wie die Liste? (Sie ist gekappt --
+        bei أبد stehen 10 Stellen bei 28 Vorkommen.)
+
+   ⚠️ Laedt quran-text.js (2,3 MB). Gemessen: 0,12 s, gegen 2,1 s Gesamtlauf. */
+try {
+  const qtPfad = path.join(DIR, 'quran-text.js');
+  if (!fs.existsSync(qtPfad)) {
+    warn('quran-text.js fehlt — Fundstellen der Quranhaeufigkeit ungeprueft.');
+  } else {
+    const { QURAN_TEXT } = (new Function(fs.readFileSync(qtPfad, 'utf8')
+      + ';return {QURAN_TEXT};'))();
+    const versDa = (s, v) => {
+      const a = QURAN_TEXT[s];
+      return !!(a && a[v - 1]);
+    };
+    /* Eichung an drei bekannten Stellen -- schlaegt sie fehl, wird gar nicht
+       gemessen. QURAN_TEXT ist Sure 1-basiert, Vers 0-basiert. */
+    const eichOk = versDa(1, 1) && versDa(112, 1) && versDa(2, 255);
+    if (!eichOk) {
+      warn('QURAN_TEXT liest sich nicht wie erwartet — Fundstellen ungeprueft.');
+    } else {
+      let fStellen = 0, fFehlt = 0, fZuKlein = 0;
+      const fBefunde = [];
+      for (const [wurzel, wert] of Object.entries(QURAN_FREQ || {})) {
+        const [anzahl, liste] = Array.isArray(wert) ? wert : [wert, []];
+        if (!Array.isArray(liste)) continue;
+        if (typeof anzahl === 'number' && liste.length > anzahl) {
+          fZuKlein++;
+          fBefunde.push(`${wurzel}: Zahl ${anzahl}, aber ${liste.length} Fundstellen gelistet`);
+        }
+        for (const [s, v] of liste) {
+          fStellen++;
+          if (!versDa(s, v)) {
+            fFehlt++;
+            if (fBefunde.length < 5) fBefunde.push(`${wurzel}: ${s}:${v} gibt es nicht`);
+          }
+        }
+      }
+      if (fBefunde.length)
+        warn(`Quranhaeufigkeit: ${fFehlt} Fundstelle(n) gibt es nicht, ${fZuKlein} Zahl(en) kleiner als die Liste — ${fBefunde.slice(0,4).join(' | ')}`);
+      else
+        note(`Quranhaeufigkeit: alle ${fStellen} Fundstellen existieren, keine Zahl kleiner als ihre Liste.`);
+    }
+  }
+} catch (e) {
+  warn(`Quran-Fundstellen nicht messbar: ${e.message}`);
+}
+
 /* ---------- Ausgabe ---------- */
 console.log('--- Validierung Vokabeltrainer ---');
 info.forEach(m => console.log('  ok   ' + m));
