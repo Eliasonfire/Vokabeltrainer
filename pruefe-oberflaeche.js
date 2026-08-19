@@ -242,6 +242,64 @@
     });
   }
 
+  /* ---- 8c. Regel-Fortschritt und Wortfolgen (19.08.2026) ----
+     Der Modus "Welche Regel?" speist vt_regelStand — die Zahl, auf die
+     Elias' Regelauswahl sich stuetzt. Und seit dem 19.08. zeigt er auch auf
+     WORTFOLGEN (matchText ueber mehrere Woerter); vorher fielen 21 der 95
+     Regeln komplett heraus. Beides darf nicht still zurueckfallen. */
+  if (typeof uebungenAufbauen === 'function' && typeof merkeRegel === 'function'){
+    versuch('Regelmodus: Wortfolgen und Fortschritt', ()=>{
+      const gesichertStand = localStorage.getItem('vt_regelStand');
+      const gesichertRegel = (typeof REGEL_STAND !== 'undefined') ? REGEL_STAND : null;
+      try {
+        UEB_CACHE = { thema:null, nachModus:null };
+        const alle = uebungenAufbauen();
+        const aufgaben = alle['regel'] || [];
+        const mitBereich = aufgaben.filter(a=>a.wortIdxBis != null);
+        const regeln = new Set(aufgaben.map(a=>a.regelId));
+        if (!aufgaben.length) throw new Error('keine Aufgaben im Regelmodus');
+        if (!mitBereich.length) throw new Error('keine einzige Bereichs-Aufgabe — Wortfolgen-Erkennung zurueckgefallen?');
+        if (!aufgaben.every(a=>a.regelId)) throw new Error('Aufgabe ohne regelId — Fortschritt bliebe blind');
+        /* merkeRegel selbst, am Rande: schreibt, zaehlt, ignoriert null. */
+        REGEL_STAND = {};
+        merkeRegel('pruefe-oberflaeche-test', true);
+        merkeRegel('pruefe-oberflaeche-test', false);
+        merkeRegel(null, true);
+        const e = JSON.parse(localStorage.getItem('vt_regelStand'))['pruefe-oberflaeche-test'];
+        if (!e || e.gestellt !== 2 || e.richtig !== 1) throw new Error('merkeRegel zaehlt falsch: ' + JSON.stringify(e));
+        if (Object.keys(JSON.parse(localStorage.getItem('vt_regelStand'))).length !== 1) throw new Error('merkeRegel(null) hat einen Eintrag angelegt');
+        return `${aufgaben.length} Aufgaben, ${mitBereich.length} mit Wortfolge, ${regeln.size} Regeln erreichbar`;
+      } finally {
+        if (gesichertStand == null) localStorage.removeItem('vt_regelStand');
+        else localStorage.setItem('vt_regelStand', gesichertStand);
+        if (gesichertRegel !== null) REGEL_STAND = gesichertRegel;
+      }
+    });
+  }
+
+  /* ---- 8d. Sync-Merge fuer vt_regelStand: feldweises Maximum ----
+     Blockstempel wuerfe die Zaehlungen des anderen Geraets weg, Summieren
+     zaehlte nach jedem Abgleich doppelt. Der Merge muss das MAXIMUM je Feld
+     nehmen — genau das wird hier mit einem gestellten Fern-Stand geprueft. */
+  if (typeof fuehreZusammen === 'function'){
+    versuch('Sync: Regel-Fortschritt merged feldweise', ()=>{
+      const gesichert = localStorage.getItem('vt_regelStand');
+      try {
+        localStorage.setItem('vt_regelStand', JSON.stringify({ a:{gestellt:6,richtig:1,zuletzt:'2026-08-18'}, nurHier:{gestellt:2,richtig:2,zuletzt:'2026-08-19'} }));
+        fuehreZusammen({ stempel:{}, daten:{ vt_regelStand: JSON.stringify({ a:{gestellt:2,richtig:2,zuletzt:'2026-08-19'}, nurDort:{gestellt:3,richtig:0,zuletzt:'2026-08-17'}, kaputt:'kein-objekt' }) } });
+        const r = JSON.parse(localStorage.getItem('vt_regelStand'));
+        if (!r.a || r.a.gestellt !== 6 || r.a.richtig !== 2) throw new Error('kein feldweises Maximum: ' + JSON.stringify(r.a));
+        if (r.a.zuletzt !== '2026-08-19') throw new Error('zuletzt nicht der spaetere Tag: ' + r.a.zuletzt);
+        if (!r.nurHier || !r.nurDort) throw new Error('einseitige Eintraege ueberleben nicht');
+        if (r.kaputt) throw new Error('kaputter Ferneintrag wurde uebernommen');
+        return 'g6r1+g2r2 -> g6r2, beide Einzelseiten ueberleben';
+      } finally {
+        if (gesichert == null) localStorage.removeItem('vt_regelStand');
+        else localStorage.setItem('vt_regelStand', gesichert);
+      }
+    });
+  }
+
   /* ---- 9. Sicherung: Runde durch Export und Import ---- */
   if (typeof baueSicherung === 'function'){
     versuch('Sicherung enthaelt alle Schluessel', ()=>{
