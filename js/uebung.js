@@ -502,11 +502,27 @@ let UEB = { modus:null, liste:[], idx:0, gewaehlt:new Set(), beantwortet:false,
 
 /* Aufgaben werden je Thema EINMAL gebaut und gemerkt. Ohne das liefe
    analysiereSatz() bei jedem Reiterwechsel 186 mal je Modus - also 2418 mal,
-   nur um die Zahlen an die Reiter zu schreiben. */
-let UEB_CACHE = { thema:null, nachModus:null };
+   nur um die Zahlen an die Reiter zu schreiben.
+
+   ⛔ DAS THEMA ALLEIN REICHT ALS SCHLUESSEL NICHT.
+   Am 20.08.2026 im Browser gemessen: Satzmodus offen (Cache voll), dann in den
+   Einstellungen ein Kapitel abgewaehlt, dann zurueck in den Satzmodus.
+   `openSentences()` baut SENT.list richtig neu - 251 Saetze wurden zu 220 -,
+   aber SATZ_THEMA war unveraendert, also griff der Cache: die Leiste zeigte
+   weiter 5032 Aufgaben statt 4424, und die Aufgaben stammten aus Saetzen, die
+   gar nicht mehr im Vorrat sind.
+
+   Das trifft genau den haeufigsten Fall: Elias hakt ein Kapitel an. Deshalb
+   gehoert die Satzliste in den Schluessel. Ein Fingerabdruck aus den IDs statt
+   nur der Laenge - zwei Listen koennen gleich lang und verschieden sein. */
+let UEB_CACHE = { thema:null, liste:null, nachModus:null };
+const uebListenAbdruck = () => (typeof SENT !== 'undefined' && SENT.list)
+  ? SENT.list.map(s=>s.id).join(',') : '';
 
 function uebungenAufbauen(){
-  if (UEB_CACHE.thema === SATZ_THEMA && UEB_CACHE.nachModus) return UEB_CACHE.nachModus;
+  const abdruck = uebListenAbdruck();
+  if (UEB_CACHE.thema === SATZ_THEMA && UEB_CACHE.liste === abdruck && UEB_CACHE.nachModus)
+    return UEB_CACHE.nachModus;
   if (typeof setzeLexikon === 'function') setzeLexikon(VOCAB_DATA);
   const nachModus = {};
   UEBUNGEN.forEach(m=>nachModus[m.id] = []);
@@ -520,7 +536,7 @@ function uebungenAufbauen(){
       aufgaben.forEach(a=>nachModus[m.id].push({ ...a, satz, zeilen, modus:m }));
     });
   });
-  UEB_CACHE = { thema:SATZ_THEMA, nachModus };
+  UEB_CACHE = { thema:SATZ_THEMA, liste:abdruck, nachModus };
   return nachModus;
 }
 
