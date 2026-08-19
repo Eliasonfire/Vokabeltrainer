@@ -154,5 +154,104 @@ const FACHBEGRIFF_VOKABELN = [
     regel: 'alif-maqsura-01',
     belegt: 3,
     mnemo: 'Ein ى am Wortende OHNE Punkte ist kein Ya, sondern ein „kleines Alif" — gesprochen wie langes ā. عَلى hast du als Vokabel: „auf". عَلِيٌّ dagegen ist der Name Ali und endet wirklich auf ein Ya. Ohne Taschkīl sehen die beiden fast gleich aus — der Unterschied sind nur die zwei Punkte.'
+  },
+
+  /* ------------------------------------------------------------------------
+     DIE FUENF BESITZENDUNGEN (19.08.2026)
+
+     Elias: „ich muss unbedingt kapitel 10 wiederholen mit den suffixen die ich
+     gelernt habe … die sufixe die ich da gelernt haben soll die sollten auch
+     als karteikarte sein und ich soll die auch lernen bei dem lern modus bei
+     karteikarten."
+
+     ⭐ WARUM SIE HIER STEHEN UND NICHT IN EINER EIGENEN DATEI
+     Eine sechste Datendatei muesste in index.html, sw.js, kern.js,
+     pruefe-eselsbruecken.js, pruefe-oberflaeche.js und pruefe-plural-thema.mjs
+     einzeln bekannt gemacht werden. Genau daran ist am selben Tag
+     data/beispielsaetze.js gescheitert: drei Werkzeuge kannten sie nicht, und
+     fuenf fertige Saetze erzeugten 0 statt 105 Uebungsaufgaben.
+     [[dritte_satzquelle]] Hier greift dagegen alles sofort, weil
+     `chapter: grammar` schon ueberall behandelt wird.
+
+     ⭐ UND SIE BRINGEN DEN SATZMODUS GLEICH MIT
+     `alleSaetze()` in js/saetze.js liest VOCAB_DATA.filter(w => w.sentAr).
+     Ein `sentAr` an der Karte ist damit zugleich ein Satz im Satzmodus —
+     genau das, was Elias mit „der satzmodus bietet sich sehr gut dafuer an"
+     meinte. Deshalb traegt jede der fuenf Karten einen eigenen Satz.
+
+     ⛔ HERKUNFT: Kein Zeichen ist hier vokalisiert worden.
+     · Die fuenf Endungen stehen woertlich im Namen von possessiv-endungen-01.
+     · Jedes Wort der fuenf Saetze ist aus einem Lehrbuchsatz herausgesucht —
+       ueber sein Skelett, mit Gegenprobe auf genau eine Form:
+         mb1-61-1 (S.61) · mb1-61-2 (S.61) · mb1-61-3 (S.61) · mb1-61-4 (S.61)
+         mb1-58-1 (S.58, Kapitel 10) · mb1-63-1 (S.63) · mb1-65-1 (S.65)
+     · Die Verse kommen aus quran-text.js: 94:1 · 99:2 · 109:6 · 111:2 — alle
+       aus dem Bereich, den Elias auswendig kann. [[quranbezug_nur_auswendiges]]
+     Gebaut mit werkzeuge/suffixkarten.mjs, das bei jeder Abweichung abbricht.
+     ------------------------------------------------------------------------ */
+  {
+    id: 'gram-suffix-i',
+    ar: 'ـِي',
+    de: 'die Besitzendung „mein“ — 1. Person',
+    type: 'particle',
+    chapter: 'grammar',
+    book: 'grammar',
+    regel: 'possessiv-ya-01',
+    belegt: 2,
+    sentAr: 'هَذَا كِتَابِي.',
+    sentDe: 'Dies ist mein Buch.',
+    mnemo: 'Dein Lehrer geht die fünf der Reihe nach durch und nennt zuerst diese: ـِي „meins“. Du hast sie längst gelesen, ohne sie zu benennen — auf Seite 61 steht بَيْتِي „mein Haus“, auf Seite 61 auch كِتَابِي „mein Buch“. Das Yāʾ am Ende ist das Ich.'
+  },
+  {
+    id: 'gram-suffix-ka',
+    ar: 'ـكَ',
+    de: 'die Besitzendung „dein“ — zu einem Mann',
+    type: 'particle',
+    chapter: 'grammar',
+    book: 'grammar',
+    regel: 'possessiv-endungen-01',
+    belegt: 3,
+    sentAr: 'أَيْنَ قَلَمُكَ يَا خَالِدُ؟',
+    sentDe: 'Wo ist dein Stift, Khālid?',
+    mnemo: 'Deinem Lehrer ist der Vokal das Merkzeichen: „Kev, mit Fetha“ — ـكَ mit Fatḥa spricht einen Mann an. ⭐ Und das Entscheidende steht daneben: das Tanwīn fällt weg. Aus einem Stift mit Tanwīn wird قَلَمُكَ „dein Stift“ — Seite 58, genau dein Kapitel 10.'
+  },
+  {
+    id: 'gram-suffix-ki',
+    ar: 'ـكِ',
+    de: 'die Besitzendung „dein“ — zu einer Frau',
+    type: 'particle',
+    chapter: 'grammar',
+    book: 'grammar',
+    regel: 'possessiv-endungen-01',
+    belegt: 1,
+    sentAr: 'مَا اسْمُكِ يَا آمِنَةُ؟',
+    sentDe: 'Wie heißt du, Āmina?',
+    mnemo: 'Derselbe Buchstabe wie bei ـكَ, nur der Vokal wechselt: Fatḥa fragt einen Mann, Kasra fragt eine Frau. Auf Seite 63 steht genau diese Frage an Āmina: اسْمُكِ „dein Name“. Ein einziges Zeichen entscheidet, wen du ansprichst.'
+  },
+  {
+    id: 'gram-suffix-hu',
+    ar: 'ـهُ',
+    de: 'die Besitzendung „sein“',
+    type: 'particle',
+    chapter: 'grammar',
+    book: 'grammar',
+    regel: 'possessiv-endungen-01',
+    belegt: 2,
+    sentAr: 'لِي أَخٌ اسْمُهُ حَامِدٌ.',
+    sentDe: 'Ich habe einen Bruder, sein Name ist Ḥāmid.',
+    mnemo: 'Auf Seite 61 stehen ـهُ und ـهَا in EINEM Satz nebeneinander: اسْمُهُ أُسَامَةُ für den Bruder, اسْمُهَا سُعَادُ für die Schwester. Wer diesen einen Satz liest, hat beide Endungen auf einmal.'
+  },
+  {
+    id: 'gram-suffix-ha',
+    ar: 'ـهَا',
+    de: 'die Besitzendung „ihr“',
+    type: 'particle',
+    chapter: 'grammar',
+    book: 'grammar',
+    regel: 'possessiv-endungen-01',
+    belegt: 2,
+    sentAr: 'لِي أُخْتٌ اسْمُهَا آمِنَةُ.',
+    sentDe: 'Ich habe eine Schwester, ihr Name ist Āmina.',
+    mnemo: 'Deinem Lehrer genügt dafür ein Wort: „Ha, mit Elif“. Genau daran erkennst du sie — dasselbe Hāʾ wie beim „sein“, aber ein Alif dahinter macht es weiblich: اسْمُهُ gegen اسْمُهَا (Seite 61).'
   }
 ];

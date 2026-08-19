@@ -53,7 +53,7 @@ const CHAPTER_NAMES = {
      daraus angefordert. */
   24:"Anhang (Pronomen, Zahlen, Fachbegriffe)", personal:"Eigene Vokabeln",
 
-  /* Die zehn arabischen Fachbegriffe seines Lehrers (data/fachbegriffe.js,
+  /* Die arabischen Fachbegriffe seines Lehrers (data/fachbegriffe.js,
      17.08.2026). Eigenes Kapitel, NICHT 'personal' - siehe die Begruendung
      dort und bei istBekannt(). */
   grammar:"Fachbegriffe aus dem Unterricht"
@@ -278,10 +278,10 @@ function merkeRegel(regelId, richtig){
    arabicroots-Abzug erzeugt wird - ein Eintrag von Hand darin waere beim
    naechsten Backfill still weg. Der Zeitpunkt ist bewusst VOR initProgress():
    die Funktion legt fuer jedes Wort ohne Eintrag eine Startbox an, und ohne
-   sie taeuchten die zehn nie in „Jetzt lernen" auf.
+   sie taeuchten die fuenfzehn nie in „Jetzt lernen" auf.
 
    Der typeof-Test haelt die App lauffaehig, falls data/fachbegriffe.js einmal
-   nicht geladen ist - dann fehlen zehn Vokabeln, statt dass gar nichts geht. */
+   nicht geladen ist - dann fehlen fuenfzehn Vokabeln, statt dass gar nichts geht. */
 if (typeof FACHBEGRIFF_VOKABELN !== 'undefined' && Array.isArray(FACHBEGRIFF_VOKABELN)){
   /* ⚠️ Die ausgeblendeten ueberspringen (18.08.2026). Die Liste wird hier
      DIREKT aus dem Speicher gelesen und nicht ueber istGeloescht(): GELOESCHT

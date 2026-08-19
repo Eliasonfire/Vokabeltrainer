@@ -2024,6 +2024,26 @@ const SENTENCE_TAGS = {
   "45903": [
     { ruleId: "jumla-ismiya-filiya-01", matchText: "أَحَبَّ" },
     { ruleId: "possessiv-ist-idafa-01", matchText: "أُمَّهُ" }
+  ],
+  "gram-suffix-i": [
+    { ruleId: "possessiv-ya-01", matchText: "كِتَابِي" },
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" }
+  ],
+  "gram-suffix-ka": [
+    { ruleId: "possessiv-endungen-01", matchText: "قَلَمُكَ" },
+    { ruleId: "istifham-ayna-01", matchText: "أَيْنَ" }
+  ],
+  "gram-suffix-ki": [
+    { ruleId: "possessiv-endungen-01", matchText: "اسْمُكِ" },
+    { ruleId: "istifham-ma-01", matchText: "مَا" }
+  ],
+  "gram-suffix-hu": [
+    { ruleId: "possessiv-endungen-01", matchText: "اسْمُهُ" },
+    { ruleId: "harf-jarr-li-01", matchText: "لِي" }
+  ],
+  "gram-suffix-ha": [
+    { ruleId: "possessiv-endungen-01", matchText: "اسْمُهَا" },
+    { ruleId: "harf-jarr-li-01", matchText: "لِي" }
   ]
 };
 

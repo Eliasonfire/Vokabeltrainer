@@ -113,6 +113,20 @@ function ladeSaetze() {
      nur Saetze zu Woertern, die in vocab-data.js KEINEN haben. Ueberschneidung
      gibt es nicht; stuende doch eine da, waere die handverlesene aus
      vocab-data.js die aeltere und richtige — deshalb wird hier nur ergaenzt. */
+  /* ⛔⛔ VIERTE QUELLE (19.08.2026): data/fachbegriffe.js.
+     Der Kommentar oben sagt: "Wer eine vierte Satzquelle anlegt, muss BEIDE
+     Werkzeuge mitnehmen." Genau das ist jetzt eingetreten — die fuenf
+     Besitzendungen sind Karteikarten MIT `sentAr`, und js/saetze.js liest
+     `VOCAB_DATA.filter(w => w.sentAr)`. Ohne diesen Block meldete das
+     Werkzeug "Satz nicht gefunden" und keine der fuenf haette je eine
+     Markierung bekommen. */
+  const fb = path.join(REPO, 'data', 'fachbegriffe.js');
+  if (fs.existsSync(fb)) {
+    const o = (new Function(fs.readFileSync(fb, 'utf8')
+      + ';return typeof FACHBEGRIFF_VOKABELN!=="undefined"?FACHBEGRIFF_VOKABELN:[];'))();
+    for (const v of o) if (v && v.sentAr && !aus.has(String(v.id)))
+      aus.set(String(v.id), { ar: nfc(v.sentAr), de: v.sentDe || '', woher: 'fachbegriff' });
+  }
   const bs = path.join(REPO, 'data', 'beispielsaetze.js');
   if (fs.existsSync(bs)) {
     const o = (new Function(fs.readFileSync(bs, 'utf8')
