@@ -15,6 +15,7 @@ const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 
+const { execFileSync } = require('child_process');
 const DIR = __dirname;
 const errors = [];
 const warnings = [];
@@ -478,6 +479,36 @@ try {
       if (!assets.some(a => a.replace(/^\.\//, '') === s)) warn(`"${s}" wird von index.html geladen, steht aber nicht in ASSETS von sw.js (offline nicht verfügbar).`);
     });
     note(`sw.js: ${assets.length} Cache-Einträge geprüft.`);
+
+    /* ⛔⛔ node --check auf jede ausgelieferte .js-Datei.
+
+       Am 19.08.2026 hat eine Textänderung ein Anführungszeichen falsch
+       maskiert: `data/eselsbruecken.js` und `vocab-data.js` waren beide
+       syntaktisch kaputt — und validate.js meldete "Alles sauber". Die App
+       hätte beim Laden die Hälfte ihrer Daten verloren, und zwar STILL:
+       ein Skript, das nicht parst, wirft im Browser und der Rest läuft weiter.
+
+       Dieselbe Lücke stand schon einmal im Gedächtnis: ein Kommentar-Einschub
+       hinter dem Kommentarende wurde zu nacktem Code — "node --check findet
+       es, validate.js nicht". Jetzt findet validate.js es auch.
+
+       ⚠️ Und genau daran ist dieser Block beim Schreiben selbst gescheitert:
+       die Zeichenfolge Stern-Schrägstrich stand im Kommentartext und hat den
+       Kommentar vorzeitig geschlossen. Sie steht hier deshalb nirgends
+       ausgeschrieben. */
+    const kaputt = [];
+    assets.filter(a => a.endsWith('.js')).forEach(a => {
+      const p = path.join(DIR, a.replace(/^\.\//, ''));
+      if (!fs.existsSync(p)) return;
+      try { execFileSync(process.execPath, ['--check', p], { stdio: 'pipe' }); }
+      catch (e) {
+        const roh = String(e.stderr || '').split(/\r?\n/);
+        const zeile = roh.find(z => /Error/.test(z)) || 'Parserfehler';
+        kaputt.push(`${a}: ${zeile.trim()}`);
+      }
+    });
+    if (kaputt.length) kaputt.forEach(k => fail(`Syntaxfehler in ausgelieferter Datei — ${k}`));
+    else note(`Syntax: alle ${assets.filter(a => a.endsWith('.js')).length} ausgelieferten .js-Dateien parsen.`);
   }
 } catch (e) {
   fail(`sw.js nicht lesbar: ${e.message}`);

@@ -347,12 +347,187 @@ console.log('=== 6. Dauerauftrag: neu freigeschaltete Kapitel ===');
   }
 }
 
+
+console.log('');
+console.log('=== 7. Anker: baut die Eselsbruecke auf etwas, das er SCHON hat? ===');
+{
+  /* ⭐ Elias am 19.08.2026: „es sollen immer 3 eselsbrücken sein. wichtig ist,
+     dass sie darauf basieren was ich bereits kann."
+
+     ⛔ Das ist SCHAERFER als „das Wort steht irgendwo im Bestand" (Abschnitt 4).
+     Ein Anker aus Kapitel 22 hilft bei einem Wort aus Kapitel 1 nicht — dann
+     ist die Bruecke an ein Ufer gebaut, das er noch nicht betreten hat.
+
+     ⛔⛔ DREI MAL NACHGESCHAERFT, und jedes Mal war die erste Zahl falsch:
+       194 Treffer  — verglichen wurde nur mit dem Kapitel des erklaerten
+                      Wortes. Damit galt كَعْبَةٌ (K5) als zu frueh fuer
+                      بَيْتٌ (K1) — obwohl Elias bei K11 steht und die
+                      كَعْبَة laengst kennt.
+        93 Treffer  — die GRAMMATIKBEGRIFFE zaehlten mit. Der Abzug legt sie
+                      in Kapitel 24 ab (فَاعِل, نَعْت, مَجْرُور …), gelernt
+                      werden sie aber aus den Videos, nicht aus Lektion 24.
+        46 Treffer  — dazu der Anhang des Abzugs: Pronomen, Demonstrativa und
+                      Fragewoerter stehen ebenfalls unter Kapitel 24, obwohl
+                      هَذَا im Buch ab Lektion 1 vorkommt.
+        32 Treffer  — `wordType` statt `type` gelesen; das Feld heisst im
+                      Abzug anders als in vocab-data.js.
+     [[kandidatenliste_ist_keine_fehlerliste]]
+
+     ⚠️ Verglichen wird ueber das Konsonantengeruest. Das wirft Information weg
+     (مِنْ/مَنْ sehen gleich aus) — fuer die Frage „kommt dieses Wort als
+     Vokabel vor?" ist es die richtige Grobheit, und jeder Treffer wird mit
+     voller Schreibung ausgegeben. [[skelettvergleich_wirft_information_weg]] */
+
+  const standDatei = path.join(WURZEL, 'data/lernstand.json');
+  if (!fs.existsSync(standDatei)){
+    console.log('  data/lernstand.json fehlt — uebersprungen.');
+  } else {
+    const stand = JSON.parse(fs.readFileSync(standDatei, 'utf8'));
+    /* ⛔ Massgeblich ist SEINE ANGABE, nicht die Messung aus get_learning_progress.
+       Gemessen meldet madina-1 „hoechstes Kapitel 23"; gesagt hat er 11.
+       [[kann_ist_nicht_ist]] */
+    const ANGABE = stand.angabe || {};
+    if (!Object.keys(ANGABE).length){
+      console.log('  data/lernstand.json hat keine `angabe` — uebersprungen (nur seine eigene Angabe zaehlt).');
+    } else {
+
+    /* ⛔ KEIN STUMMES catch. Am 19.08.2026 hat genau hier ein leeres
+       catch eine kaputte data/eselsbruecken.js verschluckt: Abschnitt 7 lief
+       mit NULL Buch-Eselsbruecken weiter, meldete 231 statt 298 geprueften
+       Woertern und fand dadurch weniger Anker — es sah aus wie ein Erfolg.
+       Ein Fangnetz, das alles faengt, versteckt auch den eigenen Fehler. */
+    let BUCH_EB = {};
+    try { BUCH_EB = ladeAusSkript('data/eselsbruecken.js', 'BUCH_ESELSBRUECKEN'); }
+    catch (e){
+      console.log('  ⛔ data/eselsbruecken.js NICHT LESBAR: ' + e.message);
+      console.log('     Abschnitt 7 prueft ohne die Buch-Eselsbruecken und sieht damit WENIGER als die App.');
+      fehler++;
+    }
+
+    const geruest = s => String(s || '').normalize('NFC')
+      .replace(/[ً-ْٰـ]/g, '').replace(/[إأآٱ]/g, 'ا').trim();
+
+    /* Grammatikbegriffe des Unterrichts — sie kommen aus den Videos, nicht aus
+       dem Kapitel, unter dem der Abzug sie ablegt. */
+    const GRAMMATIK = new Set(['مبتدا','مفعول','فاعل',
+      'مرفوع','منصوب','مجرور','مضاف',
+      'اضافة','نعت','حرف','اسم','فعل','جر']);
+
+    let echt = 0, spaeter = 0, geprueftHier = 0;
+    const jeWort = {};
+
+    Object.entries(ANGABE).forEach(([slug, lernstand]) => {
+      const datei = `data/vokabeln-${slug}.js`;
+      if (!fs.existsSync(path.join(WURZEL, datei))){
+        console.log(`  ${datei} liegt nicht vor — ${slug} nicht pruefbar.`);
+        return;
+      }
+      const fenster = {};
+      new Function('window', fs.readFileSync(path.join(WURZEL, datei), 'utf8'))(fenster);
+      const liste = (fenster.VOKABELN && fenster.VOKABELN[slug]) || [];
+
+      /* Verzeichnis: Geruest -> kleinstes Kapitel, in dem es auftaucht. */
+      const kapitelVon = new Map(), schreibungVon = new Map();
+      const merke = (ar, kap) => {
+        const k = geruest(ar);
+        if (!k || k.length < 2) return;
+        const n = Number(kap);
+        if (Number.isNaN(n)) return;      /* 'personal'/'grammar' zaehlen als immer bekannt */
+        if (!kapitelVon.has(k) || n < kapitelVon.get(k)) kapitelVon.set(k, n);
+        if (!schreibungVon.has(k)) schreibungVon.set(k, ar);
+      };
+      const letztesKapitel = Math.max(...liste.map(w => Number(w.chapter) || 0));
+      liste.forEach(w => {
+        const g = geruest(w.ar);
+        if (GRAMMATIK.has(g)) return;
+        /* Anhang des Abzugs im LETZTEN Kapitel: Partikeln, Pronomen, Fragewoerter. */
+        if (Number(w.chapter) === letztesKapitel && (w.wordType || w.type) === 'particle') return;
+        merke(w.ar, w.chapter);
+      });
+      VOCAB_DATA.forEach(w => merke(w.ar, w.chapter));
+
+      const eigen = new Map(VOCAB_DATA.map(w => [String(w.id), w]));
+      liste.forEach(w => {
+        const id = String(w.id);
+        const meinKapitel = Number(w.chapter);
+        if (Number.isNaN(meinKapitel)) return;
+        const e = eigen.get(id);
+        const texte = [];
+        const erst = (e && e.mnemo) || w.mnemo || BUCH_EB[id];
+        if (erst) texte.push(['1. Vorschlag', erst]);
+        (ALT[id] || []).forEach((t, i) => texte.push([(i + 2) + '. Vorschlag', t]));
+        if (!texte.length) return;
+        geprueftHier++;
+
+        texte.forEach(([welcher, text]) => {
+          const woerter = String(text).match(/[؀-ۿݐ-ݿ]+/g) || [];
+          woerter.forEach(roh => {
+            const k = geruest(roh);
+            if (!kapitelVon.has(k)) return;                /* kein Lernwort — egal */
+            const kap = kapitelVon.get(k);
+            /* Die Grenze ist das GROESSERE von beidem:
+                 - was er heute kann (seine Angabe)
+                 - das Kapitel des erklaerten Wortes selbst; wer dort ankommt,
+                   kennt alles davor. */
+            const grenze = Math.max(Number(lernstand), meinKapitel);
+            if (kap <= grenze) return;
+            /* ⭐ Zwei Schweregrade, und sie sind nicht dasselbe:
+               Steht das erklaerte Wort in einem Kapitel, das er SCHON hat, ist
+               die Bruecke heute kaputt — Fehler. Ist es vorausgeschrieben,
+               bleibt Zeit — Hinweis. */
+            const dringend = meinKapitel <= Number(lernstand);
+            const eintrag = (jeWort[id] = jeWort[id] || { ar: w.ar, kap: meinKapitel, slug, dringend, anker: new Map() });
+            const schluessel = schreibungVon.get(k) + '|' + kap;
+            if (!eintrag.anker.has(schluessel))
+              eintrag.anker.set(schluessel, { anker: schreibungVon.get(k), kap, welcher });
+            if (dringend) echt++; else spaeter++;
+          });
+        });
+      });
+    });
+
+    geprueft += geprueftHier;
+    const woerter = Object.values(jeWort);
+    console.log(`  ${geprueftHier} Woerter mit Eselsbruecken geprueft, Lernstand laut seiner Angabe: ` +
+      Object.entries(ANGABE).map(([b, k]) => `${b} Kapitel ${k}`).join(', '));
+
+    if (!woerter.length){
+      console.log('  ✅ Kein Anker aus einem spaeteren Kapitel.');
+    } else {
+      const jetzt = woerter.filter(w => w.dringend);
+      const bald  = woerter.filter(w => !w.dringend);
+      if (jetzt.length){
+        console.log(`  ⛔ ${echt} Anker in ${jetzt.length} Woertern, die er HEUTE schon lernt:`);
+        jetzt.forEach(w => {
+          console.log(`     ${w.ar} (Kapitel ${w.kap})`);
+          w.anker.forEach(a => console.log(`        ⛔ ${a.anker} aus Kapitel ${a.kap}   [${a.welcher}]`));
+        });
+        fehler += jetzt.length;
+      }
+      if (bald.length){
+        console.log(`  ⬜ ${spaeter} weitere Anker in ${bald.length} vorausgeschriebenen Woertern (Kapitel ueber seinem Stand):`);
+        bald.forEach(w => {
+          const a = [...w.anker.values()];
+          console.log(`     ${w.ar} (K${w.kap}) ← ` + a.map(x => `${x.anker} K${x.kap}`).join(', '));
+        });
+        hinweise.push(`${spaeter} Anker in ${bald.length} vorausgeschriebenen Woertern zeigen auf spaetere Kapitel — kein akuter Fehler, aber vor der Freischaltung zu ersetzen.`);
+      }
+    }
+    }
+  }
+}
 console.log('');
 if (hinweise.length){
   console.log('=== Hinweise (kein Fehler — Elias entscheidet) ===');
   hinweise.forEach(h => console.log('  hinw ' + h));
-  console.log(`  ${hinweise.length} alte Merkhaken zitieren eine Sure ausserhalb seines`);
-  console.log('  auswendigen Bereichs. Der Inhalt kann trotzdem gut sein.');
+  /* ⚠️ Nur die Koran-Hinweise zaehlen, nicht alle. Seit Abschnitt 7 stehen hier
+     auch andere — die Zeile behauptete sonst 8 Sure-Hinweise, wo 7 sind.
+     [[zahlen_ohne_beleg]] */
+  const sureHinweise = hinweise.filter(h => /ausserhalb des auswendigen Bereichs/.test(h)).length;
+  if (sureHinweise){
+    console.log(`  ${sureHinweise} alte Merkhaken zitieren eine Sure ausserhalb seines`);
+    console.log('  auswendigen Bereichs. Der Inhalt kann trotzdem gut sein.');
+  }
   console.log('');
 }
 if (fehler){ console.log(`${fehler} Verstoss/Verstoesse gefunden.`); process.exit(1); }
