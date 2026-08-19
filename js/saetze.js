@@ -165,7 +165,7 @@ function buildSentenceHtml(w, opts){
        nicht bei den karteikarten als erklaerung". Deshalb wird hier nur
        unterdrueckt, wenn der Aufrufer eine Karteikarte zeichnet - die
        Satzansicht (Zeile 212) uebergibt `karteikarte` nicht und zeigt sie. */
-    if (rule.nichtAufKarteikarten && opts.karteikarte) return;
+    if (rule.nichtAufKarteikarten && opts && opts.karteikarte) return;
     /* Frueher nur die erste Fundstelle. In «أَهَذَا كِتَابٌ؟ نَعَمْ، هَذَا
        كِتَابٌ.» war damit das erste كِتَابٌ unterstrichen und das zweite nicht -
        dieselbe Regel, willkuerlich nur einmal gezeigt.

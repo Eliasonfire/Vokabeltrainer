@@ -318,6 +318,136 @@
   SETTINGS.buecher = JSON.parse(JSON.stringify(vorher.buecher));
   SETTINGS.eigeneGewaehlt = vorher.eigene;
   SETTINGS.selectedChapters = vorher.kapitel;
+  /* ---- 8e. „Taugt nicht": bleibt bei EINEM Vorschlag ehrlich? ----
+
+     Am 19.08.2026 gemessen: 135 der geladenen Woerter haben genau einen
+     Vorschlag. Der Knopf hiess bis dahin immer „Taugt nicht — bitte ersetzen"
+     und versprach damit etwas, das die App nicht halten kann: sie hat keine
+     KI und kein Backend, sie blaettert nur durch einen Vorrat.
+
+     Geprueft wird deshalb BEIDES — der Einzelfall UND der Mehrfachfall. Nur
+     den Einzelfall zu pruefen wuerde nicht merken, wenn die Unterscheidung
+     ganz verschwindet und ueberall „einziger" steht. */
+  if (typeof vorschlagsListe === 'function' && typeof zeigeVorschlag === 'function'){
+    versuch('Vorschlaege: einer gegen mehrere', ()=>{
+      const gesichertSession = (typeof SESSION !== 'undefined') ? SESSION : null;
+      const gesichertListe = (typeof VORSCHLAEGE !== 'undefined') ? VORSCHLAEGE : null;
+      const gesichertNr = (typeof VORSCHLAG_NR !== 'undefined') ? VORSCHLAG_NR : 0;
+      try {
+        const einer = VOCAB_DATA.find(w=>vorschlagsListe(w).length === 1);
+        const viele = VOCAB_DATA.find(w=>vorschlagsListe(w).length > 1);
+        if (!einer) return 'kein Wort mit genau einem Vorschlag — nichts zu pruefen';
+        if (!viele) throw new Error('kein Wort mit mehreren Vorschlaegen — Vorrat leer?');
+
+        const marke = document.querySelector('#neVorschlag .ne-vorschlag-marke');
+        const knopf = document.getElementById('btnVorschlagWeg');
+        if (!marke || !knopf) throw new Error('Vorschlagskasten fehlt im Markup');
+
+        const lies = (w)=>{
+          SESSION.words = [w]; SESSION.idx = 0;
+          VORSCHLAEGE = vorschlagsListe(w); VORSCHLAG_NR = 0;
+          zeigeVorschlag();
+          return { marke: marke.textContent, knopf: knopf.textContent };
+        };
+        const a = lies(einer), b = lies(viele);
+        if (!/einziger/.test(a.marke)) throw new Error('bei einem Vorschlag fehlt „einziger": ' + a.marke);
+        if (/ersetzen/.test(a.knopf)) throw new Error('verspricht Ersatz, den es nicht gibt: ' + a.knopf);
+        if (/einziger/.test(b.marke)) throw new Error('bei mehreren steht faelschlich „einziger": ' + b.marke);
+        if (!/ersetzen/.test(b.knopf)) throw new Error('bei mehreren fehlt „ersetzen": ' + b.knopf);
+        const zahl = VOCAB_DATA.filter(w=>vorschlagsListe(w).length === 1).length;
+        return `${zahl} von ${VOCAB_DATA.length} Woertern mit genau einem Vorschlag, beide Faelle richtig beschriftet`;
+      } finally {
+        if (gesichertListe !== null) VORSCHLAEGE = gesichertListe;
+        VORSCHLAG_NR = gesichertNr;
+        if (gesichertSession !== null) SESSION = gesichertSession;
+      }
+    });
+  }
+
+  /* ---- 8f. Regelfortschritt: die Anzeige, nicht nur die Messung ----
+
+     `vt_regelStand` wurde seit v209 geschrieben und war bis v221 NIRGENDS zu
+     sehen. Genau deshalb prueft dieser Abschnitt die ANZEIGE: dass sie
+     ueberhaupt Zeilen baut, dass die Sortierung „schwaechste zuerst" wirklich
+     aufsteigend ist, und dass der leere Fall einen Satz zeigt statt einer
+     leeren Flaeche.
+
+     ⚠️ Eine Quote ohne Nenner ist bei kleinen Zahlen wertlos (1/1 sind 100 %).
+     Deshalb wird auch geprueft, dass die Zeile „richtig/gestellt" zeigt und
+     nicht bloss ein Prozentzeichen. */
+  if (typeof renderRegelStand === 'function' && typeof merkeRegel === 'function'){
+    versuch('Regelfortschritt: Anzeige und Sortierung', ()=>{
+      const gesichertStand = localStorage.getItem('vt_regelStand');
+      const gesichertRegel = (typeof REGEL_STAND !== 'undefined') ? REGEL_STAND : null;
+      const gesichertSort = (typeof REGEL_SORT !== 'undefined') ? REGEL_SORT.art : 'schwach';
+      try {
+        const kasten = document.getElementById('regelStand');
+        if (!kasten) throw new Error('#regelStand fehlt im Markup');
+
+        REGEL_STAND = {}; localStorage.removeItem('vt_regelStand');
+        REGEL_SORT.art = 'schwach';
+        renderRegelStand();
+        if (kasten.querySelectorAll('.rz').length) throw new Error('leerer Stand zeigt Zeilen');
+        if (!/Noch keine Regel/.test(kasten.textContent)) throw new Error('leerer Stand ohne Erklaerung');
+
+        const ids = GRAMMAR_RULES.filter(r=>!r.ausgeblendet).slice(0, 3).map(r=>r.id);
+        merkeRegel(ids[0], true); merkeRegel(ids[0], true); merkeRegel(ids[0], true);   /* 3/3 */
+        merkeRegel(ids[1], false); merkeRegel(ids[1], false); merkeRegel(ids[1], true); /* 1/3 */
+        merkeRegel(ids[2], true); merkeRegel(ids[2], false);                            /* 1/2 */
+        renderRegelStand();
+        const zeilen = [...kasten.querySelectorAll('.rz')];
+        if (zeilen.length !== 3) throw new Error('erwartet 3 Zeilen, gezeigt ' + zeilen.length);
+        const quoten = zeilen.map(z=>z.querySelector('.rq').textContent.trim());
+        if (!quoten.every(q=>/^\d+\/\d+$/.test(q))) throw new Error('Quote ohne Nenner: ' + quoten.join(', '));
+        const werte = quoten.map(q=>{ const [r,g] = q.split('/').map(Number); return r/g; });
+        for (let i = 1; i < werte.length; i++)
+          if (werte[i] < werte[i-1] - 1e-9) throw new Error('nicht aufsteigend sortiert: ' + quoten.join(' < '));
+        /* Faerbung erst ab drei Versuchen — 1/2 darf nicht rot sein. */
+        const zweier = zeilen.find(z=>z.querySelector('.rq').textContent.trim() === '1/2');
+        if (zweier && zweier.classList.contains('schwach'))
+          throw new Error('1/2 als schwach gefaerbt — die Schwelle von 3 Versuchen greift nicht');
+
+        REGEL_SORT.art = 'nie';
+        renderRegelStand();
+        const nie = kasten.querySelectorAll('.rz').length;
+        if (nie !== GRAMMAR_RULES.length - 3)
+          throw new Error(`„nie geuebt" zeigt ${nie}, erwartet ${GRAMMAR_RULES.length - 3}`);
+        return `leer, ${zeilen.length} geuebt aufsteigend (${quoten.join(' ')}), ${nie} nie geuebt`;
+      } finally {
+        if (typeof REGEL_SORT !== 'undefined') REGEL_SORT.art = gesichertSort;
+        if (gesichertStand == null) localStorage.removeItem('vt_regelStand');
+        else localStorage.setItem('vt_regelStand', gesichertStand);
+        if (gesichertRegel !== null) REGEL_STAND = gesichertRegel;
+        if (typeof renderRegelStand === 'function') renderRegelStand();
+      }
+    });
+  }
+
+  /* ---- 8g. Icons: Sprite vollstaendig, App-Icons vorhanden ----
+
+     Zwei verschiedene Dinge, die beide „Icon" heissen:
+       - der SVG-Sprite in index.html, aus dem `icon(name)` zieht. Fehlt ein
+         Symbol, malt der Browser NICHTS und meldet auch nichts — die Stelle
+         sieht einfach leer aus.
+       - die App-Icons aus manifest.json (icon.svg, icon-maskable.svg), die
+         auf dem Startbildschirm landen.
+     Der erste Fall ist der haeufigere und der stillere. */
+  versuch('Icons: Sprite und App-Icon', ()=>{
+    const vorhanden = new Set([...document.querySelectorAll('svg symbol[id^="ic-"]')].map(s=>s.id.slice(3)));
+    if (!vorhanden.size) throw new Error('kein einziges Sprite-Symbol gefunden');
+    /* Jede benutzte Verweisstelle muss ein Symbol haben. */
+    const benutzt = new Set([...document.querySelectorAll('svg.ic use')]
+      .map(u=>(u.getAttribute('href') || '').replace('#ic-', '')).filter(Boolean));
+    const fehlend = [...benutzt].filter(n=>!vorhanden.has(n));
+    if (fehlend.length) throw new Error('Verweis ohne Symbol: ' + fehlend.join(', '));
+    /* Und die Wortmarke im Kopf, die kein Sprite ist, sondern eine Datei. */
+    const marke = document.querySelector('.brand-mark');
+    if (!marke) throw new Error('.brand-mark fehlt im Kopf');
+    if (marke.tagName === 'IMG' && marke.naturalWidth === 0 && marke.complete)
+      throw new Error('wortmarke.svg laedt nicht (naturalWidth 0)');
+    return `${vorhanden.size} Sprite-Symbole, ${benutzt.size} davon in Gebrauch, Wortmarke geladen`;
+  });
+
   saveSettings();
   if (typeof renderBuchChips === 'function') renderBuchChips();
   if (typeof renderHome === 'function') renderHome();
