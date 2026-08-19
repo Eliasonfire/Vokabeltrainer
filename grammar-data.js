@@ -166,7 +166,7 @@ const GRAMMAR_RULES = [
   {
     id: "mubtada-khabar-01",
     name: "مُبْتَدَأ وخَبَر (Subjekt und Aussage)",
-    shortExplanation: "Die beiden Begriffe kommen hier zunächst nur als Vorgeschmack (\"erstmal nicht viel damit machen, sondern erstmal nur wissen\"). خَبَر (khabar) ist die Information über das Nomen – in den Übungen das ergänzte Wort, z.B. جَديدٌ (dschadīdun, neu). مُبْتَدَأ (mubtadaʾ) ist das Subjekt, also das, worum es im Satz geht, z.B. اَلْمُدَرِّسُ (al-mudarrisu, der Lehrer). Zusammen: اَلْمُدَرِّسُ جَديدٌ – der Lehrer ist neu.",
+    shortExplanation: "Der خَبَر ist **die Benachrichtigung für den مُبْتَدَأ** – so definiert der Lehrer es beim Abschluss von Kapitel 9 (Folge 14, 45:15): »Der خَبَر ist die Benachrichtigung für den مُبْتَدَأ, also für das Subjekt. Und wenn wir das wissen, wissen wir immer, wo unser [خَبَر] ist.« ⚠️ Er hängt dort selbst an: »Das kommt noch mal zu gegebener Zeit« (45:24) – die ausführliche Regel steht im Stoff also noch aus. In Folge 03 wurden die Begriffe nur angekündigt (\"erstmal nicht viel damit machen, sondern erstmal nur wissen\"). خَبَر (khabar) ist die Information über das Nomen – in den Übungen das ergänzte Wort, z.B. جَديدٌ (dschadīdun, neu). مُبْتَدَأ (mubtadaʾ) ist das Subjekt, also das, worum es im Satz geht, z.B. اَلْمُدَرِّسُ (al-mudarrisu, der Lehrer). Zusammen: اَلْمُدَرِّسُ جَديدٌ – der Lehrer ist neu.",
     color: "mubtada",
     source: { folge: 3, video: "Folge 03", approxTimestamp: "13:57", chapter: 3 },
     source2: { schluessel: 2, lektion: 1, seite: 5 }
@@ -370,7 +370,7 @@ const GRAMMAR_RULES = [
   {
     id: "harf-jarr-min-ila-01",
     name: "مِنْ und إِلى (zwei neue حُروف جَرّ)",
-    shortExplanation: "Zu فِي und عَلى kommen zwei weitere Präpositionen dazu: مِنْ min heißt „von“, إِلى ilā heißt „zu“ oder „nach“. Beide sind Huruf Jarr, das folgende Wort wird also majrūr: مِنَ الْبَيْتِ mina l-baiti (vom Haus), إِلَى الْمَسْجِدِ ilā l-masjidi (zur Moschee).",
+    shortExplanation: "Der Lehrer führt sie nicht als Vokabeln ein, sondern als Zuwachs zu einer **Liste, die weiter wächst** (Folge 05, 22:54): »Jetzt lernen wir **zwei weitere حُروف جَرّ**.« Das ist die Regel: Jedes neue Glied dieser Liste hat dieselbe Wirkung wie فِي und عَلى – das folgende Nomen wird مَجْرور, egal welches Wort davorsteht. Zu فِي und عَلى kommen also zwei weitere Präpositionen dazu: مِنْ min heißt „von“, إِلى ilā heißt „zu“ oder „nach“. Beide sind Huruf Jarr, das folgende Wort wird also majrūr: مِنَ الْبَيْتِ mina l-baiti (vom Haus), إِلَى الْمَسْجِدِ ilā l-masjidi (zur Moschee).",
     color: "nasab",
     source: { folge: 5, video: "Folge 05", approxTimestamp: "22:54", chapter: 4 },
     source2: { schluessel: 1, lektion: 4, seite: 16 }
@@ -398,7 +398,7 @@ const GRAMMAR_RULES = [
   {
     id: "verb-enthaelt-pronomen-01",
     name: "خَرَجَ / ذَهَبَ (das „er“ steckt im Verb)",
-    shortExplanation: "Die ersten beiden Verben sind خَرَجَ kharaja (er verließ, er ging hinaus) und ذَهَبَ dhahaba (er ging) – beides Vergangenheit. Das „er“ ist kein eigenes Wort und steckt auch nicht in der Endung, sondern ist im Verb selbst versteckt.",
+    shortExplanation: "Die ersten beiden Verben sind خَرَجَ kharaja (er verließ, er ging hinaus) und ذَهَبَ dhahaba (er ging) – beides Vergangenheit. Ein Schüler fragt, ob das »er« in der Endung stecke; der Lehrer widerspricht ausdrücklich (Folge 05, 27:44): »**Nicht in der Endung. Es ist im Verb drinne, es ist sozusagen versteckt.**« Daran erkennst du es im Satz: **es steht kein eigenes Wort für »er« da.** In ذَهَبَ إِلَى الْمُدِيرِ dhahaba ilā l-mudīri (er ging zum Direktor) trägt allein das Verb den Handelnden – zwischen Verb und Präposition fehlt jedes Pronomen. Der Lehrer bei 27:52: »Das kommt … auch noch mal.«",
     color: "mubtada",
     source: { folge: 5, video: "Folge 05", approxTimestamp: "27:41", chapter: 4 },
     source2: { schluessel: 1, lektion: 4, seite: 16 }
@@ -406,7 +406,7 @@ const GRAMMAR_RULES = [
   {
     id: "alif-maqsura-01",
     name: "أَلِف مَقْصورة (ى am Wortende)",
-    shortExplanation: "Ein ى am Wortende ohne Punkte ist kein Ya, sondern eine أَلِف مَقْصورة alif maqṣūra – ein „kleines Alif“, gesprochen wie ein langes ā. Deshalb aufpassen: عَلى ʿalā heißt „auf“, عَلِيٌّ ʿaliyyun dagegen ist der Name Ali und endet wirklich auf ein Ya. Ohne Taschkil sehen die beiden fast gleich aus.",
+    shortExplanation: "Ein ى am Wortende ohne Punkte ist kein Ya, sondern eine أَلِف مَقْصورة alif maqṣūra – ein „kleines Alif“, gesprochen wie ein langes ā. **Die Punkte entscheiden, nichts sonst** – das ist der ganze Handgriff. Der Lehrer (Folge 05, 29:44): »أَلِف مَقْصورة ist ein Alif, ist ein kleines Alif«, und 29:58: »Muss man aufpassen … weil [es] keine Punkte hat.« Zwei Punkte unter dem Zahn ⇒ echtes ي, gesprochen -ī oder -iyy. Keine Punkte ⇒ ى, gesprochen wie langes ā. Deshalb: عَلى ʿalā heißt „auf“, عَلِيٌّ ʿaliyyun dagegen ist der Name Ali und endet wirklich auf ein Ya. Ohne Taschkil sehen die beiden fast gleich aus.",
     color: "other",
     source: { folge: 5, video: "Folge 05", approxTimestamp: "29:38", chapter: 4 }
   },
@@ -425,7 +425,7 @@ const GRAMMAR_RULES = [
   {
     id: "idafa-01",
     name: "إِضافة (Genitivverbindung)",
-    shortExplanation: "Mit der إِضافة verbindet man zwei Nomen (اِسْم + اِسْم) zu einem Ausdruck. Das erste Wort heißt مُضَاف (der Besitz), das zweite مُضَاف إِلَيْهِ (der Besitzer): كِتابُ اللهِ kitābu llāhi – das Buch Allahs, بَيْتُ اللهِ baytu llāhi – das Haus Allahs (die Kaaba), بَابُ الْمَسْجِدِ bābu l-masjidi – die Tür der Moschee, سَيّارَةُ حامِدٍ sayyāratu ḥāmidin – das Auto von Hamid. Damit kann man zusammengesetzte Begriffe bilden – der Lehrer zählt auf Deutsch auf: Wörterbuch, Feuertreppe, Trinkbecher, Schreibtisch. Das ging vorher nicht. Die Verbindung funktioniert nur zwischen zwei Nomen, اِسْم und اِسْم.",
+    shortExplanation: "Die إِضافة ist der **zweite Weg, ein Wort مَجْرور zu machen** – der erste ist der حَرْف جَرّ. Der Lehrer stellt sie genau so vor (Folge 07, 1:09): »wir kriegen den مَجْرور durch حَرْف جَرّ … oder wir kriegen ihn durch die إِضافة, durch مُضاف und مُضاف إِلَيْهِ«, und bei 2:00: »es gibt noch eine Regel – diese können auch das Wort مَجْرور machen, das heißt mit كَسْرة am Ende«. Der Grundfall bleibt مَرْفوع; erst wenn etwas hinzukommt, ändert sich die Endung. Mit der إِضافة verbindet man zwei Nomen (اِسْم + اِسْم) zu einem Ausdruck. Das erste Wort heißt مُضَاف (der Besitz), das zweite مُضَاف إِلَيْهِ (der Besitzer): كِتابُ اللهِ kitābu llāhi – das Buch Allahs, بَيْتُ اللهِ baytu llāhi – das Haus Allahs (die Kaaba), بَابُ الْمَسْجِدِ bābu l-masjidi – die Tür der Moschee, سَيّارَةُ حامِدٍ sayyāratu ḥāmidin – das Auto von Hamid. Damit kann man zusammengesetzte Begriffe bilden – der Lehrer zählt auf Deutsch auf: Wörterbuch, Feuertreppe, Trinkbecher, Schreibtisch. Das ging vorher nicht. Die Verbindung funktioniert nur zwischen zwei Nomen, اِسْم und اِسْم.",
     color: "idafa",
     source: { folge: 7, video: "Folge 07", approxTimestamp: "2:24", chapter: 5 },
     source2: { schluessel: 1, lektion: 5, seite: 18 }
