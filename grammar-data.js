@@ -201,7 +201,7 @@ const GRAMMAR_RULES = [
   {
     id: "mubtada-khabar-01",
     name: "مُبْتَدَأ وخَبَر (Subjekt und Aussage)",
-    shortExplanation: "Der خَبَر ist **die Benachrichtigung für den مُبْتَدَأ** – so definiert der Lehrer es beim Abschluss von Kapitel 9 (Folge 14, 45:15): »Der خَبَر ist die Benachrichtigung für den مُبْتَدَأ, also für das Subjekt. Und wenn wir das wissen, wissen wir immer, wo unser [خَبَر] ist.« ⚠️ Er hängt dort selbst an: »Das kommt noch mal zu gegebener Zeit« (45:24) – die ausführliche Regel steht im Stoff also noch aus. In Folge 03 wurden die Begriffe nur angekündigt (\"erstmal nicht viel damit machen, sondern erstmal nur wissen\"). خَبَر (khabar) ist die Information über das Nomen – in den Übungen das ergänzte Wort, z.B. جَديدٌ (dschadīdun, neu). مُبْتَدَأ (mubtadaʾ) ist das Subjekt, also das, worum es im Satz geht, z.B. اَلْمُدَرِّسُ (al-mudarrisu, der Lehrer). Zusammen: اَلْمُدَرِّسُ جَديدٌ – der Lehrer ist neu.",
+    shortExplanation: "Der خَبَر ist **die Benachrichtigung für den مُبْتَدَأ**, also die Aussage über das Subjekt. So definiert es der Lehrer beim Abschluss von Kapitel 9 (Folge 14, 45:15), und er fügt an: »Und wenn wir das wissen, wissen wir immer, wo unser خَبَر ist«. ⚠️ Er hängt dort selbst an: »Das kommt noch mal zu gegebener Zeit« (45:24) – die ausführliche Regel steht im Stoff also noch aus. In Folge 03 wurden die Begriffe nur angekündigt (\"erstmal nicht viel damit machen, sondern erstmal nur wissen\"). خَبَر (khabar) ist die Information über das Nomen – in den Übungen das ergänzte Wort, z.B. جَديدٌ (dschadīdun, neu). مُبْتَدَأ (mubtadaʾ) ist das Subjekt, also das, worum es im Satz geht, z.B. اَلْمُدَرِّسُ (al-mudarrisu, der Lehrer). Zusammen: اَلْمُدَرِّسُ جَديدٌ – der Lehrer ist neu.",
     color: "mubtada",
     source: { folge: 3, video: "Folge 03", approxTimestamp: "13:57", chapter: 3 },
     source2: { schluessel: 2, lektion: 1, seite: 5 }
@@ -360,7 +360,7 @@ const GRAMMAR_RULES = [
   {
     id: "harf-jarr-fi-ala-01",
     name: "فِي und عَلَى (die ersten zwei Genitivpartikeln)",
-    shortExplanation: "In Kapitel 4 lernen wir zwei Genitivpartikeln: فِي (fī) heißt \"in\" und عَلَى (ʿalā) heißt \"auf\". Beide setzen das folgende Nomen in den Genitiv (Kasra statt Damma): اَلْبَيْتُ → فِي الْبَيْتِ (fī l-bayti) \"im Haus\", اَلْمَسْجِدُ → فِي الْمَسْجِدِ (fī l-masjidi) \"in der Moschee\", اَلْمَكْتَبُ → عَلَى الْمَكْتَبِ (ʿalā l-maktabi) \"auf dem Schreibtisch\", اَلسَّريرُ → عَلَى السَّريرِ (ʿalā s-sarīri) \"auf dem Bett\". Beim Übersetzen besteht der Lehrer auf Genauigkeit: عَلَى heißt \"auf\", nicht \"über\" – \"über\" wäre etwas anderes. Zweites Beispiel, komplett durchanalysiert, aus dem Koran (Sure al-Baqara, Vers 61): لَن نَّصْبِرَ عَلَىٰ طَعَامٍ وَٰحِدٍ (lan naṣbira ʿalā ṭaʿāmin wāḥidin) – \"wir werden eine einzige Speise nicht ertragen\"; عَلَى ist der حَرْف جَرّ, طَعَامٍ das اِسْم مَجْرُور danach. Weitere Präpositionen kommen später; مِنْ (min) und إِلى (ilā) kündigt er am Ende der Stunde für das nächste Mal an.",
+    shortExplanation: "Ein حَرْف جَرّ **setzt das folgende Nomen in den Genitiv** – statt Damma steht Kasra. Die ersten zwei sind فِي (fī) \"in\" und عَلَى (ʿalā) \"auf\": اَلْبَيْتُ → فِي الْبَيْتِ (fī l-bayti) \"im Haus\", اَلْمَسْجِدُ → فِي الْمَسْجِدِ (fī l-masjidi) \"in der Moschee\", اَلْمَكْتَبُ → عَلَى الْمَكْتَبِ (ʿalā l-maktabi) \"auf dem Schreibtisch\", اَلسَّريرُ → عَلَى السَّريرِ (ʿalā s-sarīri) \"auf dem Bett\". Beim Übersetzen besteht der Lehrer auf Genauigkeit: عَلَى heißt \"auf\", nicht \"über\" – \"über\" wäre etwas anderes. Zweites Beispiel, komplett durchanalysiert, aus dem Koran (Sure al-Baqara, Vers 61): لَن نَّصْبِرَ عَلَىٰ طَعَامٍ وَٰحِدٍ (lan naṣbira ʿalā ṭaʿāmin wāḥidin) – \"wir werden eine einzige Speise nicht ertragen\"; عَلَى ist der حَرْف جَرّ, طَعَامٍ das اِسْم مَجْرُور danach. Weitere Präpositionen kommen später; مِنْ (min) und إِلى (ilā) kündigt er am Ende der Stunde für das nächste Mal an.",
     color: "nasab",
     source: { folge: 4, video: "Folge 04", approxTimestamp: "25:05", chapter: 4 },
     source2: { schluessel: 1, lektion: 4, seite: 13 }
@@ -455,7 +455,7 @@ const GRAMMAR_RULES = [
   {
     id: "harf-jarr-min-ila-01",
     name: "مِنْ und إِلى (zwei neue حُروف جَرّ)",
-    shortExplanation: "Der Lehrer führt sie nicht als Vokabeln ein, sondern als Zuwachs zu einer **Liste, die weiter wächst** (Folge 05, 22:54): »Jetzt lernen wir **zwei weitere حُروف جَرّ**.« Das ist die Regel: Jedes neue Glied dieser Liste hat dieselbe Wirkung wie فِي und عَلى – das folgende Nomen wird مَجْرور, egal welches Wort davorsteht. Zu فِي und عَلى kommen also zwei weitere Präpositionen dazu: مِنْ min heißt „von“, إِلى ilā heißt „zu“ oder „nach“. Beide sind Huruf Jarr, das folgende Wort wird also majrūr: مِنَ الْبَيْتِ mina l-baiti (vom Haus), إِلَى الْمَسْجِدِ ilā l-masjidi (zur Moschee).",
+    shortExplanation: "**Jedes neue Glied der حُروف جَرّ wirkt wie فِي und عَلى**: das folgende Nomen wird مَجْرور, egal welche Präposition davorsteht. Die Liste wächst also, die Regel bleibt dieselbe. Der Lehrer führt die beiden genau so ein (Folge 05, 22:54): »Jetzt lernen wir zwei weitere حُروف جَرّ.« Zu فِي und عَلى kommen damit: مِنْ min heißt „von“, إِلى ilā heißt „zu“ oder „nach“. Beide sind Huruf Jarr, das folgende Wort wird also majrūr: مِنَ الْبَيْتِ mina l-baiti (vom Haus), إِلَى الْمَسْجِدِ ilā l-masjidi (zur Moschee).",
     color: "nasab",
     source: { folge: 5, video: "Folge 05", approxTimestamp: "22:54", chapter: 4 },
     source2: { schluessel: 1, lektion: 4, seite: 16 }
@@ -488,7 +488,7 @@ const GRAMMAR_RULES = [
   {
     id: "verb-enthaelt-pronomen-01",
     name: "خَرَجَ / ذَهَبَ (das „er“ steckt im Verb)",
-    shortExplanation: "Die ersten beiden Verben sind خَرَجَ kharaja (er verließ, er ging hinaus) und ذَهَبَ dhahaba (er ging) – beides Vergangenheit. Ein Schüler fragt, ob das »er« in der Endung stecke; der Lehrer widerspricht ausdrücklich (Folge 05, 27:44): »**Nicht in der Endung. Es ist im Verb drinne, es ist sozusagen versteckt.**« Daran erkennst du es im Satz: **es steht kein eigenes Wort für »er« da.** In ذَهَبَ إِلَى الْمُدِيرِ dhahaba ilā l-mudīri (er ging zum Direktor) trägt allein das Verb den Handelnden – zwischen Verb und Präposition fehlt jedes Pronomen. Der Lehrer bei 27:52: »Das kommt … auch noch mal.«",
+    shortExplanation: "Das »er« steckt **nicht in der Endung**, sondern im Verb selbst. Daran erkennst du es im Satz: es steht **kein eigenes Wort für »er«** da. Der Lehrer widerspricht damit ausdrücklich einem Schüler, der es in der Endung vermutet hatte (Folge 05, 27:44): »Nicht in der Endung, es ist im Verb drinne, sozusagen versteckt.« Die ersten beiden Verben sind خَرَجَ kharaja (er verließ, er ging hinaus) und ذَهَبَ dhahaba (er ging) – beides Vergangenheit. Daran erkennst du es im Satz: **es steht kein eigenes Wort für »er« da.** In ذَهَبَ إِلَى الْمُدِيرِ dhahaba ilā l-mudīri (er ging zum Direktor) trägt allein das Verb den Handelnden – zwischen Verb und Präposition fehlt jedes Pronomen. Der Lehrer bei 27:52: »Das kommt … auch noch mal.«",
     color: "mubtada",
     source: { folge: 5, video: "Folge 05", approxTimestamp: "27:41", chapter: 4 },
     source2: { schluessel: 1, lektion: 4, seite: 16 }
@@ -536,7 +536,7 @@ const GRAMMAR_RULES = [
   {
     id: "mudaf-ilayh-01",
     name: "مُضَاف إِلَيْهِ (der Besitzer – zweites Wort)",
-    shortExplanation: "Der مُضَاف إِلَيْهِ, also das zweite Wort, ist immer مَجْرُور – daran lässt sich nichts ändern; er endet auf Kasra: كِتابُ الْمُدَرِّسِ kitābu l-mudarrisi – das Buch des Lehrers. Er darf dabei bestimmt oder unbestimmt sein: كِتابُ مُدَرِّسٍ kitābu mudarrisin – das Buch eines Lehrers.",
+    shortExplanation: "Der مُضَاف إِلَيْهِ, also das zweite Wort, ist **immer** مَجْرُور – daran lässt sich nichts ändern, egal was um die إِضافة herum steht; er endet auf Kasra. Das ist zugleich das Erkennungszeichen: **findest du zwei Nomen hintereinander und das zweite trägt Kasra, ist es eine إِضافة**: كِتابُ الْمُدَرِّسِ kitābu l-mudarrisi – das Buch des Lehrers. Er darf dabei bestimmt oder unbestimmt sein: كِتابُ مُدَرِّسٍ kitābu mudarrisin – das Buch eines Lehrers.",
     color: "idafa",
     source: { folge: 7, video: "Folge 07", approxTimestamp: "7:39", chapter: 5 },
     source2: { schluessel: 1, lektion: 5, seite: 18 }
@@ -544,7 +544,7 @@ const GRAMMAR_RULES = [
   {
     id: "ya-nida-01",
     name: "يَا (Rufpartikel)",
-    shortExplanation: "يَا ist die Rufpartikel („o …\"). Steht sie vor einem männlichen Namen, fällt dessen Tanwin weg und es bleibt eine Damma: nicht يَا ياسِرٌ yā Yāsirun, sondern يَا ياسِرُ yā Yāsiru. Im Kapiteltext: أَهَذا كِتابُ مُحَمَّدٍ يَا ياسِرُ؟ – „Ist dies Muhammads Buch, o Yasir?\" Genauso im selben Text: يَا عَلِي yā ʿAlī – „o Ali\", obwohl der Name sonst عَلِيٌّ ʿalīyun mit Tanwin ist.",
+    shortExplanation: "يَا ist die Rufpartikel („o …\"). Steht sie vor einem männlichen Namen, fällt dessen Tanwin weg und es bleibt eine Damma: nicht يَا ياسِرٌ yā Yāsirun, sondern يَا ياسِرُ yā Yāsiru. Im Kapiteltext: أَهَذا كِتابُ مُحَمَّدٍ يَا ياسِرُ؟ – „Ist dies Muhammads Buch, o Yasir?\" Der Lehrer zählt im selben Atemzug die männlichen Namen auf, an denen man das prüfen kann (Folge 07, 9:57): مُحَمَّدٌ, حامِدٌ, عَبّاسٌ – alle mit Tanwin. Nach يَا wird daraus yā Muḥammadu, yā Ḥāmidu, yā ʿAbbāsu. (Die Rufformen selbst spricht er nicht aus, deshalb stehen sie hier in Umschrift statt vokalisiert.)",
     color: "nasab",
     source: { folge: 7, video: "Folge 07", approxTimestamp: "9:39", chapter: 5 }
   },
@@ -559,7 +559,7 @@ const GRAMMAR_RULES = [
   {
     id: "harf-jarr-idafa-01",
     name: "حَرْف جَرّ + إِضافة (Verkettung)",
-    shortExplanation: "Steht ein حَرْف جَرّ (عَلى, مِنْ, فِي) vor einer إِضافة, greifen zwei Regeln hintereinander – der Lehrer nennt das eine „Verkettung\". Der حَرْف جَرّ macht den مُضَاف مَجْرُور, und der مُضَاف إِلَيْهِ ist ohnehin مَجْرُور: beide Wörter bekommen Kasra. عَلى مَكْتَبِ الْمُدَرِّسِ ʿalā maktabi l-mudarrisi – auf dem Schreibtisch des Lehrers (مَكْتَب kann jeden Fall annehmen, durch عَلى muss es مَجْرُور werden); فِي كِتابِ اللهِ fī kitābi llāhi – im Buch Allahs (genau diesen Fall zerlegt der Lehrer: فِي ist ein حَرْف جَرّ und macht كِتاب مَجْرُور, und كِتاب ist zugleich مُضَاف und macht اللّٰه مَجْرُور); مِنْ بَيْتِ الْمُدَرِّسِ min bayti l-mudarrisi – vom Haus des Lehrers.",
+    shortExplanation: "Steht ein حَرْف جَرّ vor einer إِضافة, bekommen **beide Wörter Kasra** – das ist der ganze Fall. Der حَرْف جَرّ macht den مُضَاف مَجْرُور, und der مُضَاف إِلَيْهِ ist ohnehin مَجْرُور; der Lehrer nennt das eine „Verkettung\". عَلى مَكْتَبِ الْمُدَرِّسِ ʿalā maktabi l-mudarrisi – auf dem Schreibtisch des Lehrers (مَكْتَب kann jeden Fall annehmen, durch عَلى muss es مَجْرُور werden); فِي كِتابِ اللهِ fī kitābi llāhi – im Buch Allahs (genau diesen Fall zerlegt der Lehrer: فِي ist ein حَرْف جَرّ und macht كِتاب مَجْرُور, und كِتاب ist zugleich مُضَاف und macht اللّٰه مَجْرُور); مِنْ بَيْتِ الْمُدَرِّسِ min bayti l-mudarrisi – vom Haus des Lehrers.",
     color: "nasab",
     source: { folge: 7, video: "Folge 07", approxTimestamp: "12:57", chapter: 5 },
     source2: { schluessel: 1, lektion: 5, seite: 19 }
