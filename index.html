@@ -1882,6 +1882,46 @@ main{
 .blatt .zeile.aktiv .ar{color:var(--red-bright);}
 .blatt.ueben .zeile.aktiv{background:var(--green-wash);}
 .blatt.ueben .zeile.aktiv .ar{color:var(--green);}
+/* =====================================================================
+   SATZSUCHE — Elias' Wunsch vom 19.08.2026
+
+   „ein suchfeld ganz oben einzubauen wo ich dann einen begriff eingeben kann
+   und er zeigt mir dann die passenden sätze dazu … am besten ist es ebenfalls
+   in dem modus aktiv in dem ich es einsetzte."
+
+   ⭐ Deshalb ist die Suche KEIN eigener Bildschirm, sondern ein Filter auf
+   demselben Vorrat, aus dem auch die Übungen gebaut werden. Wer im
+   Genitiv-Modus sucht, bekommt Genitiv-Aufgaben zu seinem Wort.
+   ===================================================================== */
+.satz-suche{position:relative;margin-bottom:var(--sp-3);}
+.satz-suche input{
+  width:100%;background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--r-2);color:var(--text);
+  padding:var(--sp-3) var(--sp-7) var(--sp-3) var(--sp-4);
+  font-size:var(--fs-md);font-weight:700;font-family:var(--font-ui);
+}
+/* ⛔ `font: inherit` reicht bei Eingabefeldern nicht — sie erben Schrift und
+   Größe nicht von selbst, und ohne diese Zeilen steht hier plötzlich die
+   Browser-Voreinstellung. [[klasse_ohne_css_regel]] */
+.satz-suche input::placeholder{color:var(--text-faint);font-weight:700;}
+.satz-suche input:focus{outline:none;border-color:var(--border-strong);}
+/* Arabisch tippt sich von rechts — das Feld richtet sich nach dem Inhalt.
+   `dir=auto` steht im Markup; hier nur die Ausrichtung des Textes. */
+.satz-suche input[dir="auto"]{unicode-bidi:plaintext;}
+.satz-suche .loeschen{
+  position:absolute;inset-inline-end:var(--sp-2);top:50%;transform:translateY(-50%);
+  background:transparent;border:0;color:var(--text-faint);
+  font-size:var(--fs-lg);line-height:1;cursor:pointer;padding:var(--sp-2);
+  font-family:var(--font-ui);
+}
+.satz-suche .loeschen:hover{color:var(--text);}
+.satz-treffer{
+  color:var(--text-faint);font-size:var(--fs-xs);font-weight:700;
+  margin:var(--sp-2) 0 0;
+}
+.satz-treffer b{color:var(--text-dim);}
+.satz-treffer.leer b{color:var(--red-bright);}
+
 
 
 .ueb-box{
@@ -3631,15 +3671,19 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
       </div>
 
 
-      <!-- Themenfilter. Die Zahl an jedem Reiter kommt aus den Daten und sagt
-           vorher, wie groß das Thema ist — siehe SATZ_THEMEN in grammar-data.js. -->
-      <div class="waehler-block">
-        <button class="waehler" id="themenWaehler" type="button" aria-expanded="false" aria-controls="themenBlatt">
-          <span class="wert"><b id="themenWert">Alle</b><i id="themenZahl"></i></span>
-          <span class="pfeil">▾</span>
-        </button>
-        <div class="blatt hidden" id="themenBlatt"></div>
+      <!-- Satzsuche (19.08.2026). Filtert denselben Vorrat, aus dem auch die
+           Übungsaufgaben gebaut werden — deshalb wirkt sie im Lesemodus UND
+           im Übungsmodus, ohne dass es zwei Suchen bräuchte.
+           `dir="auto"` läuft mit dem Inhalt: deutsch von links, arabisch von
+           rechts, ohne Umschalten. -->
+      <div class="satz-suche">
+        <input type="search" id="satzSuche" dir="auto" autocomplete="off"
+               placeholder="Wort suchen — arabisch oder deutsch"
+               aria-label="Sätze nach einem Wort durchsuchen">
+        <button class="loeschen hidden" id="satzSucheAus" type="button"
+                aria-label="Suche löschen">×</button>
       </div>
+      <p class="satz-treffer hidden" id="satzTreffer"></p>
 
       <!-- Übungsmodi (js/uebung.js). Elias' Wunsch vom 29.07.2026, und auf
            seine Entscheidung hier IM Satz-Modus statt auf einem eigenen
@@ -3647,12 +3691,23 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
            jedem Reiter ist die Fragenzahl in der aktuellen Auswahl; eine 0 wird
            bewusst gezeigt statt versteckt. -->
       <div class="ueb-leiste">
-        <div class="ueb-label">Üben — selbst antworten statt nur lesen</div>
+        <div class="ueb-label">Übungsmodus</div>
         <button class="waehler" id="uebWaehler" type="button" aria-expanded="false" aria-controls="uebBlatt">
           <span class="wert"><b id="uebWert">Modus wählen</b><i id="uebZahl"></i></span>
           <span class="pfeil">▾</span>
         </button>
         <div class="blatt ueben hidden" id="uebBlatt"></div>
+      </div>
+
+      <!-- Themenfilter. Die Zahl an jedem Reiter kommt aus den Daten und sagt
+           vorher, wie groß das Thema ist — siehe SATZ_THEMEN in grammar-data.js. -->
+      <div class="waehler-block">
+        <div class="ueb-label">Lesemodus</div>
+        <button class="waehler" id="themenWaehler" type="button" aria-expanded="false" aria-controls="themenBlatt">
+          <span class="wert"><b id="themenWert">Alle</b><i id="themenZahl"></i></span>
+          <span class="pfeil">▾</span>
+        </button>
+        <div class="blatt hidden" id="themenBlatt"></div>
       </div>
 
       <div class="ueb-box hidden" id="uebBox">
