@@ -1480,5 +1480,183 @@ const ESELSBRUECKEN_ALT = {
   '45943': [
     '⭐ Du zählst dieses Wort jeden Tag siebzehnmal: zwei رَكَعَات im الْفَجْر, vier im الظُّهْر, vier im الْعَصْر, drei im الْمَغْرِب und vier im الْعِشَاء. Die Vokabel ist längst Teil deines Tages.',
     'Die Wurzel ر ك ع ist die der Verbeugung: الرُّكُوع ist die Verbeugung selbst, الرَّاكِع der, der sie vollzieht. Eine رَكْعَة heißt nach der Bewegung, die in ihr steckt.'
+  ],
+
+  /* ══════ Kapitel 19 ══════ */
+
+  /* كُلٌّ - alle / jeder */
+  '45944': [
+    '⭐ Belegt in al-Humaza, die du auswendig kannst: وَيْلٌ لِكُلِّ هُمَزَةٍ لُمَزَةٍ — „Wehe jedem Stichler und Nörgler" (104:1). Dort steht كُلّ genau in seiner häufigsten Rolle: vor einem zweiten Nomen.',
+    'Aus derselben Wurzel kommt ein Wort aus Kapitel 14: كُلِّيَّةٌ, die Fakultät — die „Gesamtheit" eines Fachs. Wer كُلّ kennt, versteht auch, warum die Fakultät so heißt.'
+  ],
+
+  /* مُخْتَلِفٌ - unterschiedlich */
+  '45945': [
+    '⭐ Dieselbe Wurzel خ ل ف trägt ein Wort, das du längst kennst: خَلِيفَةٌ, der Nachfolger — und الْخُلَفَاءُ الرَّاشِدُونَ, die rechtgeleiteten Kalifen. Wer nachfolgt, kommt hinterher; was مُخْتَلِف ist, weicht ab.',
+    'Der Begriff الِاخْتِلَافُ ist derselbe Bau wie مُخْتَلِف und meint die Meinungsverschiedenheit der Gelehrten — ein Wort, das dir in jedem Fiqh-Buch begegnet. Das eingeschobene ـتَـ erkennst du in beiden.'
+  ],
+
+  /* أُورُوبَّا - Europa */
+  '45946': [
+    '⚠️ Achtung, dieser Ländername endet ANDERS als die übrigen: أَلْمَانِيَا, سُورِيَا und آسِيَا enden auf ـِيَا, أُورُوبَّا dagegen auf ـَّا mit Šadda. Genau da schreibt man sich falsch.',
+    'أَلْمَانِيَا aus Kapitel 8 liegt in أُورُوبَّا — Land und Erdteil in einem Satz. Wenn du die beiden zusammen sprichst, hängt der neue Name am alten.'
+  ],
+
+  /* يُوغُوسْلَافِيَا - Jugoslawien */
+  '45947': [
+    'Das غ ist hier der Schlüssel: das Arabische hat kein g, und für ein fremdes g steht meist غ ein — wie in غَانَا. Wer das weiß, liest jeden fremden Namen mit غ richtig.',
+    'Ein Land, das es nicht mehr gibt — das Lehrbuch ist an dieser Stelle älter als die Landkarte. Merk es dir als das lange Wort mit den drei Häppchen يُو-غُوسْ-لَافِيَا; die Bedeutung musst du nur einmal einordnen.'
+  ],
+
+  /* ثَمَنٌ - Preis */
+  '45948': [
+    'Aus derselben Wurzel kommt ثَمِينٌ, „wertvoll" — was einen Preis hat, ist etwas wert. Über diesen Bogen hängt der Preis an einer Bedeutung statt an einem Klang.',
+    'Häng ihn an Kapitel 17: ein ثَمَن ist entweder رَخِيصٌ (billig) oder غَالٍ (teuer). Drei Wörter, ein Satz — und du hast den ganzen Einkauf beisammen.'
+  ],
+
+  /* نِصْفٌ - Hälfte */
+  '45949': [
+    '⭐ Ein bekannter Hadith trägt das Wort: مَنْ تَزَوَّجَ فَقَدِ اسْتَكْمَلَ نِصْفَ الدِّينِ — „Wer heiratet, hat die Hälfte der Religion vervollständigt". Darin steckt auch زَوْج aus Kapitel 13.',
+    'Und im Gebet begegnet dir die Hälfte praktisch: der Reisende betet statt vier nur zwei رَكَعَات — die Hälfte. Das ist die رُخْصَة, die Erleichterung, die du bei رَخِيصٌ in Kapitel 17 kennengelernt hast.'
+  ],
+
+  /* قِرْشٌ - Geldeinheit */
+  '45950': [
+    '⚠️ Dasselbe Wort, ganz andere Welt: قِرْشٌ heißt im heutigen Arabisch auch „Hai". Wer den Fisch dazudenkt, vergisst die Münze nicht mehr — und stutzt später nicht, wenn sie im Meer auftaucht.',
+    'Die Größenordnung merkt man sich am besten praktisch: hundert قُرُوش machen ein جُنَيْه oder einen رِيَال. Der قِرْش ist also das Kleingeld, nicht der Schein.'
+  ],
+
+  /* رَاكِبٌ - Passagier */
+  '45951': [
+    '⚠️ Ein Buchstabe trennt zwei Wörter aus benachbarten Kapiteln: رَكْعَةٌ (Gebetseinheit, Kapitel 18) hat ع am Ende, رَاكِبٌ (Passagier) hat ب. Sprich beide laut, dann trennst du sie dauerhaft.',
+    'Aus derselben Wurzel ر ك ب kommt الرُّكُوبُ, das Auf- und Mitfahren, und مَرْكَبَةٌ, das Fahrzeug. Der رَاكِب ist der, der aufsitzt — ob auf dem جَمَلٌ aus Kapitel 1 oder im Bus.'
+  ],
+
+  /* سُؤَالٌ - Frage */
+  '45952': [
+    '⭐ Dieselbe Wurzel س أ ل steht in aḍ-Ḍuḥā, die du auswendig kannst: وَأَمَّا السَّائِلَ فَلَا تَنْهَرْ — „und was den Bittenden angeht, so fahre ihn nicht an" (93:10). Der السَّائِل ist der Fragende und Bittende.',
+    'Das Gegenstück heißt جَوَابٌ (Antwort) und steht in Bayna Yadayk 1. سُؤَال und جَوَاب gehören auf dieselbe Karte — im Unterricht kommen sie ohnehin immer zu zweit.'
+  ],
+
+  /* ══════ Kapitel 20 ══════ */
+
+  /* كَلِمَةٌ - Wort */
+  '45953': [
+    '⭐ Der stärkste Anker überhaupt: كَلِمَةُ التَّوْحِيدِ — „das Wort des Tauḥīd", also لَا إِلَٰهَ إِلَّا اللهُ. Ein Satz, den du täglich sprichst, und das Wort für „Wort" steht davor.',
+    'Die Wurzel ك ل م trägt eine ganze Familie: تَكَلَّمَ (sprechen), كَلَامٌ (Rede) — und عِلْمُ الْكَلَامِ, die islamische Theologie. Alle vier meinen dasselbe Grundbild: das gesprochene Wort.'
+  ],
+
+  /* حَرْفٌ - Buchstabe */
+  '45954': [
+    '⭐⭐ Das Wort ist einer der drei Grundbegriffe deiner Grammatik: أَقْسَامُ الْكَلِمَةِ sind اِسْمٌ, فِعْلٌ und حَرْفٌ. Im Buchstabensinn ist ein حَرْف ein Zeichen, im Grammatiksinn das Partikelwort — dieselbe Vokabel in zwei Rollen.',
+    '⭐ Und du kennst sie aus dem Koran: die الْحُرُوفُ الْمُقَطَّعَةُ, die einzeln gesprochenen Buchstaben am Anfang mancher Suren — الم, يس, ق. Dort steht der Plural حُرُوف.'
+  ],
+
+  /* دَرْسٌ - Unterricht; Lektion */
+  '45955': [
+    '⭐ Dein Lehrbuch trägt das Wort im Titel: دُرُوسُ اللُّغَةِ الْعَرَبِيَّةِ — „Lektionen der arabischen Sprache". Das ist der Plural von دَرْس, und er steht auf dem Umschlag, den du jeden Tag ansiehst.',
+    'Vier Wörter aus einer Wurzel د ر س: دَرْسٌ (Lektion), مُدَرِّسٌ (Lehrer, Kapitel 1), مَدْرَسَةٌ (Schule, Kapitel 4) und دِرَاسَةٌ (das Studium). Sprich sie hintereinander, dann hörst du den gemeinsamen Kern.'
+  ],
+
+  /* ══════ Kapitel 21 ══════ */
+
+  /* وَاسِعٌ - geräumig */
+  '45956': [
+    '⭐ الْوَاسِعُ ist einer der schönen Namen — meist zusammen mit dem nächsten gesprochen: وَاسِعٌ عَلِيمٌ, „allumfassend und allwissend". Was وَاسِع ist, umfasst viel.',
+    '⚠️ Ein Buchstabe trennt es von einem Wort aus Kapitel 12: و س ع ist weit, و س ط ist mittig — وَاسِعٌ gegen مُتَوَسِّطٌ. Das ع gegen das ط, sonst nichts.'
+  ],
+
+  /* آسِيَا - Asien */
+  '45957': [
+    '⭐ Das آ am Anfang ist ein langes A mit Madda — dasselbe Zeichen, das du in الْقُرْآن jeden Tag siehst. Wenn du es dort erkennst, erkennst du es auch hier.',
+    'Zwei Länder deiner Liste liegen in آسِيَا: إِنْدُونِيسِيَا aus Kapitel 9 und مَالِيزِيَا aus Kapitel 11. Der Erdteil sammelt ein, was du schon einzeln kennst.'
+  ],
+
+  /* ══════ Kapitel 22 ══════ */
+
+  /* أَحْمَرُ - rot */
+  '45958': [
+    '⭐ Ein Meer trägt die Farbe im Namen: الْبَحْرُ الْأَحْمَرُ, das Rote Meer, an dessen Ufer جُدَّة aus diesem Kapitel liegt. Und بَحْر hast du aus Kapitel 16.',
+    'Die weibliche Form geht bei allen Farben gleich: حَمْرَاءُ, بَيْضَاءُ, سَوْدَاءُ, خَضْرَاءُ — Muster فَعْلَاءُ, und wie die männliche Form ohne Tanwīn. Lern das Paar أَحْمَرُ / حَمْرَاءُ, dann hast du die Regel für alle sechs.'
+  ],
+
+  /* أَزْرَقُ - blau */
+  '45959': [
+    '⭐ Zwei Flüsse treffen sich in Khartum und tragen zwei deiner Farben: النِّيلُ الْأَزْرَقُ und النِّيلُ الْأَبْيَضُ, der Blaue und der Weiße Nil. Dazu نَهْر aus Kapitel 16 — drei Vokabeln in einem Bild.',
+    'Weibliche Form زَرْقَاءُ, Plural زُرْقٌ. ⚠️ Achte auf das ق am Ende, nicht ك: زُرْقَة ist das Blau, und der Buchstabe bleibt in allen Formen erhalten.'
+  ],
+
+  /* أَخْضَرُ - grün */
+  '45960': [
+    '⭐ Ein Name aus einer Geschichte, die du kennst: الْخَضِرُ — der Gefährte von Mūsā ﷺ, den er مَجْمَعَ الْبَحْرَيْنِ traf. Sein Name heißt „der Grüne". Dieselbe Wurzel خ ض ر.',
+    'Grün ist die حَدِيقَةٌ aus Kapitel 14 und das حَقْلٌ aus Kapitel 13. ⚠️ Und achte auf den zweiten Buchstaben: أَخْضَرُ hat خ, أَحْمَرُ hat ح — im Schriftbild trennt sie nur der Punkt.'
+  ],
+
+  /* أَسْوَدُ - schwarz */
+  '45961': [
+    '⭐ Aus der Abschiedspredigt, in der beide Farben nebeneinander stehen: وَلَا لِأَبْيَضَ عَلَىٰ أَسْوَدَ إِلَّا بِالتَّقْوَىٰ — „und kein Weißer hat Vorrang vor einem Schwarzen außer durch Gottesfurcht". Ein Satz, zwei Vokabeln.',
+    'Weibliche Form سَوْدَاءُ, Plural سُودٌ. ⚠️ Das و in der Mitte ist stumm — gesprochen as-wad, nicht as-uu-wad. Genau wie bei أَبْيَضُ das ي: ab-yaḍ.'
+  ],
+
+  /* أَصْفَرُ - gelb */
+  '45962': [
+    '⭐ Die gelbe Kuh aus Sūrat al-Baqara heißt بَقَرَةٌ صَفْرَاءُ — die Geschichte, nach der die ganze Sure benannt ist. Dort steht die weibliche Form dieser Farbe.',
+    '⚠️ Dieselben drei Buchstaben ص ف ر tragen صِفْرٌ, die Null — und genau dieses arabische Wort wurde im Deutschen zur „Ziffer". Ein Wort, das du längst benutzt, ohne es zu wissen.'
+  ],
+
+  /* أَبْيَضُ - weiß */
+  '45963': [
+    '⭐ Aus Kapitel 12 kennst du schon einen langen Ausdruck damit: الْبَحْرُ الْأَبْيَضُ الْمُتَوَسِّطُ, das Mittelmeer — wörtlich „das weiße mittlere Meer". Die Farbe stand dort, bevor sie Vokabel wurde.',
+    '⭐ Und ein Zeichen von Mūsā ﷺ heißt يَدٌ بَيْضَاءُ, „eine weiße Hand" — seine Hand, die leuchtend weiß hervorkam. Dort steht die weibliche Form بَيْضَاءُ.'
+  ],
+
+  /* بَغْدَادُ - Bagdad */
+  '45964': [
+    '⭐ Ihr alter Beiname war دَارُ السَّلَامِ, „Haus des Friedens", und dort stand بَيْتُ الْحِكْمَةِ, das Haus der Weisheit — die Übersetzerakademie der عَبَّاسِيُّون. Die Stadt hängt an einer Geschichte, nicht an einem Klang.',
+    '⚠️ Kein Tanwīn, Endung schlicht ـُ. Das gilt für fast alle fremden Orts- und Ländernamen: بَغْدَادُ, إِسْطَنْبُولُ, وَاشِنْطُنُ, جُدَّةُ. Wer da ein Tanwīn setzt, verrät sich sofort.'
+  ],
+
+  /* جُدَّةُ - Jeddah */
+  '45965': [
+    '⭐ Die Hafenstadt, über die die Pilger nach Mekka kommen — und sie liegt am الْبَحْر الْأَحْمَر, der Farbe aus diesem Kapitel. Wer an den Weg zum حَجّ denkt, hat die Stadt.',
+    '⚠️ Drei Wörter aus denselben Buchstaben ج د د, nur die Vokale trennen sie: جُدَّةُ (die Stadt), جَدِيدٌ (neu, Kapitel 3) und جَدٌّ (Großvater). Dazu جِدًّا, „sehr". Sprich sie hintereinander.'
+  ],
+
+  /* فِنْجَانٌ - Teetasse */
+  '45966': [
+    'Der Plural فَنَاجِينُ folgt genau dem Bau von فَنَادِقُ (Kapitel 16) und دَسَاتِيرُ (Kapitel 14): vier Wurzelbuchstaben, langer Vokal vor dem Ende, kein Tanwīn. Drei Lehnwörter, ein Pluralmuster.',
+    'Der Unterschied zu كُوبٌ aus Kapitel 9 ist die Größe und der Inhalt: der كُوب ist der Becher, der فِنْجَان die kleine Tasse für قَهْوَةٌ und شَايٌ — beide aus Kapitel 6.'
+  ],
+
+  /* دَقِيقَةٌ - Minute */
+  '45967': [
+    '⚠️ Dasselbe Wort heißt auch „fein" und, als دَقِيق, sogar „Mehl" — das feine Gemahlene. Die Minute ist die feine Unterteilung der Stunde; ein Bild trägt beide Bedeutungen.',
+    'Bau die Leiter mit den Wörtern, die du hast: دَقِيقَةٌ (Minute) → سَاعَةٌ (Stunde, Bayna Yadayk 1) → يَوْمٌ (Tag) → أُسْبُوعٌ (Woche, Kapitel 15) → سَنَةٌ (Jahr, Kapitel 18). Fünf Stufen, eine Reihe.'
+  ],
+
+  /* قَالَ - sagen */
+  '45968': [
+    '⭐⭐ Drei Suren aus deinem auswendigen Bereich fangen mit dem Befehl dieses Verbs an: قُلْ هُوَ اللَّهُ أَحَدٌ (112:1), قُلْ يَا أَيُّهَا الْكَافِرُونَ (109:1) und قُلْ أَعُوذُ بِرَبِّ النَّاسِ (114:1). Du sprichst قُلْ jeden Tag mehrfach.',
+    '⚠️ Ein hohles Verb: die Wurzel ق و ل hat ein و in der Mitte, das im Wort verschwindet. قَالَ ist „er sagte", aber قُلْتُ ist „ich sagte" — das lange ـَا fällt weg, sobald eine Endung mit Sukūn folgt.'
+  ],
+
+  /* ══════ Kapitel 23 ══════ */
+
+  /* إِسْطَنْبُولُ - Istanbul */
+  '45969': [
+    '⭐ Ihr früherer Name war الْقُسْطَنْطِينِيَّةُ, Konstantinopel — die Stadt, deren Eroberung in einem bekannten Hadith angekündigt wurde: لَتُفْتَحَنَّ الْقُسْطَنْطِينِيَّةُ. Damit hängt der Name an einem Ereignis.',
+    '⚠️ Das ط, nicht ت — dieselbe Falle wie bei وَاشِنْطُنُ im selben Kapitel und bei أَرِسْطُو (Aristoteles). Ein fremdes hartes t wird im Arabischen regelmäßig zum ط.'
+  ],
+
+  /* وَاشِنْطُنُ - Washington */
+  '45970': [
+    'Zwei fremde Laute auf einmal: das anlautende و steht für ein W, das das Arabische sonst nicht kennt, und das ط für das harte t. Wer beide Regeln hat, schreibt jeden fremden Namen sicherer.',
+    'Merk es als Paar mit إِسْطَنْبُولُ aus demselben Kapitel: beide tragen ط, beide enden ohne Tanwīn auf ـُ. Zwei Städte, eine Schreibregel.'
+  ],
+
+  /* الطَّائِفُ - Taif */
+  '45971': [
+    '⭐ Die Stadt aus der Sīra: dorthin ging der Prophet ﷺ, als Mekka sich verschloss, und wurde abgewiesen — dort sprach er das Bittgebet, das viele auswendig kennen. Der Name hängt an einem Ereignis, nicht an einem Klang.',
+    'الطَّائِف ist ein Partizip: „der Umherziehende", von der Wurzel ط و ف — dieselbe wie im طَوَاف um die كَعْبَةٌ aus Kapitel 5. Und الطَّائِفَةُ, die Gruppe, gehört ebenfalls dazu.'
   ]
 };
