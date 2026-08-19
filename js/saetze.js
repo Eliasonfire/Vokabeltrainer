@@ -14,7 +14,51 @@ function alleSaetze(){
      ohne dass dafuer irgendwo Ersatz stuende. */
   const ausVokabeln = VOCAB_DATA.filter(w=>w.sentAr);
   const ausLehrbuch = (typeof LEHRBUCH_SAETZE!=='undefined') ? LEHRBUCH_SAETZE : [];
-  return ausVokabeln.concat(ausLehrbuch);
+  return ausVokabeln.concat(ausLehrbuch).filter(nichtVorausgeschrieben);
+}
+
+/* ---------- Nur nach VORN filtern ----------
+
+   Elias am 19.08.2026, als ich ihm den Ablauf geschildert hatte: der Satzmodus
+   solle „nur begriffe beinhalten die ich freigeschaltet habe".
+
+   Gemessen war das an dem Tag zufaellig erfuellt — 0 von 215 Saetzen kamen aus
+   gesperrten Kapiteln —, aber NICHT geprueft. Und es kippt beim naechsten
+   Schritt: die Wartungsroutine schreibt im Fenster +3 VORAUS. Steht er bei
+   Kapitel 12, entstehen Saetze fuer 13 bis 15, und die stuenden hier, bevor er
+   die Woerter hat.
+
+   ⛔ Bewusst NICHT der volle Buchfilter. Der Kommentar oben warnt zu Recht:
+   ein Filter auf das aktive Buch wuerde den Satzmodus leerraeumen, sobald
+   Elias ein anderes Buch lernt — Beispielsaetze gibt es fast nur zu Madina 1.
+   Deshalb faellt ein Satz nur weg, wenn sein Wort in EINEM BUCH liegt, das er
+   lernt, und dort in einem Kapitel VOR ihm liegt. Saetze aus Buechern ohne
+   eigene Auswahl bleiben unangetastet. */
+function nichtVorausgeschrieben(s){
+  if (typeof istBekannt !== 'function') return true;
+  /* ⛔ LEHRBUCHSAETZE BLEIBEN IMMER. Erster Anlauf hat sie mitgefiltert und
+     dabei vier Saetze aus Kapitel 12 weggenommen (mb1-63-1, mb1-63-2,
+     mb1-65-1, sk3-7-1) — 215 wurden zu 211.
+
+     Zwei Gruende, warum das falsch war:
+     1. Sie stehen in Elias' EIGENEM gedruckten Buch, das er besitzt und
+        gelesen hat. Was arabicroots freischaltet, sagt darueber nichts.
+     2. lehrbuch-saetze.js existiert ausdruecklich, um Regeln erreichbar zu
+        machen — 22 Regeln lagen ohne sie unerreichbar in grammar-data.js.
+        Sie zu verstecken nimmt genau das zurueck.
+
+     Der Fall, um den es hier geht, ist ein anderer: von der Routine im
+     Fenster +3 VORAUSGESCHRIEBENE Saetze zu Buchvokabeln. Nur die. */
+  if (s.seite !== undefined) return true;
+  const w = VOCAB_DATA.find(v => v.id === s.id);
+  if (!w) return true;
+  /* Nur wenn fuer dieses Buch ueberhaupt eine Auswahl besteht — sonst waere es
+     der Buchfilter, den es hier gerade nicht geben soll. */
+  const hatAuswahl = (typeof SETTINGS !== 'undefined') && SETTINGS.buecher
+                     && Array.isArray(SETTINGS.buecher[w.book]) && SETTINGS.buecher[w.book].length;
+  const hatFrei = (typeof FREIGESCHALTET !== 'undefined') && FREIGESCHALTET[w.book];
+  if (!hatAuswahl && !hatFrei) return true;
+  return istBekannt(w);
 }
 
 /* ---------- Themenfilter (Elias' Wunsch vom 29.07.2026) ----------
