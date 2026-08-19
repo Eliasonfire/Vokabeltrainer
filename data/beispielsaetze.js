@@ -185,6 +185,194 @@ const BEISPIELSAETZE = {
   '45912': {
     sentAr: 'الْمَمْلَكَةُ الْجَدِيدَةُ بَعِيدَةٌ.',
     sentDe: 'Das neue Königreich ist fern.'
+  },
+
+  /* ------------------------------------------------------------------------
+     KAPITEL 13 — VORGESCHRIEBEN (19.08.2026)
+
+     Gemessen am selben Tag: Kapitel 13 hat 8 Woerter, ALLE mit ihren drei
+     Eselsbruecken — und null Beispielsaetzen. Haekt Elias das Kapitel an,
+     kaemen die Woerter ohne einen einzigen Satz an, also ohne Markierung und
+     ohne eine einzige Uebungsaufgabe.
+
+     ⛔ HERKUNFT: kein Zeichen ist von Hand vokalisiert. Grundformen und
+     weibliche Formen stehen so im arabicroots-Abzug; hadha, hadhihi,
+     Muhammad, Allahi und mina sind BELEGE aus dem vorhandenen Satzbestand,
+     jeder mit Eindeutigkeitspruefung geholt. Die vier Umformungen dazwischen
+     sind an 111 wirklich vorkommenden Bestandsformen geeicht.
+     ------------------------------------------------------------------------ */
+
+  /* ضَيْفٌ — Gast (madina-1, Kapitel 13)
+     Nominalsatz mit Ortsangabe; Sonnenbuchstabe im Artikel. */
+  '45913': {
+    sentAr: 'الضَّيْفُ فِي الْبَيْتِ.',
+    sentDe: 'Der Gast ist im Haus.'
+  },
+
+  /* حَقْلٌ — Feld (madina-1, Kapitel 13)
+     Der Bauer aus Kapitel 6 trifft sein Feld — zwei Woerter, die zusammengehoeren. */
+  '45914': {
+    sentAr: 'الْفَلَّاحُ فِي الْحَقْلِ.',
+    sentDe: 'Der Bauer ist auf dem Feld.'
+  },
+
+  /* النَّاسُ — die Leute (madina-1, Kapitel 13)
+     Das Wort bringt den Artikel schon mit und steht immer bestimmt. */
+  '45915': {
+    sentAr: 'النَّاسُ فِي السُّوقِ.',
+    sentDe: 'Die Leute sind auf dem Markt.'
+  },
+
+  /* مَطْعَمٌ — Restaurant (madina-1, Kapitel 13)
+     Vor einem Wort mit Artikel heisst die Praeposition mina, nicht min. */
+  '45916': {
+    sentAr: 'الْمَطْعَمُ قَرِيبٌ مِنَ الْجَامِعَةِ.',
+    sentDe: 'Das Restaurant ist nahe an der Universität.'
+  },
+
+  /* شَيْخٌ — alter Mann / Gelehrter (madina-1, Kapitel 13)
+     Der Ort, an dem man einen schaych am ehesten trifft. */
+  '45917': {
+    sentAr: 'الشَّيْخُ فِي الْمَسْجِدِ.',
+    sentDe: 'Der Gelehrte ist in der Moschee.'
+  },
+
+  /* أُسْتَاذَةٌ — Professorin (madina-1, Kapitel 13)
+     Artikel vor einem Hamzah-Anlaut, wie in al-uchtu aus dem Bestand. */
+  '45918': {
+    sentAr: 'الْأُسْتَاذَةُ فِي الْجَامِعَةِ.',
+    sentDe: 'Die Professorin ist an der Universität.'
+  },
+
+  /* امْرَأَةٌ — Frau (madina-1, Kapitel 13)
+     Unbestimmt gelassen: mit Artikel faellt das Alif weg (al-marʾatu) — eine Umformung, die noch nicht drankam. */
+  '45919': {
+    sentAr: 'هَذِهِ امْرَأَةٌ مُجْتَهِدَةٌ.',
+    sentDe: 'Dies ist eine fleißige Frau.'
+  },
+
+  /* زَوْجٌ — Ehemann (madina-1, Kapitel 13)
+     Idafa als Subjekt, Beruf als unbestimmtes Praedikat. */
+  '45920': {
+    sentAr: 'زَوْجُ الْمُدَرِّسَةِ تَاجِرٌ.',
+    sentDe: 'Der Ehemann der Lehrerin ist Händler.'
+  },
+
+  /* ------------------------------------------------------------------------
+     KAPITEL 14 — VORGESCHRIEBEN (19.08.2026)   13 Woerter, vorher null Saetze
+
+     Die vier Fakultaeten sind im Abzug bereits zusammengesetzte Ausdruecke
+     (kulliyyatu t-tibbi). Sie bleiben als Ganzes stehen; nur das erste Wort
+     traegt den Kasus, und der Artikel des zweiten wird auf die Schreibung des
+     Satzbestands gebracht — der setzt 160x ein Sukun aufs Lam, der Abzug 10x
+     keines.
+
+     ⚠️ Bei rajab bleibt die Abzugsform mit Tanwin stehen. Ob der Monatsname
+     als Eigenname zu den mamnu min as-sarf gehoert und deshalb OHNE Tanwin
+     stuende, ist eine Frage an seinen Lehrer — nicht eine, die ich still
+     entscheide.
+     ------------------------------------------------------------------------ */
+
+  /* دُسْتُورٌ — Verfassung (madina-1, Kapitel 14)
+     Das Koenigreich aus Kapitel 12 bekommt seine Verfassung. */
+  '45921': {
+    sentAr: 'دُسْتُورُ الْمَمْلَكَةِ جَدِيدٌ.',
+    sentDe: 'Die Verfassung des Königreichs ist neu.'
+  },
+
+  /* قِبْلَةٌ — Gebetsrichtung (madina-1, Kapitel 14)
+     ila mit Genitiv; die Kaaba kennt er aus Kapitel 5. */
+  '45922': {
+    sentAr: 'الْقِبْلَةُ إِلَى الْكَعْبَةِ.',
+    sentDe: 'Die Gebetsrichtung ist zur Kaaba.'
+  },
+
+  /* مَحْكَمَةٌ — Gericht (madina-1, Kapitel 14)
+     Weibliches Nomen, weibliches Adjektiv — die Angleichung ist hoerbar. */
+  '45923': {
+    sentAr: 'الْمَحْكَمَةُ قَرِيبَةٌ مِنَ السُّوقِ.',
+    sentDe: 'Das Gericht ist nahe am Markt.'
+  },
+
+  /* حَفِيدٌ — Enkel (madina-1, Kapitel 14)
+     Idafa mit dem schaych aus Kapitel 13 — drei Generationen in vier Woertern. */
+  '45924': {
+    sentAr: 'حَفِيدُ الشَّيْخِ طَالِبٌ.',
+    sentDe: 'Der Enkel des Gelehrten ist Student.'
+  },
+
+  /* حَدِيقَةٌ — Garten (madina-1, Kapitel 14)
+     Zwei Praedikate mit wa- verbunden, beide weiblich. */
+  '45925': {
+    sentAr: 'الْحَدِيقَةُ جَمِيلَةٌ وَنَظِيفَةٌ.',
+    sentDe: 'Der Garten ist schön und sauber.'
+  },
+
+  /* رَجَبٌ — Rajab (Monat) (madina-1, Kapitel 14)
+     Beide Formen stehen unveraendert im Abzug: der Monatsname ist im Grundfall belassen. */
+  '45926': {
+    sentAr: 'رَجَبٌ قَرِيبٌ.',
+    sentDe: 'Rajab ist nah.'
+  },
+
+  /* اليُونَانُ — Griechenland (madina-1, Kapitel 14)
+     Laendername mit Artikel nach mina — dasselbe Muster wie mina s-sini. */
+  '45927': {
+    sentAr: 'الْأُسْتَاذَةُ مِنَ الْيُونَانِ.',
+    sentDe: 'Die Professorin ist aus Griechenland.'
+  },
+
+  /* مَطَارٌ — Flughafen (madina-1, Kapitel 14)
+     Gegenstueck zum Restaurant-Satz: einmal nah, einmal fern. */
+  '45928': {
+    sentAr: 'الْمَطَارُ بَعِيدٌ مِنَ الْمَدِينَةِ.',
+    sentDe: 'Der Flughafen ist weit von der Stadt entfernt.'
+  },
+
+  /* كُلِّيَّةُ الطِّبِّ — medizinische Fakultät (madina-1, Kapitel 14)
+     Der Begriff ist selbst schon eine Idafa und bleibt als Ganzes stehen. */
+  '45929': {
+    sentAr: 'كُلِّيَّةُ الطِّبِّ فِي الْجَامِعَةِ.',
+    sentDe: 'Die medizinische Fakultät ist an der Universität.'
+  },
+
+  /* كُلِّيَّةُ الهَنْدَسَةِ — Ingenieursfakultät (madina-1, Kapitel 14)
+     Das Praedikat richtet sich nach kulliyyah — weiblich, obwohl der Begriff zwei Woerter hat. */
+  '45930': {
+    sentAr: 'كُلِّيَّةُ الْهَنْدَسَةِ جَدِيدَةٌ.',
+    sentDe: 'Die Ingenieursfakultät ist neu.'
+  },
+
+  /* كُلِّيَّةُ التِّجَارَةِ — Wirtschaftsfakultät (madina-1, Kapitel 14)
+     Dieselbe Bauform wie beim Gericht, nur mit einem zweiteiligen Subjekt. */
+  '45931': {
+    sentAr: 'كُلِّيَّةُ التِّجَارَةِ قَرِيبَةٌ مِنَ الْمَكْتَبَةِ.',
+    sentDe: 'Die Wirtschaftsfakultät ist nahe an der Bibliothek.'
+  },
+
+  /* كُلِّيَّةُ الشَّرِيعَةِ — Fakultät für islamisches Recht (madina-1, Kapitel 14)
+     Die vierte Fakultaet — vier gleich gebaute Saetze, die sich nur im Praedikat unterscheiden. */
+  '45932': {
+    sentAr: 'كُلِّيَّةُ الشَّرِيعَةِ مَشْهُورَةٌ.',
+    sentDe: 'Die Fakultät für islamisches Recht ist berühmt.'
+  },
+
+  /* نَبِيٌّ — Prophet (madina-1, Kapitel 14)
+     Echo auf den Satz muhammadun rasulu llahi, den er schon hat. */
+  '45933': {
+    sentAr: 'مُحَمَّدٌ نَبِيُّ اللهِ.',
+    sentDe: 'Muhammad ist der Prophet Allahs.'
+  },
+
+  /* ------------------------------------------------------------------------
+     KAPITEL 15 — VORGESCHRIEBEN (19.08.2026)   bisher nur 1 Wort im Abzug
+     ------------------------------------------------------------------------ */
+
+  /* أُسْبُوعٌ — Woche (madina-1, Kapitel 15)
+     hadha vor einem bestimmten Nomen — dieselbe Bauform wie hadha l-kursiyyu. */
+  '45934': {
+    sentAr: 'هَذَا الْأُسْبُوعُ طَوِيلٌ.',
+    sentDe: 'Diese Woche ist lang.'
   }
 
 };
