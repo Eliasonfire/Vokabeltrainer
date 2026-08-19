@@ -82,7 +82,13 @@ const BUCH_WOERTER = [];
       Object.keys(fenster.VOKABELN || {}).forEach(slug => {
         (fenster.VOKABELN[slug] || []).forEach(w => BUCH_WOERTER.push(Object.assign({ book: slug }, w)));
       });
-    } catch (e){ /* eine kaputte Abzugsdatei darf die Pruefung nicht kippen */ }
+    } catch (e){
+      /* Eine kaputte Abzugsdatei darf die Pruefung nicht kippen — aber sie
+         darf auch nicht schweigen. Ohne diese Zeile faellt die Namensaufloesung
+         fuer ein ganzes Buch aus, und jede Meldung dazu heisst dann
+         "(unbekannt)": derselbe Ausfall, nur unsichtbar. */
+      console.log('  hinw data/' + n + ' nicht lesbar (' + e.message + ') — dieses Buch fehlt in der Pruefung.');
+    }
   });
 })();
 
@@ -98,9 +104,16 @@ VOCAB_DATA.forEach(w => {
   if (w.mnemo) texte.push({ id: w.id, wort: w.ar, quelle: 'mnemo', text: w.mnemo });
 });
 Object.keys(ALT).forEach(id => {
-  const w = VOCAB_DATA.find(x => String(x.id) === id);
+  /* ⛔ AUCH IM BUCHABZUG NACHSEHEN. Bis zum 19.08.2026 stand hier nur
+     VOCAB_DATA — also 171 von 4.446 Woertern. Jede Meldung zu einem Buchwort
+     hiess deshalb "(unbekannt)", und das waren alle neun offenen Befunde:
+     man sah, DASS etwas nicht stimmt, aber nicht WORAN.
+     Abschnitt 3 hat es zwei Bildschirmseiten weiter unten schon richtig
+     gemacht — dieselbe Frage, zwei Antworten in einer Datei. */
+  const w = VOCAB_DATA.find(x => String(x.id) === id)
+         || BUCH_WOERTER.find(x => String(x.id) === id);
   (ALT[id] || []).forEach((t, i) => {
-    texte.push({ id, wort: w ? w.ar : '(unbekannt)', quelle: 'alt[' + i + ']', text: t });
+    texte.push({ id, wort: w ? w.ar : '(unbekannt, id ' + id + ')', quelle: 'alt[' + i + ']', text: t });
   });
 });
 
@@ -272,8 +285,21 @@ console.log('=== 4. „das hast du auch" — steht das Wort wirklich im Lernbest
                   || /\bhast du\b/i.test(satz)
                   || /\bdu\b[^.]{0,40}\bhast\b/i.test(satz);
       if (!besitz) continue;
+      /* ⛔ DAS WORT SELBST IST KEINE BEHAUPTUNG UEBER EIN FREMDES WORT.
+         Am 19.08.2026 waren drei der neun offenen Befunde genau das: eine
+         Eselsbruecke, die ihr eigenes Wort in eine Reihe stellt.
+           حَفِيدٌ: „أَبٌ (Vater) → اِبْنٌ (Sohn) → حَفِيدٌ (Enkel).
+                     Drei Generationen — und nur die letzte ist neu."
+         Der Text sagt ausdruecklich, dass es das neue Wort ist, und die
+         Pruefung meldete es als unbelegte Behauptung.
+         Mitgeprueft wird auch der Bestandteil eines zusammengesetzten
+         Eintrags (كُلِّيَّةُ التِّجَارَةِ enthaelt التِّجَارَة).
+         [[kandidatenliste_ist_keine_fehlerliste]] */
+      const eigen = flach(t.wort || '');
+      const gesucht = flach(wort);
+      if (eigen && gesucht && (eigen === gesucht || eigen.includes(gesucht))) continue;
       behauptungen++;
-      if (!bekannt.has(flach(wort)))
+      if (!bekannt.has(gesucht))
         melde(`${t.wort} (${t.quelle}): „${wort} (${glosse})" wird als bekanntes Wort vorgestellt, steht aber NICHT im Lernbestand`);
     }
   });
