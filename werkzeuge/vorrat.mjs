@@ -66,6 +66,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
+import { execFileSync } from 'node:child_process';
 
 /* fileURLToPath, nicht von Hand zerlegen: der Ordner heisst "1. Workspace"
    mit Leerzeichen, das steht in import.meta.url als %20. */
@@ -117,6 +118,38 @@ function freischaltungLesen(){
   });
   const datum = (block[1].match(/abgefragt am ([0-9.]+)/) || [])[1] || 'unbekannt';
   return { frei, datum };
+}
+
+/* ⭐⭐ ZWEI QUELLEN, UND DIE GROESSERE GILT
+   Elias am 19.08.2026: „es wäre glaube ich gut, wenn sie rücksicht auf meine
+   app und arabicroots nimmt. wenn eine der beiden bis zu 3 nächsten kapiteln
+   frei schaltet dann soll bearbeitet werden."
+
+   Die App fuehrt ihre eigene Auswahl in SETTINGS.buecher, kapitelgenau:
+     { 'madina-1': [1,2,3,...,11] }
+   Sie liegt in `vt_settings` und wird ueber js/sync.js in den Cloudflare-KV
+   abgeglichen — also von aussen lesbar:
+
+     npx wrangler kv key get --namespace-id=<id> "stand:<mail>" --remote
+
+   Am 19.08.2026 gelesen: {"madina-1":[1,2,3,5,4,6,7,8,9,10,11]} — deckt sich
+   mit seiner Angabe. ⚠️ Die Liste ist NICHT sortiert (5 vor 4); wer das
+   letzte Element statt des groessten nimmt, liest 11 als 11 und beim naechsten
+   Mal vielleicht 4. */
+function auswahlAusKvStand(text){
+  let roh;
+  try { roh = JSON.parse(text); }
+  catch (e) { console.error('  KV-Datei ist kein JSON: ' + e.message); process.exit(1); }
+  let s;
+  try { s = JSON.parse((roh.daten && roh.daten.vt_settings) || '{}'); }
+  catch (e) { console.error('  vt_settings ist kein JSON: ' + e.message); process.exit(1); }
+  const frei = {};
+  Object.entries(s.buecher || {}).forEach(([b, liste]) => {
+    const zahlen = (Array.isArray(liste) ? liste : []).map(Number)
+      .filter(n => !Number.isNaN(n)).sort((a, b2) => a - b2);
+    if (zahlen.length) frei[b] = zahlen;
+  });
+  return { frei, stempel: (roh.stempel && roh.stempel.vt_settings) || null };
 }
 
 /* Aus get_unlocked_chapters kommt eine Liste wie
@@ -280,7 +313,57 @@ const { frei, datum } = freischaltungLesen();
 if (iStand >= 0){
   const quelle = ARG[iStand + 1];
   if (!quelle){ console.error('  --stand braucht eine Datei.'); process.exit(1); }
-  const neu = freischaltungAusJson(fs.readFileSync(quelle, 'utf8'));
+  const vonRoots = freischaltungAusJson(fs.readFileSync(quelle, 'utf8'));
+
+  /* Zweite Quelle: die Auswahl in seiner eigenen App, falls mitgegeben.
+     Vereinigt wird, nicht ersetzt — „wenn EINE der beiden" freischaltet. */
+  let neu = vonRoots, vonApp = null;
+  const iApp = ARG.indexOf('--app');
+  if (iApp >= 0 && ARG[iApp + 1]){
+    /* `--app auto` holt den Stand selbst aus dem KV. So braucht die Routine
+       nur EINE Freigabe (dieses Skript) statt einer breiten fuer wrangler —
+       und der Weg steht an einer Stelle statt in jeder Anleitung neu. */
+    let text;
+    if (ARG[iApp + 1] === 'auto'){
+      const NS = (fs.readFileSync(p('wrangler.toml'), 'utf8').match(/id\s*=\s*"([0-9a-f]{32})"/) || [])[1];
+      if (!NS){ console.error('  KV-Namensraum nicht in wrangler.toml gefunden.'); process.exit(1); }
+      const SCHLUESSEL = 'stand:' + (process.env.VT_MAIL || 'abdurahman.tunk@gmail.com');
+      try {
+        /* ⛔ Unter Windows heisst es npx.cmd — mit 'npx' wirft execFileSync
+           ENOENT. [[npm_global_windows_fallen]] */
+        /* ⛔ Zwei Windows-Fallen hintereinander: 'npx' allein wirft ENOENT
+           (es heisst npx.cmd), und seit Node 20 wirft ein direktes .cmd EINVAL.
+           Der Weg, der beides umgeht, ist cmd /c.
+           [[npm_global_windows_fallen]] */
+        const win = process.platform === 'win32';
+        const befehl = win ? 'cmd' : 'npx';
+        const args = ['wrangler@4.124.0', 'kv', 'key', 'get',
+          '--namespace-id=' + NS, SCHLUESSEL, '--remote'];
+        text = execFileSync(befehl, win ? ['/c', 'npx', ...args] : args,
+          { cwd: WURZEL, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 180000 });
+      } catch (e) {
+        console.log('  ⚠️ KV nicht erreichbar (' + (e.message || '').split('\n')[0] + ')'
+          + ' — es zaehlt nur arabicroots. Das gehoert in den Bericht.');
+      }
+    } else {
+      text = fs.readFileSync(ARG[iApp + 1], 'utf8');
+    }
+    if (!text) { console.log('  (App-Auswahl uebersprungen)'); }
+    else {
+    const a = auswahlAusKvStand(text);
+    vonApp = a.frei;
+    console.log('  App-Auswahl (KV, Stand '
+      + (a.stempel ? new Date(a.stempel).toLocaleString('de-DE') : 'unbekannt') + '): '
+      + (Object.entries(vonApp).map(([b, k]) => `${b} bis ${Math.max(...k)}`).join(' | ') || '—'));
+    neu = {};
+    new Set([...Object.keys(vonRoots), ...Object.keys(vonApp)]).forEach(b => {
+      neu[b] = [...new Set([...(vonRoots[b] || []), ...(vonApp[b] || [])])].sort((x, y) => x - y);
+    });
+    }
+  } else {
+    console.log('  ⚠️ Ohne --app zaehlt nur arabicroots. Elias wollte beide Quellen —'
+      + ' den KV-Stand mit `wrangler kv key get` holen und mitgeben.');
+  }
   /* ⛔ Nur Buecher nachziehen, die auch als Datei vorliegen — sonst traegt
      sich ein Buch ein, dessen Woerter niemand pruefen kann, und der
      Rueckstand meldet ploetzlich Tausende. */
