@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ähnliche Regeln zusammenfassen?</title>
+<style>
+:root{
+  --bg:#0a0a0b; --karte:#141416; --karte2:#1c1c1f; --rand:#2a2a2e; --rand2:#3a3a40;
+  --text:#f2f2f3; --dim:#a8a8ae; --faint:#76767c;
+  --rot:#ff4d5e; --rot-w:rgba(255,77,94,.12); --gruen:#2fd07a; --gruen-w:rgba(47,208,122,.12);
+  --gelb:#f5b942; --gelb-w:rgba(245,185,66,.12);
+  --ar:1.55em;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  padding:20px 16px 80px;}
+.huelle{max-width:940px;margin:0 auto}
+h1{font-size:1.5rem;margin:0 0 6px}
+.vorwort{color:var(--dim);font-size:.94rem;margin:0 0 8px}
+.vorwort b{color:var(--text)}
+.warnung{background:var(--gelb-w);border:1px solid var(--gelb);border-radius:10px;
+  padding:12px 14px;margin:16px 0 26px;font-size:.92rem;color:var(--text)}
+.gruppe{background:var(--karte);border:1px solid var(--rand);border-radius:14px;
+  padding:16px;margin:0 0 20px}
+.gruppe.beantwortet{border-color:var(--rand2)}
+.gkopf{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.nr{font-size:.75rem;color:var(--faint);text-transform:uppercase;letter-spacing:.06em}
+.gkopf h2{margin:2px 0 2px;font-size:1.3rem}
+.unter{color:var(--dim);font-size:.86rem}
+.wahl{display:flex;gap:6px;flex-wrap:wrap}
+.w{background:var(--karte2);border:1px solid var(--rand2);color:var(--dim);
+  border-radius:999px;padding:7px 13px;font:inherit;font-size:.84rem;font-weight:600;cursor:pointer}
+.w:hover{border-color:var(--faint);color:var(--text)}
+.w.an[data-w="zusammen"]{background:var(--gruen-w);border-color:var(--gruen);color:var(--gruen)}
+.w.an[data-w="getrennt"]{background:var(--rot-w);border-color:var(--rot);color:var(--rot)}
+.w.an[data-w="spaeter"]{background:var(--gelb-w);border-color:var(--gelb);color:var(--gelb)}
+.waagen{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+@media(max-width:640px){.waagen{grid-template-columns:1fr}}
+.waage{border:1px solid var(--rand);border-radius:10px;padding:10px 12px;font-size:.88rem}
+.waage h3{margin:0 0 4px;font-size:.76rem;text-transform:uppercase;letter-spacing:.06em}
+.waage p{margin:0;color:var(--dim)}
+.dafuer h3{color:var(--gruen)} .dagegen h3{color:var(--rot)}
+.regeln{display:grid;gap:8px}
+.regel{background:var(--karte2);border:1px solid var(--rand);border-radius:10px;padding:11px 13px}
+.regel header{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.regel h4{margin:0;font-size:1rem;font-weight:700}
+.marke{font-size:.7rem;padding:2px 7px;border-radius:999px;font-weight:700}
+.marke.weg{background:var(--rot-w);color:var(--rot);border:1px solid var(--rot)}
+.regel .id{font-size:.74rem;color:var(--faint);font-family:ui-monospace,monospace;margin:3px 0 7px}
+.regel p{margin:0;color:var(--dim);font-size:.89rem}
+.bsp{margin:8px 0 0;padding:0 0 0 16px;font-size:.86rem;color:var(--faint)}
+.bsp b{color:var(--text)}
+.satz{color:var(--faint);margin-inline-start:6px}
+.leer{color:var(--faint);font-style:italic}
+:is(h2,.bsp b,.satz){font-feature-settings:"kern"}
+[lang=ar],.bsp b,.satz{font-size:var(--ar);line-height:1.9}
+.notiz{display:block;margin-top:12px;font-size:.8rem;color:var(--faint)}
+.notiz textarea{display:block;width:100%;margin-top:5px;background:var(--karte2);
+  border:1px solid var(--rand);border-radius:8px;color:var(--text);
+  padding:8px 10px;font:inherit;font-size:.88rem;resize:vertical}
+.fuss{background:var(--karte);border:1px solid var(--rand);border-radius:14px;padding:16px;margin-top:26px}
+.fuss h2{margin:0 0 8px;font-size:1.1rem}
+.stand{color:var(--dim);font-size:.9rem;margin:0 0 10px}
+#ausgabe{width:100%;height:130px;background:var(--bg);border:1px solid var(--rand);
+  border-radius:8px;color:var(--text);padding:10px;font:12px/1.5 ui-monospace,monospace;resize:vertical}
+.knoepfe{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.kopier{background:var(--rot);border:0;color:#fff;border-radius:999px;padding:9px 16px;
+  font:inherit;font-weight:700;cursor:pointer}
+.zuruecksetzen{background:transparent;border:1px solid var(--rand2);color:var(--faint);
+  border-radius:999px;padding:9px 16px;font:inherit;cursor:pointer}
+</style></head><body><div class="huelle">
+
+<h1>Ähnliche Regeln zusammenfassen?</h1>
+<p class="vorwort">Deine Worte vom 19.08.: <i>„zb حَرْفُ الجَرِّ und die regel für
+fi und ala oder min und li, sie sollten irgendwie zu einer regel werden statt 5
+unterschiedliche die das gleiche meinen."</i></p>
+<p class="vorwort">Gemessen wurden <b>8 Gruppen mit 21 Regeln</b>
+(Wortüberschneidung der Erklärungen, Namensstamm und geteilte Sätze). Deine
+Gruppe حَرْف جَرّ ist Treffer Nummer eins.</p>
+<!-- ⛔ NICHT „حَرْف-جَرّ-Gruppe" schreiben. Der Bidi-Algorithmus dreht den
+     arabischen Lauf, und die Bindestriche landen auf der falschen Seite —
+     im Bildschirmfoto vom 19.08. stand dort „-حَرْف جَرّ" mit vorangestelltem
+     Strich. Ein Leerzeichen kennt keine Richtung, ein Bindestrich schon. -->
+
+<div class="warnung">⚠️ <b>Das ist ein Kandidatenfinder, kein Urteil.</b> Die
+Messung erkennt Wortlaut, nicht Lehrabsicht — bei den Hinweiswörtern spricht
+das Meiste <b>gegen</b> das Zusammenfassen. Deshalb steht bei jeder Gruppe
+beides. <b>Nichts ist verschmolzen</b>, und nichts passiert, bis du entschieden
+hast. Du hattest selbst gesagt, es sei womöglich verfrüht, solange nicht alle
+95 Regeln beurteilt sind — die Seite wartet, sie drängt nicht.</div>
+
+
+<section class="gruppe" data-gruppe="harf-jarr">
+  <div class="gkopf">
+    <div>
+      <span class="nr">1 von 8</span>
+      <h2 lang="ar">حَرْف جَرّ</h2>
+      <div class="unter">Die Gruppe, die du selbst genannt hast · 5 Regeln</div>
+    </div>
+    <div class="wahl">
+      <button class="w" data-w="zusammen">zu einer Regel</button>
+      <button class="w" data-w="getrennt">getrennt lassen</button>
+      <button class="w" data-w="spaeter">später</button>
+    </div>
+  </div>
+  <div class="waagen">
+    <div class="waage dafuer"><h3>Dafür</h3><p>Eine Grundregel und vier Nachträge, die je zwei Partikel aus einer Folge nachreichen. Historisch gewachsen: der Lehrer hat die Partikel über fünf Folgen verteilt eingeführt (F4, F4, F5, F7, F9), nicht weil sie verschieden sind, sondern weil sie nacheinander drankamen.</p></div>
+    <div class="waage dagegen"><h3>Dagegen</h3><p>Zwei der fünf haben nur EINE Markierung — beim Zusammenfassen musst du entscheiden, welche Beispielsätze zur neuen Regel gehören.</p></div>
+  </div>
+  <div class="regeln"><article class="regel"><header><h4>حَرْفُ الجَرِّ (Genitivpartikel)</h4></header><div class="id">harf-jarr-01 · Folge 4 · 24:07 · 9 Markierungen</div><p>حَرْف (ḥarf) heißt Buchstabe oder Partikel, und اَلْجَرّ (al-jarr) kommt von مَجْرُور (Genitiv). Ein حَرْفُ الجَرِّ (Plural: حُروفُ الجَرِّ) ist also eine Genitivpartikel – meistens sind das Präpositionen. Eine solche Partikel verändert den Fall des Nomens, das direkt danach kommt, von مَرْفُوع zu مَجْرُور: aus اَلْبَيْتُ (al-baytu) wird فِي الْبَيْتِ (fī l-bayti) &quot;im Haus&quot;. Merksatz des Lehrers: Der ḥarf al-jarr macht sein Nomen (اِسْم, ism) zu majrūr.</p><ul class="bsp"><li><b>فِي الْمَطْبَخِ</b> <span class="satz">هَذِهِ قِدْرٌ ثَقِيلَةٌ فِي الْمَطْبَخِ.</span></li><li><b>فِي الْغُرْفَةِ</b> <span class="satz">هَذِهِ نَافِذَةٌ مُغْلَقَةٌ فِي الْغُرْفَةِ.</span></li><li><b>مِنْ إِنْجِلْتَرَا</b> <span class="satz">هَذِهِ السَّيَّارَةُ مِنْ إِنْجِلْتَرَا.</span></li></ul></article><article class="regel"><header><h4>فِي und عَلَى (die ersten zwei Genitivpartikeln)</h4></header><div class="id">harf-jarr-fi-ala-01 · Folge 4 · 25:05 · 8 Markierungen</div><p>Ein حَرْف جَرّ **setzt das folgende Nomen in den Genitiv** – statt Damma steht Kasra. Die ersten zwei sind فِي (fī) &quot;in&quot; und عَلَى (ʿalā) &quot;auf&quot;: اَلْبَيْتُ → فِي الْبَيْتِ (fī l-bayti) &quot;im Haus&quot;, اَلْمَسْجِدُ → فِي الْمَسْجِدِ (fī l-masjidi) &quot;in der Moschee&quot;, اَلْمَكْتَبُ → عَلَى الْمَكْتَبِ (ʿalā l-maktabi) &quot;auf dem Schreibtisch&quot;, اَلسَّريرُ → عَلَى السَّريرِ (ʿalā s-sarīri) &quot;auf dem Bett&quot;. Beim Übersetzen besteht der Lehrer auf Genauigkeit: عَلَى heißt &quot;auf&quot;, nicht &quot;über&quot; – &quot;über&quot; wäre etwas anderes. Zweites Beispiel, komplett durchanalysiert, aus dem Koran (Sure al-Baqara, Vers 61): لَن نَّصْبِرَ عَلَىٰ طَعَامٍ وَٰحِدٍ (lan naṣbira ʿalā ṭaʿāmin wāḥidin) – &quot;wir werden eine einzige Speise nicht ertragen&quot;; عَلَى ist der حَرْف جَرّ, طَعَامٍ das اِسْم مَجْرُور danach. Weitere Präpositionen kommen später; مِنْ (min) und إِلى (ilā) kündigt er am Ende der Stunde für das nächste Mal an.</p><ul class="bsp"><li><b>فِي الْحَقِيبَةِ</b> <span class="satz">هَذَا مِنْدِيلٌ نَظِيفٌ فِي الْحَقِيبَةِ.</span></li><li><b>فِي الْحَقِيبَةِ</b> <span class="satz">الْكِتَابُ فِي الْحَقِيبَةِ.</span></li><li><b>فِي الْمَكْتَبِ</b> <span class="satz">الْمُدِيرُ فِي الْمَكْتَبِ الْآنَ.</span></li></ul></article><article class="regel"><header><h4>مِنْ und إِلى (zwei neue حُروف جَرّ)</h4></header><div class="id">harf-jarr-min-ila-01 · Folge 5 · 22:54 · 8 Markierungen</div><p>**Jedes neue Glied der حُروف جَرّ wirkt wie فِي und عَلى**: das folgende Nomen wird مَجْرور, egal welche Präposition davorsteht. Die Liste wächst also, die Regel bleibt dieselbe. Der Lehrer führt die beiden genau so ein (Folge 05, 22:54): »Jetzt lernen wir zwei weitere حُروف جَرّ.« Zu فِي und عَلى kommen damit: مِنْ min heißt „von“, إِلى ilā heißt „zu“ oder „nach“. Beide sind Huruf Jarr, das folgende Wort wird also majrūr: مِنَ الْبَيْتِ mina l-baiti (vom Haus), إِلَى الْمَسْجِدِ ilā l-masjidi (zur Moschee).</p><ul class="bsp"><li><b>مِنَ الْبَيْتِ</b> <span class="satz">مِنَ الْبَيْتِ إِلَى الْجَامِعَةِ.</span></li><li><b>مِنَ الْفِلِيبِّينِ</b> <span class="satz">هَذَا الطَّالِبُ مِنَ الْفِلِيبِّينِ.</span></li><li><b>مِنَ الْيَابَانِ</b> <span class="satz">هَذِهِ سَيَّارَةٌ مِنَ الْيَابَانِ.</span></li></ul></article><article class="regel"><header><h4>لِ (fünfter حَرْف جَرّ, Besitz)</h4></header><div class="id">harf-jarr-li-01 · Folge 9 · 35:14 · 1 Markierung</div><p>لِ ist der fünfte Harf al-Jarr nach فِي، عَلَى، إِلَى، مِنْ – nur ein einziger Buchstabe, ein Lām mit Kasra. Es bedeutet »für« oder »gehört« und ist eine Besitzanzeige: هَذَا لِخَالِدٍ hādhā li-Khālidin – »dies gehört Khalid«. Fürs Erste steht لِ nur für Besitz; weitere Bedeutungen kommen später dazu. Wie bei den anderen Huruf al-Jarr wird das Wort danach مَجْرُور majrūr (Kasra bzw. Kasratān): لِ ist حَرْف جَرّ, خَالِدٍ ist اِسْم مَجْرُور.</p><ul class="bsp"><li><b>لِلطَّبِيبِ</b> <span class="satz">هَذَا الْبَيْتُ لِلتَّاجِرِ وَذَلِكَ الْبَيْتُ لِلطَّبِيبِ.</span></li></ul></article><article class="regel"><header><h4>حَرْف جَرّ + إِضافة (Verkettung)</h4></header><div class="id">harf-jarr-idafa-01 · Folge 7 · 12:57 · 1 Markierung</div><p>Steht ein حَرْف جَرّ vor einer إِضافة, bekommen **beide Wörter Kasra** – das ist der ganze Fall. Der حَرْف جَرّ macht den مُضَاف مَجْرُور, und der مُضَاف إِلَيْهِ ist ohnehin مَجْرُور; der Lehrer nennt das eine „Verkettung&quot;. عَلى مَكْتَبِ الْمُدَرِّسِ ʿalā maktabi l-mudarrisi – auf dem Schreibtisch des Lehrers (مَكْتَب kann jeden Fall annehmen, durch عَلى muss es مَجْرُور werden); فِي كِتابِ اللهِ fī kitābi llāhi – im Buch Allahs (genau diesen Fall zerlegt der Lehrer: فِي ist ein حَرْف جَرّ und macht كِتاب مَجْرُور, und كِتاب ist zugleich مُضَاف und macht اللّٰه مَجْرُور); مِنْ بَيْتِ الْمُدَرِّسِ min bayti l-mudarrisi – vom Haus des Lehrers.</p><ul class="bsp"><li><b>عَلَى مَكْتَبِ الْمُدَرِّسِ</b> <span class="satz">أَيْنَ دَفْتَرُ عَمَّارٍ؟ هُوَ عَلَى مَكْتَبِ الْمُدَرِّسِ.</span></li></ul></article></div>
+  <label class="notiz">Notiz an mich (freiwillig)
+    <textarea rows="2" placeholder="z.B. „nur die ersten drei zusammen""></textarea></label>
+</section>
+<section class="gruppe" data-gruppe="isara">
+  <div class="gkopf">
+    <div>
+      <span class="nr">2 von 8</span>
+      <h2 lang="ar">Hinweiswörter</h2>
+      <div class="unter">هَذَا · هَذِهِ · ذَلِكَ · تِلْكَ · 4 Regeln</div>
+    </div>
+    <div class="wahl">
+      <button class="w" data-w="zusammen">zu einer Regel</button>
+      <button class="w" data-w="getrennt">getrennt lassen</button>
+      <button class="w" data-w="spaeter">später</button>
+    </div>
+  </div>
+  <div class="waagen">
+    <div class="waage dafuer"><h3>Dafür</h3><p>Vier Regeln nach demselben Bauplan — Hinweiswort plus Nomen.</p></div>
+    <div class="waage dagegen"><h3>Dagegen</h3><p>⚠️ Hier spricht das Meiste GEGEN das Zusammenfassen: das sind vier verschiedene Wörter, und der Lehrer hat sie einzeln über vier Folgen eingeführt (F1, F2, F9, F10). Nah/fern und männlich/weiblich sind genau der Unterschied, den man lernen muss. Eine Sammelregel würde ihn zudecken.</p></div>
+  </div>
+  <div class="regeln"><article class="regel"><header><h4>هَذَا (dies)</h4><span class="marke weg">nicht auf Karteikarten</span></header><div class="id">ismul-isara-hadha-01 · Folge 1 · 10:07 · 8 Markierungen</div><p>هَذَا (hadha) ist ein اسْمُ الْإِشَارَة (Hinweiswort/Demonstrativpronomen). Es wird für das benutzt, was (a) in der Nähe ist und (b) männlich – nicht für weibliche Wörter, dafür steht هَذِهِ. Menschen und Dinge gleichermaßen: Sharḥ Madīnah S. 3 definiert es als لِلْمُفْرَدِ الْمُذَكَّرِ الْقَرِيبِ الْعَاقِلِ، وَغَيْرِ الْعَاقِلِ – für das männliche Einzelne in der Nähe, ob vernunftbegabt oder nicht. Die Nähe muss nicht räumlich sein: der Lehrer erklärt am Beispiel يَوْمُ الْقِيامَة (der Tag der Auferstehung), dass dieser Tag im Koran mit هَذَا bezeichnet wird und nicht mit ذَلِكَ (jenes) – weil er als nah empfunden wird, nicht als fern.</p><ul class="bsp"><li><b>هَذَا</b> <span class="satz">هَذَا بَيْتٌ جَمِيلٌ وَنَظِيفٌ.</span></li><li><b>هَذَا</b> <span class="satz">هَذَا مَسْجِدٌ جَدِيدٌ قَرِيبٌ مِنَ الْبَيْتِ.</span></li><li><b>هَذَا</b> <span class="satz">هَذَا كِتَابٌ قَدِيمٌ وَثَقِيلٌ.</span></li></ul></article><article class="regel"><header><h4>هَذِهِ (weibliches Hinweiswort, nah)</h4></header><div class="id">ismul-isara-hadhihi-01 · Folge 9 · 22:58 · 17 Markierungen</div><p>هَذِهِ hādhihi ist die weibliche Form von هَذَا hādhā und zeigt wie dieses auf Nahes (der Lehrer liest die Kapitelüberschrift: »diese sind für die Nähe, diese sind für die Ferne«). Genauso gibt es zu ذَلِكَ dhālika »jenes« die weibliche Form تِلْكَ tilka – die kommt aber erst in Kapitel 7. Der Lehrer sagt ausdrücklich: für هَذِهِ und تِلْكَ gelten genau die gleichen Regeln wie bei هَذَا und ذَلِكَ, nur eben für Begriffe, die weiblich sind. Beispiel aus der Stunde: هَذِهِ بِنْتُ يَاسِرٍ hādhihi bintu Yāsirin – »dies ist die Tochter von Yāsir«.</p><ul class="bsp"><li><b>هَذِهِ</b> <span class="satz">هَذِهِ سَيَّارَةٌ مِنَ الْيَابَانِ.</span></li><li><b>هَذِهِ</b> <span class="satz">هَذِهِ مَدْرَسَةٌ نَظِيفَةٌ وَجَمِيلَةٌ.</span></li><li><b>هَذِهِ</b> <span class="satz">هَذِهِ سُوقٌ قَدِيمَةٌ قَرِيبَةٌ مِنَ الْبَيْتِ.</span></li></ul></article><article class="regel"><header><h4>تِلْكَ (jene)</h4></header><div class="id">ismul-isara-tilka-01 · Folge 10 · 29:57 · 6 Markierungen</div><p>تِلْكَ (tilka) ist das Hinweiswort für etwas Entferntes, das weiblich ist – das weibliche Gegenstück zu ذَلِكَ (dhalika). In der Nähe steht هَذِهِ (hadhihi), in der Ferne تِلْكَ. Der Lehrer buchstabiert es als drei Buchstaben: ت – ل – ك (Ta, Lam, Kaf). Beispiel aus der Stunde: مَنْ تِلْكَ؟ – تِلْكَ فاطِمةُ (man tilka – tilka Fatimatu) „Wer ist jene? – Jene ist Fatima&quot;; er merkt dazu an, dass man hier im Deutschen „jene&quot; statt „jenes&quot; sagen muss, weil das Wort weiblich ist. In den Sätzen des Kapitels stehen هَذِهِ und تِلْكَ meist als Paar in einem Satz: هَذِهِ طَبيبةٌ وَتِلْكَ مُمَرِّضةٌ (hadhihi tabibatun wa-tilka mumarridatun) „dies ist eine Ärztin und jene ist eine Krankenschwester&quot;, هَذِهِ مِنَ الْهِنْدِ وَتِلْكَ مِنَ الْيابانِ (hadhihi mina l-Hindi wa-tilka mina l-Yabani) „diese kommt aus Indien und jene kommt aus Japan&quot;.</p><ul class="bsp"><li><b>تِلْكَ</b> <span class="satz">تِلْكَ نَاقَةٌ طَوِيلَةٌ.</span></li><li><b>تِلْكَ</b> <span class="satz">تِلْكَ بَطَّةٌ صَغِيرَةٌ.</span></li><li><b>تِلْكَ</b> <span class="satz">تِلْكَ مُمَرِّضَةٌ مُجْتَهِدَةٌ فِي الْمُسْتَشْفَى.</span></li></ul></article><article class="regel"><header><h4>ذَلِكَ (jenes)</h4></header><div class="id">ismul-isara-dhalika-01 · Folge 2 · 20:07 · 4 Markierungen</div><p>ذَلِكَ (dhalika) ist wie هَذَا ein اسْمُ الْإِشَارَة (Hinweiswort), aber für Dinge in der Ferne statt in der Nähe. Gilt ebenfalls nur für männliche Wörter. Kann auch auf zuvor Erwähntes zurückverweisen, nicht nur auf räumlich Entferntes.</p><ul class="bsp"><li><b>ذَلِكَ</b> <span class="satz">مَنْ ذَلِكَ؟ ذَلِكَ إِمَامٌ.</span></li><li><b>ذَلِكَ</b> <span class="satz">هَذَا سُكَّرٌ وَذَلِكَ لَبَنٌ.</span></li><li><b>ذَلِكَ</b> <span class="satz">هَذَا الْبَيْتُ لِلتَّاجِرِ وَذَلِكَ الْبَيْتُ لِلطَّبِيبِ.</span></li></ul></article></div>
+  <label class="notiz">Notiz an mich (freiwillig)
+    <textarea rows="2" placeholder="z.B. „nur die ersten drei zusammen""></textarea></label>
+</section>
+<section class="gruppe" data-gruppe="mubtada">
+  <div class="gkopf">
+    <div>
+      <span class="nr">3 von 8</span>
+      <h2 lang="ar">مُبْتَدَأ</h2>
+      <div class="unter">Grundregel und Genus-Zusatz · 2 Regeln</div>
+    </div>
+    <div class="wahl">
+      <button class="w" data-w="zusammen">zu einer Regel</button>
+      <button class="w" data-w="getrennt">getrennt lassen</button>
+      <button class="w" data-w="spaeter">später</button>
+    </div>
+  </div>
+  <div class="waagen">
+    <div class="waage dafuer"><h3>Dafür</h3><p>Die zweite ist ein Zusatz zur ersten: was für den Satzbau gilt, gilt auch fürs Geschlecht.</p></div>
+    <div class="waage dagegen"><h3>Dagegen</h3><p>⚠️ Bei der ersten steht noch eine andere Entscheidung an (Nachtplan 4: ihr Beleg zeigt auf die Ankündigung in Folge 03 statt auf die Definition in Folge 14). Das erst klären, sonst führt die zusammengefasste Regel den falschen Beleg mit.</p></div>
+  </div>
+  <div class="regeln"><article class="regel"><header><h4>مُبْتَدَأ وخَبَر (Subjekt und Aussage)</h4></header><div class="id">mubtada-khabar-01 · Folge 3 · 13:57 · 7 Markierungen</div><p>Der خَبَر ist **die Benachrichtigung für den مُبْتَدَأ**, also die Aussage über das Subjekt. So definiert es der Lehrer beim Abschluss von Kapitel 9 (Folge 14, 45:15), und er fügt an: »Und wenn wir das wissen, wissen wir immer, wo unser خَبَر ist«. ⚠️ Er hängt dort selbst an: »Das kommt noch mal zu gegebener Zeit« (45:24) – die ausführliche Regel steht im Stoff also noch aus. In Folge 03 wurden die Begriffe nur angekündigt (&quot;erstmal nicht viel damit machen, sondern erstmal nur wissen&quot;). خَبَر (khabar) ist die Information über das Nomen – in den Übungen das ergänzte Wort, z.B. جَديدٌ (dschadīdun, neu). مُبْتَدَأ (mubtadaʾ) ist das Subjekt, also das, worum es im Satz geht, z.B. اَلْمُدَرِّسُ (al-mudarrisu, der Lehrer). Zusammen: اَلْمُدَرِّسُ جَديدٌ – der Lehrer ist neu.</p><ul class="bsp"><li><b>الْمَاءُ</b> <span class="satz">الْمَاءُ بَارِدٌ الْيَوْمَ.</span></li><li><b>الْوَلَدُ</b> <span class="satz">الْوَلَدُ وَاقِفٌ قَرِيبٌ مِنَ الْبَابِ.</span></li><li><b>الْمَدْرَسَةُ</b> <span class="satz">الْمَدْرَسَةُ قَرِيبَةٌ مِنَ الْبَيْتِ.</span></li></ul></article><article class="regel"><header><h4>مُبْتَدَأ und خَبَر müssen im Geschlecht übereinstimmen</h4></header><div class="id">mubtada-khabar-genus-01 · nur Buch · 3 Markierungen</div><p>Im Nominalsatz richtet sich das Prädikat im Geschlecht nach dem Subjekt. Sharḥ Madīnah setzt es als Gegensatzpaar: الْغُرْفَةُ مَفْتُوحٌ ist falsch, الْغُرْفَةُ مَفْتُوحَةٌ ist richtig — غُرْفَة ist weiblich, also muss auch مَفْتُوحَة weiblich sein. Ebenso in seiner Beispielreihe: مُحَمَّدٌ طَالِبٌ neben فَاطِمَةُ طَالِبَةٌ, الْبَابُ مُغْلَقٌ neben النَّافِذَةُ مَفْتُوحَةٌ. Du hast nat-vier-bedingungen-01 für das Adjektiv am Nomen (مَسْجِدٌ كَبِيرٌ), aber der Nominalsatz ist ein anderer Bau — satz-vs-wortgruppe-01 unterscheidet die beiden sogar ausdrücklich („Das Hemd ist sauber&quot; ≠ „das saubere Hemd&quot;), ohne die Kongruenz für den Satzfall zu nennen.</p><ul class="bsp"><li><b>قَرِيبَةٌ</b> <span class="satz">الْمَدْرَسَةُ قَرِيبَةٌ مِنَ الْبَيْتِ.</span></li><li><b>جَمِيلَةٌ</b> <span class="satz">اللُّغَةُ الْعَرَبِيَّةُ جَمِيلَةٌ.</span></li><li><b>الْبَابُ مُغْلَقٌ</b> <span class="satz">لِمَاذَا هَذَا الْبَابُ مُغْلَقٌ؟</span></li></ul></article></div>
+  <label class="notiz">Notiz an mich (freiwillig)
+    <textarea rows="2" placeholder="z.B. „nur die ersten drei zusammen""></textarea></label>
+</section>
+<section class="gruppe" data-gruppe="asma">
+  <div class="gkopf">
+    <div>
+      <span class="nr">4 von 8</span>
+      <h2 lang="ar">الأَسْمَاء الخَمْسَة</h2>
+      <div class="unter">Älter gegen neuer · 2 Regeln</div>
+    </div>
+    <div class="wahl">
+      <button class="w" data-w="zusammen">zu einer Regel</button>
+      <button class="w" data-w="getrennt">getrennt lassen</button>
+      <button class="w" data-w="spaeter">später</button>
+    </div>
+  </div>
+  <div class="waagen">
+    <div class="waage dafuer"><h3>Dafür</h3><p>Klarer Fall von „dieselbe Sache, zwei Stände&quot;: Folge 16 nennt zwei der fünf Nomen, das Buch alle fünf. Die zweite Regel ersetzt die erste inhaltlich.</p></div>
+    <div class="waage dagegen"><h3>Dagegen</h3><p>Beide haben nur je eine Markierung — es geht also wenig verloren, aber es kommt auch wenig zusammen.</p></div>
+  </div>
+  <div class="regeln"><article class="regel"><header><h4>Die fünf Ausnahmewörter: أَبٌ und أَخٌ nehmen ein Wāw</h4></header><div class="id">asma-khamsa-01 · Folge 16 · 16:15 · 1 Markierung</div><p>Normalerweise hängt die Besitzendung direkt ans Wort. Bei fünf Wörtern nicht — der Lehrer: „es gibt in der arabischen Sprache fünf Ausnahmewörter … bei أَبٌ und bei أَخٌ und bei drei anderen kommt nicht das direkt hinten ran.&quot; Dort schiebt sich erst ein **Wāw** dazwischen: abū-ka „dein Vater&quot;, aḫū-ka „dein Bruder&quot; — statt des erwarteten abu-ka. ⭐ **Eine Ausnahme von der Ausnahme:** Bei „mein&quot; kommt kein Wāw, sondern das Yāʾ direkt dahinter — abī „mein Vater&quot;. Seine Worte: „Außer bei mein. Da kommt das Yāʾ direkt hinten dran. Bei einem anderen kommt immer ein Wāw.&quot; Die drei übrigen der fünf nennt er nicht: sie kommen erst im zweiten Buch. Das ist hier so festgehalten, statt sie zu ergänzen. ⚠️ abūka, aḫūka und abī stehen in Umschrift — ihre vokalisierte Schreibung ist im vorhandenen Wortbestand nicht belegt.</p><ul class="bsp"><li><b>أَبُوكَ</b> <span class="satz">أَيْنَ أَبُوكَ يَا خَالِدُ؟</span></li></ul></article><article class="regel"><header><h4>الأَسْمَاءُ الخَمْسَةُ — alle fünf, und wann sie gelten</h4></header><div class="id">asma-khamsa-vollstaendig-01 · nur Buch · 1 Markierung</div><p>Dein Lehrer nennt in Folge 16 nur أَبٌ und أَخٌ und sagt ausdrücklich, die drei übrigen kämen erst im zweiten Buch (asma-khamsa-01). Der deutsche Madina-Schlüssel 3 nennt sie vollständig: أَبٌ، أَخٌ، حَمٌ، فَمٌ، ذُو. ⭐ Und er nennt die Bedingung, unter der die besonderen Endungen überhaupt gelten — im Wortlaut des Buchs: «Diese Nomen bekommen die Sekundären Endungen nur, wenn sie مُضافٌ sind und der مُضافٌ إِلَيْهِ nicht ein Pronomen der ersten Person Singular ist. In dieser Gruppe ist die rafʿ-Endung wāw, die naṣb-Endung alif und die jarr-Endung ist yāʾ.» Damit sind beide Ausnahmen deines Lehrers erklärt: أَبِي (mein Vater) hat kein Wāw, weil dort das Ich-Pronomen steht — und هُوَ أَخٌ hat keins, weil أَخٌ dort gar kein مُضَاف ist. حَمٌ ist laut Fußnote des Buchs «der männliche Verwandte des Ehemanns so wie sein Bruder oder sein Vater». فَمٌ (Mund) geht auf zwei Arten: mit مـ wird es normal dekliniert (فَمُكَ نَظِيفٌ), ohne مـ wie die fünf (فُوكَ صَغِيرٌ).</p><ul class="bsp"><li><b>أَبُو</b> <span class="satz">مَاذَا قَالَ أَبُو بِلَالٍ؟</span></li></ul></article></div>
+  <label class="notiz">Notiz an mich (freiwillig)
+    <textarea rows="2" placeholder="z.B. „nur die ersten drei zusammen""></textarea></label>
+</section>
+<section class="gruppe" data-gruppe="schams">
+  <div class="gkopf">
+    <div>
+      <span class="nr">5 von 8</span>
+      <h2 lang="ar">Sonnen- und Mondbuchstaben</h2>
+      <div class="unter">Regel und Merkhilfe · 2 Regeln</div>
+    </div>
+    <div class="wahl">
+      <button class="w" data-w="zusammen">zu einer Regel</button>
+      <button class="w" data-w="getrennt">getrennt lassen</button>
+      <button class="w" data-w="spaeter">später</button>
+    </div>
+  </div>
+  <div class="waagen">
+    <div class="waage dafuer"><h3>Dafür</h3><p>Beide aus Folge 3, beide mit acht Markierungen — die zweite ist die Eselsbrücke zur ersten, kein eigener Lehrsatz.</p></div>
+    <div class="waage dagegen"><h3>Dagegen</h3><p>⭐ Du hast beide bereits von den Karteikarten genommen. Vielleicht erledigt sich die Frage damit von selbst.</p></div>
+  </div>
+  <div class="regeln"><article class="regel"><header><h4>حُروف شَمْسِيّة وقَمَرِيّة (Sonnen- &amp; Mondbuchstaben)</h4><span class="marke weg">nicht auf Karteikarten</span></header><div class="id">schams-qamar-01 · Folge 3 · 21:42 · 8 Markierungen</div><p>Von den 28 arabischen Buchstaben (die Hamza nicht mitgezählt) sind 14 Sonnenbuchstaben und 14 Mondbuchstaben – genau Hälfte/Hälfte. Die Regel gilt nur bei bestimmten Wörtern, also nur wenn اَلْ davorsteht. Beim Mondbuchstaben liest man das لْ ganz normal mit: بَيْتٌ (baytun, ein Haus) wird zu اَلْبَيْتُ (al-baytu, das Haus). Beim Sonnenbuchstaben steht ein Schadda auf dem ersten Buchstaben und das Lam wird übersprungen: نَجْمٌ (nadschmun) wird zu اَلنَّجْمُ (an-nadschmu) – nicht „al-nadschmu&quot;. Genauso macht es der Lehrer an اَلرَّجُلُ (ar-radschulu) vor: „nicht al-radschulu, sondern ar-radschulu&quot;, dazu اَلطَّالِبُ (aṭ-ṭālibu, der Student) und اَلدِّيكُ (ad-dīku). Er betont: Man muss die Buchstaben nicht auswendig lernen, sondern nur schauen, ob nach dem اَلْ ein Schadda steht. Und er weist darauf hin, dass das im Koran genauso steht – man kann die Regel direkt beim Koranlesen anwenden.</p><ul class="bsp"><li><b>السَّمَاءِ</b> <span class="satz">هَذَا نَجْمٌ بَعِيدٌ فِي السَّمَاءِ.</span></li><li><b>الطَّبِيبُ</b> <span class="satz">الطَّبِيبُ فِي الْمُسْتَشْفَى الْآنَ.</span></li><li><b>التَّاجِرُ</b> <span class="satz">التَّاجِرُ فِي السُّوقِ الْآنَ.</span></li></ul></article><article class="regel"><header><h4>اَلْقَمَر / اَلشَّمْس (Merkhilfe für die Namen)</h4><span class="marke weg">nicht auf Karteikarten</span></header><div class="id">schams-qamar-merkhilfe-01 · Folge 3 · 42:31 · 8 Markierungen</div><p>Die beiden Gruppen heißen حُروف قَمَرِيّة (Mondbuchstaben) und حُروف شَمْسِيّة (Sonnenbuchstaben). Der Grund für die Namen steckt in den Wörtern selbst: اَلْقَمَر (al-qamar, der Mond) beginnt mit ق, einem Mondbuchstaben, und wird mit gelesenem Lam gesprochen. اَلشَّمْس (asch-schams, die Sonne) beginnt mit ش, einem Sonnenbuchstaben, und wird mit Schadda und übersprungenem Lam gesprochen. Die Beispielwörter zeigen also die Regel bereits selbst.</p><ul class="bsp"><li><b>الشَّرْقِ</b> <span class="satz">الْمَسْجِدُ فِي الشَّرْقِ.</span></li><li><b>الطَّبِيبُ</b> <span class="satz">هَذَا الطَّبِيبُ مِنْ أَمْرِيكَا.</span></li><li><b>السَّيَّارَةُ</b> <span class="satz">هَذِهِ السَّيَّارَةُ مِنْ إِنْجِلْتَرَا.</span></li></ul></article></div>
+  <label class="notiz">Notiz an mich (freiwillig)
+    <textarea rows="2" placeholder="z.B. „nur die ersten drei zusammen""></textarea></label>
+</section>
+<section class="gruppe" data-gruppe="zuruf">
+  <div class="gkopf">
+    <div>
+      <span class="nr">6 von 8</span>
+      <h2 lang="ar">ظُرُوف المَكَان</h2>
+      <div class="unter">Drei Wörter gegen dreizehn · 2 Regeln</div>
+    </div>
+    <div class="wahl">
+      <button class="w" data-w="zusammen">zu einer Regel</button>
+      <button class="w" data-w="getrennt">getrennt lassen</button>
+      <button class="w" data-w="spaeter">später</button>
+    </div>
+  </div>
+  <div class="waagen">
+    <div class="waage dafuer"><h3>Dafür</h3><p>Wie bei den fünf Nomen: Folge 12 nennt drei Ortswörter, das Buch dreizehn. Dieselbe Regel, größere Liste.</p></div>
+    <div class="waage dagegen"><h3>Dagegen</h3><p>Die zweite hat nur eine Markierung — die Beispiele der ersten müssten mitwandern.</p></div>
+  </div>
+  <div class="regeln"><article class="regel"><header><h4>تَحْتَ / أَمامَ / خَلْفَ (Ortsadverbien)</h4></header><div class="id">zuruf-makan-01 · Folge 12 · 26:59 · 4 Markierungen</div><p>Die bisher gelernten drei ظَرْف (ẓarf, Zeit- und Ortsangaben - der Lehrer sagt dazu &quot;Adverbien&quot;) sind: تَحْتَ (taḥta) = unter, أَمامَ (amāma) = davor/vor, خَلْفَ (khalfa) = dahinter/hinter. Das Wort dahinter steht im Genitiv, endet also auf Kasra - genau daran wird im Unterricht korrigiert: أَمامَ الطّالِبِ (amāma ṭ-ṭālibi, &quot;vor dem Studenten&quot;, nicht ṭālibu) und خَلْفَ الْمَسْجِدِ (khalfa l-masjidi, nicht masjidu). Beispiele aus der Stunde: &quot;Die Tafel ist vor dem Studenten und sie ist hinter dem Lehrer&quot; sowie بَيْتُ الإِمامِ خَلْفَ الْمَسْجِدِ (baytu l-imāmi khalfa l-masjidi) - &quot;Das Haus des Imams ist hinter der Moschee.&quot;</p><ul class="bsp"><li><b>تَحْتَ</b> <span class="satz">أَيْنَ حَقِيبَةُ الْمُدَرِّسِ؟ هِيَ تَحْتَ الْمَكْتَبِ.</span></li><li><b>تَحْتَ</b> <span class="satz">أَيْنَ الْكَلْبُ؟ هُوَ تَحْتَ السَّيَّارَةِ.</span></li><li><b>أَمَامَ</b> <span class="satz">بَيْتُ التَّاجِرِ أَمَامَ الْمَسْجِدِ وَبَيْتُ الطَّبِيبِ خَ</span></li></ul></article><article class="regel"><header><h4>Zehn weitere Ortswörter</h4></header><div class="id">zuruf-makan-weitere-01 · nur Buch · 1 Markierung</div><p>Deine Kapitel-8-Regel nennt drei Ortswörter, Bayna Yadayk Band 2 zählt dreizehn auf: أَمامَ, وَراءَ, خَلْفَ, يَمِين, يَسار, بَيْنَ, عِنْدَ, فَوْقَ, تَحْتَ, شَمال, جَنُوب, شَرْق, غَرْب. Alle verhalten sich gleich — sie sind selbst مَنْصُوب und ziehen das folgende Wort in den Genitiv. Beispiele aus dem Buch: تَقَعُ المَدِينَةُ شَمالَ مَكَّةَ · يُصَلِّي الْإِمَامُ أَمامَ المَأْمُومِينَ، وَهُمْ خَلْفَهُ · القَلَمُ فَوْقَ الكِتابِ · الكِتابُ تَحْتَ الحَقِيبَةِ · أُصَلِّي خَلْفَ مَقامِ إِبْراهِيمَ · السَّيّارَةُ وَراءَ الشَّجَرَةِ · الطَّبِيبُ عِنْدَ الْبَابِ.</p><ul class="bsp"><li><b>فَوْقَ</b> <span class="satz">الْقَلَمُ فَوْقَ الْكِتَابِ.</span></li></ul></article></div>
+  <label class="notiz">Notiz an mich (freiwillig)
+    <textarea rows="2" placeholder="z.B. „nur die ersten drei zusammen""></textarea></label>
+</section>
+<section class="gruppe" data-gruppe="tamarbuta">
+  <div class="gkopf">
+    <div>
+      <span class="nr">7 von 8</span>
+      <h2 lang="ar">تَاء مَرْبُوطَة</h2>
+      <div class="unter">Eine davon hast du abbestellt · 2 Regeln</div>
+    </div>
+    <div class="wahl">
+      <button class="w" data-w="zusammen">zu einer Regel</button>
+      <button class="w" data-w="getrennt">getrennt lassen</button>
+      <button class="w" data-w="spaeter">später</button>
+    </div>
+  </div>
+  <div class="waagen">
+    <div class="waage dafuer"><h3>Dafür</h3><p>Beide behandeln, wofür das ة steht und wofür nicht.</p></div>
+    <div class="waage dagegen"><h3>Dagegen</h3><p>⚠️ `ta-marbuta-fem-01` ist deine Abbestellung vom 29.07. — sie hat acht Markierungen und soll trotzdem nicht erscheinen. Zusammenfassen würde sie dir zurückholen. Das ist vermutlich der Grund, warum diese Gruppe überhaupt aufgefallen ist, und kein echter Kandidat.</p></div>
+  </div>
+  <div class="regeln"><article class="regel"><header><h4>تاء مربوطة (weibliche Endung)</h4><span class="marke weg">ausgeblendet</span></header><div class="id">ta-marbuta-fem-01 · Folge 1 · 15:17 · 8 Markierungen</div><p>Die تاء مربوطة (das ة am Wortende, geschrieben wie ein Kreis mit zwei Punkten) wird für Wörter benutzt, die weiblich sind. Wenn ein Wort ein ة hat, weißt du: das Wort ist weiblich – z.B. مَدْرَسَةٌ (madrasatun) „Schule“. بَيْتٌ (baytun) „Haus“ wird dagegen mit normalem ت geschrieben und ist männlich. (Umgekehrt gilt bei بَيْت NICHT, dass jedes Wort mit normalem ت männlich sei, sagt der Lehrer nicht.)</p><ul class="bsp"><li><b>الْمَدْرَسَةِ</b> <span class="satz">هَذَا مَكْتَبٌ جَدِيدٌ فِي الْمَدْرَسَةِ.</span></li><li><b>الْغُرْفَةِ</b> <span class="satz">هَذَا سَرِيرٌ صَغِيرٌ فِي الْغُرْفَةِ.</span></li><li><b>الْجَامِعَةِ</b> <span class="satz">هَذَا طَالِبٌ فِي الْجَامِعَةِ.</span></li></ul></article><article class="regel"><header><h4>تاء مَرْبُوطة – nicht jedes Wort laesst sich weiblich machen</h4></header><div class="id">ta-marbuta-grenzen-01 · Folge 13 · 18:21 · 8 Markierungen</div><p>Man kann nicht jedes Nomen einfach mit einer تاء مَرْبُوطة weiblich machen. Das geht nur dort, wo es ein weibliches Gegenstueck gibt oder wo es Sinn ergibt – der Lehrer nennt als Beispiele Personengruppen wie Handwerker/Handwerkerin und Esel/Eselin. Bei Sachwoertern geht es nicht; er vergleicht es mit „Hose&quot;, wo es zwar „Hoeschen&quot;, aber kein „Hosi&quot; gibt. Beim Wort طَائِر (ta'ir, Vogel) wuerde die تاء مَرْبُوطة sogar ein ganz anderes Wort ergeben, naemlich طَائِرَة (ta'ira, Flugzeug) – deshalb bleibt طَائِر maennlich.</p><ul class="bsp"><li><b>الْكَعْبَةُ</b> <span class="satz">هَذِهِ الْكَعْبَةُ قَدِيمَةٌ وَمَشْهُورَةٌ.</span></li><li><b>الْمَكْتَبَةُ</b> <span class="satz">الْمَكْتَبَةُ هُنَاكَ.</span></li><li><b>بَقَرَةٌ</b> <span class="satz">هَذِهِ بَقَرَةٌ كَبِيرَةٌ.</span></li></ul></article></div>
+  <label class="notiz">Notiz an mich (freiwillig)
+    <textarea rows="2" placeholder="z.B. „nur die ersten drei zusammen""></textarea></label>
+</section>
+<section class="gruppe" data-gruppe="alifmaqsura">
+  <div class="gkopf">
+    <div>
+      <span class="nr">8 von 8</span>
+      <h2 lang="ar">أَلِف مَقْصُورَة</h2>
+      <div class="unter">Schreibung gegen Kasus · 2 Regeln</div>
+    </div>
+    <div class="wahl">
+      <button class="w" data-w="zusammen">zu einer Regel</button>
+      <button class="w" data-w="getrennt">getrennt lassen</button>
+      <button class="w" data-w="spaeter">später</button>
+    </div>
+  </div>
+  <div class="waagen">
+    <div class="waage dafuer"><h3>Dafür</h3><p>Dasselbe Zeichen, zwei Folgen (F5 und F12).</p></div>
+    <div class="waage dagegen"><h3>Dagegen</h3><p>⚠️ Inhaltlich sind es zwei verschiedene Aussagen: die eine erklärt, WIE man es schreibt, die andere, dass sich die Endung NICHT ändert. Zusammen wäre es eine Regel mit zwei Kernen.</p></div>
+  </div>
+  <div class="regeln"><article class="regel"><header><h4>أَلِف مَقْصورة (ى am Wortende)</h4></header><div class="id">alif-maqsura-01 · Folge 5 · 29:38 · 8 Markierungen</div><p>Ein ى am Wortende ohne Punkte ist kein Ya, sondern eine أَلِف مَقْصورة alif maqṣūra – ein „kleines Alif“, gesprochen wie ein langes ā. **Die Punkte entscheiden, nichts sonst** – das ist der ganze Handgriff. Der Lehrer (Folge 05, 29:44): »أَلِف مَقْصورة ist ein Alif, ist ein kleines Alif«, und 29:58: »Muss man aufpassen … weil [es] keine Punkte hat.« Zwei Punkte unter dem Zahn ⇒ echtes ي, gesprochen -ī oder -iyy. Keine Punkte ⇒ ى, gesprochen wie langes ā. Deshalb: عَلى ʿalā heißt „auf“, عَلِيٌّ ʿaliyyun dagegen ist der Name Ali und endet wirklich auf ein Ya. Ohne Taschkil sehen die beiden fast gleich aus.</p><ul class="bsp"><li><b>عَلَى</b> <span class="satz">هَذَا قَلَمٌ صَغِيرٌ عَلَى الْمَكْتَبِ.</span></li><li><b>الْمُسْتَشْفَى</b> <span class="satz">الطَّبِيبُ فِي الْمُسْتَشْفَى الْآنَ.</span></li><li><b>عَلَى</b> <span class="satz">الطَّالِبُ جَالِسٌ عَلَى الْكُرْسِيِّ.</span></li></ul></article><article class="regel"><header><h4>أَلِف مَقْصورة (unveränderliche Endung)</h4></header><div class="id">alif-maqsura-unveraenderlich-01 · Folge 12 · 19:43 · 1 Markierung</div><p>Der Normalfall ist مَرْفُوع (marfūʿ): اَلْبَيْتُ (al-baytu, das Haus). Wird ein Wort مَجْرُور (majrūr), bekommt es Kasra: فِي الْبَيْتِ (fī l-bayti, im Haus), مِنَ الْبَيْتِ (mina l-bayti, vom Haus), إِلَى الْبَيْتِ (ilā l-bayti, zum Haus). Endet ein Wort aber auf ein Alif (ـا) oder auf ein Alif maqṣūra (ـى, &quot;das hier ohne Punkte&quot;), dann sieht man den Fall an dem Wort nicht - es bleibt immer gleich. Der Lehrer führt dieselben drei Präpositionen an اَلْمُسْتَشْفى (al-mustashfā, das Krankenhaus) vor: فِي الْمُسْتَشْفى، مِنَ الْمُسْتَشْفى، إِلَى الْمُسْتَشْفى - &quot;keine Anzeichen, ändert sich nicht, bleibt immer gleich&quot;. Genauso bei أَمْريكا (Amrīkā, Amerika): فِي أَمْريكا، مِنْ أَمْريكا، إِلى أَمْريكا, ebenso bei أَلْمانِيا (Almāniyā, Deutschland) und مُوسى (Mūsā, Musa): &quot;Ob du sagst, Musa ist marfūʿ - bleibt Musa.&quot; Der Lehrer nennt das selbst nur &quot;eine kleine Nebenregel&quot;.</p><ul class="bsp"><li><b>مُسْتَشْفًى</b> <span class="satz">هَذَا مُسْتَشْفًى نَظِيفٌ وَجَدِيدٌ.</span></li></ul></article></div>
+  <label class="notiz">Notiz an mich (freiwillig)
+    <textarea rows="2" placeholder="z.B. „nur die ersten drei zusammen""></textarea></label>
+</section>
+
+<div class="fuss">
+  <h2>Und dann schick mir das hier</h2>
+  <p class="stand" id="stand">Noch nichts beantwortet.</p>
+  <textarea id="ausgabe" readonly></textarea>
+  <div class="knoepfe">
+    <button class="kopier" id="btnKopieren">In die Zwischenablage</button>
+    <button class="zuruecksetzen" id="btnZuruecksetzen">Alles zurücksetzen</button>
+  </div>
+  <p class="stand" style="margin-top:10px">Deine Antworten liegen nur in diesem
+  Browser (<code>verschmelzung-v1</code>). Ich kann sie nicht lesen — ohne diesen
+  Kasten bliebe deine Arbeit hier gefangen.</p>
+</div>
+
+</div><script>
+/* ⛔ Eigener Schluessel. regelpruefung-v1, satzmodus-auswahl-v1 und
+   regelkandidaten-v1 liegen im selben localStorage — wer einen davon
+   wiederverwendet, loescht Elias die Antworten aus dem anderen Artefakt. */
+const SCHLUESSEL = 'verschmelzung-v1';
+const stand = JSON.parse(localStorage.getItem(SCHLUESSEL) || '{}');
+
+function sichern(){
+  localStorage.setItem(SCHLUESSEL, JSON.stringify(stand));
+  zeichnen();
+}
+function zeichnen(){
+  document.querySelectorAll('.gruppe').forEach(sec => {
+    const g = sec.dataset.gruppe;
+    const e = stand[g] || {};
+    sec.classList.toggle('beantwortet', !!e.wahl);
+    sec.querySelectorAll('.w').forEach(b => b.classList.toggle('an', b.dataset.w === e.wahl));
+    const t = sec.querySelector('textarea');
+    if (document.activeElement !== t) t.value = e.notiz || '';
+  });
+  const n = Object.values(stand).filter(x => x.wahl).length;
+  const gesamt = document.querySelectorAll('.gruppe').length;
+  document.getElementById('stand').textContent = n === 0
+    ? 'Noch nichts beantwortet.'
+    : n + ' von ' + gesamt + ' Gruppen beantwortet' + (n === gesamt ? ' — fertig.' : '.');
+  const zeilen = [...document.querySelectorAll('.gruppe')].map(sec => {
+    const g = sec.dataset.gruppe, e = stand[g] || {};
+    if (!e.wahl) return null;
+    const titel = sec.querySelector('h2').textContent;
+    return '- ' + g + ' (' + titel + '): ' + e.wahl + (e.notiz ? '  // ' + e.notiz : '');
+  }).filter(Boolean);
+  document.getElementById('ausgabe').value = zeilen.length
+    ? 'VERSCHMELZUNG ' + zeilen.length + '/' + gesamt + '\n' + zeilen.join('\n')
+    : '';
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('.w');
+  if (!b) return;
+  const g = b.closest('.gruppe').dataset.gruppe;
+  stand[g] = stand[g] || {};
+  /* Nochmal auf dieselbe Antwort tippen nimmt sie zurueck — sonst kaeme man
+     aus einer versehentlichen Wahl nicht mehr heraus. */
+  stand[g].wahl = stand[g].wahl === b.dataset.w ? null : b.dataset.w;
+  sichern();
+});
+document.addEventListener('input', e => {
+  if (!e.target.matches('.notiz textarea')) return;
+  const g = e.target.closest('.gruppe').dataset.gruppe;
+  stand[g] = stand[g] || {};
+  stand[g].notiz = e.target.value;
+  localStorage.setItem(SCHLUESSEL, JSON.stringify(stand));
+  zeichnen();
+});
+document.getElementById('btnKopieren').addEventListener('click', async () => {
+  const t = document.getElementById('ausgabe');
+  if (!t.value) return;
+  const knopf = document.getElementById('btnKopieren');
+  try { await navigator.clipboard.writeText(t.value); knopf.textContent = 'Kopiert'; }
+  catch { t.select(); document.execCommand('copy'); knopf.textContent = 'Kopiert'; }
+  setTimeout(() => { knopf.textContent = 'In die Zwischenablage'; }, 1600);
+});
+document.getElementById('btnZuruecksetzen').addEventListener('click', () => {
+  if (!confirm('Alle Antworten auf dieser Seite löschen?')) return;
+  Object.keys(stand).forEach(k => delete stand[k]);
+  sichern();
+});
+zeichnen();
+</script></body></html>
