@@ -296,7 +296,12 @@ const istFuenfNomen = w => istInListe(w, FUENF_NOMEN);
    ⛔ Nicht ueber ein Konsonantengeruest erweitern: مِنْ trifft dann مَنَّ,
    صِفْر trifft صَفَرَ, عَمِّي trifft عَمَّ. Jeder Eintrag hier ist an einem
    Satz nachgeschlagen. */
-const VERBEN = ['خرج', 'ذهب', 'قال'];
+/* ⛔ أحب am 19.08.2026 dazu. Der Grund steht in pruefe-saetze.js selbst: ohne
+   festen Eintrag haengt die Zerlegung an der BUCHAUSWAHL. Mit madina-1 sah die
+   Pruefung أَحَبَّ als فِعْل und الْوَلَدُ als فَاعِل, ohne madina-1 wurde
+   daraus مُبْتَدَأ + مُضَاف إِلَيْه — derselbe Satz, zwei Lehren, je nachdem
+   welche Buecher Elias gerade angehakt hat. */
+const VERBEN = ['خرج', 'ذهب', 'قال', 'أحب'];
 /* Und die Gegenrichtung: der Vokabelabzug haelt diese vier fuer Verben, weil
    ihr Konsonantengeruest mit einem Verb zusammenfaellt. Im Satz sind sie
    keines — صِفْرٌ ist die Null, عَمِّي mein Onkel, جَرٍّ der Genitiv, لِ eine
@@ -434,6 +439,14 @@ function analysiereSatz(satz){
   let ersteRolleVergeben = false;
   let nachNida = false;   /* steht das naechste Wort hinter يا? */
   let nachVerb = false;   /* steht das naechste Wort hinter einem Verb? */
+  /* ⛔ Am 19.08.2026 ergaenzt. Bis dahin kannte die Zerlegung im Verbalsatz nur
+     فِعْل und فَاعِل — jedes weitere Nomen fiel in den Schlusszweig und wurde
+     zu خَبَر mit erwartetem raf. Bei أَحَبَّ الْوَلَدُ أُمَّهُ meldete die
+     Pruefung deshalb „ist خَبَر, das verlangt raf, geschrieben steht aber
+     Fatha" — und der Satz war richtig, die Erklaerung falsch.
+     Das faellt jetzt ins Gewicht: Elias faengt in madina-1 Kapitel 11 die
+     Verben an, und im vollen Abzug stehen 1.606 davon. */
+  let imVerbalsatz = false;
   let letzterKasus = null;        // Kasus des zuletzt bewerteten Nomens
   let letzteBestimmtheit = null;  // und ob es bestimmt war - fuers نَعْت
 
@@ -467,7 +480,7 @@ function analysiereSatz(satz){
          an, das folgende Wort ist فَاعِل und steht im Nominativ. */
       rolle = 'فِعْل';
       vorherJarr = false; vorherMudaf = false; ersteRolleVergeben = false;
-      nachVerb = true;
+      nachVerb = true; imVerbalsatz = true;
       out.push({ wort, rein, rolle, erwartet:null, gelesen, stimmt:null });
       return;
     } else if (istHarfNida(wort)){
@@ -574,6 +587,14 @@ function analysiereSatz(satz){
       rolle = 'مُبْتَدَأ';
       erwartet = 'raf';
       ersteRolleVergeben = true;
+    } else if (imVerbalsatz){
+      /* Im Verbalsatz gibt es kein خَبَر. Steht nach فِعْل und فَاعِل noch ein
+         Nomen, ist es das Objekt — مَفْعُول بِهِ, und das ist مَنْصُوب.
+         ⚠️ Bewusst nur EIN Zweig statt einer Zaehlung: mehrere Objekte und
+         Umstandsangaben (مَفْعُول فِيهِ, حَال) haengen an Wissen, das hier
+         nicht steht. Lieber die eine belegte Rolle richtig als drei geraten. */
+      rolle = 'مَفْعُول بِهِ';
+      erwartet = 'nasb';
     } else {
       rolle = 'خَبَر';
       erwartet = 'raf';
@@ -610,6 +631,9 @@ function analysiereSatz(satz){
       ersteRolleVergeben = false;
       letzterKasus = null; letzteBestimmtheit = null;
       vorherJarr = false; vorherMudaf = false; nachVerb = false; nachNida = false;
+      /* ⛔ Muss mit zurueckgesetzt werden, sonst gilt der naechste Satz
+         weiterhin als Verbalsatz und sein Praedikat wird zum مَفْعُول بِهِ. */
+      imVerbalsatz = false;
     }
     const stimmt = (erwartet && gelesen && !dualOderPlural) ? (gelesen.kasus === erwartet) : null;
     out.push({ wort, rein, rolle, erwartet, gelesen, stimmt });

@@ -31,6 +31,26 @@ const { VOCAB_DATA } =
 const { LEHRBUCH_SAETZE } =
   (new Function(fs.readFileSync(P + 'lehrbuch-saetze.js', 'utf8') + ';return {LEHRBUCH_SAETZE};'))();
 
+/* ⛔ data/beispielsaetze.js MUSS hier mitgelesen werden.
+   Am 19.08.2026 sind fuenf verfasste Saetze in die App gelangt, ohne dass
+   diese Pruefung sie je gesehen haette: sie las nur vocab-data.js und
+   lehrbuch-saetze.js. Die App liest aber drei Quellen — die dritte wird in
+   js/buecher.js per saetzeNachtragen() an die Woerter gehaengt.
+
+   Das ist [[pruefwerkzeug_laedt_mehr_als_die_app]] mit umgekehrtem Vorzeichen:
+   die Pruefung sah WENIGER als die App und meldete trotzdem gruen. Und es
+   waere kein Einzelfall geblieben — die Wartungsroutine schreibt kuenftig
+   genau in diese Datei.
+
+   ⚠️ Optional geladen: data/ ist per .gitignore lokal. Auf einem frisch
+   geklonten Stand fehlt die Datei, dann bleibt die Quelle leer. */
+let BEISPIELSAETZE = {};
+try {
+  const d = P + 'data' + path.sep + 'beispielsaetze.js';
+  if (fs.existsSync(d))
+    ({ BEISPIELSAETZE } = (new Function(fs.readFileSync(d, 'utf8') + ';return {BEISPIELSAETZE};'))());
+} catch (e) { console.log('  data/beispielsaetze.js nicht lesbar: ' + e.message); }
+
 const ALLE = process.argv.includes('--alle');
 
 /* Wortarten aus dem vollen Datenabzug nachladen - erst damit kann die Analyse
@@ -83,7 +103,11 @@ const quellen = [
     saetze: VOCAB_DATA.filter(v=>v.sentAr && !istMetasprache(v.sentAr))
                       .map(v=>({ id:v.id, ar:v.sentAr, de:v.sentDe })) },
   { name: 'Saetze aus dem Lehrwerk (Kontrollgruppe, muessen sauber sein)',
-    saetze: LEHRBUCH_SAETZE.map(s=>({ id:s.id, ar:s.sentAr, de:s.sentDe, seite:s.seite })) }
+    saetze: LEHRBUCH_SAETZE.map(s=>({ id:s.id, ar:s.sentAr, de:s.sentDe, seite:s.seite })) },
+  { name: 'Beispielsaetze aus data/beispielsaetze.js (verfasst, fuer Buchvokabeln)',
+    saetze: Object.entries(BEISPIELSAETZE)
+                  .filter(([, s]) => s && s.sentAr && !istMetasprache(s.sentAr))
+                  .map(([id, s]) => ({ id, ar: s.sentAr, de: s.sentDe })) }
 ];
 
 /* ---------- Satzlaenge (Elias' Punkt 16 vom 04.08.2026) ----------

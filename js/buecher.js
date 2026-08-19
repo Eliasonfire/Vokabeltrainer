@@ -226,7 +226,34 @@ function einhaengen(liste){
     if (hatErgaenzt) ergaenzt++;
   });
   const eselsbruecken = eselsbrueckenNachtragen(liste);
-  return { neu, ergaenzt, verworfen, eselsbruecken };
+  const saetze = saetzeNachtragen(liste);
+  return { neu, ergaenzt, verworfen, eselsbruecken, saetze };
+}
+
+/* ---------- Beispielsaetze fuer die Buchvokabeln nachtragen ----------
+
+   Dieselbe Bauart und derselbe Grund wie bei den Eselsbruecken darunter:
+   data/vokabeln-*.js wird neu erzeugt, alles Handgeschriebene waere weg.
+   Deshalb liegen die Saetze in data/beispielsaetze.js und werden hier
+   angewandt, gleich nachdem ein Buch eingehaengt wurde.
+
+   ⚠️ NUR wo noch keiner steht — vorhandenes gewinnt. Die 171 Woerter aus
+   vocab-data.js bringen ihren Satz aus der arabicroots-Datenbank mit; der
+   darf nicht ueberschrieben werden.
+
+   ⚠️ NACH dem Einhaengen, nicht davor: die frisch per VOCAB_DATA.push()
+   dazugekommenen Woerter sollen ihren Satz ja auch bekommen. */
+function saetzeNachtragen(liste){
+  if (typeof BEISPIELSAETZE === 'undefined') return 0;
+  const nachId = new Map(VOCAB_DATA.map(w=>[String(w.id), w]));
+  let n = 0;
+  liste.forEach(roh=>{
+    const w = nachId.get(String(roh.id));
+    if (!w || w.sentAr) return;
+    const s = BEISPIELSAETZE[String(roh.id)];
+    if (s && s.sentAr){ w.sentAr = s.sentAr; if (s.sentDe) w.sentDe = s.sentDe; n++; }
+  });
+  return n;
 }
 
 /* ---------- Eselsbruecken fuer die Buchvokabeln nachtragen ----------
