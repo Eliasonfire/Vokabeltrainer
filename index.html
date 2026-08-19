@@ -158,6 +158,12 @@
   --rand-btn2:#5d5d65;         /* IST: var(--border)        .btn-secondary */
   --rand-check:#616169;        /* IST: var(--border-strong) .hifz-check */
   --rand-korb:#5d5d65;         /* IST: var(--border-strong) .wz-korb */
+  /* Nachgetragen 19.08.2026: der siebte Fall. Er gehoerte nicht zu den sechs,
+     ueber die Elias am 18.08. entschieden hat, weil sein Rand ROT ist und
+     nicht grau werden darf. Vier Rottoene verglichen, er waehlte den
+     mittleren: "glaube den finde ich gut". #cb1036 erreicht 3,00 auf der
+     unguenstigsten Flaeche, --red-dim lag bei 1,26. */
+  --rand-wrongonly:#cb1036;    /* IST: var(--red-dim)       .btn-wrongonly */
 
   /* --- Akzent --- */
   --red:#ff1744;
@@ -779,7 +785,7 @@ main{
 .chip-toggle:hover{border-color:var(--border-strong);color:var(--text);}
 .chip-toggle:active{transform:scale(.94);}
 .chip-toggle.active{background:var(--accent-grad);color:#fff;border-color:transparent;box-shadow:var(--sh-glow);}
-.btn-wrongonly{width:100%;text-align:center;color:var(--red-soft);border-color:var(--red-dim);}
+.btn-wrongonly{width:100%;text-align:center;color:var(--red-soft);border-color:var(--rand-wrongonly);}
 .btn-wrongonly.active{background:var(--red-wash);color:#fff;border-color:var(--red);}
 
 /* =====================================================================
