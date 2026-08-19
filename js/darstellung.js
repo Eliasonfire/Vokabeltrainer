@@ -78,6 +78,25 @@ const ZIEH_SCHWELLE = 78;
     if (e.touches.length !== 1){ abbrechen(); return; }   // zwei Finger: Zoom
     if (main.scrollTop > 0) return;                       // nur am oberen Anschlag
     if (e.target.closest('#flashcard, .word-chip, input, textarea')) return;
+    /* ⛔ Elias am 19.08.2026: „wenn ich hier bei den listen am handy
+       runtergescrollt habe und wieder hoch scrollen möchte dann geht das nicht
+       sondern die app aktualisiert sich."
+
+       Die Ursache: `main.scrollTop` ist 0, weil nicht die SEITE gerollt wurde,
+       sondern ein Behaelter darin (das Modus-Blatt hat `overflow-y:auto`).
+       Die Geste sah also einen oberen Anschlag, den es fuer den Finger gar
+       nicht gab — und lud die App neu.
+
+       ⭐ Deshalb nicht auf einzelne Bauteile pruefen, sondern auf die
+       EIGENSCHAFT: liegt unter dem Finger irgendein eigener Rollbereich,
+       gehoert die Geste ihm. Eine Liste von IDs waere beim naechsten
+       aufklappbaren Ding wieder unvollstaendig.
+       [[geste_auf_rollflaeche]] */
+    for (let el = e.target; el && el !== main; el = el.parentElement){
+      if (!el.getBoundingClientRect) continue;
+      const art = getComputedStyle(el).overflowY;
+      if ((art === 'auto' || art === 'scroll') && el.scrollHeight > el.clientHeight + 1) return;
+    }
     startY = e.touches[0].clientY;
     startX = e.touches[0].clientX;
     aktiv = true; uebernommen = false; weg = 0;
