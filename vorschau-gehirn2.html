@@ -3,25 +3,27 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Gehirn nach Elias' Vorlage — vierte Runde</title>
+<title>Hirnstamm an Fassung P — fünfte Runde</title>
 <!--
-  Gebaut am 19.08.2026. Elias hat eine Vorlage geschickt und gesagt:
-  "ich möchte genau diese FORM des gehirns haben ... ich möchte einfach nur die
-  gleiche form haben ... und so sollst du das hirn bauen anhand dieser vorlage
-  mit dem oled schwarz".
+  19.08.2026, nach Elias' Rueckmeldung zur vierten Runde:
 
-  ⭐ NACHGEZEICHNET, NICHT ABGEPAUST. Dieselbe Regel wie bei den Vorlagen vom
-  18.08.: die Vorlage gibt Blickrichtung, Gliederung und Stil vor — die Kurven
-  sind eigene. Eine fremde Illustration im App-Icon waere ein Problem, das
-  spaeter niemand mehr geradebiegt.
+    "die sehen alle schrecklich aus, da war das davor sogar besser. das sieht
+     herzfoermig aus, das hat nichts mehr mit einem gehirn zu tun. der stamm
+     ist auch in die falsche richtung und so mittig das ist irgendwie gar
+     nicht gut. da musst du nochmals ran und die schwarzen linien haben mir
+     bei der vorherigen vorlage wesentlich besser gefallen"
 
-  Was aus der Vorlage uebernommen ist:
-    - Profil nach LINKS
-    - eine gelappte, huegelige Silhouette statt einer glatten Kuppel
-    - Furchen als DUENNE Linien, teils gegabelt, nicht als dicke Aussparungen
-    - ein geschwungener Stamm, der nach vorn-unten laeuft und spitz auslaeuft
-    - vier Funkeln in verschiedenen Groessen
-    - EINE Farbe, flach, kein Verlauf
+  ⛔ WAS ICH FALSCH GEMACHT HABE. Er hatte gesagt "ich moechte genau diese FORM
+  des gehirns haben" und dazu eine Vorlage geschickt. Ich habe daraus
+  "Silhouette neu zeichnen" gemacht — dabei hatte er im selben Atemzug gesagt,
+  Fassung P sei "bisher das beste ergebnis". Beides zusammen heisst: P ist nah
+  dran, NUR DER STAMM stoert. Meine neue Silhouette wurde herzfoermig und die
+  duennen Furchen waren ein Rueckschritt.
+
+  Deshalb hier: Kuppe, Kleinhirn und Falten sind Zeichen fuer Zeichen aus
+  Fassung P, mit ihrer urspruenglichen Strichbreite 13. Verglichen wird
+  ausschliesslich der Stamm — und er bleibt, wo er bei P sitzt: RECHTS UNTEN,
+  nach unten laufend. Nicht mittig, das hat er ausdruecklich abgelehnt.
 -->
 <style>
   :root{
@@ -44,10 +46,16 @@
   .vorspann{color:var(--leise);margin:0 0 var(--sp3);max-width:62ch}
   .vorspann strong{color:var(--text)}
   code{font-family:var(--mono);font-size:.86em;color:var(--leise)}
+  .warnkasten{background:#1a1206;border:1px solid #4a3410;border-left:3px solid var(--gelb);
+              border-radius:12px;padding:var(--sp3);margin:0 0 var(--sp4);
+              color:#e8d5ac;font-size:.92rem}
+  .warnkasten b{color:var(--gelb)}
   h2{display:flex;align-items:baseline;gap:var(--sp2);flex-wrap:wrap;
      font-size:1.08rem;font-weight:600;margin:var(--sp5) 0 var(--sp1);
      padding-bottom:var(--sp1);border-bottom:1px solid var(--rand)}
   .nr{font-family:var(--mono);font-size:.78rem;text-transform:uppercase;color:var(--rot)}
+  .marke{margin-left:auto;font-family:var(--mono);font-size:.7rem;color:var(--still)}
+  .marke.neu{color:var(--gruen)}
   .was{color:var(--leise);font-size:.92rem;margin:0 0 var(--sp3);max-width:62ch}
   .was b{color:var(--text)}
   .karte{background:var(--flaeche);border:1px solid var(--rand);border-radius:14px;
@@ -57,138 +65,137 @@
   .probe span{display:block;margin-top:var(--sp1);font-family:var(--mono);
               font-size:.68rem;color:var(--still)}
   .probe svg{display:block;border-radius:22.3%}
-  .hilfe{outline:1px dashed #333}
 </style>
 </head>
 <body>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
-
-<!-- ================= Die Silhouette ==================================
-     Profil nach links. Der Umriss ist bewusst HUEGELIG: jede Woelbung ist ein
-     Lappen. Bei der alten Fassung P war es eine glatte Kuppel aus
-     Kreisboegen — genau das unterscheidet sie von Elias' Vorlage.        -->
-<path id="hirn" d="
-  M 150 176
-  C 158 142 198 124 232 140
-  C 252 112 306 104 336 132
-  C 374 120 412 152 412 192
-  C 440 208 446 258 418 282
-  C 420 314 392 336 362 330
-  C 366 352 352 372 330 374
-  C 322 396 296 406 276 396
-  C 258 408 236 400 232 382
-  C 208 392 182 382 174 362
-  C 144 366 120 348 120 322
-  C 92 314 80 282 96 258
-  C 78 232 88 194 118 184
-  C 122 176 134 170 150 176 Z"/>
-
-<!-- ================= Der Stamm =======================================
-     Elias: "achte vorallem darauf den hirnstamm richtig zu treffen."
-     In seiner Vorlage ist der Stamm KEIN kurzes Anhaengsel: er tritt unter
-     dem hinteren Teil aus, laeuft deutlich nach VORN-UNTEN und wird dabei
-     schmaler, bis er in einer runden Spitze endet. Er reicht spuerbar unter
-     die Silhouette — das ist es, was ihn als Stamm lesbar macht statt als
-     Tropfen.
-     Drei Laengen zum Vergleich, sonst raet man wieder.                  -->
-<path id="stamm-kurz" d="
-  M 302 346
-  C 310 370 302 394 282 408
-  C 271 415 258 411 264 400
-  C 277 386 284 372 284 350 Z"/>
-<path id="stamm" d="
-  M 304 344
-  C 316 374 306 410 278 430
-  C 265 439 248 434 255 421
-  C 273 404 286 382 286 348 Z"/>
-<path id="stamm-lang" d="
-  M 306 342
-  C 322 378 310 424 274 450
-  C 259 461 240 454 249 440
-  C 272 420 288 392 288 346 Z"/>
-
-<!-- ================= Die Furchen ======================================
-     Duenne Linien, teils GEGABELT. In der Vorlage enden viele in einer
-     kleinen Y-Gabel — das ist das Merkmal, das sie organisch wirken laesst
-     statt wie Kritzel.                                                   -->
-<g id="furchen" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path d="M 196 150 C 186 168 192 186 208 194"/>
-  <path d="M 262 132 C 254 156 262 176 282 184"/>
-  <path d="M 282 184 C 296 178 310 182 318 194"/>
-  <path d="M 282 184 C 288 198 286 212 276 222"/>
-  <path d="M 348 148 C 340 168 348 188 366 194"/>
-  <path d="M 366 194 C 380 190 394 196 400 208"/>
-  <path d="M 414 240 C 398 244 388 258 390 274"/>
-  <path d="M 132 214 C 148 220 156 236 150 252"/>
-  <path d="M 150 252 C 138 260 132 274 136 288"/>
-  <path d="M 208 236 C 226 226 248 232 258 248"/>
-  <path d="M 258 248 C 250 260 250 274 258 284"/>
-  <path d="M 300 250 C 318 240 340 248 348 264"/>
-  <path d="M 196 300 C 214 290 236 296 246 312"/>
-  <path d="M 316 306 C 330 298 346 302 354 314"/>
-  <path d="M 240 350 C 256 342 274 346 282 358"/>
+<!-- ============ Aus Fassung P, Zeichen fuer Zeichen ============ -->
+<path id="kuppe" d="M102 240
+    A 37 37 0 0 1 133 185
+    A 45 45 0 0 1 204 154
+    A 52 52 0 0 1 296 154
+    A 45 45 0 0 1 367 185
+    A 33 33 0 0 1 397 232
+    A 28 28 0 0 1 384 278
+    A 42 42 0 0 1 324 318
+    A 260 260 0 0 1 212 327
+    A 90 90 0 0 1 122 285
+    A 30 30 0 0 1 102 240 Z"/>
+<path id="klein" d="M298 286 C 324 276 352 290 354 314
+                    C 356 338 336 352 316 344
+                    C 296 336 286 296 298 286 Z"/>
+<g id="falten" fill="none" stroke-linecap="round">
+  <path d="M133 185 C 156 204 148 232 120 240"/>
+  <path d="M204 154 C 212 186 190 206 162 200"/>
+  <path d="M296 154 C 292 190 266 204 240 194"/>
+  <path d="M367 185 C 348 208 356 236 378 246"/>
+  <path d="M397 232 C 368 240 354 264 362 284"/>
+  <path d="M324 318 C 314 292 324 270 344 262"/>
+  <path d="M212 327 C 210 298 226 280 250 274"/>
+  <path d="M122 285 C 148 280 162 262 158 240"/>
+  <path d="M176 216 C 206 200 236 214 244 242"/>
+  <path d="M258 226 C 286 216 310 230 314 254"/>
+  <path d="M196 262 C 222 250 250 262 258 286"/>
 </g>
 
-<!-- Vier Funkeln, vierzackig, wie in der Vorlage. Sie liegen AUSSERHALB des
-     Gehirns und duerfen bei maskable angeschnitten werden. -->
-<path id="funke" d="M0 -14 Q2.8 -2.8 14 0 Q2.8 2.8 0 14 Q-2.8 2.8 -14 0 Q-2.8 -2.8 0 -14 Z"/>
+<!-- ============ Nur DAS hier wird verglichen ============
+     Alle sitzen an derselben Stelle wie bei P: Ansatz um x 300-318, y 316,
+     Verlauf nach UNTEN. Nicht mittig, nicht nach vorn — beides abgelehnt. -->
+
+<!-- P heute: laeuft hinunter und hakt am Ende nach links zurueck. -->
+<path id="s-heute" d="M316 318 C 324 342 318 366 306 378
+                      C 296 388 278 382 286 370
+                      C 298 352 300 336 296 316 Z"/>
+
+<!-- Ohne den Haken: derselbe Verlauf, aber das Ende laeuft gerade aus statt
+     zurueckzuschwingen. Der Haken ist das, was ihn wie ein Anhaengsel wirken
+     laesst. -->
+<path id="s-glatt" d="M314 318 C 322 344 318 370 308 386
+                      C 304 394 295 392 297 383
+                      C 304 364 306 342 300 316 Z"/>
+
+<!-- Laenger und schmaler, spitz auslaufend. -->
+<path id="s-spitz" d="M316 316 C 323 346 317 374 305 394
+                      C 300 403 291 400 294 390
+                      C 302 368 304 342 300 316 Z"/>
+
+<!-- Kuerzer und dicker: dieselbe Masse auf weniger Laenge, damit er bei 32 px
+     nicht zum Faden wird. -->
+<path id="s-dick" d="M318 316 C 329 336 327 357 313 367
+                     C 303 374 288 369 294 359
+                     C 303 346 305 332 301 314 Z"/>
+
+<!-- Ganz weg. -->
 </defs></svg>
 
 <div class="huelle">
-<p class="eyebrow">19.08.2026 · vierte Runde · nach deiner Vorlage</p>
-<h1>Gehirn nach deiner Vorlage</h1>
+<p class="eyebrow">19.08.2026 · fünfte Runde · P unverändert</p>
+<h1>Nur der Hirnstamm</h1>
 
-<p class="vorspann">Deine Vorlage gibt die <strong>Form</strong> vor: Profil nach
-links, hügelige Lappen statt glatter Kuppel, <strong>dünne gegabelte Furchen</strong>
-statt dicker Aussparungen, ein Stamm der nach vorn ausläuft, eine flache Farbe.
-<b>Die Funkeln sind raus</b> — auf deinen Zuruf. Gezeichnet ist die Form neu:
-<b>nachgezeichnet, nicht abgepaust</b>, damit im Icon keine fremde Illustration
-steckt.</p>
+<p class="vorspann">Letzte Runde war ein Fehlgriff: Du hattest gesagt
+<strong>„genau diese Form"</strong> und im selben Atemzug, dass <strong>P bisher
+das beste Ergebnis</strong> ist. Ich habe daraus „Silhouette neu zeichnen"
+gemacht — heraus kam etwas Herzförmiges mit zu dünnen Linien. Zurückgenommen.</p>
 
-<p class="vorspann"><strong>Worauf du schauen sollst:</strong> der Stamm. Du
-hast gesagt, den soll ich vor allem treffen — deshalb steht er hier in drei
-Längen, sonst rate ich beim nächsten Mal wieder. Die oberste Größe ist 320 px,
-damit man ihn überhaupt beurteilen kann; die 32 px daneben sind der
-Wirklichkeitstest.</p>
+<p class="vorspann">Hier ist <strong>P unverändert</strong>: dieselbe Kuppe,
+dasselbe Kleinhirn, dieselben <strong>dicken schwarzen Linien</strong> (Breite 13).
+Verglichen wird ausschließlich der Stamm — und er bleibt, wo er bei P sitzt:
+<strong>rechts unten, nach unten laufend</strong>. Nicht mittig.</p>
+
+<div class="warnkasten">
+<b>⚠️ Was ich vermute, ohne es zu wissen:</b> Was am heutigen Stamm stört, ist
+vermutlich der <b>Haken am Ende</b> — er schwingt unten nach links zurück und
+lässt den Stamm dadurch wie ein angehängtes Tröpfchen wirken statt wie eine
+Fortsetzung. Fassung 2 nimmt genau diesen Haken weg, sonst ändert sie nichts.
+<br><br>
+Falls das nicht der Punkt ist: <b>ein Halbsatz reicht</b> — zu lang, zu dick,
+zu weit rechts, falscher Winkel. Dann treffe ich es beim nächsten Mal, statt
+wieder zu raten.
+</div>
 
 <div id="ziel"></div>
 </div>
 
 <script>
-/* 320 steht vorn, damit man den Stamm ueberhaupt beurteilen kann — bei 176 px
-   ist er zu klein, um zu sehen, wo er ansetzt und wie er auslaeuft. */
+/* 320 zuerst, damit der Stamm ueberhaupt beurteilbar ist; 32 zuletzt, weil
+   dort die Entscheidung faellt. */
 var GROESSEN = [320, 96, 48, 32];
 
-/* Die Furchenbreite waechst NICHT mit — sie steht im viewBox-Raster und wird
-   mitskaliert. Bei 32 px sind 9 Einheiten von 512 rund ein halbes Nutzerpixel;
-   deshalb gibt es die Fassung mit dickeren Furchen daneben. */
-function bild(px, o){
-  o = o || {};
+function bild(stamm, px){
   return '<svg viewBox="0 0 512 512" width="' + px + '" height="' + px + '" '
-    + 'xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Entwurf">'
+    + 'xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fassung">'
     + '<rect width="512" height="512" fill="#000"/>'
     + '<g fill="#ff3355">'
-    + (o.stamm === null ? '' : '<use href="#' + (o.stamm || 'stamm') + '"/>')
-    + '<use href="#hirn"/></g>'
-    + '<use href="#furchen" stroke="#000" stroke-width="' + (o.furche || 9) + '"/>'
+    + (stamm ? '<use href="#' + stamm + '"/>' : '')
+    + '<use href="#kuppe"/><use href="#klein"/></g>'
+    /* Strichbreite 13 — der Wert aus Fassung P. Er hat die dicken Linien
+       ausdruecklich den duennen vorgezogen. */
+    + '<use href="#falten" stroke="#000" stroke-width="13"/>'
     + '</svg>';
 }
 
 var FASSUNGEN = [
-  { nr:'1', titel:'Stamm mittellang', was:'Tritt hinten unten aus, läuft nach vorn-unten und endet in einer runden Spitze. <b>Das ist der Versuch, deine Vorlage zu treffen.</b>', o:{} },
-  { nr:'2', titel:'Stamm länger', was:'Derselbe Verlauf, aber er reicht <b>deutlich weiter</b> unter die Silhouette. In deiner Vorlage wirkt der Stamm eher lang als kurz — deshalb steht das hier daneben.', o:{stamm:'stamm-lang'} },
-  { nr:'3', titel:'Stamm kürzer', was:'Zum Eingrenzen nach unten. Wenn dir schon der hier zu lang vorkommt, weiß ich, dass die Richtung stimmt und nur das Maß nicht.', o:{stamm:'stamm-kurz'} },
-  { nr:'4', titel:'Mittellang, dickere Furchen', was:'Wie 1, aber die Furchen sind <b>14 statt 9</b> breit. Bei 32 px verschwinden dünne Linien sonst ganz — dann bleibt nur ein roter Fleck.', o:{furche:14} },
+  { nr:'1', titel:'Wie P heute', marke:'Ausgangspunkt', stamm:'s-heute',
+    was:'Zum Danebenhalten — der Stand, den du überarbeitet haben willst.' },
+  { nr:'2', titel:'Ohne den Haken am Ende', marke:'neu', neu:true, stamm:'s-glatt',
+    was:'Derselbe Verlauf, nur schwingt das Ende <b>nicht mehr nach links zurück</b>. Das ist die kleinste denkbare Änderung — und meine Vermutung, was stört.' },
+  { nr:'3', titel:'Länger, spitz auslaufend', marke:'neu', neu:true, stamm:'s-spitz',
+    was:'Reicht weiter nach unten und wird dabei schmaler, statt in einer Rundung zu enden.' },
+  { nr:'4', titel:'Kürzer und dicker', marke:'neu', neu:true, stamm:'s-dick',
+    was:'Dieselbe Masse auf weniger Länge. Bei 32 px wird aus einem langen dünnen Stamm sonst ein Faden, der verschwindet.' },
+  { nr:'5', titel:'Ganz ohne Stamm', marke:'Gegentest', stamm:null,
+    was:'Wenn dir <b>der</b> am besten gefällt, ist die Antwort „weglassen" — auch das ist ein Ergebnis und spart die nächste Runde.' },
 ];
 
 var html = '';
 FASSUNGEN.forEach(function(f){
-  html += '<h2><span class="nr">' + f.nr + '</span>' + f.titel + '</h2>'
+  html += '<h2><span class="nr">' + f.nr + '</span>' + f.titel
+    + '<span class="marke' + (f.neu ? ' neu' : '') + '">' + f.marke + '</span></h2>'
     + '<p class="was">' + f.was + '</p>'
     + '<div class="karte"><div class="reihe">'
     + GROESSEN.map(function(px){
-        return '<div class="probe">' + bild(px, f.o) + '<span>' + px + '</span></div>';
+        return '<div class="probe">' + bild(f.stamm, px) + '<span>' + px + '</span></div>';
       }).join('')
     + '</div></div>';
 });

@@ -613,6 +613,43 @@ function setzeGewaehltenVorschlag(id, nr){
   LS.set(VORSCHLAG_SCHLUESSEL, VORSCHLAG_WAHL);
 }
 
+/* ---------- Verworfene Vorschlaege (Elias, 19.08.2026) ----------
+
+   "wenn ich vorschlaege finde die ich gar nicht gut finde ... das ich da auch
+   einen knopf habe der aussagt, dass dieser vorschlag entfernt und verbessert
+   bzw ausgetauscht werden muss durch einen besseren."
+
+   Aufbau: { wortId: { nummer: { text, zeit } } }
+
+   ⭐ Der TEXT wird mitgespeichert, nicht nur die Nummer. data/eselsbruecken-alt.js
+   kann sich aendern; eine gespeicherte 2 zeigte dann auf einen anderen
+   Vorschlag als den, den er abgelehnt hat. Der Text ueberlebt das.
+
+   ⚠️ Verworfen heisst NICHT versteckt. Der Vorschlag bleibt sichtbar und
+   traegt eine Marke — sonst verschwaende beim Verwerfen des letzten
+   Vorschlags der ganze Kasten, und er saehe nicht mehr, was er abgelehnt
+   hat. */
+const VORSCHLAG_WEG_SCHLUESSEL = 'vt_vorschlagWeg';
+let VORSCHLAG_WEG = LS.get(VORSCHLAG_WEG_SCHLUESSEL, {});
+if (!VORSCHLAG_WEG || typeof VORSCHLAG_WEG !== 'object' || Array.isArray(VORSCHLAG_WEG)) VORSCHLAG_WEG = {};
+
+function istVorschlagVerworfen(id, nr){
+  const e = VORSCHLAG_WEG[id];
+  return !!(e && e[String(nr)]);
+}
+
+/* Nochmal derselbe Knopf nimmt die Ablehnung zurueck — ohne das kaeme er aus
+   einem Fehlgriff nicht mehr heraus. Gibt zurueck, ob es jetzt verworfen ist. */
+function schalteVorschlagWeg(id, nr, text){
+  const schl = String(nr);
+  const e = VORSCHLAG_WEG[id] || {};
+  if (e[schl]) { delete e[schl]; }
+  else { e[schl] = { text: String(text || '').slice(0, 400), zeit: Date.now() }; }
+  if (Object.keys(e).length) VORSCHLAG_WEG[id] = e; else delete VORSCHLAG_WEG[id];
+  LS.set(VORSCHLAG_WEG_SCHLUESSEL, VORSCHLAG_WEG);
+  return !!(VORSCHLAG_WEG[id] && VORSCHLAG_WEG[id][schl]);
+}
+
 /* Fortschritt initialisieren: Startbox aus Arabic-Roots-Daten importieren.
    WICHTIG: Laeuft NICHT nur beim allerersten Start. Frueher stieg die Funktion bei
    vorhandenem Speicherstand sofort aus - Vokabeln, die spaeter zu VOCAB_DATA

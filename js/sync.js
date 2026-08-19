@@ -50,6 +50,11 @@ const SYNC_SCHLUESSEL = [
   /* Welcher Eselsbruecken-Vorschlag auf der Karte steht (18.08.2026). Ebenfalls
      JE WORT, aus demselben Grund und ueber denselben Zweig. */
   'vt_vorschlagNr',
+  /* Verworfene Vorschlaege (19.08.2026). ⚠️ Eigener Zweig in fuehreZusammen(),
+     NICHT der von vt_vorschlagNr: dort gewinnt je Wort der juengere Eintrag,
+     hier muessen sich zwei Geraete ERGAENZEN. Verwirft er auf dem Handy
+     Vorschlag 1 und auf dem Tablet Vorschlag 2, sind das zwei Befunde. */
+  'vt_vorschlagWeg',
   /* Seine Korrekturen an Buchvokabeln (18.08.2026). Auch je Wort: aendert er auf
      dem Handy zwei Woerter und am Rechner eins, duerfen die zwei nicht durch
      den aelteren Blockstempel verschwinden. */
@@ -231,6 +236,32 @@ function fuehreZusammen(fern){
           if (!dort || typeof dort !== 'object') return;
           if (!hier || (dort.zeit || 0) > (hier.zeit || 0)) raus[id] = dort;
         });
+        const neu = JSON.stringify(raus);
+        if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
+      } catch (e){ /* kaputtes JSON auf einer Seite: lokal behalten */ }
+      return;
+    }
+
+    /* Verworfene Vorschlaege: VEREINIGUNG je Wort UND je Nummer.
+       { wortId: { nummer: {text, zeit} } }. Bei einem Treffer auf beiden Seiten
+       gewinnt der FRUEHERE Zeitpunkt — er beantwortet die Frage "seit wann
+       stoert ihn das", und die aendert sich durch einen zweiten Blick nicht. */
+    if (k === 'vt_vorschlagWeg'){
+      try {
+        const a = JSON.parse(hierRoh) || {}, b = JSON.parse(dortRoh) || {};
+        const raus = {};
+        for (const id of new Set([...Object.keys(a), ...Object.keys(b)])){
+          const ha = (a[id] && typeof a[id] === 'object') ? a[id] : {};
+          const hb = (b[id] && typeof b[id] === 'object') ? b[id] : {};
+          const zusammen = {};
+          for (const nr of new Set([...Object.keys(ha), ...Object.keys(hb)])){
+            const x = ha[nr], y = hb[nr];
+            if (!x) zusammen[nr] = y;
+            else if (!y) zusammen[nr] = x;
+            else zusammen[nr] = ((x.zeit || 0) <= (y.zeit || 0)) ? x : y;
+          }
+          if (Object.keys(zusammen).length) raus[id] = zusammen;
+        }
         const neu = JSON.stringify(raus);
         if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
       } catch (e){ /* kaputtes JSON auf einer Seite: lokal behalten */ }

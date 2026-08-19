@@ -648,6 +648,17 @@ function zeigeVorschlag(){
   document.getElementById('neVorschlagBlaettern').classList.toggle('hidden', !mehrere);
   document.getElementById('neVorschlagZaehler').textContent =
     mehrere ? ` ${VORSCHLAG_NR + 1} von ${VORSCHLAEGE.length}` : '';
+  /* Den Zustand des „Taugt nicht"-Knopfs mitziehen. Ohne das zeigte er beim
+     Blaettern noch die Antwort des vorigen Vorschlags an — und man haette
+     zweimal getippt, um einen zu verwerfen, den man gar nicht meinte. */
+  const w = SESSION.words[SESSION.idx];
+  const weg = !!(w && istVorschlagVerworfen(w.id, VORSCHLAG_NR));
+  const knopf = document.getElementById('btnVorschlagWeg');
+  if (knopf){
+    knopf.setAttribute('aria-pressed', String(weg));
+    knopf.textContent = weg ? 'Als „taugt nicht" gemerkt ✓' : 'Taugt nicht — bitte ersetzen';
+  }
+  document.getElementById('neVorschlag').classList.toggle('ist-weg', weg);
 }
 
 function blaettereVorschlag(schritt){
@@ -701,6 +712,18 @@ document.getElementById('btnVorschlagUebernehmen').addEventListener('click', ()=
   feld.value = document.getElementById('neVorschlagText').textContent;
   document.getElementById('neVorschlag').classList.add('hidden');
   feld.focus();
+});
+/* „Taugt nicht": merkt den Vorschlag als abgelehnt und blaettert weiter, wenn
+   es noch einen gibt. Das Weiterblaettern ist Absicht — er hat gesagt, der
+   Vorschlag solle „ausgetauscht werden durch einen besseren", also soll gleich
+   der naechste dastehen statt der abgelehnte. Beim Zuruecknehmen wird NICHT
+   geblaettert, sonst spraenge die Ansicht bei jedem Antippen. */
+document.getElementById('btnVorschlagWeg').addEventListener('click', ()=>{
+  const w = SESSION.words[SESSION.idx];
+  if (!w || !VORSCHLAEGE.length) return;
+  const jetztWeg = schalteVorschlagWeg(w.id, VORSCHLAG_NR, VORSCHLAEGE[VORSCHLAG_NR]);
+  if (jetztWeg && VORSCHLAEGE.length > 1) blaettereVorschlag(1);
+  else zeigeVorschlag();
 });
 document.getElementById('btnVorschlagWeiter').addEventListener('click', ()=> blaettereVorschlag(1));
 document.getElementById('btnVorschlagZurueck').addEventListener('click', ()=> blaettereVorschlag(-1));
