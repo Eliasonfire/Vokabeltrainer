@@ -105,8 +105,98 @@ function showScreen(name, opt){
   }
 }
 
+/* ---------- Overlays und die Zurueck-Taste ----------
+
+   Elias am 19.08.2026: "wenn ich gerade einen vorschlag angucke und im
+   textfeld bin ... da habe ich die zurueck taste von meinem handy gedrueckt
+   und das vorschlag pop up ist immer noch da geblieben, jedoch bin ich auf die
+   startseite der app dadurch gekommen".
+
+   ⛔ Die Ursache: der popstate-Handler unten kannte nur BILDSCHIRME. Ein
+   offenes Overlay stand in der Historie ueberhaupt nicht, also ging die
+   Zurueck-Taste eine Bildschirmebene zurueck und liess das Overlay stehen —
+   schwebend ueber einem Bildschirm, zu dem es nicht gehoert.
+
+   ⚠️ Gemessen am 19.08.2026: BETROFFEN WAREN ALLE VIER Overlays, nicht nur das
+   gemeldete. Keines legte einen Historieneintrag an.
+
+   Die Loesung ist eine eigene Ebene in der Historie: das Oeffnen legt einen
+   Eintrag an, die Zurueck-Taste verbraucht genau diesen. Damit gilt sie erst
+   dem Overlay und danach dem Bildschirm — so, wie man es von Android kennt.
+
+   ⭐ Warum der Weg ueber die Historie und nicht "beim popstate einfach
+   zumachen": ohne eigenen Eintrag wuerde die Zurueck-Taste einen
+   BILDSCHIRM-Eintrag aufbrauchen. Die Historie waere danach eine Ebene zu
+   flach, und der naechste Druck spraenge zwei Schritte auf einmal.
+
+   ⚠️ Die Nav-Leiste ist waehrenddessen nicht erreichbar: der Backdrop liegt
+   auf z-index 650, die Leiste auf 30. Die Zurueck-Taste war also der einzige
+   Weg in diesen Zustand — deshalb braucht es keine zweite Absicherung in
+   showScreen(). */
+const OVERLAYS = [
+  { id: 'noteEditor',       zu: 'schliesseNotizEditor'  },
+  { id: 'quranFreqPopover', zu: 'closeQuranFreqPopover' },
+  { id: 'ayahPopover',      zu: 'schliesseAyahListe'    },
+  { id: 'wortKarte',        zu: 'schliesseWortKarte'    }
+];
+
+/* Welches Overlay liegt gerade oben? Gelesen wird der DOM, nicht eine
+   mitgefuehrte Variable — eine Variable koennte auseinanderlaufen, die Klasse
+   `hidden` ist die Wahrheit, die auch Elias auf dem Schirm sieht. */
+function offenesOverlay(){
+  for (const o of OVERLAYS){
+    const el = document.getElementById(o.id);
+    if (el && !el.classList.contains('hidden')) return o;
+  }
+  return null;
+}
+
+/* Beim Oeffnen aufzurufen, als LETZTE Zeile — erst steht das Overlay, dann
+   bekommt es seinen Eintrag. */
+function overlayAuf(id){
+  const alt = history.state || {};
+  history.pushState(Object.assign({}, alt, { overlay: id }), '');
+}
+
+/* Am ANFANG jeder Schliessfunktion aufzurufen. Liefert true, wenn das
+   Schliessen ueber die Historie laeuft — dann hoert die Schliessfunktion
+   sofort auf, und der popstate-Handler ruft sie gleich noch einmal, diesmal
+   ohne Eintrag. So gibt es genau EINEN Weg zum Zumachen, egal ob das X, der
+   Hintergrund oder die Zurueck-Taste benutzt wurde.
+
+   ⚠️ history.back() wirkt erst im naechsten Zug. Fuer den Nutzer ist das
+   unsichtbar, aber wer direkt danach den geschlossenen Zustand abfragt,
+   bekommt noch den alten. */
+function overlayZuUeberHistorie(id){
+  if ((history.state || {}).overlay !== id) return false;
+  history.back();
+  return true;
+}
+
 /* Zurueck-Taste des Geraets: innerhalb der App navigieren statt sie zu verlassen. */
 window.addEventListener('popstate', (e)=>{
+  /* Liegt ein Overlay oben, gilt die Zurueck-Taste ihm — der Bildschirm
+     darunter bleibt unberuehrt. Der Eintrag, den sie gerade verbraucht hat,
+     ist genau der, den overlayAuf() beim Oeffnen angelegt hat; deshalb bleibt
+     die Tiefe der Historie stimmig, ohne dass hier etwas nachgelegt wird.
+
+     ⚠️ Die Schliessfunktion wird ueber ihren NAMEN geholt, nicht als
+     Verweis: js/navigation.js wird vor js/lernen.js geladen, ein Verweis
+     waere zum Zeitpunkt der Liste noch undefined. */
+  const obenauf = offenesOverlay();
+  if (obenauf){
+    const zu = window[obenauf.zu];
+    if (typeof zu === 'function') zu();
+    else {
+      /* Notnagel, falls eine Schliessfunktion einmal umbenannt wird: dann
+         wenigstens zuklappen, statt das Overlay stehen zu lassen. Genau
+         dieser Zustand war der gemeldete Fehler. */
+      const el = document.getElementById(obenauf.id);
+      if (el) el.classList.add('hidden');
+      document.querySelectorAll('.qfp-backdrop').forEach(b=>b.classList.add('hidden'));
+    }
+    return;
+  }
   const st = e.state || {};
   const ziel = st.screen || 'home';
   /* VOR showScreen() ablesen: renderSurahList() setzt OFFENE_SURE gleich auf
