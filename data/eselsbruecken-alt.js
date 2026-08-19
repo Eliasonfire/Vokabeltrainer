@@ -1498,7 +1498,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* أُورُوبَّا - Europa */
   '45946': [
-    '⚠️ Achtung, dieser Ländername endet ANDERS als die übrigen: أَلْمَانِيَا, سُورِيَا und آسِيَا enden auf ـِيَا, أُورُوبَّا dagegen auf ـَّا mit Šadda. Genau da schreibt man sich falsch.',
+    '⚠️ Achtung, dieser Ländername endet ANDERS als die übrigen: أَلْمَانِيَا, سُورِيَا und آسِيَا (Kapitel 21) enden auf ـِيَا, أُورُوبَّا dagegen auf ـَّا mit Šadda. Genau da schreibt man sich falsch.',
     'أَلْمَانِيَا aus Kapitel 8 liegt in أُورُوبَّا — Land und Erdteil in einem Satz. Wenn du die beiden zusammen sprichst, hängt der neue Name am alten.'
   ],
 
@@ -1613,13 +1613,13 @@ const ESELSBRUECKEN_ALT = {
   /* بَغْدَادُ - Bagdad */
   '45964': [
     '⭐ Ihr alter Beiname war دَارُ السَّلَامِ, „Haus des Friedens", und dort stand بَيْتُ الْحِكْمَةِ, das Haus der Weisheit — die Übersetzerakademie der عَبَّاسِيُّون. Die Stadt hängt an einer Geschichte, nicht an einem Klang.',
-    '⚠️ Kein Tanwīn, Endung schlicht ـُ. Das gilt für fast alle fremden Orts- und Ländernamen: بَغْدَادُ, إِسْطَنْبُولُ, وَاشِنْطُنُ, جُدَّةُ. Wer da ein Tanwīn setzt, verrät sich sofort.'
+    '⚠️ Kein Tanwīn, Endung schlicht ـُ. Das gilt für fast alle fremden Orts- und Ländernamen: بَغْدَادُ und جُدَّةُ hier, إِسْطَنْبُولُ und وَاشِنْطُنُ in Kapitel 23. Wer da ein Tanwīn setzt, verrät sich sofort.'
   ],
 
   /* جُدَّةُ - Jeddah */
   '45965': [
     '⭐ Die Hafenstadt, über die die Pilger nach Mekka kommen — und sie liegt am الْبَحْر الْأَحْمَر, der Farbe aus diesem Kapitel. Wer an den Weg zum حَجّ denkt, hat die Stadt.',
-    '⚠️ Drei Wörter aus denselben Buchstaben ج د د, nur die Vokale trennen sie: جُدَّةُ (die Stadt), جَدِيدٌ (neu, Kapitel 3) und جَدٌّ (Großvater). Dazu جِدًّا, „sehr". Sprich sie hintereinander.'
+    '⚠️ Drei Wörter aus denselben Buchstaben ج د د, nur die Vokale trennen sie: جُدَّةُ (die Stadt), جَدِيدٌ (neu, Kapitel 3) und جَدٌّ (Großvater). Dazu جِدًّا, „sehr", das dir in Kapitel 24 begegnet. Sprich sie hintereinander.'
   ],
 
   /* فِنْجَانٌ - Teetasse */
