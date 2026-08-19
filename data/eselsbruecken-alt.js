@@ -1387,7 +1387,7 @@ const ESELSBRUECKEN_ALT = {
   /* كُلِّيَّةُ الطِّبِّ - medizinische Fakultät */
   '45929': [
     '⭐ الطِّبُّ النَّبَوِيُّ — die prophetische Medizin — ist ein feststehender Begriff und Buchtitel. Darin steht genau dieses Wort für Medizin, und darin steckt طَبِيبٌ (Arzt) aus Kapitel 1.',
-    '⚠️ Achte auf die Vokale von كُلِّيَّة: mit Šadda auf dem لّ ist es die Fakultät, von كُلّ (alles) — die Gesamtheit eines Fachs. Ohne Šadda und anders vokalisiert wäre كُلْيَة die Niere. Gleiche Buchstaben, zwei Welten.'
+    '⚠️ Achte auf die Vokale von كُلِّيَّة: mit Šadda auf dem لّ ist es die Fakultät, von كُلّ (alles, Kapitel 19) — die Gesamtheit eines Fachs. Ohne Šadda und anders vokalisiert wäre كُلْيَة die Niere. Gleiche Buchstaben, zwei Welten.'
   ],
 
   /* كُلِّيَّةُ الهَنْدَسَةِ - Ingenieursfakultät */

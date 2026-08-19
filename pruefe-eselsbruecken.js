@@ -523,6 +523,21 @@ console.log('=== 7. Anker: baut die Eselsbruecke auf etwas, das er SCHON hat? ==
                    kennt alles davor. */
             const grenze = Math.max(Number(lernstand), meinKapitel);
             if (kap <= grenze) return;
+            /* ⛔ OFFENGELEGT IST NICHT VORAUSGESETZT.
+               Nennt der Satz um die Fundstelle das spaetere Kapitel selbst,
+               baut der Text nicht auf dem Wort auf — er zeigt darauf:
+                 „…in Kapitel 24 begegnet dir noch مَتْجَرٌ, der Ort des Handels."
+               Abschnitt 4 kennt diese Unterscheidung laengst ("noch nicht",
+               "nicht in deinen"); Abschnitt 7 ist neu und hatte sie nicht.
+               ⚠️ Nur die KAPITELZAHL zaehlt als Offenlegung, keine weichen
+               Stichworte wie "spaeter" — eine Zahl ist nachpruefbar. */
+            const stelle = String(text).indexOf(roh);
+            const vor = String(text).slice(0, stelle);
+            const nach = String(text).slice(stelle);
+            const satz = vor.slice(vor.lastIndexOf('. ') + 1)
+                       + nach.slice(0, (nach.indexOf('. ') + 1) || nach.length);
+            const genannt = [...satz.matchAll(/Kapitel\s+(\d{1,2})/g)].map(m => Number(m[1]));
+            if (genannt.some(n => n === kap)) return;
             /* ⭐ Zwei Schweregrade, und sie sind nicht dasselbe:
                Steht das erklaerte Wort in einem Kapitel, das er SCHON hat, ist
                die Bruecke heute kaputt — Fehler. Ist es vorausgeschrieben,
