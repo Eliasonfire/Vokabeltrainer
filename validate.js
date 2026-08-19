@@ -505,6 +505,47 @@ try {
   warn(`Satzmodus-Kategorien nicht messbar: ${e.message}`);
 }
 
+/* ---------- Bleibt jede Kategorie besetzt? (Elias, Nachtplan 5 und 13) ----------
+
+   Seine Worte: "man muesste auch da eine routine einfuehren, dass das immer
+   aktuell bleibt mit den verwendeten vokabeln und den moeglichen kategorien".
+
+   ⛔ Die Pruefung oben sieht nur die andere Richtung: Regeln, die durch JEDE
+   Kategorie fallen. Die Gegenrichtung fehlte — eine Kategorie, auf deren
+   Muster keine Regel mehr passt, bleibt als Reiter stehen und fuehrt ins
+   Leere. Elias hat am 19.08.2026 achtundzwanzig Regeln von den Karteikarten
+   genommen; bei jeder weiteren Runde kann eine Kategorie leerlaufen.
+
+   ⚠️ Gezaehlt wird, was im Satzmodus WIRKLICH erreichbar ist — also nur
+   Regeln mit mindestens einer Markierung. Eine Kategorie mit fuenf Regeln,
+   von denen keine markiert ist, zeigt dem Nutzer trotzdem nichts an.
+   Das ist derselbe Unterschied wie in [[daten_ohne_zugang]]: vorhanden ist
+   nicht dasselbe wie erreichbar.
+
+   Schwelle 2, gemessen am 19.08.2026: die kleinste Kategorie ist "Wortarten"
+   mit 3 markierten Regeln, die groesste "Genitiv" mit 11. Eine Kategorie mit
+   nur einer Regel ist kein Reiter mehr, sondern ein Umweg. */
+try {
+  const themen = (typeof SATZ_THEMEN !== 'undefined' ? SATZ_THEMEN : []).filter(x => x.muster);
+  const markiert = new Set();
+  Object.values(SENTENCE_TAGS || {}).forEach(l => l.forEach(x => markiert.add(x.ruleId)));
+  const duenn = [];
+  themen.forEach(t => {
+    const n = GRAMMAR_RULES.filter(r => t.muster.test(r.id) && markiert.has(r.id)).length;
+    if (n < 2) duenn.push(`${t.name} (${n})`);
+  });
+  if (duenn.length)
+    warn(`${duenn.length} Satzmodus-Kategorie(n) haben weniger als 2 erreichbare Regeln und `
+       + `laufen ins Leere: ${duenn.join(', ')} — Muster erweitern oder Kategorie entfernen.`);
+  else {
+    const zahlen = themen.map(t => GRAMMAR_RULES.filter(r => t.muster.test(r.id) && markiert.has(r.id)).length);
+    note(`Satzmodus-Kategorien: alle ${themen.length} besetzt, `
+       + `${Math.min(...zahlen)}–${Math.max(...zahlen)} erreichbare Regeln je Kategorie.`);
+  }
+} catch (e) {
+  warn(`Kategoriebesetzung nicht messbar: ${e.message}`);
+}
+
 /* ---------- Ausgabe ---------- */
 console.log('--- Validierung Vokabeltrainer ---');
 info.forEach(m => console.log('  ok   ' + m));
