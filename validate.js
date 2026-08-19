@@ -93,6 +93,14 @@ if (!Array.isArray(VOCAB_DATA) || VOCAB_DATA.length === 0){
 
      Die fehlende Form wird NICHT ergaenzt: erfundene Grammatik verbietet E.1.
      Der Hinweis sagt, wo nachzuschlagen ist - mehr darf er nicht. */
+  /* Im arabicroots-Abzug nachgeschlagen (19.08.2026, MCP search_vocabulary).
+     Wer hier steht, hat auch DORT keinen Plural — es gibt also nichts
+     nachzutragen, und selbst bilden verbietet E.1. Die Meldung bleibt
+     trotzdem stehen: kommt spaeter ein Plural in den Abzug, faellt sie auf. */
+  const ABZUG_OHNE_PLURAL = {
+    '45841': 'مِكْوَاةٌ — arabicroots id 45841, madina-1 K6: plural ist dort NULL (19.08.2026 geprueft)',
+  };
+
   const plOhneSg = VOCAB_DATA.filter(w => w && w.pl && !w.sg);
   const sgOhnePl = VOCAB_DATA.filter(w => w && w.sg && !w.pl);
   const sgUngleichAr = VOCAB_DATA.filter(w => w && w.sg && w.ar && w.sg !== w.ar);
@@ -100,7 +108,7 @@ if (!Array.isArray(VOCAB_DATA) || VOCAB_DATA.length === 0){
   if (plOhneSg.length)
     warn(`${plOhneSg.length} Vokabel(n) mit Plural, aber ohne sg-Feld — unkritisch, "ar" ist dort der Singular: ${plOhneSg.slice(0,5).map(w => `${w.ar} (id ${w.id})`).join(', ')}${plOhneSg.length>5?' …':''}`);
   if (sgOhnePl.length)
-    warn(`${sgOhnePl.length} Vokabel(n) mit sg-Feld, aber ohne Plural — im Abzug nachsehen, nicht selbst bilden (E.1): ${sgOhnePl.slice(0,5).map(w => `${w.ar} (id ${w.id})`).join(', ')}${sgOhnePl.length>5?' …':''}`);
+    warn(`${sgOhnePl.length} Vokabel(n) mit sg-Feld, aber ohne Plural — ${sgOhnePl.every(w => ABZUG_OHNE_PLURAL[w.id]) ? 'im Abzug geprueft, dort ebenfalls keiner' : 'im Abzug nachsehen, nicht selbst bilden (E.1)'}: ${sgOhnePl.slice(0,5).map(w => `${w.ar} (id ${w.id})`).join(', ')}${sgOhnePl.length>5?' …':''}`);
   /* Kommt bisher nie vor. Traete es auf, stuende die Vokabel unter ihrem Plural
      und `w.sg || w.ar` in js/saetze.js suchte im Satz nach einer anderen Form
      als bisher - das gehoert gesehen, bevor es still das Verhalten aendert. */
