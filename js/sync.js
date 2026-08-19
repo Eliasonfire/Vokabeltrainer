@@ -56,7 +56,15 @@ const SYNC_SCHLUESSEL = [
   'vt_wortAenderungen',
   /* Ausgeblendete Fachbegriffe (18.08.2026). Je Wort, damit auch das
      Zurückholen auf dem anderen Gerät ankommt. */
-  'vt_geloescht'
+  'vt_geloescht',
+  /* Fortschritt je Grammatikregel (19.08.2026). Er speist Elias' Auswahl,
+     welche Regeln im Satzmodus bleiben — auf EINEM Geraet gefuehrt waere die
+     Zahl halb blind, er uebt auf Tablet UND Handy. ⚠️ Eigener Merge-Zweig:
+     je Regel das FELDWEISE MAXIMUM. Ein Blockstempel wuerfe die Zaehlungen
+     des anderen Geraets weg, Summieren zaehlte nach jedem Abgleich doppelt.
+     Das Maximum verliert hoechstens, was BEIDE parallel geuebt haben, und
+     richtig<=gestellt bleibt erhalten, weil es je Seite gilt. */
+  'vt_regelStand'
 ];
 
 /* Je Schluessel merken, wann er zuletzt lokal geaendert wurde. Ohne das kann
@@ -222,6 +230,28 @@ function fuehreZusammen(fern){
           const hier = raus[id], dort = b[id];
           if (!dort || typeof dort !== 'object') return;
           if (!hier || (dort.zeit || 0) > (hier.zeit || 0)) raus[id] = dort;
+        });
+        const neu = JSON.stringify(raus);
+        if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
+      } catch (e){ /* kaputtes JSON auf einer Seite: lokal behalten */ }
+      return;
+    }
+
+    /* Fortschritt je Regel: monotone Zaehler, feldweises Maximum. */
+    if (k === 'vt_regelStand'){
+      try {
+        const a = JSON.parse(hierRoh) || {}, b = JSON.parse(dortRoh) || {};
+        const raus = Object.assign({}, a);
+        Object.keys(b).forEach(id => {
+          const d = b[id];
+          if (!d || typeof d !== 'object') return;
+          const h = raus[id];
+          if (!h){ raus[id] = d; return; }
+          raus[id] = {
+            gestellt: Math.max(h.gestellt || 0, d.gestellt || 0),
+            richtig:  Math.max(h.richtig  || 0, d.richtig  || 0),
+            zuletzt:  (String(h.zuletzt || '') >= String(d.zuletzt || '')) ? h.zuletzt : d.zuletzt
+          };
         });
         const neu = JSON.stringify(raus);
         if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
