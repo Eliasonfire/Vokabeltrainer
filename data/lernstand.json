@@ -1,0 +1,35 @@
+{
+  "_hinweis": "Abgeleitet aus get_learning_progress. Nur das hoechste Kapitel je Buch, in dem wirklich geuebt wurde — NICHT was freigeschaltet ist. Erzeugt von werkzeuge/vorrat.mjs --lernstand.",
+  "gemessen": "2026-08-19",
+  "buecher": {
+    "madina-1": {
+      "hoechstesKapitel": 23,
+      "geuebteWoerter": 222
+    },
+    "bayna-yadayk-2": {
+      "hoechstesKapitel": 16,
+      "geuebteWoerter": 275
+    },
+    "bayna-yadayk-1": {
+      "hoechstesKapitel": 16,
+      "geuebteWoerter": 221
+    },
+    "madina-3": {
+      "hoechstesKapitel": 34,
+      "geuebteWoerter": 32
+    },
+    "bayna-yadayk-3": {
+      "hoechstesKapitel": 16,
+      "geuebteWoerter": 12
+    },
+    "madina-2": {
+      "hoechstesKapitel": 31,
+      "geuebteWoerter": 250
+    }
+  },
+  "angabe": {
+    "madina-1": 11
+  },
+  "angabeVom": "19.08.2026",
+  "_angabeWortlaut": "Elias am 19.08.2026: \"nein, ich bin bei madina-1 kapitel 11, madina-2 ist nur freigeschaltet\""
+}
