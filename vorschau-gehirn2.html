@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Gehirn nach Elias' Vorlage — vierte Runde</title>
+<!--
+  Gebaut am 19.08.2026. Elias hat eine Vorlage geschickt und gesagt:
+  "ich möchte genau diese FORM des gehirns haben ... ich möchte einfach nur die
+  gleiche form haben ... und so sollst du das hirn bauen anhand dieser vorlage
+  mit dem oled schwarz".
+
+  ⭐ NACHGEZEICHNET, NICHT ABGEPAUST. Dieselbe Regel wie bei den Vorlagen vom
+  18.08.: die Vorlage gibt Blickrichtung, Gliederung und Stil vor — die Kurven
+  sind eigene. Eine fremde Illustration im App-Icon waere ein Problem, das
+  spaeter niemand mehr geradebiegt.
+
+  Was aus der Vorlage uebernommen ist:
+    - Profil nach LINKS
+    - eine gelappte, huegelige Silhouette statt einer glatten Kuppel
+    - Furchen als DUENNE Linien, teils gegabelt, nicht als dicke Aussparungen
+    - ein geschwungener Stamm, der nach vorn-unten laeuft und spitz auslaeuft
+    - vier Funkeln in verschiedenen Groessen
+    - EINE Farbe, flach, kein Verlauf
+-->
+<style>
+  :root{
+    --bg:#000; --flaeche:#111114; --hoch:#17171c; --rand:#26262c;
+    --text:#f4f4f6; --leise:#9a9aa4; --still:#6b6b75;
+    --rot:#ff3355; --gruen:#2fd27a; --gelb:#ffc44d;
+    --sp1:6px; --sp2:10px; --sp3:16px; --sp4:24px; --sp5:38px;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);
+       font-size:17px;line-height:1.55;padding:var(--sp5) var(--sp3) 80px}
+  .huelle{max-width:860px;margin:0 auto}
+  .eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;
+           text-transform:uppercase;color:var(--still);margin:0 0 var(--sp2)}
+  h1{font-size:clamp(1.9rem,7vw,2.5rem);line-height:1.1;letter-spacing:-.025em;
+     margin:0 0 var(--sp3)}
+  .vorspann{color:var(--leise);margin:0 0 var(--sp3);max-width:62ch}
+  .vorspann strong{color:var(--text)}
+  code{font-family:var(--mono);font-size:.86em;color:var(--leise)}
+  h2{display:flex;align-items:baseline;gap:var(--sp2);flex-wrap:wrap;
+     font-size:1.08rem;font-weight:600;margin:var(--sp5) 0 var(--sp1);
+     padding-bottom:var(--sp1);border-bottom:1px solid var(--rand)}
+  .nr{font-family:var(--mono);font-size:.78rem;text-transform:uppercase;color:var(--rot)}
+  .was{color:var(--leise);font-size:.92rem;margin:0 0 var(--sp3);max-width:62ch}
+  .was b{color:var(--text)}
+  .karte{background:var(--flaeche);border:1px solid var(--rand);border-radius:14px;
+         padding:var(--sp3);margin-bottom:var(--sp2);overflow-x:auto}
+  .reihe{display:flex;align-items:flex-end;gap:var(--sp4);min-width:min-content}
+  .probe{text-align:center;flex:0 0 auto}
+  .probe span{display:block;margin-top:var(--sp1);font-family:var(--mono);
+              font-size:.68rem;color:var(--still)}
+  .probe svg{display:block;border-radius:22.3%}
+  .hilfe{outline:1px dashed #333}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+
+<!-- ================= Die Silhouette ==================================
+     Profil nach links. Der Umriss ist bewusst HUEGELIG: jede Woelbung ist ein
+     Lappen. Bei der alten Fassung P war es eine glatte Kuppel aus
+     Kreisboegen — genau das unterscheidet sie von Elias' Vorlage.        -->
+<path id="hirn" d="
+  M 150 176
+  C 158 142 198 124 232 140
+  C 252 112 306 104 336 132
+  C 374 120 412 152 412 192
+  C 440 208 446 258 418 282
+  C 420 314 392 336 362 330
+  C 366 352 352 372 330 374
+  C 322 396 296 406 276 396
+  C 258 408 236 400 232 382
+  C 208 392 182 382 174 362
+  C 144 366 120 348 120 322
+  C 92 314 80 282 96 258
+  C 78 232 88 194 118 184
+  C 122 176 134 170 150 176 Z"/>
+
+<!-- ================= Der Stamm =======================================
+     Elias: "achte vorallem darauf den hirnstamm richtig zu treffen."
+     In seiner Vorlage ist der Stamm KEIN kurzes Anhaengsel: er tritt unter
+     dem hinteren Teil aus, laeuft deutlich nach VORN-UNTEN und wird dabei
+     schmaler, bis er in einer runden Spitze endet. Er reicht spuerbar unter
+     die Silhouette — das ist es, was ihn als Stamm lesbar macht statt als
+     Tropfen.
+     Drei Laengen zum Vergleich, sonst raet man wieder.                  -->
+<path id="stamm-kurz" d="
+  M 302 346
+  C 310 370 302 394 282 408
+  C 271 415 258 411 264 400
+  C 277 386 284 372 284 350 Z"/>
+<path id="stamm" d="
+  M 304 344
+  C 316 374 306 410 278 430
+  C 265 439 248 434 255 421
+  C 273 404 286 382 286 348 Z"/>
+<path id="stamm-lang" d="
+  M 306 342
+  C 322 378 310 424 274 450
+  C 259 461 240 454 249 440
+  C 272 420 288 392 288 346 Z"/>
+
+<!-- ================= Die Furchen ======================================
+     Duenne Linien, teils GEGABELT. In der Vorlage enden viele in einer
+     kleinen Y-Gabel — das ist das Merkmal, das sie organisch wirken laesst
+     statt wie Kritzel.                                                   -->
+<g id="furchen" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M 196 150 C 186 168 192 186 208 194"/>
+  <path d="M 262 132 C 254 156 262 176 282 184"/>
+  <path d="M 282 184 C 296 178 310 182 318 194"/>
+  <path d="M 282 184 C 288 198 286 212 276 222"/>
+  <path d="M 348 148 C 340 168 348 188 366 194"/>
+  <path d="M 366 194 C 380 190 394 196 400 208"/>
+  <path d="M 414 240 C 398 244 388 258 390 274"/>
+  <path d="M 132 214 C 148 220 156 236 150 252"/>
+  <path d="M 150 252 C 138 260 132 274 136 288"/>
+  <path d="M 208 236 C 226 226 248 232 258 248"/>
+  <path d="M 258 248 C 250 260 250 274 258 284"/>
+  <path d="M 300 250 C 318 240 340 248 348 264"/>
+  <path d="M 196 300 C 214 290 236 296 246 312"/>
+  <path d="M 316 306 C 330 298 346 302 354 314"/>
+  <path d="M 240 350 C 256 342 274 346 282 358"/>
+</g>
+
+<!-- Vier Funkeln, vierzackig, wie in der Vorlage. Sie liegen AUSSERHALB des
+     Gehirns und duerfen bei maskable angeschnitten werden. -->
+<path id="funke" d="M0 -14 Q2.8 -2.8 14 0 Q2.8 2.8 0 14 Q-2.8 2.8 -14 0 Q-2.8 -2.8 0 -14 Z"/>
+</defs></svg>
+
+<div class="huelle">
+<p class="eyebrow">19.08.2026 · vierte Runde · nach deiner Vorlage</p>
+<h1>Gehirn nach deiner Vorlage</h1>
+
+<p class="vorspann">Deine Vorlage gibt die <strong>Form</strong> vor: Profil nach
+links, hügelige Lappen statt glatter Kuppel, <strong>dünne gegabelte Furchen</strong>
+statt dicker Aussparungen, ein Stamm der nach vorn ausläuft, eine flache Farbe.
+<b>Die Funkeln sind raus</b> — auf deinen Zuruf. Gezeichnet ist die Form neu:
+<b>nachgezeichnet, nicht abgepaust</b>, damit im Icon keine fremde Illustration
+steckt.</p>
+
+<p class="vorspann"><strong>Worauf du schauen sollst:</strong> der Stamm. Du
+hast gesagt, den soll ich vor allem treffen — deshalb steht er hier in drei
+Längen, sonst rate ich beim nächsten Mal wieder. Die oberste Größe ist 320 px,
+damit man ihn überhaupt beurteilen kann; die 32 px daneben sind der
+Wirklichkeitstest.</p>
+
+<div id="ziel"></div>
+</div>
+
+<script>
+/* 320 steht vorn, damit man den Stamm ueberhaupt beurteilen kann — bei 176 px
+   ist er zu klein, um zu sehen, wo er ansetzt und wie er auslaeuft. */
+var GROESSEN = [320, 96, 48, 32];
+
+/* Die Furchenbreite waechst NICHT mit — sie steht im viewBox-Raster und wird
+   mitskaliert. Bei 32 px sind 9 Einheiten von 512 rund ein halbes Nutzerpixel;
+   deshalb gibt es die Fassung mit dickeren Furchen daneben. */
+function bild(px, o){
+  o = o || {};
+  return '<svg viewBox="0 0 512 512" width="' + px + '" height="' + px + '" '
+    + 'xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Entwurf">'
+    + '<rect width="512" height="512" fill="#000"/>'
+    + '<g fill="#ff3355">'
+    + (o.stamm === null ? '' : '<use href="#' + (o.stamm || 'stamm') + '"/>')
+    + '<use href="#hirn"/></g>'
+    + '<use href="#furchen" stroke="#000" stroke-width="' + (o.furche || 9) + '"/>'
+    + '</svg>';
+}
+
+var FASSUNGEN = [
+  { nr:'1', titel:'Stamm mittellang', was:'Tritt hinten unten aus, läuft nach vorn-unten und endet in einer runden Spitze. <b>Das ist der Versuch, deine Vorlage zu treffen.</b>', o:{} },
+  { nr:'2', titel:'Stamm länger', was:'Derselbe Verlauf, aber er reicht <b>deutlich weiter</b> unter die Silhouette. In deiner Vorlage wirkt der Stamm eher lang als kurz — deshalb steht das hier daneben.', o:{stamm:'stamm-lang'} },
+  { nr:'3', titel:'Stamm kürzer', was:'Zum Eingrenzen nach unten. Wenn dir schon der hier zu lang vorkommt, weiß ich, dass die Richtung stimmt und nur das Maß nicht.', o:{stamm:'stamm-kurz'} },
+  { nr:'4', titel:'Mittellang, dickere Furchen', was:'Wie 1, aber die Furchen sind <b>14 statt 9</b> breit. Bei 32 px verschwinden dünne Linien sonst ganz — dann bleibt nur ein roter Fleck.', o:{furche:14} },
+];
+
+var html = '';
+FASSUNGEN.forEach(function(f){
+  html += '<h2><span class="nr">' + f.nr + '</span>' + f.titel + '</h2>'
+    + '<p class="was">' + f.was + '</p>'
+    + '<div class="karte"><div class="reihe">'
+    + GROESSEN.map(function(px){
+        return '<div class="probe">' + bild(px, f.o) + '<span>' + px + '</span></div>';
+      }).join('')
+    + '</div></div>';
+});
+document.getElementById('ziel').innerHTML = html;
+</script>
+</body>
+</html>
