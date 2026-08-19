@@ -621,7 +621,7 @@ function baueWortKarte(w){
   if (w.sentAr){
     t.push(`<div class="wk-abschnitt">
       <div class="wk-marke"><span>Beispielsatz</span></div>
-      <div class="ar" lang="ar" dir="rtl">${buildSentenceHtml(w, { ohneLuecke:true })}</div>
+      <div class="ar" lang="ar" dir="rtl">${buildSentenceHtml(w, { ohneLuecke:true, karteikarte:true })}</div>
       <div class="de">${escapeHtml(w.sentDe || '')}</div>
     </div>`);
   }
