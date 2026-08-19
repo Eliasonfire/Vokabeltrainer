@@ -320,6 +320,17 @@ function nachAuswahlwechsel(){
   renderHome();
   if (typeof passeRundeAnAuswahlAn === 'function') passeRundeAnAuswahlAn();
   if (typeof renderCategories === 'function') renderCategories();
+  /* ⛔ EINE LAUFENDE UEBUNG MUSS ENDEN — dieselbe Begruendung, die in
+     setzeThema() (js/saetze.js) schon steht, nur fuer die andere Ursache:
+     "Der Themenwechsel tauscht den Vorrat aus, aus dem die Uebungsaufgaben
+     gebaut werden. Eine laufende Uebung waere danach eine Aufgabe zu einem
+     Satz, der nicht mehr im Thema steht."
+     Die Buchauswahl tauscht denselben Vorrat aus. Am 20.08.2026 im Browser
+     gemessen: Uebung "kasus" mit 637 Aufgaben gestartet (Kapitel 1-15), dann
+     Kapitel 12-15 abgewaehlt -> die Uebung lief unveraendert weiter, und
+     82 ihrer Aufgaben zeigten auf Saetze, die gar nicht mehr im Vorrat waren.
+     Die allererste war eine davon. */
+  if (typeof uebungBeenden === 'function' && typeof UEB !== 'undefined' && UEB.modus) uebungBeenden();
   if (typeof openSentences === 'function' && document.querySelector('[data-screen="sentences"].active')) openSentences();
 }
 
