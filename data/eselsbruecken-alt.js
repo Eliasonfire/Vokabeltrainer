@@ -1226,6 +1226,259 @@ const ESELSBRUECKEN_ALT = {
   'gram-alif-maqsura': [
     'Du hast vier Wörter damit: عَلَى (auf), إِلَى (zu), مُسْتَشْفًى (Krankenhaus) und den Plural مَرْضَى (Kranke). ⚠️ Alle vier enden auf ein langes ā, obwohl dort ein ى steht. Sprich sie hintereinander, dann trennt sich das Schriftbild vom Klang.',
     '⚠️ Sobald etwas angehängt wird, verwandelt sich das ى in ein echtes ي: عَلَى → عَلَيْهِ, إِلَى → إِلَيْهِ, مُسْتَشْفًى → مُسْتَشْفَيَاتٌ. Daran erkennst du, dass es nie ein bloßes Alif war — der Buchstabe darunter ist ein ي, das nur allein am Wortende seine Punkte verliert.'
-  ]
+  ],
 
+  /* ══════ Kapitel 12 ══════ */
+
+  /* عَمَّةٌ - Tante väterlicherseits */
+  '45904': [
+    '⭐ Der Prophet ﷺ hatte berühmte أَعْمَام — حَمْزَة und الْعَبَّاس — und ihre Schwester صَفِيَّة بِنْت عَبْد الْمُطَّلِب war seine عَمَّة, die Mutter von الزُّبَيْر. Die Namen kennst du; das Verwandtschaftswort steckt zwischen ihnen.',
+    'Der Ausdruck, den du am häufigsten hören wirst, ist ابْنُ الْعَمِّ und بِنْتُ الْعَمِّ — Cousin und Cousine von Vaters Seite. Das عَمّ sitzt mitten im Ausdruck, und mit ـة wird die Schwester des Vaters selbst daraus.'
+  ],
+
+  /* خَالَةٌ - Tante mütterlicherseits */
+  '45905': [
+    '⭐ Ein Hadith trägt das Wort und seine Bedeutung zugleich: الْخَالَةُ بِمَنْزِلَةِ الْأُمِّ — „die Tante mütterlicherseits steht an der Stelle der Mutter" (Buḫārī). Wer den Satz einmal gehört hat, weiß auch, welche Seite gemeint ist.',
+    'Sprich die beiden Tanten laut nebeneinander: ʿam-ma gegen ḫā-la. Die eine hat eine شَدَّة und ist kurz und hart, die andere ein langes ـَا und fließt. Der Klang trennt sie zuverlässiger als die Bedeutung.'
+  ],
+
+  /* شَجَرَةٌ - Baum */
+  '45906': [
+    '⭐ Zwei Bäume kennst du beim Namen: سِدْرَةُ الْمُنْتَهَىٰ, der Lotusbaum an der äußersten Grenze, und شَجَرَةُ الزَّقُّومِ, der Baum der Höllenspeise. Beide Male steht dasselbe schlichte Wort für „Baum" davor.',
+    '⭐ Und der Treueid von al-Ḥudaybiya heißt بَيْعَةُ الرِّضْوَانِ, geleistet تَحْتَ الشَّجَرَةِ — „unter dem Baum". Auch der Baum, dem Ādam ﷺ sich nicht nähern sollte, wird im Koran nur الشَّجَرَة genannt.'
+  ],
+
+  /* سُورِيَا - Syrien */
+  '45907': [
+    '⭐ Dasselbe Land heißt im Arabischen auch الشَّام — das Gebiet, für das der Prophet ﷺ ausdrücklich um Segen bat: اللَّهُمَّ بَارِكْ لَنَا فِي شَامِنَا. دِمَشْق mit der Umayyaden-Moschee liegt dort.',
+    '⚠️ Verwechslungsfalle: سُورِيَا hat mit سُورَة nichts zu tun. Ländernamen sind entlehnt und haben gar keine arabische Wurzel — die Angabe س و ر ist nur eine Hilfszeile in der Datenbank. Hier trägt allein der Klang.'
+  ],
+
+  /* مَدْرَسَةٌ مُتَوَسِّطَةٌ - Mittelschule */
+  '45908': [
+    '⭐ Dasselbe Wort steckt im Namen des Mittelmeers: الْبَحْرُ الْأَبْيَضُ الْمُتَوَسِّطُ — das „mittlere" Meer zwischen den Kontinenten. Und die صَلَاةٌ وُسْطَىٰ, das mittlere Gebet, trägt dieselbe Wurzel و س ط.',
+    'Achte auf das ـة am Ende von مُتَوَسِّطَةٌ: es steht dort nur, weil مَدْرَسَةٌ weiblich ist. Genau deine Regel zur Übereinstimmung — das Adjektiv richtet sich nach dem Nomen. Bei einem männlichen Wort hieße es مُتَوَسِّطٌ.'
+  ],
+
+  /* مُفَتِّشٌ - Inspektor */
+  '45909': [
+    'Das Wort für „Durchsuchung" heißt تَفْتِيشٌ und steht an jedem Sicherheitsschalter eines arabischen Flughafens. Der مُفَتِّشٌ ist der Mann, der das tut — Wurzel und Beruf hängen unmittelbar zusammen.',
+    '⚠️ Ein einziger Buchstabe trennt zwei Welten: ف ت ح ist öffnen und trägt مِفْتَاحٌ und الْفَاتِحَة, die du beide kennst. ف ت ش mit ش ist durchsuchen. Wer das ش überliest, macht aus dem Inspektor einen Schlüssel.'
+  ],
+
+  /* فَتَاةٌ - junge Frau */
+  '45910': [
+    '⚠️ Hier wird sichtbar, was in فَتًى versteckt lag: das ى am Ende war nie ein bloßes Alif. Sobald ـة angehängt wird, tritt ein langes ـَا hervor — fa-tan wird zu fa-tāh. Genau der Vorgang, den deine Regel zur أَلِف مَقْصورة beschreibt.',
+    'Vier Paare aus deinem Bestand gehen alle gleich: عَمٌّ/عَمَّةٌ, خَالٌ/خَالَةٌ, زَوْجٌ/زَوْجَةٌ und فَتًى/فَتَاةٌ. Sprich sie als Paare statt als acht einzelne Wörter — dann lernst du sie in vier Portionen.'
+  ],
+
+  /* مَالِيزِيَا - Malaysia */
+  '45911': [
+    'Neben إِنْدُونِيسِيَا aus Kapitel 9 das zweite südostasiatische Land in deiner Liste, und wie dieses mit muslimischer Mehrheit. Beide enden auf ـِيَا, beide sind reine Lautschriften.',
+    '⚠️ Vier Silben, und die erste ist schon lang: mā-lī-zi-yā. Das ـَا direkt nach dem م wird gern verschluckt; wer „Maliziya" liest, schreibt es hinterher auch so. Dehne die erste Silbe bewusst.'
+  ],
+
+  /* مَمْلَكَةٌ - Königreich */
+  '45912': [
+    '⭐ Die Wurzel م ل ك sprichst du in jedem Gebet und in jedem Schutzgebet: مَالِكِ يَوْمِ الدِّينِ (1:4) und مَلِكِ النَّاسِ (114:2). Der مَلِك ist der König — die مَمْلَكَة ist das Gebiet, über das er herrscht.',
+    '⭐ Und du kennst das Wort aus dem Namen eines Landes: الْمَمْلَكَةُ الْعَرَبِيَّةُ السُّعُودِيَّةُ, das Königreich Saudi-Arabien. Es steht ganz vorn, noch vor der Herkunftsangabe.'
+  ],
+
+  /* ══════ Kapitel 13 ══════ */
+
+  /* ضَيْفٌ - Gast */
+  '45913': [
+    '⭐ Ein Hadith, der das Wort trägt: مَنْ كَانَ يُؤْمِنُ بِاللَّهِ وَالْيَوْمِ الْآخِرِ فَلْيُكْرِمْ ضَيْفَهُ — „Wer an Allah und den Jüngsten Tag glaubt, soll seinen Gast ehren" (Buḫārī und Muslim). إِكْرَامُ الضَّيْفِ ist daraus ein feststehender Begriff geworden.',
+    '⭐ Und die Geschichte kennst du: die Engel, die zu Ibrāhīm ﷺ kamen und denen er das gebratene Kalb vorsetzte, heißen im Koran schlicht ضَيْفُ إِبْرَاهِيمَ. Das Wort steht mitten in einer Erzählung, die du schon hast.'
+  ],
+
+  /* حَقْلٌ - Feld */
+  '45914': [
+    'Im Plural begegnet dir das Wort in den Nachrichten: حُقُولُ النِّفْطِ, die Ölfelder. Dieselbe Vokabel, nur größer gedacht — aus dem bestellten Acker wird das Fördergebiet.',
+    'Der Bau ist derselbe wie bei بَيْتٌ und عَيْنٌ aus deinen ersten Kapiteln: Fatḥa, dann Sukūn, dann die Endung — ḥaq-l, bay-t, ʿay-n. Ein einsilbiges Wort mit ruhendem Mittelbuchstaben; der Plural dehnt sich dann auf حُقُولٌ.'
+  ],
+
+  /* النَّاسُ - die Leute */
+  '45915': [
+    '⭐ In der letzten Sure steht das Wort fünfmal, in sechs Versen: بِرَبِّ النَّاسِ · مَلِكِ النَّاسِ · إِلَٰهِ النَّاسِ · فِي صُدُورِ النَّاسِ · وَالنَّاسِ. Du sprichst es jedes Mal, wenn du Zuflucht suchst.',
+    '⚠️ النَّاس ist ein Sammelwort: die Form ist Einzahl, gemeint sind alle. Deshalb siehst du es fast immer mit اَلْ und nie mit Tanwīn — ein einzelner „Mensch" heißt رَجُلٌ oder إِنْسَانٌ, nicht نَاس.'
+  ],
+
+  /* مَطْعَمٌ - Restaurant */
+  '45916': [
+    '⭐ Die Wurzel ط ع م steht zweimal in deinem auswendigen Bereich: الَّذِي أَطْعَمَهُم مِّن جُوعٍ (106:4) und طَعَامِ الْمِسْكِينِ (107:3). Der مَطْعَم ist genau der Ort, an dem das geschieht.',
+    'Halte die beiden Wörter auseinander: طَعَامٌ ist das Essen selbst, مَطْعَمٌ der Ort dafür. Das مَـ macht den Unterschied — dieselbe Verwandlung wie bei مَطْبَخٌ (Küche) und مَكْتَبَةٌ (Bibliothek), die du beide hast.'
+  ],
+
+  /* شَيْخٌ - alter Mann / Gelehrter */
+  '45917': [
+    '⭐ Im Wissen ist der شَيْخ der Lehrer, von dem man überliefert; شَيْخُ الْإِسْلَامِ ist ein Ehrentitel. Das Wort meint beides zugleich — alt an Jahren und alt im Wissen —, und beide Bedeutungen stammen aus derselben Vorstellung.',
+    'Sein Gegenstück im Buch ist فَتًى, der junge Mann aus Kapitel 10. Das Alterspaar lohnt sich zusammen: fa-tan gegen šay-ḫ. Plural شُيُوخٌ, daneben gebräuchlich مَشَايِخُ.'
+  ],
+
+  /* أُسْتَاذَةٌ - Professorin */
+  '45918': [
+    '⚠️ Dieses Wort ist aus dem Persischen entlehnt und passt in kein arabisches Wurzelmuster — die Angabe أ س ت ذ ist nur eine Hilfszeile. Bei Lehnwörtern trägt der Klang, nicht die Ableitung: us-tā-ḏa.',
+    'Der Ort trennt die Titel: der مُدَرِّسٌ unterrichtet an der مَدْرَسَةٌ, die أُسْتَاذَةٌ an der جَامِعَةٌ — beide Orte hast du aus Kapitel 1 und 4. Wer sich den Ort merkt, verwechselt die Titel nicht.'
+  ],
+
+  /* امْرَأَةٌ - Frau */
+  '45919': [
+    '⭐ Belegt in al-Masad, die du auswendig kannst: وَامْرَأَتُهُ حَمَّالَةَ الْحَطَبِ — „und seine Frau, die Brennholzträgerin" (111:4). Dort steht das Wort schon mit Anhang: امْرَأَتُهُ, „seine Frau".',
+    '⚠️ Das Alif am Anfang ist ein Hilfsalif und verschwindet mit dem Artikel: امْرَأَةٌ allein, aber الْمَرْأَةُ mit اَلْ. Wer das nicht weiß, sucht die bestimmte Form vergeblich unter dem ا — sie steht unter dem م.'
+  ],
+
+  /* زَوْجٌ - Ehemann */
+  '45920': [
+    '⭐ Die Wurzel trägt das Wort für die Ehe selbst: الزَّوَاج, und der Ehevertrag heißt عَقْدُ الزَّوَاجِ. Wer heiratet, wird zum زَوْج — Wort und Lebensereignis hängen unmittelbar zusammen.',
+    '⚠️ زَوْجٌ heißt eigentlich „einer von einem Paar", nicht „Mann". Deshalb konnte es klassisch beide Seiten meinen. Heute gilt die einfache Regel: ohne ـة er, mit ـة sie — زَوْجٌ und زَوْجَةٌ, die du aus Kapitel 10 schon hast.'
+  ],
+
+  /* ══════ Kapitel 14 ══════ */
+
+  /* دُسْتُورٌ - Verfassung */
+  '45921': [
+    'Aus demselben Kapitel kommt مَحْكَمَةٌ dazu — und beide Wörter treffen sich in einem festen Begriff: الْمَحْكَمَةُ الدُّسْتُورِيَّةُ, das Verfassungsgericht. Zwei neue Vokabeln, ein Ausdruck.',
+    'Der Plural دَسَاتِيرُ folgt derselben Form wie فَنَادِقُ von فُنْدُقٌ aus Kapitel 16: vier Wurzelbuchstaben, langes ـِيـ vor dem Ende, und kein Tanwīn. Merk dir die beiden Fremdwörter als Paar, dann stimmt auch der Plural.'
+  ],
+
+  /* قِبْلَةٌ - Gebetsrichtung */
+  '45922': [
+    '⭐ Die Wurzel ق ب ل meint das Zuwenden, und du kennst sie aus mehreren Wörtern: اِسْتَقْبَلَ (empfangen, sich jemandem zuwenden) und مُسْتَقْبَل (Zukunft — das, was auf einen zukommt). Die قِبْلَة ist die Richtung, der man sich zuwendet.',
+    '⭐ Der Begriff تَحْوِيلُ الْقِبْلَةِ steht für ein bekanntes Ereignis: die Wende von Jerusalem zur كَعْبَة, die du aus Kapitel 5 hast. Wer das Ereignis kennt, hat auch das Wort.'
+  ],
+
+  /* مَحْكَمَةٌ - Gericht */
+  '45923': [
+    '⭐ Die Wurzel ح ك م trägt zwei der schönen Namen: الْحَكِيمُ (der Allweise) und الْحَكَمُ (der Richtende). Ein Urteil heißt حُكْمٌ — und die مَحْكَمَة ist der Ort, an dem eines gefällt wird.',
+    'Der Plural مَحَاكِمُ steht ohne Tanwīn, genau wie مَمَالِكُ von مَمْلَكَةٌ aus Kapitel 12. Beide Wörter beginnen mit مَـ, beide bilden denselben Plural, beide verlieren dabei das Tanwīn. Ein Muster für zwei Vokabeln.'
+  ],
+
+  /* حَفِيدٌ - Enkel */
+  '45924': [
+    '⭐ Die berühmtesten أَحْفَاد der islamischen Geschichte sind الْحَسَن und الْحُسَيْن, die Enkel des Propheten ﷺ über فَاطِمَة. Wenn du an die beiden denkst, hast du das Wort.',
+    'Bau die Leiter aus Wörtern, die du hast: أَبٌ (Vater, Kapitel 6) → اِبْنٌ (Sohn) → حَفِيدٌ (Enkel). Drei Generationen, drei Vokabeln — und nur die letzte ist neu.'
+  ],
+
+  /* حَدِيقَةٌ - Garten */
+  '45925': [
+    '⚠️ Im Deutschen heißen beide „Garten", im Arabischen nicht: حَدِيقَةٌ ist der Garten vor dem Haus oder der Park in der Stadt, جَنَّةٌ der Garten des Paradieses. Wer das trennt, verwechselt sie nie wieder.',
+    'Der Plural حَدَائِقُ geht wie حَقَائِبُ von حَقِيبَةٌ aus Kapitel 5 — dieselbe Form, dasselbe fehlende Tanwīn. Und weil die Singulare sich schon ähneln, lohnt es sich, die Plurale gleich mitzunehmen.'
+  ],
+
+  /* رَجَبٌ - Rajab (Monat) */
+  '45926': [
+    '⭐ رَجَب ist einer der أَشْهُرٌ حُرُمٌ, der vier heiligen Monate, in denen der Kampf verboten war — zusammen mit ذُو الْقَعْدَةِ, ذُو الْحِجَّةِ und مُحَرَّم. Damit steht das Wort in einer Reihe, die du schon kennst.',
+    'Am leichtesten über die Reihenfolge: رَجَب, dann شَعْبَان, dann رَمَضَان. Der dritte ist dir vertraut — zähl von ihm zwei zurück, dann steht رَجَب da.'
+  ],
+
+  /* اليُونَانُ - Griechenland */
+  '45927': [
+    'Das Fach, das über Jahrhunderte ins Arabische übersetzt wurde, heißt الْفَلْسَفَةُ الْيُونَانِيَّةُ — die griechische Philosophie. Die Zugehörigkeitsform يُونَانِيّ begegnet dir häufiger als der Ländername selbst.',
+    '⚠️ Nah dran und doch etwas ganz anderes: يُونُس ﷺ, der Prophet Jonas. Beide fangen mit يُو an, sonst haben sie nichts miteinander zu tun. Merk dir das ausdrücklich als Falle, sonst baust du sie dir später selbst.'
+  ],
+
+  /* مَطَارٌ - Flughafen */
+  '45928': [
+    '⭐ Belegt in al-Fīl, die du auswendig kannst: وَأَرْسَلَ عَلَيْهِمْ طَيْرًا أَبَابِيلَ — „und Er sandte gegen sie Vögel in Schwärmen" (105:3). طَيْر und مَطَار teilen die Wurzel ط ي ر; der Flughafen ist der Ort des Fliegens.',
+    'Im Alltag begegnet dir die Wurzel als طَيَرَان, das Fliegen: شَرِكَةُ طَيَرَانٍ ist eine Fluggesellschaft. Wer ein Ticket bucht, liest beide Wörter auf demselben Blatt.'
+  ],
+
+  /* كُلِّيَّةُ الطِّبِّ - medizinische Fakultät */
+  '45929': [
+    '⭐ الطِّبُّ النَّبَوِيُّ — die prophetische Medizin — ist ein feststehender Begriff und Buchtitel. Darin steht genau dieses Wort für Medizin, und darin steckt طَبِيبٌ (Arzt) aus Kapitel 1.',
+    '⚠️ Achte auf die Vokale von كُلِّيَّة: mit Šadda auf dem لّ ist es die Fakultät, von كُلّ (alles) — die Gesamtheit eines Fachs. Ohne Šadda und anders vokalisiert wäre كُلْيَة die Niere. Gleiche Buchstaben, zwei Welten.'
+  ],
+
+  /* كُلِّيَّةُ الهَنْدَسَةِ - Ingenieursfakultät */
+  '45930': [
+    'Ein Fach, zwei deutsche Wörter: هَنْدَسَة heißt sowohl Ingenieurwesen als auch Geometrie. Der Bogen dazwischen ist das Messen und Berechnen — die الْهَنْدَسَةُ الْمِعْمَارِيَّةُ ist die Architektur.',
+    '⚠️ Das Wort ist wie دُسْتُورٌ aus diesem Kapitel entlehnt und hat keine echte arabische Wurzel. Deshalb hilft kein Muster, und deshalb sieht es الْهِنْد (Indien) so verwirrend ähnlich, ohne verwandt zu sein.'
+  ],
+
+  /* كُلِّيَّةُ التِّجَارَةِ - Wirtschaftsfakultät */
+  '45931': [
+    '⭐ Ein bekannter Hadith gibt dem Wort ein Gesicht: التَّاجِرُ الصَّدُوقُ الْأَمِينُ مَعَ النَّبِيِّينَ وَالصِّدِّيقِينَ وَالشُّهَدَاءِ — „der ehrliche, vertrauenswürdige Händler ist mit den Propheten, den Wahrhaftigen und den Märtyrern" (Tirmiḏī).',
+    'Drei Wörter aus einem Stamm, verteilt über dein Buch: تَاجِرٌ (Händler, Kapitel 1), التِّجَارَة (der Handel, hier) und مَتْجَرٌ (der Laden, Kapitel 24). Der Stamm ت ج ر hält sie zusammen.'
+  ],
+
+  /* كُلِّيَّةُ الشَّرِيعَةِ - Fakultät für islamisches Recht */
+  '45932': [
+    '⭐ Die Grundbedeutung macht das Wort anschaulich: eine شَرِيعَة war ursprünglich der Weg hinunter zur Wasserstelle — der Zugang zu dem, wovon man lebt. Genau dieses Bild trägt der Begriff bis heute.',
+    '⚠️ Nicht dasselbe wie فِقْه: die شَرِيعَة ist das Offenbarte, der فِقْه das daraus erarbeitete Verständnis der Gelehrten. Die Fakultät heißt nach dem Ersten, gelehrt wird beides.'
+  ],
+
+  /* نَبِيٌّ - Prophet */
+  '45933': [
+    '⭐ Du kennst den Titel als feststehenden Ausdruck: خَاتَمُ النَّبِيِّينَ — „das Siegel der Propheten". Darin steht der Plural des Wortes, und der Ausdruck sagt dir zugleich, dass nach ihm ﷺ keiner mehr kam.',
+    '⚠️ نَبِيٌّ und رَسُولٌ (Kapitel 5) sind nicht dasselbe: jeder رَسُول ist ein نَبِيّ, aber nicht jeder نَبِيّ ist ein رَسُول. Der Unterschied liegt in der Sendung mit einer eigenen Botschaft.'
+  ],
+
+  /* ══════ Kapitel 15 ══════ */
+
+  /* أُسْبُوعٌ - Woche */
+  '45934': [
+    '⭐ Die Zahl steht in al-Mulk, die du auswendig kannst: الَّذِي خَلَقَ سَبْعَ سَمَاوَاتٍ طِبَاقًا — „Der sieben Himmel in Schichten erschaffen hat" (67:3). Dasselbe سَبْع steckt in أُسْبُوع.',
+    '⭐ Die Sieben trägt fast jede Handlung der عُمْرَة und des حَجّ: sieben Runden im طَوَاف, sieben Gänge beim سَعْي, sieben Steinchen beim Werfen. Wer die Riten kennt, hat die Zahl längst im Ohr.'
+  ],
+
+  /* ══════ Kapitel 16 ══════ */
+
+  /* نَهْرٌ - Fluss */
+  '45935': [
+    '⭐ In deinem auswendigen Bereich stehen dieselben drei Buchstaben mit einer ganz anderen Bedeutung: وَأَمَّا السَّائِلَ فَلَا تَنْهَرْ — „und was den Bettler angeht, so fahre ihn nicht an" (93:10). ⚠️ Kein Fluss weit und breit; merk dir beides nebeneinander, dann stolperst du später nicht.',
+    '⭐ Der Fluss, den du beim Namen kennst, ist الْكَوْثَر: إِنَّا أَعْطَيْنَاكَ الْكَوْثَرَ (108:1). Über das Bild des Flusses im Paradies hast du das Wort, ohne es einzeln lernen zu müssen.'
+  ],
+
+  /* بَحْرٌ - Meer */
+  '45936': [
+    '⭐ Ein Land trägt den Dual dieses Wortes im Namen: الْبَحْرَيْن — „die zwei Meere". Und die Begegnung von Mūsā ﷺ mit al-Ḫiḍr fand مَجْمَعَ الْبَحْرَيْنِ statt, am Zusammenfluss der beiden Meere.',
+    'Aus Kapitel 12 kennst du schon einen Ausdruck damit: الْبَحْرُ الْأَبْيَضُ الْمُتَوَسِّطُ, das Mittelmeer. Dort steht بَحْر an erster Stelle — du hast das Wort also gelesen, bevor es als Vokabel drankam.'
+  ],
+
+  /* فُنْدُقٌ - Hotel */
+  '45937': [
+    'Das Wort ist über das Griechische ins Arabische gekommen, aus einem Ausdruck für die Herberge des Fremden — dieselbe Wurzel des Wortes, aus dem im Italienischen „fondaco", das Handelshaus, wurde. Deshalb passt es in kein arabisches Muster.',
+    'Der Plural فَنَادِقُ geht wie دَسَاتِيرُ von دُسْتُورٌ aus Kapitel 14: vier Wurzelbuchstaben, langer Vokal vor dem Ende, kein Tanwīn. Zwei Lehnwörter, ein Pluralbau.'
+  ],
+
+  /* ══════ Kapitel 17 ══════ */
+
+  /* رَخِيصٌ - billig */
+  '45938': [
+    '⭐ Aus derselben Wurzel ر خ ص kommt رُخْصَةٌ, die Erleichterung — der Reisende darf das Gebet kürzen, der Kranke darf sitzen. Beides meint dasselbe: etwas ist leichter zu haben als sonst.',
+    'Sein Gegenstück ist غَالٍ (teuer) aus madina-2. Adjektivpaare lernt man am besten zu zweit — رَخِيص und غَالٍ gehören auf dieselbe Karteikarte im Kopf.'
+  ],
+
+  /* ══════ Kapitel 18 ══════ */
+
+  /* عَجَلَةٌ - Rad */
+  '45939': [
+    '⭐ Dieselbe Wurzel trägt die Eile — und einen Satz, den du kennst: الْعَجَلَةُ مِنَ الشَّيْطَانِ, „die Eile ist vom Satan". Ein Rad ist genau das, was schnell macht; Wort und Sprichwort hängen zusammen.',
+    '⚠️ Drei Wörter, drei Buchstaben ع ج ل: عَجَلَة das Rad, عَجَلَة die Eile — und عِجْل das Kalb, aus der Geschichte des goldenen Kalbes. Nur die Vokale trennen sie.'
+  ],
+
+  /* سَنَةٌ - Jahr */
+  '45940': [
+    '⚠️ Ein Buchstabe Unterschied im Klang, Welten im Sinn: سَنَةٌ ist das Jahr, السُّنَّة der Weg des Propheten ﷺ. Die Šadda auf dem نّ macht den ganzen Unterschied — sprich beide laut hintereinander.',
+    '⭐ Ein Jahr, das du beim Namen kennst: عَامُ الْفِيلِ, das Jahr des Elefanten, in dem der Prophet ﷺ geboren wurde. Dort steht عَام, das gleichbedeutende Wort — سَنَة und عَام wechseln sich ab.'
+  ],
+
+  /* مِسْطَرَةٌ - Lineal */
+  '45941': [
+    'Die Wurzel س ط ر ist die der Zeile: ein سَطْر ist eine geschriebene Zeile, und أَسَاطِيرُ الْأَوَّلِينَ — „die Schriften der Früheren" — ist ein Ausdruck, der im Koran mehrfach vorkommt. Das Lineal zieht genau das: die Zeile.',
+    'Zwei Werkzeuge desselben Tisches: مِسْطَرَةٌ zieht die Linie, قَلَمٌ (Kapitel 1) schreibt darauf. Beide beginnen mit dem Werkzeug-Zeichen, das du schon von مِفْتَاحٌ kennst.'
+  ],
+
+  /* سَبُّورَةٌ - Tafel */
+  '45942': [
+    'Nimm das Klassenzimmer als Ganzes: im فَصْلٌ (Kapitel 4) hängt die سَبُّورَةٌ, auf dem Tisch liegen مِسْطَرَةٌ, قَلَمٌ und كِتَابٌ. Fünf Wörter, ein Raum — so merkt man sie besser als einzeln.',
+    '⚠️ Die Šadda auf dem بّ trägt die Bedeutung nicht, aber die Aussprache: sab-bū-ra, mit hörbar doppeltem b und langem ū. Wer sie überspringt, sagt „sabūra" und schreibt es hinterher auch so.'
+  ],
+
+  /* رَكْعَةٌ - Gebetseinheit */
+  '45943': [
+    '⭐ Du zählst dieses Wort jeden Tag siebzehnmal: zwei رَكَعَات im الْفَجْر, vier im الظُّهْر, vier im الْعَصْر, drei im الْمَغْرِب und vier im الْعِشَاء. Die Vokabel ist längst Teil deines Tages.',
+    'Die Wurzel ر ك ع ist die der Verbeugung: الرُّكُوع ist die Verbeugung selbst, الرَّاكِع der, der sie vollzieht. Eine رَكْعَة heißt nach der Bewegung, die in ihr steckt.'
+  ]
 };
