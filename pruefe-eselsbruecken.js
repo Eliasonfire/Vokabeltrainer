@@ -341,7 +341,31 @@ console.log('=== 6. Dauerauftrag: neu freigeschaltete Kapitel ===');
       const m = z.match(/'([^']+)'\s*:\s*\[([^\]]*)\]/);
       if (m) frei[m[1]] = m[2].split(',').map(x => Number(x.trim())).filter(n => !Number.isNaN(n));
     });
-    const buecher = Object.keys(frei);
+    /* ⛔ NICHT gegen FREIGESCHALTET pruefen, sondern gegen den LERNSTAND.
+       Am 19.08.2026 gemessen: madina-2 ist vollstaendig freigeschaltet und
+       meldete "224 von 224 Woertern ohne Alternative" — also 448 Texte, die
+       niemand braucht. Elias steht bei madina-1 Kapitel 11.
+       Er selbst dazu: "es macht keinen sinn alle 4000 woerter einen vorschlag
+       zu machen weil wir wissen ja nicht wie in 2 jahren mein wissenstand ist."
+       [[kann_ist_nicht_ist]]
+       Abschnitt 7 macht es seit heute richtig; dieser hier ist aelter und
+       wurde nicht mitgezogen. */
+    const LERNFENSTER = 3;
+    let ANGABE = {};
+    {
+      const sd = path.join(WURZEL, 'data/lernstand.json');
+      if (fs.existsSync(sd)){
+        try { ANGABE = JSON.parse(fs.readFileSync(sd, 'utf8')).angabe || {}; }
+        catch (e){ console.log('  hinw data/lernstand.json nicht lesbar: ' + e.message); }
+      }
+    }
+    const buecher = Object.keys(frei).filter(b => {
+      if (ANGABE[b] === undefined){
+        console.log('  ⬜ ' + b + ': freigeschaltet, aber ohne Lernstand-Angabe — nicht eingefordert.');
+        return false;
+      }
+      return true;
+    });
     console.log('  freigeschaltet: ' + buecher.map(b => `${b} ${frei[b].join(',')}`).join(' | '));
 
     let gesamtOffen = 0, gesamtGeprueft = 0;
@@ -354,7 +378,9 @@ console.log('=== 6. Dauerauftrag: neu freigeschaltete Kapitel ===');
       const fenster = {};
       new Function('window', fs.readFileSync(path.join(WURZEL, datei), 'utf8'))(fenster);
       const liste = (fenster.VOKABELN && fenster.VOKABELN[slug]) || [];
-      const bekannteKapitel = liste.filter(w => frei[slug].includes(w.chapter));
+      /* Freigeschaltet UND im Fenster (Lernstand bis Lernstand+3). */
+      const imFenster = k => Number(k) <= Number(ANGABE[slug]) + LERNFENSTER;
+      const bekannteKapitel = liste.filter(w => frei[slug].includes(w.chapter) && imFenster(w.chapter));
       const fehlen = bekannteKapitel.filter(w => !ALT[w.id]);
       gesamtGeprueft += bekannteKapitel.length;
       gesamtOffen += fehlen.length;
@@ -532,9 +558,15 @@ console.log('=== 7. Anker: baut die Eselsbruecke auf etwas, das er SCHON hat? ==
       }
       if (bald.length){
         console.log(`  ⬜ ${spaeter} weitere Anker in ${bald.length} vorausgeschriebenen Woertern (Kapitel ueber seinem Stand):`);
-        bald.forEach(w => {
+        /* Nach Abstand ordnen — 18 Zeilen sehen sonst alle gleich schlimm aus.
+           +1 Kapitel ist praktisch harmlos (wer dort ankommt, ist eine Lektion
+           spaeter sowieso da), +10 ist etwas anderes. */
+        bald.map(w => {
           const a = [...w.anker.values()];
-          console.log(`     ${w.ar} (K${w.kap}) ← ` + a.map(x => `${x.anker} K${x.kap}`).join(', '));
+          return { w, a, weit: Math.max(...a.map(x => x.kap - w.kap)) };
+        }).sort((x, y) => y.weit - x.weit).forEach(({ w, a, weit }) => {
+          console.log(`     +${String(weit).padStart(2)} Kapitel  ${w.ar} (K${w.kap}) ← ` +
+            a.map(x => `${x.anker} K${x.kap}`).join(', '));
         });
         hinweise.push(`${spaeter} Anker in ${bald.length} vorausgeschriebenen Woertern zeigen auf spaetere Kapitel — kein akuter Fehler, aber vor der Freischaltung zu ersetzen.`);
       }
