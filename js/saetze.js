@@ -42,16 +42,68 @@ function saetzeZumThema(themaId){
   });
 }
 
+/* Waehler statt Wischstreifen — Elias' Entscheidung vom 19.08.2026 (Entwurf A3).
+   Sein Grund war die Zukunft, nicht die heutige Groesse: „gerade auch für die
+   zukunft wenn mehr und mehr sachen dazu kommen ist das die beste lösung."
+   Der alte Streifen wuchs waagerecht mit jedem Thema; ein Blatt waechst nach
+   unten, und senkrecht zu rollen ist die Geste, die man ohnehin macht. */
 function renderThemenLeiste(){
-  const leiste = document.getElementById('sentThemen');
-  if (!leiste || typeof SATZ_THEMEN === 'undefined') return;
-  leiste.innerHTML = SATZ_THEMEN.map(t=>{
+  const blatt = document.getElementById('themenBlatt');
+  if (!blatt || typeof SATZ_THEMEN === 'undefined') return;
+  blatt.innerHTML = SATZ_THEMEN.map(t=>{
     const n = saetzeZumThema(t.id).length;
     /* Die Zahl steht dran, weil sie die Erwartung setzt: "Iḍāfa 16" sagt
        vorher, dass es ein kleines Thema ist, statt es hinterher zu zeigen. */
-    return `<button class="sent-thema${t.id===SATZ_THEMA?' active':''}" data-thema="${t.id}">`
-         + `${escapeHtml(t.name)}<i>${n}</i></button>`;
+    return `<button class="zeile${t.id===SATZ_THEMA?' aktiv':''}${n?'':' leer'}" type="button" data-thema="${t.id}">`
+         + `<span class="links"><span class="ar">${escapeHtml(t.name)}</span></span>`
+         + `<span class="n">${n}</span></button>`;
   }).join('');
+  /* Der Knopf muss ohne Aufklappen sagen, was gerade gilt — sonst hat man
+     eine Ebene gewonnen und eine Auskunft verloren. */
+  const jetzt = SATZ_THEMEN.find(t=>t.id===SATZ_THEMA);
+  const wert = document.getElementById('themenWert');
+  const zahl = document.getElementById('themenZahl');
+  if (wert) wert.textContent = jetzt ? jetzt.name : 'Thema wählen';
+  if (zahl) zahl.textContent = jetzt ? `${saetzeZumThema(jetzt.id).length} Sätze` : '';
+}
+
+/* Auf- und zuklappen. `aria-expanded` traegt zugleich den Pfeil (CSS) — ein
+   Zustand an einer Stelle, nicht zwei, die auseinanderlaufen koennen. */
+function blattUmschalten(knopfId, blattId, offen){
+  const knopf = document.getElementById(knopfId);
+  const blatt = document.getElementById(blattId);
+  if (!knopf || !blatt) return;
+  const auf = (offen === undefined) ? blatt.classList.contains('hidden') : offen;
+  blatt.classList.toggle('hidden', !auf);
+  knopf.setAttribute('aria-expanded', auf ? 'true' : 'false');
+  if (!auf) return;
+  blatt.scrollTop = 0;
+  /* ⛔ Der Deckel muss aus dem PLATZ kommen, nicht aus einer festen Zahl —
+     und „Platz" endet nicht am Fensterrand.
+
+     Zwei Anlaeufe, beide am 19.08.2026 auf 375×812:
+       `max-height:60vh`   -> Blatt 487 px hoch, Unterkante bei 867 px, also
+                              55 px UNTER dem Bildschirmrand.
+       Fensterhoehe minus   -> Unterkante 796 px, meine Pruefung sagte „passt".
+       Blattanfang            Elias schickte ein Bildschirmfoto: die letzte
+                              Gruppe stand hinter Zurueck/Weiter.
+
+     ⭐ `.sent-nav` und `.ueb-fuss` sind `position:fixed` und schweben ueber
+     dem Inhalt. Sie kosten keinen Platz im Layout und tauchen in keiner
+     Hoehenrechnung auf — sie verdecken einfach. Deshalb wird hier ihre
+     OBERKANTE gemessen und als Grenze genommen, nicht innerHeight.
+     [[milder_bezugspunkt_verdeckt_mangel]]: „passt auf den Schirm" war die
+     falsche Frage, „passt ueber die Leiste" ist die richtige. */
+  const oben = blatt.getBoundingClientRect().top;
+  let grenze = window.innerHeight;
+  document.querySelectorAll('.sent-nav, .ueb-fuss').forEach(el=>{
+    const r = el.getBoundingClientRect();
+    /* Hoehe 0 heisst versteckt — waehrend einer Uebung steht .ueb-fuss statt
+       .sent-nav, und umgekehrt. */
+    if (r.height > 0 && r.top > oben && r.top < grenze) grenze = r.top;
+  });
+  const platz = Math.max(200, Math.round(grenze - oben - 12));
+  blatt.style.maxHeight = platz + 'px';
 }
 
 function setzeThema(themaId){
@@ -79,9 +131,16 @@ function openSentences(){
   renderSentence();
 }
 
-document.getElementById('sentThemen').addEventListener('click', (e)=>{
+document.getElementById('themenWaehler').addEventListener('click', ()=>{
+  blattUmschalten('themenWaehler', 'themenBlatt');
+});
+document.getElementById('themenBlatt').addEventListener('click', (e)=>{
   const knopf = e.target.closest('[data-thema]');
-  if (knopf) setzeThema(knopf.dataset.thema);
+  if (!knopf) return;
+  setzeThema(knopf.dataset.thema);
+  /* Nach der Wahl zu. Ein Blatt, das offen bleibt, verdeckt genau den Satz,
+     den man gerade sehen wollte. */
+  blattUmschalten('themenWaehler', 'themenBlatt', false);
 });
 
 /* Woher stammt der Satz? Bei Lehrbuchsaetzen ist die Seite die eigentliche

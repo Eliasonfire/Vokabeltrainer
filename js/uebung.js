@@ -524,18 +524,52 @@ function uebungenAufbauen(){
   return nachModus;
 }
 
+/* Waehler mit Gruppen — Elias' Entscheidung vom 19.08.2026 (Entwurf B3).
+   Gruppiert wird nach dem Feld `art`, das die Modi ohnehin tragen: die
+   Ueberschrift sagt, WAS man tun muss, bevor man den Namen liest.
+
+   ⛔ Der alte Streifen war 2061 px breit bei 13 Modi. Jeder neue Modus
+   verlaengerte den Wischweg, ohne dass mehr zu sehen war — genau das, was
+   Elias dreimal gemeldet hat. */
+const UEB_GRUPPEN = [
+  ['Antippen',         'tippen'],
+  ['Mehrere antippen', 'mehrfach'],
+  ['Auswählen',        'wahl']
+];
+
 function renderUebungsLeiste(){
-  const leiste = document.getElementById('uebModi');
-  if (!leiste) return;
+  const blatt = document.getElementById('uebBlatt');
+  if (!blatt) return;
   const alle = uebungenAufbauen();
-  leiste.innerHTML = UEBUNGEN.map(m=>{
+  const zeile = m => {
     const n = alle[m.id].length;
     /* Die Zahl steht dran, auch wenn sie 0 ist. Elias' Auflage: ein Modus
        ohne Fragen sagt das ehrlich, statt ins Leere zu laufen. */
-    return `<button class="ueb-modus${UEB.modus===m.id?' active':''}${n?'':' leer'}" data-uebmodus="${m.id}"`
+    return `<button class="zeile${UEB.modus===m.id?' aktiv':''}${n?'':' leer'}" type="button" data-uebmodus="${m.id}"`
          + `${n?'':' title="In dieser Auswahl gibt es dazu keine Frage."'}>`
-         + `${escapeHtml(m.name)}<i>${n}</i></button>`;
+         + `<span class="links"><span class="ar">${escapeHtml(m.name)}</span></span>`
+         + `<span class="n">${n}</span></button>`;
+  };
+  /* ⚠️ Erst die bekannten Gruppen, danach alles, was in keine passt. Ohne den
+     Rest-Zweig wuerde ein neuer Modus mit unbekannter `art` lautlos
+     verschwinden — und das ist die Sorte Fehler, die niemand meldet. */
+  const vergeben = new Set();
+  let html = UEB_GRUPPEN.map(([titel, art])=>{
+    const teil = UEBUNGEN.filter(m=>m.art===art);
+    teil.forEach(m=>vergeben.add(m.id));
+    if (!teil.length) return '';
+    return `<div class="gruppe">${escapeHtml(titel)}</div>` + teil.map(zeile).join('');
   }).join('');
+  const rest = UEBUNGEN.filter(m=>!vergeben.has(m.id));
+  if (rest.length) html += '<div class="gruppe">Weitere</div>' + rest.map(zeile).join('');
+  blatt.innerHTML = html;
+
+  const jetzt = UEBUNGEN.find(m=>m.id===UEB.modus);
+  const wert = document.getElementById('uebWert');
+  const zahl = document.getElementById('uebZahl');
+  if (wert) wert.textContent = jetzt ? jetzt.name : 'Modus wählen';
+  if (zahl) zahl.textContent = jetzt ? `${alle[jetzt.id].length} Fragen`
+                                    : `${UEBUNGEN.length} Modi`;
 }
 
 function uebungStarten(modusId){
@@ -710,11 +744,16 @@ function uebungWeiter(){
 }
 
 /* ---------- Verdrahtung ---------- */
-document.getElementById('uebModi').addEventListener('click', (e)=>{
+document.getElementById('uebWaehler').addEventListener('click', ()=>{
+  blattUmschalten('uebWaehler', 'uebBlatt');
+});
+document.getElementById('uebBlatt').addEventListener('click', (e)=>{
   const knopf = e.target.closest('[data-uebmodus]');
   if (!knopf) return;
   const id = knopf.dataset.uebmodus;
   if (UEB.modus === id) uebungBeenden(); else uebungStarten(id);
+  /* Zu — sonst steht das Blatt ueber der Aufgabe, die es gerade gestartet hat. */
+  blattUmschalten('uebWaehler', 'uebBlatt', false);
 });
 document.getElementById('uebSatz').addEventListener('click', (e)=>{
   const span = e.target.closest('[data-uebidx]');
