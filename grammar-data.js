@@ -2006,6 +2006,24 @@ const SENTENCE_TAGS = {
   ],
   "mb1-58-1": [
     { ruleId: "possessiv-endungen-01", matchText: "قَلَمُكَ" }
+  ],
+  "45899": [
+    { ruleId: "possessiv-ist-idafa-01", matchText: "زَمِيلِي" },
+    { ruleId: "nat-bestimmtheit-01", matchText: "جَدِيدٌ" }
+  ],
+  "45900": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "زَوْجَةُ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "التَّاجِرِ" }
+  ],
+  "45901": [
+    { ruleId: "nat-bestimmtheit-01", matchText: "الصَّغِيرُ" }
+  ],
+  "45902": [
+    { ruleId: "alif-maqsura-unveraenderlich-01", matchText: "الْفَتَى" }
+  ],
+  "45903": [
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "أَحَبَّ" },
+    { ruleId: "possessiv-ist-idafa-01", matchText: "أُمَّهُ" }
   ]
 };
 
