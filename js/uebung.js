@@ -331,12 +331,30 @@ const UEBUNGEN = [
       tags.forEach(({t, rule})=>{
         /* Die Markierung sitzt auf einem Textstueck, nicht auf einem Wortindex —
            gesucht ist das Wort, in dem sie steckt. Erst wortgleich, dann
-           enthalten. Eine Markierung ueber MEHRERE Woerter (Leerzeichen darin)
-           laesst sich auf kein einzelnes Wort hervorheben und wird
-           uebersprungen, statt willkuerlich das erste zu nehmen. */
-        if (/\s/.test(t.matchText)) return;
-        let idx = z.findIndex(zeile=>zeile.rein === t.matchText);
-        if (idx < 0) idx = z.findIndex(zeile=>zeile.wort.includes(t.matchText));
+           enthalten.
+
+           ⭐ Seit dem 19.08.2026 auch als WORTFOLGE: eine Markierung ueber
+           mehrere Woerter (فِي الْحَقِيبَةِ) wurde vorher uebersprungen — damit
+           fielen 21 der 95 Regeln komplett aus diesem Modus heraus und
+           bekaemen nie einen Messwert in vt_regelStand. Elias' Auswahl saehe
+           sie als „nie geuebt", obwohl sie nie GEFRAGT werden konnten.
+           Gesucht werden aufeinanderfolgende Woerter, deren `rein` (ohne
+           Satzzeichen, mit Harakat) der Folge entspricht. */
+        const mtWorte = String(t.matchText).trim().split(/\s+/);
+        let idx = -1, bis = -1;
+        if (mtWorte.length === 1){
+          idx = z.findIndex(zeile=>zeile.rein === t.matchText);
+          if (idx < 0) idx = z.findIndex(zeile=>zeile.wort.includes(t.matchText));
+          bis = idx;
+        } else {
+          for (let s = 0; s + mtWorte.length <= z.length; s++){
+            let passt = true;
+            for (let k = 0; k < mtWorte.length; k++){
+              if (z[s+k].rein !== mtWorte[k] && !z[s+k].wort.includes(mtWorte[k])){ passt = false; break; }
+            }
+            if (passt){ idx = s; bis = s + mtWorte.length - 1; break; }
+          }
+        }
         if (idx < 0) return;
         /* ⚠️ Traegt dasselbe Wort mehrere Markierungen, ist die Frage nicht
            beantwortbar - dann sind zwei Antworten gleich richtig. Beim ersten
@@ -351,8 +369,10 @@ const UEBUNGEN = [
         if (ablenker.length < 2) return;   // sonst ist es keine Wahl
         const optionen = shuffle([rule, ...ablenker]).map(r=>({ wert:r.id, text:r.name }));
         out.push({
-          frage:'Welche Regel wird am hervorgehobenen Wort sichtbar?',
-          wortIdx:idx, optionen, loesung:rule.id,
+          frage: bis > idx ? 'Welche Regel wird an der hervorgehobenen Stelle sichtbar?'
+                           : 'Welche Regel wird am hervorgehobenen Wort sichtbar?',
+          wortIdx:idx, wortIdxBis: bis > idx ? bis : undefined,
+          optionen, loesung:rule.id,
           aufloesung:rule.name,
           /* Fuer den Fortschritt je Regel (19.08.2026). Steht ausdruecklich
              als eigenes Feld da und nicht als `loesung`: `loesung` ist die
@@ -561,9 +581,16 @@ function uebungAktuell(){ return UEB.liste[UEB.idx] || null; }
 function uebungSatzHtml(a){
   return a.zeilen.map((t,i)=>{
     const gewaehlt = UEB.gewaehlt.has(i);
-    const ziel = a.ziele ? a.ziele.includes(i) : (a.wortIdx === i);
+    /* wortIdxBis: der Modus „Welche Regel?" kann seit dem 19.08.2026 eine
+       WORTFOLGE hervorheben (فِي الْحَقِيبَةِ). Alles zwischen wortIdx und
+       wortIdxBis gehoert zur Stelle — auch fuer die Gruen-Faerbung nach der
+       Antwort. verdeckt/ohneEndung unten bleiben bewusst am einzelnen
+       wortIdx: die Modi, die sie nutzen, setzen nie einen Bereich. */
+    const imBereich = (a.wortIdxBis != null)
+      ? (i >= a.wortIdx && i <= a.wortIdxBis) : (a.wortIdx === i);
+    const ziel = a.ziele ? a.ziele.includes(i) : imBereich;
     let klassen = 'ueb-wort';
-    if (a.wortIdx === i) klassen += ' hervor';
+    if (imBereich) klassen += ' hervor';
     if (gewaehlt) klassen += ' gewaehlt';
     if (UEB.beantwortet && ziel) klassen += ' richtig';
     if (UEB.beantwortet && gewaehlt && !ziel) klassen += ' falsch';
