@@ -311,6 +311,9 @@
      danach misst js/darstellung.js sie und setzt sie genau. Die drei
      schwebenden Leisten (.sent-nav, .ueb-fuss, .wz-nav) sitzen darauf. */
   --leiste-unten:66px;
+  /* Wie stark Verdecktes verschwimmt. In em, damit es mit der Schrift
+     waechst — 7px waren beim Korantext zu wenig zum Lesenverhindern. */
+  --verdeck-unschaerfe:0.42em;
 }
 
 /* =====================================================================
@@ -2633,11 +2636,21 @@ main{
 /* Ein auswendig gelernter Vers wird im Verdecken-Modus unlesbar gemacht, bis
    man ihn antippt - das ist der eigentliche Selbsttest. Kein display:none:
    der Vers soll seinen Platz behalten, damit die Seite nicht springt. */
-.verse-ar.verdeckt{
-  filter:blur(7px);cursor:pointer;user-select:none;
+/* ⚠️ Die Unschaerfe steht in `em`, nicht in `px`. Sie war 7px fest — bei
+   der grossen Koranschrift reichte das nicht, Elias konnte "wenn man genau
+   hinsieht" noch mitlesen. In `em` waechst sie mit der Schrift mit, und
+   derselbe Wert taugt fuer den Korantext wie fuer den Beispielsatz. */
+.verse-ar.verdeckt,
+.arabic-sentence.verdeckt{
+  filter:blur(var(--verdeck-unschaerfe));cursor:pointer;user-select:none;
   transition:filter var(--dur-2) ease;
 }
-.verse-ar.verdeckt:hover{filter:blur(5px);}
+/* Beim Zeigen nur ein wenig klarer — genug, um zu merken, dass es aufgeht,
+   zu wenig, um zu schummeln. */
+.verse-ar.verdeckt:hover,
+.arabic-sentence.verdeckt:hover{filter:blur(calc(var(--verdeck-unschaerfe) * .82));}
+/* Ein eingeschalteter Rundknopf traegt dieselbe Farbe wie ein aktiver Reiter. */
+.round-btn.an{background:var(--red-wash);border-color:var(--red-dim);color:var(--red-bright);}
 /* Auswendige Verse haben BEWUSST keinen grünen Rahmen mehr (10.08.2026).
    Elias: "dass die ayaht nicht mit einem grünen Rahmen sind, sondern einfach
    nur mit diesem grünen Kästchen sind, dass einfach grün ist. Ansonsten diese
@@ -3706,6 +3719,9 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         <div class="sent-controls">
           <button class="round-btn" id="btnSentSpeak" title="Satz hören" aria-label="Satz hören">
             <svg class="ic"><use href="#ic-speaker"/></svg>
+          </button>
+          <button class="round-btn" id="btnSentVerdeckt" title="Satz verdecken — zuhören und prüfen" aria-label="Satz verdecken" aria-pressed="false">
+            <svg class="ic"><use href="#ic-auge"/></svg>
           </button>
           <button class="round-btn" id="btnSentOther" title="Anderer Satz mit diesem Wort" aria-label="Anderer Satz mit diesem Wort">
             <svg class="ic"><use href="#ic-shuffle"/></svg>

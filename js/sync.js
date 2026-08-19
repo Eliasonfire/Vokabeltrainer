@@ -380,10 +380,24 @@ async function gleicheAb(still){
 
 /* Gebuendelt statt sofort: KV erlaubt im Gratistarif 1.000 Schreibvorgaenge am
    Tag. Nach jeder Karte zu senden waere bei 138 faelligen Woertern schon eine
-   Runde am Limit. Zehn Sekunden Ruhe nach der letzten Aenderung reichen. */
+   Runde am Limit.
+
+   ⭐ Am 19.08.2026 von zehn Sekunden auf fuenf Minuten verlaengert. Elias:
+   „vielleicht will ich nur mal kurz rein gucken oder was testen. da sind 5 min
+   denke ich besser bevor was in gang gesetzt wird."
+
+   Der Grund ist nicht das Schreibkontingent, sondern die Absicht: ein Blick in
+   die App ist noch keine Entscheidung. Wer ein Kapitel antippt und es gleich
+   wieder abwaehlt, soll damit keine Wartungsroutine ausloesen.
+
+   ⚠️ Gefahrlos NUR wegen der Sicherung weiter unten: `visibilitychange`
+   bricht die Wartezeit ab und gleicht sofort ab, sobald die App weggelegt
+   wird. Ohne die waere jede Aenderung fuenf Minuten lang ungesichert — und
+   auf dem Handy wird eine App selten fuenf Minuten lang bewusst geschlossen. */
+const SYNC_WARTEZEIT = 5 * 60 * 1000;
 function planeAbgleich(){
   clearTimeout(SYNC_GEPLANT);
-  SYNC_GEPLANT = setTimeout(()=> gleicheAb(true), 10000);
+  SYNC_GEPLANT = setTimeout(()=> gleicheAb(true), SYNC_WARTEZEIT);
 }
 
 /* Von aussen aufrufbar - LS.set() in js/kern.js meldet JEDE Speicherung hierher.

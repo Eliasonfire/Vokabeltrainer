@@ -318,6 +318,9 @@ function renderSentence(){
   document.getElementById('sentChapter').textContent = herkunft(w);
   document.getElementById('sentAr').innerHTML = buildSentenceHtml(w);
   document.getElementById('sentDe').textContent = w.sentDe || '';
+  /* Jeder neue Satz kommt wieder verdeckt — sonst waere das Aufdecken des
+     vorigen ein Freifahrtschein fuer alle folgenden. */
+  verdeckungAnwenden();
   document.getElementById('sentPos').textContent = `${SENT.idx+1} / ${SENT.list.length}`;
 
   const qBox = document.getElementById('sentQuranBox');
@@ -351,6 +354,49 @@ document.getElementById('btnSentPrev').addEventListener('click', ()=>{
 document.getElementById('btnSentNext').addEventListener('click', ()=>{
   blaettere(1);
 });
+/* ---------- Satz verdecken und hoeren ----------
+
+   Elias am 19.08.2026: „wie beim quran lesen die sätze verdecken kann und dann
+   zuhören … so kann ich ganze sätze trainieren und gucken, ob ich den satz
+   richtig verstanden habe."
+
+   ⭐ Bewusst dieselbe Bauart wie im Quran-Leser: verschwommen, und ein Tipp auf
+   den Satz deckt genau ihn auf. Wer die Geste dort kennt, kennt sie hier.
+
+   ⚠️ Die deutsche Uebersetzung bleibt STEHEN. Sie ist die Aufgabe: er hoert das
+   Arabische, liest die Bedeutung und prueft, ob er es zusammenbekommt. Beides
+   zu verdecken waere kein Selbsttest, sondern nur Raten. */
+function verdeckungAnwenden(){
+  const satz = document.getElementById('sentAr');
+  const knopf = document.getElementById('btnSentVerdeckt');
+  if (!satz || !knopf) return;
+  const an = !!SETTINGS.satzVerdeckt;
+  satz.classList.toggle('verdeckt', an);
+  knopf.classList.toggle('an', an);
+  knopf.setAttribute('aria-pressed', an ? 'true' : 'false');
+  knopf.title = an ? 'Verdecken aus' : 'Satz verdecken — zuhören und prüfen';
+}
+
+document.getElementById('btnSentVerdeckt').addEventListener('click', ()=>{
+  SETTINGS.satzVerdeckt = !SETTINGS.satzVerdeckt;
+  saveSettings();
+  verdeckungAnwenden();
+  /* Beim Einschalten gleich vorlesen: das ist der ganze Zweck, und ein
+     zusaetzlicher Griff zum Lautsprecher waere nur im Weg. */
+  if (SETTINGS.satzVerdeckt && SENT.list.length && typeof speakArabic === 'function')
+    speakArabic(SENT.list[SENT.idx].sentAr);
+});
+
+/* Antippen deckt genau diesen Satz auf, ohne den Modus zu verlassen — der
+   naechste kommt wieder verdeckt. Zweites Antippen verdeckt ihn erneut. */
+document.getElementById('sentAr').addEventListener('click', (e)=>{
+  if (!SETTINGS.satzVerdeckt) return;
+  /* ⛔ Nicht auf ein markiertes Wort: dort haengt schon das Grammatik-Popup,
+     und zwei Bedeutungen an einem Tipp schlagen sich. */
+  if (e.target.closest('.gram-underline')) return;
+  document.getElementById('sentAr').classList.toggle('verdeckt');
+});
+
 document.getElementById('btnSentSpeak').addEventListener('click', ()=>{
   speakArabic(SENT.list[SENT.idx].sentAr);
 });
