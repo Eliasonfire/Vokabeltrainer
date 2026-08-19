@@ -276,6 +276,22 @@ laden('data/eselsbruecken.js');
 laden('data/eselsbruecken-alt.js');
 laden('data/buecher.js');
 const hatSaetze = laden('data/beispielsaetze.js', false);
+/* ⛔⛔ Am 19.08.2026 dazu, nach Elias' Ansage: „die neuen vokabeln müssen auch
+   automatisch in den satzmodus und in die kategorien direkt automatisch
+   eingetragen werden … alles muss automatisch ablaufen sobald neue kapiteln
+   freigeschaltet wurden."
+
+   Bis dahin mass dieses Werkzeug ZWEI von vier Dingen: hat das Wort drei
+   Eselsbruecken, hat es einen Beispielsatz. Es mass NICHT, ob der Satz
+   ueberhaupt erreichbar ist und ob das Wort in einer Kategorie steht.
+
+   Und genau das ist durchgefallen: die fuenf Saetze, die ich am selben
+   Nachmittag geschrieben habe, hatten KEINE Markierung. Sie standen damit nur
+   unter „Alle", in keinem Thema, und erzeugten keine einzige Uebungsaufgabe —
+   waehrend `vorrat.mjs` „alle 154 vollstaendig" meldete.
+   [[daten_ohne_zugang]]: eingetragen ist nicht erreichbar. */
+laden('grammar-data.js');
+laden('wortfelder-data.js', false);
 
 const VOCAB   = hol('VOCAB_DATA') || [];
 const BUCH_EB = hol('BUCH_ESELSBRUECKEN') || {};
@@ -305,6 +321,29 @@ function hatSatz(id){
   if (e && e.sentAr && String(e.sentAr).trim()) return true;
   const s = SAETZE[id];
   return !!(s && s.sentAr && String(s.sentAr).trim());
+}
+
+/* ⛔⛔ „Hat einen Satz" ist NICHT „ist erreichbar".
+   Am 19.08.2026 hatte dieses Werkzeug „alle 154 vollstaendig" gemeldet,
+   waehrend die fuenf frisch verfassten Saetze in KEINEM Thema standen und
+   NULL Uebungsaufgaben erzeugten: ihnen fehlten die Markierungen.
+   Ein Satz ohne Markierung erscheint nur unter „Alle" — dort sieht ihn
+   niemand, der ein Thema gewaehlt hat. [[daten_ohne_zugang]] */
+const TAGS = hol('SENTENCE_TAGS') || {};
+function satzErreichbar(id){
+  const t = TAGS[String(id)];
+  return Array.isArray(t) && t.length > 0;
+}
+
+/* Und dasselbe fuer die Kategorien. ⚠️ Die Wortfelder sind LAENGST automatisch:
+   WORTFELDER traegt `typ:'noun'` usw. direkt aus dem Abzug, die Zuordnung
+   passiert von selbst. Gemessen wird trotzdem — ein Wort, dessen `type` fehlt
+   oder unbekannt ist, faellt sonst lautlos aus jeder Kategorie. */
+const FELDER = hol('WORTFELDER') || [];
+const FELD_TYPEN = new Set(FELDER.filter(f => f.typ).map(f => f.typ));
+function hatKategorie(w){
+  if (!FELDER.length) return true;          /* Datei fehlt: nicht behaupten */
+  return FELD_TYPEN.has(w.type || w.wordType);
 }
 
 /* ---------- Hauptteil ---------- */
@@ -489,20 +528,27 @@ BUECHER.forEach(b => {
     const id = String(w.id);
     const n = vorschlagsZahl(id, w);
     const s = hatSatz(id);
-    if (n < 3 || !s)
+    /* Nur sinnvoll, wenn es ueberhaupt einen Satz gibt: ohne Satz fehlt die
+       Markierung zwangslaeufig, und sie zweimal zu melden hilft niemandem. */
+    const m = s ? satzErreichbar(id) : true;
+    const kat = hatKategorie(w);
+    if (n < 3 || !s || !m || !kat)
       offen.push({ slug: b.slug, kapitel: Number(w.chapter), id, ar: w.ar, de: w.de,
                    hat: n, fehltEB: Math.max(0, 3 - n), fehltSatz: !s,
-                   root: w.root, pl: w.plural });
+                   fehltMarkierung: s && !m, fehltKategorie: !kat,
+                   root: w.root, pl: w.plural, type: w.type });
   });
 });
 
 const fehlendeEB   = offen.reduce((s, w) => s + w.fehltEB, 0);
 const fehlendeSatz = offen.filter(w => w.fehltSatz).length;
+const fehlendeMark = offen.filter(w => w.fehltMarkierung).length;
+const fehlendeKat  = offen.filter(w => w.fehltKategorie).length;
 
 if (KNAPP){
   console.log(offen.length
-    ? `Vorrat: ${offen.length} von ${geprueft} freigeschalteten Woertern unvollstaendig — ${fehlendeEB} Eselsbruecken, ${fehlendeSatz} Beispielsaetze fehlen. (Freischaltstand ${datum})`
-    : `Vorrat: alle ${geprueft} freigeschalteten Woerter haben drei Eselsbruecken und einen Beispielsatz. (Freischaltstand ${datum})`);
+    ? `Vorrat: ${offen.length} von ${geprueft} freigeschalteten Woertern unvollstaendig — ${fehlendeEB} Eselsbruecken, ${fehlendeSatz} Beispielsaetze, ${fehlendeMark} Markierungen, ${fehlendeKat} Kategorien fehlen. (Freischaltstand ${datum})`
+    : `Vorrat: alle ${geprueft} freigeschalteten Woerter haben drei Eselsbruecken, einen Beispielsatz, Markierungen und eine Kategorie. (Freischaltstand ${datum})`);
   process.exit(offen.length ? 2 : 0);
 }
 
@@ -523,6 +569,8 @@ console.log('  vollstaendig:             ' + (geprueft - offen.length));
 console.log('  unvollstaendig:           ' + offen.length);
 console.log('    fehlende Eselsbruecken: ' + fehlendeEB);
 console.log('    fehlende Beispielsaetze:' + fehlendeSatz);
+console.log('    fehlende Markierungen:  ' + fehlendeMark + (fehlendeMark ? '   ⛔ diese Saetze stehen in KEINEM Thema' : ''));
+console.log('    ohne Kategorie:         ' + fehlendeKat);
 
 if (offen.length){
   const jeKap = {};
