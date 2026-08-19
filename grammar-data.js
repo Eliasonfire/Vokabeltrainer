@@ -1085,7 +1085,7 @@ const GRAMMAR_RULES = [
   {
     "id": "li-vs-inda-01",
     "name": "لِ oder عِنْدَ? Untrennbar gegen trennbar",
-    "shortExplanation": "Beide heißen auf Deutsch „ich habe\", aber sie sind nicht austauschbar — der Lehrer nennt das ausdrücklich „eine wichtige Regel\". **لِ steht für Dinge, die untrennbar zu einem gehören**: Verwandtschaftsbande (Geschwister, Eltern, Kinder) und Körperteile. **عِنْدَ steht für Dinge, die man von sich trennen kann.** Seine Gegenüberstellung, arabisch gesprochen: „naqūlu ʿindī kitābun, wa-naqūlu lī aḫun, wa-lā naqūlu ʿindī aḫun\" — wir sagen „bei mir ist ein Buch\" und wir sagen „mir gehört ein Bruder\", aber wir sagen NICHT „bei mir ist ein Bruder\". Wörtlich unterscheidet er auch die Bedeutung: عِنْدَ heißt „bei mir ist\", لِ heißt „mir gehört\". ⚠️ Die Beispielsätze stehen hier in Umschrift: عِنْدِي und لِي sind im vorhandenen Wortbestand nicht vokalisiert belegt, und eine Ḥaraka ohne Beleg wird nicht gesetzt.",
+    "shortExplanation": "Beide heißen auf Deutsch „ich habe\", aber sie sind nicht austauschbar — der Lehrer nennt das ausdrücklich „eine wichtige Regel\". **لِ steht für Dinge, die untrennbar zu einem gehören**: Verwandtschaftsbande (Geschwister, Eltern, Kinder) und Körperteile. **عِنْدَ steht für Dinge, die man von sich trennen kann.** Seine Gegenüberstellung: wir sagen عِنْدِي كِتَابٌ „bei mir ist ein Buch\" und wir sagen لِي أَخٌ „mir gehört ein Bruder\" — aber wir sagen NICHT عِنْدِي أَخٌ. Wörtlich unterscheidet er auch die Bedeutung: عِنْدَ heißt „bei mir ist\", لِ heißt „mir gehört\".",
     "color": "idafa",
     "kapitel": 10,
     "source": {

@@ -188,6 +188,7 @@ const SICHERUNGS_SCHLUESSEL = [
   'vt_hoerTag',   /* Tageszaehler Hoermodus, 17.08.2026 */
   'vt_bekannt',   /* „Kenne ich schon" — seine Auswahl, nicht wiederherstellbar */
   'vt_vorschlagNr', /* welcher Eselsbrücken-Vorschlag gilt (18.08.2026) — dito */
+  'vt_vorschlagWeg', /* welche Vorschläge er abgelehnt hat (19.08.2026) — dito */
   'vt_wortAenderungen', /* seine Korrekturen an Buchvokabeln (18.08.2026) */
   'vt_geloescht',   /* ausgeblendete Fachbegriffe (18.08.2026) */
   /* Beide am 04.08.2026 nachgetragen. `vt_quranFav` (Favoriten-Suren) war seit

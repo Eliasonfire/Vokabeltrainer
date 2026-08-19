@@ -2071,6 +2071,12 @@ main{
 .ne-vorschlag-blaettern .btn-klein{min-width:0;flex:1 1 0;}
 /* Zähler „2 von 3" hinter der Marke. Ohne ihn wäre nicht zu sehen, wie viele
    es überhaupt gibt — und ob man beim Blättern schon herum ist. */
+/* Verworfener Vorschlag: der Text bleibt lesbar, wird aber gedämpft, und der
+   Knopf zeigt den Zustand. Kein Ausblenden — siehe Kommentar im Markup. */
+.ne-vorschlag.ist-weg #neVorschlagText{opacity:.5;text-decoration:line-through;
+  text-decoration-color:var(--red);text-decoration-thickness:1px}
+#btnVorschlagWeg[aria-pressed="true"]{color:var(--red-soft);
+  border-color:var(--rand-wrongonly);background:var(--red-wash)}
 #neVorschlagZaehler{
   margin-inline-start:.6em;color:var(--text-faint);
   font-weight:600;letter-spacing:.04em;text-transform:none;
@@ -4141,6 +4147,12 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
       <button class="btn btn-secondary btn-klein" id="btnVorschlagWeiter">Anderer Vorschlag →</button>
     </div>
     <button class="btn btn-secondary btn-klein" id="btnVorschlagUebernehmen">Übernehmen und bearbeiten</button>
+    <!-- „Taugt nicht" (Elias, 19.08.2026). Der Vorschlag verschwindet dabei
+         NICHT — er bekommt eine Marke. Wer den letzten Vorschlag verwirft,
+         soll nicht vor einem leeren Kasten stehen und rätseln, was er eben
+         abgelehnt hat. Nochmal derselbe Knopf nimmt es zurück. -->
+    <button class="btn btn-secondary btn-klein btn-weg" id="btnVorschlagWeg"
+            aria-pressed="false">Taugt nicht — bitte ersetzen</button>
   </div>
   <textarea id="neText" placeholder="Wie merkst du dir dieses Wort? (z.B. Klangähnlichkeit, Wurzel, eigene Geschichte)" lang="de"></textarea>
   <div class="ne-aktionen">
