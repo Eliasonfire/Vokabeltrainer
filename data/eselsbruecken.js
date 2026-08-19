@@ -143,7 +143,7 @@ const BUCH_ESELSBRUECKEN = {
 
   /* ---------- Kapitel 15 ---------- */
 
-  "45934": "⭐ Wurzel س ب ع — dieselbe wie in سَبْعَةٌ (sieben), das du schon hast. Eine Woche ist sieben Tage. Wenn du das einmal siehst, musst du das Wort nie wieder einzeln lernen. Plural أَسَابِيعُ.",
+  "45934": "⭐ Wurzel س ب ع — dieselbe wie in سَبْعَةٌ (sieben) aus Kapitel 24. Eine Woche ist sieben Tage. Wenn du das einmal siehst, musst du das Wort nie wieder einzeln lernen. Plural أَسَابِيعُ.",
 
   /* ---------- Kapitel 16 ---------- */
 
@@ -161,7 +161,7 @@ const BUCH_ESELSBRUECKEN = {
 
   "45939": "Das Rad. Du hast schon دَرَّاجَةٌ (Fahrrad) und سَيَّارَةٌ (Auto) — beide fahren auf عَجَلَات. Merk dir das Wort über die Dinge, die du schon kennst, nicht über den Klang.",
 
-  "45940": "⚠️ Zwei Plurale, beide richtig: سَنَوَاتٌ und سِنُونَ. Das ist selten genug, um es sich zu merken. Und bau dir die Zeitleiter: دَقِيقَةٌ (Minute) → يَوْمٌ (Tag) → أُسْبُوعٌ (Woche) → سَنَةٌ (Jahr).",
+  "45940": "⚠️ Zwei Plurale, beide richtig: سَنَوَاتٌ und سِنُونَ. Das ist selten genug, um es sich zu merken. Und bau dir die Zeitleiter, deren erste Stufe erst in Kapitel 22 dazukommt: دَقِيقَةٌ (Minute) → يَوْمٌ (Tag) → أُسْبُوعٌ (Woche) → سَنَةٌ (Jahr).",
 
   "45941": "⭐ Das مِـ am Anfang zeigt das Werkzeug — wie bei مِفْتَاحٌ (Schlüssel), مِلْعَقَةٌ (Löffel), مِكْوَاةٌ (Bügeleisen) und مِرْوَحَةٌ (Ventilator), die du alle schon hast. Das Lineal ist das Werkzeug für die Linie.",
 
@@ -179,9 +179,9 @@ const BUCH_ESELSBRUECKEN = {
 
   "45947": "Das längste Wort des Kapitels, und nur Klang: „Yughuslafiya“. Zerleg es beim Lesen in drei Häppchen: يُو-غُوسْ-لَافِيَا. Der Staat existiert heute nicht mehr — das Wort steht so im Lehrbuch.",
 
-  "45948": "⚠️ Falle: dieselbe Wurzel ث م ن wie ثَمَانِيَةٌ (acht), das du schon hast — mit dem Preis hat die Acht aber nichts zu tun. Merk sie über die Länge: ثَمَن kurz, ثَمَانِيَة lang. Plural أَثْمَانٌ.",
+  "45948": "⚠️ Falle: dieselbe Wurzel ث م ن wie ثَمَانِيَةٌ (acht) aus Kapitel 24 — mit dem Preis hat die Acht aber nichts zu tun. Merk sie über die Länge: ثَمَن kurz, ثَمَانِيَة lang. Plural أَثْمَانٌ.",
 
-  "45949": "Die Hälfte. Häng es an deine Zahlen: die Hälfte von عَشَرَةٌ (zehn) ist خَمْسَةٌ (fünf). Kurzes Wort mit Sukun, Wurzel ن ص ف. Plural أَنْصَافٌ.",
+  "45949": "Die Hälfte. Häng es an die Zahlen aus Kapitel 24: die Hälfte von عَشَرَةٌ (zehn) ist خَمْسَةٌ (fünf). Kurzes Wort mit Sukun, Wurzel ن ص ف. Plural أَنْصَافٌ.",
 
   "45950": "Eine kleine Münzeinheit, wie bei uns der Cent. Klanghilfe, nur der Klang: „Qirsch“ — im Deutschen klingt der „Groschen“ ähnlich. Plural قُرُوشٌ.",
 
