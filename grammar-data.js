@@ -2044,6 +2044,42 @@ const SENTENCE_TAGS = {
   "gram-suffix-ha": [
     { ruleId: "possessiv-endungen-01", matchText: "اسْمُهَا" },
     { ruleId: "harf-jarr-li-01", matchText: "لِي" }
+  ],
+  "45904": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "عَمَّةُ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "الْوَلَدِ" }
+  ],
+  "45905": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "خَالَةُ" },
+    { ruleId: "mubtada-khabar-genus-01", matchText: "مُمَرِّضَةٌ" }
+  ],
+  "45906": [
+    { ruleId: "nat-fem-01", matchText: "الْكَبِيرَةُ" },
+    { ruleId: "hurufu-jarr-bedeutungen-01", matchText: "فِي الشَّارِعِ" }
+  ],
+  "45907": [
+    { ruleId: "marfu-grundfall-01", matchText: "الْمُدَرِّسُ" },
+    { ruleId: "hurufu-jarr-bedeutungen-01", matchText: "مِنْ سُورِيَا" }
+  ],
+  "45908": [
+    { ruleId: "nat-bestimmtheit-01", matchText: "الْمُتَوَسِّطَةُ" },
+    { ruleId: "mutabaqa-genus-01", matchText: "قَرِيبَةٌ" }
+  ],
+  "45909": [
+    { ruleId: "mubtada-khabar-01", matchText: "الْمُفَتِّشُ" },
+    { ruleId: "hurufu-jarr-bedeutungen-01", matchText: "فِي الْمَدْرَسَةِ" }
+  ],
+  "45910": [
+    { ruleId: "al-gesamtheit-01", matchText: "الْفَتَاةُ" },
+    { ruleId: "mubtada-khabar-genus-01", matchText: "طَالِبَةٌ" }
+  ],
+  "45911": [
+    { ruleId: "nat-vier-bedingungen-01", matchText: "الطَّالِبُ الْجَدِيدُ" },
+    { ruleId: "hurufu-jarr-bedeutungen-01", matchText: "مِنْ مَالِيزِيَا" }
+  ],
+  "45912": [
+    { ruleId: "nat-fem-01", matchText: "الْجَدِيدَةُ" },
+    { ruleId: "mutabaqa-genus-01", matchText: "بَعِيدَةٌ" }
   ]
 };
 
