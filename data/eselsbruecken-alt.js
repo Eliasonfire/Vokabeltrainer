@@ -1250,7 +1250,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* سُورِيَا - Syrien */
   '45907': [
-    '⭐ Dasselbe Land heißt im Arabischen auch الشَّام — das Gebiet, für das der Prophet ﷺ ausdrücklich um Segen bat: اللَّهُمَّ بَارِكْ لَنَا فِي شَامِنَا. دِمَشْق mit der Umayyaden-Moschee liegt dort.',
+    '⭐ Dasselbe Land heißt im Arabischen auch الشَّام — das Gebiet, für das der Prophet ﷺ ausdrücklich um Segen bat: اللَّهُمَّ بَارِكْ لَنَا — „O Allah, segne uns“ — فِي شَامِنَا. دِمَشْق mit der Umayyaden-Moschee liegt dort.',
     '⚠️ Verwechslungsfalle: سُورِيَا hat mit سُورَة nichts zu tun. Ländernamen sind entlehnt und haben gar keine arabische Wurzel — die Angabe س و ر ist nur eine Hilfszeile in der Datenbank. Hier trägt allein der Klang.'
   ],
 
@@ -1288,7 +1288,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* ضَيْفٌ - Gast */
   '45913': [
-    '⭐ Ein Hadith, der das Wort trägt: مَنْ كَانَ يُؤْمِنُ بِاللَّهِ وَالْيَوْمِ الْآخِرِ فَلْيُكْرِمْ ضَيْفَهُ — „Wer an Allah und den Jüngsten Tag glaubt, soll seinen Gast ehren" (Buḫārī und Muslim). إِكْرَامُ الضَّيْفِ ist daraus ein feststehender Begriff geworden.',
+    '⭐ Ein Hadith, der das Wort trägt: مَنْ كَانَ يُؤْمِنُ بِاللَّهِ — „Wer an Allah glaubt“ — وَالْيَوْمِ الْآخِرِ — „und an den Jüngsten Tag“ — فَلْيُكْرِمْ ضَيْفَهُ — „der ehre seinen Gast" (Buḫārī und Muslim). إِكْرَامُ الضَّيْفِ ist daraus ein feststehender Begriff geworden.',
     '⭐ Und die Geschichte kennst du: die Engel, die zu Ibrāhīm ﷺ kamen und denen er das gebratene Kalb vorsetzte, heißen im Koran schlicht ضَيْفُ إِبْرَاهِيمَ. Das Wort steht mitten in einer Erzählung, die du schon hast.'
   ],
 
@@ -1398,7 +1398,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* كُلِّيَّةُ التِّجَارَةِ - Wirtschaftsfakultät */
   '45931': [
-    '⭐ Ein bekannter Hadith gibt dem Wort ein Gesicht: التَّاجِرُ الصَّدُوقُ الْأَمِينُ مَعَ النَّبِيِّينَ وَالصِّدِّيقِينَ وَالشُّهَدَاءِ — „der ehrliche, vertrauenswürdige Händler ist mit den Propheten, den Wahrhaftigen und den Märtyrern" (Tirmiḏī).',
+    '⭐ Ein bekannter Hadith gibt dem Wort ein Gesicht: التَّاجِرُ الصَّدُوقُ الْأَمِينُ — „der ehrliche, treue Händler“ — مَعَ النَّبِيِّينَ وَالصِّدِّيقِينَ وَالشُّهَدَاءِ — „ist mit den Propheten, den Wahrhaftigen und den Märtyrern" (Tirmiḏī).',
     'Drei Wörter aus einem Stamm, verteilt über dein Buch: تَاجِرٌ (Händler, Kapitel 1), التِّجَارَة (der Handel, hier) und مَتْجَرٌ (der Laden, Kapitel 24). Der Stamm ت ج ر hält sie zusammen.'
   ],
 
@@ -1418,7 +1418,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* أُسْبُوعٌ - Woche */
   '45934': [
-    '⭐ Die Zahl steht in al-Mulk, die du auswendig kannst: الَّذِي خَلَقَ سَبْعَ سَمَاوَاتٍ طِبَاقًا — „Der sieben Himmel in Schichten erschaffen hat" (67:3). Dasselbe سَبْع steckt in أُسْبُوع.',
+    '⭐ Die Zahl steht in al-Mulk, die du auswendig kannst: الَّذِي خَلَقَ — „Der erschaffen hat“ — سَبْعَ سَمَاوَاتٍ طِبَاقًا — „sieben Himmel in Schichten" (67:3). Dasselbe سَبْع steckt in أُسْبُوع.',
     '⭐ Die Sieben trägt fast jede Handlung der عُمْرَة und des حَجّ: sieben Runden im طَوَاف, sieben Gänge beim سَعْي, sieben Steinchen beim Werfen. Wer die Riten kennt, hat die Zahl längst im Ohr.'
   ],
 
@@ -1516,7 +1516,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* نِصْفٌ - Hälfte */
   '45949': [
-    '⭐ Ein bekannter Hadith trägt das Wort: مَنْ تَزَوَّجَ فَقَدِ اسْتَكْمَلَ نِصْفَ الدِّينِ — „Wer heiratet, hat die Hälfte der Religion vervollständigt". Darin steckt auch زَوْج aus Kapitel 13.',
+    '⭐ Ein bekannter Hadith trägt das Wort: مَنْ تَزَوَّجَ — „Wer heiratet“ — فَقَدِ اسْتَكْمَلَ نِصْفَ الدِّينِ — „hat die Hälfte der Religion vervollständigt". Darin steckt auch زَوْج aus Kapitel 13.',
     'Und im Gebet begegnet dir die Hälfte praktisch: der Reisende betet statt vier nur zwei رَكَعَات — die Hälfte. Das ist die رُخْصَة, die Erleichterung, die du bei رَخِيصٌ in Kapitel 17 kennengelernt hast.'
   ],
 
@@ -1594,7 +1594,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* أَسْوَدُ - schwarz */
   '45961': [
-    '⭐ Aus der Abschiedspredigt, in der beide Farben nebeneinander stehen: وَلَا لِأَبْيَضَ عَلَىٰ أَسْوَدَ إِلَّا بِالتَّقْوَىٰ — „und kein Weißer hat Vorrang vor einem Schwarzen außer durch Gottesfurcht". Ein Satz, zwei Vokabeln.',
+    '⭐ Aus der Abschiedspredigt, in der beide Farben nebeneinander stehen: وَلَا لِأَبْيَضَ عَلَىٰ أَسْوَدَ — „und kein Weißer über einen Schwarzen“ — إِلَّا بِالتَّقْوَىٰ — „außer durch Gottesfurcht". Ein Satz, zwei Vokabeln.',
     'Weibliche Form سَوْدَاءُ, Plural سُودٌ. ⚠️ Das و in der Mitte ist stumm — gesprochen as-wad, nicht as-uu-wad. Genau wie bei أَبْيَضُ das ي: ab-yaḍ.'
   ],
 
