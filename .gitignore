@@ -49,3 +49,6 @@ __pycache__/
 CLAUDE.md
 .budget.json
 .arbeit.json
+
+# Gebaute Artefakt-Seiten: enthalten Vokabeln und Beispielsaetze (Regel 7a)
+artefakte/

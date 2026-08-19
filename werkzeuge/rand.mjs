@@ -38,6 +38,7 @@ const MERKMALE = {
   '--rand-btn2':   ['#5d5d65', 'var(--border)',        '.btn-secondary'],
   '--rand-check':  ['#616169', 'var(--border-strong)', '.hifz-check'],
   '--rand-korb':   ['#5d5d65', 'var(--border-strong)', '.wz-korb'],
+  '--rand-wrongonly': ['#cb1036', 'var(--red-dim)',  '.btn-wrongonly'],
 };
 
 const roh = fs.readFileSync(P, 'utf8');
