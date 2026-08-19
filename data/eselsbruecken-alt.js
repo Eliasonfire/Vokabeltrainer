@@ -1269,7 +1269,7 @@ const ESELSBRUECKEN_ALT = {
   /* فَتَاةٌ - junge Frau */
   '45910': [
     '⚠️ Hier wird sichtbar, was in فَتًى versteckt lag: das ى am Ende war nie ein bloßes Alif. Sobald ـة angehängt wird, tritt ein langes ـَا hervor — fa-tan wird zu fa-tāh. Genau der Vorgang, den deine Regel zur أَلِف مَقْصورة beschreibt.',
-    'Vier Paare aus deinem Bestand gehen alle gleich: عَمٌّ/عَمَّةٌ, خَالٌ/خَالَةٌ, زَوْجٌ/زَوْجَةٌ und فَتًى/فَتَاةٌ. Sprich sie als Paare statt als acht einzelne Wörter — dann lernst du sie in vier Portionen.'
+    'Vier Paare gehen alle gleich: عَمٌّ/عَمَّةٌ, خَالٌ/خَالَةٌ, زَوْجٌ/زَوْجَةٌ (von diesem Paar hast du bisher nur die Frau, der Mann kommt in Kapitel 13) und فَتًى/فَتَاةٌ. Sprich sie als Paare statt als acht einzelne Wörter — dann lernst du sie in vier Portionen.'
   ],
 
   /* مَالِيزِيَا - Malaysia */

@@ -538,6 +538,17 @@ console.log('=== 7. Anker: baut die Eselsbruecke auf etwas, das er SCHON hat? ==
                        + nach.slice(0, (nach.indexOf('. ') + 1) || nach.length);
             const genannt = [...satz.matchAll(/Kapitel\s+(\d{1,2})/g)].map(m => Number(m[1]));
             if (genannt.some(n => n === kap)) return;
+            /* ⛔ ZWEITE QUELLE FUER "KENNT ER SCHON": DER KORAN.
+               مَمْلَكَةٌ knuepft an مَلِكِ النَّاسِ (114:2) an. Der Prüfer hielt das
+               für einen Anker auf Kapitel 13, weil النَّاسُ dort als Vokabel
+               steht — Elias kennt das Wort aber aus Sure 114, die er auswendig
+               kann. Ein Vokabelkapitel ist nicht die einzige Art, ein Wort zu
+               kennen; genau darauf zielen die Merkhaken ja.
+               ⚠️ Nur wenn die Fundstelle IM SELBEN SATZ eine Sure aus seinem
+               auswendigen Bereich nennt — sonst wäre jede Erwähnung eines
+               beliebigen Verses ein Freibrief. [[quranbezug-nur-auswendiges]] */
+            const suren = [...satz.matchAll(/(\d{1,3}):(\d{1,3})/g)].map(m => Number(m[1]));
+            if (suren.some(n => AUSWENDIG.has(n))) return;
             /* ⭐ Zwei Schweregrade, und sie sind nicht dasselbe:
                Steht das erklaerte Wort in einem Kapitel, das er SCHON hat, ist
                die Bruecke heute kaputt — Fehler. Ist es vorausgeschrieben,
