@@ -32,7 +32,27 @@
  *   node werkzeuge/vorrat.mjs                  Uebersicht, Exitcode 2 bei Rueckstand
  *   node werkzeuge/vorrat.mjs --knapp          eine Zeile, fuer Routinen
  *   node werkzeuge/vorrat.mjs --stand <datei>  FREIGESCHALTET aus get_unlocked_chapters nachziehen
+ *   node werkzeuge/vorrat.mjs --lernstand <datei>  Lernstand aus get_learning_progress nachziehen
  *   node werkzeuge/vorrat.mjs --auftrag <datei> Arbeitsauftrag fuer die Sitzung schreiben
+ *   node werkzeuge/vorrat.mjs --fenster 3      wie viele Kapitel vorausgearbeitet wird (Standard 3)
+ *
+ * ⭐⭐ WARUM „FREIGESCHALTET" ALS AUSLOESER NICHT REICHT
+ *
+ * Elias am 19.08.2026: „es könnte sein das ich zb aus interesse alle kapitel
+ * oder alle bücher auswähle (dann soll es natürlich nicht ausschlagen) aber
+ * 1-3 kapitel sind realistisch."
+ *
+ * Genau das ist der Unterschied zwischen KANN und IST. Am selben Tag gemessen:
+ * arabicroots meldete madina-2 als komplett freigeschaltet — alle 24 Kapitel,
+ * 445 Woerter — waehrend Elias tatsaechlich bei madina-1 Kapitel 11 stand. Wer
+ * auf „freigeschaltet" hoert, haette 1.335 Texte als Rueckstand gemeldet, die
+ * niemand braucht.
+ *
+ * Deshalb zwei Groessen, und sie duerfen nie verwechselt werden:
+ *   FREIGESCHALTET  was die Schule geoeffnet hat        (js/kern.js)
+ *   LERNSTAND       wo er wirklich geuebt hat           (data/lernstand.json)
+ * Gearbeitet wird im FENSTER: Lernstand + 1 bis + 3 Kapitel, und nur was
+ * darin liegt UND freigeschaltet ist.
  *
  * ⚠️ `--stand` braucht eine Datei, weil nur eine Claude-Sitzung den
  * arabicroots-MCP erreichen kann. Die Sitzung ruft get_unlocked_chapters,
@@ -56,7 +76,12 @@ const p      = (...t) => path.join(WURZEL, ...t);
 const ARG    = process.argv.slice(2);
 const KNAPP  = ARG.includes('--knapp');
 const iStand = ARG.indexOf('--stand');
+const iLern  = ARG.indexOf('--lernstand');
 const iAuftr = ARG.indexOf('--auftrag');
+const iFenst = ARG.indexOf('--fenster');
+/* Drei Kapitel voraus — Elias' eigene Zahl: „1-3 kapitel sind realistisch." */
+const FENSTER = iFenst >= 0 ? Math.max(1, Number(ARG[iFenst + 1]) || 3) : 3;
+const LERNDATEI = 'data/lernstand.json';
 
 /* ---------- Dateien in einer Kiste laden ---------- */
 const kiste = { window: {} };
@@ -124,6 +149,92 @@ function freischaltungSchreiben(neu, heute){
   const raus = q.replace(/const FREIGESCHALTET = \{[\s\S]*?\};/, block);
   if (raus === q) { console.error('  Ersetzung hat nichts geaendert.'); process.exit(1); }
   fs.writeFileSync(KERN, raus, 'utf8');
+}
+
+/* ---------- Lernstand: wo hat er WIRKLICH geuebt ---------- */
+
+function lernstandLesen(){
+  const d = p(LERNDATEI);
+  if (!fs.existsSync(d)) return null;
+  try { return JSON.parse(fs.readFileSync(d, 'utf8')); }
+  catch (e) { console.error('  ' + LERNDATEI + ' ist kein JSON: ' + e.message); return null; }
+}
+
+/* Aus get_learning_progress kommen Einzelversuche je Vokabel, angereichert mit
+   bookSlug und chapterPosition. Daraus wird je Buch das hoechste Kapitel, in
+   dem tatsaechlich geuebt wurde.
+
+   ⚠️ Gespeichert wird NUR diese abgeleitete Zahl, nicht der Rohbestand: die
+   Einzelversuche sind Elias' persoenliche Lerndaten und haben im Repo nichts
+   verloren. Zwei Zahlen je Buch reichen fuer den Zweck vollstaendig. */
+function lernstandAusJson(text){
+  let roh;
+  try { roh = JSON.parse(text); }
+  catch (e) { console.error('  Datei ist kein JSON: ' + e.message); process.exit(1); }
+  const liste = Array.isArray(roh) ? roh : (roh.progress || roh.data || roh.items || []);
+  const je = {};
+  liste.forEach(e => {
+    const buch = e.bookSlug || e.book_slug || e.buch;
+    const kap  = Number(e.chapterPosition ?? e.chapter_position ?? e.chapter);
+    if (!buch || Number.isNaN(kap)) return;
+    /* ⛔ Nur Woerter zaehlen, die wirklich ANGEFASST wurden. Ein Datensatz mit
+       null Versuchen bedeutet „steht bereit", nicht „geuebt" — und genau die
+       Verwechslung wuerde das Fenster wieder auf alles aufreissen. */
+    /* ⚠️ Die Felder heissen `total`, `correct`, `wrong` — am 19.08.2026 am
+       echten Abzug nachgesehen, nicht geraten. Meine erste Fassung suchte nach
+       `incorrect` und haette bei jedem Wort null Versuche gezaehlt: das
+       Fenster waere leer geblieben und die Routine haette „nichts zu tun"
+       gemeldet, obwohl Rueckstand da war. */
+    const versuche = Number(e.total ?? (Number(e.correct || 0) + Number(e.wrong || 0)));
+    if (!(versuche > 0)) return;
+    je[buch] = je[buch] || { hoechstesKapitel: 0, geuebteWoerter: 0 };
+    je[buch].geuebteWoerter++;
+    if (kap > je[buch].hoechstesKapitel) je[buch].hoechstesKapitel = kap;
+  });
+  return je;
+}
+
+if (iLern >= 0){
+  const quelle = ARG[iLern + 1];
+  if (!quelle){ console.error('  --lernstand braucht eine Datei.'); process.exit(1); }
+  const neu = lernstandAusJson(fs.readFileSync(quelle, 'utf8'));
+  if (!Object.keys(neu).length){
+    console.log('  Keine geuebten Vokabeln in der Datei gefunden — nichts geaendert.');
+    process.exit(0);
+  }
+  const alt = lernstandLesen() || { buecher: {} };
+  const aenderungen = [];
+  Object.entries(neu).forEach(([b, z]) => {
+    const a = (alt.buecher && alt.buecher[b] && alt.buecher[b].hoechstesKapitel) || 0;
+    if (a !== z.hoechstesKapitel) aenderungen.push(`  ${b}: Kapitel ${a || '—'} → ${z.hoechstesKapitel}`);
+  });
+  /* ⛔⛔ DIE GEMESSENE ZAHL IST NICHT SEIN LERNSTAND.
+     Am 19.08.2026 gemessen: get_learning_progress meldete madina-1 bis
+     Kapitel 23 und madina-2 bis Kapitel 31 — Elias sagte am selben Tag
+     ausdruecklich „ich bin bei madina-1 kapitel 11, madina-2 ist nur
+     freigeschaltet".
+     Beides stimmt: die Zahl misst, WOMIT ER ABGEFRAGT WURDE, und sein eigener
+     Vokabeltrainer fragt alles ab, was er angehakt hat. Genau der Fall, den er
+     vorhergesagt hat („aus interesse alle kapitel ... auswählen").
+     Deshalb bleibt `angabe` massgeblich und wird hier NIE ueberschrieben; die
+     Messung steht als `gemessen` daneben und dient nur der Gegenprobe.
+     [[kennzeichen_mit_zwei_ursachen]] */
+  const vorher = lernstandLesen();
+  fs.writeFileSync(p(LERNDATEI), JSON.stringify({
+    _hinweis: 'angabe = was Elias selbst gesagt hat, MASSGEBLICH fuer das Fenster. '
+            + 'gemessen = abgeleitet aus get_learning_progress, nur Gegenprobe — '
+            + 'die Zahl misst, womit abgefragt wurde, nicht wo er im Kurs steht.',
+    angabe: (vorher && vorher.angabe) || {},
+    angabeVom: (vorher && vorher.angabeVom) || null,
+    gemessenAm: new Date().toISOString().slice(0, 10),
+    gemessen: neu
+  }, null, 2), 'utf8');
+  console.log('  Lernstand geschrieben nach ' + LERNDATEI + ':');
+  Object.entries(neu).forEach(([b, z]) =>
+    console.log(`    ${b}: hoechstes geuebtes Kapitel ${z.hoechstesKapitel} (${z.geuebteWoerter} Woerter angefasst)`));
+  if (aenderungen.length){ console.log('  Veraendert:'); aenderungen.forEach(z => console.log(z)); }
+  else console.log('  (unveraendert gegenueber vorher)');
+  process.exit(0);
 }
 
 /* ---------- Bestand einsammeln ---------- */
@@ -196,11 +307,51 @@ if (iStand >= 0){
   process.exit(0);
 }
 
-/* Messen. */
+/* Messen — im FENSTER, nicht im Freigeschalteten. */
+const lern = lernstandLesen();
+const fensterInfo = [];
+const fehlendeAngabe = [];
+
+/* Welche Kapitel eines Buchs zaehlen? Der Schnitt aus
+     freigeschaltet  ∩  [1 .. Lernstand + FENSTER]
+   Ohne Lernstand faellt das Werkzeug auf „alles Freigeschaltete" zurueck und
+   sagt das ausdruecklich — lieber zu viel melden als stillschweigend zu wenig.
+   [[erfundene_begruendung_schliesst_den_fall]] */
+function kapitelImFenster(slug){
+  const frei_ = frei[slug];
+  if (!frei_ || !frei_.length) return null;
+  const gesagt  = lern && lern.angabe && lern.angabe[slug];
+  const gemess  = lern && lern.gemessen && lern.gemessen[slug];
+
+  /* ⛔ Ohne Angabe wird das Buch NICHT gemessen, statt auf „alles
+     Freigeschaltete" zurueckzufallen. Der Rueckfall waere die teure Richtung:
+     schaltet die Schule madina-2 komplett frei, meldete das Werkzeug 445
+     Woerter Rueckstand, die niemand braucht — und ein Werkzeug, das regelmaessig
+     Unsinn meldet, wird nach dem dritten Mal ignoriert.
+     Lieber laut sagen, dass die Angabe fehlt. */
+  if (typeof gesagt !== 'number'){
+    fehlendeAngabe.push(slug);
+    fensterInfo.push(`${slug}: ⛔ keine Angabe von Elias → NICHT gemessen`
+      + (gemess ? ` (abgefragt wurde bis Kapitel ${gemess.hoechstesKapitel}, das ist aber kein Lernstand)` : ''));
+    return null;
+  }
+  const grenze = gesagt + FENSTER;
+  const drin = frei_.filter(k => k <= grenze);
+  fensterInfo.push(`${slug}: Elias ist bei Kapitel ${gesagt}, Fenster bis ${grenze}`
+    + ` → ${drin.length} von ${frei_.length} freigeschalteten Kapiteln`);
+  /* ⚠️ Auseinanderlaufen MELDEN, nicht aufloesen. Weicht die Messung stark ab,
+     ist entweder die Angabe alt oder er hat quer geuebt — beides soll er
+     sehen, und keines darf das Fenster heimlich aufreissen. */
+  if (gemess && gemess.hoechstesKapitel > grenze)
+    fensterInfo.push(`    ⚠️ gemessen wurde bis Kapitel ${gemess.hoechstesKapitel}`
+      + ` (${gemess.geuebteWoerter} Woerter) — pruefen, ob die Angabe noch stimmt`);
+  return drin;
+}
+
 const offen = [];      /* { slug, kapitel, id, ar, de, fehltEB, fehltSatz } */
 let geprueft = 0;
 BUECHER.forEach(b => {
-  const kapitel = frei[b.slug];
+  const kapitel = kapitelImFenster(b.slug);
   if (!kapitel || !kapitel.length) return;
   const datei = p(b.datei);
   if (!fs.existsSync(datei)) return;
@@ -228,9 +379,16 @@ if (KNAPP){
   process.exit(offen.length ? 2 : 0);
 }
 
-console.log('  Freischaltstand aus js/kern.js: '
+console.log('  Freigeschaltet (js/kern.js): '
   + Object.entries(frei).map(([b, k]) => `${b} Kap. ${k.join(',')}`).join(' | ')
   + '   (abgefragt am ' + datum + ')');
+if (lern && lern.angabe && Object.keys(lern.angabe).length)
+  console.log('  Elias\' Angabe (' + LERNDATEI + (lern.angabeVom ? ', vom ' + lern.angabeVom : '') + '): '
+    + Object.entries(lern.angabe).map(([b, k]) => `${b} Kapitel ${k}`).join(' | '));
+else console.log('  ⚠️ Keine Angabe von Elias hinterlegt — es zaehlt alles Freigeschaltete.'
+  + ' Eintragen unter "angabe" in ' + LERNDATEI + '.');
+console.log('  Fenster: ' + FENSTER + ' Kapitel voraus');
+fensterInfo.forEach(z => console.log('    ' + z));
 if (!hatSaetze) console.log('  data/beispielsaetze.js liegt noch nicht vor — Saetze zaehlen als fehlend.');
 console.log('');
 console.log('  geprueft:                 ' + geprueft + ' Woerter aus freigeschalteten Kapiteln');
