@@ -32,56 +32,14 @@ function themaRegelIds(themaId){
   return new Set(GRAMMAR_RULES.filter(r=>t.muster.test(r.id) && !r.ausgeblendet).map(r=>r.id));
 }
 
-/* ---------- Satzsuche (Elias' Wunsch vom 19.08.2026) ----------
-
-   „ein suchfeld ganz oben … am besten ist es ebenfalls in dem modus aktiv in
-   dem ich es einsetzte. also wenn ich bei genitiv übungen bin und da ein
-   bestimmtes wort eingebe das mir dann die sätze angezeigt werden im
-   übungsmodus mit dem satz."
-
-   ⭐ Deshalb steht der Filter HIER und nirgends sonst: uebungenAufbauen() in
-   js/uebung.js baut seine Aufgaben aus SENT.list, und SENT.list kommt aus
-   dieser Funktion. Ein Filter an dieser einen Stelle wirkt damit im Lesemodus
-   UND im Uebungsmodus — zwei Suchen waeren zwei Gelegenheiten, auseinander zu
-   laufen. */
-let SATZ_SUCHE = '';
-
-/* ⚠️ Gesucht wird ohne Ḥarakāt. Das wirft Information weg — مِنْ und مَنْ
-   sehen danach gleich aus — und genau das ist hier richtig: Elias tippt ein
-   Wort, keine vollvokalisierte Form. Fuer einen Vergleich zwischen Datensaetzen
-   waere es falsch ([[skelettvergleich_wirft_information_weg]]), fuer ein
-   Suchfeld ist es die einzige brauchbare Grobheit.
-   Alif-Varianten werden vereinheitlicht, damit اِ und أ und ا dasselbe finden. */
-function suchForm(s){
-  return String(s || '').normalize('NFC')
-    .replace(/[ً-ْٰـ]/g, '')
-    .replace(/[إأآٱ]/g, 'ا')
-    .replace(/ى/g, 'ي')
-    .toLowerCase().trim();
-}
-
-function passtZurSuche(w){
-  if (!SATZ_SUCHE) return true;
-  const n = suchForm(SATZ_SUCHE);
-  if (!n) return true;
-  /* Arabisch UND Deutsch, damit er in der Sprache suchen kann, die ihm
-     gerade einfaellt. */
-  return suchForm(w.sentAr).indexOf(n) >= 0
-      || String(w.sentDe || '').toLowerCase().indexOf(n) >= 0;
-}
-
-/* `ohneSuche` liefert den Vorrat VOR dem Suchfilter — gebraucht fuer den
-   Nenner der Trefferzeile. ⚠️ Ohne diesen Schalter rief die Trefferzeile
-   dieselbe gefilterte Funktion und haette immer „12 von 12" gemeldet: eine
-   Quote, die per Bauart nie etwas anderes sagen kann. */
-function saetzeZumThema(themaId, ohneSuche){
+function saetzeZumThema(themaId){
   const alle = alleSaetze();
   const ids = themaRegelIds(themaId);
-  const nachThema = !ids ? alle : alle.filter(w=>{
+  if (!ids) return alle;
+  return alle.filter(w=>{
     const tags = (typeof SENTENCE_TAGS!=='undefined') && SENTENCE_TAGS[w.id];
     return tags && tags.some(t=>ids.has(t.ruleId));
   });
-  return (SATZ_SUCHE && !ohneSuche) ? nachThema.filter(passtZurSuche) : nachThema;
 }
 
 /* Waehler statt Wischstreifen — Elias' Entscheidung vom 19.08.2026 (Entwurf A3).
@@ -190,59 +148,6 @@ document.getElementById('themenWaehler').addEventListener('click', ()=>{
   blattUmschalten('themenWaehler', 'themenBlatt');
 });
 
-/* ---------- Satzsuche: Verdrahtung ----------
-   ⚠️ Verzoegert, nicht bei jedem Tastendruck: saetzeZumThema() laeuft ueber
-   215 Saetze und uebungenAufbauen() zerlegt sie danach neu. Bei jedem
-   Buchstaben waere das spuerbar. */
-let SUCH_UHR = null;
-function sucheAnwenden(){
-  const feld = document.getElementById('satzSuche');
-  const aus  = document.getElementById('satzSucheAus');
-  const zeile = document.getElementById('satzTreffer');
-  SATZ_SUCHE = feld.value.trim();
-  aus.classList.toggle('hidden', !SATZ_SUCHE);
-
-  /* ⛔ Der Aufgaben-Zwischenspeicher haengt am Thema. Ohne den Suchbegriff im
-     Schluessel bliebe er stehen, und der Uebungsmodus zeigte weiter die alten
-     Aufgaben — die Suche waere im Lesemodus sichtbar und im Uebungsmodus
-     wirkungslos. Genau das, was Elias ausdruecklich NICHT wollte. */
-  if (typeof UEB_CACHE !== 'undefined') UEB_CACHE = { thema:null, nachModus:null };
-
-  /* Eine laufende Uebung wird beendet: ihre Aufgaben stammen aus einem
-     Vorrat, den es so nicht mehr gibt. Dieselbe Begruendung wie beim
-     Themenwechsel. */
-  if (typeof uebungBeenden === 'function' && typeof UEB !== 'undefined' && UEB.modus) uebungBeenden();
-
-  SENT.list = saetzeZumThema(SATZ_THEMA);
-  SENT.idx = 0;
-  if (LUECKE.aktiv) beendeLuecke();
-  renderThemenLeiste();
-  if (typeof renderUebungsLeiste === 'function') renderUebungsLeiste();
-  renderSentence();
-
-  if (!SATZ_SUCHE){ zeile.classList.add('hidden'); return; }
-  const n = SENT.list.length;
-  zeile.classList.remove('hidden');
-  zeile.classList.toggle('leer', n === 0);
-  /* ⚠️ Der Nenner gehoert dazu. „12 Sätze" allein sagt nicht, ob das viel
-     oder wenig ist. [[trefferquote_ohne_preis]] */
-  const gesamt = saetzeZumThema(SATZ_THEMA, true).length;
-  zeile.innerHTML = n
-    ? `<b>${n}</b> von ${gesamt} — gesucht in ${escapeHtml(themaName(SATZ_THEMA))}`
-    : `<b>Kein Satz</b> mit „${escapeHtml(SATZ_SUCHE)}" in ${escapeHtml(themaName(SATZ_THEMA))}`;
-}
-function themaName(id){
-  const t = (typeof SATZ_THEMEN !== 'undefined') && SATZ_THEMEN.find(x=>x.id===id);
-  return t ? t.name : 'allen Sätzen';
-}
-document.getElementById('satzSuche').addEventListener('input', ()=>{
-  clearTimeout(SUCH_UHR);
-  SUCH_UHR = setTimeout(sucheAnwenden, 220);
-});
-document.getElementById('satzSucheAus').addEventListener('click', ()=>{
-  document.getElementById('satzSuche').value = '';
-  sucheAnwenden();
-});
 document.getElementById('themenBlatt').addEventListener('click', (e)=>{
   const knopf = e.target.closest('[data-thema]');
   if (!knopf) return;
