@@ -4330,6 +4330,24 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         <button class="btn btn-secondary" id="btnEinzelnFreiAlle">Alle zurück</button>
       </div>
       <div class="kenne-schon-liste" id="einzelnFreiListe"></div>
+      <!-- ⭐⭐ DIE BRÜCKE ÜBER DIE SPEICHERGRENZE (20.08.2026).
+           Einzeln freigeschaltete Wörter stehen in `vt_einzeln_frei`, also im
+           localStorage seines Browsers. Kein Werkzeug außerhalb der App kommt
+           daran — die Wartung mittwochs und sonntags kann diesen Wörtern
+           deshalb NICHT das volle Programm geben, obwohl sie zu seinem Bestand
+           gehören. Gemessen am 20.08.2026: das war die letzte von vier
+           Zugangswegen, die keiner sah.
+
+           Dieser Knopf legt die Liste in die Zwischenablage. Das ist kein
+           schöner Weg, aber der einzige, der ohne Backend funktioniert — und
+           die App soll ausdrücklich keines bekommen. -->
+      <div class="setting-row" id="einzelnFreiExportZeile" hidden>
+        <div>
+          <div class="setting-title">Liste für die Wartung</div>
+          <div class="setting-sub">Kopiert die Wörter, damit sie beim nächsten Routinelauf Beispielsätze und Eselsbrücken bekommen</div>
+        </div>
+        <button class="btn btn-secondary" id="btnEinzelnFreiKopieren">Kopieren</button>
+      </div>
 
       <!-- ⭐ Neu am 30.07.2026, und der Anlass war ein Kreislauf, in dem Elias
            festhing: Das Ziehen zum Aktualisieren war kaputt, also kam kein neuer
