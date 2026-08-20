@@ -99,9 +99,67 @@ try {
   }
 } catch { console.log('\n  ⚠️ Vault-Notiz nicht erreichbar — Gegenprobe übersprungen.'); }
 
-console.log('');
-if (fehler){
-  console.log('⛔ ' + fehler + ' Abweichung(en) — das Uhrzeit-Muster ist zu weit oder zu eng.');
+/* ⛔⛔ ZWEITER TEIL: DIE SPANNEN-ERKENNUNG.
+
+   Die Reihenfolgeprüfung in pruefe-datumsangaben.mjs nimmt Blöcke mit einer
+   Zeitspanne im Kopf aus. Ohne diese Ausnahme meldete sie am 20.08.2026
+   **4 Fehlalarme** — alle vier Rückwärtssprünge der Notiz betreffen Spannen,
+   es sind nachträglich eingefügte Verlaufsblöcke.
+
+   ⛔ Die gefährlichere Richtung ist wieder die weite: `112:1` und `89:1` in
+   einer Überschrift sehen aus wie eine Zeitspanne. Träfe das Muster sie,
+   wäre der Block ausgenommen — und ein echter Rücksprung bliebe stumm. */
+const mS = /const spanne = \(b\.kopf\.match\((\/.+?\/[gimsuy]*)\)/.exec(quelle);
+if (!mS){
+  console.log('');
+  console.log('⛔ In pruefe-datumsangaben.mjs steht keine Zeile `const spanne = …` mehr —');
+  console.log('   entweder wurde die Reihenfolgeprüfung entfernt oder umgebaut.');
   process.exit(1);
 }
-console.log('✔ ' + FAELLE.length + ' von ' + FAELLE.length + ' richtig, und an der Notiz greift es.');
+const spanneRe = new RegExp(mS[1].slice(1, mS[1].lastIndexOf('/')),
+  mS[1].slice(mS[1].lastIndexOf('/') + 1));
+const spanneAus = kopf => (kopf.match(spanneRe) || []).length > 1;
+console.log('');
+console.log('  Spannen-Muster aus derselben Datei: ' + mS[1]);
+console.log('');
+const SPANNEN = [
+  ['## 20.08.2026, 02:29–02:42 — Box von Hand',            true,  '⭐ Gedankenstrich — der häufigste Fall'],
+  ['## 20.08.2026, 08:4x–09:0x — Neue Schicht',            true,  '⭐ Platzhalter auf beiden Seiten'],
+  ['## 20.08.2026, 05:00-06:00 — mit Bindestrich',         true,  'Bindestrich statt Gedankenstrich'],
+  ['## 20.08.2026, 23:24 — Die Satzschablone',             false, 'EINE Uhrzeit, keine Spanne'],
+  ['## 20.08.2026, ~22:25 — ungefähr',                     false, '„ungefähr" ist keine Spanne'],
+  ['## 20.08.2026 — Kapitel 24 und Sure 112:1',            false, '⛔ eine Quranstelle'],
+  ['## 20.08.2026 — Eselsbrücke aus 105:1, Wurzel aus 89:1', false, '⛔⛔ ZWEI Quranstellen — sehen aus wie eine Spanne'],
+];
+for (const [kopf, soll, warum] of SPANNEN){
+  const ist = spanneAus(kopf);
+  const ok = ist === soll;
+  if (!ok) fehler++;
+  console.log((ok ? '  ok   ' : '  ⛔   ') + (ist ? 'Spanne ' : 'einzeln')
+    + ' soll ' + (soll ? 'Spanne ' : 'einzeln') + '   ' + warum);
+}
+
+/* ⭐ Am echten Bestand: null Spannen wäre verdächtig — dann greift die
+   Ausnahme nie, und die vier bekannten Fehlalarme kommen zurück. */
+try {
+  let mitSpanne = 0, koepfe2 = 0;
+  for (const zz of fs.readFileSync(NOTIZ, 'utf8').split(/\r?\n/)){
+    if (!zz.startsWith('## ')) continue;
+    koepfe2++;
+    if (spanneAus(zz)) mitSpanne++;
+  }
+  console.log('');
+  console.log('  An der echten Notiz: ' + mitSpanne + ' von ' + koepfe2 + ' Überschriften tragen eine Zeitspanne.');
+  if (!mitSpanne){
+    console.log('  ⛔ KEINE — dann greift die Ausnahme nie und die vier bekannten');
+    console.log('     Fehlalarme kommen bei jedem Lauf zurück.');
+    fehler++;
+  }
+} catch { console.log('\n  ⚠️ Vault-Notiz nicht erreichbar — Gegenprobe übersprungen.'); }
+
+console.log('');
+if (fehler){
+  console.log('⛔ ' + fehler + ' Abweichung(en) — Uhrzeit- oder Spannen-Muster stimmen nicht mehr.');
+  process.exit(1);
+}
+console.log('✔ ' + (FAELLE.length + SPANNEN.length) + ' Fälle richtig (' + FAELLE.length + ' Uhrzeit, ' + SPANNEN.length + ' Spanne), und beide Muster greifen an der Notiz.');
