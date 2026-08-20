@@ -101,6 +101,45 @@ function gruppenAus(text){
     .filter(g => !/^Regeln mit/.test(g.name));
 }
 
+/* A2) Wörter ohne Eselsbrücke.
+
+   ⛔ Das stand bis zum 20.08.2026 auf dieser Seite GAR NICHT — der Rückstand
+   war nur in der Ausgabe von vorrat.mjs sichtbar, die Elias nie zu Gesicht
+   bekommt. Ein Posten, den nur das Werkzeug kennt, ist so gut wie keiner.
+   [[daten_ohne_zugang]]
+
+   ⚠️ Gemessen aus dem Arbeitsauftrag, nicht aus einer Handliste: welche Wörter
+   noch welche brauchen, steht dort je Wort als „hat N, braucht M mehr".
+   [[handliste_neben_echter_quelle]] */
+{
+  const datei = path.join(REPO, '.wartet-auftrag.md');
+  let text = '';
+  messen(path.join(REPO, 'werkzeuge', 'vorrat.mjs'), ['--auftrag', datei]);
+  try { text = fs.readFileSync(datei, 'utf8'); fs.unlinkSync(datei); } catch (e) {}
+  const bloecke = text.split(/^## /m).slice(1);
+  const offen = bloecke.map(b => {
+    const m = /braucht (\d+) mehr/.exec(b);
+    if (!m || Number(m[1]) === 0) return null;
+    const kopf = b.split('\n')[0];
+    const teile = kopf.split(/\s+/);
+    return { zahl: Number(m[1]), id: teile[0],
+             wort: teile.slice(1).join(' ').replace(/\s+/g, ' ').trim() };
+  }).filter(Boolean);
+  const summe = offen.reduce((s, o) => s + o.zahl, 0);
+  if (summe) posten.push({
+    titel: 'Eselsbrücken, die noch fehlen',
+    zahl: summe,
+    einheit: 'Merkhaken',
+    dazu: `an ${offen.length} Wörtern`,
+    aufwand: 'eine Entscheidung: brauchst du sie überhaupt?',
+    warum: 'Es sind ausschließlich Funktionswörter. Ich habe sie bewusst ausgelassen — '
+      + 'sie sind Grundwortschatz und lernen sich über den Gebrauch, nicht über ein Bild.',
+    wie: 'Sag „ja, schreib sie" — dann kommen sie beim nächsten Lauf. Sagst du nichts, '
+      + 'bleibt es so, und dieser Posten steht hier weiter.',
+    zeilen: offen.slice(0, 12).map(o => `${o.wort}`)
+  });
+}
+
 /* B) Taschkīl */
 {
   const r = messen(path.join(REPO, 'pruefe-taschkil.js'));
