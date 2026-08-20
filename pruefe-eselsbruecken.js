@@ -55,6 +55,26 @@ try {
   VOCAB_DATA.push(...ladeAusSkript('data/fachbegriffe.js', 'FACHBEGRIFF_VOKABELN'));
 } catch (e){ console.log('  hinw data/fachbegriffe.js nicht lesbar — ohne sie geprueft.'); }
 
+/* ⛔⛔ Und seine SELBST ANGELEGTEN Woerter — der vierte Weg in den Bestand.
+
+   Sie stehen nur in vt_personalVocab, also in seinem localStorage;
+   js/kern.js:245 schiebt sie beim Start in VOCAB_DATA. Ohne diese Zeilen
+   meldet die Pruefung ihre Eselsbruecken als „Id gehoert zu keiner Vokabel" —
+   am 20.08.2026 waren das fuenf Fehlmeldungen, direkt nachdem die ersten
+   Texte dafuer geschrieben waren.
+
+   Die Datei entsteht bei `vorrat.mjs --stand <datei> --app auto`.
+   ⚠️ Fehlt sie, wird das GESAGT: eine stillschweigend kleinere Pruefung sieht
+   aus wie eine bestandene. [[werkzeug_misst_kleineren_bestand]] */
+try {
+  const d = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'eigene-woerter.json'), 'utf8'));
+  const liste = Array.isArray(d.woerter) ? d.woerter : [];
+  if (liste.length) VOCAB_DATA.push(...liste);
+} catch (e){
+  console.log('  hinw data/eigene-woerter.json fehlt — seine selbst angelegten Woerter');
+  console.log('       sind NICHT geprueft (node werkzeuge/vorrat.mjs --stand <datei> --app auto).');
+}
+
 /* Sein auswendiger Bereich. Belegt aus vt_hifz (seine eigenen Haekchen im
    Quran-Leser) plus "und ein paar mehr noch bis sura duha". */
 const ZEICHEN = /[ؐ-ًؚ-ٰٟۖ-ࣰۭ-ࣳ]/g;

@@ -61,6 +61,24 @@
 
 const BUCH_ESELSBRUECKEN = {
 
+  /* ---------- Selbst angelegte Woerter (vt_personalVocab, 20.08.2026) ----------
+
+     ⛔ Diese Ids sehen anders aus als die Buchvokabeln: `p_` plus Zeitstempel.
+     Sie kommen aus addPersonalVocab() und stehen nur in Elias' localStorage;
+     die Zuordnung hier erreicht sie seit js/buecher.js (Aufruf von
+     eselsbrueckenNachtragen mit PERSONAL_VOCAB). Ohne diese Zeile waeren die
+     Texte geschrieben und nie angezeigt worden.
+
+     Nur die fuenf INHALTSWOERTER haben eine bekommen. Fuer die neun
+     Funktionswoerter (لَكَ, فِيْهِ, كَيْفَ, بَعْدَ, عِنْدَ, أَمَامَ, لِمَن,
+     حَالُكْ, لَكِ) waere eine Eselsbruecke gestellt: sie sind Grundwortschatz
+     und lernen sich ueber den Gebrauch, nicht ueber ein Bild. */
+  "p_1787183484954": "Dieselbe Form wie مَشْهُورٌ (berühmt), das du schon hast: مَفْعُولٌ, das Partizip Passiv — „das, was gemacht wurde\". ⭐ Und du kennst zwei weitere aus dem Unterricht: مَجْرُور und مَرْفُوع. مَكْسُورٌ ist also „das Gebrochene\". Wurzel ك س ر.",
+  "p_1787185012359": "Die höfliche Anrede, dein „Herr X\". ⭐ Im Islam ist سَيِّدُنَا („unser Herr\") die Anrede für die Propheten — daher kennst du das Wort schon aus dem Mund anderer, auch ohne es gelernt zu haben. Die weibliche Form bildest du wie immer mit der تاء مَرْبُوطة: سَيِّدَةٌ.",
+  "p_1787185031977": "Genau سَيِّدٌ plus تاء مَرْبُوطة — die Endung, die du als Fachbegriff schon hast. ⭐ Merke das Paar zusammen, dann hast du zwei Wörter für einen Preis: سَيِّدٌ für den Mann, سَيِّدَةٌ für die Frau. Dieselbe Regel wie bei كَبِيرٌ / كَبِيرَةٌ.",
+  "p_1787189845886": "Du hast es auswendig, ohne es zu wissen: وَأَخْرَجَتِ الْأَرْضُ أَثْقَالَهَا — „und die Erde bringt ihre Lasten hervor\" (99:2, az-Zalzala). ⭐ أَخْرَجَ ist die verstärkte Form von خَرَجَ: „herausgehen\" wird zu „herausbringen\". Wurzel خ ر ج.",
+  "p_1787191371934": "⚠️ Nicht mit مَكْسُورٌ verwechseln, das du am selben Tag angelegt hast: dort ist die Wurzel ك س ر (brechen), hier ك س ل. Der Unterschied steckt allein im letzten Buchstaben — ر gegen ل. ⭐ كَسْلَانُ hat die Form فَعْلَانُ, die im Arabischen einen Zustand beschreibt, der einen gerade befallen hat.",
+
   /* ---------- Madina 1, Kapitel 10 ---------- */
 
   "45899": "Gleiche Form wie جَمِيلٌ (schön) und قَصِيرٌ (kurz): فَعِيلٌ. Ein زَمِيلٌ ist der, der neben dir am selben مَكْتَبٌ (Schreibtisch) sitzt — Kollege oder Mitschüler. Plural زُمَلَاءُ.",
