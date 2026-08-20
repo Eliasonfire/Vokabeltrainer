@@ -190,11 +190,22 @@ try {
       { cwd: WURZEL, encoding: 'utf8' });
   } catch (e){ roh = (e.stdout || '') + ''; }   /* Exitcode != 0 ist dort ein Signal */
   const zl = roh.split(/\r?\n/);
-  const i0 = zl.findIndex(z => /^=== Haraka fehlt:/.test(z));
-  if (i0 >= 0) for (let i = i0 + 1; i < zl.length; i++){
-    if (/^===/.test(zl[i]) || !zl[i].trim()) break;
-    const m = /^\s*(\S+)\s+Stelle\s+(\d+)\s+\((\S)\)\s+(\S+)\s+id\s+(.+?)\s*$/.exec(zl[i]);
-    if (m) taschkilListe.push({ wort: m[1], stelle: +m[2], feld: m[4], id: m[5] });
+  /* ⭐ ZWEI Abschnitte, nicht einer. „Hamzat al-wasl am Wortanfang ohne
+     Kasra" ist derselbe Fragetyp — fehlt an einer Stelle ein Vokalzeichen? —
+     und dieselbe Quelle beantwortet ihn: Wiktionary fuehrt اِسْم und اِمْرَأَة
+     beide MIT Kasra auf dem Alif (U+0627 U+0650, nachgesehen).
+     ⛔ Nur den ersten Abschnitt zu lesen hiesse, zehn belegbare Faelle liegen
+     zu lassen — und die zehn haengen an genau ZWEI Wortstaemmen, eine
+     Entscheidung von Elias raeumt sie alle ab. */
+  const ABSCHNITTE = [/^=== Haraka fehlt:/, /^=== Hamzat al-wasl/];
+  for (const muster of ABSCHNITTE){
+    const i0 = zl.findIndex(z => muster.test(z));
+    if (i0 < 0) continue;
+    for (let i = i0 + 1; i < zl.length; i++){
+      if (/^===/.test(zl[i]) || !zl[i].trim()) break;
+      const m = /^\s*(\S+)\s+Stelle\s+(\d+)\s+\((\S)\)\s+(\S+)\s+id\s+(.+?)\s*$/.exec(zl[i]);
+      if (m) taschkilListe.push({ wort: m[1], stelle: +m[2], feld: m[4], id: m[5] });
+    }
   }
 } catch { /* laeuft das Werkzeug nicht, gibt es eben keine Taschkil-Belege */ }
 const taschkilWoerter = [...new Map(taschkilListe.map(t => [t.wort, t])).values()];
@@ -398,16 +409,63 @@ function harakaAnStelle(kandidat, wort, stelle){
   if (skelett(wort) !== skelett(kandidat)) return null;
   const ziel = konsonantIndex(wort, stelle);
   if (ziel < 0) return null;
-  let n = -1;
+
+  /* Die Haraka an der gefragten Stelle im Kandidaten holen. */
+  let n = -1, gefunden = null;
   for (let i = 0; i < kandidat.length; i++){
     if (IST_HARAKA.test(kandidat[i])) continue;
     n++;
     if (n === ziel){
       const m = /^[ً-ْٰ]+/.exec(kandidat.slice(i + 1));
-      return m ? m[0] : null;
+      gefunden = m ? m[0] : null;
+      break;
     }
   }
-  return null;
+  if (!gefunden) return null;
+
+  /* ⛔⛔ DIE ZWEITE BEDINGUNG, auch hier. Am 21.08.2026 traf اسْمِي („mein
+     Name") auf اِسْمِيّ („nominal") — Skelett gleich, aber Wiktionary hat
+     AUSSER der gefragten Kasra noch ein Schadda am Ende. Das macht daraus
+     ein anderes Wort, und der Beleg war nur zufaellig richtig.
+     Ein zufaellig richtiger Beleg ist gefaehrlicher als keiner: er sieht
+     aus wie eine Antwort und schliesst den Fall.
+     [[skelettvergleich_wirft_information_weg]]
+
+     Also: ausser an DIESER Stelle — und ausser der Zitier-Endung, die im
+     Woerterbuch ohnehin fehlt — muessen die Harakat uebereinstimmen. */
+  const harakaJeKonsonant = (s) => {
+    const raus = []; let k = -1;
+    for (let i = 0; i < s.length; i++){
+      if (IST_HARAKA.test(s[i])) continue;
+      k++;
+      const m = /^[ً-ْٰ]+/.exec(s.slice(i + 1));
+      raus[k] = m ? m[0] : "";
+    }
+    return raus;
+  };
+  const hw = harakaJeKonsonant(wort), hk = harakaJeKonsonant(kandidat);
+  /* ⭐ Vokal und Schadda sind zwei verschiedene Fragen:
+
+       Vokal — nur ein WIDERSPRUCH zaehlt: beide Seiten haben einen, und er
+       ist verschieden. Fehlt er bei Elias, ist das die Luecke selbst und
+       kein Hinweis auf ein anderes Wort. (إِضافة gegen إِضَافَة)
+
+       Schadda — STRUKTURELL. Hat eine Seite eine und die andere nicht,
+       sind es verschiedene Woerter: اِسْمِيّ „nominal" gegen اسْمِي „mein
+       Name". Auch eine FEHLENDE Schadda schliesst also aus.
+
+     Ohne diese Trennung ist die Bedingung entweder zu streng (wirft إِضافة
+     weg) oder zu weit (laesst اِسْمِيّ durch). Beides ist am 21.08.2026
+     nacheinander passiert. [[kennzeichen_mit_zwei_ursachen]] */
+  const SCH = /\u0651/;
+  const vokal = s => (s || "").replace(SCH, "");
+  for (let i = 0; i < Math.min(hw.length, hk.length); i++){
+    if (SCH.test(hw[i] || "") !== SCH.test(hk[i] || "")) return null;
+    if (i === ziel) continue;
+    const a = vokal(hw[i]), b = vokal(hk[i]);
+    if (a && b && a !== b) return null;
+  }
+  return gefunden;
 }
 
 const taschkilBelege = {};
