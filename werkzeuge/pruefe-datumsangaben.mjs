@@ -68,13 +68,47 @@ zeilen.forEach((z, i) => { if (z.startsWith('## ')) bloecke.push({ zeile: i + 1,
 bloecke.forEach((b, i) => { b.bis = i + 1 < bloecke.length ? bloecke[i + 1].von : zeilen.length; });
 
 const cache = new Map();
+/* ⏱ EINMAL statt hundertmal — nachgeruestet am 20.08.2026.
+
+   Vorher startete diese Funktion fuer JEDEN Hash einen eigenen git-Prozess.
+   Gemessen: 10.572 ms fuer einen Lauf, gegen 1.764 ms fuer validate.js und
+   104 ms fuer vorrat.mjs. Bei 470 Commits im Repo und Hunderten Nennungen
+   in der Notiz ist das der ganze Unterschied.
+
+   Jetzt: ein einziger `git log`, daraus eine Karte kurzer Hash -> Datum.
+   ⛔ Der Einzelaufruf bleibt als Rueckfall — die Notiz nennt vereinzelt
+   VOLLE 40-Zeichen-Hashes, und die stehen in der Kurzform-Liste nicht. */
+const alleCommits = new Map();
+const vollHashes = new Map();
+try {
+  const roh = execFileSync('git',
+    ['-C', REPO, 'log', '--format=%h %H %ad', '--date=format:%d.%m.%Y %H:%M'],
+    { encoding: 'utf8', maxBuffer: 20e6 });
+  for (const zeile of roh.split(/\r?\n/)){
+    /* Drei Felder: kurzer Hash, voller Hash, Datum. */
+    const t = zeile.split(' ');
+    if (t.length < 3) continue;
+    const datum = t.slice(2).join(' ').trim();
+    alleCommits.set(t[0], datum);
+    vollHashes.set(t[1], datum);
+  }
+} catch { /* kein Repo — dann greift der Rueckfall unten */ }
+
 function commitTag(hash) {
   if (cache.has(hash)) return cache.get(hash);
   let d = null;
-  try {
-    d = execFileSync('git', ['-C', REPO, 'log', '-1', '--format=%ad', '--date=format:%d.%m.%Y %H:%M', hash],
-      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
-  } catch { /* kein Commit dieses Namens */ }
+  /* Der Normalfall: ein 7-stelliger Hash steht so in der Karte. */
+  if (alleCommits.has(hash)) d = alleCommits.get(hash);
+  else {
+    /* ⛔ Laengere Zeichenketten sind hier meist GAR KEINE Commits: die Notiz
+       verlinkt Artefakte, und deren UUIDs fangen mit acht Hex-Zeichen an
+       (`d9916aee`, `1e11a0ef`). Am 20.08.2026 gezaehlt: 63 von 425. Fuer
+       jede lief ein git-Prozess ins Leere — zusammen rund zwei Sekunden.
+       Ein Praefixvergleich gegen die vollen Hashes kostet nichts. */
+    for (const [voll, datum] of vollHashes){
+      if (voll.startsWith(hash)){ d = datum; break; }
+    }
+  }
   cache.set(hash, d);
   return d;
 }
