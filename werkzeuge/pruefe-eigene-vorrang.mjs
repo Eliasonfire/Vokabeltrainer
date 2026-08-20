@@ -241,6 +241,13 @@ if (nurAlt.length){
   console.log('     bekaeme Elias eine Meldung, die er nicht abstellen kann.');
 }
 
+/* ⛔ Eigener Zaehler: ein Bestandsunterschied ist eine ANDERE Ursache als
+   „liest den Rohabzug" und braucht eine andere Reparatur. Bis zum
+   20.08.2026 liefen beide in `rot` zusammen, und die Schlussmeldung nannte
+   nur die erste — sie schickte damit in js/buecher.js:538, wo nichts war.
+   [[widerspruch_liegt_in_der_beschriftung]] */
+let rotBestand = 0;
+
 console.log('--- Messen alle Werkzeuge denselben Bestand? ---');
 console.log('');
 const zahlen = [];
@@ -249,7 +256,7 @@ for (const w of BESTANDSZAHL){
   if (!m){
     console.log('  ⛔ ' + w.name + ': die Zahl steht nicht in der Ausgabe —');
     console.log('     entweder umbenannt oder das Werkzeug bricht ab. NICHT gruen.');
-    rot++;
+    rotBestand++;
     continue;
   }
   zahlen.push({ name: w.name, zahl: Number(m[1]) });
@@ -261,7 +268,7 @@ if (zahlen.length > 1){
   if (einig){
     console.log('  ok  alle messen ' + zahlen[0].zahl + ' Woerter.');
   } else {
-    rot++;
+    rotBestand++;
     console.log('  ⛔ Die Werkzeuge messen VERSCHIEDENE Bestaende.');
     console.log('     Der kleinere kennt einen Weg nicht — meist vt_personalVocab');
     console.log('     (data/eigene-woerter.json) oder eine Buchdatei, die nur bei');
@@ -270,10 +277,19 @@ if (zahlen.length > 1){
 }
 
 console.log('');
-if (rot){
-  console.log('⛔ ' + rot + ' Werkzeug(e) lesen den Rohabzug statt der Fassung, die die App sieht.');
-  console.log('   Die Regel steht in js/buecher.js:538 — ein eigenes Wort, dessen id schon');
-  console.log('   in VOCAB_DATA steht, wird durch die gepflegte Fassung ersetzt.');
+if (rot || rotBestand){
+  if (rot){
+    console.log('⛔ ' + rot + ' Werkzeug(e) lesen den Rohabzug statt der Fassung, die die App sieht.');
+    console.log('   Die Regel steht in js/buecher.js:538 — ein eigenes Wort, dessen id schon');
+    console.log('   in VOCAB_DATA steht, wird durch die gepflegte Fassung ersetzt.');
+  }
+  if (rotBestand){
+    console.log('⛔ ' + rotBestand + ' Abweichung(en) beim BESTAND — eine andere Ursache.');
+    console.log('   Nicht in js/buecher.js suchen: hier kennt ein Werkzeug einen der');
+    console.log('   fuenf Wege nicht. Die fuenf sind Kapitel (FREIGESCHALTET) · einzeln');
+    console.log('   freigeschaltet · vokabeln-eigene.js · fachbegriffe.js · und was NUR');
+    console.log('   in vocab-data.js steht (chapter "personal" oder gar kein Abzug).');
+  }
   process.exit(2);
 }
 console.log('✅ Alle ' + WERKZEUGE.length + ' Werkzeuge sehen dieselbe Fassung wie die App.');
