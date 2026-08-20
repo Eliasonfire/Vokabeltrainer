@@ -455,5 +455,14 @@ fs.renameSync(tmp2, ZIEL_ART);
 
 console.log('Seite gebaut: ' + path.relative(REPO, ZIEL));
 console.log('  zum Veröffentlichen: ' + path.relative(REPO, ZIEL_ART));
+/* ⛔ Die URL gehoert HIERHER, nicht nur in den Wartungsprompt.
+   Wer die Seite ohne sie veroeffentlicht, legt eine ZWEITE an - und die
+   Warteseite verlinkt weiter auf die alte, die dann nie wieder aktuell
+   wird. Beim Schwesterwerkzeug wartet-auf-elias.mjs stand die Warnung
+   laengst; hier fehlte sie, einen Abschnitt daneben.
+   [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+console.log('  ⚠️ Veroeffentlichen kann die Routine nicht selbst - das braucht eine Sitzung.');
+console.log('     DIESELBE URL wiederverwenden, keine neue anlegen:');
+console.log('     https://claude.ai/code/artifact/724ee9bc-adb7-4dcd-ad75-6a56a552adbd');
 console.log('  ' + fragen.length + ' Frage(n), ' + anzahl + ' Wörter.');
 fragen.forEach(f => console.log('    ' + f.feld.padEnd(9) + String(f.woerter.length).padStart(3) + '  ' + f.titel));

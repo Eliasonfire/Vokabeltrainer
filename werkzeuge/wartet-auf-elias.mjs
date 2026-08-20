@@ -441,4 +441,6 @@ fs.renameSync(ZIEL + '.neu', ZIEL);
 console.log('');
 console.log('Seite gebaut: ' + path.relative(REPO, ZIEL));
 console.log('  ⚠️ Veroeffentlichen kann die Routine nicht selbst — das braucht eine Sitzung.');
+console.log('     DIESELBE URL wiederverwenden, keine neue anlegen:');
+console.log('     https://claude.ai/code/artifact/4c3a7c9e-c288-480c-bb1f-e2d7cd26d856');
 process.exit(posten.length ? 2 : 0);
