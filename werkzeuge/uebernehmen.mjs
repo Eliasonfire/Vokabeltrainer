@@ -91,7 +91,51 @@ function ladeSaetze() {
       }
     }
   }
-  return { saetze: aus, ausData: ausVokabeln };
+  /* ⛔ DRITTE QUELLE: data/beispielsaetze.js — bis zum 20.08.2026 fehlte sie.
+     Gemessen an dem Tag: 39 (Lehrbuch) + 171 (arabicroots) = 210 Saetze
+     standen zur Auswahl, waehrend 148 weitere existierten. **41,3 % der
+     Auswahl** fehlten diesem Werkzeug.
+
+     ⭐ Das wiegt hier schwerer als in einem Pruefskript: uebernehmen.mjs
+     ordnet neuen Regeln ihren Beispielsatz zu. Was es nicht sieht, kann keine
+     Regel bekommen — und die 45 offenen Regelkandidaten aus F14/15/16 laufen
+     genau hier durch. Ein Satz, den es nicht kennt, fuehrt zu "kein Satz
+     gefunden" und die Regel bliebe unerreichbar.
+
+     ⚠️ Der Kommentar zwei Absaetze weiter oben beschreibt denselben Fehler
+     schon einmal ("Die Zahl sah plausibel aus - genau deshalb steht unten die
+     Herkunft dabei"). Er hat ihn beim zweiten Mal nicht verhindert, weil er
+     ueber das FALSCHE Verzeichnis geschrieben war. [[dritte_satzquelle]]
+     [[entscheidung_gilt_fuer_das_zweite_werkzeug]]
+
+     Dieselbe Luecke steckte in pruefe-markierungen.js (937b1e3) und
+     pruefe-taschkil.js (7601424). Drei Werkzeuge, ein Loch. */
+  const bs = path.join(REPO, 'data', 'beispielsaetze.js');
+  let ausVerfasst = 0;
+  if (fs.existsSync(bs)) {
+    let o = null;
+    try {
+      o = (new Function(fs.readFileSync(bs, 'utf8')
+        + ';return typeof BEISPIELSAETZE!=="undefined"?BEISPIELSAETZE:null;'))();
+    } catch (e) {
+      console.log(`⚠️  data/beispielsaetze.js liess sich nicht laden: ${e.message}`);
+      console.log('   148 verfasste Saetze stehen damit NICHT zur Auswahl.');
+    }
+    if (o) {
+      const schon = new Set(aus.map(s => String(s.id)));
+      for (const k of Object.keys(o)) {
+        const s = o[k];
+        if (!s || !s.sentAr || schon.has(String(k))) continue;
+        aus.push({ id: String(k), ar: nfc(s.sentAr), de: s.sentDe, quelle: 'verfasst' });
+        ausVerfasst++;
+      }
+    }
+  } else {
+    console.log('⚠️  data/beispielsaetze.js fehlt — 148 verfasste Saetze stehen');
+    console.log('   nicht zur Auswahl. Ein Lauf ohne sie sieht genauso aus wie');
+    console.log('   einer mit ihnen, nur mit weniger Treffern.');
+  }
+  return { saetze: aus, ausData: ausVokabeln, ausVerfasst };
 }
 
 /* ------------------------------------------------------ Schritt 1: Entwuerfe */
@@ -222,15 +266,26 @@ function pruefen(zeigeNur) {
     process.exit(0);
   }
   const { entwuerfe } = JSON.parse(fs.readFileSync(ENTWUERFE, 'utf8'));
-  const { saetze, ausData } = ladeSaetze();
+  const { saetze, ausData, ausVerfasst } = ladeSaetze();
   const { GRAMMAR_RULES, SENTENCE_TAGS } = ladeGD();
   const vorhandeneIds = new Set(GRAMMAR_RULES.map(r => r.id));
 
+  /* ⚠️ Die Herkunft wird GERECHNET, nicht als Rest gebildet. Bis zum
+     20.08.2026 stand hier `saetze.length - ausData` als "aus dem Lehrbuch" —
+     mit der dritten Quelle waeren daraus still 187 statt 39 geworden. Ein
+     Restwert stimmt nur so lange, wie es genau zwei Toepfe gibt. */
+  const ausLehrbuch = saetze.length - ausData - (ausVerfasst || 0);
   console.log(`${entwuerfe.length} Entwuerfe, ${saetze.length} Saetze zur Auswahl`
-    + ` (${saetze.length - ausData} aus dem Lehrbuch, ${ausData} aus arabicroots).`);
+    + ` (${ausLehrbuch} aus dem Lehrbuch, ${ausData} aus arabicroots,`
+    + ` ${ausVerfasst || 0} verfasst).`);
   if (!ausData) {
     console.log('⚠️  Keine arabicroots-Saetze geladen. "kein Satz gefunden" heisst');
     console.log('    dann nur: nicht im Lehrbuch - nicht: nirgends.');
+  }
+  if (!ausVerfasst) {
+    console.log('⚠️  Keine verfassten Saetze geladen (data/beispielsaetze.js).');
+    console.log('    Das sind 41 % der Auswahl — "kein Satz gefunden" waere dann');
+    console.log('    kein Befund, sondern eine Folge der fehlenden Quelle.');
   }
   console.log('');
 
