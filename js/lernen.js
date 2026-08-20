@@ -27,9 +27,13 @@ const FACH_TAKT = 6;
 
 function fachbegriffTakt(pool, size){
   const laenge = Math.min(size, pool.length);
-  const fach = pool.filter(w => w.chapter === 'grammar');
+  /* ⛔ `book`, nicht `chapter`. Seit dem 20.08.2026 tragen die Fachbegriffe
+     chapter 'personal' (Elias wollte sie unter den eigenen Vokabeln). Wer hier
+     weiter nach chapter fragt, findet keinen einzigen mehr — der Takt hörte
+     auf zu wirken, ohne dass irgendetwas meldet. */
+  const fach = pool.filter(w => w.book === 'grammar');
   if (!fach.length) return pool.slice(0, laenge);
-  const rest = pool.filter(w => w.chapter !== 'grammar');
+  const rest = pool.filter(w => w.book !== 'grammar');
 
   /* Platz 6, 12, 18 … also Index 5, 11, 17. */
   const plaetze = [];

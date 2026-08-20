@@ -35,7 +35,14 @@
    die zweite steht hier, damit die Abweichung nicht unsichtbar verschwindet.
 
    ---------------------------------------------------------------------------
-   TECHNISCH: `chapter: 'grammar'` und `book: 'grammar'`.
+   TECHNISCH: `book: 'grammar'` (die Herkunft) und `chapter: 'personal'`.
+   ⚠️ Das `chapter` war bis zum 20.08.2026 ebenfalls 'grammar'. Elias an
+   diesem Tag: „ich finde die kategorie ,,fachbegriffe" unnötig. ich möchte das
+   all diese begriffe und zukünftige einfach als meine eigenen begriffe gelten.
+   sie sollen alle unter eigene vokabeln sein."
+   ⛔ `book` bleibt 'grammar' und ist ab jetzt das EINZIGE Merkmal: daran haengen
+   der Fachbegriff-Takt im Lernmodus (jeder sechste Platz), der Hoermodus und die
+   Zaehlung in pruefe-oberflaeche.js. Wer es entfernt, schaltet alle drei still ab.
 
    ⛔ Sie laufen bewusst NICHT unter 'personal'. Der Schalter „Eigene" darf sie
    nicht abschalten können — sonst verschwinden genau die Wörter, um die er
@@ -49,7 +56,7 @@ const FACHBEGRIFF_VOKABELN = [
     ar: 'مُضَاف',
     de: 'der Besitz — das erste Wort der Genitivverbindung',
     type: 'noun',
-    chapter: 'grammar',
+    chapter: 'personal',
     book: 'grammar',
     regel: 'mudaf-01',
     belegt: 23,
@@ -60,7 +67,7 @@ const FACHBEGRIFF_VOKABELN = [
     ar: 'مَجْرُور',
     de: 'Genitiv (Frage: wessen?)',
     type: 'noun',
-    chapter: 'grammar',
+    chapter: 'personal',
     book: 'grammar',
     regel: 'irab-drei-faelle-01',
     belegt: 18,
@@ -71,7 +78,7 @@ const FACHBEGRIFF_VOKABELN = [
     ar: 'مَرْفُوع',
     de: 'Nominativ — der Grundfall',
     type: 'noun',
-    chapter: 'grammar',
+    chapter: 'personal',
     book: 'grammar',
     regel: 'marfu-grundfall-01',
     belegt: 8,
@@ -82,7 +89,7 @@ const FACHBEGRIFF_VOKABELN = [
     ar: 'نَعْت',
     de: 'Adjektiv — das beschreibende Wort',
     type: 'noun',
-    chapter: 'grammar',
+    chapter: 'personal',
     book: 'grammar',
     regel: 'nat-vier-bedingungen-01',
     belegt: 5,
@@ -93,7 +100,7 @@ const FACHBEGRIFF_VOKABELN = [
     ar: 'إِضافة',
     de: 'Genitivverbindung — zwei Nomen werden ein Ausdruck',
     type: 'noun',
-    chapter: 'grammar',
+    chapter: 'personal',
     book: 'grammar',
     regel: 'idafa-01',
     belegt: 9,
@@ -104,7 +111,7 @@ const FACHBEGRIFF_VOKABELN = [
     ar: 'ظَرْف',
     de: 'Zeit- oder Ortsangabe',
     type: 'noun',
-    chapter: 'grammar',
+    chapter: 'personal',
     book: 'grammar',
     regel: 'zarf-01',
     belegt: 3,
@@ -122,7 +129,7 @@ const FACHBEGRIFF_VOKABELN = [
     ar: 'شَكْل',
     de: 'Vokalzeichen (ein einzelnes)',
     type: 'noun',
-    chapter: 'grammar',
+    chapter: 'personal',
     book: 'grammar',
     regel: 'schakl-01',
     belegt: 3,
@@ -133,7 +140,7 @@ const FACHBEGRIFF_VOKABELN = [
     ar: 'اسْمُ الْإِشَارَة',
     de: 'Hinweiswort (dieser, jener)',
     type: 'noun',
-    chapter: 'grammar',
+    chapter: 'personal',
     book: 'grammar',
     regel: 'ismul-isara-hadha-01',
     belegt: 2,
@@ -145,7 +152,7 @@ const FACHBEGRIFF_VOKABELN = [
     ar: 'تاء مَرْبُوطة',
     de: 'die weibliche Endung ة',
     type: 'noun',
-    chapter: 'grammar',
+    chapter: 'personal',
     book: 'grammar',
     regel: 'ta-marbuta-fem-01',
     belegt: 4,
@@ -156,7 +163,7 @@ const FACHBEGRIFF_VOKABELN = [
     ar: 'أَلِف مَقْصورة',
     de: 'das ى am Wortende (gesprochen wie langes ā)',
     type: 'noun',
-    chapter: 'grammar',
+    chapter: 'personal',
     book: 'grammar',
     regel: 'alif-maqsura-01',
     belegt: 3,
@@ -201,7 +208,7 @@ const FACHBEGRIFF_VOKABELN = [
     ar: 'ـِي',
     de: 'die Besitzendung „mein“ — 1. Person',
     type: 'particle',
-    chapter: 'grammar',
+    chapter: 'personal',
     book: 'grammar',
     regel: 'possessiv-ya-01',
     belegt: 2,
@@ -214,7 +221,7 @@ const FACHBEGRIFF_VOKABELN = [
     ar: 'ـكَ',
     de: 'die Besitzendung „dein“ — zu einem Mann',
     type: 'particle',
-    chapter: 'grammar',
+    chapter: 'personal',
     book: 'grammar',
     regel: 'possessiv-endungen-01',
     belegt: 3,
@@ -227,7 +234,7 @@ const FACHBEGRIFF_VOKABELN = [
     ar: 'ـكِ',
     de: 'die Besitzendung „dein“ — zu einer Frau',
     type: 'particle',
-    chapter: 'grammar',
+    chapter: 'personal',
     book: 'grammar',
     regel: 'possessiv-endungen-01',
     belegt: 1,
@@ -240,7 +247,7 @@ const FACHBEGRIFF_VOKABELN = [
     ar: 'ـهُ',
     de: 'die Besitzendung „sein“',
     type: 'particle',
-    chapter: 'grammar',
+    chapter: 'personal',
     book: 'grammar',
     regel: 'possessiv-endungen-01',
     belegt: 2,
@@ -253,7 +260,7 @@ const FACHBEGRIFF_VOKABELN = [
     ar: 'ـهَا',
     de: 'die Besitzendung „ihr“',
     type: 'particle',
-    chapter: 'grammar',
+    chapter: 'personal',
     book: 'grammar',
     regel: 'possessiv-endungen-01',
     belegt: 2,

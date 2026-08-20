@@ -267,6 +267,10 @@ document.addEventListener('click', (e)=>{
     const buch = chBtn.dataset.chbuch;
     if (val === 'personal'){
       SETTINGS.eigeneGewaehlt = !SETTINGS.eigeneGewaehlt;
+      /* ⭐ Ab jetzt ist es SEINE Entscheidung und wird nicht mehr angefasst.
+         Die einmalige Umstellung in js/buecher.js (eigeneChipNachziehen) läuft
+         nur, solange dieser Merker fehlt. */
+      SETTINGS.eigeneChipEntschieden = true;
     } else {
       if (!SETTINGS.buecher || typeof SETTINGS.buecher !== 'object') SETTINGS.buecher = {};
       const slug = buch || (typeof aktivesBuch === 'function' ? aktivesBuch() : 'madina-1');

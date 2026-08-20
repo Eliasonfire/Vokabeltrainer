@@ -34,7 +34,12 @@ function renderChapterCats(){
      Dieselbe Entscheidung wie am 29.07.2026 bei den eigenen Kategorien, die er
      ausdruecklich oben haben wollte: seine eigenen sind ihm wichtiger als die
      automatischen, denn er hat sie ja gerade deshalb angelegt. */
-  const eigeneOben = ['personal', 'grammar'];
+  /* ⭐ Seit dem 20.08.2026 nur noch EIN Eintrag. Elias: „ich finde die
+     kategorie ,,fachbegriffe" unnötig … sie sollen alle unter eigene
+     vokabeln sein." Die fünfzehn Begriffe tragen jetzt selbst chapter
+     'personal' und stehen damit in derselben Liste wie seine eigenen
+     Wörter — es gibt keine zweite Kachel mehr. */
+  const eigeneOben = ['personal'];
   const chapters = [...eigeneOben, ...kapitelDesBuchs()];
   const html = chapters.map(ch=>{
     const words = buchVokabeln().filter(w=>w.chapter===ch);
@@ -50,9 +55,7 @@ function renderChapterCats(){
          deutschen Satz kehrt die Reihenfolge um, und das Komma dazwischen ist
          richtungsneutral und wandert. Rein deutsch ist hier das Richtige - die
          Begriffe selbst stehen ja eine Zeile weiter in der Liste. */
-      : ch === 'grammar'
-        ? `<div class="list-row-sub">Die Grammatikbegriffe deines Lehrers</div>`
-        : '';
+      : '';
     const label = eigen
       ? `<span class="eigen-stern">★</span><span>${name}</span>`
       : `<span>Kap. ${ch} — ${name}</span>`;
@@ -231,13 +234,13 @@ function openWordList(key){
   let words, title;
   if (key.startsWith('chapter:')){
     const ch = key.split(':')[1];
-    const chNum = (ch==='personal' || ch==='grammar') ? ch : Number(ch);
+    const chNum = (ch==='personal') ? ch : Number(ch);
     words = buchVokabeln().filter(w=>w.chapter===chNum);
     /* CHAPTER_NAMES benennt nur die neun Kapitel aus Madina 1, zu denen eine
        belegte Grammatikregel vorliegt. Fuer alle uebrigen bleibt die Nummer -
        einen Namen zu erfinden verbietet E.1. */
     const kapName = CHAPTER_NAMES[chNum];
-    title = (ch==='personal' || ch==='grammar')
+    title = (ch==='personal')
       ? (kapName || ch)
       : (kapName ? `Kapitel ${ch} — ${kapName}` : `Kapitel ${ch}`);
   } else if (key.startsWith('feld:')){
@@ -558,7 +561,7 @@ function baueWortKarte(w){
      anbieten, weil das Wort dann wie jedes andere aussieht. */
   const wkEinzeln   = (typeof istEinzelnFrei === 'function') && istEinzelnFrei(w);
   const wkNochNicht = (typeof istBekannt === 'function') && !istBekannt(w);
-  const wkEigen     = w.chapter === 'personal' || w.chapter === 'grammar';
+  const wkEigen     = w.chapter === 'personal';
 
   t.push(`<div class="wk-kopfzeile">
     <div class="wk-marken">
@@ -658,7 +661,7 @@ function baueWortKarte(w){
      dasselbe. ⛔ Diese Zeile stand zuerst nur auf 'personal', während kern.js
      schon beide erlaubte: der Knopf erschien nie, obwohl die Funktion dahinter
      fertig war. Aufgefallen nur, weil ich es im Browser durchgeklickt habe. */
-  const eigen = w.chapter === 'personal' || w.chapter === 'grammar';
+  const eigen = w.chapter === 'personal';
   const geaendert = (typeof WORT_AENDERUNGEN !== 'undefined') && !!WORT_AENDERUNGEN[w.id];
 
   /* ⭐ Pluralkarten sind ABGELEITET (18.08.2026). Sie werden bei jedem Start aus

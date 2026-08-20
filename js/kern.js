@@ -81,7 +81,6 @@ function kapitelBeschriftung(w){
      man im Quelltext nicht, und was man nicht sieht, prueft man auch nicht. */
   if (w.istPlural && w.sgAr) return `Plural von ${w.sgAr}`;
   if (w.chapter === 'personal') return 'Eigene Vokabel';
-  if (w.chapter === 'grammar')  return 'Fachbegriff';
   return `Kap. ${w.chapter}`;
 }
 
@@ -148,11 +147,9 @@ const LERNBESTAND_IDS = new Set(VOCAB_DATA.map(w => w.id));
 function istBekannt(w){
   if (!w) return false;
   if (w.chapter === 'personal') return true;
-  /* ⭐ Die Fachbegriffe seines Lehrers (data/fachbegriffe.js). Sie sind
-     definitionsgemaess bekannt: sie stammen aus SEINEN 73 Regeln, also aus dem
-     Unterricht, den er schon hatte. Ohne diese Zeile fielen sie durch den
-     Buchfilter unten, weil 'grammar' in FREIGESCHALTET nicht vorkommt. */
-  if (w.chapter === 'grammar') return true;
+  /* ⭐ Die Fachbegriffe seines Lehrers liefen bis zum 20.08.2026 unter
+     chapter 'grammar' und brauchten hier eine eigene Zeile. Jetzt sind sie
+     chapter 'personal' und der Zweig darueber erledigt sie mit. */
   if (LERNBESTAND_IDS.has(w.id)) return true;
   /* ⭐⭐ EINZELN FREIGESCHALTETE WÖRTER — Elias am 20.08.2026:
      „ich will auch, dass ich wörter die in späteren kapiteln kommen ich
@@ -468,7 +465,7 @@ function istGeloescht(id){ const e = GELOESCHT[id]; return !!(e && e.an); }
 
 function loeschePersonalVocab(id){
   const w = VOCAB_DATA.find(x => x.id === id);
-  if (!w || (w.chapter !== 'personal' && w.chapter !== 'grammar')) return false;
+  if (!w || w.chapter !== 'personal') return false;   /* Fachbegriffe sind seit dem 20.08.2026 selbst 'personal'. */
 
   /* ⚠️ Seit C8 (18.08.2026) stehen unter 'personal' ZWEI Herkuenfte: was Elias
      hier im Trainer angelegt hat (PERSONAL_VOCAB im Geraetespeicher) und was er
@@ -1179,12 +1176,14 @@ function passtZurAuswahl(w){
   if (typeof istEinzelnFrei === 'function' && istEinzelnFrei(w)) return true;
   const karte = (SETTINGS.buecher && typeof SETTINGS.buecher === 'object')
     ? SETTINGS.buecher : { 'madina-1': [] };
-  /* ⛔ Die Fachbegriffe stehen VOR dem Eigene-Schalter und haben keinen
-     eigenen. Elias hat sie ausdruecklich bestellt; ein Schalter, der sie
-     wieder verschwinden laesst, waere genau der Fehler, den der Punkt in der
-     To-Do benennt: „Nicht hinter Eigene verstecken." Wer einen einzelnen
-     Begriff nicht mehr sehen will, nimmt den „Kenne ich schon"-Knopf. */
-  if (w.chapter === 'grammar') return true;
+  /* ⚠️ Hier stand bis zum 20.08.2026 ein eigener Zweig fuer die Fachbegriffe
+     mit der Begruendung „Nicht hinter Eigene verstecken". Elias hat das an
+     diesem Tag ausdruecklich umgedreht: „ich möchte das all diese begriffe und
+     zukünftige einfach als meine eigenen begriffe gelten. sie sollen alle unter
+     eigene vokabeln sein."
+     ⛔ Das hat eine Folge, die er kennen muss: sie haengen jetzt am
+     „Eigene"-Chip. Solange er KEIN Kapitel eingeengt hat, laufen sie wie bisher
+     immer mit; hat er eingeengt und „Eigene" nicht angehakt, sind sie weg. */
   if (w.chapter === 'personal'){
     const eng = (typeof irgendwoEingeengt === 'function') ? irgendwoEingeengt() : false;
     return !eng || !!SETTINGS.eigeneGewaehlt;
