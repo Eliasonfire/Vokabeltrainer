@@ -547,7 +547,14 @@ try {
       .split(/\r?\n/)
       .filter(z => /^\s*[-*]\s/.test(z))
       .map(z => z.replace(/^\s*[-*]\s+/, '').trim())
-      .filter(Boolean);
+      .filter(Boolean)
+      /* ⛔ ERLEDIGTES gehoert nicht auf eine Seite, die zeigt, was WARTET.
+         Am 20.08.2026 stand dort ein vierzeiliger Absatz „✅ Erledigt … die
+         zwei Saetze sind KEIN Mangel" — richtig und gut belegt, aber er machte
+         die Seite laenger statt klarer. Ein erledigter Punkt bleibt in der
+         To-Do stehen (dort ist er der Beleg), nur nicht hier.
+         [[flaeche_nur_im_gefuellten_zustand]] */
+      .filter(z => !/^(✅|~~)/.test(z.trim()));
   }
 } catch (e) {
   console.error('⚠️ To-Do nicht lesbar: ' + e.message);
