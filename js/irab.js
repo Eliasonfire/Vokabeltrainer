@@ -339,7 +339,26 @@ const NICHT_VERB = ['صفر', 'عمي', 'جر', 'ل', 'فوق',
      ⚠️ Ausgerechnet bei diesem Wort ist die Verwechslung besonders schaedlich:
      فَاعِل IST der Fachbegriff fuer den Taeter eines Verbs. Wer ihn als Verb
      gelesen bekommt, lernt den Begriff falsch, den er gerade lernen will. */
-  'فاعل'];
+  'فاعل',
+  /* ⛔ 20.08.2026, der vierte Fall: طَالِبٌ faellt mit طَلَبَ (verlangen)
+     zusammen. In كُلُّ طَالِبٍ فِي الْمَدْرَسَةِ wurde طَالِبٍ zum فَاعِل
+     statt zum مُضَاف إِلَيْهِ — die إِضَافَة war damit unsichtbar, und die ist
+     der ganze Grund fuer diesen Satz. طَالِبٌ steht seit Kapitel 1 als Nomen
+     in seinem Bestand. */
+  'طالب',
+  /* ⛔ Und der eigentliche Taeter im selben Satz: كُلُّ faellt mit كَلَّ
+     (ermueden) zusammen. Es wurde zum فِعْل — und ERST DADURCH wurde طَالِبٍ
+     dahinter zum فَاعِل. Ich hatte zuerst nur طالب eingetragen und mich
+     gewundert, warum sich nichts aendert: das zweite Wort war die FOLGE,
+     nicht die Ursache. */
+  'كل',
+  /* ⛔ Die letzten beiden aus Kapitel 19/20, gefunden im selben Lauf:
+     دَرْسٌ faellt mit دَرَسَ (lernen) zusammen, سُؤَالٌ mit سَأَلَ (fragen).
+     ⚠️ Beide Male ist das Nomen von genau diesem Verb ABGELEITET — das ist
+     kein Zufall, sondern der Normalfall im Arabischen. Deshalb wird diese
+     Liste weiter wachsen, sooft neue Nomen in Beispielsaetze kommen.
+     Der Artikel wird von istInListe NICHT abgetrennt: beide Formen noetig. */
+  'درس', 'الدرس', 'سؤال'];
 /* Adjektive, die in den Beispielsaetzen vorkommen und deren Wortart nicht
    verlaesslich aus dem Lexikon kommt: كسلان und مجرور fehlen im kleinen
    Bestand ganz, حار steht im grossen ZWEIMAL (adjective und verb حَارَ) und
@@ -347,7 +366,14 @@ const NICHT_VERB = ['صفر', 'عمي', 'جر', 'ل', 'فوق',
    ⛔ Nicht aufgenommen sind واحد und اثنان: der Abzug fuehrt sie als
    Adjektive, in «صِفْرٌ، وَاحِدٌ، اِثْنَانِ.» sind sie aber eine Aufzaehlung
    und kein نَعْت. */
-const ADJEKTIVE = ['حار', 'كسلان', 'مجرور'];
+/* ⛔ 20.08.2026: وَاسِعٌ (geraeumig) faengt mit einem و an, und der Zerleger
+   hielt das fuer die Konjunktion „und“ — الْبَيْتُ وَاسِعٌ wurde ohne geladenes
+   Buch zu „Anschluss mit و, Kasus nicht eindeutig“. Es ist kein Anschluss, es ist
+   das Praedikat.
+   ⚠️ istInListe() prueft beide Formen — mit und ohne fuehrendes و/ف —, deshalb
+   genuegt der Eintrag mit و. Die weibliche Form braucht einen eigenen: die
+   Liste vergleicht ganze Woerter, nicht Wortstaemme. */
+const ADJEKTIVE = ['حار', 'كسلان', 'مجرور', 'واسع', 'واسعة', 'الواسع', 'الواسعة'];
 const istVerb = w => !istInListe(w, NICHT_VERB) && istInListe(w, VERBEN);
 const giltAlsVerb = w => !istInListe(w, NICHT_VERB) && (wortart(w) === 'verb' || istInListe(w, VERBEN));
 
