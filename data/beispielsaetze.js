@@ -1228,6 +1228,76 @@ const BEISPIELSAETZE = {
     sentDe: 'Die Verspätung ist lang.'
   },
 
+  /* ---------- Die letzten sechs aus Kapitel 24 (21.08.2026) ------------
+
+     Damit ist madina-1 vollstaendig: 298 Woerter, jedes mit Eselsbruecke
+     und Satz. Gemessen vorher: 76 Woerter in K24, davon 70 mit Satz.
+
+     ⛔ Diese sechs sind KEIN Anfaengerwortschatz — Kapitel 24 ist der
+     Anhang des Buches. Die Saetze halten den uebrigen Wortschatz deshalb
+     bewusst einfach (K1-K9), damit nur das NEUE Wort neu ist.
+     [[was_geuebt_werden_soll]] */
+
+  /* دَأَبَ — beharrlich sein / unermuedlich tun (madina-1, Kapitel 24)
+     Verbalsatz in der Grundfolge: Verb, dann الطَّالِبُ als فَاعِل im Nominativ,
+     dann die Praepositionalphrase. دَأَبَ verlangt عَلَى fuer das, worin man
+     beharrt — nicht فِي und nicht den blossen Akkusativ. */
+  '50466': {
+    sentAr: 'دَأَبَ الطَّالِبُ عَلَى الْعَمَلِ.',
+    sentDe: 'Der Student arbeitete unermüdlich.'
+  },
+
+  /* سَابِقَةٌ — Praezedenzfall / Vorgeschichte (madina-1, Kapitel 24)
+     ⭐ Der Satz uebt die Uebereinstimmung des نَعْت: جَدِيدَةٌ folgt سَابِقَةٌ in
+     Geschlecht (feminin), Kasus (Nominativ) und Bestimmtheit (beide ohne
+     اَلْ). Dazu هَذِهِ als feminines مُبْتَدَأ — nicht هَذَا. */
+  '50184': {
+    sentAr: 'هَذِهِ سَابِقَةٌ جَدِيدَةٌ فِي الْمَدْرَسَةِ.',
+    sentDe: 'Das ist ein neuer Präzedenzfall in der Schule.'
+  },
+
+  /* خَاصِرَةٌ — Taille / Flanke (madina-1, Kapitel 24)
+     ⭐ Zwei إِضَافَة in einem Satz: يَدُ الطَّبِيبِ traegt kein Tanwin, weil ein
+     zweites Nomen folgt, und خَاصِرَةِ الْمَرِيضِ steht komplett im Genitiv,
+     weil عَلَى davor steht. Genau die Regel mudaf-ohne-al-01. */
+  '50187': {
+    sentAr: 'يَدُ الطَّبِيبِ عَلَى خَاصِرَةِ الْمَرِيضِ.',
+    sentDe: 'Die Hand des Arztes liegt auf der Flanke des Kranken.'
+  },
+
+  /* اِمْتِثَالٌ — Befolgung / Gehorsam (madina-1, Kapitel 24)
+     ⚠️ Die Schreibung ist die Schwierigkeit, nicht die Bedeutung: اِمْتِثَالٌ
+     beginnt mit einer هَمْزَة وَصْل. Tritt اَلْ davor, faellt sie weg und das لـ
+     bekommt das Kasra — الِامْتِثَالُ, nicht الْاِمْتِثَالُ.
+     Sonst: مَصْدَر als مُبْتَدَأ, أَمْرِ اللَّهِ als إِضَافَة hinter لِـ. */
+  '50192': {
+    sentAr: 'الِامْتِثَالُ لِأَمْرِ اللَّهِ وَاجِبٌ.',
+    sentDe: 'Die Befolgung des Befehls Allahs ist Pflicht.'
+  },
+
+  /* اِسْتَذْكَرَ — lernen / auswendig lernen (madina-1, Kapitel 24)
+     Verb der zehnten Form. Am Satzanfang traegt seine هَمْزَة وَصْل ein Kasra
+     (اِسْتَذْكَرَ); دُرُوسَهُ ist مَفْعُول بِهِ im Akkusativ, gebrochener Plural mit
+     angehaengtem Pronomen. ⭐ Und قَبْلَ الِامْتِحَانِ zeigt dieselbe هَمْزَة وَصْل
+     wie der Satz darueber — zweimal dasselbe Muster, einmal am Wortanfang,
+     einmal hinter dem Artikel. */
+  '50196': {
+    sentAr: 'اِسْتَذْكَرَ الطَّالِبُ دُرُوسَهُ قَبْلَ الِامْتِحَانِ.',
+    sentDe: 'Der Student wiederholte seine Lektionen vor der Prüfung.'
+  },
+
+  /* فَضَلَ — vorzueglich / ueberlegen sein (madina-1, Kapitel 24)
+     ⭐ Der klarste Kasus-Satz der sechs: beide Nomen tragen اَلْ, nur die
+     Endung trennt die Rollen — الْعِلْمُ ist فَاعِل (Nominativ), الْمَالَ ist
+     مَفْعُول بِهِ (Akkusativ). Ohne die Harakat waere der Satz zweideutig.
+     ⚠️ Der Abzug uebersetzt فَضَلَ als „vorzueglich / ueberlegen sein";
+     gebraucht wird es transitiv (فَضَلَهُ = er uebertraf ihn), und genau das
+     zeigt der Satz. Die intransitive Lesart gehoert zu فَضُلَ. */
+  '50197': {
+    sentAr: 'فَضَلَ الْعِلْمُ الْمَالَ.',
+    sentDe: 'Das Wissen übertrifft das Vermögen.'
+  },
+
   /* ---------- Elias' selbst angelegte Woerter (Weg 3, vt_personalVocab) -----
 
      ⛔ Diese vierzehn standen bis zum 20.08.2026 ohne Satz da, und ein Satz
