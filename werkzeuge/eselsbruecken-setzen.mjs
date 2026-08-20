@@ -117,16 +117,83 @@ function setzeAlt(inhalt, id, texte){
   return { inhalt: zeilen.join(ze), meldung: null };
 }
 
+/* ---------- data/eselsbruecken.js: die erste Stelle für eine BUCHVOKABEL ----
+
+   ⛔⛔ OHNE DAS KANN DIESES WERKZEUG FÜR EIN NEUES WORT GAR NICHTS.
+   Bis zum 20.08.2026 kannte es zwei Ziele, und beide brauchen einen
+   VORHANDENEN Anker: die `"id": "<id>",`-Zeile in vocab-data.js (die gibt es
+   nur für die 171 Lernwörter) und den Block `'<id>': [` in
+   eselsbruecken-alt.js (den gibt es nur, wo schon eine Alternative steht).
+
+   Für die acht Wörter aus madina-1 Kapitel 13 — also genau das, was die
+   Wartung beim nächsten Freischalten bearbeiten soll — findet es keinen von
+   beiden und schreibt NICHTS. Punkt A6 des vollen Programms hätte damit
+   keinen Automatikweg gehabt, und die Routine hätte von Hand in die Datei
+   geschrieben: ohne diese Maskierung, ohne die Zeilenende-Messung.
+   [[werkzeug_ohne_aufrufer]]
+
+   ⚠️ Warum eine dritte Datei und nicht einfach vocab-data.js: dort hängt
+   LERNBESTAND_IDS dran und steuert die Freischaltung. Ein neuer Eintrag hätte
+   die Nebenwirkung, dass das Wort als „kennt er schon" gilt — das verschiebt
+   Elias' Lernstand. Der Kopf von data/eselsbruecken.js sagt das selbst. */
+function setzeBuch(inhalt, id, text){
+  const ze = zeilenende(inhalt);
+  const zeilen = inhalt.split(/\r?\n/);
+  const suche = new RegExp('^\\s*"' + id + '"\\s*:');
+  const i = zeilen.findIndex(z => suche.test(z));
+  if (i >= 0){
+    /* Vorhandenen Eintrag ersetzen. Ein Eintrag kann über mehrere Zeilen
+       gehen — bis zur nächsten id-Zeile oder zur schließenden Klammer. */
+    let ende = i;
+    for (let j = i + 1; j < zeilen.length; j++){
+      if (/^\s*"\d+"\s*:/.test(zeilen[j]) || /^\s*\};?\s*$/.test(zeilen[j])) break;
+      ende = j;
+    }
+    const einzug = zeilen[i].match(/^\s*/)[0];
+    zeilen.splice(i, ende - i + 1, `${einzug}"${id}": ${JSON.stringify(text)},`);
+    return { inhalt: zeilen.join(ze), meldung: null, neu: false };
+  }
+  /* Neu anlegen — ans Ende des Objekts, vor die schließende Klammer.
+     ⛔ Die LETZTE `};` im Objekt suchen, nicht die erste im ganzen Text: davor
+     stehen Kommentare mit geschweiften Klammern. */
+  const iObj = zeilen.findIndex(z => /const BUCH_ESELSBRUECKEN\s*=\s*\{/.test(z));
+  if (iObj < 0) return { inhalt, meldung: `id ${id}: BUCH_ESELSBRUECKEN nicht gefunden` };
+  let iZu = -1;
+  for (let j = iObj + 1; j < zeilen.length; j++){
+    if (/^\};?\s*$/.test(zeilen[j])){ iZu = j; break; }
+  }
+  if (iZu < 0) return { inhalt, meldung: `id ${id}: BUCH_ESELSBRUECKEN wird nicht geschlossen` };
+  /* Ein Komma an die bisher letzte Eintragszeile, falls es fehlt. */
+  for (let j = iZu - 1; j > iObj; j--){
+    const s = zeilen[j].trim();
+    if (!s || s.startsWith('/*') || s.startsWith('*') || s.startsWith('//')) continue;
+    if (!s.endsWith(',')) zeilen[j] = zeilen[j].replace(/\s*$/, ',');
+    break;
+  }
+  zeilen.splice(iZu, 0, '', `  "${id}": ${JSON.stringify(text)}`);
+  return { inhalt: zeilen.join(ze), meldung: null, neu: true };
+}
+
 let vocab = fs.readFileSync(VOCAB, 'utf8');
 let alt   = fs.readFileSync(ALT, 'utf8');
+const BUCH = path.join(WURZEL, 'data', 'eselsbruecken.js');
+let buch = fs.existsSync(BUCH) ? fs.readFileSync(BUCH, 'utf8') : null;
 const fehler = [];
-let gesetztMnemo = 0, gesetztAlt = 0;
+let gesetztMnemo = 0, gesetztAlt = 0, gesetztBuch = 0, neuBuch = 0;
 
 for (const id of ids){
   const e = neu[id];
   if (typeof e.mnemo === 'string'){
     const r = setzeMnemo(vocab, id, e.mnemo);
-    if (r.meldung) fehler.push(r.meldung); else { vocab = r.inhalt; gesetztMnemo++; }
+    if (!r.meldung){ vocab = r.inhalt; gesetztMnemo++; }
+    else if (buch !== null){
+      /* ⭐ Kein Lernwort — dann ist es eine Buchvokabel, und ihre erste
+         Eselsbrücke gehört nach data/eselsbruecken.js. Das ist keine
+         Notlösung, sondern der vorgesehene Ort. */
+      const b = setzeBuch(buch, id, e.mnemo);
+      if (b.meldung) fehler.push(b.meldung);
+      else { buch = b.inhalt; gesetztBuch++; if (b.neu) neuBuch++; }
+    } else fehler.push(r.meldung);
   }
   if (Array.isArray(e.alt) && e.alt.length){
     const r = setzeAlt(alt, id, e.alt);
@@ -134,8 +201,10 @@ for (const id of ids){
   }
 }
 
-console.log(`erste Stelle (mnemo): ${gesetztMnemo} gesetzt`);
-console.log(`Alternativen:         ${gesetztAlt} Bloecke gesetzt`);
+console.log(`erste Stelle (mnemo):  ${gesetztMnemo} in vocab-data.js`);
+console.log(`erste Stelle (Buch):   ${gesetztBuch} in data/eselsbruecken.js`
+  + (neuBuch ? `, davon ${neuBuch} neu angelegt` : ''));
+console.log(`Alternativen:          ${gesetztAlt} Bloecke gesetzt`);
 if (fehler.length){
   console.log('\n⛔ NICHT gesetzt:');
   fehler.forEach(f => console.log('  ' + f));
@@ -156,4 +225,5 @@ if (fehler.length){
 
 fs.writeFileSync(VOCAB, vocab);
 fs.writeFileSync(ALT, alt);
+if (buch !== null && gesetztBuch) fs.writeFileSync(BUCH, buch);
 console.log('\n✅ Geschrieben. Jetzt pflicht: node --check auf beide Dateien und node pruefe-eselsbruecken.js');

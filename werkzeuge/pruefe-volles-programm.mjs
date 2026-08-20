@@ -186,8 +186,62 @@ for (const m of MESSER){
   const d = path.join(WURZEL, m);
   if (fs.existsSync(d)) quelltexte[m] = fs.readFileSync(d, 'utf8');
 }
+/* ---------- 4a. ⭐ Nennt JEDER Punkt ein Werkzeug, und gibt es das? ----------
+
+   ⛔⛔ BIS ZUM 20.08.2026 PRÜFTE DIESER WÄCHTER 11 VON 13 PUNKTEN NICHT.
+   Er sammelte die Pflichtfelder aus BACKTICKS in den A-Überschriften — und
+   genau sieben Punkte tragen dort keinen Feldnamen: A6 (Eselsbrücken),
+   A7 (Kategorie), A8 (Funktionsanzeige), A9 (Beispielsatz), A10 (Markierungen),
+   A11 (Quran-Bezug), A13 (Duplikat). Der Prüfer, der „ein Punkt, den kein
+   Werkzeug misst" verhindern soll, sah also die Hälfte der Liste nie.
+
+   Gefunden hat es ein Gegenprüfer, nicht ich — und das ist die Lehre daran:
+   ein Werkzeug prüft, wonach es sucht, nicht wonach es benannt ist.
+   [[pruefwerkzeug_mit_eingebauter_antwort]]
+
+   Geprüft wird jetzt die dritte Spalte der Übersichtstabelle: sie muss ein
+   Werkzeug nennen, und das Werkzeug muss es geben. Was dort steht, ist eine
+   Behauptung des Textes — dass sie stimmt, kann diese Prüfung nicht wissen.
+   Aber ein Punkt, der GAR KEIN Werkzeug nennt, ist ein Versprechen ohne
+   Deckung, und das findet sie. */
+const tabelle = [...quelle.matchAll(/^\| (A\d+) \| (.+?) \| (.+?) \| (.+?) \|$/gm)];
 console.log('');
-console.log('  Wird jedes Pflichtfeld von einem Werkzeug gemessen?');
+console.log('  Nennt jeder der ' + tabelle.length + ' Punkte ein Werkzeug, und gibt es das?');
+const ohneWerkzeug = [];
+for (const [, id, titel, wer] of tabelle){
+  /* Werkzeugnamen aus der Spalte holen — alles in Backticks, das wie eine
+     Datei aussieht. */
+  const genannt = [...wer.matchAll(/`([A-Za-z0-9_\-./]+\.(?:mjs|js))`/g)].map(m => m[1]);
+  if (!genannt.length){
+    /* Ein Punkt darf ausdrücklich „nur seine App" nennen — das ist eine
+       ehrliche Lücke und kein Versäumnis. */
+    if (/nur seine App|⛔/.test(wer)){
+      console.log('    --   ' + id.padEnd(4) + 'kein Werkzeug möglich: ' + wer.replace(/[⛔*]/g, '').trim());
+      continue;
+    }
+    console.log('    ⛔   ' + id.padEnd(4) + 'nennt KEIN Werkzeug');
+    ohneWerkzeug.push(id);
+    continue;
+  }
+  const fehlend = genannt.filter(w => {
+    const kandidaten = [path.join(WURZEL, w), path.join(WURZEL, 'werkzeuge', w)];
+    return !kandidaten.some(k => fs.existsSync(k));
+  });
+  if (fehlend.length){
+    console.log('    ⛔   ' + id.padEnd(4) + 'nennt ein Werkzeug, das es nicht gibt: ' + fehlend.join(', '));
+    ohneWerkzeug.push(id);
+  } else {
+    console.log('    ok   ' + id.padEnd(4) + genannt.join(', '));
+  }
+}
+if (ohneWerkzeug.length){
+  fehler++;
+  console.log('');
+  console.log('  ⛔ ' + ohneWerkzeug.length + ' Punkt(e) ohne prüfendes Werkzeug: ' + ohneWerkzeug.join(', '));
+}
+
+console.log('');
+console.log('  Und die Felder einzeln — misst sie wirklich jemand?');
 const ungemessen = [];
 for (const f of [...felder].sort()){
   /* Ein Werkzeug misst das Feld, wenn es den Namen als Zeichenkette ODER als

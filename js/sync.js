@@ -47,6 +47,22 @@ const SYNC_SCHLUESSEL = [
      behoben wurde: markiert Elias auf dem Handy drei Woerter und auf dem Tablet
      eins, verlöre der aeltere Stempel alle drei. */
   'vt_bekannt',
+  /* ⛔⛔ Einzeln freigeschaltete Woerter (20.08.2026 nachgetragen, und das war
+     ein FEHLER, kein Nachruesten). js/kern.js legt sie in derselben
+     {an, zeit}-Form an wie vt_bekannt und begruendet das dort ausdruecklich
+     damit, dass „beim Geraeteabgleich auch das ZURUECKNEHMEN ankommen" muss —
+     die Form war fuer einen Abgleich gebaut, den es nicht gab.
+
+     Die Folge war doppelt zu: syncGeaendert() steigt bei einem unbekannten
+     Schluessel sofort aus, setzt also nicht einmal einen Stempel, und die
+     Hochlade-Schleife laeuft ebenfalls nur ueber diese Liste. Der Schluessel
+     verliess das Geraet in KEINER Richtung.
+
+     ⚠️ Und Elias konnte es nicht bemerken: die Liste in den Einstellungen
+     zeigt auf jedem Geraet genau das, was dieses Geraet gespeichert hat — also
+     ueberall etwas Plausibles. Gefunden hat es ein Gegenpruefer.
+     [[ausfall_ist_unsichtbar_gebaut]] */
+  'vt_einzeln_frei',
   /* Welcher Eselsbruecken-Vorschlag auf der Karte steht (18.08.2026). Ebenfalls
      JE WORT, aus demselben Grund und ueber denselben Zweig. */
   'vt_vorschlagNr',
@@ -227,7 +243,7 @@ function fuehreZusammen(fern){
        ist {nr:…, zeit:…}, und gebraucht wird genau dasselbe - je Id gewinnt der
        spaetere Zeitstempel. Der Zweig liest ausser `zeit` nichts aus dem
        Eintrag, deshalb reicht die zweite Bedingung statt einer Kopie. */
-    if (k === 'vt_bekannt' || k === 'vt_vorschlagNr' || k === 'vt_wortAenderungen' || k === 'vt_geloescht'){
+    if (k === 'vt_bekannt' || k === 'vt_einzeln_frei' || k === 'vt_vorschlagNr' || k === 'vt_wortAenderungen' || k === 'vt_geloescht'){
       try {
         const a = JSON.parse(hierRoh) || {}, b = JSON.parse(dortRoh) || {};
         const raus = Object.assign({}, a);
@@ -262,6 +278,45 @@ function fuehreZusammen(fern){
           }
           if (Object.keys(zusammen).length) raus[id] = zusammen;
         }
+        const neu = JSON.stringify(raus);
+        if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
+      } catch (e){ /* kaputtes JSON auf einer Seite: lokal behalten */ }
+      return;
+    }
+
+    /* ⛔⛔ SEINE EIGENEN TEXTE: VEREINIGUNG JE WORT, nicht Blockersatz.
+       ==============================================================
+       `vt_notes` (eigene Eselsbruecken) und `vt_notizen` (eigene Notizen) haben
+       die Form { wortId: "Text" } — ohne Zeitstempel je Eintrag. Sie liefen bis
+       zum 20.08.2026 ueber den Schlusszweig „der juengere Stempel gewinnt", und
+       zwar als GANZER BLOCK.
+
+       Die Folge: Schreibt Elias am Handy eine Notiz zu Wort A und am Tablet
+       eine zu Wort B, ueberlebt nur die vom juengeren Geraet. Die andere ist
+       weg — und es ist selbst geschriebener Text, den niemand wiederherstellen
+       kann.
+
+       Genau diesen Fehler beschreibt der Kommentar bei `vt_bekannt` weiter
+       oben („verloere der aeltere Stempel alle drei"). Dort wurde er behoben,
+       hier stand er noch. `vt_notizen` habe ich am 19.08.2026 selbst
+       hinzugefuegt und den Zweig nicht mitgedacht.
+
+       ⚠️ Ohne Zeitstempel je Wort ist ein Feld-fuer-Feld-Vergleich nicht
+       moeglich. Deshalb: alles vereinigen, und wo BEIDE Seiten einen Text zum
+       selben Wort haben, entscheidet der Blockstempel. Ein Wort, das nur eine
+       Seite kennt, ueberlebt in jedem Fall — und das ist der haeufige Fall.
+       [[ausfall_ist_unsichtbar_gebaut]] */
+    if (k === 'vt_notes' || k === 'vt_notizen'){
+      try {
+        const a = JSON.parse(hierRoh) || {}, b = JSON.parse(dortRoh) || {};
+        const fremdIstNeuer = (fremde[k] || 0) > (meine[k] || 0);
+        const raus = Object.assign({}, a);
+        Object.keys(b).forEach(id => {
+          const hier = raus[id], dort = b[id];
+          if (typeof dort !== 'string' || !dort.trim()) return;
+          if (typeof hier !== 'string' || !hier.trim()){ raus[id] = dort; return; }
+          if (hier !== dort && fremdIstNeuer) raus[id] = dort;
+        });
         const neu = JSON.stringify(raus);
         if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
       } catch (e){ /* kaputtes JSON auf einer Seite: lokal behalten */ }
