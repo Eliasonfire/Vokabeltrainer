@@ -395,6 +395,7 @@ const SURAH_FELDER = ['arTaschkil'];
    Zusammenbau verwirft nur schlechtere Schreibungen und fuellt leere Felder,
    er erfindet nie eine Haraka. Jede Zeichenfolge, die aufs Geraet kommt,
    steht also schon hier. */
+let eigeneAnzahl = 0;   // fuer den Geltungsbereich-Satz weiter unten
 const BUCH_DIR = path.join(DIR, 'data');
 const buchBefunde = [];
 let buchWoerter = 0, buchEintraege = 0;
@@ -427,9 +428,41 @@ buchDateien.forEach(f => {
     return;
   }
   if (!liste) { console.error(`  ! ${f}: kein VOKABELN gefunden`); return; }
-  buchEintraege += liste.length;
-  liste.forEach(w => { buchWoerter += pruefeEintrag(w, f, buchBefunde); });
+  /* ⭐⭐ vokabeln-eigene.js ist KEIN Abzug — es sind Elias' eigene Vokabeln,
+     und die Vokalisierung darin stammt von ihm selbst. Die Begruendung, warum
+     die uebrigen Buchdateien den Rueckgabewert nicht faerben ("fremde Daten,
+     duerfen nicht selbst vokalisiert werden"), trifft auf sie nicht zu: er
+     KANN sie aendern, und niemand sonst tut es.
+
+     Bis zum 20.08.2026 fielen sie mit dem Abzug in dieselbe Gruppe. Gemessen
+     hat das genau einen Befund verschluckt, den kein anderes Werkzeug sieht:
+     إِلَيهِ in „مُضَافْ إِلَيهِ" — dem ي fehlt das Sukun.
+     [[regel_gilt_nur_mit_begruendung]] */
+  const eigene = f === 'vokabeln-eigene.js';
+  if (eigene) eigeneAnzahl = liste.length;
+  buchEintraege += eigene ? 0 : liste.length;
+  liste.forEach(w => {
+    const n = pruefeEintrag(w, eigene ? 'data/' + f : f, eigene ? befunde : buchBefunde);
+    if (eigene) woerterGeprueft += n; else buchWoerter += n;
+  });
 });
+
+/* ⛔ Ein Wort kann in ZWEI Dateien stehen: Elias' eigene Vokabeln liegen
+   sowohl in vocab-data.js (sein Lernbestand) als auch in
+   data/vokabeln-eigene.js (der Abzug). Ohne diesen Schritt zaehlt derselbe
+   Befund doppelt — am 20.08.2026 gemessen: 16 statt 14, und die zwei
+   Ueberzaehligen waren الإِسْمُ und أَيْضاً.
+   Eindeutig ist ein Befund durch id + Feld + Stelle.
+   [[kandidatenliste_ist_keine_fehlerliste]] */
+{
+  const gesehen = new Set();
+  for (let i = befunde.length - 1; i >= 0; i--){
+    const b = befunde[i];
+    const schluessel = String(b.id) + '|' + b.feld + '|' + b.stelle + '|' + b.wort;
+    if (gesehen.has(schluessel)) befunde.splice(i, 1);
+    else gesehen.add(schluessel);
+  }
+}
 
 /* ---------- Ausgabe ---------- */
 console.log('--- Vollstaendigkeit der Vokalisierung ---');
@@ -438,8 +471,9 @@ console.log(`${woerterGeprueft} arabische Woerter geprueft ` +
 
 /* Der Geltungsbereich kommt IMMER mit — auch und gerade im gruenen Fall.
    Ein "alles vokalisiert" ohne diesen Satz war die eigentliche Falle. */
-console.log(`\nGeltungsbereich: vocab-data.js, lehrbuch-saetze.js, surah-data.js` +
-            ` (${VOCAB_DATA.length} Lernwoerter).`);
+console.log(`
+Geltungsbereich: vocab-data.js, lehrbuch-saetze.js, surah-data.js` +
+            ` und data/vokabeln-eigene.js (${VOCAB_DATA.length} Lernwoerter + ${eigeneAnzahl} eigene).`);
 
 /* Die Regeln bekommen eine eigene Zeile mit eigener Zahl - nicht in die Summe
    oben gemischt. Sonst waere nach dem naechsten gruenen Lauf wieder unklar,
