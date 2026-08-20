@@ -306,7 +306,8 @@
   --ease-spring:cubic-bezier(.34,1.4,.64,1);
 
   --safe-top:env(safe-area-inset-top,0px);
-  --safe-bottom:env(safe-area-inset-bottom,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+
   /* Hoehe der unteren App-Leiste. Vorgabe fuer den ersten Bildaufbau;
      danach misst js/darstellung.js sie und setzt sie genau. Die drei
      schwebenden Leisten (.sent-nav, .ueb-fuss, .wz-nav) sitzen darauf. */
@@ -1626,6 +1627,14 @@ main{
    (20.08.2026). Beide sagen dasselbe in zwei Stärken: hier ist etwas, das
    noch nicht von ihm kommt. Gedämpft, nicht warnend — es ist kein Fehler,
    nur eine Auskunft. */
+/* Die Funktionszeilen unter der Bedeutung (20.08.2026). Untereinander statt
+   nebeneinander: es sind ganze Aussagen („Das Wort danach steht im Genitiv“),
+   keine Etiketten — nebeneinander würden sie zu einer unlesbaren Zeile. */
+.wk-funktionen{display:flex;flex-direction:column;gap:var(--sp-1);margin-top:var(--sp-2);}
+.wk-funktion{
+  font-size:var(--fs-sm);color:var(--text-dim);line-height:1.5;
+  padding-left:var(--sp-3);border-left:2px solid var(--border);
+}
 .wk-quelle{font-size:var(--fs-xs);color:var(--text-faint);font-weight:500;}
 .wk-unvollstaendig{display:flex;align-items:center;gap:var(--sp-2);flex-wrap:wrap;}
 .wk-unvollstaendig b{color:var(--text);font-weight:700;}

@@ -622,6 +622,23 @@ function baueWortKarte(w){
   t.push(`<div class="wk-ar" lang="ar" dir="rtl">${escapeHtml(w.sg || w.ar)}</div>`);
   t.push(`<div class="wk-de">${escapeHtml(w.de)}</div>`);
   if (w.deNeben) t.push(`<div class="wk-neben">auch: ${escapeHtml(w.deNeben)}</div>`);
+
+  /* ⭐⭐ WAS IST DIESES WORT? — Elias am 20.08.2026: „ich würde auch gerne bei
+     den infokarten, dass ihre funktion auch gezeigt wird also wie zb bei inda
+     (bei) soll angezeigt werden das es orts- und zeitangabe ist aber auch das
+     es ein genitivpräposition ist … natürlich können bei einigen auch mehr
+     stehen, das ist dann auch okay“
+
+     Die Angaben kommen aus funktionenVon() in js/irab.js — aus denselben
+     Listen, mit denen der Iʿrāb-Erklärer die Sätze zerlegt. Damit kann die
+     Karte nicht etwas anderes behaupten als die Satzanalyse.
+
+     ⚠️ Direkt unter der Bedeutung und ÜBER dem Lautsprecher: die Funktion
+     gehört zum Wort, nicht zu den Zusatzangaben weiter unten. */
+  const wkFunktionen = (typeof funktionenVon === 'function') ? funktionenVon(w) : [];
+  if (wkFunktionen.length)
+    t.push(`<div class="wk-funktionen">` + wkFunktionen.map(f =>
+      `<span class="wk-funktion">${arabischHervorheben(f)}</span>`).join('') + `</div>`);
   t.push(`<div class="wk-ton">
     <button class="speak-btn" data-wksprich aria-label="Vorlesen"><svg class="ic"><use href="#ic-speaker"/></svg></button>
   </div>`);
