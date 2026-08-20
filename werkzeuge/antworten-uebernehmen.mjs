@@ -225,11 +225,33 @@ for (const z of zweifel){
   if (!(z.feld in Z.eintraege[z.id])) neuZ++;
   Z.eintraege[z.id][z.feld] = 'von Elias bestritten am ' + heute + ' — ' + z.wort;
 }
-/* ⭐ Beantwortet er die Wortart, ist der Zweifel erledigt — sonst stünde das
-   Wort für immer in der type-Frage, auch mit der neuen Antwort im Bestand. */
-for (const w of werte){
-  if (w.feld === 'type' && Z.eintraege[w.id]) delete Z.eintraege[w.id].type;
-}
+/* ⛔⛔ HIER STAND EINE LÖSCHUNG, UND SIE HAT DIE ANTWORT UNWIRKSAM GEMACHT.
+
+   Der alte Code war:
+
+     for (const w of werte)
+       if (w.feld === 'type' && Z.eintraege[w.id]) delete Z.eintraege[w.id].type;
+
+   mit der Begründung: „Beantwortet er die Wortart, ist der Zweifel erledigt —
+   sonst stünde das Wort für immer in der type-Frage." ⭐ Das war richtig,
+   solange FELD_ZWEIFEL nur eines tat: die Frage erneut stellen.
+
+   Seit dem 20.08.2026 tut es ein Zweites, und das ist wichtiger: ein
+   BESTRITTENER Wert zählt in wendeFeldErgaenzungenAn() wie ein LEERER. Nur
+   dadurch darf die Ergänzung ein gefülltes Feld überhaupt ersetzen — und die
+   14 selbst angelegten Wörter tragen alle ein gefülltes `noun`.
+
+   ⛔ Gemessen: die Löschung entfernte genau den Zweifel, den diese Datei ein
+   paar Zeilen darüber selbst eingetragen hatte. `FELD_ZWEIFEL[id]` blieb als
+   leeres `{}` stehen, `feldBestritten()` lieferte false, und Elias' Antwort
+   „خَرَجَ → verb" kam in der App nicht an.
+
+   ⭐ Gegen die alte Sorge sind jetzt ZWEI andere Sperren gebaut, beide in
+   werkzeuge/vorrat.mjs und beide gemessen:
+     · `kaputterTyp` zählt einen Zweifel nur, solange KEINE Ergänzung vorliegt
+     · `typFestwert()` kennt beide Wege, den Festwert aufzulösen
+   Die Frage kommt also nicht wieder — der Zweifel darf und muss bleiben.
+   [[erst_ursache_dann_zweite_massnahme]] [[erfolgsmeldung_ohne_wirkung]] */
 
 /* ⛔ Nur Hochkomma und Backslash schützen — arabische Zeichen bleiben als
    ECHTE Zeichen stehen. Eine \u-Folge wäre für normalize() unsichtbar, und
