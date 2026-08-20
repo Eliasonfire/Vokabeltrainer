@@ -277,10 +277,10 @@ function gruppenAus(text){
     titel: 'Ein Wort steht doppelt',
     zahl: Number(m[1]),
     einheit: Number(m[1]) === 1 ? 'Wort' : 'Wörter',
-    dazu: 'Fachbegriff und Buchvokabel',
-    aufwand: 'eine Entscheidung: welche Karte bleibt',
+    dazu: 'eigene Vokabel oder Fachbegriff gegen Buchvokabel',
+    aufwand: 'schon entschieden — nur bestätigen, welche echt sind',
     warum: 'Zwei Karteikarten für dasselbe Wort — du lernst es doppelt.',
-    wie: '⚠️ Kann auch Absicht sein: eine Grammatikkarte und eine Wortschatzkarte sind nicht dasselbe. Sag mir, ob es so bleiben soll.',
+    wie: 'Deine Regel vom 20.08.: „wenn bei einem kapitel das gleiche wort wie bei eigenen vokabeln ist dann soll meine eigene vokabel weg“. ⛔ Aber nicht jeder Treffer ist ein Duplikat — die Bedeutung steht hinter jedem Eintrag. ظَرْف = Zeit-/Ortsangabe gegen ظَرْفٌ = Umschlag sind zwei verschiedene Wörter.',
     zeilen: r.text.split(String.fromCharCode(10)).filter(z => z.startsWith('  ') && z.includes('(') && z.includes('id ')).slice(0, 4).map(z => z.trim())
   });
 }
