@@ -59,6 +59,59 @@ function zeichneEinzelnFreiListe(){
        </div>
        <button class="kenne-schon-zurueck" data-einzelnzurueck="${escapeHtml(String(w.id))}">Wieder zumachen</button>
      </div>`).join('');
+
+  /* Die Kopierzeile erscheint nur, wenn es etwas zu kopieren gibt. */
+  const zeile = document.getElementById('einzelnFreiExportZeile');
+  if (zeile) zeile.hidden = !woerter.length;
+}
+
+/* ---------- Die Liste für die Wartung herausgeben (20.08.2026) ----------
+
+   ⛔ Ohne diesen Weg ist `vt_einzeln_frei` eine Sackgasse: die Wörter laufen im
+   Lernstoff mit, aber kein Werkzeug außerhalb des Browsers weiß von ihnen. Die
+   Wartung mittwochs und sonntags gibt deshalb genau diesen Wörtern KEIN volles
+   Programm — sie sieht sie nicht. [[daten_ohne_zugang]]
+
+   Das Format ist bewusst schlicht und für Menschen lesbar: eine Zeile je Wort
+   mit Id, Wort und Buch. Ein JSON wäre für ein Werkzeug bequemer, aber Elias
+   fügt das in einen Chat ein und soll dabei sehen, was er weitergibt. */
+function einzelnFreiAlsText(){
+  const woerter = (typeof einzelnFreigeschaltete === 'function') ? einzelnFreigeschaltete() : [];
+  if (!woerter.length) return '';
+  const zeilen = woerter.map(w =>
+    `${w.id}\t${w.ar}\t${w.de}\t${w.book || '?'} Kap. ${w.chapter}`);
+  return `Einzeln freigeschaltete Wörter (${woerter.length}), Stand `
+    + new Date().toLocaleDateString('de-DE') + '\n'
+    + 'Id\tArabisch\tDeutsch\tHerkunft\n' + zeilen.join('\n');
+}
+
+async function kopiereEinzelnFrei(){
+  const text = einzelnFreiAlsText();
+  if (!text){ toast('Nichts zu kopieren.'); return; }
+  /* ⚠️ navigator.clipboard braucht einen sicheren Kontext UND kann trotzdem
+     werfen (verweigerte Berechtigung, Fokus verloren). Der Rückfallweg über ein
+     verstecktes Textfeld funktioniert überall — ohne ihn stünde bei einem Fehler
+     nur eine Konsolenmeldung, die niemand sieht. [[ausfall_ist_unsichtbar_gebaut]] */
+  try {
+    if (navigator.clipboard && window.isSecureContext){
+      await navigator.clipboard.writeText(text);
+      toast('Liste kopiert — schick sie mir im Chat.');
+      return;
+    }
+    throw new Error('kein clipboard');
+  } catch (e) {
+    const feld = document.createElement('textarea');
+    feld.value = text;
+    feld.setAttribute('readonly', '');
+    feld.style.cssText = 'position:fixed;top:-1000px;left:0;opacity:0;';
+    document.body.appendChild(feld);
+    feld.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e2) { ok = false; }
+    document.body.removeChild(feld);
+    toast(ok ? 'Liste kopiert — schick sie mir im Chat.'
+             : 'Kopieren ging nicht. Mach ein Bildschirmfoto der Liste oben.');
+  }
 }
 
 document.getElementById('einzelnFreiListe').addEventListener('click', (e)=>{
@@ -73,6 +126,8 @@ document.getElementById('einzelnFreiListe').addEventListener('click', (e)=>{
   const w = VOCAB_DATA.find(x => String(x.id) === id);
   toast(w ? `${w.de} ist wieder außer Reichweite.` : 'Zurückgenommen.');
 });
+
+document.getElementById('btnEinzelnFreiKopieren').addEventListener('click', kopiereEinzelnFrei);
 
 document.getElementById('btnEinzelnFreiAlle').addEventListener('click', ()=>{
   const woerter = einzelnFreigeschaltete();
