@@ -176,6 +176,27 @@ try {
   console.log('     sind NICHT gemessen (node werkzeuge/vorrat.mjs --stand <datei> --app auto).');
 }
 
+/* ⛔⛔ DER FUENFTE WEG: was nur ueber vocab-data.js im Bestand ist.
+
+   Am 20.08.2026 meldete werkzeuge/pruefe-eigene-vorrang.mjs den Unterschied
+   selbst: vorrat.mjs 214, dieses Skript 203. Die elf sind
+
+     9x  50296-50304  die Zahlwoerter. Im Abzug stehen sie unter Kapitel 24,
+                      madina-1 ist bis 12 frei — sie fallen aus dem Fenster.
+                      In vocab-data.js tragen sie `chapter: "personal"`, und
+                      js/kern.js:149 macht sie damit in der App IMMER bekannt.
+     2x  madina1-l6-ach / -ucht  stehen in KEINER Abzugsdatei, tragen aber
+                      `chapter: 6` und liegen damit mitten im Fenster.
+
+   ⛔ Nur im Fenster-Modus. Mit --ohne-fenster sind ohnehin alle VOCAB drin,
+   und der Filter wuerde jedes Wort ein zweites Mal einhaengen.
+   [[werkzeug_misst_kleineren_bestand]] [[dieselbe_frage_zwei_antworten]] */
+if (!OHNE_FENSTER){
+  const _da = new Set(woerter.map(w => String(w.id)));
+  VOCAB.filter(w => !_da.has(String(w.id)))
+       .forEach(w => woerter.push({ ...w, quelle: 'vocab-data' }));
+}
+
 if (setzeLexikon) { try { setzeLexikon(woerter); } catch (e){ /* optional */ } }
 
 if (!woerter.length){
