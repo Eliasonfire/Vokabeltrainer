@@ -682,7 +682,36 @@ if (!WORT_AENDERUNGEN || typeof WORT_AENDERUNGEN !== 'object' || Array.isArray(W
 /* Welche Felder er ueberhaupt anfassen darf. Bewusst eine feste Liste und kein
    Object.assign: sonst koennte ein alter oder kaputter Eintrag `id`, `chapter`
    oder `book` ueberschreiben und das Wort aus jeder Auswahl fallen lassen. */
-const AENDERBAR = ['ar','de','sentAr','sentDe','pl','root'];
+const AENDERBAR = ['ar','de','sentAr','sentDe','pl','root','type'];
+
+/* ⛔⛔ `type` kam am 20.08.2026 dazu, und zwar als BEHOBENER FEHLER, nicht als
+   neue Funktion. Am Vortag entstand die Wortart-Auswahl im Bearbeitungsformular
+   (`wkType` in js/kategorien.js); sie reichte `type` an speichereWortAenderung()
+   weiter, aber die Liste hier kannte es nicht — also fiel der Wert still durch
+   den Filter. Die App meldete „Gespeichert", der Speicher enthielt sechs Felder
+   ohne `type`, und die Wortart blieb, was sie war.
+
+   Im Browser gemessen: nach speichereWortAenderung(..., {type:'adjective'}) war
+   `typeGewirkt: false`, während dieselbe Prüfung für `pl` `true` ergab — die
+   Gegenprobe, dass nicht der Testaufbau schuld war.
+   [[erfolgsmeldung_ohne_wirkung]]
+
+   ⚠️ Anders als die sechs Textfelder ist `type` ein SCHLÜSSEL: ein erfundener
+   Wert ließe das Wort aus jeder Kategorie und jeder Übung fallen. Deshalb
+   unten die Prüfung gegen WORTARTEN — genau die Werte, die die Auswahl
+   anbietet. */
+const WORTARTEN = ['noun','verb','adjective','particle','adverb','expression','vocab','other'];
+
+/* ⭐ Was VOR seiner Korrektur dastand — je Wort und Feld, einmal beim Laden
+   gemerkt. Ohne das ist der Vorher-Wert unwiederbringlich: die Buchdateien
+   führen `sentAr` und `sentDe` gar nicht, und `VOCAB_DATA` ist nach der
+   nächsten Zeile bereits überschrieben.
+
+   Gebraucht wird es für den Wartungs-Export in js/einstellungen.js: dort soll
+   stehen, was er GEÄNDERT hat, nicht alle sieben Felder. Am 20.08.2026 zeigte
+   der erste Entwurf bei jeder Korrektur auch Satz und Übersetzung mit, weil
+   der Vergleichswert fehlte. [[eingefrorenes_feld_ist_kein_zustand]] */
+const WORT_ORIGINAL = {};
 
 function wendeWortAenderungenAn(){
   Object.keys(WORT_AENDERUNGEN).forEach(id => {
@@ -690,7 +719,14 @@ function wendeWortAenderungenAn(){
     if (!w) return;
     const a = WORT_AENDERUNGEN[id];
     if (!a || typeof a !== 'object') return;
-    AENDERBAR.forEach(f => { if (typeof a[f] === 'string') w[f] = a[f]; });
+    AENDERBAR.forEach(f => {
+      if (typeof a[f] !== 'string') return;
+      /* Nur beim ERSTEN Mal sichern — ein zweiter Lauf würde sonst den bereits
+         geänderten Wert als Original festschreiben. */
+      if (!WORT_ORIGINAL[id]) WORT_ORIGINAL[id] = {};
+      if (!(f in WORT_ORIGINAL[id])) WORT_ORIGINAL[id][f] = w[f];
+      w[f] = a[f];
+    });
   });
 }
 
@@ -700,6 +736,11 @@ function speichereWortAenderung(id, felder){
   const sauber = {};
   AENDERBAR.forEach(f => { if (typeof felder[f] === 'string') sauber[f] = felder[f].trim(); });
   if (!sauber.ar || !sauber.de) return false;      /* ohne die beiden ist es keine Vokabel */
+  /* ⛔ Eine unbekannte Wortart wird VERWORFEN, nicht gespeichert: sie ließe das
+     Wort aus jeder Kategorie und jeder Übung fallen, und niemand würde es
+     melden. Der bisherige Wert bleibt dann stehen — das ist der harmlosere
+     der beiden Fehler. */
+  if (sauber.type !== undefined && !WORTARTEN.includes(sauber.type)) delete sauber.type;
 
   if (w.chapter === 'personal'){
     /* Seine eigene Vokabel: direkt am Original aendern, kein Zweitspeicher. */
@@ -710,7 +751,14 @@ function speichereWortAenderung(id, felder){
     WORT_AENDERUNGEN[id] = Object.assign({}, WORT_AENDERUNGEN[id], sauber, { zeit: Date.now() });
     LS.set(AENDERUNGS_SCHLUESSEL, WORT_AENDERUNGEN);
   }
-  AENDERBAR.forEach(f => { if (sauber[f] !== undefined) w[f] = sauber[f]; });
+  /* Auch hier den Vorher-Wert sichern, bevor überschrieben wird — sonst kennt
+     der Export nur die Originale der Änderungen, die beim Laden schon dastanden. */
+  AENDERBAR.forEach(f => {
+    if (sauber[f] === undefined) return;
+    if (!WORT_ORIGINAL[id]) WORT_ORIGINAL[id] = {};
+    if (!(f in WORT_ORIGINAL[id])) WORT_ORIGINAL[id][f] = w[f];
+    w[f] = sauber[f];
+  });
   return true;
 }
 
