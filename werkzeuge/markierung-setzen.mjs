@@ -427,7 +427,16 @@ function einbauen(p) {
       if (relativ < 0) { console.log('⛔ Liste zu ' + g.satzId + ' nicht gefunden - abgebrochen'); process.exitCode = 2; return; }
       const zu = stelle + relativ;
       const davor = quelle.slice(0, zu).replace(/\s*$/, '');
-      quelle = davor + ',' + ze + '    ' + eintrag + ze + '  ' + quelle.slice(zu);
+      /* ⛔ Kein Komma vor den ERSTEN Eintrag einer leeren Liste.
+         Bis zum 20.08.2026 hing hier immer eines - bei einer leeren Liste
+         wurde daraus `[,` und damit ein Loch an Stelle 0. Getroffen hat es
+         genau den Ablauf, den eine Wartung wirklich faehrt: erst die letzte
+         Markierung eines Satzes abnehmen, dann eine neue setzen. Die
+         eingebaute Pruefung fing es ab ("NICHTS geschrieben") - der Einbau
+         war danach aber blockiert, bis jemand von Hand nachsah.
+         [[befund_vor_dem_ende_der_funktion]] */
+      const leereListe = davor.endsWith('[');
+      quelle = davor + (leereListe ? '' : ',') + ze + '    ' + eintrag + ze + '  ' + quelle.slice(zu);
     } else {
       const ende = quelle.indexOf(ze + '};', blockVon);
       const davor = ohneKommentare(quelle.slice(0, ende)).slice(-200);
@@ -503,6 +512,20 @@ function einbauen(p) {
       + 'wurde nicht abgeschlossen. Erst ansehen, dann wegraeumen.');
     process.exitCode = 2; return;
   }
+
+  /* ⛔ Hatte git den alten Stand schon? Dann ist die Sicherung nach einem
+     geglueckten Lauf entbehrlich und darf weg - sonst blockiert sie den
+     NAECHSTEN Lauf, und eine unbeaufsichtigte Routine kann das nicht
+     aufloesen: sie darf ja nicht raten, ob die Datei noch gebraucht wird.
+     Genau das ist am 20.08.2026 passiert - die Sicherung von 04:09 lag noch
+     da, obwohl ihr Lauf laengst durch und committet war.
+     ⚠️ Gemessen wird VOR dem Schreiben; hinterher ist die Datei immer
+     geaendert und die Frage nicht mehr beantwortbar. */
+  let alterStandInGit = false;
+  try {
+    alterStandInGit = execFileSync('git', ['status', '--porcelain', '--', 'grammar-data.js'],
+      { cwd: REPO, encoding: 'utf8' }).trim() === '';
+  } catch (e) { alterStandInGit = false; }
   fs.copyFileSync(GD, sicherung);
   fs.writeFileSync(GD, quelle, 'utf8');
 
@@ -514,10 +537,24 @@ function einbauen(p) {
   try {
     console.log('\n--- node validate.js ---');
     console.log(execFileSync('node', ['validate.js'], { cwd: REPO, encoding: 'utf8' }).trim().split('\n').slice(-4).join('\n'));
+    sicherungWegraeumen();
   } catch (e) {
     console.log('⛔ validate.js meldet einen Fehler:\n' + (e.stdout || e.message));
     console.log('   Zuruecknehmen mit: node -e "require(\'fs\').copyFileSync(\'grammar-data.js.vor-markierung\',\'grammar-data.js\')"');
     process.exitCode = 2;
+    return;   /* ⛔ Sicherung BLEIBT - sie ist jetzt der einzige Rueckweg. */
+  }
+
+  function sicherungWegraeumen(){
+    if (!alterStandInGit){
+      console.log('  Sicherung bleibt liegen: grammar-data.js war vor dem Lauf nicht');
+      console.log('  committet, git hat den alten Stand also nicht. Nach dem Commit');
+      console.log('  von Hand wegraeumen.');
+      return;
+    }
+    try { fs.unlinkSync(sicherung);
+          console.log('  Sicherung weggeraeumt - der alte Stand liegt in git.'); }
+    catch (e){ console.log('  Sicherung liess sich nicht wegraeumen: ' + e.message); }
   }
 }
 
