@@ -91,6 +91,16 @@ const posten = [];
   });
 }
 
+/* Die Gruppenzeilen aus der Ausgabe von pruefe-taschkil.js lesen:
+   „=== Haraka fehlt: 7 ===". ⛔ Die Zeile „Regeln mit unvokalisierten
+   Woertern" gehoert NICHT dazu — sie zaehlt Regeltexte, nicht Vokabeln, und
+   steht auch nicht in der Summe „14 Befunde". */
+function gruppenAus(text){
+  return [...String(text).matchAll(/^=== (.+?): (\d+) ===$/gm)]
+    .map(m => ({ name: m[1], zahl: Number(m[2]) }))
+    .filter(g => !/^Regeln mit/.test(g.name));
+}
+
 /* B) Taschkīl */
 {
   const r = messen(path.join(REPO, 'pruefe-taschkil.js'));
@@ -100,14 +110,25 @@ const posten = [];
     zahl: Number(m[1]),
     einheit: 'Befunde',
     dazu: `in ${m[2]} Wörtern`,
-    aufwand: 'drei echte Entscheidungen, der Rest sind Varianten',
+    /* ⛔⛔ GEMESSEN, NICHT AUFGESCHRIEBEN.
+
+       Bis zum 20.08.2026 standen hier drei feste Zeilen und die Angabe „drei
+       echte Entscheidungen". Beides war eingefroren und schon überholt:
+       مُضَافْ إِلَيهِ war am selben Vormittag als Abzugs-Artefakt entfallen, und
+       لِمَن war neu dazugekommen — die Seite zeigte Elias also eine Liste, die
+       es so nicht mehr gab. [[eingefrorenes_feld_ist_kein_zustand]]
+
+       ⭐ `pruefe-taschkil.js` gruppiert die Befunde ohnehin und schreibt die
+       Gruppen als „=== Name: Zahl ===" in die Ausgabe. Die Zahl der Gruppen
+       ist die ehrliche Antwort auf „wie viele Entscheidungen sind es?" —
+       innerhalb einer Gruppe entscheidet er einmal für alle.
+       [[zahlen_ohne_beleg]] */
+    aufwand: gruppenAus(r.text).length
+      ? `${gruppenAus(r.text).length} Entscheidung(en) — innerhalb einer Gruppe gilt sie für alle`
+      : 'nach Gruppen sortiert',
     warum: 'Eine fehlende Ḥaraka ändert die Aussprache und macht die Suche unbrauchbar.',
-    wie: 'Die drei Fragen stehen in der To-Do unter „Wartet auf Elias" — mit dem, was ich schon geklärt habe.',
-    zeilen: [
-      'Hamzat al-Waṣl in fünf Beispielsätzen: Kasra setzen oder nicht?',
-      'Zwei Surennamen mit fehlender Kasra — kein zitierbarer Beleg',
-      'مُضَافْ إِلَيهِ — zwei Stellen in deiner eigenen Vokabel'
-    ]
+    wie: 'Je Gruppe eine Entscheidung. Was ich schon geklärt habe, steht in der To-Do unter „Wartet auf Elias".',
+    zeilen: gruppenAus(r.text).map(g => `${g.zahl}× ${g.name}`)
   });
 }
 
