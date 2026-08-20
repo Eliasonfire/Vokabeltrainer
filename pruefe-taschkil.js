@@ -374,8 +374,17 @@ buchDateien.forEach(f => {
   try {
     const ctx = { window: {} };
     vm.createContext(ctx);
+    /* ⛔ `vokabeln-eigene.js` schreibt NICHT nach window.VOKABELN, sondern nach
+       window.EIGENE_VOKABELN — bewusst, damit die eigenen Vokabeln in der
+       Buchauswahl nicht als achtes Buch erscheinen (siehe Kopf jener Datei).
+       Bis zum 20.08.2026 meldete dieses Skript deshalb nur
+       „kein VOKABELN gefunden" und ueberging SEINE elf Vokabeln stillschweigend
+       — ausgerechnet die, bei denen die Vokalisierung von ihm selbst kommt und
+       am ehesten Luecken hat. [[dritte_satzquelle]] */
     vm.runInContext(fs.readFileSync(path.join(BUCH_DIR, f), 'utf8') +
-      '\nglobalThis.__V = (typeof VOKABELN !== "undefined") ? VOKABELN : (window.VOKABELN || null);',
+      '\nglobalThis.__V = (typeof VOKABELN !== "undefined") ? VOKABELN' +
+      ' : (window.VOKABELN || window.EIGENE_VOKABELN' +
+      ' || (typeof FACHBEGRIFF_VOKABELN !== "undefined" ? FACHBEGRIFF_VOKABELN : null));',
       ctx, { filename: f });
     liste = Array.isArray(ctx.__V) ? ctx.__V
           : (ctx.__V ? Object.values(ctx.__V).flat() : null);
