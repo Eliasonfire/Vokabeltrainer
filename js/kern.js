@@ -560,11 +560,41 @@ function istGeloescht(id){ const e = GELOESCHT[id]; return !!(e && e.an); }
    ein Mangel, der keiner ist, wäre nur Rauschen. */
 function wasFehlt(w){
   if (!w || w.istPlural) return [];
+  /* ⛔ DIE FÜNFZEHN FACHBEGRIFFE MELDEN NICHTS — bei ihnen ist das Fehlende
+     eine ENTSCHEIDUNG, kein Mangel. Gemessen am 20.08.2026: ohne diese Zeile
+     meldeten ALLE Fünfzehn „Noch offen“, die meisten dreifach.
+
+     • Beispielsatz: In data/fachbegriffe.js steht ausdrücklich, dass ẓarf der
+       EINZIGE ist, der einen bekommt — die übrigen Regeln sind über andere
+       Sätze bereits erreichbar (3 bis 13 Markierungen). Ein zweiter Satz wäre
+       Doppelung, und der Hinweis hier hätte mich beinahe dazu verleitet.
+     • Wurzel: ـِي, ـكَ, ـهَا sind Endungen. Sie haben keine.
+     • Plural: bei einem Grammatikbegriff sinnlos.
+
+     Eine Kandidatenliste, die zu 100 % aus Fehlalarmen besteht, liest niemand
+     mehr — auch die echten Treffer darin nicht. */
+  if (w.book === 'grammar') return [];
   const fehlt = [];
   const einWort = !/\s/.test(String(w.ar || '').trim());
   if (!w.sentAr) fehlt.push('Beispielsatz');
-  if (einWort && !w.root) fehlt.push('Wurzel');
-  if (einWort && !w.pl && w.type === 'noun') fehlt.push('Plural');
+  /* ⛔ KEINE WURZEL BEI PARTIKELN. Gemessen am 20.08.2026: von 40 gemeldeten
+     Wörtern waren 13 Partikeln — نَعَمْ, لَا, مَا, وَ, مِنْ, إِلَى. Die haben
+     keine Wurzel und werden auch nie eine bekommen. */
+  /* ⚠️ `grammar` gehört dazu: darunter laufen bei den eigenen Vokabeln die
+     Partikeln لِ und يَا sowie mehrteilige Fachausdrücke. Auch sie haben keine
+     Wurzel. */
+  if (einWort && !w.root && w.type !== 'particle' && w.type !== 'grammar') fehlt.push('Wurzel');
+  /* ⛔ DER PLURAL IST KEINE PFLICHT und steht deshalb gar nicht mehr auf der
+     Liste. Die übrigen 27 der 40 Meldungen waren genau das: سُكَّرٌ (Zucker),
+     مَاءٌ (Wasser) — Stoffnamen, die im Arabischen keinen Plural bilden.
+     validate.js sagt bei مِكْوَاةٌ selbst „im Abzug geprueft, dort ebenfalls
+     keiner“. Ein Feld, das aus gutem Grund leer ist, gehört nicht auf eine
+     Mängelliste. Wer einen Plural nachtragen will, kann es weiterhin — der
+     Knopf führt ins Formular, in dem das Feld steht.
+
+     ⭐ 40 Meldungen bei 196 Wörtern, davon 40 falsch: eine Liste, die zu 100 %
+     aus Fehlalarmen besteht, liest niemand mehr — auch die echten Treffer
+     darin nicht. */
   const merk = (typeof getNote === 'function') ? getNote(w.id) : '';
   const vor  = (typeof vorschlagsListe === 'function') ? vorschlagsListe(w).length : 0;
   if (!merk && !vor) fehlt.push('Eselsbrücke');
