@@ -2341,6 +2341,43 @@ const SENTENCE_TAGS = {
   ],
   "45971": [
     { ruleId: "nat-fem-01", matchText: "مَدِينَةٌ جَمِيلَةٌ" }
+  ],
+  "50160": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "nat-vier-bedingungen-01", matchText: "كِتَابٌ جَدِيدٌ" }
+  ],
+  "50161": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" },
+    { ruleId: "nat-fem-01", matchText: "مَدْرَسَةٌ جَدِيدَةٌ" }
+  ],
+  "50162": [
+    { ruleId: "ismul-isara-dhalika-01", matchText: "ذَلِكَ" }
+  ],
+  "50163": [
+    { ruleId: "ismul-isara-tilka-01", matchText: "تِلْكَ" },
+    { ruleId: "nat-fem-01", matchText: "مَدِينَةٌ بَعِيدَةٌ" }
+  ],
+  "50164": [
+    { ruleId: "nominalsatz-ohne-kopula-01", matchText: "هَؤُلَاءِ أَوْلَادٌ" }
+  ],
+  "50165": [
+    { ruleId: "nominalsatz-ohne-kopula-01", matchText: "أُولَئِكَ رِجَالٌ" }
+  ],
+  "50168": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" }
+  ],
+  "50170": [
+    { ruleId: "idafa-erkennen-01", matchText: "أَيُّ كِتَابٍ" }
+  ],
+  "50171": [
+    { ruleId: "zuruf-makan-01", matchText: "الْمُدَرِّسِ" }
+  ],
+  "50289": [
+    { ruleId: "mubtada-khabar-01", matchText: "الْبَيْتُ كَبِيرٌ" }
+  ],
+  "50312": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "mubtada-khabar-01", matchText: "الرَّجُلُ مُسْلِمٌ" }
   ]
 };
 
