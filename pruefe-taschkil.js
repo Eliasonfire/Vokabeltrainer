@@ -307,6 +307,15 @@ let regelWoerter = 0, regelAusgenommen = 0;
   });
 });
 
+/* Aus Codepoints gebaut, nicht kopiert: gleiches Schriftbild bei anderen
+   Codepoints waere hier nicht zu sehen und wuerde die Pruefung still
+   verfehlen. [[zeichenklasse_nie_sichtbar_kopieren]] */
+const IHFA_NUN = 'ن';
+const IHFA_MIM = 'م';
+const IHFA_BA  = 'ب';
+const IQLAB_BA = 'ب';
+const IHFA_BUCHSTABEN = 'تثجدذزسشصضطظفقك';
+
 const SURAH_FELDER = ['arTaschkil'];
 (SURAH_DATA || []).forEach(s => {
   SURAH_FELDER.forEach(feld => {
@@ -327,6 +336,31 @@ const SURAH_FELDER = ['arTaschkil'];
            قٓ). Buchstabennamen tragen keine Harakat - auch die Quelle liefert
            sie ohne, und der Korantext schreibt sie ebenso. Kein Befund. */
         if (/^[طيصقنهرالمكعسحدذ]{1,3}[ٓ]?$/.test(wort)) continue;
+        /* ⭐ Ein Nun ohne Zeichen VOR einem Ihfa-Buchstaben ist in der
+           uthmani-Schreibung richtig, nicht luecken haft: das Nun wird dort
+           verborgen gesprochen und traegt deshalb kein Sukun. Dasselbe gilt
+           fuer das Mim vor Ba (Ihfa schafawi).
+
+           ⛔ BELEGT AUS DEM KORANTEXT SELBST, nicht angenommen:
+             8:1   يَسْـَٔلُونَكَ عَنِ ٱلْأَنفَالِ   -- Nun vor Fa, kein Sukun
+             8:1   إِن كُنتُم مُّؤْمِنِينَ           -- Nun vor Ta, kein Sukun
+             60:1  إِلَيْهِم بِٱلْمَوَدَّةِ          -- Mim vor Ba, kein Sukun
+
+           Ohne diese Zeile meldete das Skript 6 Surennamen als Luecke, die in
+           der Quelle korrekt geschrieben sind: \u0627\u0644\u0623\u0646\u0641\u0627\u0644 und funf weitere.
+           [[zwei_rechtschreibungen_ein_text]] */
+        if (grund !== 'Endung fehlt'){
+          const naechster = wort.slice(i + 1).replace(/[\u064B-\u0652\u0670]/g, '')[0];
+          if (wort[i] === IHFA_NUN && naechster && IHFA_BUCHSTABEN.includes(naechster)) continue;
+          /* Iqlab: Nun vor Ba wird zu einem Mim und traegt statt eines Sukun
+             das kleine Mim U+06E2 -- oder im Surennamen gar nichts.
+             Beleg 2:33  أَنۢبِئْهُم  = U+0646 U+06E2 U+0628, kein Sukun.
+             ⭐ Gegenprobe, damit die Regel nicht zu breit wird: vor einem
+             IZHAR-Buchstaben steht das Sukun sehr wohl --
+             6:99  مِنْهُ  und  يَنْعِهِ  tragen es. */
+          if (wort[i] === IHFA_NUN && naechster === IQLAB_BA) continue;
+          if (wort[i] === IHFA_MIM && naechster === IHFA_BA) continue;
+        }
         const ausnahme = AUSNAHMEN.find(a => a.trifft(wort, i));
         if (ausnahme && !ausnahme.nurMelden) continue;
         befunde.push({
