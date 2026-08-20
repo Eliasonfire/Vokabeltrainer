@@ -632,8 +632,11 @@ function baueWortKarte(w){
   }
 
   if (w.sentAr){
+    /* ⭐ Sagen, woher der Satz kommt. Ein von der App gebauter Satz ist richtig,
+       aber schlicht („Das ist ein Buch.") — wer nicht weiß, dass er von der App
+       stammt, hält ihn für etwas Ausgesuchtes und ersetzt ihn nie. */
     t.push(`<div class="wk-abschnitt">
-      <div class="wk-marke"><span>Beispielsatz</span></div>
+      <div class="wk-marke"><span>Beispielsatz</span>${w.satzAusSchablone ? '<span class="wk-quelle">von der App gebaut</span>' : ''}</div>
       <div class="ar" lang="ar" dir="rtl">${buildSentenceHtml(w, { ohneLuecke:true, karteikarte:true })}</div>
       <div class="de">${escapeHtml(w.sentDe || '')}</div>
     </div>`);
@@ -716,6 +719,22 @@ function baueWortKarte(w){
     ${(!eigen && geaendert) ? `<button class="btn btn-secondary btn-klein" data-wkzuruecksetzen>Auf Original zurück</button>` : ''}
   </div>`);
 
+  /* ⭐⭐ WAS FEHLT DIESER KARTE NOCH? — Elias am 20.08.2026: „einfach alles um
+     die karteikarte vollständig zu machen".
+
+     ⛔ Die App kann Wurzel, Plural und eine tragende Eselsbrücke nicht selbst
+     erzeugen — kein Backend, keine KI, und Geratenes stünde als Tatsache auf
+     einer Lernkarte. Was sie kann: sagen, was leer ist, statt es still leer zu
+     lassen. Der Knopf führt direkt ins Formular, in dem alle diese Felder
+     stehen. */
+  const fehlt = (typeof wasFehlt === 'function') ? wasFehlt(w) : [];
+  if (fehlt.length && !w.istPlural){
+    t.push(`<div class="wk-hinweis wk-unvollstaendig">
+      Noch offen: <b>${fehlt.join(', ')}</b>.
+      <button class="wk-stift" data-wkbearbeiten>${icon('note')}nachtragen</button>
+    </div>`);
+  }
+
   /* Sagen, was der Knopf tut — und vor allem, was er NICHT tut. Ohne den Satz
      läge der Verdacht nahe, damit werde das ganze Kapitel aufgemacht. */
   if (wkNochNicht && !wkEigen)
@@ -743,6 +762,7 @@ function baueWortFormular(w){
     ${feld('wkAr', 'Arabisch', w.ar, true)}
     ${feld('wkDe', 'Deutsch', w.de, false)}
     ${feld('wkPl', 'Plural (optional)', w.pl, true)}
+    ${feld('wkRoot', 'Wurzel (optional, z. B. \u0643 \u062a \u0628)', w.root, true)}
     ${feld('wkSentAr', 'Beispielsatz Arabisch (optional)', w.sentAr, true)}
     ${feld('wkSentDe', 'Beispielsatz Deutsch (optional)', w.sentDe, false)}
     <div class="wk-aktionen">
@@ -871,6 +891,9 @@ document.getElementById('wortKarte').addEventListener('click', (e)=>{
     const wert = id => (document.getElementById(id)?.value || '').trim();
     const ok = speichereWortAenderung(WK_WORT.id, {
       ar: wert('wkAr'), de: wert('wkDe'), pl: wert('wkPl'),
+      /* ⚠️ `root` stand seit jeher in AENDERBAR, hatte aber kein Feld — die
+         Wurzel ließ sich also nie ändern, obwohl die Speicherseite es konnte. */
+      root: wert('wkRoot'),
       sentAr: wert('wkSentAr'), sentDe: wert('wkSentDe')
     });
     if (!ok){ toast('Arabisch und Deutsch dürfen nicht leer sein'); return; }

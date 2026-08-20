@@ -1618,6 +1618,13 @@ main{
 .wk-aktionen{display:flex;gap:var(--sp-2);flex-wrap:wrap;justify-content:flex-end;}
 /* Erklärzeile unter den Knöpfen der Wortkarte. Sie steht dort, wo sonst ein
    „Bearbeiten" wäre, und sagt, warum es hier keines gibt (Pluralkarten). */
+/* „von der App gebaut" am Beispielsatz und „Noch offen: …" darunter
+   (20.08.2026). Beide sagen dasselbe in zwei Stärken: hier ist etwas, das
+   noch nicht von ihm kommt. Gedämpft, nicht warnend — es ist kein Fehler,
+   nur eine Auskunft. */
+.wk-quelle{font-size:var(--fs-xs);color:var(--text-faint);font-weight:500;}
+.wk-unvollstaendig{display:flex;align-items:center;gap:var(--sp-2);flex-wrap:wrap;}
+.wk-unvollstaendig b{color:var(--text);font-weight:700;}
 .wk-hinweis{
   margin-top:var(--sp-2);
   color:var(--text-dim);
@@ -4235,6 +4242,19 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         <button class="btn btn-secondary" id="btnKenneSchonAlle">Alle zurück</button>
       </div>
       <div class="kenne-schon-liste" id="kenneSchonListe"></div>
+
+      <!-- Der Rückweg zur einzelnen Freischaltung (20.08.2026). Bis hierher ging
+           das Zurücknehmen nur über die Wortkarte des Wortes selbst — und die
+           muss man erst einmal wiederfinden. Dieselbe Bauart wie die Liste
+           darüber, aus demselben Grund. -->
+      <div class="setting-row">
+        <div>
+          <div class="setting-title">Einzeln freigeschaltete Wörter</div>
+          <div class="setting-sub" id="einzelnFreiStand">Noch keins freigeschaltet</div>
+        </div>
+        <button class="btn btn-secondary" id="btnEinzelnFreiAlle">Alle zurück</button>
+      </div>
+      <div class="kenne-schon-liste" id="einzelnFreiListe"></div>
 
       <!-- ⭐ Neu am 30.07.2026, und der Anlass war ein Kreislauf, in dem Elias
            festhing: Das Ziehen zum Aktualisieren war kaputt, also kam kein neuer
