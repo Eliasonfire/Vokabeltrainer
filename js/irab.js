@@ -332,7 +332,19 @@ const istFuenfNomen = w => istInListe(w, FUENF_NOMEN);
    Pruefung أَحَبَّ als فِعْل und الْوَلَدُ als فَاعِل, ohne madina-1 wurde
    daraus مُبْتَدَأ + مُضَاف إِلَيْه — derselbe Satz, zwei Lehren, je nachdem
    welche Buecher Elias gerade angehakt hat. */
-const VERBEN = ['خرج', 'ذهب', 'قال', 'أحب'];
+const VERBEN = ['خرج', 'ذهب', 'قال', 'أحب',
+  /* ⛔ 21.08.2026, von pruefe-saetze.js an den letzten sechs Saetzen aus
+     madina-1 Kapitel 24 gefunden: alle drei wurden je nach BUCHAUSWAHL
+     anders gelesen — mit geladenem madina-1 als فِعل, ohne es als
+     مُبْتَدَأ (مُضاف). Bei فَضَلَ schlug es bis in die
+     Endungspruefung durch: الْمَالَ galt als نَعْت und haette raf verlangt.
+
+     ⭐ Die Skelette دأب und فضل treffen auch Nomen — دَأْبٌ (Gewohnheit,
+     madina-3 K29), فَضْلٌ (Gunst, madina-3 K22). Die brauchen KEINEN
+     Eintrag in NICHT_VERB: sie tragen Tanwin, und traegtTanwin() faengt sie
+     schon ab. Eine allgemeine Regel, die den Listeneintrag ueberfluessig
+     macht. [[allgemeine_regel_statt_listeneintrag]] */
+  'دأب', 'استذكر', 'فضل'];
 /* Und die Gegenrichtung: der Vokabelabzug haelt diese vier fuer Verben, weil
    ihr Konsonantengeruest mit einem Verb zusammenfaellt. Im Satz sind sie
    keines — صِفْرٌ ist die Null, عَمِّي mein Onkel, جَرٍّ der Genitiv, لِ eine
@@ -927,7 +939,18 @@ function analysiereSatz(satz){
          Bestimmtheit nicht ueberein, ist es kein نَعْت, sondern ein خَبَر. */
       rolle = 'نَعْت (Adjektiv zum Wort davor)';
       erwartet = letzterKasus;
-    } else if (letzterKasus && letzteBestimmtheit && istBestimmt(wort)){
+    } else if (letzterKasus && letzteBestimmtheit && istBestimmt(wort)
+               && !(imVerbalsatz && gelesen && gelesen.kasus
+                    && gelesen.kasus !== letzterKasus)){
+      /* ⛔ 21.08.2026: die zweite Bedingung ist neu. Ohne sie galt الْمَالَ in
+         فَضَلَ الْعِلْمُ الْمَالَ als نَعْت zu الْعِلْمُ und haette raf verlangt —
+         obwohl sichtbar Fatha dasteht. Ein نَعْت stimmt aber im KASUS mit
+         seinem Bezugswort ueberein; weicht der gelesene Kasus ab, ist es
+         keines, und im Verbalsatz ist es dann das Objekt. Dieselbe Umkehrung
+         wie beim مُبْتَدَأ weiter unten: die Endung schliesst die Rolle aus.
+         ⚠️ Nur im Verbalsatz — im Nominalsatz waere die Alternative das خَبَر,
+         und dessen raf faellt mit dem des مُبْتَدَأ zusammen. Dort traegt die
+         Abweichung also keine Aussage. */
       /* Zwei bestimmte Nomen hintereinander: das zweite beschreibt das erste
          und stimmt mit ihm ueberein - الْمَدِينَةِ الْمُنَوَّرَةِ. Das gilt auch,
          wenn das Wort nicht im Wortschatz steht und die Wortart deshalb
