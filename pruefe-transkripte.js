@@ -3,7 +3,7 @@
  * Aufruf:  node pruefe-transkripte.js [Fenster in Sekunden, Standard 90]
  *          node pruefe-transkripte.js 90 <regel-id>     (nur eine Regel, mit Text)
  *
- * Warum das noetig ist: die 73 Regeln in grammar-data.js sind aus den
+ * Warum das noetig ist: die Regeln in grammar-data.js sind aus den
  * YouTube-Untertiteln der Unterrichtsfolgen abgeleitet. Die sind maschinell
  * erzeugt und verstuemmeln ausgerechnet die arabischen Fachbegriffe - belegt:
  * "H nicht" statt هذا, "Trebote" statt تاء مربوطة, "hell hell h beon" statt
