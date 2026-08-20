@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Acht Akzentfarben am echten Aufbau</title>
+<style>
+/* Die Flaechen und Abstaende sind aus index.html uebernommen, damit der
+   Vergleich etwas taugt: eine Farbe auf weissem Grund sagt nichts darueber,
+   wie sie auf OLED-Schwarz wirkt. */
+:root{
+  --bg:#000; --surface-1:#0b0b0c; --surface-2:#131315; --surface-3:#1b1b1e;
+  --border:#26262c; --border-strong:#5d5d65;
+  --text:#f4f4f5; --text-dim:#a1a1a8; --text-faint:#82828a;
+  --green:#2ee6a6;
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:38px;
+  --r-sm:10px; --r-md:14px; --r-lg:20px; --r-full:999px;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,Menlo,Consolas,monospace;
+
+  /* Wird vom Skript gesetzt — Ausgangswert ist die HEUTIGE Farbe. */
+  --akz:#ff1744; --akz-bright:#ff4d6a; --akz-soft:#ff8095; --akz-dim:#5e0b1c;
+  --akz-glow:rgba(255,23,68,.34); --akz-wash:rgba(255,23,68,.09);
+  --akz-rand:#cb1036;
+  --akz-grad:linear-gradient(135deg,#ff1744 0%,#ff4d6a 100%);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);
+     font-size:17px;line-height:1.55;padding:var(--sp-6) var(--sp-4) 120px}
+.huelle{max-width:920px;margin:0 auto}
+.eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;
+         text-transform:uppercase;color:var(--text-faint);margin:0 0 var(--sp-2)}
+h1{font-size:clamp(1.8rem,6.5vw,2.4rem);line-height:1.1;letter-spacing:-.025em;
+   margin:0 0 var(--sp-3);text-wrap:balance}
+h2{font-size:1.05rem;font-weight:600;margin:var(--sp-6) 0 var(--sp-4);
+   padding-bottom:var(--sp-1);border-bottom:1px solid var(--border);
+   display:flex;align-items:baseline;gap:var(--sp-2)}
+h2 .nr{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;
+       text-transform:uppercase;color:var(--text-faint)}
+p{margin:0 0 var(--sp-4);max-width:64ch;color:var(--text-dim)}
+p strong,b{color:var(--text)}
+code{font-family:var(--mono);font-size:.84em;background:var(--surface-2);
+     padding:1px 5px;border-radius:5px;color:var(--text-dim)}
+
+/* ---------- Farbwahl ---------- */
+.wahlleiste{position:sticky;top:0;z-index:30;background:var(--bg);
+            padding:var(--sp-3) 0;margin-bottom:var(--sp-4);
+            border-bottom:1px solid var(--border)}
+.farbreihe{display:flex;gap:var(--sp-2);flex-wrap:wrap;align-items:stretch}
+.fchip{display:flex;flex-direction:column;gap:3px;align-items:center;
+       background:var(--surface-2);border:1px solid var(--border);
+       border-radius:var(--r-md);padding:var(--sp-2) var(--sp-3);cursor:pointer;
+       font:inherit;color:var(--text);min-width:92px}
+.fchip:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+.fchip[aria-pressed="true"]{border-color:var(--text);background:var(--surface-3)}
+.fchip .klecks{width:100%;height:22px;border-radius:6px}
+.fchip .fname{font-size:.74rem;font-weight:600;letter-spacing:.02em}
+.fchip .fhex{font-family:var(--mono);font-size:.68rem;color:var(--text-faint)}
+.fchip.heute{border-color:var(--green)}
+.fchip.heute .fname::after{content:" ·  heute";color:var(--green);font-weight:400}
+
+/* ---------- Der nachgebaute Aufbau ---------- */
+.bereiche{display:grid;gap:var(--sp-3);
+          grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.feld{background:var(--surface-1);border:1px solid var(--border);
+      border-radius:var(--r-lg);padding:var(--sp-4);position:relative}
+.feld .titel{font-family:var(--mono);font-size:.68rem;letter-spacing:.09em;
+             text-transform:uppercase;color:var(--text-faint);
+             margin-bottom:var(--sp-3);display:block}
+.feld.weit{grid-column:1/-1}
+
+/* 1 Hauptknopf */
+.knopf{display:flex;align-items:center;justify-content:center;gap:var(--sp-2);
+       width:100%;background:var(--akz-grad);color:#fff;border:0;
+       border-radius:var(--r-full);padding:14px 20px;
+       font:inherit;font-weight:700;font-size:1.05rem;cursor:pointer;
+       box-shadow:0 6px 26px var(--akz-glow)}
+/* 2 Grosse Zahl */
+.grossezahl{font-size:64px;font-weight:800;line-height:1;letter-spacing:-.03em;
+            background:var(--akz-grad);-webkit-background-clip:text;
+            background-clip:text;color:transparent;text-align:center;
+            font-variant-numeric:tabular-nums}
+.zahlnote{text-align:center;color:var(--text-dim);font-size:.9rem;margin-top:var(--sp-2)}
+/* 3 Chips */
+.chips{display:flex;gap:var(--sp-2);flex-wrap:wrap}
+.chip{background:var(--surface-2);border:1px solid var(--border);
+      border-radius:var(--r-full);padding:6px 14px;font-size:.88rem;color:var(--text-dim)}
+.chip.an{background:var(--akz-grad);color:#fff;border-color:transparent;
+         box-shadow:0 0 18px var(--akz-glow);font-weight:600}
+/* 4 Fortschritt */
+.balken{height:8px;background:var(--surface-3);border-radius:var(--r-full);overflow:hidden}
+.balken i{display:block;height:100%;width:62%;background:var(--akz-grad)}
+/* 5 Streak */
+.streak{display:inline-flex;align-items:center;gap:var(--sp-2);
+        background:var(--surface-2);border:1px solid var(--border);
+        padding:8px 14px;border-radius:var(--r-full);font-weight:700}
+.streak .n{color:var(--akz)}
+/* 6 Fussleiste */
+.fuss{display:flex;justify-content:space-between;background:var(--surface-1);
+      border-top:1px solid var(--border);padding:var(--sp-2) var(--sp-3);
+      border-radius:0 0 var(--r-md) var(--r-md)}
+.fusspunkt{display:flex;flex-direction:column;align-items:center;gap:2px;
+           font-size:.68rem;color:var(--text-faint);flex:1}
+.fusspunkt .ikon{font-size:1.05rem;line-height:1}
+.fusspunkt.an{color:var(--akz)}
+.fusspunkt.an .strich{width:22px;height:2px;background:var(--akz);border-radius:2px;margin-top:2px}
+/* 7 Wortmarke */
+.marke{direction:rtl;unicode-bidi:isolate;font-size:44px;font-weight:700;
+       line-height:1.9;white-space:nowrap;text-align:center;
+       background:var(--akz-grad);-webkit-background-clip:text;
+       background-clip:text;color:transparent}
+/* 8 Karte */
+.karte{background:var(--surface-2);border:1px solid var(--border);
+       border-left:3px solid var(--akz);border-radius:var(--r-md);
+       padding:var(--sp-3)}
+.karte .ar{direction:rtl;unicode-bidi:isolate;font-size:1.6rem;line-height:1.9}
+.karte .de{color:var(--text-dim);font-size:.9rem}
+/* 9 Wasch-Flaeche */
+.wasch{background:var(--akz-wash);border:1px solid var(--akz-dim);
+       border-radius:var(--r-md);padding:var(--sp-3);color:var(--text-dim);font-size:.9rem}
+.wasch b{color:var(--akz)}
+/* 10 Farbiger Text */
+.textprobe p{margin:0 0 var(--sp-2)}
+.tfarbe{color:var(--akz)}
+.tsoft{color:var(--akz-soft)}
+.tbright{color:var(--akz-bright)}
+/* 11 Umrandeter Knopf — Elias' Sonderfall vom 18.08. */
+.randknopf{background:transparent;border:1px solid var(--akz-rand);color:var(--akz-soft);
+           border-radius:var(--r-full);padding:9px 16px;font:inherit;font-size:.9rem;
+           font-weight:600;cursor:pointer;width:100%}
+/* 12 Linie + Flaeche */
+.linie{height:2px;background:var(--akz);border-radius:2px;margin-bottom:var(--sp-3)}
+.flaeche{height:56px;border-radius:var(--r-md);background:var(--akz)}
+.flaechegrad{height:56px;border-radius:var(--r-md);background:var(--akz-grad);margin-top:var(--sp-2)}
+/* 13 Abstufungen */
+.leiter{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.leiter div{height:44px;border-radius:8px;display:flex;align-items:flex-end;
+            justify-content:center;padding-bottom:3px;
+            font-family:var(--mono);font-size:.6rem;color:rgba(255,255,255,.75)}
+
+/* ---------- Kontrast ---------- */
+.tabellenhuelle{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r-md)}
+table{border-collapse:collapse;width:100%;font-size:.9rem;min-width:420px}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--surface-3)}
+th{color:var(--text-faint);font-weight:600;font-size:.72rem;letter-spacing:.07em;
+   text-transform:uppercase;background:var(--surface-1)}
+tr:last-child td{border-bottom:0}
+td.z{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+.gut{color:var(--green)}.schlecht{color:#ff5a72}
+.uklecks{width:34px;height:20px;border-radius:5px;display:block}
+#uebersicht tr.ist td{background:var(--surface-2)}
+#uebersicht tr.ist td:first-child{box-shadow:inset 2px 0 0 var(--green)}
+#uebersicht .jetzt{color:var(--green);font-size:.75rem;margin-left:6px}
+
+.ausgabe{width:100%;min-height:190px;background:var(--surface-2);color:var(--text-dim);
+         border:1px solid var(--border);border-radius:var(--r-md);padding:var(--sp-3);
+         font-family:var(--mono);font-size:.78rem;line-height:1.6;resize:vertical}
+.hinweis{background:var(--surface-1);border:1px solid var(--border);
+         border-left:3px solid var(--green);border-radius:var(--r-md);
+         padding:var(--sp-4);margin:0 0 var(--sp-4)}
+.hinweis.warn{border-left-color:#ffc44d}
+.hinweis p{margin-bottom:0}
+</style>
+</head>
+<body>
+<div class="huelle">
+
+<p class="eyebrow">Gestaltung · 20. August 2026</p>
+<h1>Acht Akzentfarben am echten Aufbau</h1>
+
+<p>Deine sieben Farben plus die, die heute läuft. Oben wählst du eine — alles
+darunter färbt sich sofort um. Die Flächen, Abstände und Radien sind aus
+<code>index.html</code> übernommen, damit der Vergleich etwas taugt: eine Farbe
+auf weißem Grund sagt nichts darüber, wie sie auf OLED-Schwarz wirkt.</p>
+
+<div class="hinweis">
+<p><b>Der Rückweg, um den du gebeten hast, ist die grün umrandete Kachel:</b>
+<code>#ff1744</code> ist die Farbe, die heute in der App steht. Ganz unten
+stehen alle acht CSS-Werte der gewählten Farbe zum Kopieren — für die heutige
+sind es genau die Zeilen, die jetzt in <code>index.html</code> ab Zeile 169
+stehen.</p>
+</div>
+
+<div class="wahlleiste">
+  <div class="farbreihe" id="farbreihe"></div>
+</div>
+
+<h2><span class="nr">1</span> Alle acht auf einen Blick</h2>
+<p>Der Kontrast ist das einzige Kriterium hier, das <strong>keine
+Geschmacksfrage</strong> ist. Gemessen gegen <code>#1b1b1e</code>, die hellste
+Fläche der App — der ungünstigste Ort, nicht der bequemste.</p>
+
+<div class="tabellenhuelle" style="margin-bottom:var(--sp-4)">
+<table>
+<thead><tr><th></th><th>Farbe</th><th>Hex</th><th class="z">Kontrast</th><th>reicht für</th></tr></thead>
+<tbody id="uebersicht"></tbody>
+</table>
+</div>
+
+<h2><span class="nr">2</span> Die Flächen, auf denen die Farbe wirklich vorkommt</h2>
+<div class="bereiche">
+
+  <div class="feld weit">
+    <span class="titel">Startbildschirm — Zahl, Knopf, Fortschritt</span>
+    <div class="grossezahl">200</div>
+    <p class="zahlnote">Karten heute fällig</p>
+    <button class="knopf" type="button">Jetzt lernen</button>
+    <div style="margin-top:var(--sp-4)"><div class="balken"><i></i></div></div>
+  </div>
+
+  <div class="feld">
+    <span class="titel">Kapitelwahl — aktiv gegen ruhend</span>
+    <div class="chips">
+      <span class="chip">Alle</span><span class="chip an">1</span>
+      <span class="chip an">2</span><span class="chip">3</span>
+      <span class="chip">4</span><span class="chip an">Eigene</span>
+    </div>
+  </div>
+
+  <div class="feld">
+    <span class="titel">Tages-Streak</span>
+    <span class="streak">🔥 <span class="n">12</span></span>
+    <p style="font-size:.85rem;margin:var(--sp-3) 0 0">Hier steht die Farbe als
+    <b>Ziffer auf dunkler Fläche</b> — der Fall mit dem geringsten Kontrast.</p>
+  </div>
+
+  <div class="feld">
+    <span class="titel">Wortmarke im Verlauf</span>
+    <div class="marke">طالب</div>
+  </div>
+
+  <div class="feld">
+    <span class="titel">Untere Leiste — aktiver Punkt</span>
+    <div class="fuss">
+      <span class="fusspunkt an"><span class="ikon">⌂</span>Start<span class="strich"></span></span>
+      <span class="fusspunkt"><span class="ikon">▭</span>Lernen</span>
+      <span class="fusspunkt"><span class="ikon">☰</span>Kategorien</span>
+      <span class="fusspunkt"><span class="ikon">◌</span>Sätze</span>
+    </div>
+  </div>
+
+  <div class="feld">
+    <span class="titel">Karteikarte mit Farbkante</span>
+    <div class="karte">
+      <div class="ar">الْمُدَرِّسُ</div>
+      <div class="de">der Lehrer</div>
+    </div>
+  </div>
+
+  <div class="feld">
+    <span class="titel">Wasch-Fläche (9 % Deckung)</span>
+    <div class="wasch">Diese Regel gilt <b>nur bei bestimmten Wörtern</b> —
+    der Kasten ist der leiseste Einsatz der Farbe.</div>
+  </div>
+
+  <div class="feld textprobe">
+    <span class="titel">Farbe als Text auf Schwarz</span>
+    <p class="tfarbe">Grundton — 17 px, normal</p>
+    <p class="tbright">Aufgehellt (+10 %) — für kleine Schrift</p>
+    <p class="tsoft">Weich (+20 %) — für lange Zeilen</p>
+    <p style="font-size:.8rem;color:var(--text-faint);margin:0">Kleine Schrift im Grundton:
+    <span class="tfarbe">so sieht ein Hinweis von 13 px aus</span></p>
+  </div>
+
+  <div class="feld">
+    <span class="titel">Umrandet, ohne Füllung</span>
+    <button class="randknopf" type="button">Nur falsche wiederholen</button>
+    <p style="font-size:.82rem;margin:var(--sp-3) 0 0">⭐ Diesen Rand hast du am
+    18.08. <b>einzeln</b> ausgewählt (<code>#cb1036</code>), weil der abgeleitete
+    Ton nur 1,26 Kontrast erreichte. Er wandert hier mit.</p>
+  </div>
+
+  <div class="feld">
+    <span class="titel">Linie, Fläche, Verlauf</span>
+    <div class="linie"></div>
+    <div class="flaeche"></div>
+    <div class="flaechegrad"></div>
+  </div>
+
+  <div class="feld weit">
+    <span class="titel">Die fünf Abstufungen nebeneinander</span>
+    <div class="leiter" id="leiter"></div>
+  </div>
+
+</div>
+
+<h2><span class="nr">3</span> Die gewählte Farbe im Detail</h2>
+<p>Gegen die <strong>hellste</strong> Fläche der App (<code>--surface-3</code>,
+<code>#1b1b1e</code>), nicht gegen Schwarz. Bei heller Schrift auf dunklem Grund
+sinkt der Kontrast, je heller der Grund wird — der schwerste Fall ist also die
+hellste Fläche.</p>
+
+<div class="tabellenhuelle">
+<table>
+<thead><tr><th>Wert</th><th>Hex</th><th class="z">auf #000</th><th class="z">auf #1b1b1e</th><th>reicht für</th></tr></thead>
+<tbody id="kontrast"></tbody>
+</table>
+</div>
+
+<h2><span class="nr">4</span> Die acht Werte zum Kopieren</h2>
+<textarea class="ausgabe" id="ausgabe" readonly></textarea>
+
+<div class="hinweis warn" style="margin-top:var(--sp-4)">
+<p><b>⛔ Nichts davon ist eingebaut.</b> Diese Seite färbt nur sich selbst. Sag
+mir, welche es sein soll, dann setze ich sie in <code>index.html</code> — und
+<code>#ff1744</code> bleibt als Rückweg in dieser Datei stehen.</p>
+</div>
+
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var SPEICHER = 'farbgeruest-v1';
+  var stand = {};
+  try { stand = JSON.parse(localStorage.getItem(SPEICHER) || '{}'); } catch(e){ stand = {}; }
+
+  /* Elias' sieben Farben aus den Bildschirmfotos vom 20.08., 06:34-06:38,
+     plus die heutige als Bezug. */
+  var FARBEN = [
+    { hex:'#ff1744', name:'Torch Red',        heute:true },
+    { hex:'#0a84ff', name:'Azure' },
+    { hex:'#0066ff', name:'Ultramarin' },
+    { hex:'#00d2ff', name:'Cyan' },
+    { hex:'#ff3b5c', name:'Rot 1' },
+    { hex:'#ff2a4d', name:'Rot 2' },
+    { hex:'#ff4d4d', name:'Coral Red' },
+    { hex:'#ff0000', name:'Rot pur' }
+  ];
+
+  /* ---------- Farbrechnen ---------- */
+  function zuRgb(hex){
+    var n = parseInt(hex.slice(1), 16);
+    return [n>>16&255, n>>8&255, n&255];
+  }
+  function zuHsl(hex){
+    var c = zuRgb(hex), r=c[0]/255, g=c[1]/255, b=c[2]/255;
+    var mx=Math.max(r,g,b), mn=Math.min(r,g,b), l=(mx+mn)/2, h=0, s=0;
+    if (mx!==mn){
+      var d=mx-mn;
+      s = l>.5 ? d/(2-mx-mn) : d/(mx+mn);
+      h = mx===r ? (g-b)/d+(g<b?6:0) : mx===g ? (b-r)/d+2 : (r-g)/d+4;
+      h*=60;
+    }
+    return [h, s*100, l*100];
+  }
+  function ausHsl(h, s, l){
+    h=((h%360)+360)%360; s=Math.max(0,Math.min(100,s))/100; l=Math.max(0,Math.min(100,l))/100;
+    var c=(1-Math.abs(2*l-1))*s, x=c*(1-Math.abs((h/60)%2-1)), m=l-c/2, r,g,b;
+    if(h<60){r=c;g=x;b=0}else if(h<120){r=x;g=c;b=0}else if(h<180){r=0;g=c;b=x}
+    else if(h<240){r=0;g=x;b=c}else if(h<300){r=x;g=0;b=c}else{r=c;g=0;b=x}
+    var f=function(v){ return ('0'+Math.round((v+m)*255).toString(16)).slice(-2); };
+    return '#'+f(r)+f(g)+f(b);
+  }
+  /* ⭐ Die Ableitung ist aus der HEUTIGEN Familie zurueckgerechnet:
+     bright = L+10 · soft = L+20 · dim = L-34 S-21 · rand = L-12 S-15.
+     So bekommt jede Farbe dieselbe Abstufung wie #ff1744 heute. */
+  function familie(hex){
+    var v = zuHsl(hex), h=v[0], s=v[1], l=v[2], c=zuRgb(hex);
+    return {
+      basis:  hex,
+      bright: ausHsl(h+2, s, l+10),
+      soft:   ausHsl(h+2, s, l+20),
+      dim:    ausHsl(h, s-21, l-34),
+      rand:   ausHsl(h, s-15, l-12),
+      glow:   'rgba('+c[0]+','+c[1]+','+c[2]+',.34)',
+      wash:   'rgba('+c[0]+','+c[1]+','+c[2]+',.09)'
+    };
+  }
+  /* WCAG-Kontrast */
+  function leucht(hex){
+    return zuRgb(hex).map(function(v){ v/=255; return v<=.03928 ? v/12.92 : Math.pow((v+.055)/1.055, 2.4); })
+      .reduce(function(a,v,i){ return a + v*[.2126,.7152,.0722][i]; }, 0);
+  }
+  function kontrast(a, b){
+    var x=leucht(a), y=leucht(b);
+    return ((Math.max(x,y)+.05)/(Math.min(x,y)+.05));
+  }
+
+  var gewaehlt = stand.hex || '#ff1744';
+
+  function anwenden(){
+    var f = familie(gewaehlt);
+    var w = document.documentElement.style;
+    w.setProperty('--akz', f.basis);
+    w.setProperty('--akz-bright', f.bright);
+    w.setProperty('--akz-soft', f.soft);
+    w.setProperty('--akz-dim', f.dim);
+    w.setProperty('--akz-rand', f.rand);
+    w.setProperty('--akz-glow', f.glow);
+    w.setProperty('--akz-wash', f.wash);
+    w.setProperty('--akz-grad', 'linear-gradient(135deg,'+f.basis+' 0%,'+f.bright+' 100%)');
+
+    /* ⚠️ Fuer die HEUTIGE Farbe die echten Werte aus index.html setzen, nicht
+       die zurueckgerechneten — sonst vergleicht er gegen eine Naeherung
+       seiner eigenen Farbe. */
+    if (gewaehlt === '#ff1744'){
+      w.setProperty('--akz-bright', '#ff4d6a');
+      w.setProperty('--akz-soft', '#ff8095');
+      w.setProperty('--akz-dim', '#5e0b1c');
+      w.setProperty('--akz-rand', '#cb1036');
+      w.setProperty('--akz-grad', 'linear-gradient(135deg,#ff1744 0%,#ff4d6a 100%)');
+      f = { basis:'#ff1744', bright:'#ff4d6a', soft:'#ff8095', dim:'#5e0b1c',
+            rand:'#cb1036', glow:'rgba(255,23,68,.34)', wash:'rgba(255,23,68,.09)' };
+    }
+
+    /* Abstufungsleiter */
+    var L = document.getElementById('leiter');
+    L.textContent = '';
+    [['dim',f.dim],['rand',f.rand],['basis',f.basis],['bright',f.bright],['soft',f.soft]]
+      .forEach(function(p){
+        var d = document.createElement('div');
+        d.style.background = p[1];
+        d.textContent = p[0];
+        L.appendChild(d);
+      });
+
+    /* Kontrasttabelle */
+    var K = document.getElementById('kontrast');
+    K.textContent = '';
+    [['Grundton',f.basis],['Aufgehellt',f.bright],['Weich',f.soft],['Rand',f.rand]]
+      .forEach(function(p){
+        var k0 = kontrast(p[1], '#000000'), k3 = kontrast(p[1], '#1b1b1e');
+        var tr = document.createElement('tr');
+        var reicht = k3 >= 4.5 ? '<span class="gut">jede Schriftgröße</span>'
+                   : k3 >= 3   ? '<span class="gut">ab 18,66 px fett</span>'
+                   : '<span class="schlecht">nur Flächen, nicht Text</span>';
+        tr.innerHTML = '<td>' + p[0] + '</td><td><code>' + p[1] + '</code></td>'
+          + '<td class="z">' + k0.toFixed(2) + '</td>'
+          + '<td class="z">' + k3.toFixed(2) + '</td><td>' + reicht + '</td>';
+        K.appendChild(tr);
+      });
+
+    /* Zum Kopieren */
+    var name = FARBEN.filter(function(x){ return x.hex === gewaehlt; })[0];
+    document.getElementById('ausgabe').value =
+      '/* ' + (name ? name.name : gewaehlt) + ' — für index.html ab Zeile 169 */\n' +
+      '  --red:' + f.basis + ';\n' +
+      '  --red-bright:' + f.bright + ';\n' +
+      '  --red-soft:' + f.soft + ';\n' +
+      '  --red-dim:' + f.dim + ';\n' +
+      '  --red-glow:' + f.glow + ';\n' +
+      '  --red-wash:' + f.wash + ';\n' +
+      '  --accent-grad:linear-gradient(135deg,' + f.basis + ' 0%,' + f.bright + ' 100%);\n' +
+      '\n  /* steht weiter oben, Zeile 167 — NICHT vergessen: */\n' +
+      '  --rand-wrongonly:' + f.rand + ';';
+
+    document.querySelectorAll('.fchip').forEach(function(b){
+      b.setAttribute('aria-pressed', b.dataset.hex === gewaehlt ? 'true' : 'false');
+    });
+  }
+
+  /* ⭐ Die Uebersicht wird EINMAL gebaut: sie zeigt alle acht nebeneinander,
+     unabhaengig davon, welche gerade gewaehlt ist. */
+  function uebersichtBauen(){
+    var U = document.getElementById('uebersicht');
+    if (!U) return;
+    var reihen = FARBEN.map(function(f){
+      var fam = familie(f.hex);
+      var basis = (f.hex === '#ff1744') ? '#ff1744' : fam.basis;
+      return { f: f, k: kontrast(basis, '#1b1b1e') };
+    }).sort(function(a, b){ return b.k - a.k; });
+    U.textContent = '';
+    reihen.forEach(function(r){
+      var tr = document.createElement('tr');
+      if (r.f.heute) tr.className = 'ist';
+      var reicht = r.k >= 4.5 ? '<span class="gut">jede Schriftgröße</span>'
+                 : r.k >= 3   ? 'ab 18,66 px fett'
+                 : '<span class="schlecht">nur Flächen, nicht Text</span>';
+      tr.innerHTML = '<td><span class="uklecks"></span></td>'
+        + '<td>' + r.f.name + (r.f.heute ? '<span class="jetzt">· heute</span>' : '') + '</td>'
+        + '<td><code>' + r.f.hex.toUpperCase() + '</code></td>'
+        + '<td class="z">' + r.k.toFixed(2) + '</td><td>' + reicht + '</td>';
+      tr.querySelector('.uklecks').style.background =
+        'linear-gradient(135deg,' + r.f.hex + ' 0%,' + familie(r.f.hex).bright + ' 100%)';
+      tr.addEventListener('click', function(){
+        gewaehlt = r.f.hex;
+        try { localStorage.setItem(SPEICHER, JSON.stringify({ hex: gewaehlt })); } catch(e){}
+        anwenden();
+      });
+      tr.style.cursor = 'pointer';
+      U.appendChild(tr);
+    });
+  }
+
+  /* Kacheln bauen */
+  var reihe = document.getElementById('farbreihe');
+  FARBEN.forEach(function(f){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'fchip' + (f.heute ? ' heute' : '');
+    b.dataset.hex = f.hex;
+    b.setAttribute('aria-pressed', 'false');
+    b.innerHTML = '<span class="klecks"></span><span class="fname"></span><span class="fhex"></span>';
+    b.querySelector('.klecks').style.background =
+      'linear-gradient(135deg,' + f.hex + ' 0%,' + familie(f.hex).bright + ' 100%)';
+    b.querySelector('.fname').textContent = f.name;
+    b.querySelector('.fhex').textContent = f.hex.toUpperCase();
+    b.addEventListener('click', function(){
+      gewaehlt = f.hex;
+      try { localStorage.setItem(SPEICHER, JSON.stringify({ hex: gewaehlt })); } catch(e){}
+      anwenden();
+    });
+    reihe.appendChild(b);
+  });
+
+  uebersichtBauen();
+  anwenden();
+})();
+</script>
+</body>
+</html>
