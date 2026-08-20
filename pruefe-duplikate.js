@@ -72,7 +72,25 @@ const FREI = {};
 for (const t of m[1].matchAll(/'([^']+)':\s*\[([0-9,\s]*)\]/g))
   FREI[t[1]] = t[2].split(',').map(s => Number(s.trim())).filter(n => !Number.isNaN(n));
 
-const EIGENE = kiste.window.EIGENE_VOKABELN || [];
+/* ⛔⛔ ZWEI GETRENNTE SPEICHER FUER „eigene Vokabeln“ — gemessen 20.08.2026:
+
+     data/vokabeln-eigene.js  (EIGENE_VOKABELN)   11 Woerter, UUID-Kennungen
+     data/eigene-woerter.json (vt_personalVocab)  14 Woerter, p_-Kennungen
+
+   ⭐ KEINE Ueberschneidung — keine einzige Kennung kommt in beiden vor. Die App
+   laedt beide: js/buecher.js:536 die erste, saetzeNachtragen(PERSONAL_VOCAB)
+   die zweite. Dieses Werkzeug kannte nur die erste und hat deshalb
+   سَيِّدٌ (p_1787185012359) nicht gefunden — ein ECHTES Duplikat zu
+   madina-2 K18, und das Kapitel ist freigeschaltet.
+   [[werkzeug_misst_kleineren_bestand]] [[dritte_satzquelle]] */
+const EIGENE_ALT = kiste.window.EIGENE_VOKABELN || [];
+let EIGENE_NEU = [];
+try {
+  const ew = path.join(DATEN, 'eigene-woerter.json');
+  if (fs.existsSync(ew)) EIGENE_NEU = (JSON.parse(fs.readFileSync(ew, 'utf8')).woerter) || [];
+  else console.log('  ⚠ data/eigene-woerter.json fehlt — 14 eigene Woerter UNGEPRUEFT.');
+} catch (e) { console.log('  ⚠ data/eigene-woerter.json nicht lesbar: ' + e.message); }
+const EIGENE = EIGENE_ALT.concat(EIGENE_NEU);
 const FACH = vm.runInContext(
   'typeof FACHBEGRIFF_VOKABELN !== "undefined" ? FACHBEGRIFF_VOKABELN : []', kiste);
 const BUCH = [];
@@ -140,11 +158,20 @@ if (!befunde.length) {
 }
 console.log('=== ' + befunde.length + ' Befund(e) ===');
 for (const b of befunde) {
-  console.log('  ' + String(b.e.ar).padEnd(22) + '(' + b.herkunft + ', id ' + b.e.id + ')');
-  b.t.forEach(x => console.log('      == ' + String(x.ar).padEnd(20) + x.book + ' K' + x.chapter + '  id ' + x.id));
+  console.log('  ' + String(b.e.ar).padEnd(22) + '(' + b.herkunft + ', id ' + b.e.id + ')  ' + (b.e.de || ''));
+  b.t.forEach(x => console.log('      == ' + String(x.ar).padEnd(20) + x.book + ' K' + x.chapter + '  id ' + x.id + '  ' + (x.de || '')));
 }
 console.log('');
 console.log('⚠️ Ein Befund ist noch keine Aufforderung: ein Fachbegriff und eine');
 console.log('   Buchvokabel koennen bewusst nebeneinander stehen (Grammatikkarte');
 console.log('   gegen Wortschatzkarte). Welche Elias will, entscheidet er.');
+console.log('');
+/* ⭐ Die BEDEUTUNG steht seit dem 20.08.2026 hinter jedem Eintrag — ohne sie
+   sieht ein Homograph aus wie ein Duplikat. Genau das war bei ظَرْف der Fall:
+   der Fachbegriff heißt „Zeit- oder Ortsangabe“, die Buchvokabel „Umschlag“.
+   Gleiches Schriftbild, verschiedene Woerter. Automatisch entscheiden laesst
+   sich das nicht — deutscher Text ist frei formuliert —, aber SICHTBAR machen
+   schon. [[skelettvergleich_wirft_information_weg]] */
+console.log('⛔ Und zwar mit BEDEUTUNG vergleichen, nicht nur mit Schriftbild:');
+console.log('   ظَرْف = Zeit-/Ortsangabe gegen ظَرْفٌ = Umschlag ist KEIN Duplikat.');
 process.exit(2);
