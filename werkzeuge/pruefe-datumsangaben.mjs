@@ -35,7 +35,7 @@
  * Aufruf:  node werkzeuge/pruefe-datumsangaben.mjs [--alle]
  *          --alle zeigt auch die Blöcke, die stimmen.
  */
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -46,7 +46,21 @@ const ALLE = process.argv.includes('--alle');
 
 let zeilen;
 try { zeilen = readFileSync(NOTIZ, 'utf8').split(/\r?\n/); }
-catch { console.log('⚠️  Vault-Notiz nicht erreichbar — übersprungen.'); process.exit(0); }
+catch {
+  /* ⛔ „Nicht da" hat ZWEI Ursachen, und nur eine ist harmlos. Fehlt der
+     ganze Vault-Ordner, ist das ein fremder Rechner — der Normalfall. Ist der
+     Ordner da und die Datei nicht, ist etwas kaputt, und ein stilles Exit 0
+     verschweigt es. [[kennzeichen_mit_zwei_ursachen]] [[ausfall_ist_unsichtbar_gebaut]] */
+  const ordner = NOTIZ.slice(0, NOTIZ.lastIndexOf(String.fromCharCode(92)));
+  if (!existsSync(ordner)){
+    console.log('⚠️  Vault-Ordner nicht da — fremder Rechner, übersprungen.');
+    process.exit(0);
+  }
+  console.log('⛔ Der Vault-Ordner ist da, die Notiz aber nicht lesbar:');
+  console.log('   ' + NOTIZ);
+  console.log('   Das ist KEIN fremder Rechner — hier fehlt etwas.');
+  process.exit(1);
+}
 
 /* Blöcke abgrenzen: von einer „## "-Überschrift bis zur nächsten. */
 const bloecke = [];
