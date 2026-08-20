@@ -150,6 +150,42 @@ if (!Array.isArray(VOCAB_DATA) || VOCAB_DATA.length === 0){
      als bisher - das gehoert gesehen, bevor es still das Verhalten aendert. */
   if (sgUngleichAr.length)
     warn(`${sgUngleichAr.length} Vokabel(n) mit sg ≠ ar (bisher gab es das nicht; js/saetze.js sucht dann eine andere Form im Satz): ${sgUngleichAr.slice(0,5).map(w => `${w.ar} → sg ${w.sg} (id ${w.id})`).join(', ')}`);
+
+  /* ⛔ Ein `pl`, das gar kein Plural ist — gemessen am 20.08.2026.
+
+     Die neun Zahlwoerter 50296-50304 tragen im Feld `pl` nicht den Plural,
+     sondern die jeweils andere Genusform:
+
+         50296  وَاحِدٌ    pl: وَاحِدَةٌ
+         50297  ثَلَاثَةٌ  pl: ثَلَاثٌ
+         …      bis 50304 عَشَرَةٌ  pl: عَشْرٌ
+
+     Das ist kein Schreibfehler, sondern eine andere Beziehung: bei den
+     Zahlen 3-10 richtet sich die Form gegenlaeufig nach dem Gezaehlten.
+     Die App beschriftet das Feld aber an DREI Stellen woertlich mit
+     "Plural" (js/kategorien.js:650 und :912, js/lernen.js:231), und
+     `bauePluralKarte()` in js/kern.js:366 baut daraus eine eigene
+     Lernkarte mit `de: w.de + " (Plural)"` — also "drei (Plural)".
+
+     ⛔ ABSICHTLICH warn() und ABSICHTLICH ohne Korrektur. Was dort statt
+     "Plural" stehen soll, ist eine Frage an Elias' Lehrer und nicht an
+     mich; eine erfundene Beschriftung waere schlimmer als die falsche,
+     weil sie niemand mehr nachprueft. [[sein_ist_nicht_wirken]]
+     [[erfundene_begruendung_schliesst_den_fall]]
+
+     ⭐ Erkannt an der BEDEUTUNG, nicht an der Form. Der Formvergleich
+     ("nur die Taa marbuta trennt sie") hatte 9 Kandidaten: 8 echt, dazu
+     غُرْفَةٌ → غُرَفٌ falsch getroffen (echter gebrochener Plural) und
+     ثَمَانِيَةٌ → ثَمَانٍ uebersehen. Ueber `de` sind es genau die neun, in
+     beide Richtungen gegengeprueft. [[kandidatenliste_ist_keine_fehlerliste]] */
+  const ZAHLWORT = /^(null|ein|eins|eine|zwei|drei|vier|fuenf|fünf|sechs|sieben|acht|neun|zehn|elf|zwoelf|zwölf)$/i;
+  const istZahlwort = de => String(de || '').split('/').some(t => ZAHLWORT.test(t.trim()));
+  const zahlMitPl = VOCAB_DATA.filter(w => w && w.pl && istZahlwort(w.de));
+  if (zahlMitPl.length)
+    warn(`${zahlMitPl.length} Zahlwort(e) zeigen unter "Plural" die andere Genusform, keinen Plural — `
+      + `die Beschriftung braucht Elias' Entscheidung, nicht meine: `
+      + `${zahlMitPl.slice(0,3).map(w => `${w.ar} → ${w.pl} (id ${w.id})`).join(', ')}${zahlMitPl.length>3?' …':''}`);
+  note(`Zahlwoerter: ${VOCAB_DATA.filter(w => w && istZahlwort(w.de)).length} im Bestand, ${zahlMitPl.length} davon mit einem pl-Feld.`);
   note(`sg/pl: ${VOCAB_DATA.filter(w => w && w.sg && w.pl).length} Einträge mit beiden Formen, ${plOhneSg.length} nur Plural, ${sgOhnePl.length} nur Singular.`);
 
   /* ---------- 1c. Trennzeichen in Mehrfachformen ----------
