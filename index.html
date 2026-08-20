@@ -1430,6 +1430,10 @@ main{
   color:var(--text-dim);font-family:var(--font-ui);font-size:var(--fs-xs);font-weight:700;
   text-decoration:underline;text-underline-offset:3px;
 }
+/* „N freischalten“ steht neben „Auswahl aufheben“ und muss sich davon abheben:
+   das eine nimmt etwas weg, das andere holt Wörter in seinen Lernvorrat. Ohne
+   eigene Farbe sähen beide gleich aus — zwei Unterstriche nebeneinander. */
+.kat-frei{color:var(--red-bright);margin-left:auto;margin-right:var(--sp-3);}
 .kat-ziele{display:flex;gap:var(--sp-2);overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
 .kat-ziele::-webkit-scrollbar{display:none;}
 .kat-ziel{
@@ -3697,6 +3701,10 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
       <div class="kat-zielleiste hidden" id="boxZielLeiste">
         <div class="kat-zeile">
           <span class="kat-zahl" id="boxAuswahlZahl"></span>
+          <!-- ⭐ Erscheint nur, wenn unter den markierten Wörtern welche sind, die
+               sein Kapitel noch gar nicht freigibt — sonst wäre es ein Knopf ohne
+               Wirkung. Er geht gerade Kapitel 24 durch, und dort stehen 85. -->
+          <button class="kat-aus kat-frei hidden" id="btnBoxFreischalten"></button>
           <button class="kat-aus" id="btnBoxAuswahlAus" aria-label="Auswahl aufheben">Auswahl aufheben</button>
         </div>
         <div class="kat-ziele" id="boxZiele"></div>
