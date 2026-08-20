@@ -192,13 +192,36 @@ function pruefe(auftrag) {
     if (!r) { fehler.push(wo + ': Regel steht nicht in GRAMMAR_RULES'); continue; }
     const s = saetze.get(String(m.satzId));
     if (!s) { fehler.push(wo + ': Satz nicht gefunden (weder Lehrbuch noch arabicroots)'); continue; }
-    const text = nfc(m.matchText);
+    /* ⛔ DER matchText DARF NICHT NORMALISIERT WERDEN.
+
+       Hier stand `nfc(m.matchText)`, und das hat am 20.08.2026 zwei
+       Markierungen still unbrauchbar gemacht. NFC sortiert kombinierende
+       Zeichen kanonisch um: aus ر + Kasra + Šadda wird ر + Šadda + Kasra.
+       Dieselben Zeichen, andere Reihenfolge — und die Sätze in
+       data/beispielsaetze.js stehen NICHT in NFC.
+
+       Die App sucht die Stelle mit `text.indexOf(t.matchText)` (js/saetze.js),
+       also ROH. Ein normalisierter matchText wird dort nie gefunden: keine
+       Hervorhebung, keine Fehlermeldung. Gemessen an أَنَا مُدَرِّسٌ.
+
+       ⭐ Deshalb umgekehrt: über NFC wird nur GESUCHT, gespeichert werden die
+       Zeichen des Satzes selbst. Damit passt der matchText immer zu der Quelle,
+       in der er nachher gefunden werden muss. [[arabisch_vergleichen_nfc]] */
+    let text = String(m.matchText == null ? '' : m.matchText);
     if (!text) { fehler.push(wo + ': matchText ist leer'); continue; }
     if (!s.ar.includes(text)) {
-      fehler.push(wo + ': matchText kommt im Satz nicht vor');
-      hinweise.push('    Satz : ' + s.ar);
-      hinweise.push('    Suche: ' + text);
-      continue;
+      const i = nfc(s.ar).indexOf(nfc(text));
+      const ausSatz = i >= 0 ? s.ar.substr(i, text.length) : null;
+      /* ⚠️ Nicht darauf verlassen, dass NFC die Länge lässt — nachmessen. */
+      if (ausSatz && nfc(ausSatz) === nfc(text) && s.ar.includes(ausSatz)){
+        text = ausSatz;
+        hinweise.push('    ℹ ' + wo + ': matchText an die Schreibweise des Satzes angeglichen (NFC-Reihenfolge)');
+      } else {
+        fehler.push(wo + ': matchText kommt im Satz nicht vor');
+        hinweise.push('    Satz : ' + s.ar);
+        hinweise.push('    Suche: ' + text);
+        continue;
+      }
     }
     const vorhanden = (SENTENCE_TAGS[String(m.satzId)] || []);
     if (vorhanden.some(t => t.ruleId === m.ruleId)) {

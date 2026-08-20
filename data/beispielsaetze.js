@@ -405,7 +405,7 @@ const BEISPIELSAETZE = {
      trägt kein Kasuszeichen (es ist مَبْنِيٌّ), das Chābar steht unbestimmt im
      Nominativ. Genau die Bauform, mit der Kapitel 24 die Pronomen einführt. */
   '50154': {
-    sentAr: '\u0623\u064e\u0646\u064e\u0627 \u0645\u064f\u062f\u064e\u0631\u0651\u0650\u0633\u064c.',
+    sentAr: 'أَنَا مُدَرِّسٌ.',
     sentDe: 'Ich bin ein Lehrer.'
   },
 
@@ -414,7 +414,7 @@ const BEISPIELSAETZE = {
      und den lernt er erst in Kapitel 14. فِي zieht den Genitiv nach sich,
      deshalb الْمَسْجِدِ mit Kasra. */
   '50155': {
-    sentAr: '\u0646\u064e\u062d\u0652\u0646\u064f \u0641\u0650\u064a \u0627\u0644\u0652\u0645\u064e\u0633\u0652\u062c\u0650\u062f\u0650.',
+    sentAr: 'نَحْنُ فِي الْمَسْجِدِ.',
     sentDe: 'Wir sind in der Moschee.'
   },
 
@@ -422,13 +422,13 @@ const BEISPIELSAETZE = {
      ⭐ Mit Adjektiv, damit der Satz gleich das نَعْت zeigt: جَدِيدٌ folgt
      طَالِبٌ in Unbestimmtheit, Kasus und Geschlecht. */
   '50156': {
-    sentAr: '\u0623\u064e\u0646\u0652\u062a\u064e \u0637\u064e\u0627\u0644\u0650\u0628\u064c \u062c\u064e\u062f\u0650\u064a\u062f\u064c.',
+    sentAr: 'أَنْتَ طَالِبٌ جَدِيدٌ.',
     sentDe: 'Du bist ein neuer Student.'
   },
 
   /* هُوَ — er (madina-1, Kapitel 24) */
   '50157': {
-    sentAr: '\u0647\u064f\u0648\u064e \u0637\u064e\u0628\u0650\u064a\u0628\u064c.',
+    sentAr: 'هُوَ طَبِيبٌ.',
     sentDe: 'Er ist ein Arzt.'
   },
 
@@ -436,14 +436,14 @@ const BEISPIELSAETZE = {
      Das Gegenstück zu أَنَا مُدَرِّسٌ: dieselbe Bauform, aber feminin — die
      Tāʾ marbūṭa macht den Unterschied sichtbar. */
   '50158': {
-    sentAr: '\u0647\u0650\u064a\u064e \u0645\u064f\u062f\u064e\u0631\u0651\u0650\u0633\u064e\u0629\u064c.',
+    sentAr: 'هِيَ مُدَرِّسَةٌ.',
     sentDe: 'Sie ist eine Lehrerin.'
   },
 
   /* هُمْ — sie (Pl. m.) (madina-1, Kapitel 24)
      Wieder ein Ortssatz aus demselben Grund wie bei نَحْنُ. */
   '50159': {
-    sentAr: '\u0647\u064f\u0645\u0652 \u0641\u0650\u064a \u0627\u0644\u0652\u0628\u064e\u064a\u0652\u062a\u0650.',
+    sentAr: 'هُمْ فِي الْبَيْتِ.',
     sentDe: 'Sie sind im Haus.'
   },
 
@@ -454,7 +454,7 @@ const BEISPIELSAETZE = {
      ⚠️ مَنْعُوتٌ (das Beschriebene) wäre das Gegenstück, steht aber nicht in
      seinem Bestand — deshalb hier nur die eine Hälfte des Begriffspaars. */
   '50428': {
-    sentAr: '\u0627\u0644\u0652\u062c\u064e\u062f\u0650\u064a\u062f\u064f \u0646\u064e\u0639\u0652\u062a\u064c \u0644\u0650\u0644\u0652\u0643\u0650\u062a\u064e\u0627\u0628\u0650.',
+    sentAr: 'الْجَدِيدُ نَعْتٌ لِلْكِتَابِ.',
     sentDe: '‚Neu‘ ist ein Attribut zum Buch.'
   },
 };

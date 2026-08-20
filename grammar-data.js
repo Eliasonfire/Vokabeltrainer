@@ -2171,6 +2171,31 @@ const SENTENCE_TAGS = {
   ],
   "gram-zarf": [
     { ruleId: "zarf-01", matchText: "تَحْتَ الْبَابِ" }
+  ],
+  "50154": [
+    { ruleId: "mubtada-khabar-01", matchText: "أَنَا مُدَرِّسٌ" },
+    { ruleId: "nominalsatz-ohne-kopula-01", matchText: "أَنَا مُدَرِّسٌ" }
+  ],
+  "50155": [
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْمَسْجِدِ" },
+    { ruleId: "nominalsatz-ohne-kopula-01", matchText: "نَحْنُ فِي الْمَسْجِدِ" }
+  ],
+  "50156": [
+    { ruleId: "nat-vier-bedingungen-01", matchText: "طَالِبٌ جَدِيدٌ" },
+    { ruleId: "mubtada-khabar-01", matchText: "أَنْتَ طَالِبٌ" }
+  ],
+  "50157": [
+    { ruleId: "mubtada-khabar-01", matchText: "هُوَ طَبِيبٌ" }
+  ],
+  "50158": [
+    { ruleId: "mubtada-khabar-genus-01", matchText: "هِيَ مُدَرِّسَةٌ" }
+  ],
+  "50159": [
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْبَيْتِ" }
+  ],
+  "50428": [
+    { ruleId: "harf-jarr-li-01", matchText: "لِلْكِتَابِ" },
+    { ruleId: "mubtada-khabar-01", matchText: "الْجَدِيدُ نَعْتٌ" }
   ]
 };
 
