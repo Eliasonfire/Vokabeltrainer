@@ -61,6 +61,15 @@ function messen(befehl, args = []){
   }
 }
 
+/* ⛔ Bis zum 20.08.2026 stand hier „über sechstausend Zeilen" als fester Text.
+   Gemessen waren es an dem Tag schon 7.228 — und die Angabe wäre still weiter
+   veraltet, obwohl die Datei ohnehin gelesen wird und die Zahl gratis ist.
+   [[eingefrorenes_feld_ist_kein_zustand]] [[zahlen_ohne_beleg]] */
+const TODO_ZEILEN = (() => {
+  try { return fs.readFileSync(TODO, 'utf8').split(String.fromCharCode(10)).length; }
+  catch (e) { return 0; }
+})();
+
 const posten = [];
 
 /* A) Die offenen Feldangaben — dieselbe Quelle wie die Fragenseite. */
@@ -511,7 +520,7 @@ h3{font-size:1rem;font-weight:600;margin:var(--sp5) 0 var(--sp2);
 
 <p class="vorspann">Alles andere ist erledigt. Was hier steht, kann ich nicht
 allein entscheiden — <b>und mehr steht hier auch nicht</b>. Die To-Do daneben
-ist auf über sechstausend Zeilen gewachsen; diese Seite wird bei jedem
+zählt inzwischen ${TODO_ZEILEN.toLocaleString('de-DE')} Zeilen; diese Seite wird bei jedem
 Wartungslauf <b>neu erzeugt</b> und ist nie älter als ihr Datum oben.</p>
 
 <div class="summe">
