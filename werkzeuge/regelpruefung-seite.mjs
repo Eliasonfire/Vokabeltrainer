@@ -11,6 +11,15 @@
  * damit unter Regel 7a (arabicroots-AGB Ziffer 9 und 3.7).
  */
 import fs from 'node:fs';
+
+/* ⛔ Das Datum stand FEST als "Stand 19.08.2026" in der Seite — derselbe
+   Fehler wie in freigabe-artefakt.mjs, eine Datei daneben. Eine erzeugte
+   Seite, die immer denselben Tag behauptet, sieht so alt aus wie eine
+   handgeschriebene, und niemand merkt, wann zuletzt gemessen wurde.
+   [[eingefrorenes_feld_ist_kein_zustand]]
+   [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+const STAND_HEUTE = new Date().toLocaleDateString('de-DE',
+  { day: '2-digit', month: '2-digit', year: 'numeric' });
 const S = 'artefakte/';
 const regeln = JSON.parse(fs.readFileSync(S + 'regeln.json', 'utf8'));
 
@@ -221,7 +230,7 @@ summary:focus-visible{outline:2px solid var(--rot);outline-offset:2px}
 </style>
 
 <div class="huelle">
-<p class="eyebrow">Stand 19.08.2026 · ${regeln.length} Regeln · gilt nur für die Karteikarten</p>
+<p class="eyebrow">Stand ${STAND_HEUTE} · ${regeln.length} Regeln · gilt nur für die Karteikarten</p>
 <h1>Regelprüfung Madina 1</h1>
 <p class="vorspann">Dein Wunsch vom 29.07.: <em>„die regeln selbst aussuchen und
 absegnen damit sie wirklich richtig sind und tatsächlich das sind was mein
