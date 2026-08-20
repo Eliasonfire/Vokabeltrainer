@@ -567,6 +567,31 @@ try {
     console.log('     Wer sie veroeffentlicht, legt eine ZWEITE Seite an. Erst die URL in');
     console.log('     DATEI_ZU_URL (werkzeuge/wartet-auf-elias.mjs) eintragen, dann veroeffentlichen.');
   }
+  /* ⭐⭐ UND DIE GEGENRICHTUNGEN. Am 20.08.2026 dreimal gelernt: ein Waechter
+     prueft die Richtung, in der man ihn gedacht hat — die andere Haelfte
+     fuehlt sich wie dieselbe Frage an und ist eine andere.
+       Datei ohne URL      → fand freigabe.html
+       URL ohne Datei      → fand regelauswahl.html im WURZELORDNER
+       URL ohne Liste      → fand drei Seiten mit seinen Antworten
+     Die ersten beiden Richtungen stehen jetzt als Code da, die dritte auch.
+     [[werkzeug_misst_kleineren_bestand]] */
+  const alleDateien = new Set();
+  for (const [ordner, praefix] of [[path.join(REPO, 'artefakte'), ''], [REPO, '../']])
+    for (const f of fs.readdirSync(ordner)) if (f.endsWith('.html')) alleDateien.add(praefix + f);
+  const ohneDatei = Object.keys(DATEI_ZU_URL).filter(f => !alleDateien.has(f));
+  if (ohneDatei.length)
+    console.log('  ⛔ ' + ohneDatei.length + ' Zuordnung(en) ohne Datei im Projekt: ' + ohneDatei.join(', '));
+
+  const aufListe = new Set([...ARTEFAKTE, ...LAUFEND].map(x => x[1]));
+  const ohneListe = Object.entries(DATEI_ZU_URL)
+    .filter(([f, id]) => id && !aufListe.has(id))
+    .filter(([f]) => !f.startsWith('../vorschau'))
+    .map(([f]) => f);
+  if (ohneListe.length){
+    console.log('  ⛔ ' + ohneListe.length + ' Seite(n) haben eine URL, stehen aber auf KEINER Liste,');
+    console.log('     die Elias sieht: ' + ohneListe.join(', '));
+    console.log('     Eine Adresse, die man nicht findet, ist so gut wie keine.');
+  }
 } catch (e) { console.log('  ⚠️ artefakte/ nicht lesbar: ' + e.message); }
 console.log('  ⚠️ Veroeffentlichen kann die Routine nicht selbst — das braucht eine Sitzung.');
 console.log('     DIESELBE URL wiederverwenden, keine neue anlegen:');
