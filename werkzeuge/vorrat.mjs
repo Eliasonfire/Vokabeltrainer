@@ -1016,6 +1016,37 @@ const jeFeld = {};
 offen.forEach(w => (w.fehltFelder || []).forEach(f => { jeFeld[f] = (jeFeld[f] || 0) + 1; }));
 const fehlendeFelder = Object.values(jeFeld).reduce((a, b) => a + b, 0);
 
+
+/* ⛔ Was NICHT gemessen wurde, braucht seinen Nenner.
+   Ein Buch ohne Angabe faellt oben aus der Messung — richtig so, sonst meldet
+   das Werkzeug Rueckstand, den niemand braucht. Aber die Meldung nannte bis
+   zum 20.08.2026 nur den Buchnamen, nicht den UMFANG. "madina-2: nicht
+   gemessen" liest sich wie eine Randnotiz; "224 freigeschaltete Woerter,
+   ungeprueft" ist eine Entscheidung, die Elias treffen muss.
+   Gemessen am 20.08.2026: 203 geprueft gegen 224 uebersprungen — das
+   Uebersprungene war groesser als das Gemessene, und niemand konnte es sehen.
+   [[trefferquote_ohne_preis]] [[werkzeug_misst_kleineren_bestand]] */
+function ungemessenZaehlen(){
+  return fehlendeAngabe.map(slug => {
+    const b = BUECHER.find(x => x.slug === slug);
+    const kap = frei[slug] || [];
+    if (!b || !kap.length) return { slug, woerter: null, kapitel: kap.length };
+    const datei = p(b.datei);
+    if (!fs.existsSync(datei)) return { slug, woerter: null, kapitel: kap.length };
+    if (!(kiste.window.VOKABELN && kiste.window.VOKABELN[slug]))
+      vm.runInContext(fs.readFileSync(datei, 'utf8'), kiste, { filename: b.datei });
+    const liste = (kiste.window.VOKABELN && kiste.window.VOKABELN[slug]) || [];
+    return { slug, kapitel: kap.length,
+             woerter: liste.filter(w => kap.includes(Number(w.chapter))).length };
+  });
+}
+const UNGEMESSEN = ungemessenZaehlen();
+const UNGEMESSEN_SUMME = UNGEMESSEN.reduce((s, x) => s + (x.woerter || 0), 0);
+const ungemessenZeile = () => UNGEMESSEN.length
+  ? UNGEMESSEN.map(x => x.slug + ': ' + (x.woerter === null ? '? ' : x.woerter)
+      + ' freigeschaltete Woerter in ' + x.kapitel + ' Kapiteln, UNGEPRUEFT').join(' | ')
+  : '';
+
 if (KNAPP){
   const felderText = fehlendeFelder
     ? ', ' + Object.entries(jeFeld).sort((a, b) => b[1] - a[1]).map(([f, n]) => n + '× ' + f).join(', ')
@@ -1023,6 +1054,12 @@ if (KNAPP){
   console.log(offen.length
     ? `Vorrat: ${offen.length} von ${geprueft} freigeschalteten Woertern unvollstaendig — ${fehlendeEB} Eselsbruecken, ${fehlendeSatz} Beispielsaetze, ${fehlendeMark} Markierungen, ${fehlendeKat} Kategorien${felderText}. (Freischaltstand ${datum})`
     : `Vorrat: alle ${geprueft} freigeschalteten Woerter sind nach allen 13 Punkten des vollen Programms vollstaendig. (Freischaltstand ${datum})`);
+  /* ⛔ Auch die knappe Fassung traegt den Nenner — sie ist die, die in den
+     Routinenbericht wandert, und dort faellt eine Luecke sonst nie auf. */
+  if (UNGEMESSEN_SUMME)
+    console.log(`  ⛔ NICHT gemessen: ${UNGEMESSEN_SUMME} weitere freigeschaltete Woerter `
+      + `= ${Math.round(UNGEMESSEN_SUMME / (UNGEMESSEN_SUMME + geprueft) * 100)} % des freigeschalteten `
+      + `Bestands (${ungemessenZeile()}) — fuer diese Buecher fehlt Elias' Lernstand.`);
   process.exit(offen.length ? 2 : 0);
 }
 
@@ -1036,6 +1073,10 @@ else console.log('  ⚠️ Keine Angabe von Elias hinterlegt — es zaehlt alles
   + ' Eintragen unter "angabe" in ' + LERNDATEI + '.');
 console.log('  Fenster: ' + FENSTER + ' Kapitel voraus');
 fensterInfo.forEach(z => console.log('    ' + z));
+if (UNGEMESSEN_SUMME)
+  console.log('    ⛔ NICHT gemessen: ' + UNGEMESSEN_SUMME + ' weitere freigeschaltete Woerter'
+    + ' — ' + Math.round(UNGEMESSEN_SUMME / (UNGEMESSEN_SUMME + geprueft) * 100) + ' % des'
+    + ' freigeschalteten Bestands (' + (UNGEMESSEN_SUMME + geprueft) + ') bleiben damit ungeprueft.');
 if (!hatSaetze) console.log('  data/beispielsaetze.js liegt noch nicht vor — Saetze zaehlen als fehlend.');
 console.log('');
 console.log('  geprueft:                 ' + geprueft + ' Woerter aus freigeschalteten Kapiteln');
