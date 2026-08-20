@@ -457,6 +457,11 @@ const DATEI_ZU_URL = {
   'stimme-artefakt.html':         '15b48598-2cda-4516-81bd-6a7e730dd4cc',
   'regelpruefung.html':           '1e11a0ef-992b-41ac-9786-1247cc185e83',
   'freigabe.html':                'd9916aee-b679-4d91-bb0c-c3642f8889ac',
+  /* Der 48-Stunden-Bericht vom 20.08. Er lag bis zum 21.08. NUR im
+     Scratchpad — also ausserhalb jeder Sicherung und ohne Eintrag hier.
+     Waere er einmal unter einer neuen URL erschienen, haette Elias zwei
+     Berichte gehabt und keinen Hinweis, welcher gilt. */
+  'lagebericht.html':             '3eb1fcc3-e2ca-4c89-947c-9e382068e9e3',
 
   /* ⛔⛔ UND DIE SEITEN IM WURZELORDNER — sie waren dem Waechter unsichtbar,
      weil er nur artefakte/ las. Genau die Fehlerklasse des Tages: ein
