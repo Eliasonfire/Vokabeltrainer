@@ -188,6 +188,7 @@ function abschnitt(f, nr){
     return `<div class="wort" data-feld="${esc(f.feld)}" data-id="${esc(w.id)}">
   <div class="kopf"><span class="ar">${esc(w.ar)}</span><span class="de">${esc(w.de)}</span></div>
   <div class="herkunft">${esc(w.quelle)}${w.kapitel ? ' · Kapitel ' + w.kapitel : ''}${w.type ? ' · ' + esc(w.type) : ''}</div>
+  ${w.folgt ? `<div class="folgt">⭐ Entf\u00e4llt, wenn du oben <b>${esc(w.folgt)}</b> gew\u00e4hlt hast \u2014 ein ${esc(w.folgt)} hat keine Wurzel.</div>` : ''}
   ${beleg}
   ${wahl}
 </div>`;
@@ -302,6 +303,11 @@ h2{display:flex;align-items:baseline;gap:var(--sp2);flex-wrap:wrap;
 .knopf-tipp{font-family:var(--mono);font-size:.82rem;color:var(--text);
             background:var(--rand);padding:1px 6px;border-radius:5px}
 .beleg.aussen a:hover,.beleg.aussen a:focus-visible{color:var(--text)}
+/* Der Hinweis auf eine Frage, die sich von selbst erledigen kann. Bewusst
+   leiser als der Beleg: er sagt nichts ueber DIESES Wort, sondern ueber die
+   Reihenfolge. */
+.folgt{font-size:.8rem;color:var(--still);margin:0 0 var(--sp2)}
+.folgt b{color:var(--leise);font-family:var(--mono);font-size:.82rem}
 .wahl{display:flex;gap:var(--sp1);flex-wrap:wrap;align-items:center}
 .wahl button{font:inherit;font-size:.85rem;color:var(--text);background:var(--hoch);
              border:1px solid var(--rand);border-radius:99px;padding:7px 14px;cursor:pointer}

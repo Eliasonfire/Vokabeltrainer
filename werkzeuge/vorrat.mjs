@@ -732,6 +732,11 @@ function kapitelImFenster(slug){
    welche Wortart das Wort ist. Sie dann trotzdem zu melden hiesse, denselben
    Mangel viermal zu zaehlen. [[kandidatenliste_ist_keine_fehlerliste]] */
 const feldAusnahme = hol('feldAusnahme');
+/* ⭐ Die Tabelle hinter feldAusnahme() — sie sagt, WELCHES Feld an welcher
+   Wortart haengt. Gebraucht wird sie fuer die Reihenfolge der Fragen:
+   `root` entfaellt bei einem Partikel, also muss `type` VORHER gefragt
+   werden. Aus derselben Datei geholt, kein zweiter Bestand. */
+const FELD_REGELN = hol('FELD_REGELN') || {};
 /* ⛔ Die nachgetragenen Werte müssen HIER genauso gelten wie in der App —
    sonst meldet dieses Werkzeug ein Wort weiter als unvollständig, obwohl Elias
    die Antwort längst gegeben hat, und er bekäme jede Woche dieselbe Frage.
@@ -1360,12 +1365,39 @@ if (ARG.includes('--offene-fragen')){
     (jeFeldWoerter[f] = jeFeldWoerter[f] || []).push({
       id: w.id, ar: w.ar, de: String(w.de || '').replace(/\s+/g, ' '),
       quelle: w.slug, kapitel: w.kapitel, type: w.type,
-      beleg: belegSuchen(w, f)
+      beleg: belegSuchen(w, f),
+      /* ⭐ Haengt diese Frage an der type-Frage desselben Wortes? Dann sagt
+         die Seite es — sonst sieht Elias zweimal dasselbe Wort und nichts
+         verbindet die beiden. Nur gesetzt, wenn type WIRKLICH offen ist. */
+      folgt: ((FELD_REGELN[f] || {}).typen || []).includes('particle')
+             && (w.fehltFelder || []).includes('type') ? 'Partikel' : ''
     });
   }));
 
   const fragen = Object.entries(jeFeldWoerter)
-    .sort((a, b) => b[1].length - a[1].length)
+    /* ⭐⭐ NICHT nach Anzahl sortieren, sondern nach WIRKUNG.
+
+       Bis zum 21.08.2026 stand hier nur `b[1].length - a[1].length`, also
+       die groesste Gruppe zuerst: pl (25) · root (25) · type (19) ·
+       femSg (1). Damit stand `type` HINTER `root`.
+
+       ⛔ FELD_REGELN.root.typen = ['particle'] heisst: ein Partikel hat
+       keine Wurzel. Wer erst die Wurzel beantwortet und danach „Partikel"
+       waehlt, hat eine Frage UMSONST beantwortet — und merkt es nicht.
+
+       Gemessen: 19 der 70 Fragen haengen so an der type-Frage.
+       ⚠️ Das ist die OBERGRENZE, nicht der Gewinn — es entfaellt nur, was
+       er wirklich als Partikel einstuft. [[trefferquote_ohne_preis]]
+
+       Also: erst die Felder, an denen andere Regeln haengen; die Anzahl
+       bleibt das zweite Kriterium. */
+    .sort((a, b) => {
+      const haengtDaran = f => Object.values(FELD_REGELN)
+        .some(r => r && Array.isArray(r.typen) && r.typen.length);
+      const rang = f => (f === 'type' && haengtDaran(f)) ? 1 : 0;
+      const d = rang(b[0]) - rang(a[0]);
+      return d !== 0 ? d : b[1].length - a[1].length;
+    })
     .map(([feld, woerter]) => ({
       art: 'feld', feld,
       titel: (FRAGE_TEXT[feld] || {}).titel || ('Feld `' + feld + '` fehlt'),
