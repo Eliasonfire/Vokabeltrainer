@@ -313,7 +313,17 @@ const LAUFEND = [
   ['Regelprüfung Madina 1', '1e11a0ef-992b-41ac-9786-1247cc185e83',
    'deine Beurteilung der Regeln — Schlüssel regelpruefung-v1, deine Antworten liegen darin'],
   ['Regelkandidaten freigeben', 'd9916aee-b679-4d91-bb0c-c3642f8889ac',
-   'neue Regeln vor dem Eintragen — Schlüssel regelkandidaten-v1']
+   'neue Regeln vor dem Eintragen — Schlüssel regelkandidaten-v1'],
+  /* ⛔ Diese drei tragen einen eigenen Speicher — also deine Antworten — und
+     standen bis zum 20.08.2026 auf KEINER Liste. Eine Adresse, die man nicht
+     findet, ist so gut wie keine; und wer eine davon ohne ihre URL neu
+     veroeffentlicht, laesst die Antworten in der alten Fassung zurueck. */
+  ['Ähnliche Regeln zusammenfassen?', '9cb296d7-b5ea-4767-8f99-e5e896e6a871',
+   'acht gemessene Regelgruppen zum Verschmelzen — Schlüssel verschmelzung-v1'],
+  ['Neun Befunde', 'bc9b71c0-5ea6-451b-9f02-0fbc9fbdd63d',
+   'die Befunde aus der Nacht auf den 19.08. — Schlüssel befunde-v1'],
+  ['Die Wortmarke im Kopf der App', '75f11c5e-c9ae-4a57-87cc-d8b86338c621',
+   'die aeltere Wortmarken-Frage — Schlüssel wortmarke-v1']
 ];
 
 /* ⛔⛔ WELCHE DATEI GEHOERT ZU WELCHER URL
