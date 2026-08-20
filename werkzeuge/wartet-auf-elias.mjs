@@ -404,6 +404,10 @@ const ARTEFAKTE = [
   ['Was auf dich wartet',   '4c3a7c9e-c288-480c-bb1f-e2d7cd26d856', 'diese Seite — alle offenen Entscheidungen'],
   ['Die Fragenseite',       '724ee9bc-adb7-4dcd-ad75-6a56a552adbd', 'die offenen Feldangaben, ein Durchgang je Frage'],
   ['Der Wartungskreislauf', '9ec136ba-019d-438b-98af-e57939eb4a99', 'wie das System läuft — vier Phasen, dreizehn Prüfungen'],
+  /* ⭐ Am 21.08. vom eigenen Wächter gemeldet: „1 Seite hat eine URL, steht
+     aber auf KEINER Liste, die Elias sieht." Genau der Fall, für den er
+     gebaut wurde — eine Adresse, die man nicht findet, ist so gut wie keine. */
+  ['Lagebericht', '3eb1fcc3-e2ca-4c89-947c-9e382068e9e3', '48 Stunden Arbeit, der Stand des Goal-Prompts, mit Nachtrag vom 21.08.'],
   ['Vierzehn Schriften',    '21463a39-a852-43e0-ad80-7c3bbf78714b', 'die Wortmarke طالب zur Auswahl'],
   ['Das Farbgerüst',        '4e9ce030-17a6-46be-ba47-02ccb56bc32a', 'acht Akzentfarben an dreizehn Flächen'],
   ['Eine Stimme fürs Arabische', '15b48598-2cda-4516-81bd-6a7e730dd4cc', 'vier Wege, mit den gemessenen Kosten']
