@@ -843,4 +843,94 @@ const BEISPIELSAETZE = {
     sentAr: 'الطَّائِفُ مَدِينَةٌ جَمِيلَةٌ.',
     sentDe: 'Taif ist eine schöne Stadt.'
   },
+
+  /* ------------------------------------------------------------------------
+     KAPITEL 24, GRUPPE 1 — DIE HINWEIS- UND FRAGEWÖRTER (20.08.2026)
+
+     Elf Wörter, die sein Lehrer ständig benutzt und zu denen es eigene Regeln
+     gibt (ismul-isara-hadha/hadhihi/dhalika/tilka, isara-genus-kongruenz).
+     Kapitel 24 hat 54 Wörter ohne Beispielsatz; das hier ist die erste
+     Gruppe — die übrigen folgen.
+
+     ⭐ Die vier Sätze zu هَذَا / هَذِهِ / ذَلِكَ / تِلْكَ sind bewusst
+     PARALLEL gebaut: gleiche Bauform, nur nah gegen fern und männlich gegen
+     weiblich. So sieht man den einen Unterschied, um den es geht.
+     ------------------------------------------------------------------------ */
+
+  /* هَذَا — dieser, m. (madina-1, Kapitel 24)
+     Das Urbeispiel des Nominalsatzes, mit dem Madina 1 auf Seite 1 anfängt. */
+  '50160': {
+    sentAr: 'هَذَا كِتَابٌ جَدِيدٌ.',
+    sentDe: 'Das ist ein neues Buch.'
+  },
+
+  /* هَذِهِ — diese, f. (madina-1, Kapitel 24)
+     Dieselbe Bauform wie eine Zeile darüber, nur weiblich — an drei Stellen:
+     هَذِهِ, die Tāʾ marbūṭa und das Adjektiv. */
+  '50161': {
+    sentAr: 'هَذِهِ مَدْرَسَةٌ جَدِيدَةٌ.',
+    sentDe: 'Das ist eine neue Schule.'
+  },
+
+  /* ذَلِكَ — jener, m. (madina-1, Kapitel 24)
+     Das Gegenstück zu هَذَا: nicht nah, sondern fern — deshalb بَعِيدٌ. */
+  '50162': {
+    sentAr: 'ذَلِكَ بَيْتٌ بَعِيدٌ.',
+    sentDe: 'Jenes ist ein weit entferntes Haus.'
+  },
+
+  /* تِلْكَ — jene, f. (madina-1, Kapitel 24) */
+  '50163': {
+    sentAr: 'تِلْكَ مَدِينَةٌ بَعِيدَةٌ.',
+    sentDe: 'Jene ist eine weit entfernte Stadt.'
+  },
+
+  /* هَؤُلَاءِ — diese, Pl. (madina-1, Kapitel 24)
+     ⚠️ Der Plural gilt für Männer UND Frauen — anders als im Singular gibt
+     es hier keine zweite Form nach Geschlecht. */
+  '50164': {
+    sentAr: 'هَؤُلَاءِ أَوْلَادٌ.',
+    sentDe: 'Das sind Jungen.'
+  },
+
+  /* أُولَئِكَ — jene, Pl. (madina-1, Kapitel 24) */
+  '50165': {
+    sentAr: 'أُولَئِكَ رِجَالٌ.',
+    sentDe: 'Jene sind Männer.'
+  },
+
+  /* مَنْ — wer (madina-1, Kapitel 24)
+     ⚠️ Nicht mit مَا verwechseln: مَنْ fragt nach Personen, مَا nach Sachen.
+     Beide sehen ohne Ḥarākāt fast gleich aus. */
+  '50168': {
+    sentAr: 'مَنْ هَذَا الرَّجُلُ؟',
+    sentDe: 'Wer ist dieser Mann?'
+  },
+
+  /* أَيٌّ — welcher (madina-1, Kapitel 24)
+     ⭐ أَيُّ steht als مُضَاف ohne Tanwin, das Gefragte folgt im Genitiv. */
+  '50170': {
+    sentAr: 'أَيُّ كِتَابٍ هَذَا؟',
+    sentDe: 'Welches Buch ist das?'
+  },
+
+  /* مَعَ — mit (madina-1, Kapitel 24)
+     مَعَ ist eine Ortsangabe wie تَحْتَ und zieht den Genitiv nach sich. */
+  '50171': {
+    sentAr: 'الْوَلَدُ مَعَ الْمُدَرِّسِ.',
+    sentDe: 'Der Junge ist beim Lehrer.'
+  },
+
+  /* مُسْلِمٌ — Muslim (madina-1, Kapitel 24) */
+  '50312': {
+    sentAr: 'هَذَا الرَّجُلُ مُسْلِمٌ.',
+    sentDe: 'Dieser Mann ist Muslim.'
+  },
+
+  /* جِدًّا — sehr (madina-1, Kapitel 24)
+     ⚠️ Steht immer HINTER dem Adjektiv, nie davor — anders als im Deutschen. */
+  '50289': {
+    sentAr: 'الْبَيْتُ كَبِيرٌ جِدًّا.',
+    sentDe: 'Das Haus ist sehr groß.'
+  },
 };
