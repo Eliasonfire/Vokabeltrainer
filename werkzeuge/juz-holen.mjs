@@ -93,7 +93,11 @@ console.log(`   ${mehrfach} Suren liegen ueber mehr als einem Juz, alle zusammen
 if (SCHREIBEN) {
   for (const s of SURAH_DATA) s.juz = [...proSure[s.id]].sort((a, b) => a - b);
   const kopf = roh.slice(0, roh.indexOf('const SURAH_DATA = ['));
-  fs.writeFileSync(DATEI, kopf + 'const SURAH_DATA = ' + JSON.stringify(SURAH_DATA, null, 1) + ';\n');
+  /* ⛔ Nie direkt auf die bestehende surah-data.js: ein Abbruch mitten im
+     Schreiben hinterliesse eine leere Datei, und die besteht jeden Test.
+     [[leere_datei_besteht_jeden_test]] */
+  fs.writeFileSync(DATEI + '.neu', kopf + 'const SURAH_DATA = ' + JSON.stringify(SURAH_DATA, null, 1) + ';\n');
+  fs.renameSync(DATEI + '.neu', DATEI);
   console.log('\nsurah-data.js ergaenzt.');
 } else {
   console.log('\n(Nur geprueft. Mit --schreiben wird surah-data.js ergaenzt.)');

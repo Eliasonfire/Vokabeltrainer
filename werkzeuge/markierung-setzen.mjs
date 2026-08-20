@@ -527,7 +527,13 @@ function einbauen(p) {
       { cwd: REPO, encoding: 'utf8' }).trim() === '';
   } catch (e) { alterStandInGit = false; }
   fs.copyFileSync(GD, sicherung);
-  fs.writeFileSync(GD, quelle, 'utf8');
+  /* ⛔ Nie direkt auf die bestehende Datei: grammar-data.js — 95 Regeln und 587 Markierungen.
+       Bricht der Lauf mitten im Schreiben ab, steht dort eine leere Datei —
+       und eine leere Datei besteht jeden Test. Erst daneben, dann umbenennen;
+       rename ist auf demselben Laufwerk unteilbar.
+       [[leere_datei_besteht_jeden_test]] */
+    fs.writeFileSync(GD + '.neu', quelle, 'utf8');
+    fs.renameSync(GD + '.neu', GD);
 
   console.log('Eingetragen: ' + p.neueRegeln.length + ' Regel(n), ' + p.gut.length
     + ' Markierung(en), ' + p.weg.length + ' abgenommen, ' + p.entsperren.length + ' entsperrt.');
