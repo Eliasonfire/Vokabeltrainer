@@ -123,6 +123,24 @@ const posten = [];
   });
 }
 
+/* C2) Duplikate (A13) */
+{
+  const r = messen(path.join(REPO, 'pruefe-duplikate.js'));
+  /* ⛔ Regex OHNE Escapes: die Backslashes kommen durch den Kanal halbiert
+     oder gar nicht an — hier stand erst /=== (d+) Befund/. */
+  const m = new RegExp("=== (" + '\\d' + "+) Befund").exec(r.text);
+  if (m && Number(m[1]) > 0) posten.push({
+    titel: 'Ein Wort steht doppelt',
+    zahl: Number(m[1]),
+    einheit: Number(m[1]) === 1 ? 'Wort' : 'Wörter',
+    dazu: 'Fachbegriff und Buchvokabel',
+    aufwand: 'eine Entscheidung: welche Karte bleibt',
+    warum: 'Zwei Karteikarten für dasselbe Wort — du lernst es doppelt.',
+    wie: '⚠️ Kann auch Absicht sein: eine Grammatikkarte und eine Wortschatzkarte sind nicht dasselbe. Sag mir, ob es so bleiben soll.',
+    zeilen: r.text.split(String.fromCharCode(10)).filter(z => z.startsWith('  ') && z.includes('(') && z.includes('id ')).slice(0, 4).map(z => z.trim())
+  });
+}
+
 /* D) Gestaltungsentscheidungen — sie warten, ohne dass ein Werkzeug sie misst. */
 posten.push({
   titel: 'Wortmarke: welche Schrift?',
@@ -326,8 +344,8 @@ ${ausTodo.length ? `<h3>Dazu aus der To-Do</h3>
   `<li><a href="https://claude.ai/code/artifact/${id}">${esc(n)}</a> <span>${esc(was)}</span></li>`).join('')}</ul>
 
 <p class="fuss">Erzeugt von <code>werkzeuge/wartet-auf-elias.mjs</code>. Die
-Zahlen kommen aus <code>vorrat.mjs</code>, <code>pruefe-taschkil.js</code> und
-<code>pruefe-funktionen.js</code> — live bei jedem Lauf, nicht abgeschrieben.</p>
+Zahlen kommen aus <code>vorrat.mjs</code>, <code>pruefe-taschkil.js</code>,
+<code>pruefe-funktionen.js</code> und <code>pruefe-duplikate.js</code> — live bei jedem Lauf, nicht abgeschrieben.</p>
 </div>
 `;
 
