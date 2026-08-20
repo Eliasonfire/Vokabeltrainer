@@ -23,7 +23,8 @@
  * ist der Pruefer zu streng und nicht das Buch falsch. */
 const fs = require('fs');
 const path = require('path');
-const { analysiereSatz, setzeLexikon, endungUnsichtbar } = require('./js/irab.js');
+const { analysiereSatz, setzeLexikon, endungUnsichtbar,
+        istJarrLamVoll, giltAlsVerb } = require('./js/irab.js');
 
 const P = __dirname + path.sep;
 const { VOCAB_DATA } =
@@ -341,4 +342,68 @@ console.log('\n=== LEXIKON-VERGLEICH: sieht die App dasselbe wie diese Pruefung?
   }
   /* Das Lexikon so zuruecklassen, wie der Rest der Datei es erwartet. */
   setzeLexikon(wortschatz);
+}
+
+/* ==========================================================================
+   EICHUNG: taugen die beiden Handlisten in js/irab.js noch?
+
+   ⛔ JARR_LAM_VOLL und VERBEN entscheiden ueber die Zerlegung und werden von
+   Hand gepflegt. Faellt eine Zeile heraus oder verrutscht ein Zeichen,
+   meldet niemand etwas — die Saetze werden nur wieder falsch gelesen. Am
+   21.08.2026 stand فَضَلَ nicht in VERBEN, und الْمَالَ galt daraufhin als
+   نَعْت statt als مَفْعُول بِهِ.
+
+   ⭐ Geprueft wird die ECHTE, geladene Funktion aus js/irab.js, nicht eine
+   nachgebaute Kopie — sonst eicht sich der Test an sich selbst.
+   Jeder Fall traegt seine Begruendung; die NEIN-Faelle sind die wichtigen.
+   ========================================================================== */
+{
+  const EICH_JARR = [
+    ['\u0644\u064E\u0643\u064E.', true,  'lakа mit Punkt — der am 21.08. gemeldete Fall'],
+    ['\u0644\u064E\u0643\u0650',  true,  'laki, weiblich'],
+    ['\u0648\u0644\u064E\u0647\u064F', true, 'wa-lahu — das Anschluss-Waw wird abgeschnitten'],
+    ['\u0628\u0650\u0643\u064E',  true,  'bika — das angeschriebene bi zaehlt mit'],
+    ['\u0644\u064E\u0647\u064E\u0627', false, 'laha — madina-3 fuehrt es als VERB, gleiche Vokalisierung'],
+    ['\u0644\u064E\u0643\u0650\u0646\u0651\u064E', false, 'lakinna (aber) — Schwester von inna, kein jarr'],
+    ['\u0644\u0643', false, 'ohne Harakat — der Skelettvergleich darf NICHT greifen'],
+    ['\u0627\u0644\u0652\u0643\u0650\u062A\u064E\u0627\u0628\u064F', false, 'ein gewoehnliches Nomen']
+  ];
+  const EICH_VERB = [
+    ['\u062F\u064E\u0623\u064E\u0628\u064E', true,  'daaba — madina-1 K24, am 21.08. nachgetragen'],
+    ['\u0641\u064E\u0636\u064E\u0644\u064E', true,  'fadala — dito'],
+    ['\u0627\u0650\u0633\u062A\u064E\u0630\u0652\u0643\u064E\u0631\u064E', true, 'istadhkara — Form X'],
+    ['\u0641\u064E\u0636\u0652\u0644\u064C', false, 'fadlun (Gunst) — Tanwin, also nie ein Verb'],
+    ['\u062F\u064E\u0623\u0652\u0628\u064C', false, 'dabun (Gewohnheit) — dito'],
+    ['\u0627\u0644\u0652\u0643\u0650\u062A\u064E\u0627\u0628\u064F', false, 'ein gewoehnliches Nomen']
+  ];
+
+  let schief = 0;
+  const eiche = (liste, fn, name) => {
+    const falsch = liste.filter(([w, soll]) => fn(w) !== soll);
+    if (falsch.length){
+      schief += falsch.length;
+      console.log('  ⛔ ' + name + ': ' + falsch.length + ' von ' + liste.length + ' Eichfaellen falsch.');
+      falsch.forEach(([w, soll, warum]) =>
+        console.log('     ' + w + '  ist ' + fn(w) + ', soll ' + soll + '  — ' + warum));
+    } else {
+      console.log('  ok ' + name + ': ' + liste.length + ' von ' + liste.length + ' Eichfaellen richtig.');
+    }
+  };
+
+  console.log('');
+  console.log('=== EICHUNG der Handlisten in js/irab.js ===');
+  eiche(EICH_JARR, istJarrLamVoll, 'JARR_LAM_VOLL (لَكَ ist kein خَبَر)');
+
+  /* ⛔⛔ OHNE LEXIKON PRUEFEN — sonst misst dieser Test nichts.
+     Erster Anlauf am 21.08.2026: فَضَلَ aus VERBEN entfernt, und die Eichung
+     blieb GRUEN. giltAlsVerb fragt zuerst `wortart(w)`, und dieses Skript
+     hat 4.447 Vokabeln geladen — darunter فَضَلَ. Die Liste wurde also gar
+     nicht befragt. Genau davor soll sie aber schuetzen: sie traegt die
+     Faelle, in denen das Lexikon NICHT geladen ist, weil Elias das Buch
+     abgewaehlt hat. [[pruefwerkzeug_mit_eingebauter_antwort]]
+     [[app_auswahl_entscheidet]] */
+  setzeLexikon(null);
+  eiche(EICH_VERB, giltAlsVerb,    'VERBEN + traegtTanwin (ohne Lexikon)');
+  setzeLexikon(wortschatz);
+  if (schief) process.exitCode = 1;
 }
