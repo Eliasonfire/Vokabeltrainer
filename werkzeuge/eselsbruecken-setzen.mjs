@@ -223,7 +223,25 @@ if (fehler.length){
   process.exit(2);
 }
 
-fs.writeFileSync(VOCAB, vocab);
-fs.writeFileSync(ALT, alt);
-if (buch !== null && gesetztBuch) fs.writeFileSync(BUCH, buch);
+/* ⛔ Nie direkt auf die bestehende Datei: vocab-data.js — 171 Lernwoerter.
+       Bricht der Lauf mitten im Schreiben ab, steht dort eine leere Datei —
+       und eine leere Datei besteht jeden Test. Erst daneben, dann umbenennen;
+       rename ist auf demselben Laufwerk unteilbar.
+       [[leere_datei_besteht_jeden_test]] */
+    fs.writeFileSync(VOCAB + '.neu', vocab);
+    fs.renameSync(VOCAB + '.neu', VOCAB);
+/* ⛔ Nie direkt auf die bestehende Datei: data/eselsbruecken-alt.js.
+       Bricht der Lauf mitten im Schreiben ab, steht dort eine leere Datei —
+       und eine leere Datei besteht jeden Test. Erst daneben, dann umbenennen;
+       rename ist auf demselben Laufwerk unteilbar.
+       [[leere_datei_besteht_jeden_test]] */
+    fs.writeFileSync(ALT + '.neu', alt);
+    fs.renameSync(ALT + '.neu', ALT);
+if (buch !== null && gesetztBuch){
+  /* ⛔ Nie direkt auf die bestehende Datei: ein Abbruch mitten im Schreiben
+       hinterliesse eine leere, die jeden Test besteht.
+       [[leere_datei_besteht_jeden_test]] */
+  fs.writeFileSync(BUCH + '.neu', buch);
+  fs.renameSync(BUCH + '.neu', BUCH);
+}
 console.log('\n✅ Geschrieben. Jetzt pflicht: node --check auf beide Dateien und node pruefe-eselsbruecken.js');

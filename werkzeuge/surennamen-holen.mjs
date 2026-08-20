@@ -201,7 +201,13 @@ if (fehler.length){
     console.log(`\n❌ ${gesetzt} statt 114 Zeilen getroffen — es wird NICHTS geschrieben.`);
     process.exitCode = 1;
   } else {
-    fs.writeFileSync(DATEI, raus.join('\n'));
+    /* ⛔ Nie direkt auf die bestehende Datei: surah-data.js — 114 Surennamen.
+       Bricht der Lauf mitten im Schreiben ab, steht dort eine leere Datei —
+       und eine leere Datei besteht jeden Test. Erst daneben, dann umbenennen;
+       rename ist auf demselben Laufwerk unteilbar.
+       [[leere_datei_besteht_jeden_test]] */
+    fs.writeFileSync(DATEI + '.neu', raus.join('\n'));
+    fs.renameSync(DATEI + '.neu', DATEI);
     console.log(`\n✅ ${gesetzt} Namen als "arTaschkil" eingetragen.`);
   }
 }

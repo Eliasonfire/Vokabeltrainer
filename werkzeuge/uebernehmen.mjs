@@ -613,7 +613,13 @@ function einbauen() {
   console.log(`Vorabpruefung: ${vorabRegeln.length} Regeln, ${tagsNeu} Markierungen, `
     + 'keine Loecher, keine unerreichbare Regel.');
 
-  fs.writeFileSync(GD, quelle, 'utf8');
+  /* ⛔ Nie direkt auf die bestehende Datei: grammar-data.js — dieselbe Datei, zweites Werkzeug.
+       Bricht der Lauf mitten im Schreiben ab, steht dort eine leere Datei —
+       und eine leere Datei besteht jeden Test. Erst daneben, dann umbenennen;
+       rename ist auf demselben Laufwerk unteilbar.
+       [[leere_datei_besteht_jeden_test]] */
+    fs.writeFileSync(GD + '.neu', quelle, 'utf8');
+    fs.renameSync(GD + '.neu', GD);
   console.log(`${fertig.length} Regeln und ${neueTags.length} Markierungen eingetragen.`);
 
   /* ---- Gegenproben. Faellt eine durch, wird zurueckgenommen. -------------

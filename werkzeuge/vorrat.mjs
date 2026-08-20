@@ -272,7 +272,13 @@ function freischaltungSchreiben(neu, heute){
     + '};';
   const raus = q.replace(/const FREIGESCHALTET = \{[\s\S]*?\n\};/, block);
   if (raus === q) { console.error('  Ersetzung hat nichts geaendert.'); process.exit(1); }
-  fs.writeFileSync(KERN, raus, 'utf8');
+  /* ⛔ Nie direkt auf die bestehende Datei: js/kern.js — die Freischaltliste; ein Abbruch macht die App kaputt.
+       Bricht der Lauf mitten im Schreiben ab, steht dort eine leere Datei —
+       und eine leere Datei besteht jeden Test. Erst daneben, dann umbenennen;
+       rename ist auf demselben Laufwerk unteilbar.
+       [[leere_datei_besteht_jeden_test]] */
+    fs.writeFileSync(KERN + '.neu', raus, 'utf8');
+    fs.renameSync(KERN + '.neu', KERN);
 }
 
 /* ---------- Lernstand: wo hat er WIRKLICH geuebt ---------- */
