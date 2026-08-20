@@ -1139,4 +1139,92 @@ const BEISPIELSAETZE = {
     sentAr: 'هَذِهِ أُضْحِيَةٌ كَبِيرَةٌ.',
     sentDe: 'Das ist ein großes Opfertier.'
   },
+
+  /* ------------------------------------------------------------------------
+     KAPITEL 24, GRUPPE 4 — DAS UNIVERSITÄTSVOKABULAR (20.08.2026)
+
+     Die Wörter aus dem Dialog an der Universität. Sie sind der Rest, den ich
+     in Gruppe 3 bewusst liegengelassen hatte — hier sind die, die sich mit
+     جَامِعَةٌ (Kap. 4), غُرْفَةٌ (Kap. 4) und den Adjektiven aus Kapitel 3
+     natürlich bauen lassen.
+
+     ⛔ DREI WÖRTER BEKOMMEN WEITERHIN KEINEN SATZ, und das ist Absicht:
+       خَاصِرَةٌ (Taille)      — Körperteil ohne Zusammenhang in seinem Bestand
+       اِمْتِثَالٌ (Befolgung) — abstrakt, jeder Satz wäre gestellt
+       سَابِقَةٌ (Präzedenzfall) — dito
+     Dazu die drei Verben دَأَبَ, اِسْتَذْكَرَ, فَضَلَ: ein Verbalsatz
+     braucht ein Objekt, und die passenden Objekte stehen nicht in seinem
+     Bestand. Ein gestellter Satz ist schlechter als keiner.
+     ------------------------------------------------------------------------ */
+
+  /* جَزِيلٌ — reichlich (madina-1, Kapitel 24)
+     ⭐ Die feste Wendung, in der das Wort fast immer steht: شُكْرًا جَزِيلًا.
+     Beide Wörter im Akkusativ, weil ein gedachtes Verb davorsteht — und
+     جَزِيلًا folgt شُكْرًا als نَعْت in Kasus und Unbestimmtheit. */
+  '50178': {
+    sentAr: 'شُكْرًا جَزِيلًا.',
+    sentDe: 'Vielen Dank!'
+  },
+
+  /* مُرْشِدٌ — Studienberater (madina-1, Kapitel 24) */
+  '50174': {
+    sentAr: 'الْمُرْشِدُ فِي الْجَامِعَةِ.',
+    sentDe: 'Der Studienberater ist an der Universität.'
+  },
+
+  /* عِمَادَةٌ — Dekanat (madina-1, Kapitel 24) */
+  '50175': {
+    sentAr: 'عِمَادَةُ الْجَامِعَةِ قَرِيبَةٌ.',
+    sentDe: 'Das Dekanat der Universität ist nah.'
+  },
+
+  /* اِسْتِمَارَةٌ — Formular (madina-1, Kapitel 24) */
+  '50176': {
+    sentAr: 'هَذِهِ اِسْتِمَارَةٌ جَدِيدَةٌ.',
+    sentDe: 'Das ist ein neues Formular.'
+  },
+
+  /* إِسْكَانٌ — Unterbringung (madina-1, Kapitel 24) */
+  '50177': {
+    sentAr: 'الْإِسْكَانُ قَرِيبٌ مِنَ الْجَامِعَةِ.',
+    sentDe: 'Die Unterbringung ist nahe bei der Universität.'
+  },
+
+  /* شُعْبَةٌ — Abteilung (madina-1, Kapitel 24) */
+  '50179': {
+    sentAr: 'شُعْبَةُ الْجَامِعَةِ كَبِيرَةٌ.',
+    sentDe: 'Die Abteilung der Universität ist groß.'
+  },
+
+  /* مُسْتَوًى — Niveau (madina-1, Kapitel 24)
+     ⭐ Wie فَتًى: mit dem Artikel verschwindet das Tanwin und aus مُسْتَوًى
+     wird الْمُسْتَوَى — die أَلِف مَقْصورة bleibt, das ـً faellt weg. */
+  '50180': {
+    sentAr: 'الْمُسْتَوَى جَدِيدٌ.',
+    sentDe: 'Das Niveau ist neu.'
+  },
+
+  /* تَعَارُفٌ — gegenseitiges Kennenlernen (madina-1, Kapitel 24) */
+  '50172': {
+    sentAr: 'هَذَا تَعَارُفٌ جَدِيدٌ.',
+    sentDe: 'Das ist ein neues Kennenlernen.'
+  },
+
+  /* حِوَارٌ — Dialog (madina-1, Kapitel 24) */
+  '50173': {
+    sentAr: 'هَذَا حِوَارٌ قَصِيرٌ.',
+    sentDe: 'Das ist ein kurzer Dialog.'
+  },
+
+  /* فَذٌّ — einzigartig (madina-1, Kapitel 24) */
+  '50186': {
+    sentAr: 'هَذَا الطَّالِبُ فَذٌّ.',
+    sentDe: 'Dieser Student ist einzigartig.'
+  },
+
+  /* تَأْخِيرٌ — Verspätung (madina-1, Kapitel 24) */
+  '50188': {
+    sentAr: 'التَّأْخِيرُ طَوِيلٌ.',
+    sentDe: 'Die Verspätung ist lang.'
+  },
 };

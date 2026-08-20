@@ -690,6 +690,29 @@ function baueWortKarte(w){
     }
   }
 
+  /* ⭐⭐ EIGENE NOTIZ — Elias am 20.08.2026: „ich will am besten eine notiz
+     funktion haben ähnlich wie die vorschlag funktion … ich wollte eben zu
+     ‚die Besitzendung mein‘ als notiz dazu schreiben, dass es das vorherige
+     buchstaben mit einem kasrah macht statt dummah, jedoch habe ich aktuell
+     kein feld dafür."
+
+     Sie steht ÜBER dem Beispielsatz, nicht unter den Aktionen: was er selbst
+     zu einem Wort herausgefunden hat, ist für ihn wichtiger als alles, was die
+     App dazu beisteuert. ⛔ Die Notiz erscheint nur, wenn eine da ist — ein
+     leerer Kasten an jeder der 4433 Karten wäre Lärm. Wer keine hat, kommt
+     über den Knopf bei den Aktionen hin.
+
+     `arabischHervorheben` wie bei der Eselsbrücke: er wird arabische Wörter
+     hineinschreiben, und die brauchen ihre eigene Schrift und Laufrichtung. */
+  const eigeneNotiz = (typeof getNotiz === 'function') ? getNotiz(w.id) : '';
+  if (eigeneNotiz){
+    t.push(`<div class="wk-abschnitt wk-notiz">
+      <div class="wk-marke"><span>Deine Notiz</span>
+        <button class="wk-stift" data-wknotiz aria-label="Notiz ändern">${icon('note')}ändern</button></div>
+      <div class="de">${arabischHervorheben(eigeneNotiz)}</div>
+    </div>`);
+  }
+
   if (w.sentAr){
     /* ⭐ Sagen, woher der Satz kommt. Ein von der App gebauter Satz ist richtig,
        aber schlicht („Das ist ein Buch.") — wer nicht weiß, dass er von der App
@@ -736,6 +759,7 @@ function baueWortKarte(w){
   if (w.istPlural){
     t.push(`<div class="wk-aktionen">
       <button class="btn btn-secondary btn-klein" data-wkgrundwort="${escapeHtml(w.plVon)}">Zur Grundvokabel</button>
+      <button class="btn btn-secondary btn-klein" data-wknotiz>${icon('note')}${eigeneNotiz ? 'Notiz ändern' : 'Notiz'}</button>
     </div>
     <div class="wk-hinweis">Diese Karte entsteht aus dem Plural der Grundvokabel. Ändern lässt sich der Plural dort.</div>`);
     return t.join('');
@@ -773,6 +797,7 @@ function baueWortKarte(w){
 
   t.push(`<div class="wk-aktionen">
     ${wkFreiKnopf}
+    <button class="btn btn-secondary btn-klein" data-wknotiz>${icon('note')}${eigeneNotiz ? 'Notiz ändern' : 'Notiz'}</button>
     <button class="btn btn-secondary btn-klein" data-wkbearbeiten>${icon('note')}Bearbeiten</button>
     ${eigen ? `<button class="btn btn-secondary btn-klein wk-loeschen" data-wkloeschen>${icon('trash')}Löschen</button>` : ''}
     ${(!eigen && geaendert) ? `<button class="btn btn-secondary btn-klein" data-wkzuruecksetzen>Auf Original zurück</button>` : ''}
@@ -856,6 +881,33 @@ function baueMerkFormular(w){
     <div class="wk-hinweis">Wird beim Zurückgehen und beim Schließen von selbst gespeichert.</div>`;
 }
 
+/* ---------- Eigene Notiz schreiben oder ändern (20.08.2026) ----------
+
+   ⛔ KEIN Vorschlag und kein vorgefüllter Text. Bei der Eselsbrücke gibt es
+   beides zu erklären („leer lassen, um wieder den Vorschlag zu sehen"); hier
+   heißt leer schlicht leer, und der Hinweis darunter darf entsprechend kurz
+   bleiben.
+
+   Sein eigenes Beispiel steht als `placeholder` da — nicht als Vorgabe, aber
+   als Beleg dafür, wofür das Feld gedacht ist. Ein leeres Feld mit „Notiz"
+   darüber lässt offen, ob eine Vokabel oder eine Regel hineingehört. */
+function baueNotizFormular(w){
+  return `<div class="wk-kopfzeile">
+      <div class="wk-marken"><span class="chip chip-chapter">Notiz</span></div>
+      <button class="icon-btn" id="btnCloseWortKarte" aria-label="Schließen"><svg class="ic"><use href="#ic-close"/></svg></button>
+    </div>
+    <div class="wk-ar" lang="ar" dir="rtl" style="font-size:clamp(1.8rem,8vw,2.6rem)">${escapeHtml(w.sg || w.ar)}</div>
+    <label class="wk-feld">
+      <span>Deine Notiz zu diesem Wort — was es tut, was dir aufgefallen ist</span>
+      <textarea id="wkNotizText" rows="6" lang="de"
+        placeholder="z. B.: macht den Buchstaben davor mit Kasrah statt Dammah">${escapeHtml(typeof getNotiz === 'function' ? getNotiz(w.id) : '')}</textarea>
+    </label>
+    <div class="wk-aktionen">
+      <button class="btn btn-secondary btn-klein" data-wkabbrechen>Zurück zur Karte</button>
+    </div>
+    <div class="wk-hinweis">Wird beim Zurückgehen und beim Schließen von selbst gespeichert. Arabisches darfst du hineinschreiben — es bekommt seine eigene Schrift.</div>`;
+}
+
 function zeigeWortKarte(id){
   const w = byId(id);
   if (!w) return;
@@ -914,6 +966,20 @@ function speichereOffenesFormular(){
     if (text === getNote(WK_WORT.id)) return 'nichts';
     setNote(WK_WORT.id, text);
     toast(text ? 'Eselsbrücke gespeichert' : 'Eigene Eselsbrücke entfernt — der Vorschlag steht wieder da.');
+    return 'gespeichert';
+  }
+
+  /* c) Das Notizformular (20.08.2026).
+     ⛔ Diese drei Zweige dürfen sich nicht überschneiden: `wkNotizText` gibt es
+     nur im Notizformular, `wkMerkText` nur im Eselsbrücken-Formular. Hingen
+     beide an derselben Feld-Id, würde der erste Zweig den zweiten still
+     schlucken und eine der beiden Eingaben ginge bei jedem Schließen verloren,
+     ohne dass irgendetwas meldet. */
+  if (document.getElementById('wkNotizText') && WK_WORT){
+    const text = wert('wkNotizText');
+    if (text === getNotiz(WK_WORT.id)) return 'nichts';
+    setNotiz(WK_WORT.id, text);
+    toast(text ? 'Notiz gespeichert' : 'Notiz entfernt');
     return 'gespeichert';
   }
   return 'nichts';
@@ -982,6 +1048,15 @@ document.getElementById('wortKarte').addEventListener('click', (e)=>{
   if (e.target.closest('[data-wkbearbeiten]') && WK_WORT){
     karte.innerHTML = baueWortFormular(WK_WORT);
     karte.scrollTop = 0;
+    return;
+  }
+  /* Notiz (20.08.2026). Der Cursor steht sofort im Feld — er hat den Knopf
+     gedrückt, weil er etwas schreiben will, nicht um ein Feld anzusehen. */
+  if (e.target.closest('[data-wknotiz]') && WK_WORT){
+    karte.innerHTML = baueNotizFormular(WK_WORT);
+    karte.scrollTop = 0;
+    const feld = document.getElementById('wkNotizText');
+    if (feld) feld.focus();
     return;
   }
   if (e.target.closest('[data-wkmerk]') && WK_WORT){

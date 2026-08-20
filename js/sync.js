@@ -31,7 +31,7 @@ const SYNC_SCHLUESSEL = [
      Der Einstellungs-Merge liest den lokalen Feldstempel; wuerde der vorher
      schon mit dem fremden vereinigt, gaebe es keinen Unterschied mehr zu
      messen und das andere Geraet gewaenne immer. */
-  'vt_progress', 'vt_notes', 'vt_settings', 'vt_settingsFeld', 'vt_streak',
+  'vt_progress', 'vt_notes', 'vt_notizen', 'vt_settings', 'vt_settingsFeld', 'vt_streak',
   'vt_personalVocab', 'vt_customCats', 'vt_hifz', 'vt_hifzVerse',
   'vt_quranFav', 'vt_lesestand',
   /* Der Tageszaehler des Hoermodus (17.08.2026). Er gehoert dazu, weil Elias

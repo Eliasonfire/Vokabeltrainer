@@ -1636,6 +1636,14 @@ main{
   padding-left:var(--sp-3);border-left:2px solid var(--border);
 }
 .wk-quelle{font-size:var(--fs-xs);color:var(--text-faint);font-weight:500;}
+/* Seine eigene Notiz (20.08.2026). Sie sieht anders aus als die Abschnitte
+   daneben, weil sie etwas anderes ist: alles andere auf der Karte kommt aus
+   dem Buch oder von der App, das hier kommt von ihm. Eine Kante in der
+   Akzentfarbe reicht dafür — ein eigener Hintergrund würde den Kasten aus der
+   Karte herausbrechen, und Elias' Vorgabe ist OLED-Schwarz.
+   ⛔ `.wk-abschnitt` steht VOR dieser Regel, sonst gewänne dessen `border`. */
+.wk-notiz{border-left:3px solid var(--red);}
+.wk-notiz .de{color:var(--text);}
 .wk-unvollstaendig{display:flex;align-items:center;gap:var(--sp-2);flex-wrap:wrap;}
 .wk-unvollstaendig b{color:var(--text);font-weight:700;}
 .wk-hinweis{
