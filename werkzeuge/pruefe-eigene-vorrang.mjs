@@ -227,6 +227,12 @@ const BESTANDSZAHL = [
     muster: /geprueft:\s+(\d+)\s+Woerter/ },
   { name: 'pruefe-funktionen.js', argv: [p('pruefe-funktionen.js')],
     muster: /gemessen:\s+(\d+)\s+Woerter/ },
+  /* ⭐ Dritter Vergleich seit dem 20.08.2026. Zwei Werkzeuge koennen sich
+     auch gemeinsam irren; der dritte hat den zwoelften Fall aufgedeckt
+     (pruefe-wortfelder.js mass 192 statt 214). [[milder_bezugspunkt_verdeckt_mangel]] */
+  { name: 'pruefe-wortfelder.js --fenster',
+    argv: [p('pruefe-wortfelder.js'), '--fenster'],
+    muster: /--fenster: nur die (\d+) Woerter/ },
 ];
 
 if (nurAlt.length){
