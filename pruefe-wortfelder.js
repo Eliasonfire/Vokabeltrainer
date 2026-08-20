@@ -183,6 +183,16 @@ if (FENSTER){
     let n = 0;
     for (const q of quellen){
       const m = /^data \((.+)\)$/.exec(q.name);
+      /* ⭐ Die Wege 3 und 4 bleiben IMMER im Fenster — nicht aus Kulanz,
+         sondern weil die App es so entscheidet: js/kern.js:149 sagt in
+         istBekannt() woertlich `if (w.chapter === 'personal') return true;`.
+         Sie haengen an keinem Kapitel und koennen deshalb auch nicht aus
+         einem Kapitel-Fenster fallen. Bis zum 20.08.2026 taten sie genau das:
+         das Namensmuster unten trifft nur `data (slug)`, und alles andere
+         wurde geleert — auch seine 14 eigenen Woerter und die 15
+         Fachbegriffe, die er JEDEN Tag vor sich hat.
+         [[app_auswahl_entscheidet]] */
+      if (/\(Weg [34]\)$/.test(q.name)){ n += (q.woerter || []).length; continue; }
       if (!m){ q.woerter = []; continue; }   /* vocab-data.js ist Lernbestand, nicht Fenster */
       const slug = m[1];
       if (!angabe[slug]){ q.woerter = []; continue; }
