@@ -21,6 +21,7 @@
  * käme einfach wieder auf die Frageliste.
  */
 import fs from 'node:fs';
+import vm from 'node:vm';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -67,6 +68,48 @@ const GESCHLECHTER = ['masculine','feminine'];
 let feld = null;
 const ausnahmen = [];    /* { id, feld, wort } */
 const zweifel = [];      /* { id, feld, wort } — Wortart bestritten */
+
+/* ⛔⛔ DER VORHANDENE `type` — ohne ihn kommt seine Antwort nicht in der App an.
+
+   Gemessen am 20.08.2026 an der echten Kette: Elias beantwortet „خَرَجَ →
+   verb", der Wert landet sauber in FELD_ERGAENZUNGEN — und
+   wendeFeldErgaenzungenAn() laesst ihn liegen, weil das Feld GEFUELLT ist
+   (`noun` aus addPersonalVocab). Nur leer, `null`, `other` und `vocab`
+   gelten als leer.
+
+   ⭐ Ebene 4 loest das: ein BESTRITTENER Wert zaehlt seit dem 20.08. wie ein
+   leerer (data/feld-ausnahmen.js). Aber der Zweifel wurde bisher nur gesetzt,
+   wenn Elias ausdruecklich „ist kein Nomen" angetippt hat — nicht, wenn er
+   einfach die richtige Wortart waehlt.
+
+   Also: weicht die Antwort vom vorhandenen Wert ab und ist dieser nicht leer,
+   setzen wir den Zweifel SELBST. [[erfolgsmeldung_ohne_wirkung]] */
+const BESTAND_TYPE = new Map();
+{
+  const laden = (rel, name) => {
+    try {
+      const ctx = { window: {} };
+      vm.createContext(ctx);
+      vm.runInContext(fs.readFileSync(path.join(REPO, rel), 'utf8'), ctx, { filename: rel });
+      const v = vm.runInContext('typeof ' + name + ' !== "undefined" ? ' + name + ' : (window.' + name + ' || null)', ctx);
+      return Array.isArray(v) ? v : (v ? Object.values(v).flat() : []);
+    } catch (e) { return []; }
+  };
+  const alle = [
+    ...laden('vocab-data.js', 'VOCAB_DATA'),
+    ...laden('data/fachbegriffe.js', 'FACHBEGRIFF_VOKABELN'),
+    ...laden('data/vokabeln-eigene.js', 'EIGENE_VOKABELN'),
+  ];
+  try {
+    const d = JSON.parse(fs.readFileSync(path.join(REPO, 'data', 'eigene-woerter.json'), 'utf8'));
+    if (Array.isArray(d.woerter)) alle.push(...d.woerter);
+  } catch (e) { /* nicht da — dann eben ohne */ }
+  /* ⚠️ Die gepflegte Fassung gewinnt: vocab-data.js steht zuerst in der Liste,
+     also NICHT ueberschreiben. [[pruefwerkzeug_laedt_mehr_als_die_app]] */
+  for (const w of alle) if (w && w.id && !BESTAND_TYPE.has(String(w.id)))
+    BESTAND_TYPE.set(String(w.id), String(w.type || ''));
+}
+const giltAlsLeer = (v) => !v || !String(v).trim() || v === 'other' || v === 'vocab';
 const werte = [];        /* { id, feld, wert, wort } */
 const unklar = [];
 
@@ -109,6 +152,14 @@ for (const roh of zeilen){
       + ' bei ' + ar + ' (' + id + ') nicht eingetragen. Tippfehler?');
   } else {
     werte.push({ id, feld, wert: antwort, wort: ar + ' (' + de + ')' });
+    /* ⭐ Siehe BESTAND_TYPE oben: steht dort schon ein anderer, nicht-leerer
+       Wert, braucht die Ergaenzung den Zweifel daneben — sonst wirkt sie nicht. */
+    if (feld === 'type'){
+      const da = BESTAND_TYPE.get(String(id));
+      if (da && !giltAlsLeer(da) && da !== antwort)
+        zweifel.push({ id, feld: 'type', wort: ar + ' (' + de + ')',
+                       grund: 'Antwort „' + antwort + '" weicht von „' + da + '" ab' });
+    }
   }
 }
 
