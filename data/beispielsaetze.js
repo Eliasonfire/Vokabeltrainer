@@ -1227,4 +1227,113 @@ const BEISPIELSAETZE = {
     sentAr: 'التَّأْخِيرُ طَوِيلٌ.',
     sentDe: 'Die Verspätung ist lang.'
   },
+
+  /* ---------- Elias' selbst angelegte Woerter (Weg 3, vt_personalVocab) -----
+
+     ⛔ Diese vierzehn standen bis zum 20.08.2026 ohne Satz da, und ein Satz
+     haette sie auch nicht erreicht: js/buecher.js rief saetzeNachtragen()
+     nur mit der Buchliste auf, nie mit PERSONAL_VOCAB. Der Aufruf ist
+     nachgetragen — ohne ihn waere jeder Satz hier tote Schrift.
+     [[entscheidung_gilt_fuer_das_zweite_werkzeug]]
+
+     Nur Woerter aus madina-1 Kapitel 1-12 oder aus dem Lernbestand.
+     Vollstaendig vokalisiert, jede Kasusendung gesetzt. */
+
+  /* مَكْسُورٌ — kaputt (selbst angelegt am 20.08.2026, Weg 3)
+     Mubtadaʾ + Ḫabar, beide marfūʿ. بَابٌ aus K1. */
+  'p_1787183484954': {
+    sentAr: 'الْبَابُ مَكْسُورٌ.',
+    sentDe: 'Die Tür ist kaputt.'
+  },
+
+  /* سَيِّدٌ — Herr (selbst angelegt am 20.08.2026, Weg 3)
+     Ḫabar ist ein Ǧārr wa maǧrūr. فِي und بَيْتٌ aus K1/K7. */
+  'p_1787185012359': {
+    sentAr: 'السَّيِّدُ فِي الْبَيْتِ.',
+    sentDe: 'Der Herr ist im Haus.'
+  },
+
+  /* سَيِّدَةٌ — Dame (selbst angelegt am 20.08.2026, Weg 3)
+     Beide marfūʿ, das Ḫabar unbestimmt. مُدَرِّسَةٌ steht im Lernbestand. */
+  'p_1787185031977': {
+    sentAr: 'السَّيِّدَةُ مُدَرِّسَةٌ.',
+    sentDe: 'Die Dame ist Lehrerin.'
+  },
+
+  /* خَرَجَ — herausgehen (selbst angelegt am 20.08.2026, Weg 3)
+     Verb + Fāʿil (marfūʿ) + Ǧārr wa maǧrūr. مِنْ wird vor Hamzat al-waṣl zu مِنَ. */
+  'p_1787189845886': {
+    sentAr: 'خَرَجَ الْوَلَدُ مِنَ الْبَيْتِ.',
+    sentDe: 'Der Junge ging aus dem Haus.'
+  },
+
+  /* كَسْلَانُ — faul (selbst angelegt am 20.08.2026, Weg 3)
+     كَسْلَانُ folgt dem Muster فَعْلَان (Fem. فَعْلَى) und ist damit mamnūʿ min aṣ-ṣarf — deshalb Ḍamma OHNE Tanwīn, obwohl das Ḫabar unbestimmt ist. */
+  'p_1787191371934': {
+    sentAr: 'الطَّالِبُ كَسْلَانُ.',
+    sentDe: 'Der Student ist faul.'
+  },
+
+  /* لَكَ — für dich (m.) (selbst angelegt am 20.08.2026, Weg 3)
+     لِ + كَ; das Ḫabar ist der Ǧārr wa maǧrūr. Vor dem Personalpronomen wird لِ zu لَ. */
+  'p_1787185309933': {
+    sentAr: 'الْكِتَابُ لَكَ.',
+    sentDe: 'Das Buch ist für dich.'
+  },
+
+  /* لَكِ — für dich (f.) (selbst angelegt am 20.08.2026, Weg 3)
+     Dieselbe Bauart wie لَكَ, nur die weibliche Anrede. حَقِيبَةٌ aus K8. */
+  'p_1787185328882': {
+    sentAr: 'الْحَقِيبَةُ لَكِ.',
+    sentDe: 'Die Tasche ist für dich.'
+  },
+
+  /* فِيْهِ — darin (selbst angelegt am 20.08.2026, Weg 3)
+     فِي + هِ. Der zweite Satzteil stellt den Ǧārr wa maǧrūr voran, das Mubtadaʾ غُرْفَةٌ folgt. */
+  'p_1787189488747': {
+    sentAr: 'الْبَيْتُ كَبِيرٌ، وَفِيهِ غُرْفَةٌ.',
+    sentDe: 'Das Haus ist groß, und darin ist ein Zimmer.'
+  },
+
+  /* كَيْفَ — wie (selbst angelegt am 20.08.2026, Weg 3)
+     Fragewort + Mubtadaʾ mit angehängtem Pronomen. ⚠️ Seine Zitierform حَالُكْ traegt die Pausalendung; im Satz steht حَالُكَ. */
+  'p_1787189022107': {
+    sentAr: 'كَيْفَ حَالُكَ؟',
+    sentDe: 'Wie geht es dir?'
+  },
+
+  /* حَالُكْ — dein Zustand (selbst angelegt am 20.08.2026, Weg 3)
+     Derselbe Satz wie bei كَيْفَ — die beiden Woerter kommen nur zusammen vor. */
+  'p_1787189076593': {
+    sentAr: 'كَيْفَ حَالُكَ؟',
+    sentDe: 'Wie geht es dir?'
+  },
+
+  /* بَعْدَ — nach (selbst angelegt am 20.08.2026, Weg 3)
+     بَعْدَ ist ein Ẓarf und Muḍāf: das folgende Wort steht im Genitiv (الْمَسْجِدِ). */
+  'p_1787188396011': {
+    sentAr: 'الْمَكْتَبَةُ بَعْدَ الْمَسْجِدِ.',
+    sentDe: 'Die Bibliothek ist nach der Moschee.'
+  },
+
+  /* عِنْدَ — bei (selbst angelegt am 20.08.2026, Weg 3)
+     Ẓarf + Muḍāf ilayh im Genitiv. */
+  'p_1787190874749': {
+    sentAr: 'الْكِتَابُ عِنْدَ الْمُدَرِّسِ.',
+    sentDe: 'Das Buch ist beim Lehrer.'
+  },
+
+  /* أَمَامَ — vor (selbst angelegt am 20.08.2026, Weg 3)
+     Ẓarf makān + Muḍāf ilayh im Genitiv. سَيَّارَةٌ aus K9. */
+  'p_1787189287368': {
+    sentAr: 'السَّيَّارَةُ أَمَامَ الْبَيْتِ.',
+    sentDe: 'Das Auto ist vor dem Haus.'
+  },
+
+  /* لِمَن — für wen (selbst angelegt am 20.08.2026, Weg 3)
+     ⚠️ لِمَنْ endet auf Sukūn; trifft es auf die Hamzat al-waṣl von الْ, bekommt es ein Kasra: لِمَنِ. */
+  'p_1787184718572': {
+    sentAr: 'لِمَنِ الْكِتَابُ؟',
+    sentDe: 'Wem gehört das Buch?'
+  },
 };

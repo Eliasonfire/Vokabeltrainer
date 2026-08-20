@@ -559,8 +559,26 @@ document.addEventListener('DOMContentLoaded', async ()=>{
      ⚠️ Der Aufruf ist gefahrlos, wenn nichts passt: die Funktion ueberspringt
      jedes Wort, das schon ein `mnemo` hat, und jede Id ohne Eintrag. */
   if (typeof PERSONAL_VOCAB !== 'undefined' && Array.isArray(PERSONAL_VOCAB)
-      && PERSONAL_VOCAB.length)
+      && PERSONAL_VOCAB.length){
     eselsbrueckenNachtragen(PERSONAL_VOCAB);
+    /* ⛔⛔ UND DIE BEISPIELSAETZE, aus genau demselben Grund.
+
+       Am 20.08.2026 wurde oben der Eselsbruecken-Weg repariert — und die
+       Zeile daneben blieb stehen. `saetzeNachtragen()` lief weiterhin nur
+       mit der Buchliste (einhaengen(), Zeile 256), also lief derselbe
+       Fehler unter anderem Namen weiter: ein Eintrag in
+       data/beispielsaetze.js unter einer `p_…`-Id waere geschrieben,
+       gespeichert, ausgeliefert — und nie angewandt worden.
+
+       ⭐ Die Lehre ist nicht „Saetze vergessen", sondern: eine Entscheidung
+       ueber einen Weg gilt fuer JEDEN Weg derselben Bauart. Hier waren es
+       zwei Funktionen mit identischer Aufgabe, zwei Zeilen auseinander.
+       [[entscheidung_gilt_fuer_das_zweite_werkzeug]] [[werkzeug_ohne_aufrufer]]
+
+       ⚠️ Gefahrlos, wenn nichts passt: die Funktion ueberspringt jedes Wort,
+       das schon ein `sentAr` hat, und jede Id ohne Eintrag. */
+    saetzeNachtragen(PERSONAL_VOCAB);
+  }
 
   /* ---------- Pluralkarten NACH den Buechern neu bauen (18.08.2026) --------
 

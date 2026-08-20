@@ -86,6 +86,46 @@ if (fs.existsSync(datenOrdner)){
   }
 }
 const wortschatz = Object.values(fenster.VOKABELN || {}).flat();
+
+/* ⛔⛔ UND SEINE SELBST ANGELEGTEN WOERTER — sonst sieht diese Pruefung
+   WENIGER als die App und meldet Fehler, die es nicht gibt.
+
+   In der App laeuft setzeLexikon(VOCAB_DATA) (js/saetze.js:623, js/uebung.js:526),
+   und VOCAB_DATA enthaelt die Woerter aus vt_personalVocab — js/kern.js:245
+   schiebt sie hinein. Hier standen bis zum 20.08.2026 nur die Buchdateien.
+
+   ⭐ Gemessen an einem echten Fehlalarm: der Satz «الْكِتَابُ لَكَ.» wurde als
+   VERB gelesen, sobald bayna-yadayk-3 geladen war. Dort steht لَاكَ „kauen"
+   mit dem Imperativ لُكْ — und ohne Vokalzeichen ist لُكْ von لَكَ nicht zu
+   unterscheiden. Die App kennt لَكَ als genauen Lexikoneintrag und liest
+   richtig; nur dieses Skript kannte es nicht.
+   [[werkzeug_misst_kleineren_bestand]] [[skelettvergleich_wirft_information_weg]]
+
+   ⚠️ Faellt die Datei aus, wird das GESAGT. Ein stiller Ausfall saehe genauso
+   aus wie ein gruener Lauf. [[ausfall_ist_unsichtbar_gebaut]] */
+try {
+  const d = JSON.parse(fs.readFileSync(P + 'data' + path.sep + 'eigene-woerter.json', 'utf8'));
+  const liste = Array.isArray(d.woerter) ? d.woerter : [];
+  wortschatz.push(...liste);
+  /* ⛔ UND in VOCAB_DATA — genau das tut js/kern.js:245 in der App.
+     Der Lexikon-Vergleich weiter unten baut jeden Buchstand aus VOCAB_DATA
+     auf; steckten die 14 nur im `wortschatz`, waere der erste Ladevorgang
+     richtig und JEDER Vergleichsstand weiterhin blind. Ein halber Fix ist
+     hier schlimmer als keiner, weil die Ausgabe gruen aussieht.
+     [[zweiter_aufruf_ueberschreibt_still]] */
+  const schon = new Set(VOCAB_DATA.map(w => String(w.id)));
+  VOCAB_DATA.push(...liste.filter(w => !schon.has(String(w.id))));
+  liste.forEach(v => {
+    if (v && v.sentAr && !BEISPIELSAETZE[v.id])
+      BEISPIELSAETZE[v.id] = { sentAr: v.sentAr, sentDe: v.sentDe || '' };
+  });
+  if (liste.length) console.log(`  ${liste.length} selbst angelegte Woerter mitgeladen (data/eigene-woerter.json).`);
+} catch (e) {
+  console.log('  ⚠️ data/eigene-woerter.json fehlt — seine selbst angelegten Woerter');
+  console.log('     sind der Analyse UNBEKANNT. Sie entsteht bei');
+  console.log('     node werkzeuge/vorrat.mjs --stand <datei> --app auto');
+}
+
 setzeLexikon(wortschatz);
 console.log(wortschatz.length
   ? `Wortarten aus ${wortschatz.length} Vokabeln geladen.`
