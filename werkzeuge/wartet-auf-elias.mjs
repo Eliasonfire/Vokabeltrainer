@@ -245,7 +245,22 @@ function gruppenAus(text){
       ? `${echt.length} Entscheidung(en) — innerhalb einer Gruppe gilt sie für alle`
       : 'nach Gruppen sortiert',
     warum: 'Eine fehlende Ḥaraka ändert die Aussprache und macht die Suche unbrauchbar.',
-    wie: 'Je Gruppe eine Entscheidung. Was ich schon geklärt habe, steht in der To-Do unter „Wartet auf Elias".',
+    /* ⭐ Belege sichtbar machen. Beim Feldangaben-Posten steht schon „bei 31
+       steht die Antwort schon auf der Seite"; fuer Taschkil gilt seit dem
+       21.08. dasselbe, nur sah man es hier nicht. Eine Hilfe, die niemand
+       sieht, hilft nicht. [[flaeche_nur_im_gefuellten_zustand]]
+       ⛔ Gezaehlt wird aus data/aussenbelege.json, nicht geschaetzt. Fehlt
+       die Datei, faellt der Satz weg statt eine Zahl zu erfinden. */
+    wie: (() => {
+      let n = 0;
+      try {
+        const p = path.join(REPO, 'data', 'aussenbelege.json');
+        n = Object.keys(JSON.parse(fs.readFileSync(p, 'utf8')).taschkil || {}).length;
+      } catch { /* keine Belege geholt */ }
+      return 'Je Gruppe eine Entscheidung.'
+           + (n ? ` Bei ${n} Befunden steht die Schreibung von en.wiktionary schon daneben — \`node pruefe-taschkil.js\` zeigt sie unter dem Befund.` : '')
+           + ' Was ich schon geklärt habe, steht in der To-Do unter „Wartet auf Elias".';
+    })(),
     zeilen: alleGruppen.map(g => (g.keinMangel ? '✓ kein Mangel: ' : '') + g.zahl + "× " + g.name + (g.woerter.length ? "  —  " + g.woerter.slice(0, 5).join(" · ") + (g.woerter.length > 5 ? " …" : "") : ""))
   });
 }
