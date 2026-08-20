@@ -353,6 +353,30 @@ stellen.forEach(zeichne);
 standZeigen();
 </script>`;
 
+/* ⛔ Auch hier der Leerfall: sind alle Kandidaten abgearbeitet, waere `gesamt`
+   null — die Seite zeigte "0 von 0 entschieden" und der Fortschrittsbalken
+   rechnete n/0. Vor allem aber bliebe die ALTE Fassung als Artefakt stehen
+   und zeigte Fundstellen, die er laengst entschieden hat.
+   [[flaeche_nur_im_gefuellten_zustand]] */
+if (!gesamt) {
+  const leer = ['<title>Regelkandidaten freigeben</title>',
+    '<style>:root{color-scheme:dark}body{margin:0;background:#000;color:#f4f4f6;'
+    + 'font:17px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:38px 16px}'
+    + '.h{max-width:640px;margin:0 auto}h1{font-size:2rem;margin:0 0 16px}p{color:#9a9aa4}'
+    + 'b{color:#f4f4f6}</style>',
+    '<div class="h">', '<h1>✓ Nichts offen</h1>',
+    '<p><b>Alle Fundstellen sind entschieden.</b> Aus den ausgewerteten Folgen'
+    + ' wartet keine mehr auf dein Ja oder Nein.</p>',
+    '<p>Sobald eine neue Folge ausgewertet ist, stehen die Kandidaten wieder hier.</p>',
+    '<p style="color:#6b6b75;font-size:.85rem">Stand ' + STAND_HEUTE + '</p>', '</div>'
+  ].join(String.fromCharCode(10));
+  fs.writeFileSync(path.join(AUS, 'freigabe.html'), leer, 'utf8');
+  console.log('Nichts offen — Seite zeigt jetzt "✓ Nichts offen" statt alter Fundstellen.');
+  console.log('  ⚠️ Trotzdem veroeffentlichen, sonst zeigt das Artefakt die alten:');
+  console.log('     https://claude.ai/code/artifact/d9916aee-b679-4d91-bb0c-c3642f8889ac');
+  process.exit(0);
+}
+
 const ziel = path.join(AUS, 'freigabe.html');
 fs.writeFileSync(ziel, html, 'utf8');
 console.log('geschrieben: ' + ziel);
