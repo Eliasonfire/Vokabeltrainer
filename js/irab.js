@@ -412,15 +412,14 @@ const NICHT_VERB = ['صفر', 'عمي', 'جر', 'ل', 'فوق',
    Was der Iʿrāb-Erklärer benutzt, um einen Satz zu zerlegen, ist genau das,
    was auf der Karte stehen soll.
 
-   ⛔ ZU عِنْدَ, SEINEM BEISPIEL, EINE KLARSTELLUNG. Er nennt es eine
-   „Genitivpräposition“ — sein Lehrer sagt ausdrücklich das Gegenteil, und das
-   steht in data/fachbegriffe.js bei gram-zarf: „تَحْتَ selbst ist KEIN
-   حَرْف جَرّ — es wirkt nur so.“ عِنْدَ ist ein ظَرْف.
-   Deshalb steht auf der Karte beides, aber richtig benannt: die Wortart als
-   ظَرْف und die WIRKUNG als eigene Zeile — „das Wort danach steht im
-   Genitiv“. Damit bekommt er, was er sehen will, ohne dass die App seinem
-   Lehrer widerspricht.
-
+   ⭐ ZU عِنْدَ, SEINEM BEISPIEL. Er wollte, dass dort „Orts- und Zeitangabe“
+   UND die Genitivwirkung steht. Ich hatte zuerst eingewandt, sein Lehrer
+   nenne تَحْتَ ausdrücklich KEIN حَرْف جَرّ — und lag damit daneben.
+   Elias: „das stimmt nicht, orts und zeitangaben haben die selbe wirkung wie
+   genitivpräpositionen. so soll das sein.“
+   Er hat recht: der Lehrer bestreitet die WORTART, nicht die WIRKUNG. Auf der
+   Karte steht deshalb beides — ظَرْف als Wortart und die Genitivwirkung
+   ausdrücklich als „dieselbe Wirkung wie bei einer Genitivpräposition“.
    ⚠️ Was hier NICHT steht, wird auch nicht behauptet. Ein Nomen ohne
    Besonderheit bekommt genau eine Zeile: „Nomen“. */
 const FRAGEWOERTER = ['ما','من','أين','اين','متى','كيف','هل','لماذا','ماذا','كم','أي','اي','لمن'];
@@ -459,7 +458,15 @@ function funktionenVon(w){
   /* 3. Die WIRKUNG auf das nächste Wort — genau das, was Elias bei عِنْدَ
      sehen will. Präposition und Ortsangabe tun dasselbe, heissen aber
      verschieden; die Wirkung ist eine eigene Zeile. */
-  if ((drin(HURUF_JARR) && !istFragewortMan) || drin(ZURUF)) nenn('Das Wort danach steht im Genitiv');
+  /* ⭐ Elias am 20.08.2026, und er hat recht: „orts und zeitangaben haben die
+     selbe wirkung wie genitivpräpositionen. so soll das sein.“ Ich hatte ihm
+     zuerst widersprochen — zu Unrecht. Sein Lehrer sagt nicht, dass تَحْتَ
+     anders WIRKT, sondern nur, dass es kein حَرْف جَرّ IST. Die Wirkung ist
+     dieselbe, und genau das steht jetzt auf der Karte. */
+  if (drin(ZURUF))
+    nenn('Das Wort danach steht im Genitiv — dieselbe Wirkung wie bei einer Genitivpräposition');
+  else if (drin(HURUF_JARR) && !istFragewortMan)
+    nenn('Das Wort danach steht im Genitiv');
 
   /* 4. Unveränderlich (مَبْنِيّ): keine Endung nach der Satzrolle. */
   if (drin(INDEKLINABEL)) nenn('مَبْنِيّ — die Endung ändert sich nie');
