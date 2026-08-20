@@ -2294,6 +2294,53 @@ const SENTENCE_TAGS = {
   ],
   "45957": [
     { ruleId: "mubtada-khabar-genus-01", matchText: "آسِيَا كَبِيرَةٌ" }
+  ],
+  "45958": [
+    { ruleId: "mamnu-min-as-sarf-01", matchText: "أَحْمَرُ" },
+    { ruleId: "mubtada-khabar-01", matchText: "الْكِتَابُ أَحْمَرُ" }
+  ],
+  "45959": [
+    { ruleId: "mubtada-khabar-01", matchText: "الْبَابُ أَزْرَقُ" }
+  ],
+  "45960": [
+    { ruleId: "mamnu-min-as-sarf-01", matchText: "أَخْضَرُ" }
+  ],
+  "45961": [
+    { ruleId: "mamnu-min-as-sarf-01", matchText: "أَسْوَدُ" }
+  ],
+  "45962": [
+    { ruleId: "mamnu-min-as-sarf-01", matchText: "أَصْفَرُ" }
+  ],
+  "45963": [
+    { ruleId: "mamnu-min-as-sarf-01", matchText: "أَبْيَضُ" }
+  ],
+  "45964": [
+    { ruleId: "mamnu-min-as-sarf-01", matchText: "بَغْدَادُ" },
+    { ruleId: "nat-fem-01", matchText: "مَدِينَةٌ كَبِيرَةٌ" }
+  ],
+  "45965": [
+    { ruleId: "mamnu-min-as-sarf-01", matchText: "جُدَّةُ" },
+    { ruleId: "nat-fem-01", matchText: "مَدِينَةٌ جَمِيلَةٌ" }
+  ],
+  "45966": [
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "عَلَى الْمَكْتَبِ" }
+  ],
+  "45967": [
+    { ruleId: "nat-fem-01", matchText: "دَقِيقَةٌ طَوِيلَةٌ" },
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" }
+  ],
+  "45968": [
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "قَالَ الْمُدَرِّسُ" }
+  ],
+  "45969": [
+    { ruleId: "mamnu-min-as-sarf-01", matchText: "إِسْطَنْبُولُ" },
+    { ruleId: "nat-fem-01", matchText: "مَدِينَةٌ كَبِيرَةٌ" }
+  ],
+  "45970": [
+    { ruleId: "mamnu-min-as-sarf-01", matchText: "وَاشِنْطُنُ" }
+  ],
+  "45971": [
+    { ruleId: "nat-fem-01", matchText: "مَدِينَةٌ جَمِيلَةٌ" }
   ]
 };
 

@@ -358,7 +358,18 @@ const NICHT_VERB = ['صفر', 'عمي', 'جر', 'ل', 'فوق',
      kein Zufall, sondern der Normalfall im Arabischen. Deshalb wird diese
      Liste weiter wachsen, sooft neue Nomen in Beispielsaetze kommen.
      Der Artikel wird von istInListe NICHT abgetrennt: beide Formen noetig. */
-  'درس', 'الدرس', 'سؤال'];
+  'درس', 'الدرس', 'سؤال',
+  /* ⛔ DIE FARBEN AUS KAPITEL 22. Das Muster أَفْعَلُ ist zugleich eine
+     Verbform (أَحْمَرَ „rot werden“), deshalb las der Zerleger
+     الْكِتَابُ أَحْمَرُ als Verbalsatz.
+     ⚠️ أزرق steht NICHT dabei: es wurde bereits richtig gelesen, und ein
+     Eintrag ohne Befund waere ein Eintrag ohne Grund. */
+  /* ⛔ MIT Hamza schreiben. ohneVokale() entfernt nur Ḥarakāt, das أ bleibt
+     stehen — ein Eintrag „احمر“ trifft أَحْمَرُ also NIE. Die bisherigen
+     Eintraege dieser Liste fangen alle ohne Hamza an, deshalb ist es nie
+     aufgefallen; mein erster Versuch lag wirkungslos daneben und die Pruefung
+     meldete unveraendert weiter. */
+  'أحمر', 'أخضر', 'أسود', 'أصفر', 'أبيض'];
 /* Adjektive, die in den Beispielsaetzen vorkommen und deren Wortart nicht
    verlaesslich aus dem Lexikon kommt: كسلان und مجرور fehlen im kleinen
    Bestand ganz, حار steht im grossen ZWEIMAL (adjective und verb حَارَ) und
