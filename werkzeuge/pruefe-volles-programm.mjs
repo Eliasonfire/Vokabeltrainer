@@ -127,6 +127,24 @@ if (fs.existsSync(PROMPT)){
       fs.writeFileSync(tmp, neu, 'utf8');
       fs.renameSync(tmp, PROMPT);
       console.log('  ↻   Kurzliste im Wartungs-Prompt neu erzeugt.');
+      /* ⭐ WAS DABEI WEGFAELLT, GEHOERT IN DIE AUSGABE.
+
+         Am 21.08.2026 hatte jemand (ich) einen Absatz IN den erzeugten
+         Bereich gesetzt. --angleichen nahm ihn erwartungsgemaess mit — und
+         meldete nur „neu erzeugt". 18 Zeilen weg, keine Silbe darueber.
+         Gemerkt hat es ein anderer Waechter, eine halbe Stunde spaeter.
+
+         ⛔ Verhindert wird hier nichts: der Marker sagt ausdruecklich
+         „NICHT von Hand aendern". Aber ein Werkzeug, das ueberschreibt,
+         muss seinen Verlust benennen. [[ausfall_ist_unsichtbar_gebaut]] */
+      const wegZeilen = jetzt.split(String.fromCharCode(10))
+        .filter(z => z.trim() && !soll.includes(z));
+      if (wegZeilen.length){
+        console.log('      ⚠️ ' + wegZeilen.length + ' Zeile(n) standen im erzeugten Bereich und sind WEG:');
+        wegZeilen.slice(0, 6).forEach(z => console.log('         ' + z.trim().slice(0, 88)));
+        if (wegZeilen.length > 6) console.log('         … ' + (wegZeilen.length - 6) + ' weitere');
+        console.log('      ⭐ Sollten sie bleiben, gehoeren sie VOR den Marker.');
+      }
     } else if (jetzt !== soll){
       sag(false, 'Die Kurzliste im Wartungs-Prompt ist nicht die aus der Quelle erzeugte.');
       console.log('        → node werkzeuge/pruefe-volles-programm.mjs --angleichen');
