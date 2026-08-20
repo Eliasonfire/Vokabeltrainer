@@ -798,14 +798,33 @@ const gruppenTitel = g => (KEINE_FRAGE.has(g) ? '[kein Mangel] ' : '') + g;
 const nachGruppe = {};
 befunde.forEach(b => (nachGruppe[b.gruppe] = nachGruppe[b.gruppe] || []).push(b));
 
+/* ---------- Belege von aussen, falls jemand sie geholt hat ----------
+   ⭐ Gefuellt von `node werkzeuge/aussenbelege.mjs`. Fehlt die Datei, aendert
+   sich nichts — das Werkzeug misst, und ein Messwerkzeug darf an einer Zugabe
+   nicht scheitern. Es holt auch nichts selbst: es laeuft in Routinen, und ein
+   Netzaufruf mitten in einer Pruefung waere eine Abhaengigkeit, die niemand
+   erwartet.
+   ⛔ Ein Beleg ist keine Antwort. Die Haraka kommt aus der Quelle, samt
+   Fundstelle; ob sie die richtige ist, entscheidet Elias. E.1 bleibt. */
+let TASCHKIL_BELEG = {};
+try {
+  const p = require('path').join(__dirname, 'data', 'aussenbelege.json');
+  TASCHKIL_BELEG = JSON.parse(require('fs').readFileSync(p, 'utf8')).taschkil || {};
+} catch { /* keine da */ }
+const belegFuer = (b) => TASCHKIL_BELEG[b.id + '|' + b.feld + '|' + b.stelle];
+
 Object.entries(nachGruppe)
   .sort((a, b) => b[1].length - a[1].length)
   .forEach(([gruppe, liste]) => {
     console.log(`\n=== ${gruppenTitel(gruppe)}: ${liste.length} ===`);
     const zeigen = ALLE ? liste : liste.slice(0, 12);
-    zeigen.forEach(b => console.log(
+    zeigen.forEach(b => {
+      const bl = belegFuer(b);
+      console.log(
       `  ${b.wort.padEnd(18)} Stelle ${String(b.stelle).padStart(2)} ` +
-      `(${b.zeichen})  ${b.feld}  id ${b.id}`));
+      `(${b.zeichen})  ${b.feld}  id ${b.id}` +
+      (bl ? `\n      ↳ en.wiktionary fuehrt ${bl.form}` : ''));
+    });
     if (!ALLE && liste.length > zeigen.length)
       console.log(`  … ${liste.length - zeigen.length} weitere (--alle zeigt sie)`);
   });
