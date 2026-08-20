@@ -496,6 +496,31 @@ console.log('=== 7. Anker: baut die Eselsbruecke auf etwas, das er SCHON hat? ==
       'مرفوع','منصوب','مجرور','مضاف',
       'اضافة','نعت','حرف','اسم','فعل','جر']);
 
+    /* ⛔ 21.08.2026: BUECHER OHNE ANGABE WURDEN GAR NICHT GEPRUEFT.
+       Fuer bayna-yadayk-1 lagen 27 Eselsbruecken vor, und dieser Abschnitt
+       meldete „Kein Anker aus einem spaeteren Kapitel" — ohne sie
+       anzusehen: `angabe` in lernstand.json nennt nur madina-1.
+       Ein Pruefwerkzeug, das den halben Bestand nicht kennt, kann gar nicht
+       schlecht ausfallen. [[werkzeug_misst_kleineren_bestand]]
+       [[pruefwerkzeug_mit_eingebauter_antwort]]
+
+       Die Grenze 0 ist die konservative Annahme: ohne seine Angabe zaehlt
+       nur das Kapitel des erklaerten Wortes selbst als bekannt. Lieber eine
+       Meldung zu viel als ein Anker, den er nicht aufloesen kann. */
+    for (const d of fs.readdirSync(path.join(WURZEL, 'data'))){
+      const m = /^vokabeln-(.+)\.js$/.exec(d);
+      if (!m || ANGABE[m[1]] !== undefined) continue;
+      const f = {};
+      try { new Function('window', fs.readFileSync(path.join(WURZEL, 'data', d), 'utf8'))(f); }
+      catch (e){ console.log('  ⛔ ' + d + ' nicht lesbar: ' + e.message); fehler++; continue; }
+      const liste = (f.VOKABELN && f.VOKABELN[m[1]]) || [];
+      const wieViele = liste.filter(w => BUCH_EB[String(w.id)]).length;
+      if (!wieViele) continue;
+      ANGABE[m[1]] = 0;
+      console.log('  ⭐ ' + m[1] + ': keine Angabe von Elias, aber ' + wieViele
+        + ' Eselsbruecke(n) vorhanden — mit Grenze 0 geprueft.');
+    }
+
     let echt = 0, spaeter = 0, geprueftHier = 0;
     const jeWort = {};
 
@@ -527,7 +552,13 @@ console.log('=== 7. Anker: baut die Eselsbruecke auf etwas, das er SCHON hat? ==
         if (Number(w.chapter) === letztesKapitel && (w.wordType || w.type) === 'particle') return;
         merke(w.ar, w.chapter);
       });
-      VOCAB_DATA.forEach(w => merke(w.ar, w.chapter));
+      /* ⛔ 21.08.2026: die Kapitelzahl aus vocab-data.js ist eine
+         madina-1-Zahl. Gegen die Kapitel eines ANDEREN Buches gehalten,
+         vergleicht sie zwei verschiedene Skalen — وَاحِدٌ steht dort unter
+         Kapitel 24 und haette in bayna-yadayk-1 Kapitel 1 als „spaeter"
+         gegolten, obwohl es laengst in seinem Lernbestand liegt.
+         Bei einem fremden Buch zaehlen sie deshalb als immer bekannt. */
+      VOCAB_DATA.forEach(w => merke(w.ar, slug === 'madina-1' ? w.chapter : 0));
 
       const eigen = new Map(VOCAB_DATA.map(w => [String(w.id), w]));
       liste.forEach(w => {

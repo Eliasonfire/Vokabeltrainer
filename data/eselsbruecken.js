@@ -416,5 +416,58 @@ const BUCH_ESELSBRUECKEN = {
 
   "p_1787189488747": "فِي + هُ, und die Regel für den Vokalwechsel hast du aus Folge 16: nach einem Kasra wird das هُ zu هِ. فِي endet auf Kasra — also فِيهِ, nicht fīhu. Dein Lehrer sagt dazu: „auf ein Kasra folgt nur schwer eine Ḍamma.\"",
 
-  "p_1787190874749": "Du sprichst es in al-Mulk: قُلْ إِنَّمَا الْعِلْمُ عِنْدَ اللَّهِ — „Sag: Nur Allah weiß darüber Bescheid\", wörtlich „das Wissen ist BEI Allah\" (67:26). Dasselbe عِنْدَ, dieselbe Bedeutung."
+  "p_1787190874749": "Du sprichst es in al-Mulk: قُلْ إِنَّمَا الْعِلْمُ عِنْدَ اللَّهِ — „Sag: Nur Allah weiß darüber Bescheid\", wörtlich „das Wissen ist BEI Allah\" (67:26). Dasselbe عِنْدَ, dieselbe Bedeutung.",
+
+  "45972": "Form I, Fatḥa auf allen drei Radikalen: نَظَرَ. ⛔ Nicht mit نَظِيفٌ (sauber) verwechseln — das ist ن ظ ف mit فـ am Ende, نَظَرَ hat ein رـ. Es verlangt إِلَى: نَظَرَ إِلَى الْكِتَابِ, „er schaute auf das Buch\".",
+
+  "45973": "Dieselbe Wurzel wie سَمِعَ (hören) im selben Kapitel, nur mit اِسْتَـ davor — die zehnte Form. Und die trägt hier die Absicht: سَمِعَ passiert dir, اِسْتَمَعَ tust du. Hören gegen Zuhören.",
+
+  "45974": "Vierte Form von عَادَ (zurückkehren): etwas zurückkehren LASSEN, also wiederholen. ⭐ Merk أَعَادَ, أَشَارَ und أَجَابَ als Trio — alle drei in diesem Kapitel, alle vierte Form, alle mit langem ā statt des schwachen Radikals.",
+
+  "45975": "Vierte Form, Wurzel ش و ر — das و steckt im langen ā. Gezeigt wird MIT etwas, deshalb folgt بِـ: أَشَارَ بِيَدِهِ, „er zeigte mit seiner Hand\". ⭐ Gleiche Bauart wie أَعَادَ und أَجَابَ nebenan.",
+
+  "45976": "Ein Verb mit وـ als erstem Radikal — und die verschwinden im Präsens: يَضَعُ, nicht yawḍaʿu. ⭐ Dieselbe Gruppe wie وَقَفَ, das du in وَاقِفٌ (stehend) längst hast.",
+
+  "45977": "Kasra im mittleren Radikal: سَمِعَ. Das Muster فَعِلَ steht oft für Wahrnehmen. ⭐ Aus derselben Wurzel: اِسْتَمَعَ (zuhören) in diesem Kapitel — und السَّمِيعُ, „der Allhörende\", einer der Namen Allahs.",
+
+  "45978": "Zweite Form: der mittlere Radikal trägt eine Šadda (رتّـ). Diese Form macht aus einem Zustand ein Tun — hier: etwas in eine رُتْبَة, eine Reihe, bringen. ⭐ Gleiche Bauart wie مُدَرِّسٌ (Lehrer), das du hast.",
+
+  "45979": "Sechste Form تَفَاعَلَ — und die ist immer GEGENSEITIG. Zwei tauschen, jeder gibt und jeder bekommt. ⭐ تَـ am Anfang plus Alif in der Mitte: an diesem Bild erkennst du die Gegenseitigkeit bei jedem Wort wieder.",
+
+  "45980": "Direkt daneben steht sein Nomen: جَوَابٌ (Antwort) — dieselbe Wurzel ج و ب, dasselbe Kapitel. Merk sie als Paar: أَجَابَ ist das Tun, جَوَابٌ das Ergebnis.",
+
+  "45981": "Die Wurzel, aus der قُرْآن kommt — das Gelesene, das Rezitierte. Du sprichst ihre Befehlsform auswendig: ٱقْرَأْ بِٱسْمِ رَبِّكَ ٱلَّذِي خَلَقَ, „Lies im Namen deines Herrn, Der erschaffen hat\" (96:1, al-ʿAlaq).",
+
+  "45982": "Zwei gleiche Radikale am Ende, deshalb die Šadda: مَرَّ statt marara. ⭐ Dieselbe Bauart wie حَارٌّ (heiß) und قِطٌّ (Katze), die du hast. Es verlangt بِـ: مَرَّ بِالْبَيْتِ — er ging am Haus vorbei.",
+
+  "45983": "Davon kommt نُسْخَةٌ, die Kopie. Ursprünglich hieß نَسَخَ „abschreiben\" — was ein Schreiber von Hand tat, lange bevor es Geräte gab. ⭐ Verb und Nomen sind dieselbe Wurzel: wer eines hat, hat beide.",
+
+  "45984": "Das hast du schon aus madina-1 Kapitel 6. ⛔ Hier nur die Erinnerung an das Besondere: أَخٌ gehört zu den fünf Nomen — mit einem Anhang wird die Endung ein BUCHSTABE: أَخُوكَ, أَخَاكَ, أَخِيكَ.",
+
+  "45985": "Muster فَعِيلٌ — dieselbe Form wie جَمِيلٌ (schön), قَصِيرٌ (kurz) und طَوِيلٌ (groß), die du alle hast. ⭐ Die Wurzel ص د ق ist die der Wahrhaftigkeit: ein صَدِيق ist der, der dir gegenüber ehrlich ist.",
+
+  "45986": "Auch schon aus madina-1 Kapitel 6. ⛔ Und anders als أَخٌ gehört أُخْتٌ NICHT zu den fünf Nomen — sie nimmt ganz gewöhnliche Endungen: أُخْتُكَ, أُخْتَكَ, أُخْتِكَ.",
+
+  "45987": "Wurzel ص و ر — dieselbe wie in الْمُصَوِّرُ, „der Gestalter\", einem der Namen Allahs. Eine صُورَة ist eine festgehaltene Gestalt. Plural صُوَرٌ.",
+
+  "45988": "Das Nomen zu أَجَابَ (antworten) aus demselben Kapitel. ⭐ Das Muster فَعَالٌ trägt oft das Ergebnis einer Handlung — genau wie كِتَابٌ zu كَتَبَ, das du kennst.",
+
+  "45989": "Dieselbe Wurzel wie جَمِيلٌ (schön) und جَمَلٌ (Kamel), die du hast: ج م ل heißt im Kern „zusammenfassen\". Eine جُمْلَة fasst Wörter zu einer Aussage zusammen. ⭐ Drei Wörter, eine Wurzel.",
+
+  "45990": "Von وَاحِدٌ (eins), das du schon hast — eine وَحْدَة ist eine Einheit, ein in sich geschlossenes Stück. In diesem Buch heißt so ein Stück Kapitel.",
+
+  "45991": "جِنْسٌ ist die Art, die Gattung; die Endung ـِيَّة macht daraus die Zugehörigkeit. ⭐ Dieselbe Endung wie in عَرَبِيَّةٌ (Arabisch) und إِنْجِلِيزِيَّةٌ (Englisch), die du beide hast.",
+
+  "45992": "Steht schon in deinem Wortschatz. ⭐ Das مُـ am Anfang plus Kasra vor dem letzten Radikal ist das Muster für den Handelnden — wie مُدَرِّسٌ (Lehrer) und مُدِيرٌ (Direktor), die du hast.",
+
+  "45993": "Muster تَفْعِيلٌ: تـ vorn, langes ī vor dem letzten Radikal. So bildet die zweite Form — die mit Šadda, wie in مُدَرِّسٌ (Lehrer) — immer ihr Nomen. ⭐ Ein تَدْرِيب ist das Üben selbst, nicht das Geübte.",
+  "45994": "Zwei gleiche Radikale (ع د د), hier aber ausgeschrieben statt verschmolzen. ⭐ Der Unterschied zu رَقْمٌ nebenan: عَدَدٌ ist die Menge („drei Bücher\"), رَقْمٌ das Zeichen, das man schreibt („die 3\").",
+
+  "45995": "مِثْلَ heißt „wie, gleich\" — ein مِثَالٌ ist das, was einer Sache gleicht und sie damit zeigt. Plural أَمْثِلَةٌ.",
+
+  "45996": "Das geschriebene Zeichen. ⭐ Der Unterschied zu عَدَدٌ aus demselben Kapitel: رَقْمٌ ist die Ziffer auf dem Papier, عَدَدٌ die Menge dahinter. Deine Hausnummer ist ein رَقْم.",
+
+  "45997": "Wurzel ع ل م — dieselbe wie in الْعِلْمُ, das du aus al-Mulk sprichst: قُلْ إِنَّمَا الْعِلْمُ عِنْدَ اللَّهِ (67:26). Eine عَلَامَة ist ein Zeichen, an dem man etwas ERKENNT.",
+
+  "45998": "Hamza als mittlerer Radikal: سَأَلَ. Gefragt wird NACH etwas, also mit عَنْ: سَأَلَ عَنِ الْكِتَابِ. ⭐ Und سُؤَالٌ (Frage) ist dieselbe Wurzel — nur das Nomen dazu."
 };
