@@ -60,7 +60,12 @@ const JARR_MIT_PRONOMEN = [
 const istJarrMitPronomen = w => istInListe(w, JARR_MIT_PRONOMEN);
 /* Ortsangaben. Der Lehrer nennt sie ظَرْف und sagt ausdruecklich, sie
    funktionierten "wie ein مُضَاف" - das folgende Wort steht im Genitiv. */
-const ZURUF = ['تحت', 'أمام', 'امام', 'خلف', 'فوق', 'عند', 'بين', 'وراء'];
+/* ⚠️ مع am 20.08.2026 dazu. Es stand hier nicht, obwohl es genau dasselbe tut
+   wie تحت: Zeit-/Ortsangabe, und das Wort danach wird مَجْرور. Aufgefallen
+   beim Bauen der Funktionsanzeige — مَعَ bekam nur „Partikel“, während تَحْتَ
+   beide Angaben bekam. Die Markierung zuruf-makan-01 an seinem Beispielsatz
+   sagt dasselbe. */
+const ZURUF = ['تحت', 'أمام', 'امام', 'خلف', 'فوق', 'عند', 'بين', 'وراء', 'مع'];
 /* Rufpartikel. Sie war bis zum 18.08.2026 unbekannt, und ein unbekanntes Wort
    bekommt in dieser Zerlegung die naechste freie Nomen-Rolle — in
    «أَيْنَ أَبُوكَ يَا خَالِدُ؟» wurde يَا damit zum خَبَر ueber den Vater.
@@ -384,6 +389,88 @@ const NICHT_VERB = ['صفر', 'عمي', 'جر', 'ل', 'فوق',
    ⚠️ istInListe() prueft beide Formen — mit und ohne fuehrendes و/ف —, deshalb
    genuegt der Eintrag mit و. Die weibliche Form braucht einen eigenen: die
    Liste vergleicht ganze Woerter, nicht Wortstaemme. */
+/* ---------- Welche FUNKTION hat dieses Wort? (20.08.2026) ----------
+
+   Elias: „ich würde auch gerne bei den infokarten, dass ihre funktion auch
+   gezeigt wird also wie zb bei inda (bei) soll angezeigt werden das es orts-
+   und zeitangabe ist aber auch das es ein genitivpräposition ist. so sollen
+   alle infokarten ihre jeweilge funktion auch bekommen. natürlich können bei
+   einigen auch mehr stehen, das ist dann auch okay“
+
+   ⭐ Die Angaben kommen AUS DEN LISTEN, die dieser Datei ohnehin zugrunde
+   liegen — nicht aus einer neuen Tabelle, die irgendwann auseinanderläuft.
+   Was der Iʿrāb-Erklärer benutzt, um einen Satz zu zerlegen, ist genau das,
+   was auf der Karte stehen soll.
+
+   ⛔ ZU عِنْدَ, SEINEM BEISPIEL, EINE KLARSTELLUNG. Er nennt es eine
+   „Genitivpräposition“ — sein Lehrer sagt ausdrücklich das Gegenteil, und das
+   steht in data/fachbegriffe.js bei gram-zarf: „تَحْتَ selbst ist KEIN
+   حَرْف جَرّ — es wirkt nur so.“ عِنْدَ ist ein ظَرْف.
+   Deshalb steht auf der Karte beides, aber richtig benannt: die Wortart als
+   ظَرْف und die WIRKUNG als eigene Zeile — „das Wort danach steht im
+   Genitiv“. Damit bekommt er, was er sehen will, ohne dass die App seinem
+   Lehrer widerspricht.
+
+   ⚠️ Was hier NICHT steht, wird auch nicht behauptet. Ein Nomen ohne
+   Besonderheit bekommt genau eine Zeile: „Nomen“. */
+const FRAGEWOERTER = ['ما','من','أين','اين','متى','كيف','هل','لماذا','ماذا','كم','أي','اي','لمن'];
+const HINWEISWOERTER = ['هذا','هذه','ذلك','تلك','هؤلاء','أولئك','اولئك'];
+const PERSONALPRONOMEN = ['أنا','انا','نحن','أنت','انت','أنتِ','هو','هي','هم','هن','أنتم','انتم'];
+
+function funktionenVon(w){
+  if (!w || !w.ar) return [];
+  const aus = [];
+  const nenn = t => { if (aus.indexOf(t) < 0) aus.push(t); };
+  const wort = String(w.ar).trim();
+  const drin = liste => { try { return istInListe(wort, liste); } catch(e){ return false; } };
+
+  /* ⛔ مِنْ UND مَنْ SEHEN OHNE ḤARĀKĀT GLEICH AUS. istInListe() wirft die
+     Vokalzeichen weg, und dadurch galt مَنْ (wer) als حَرْف جَرّ — auf einer
+     Lernkarte wäre das eine falsche Lehre an genau dem Wort, das man
+     verwechselt. Beim Fragewort ist die Fatḥa das einzige Unterscheidungs-
+     merkmal, also muss sie hier gelesen werden. */
+  const istFragewortMan = /^مَن/.test(wort);   /* مَنْ mit Fatḥa: wer */
+  const istPraepositionMin = /^مِن/.test(wort); /* مِنْ mit Kasra: von */
+
+  /* 1. Die Wortart — sie steht an jedem Datensatz und ist immer da. */
+  const WORTART = { noun:'Nomen', verb:'Verb', adjective:'Adjektiv',
+                    particle:'Partikel', adverb:'Adverb', expression:'Wendung',
+                    grammar:'Fachbegriff', vocab:'Wort' };
+
+  /* 2. Die Sonderrollen. Sie kommen VOR die Wortart, wenn sie genauer sind:
+     „Genitivpräposition“ sagt mehr als „Partikel“. */
+  if (drin(HURUF_JARR) && !istFragewortMan) nenn('حَرْف جَرّ — Genitivpräposition');
+  if (drin(ZURUF))            nenn('ظَرْف — Zeit- oder Ortsangabe');
+  if (drin(HURUF_NIDA))       nenn('حَرْف نِدَاء — Rufpartikel');
+  if (drin(HINWEISWOERTER))   nenn('اِسْم إِشَارَة — Hinweiswort');
+  if (drin(PERSONALPRONOMEN)) nenn('ضَمِير — Personalpronomen');
+  if (drin(FRAGEWOERTER) && !istPraepositionMin) nenn('اِسْم اِسْتِفْهَام — Fragewort');
+
+  /* 3. Die WIRKUNG auf das nächste Wort — genau das, was Elias bei عِنْدَ
+     sehen will. Präposition und Ortsangabe tun dasselbe, heissen aber
+     verschieden; die Wirkung ist eine eigene Zeile. */
+  if ((drin(HURUF_JARR) && !istFragewortMan) || drin(ZURUF)) nenn('Das Wort danach steht im Genitiv');
+
+  /* 4. Unveränderlich (مَبْنِيّ): keine Endung nach der Satzrolle. */
+  if (drin(INDEKLINABEL)) nenn('مَبْنِيّ — die Endung ändert sich nie');
+
+  /* 5. مَمْنُوع مِنَ الصَّرْف: unbestimmt und trotzdem ohne Tanwin.
+     ⚠️ Gemessen statt gelistet — die Farben, die Städtenamen und غَضْبَانُ
+     fallen alle darunter, und eine Liste davon wäre nie vollständig. */
+  const ohneAl = !/^(اَ?ل|ال)/.test(wort);
+  const endetAufDamma = /ُ\s*$/.test(wort);
+  const hatTanwin = /[ًٌٍ]/.test(wort);
+  if (ohneAl && endetAufDamma && !hatTanwin && !drin(INDEKLINABEL)
+      && (w.type === 'noun' || w.type === 'adjective'))
+    nenn('مَمْنُوع مِنَ الصَّرْف — nie Tanwin, nie Kasra');
+
+  /* 6. Zum Schluss die Wortart, falls noch nichts Genaueres dasteht. */
+  const art = WORTART[w.type];
+  if (art && !aus.length) nenn(art);
+  else if (art && (w.type === 'noun' || w.type === 'verb' || w.type === 'adjective')) nenn(art);
+
+  return aus;
+}
 const ADJEKTIVE = ['حار', 'كسلان', 'مجرور', 'واسع', 'واسعة', 'الواسع', 'الواسعة'];
 const istVerb = w => !istInListe(w, NICHT_VERB) && istInListe(w, VERBEN);
 const giltAlsVerb = w => !istInListe(w, NICHT_VERB) && (wortart(w) === 'verb' || istInListe(w, VERBEN));
