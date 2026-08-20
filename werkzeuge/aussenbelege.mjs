@@ -269,7 +269,22 @@ function eintraege(teil){
                     Entfernen bleibt ein nacktes ":". Lieber gar keine Glosse
                     als eine, die nichts sagt. */
                  .filter(g => g && g.replace(/[^\p{L}]/gu, '').length >= 2);
-    raus.push({ art: k[1], form: f ? f[1].trim() : '', gloss: gl[0] || '' });
+    /* ⭐ Der Plural steht als benannter Parameter in derselben Vorlage:
+         {{ar-noun|مَاء|m|pl=مِيَاه}}
+       ⛔ Wiktionary schreibt REGELMAESSIGE Formen als Platzhalter „+" oder
+       „+f". Gemessen an den offenen Faellen: سُكَّر liefert „pl=+f", كَعْبَة
+       liefert „كَعَبَات, +, كِعَاب". Auf einer Lernkarte stuende dort dann
+       „Plural: +f" — eine Angabe, die falsch ist und sich nie meldet.
+       Deshalb: alles verwerfen, was kein arabisches Zeichen traegt.
+       [[bild_ohne_fehlermeldung_falsch]] */
+    const kopf = /\{\{ar-(?:noun|adj)[^}]*\}\}/.exec(s);
+    const pl = [];
+    if (kopf) for (const p of kopf[0].matchAll(/\bpl\d?\s*=\s*([^|}]+)/g))
+      for (const einzeln of p[1].split(',')){
+        const t = einzeln.replace(/<[^>]*>/g, '').trim();
+        if (t && /[\u0600-\u06FF]/.test(t) && !pl.includes(t)) pl.push(t);
+      }
+    raus.push({ art: k[1], form: f ? f[1].trim() : '', gloss: gl[0] || '', pl });
   }
   return raus;
 }
@@ -361,6 +376,16 @@ for (let i = 0; i < liste.length; i += 40){
         eintrag.pl = '__eigenname__';
     }
 
+    /* ⭐ Ist das Wort kein reiner Eigenname, kann Wiktionary trotzdem einen
+       Plural nennen — مَاء fuehrt مِيَاه. Das ist ein BELEG, keine Antwort:
+       ob مَاءٌ im Unterricht einen Plural hat, entscheidet Elias' Lehrer.
+       ⛔ Erst hier gesetzt, also NACH der Formpruefung — ohne sie belegte
+       ein Homograph den falschen Plural. */
+    if (w.fehlt.includes('pl') && !eintrag.pl){
+      const p = [...new Set(passend.flatMap(x => x.pl || []))];
+      if (p.length) eintrag.pl = p.join(' / ');
+    }
+
     if (w.fehlt.includes('root') && e.wurzeln.length)
       eintrag.root = e.wurzeln.length === 1 ? e.wurzeln[0] : e.wurzeln.join(' / ');
     if (w.fehlt.includes('type'))
@@ -375,7 +400,8 @@ for (let i = 0; i < liste.length; i += 40){
     eintrag.url   = 'https://en.wiktionary.org/wiki/' + encodeURIComponent(skelett(w.ar)) + '#Arabic';
     belege[w.id]  = eintrag;
     bericht.bestaetigt.push(w.ar + ' (' + w.de + ') -> '
-      + [eintrag.pl === '__eigenname__' ? 'Eigenname, kein Plural' : null,
+      + [eintrag.pl === '__eigenname__' ? 'Eigenname, kein Plural'
+           : eintrag.pl ? 'Plural ' + eintrag.pl : null,
          eintrag.root ? 'Wurzel ' + eintrag.root : null,
          eintrag.type ? 'Wortart ' + eintrag.type : null].filter(Boolean).join(' · '));
   }
