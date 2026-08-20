@@ -181,7 +181,7 @@ function abschnitt(f, nr){
          ⚠️ Der Außenbeleg nennt deshalb die dort geführte FORM mit — nur weil
          sie mit seiner Karte übereinstimmt, gilt der Beleg überhaupt. */
       ? (w.beleg.aussen
-          ? `<div class="beleg aussen"><b dir="${/[؀-ۿ]/.test(w.beleg.wert) ? 'rtl' : 'ltr'}">${esc(w.beleg.wert)}</b> — ${esc(w.beleg.woher)} ${w.beleg.grund ? esc(w.beleg.grund) + ' (' + esc(w.beleg.form || w.ar) + ')' : 'führt ' + esc(w.beleg.form || w.ar)}${w.beleg.de ? ', „' + esc(w.beleg.de) + '"' : ''}${w.beleg.url ? ' <a href="' + esc(w.beleg.url) + '" target="_blank" rel="noopener">nachsehen</a>' : ''}</div>`
+          ? `<div class="beleg aussen"><b dir="${/[؀-ۿ]/.test(w.beleg.wert) ? 'rtl' : 'ltr'}">${esc(w.beleg.wert)}</b> — ${esc(w.beleg.woher)} ${w.beleg.grund ? esc(w.beleg.grund) + ' (' + esc(w.beleg.form || w.ar) + ')' : 'führt ' + esc(w.beleg.form || w.ar)}${w.beleg.de ? ', „' + esc(w.beleg.de) + '"' : ''}${w.beleg.knopf ? ' — antippen: <b class="knopf-tipp">' + esc(w.beleg.knopf) + '</b>' : ''}${w.beleg.url ? ' <a href="' + esc(w.beleg.url) + '" target="_blank" rel="noopener">nachsehen</a>' : ''}</div>`
           : `<div class="beleg">Im Bestand steht dasselbe Wort schon mit <b>${esc(w.beleg.wert)}</b> — <i>${esc(w.beleg.woher)}</i>${w.beleg.de ? ', „' + esc(w.beleg.de) + '"' : ''}</div>`)
       : '';
 
@@ -297,6 +297,10 @@ h2{display:flex;align-items:baseline;gap:var(--sp2);flex-wrap:wrap;
 .beleg.aussen b{unicode-bidi:isolate;font-family:inherit;
                 font-size:.9rem;color:var(--text)}
 .beleg.aussen a{color:var(--still);text-decoration:underline}
+/* Der Knopfname, den Elias antippen soll — bewusst in der Schrift der
+   Knoepfe selbst, damit die Verbindung ohne Erklaerung sichtbar ist. */
+.knopf-tipp{font-family:var(--mono);font-size:.82rem;color:var(--text);
+            background:var(--rand);padding:1px 6px;border-radius:5px}
 .beleg.aussen a:hover,.beleg.aussen a:focus-visible{color:var(--text)}
 .wahl{display:flex;gap:var(--sp1);flex-wrap:wrap;align-items:center}
 .wahl button{font:inherit;font-size:.85rem;color:var(--text);background:var(--hoch);

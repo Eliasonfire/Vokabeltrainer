@@ -1344,6 +1344,13 @@ if (ARG.includes('--offene-fragen')){
       aussen: true,
       grund:  eigenname ? 'führt es ausschließlich als Eigennamen' : '',
       form:   b.form || '',
+      /* ⭐ Bei `type` heißt der Wiktionary-Name nicht wie der Knopf auf der
+         Fragenseite. صِفْر steht dort als „Adjective / Numeral" — „Numeral"
+         gibt es unter den sechs Knöpfen nicht, und Elias säße vor einem
+         Beleg, zu dem nichts passt. `typeApp` nennt daneben, was anzutippen
+         ist. Beides zusammen, nicht eines statt des anderen: die Quelle sagt
+         das eine, die App braucht das andere. */
+      knopf:  (feld === 'type' && b.typeApp) ? b.typeApp : '',
       url:    b.url  || ''
     };
   }

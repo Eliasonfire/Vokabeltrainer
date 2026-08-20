@@ -388,8 +388,35 @@ for (let i = 0; i < liste.length; i += 40){
 
     if (w.fehlt.includes('root') && e.wurzeln.length)
       eintrag.root = e.wurzeln.length === 1 ? e.wurzeln[0] : e.wurzeln.join(' / ');
-    if (w.fehlt.includes('type'))
-      eintrag.type = [...new Set(passend.map(x => x.art))].join(' / ');
+    if (w.fehlt.includes('type')){
+      /* ⭐ In die Sprache der Fragenseite uebersetzen. Sie hat sechs
+         Knoepfe (noun · verb · adjective · particle · adverb · expression);
+         Wiktionary kennt mehr. Ein Beleg „Wortart Numeral" laesst Elias
+         vor einer Seite sitzen, auf der es diesen Knopf nicht gibt.
+
+         ⛔ Die Zuordnung ist am eigenen Bestand GEMESSEN, nicht geraten:
+         von elf Zahlwoertern in vocab-data.js tragen NEUN type:"noun"
+         (واحد bis عشرة). Dasselbe fuer Praeposition/Konjunktion/Pronomen —
+         die App kennt dafuer nur „particle" (حَرْف), und genau so stehen
+         die 15 particle-Woerter im Bestand da.
+
+         ⚠️ Uebersetzt wird NUR, was die App kennt. Alles andere bleibt im
+         Wiktionary-Wortlaut — lieber ein fremder Begriff als eine falsche
+         Zuordnung. */
+      const ZU_APP = {
+        "noun": "noun", "proper noun": "noun", "numeral": "noun",
+        "verb": "verb", "adjective": "adjective", "adverb": "adverb",
+        "particle": "particle", "preposition": "particle",
+        "conjunction": "particle", "pronoun": "particle",
+        "interjection": "expression"
+      };
+      const arten = [...new Set(passend.map(x => x.art))];
+      const app   = [...new Set(arten.map(a => ZU_APP[a.toLowerCase()]).filter(Boolean))];
+      eintrag.type = arten.join(' / ');
+      /* Der Knopfname kommt DAZU, nicht STATT — Elias soll sehen, was die
+         Quelle sagt UND was er anzutippen hat. */
+      if (app.length) eintrag.typeApp = app.join(' / ');
+    }
     if (!Object.keys(eintrag).length){
       bericht.verworfen.push(w.ar + ' (' + w.de + ') — Form stimmt, aber kein Feld belegbar');
       continue;
