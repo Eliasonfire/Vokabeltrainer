@@ -257,6 +257,13 @@ if (!fs.existsSync(PROMPT)){
         "prueft die Unterrichtstranskripte, aus denen Regeln erst entstehen",
       "pruefe-sprecher.js":
         "prueft die Sprecherspuren der Videos - kein Feld einer Vokabel",
+      /* ⭐ Am 21.08.2026 dazugekommen. Beide pruefen nicht eine VOKABEL,
+         sondern das System drumherum — und die Kette beantwortet genau eine
+         Frage: ist eine Vokabel oder eine Regel vollstaendig? */
+      "werkzeuge/pruefe-artefakt-inhalt.mjs":
+        "prueft, ob eine Artefaktseite gesperrtes Kursmaterial traegt - eine Frage an die Veroeffentlichung",
+      "werkzeuge/pruefe-erreichbarkeit-eichung.mjs":
+        "eicht pruefe-erreichbarkeit.js an drei Faellen - sie prueft den PRUEFER, nicht die Daten",
     };
     const pruefend = gefordert.filter(w =>
       (w.includes("pruefe-") || w === "validate.js" || w === "werkzeuge/vorrat.mjs")
