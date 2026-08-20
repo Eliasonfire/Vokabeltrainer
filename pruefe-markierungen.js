@@ -99,7 +99,20 @@ const PRUEFUNG = {
   'schams-qamar-merkhilfe-01': w => /^ال/.test(blank(w)),
   'al-gesamtheit-01':       w => /^ال/.test(blank(w)),
   'mina-al-01':             w => /من\s*ال/.test(blank(w)),
-  'harf-jarr-fi-ala-01':    w => /^(في|على)(\s|$)/.test(blank(w)),
+  /* ⭐ Drei Faelle, und der dritte ist der Grund fuer die Umstaendlichkeit:
+       في   allein oder mit angehaengtem Pronomen
+       على  mit Alif maqsura nur ALLEIN (ein و davor ist erlaubt)
+       علي  mit Ya nur MIT Pronomen — allein waere es der Name عَلِيّ
+     Ohne die dritte Trennung liesse die Bedingung „Ali" durchgehen.
+
+     ⚠️ Erweitert am 21.08.2026. Die alte Fassung /^(في|على)(\s|$)/ meldete
+     وَفِيهِ im Satz p_1787189488747 als Verstoss — inhaltlich falsch: فِي ist
+     dort der Harf jarr, هِ das angehaengte Pronomen, و die Konjunktion.
+     Beidseitig gemessen, bevor gelockert wurde: 26 → 27 bestehende
+     Markierungen (keine verloren), und 15 Eichfaelle richtig — darunter
+     sechs, die NICHT durchgehen duerfen (علي · فيل · فيلم · عليم · عالي ·
+     فيصل). [[entwurf_zu_grob]] [[pruefwerkzeug_mit_eingebauter_antwort]] */
+  'harf-jarr-fi-ala-01':    w => /^و?(?:في(?:(?:ه|ها|هم|هن|هما|ك|كم|كن|ي|نا)|\s|$)|على(?:\s|$)|علي(?:ه|ها|هم|هن|هما|ك|كم|كن|ي|نا))/.test(blank(w)),
   'harf-jarr-min-ila-01':   w => /^(من|إلى|الى)(\s|$)/.test(blank(w)),
   'harf-jarr-li-01':        w => /^ل/.test(blank(w)),
   'li-al-lil-01':           w => /^لل/.test(blank(w)),
