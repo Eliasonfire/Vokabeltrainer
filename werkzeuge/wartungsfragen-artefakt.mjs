@@ -181,7 +181,7 @@ function abschnitt(f, nr){
          ⚠️ Der Außenbeleg nennt deshalb die dort geführte FORM mit — nur weil
          sie mit seiner Karte übereinstimmt, gilt der Beleg überhaupt. */
       ? (w.beleg.aussen
-          ? `<div class="beleg aussen"><b>${esc(w.beleg.wert)}</b> — ${esc(w.beleg.woher)} führt ${esc(w.beleg.form || w.ar)}${w.beleg.de ? ', „' + esc(w.beleg.de) + '"' : ''}${w.beleg.url ? ' <a href="' + esc(w.beleg.url) + '" target="_blank" rel="noopener">nachsehen</a>' : ''}</div>`
+          ? `<div class="beleg aussen"><b dir="${/[؀-ۿ]/.test(w.beleg.wert) ? 'rtl' : 'ltr'}">${esc(w.beleg.wert)}</b> — ${esc(w.beleg.woher)} ${w.beleg.grund ? esc(w.beleg.grund) + ' (' + esc(w.beleg.form || w.ar) + ')' : 'führt ' + esc(w.beleg.form || w.ar)}${w.beleg.de ? ', „' + esc(w.beleg.de) + '"' : ''}${w.beleg.url ? ' <a href="' + esc(w.beleg.url) + '" target="_blank" rel="noopener">nachsehen</a>' : ''}</div>`
           : `<div class="beleg">Im Bestand steht dasselbe Wort schon mit <b>${esc(w.beleg.wert)}</b> — <i>${esc(w.beleg.woher)}</i>${w.beleg.de ? ', „' + esc(w.beleg.de) + '"' : ''}</div>`)
       : '';
 
@@ -294,7 +294,7 @@ h2{display:flex;align-items:baseline;gap:var(--sp2);flex-wrap:wrap;
    sonst zieht sie das lateinische Drumherum durcheinander.
    [[rtl_richtung_physisch]] */
 .beleg.aussen{border-left-style:dashed;background:transparent;color:var(--leise)}
-.beleg.aussen b{direction:rtl;unicode-bidi:isolate;font-family:inherit;
+.beleg.aussen b{unicode-bidi:isolate;font-family:inherit;
                 font-size:.9rem;color:var(--text)}
 .beleg.aussen a{color:var(--still);text-decoration:underline}
 .beleg.aussen a:hover,.beleg.aussen a:focus-visible{color:var(--text)}

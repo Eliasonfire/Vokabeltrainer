@@ -1332,11 +1332,17 @@ if (ARG.includes('--offene-fragen')){
     if (!AUSSEN) return null;
     const b = AUSSEN[String(w.id)];
     if (!b || !b[feld]) return null;
+    /* ⭐ Bei `pl` ist die Antwort keine Form, sondern ein Nein: Wiktionary
+       fuehrt das Wort ausschliesslich als Eigennamen, und Eigennamen haben
+       keinen Plural. Der Beleg sagt das im Klartext — `__eigenname__` ist die
+       interne Marke und darf nie auf der Seite landen. */
+    const eigenname = b[feld] === '__eigenname__';
     return {
-      wert:   String(b[feld]),
+      wert:   eigenname ? 'kein Plural' : String(b[feld]),
       woher:  'en.wiktionary.org',
       de:     b.gloss || '',
       aussen: true,
+      grund:  eigenname ? 'führt es ausschließlich als Eigennamen' : '',
       form:   b.form || '',
       url:    b.url  || ''
     };

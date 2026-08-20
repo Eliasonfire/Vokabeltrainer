@@ -104,8 +104,26 @@ const skelett = s => (s || '').normalize('NFC').replace(DIAKRITIKA, '').replace(
    dann Alif). Dasselbe Wort. Ohne diese Zeile wird es als Homograph
    verworfen — gemessen: genau EIN zusaetzlicher Treffer, kein falscher. */
 const TANWIN_ALIF = /(?:\u064B\u0627|\u0627\u064B)$/;
+/* ⭐ Der Artikel wird in zwei Schreibungen gefuehrt: Wiktionary setzt das
+   Sukun auf das Lam (الْيَابَان), Elias' Abzug nicht (اليَابَانُ). Dasselbe Wort.
+   ⛔ ENG gefasst: NUR ein Sukun auf dem Lam des Artikels am WORTANFANG. Wer
+   hier alle Sukun ignoriert, hat den Skelettvergleich wieder, den die zweite
+   Bedingung gerade verhindert. Gemessen: 5 zusaetzliche Treffer, kein
+   falscher. [[skelettvergleich_wirft_information_weg]] */
+const ARTIKEL_SUKUN = /^(\u0627\u064E?\u0644)\u0652/;
 const voll    = s => (s || '').normalize('NFC').replace(STEUER, '')
+                       .replace(ARTIKEL_SUKUN, '$1')
                        .replace(TANWIN_ALIF, '').replace(ENDUNG, '').trim();
+
+/* Wiktionary nennt im Kopf oft MEHRERE Schreibvarianten desselben Worts,
+   durch Komma getrennt und teils mit Transkriptionsmarke:
+       سُورِيَا,سُورِيَّا        إِنْجِلْتِرَا<tr:ʔingiltirā>,إِنْجِلْتِرَا
+   ⚠️ Das ist KEINE Lockerung der zweiten Bedingung: die Varianten stehen im
+   selben Eintrag desselben Worts, es sind Schreibungen, keine Homographen.
+   Ein Treffer zaehlt, wenn EINE davon uebereinstimmt. */
+const formen = s => String(s || '').split(',')
+                      .map(x => x.replace(/<[^>]*>/g, '').trim())
+                      .filter(Boolean);
 
 /* ---------- die offenen Fragen von vorrat.mjs holen ---------- */
 /* ⭐ Nicht selbst nachbauen, welche Felder offen sind — die Kette verfolgen.
@@ -146,12 +164,10 @@ for (const q of fragen.fragen) for (const w of q.woerter){
   if (!woerter.has(w.id)) woerter.set(w.id, { ...w, fehlt: [] });
   woerter.get(w.id).fehlt.push(q.feld);
 }
-/* Nur was diese Quelle ueberhaupt beantworten kann. `pl` steht bei Wiktionary
-   zwar oft, ist bei den 25 offenen Faellen aber fast immer ein Eigen- oder
-   Stoffname — dort ist die Antwort "gibt es nicht" und gehoert als Regel nach
-   data/feld-ausnahmen.js, nicht als Beleg hierher.
-   [[allgemeine_regel_statt_listeneintrag]] */
-const KANN = new Set(['root', 'type']);
+/* Was diese Quelle beantworten kann. Bei `pl` wird NICHT der Plural
+   uebernommen — sondern die Frage umgedreht: ist das Wort ueberhaupt eines,
+   das einen Plural haben KANN? Siehe EIGENNAME unten. */
+const KANN = new Set(['root', 'type', 'pl']);
 const liste = [...woerter.values()].filter(w => w.fehlt.some(f => KANN.has(f)));
 
 console.log('Offene Felder gesamt: ' + fragen.fragen.reduce((a, q) => a + q.woerter.length, 0));
@@ -266,7 +282,7 @@ for (let i = 0; i < liste.length; i += 40){
 
     /* ⛔ DIE ZWEITE BEDINGUNG. Ohne sie belegt حالك das Wort "pechschwarz". */
     const meins = voll(w.ar);
-    const passend = e.eintraege.filter(x => x.form && voll(x.form) === meins);
+    const passend = e.eintraege.filter(x => formen(x.form).some(f => voll(f) === meins));
     if (!passend.length){
       bericht.verworfen.push(w.ar + ' (' + w.de + ') — Wiktionary fuehrt: '
         + e.eintraege.map(x => (x.form || '?') + ' [' + x.art + ']').join(', '));
@@ -274,6 +290,37 @@ for (let i = 0; i < liste.length; i += 40){
     }
 
     const eintrag = {};
+
+    /* ⭐⭐ EIGENNAME — die Antwort auf "hat das einen Plural?" ist bei
+       أَلْمَانِيَا, اليَابَانُ, القَاهِرَةُ nicht eine Form, sondern ein Nein.
+       Wiktionary fuehrt "Proper noun" als eigene Wortart; das laesst sich
+       MESSEN, waehrend "das klingt nach einem Land" nur eine Vermutung waere.
+
+       ⛔ Die Bedingung ist AUSSCHLIESSLICH Proper noun, nicht "auch". Der
+       Unterschied ist der ganze Wert der Regel — gemessen an Woertern, deren
+       Plural im Abzug steht, also wo jeder Fehlalarm nachweisbar ist:
+
+         "auch Proper noun"          6 Fehlalarme von 111
+         "ausschliesslich Proper noun"  0 Fehlalarme von 111
+
+       Die Fehltreffer trugen alle eine zweite Wortart: مَسْقَط ist die Stadt
+       Maskat UND "Geburtsort" (Plural مَسَاقِط), حُجَّة ein Name UND "Beweis".
+
+       ⚠️ Diese Verschaerfung stammt aus denselben Daten, an denen sie
+       auffiel — deshalb an einer ZWEITEN, ueberschneidungsfreien Stichprobe
+       nachgeeicht: 0 Fehlalarme von 119. Zusammen 0 von 230.
+       [[pruefwerkzeug_mit_eingebauter_antwort]]
+
+       Deckung bei den offenen Faellen: 13 von 25. Die uebrigen sind
+       Stoffnamen und Abstrakta (مَاءٌ, شَايٌ, قَهْوَةٌ, عَرَبِيَّةٌ) — dort
+       greift die Regel zu Recht nicht, denn ob مَاءٌ einen Plural hat, ist
+       eine Frage an die Sprache und gehoert Elias. */
+    if (w.fehlt.includes('pl')){
+      const arten = [...new Set(e.eintraege.map(x => x.art))];
+      if (arten.length === 1 && /^proper noun$/i.test(arten[0]))
+        eintrag.pl = '__eigenname__';
+    }
+
     if (w.fehlt.includes('root') && e.wurzeln.length)
       eintrag.root = e.wurzeln.length === 1 ? e.wurzeln[0] : e.wurzeln.join(' / ');
     if (w.fehlt.includes('type'))
@@ -282,11 +329,15 @@ for (let i = 0; i < liste.length; i += 40){
       bericht.verworfen.push(w.ar + ' (' + w.de + ') — Form stimmt, aber kein Feld belegbar');
       continue;
     }
-    eintrag.form  = passend[0].form;
+    /* Die Variante zeigen, die WIRKLICH passt — nicht das ganze Rohfeld. */
+    eintrag.form  = formen(passend[0].form).find(f => voll(f) === meins) || passend[0].form;
     eintrag.gloss = passend[0].gloss;
     eintrag.url   = 'https://en.wiktionary.org/wiki/' + encodeURIComponent(skelett(w.ar)) + '#Arabic';
     belege[w.id]  = eintrag;
-    bericht.bestaetigt.push(w.ar + ' (' + w.de + ') -> ' + JSON.stringify(eintrag.root || eintrag.type));
+    bericht.bestaetigt.push(w.ar + ' (' + w.de + ') -> '
+      + [eintrag.pl === '__eigenname__' ? 'Eigenname, kein Plural' : null,
+         eintrag.root ? 'Wurzel ' + eintrag.root : null,
+         eintrag.type ? 'Wortart ' + eintrag.type : null].filter(Boolean).join(' · '));
   }
 }
 
