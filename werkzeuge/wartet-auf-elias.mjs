@@ -300,6 +300,43 @@ function gruppenAus(text){
   });
 }
 
+/* C3) Neun Karten behaupten einen Plural, den es nicht gibt (20.08.2026) */
+{
+  const r = messen(path.join(REPO, "validate.js"));
+  /* ⛔ Regex OHNE Backslash-Escape — siehe C2. [0-9] tut dasselbe wie \d
+     und uebersteht den Weg durch ein schreibendes Skript. */
+  const m = new RegExp("([0-9]+) Zahlwort").exec(r.text);
+  /* Die drei Beispiele stehen in derselben Zeile: „وَاحِدٌ → وَاحِدَةٌ (id 50296)". */
+  const zeile = String(r.text).split(String.fromCharCode(10))
+    .find(x => x.includes("Zahlwort")) || "";
+  const bsp = zeile.split(": ").pop().trim();
+  if (m && Number(m[1]) > 0) posten.push({
+    titel: '„Plural“ steht an einer Zahl, wo keiner ist',
+    zahl: Number(m[1]),
+    einheit: Number(m[1]) === 1 ? "Karte" : "Karten",
+    dazu: "die Zahlwörter eins bis zehn",
+    auswahl: true,
+    aufwand: "eine Antwort für alle neun — nicht neunmal dieselbe Frage",
+    warum: "Deine Karte zu ثَلَاثَةٌ zeigt „Plural: ثَلَاثٌ“. Das ist kein Plural,"
+      + " sondern die Form, die vor einem femininen Gezählten steht"
+      + " (ثَلَاثُ نِسَاءٍ gegen ثَلَاثَةُ رِجَالٍ). Bei وَاحِدٌ steht dort die feminine"
+      + " Form وَاحِدَةٌ. An drei Stellen der App steht wörtlich „Plural“ davor,"
+      + " und mit eingeschalteten Pluralkarten wird daraus eine eigene Karte"
+      + " „drei (Plural)“.",
+    /* ⛔ Ich schlage KEINE Beschriftung vor. Wie dein Lehrer diese Form
+       nennt, weiss er und nicht ich; eine erfundene Bezeichnung stuende als
+       Tatsache auf einer Lernkarte und meldete sich nie.
+       [[sein_ist_nicht_wirken]] */
+    wie: "Drei Wege, du musst nur einen nennen:  (a) die Zeile bei Zahlen"
+      + " weglassen — der Wert bleibt im Datensatz, nur die falsche Beschriftung"
+      + " verschwindet;  (b) sie anders beschriften — dann sag mir, wie dein"
+      + " Lehrer diese Form nennt;  (c) so lassen, wenn ihr es im Unterricht"
+      + " so nutzt. ⛔ Ich habe absichtlich nichts geändert: was dort stehen"
+      + " soll, ist eine Frage an deinen Unterricht, nicht an mich.",
+    zeilen: bsp ? [bsp] : []
+  });
+}
+
 /* D) Gestaltungsentscheidungen — sie warten, ohne dass ein Werkzeug sie misst. */
 /* ⚠️⚠️ DIESE ZWEI POSTEN HABEN AM 20.08. IHRE FRAGE GEWECHSELT, und ein Posten,
    der stillsteht, waehrend sich die Lage bewegt, macht ihm Arbeit vor, die es
