@@ -212,6 +212,64 @@ if (!fs.existsSync(PROMPT)){
   } else {
     sag(true, "Alle " + gefordert.length + " im Prompt aufgerufenen Werkzeuge stehen in allowedTools.");
   }
+
+  /* ⛔⛔ ZWEI LISTEN FUER DIESELBE PRUEFKETTE.
+
+     VOLLES-PROGRAMM.md fuehrt „Die vollstaendige Pruefkette", der
+     Wartungsprompt ruft in Schritt 1c.5 eine Auswahl davon auf. Am
+     20.08.2026 gemessen: pruefe-eigene-vorrang.mjs stand NUR im Prompt —
+     wer die Kette von Hand fuhr, liess ausgerechnet das Werkzeug aus, das
+     prueft, ob alle anderen dieselbe Fassung sehen wie die App.
+
+     Die Regel ist eine Teilmengen-Regel: was der Prompt prueft, muss auch in
+     der Kette stehen. Umgekehrt nicht — die Kette darf mehr enthalten.
+     [[dieselbe_frage_zwei_antworten]] */
+  const ketteVon = quelle.indexOf("# Die vollständige Prüfkette");
+  const ketteBis = quelle.indexOf("# Bericht an ihn", ketteVon + 1);
+  if (ketteVon < 0 || ketteBis < 0){
+    sag(false, "Abschnitt „Die vollständige Prüfkette\" nicht gefunden — UNGEPRUEFT.");
+  } else {
+    const kette = new Set(quelle.slice(ketteVon, ketteBis).split(String.fromCharCode(10))
+      .map(z => z.replace(String.fromCharCode(13), ""))
+      .filter(z => z.startsWith("node "))
+      .map(werkzeugAus).filter(Boolean));
+    /* Nur die PRUEFENDEN aus dem Prompt vergleichen: hole-vokabeln,
+       veroeffentlichen und die Artefaktbauer gehoeren nicht in die Kette.
+
+       ⚠️ Und vier Pruefungen gehoeren ausdruecklich NICHT hinein, obwohl sie
+       „pruefe-" heissen. Die Kette beantwortet EINE Frage: ist eine Vokabel
+       oder eine Regel vollstaendig? Wer sie um alles erweitert, was irgendwo
+       prueft, macht sie unbrauchbar — und ein Waechter, der jedes Mal vier
+       Fehlalarme meldet, wird nach dem dritten Mal ueberlesen.
+       [[kandidatenliste_ist_keine_fehlerliste]]
+
+       ⚠️ EHRLICHE LUECKE: geprueft wird nur die Schnittmenge. Faellt eine
+       Pruefung aus der Kette, die der Prompt gar nicht aufruft, faellt es
+       hier NICHT auf - im Stoertest gemessen an pruefe-taschkil.js, das der
+       Prompt ueber die Kette selbst startet. Angeschlagen hat er dagegen
+       sauber bei pruefe-saetze.js, das in Schritt 1c.5 namentlich steht. */
+    const NICHT_IN_DIE_KETTE = {
+      "werkzeuge/pruefe-volles-programm.mjs":
+        "prueft die LISTE selbst, nicht eine Vokabel - es ist der Waechter ueber die Kette",
+      "../Automation/pruefe-laeufe.mjs":
+        "prueft, ob die Routinen ueberhaupt gelaufen sind - eine Frage an die Automation",
+      "pruefe-transkripte.js":
+        "prueft die Unterrichtstranskripte, aus denen Regeln erst entstehen",
+      "pruefe-sprecher.js":
+        "prueft die Sprecherspuren der Videos - kein Feld einer Vokabel",
+    };
+    const pruefend = gefordert.filter(w =>
+      (w.includes("pruefe-") || w === "validate.js" || w === "werkzeuge/vorrat.mjs")
+      && !(w in NICHT_IN_DIE_KETTE));
+    const fehlt = pruefend.filter(w => !kette.has(w));
+    if (fehlt.length){
+      sag(false, fehlt.length + " Pruefung(en) laufen im Wartungslauf, stehen aber NICHT in der Kette:");
+      fehlt.forEach(w => console.log("        " + w));
+      console.log("        Wer die Kette von Hand faehrt, laesst sie aus.");
+    } else {
+      sag(true, "Alle " + pruefend.length + " Pruefungen des Wartungslaufs stehen auch in der Kette (" + kette.size + " gesamt).");
+    }
+  }
 }
 
 /* ---------- 3. Kennt der Prompt alle Punkte? ---------- */
