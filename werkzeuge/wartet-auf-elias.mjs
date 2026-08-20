@@ -183,6 +183,22 @@ const ARTEFAKTE = [
   ['Eine Stimme fürs Arabische', '15b48598-2cda-4516-81bd-6a7e730dd4cc', 'vier Wege, mit den gemessenen Kosten']
 ];
 
+/* ⭐ Zwei Seiten, die NICHT zu den Entscheidungen gehören, sondern laufend
+   gebraucht werden — und in denen deine Antworten stehen. Sie standen bis zum
+   20.08.2026 in keinem Index; `Artifact action:"list"` kennt neunzehn Seiten,
+   die meisten davon erledigte Entwürfe.
+
+   ⛔ Elias am 18.08.2026 zur Regelprüfung: „jedoch habe ich da schon ein paar
+   antworten gegeben, die sollen nicht verschwinden das ist das aller
+   wichtigste." Die Schlüssel dieser beiden Seiten dürfen sich deshalb NIE
+   ändern. */
+const LAUFEND = [
+  ['Regelauswahl Satzmodus', 'da4af296-67c5-4055-a2e7-35defc375007',
+   'welche der 95 Regeln im Satzmodus bleiben — Schlüssel satzmodus-auswahl-v1'],
+  ['Regelprüfung Madina 1', '1e11a0ef-992b-41ac-9786-1247cc185e83',
+   'deine Beurteilung der Regeln — Schlüssel regelpruefung-v1, deine Antworten liegen darin']
+];
+
 /* ---------- 2. Der Abschnitt aus der To-Do ---------- */
 let ausTodo = [];
 try {
@@ -338,6 +354,10 @@ ${karten}
 
 ${ausTodo.length ? `<h3>Dazu aus der To-Do</h3>
 <ul class="todoliste">${ausTodo.map(z => `<li>${md(z)}</li>`).join('')}</ul>` : ''}
+
+<h3>Laufend gebraucht — deine Antworten liegen darin</h3>
+<ul class="seiten">${LAUFEND.map(([n, id, was]) =>
+  `<li><a href="https://claude.ai/code/artifact/${id}">${esc(n)}</a> <span>${esc(was)}</span></li>`).join('')}</ul>
 
 <h3>Alle Seiten für dich</h3>
 <ul class="seiten">${ARTEFAKTE.map(([n, id, was]) =>
