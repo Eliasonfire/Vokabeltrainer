@@ -170,6 +170,35 @@ for (const q of fragen.fragen) for (const w of q.woerter){
 const KANN = new Set(['root', 'type', 'pl']);
 const liste = [...woerter.values()].filter(w => w.fehlt.some(f => KANN.has(f)));
 
+/* ---------- Dazu die Taschkil-Luecken ----------
+   ⭐ Derselbe Handgriff beantwortet eine zweite Frage: `pruefe-taschkil.js`
+   meldet Stellen, an denen einem Buchstaben die Haraka fehlt, und Wiktionary
+   fuehrt die Woerter voll vokalisiert. Fuer أَيْضاً lag der Beleg sogar schon
+   in dieser Datei — an einer Frage, die niemand gestellt hatte.
+
+   ⛔ Auch hier wird NICHTS eingetragen. Die Haraka kommt aus der Quelle, samt
+   Fundstelle; ob sie die richtige ist, entscheidet Elias. Goal E.1.
+
+   Gemessen am 21.08.: 4 von 11 Luecken belegbar. Die uebrigen sind vier
+   Surennamen (dort liefert schon die API unvollstaendig — siehe unten),
+   مَرْبُوطة und مَقْصورة (keine Wiktionary-Seite) und الإِسْمُ. */
+const taschkilListe = [];
+try {
+  let roh = '';
+  try {
+    roh = execFileSync(process.execPath, [path.join(WURZEL, 'pruefe-taschkil.js')],
+      { cwd: WURZEL, encoding: 'utf8' });
+  } catch (e){ roh = (e.stdout || '') + ''; }   /* Exitcode != 0 ist dort ein Signal */
+  const zl = roh.split(/\r?\n/);
+  const i0 = zl.findIndex(z => /^=== Haraka fehlt:/.test(z));
+  if (i0 >= 0) for (let i = i0 + 1; i < zl.length; i++){
+    if (/^===/.test(zl[i]) || !zl[i].trim()) break;
+    const m = /^\s*(\S+)\s+Stelle\s+(\d+)\s+\((\S)\)\s+(\S+)\s+id\s+(.+?)\s*$/.exec(zl[i]);
+    if (m) taschkilListe.push({ wort: m[1], stelle: +m[2], feld: m[4], id: m[5] });
+  }
+} catch { /* laeuft das Werkzeug nicht, gibt es eben keine Taschkil-Belege */ }
+const taschkilWoerter = [...new Map(taschkilListe.map(t => [t.wort, t])).values()];
+
 console.log('Offene Felder gesamt: ' + fragen.fragen.reduce((a, q) => a + q.woerter.length, 0));
 console.log('Davon root/type an ' + liste.length + ' Woertern — nur die werden abgefragt.');
 
@@ -352,6 +381,67 @@ console.log('');
 console.log('  Verworfen — das waeren die falschen Belege gewesen:');
 for (const s of bericht.verworfen) console.log('    ✘ ' + s);
 
+/* ---------- Taschkil: die Haraka an der gemeldeten Stelle belegen ---------- */
+/* ⛔ `stelle` ist der Index im VOLLEN String — so zaehlt pruefe-taschkil.js
+   (`function luecke(wort, i){ const c = wort[i]; … }`). Wer sie fuer einen
+   Buchstabenindex haelt, vergleicht die falsche Stelle: der erste Anlauf fand
+   so 1 statt 4 Belegen. Uebersetzbar sind beide ueber den KONSONANTEN-Index,
+   der bleibt gleich, egal wie das Wort vokalisiert ist.
+   [[zitat_ueber_die_stelle]] */
+const IST_HARAKA = /[ً-ْٰ]/;
+const konsonantIndex = (wort, stelle) => {
+  let n = -1;
+  for (let i = 0; i <= stelle && i < wort.length; i++) if (!IST_HARAKA.test(wort[i])) n++;
+  return n;
+};
+function harakaAnStelle(kandidat, wort, stelle){
+  if (skelett(wort) !== skelett(kandidat)) return null;
+  const ziel = konsonantIndex(wort, stelle);
+  if (ziel < 0) return null;
+  let n = -1;
+  for (let i = 0; i < kandidat.length; i++){
+    if (IST_HARAKA.test(kandidat[i])) continue;
+    n++;
+    if (n === ziel){
+      const m = /^[ً-ْٰ]+/.exec(kandidat.slice(i + 1));
+      return m ? m[0] : null;
+    }
+  }
+  return null;
+}
+
+const taschkilBelege = {};
+if (taschkilWoerter.length){
+  let erg2 = new Map();
+  try { erg2 = await hole([...new Set(taschkilWoerter.map(t => skelett(t.wort)).filter(Boolean))]); }
+  catch (e){ console.error('  ⚠️ Taschkil-Abfrage fehlgeschlagen: ' + e.message); }
+
+  for (const t of taschkilListe){
+    const kand = [];
+    /* Erst die Form, die oben schon bestaetigt wurde — sie hat die
+       Formpruefung bereits bestanden. */
+    if (belege[t.id] && belege[t.id].form) kand.push(belege[t.id].form);
+    for (const x of (erg2.get(skelett(t.wort)) || { eintraege: [] }).eintraege || [])
+      for (const f of formen(x.form)) kand.push(f);
+
+    for (const k of kand){
+      const h = harakaAnStelle(k, t.wort, t.stelle);
+      if (h){
+        taschkilBelege[t.id + '|' + t.feld + '|' + t.stelle] = {
+          wort: t.wort, stelle: t.stelle, haraka: h, form: k,
+          url: 'https://en.wiktionary.org/wiki/' + encodeURIComponent(skelett(t.wort)) + '#Arabic'
+        };
+        break;
+      }
+    }
+  }
+  console.log('');
+  console.log('  Taschkil-Luecken: ' + Object.keys(taschkilBelege).length
+            + ' von ' + taschkilListe.length + ' belegt.');
+  for (const b of Object.values(taschkilBelege))
+    console.log('    ✔ ' + b.wort + '  Stelle ' + b.stelle + '  ->  ' + b.form);
+}
+
 if (PROBE){ console.log('\n  --probe: nichts geschrieben.'); process.exit(0); }
 
 /* ⛔ Nie direkt auf die Zieldatei schreiben. Bricht der Lauf mitten im
@@ -363,8 +453,13 @@ const inhalt = JSON.stringify({
   hinweis: 'BELEGE, keine Eintraege. Nur Treffer, deren voll vokalisierte Form mit der Karte uebereinstimmt.',
   geprueft: liste.length,
   bestaetigt: bericht.bestaetigt.length,
-  belege
+  belege,
+  /* Schluessel: "<id>|<feld>|<stelle>" — genau die drei Angaben, mit denen
+     pruefe-taschkil.js einen Befund eindeutig macht (Zeile 646 dort). */
+  taschkil: taschkilBelege
 }, null, 1);
 fs.writeFileSync(ZIEL + '.neu', inhalt, 'utf8');
 fs.renameSync(ZIEL + '.neu', ZIEL);
-console.log('\n  Geschrieben: data/aussenbelege.json (' + Object.keys(belege).length + ' Belege)');
+console.log('\n  Geschrieben: data/aussenbelege.json ('
+  + Object.keys(belege).length + ' Feldbelege, '
+  + Object.keys(taschkilBelege).length + ' Taschkil-Belege)');
