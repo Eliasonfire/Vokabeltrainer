@@ -552,7 +552,14 @@ if (iStand >= 0){
     console.log('     (Wirklich schliessen? Dann --auch-schliessen. Das ist SEINE Entscheidung.)');
   }
   if (!aenderungen.length){
-    console.log('  FREIGESCHALTET war schon aktuell (Stand ' + datum + ').');
+    /* ⚠️ Nach dem Zurückmischen kann „keine Änderung" heißen, dass genau EIN
+       Schrumpfen verhindert wurde. Beide Zeilen nebeneinander klängen sonst
+       gegenläufig: erst „Nicht zugemacht", dann „war schon aktuell".
+       [[widerspruch_liegt_in_der_beschriftung]] */
+    console.log(verloren.length
+      ? '  FREIGESCHALTET bleibt, wie es war — die gemessenen Quellen hätten'
+        + ' Kapitel weggenommen (siehe oben), das wurde verhindert.'
+      : '  FREIGESCHALTET war schon aktuell (Stand ' + datum + ').');
     process.exit(0);
   }
   const heute = new Date().toLocaleDateString('de-DE');
