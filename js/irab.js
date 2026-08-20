@@ -77,10 +77,31 @@ const ZURUF = ['تحت', 'أمام', 'امام', 'خلف', 'فوق', 'عند', '
    Was danach kommt, ist der مُنَادَى: Damma OHNE Tanwin (ya-nida-01). */
 const HURUF_NIDA = ['يا'];
 const istHarfNida = w => istInListe(w, HURUF_NIDA);
+/* حُرُوف مُشَبَّهَة بِالْفِعْل — إِنَّ und ihre Schwestern. Sie sind selbst مَبْنِيّ,
+   ihr اِسْم steht im Akkusativ (meist als angehängtes Pronomen) und ihr خَبَر
+   im Nominativ. ⚠️ Erkannt wird der ANFANG des Wortes, weil das Pronomen
+   angehängt ist: لَكِنَّهُ, كَأَنَّهُ, إِنَّهَا. */
+const INNA_SCHWESTERN = ['إن','ان','أن','لكن','كأن','لعل','ليت','لكنما','كأنما'];
+function istSchwesterVonInna(w){
+  const roh = ohneVokale(String(w).replace(/[.،؟!«»:؛]/g, '')).replace(/^[وف]/, '');
+  /* Nur MIT angehängtem Pronomen: das nackte لَكِنْ ist eine schlichte
+     Konjunktion und hat diese Wirkung nicht. */
+  return INNA_SCHWESTERN.some(s => roh.length > s.length && roh.startsWith(s)
+    && /^(ه|ها|هم|هن|ك|كم|ي|نا|هما|كما)$/.test(roh.slice(s.length)));
+}
 /* Woerter, die nie eine Kasusendung tragen. */
 const INDEKLINABEL = ['هذا','هذه','ذلك','تلك','هو','هي','أنا','انا','أنت','انت',
                       'نحن','هم','ما','من','أين','اين','متى','كيف','هل','نعم','لا','بلى',
                       'و','ف','ثم','هناك','هنا','التي','الذي','الذين',
+                      /* ⛔ Die PLURAL-Demonstrativa fehlten bis zum 20.08.2026.
+                         هَؤُلَاءِ أَوْلَادٌ und أُولَئِكَ رِجَالٌ wurden deshalb als
+                         Kasusfehler gemeldet („ist مُبْتَدَأ, das verlangt raf,
+                         geschrieben steht aber Kasra") — dabei tragen sie wie
+                         alle اِسْم إِشَارَة nie eine Kasusendung.
+                         ⚠️ MIT Hamza schreiben: ohneVokale() entfernt nur die
+                         Ḥarakāt, die Hamza bleibt stehen. Ein Eintrag „هولاء"
+                         hätte nie getroffen. [[nomen_wird_zum_verb_gelesen]] */
+                      'هؤلاء','أولئك','اولئك',
                       /* Adverbien: stehen immer auf Fatha und bekommen nie eine
                          Endung nach ihrer Satzrolle. */
                       'الآن','الان','اليوم','غدا','جدا','أيضا','ايضا','معا','دائما','أبدا',
@@ -527,7 +548,39 @@ function erschlosseneWortart(wort){
 }
 const ADJEKTIVE = ['حار', 'كسلان', 'مجرور', 'واسع', 'واسعة', 'الواسع', 'الواسعة'];
 const istVerb = w => !istInListe(w, NICHT_VERB) && istInListe(w, VERBEN);
-const giltAlsVerb = w => !istInListe(w, NICHT_VERB) && (wortart(w) === 'verb' || istInListe(w, VERBEN));
+/* ⛔⛔ DIE VOLL VOKALISIERTE FORM SCHLAEGT ALLES (20.08.2026). شُكْرًا steht als
+   `expression` im Wortschatz — trotzdem galt es als Verb, sobald madina-2
+   geladen war: ueber das Skelett شكر traf es شَكَرَ (danken). Dieselbe Klasse
+   wie هُمْ, نَهْرٌ, فَاعِلٌ vorher, aber diesmal ist die Loesung allgemein statt
+   ein weiterer Listeneintrag: steht das Wort GENAU SO im Lexikon und ist dort
+   kein Verb, dann ist es keines. Die Harakat sind die Information, die der
+   Skelettvergleich wegwirft. [[skelettvergleich_wirft_information_weg]]
+
+   ⚠️ `wortartGenau` fragt NUR die exakte Form ab, nie das Skelett — sonst
+   waere nichts gewonnen. */
+function wortartGenau(w){
+  if (!LEXIKON) return null;
+  const genau = String(w).replace(/[.،؟!«»:؛]/g, '').trim();
+  for (const v of [genau, genau.replace(/^[وف][َُِ]?/, '')])
+    if (LEXIKON.has(v)) return LEXIKON.get(v);
+  return null;
+}
+/* ⛔⛔ EIN VERB TRAEGT NIE TANWIN (20.08.2026). Das ist die allgemeine Fassung
+   dessen, was NICHT_VERB bisher Wort fuer Wort nachtrug: شُكْرًا galt als
+   فِعْل, sobald madina-2 geladen war, weil sein Skelett شكر das Verb شَكَرَ
+   trifft. Tanwin ist ein Kennzeichen des اِسْم — kein Verb hat je eines.
+
+   ⭐ Eine Regel statt eines Listeneintrags: sie greift auch fuer jedes
+   kuenftige مَصْدَر, das mit seinem Verb zusammenfaellt, und die musste bisher
+   jedes einzeln gemeldet und nachgetragen werden.
+   [[nomen_wird_zum_verb_gelesen]] · [[skelettvergleich_wirft_information_weg]] */
+const traegtTanwin = w => /[ًٌٍ]/.test(String(w));
+const giltAlsVerb = w => {
+  if (traegtTanwin(w)) return false;
+  const genau = wortartGenau(w);
+  if (genau && genau !== 'verb') return false;
+  return !istInListe(w, NICHT_VERB) && (wortart(w) === 'verb' || istInListe(w, VERBEN));
+};
 
 /* Warum bei manchen Woertern KEINE Kasusendung zu lesen ist — und das kein
    Mangel ist, sondern die Regel. Zwei Faelle, beide in dieser Datei schon
@@ -618,6 +671,36 @@ function LEXIKON_hat(w){
   return LEXIKON.has(genau) || (LEXIKON_ROH && LEXIKON_ROH.has(skelett(genau)));
 }
 
+/* ---------- Ein مُضَاف إِلَيْه steht im Genitiv — sonst war es keines (20.08.2026) ----------
+
+   بَغْدَادُ مَدِينَةٌ كَبِيرَةٌ wurde als doppelter Kasusfehler gemeldet: بَغْدَادُ
+   endet auf Ḍamma OHNE Tanwīn, und genau daran erkennt die مُضَاف-Regel sonst
+   das Erstglied einer Genitivverbindung. Also galt مَدِينَةٌ als مُضَاف إِلَيْه
+   und hätte im Genitiv stehen müssen. Richtig ist: بَغْدَادُ ist
+   مَمْنُوع مِنَ الصَّرْف, sein blankes Ḍamma ist der Nominativ.
+
+   ⭐ Entschieden wird am FOLGENDEN Wort, und zwar rein an der Form: ein
+   مُضَاف إِلَيْه trägt Genitiv. Steht dort ein Tanwīn im Nominativ oder
+   Akkusativ, ist eine Iḍāfa ausgeschlossen — كِتَابُ وَلَدٍ hat Tanwīn Kasra
+   und bleibt eine, بَغْدَادُ مَدِينَةٌ hat Tanwīn Ḍamma und ist keine.
+
+   ⛔ BEWUSST OHNE LEXIKON. Mein erster Entwurf las im Wortschatz nach, ob die
+   Grundform schon ohne Tanwīn steht. Das funktionierte — aber nur, solange das
+   Buch geladen war: der Lexikon-Vergleich in pruefe-saetze.js zeigte für
+   dieselben vier Sätze „mit Buch: مُبْتَدَأ | ohne: مُبْتَدَأ (مُضَاف)". Eine
+   Analyse, die von seiner Buchauswahl abhängt, ist keine.
+   [[app_auswahl_entscheidet]] · [[dieselbe_frage_zwei_antworten]]
+
+   ⛔ Auch keine Liste der Ortsnamen: die wäre nie vollständig — die Farben,
+   غَضْبَانُ, die Elative und alle Eigennamen fallen darunter. */
+function schliesstIdafaAus(naechstes){
+  if (!naechstes) return false;
+  const w = String(naechstes).replace(/[.،؟!«»:؛]/g, '').trim();
+  /* Tanwin Dammatan (ٌ) oder Fathatan (ً) am Wortende = raf oder nasb.
+     Beides kann kein مُضَاف إِلَيْه sein. Tanwin Kasratan (ٍ) darf stehen. */
+  return /[ًٌ]ا?$/.test(w);
+}
+
 function wortart(w){
   if (!LEXIKON) return null;
   const genau = String(w).replace(/[.،؟!«»:؛]/g, '').trim();
@@ -626,7 +709,23 @@ function wortart(w){
     if (LEXIKON.has(v)) return LEXIKON.get(v);
   }
   const roh = skelett(genau);
-  for (const v of [roh, roh.replace(/^[وف]/, ''), roh.replace(/^[وف]?ال/, '')]){
+  /* ⛔ DAS TANWĪN-ALIF GEHOERT NICHT ZUM WORT (20.08.2026). Tanwīn Fatḥa wird
+     als ـًا geschrieben; das Skelett von جَزِيلًا ist deshalb „جزيلا", das der
+     Lexikonform جَزِيلٌ aber „جزيل" — die beiden trafen einander nie. Folge:
+     in شُكْرًا جَزِيلًا galt جَزِيلًا nicht als Adjektiv, fiel aus dem نَعْت-Zweig
+     und wurde als خَبَر mit Nominativ-Erwartung gemeldet.
+     ⚠️ Nur am WORTENDE und nur nach einem Konsonanten abschneiden, sonst
+     verliert دُنْيَا oder فَتَى seinen letzten Buchstaben. */
+  /* ⛔⛔ NUR bei tatsächlich vorhandenem Tanwīn Fatḥa im ORIGINAL. Mein erster
+     Entwurf schnitt jedes End-Alif nach einem Konsonanten ab — und erzeugte
+     damit sofort drei Fehltreffer, die der Lexikon-Vergleich aufdeckte:
+     شُكْرًا wurde zu شكر und traf das Verb شَكَرَ aus madina-2, جِدًّا wurde zu
+     جد und traf جَدَّ, أَنَا wurde zu ان. Alle drei galten damit als فِعْل,
+     und die ganze Satzzerlegung kippte — aber nur, wenn madina-2 geladen war.
+     [[skelettvergleich_wirft_information_weg]] */
+  const ohneTanwinAlif = /ًا?$/.test(genau) && /ا$/.test(roh)
+    ? roh.slice(0, -1) : roh;
+  for (const v of [roh, ohneTanwinAlif, roh.replace(/^[وف]/, ''), roh.replace(/^[وف]?ال/, '')]){
     const t = LEXIKON_ROH && LEXIKON_ROH.get(v);
     if (t && t.typ !== 'mehrdeutig') return t.typ;
     if (t) return null;
@@ -648,6 +747,11 @@ function analysiereSatz(satz){
   let vorherMudaf = false;     // das Wort davor war ein مُضَاف
   let ersteRolleVergeben = false;
   let nachNida = false;   /* steht das naechste Wort hinter يا? */
+  /* Der Index des مَفْعُول مُطْلَق — sein نَعْت steht UNMITTELBAR
+     dahinter (شُكْرًا جَزِيلًا).
+     ⛔ Als Index und nicht als Flag: ein Flag ueberlebte das يَا in
+     شُكْرًا يَا مُدَرِّسُ, und der مُنَادَى wurde zum نَعْت erklaert. */
+  let mafulIndex = -2;
   let nachVerb = false;   /* steht das naechste Wort hinter einem Verb? */
   /* ⛔ Am 19.08.2026 ergaenzt. Bis dahin kannte die Zerlegung im Verbalsatz nur
      فِعْل und فَاعِل — jedes weitere Nomen fiel in den Schlusszweig und wurde
@@ -680,6 +784,21 @@ function analysiereSatz(satz){
       if (satzende){ ersteRolleVergeben = false; letzterKasus = null; }
       return;
     } else if (istHarfJarr(wort)){
+      /* ⛔ EIN ZITIERTES WORT (20.08.2026). Steht schon eine jarr-Erwartung
+         offen und das nächste Wort ist selbst eine Präposition, wird sie
+         ZITIERT, nicht gebraucht: الْاِسْمُ بَعْدَ فِي مَجْرُورٌ — „das Nomen nach
+         ‚fī‘". Ein Partikel ist مَبْنِيّ und kann gar nicht im Genitiv stehen.
+
+         ⚠️ Und die Kette bricht hier ab: مَجْرُورٌ ist das خَبَر des Satzes.
+         Vorher wurde sein Ḍammatan als Fehler gemeldet — ausgerechnet in dem
+         Satz, der diese Regel erklärt. */
+      if (vorherJarr){
+        rolle = 'zitiertes Wort (مَبْنِيّ)';
+        vorherJarr = false; vorherMudaf = false;
+        letzterKasus = null; letzteBestimmtheit = null;
+        out.push({ wort, rein, rolle, erwartet:null, gelesen, stimmt:null });
+        return;
+      }
       rolle = 'حَرْف جَرّ';
       vorherJarr = true; vorherMudaf = false;
       out.push({ wort, rein, rolle, erwartet:null, gelesen, stimmt:null });
@@ -699,6 +818,25 @@ function analysiereSatz(satz){
       vorherJarr = false; vorherMudaf = false;
       out.push({ wort, rein, rolle, erwartet:null, gelesen, stimmt:null });
       return;
+    } else if (istSchwesterVonInna(wort)){
+      /* ⛔ إِنَّ UND IHRE SCHWESTERN mit angehängtem Pronomen (20.08.2026).
+         لَكِنَّهُ جَمِيلٌ und كَأَنَّهُ مُدَرِّسٌ wurden als Kasusfehler gemeldet:
+         das Wort endet auf Fatḥa, galt aber als خَبَر bzw. مُبْتَدَأ und hätte
+         damit Ḍamma tragen müssen.
+
+         Richtig ist: لَكِنَّ, كَأَنَّ, إِنَّ, أَنَّ, لَعَلَّ, لَيْتَ sind حُرُوف مُشَبَّهَة
+         بِالْفِعْل. Sie selbst sind مَبْنِيّ; das angehängte Pronomen ist ihr
+         اِسْم im Akkusativ, und was danach folgt, ist ihr خَبَر — und das ist
+         مَرْفُوع. Genau deshalb steht danach جَمِيلٌ mit Ḍamma. */
+      rolle = 'حَرْف مُشَبَّه بِالْفِعْل (مَبْنِيّ)';
+      /* Das folgende Wort ist das خَبَر und steht im Nominativ. Der übliche
+         خَبَر-Zweig am Ende tut genau das — also nur dafür sorgen, dass es
+         nicht als مُبْتَدَأ gelesen wird. */
+      ersteRolleVergeben = true;
+      vorherJarr = false; vorherMudaf = false;
+      letzterKasus = null; letzteBestimmtheit = null;
+      out.push({ wort, rein, rolle, erwartet:null, gelesen, stimmt:null });
+      return;
     } else if (istIndeklinabel(wort)){
       /* Steht ein Pronomen am Anfang, ist es das Subjekt - dann wird das
          folgende Nomen zur Aussage darueber und nicht selbst zum Subjekt. */
@@ -708,6 +846,19 @@ function analysiereSatz(satz){
         ersteRolleVergeben = true;
       } else {
         rolle = 'unveränderlich';
+      }
+      /* ⛔ أَيُّ IST IMMER مُضَاف (20.08.2026). In أَيُّ كِتَابٍ هَذَا؟ galt كِتَابٍ
+         als مُبْتَدَأ und damit sein Kasra als Fehler. Das Fragewort أَيّ steht
+         aber nie allein: es bildet mit dem folgenden Nomen eine Iḍāfa, und
+         dessen Genitiv ist genau richtig. Die مُضَاف-Erkennung weiter unten
+         greift hier nicht, weil sie Wörter mit „unveränderlich" in der Rolle
+         überspringt — deshalb hier von Hand. */
+      if (/^أَ?يُّ/.test(wort) || /^اي/.test(ohneVokale(rein))){
+        const naechst = woerter[i+1];
+        if (naechst && !satzende && !istHarfJarr(naechst) && !istIndeklinabel(naechst)){
+          rolle += ' (مُضَاف)';
+          vorherMudaf = true;
+        }
       }
       /* Ein Demonstrativpronomen faengt einen neuen Satzteil an: was danach
          kommt, beschreibt nicht mehr das Wort davor. Ohne dieses
@@ -721,6 +872,21 @@ function analysiereSatz(satz){
          قَلَمٌ mit Tanwin-Damma, also im Nominativ. Am 19.08.2026 in der
          laufenden App gemessen. */
       vorherJarr = !zarfMitPronomen(wort); vorherMudaf = false;
+      out.push({ wort, rein, rolle, erwartet:null, gelesen, stimmt:null });
+      return;
+    } else if (vorherJarr && (istHarfJarr(wort) || istZarf(wort))){
+      /* ⛔ EIN حَرْف JARR KANN NICHT SELBST IM GENITIV STEHEN (20.08.2026).
+         In الْاِسْمُ بَعْدَ فِي مَجْرُورٌ steht فِي nach dem ظَرْف بَعْدَ — aber es
+         wird ZITIERT, nicht gebraucht. Ein Partikel ist مَبْنِيّ und trägt nie
+         eine Kasusendung.
+
+         ⚠️ Und weil das Zitat die Kette unterbricht, erlischt die Erwartung
+         auch für das ÜBERNÄCHSTE Wort: مَجْرُورٌ ist das خَبَر des Satzes und
+         steht zu Recht im Nominativ. Vorher wurde sein Ḍammatan als Fehler
+         gemeldet — in einem Satz, der genau diese Regel erklärt. */
+      rolle = 'zitiertes Wort (مَبْنِيّ)';
+      vorherJarr = false;
+      letzterKasus = null; letzteBestimmtheit = null;
       out.push({ wort, rein, rolle, erwartet:null, gelesen, stimmt:null });
       return;
     } else if (vorherJarr){
@@ -747,6 +913,12 @@ function analysiereSatz(satz){
          Am Schriftbild ist das nicht zu entscheiden - also keine
          Kasusaussage statt einer falschen. */
       rolle = 'unklar (لِ + Wort oder eigenes Wort?)';
+    } else if (i === mafulIndex + 1 && letzterKasus && !istBestimmt(wort)){
+      /* شُكْرًا جَزِيلًا — das zweite Wort ist نَعْت zum مَفْعُول مُطْلَق und
+         stimmt mit ihm in Kasus und Unbestimmtheit überein. Ein خَبَر kann es
+         nicht sein: dazu fehlt ein مُبْتَدَأ. */
+      rolle = 'نَعْت (zum مَفْعُول مُطْلَق)';
+      erwartet = letzterKasus;
     } else if ((istInListe(wort, ADJEKTIVE) || wortart(wort) === 'adjective') && letzterKasus
                && istBestimmt(wort) === letzteBestimmtheit){
       /* نَعْت: ein Adjektiv direkt hinter seinem مَنْعُوت stimmt in Kasus,
@@ -793,6 +965,24 @@ function analysiereSatz(satz){
       rolle = 'مُنَادَى';
       erwartet = 'raf';
       nachNida = false;
+    } else if (!ersteRolleVergeben && gelesen && gelesen.kasus === 'nasb' && gelesen.tanwin){
+      /* ⛔ EIN مُبْتَدَأ IST IMMER مَرْفُوع (20.08.2026). Steht das erste Wort mit
+         Tanwīn Fatḥa da, kann es keines sein — es ist ein مَفْعُول مُطْلَق zu
+         einem gedachten Verb. شُكْرًا جَزِيلًا heißt vollständig
+         أَشْكُرُكَ شُكْرًا جَزِيلًا, deshalb der Akkusativ, und جَزِيلًا folgt als
+         نَعْت in Kasus und Unbestimmtheit.
+
+         ⭐ Das ist keine Vermutung über die Bedeutung, sondern eine Umkehrung:
+         die Endung, die dasteht, SCHLIESST das مُبْتَدَأ aus. Vorher meldete
+         die Prüfung hier zwei Fehler in einem Satz, den Elias täglich sagt. */
+      rolle = 'مَفْعُول مُطْلَق (Verb mitgedacht)';
+      erwartet = 'nasb';
+      ersteRolleVergeben = true;
+      /* Was danach folgt, ist sein نَعْت und steht im selben Kasus — nicht ein
+         خَبَر, den es hier gar nicht gibt. Ohne dieses Flag hing die Erkennung
+         am Lexikon (`wortart(جَزِيلًا)==='adjective'`) und fiel mit der
+         Buchauswahl aus. */
+      mafulIndex = i;
     } else if (!ersteRolleVergeben){
       rolle = 'مُبْتَدَأ';
       erwartet = 'raf';
@@ -824,6 +1014,10 @@ function analysiereSatz(satz){
            Nomen, deren Endung ein Buchstabe ist und die `endung()` deshalb
            gar nicht sieht. */
         && ((gelesen && !gelesen.tanwin) || istFuenfNomen(wort))
+        /* ⛔ Trägt das folgende Wort Tanwīn im Nominativ oder Akkusativ, kann
+           es kein مُضَاف إِلَيْه sein — dann war auch das Wort davor kein مُضَاف,
+           sondern ein مَمْنُوع مِنَ الصَّرْف (20.08.2026). */
+        && !schliesstIdafaAus(naechstes)
         && !istBestimmt(wort)){
       /* Ein مُضَاف kann selbst im Genitiv stehen: عَلى مَكْتَبِ الْمُدَرِّسِ.
          Die Bedingung \"nicht im Genitiv\" hat genau diese Verkettung
