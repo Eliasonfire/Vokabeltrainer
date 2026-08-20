@@ -168,7 +168,15 @@ for (const datei of DATEIEN) {
 }
 
 console.log(gemeldet
-  ? `\n${gemeldet} Stelle(n) ansehen - sie stehen NICHT in einem datierten Abschnitt und lesen sich deshalb wie der aktuelle Stand.`
+  /* ⚠️ „Kandidaten", nicht „Stellen": dieses Werkzeug vergleicht JEDE Zahl vor
+     „Regeln" oder „Markierungen" mit dem Gesamtstand. Am 20.08.2026 waren alle
+     17 Meldungen Fehlalarme - es waren Teilangaben („an 13 Regeln war es der
+     Platzhalter", „84 Regeln als id:, 9 als \"id\":"). Ein Werkzeug, das
+     siebzehnmal danebenliegt, wird ueberlesen; die Beschriftung muss das sagen.
+     [[kandidatenliste_ist_keine_fehlerliste]] */
+  ? `
+${gemeldet} KANDIDAT(EN) ansehen - sie stehen NICHT in einem datierten Abschnitt.
+⚠️ Die meisten sind Teilangaben, keine Gesamtstaende. Entscheidend ist die Zeile darunter.`
   : '\nKeine widersprechende Zahl ausserhalb der Verlaufsabschnitte.');
 
 /* ---------- Zweite Pruefung: sagt die Kurzbeschreibung noch dasselbe wie der Text? ----------
