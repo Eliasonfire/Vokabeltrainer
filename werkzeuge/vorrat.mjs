@@ -880,9 +880,24 @@ try {
    laesst er sich nur an einer Sache: hat Elias das Wort im Formular angefasst,
    liegt eine Aenderung in vt_wortAenderungen.
 
-   Am 20.08.2026 gemessen: 14 Woerter, 0 davon mit geprueftem `type` — darunter
-   خَرَجَ (Verb), كَسْلَانُ und مَكْسُورٌ (Adjektive), بَعْدَ/أَمَامَ/عِنْدَ (Zuruf).
-   Alle vierzehn galten als Nomen. ⛔ Das ist nicht nur eine ausgefallene Uebung:
+   Am 20.08.2026 gemessen: 14 Woerter, 0 davon mit geprueftem `type`.
+
+   ⛔ Zweifelsfrei FALSCH ist `noun` bei dreien: خَرَجَ (Perfektform, also ein
+   Verb) sowie كَسْلَانُ und مَكْسُورٌ (Adjektive).
+
+   ⚠️ Bei بَعْدَ, أَمَامَ und عِنْدَ ist es RICHTIG, auch wenn sie wie
+   Praepositionen klingen: ein ظَرْف ist die FUNKTION (adverbiale Bestimmung
+   im Akkusativ), die Wortart ist اِسْم. Gemessen gegen die Liste ZURUF in
+   js/irab.js, nicht aus der Bedeutung abgeleitet — der erste Entwurf dieses
+   Kommentars hatte sie faelschlich als Fehler gefuehrt.
+   [[sein_ist_nicht_wirken]]
+
+   Dass trotzdem alle 14 gemeldet werden, ist Absicht: es ist eine
+   KANDIDATENLISTE, keine Fehlerliste. `noun` steht als Festwert da, nicht
+   als gepruefte Angabe — erst Elias' Klick macht eine daraus.
+   [[kandidatenliste_ist_keine_fehlerliste]]
+
+   ⛔ Das ist nicht nur eine ausgefallene Uebung:
    setzeLexikon() traegt `type` ins Iʿrab-Lexikon, also wird JEDER Satz mit
    diesen Woertern danach zerlegt. [[nomen_wird_zum_verb_gelesen]] */
 function typFestwert(w){
