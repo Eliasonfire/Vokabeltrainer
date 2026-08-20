@@ -85,7 +85,7 @@ schreibt. Spaltenzahl und Reihenfolge deshalb nicht ändern, Inhalt gern.
 | A10 | **Markierungen** am Satz | `vorrat.mjs`, `pruefe-markierungen.js`, `pruefe-erreichbarkeit.js` | Satz steht in keinem Thema, null Aufgaben |
 | A11 | **Quran-Bezug** nur aus Sure 1, 67, 93–114 | `pruefe-quran.js` | (kein Ausfall — Zusatz) |
 | A12 | **Vollständiges Taschkil** | `pruefe-taschkil.js` | falsche Aussprache, kaputte Suche |
-| A13 | **Kein Duplikat** zu einer freigeschalteten Buchvokabel | ⛔ nur seine App | zwei Karten für dasselbe Wort |
+| A13 | **Kein Duplikat** zu einer freigeschalteten Buchvokabel | `pruefe-duplikate.js` | zwei Karten für dasselbe Wort |
 
 ⭐ **Die vierte Spalte ist der eigentliche Grund für diese Liste.** Nichts
 davon meldet sich von selbst: `js/uebung.js` gibt bei einem Wort ohne `gender`
@@ -680,7 +680,7 @@ ihn sieht er den alten Stand und hält die Arbeit für nicht gemacht.
 
 # Die vollständige Prüfkette
 
-Alle elf auf einmal, wenn mehr als ein Wort dazukam:
+Alle zwölf auf einmal, wenn mehr als ein Wort dazukam:
 
 ```
 node validate.js
@@ -692,6 +692,7 @@ node pruefe-wortfelder.js --fenster
 node pruefe-taschkil.js
 node pruefe-quran.js
 node pruefe-funktionen.js
+node pruefe-duplikate.js
 node werkzeuge/vorrat.mjs
 node werkzeuge/export-index.mjs --pruefen
 ```
@@ -731,7 +732,18 @@ aufhört zu lesen. [[dieselbe_frage_zwei_antworten]]
 Was es **nicht** messen kann — neun plus diese vier ergibt dreizehn:
 A8 (Funktionsanzeige — dafür seit dem 20.08. `pruefe-funktionen.js`),
 A11 (Quran-Bezug — dafür `pruefe-quran.js`), A12 (Taschkīl — dafür
-`pruefe-taschkil.js`), A13 (Duplikat — braucht seine App).
+`pruefe-taschkil.js`), A13 (Duplikat — dafür seit dem 20.08.
+`pruefe-duplikate.js`).
+
+⭐ **Damit hat jeder der dreizehn Punkte ein Werkzeug.** A13 war bis zum
+20.08.2026 der letzte ohne — dort stand „⛔ nur seine App", ein Duplikat konnte
+also nur auffallen, wenn Elias beim Lernen zweimal dieselbe Karte bekam.
+
+⚠️ Der erste Bau von `pruefe-duplikate.js` meldete **14** Duplikate, davon war
+**eines** echt. Zwei Fehler zugleich: er verglich **ohne Vokalzeichen**
+(صِفْرٌ „Null" gegen صَفَرَ, ein Verb) und gegen **alle 4433** Buchvokabeln statt
+gegen die **387 freigeschalteten**. Das Werkzeug prüft sich deshalb beim Start
+an vier Fällen, deren Antwort feststeht, und bricht ab, wenn einer davon kippt.
 
 ⚠️ **Und es misst ein FENSTER, nicht den ganzen Bestand.** Gemessen werden die
 Wörter, die Elias erreichen kann — am 20.08. **189** von **4444** im Abzug. Das
