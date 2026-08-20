@@ -464,6 +464,51 @@ buchDateien.forEach(f => {
   }
 }
 
+/* ⛔⛔ DIE GEPFLEGTE FASSUNG GEWINNT — der Schritt, den die Entdopplung darueber
+   nicht schafft.
+
+   Sie vergleicht id + Feld + Stelle + WORT. Steht dasselbe Wort in beiden
+   Dateien unterschiedlich vokalisiert, sind das fuer sie zwei Befunde:
+
+     data/vokabeln-eigene.js   مُضَافْ إِلَيهِ     (Roh-Abzug, Sukun fehlt)
+     vocab-data.js             مُضَافْ إِلَيْهِ    (gepflegt, korrekt)
+
+   Gemeldet wurde daraufhin die rohe Form — ein Befund, den Elias NIE beheben
+   koennte: die App liest fuer dieses Wort ausschliesslich die gepflegte Fassung
+   (js/buecher.js:538 ueberspringt jedes eigene Wort, dessen id schon in
+   VOCAB_DATA steht), und hole-vokabeln.mjs schreibt den Abzug bei jeder Wartung
+   neu. Eine Korrektur darin waere beim naechsten Lauf weg.
+
+   ⚠️ Nur Woerter, die in BEIDEN stehen. Ein eigenes Wort, das noch nicht in
+   vocab-data.js gepflegt ist, wird von der App sehr wohl aus dem Abzug gelesen —
+   dort ist der Befund echt und bleibt stehen.
+   [[pruefwerkzeug_laedt_mehr_als_die_app]] [[zwei_rechtschreibungen_ein_text]] */
+{
+  /* ⛔ NICHT nach der id filtern — das war am 20.08.2026 der erste Entwurf,
+     und er verschluckte ZWEI ECHTE Befunde. أَيْضاً und الإِسْمُ stehen in beiden
+     Dateien BUCHSTABENGLEICH; ihre Luecke ist also auch in vocab-data.js echt.
+     Nur bei إِلَيهِ unterscheidet sich die Schreibung. Gemessen mit Codepoints,
+     nicht nach Augenschein. [[entwurf_zu_grob]] [[zeichenklasse_nie_sichtbar_kopieren]]
+
+     Der richtige Massstab ist das GEMELDETE WORT: kommt es in der gepflegten
+     Fassung genauso vor, gilt der Befund dort auch. Kommt es nicht vor, hat
+     die gepflegte Fassung es anders (richtig) — dann ist es ein Abzugs-Artefakt.
+     ⚠️ NFC, sonst scheitert der Vergleich lautlos. [[arabisch_vergleichen_nfc]] */
+  const nfc = s => String(s == null ? '' : s).normalize('NFC');
+  const gepflegt = new Map((VOCAB_DATA || []).map(w => [String(w.id), w]));
+  const vorher = befunde.length;
+  for (let i = befunde.length - 1; i >= 0; i--){
+    const b = befunde[i];
+    if (!String(b.quelle || '').includes('vokabeln-eigene.js')) continue;
+    const v = gepflegt.get(String(b.id));
+    if (!v) continue;                       // nur im Abzug — dort liest die App ihn
+    if (!nfc(v[b.feld]).includes(nfc(b.wort))) befunde.splice(i, 1);
+  }
+  if (vorher !== befunde.length)
+    console.log('  (' + (vorher - befunde.length) + ' Befund(e) aus dem Roh-Abzug verworfen —'
+      + ' das Wort liegt in vocab-data.js gepflegt vor)');
+}
+
 /* ---------- Ausgabe ---------- */
 console.log('--- Vollstaendigkeit der Vokalisierung ---');
 console.log(`${woerterGeprueft} arabische Woerter geprueft ` +
