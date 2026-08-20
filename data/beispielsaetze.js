@@ -933,4 +933,103 @@ const BEISPIELSAETZE = {
     sentAr: 'الْبَيْتُ كَبِيرٌ جِدًّا.',
     sentDe: 'Das Haus ist sehr groß.'
   },
+
+  /* ------------------------------------------------------------------------
+     KAPITEL 24, GRUPPE 2 — DIE ALLTAGSWÖRTER (20.08.2026)
+
+     Zwölf Wörter, die man tatsächlich braucht, im Gegensatz zum
+     Universitätsvokabular derselben Lektion (تَعَارُفٌ, عِمَادَةٌ,
+     اِسْتِمَارَةٌ …), das noch offen ist.
+
+     ⚠️ مَتى war der schwierigste: die naheliegenden Antworten („wann ist
+     der Unterricht / das Gebet / die Prüfung“) brauchen alle ein Wort, das er
+     nicht hat. Der Satz fragt deshalb nach einer Person und einem Ort — beides
+     aus Kapitel 1 und 5.
+     ------------------------------------------------------------------------ */
+
+  /* مَتَى — wann (madina-1, Kapitel 24) */
+  '50169': {
+    sentAr: 'مَتَى الْمُدَرِّسُ هُنَا؟',
+    sentDe: 'Wann ist der Lehrer hier?'
+  },
+
+  /* لَكِنَّ — aber (madina-1, Kapitel 24)
+     ⚠️ لَكِنَّ verlangt einen Akkusativ hinter sich — hier steckt der im
+     angehängten ـهُ, das er als Fachbegriff kennt. */
+  '50201': {
+    sentAr: 'الْبَيْتُ صَغِيرٌ لَكِنَّهُ جَمِيلٌ.',
+    sentDe: 'Das Haus ist klein, aber es ist schön.'
+  },
+
+  /* كَأَنَّ — als ob (madina-1, Kapitel 24)
+     Dieselbe Bauform wie لَكِنَّ: ein angehängtes Pronomen übernimmt den
+     Akkusativ, den die Partikel verlangt. */
+  '50287': {
+    sentAr: 'كَأَنَّهُ مُدَرِّسٌ.',
+    sentDe: 'Es ist, als wäre er ein Lehrer.'
+  },
+
+  /* بَعْضٌ — einige (madina-1, Kapitel 24)
+     ⭐ Wie كُلُّ eine إِضَافَة: بَعْضُ ohne Tanwin, das Gezählte im
+     Genitiv dahinter. */
+  '50285': {
+    sentAr: 'بَعْضُ الطُّلَّابِ فِي الْمَدْرَسَةِ.',
+    sentDe: 'Einige der Studenten sind in der Schule.'
+  },
+
+  /* شُكْرًا — danke (madina-1, Kapitel 24)
+     ⚠️ Das Tanwin mit Fatḥa ist kein Zufall: شُكْرًا steht im Akkusativ, weil
+     ein gedachtes Verb davorsteht („ich danke dir Dank“). */
+  '50290': {
+    sentAr: 'شُكْرًا يَا مُدَرِّسُ.',
+    sentDe: 'Danke, Lehrer!'
+  },
+
+  /* مَتْجَرٌ — Laden (madina-1, Kapitel 24) */
+  '50338': {
+    sentAr: 'الْمَتْجَرُ قَرِيبٌ مِنَ الْبَيْتِ.',
+    sentDe: 'Der Laden ist nahe beim Haus.'
+  },
+
+  /* غَضْبَانُ — wütend (madina-1, Kapitel 24)
+     ⭐ Kein Tanwin: das Muster فَعْلَانُ ist مَمْنُوع مِنَ الصَّرْف, genau
+     wie die Farben aus Kapitel 22. */
+  '50357': {
+    sentAr: 'الْوَلَدُ غَضْبَانُ.',
+    sentDe: 'Der Junge ist wütend.'
+  },
+
+  /* عَاقِلٌ — vernünftig (madina-1, Kapitel 24) */
+  '50358': {
+    sentAr: 'الطَّالِبُ عَاقِلٌ.',
+    sentDe: 'Der Student ist vernünftig.'
+  },
+
+  /* حَاجٌّ — Pilger (madina-1, Kapitel 24) */
+  '50387': {
+    sentAr: 'الْحَاجُّ فِي الْمَسْجِدِ.',
+    sentDe: 'Der Pilger ist in der Moschee.'
+  },
+
+  /* فَرَنْسَا — Frankreich (madina-1, Kapitel 24)
+     Ländernamen sind weiblich — deshalb بَعِيدَةٌ. */
+  '50480': {
+    sentAr: 'فَرَنْسَا بَعِيدَةٌ.',
+    sentDe: 'Frankreich ist weit weg.'
+  },
+
+  /* يَابَانِيٌّ — Japaner (madina-1, Kapitel 24)
+     Die Nisba-Endung ـِيّ macht aus einem Land eine Herkunft. */
+  '50498': {
+    sentAr: 'هَذَا الطَّالِبُ يَابَانِيٌّ.',
+    sentDe: 'Dieser Student ist Japaner.'
+  },
+
+  /* اِبْتِدَائِيٌّ — Grund-, Anfangs- (madina-1, Kapitel 24)
+     Ebenfalls eine Nisba, hier weiblich als نَعْت zu الْمَدْرَسَةُ — beide
+     bestimmt, beide Nominativ, beide weiblich. */
+  '50503': {
+    sentAr: 'الْمَدْرَسَةُ الْاِبْتِدَائِيَّةُ قَرِيبَةٌ.',
+    sentDe: 'Die Grundschule ist nah.'
+  },
 };
