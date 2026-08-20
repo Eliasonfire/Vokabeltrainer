@@ -1227,15 +1227,6 @@ function dueWords(){
      PROGRESS[a.id].nextReview > PROGRESS[b.id].nextReview ?  1 : 0)
     || PROGRESS[a.id].box - PROGRESS[b.id].box);
 }
-function allRoots(){
-  const map = {};
-  /* Nur das aktive Buch: die Wurzelliste steht im Kategorien-Bildschirm, und
-     der zeigt sonst nach dem ersten Buchwechsel Wurzeln aus Buechern, die
-     gerade gar nicht gelernt werden. */
-  const quelle = (typeof buchVokabeln === 'function') ? buchVokabeln() : VOCAB_DATA;
-  quelle.forEach(w=>{ if(w.root){ (map[w.root] = map[w.root]||[]).push(w.id); } });
-  return map;
-}
 
 /* ---------- Wortfelder statt Wurzeln ----------
    Ersetzt seit dem 29.07.2026 die Wurzelliste im Kategorien-Bildschirm. Elias:
