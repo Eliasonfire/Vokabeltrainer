@@ -241,7 +241,7 @@ posten.push({
    ueber Aktualisierungen hinweg dieselbe. */
 const ARTEFAKTE = [
   ['Was auf dich wartet',   '4c3a7c9e-c288-480c-bb1f-e2d7cd26d856', 'diese Seite — alle offenen Entscheidungen'],
-  ['Die Fragenseite',       '724ee9bc-adb7-4dcd-ad75-6a56a552adbd', 'die 48 Angaben, ein Durchgang je Frage'],
+  ['Die Fragenseite',       '724ee9bc-adb7-4dcd-ad75-6a56a552adbd', 'die offenen Feldangaben, ein Durchgang je Frage'],
   ['Der Wartungskreislauf', '9ec136ba-019d-438b-98af-e57939eb4a99', 'wie das System läuft — vier Phasen, dreizehn Prüfungen'],
   ['Vierzehn Schriften',    '21463a39-a852-43e0-ad80-7c3bbf78714b', 'die Wortmarke طالب zur Auswahl'],
   ['Das Farbgerüst',        '4e9ce030-17a6-46be-ba47-02ccb56bc32a', 'acht Akzentfarben an dreizehn Flächen'],
@@ -261,8 +261,37 @@ const LAUFEND = [
   ['Regelauswahl Satzmodus', 'da4af296-67c5-4055-a2e7-35defc375007',
    'welche der 95 Regeln im Satzmodus bleiben — Schlüssel satzmodus-auswahl-v1'],
   ['Regelprüfung Madina 1', '1e11a0ef-992b-41ac-9786-1247cc185e83',
-   'deine Beurteilung der Regeln — Schlüssel regelpruefung-v1, deine Antworten liegen darin']
+   'deine Beurteilung der Regeln — Schlüssel regelpruefung-v1, deine Antworten liegen darin'],
+  ['Regelkandidaten freigeben', 'd9916aee-b679-4d91-bb0c-c3642f8889ac',
+   'neue Regeln vor dem Eintragen — Schlüssel regelkandidaten-v1']
 ];
+
+/* ⛔⛔ WELCHE DATEI GEHOERT ZU WELCHER URL
+
+   Die Listen oben fuehren Titel und URL - aber nicht den DATEINAMEN. Wer eine
+   Seite veroeffentlicht, muss die Zuordnung also im Kopf haben, und wer sie
+   nicht hat, legt eine ZWEITE Seite an. Die alte bleibt verlinkt und wird nie
+   wieder aktuell; gemerkt haette es niemand, weil beide fuer sich richtig
+   aussehen. Am 20.08.2026 ist genau das an der Fragenseite fast passiert.
+
+   ⚠️ Der Waechter unten meldet jede HTML in artefakte/, die hier fehlt. Eine
+   Datei ohne Zuordnung ist keine Kleinigkeit: sie ist die naechste doppelte
+   Seite. [[entscheidung_gilt_fuer_das_zweite_werkzeug]] [[werkzeug_ohne_aufrufer]] */
+const DATEI_ZU_URL = {
+  'wartet-auf-elias.html':        '4c3a7c9e-c288-480c-bb1f-e2d7cd26d856',
+  'wartungsfragen-artefakt.html': '724ee9bc-adb7-4dcd-ad75-6a56a552adbd',
+  'wartungskreislauf.html':       '9ec136ba-019d-438b-98af-e57939eb4a99',
+  'schriften-talib-artefakt.html':'21463a39-a852-43e0-ad80-7c3bbf78714b',
+  'farben-artefakt.html':         '4e9ce030-17a6-46be-ba47-02ccb56bc32a',
+  'stimme-artefakt.html':         '15b48598-2cda-4516-81bd-6a7e730dd4cc',
+  'regelpruefung.html':           '1e11a0ef-992b-41ac-9786-1247cc185e83',
+  'freigabe.html':                'd9916aee-b679-4d91-bb0c-c3642f8889ac',
+  /* ⚠️ wartungsfragen.html ist die Vorschaufassung derselben Seite und wird
+     NICHT veroeffentlicht - deshalb bewusst ohne URL, aber genannt, damit der
+     Waechter sie nicht jedes Mal meldet. */
+  'wartungsfragen.html':          null,
+};
+
 
 /* ---------- 2. Der Abschnitt aus der To-Do ---------- */
 let ausTodo = [];
@@ -440,6 +469,18 @@ fs.writeFileSync(ZIEL + '.neu', html, 'utf8');
 fs.renameSync(ZIEL + '.neu', ZIEL);
 console.log('');
 console.log('Seite gebaut: ' + path.relative(REPO, ZIEL));
+/* Waechter: liegt eine Artefakt-Seite ohne bekannte URL da? */
+try {
+  const ordner = path.join(REPO, 'artefakte');
+  const ohne = fs.readdirSync(ordner)
+    .filter(f => f.endsWith('.html'))
+    .filter(f => !(f in DATEI_ZU_URL));
+  if (ohne.length){
+    console.log('  ⛔ ' + ohne.length + ' Artefakt-Seite(n) ohne hinterlegte URL: ' + ohne.join(', '));
+    console.log('     Wer sie veroeffentlicht, legt eine ZWEITE Seite an. Erst die URL in');
+    console.log('     DATEI_ZU_URL (werkzeuge/wartet-auf-elias.mjs) eintragen, dann veroeffentlichen.');
+  }
+} catch (e) { console.log('  ⚠️ artefakte/ nicht lesbar: ' + e.message); }
 console.log('  ⚠️ Veroeffentlichen kann die Routine nicht selbst — das braucht eine Sitzung.');
 console.log('     DIESELBE URL wiederverwenden, keine neue anlegen:');
 console.log('     https://claude.ai/code/artifact/4c3a7c9e-c288-480c-bb1f-e2d7cd26d856');
