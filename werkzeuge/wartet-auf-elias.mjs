@@ -235,6 +235,56 @@ posten.push({
   seiteText: 'Der Bericht'
 });
 
+/* ⛔⛔ REGELKANDIDATEN — der Posten, der bis zum 20.08.2026 fehlte.
+
+   Elias' Auftrag nennt die Routinen ausdruecklich „vor allem bezogen auf die
+   NEUEN REGELN und Vokabeln". Fuer die Vokabeln gibt es die Fragenseite; fuer
+   die Regeln gibt es die Freigabeseite — und die stand auf KEINER Liste.
+   Gemessen am 20.08.: 45 Fundstellen aus den Folgen 14, 15 und 16 warteten
+   auf seine Freigabe, und seine Seite „Was auf dich wartet" wusste nichts
+   davon, obwohl sie verspricht, ALLE offenen Entscheidungen zu zeigen.
+
+   ⚠️ Gezaehlt werden die Kandidaten aus transcripts/kandidaten/folge-*.json
+   MINUS dem, was in entscheidungen.json schon beantwortet ist. Ohne diesen
+   Abzug meldete der Posten dieselbe Zahl weiter, nachdem er geantwortet hat —
+   und ein Posten, der sich nie bewegt, wird nach dem dritten Mal ueberlesen.
+   [[erledigt_heisst_nicht_wertlos]] */
+try {
+  const kand = path.join(REPO, 'transcripts', 'kandidaten');
+  const dateien = fs.existsSync(kand)
+    /* ⛔ KEIN Regex hier. Ein Muster mit Backslashes ueberlebt den Weg durch
+       ein Skript, das dieses Skript schreibt, nicht: aus /^folge-d+/ wurde
+       beim Einbau /^folge-d+/, und das trifft NICHTS. Der Posten blieb
+       lautlos leer, weil 0 Kandidaten kein Fehler sind.
+       [[python_backslash_b_wird_backspace]] [[ausfall_ist_unsichtbar_gebaut]] */
+    ? fs.readdirSync(kand).filter(f => f.startsWith('folge-') && f.endsWith('.json')) : [];
+  if (!dateien.length) console.log('  ⚠️ keine folge-*.json in transcripts/kandidaten - Regelkandidaten UNGEPRUEFT.');
+  let offen = 0; const folgen = [];
+  for (const d of dateien){
+    const o = JSON.parse(fs.readFileSync(path.join(kand, d), 'utf8'));
+    const n = (o.kandidaten || []).length;
+    if (n){ offen += n; folgen.push('F' + o.folge + ': ' + n); }
+  }
+  let beantwortet = 0;
+  const ent = path.join(kand, 'entscheidungen.json');
+  if (fs.existsSync(ent)){
+    const e = JSON.parse(fs.readFileSync(ent, 'utf8'));
+    beantwortet = (e.entscheidungen || []).length;
+  }
+  const rest = Math.max(0, offen - beantwortet);
+  if (rest) posten.push({
+    titel: 'Regelkandidaten aus dem Unterricht',
+    zahl: rest, einheit: 'Fundstellen', dazu: folgen.join(' · '),
+    aufwand: 'durchsehen und je Fundstelle ja/nein/später — das Zusammenfassen mache ich',
+    warum: 'Aus ihnen werden neue Grammatikregeln. Ohne dein Ja trage ich keine ein — eine Regel ohne Quelle waere geraten, und geraten wird hier nicht.',
+    wie: 'Auf der Freigabeseite antippen, unten den Text kopieren, in den Chat schicken.',
+    seite: 'https://claude.ai/code/artifact/d9916aee-b679-4d91-bb0c-c3642f8889ac',
+    seiteText: 'Die Freigabeseite'
+  });
+} catch (e) {
+  console.log('  ⚠️ Regelkandidaten nicht lesbar: ' + e.message);
+}
+
 /* ⭐ Alle Seiten, die es fuer ihn gibt. Sie stehen HIER, weil diese Seite die
    ist, die er aufmacht — eine Adresse, die man nicht findet, ist so gut wie
    keine. ⚠️ Beim Anlegen eines neuen Artefakts hier ergaenzen; die URL bleibt
