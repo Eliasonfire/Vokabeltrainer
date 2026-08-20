@@ -538,6 +538,48 @@ Präfix des Themas beginnen, in das die Regel gehört — oder `SATZ_THEMEN` bek
 ein neues Muster. Wer die `id` erst vergibt und die Einsortierung „später"
 macht, hat sie schon verbaut.
 
+## ⛔⛔ Wer einen Satz ändert, reißt seine Markierungen mit
+
+`matchText` speichert den WORTLAUT, nicht eine Stelle. Ändert sich ein einziges
+Zeichen im Satz — auch nur eine ergänzte Ḥaraka —, zeigt die Markierung ins
+Leere.
+
+Am 20.08.2026 belegt: Ich habe in fünf Sätzen eine fehlende Kasra ergänzt.
+`validate.js` meldete daraufhin sofort
+
+    FEHLER SENTENCE_TAGS["mb1-42-2"][0]: matchText "اسْمُ التَّاجِرِ" kommt im Satz nicht vor.
+
+und nach dem Nachziehen in `grammar-data.js` **drei weitere**, weil dieselben
+Wörter noch in Fachbegriff-Sätzen standen (`gram-suffix-ki`, `-hu`, `-ha`).
+
+⭐ **Das ist ein Fall, in dem die Prüfung ihren Wert beweist:** ohne
+`validate.js` wären die Markierungen still verschwunden — in der App fehlt dann
+einfach die Farbe, und niemand merkt, woran es liegt.
+
+**Praktisch:** Nach jeder Änderung an einem Satz `node validate.js` laufen
+lassen, und zwar **bevor** man weiterarbeitet. Der Fehler ist trivial zu
+beheben, solange man weiß, woher er kommt.
+
+## ⛔ Zitierform ist nicht Satzkontext — Hamzat al-Waṣl
+
+Derselbe Versuch hat einen zweiten, tieferen Befund erzeugt, und deshalb wurde
+er **ganz zurückgenommen**:
+
+`vocab-data.js` führt <span dir="rtl">اِسْمٌ</span> **mit Kasra** — das ist die
+**Zitierform**, in der das Wort allein steht und die Hamzat al-Waṣl wirklich
+gesprochen wird. Im Satz <span dir="rtl">مَا اسْمُكِ؟</span> steht dasselbe Wort
+aber **nicht** am Sprechanfang: dort wird die Hamzat al-Waṣl übersprungen, und
+die Kasra wäre falsch.
+
+⛔ **Ein Beleg für die Zitierform ist kein Beleg für den Satzkontext.** Genau
+das habe ich am 20.08. verwechselt — die Änderung war schon geschrieben und
+`pruefe-taschkil.js` von 17 auf 12 Befunde gefallen, bevor es auffiel. Eine
+Prüfung, die grüner wird, ist kein Beweis, dass man recht hatte.
+
+**Die fünf Stellen bleiben deshalb als Befund stehen** und gehören Elias
+vorgelegt, nicht selbst entschieden. Goal-Prompt **E.1** gilt für Ḥarakāt
+genauso wie für Grammatik. [[quranbezug_nur_auswendiges]] · [[zitieren_am_original]]
+
 ## B5 · `SENTENCE_TAGS` hat vier Schlüsselarten, nicht eine
 
 Der Schlüssel ist **nicht** immer eine Wort-id. Gezählt über alle 315 Einträge:
