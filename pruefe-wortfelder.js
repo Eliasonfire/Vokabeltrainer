@@ -147,7 +147,11 @@ if (FENSTER){
       q.woerter = (q.woerter || []).filter(w => kapitel.includes(Number(w.chapter)));
       n += q.woerter.length;
     }
-    quellen = quellen.filter(q => (q.woerter || []).length);
+    /* ⛔ `quellen` ist const — nicht neu zuweisen, sondern an Ort und Stelle
+       ausduennen. Sonst wirft es TypeError, und der catch weiter unten macht
+       daraus eine harmlos klingende Zeile. */
+    for (let i = quellen.length - 1; i >= 0; i--)
+      if (!(quellen[i].woerter || []).length) quellen.splice(i, 1);
     info.push(`--fenster: nur die ${n} Woerter, die Elias jetzt erreicht `
       + `(${Object.entries(angabe).map(([b, k]) => `${b} bis ${k}+${VORAUS}`).join(', ')}).`);
   } catch (e) {
@@ -226,8 +230,15 @@ info.forEach(m => console.log('  ok   ' + m));
 if (abzuege === 0)
   console.log('  ok   data/vokabeln-*.js nicht vorhanden — nur der Lernbestand wurde gemessen (die Abzuege sind wegen der arabicroots-AGB nicht im Repo).');
 
+/* Bei --fenster ist ein leeres Feld KEIN Befund: es heisst nur, dass in
+   seinen 163 Woertern gerade keine Farbe und keine Zahl vorkommt. Ohne diese
+   Unterscheidung erzeugt der engere Bezugspunkt Fehlalarm - das Gegenstueck zu
+   dem Fehler, den der Filter beheben soll. [[milder_bezugspunkt_verdeckt_mangel]] */
 if (leer.length)
-  console.log(`\n  warn ${leer.length} Feld(er) ohne einen einzigen Treffer: ${leer.join(' · ')}`);
+  console.log(FENSTER
+    ? `\n  ok   ${leer.length} Feld(er) haben im Fenster keinen Treffer: ${leer.join(' · ')}`
+      + `\n       (kein Befund — im Gesamtbestand koennen sie besetzt sein. Ohne --fenster pruefen.)`
+    : `\n  warn ${leer.length} Feld(er) ohne einen einzigen Treffer: ${leer.join(' · ')}`);
 
 if (ohneFeld.length){
   console.log(`\n  warn ${fehlend} Vokabel(n) stehen nur unter ihrer Wortart und in keinem Bedeutungsfeld.`);

@@ -155,27 +155,88 @@ node validate.js          # Abschnitt „Wurzeln"
 ⛔ Keine Wurzel raten. Beleg aus dem Madina-Schlüssel oder aus einem Wort
 derselben Wurzel, das schon im Bestand steht.
 
+## ⛔⛔ Wohin diese Felder überhaupt geschrieben werden
+
+**Das gilt für A3, A4 und A5 gemeinsam und stand bis zum 20.08.2026 nirgends** —
+ein Prüf-Agent hat es gefunden, und es ist genau die Lücke, an der „einfach
+irgendwas machen" anfängt. Alle naheliegenden Orte scheiden aus:
+
+| Ort | warum nicht |
+|---|---|
+| `data/vokabeln-<buch>.js` | wird von `hole-vokabeln.mjs` bei **jedem** Abzug neu erzeugt — spurlos weg |
+| Das Bearbeitungsformular der App | `AENDERBAR` in `js/kern.js` führt sieben Felder: `ar`, `de`, `sentAr`, `sentDe`, `pl`, `root`, `type`. `gender`, `sg`, `femSg`, `femPl` und die vier Verbformen sind **nicht** dabei, und das Formular hat auch keine Eingabezeile dafür |
+| `vocab-data.js` | nur für die 171 Lernwörter — ein neuer Eintrag zöge das Wort über `LERNBESTAND_IDS` in „kennt er schon" und verschöbe seinen Lernstand |
+
+⭐ **Der einzige haltbare Ort ist `FELD_ERGAENZUNGEN` in
+`data/feld-ausnahmen.js`** — angewandt in `js/kern.js` vor `WORT_AENDERUNGEN`,
+gefüllt von `werkzeuge/antworten-uebernehmen.mjs` aus dem, was Elias im
+Wartungsfragen-Artefakt beantwortet hat.
+
+⚠️ **Für eine in der App angelegte eigene Vokabel gilt das nicht.**
+`addPersonalVocab()` nimmt sechs Felder entgegen und setzt `type: 'noun'` fest;
+nachtragen ginge nur über `AENDERBAR`. **Ein selbst angelegtes Adjektiv kann
+deshalb nie ein `femSg` bekommen** — weder durch ihn noch durch mich. Das ist
+eine ehrliche Grenze von Weg 3 und gehört in den Bericht, nicht in ein „gleich
+erledigt".
+
+## ⭐⭐ Und der wichtigste Grund für diese drei Punkte
+
+`setzeLexikon()` in `js/irab.js` trägt `type`, `sg`, `pl`, `femSg`, `femPl` und
+die Verbformen ins **Iʿrāb-Lexikon** ein. Damit entscheiden sie, **wie jeder
+Satz zerlegt wird** — nicht nur, ob eine Übung Aufgaben erzeugt.
+
+Gemessen am 20.08.2026 (Bestand nachgebaut, je ein Feld entfernt, 350 Sätze):
+
+| entferntes Feld | Übungsarten mit **veränderter** Aufgabenzahl |
+|---|---|
+| `femSg` | **8** — u. a. Übung 1: 660 → **706** |
+| `type` | **6** — Übung 8: 1152 → 23, Übung 9: 710 → 7 |
+| `pl` | **6** |
+| `sg`, `gender` | je 1 |
+
+⛔ **Die Zahlen, die STEIGEN, sind der eigentliche Befund.** Ohne `femSg`
+erzeugt Übung 1 nicht weniger, sondern **mehr** Aufgaben — es fehlen keine, es
+entstehen **andere**. Die Analyse liest den Satz anders.
+
+**Daraus folgt: ein FALSCHES Feld ist schädlicher als ein leeres.** Ein leeres
+kostet eine Funktion; ein falsches macht aus richtigen Sätzen falsche
+Auskünfte, und keine Prüfung meldet das.
+
+⚠️ `gender` hat **keine Wertprüfung**: erkannt werden nur `'masculine'` und
+`'feminine'`. Jeder andere Wert gilt in Übung 11 stillschweigend als männlich.
+Kein Werkzeug prüft das — beim Nachtragen also buchstabengenau.
+
 ## A3 · Bei Nomen: `gender`, `sg`, `pl`
 
 | Feld | Wofür genau |
 |---|---|
-| `gender` | Die Genus-Übung (Nr. 11 مُذَكَّر/مُؤَنَّث) **und** die Hinweiswort-Übung (Nr. 12 هَذَا/هَذِهِ). Ohne `gender` fällt das Wort aus **beiden** heraus. Die Lernkarte zeigt es zusätzlich farbig an. |
-| `sg` | Hörmodus, Wurzelbaum, und die Grundlage der Pluralkarten |
+| `gender` | Die Genus-Übung (Nr. 11 مُذَكَّر/مُؤَنَّث). ⚠️ **Nicht** Übung 12: die liest `p.istFem` aus dem Satz, nicht dieses Feld — bis zum 20.08. stand hier „beide". Die Lernkarte zeigt es zusätzlich farbig an. |
+| `sg` | Anzeige und Sprachausgabe (`sprechText()` nutzt `w.sg \|\| w.ar`), Wurzelbaum, Grundlage der Pluralkarten. ⚠️ **Der Hörmodus überspringt ein Wort ohne `sg` NICHT** — er filtert auf `de` mit mehr als einem Zeichen. |
 | `pl` | ⭐ Aus `pl` entsteht eine **eigene Karteikarte** mit eigenem Fortschritt. Fehlt der Plural, fehlt diese Karte — und niemand merkt es. |
 
 ⛔ Stoffnamen (Fleisch, Milch, Wasser) haben keinen Plural. Das ist kein
-Mangel und darf nicht nachgetragen werden.
+Mangel und darf nicht nachgetragen werden — es gehört als „gibt es nicht" in
+`FELD_AUSNAHMEN`, dann fragt kein Werkzeug wieder danach.
 
 ## A4 · Bei Adjektiven: `femSg` (und `femPl`)
 
-Die weibliche Form. ⭐ **Daran hängt Übung Nr. 13** („صَغِيرٌ / صَغِيرَةٌ —
-weibliche Form"): ohne `femSg` erzeugt das Wort dort **null Aufgaben**.
+Die weibliche Form. ⭐ **Übung Nr. 13** („صَغِيرٌ / صَغِيرَةٌ") erzeugt ohne
+`femSg` **null** Aufgaben — und **acht weitere Übungsarten zerlegen den Satz
+anders**, siehe oben.
 
 ## A5 · Bei Verben: `past`, `present`, `imperative`, `masdar`
 
-Die vier Stammformen. Sie stehen im Formen-Kasten der Wortkarte und in der
-Sprachausgabe. ⚠️ Nicht jedes Verb hat einen Imperativ (unpersönliche Verben) —
-das ist begründet und kein Mangel.
+Die vier Stammformen. ⭐ **Ihre wichtigste Wirkung ist das Iʿrāb-Lexikon**
+(siehe oben) — daran hängt jede Satzzerlegung.
+
+⚠️ Zwei Wirkungen, die früher hier standen und **nicht** stimmen: In der
+**Sprachausgabe** kommen sie nicht vor (`js/sprachausgabe.js` kennt sie nicht,
+gesprochen wird `w.sg || w.ar`). Und der **Formen-Kasten** auf der Lernkarte
+erscheint nur, wenn `SETTINGS.showVerbFormen` an ist — aus ist der Standard,
+auf Elias' ausdrücklichen Wunsch vom 30.07.2026.
+
+⚠️ Nicht jedes Verb hat einen Imperativ (unpersönliche Verben) — das ist
+begründet und kein Mangel. Es gehört als „gibt es nicht" in `FELD_AUSNAHMEN`.
 
 ## A6 · Drei Eselsbrücken
 
