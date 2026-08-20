@@ -115,6 +115,46 @@ if (fs.existsSync(dataDir)){
   buecher.forEach(([slug, liste]) => quellen.push({ name: `data (${slug})`, woerter: liste }));
 }
 
+/* ---------- --fenster: nur, was Elias JETZT erreichen kann ----------
+
+   ⛔ OHNE DIESEN SCHALTER IST DIE ZAHL FUER EINEN WARTUNGSLAUF NUTZLOS.
+   Gemessen am 20.08.2026: „3509 Vokabel(n) stehen nur unter ihrer Wortart" —
+   ueber alle 4604 Woerter aus neun Buechern, von denen er 189 erreicht. Eine
+   Zahl, die zu 96 % aus Woertern besteht, die er nie sieht, sagt ueber seinen
+   Bestand nichts und wird beim dritten Lauf ueberlesen.
+   [[milder_bezugspunkt_verdeckt_mangel]] · [[trefferquote_ohne_preis]]
+
+   Das Fenster wird genauso gebildet wie in werkzeuge/vorrat.mjs: Elias'
+   `angabe` aus data/lernstand.json plus drei Kapitel, geschnitten mit dem, was
+   in js/kern.js freigeschaltet ist. */
+const FENSTER = process.argv.includes('--fenster');
+if (FENSTER){
+  try {
+    const kern = fs.readFileSync(path.join(DIR, 'js', 'kern.js'), 'utf8');
+    const mF = kern.match(/const FREIGESCHALTET\s*=\s*(\{[\s\S]*?\n\});/);
+    const frei = mF ? vm.runInNewContext('(' + mF[1].replace(/\/\/[^\n]*/g, '') + ')') : {};
+    const lern = JSON.parse(fs.readFileSync(path.join(DIR, 'data', 'lernstand.json'), 'utf8'));
+    const angabe = (lern && lern.angabe) || {};
+    const VORAUS = 3;
+    let n = 0;
+    for (const q of quellen){
+      const m = /^data \((.+)\)$/.exec(q.name);
+      if (!m){ q.woerter = []; continue; }   /* vocab-data.js ist Lernbestand, nicht Fenster */
+      const slug = m[1];
+      if (!angabe[slug]){ q.woerter = []; continue; }
+      const grenze = angabe[slug] + VORAUS;
+      const kapitel = (frei[slug] || []).map(Number).filter(k => k <= grenze);
+      q.woerter = (q.woerter || []).filter(w => kapitel.includes(Number(w.chapter)));
+      n += q.woerter.length;
+    }
+    quellen = quellen.filter(q => (q.woerter || []).length);
+    info.push(`--fenster: nur die ${n} Woerter, die Elias jetzt erreicht `
+      + `(${Object.entries(angabe).map(([b, k]) => `${b} bis ${k}+${VORAUS}`).join(', ')}).`);
+  } catch (e) {
+    errors.push('--fenster: Lernstand oder FREIGESCHALTET nicht lesbar: ' + e.message);
+  }
+}
+
 /* ---------- 1. Die Tabelle gegen sich selbst pruefen ----------
    Das ist der Teil, der einen Push aufhalten darf: ein Feld ohne jedes
    Kriterium trifft nie etwas und steht dann als leere Kachel in der App, eine
