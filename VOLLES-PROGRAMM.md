@@ -712,6 +712,7 @@ node pruefe-quran.js
 node pruefe-funktionen.js
 node pruefe-duplikate.js
 node werkzeuge/vorrat.mjs
+node werkzeuge/pruefe-eigene-vorrang.mjs
 node werkzeuge/export-index.mjs --pruefen
 ```
 
@@ -720,6 +721,7 @@ node werkzeuge/export-index.mjs --pruefen
 | | |
 |---|---|
 | `node validate.js` | **ist kein Tor.** Es endet mit **0 auch bei Warnungen** — und B6 (die Einsortierung ins Satzmodus-Thema) ist nur eine Warnung. Wer „grün" liest, hat nicht geprüft, ob am Ende „0 Hinweise" steht |
+| `pruefe-eigene-vorrang.mjs` | stand bis zum 20.08.2026 **nur im Wartungsprompt** (Schritt 1c.5), nicht in dieser Kette. Wer sie von Hand fuhr, ließ es also aus — und es ist genau das Werkzeug, das prüft, ob alle anderen **dieselbe Fassung** sehen wie die App |
 | `export-index.mjs --pruefen` | misst **keinen** der dreizehn Punkte. Es prüft den Samsung-Notes-Index — gehört in die Kette, gehört aber nicht zur Vollständigkeit einer Vokabel |
 
 ⭐ `pruefe-funktionen.js` ist am 20.08.2026 dazugekommen und misst **A8** — den
