@@ -336,6 +336,24 @@ const DATEI_ZU_URL = {
   'stimme-artefakt.html':         '15b48598-2cda-4516-81bd-6a7e730dd4cc',
   'regelpruefung.html':           '1e11a0ef-992b-41ac-9786-1247cc185e83',
   'freigabe.html':                'd9916aee-b679-4d91-bb0c-c3642f8889ac',
+
+  /* ⛔⛔ UND DIE SEITEN IM WURZELORDNER — sie waren dem Waechter unsichtbar,
+     weil er nur artefakte/ las. Genau die Fehlerklasse des Tages: ein
+     Werkzeug meldet gruen, weil es einen kleineren Bestand misst.
+     [[werkzeug_misst_kleineren_bestand]]
+
+     ⛔⛔ In den ersten vier liegen ELIAS ANTWORTEN (localStorage-Schluessel
+     dahinter). Wer eine davon ohne ihre URL veroeffentlicht, legt eine ZWEITE
+     Seite an — und seine Antworten bleiben in der ersten. Sein Wortlaut vom
+     18.08.2026: „ich habe da schon ein paar antworten gegeben, die sollen
+     nicht verschwinden das ist das aller wichtigste."
+     Zugeordnet ueber den <title>, der in Datei und Artefaktliste gleich ist. */
+  '../regelauswahl.html':         'da4af296-67c5-4055-a2e7-35defc375007',   /* satzmodus-auswahl-v1 */
+  '../befunde.html':              'bc9b71c0-5ea6-451b-9f02-0fbc9fbdd63d',   /* befunde-v1 */
+  '../verschmelzung.html':        '9cb296d7-b5ea-4767-8f99-e5e896e6a871',   /* verschmelzung-v1 */
+  '../wortmarke-entwuerfe.html':  '75f11c5e-c9ae-4a57-87cc-d8b86338c621',   /* wortmarke-v1 */
+  '../vorschau-stamm.html':       '488ce289-f5ae-4c8d-b597-ebd83d275cc2',
+  '../vorschau-modusleisten.html':'13414c89-616d-4280-84fa-eef11e9b29e0',
   /* ⚠️ wartungsfragen.html ist die Vorschaufassung derselben Seite und wird
      NICHT veroeffentlicht - deshalb bewusst ohne URL, aber genannt, damit der
      Waechter sie nicht jedes Mal meldet. */
@@ -521,10 +539,19 @@ console.log('');
 console.log('Seite gebaut: ' + path.relative(REPO, ZIEL));
 /* Waechter: liegt eine Artefakt-Seite ohne bekannte URL da? */
 try {
-  const ordner = path.join(REPO, 'artefakte');
-  const ohne = fs.readdirSync(ordner)
-    .filter(f => f.endsWith('.html'))
-    .filter(f => !(f in DATEI_ZU_URL));
+  const ohne = [];
+  for (const [ordner, praefix] of [[path.join(REPO, 'artefakte'), ''], [REPO, '../']]){
+    for (const f of fs.readdirSync(ordner)){
+      if (!f.endsWith('.html')) continue;
+      /* index.html ist die App selbst, vorschau-* sind Entwuerfe, die nie
+         veroeffentlicht wurden. Beides gehoert nicht in die Zuordnung — sonst
+         meldete der Waechter bei jedem Lauf fuenfzehn Fehlalarme und wuerde
+         nach dem dritten Mal ueberlesen. Die zwei vorschau-Seiten, die DOCH
+         veroeffentlicht sind, stehen oben namentlich drin. */
+      if (praefix === '../' && (f === 'index.html' || f.startsWith('vorschau'))) continue;
+      if (!((praefix + f) in DATEI_ZU_URL)) ohne.push(praefix + f);
+    }
+  }
   if (ohne.length){
     console.log('  ⛔ ' + ohne.length + ' Artefakt-Seite(n) ohne hinterlegte URL: ' + ohne.join(', '));
     console.log('     Wer sie veroeffentlicht, legt eine ZWEITE Seite an. Erst die URL in');
