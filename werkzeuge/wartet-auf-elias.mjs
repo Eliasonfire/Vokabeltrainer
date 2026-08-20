@@ -515,11 +515,17 @@ ist auf über sechstausend Zeilen gewachsen; diese Seite wird bei jedem
 Wartungslauf <b>neu erzeugt</b> und ist nie älter als ihr Datum oben.</p>
 
 <div class="summe">
-  <span class="gross">${posten.length}</span>
+  ${posten.length === 0
+    ? `<span class="gross">✓</span>
+  <span class="txt"><b>Nichts offen.</b><br>
+  Alles, was ohne dich geht, ist erledigt — und alles, was du entschieden
+  hast, ist eingebaut. Diese Seite kommt wieder, sobald etwas auf dich
+  wartet.</span>`
+    : `<span class="gross">${posten.length}</span>
   <span class="txt"><b>Entscheidungen</b> — nicht ${stueck} Aufgaben.<br>
   ${auswahlPosten} davon heißt nur: ansehen und eine antippen. Die übrigen
   ${posten.length - auswahlPosten} betreffen zusammen ${stueck} Einzelstücke,
-  aber die gehen in wenigen Durchgängen, nicht Stück für Stück.</span>
+  aber die gehen in wenigen Durchgängen, nicht Stück für Stück.</span>`}
 </div>
 
 ${karten}
