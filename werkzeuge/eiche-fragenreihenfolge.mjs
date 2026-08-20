@@ -44,6 +44,60 @@ if (!REGELN){ console.error('⛔ FELD_REGELN nicht gefunden — die Grundlage fe
 const abhaengig = Object.entries(REGELN)
   .filter(([, r]) => r && Array.isArray(r.typen) && r.typen.length)
   .map(([f]) => f);
+/* ⛔⛔ DIE ZWEITE QUELLE — nachgeruestet am 20.08.2026.
+
+   FELD_REGELN kennt `root`, `femSg` und die vier Verbformen. Die
+   Typabhaengigkeit von `gender`, `sg` und `pl` steht aber nicht dort,
+   sondern als CODE in vorrat.mjs, felderPruefen():
+
+       if (t === "noun"){ pruefe("gender"); pruefe("sg"); pruefe("pl"); }
+
+   Diese Eichung sah sie bis heute NICHT. Sie waere gruen geblieben, wenn
+   jemand die Fragenseite auf `gender -> type` umgestellt haette — und
+   `pl` ist mit 25 Fragen die groesste Gruppe ueberhaupt.
+   [[dieselbe_frage_zwei_antworten]] [[pruefwerkzeug_mit_eingebauter_antwort]]
+
+   ⛔ Zeichenweise zerlegt, kein Regex: die Backslashes ueberleben den Weg
+   durch ein schreibendes Skript nicht. */
+const _vz = fs.readFileSync(path.join(REPO, "werkzeuge", "vorrat.mjs"), "utf8").split(/\r?\n/);
+const _ausCode = new Set();
+for (const _z of _vz){
+  const _t = _z.trim();
+  if (!_t.startsWith("if (t ===")) continue;
+  for (const _s of _t.split("pruefe(").slice(1)){
+    const _auf = _s.indexOf("'");
+    const _zu  = _s.indexOf("'", _auf + 1);
+    if (_auf === 0 && _zu > 0) _ausCode.add(_s.slice(1, _zu));
+  }
+}
+/* ⛔⛔ UNTERGRENZE, nicht nur „ueberhaupt etwas".
+
+   Der erste Entwurf prueft nur `_ausCode.size === 0`. Im Stoertest am
+   20.08.2026 wurde EINE if-Zeile aus felderPruefen() entfernt — `_ausCode`
+   war danach noch besetzt, `gender` und `pl` fielen aber aus der Pruefung,
+   und die Eichung meldete **Exit 0**. Sie wurde leiser statt rot.
+
+   Am 20.08.2026 gemessen: felderPruefen() macht acht Felder typabhaengig
+   (gender · sg · pl · femSg · past · present · imperative · masdar).
+   Werden es weniger, ist das eine Aenderung, die gesehen gehoert — auch
+   wenn sie richtig sein sollte. [[ausfall_ist_unsichtbar_gebaut]] */
+const _MINDESTENS = 8;
+if (_ausCode.size < _MINDESTENS){
+  console.error("⛔ vorrat.mjs macht nur noch " + _ausCode.size + " Feld(er) typabhaengig,");
+  console.error("   am 20.08.2026 waren es " + _MINDESTENS + ": gender · sg · pl · femSg · past ·");
+  console.error("   present · imperative · masdar. Gefunden: " + [..._ausCode].join(" · "));
+  console.error("   Entweder umgebaut oder das Muster `if (t === …) pruefe(…)` traegt nicht mehr.");
+  process.exit(1);
+}
+/* ⛔ Erst merken, dann erweitern: der Vergleich gegen Object.keys(REGELN)
+   lief ins Leere, weil `gender`, `sg` und `pl` dort als Schluessel stehen —
+   nur ohne `typen`. Die Zeile war deshalb immer leer und behauptete, es
+   gebe keine zweite Quelle. [[widerspruch_liegt_in_der_beschriftung]] */
+const _ausRegeln = abhaengig.slice();
+for (const _f of _ausCode) if (!abhaengig.includes(_f)) abhaengig.push(_f);
+const _nurCode = [..._ausCode].filter(f => !_ausRegeln.includes(f));
+console.log("  davon nur aus vorrat.mjs (Code, nicht FELD_REGELN): "
+  + (_nurCode.length ? _nurCode.join(" · ") : "keines"));
 console.log('Felder, deren Regel an der Wortart haengt: ' + abhaengig.join(' · '));
 
 /* Die ECHTE Ausgabe holen. ⛔ vorrat.mjs endet mit Exit 2, wenn etwas offen

@@ -1492,9 +1492,28 @@ if (ARG.includes('--offene-fragen')){
        Also: erst die Felder, an denen andere Regeln haengen; die Anzahl
        bleibt das zweite Kriterium. */
     .sort((a, b) => {
-      const haengtDaran = f => Object.values(FELD_REGELN)
-        .some(r => r && Array.isArray(r.typen) && r.typen.length);
-      const rang = f => (f === 'type' && haengtDaran(f)) ? 1 : 0;
+      /* ⛔ Bis zum 20.08.2026 stand hier
+           const haengtDaran = f => Object.values(FELD_REGELN)
+             .some(r => r && Array.isArray(r.typen) && r.typen.length);
+         — `f` wurde nie benutzt. Die Funktion sagte „ja", sobald IRGENDEIN
+         Feld ein `typen`-Array hat. Das Ergebnis stimmte (type steht vorn),
+         die Begruendung nicht — und verloere FELD_REGELN je alle `typen`,
+         rutschte `type` nach hinten, obwohl felderPruefen() die
+         Abhaengigkeit als Code weitertraegt.
+         [[erfundene_begruendung_schliesst_den_fall]] */
+      const HAENGT_AN_WORTART = new Set([
+        ...Object.entries(FELD_REGELN)
+          .filter(([, r]) => r && Array.isArray(r.typen) && r.typen.length)
+          .map(([f]) => f),
+        /* ⛔ Die zweite Quelle: felderPruefen() prueft diese drei nur bei
+           `type === "noun"`, und das steht in KEINEM FELD_REGELN-Eintrag. */
+        'gender', 'sg', 'pl'
+      ]);
+      const haengtDaran = f => HAENGT_AN_WORTART.has(f);
+      /* ⛔ `type` ist das einzige Feld, an dem andere haengen — deshalb steht
+         es vorn, sobald es ueberhaupt abhaengige gibt. Die Frage ist NICHT
+         „haengt type an etwas", sondern „haengt etwas an type". */
+      const rang = f => (f === 'type' && HAENGT_AN_WORTART.size > 0) ? 1 : 0;
       const d = rang(b[0]) - rang(a[0]);
       return d !== 0 ? d : b[1].length - a[1].length;
     })
