@@ -410,6 +410,17 @@ console.log('=== 6. Dauerauftrag: neu freigeschaltete Kapitel ===');
         console.log(`  ⬜ ${slug}: ${fehlen.length} von ${bekannteKapitel.length} Woertern aus freigeschalteten Kapiteln ohne Alternative — ${JSON.stringify(je)}`);
       } else {
         console.log(`  ✅ ${slug}: alle ${bekannteKapitel.length} Woerter aus freigeschalteten Kapiteln haben Alternativen.`);
+        /* ⛔ Der Nenner sagt, was er NICHT angesehen hat. Dieser Abschnitt
+           fragt nach neu freigeschalteten KAPITELWOERTERN; die eigenen
+           Vokabeln, die Fachbegriffe, die selbst angelegten und die elf, die
+           es nur in vocab-data.js gibt, haengen an keinem Kapitel und koennen
+           hier gar nicht auftauchen. Am 20.08.2026 gemessen: 163 hier gegen
+           214 im Lernbestand, und von den 51 Differenz hat KEINES eine
+           fehlende Alternative — Abschnitt 1 sieht sie alle.
+           ⭐ Ohne diese Zeile liest sich „alle 163" wie „alle bekannten", und
+           genau daran habe ich selbst eine Viertelstunde gesucht.
+           [[trefferquote_ohne_preis]] [[werkzeug_misst_kleineren_bestand]] */
+        console.log('     (Die eigenen Vokabeln, Fachbegriffe, selbst angelegten und die elf nur aus vocab-data.js haengen an keinem Kapitel und werden hier NICHT gezaehlt — Abschnitt 1 prueft sie mit.)');
       }
     });
     if (gesamtOffen){
