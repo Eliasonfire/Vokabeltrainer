@@ -19,6 +19,7 @@ function renderSettings(){
   document.getElementById('toggleWurzelAusrichten')
     .classList.toggle('on', SETTINGS.wurzelAusrichten !== false);
   zeichneKenneSchonListe();
+  zeichneEinzelnFreiListe();
   loadVoices();
 }
 
@@ -34,6 +35,54 @@ function renderSettings(){
    Die Liste steht bewusst offen da und nicht hinter einem Aufklapper: sie ist
    normalerweise leer und stört dann nicht (`:empty{display:none}`), und wenn
    sie etwas enthält, ist genau das die Auskunft, die man sucht. */
+/* ⭐ Die Wörter, die er einzeln freigeschaltet hat, obwohl ihr Kapitel noch zu
+   ist (20.08.2026). Ohne diese Liste ist der Knopf in der Wortkarte eine
+   Einbahnstraße: zurücknehmen ginge nur dort, wo man das Wort erst wieder
+   suchen muss. Genau dieselbe Überlegung wie eine Liste weiter oben. */
+function zeichneEinzelnFreiListe(){
+  const kasten = document.getElementById('einzelnFreiListe');
+  const stand  = document.getElementById('einzelnFreiStand');
+  const alle   = document.getElementById('btnEinzelnFreiAlle');
+  if (!kasten || !stand) return;
+  const woerter = (typeof einzelnFreigeschaltete === 'function') ? einzelnFreigeschaltete() : [];
+
+  stand.textContent = woerter.length
+    ? `${woerter.length} ${woerter.length===1?'Wort läuft':'Wörter laufen'} mit, obwohl das Kapitel noch zu ist`
+    : 'Noch keins freigeschaltet';
+  if (alle) alle.disabled = !woerter.length;
+
+  kasten.innerHTML = woerter.map(w =>
+    `<div class="kenne-schon-eintrag">
+       <div class="kenne-schon-wort">
+         <span class="ar" lang="ar" dir="rtl">${escapeHtml(w.sg || w.ar)}</span>
+         <span class="de">${escapeHtml(w.de)} · ${escapeHtml(kapitelBeschriftung(w))}</span>
+       </div>
+       <button class="kenne-schon-zurueck" data-einzelnzurueck="${escapeHtml(String(w.id))}">Wieder zumachen</button>
+     </div>`).join('');
+}
+
+document.getElementById('einzelnFreiListe').addEventListener('click', (e)=>{
+  const knopf = e.target.closest('[data-einzelnzurueck]');
+  if (!knopf) return;
+  const id = knopf.dataset.einzelnzurueck;
+  setzeEinzelnFrei(id, false);
+  zeichneEinzelnFreiListe();
+  /* ⚠️ Wie in der Wortkarte: Lernvorrat, Kategorien, Wortfelder und Statistik
+     hängen alle an derselben Prüfung und stehen sonst mit der alten Liste da. */
+  if (typeof nachAuswahlwechsel === 'function') nachAuswahlwechsel();
+  const w = VOCAB_DATA.find(x => String(x.id) === id);
+  toast(w ? `${w.de} ist wieder außer Reichweite.` : 'Zurückgenommen.');
+});
+
+document.getElementById('btnEinzelnFreiAlle').addEventListener('click', ()=>{
+  const woerter = einzelnFreigeschaltete();
+  if (!woerter.length) return;
+  woerter.forEach(w => setzeEinzelnFrei(w.id, false));
+  zeichneEinzelnFreiListe();
+  if (typeof nachAuswahlwechsel === 'function') nachAuswahlwechsel();
+  toast(`${woerter.length} ${woerter.length===1?'Wort ist':'Wörter sind'} wieder außer Reichweite.`);
+});
+
 function zeichneKenneSchonListe(){
   const kasten = document.getElementById('kenneSchonListe');
   const stand  = document.getElementById('kenneSchonStand');
