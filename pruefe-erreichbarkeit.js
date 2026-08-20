@@ -160,10 +160,29 @@ try {
     const { BEISPIELSAETZE } =
       (new Function(fs.readFileSync(bsPfad, 'utf8') + ';return {BEISPIELSAETZE};'))();
 
-    /* Nur Beispielsaetze zu Buchvokabeln koennen ausgeblendet sein. */
+    /* Nur Beispielsaetze zu Buchvokabeln koennen ausgeblendet sein.
+     *
+     * ⛔⛔ DER FALL, DEN DIE ERSTE FASSUNG FALSCH BEURTEILTE: `kapVon` kennt
+     * nur madina-1. Von den 148 Beispielsaetzen haengen 14 an Elias' EIGENEN
+     * Woertern (`p_`-Ids) — dort liefert kapVon `undefined`, und die alte
+     * Bedingung `k !== undefined && k <= stand` machte daraus "nicht
+     * sichtbar". Genau umgekehrt ist es richtig: eigene Woerter tragen
+     * `chapter: 'personal'`, und `istBekannt()` in js/kern.js:149 gibt dafuer
+     * bedingungslos true zurueck — sie sind IMMER sichtbar, an keinem Kapitel
+     * haengend.
+     *
+     * ⚠️ Am 21.08.2026 traf es noch keine Regel: 10 haben eine Markierung an
+     * einem eigenen Wort, aber **keine ausschliesslich dort**. Der Fehler war
+     * also latent — er haette beim ersten Mal zugeschlagen, wenn eine Regel
+     * nur noch an einer eigenen Karte haengt, und dann als "nicht erreichbar"
+     * gemeldet, was in Wahrheit die am besten erreichbare Stelle ist.
+     * [[app_auswahl_entscheidet]] [[werkzeug_misst_kleineren_bestand]] */
     const sichtbar = id => {
-      const k = BEISPIELSAETZE[String(id)] ? kapVon.get(String(id)) : undefined;
-      return BEISPIELSAETZE[String(id)] ? (k !== undefined && k <= stand) : true;
+      const s = String(id);
+      if (!BEISPIELSAETZE[s]) return true;
+      const k = kapVon.get(s);
+      if (k === undefined) return true;   /* keine madina-1-Vokabel = kein Kapitel = immer sichtbar */
+      return k <= stand;
     };
 
     const versteckt = [];
