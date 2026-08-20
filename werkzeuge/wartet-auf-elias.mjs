@@ -152,6 +152,19 @@ posten.push({
   seiteText: 'Der Bericht'
 });
 
+/* ⭐ Alle Seiten, die es fuer ihn gibt. Sie stehen HIER, weil diese Seite die
+   ist, die er aufmacht — eine Adresse, die man nicht findet, ist so gut wie
+   keine. ⚠️ Beim Anlegen eines neuen Artefakts hier ergaenzen; die URL bleibt
+   ueber Aktualisierungen hinweg dieselbe. */
+const ARTEFAKTE = [
+  ['Was auf dich wartet',   '4c3a7c9e-c288-480c-bb1f-e2d7cd26d856', 'diese Seite — alle offenen Entscheidungen'],
+  ['Die Fragenseite',       '724ee9bc-adb7-4dcd-ad75-6a56a552adbd', 'die 48 Angaben, ein Durchgang je Frage'],
+  ['Der Wartungskreislauf', '9ec136ba-019d-438b-98af-e57939eb4a99', 'wie das System läuft — vier Phasen, dreizehn Prüfungen'],
+  ['Vierzehn Schriften',    '21463a39-a852-43e0-ad80-7c3bbf78714b', 'die Wortmarke طالب zur Auswahl'],
+  ['Das Farbgerüst',        '4e9ce030-17a6-46be-ba47-02ccb56bc32a', 'acht Akzentfarben an dreizehn Flächen'],
+  ['Eine Stimme fürs Arabische', '15b48598-2cda-4516-81bd-6a7e730dd4cc', 'vier Wege, mit den gemessenen Kosten']
+];
+
 /* ---------- 2. Der Abschnitt aus der To-Do ---------- */
 let ausTodo = [];
 try {
@@ -277,6 +290,13 @@ h3{font-size:1rem;font-weight:600;margin:var(--sp5) 0 var(--sp2);
 .todoliste li{margin-bottom:var(--sp2)}
 .todoliste b{color:var(--text)}
 .fuss{color:var(--still);font-size:.83rem;margin-top:var(--sp5)}
+.seiten{list-style:none;padding:0;margin:0}
+.seiten li{padding:var(--sp2) 0;border-bottom:1px solid var(--rand2);
+           display:flex;gap:var(--sp2);flex-wrap:wrap;align-items:baseline}
+.seiten li:last-child{border-bottom:0}
+.seiten a{color:var(--blau);text-decoration:none;font-weight:600;font-size:.95rem}
+.seiten a:hover{text-decoration:underline}
+.seiten span{color:var(--still);font-size:.85rem}
 </style>
 
 <div class="huelle">
@@ -300,6 +320,10 @@ ${karten}
 
 ${ausTodo.length ? `<h3>Dazu aus der To-Do</h3>
 <ul class="todoliste">${ausTodo.map(z => `<li>${md(z)}</li>`).join('')}</ul>` : ''}
+
+<h3>Alle Seiten für dich</h3>
+<ul class="seiten">${ARTEFAKTE.map(([n, id, was]) =>
+  `<li><a href="https://claude.ai/code/artifact/${id}">${esc(n)}</a> <span>${esc(was)}</span></li>`).join('')}</ul>
 
 <p class="fuss">Erzeugt von <code>werkzeuge/wartet-auf-elias.mjs</code>. Die
 Zahlen kommen aus <code>vorrat.mjs</code>, <code>pruefe-taschkil.js</code> und
