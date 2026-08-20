@@ -158,6 +158,24 @@ const _EIGENE_GEPFLEGT = (ctx.window.EIGENE_VOKABELN || [])
 _EIGENE_GEPFLEGT.forEach(w => woerter.push({ ...w, quelle: 'eigene' }));
 (hol('FACHBEGRIFF_VOKABELN') || []).forEach(w => woerter.push({ ...w, quelle: 'fachbegriff' }));
 
+/* ⛔ Der vierte Weg: seine SELBST ANGELEGTEN Woerter aus vt_personalVocab.
+   Sie stehen nur im localStorage; `vorrat.mjs --stand … --app auto` holt sie
+   nach data/eigene-woerter.json. Ohne diese Zeilen mass dieses Skript 189
+   Woerter, waehrend vorrat.mjs 203 zaehlte — dieselbe Frage, zwei Antworten.
+
+   ⚠️ Fehlt die Datei, wird das GESAGT. Ein stillschweigend kleinerer Bestand
+   sieht aus wie ein gruener Lauf. [[ausfall_ist_unsichtbar_gebaut]] */
+let selbstAnzahl = 0;
+try {
+  const d = JSON.parse(fs.readFileSync(path.join(DIR, 'data', 'eigene-woerter.json'), 'utf8'));
+  (Array.isArray(d.woerter) ? d.woerter : []).forEach(w => {
+    woerter.push({ ...w, quelle: 'selbst' }); selbstAnzahl++;
+  });
+} catch (e) {
+  console.log('  ⚠️ data/eigene-woerter.json fehlt — seine selbst angelegten Woerter');
+  console.log('     sind NICHT gemessen (node werkzeuge/vorrat.mjs --stand <datei> --app auto).');
+}
+
 if (setzeLexikon) { try { setzeLexikon(woerter); } catch (e){ /* optional */ } }
 
 if (!woerter.length){

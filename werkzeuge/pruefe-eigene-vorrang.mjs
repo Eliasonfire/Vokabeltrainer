@@ -158,6 +158,57 @@ if (SELBSTTEST){
   }
 }
 
+/* ---------- Zweiter Abschnitt: messen alle denselben Bestand? ---------- */
+/* ⛔⛔ DIESELBE FRAGE, ZWEI ANTWORTEN — die allgemeine Form des Fehlers oben.
+
+   Am 20.08.2026 traten an EINEM Tag vier Faelle auf:
+     · drei Werkzeuge lasen den Roh-Abzug statt der gepflegten Fassung
+     · fuenf kannten den vierten Weg (vt_personalVocab) gar nicht
+     · vorrat.mjs mass 203 Woerter, pruefe-funktionen.js 189
+     · die Belegsuche fand 0 Treffer, weil sie nur 469 statt 4629 Woerter sah
+
+   Jeder einzelne war unsichtbar: das Werkzeug meldete gruen, nur eben ueber
+   einen kleineren Bestand. Diese Pruefung vergleicht deshalb die ZAHLEN, die
+   die Werkzeuge selbst ausgeben — nicht ihren Quelltext.
+
+   ⚠️ Verglichen werden nur Werkzeuge, die dasselbe MEINEN: „Woerter im
+   Fenster". pruefe-taschkil.js zaehlt arabische Woerter in Feldern und gehoert
+   deshalb NICHT dazu. [[widerspruch_liegt_in_der_beschriftung]] */
+const BESTANDSZAHL = [
+  { name: 'werkzeuge/vorrat.mjs', argv: [p('werkzeuge/vorrat.mjs')],
+    muster: /geprueft:\s+(\d+)\s+Woerter/ },
+  { name: 'pruefe-funktionen.js', argv: [p('pruefe-funktionen.js')],
+    muster: /gemessen:\s+(\d+)\s+Woerter/ },
+];
+
+console.log('--- Messen alle Werkzeuge denselben Bestand? ---');
+console.log('');
+const zahlen = [];
+for (const w of BESTANDSZAHL){
+  const m = ausgabeVon(w).match(w.muster);
+  if (!m){
+    console.log('  ⛔ ' + w.name + ': die Zahl steht nicht in der Ausgabe —');
+    console.log('     entweder umbenannt oder das Werkzeug bricht ab. NICHT gruen.');
+    rot++;
+    continue;
+  }
+  zahlen.push({ name: w.name, zahl: Number(m[1]) });
+  console.log('  ' + String(m[1]).padStart(6) + '  ' + w.name);
+}
+if (zahlen.length > 1){
+  const einig = zahlen.every(z => z.zahl === zahlen[0].zahl);
+  console.log('');
+  if (einig){
+    console.log('  ok  alle messen ' + zahlen[0].zahl + ' Woerter.');
+  } else {
+    rot++;
+    console.log('  ⛔ Die Werkzeuge messen VERSCHIEDENE Bestaende.');
+    console.log('     Der kleinere kennt einen Weg nicht — meist vt_personalVocab');
+    console.log('     (data/eigene-woerter.json) oder eine Buchdatei, die nur bei');
+    console.log('     vorhandener Lernstand-Angabe geladen wird.');
+  }
+}
+
 console.log('');
 if (rot){
   console.log('⛔ ' + rot + ' Werkzeug(e) lesen den Rohabzug statt der Fassung, die die App sieht.');
