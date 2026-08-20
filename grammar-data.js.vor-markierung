@@ -2419,6 +2419,12 @@ const SENTENCE_TAGS = {
   ],
   "50474": [
     { ruleId: "idafa-01", matchText: "مِفْتَاحُ الْبَابِ" }
+  ],
+  "397cfa89-5bc0-4ce7-ae45-30fe8ea64fe2": [
+    { ruleId: "harf-jarr-01", matchText: "فِي الْبَيْتِ" }
+  ],
+  "65699a81-0913-4e3c-9d5d-fa750d972779": [
+    { ruleId: "wortarten-01", matchText: "اِسْمٌ" }
   ]
 };
 

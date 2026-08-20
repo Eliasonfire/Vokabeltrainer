@@ -2425,6 +2425,48 @@ const SENTENCE_TAGS = {
   ],
   "65699a81-0913-4e3c-9d5d-fa750d972779": [
     { ruleId: "wortarten-01", matchText: "اِسْمٌ" }
+  ],
+  "p_1787183484954": [
+    { ruleId: "mubtada-khabar-01", matchText: "مَكْسُورٌ" }
+  ],
+  "p_1787185012359": [
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْبَيْتِ" }
+  ],
+  "p_1787185031977": [
+    { ruleId: "mubtada-khabar-genus-01", matchText: "مُدَرِّسَةٌ" }
+  ],
+  "p_1787189845886": [
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "خَرَجَ" }
+  ],
+  "p_1787191371934": [
+    { ruleId: "mamnu-min-as-sarf-01", matchText: "كَسْلَانُ" }
+  ],
+  "p_1787185309933": [
+    { ruleId: "harf-jarr-li-01", matchText: "لَكَ" }
+  ],
+  "p_1787185328882": [
+    { ruleId: "harf-jarr-li-01", matchText: "لَكِ" }
+  ],
+  "p_1787189488747": [
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "وَفِيهِ" }
+  ],
+  "p_1787189022107": [
+    { ruleId: "possessiv-ist-idafa-01", matchText: "حَالُكَ" }
+  ],
+  "p_1787189076593": [
+    { ruleId: "possessiv-ist-idafa-01", matchText: "حَالُكَ" }
+  ],
+  "p_1787188396011": [
+    { ruleId: "zarf-als-mudaf-01", matchText: "بَعْدَ الْمَسْجِدِ" }
+  ],
+  "p_1787190874749": [
+    { ruleId: "zarf-als-mudaf-01", matchText: "عِنْدَ الْمُدَرِّسِ" }
+  ],
+  "p_1787189287368": [
+    { ruleId: "zarf-makan-rollenname-01", matchText: "أَمَامَ" }
+  ],
+  "p_1787184718572": [
+    { ruleId: "istifham-liman-01", matchText: "لِمَنِ" }
   ]
 };
 
