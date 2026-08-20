@@ -335,6 +335,17 @@ function zeichneBoxAuswahl(){
   document.getElementById('boxAuswahlZahl').textContent =
     n === 1 ? '1 Wort ausgewählt' : `${n} Wörter ausgewählt`;
 
+  /* ⭐ Wie viele der markierten Wörter sind noch gar nicht dran? */
+  const zu = [...BOX_AUSWAHL].filter(id => {
+    const w = byId(id);
+    return w && typeof istBekannt === 'function' && !istBekannt(w);
+  });
+  const freiKnopf = document.getElementById('btnBoxFreischalten');
+  if (freiKnopf){
+    freiKnopf.classList.toggle('hidden', !zu.length);
+    freiKnopf.textContent = zu.length === 1 ? '1 freischalten' : `${zu.length} freischalten`;
+  }
+
   /* Die Faelligkeit steht mit am Knopf. Ohne sie ist "Box 4" eine blosse
      Nummer - mit "in 7 Tagen" sagt der Knopf, was er bewirkt. */
   const tage = t => t === 0 ? 'sofort' : t === 1 ? 'morgen' : `in ${t} Tagen`;
@@ -358,11 +369,39 @@ document.getElementById('wordList').addEventListener('click', (e)=>{
   zeigeWortKarte(id);
 });
 
+document.getElementById('btnBoxFreischalten').addEventListener('click', ()=>{
+  const zu = [...BOX_AUSWAHL].filter(id => { const w = byId(id); return w && !istBekannt(w); });
+  if (!zu.length) return;
+  zu.forEach(id => setzeEinzelnFrei(id, true));
+  /* ⚠️ Lernvorrat, Kategorien, Wortfelder und Statistik hängen alle an
+     derselben Prüfung — ohne diesen Aufruf stünden sie mit der alten Liste da. */
+  if (typeof nachAuswahlwechsel === 'function') nachAuswahlwechsel();
+  zeichneBoxAuswahl();
+  toast(`${zu.length} ${zu.length===1?'Wort ist':'Wörter sind'} freigeschaltet — der Rest des Kapitels bleibt zu.`);
+});
+
 document.getElementById('boxZiele').addEventListener('click', (e)=>{
   const knopf = e.target.closest('[data-boxziel]');
   if (!knopf || !BOX_AUSWAHL.size) return;
   const ziel = Number(knopf.dataset.boxziel);
   let bewegt = 0, schonDrin = 0;
+
+  /* ⛔⛔ GESPERRTE WÖRTER BEIM VERLEGEN MITNEHMEN. Ohne das wäre der Umzug
+     eine Scheinhandlung: das Wort stünde in Box 5 und käme trotzdem nie dran,
+     weil passtZurAuswahl() es vorher aussortiert. Nichts würde melden, dass
+     der Knopf wirkungslos war — und genau diesen Weg geht Elias gerade
+     („ich schalte gerade ein paar wörter aus kapitel 24 frei … und will sie
+     direkt in box 5 packen"). Der Toast unten nennt es, damit es keine stille
+     Nebenwirkung ist. */
+  let mitFreigeschaltet = 0;
+  BOX_AUSWAHL.forEach(id => {
+    const wort = byId(id);
+    if (wort && typeof istBekannt === 'function' && !istBekannt(wort)
+        && typeof setzeEinzelnFrei === 'function'){
+      setzeEinzelnFrei(id, true);
+      mitFreigeschaltet++;
+    }
+  });
 
   BOX_AUSWAHL.forEach(id => {
     /* Ein Wort ohne Fortschrittseintrag gibt es (die Liste zeigt dann "Box 1"
@@ -397,6 +436,9 @@ document.getElementById('boxZiele').addEventListener('click', (e)=>{
   const teile = [];
   if (bewegt)    teile.push(`${bewegt} Wort${bewegt===1?'':'e'} → Box ${ziel}`);
   if (schonDrin) teile.push(`${schonDrin} lag${schonDrin===1?'':'en'} dort schon`);
+  /* Die Mitnahme gehört in die Meldung. Eine Nebenwirkung, die niemand nennt,
+     ist eine stille Nebenwirkung — und diese hier verändert seinen Lernvorrat. */
+  if (mitFreigeschaltet) teile.push(`${mitFreigeschaltet} dabei freigeschaltet`);
   toast(teile.join(' · '));
   /* Die Startseite zeigt die Boxstaende - sonst stimmen sie nach einem Umzug
      nicht mehr mit dem ueberein, was die Wortliste gerade gezeigt hat. */
