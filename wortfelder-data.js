@@ -177,6 +177,8 @@ const WORTFELDER = [
     'Ägypten', 'Indien', 'Japan', 'China', 'Amerika', 'Deutschland', 'Frankreich',
     'England', 'Türkei', 'Syrien', 'Irak', 'Iran', 'Jemen', 'Sudan', 'Marokko',
     'Pakistan', 'Nigeria', 'Philippinen', 'Indonesien', 'Mekka', 'Medina',
+    /* 20.08.2026: مَمْلَكَةٌ, Koenigreich. */
+    'Königreich',
     'Jerusalem', 'Damaskus', 'Kairo', 'Hauptstadt', 'Ort', 'Region', 'Grenze',
     'Heimat', 'Ausland', 'Osten', 'Westen', 'Norden', 'Süden' ,
     'Schweiz', 'Kuwait', 'Saudi-Arabien', 'Katar', 'Libanon', 'Jordanien', 'Algerien', 'Tunesien', 'Libyen', 'Malaysia', 'Bangladesch', 'Afghanistan', 'Spanien', 'Italien', 'Russland', 'Somalia' ] },
@@ -188,6 +190,14 @@ const WORTFELDER = [
     'Kugelschreiber', 'Bleistift', 'Papier', 'Tafel', 'Kreide', 'Tasche',
     'Wörterbuch', 'Bibliothek', 'Direktor', 'Lineal', 'Radiergummi', 'Seite',
     'Wissen', 'Wissenschaft', 'lernen', 'studieren', 'Hausaufgabe' ,
+    /* 20.08.2026 — zwei der vier Nomen, die im Fenster in keinem
+       Bedeutungsfeld standen. Gemessen mit `node pruefe-wortfelder.js
+       --fenster --alle`: 39 Woerter ohne Feld, davon nur DIESE vier Nomen
+       (bei Adjektiv und Partikel ist die Wortart selbst die Kategorie).
+       ⚠️ 'Mittelschule' braucht einen eigenen Eintrag: der Vergleich zerlegt
+       den deutschen Text an /[^A-Za-zÀ-ÿ]+/ und verlangt ein GANZES Teilwort;
+       'schul*' trifft nur, was mit 'schul' ANFAENGT. */
+    'Mitschüler', 'Mittelschule',
     'Klassenzimmer', 'Hörsaal', 'Fakultät', 'Übung', 'Beispiel', 'Labor', 'Stundenplan', 'Pause', 'Note', 'Zeugnis' ] },
 
   { name: 'Haus & Wohnen', woerter: [
@@ -244,6 +254,10 @@ const WORTFELDER = [
     'Fahrer', 'Pilot', 'Soldat', 'Polizist', 'Richter', 'Anwalt', 'Koch',
     'Kellner', 'Verkäufer', 'Angestellter', 'Beamter', 'Chef', 'Direktor',
     'Sekretär', 'Handwerker', 'Firma', 'Büro', 'Lohn', 'Gehalt', 'Markt',
+    /* 20.08.2026: مُفَتِّشٌ. Und 'Kollege', weil زَمِيلٌ im Abzug
+       'Kollege / Mitschüler' heisst - beide Felder treffen zu, und die
+       Zuordnung bricht nach dem ersten Treffer NICHT ab. */
+    'Inspektor', 'Kollege',
     'Laden', 'Geschäft', 'Fabrik', 'Kunde' ,
     'Minister', 'Gebetsrufer', 'Muezzin', 'Bauarbeiter', 'Wächter' ] },
 
