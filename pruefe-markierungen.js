@@ -239,27 +239,95 @@ for (const k of Object.keys(SENTENCE_TAGS)) {
 }
 console.log(`\n=== Wortgrenzen: ${schief} Markierungen sitzen mitten in einem Wort ===`);
 
-// --- Pruefung 3: ueberschneiden sich zwei Markierungen? ------------------
-// buildSentenceHtml() setzt die Unterstreichungen positionsbasiert und
-// ueberspringt Ueberschneidungen still. Eine Regel waere dann in der App
-// unsichtbar, ohne dass es irgendwo auffaellt - deshalb hier melden.
-let kollision = 0;
-for (const k of Object.keys(SENTENCE_TAGS)) {
-  const s = (satz[k] || {}).sentAr;
-  if (!s) continue;
-  const sp = SENTENCE_TAGS[k]
-    .map(t => ({ t, von: s.indexOf(t.matchText) }))
-    .filter(x => x.von >= 0)
-    .map(x => ({ ...x, bis: x.von + x.t.matchText.length }))
-    .sort((a, b) => a.von - b.von);
-  for (let i = 1; i < sp.length; i++) {
-    if (sp[i].von < sp[i - 1].bis) {
-      kollision++;
-      console.log(`Satz ${k}: >>${sp[i - 1].t.matchText}<< (${sp[i - 1].t.ruleId}) und >>${sp[i].t.matchText}<< (${sp[i].t.ruleId}) ueberschneiden sich`);
+// --- Pruefung 3: wird jede Markierung auch WIRKLICH angezeigt? ----------
+//
+// ⛔ HIER STAND BIS ZUM 21.08.2026 die Frage, ob sich zwei Markierungen
+// ueberschneiden. Die war ein Stellvertreter: buildSentenceHtml() liess
+// ueberschneidende Markierungen still weg, also war jede Ueberschneidung
+// gleichbedeutend mit einer unsichtbaren Regel.
+//
+// Seit dem 21.08. verschachtelt die Zerlegung sie stattdessen. Eine
+// Ueberschneidung ist damit erlaubt und kein Mangel mehr - die Frage, die
+// zaehlt, ist die direkte: kommt jede eingetragene Regel im gerenderten
+// HTML vor? Genau das wird jetzt an der ECHTEN Funktion gemessen, nicht
+// an einem Stellvertreter und nicht an einem Nachbau.
+//
+// ⚠️ Der Stellvertreter hatte vier Faelle gemeldet, und alle vier waren
+// echt. Er wird trotzdem ersetzt: er kann kuenftige Faelle nur so lange
+// finden, wie Ueberschneidung und Unsichtbarkeit dasselbe bedeuten.
+const vmModul = require('vm');
+function ladeSatzbauer(){
+  const lies = f => fs.readFileSync(P + f, 'utf8');
+  const schneide = (text, kopf) => {
+    const i = text.indexOf(kopf);
+    if (i < 0) throw new Error('nicht gefunden: ' + kopf);
+    let tiefe = 0;
+    const s = text.indexOf('{', i);
+    for (let k = s; k < text.length; k++){
+      if (text[k] === '{') tiefe++;
+      else if (text[k] === '}'){ tiefe--; if (!tiefe) return text.slice(i, k + 1); }
     }
-  }
+    throw new Error('Ende nicht gefunden: ' + kopf);
+  };
+  const saetzeText = lies('js/saetze.js');
+  /* ⛔ Die GRENZ_-Konstanten stehen NEBEN anWortgrenze. Ohne sie wirft die
+     Funktion, und der Vergleich haette Saetze stillschweigend als in
+     Ordnung gezaehlt. Genau das ist am 21.08. beim Bauen passiert. */
+  const konstanten = saetzeText.split(/\r?\n/)
+    .filter(x => /^const GRENZ_/.test(x.trim())).join('\n');
+  if (!konstanten) throw new Error('GRENZ_-Konstanten nicht gefunden');
+  const kiste = { window: {}, console };
+  kiste.globalThis = kiste;
+  vmModul.createContext(kiste);
+  vmModul.runInContext(lies('grammar-data.js'), kiste);
+  vmModul.runInContext(
+    'const SETTINGS = { grammarHighlight: true };\n'
+    + 'function mitLuecke(){ return null; }\n'
+    + konstanten + '\n'
+    + schneide(lies('js/kern.js'), 'function escapeHtml(') + '\n'
+    + schneide(saetzeText, 'function anWortgrenze(') + '\n'
+    + schneide(saetzeText, 'function buildSentenceHtml(')
+    + '\nglobalThis.bau = buildSentenceHtml;', kiste);
+  return kiste.bau;
 }
-console.log(`=== Ueberschneidungen: ${kollision} ===`);
+
+let unsichtbar = 0, kollision = 0;
+try {
+  const bau = ladeSatzbauer();
+  for (const k of Object.keys(SENTENCE_TAGS)) {
+    const s = (satz[k] || {}).sentAr;
+    if (!s) continue;
+    /* Ausgeblendete Regeln sollen NICHT erscheinen — sie zaehlen nicht. */
+    const erwartet = SENTENCE_TAGS[k]
+      .map(t => t.ruleId)
+      .filter(id => { const r = GRAMMAR_RULES.find(x => x.id === id); return r && !r.ausgeblendet; });
+    if (!erwartet.length) continue;
+    let html;
+    try { html = bau({ id: k, sentAr: s }, { ohneLuecke: true }); }
+    catch (e){ console.log('Satz ' + k + ': buildSentenceHtml wirft — ' + e.message); unsichtbar++; continue; }
+    const gezeigt = new Set((String(html).match(/data-rule="[^"]+"/g) || [])
+      .map(x => x.slice(11, -1)));
+    for (const id of new Set(erwartet))
+      if (!gezeigt.has(id)){
+        unsichtbar++;
+        console.log('Satz ' + k + ': >>' + s + '<< zeigt ' + id + ' NICHT an');
+      }
+    /* Ueberschneidungen weiter zaehlen — als Information, nicht als Mangel. */
+    const sp = SENTENCE_TAGS[k]
+      .map(t => ({ t, von: s.indexOf(t.matchText) }))
+      .filter(x => x.von >= 0)
+      .map(x => ({ ...x, bis: x.von + x.t.matchText.length }))
+      .sort((a, b) => a.von - b.von);
+    for (let i = 1; i < sp.length; i++) if (sp[i].von < sp[i - 1].bis) kollision++;
+  }
+} catch (e){
+  /* ⛔ KEIN stummes catch: kann die Funktion nicht geladen werden, prueft
+     dieser Abschnitt NICHTS und muss das sagen. */
+  console.log('⛔ buildSentenceHtml nicht ladbar: ' + e.message);
+  console.log('   Dieser Abschnitt hat NICHTS geprueft.');
+  unsichtbar++;
+}
+console.log(`=== Unsichtbare Markierungen: ${unsichtbar}   (${kollision} Ueberschneidung(en), erlaubt) ===`);
 
 // --- Pruefung 4: wie trennscharf sind die Bedingungen ueberhaupt? --------
 //
