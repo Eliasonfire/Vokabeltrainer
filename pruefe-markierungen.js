@@ -30,8 +30,54 @@ const { VOCAB_DATA } =
 const { LEHRBUCH_SAETZE } =
   (new Function(fs.readFileSync(P + 'lehrbuch-saetze.js', 'utf8') + ';return {LEHRBUCH_SAETZE};'))();
 
+/* ⛔ DRITTE UND VIERTE SATZQUELLE — bis zum 20.08.2026 fehlten sie hier.
+   pruefe-saetze.js liest seit dem 19.08. vier Quellen, dieses Skript las zwei.
+   Derselbe Mangel, zwei Werkzeuge, nur der Dateiname war anders.
+   [[entscheidung_gilt_fuer_das_zweite_werkzeug]]
+
+   ⭐ Gemessen an dem Tag: von 587 Markierungen sassen **14** auf Saetzen mit
+   `p_`-Schluessel (Elias' selbst angelegte Woerter, Weg 3). Fuer sie lieferte
+   `satz[k]` undefined, und `(satz[k]||{}).sentAr` machte daraus still ein
+   `undefined` — die Wortgrenzen-Pruefung (Z. 157) und die Ueberschneidungs-
+   pruefung (Z. 189) uebersprangen sie kommentarlos, die Regelbedingung meldete
+   `(Satz p_1787189488747: undefined)`. Ein Ausfall, der wie ein gruener Lauf
+   aussieht. [[ausfall_ist_unsichtbar_gebaut]] [[werkzeug_misst_kleineren_bestand]]
+
+   ⚠️ Optional geladen: data/ ist per .gitignore lokal (der arabicroots-Abzug).
+   Auf einem frisch geklonten Stand fehlt der Ordner — dann bleibt die Quelle
+   leer, und das wird GESAGT statt verschwiegen. */
+let BEISPIELSAETZE = {};
+try {
+  const d = P + 'data/beispielsaetze.js';
+  if (fs.existsSync(d))
+    ({ BEISPIELSAETZE } = (new Function(fs.readFileSync(d, 'utf8') + ';return {BEISPIELSAETZE};'))());
+  else console.log('  ⚠️ data/beispielsaetze.js fehlt — Markierungen auf p_-Saetzen bleiben UNGEPRUEFT.');
+} catch (e) { console.log('  ⚠️ data/beispielsaetze.js nicht lesbar: ' + e.message); }
+
+let FACHBEGRIFF_VOKABELN = [];
+try {
+  const d = P + 'data/fachbegriffe.js';
+  if (fs.existsSync(d))
+    ({ FACHBEGRIFF_VOKABELN } = (new Function(fs.readFileSync(d, 'utf8') + ';return {FACHBEGRIFF_VOKABELN};'))());
+} catch (e) { console.log('  ⚠️ data/fachbegriffe.js nicht lesbar: ' + e.message); }
+
 const satz = {};
 for (const v of VOCAB_DATA.concat(LEHRBUCH_SAETZE)) satz[v.id] = v;
+/* Die dritte Quelle traegt kein `id`-Feld — der Schluessel IST die Id. */
+for (const k of Object.keys(BEISPIELSAETZE))
+  if (!satz[k] || !satz[k].sentAr) satz[k] = Object.assign({ id: k }, BEISPIELSAETZE[k]);
+/* Die vierte: Fachbegriffe sind Karteikarten mit eigenem sentAr. */
+for (const v of FACHBEGRIFF_VOKABELN)
+  if (v && v.sentAr && !satz[v.id]) satz[v.id] = v;
+
+/* Gegenprobe im Lauf selbst: eine Markierung, deren Satz unauffindbar bleibt,
+   wird oben still uebersprungen. Deshalb hier gezaehlt und genannt. */
+const OHNE_SATZ = Object.keys(SENTENCE_TAGS)
+  .filter(k => !(satz[k] && satz[k].sentAr));
+console.log('=== Satzquellen: ' + Object.keys(satz).length + ' Saetze bekannt, '
+  + OHNE_SATZ.length + ' der ' + Object.keys(SENTENCE_TAGS).length
+  + ' markierten Saetze unauffindbar'
+  + (OHNE_SATZ.length ? ' — ' + OHNE_SATZ.slice(0, 5).join(', ') : ' ✅') + '\n');
 const roh = x => x.replace(/[\u064B-\u0652\u0670\u0640]/g, '');   // Taschkil + Tatweel weg
 /* Satzzeichen raus, sonst scheitert jede Bedingung mit $ still. Am 18.08.2026
    nachgemessen: von 371 matchText-Werten trugen 53 ein Satzzeichen. 52 davon
