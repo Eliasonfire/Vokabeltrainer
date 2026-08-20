@@ -164,6 +164,54 @@ if (!fs.existsSync(PROMPT)){
   } else {
     sag(true, 'Alle ' + pfade.length + ' absoluten Pfade im Prompt liegen in cwd oder addDirs.');
   }
+
+  /* ⛔⛔ UND: darf die Routine jeden Befehl, den der Prompt ihr auftraegt,
+     ueberhaupt ausfuehren?
+
+     Ein Befehl, der nicht in allowedTools steht, wird abgelehnt. Die Routine
+     stirbt daran nicht — sie ueberspringt ihn und meldet gruen. Am 20.08.2026
+     gemessen: der neue Schritt 1c.8b rief werkzeuge/freigabe-artefakt.mjs auf,
+     und genau dieser Eintrag fehlte. Die Freigabeseite fuer NEUE REGELN waere
+     also nie erneuert worden, ohne dass jemand etwas bemerkt haette.
+
+     ⚠️ Verglichen wird der WERKZEUGPFAD, nicht die ganze Zeile: allowedTools
+     endet auf „:*", der Prompt haengt Argumente an. Wer die Zeilen vergleicht,
+     findet nie einen Treffer. [[anleitung_ohne_berechtigung]] */
+  const erlaubteBefehle = (rout && rout.allowedTools) || [];
+  /* ⛔ KEIN Regex hier — Muster mit Backslashes ueberleben den Weg durch ein
+     Skript, das dieses Skript schreibt, nicht: aus  s+  wurde beim ersten
+     Versuch  s , und die Datei liess sich nicht mehr laden. Zeichenweise
+     zerlegen ist haesslicher und haelt. [[python_backslash_b_wird_backspace]] */
+  const werkzeugAus = (s) => {
+    const txt = String(s);
+    const i = txt.indexOf("node ");
+    if (i < 0) return null;
+    let rest = txt.slice(i + 5).trim();
+    for (const trenner of [" ", "	", ":", "`"]){
+      const k = rest.indexOf(trenner);
+      if (k > 0) rest = rest.slice(0, k);
+    }
+    return (rest.endsWith(".mjs") || rest.endsWith(".js")) ? rest : null;
+  };
+  const erlaubteWerkzeuge = new Set(erlaubteBefehle.map(werkzeugAus).filter(Boolean));
+  /* ⚠️ Zeilenumbruch als Zeichencode, nicht als Escape: eine Kette aus
+     Skripten, die Skripte schreiben, frisst Backslashes. Zweimal an diesem
+     Nachmittag ist genau daran eine Datei zerbrochen.
+     [[python_backslash_b_wird_backspace]] */
+  const gefordert = [...new Set(prompt.split(String.fromCharCode(10))
+    .map(z => z.replace(String.fromCharCode(13), ""))
+    .filter(z => z.trim().startsWith("node "))
+    .map(werkzeugAus).filter(Boolean))];
+  const ohneRecht = gefordert.filter(w => !erlaubteWerkzeuge.has(w));
+  if (!erlaubteBefehle.length){
+    sag(false, "routines.json nicht lesbar — die Berechtigungen sind UNGEPRUEFT.");
+  } else if (ohneRecht.length){
+    sag(false, ohneRecht.length + " Werkzeug(e) im Prompt stehen NICHT in allowedTools:");
+    ohneRecht.forEach(w => console.log("        " + w));
+    console.log("        Die Routine wird abgelehnt, ueberspringt still und meldet gruen.");
+  } else {
+    sag(true, "Alle " + gefordert.length + " im Prompt aufgerufenen Werkzeuge stehen in allowedTools.");
+  }
 }
 
 /* ---------- 3. Kennt der Prompt alle Punkte? ---------- */
