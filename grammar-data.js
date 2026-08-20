@@ -2378,6 +2378,47 @@ const SENTENCE_TAGS = {
   "50312": [
     { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
     { ruleId: "mubtada-khabar-01", matchText: "الرَّجُلُ مُسْلِمٌ" }
+  ],
+  "50181": [
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْجَنُوبِ" }
+  ],
+  "50182": [
+    { ruleId: "mubtada-khabar-01", matchText: "الْفَطُورُ مُبَكِّرٌ" }
+  ],
+  "50183": [
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْبَيْتِ" }
+  ],
+  "50185": [
+    { ruleId: "mubtada-khabar-01", matchText: "الْمَسْجِدُ طَاهِرٌ" }
+  ],
+  "50189": [
+    { ruleId: "nat-fem-01", matchText: "هِوَايَةٌ جَدِيدَةٌ" },
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" }
+  ],
+  "50190": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "فَرْعُ الْمَدْرَسَةِ" }
+  ],
+  "50191": [
+    { ruleId: "nat-fem-01", matchText: "لُقْمَةٌ صَغِيرَةٌ" },
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" }
+  ],
+  "50193": [
+    { ruleId: "nat-fem-01", matchText: "أُضْحِيَةٌ كَبِيرَةٌ" }
+  ],
+  "50194": [
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "عَلَى الْمَكْتَبِ" }
+  ],
+  "50195": [
+    { ruleId: "mubtada-khabar-01", matchText: "الْمَاءُ سَائِلٌ" }
+  ],
+  "50470": [
+    { ruleId: "mubtada-khabar-01", matchText: "الْمُبْتَدَأُ مَرْفُوعٌ" }
+  ],
+  "50473": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "بَيْتُ الْمُدَرِّسِ" }
+  ],
+  "50474": [
+    { ruleId: "idafa-01", matchText: "مِفْتَاحُ الْبَابِ" }
   ]
 };
 
