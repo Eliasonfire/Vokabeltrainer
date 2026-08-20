@@ -768,7 +768,34 @@ BUECHER.forEach(b => {
    aus arabicroots immer 'other', und das faellt bei hatKategorie() zwangslaeufig
    durch. Das ist ein eigener Punkt (A1 im Skill) und wuerde hier nur jede Zeile
    rot machen, ohne etwas Neues zu sagen. [[kandidatenliste_ist_keine_fehlerliste]] */
-const EIGENE = kiste.window.EIGENE_VOKABELN || [];
+/* ⛔⛔ DIE FASSUNG, DIE DIE APP SIEHT — nicht die aus dem Rohabzug.
+
+   Elias' eigene Vokabeln stehen in ZWEI Dateien, und am 20.08.2026 wichen
+   ALLE ELF voneinander ab:
+
+     data/vokabeln-eigene.js  roher arabicroots-Abzug: type:'other', kein Satz
+     vocab-data.js            gepflegt: type:'grammar'/'vocab', mit Satz
+
+   Die App nimmt die gepflegte Fassung — js/buecher.js:538 ueberspringt jedes
+   eigene Wort, dessen id schon in VOCAB_DATA steht:
+
+     const da = new Set(VOCAB_DATA.map(w => String(w.id)));
+     const neu = window.EIGENE_VOKABELN.filter(w => !da.has(String(w.id)) && …);
+
+   Bei allen elf trifft das zu. Der Rohabzug erreicht die App also NIE.
+   Wer ihn trotzdem misst, meldet Maengel, die es nicht gibt: sechs der acht
+   „nur Wort"-Befunde tragen in der App ein sauberes type:'grammar', und die
+   Fragenseite stellte sechs Fragen, deren Antwort laengst im Bestand stand —
+   Fragen, die Elias nicht einmal richtig beantworten KONNTE, weil das
+   Formular nur Nomen/Verb/Partikel/Adjektiv anbietet und `grammar` fehlt.
+
+   ⚠️ Dieselbe Regel steht in werkzeuge/vorrat.mjs, pruefe-funktionen.js und
+   pruefe-taschkil.js. Wer eine aendert, aendert alle drei —
+   werkzeuge/pruefe-eigene-vorrang.mjs meldet es, wenn eine fehlt.
+   [[pruefwerkzeug_laedt_mehr_als_die_app]] [[dieselbe_frage_zwei_antworten]] */
+const _gepflegt = new Map((VOCAB || []).map(w => [String(w.id), w]));
+const EIGENE = (kiste.window.EIGENE_VOKABELN || [])
+  .map(w => _gepflegt.get(String(w.id)) || w);
 const FACH   = hol('FACHBEGRIFF_VOKABELN') || [];
 
 /* ⛔⛔ EIN FACHBEGRIFF BRAUCHT KEINEN EIGENEN SATZ, WENN SEINE REGEL EINEN HAT.
