@@ -177,6 +177,39 @@ const AUSNAHMEN = [
       return false;
     },
     nurMelden: true
+  },
+  {
+    /* ⭐ Ein Fachbegriff wird in der ZITIERFORM genannt, also ohne Endung:
+       مُضَاف, نَعْت, ظَرْف, شَكْل, مَجْرُور. „Endung fehlt" ist dort kein
+       Mangel, sondern die uebliche Nennform — genau die, in der Elias' Lehrer
+       sie ausspricht.
+
+       ⛔ Nicht geraten, sondern im eigenen Bestand nachgeschlagen
+       (20.08.2026, ueber vocab-data.js, grammar-data.js und die Buchdateien):
+
+         مُضَاف    6×  neben مُضَافٌ 2×
+         نَعْت     5×  neben نَعْتٌ  2×
+         ظَرْف     3×  neben ظَرْفٌ  2×
+         مَرْفُوع  1×  neben مَرْفُوعٌ 1×
+         شَكْل     1×  neben شَكْلٌ  2×
+
+       Beide Formen stehen also nebeneinander im Material. Die endungslose ist
+       damit belegt und keine Nachlaessigkeit. [[zitierform_ist_nicht_satzkontext]]
+
+       ⚠️ Die Ausnahme haengt an der HERKUNFT, nicht am Wort: nur Eintraege
+       aus data/fachbegriffe.js (`gram-`-Kennung). Dasselbe Wort in einem SATZ
+       braucht seine Endung weiter, und dort wird sie weiter gemeldet.
+
+       ⛔ Sie deckt AUSDRUECKLICH NICHT die Faelle „Haraka fehlt" ab — إِضافة,
+       تاء, مَرْبُوطة, مَقْصورة haben eine Luecke MITTEN im Wort, und das ist
+       keine Nennform, sondern eine echte Luecke. Die bleiben in der
+       Hauptliste. */
+    name: 'Zitierform eines Fachbegriffs (ohne Endung, richtig so)',
+    trifft: (wort, i, eintrag) =>
+      !!eintrag && typeof eintrag.id === 'string'
+      && eintrag.id.indexOf('gram-') === 0
+      && i === wort.length - 1,
+    nurMelden: true
   }
 ];
 
@@ -257,7 +290,10 @@ function pruefeEintrag(eintrag, quelle, ziel = befunde){
       for (let i = 0; i < wort.length; i++){
         const grund = luecke(wort, i);
         if (!grund) continue;
-        const ausnahme = AUSNAHMEN.find(a => a.trifft(wort, i));
+        /* ⚠️ Dritter Parameter seit dem 20.08.2026: manche Ausnahmen haengen
+           nicht am Wort, sondern am EINTRAG (siehe „Zitierform eines
+           Fachbegriffs"). Die aelteren vier ignorieren ihn. */
+        const ausnahme = AUSNAHMEN.find(a => a.trifft(wort, i, eintrag));
         if (ausnahme && !ausnahme.nurMelden) continue;
         ziel.push({
           quelle, id: eintrag.id, feld, wort,
@@ -311,6 +347,40 @@ try {
 } catch (e) {
   console.log('  ⚠️ data/beispielsaetze.js nicht lesbar: ' + e.message);
   console.log('     Die verfassten Saetze sind damit UNGEPRUEFT.');
+}
+
+/* ⛔⛔ DIE VIERTE QUELLE — data/fachbegriffe.js, der Fachbegriff-Weg.
+   Am 20.08.2026 nachgezaehlt: 15 Fachbegriffe, **0 davon** stehen in
+   vocab-data.js. Alle 21 arabischen Felder waren ungeprueft.
+
+   ⛔ Und das ist der peinliche Teil: der Block direkt darueber ist am selben
+   Tag entstanden, eine Stunde vorher. Ich habe dort die DRITTE Quelle
+   nachgetragen und die vierte liegen lassen — obwohl ich sie im
+   Schwesterwerkzeug pruefe-markierungen.js im selben Zug beide ergaenzt
+   hatte. Sechster Fall derselben Klasse an einem Tag.
+   [[entscheidung_gilt_fuer_das_zweite_werkzeug]]
+
+   ⭐ Sie gehoeren hierher, weil sie in der App echte Karteikarten sind:
+   js/kern.js schiebt sie in VOCAB_DATA, und ihre Vokalisierung stammt aus
+   dem Unterricht bzw. von mir — also aus derselben Ecke wie die verfassten
+   Saetze, nicht aus einem gegengelesenen Abzug. */
+let fachAnzahl = 0;
+try {
+  const fb = path.join(DIR, 'data', 'fachbegriffe.js');
+  if (fs.existsSync(fb)){
+    const { FACHBEGRIFF_VOKABELN } =
+      (new Function(fs.readFileSync(fb, 'utf8') + ';return {FACHBEGRIFF_VOKABELN};'))();
+    for (const w of (FACHBEGRIFF_VOKABELN || [])){
+      if (!w) continue;
+      woerterGeprueft += pruefeEintrag(w, 'data/fachbegriffe.js');
+      fachAnzahl++;
+    }
+  } else {
+    console.log('  ⚠️ data/fachbegriffe.js fehlt — 15 Fachbegriffe sind UNGEPRUEFT.');
+  }
+} catch (e) {
+  console.log('  ⚠️ data/fachbegriffe.js nicht lesbar: ' + e.message);
+  console.log('     Die Fachbegriffe sind damit UNGEPRUEFT.');
 }
 
 /* Surentitel, seit 04.08.2026 (Elias' Punkt 5). Geprueft wird NUR
