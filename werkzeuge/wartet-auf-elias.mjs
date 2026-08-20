@@ -286,23 +286,35 @@ function gruppenAus(text){
 }
 
 /* D) Gestaltungsentscheidungen — sie warten, ohne dass ein Werkzeug sie misst. */
+/* ⚠️⚠️ DIESE ZWEI POSTEN HABEN AM 20.08. IHRE FRAGE GEWECHSELT, und ein Posten,
+   der stillsteht, waehrend sich die Lage bewegt, macht ihm Arbeit vor, die es
+   nicht mehr gibt. Beides ist belegt, nicht vermutet:
+
+     Schrift  — er hat am 20.08. entschieden: „das will ich" (Scheherazade New),
+                „aber die farbe muss noch schöner sein".
+     Farben   — die fuenf, die ihm gefielen, stehen seit v282 im Farbwaehler der
+                App (AKZENT_FARBEN in js/darstellung.js). Er braucht keine
+                Vergleichsseite mehr, er hat sie in der Hand.
+
+   ⛔ Beim naechsten Mal zuerst pruefen, ob die FRAGE noch stimmt — nicht nur,
+   ob sie beantwortet ist. [[eingefrorenes_feld_ist_kein_zustand]] */
 posten.push({
-  titel: 'Wortmarke: welche Schrift?',
-  zahl: 14, einheit: 'Entwürfe', dazu: 'zur Auswahl', auswahl: true,
-  aufwand: 'einmal durchsehen, eine antippen',
-  warum: 'Aus der gewählten Schrift baue ich wieder einen SVG-Pfad — dann bleibt die App unabhängig von Google.',
-  wie: 'Kachel antippen, Name unten kopieren.',
+  titel: 'Wortmarke: welche Farbe?',
+  zahl: 1, einheit: 'Entscheidung', dazu: 'Schrift steht bereits', auswahl: true,
+  aufwand: 'eine Farbe nennen, den Rest baue ich',
+  warum: 'Die Schrift hast du gewählt (Scheherazade New) und dazu gesagt: „die farbe muss noch schöner sein". Sobald sie feststeht, wird die Marke zu einem SVG-Pfad — dann bleibt die App unabhängig von Google.',
+  wie: 'Eine der fünf Akzentfarben aus deinen Einstellungen nennen, oder eine eigene.',
   seite: 'https://claude.ai/code/artifact/21463a39-a852-43e0-ad80-7c3bbf78714b',
-  seiteText: 'Die vierzehn Schriften'
+  seiteText: 'Die Schriftentwürfe'
 });
 posten.push({
-  titel: 'Akzentfarbe: bleibt es bei #ff1744?',
-  zahl: 8, einheit: 'Farben', dazu: 'an dreizehn Flächen', auswahl: true,
-  aufwand: 'durchtippen, vergleichen',
-  warum: 'Deine heutige Farbe erreicht 4,47 Kontrast — knapp unter der Schwelle 4,5 für kleine Schrift. Cyan käme auf 9,54.',
-  wie: 'Farbe wählen, die acht CSS-Werte stehen unten zum Kopieren.',
-  seite: 'https://claude.ai/code/artifact/4e9ce030-17a6-46be-ba47-02ccb56bc32a',
-  seiteText: 'Das Farbgerüst'
+  titel: 'Akzentfarbe: welche wird es?',
+  zahl: 5, einheit: 'Farben', dazu: 'seit v282 in den Einstellungen', auswahl: true,
+  aufwand: 'in der App antippen — kein Artefakt nötig',
+  warum: 'Torch Red erreicht 4,47 Kontrast am ungünstigsten Ort, knapp unter der Schwelle 4,5. Cyan käme auf 9,54, Azure auf 4,71.',
+  wie: 'Einstellungen öffnen, Farbe antippen, sie wirkt sofort. „BISHER" markiert die alte.',
+  seite: '',
+  seiteText: ''
 });
 posten.push({
   titel: 'Arabische Stimme: Hörproben?',
