@@ -67,7 +67,38 @@ const fragen = daten.fragen || [];
 const anzahl = fragen.reduce((s, f) => s + f.woerter.length, 0);
 const betroffen = new Set(fragen.flatMap(f => f.woerter.map(w => String(w.id)))).size;
 if (!anzahl) {
-  console.log('Nichts offen — keine Seite gebaut.');
+  /* ⛔ „Keine Seite bauen" ist NICHT dasselbe wie „die Seite sagt, dass
+     nichts offen ist". Die alte Fassung bliebe liegen — lokal UND als
+     veroeffentlichtes Artefakt — und zeigte ihm Fragen, die er laengst
+     beantwortet hat. Der beste Zustand darf nicht der irrefuehrendste sein.
+     [[flaeche_nur_im_gefuellten_zustand]] [[eingefrorenes_feld_ist_kein_zustand]] */
+  const leer = [
+    '<title>Offene Fragen der Wartung</title>',
+    '<style>:root{color-scheme:dark}body{margin:0;background:#000;color:#f4f4f6;'
+      + 'font:17px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;'
+      + 'padding:38px 16px}.h{max-width:640px;margin:0 auto}h1{font-size:2rem;margin:0 0 16px}'
+      + 'p{color:#9a9aa4}b{color:#f4f4f6}</style>',
+    '<div class="h">',
+    '<h1>✓ Nichts offen</h1>',
+    '<p><b>Alle Angaben sind da.</b> Zu keiner Vokabel im Fenster fehlt noch'
+      + ' ein Feld, das ich nicht selbst entscheiden darf.</p>',
+    '<p>Diese Seite wird bei jedem Wartungslauf neu erzeugt. Sobald eine neue'
+      + ' Vokabel dazukommt, der etwas fehlt, stehen die Fragen wieder hier.</p>',
+    '<p style="color:#6b6b75;font-size:.85rem">Stand ' + new Date().toLocaleString('de-DE') + '</p>',
+    '</div>',
+  ].join(String.fromCharCode(10));
+  /* ⚠️ ZIEL_ART wird erst weiter unten deklariert; `const` ist nicht
+     gehoistet, ein Zugriff hier wirft ReferenceError. Der Stoertest hat
+     genau das gefunden — der Leerzweig waere im Ernstfall abgestuerzt,
+     und der Ernstfall ist der Tag, an dem nichts mehr offen ist.
+     [[befund_vor_dem_ende_der_funktion]] */
+  const zielArtLeer = path.join(REPO, 'artefakte', 'wartungsfragen-artefakt.html');
+  fs.writeFileSync(ZIEL, leer, 'utf8');
+  fs.writeFileSync(zielArtLeer, leer, 'utf8');
+  console.log('Nichts offen — alle Angaben da. Seite zeigt jetzt "✓ Nichts offen".');
+  console.log('  ' + path.relative(REPO, zielArtLeer));
+  console.log('  ⚠️ Trotzdem veroeffentlichen, sonst zeigt das Artefakt die alten Fragen:');
+  console.log('     https://claude.ai/code/artifact/724ee9bc-adb7-4dcd-ad75-6a56a552adbd');
   process.exit(0);
 }
 
