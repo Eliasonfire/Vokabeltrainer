@@ -409,6 +409,16 @@ gleich aus.
 | `quran` | — | speist den Bildschirm „Wörter im Quran" und den Startzähler (`js/quran.js`, `js/start.js`) |
 | `note` | **5×** | freie Anmerkung aus dem Abzug |
 
+⚠️ **Ein Feld, das es NICHT gibt und trotzdem wirkt: `box`.** Am 20.08.2026
+gemessen: **0 von 4433** Wörtern tragen es. Gelesen wird es trotzdem — als
+**Vorgabewert** an drei Stellen, die einen neuen `PROGRESS`-Eintrag anlegen
+(`js/buecher.js:378`, `:563`, `js/kern.js:960`): `box: w.box || 1`.
+
+⛔ **Es gehört deshalb NICHT ins volle Programm** — der Leitner-Stand steht in
+`PROGRESS`, nicht am Wort. Aber es ist ein Einfallstor: brächte ein künftiger
+arabicroots-Abzug ein `box`-Feld mit, gäbe es beim ersten Anlegen still den
+Lernstand vor. [[kennzeichen_mit_zwei_ursachen]]
+
 ⭐ **`root` hat einen dritten Verbraucher, der leicht übersehen wird:**
 `QURAN_FREQ[w.root.replace(/\s+/g,'')]` (`js/kategorien.js:1279`,
 `js/lernen.js:489`). Die Wurzel muss also nicht nur *da* sein, sondern zur
