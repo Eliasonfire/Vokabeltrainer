@@ -1441,6 +1441,20 @@ main{
 }
 .kat-ziel:active{transform:scale(.95);}
 .kat-ziel-leer{color:var(--text-faint);font-size:var(--fs-xs);}
+
+/* Die Boxreihe in der Wortkarte (20.08.2026). Sie benutzt bewusst dieselben
+   `.kat-ziel`-Knöpfe wie die Mehrfachauswahl in der Wortliste — derselbe
+   Vorgang soll nicht an zwei Stellen verschieden aussehen. Zwei Zutaten
+   kommen dazu: Umbruch statt Rollen (in der Karte ist die Breite knapper als
+   in der Leiste), und eine Marke für die Box, in der das Wort gerade steht.
+   ⛔ Ohne diese Marke sind es fünf gleich aussehende Knöpfe, und man tippt
+   auf den, in dem das Wort schon liegt. */
+.wk-boxziele{display:flex;flex-wrap:wrap;gap:var(--sp-2);}
+.wk-boxziele .kat-ziel{padding:var(--sp-2) var(--sp-3);}
+.wk-boxziele .kat-ziel.ist-drin{
+  background:var(--red-bright);border-color:var(--red-bright);color:#fff;
+  box-shadow:var(--sh-glow);
+}
 /* Ein markiertes Wort. Deutlich, aber nicht schreiend — man markiert oft
    mehrere hintereinander. */
 .word-chip.gewaehlt{

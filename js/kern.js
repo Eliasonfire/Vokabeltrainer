@@ -418,10 +418,97 @@ function wendePluralKartenAn(an){
 
 wendePluralKartenAn(!!(LS.get('vt_settings', {}) || {}).pluralKarten);
 
-function addPersonalVocab({ar, de, sentAr, sentDe}){
-  const w = { id:'p_'+Date.now(), ar, de, chapter:'personal', type:'noun' };
+/* ---------- Was sich beim Anlegen SICHER ableiten lässt (20.08.2026) ----------
+
+   Elias: „und wenn ich eigene arabische wörter mit deutscher übersetzung
+   hinzufüge, dann soll ebenfalls für sie automatisch direkt ein eigener
+   beispielsatz kommen ebenso wie auch drei vorschläge. ebenso wortwurzel und
+   plural und so weiter, einfach alles um die karteikarte vollständig zu machen"
+
+   ⛔ DIE APP HAT KEINE KI UND KEIN BACKEND. Von seiner Liste lässt sich hier
+   genau EINES sicher erzeugen: der Beispielsatz. Wurzel, Plural und eine
+   tragende Eselsbrücke sind ohne Morphologie und ohne Wissen nicht ableitbar
+   — und eine geratene Wurzel stünde als Tatsache auf einer Lernkarte und
+   meldete sich nie. Lieber ein leeres Feld als ein falsches.
+
+   Der Satz folgt Madina 1, Kapitel 1–2 — also genau dem, was er kann:
+     هَذَا كِتَابٌ.     (maskulin)
+     هَذِهِ مَدْرَسَةٌ.   (feminin, erkennbar an der Tāʾ marbūṭa)
+
+   ⚠️ ER GREIFT ABSICHTLICH NICHT IMMER. Kein Satz entsteht, wenn
+     • das Wort mit dem Artikel steht (ال…) — dann wäre die Endung eine andere
+       und der Satz hieße „dies ist DAS Buch", was fast nie gemeint ist;
+     • es aus mehreren Wörtern besteht (Fachausdrücke wie اِسْمٌ مَجْرورٌ);
+     • die deutsche Bedeutung eine Aufzählung ist („für / gehört") — dann ist es
+       keine Sache, auf die man zeigen kann.
+   In diesen Fällen bleibt das Feld leer, und die Wortkarte sagt ihm, dass
+   etwas fehlt. Ein halbfalscher Satz wäre schlechter als keiner. */
+const TA_MARBUTA = '\u0629';
+function schablonenSatz(ar, de){
+  const wort = String(ar || '').trim();
+  const bed  = String(de || '').trim();
+  if (!wort || !bed) return null;
+  if (/\s/.test(wort)) return null;                         /* mehrere Wörter */
+  if (/[\/,;()]/.test(bed)) return null;                    /* Aufzählung */
+  /* Artikel erkennen: Alif+Lam am Anfang, auch mit Waṣla oder Hāraka dazwischen. */
+  if (/^[\u0627\u0671][\u064b-\u0652]*\u0644/.test(wort)) return null;
+  /* Ohne Tanwīn am Ende ist die Form nicht als unbestimmtes Nomen gesichert. */
+  if (!/[\u064b\u064c\u064d]\s*$/.test(wort)) return null;
+  const ohneEndung = wort.replace(/[\u064b-\u0652]+\s*$/, '');
+  const fem = ohneEndung.slice(-1) === TA_MARBUTA;
+  return {
+    ar: (fem ? '\u0647\u064e\u0630\u0650\u0647\u0650' : '\u0647\u064e\u0630\u064e\u0627') + ' ' + wort + '.',
+    /* ⛔ Das deutsche Geschlecht folgt NICHT dem arabischen. „eine Auto“ und
+       „ein Schule“ wären genau der Fehler, den ein Lernender übernimmt. Aus dem
+       arabischen Wort lässt sich das deutsche Genus nicht ableiten — wohl aber
+       aus SEINER Übersetzung, wenn sie einen Artikel mitbringt:
+         „das Buch“ → „ein Buch“ · „die Schule“ → „eine Schule“
+       Steht keiner da („Fleisch“), bleibt der Satz artikellos — bei Stoffnamen
+       ist das sogar das Richtige. */
+    de: 'Das ist ' + bed.replace(/^(der|die|das)\s+/i, (m, a) =>
+      (a.toLowerCase() === 'die' ? 'eine ' : 'ein ')) + '.'
+  };
+}
+
+/* ---------- Ein Wort von Hand in eine Box legen (20.08.2026) ----------
+
+   Elias: „ich schalte gerade ein paar wörter aus kapitel 24 frei die ich bereits
+   sehr gut kann und will sie direkt in box 5 packen."
+
+   ⛔ Die Logik steht HIER und nicht in der Wortkarte, weil es sie schon einmal
+   gibt: die Mehrfachauswahl in der Wortliste (js/kategorien.js) verlegt genauso.
+   Zwei Fassungen desselben Vorgangs würden irgendwann verschieden entscheiden —
+   etwa beim Zeitstempel, den der Geräteabgleich braucht.
+
+   Drei Dinge gehören untrennbar zusammen und sind einzeln je ein Fehler:
+     1. `box`        — sonst passiert gar nichts
+     2. `nextReview` — ohne sie steht das Wort in Box 5 und ist trotzdem heute
+                        fällig, oder es verschwindet für immer
+     3. `ts`         — ohne den Stempel gewinnt beim Abgleich die ältere Fassung
+                        des anderen Geräts, und der Umzug ist morgen weg */
+function verschiebeInBox(id, ziel){
+  const z = Number(ziel);
+  if (!INTERVALS[z]  && INTERVALS[z] !== 0) return false;
+  if (!PROGRESS[id]) PROGRESS[id] = { box:1, nextReview: todayStr(0), correct:0, wrong:0 };
+  if (PROGRESS[id].box === z) return false;
+  PROGRESS[id].box = z;
+  PROGRESS[id].nextReview = todayStr(INTERVALS[z]);
+  PROGRESS[id].ts = Date.now();
+  saveProgress();
+  return true;
+}
+
+function addPersonalVocab({ar, de, sentAr, sentDe, root, pl}){
+  const w = { id:'p_'+Date.now(), ar, de, chapter:'personal', book:'personal', type:'noun' };
   if (sentAr) w.sentAr = sentAr;
   if (sentDe) w.sentDe = sentDe;
+  if (root) w.root = root;
+  if (pl)   w.pl   = pl;
+  /* ⭐ Nur wenn er selbst keinen geschrieben hat — seiner geht immer vor. */
+  if (!w.sentAr){
+    const satz = schablonenSatz(ar, de);
+    if (satz){ w.sentAr = satz.ar; w.sentDe = satz.de; w.satzAusSchablone = true; }
+  }
   PERSONAL_VOCAB.push(w);
   savePersonalVocab();
   VOCAB_DATA.push(w);
@@ -462,6 +549,27 @@ const GELOESCHT_SCHLUESSEL = 'vt_geloescht';
 let GELOESCHT = LS.get(GELOESCHT_SCHLUESSEL, {});
 if (!GELOESCHT || typeof GELOESCHT !== 'object' || Array.isArray(GELOESCHT)) GELOESCHT = {};
 function istGeloescht(id){ const e = GELOESCHT[id]; return !!(e && e.an); }
+
+/* ⭐ Was fehlt dieser Karte noch? Gibt die Feldnamen zurück, die eine
+   vollständige Karteikarte ausmachen und hier leer sind. Die Wortkarte zeigt
+   das an, damit ein Lücke nicht still bleibt — und damit er sieht, was er
+   selbst nachtragen kann.
+
+   ⛔ Wurzel und Plural stehen bewusst NICHT bei jedem Wort auf der Liste:
+   Partikeln (لِ, يَا) haben keine, mehrteilige Fachausdrücke auch nicht, und
+   ein Mangel, der keiner ist, wäre nur Rauschen. */
+function wasFehlt(w){
+  if (!w || w.istPlural) return [];
+  const fehlt = [];
+  const einWort = !/\s/.test(String(w.ar || '').trim());
+  if (!w.sentAr) fehlt.push('Beispielsatz');
+  if (einWort && !w.root) fehlt.push('Wurzel');
+  if (einWort && !w.pl && w.type === 'noun') fehlt.push('Plural');
+  const merk = (typeof getNote === 'function') ? getNote(w.id) : '';
+  const vor  = (typeof vorschlagsListe === 'function') ? vorschlagsListe(w).length : 0;
+  if (!merk && !vor) fehlt.push('Eselsbrücke');
+  return fehlt;
+}
 
 function loeschePersonalVocab(id){
   const w = VOCAB_DATA.find(x => x.id === id);
