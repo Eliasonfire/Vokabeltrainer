@@ -397,6 +397,24 @@ const BUCH_ESELSBRUECKEN = {
 
   "50196": "⭐ Genau das, was du gerade tust. Beginnt mit اِسْتَـ — dieselbe Silbe wie مُسْتَشْفًى (Krankenhaus) und مُسْتَوًى (Niveau). Wurzel ذ ك ر, dieselben drei Buchstaben wie in ذِكْر, dem Gedenken.",
 
-  "50197": "Wurzel ف ض ل — dieselben Buchstaben wie in فَضْل, „Vorzug, Güte“. ⚠️ Nicht mit فَصْلٌ (Klassenzimmer/Kapitel) verwechseln, das du schon hast: hier ض, dort ص. Ein Zahn Unterschied, zwei Wörter."
+  "50197": "Wurzel ف ض ل — dieselben Buchstaben wie in فَضْل, „Vorzug, Güte“. ⚠️ Nicht mit فَصْلٌ (Klassenzimmer/Kapitel) verwechseln, das du schon hast: hier ض, dort ص. Ein Zahn Unterschied, zwei Wörter.",
 
+
+  "p_1787184718572": "لِ + مَنْ — beide Teile hast du längst einzeln: لِ ist der fünfte Ḥarf ǧarr aus Folge 9 („gehört\"), مَنْ das Fragewort für Personen aus Folge 2. Zusammen fragt es nach dem Besitzer: لِمَنِ الْكِتَابُ؟ — „Wem gehört das Buch?\"",
+
+  "p_1787185309933": "Du kennst den Vers auswendig: أَلَمْ نَشْرَحْ لَكَ صَدْرَكَ — „Haben Wir dir nicht deine Brust aufgetan\" (94:1, aš-Šarḥ, erster Vers). Genau dieses لَكَ heißt „für dich\" — und im selben Vers steht صَدْرَكَ mit demselben كَ.",
+
+  "p_1787185328882": "Genau لَكَ, nur mit Kasra statt Fatḥa — das ist der ganze Unterschied: لَكَ zu einem Mann, لَكِ zu einer Frau. ⭐ Das ist dieselbe Trennung wie bei ـكَ und ـكِ aus Folge 15, und wie bei أَنْتَ / أَنْتِ.",
+
+  "p_1787188396011": "Ein Ẓarf und zugleich Muḍāf: das Wort danach steht im Genitiv. Dein eigener Satz zeigt es — الْمَكْتَبَةُ بَعْدَ الْمَسْجِدِ, „die Bibliothek ist nach der Moschee\". ⭐ Genau wie تَحْتَ, أَمَامَ und خَلْفَ aus Folge 12, die du schon hast.",
+
+  "p_1787189022107": "Du kennst es aus dem Vers, den du auswendig kannst: أَلَمْ تَرَ كَيْفَ فَعَلَ رَبُّكَ بِأَصْحَابِ الْفِيلِ — „Siehst du nicht, WIE dein Herr mit den Leuten des Elefanten verfuhr\" (105:1, al-Fīl). Das كَيْفَ steht dort an dritter Stelle und fragt genau danach: nach dem WIE.",
+
+  "p_1787189076593": "حَال („Zustand\") + كَ („dein\") — die Besitzendung aus Folge 15. ⭐ Und deine Regel possessiv-ist-idafa-01 aus Folge 16 sagt, warum: die Endung IST ein Muḍāf ilayh, das Wort davor also ein Muḍāf. Es ist eine Iḍāfa wie كِتَابُ الْمُدَرِّسِ, nur mit Endung statt zweitem Wort.",
+
+  "p_1787189287368": "Eines der drei Ortswörter aus Folge 12, die du zusammen gelernt hast: تَحْتَ (unter), أَمَامَ (vor), خَلْفَ (hinter). ⭐ Merk sie als Trio — wer eines vergisst, holt es über die anderen zurück.",
+
+  "p_1787189488747": "فِي + هُ, und die Regel für den Vokalwechsel hast du aus Folge 16: nach einem Kasra wird das هُ zu هِ. فِي endet auf Kasra — also فِيهِ, nicht fīhu. Dein Lehrer sagt dazu: „auf ein Kasra folgt nur schwer eine Ḍamma.\"",
+
+  "p_1787190874749": "Du sprichst es in al-Mulk: قُلْ إِنَّمَا الْعِلْمُ عِنْدَ اللَّهِ — „Sag: Nur Allah weiß darüber Bescheid\", wörtlich „das Wissen ist BEI Allah\" (67:26). Dasselbe عِنْدَ, dieselbe Bedeutung."
 };
