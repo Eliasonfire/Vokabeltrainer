@@ -13,6 +13,24 @@
  * Aufruf:  node werkzeuge/freigabe-artefakt.mjs
  * Ergebnis: artefakte/freigabe.html
  *
+ * ======================= ⛔⛔ DIESE SEITE NICHT TEILEN =====================
+ *
+ * Sie enthaelt WOERTLICHEN TRANSKRIPTTEXT aus den Aufzeichnungen — am
+ * 21.08.2026 nachgemessen: 13 von 15 Kandidaten der Folge 14 stehen mit ihrem
+ * Originalwortlaut darin. Genau dieses Material liegt unter transcripts/ und
+ * ist per .gitignore gesperrt (arabicroots AGB 3.7 und 9, unerlaubte
+ * Weitergabe von Kursmaterial).
+ *
+ * ⭐ Als Artefakt ist die Seite standardmaessig PRIVAT — nur Elias sieht sie.
+ * Das ist in Ordnung. Was NICHT in Ordnung waere: sie ueber das Teilen-Menue
+ * freizugeben. Der Unterschied ist einen Klick gross, und niemand sieht der
+ * Seite an, dass er zaehlt. Deshalb steht der Hinweis seit dem 21.08. auch
+ * SICHTBAR im Kopf der erzeugten Seite — ein Vorbehalt, der nur im Quelltext
+ * steht, erreicht den Leser nicht. [[regel_gilt_nur_mit_begruendung]]
+ *
+ * Dasselbe gilt fuer transcripts/kandidaten/freigabe.html, die aeltere
+ * Fassung derselben Seite.
+ *
  * ============================ ⛔ EIGENER SPEICHERSCHLUESSEL ================
  *
  * SPEICHER = 'regelkandidaten-v1'.
@@ -223,11 +241,21 @@ summary:focus-visible{outline:2px solid var(--text);outline-offset:2px}
                   border-radius:10px;padding:var(--sp3)}
 .leermeldung{color:var(--still);font-size:.9rem;display:none}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.privat{font-size:.88rem;color:var(--leise,#9a9aa4);background:var(--hoch,#17171c);
+        border:1px solid var(--rand,#26262c);border-left:3px solid var(--gelb,#ffc44d);
+        border-radius:0 10px 10px 0;padding:10px 14px;margin:0 0 18px}
+.privat b{color:var(--text,#f4f4f6)}
 </style>
 
 <div class="huelle">
 <p class="eyebrow">Stand ${STAND_HEUTE} · ${gesamt} Fundstellen · Folge ${folgen.map(f => f.folge).join(', ')}</p>
 <h1>Regelkandidaten freigeben</h1>
+
+<p class="privat"><b>🔒 Diese Seite bitte nicht teilen.</b> Sie zeigt den
+wörtlichen Wortlaut aus den Kursaufzeichnungen — dasselbe Material, das
+im Repo gesperrt ist (arabicroots AGB 3.7 und 9). Als Artefakt ist sie
+privat, und das soll sie bleiben; über das Teilen-Menü wäre es eine
+Weitergabe.</p>
 
 <p class="vorspann"><strong>Du entscheidest, was eine Regel ist</strong> — die
 Maschine sucht nur die Stellen. Je Fundstelle steht hier, was der Lehrer sagt,
