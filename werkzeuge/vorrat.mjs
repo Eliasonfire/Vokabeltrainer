@@ -324,6 +324,23 @@ laden('wortfelder-data.js', false);
    pruefe-taschkil.js vorbeigelaufen. [[dritte_satzquelle]] */
 laden('data/fachbegriffe.js', false);
 laden('data/vokabeln-eigene.js', false);
+/* ⛔⛔ 20.08.2026 — DIE NEUN UNGEMESSENEN PUNKTE.
+   Bis heute mass dieses Werkzeug VIER Dinge: Eselsbruecken, Beispielsatz,
+   Markierung, Kategorie. Das volle Programm (VOLLES-PROGRAMM.md) hat aber
+   DREIZEHN. Neun davon konnte die Wartungsroutine gar nicht melden — und was
+   kein Werkzeug misst, wird nie ergaenzt. [[werkzeug_ohne_aufrufer]]
+
+   Gemessen, was das kostet (js/uebung.js Zeile 399 und 451):
+     ohne `gender` -> Uebung 11 und 12 erzeugen fuer das Wort NULL Aufgaben
+     ohne `femSg`  -> Uebung 13 desgleichen
+     ohne `type`   -> Kategorie, Statistik, Funktionsanzeige, Uebung 8
+     ohne `sg`     -> js/hoeren.js ueberspringt das Wort
+
+   ⚠️ Ein leeres Feld ist aber nicht dasselbe wie eine Luecke: نَعَمْ hat keine
+   Wurzel, اليَابَانُ keinen Plural. Die Unterscheidung steht in
+   data/feld-ausnahmen.js — ohne sie bestuende die Meldung zu vier Fuenfteln
+   aus Nicht-Fehlern. [[kennzeichen_mit_zwei_ursachen]] */
+laden('data/feld-ausnahmen.js', false);
 
 const VOCAB   = hol('VOCAB_DATA') || [];
 const BUCH_EB = hol('BUCH_ESELSBRUECKEN') || {};
@@ -546,7 +563,58 @@ function kapitelImFenster(slug){
   return drin;
 }
 
-const offen = [];      /* { slug, kapitel, id, ar, de, fehltEB, fehltSatz } */
+/* ---------- Die neun uebrigen Punkte des vollen Programms ----------
+
+   Reihenfolge der Pruefung ist Absicht: `type` zuerst. Faellt es aus, sind
+   `gender`, `pl` und `femSg` gar nicht entscheidbar — sie haengen alle daran,
+   welche Wortart das Wort ist. Sie dann trotzdem zu melden hiesse, denselben
+   Mangel viermal zu zaehlen. [[kandidatenliste_ist_keine_fehlerliste]] */
+const feldAusnahme = hol('feldAusnahme');
+const leerWert = (v) => v === undefined || v === null || String(v).trim() === '';
+
+/* Welches Feld kostet was — steht im Bericht neben jeder Zahl, damit ein
+   Rueckstand nicht als Formalie gelesen wird. */
+const FELD_FOLGE = {
+  type:   'Kategorie, Statistik, Funktionsanzeige, Uebung 8',
+  root:   'Wurzelansicht und Wortfamilie',
+  gender: 'Uebung 11 (مُذَكَّر/مُؤَنَّث) und Uebung 12 (هَذَا/هَذِهِ)',
+  sg:     'Hoermodus ueberspringt das Wort',
+  pl:     'Pluralanzeige auf der Karte',
+  femSg:  'Uebung 13 (صَغِيرٌ/صَغِيرَةٌ)',
+  past:      'Formen-Kasten und Sprachausgabe',
+  present:   'Formen-Kasten und Sprachausgabe',
+  imperative:'Formen-Kasten (Befehlsform)',
+  masdar:    'Formen-Kasten (Verbalnomen)'
+};
+
+function felderPruefen(w, quelle){
+  const fehlt = [];
+  const t = String(w.type || '');
+  const kaputterTyp = leerWert(t) || t === 'other' || t === 'vocab';
+  if (kaputterTyp) fehlt.push('type');
+
+  const pruefe = (feld) => {
+    if (!leerWert(w[feld])) return;
+    if (feldAusnahme && feldAusnahme(w, feld, quelle)) return;
+    fehlt.push(feld);
+  };
+
+  pruefe('root');
+  /* Ohne brauchbares `type` steht nicht fest, welche der folgenden Felder das
+     Wort ueberhaupt braucht. Dann nur `type` melden — das ist die Ursache. */
+  if (kaputterTyp) return fehlt;
+
+  if (t === 'noun'){ pruefe('gender'); pruefe('sg'); pruefe('pl'); }
+  if (t === 'adjective') pruefe('femSg');
+  /* ⚠️ `imperative` und `masdar` sind hier bewusst dabei, obwohl nicht jedes
+     Verb einen sinnvollen Imperativ hat (لَيْسَ etwa nicht). Wo er fehlt,
+     gehört das nach data/feld-ausnahmen.js — als AUSDRÜCKLICHES „gibt es
+     nicht", nicht als schweigende Lücke. [[kennzeichen_mit_zwei_ursachen]] */
+  if (t === 'verb'){ pruefe('past'); pruefe('present'); pruefe('imperative'); pruefe('masdar'); }
+  return fehlt;
+}
+
+const offen = [];      /* { slug, kapitel, id, ar, de, fehltEB, fehltSatz, fehltFelder } */
 let geprueft = 0;
 BUECHER.forEach(b => {
   const kapitel = kapitelImFenster(b.slug);
@@ -564,11 +632,16 @@ BUECHER.forEach(b => {
        Markierung zwangslaeufig, und sie zweimal zu melden hilft niemandem. */
     const m = s ? satzErreichbar(id) : true;
     const kat = hatKategorie(w);
-    if (n < 3 || !s || !m || !kat)
+    const ff  = felderPruefen(w, b.slug);
+    if (n < 3 || !s || !m || !kat || ff.length)
       offen.push({ slug: b.slug, kapitel: Number(w.chapter), id, ar: w.ar, de: w.de,
                    hat: n, fehltEB: Math.max(0, 3 - n), fehltSatz: !s,
-                   fehltMarkierung: s && !m, fehltKategorie: !kat,
-                   root: w.root, pl: w.plural, type: w.type });
+                   fehltMarkierung: s && !m, fehltKategorie: !kat, fehltFelder: ff,
+                   /* ⛔ `w.pl`, nicht `w.plural`: das Feld heisst in ALLEN
+                      Datendateien `pl`, und `plural` hat in js/ null Treffer.
+                      Bis zum 20.08.2026 stand hier `w.plural` — der Auftrag
+                      zeigte den Plural also nie an, ohne dass es auffiel. */
+                   root: w.root, pl: w.pl, type: w.type });
   });
 });
 
@@ -610,12 +683,14 @@ function fachbegriffErreichbar(w){
     geprueft++;
     const id = String(w.id);
     const n = vorschlagsZahl(id, w);
+    const ff = felderPruefen(w, slug);
     if (slug === 'fachbegriffe' && fachbegriffErreichbar(w)){
       /* Erreichbar ueber seine Regel — nur die Eselsbruecken zaehlen noch. */
-      if (n < 3)
+      if (n < 3 || ff.length)
         offen.push({ slug, kapitel: 0, id, ar: w.ar, de: w.de, hat: n,
-                     fehltEB: 3 - n, fehltSatz: false, fehltMarkierung: false,
-                     fehltKategorie: false, root: w.root, pl: w.pl, type: w.type });
+                     fehltEB: Math.max(0, 3 - n), fehltSatz: false, fehltMarkierung: false,
+                     fehltKategorie: false, fehltFelder: ff,
+                     root: w.root, pl: w.pl, type: w.type });
       return;
     }
     /* ⛔ hatSatz() sucht in VOCAB_DATA und in BEISPIELSAETZE — die Fachbegriffe
@@ -624,10 +699,10 @@ function fachbegriffErreichbar(w){
        obwohl sechs einen haben. [[kandidatenliste_ist_keine_fehlerliste]] */
     const s = hatSatz(id) || !!(w.sentAr && String(w.sentAr).trim());
     const m = s ? satzErreichbar(id) : true;
-    if (n < 3 || !s || !m)
+    if (n < 3 || !s || !m || ff.length)
       offen.push({ slug, kapitel: 0, id, ar: w.ar, de: w.de,
                    hat: n, fehltEB: Math.max(0, 3 - n), fehltSatz: !s,
-                   fehltMarkierung: s && !m, fehltKategorie: false,
+                   fehltMarkierung: s && !m, fehltKategorie: false, fehltFelder: ff,
                    root: w.root, pl: w.pl, type: w.type });
   });
 });
@@ -636,11 +711,18 @@ const fehlendeEB   = offen.reduce((s, w) => s + w.fehltEB, 0);
 const fehlendeSatz = offen.filter(w => w.fehltSatz).length;
 const fehlendeMark = offen.filter(w => w.fehltMarkierung).length;
 const fehlendeKat  = offen.filter(w => w.fehltKategorie).length;
+/* je Feldname, wie oft es fehlt */
+const jeFeld = {};
+offen.forEach(w => (w.fehltFelder || []).forEach(f => { jeFeld[f] = (jeFeld[f] || 0) + 1; }));
+const fehlendeFelder = Object.values(jeFeld).reduce((a, b) => a + b, 0);
 
 if (KNAPP){
+  const felderText = fehlendeFelder
+    ? ', ' + Object.entries(jeFeld).sort((a, b) => b[1] - a[1]).map(([f, n]) => n + '× ' + f).join(', ')
+    : '';
   console.log(offen.length
-    ? `Vorrat: ${offen.length} von ${geprueft} freigeschalteten Woertern unvollstaendig — ${fehlendeEB} Eselsbruecken, ${fehlendeSatz} Beispielsaetze, ${fehlendeMark} Markierungen, ${fehlendeKat} Kategorien fehlen. (Freischaltstand ${datum})`
-    : `Vorrat: alle ${geprueft} freigeschalteten Woerter haben drei Eselsbruecken, einen Beispielsatz, Markierungen und eine Kategorie. (Freischaltstand ${datum})`);
+    ? `Vorrat: ${offen.length} von ${geprueft} freigeschalteten Woertern unvollstaendig — ${fehlendeEB} Eselsbruecken, ${fehlendeSatz} Beispielsaetze, ${fehlendeMark} Markierungen, ${fehlendeKat} Kategorien${felderText}. (Freischaltstand ${datum})`
+    : `Vorrat: alle ${geprueft} freigeschalteten Woerter sind nach allen 13 Punkten des vollen Programms vollstaendig. (Freischaltstand ${datum})`);
   process.exit(offen.length ? 2 : 0);
 }
 
@@ -663,6 +745,17 @@ console.log('    fehlende Eselsbruecken: ' + fehlendeEB);
 console.log('    fehlende Beispielsaetze:' + fehlendeSatz);
 console.log('    fehlende Markierungen:  ' + fehlendeMark + (fehlendeMark ? '   ⛔ diese Saetze stehen in KEINEM Thema' : ''));
 console.log('    ohne Kategorie:         ' + fehlendeKat);
+if (fehlendeFelder){
+  console.log('');
+  console.log('  Felder des vollen Programms, die fehlen (ohne die erklaerten Faelle');
+  console.log('  aus data/feld-ausnahmen.js):');
+  Object.entries(jeFeld).sort((a, b) => b[1] - a[1]).forEach(([f, n]) =>
+    console.log('    ' + (f + ':').padEnd(10) + String(n).padStart(4) + '   ' + (FELD_FOLGE[f] || '')));
+} else if (feldAusnahme){
+  console.log('    Felder (13 Punkte):     alle vollstaendig');
+} else {
+  console.log('    ⚠️ data/feld-ausnahmen.js fehlt — die neun Feldpunkte wurden NICHT geprueft.');
+}
 
 if (offen.length){
   const jeKap = {};
@@ -690,6 +783,8 @@ if (iAuftr >= 0){
     z.push('## ' + w.id + '  ' + w.ar + '  — ' + String(w.de || '').replace(/\s+/g, ' '));
     z.push('   ' + w.slug + ' Kapitel ' + w.kapitel
       + (w.root ? ' · Wurzel ' + w.root : '') + (w.pl ? ' · Pl. ' + w.pl : ''));
+    if (w.fehltFelder && w.fehltFelder.length)
+      z.push('   FEHLENDE FELDER: ' + w.fehltFelder.map(f => f + ' (' + (FELD_FOLGE[f] || '') + ')').join(', '));
     z.push('   Eselsbruecken: hat ' + w.hat + ', braucht ' + w.fehltEB + ' mehr');
     const e = eigen.get(w.id);
     const erst = (e && e.mnemo) || w.mnemoRoh || BUCH_EB[w.id];
