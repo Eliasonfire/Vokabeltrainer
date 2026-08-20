@@ -342,14 +342,70 @@ function buildSentenceHtml(w, opts){
   // Von links nach rechts, bei gleichem Start gewinnt die laengere Markierung.
   treffer.sort((a,b)=> a.von - b.von || (b.bis - b.von) - (a.bis - a.von));
 
-  let html = '', pos = 0;
-  for (const t of treffer){
-    if (t.von < pos) continue;                 // ueberschneidet eine gesetzte
-    html += escapeHtml(text.slice(pos, t.von));
-    html += `<span class="gram-underline" style="--gram-role:var(--gram-${t.rule.color})" data-rule="${t.rule.id}">${escapeHtml(text.slice(t.von, t.bis))}</span>`;
-    pos = t.bis;
+  /* ⛔ 21.08.2026: HIER STAND `if (t.von < pos) continue;` — und liess damit
+     jede Markierung aus, die eine schon gesetzte beruehrt. STILL: kein
+     Hinweis, keine Meldung. Gemessen mit dieser Funktion selbst fehlte in
+     vier Saetzen je eine von zwei Regeln:
+       45958  الْكِتَابُ أَحْمَرُ.      mamnu-min-as-sarf-01
+       50154  أَنَا مُدَرِّسٌ.          nominalsatz-ohne-kopula-01
+       50155  نَحْنُ فِي الْمَسْجِدِ.    harf-jarr-fi-ala-01
+       50156  أَنْتَ طَالِبٌ جَدِيدٌ.    nat-vier-bedingungen-01
+
+     ⭐ Der Kommentar oben hatte es vorhergesagt und war veraltet: er berief
+     sich auf „0 Ueberschneidungen bei 316 Markierungen" (29.07.2026).
+     Heute sind es 587 Markierungen und 4 Ueberschneidungen. Die Zusage galt
+     fuer die Daten, nicht fuer den Code — und die Daten sind gewachsen.
+     [[eingefrorenes_feld_ist_kein_zustand]] [[daten_ohne_zugang]]
+
+     Jetzt: der Text wird an ALLEN Grenzen zerlegt. Jedes Stueck weiss,
+     welche Regeln es ueberdecken, und wird so tief verschachtelt, wie es
+     Regeln gibt — die laengste aussen, die kuerzeste innen. Damit kann
+     keine Markierung mehr verschwinden, egal wie die Daten wachsen. */
+  const grenzen = new Set([0, text.length]);
+  treffer.forEach(t => { grenzen.add(t.von); grenzen.add(t.bis); });
+  const punkte = Array.from(grenzen).sort((a,b)=> a - b);
+
+  /* ⛔ Die Ebene gilt fuer den GANZEN Satz, nicht je Stueck. Sonst springt
+     die Linie: in الْكِتَابُ أَحْمَرُ lag mubtada-khabar-01 links auf Ebene 0
+     und rechts — wo mamnu-min-as-sarf-01 daruntersteckt — auf Ebene 1.
+     Die laengste Markierung bekommt die oberste Linie. */
+  const nachLaenge = treffer.slice().sort((a,b)=> (b.bis - b.von) - (a.bis - a.von));
+  const ebeneVon = new Map();
+  nachLaenge.forEach(t => {
+    if (ebeneVon.has(t.rule.id)) return;
+    /* Die niedrigste Ebene, die keine UEBERLAPPENDE Markierung schon hat.
+       Zwei Markierungen, die einander nicht beruehren, duerfen dieselbe
+       Ebene teilen — sonst rutschte jede weitere Regel im Satz tiefer,
+       auch wenn sie am anderen Ende steht. */
+    let e = 0;
+    while (treffer.some(o => ebeneVon.get(o.rule.id) === e
+             && o.von < t.bis && t.von < o.bis)) e++;
+    ebeneVon.set(t.rule.id, e);
+  });
+
+  let html = '';
+  for (let i = 0; i < punkte.length - 1; i++){
+    const von = punkte[i], bis = punkte[i+1];
+    if (von >= bis) continue;
+    /* Alle Markierungen, die dieses Stueck GANZ ueberdecken. Ein Stueck
+       liegt per Konstruktion entweder ganz in einer Markierung oder ganz
+       ausserhalb — deshalb reicht der Vergleich der beiden Grenzen. */
+    const hier = treffer.filter(t => t.von <= von && t.bis >= bis)
+                        .sort((a,b)=> ebeneVon.get(a.rule.id) - ebeneVon.get(b.rule.id));
+    let stueck = escapeHtml(text.slice(von, bis));
+    /* Von innen nach aussen bauen: die kuerzeste Regel sitzt am tiefsten
+       und bekommt die unterste Linie. Ohne den wachsenden Abstand laegen
+       zwei Unterstreichungen exakt aufeinander und man saehe nur eine. */
+    for (let k = hier.length - 1; k >= 0; k--){
+      const t = hier[k];
+      stueck = '<span class="gram-underline"'
+        + ' style="--gram-role:var(--gram-' + t.rule.color + ')'
+        + (ebeneVon.get(t.rule.id) ? ';padding-bottom:' + (1 + ebeneVon.get(t.rule.id) * 4) + 'px' : '') + '"'
+        + ' data-rule="' + t.rule.id + '">' + stueck + '</span>';
+    }
+    html += stueck;
   }
-  return html + escapeHtml(text.slice(pos));
+  return html;
 }
 
 function renderSentence(){
@@ -761,7 +817,34 @@ function zeigeGrammatikPopover(span){
         ? `<button class="gp-mehr" type="button">ausführlich</button>`
           + `<div class="gp-rest hidden">${escapeHtml(rest)}</div>`
         : '')
-    + `<div class="gp-source">${escapeHtml(quelle.join(' · '))}</div>`;
+    + `<div class="gp-source">${escapeHtml(quelle.join(' · '))}</div>`
+    /* ⛔ 21.08.2026: WEITERE REGELN AN DERSELBEN STELLE.
+       Seit die Zerlegung ueberschneidende Markierungen verschachtelt statt
+       sie wegzulassen, koennen zwei Regeln denselben Text tragen — in
+       أَنَا مُدَرِّسٌ sogar Zeichen fuer Zeichen denselben. Ein Klick trifft
+       aber immer nur den innersten Span. Ohne diese Zeile waere die zweite
+       Regel zu SEHEN und nicht zu erreichen.
+       [[flaeche_nur_im_gefuellten_zustand]] */
+    + (function(){
+        const andere = [];
+        /* nach aussen: alle umschliessenden Markierungen */
+        for (let el = span.parentElement; el; el = el.parentElement){
+          if (!el.classList || !el.classList.contains('gram-underline')) break;
+          if (el.dataset.rule && el.dataset.rule !== rule.id) andere.push(el.dataset.rule);
+        }
+        /* nach innen: alle enthaltenen */
+        span.querySelectorAll('.gram-underline').forEach(el => {
+          if (el.dataset.rule && el.dataset.rule !== rule.id
+              && andere.indexOf(el.dataset.rule) < 0) andere.push(el.dataset.rule);
+        });
+        if (!andere.length) return '';
+        const namen = andere.map(id => {
+          const r = GRAMMAR_RULES.find(x => x.id === id);
+          return r ? `<button class="gp-andere" type="button" data-rule="${id}">${escapeHtml(r.name)}</button>` : '';
+        }).filter(Boolean);
+        return namen.length
+          ? `<div class="gp-auch">Hier gilt auch: ${namen.join(' ')}</div>` : '';
+      })();
   pop._anker = span;
   platzierePopover();
   pop.classList.add('show');
@@ -808,6 +891,23 @@ document.getElementById('sentAr').addEventListener('click', (e)=>{
    Klick anhalten - sonst schliesst der Zuklapp-Handler das Popover, waehrend man
    gerade mehr lesen will. */
 document.getElementById('gramPopover').addEventListener('click', (e)=>{
+  /* ⭐ Zuerst die Knoepfe fuer die anderen Regeln an derselben Stelle:
+     sie tauschen den Inhalt aus und behalten denselben Anker. */
+  const anders = e.target.closest('.gp-andere');
+  if (anders){
+    e.stopPropagation();
+    const pop = document.getElementById('gramPopover');
+    const anker = pop._anker;
+    if (!anker) return;
+    /* Einen Span mit der gewuenschten Regel in derselben Kette finden —
+       sonst wuesste zeigeGrammatikPopover nicht, welche gemeint ist. */
+    let ziel = null;
+    for (let el = anker; el && el.classList && el.classList.contains('gram-underline'); el = el.parentElement)
+      if (el.dataset.rule === anders.dataset.rule){ ziel = el; break; }
+    if (!ziel) ziel = anker.querySelector('.gram-underline[data-rule="' + anders.dataset.rule + '"]');
+    if (ziel) zeigeGrammatikPopover(ziel);
+    return;
+  }
   const knopf = e.target.closest('.gp-mehr');
   if (!knopf) return;
   e.stopPropagation();
