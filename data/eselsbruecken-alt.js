@@ -62,6 +62,28 @@
 
 const ESELSBRUECKEN_ALT = {
 
+  /* ---------- Selbst angelegte Woerter (20.08.2026) ---------- */
+  "p_1787183484954": [
+    "⭐ Die Ḥaraka, die du auf jeder Karteikarte siehst, heißt كَسْرَة — von derselben Wurzel ك س ر. Sie ist der Strich, der den Vokal nach unten „bricht\". Wer كَسْرَة sagt, hat مَكْسُورٌ schon halb im Mund.",
+    "Das Gegenstück im Deutschen ist zweiteilig: „kaputt\" und „zerbrochen\". مَكْسُورٌ ist das zweite — ein Partizip, kein Zustandswort. Etwas ist مَكْسُورٌ, weil jemand oder etwas es gebrochen HAT.",
+  ],
+  "p_1787185012359": [
+    "Die Form فَيْعِلٌ mit dem doppelten ي in der Mitte: سَيِّد. Die Wurzel ist س و د — das و wird im Wort zu ي. ⭐ Dasselbe passiert bei سَيِّدَةٌ.",
+    "Im Deutschen sagst du „Herr\" auch dann, wenn du niemanden besitzt. Genauso سَيِّدٌ: es ist die höfliche Anrede, nicht der Herr über Diener.",
+  ],
+  "p_1787185031977": [
+    "Wenn du سَيِّدٌ kannst, kannst du سَيِّدَةٌ — die تاء مَرْبُوطة ist im Arabischen der Normalweg zur weiblichen Form. ⭐ Sprich sie am Wortende als kurzes „a\", nicht als „t\": sayyida.",
+    "Merke dir das Paar an einer Tür: an der einen steht سَيِّدٌ, an der anderen سَيِّدَةٌ. Dasselbe ة, das du bei تاء مَرْبُوطة gelernt hast.",
+  ],
+  "p_1787189845886": [
+    "Die Wurzel خ ر ج steckt im مَخْرَج, dem „Ausgang\". ⭐ Im Tajwīd sind die مَخَارِج الْحُرُوف die Stellen im Mund, an denen ein Buchstabe HERAUSKOMMT — dieselbe Wurzel, derselbe Gedanke.",
+    "Das Gegenteil ist دَخَلَ (hineingehen). ⭐ Ein Buchstabe Unterschied am Anfang, und die Richtung dreht sich um: خ hinaus, د hinein.",
+  ],
+  "p_1787191371934": [
+    "Die Form فَعْلَانُ beschreibt einen Zustand, in dem du GERADE bist — nicht eine Eigenschaft, die du immer hast. ⭐ Wer كَسْلَانُ ist, ist heute faul, nicht sein Leben lang.",
+    "⚠️ Achte auf die Endung: كَسْلَانُ trägt ein Ḍamma ohne Tanwīn, obwohl es unbestimmt ist. Das ist kein Tippfehler — Wörter dieser Form gehören zu denen, die kein Tanwīn annehmen.",
+  ],
+
   /* بَيْتٌ - Haus */
   '45751': [
     'Du sprichst es in Quraysh mit: فَلْيَعْبُدُوا رَبَّ هَٰذَا الْبَيْتِ — „So sollen sie dem Herrn dieses Hauses dienen“ (106:3). Gemeint ist die كَعْبَةٌ, das Wort ist dasselbe wie für dein Haus.',
