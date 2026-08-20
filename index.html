@@ -3151,26 +3151,24 @@ main{
 
 /* ---------- Akzentfarbe waehlen (20.08.2026) ----------
    Eigene Zeile statt Auswahlfeld: eine Farbe muss man SEHEN, ein <select>
-   zeigt nur ihren Namen. Deshalb bricht diese Reihe unter den Titel statt
-   danebenzustehen — auf 375 px Breite passen fuenf Kacheln sonst nicht. */
-.setting-row-block{flex-direction:column;align-items:stretch;gap:var(--sp-3);}
-/* ⛔ Grid statt Flex-Wrap. Der erste Entwurf hatte `flex:1 1 5.2rem` — im
-   Browser nachgemessen war die fünfte Kachel dann **390 px** breit statt 92:
-   sie stand allein in der zweiten Reihe und streckte sich über die volle
-   Breite. Ein Grid gibt allen dieselbe Spaltenbreite, egal wie viele in der
-   letzten Reihe stehen. */
+   zeigt nur ihren Namen.
+
+   ⛔ ZWEITER ENTWURF, weil der erste zu viel Platz nahm. Elias: "mach das
+   kleiner, das nimmt viel platz ein." Im Browser nachgemessen war der Block
+   **300 px** hoch — zwei Reihen a 111 px plus Titel. Jetzt stehen alle fünf
+   in EINER Reihe: das Farbfeld ist von 34 auf 22 px geschrumpft, Name und
+   Kontrast rücken darunter zusammen. */
+.setting-row-block{flex-direction:column;align-items:stretch;gap:var(--sp-2);}
 .farbwahl{
-  display:grid;gap:var(--sp-2);
-  grid-template-columns:repeat(auto-fill,minmax(5.2rem,1fr));
-  /* ⚠ Ohne das steht die zweite Reihe 18 px niedriger als die erste —
-     nur Torch Red trägt die Marke „bisher“, und Grid richtet die Höhe je
-     ZEILE aus. Im Browser nachgemessen: 111 px gegen 93 px. */
-  grid-auto-rows:1fr;
+  display:grid;gap:6px;
+  /* ⚠ Feste fünf Spalten statt auto-fill: mit auto-fill brach die letzte
+     Kachel je nach Breite in eine zweite Reihe, und die war dann allein. */
+  grid-template-columns:repeat(5,1fr);
 }
 .farbe{
-  display:flex;flex-direction:column;align-items:center;gap:6px;
-  background:var(--surface-3,var(--surface-2));border:1.5px solid var(--border);
-  border-radius:var(--r-2,12px);padding:10px 8px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  background:transparent;border:1.5px solid transparent;
+  border-radius:9px;padding:5px 3px;cursor:pointer;
   font:inherit;color:var(--text-dim);
   transition:border-color var(--dur-2) ease, color var(--dur-2) ease;
 }
@@ -3178,21 +3176,27 @@ main{
 .farbe:focus-visible{outline:2px solid var(--red-bright);outline-offset:2px;}
 .farbe[aria-checked="true"]{border-color:var(--red);color:var(--text);}
 .farbe-feld{
-  width:100%;height:34px;border-radius:8px;
+  width:100%;height:22px;border-radius:6px;
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.10);
 }
-.farbe-name{font-size:.74rem;font-weight:600;line-height:1.2;text-align:center;}
+.farbe-name{font-size:.66rem;font-weight:600;line-height:1.15;text-align:center;}
+/* ⚠ Die Marke "bisher" traegt KEINE Akzentfarbe — sie sagt, welche Farbe
+   heute steht, und wuerde sonst mitwandern, sobald er wechselt. */
+.farbe-marke{
+  font-size:.55rem;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--text-dim);opacity:.7;line-height:1;
+}
 /* ⭐ Der Kontrastwert steht an jeder Kachel, weil er die einzige Zahl ist,
    die man einer Farbe nicht ansieht. Gemessen am UNGUENSTIGSTEN Ort der App
    (--surface-3, die hellste Flaeche) — gegen reines Schwarz sehen alle fünf
-   besser aus, als sie in der App wirklich sind. Die Schwelle für kleine
-   Schrift ist 4,5. ⛔ Es ist ein HINWEIS, keine Sperre: Elias entscheidet. */
+   besser aus, als sie in der App wirklich sind. Schwelle: 4,5.
+   ⛔ Ein HINWEIS, keine Sperre: Elias entscheidet. */
 .farbe-kontrast{
-  font-size:.62rem;font-variant-numeric:tabular-nums;
-  color:var(--text-dim);opacity:.6;
+  font-size:.58rem;font-variant-numeric:tabular-nums;
+  color:var(--text-dim);opacity:.55;line-height:1;
 }
 .farbe[data-hex="#0066ff"] .farbe-kontrast,
-.farbe[data-hex="#ff0000"] .farbe-kontrast{color:#ffb340;opacity:.85;}
+.farbe[data-hex="#ff0000"] .farbe-kontrast{color:#ffb340;opacity:.8;}
 /* ⚠️ Die Marke „bisher" traegt KEINE Akzentfarbe — sie soll sagen, welche
    Farbe heute steht, und wuerde sonst mitwandern, sobald er wechselt. */
 .farbe-marke{
