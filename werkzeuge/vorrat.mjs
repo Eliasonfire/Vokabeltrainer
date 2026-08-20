@@ -184,6 +184,21 @@ function eigeneWoerterSchreiben(text){
     stempel: (roh.stempel && roh.stempel.vt_personalVocab) || null,
     geholt: new Date().toLocaleDateString('de-DE'),
     woerter: liste,
+    /* ⭐⭐ SEINE EIGENEN NOTIZEN — sonst schreibt die Wartung gegen sie an.
+
+       Am 20.08.2026 gemessen: sechs Woerter tragen eine Notiz von ihm, bis zu
+       284 Zeichen lang und inhaltlich ausgearbeitet (die Wurzel م ر ض erklaert,
+       der Zusammenhang von المغرب mit dem Sonnenuntergang). Eines davon,
+       غَرْبٌ, stand im Arbeitsauftrag als „Eselsbruecke fehlt".
+
+       ⛔ Eine Notiz IST keine Eselsbruecke — es sind verschiedene Felder, und
+       das eine ersetzt das andere nicht. Aber wer eine Eselsbruecke schreibt,
+       ohne die vorhandene Notiz zu kennen, schreibt womoeglich dasselbe noch
+       einmal oder etwas, das ihr widerspricht. */
+    notizen: (() => {
+      try { return JSON.parse((roh.daten && roh.daten.vt_notes) || '{}'); }
+      catch (e) { return {}; }
+    })(),
     /* ⭐ Seine eigenen Korrekturen aus DEMSELBEN Abruf. Sie sind der einzige
        Weg, den FESTWERT type:'noun' von einer geprueften Angabe zu
        unterscheiden: addPersonalVocab() setzt ihn immer, eine Aenderung im
@@ -867,12 +882,13 @@ const FACH   = hol('FACHBEGRIFF_VOKABELN') || [];
    wird nichts gemessen — aber das steht dann auch in der Ausgabe. Ein
    stillschweigendes Null waere genau die Falle, die dieses Werkzeug schliessen
    soll. [[leere_liste_ist_keine_messung]] */
-let SELBST = [], SELBST_AENDERUNGEN = {}, SELBST_STAND = null;
+let SELBST = [], SELBST_AENDERUNGEN = {}, SELBST_STAND = null, SELBST_NOTIZEN = {};
 try {
   const d = JSON.parse(fs.readFileSync(p('data/eigene-woerter.json'), 'utf8'));
   SELBST = Array.isArray(d.woerter) ? d.woerter : [];
   SELBST_AENDERUNGEN = d.aenderungen || {};
   SELBST_STAND = d.geholt || null;
+  SELBST_NOTIZEN = d.notizen || {};
 } catch (e) { /* nicht da — die Ausgabe sagt es unten */ }
 
 /* ⭐ `addPersonalVocab()` setzt `type: 'noun'` FEST — bei jedem Wort, auch bei
@@ -1068,6 +1084,27 @@ if (iAuftr >= 0){
     const erst = (e && e.mnemo) || w.mnemoRoh || BUCH_EB[w.id];
     if (erst) z.push('   vorhanden: ' + String(erst).replace(/\s+/g, ' '));
     (ALT[w.id] || []).forEach((t, i) => z.push('   alt ' + (i + 2) + ': ' + String(t).replace(/\s+/g, ' ')));
+    /* ⭐⭐ SEINE NOTIZ AM WORT — sie zeigt, WELCHEN Vorschlag er genommen hat.
+
+       ⚠️ Der erste Anlauf dieser Zeile hatte eine staerkere Begruendung:
+       „sonst schreibt die Wartung gegen seine eigene Arbeit an". Nachgemessen
+       stimmte das nicht — von sechs Notizen waren DREI wortgleich mit einem
+       Vorschlag aus ESELSBRUECKEN_ALT, den er uebernommen hat. غَرْبٌ stand
+       ausserdem gar nicht wegen der Eselsbruecke im Auftrag („hat 3, braucht
+       0 mehr"), sondern wegen `pl`.
+
+       ⭐ Der echte Nutzen ist ein anderer und groesser: die Notiz ist die
+       einzige Stelle, an der steht, WELCHE der drei angebotenen Eselsbruecken
+       er tatsaechlich behalten hat. Das ist eine Rueckmeldung ueber seinen
+       Geschmack, die sonst nirgends auftaucht — und wer die naechste
+       Eselsbruecke schreibt, sollte sie gelesen haben.
+
+       Die drei uebrigen sind eigener Text, zwei davon kurze Stichworte
+       („Waisen (Kind)", „Leichtes ha").
+
+       ⛔ Eine Notiz ERSETZT keine Eselsbruecke — es sind verschiedene Felder. */
+    const notiz = SELBST_NOTIZEN[String(w.id)];
+    if (notiz) z.push('   ⭐ SEINE NOTIZ: ' + String(notiz).replace(/\s+/g, ' '));
     z.push('   Beispielsatz: ' + (w.fehltSatz ? 'FEHLT' : 'vorhanden'));
     z.push('');
   });
