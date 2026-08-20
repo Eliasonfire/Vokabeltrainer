@@ -79,7 +79,7 @@ schreibt. Spaltenzahl und Reihenfolge deshalb nicht ändern, Inhalt gern.
 | A4 | Bei Adjektiven: `femSg` (und `femPl`) | `vorrat.mjs`, `validate.js` | **Übung 13** erzeugt null Aufgaben |
 | A5 | Bei Verben: `past`, `present`, `imperative`, `masdar` | `vorrat.mjs` | Formen-Kasten, Sprachausgabe |
 | A6 | **Drei Eselsbrücken** nach seiner Rangfolge | `vorrat.mjs`, `pruefe-eselsbruecken.js` | er hat nur den Abzugstext |
-| A7 | **Wortfeld / Kategorie** (folgt aus A1) | `vorrat.mjs`, `pruefe-wortfelder.js` | Wort taucht in keiner Kategorie auf |
+| A7 | **Wortart-Kategorie** (folgt aus A1) · Bedeutungsfeld ist ein Zusatz | `vorrat.mjs` (Wortart), `pruefe-wortfelder.js` (Bedeutungsfeld) | Wort fehlt in der Kategorieansicht und in der Statistik |
 | A8 | **Funktionsanzeige** — ggf. Liste in `js/irab.js` | `pruefe-saetze.js` | Infokarte sagt nur „Wort" |
 | A9 | **Beispielsatz** — nur mit Wörtern, die er hat | `vorrat.mjs`, `pruefe-saetze.js` | **acht** Übungsarten fallen aus |
 | A10 | **Markierungen** am Satz | `vorrat.mjs`, `pruefe-markierungen.js`, `pruefe-erreichbarkeit.js` | Satz steht in keinem Thema, null Aufgaben |
@@ -181,12 +181,27 @@ Ohne Ḥarakāt treffen مُدَرِّسَةٌ/مَدْرَسَةٌ und مَلِ
 
 ## A7 · Wortfeld / Kategorie
 
-`wortfelder-data.js`. Läuft über `type` weitgehend von selbst — deshalb ist A1
-die Voraussetzung. Ein Wort mit unbekanntem `type` fällt **lautlos** aus jeder
-Kategorie und damit aus der Statistik.
+⛔ **Das sind ZWEI Dinge, und nur eines läuft von selbst.**
+`wortfelder-data.js` hat 27 Einträge, davon tragen nur **7** ein `typ`:
+
+| | | |
+|---|---|---|
+| **Wortart-Kategorie** (7) | folgt aus `type` | läuft von selbst — deshalb ist A1 die Voraussetzung |
+| **Bedeutungsfeld** (18) | greift über `passtInsFeld()` in `js/kern.js`, also über die Form oder das deutsche Stichwort | greift **nicht** automatisch |
+
+Ein Wort mit unbekanntem `type` fällt **lautlos** aus jeder Kategorie und damit
+aus der Statistik. Ein Wort ohne Bedeutungsfeld dagegen ist **kein Mangel am
+Wort**: es heißt, dass keines der 18 Felder es abdeckt. Bei madina-1 sind das
+58 % der Wörter, die eines haben — ein neues Feld anzulegen ist Elias'
+Entscheidung, keine Pflicht des Laufs.
+
+⚠️ `werkzeuge/vorrat.mjs` misst nur die **Wortart**-Kategorie und sagt das seit
+dem 20.08.2026 auch so. Die Zeile hieß vorher „ohne Kategorie: 0" und klang
+nach „alle einsortiert". [[widerspruch_liegt_in_der_beschriftung]]
 
 ```
-node pruefe-wortfelder.js
+node pruefe-wortfelder.js          # Bedeutungsfelder, je Quelle mit Anteil
+node werkzeuge/vorrat.mjs          # Wortart-Kategorie im Fenster
 ```
 
 ## A8 · Funktionsanzeige auf der Infokarte

@@ -418,6 +418,21 @@ function satzErreichbar(id){
    oder unbekannt ist, faellt sonst lautlos aus jeder Kategorie. */
 const FELDER = hol('WORTFELDER') || [];
 const FELD_TYPEN = new Set(FELDER.filter(f => f.typ).map(f => f.typ));
+/* ⚠️ DAS MISST DIE WORTART-KATEGORIE, NICHT DAS BEDEUTUNGSFELD — und die
+   Ausgabe muss das sagen. Bis zum 20.08.2026 stand darüber „ohne Kategorie: 0",
+   und das klang nach „alle Wörter sind einsortiert".
+
+   `wortfelder-data.js` hat 27 Einträge, aber nur 7 davon tragen ein `typ`
+   (noun, verb, adjective, adverb, expression/phrase, grammar, particle). Die
+   übrigen 18 sind BEDEUTUNGSFELDER, und in die kommt ein Wort nicht durch ein
+   Feld am Datensatz, sondern durch `passtInsFeld()` in js/kern.js — über seine
+   Form oder sein deutsches Stichwort.
+
+   ⭐ Ein Wort ohne Bedeutungsfeld ist deshalb KEIN Mangel am Wort: es heißt,
+   dass keines der 18 Felder es abdeckt, und ein neues anzulegen ist Elias'
+   Entscheidung. Gemessen wird das von `pruefe-wortfelder.js` (58 % bei
+   madina-1) — dort gehört es hin, nicht hierher.
+   [[widerspruch_liegt_in_der_beschriftung]] */
 function hatKategorie(w){
   if (!FELDER.length) return true;          /* Datei fehlt: nicht behaupten */
   return FELD_TYPEN.has(w.type || w.wordType);
@@ -830,7 +845,8 @@ console.log('  unvollstaendig:           ' + offen.length);
 console.log('    fehlende Eselsbruecken: ' + fehlendeEB);
 console.log('    fehlende Beispielsaetze:' + fehlendeSatz);
 console.log('    fehlende Markierungen:  ' + fehlendeMark + (fehlendeMark ? '   ⛔ diese Saetze stehen in KEINEM Thema' : ''));
-console.log('    ohne Kategorie:         ' + fehlendeKat);
+console.log('    ohne Wortart-Kategorie: ' + fehlendeKat
+  + '   (das Bedeutungsfeld misst pruefe-wortfelder.js, nicht dieses Werkzeug)');
 if (fehlendeFelder){
   console.log('');
   console.log('  Felder des vollen Programms, die fehlen (ohne die erklaerten Faelle');
