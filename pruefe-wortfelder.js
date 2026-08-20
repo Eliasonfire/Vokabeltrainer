@@ -138,6 +138,15 @@ try {
   if (fs.existsSync(ew)){
     const d = JSON.parse(fs.readFileSync(ew, 'utf8'));
     const liste = Array.isArray(d.woerter) ? d.woerter : [];
+    /* ⛔ `type` ist hier ein FESTWERT: addPersonalVocab() (js/kern.js:502)
+       setzt `type:'noun'` bei jedem selbst angelegten Wort, auch bei einem
+       Verb. Geprueft ist er nur, wo Elias das Wort im Formular angefasst
+       hat — das steht in `aenderungen`. Ohne diese Unterscheidung meldet
+       die Zaehlung unten „13 Nomen" und behauptet damit 13 echte Luecken.
+       [[eingefrorenes_feld_ist_kein_zustand]] */
+    const _ge = d.aenderungen || {};
+    for (const w of liste)
+      if (!(_ge[String(w.id)] && _ge[String(w.id)].type)) w._typeFestwert = true;
     if (liste.length) quellen.push({ name: 'data/eigene-woerter.json (Weg 3)', woerter: liste });
   } else {
     errors.push('data/eigene-woerter.json fehlt — seine selbst angelegten Wörter sind UNGEMESSEN.');
@@ -337,7 +346,13 @@ if (ohneFeld.length){
   ohneFeld.forEach(g => {
     const zeigen = ALLE ? g.woerter : g.woerter.slice(0, 20);
     const nomen = g.woerter.filter(w => w.type === 'noun').length;
-    console.log(`\n  ${g.quelle} (${g.woerter.length}, davon ${nomen} Nomen):`);
+    /* ⛔ Wie viele davon tragen einen UNGEPRUEFTEN Festwert? Ohne diesen
+       Zusatz liest sich „13 Nomen" wie eine Messung. */
+    const festwert = g.woerter.filter(w => w.type === 'noun' && w._typeFestwert).length;
+    const nomenText = festwert
+      ? `davon ${nomen} als „Nomen" gefuehrt — ⛔ ${festwert} davon FESTWERT aus addPersonalVocab(), nicht geprueft`
+      : `davon ${nomen} Nomen`;
+    console.log(`\n  ${g.quelle} (${g.woerter.length}, ${nomenText}):`);
     zeigen.forEach(w => console.log(`    ${w.ar}   ${w.de}${w.type ? `   [${w.type}]` : ''}`));
     if (!ALLE && g.woerter.length > zeigen.length)
       console.log(`    … ${g.woerter.length - zeigen.length} weitere (mit --alle vollstaendig)`);
