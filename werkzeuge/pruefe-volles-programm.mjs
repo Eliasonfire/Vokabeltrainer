@@ -282,6 +282,12 @@ if (!fs.existsSync(PROMPT)){
         "prueft, ob eine Artefaktseite gesperrtes Kursmaterial traegt - eine Frage an die Veroeffentlichung",
       "werkzeuge/pruefe-erreichbarkeit-eichung.mjs":
         "eicht pruefe-erreichbarkeit.js an drei Faellen - sie prueft den PRUEFER, nicht die Daten",
+      /* ⭐ Am 20.08.2026 dazugekommen — und dieser Waechter hat es SELBST
+         gemeldet, keine Stunde nachdem das Werkzeug entstand. Er haelt die
+         Ueberschriften der Vault-Notiz gegen `git log`; das ist eine Frage
+         an das GEDAECHTNIS, nicht an eine Vokabel. */
+      "werkzeuge/pruefe-datumsangaben.mjs":
+        "prueft die Datumsangaben der Vault-Notiz gegen die Commits - eine Frage an das Gedaechtnis, nicht an eine Vokabel",
       "werkzeuge/pruefe-schreibpfade.mjs":
         "prueft, ob ein Werkzeug Lerninhalt ohne .neu-Zwischenschritt ueberschreibt - eine Frage an den CODE, nicht an eine Vokabel",
     };
