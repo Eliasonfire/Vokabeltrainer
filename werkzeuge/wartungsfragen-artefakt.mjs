@@ -173,7 +173,16 @@ function abschnitt(f, nr){
          Text: „schon mit␣␣␣␣␣␣ل ح م". Sie waren hier aus der Einrueckung des
          erzeugenden Skripts hereingeraten. Gegenprobe auf der fertigen Seite:
          /S {2,}S/ [[nutztext_nie_in_shell_strings]] */
-      ? `<div class="beleg">Im Bestand steht dasselbe Wort schon mit <b>${esc(w.beleg.wert)}</b> — <i>${esc(w.beleg.woher)}</i>${w.beleg.de ? ', „' + esc(w.beleg.de) + '"' : ''}</div>`
+      /* ⭐⭐ ZWEI BELEGARTEN, UND SIE DÜRFEN NICHT GLEICH AUSSEHEN.
+         Der Bestandsbeleg kommt aus SEINEM Abzug — dieselbe Quelle, mit der er
+         lernt. Der Außenbeleg kommt von en.wiktionary und ist eine fremde
+         Meinung: nützlich, aber nicht dasselbe. Wer beide gleich darstellt,
+         nimmt ihm die Grundlage, verschieden genau hinzusehen.
+         ⚠️ Der Außenbeleg nennt deshalb die dort geführte FORM mit — nur weil
+         sie mit seiner Karte übereinstimmt, gilt der Beleg überhaupt. */
+      ? (w.beleg.aussen
+          ? `<div class="beleg aussen"><b>${esc(w.beleg.wert)}</b> — ${esc(w.beleg.woher)} führt ${esc(w.beleg.form || w.ar)}${w.beleg.de ? ', „' + esc(w.beleg.de) + '"' : ''}${w.beleg.url ? ' <a href="' + esc(w.beleg.url) + '" target="_blank" rel="noopener">nachsehen</a>' : ''}</div>`
+          : `<div class="beleg">Im Bestand steht dasselbe Wort schon mit <b>${esc(w.beleg.wert)}</b> — <i>${esc(w.beleg.woher)}</i>${w.beleg.de ? ', „' + esc(w.beleg.de) + '"' : ''}</div>`)
       : '';
 
     return `<div class="wort" data-feld="${esc(f.feld)}" data-id="${esc(w.id)}">
@@ -279,6 +288,16 @@ h2{display:flex;align-items:baseline;gap:var(--sp2);flex-wrap:wrap;
        padding:6px 10px;margin:0 0 var(--sp2)}
 .beleg b{font-family:var(--mono);font-size:.82rem}
 .beleg i{font-style:normal;color:var(--still)}
+/* Der Beleg von aussen (en.wiktionary). Noch zurueckhaltender als der aus dem
+   Bestand — gestrichelt statt durchgezogen: eine fremde Quelle, kein Auszug
+   aus seinem eigenen Kurs. Die arabische FORM steht rechtslaeufig isoliert,
+   sonst zieht sie das lateinische Drumherum durcheinander.
+   [[rtl_richtung_physisch]] */
+.beleg.aussen{border-left-style:dashed;background:transparent;color:var(--leise)}
+.beleg.aussen b{direction:rtl;unicode-bidi:isolate;font-family:inherit;
+                font-size:.9rem;color:var(--text)}
+.beleg.aussen a{color:var(--still);text-decoration:underline}
+.beleg.aussen a:hover,.beleg.aussen a:focus-visible{color:var(--text)}
 .wahl{display:flex;gap:var(--sp1);flex-wrap:wrap;align-items:center}
 .wahl button{font:inherit;font-size:.85rem;color:var(--text);background:var(--hoch);
              border:1px solid var(--rand);border-radius:99px;padding:7px 14px;cursor:pointer}
