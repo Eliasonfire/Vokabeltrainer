@@ -45,9 +45,28 @@ const zeilen = fs.readFileSync(QUELLE, 'utf8').split(/\r?\n/);
 /* ---------- Lesen ---------- */
 const FELDER_ERLAUBT = ['pl','sg','gender','femSg','femPl','root','type','past','present','imperative','masdar'];
 const WORTARTEN = ['noun','verb','adjective','particle','adverb','expression','vocab'];
+/* ⛔⛔ JEDES Feld braucht seine Wertpruefung, nicht nur `type`.
+ *
+ * Am 20.08.2026 gemessen: die Zeile
+ *     48402  الْيَوْمُ  (heute)  -> WORTART FALSH
+ * (ein Buchstabendreher in „FALSCH") ging still als femSg-WERT durch. Das Wort
+ * haette danach „WORTART FALSH" als weibliche Form getragen — sichtbar auf der
+ * Karte, im Iʿrāb-Lexikon und in Uebung 13.
+ *
+ * ⭐ Eine arabische Angabe muss arabisch sein. Das ist keine Feinheit: es ist
+ * die einzige Pruefung, die einen Tippfehler von einer Antwort unterscheidet.
+ * [[kennzeichen_mit_zwei_ursachen]]
+ *
+ * \u0600-\u06FF ist der arabische Block, \u0750-\u077F die Ergaenzung.
+ * ⚠️ Als \u-Folge geschrieben, damit ein Editor sie nicht unsichtbar
+ * normalisiert. [[zeichenklasse_nie_sichtbar_kopieren]] */
+const ARABISCH = /[\u0600-\u06FF\u0750-\u077F]/;
+const NUR_ARABISCH = ['pl','sg','femSg','femPl','past','present','imperative','masdar','root'];
+const GESCHLECHTER = ['masculine','feminine'];
 
 let feld = null;
 const ausnahmen = [];    /* { id, feld, wort } */
+const zweifel = [];      /* { id, feld, wort } — Wortart bestritten */
 const werte = [];        /* { id, feld, wert, wort } */
 const unklar = [];
 
@@ -70,10 +89,24 @@ for (const roh of zeilen){
   const antwort = antwortRoh.trim();
   if (/^GIBT ES NICHT$/i.test(antwort)){
     ausnahmen.push({ id, feld, wort: ar + ' (' + de + ')' });
+  } else if (/^WORTART FALSCH$/i.test(antwort)){
+    /* ⭐ Kein Eintrag für DIESES Feld — die Frage verschwindet von selbst,
+       sobald `type` als kaputt gilt: felderPruefen() in vorrat.mjs meldet dann
+       nur noch `type` und bricht ab. Ein zusätzlicher Ausnahme-Eintrag würde
+       die Frage dauerhaft stilllegen, auch NACHDEM die Wortart korrigiert ist —
+       und dann fehlte der Plural für immer. [[kennzeichen_mit_zwei_ursachen]] */
+    zweifel.push({ id, feld: 'type', wort: ar + ' (' + de + ')' });
   } else if (feld === 'type' && !WORTARTEN.includes(antwort)){
     /* ⛔ Eine erfundene Wortart ließe das Wort aus jeder Kategorie fallen.
        Lieber melden als eintragen. */
     unklar.push('Unbekannte Wortart „' + antwort + '" bei ' + ar + ' (' + id + ')');
+  } else if (feld === 'gender' && !GESCHLECHTER.includes(antwort)){
+    /* ⚠️ js/uebung.js erkennt nur diese zwei; jeder andere Wert gilt in
+       Übung 11 stillschweigend als männlich. Befund A-13 des Skill-Prüfers. */
+    unklar.push('Geschlecht muss masculine oder feminine sein, nicht „' + antwort + '" bei ' + ar + ' (' + id + ')');
+  } else if (NUR_ARABISCH.includes(feld) && !ARABISCH.test(antwort)){
+    unklar.push('„' + antwort + '" enthält kein arabisches Zeichen — als ' + feld
+      + ' bei ' + ar + ' (' + id + ') nicht eingetragen. Tippfehler?');
   } else {
     werte.push({ id, feld, wert: antwort, wort: ar + ' (' + de + ')' });
   }
@@ -82,6 +115,7 @@ for (const roh of zeilen){
 console.log('Gelesen aus ' + path.basename(QUELLE) + ':');
 console.log('  ' + String(ausnahmen.length).padStart(4) + ' × „gibt es nicht"  → FELD_AUSNAHMEN');
 console.log('  ' + String(werte.length).padStart(4) + ' × ein Wert         → FELD_ERGAENZUNGEN');
+console.log('  ' + String(zweifel.length).padStart(4) + ' × „Wortart falsch" → FELD_ZWEIFEL (kommt wieder als type-Frage)');
 if (unklar.length){
   console.log('');
   console.log('  ⚠️ ' + unklar.length + ' Zeile(n) nicht übernommen:');
@@ -120,10 +154,11 @@ function blockLesen(text, name){
 
 const A = blockLesen(alt, 'FELD_AUSNAHMEN');
 const E = blockLesen(alt, 'FELD_ERGAENZUNGEN');
-if (A.auf < 0 || E.auf < 0){ console.error('⛔ Blöcke in ' + ZIEL + ' nicht gefunden.'); process.exit(1); }
+const Z = blockLesen(alt, 'FELD_ZWEIFEL');
+if (A.auf < 0 || E.auf < 0 || Z.auf < 0){ console.error('⛔ Blöcke in ' + ZIEL + ' nicht gefunden.'); process.exit(1); }
 
 const heute = new Date().toLocaleDateString('de-DE');
-let neuA = 0, neuE = 0, ersetztE = 0;
+let neuA = 0, neuE = 0, ersetztE = 0, neuZ = 0;
 for (const a of ausnahmen){
   A.eintraege[a.id] = A.eintraege[a.id] || {};
   if (!(a.feld in A.eintraege[a.id])) neuA++;
@@ -133,6 +168,16 @@ for (const w of werte){
   E.eintraege[w.id] = E.eintraege[w.id] || {};
   if (!(w.feld in E.eintraege[w.id])) neuE++; else ersetztE++;
   E.eintraege[w.id][w.feld] = w.wert;
+}
+for (const z of zweifel){
+  Z.eintraege[z.id] = Z.eintraege[z.id] || {};
+  if (!(z.feld in Z.eintraege[z.id])) neuZ++;
+  Z.eintraege[z.id][z.feld] = 'von Elias bestritten am ' + heute + ' — ' + z.wort;
+}
+/* ⭐ Beantwortet er die Wortart, ist der Zweifel erledigt — sonst stünde das
+   Wort für immer in der type-Frage, auch mit der neuen Antwort im Bestand. */
+for (const w of werte){
+  if (w.feld === 'type' && Z.eintraege[w.id]) delete Z.eintraege[w.id].type;
 }
 
 /* ⛔ Nur Hochkomma und Backslash schützen — arabische Zeichen bleiben als
@@ -148,20 +193,25 @@ function blockBauen(eintraege, einrueckung = '  '){
     ' }').join(',\n') + '\n';
 }
 
-/* Von hinten nach vorn ersetzen, sonst verschieben sich die Positionen. */
+/* ⭐ Je Block FRISCH suchen statt Positionen fortzuschreiben: nach dem ersten
+   Ersetzen stimmen alle Offsets dahinter nicht mehr, und ein vergessener
+   Neu-Aufruf schriebe mitten in den Quelltext. So ist die Reihenfolge egal. */
+function blockSchreiben(text, name, eintraege){
+  const b = blockLesen(text, name);
+  if (b.auf < 0) return text;
+  return text.slice(0, b.auf + 1) + blockBauen(Object.assign({}, b.eintraege, eintraege)) + text.slice(b.zu);
+}
 let neu = alt;
-neu = neu.slice(0, E.auf + 1) + blockBauen(E.eintraege) + neu.slice(E.zu);
-const A2 = blockLesen(neu, 'FELD_AUSNAHMEN');
-neu = neu.slice(0, A2.auf + 1) + blockBauen(A2.eintraege) + neu.slice(A2.zu);
-/* A war vor E — nach dem ersten Ersetzen neu suchen, statt Positionen zu raten. */
-const A3 = blockLesen(neu, 'FELD_AUSNAHMEN');
-neu = neu.slice(0, A3.auf + 1) + blockBauen(Object.assign({}, A3.eintraege, A.eintraege)) + neu.slice(A3.zu);
+neu = blockSchreiben(neu, 'FELD_ZWEIFEL', Z.eintraege);
+neu = blockSchreiben(neu, 'FELD_ERGAENZUNGEN', E.eintraege);
+neu = blockSchreiben(neu, 'FELD_AUSNAHMEN', A.eintraege);
 
 if (NUR_ZEIGEN){
   console.log('');
   console.log('--pruefen: nichts geschrieben. Es kämen dazu:');
   ausnahmen.forEach(a => console.log('  AUSNAHME   ' + a.feld.padEnd(8) + a.wort));
   werte.forEach(w => console.log('  WERT       ' + w.feld.padEnd(8) + w.wort + '  = ' + w.wert));
+  zweifel.forEach(z => console.log('  ZWEIFEL    ' + 'type'.padEnd(8) + z.wort + '  → kommt wieder als type-Frage'));
   process.exit(0);
 }
 
@@ -173,6 +223,7 @@ fs.renameSync(tmp, ZIEL);
 console.log('');
 console.log('Eingetragen in data/feld-ausnahmen.js:');
 console.log('  ' + neuA + ' neue Ausnahme(n), ' + neuE + ' neue Wert(e)'
-  + (ersetztE ? ', ' + ersetztE + ' ersetzt' : ''));
+  + (ersetztE ? ', ' + ersetztE + ' ersetzt' : '')
+  + (neuZ ? ', ' + neuZ + ' bestrittene Wortart(en)' : ''));
 console.log('');
 console.log('Jetzt prüfen:  node validate.js  und  node werkzeuge/vorrat.mjs');

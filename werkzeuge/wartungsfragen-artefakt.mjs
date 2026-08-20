@@ -82,16 +82,50 @@ const WORTARTEN = [
   ['particle', 'Partikel (حَرْف)'], ['adverb', 'Adverb'], ['expression', 'Wendung']
 ];
 
+/* ⛔⛔ WELCHE FRAGE EINE WORTART VORAUSSETZT
+ *
+ * „Wie lautet die weibliche Form?" ist nur beantwortbar, wenn das Wort ein
+ * Adjektiv IST. Stimmt die Wortart nicht, ist die Frage nicht schwer, sondern
+ * unbeantwortbar — und Elias sitzt davor und überlegt, was er falsch versteht.
+ *
+ * Am 20.08.2026 an الْيَوْمُ („heute", id 48402) aufgefallen: der Abzug führt
+ * es als `adjective`, es ist ein Nomen (يَوْمٌ, adverbial gebraucht). Die
+ * Seite hätte nach seiner weiblichen Form gefragt.
+ *
+ * ⭐ Deshalb bekommt JEDE dieser Fragen einen Ausweg — nicht nur die eine, an
+ * der es auffiel. [[allgemeine_regel_statt_listeneintrag]]
+ */
+/* Genau die zwei Werte, die js/uebung.js kennt. Ein dritter waere in
+   Übung 11 stillschweigend „männlich". */
+const GESCHLECHTER = [['masculine', 'männlich (مُذَكَّر)'], ['feminine', 'weiblich (مُؤَنَّث)']];
+
+const SETZT_VORAUS = {
+  gender: ['noun', 'Nomen'], sg: ['noun', 'Nomen'], pl: ['noun', 'Nomen'],
+  femSg: ['adjective', 'Adjektiv'], femPl: ['adjective', 'Adjektiv'],
+  past: ['verb', 'Verb'], present: ['verb', 'Verb'],
+  imperative: ['verb', 'Verb'], masdar: ['verb', 'Verb']
+};
+
 function abschnitt(f, nr){
   const eingabe = ['pl', 'sg', 'femSg', 'root', 'past', 'present', 'imperative', 'masdar'].includes(f.feld);
   const zeilen = f.woerter.map(w => {
-    const wahl = f.feld === 'type'
-      ? `<div class="wahl">` + WORTARTEN.map(([v, t]) =>
+    const knopfliste = f.feld === 'type' ? WORTARTEN
+                     : f.feld === 'gender' ? GESCHLECHTER : null;
+    const wahl = knopfliste
+      ? `<div class="wahl">` + knopfliste.map(([v, t]) =>
           `<button type="button" data-wert="${v}">${esc(t)}</button>`).join('') +
+        (SETZT_VORAUS[f.feld]
+          ? `<button type="button" data-wert="__falschertyp__" class="falschertyp">ist kein ${esc(SETZT_VORAUS[f.feld][1])}</button>`
+          : '') +
         `<button type="button" data-wert="" class="spaeter">später</button></div>`
       : `<div class="wahl">` +
         (eingabe ? `<input type="text" inputmode="text" placeholder="${esc(f.feld)} eintragen" data-eingabe>` : '') +
         `<button type="button" data-wert="__nein__">${esc(f.neinText)}</button>` +
+        /* ⭐ Der Ausweg: die Frage ist falsch gestellt, weil die Wortart nicht
+           stimmt. Nur wo eine Wortart überhaupt vorausgesetzt wird. */
+        (SETZT_VORAUS[f.feld]
+          ? `<button type="button" data-wert="__falschertyp__" class="falschertyp">ist kein ${esc(SETZT_VORAUS[f.feld][1])}</button>`
+          : '') +
         `<button type="button" data-wert="" class="spaeter">später</button></div>`;
     return `<div class="wort" data-feld="${esc(f.feld)}" data-id="${esc(w.id)}">
   <div class="kopf"><span class="ar">${esc(w.ar)}</span><span class="de">${esc(w.de)}</span></div>
@@ -105,7 +139,8 @@ function abschnitt(f, nr){
       <span class="kzahl"><b data-fertig>0</b>/${f.woerter.length}</span></h2>
   ${f.hilfe ? `<p class="hilfe">${esc(f.hilfe)}</p>` : ''}
   ${f.folge ? `<p class="folge">Ohne die Angabe fällt aus: <b>${esc(f.folge)}</b></p>` : ''}
-  ${f.feld !== 'type' ? `<button type="button" class="alle" data-alle="__nein__">Alle auf „${esc(f.neinText)}"</button>` : ''}
+  ${SETZT_VORAUS[f.feld] ? `<p class="voraus">Diese Frage setzt voraus, dass das Wort ein <b>${esc(SETZT_VORAUS[f.feld][1])}</b> ist. Stimmt das nicht, ist sie nicht beantwortbar — dann „ist kein ${esc(SETZT_VORAUS[f.feld][1])}" wählen; das Wort kommt dann bei der Wortart wieder.</p>` : ''}
+  ${(f.feld !== 'type' && f.feld !== 'gender') ? `<button type="button" class="alle" data-alle="__nein__">Alle auf „${esc(f.neinText)}"</button>` : ''}
   ${zeilen}
 </section>`;
 }
@@ -162,6 +197,13 @@ h2{display:flex;align-items:baseline;gap:var(--sp2);flex-wrap:wrap;
        font-variant-numeric:tabular-nums}
 .hilfe{color:var(--leise);font-size:.92rem;margin:0 0 var(--sp2);max-width:62ch}
 .folge{color:var(--gelb);font-size:.88rem;margin:0 0 var(--sp3)}
+.voraus{color:var(--leise);font-size:.85rem;margin:0 0 var(--sp3);max-width:62ch;
+        padding-left:var(--sp2);border-left:2px solid var(--rand)}
+.voraus b{color:var(--text)}
+/* Der Ausweg sieht anders aus als die Antwort — er beendet die Frage nicht,
+   er stellt sie neu. */
+.wahl button.falschertyp{border-style:dashed;color:var(--gelb)}
+.wort[data-beantwortet="__falschertyp__"]{border-left-color:var(--gelb)}
 .folge b{color:var(--gelb)}
 .alle{font:inherit;font-size:.85rem;font-weight:600;color:var(--text);
       background:var(--hoch);border:1px solid var(--rand);border-radius:99px;
@@ -266,8 +308,10 @@ ${fragen.map((f, i) => abschnitt(f, i + 1)).join('\n')}
     }
     if (a === undefined) el.removeAttribute('data-beantwortet');
     else if (a === '') el.setAttribute('data-beantwortet', '__spaeter__');
+    else if (a === '__falschertyp__') el.setAttribute('data-beantwortet', '__falschertyp__');
     else el.setAttribute('data-beantwortet', 'ja');
-    if (feld && a !== undefined && a !== '__nein__' && a !== '' && feld.value !== a) feld.value = a;
+    if (feld && a !== undefined && a !== '__nein__' && a !== '__falschertyp__'
+        && a !== '' && feld.value !== a) feld.value = a;
   }
 
   function zaehlen(){
@@ -294,7 +338,8 @@ ${fragen.map((f, i) => abschnitt(f, i + 1)).join('\n')}
         var ar = el.querySelector('.ar').textContent;
         var de = el.querySelector('.de').textContent;
         zeilen.push('  ' + el.dataset.id + '  ' + ar + '  (' + de + ')  -> ' +
-                    (a === '__nein__' ? 'GIBT ES NICHT' : a));
+                    (a === '__nein__' ? 'GIBT ES NICHT'
+                   : a === '__falschertyp__' ? 'WORTART FALSCH' : a));
       });
       if (zeilen.length){ z.push(feld + ':'); z.push.apply(z, zeilen); z.push(''); }
     });
