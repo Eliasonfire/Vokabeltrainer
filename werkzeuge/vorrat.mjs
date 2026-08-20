@@ -1209,6 +1209,18 @@ if (ARG.includes('--offene-fragen')){
   const ziel = ARG[ARG.indexOf('--offene-fragen') + 1];
   if (!ziel){ console.error('  --offene-fragen braucht eine Datei.'); process.exit(1); }
 
+  /* Belege von aussen, falls jemand sie geholt hat (werkzeuge/aussenbelege.mjs).
+     ⚠️ Fehlt die Datei oder ist sie kaputt, laeuft alles unveraendert weiter —
+     dieses Werkzeug misst und darf an einer Zugabe nicht scheitern. Der Stand
+     wird aber genannt, sonst waere ein veralteter Abzug unsichtbar. */
+  let AUSSEN = null;
+  try {
+    const ab = JSON.parse(fs.readFileSync(p('data/aussenbelege.json'), 'utf8'));
+    AUSSEN = ab.belege || null;
+    if (AUSSEN) console.log('  Aussenbelege: ' + Object.keys(AUSSEN).length
+      + ' aus ' + (ab.quelle || '?') + ', geholt ' + String(ab.erzeugt || '?').slice(0, 10));
+  } catch { /* keine da — dann eben nur der eigene Bestand */ }
+
   /* Je Feld EINE Frage, mit allen betroffenen Wörtern. Ein Durchgang je Feld
      statt einer je Wort — bei 25 Plural-Fragen ist das der ganze Unterschied. */
   const FRAGE_TEXT = {
@@ -1305,7 +1317,29 @@ if (ARG.includes('--offene-fragen')){
             || wv(seins).some(x => meineW.has(x)))) continue;
       return { wert, woher: x.book || x.chapter || 'Bestand', de: String(x.de || '') };
     }
-    return null;
+    return aussenBeleg(w, feld);
+  }
+
+  /* ---------- Rueckfall: Beleg von aussen ----------
+     ⭐ Erst der eigene Bestand, dann Wiktionary — und nie umgekehrt. Steht
+     dasselbe Wort in einem anderen Buch seines Abzugs, ist das der staerkere
+     Beleg: es ist DIE Quelle, mit der er lernt.
+
+     Gefuellt von werkzeuge/aussenbelege.mjs. Fehlt die Datei, aendert sich
+     nichts — sie ist eine Zugabe, keine Voraussetzung. Deshalb hier auch
+     kein Fehler bei fehlender Datei. */
+  function aussenBeleg(w, feld){
+    if (!AUSSEN) return null;
+    const b = AUSSEN[String(w.id)];
+    if (!b || !b[feld]) return null;
+    return {
+      wert:   String(b[feld]),
+      woher:  'en.wiktionary.org',
+      de:     b.gloss || '',
+      aussen: true,
+      form:   b.form || '',
+      url:    b.url  || ''
+    };
   }
 
   const jeFeldWoerter = {};

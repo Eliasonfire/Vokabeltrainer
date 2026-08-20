@@ -64,3 +64,17 @@ artefakte/
 # Wartung laeuft auf seinem PC, dort liegt die Datei. Sobald er zustimmt, diese
 # Zeile entfernen.
 data/eigene-woerter.json
+
+# Belege von en.wiktionary zu den offenen Feldangaben, gebaut mit
+#   node werkzeuge/aussenbelege.mjs
+# Die Belege SELBST sind oeffentliche Wiktionary-Daten. Ausgeschlossen ist die
+# Datei wegen der anderen Haelfte: sie ordnet jeden Beleg einer Karten-ID zu und
+# gibt damit Elias' eigene Vokabelliste preis — dieselben IDs, die eine Zeile
+# weiter oben bewusst draussen bleiben. Traegt ein Teil einer Liste eine
+# Einschraenkung, gilt sie fuer alle. [[schweigen_ist_kein_auftrag]]
+# Kostet nichts: das Werkzeug erzeugt die Datei jederzeit neu.
+data/aussenbelege.json
+
+# Zwischenstaende der Werkzeuge (aussenbelege.mjs legt hier die Fragenliste ab,
+# die es von vorrat.mjs geholt hat). Wird bei jedem Lauf neu geschrieben.
+.state/
