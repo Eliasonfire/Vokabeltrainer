@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>طالب in vierzehn Schriften</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Aref+Ruqaa:wght@400;700&family=Almarai:wght@400;700;800&family=Cairo:wght@400;700;900&family=El+Messiri:wght@400;600;700&family=Gulzar&family=Lalezar&family=Marhey:wght@400;700&family=Mirza:wght@400;600;700&family=Noto+Kufi+Arabic:wght@400;700;900&family=Noto+Naskh+Arabic:wght@400;700&family=Rakkas&family=Reem+Kufi:wght@400;700&family=Scheherazade+New:wght@400;700&family=Tajawal:wght@400;700;900&display=swap">
+<style>
+/* Dieselbe Bauform wie die App: OLED-Schwarz, roter Akzent, alles gemalt. */
+:root{
+  --bg:#000; --flaeche:#111114; --hoch:#17171c; --rand:#26262c; --rand2:#1c1c21;
+  --text:#f4f4f6; --leise:#9a9aa4; --still:#6b6b75;
+  --red:#ff1744; --red-bright:#ff4d6a;
+  --accent-grad:linear-gradient(135deg,#ff1744 0%,#ff4d6a 100%);
+  --gruen:#2fd27a; --gelb:#ffc44d; --blau:#5aa9ff;
+  --sp1:6px; --sp2:10px; --sp3:16px; --sp4:24px; --sp5:38px;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);
+     font-size:17px;line-height:1.55;padding:var(--sp5) var(--sp3) 120px}
+.huelle{max-width:900px;margin:0 auto}
+.eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;
+         text-transform:uppercase;color:var(--still);margin:0 0 var(--sp2)}
+h1{font-size:clamp(1.9rem,7vw,2.5rem);line-height:1.1;letter-spacing:-.025em;
+   margin:0 0 var(--sp3);text-wrap:balance}
+h2{font-size:1.1rem;font-weight:600;margin:var(--sp5) 0 var(--sp3);
+   padding-bottom:var(--sp1);border-bottom:1px solid var(--rand)}
+p{margin:0 0 var(--sp3);max-width:64ch;color:var(--leise)}
+p strong,b{color:var(--text)}
+code{font-family:var(--mono);font-size:.86em;background:var(--hoch);
+     padding:1px 5px;border-radius:5px;color:var(--leise)}
+
+/* ---- Steuerleiste ---- */
+.leiste{position:sticky;top:0;z-index:20;background:var(--bg);
+        padding:var(--sp2) 0 var(--sp3);margin-bottom:var(--sp3);
+        border-bottom:1px solid var(--rand)}
+.reihe{display:flex;gap:var(--sp2);flex-wrap:wrap;align-items:center}
+.reihe + .reihe{margin-top:var(--sp2)}
+.reihe label{font-size:.8rem;color:var(--still);letter-spacing:.06em;
+             text-transform:uppercase;font-weight:600;margin-right:var(--sp1)}
+button.wahl{font:inherit;font-size:.85rem;font-weight:600;color:var(--text);
+       background:var(--hoch);border:1px solid var(--rand);border-radius:99px;
+       padding:6px 14px;cursor:pointer}
+button.wahl[aria-pressed="true"]{background:var(--accent-grad);color:#fff;border-color:transparent}
+button.wahl:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+input[type=range]{accent-color:var(--red);flex:1;min-width:140px;max-width:260px}
+.wert{font-family:var(--mono);font-variant-numeric:tabular-nums;
+      font-size:.85rem;color:var(--leise);min-width:56px;text-align:right}
+
+/* ---- Die Proben ---- */
+.gitter{display:grid;gap:var(--sp2)}
+.probe{background:var(--flaeche);border:1px solid var(--rand);border-radius:16px;
+       padding:var(--sp3) var(--sp4);position:relative}
+/* ⛔ KEIN overflow:hidden — es würde die Kasrah unter dem letzten Buchstaben
+   abschneiden, und genau die ist beim Vergleich von Schriften wichtig. */
+.marke .glyphen{display:inline-block}
+.probe.gewaehlt{border-color:var(--red);box-shadow:0 0 0 1px var(--red)}
+.pkopf{display:flex;align-items:baseline;gap:var(--sp2);flex-wrap:wrap;
+       margin-bottom:var(--sp2)}
+.pname{font-weight:600;font-size:.95rem}
+.part{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;
+      text-transform:uppercase;color:var(--still)}
+.pnote{font-size:.85rem;color:var(--still);margin-left:auto}
+
+/* ⛔ line-height NICHT klein: Kasrah und Tanwīn Kasrah stehen UNTER der
+   Grundlinie und würden sonst abgeschnitten. Und kein break-word — Arabisch
+   bricht nie mitten im Wort, das kippt die Buchstabenformen. */
+.marke{direction:rtl;unicode-bidi:isolate;line-height:1.85;
+       overflow-wrap:normal;word-break:normal;white-space:nowrap;
+       background:var(--accent-grad);-webkit-background-clip:text;
+       background-clip:text;color:transparent;
+       padding:.12em 0;font-size:76px;font-weight:700}
+.probe.einfarbig .marke{background:none;-webkit-text-fill-color:var(--text);color:var(--text)}
+/* Die Größe setzt einpassen() — hier nur der Ausgangswert. */
+.probe.klein .marke{font-size:34px}
+
+/* Die heutige Marke als Bezugsgröße */
+.bezug{background:var(--hoch);border:1px dashed var(--rand);border-radius:16px;
+       padding:var(--sp3) var(--sp4);margin-bottom:var(--sp4);text-align:center}
+.bezug img{display:block;margin:var(--sp2) auto 0;height:76px;width:auto}
+.bezug .pnote{margin:0}
+
+.hinweis{background:var(--flaeche);border:1px solid var(--rand);border-radius:14px;
+         border-left:3px solid var(--gelb);padding:var(--sp3);margin:0 0 var(--sp3)}
+.hinweis b{color:var(--text)}
+.hinweis.rot{border-left-color:var(--red)}
+.hinweis p{margin-bottom:0;color:var(--leise)}
+
+.ausgabe{width:100%;min-height:90px;background:var(--hoch);color:var(--leise);
+         border:1px solid var(--rand);border-radius:12px;padding:var(--sp2);
+         font-family:var(--mono);font-size:.8rem;resize:vertical;margin-top:var(--sp2)}
+</style>
+</head>
+<body>
+<div class="huelle">
+
+<p class="eyebrow">Gestaltung · 20. August 2026</p>
+<h1>طالب in vierzehn Schriften</h1>
+
+<p>Die Marke, die seit heute in der App steht, ist <strong>ein einziger
+SVG-Pfad</strong> — kein Text. Das ist Absicht: sie sieht auf jedem Gerät
+gleich aus, auch wo keine arabische Schrift installiert ist. Diese Seite zeigt,
+wie dieselben vier Buchstaben in vierzehn anderen Schriften aussähen.</p>
+
+<div class="hinweis">
+<p><b>Wie das hier gemeint ist:</b> unten wählst du eine aus — sie wird rot
+umrandet, und ganz unten steht ihr Name zum Kopieren. Aus der gewählten Schrift
+baue ich dann wieder <b>einen SVG-Pfad</b>, damit die Unabhängigkeit vom Gerät
+erhalten bleibt. Direkt als Schriftart einzubinden wäre der falsche Weg: dann
+hinge das Gesicht der App an einer Datei von Google.</p>
+</div>
+
+<div class="bezug">
+  <span class="part">Heute in der App</span>
+  <img src="wortmarke-talib.svg" alt="طالب — die heutige Wortmarke">
+  <p class="pnote" style="margin-top:var(--sp2)">SVG-Pfad · 2.493 Bytes · derselbe Verlauf wie hier</p>
+</div>
+
+<div class="leiste">
+  <div class="reihe">
+    <label>Text</label>
+    <button type="button" class="wahl" data-text="طالب" aria-pressed="true">طالب</button>
+    <button type="button" class="wahl" data-text="طَالِبٌ" aria-pressed="false">طَالِبٌ</button>
+    <button type="button" class="wahl" data-text="طالب العلم" aria-pressed="false">طالب العلم</button>
+    <button type="button" class="wahl" data-text="طَالِبُ الْعِلْمِ" aria-pressed="false">طَالِبُ الْعِلْمِ</button>
+  </div>
+  <div class="reihe">
+    <label>Farbe</label>
+    <button type="button" class="wahl" id="fVerlauf" aria-pressed="true">Verlauf</button>
+    <button type="button" class="wahl" id="fWeiss" aria-pressed="false">Weiß</button>
+    <label style="margin-left:var(--sp3)">Größe</label>
+    <input type="range" id="groesse" min="24" max="140" value="76" step="2">
+    <span class="wert" id="groesseWert">76 px</span>
+  </div>
+</div>
+
+<div class="gitter" id="gitter"></div>
+
+<h2>So sähe die Auswahl im Kopf der App aus</h2>
+<p>Dieselbe Höhe wie heute — <code>height: 2rem</code>, also 32 px. Daran
+entscheidet sich mehr als am großen Bild: eine Schrift, die groß schön ist,
+kann hier zu einem Strich zusammenfallen.</p>
+<div class="gitter" id="gitterKlein"></div>
+
+<h2>Deine Wahl</h2>
+<textarea class="ausgabe" id="ausgabe" readonly></textarea>
+
+<div class="hinweis rot" style="margin-top:var(--sp3)">
+<p><b>⛔ Nichts davon ist eingebaut.</b> Diese Seite ändert die App nicht — sie
+zeigt nur. Sag mir den Namen, dann wandle ich die Schrift in Pfade um und baue
+sie ein, mit <code>wortmarke-talib.svg</code> als Rückweg.</p>
+</div>
+
+</div>
+
+<script>
+(function(){
+  'use strict';
+  /* ⛔ localStorage kann WERFEN (gesperrter Speicher). Ohne try stirbt das
+     Skript in der ersten Zeile und die Seite ist stumm. */
+  var SPEICHER = 'schriften-talib-v1';
+  var stand = {};
+  try { stand = JSON.parse(localStorage.getItem(SPEICHER) || '{}'); } catch(e){ stand = {}; }
+
+  /* Vierzehn Schriften, nach Bauart geordnet — nicht alphabetisch. Wer eine
+     Wortmarke sucht, vergleicht innerhalb einer Bauart, nicht quer. */
+  var SCHRIFTEN = [
+    { f:'Amiri',              art:'Naskh',   note:'klassisch, buchnah — die Schrift der Lehrbücher' },
+    { f:'Scheherazade New',   art:'Naskh',   note:'ruhig und sehr lesbar, trägt Ḥarakāt gut' },
+    { f:'Noto Naskh Arabic',  art:'Naskh',   note:'nüchtern, der Standard — wenig Eigenart' },
+    { f:'Mirza',              art:'Naskh',   note:'kalligrafischer Einschlag, feine Striche' },
+    { f:'Aref Ruqaa',         art:'Ruqʿah',  note:'Handschrift — steile Züge, stark im Charakter' },
+    { f:'Gulzar',             art:'Nastaʿlīq',note:'persisch geneigt, sehr dekorativ' },
+    { f:'Reem Kufi',          art:'Kufi',    note:'geometrisch, modern — klare Kanten' },
+    { f:'Noto Kufi Arabic',   art:'Kufi',    note:'streng geometrisch, technisch' },
+    { f:'El Messiri',         art:'Modern',  note:'zeitgemäß mit eigener Note' },
+    { f:'Cairo',              art:'Modern',  note:'sachlich, gut in kleinen Größen' },
+    { f:'Tajawal',            art:'Modern',  note:'geometrisch-schlank, sehr neutral' },
+    { f:'Almarai',            art:'Modern',  note:'rund und freundlich' },
+    { f:'Rakkas',             art:'Display', note:'plakativ, fett — nur für große Marken' },
+    { f:'Marhey',             art:'Display', note:'verspielt, weich — der lauteste Kandidat' }
+  ];
+
+  var text = stand.text || 'طالب';
+  var groesse = stand.groesse || 76;
+  var verlauf = stand.verlauf !== false;
+  var gewaehlt = stand.gewaehlt || null;
+
+  function sichern(){
+    try { localStorage.setItem(SPEICHER, JSON.stringify(
+      { text: text, groesse: groesse, verlauf: verlauf, gewaehlt: gewaehlt })); } catch(e){}
+  }
+
+  function karte(s, klein){
+    var d = document.createElement('div');
+    d.className = 'probe' + (klein ? ' klein' : '');
+    d.dataset.font = s.f;
+    d.innerHTML = '<div class="pkopf"><span class="pname"></span>'
+      + '<span class="part"></span><span class="pnote"></span></div>'
+      + '<div class="marke"><span class="glyphen"></span></div>';
+    d.querySelector('.pname').textContent = s.f;
+    d.querySelector('.part').textContent = s.art;
+    d.querySelector('.pnote').textContent = klein ? '32 px' : s.note;
+    var m = d.querySelector('.marke');
+    m.style.fontFamily = '"' + s.f + '", serif';
+    m.querySelector('.glyphen').textContent = text;
+    d.addEventListener('click', function(){
+      gewaehlt = (gewaehlt === s.f) ? null : s.f;
+      sichern(); malen();
+    });
+    return d;
+  }
+
+  function bauen(){
+    var g = document.getElementById('gitter');
+    var gk = document.getElementById('gitterKlein');
+    g.textContent = ''; gk.textContent = '';
+    SCHRIFTEN.forEach(function(s){ g.appendChild(karte(s, false)); });
+    SCHRIFTEN.forEach(function(s){ gk.appendChild(karte(s, true)); });
+    malen();
+  }
+
+  /* ⭐ Die Schrift an die Breite anpassen, nicht den Text umbrechen.
+     Arabisch bricht nie mitten im Wort — ein Umbruch würde die
+     Buchstabenformen kippen. Und `overflow:hidden` auf der Kachel würde
+     stattdessen die Kasrah am Zeilenende abschneiden. */
+  function einpassen(m, wunsch){
+    var g = m.querySelector('.glyphen');
+    if (!g) return;
+    m.style.fontSize = wunsch + 'px';
+    var platz = m.clientWidth;
+    if (!platz) return;
+    var breit = g.getBoundingClientRect().width;
+    if (breit > platz){
+      /* 0,97 als Sicherheitsrand: die Ḥarakāt ragen seitlich minimal über
+         die gemessene Glyphenbreite hinaus. */
+      m.style.fontSize = Math.max(12, Math.floor(wunsch * platz / breit * 0.97)) + 'px';
+    }
+  }
+
+  function malen(){
+    document.querySelectorAll('.probe').forEach(function(p){
+      var m = p.querySelector('.marke');
+      m.querySelector('.glyphen').textContent = text;
+      einpassen(m, p.classList.contains('klein') ? 34 : groesse);
+      p.classList.toggle('einfarbig', !verlauf);
+      p.classList.toggle('gewaehlt', p.dataset.font === gewaehlt);
+    });
+    document.getElementById('groesseWert').textContent = groesse + ' px';
+    document.querySelectorAll('[data-text]').forEach(function(b){
+      b.setAttribute('aria-pressed', b.dataset.text === text ? 'true' : 'false');
+    });
+    document.getElementById('fVerlauf').setAttribute('aria-pressed', verlauf ? 'true' : 'false');
+    document.getElementById('fWeiss').setAttribute('aria-pressed', verlauf ? 'false' : 'true');
+    var s = SCHRIFTEN.filter(function(x){ return x.f === gewaehlt; })[0];
+    document.getElementById('ausgabe').value = gewaehlt
+      ? 'Schrift für die Wortmarke: ' + gewaehlt + '  (' + s.art + ')\n'
+        + 'Text: ' + text + '\n'
+        + 'Größe in der Vorschau: ' + groesse + ' px\n'
+        + 'Farbe: ' + (verlauf ? 'Verlauf wie heute' : 'einfarbig weiß')
+      : 'Noch nichts gewählt — tippe eine Kachel an.';
+  }
+
+  document.querySelectorAll('[data-text]').forEach(function(b){
+    b.addEventListener('click', function(){ text = b.dataset.text; sichern(); malen(); });
+  });
+  document.getElementById('fVerlauf').addEventListener('click', function(){ verlauf = true; sichern(); malen(); });
+  document.getElementById('fWeiss').addEventListener('click', function(){ verlauf = false; sichern(); malen(); });
+  var r = document.getElementById('groesse');
+  r.value = groesse;
+  r.addEventListener('input', function(){ groesse = Number(r.value); sichern(); malen(); });
+
+  bauen();
+})();
+</script>
+</body>
+</html>
