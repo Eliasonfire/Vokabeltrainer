@@ -1689,5 +1689,60 @@ const ESELSBRUECKEN_ALT = {
   'gram-suffix-ha': [
     'Im Koran in az-Zalzalah: وَأَخْرَجَتِ ٱلْأَرْضُ أَثْقَالَهَا (99:2) — „ihre Lasten“. Die Erde ist im Arabischen weiblich, deshalb ـهَا.',
     'Sie ist die einzige der fünf, die zwei Buchstaben lang ist — und die einzige, die sich nach einer Kasra NICHT ändert. Auf Seite 61 steht فِيهَا „in ihr“ mit Kasra davor, und das Alif bleibt stehen.'
-  ]
+  ],
+  /* ------------------------------------------------------------------------
+     KAPITEL 24 - EINZELN FREIGESCHALTET (20.08.2026)
+
+     Elias schaltet seit dem 20.08. einzelne Woerter aus spaeteren Kapiteln
+     frei, ohne das Kapitel zu oeffnen. Gemessen an dem Tag: alle 67 Woerter
+     aus Kapitel 24 hatten genau EINEN Vorschlag. Hier kommen die zwei
+     weiteren fuer die sieben, die er namentlich genannt hat.
+
+     ⛔ Die Koranstellen stammen ausschliesslich aus dem, was er auswendig
+     kann - Faatiha, al-Mulk und die Suren 93-114. Jede Stelle ist gegen
+     quran-text.js geprueft; أَنْتَ und نَعْت kommen dort nicht vor und
+     bekommen deshalb keinen Koranbezug, sondern eine Bruecke zum Stoff.
+     ------------------------------------------------------------------------ */
+
+  /* أَنَا - ich (madina-1, Kapitel 24) */
+  '50154': [
+    'Aus al-Kāfirūn, die du auswendig kannst: وَلَا أَنَا عَابِدٌ — „und ich bin kein Diener“ — مَا عَبَدْتُمْ, „dessen, dem ihr dient“ (109:4). Dasselbe أَنَا wie in أَنَا مُدَرِّسٌ, nur mit einer gewichtigeren Aussage dahinter. ⚠️ Im Muṣḥaf steht dort ein kleines Alif über dem Wort — gesprochen wird es kurz, geschrieben lang.',
+    'Und in al-Mulk: وَإِنَّمَا أَنَا نَذِيرٌ مُبِينٌ — „ich bin nur ein deutlicher Warner" (67:26). Merk dir die Bauform: أَنَا + ein Nomen, fertig ist der Satz. Genau so baust du أَنَا مُدَرِّسٌ — im Arabischen steht zwischen beiden kein „bin".'
+  ],
+
+  /* نَحْنُ - wir (madina-1, Kapitel 24) */
+  '50155': [
+    'Das ن am Anfang ist das Zeichen für „wir" in der ganzen Sprache — نَحْنُ trägt es, und jedes Verb, das „wir" tut, beginnt ebenfalls damit. Wer das ن hört, weiß: es geht um mehrere, und ich bin dabei.',
+    'Häng es an deinen Satz: نَحْنُ فِي الْمَسْجِدِ. Beachte, dass kein „sind" dasteht — im Arabischen genügen zwei Teile, das Pronomen und der Ort. ⚠️ فِي zieht den Genitiv nach sich, deshalb الْمَسْجِدِ mit Kasra und nicht الْمَسْجِدُ.'
+  ],
+
+  /* أَنْتَ - du, m. (madina-1, Kapitel 24) */
+  '50156': [
+    '⭐ Die Brücke zu dem, was du gerade gelernt hast: أَنْتَ und أَنْتِ aus Kapitel 12 sind bis auf den letzten Vokal dasselbe Wort. Fatḥa ـتَ heißt „du" zu einem Mann, Kasra ـتِ zu einer Frau. Ein einziges Zeichen trennt die beiden, und es steht ganz am Ende.',
+    'Dein Satz zeigt gleich zwei Dinge auf einmal: أَنْتَ طَالِبٌ جَدِيدٌ. Das جَدِيدٌ hängt an طَالِبٌ und folgt ihm in Unbestimmtheit, Kasus und Geschlecht — das ist das نَعْت, das dein Lehrer meint.'
+  ],
+
+  /* هُوَ - er (madina-1, Kapitel 24) */
+  '50157': [
+    '⭐ Das kennst du längst auswendig: قُلْ هُوَ اللَّهُ أَحَدٌ — „Sag: Er ist Allah, ein Einziger" (112:1). Der erste Vers von al-Ikhlāṣ ist zugleich das klarste Beispiel für هُوَ am Satzanfang.',
+    'In al-Mulk gleich mehrfach: قُلْ هُوَ الَّذِي أَنْشَأَكُمْ — „Sag: Er ist es, der euch erschaffen hat" (67:23). Immer dieselbe Stelle im Satz: هُوَ steht vorn und wird danach näher bestimmt. Genau so in هُوَ طَبِيبٌ.'
+  ],
+
+  /* هِيَ - sie, Sg. (madina-1, Kapitel 24) */
+  '50158': [
+    '⭐ Aus al-Qadr, die du auswendig kannst: سَلَامٌ هِيَ — „Frieden ist sie“ — حَتَّى مَطْلَعِ الْفَجْرِ, „bis zum Anbruch der Morgenröte“ (97:5). Das هِيَ meint dort die Nacht, لَيْلَة — ein weibliches Wort, deshalb هِيَ und nicht هُوَ.',
+    'Dein Satz macht es sichtbar: هِيَ مُدَرِّسَةٌ. Die تاء مربوطة am Ende zeigt dasselbe an wie das هِيَ davor — beides weiblich. ⚠️ Bei هُوَ مُدَرِّسٌ fällt beides zusammen weg. Das Geschlecht steht nie nur an einer Stelle.'
+  ],
+
+  /* هُمْ - sie, Pl. m. (madina-1, Kapitel 24) */
+  '50159': [
+    '⭐ Aus al-Māʿūn, die du auswendig kannst: الَّذِينَ هُمْ — „die, welche“ — عَنْ صَلَاتِهِمْ سَاهُونَ, „ihr Gebet vernachlässigen“ (107:5). Dort steht هُمْ für eine Gruppe von Menschen, genau wie in deinem Satz.',
+    'In al-Bayyina steht es zweimal dicht beieinander: أُولَٰئِكَ هُمْ شَرُّ الْبَرِيَّةِ (98:6) und أُولَٰئِكَ هُمْ خَيْرُ الْبَرِيَّةِ (98:7) — dieselbe Bauform, das Gegenteil an Aussage. ⚠️ Merk dir das ـمْ mit Sukūn am Ende: es ist stumm, aber es ist da.'
+  ],
+
+  /* نَعْتٌ - Attribut / Adjektiv (madina-1, Kapitel 24) */
+  '50428': [
+    'Der Begriff steht in deinem eigenen Satz drin: الْجَدِيدُ نَعْتٌ لِلْكِتَابِ — „‚Neu‘ ist ein Attribut zum Buch." ⚠️ لِ und der Artikel اَلْ verschmelzen zu لِلْـ: das Alif fällt weg, das Lām bleibt doppelt stehen.',
+    'Die vier Bedingungen, die dein Lehrer nennt, kannst du an einem Beispiel abzählen: بَيْتٌ كَبِيرٌ. Beide unbestimmt, beide Nominativ, beide männlich, beide Einzahl — stimmt eines nicht, ist es kein نَعْت mehr, sondern ein eigener Satz.'
+  ],
 };
