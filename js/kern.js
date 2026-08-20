@@ -113,7 +113,7 @@ function kapitelBeschriftung(w){
    sieht schlicht wie eine bewusste Grenze aus. Siehe die Lehre zum
    eingefrorenen Feld. */
 const FREIGESCHALTET = {
-  'madina-1': [1,2,3,4,5,6,7,8,9,10,11],
+  'madina-1': [1,2,3,4,5,6,7,8,9,10,11,12],   // Elias am 20.08.2026: „ich habe übrigens kapitel 12 freigeschaltet“
   'madina-2': [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]   // arabicroots, abgefragt am 19.8.2026
 };
 
@@ -154,6 +154,18 @@ function istBekannt(w){
      Buchfilter unten, weil 'grammar' in FREIGESCHALTET nicht vorkommt. */
   if (w.chapter === 'grammar') return true;
   if (LERNBESTAND_IDS.has(w.id)) return true;
+  /* ⭐⭐ EINZELN FREIGESCHALTETE WÖRTER — Elias am 20.08.2026:
+     „ich will auch, dass ich wörter die in späteren kapiteln kommen ich
+     vereinzelnd jetzt schon freischalte bzw mit ihnen jetzt schon lerne, weil
+     teilweise benutzt mein lehrer begriffe die wir in späteren kapiteln finden
+     oder auch das buch selbst. … ich möchte aber nur die vereinzelnen wörter
+     haben ohne den rest des kapitels zu haben."
+
+     Die Zeile steht VOR der eigenen Buchauswahl und vor FREIGESCHALTET,
+     denn beide entscheiden über das KAPITEL. Ein einzeln freigeschaltetes
+     Wort aus Kapitel 24 fällt sonst genau durch die Grenze, die es
+     überspringen soll. Der Speicher liegt weiter unten bei BEKANNT. */
+  if (typeof istEinzelnFrei === 'function' && istEinzelnFrei(w)) return true;
 
   /* ⭐⭐ SEINE EIGENE AUSWAHL GEHT VOR — am 19.08.2026 dazu.
      Elias: „die neuen vokabeln müssen auch automatisch in den satzmodus und in
@@ -609,6 +621,45 @@ function kennErSchon(w){
 function setzeKennErSchon(id, an){
   BEKANNT[id] = { an: !!an, zeit: Date.now() };
   LS.set(BEKANNT_SCHLUESSEL, BEKANNT);
+}
+
+/* ---------- EINZELN FREIGESCHALTETE WÖRTER (20.08.2026) ----------
+   Das Gegenstück zu „Kenne ich schon": dort nimmt er ein Wort aus dem Vorrat
+   heraus, hier holt er eines hinein, das seine Kapitelgrenze noch gar nicht
+   freigibt. Sein Beispiel: نَعْت (Adjektiv) und die Personalpronomen stehen im
+   Buch erst in Kapitel 24, sein Lehrer benutzt sie aber jetzt schon.
+
+   ⚠️ Dieselbe Form wie BEKANNT — `{an, zeit}` statt einer nackten Id-Liste,
+   und aus demselben Grund: beim Geräteabgleich muss auch das ZURÜCKNEHMEN
+   ankommen. Zwei nackte Listen würden vereinigt, und das Gerät, auf dem er ein
+   Wort wieder zugemacht hat, bekäme es vom anderen still zurück.
+
+   ⛔ Es wird KEIN Kapitel angefasst. Wer das ganze Kapitel will, hakt es in
+   den Kategorien an; hier geht es ausdrücklich um einzelne Wörter. */
+const EINZELN_SCHLUESSEL = 'vt_einzeln_frei';
+let EINZELN = LS.get(EINZELN_SCHLUESSEL, {});
+if (!EINZELN || typeof EINZELN !== 'object' || Array.isArray(EINZELN)) EINZELN = {};
+
+function istEinzelnFrei(w){
+  if (!w) return false;
+  const e = EINZELN[w.id !== undefined ? w.id : w];
+  return !!(e && e.an);
+}
+
+function setzeEinzelnFrei(id, an){
+  EINZELN[id] = { an: !!an, zeit: Date.now() };
+  LS.set(EINZELN_SCHLUESSEL, EINZELN);
+}
+
+/* Für die Liste in den Einstellungen — wie bei bekannteMarkierungen() über
+   VOCAB_DATA und nicht über buchVokabeln(), sonst wäre ein Wort aus einem
+   abgewählten Buch unsichtbar UND weiterhin freigeschaltet. */
+function einzelnFreigeschaltete(){
+  return Object.keys(EINZELN)
+    .filter(id => EINZELN[id] && EINZELN[id].an)
+    .map(id => VOCAB_DATA.find(w => String(w.id) === String(id)))
+    .filter(Boolean)
+    .sort((a,b) => (EINZELN[b.id].zeit || 0) - (EINZELN[a.id].zeit || 0));
 }
 
 /* Die Woerter hinter den Markierungen - fuer die Liste in den Einstellungen.
@@ -1119,6 +1170,13 @@ function passtZurAuswahl(w){
      Vokabeln, Fachbegriffe) - stuende die Pruefung dahinter, waere sie fuer
      genau die Woerter wirkungslos, ohne dass es je auffiele. */
   if (typeof kennErSchon === 'function' && kennErSchon(w)) return false;
+  /* ⛔ Auch HIER, nicht nur in istBekannt(). Die Wissensgrenze oben lässt das
+     Wort durch, der Buchfilter unten wirft es wieder hinaus: wer Kapitel 1–12
+     angehakt hat, sähe ein einzeln freigeschaltetes Wort aus Kapitel 24 nie.
+     Ohne diese Zeile wäre das Freischalten in der Kartei, im Satzmodus, in den
+     Wortfeldern und in der Statistik wirkungslos — alle vier hängen an dieser
+     einen Funktion. */
+  if (typeof istEinzelnFrei === 'function' && istEinzelnFrei(w)) return true;
   const karte = (SETTINGS.buecher && typeof SETTINGS.buecher === 'object')
     ? SETTINGS.buecher : { 'madina-1': [] };
   /* ⛔ Die Fachbegriffe stehen VOR dem Eigene-Schalter und haben keinen
