@@ -4531,6 +4531,12 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
      Regel-Ids darauf und liest nichts daraus. Sie muss aber vor js/kern.js
      kommen, weil kern.js sie in VOCAB_DATA einhaengt. -->
 <script src="data/fachbegriffe.js"></script>
+<!-- Wo ein leeres Feld kein Mangel ist, und was Elias nachgetragen hat
+     (20.08.2026). Muss vor js/kern.js stehen: dort werden die Ergänzungen
+     auf VOCAB_DATA gelegt, bevor seine eigenen Änderungen darüberkommen.
+     ⛔ Die Buchdateien können das nicht aufnehmen — hole-vokabeln.mjs
+     schreibt sie bei jedem Abzug neu. -->
+<script src="data/feld-ausnahmen.js"></script>
 <script src="surah-data.js"></script>
 <!-- Seitengrenzen des Muṣḥaf, erzeugt von werkzeuge/seiten-holen.mjs und dort
      gegen surah-data.js geprüft (114/114 Verszahlen, 604 Seiten lückenlos). -->

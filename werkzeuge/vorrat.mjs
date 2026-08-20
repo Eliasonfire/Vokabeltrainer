@@ -570,7 +570,23 @@ function kapitelImFenster(slug){
    welche Wortart das Wort ist. Sie dann trotzdem zu melden hiesse, denselben
    Mangel viermal zu zaehlen. [[kandidatenliste_ist_keine_fehlerliste]] */
 const feldAusnahme = hol('feldAusnahme');
+/* ⛔ Die nachgetragenen Werte müssen HIER genauso gelten wie in der App —
+   sonst meldet dieses Werkzeug ein Wort weiter als unvollständig, obwohl Elias
+   die Antwort längst gegeben hat, und er bekäme jede Woche dieselbe Frage.
+   [[werkzeug_ohne_aufrufer]] */
+const ERGAENZT = hol('FELD_ERGAENZUNGEN') || {};
 const leerWert = (v) => v === undefined || v === null || String(v).trim() === '';
+/* ⛔ Dieselbe Leer-Regel wie die App: `type: 'other'` ist gefüllt und trotzdem
+   keine Angabe. Wird sie hier anders gezogen als in data/feld-ausnahmen.js,
+   melden Werkzeug und App verschiedene Stände — und beide sehen richtig aus.
+   [[dieselbe_frage_zwei_antworten]] */
+const giltAlsLeer = hol('feldGiltAlsLeer') || ((f, v) => leerWert(v));
+/* Der Wert, den die App sehen wird: erst der Abzug, dann die Nachtragung. */
+const feldWert = (w, feld) => {
+  if (!giltAlsLeer(feld, w[feld])) return w[feld];
+  const e = ERGAENZT[String(w && w.id)];
+  return e && e[feld] !== undefined ? e[feld] : w[feld];
+};
 
 /* Welches Feld kostet was — steht im Bericht neben jeder Zahl, damit ein
    Rueckstand nicht als Formalie gelesen wird. */
@@ -589,12 +605,12 @@ const FELD_FOLGE = {
 
 function felderPruefen(w, quelle){
   const fehlt = [];
-  const t = String(w.type || '');
+  const t = String(feldWert(w, 'type') || '');
   const kaputterTyp = leerWert(t) || t === 'other' || t === 'vocab';
   if (kaputterTyp) fehlt.push('type');
 
   const pruefe = (feld) => {
-    if (!leerWert(w[feld])) return;
+    if (!leerWert(feldWert(w, feld))) return;
     if (feldAusnahme && feldAusnahme(w, feld, quelle)) return;
     fehlt.push(feld);
   };
