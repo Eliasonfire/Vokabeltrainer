@@ -482,11 +482,48 @@ function funktionenVon(w){
     nenn('مَمْنُوع مِنَ الصَّرْف — nie Tanwin, nie Kasra');
 
   /* 6. Zum Schluss die Wortart, falls noch nichts Genaueres dasteht. */
-  const art = WORTART[w.type];
+  const art = WORTART[w.type] === 'Wort' ? erschlosseneWortart(wort) : WORTART[w.type];
   if (art && !aus.length) nenn(art);
   else if (art && (w.type === 'noun' || w.type === 'verb' || w.type === 'adjective')) nenn(art);
 
   return aus;
+}
+
+/* ---------- „Wort" ist keine Wortart (20.08.2026) ----------
+
+   Elias, mit einem Bildschirmfoto von لَحْمٌ: „anstatt bei solchen wörtern
+   einfach nur wort zu schreiben, schreibe lieber Nomen oder so hin".
+
+   Der Grund liegt daran, wie eigene Vokabeln entstehen: beim Anlegen bekommen
+   sie `type:'vocab'`, weil das Formular nie nach der Wortart gefragt hat. Fünf
+   seiner Vokabeln tragen ihn — لَحْمٌ, صِفْرٌ, أَلْمُهَنْدِسٌ, إِثْنَانِ,
+   أَيْضاً. „Wort" ist dabei keine Auskunft, sondern das Eingeständnis, dass
+   keine da ist.
+
+   ⛔ HIER WIRD NICHT GERATEN. Abgeleitet wird nur aus Endungen, bei denen die
+   arabische Grammatik keine zweite Möglichkeit lässt:
+
+     Tanwīn (ً ٌ ٍ)   Ein Verb bekommt nie Tanwīn, eine Partikel auch nicht.
+                      Was Tanwīn trägt, ist ein اِسْم.
+     ـَانِ / ـَيْنِ    Dualendung — die gibt es nur am Nomen.
+     ـُونَ / ـِينَ     Gesunder Maskulinplural — dito.
+                      ⚠️ NICHT ـَاتٌ: das faellt schon unter Tanwin, und ohne
+                      Tanwin waere ـات auch eine Verbform (كَتَبَات gibt es
+                      nicht, aber بَنَات und بَاتَ sehen zerlegt gleich aus).
+
+   Trifft keine davon zu, bleibt es bei „Wort" — lieber die ehrliche Leerstelle
+   als eine erfundene Wortart auf einer Lernkarte.
+   [[nomen_wird_zum_verb_gelesen]] · [[zahlen_ohne_beleg]]
+
+   ⭐ Der eigentliche Weg ist trotzdem, dass ER die Wortart setzt: dafür steht
+   sie seit heute im Bearbeitungsformular der Wortkarte. Diese Ableitung ist
+   nur da, damit die fünf bestehenden Karten nicht bis dahin „Wort" sagen. */
+function erschlosseneWortart(wort){
+  const rein = String(wort || '').replace(/[.،؟!«»:؛\s]/g, '');
+  if (/[ًٌٍ]/.test(rein)) return 'Nomen';        /* Tanwin */
+  if (/(َانِ|َيْنِ)$/.test(rein)) return 'Nomen';  /* ـَانِ ـَيْنِ */
+  if (/(ُونَ|ِينَ)$/.test(rein)) return 'Nomen';        /* ـُونَ ـِينَ */
+  return 'Wort';
 }
 const ADJEKTIVE = ['حار', 'كسلان', 'مجرور', 'واسع', 'واسعة', 'الواسع', 'الواسعة'];
 const istVerb = w => !istInListe(w, NICHT_VERB) && istInListe(w, VERBEN);

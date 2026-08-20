@@ -609,6 +609,26 @@ function renderNotiz(w){
      Ein VORSCHLAG loest ihn bewusst nicht aus: der Punkt ist die Auskunft
      "davon weiss ich selbst schon etwas", und die waere sonst gelogen. */
   punkt.classList.toggle('hidden', !notiz);
+
+  /* ⭐ Seine eigene Notiz (20.08.2026): „notizfeld soll auch erstmal bei den
+     karteikarten angezeigt werden."
+
+     ⛔ Nur ANZEIGEN, nicht bearbeiten. Geschrieben wird sie auf der Infokarte
+     — zwei Eingabewege auf denselben Text wären zwei Stellen, an denen
+     dasselbe schiefgehen kann, und beim Abfragen will man ohnehin nicht
+     tippen. Deshalb ein <div> und kein <button>.
+
+     ⚠️ Der Kasten steht auf der Rückseite und verschwindet ganz, wenn keine
+     Notiz da ist — anders als die Eselsbrücke, die als Einladung auch leer
+     dasteht. Die Notiz hat hier keine Einladung zu sein: dafür ist die
+     Infokarte da. */
+  const nBox  = document.getElementById('cardNotizBox');
+  const nText = document.getElementById('cardNotizText');
+  if (nBox && nText){
+    const eigene = (typeof getNotiz === 'function') ? getNotiz(w.id) : '';
+    nText.innerHTML = eigene ? arabischHervorheben(eigene) : '';
+    nBox.classList.toggle('hidden', !eigene);
+  }
 }
 
 /* ---------- Mehrere Vorschlaege je Wort (Elias, 16.08.2026) ----------
