@@ -57,7 +57,33 @@ const JARR_MIT_PRONOMEN = [
    liefert dort 'يه'. Der erste Entwurf am 18.08. tat genau das - die Zerlegung
    blieb unveraendert falsch, ohne jede Fehlermeldung. istInListe prueft beide
    Schreibweisen, ohne das Wort zu verstuemmeln. */
-const istJarrMitPronomen = w => istInListe(w, JARR_MIT_PRONOMEN);
+/* ⛔ 21.08.2026: DIE ANGESCHRIEBENEN لِـ UND بِـ, VOLL VOKALISIERT.
+
+   pruefe-saetze.js meldete an zwei von Elias' eigenen Karten einen
+   Kasusfehler, den es nicht gibt: الْكِتَابُ لَكَ. und الْحَقِيبَةُ لَكِ. — لَكَ galt
+   als خَبَر und haette Damma tragen muessen. Ein Pronomen ist aber مَبْنِيّ
+   und hat gar keine Kasusendung.
+
+   Die Liste oben laesst لَهُ bewusst aus, weil das angeschriebene ل mit
+   Woertern des Wortschatzes zusammenfaellt. Das gilt fuer den
+   SKELETT-Vergleich (istInListe wirft die Harakat weg) — voll vokalisiert
+   sind die Formen eindeutig. Gemessen ueber alle 4.604 Eintraege aller
+   Buecher: die einzige echte Kollision ist لَهَا, das madina-3 als Verb
+   fuehrt (Wurzel ل ه و) — mit derselben Vokalisierung. Deshalb steht لَهَا
+   hier NICHT; diese Zweideutigkeit loest auch das Taschkil nicht auf.
+   Ebenso draussen: لَكُنَّ und لَهُنَّ (Skelett wie لَكِنَّ, und der
+   Femininplural kommt in madina-1 nicht vor).
+   [[skelettvergleich_wirft_information_weg]] */
+const JARR_LAM_VOLL = [
+  'لِي', 'لَكَ', 'لَكِ', 'لَهُ', 'لَنَا', 'لَكُمْ', 'لَهُمْ',
+  'بِي', 'بِكَ', 'بِكِ', 'بِنَا', 'بِكُمْ'
+];
+/* ⚠️ Exakter Vergleich der VOLLEN Schreibung — nicht ueber istInListe, das
+   waere genau der Skelettvergleich, den diese Liste umgeht. NFC, damit eine
+   zerlegte Schreibung nicht lautlos danebengeht. [[arabisch_vergleichen_nfc]] */
+const istJarrLamVoll = w => JARR_LAM_VOLL.includes(
+  String(w).normalize('NFC').replace(/[.،؟!«»:؛]/g, '').replace(/^[وف]/, '').trim());
+const istJarrMitPronomen = w => istInListe(w, JARR_MIT_PRONOMEN) || istJarrLamVoll(w);
 /* Ortsangaben. Der Lehrer nennt sie ظَرْف und sagt ausdruecklich, sie
    funktionierten "wie ein مُضَاف" - das folgende Wort steht im Genitiv. */
 /* ⚠️ مع am 20.08.2026 dazu. Es stand hier nicht, obwohl es genau dasselbe tut
@@ -1083,6 +1109,9 @@ function irabZeilen(satz){
 }
 
 if (typeof module !== 'undefined' && module.exports){
+  /* ⭐ istJarrLamVoll und giltAlsVerb sind mit exportiert, damit
+     pruefe-saetze.js sie EICHEN kann — an der echten, geladenen Funktion
+     statt an einer nachgebauten Kopie. [[handliste_neben_echter_quelle]] */
   module.exports = { analysiereSatz, irabZeilen, endung, setzeLexikon, wortart, KASUS,
-                     endungUnsichtbar };
+                     endungUnsichtbar, istJarrLamVoll, giltAlsVerb };
 }
