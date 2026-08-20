@@ -27,23 +27,36 @@ Fenster** — nicht nur für das, was neu dazukam. Und zusätzlich, sobald er es
 ausdrücklich sagt.
 
 ⚠️ **Das Fenster ist kleiner als das Freigeschaltete, und der Unterschied ist
-groß.** Am 20.08.2026: **203 gemessen von 427 freigeschalteten** Wörtern. Die
+groß.** Am 20.08.2026 abends: **214 gemessen von 438 freigeschalteten** Wörtern (nachmittags waren es 203 von 427). Die
 fehlenden 224 sind madina-2, für das Elias keinen Lernstand angegeben hat —
 sie bleiben absichtlich draußen (siehe unten), aber das Werkzeug **beziffert**
 es seitdem, statt nur den Buchnamen zu nennen.
 
-Es gibt **vier Wege**, auf denen ein Wort in seine Reichweite kommt:
+Es gibt **fünf Wege**, auf denen ein Wort in seine Reichweite kommt:
 
-| Weg | Wo das Wort herkommt | Wo es liegt |
-|---|---|---|
-| 1 | Er schaltet ein **Kapitel** frei | `FREIGESCHALTET` in `js/kern.js` |
-| 2 | Er schaltet ein **einzelnes Wort** frei | ⛔ `vt_einzeln_frei` — **nur in seinem localStorage** |
-| 3 | Er legt eine **eigene Vokabel** an | `window.EIGENE_VOKABELN` (arabicroots) oder `vt_personalVocab` (App) |
-| 4 | Ein **Fachbegriff** kommt dazu | `FACHBEGRIFF_VOKABELN` in `data/fachbegriffe.js` |
+| Weg | Wo das Wort herkommt | Wo es liegt | Zahl |
+|---|---|---|---|
+| 1 | Er schaltet ein **Kapitel** frei | `FREIGESCHALTET` in `js/kern.js` | — |
+| 2 | Er schaltet ein **einzelnes Wort** frei | ⛔ `vt_einzeln_frei` — **nur in seinem localStorage** | ? |
+| 3a | Er legt eine **eigene Vokabel** in arabicroots an | `window.EIGENE_VOKABELN` | 11 |
+| 3b | Er legt sie **in der App** an | `vt_personalVocab` → `data/eigene-woerter.json` | 14 |
+| 4 | Ein **Fachbegriff** kommt dazu | `FACHBEGRIFF_VOKABELN` in `data/fachbegriffe.js` | 15 |
+| **5** | Ein Wort steht **nur in `vocab-data.js`** | die neun Zahlwörter (im Abzug Kapitel 24) und أَخٌ / أُخْتٌ (in keiner Abzugsdatei) | **11** |
 
-⭐ **`werkzeuge/vorrat.mjs` deckt seit dem 20.08.2026 die Wege 1, 3 und 4 ab**
-(vorher nur Weg 1 — seine 11 eigenen Vokabeln und die 15 Fachbegriffe waren
-unsichtbar, 163 → 189 geprüfte Wörter).
+⛔ **Die Nummern 1–4 sind absichtlich unverändert** — „Weg 3" wird in diesem
+Dokument an vier weiteren Stellen genannt, und eine Umnummerierung bräche sie
+still. Weg 3 ist nur in **3a/3b** aufgeschlüsselt: es sind zwei getrennte
+Speicher ohne eine einzige gemeinsame Kennung, und bis zum 20.08.2026 kannte
+`pruefe-duplikate.js` nur den ersten.
+
+⭐ **`werkzeuge/vorrat.mjs` deckt seit dem 20.08.2026 die Wege 1, 3a, 3b, 4
+und 5 ab** (vorher nur Weg 1: 163 → 189 → **214** geprüfte Wörter).
+
+⭐⭐ **Weg 5 war der teuerste und kam zuletzt.** In der laufenden App zählte
+`bekannteVokabeln()` **200**, `vorrat.mjs` **203**, und die Probe
+200 − 11 + 14 = 203 ging auf. Die elf Wörter standen in **keiner** Messung.
+Drei Werkzeuge messen seitdem übereinstimmend 214 (vorher 203 / 203 / 192);
+`werkzeuge/pruefe-eigene-vorrang.mjs` hält die drei Zahlen gegeneinander.
 
 ⛔ **Weg 2 bleibt strukturell unsichtbar.** `vt_einzeln_frei` liegt in seinem
 localStorage, kein Werkzeug hier kommt daran. Dafür gibt es den Kopierknopf in
