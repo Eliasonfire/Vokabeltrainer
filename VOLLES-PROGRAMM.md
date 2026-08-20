@@ -398,7 +398,9 @@ gleich aus.
 ## Vier Felder, die in keiner Liste standen
 
 ⛔ **Auch diese vier gibt es wirklich, und drei davon wirken.** Am 20.08.2026
-über alle 4444 Wörter des Abzugs gezählt:
+über alle **4444** Wörter gezählt — das sind **4433** Buchvokabeln plus seine
+**11** eigenen. ⚠️ Die **15 Fachbegriffe** aus `data/fachbegriffe.js` sind darin
+**nicht** enthalten; mit ihnen wären es 4459:
 
 | Feld | wie oft | was es tut |
 |---|---|---|
@@ -742,12 +744,14 @@ also nur auffallen, wenn Elias beim Lernen zweimal dieselbe Karte bekam.
 ⚠️ Der erste Bau von `pruefe-duplikate.js` meldete **14** Duplikate, davon war
 **eines** echt. Zwei Fehler zugleich: er verglich **ohne Vokalzeichen**
 (صِفْرٌ „Null" gegen صَفَرَ, ein Verb) und gegen **alle 4433** Buchvokabeln statt
-gegen die **387 freigeschalteten**. Das Werkzeug prüft sich deshalb beim Start
+gegen die **387 freigeschalteten**. ⚠️ 4433 sind hier die Buchvokabeln **ohne**
+seine 11 eigenen — die Zahl 4444 weiter oben schließt sie ein. Das Werkzeug prüft sich deshalb beim Start
 an vier Fällen, deren Antwort feststeht, und bricht ab, wenn einer davon kippt.
 
 ⚠️ **Und es misst ein FENSTER, nicht den ganzen Bestand.** Gemessen werden die
-Wörter, die Elias erreichen kann — am 20.08. **189** von **4444** im Abzug. Das
-ist Absicht: eine Zahl über 4444 Wörter, von denen er 4255 nie sieht, ist
+Wörter, die Elias erreichen kann — am 20.08. **189** von **4444** (Buchvokabeln
+plus eigene). Das ist Absicht: eine Zahl über 4444 Wörter, von denen er 4255
+nie sieht, ist
 für einen Wartungslauf ohne Aussage. Aber sie ist eben auch keine Auskunft über
 „den ganzen Bestand". [[milder_bezugspunkt_verdeckt_mangel]]
 
