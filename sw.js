@@ -39,6 +39,7 @@ const ASSETS = [
   './data/eselsbruecken-alt.js',
   './data/beispielsaetze.js',
   './data/fachbegriffe.js',
+  './data/feld-ausnahmen.js',
   './data/vokabeln-eigene.js',
 
   /* Die Schriften, seit 18.08.2026 lokal (C7). Sie MUESSEN hier stehen —

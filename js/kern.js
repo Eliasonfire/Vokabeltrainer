@@ -776,6 +776,10 @@ function verwirfWortAenderung(id){
    `let` und liegt bis zu seiner Zeile in der zeitlichen Totzone - ein Aufruf
    davor stuerzte mit ReferenceError ab. Es genuegt, dass es VOR initProgress()
    steht (Zeile ~447), und das tut es. */
+/* ⭐ ERST die nachgetragenen Werte aus data/feld-ausnahmen.js, DANN seine
+   eigenen Änderungen. Die Reihenfolge entscheidet: was er selbst eingetippt
+   hat, muss eine Nachtragung überschreiben können, nie umgekehrt. */
+if (typeof wendeFeldErgaenzungenAn === 'function') wendeFeldErgaenzungenAn(VOCAB_DATA);
 wendeWortAenderungenAn();
 
 /* ---------- „Kenne ich schon" (17.08.2026) ----------

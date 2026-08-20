@@ -216,7 +216,11 @@ Ob اليَابَان einen Plural hat, ist eine Frage an die Sprache, nicht an 
 <div class="warnkasten"><b>Ein Durchgang je Frage, nicht je Wort.</b> Wo eine ganze
 Gruppe dieselbe Antwort hat — Länder- und Städtenamen etwa haben keinen Plural —
 reicht der Knopf oben am Abschnitt. Was du hier als „gibt es nicht" einträgst,
-wird nie wieder gefragt.</div>
+wird nie wieder gefragt.<br><br>
+⚠️ <b>Eine Antwort kann neue Fragen erzeugen</b>, und das ist kein Fehler:
+Sagst du bei لَحْمٌ „Nomen", wird ab da auch nach Geschlecht und Plural gefragt —
+vorher war das gar nicht entscheidbar. Die Wortart ist die Wurzel, an der vier
+weitere Angaben hängen.</div>
 
 <div class="fortschritt">
   <div class="balken"><i id="fortschrittBalken"></i></div>

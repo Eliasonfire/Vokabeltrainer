@@ -84,7 +84,32 @@ const FELD_REGELN = {
  */
 
 const FELD_AUSNAHMEN = {
-  /* (noch leer — wird durch Elias' Freigaben gefüllt) */
+  /* (noch leer — wird aus seinen Freigaben gefüllt) */
+};
+
+/* ---------- Ebene 3: Werte, die Elias nachgetragen hat ----------
+ *
+ * ⛔⛔ WARUM DAS NICHT IN DIE BUCHDATEI KANN: `data/vokabeln-<buch>.js` wird von
+ * `werkzeuge/hole-vokabeln.mjs` bei jedem Abzug NEU GESCHRIEBEN. Ein dort
+ * eingetragener Plural wäre beim nächsten Lauf spurlos weg — und niemand
+ * würde es merken, weil das Wort einfach wieder als unvollständig gemeldet
+ * würde. [[leere_datei_besteht_jeden_test]]
+ *
+ * Deshalb hier, in einer Datei, die kein Werkzeug überschreibt.
+ *
+ * ⭐ Sie wird AUSGELIEFERT und von js/kern.js angewendet — sonst stünde der
+ * nachgetragene Plural nur in seinem Browserspeicher und wäre auf jedem
+ * zweiten Gerät wieder weg. Seine eigene Änderung (`vt_wortAenderungen`)
+ * behält trotzdem Vorrang: sie wird DANACH angewendet.
+ *
+ * Aufbau:  'wort-id': { feld: 'Wert' }
+ *
+ * Gefüllt von `werkzeuge/antworten-uebernehmen.mjs` aus dem, was Elias im
+ * Wartungsfragen-Artefakt beantwortet hat. ⛔ Nicht von Hand raten.
+ */
+
+const FELD_ERGAENZUNGEN = {
+  /* (noch leer — wird aus seinen Antworten gefüllt) */
 };
 
 /* ---------- Prüffunktion ---------- */
@@ -107,11 +132,46 @@ function feldAusnahme(w, feld, quelle){
   return null;
 }
 
+/* ⛔ `other` und `vocab` sind bei `type` KEINE Angabe, auch wenn das Feld
+   gefüllt ist: auf der Karte wird daraus „Wort", und Kategorie, Statistik und
+   Übung 8 fallen genauso aus wie bei einem leeren Feld. Genau daran wäre die
+   Nachtragung sonst wirkungslos geblieben — seine 11 eigenen Vokabeln stehen
+   alle auf `other`, und eine Prüfung auf „leer" hätte sie nie ersetzt.
+   [[kennzeichen_mit_zwei_ursachen]] */
+function feldGiltAlsLeer(feld, wert){
+  if (wert === undefined || wert === null || String(wert).trim() === '') return true;
+  return feld === 'type' && (wert === 'other' || wert === 'vocab');
+}
+
+/**
+ * Die nachgetragenen Werte auf den Bestand legen.
+ * ⛔ Nur wo das Feld leer ist (siehe feldGiltAlsLeer) — ein vorhandener Wert
+ * aus dem Abzug hat Vorrang, sonst überschriebe eine alte Nachtragung eine
+ * spätere Korrektur des Verlags, ohne dass es auffällt.
+ * @param {Array} liste  VOCAB_DATA oder eine Buchliste
+ * @returns {number} wie viele Felder gesetzt wurden
+ */
+function wendeFeldErgaenzungenAn(liste){
+  if (!Array.isArray(liste)) return 0;
+  let n = 0;
+  for (const w of liste){
+    const e = FELD_ERGAENZUNGEN[String(w && w.id)];
+    if (!e) continue;
+    for (const f of Object.keys(e)){
+      if (feldGiltAlsLeer(f, w[f])){ w[f] = e[f]; n++; }
+    }
+  }
+  return n;
+}
+
 if (typeof window !== 'undefined'){
   window.FELD_REGELN = FELD_REGELN;
   window.FELD_AUSNAHMEN = FELD_AUSNAHMEN;
+  window.FELD_ERGAENZUNGEN = FELD_ERGAENZUNGEN;
   window.feldAusnahme = feldAusnahme;
+  window.wendeFeldErgaenzungenAn = wendeFeldErgaenzungenAn;
+  window.feldGiltAlsLeer = feldGiltAlsLeer;
 }
 if (typeof module !== 'undefined' && module.exports){
-  module.exports = { FELD_REGELN, FELD_AUSNAHMEN, feldAusnahme };
+  module.exports = { FELD_REGELN, FELD_AUSNAHMEN, FELD_ERGAENZUNGEN, feldAusnahme, wendeFeldErgaenzungenAn, feldGiltAlsLeer };
 }
