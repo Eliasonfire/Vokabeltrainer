@@ -585,7 +585,6 @@ function erschlosseneWortart(wort){
   return 'Wort';
 }
 const ADJEKTIVE = ['حار', 'كسلان', 'مجرور', 'واسع', 'واسعة', 'الواسع', 'الواسعة'];
-const istVerb = w => !istInListe(w, NICHT_VERB) && istInListe(w, VERBEN);
 /* ⛔⛔ DIE VOLL VOKALISIERTE FORM SCHLAEGT ALLES (20.08.2026). شُكْرًا steht als
    `expression` im Wortschatz — trotzdem galt es als Verb, sobald madina-2
    geladen war: ueber das Skelett شكر traf es شَكَرَ (danken). Dieselbe Klasse
