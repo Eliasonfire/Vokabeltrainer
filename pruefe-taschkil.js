@@ -126,6 +126,57 @@ const AUSNAHMEN = [
     name: 'Hamzat al-wasl am Wortanfang ohne Kasra',
     trifft: (wort, i) => i === 0 && wort[0] === 'ا' && wort[1] !== 'ل',
     nurMelden: true
+  },
+  {
+    /* ⭐ Das Alif nach einem Tanwin Fath ist STUMM (Alif at-tanwin): شُكْرًا,
+       جَزِيلًا, جِدًّا. Es wird nicht gesprochen und traegt deshalb weder Haraka
+       noch Sukun - "Endung fehlt" ist dort keine Luecke, sondern die Regel.
+
+       Gefunden am 20.08.2026, als data/beispielsaetze.js zum ersten Mal
+       mitgeprueft wurde: von 432 Woertern dieser Quelle tragen 4 ein Tanwin
+       Fath, und 3 davon standen als "Endung fehlt" in der Liste.
+
+       ⛔ Ein Wort zur Schreibung, weil es KEINE Fehlerfrage ist, sondern eine
+       Konventionsfrage - und die beiden Konventionen stehen in diesem Repo
+       nebeneinander (gemessen am 20.08.2026):
+
+         data/beispielsaetze.js   ـًا  (Tanwin VOR dem Alif)   2 Woerter
+         vocab-data.js            ـاً  (Tanwin AUF dem Alif)   1 Wort (أَيْضاً)
+         lehrbuch-saetze.js       gar kein Tanwin Fath          0 von 193
+
+       Beide sind uebliche Schreibungen. Diese Ausnahme deckt nur die erste ab;
+       bei der zweiten steht der KONSONANT ohne Zeichen (ض in أَيْضاً), und das
+       ist eine echte Luecke, die weiter gemeldet wird.
+
+       ⚠️ Deshalb nurMelden: der Fall bekommt einen eigenen Namen statt unter
+       "Endung fehlt" zu stehen - er verschwindet aber nicht. Eine Ausnahme,
+       die einen Befund still schluckt, macht den Pruefer blind.
+       [[pruefwerkzeug_mit_eingebauter_antwort]] */
+    name: 'Alif at-tanwin nach Tanwin Fath (stumm, richtig so)',
+    /* ⚠️ Zwischen Tanwin und Alif kann eine Schadda stehen: جِدًّا ist
+       064b 0651 0627, also Tanwin, Schadda, Alif. Eine Bedingung, die nur
+       wort[i-1] ansieht, greift dort NICHT — genau so ist die erste Fassung
+       dieser Ausnahme an جِدًّا vorbeigelaufen, waehrend شُكْرًا sie traf.
+       Gleiches Schriftbild, andere Codepoints.
+       [[zeichenklasse_nie_sichtbar_kopieren]]
+
+       ⭐ Nachgemessen, bevor ich die Reihenfolge fuer falsch hielt: der GANZE
+       Bestand schreibt Haraka VOR Schadda — 278 Mal gegen 0 (lehrbuch-saetze
+       34, vocab-data 156, beispielsaetze 88). Die Reihenfolge in جِدًّا ist
+       also die hiesige Konvention und kein Tippfehler. */
+    trifft: (wort, i) => {
+      if (wort[i] !== String.fromCharCode(0x627)) return false;   /* ا */
+      if (i !== wort.length - 1) return false;
+      for (let j = i - 1; j >= 0; j--){
+        const c = wort.charCodeAt(j);
+        if (c === 0x64B) return true;                 /* ً gefunden */
+        if (c >= 0x64C && c <= 0x652) continue;       /* andere Haraka/Schadda */
+        if (c === 0x670) continue;                    /* Dolch-Alif */
+        return false;                                 /* Konsonant: Schluss */
+      }
+      return false;
+    },
+    nurMelden: true
   }
 ];
 
@@ -222,6 +273,45 @@ function pruefeEintrag(eintrag, quelle, ziel = befunde){
 
 VOCAB_DATA.forEach(w => { woerterGeprueft += pruefeEintrag(w, 'vocab-data.js'); });
 (LEHRBUCH_SAETZE || []).forEach(s => { woerterGeprueft += pruefeEintrag(s, 'lehrbuch-saetze.js'); });
+
+/* ⛔⛔ DIE DRITTE SATZQUELLE — data/beispielsaetze.js.
+   Am 20.08.2026 nachgezaehlt: 148 Saetze stehen dort und NIRGENDS sonst.
+   Keiner davon war je auf Taschkil geprueft.
+
+   ⭐ Und das ausgerechnet bei der Quelle, wo ein Fehler am wahrscheinlichsten
+   ist: die 148 Saetze sind von MIR verfasst, nicht aus dem Lehrwerk
+   abgeschrieben. lehrbuch-saetze.js traegt den Wortlaut des Buches, vocab-data.js
+   den arabicroots-Abzug — beide sind gegengelesen. Diese hier nicht.
+
+   ⚠️ Die 14 selbst angelegten Woerter helfen hier nicht aus: in
+   data/eigene-woerter.json hat KEINES ein sentAr (gemessen: 0 von 14). Ihre
+   Saetze stehen ausschliesslich hier. Der Block weiter unten prueft also ihre
+   Wortfelder, nicht ihre Saetze.
+
+   Derselbe Mangel steckte in pruefe-markierungen.js (Commit 937b1e3, dort
+   33,2 % aller Markierungen blind). Zwei Werkzeuge, ein Loch, verschiedene
+   Dateinamen. [[entscheidung_gilt_fuer_das_zweite_werkzeug]] [[dritte_satzquelle]] */
+let beispielAnzahl = 0;
+try {
+  const bs = path.join(DIR, 'data', 'beispielsaetze.js');
+  if (fs.existsSync(bs)){
+    const { BEISPIELSAETZE } =
+      (new Function(fs.readFileSync(bs, 'utf8') + ';return {BEISPIELSAETZE};'))();
+    for (const k of Object.keys(BEISPIELSAETZE || {})){
+      const s = BEISPIELSAETZE[k];
+      if (!s || !s.sentAr) continue;
+      woerterGeprueft += pruefeEintrag({ id: k, sentAr: s.sentAr },
+                                       'data/beispielsaetze.js');
+      beispielAnzahl++;
+    }
+  } else {
+    console.log('  ⚠️ data/beispielsaetze.js fehlt — 148 verfasste Saetze sind');
+    console.log('     damit UNGEPRUEFT. Ein gruener Lauf sieht genauso aus.');
+  }
+} catch (e) {
+  console.log('  ⚠️ data/beispielsaetze.js nicht lesbar: ' + e.message);
+  console.log('     Die verfassten Saetze sind damit UNGEPRUEFT.');
+}
 
 /* Surentitel, seit 04.08.2026 (Elias' Punkt 5). Geprueft wird NUR
    `arTaschkil` - das Feld `ar` daneben ist absichtlich unvokalisiert, es ist
