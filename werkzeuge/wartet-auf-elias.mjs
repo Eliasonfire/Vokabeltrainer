@@ -322,7 +322,14 @@ function gruppenAus(text){
       + " (ثَلَاثُ نِسَاءٍ gegen ثَلَاثَةُ رِجَالٍ). Bei وَاحِدٌ steht dort die feminine"
       + " Form وَاحِدَةٌ. An drei Stellen der App steht wörtlich „Plural“ davor,"
       + " und mit eingeschalteten Pluralkarten wird daraus eine eigene Karte"
-      + " „drei (Plural)“.",
+      + " „drei (Plural)“."
+      /* ⭐ Die acht offenen gender-Fragen sind DIESELBE Sache: die Gruppe
+         „Welches Geschlecht haben diese Wörter?" besteht zu 8 von 8 aus den
+         Zahlen 3-10 (am 20.08.2026 ausgezaehlt). Ohne diesen Satz sieht er
+         zwei Aufgaben und beantwortet zweimal dasselbe. */
+      + " ⭐ Dieselbe Sache steckt hinter den acht offenen Fragen"
+      + " „Welches Geschlecht haben diese Wörter?“ auf der Fragenseite — das"
+      + " sind genau diese Zahlen. Eine Antwort erledigt beides.",
     /* ⛔ Ich schlage KEINE Beschriftung vor. Wie dein Lehrer diese Form
        nennt, weiss er und nicht ich; eine erfundene Bezeichnung stuende als
        Tatsache auf einer Lernkarte und meldete sich nie.
