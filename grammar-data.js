@@ -2196,6 +2196,37 @@ const SENTENCE_TAGS = {
   "50428": [
     { ruleId: "harf-jarr-li-01", matchText: "لِلْكِتَابِ" },
     { ruleId: "mubtada-khabar-01", matchText: "الْجَدِيدُ نَعْتٌ" }
+  ],
+  "45935": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "nat-vier-bedingungen-01", matchText: "نَهْرٌ كَبِيرٌ" }
+  ],
+  "45936": [
+    { ruleId: "nominalsatz-ohne-kopula-01", matchText: "الْبَحْرُ بَارِدٌ" }
+  ],
+  "45937": [
+    { ruleId: "harf-jarr-min-ila-01", matchText: "مِنَ الْمَسْجِدِ" },
+    { ruleId: "mubtada-khabar-01", matchText: "الْفُنْدُقُ قَرِيبٌ" }
+  ],
+  "45938": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "mubtada-khabar-01", matchText: "الْقَلَمُ رَخِيصٌ" }
+  ],
+  "45939": [
+    { ruleId: "idafa-erkennen-01", matchText: "عَجَلَةُ السَّيَّارَةِ" }
+  ],
+  "45940": [
+    { ruleId: "isara-genus-kongruenz-01", matchText: "هَذِهِ السَّنَةُ" }
+  ],
+  "45941": [
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "عَلَى الْمَكْتَبِ" }
+  ],
+  "45942": [
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْفَصْلِ" }
+  ],
+  "45943": [
+    { ruleId: "nat-fem-01", matchText: "رَكْعَةٌ طَوِيلَةٌ" },
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" }
   ]
 };
 

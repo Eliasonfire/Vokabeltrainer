@@ -325,7 +325,13 @@ const NICHT_VERB = ['صفر', 'عمي', 'جر', 'ل', 'فوق',
      هُمْ ist ein Personalpronomen und niemals ein Verb — und Elias schaltet
      genau diese Wörter gerade einzeln frei. Ein „فِعْل“ auf seiner Karte wäre
      eine falsche Lehre an einem Wort, das er neu lernt. */
-  'هم'];
+  'هم',
+  /* ⛔ 20.08.2026, zum zweiten Mal am selben Tag und aus demselben Grund:
+     نهر fällt mit dem Verb نَهَرَ (anfahren, zurechtweisen) zusammen. In
+     هَذَا نَهْرٌ كَبِيرٌ wurde نَهْرٌ mit geladenem madina-3 zum فِعْل und
+     كَبِيرٌ gleich mit zum فَاعِل — aus einem Nominalsatz wurde ein
+     Verbalsatz. Der Fluss ist ein Nomen. */
+  'نهر'];
 /* Adjektive, die in den Beispielsaetzen vorkommen und deren Wortart nicht
    verlaesslich aus dem Lexikon kommt: كسلان und مجرور fehlen im kleinen
    Bestand ganz, حار steht im grossen ZWEIMAL (adjective und verb حَارَ) und

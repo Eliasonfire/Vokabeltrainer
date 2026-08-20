@@ -457,4 +457,90 @@ const BEISPIELSAETZE = {
     sentAr: 'الْجَدِيدُ نَعْتٌ لِلْكِتَابِ.',
     sentDe: '‚Neu‘ ist ein Attribut zum Buch.'
   },
+
+  /* ------------------------------------------------------------------------
+     KAPITEL 16-18 — VORGESCHRIEBEN (20.08.2026)
+
+     Elias steht bei Kapitel 12, das Fenster reicht drei Kapitel voraus — also
+     bis 15, und die sind versorgt. Hakt er 13 an, wandert das Fenster auf 16.
+     Gemessen an diesem Tag: die neun Woerter aus 16, 17 und 18 haben ALLE ihre
+     drei Eselsbruecken, ihre Wurzel und ihren Plural — nur der Beispielsatz
+     fehlt bei jedem einzelnen. Ohne ihn kaemen sie ohne Markierung und ohne
+     eine einzige Uebungsaufgabe an.
+
+     ⛔ Alle Saetze benutzen ausschliesslich Kapitel 1-12.
+     ------------------------------------------------------------------------ */
+
+  /* نَهْرٌ — Fluss (madina-1, Kapitel 16)
+     Hinweiswort mit unbestimmtem Nomen und نَعْت: كَبِيرٌ folgt نَهْرٌ in
+     Unbestimmtheit, Kasus und Geschlecht. */
+  '45935': {
+    sentAr: 'هَذَا نَهْرٌ كَبِيرٌ.',
+    sentDe: 'Das ist ein großer Fluss.'
+  },
+
+  /* بَحْرٌ — Meer (madina-1, Kapitel 16)
+     Der schlichteste Nominalsatz: bestimmtes Mubtadaʾ, unbestimmtes Chabar.
+     Genau daran erkennt man, wo der Satz aufhoert — waeren beide bestimmt,
+     waere بَارِدٌ ein نَعْت und der Satz noch gar nicht fertig. */
+  '45936': {
+    sentAr: 'الْبَحْرُ بَارِدٌ.',
+    sentDe: 'Das Meer ist kalt.'
+  },
+
+  /* فُنْدُقٌ — Hotel (madina-1, Kapitel 16)
+     ⭐ Mit مِنَ statt مِنْ: vor dem Artikel bekommt die Praeposition eine
+     Fatḥa, weil zwei Sukun nicht aufeinandertreffen duerfen — das نْ von مِنْ
+     und das لْ von اَلْ. Dieselbe Regel wie bei مِنَ الْبَيْتِ. */
+  '45937': {
+    sentAr: 'الْفُنْدُقُ قَرِيبٌ مِنَ الْمَسْجِدِ.',
+    sentDe: 'Das Hotel ist nahe bei der Moschee.'
+  },
+
+  /* رَخِيصٌ — billig (madina-1, Kapitel 17)
+     Hinweiswort mit BESTIMMTEM Nomen — dann steht das Chabar dahinter und
+     bleibt unbestimmt. Das Gegenstueck zu هَذَا نَهْرٌ كَبِيرٌ eine Zeile
+     weiter oben. */
+  '45938': {
+    sentAr: 'هَذَا الْقَلَمُ رَخِيصٌ.',
+    sentDe: 'Dieser Stift ist billig.'
+  },
+
+  /* عَجَلَةٌ — Rad (madina-1, Kapitel 18)
+     ⭐ Eine إِضَافَة: عَجَلَةُ traegt KEIN Tanwin, weil ein zweites Nomen
+     folgt, und السَّيَّارَةِ steht im Genitiv als مُضَاف إِلَيْهِ. Das
+     Adjektiv am Ende gehoert zum ERSTEN Wort, nicht zum zweiten. */
+  '45939': {
+    sentAr: 'عَجَلَةُ السَّيَّارَةِ صَغِيرَةٌ.',
+    sentDe: 'Das Rad des Autos ist klein.'
+  },
+
+  /* سَنَةٌ — Jahr (madina-1, Kapitel 18)
+     Das weibliche Gegenstueck zu هَذَا الْأُسْبُوعُ طَوِيلٌ (Kapitel 15):
+     هَذِهِ statt هَذَا und طَوِيلَةٌ statt طَوِيلٌ — dieselbe Bauform, an
+     zwei Stellen weiblich. */
+  '45940': {
+    sentAr: 'هَذِهِ السَّنَةُ طَوِيلَةٌ.',
+    sentDe: 'Dieses Jahr ist lang.'
+  },
+
+  /* مِسْطَرَةٌ — Lineal (madina-1, Kapitel 18) */
+  '45941': {
+    sentAr: 'الْمِسْطَرَةُ عَلَى الْمَكْتَبِ.',
+    sentDe: 'Das Lineal ist auf dem Schreibtisch.'
+  },
+
+  /* سَبُّورَةٌ — Tafel (madina-1, Kapitel 18) */
+  '45942': {
+    sentAr: 'السَّبُّورَةُ فِي الْفَصْلِ.',
+    sentDe: 'Die Tafel ist im Klassenzimmer.'
+  },
+
+  /* رَكْعَةٌ — Gebetseinheit (madina-1, Kapitel 18)
+     ⚠️ صَلَاة steht nicht in seinem Bestand, deshalb kein Satz ueber das
+     Gebet selbst. Hinweiswort und نَعْت genuegen und bleiben richtig. */
+  '45943': {
+    sentAr: 'هَذِهِ رَكْعَةٌ طَوِيلَةٌ.',
+    sentDe: 'Das ist eine lange Gebetseinheit.'
+  },
 };
