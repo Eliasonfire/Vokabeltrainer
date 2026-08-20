@@ -22,9 +22,15 @@ ersetzt.** Ein Punkt, der nicht geht, wird gemeldet — nicht weggelassen.
 
 ## Wann das gilt
 
-**Bei jedem Wartungslauf** (Mi 22:00, So 13:00) für den ganzen Bestand, den
-Elias erreichen kann — nicht nur für das, was neu dazukam. Und zusätzlich,
-sobald er es ausdrücklich sagt.
+**Bei jedem Wartungslauf** (Mi 22:00, So 13:00) für den ganzen Bestand **im
+Fenster** — nicht nur für das, was neu dazukam. Und zusätzlich, sobald er es
+ausdrücklich sagt.
+
+⚠️ **Das Fenster ist kleiner als das Freigeschaltete, und der Unterschied ist
+groß.** Am 20.08.2026: **203 gemessen von 427 freigeschalteten** Wörtern. Die
+fehlenden 224 sind madina-2, für das Elias keinen Lernstand angegeben hat —
+sie bleiben absichtlich draußen (siehe unten), aber das Werkzeug **beziffert**
+es seitdem, statt nur den Buchnamen zu nennen.
 
 Es gibt **vier Wege**, auf denen ein Wort in seine Reichweite kommt:
 
@@ -758,12 +764,28 @@ gegen die **387 freigeschalteten**. ⚠️ 4433 sind hier die Buchvokabeln **ohn
 seine 11 eigenen — die Zahl 4444 weiter oben schließt sie ein. Das Werkzeug prüft sich deshalb beim Start
 an vier Fällen, deren Antwort feststeht, und bricht ab, wenn einer davon kippt.
 
-⚠️ **Und es misst ein FENSTER, nicht den ganzen Bestand.** Gemessen werden die
-Wörter, die Elias erreichen kann — am 20.08. **189** von **4444** (Buchvokabeln
-plus eigene). Das ist Absicht: eine Zahl über 4444 Wörter, von denen er 4255
-nie sieht, ist
-für einen Wartungslauf ohne Aussage. Aber sie ist eben auch keine Auskunft über
-„den ganzen Bestand". [[milder_bezugspunkt_verdeckt_mangel]]
+⚠️ **Und es misst ein FENSTER, nicht den ganzen Bestand.** ⛔ Hier stand bis
+zum 20.08.2026 „gemessen werden die Wörter, die Elias erreichen kann" — das
+war **falsch**. Erreichen kann er alles Freigeschaltete; gemessen wird nur,
+was zusätzlich im Fenster liegt.
+
+| | am 20.08.2026 |
+|---|---|
+| gemessen (Fenster) | **203** |
+| freigeschaltet, also erreichbar | **427** |
+| Buchvokabeln plus eigene | 4444 |
+
+Dass madina-2 draußen bleibt, ist Absicht: ohne Lernstandsangabe meldete das
+Werkzeug sonst 445 Wörter Rückstand, die niemand braucht — und ein Werkzeug,
+das regelmäßig Unsinn meldet, wird nach dem dritten Mal ignoriert.
+
+⭐ **Was seit dem 20.08. dazugekommen ist: der Nenner.** Die Meldung nannte
+vorher nur den Buchnamen („madina-2: NICHT gemessen"), und damit las sich das
+Übersprungene wie eine Randnotiz — obwohl es **größer war als das Gemessene**.
+Jetzt steht in beiden Ausgabewegen, wie viel es ist:
+*„224 weitere freigeschaltete Wörter = 52 % des freigeschalteten Bestands
+(427) bleiben ungeprüft."* [[trefferquote_ohne_preis]]
+[[milder_bezugspunkt_verdeckt_mangel]]
 
 Dasselbe gilt für `pruefe-wortfelder.js`: **ohne `--fenster`** meldet es über
 alle neun Bücher und ist damit für einen Lauf unbrauchbar.
