@@ -73,25 +73,45 @@ schreibt. Spaltenzahl und Reihenfolge deshalb nicht ändern, Inhalt gern.
 
 | # | Bestandteil | wer es misst | was ohne es ausfällt |
 |---|---|---|---|
-| A1 | **Wortart** `type` — nie `other`/`vocab` | `vorrat.mjs`, `pruefe-wortfelder.js` | Kategorie, Statistik, Funktionsanzeige, Übung 8 |
+| A1 | **Wortart** `type` — nie `other`/`vocab` | `vorrat.mjs`, `pruefe-wortfelder.js` | Kategorieansicht, Funktionsanzeige, **6** Übungsarten |
 | A2 | **Wurzel** `root` (nicht bei Partikeln, nicht bei Fachbegriffen) | `vorrat.mjs`, `validate.js` | Wurzelansicht, Wortfamilie |
-| A3 | Bei Nomen: `gender`, `sg`, `pl` | `vorrat.mjs`, `validate.js` | **Übung 11 + 12**, Hörmodus, Pluralkarte |
-| A4 | Bei Adjektiven: `femSg` (und `femPl`) | `vorrat.mjs`, `validate.js` | **Übung 13** erzeugt null Aufgaben |
-| A5 | Bei Verben: `past`, `present`, `imperative`, `masdar` | `vorrat.mjs` | Formen-Kasten, Sprachausgabe |
+| A3 | Bei Nomen: `gender`, `sg`, `pl` | `vorrat.mjs` | `gender`: **Übung 11** · `pl`: eigene Pluralkarte · `sg`: Anzeige und Sprachausgabe |
+| A4 | Bei Adjektiven: `femSg` (und `femPl`) | `vorrat.mjs` | **Übung 13** erzeugt null Aufgaben — und **8** weitere zerlegen den Satz anders |
+| A5 | Bei Verben: `past`, `present`, `imperative`, `masdar` | `vorrat.mjs` | ⭐ **das Iʿrāb-Lexikon** — sie steuern, wie JEDER Satz zerlegt wird |
 | A6 | **Drei Eselsbrücken** nach seiner Rangfolge | `vorrat.mjs`, `pruefe-eselsbruecken.js` | er hat nur den Abzugstext |
 | A7 | **Wortart-Kategorie** (folgt aus A1) · Bedeutungsfeld ist ein Zusatz | `vorrat.mjs` (Wortart), `pruefe-wortfelder.js` (Bedeutungsfeld) | Wort fehlt in der Kategorieansicht und in der Statistik |
 | A8 | **Funktionsanzeige** — ggf. Liste in `js/irab.js` | `pruefe-saetze.js` | Infokarte sagt nur „Wort" |
-| A9 | **Beispielsatz** — nur mit Wörtern, die er hat | `vorrat.mjs`, `pruefe-saetze.js` | **acht** Übungsarten fallen aus |
+| A9 | **Beispielsatz** — nur mit Wörtern, die er hat | `vorrat.mjs`, `pruefe-saetze.js` | **10 bis 12** Übungsarten fallen aus — der teuerste Einzelpunkt |
 | A10 | **Markierungen** am Satz | `vorrat.mjs`, `pruefe-markierungen.js`, `pruefe-erreichbarkeit.js` | Satz steht in keinem Thema, null Aufgaben |
 | A11 | **Quran-Bezug** nur aus Sure 1, 67, 93–114 | `pruefe-quran.js` | (kein Ausfall — Zusatz) |
 | A12 | **Vollständiges Taschkil** | `pruefe-taschkil.js` | falsche Aussprache, kaputte Suche |
 | A13 | **Kein Duplikat** zu einer freigeschalteten Buchvokabel | ⛔ nur seine App | zwei Karten für dasselbe Wort |
 
-⭐ **Die vierte Spalte ist der eigentliche Grund für diese Liste.** Ein
-fehlender Satz kostet **acht** Übungsarten, ein fehlendes `type` vier
-Funktionen, ein fehlendes `gender` zwei. Nichts davon meldet sich von selbst:
-`js/uebung.js` gibt bei einem Wort ohne `gender` schlicht `null` zurück
-(Zeile 399), und die Aufgabe entsteht nie.
+⭐ **Die vierte Spalte ist der eigentliche Grund für diese Liste.** Nichts
+davon meldet sich von selbst: `js/uebung.js` gibt bei einem Wort ohne `gender`
+schlicht `null` zurück (Zeile 399), und die Aufgabe entsteht nie.
+
+⛔ **Die Zahlen sind am 20.08.2026 gemessen worden — und drei davon standen
+hier vorher falsch.** Ein Prüf-Agent hat den Bestand nachgebaut und je ein Feld
+entfernt:
+
+| Behauptung vorher | gemessen | wie |
+|---|---|---|
+| fehlender Satz kostet **acht** Übungsarten | **10 bis 12** | je Wort geprüft: بَيْتٌ 10, مَسْجِدٌ 12, قَلَمٌ 12 |
+| `gender` kostet **zwei** Übungsarten | **eine** | `gender` steht in `js/uebung.js` nur in Übung 11 (Zeile 399–400). Übung 12 liest `p.istFem` **aus dem Satz**, nicht das Feld |
+| `type` kostet auch die **Statistik** | **nein** | `js/statistik.js` enthält kein `WORTFELDER` und keinen Kategoriebezug — gezählt wird über `bekannteVokabeln()` und `PROGRESS` |
+
+⭐ **Warum „acht" zu niedrig war:** `js/uebung.js:529` baut **jede** der 13
+Übungsarten je Satz (`SENT.list.forEach(satz => … UEBUNGEN.forEach(m =>
+m.baue(zeilen, satz)))`). Ohne Satz gibt es gar nichts — die 10 bis 12 sind
+nur deshalb nicht 13, weil einzelne Übungen zusätzliche Bedingungen haben.
+
+⭐⭐ **Und der wichtigste Fund: ein FALSCHES Feld ist schädlicher als ein
+leeres.** `setzeLexikon()` in `js/irab.js:635` trägt `type`, `sg`, `pl`,
+`femSg`, `femPl` und die Verbformen ins Iʿrāb-Lexikon ein — sie entscheiden,
+wie **jeder** Satz zerlegt wird. Gemessen: ohne `femSg` erzeugt Übung 1 statt
+660 plötzlich **706** Aufgaben. Es fehlen also nicht Aufgaben, es entstehen
+**andere**. [[zahlen_ohne_beleg]]
 
 ---
 
