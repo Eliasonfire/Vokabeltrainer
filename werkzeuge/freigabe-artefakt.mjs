@@ -68,6 +68,14 @@ function kuerze(t, n) {
   return [s.slice(0, i), s.slice(i).trim()];
 }
 
+/* ⛔ Das Datum stand bis zum 20.08.2026 FEST als "Stand 19.08.2026" in der
+   Seite. Sie behauptete also bei jedem Lauf denselben Tag - genau der Fall,
+   in dem eine erzeugte Seite so alt aussieht wie eine handgeschriebene und
+   niemand merkt, wann sie zuletzt gemessen hat.
+   [[eingefrorenes_feld_ist_kein_zustand]] */
+const STAND_HEUTE = new Date().toLocaleDateString('de-DE',
+  { day: '2-digit', month: '2-digit', year: 'numeric' });
+
 let bloecke = '', gesamt = 0;
 const folgen = [];
 
@@ -218,7 +226,7 @@ summary:focus-visible{outline:2px solid var(--text);outline-offset:2px}
 </style>
 
 <div class="huelle">
-<p class="eyebrow">Stand 19.08.2026 · ${gesamt} Fundstellen · Folge ${folgen.map(f => f.folge).join(', ')}</p>
+<p class="eyebrow">Stand ${STAND_HEUTE} · ${gesamt} Fundstellen · Folge ${folgen.map(f => f.folge).join(', ')}</p>
 <h1>Regelkandidaten freigeben</h1>
 
 <p class="vorspann"><strong>Du entscheidest, was eine Regel ist</strong> — die
