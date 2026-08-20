@@ -54,8 +54,40 @@ const TAGS  = lade('grammar-data.js', 'SENTENCE_TAGS');
 const VOCAB = lade('vocab-data.js', 'VOCAB_DATA');
 const LEHR  = lade('lehrbuch-saetze.js', 'LEHRBUCH_SAETZE');
 
+/* ⛔ Dritte und vierte Satzquelle — bis zum 20.08.2026 fehlten sie hier.
+   Gemessen an dem Tag: von 228 Beispielen, die diese Seite Elias zeigt,
+   standen **37 ohne Satztext** da — nur der markierte Ausschnitt, ohne den
+   Satz, in dem er sitzt. Mit beiden Quellen sind es **0**.
+
+   ⭐ Das ist eine Seite, die ER liest. Ein Beleg ohne seinen Satz ist genau
+   der halbe Beleg, wegen dem er zurueckfragen muesste.
+
+   Vierter Fall derselben Klasse an diesem Tag: pruefe-markierungen.js
+   (937b1e3, 33 % der Markierungen blind), pruefe-taschkil.js (7601424,
+   148 Saetze nie geprueft), uebernehmen.mjs (732f0a4, 41 % der Auswahl).
+   [[dritte_satzquelle]] [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+const ladeWeich = (d, n) => {
+  try {
+    if (!fs.existsSync(W + d)) {
+      console.log(`⚠️  ${d} fehlt — Beispiele ohne Satztext moeglich.`);
+      return null;
+    }
+    return lade(d, n);
+  } catch (e) {
+    console.log(`⚠️  ${d} nicht lesbar: ${e.message}`);
+    return null;
+  }
+};
+const BSP = ladeWeich('data' + path.sep + 'beispielsaetze.js', 'BEISPIELSAETZE') || {};
+const FACH = ladeWeich('data' + path.sep + 'fachbegriffe.js', 'FACHBEGRIFF_VOKABELN') || [];
+
 const satzVon = {};
 VOCAB.concat(LEHR).forEach(s => { satzVon[String(s.id)] = s; });
+/* Der Schluessel IST die Id — die dritte Quelle traegt kein id-Feld. */
+Object.keys(BSP).forEach(k => {
+  if (!satzVon[k] || !satzVon[k].sentAr) satzVon[k] = Object.assign({ id: k }, BSP[k]);
+});
+FACH.forEach(v => { if (v && v.sentAr && !satzVon[String(v.id)]) satzVon[String(v.id)] = v; });
 const markVon = {};
 Object.entries(TAGS).forEach(([sid, liste]) =>
   liste.forEach(t => (markVon[t.ruleId] = markVon[t.ruleId] || []).push({ sid, text: t.matchText })));

@@ -29,12 +29,39 @@ const ALT = new Set(fs.readFileSync(S + 'artefakt-ids.txt', 'utf8')
 
 /* Satz je Regel: der erste, der mit ihr markiert ist. Mehr als einer bringt
    fuer die Pruefung nichts — es geht darum, die Regel am Beispiel zu sehen. */
+/* ⚠️ Dritte und vierte Satzquelle mitgelesen — hier VORSORGLICH, nicht wegen
+   eines gemessenen Schadens. Am 20.08.2026 nachgezaehlt: mit und ohne sie
+   bekommen **95 von 95** markierten Regeln einen Satz, die Wirkung ist heute
+   also NULL. Das liegt daran, dass jede Regel mehrere Markierungen hat und
+   mindestens eine in einer bekannten Quelle sitzt — nicht daran, dass die
+   Luecke keine waere.
+
+   Sie schlaegt in dem Augenblick zu, in dem eine Regel NUR auf einem
+   verfassten Satz markiert ist. Genau das ist bei den 45 offenen
+   Regelkandidaten aus F14/15/16 zu erwarten.
+
+   ⛔ Die Zahl steht hier, damit niemand spaeter glaubt, hier sei ein Fehler
+   behoben worden. [[zahlen_ohne_beleg]] */
+let BSP = {}, FACH = [];
+try {
+  const p = V + 'data' + (V.endsWith('/') ? '/' : '\\') + 'beispielsaetze.js';
+  if (fs.existsSync(p)) BSP = (new Function(fs.readFileSync(p, 'utf8')
+    + ';return typeof BEISPIELSAETZE!=="undefined"?BEISPIELSAETZE:{};'))();
+} catch (e) { console.log('⚠️  data/beispielsaetze.js nicht lesbar: ' + e.message); }
+try {
+  const p = V + 'data' + (V.endsWith('/') ? '/' : '\\') + 'fachbegriffe.js';
+  if (fs.existsSync(p)) FACH = (new Function(fs.readFileSync(p, 'utf8')
+    + ';return typeof FACHBEGRIFF_VOKABELN!=="undefined"?FACHBEGRIFF_VOKABELN:[];'))();
+} catch (e) { console.log('⚠️  data/fachbegriffe.js nicht lesbar: ' + e.message); }
+
 const satzFuer = {};
 for (const [wid, tags] of Object.entries(SENTENCE_TAGS)){
   for (const t of (tags || [])){
     if (satzFuer[t.ruleId]) continue;
     const w = VOCAB_DATA.find(x => String(x.id) === wid)
-           || LEHRBUCH.find(x => String(x.id) === wid);
+           || LEHRBUCH.find(x => String(x.id) === wid)
+           || (BSP[wid] && BSP[wid].sentAr ? BSP[wid] : null)
+           || FACH.find(x => String(x.id) === wid);
     if (!w) continue;
     satzFuer[t.ruleId] = { ar: w.sentAr || w.ar, de: w.sentDe || w.de, treffer: t.matchText };
   }
