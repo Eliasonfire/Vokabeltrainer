@@ -373,6 +373,88 @@ const BEISPIELSAETZE = {
   '45934': {
     sentAr: 'هَذَا الْأُسْبُوعُ طَوِيلٌ.',
     sentDe: 'Diese Woche ist lang.'
-  }
+  },
 
+
+  /* ------------------------------------------------------------------------
+     KAPITEL 24 — EINZELN FREIGESCHALTET (20.08.2026)
+
+     Elias: „teilweise benutzt mein lehrer begriffe die wir in späteren
+     kapiteln finden … beispielsweise wird in kapitel 24 das wort naat
+     (adjektiv) freigeschaltet oder ich, du. wir usw.. ich möchte aber nur die
+     vereinzelnen wörter haben ohne den rest des kapitels zu haben."
+
+     Seit demselben Tag kann er einzelne Wörter freischalten, ohne das Kapitel
+     zu öffnen. Gemessen an dem Tag: ALLE 67 Wörter aus Kapitel 24 haben genau
+     EINEN Vorschlag und NULL Beispielsätze — wer eines davon freischaltet,
+     bekommt also eine nackte Karte. Die sieben hier sind die, die er
+     namentlich genannt hat.
+
+     ⛔ Alle Sätze bauen ausschließlich auf Kapitel 1–12 auf, geprüft gegen
+     vocab-data.js: مُدَرِّسٌ/طَالِبٌ/طَبِيبٌ/مَسْجِدٌ/بَيْتٌ/كِتَابٌ (Kap. 1),
+     جَدِيدٌ/صَغِيرٌ (Kap. 3), فِي (Kap. 4), بِنْتٌ (Kap. 5). Die femininen Formen
+     مُدَرِّسَةٌ und صَغِيرَةٌ stehen als `femSg` an ihren Grundwörtern.
+
+     ⚠️ Der maskuline Plural (مُسْلِمُونَ) wäre bei „wir“ und „sie“ das
+     Naheliegende — er steht aber erst in Kapitel 14. Deshalb beide Male ein
+     Ortssatz mit Präposition statt eines Prädikatsnomens im Plural.
+     ------------------------------------------------------------------------ */
+
+  /* أَنَا — ich (madina-1, Kapitel 24)
+     Nominalsatz in seiner einfachsten Form: das Pronomen ist Mubtadaʾ und
+     trägt kein Kasuszeichen (es ist مَبْنِيٌّ), das Chābar steht unbestimmt im
+     Nominativ. Genau die Bauform, mit der Kapitel 24 die Pronomen einführt. */
+  '50154': {
+    sentAr: '\u0623\u064e\u0646\u064e\u0627 \u0645\u064f\u062f\u064e\u0631\u0651\u0650\u0633\u064c.',
+    sentDe: 'Ich bin ein Lehrer.'
+  },
+
+  /* نَحْنُ — wir (madina-1, Kapitel 24)
+     ⭐ Bewusst ein Ortssatz: das Prädikat wäre sonst ein maskuliner Plural,
+     und den lernt er erst in Kapitel 14. فِي zieht den Genitiv nach sich,
+     deshalb الْمَسْجِدِ mit Kasra. */
+  '50155': {
+    sentAr: '\u0646\u064e\u062d\u0652\u0646\u064f \u0641\u0650\u064a \u0627\u0644\u0652\u0645\u064e\u0633\u0652\u062c\u0650\u062f\u0650.',
+    sentDe: 'Wir sind in der Moschee.'
+  },
+
+  /* أَنْتَ — du (m.) (madina-1, Kapitel 24)
+     ⭐ Mit Adjektiv, damit der Satz gleich das نَعْت zeigt: جَدِيدٌ folgt
+     طَالِبٌ in Unbestimmtheit, Kasus und Geschlecht. */
+  '50156': {
+    sentAr: '\u0623\u064e\u0646\u0652\u062a\u064e \u0637\u064e\u0627\u0644\u0650\u0628\u064c \u062c\u064e\u062f\u0650\u064a\u062f\u064c.',
+    sentDe: 'Du bist ein neuer Student.'
+  },
+
+  /* هُوَ — er (madina-1, Kapitel 24) */
+  '50157': {
+    sentAr: '\u0647\u064f\u0648\u064e \u0637\u064e\u0628\u0650\u064a\u0628\u064c.',
+    sentDe: 'Er ist ein Arzt.'
+  },
+
+  /* هِيَ — sie (Sg.) (madina-1, Kapitel 24)
+     Das Gegenstück zu أَنَا مُدَرِّسٌ: dieselbe Bauform, aber feminin — die
+     Tāʾ marbūṭa macht den Unterschied sichtbar. */
+  '50158': {
+    sentAr: '\u0647\u0650\u064a\u064e \u0645\u064f\u062f\u064e\u0631\u0651\u0650\u0633\u064e\u0629\u064c.',
+    sentDe: 'Sie ist eine Lehrerin.'
+  },
+
+  /* هُمْ — sie (Pl. m.) (madina-1, Kapitel 24)
+     Wieder ein Ortssatz aus demselben Grund wie bei نَحْنُ. */
+  '50159': {
+    sentAr: '\u0647\u064f\u0645\u0652 \u0641\u0650\u064a \u0627\u0644\u0652\u0628\u064e\u064a\u0652\u062a\u0650.',
+    sentDe: 'Sie sind im Haus.'
+  },
+
+  /* نَعْتٌ — Attribut / Adjektiv (madina-1, Kapitel 24)
+     ⭐ Das Wort erklärt sich hier selbst: الْجَدِيدُ ist das Attribut, und der
+     Satz sagt genau das über es aus. لِ + الْكِتَابِ verschmilzt zu لِلْكِتَابِ —
+     das Alif des Artikels fällt weg, das Lām bleibt doppelt stehen.
+     ⚠️ مَنْعُوتٌ (das Beschriebene) wäre das Gegenstück, steht aber nicht in
+     seinem Bestand — deshalb hier nur die eine Hälfte des Begriffspaars. */
+  '50428': {
+    sentAr: '\u0627\u0644\u0652\u062c\u064e\u062f\u0650\u064a\u062f\u064f \u0646\u064e\u0639\u0652\u062a\u064c \u0644\u0650\u0644\u0652\u0643\u0650\u062a\u064e\u0627\u0628\u0650.',
+    sentDe: '‚Neu‘ ist ein Attribut zum Buch.'
+  },
 };
