@@ -181,6 +181,7 @@ if (FENSTER){
     const angabe = (lern && lern.angabe) || {};
     const VORAUS = 3;
     let n = 0;
+    let qVocab = null;
     for (const q of quellen){
       const m = /^data \((.+)\)$/.exec(q.name);
       /* ⭐ Die Wege 3 und 4 bleiben IMMER im Fenster — nicht aus Kulanz,
@@ -193,13 +194,39 @@ if (FENSTER){
          Fachbegriffe, die er JEDEN Tag vor sich hat.
          [[app_auswahl_entscheidet]] */
       if (/\(Weg [34]\)$/.test(q.name)){ n += (q.woerter || []).length; continue; }
-      if (!m){ q.woerter = []; continue; }   /* vocab-data.js ist Lernbestand, nicht Fenster */
+      /* ⛔⛔ DER FUENFTE WEG — bis zum 20.08.2026 stand hier `q.woerter = []`.
+
+         Fuer die 160 Woerter, die ohnehin ueber ihre Buchdatei kommen, ist
+         das richtig. Fuer elf ist es falsch: die neun Zahlwoerter
+         50296-50304 (im Abzug Kapitel 24, madina-1 ist bis 12 frei, in
+         vocab-data.js `chapter: "personal"`) und madina1-l6-ach/-ucht (in
+         KEINER Abzugsdatei). Sie standen damit in keiner Wortfeld-Messung.
+
+         ⭐ Die Begruendung steht sieben Zeilen weiter oben schon da — sie
+         galt nur fuer die Wege 3 und 4. `chapter: "personal"` heisst in
+         js/kern.js:149 IMMER bekannt, egal aus welcher Datei es kommt.
+         [[entscheidung_gilt_fuer_das_zweite_werkzeug]]
+
+         ⛔ Nicht hier filtern: diese Quelle ist die ERSTE, die Buchquellen
+         sind jetzt noch ungefiltert und enthalten auch Kapitel 24. Die
+         Mengendifferenz an dieser Stelle warf die neun wieder heraus und
+         sah dabei aus, als haette sie gewirkt. */
+      if (!m){ qVocab = q; continue; }
       const slug = m[1];
       if (!angabe[slug]){ q.woerter = []; continue; }
       const grenze = angabe[slug] + VORAUS;
       const kapitel = (frei[slug] || []).map(Number).filter(k => k <= grenze);
       q.woerter = (q.woerter || []).filter(w => kapitel.includes(Number(w.chapter)));
       n += q.woerter.length;
+    }
+    /* Jetzt sind die Buchquellen aufs Fenster geschnitten — erst hier sagt
+       die Mengendifferenz die Wahrheit. */
+    if (qVocab){
+      const _da = new Set();
+      for (const q2 of quellen)
+        if (q2 !== qVocab) for (const w of (q2.woerter || [])) _da.add(String(w.id));
+      qVocab.woerter = (qVocab.woerter || []).filter(w => !_da.has(String(w.id)));
+      n += qVocab.woerter.length;
     }
     /* ⛔ `quellen` ist const — nicht neu zuweisen, sondern an Ort und Stelle
        ausduennen. Sonst wirft es TypeError, und der catch weiter unten macht
