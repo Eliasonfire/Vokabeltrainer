@@ -447,6 +447,35 @@ buchDateien.forEach(f => {
   });
 });
 
+/* ⛔⛔ SEINE SELBST ANGELEGTEN WOERTER — der vierte Weg in den Bestand.
+
+   `addPersonalVocab()` legt sie in vt_personalVocab ab, also nur im
+   localStorage; js/kern.js:245 schiebt sie beim Start in VOCAB_DATA. Sie sind
+   damit voll im Lernbestand — und ausgerechnet bei ihnen kommt die
+   Vokalisierung von IHM selbst, hat also am ehesten Luecken.
+
+   Seit dem 20.08.2026 holt `vorrat.mjs --stand … --app auto` sie aus dem
+   Geraeteabgleich nach data/eigene-woerter.json. Ohne diese Zeilen hier
+   pruefte dieses Skript 189 Woerter, waehrend vorrat.mjs 203 mass.
+
+   ⚠️ Geprueft wird mit pruefeEintrag(), der ECHTEN Funktion — ein Nachbau der
+   Luecken-Erkennung waere genau der Fehler, den dieses Repo schon dreimal
+   gesehen hat. [[handliste_neben_echter_quelle]] */
+let selbstAnzahl = 0;
+try {
+  const d = JSON.parse(fs.readFileSync(path.join(DIR, 'data', 'eigene-woerter.json'), 'utf8'));
+  const liste = Array.isArray(d.woerter) ? d.woerter : [];
+  liste.forEach(w => { woerterGeprueft += pruefeEintrag(w, 'data/eigene-woerter.json'); });
+  selbstAnzahl = liste.length;
+} catch (e) {
+  /* ⛔ Nicht schweigen. Fehlt die Datei, sind 14 Woerter UNGEPRUEFT, und ein
+     gruener Lauf saehe genauso aus wie einer, der sie geprueft hat.
+     [[ausfall_ist_unsichtbar_gebaut]] */
+  console.log('  ⚠️ data/eigene-woerter.json fehlt — seine selbst angelegten');
+  console.log('     Woerter sind NICHT geprueft. Sie entsteht bei');
+  console.log('     node werkzeuge/vorrat.mjs --stand <datei> --app auto');
+}
+
 /* ⛔ Ein Wort kann in ZWEI Dateien stehen: Elias' eigene Vokabeln liegen
    sowohl in vocab-data.js (sein Lernbestand) als auch in
    data/vokabeln-eigene.js (der Abzug). Ohne diesen Schritt zaehlt derselbe
@@ -518,7 +547,8 @@ console.log(`${woerterGeprueft} arabische Woerter geprueft ` +
    Ein "alles vokalisiert" ohne diesen Satz war die eigentliche Falle. */
 console.log(`
 Geltungsbereich: vocab-data.js, lehrbuch-saetze.js, surah-data.js` +
-            ` und data/vokabeln-eigene.js (${VOCAB_DATA.length} Lernwoerter + ${eigeneAnzahl} eigene).`);
+            ` und data/vokabeln-eigene.js (${VOCAB_DATA.length} Lernwoerter + ${eigeneAnzahl} eigene`
+            + (selbstAnzahl ? ` + ${selbstAnzahl} selbst angelegte` : ' + 0 selbst angelegte ⚠️') + `).`);
 
 /* Die Regeln bekommen eine eigene Zeile mit eigener Zahl - nicht in die Summe
    oben gemischt. Sonst waere nach dem naechsten gruenen Lauf wieder unklar,
