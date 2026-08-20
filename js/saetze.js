@@ -400,7 +400,15 @@ function buildSentenceHtml(w, opts){
       const t = hier[k];
       stueck = '<span class="gram-underline"'
         + ' style="--gram-role:var(--gram-' + t.rule.color + ')'
-        + (ebeneVon.get(t.rule.id) ? ';padding-bottom:' + (1 + ebeneVon.get(t.rule.id) * 4) + 'px' : '') + '"'
+        + (ebeneVon.get(t.rule.id)
+             ? ';padding-bottom:' + (1 + ebeneVon.get(t.rule.id) * 4) + 'px'
+               /* ⛔ Duenner statt gestrichelt: `dashed` heisst in dieser App
+                  schon „hier fehlt ein Wort" (.satz-luecke). Im Browser
+                  gemessen teilen sich 96 von 320 Regelpaaren im selben Satz
+                  die Farbe — ohne Unterschied in der Staerke waeren zwei
+                  blaue Linien 4px uebereinander nicht zuzuordnen. */
+               + ';border-bottom-width:1px'
+             : '') + '"'
         + ' data-rule="' + t.rule.id + '">' + stueck + '</span>';
     }
     html += stueck;
