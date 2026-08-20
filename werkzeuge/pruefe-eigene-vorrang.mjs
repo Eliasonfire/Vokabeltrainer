@@ -69,7 +69,18 @@ const EIGEN = kiste.window.EIGENE_VOKABELN || [];
 
 /* ---------- Wo weichen sie ab? ---------- */
 const nfc = (s) => String(s == null ? '' : s).normalize('NFC');
+/* ⛔ Die Fachbegriffe gehoeren dazu: gram-zarf und gram-nat sind genau die
+   zwei Woerter, die Elias im Formular geaendert hat, und sie stehen NICHT in
+   VOCAB_DATA. Ohne sie faende die Pruefung unten nichts und saehe gruen aus.
+   [[leere_liste_ist_keine_messung]] */
 const gepflegt = new Map(VOCAB.map(w => [String(w.id), w]));
+try {
+  const c = { window: {} };
+  vm.createContext(c);
+  vm.runInContext(fs.readFileSync(p('data/fachbegriffe.js'), 'utf8'), c, { filename: 'f.js' });
+  const F = vm.runInContext('typeof FACHBEGRIFF_VOKABELN !== "undefined" ? FACHBEGRIFF_VOKABELN : []', c);
+  for (const w of F) if (w && w.id && !gepflegt.has(String(w.id))) gepflegt.set(String(w.id), w);
+} catch (e) { /* nicht da */ }
 
 /* Felder, deren roher Wert in einer Werkzeugausgabe sichtbar wuerde. `de` und
    `ar` erscheinen in Wortlisten, `type` in den Feldmeldungen. */
@@ -82,6 +93,39 @@ for (const e of EIGEN){
   for (const f of FELDER){
     const roh = nfc(e[f]), gut = nfc(v[f]);
     if (roh && gut && roh !== gut) abweichend.push({ id: String(e.id), feld: f, roh, gut, ar: v.ar });
+  }
+}
+
+/* ⛔⛔ DIE DRITTE FASSUNG: was Elias im FORMULAR der App geaendert hat.
+
+   `vt_wortAenderungen` liegt im Geraeteabgleich und kommt seit dem 20.08.2026
+   mit `data/eigene-woerter.json`. Die App wendet es an (js/kern.js:783,
+   wendeWortAenderungenAn) — und zwar NACH den Feldergaenzungen, weil was er
+   selbst eingetippt hat eine Nachtragung ueberschreiben koennen muss.
+
+   ⛔ Kein Pruefwerkzeug kennt diese Fassung. Gemessen an dem Tag: zwei
+   Eintraege (gram-zarf, gram-nat — er hat das Tanwin ergaenzt), beide ohne
+   aktuellen Befund. Also latent, nicht akut — deshalb wurde nichts umgebaut.
+
+   ⭐ Aber der Waechter nimmt sie mit: bemaengelt ein Werkzeug eines Tages
+   genau die Fassung, die er korrigiert hat, faellt es hier auf, statt dass er
+   eine Meldung bekommt, die er nicht abstellen kann.
+   [[werkzeug_misst_kleineren_bestand]] */
+let AENDERUNGEN = {};
+try {
+  const d = JSON.parse(fs.readFileSync(p('data/eigene-woerter.json'), 'utf8'));
+  AENDERUNGEN = d.aenderungen || {};
+} catch (e) { /* nicht da — dann eben ohne */ }
+
+const nurAlt = [];
+for (const [id, a] of Object.entries(AENDERUNGEN)){
+  if (!a || typeof a !== 'object') continue;
+  for (const f of FELDER){
+    const seins = nfc(a[f]);
+    if (!seins) continue;
+    const v = gepflegt.get(String(id));
+    const datei = nfc(v && v[f]);
+    if (datei && datei !== seins) nurAlt.push({ id: String(id), feld: f, seins, datei });
   }
 }
 
@@ -184,6 +228,18 @@ const BESTANDSZAHL = [
   { name: 'pruefe-funktionen.js', argv: [p('pruefe-funktionen.js')],
     muster: /gemessen:\s+(\d+)\s+Woerter/ },
 ];
+
+if (nurAlt.length){
+  console.log('');
+  console.log('--- Was Elias im Formular geaendert hat ---');
+  console.log('');
+  nurAlt.forEach(a => console.log('    ' + a.id.slice(0, 12).padEnd(14) + a.feld.padEnd(6)
+    + ' er: ' + JSON.stringify(a.seins).slice(0, 24) + '   Datei: ' + JSON.stringify(a.datei).slice(0, 24)));
+  console.log('');
+  console.log('  ⚠️ Kein Pruefwerkzeug kennt diese Fassung. Solange keines der Woerter');
+  console.log('     bemaengelt wird, ist das folgenlos — bemaengelt eines es doch,');
+  console.log('     bekaeme Elias eine Meldung, die er nicht abstellen kann.');
+}
 
 console.log('--- Messen alle Werkzeuge denselben Bestand? ---');
 console.log('');
