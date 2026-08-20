@@ -612,4 +612,121 @@ const BEISPIELSAETZE = {
     sentAr: 'هَلْ هَذَا كِتَابٌ؟',
     sentDe: 'Ist das ein Buch?'
   },
+
+  /* ------------------------------------------------------------------------
+     KAPITEL 19-21 — VORGESCHRIEBEN (20.08.2026)
+
+     Wie bei 16-18: alle vierzehn Wörter haben ihre drei Eselsbrücken und ihre
+     Wurzel, keines einen Beispielsatz.
+
+     ⛔ Nur Kapitel 1-12 — mit einer benannten Ausnahme: ثَمَنٌ und قِرْشٌ
+     stützen sich gegenseitig, ebenso ثَمَنٌ und نِصْفٌ. Sie stehen im SELBEN
+     Kapitel: wer eines davon hat, hat auch das andere.
+
+     ⚠️ قَلِيل und سَاعَة stehen NICHT in seinem Bestand — die
+     naheliegenden Sätze zu ثَمَنٌ („der Preis ist niedrig“) und نِصْفٌ („eine
+     halbe Stunde“) gehen deshalb nicht.
+     ------------------------------------------------------------------------ */
+
+  /* كُلٌّ — alle / jeder (madina-1, Kapitel 19)
+     ⭐ Eine إِضَافَة mit UNBESTIMMTEM Zweitglied: كُلُّ steht ohne Tanwin,
+     طَالِبٍ im Genitiv mit Tanwin — und genau dadurch heißt es „jeder
+     Student“ und nicht „der ganze Student“. */
+  '45944': {
+    sentAr: 'كُلُّ طَالِبٍ فِي الْمَدْرَسَةِ.',
+    sentDe: 'Jeder Student ist in der Schule.'
+  },
+
+  /* مُخْتَلِفٌ — unterschiedlich (madina-1, Kapitel 19)
+     Hinweiswort mit bestimmtem Nomen, das Adjektiv folgt als خَبَر. */
+  '45945': {
+    sentAr: 'هَذَا الْكِتَابُ مُخْتَلِفٌ.',
+    sentDe: 'Dieses Buch ist anders.'
+  },
+
+  /* أُورُوبَّا — Europa (madina-1, Kapitel 19)
+     ⚠️ Ländernamen sind im Arabischen weiblich, deshalb كَبِيرَةٌ mit Tāʾ
+     marbūṭa — obwohl am Wort selbst nichts Weibliches zu sehen ist. Und sie
+     tragen kein Tanwin: أُورُوبَّا ist مَمْنُوع مِنَ الصَّرْف. */
+  '45946': {
+    sentAr: 'أُورُوبَّا كَبِيرَةٌ.',
+    sentDe: 'Europa ist groß.'
+  },
+
+  /* يُوغُوسْلَافِيَا — Jugoslawien (madina-1, Kapitel 19)
+     فِي zieht den Genitiv nach sich — an أُورُوبَّا ist davon nichts zu
+     sehen, weil das Alif am Ende unveränderlich ist. */
+  '45947': {
+    sentAr: 'يُوغُوسْلَافِيَا فِي أُورُوبَّا.',
+    sentDe: 'Jugoslawien liegt in Europa.'
+  },
+
+  /* ثَمَنٌ — Preis (madina-1, Kapitel 19)
+     Frage mit مَا und einer إِضَافَة dahinter — genau die Form, in der man
+     im Buch nach dem Preis fragt. */
+  '45948': {
+    sentAr: 'مَا ثَمَنُ الْكِتَابِ؟',
+    sentDe: 'Was kostet das Buch?'
+  },
+
+  /* نِصْفٌ — Hälfte (madina-1, Kapitel 19)
+     نِصْفُ steht ohne Tanwin als مُضَاف; الثَّمَنِ ist der مُضَاف إِلَيْهِ.
+     Beide Wörter stehen im selben Kapitel. */
+  '45949': {
+    sentAr: 'هَذَا نِصْفُ الثَّمَنِ.',
+    sentDe: 'Das ist die Hälfte des Preises.'
+  },
+
+  /* قِرْشٌ — Geldeinheit (madina-1, Kapitel 19) */
+  '45950': {
+    sentAr: 'ثَمَنُ الْقَلَمِ قِرْشٌ.',
+    sentDe: 'Der Preis des Stifts ist ein Qirš.'
+  },
+
+  /* رَاكِبٌ — Passagier (madina-1, Kapitel 19) */
+  '45951': {
+    sentAr: 'الرَّاكِبُ فِي السَّيَّارَةِ.',
+    sentDe: 'Der Passagier ist im Auto.'
+  },
+
+  /* سُؤَالٌ — Frage (madina-1, Kapitel 19) */
+  '45952': {
+    sentAr: 'هَذَا سُؤَالٌ جَدِيدٌ.',
+    sentDe: 'Das ist eine neue Frage.'
+  },
+
+  /* كَلِمَةٌ — Wort (madina-1, Kapitel 20)
+     Weibliches Hinweiswort und weibliches نَعْت — die Tāʾ marbūṭa steht
+     zweimal. */
+  '45953': {
+    sentAr: 'هَذِهِ كَلِمَةٌ جَدِيدَةٌ.',
+    sentDe: 'Das ist ein neues Wort.'
+  },
+
+  /* حَرْفٌ — Buchstabe (madina-1, Kapitel 20)
+     ⭐ Eine إِضَافَة mit zwei Wörtern aus demselben Kapitel: حَرْفُ ohne
+     Tanwin, الْكَلِمَةِ im Genitiv. */
+  '45954': {
+    sentAr: 'حَرْفُ الْكَلِمَةِ جَدِيدٌ.',
+    sentDe: 'Der Buchstabe des Wortes ist neu.'
+  },
+
+  /* دَرْسٌ — Unterricht (madina-1, Kapitel 20) */
+  '45955': {
+    sentAr: 'الدَّرْسُ فِي الْمَدْرَسَةِ.',
+    sentDe: 'Der Unterricht ist in der Schule.'
+  },
+
+  /* وَاسِعٌ — geräumig (madina-1, Kapitel 21) */
+  '45956': {
+    sentAr: 'الْبَيْتُ الْوَاسِعُ جَمِيلٌ.',
+    sentDe: 'Das geräumige Haus ist schön.'
+  },
+
+  /* آسِيَا — Asien (madina-1, Kapitel 21)
+     Wie أُورُوبَّا: Ländername, also weiblich und ohne Tanwin. */
+  '45957': {
+    sentAr: 'آسِيَا كَبِيرَةٌ.',
+    sentDe: 'Asien ist groß.'
+  },
 };

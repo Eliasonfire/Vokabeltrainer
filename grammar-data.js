@@ -2247,6 +2247,53 @@ const SENTENCE_TAGS = {
   ],
   "50471": [
     { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" }
+  ],
+  "45944": [
+    { ruleId: "idafa-zweitglied-01", matchText: "كُلُّ طَالِبٍ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْمَدْرَسَةِ" }
+  ],
+  "45945": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "mubtada-khabar-01", matchText: "الْكِتَابُ مُخْتَلِفٌ" }
+  ],
+  "45946": [
+    { ruleId: "mubtada-khabar-genus-01", matchText: "أُورُوبَّا كَبِيرَةٌ" }
+  ],
+  "45947": [
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي أُورُوبَّا" }
+  ],
+  "45948": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "ثَمَنُ الْكِتَابِ" }
+  ],
+  "45949": [
+    { ruleId: "mudaf-ilayh-01", matchText: "نِصْفُ الثَّمَنِ" },
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" }
+  ],
+  "45950": [
+    { ruleId: "idafa-01", matchText: "ثَمَنُ الْقَلَمِ" }
+  ],
+  "45951": [
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي السَّيَّارَةِ" }
+  ],
+  "45952": [
+    { ruleId: "nat-vier-bedingungen-01", matchText: "سُؤَالٌ جَدِيدٌ" },
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" }
+  ],
+  "45953": [
+    { ruleId: "nat-fem-01", matchText: "كَلِمَةٌ جَدِيدَةٌ" },
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" }
+  ],
+  "45954": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "حَرْفُ الْكَلِمَةِ" }
+  ],
+  "45955": [
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْمَدْرَسَةِ" }
+  ],
+  "45956": [
+    { ruleId: "nat-bestimmtheit-01", matchText: "الْبَيْتُ الْوَاسِعُ" }
+  ],
+  "45957": [
+    { ruleId: "mubtada-khabar-genus-01", matchText: "آسِيَا كَبِيرَةٌ" }
   ]
 };
 
