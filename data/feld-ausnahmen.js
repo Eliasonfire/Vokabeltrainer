@@ -112,6 +112,36 @@ const FELD_ERGAENZUNGEN = {
   /* (noch leer — wird aus seinen Antworten gefüllt) */
 };
 
+/* ---------- Ebene 4: Wortarten, die Elias bestritten hat ----------
+ *
+ * ⛔⛔ WOZU: Eine Frage nach `femSg` setzt voraus, dass das Wort ein Adjektiv
+ * IST. Stimmt die Wortart nicht, ist die Frage nicht schwer, sondern
+ * **unbeantwortbar** — und Elias sitzt davor und überlegt, was er falsch
+ * versteht.
+ *
+ * Am 20.08.2026 aufgefallen an `id 48402`: الْيَوْمُ („heute") steht im
+ * arabicroots-Abzug als `type: "adjective"`. Es ist ein Nomen (يَوْمٌ, mit
+ * Artikel adverbial gebraucht, ظَرْفُ زَمَانٍ) und hat keine weibliche Form.
+ * Die Fragenseite hätte danach gefragt.
+ *
+ * ⭐ Die Wirkung reicht weiter als eine ausgefallene Übung: `setzeLexikon()`
+ * in js/irab.js trägt `type` ins Iʿrāb-Lexikon ein — JEDER Satz mit dem Wort
+ * wird danach zerlegt. Ein falsches Feld ist schädlicher als ein leeres.
+ *
+ * Aufbau:  'wort-id': { feld: 'was im Abzug steht' }
+ *
+ * Wirkung: das Wort kommt bei der nächsten Messung wieder in die Frage
+ * „Welche Wortart?", obwohl das Feld gefüllt ist. Beantwortet er sie, landet
+ * der neue Wert in FELD_ERGAENZUNGEN und der Zweifel ist erledigt.
+ *
+ * ⛔ Auch hier gilt Ebene 2: NUR was er selbst bestritten hat. Ein Verdacht
+ * von mir gehört ihm vorgelegt, nicht hier eingetragen.
+ */
+
+const FELD_ZWEIFEL = {
+  /* (noch leer — wird aus seinen Antworten gefüllt) */
+};
+
 /* ---------- Prüffunktion ---------- */
 
 /**
@@ -144,6 +174,20 @@ function feldGiltAlsLeer(feld, wert){
 }
 
 /**
+ * Hat Elias die Wortart dieses Wortes bestritten?
+ * ⭐ Ein bestrittener `type` zählt wie ein leerer: das Wort kommt wieder in
+ * die Frage „Welche Wortart?". Sonst bliebe der falsche Wert für immer stehen,
+ * weil das Feld ja gefüllt IST. [[kennzeichen_mit_zwei_ursachen]]
+ * @param {object} w   das Wort
+ * @param {string} feld  Feldname
+ * @returns {boolean}
+ */
+function feldBestritten(w, feld){
+  const id = String(w && w.id || '');
+  return !!(FELD_ZWEIFEL[id] && FELD_ZWEIFEL[id][feld]);
+}
+
+/**
  * Die nachgetragenen Werte auf den Bestand legen.
  * ⛔ Nur wo das Feld leer ist (siehe feldGiltAlsLeer) — ein vorhandener Wert
  * aus dem Abzug hat Vorrang, sonst überschriebe eine alte Nachtragung eine
@@ -168,10 +212,13 @@ if (typeof window !== 'undefined'){
   window.FELD_REGELN = FELD_REGELN;
   window.FELD_AUSNAHMEN = FELD_AUSNAHMEN;
   window.FELD_ERGAENZUNGEN = FELD_ERGAENZUNGEN;
+  window.FELD_ZWEIFEL = FELD_ZWEIFEL;
+  window.feldBestritten = feldBestritten;
   window.feldAusnahme = feldAusnahme;
   window.wendeFeldErgaenzungenAn = wendeFeldErgaenzungenAn;
   window.feldGiltAlsLeer = feldGiltAlsLeer;
 }
 if (typeof module !== 'undefined' && module.exports){
-  module.exports = { FELD_REGELN, FELD_AUSNAHMEN, FELD_ERGAENZUNGEN, feldAusnahme, wendeFeldErgaenzungenAn, feldGiltAlsLeer };
+  module.exports = { FELD_REGELN, FELD_AUSNAHMEN, FELD_ERGAENZUNGEN, FELD_ZWEIFEL,
+    feldAusnahme, wendeFeldErgaenzungenAn, feldGiltAlsLeer, feldBestritten };
 }

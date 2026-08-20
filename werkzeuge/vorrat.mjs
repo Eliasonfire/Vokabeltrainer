@@ -673,6 +673,11 @@ const leerWert = (v) => v === undefined || v === null || String(v).trim() === ''
    melden Werkzeug und App verschiedene Stände — und beide sehen richtig aus.
    [[dieselbe_frage_zwei_antworten]] */
 const giltAlsLeer = hol('feldGiltAlsLeer') || ((f, v) => leerWert(v));
+/* ⛔ Ein BESTRITTENER Wert zaehlt wie ein leerer. Steht `type: 'adjective'`
+   an einem Wort, das keines ist, fragt kein Werkzeug je wieder danach — das
+   Feld IST ja gefuellt. Erst dieser Eintrag holt es zurueck in die Frage.
+   Am 20.08.2026 an الْيَوْمُ (id 48402) aufgefallen. */
+const bestritten = hol('feldBestritten') || (() => false);
 /* Der Wert, den die App sehen wird: erst der Abzug, dann die Nachtragung. */
 const feldWert = (w, feld) => {
   if (!giltAlsLeer(feld, w[feld])) return w[feld];
@@ -698,7 +703,7 @@ const FELD_FOLGE = {
 function felderPruefen(w, quelle){
   const fehlt = [];
   const t = String(feldWert(w, 'type') || '');
-  const kaputterTyp = leerWert(t) || t === 'other' || t === 'vocab';
+  const kaputterTyp = leerWert(t) || t === 'other' || t === 'vocab' || bestritten(w, 'type');
   if (kaputterTyp) fehlt.push('type');
 
   const pruefe = (feld) => {
