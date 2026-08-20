@@ -145,6 +145,15 @@ function gruppenAus(text){
       + 'sie sind Grundwortschatz und lernen sich über den Gebrauch, nicht über ein Bild.',
     wie: 'Sag „ja, schreib sie" — dann kommen sie beim nächsten Lauf. Sagst du nichts, '
       + 'bleibt es so, und dieser Posten steht hier weiter.',
+    /* ⛔ Eine Entscheidung ohne Anschauung ist keine. Er kann nicht wissen, ob
+       er sie braucht, ohne EINE gesehen zu haben — deshalb steht hier ein
+       belegtes Beispiel statt einer Beschreibung.
+       [[eselsbruecken_an_bekanntes_anknuepfen]] [[quranbezug_nur_auswendiges]] */
+    beispiel: 'So sähe eine aus — für كَيْفَ: Du kennst es aus dem Vers, den du '
+      + 'auswendig kannst. أَلَمْ تَرَ كَيْفَ فَعَلَ رَبُّكَ بِأَصْحَٰبِ ٱلْفِيلِ '
+      + '(105:1, al-Fīl) — „Siehst du nicht, WIE dein Herr mit den Leuten des '
+      + 'Elefanten verfuhr". Das كَيْفَ steht dort an dritter Stelle und fragt '
+      + 'genau danach: nach dem WIE.',
     zeilen: offen.slice(0, 12).map(o => `${o.wort}`)
   });
 }
@@ -437,6 +446,7 @@ const karten = posten.map((p, i) => `
   <p class="aufwand"><span class="marke">Aufwand</span> ${esc(p.aufwand)}</p>
   <p class="warum">${esc(p.warum)}</p>
   <p class="wie"><span class="marke">So geht es</span> ${esc(p.wie)}</p>
+  ${p.beispiel ? `<p class="warum"><span class="marke">Beispiel</span> ${esc(p.beispiel)}</p>` : ''}
   ${p.zeilen && p.zeilen.length ? `<ul class="zeilen">${p.zeilen.map(z => `<li>${md(z)}</li>`).join('')}</ul>` : ''}
   ${p.seite ? `<a class="knopf" href="${esc(p.seite)}" target="_blank" rel="noopener">${esc(p.seiteText || 'Öffnen')} →</a>` : ''}
 </article>`).join('\n');
