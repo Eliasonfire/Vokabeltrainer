@@ -98,6 +98,43 @@ Object.entries(kiste.window.VOKABELN || {}).forEach(([b, l]) =>
   (l || []).forEach(w => BUCH.push(Object.assign({}, w, { book: b }))));
 const bezug = ALLE ? BUCH : BUCH.filter(w => (FREI[w.book] || []).includes(Number(w.chapter)));
 
+/* ⛔⛔ DER FUENFTE WEG: was die App ueber vocab-data.js kennt, der Abzug aber
+   nicht hergibt. Am 20.08.2026 gemessen: elf Woerter.
+
+     9x  50296-50304  die Zahlwoerter. Im Abzug stehen sie unter Kapitel 24,
+                      madina-1 ist bis 12 frei — sie fallen aus `bezug`.
+                      In vocab-data.js tragen sie `chapter: "personal"`, und
+                      js/kern.js:149 macht sie damit IMMER bekannt.
+     2x  madina1-l6-ach / -ucht  stehen in KEINER der neun Abzugsdateien
+                      (grep -c = 0), tragen aber `chapter: 6`.
+
+   ⭐ HEUTE FINDET DAS NICHTS — gemessen: 0 zusaetzliche Befunde, waehrend
+   die Gegenprobe die zwei bekannten (سَيِّدٌ, ظَرْف) sehr wohl findet. Der
+   Einbau ist also LATENT, genau wie bei pruefe-erreichbarkeit.js: er wirkt
+   erst, wenn Elias ein Wort anlegt, das eines dieser elf schon abdeckt —
+   und dann faellt es auf, statt still dazustehen.
+
+   ⛔ Erkannt ueber die MENGENDIFFERENZ, nicht ueber das `book`-Feld. Genau
+   die elf tragen als einzige der 171 Eintraege ein `book` — das saehe wie
+   ein bequemes Kennzeichen aus, haette aber zwei Ursachen und ueberginge
+   ein zwoelftes Wort, das ohne `book` nachgetragen wird.
+   [[kennzeichen_mit_zwei_ursachen]] [[werkzeug_misst_kleineren_bestand]] */
+const kisteV = { window: {} };
+kisteV.globalThis = kisteV;
+vm.createContext(kisteV);
+let VOCAB_DATA = [];
+try {
+  vm.runInContext(fs.readFileSync(path.join(REPO, "vocab-data.js"), "utf8"), kisteV,
+    { filename: "vocab-data.js" });
+  VOCAB_DATA = kisteV.window.VOCAB_DATA
+    || vm.runInContext("typeof VOCAB_DATA !== 'undefined' ? VOCAB_DATA : []", kisteV) || [];
+} catch (e) { console.log("  ⚠ vocab-data.js nicht lesbar: " + e.message); }
+const _bezugIds  = new Set(bezug.map(w => String(w.id)));
+const _sonderIds = new Set([...EIGENE, ...FACH].map(w => String(w.id)));
+const NUR_VOCAB  = VOCAB_DATA.filter(w =>
+  !_bezugIds.has(String(w.id)) && !_sonderIds.has(String(w.id)));
+bezug.push(...NUR_VOCAB);
+
 /* ---------- Vergleich ---------- */
 const HARAKA_ENDE = /[ًٌٍَُِْ]$/;
 function form(s) {
@@ -131,7 +168,8 @@ console.log('--- A13: Duplikate zu freigeschalteten Vokabeln ---');
 console.log('');
 console.log('  Freigeschaltet: ' + Object.entries(FREI)
   .map(([b, k]) => b + ' K' + Math.min(...k) + '-' + Math.max(...k)).join(' · '));
-console.log('  Verglichen gegen ' + bezug.length + ' von ' + BUCH.length + ' Buchvokabeln'
+console.log('  Verglichen gegen ' + (bezug.length - NUR_VOCAB.length) + ' von ' + BUCH.length + ' Buchvokabeln'
+  + (NUR_VOCAB.length ? ' + ' + NUR_VOCAB.length + ' aus vocab-data.js, die der Abzug nicht hergibt' : '')
   + (ALLE ? '  (--alle: ALLE, auch nicht freigeschaltete)' : ''));
 console.log('  Eichung: ' + EICHUNG.length + ' Faelle, alle wie erwartet.');
 console.log('');
