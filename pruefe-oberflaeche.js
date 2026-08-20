@@ -201,11 +201,16 @@
          'personal'. Folge: JEDES der acht Buecher meldete +10 und damit einen
          Fehler, den es nicht gab. Gemessen an 'quran': 373 = 343 Abzug + 20
          mitreisend + 10 grammar. */
-      /* ⛔ über `book`, nicht über `chapter` — seit dem 20.08.2026 sind die
-         Fachbegriffe chapter 'personal' (Elias wollte sie unter den eigenen
-         Vokabeln). Nach `chapter` gefragt kaeme hier NULL heraus. */
-      const fachbegriffe = VOCAB_DATA.filter(w => w.book === 'grammar').length;
-      const soll = b.vokabeln + mitreisend.length - schonDrin + vonHand + fachbegriffe;
+      /* ⛔ SEIT DEM 20.08.2026 NICHT MEHR EXTRA ADDIEREN. Die fünfzehn
+         Fachbegriffe tragen jetzt chapter 'personal' und stecken damit bereits
+         in `mitreisend` — ein zweiter Summand zählte sie doppelt. Gemessen
+         direkt nach dem Umbau: ALLE ACHT Bücher meldeten genau +15,
+         „518 Vokabeln, erwartet 533“. Kein Datenfehler, ein Rechenfehler hier.
+         ⭐ Genau dafür ist dieser Lauf da: er hat den Umbau erwischt, während
+         validate.js grün blieb — das kennt die Summe je Buch nicht.
+         Ihr `book` ist weiterhin 'grammar'; wer sie zählen will, fragt danach
+         und NICHT nach `chapter`. */
+      const soll = b.vokabeln + mitreisend.length - schonDrin + vonHand;
       const ist = buchVokabeln().length;
       if (ist !== soll) fehl(`Buch ${b.slug}`, `${ist} Vokabeln, erwartet ${soll}`);
       else ok(`Buch ${b.slug}`, `${ist} Vokabeln, ${dauer} ms`);

@@ -766,9 +766,9 @@ function baueWortFormular(w){
     ${feld('wkSentAr', 'Beispielsatz Arabisch (optional)', w.sentAr, true)}
     ${feld('wkSentDe', 'Beispielsatz Deutsch (optional)', w.sentDe, false)}
     <div class="wk-aktionen">
-      <button class="btn btn-secondary btn-klein" data-wkabbrechen>Abbrechen</button>
-      <button class="btn btn-primary btn-klein" data-wkspeichern>${icon('check')}Speichern</button>
-    </div>`;
+      <button class="btn btn-secondary btn-klein" data-wkabbrechen>Zurück zur Karte</button>
+    </div>
+    <div class="wk-hinweis">Wird beim Zurückgehen und beim Schließen von selbst gespeichert.</div>`;
 }
 
 /* ---------- Eselsbrücke schreiben oder ändern ----------
@@ -792,9 +792,9 @@ function baueMerkFormular(w){
       <textarea id="wkMerkText" rows="5" lang="de" placeholder="Wie merkst du dir dieses Wort?">${escapeHtml(getNote(w.id))}</textarea>
     </label>
     <div class="wk-aktionen">
-      <button class="btn btn-secondary btn-klein" data-wkabbrechen>Abbrechen</button>
-      <button class="btn btn-primary btn-klein" data-wkmerkspeichern>${icon('check')}Speichern</button>
-    </div>`;
+      <button class="btn btn-secondary btn-klein" data-wkabbrechen>Zurück zur Karte</button>
+    </div>
+    <div class="wk-hinweis">Wird beim Zurückgehen und beim Schließen von selbst gespeichert.</div>`;
 }
 
 function zeigeWortKarte(id){
@@ -809,7 +809,62 @@ function zeigeWortKarte(id){
   overlayAuf('wortKarte');
 }
 
+/* ---------- Von selbst speichern (20.08.2026) ----------
+
+   Elias: „ich möchte einfach diese infokarte bearbeiten und dann raus gehen
+   (entweder auf das kreuz drücken oder die zurück taste machen) und es soll
+   automatisch gespeichert sein ohne das ich auf speichern drücken muss weil oft
+   vergesse ich das zu drücken und das ist nervig"
+
+   ⛔ EIN Ort für alle Auswege. Es gibt vier, aus denen man ein offenes Formular
+   verlassen kann — Kreuz, Zurück-Taste, Tipp neben die Karte und der Knopf
+   „Zurück zur Karte“. Wäre das Speichern an den einzelnen Knöpfen hängen
+   geblieben, wäre genau der Weg, den er am häufigsten nimmt, der ungesicherte.
+
+   ⚠️ Erkannt wird das offene Formular an seinen Feldern im DOM, nicht an einer
+   Merkvariablen: die Karte wird an mehreren Stellen über innerHTML neu gebaut,
+   und eine Variable daneben wäre irgendwann nicht mehr synchron. Was im DOM
+   steht, ist immer die Wahrheit.
+
+   ⚠️ Leeres Arabisch oder Deutsch wird NICHT gespeichert — das wäre keine
+   Vokabel mehr. Weil es hier keinen Knopf mehr gibt, an dem eine Fehlermeldung
+   hängen könnte, sagt es der Toast, und die Karte bleibt unverändert. */
+function speichereOffenesFormular(){
+  const wert = id => { const e = document.getElementById(id); return e ? e.value.trim() : null; };
+
+  /* a) Das Bearbeitungsformular */
+  if (document.getElementById('wkAr') && WK_WORT){
+    const ar = wert('wkAr'), de = wert('wkDe');
+    if (!ar || !de){ toast('Nicht gespeichert — Arabisch und Deutsch dürfen nicht leer sein'); return 'fehler'; }
+    const geaendert = ar !== (WK_WORT.ar || '') || de !== (WK_WORT.de || '')
+      || wert('wkPl') !== (WK_WORT.pl || '') || wert('wkRoot') !== (WK_WORT.root || '')
+      || wert('wkSentAr') !== (WK_WORT.sentAr || '') || wert('wkSentDe') !== (WK_WORT.sentDe || '');
+    if (!geaendert) return 'nichts';
+    speichereWortAenderung(WK_WORT.id, {
+      ar, de, pl: wert('wkPl'), root: wert('wkRoot'),
+      sentAr: wert('wkSentAr'), sentDe: wert('wkSentDe')
+    });
+    if (typeof openWordList === 'function' && AKTUELLE_LISTE) openWordList(AKTUELLE_LISTE);
+    toast('Gespeichert');
+    return 'gespeichert';
+  }
+
+  /* b) Das Eselsbrücken-Formular */
+  if (document.getElementById('wkMerkText') && WK_WORT){
+    const text = wert('wkMerkText');
+    if (text === getNote(WK_WORT.id)) return 'nichts';
+    setNote(WK_WORT.id, text);
+    toast(text ? 'Eselsbrücke gespeichert' : 'Eigene Eselsbrücke entfernt — der Vorschlag steht wieder da.');
+    return 'gespeichert';
+  }
+  return 'nichts';
+}
+
 function schliesseWortKarte(){
+  /* ⛔ VOR overlayZuUeberHistorie — das kehrt frueh zurueck und alles danach
+     liefe beim Zurueckgehen ueber die Geraetetaste nie. Genau der Weg, den er
+     im Auftrag ausdruecklich nennt. */
+  if (speichereOffenesFormular() === 'fehler') return;
   if (overlayZuUeberHistorie('wortKarte')) return;
   WK_WORT = null;
   document.getElementById('wortKarte').classList.add('hidden');
@@ -876,32 +931,21 @@ document.getElementById('wortKarte').addEventListener('click', (e)=>{
     document.getElementById('wkMerkText').focus();
     return;
   }
-  if (e.target.closest('[data-wkmerkspeichern]') && WK_WORT){
-    const text = (document.getElementById('wkMerkText')?.value || '').trim();
-    setNote(WK_WORT.id, text);
-    karte.innerHTML = baueWortKarte(WK_WORT);
-    toast(text ? 'Eselsbrücke gespeichert' : 'Eigene Eselsbrücke entfernt — der Vorschlag steht wieder da.');
-    return;
-  }
+  /* ⚠️ Die beiden Zweige für die Speichern-Knöpfe standen hier bis zum
+     20.08.2026. Sie sind weg, weil es die Knöpfe nicht mehr gibt — ihre Arbeit
+     macht speichereOffenesFormular() an allen vier Auswegen. */
   if (e.target.closest('[data-wkabbrechen]') && WK_WORT){
+    /* Der Knopf heißt nicht mehr „Abbrechen“, sondern „Zurück zur Karte“ — und
+       tut jetzt genau das: sichern und zurück. Ein Abbrechen wäre neben dem
+       automatischen Speichern der drei anderen Auswege ein Widerspruch. */
+    if (speichereOffenesFormular() === 'fehler') return;
     karte.innerHTML = baueWortKarte(WK_WORT);
     return;
   }
-  if (e.target.closest('[data-wkspeichern]') && WK_WORT){
-    const wert = id => (document.getElementById(id)?.value || '').trim();
-    const ok = speichereWortAenderung(WK_WORT.id, {
-      ar: wert('wkAr'), de: wert('wkDe'), pl: wert('wkPl'),
-      /* ⚠️ `root` stand seit jeher in AENDERBAR, hatte aber kein Feld — die
-         Wurzel ließ sich also nie ändern, obwohl die Speicherseite es konnte. */
-      root: wert('wkRoot'),
-      sentAr: wert('wkSentAr'), sentDe: wert('wkSentDe')
-    });
-    if (!ok){ toast('Arabisch und Deutsch dürfen nicht leer sein'); return; }
-    karte.innerHTML = baueWortKarte(WK_WORT);
-    openWordList(AKTUELLE_LISTE);          /* die Liste dahinter zeigt sonst den alten Text */
-    toast('Gespeichert');
-    return;
-  }
+  /* ⚠️ Hier stand bis zum 20.08.2026 der Zweig fuer den Speichern-Knopf des
+     Bearbeitungsformulars. Der Knopf ist weg (Elias: „generell diese taste soll
+     weg“), also waere der Zweig toter Code, der so aussieht, als gaebe es den
+     Knopf noch. Seine Arbeit macht speichereOffenesFormular(). */
   if (e.target.closest('[data-wkzuruecksetzen]') && WK_WORT){
     /* Nur die eigene Fassung wegwerfen; das Original steht in vocab-data.js und
        ist nach dem Neuladen wieder da. Ohne Neuladen bliebe die geaenderte
