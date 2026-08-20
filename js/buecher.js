@@ -85,6 +85,33 @@ function stelleBuchauswahlUm(){
   return true;
 }
 
+/* ---------- Der „Eigene"-Chip, einmalig nachgezogen (20.08.2026) ----------
+
+   ⛔ Gemessen am 20.08.2026: `irgendwoEingeengt()` true, `eigeneGewaehlt` false
+   — damit standen NULL von 44 eigenen Vokabeln in der Auswahl. Kein Fehler
+   meldete das; die Wörter waren einfach nicht da.
+
+   Der Wert kam nicht von Elias, sondern aus stelleBuchauswahlUm() weiter oben:
+   stand in der alten Kapitelliste kein 'personal', wurde daraus `false`. Das
+   ist keine Entscheidung, das ist ein Nebenprodukt einer Datenumstellung.
+
+   ⚠️ Akut wurde es durch Auftrag E vom selben Tag: die fünfzehn Fachbegriffe
+   hatten bis dahin einen eigenen Zweig VOR dem Chip und liefen deshalb immer
+   mit. Als sie zu eigenen Vokabeln wurden, wären sie mit unter den Chip
+   gerutscht — und mit ihm verschwunden. Der Auftrag hätte ihm etwas
+   weggenommen, statt etwas zusammenzulegen.
+
+   ⭐ Deshalb: wer den Chip nie selbst angetippt hat (kein
+   `eigeneChipEntschieden`), bekommt ihn an. Wer ihn antippt, setzt den Merker
+   — ab dann bleibt seine Wahl stehen, auch wenn sie „aus" lautet. */
+function eigeneChipNachziehen(){
+  if (SETTINGS.eigeneChipEntschieden) return false;
+  SETTINGS.eigeneChipEntschieden = true;
+  if (SETTINGS.eigeneGewaehlt) return false;
+  SETTINGS.eigeneGewaehlt = true;
+  return true;
+}
+
 /* Die Eintraege aus vocab-data.js kennen kein `book`-Feld - sie stammen alle
    aus Madina 1. Ohne das Feld faende der Buchfilter sie nicht wieder. */
 (function basisEinordnen(){
@@ -390,14 +417,16 @@ function buchTitel(slug){ return BUCH_TITEL[slug] || slug; }
    Eigene Vokabeln laufen bewusst in jeder Auswahl mit. */
 function buchVokabeln(){
   const gewaehlt = new Set(aktiveBuecher());
-  /* 'grammar' sind die fuenfzehn Fachbegriffe und Endungen aus dem Unterricht
-     (data/fachbegriffe.js). Sie gehoeren zu keinem Lehrwerk und laufen
-     deshalb - wie die eigenen Vokabeln - in jeder Buchauswahl mit. Ohne
-     diese Bedingung waeren sie unsichtbar, denn 'grammar' steht in keiner
-     Buchliste und kann auch nicht angehakt werden. */
+  /* ⭐ Die fuenfzehn Fachbegriffe aus dem Unterricht (data/fachbegriffe.js)
+     tragen seit dem 20.08.2026 chapter 'personal' und brauchen deshalb keine
+     eigene Bedingung mehr. Elias: „ich finde die kategorie ,,fachbegriffe"
+     unnötig. ich möchte das all diese begriffe und zukünftige einfach als
+     meine eigenen begriffe gelten."
+     ⚠️ Ihr `book` ist weiterhin 'grammar' — daran haengen der Fachbegriff-Takt
+     im Lernmodus und der Hoermodus. Die Herkunft bleibt, die Zugehoerigkeit
+     wechselt. */
   return VOCAB_DATA.filter(w => gewaehlt.has(w.book)
-                             || w.chapter === 'personal'
-                             || w.chapter === 'grammar');
+                             || w.chapter === 'personal');
 }
 
 /* Alle Kapitelnummern des aktiven Buchs, aufsteigend. Fuer Madina 1 tragen
@@ -476,7 +505,9 @@ document.addEventListener('DOMContentLoaded', async ()=>{
      window.VOKABELN und meldete das Buch als fehlend - obwohl es Sekunden
      spaeter dagewesen waere. Siehe js/vokabelpaket.js. */
   if (typeof PAKET_BEREIT !== 'undefined') await PAKET_BEREIT;
-  if (stelleBuchauswahlUm()) saveSettings();
+  /* ⛔ Beide Umstellungen in EINER Zeile, sonst haette die zweite keinen
+     Aufrufer und liefe nie. */
+  if ([stelleBuchauswahlUm(), eigeneChipNachziehen()].some(Boolean)) saveSettings();
   /* ALLE gemerkten Buecher laden, nicht nur eines. Nacheinander und nicht
      ueber Promise.all: einhaengen() schreibt in dieselbe Liste VOCAB_DATA und
      baut sich dafuer jedes Mal einen Index darueber auf - zwei gleichzeitige

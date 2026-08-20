@@ -87,7 +87,7 @@ function hoerbareVokabeln(){
   if (typeof irgendwoEingeengt === 'function' && irgendwoEingeengt()){
     const eng = pool.filter(w => {
       if (w.chapter === 'personal') return true;
-      if (w.chapter === 'grammar')  return true;   /* Fachbegriffe: kein Buch, kein Kapitel */
+      if (w.book === 'grammar')     return true;   /* Fachbegriffe: kein Lehrwerk. ⛔ `book`, nicht `chapter` — seit dem 20.08.2026 sind sie chapter 'personal'. */
       const sel = kapitelAuswahl(w.book);
       return !sel.length || sel.indexOf(w.chapter) >= 0;
     });

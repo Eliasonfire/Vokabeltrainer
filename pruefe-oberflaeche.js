@@ -201,7 +201,10 @@
          'personal'. Folge: JEDES der acht Buecher meldete +10 und damit einen
          Fehler, den es nicht gab. Gemessen an 'quran': 373 = 343 Abzug + 20
          mitreisend + 10 grammar. */
-      const fachbegriffe = VOCAB_DATA.filter(w => w.chapter === 'grammar').length;
+      /* ⛔ über `book`, nicht über `chapter` — seit dem 20.08.2026 sind die
+         Fachbegriffe chapter 'personal' (Elias wollte sie unter den eigenen
+         Vokabeln). Nach `chapter` gefragt kaeme hier NULL heraus. */
+      const fachbegriffe = VOCAB_DATA.filter(w => w.book === 'grammar').length;
       const soll = b.vokabeln + mitreisend.length - schonDrin + vonHand + fachbegriffe;
       const ist = buchVokabeln().length;
       if (ist !== soll) fehl(`Buch ${b.slug}`, `${ist} Vokabeln, erwartet ${soll}`);
@@ -492,7 +495,7 @@
     const gruppen = [
       ['Buchvokabeln', VOCAB_DATA.filter(w => w.book && !(typeof istPluralKarte === 'function' && istPluralKarte(w.id)))],
       ['Pluralkarten', VOCAB_DATA.filter(w => typeof istPluralKarte === 'function' && istPluralKarte(w.id))],
-      ['Fachbegriffe', VOCAB_DATA.filter(w => w.chapter === 'grammar')]
+      ['Fachbegriffe', VOCAB_DATA.filter(w => w.book === 'grammar')]
     ];
     const teile = [];
     for (const [name, liste] of gruppen){
@@ -516,7 +519,7 @@
   /* Pflichtfelder je Datensatz - dieselbe Ursache, eine Ebene tiefer.
      Ein Wort ohne `book` und ohne Sonderkapitel kann nirgends ankommen. */
   versuch('Kette: kein Datensatz ohne Herkunft', () => {
-    const ohne = VOCAB_DATA.filter(w => !w.book && w.chapter !== 'personal' && w.chapter !== 'grammar');
+    const ohne = VOCAB_DATA.filter(w => !w.book && w.chapter !== 'personal');
     if (ohne.length)
       throw new Error(`${ohne.length} Datensaetze ohne book und ohne Sonderkapitel, z.B. `
                     + ohne.slice(0, 3).map(w => `${w.id} (${w.ar})`).join(', '));
