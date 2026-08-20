@@ -1032,4 +1032,111 @@ const BEISPIELSAETZE = {
     sentAr: 'الْمَدْرَسَةُ الْاِبْتِدَائِيَّةُ قَرِيبَةٌ.',
     sentDe: 'Die Grundschule ist nah.'
   },
+
+  /* ------------------------------------------------------------------------
+     KAPITEL 24, GRUPPE 3 (20.08.2026)
+
+     Vierzehn Wörter: die vier Grammatikbegriffe, die es auch als Fachbegriff
+     gibt (مَرْفُوعٌ, مَجْرُورٌ, مُضَافٌ, إِضَافَةٌ), und zehn
+     alltagsnahe.
+
+     ⛔ BEWUSST NICHT DABEI: das Verwaltungsvokabular derselben Lektion —
+     تَعَارُفٌ, حِوَارٌ, مُرْشِدٌ, عِمَادَةٌ, اِسْتِمَارَةٌ, إِسْكَانٌ,
+     شُعْبَةٌ, مُسْتَوًى, سَابِقَةٌ, اِمْتِثَالٌ, خَاصِرَةٌ, تَأْخِيرٌ, فَذٌّ,
+     جَزِيلٌ und die drei Verben. Sie stammen aus einem Dialog an der
+     Universität; ein Satz darüber bräuchte Wörter, die er nicht hat, und
+     einzeln freischalten wird er sie kaum. Steht als offener Punkt in der
+     To-Do.
+     ------------------------------------------------------------------------ */
+
+  /* مَرْفُوعٌ — im Nominativ (madina-1, Kapitel 24)
+     ⚠️ Es gibt das Wort auch als Fachbegriff (gram-marfu). Der Satz hier
+     ist die Buchvokabel; beide zeigen dasselbe von zwei Seiten. */
+  '50470': {
+    sentAr: 'الْمُبْتَدَأُ مَرْفُوعٌ.',
+    sentDe: 'Das Mubtadaʾ steht im Nominativ.'
+  },
+
+  /* مَجْرُورٌ — im Genitiv (madina-1, Kapitel 24) */
+  '50472': {
+    sentAr: 'الْاِسْمُ بَعْدَ فِي مَجْرُورٌ.',
+    sentDe: 'Das Nomen nach „fī“ steht im Genitiv.'
+  },
+
+  /* مُضَافٌ — Besitzobjekt (madina-1, Kapitel 24)
+     Der Satz ZEIGT, was er sagt: بَيْتُ steht selbst ohne Tanwin da. */
+  '50473': {
+    sentAr: 'بَيْتُ الْمُدَرِّسِ كَبِيرٌ.',
+    sentDe: 'Das Haus des Lehrers ist groß.'
+  },
+
+  /* إِضَافَةٌ — Genitivverbindung (madina-1, Kapitel 24) */
+  '50474': {
+    sentAr: 'مِفْتَاحُ الْبَابِ صَغِيرٌ.',
+    sentDe: 'Der Schlüssel der Tür ist klein.'
+  },
+
+  /* فَطُورٌ — Frühstück (madina-1, Kapitel 24) */
+  '50183': {
+    sentAr: 'الْفَطُورُ فِي الْبَيْتِ.',
+    sentDe: 'Das Frühstück ist im Haus.'
+  },
+
+  /* هِوَايَةٌ — Hobby (madina-1, Kapitel 24) */
+  '50189': {
+    sentAr: 'هَذِهِ هِوَايَةٌ جَدِيدَةٌ.',
+    sentDe: 'Das ist ein neues Hobby.'
+  },
+
+  /* مُبَكِّرٌ — früh (madina-1, Kapitel 24) */
+  '50182': {
+    sentAr: 'الْفَطُورُ مُبَكِّرٌ.',
+    sentDe: 'Das Frühstück ist früh.'
+  },
+
+  /* طَاهِرٌ — rein (madina-1, Kapitel 24)
+     ⚠️ Das Wort gehört zur Gebetsreinheit — der Satz bleibt bewusst
+     beim Ort, weil طَهَارَة und وُضُوء nicht in seinem Bestand stehen. */
+  '50185': {
+    sentAr: 'الْمَسْجِدُ طَاهِرٌ.',
+    sentDe: 'Die Moschee ist rein.'
+  },
+
+  /* جَنُوبٌ — Süden (madina-1, Kapitel 24) */
+  '50181': {
+    sentAr: 'الْمَدِينَةُ فِي الْجَنُوبِ.',
+    sentDe: 'Die Stadt liegt im Süden.'
+  },
+
+  /* فَرْعٌ — Zweig, Filiale (madina-1, Kapitel 24) */
+  '50190': {
+    sentAr: 'فَرْعُ الْمَدْرَسَةِ قَرِيبٌ.',
+    sentDe: 'Die Zweigstelle der Schule ist nah.'
+  },
+
+  /* قَارُورَةٌ — Fläschchen (madina-1, Kapitel 24) */
+  '50194': {
+    sentAr: 'الْقَارُورَةُ عَلَى الْمَكْتَبِ.',
+    sentDe: 'Das Fläschchen steht auf dem Schreibtisch.'
+  },
+
+  /* سَائِلٌ — Flüssigkeit (madina-1, Kapitel 24) */
+  '50195': {
+    sentAr: 'الْمَاءُ سَائِلٌ.',
+    sentDe: 'Wasser ist eine Flüssigkeit.'
+  },
+
+  /* لُقْمَةٌ — Bissen (madina-1, Kapitel 24) */
+  '50191': {
+    sentAr: 'هَذِهِ لُقْمَةٌ صَغِيرَةٌ.',
+    sentDe: 'Das ist ein kleiner Bissen.'
+  },
+
+  /* أُضْحِيَةٌ — Opfertier (madina-1, Kapitel 24)
+     ⭐ Ein Wort aus seinem Glauben: das Tier, das zum عِيد الأَضْحَى
+     geschlachtet wird. Beide Wörter tragen dieselbe Wurzel ض ح ي. */
+  '50193': {
+    sentAr: 'هَذِهِ أُضْحِيَةٌ كَبِيرَةٌ.',
+    sentDe: 'Das ist ein großes Opfertier.'
+  },
 };

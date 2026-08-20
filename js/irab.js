@@ -65,7 +65,12 @@ const istJarrMitPronomen = w => istInListe(w, JARR_MIT_PRONOMEN);
    beim Bauen der Funktionsanzeige — مَعَ bekam nur „Partikel“, während تَحْتَ
    beide Angaben bekam. Die Markierung zuruf-makan-01 an seinem Beispielsatz
    sagt dasselbe. */
-const ZURUF = ['تحت', 'أمام', 'امام', 'خلف', 'فوق', 'عند', 'بين', 'وراء', 'مع'];
+/* ⚠️ بعد und قبل am 20.08.2026 dazu — Zeitangaben statt Ortsangaben, aber
+   grammatisch dasselbe: ظَرْف, und das Wort danach wird مَجْرور. Aufgefallen,
+   weil بَعْدَ in الْاِسْمُ بَعْدَ فِي مَجْرُورٌ als فِعْل gelesen wurde
+   (بعد ist auch eine Verbwurzel). قبل gleich mit, damit das Paar nicht
+   auseinanderfällt — sonst faellt es beim naechsten Satz einzeln auf. */
+const ZURUF = ['تحت', 'أمام', 'امام', 'خلف', 'فوق', 'عند', 'بين', 'وراء', 'مع', 'بعد', 'قبل'];
 /* Rufpartikel. Sie war bis zum 18.08.2026 unbekannt, und ein unbekanntes Wort
    bekommt in dieser Zerlegung die naechste freie Nomen-Rolle — in
    «أَيْنَ أَبُوكَ يَا خَالِدُ؟» wurde يَا damit zum خَبَر ueber den Vater.
@@ -374,7 +379,12 @@ const NICHT_VERB = ['صفر', 'عمي', 'جر', 'ل', 'فوق',
      Eintraege dieser Liste fangen alle ohne Hamza an, deshalb ist es nie
      aufgefallen; mein erster Versuch lag wirkungslos daneben und die Pruefung
      meldete unveraendert weiter. */
-  'أحمر', 'أخضر', 'أسود', 'أصفر', 'أبيض'];
+  'أحمر', 'أخضر', 'أسود', 'أصفر', 'أبيض',
+  /* ⛔ بعد und قبل auch HIER, nicht nur in ZURUF. Die Verbpruefung kommt
+     zuerst: solange بَعْدَ als فِعْل gilt, wird der ZURUF-Zweig gar nicht
+     erreicht. Ich hatte es zuerst nur in ZURUF eingetragen und die Pruefung
+     meldete unveraendert weiter — dieselbe Reihenfolge-Falle wie bei كُلُّ. */
+  'بعد', 'قبل'];
 /* Adjektive, die in den Beispielsaetzen vorkommen und deren Wortart nicht
    verlaesslich aus dem Lexikon kommt: كسلان und مجرور fehlen im kleinen
    Bestand ganz, حار steht im grossen ZWEIMAL (adjective und verb حَارَ) und
