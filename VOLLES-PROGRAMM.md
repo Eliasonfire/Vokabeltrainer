@@ -79,7 +79,7 @@ schreibt. Spaltenzahl und Reihenfolge deshalb nicht ändern, Inhalt gern.
 | A4 | Bei Adjektiven: `femSg` (und `femPl`) | `vorrat.mjs` | **Übung 13** erzeugt null Aufgaben — und **8** weitere zerlegen den Satz anders |
 | A5 | Bei Verben: `past`, `present`, `imperative`, `masdar` | `vorrat.mjs` | ⭐ **das Iʿrāb-Lexikon** — sie steuern, wie JEDER Satz zerlegt wird |
 | A6 | **Drei Eselsbrücken** nach seiner Rangfolge | `vorrat.mjs`, `pruefe-eselsbruecken.js` | er hat nur den Abzugstext |
-| A7 | **Wortart-Kategorie** (folgt aus A1) · Bedeutungsfeld ist ein Zusatz | `vorrat.mjs` (Wortart), `pruefe-wortfelder.js` (Bedeutungsfeld) | Wort fehlt in der Kategorieansicht und in der Statistik |
+| A7 | **Wortart-Kategorie** (folgt aus A1) · Bedeutungsfeld ist ein Zusatz | `vorrat.mjs` (Wortart), `pruefe-wortfelder.js` (Bedeutungsfeld) | Wort fehlt in der Kategorieansicht — **nicht** in der Statistik, die zählt über `bekannteVokabeln()` |
 | A8 | **Funktionsanzeige** — ggf. Liste in `js/irab.js` | `pruefe-saetze.js` | Infokarte sagt nur „Wort" |
 | A9 | **Beispielsatz** — nur mit Wörtern, die er hat | `vorrat.mjs`, `pruefe-saetze.js` | **10 bis 12** Übungsarten fallen aus — der teuerste Einzelpunkt |
 | A10 | **Markierungen** am Satz | `vorrat.mjs`, `pruefe-markierungen.js`, `pruefe-erreichbarkeit.js` | Satz steht in keinem Thema, null Aufgaben |
@@ -117,8 +117,19 @@ wie **jeder** Satz zerlegt wird. Gemessen: ohne `femSg` erzeugt Übung 1 statt
 
 # TEIL A — Eine neue Vokabel
 
-Die Reihenfolge ist nicht beliebig: **Punkt 1 entscheidet über 7, 8 und 12;
-Punkt 5 entscheidet über 6, 15 und 16.** Wer hinten anfängt, arbeitet doppelt.
+Die Reihenfolge ist nicht beliebig, und zwar aus der Sache heraus:
+
+| zuerst | entscheidet über | warum |
+|---|---|---|
+| **A1** Wortart | A3, A4, A5 | ohne sie steht nicht fest, **welche** Felder das Wort überhaupt braucht |
+| **A1** Wortart | A7, A8 | Kategorie und Funktionsanzeige folgen ihr unmittelbar |
+| **A9** Beispielsatz | A10, A12 | Markierungen und Taschkīl hängen am Satz — ohne ihn gibt es nichts zu markieren |
+
+Wer hinten anfängt, arbeitet doppelt.
+
+⛔ **Hier stand bis zum 20.08.2026 „Punkt 5 entscheidet über 6, 15 und 16".**
+Teil A hat dreizehn Punkte — 15 und 16 gibt es nicht. Und A5 (die Verbformen)
+entscheidet über gar nichts Weiteres; es ist A1, an dem alles hängt.
 
 ## A1 · Wortart (`type`)
 
@@ -384,6 +395,63 @@ gleich aus.
 
 ---
 
+## Vier Felder, die in keiner Liste standen
+
+⛔ **Auch diese vier gibt es wirklich, und drei davon wirken.** Am 20.08.2026
+über alle 4444 Wörter des Abzugs gezählt:
+
+| Feld | wie oft | was es tut |
+|---|---|---|
+| `chapter` | **4444×** | ohne es taucht das Wort in **keiner Kapitelauswahl** auf — bei eigenen Vokabeln steht dort `'personal'` |
+| `deNeben` | — | eine zweite deutsche Angabe: wird **angezeigt** und ist **suchbar** (`js/kategorien.js`, `js/lernen.js`) |
+| `quran` | — | speist den Bildschirm „Wörter im Quran" und den Startzähler (`js/quran.js`, `js/start.js`) |
+| `note` | **5×** | freie Anmerkung aus dem Abzug |
+
+⭐ **`root` hat einen dritten Verbraucher, der leicht übersehen wird:**
+`QURAN_FREQ[w.root.replace(/\s+/g,'')]` (`js/kategorien.js:1279`,
+`js/lernen.js:489`). Die Wurzel muss also nicht nur *da* sein, sondern zur
+Schreibung im Häufigkeitsverzeichnis **passen** — sonst bleibt der Quranbezug
+still leer, ohne dass irgendetwas meldet.
+
+## ⛔ Zwei Werte, die die App still verwirft
+
+`js/kern.js:703` führt die erlaubten Wortarten:
+
+    const WORTARTEN = ['noun','verb','adjective','particle','adverb',
+                       'expression','vocab','other'];
+
+**`phrase` und `grammar` stehen nicht darin** — und `data/vokabeln-madina-3.js`
+enthält **9** Wörter mit `type: "phrase"`. Wer die Wortart eines solchen Wortes
+im Bearbeitungsformular ändert und wieder zurücksetzen will, kommt nicht
+zurück: `speichereWortAenderung()` wirft den Wert weg und meldet trotzdem
+Erfolg. [[erfolgsmeldung_ohne_wirkung]]
+
+## ⛔ Weg 3 kann A3, A4 und A5 nicht erfüllen — strukturell
+
+`addPersonalVocab()` (`js/kern.js:501`) nimmt **sechs** Felder — `ar`, `de`,
+`sentAr`, `sentDe`, `root`, `pl` — und setzt `type: 'noun'` **fest**.
+
+Daraus folgt, was keine Sorgfalt behebt:
+
+- Eine selbst angelegte Vokabel ist immer ein Nomen. Ein eigenes **Adjektiv**
+  kann nie ein `femSg` bekommen, ein eigenes **Verb** keine Verbformen —
+  weder durch Elias noch durch mich.
+- `gender`, `sg`, `femSg`, `femPl` und die vier Verbformen stehen **nicht**
+  in `AENDERBAR`, sind also auch nachträglich nicht eintragbar.
+
+⭐ **Der einzige Ort, an dem diese Felder landen können, ist `FELD_ERGAENZUNGEN`
+in `data/feld-ausnahmen.js`** — `data/vokabeln-*.js` wird bei jedem Abzug neu
+geschrieben, und ein dort eingetragener Wert wäre spurlos weg.
+
+⚠️ **Und A9 hat bei Weg 3 eine ungenannte Ausnahme:** hat Elias keinen Satz
+geschrieben, baut `addPersonalVocab()` selbst einen aus einer Schablone und
+markiert ihn mit `satzAusSchablone: true`. Das steht gegen den Grundsatz „lieber
+kein Satz als ein gestellter" — es ist eine **bewusste** Ausnahme für eigene
+Vokabeln, keine Nachlässigkeit, und gehört hier genannt, damit sie nicht als
+Fehler gemeldet wird.
+
+---
+
 # TEIL B — Eine neue Regel
 
 Kommt aus einer neuen Unterrichtsfolge oder aus seinem Heft. Der ausführliche
@@ -392,12 +460,98 @@ Weg steht in Schritt 1b des Wartungs-Prompts; hier das, was jede Regel braucht:
 | # | Bestandteil | Prüfung |
 |---|---|---|
 | B1 | `id`, `name`, `shortExplanation` in `grammar-data.js` | `node validate.js` |
-| B2 | `source` — Videostelle **oder** Buchbeleg, beide sehr kurz | `node validate.js` |
+| B2 | Die Herkunft — **zwei Gestalten, die sich ausschließen** (siehe unten) | `node validate.js` |
 | B3 | `color` für die Markierung im Satz | `node validate.js` (Abschnitt Färbung) |
 | B4 | **Mindestens ein Satz, der sie zeigt** — sonst ist sie unerreichbar | `node pruefe-erreichbarkeit.js` |
 | B5 | Die Markierung an diesem Satz (`SENTENCE_TAGS`) | `node pruefe-markierungen.js` |
 | B6 | Einsortierung in ein Satzmodus-Thema (`SATZ_THEMEN`, über `muster`) | `node validate.js` |
 | B7 | Abgleich mit den bestehenden Regeln — Widerspruch? | `node werkzeuge/abgleich.mjs` |
+
+## B2 · Die Herkunft — entweder Video **oder** Buch, nie beides
+
+⛔ **Das ist kein Formalismus, sondern ein Entweder-oder, das `validate.js`
+erzwingt.** Eine Regel aus dem Unterricht und eine aus dem Buch sehen im
+Quelltext völlig verschieden aus:
+
+| kommt aus | Felder | `validate.js` verlangt |
+|---|---|---|
+| **Unterrichtsfolge** | `source: { video, approxTimestamp, chapter }` | alle drei; `ergaenzung` steht **nicht** dabei |
+| **Buch** (Madina-Schlüssel u. a.) | `ergaenzung: true` · `buchQuelle: { werk, lektion, seite }` · `kapitel: <Zahl>` | alle drei Teile von `buchQuelle`, `werk` aus `BUCHWERKE`, dazu `kapitel` als ganze Zahl |
+
+⭐ **`kapitel` ersetzt bei Buchregeln das `source.chapter`.** Ohne es weiß die
+Oberfläche nicht, wohin die Regel gehört — sie taucht in **keiner
+Kapitelauswahl** auf. Am 20.08.2026 gemessen: **22** Regeln tragen `kapitel`,
+**12** tragen `ergaenzung: true` und `buchQuelle`, und **keine einzige** davon
+hat daneben ein `source`. Umgekehrt fällt `buchQuelle` ohne `ergaenzung: true`
+durch die Prüfung — dann wäre die Herkunft in der App nicht gekennzeichnet.
+
+## Vier weitere Felder, die es wirklich gibt
+
+⛔ **Diese vier standen bis zum 20.08.2026 in keiner Liste**, obwohl drei davon
+das Verhalten der App verändern. Ein Feld, das niemand kennt, wird beim
+Eintragen einer neuen Regel schlicht vergessen.
+
+| Feld | wie oft | was es tut | wer es liest |
+|---|---|---|---|
+| `source2` | **61×** | freiwilliger **Zweitbeleg** aus einem gedruckten Madina-Schlüssel: `{ schluessel, lektion, seite }`. Steht nur, wo Buch und Unterricht dasselbe sagen — wo sie abweichen, entscheidet Elias und es bleibt leer | `js/saetze.js`, `validate.js` |
+| `nichtAufKarteikarten` | **27×** | die Regel erscheint im Satzmodus, aber **nicht** als Karteikarte | `js/saetze.js:314`, `pruefe-markierungen.js` |
+| `kapitel` | **22×** | siehe B2 — Pflicht bei `ergaenzung: true` | `validate.js:267` |
+| `ausgeblendet` | **1×** | die Regel wird **nirgends** angezeigt und zählt in keinem Thema mit | `js/saetze.js:76` und `:309` |
+
+⚠️ **`source2` ist freiwillig, aber nicht halb erlaubt.** Steht das Feld da,
+prüft `validate.js` alle drei Teile — *„eine halbe Fundstelle ist schlimmer als
+keine, weil man ihr glaubt."*
+
+## ⭐⭐ B6 wird schon bei B1 entschieden — von der `id`
+
+Das ist der Punkt, an dem eine neue Regel still im Nichts landen kann.
+`SATZ_THEMEN` ordnet **nicht** über ein eigenes Feld zu, sondern über einen
+**regulären Ausdruck auf die `id`** (`js/saetze.js:76`):
+
+    GRAMMAR_RULES.filter(r => t.muster.test(r.id) && !r.ausgeblendet)
+
+Die dreizehn Themen und ihre Präfixe, am 20.08.2026 gemessen:
+
+| Thema | `muster` | trifft |
+|---|---|---|
+| `isara` | `^(ismul-isara\|hadha\|isara\|tilka\|kaf-der-entfernung)` | 9 |
+| `jarr` | `^(harf-jarr\|min-ila\|fi-ala\|mina-al\|li-\|lil-\|hurufu-jarr)` | 11 |
+| `nominalsatz` | `^(mubtada\|nominalsatz\|jumla\|wortstellung\|satz-vs-wortgruppe)` | 6 |
+| `kasus` | `^(irab\|kasus\|marfu\|majrur\|mansub\|tanwin\|alif-maqsura\|mamnu-min-as-sarf)` | 8 |
+| `nat` | `^(nat\|adjektive\|mutabaqa\|ismun-mawsul)` | 8 |
+| `al` | `^(al-\|schams\|qamar\|adjektive-an\|nakira-marifa)` | 6 |
+| `idafa` | `^(idafa\|mudaf\|zarf-als-mudaf\|possessiv-ist-idafa)` | 10 |
+| `fragen` | `^(istifham\|fragepartikel\|min-ayna\|min-man)` | 10 |
+| `zarf` | `^(zarf-\|zuruf-makan\|inda-ort)` | 7 |
+| `besitz` | `^(possessiv-ya\|possessiv-endungen\|asma-khamsa\|hu-nach-kasra)` | 5 |
+| `schrift` | `^(madd\|schakl\|hamzatul\|lafz-al\|taschkil\|iltiqa\|mudarris-lesung)` | 7 |
+| `wortarten` | `^(wortarten\|huwa-hiya\|verb-enthaelt)` | 3 |
+
+⛔ **Eine `id`, die auf kein Präfix passt, landet in keinem Thema** — die Regel
+ist dann nur unter „Alle" zu finden, und im Satzmodus taucht sie nirgends auf,
+wo Elias sie suchen würde. Am 20.08. betrifft das **6** Regeln (`ya-nida-01`,
+`fem-ohne-ta-marbuta-01`, `koerperteile-genus-01`,
+`eigennamen-fem-ohne-tanwin-01`, `ta-marbuta-grenzen-01` und eine weitere).
+
+⭐ **Praktisch heißt das: die `id` wird nicht frei gewählt.** Sie muss mit dem
+Präfix des Themas beginnen, in das die Regel gehört — oder `SATZ_THEMEN` bekommt
+ein neues Muster. Wer die `id` erst vergibt und die Einsortierung „später"
+macht, hat sie schon verbaut.
+
+## B5 · `SENTENCE_TAGS` hat vier Schlüsselarten, nicht eine
+
+Der Schlüssel ist **nicht** immer eine Wort-id. Gezählt über alle 315 Einträge:
+
+| Art | wie oft | wofür |
+|---|---|---|
+| reine Zahl (`45751`) | **259** | Satz an einer Buchvokabel |
+| Satz-id (`mb1-13-1`) | **36** | Satz aus `data/beispielsaetze.js` |
+| UUID (`0f311405-…`) | **9** | Satz an einer eigenen Vokabel |
+| sonstige | **11** | Fachbegriffe und Quranverse |
+
+⚠️ Wer beim Markieren nur an die Wort-id denkt, findet die 36 Sätze aus
+`data/beispielsaetze.js` nicht — genau die Quelle, die am 19.08.2026 **drei
+Werkzeugen unbekannt** war. [[dritte_satzquelle]]
 
 ⛔ **Bei Widerspruch beide Fassungen nennen, nie still eine wählen.**
 [[vokabeltrainer_quellen]]
@@ -423,7 +577,7 @@ fehlt. **Nach dem Eintragen prüfen, ob sie greifen:**
 | **Satzmodus** (`js/saetze.js`) | Satz **und** Markierung | Markierung fehlt → nur unter „Alle" sichtbar |
 | **13 Übungsarten** (`js/uebung.js`) | siehe unten | |
 | **Kategorien** (`js/kategorien.js`) | `type` über `WORTFELDER` | `type` unbekannt → keine Kategorie |
-| **Statistik** (`js/statistik.js`) | Kategorien | dito, das Wort fehlt in der Zählung |
+| **Statistik** (`js/statistik.js`) | `PROGRESS` und `bekannteVokabeln()` | ⚠️ **nicht** an Kategorien oder `type` — am 20.08. nachgemessen: 0 Treffer für `WORTFELDER`, `kategorie`, `.type` |
 | **Suche** | `ar`, `de` | — geht immer |
 | **Sprachausgabe** | `ar`, Verbformen | — |
 
@@ -442,13 +596,23 @@ fehlt. **Nach dem Eintragen prüfen, ob sie greifen:**
 | 9 | Bestimmt? | Satz |
 | 10 | Welche Regel? | Satz + Markierung |
 | 11 | مُذَكَّر / مُؤَنَّث | **`gender`** |
-| 12 | هَذَا / هَذِهِ | **`gender`** |
+| 12 | هَذَا / هَذِهِ | Satz — ⚠️ **nicht** `gender`: `istFem` steht in der Musterliste (`js/uebung.js:423–426`), nicht am Wort |
 | 13 | صَغِيرٌ / صَغِيرَةٌ | **`femSg`** |
 
-⭐ **Das ist die Interdependenz, die man leicht übersieht:** ein fehlendes
-`gender` kostet nicht eine, sondern **zwei** Übungsarten. Ein fehlender Satz
-kostet **acht**. Ein fehlendes `type` kostet die Kategorie, die Statistik, die
-Funktionsanzeige und Übung 8.
+⭐ **Das ist die Interdependenz, die man leicht übersieht** — mit den am
+20.08.2026 nachgemessenen Zahlen:
+
+| fehlt | kostet | gemessen woran |
+|---|---|---|
+| **Satz** | **10 bis 12** Übungsarten | `js/uebung.js:529` baut jede der 13 je Satz; بَيْتٌ 10, مَسْجِدٌ 12, قَلَمٌ 12 |
+| **`type`** | Kategorie, Funktionsanzeige, Übung 8 — **6** Übungsarten insgesamt | ⚠️ **nicht** die Statistik |
+| **`gender`** | **eine** Übungsart (11) | ⚠️ **nicht** zwei — Übung 12 liest die Musterliste |
+| **`femSg`** | Übung 13, und **8** weitere zerlegen den Satz anders | `setzeLexikon()` trägt es ins Iʿrāb-Lexikon |
+
+⛔ **Diese vier Zeilen standen hier bis zum 20.08.2026 falsch** — und zwar,
+obwohl die Korrektur zweihundert Zeilen weiter oben schon eingetragen war. Eine
+Datei kann sich selbst widersprechen, ohne dass ein Werkzeug es meldet: beide
+Stellen sehen für sich genommen richtig aus. [[dieselbe_frage_zwei_antworten]]
 
 ---
 
@@ -474,7 +638,7 @@ ihn sieht er den alten Stand und hält die Arbeit für nicht gemacht.
 
 # Die vollständige Prüfkette
 
-Alle zehn auf einmal, wenn mehr als ein Wort dazukam:
+Alle elf auf einmal, wenn mehr als ein Wort dazukam:
 
 ```
 node validate.js
@@ -482,16 +646,33 @@ node pruefe-saetze.js
 node pruefe-markierungen.js
 node pruefe-erreichbarkeit.js
 node pruefe-eselsbruecken.js
-node pruefe-wortfelder.js
+node pruefe-wortfelder.js --fenster
 node pruefe-taschkil.js
 node pruefe-quran.js
+node pruefe-funktionen.js
 node werkzeuge/vorrat.mjs
 node werkzeuge/export-index.mjs --pruefen
 ```
 
-⭐ **`vorrat.mjs` misst seit dem 20.08.2026 alle dreizehn Punkte**, nicht mehr
-nur vier. Es ist damit das einzige Werkzeug, das „vollständig" für ein Wort
-überhaupt beantworten kann — die anderen prüfen je einen Ausschnitt.
+⛔ **Zwei davon prüfen etwas anderes, als man beim Überfliegen annimmt:**
+
+| | |
+|---|---|
+| `node validate.js` | **ist kein Tor.** Es endet mit **0 auch bei Warnungen** — und B6 (die Einsortierung ins Satzmodus-Thema) ist nur eine Warnung. Wer „grün" liest, hat nicht geprüft, ob am Ende „0 Hinweise" steht |
+| `export-index.mjs --pruefen` | misst **keinen** der dreizehn Punkte. Es prüft den Samsung-Notes-Index — gehört in die Kette, gehört aber nicht zur Vollständigkeit einer Vokabel |
+
+⭐ `pruefe-funktionen.js` ist am 20.08.2026 dazugekommen und misst **A8** — den
+einzigen Punkt, für den es vorher gar kein Werkzeug gab. Die Liste nannte
+`pruefe-saetze.js`, das `funktionenVon` mit **0** Treffern nie aufruft.
+
+⭐ **`vorrat.mjs` misst seit dem 20.08.2026 neun der dreizehn Punkte**, vorher
+waren es vier. Es ist damit das Werkzeug mit der breitesten Sicht auf ein
+einzelnes Wort — die anderen prüfen je einen Ausschnitt.
+
+⛔ **Hier stand bis zum 20.08. „alle dreizehn".** Die Tabelle direkt darunter
+listet **neun**, und der Absatz danach nennt die vier, die es *nicht* messen
+kann. Drei Angaben, zwei davon richtig — und die falsche stand oben, wo man
+aufhört zu lesen. [[dieselbe_frage_zwei_antworten]]
 
 | was es meldet | Punkt |
 |---|---|
@@ -505,9 +686,19 @@ nur vier. Es ist damit das einzige Werkzeug, das „vollständig" für ein Wort
 | `femSg` fehlt bei einem Adjektiv | A4 |
 | `past`/`present` fehlen bei einem Verb | A5 |
 
-Was es **nicht** messen kann: A8 (Funktionsanzeige — steckt in `js/irab.js`),
+Was es **nicht** messen kann — neun plus diese vier ergibt dreizehn:
+A8 (Funktionsanzeige — dafür seit dem 20.08. `pruefe-funktionen.js`),
 A11 (Quran-Bezug — dafür `pruefe-quran.js`), A12 (Taschkīl — dafür
 `pruefe-taschkil.js`), A13 (Duplikat — braucht seine App).
+
+⚠️ **Und es misst ein FENSTER, nicht den ganzen Bestand.** Gemessen werden die
+Wörter, die Elias erreichen kann — am 20.08. **189** von **4444** im Abzug. Das
+ist Absicht: eine Zahl über 4444 Wörter, von denen er 4255 nie sieht, ist
+für einen Wartungslauf ohne Aussage. Aber sie ist eben auch keine Auskunft über
+„den ganzen Bestand". [[milder_bezugspunkt_verdeckt_mangel]]
+
+Dasselbe gilt für `pruefe-wortfelder.js`: **ohne `--fenster`** meldet es über
+alle neun Bücher und ist damit für einen Lauf unbrauchbar.
 
 ⚠️ `pruefe-oberflaeche.js` läuft **nicht** unter node, nur im Browser über
 `fetch(...).then(eval)`. Unter node wirft es `SETTINGS is not defined` — das ist
