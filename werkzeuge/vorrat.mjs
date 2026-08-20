@@ -308,6 +308,22 @@ const hatSaetze = laden('data/beispielsaetze.js', false);
    [[daten_ohne_zugang]]: eingetragen ist nicht erreichbar. */
 laden('grammar-data.js');
 laden('wortfelder-data.js', false);
+/* ⛔⛔ WEG 3 UND 4 — Elias am 20.08.2026: „ich habe viele neue wörter
+   freigeschaltet und neue eigene vokabeln hinzugefügt. sie müssen das volle
+   programm bekommen."
+
+   Bis dahin lief dieses Werkzeug NUR ueber `BUECHER x kapitelImFenster(slug)`
+   und sah damit ausschliesslich Buchvokabeln. Seine 11 eigenen Vokabeln und
+   die 15 Fachbegriffe waren unsichtbar — gemessen am selben Tag: 11 von 11
+   ohne Beispielsatz, 9 von 15 Fachbegriffen ohne Satz, und kein Werkzeug
+   meldete es je.
+
+   ⚠️ Beide liegen NICHT unter window.VOKABELN: die eigenen unter
+   window.EIGENE_VOKABELN (damit sie in der Buchauswahl kein achtes Buch
+   werden), die Fachbegriffe unter FACHBEGRIFF_VOKABELN. Genau daran ist auch
+   pruefe-taschkil.js vorbeigelaufen. [[dritte_satzquelle]] */
+laden('data/fachbegriffe.js', false);
+laden('data/vokabeln-eigene.js', false);
 
 const VOCAB   = hol('VOCAB_DATA') || [];
 const BUCH_EB = hol('BUCH_ESELSBRUECKEN') || {};
@@ -553,6 +569,66 @@ BUECHER.forEach(b => {
                    hat: n, fehltEB: Math.max(0, 3 - n), fehltSatz: !s,
                    fehltMarkierung: s && !m, fehltKategorie: !kat,
                    root: w.root, pl: w.plural, type: w.type });
+  });
+});
+
+/* ---------- Seine eigenen Vokabeln und die Fachbegriffe (20.08.2026) ----------
+
+   Sie kommen NICHT aus BUECHER und haben kein Kapitel, das in ein Fenster
+   passen koennte — sie gehoeren ihm einfach, sobald sie da sind. Deshalb ein
+   eigener Durchgang mit denselben vier Messungen.
+
+   ⛔ Die Kategorie wird hier NICHT geprueft: `type` ist bei eigenen Vokabeln
+   aus arabicroots immer 'other', und das faellt bei hatKategorie() zwangslaeufig
+   durch. Das ist ein eigener Punkt (A1 im Skill) und wuerde hier nur jede Zeile
+   rot machen, ohne etwas Neues zu sagen. [[kandidatenliste_ist_keine_fehlerliste]] */
+const EIGENE = kiste.window.EIGENE_VOKABELN || [];
+const FACH   = hol('FACHBEGRIFF_VOKABELN') || [];
+
+/* ⛔⛔ EIN FACHBEGRIFF BRAUCHT KEINEN EIGENEN SATZ, WENN SEINE REGEL EINEN HAT.
+   Der erste Lauf dieser Erweiterung meldete neun Fachbegriffe als „Beispielsatz
+   FEHLT" — und ich war dabei, ihnen neun Saetze zu schreiben. Der Kommentar in
+   data/fachbegriffe.js bei gram-zarf hielt mich auf:
+
+     „Der EINZIGE Fachbegriff, der einen Satz bekommt — und zwar mit Grund.
+      Von den zehn Begriffen ohne Beispielsatz haben neun eine Regel mit 3 bis
+      13 Markierungen, ihr Konzept ist also erreichbar."
+
+   Das Feld `regel` am Fachbegriff nennt die zugehoerige Regel-Id. Hat die
+   Markierungen in echten Saetzen, ist der Begriff erreichbar — ein zusaetzlicher
+   Satz waere gestellt und wuerde nichts erschliessen.
+   [[stichworttreffer_im_kommentar]] — der Treffer war die BEGRUENDUNG, warum
+   es richtig ist. [[kandidatenliste_ist_keine_fehlerliste]] */
+const REGEL_HAT_MARKIERUNG = new Set(
+  Object.values(hol('SENTENCE_TAGS') || {}).flat().map(m => m && m.ruleId).filter(Boolean));
+function fachbegriffErreichbar(w){
+  return !!(w.regel && REGEL_HAT_MARKIERUNG.has(w.regel));
+}
+
+[['eigene', EIGENE], ['fachbegriffe', FACH]].forEach(([slug, liste]) => {
+  liste.forEach(w => {
+    geprueft++;
+    const id = String(w.id);
+    const n = vorschlagsZahl(id, w);
+    if (slug === 'fachbegriffe' && fachbegriffErreichbar(w)){
+      /* Erreichbar ueber seine Regel — nur die Eselsbruecken zaehlen noch. */
+      if (n < 3)
+        offen.push({ slug, kapitel: 0, id, ar: w.ar, de: w.de, hat: n,
+                     fehltEB: 3 - n, fehltSatz: false, fehltMarkierung: false,
+                     fehltKategorie: false, root: w.root, pl: w.pl, type: w.type });
+      return;
+    }
+    /* ⛔ hatSatz() sucht in VOCAB_DATA und in BEISPIELSAETZE — die Fachbegriffe
+       tragen ihren Satz aber am EIGENEN Datensatz, in keiner der beiden. Ohne
+       diese Zeile meldete der erste Lauf 15 von 15 Fachbegriffen „ohne Satz",
+       obwohl sechs einen haben. [[kandidatenliste_ist_keine_fehlerliste]] */
+    const s = hatSatz(id) || !!(w.sentAr && String(w.sentAr).trim());
+    const m = s ? satzErreichbar(id) : true;
+    if (n < 3 || !s || !m)
+      offen.push({ slug, kapitel: 0, id, ar: w.ar, de: w.de,
+                   hat: n, fehltEB: Math.max(0, 3 - n), fehltSatz: !s,
+                   fehltMarkierung: s && !m, fehltKategorie: false,
+                   root: w.root, pl: w.pl, type: w.type });
   });
 });
 
