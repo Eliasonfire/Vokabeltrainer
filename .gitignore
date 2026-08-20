@@ -78,3 +78,20 @@ data/aussenbelege.json
 # Zwischenstaende der Werkzeuge (aussenbelege.mjs legt hier die Fragenliste ab,
 # die es von vorrat.mjs geholt hat). Wird bei jedem Lauf neu geschrieben.
 .state/
+
+# ⛔⛔ Scans der Madina-Buecher. Am 21.08.2026 lag
+# C:\Users\abdur\Documents\madina-buch1-beschriftet.pdf (137 Seiten) als
+# moegliche Quelle fuer die fehlenden Zweitbelege auf dem Tisch. Gemessen:
+# 0 Seiten mit Textebene, 120 nur mit der Fusszeile — und diese Fusszeile
+# lautet auf JEDER Seite:
+#
+#   "For Personal use Only. Courtesy of Institute of the Language of the
+#    Qur'an … and by kind permission of Shaykh Dr. V. Abdur Raheem"
+#
+# Das ist ein ausdruecklicher Nutzungsvorbehalt. Solche Dateien gehoeren in
+# dieselbe Klasse wie transcripts/ und data/vokabeln-*.js: sie bleiben lokal,
+# auch seitenweise als Beleg. Die Zeile steht hier vorsorglich — heute liegt
+# keine solche Datei im Ordner, und genau deshalb faellt es spaeter niemandem
+# auf, wenn eine hereinkommt.
+*madina-buch*.pdf
+*-beschriftet.pdf
