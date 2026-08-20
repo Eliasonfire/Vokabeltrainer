@@ -174,12 +174,40 @@ function freischaltungAusJson(text){
 function freischaltungSchreiben(neu, heute){
   const q = fs.readFileSync(KERN, 'utf8');
   const nl = (q.match(/\r\n/g) || []).length > (q.match(/\n/g) || []).length / 2 ? '\r\n' : '\n';
-  const zeilen = Object.keys(neu).sort().map(b =>
-    `  '${b}': [${neu[b].join(',')}]`);
+
+  /* ⛔ ELIAS' EIGENE KOMMENTARE ÜBERLEBEN LASSEN.
+     Der Block wird neu gebaut, und bis zum 20.08.2026 fiel dabei alles weg,
+     was hinter einer Buchzeile stand — darunter
+
+       'madina-1': [1,…,12],   // Elias am 20.08.2026: „ich habe uebrigens
+                                  kapitel 12 freigeschaltet"
+
+     Das ist die einzige Stelle, an der steht, WARUM diese Zahl von der
+     gemessenen abweicht. Ohne sie sieht der nächste Leser nur noch einen
+     Widerspruch und keine Begründung. [[erfundene_begruendung_schliesst_den_fall]] */
+  const bisher = {};
+  const mBlock = q.match(/const FREIGESCHALTET = \{([\s\S]*?)\n\};/);
+  if (mBlock){
+    for (const m of mBlock[1].matchAll(/'([^']+)':\s*\[[^\]]*\],?\s*(\/\/[^\n\r]*)/g)){
+      /* Der erzeugte Standardkommentar wird nicht mitgeschleppt. */
+      if (!/^\/\/\s*arabicroots, abgefragt am/.test(m[2].trim())) bisher[m[1]] = m[2].trim();
+    }
+  }
+
+  const namen = Object.keys(neu).sort();
+  const zeilen = namen.map((b, i) => {
+    const komma = i < namen.length - 1 ? ',' : '';
+    const eigen = bisher[b] ? '   ' + bisher[b] : '';
+    return `  '${b}': [${neu[b].join(',')}]${komma}${eigen}`;
+  });
+  /* Der Stand-Kommentar steht jetzt ÜBER dem Block statt hinter der letzten
+     Zeile — dort kollidiert er nicht mehr mit einem eigenen Kommentar. */
   const block = 'const FREIGESCHALTET = {' + nl
-    + zeilen.join(',' + nl) + '   // arabicroots, abgefragt am ' + heute + nl
+    + '  // Stand: arabicroots' + (ARG.includes('--app') ? ' + App-Auswahl' : '')
+    + ', abgefragt am ' + heute + nl
+    + zeilen.join(nl) + nl
     + '};';
-  const raus = q.replace(/const FREIGESCHALTET = \{[\s\S]*?\};/, block);
+  const raus = q.replace(/const FREIGESCHALTET = \{[\s\S]*?\n\};/, block);
   if (raus === q) { console.error('  Ersetzung hat nichts geaendert.'); process.exit(1); }
   fs.writeFileSync(KERN, raus, 'utf8');
 }
@@ -460,12 +488,54 @@ if (iStand >= 0){
   ueber.forEach(b => delete neu[b]);
 
   const alt = frei;
+
+  /* ⛔⛔ DRITTE QUELLE: DER BESTEHENDE STAND. Und er wird NIE beschnitten.
+     ===================================================================
+     Am 20.08.2026 gemessen und beinahe ausgeliefert:
+
+       arabicroots (get_unlocked_chapters): madina-1 bis Kapitel 11
+       js/kern.js:                          madina-1 bis Kapitel 12
+       Kommentar dort: „Elias am 20.08.2026: ich habe uebrigens kapitel 12
+                        freigeschaltet"
+
+     Der naechste Wartungslauf haette daraus [1..11] gemacht, die Zeile
+     veroeffentlicht und Elias' eigene Ansage samt Begruendung geloescht — und
+     der Zuwachs-Zweig weiter unten haette geschwiegen, weil er mit
+     `if (zuwachs <= 0) return;` beginnt. Neun Woerter waeren aus dem Fenster,
+     aus pruefe-eselsbruecken und aus pruefe-erreichbarkeit gefallen, mit
+     Exitcode 0 und ohne eine Zeile im Bericht.
+
+     ⭐ Die Regel dahinter ist einfach und kommt aus der Sache: WAS ER EINMAL
+     GELERNT HAT, VERLERNT ER NICHT, wenn eine Kursplattform ein Kapitel wieder
+     schliesst. Ein Freischaltstand darf wachsen; das Zurueckdrehen ist SEINE
+     Entscheidung, nicht die einer Messung.
+
+     ⚠️ Ein Schrumpfen wird deshalb GEMELDET statt ausgefuehrt. Wer es doch
+     will, sagt es ausdruecklich mit --auch-schliessen.
+     [[kennzeichen_mit_zwei_ursachen]] · [[eingefrorenes_feld_ist_kein_zustand]] */
+  const SCHLIESSEN = ARG.includes('--auch-schliessen');
+  const verloren = [];
+  if (!SCHLIESSEN){
+    Object.keys(alt).forEach(b => {
+      const fehlend = (alt[b] || []).filter(k => !(neu[b] || []).includes(k));
+      if (!fehlend.length) return;
+      verloren.push(`${b}: Kapitel ${fehlend.join(', ')} stehen in js/kern.js, aber nicht`
+        + ` in den gemessenen Quellen — BEHALTEN`);
+      neu[b] = [...new Set([...(neu[b] || []), ...fehlend])].sort((x, y) => x - y);
+    });
+  }
+
   const aenderungen = [];
   new Set([...Object.keys(alt), ...Object.keys(neu)]).forEach(b => {
     const a = (alt[b] || []).join(','), n = (neu[b] || []).join(',');
     if (a !== n) aenderungen.push(`  ${b}: [${a || '—'}] → [${n || '—'}]`);
   });
   if (ueber.length) console.log('  uebersprungen (keine Vokabeldatei): ' + ueber.join(', '));
+  if (verloren.length){
+    console.log('  ⚠️ Nicht zugemacht — das gehoert in den Bericht an Elias:');
+    verloren.forEach(z => console.log('     ' + z));
+    console.log('     (Wirklich schliessen? Dann --auch-schliessen. Das ist SEINE Entscheidung.)');
+  }
   if (!aenderungen.length){
     console.log('  FREIGESCHALTET war schon aktuell (Stand ' + datum + ').');
     process.exit(0);
