@@ -698,20 +698,29 @@ function baueWortKarte(w){
 
      Sie steht ÜBER dem Beispielsatz, nicht unter den Aktionen: was er selbst
      zu einem Wort herausgefunden hat, ist für ihn wichtiger als alles, was die
-     App dazu beisteuert. ⛔ Die Notiz erscheint nur, wenn eine da ist — ein
-     leerer Kasten an jeder der 4433 Karten wäre Lärm. Wer keine hat, kommt
-     über den Knopf bei den Aktionen hin.
+     App dazu beisteuert.
+
+     ⭐⭐ SIE STEHT IMMER DA, auch leer — Elias eine halbe Stunde später:
+     „und die notiz soll so in der infokartei liegen wie die vorschläge. nicht
+     so versteckt unten als einzelnen knopf". Mein erster Entwurf zeigte den
+     Kasten nur, wenn schon etwas drinstand, und ließ sonst nur einen Knopf
+     ganz unten bei „Bearbeiten"/„Löschen". Damit war das Feld genau für den
+     Fall unsichtbar, für den er es gebaut haben wollte: wenn ihm beim Ansehen
+     einer Karte etwas auffällt und er es aufschreiben will. Ein Kasten, den
+     man erst findet, nachdem man ihn benutzt hat, ist kein Feld, sondern ein
+     Versteck. Der leere Zustand sagt jetzt dasselbe wie bei der Eselsbrücke:
+     hier ist Platz, und er gehört dir.
 
      `arabischHervorheben` wie bei der Eselsbrücke: er wird arabische Wörter
      hineinschreiben, und die brauchen ihre eigene Schrift und Laufrichtung. */
   const eigeneNotiz = (typeof getNotiz === 'function') ? getNotiz(w.id) : '';
-  if (eigeneNotiz){
-    t.push(`<div class="wk-abschnitt wk-notiz">
-      <div class="wk-marke"><span>Deine Notiz</span>
-        <button class="wk-stift" data-wknotiz aria-label="Notiz ändern">${icon('note')}ändern</button></div>
-      <div class="de">${arabischHervorheben(eigeneNotiz)}</div>
-    </div>`);
-  }
+  t.push(`<div class="wk-abschnitt wk-notiz">
+    <div class="wk-marke"><span>Deine Notiz</span>
+      <button class="wk-stift" data-wknotiz aria-label="${eigeneNotiz ? 'Notiz ändern' : 'Notiz schreiben'}">${icon('note')}${eigeneNotiz ? 'ändern' : 'schreiben'}</button></div>
+    ${eigeneNotiz
+      ? `<div class="de">${arabischHervorheben(eigeneNotiz)}</div>`
+      : `<div class="de" style="color:var(--text-faint)">Noch keine — schreib dir auf, was dir an diesem Wort auffällt.</div>`}
+  </div>`);
 
   if (w.sentAr){
     /* ⭐ Sagen, woher der Satz kommt. Ein von der App gebauter Satz ist richtig,
@@ -724,13 +733,20 @@ function baueWortKarte(w){
     </div>`);
   }
 
-  if (w.quran){
-    t.push(`<div class="wk-abschnitt">
-      <div class="wk-marke"><span>Quran-Bezug</span><span>${escapeHtml(`${w.quran.surah} ${w.quran.ayah}`)}</span></div>
-      <div class="ar" lang="ar" dir="rtl">${quranMitTreffer(w.quran.ar, w)}</div>
-      <div class="de">${escapeHtml(w.quran.de || w.quran.note || '')}</div>
-    </div>`);
-  }
+  /* ⛔ HIER STAND DER QURAN-BEZUG. Elias am 20.08.2026: „koranbezug kannst du
+     überall weg machen aus den infokarten".
+
+     Der Grund liegt auf der Hand, sobald man seine Karte ansieht: bei لَحْمٌ
+     stand al-Wāqiʿah 56:21 — eine Sure, die er nicht auswendig kann. Auswendig
+     kann er die Fātiḥa, al-Mulk und die Suren 93–114; alles andere ist für ihn
+     ein fremder Vers, der Platz einnimmt und nichts stützt.
+     [[quranbezug_nur_auswendiges]]
+
+     ⚠️ NUR DIE ANZEIGE IN DER WORTKARTE ist weg. Das Feld `w.quran` bleibt in
+     den Daten, die Kategorie „Wörter mit Quran-Bezug" (Zeile 266) bleibt, und
+     auf der Lernkarte und im Satzmodus hängt es an seinem eigenen Schalter
+     `SETTINGS.showQuran`. Wollte er es auch dort weg, ist das ein zweiter
+     Handgriff — aber er hat ausdrücklich „aus den infokarten" gesagt. */
 
   /* Bearbeiten und Loeschen (Elias, 18.08.2026): „ich will auch die vokabeln
      bearbeiten können, alle. aber vorallem will ich auch die möglichkeit haben
@@ -759,7 +775,6 @@ function baueWortKarte(w){
   if (w.istPlural){
     t.push(`<div class="wk-aktionen">
       <button class="btn btn-secondary btn-klein" data-wkgrundwort="${escapeHtml(w.plVon)}">Zur Grundvokabel</button>
-      <button class="btn btn-secondary btn-klein" data-wknotiz>${icon('note')}${eigeneNotiz ? 'Notiz ändern' : 'Notiz'}</button>
     </div>
     <div class="wk-hinweis">Diese Karte entsteht aus dem Plural der Grundvokabel. Ändern lässt sich der Plural dort.</div>`);
     return t.join('');
@@ -797,7 +812,6 @@ function baueWortKarte(w){
 
   t.push(`<div class="wk-aktionen">
     ${wkFreiKnopf}
-    <button class="btn btn-secondary btn-klein" data-wknotiz>${icon('note')}${eigeneNotiz ? 'Notiz ändern' : 'Notiz'}</button>
     <button class="btn btn-secondary btn-klein" data-wkbearbeiten>${icon('note')}Bearbeiten</button>
     ${eigen ? `<button class="btn btn-secondary btn-klein wk-loeschen" data-wkloeschen>${icon('trash')}Löschen</button>` : ''}
     ${(!eigen && geaendert) ? `<button class="btn btn-secondary btn-klein" data-wkzuruecksetzen>Auf Original zurück</button>` : ''}
