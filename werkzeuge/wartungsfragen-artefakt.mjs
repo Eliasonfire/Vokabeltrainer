@@ -357,6 +357,32 @@ const tmp = ZIEL + '.neu';
 fs.writeFileSync(tmp, html, 'utf8');
 fs.renameSync(tmp, ZIEL);
 
+/* ---------- Zweite Fassung für die Veröffentlichung als Artefakt ----------
+
+   ⛔ Ein Artefakt bekommt seinen Dokumentrahmen von der Umgebung: <!doctype>,
+   <html>, <head> und <body> werden beim Veröffentlichen umgelegt. Sind sie im
+   Inhalt schon drin, stehen sie doppelt.
+
+   ⭐ Warum es überhaupt zwei Fassungen gibt: Die Datei oben öffnet Elias am PC
+   per Doppelklick — kein Server, kein Port, nichts, was erst laufen muss. Am
+   Handy geht das nicht, und genau dort will er die Fragen durchgehen. Dafür
+   die Fassung hier, die ich als Artefakt veröffentliche.
+
+   ⚠️ Die Routine kann das NICHT selbst: Artefakte veröffentlicht nur eine
+   Sitzung mit dem Artifact-Werkzeug. Der Bericht muss deshalb sagen, dass eine
+   neue Fassung bereitliegt — sonst sieht Elias am Handy den Stand von letzter
+   Woche und hält ihn für aktuell. [[alte_fassung_beim_nutzer]] */
+const ZIEL_ART = path.join(REPO, 'artefakte', 'wartungsfragen-artefakt.html');
+const nurInhalt = html
+  .replace(/^[\s\S]*?<title>/, '<title>')
+  .replace(/<\/head>\s*<body>/, '')
+  .replace(/<\/body>\s*<\/html>\s*$/, '')
+  .replace(/<meta[^>]*>\s*/g, '');
+const tmp2 = ZIEL_ART + '.neu';
+fs.writeFileSync(tmp2, nurInhalt, 'utf8');
+fs.renameSync(tmp2, ZIEL_ART);
+
 console.log('Seite gebaut: ' + path.relative(REPO, ZIEL));
+console.log('  zum Veröffentlichen: ' + path.relative(REPO, ZIEL_ART));
 console.log('  ' + fragen.length + ' Frage(n), ' + anzahl + ' Wörter.');
 fragen.forEach(f => console.log('    ' + f.feld.padEnd(9) + String(f.woerter.length).padStart(3) + '  ' + f.titel));
