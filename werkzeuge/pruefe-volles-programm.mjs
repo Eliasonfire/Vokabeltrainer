@@ -205,6 +205,26 @@ for (const m of MESSER){
    Aber ein Punkt, der GAR KEIN Werkzeug nennt, ist ein Versprechen ohne
    Deckung, und das findet sie. */
 const tabelle = [...quelle.matchAll(/^\| (A\d+) \| (.+?) \| (.+?) \| (.+?) \|$/gm)];
+
+/* ⭐ Je Punkt ein Kennzeichen, das im genannten Werkzeug vorkommen MUSS.
+   Am 20.08.2026 an allen zehn nachgemessen — und an der Gegenprobe geeicht:
+   `funktionenVon` kommt in pruefe-saetze.js NULL Mal vor, genau der Fall, der
+   monatelang unbemerkt blieb.
+
+   ⚠️ A3/A4/A5 stehen hier nicht: ihre Feldnamen (`gender`, `femSg`, `past` …)
+   deckt die Feld-Prüfung weiter unten bereits ab, und zwar genauer. */
+const KENNZEICHEN = {
+  A1:  'type',
+  A2:  'root',
+  A6:  'lternativ',
+  A7:  'WORTFELDER',
+  A8:  'funktionenVon',
+  A9:  'sentAr',
+  A10: 'matchText',
+  A11: 'quran',
+  A12: 'HARAKA',
+  A13: 'FREIGESCHALTET'
+};
 console.log('');
 console.log('  Nennt jeder der ' + tabelle.length + ' Punkte ein Werkzeug, und gibt es das?');
 const ohneWerkzeug = [];
@@ -230,9 +250,33 @@ for (const [, id, titel, wer] of tabelle){
   if (fehlend.length){
     console.log('    ⛔   ' + id.padEnd(4) + 'nennt ein Werkzeug, das es nicht gibt: ' + fehlend.join(', '));
     ohneWerkzeug.push(id);
-  } else {
-    console.log('    ok   ' + id.padEnd(4) + genannt.join(', '));
+    continue;
   }
+  /* ⛔ Existieren reicht NICHT. Beruehrt das Werkzeug den Punkt ueberhaupt? */
+  const kenn = KENNZEICHEN[id];
+  if (kenn){
+    const trifft = genannt.some(w => {
+      for (const k of [path.join(WURZEL, w), path.join(WURZEL, 'werkzeuge', w)]){
+        try {
+          /* Kommentare weg — eine Erwaehnung im Kommentar ist keine Messung.
+             [[stichworttreffer_im_kommentar]] */
+          const code = fs.readFileSync(k, 'utf8')
+            .replace(/\/\*[\s\S]*?\*\//g, ' ')
+            .split('\n').map(z => z.replace(/\/\/.*$/, '')).join('\n');
+          if (code.includes(kenn)) return true;
+        } catch { /* naechster Ort */ }
+      }
+      return false;
+    });
+    if (!trifft){
+      console.log('    ⛔   ' + id.padEnd(4) + 'nennt ' + genannt.join(', ')
+        + ' — aber dort kommt „' + kenn + '" nicht vor. Misst es den Punkt wirklich?');
+      ohneWerkzeug.push(id);
+      continue;
+    }
+  }
+  console.log('    ok   ' + id.padEnd(4) + genannt.join(', ')
+    + (kenn ? '   (prüft „' + kenn + '")' : ''));
 }
 if (ohneWerkzeug.length){
   fehler++;
