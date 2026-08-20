@@ -115,6 +115,50 @@ if (fs.existsSync(dataDir)){
   buecher.forEach(([slug, liste]) => quellen.push({ name: `data (${slug})`, woerter: liste }));
 }
 
+/* ⛔⛔ DIE ZWEI UEBRIGEN WEGE IN DEN BESTAND — bis zum 20.08.2026 fehlten sie.
+   Elias hat VIER: Kapitel (data/vokabeln-*.js) · einzeln freigeschaltet · eigene
+   Vokabel (data/eigene-woerter.json) · Fachbegriff (data/fachbegriffe.js).
+   Dieses Skript kannte die ersten beiden.
+
+   ⭐ Gemessen an dem Tag: 14 eigene Wörter + 15 Fachbegriffe = 29 Wörter,
+   davon **0** mit Bedeutungsfeld. Die Zahl „128 von 163“ (79 %) stammte damit
+   aus einer Menge, die diese 29 gar nicht enthielt — mit ihnen ist der Nenner
+   192. Eine Quote ohne ihren Nenner ist keine Messung.
+   [[trefferquote_ohne_preis]] [[werkzeug_misst_kleineren_bestand]]
+
+   ⭐ Dass Wortfelder dazugehören, ist nicht Auslegung: istBekannt() entscheidet
+   über VIER Dinge — Karten, Kategorien, WORTFELDER, Statistik.
+   [[app_auswahl_entscheidet]]
+
+   ⚠ Beide Dateien liegen unter data/ und sind per .gitignore lokal. Fehlt eine,
+   wird das GESAGT statt verschwiegen — ein stiller Ausfall sähe aus wie ein
+   grüner Lauf. [[ausfall_ist_unsichtbar_gebaut]] */
+try {
+  const ew = path.join(DIR, 'data', 'eigene-woerter.json');
+  if (fs.existsSync(ew)){
+    const d = JSON.parse(fs.readFileSync(ew, 'utf8'));
+    const liste = Array.isArray(d.woerter) ? d.woerter : [];
+    if (liste.length) quellen.push({ name: 'data/eigene-woerter.json (Weg 3)', woerter: liste });
+  } else {
+    errors.push('data/eigene-woerter.json fehlt — seine selbst angelegten Wörter sind UNGEMESSEN.');
+  }
+} catch (e) {
+  errors.push(`data/eigene-woerter.json nicht lesbar: ${e.message}`);
+}
+
+try {
+  const fb = path.join(DIR, 'data', 'fachbegriffe.js');
+  if (fs.existsSync(fb)){
+    const o = (new Function(fs.readFileSync(fb, 'utf8')
+      + ';return typeof FACHBEGRIFF_VOKABELN!=="undefined"?FACHBEGRIFF_VOKABELN:[];'))();
+    if (o && o.length) quellen.push({ name: 'data/fachbegriffe.js (Weg 4)', woerter: o });
+  } else {
+    errors.push('data/fachbegriffe.js fehlt — die 15 Fachbegriffe sind UNGEMESSEN.');
+  }
+} catch (e) {
+  errors.push(`data/fachbegriffe.js nicht lesbar: ${e.message}`);
+}
+
 /* ---------- --fenster: nur, was Elias JETZT erreichen kann ----------
 
    ⛔ OHNE DIESEN SCHALTER IST DIE ZAHL FUER EINEN WARTUNGSLAUF NUTZLOS.
