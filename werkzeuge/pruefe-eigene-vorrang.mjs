@@ -114,6 +114,10 @@ const WERKZEUGE = [
   { name: 'werkzeuge/vorrat.mjs',   argv: [p('werkzeuge/vorrat.mjs')] },
   { name: 'pruefe-funktionen.js',   argv: [p('pruefe-funktionen.js')] },
   { name: 'pruefe-taschkil.js',     argv: [p('pruefe-taschkil.js')] },
+  /* ⭐ Am 20.08.2026 als VIERTES Werkzeug derselben Klasse aufgefallen: es
+     meldete die fuenf neuen Eselsbruecken-Ids als „gehoert zu keiner
+     Vokabel", weil es vt_personalVocab nicht kannte. */
+  { name: 'pruefe-eselsbruecken.js', argv: [p('pruefe-eselsbruecken.js')] },
 ];
 
 function ausgabeVon(w){
