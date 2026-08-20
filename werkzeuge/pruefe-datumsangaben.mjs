@@ -269,6 +269,69 @@ for (const z of zeitRot) {
   for (const e of z.commits) console.log('       · ' + e.h + '  ' + e.d);
 }
 
+/* ⛔⛔ ZWEITE PRUEFUNG: DIE REIHENFOLGE — nachgeruestet am 20.08.2026.
+
+   Alles oben haengt an einem Commit. Von 211 datierten Bloecken nennen
+   **84 keinen** — fuer die ist jede Uhrzeit ungeprueft.
+
+   Diese Pruefung braucht keinen: die Notiz waechst durch Anhaengen, also
+   muss die Uhrzeit innerhalb eines Tages aufsteigen.
+
+   ⛔ WAS SIE NICHT KANN, im Stoertest gemessen: eine geschaetzte Zeit, die
+   zufaellig SPAETER liegt als der Block davor, faellt nicht auf. Genau so
+   ein Fall war der Anlass (23:27 statt 23:24, letzter Block der Datei) —
+   und meine erste Begruendung behauptete faelschlich, sie faenge ihn ab.
+   [[erfundene_begruendung_schliesst_den_fall]]
+
+   ⭐ Was sie WIRKLICH gefunden hat: den Bruch „22:2x" vor „22:1x" am
+   20.08.2026 — zwei geschaetzte Zeiten in der falschen Reihenfolge. Sechs
+   Ueberschriften stehen seitdem auf ihren Commit-Zeiten.
+
+   ⛔ ZWEI Einschraenkungen, beide gemessen und beide noetig:
+
+     a) Bloecke mit einer ZEITSPANNE im Kopf („02:29-02:42") sind
+        ausgenommen. Von 66 Bloecken mit Uhrzeit haben 25 eine Spanne, und
+        ALLE VIER verbliebenen Rueckwaertssprünge betreffen sie — es sind
+        nachtraeglich eingefuegte Verlaufsbloecke, kein Fehler. Ohne sie:
+        null Fehlalarme.
+
+     b) Ein Rueckwaertssprung von mehr als zwoelf Stunden ist ein
+        Tageswechsel (Nachtschicht) und kein Fehler.
+   [[kandidatenliste_ist_keine_fehlerliste]] [[uhrzeit_messen_nicht_schaetzen]] */
+const zeitBloecke = [];
+for (const b of bloecke){
+  const d = b.kopf.match(/(\d{2})\.(\d{2})\.(\d{4})/);
+  const u = b.kopf.match(/(?:^|[\s,~(])(\d{2}:\d{2}|\d{2}:\d[x])(?=\s|[-–—,)]|$)/);
+  if (!d || !u) continue;
+  /* Zwei Uhrzeiten im Kopf = Spanne. */
+  const spanne = (b.kopf.match(/\d{2}:\d[0-9x]/g) || []).length > 1;
+  zeitBloecke.push({ b, tag: d[0], zeit: u[1].replace(/x$/, '5'), spanne });
+}
+const jeTag = new Map();
+for (const x of zeitBloecke){
+  if (!jeTag.has(x.tag)) jeTag.set(x.tag, []);
+  jeTag.get(x.tag).push(x);
+}
+const rueckwaerts = [];
+for (const [, xs] of jeTag){
+  for (let i = 1; i < xs.length; i++){
+    if (xs[i].spanne || xs[i - 1].spanne) continue;
+    const d = minuten(xs[i].zeit) - minuten(xs[i - 1].zeit);
+    if (d < 0 && d > -12 * 60) rueckwaerts.push({ vor: xs[i - 1], jetzt: xs[i] });
+  }
+}
+console.log('');
+console.log('  Reihenfolge:         ' + zeitBloecke.filter(x => !x.spanne).length
+  + ' Bloecke ohne Zeitspanne   (mit Spanne, ausgenommen: ' + zeitBloecke.filter(x => x.spanne).length + ')');
+console.log('    ' + (rueckwaerts.length ? '❌' : '✅') + ' rueckwaerts:      ' + rueckwaerts.length);
+for (const r of rueckwaerts){
+  console.log('\n❌ Z' + r.jetzt.b.zeile + '  ' + r.jetzt.b.kopf.slice(3, 72));
+  console.log('     sagt ' + r.jetzt.zeit + ', der Block davor (Z' + r.vor.b.zeile + ') sagt ' + r.vor.zeit + '.');
+  console.log('     Die Notiz waechst durch Anhaengen — eine spaetere Zeile mit frueherer');
+  console.log('     Uhrzeit ist entweder nachgetragen oder geschaetzt. ⛔ Nicht raten:');
+  console.log('     git log --format=\'%h %cd %s\' --date=format:\'%H:%M\'');
+}
+
 if (!weicht) console.log('\n✅ Keine Überschrift widerspricht ihren Commits.');
 else console.log('\n⚠️  ' + weicht + ' Überschrift(en) prüfen — und NICHT blind umschreiben:'
   + '\n   Ein Kurzstand darf am Folgetag datiert sein („Stand von wann"), ein'
@@ -277,4 +340,4 @@ if (zeitRot.length) console.log('⚠️  ' + zeitRot.length + ' Uhrzeit(en) prü
   + '\n   erst den Block lesen, dann die Zahl korrigieren. Die Commit-Zeit ist'
   + '\n   die bessere Quelle als jede Erinnerung.');
 
-process.exit(weicht || zeitRot.length ? 1 : 0);
+process.exit(weicht || zeitRot.length || rueckwaerts.length ? 1 : 0);
