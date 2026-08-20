@@ -153,6 +153,7 @@ const AUSNAHMEN = [
        die einen Befund still schluckt, macht den Pruefer blind.
        [[pruefwerkzeug_mit_eingebauter_antwort]] */
     name: 'Alif at-tanwin nach Tanwin Fath (stumm, richtig so)',
+    keineFrage: true,   /* kein Mangel - zaehlt nicht als Frage an Elias */
     /* ⚠️ Zwischen Tanwin und Alif kann eine Schadda stehen: جِدًّا ist
        064b 0651 0627, also Tanwin, Schadda, Alif. Eine Bedingung, die nur
        wort[i-1] ansieht, greift dort NICHT — genau so ist die erste Fassung
@@ -205,6 +206,7 @@ const AUSNAHMEN = [
        keine Nennform, sondern eine echte Luecke. Die bleiben in der
        Hauptliste. */
     name: 'Zitierform eines Fachbegriffs (ohne Endung, richtig so)',
+    keineFrage: true,   /* kein Mangel - zaehlt nicht als Frage an Elias */
     trifft: (wort, i, eintrag) =>
       !!eintrag && typeof eintrag.id === 'string'
       && eintrag.id.indexOf('gram-') === 0
@@ -776,13 +778,30 @@ if (!befunde.length){
 
 /* Nach Gruppe zusammenfassen, damit ein systematischer Fall nicht als
    hundert Einzelbefunde erscheint. */
+/* ⛔ Nicht jede Gruppe ist eine FRAGE an Elias. Am 20.08.2026 stand auf
+   seiner Seite „35 Taschkīl-Fragen“ — darin 12, die ausdruecklich als
+   „richtig so“ gekennzeichnet sind. Eine Kandidatenliste, die als Fragenzahl
+   auftritt, macht ihm die Arbeit SCHWERER statt leichter — und genau das
+   widerspricht seinem Auftrag. [[kandidatenliste_ist_keine_fehlerliste]]
+
+   Deshalb tragen solche Gruppen in der Ausgabe das Praefix „[kein Mangel] “.
+   Ein PRAEFIX, weil wartet-auf-elias.mjs die Zeile zeichenweise zerlegt und
+   ein Praefix eindeutiger zu treffen ist als ein Wort mitten im Namen.
+
+   ⚠ Nicht jede Ausnahme mit nurMelden gehoert dazu: „Hamzat al-wasl am
+   Wortanfang ohne Kasra“ ist eine ECHTE Frage — Elias hat fuer اِبْنٌ
+   ausdruecklich MIT Kasra entschieden. Deshalb ein eigenes Merkmal
+   (keineFrage) statt nurMelden mitzubenutzen. */
+const KEINE_FRAGE = new Set(AUSNAHMEN.filter(a => a.keineFrage).map(a => a.name));
+const gruppenTitel = g => (KEINE_FRAGE.has(g) ? '[kein Mangel] ' : '') + g;
+
 const nachGruppe = {};
 befunde.forEach(b => (nachGruppe[b.gruppe] = nachGruppe[b.gruppe] || []).push(b));
 
 Object.entries(nachGruppe)
   .sort((a, b) => b[1].length - a[1].length)
   .forEach(([gruppe, liste]) => {
-    console.log(`\n=== ${gruppe}: ${liste.length} ===`);
+    console.log(`\n=== ${gruppenTitel(gruppe)}: ${liste.length} ===`);
     const zeigen = ALLE ? liste : liste.slice(0, 12);
     zeigen.forEach(b => console.log(
       `  ${b.wort.padEnd(18)} Stelle ${String(b.stelle).padStart(2)} ` +

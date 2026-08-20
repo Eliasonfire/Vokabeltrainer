@@ -124,7 +124,16 @@ function gruppenAus(text){
       const p = kern.lastIndexOf(": ");
       const zahl = p < 0 ? NaN : Number(kern.slice(p + 2));
       if (p > 0 && Number.isFinite(zahl)){
-        jetzt = { name: kern.slice(0, p), zahl, woerter: [] };
+        /* ⛔ pruefe-taschkil.js stellt Gruppen, die KEIN Mangel sind, das
+           Praefix „[kein Mangel] “ voran (Zitierform eines Fachbegriffs, Alif
+           at-tanwin). Am 20.08.2026 waren das 12 von 35 — und alle 35 standen
+           hier als „Taschkīl-Fragen“. Eine Kandidatenliste, die als Fragenzahl
+           auftritt, macht ihm die Arbeit SCHWERER statt leichter.
+           [[kandidatenliste_ist_keine_fehlerliste]] */
+        const roh0 = kern.slice(0, p);
+        const keinMangel = roh0.startsWith("[kein Mangel] ");
+        jetzt = { name: keinMangel ? roh0.slice(14) : roh0,
+                  zahl, keinMangel, woerter: [] };
         if (!jetzt.name.startsWith("Regeln mit")) raus.push(jetzt); else jetzt = null;
       }
       continue;
@@ -195,11 +204,30 @@ function gruppenAus(text){
 {
   const r = messen(path.join(REPO, 'pruefe-taschkil.js'));
   const m = /^(\d+) Befunde in (\d+)/m.exec(r.text);
-  if (m && Number(m[1]) > 0) posten.push({
+  /* ⭐ Die Summenzeile von pruefe-taschkil.js zaehlt ALLE Befunde, auch die
+     als „kein Mangel“ gekennzeichneten. Fuer diese Seite gilt nur, was
+     wirklich eine Frage an ihn ist — sonst waechst die Zahl, ohne dass mehr
+     zu tun waere. */
+  const alleGruppen = gruppenAus(r.text);
+  const echt = alleGruppen.filter(g => !g.keinMangel);
+  const echteBefunde = echt.reduce((n, g) => n + g.zahl, 0);
+  const ohneMangel = alleGruppen.filter(g => g.keinMangel).reduce((n, g) => n + g.zahl, 0);
+  /* ⚠ Auch die Woerterzahl neu bilden: m[2] zaehlt die Woerter ALLER
+     Gruppen. „23 Befunde in 29 Woertern“ waere eine Zahl aus zwei
+     verschiedenen Mengen. [[zahlen_ohne_beleg]] */
+  /* ⚠ pruefe-taschkil.js zeigt je Gruppe nur die ersten 12 Befunde (ohne
+     --alle). Solange keine Gruppe groesser ist, stimmt diese Zahl; danach
+     waere sie zu klein. Am 20.08.2026 ist die groesste Gruppe 11.
+     [[begrenzung_haelt_messung_nicht_stand]] */
+  const gekappt = echt.some(g => g.zahl > g.woerter.length && g.zahl > 12);
+  const echteWoerter = new Set(echt.flatMap(g => g.woerter)).size || Number(m[2]);
+  if (gekappt) console.log("  ⚠ Eine Taschkil-Gruppe ist groesser als 12 —"
+    + " die Woerterzahl unten ist dadurch zu klein. pruefe-taschkil.js --alle.");
+  if (m && echteBefunde > 0) posten.push({
     titel: 'Taschkīl-Fragen',
-    zahl: Number(m[1]),
+    zahl: echteBefunde,
     einheit: 'Befunde',
-    dazu: `in ${m[2]} Wörtern`,
+    dazu: `in ${echteWoerter} Wörtern` + (ohneMangel ? ` · ${ohneMangel} weitere sind kein Mangel` : ''),
     /* ⛔⛔ GEMESSEN, NICHT AUFGESCHRIEBEN.
 
        Bis zum 20.08.2026 standen hier drei feste Zeilen und die Angabe „drei
@@ -213,12 +241,12 @@ function gruppenAus(text){
        ist die ehrliche Antwort auf „wie viele Entscheidungen sind es?" —
        innerhalb einer Gruppe entscheidet er einmal für alle.
        [[zahlen_ohne_beleg]] */
-    aufwand: gruppenAus(r.text).length
-      ? `${gruppenAus(r.text).length} Entscheidung(en) — innerhalb einer Gruppe gilt sie für alle`
+    aufwand: echt.length
+      ? `${echt.length} Entscheidung(en) — innerhalb einer Gruppe gilt sie für alle`
       : 'nach Gruppen sortiert',
     warum: 'Eine fehlende Ḥaraka ändert die Aussprache und macht die Suche unbrauchbar.',
     wie: 'Je Gruppe eine Entscheidung. Was ich schon geklärt habe, steht in der To-Do unter „Wartet auf Elias".',
-    zeilen: gruppenAus(r.text).map(g => g.zahl + "× " + g.name + (g.woerter.length ? "  —  " + g.woerter.slice(0, 5).join(" · ") + (g.woerter.length > 5 ? " …" : "") : ""))
+    zeilen: alleGruppen.map(g => (g.keinMangel ? '✓ kein Mangel: ' : '') + g.zahl + "× " + g.name + (g.woerter.length ? "  —  " + g.woerter.slice(0, 5).join(" · ") + (g.woerter.length > 5 ? " …" : "") : ""))
   });
 }
 
