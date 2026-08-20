@@ -79,6 +79,41 @@ if (!Array.isArray(VOCAB_DATA) || VOCAB_DATA.length === 0){
   });
   note(`VOCAB_DATA: ${VOCAB_DATA.length} Einträge, ${seen.size} eindeutige IDs.`);
 
+  /* ⚠ SEINE EIGENEN WOERTER — der dritte Weg in den Bestand, seit 20.08.2026.
+     js/kern.js:245 schiebt vt_personalVocab in VOCAB_DATA; strukturell gelten
+     dort dieselben Regeln. Dieses Tor kannte sie nicht (grep auf
+     'eigene-woerter' in validate.js: 0 Treffer).
+
+     ⛔ ABSICHTLICH warn() statt fail(): validate.js ist das Tor VOR dem
+     Veroeffentlichen, und data/ wird gar nicht ausgeliefert (.gitignore).
+     Ein Fehler in einer nicht ausgelieferten Datei darf die Auslieferung von
+     etwas Unbeteiligtem nicht blockieren. Sichtbar sein muss er trotzdem.
+
+     ⭐ Am Tag des Einbaus waren alle vier Pruefungen sauber (0 ID-Dubletten,
+     0 ungueltige chapter, 0 ohne id, 0 pl-ohne-sg). Die Wirkung ist heute
+     NULL — das steht hier, damit spaeter niemand glaubt, hier sei ein Fehler
+     behoben worden. [[zahlen_ohne_beleg]] */
+  {
+    const ew = path.join(DIR, 'data', 'eigene-woerter.json');
+    if (fs.existsSync(ew)){
+      try {
+        const liste = (JSON.parse(fs.readFileSync(ew, 'utf8')).woerter) || [];
+        let n = 0;
+        liste.forEach(w => {
+          if (!w || w.id == null || String(w.id) === ''){ warn('eigene-woerter.json: Eintrag ohne id.'); n++; return; }
+          if (seen.has(w.id)){ warn(`eigene-woerter.json: id "${w.id}" gibt es schon in VOCAB_DATA — in der App gewinnt eine von beiden still.`); n++; }
+          const ch = w.chapter;
+          if (!(ch === 'personal' || (Number.isInteger(ch) && ch >= 1 && ch <= 24))){
+            warn(`eigene-woerter.json (id ${w.id}): ungueltiges chapter "${ch}".`); n++; }
+          if (w.pl && !w.sg){ warn(`eigene-woerter.json (id ${w.id}): pl ohne sg.`); n++; }
+        });
+        note(`data/eigene-woerter.json: ${liste.length} eigene Woerter geprueft, ${n} Hinweis(e).`);
+      } catch (e) { warn('data/eigene-woerter.json nicht lesbar: ' + e.message); }
+    } else {
+      note('data/eigene-woerter.json fehlt — seine eigenen Woerter sind UNGEPRUEFT (auf einem frisch geklonten Stand normal).');
+    }
+  }
+
   /* ---------- 1b. Singular- und Pluralfeld ----------
      Am 29.07.26 nachgemessen, bevor diese Pruefung entstand: `sg` ist in ALLEN
      111 gefuellten Faellen wortgleich mit `ar` - das Feld traegt nirgends eine
