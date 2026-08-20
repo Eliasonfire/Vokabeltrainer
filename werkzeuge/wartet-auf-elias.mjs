@@ -72,12 +72,17 @@ const posten = [];
   const fragen = (daten && daten.fragen) || [];
   const anzahl = fragen.reduce((s, f) => s + f.woerter.length, 0);
   const woerter = new Set(fragen.flatMap(f => f.woerter.map(w => String(w.id)))).size;
+  const belegt = fragen.reduce((s, f) => s + f.woerter.filter(w => w.beleg).length, 0);
   if (anzahl) posten.push({
     titel: 'Fehlende Angaben an Vokabeln',
     zahl: anzahl,
     einheit: anzahl === 1 ? 'Angabe' : 'Angaben',
     dazu: `an ${woerter} Wörtern`,
-    aufwand: `${fragen.length} Durchgänge — einer je Frage, nicht je Wort`,
+    /* ⭐ Die Zahl der BELEGTEN Fragen gehoert dazu — sonst schaetzt die
+       Uebersicht den Aufwand zu hoch ein. Bei einer belegten Frage steht die
+       Antwort schon auf der Seite; es bleibt Hinsehen statt Tippen. */
+    aufwand: `${fragen.length} Durchgänge — einer je Frage, nicht je Wort`
+      + (belegt ? `; bei ${belegt} steht die Antwort schon auf der Seite` : ''),
     warum: 'Ohne sie fallen Übungen aus und die Satzanalyse liest den Satz anders.',
     wie: 'Auf der Fragenseite antippen, unten den Text kopieren, in den Chat schicken.',
     seite: 'https://claude.ai/code/artifact/724ee9bc-adb7-4dcd-ad75-6a56a552adbd',
