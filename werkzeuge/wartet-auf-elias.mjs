@@ -105,9 +105,42 @@ const posten = [];
    Woertern" gehoert NICHT dazu — sie zaehlt Regeltexte, nicht Vokabeln, und
    steht auch nicht in der Summe „14 Befunde". */
 function gruppenAus(text){
-  return [...String(text).matchAll(/^=== (.+?): (\d+) ===$/gm)]
-    .map(m => ({ name: m[1], zahl: Number(m[2]) }))
-    .filter(g => !/^Regeln mit/.test(g.name));
+  /* ⛔ Die Gruppe allein („7× Haraka fehlt") sagt ihm nicht, WELCHE Woerter
+     betroffen sind — er muesste dafuer in die 7.000-Zeilen-To-Do. Eine Frage
+     ohne Anschauung ist keine; dieselbe Luecke wie beim Eselsbruecken-Posten.
+     pruefe-taschkil.js schreibt die Woerter ohnehin unter jede Gruppe, als
+     erstes Feld der eingerueckten Zeilen. */
+  const zeilen = String(text).split(String.fromCharCode(10));
+  const raus = [];
+  let jetzt = null;
+  for (const roh of zeilen){
+    const z = roh.replace(String.fromCharCode(13), "");
+    /* ⛔ Kein Regex — zum fuenften Mal an diesem Tag haben die Backslashes
+       den Weg durch das schreibende Skript nicht ueberlebt: aus (d+) wurde
+       (d+), das trifft nichts, und der Posten stand STILL ohne Zeilen da.
+       Zeichenweise zerlegen haelt. [[python_backslash_b_wird_backspace]] */
+    if (z.startsWith("=== ") && z.endsWith(" ===")){
+      const kern = z.slice(4, -4);
+      const p = kern.lastIndexOf(": ");
+      const zahl = p < 0 ? NaN : Number(kern.slice(p + 2));
+      if (p > 0 && Number.isFinite(zahl)){
+        jetzt = { name: kern.slice(0, p), zahl, woerter: [] };
+        if (!jetzt.name.startsWith("Regeln mit")) raus.push(jetzt); else jetzt = null;
+      }
+      continue;
+    }
+    if (!jetzt) continue;
+    if (!z.startsWith("  ") || !z.trim()) continue;
+    const w = z.trim().split(" ")[0].split(String.fromCharCode(9))[0];
+    /* ⛔ Nur ARABISCHE Woerter. Unter einer Gruppe stehen auch Erklaerzeilen;
+       ihr erstes Wort ist deutsch und landete sonst in der Liste — gemessen:
+       "2× Endung fehlt — أَلْبَان · لِمَن · dem". Ein sichtbarer Unsinn ist ein
+       Geschenk; der naechste waere es nicht. [[unmoegliche_zahl_ist_ein_geschenk]] */
+    const c = w ? w.charCodeAt(0) : 0;
+    if (c < 0x0600 || c > 0x06FF) continue;
+    if (w && w !== "Stelle" && !jetzt.woerter.includes(w)) jetzt.woerter.push(w);
+  }
+  return raus;
 }
 
 /* A2) Wörter ohne Eselsbrücke.
@@ -185,7 +218,7 @@ function gruppenAus(text){
       : 'nach Gruppen sortiert',
     warum: 'Eine fehlende Ḥaraka ändert die Aussprache und macht die Suche unbrauchbar.',
     wie: 'Je Gruppe eine Entscheidung. Was ich schon geklärt habe, steht in der To-Do unter „Wartet auf Elias".',
-    zeilen: gruppenAus(r.text).map(g => `${g.zahl}× ${g.name}`)
+    zeilen: gruppenAus(r.text).map(g => g.zahl + "× " + g.name + (g.woerter.length ? "  —  " + g.woerter.slice(0, 5).join(" · ") + (g.woerter.length > 5 ? " …" : "") : ""))
   });
 }
 
