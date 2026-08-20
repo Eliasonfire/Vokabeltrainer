@@ -1119,11 +1119,86 @@ if (ARG.includes('--offene-fragen')){
     masdar: { titel: 'Wie lautet das Verbalnomen (مَصْدَر)?', hilfe: '', nein: 'gibt es nicht' }
   };
 
+  /* ⭐⭐ DIE ANTWORT STEHT OFT SCHON IM BESTAND — nur in einem anderen Buch.
+
+     Am 20.08.2026 gemessen: von 70 offenen Fragen waren **14** so belegbar.
+     خَرَجَ etwa fehlte in seinen selbst angelegten Woertern die Wurzel — in
+     bayna-yadayk-2 steht dasselbe Wort mit `root: "خ ر ج"` und `type: "verb"`.
+
+     ⛔ Das ist ein BELEG, kein Vorschlag. Er entscheidet weiter; die Seite
+     zeigt ihm nur, was der Bestand zu demselben Wort schon sagt, samt
+     Herkunft. Bei 25 Wurzelfragen ist das der Unterschied zwischen Tippen
+     und Hinsehen.
+
+     ⚠️ Zwei Bedingungen, und beide sind noetig:
+       1. VOLLE Schreibung, nur die Zitier-Endung darf abweichen. Ein
+          Skelettvergleich haette مِنْ auf مَنْ geworfen.
+          [[skelettvergleich_wirft_information_weg]]
+       2. Die deutsche Bedeutung muss zusammenpassen. Ohne diese zweite
+          Bedingung belegt ein zufaellig gleich geschriebenes Wort etwas
+          Falsches — geprueft an allen acht Treffern, alle stimmten ueberein.
+
+     ⛔ NICHT ueber die Wurzel raten: der erste Entwurf suchte Woerter, deren
+     Radikale in der richtigen Reihenfolge vorkommen, und lieferte
+     „الإِسْمُ → أ ل م (wie أَلْمَانِيَا)" und „إِثْنَانِ → أ ن ن". Beides falsch;
+     richtig waeren س م و und ث ن ي. Zwei von acht Treffern waren Unsinn.
+     [[kandidatenliste_ist_keine_fehlerliste]] */
+  const nfcAr = (s) => String(s == null ? '' : s).normalize('NFC')
+    .replace(/[\u064B-\u064F\u0652]$/, '').trim();
+  const nfcDe = (s) => String(s == null ? '' : s).toLowerCase()
+    .replace(/[^a-zäöüß ]/g, ' ').replace(/\s+/g, ' ').trim();
+
+  /* ⛔ ALLE Buchdateien laden, nicht nur die des Fensters. Beim ersten Lauf
+     kamen 0 Belege heraus, weil kiste.window.VOKABELN nur EINEN Schluessel
+     trug: geladen wird sonst nur, wofuer eine Lernstand-Angabe existiert
+     (469 statt 4629 Woerter). Genau die Buecher fehlten, aus denen die
+     Belege stammen — bayna-yadayk, madina-2/3, quran.
+
+     ⭐ Fuer einen BELEG ist der ganze Bestand richtig: dass ein Wort in einem
+     Buch steht, das er noch nicht lernt, macht die dort hinterlegte Wurzel
+     nicht falsch. */
+  const BESTAND = [];
+  VOCAB.forEach(w => BESTAND.push(w));
+  BUECHER.forEach(b => {
+    if (!(kiste.window.VOKABELN && kiste.window.VOKABELN[b.slug])) laden(b.datei, false);
+    ((kiste.window.VOKABELN && kiste.window.VOKABELN[b.slug]) || [])
+      .forEach(w => BESTAND.push({ ...w, book: b.slug }));
+  });
+
+  function belegSuchen(w, feld){
+    const ziel = nfcAr(w.ar);
+    if (!ziel) return null;
+    const meins = nfcDe(w.de);
+    for (const x of BESTAND){
+      if (String(x.id) === String(w.id)) continue;
+      if (nfcAr(x.ar) !== ziel) continue;
+      const wert = x[feld] && String(x[feld]).trim();
+      if (!wert) continue;
+      /* Bedeutungsprobe: eines der beiden muss im anderen vorkommen. */
+      const seins = nfcDe(x.de);
+      if (!meins || !seins) continue;
+      /* ⭐ Wortweise, mit Mindestlaenge 4. Die erste Fassung verlangte, dass
+         eine Bedeutung die andere ENTHAELT — daran scheiterte خَرَجَ:
+         „Herausgehen/ herauskommen" gegen „hinausgehen / herauskommen".
+         Gemessen, was die Lockerung zusaetzlich findet: genau ZWEI Treffer,
+         beide خَرَجَ, beide richtig — und kein einziger falscher.
+         Die Mindestlaenge haelt „der", „ein", „und" heraus, die sonst
+         beliebige Woerter verbaenden. [[entwurf_zu_grob]] */
+      const wv = (s) => s.split(' ').filter(x => x.length >= 4);
+      const meineW = new Set(wv(meins));
+      if (!(seins.includes(meins) || meins.includes(seins)
+            || wv(seins).some(x => meineW.has(x)))) continue;
+      return { wert, woher: x.book || x.chapter || 'Bestand', de: String(x.de || '') };
+    }
+    return null;
+  }
+
   const jeFeldWoerter = {};
   offen.forEach(w => (w.fehltFelder || []).forEach(f => {
     (jeFeldWoerter[f] = jeFeldWoerter[f] || []).push({
       id: w.id, ar: w.ar, de: String(w.de || '').replace(/\s+/g, ' '),
-      quelle: w.slug, kapitel: w.kapitel, type: w.type
+      quelle: w.slug, kapitel: w.kapitel, type: w.type,
+      beleg: belegSuchen(w, f)
     });
   }));
 

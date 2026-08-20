@@ -127,9 +127,28 @@ function abschnitt(f, nr){
           ? `<button type="button" data-wert="__falschertyp__" class="falschertyp">ist kein ${esc(SETZT_VORAUS[f.feld][1])}</button>`
           : '') +
         `<button type="button" data-wert="" class="spaeter">später</button></div>`;
+    /* ⭐⭐ DER BELEG AUS DEM BESTAND — er spart die Hälfte der Arbeit.
+
+       `vorrat.mjs` sucht zu jeder Frage, ob DASSELBE Wort anderswo im Bestand
+       die Antwort schon trägt (gleiche Schreibung UND passende Bedeutung).
+       Am 20.08.2026 traf das auf 12 von 70 Fragen zu.
+
+       ⛔ Es ist ein BELEG, kein Vorschlag, und er wird bewusst NICHT
+       vorausgewählt: ein vorausgewählter Knopf lädt zum Durchklicken ein, und
+       dann steht am Ende eine Angabe da, die niemand geprüft hat. Sichtbar
+       machen, entscheiden lassen. */
+    const beleg = w.beleg
+      /* ⛔ KEINE Mehrfach-Leerzeichen im Template — sie landen im SICHTBAREN
+         Text: „schon mit␣␣␣␣␣␣ل ح م". Sie waren hier aus der Einrueckung des
+         erzeugenden Skripts hereingeraten. Gegenprobe auf der fertigen Seite:
+         /S {2,}S/ [[nutztext_nie_in_shell_strings]] */
+      ? `<div class="beleg">Im Bestand steht dasselbe Wort schon mit <b>${esc(w.beleg.wert)}</b> — <i>${esc(w.beleg.woher)}</i>${w.beleg.de ? ', „' + esc(w.beleg.de) + '"' : ''}</div>`
+      : '';
+
     return `<div class="wort" data-feld="${esc(f.feld)}" data-id="${esc(w.id)}">
   <div class="kopf"><span class="ar">${esc(w.ar)}</span><span class="de">${esc(w.de)}</span></div>
   <div class="herkunft">${esc(w.quelle)}${w.kapitel ? ' · Kapitel ' + w.kapitel : ''}${w.type ? ' · ' + esc(w.type) : ''}</div>
+  ${beleg}
   ${wahl}
 </div>`;
   }).join('\n');
@@ -222,6 +241,13 @@ h2{display:flex;align-items:baseline;gap:var(--sp2);flex-wrap:wrap;
     word-break:normal;overflow-wrap:normal}
 .de{color:var(--leise);font-size:.95rem}
 .herkunft{font-family:var(--mono);font-size:.72rem;color:var(--still);margin-bottom:var(--sp2)}
+/* Der Beleg aus dem Bestand. Bewusst ruhig gehalten und NICHT wie ein
+   gewaehlter Knopf aussehend — er ist ein Hinweis, keine Antwort. */
+.beleg{font-size:.8rem;color:var(--text);background:var(--hoch);
+       border-left:3px solid var(--still);border-radius:0 6px 6px 0;
+       padding:6px 10px;margin:0 0 var(--sp2)}
+.beleg b{font-family:var(--mono);font-size:.82rem}
+.beleg i{font-style:normal;color:var(--still)}
 .wahl{display:flex;gap:var(--sp1);flex-wrap:wrap;align-items:center}
 .wahl button{font:inherit;font-size:.85rem;color:var(--text);background:var(--hoch);
              border:1px solid var(--rand);border-radius:99px;padding:7px 14px;cursor:pointer}
