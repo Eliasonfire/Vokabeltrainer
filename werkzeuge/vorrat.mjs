@@ -859,6 +859,26 @@ console.log('    fehlende Beispielsaetze:' + fehlendeSatz);
 console.log('    fehlende Markierungen:  ' + fehlendeMark + (fehlendeMark ? '   ⛔ diese Saetze stehen in KEINEM Thema' : ''));
 console.log('    ohne Wortart-Kategorie: ' + fehlendeKat
   + '   (das Bedeutungsfeld misst pruefe-wortfelder.js, nicht dieses Werkzeug)');
+
+/* ⛔ Eine Zahl ohne die Namen ist keine Auskunft, sondern eine Behauptung —
+   man kann sie weder nachpruefen noch beheben. Am 20.08.2026 stand hier
+   „fehlende Markierungen: 2" ohne jeden Hinweis, WELCHE; der Versuch, sie mit
+   einem eigenen Skript zu finden, lieferte ein falsch nachgebautes Fenster
+   (413 statt 189 Woerter). [[namenssuche_trifft_die_welt]] */
+function nenneOffene(bedingung, ueberschrift){
+  const liste = offen.filter(bedingung);
+  if (!liste.length) return;
+  console.log('      ' + ueberschrift);
+  liste.slice(0, 12).forEach(w =>
+    /* ⚠️ Eigene Vokabeln tragen eine UUID (36 Zeichen) — mit padEnd(10) läuft
+       sie in die arabische Spalte und macht die Zeile unlesbar. Die ersten
+       zehn Zeichen reichen zum Wiederfinden. */
+    console.log('        ' + String(w.id).slice(0, 10).padEnd(12) + String(w.ar || '').padEnd(16)
+      + (w.de || '').slice(0, 28) + '   ' + w.slug + ' K' + w.kapitel));
+  if (liste.length > 12) console.log('        … und ' + (liste.length - 12) + ' weitere');
+}
+nenneOffene(w => w.fehltMarkierung, 'Diese Saetze stehen in keinem Thema:');
+nenneOffene(w => w.fehltKategorie,  'Diese Woerter haben keine Wortart-Kategorie:');
 if (fehlendeFelder){
   console.log('');
   console.log('  Felder des vollen Programms, die fehlen (ohne die erklaerten Faelle');
