@@ -331,7 +331,15 @@ const NICHT_VERB = ['صفر', 'عمي', 'جر', 'ل', 'فوق',
      هَذَا نَهْرٌ كَبِيرٌ wurde نَهْرٌ mit geladenem madina-3 zum فِعْل und
      كَبِيرٌ gleich mit zum فَاعِل — aus einem Nominalsatz wurde ein
      Verbalsatz. Der Fluss ist ein Nomen. */
-  'نهر'];
+  'نهر',
+  /* ⛔ 20.08.2026, der DRITTE Fall an einem Tag — nach هم und نهر jetzt فاعل.
+     Das Muster ist immer dasselbe: ein Nomen, dessen Konsonantengeruest mit
+     einer Verbwurzel zusammenfaellt (hier فَعَلَ, 'tun'). In
+     الطَّالِبُ فَاعِلٌ wurde فَاعِلٌ zum فِعْل.
+     ⚠️ Ausgerechnet bei diesem Wort ist die Verwechslung besonders schaedlich:
+     فَاعِل IST der Fachbegriff fuer den Taeter eines Verbs. Wer ihn als Verb
+     gelesen bekommt, lernt den Begriff falsch, den er gerade lernen will. */
+  'فاعل'];
 /* Adjektive, die in den Beispielsaetzen vorkommen und deren Wortart nicht
    verlaesslich aus dem Lexikon kommt: كسلان und مجرور fehlen im kleinen
    Bestand ganz, حار steht im grossen ZWEIMAL (adjective und verb حَارَ) und

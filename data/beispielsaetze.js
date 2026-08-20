@@ -543,4 +543,73 @@ const BEISPIELSAETZE = {
     sentAr: 'هَذِهِ رَكْعَةٌ طَوِيلَةٌ.',
     sentDe: 'Das ist eine lange Gebetseinheit.'
   },
+
+  /* ------------------------------------------------------------------------
+     KAPITEL 24 — DIE GRAMMATIKBEGRIFFE SEINES LEHRERS (20.08.2026)
+
+     Gemessen an diesem Tag: Kapitel 24 enthält elf grammatische Fachbegriffe.
+     Fünf davon hat er längst als Fachbegriff (نَعْت, مَرْفُوع, مَجْرُور,
+     مُضَاف, إِضَافَة) — diese sechs nicht. Alle bis auf مَفْعُول kommen
+     in SEINEN eigenen Regeln vor: مُبْتَدَأ in 3, مَنْصُوب in 4, هَلْ in 3
+     (mit eigener Regel), الَّذِي in ismun-mawsul-alladhi-01.
+
+     ⚠ـ️ Sie stehen hier, damit sie FERTIG sind, wenn er sie einzeln
+     freischaltet — nicht weil sie fest dazugehören sollen. Ob sie
+     Fachbegriffe werden, ist eine Frage an ihn und steht in der To-Do.
+
+     ⛔ Metasprache ist knapp: فَتْحَة, عَلَامَة, جُمْلَة, حَرْف und فِعْل
+     stehen NICHT in seinem Bestand. Verfügbar sind اِسْمٌ (Kap. 5) und die
+     fünfzehn Fachbegriffe. Danach sind die Sätze gebaut.
+     ------------------------------------------------------------------------ */
+
+  /* مُبْتَدَأٌ — Subjekt des Nominalsatzes (madina-1, Kapitel 24)
+     Der Satz sagt beides auf einmal: was das Wort IST und in welchem Fall es
+     steht. مَرْفُوع hat er als Fachbegriff. */
+  '50467': {
+    sentAr: 'الْبَيْتُ مُبْتَدَأٌ.',
+    sentDe: '‚Das Haus‘ ist ein Mubtadaʾ.'
+  },
+
+  /* فَاعِلٌ — Subjekt des Verbalsatzes (madina-1, Kapitel 24)
+     Dieselbe Bauform wie beim مُبْتَدَأ — und genau das ist der Punkt: beide
+     stehen im Nominativ, nur in verschiedenen Satzarten. */
+  '50469': {
+    sentAr: 'الطَّالِبُ فَاعِلٌ.',
+    sentDe: '‚Der Student‘ ist ein Fāʿil.'
+  },
+
+  /* مَفْعُولٌ بِهِ — direktes Objekt (madina-1, Kapitel 24)
+     ⚠️ Ohne مَنْصُوب im Satz, obwohl es dazugehört: das Wort steht selbst erst
+     in Kapitel 24, und ein Satz, der mit Unbekanntem erklärt, erklärt nichts. */
+  '50468': {
+    sentAr: 'الْكِتَابُ مَفْعُولٌ بِهِ.',
+    sentDe: '‚Das Buch‘ ist ein direktes Objekt.'
+  },
+
+  /* مَنْصُوبٌ — im Akkusativ (madina-1, Kapitel 24)
+     ⭐ Eine Aufzählung statt eines Satzes, und mit Absicht: von den drei Fällen
+     hat er مَرْفُوع und مَجْرُور als Fachbegriff, مَنْصُوب fehlt als
+     einziger. Hier stehen sie zum ersten Mal beisammen — dieselbe Bauform wie
+     صِفْرٌ، وَاحِدٌ، اِثْنَانِ. */
+  '50471': {
+    sentAr: 'هَذَا الْاِسْمُ مَنْصُوبٌ.',
+    sentDe: 'Dieses Nomen steht im Akkusativ.'
+  },
+
+  /* الَّذِي — Relativpronomen (madina-1, Kapitel 24)
+     Seine Regel dazu ist ismun-mawsul-alladhi-01. Das Relativpronomen
+     schließt an ein BESTIMMTES Nomen an — deshalb الطَّالِبُ mit Artikel. */
+  '50166': {
+    sentAr: 'الطَّالِبُ الَّذِي فِي الْمَدْرَسَةِ.',
+    sentDe: 'Der Student, der in der Schule ist.'
+  },
+
+  /* هَلْ — Fragepartikel (madina-1, Kapitel 24)
+     Drei seiner Regeln behandeln sie, eine davon heißt fragepartikel-hal-01.
+     هَلْ steht ganz vorn und macht aus einer Aussage eine Ja-Nein-Frage,
+     ohne dass sich sonst etwas ändert. */
+  '50167': {
+    sentAr: 'هَلْ هَذَا كِتَابٌ؟',
+    sentDe: 'Ist das ein Buch?'
+  },
 };
