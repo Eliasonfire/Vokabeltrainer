@@ -282,6 +282,8 @@ if (!fs.existsSync(PROMPT)){
         "prueft, ob eine Artefaktseite gesperrtes Kursmaterial traegt - eine Frage an die Veroeffentlichung",
       "werkzeuge/pruefe-erreichbarkeit-eichung.mjs":
         "eicht pruefe-erreichbarkeit.js an drei Faellen - sie prueft den PRUEFER, nicht die Daten",
+      "werkzeuge/pruefe-schreibpfade.mjs":
+        "prueft, ob ein Werkzeug Lerninhalt ohne .neu-Zwischenschritt ueberschreibt - eine Frage an den CODE, nicht an eine Vokabel",
     };
     const pruefend = gefordert.filter(w =>
       (w.includes("pruefe-") || w === "validate.js" || w === "werkzeuge/vorrat.mjs")
