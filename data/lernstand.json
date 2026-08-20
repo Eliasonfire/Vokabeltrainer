@@ -1,10 +1,10 @@
 {
   "_hinweis": "angabe = was Elias selbst gesagt hat, MASSGEBLICH fuer das Fenster. gemessen = abgeleitet aus get_learning_progress, nur Gegenprobe — die Zahl misst, womit abgefragt wurde, nicht wo er im Kurs steht.",
   "angabe": {
-    "madina-1": 11
+    "madina-1": 12
   },
-  "angabeVom": "19.08.2026",
-  "_angabeWortlaut": "Elias am 19.08.2026: \"nein, ich bin bei madina-1 kapitel 11, madina-2 ist nur freigeschaltet\"",
+  "angabeVom": "20.08.2026",
+  "_angabeWortlaut": "Elias am 20.08.2026, 01:5x: \"ich habe übrigens kapitel 12 freigeschaltet\" — davor am 19.08.: \"nein, ich bin bei madina-1 kapitel 11, madina-2 ist nur freigeschaltet\". ⚠️ Er unterscheidet selbst zwischen \"ich bin bei\" und \"nur freigeschaltet\" (so gesagt über madina-2, das deshalb gar nicht in `angabe` steht). Hier meldet er den Fortschritt aktiv und im Zusammenhang mit der App, also zählt es als Erweiterung des Fensters auf 12.",
   "gemessenAm": "2026-08-19",
   "gemessen": {
     "madina-1": {

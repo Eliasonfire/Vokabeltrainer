@@ -552,9 +552,19 @@ function baueWortKarte(w){
   const t = [];
   const box = PROGRESS[w.id] ? PROGRESS[w.id].box : 1;
 
+  /* ⭐ Einzeln freigeschaltet? — Elias am 20.08.2026. Beide Angaben werden
+     gebraucht und sind NICHT dasselbe: `istBekannt` sagt bereits Ja, sobald
+     ein Wort einzeln frei ist. Wer nur danach frägt, könnte den Rückweg nie
+     anbieten, weil das Wort dann wie jedes andere aussieht. */
+  const wkEinzeln   = (typeof istEinzelnFrei === 'function') && istEinzelnFrei(w);
+  const wkNochNicht = (typeof istBekannt === 'function') && !istBekannt(w);
+  const wkEigen     = w.chapter === 'personal' || w.chapter === 'grammar';
+
   t.push(`<div class="wk-kopfzeile">
     <div class="wk-marken">
       <span class="chip chip-chapter">${escapeHtml(kapitelBeschriftung(w))}</span>
+      ${wkEinzeln ? `<span class="chip chip-einzeln">einzeln freigeschaltet</span>` : ''}
+      ${wkNochNicht ? `<span class="chip chip-fremd">noch nicht dran</span>` : ''}
       <span class="wl-box">Box ${box}</span>
     </div>
     <button class="icon-btn" id="btnCloseWortKarte" aria-label="Schließen"><svg class="ic"><use href="#ic-close"/></svg></button>
@@ -666,11 +676,33 @@ function baueWortKarte(w){
     return t.join('');
   }
 
+  /* ⭐⭐ EINZELN FREISCHALTEN — Elias am 20.08.2026: „teilweise benutzt mein
+     lehrer begriffe die wir in späteren kapiteln finden … ich möchte aber nur
+     die vereinzelnen wörter haben ohne den rest des kapitels zu haben."
+
+     Der Knopf steht in der Wortkarte, weil die Suche schon über den GANZEN
+     Bestand geht — auch über zugesperrte Kapitel. Wer نَعْت sucht, findet es
+     heute schon; bis jetzt konnte er es nur ansehen und nicht mitnehmen.
+
+     ⛔ Nicht bei eigenen Vokabeln und Fachbegriffen: die sind ohnehin immer
+     bekannt, ein Knopf dort wäre eine Scheinfunktion. */
+  const wkFreiKnopf = wkEigen ? '' : (wkEinzeln
+    ? `<button class="btn btn-secondary btn-klein" data-wkeinzeln="0">Freischaltung zurücknehmen</button>`
+    : (wkNochNicht ? `<button class="btn btn-primary btn-klein" data-wkeinzeln="1">${icon('check')}Nur dieses Wort freischalten</button>` : ''));
+
   t.push(`<div class="wk-aktionen">
+    ${wkFreiKnopf}
     <button class="btn btn-secondary btn-klein" data-wkbearbeiten>${icon('note')}Bearbeiten</button>
     ${eigen ? `<button class="btn btn-secondary btn-klein wk-loeschen" data-wkloeschen>${icon('trash')}Löschen</button>` : ''}
     ${(!eigen && geaendert) ? `<button class="btn btn-secondary btn-klein" data-wkzuruecksetzen>Auf Original zurück</button>` : ''}
   </div>`);
+
+  /* Sagen, was der Knopf tut — und vor allem, was er NICHT tut. Ohne den Satz
+     läge der Verdacht nahe, damit werde das ganze Kapitel aufgemacht. */
+  if (wkNochNicht && !wkEigen)
+    t.push(`<div class="wk-hinweis">Steht in einem Kapitel, das du noch nicht hast. Freischalten holt <b>nur dieses eine Wort</b> in deine Karteikarten, Kategorien, Sätze und Statistik — der Rest des Kapitels bleibt zu.</div>`);
+  else if (wkEinzeln)
+    t.push(`<div class="wk-hinweis">Dieses Wort hast du einzeln freigeschaltet, obwohl sein Kapitel noch zu ist.</div>`);
 
   return t.join('');
 }
@@ -761,6 +793,26 @@ document.getElementById('wortKarte').addEventListener('click', (e)=>{
     return;
   }
 
+  const einzelnKnopf = e.target.closest('[data-wkeinzeln]');
+  if (einzelnKnopf && WK_WORT){
+    const an = einzelnKnopf.getAttribute('data-wkeinzeln') === '1';
+    setzeEinzelnFrei(WK_WORT.id, an);
+    karte.innerHTML = baueWortKarte(WK_WORT);
+    karte.scrollTop = 0;
+    /* ⚠️ Nicht nur die Karte neu zeichnen. Die Freischaltung wirkt auf den
+       Lernvorrat, die Kategorien, die Wortfelder und die Statistik — stehen
+       die noch mit der alten Liste da, sieht es aus, als hätte der Knopf
+       nichts getan. Genau derselbe Fall wie bei der Buchauswahl. */
+    /* ⚠️ nachAuswahlwechsel() und sonst NICHTS als Ausweich — der zweite Name,
+       den ich hier zuerst stehen hatte (frischeKategorienAuf), gibt es gar
+       nicht. Ein Ausweichzweig auf eine Funktion, die nirgends steht, sieht
+       nach Absicherung aus und ist eine Attrappe. */
+    if (typeof nachAuswahlwechsel === 'function') nachAuswahlwechsel();
+    if (typeof zeichneSuche === 'function') zeichneSuche();
+    toast(an ? 'Freigeschaltet — das Wort lernst du ab jetzt mit.'
+             : 'Zurückgenommen — das Wort ist wieder außer Reichweite.');
+    return;
+  }
   if (e.target.closest('[data-wkbearbeiten]') && WK_WORT){
     karte.innerHTML = baueWortFormular(WK_WORT);
     karte.scrollTop = 0;

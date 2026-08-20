@@ -594,10 +594,29 @@ button{font-family:inherit;color:inherit;}
 main{
   flex:1;
   overflow-y:auto;
-  padding:var(--sp-1) var(--gutter) calc(96px + var(--safe-bottom));
+  /* ⛔ padding-top ist hier bewusst 0. Ein `position:sticky; top:0`-Element
+     klebt nicht an der Scrollport-Kante, sondern an der PADDING-Box des
+     Scrollports: mit `padding-top: var(--sp-1)` blieb oberhalb jedes
+     `.screen-header` ein 4-px-Streifen offen, durch den die Liste sichtbar
+     durchlief. Elias am 20.08.2026 mit Bildschirmfoto der Kategorien:
+     „hier ist auch eine lücke oben, das soll so nicht sein. mach diese untere
+     leiste nach oben damit diese lücke nicht mehr da ist."
+
+     Gemessen bei 375 px, Kategorien, scrollTop 400: `.topbar` endet bei 72,9 --
+     der Header klebte bei 76,9, und `elementFromPoint(187, 75)` lieferte
+     `.list-row`, also den durchlaufenden Kapiteleintrag. Nach der Änderung
+     klebt er bei 72,9 und der Streifen ist zu.
+
+     ⚠️ Der Fehler traf ALLE NEUN Bildschirme mit `.screen-header`, nicht nur
+     den gemeldeten -- gemeldet wurde nur der, auf dem gerade gerollt wurde.
+     Die beiden ohne Header (Start, Lernen) bekommen den Abstand darunter
+     einzeln zurück, damit sie nicht um 4 px nach oben rutschen. */
+  padding:0 var(--gutter) calc(96px + var(--safe-bottom));
   -webkit-overflow-scrolling:touch;
   scroll-behavior:smooth;
 }
+#screen-home,
+#screen-learn{padding-top:var(--sp-1);}
 .screen{display:none;}
 .screen.active{display:block;animation:screenIn var(--dur-3) var(--ease-out);}
 
@@ -1535,6 +1554,12 @@ main{
    neutralisiert das seit dem 04.08. mit derselben Zeile in `.front-marken`; ich
    hatte die Regel übernommen, ihre Begründung aber nicht. */
 .wk-marken .chip{position:static;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* Die beiden Marken der einzelnen Freischaltung (20.08.2026). `.chip` bringt
+   von Haus aus die rote Optik mit; „noch nicht dran“ soll aber gedämpft sein
+   wie `.wl-fremd` in der Suchliste — dieselbe Aussage, dieselbe Farbe. Rot
+   bleibt der Marke vorbehalten, die sagt: hier hast DU etwas getan. */
+.wk-marken .chip-fremd{background:transparent;color:var(--text-faint);border-color:var(--border);font-weight:600;letter-spacing:0;}
+.wk-marken .chip-einzeln{letter-spacing:0;}
 /* ⭐ Die Größen kommen von der Lernkarte, nicht neu erfunden (Elias,
    18.08.2026: „das arabische wort ist viel zu klein"). Dort steht
    `clamp(3.2rem,15vw,5.2rem)`; hier eine Stufe kleiner, weil unter dem Wort
