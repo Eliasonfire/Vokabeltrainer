@@ -317,7 +317,15 @@ const NICHT_VERB = ['صفر', 'عمي', 'جر', 'ل', 'فوق',
      Im Satz sind alle drei Nomen: der Gelehrte, der Ehemann, die Medizin.
      Beide Schreibungen nötig — istInListe() trennt و und ف ab, aber NICHT
      den Artikel. */
-  'شيخ', 'الشيخ', 'زوج', 'الزوج', 'طب', 'الطب'];
+  'شيخ', 'الشيخ', 'زوج', 'الزوج', 'طب', 'الطب',
+  /* ⛔ 20.08.2026, von pruefe-saetze.js am neuen Satz هُمْ فِي الْبَيْتِ gefunden:
+     mit geladenem madina-3 las die Zerlegung هُمْ als فِعْل, ohne es als
+     مُبْتَدَأ. Ursache ist wieder der Skelettvergleich: هم fällt mit der Wurzel
+     des Verbs هَمَّ (bekümmern) zusammen.
+     هُمْ ist ein Personalpronomen und niemals ein Verb — und Elias schaltet
+     genau diese Wörter gerade einzeln frei. Ein „فِعْل“ auf seiner Karte wäre
+     eine falsche Lehre an einem Wort, das er neu lernt. */
+  'هم'];
 /* Adjektive, die in den Beispielsaetzen vorkommen und deren Wortart nicht
    verlaesslich aus dem Lexikon kommt: كسلان und مجرور fehlen im kleinen
    Bestand ganz, حار steht im grossen ZWEIMAL (adjective und verb حَارَ) und
