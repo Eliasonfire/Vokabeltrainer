@@ -475,7 +475,58 @@ function hatSatz(id){
    NULL Uebungsaufgaben erzeugten: ihnen fehlten die Markierungen.
    Ein Satz ohne Markierung erscheint nur unter „Alle" — dort sieht ihn
    niemand, der ein Thema gewaehlt hat. [[daten_ohne_zugang]] */
+/* ⛔ VOCAB und die Fachbegriffe zusammen — ein Fachbegriff traegt seinen Satz
+   am eigenen Datensatz, nicht in VOCAB_DATA. */
+const _gepflegtSatz = new Map([...(VOCAB || []),
+  ...(hol('FACHBEGRIFF_VOKABELN') || [])].map(w => [String(w.id), w]));
 const TAGS = hol('SENTENCE_TAGS') || {};
+/* ⛔⛔ EINE AUFZAEHLUNG BRAUCHT KEINE MARKIERUNG.
+
+   Am 20.08.2026 meldete dieses Werkzeug 11 fehlende Markierungen. Neun
+   davon sind Zahlenreihen und Zaehlsaetze:
+
+       كِتَابٌ، قَلَمٌ، بَابٌ: ثَلَاثَةٌ.        „Buch, Stift, Tuer: drei."
+       ثَمَانِيَةٌ، تِسْعَةٌ، عَشَرَةٌ.           „Acht, neun, zehn."
+
+   Eine Grammatikmarkierung darauf waere keine Hilfe, sondern Unsinn — und
+   eine Kennzahl, die dauerhaft neun Nicht-Maengel meldet, wird beim dritten
+   Lauf ueberlesen. [[kandidatenliste_ist_keine_fehlerliste]]
+
+   ⭐ pruefe-saetze.js hat diese Entscheidung seit dem 18.08.2026 und hat sie
+   zweiseitig geeicht (208 Beispielsaetze, erkannt genau 7 Zahlenreihen).
+   Sie wird hier NICHT nachgebaut, sondern aus der Datei gelesen — zwei
+   Fassungen liefen sonst auseinander, ohne dass es jemand merkt.
+   [[entscheidung_gilt_fuer_das_zweite_werkzeug]] [[handliste_neben_echter_quelle]]
+
+   ⛔ Faellt das Lesen aus, wird KONSERVATIV gezaehlt (alles gilt als Mangel)
+   und das gesagt. Ein stilles „0 Maengel" waere die teure Richtung.
+   [[ausfall_ist_unsichtbar_gebaut]] */
+let istMetasprache = () => false;
+let metaQuelle = null;
+try {
+  const _ps = fs.readFileSync(p('pruefe-saetze.js'), 'utf8').split(/\r?\n/);
+  const _a = _ps.findIndex(l => l.includes('const istMetasprache = ar =>'));
+  const _b = _ps.findIndex((l, n) => n > _a && l.trim() === '}');
+  if (_a < 0 || _b < 0) throw new Error('istMetasprache/istAufzaehlung nicht gefunden');
+  ({ istMetasprache } = (new Function(_ps.slice(_a, _b + 1).join('\n')
+    + '\n; return { istMetasprache };'))());
+  /* Eichung an den Beispielen, die im Kommentar von pruefe-saetze.js stehen */
+  if (!istMetasprache('كِتَابٌ، قَلَمٌ: اِثْنَانِ.') || istMetasprache('هَذَا كِتَابٌ.'))
+    throw new Error('Eichfaelle stimmen nicht');
+  metaQuelle = 'pruefe-saetze.js';
+} catch (e) {
+  istMetasprache = () => false;
+  metaQuelle = '⛔ nicht lesbar (' + e.message + ') — Aufzaehlungen zaehlen als Mangel';
+}
+
+/* Der Satztext zu einer Id — dieselben Quellen, die hatSatz() kennt. */
+function satzText(id){
+  const w = _gepflegtSatz.get(String(id));
+  if (w && w.sentAr) return w.sentAr;
+  const b = (hol('BEISPIELSAETZE') || {})[String(id)];
+  return (b && b.sentAr) || '';
+}
+
 function satzErreichbar(id){
   const t = TAGS[String(id)];
   return Array.isArray(t) && t.length > 0;
@@ -857,7 +908,7 @@ BUECHER.forEach(b => {
     const s = hatSatz(id);
     /* Nur sinnvoll, wenn es ueberhaupt einen Satz gibt: ohne Satz fehlt die
        Markierung zwangslaeufig, und sie zweimal zu melden hilft niemandem. */
-    const m = s ? satzErreichbar(id) : true;
+    const m = s ? (satzErreichbar(id) || istMetasprache(satzText(id))) : true;
     const kat = hatKategorie(w);
     const ff  = felderPruefen(w, b.slug);
     if (n < 3 || !s || !m || !kat || ff.length)
@@ -1050,7 +1101,7 @@ function fachbegriffErreichbar(w){
        diese Zeile meldete der erste Lauf 15 von 15 Fachbegriffen „ohne Satz",
        obwohl sechs einen haben. [[kandidatenliste_ist_keine_fehlerliste]] */
     const s = hatSatz(id) || !!(w.sentAr && String(w.sentAr).trim());
-    const m = s ? satzErreichbar(id) : true;
+    const m = s ? (satzErreichbar(id) || istMetasprache(satzText(id))) : true;
     if (n < 3 || !s || !m || ff.length)
       offen.push({ slug, kapitel: 0, id, ar: w.ar, de: w.de,
                    hat: n, fehltEB: Math.max(0, 3 - n), fehltSatz: !s,
@@ -1137,6 +1188,8 @@ console.log('  unvollstaendig:           ' + offen.length);
 console.log('    fehlende Eselsbruecken: ' + fehlendeEB);
 console.log('    fehlende Beispielsaetze:' + fehlendeSatz);
 console.log('    fehlende Markierungen:  ' + fehlendeMark + (fehlendeMark ? '   ⛔ diese Saetze stehen in KEINEM Thema' : ''));
+if (metaQuelle && metaQuelle.startsWith('⛔'))
+  console.log('      ⚠️ Aufzaehlungserkennung: ' + metaQuelle);
   /* ⛔ Der Geltungsbereich gehoert IMMER in die Ausgabe — auch und gerade,
      wenn die Datei fehlt. Ein stillschweigendes Null saehe aus wie „nichts
      offen". [[leere_liste_ist_keine_messung]] [[ausfall_ist_unsichtbar_gebaut]] */
