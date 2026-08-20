@@ -317,11 +317,16 @@ posten.push({
   seiteText: ''
 });
 posten.push({
-  titel: 'Arabische Stimme: Hörproben?',
-  zahl: 4, einheit: 'Wege', dazu: 'verglichen', auswahl: true,
-  aufwand: 'ein Wort von dir, dann erzeuge ich die Proben',
-  warum: 'Auf deinem PC ist gar keine arabische Stimme installiert. Der ganze Bestand kostet einmalig unter $4.',
-  wie: 'Sag Bescheid, dann stelle ich Piper (kostenlos, lokal) gegen einen bezahlten Anbieter — mit Wörtern aus deinem Kapitel.',
+  /* ⭐ Am 21.08. dreifach nachgemessen — und der Posten fängt damit früher an
+     als gedacht: es geht nicht um die BESTE Stimme, sondern erst einmal um
+     eine überhaupt. SAPI kennt 2 (Hedda de-DE, Zira en-US), OneCore 3 (alle
+     de-DE), und `speechSynthesis.getVoices()` im Browser — die Liste, die für
+     die App zählt — liefert 3 Stimmen, davon 0 arabische. */
+  titel: 'Arabische Stimme: erst installieren, dann hören',
+  zahl: 0, einheit: 'arabische Stimmen', dazu: 'im Browser gemessen', auswahl: true,
+  aufwand: 'einmal in den Windows-Einstellungen, kostenlos',
+  warum: 'Auf deinem PC ist KEINE arabische Stimme — dreifach gemessen (SAPI, OneCore, speechSynthesis im Browser). Die App kann heute gar nicht arabisch sprechen; das ist keine Frage der Qualität.',
+  wie: 'Einstellungen → Zeit und Sprache → Sprache und Region → Sprache hinzufügen → Arabisch → Optionen → Sprachausgabe. Danach sage ich dir in zehn Sekunden, ob sie deine Ḥarakāt liest: رَجُلٌ gegen رِجْلٌ. Spricht sie beide gleich, ist sie unbrauchbar — und eine kostenlose, die sie liest, schlägt jede bezahlte, die rät.',
   seite: 'https://claude.ai/code/artifact/15b48598-2cda-4516-81bd-6a7e730dd4cc',
   seiteText: 'Der Bericht'
 });
