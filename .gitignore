@@ -52,3 +52,15 @@ CLAUDE.md
 
 # Gebaute Artefakt-Seiten: enthalten Vokabeln und Beispielsaetze (Regel 7a)
 artefakte/
+
+# Elias' selbst angelegte Vokabeln (vt_personalVocab), aus dem Geraeteabgleich
+# geholt von `vorrat.mjs --stand … --app auto`. Am 20.08.2026 waren es 14, und
+# sie standen bis dahin NUR in seinem localStorage — kein Pruefwerkzeug sah sie,
+# obwohl alle vierzehn `type:'noun'` tragen (der Festwert aus addPersonalVocab)
+# und darunter ein Verb, zwei Adjektive und mehrere Zuruf sind.
+#
+# Vorerst nicht im oeffentlichen Repo: es sind zwar SEINE eigenen Eingaben und
+# kein arabicroots-Material, aber die vorsichtige Wahl kostet nichts — die
+# Wartung laeuft auf seinem PC, dort liegt die Datei. Sobald er zustimmt, diese
+# Zeile entfernen.
+data/eigene-woerter.json

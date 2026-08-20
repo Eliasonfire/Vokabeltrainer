@@ -152,6 +152,54 @@ function auswahlAusKvStand(text){
   return { frei, stempel: (roh.stempel && roh.stempel.vt_settings) || null };
 }
 
+/* ⛔⛔ DER VIERTE WEG IN DEN BESTAND — und bis zum 20.08.2026 sah ihn KEIN
+   Werkzeug.
+
+   `addPersonalVocab()` legt ein Wort direkt in `vt_personalVocab` ab, also nur
+   im localStorage. js/kern.js:245 schiebt es beim Start in VOCAB_DATA — es ist
+   damit voll im Lernbestand, erscheint auf Karteikarten, in Uebungen und im
+   Iʿrab-Lexikon. Gemessen waren es an dem Tag VIERZEHN Woerter.
+
+   ⭐ Und alle vierzehn trugen `type: 'noun'` — den FESTWERT aus
+   addPersonalVocab(). Darunter: خَرَجَ (ein Verb), كَسْلَانُ und مَكْسُورٌ
+   (Adjektive) sowie بَعْدَ, أَمَامَ, عِنْدَ (Zuruf). Da setzeLexikon() den `type`
+   ins Iʿrab-Lexikon traegt, wird JEDER Satz mit diesen Woertern danach zerlegt.
+   Ein falsches Feld ist schaedlicher als ein leeres.
+
+   Der KV-Abruf oben holt den ganzen Stand — vt_personalVocab liegt im SELBEN
+   Datensatz. Es kostet also keinen zweiten Aufruf, nur diese Funktion.
+
+   ⚠️ Die Datei steht in .gitignore: das Repo ist oeffentlich, und ob seine
+   eigenen Eingaben dorthin gehoeren, entscheidet er.
+   [[vor_dem_eintragen_messen]] [[daten_ohne_zugang]] */
+function eigeneWoerterSchreiben(text){
+  let roh;
+  try { roh = JSON.parse(text); } catch (e) { return null; }
+  let liste;
+  try { liste = JSON.parse((roh.daten && roh.daten.vt_personalVocab) || '[]'); }
+  catch (e) { return null; }
+  if (!Array.isArray(liste) || !liste.length) return { anzahl: 0 };
+  const ziel = p('data/eigene-woerter.json');
+  const inhalt = JSON.stringify({
+    stempel: (roh.stempel && roh.stempel.vt_personalVocab) || null,
+    geholt: new Date().toLocaleDateString('de-DE'),
+    woerter: liste,
+    /* ⭐ Seine eigenen Korrekturen aus DEMSELBEN Abruf. Sie sind der einzige
+       Weg, den FESTWERT type:'noun' von einer geprueften Angabe zu
+       unterscheiden: addPersonalVocab() setzt ihn immer, eine Aenderung im
+       Formular landet dagegen in vt_wortAenderungen. */
+    aenderungen: (() => {
+      try { return JSON.parse((roh.daten && roh.daten.vt_wortAenderungen) || '{}'); }
+      catch (e) { return {}; }
+    })(),
+  }, null, 2);
+  /* ⛔ Nie direkt auf die Zieldatei schreiben — bricht der Lauf mitten drin ab,
+     besteht eine leere Datei jeden Test. [[leere_datei_besteht_jeden_test]] */
+  fs.writeFileSync(ziel + '.neu', inhalt, 'utf8');
+  fs.renameSync(ziel + '.neu', ziel);
+  return { anzahl: liste.length };
+}
+
 /* Aus get_unlocked_chapters kommt eine Liste wie
      [{ chapter_id: "madina-1-chapter-11" }, ...]
    Daraus wird { 'madina-1': [1,...,11] }. */
@@ -483,6 +531,13 @@ if (iStand >= 0){
     else {
     const a = auswahlAusKvStand(text);
     vonApp = a.frei;
+    /* Aus DEMSELBEN Abruf: seine selbst angelegten Woerter (siehe oben). */
+    const eig = eigeneWoerterSchreiben(text);
+    if (eig && eig.anzahl)
+      console.log('  eigene Woerter (vt_personalVocab): ' + eig.anzahl
+        + ' -> data/eigene-woerter.json');
+    else
+      console.log('  eigene Woerter (vt_personalVocab): keine im Geraeteabgleich');
     console.log('  App-Auswahl (KV, Stand '
       + (a.stempel ? new Date(a.stempel).toLocaleString('de-DE') : 'unbekannt') + '): '
       + (Object.entries(vonApp).map(([b, k]) => `${b} bis ${Math.max(...k)}`).join(' | ') || '—'));
@@ -703,7 +758,10 @@ const FELD_FOLGE = {
 function felderPruefen(w, quelle){
   const fehlt = [];
   const t = String(feldWert(w, 'type') || '');
-  const kaputterTyp = leerWert(t) || t === 'other' || t === 'vocab' || bestritten(w, 'type');
+  /* ⭐ 'selbst': dort ist `noun` der Festwert aus addPersonalVocab() und keine
+     geprüfte Angabe — siehe typFestwert() weiter oben. */
+  const kaputterTyp = leerWert(t) || t === 'other' || t === 'vocab' || bestritten(w, 'type')
+    || (quelle === 'selbst' && typFestwert(w));
   if (kaputterTyp) fehlt.push('type');
 
   const pruefe = (feld) => {
@@ -798,6 +856,40 @@ const EIGENE = (kiste.window.EIGENE_VOKABELN || [])
   .map(w => _gepflegt.get(String(w.id)) || w);
 const FACH   = hol('FACHBEGRIFF_VOKABELN') || [];
 
+/* ⛔⛔ DER VIERTE WEG: seine SELBST ANGELEGTEN Woerter.
+
+   Sie stehen nur in seinem localStorage (`vt_personalVocab`) und kamen bis zum
+   20.08.2026 in KEINER Messung vor — obwohl js/kern.js:245 sie beim Start in
+   VOCAB_DATA schiebt und sie damit voll im Lernbestand sind.
+
+   `--stand … --app auto` holt sie jetzt aus dem Geraeteabgleich nach
+   data/eigene-woerter.json. Fehlt die Datei (frischer Klon, kein KV-Zugang),
+   wird nichts gemessen — aber das steht dann auch in der Ausgabe. Ein
+   stillschweigendes Null waere genau die Falle, die dieses Werkzeug schliessen
+   soll. [[leere_liste_ist_keine_messung]] */
+let SELBST = [], SELBST_AENDERUNGEN = {}, SELBST_STAND = null;
+try {
+  const d = JSON.parse(fs.readFileSync(p('data/eigene-woerter.json'), 'utf8'));
+  SELBST = Array.isArray(d.woerter) ? d.woerter : [];
+  SELBST_AENDERUNGEN = d.aenderungen || {};
+  SELBST_STAND = d.geholt || null;
+} catch (e) { /* nicht da — die Ausgabe sagt es unten */ }
+
+/* ⭐ `addPersonalVocab()` setzt `type: 'noun'` FEST — bei jedem Wort, auch bei
+   einem Verb. Der Wert steht also da, ist aber nicht geprueft. Unterscheiden
+   laesst er sich nur an einer Sache: hat Elias das Wort im Formular angefasst,
+   liegt eine Aenderung in vt_wortAenderungen.
+
+   Am 20.08.2026 gemessen: 14 Woerter, 0 davon mit geprueftem `type` — darunter
+   خَرَجَ (Verb), كَسْلَانُ und مَكْسُورٌ (Adjektive), بَعْدَ/أَمَامَ/عِنْدَ (Zuruf).
+   Alle vierzehn galten als Nomen. ⛔ Das ist nicht nur eine ausgefallene Uebung:
+   setzeLexikon() traegt `type` ins Iʿrab-Lexikon, also wird JEDER Satz mit
+   diesen Woertern danach zerlegt. [[nomen_wird_zum_verb_gelesen]] */
+function typFestwert(w){
+  const a = SELBST_AENDERUNGEN[String(w.id)];
+  return !(a && a.type && String(a.type).trim());
+}
+
 /* ⛔⛔ EIN FACHBEGRIFF BRAUCHT KEINEN EIGENEN SATZ, WENN SEINE REGEL EINEN HAT.
    Der erste Lauf dieser Erweiterung meldete neun Fachbegriffe als „Beispielsatz
    FEHLT" — und ich war dabei, ihnen neun Saetze zu schreiben. Der Kommentar in
@@ -818,7 +910,7 @@ function fachbegriffErreichbar(w){
   return !!(w.regel && REGEL_HAT_MARKIERUNG.has(w.regel));
 }
 
-[['eigene', EIGENE], ['fachbegriffe', FACH]].forEach(([slug, liste]) => {
+[['eigene', EIGENE], ['fachbegriffe', FACH], ['selbst', SELBST]].forEach(([slug, liste]) => {
   liste.forEach(w => {
     geprueft++;
     const id = String(w.id);
@@ -884,6 +976,16 @@ console.log('  unvollstaendig:           ' + offen.length);
 console.log('    fehlende Eselsbruecken: ' + fehlendeEB);
 console.log('    fehlende Beispielsaetze:' + fehlendeSatz);
 console.log('    fehlende Markierungen:  ' + fehlendeMark + (fehlendeMark ? '   ⛔ diese Saetze stehen in KEINEM Thema' : ''));
+  /* ⛔ Der Geltungsbereich gehoert IMMER in die Ausgabe — auch und gerade,
+     wenn die Datei fehlt. Ein stillschweigendes Null saehe aus wie „nichts
+     offen". [[leere_liste_ist_keine_messung]] [[ausfall_ist_unsichtbar_gebaut]] */
+  if (SELBST.length)
+    console.log('    selbst angelegte Woerter: ' + SELBST.length
+      + '   (aus dem Geraeteabgleich, geholt am ' + (SELBST_STAND || '?') + ')');
+  else
+    console.log('    selbst angelegte Woerter: NICHT GEMESSEN'
+      + '   ⛔ data/eigene-woerter.json fehlt — sie entsteht bei'
+      + ' vorrat.mjs --stand <datei> --app auto');
 console.log('    ohne Wortart-Kategorie: ' + fehlendeKat
   + '   (das Bedeutungsfeld misst pruefe-wortfelder.js, nicht dieses Werkzeug)');
 
