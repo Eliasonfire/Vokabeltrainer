@@ -729,4 +729,118 @@ const BEISPIELSAETZE = {
     sentAr: 'آسِيَا كَبِيرَةٌ.',
     sentDe: 'Asien ist groß.'
   },
+
+  /* ------------------------------------------------------------------------
+     KAPITEL 22-23 — VORGESCHRIEBEN (20.08.2026)
+
+     ⭐ Kapitel 22 ist die Farbenlektion, und die Farben sind alle
+     مَمْنُوع مِنَ الصَّرْف: sie tragen KEIN Tanwin, obwohl sie unbestimmt
+     sind — أَحْمَرُ und nicht أَحْمَرٌ. Das ist der ganze Grund, warum sie ein
+     eigenes Kapitel bekommen, und jeder Satz hier zeigt es.
+
+     ⚠️ Zwei Wörter bekommen bewusst KEINEN Satz mit Ortsangabe: جُدَّةُ und
+     الطَّائِفُ liegen beide in der السُّعُودِيَّة, und die steht nicht in seinem
+     Bestand. Stattdessen مَدِينَةٌ aus Kapitel 9.
+
+     ⛔ وَاشِنْطُنُ fängt mit و an — dasselbe Problem wie bei وَاسِعٌ eine
+     Lektion vorher. Das Wort steht deshalb NICHT am Satzanfang.
+     ------------------------------------------------------------------------ */
+
+  /* أَحْمَرُ — rot (madina-1, Kapitel 22)
+     ⭐ Kein Tanwin, obwohl das Wort unbestimmt ist: أَحْمَرُ ist
+     مَمْنُوع مِنَ الصَّرْف. Genau daran erkennt man die Farbform. */
+  '45958': {
+    sentAr: 'الْكِتَابُ أَحْمَرُ.',
+    sentDe: 'Das Buch ist rot.'
+  },
+
+  /* أَزْرَقُ — blau (madina-1, Kapitel 22) */
+  '45959': {
+    sentAr: 'الْبَابُ أَزْرَقُ.',
+    sentDe: 'Die Tür ist blau.'
+  },
+
+  /* أَخْضَرُ — grün (madina-1, Kapitel 22) */
+  '45960': {
+    sentAr: 'الْقَلَمُ أَخْضَرُ.',
+    sentDe: 'Der Stift ist grün.'
+  },
+
+  /* أَسْوَدُ — schwarz (madina-1, Kapitel 22) */
+  '45961': {
+    sentAr: 'الْكُرْسِيُّ أَسْوَدُ.',
+    sentDe: 'Der Stuhl ist schwarz.'
+  },
+
+  /* أَصْفَرُ — gelb (madina-1, Kapitel 22) */
+  '45962': {
+    sentAr: 'الْمِفْتَاحُ أَصْفَرُ.',
+    sentDe: 'Der Schlüssel ist gelb.'
+  },
+
+  /* أَبْيَضُ — weiß (madina-1, Kapitel 22) */
+  '45963': {
+    sentAr: 'الْمَسْجِدُ أَبْيَضُ.',
+    sentDe: 'Die Moschee ist weiß.'
+  },
+
+  /* بَغْدَادُ — Bagdad (madina-1, Kapitel 22)
+     Auch Städtenamen sind مَمْنُوع مِنَ الصَّرْف — بَغْدَادُ ohne Tanwin.
+     Und weiblich, deshalb كَبِيرَةٌ. */
+  '45964': {
+    sentAr: 'بَغْدَادُ مَدِينَةٌ كَبِيرَةٌ.',
+    sentDe: 'Bagdad ist eine große Stadt.'
+  },
+
+  /* جُدَّةُ — Jeddah (madina-1, Kapitel 22) */
+  '45965': {
+    sentAr: 'جُدَّةُ مَدِينَةٌ جَمِيلَةٌ.',
+    sentDe: 'Jeddah ist eine schöne Stadt.'
+  },
+
+  /* فِنْجَانٌ — Teetasse (madina-1, Kapitel 22) */
+  '45966': {
+    sentAr: 'الْفِنْجَانُ عَلَى الْمَكْتَبِ.',
+    sentDe: 'Die Teetasse steht auf dem Schreibtisch.'
+  },
+
+  /* دَقِيقَةٌ — Minute (madina-1, Kapitel 22) */
+  '45967': {
+    sentAr: 'هَذِهِ دَقِيقَةٌ طَوِيلَةٌ.',
+    sentDe: 'Das ist eine lange Minute.'
+  },
+
+  /* قَالَ — sagen (madina-1, Kapitel 22)
+     ⭐ Das einzige VERB der beiden Lektionen, deshalb ein Verbalsatz: قَالَ
+     zuerst, dann der فَاعِل im Nominativ. Genau die Reihenfolge, die den
+     Verbalsatz vom Nominalsatz unterscheidet. */
+  '45968': {
+    sentAr: 'قَالَ الْمُدَرِّسُ.',
+    sentDe: 'Der Lehrer sagte.'
+  },
+
+  /* إِسْطَنْبُولُ — Istanbul (madina-1, Kapitel 23) */
+  '45969': {
+    sentAr: 'إِسْطَنْبُولُ مَدِينَةٌ كَبِيرَةٌ.',
+    sentDe: 'Istanbul ist eine große Stadt.'
+  },
+
+  /* وَاشِنْطُنُ — Washington (madina-1, Kapitel 23)
+     ⛔ Das Wort steht bewusst AM SATZANFANG: es fängt mit و an, und der
+     Iʿrāb-Erklärer liest ein و als Konjunktion, sobald schon eine Rolle vergeben
+     ist. Als erstes Wort greift dieser Zweig nicht.
+     ⚠️ Am Satzende gemessen: „Anschluss mit و, Kasus nicht eindeutig“ — dieselbe
+     Falle wie bei وَاسِعٌ in Kapitel 21, nur anders zu lösen. */
+  '45970': {
+    sentAr: 'وَاشِنْطُنُ مَدِينَةٌ كَبِيرَةٌ.',
+    sentDe: 'Washington ist eine große Stadt.'
+  },
+
+  /* الطَّائِفُ — Taif (madina-1, Kapitel 23)
+     ⚠️ Der einzige Städtename der Lektion MIT Artikel — und deshalb trägt er
+     die normale Ḍamma, nicht die eines مَمْنُوع. */
+  '45971': {
+    sentAr: 'الطَّائِفُ مَدِينَةٌ جَمِيلَةٌ.',
+    sentDe: 'Taif ist eine schöne Stadt.'
+  },
 };
