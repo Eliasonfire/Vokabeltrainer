@@ -202,7 +202,25 @@ function wendeFeldErgaenzungenAn(liste){
     const e = FELD_ERGAENZUNGEN[String(w && w.id)];
     if (!e) continue;
     for (const f of Object.keys(e)){
-      if (feldGiltAlsLeer(f, w[f])){ w[f] = e[f]; n++; }
+      /* ⛔⛔ LEER **ODER BESTRITTEN** — bis zum 20.08.2026 stand hier nur die
+         erste Haelfte, und damit war Ebene 4 wirkungslos.
+
+         feldBestritten() traegt seit dem Vortag den Kommentar „Ein bestrittener
+         `type` zaehlt wie ein leerer" — das war die ABSICHT. Die Wirkung fehlte:
+         die Funktion wurde in js/ nirgends aufgerufen (gemessen: 0 Treffer
+         ausser in dieser Datei und in werkzeuge/vorrat.mjs).
+
+         Was das hiess: Elias sagt „die Wortart stimmt nicht", beantwortet die
+         Frage neu, antworten-uebernehmen.mjs traegt den Wert in
+         FELD_ERGAENZUNGEN — und die App liess ihn liegen, weil das Feld ja
+         GEFUELLT war. Der falsche Wert blieb fuer immer stehen.
+
+         ⭐ Betroffen war genau der Fall, fuer den Ebene 4 gebaut wurde:
+         id 48402, الْيَوْمُ, steht im Abzug als type:"adjective" und ist ein
+         Nomen. `adjective` gilt nicht als leer.
+         [[kommentar_beschreibt_absicht_markup_wirkung]]
+         [[erfolgsmeldung_ohne_wirkung]] */
+      if (feldGiltAlsLeer(f, w[f]) || feldBestritten(w, f)){ w[f] = e[f]; n++; }
     }
   }
   return n;
