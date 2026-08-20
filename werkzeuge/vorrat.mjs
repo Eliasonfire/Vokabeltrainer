@@ -836,6 +836,12 @@ function felderPruefen(w, quelle){
 
 const offen = [];      /* { slug, kapitel, id, ar, de, fehltEB, fehltSatz, fehltFelder } */
 let geprueft = 0;
+/* ⛔⛔ DER FUENFTE WEG: was nur in vocab-data.js steht.
+   Wird unten gebraucht — hier gefuellt, damit `kapitelImFenster()` NICHT
+   ein zweites Mal laufen muss. Sie ist nicht rein (schreibt in
+   `fehlendeAngabe`), und ein Zweitaufruf verdoppelte am 21.08. die Meldung
+   „224 ungeprueft" auf „448". [[zweiter_aufruf_ueberschreibt_still]] */
+const _imAbzug = new Set();
 BUECHER.forEach(b => {
   const kapitel = kapitelImFenster(b.slug);
   if (!kapitel || !kapitel.length) return;
@@ -846,6 +852,7 @@ BUECHER.forEach(b => {
   liste.filter(w => kapitel.includes(Number(w.chapter))).forEach(w => {
     geprueft++;
     const id = String(w.id);
+    _imAbzug.add(id);
     const n = vorschlagsZahl(id, w);
     const s = hatSatz(id);
     /* Nur sinnvoll, wenn es ueberhaupt einen Satz gibt: ohne Satz fehlt die
@@ -925,6 +932,40 @@ try {
   SELBST_NOTIZEN = d.notizen || {};
 } catch (e) { /* nicht da — die Ausgabe sagt es unten */ }
 
+/* ⛔⛔ DER FUENFTE WEG — am 21.08.2026 an der laufenden App gemessen.
+
+   `bekannteVokabeln()` zaehlte im Browser 200, dieses Werkzeug 203, und die
+   Probe 200 - 11 + 14 = 203 ging auf. Die 14 sind die selbst angelegten (im
+   Pruefserver-localStorage nicht vorhanden, kein Fehler). Die ELF fielen
+   still durch:
+
+     9x  50296-50304  die Zahlwoerter. Wort fuer Wort nachgeschlagen:
+                      im ABZUG stehen sie unter `"chapter": 24`, madina-1
+                      ist aber nur bis Kapitel 12 frei — sie fallen also
+                      durchs FENSTER. In vocab-data.js tragen dieselben
+                      neun `"chapter": "personal"`, und js/kern.js:149
+                      sagt `if (w.chapter === 'personal') return true;` —
+                      in der App sind sie damit IMMER bekannt.
+                      ⛔ Meine erste Begruendung war erfunden: ich hatte
+                      notiert, `"personal"` stehe im Abzug und falle ueber
+                      `Number(...)` = NaN durch. Es steht dort nicht.
+                      [[erfundene_begruendung_schliesst_den_fall]]
+     2x  madina1-l6-ach / -ucht  tragen `chapter: 6`, liegen also mitten im
+                      Fenster — stehen aber in KEINER Abzugsdatei
+                      (`grep -c` = 0 in allen neun). Von Hand aus dem
+                      Schluessel nachgetragen.
+
+   ⭐ Der Kern: dieses Werkzeug liest die ABZUGSDATEIEN, die App liest
+   vocab-data.js. Zwei Bestaende — und der Unterschied waren elf Woerter aus
+   Elias' Lernbestand, fuer die nie geprueft wurde, ob sie Eselsbruecken,
+   einen Satz, eine Markierung oder vollstaendige Felder haben.
+   [[werkzeug_misst_kleineren_bestand]] [[app_auswahl_entscheidet]] */
+const _sonderIds = new Set([...EIGENE, ...FACH, ...SELBST].map(w => String(w.id)));
+const NUR_VOCAB = (VOCAB || []).filter(w => {
+  const id = String(w.id);
+  return !_imAbzug.has(id) && !_sonderIds.has(id);
+});
+
 /* ⭐ `addPersonalVocab()` setzt `type: 'noun'` FEST — bei jedem Wort, auch bei
    einem Verb. Der Wert steht also da, ist aber nicht geprueft. Unterscheiden
    laesst er sich nur an einer Sache: hat Elias das Wort im Formular angefasst,
@@ -989,7 +1030,7 @@ function fachbegriffErreichbar(w){
   return !!(w.regel && REGEL_HAT_MARKIERUNG.has(w.regel));
 }
 
-[['eigene', EIGENE], ['fachbegriffe', FACH], ['selbst', SELBST]].forEach(([slug, liste]) => {
+[['eigene', EIGENE], ['fachbegriffe', FACH], ['selbst', SELBST], ['vocab-data', NUR_VOCAB]].forEach(([slug, liste]) => {
   liste.forEach(w => {
     geprueft++;
     const id = String(w.id);
