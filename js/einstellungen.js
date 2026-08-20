@@ -244,7 +244,11 @@ const SICHERUNGS_SCHLUESSEL = [
      seiner Einfuehrung am selben Tag nicht dabei - aufgefallen erst, als
      `vt_lesestand` dazukam und die Liste noch einmal gelesen wurde. Wer eine
      Sicherung einspielte, verlor die Favoriten lautlos. */
-  'vt_quranFav', 'vt_lesestand'
+  'vt_quranFav', 'vt_lesestand',
+  /* Seine eigenen Grammatiknotizen an den Wortkarten (20.08.2026). Sie stehen
+     nirgends sonst — geht die Liste hier daran vorbei, ist die Sicherung eine
+     Sicherung ohne sie, und das faellt erst beim Einspielen auf. */
+  'vt_notizen'
 ];
 
 function baueSicherung(){

@@ -635,6 +635,10 @@ function loeschePersonalVocab(id){
     delete NOTES[id];
     if (typeof saveNotes === 'function') saveNotes();
   }
+  if (typeof NOTIZEN !== 'undefined' && NOTIZEN && NOTIZEN[id] !== undefined){
+    delete NOTIZEN[id];
+    if (typeof saveNotizen === 'function') saveNotizen();
+  }
   if (typeof BEKANNT !== 'undefined' && BEKANNT && BEKANNT[id] !== undefined){
     delete BEKANNT[id];
     LS.set(BEKANNT_SCHLUESSEL, BEKANNT);
@@ -1052,6 +1056,36 @@ function setNote(id, text){
   const t = (text || '').trim();
   if (t) NOTES[id] = t; else delete NOTES[id];
   saveNotes();
+}
+
+/* ---------- Eigene Notizen pro Vokabel (20.08.2026) ----------
+
+   Elias: „ich will am besten eine notiz funktion haben ähnlich wie die
+   vorschlag funktion … ich wollte eben zu ‚die Besitzendung mein‘ als notiz
+   dazu schreiben, dass es das vorherige buchstaben mit einem kasrah macht
+   statt dummah, jedoch habe ich aktuell kein feld dafür."
+
+   ⛔ BEWUSST GETRENNT VON `vt_notes` (der Eselsbruecke), obwohl beide „Notiz"
+   heissen koennten. Zwei Gruende, und beide sind ihm im Gebrauch anzumerken:
+
+   1. Die Eselsbruecke hat einen VORSCHLAG dahinter — ein leeres Feld dort holt
+      den Vorschlag zurueck. Eine Grammatiknotiz hat keinen Vorschlag; ein
+      leeres Feld bedeutet dort schlicht „keine Notiz".
+   2. Die Eselsbruecke beantwortet „wie merke ich mir das Wort", die Notiz
+      „was tut dieses Wort". Sein Beispiel — die Kasrah statt der Dammah — ist
+      eine Regel und keine Merkhilfe. In dasselbe Feld gequetscht wuerde eines
+      von beiden das andere verdraengen.
+
+   Wie NOTES nicht an PROGRESS haengend: „Fortschritt zuruecksetzen" wirft
+   nicht weg, was er selbst geschrieben hat. */
+const NOTIZ_SCHLUESSEL = 'vt_notizen';
+let NOTIZEN = LS.get(NOTIZ_SCHLUESSEL, {});
+function saveNotizen(){ LS.set(NOTIZ_SCHLUESSEL, NOTIZEN); }
+function getNotiz(id){ return (NOTIZEN[id] || '').trim(); }
+function setNotiz(id, text){
+  const t = (text || '').trim();
+  if (t) NOTIZEN[id] = t; else delete NOTIZEN[id];
+  saveNotizen();
 }
 
 let CUSTOM_CATS = LS.get('vt_customCats', []);
