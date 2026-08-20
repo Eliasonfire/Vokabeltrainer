@@ -798,4 +798,78 @@ if (iAuftr >= 0){
   console.log('  Arbeitsauftrag geschrieben: ' + ziel);
 }
 
+/* ---------- Was NUR Elias beantworten kann ----------
+
+   ⭐ Elias am 20.08.2026: „sobald … nur noch das übrig ist was ich erledigen
+   muss …, soll mir die bearbeitung der restlichen aufgaben sehr leicht gemacht
+   werden … mit so geringem zeit und arbeitaufwand wie nur möglich."
+
+   Der Unterschied zum Arbeitsauftrag oben ist der Adressat. `--auftrag` ist
+   die Liste dessen, was ICH schreiben kann: Eselsbrücken, Beispielsätze,
+   Markierungen. Was hier herauskommt, kann ich NICHT entscheiden, ohne zu
+   raten — ob اليَابَان einen Plural hat, ist eine Frage an die Sprache, nicht
+   an die Daten.
+
+   ⛔ Deshalb landet nichts davon still in data/feld-ausnahmen.js. Es geht als
+   Frage an ihn, und erst seine Antwort wird eingetragen. */
+if (ARG.includes('--offene-fragen')){
+  const ziel = ARG[ARG.indexOf('--offene-fragen') + 1];
+  if (!ziel){ console.error('  --offene-fragen braucht eine Datei.'); process.exit(1); }
+
+  /* Je Feld EINE Frage, mit allen betroffenen Wörtern. Ein Durchgang je Feld
+     statt einer je Wort — bei 25 Plural-Fragen ist das der ganze Unterschied. */
+  const FRAGE_TEXT = {
+    pl:     { titel: 'Haben diese Wörter einen Plural?',
+              hilfe: 'Eigennamen (Länder, Städte) und Stoffnamen haben meist keinen. Wo es keinen gibt, wird das ausdrücklich eingetragen — dann fragt kein Werkzeug je wieder danach.',
+              nein:  'kein Plural' },
+    sg:     { titel: 'Haben diese Wörter einen Singular?', hilfe: '', nein: 'kein Singular' },
+    gender: { titel: 'Welches Geschlecht haben diese Wörter?',
+              hilfe: 'Ohne die Angabe erzeugen die Übungen „مُذَكَّر oder مُؤَنَّث?" und „هَذَا oder هَذِهِ?" für das Wort keine einzige Aufgabe.',
+              nein:  'nicht anwendbar' },
+    femSg:  { titel: 'Wie lautet die weibliche Form?',
+              hilfe: 'Ohne sie erzeugt die Übung „صَغِيرٌ oder صَغِيرَةٌ?" für das Wort keine Aufgabe.',
+              nein:  'keine weibliche Form' },
+    root:   { titel: 'Wie lautet die Wurzel?',
+              hilfe: 'Partikeln, Fremdwörter und Eigennamen haben keine — das ist kein Mangel.',
+              nein:  'keine Wurzel' },
+    type:   { titel: 'Welche Wortart?',
+              hilfe: 'Steht hier „other", zeigt die Infokarte nur „Wort". Daran hängen außerdem die Kategorie, die Statistik und die Wortart-Übung.',
+              nein:  'weiß ich nicht' },
+    past:   { titel: 'Wie lautet die Vergangenheitsform?', hilfe: '', nein: 'entfällt' },
+    present:{ titel: 'Wie lautet die Gegenwartsform?', hilfe: '', nein: 'entfällt' },
+    imperative: { titel: 'Wie lautet die Befehlsform?', hilfe: 'Nicht jedes Verb hat eine.', nein: 'gibt es nicht' },
+    masdar: { titel: 'Wie lautet das Verbalnomen (مَصْدَر)?', hilfe: '', nein: 'gibt es nicht' }
+  };
+
+  const jeFeldWoerter = {};
+  offen.forEach(w => (w.fehltFelder || []).forEach(f => {
+    (jeFeldWoerter[f] = jeFeldWoerter[f] || []).push({
+      id: w.id, ar: w.ar, de: String(w.de || '').replace(/\s+/g, ' '),
+      quelle: w.slug, kapitel: w.kapitel, type: w.type
+    });
+  }));
+
+  const fragen = Object.entries(jeFeldWoerter)
+    .sort((a, b) => b[1].length - a[1].length)
+    .map(([feld, woerter]) => ({
+      art: 'feld', feld,
+      titel: (FRAGE_TEXT[feld] || {}).titel || ('Feld `' + feld + '` fehlt'),
+      hilfe: (FRAGE_TEXT[feld] || {}).hilfe || '',
+      neinText: (FRAGE_TEXT[feld] || {}).nein || 'gibt es nicht',
+      folge: FELD_FOLGE[feld] || '',
+      woerter
+    }));
+
+  fs.writeFileSync(ziel, JSON.stringify({
+    erzeugt: new Date().toISOString(),
+    freischaltstand: datum,
+    geprueft,
+    fragen
+  }, null, 2), 'utf8');
+  console.log('');
+  console.log('  Offene Fragen an Elias geschrieben: ' + ziel);
+  console.log('  ' + fragen.length + ' Frage(n), '
+    + fragen.reduce((s, f) => s + f.woerter.length, 0) + ' Wörter insgesamt.');
+}
+
 process.exit(offen.length ? 2 : 0);

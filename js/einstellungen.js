@@ -60,9 +60,17 @@ function zeichneEinzelnFreiListe(){
        <button class="kenne-schon-zurueck" data-einzelnzurueck="${escapeHtml(String(w.id))}">Wieder zumachen</button>
      </div>`).join('');
 
-  /* Die Kopierzeile erscheint nur, wenn es etwas zu kopieren gibt. */
+  /* Die Kopierzeile erscheint nur, wenn es etwas zu kopieren gibt — und das
+     ist seit dem 20.08.2026 MEHR als die freigeschalteten Wörter: auch seine
+     eigenen Korrekturen an Vokabeln stehen nur im localStorage. */
   const zeile = document.getElementById('einzelnFreiExportZeile');
-  if (zeile) zeile.hidden = !woerter.length;
+  if (zeile) zeile.hidden = !(woerter.length || aenderungsZahl());
+}
+
+/* Wie viele Vokabeln hat Elias selbst korrigiert? Die Zahl steht in der
+   Beschriftung, damit er sieht, dass da etwas ist. */
+function aenderungsZahl(){
+  try { return Object.keys(WORT_AENDERUNGEN || {}).length; } catch (e) { return 0; }
 }
 
 /* ---------- Die Liste für die Wartung herausgeben (20.08.2026) ----------
@@ -85,8 +93,77 @@ function einzelnFreiAlsText(){
     + 'Id\tArabisch\tDeutsch\tHerkunft\n' + zeilen.join('\n');
 }
 
+/* ---------- Seine eigenen Korrekturen (20.08.2026) ----------
+
+   ⛔⛔ DIESELBE SACKGASSE, ein zweites Mal. `vt_wortAenderungen` nimmt auf, was
+   Elias im Bearbeitungsformular ändert: Schreibung, Übersetzung, Plural,
+   Wurzel, Beispielsatz — und seit heute die Wortart. Alles davon liegt in
+   seinem localStorage und in keiner Datei.
+
+   Die Folge ist derselbe Kreislauf wie bei den einzeln freigeschalteten
+   Wörtern, nur andersherum: Er trägt einen Plural ein, `vorrat.mjs` sieht ihn
+   nie und meldet das Wort beim nächsten Lauf wieder als unvollständig. Er
+   bekommt also jede Woche dieselbe Frage zu einem Wort, das er längst
+   beantwortet hat. [[daten_ohne_zugang]]
+
+   ⭐ NUR die Felder, die wirklich abweichen. `speichereWortAenderung()` legt
+   immer alle sieben ab, auch die unveränderten — ein Export davon wäre bei
+   zwanzig Korrekturen 140 Zeilen, von denen fünf etwas sagen.
+
+   Der Vergleichswert kommt aus `window.VOKABELN[buch]` und NICHT aus
+   `VOCAB_DATA`: dort hat `wendeWortAenderungenAn()` den neuen Wert längst
+   hineingeschrieben, ein Vergleich damit fände nie einen Unterschied. Am
+   20.08.2026 im Browser gegengeprüft — dieselbe Vokabel las sich in VOCAB_DATA
+   als „GEAENDERT" und in VOKABELN weiterhin als „Moschee".
+   [[eingefrorenes_feld_ist_kein_zustand]] */
+function aenderungenAlsText(){
+  let eintraege;
+  try { eintraege = WORT_AENDERUNGEN || {}; } catch (e) { return ''; }
+  const ids = Object.keys(eintraege);
+  if (!ids.length) return '';
+
+  /* ⛔ NFC vor dem Vergleich. Am 20.08.2026 gemessen: derselbe Plural أَئِمَّةٌ
+     stand einmal als م + Fatḥah + Schaddah (645 64e 651) und einmal als
+     م + Schaddah + Fatḥah (645 651 64e) — gleiches Bild, andere Reihenfolge der
+     kombinierenden Marken, und `===` sagt „geändert". NFC sortiert sie nach
+     ihrer Combining Class und macht beide gleich. [[arabisch_vergleichen_nfc]] */
+  const gleich = (a, b) =>
+    String(a == null ? '' : a).trim().normalize('NFC') === String(b == null ? '' : b).trim().normalize('NFC');
+
+  const FELDER = ['ar', 'de', 'pl', 'root', 'type', 'sentAr', 'sentDe'];
+  const zeilen = [];
+  ids.forEach(id => {
+    const a = eintraege[id];
+    if (!a || typeof a !== 'object') return;
+    const w = VOCAB_DATA.find(x => String(x.id) === String(id));
+    /* WORT_ORIGINAL wird in js/kern.js gefüllt, bevor überschrieben wird —
+       es ist die einzige Stelle, an der der Vorher-Wert noch steht. */
+    const o = (typeof WORT_ORIGINAL !== 'undefined' && WORT_ORIGINAL[id]) || null;
+    const felder = FELDER
+      .filter(f => typeof a[f] === 'string' && a[f].trim())
+      /* Ohne Original wird alles gezeigt — lieber zu viel als eine stille
+         Auslassung, die wie „nichts geändert" aussieht. */
+      .filter(f => !o || !(f in o) || !gleich(o[f], a[f]))
+      .map(f => {
+        const vorher = o && (f in o) ? String(o[f] || '').trim() : '';
+        return `${f}: ${vorher ? vorher + '  →  ' : '(war leer)  →  '}${a[f]}`;
+      });
+    if (!felder.length) return;
+    const kopf = w ? `${id}\t${w.ar}\t${w.de}` : `${id}\t(Wort nicht mehr im Bestand)`;
+    zeilen.push(kopf + '\n    ' + felder.join('\n    '));
+  });
+  if (!zeilen.length) return '';
+  return `Deine eigenen Korrekturen (${zeilen.length}), Stand `
+    + new Date().toLocaleDateString('de-DE') + '\n' + zeilen.join('\n');
+}
+
+/* Beides zusammen — ein Knopf, ein Einfügen. */
+function wartungsExportAlsText(){
+  return [einzelnFreiAlsText(), aenderungenAlsText()].filter(Boolean).join('\n\n');
+}
+
 async function kopiereEinzelnFrei(){
-  const text = einzelnFreiAlsText();
+  const text = wartungsExportAlsText();
   if (!text){ toast('Nichts zu kopieren.'); return; }
   /* ⚠️ navigator.clipboard braucht einen sicheren Kontext UND kann trotzdem
      werfen (verweigerte Berechtigung, Fokus verloren). Der Rückfallweg über ein
