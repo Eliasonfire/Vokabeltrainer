@@ -749,8 +749,19 @@ const giltAlsLeer = hol('feldGiltAlsLeer') || ((f, v) => leerWert(v));
    Am 20.08.2026 an الْيَوْمُ (id 48402) aufgefallen. */
 const bestritten = hol('feldBestritten') || (() => false);
 /* Der Wert, den die App sehen wird: erst der Abzug, dann die Nachtragung. */
+/* ⛔⛔ LEER **ODER BESTRITTEN** — dieselbe Regel wie in der App.
+
+   data/feld-ausnahmen.js wendet seit dem 20.08.2026 beides an. Stand hier nur
+   die Leer-Pruefung, entstand eine SCHLEIFE: Elias beantwortet „خَرَجَ → verb",
+   antworten-uebernehmen.mjs setzt Wert und Zweifel, die App zeigt korrekt
+   `verb` — und dieses Werkzeug liest weiter `noun` (nicht leer), sieht den
+   Zweifel und stellt die Frage beim naechsten Lauf ERNEUT.
+
+   ⭐ Zwei Stellen, eine Regel: wo die App den bestrittenen Wert ersetzt, muss
+   die Messung ihn auch ersetzt sehen. [[dieselbe_frage_zwei_antworten]] */
 const feldWert = (w, feld) => {
-  if (!giltAlsLeer(feld, w[feld])) return w[feld];
+  const ersetzbar = giltAlsLeer(feld, w[feld]) || bestritten(w, feld);
+  if (!ersetzbar) return w[feld];
   const e = ERGAENZT[String(w && w.id)];
   return e && e[feld] !== undefined ? e[feld] : w[feld];
 };
@@ -775,7 +786,19 @@ function felderPruefen(w, quelle){
   const t = String(feldWert(w, 'type') || '');
   /* ⭐ 'selbst': dort ist `noun` der Festwert aus addPersonalVocab() und keine
      geprüfte Angabe — siehe typFestwert() weiter oben. */
-  const kaputterTyp = leerWert(t) || t === 'other' || t === 'vocab' || bestritten(w, 'type')
+  /* ⛔⛔ Ein Zweifel zaehlt nur, SOLANGE keine Antwort vorliegt.
+
+     Sonst entsteht eine Schleife, am 20.08.2026 an der echten Kette gemessen:
+     Elias beantwortet die Wortart, antworten-uebernehmen.mjs traegt Wert UND
+     Zweifel ein (der Zweifel ist noetig, damit die Ergaenzung ein gefuelltes
+     Feld ueberhaupt ersetzen darf) — und die Frage kam beim naechsten Lauf
+     wieder, weil bestritten() hier bedingungslos zaehlte.
+
+      oben liefert bereits den ERSETZTEN Wert. Wenn der brauchbar
+     ist, ist die Frage beantwortet. [[erst_ursache_dann_zweite_massnahme]] */
+  const nochOffen = bestritten(w, 'type')
+    && (ERGAENZT[String(w && w.id)] || {}).type === undefined;
+  const kaputterTyp = leerWert(t) || t === 'other' || t === 'vocab' || nochOffen
     || (quelle === 'selbst' && typFestwert(w));
   if (kaputterTyp) fehlt.push('type');
 
@@ -916,9 +939,23 @@ try {
    ⛔ Das ist nicht nur eine ausgefallene Uebung:
    setzeLexikon() traegt `type` ins Iʿrab-Lexikon, also wird JEDER Satz mit
    diesen Woertern danach zerlegt. [[nomen_wird_zum_verb_gelesen]] */
+/* ⛔⛔ ZWEI Wege, den Festwert aufzuloesen — und beide muessen zaehlen.
+
+   Am 20.08.2026 an der echten Kette gemessen: Elias beantwortet auf der
+   Fragenseite „خَرَجَ → verb", antworten-uebernehmen.mjs traegt den Wert in
+   FELD_ERGAENZUNGEN — und die Frage kam beim naechsten Lauf WIEDER, weil hier
+   nur nach vt_wortAenderungen gesehen wurde. Das ist der andere Weg: die
+   Wortart-Auswahl im Bearbeitungsformular der App.
+
+   ⭐ Zwei Eingaenge, ein Ergebnis. Wer nur einen kennt, baut eine Schleife.
+   [[vor_dem_eintragen_messen]] */
 function typFestwert(w){
-  const a = SELBST_AENDERUNGEN[String(w.id)];
-  return !(a && a.type && String(a.type).trim());
+  const id = String(w.id);
+  const a = SELBST_AENDERUNGEN[id];
+  if (a && a.type && String(a.type).trim()) return false;   // im Formular geaendert
+  const e = ERGAENZT[id];
+  if (e && e.type !== undefined && String(e.type).trim()) return false;  // auf der Fragenseite beantwortet
+  return true;
 }
 
 /* ⛔⛔ EIN FACHBEGRIFF BRAUCHT KEINEN EIGENEN SATZ, WENN SEINE REGEL EINEN HAT.
