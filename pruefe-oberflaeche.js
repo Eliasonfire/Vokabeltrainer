@@ -20,6 +20,23 @@
  * nichts wirft, dass die Zaehlwerte zusammenpassen und dass jeder Datensatz
  * einmal durch seine Darstellung gelaufen ist. Layout, Lesbarkeit und ob eine
  * Erklaerung inhaltlich stimmt, bleiben Augenarbeit. */
+/* ⛔ Dieses Werkzeug laeuft NUR im Browser — es braucht SETTINGS, localStorage
+   und das DOM der laufenden App. Unter `node` warf es bis zum 20.08.2026 einen
+   nackten ReferenceError, und der sieht aus wie ein Befund: ich bin selbst
+   darauf hereingefallen und habe nach einer Ursache gesucht, die es nicht gab.
+   Ein Werkzeug soll sagen, warum es nicht laufen kann. */
+if (typeof window === 'undefined' || typeof localStorage === 'undefined'){
+  console.error('');
+  console.error('  ⛔ pruefe-oberflaeche.js laeuft NICHT unter node.');
+  console.error('     Es prueft die LAUFENDE App und braucht Browser, DOM und localStorage.');
+  console.error('');
+  console.error('     So geht es: App im Browser oeffnen, Entwicklerkonsole auf, dann');
+  console.error("       fetch('pruefe-oberflaeche.js').then(r=>r.text()).then(eval)");
+  console.error('');
+  console.error('     Exit 3 heisst „falsch aufgerufen", nicht „Fehler gefunden".');
+  process.exit(3);
+}
+
 (async function pruefeOberflaeche(){
   const ergebnis = [];
   const ok   = (was, zusatz) => ergebnis.push({ status:'ok',   was, zusatz: zusatz || '' });

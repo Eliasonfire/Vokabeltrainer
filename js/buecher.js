@@ -542,6 +542,26 @@ document.addEventListener('DOMContentLoaded', async ()=>{
     if (neu.length) VOCAB_DATA.push(...neu.map(w => Object.assign({}, w)));
   }
 
+  /* ⛔⛔ AUCH DIE SELBST ANGELEGTEN WOERTER — sonst kommt keine Eselsbruecke
+     bei ihnen an.
+
+     eselsbrueckenNachtragen() lief bis zum 20.08.2026 NUR mit der Buchliste
+     (einhaengen(), Zeile 255). Woerter aus vt_personalVocab stehen aber in
+     keiner Buchliste — js/kern.js:245 schiebt sie direkt in VOCAB_DATA. Ein
+     Eintrag in data/eselsbruecken.js unter ihrer `p_…`-Id waere also
+     geschrieben, gespeichert, ausgeliefert — und nie angewandt worden.
+
+     ⭐ Gefunden, BEVOR die ersten Texte dafuer geschrieben waren: die Frage
+     „wer ruft das eigentlich auf, und womit?" kostete zwei Minuten und
+     ersparte fuenfzehn Eselsbruecken, die niemand je gesehen haette.
+     [[werkzeug_ohne_aufrufer]]
+
+     ⚠️ Der Aufruf ist gefahrlos, wenn nichts passt: die Funktion ueberspringt
+     jedes Wort, das schon ein `mnemo` hat, und jede Id ohne Eintrag. */
+  if (typeof PERSONAL_VOCAB !== 'undefined' && Array.isArray(PERSONAL_VOCAB)
+      && PERSONAL_VOCAB.length)
+    eselsbrueckenNachtragen(PERSONAL_VOCAB);
+
   /* ---------- Pluralkarten NACH den Buechern neu bauen (18.08.2026) --------
 
      ⚠️ Ein Fehler, den nur die Zahl verraten hat. `wendePluralKartenAn` laeuft
