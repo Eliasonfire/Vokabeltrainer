@@ -693,6 +693,22 @@ function baueWortKarte(w){
     ? `<button class="btn btn-secondary btn-klein" data-wkeinzeln="0">Freischaltung zurücknehmen</button>`
     : (wkNochNicht ? `<button class="btn btn-primary btn-klein" data-wkeinzeln="1">${icon('check')}Nur dieses Wort freischalten</button>` : ''));
 
+  /* ⭐⭐ BOX VON HAND WÄHLEN — Elias am 20.08.2026: „ich will auch, dass wenn
+     ich auf einer infokarte von einem wort bin, dass ich sie auch beliebig in
+     die boxen packen kann … will sie direkt in box 5 packen."
+
+     Die Fälligkeit steht mit am Knopf, genau wie bei der Mehrfachauswahl in der
+     Wortliste: „Box 4" allein ist eine bloße Nummer, „in 7 Tagen" sagt, was
+     passiert. ⛔ Pluralkarten bekommen die Reihe auch — sie haben einen eigenen
+     Fortschritt und werden einzeln abgefragt. */
+  const wkTage = t => t === 0 ? 'sofort' : t === 1 ? 'morgen' : `in ${t} Tagen`;
+  t.push(`<div class="wk-abschnitt wk-boxwahl">
+    <div class="wk-marke"><span>In welcher Box?</span></div>
+    <div class="wk-boxziele">${[1,2,3,4,5].map(b =>
+      `<button class="kat-ziel${b === box ? ' ist-drin' : ''}" data-wkbox="${b}"${b === box ? ' aria-current="true"' : ''}>Box ${b}<span class="box-ziel-tage"> · ${wkTage(INTERVALS[b])}</span></button>`
+    ).join('')}</div>
+  </div>`);
+
   t.push(`<div class="wk-aktionen">
     ${wkFreiKnopf}
     <button class="btn btn-secondary btn-klein" data-wkbearbeiten>${icon('note')}Bearbeiten</button>
@@ -796,6 +812,19 @@ document.getElementById('wortKarte').addEventListener('click', (e)=>{
     return;
   }
 
+  /* ⚠️ Steht VOR allen anderen Zweigen und baut die Karte neu — sonst zeigt
+     die Marke im Kopf weiter die alte Box, und es sähe aus, als hätte der
+     Knopf nichts getan. */
+  const boxKnopf = e.target.closest('[data-wkbox]');
+  if (boxKnopf && WK_WORT){
+    const ziel = Number(boxKnopf.getAttribute('data-wkbox'));
+    const bewegt = verschiebeInBox(WK_WORT.id, ziel);
+    karte.innerHTML = baueWortKarte(WK_WORT);
+    if (typeof renderHome === 'function') renderHome();
+    toast(bewegt ? `In Box ${ziel} gelegt — ${ziel === 1 ? 'sofort wieder dran' : 'wieder dran ' + (INTERVALS[ziel] === 1 ? 'morgen' : 'in ' + INTERVALS[ziel] + ' Tagen')}.`
+                 : `Steht schon in Box ${ziel}.`);
+    return;
+  }
   const einzelnKnopf = e.target.closest('[data-wkeinzeln]');
   if (einzelnKnopf && WK_WORT){
     const an = einzelnKnopf.getAttribute('data-wkeinzeln') === '1';
