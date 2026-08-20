@@ -18,6 +18,7 @@ function renderSettings(){
   document.getElementById('wurzelNiveauSelect').value = SETTINGS.wurzelNiveau || 'stand';
   document.getElementById('toggleWurzelAusrichten')
     .classList.toggle('on', SETTINGS.wurzelAusrichten !== false);
+  zeichneFarbwahl();
   zeichneKenneSchonListe();
   zeichneEinzelnFreiListe();
   loadVoices();
@@ -586,3 +587,34 @@ document.getElementById('paketDatei').addEventListener('change', async (e)=>{
 /* Beim Start anzeigen, was auf diesem Geraet liegt - erst wenn das Paket
    wirklich gelesen ist, sonst stuende dort immer der Leertext. */
 if (typeof PAKET_BEREIT !== 'undefined') PAKET_BEREIT.then(zeigePaketStand);
+
+/* ---------- Akzentfarbe waehlen (20.08.2026) ----------
+   Elias hat aus acht Vorschlaegen fuenf behalten. Die Kacheln stehen in
+   index.html; hier haengt nur die Bedienung dran.
+
+   ⭐ Kein Neuaufbau der Oberflaeche: die Farbe wirkt ueber CSS-Variablen am
+   <html>, also aendert sich alles gleichzeitig und ohne dass eine laufende
+   Uebung ihren Stand verliert. Dasselbe Prinzip wie bei der Wurzelfaerbung. */
+function zeichneFarbwahl(){
+  const kasten = document.getElementById('farbwahl');
+  if (!kasten) return;
+  const jetzt = SETTINGS.akzentFarbe || '#ff1744';
+  kasten.querySelectorAll('.farbe').forEach(b =>
+    b.setAttribute('aria-checked', b.dataset.hex === jetzt ? 'true' : 'false'));
+}
+
+(function(){
+  const kasten = document.getElementById('farbwahl');
+  if (!kasten) return;
+  kasten.addEventListener('click', (e) => {
+    const b = e.target.closest('.farbe');
+    if (!b) return;
+    const hex = b.dataset.hex;
+    if (!hex || hex === (SETTINGS.akzentFarbe || '#ff1744')) return;
+    SETTINGS.akzentFarbe = wendeAkzentfarbeAn(hex);
+    saveSettings();
+    zeichneFarbwahl();
+    const name = (b.querySelector('.farbe-name') || {}).textContent || hex;
+    toast('Akzentfarbe: ' + name);
+  });
+})();

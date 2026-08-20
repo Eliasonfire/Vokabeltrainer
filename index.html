@@ -3148,6 +3148,57 @@ main{
   transition:border-color var(--dur-2) ease, background var(--dur-2) ease;
 }
 .setting-row:hover{border-color:var(--border-strong);}
+
+/* ---------- Akzentfarbe waehlen (20.08.2026) ----------
+   Eigene Zeile statt Auswahlfeld: eine Farbe muss man SEHEN, ein <select>
+   zeigt nur ihren Namen. Deshalb bricht diese Reihe unter den Titel statt
+   danebenzustehen — auf 375 px Breite passen fuenf Kacheln sonst nicht. */
+.setting-row-block{flex-direction:column;align-items:stretch;gap:var(--sp-3);}
+/* ⛔ Grid statt Flex-Wrap. Der erste Entwurf hatte `flex:1 1 5.2rem` — im
+   Browser nachgemessen war die fünfte Kachel dann **390 px** breit statt 92:
+   sie stand allein in der zweiten Reihe und streckte sich über die volle
+   Breite. Ein Grid gibt allen dieselbe Spaltenbreite, egal wie viele in der
+   letzten Reihe stehen. */
+.farbwahl{
+  display:grid;gap:var(--sp-2);
+  grid-template-columns:repeat(auto-fill,minmax(5.2rem,1fr));
+  /* ⚠ Ohne das steht die zweite Reihe 18 px niedriger als die erste —
+     nur Torch Red trägt die Marke „bisher“, und Grid richtet die Höhe je
+     ZEILE aus. Im Browser nachgemessen: 111 px gegen 93 px. */
+  grid-auto-rows:1fr;
+}
+.farbe{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  background:var(--surface-3,var(--surface-2));border:1.5px solid var(--border);
+  border-radius:var(--r-2,12px);padding:10px 8px;cursor:pointer;
+  font:inherit;color:var(--text-dim);
+  transition:border-color var(--dur-2) ease, color var(--dur-2) ease;
+}
+.farbe:hover{border-color:var(--border-strong);color:var(--text);}
+.farbe:focus-visible{outline:2px solid var(--red-bright);outline-offset:2px;}
+.farbe[aria-checked="true"]{border-color:var(--red);color:var(--text);}
+.farbe-feld{
+  width:100%;height:34px;border-radius:8px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.10);
+}
+.farbe-name{font-size:.74rem;font-weight:600;line-height:1.2;text-align:center;}
+/* ⭐ Der Kontrastwert steht an jeder Kachel, weil er die einzige Zahl ist,
+   die man einer Farbe nicht ansieht. Gemessen am UNGUENSTIGSTEN Ort der App
+   (--surface-3, die hellste Flaeche) — gegen reines Schwarz sehen alle fünf
+   besser aus, als sie in der App wirklich sind. Die Schwelle für kleine
+   Schrift ist 4,5. ⛔ Es ist ein HINWEIS, keine Sperre: Elias entscheidet. */
+.farbe-kontrast{
+  font-size:.62rem;font-variant-numeric:tabular-nums;
+  color:var(--text-dim);opacity:.6;
+}
+.farbe[data-hex="#0066ff"] .farbe-kontrast,
+.farbe[data-hex="#ff0000"] .farbe-kontrast{color:#ffb340;opacity:.85;}
+/* ⚠️ Die Marke „bisher" traegt KEINE Akzentfarbe — sie soll sagen, welche
+   Farbe heute steht, und wuerde sonst mitwandern, sobald er wechselt. */
+.farbe-marke{
+  font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--text-dim);opacity:.75;
+}
 .setting-title{font-weight:700;font-size:var(--fs-md);}
 .setting-sub{font-size:var(--fs-sm);color:var(--text-dim);margin-top:2px;line-height:1.45;}
 .switch{
@@ -4169,6 +4220,56 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
       <div class="screen-header">
         <button class="icon-btn" data-back aria-label="Zurück"><svg class="ic"><use href="#ic-left"/></svg></button>
         <h2>Einstellungen</h2>
+      </div>
+
+      <!-- Akzentfarbe. Elias am 20.08.2026, nachdem er die Vergleichsseite
+           durchgesehen hatte: „die farben die ich umrahmt habe gefallen mir,
+           die anderen koennen verworfen werden. du sollst am besten alle die
+           mir gefallen in den einstellungen fuer mich verfuegbar machen (das
+           alte sollte gekennzeichnet werden)."
+
+           Vier der acht Vorschlaege sind damit gestrichen (Rot 1 #ff3b5c,
+           Rot 2 #ff2a4d, Coral Red #ff4d4d) — sie standen alle nah bei der
+           heutigen Farbe und brachten keinen sichtbaren Unterschied.
+
+           ⭐ Die Abstufungen werden GERECHNET, nicht je Farbe hinterlegt:
+           bright = L+10, soft = L+20, dim = L-34/S-21, rand = L-12/S-15. Die
+           Formel ist aus der heutigen Familie um #ff1744 zurueckgerechnet, so
+           bekommt jede Farbe dieselbe Abstufung. Steht in js/darstellung.js. -->
+      <div class="setting-row setting-row-block">
+        <div>
+          <div class="setting-title">Akzentfarbe</div>
+          <div class="setting-sub">Die Farbe der Knöpfe, Fortschrittsbalken und Hervorhebungen</div>
+        </div>
+        <div class="farbwahl" id="farbwahl" role="radiogroup" aria-label="Akzentfarbe">
+          <button class="farbe" data-hex="#ff1744" role="radio" aria-checked="true"
+                  title="Torch Red — die bisherige Farbe">
+            <span class="farbe-feld" style="background:#ff1744"></span>
+            <span class="farbe-name">Torch Red</span>
+            <span class="farbe-marke">bisher</span>
+            <span class="farbe-kontrast">4,47</span>
+          </button>
+          <button class="farbe" data-hex="#ff0000" role="radio" aria-checked="false" title="Rot pur">
+            <span class="farbe-feld" style="background:#ff0000"></span>
+            <span class="farbe-name">Rot pur</span>
+            <span class="farbe-kontrast">4,30</span>
+          </button>
+          <button class="farbe" data-hex="#0a84ff" role="radio" aria-checked="false" title="Azure">
+            <span class="farbe-feld" style="background:#0a84ff"></span>
+            <span class="farbe-name">Azure</span>
+            <span class="farbe-kontrast">4,71</span>
+          </button>
+          <button class="farbe" data-hex="#0066ff" role="radio" aria-checked="false" title="Ultramarin">
+            <span class="farbe-feld" style="background:#0066ff"></span>
+            <span class="farbe-name">Ultramarin</span>
+            <span class="farbe-kontrast">3,55</span>
+          </button>
+          <button class="farbe" data-hex="#00d2ff" role="radio" aria-checked="false" title="Cyan">
+            <span class="farbe-feld" style="background:#00d2ff"></span>
+            <span class="farbe-name">Cyan</span>
+            <span class="farbe-kontrast">9,54</span>
+          </button>
+        </div>
       </div>
       <!-- Grammatik-Hinweise: am 19.08.2026 aus dem Satz-Modus hierher
            verschoben. Elias: „das kannst du in die einstellungen verschieben."

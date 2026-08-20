@@ -186,3 +186,129 @@ function animateNumber(el, to, suffix, dur){
   /* Nach dem Laden der Schriften kann sie eine Spur anders sein. */
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(setzen);
 })();
+
+/* ===================== AKZENTFARBE (20.08.2026) =====================
+
+   Elias, nachdem er die Vergleichsseite durchgesehen hatte: „die farben die
+   ich umrahmt habe gefallen mir, die anderen können verworfen werden. du
+   sollst am besten alle die mir gefallen in den einstellungen für mich
+   verfügbar machen (das alte sollte gekennzeichnet werden)."
+
+   ⭐ WARUM GERECHNET UND NICHT JE FARBE HINTERLEGT
+
+   An der Akzentfarbe hängen sieben Variablen, nicht eine: --red, --red-bright,
+   --red-soft, --red-dim, --red-glow, --red-wash und --accent-grad. Fünf Farben
+   × sieben Werte wären 35 Zahlen von Hand — und beim nächsten Farbwunsch
+   nochmal sieben. Die Ableitung ist deshalb aus der HEUTIGEN Familie um
+   #ff1744 zurückgerechnet:
+
+       bright = L+10        soft = L+20
+       dim    = L-34, S-21  rand = L-12, S-15
+
+   Gegengeprüft an #ff1744 selbst: die Formel muss die vorhandenen Werte
+   wieder herausgeben, sonst stimmt sie nicht. Genau dafür steht unten der
+   Sonderfall — bei der heutigen Farbe werden die HANDGEPFLEGTEN Werte aus
+   index.html gesetzt, nicht die gerechneten. Sie sind über Wochen an echten
+   Flächen nachgemessen worden (--rand-wrongonly bei Kontrast 1,26), und eine
+   Formel, die sie um ein Grad verfehlt, wäre kein Fortschritt.
+
+   ⚠️ NICHT im :root von index.html ändern. Dort stehen die Voreinstellungen,
+   die gelten, solange nichts gewählt ist — sie sind der Rückweg. */
+
+const AKZENT_FARBEN = [
+  { hex:'#ff1744', name:'Torch Red', heute:true },
+  { hex:'#ff0000', name:'Rot pur' },
+  { hex:'#0a84ff', name:'Azure' },
+  { hex:'#0066ff', name:'Ultramarin' },
+  { hex:'#00d2ff', name:'Cyan' }
+];
+
+function farbeZuHsl(hex){
+  const r = parseInt(hex.slice(1,3),16)/255,
+        g = parseInt(hex.slice(3,5),16)/255,
+        b = parseInt(hex.slice(5,7),16)/255;
+  const max = Math.max(r,g,b), min = Math.min(r,g,b), d = max-min;
+  let h = 0;
+  if (d){
+    if (max === r)      h = 60 * (((g-b)/d) % 6);
+    else if (max === g) h = 60 * ((b-r)/d + 2);
+    else                h = 60 * ((r-g)/d + 4);
+  }
+  if (h < 0) h += 360;
+  const l = (max+min)/2;
+  const s = d ? d / (1 - Math.abs(2*l - 1)) : 0;
+  return [h, s*100, l*100];
+}
+
+function farbeAusHsl(h, s, l){
+  h = ((h % 360) + 360) % 360;
+  s = Math.max(0, Math.min(100, s)) / 100;
+  l = Math.max(0, Math.min(100, l)) / 100;
+  const c = (1 - Math.abs(2*l - 1)) * s, x = c * (1 - Math.abs((h/60) % 2 - 1)),
+        m = l - c/2;
+  let r=0,g=0,b=0;
+  if      (h <  60){ r=c; g=x; }
+  else if (h < 120){ r=x; g=c; }
+  else if (h < 180){ g=c; b=x; }
+  else if (h < 240){ g=x; b=c; }
+  else if (h < 300){ r=x; b=c; }
+  else             { r=c; b=x; }
+  const f = v => ('0' + Math.round((v+m)*255).toString(16)).slice(-2);
+  return '#' + f(r) + f(g) + f(b);
+}
+
+function akzentFamilie(hex){
+  const [h,s,l] = farbeZuHsl(hex);
+  const r = parseInt(hex.slice(1,3),16),
+        g = parseInt(hex.slice(3,5),16),
+        b = parseInt(hex.slice(5,7),16);
+  return {
+    basis:  hex,
+    bright: farbeAusHsl(h+2, s, l+10),
+    soft:   farbeAusHsl(h+2, s, l+20),
+    dim:    farbeAusHsl(h, s-21, l-34),
+    rand:   farbeAusHsl(h, s-15, l-12),
+    glow:   'rgba(' + r + ',' + g + ',' + b + ',.34)',
+    wash:   'rgba(' + r + ',' + g + ',' + b + ',.09)'
+  };
+}
+
+/* ⛔ Der Sonderfall ist kein Schönheitsfehler, sondern Absicht: für die
+   heutige Farbe gelten die handgepflegten Werte aus index.html, nicht die
+   gerechneten. Sie sind an echten Flächen nachgemessen; die Formel trifft sie
+   nah, aber nicht auf den Punkt. Wer sie hier überschreibt, verschlechtert
+   den einzigen Zustand, der geprüft ist. */
+const AKZENT_HEUTE = {
+  basis:'#ff1744', bright:'#ff4d6a', soft:'#ff8095', dim:'#5e0b1c',
+  rand:'#cb1036',
+  glow:'rgba(255,23,68,.34)', wash:'rgba(255,23,68,.09)'
+};
+
+function wendeAkzentfarbeAn(hex){
+  const gewaehlt = AKZENT_FARBEN.some(f => f.hex === hex) ? hex : '#ff1744';
+  const f = gewaehlt === '#ff1744' ? AKZENT_HEUTE : akzentFamilie(gewaehlt);
+  const w = document.documentElement.style;
+  w.setProperty('--red',        f.basis);
+  w.setProperty('--red-bright', f.bright);
+  w.setProperty('--red-soft',   f.soft);
+  w.setProperty('--red-dim',    f.dim);
+  w.setProperty('--red-glow',   f.glow);
+  w.setProperty('--red-wash',   f.wash);
+  w.setProperty('--rand-wrongonly', f.rand);
+  w.setProperty('--accent-grad', 'linear-gradient(135deg,' + f.basis + ' 0%,' + f.bright + ' 100%)');
+  /* ⛔ Die Adressleiste bleibt SCHWARZ. Der erste Entwurf zog sie mit —
+     nachgesehen steht in index.html aber <meta name="theme-color"
+     content="#000000">, und das ist Absicht: die App ist OLED-schwarz, eine
+     farbige Leiste darüber wäre ein Fremdkörper. Der Code dafür ist wieder
+     raus, statt als wirkungslose Zeile stehen zu bleiben. */
+  return gewaehlt;
+}
+
+/* Sofort anwenden, nicht erst wenn die Einstellungen geöffnet werden.
+   ⚠️ Direkt aus dem Speicher gelesen statt über SETTINGS: dieses Modul lädt
+   nach js/kern.js, aber vor allem, was zeichnet — so gibt es kein Aufblitzen
+   der alten Farbe. Dasselbe Muster nutzt wendePluralKartenAn() in kern.js. */
+try {
+  const s = (typeof LS !== 'undefined' && LS.get) ? (LS.get('vt_settings', {}) || {}) : {};
+  if (s.akzentFarbe) wendeAkzentfarbeAn(s.akzentFarbe);
+} catch (e) { /* gesperrter Speicher: dann bleibt die Voreinstellung, das ist der Rückweg */ }
