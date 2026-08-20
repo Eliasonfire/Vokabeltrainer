@@ -267,9 +267,22 @@ von ihm:**
    selben Muster
 
 ```
+node werkzeuge/eselsbruecken-setzen.mjs <datei.json>   # ⭐ EINSPIELEN, nicht tippen
 node pruefe-eselsbruecken.js
 node werkzeuge/vers.mjs <sure:vers>     # ⛔ JEDE Koranstelle belegen
 ```
+
+⛔⛔ **Der Text geht über eine DATEI, nie über die Kommandozeile.** Deutscher
+und arabischer Text verliert dort seine Maskierung lautlos, und der Befehl
+meldet trotzdem Erfolg. `eselsbruecken-setzen.mjs` liest deshalb JSON und
+ersetzt gezielt die betroffene Zeile — die Kommentare über den Einträgen
+bleiben stehen. [[nutztext_nie_in_shell_strings]]
+
+⚠️ **Am 21.08.2026 aufgefallen:** Das Werkzeug stand hier nicht, obwohl es
+seit dem 18.08. genau für diesen Schritt existiert und in `routines.json`
+freigegeben ist. Wer A6 abarbeitete, tippte von Hand — bei 77 Wörtern
+derselbe Handgriff 77-mal, und genau dabei passieren die Fehler, die niemand
+mehr findet. [[werkzeug_ohne_aufrufer]]
 
 ⛔ Ein Vers außerhalb 1 / 67 / 93–114 ist als Merkhaken wertlos — er ist selbst
 neuer Stoff. [[quranbezug_nur_auswendiges]]
