@@ -531,6 +531,48 @@
     return `${VOCAB_DATA.length} Datensaetze, jeder mit Herkunft`;
   });
 
+  /* ---- Einzeln freigeschaltete Woerter (20.08.2026) ----
+
+     Elias: „ich möchte aber nur die vereinzelnen wörter haben ohne den rest
+     des kapitels zu haben.“ Die Freischaltung hängt an ZWEI Zeilen — einer in
+     istBekannt() und einer in passtZurAuswahl(). Verschwindet die zweite,
+     fällt das Wort still durch den Buchfilter zurück; nichts meldet es, und
+     der Knopf in der Wortkarte sieht weiter aus, als täte er etwas.
+
+     ⛔ Der Test greift sich ein Wort aus einem gesperrten Kapitel, engt die
+     Auswahl AUSDRÜCKLICH ein und misst beide Richtungen. Ohne die Einengung
+     wäre er wertlos: bei weiter Auswahl käme das Wort auch ohne die zweite
+     Zeile durch. */
+  versuch('Kette: einzeln freigeschaltete Woerter', () => {
+    if (typeof setzeEinzelnFrei !== 'function' || typeof istEinzelnFrei !== 'function')
+      throw new Error('setzeEinzelnFrei/istEinzelnFrei fehlen — die Freischaltung ist ausgebaut');
+    const kandidat = VOCAB_DATA.find(w => w.book === 'madina-1' && !w.istPlural
+                                       && Number(w.chapter) >= 13 && !istBekannt(w));
+    if (!kandidat) return 'kein gesperrtes Wort mehr da — nichts zu pruefen';
+
+    const sicherAuswahl = JSON.parse(JSON.stringify(SETTINGS.buecher || {}));
+    const warFrei = istEinzelnFrei(kandidat);
+    try {
+      SETTINGS.buecher = { 'madina-1': [1, 2, 3] };      /* der unguenstigste Fall */
+      setzeEinzelnFrei(kandidat.id, false);
+      if (passtZurAuswahl(kandidat))
+        throw new Error(`${kandidat.ar} kommt OHNE Freischaltung durch — die Wissensgrenze greift nicht`);
+      setzeEinzelnFrei(kandidat.id, true);
+      if (!istBekannt(kandidat))
+        throw new Error(`${kandidat.ar}: istBekannt() kennt die einzelne Freischaltung nicht`);
+      if (!passtZurAuswahl(kandidat))
+        throw new Error(`${kandidat.ar}: istBekannt() sagt ja, aber passtZurAuswahl() wirft es hinaus `
+                      + `— die zweite Zeile fehlt, und der Buchfilter gewinnt`);
+      if (typeof einzelnFreigeschaltete === 'function'
+          && !einzelnFreigeschaltete().some(w => w.id === kandidat.id))
+        throw new Error(`${kandidat.ar} steht nicht in der Liste zum Zuruecknehmen — der Rueckweg fehlt`);
+      return `${kandidat.ar} (Kap. ${kandidat.chapter}): gesperrt → frei → in der Auswahl, Rueckweg da`;
+    } finally {
+      setzeEinzelnFrei(kandidat.id, warFrei);
+      SETTINGS.buecher = sicherAuswahl;
+    }
+  });
+
   saveSettings();
   if (typeof renderBuchChips === 'function') renderBuchChips();
   if (typeof renderHome === 'function') renderHome();
