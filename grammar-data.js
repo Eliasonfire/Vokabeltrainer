@@ -2227,6 +2227,26 @@ const SENTENCE_TAGS = {
   "45943": [
     { ruleId: "nat-fem-01", matchText: "رَكْعَةٌ طَوِيلَةٌ" },
     { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" }
+  ],
+  "50166": [
+    { ruleId: "ismun-mawsul-alladhi-01", matchText: "الَّذِي" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْمَدْرَسَةِ" }
+  ],
+  "50167": [
+    { ruleId: "fragepartikel-hal-01", matchText: "هَلْ" },
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" }
+  ],
+  "50467": [
+    { ruleId: "mubtada-khabar-01", matchText: "الْبَيْتُ مُبْتَدَأٌ" }
+  ],
+  "50468": [
+    { ruleId: "nominalsatz-ohne-kopula-01", matchText: "الْكِتَابُ مَفْعُولٌ بِهِ" }
+  ],
+  "50469": [
+    { ruleId: "mubtada-khabar-01", matchText: "الطَّالِبُ فَاعِلٌ" }
+  ],
+  "50471": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" }
   ]
 };
 
