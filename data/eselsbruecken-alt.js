@@ -1767,4 +1767,72 @@ const ESELSBRUECKEN_ALT = {
     'Der Begriff steht in deinem eigenen Satz drin: الْجَدِيدُ نَعْتٌ لِلْكِتَابِ — „‚Neu‘ ist ein Attribut zum Buch." ⚠️ لِ und der Artikel اَلْ verschmelzen zu لِلْـ: das Alif fällt weg, das Lām bleibt doppelt stehen.',
     'Die vier Bedingungen, die dein Lehrer nennt, kannst du an einem Beispiel abzählen: بَيْتٌ كَبِيرٌ. Beide unbestimmt, beide Nominativ, beide männlich, beide Einzahl — stimmt eines nicht, ist es kein نَعْت mehr, sondern ein eigener Satz.'
   ],
+
+  /* ---------- Elias' selbst angelegte Funktionswörter (20.08.2026) ----------
+
+     ⛔ Bis heute stand im Kopf von data/eselsbruecken.js, für diese neun wäre
+     eine Eselsbrücke „gestellt“ — sie seien Grundwortschatz und lernten sich
+     über den Gebrauch. Elias hat das am 20.08. verworfen: „ich brauche für
+     absolut jedes wort drei eselsbrücken.“
+
+     ⭐ Die Quranbelege sind AUSGEZÄHLT, nicht erinnert: ein Skript hat Sure 1,
+     67 und 93–114 — also nur, was er auswendig kann — nach dem entvokalisierten
+     Wort durchsucht. Vier der neun haben dort einen Beleg (لِمَنْ 98:8,
+     لَكَ 93:4+94:1, بَعْدَ 95:7+98:4, كَيْفَ 67:17+105:1, عِنْدَ 67:26+98:8);
+     فِيهِ, أَمَامَ und حَال kommen dort NICHT vor und knüpfen deshalb an den
+     Unterricht und an seine eigenen Sätze an. [[quranbezug_nur_auswendiges]] */
+
+  /* لِمَن - (für) wem/wen (selbst angelegt) */
+  'p_1787184718572': [
+    'Du sprichst es in al-Bayyinah: ذَٰلِكَ لِمَنْ خَشِيَ رَبَّهُ — „das ist für jemanden, der seinen Herrn fürchtet" (98:8, letzter Vers). Dasselbe لِمَنْ, dieselbe Bedeutung „für wen".',
+    '⚠️ Merk dir die Endung mit: لِمَنْ hat ein Sukūn. Trifft es auf die Hamzat al-waṣl von الْ, wird daraus ein Kasra — لِمَنِ الْكِتَابُ؟, nicht لِمَنْ الْكِتَابُ. Das ist dieselbe Regel wie bei مِنَ الْبَيْتِ, die du aus Folge 5 kennst.'
+  ],
+
+  /* لَكَ - für dich (m.) (selbst angelegt) */
+  'p_1787185309933': [
+    'لِ + كَ, und beide Teile hast du: لِ ist der Ḥarf ǧarr des Besitzes (Folge 9), كَ die Besitzendung „dein" für einen Mann (Folge 15). ⭐ Das لِ wechselt dabei von Kasra zu Fatḥa — لَكَ, nicht لِكَ. Vor einem angehängten Pronomen ist das immer so.',
+    'Und ein zweiter Vers aus deinem Bereich: خَيْرٌ لَّكَ مِنَ الْأُولَىٰ — „Und das Jenseits ist wahrlich besser für dich als das Diesseits" (93:4, aḍ-Ḍuḥā).'
+  ],
+
+  /* لَكِ - für dich (w.) (selbst angelegt) */
+  'p_1787185328882': [
+    'Merk das Paar zusammen, dann hast du zwei Wörter für einen Preis. Eselsbrücke für die Richtung: das **i** in Kasra passt zum **i** in „sie" — لَكِ geht an eine Frau.',
+    '⚠️ Ohne Taschkīl sehen لَكَ und لَكِ gleich aus (لك). Genau davor warnt deine Regel taschkil-kontext-01 aus Folge 9: das Vokalzeichen ist hier nicht Zierrat, sondern der ganze Unterschied.'
+  ],
+
+  /* بَعْدَ - nach / danach (selbst angelegt) */
+  'p_1787188396011': [
+    'Du sprichst es in al-Bayyinah: مِنْ بَعْدِ مَا جَاءَتْهُمُ — „nachdem der klare Beweis zu ihnen gekommen ist" (98:4). Dort steht بَعْدِ mit Kasra, weil مِنْ davorsteht — dieselbe Ḥarf-ǧarr-Regel wie überall.',
+    'Und in at-Tīn, vorletzter Vers: فَمَا يُكَذِّبُكَ بَعْدُ بِالدِّينِ (95:7). ⚠️ Hier steht بَعْدُ mit Ḍamma — weil kein Wort folgt, auf das es zeigt. Mit folgendem Wort: Fatḥa. Ohne: Ḍamma.'
+  ],
+
+  /* كَيْفَ - wie (selbst angelegt) */
+  'p_1787189022107': [
+    'Ein zweites Mal in al-Mulk, die du ebenfalls kannst: فَسَتَعْلَمُونَ كَيْفَ نَذِيرِ — „Dann werdet ihr erfahren, WIE Meine Warnung ist" (67:17).',
+    'Der Alltagssatz, der es festnagelt: كَيْفَ حَالُكَ؟ — „Wie geht es dir?", wörtlich „wie ist dein Zustand?". Damit hast du كَيْفَ und حَال in einem Satz.'
+  ],
+
+  /* حَالُكْ - dein Zustand (selbst angelegt) */
+  'p_1787189076593': [
+    'Es kommt fast nur mit كَيْفَ vor: كَيْفَ حَالُكَ؟ — „Wie geht es dir?" Lern die beiden als ein Stück, dann hast du eine ganze Begrüßung statt zwei loser Vokabeln.',
+    '⚠️ Deine Karte trägt die Pausalform حَالُكْ mit Sukūn — so sagt man es, wenn man danach aufhört zu sprechen. Im Satz steht حَالُكَ mit Fatḥa. Dasselbe Wort, zwei Sprechlagen; die Karte zeigt die eine, dein Beispielsatz die andere.'
+  ],
+
+  /* أَمَامَ - vor / davor (selbst angelegt) */
+  'p_1787189287368': [
+    'أَمَامَ und خَلْفَ sind ein Gegensatzpaar: davor und dahinter. Der Satz deines Lehrers hat beide: „Die Tafel ist أَمَامَ dem Studenten und sie ist خَلْفَ dem Lehrer."',
+    '⚠️ Es endet IMMER auf Fatḥa — أَمَامَ, nie أَمَامُ. Das Ẓarf ist selbst manṣūb, und das Wort danach steht im Genitiv: أَمَامَ الطَّالِبِ. Zwei Endungen in einem Ausdruck, beide fest.'
+  ],
+
+  /* فِيهِ - darin / in ihm (selbst angelegt) */
+  'p_1787189488747': [
+    'Dein eigener Satz zeigt es im Gebrauch: الْبَيْتُ كَبِيرٌ، وَفِيهِ غُرْفَةٌ — „Das Haus ist groß, und darin ist ein Zimmer." ⭐ Beachte den Bau: der Ǧārr wa maǧrūr steht vorn, das Mubtadaʾ غُرْفَةٌ folgt.',
+    'فِي ist der allererste Ḥarf ǧarr, den du gelernt hast (Folge 4, zusammen mit عَلَى). Alles, was du über فِي weißt, gilt auch hier — nur dass statt eines Nomens ein angehängtes Pronomen folgt.'
+  ],
+
+  /* عِنْدَ - bei (selbst angelegt) */
+  'p_1787190874749': [
+    'Und in al-Bayyinah, letzter Vers: جَزَاؤُهُمْ عِنْدَ رَبِّهِمْ — „Ihr Lohn BEI ihrem Herrn sind die Gärten Edens" (98:8).',
+    '⭐ Der Unterschied zu لِ, den dein Lehrer in Folge 15 ausdrücklich „eine wichtige Regel" nennt: لِ ist für Untrennbares (dein Bruder, dein Name), عِنْدَ für Trennbares (das Buch, das gerade bei dir liegt). Beide heißen auf Deutsch „ich habe" — austauschbar sind sie nicht.'
+  ],
 };
