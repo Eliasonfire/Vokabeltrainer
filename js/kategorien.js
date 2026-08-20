@@ -660,21 +660,34 @@ function baueWortKarte(w){
      abändern wenn ich das wollte." Stimmte: auf der Lernkarte öffnet ein Tipp
      auf den Eselsbrücken-Kasten den Notizeditor, hier gab es nichts dergleichen
      — man konnte nur blättern. Jetzt steht in beiden Fällen ein Stift daneben. */
+  /* ⭐⭐ DER GANZE KASTEN IST DER KNOPF — Elias am 20.08.2026: „ich will einfach
+     nur aufs textfeld klicken und dann das bearbeiten können, ich will nicht
+     auf ‚schreiben‘ oder ‚eigene‘ klicken um da meinen text einfügen zu können
+     oder bearbeiten zu können."
+
+     Der Stift daneben bleibt stehen, aber nur noch als Auskunft (`<span>`,
+     `aria-hidden`) — er sagt, DASS der Kasten etwas tut. Das Ziel für den
+     Daumen ist jetzt der ganze Kasten statt eines 60 px breiten Wortes.
+
+     ⛔ Die Blätterknöpfe liegen INNERHALB dieses Kastens. Ihr Handler steht
+     weiter unten im Klick-Ablauf, also muss der Kasten-Handler sie ausnehmen
+     — sonst öffnete „Anderer →" das Formular, statt zu blättern. Die Ausnahme
+     steht bei `data-wkmerk` im Handler. */
   const notiz = getNote(w.id);
   if (notiz){
-    t.push(`<div class="wk-abschnitt">
+    t.push(`<div class="wk-abschnitt wk-tippbar" data-wkmerk role="button" tabindex="0" aria-label="Eselsbrücke ändern">
       <div class="wk-marke"><span>Deine Eselsbrücke</span>
-        <button class="wk-stift" data-wkmerk aria-label="Eselsbrücke ändern">${icon('note')}ändern</button></div>
+        <span class="wk-stift" aria-hidden="true">${icon('note')}ändern</span></div>
       <div class="de">${arabischHervorheben(notiz)}</div>
     </div>`);
   } else {
     const liste = (typeof vorschlagsListe === 'function') ? vorschlagsListe(w) : [];
     if (liste.length){
       const nr = gewaehlterVorschlag(w.id, liste.length);
-      t.push(`<div class="wk-abschnitt">
+      t.push(`<div class="wk-abschnitt wk-tippbar" data-wkmerk role="button" tabindex="0" aria-label="Eigene Eselsbrücke schreiben">
         <div class="wk-marke"><span>Vorschlag</span>
           <span>${liste.length>1?`${nr+1} von ${liste.length}`:''}
-          <button class="wk-stift" data-wkmerk aria-label="Eigene Eselsbrücke schreiben">${icon('note')}eigene</button></span></div>
+          <span class="wk-stift" aria-hidden="true">${icon('note')}eigene</span></span></div>
         <div class="de">${arabischHervorheben(liste[nr])}</div>
         ${liste.length>1?`<div class="wk-blaettern">
           <button class="btn btn-secondary btn-klein" data-wkblatt="-1">← Vorheriger</button>
@@ -682,9 +695,9 @@ function baueWortKarte(w){
         </div>`:''}
       </div>`);
     } else {
-      t.push(`<div class="wk-abschnitt">
+      t.push(`<div class="wk-abschnitt wk-tippbar" data-wkmerk role="button" tabindex="0" aria-label="Eselsbrücke schreiben">
         <div class="wk-marke"><span>Eselsbrücke</span>
-          <button class="wk-stift" data-wkmerk aria-label="Eselsbrücke schreiben">${icon('note')}schreiben</button></div>
+          <span class="wk-stift" aria-hidden="true">${icon('note')}schreiben</span></div>
         <div class="de" style="color:var(--text-faint)">Noch keine — schreib dir eine.</div>
       </div>`);
     }
@@ -714,9 +727,10 @@ function baueWortKarte(w){
      `arabischHervorheben` wie bei der Eselsbrücke: er wird arabische Wörter
      hineinschreiben, und die brauchen ihre eigene Schrift und Laufrichtung. */
   const eigeneNotiz = (typeof getNotiz === 'function') ? getNotiz(w.id) : '';
-  t.push(`<div class="wk-abschnitt wk-notiz">
+  t.push(`<div class="wk-abschnitt wk-notiz wk-tippbar" data-wknotiz role="button" tabindex="0"
+      aria-label="${eigeneNotiz ? 'Notiz ändern' : 'Notiz schreiben'}">
     <div class="wk-marke"><span>Deine Notiz</span>
-      <button class="wk-stift" data-wknotiz aria-label="${eigeneNotiz ? 'Notiz ändern' : 'Notiz schreiben'}">${icon('note')}${eigeneNotiz ? 'ändern' : 'schreiben'}</button></div>
+      <span class="wk-stift" aria-hidden="true">${icon('note')}${eigeneNotiz ? 'ändern' : 'schreiben'}</span></div>
     ${eigeneNotiz
       ? `<div class="de">${arabischHervorheben(eigeneNotiz)}</div>`
       : `<div class="de" style="color:var(--text-faint)">Noch keine — schreib dir auf, was dir an diesem Wort auffällt.</div>`}
@@ -846,6 +860,41 @@ function baueWortKarte(w){
 /* Das Bearbeitungsformular liegt IN der Wortkarte, nicht in einem zweiten
    Fenster: ein Fenster ueber einem Fenster ist auf dem Handy kaum noch
    wegzutippen, und er soll beim Aendern sehen, was daneben steht. */
+/* ---------- Die Wortart als Auswahl (20.08.2026) ----------
+
+   Elias mit einem Bildschirmfoto von لَحْمٌ: „anstatt bei solchen wörtern
+   einfach nur wort zu schreiben, schreibe lieber Nomen oder so hin."
+
+   „Wort" stand dort, weil eigene Vokabeln beim Anlegen `type:'vocab'` bekamen
+   — das Formular hat nie nach der Wortart gefragt. `erschlosseneWortart()` in
+   js/irab.js fängt jetzt die sicheren Fälle ab (alles mit Tanwīn ist ein
+   Nomen), aber die ehrliche Lösung ist diese hier: ER weiß es, also fragt ihn
+   das Formular.
+
+   ⛔ Die Auswahl steht bei JEDER Vokabel, nicht nur bei den eigenen. Bei einer
+   Buchvokabel ist sie eine Korrektur wie jede andere im Formular auch und
+   landet in `WORT_AENDERUNGEN` — mit demselben „Auf Original zurück" daneben.
+   Die Namen sind die, die auch auf der Karte erscheinen; „Wort" bleibt als
+   Möglichkeit stehen, damit ein Datensatz ohne Wortart nicht gezwungen wird,
+   eine zu behaupten. */
+const WORTART_WAHL = [
+  ['noun', 'Nomen'], ['verb', 'Verb'], ['adjective', 'Adjektiv'],
+  ['particle', 'Partikel'], ['adverb', 'Adverb'], ['expression', 'Wendung'],
+  ['vocab', '(keine Angabe)']
+];
+function wortartFeld(w){
+  const jetzt = w.type || 'vocab';
+  /* Ein unbekannter Typ (z. B. 'grammar' oder 'phrase') darf nicht stillschweigend
+     auf 'Nomen' springen, nur weil er in der Liste fehlt — dann steht er mit drin. */
+  const liste = WORTART_WAHL.some(([k]) => k === jetzt)
+    ? WORTART_WAHL : [...WORTART_WAHL, [jetzt, jetzt]];
+  return `<label class="wk-feld">
+      <span>Wortart</span>
+      <select id="wkType">${liste.map(([k, n]) =>
+        `<option value="${escapeHtml(k)}"${k === jetzt ? ' selected' : ''}>${escapeHtml(n)}</option>`).join('')}</select>
+    </label>`;
+}
+
 function baueWortFormular(w){
   const feld = (id, beschriftung, wert, arabisch) => `
     <label class="wk-feld">
@@ -859,6 +908,7 @@ function baueWortFormular(w){
     </div>
     ${feld('wkAr', 'Arabisch', w.ar, true)}
     ${feld('wkDe', 'Deutsch', w.de, false)}
+    ${wortartFeld(w)}
     ${feld('wkPl', 'Plural (optional)', w.pl, true)}
     ${feld('wkRoot', 'Wurzel (optional, z. B. \u0643 \u062a \u0628)', w.root, true)}
     ${feld('wkSentAr', 'Beispielsatz Arabisch (optional)', w.sentAr, true)}
@@ -961,13 +1011,16 @@ function speichereOffenesFormular(){
   if (document.getElementById('wkAr') && WK_WORT){
     const ar = wert('wkAr'), de = wert('wkDe');
     if (!ar || !de){ toast('Nicht gespeichert — Arabisch und Deutsch dürfen nicht leer sein'); return 'fehler'; }
+    const typ = wert('wkType');
     const geaendert = ar !== (WK_WORT.ar || '') || de !== (WK_WORT.de || '')
       || wert('wkPl') !== (WK_WORT.pl || '') || wert('wkRoot') !== (WK_WORT.root || '')
-      || wert('wkSentAr') !== (WK_WORT.sentAr || '') || wert('wkSentDe') !== (WK_WORT.sentDe || '');
+      || wert('wkSentAr') !== (WK_WORT.sentAr || '') || wert('wkSentDe') !== (WK_WORT.sentDe || '')
+      || (typ !== null && typ !== (WK_WORT.type || 'vocab'));
     if (!geaendert) return 'nichts';
     speichereWortAenderung(WK_WORT.id, {
       ar, de, pl: wert('wkPl'), root: wert('wkRoot'),
-      sentAr: wert('wkSentAr'), sentDe: wert('wkSentDe')
+      sentAr: wert('wkSentAr'), sentDe: wert('wkSentDe'),
+      ...(typ !== null ? { type: typ } : {})
     });
     if (typeof openWordList === 'function' && AKTUELLE_LISTE) openWordList(AKTUELLE_LISTE);
     toast('Gespeichert');
@@ -1073,7 +1126,13 @@ document.getElementById('wortKarte').addEventListener('click', (e)=>{
     if (feld) feld.focus();
     return;
   }
-  if (e.target.closest('[data-wkmerk]') && WK_WORT){
+  /* ⛔ `[data-wkblatt]` ZUERST ausschliessen. Seit der ganze Vorschlagskasten
+     `data-wkmerk` traegt (20.08.2026), liegen die Blaetterknoepfe darin — und
+     ihr eigener Handler steht weiter unten. Ohne diese Ausnahme oeffnete
+     „Anderer →" das Eselsbruecken-Formular, statt den naechsten Vorschlag zu
+     zeigen. Ein Blaettern waere damit unmoeglich geworden, ohne dass
+     irgendetwas nach einem Fehler aussieht. */
+  if (e.target.closest('[data-wkmerk]') && !e.target.closest('[data-wkblatt]') && WK_WORT){
     karte.innerHTML = baueMerkFormular(WK_WORT);
     karte.scrollTop = 0;
     document.getElementById('wkMerkText').focus();
@@ -1140,6 +1199,18 @@ document.getElementById('wortKarte').addEventListener('click', (e)=>{
 /* Escape schliesst - dieselbe Erwartung wie bei jedem anderen Fenster. */
 document.addEventListener('keydown', (e)=>{
   if (e.key === 'Escape' && !document.getElementById('wortKarte').classList.contains('hidden')) schliesseWortKarte();
+});
+
+/* Ein <div role="button"> hoert NICHT von selbst auf Enter und Leertaste - das
+   tut nur ein echtes <button>. Ohne diese Zeilen waeren die tippbaren Kaesten
+   mit der Tastatur zwar erreichbar (tabindex), aber nicht auslösbar: erreichbar
+   und tot ist schlechter als gar nicht erreichbar. */
+document.getElementById('wortKarte').addEventListener('keydown', (e)=>{
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const kasten = e.target.closest('.wk-tippbar');
+  if (!kasten || e.target !== kasten) return;   /* nicht, wenn ein Knopf darin den Fokus hat */
+  e.preventDefault();
+  kasten.click();
 });
 
 /* ---------- Suche ueber den ganzen Wortschatz (Elias, 18.08.2026) ----------

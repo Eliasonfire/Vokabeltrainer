@@ -1631,8 +1631,23 @@ main{
    nebeneinander: es sind ganze Aussagen („Das Wort danach steht im Genitiv“),
    keine Etiketten — nebeneinander würden sie zu einer unlesbaren Zeile. */
 .wk-funktionen{display:flex;flex-direction:column;gap:var(--sp-1);margin-top:var(--sp-2);}
+/* ⭐ Elias am 20.08.2026 mit einem Bildschirmfoto von لِ: „du kannst das feld
+   hier ein klein ticken größer machen." Von --fs-sm (.78rem) auf --fs-md
+   (.88rem) — ein Schritt in der Skala, nicht mehr.
+
+   ⛔ HIER KEINE EIGENE REGEL FÜR DAS ARABISCHE. Es wäre naheliegend gewesen:
+   „حَرْف جَرّ — Genitivpräposition" mischt zwei Schriften, und die arabische
+   trägt bei gleicher Punktzahl kleiner. Aber `.mn-ar` (Zeile ~2299) regelt das
+   längst — mit `calc(1em * 5/3)`, und diese 5/3 sind SEINE Zahl: „kannst du
+   das arabische bei den vorschlägen vielleicht nur so 2/3 größer machen als
+   das deutsche". Weil sie an `1em` hängt, wächst das Arabische hier von selbst
+   mit. Eine zweite Regel daneben hätte seine Entscheidung still überschrieben.
+   [[zwei_regeln_selber_selektor]] · [[regel_gilt_nur_mit_begruendung]]
+
+   Die Zeilenhöhe von 1.5 auf 1.6, damit die Ḥarakāt bei der größeren Schrift
+   nicht in die Zeile darüber stoßen. [[line_height_schneidet_harakat_ab]] */
 .wk-funktion{
-  font-size:var(--fs-sm);color:var(--text-dim);line-height:1.5;
+  font-size:var(--fs-md);color:var(--text-dim);line-height:1.6;
   padding-left:var(--sp-3);border-left:2px solid var(--border);
 }
 .wk-quelle{font-size:var(--fs-xs);color:var(--text-faint);font-weight:500;}
@@ -1644,6 +1659,17 @@ main{
    ⛔ `.wk-abschnitt` steht VOR dieser Regel, sonst gewänne dessen `border`. */
 .wk-notiz{border-left:3px solid var(--red);}
 .wk-notiz .de{color:var(--text);}
+/* ⭐ Kästen, die selbst der Knopf sind (20.08.2026, Elias: „ich will einfach
+   nur aufs textfeld klicken"). Der Kasten muss ANSEHEN lassen, dass er etwas
+   tut — sonst ist die Fläche zwar da, aber niemand probiert sie aus.
+   ⚠️ `:focus-visible` und nicht `:focus`: sonst leuchtet der Kasten nach jedem
+   Fingertipp auf, auch wenn gar keine Tastatur im Spiel ist. */
+.wk-tippbar{cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.wk-tippbar:hover{border-color:var(--red-dim);}
+.wk-tippbar:focus-visible{outline:2px solid var(--red);outline-offset:2px;}
+/* Die Blätterknöpfe liegen IM tippbaren Kasten und behalten ihren eigenen
+   Zeiger — sie tun etwas anderes als der Kasten um sie herum. */
+.wk-tippbar .wk-blaettern .btn{cursor:pointer;}
 .wk-unvollstaendig{display:flex;align-items:center;gap:var(--sp-2);flex-wrap:wrap;}
 .wk-unvollstaendig b{color:var(--text);font-weight:700;}
 .wk-hinweis{
@@ -2235,6 +2261,17 @@ main{
 }
 .note-box:hover{background:var(--surface-3);border-color:var(--border-strong);}
 .note-box .ic{flex:0 0 auto;margin-top:1px;}
+/* Seine eigene Notiz auf der Lernkarte (20.08.2026). Sie erbt das Aussehen der
+   `.note-box`, aber nicht deren Verhalten: durchgezogene Kante statt
+   gestrichelt (sie lädt zu nichts ein), voller Textton (sie ist von ihm), und
+   kein `cursor:pointer` — hier lässt sich nichts anklicken.
+   ⛔ `.notiz-box` steht NACH `.note-box:hover`, sonst gewänne der Hover-Zustand
+   die Randfarbe zurück. [[zwei_regeln_selber_selektor]] */
+.notiz-box{
+  border-style:solid;border-left:3px solid var(--red);
+  color:var(--text);cursor:default;
+}
+.notiz-box:hover{background:var(--surface-2);border-color:var(--border);border-left-color:var(--red);}
 /* Ein VORSCHLAG (Punkt 8) sieht anders aus als eine eigene Notiz: gestrichelter
    Rand bleibt, aber der Text ist lesbar statt blass, und das Wort „Vorschlag"
    steht davor. Er darf nicht wie eigene Arbeit aussehen — und auch nicht wie
@@ -3588,6 +3625,19 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
                 <svg class="ic"><use href="#ic-note"/></svg>
                 <span id="cardNoteText">Eselsbrücke hinzufügen</span>
               </button>
+              <!-- ⭐ Die eigene Notiz auch auf der Lernkarte (20.08.2026, Elias:
+                   „notizfeld soll auch erstmal bei den karteikarten angezeigt
+                   werden"). Sie steht auf der RÜCKSEITE unter der Eselsbrücke,
+                   nicht daneben: beim Abfragen soll sie nicht ablenken, beim
+                   Auflösen aber sofort dastehen.
+                   ⛔ Anders als die Eselsbrücke ist das hier KEIN Eingabefeld —
+                   es zeigt nur an. Geschrieben wird die Notiz auf der Infokarte;
+                   zwei Eingabewege auf denselben Text wären zwei Stellen, an
+                   denen dasselbe schiefgehen kann. -->
+              <div class="note-box notiz-box hidden" id="cardNotizBox">
+                <svg class="ic"><use href="#ic-note"/></svg>
+                <span id="cardNotizText"></span>
+              </div>
               <div class="example-box" id="cardSentenceBox">
                 <div class="example-ar" id="cardSentenceAr" lang="ar" dir="rtl"></div>
                 <div class="example-de" id="cardSentenceDe"></div>
