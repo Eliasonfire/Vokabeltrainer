@@ -617,15 +617,23 @@ try {
        selbst wissen, was er tut. Das hier ist ein Waechter gegen Loeschen und
        Verschieben, nicht gegen Stilllegen — und dieser Satz steht hier, damit
        niemand ihm mehr zutraut. [[begrenzung_haelt_messung_nicht_stand]] */
+    /* ⛔ Kommentare weg, sonst zaehlt die Erklaerung als Aufruf. Genau das ist
+       am 21.08.2026 in werkzeuge/wartet-auf-elias.mjs passiert.
+       [[stichworttreffer_im_kommentar]]
+
+       ⚠️ Steht AUSSERHALB der Bloecke, die es benutzen — inzwischen sind es
+       zwei. Als es noch im ersten Block stand, stuerzte der zweite mit
+       „ohneKommentare is not defined" ab, und der Fang weiter unten machte
+       daraus die Meldung „sw.js nicht lesbar". Eine Ausnahme, die unter dem
+       Namen einer anderen Pruefung erscheint, schickt die Suche in die falsche
+       Datei. [[kennzeichen_mit_zwei_ursachen]] */
+    const ohneKommentare = t => t
+      .replace(/\/\*[\s\S]*?\*\//g, ' ')
+      .replace(/(^|[^:])\/\/[^\n]*/g, '$1');
+
     {
       const kernRoh = fs.readFileSync(path.join(DIR, 'js', 'kern.js'), 'utf8');
       const buchRoh = fs.readFileSync(path.join(DIR, 'js', 'buecher.js'), 'utf8');
-      /* ⛔ Kommentare weg, sonst zaehlt die Erklaerung als Aufruf. Genau das ist
-         am 21.08.2026 in werkzeuge/wartet-auf-elias.mjs passiert.
-         [[stichworttreffer_im_kommentar]] */
-      const ohneKommentare = t => t
-        .replace(/\/\*[\s\S]*?\*\//g, ' ')
-        .replace(/(^|[^:])\/\/[^\n]*/g, '$1');
 
       /* ⭐ EINE TABELLE, NICHT EIN SONDERFALL. Der erste Entwurf sicherte nur
          `ergaenzeProgress`. Gemessen sind es aber SECHS Funktionen, die alle
@@ -704,6 +712,62 @@ try {
           note(`Startlauf: alle ${NACHTRAG.length} Nachtrags-Funktionen werden aufgerufen, `
              + 'jede in der richtigen Reihenfolge.');
       }
+    }
+
+    /* ---------- Der Rollhinweis auf der Kartenrueckseite (21.08.2026) --------
+
+       ⛔ ANLASS: Elias' eigener Fehlerbericht von 05:11, mit Bild. „da wurde
+       einfach der beispielsatz bzw alles unter vorschlag abgeschnitten."
+       Gemessen ueber alle 326 Karten: der Beispielsatz war auf 284 von 317
+       Karten unter der Kante. Die Rueckseite ROLLTE die ganze Zeit — nur sagte
+       das nichts.
+
+       Faellt die Verdrahtung wieder aus, kommt genau dieser Fehler zurueck,
+       und zwar STILL: die Karte rollt weiter, der Verlauf erscheint nur nicht
+       mehr. Niemand meldet das ausser Elias, und der hat es schon einmal
+       gemeldet. [[ausfall_ist_unsichtbar_gebaut]]
+
+       ⛔ REFERENZEN ZAEHLEN MIT. `addEventListener('scroll', aktualisiereMehr-
+       Hinweis, …)` uebergibt die Funktion OHNE Klammern. Wer nur `name(` sucht,
+       haelt diesen dritten Weg fuer tot und verlangt drei Klammer-Aufrufe, die
+       es nie geben wird. [[funktion_als_referenz_sieht_tot_aus]] */
+    {
+      const lernRoh = ohneKommentare(fs.readFileSync(path.join(DIR, 'js', 'lernen.js'), 'utf8'));
+      const htmlRoh = fs.readFileSync(path.join(DIR, 'index.html'), 'utf8');
+      const NAME = 'aktualisiereMehrHinweis';
+      const rollFehler = [];
+
+      if (!new RegExp('function\\s+' + NAME + '\\s*\\(').test(lernRoh))
+        rollFehler.push(`js/lernen.js hat kein ${NAME}() mehr`);
+      else {
+        const mitKlammer = (lernRoh.match(new RegExp('(?<![\\w$])' + NAME + '\\s*\\(', 'g')) || []).length - 1;
+        const alsReferenz = new RegExp("addEventListener\\(\\s*'scroll'\\s*,\\s*" + NAME).test(lernRoh);
+        /* Zwei Klammer-Aufrufe: einer am Ende von renderCard, einer beim
+           Umdrehen. Beide sind noetig — der Hinweis haengt an ZWEI Bedingungen
+           (gedreht UND es geht weiter), und Umdrehen loest kein scroll aus. */
+        if (mitKlammer < 2)
+          rollFehler.push(`${NAME}() wird nur ${mitKlammer}× aufgerufen, gebraucht werden zwei `
+            + '(Ende von renderCard und beim Umdrehen)');
+        if (!alsReferenz)
+          rollFehler.push(`${NAME} haengt an keinem scroll-Ereignis mehr — dann bleibt der `
+            + 'Verlauf stehen, auch wenn man schon unten ist');
+      }
+      if (!/scrollTop\s*=\s*0/.test(lernRoh))
+        rollFehler.push('renderCard() setzt den Rollstand nicht mehr zurueck — nachgemessen: '
+          + 'nach 200 px Rollen stand die deutsche Antwort der NAECHSTEN Karte 129 px '
+          + 'oberhalb der Kartenkante, also ausser Sicht');
+      if (!htmlRoh.includes('id="cardMehrHinweis"'))
+        rollFehler.push('index.html hat kein Element mit id="cardMehrHinweis"');
+      if (!/\.mehr-hinweis\s*\{/.test(htmlRoh))
+        rollFehler.push('index.html hat keine CSS-Regel .mehr-hinweis — dann ist der Streifen '
+          + 'ein unsichtbares leeres div, und niemand sieht, dass es weitergeht');
+
+      if (rollFehler.length)
+        rollFehler.forEach(f => fail('Rollhinweis auf der Kartenrueckseite: ' + f + '. '
+          + 'Damit kommt Elias’ Meldung vom 21.08.2026 zurueck, und zwar still.'));
+      else
+        note('Rollhinweis: Funktion, zwei Aufrufe, scroll-Ereignis, Rollstand-Ruecksetzung '
+           + 'und Markup/CSS sind da.');
     }
 
     const swRoh = fs.readFileSync(path.join(DIR, 'sw.js'), 'utf8');
