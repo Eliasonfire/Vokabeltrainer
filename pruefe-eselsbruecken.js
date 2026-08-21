@@ -410,6 +410,31 @@ console.log('=== 4. „das hast du auch" — steht das Wort wirklich im Lernbest
       const gesucht = flach(wort);
       if (eigen && gesucht && (eigen === gesucht || eigen.includes(gesucht))) continue;
       behauptungen++;
+      /* ⛔ DER AUSDRUCK KANN MEHRWORTIG SEIN. Das Muster oben erfasst nur
+         arabische Zeichen ohne Leerzeichen, also das Wort DIREKT vor der
+         Klammer. Bei "حَرْفُ الْجَرِّ (Genitiv-Präposition)" bleibt davon
+         nur الجر uebrig — und das gibt es als eigenes Wort nicht, es
+         existiert nur im Ganzen.
+
+         Am 21.08.2026 gemessen: BEIDE Ganzheiten stehen in vocab-data.js
+           حرف الجر    id c623f2fb-57a5-48b6-b176-55df461b2ada
+           مضاف إليه   id c73787a3-8f9c-4033-b1ff-5644f34995d3
+         Die Merksaetze hatten also recht; die Pruefung meldete zwei
+         Fehlalarme. Wer sie befolgt haette, haette zwei richtige Texte
+         zerstoert. [[zitierform_ist_nicht_satzkontext]]
+
+         ⚠️ Die umgekehrte Richtung kennt die Pruefung laengst (Bestand
+         zusammengesetzt, Merksatz nennt einen Teil). Diese hier ist die
+         andere: Merksatz nennt das Zusammengesetzte, Bestand hat es als
+         Ganzes. [[form_sagt_nicht_welche_beziehung]]
+
+         Genau EIN Vorgaengerwort, nicht beliebig viele: der ganze Satz
+         davor ist arabisch, und "irgendein Teilstueck kommt im Bestand
+         vor" waere kein Nachweis mehr. */
+      if (!bekannt.has(gesucht)){
+        const davor = (vorher.match(/([\u0600-\u06FF]+)\s*$/) || [])[1];
+        if (davor && bekannt.has(flach(davor) + ' ' + gesucht)) continue;
+      }
       if (!bekannt.has(gesucht))
         {
         const wo = anderswo.get(gesucht);
