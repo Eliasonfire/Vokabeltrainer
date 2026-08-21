@@ -164,14 +164,39 @@ if (typeof window === 'undefined' || typeof localStorage === 'undefined'){
       }
       tags.forEach(t=>{ if (!w.sentAr || w.sentAr.indexOf(t.matchText) === -1) fehlend.push(`${id}/${t.ruleId}`); });
     });
-    if (nochNichtDa.length){
+    /* ⛔ ZWEI URSACHEN HINTER EINER MELDUNG, zum zweiten Mal — am 21.08.2026
+       aufgefallen, weil der Hinweis „js/buecher.js haengt sie erst nach dem
+       Laden ein" fuer Kennungen mit `p_`-Praefix gar nicht stimmen KANN.
+
+       `p_`-Ids entstehen in js/kern.js:502 (`id: 'p_' + Date.now()`) fuer
+       Woerter, die der Nutzer IN DER APP anlegt. Sie stehen in
+       vt_personalVocab im localStorage, nicht in einer Buchdatei. Ist dieser
+       Speicher leer — auf einem frischen Geraet, im Pruefserver —, kommen sie
+       NIE. „Gleich noch einmal starten" fuehrt dort ins Leere.
+
+       Gemessen am 21.08.2026 ueber alle sechs Vokabelquellen (8 Buecher,
+       vokabeln-eigene.js, vocab-data.js, fachbegriffe.js, lehrbuch-saetze.js:
+       4498 Kennungen): von 329 markierten Kennungen haben 16 kein Wort — 14
+       davon `p_`, 2 die benannten Sonderfaelle madina1-l6-ach/-ucht.
+       [[kennzeichen_mit_zwei_ursachen]] */
+    const eigene = nochNichtDa.filter(id => String(id).startsWith('p_'));
+    const ausBuch = nochNichtDa.filter(id => !String(id).startsWith('p_'));
+    if (ausBuch.length){
       warn('Buchvokabeln noch nicht eingehaengt',
-        `${nochNichtDa.length} Beispielsatz-Kennung(en) fehlen noch (${nochNichtDa.slice(0,3).join(', ')}). ` +
+        `${ausBuch.length} Beispielsatz-Kennung(en) fehlen noch (${ausBuch.slice(0,3).join(', ')}). ` +
         'js/buecher.js haengt sie erst nach dem Laden ein — Pruefung gleich noch einmal starten.');
+    }
+    if (eigene.length){
+      warn('Selbst angelegte Woerter nicht im Speicher',
+        `${eigene.length} Kennung(en) mit p_-Praefix (${eigene.slice(0,3).join(', ')}) haben Satz und ` +
+        'Markierung, aber kein Wort. Diese Woerter liegen in vt_personalVocab und ' +
+        'gehoeren nicht zu einem Buch — ein zweiter Lauf aendert daran nichts. ' +
+        'Auf einem Geraet ohne diesen Speicher bleiben die Markierungen unsichtbar.');
     }
     if (fehlend.length) throw new Error(fehlend.slice(0,5).join(', ') + (fehlend.length>5 ? ` (+${fehlend.length-5})` : ''));
     return `${Object.values(SENTENCE_TAGS).flat().length} Markierungen` +
-      (nochNichtDa.length ? `, ${nochNichtDa.length} noch ohne Satz (Buch nicht geladen)` : '');
+      (ausBuch.length ? `, ${ausBuch.length} noch ohne Satz (Buch nicht geladen)` : '')
+      + (eigene.length ? `, ${eigene.length} selbst angelegt und nicht im Speicher` : '');
   });
 
   /* ---- 4. Jede Regel erreichbar? ---- */
