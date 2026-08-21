@@ -823,6 +823,7 @@ try {
            + 'und Markup/CSS sind da.');
     });
 
+    abschnitt('Auslieferstrategie des Service Workers', () => {
     const swRoh = fs.readFileSync(path.join(DIR, 'sw.js'), 'utf8');
     const fetchBlock = swRoh.slice(swRoh.indexOf("addEventListener('fetch'"));
     if (fetchBlock){
@@ -849,6 +850,7 @@ try {
     } else {
       fail('sw.js hat keinen fetch-Handler mehr — die App waere nicht mehr offlinefaehig.');
     }
+    });
 
     note(`sw.js: ${assets.length} Cache-Einträge geprüft, dagegen ${scriptsInHtml.length} Skripte `
       + `und ${weitereGeprueft} weitere Verweise aus index.html (Stylesheets, Bilder, url()).`);
