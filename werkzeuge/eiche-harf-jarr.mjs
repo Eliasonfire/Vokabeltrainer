@@ -34,14 +34,36 @@ const alt = w => /^(في|على)(\s|$)/.test(blank(w));
      على  — mit Alif maqsura nur ALLEIN (davor darf ein و stehen)
      علي  — mit Ya nur MIT Pronomen; allein waere es der Name عَلِيّ
    Ohne die dritte Trennung liesse die Bedingung „Ali" durchgehen. */
-const SUF = '(?:ه|ها|هم|هن|هما|ك|كم|كن|ي|نا)';
-const neu = w => new RegExp(
-  '^و?(?:' +
-    'في(?:' + SUF + '|\\s|$)' + '|' +
-    'على(?:\\s|$)' + '|' +
-    'علي' + SUF +
-  ')'
-).test(blank(w));
+/* ⛔ HIER STAND DIE BEDINGUNG ALS KOPIE (bis 21.08.2026). Sie war Zeichen
+   fuer Zeichen dieselbe wie in pruefe-markierungen.js — und genau das ist
+   das Problem: aendert jemand dort etwas, prueft diese Eichung weiter die
+   alte Fassung und bleibt gruen. Sie eicht dann sich selbst.
+
+   ⭐ eiche-zahlplural.mjs macht es seit jeher richtig und sagt auch warum:
+   „Die Regex wird NICHT nachgebaut, sondern aus validate.js gelesen. Eine
+   kopierte Fassung prueft nach dem ersten Umbau etwas anderes als das, was
+   laeuft." Die Lehre stand also in der Nachbardatei und ist hier nie
+   angekommen. [[handliste_neben_echter_quelle]]
+
+   ⚠️ Beim Nachsehen hatte ich zuerst die FALSCHE Zeile als Original
+   angesehen: `grep 'في|على'` traf nur harf-jarr-01 (Z. 121), weil dort die
+   beiden Woerter direkt nebeneinander stehen. Daraus schien zu folgen, die
+   Eichung pruefe eine Bedingung, die es gar nicht gibt. Sie steht sehr wohl
+   dort — als harf-jarr-fi-ala-01, eine Zeile darueber.
+   [[stichworttreffer_ist_kein_inhaltstreffer]] */
+const REGEL = 'harf-jarr-fi-ala-01';
+const mq = fs.readFileSync(REPO + '/pruefe-markierungen.js', 'utf8');
+const mm = new RegExp("'" + REGEL + "':\\s*w\\s*=>\\s*/(.+?)/\\.test\\(blank\\(w\\)\\)").exec(mq);
+if (!mm){
+  console.log('⛔ In pruefe-markierungen.js steht keine Zeile');
+  console.log("   `'" + REGEL + "': w => /…/.test(blank(w))` mehr.");
+  console.log('   Entweder wurde die Regel umbenannt oder anders geschrieben —');
+  console.log('   diese Eichung kann dann nicht sagen, ob sie noch passt.');
+  process.exit(1);
+}
+console.log('  Regex aus pruefe-markierungen.js gelesen (' + REGEL + '):');
+console.log('    /' + mm[1] + '/');
+const neu = w => new RegExp(mm[1]).test(blank(w));
 
 /* --- A) Wirkung auf die echten Markierungen --- */
 let a = 0, n = 0; const dazu = [], weg = [];
