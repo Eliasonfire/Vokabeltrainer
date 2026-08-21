@@ -1,0 +1,146 @@
+#!/usr/bin/env node
+/* alle-pruefer.mjs — jeden Prüfer einmal, und eine Übersicht daraus
+ * ==========================================================================
+ *
+ * ⭐ WOZU
+ *
+ * In der Nacht auf den 21.08.2026 habe ich dreimal von Hand eine Schleife über
+ * alle Prüfer geschrieben, um zu sehen, was rot ist. Das gehört in ein
+ * Werkzeug: ein Befehl statt zehn, und die Lage auf einen Blick.
+ *
+ *   node werkzeuge/alle-pruefer.mjs            alle laufen lassen
+ *   node werkzeuge/alle-pruefer.mjs --knapp    nur die Übersicht
+ *
+ * ==========================================================================
+ * ⛔⛔ WAS DER EXITCODE ALLEIN NICHT SAGT — und warum hier eine Spalte dafür steht
+ *
+ * Am 21.08.2026 gemessen: die elf Prüfer nutzen ihre Exitcodes UNEINHEITLICH.
+ *
+ *   pruefe-duplikate.js      1 = Werkzeugfehler, 2 = Befunde für Elias
+ *   pruefe-erreichbarkeit.js 2 = Befunde
+ *   pruefe-taschkil.js       1 = BEIDES (Z275 Datendateien, Z837 Befunde)
+ *   die übrigen              1 = Befunde
+ *
+ * Ein Aufrufer kann daraus also NICHT ableiten, ob das Werkzeug kaputt ist
+ * oder ob Elias entscheiden muss. [[kennzeichen_mit_zwei_ursachen]]
+ *
+ * ⛔ Vereinheitlicht wird hier NICHTS: das wären elf Dateien ohne belegten
+ * Nutzen, und ein bestehender Aufrufer könnte daran brechen. Stattdessen zeigt
+ * die Übersicht die letzte Ausgabezeile mit — die sagt, was der Code meint.
+ *
+ * ==========================================================================
+ * ⚠️ ZWEI PRÜFER STEHEN DAUERHAFT ROT, UND DAS IST IN ORDNUNG
+ *
+ * pruefe-duplikate.js (2 Befunde) und pruefe-taschkil.js (25 echte von 37)
+ * warten auf Elias' Entscheidung — beide stehen auf seiner Seite „Was auf dich
+ * wartet". Automation/routines.json sagt dazu ausdrücklich: „Beide Skripte
+ * gehen ueber ein 'warn' hinaus, blockieren aber keinen Push."
+ *
+ * Deshalb trennt die Schlusszeile: „rot, wartet auf Elias" von „rot, echter
+ * Mangel". Ein Werkzeug, das dauerhaft rot steht, wird sonst überlesen.
+ *
+ * ==========================================================================
+ * ⛔ AUFRUFER: bisher nur von Hand (Nachtschicht, eigene Läufe).
+ *
+ * Es steht NICHT im Wartungs-Prompt — der liegt unter Automation/ und gehört
+ * nicht zu diesem Ordner. Ob er dort eingetragen wird, entscheidet Elias; der
+ * Punkt liegt auf seiner Warteseite. Ein Werkzeug ohne Aufrufer ist sonst
+ * genau der Fehler, vor dem [[werkzeug_ohne_aufrufer]] warnt — hier ist der
+ * Aufrufer ein Mensch, und das steht hier, damit es niemand für ein Versehen
+ * hält.
+ */
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { execFileSync } from 'node:child_process';
+
+const HIER = path.dirname(fileURLToPath(import.meta.url));
+const REPO = path.resolve(HIER, '..');
+const KNAPP = process.argv.includes('--knapp');
+
+/* Die Liste stammt aus dem Wartungs-Prompt (Abschnitt „Prüfungen"), am
+   21.08.2026 abgeglichen. `pruefe-wortfelder.js` wird dort mit `--fenster`
+   aufgerufen — ohne den Schalter misst es den ganzen Abzug statt Elias'
+   Fenster und meldet Zahlen, die nichts mit seinem Lernstand zu tun haben. */
+const PRUEFER = [
+  ['validate.js', []],
+  ['pruefe-duplikate.js', []],
+  ['pruefe-erreichbarkeit.js', []],
+  ['pruefe-eselsbruecken.js', []],
+  ['pruefe-funktionen.js', []],
+  ['pruefe-markierungen.js', []],
+  ['pruefe-quran.js', []],
+  ['pruefe-saetze.js', []],
+  ['pruefe-taschkil.js', []],
+  ['pruefe-transkripte.js', []],
+  ['pruefe-wortfelder.js', ['--fenster']],
+  ['werkzeuge/pruefe-artefakt-inhalt.mjs', []],
+  ['werkzeuge/pruefe-datumsangaben.mjs', []],
+  ['werkzeuge/pruefe-eigene-vorrang.mjs', []],
+  ['werkzeuge/pruefe-erreichbarkeit-eichung.mjs', []],
+  ['werkzeuge/pruefe-gedaechtnis.mjs', []],
+  ['werkzeuge/pruefe-plural-thema.mjs', []],
+  ['werkzeuge/pruefe-schreibpfade.mjs', []],
+  ['werkzeuge/pruefe-volles-programm.mjs', []]
+];
+
+/* ⛔ pruefe-oberflaeche.js läuft NICHT unter node — es prüft die laufende App
+   und braucht Browser, DOM und localStorage. Sein Exitcode 3 heißt „falsch
+   aufgerufen", nicht „Fehler gefunden". Es hier mitlaufen zu lassen hieße,
+   jeden Lauf mit einem falschen Rot zu beginnen. */
+const NUR_IM_BROWSER = ['pruefe-oberflaeche.js'];
+
+const ergebnisse = [];
+for (const [rel, args] of PRUEFER){
+  const datei = path.join(REPO, rel);
+  if (!fs.existsSync(datei)){
+    ergebnisse.push({ rel, code: null, letzte: '⛔ Datei fehlt' });
+    continue;
+  }
+  let code = 0, aus = '';
+  try { aus = execFileSync('node', [rel, ...args], { cwd: REPO, encoding: 'utf8' }); }
+  catch (e){ code = typeof e.status === 'number' ? e.status : -1; aus = (e.stdout || '') + (e.stderr || ''); }
+  const zeilen = aus.split(/\r?\n/).filter(l => l.trim());
+  ergebnisse.push({ rel, code, letzte: (zeilen[zeilen.length - 1] || '(keine Ausgabe)').trim() });
+  if (!KNAPP){
+    console.log('─'.repeat(74));
+    console.log('  ' + rel + (args.length ? ' ' + args.join(' ') : '') + '   → exit ' + code);
+    zeilen.slice(-3).forEach(l => console.log('    ' + l.slice(0, 100)));
+  }
+}
+
+/* ---------- Übersicht ---------- */
+console.log('');
+console.log('═'.repeat(74));
+console.log('  ÜBERSICHT — ' + new Date().toLocaleString('de-DE', { timeZone: 'Europe/Berlin' }));
+console.log('═'.repeat(74));
+const breit = Math.max(...ergebnisse.map(e => e.rel.length));
+for (const e of ergebnisse)
+  console.log('  ' + (e.code === 0 ? '✅' : '⛔') + ' ' + e.rel.padEnd(breit)
+    + '  exit ' + String(e.code).padStart(2) + '   ' + e.letzte.slice(0, 68));
+
+const rot = ergebnisse.filter(e => e.code !== 0);
+console.log('');
+console.log('  ' + ergebnisse.length + ' Prüfer gelaufen, ' + rot.length + ' rot.');
+console.log('  (' + NUR_IM_BROWSER.join(', ') + ' läuft nur im Browser und ist nicht dabei.)');
+
+if (rot.length){
+  console.log('');
+  console.log('  ⚠️ ROT heißt NICHT automatisch „kaputt". Die Exitcodes sind uneinheitlich:');
+  console.log('     pruefe-duplikate.js: 2 = Befunde für Elias, 1 = Werkzeugfehler');
+  console.log('     pruefe-taschkil.js:  1 = BEIDES');
+  console.log('     Die letzte Zeile oben sagt, was gemeint ist — sie lesen, nicht nur den Code.');
+  console.log('     Bekannt und in Ordnung: duplikate (2 Befunde) und taschkil (25 echte)');
+  console.log('     warten auf Elias und stehen auf seiner Seite „Was auf dich wartet".');
+}
+
+/* ⛔ Der eigene Exitcode meldet nur, ob ALLE gelaufen sind — nicht, ob alle
+   grün sind. Sonst stünde dieses Werkzeug wegen der zwei wartenden Prüfer
+   dauerhaft rot und würde nach dem dritten Lauf überlesen. */
+const nichtGelaufen = ergebnisse.filter(e => e.code === null || e.code === -1);
+if (nichtGelaufen.length){
+  console.log('');
+  console.log('  ⛔ ' + nichtGelaufen.length + ' Prüfer konnten gar nicht laufen:');
+  nichtGelaufen.forEach(e => console.log('     ' + e.rel + '  ' + e.letzte.slice(0, 60)));
+}
+process.exit(nichtGelaufen.length ? 1 : 0);
