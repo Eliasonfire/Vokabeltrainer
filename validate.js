@@ -530,6 +530,35 @@ try {
   fail(`index.html nicht lesbar: ${e.message}`);
 }
 
+/* ⛔⛔ ACHTUNG, DIESER `try` UMSPANNT 20 PRUEFUNGEN.
+
+   Am 21.08.2026 selbst hineingelaufen: ein `ReferenceError` in einer davon
+   ergab die Meldung
+
+       FEHLER sw.js nicht lesbar: ohneKommentare is not defined
+
+   Zwei Dinge sind daran falsch, und beide sind teuer:
+
+   1. Der NAME log. Die Ausnahme kam aus der Startlauf-Pruefung, nicht aus
+      sw.js. Wer der Meldung folgt, sucht in der falschen Datei.
+      [[kennzeichen_mit_zwei_ursachen]]
+
+   2. Schlimmer: ab dem Wurf lief KEINE der restlichen Pruefungen mehr — und
+      validate.js meldete trotzdem nur „1 Fehler". Neunzehn ausgefallene
+      Pruefungen sahen aus wie ein einzelner gewoehnlicher Befund.
+      [[ausfall_ist_unsichtbar_gebaut]]
+
+   Der Faenger unten sagt das jetzt. Ein Block sauber in zwanzig eigene `try`
+   zu zerlegen waere richtiger, ist aber ein Umbau; die Meldung zu berichtigen
+   kostet nichts und nimmt der Falle die Zaehne. */
+/* ⚠️ Die Zahl ist GEMESSEN, nicht geschaetzt, und sie veraltet, sobald jemand
+   eine Pruefung in diesen Block legt. Neu auszaehlen mit
+       sed -n '<von>,<bis>p' validate.js | grep -c "fail(\|warn(\|note("
+   ueber genau diesen try-Block. Im Stoertest am 21.08.2026 liefen davon nur
+   ZWEI, als die Ausnahme in der Mitte kam — die anderen achtzehn fielen
+   lautlos aus. [[eingefrorenes_feld_ist_kein_zustand]] */
+const SW_BLOCK_PRUEFUNGEN = 20;
+const swVorher = errors.length + warnings.length + info.length;
 try {
   const sw = fs.readFileSync(path.join(DIR, 'sw.js'), 'utf8');
   const cacheName = sw.match(/const\s+CACHE_NAME\s*=\s*['"]([^'"]+)['"]/);
@@ -844,7 +873,17 @@ try {
     else note(`Syntax: alle ${assets.filter(a => a.endsWith('.js')).length} ausgelieferten .js-Dateien parsen.`);
   }
 } catch (e) {
-  fail(`sw.js nicht lesbar: ${e.message}`);
+  /* ⛔ Diese Meldung hiess bis zum 21.08.2026 „sw.js nicht lesbar" — und war
+     damit in den meisten Faellen falsch. Sie sagt jetzt, was wirklich passiert
+     ist: der Block ist abgebrochen, und alles danach ist AUSGEFALLEN, nicht
+     bestanden. Die Begruendung steht oben am `try`. */
+  const gelaufen = errors.length + warnings.length + info.length - swVorher;
+  fail(`Der Block um sw.js ist ABGEBROCHEN: ${e.message}`);
+  fail(`⛔ Deshalb sind von ${SW_BLOCK_PRUEFUNGEN} Pruefungen in diesem Block nur ${gelaufen} `
+     + 'gelaufen — die uebrigen sind AUSGEFALLEN, nicht bestanden. Dazu gehoeren die '
+     + 'Cache-Liste, die Auslieferstrategie des Service Workers, die Syntaxpruefung der '
+     + 'ausgelieferten Dateien, die Startlauf-Nachtraege und der Rollhinweis. '
+     + 'Die Meldung darueber nennt die STELLE des Absturzes, nicht unbedingt sw.js.');
 }
 
 /* ---------- 7b. Die Pages Functions ----------
