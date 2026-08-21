@@ -94,12 +94,24 @@ if (erreichbar !== IST.Regeln)
   console.log(`   !! ${IST.Regeln - erreichbar} Regel(n) ohne Markierung - in der App unsichtbar.`);
 
 const VAULT = 'G:/1. Workspace/Obsidian/Gedächtnis/Elias Gedächtnis/';
-const MEM   = 'C:/Users/abdur/.claude/projects/F--Workspace-Obsidian/memory/';
+/* ⛔ Bis zum 21.08.2026 zeigte dieser Pfad auf .../F--Workspace-Obsidian/ —
+   ein Archiv. Gemessen an dem Tag: dort 33 Dateien, jüngste vom 03.08.;
+   im aktiven Speicher 179 Dateien, jüngste vom 21.08. Die eine Datei, auf
+   die es hier ankommt, wurde mit 44.141 Bytes gelesen statt mit 142.419.
+
+   Und es fiel nicht auf, weil die alten Kopien EXISTIEREN: die Meldung
+   "!! fehlt" unten greift nur bei fehlenden Dateien, nicht bei veralteten.
+   [[werkzeug_misst_kleineren_bestand]] [[ausfall_ist_unsichtbar_gebaut]] */
+const MEM   = 'C:/Users/abdur/.claude/projects/G--1--Workspace/memory/';
 const DATEIEN = [
   VAULT + '03 - Projekte/Vokabeltrainer-Arabisch.md',
   VAULT + '03 - Projekte/Vokabeltrainer-Generalcheck.md',
   VAULT + '03 - Projekte/Vokabeltrainer-Goal-Prompt.md',
   VAULT + '03 - Projekte/To-Do.md',
+  /* ⛔ Am 21.08.2026 nachgetragen: die Projekt-To-Do (475 KB) fehlte hier,
+     obwohl jeder Zwischenstand einer Nachtschicht dort landet. Die Liste
+     kannte nur die Übersichtsdatei To-Do.md (15 KB). */
+  VAULT + '03 - Projekte/To-Do Vokabeltrainer.md',
   VAULT + 'INDEX.md',
   VAULT + '00 - Claude Profil/Elias_KI_Profil.md',
   MEM + 'vokabeltrainer_project.md',
@@ -192,14 +204,35 @@ ${gemeldet} KANDIDAT(EN) ansehen - sie stehen NICHT in einem datierten Abschnitt
  * Vortag fertig) - ich habe Elias daraufhin eine Aufgabe genannt, die er
  * laengst erledigt hatte. Und einmal beim Tag-Audit ("Fixes noch nicht
  * angewendet", obwohl 31 Markierungen entfernt waren). */
-const MEMDIR = 'C:/Users/abdur/.claude/projects/F--Workspace-Obsidian/memory/';
+/* ⚠️ Derselbe Pfad wie oben bei MEM, und am 21.08.2026 war er hier GENAUSO
+   falsch. Zwei Zwillingsstellen, eine Entscheidung.
+   [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+const MEMDIR = 'C:/Users/abdur/.claude/projects/G--1--Workspace/memory/';
 const OFFEN  = /\boffen\b|noch nicht|ausstehend|wartet auf|steht aus|verschoben/i;
 const FERTIG = /\bERLEDIGT\b|\babgeschlossen\b|\bkomplett erledigt\b|\bist fertig\b|\bdurch\b.*\berledigt\b/;
 
+/* ⛔ Bis zum 21.08.2026 stand hier NUR `if (fs.existsSync(MEMDIR))`. Fehlte
+   der Ordner, wurde der ganze Abschnitt schweigend übersprungen — und die
+   Schlusszeile meldete trotzdem "Keine Kurzbeschreibung widerspricht ihrem
+   eigenen Text". Eine grüne Meldung ohne Zugang zu den Daten.
+   [[daten_ohne_zugang]] [[leere_liste_ist_keine_messung]]
+
+   ⭐ Und die Zahl der geprüften Dateien wird jetzt GENANNT. Hätte dort
+   "33 Beschreibungen geprüft" gestanden, während der Speicher 179 enthält,
+   wäre der falsche Pfad schon im August aufgefallen. */
 let widersprueche = 0;
+let beschriebene = 0;
+if (!fs.existsSync(MEMDIR)) {
+  console.log(`\n⛔ Speicherordner nicht gefunden: ${MEMDIR}`);
+  console.log('   Die Beschreibungspruefung hat NICHTS geprueft.');
+} else if (!fs.readdirSync(MEMDIR).some(n => n.endsWith('.md'))) {
+  console.log(`\n⛔ Speicherordner ist leer: ${MEMDIR}`);
+  console.log('   Die Beschreibungspruefung hat NICHTS geprueft.');
+}
 if (fs.existsSync(MEMDIR)) {
   for (const f of fs.readdirSync(MEMDIR).filter(n => n.endsWith('.md') && n !== 'MEMORY.md')) {
     const text = fs.readFileSync(MEMDIR + f, 'utf8');
+    beschriebene++;   // Eichzahl - sie haette den falschen Pfad verraten
     const besch = (text.match(/^description:\s*"?(.*?)"?\s*$/m) || [])[1] || '';
     if (!OFFEN.test(besch)) continue;
     /* Eine Beschreibung, die BEIDES nennt ("Vulkan ist offen - die
@@ -218,4 +251,7 @@ if (fs.existsSync(MEMDIR)) {
     }
   }
 }
-if (!widersprueche) console.log('Keine Kurzbeschreibung widerspricht ihrem eigenen Text.');
+if (!widersprueche && beschriebene)
+  console.log(`Keine der ${beschriebene} Kurzbeschreibungen widerspricht ihrem eigenen Text.`);
+else if (beschriebene)
+  console.log(`\n${widersprueche} von ${beschriebene} Kurzbeschreibungen widersprechen ihrem Text.`);
