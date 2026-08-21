@@ -30,6 +30,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import crypto from 'node:crypto';
 
 const HIER   = path.dirname(fileURLToPath(import.meta.url));
 const WURZEL = path.resolve(HIER, '..');
@@ -41,10 +42,22 @@ if (!fs.existsSync(DEPLOY)){
   process.exit(3);
 }
 
-/* Nur Textdateien vergleichen. Bilder und Schriften haben keine Zeilenenden,
-   dort ist der Bytevergleich richtig — aber sie aendern sich praktisch nie
-   und wuerden den Lauf nur langsam machen. */
+/* ⛔ HIER STAND EINE AUSNAHME MIT EINER VERMUTUNG ALS BEGRUENDUNG: Bilder und
+   Schriften wurden uebersprungen, weil sie sich "praktisch nie aendern und
+   den Lauf nur langsam machen wuerden". Gemessen am 21.08.2026:
+
+     31 Binaerdateien, 1,37 MB  ->  sha256-Vergleich aller: 22 ms
+
+   Bei 7 Sekunden Gesamtlauf ist das nichts. Die Begruendung trug nicht, und
+   ein nicht ausgeliefertes Icon waere genauso unsichtbar geblieben wie eine
+   nicht ausgelieferte js-Datei. [[begrenzung_haelt_messung_nicht_stand]]
+
+   ⚠️ Textdateien werden weiter ZEILENWEISE verglichen (mit normalisierten
+   Zeilenenden), Binaerdateien per Hash. Beides zusammenzuwerfen waere falsch:
+   ein CRLF-Unterschied in einer js-Datei ist harmlos, ein Byte-Unterschied in
+   einer woff2 ist es nicht. */
 const TEXT = /\.(js|mjs|cjs|html|json|css|md|webmanifest)$/;
+const hashVon = p => crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
 
 const dateien = [];
 (function geh(rel){
@@ -74,7 +87,13 @@ for (const rel of dateien){
     continue;
   }
 
-  if (!TEXT.test(rel)){ uebersprungen++; continue; }
+  if (!TEXT.test(rel)){
+    /* Binaer: Byte fuer Byte, ohne jede Normalisierung. */
+    if (hashVon(imDeploy) === hashVon(imRepo)){ gleich++; continue; }
+    abweichend++;
+    meldungen.push('  ⛔  ' + rel + ' — Inhalt unterscheidet sich (binaer), NICHT ausgeliefert');
+    continue;
+  }
 
   const a = ohneZeilenenden(fs.readFileSync(imDeploy, 'utf8'));
   const b = ohneZeilenenden(fs.readFileSync(imRepo, 'utf8'));
@@ -94,7 +113,7 @@ console.log('=== Ausgelieferter Stand gegen Arbeitskopie ===');
 console.log('');
 if (meldungen.length) meldungen.forEach(m => console.log(m));
 console.log('');
-console.log('  ' + gleich + ' Textdatei(en) deckungsgleich · ' + uebersprungen + ' binaer (nicht verglichen)');
+console.log('  ' + gleich + ' Datei(en) deckungsgleich (Text zeilenweise, Binaeres per Hash)');
 console.log('');
 
 if (abweichend){
