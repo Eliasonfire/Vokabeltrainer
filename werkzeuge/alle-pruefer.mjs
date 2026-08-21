@@ -74,6 +74,12 @@ const PRUEFER = [
   ['pruefe-taschkil.js', []],
   ['pruefe-transkripte.js', []],
   ['pruefe-wortfelder.js', ['--fenster']],
+  /* ⛔ Die einzige Pruefung, die "Elias hat eine aeltere Fassung" ueberhaupt
+     bemerken kann. git push veroeffentlicht hier nichts; wer nur pusht, hat
+     ein aktuelles Repo und eine alte Seite, ohne jede Fehlermeldung. Die
+     Lehre stand bisher nur in CLAUDE.md und im Gedaechtnis — gemessen hat
+     sie niemand. [[deploy_meldet_erfolg_ohne_produktion]] */
+  ['werkzeuge/pruefe-ausgeliefert.mjs', []],
   ['werkzeuge/pruefe-artefakt-inhalt.mjs', []],
   ['werkzeuge/pruefe-datumsangaben.mjs', []],
   ['werkzeuge/pruefe-eigene-vorrang.mjs', []],
