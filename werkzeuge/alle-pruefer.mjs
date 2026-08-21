@@ -101,7 +101,15 @@ for (const [rel, args] of PRUEFER){
   try { aus = execFileSync('node', [rel, ...args], { cwd: REPO, encoding: 'utf8' }); }
   catch (e){ code = typeof e.status === 'number' ? e.status : -1; aus = (e.stdout || '') + (e.stderr || ''); }
   const zeilen = aus.split(/\r?\n/).filter(l => l.trim());
-  ergebnisse.push({ rel, code, letzte: (zeilen[zeilen.length - 1] || '(keine Ausgabe)').trim() });
+  /* ⛔ NICHT einfach die letzte Zeile: bei drei Pruefern ist das die
+     Fortsetzung eines mehrzeiligen Urteils, und die liest sich ohne die
+     Zeile darueber wie ein Bruchstueck ("und die Zitate in grammar-data.js
+     bleiben Kurzzitate."). Gesucht ist die letzte NICHT eingerueckte Zeile
+     — dort faengt das Urteil an. */
+  let i = zeilen.length - 1;
+  while (i > 0 && /^\s/.test(zeilen[i])) i--;
+  const urteil = zeilen.slice(i).join(' ').replace(/\s+/g, ' ').trim();
+  ergebnisse.push({ rel, code, letzte: urteil || '(keine Ausgabe)' });
   if (!KNAPP){
     console.log('─'.repeat(74));
     console.log('  ' + rel + (args.length ? ' ' + args.join(' ') : '') + '   → exit ' + code);
