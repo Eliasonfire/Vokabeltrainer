@@ -876,7 +876,35 @@ main{
   box-shadow:var(--sh-3), inset 0 1px 0 var(--hairline);
   transition:border-color var(--dur-2) ease, box-shadow var(--dur-2) ease;
 }
-.flashcard-back{transform:rotateY(180deg);overflow-y:auto;justify-content:flex-start;padding-top:var(--sp-8);
+/* ---------- Der Kopf der Rückseite, enger gestellt (21.08.2026) ----------
+   Elias mit Bild, in dem er Wort und Geschlechts-Chip rot umrandet hat: „was
+   ist wenn man die hier etwas nach oben zieht, den abstand zwischen beiden
+   etwas verkleinert und die schrift bei beiden einen kleinen ticken kleiner
+   macht … so würde man sich denke ich ein bisschen platz wieder holen."
+
+   Nachgemessen über alle 326 Karten bei 375×812, Gegenprobe reproduziert die
+   Ausgangszahl exakt:
+
+   |                          | Überlauf | im Mittel | Satz ganz sichtbar |
+   | jetzt                    |      303 |    113 px |         33 von 317 |
+   | nur die Abstände         |      268 |     85 px |         84 von 317 |
+   | + Schrift auf 1,66 rem   |      266 |     78 px |         99 von 317 |
+   | + noch kleiner (1,62)    |      265 |     74 px |        101 von 317 |
+
+   ⭐ Die vierte Zeile ist der Grund für die dritte: noch kleiner bringt zwei
+   Karten. Deshalb die mildere Stufe — genau das „nur so ein bisschen", das er
+   beschrieben hat. [[entwurf_zu_grob]]
+
+   ⛔ Die Größen werden HIER umgestellt, nicht an `:root`. `--rueck-de` hängt
+   auch an `.wk-de`, also am deutschen Wort der INFOKARTE — die hat er nicht
+   gemeint, und sie hat den Platzmangel nicht.
+
+   ⛔ Das Verhältnis 2,145 / 1,66 = 1,292 ist dasselbe wie vorher. Es ist
+   ERTASTET, nicht gerechnet (siehe die Begründung an --rueck-ar): Elias hat es
+   dreimal mit beiden Karten nebeneinander eingestellt. Wer hier eine Zahl
+   ändert, ändert die andere mit. */
+.flashcard-back{transform:rotateY(180deg);overflow-y:auto;justify-content:flex-start;padding-top:var(--sp-5);
+  --rueck-de:1.66rem; --rueck-ar:2.145rem;
   /* pan-y hier nochmal ausdruecklich, obwohl die Karte es schon setzt: DIESES
      Element ist der Rollbereich. Steht die Einschraenkung nur am Vorfahren, ist
      sie zwar wirksam, aber wer die Wischgeste spaeter anfasst, sieht sie an der
@@ -1013,7 +1041,9 @@ main{
    ohne Legende mit. */
 .gender-chip{
   display:inline-flex;align-items:baseline;gap:var(--sp-2);
-  margin-bottom:var(--sp-4);
+  /* sp-3 statt sp-4 seit dem 21.08.2026 — „den abstand zwischen beiden etwas
+     verkleinern". Die Zahlen stehen bei `.flashcard-back`. */
+  margin-bottom:var(--sp-3);
   padding:5px var(--sp-3);border-radius:var(--r-full);
   font-size:var(--fs-sm);font-weight:600;
   color:var(--gender-role);
@@ -1023,6 +1053,12 @@ main{
 .gender-chip .ar{font-family:var(--font-ar);direction:rtl;font-size:1.05em;}
 .gender-chip .de{opacity:.72;font-weight:500;}
 .word-forms{display:flex;flex-wrap:wrap;gap:var(--sp-2);justify-content:center;margin-bottom:var(--sp-4);}
+/* ⭐ Ein leerer Kasten kostete trotzdem 16 px Abstand. Die meisten Karten
+   haben keine Wortformen — dort war das ein Loch mitten im Kopf der Karte, das
+   niemand sehen und deshalb auch niemand vermissen konnte.
+   `:empty` und nicht `.hidden`: der Kasten wird nicht versteckt, er wird mit
+   einer leeren Zeichenkette gefüllt (js/lernen.js, `cardForms`). */
+.word-forms:empty{margin-bottom:0;}
 /* ⚠️ `>` und nicht nur ein Leerzeichen. `.word-forms span` traf JEDEN
    verschachtelten span - auch die Huelle um die arabische Form, die deshalb
    selbst Rahmen, Polster und inline-flex bekam. Im Browser gemessen: der Chip
@@ -2232,18 +2268,13 @@ main{
 /* =====================================================================
    QURAN-HÄUFIGKEIT
    ===================================================================== */
-.quran-freq-badge{
-  /* an der Karte ausgerichtet, nicht am Bildschirmrand: Buehnen-Innenabstand
-     plus etwas Luft, damit das Badge in der Kartenecke sitzt */
-  position:absolute;top:var(--sp-6);right:calc(var(--gutter) + var(--sp-3));z-index:6;
-  max-width:calc(100% - var(--gutter) * 2 - var(--sp-6));
-  background:var(--red-wash);border:1px solid var(--red-dim);
-  color:var(--red-bright);font-family:var(--font-ui);font-size:var(--fs-xs);font-weight:700;
-  padding:var(--sp-1) var(--sp-3);border-radius:var(--r-full);cursor:pointer;
-  display:flex;align-items:center;gap:var(--sp-1);
-  transition:transform var(--dur-1) var(--ease-out), background var(--dur-2) ease;
-}
-.quran-freq-badge:active{transform:scale(.93);}
+/* ⛔ `.quran-freq-badge` ist am 21.08.2026 entfallen — mit dem Abzeichen auf
+   der Lernkarte, das als einziges diese Klasse trug. Die Begründung steht an
+   seiner Stelle im Markup der Bühne.
+
+   ⚠️ Der Aufklapper darunter bleibt: seine Klassen `.qfp-header` und
+   `.qfp-backdrop` trägt auch der Notiz-Editor. Wer sie mit entfernt, nimmt
+   dem Editor still seine Kopfzeile. [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
 .quran-freq-popover{
   position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
   z-index:700;width:min(340px,88vw);max-height:70vh;
@@ -2411,16 +2442,21 @@ main{
      360 px Breite nachgemessen: „Eigene Vokabel" plus Notiz-Zeichen reichte
      10 px unter das Abzeichen (Notiz endet bei 203, Abzeichen beginnt bei 193).
      Bei 375 px blieben nur 5 px Luft — deshalb ist es vorher niemandem
-     aufgefallen. Die Reihe bekommt jetzt eine harte Grenze.
-     Die Breite des Abzeichens hängt an der Zahl (bis 2851×, gemessen 127 px)
-     und steht erst zur Laufzeit fest; renderQuranFreqBadge misst sie und setzt
-     --abzeichen-breite. Ohne Abzeichen ist die Variable 0 und die Reihe darf
-     die ganze Karte nutzen — dann wird auch nichts abgeschnitten.
+     aufgefallen. Die Reihe bekam deshalb eine harte Grenze.
+
+     ⛔ Der Summand --abzeichen-breite ist am 21.08.2026 entfallen, WEIL das
+     Abzeichen entfallen ist (siehe die Begründung an seiner Stelle in der
+     Bühne). Er war eine zur Laufzeit gemessene Reserve für etwas, das es nicht
+     mehr gibt — stehen geblieben hätte er die Reihe grundlos beschnitten, und
+     zwar um einen Wert, den niemand mehr setzt.
+
+     Die Grenze bleibt: sie schützt auch ohne Abzeichen davor, dass ein langer
+     Kapitelname über die Kartenkante läuft.
      Der letzte Summand ist reine Sicherheitsluft. Er steht bewusst auf --sp-1
      und nicht höher: bei --sp-2 wurde auf 320 px selbst „Kap. 1" um 2 px
      beschnitten, obwohl dort gar nichts kollidiert. Die Luft soll Überlappung
      verhindern, nicht Abstand gestalten. */
-  max-width:calc(100% - var(--sp-4) - var(--sp-3) - var(--sp-1) - var(--abzeichen-breite, 0px));
+  max-width:calc(100% - var(--sp-4) - var(--sp-3) - var(--sp-1));
 }
 /* Der Chip positioniert sich sonst selbst absolut — in der Reihe muss er mit
    den anderen fließen. Nur hier, die beiden anderen Chips bleiben unberührt.
@@ -3692,7 +3728,19 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
       </div>
 
       <div class="card-stage" id="cardStage">
-        <button class="quran-freq-badge hidden" id="cardQuranFreq"></button>
+        <!-- ⛔ Hier stand bis zum 21.08.2026 das Abzeichen „x× im Quran". Elias
+             mit Bild, in dem er es rot umrandet hat: „und wie oft es im quran
+             ist das kann man aus den karteikarten komplett raus nehmen, so
+             bekommen wir wieder etwas mehr platz."
+
+             ⚠️ Es kostete keine Zeile im Fluss — es lag absolut über der Karte.
+             Aber es lag der deutschen Antwort im Weg: auf seinem ersten Bild
+             desselben Morgens lief „Mittelschule مَدْرَسَةٌ" mitten durch das
+             Abzeichen hindurch. Und es zwang `.front-marken` zu einer
+             Breitenreserve (--abzeichen-breite), die jetzt entfällt.
+
+             Die Zahl ist nicht verloren: die Suchtreffer in den Kategorien
+             führen sie weiter (`wl-quran`, js/kategorien.js). -->
         <div class="swipe-hint swipe-hint-left" id="swipeHintLeft"><svg class="ic"><use href="#ic-close"/></svg></div>
         <div class="swipe-hint swipe-hint-right" id="swipeHintRight"><svg class="ic"><use href="#ic-check"/></svg></div>
         <div class="flashcard" id="flashcard">
