@@ -126,6 +126,16 @@ function renderCard(){
   card.style.transition = '';
   inner.style.transition = '';
 
+  /* ⛔ Den Rollstand der Rueckseite zuruecksetzen. Ohne das kommt die naechste
+     Karte in der Stellung der vorigen hoch — nachgemessen am 21.08.2026: nach
+     einem Rollen um 200 px stand die deutsche Antwort der NAECHSTEN Karte
+     129 px oberhalb der Kartenkante, also ausser Sicht.
+
+     Das ist ein Fehler, den bis heute niemand erleben konnte: rollen ging zwar
+     immer, aber es sah niemand, dass es geht. Mit dem Rollhinweis wird er
+     sofort erreichbar. [[fehler_den_der_entwickler_nie_erlebt]] */
+  karteRueckseite().scrollTop = 0;
+
   /* Offenes Grammatik-Popover schliessen. Es haengt an `position:fixed` am
      Bildschirm, nicht an der Karte - beim Kartenwechsel blieb es deshalb
      stehen und verdeckte die naechste Karte. Elias' Meldung vom 30.07.2026:
@@ -280,7 +290,47 @@ function renderCard(){
   renderQuranFreqBadge(w);
   stufenVorschau();
   renderTippfeld(w);
+  /* Erst NACH allen Kaesten: vorher steht die Hoehe der Rueckseite noch nicht
+     fest, und der Hinweis rechnet mit ihr. */
+  aktualisiereMehrHinweis();
 }
+
+/* ---------- „Es geht noch weiter" auf der Rueckseite (21.08.2026) ----------
+   Elias mit Bild um 05:11: „da wurde einfach der beispielsatz bzw alles unter
+   vorschlag abgeschnitten." Die Rueckseite ROLLT seit jeher (overflow-y:auto)
+   — nur sagte das nichts.
+
+   Gemessen bei 375x812 ueber alle 326 Karten (nach `document.fonts.ready`;
+   davor kommen andere Zahlen heraus): 309 laufen ueber, im Mittel um 111 px.
+   Der Beispielsatz war nur auf 33 von 317 Karten ganz zu sehen.
+
+   Elias' Entscheidung: „sollst es so lassen also vorschläge oben und satz
+   unten aber mach einfach eine funktion das man diese kartekarte so nach unten
+   scrollen kann." Deshalb DREI Wege statt einem — die native Geste, ein Ziehen
+   als Rueckfall (siehe setupSwipe) und dieser Knopf. Wer einen davon nicht
+   findet, findet den naechsten.
+
+   ⚠️ Funktionsdeklarationen, keine `const`: `renderCard` ruft sie auf und
+   steht weiter oben in der Datei. [[werkzeug_ohne_aufrufer]] */
+function karteRueckseite(){ return document.querySelector('.flashcard-back'); }
+
+function kartenRestUnten(){
+  const b = karteRueckseite();
+  return b.scrollHeight - b.scrollTop - b.clientHeight;
+}
+
+function aktualisiereMehrHinweis(){
+  const hinweis = document.getElementById('cardMehrHinweis');
+  if (!hinweis) return;
+  /* Nur auf der Rueckseite. Die Vorderseite steht auf `justify-content:center`
+     und laeuft nie ueber — dort waere der Streifen eine Behauptung. */
+  const zeigen = document.getElementById('flashcard').classList.contains('flipped')
+              && kartenRestUnten() > 6;
+  hinweis.classList.toggle('zeigen', zeigen);
+  hinweis.setAttribute('aria-hidden', zeigen ? 'false' : 'true');
+}
+
+karteRueckseite().addEventListener('scroll', aktualisiereMehrHinweis, { passive:true });
 
 /* ---------- Verbformen (Elias' Wunsch vom 29.07.2026) ----------
    "Was ich brauche ist (für Verben) die (Zeit)formen (Vergangenheit,
@@ -827,6 +877,10 @@ document.getElementById('flashcard').addEventListener('click', (e)=>{
   const markierung = markierungUnterKlick(e);
   if (markierung){ zeigeGrammatikPopover(markierung); return; }
   document.getElementById('flashcard').classList.toggle('flipped');
+  /* Der Hinweis haengt an BEIDEN Bedingungen — gedreht UND es geht weiter.
+     Umdrehen aendert die erste, also muss hier nachgerechnet werden; ein
+     `scroll`-Ereignis kommt dabei ja nicht. */
+  aktualisiereMehrHinweis();
 });
 document.getElementById('btnSpeakWord').addEventListener('click', (e)=>{
   e.stopPropagation();
@@ -855,6 +909,9 @@ document.getElementById('btnExitLearn').addEventListener('click', ()=>{
   const hintR = document.getElementById('swipeHintRight');
   const hintL = document.getElementById('swipeHintLeft');
   let startX=0, startY=0, dx=0, dragging=false, achse=null, zeiger=null;
+  /* Fuer den Rueckfall beim senkrechten Ziehen — siehe die Begruendung im
+     pointermove-Zweig `achse === 'y'`. */
+  let letzterY=0, rollAnfang=0, rollProben=0, rollenSelbst=false;
 
   card.addEventListener('pointerdown', (e)=>{
     /* Sobald die Karte angefasst wird, verschwindet eine offene Erklaerung.
@@ -865,6 +922,7 @@ document.getElementById('btnExitLearn').addEventListener('click', ()=>{
     const pop = document.getElementById('gramPopover');
     if (pop && !e.target.closest('.gram-underline')) pop.classList.remove('show');
     startX=e.clientX; startY=e.clientY; dx=0; dragging=true; achse=null;
+    letzterY=e.clientY; rollAnfang=karteRueckseite().scrollTop; rollProben=0; rollenSelbst=false;
     /* Den Zeiger einfangen: sonst landet das pointerup auf dem Element, ueber
        dem der Finger gerade ist, sobald er die Karte verlaesst - und das
        passiert bei 90px Schwelle staendig. endDrag laeuft dann nie, die Karte
@@ -882,6 +940,34 @@ document.getElementById('btnExitLearn').addEventListener('click', ()=>{
        ungefragt als richtig oder falsch verbuchen. */
     if (!achse && (Math.abs(dxRoh) > 10 || Math.abs(dy) > 10)){
       achse = Math.abs(dxRoh) > Math.abs(dy) ? 'x' : 'y';
+    }
+    /* ---------- Senkrecht heisst ROLLEN, nicht Wischen ----------
+       Eigentlich erledigt das der Browser selbst: `.flashcard-back` steht auf
+       `overflow-y:auto`, und `touch-action:pan-y` laesst senkrechtes Rollen
+       ausdruecklich zu. Nur ist das hier kein gewoehnlicher Rollbereich — er
+       liegt in einer 3D-gedrehten Flaeche (`preserve-3d` + `rotateY(180deg)`),
+       und schon beim pointerdown faengt die Karte den Zeiger ein
+       (`setPointerCapture`). Ob die Fingergeste unter diesen Umstaenden
+       ankommt, haengt an der Engine — auf Elias' Geraet kam sie nicht an.
+
+       ⭐ Deshalb wird GEMESSEN statt vermutet: bewegt sich `scrollTop` trotz
+       deutlicher Fingerbewegung nicht, uebernimmt dieser Zweig das Rollen. Wo
+       die native Geste laeuft, ist er unerreichbar — dann bewegt sich
+       `scrollTop` ja, und die Bedingung trifft nie zu. Ein Rueckfall, der sich
+       selbst abschaltet, statt zweier Rollwege, die sich addieren.
+       [[ein_weg_geht_der_andere_nicht]] */
+    if (achse === 'y'){
+      const back = karteRueckseite();
+      if (!rollenSelbst && back.scrollHeight > back.clientHeight + 2){
+        rollProben++;
+        if (rollProben >= 3 && Math.abs(dy) > 24 && back.scrollTop === rollAnfang) rollenSelbst = true;
+      }
+      if (rollenSelbst){
+        if (e.cancelable) e.preventDefault();
+        back.scrollTop -= (e.clientY - letzterY);
+      }
+      letzterY = e.clientY;
+      return;
     }
     if (achse !== 'x') return;
     /* Sobald feststeht, dass gewischt wird, dem Browser die Geste wegnehmen.
