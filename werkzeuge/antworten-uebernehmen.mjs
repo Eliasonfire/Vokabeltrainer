@@ -126,7 +126,16 @@ for (const roh of zeilen){
   }
   /* Zeilenform aus dem Artefakt:  "  <id>  <arabisch>  (<deutsch>)  -> <antwort>" */
   const m = /^\s+(\S+)\s+(.+?)\s+\((.*?)\)\s+->\s+(.+)$/.exec(z);
-  if (!m) continue;
+  if (!m){
+    /* ⛔ NICHT still weiterlaufen, wenn die Zeile erkennbar eine Antwort
+       sein wollte. Ein fehlendes Leerzeichen vor dem Pfeil genuegt, damit
+       das Muster nicht greift — und ohne diese Meldung waere Elias' Antwort
+       spurlos weg. Fliesstext und Ueberschriften tragen keinen Pfeil und
+       laufen weiter durch. [[ausfall_ist_unsichtbar_gebaut]] */
+    if (/^\s/.test(z) && z.includes('->'))
+      unklar.push('Zeile nicht lesbar (Form stimmt nicht): ' + z.trim().slice(0, 60));
+    continue;
+  }
   if (!feld){ unklar.push('Zeile ohne Feldüberschrift: ' + z.trim().slice(0, 60)); continue; }
 
   const [, id, ar, de, antwortRoh] = m;
@@ -173,10 +182,25 @@ if (unklar.length){
   console.log('  ⚠️ ' + unklar.length + ' Zeile(n) nicht übernommen:');
   unklar.forEach(u => console.log('      ' + u));
 }
+/* ⛔ Die unklaren Zeilen stehen oben — aber darunter kommt gleich eine
+   Erfolgsmeldung, und die ist das Letzte, was Elias liest. Wer 78 Antworten
+   schickt und "Eingetragen: 73" sieht, haelt das fuer vollstaendig.
+   Deshalb am ENDE noch einmal, und mit Exitcode.
+   [[erfolgsmeldung_ohne_wirkung]] */
+function verloreneMelden(){
+  if (!unklar.length) return 0;
+  console.log('');
+  console.log('⛔ ' + unklar.length + ' deiner Antwort(en) sind NICHT angekommen'
+    + ' — sie stehen oben einzeln aufgelistet.');
+  console.log('   Sie kommen beim naechsten Lauf wieder als Frage. Wenn du sie');
+  console.log('   gleich richtigstellst, sparst du dir die Runde.');
+  return 2;
+}
+
 if (!ausnahmen.length && !werte.length){
   console.log('');
   console.log('Nichts zu übernehmen.');
-  process.exit(unklar.length ? 2 : 0);
+  process.exit(verloreneMelden());
 }
 
 /* ---------- Schreiben ---------- */
@@ -286,7 +310,7 @@ if (NUR_ZEIGEN){
   ausnahmen.forEach(a => console.log('  AUSNAHME   ' + a.feld.padEnd(8) + a.wort));
   werte.forEach(w => console.log('  WERT       ' + w.feld.padEnd(8) + w.wort + '  = ' + w.wert));
   zweifel.forEach(z => console.log('  ZWEIFEL    ' + 'type'.padEnd(8) + z.wort + '  → kommt wieder als type-Frage'));
-  process.exit(0);
+  process.exit(verloreneMelden());
 }
 
 /* ⛔ Erst daneben schreiben, dann umbenennen — UND die Groesse pruefen. Der
@@ -307,3 +331,4 @@ console.log('  ' + neuA + ' neue Ausnahme(n), ' + neuE + ' neue Wert(e)'
   + (neuZ ? ', ' + neuZ + ' bestrittene Wortart(en)' : ''));
 console.log('');
 console.log('Jetzt prüfen:  node validate.js  und  node werkzeuge/vorrat.mjs');
+process.exit(verloreneMelden());
