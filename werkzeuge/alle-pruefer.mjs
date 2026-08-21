@@ -80,6 +80,10 @@ const PRUEFER = [
   ['werkzeuge/pruefe-erreichbarkeit-eichung.mjs', []],
   ['werkzeuge/pruefe-gedaechtnis.mjs', []],
   ['werkzeuge/pruefe-ids.mjs', []],
+  /* ⛔ Ohne diese Zeile haette pruefe-muster.mjs keinen Aufrufer und liefe nie.
+     Genau der Fehler, den es selbst sucht, in seiner allgemeinen Form: gebaut,
+     gepusht, ausgeliefert — und nie gestartet. [[werkzeug_ohne_aufrufer]] */
+  ['werkzeuge/pruefe-muster.mjs', []],
   ['werkzeuge/pruefe-plural-thema.mjs', []],
   ['werkzeuge/pruefe-schreibpfade.mjs', []],
   ['werkzeuge/pruefe-volles-programm.mjs', []]
