@@ -115,3 +115,9 @@ for (const x of treffer) console.log(`  ${x.w.id.padEnd(10)} ${x.q.padEnd(6)} ${
 
 console.log(`\n=== Randfall: erster Satz nennt den Plural, aber ohne Formpfeil: ${rand.length} Texte ===`);
 for (const x of rand) console.log(`  ${x.w.id.padEnd(10)} ${x.q.padEnd(6)} ${(x.w.sg||x.w.ar)}  „${x.w.de}"`);
+
+/* ⛔ Dasselbe hier: das Skript endete mit einer Randfall-Zeile. Ein Urteil
+   am Ende kostet zwei Zeilen und macht den Lauf lesbar.
+   [[erfolgsmeldung_ohne_wirkung]] */
+console.log(String.fromCharCode(10) + '✅ Durchgelaufen — die Gruppen oben sind '
+  + 'Kandidaten zum Ansehen, keine Fehlerliste.');
