@@ -640,6 +640,62 @@ const ohneKommentare = txt => txt
   });
 }
 
+/* ---------- Wenn zur Laufzeit etwas wirft, sieht er nichts (21.08.2026) -----
+
+   ⛔ GEMESSEN, nicht vermutet: in js/, index.html und sw.js gibt es KEINEN
+   einzigen globalen Fehlerfaenger — kein `window.onerror`, kein
+   `addEventListener('error')`, kein `unhandledrejection`.
+
+   Wirft also irgendetwas zur Laufzeit, stirbt der betroffene Pfad still. Die
+   Karte dreht sich nicht, ein Bildschirm bleibt leer, ein Knopf tut nichts —
+   und nichts sagt, warum. Fuer Elias sieht das aus wie „kaputt", nicht wie ein
+   Fehler mit einer Ursache. [[ausfall_ist_unsichtbar_gebaut]]
+
+   ⚠️ Das ist ein echter Ausfallpfad, aber die ABHILFE ist eine
+   Gestaltungsfrage: was soll er sehen? Deshalb vorgelegt statt entschieden.
+   [[erst_ursache_dann_zweite_massnahme]]
+
+   ⚠️ LIVE gezaehlt: sobald ein Faenger existiert, verschwindet der Posten von
+   selbst. [[eingefrorenes_feld_ist_kein_zustand]] */
+{
+  let faenger = 0;
+  const suchen = (dir) => {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })){
+      if (e.name === '.deploy' || e.name === 'node_modules' || e.name === '.git') continue;
+      const voll = path.join(dir, e.name);
+      if (e.isDirectory()){ if (e.name === 'js') suchen(voll); continue; }
+      if (!/\.(js|html)$/.test(e.name)) continue;
+      if (/^pruefe-/.test(e.name)) continue;
+      const txt = ohneKommentare(fs.readFileSync(voll, 'utf8'));
+      if (/window\.onerror|addEventListener\(\s*['"]error['"]|onunhandledrejection|addEventListener\(\s*['"]unhandledrejection['"]/.test(txt)) faenger++;
+    }
+  };
+  suchen(path.join(REPO, 'js'));
+  for (const e of fs.readdirSync(REPO, { withFileTypes: true })){
+    if (!e.isFile() || !/^(index\.html|sw\.js)$/.test(e.name)) continue;
+    const txt = ohneKommentare(fs.readFileSync(path.join(REPO, e.name), 'utf8'));
+    if (/window\.onerror|addEventListener\(\s*['"]error['"]|onunhandledrejection/.test(txt)) faenger++;
+  }
+
+  if (!faenger) posten.push({
+    titel: 'Wenn etwas schiefgeht, siehst du nichts',
+    zahl: 0, einheit: 'Fehlerfänger', dazu: 'in js/, index.html und sw.js', auswahl: true,
+    aufwand: 'eine Entscheidung — was du sehen willst; das Bauen ist eine halbe Stunde',
+    warum: 'Die App hat keinen einzigen globalen Fehlerfaenger. Geht zur Laufzeit etwas'
+      + ' schief, stirbt genau dieser Pfad still: die Karte dreht sich nicht, ein'
+      + ' Bildschirm bleibt leer, ein Knopf tut nichts. Du siehst „kaputt", nicht'
+      + ' „Fehler in Modul X". Und ich sehe hinterher gar nichts, weil nichts'
+      + ' festgehalten wird — die drei Fehler, die du mir heute frueh gemeldet hast,'
+      + ' habe ich nur ueber deine Bilder gefunden.',
+    wie: 'Zwei Wege, such einen aus. (a) STILL: der Fehler wird nur gespeichert, die'
+      + ' Oberflaeche bleibt unveraendert — beim naechsten Bericht steht er dann drin.'
+      + ' (b) SICHTBAR: zusaetzlich eine schmale Zeile am unteren Rand „Da ist etwas'
+      + ' schiefgegangen", die man wegtippen kann. ⚠️ (b) aendert, was du siehst —'
+      + ' deshalb frage ich, statt es einzubauen.',
+    seite: '', seiteText: ''
+  });
+}
+
 /* D) Gestaltungsentscheidungen — sie warten, ohne dass ein Werkzeug sie misst. */
 /* ⚠️⚠️ DIESE ZWEI POSTEN HABEN AM 20.08. IHRE FRAGE GEWECHSELT, und ein Posten,
    der stillsteht, waehrend sich die Lage bewegt, macht ihm Arbeit vor, die es
