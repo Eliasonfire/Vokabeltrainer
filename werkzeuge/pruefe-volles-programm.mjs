@@ -50,6 +50,9 @@ const ROUTINEN = path.resolve(WURZEL, '..', 'Automation', 'routines.json');
 
 const ANGLEICHEN = process.argv.includes('--angleichen');
 let fehler = 0;
+/* Getrennt vom Fehlerzaehler: ein Hinweis darf den Exitcode nicht kippen,
+   muss aber in die SCHLUSSZEILE — der Sammellauf zeigt nur die. */
+let hinweisMundtot = null;
 const sag = (ok, text) => { console.log('  ' + (ok ? 'ok  ' : '⛔  ') + text); if (!ok) fehler++; };
 
 /* ---------- 0. Die Quelle muss es geben ---------- */
@@ -479,6 +482,7 @@ if (!fs.existsSync(SAMMELPRUEFER)){
     console.log('         Ohne seine Antwort ist unbekannt, wie viele Pruefungen Mi/So fehlen.');
   } else if (treffer){
     console.log('    ⚠️   ' + treffer[1] + ' Pruefungen laufen mittwochs und sonntags NICHT mit.');
+    hinweisMundtot = treffer[1] + ' Pruefungen laufen Mi/So nicht mit (eine Zeile fehlt im Wartungs-Prompt)';
     console.log('         Es fehlt im Wartungs-Prompt genau eine Zeile:');
     console.log('           node werkzeuge/alle-pruefer.mjs');
     console.log('         Sie startet alle auf einmal und veraltet nie.');
@@ -494,6 +498,10 @@ console.log('');
 if (fehler){
   console.log('⛔ ' + fehler + ' Befund(e). „Das volle Programm" ist nicht an allen Orten dasselbe.');
   process.exit(2);
+}
+if (hinweisMundtot){
+  console.log('✅ Deckungsgleich — aber ⚠️ ' + hinweisMundtot + '.');
+  process.exit(0);
 }
 console.log('✅ Quelle, Kopie, Wartungs-Prompt und Messwerkzeuge sind deckungsgleich.');
 process.exit(0);
