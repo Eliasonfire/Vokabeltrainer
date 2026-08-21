@@ -121,9 +121,14 @@ const melde = (was) => { fehler++; console.log('  FEHL ' + was); };
    die Regel gilt dem Inhalt, nicht der Datei.
 
    ⛔⛔ DRITTE QUELLE, am 21.08.2026 nachgetragen: data/eselsbruecken.js traegt
-   die Merkhilfen der BUCHVOKABELN (154 Texte). Sie fehlten hier - und damit
-   liefen ALLE Regeln dieser Datei an ihnen vorbei: Koranstellen,
-   Zitatlaenge, Mindestlaenge.
+   154 Texte. Sie fehlten hier - und damit liefen ALLE Regeln dieser Datei an
+   ihnen vorbei: Koranstellen, Zitatlaenge, Mindestlaenge.
+
+   ⚠️ Der Dateiname und mein erster Kommentar sagten "die Merkhilfen der
+   BUCHVOKABELN". Nachgezaehlt am selben Tag: 140 Buchwoerter und **14 mit
+   `p_`-Id, also Elias' EIGENE Vokabeln**. Wer hier etwas aendert, aendert
+   womoeglich an seinen eigenen Woertern - und zwei der vier Laengen-Befunde
+   von heute stehen genau dort. [[eingefrorenes_feld_ist_kein_zustand]]
 
    Gemessen: der Abschnitt "Koranstellen nur aus dem auswendigen Bereich"
    meldete 7 Faelle. Ueber alle drei Quellen sind es 11 - vier Buchtexte
