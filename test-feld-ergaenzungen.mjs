@@ -172,6 +172,50 @@ if (!mitEintrag || ohneEintrag || !rufer){
 }
 
 console.log('');
-console.log('✅ Alle sechs Faelle richtig — der Rueckweg traegt in BEIDE Richtungen:');
-console.log('   ein Wert kommt auf der Karte an, ein „gibt es nicht“ legt die Frage still.');
+/* ========================================================================
+   REGELN — bekommt er nur beantwortbare Fragen?
+
+   feldAusnahme() hat DREI Wege: Elias eigener Eintrag (oben), eine Regel
+   ueber die Wortart, eine ueber die Quelle. Faellt einer der beiden
+   Regel-Wege aus, bekommt er sinnlose Fragen vorgelegt — "wie lautet die
+   Wurzel von حَرْف?" hat keine Antwort, und er kann sie nicht loswerden.
+
+   ⛔ Der letzte Fall ist der wichtigste: ein normales Nomen MUSS seine
+   Frage bekommen. Ohne ihn waere ein "immer still"-Fehler gruen — und die
+   Warteseite dauerhaft leer, ohne dass etwas beantwortet waere.
+   [[pruefwerkzeug_mit_eingebauter_antwort]] */
+const REGELFAELLE = [
+  { w:{id:'r1',type:'particle'}, feld:'root',   quelle:'madina-1',
+    still:true,  was:'Partikel — ein حَرْف ist nicht ableitbar' },
+  { w:{id:'r2',type:'noun'},     feld:'root',   quelle:'fachbegriffe',
+    still:true,  was:'Fachbegriff — gehoert nicht in die Wurzelansicht' },
+  { w:{id:'r3',type:'noun'},     feld:'gender', quelle:'fachbegriffe',
+    still:true,  was:'Fachbegriff — Metasprache, kein Uebungswort' },
+  { w:{id:'r4',type:'noun'},     feld:'root',   quelle:'madina-1',
+    still:false, was:'normales Nomen — die Frage MUSS kommen' }
+];
+
+console.log('');
+console.log('=== Bekommt er nur beantwortbare Fragen? ===');
+console.log('');
+let regelSchlecht = 0;
+for (const r of REGELFAELLE){
+  const grund = W.feldAusnahme(r.w, r.feld, r.quelle);
+  const ok = r.still ? !!grund : !grund;
+  if (!ok) regelSchlecht++;
+  console.log('  ' + (ok ? 'ok  ' : '⛔  ') + (grund ? 'still' : 'FRAGE').padEnd(6)
+    + r.feld.padEnd(7) + r.quelle.padEnd(14) + r.was);
+}
+
+if (regelSchlecht){
+  console.log('');
+  console.log('⛔ ' + regelSchlecht + ' Regelfall/-faelle falsch. Entweder bekommt Elias sinnlose');
+  console.log('   Fragen vorgelegt, oder eine noetige Frage wird nie gestellt.');
+  process.exit(1);
+}
+
+console.log('');
+console.log('✅ Alle zehn Faelle richtig — der Rueckweg traegt in BEIDE Richtungen:');
+console.log('   ein Wert kommt auf der Karte an, ein „gibt es nicht“ legt die Frage still,');
+console.log('   und sinnlose Fragen entstehen gar nicht erst.');
 process.exit(0);
