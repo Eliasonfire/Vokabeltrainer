@@ -122,6 +122,7 @@ const PRUEFER = [
      hier. [[werkzeug_ohne_aufrufer]] */
   ['test-antwortformat.mjs', []],
   ['test-feld-ergaenzungen.mjs', []],
+  ['test-lernstand-zuwachs.mjs', []],
   ['test-buecher.mjs', []],
   ['test-p1.mjs', []],
   ['test-p6.mjs', []],
@@ -186,11 +187,18 @@ const NUR_IM_BROWSER = ['pruefe-oberflaeche.js'];
    niemand mehr. Seit es 22/22 meldet, laeuft es mit.
 
    Der Weg dorthin steht im Pruefstand selbst; hier nur das, was fuer die
-   Liste wichtig ist: die acht test-*.mjs fahren die ECHTE App-Logik in
+   Liste wichtig ist: zehn der test-*.mjs fahren die ECHTE App-Logik in
    einem vm gegen einen DOM-Stub hoch. Bricht einer, liegt der Fehler
    haeufiger im Pruefstand als in der App — von den fuenf roten waren es
    fuenf von fuenf. Erst lesen, was er misst, dann die App verdaechtigen.
-   [[testfehler_kann_echten_mangel_zeigen]] */
+   [[testfehler_kann_echten_mangel_zeigen]]
+
+   ⚠️ `test-lernstand-zuwachs.mjs` gehoert NICHT dazu: er laedt keine App,
+   sondern schneidet den Entscheidungsblock aus `werkzeuge/vorrat.mjs`
+   heraus und fuehrt ihn mit gestellten Staenden aus. Passt sein Anker
+   nicht mehr genau 1x, bricht er mit Exitcode 3 ab, statt gruen zu
+   werden. Die Zahl oben stand bis zum 21.08.2026 auf „acht" —
+   nachgezaehlt waren es zehn. [[stand_besteht_aus_mehreren_zahlen]] */
 
 const ergebnisse = [];
 for (const [rel, args] of PRUEFER){
