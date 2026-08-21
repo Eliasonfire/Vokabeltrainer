@@ -118,7 +118,21 @@ function freischaltungLesen(){
                             .filter(n => !Number.isNaN(n)).sort((a, b) => a - b);
   });
   const datum = (block[1].match(/abgefragt am ([0-9.]+)/) || [])[1] || 'unbekannt';
-  return { frei, datum };
+  /* ⛔ Das Datum allein warnt nicht — es steht nur da, und niemand rechnet.
+     Die Routine zieht Mi/So nach; faellt das aus, altert der Stand still und
+     neu freigeschaltete Kapitel tauchen nie im Vorrat auf.
+     [[eingefrorenes_feld_ist_kein_zustand]]
+     8 Tage = zwei verpasste Wartungslaeufe. Beide Schreibweisen kommen vor:
+     "19.8.2026" und "17.08.2026". */
+  let standWarnung = 0;
+  const dm = datum.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+  if (!dm){
+    standWarnung = -1;                       // unlesbar ist auch ein Befund
+  } else {
+    const tage = Math.floor((Date.now() - new Date(+dm[3], +dm[2] - 1, +dm[1]).getTime()) / 86400000);
+    if (tage > 8) standWarnung = tage;
+  }
+  return { frei, datum, standWarnung };
 }
 
 /* ⭐⭐ ZWEI QUELLEN, UND DIE GROESSERE GILT
@@ -565,7 +579,7 @@ function hatKategorie(w){
 }
 
 /* ---------- Hauptteil ---------- */
-const { frei, datum } = freischaltungLesen();
+const { frei, datum, standWarnung } = freischaltungLesen();
 
 if (iStand >= 0){
   const quelle = ARG[iStand + 1];
@@ -1161,8 +1175,8 @@ if (KNAPP){
     ? ', ' + Object.entries(jeFeld).sort((a, b) => b[1] - a[1]).map(([f, n]) => n + '× ' + f).join(', ')
     : '';
   console.log(offen.length
-    ? `Vorrat: ${offen.length} von ${geprueft} freigeschalteten Woertern unvollstaendig — ${fehlendeEB} Eselsbruecken, ${fehlendeSatz} Beispielsaetze, ${fehlendeMark} Markierungen, ${fehlendeKat} Kategorien${felderText}. (Freischaltstand ${datum})`
-    : `Vorrat: alle ${geprueft} freigeschalteten Woerter sind nach allen 13 Punkten des vollen Programms vollstaendig. (Freischaltstand ${datum})`);
+    ? `Vorrat: ${offen.length} von ${geprueft} freigeschalteten Woertern unvollstaendig — ${fehlendeEB} Eselsbruecken, ${fehlendeSatz} Beispielsaetze, ${fehlendeMark} Markierungen, ${fehlendeKat} Kategorien${felderText}. (Freischaltstand ${datum}${standWarnung === -1 ? ' — ⛔ DATUM UNLESBAR, Alter unbekannt' : standWarnung ? ' — ⚠️ ' + standWarnung + ' Tage alt, die Mi/So-Abfrage hat ausgesetzt' : ''})`
+    : `Vorrat: alle ${geprueft} freigeschalteten Woerter sind nach allen 13 Punkten des vollen Programms vollstaendig. (Freischaltstand ${datum}${standWarnung === -1 ? ' — ⛔ DATUM UNLESBAR, Alter unbekannt' : standWarnung ? ' — ⚠️ ' + standWarnung + ' Tage alt, die Mi/So-Abfrage hat ausgesetzt' : ''})`);
   /* ⛔ Auch die knappe Fassung traegt den Nenner — sie ist die, die in den
      Routinenbericht wandert, und dort faellt eine Luecke sonst nie auf. */
   if (UNGEMESSEN_SUMME)
