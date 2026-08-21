@@ -104,6 +104,25 @@ function laden(rel, pflicht = true){
 const hol = (name) =>
   vm.runInContext('typeof ' + name + ' !== "undefined" ? ' + name + ' : null', kiste);
 
+/* ⭐ Wie alt ist ein deutsch geschriebenes Datum? Gibt die Tage zurueck oder
+   `null`, wenn es sich nicht lesen laesst — unlesbar ist ein eigener Befund
+   und darf nicht als 0 durchgehen.
+
+   Beide Schreibweisen kommen vor: „19.8.2026" und „17.08.2026", weil
+   `toLocaleDateString('de-DE')` je nach Umgebung fuehrende Nullen setzt.
+
+   ⛔ Als eigene Funktion, seit 21.08.2026: den Kapitelstand prueft sie seit
+   dem 20.08. auf mehr als 8 Tage (= zwei verpasste Wartungslaeufe), den
+   Geraeteabgleich in `data/eigene-woerter.json` prueft bis heute niemand.
+   Beim ZWEITEN Fall aus demselben Grund gehoert die Regel an eine Stelle,
+   nicht zweimal hingeschrieben.
+   [[allgemeine_regel_statt_listeneintrag]] [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+function tageSeit(deutschesDatum){
+  const dm = String(deutschesDatum || '').match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+  if (!dm) return null;
+  return Math.floor((Date.now() - new Date(+dm[3], +dm[2] - 1, +dm[1]).getTime()) / 86400000);
+}
+
 /* ---------- FREIGESCHALTET lesen und schreiben ---------- */
 const KERN = p('js/kern.js');
 
@@ -125,13 +144,9 @@ function freischaltungLesen(){
      8 Tage = zwei verpasste Wartungslaeufe. Beide Schreibweisen kommen vor:
      "19.8.2026" und "17.08.2026". */
   let standWarnung = 0;
-  const dm = datum.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
-  if (!dm){
-    standWarnung = -1;                       // unlesbar ist auch ein Befund
-  } else {
-    const tage = Math.floor((Date.now() - new Date(+dm[3], +dm[2] - 1, +dm[1]).getTime()) / 86400000);
-    if (tage > 8) standWarnung = tage;
-  }
+  const tage = tageSeit(datum);
+  if (tage === null) standWarnung = -1;      // unlesbar ist auch ein Befund
+  else if (tage > 8) standWarnung = tage;
   return { frei, datum, standWarnung };
 }
 
@@ -1236,9 +1251,23 @@ if (metaQuelle && metaQuelle.startsWith('⛔'))
   /* ⛔ Der Geltungsbereich gehoert IMMER in die Ausgabe — auch und gerade,
      wenn die Datei fehlt. Ein stillschweigendes Null saehe aus wie „nichts
      offen". [[leere_liste_ist_keine_messung]] [[ausfall_ist_unsichtbar_gebaut]] */
-  if (SELBST.length)
+  if (SELBST.length){
     console.log('    selbst angelegte Woerter: ' + SELBST.length
       + '   (aus dem Geraeteabgleich, geholt am ' + (SELBST_STAND || '?') + ')');
+    /* ⛔ Das Datum allein warnt nicht — dieselbe Luecke wie beim Kapitelstand,
+       nur eine Datei weiter. Faellt der Geraeteabgleich aus, altert dieser
+       Abzug still, und alles rechnet mit einer Wortzahl von vorletzter Woche.
+       Gleiche Grenze wie dort: 8 Tage = zwei verpasste Wartungslaeufe.
+       [[eingefrorenes_feld_ist_kein_zustand]] [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+    const tageAbzug = tageSeit(SELBST_STAND);
+    if (tageAbzug === null)
+      console.log('      ⚠️ wann geholt, steht nicht lesbar da ("' + (SELBST_STAND || '') + '")'
+        + ' — das Alter dieses Abzugs ist damit unbekannt.');
+    else if (tageAbzug > 8)
+      console.log('      ⚠️ dieser Abzug ist ' + tageAbzug + ' Tage alt (mehr als zwei'
+        + ' Wartungslaeufe) — seither selbst angelegte Woerter fehlen hier.'
+        + ' Neu holen: vorrat.mjs --stand <datei> --app auto');
+  }
   else
     console.log('    selbst angelegte Woerter: NICHT GEMESSEN'
       + '   ⛔ data/eigene-woerter.json fehlt — sie entsteht bei'
