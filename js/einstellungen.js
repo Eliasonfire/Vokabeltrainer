@@ -366,6 +366,7 @@ document.getElementById('voiceSelect').addEventListener('change', (e)=>{
    blaehte die Sicherung von wenigen Kilobyte auf ueber ein Megabyte auf. */
 const SICHERUNGS_SCHLUESSEL = [
   'vt_progress', 'vt_notes', 'vt_settings', 'vt_streak',
+  'vt_uebungstage', /* Uebungskalender (21.08.2026) — nicht wiederherstellbar */
   'vt_personalVocab', 'vt_customCats', 'vt_hifz', 'vt_hifzVerse',
   'vt_hoerTag',   /* Tageszaehler Hoermodus, 17.08.2026 */
   'vt_bekannt',   /* „Kenne ich schon" — seine Auswahl, nicht wiederherstellbar */

@@ -1233,6 +1233,64 @@ function gnadeVerfuegbar(s, heute){
 }
 function getStreak(){ return LS.get('vt_streak', {count:0,last:null,gnadeAm:null}); }
 
+/* ---------- Uebungstage: der Kalender hinter der Serie (21.08.2026) --------
+
+   Elias: „bei der 8 tage streak faende ich es gut wenn da so eine art kalender
+   ist der mir zeigt an welchem datum ich so geuebt habe und wann nicht und wie
+   lange das schon so geht."
+
+   ⛔ DIE DATEN DAFUER GAB ES NICHT. `vt_streak` merkt sich nur {count, last,
+   gnadeAm}, und PROGRESS haelt je Wort {box, nextReview, correct, wrong} —
+   nirgends steht, an WELCHEM Tag geuebt wurde. Ein Kalender laesst sich daraus
+   nicht rueckwirkend fuellen, er muss ab jetzt mitschreiben.
+   [[daten_ohne_zugang]]
+
+   Form: { "2026-08-21": 34 } — Datum zu Anzahl beantworteter Karten. Ein Wert
+   von 0 heisst „an diesem Tag wurde geuebt, die Anzahl ist unbekannt": genau
+   das kommt aus der Rueckrechnung unten und wird in der Anzeige auch anders
+   gezeichnet, damit eine erschlossene Angabe nicht wie eine gemessene aussieht.
+   [[zahlen_ohne_beleg]] */
+function getUebungstage(){ return LS.get('vt_uebungstage', {}); }
+
+function tagZaehlen(){
+  const tage = getUebungstage();
+  const t = todayStr(0);
+  tage[t] = (tage[t] || 0) + 1;
+  LS.set('vt_uebungstage', tage);
+  return tage;
+}
+
+/* ⭐ Was sich aus der laufenden Serie SICHER erschliessen laesst — einmalig,
+   damit der Kalender nicht bei null anfaengt.
+
+   ⛔ Und zwar hoechstens ACHT Uebungstage zurueck, nicht `count` Tage. Grund:
+   die Serie kennt einen Gnadentag (ein ausgelassener Tag laesst sie stehen),
+   und gespeichert ist nur der LETZTE davon. In den letzten acht Uebungstagen
+   kann hoechstens einer liegen — die Gnade ist erst nach sieben Tagen wieder
+   zu haben —, und den kenne ich aus `gnadeAm`. Weiter zurueck waeren es
+   moeglicherweise mehrere unbekannte Luecken, und dann traege der Kalender
+   Tage ein, an denen niemand geuebt hat.
+   [[kennzeichen_mit_zwei_ursachen]] [[begrenzung_haelt_messung_nicht_stand]] */
+function uebungstageAusSerieErgaenzen(){
+  const tage = getUebungstage();
+  const s = getStreak();
+  if (!s.last || !s.count) return tage;
+  const ausgelassen = s.gnadeAm
+    ? new Date(new Date(s.gnadeAm).getTime() - 86400000).toISOString().slice(0, 10)
+    : null;
+  let d = new Date(s.last), offen = Math.min(s.count, 8), geaendert = false;
+  while (offen > 0){
+    const tag = d.toISOString().slice(0, 10);
+    if (tag !== ausgelassen){
+      if (tage[tag] === undefined){ tage[tag] = 0; geaendert = true; }
+      offen--;
+    }
+    d = new Date(d.getTime() - 86400000);
+  }
+  if (geaendert) LS.set('vt_uebungstage', tage);
+  return tage;
+}
+
 /* ---------- Vocab helpers ---------- */
 function byId(id){ return VOCAB_DATA.find(w=>w.id===id); }
 

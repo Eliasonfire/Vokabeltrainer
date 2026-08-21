@@ -76,11 +76,11 @@ function zeigeBildschirm(name){
   const rollkasten = document.getElementById('main');
   if (rollkasten) rollkasten.scrollTo({ top: 0, behavior: 'instant' });
 
-  /* ⭐ `renderStats()` gehoert seit dem 21.08.2026 zum Startbildschirm: die
-     Statistik sitzt dort unter der Box-Uebersicht, einen eigenen Bildschirm
-     dafuer gibt es nicht mehr. NACH renderHome(), weil beide auf dieselben
-     Zahlen zugreifen und renderHome() den Kasten darueber aufbaut. */
-  if (name==='home'){ renderHome(); renderStats(); }
+  /* ⚠️ Kein eigener renderStats()-Aufruf mehr: renderHome() ruft es selbst am
+     Ende. Stuende es hier ZUSAETZLICH, liefe es beim Bildschirmwechsel
+     zweimal — und die zweite Stelle waere die, die jemand beim naechsten
+     Umbau vergisst. */
+  if (name==='home') renderHome();
   if (name==='learn') renderCard();          // laufende Runde an derselben Karte fortsetzen
   if (name==='categories') renderCategories();
   if (name==='sentences') openSentences();

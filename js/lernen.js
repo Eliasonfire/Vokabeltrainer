@@ -1104,6 +1104,11 @@ function answer(stufe){
   p.ts = Date.now();
   saveProgress();
   touchStreak();
+  /* Der Kalender unter der Serie zaehlt hier mit — eine Zeile neben
+     touchStreak(), weil beide dasselbe Ereignis meinen: heute wurde geuebt.
+     Der Unterschied ist, dass die Serie nur den letzten Tag behaelt und der
+     Kalender jeden. */
+  if (typeof tagZaehlen === 'function') tagZaehlen();
 
   /* ---------- Meilensteine (js/feier.js) ----------
      Erst gespeichert, DANN gefeiert. Ein Effekt darf den Endzustand nie tragen:
