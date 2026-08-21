@@ -122,11 +122,22 @@ const PRUEFER = [
        eiche-wortart-knopf     <- werkzeuge/wartungsfragen-artefakt.mjs
        eiche-zahlplural        <- validate.js (const ZAHLWORT)
 
-     Die drei anderen (eiche-harf-jarr, eiche-plural-beleg,
-     eiche-taschkil-beleg) haben die Bedingung als KOPIE im eigenen Text.
-     Sie pruefen damit sich selbst und bleiben gruen, egal was sich an der
-     echten Prueflogik aendert. Sie hier einzutragen haette ihnen eine
-     Verlaesslichkeit gegeben, die sie nicht haben.
+     ⭐ Am 21.08.2026 waren es noch drei Kopie-Eichungen; zwei davon sind
+     seither umgebaut und stehen jetzt oben mit in der Liste:
+       eiche-harf-jarr     liest harf-jarr-fi-ala-01 aus pruefe-markierungen.js
+       eiche-plural-beleg  prueft ihre Fassung gegen werkzeuge/aussenbelege.mjs
+
+     ⛔ EINE FEHLT WEITER: eiche-taschkil-beleg. Sie traegt ihre Bedingungen
+     als Kopie und weicht dabei nachweislich ab — ihrem `DIA` fehlen U+200E
+     und U+200F, die beiden RTL-Steuerzeichen, die aussenbelege.mjs ueber
+     seine Konstante STEUER sehr wohl entfernt. Sie prueft also ein anderes
+     Skelett als das, was laeuft, und meldet trotzdem gruen.
+
+     Ein Textvergleich wie bei eiche-plural-beleg traegt dort nicht:
+     harakaJeKonsonant steht in der Quelle INNERHALB von harakaAnStelle, in
+     der Eichung als eigene Funktion daneben. Der Weg waere, beide Bloecke
+     (aussenbelege Z. 97-101 und 455-480) per new Function zu laden und die
+     eigenen Definitionen zu entfernen — praktisch eine Neufassung.
      [[handliste_neben_echter_quelle]]
 
      ⭐ eiche-zahlplural sagt diese Lehre in seinem eigenen Kopf („Die Regex
@@ -138,7 +149,9 @@ const PRUEFER = [
      ZAHLWORT-Regex entfernt (Gegenprobe: 0 Treffer danach) -> die Eichung
      meldet „2 Abweichungen, die Zahlwort-Pruefung trifft nicht mehr, was
      sie soll". Danach per cp zurueck, sha256 gegengeprueft. */
+  ['werkzeuge/eiche-harf-jarr.mjs', []],
   ['werkzeuge/eiche-datumsmuster.mjs', []],
+  ['werkzeuge/eiche-plural-beleg.mjs', []],
   ['werkzeuge/eiche-fragenreihenfolge.mjs', []],
   ['werkzeuge/eiche-wortart-knopf.mjs', []],
   ['werkzeuge/eiche-zahlplural.mjs', []]
