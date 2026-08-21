@@ -208,8 +208,22 @@ ok('gemerkt wird die AYAH, nicht der Rollstand',
 /* 3. Rueckkehr aus der Historie springt nicht mehr an den Anfang. */
 ok('openSurah unterscheidet Rueckkehr von Neuoeffnen',
    /opt\.ausHistorie && LESESTAND && LESESTAND\.sure === id/.test(quelleQ));
+/* ⛔ DIESES MUSTER NAGELTE EINEN FUNKTIONSNAMEN FEST und brach deshalb am
+   17.08.2026 (Commit 6b1e58a), als zeigeVers() zu zeigeVersNachAufbau()
+   wurde. Das Verhalten war und ist richtig: beide Ladewege pruefen
+   zurueckZu und springen nur ohne Rueckkehrziel an den Anfang. Nur der
+   Name ist laenger geworden — und die Pruefung meldete vier Tage lang rot,
+   ohne dass es jemand sah: dieser Pruefstand hat keinen Aufrufer.
+
+   ⚠️ Und der wichtigere Punkt: das hier ist ein STELLVERTRETER. Gemessen
+   wird eine Zeichenkette im Quelltext, nicht das Verhalten. Damit kann die
+   Pruefung drei Dinge NICHT: sie merkt keine Umformatierung, sie merkt
+   keine Umbenennung (das ist gerade passiert), und sie wuerde eine Zeile
+   fuer bare Muenze nehmen, die zwar dasteht, aber nie ausgefuehrt wird.
+   Der Funktionsname ist jetzt offen — der Rest bleibt so eng wie noetig.
+   [[pruefung_fragt_einen_stellvertreter_ab]] */
 ok('nur ohne Rueckkehrziel wird an den Anfang gesprungen',
-   (quelleQ.match(/if \(!zurueckZu \|\| !zeigeVers\(zurueckZu\)\) anDenAnfang\(\);/g) || []).length === 2,
+   (quelleQ.match(/if \(!zurueckZu \|\| !\w+\(zurueckZu\)\) anDenAnfang\(\);/g) || []).length === 2,
    'beide Ladewege (Cache und Nachladen)');
 ok('die Kopfhoehe wird gemessen, nicht geraten',
    /quran-sticky[\s\S]{0,200}getBoundingClientRect\(\)\.height/.test(quelleQ));
