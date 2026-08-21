@@ -144,6 +144,35 @@ function ablesungenZeigen(b, gebucht){
   console.log(`  Letzte Ablesung von Elias:  ${letzte.prozent} %  (${letzte.zeit})`);
   console.log(`  gegen ${b.startProzent} % bei Anlage, ${stunden.toFixed(2)} h vorher`);
 
+  /* ⛔ WIE ALT IST DIESE ZAHL EIGENTLICH?
+
+     Am 21.08.2026 aufgefallen: das Buch hatte EINE Ablesung (61 % um 02:14),
+     und um 07:55 stand hier immer noch „frei 36 %" — mit derselben
+     Bestimmtheit wie in der ersten Minute. Dazwischen lag der Reset des
+     5-Stunden-Fensters um 07:50, der die Zahl ungueltig macht.
+
+     ⚠️ Der Reset laesst sich hier NICHT ausrechnen — seine Uhrzeit weiss nur
+     Elias, und sie steht nirgends. Erfunden wird sie deshalb auch nicht.
+     Was geht, ist die Ehrlichkeit: dazusagen, wie alt die Grundlage ist.
+
+     ⭐ Eine Zahl, die dasteht, als wuerde sie fortgeschrieben, waehrend sie
+     seit Stunden stillsteht, ist schlimmer als gar keine — man glaubt ihr.
+     [[eingefrorenes_feld_ist_kein_zustand]] [[zahlen_ohne_beleg]] */
+  const alterH = (Date.now() - new Date(letzte.zeit).getTime()) / 3600000;
+  console.log('');
+  console.log(`  ⚠️ Diese Ablesung ist ${alterH.toFixed(1)} h alt.`);
+  if (alterH >= 5){
+    console.log('     Aelter als das 5-Stunden-Fenster — sie ist damit SICHER ueberholt.');
+  } else {
+    console.log('     Juenger als das Fenster, aber das heisst NICHTS: liegt der Reset');
+    console.log('     dazwischen, ist auch eine frische Ablesung ueberholt. Am 21.08.2026');
+    console.log('     war sie 3,7 h alt und trotzdem ungueltig — der Reset lag um 07:50,');
+    console.log('     die Ablesung um 04:14 Ortszeit.');
+  }
+  console.log('     Der Stundensatz unten bleibt brauchbar, der freie Rest nicht.');
+  console.log('     Abhilfe: Elias nach dem Stand fragen, dann');
+  console.log('     `node werkzeuge/budget.mjs --stand <prozent>`.');
+
   /* Ein Reset macht die Differenz sinnlos - er senkt den Stand, statt ihn zu
      heben. Dann lieber gar nichts rechnen als etwas Falsches ausgeben. */
   if (punkte <= 0){
