@@ -549,7 +549,32 @@ try {
     scriptsInHtml.forEach(s => {
       if (!assets.some(a => a.replace(/^\.\//, '') === s)) warn(`"${s}" wird von index.html geladen, steht aber nicht in ASSETS von sw.js (offline nicht verfügbar).`);
     });
-    note(`sw.js: ${assets.length} Cache-Einträge geprüft.`);
+
+    /* ⛔ Bis zum 21.08.2026 wurden NUR <script src> geprueft. Fonts,
+       Stylesheets, Bilder und url() im CSS blieben aussen vor — und ihr
+       Ausfall waere still: die App startet offline, aber das arabische
+       Schriftbild fehlt, weil der Font auf eine Ersatzschrift zurueckfaellt.
+       Keine Fehlermeldung, nur ein anderes Aussehen.
+       [[testkasten_erbt_falschen_font]] [[ausfall_ist_unsichtbar_gebaut]] */
+    const htmlRoh = fs.readFileSync(path.join(DIR, 'index.html'), 'utf8');
+    const weitere = [
+      ['<link href>', [...htmlRoh.matchAll(/<link[^>]+href="([^"]+)"/g)].map(m => m[1])],
+      ['<img src>',   [...htmlRoh.matchAll(/<img[^>]+src="([^"]+)"/g)].map(m => m[1])],
+      ['url() im CSS', [...htmlRoh.matchAll(/url\(['"]?([^)'"]+)['"]?\)/g)].map(m => m[1])]
+    ];
+    let weitereGeprueft = 0;
+    for (const [art, liste] of weitere){
+      const lokal = [...new Set(liste
+        .filter(s => !/^(https?:|data:|#)/.test(s))
+        .map(s => s.replace(/^\.\//, '').split('?')[0]))];
+      weitereGeprueft += lokal.length;
+      lokal.forEach(s => {
+        if (!assets.some(a => a.replace(/^\.\//, '') === s))
+          warn(`${art}: "${s}" wird von index.html geladen, steht aber nicht in ASSETS von sw.js (offline nicht verfügbar).`);
+      });
+    }
+    note(`sw.js: ${assets.length} Cache-Einträge geprüft, dagegen ${scriptsInHtml.length} Skripte `
+      + `und ${weitereGeprueft} weitere Verweise aus index.html (Stylesheets, Bilder, url()).`);
 
     /* ⛔⛔ node --check auf jede ausgelieferte .js-Datei.
 
