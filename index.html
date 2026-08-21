@@ -1203,6 +1203,43 @@ main{
 .swipe-hint-right{right:var(--sp-2);background:var(--green-wash);color:var(--green);border:2px solid var(--green);}
 .swipe-hint.show{opacity:1;transform:translateY(-50%) scale(1);}
 
+/* ---------- „Es geht noch weiter" auf der Kartenrückseite (21.08.2026) ----------
+   Elias mit Bild um 05:11: „da wurde einfach der beispielsatz bzw alles unter
+   vorschlag abgeschnitten."
+
+   Gemessen bei 375×812 über ALLE 326 Karten, nach `document.fonts.ready`
+   (davor kommen andere Zahlen heraus — die arabische Schrift war noch nicht
+   da): 309 Karten laufen über, im Mittel um 111 px, schlimmstenfalls 256.
+   Der Beispielsatz war nur auf 33 von 317 Karten ganz zu sehen, auf 227
+   angeschnitten, auf 57 gar nicht.
+
+   ⭐ Die Ursache ist NICHT die Satzlänge: blendet man den Vorschlagkasten aus,
+   läuft keine einzige Karte mehr über. Er ist im Median 8 Zeilen lang (max.
+   14). Elias will die Reihenfolge trotzdem behalten: „sollst es so lassen also
+   vorschläge oben und satz unten aber mach einfach eine funktion das man diese
+   kartekarte so nach unten scrollen kann."
+
+   ⛔ Der Streifen liegt in der BÜHNE, nicht in der Karte. Die Rückseite ist
+   selbst der Rollbereich (`overflow-y:auto`) — ein Kind darin würde mitrollen
+   und wäre unten weg, also genau dort, wo es hinzeigen soll.
+   Das Innenmaß der Bühne entspricht exakt der Karte (nachgemessen bei 375×812:
+   Bühne 129–621, Karte 141–601, also --sp-3 oben und --sp-5 unten). Das eine
+   Pixel obendrauf ist die Kartenkante. */
+.mehr-hinweis{
+  position:absolute;z-index:5;
+  left:calc(var(--gutter) + 1px);right:calc(var(--gutter) + 1px);
+  bottom:calc(var(--sp-5) + 1px);height:72px;
+  border-radius:0 0 var(--r-5) var(--r-5);
+  background:linear-gradient(to top,var(--surface-1) 26%,transparent);
+  opacity:0;
+  /* ⛔ NIE anfassbar. Der Streifen liegt über den unteren 72 px der Karte —
+     mit `pointer-events` fräße er dort die Wischgeste, und das ist die Geste,
+     mit der eine Vokabel als richtig oder falsch verbucht wird. */
+  pointer-events:none;
+  transition:opacity var(--dur-2) var(--ease-out);
+}
+.mehr-hinweis.zeigen{opacity:1;}
+
 /* =====================================================================
    KATEGORIEN
    ===================================================================== */
@@ -3720,6 +3757,19 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
             </div>
           </div>
         </div>
+        <!-- ⭐ „Es geht noch weiter" (21.08.2026). Elias mit Bild um 05:11:
+             „da wurde einfach der beispielsatz bzw alles unter vorschlag
+             abgeschnitten." Die Rückseite rollte schon immer, aber nichts
+             sagte das. Die Zahlen stehen im CSS zu `.mehr-hinweis`.
+
+             ⛔ Der Streifen liegt in der BÜHNE, nicht in der Karte: die
+             Rückseite ist selbst der Rollbereich, ein Kind darin würde
+             mitrollen und wäre genau dann weg, wenn man es braucht. -->
+        <!-- ⛔ Hier stand bis 05:47 ein Pfeilknopf zum Weiterrollen. Elias mit
+             Bild, in dem er ihn rot umkringelt hat: „mach aber pfeil weg, das
+             nervt nur." Der Verlauf allein sagt schon, dass es weitergeht —
+             und gerollt wird mit dem Finger. -->
+        <div class="mehr-hinweis" id="cardMehrHinweis" aria-hidden="true"></div>
       </div>
 
       <div class="answer-buttons" id="answerButtons">
