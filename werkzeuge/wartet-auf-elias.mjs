@@ -221,7 +221,12 @@ function gruppenAus(text){
      waere sie zu klein. Am 20.08.2026 ist die groesste Gruppe 11.
      [[begrenzung_haelt_messung_nicht_stand]] */
   const gekappt = echt.some(g => g.zahl > g.woerter.length && g.zahl > 12);
-  const echteWoerter = new Set(echt.flatMap(g => g.woerter)).size || Number(m[2]);
+  /* ⛔ `m ? … : 0` und nicht `Number(m[2])`: faellt pruefe-taschkil.js aus,
+     ist m null. Die Absicherung `if (m && …)` steht zwei Zeilen SPAETER —
+     zu spaet, der Generator starb hier mit TypeError. Am 21.08.2026 beim
+     Stoertest aufgefallen, nicht im Betrieb: die Datendateien fehlen sonst
+     nie. [[befund_vor_dem_ende_der_funktion]] */
+  const echteWoerter = new Set(echt.flatMap(g => g.woerter)).size || (m ? Number(m[2]) : 0);
   if (gekappt) console.log("  ⚠ Eine Taschkil-Gruppe ist groesser als 12 —"
     + " die Woerterzahl unten ist dadurch zu klein. pruefe-taschkil.js --alle.");
   if (m && echteBefunde > 0) posten.push({
