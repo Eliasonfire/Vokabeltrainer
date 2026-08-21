@@ -580,6 +580,50 @@ document.addEventListener('DOMContentLoaded', async ()=>{
     saetzeNachtragen(PERSONAL_VOCAB);
   }
 
+  /* ---------- Seine Korrekturen NACH den Buechern anwenden (21.08.2026) ----
+
+     ⛔⛔ DERSELBE FEHLER ZUM VIERTEN MAL IN DIESEM BLOCK. wendePluralKartenAn,
+     eselsbrueckenNachtragen und saetzeNachtragen stehen alle drei hier, alle
+     drei mit derselben Begruendung — und `wendeWortAenderungenAn()` fehlte.
+
+     Elias am 21.08.2026 um 05:31, mit Bild: „das hab ich jetzt mehrmals
+     versucht zu löschen und jedes mal kommt es wieder obwohl steht das es
+     gespeichert wurde. habe app zu gemacht und alles aber nichts hilft."
+
+     Im Browser bewiesen, zwei Faelle nebeneinander, ein Neustart:
+
+       45751 (Haus)  steht in vocab-data.js       -> "PROBE-HAUS"  ueberlebt ✅
+       50474 (Idafa) nur in vokabeln-madina-1.js  -> Originaltext  ist weg  ⛔
+
+     Beide standen in vt_wortAenderungen, beide Woerter waren geladen. Der
+     einzige Unterschied war die HERKUNFT.
+
+     Der Grund: wendeWortAenderungenAn() laeuft in js/kern.js beim Laden — da
+     stehen erst die 171 Woerter aus vocab-data.js in der Liste. Die
+     Buchvokabeln kommen erst hier dazu, und danach rief sie niemand mehr auf.
+     Fuer ihn sah das aus wie ein Speicher, der luegt: die Karte zeigte sofort
+     den neuen Text, der Toast sagte „Gespeichert", und beim naechsten Start
+     stand der alte wieder da. [[erfolgsmeldung_ohne_wirkung]]
+
+     ⭐ wendeFeldErgaenzungenAn() hat denselben blinden Fleck und kommt
+     deshalb mit. Gemessen: FELD_ERGAENZUNGEN hat heute 0 Eintraege — die
+     Fehlerklasse ist also leer, aber ab dem ersten Eintrag fuer eine
+     Buchvokabel waere sie still wirkungslos gewesen.
+     [[entscheidung_gilt_fuer_das_zweite_werkzeug]]
+
+     ⛔ Die Reihenfolge ist dieselbe wie in js/kern.js:782: ERST die
+     Nachtragungen, DANN seine eigenen Aenderungen. Was er selbst eingetippt
+     hat, muss eine Nachtragung ueberschreiben koennen, nie umgekehrt.
+
+     ⚠️ Beide Aufrufe sind gefahrlos, wenn nichts zu tun ist: der eine fuellt
+     nur leere oder bestrittene Felder, der andere setzt dieselben Werte noch
+     einmal und merkt sich den Vorher-Wert nur beim ERSTEN Mal.
+
+     ⚠️ VOR den Pluralkarten: die werden aus `pl` gebaut. Hat er `pl`
+     korrigiert, soll die Karte seine Fassung tragen, nicht die des Abzugs. */
+  if (typeof wendeFeldErgaenzungenAn === 'function') wendeFeldErgaenzungenAn(VOCAB_DATA);
+  if (typeof wendeWortAenderungenAn === 'function') wendeWortAenderungenAn();
+
   /* ---------- Pluralkarten NACH den Buechern neu bauen (18.08.2026) --------
 
      ⚠️ Ein Fehler, den nur die Zahl verraten hat. `wendePluralKartenAn` laeuft
