@@ -641,11 +641,33 @@ document.addEventListener('DOMContentLoaded', async ()=>{
      Liste auf und legt nichts an. */
   if (typeof wendePluralKartenAn === 'function' && typeof SETTINGS !== 'undefined'){
     wendePluralKartenAn(!!SETTINGS.pluralKarten);
-    VOCAB_DATA.forEach(w=>{
-      if (!PROGRESS[w.id]) PROGRESS[w.id] = { box: w.box || 1, nextReview: todayStr(0), correct:0, wrong:0 };
-    });
-    saveProgress();
   }
+
+  /* ---------- Lernstand fuer die Pluralkarten (21.08.2026) ----------------
+
+     Diese Schleife stand bis heute INLINE und INNERHALB der Bedingung darueber.
+     Inhaltlich war das richtig — sie gehoert hinter `wendePluralKartenAn()`,
+     weil die Pluralkarten erst dort entstehen. Nur SAGTE das nichts: eine
+     namenlose Schleife hinter einer Pruefung ueber Pluralkarten liest sich wie
+     ein Anhaengsel und nicht wie die Stelle, an der 70 Karten ihren Lernstand
+     bekommen.
+
+     ⛔ GEMESSEN, nicht vermutet. Aufruf stillgelegt, Pluralkarten AN,
+     vt_progress geleert: 518 Karten, davon 70 ohne Lernstand — alle 70
+     Pluralkarten. `dueWords()` lieferte 448 statt 518, ohne jede Meldung.
+     [[ausfall_ist_unsichtbar_gebaut]]
+
+     ⚠️ Meine erste Annahme war eine ANDERE und falsch: ich hielt die
+     nachgeladenen Buchvokabeln fuer betroffen. Der Stoertest blieb gruen —
+     `setzeBuch()` fuellt sie laengst nach jedem geladenen Buch. Erst der
+     zweite Anlauf mit eingeschalteten Pluralkarten wurde rot.
+     [[stoertest_muss_wirkung_nachweisen]]
+
+     ⭐ Jetzt eine benannte Funktion in js/kern.js, unbedingt aufgerufen und
+     weiterhin NACH den Pluralkarten. Unbedingt, weil die Bedingung darueber
+     von etwas anderem handelt: sind die Pluralkarten aus, gibt es nichts
+     nachzutragen, und der Aufruf kostet einen Durchlauf ohne Wirkung. */
+  if (typeof ergaenzeProgress === 'function') ergaenzeProgress();
 
   renderBuchChips();
   if (typeof renderHome === 'function') renderHome();
