@@ -59,16 +59,53 @@ console.log('Die drei jüngsten:');
 for (const n of notizen.slice(0, 3))
   console.log(`  ${((Date.now() - n.m) / 60000).toFixed(1).padStart(6)} min  ${kurz(n.p)}`);
 
-if (alterMin > GRENZE_MIN){
+/* ---------- Die JÜNGSTE ist der falsche Maßstab (21.08.2026) --------------
+
+   ⛔ BEFUND: bis heute maß dieses Werkzeug das Alter der jüngsten Datei im
+   ganzen Tresor. Regel 2 verlangt aber ZWEI Orte — den Arbeitsstand in der
+   Projekt-To-Do UND die Erkenntnis in der zuständigen Notiz. Wer nur einen
+   davon schreibt, bekam trotzdem „aktuell genug".
+
+   ⭐ Schlimmer: die Frische konnte von einer Datei kommen, die ich gar nicht
+   geschrieben habe. Am 21.08.2026 stand in der Liste mehrfach
+   `Routinen-Status.md` — geschrieben von einer anderen Routine. Hätte ich
+   nichts gesichert und nur sie wäre angefasst worden, wäre die Meldung grün
+   gewesen: eine Prüfung, die bestehen kann, ohne dass das Geprüfte passiert
+   ist. [[pruefung_fragt_einen_stellvertreter_ab]]
+
+   Deshalb werden die beiden Pflichtdateien jetzt EINZELN bewertet. Die
+   Gesamtmeldung oben bleibt als Übersicht stehen. */
+const PFLICHT = [
+  ['Arbeitsstand', path.join(TRESOR, '03 - Projekte', 'To-Do Vokabeltrainer.md')],
+  ['Erkenntnis',   path.join(TRESOR, '03 - Projekte', 'Vokabeltrainer-Arabisch.md')]
+];
+
+console.log('');
+console.log('Die zwei Pflichtstellen aus Regel 2:');
+let ueberfaellig = [];
+for (const [rolle, datei] of PFLICHT){
+  if (!fs.existsSync(datei)){
+    console.log(`  ⛔ ${rolle.padEnd(12)} FEHLT: ${kurz(datei)}`);
+    ueberfaellig.push(`${rolle} (Datei fehlt)`);
+    continue;
+  }
+  const alt = (Date.now() - fs.statSync(datei).mtimeMs) / 60000;
+  const zeichen = alt > GRENZE_MIN ? '❌' : '✅';
+  console.log(`  ${zeichen} ${rolle.padEnd(12)} ${alt.toFixed(1).padStart(6)} min   ${kurz(datei)}`);
+  if (alt > GRENZE_MIN) ueberfaellig.push(`${rolle} (${alt.toFixed(0)} min)`);
+}
+
+if (ueberfaellig.length){
   console.log('');
-  console.log(`❌ ÜBERFÄLLIG — seit ${alterMin.toFixed(0)} Minuten nichts geschrieben.`);
-  console.log('   Jetzt den aktuellen Stand in die zuständige Notiz schreiben,');
-  console.log('   BEVOR weitergearbeitet wird. Auch wenn der laufende Punkt noch');
-  console.log('   nicht fertig ist: dann eben der Zwischenstand mit dem, was schon');
-  console.log('   feststeht, und was noch offen ist.');
+  console.log(`❌ ÜBERFÄLLIG — ${ueberfaellig.join(', ')}.`);
+  console.log('   Regel 2 verlangt BEIDE Orte: den Arbeitsstand in der Projekt-To-Do');
+  console.log('   und die Erkenntnis in der zuständigen Notiz. Eine von beiden allein');
+  console.log('   genügt nicht — die To-Do ist zum Wegwerfen, die Notiz bleibt.');
+  console.log('   Jetzt schreiben, BEVOR weitergearbeitet wird. Auch wenn der laufende');
+  console.log('   Punkt noch nicht fertig ist: dann eben der Zwischenstand.');
   process.exit(2);
 }
 
 console.log('');
-console.log('✅ Aktuell genug.');
+console.log('✅ Aktuell genug — beide Pflichtstellen frisch.');
 process.exit(0);
