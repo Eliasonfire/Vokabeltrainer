@@ -122,5 +122,60 @@ if (schlecht){
   console.log('   sondern alle auf einmal.');
   process.exit(1);
 }
+/* ========================================================================
+   SCHREIBWEG — behaelt ein leerer Block seinen Platzhalter?
+
+   Am 21.08.2026 gemessen: beim ersten echten Schreiblauf wurde
+   data/feld-ausnahmen.js KLEINER, obwohl drei Eintraege dazukamen. Ein
+   fest verdrahteter Platzhalter ueberschrieb den erklaerenden Kommentar
+   des Blocks, der gar nicht betroffen war — und der sagt, WOHER der Block
+   gefuellt wird ("Freigaben" gegen "Antworten").
+
+   ⛔ Gefunden wurde das nur durch einen Groessenvergleich. Keine Pruefung
+   waere rot geworden. Diese hier wird es. [[unmoegliche_zahl_ist_ein_geschenk]] */
+const bbM = les.match(/function blockBauen[\s\S]*?\n\}/);
+if (!bbM){
+  console.log('⛔ blockBauen() ist in antworten-uebernehmen.mjs nicht mehr auffindbar —');
+  console.log('   dann kann diese Pruefung nichts mehr sagen. Das ist der Befund.');
+  process.exit(1);
+}
+/* ⛔ q() steht AUSSERHALB von blockBauen und wird von ihr gerufen. Auch das
+   wird GELESEN, nicht nachgebaut — es schuetzt die Hochkommata und
+   Backslashes in Elias' Antworten, und eine eigene Fassung davon waere
+   genau die dritte Wahrheit, die dieser Prueftand vermeiden soll. */
+const qM = les.match(/const q = \(s\) =>[^;]+;/);
+if (!qM){
+  console.log('⛔ q() ist in antworten-uebernehmen.mjs nicht mehr auffindbar.');
+  process.exit(1);
+}
+const blockBauen = vm.runInNewContext(qM[0] + '\n' + bbM[0] + '; blockBauen');
+
+const ALT = '\n  /* (noch leer — wird aus seinen Freigaben gefuellt) */\n';
+
+console.log('');
+console.log('=== Behaelt ein leerer Block seinen Platzhalter? ===');
+console.log('');
+
+const leerMitAlt = blockBauen({}, '  ', ALT);
+sag(leerMitAlt.includes('aus seinen Freigaben'),
+  'leerer Block behaelt den bestehenden Hinweis',
+  leerMitAlt.includes('aus seinen Freigaben') ? '' : '→ „' + leerMitAlt.trim() + '"');
+
+/* Gegenprobe: ohne alten Kommentar MUSS der Rueckfall greifen — sonst
+   entstuende bei einer frischen Datei gar kein Platzhalter. */
+const leerOhne = blockBauen({}, '  ', '');
+sag(/\(noch leer\)/.test(leerOhne), 'ohne Vorlage greift der Rueckfall',
+  '→ „' + leerOhne.trim() + '"');
+
+/* Und der gefuellte Block darf den Platzhalter NICHT mittragen. */
+const voll = blockBauen({ '48402': { type: 'noun' } }, '  ', ALT);
+sag(voll.includes('48402') && !voll.includes('noch leer'),
+  'gefuellter Block traegt nur die Eintraege');
+
+console.log('');
+if (schlecht){
+  console.log('⛔ ' + schlecht + ' Punkt(e) passen nicht.');
+  process.exit(1);
+}
 console.log('✅ Warteseite und Uebernahme sprechen dieselbe Sprache.');
 process.exit(0);
