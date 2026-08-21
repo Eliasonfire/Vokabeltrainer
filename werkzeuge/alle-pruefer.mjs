@@ -120,6 +120,7 @@ const PRUEFER = [
      ⭐ Ein Pruefstand ohne Aufrufer altert genauso schnell wie der Code, den
      er pruefen soll — er sagt es nur niemandem. Deshalb stehen sie jetzt
      hier. [[werkzeug_ohne_aufrufer]] */
+  ['test-antwortformat.mjs', []],
   ['test-feld-ergaenzungen.mjs', []],
   ['test-buecher.mjs', []],
   ['test-p1.mjs', []],
