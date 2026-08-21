@@ -24,8 +24,37 @@ const REPO = 'G:/1. Workspace/Vokabeltrainer';
 const { SENTENCE_TAGS } =
   (new Function(fs.readFileSync(REPO + '/grammar-data.js', 'utf8') + ';return {SENTENCE_TAGS};'))();
 
-const DIA = /[\u064B-\u0652\u0670\u0640\u0653-\u0655\u06D6-\u06ED]/g;
-const blank = s => (s || '').normalize('NFC').replace(DIA, '').trim();
+/* ⛔ HIER STAND EIN EIGENES blank() (bis 21.08.2026) — und es tat etwas
+   anderes als das, gegen dessen Regel diese Eichung prueft:
+
+     hier:    NFC + /[ً-ْٰـٓ-ٕۖ-ۭ]/
+     Quelle:  Taschkil+Tatweel  UND  Satzzeichen /[.،؟!«»:؛]/, kein NFC
+
+   Die Regel harf-jarr-fi-ala-01 ruft in pruefe-markierungen.js `blank(w)`
+   auf. Die Regex von dort zu lesen und dann mit ANDERS normalisiertem Text
+   zu fuettern, prueft nur halb das Richtige — der Umbau vom Vormittag hatte
+   genau diese Haelfte offen gelassen. [[fehler_trifft_mehr_als_gemeldet]]
+
+   ⚠️ GEMESSEN, bevor das hier gebaut wurde: von den 27 Markierungen dieser
+   Regel liefern die beiden Fassungen bei 0 verschiedenen Text und bei 0 ein
+   verschiedenes Urteil. Der Mangel ist also LATENT, nicht akut. Sichtbar
+   wird er erst an einem Wort mit Satzzeichen, das ueber den على-Zweig mit
+   `$` laeuft — `على.` traefe hier, in der Quelle nicht.
+   Die Quelle entfernt Satzzeichen aus belegtem Grund: „von 371
+   matchText-Werten trugen 53 ein Satzzeichen" (pruefe-markierungen.js Z. 82). */
+const { roh, blank } = (() => {
+  const q = fs.readFileSync(REPO + '/pruefe-markierungen.js', 'utf8');
+  const zeilen = q.split(/\r?\n/);
+  const hol = name => {
+    const z = zeilen.find(l => l.startsWith('const ' + name + ' ='));
+    if (!z) throw new Error('pruefe-markierungen.js: const ' + name + ' nicht gefunden — umbenannt?');
+    return z.replace(/\/\/.*$/, '').trim();
+  };
+  const raus = new Function(hol('roh') + '\n' + hol('blank') + '\nreturn { roh, blank };')();
+  if (typeof raus.blank !== 'function')
+    throw new Error('blank() aus pruefe-markierungen.js wurde nicht geladen');
+  return raus;
+})();
 
 const alt = w => /^(في|على)(\s|$)/.test(blank(w));
 
@@ -87,6 +116,22 @@ console.log('');
    ⛔ Ohne die Nein-Faelle waere das ein Test, der nicht schlecht ausfallen
    kann. [[pruefwerkzeug_mit_eingebauter_antwort]] */
 const FAELLE = [
+  /* ⭐ DIESE ZWEI PRUEFEN DIE NORMALISIERUNG MIT, nicht nur die Regel.
+     Am 21.08.2026 aufgefallen: ein Stoertest, der roh() in
+     pruefe-markierungen.js auf `x => x` setzte, blieb wirkungslos — alle
+     bisherigen Eichfaelle sind OHNE Taschkil und ohne Satzzeichen
+     geschrieben, an ihnen hat roh() gar nichts zu tun.
+
+     Das Urteil entsteht aber aus BEIDEM: blank() normalisiert, die Regex
+     entscheidet. Eine Eichung, die nur die zweite Haelfte abdeckt, laesst
+     die erste ungeprueft. [[stoertest_muss_wirkung_nachweisen]]
+
+     Der Satzzeichen-Fall ist der schaerfere: على. trifft die Regel NUR,
+     wenn der Punkt vorher entfernt wird — der على-Zweig endet auf (\s|$).
+     Genau dafuer entfernt pruefe-markierungen.js Satzzeichen, belegt mit
+     „von 371 matchText-Werten trugen 53 ein Satzzeichen" (dort Z. 82). */
+  ['وَفِيهِ',   1, '⭐ mit Taschkil — prueft, dass roh() sie entfernt'],
+  ['عَلَى.',    1, '⭐ mit Satzzeichen — trifft NUR, wenn blank() den Punkt entfernt'],
   ['في',        1, 'der Harf jarr selbst'],
   ['على',       1, 'der zweite'],
   ['في البيت',  1, 'mit folgendem Nomen'],
