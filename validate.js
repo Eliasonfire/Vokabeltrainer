@@ -644,6 +644,58 @@ try {
   fail(`sw.js nicht lesbar: ${e.message}`);
 }
 
+/* ---------- 7b. Die Pages Functions ----------
+
+   ⛔ `node --check` oben laeuft nur ueber die ASSETS aus sw.js — also ueber
+   das, was der BROWSER laedt. Die Functions unter `functions/` laufen
+   SERVERSEITIG und stehen in keinem Cache: bis zum 21.08.2026 sah niemand
+   in sie hinein.
+
+   Ein Syntaxfehler dort legt den GERAETEABGLEICH lahm (/api/stand). Elias
+   merkt das nur, wenn er zwei Geraete benutzt — dann bleibt sein Lernstand
+   auf einem haengen und kommt nie beim anderen an, ohne jede Meldung.
+   [[ausfall_ist_unsichtbar_gebaut]]
+
+   `werkzeuge/veroeffentlichen.mjs` liefert sie aus und prueft, dass
+   _middleware.js dabei ist — aber nicht, ob sie parst. */
+{
+  const fnWurzel = path.join(DIR, 'functions');
+  if (!fs.existsSync(fnWurzel)){
+    warn('functions/ fehlt — dann gibt es keinen Geraeteabgleich (/api/stand).');
+  } else {
+    const gefunden = [];
+    (function sammle(ordner, rel){
+      for (const e of fs.readdirSync(ordner, { withFileTypes: true })){
+        const voll = path.join(ordner, e.name);
+        const r = rel + '/' + e.name;
+        if (e.isDirectory()) sammle(voll, r);
+        else if (e.name.endsWith('.js')) gefunden.push({ voll, r });
+      }
+    })(fnWurzel, 'functions');
+
+    const kaputtFn = [];
+    for (const g of gefunden){
+      /* ⛔ NICHT `--check <datei>`: bei einer .js-Datei nimmt node CommonJS an
+         und meldet einen Syntaxfehler in ESM-Code NICHT — am 21.08.2026
+         gemessen, exit 0 bei nachweislich kaputter Datei. Als .mjs oder ueber
+         `--input-type=module` erkennt er ihn (exit 1). Pages Functions sind
+         immer ESM. [[stoertest_muss_wirkung_nachweisen]] */
+      try { execFileSync(process.execPath, ['--input-type=module', '--check'],
+                         { input: fs.readFileSync(g.voll), stdio: ['pipe', 'pipe', 'pipe'] }); }
+      catch (e){
+        const zeile = String(e.stderr || '').split(/\r?\n/).find(x => /Error/.test(x)) || 'Parserfehler';
+        kaputtFn.push(`${g.r}: ${zeile.trim()}`);
+      }
+    }
+    if (kaputtFn.length)
+      kaputtFn.forEach(k => fail(`Syntaxfehler in einer Pages Function — ${k}. `
+        + 'Das legt den Geraeteabgleich lahm, und zwar ohne Meldung.'));
+    else if (!gefunden.length) warn('functions/ ist leer — kein Geraeteabgleich.');
+    else note(`Pages Functions: ${gefunden.length} Datei(en) parsen `
+      + `(${gefunden.map(g => g.r.replace('functions/', '')).join(', ')}).`);
+  }
+}
+
 /* ---------- 8. manifest.json muss gültiges JSON sein ---------- */
 try {
   const raw = fs.readFileSync(path.join(DIR, 'manifest.json'), 'utf8');
