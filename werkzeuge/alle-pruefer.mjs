@@ -86,7 +86,29 @@ const PRUEFER = [
   ['werkzeuge/pruefe-muster.mjs', []],
   ['werkzeuge/pruefe-plural-thema.mjs', []],
   ['werkzeuge/pruefe-schreibpfade.mjs', []],
-  ['werkzeuge/pruefe-volles-programm.mjs', []]
+  ['werkzeuge/pruefe-volles-programm.mjs', []],
+  /* ⛔ SIEBEN PRUEFSTAENDE, DIE BIS ZUM 21.08.2026 NIEMAND GESTARTET HAT.
+     Sie fahren die echte App-Logik in einem vm gegen einen DOM-Stub hoch —
+     also genau das, was kein anderer Pruefer hier tut. Gefunden wurden sie
+     bei der Suche nach fest eingetragenen Zahlen; ein grep nach ihren Namen
+     ergab NULL Treffer ausserhalb der Dateien selbst.
+
+     Fuenf von acht waren rot, und keiner davon wegen eines Fehlers in der
+     App: dreimal hatte sich die App auf Elias' ausdruecklichen Wunsch
+     geaendert (16.08. Leitner-Stufen, 17.08. Umbenennung, 18.08. Leiste
+     spaeter zurueck) und der Pruefstand blieb stehen. Einmal hatte eine
+     Funktion zwei Rueckgabefelder dazubekommen.
+
+     ⭐ Ein Pruefstand ohne Aufrufer altert genauso schnell wie der Code, den
+     er pruefen soll — er sagt es nur niemandem. Deshalb stehen sie jetzt
+     hier. [[werkzeug_ohne_aufrufer]] */
+  ['test-buecher.mjs', []],
+  ['test-p1.mjs', []],
+  ['test-p6.mjs', []],
+  ['test-p9.mjs', []],
+  ['test-sync.mjs', []],
+  ['test-sync-anzeige.mjs', []],
+  ['test-wurzel.mjs', []]
 ];
 
 /* ⛔ pruefe-oberflaeche.js läuft NICHT unter node — es prüft die laufende App
@@ -94,6 +116,21 @@ const PRUEFER = [
    aufgerufen", nicht „Fehler gefunden". Es hier mitlaufen zu lassen hieße,
    jeden Lauf mit einem falschen Rot zu beginnen. */
 const NUR_IM_BROWSER = ['pruefe-oberflaeche.js'];
+
+/* ⛔ test-p8.mjs fehlt in der Liste oben, und zwar mit Absicht: es laedt
+   noch nicht durch. js/lernen.js ruft dort Namen aus js/kern.js auf, die
+   der Pruefstand nicht kennt — 13 offene Namen, statisch gemessen am
+   21.08.2026 (6 in kern.js, 7 aus anderen Modulen).
+
+   ⚠️ Es hier einzutragen haette den Sammellauf dauerhaft rot gemacht, und
+   ein Rot, das immer da ist, liest irgendwann niemand mehr. Es hier NICHT
+   zu erwaehnen haette es wieder zu einem Werkzeug ohne Aufrufer gemacht,
+   von dem niemand weiss. Deshalb dieser Vermerk statt beidem.
+
+   Naechster Schritt: die sechs kern.js-Funktionen per Klammerzaehlung
+   ausschneiden (Textmarken verfallen), die sieben fremden als Attrappen.
+   ⛔ NICHT kern.js ganz laden — dessen `const LS` ueberschattet die
+   Attrappe lautlos und griffe auf localStorage. Gemessen, nicht vermutet. */
 
 const ergebnisse = [];
 for (const [rel, args] of PRUEFER){
