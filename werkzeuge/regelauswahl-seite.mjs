@@ -207,8 +207,44 @@ footer{color:var(--faint);font-size:.78rem;margin-top:34px;padding-top:16px;
 <script>
 const REGELN = ${JSON.stringify(REGELN)};
 const SPEICHER = 'satzmodus-auswahl-v1';
+
+/* ⛔ HIER WURDE DAS SPEICHERN STILL VERSCHLUCKT (bis 21.08.2026): das Laden
+   stand zwar in einem try, aber sichern() fing den Fehler mit einem leeren
+   catch ab. Ist der Speicher gesperrt — und bei einer lokal geoeffneten
+   Datei ist er das oft —, verschwinden Elias' Haekchen lautlos, und beim
+   naechsten Oeffnen faengt er von vorn an.
+   [[localstorage_kann_werfen]] [[ausfall_ist_unsichtbar_gebaut]]
+
+   Uebernommen aus werkzeuge/freigabe-seite.mjs, wo die Loesung seit einem
+   echten Vorfall steht und nie zu den Nachbarseiten gewandert ist:
+   [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+let SPEICHER_GEHT = false;
+try {
+  localStorage.setItem(SPEICHER + '-probe', '1');
+  SPEICHER_GEHT = localStorage.getItem(SPEICHER + '-probe') === '1';
+  localStorage.removeItem(SPEICHER + '-probe');
+} catch(e) { SPEICHER_GEHT = false; }
+
 let aus = new Set();
-try { aus = new Set(JSON.parse(localStorage.getItem(SPEICHER) || '[]')); } catch(e){}
+if (SPEICHER_GEHT) {
+  try { aus = new Set(JSON.parse(localStorage.getItem(SPEICHER) || '[]')); } catch(e){}
+}
+
+/* Sichtbar machen, wenn nichts behalten wird. Eine stille Fehlfunktion ist
+   hier schlimmer als gar keine Seite: sie sieht aus, als wuerde sie
+   arbeiten. */
+function warneSpeicher(){
+  if (SPEICHER_GEHT || document.getElementById('speicherwarnung')) return;
+  const d = document.createElement('div');
+  d.id = 'speicherwarnung';
+  d.style.cssText = 'background:#210d0c;border:1px solid #5a1f1c;border-left:3px solid #c4483f;'
+    + 'padding:.7rem .9rem;border-radius:6px;margin:0 0 1rem;font-size:.9rem;line-height:1.5';
+  d.innerHTML = '<b style="color:#e0776d">Dieser Browser behält hier nichts.</b> '
+    + 'Deine Haken stehen nur im Arbeitsspeicher — beim Neuladen oder Schließen '
+    + 'sind sie weg. Kopier dir den Text unten heraus, bevor du die Seite verlässt.';
+  const anker = document.getElementById('liste');
+  if (anker && anker.parentNode) anker.parentNode.insertBefore(d, anker);
+}
 let filter = 'alle';
 
 const sichtbar = r =>
@@ -254,7 +290,11 @@ function zeichne(){
     b.classList.toggle('an', b.dataset.filter === filter));
 }
 
-function sichern(){ try { localStorage.setItem(SPEICHER, JSON.stringify([...aus])); } catch(e){} }
+function sichern(){
+  if (!SPEICHER_GEHT) return;
+  try { localStorage.setItem(SPEICHER, JSON.stringify([...aus])); }
+  catch(e) { SPEICHER_GEHT = false; warneSpeicher(); }
+}
 
 document.addEventListener('click', e => {
   const f = e.target.closest('[data-filter]');
@@ -280,6 +320,10 @@ document.addEventListener('click', e => {
   }
 });
 zeichne();
+/* ⛔ AUCH BEIM START warnen: war der Speicher von Anfang an gesperrt, ist
+   SPEICHER_GEHT schon false, sichern() kehrt sofort um und die Warnung
+   kaeme nie — der haeufigere Fall also stumm. */
+warneSpeicher();
 </script>
 `;
 
