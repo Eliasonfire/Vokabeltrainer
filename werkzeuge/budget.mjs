@@ -92,14 +92,24 @@ function stand(){
      die Schicht an diesem Abend ausdruecklich auf die Laenge SEINES laufenden
      5-h-Fensters begrenzt ("laenger als das sollst du auch nicht arbeiten").
      Eine fest verdrahtete 10 haette das nie gemeldet - und ein Ausloeser ohne
-     Gespraechsverlauf haette munter weitergearbeitet. */
-  const GRENZE_H = Number.isFinite(b.grenzeStunden) ? b.grenzeStunden : 10;
+     Gespraechsverlauf haette munter weitergearbeitet.
+
+     ⛔ NACHTRAG 21.08.2026: Elias hat die Grenze abgewaehlt. Beides oben
+     gilt weiter fuer den Fall, dass er wieder eine setzt - aber von sich
+     aus haelt die Schicht jetzt nicht mehr an. */
+  /* ⛔ KEINE Voreinstellung mehr: Elias hat die 10-Stunden-Grenze am
+     21.08.2026 abgewaehlt ("ich will diese beschraenkung nicht mehr").
+     Der Mechanismus bleibt — steht grenzeStunden im Buch, gilt sie wieder
+     (so wie am 11.08., als er auf sein 5-h-Fenster begrenzt hat). */
+  const GRENZE_H = Number.isFinite(b.grenzeStunden) && b.grenzeStunden > 0
+    ? b.grenzeStunden : null;
   const stunden = (Date.now() - new Date(b.start).getTime()) / 3600000;
 
   console.log(`Haushaltsbuch, angelegt ${b.start}`);
   console.log(`  Stand bei Anlage      ${b.startProzent} %`);
   console.log(`  Budget fuer den Lauf  ${b.budgetProzent} Punkte = ${budget.toLocaleString('de-DE')} Token`);
-  console.log(`  Schicht laeuft seit   ${stunden.toFixed(1)} h  (Grenze ${GRENZE_H} h)`);
+  console.log(`  Schicht laeuft seit   ${stunden.toFixed(1)} h`
+    + (GRENZE_H ? `  (Grenze ${GRENZE_H} h)` : '  (keine Zeitgrenze)'));
   console.log('');
   for (const p of b.posten)
     console.log(`  ${String(p.token).padStart(9)}  ${pz(p.token).padStart(7)}  ${p.was}`);
@@ -107,7 +117,7 @@ function stand(){
   console.log(`  gebucht  ${String(gebucht).padStart(9)}  = ${(100*gebucht/budget).toFixed(0)} % des Budgets`);
   console.log(`  frei     ${String(rest).padStart(9)}  = ${pz(rest)} des Gesamtlimits`);
   console.log('');
-  if (stunden > GRENZE_H){
+  if (GRENZE_H && stunden > GRENZE_H){
     console.log(`  ⏹  AUFNAHMESTOPP — ${stunden.toFixed(1)} h sind mehr als die vereinbarten ${GRENZE_H}.`);
     console.log('     KEIN Abbruch: keinen NEUEN Punkt mehr anfangen, den laufenden bis zum');
     console.log('     naechsten sicheren Haltepunkt bringen (keine halbe Mehrdatei-Aenderung,');
@@ -224,10 +234,11 @@ if (args.includes('--start')){
   /* Dritter Wert optional: die Schichtlaenge. Ohne Angabe bleibt es bei den 10 h
      aus Elias' Vorgabe vom 29.07.2026. */
   const grenzeRoh = Number(args[i + 3]);
-  const grenzeStunden = Number.isFinite(grenzeRoh) && grenzeRoh > 0 ? grenzeRoh : 10;
+  /* Ohne Angabe KEINE Grenze — siehe oben. */
+  const grenzeStunden = Number.isFinite(grenzeRoh) && grenzeRoh > 0 ? grenzeRoh : null;
   sichern({ start: new Date().toISOString(), startProzent, budgetProzent, grenzeStunden, posten: [] });
   console.log(`Angelegt: Stand ${startProzent} %, Budget ${budgetProzent} Punkte = ${(budgetProzent*PRO_PROZENT).toLocaleString('de-DE')} Token.`);
-  console.log(`Schichtgrenze: ${grenzeStunden} h.`);
+  console.log(grenzeStunden ? `Schichtgrenze: ${grenzeStunden} h.` : 'Keine Zeitgrenze.');
   process.exit(0);
 }
 
