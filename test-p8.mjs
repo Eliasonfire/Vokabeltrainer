@@ -88,6 +88,59 @@ const ctx = vm.createContext({
   fetch:()=>Promise.reject(new Error('kein Netz im Pruefstand')),
 });
 
+/* ⛔ js/lernen.js ruft in renderNotiz() Funktionen auf, die in js/kern.js
+   stehen — und dieser Pruefstand lud nur lernen.js. Ergebnis war ein
+   „ReferenceError: … is not defined" mitten im Laden, also ein Abbruch VOR
+   der ersten Zusicherung. Seit Commit c8c7f02 vom 18.08.2026, drei Tage
+   lang unbemerkt: der Pruefstand hat naemlich keinen Aufrufer.
+
+   ⚠️ Bewusst KEINE Attrappen. gewaehlterVorschlag() entscheidet, WELCHER
+   Vorschlag angezeigt wird — ein `()=>0` wuerde etwas anderes pruefen als
+   die App tut, und genau darum geht es hier.
+
+   ⛔ Und bewusst NICHT die ganze js/kern.js: sie definiert unter anderem
+   saveProgress(), todayStr() und buchVokabeln(), die der Kontext oben
+   absichtlich als Attrappen setzt. Ein Vollimport wuerde sie still
+   ueberschreiben, und der Pruefstand schriebe echte Fortschritte.
+   [[zweiter_aufruf_ueberschreibt_still]]
+
+   Deshalb benannte Ausschnitte statt Einzelfaelle: der zweite fehlende
+   Name war der Anlass, daraus eine Liste zu machen statt zweimal
+   dasselbe zu schreiben. [[allgemeine_regel_statt_listeneintrag]]
+   Geschnitten wird bis zum naechsten Abschnittskommentar, nie bis zu einer
+   Zeile im Funktionskoerper — eine Marke am Funktionsende verfaellt, sobald
+   die Funktion eine Zeile dazubekommt. Genau daran ist test-wurzel.mjs
+   heute gestorben. [[indexof_minus_eins_ist_immer_kleiner]] */
+{
+  const kq = fs.readFileSync('js/kern.js', 'utf8');
+  const AUSSCHNITTE = [
+    { von: 'const VORSCHLAG_SCHLUESSEL', bis: '/* ---------- Lernstand fuer NACHTRAEGLICH',
+      /* ⚠️ Die Endmarke stand zuerst auf „Verworfene Vorschlaege" — und hoerte
+         damit GENAU vor istVorschlagVerworfen() auf, das zeigeVorschlag()
+         braucht. Ein Abschnittskommentar ist eine gute Endmarke, aber nur der
+         RICHTIGE: der erste, der nichts Gebrauchtes mehr enthaelt. */
+      braucht: ['gewaehlterVorschlag', 'setzeGewaehltenVorschlag', 'istVorschlagVerworfen'] },
+    /* ⚠️ Startmarke bewusst DREI Zeilen frueher: arabischHervorheben()
+         benutzt AR_LAUF, das AR_BEREICH benutzt - beide stehen davor. Mit der
+         Funktion als Startmarke fehlten sie. Und die Endmarke ist NOETIG:
+         weiter unten steht toast(), das der Kontext oben als Attrappe setzt. */
+    { von: 'const AR_BEREICH =', bis: 'const FORM_TRENNER',
+      braucht: ['arabischHervorheben'] }
+  ];
+  for (const a of AUSSCHNITTE){
+    const von = kq.indexOf(a.von);
+    if (von < 0) throw new Error('js/kern.js: „' + a.von + '" nicht gefunden — umbenannt?');
+    let bis = kq.length;
+    if (a.bis){
+      bis = kq.indexOf(a.bis, von);
+      if (bis < 0) throw new Error('js/kern.js: Endmarke „' + a.bis + '" nicht gefunden');
+    }
+    vm.runInContext(kq.slice(von, bis), ctx, { filename: 'js/kern.js' });
+    for (const noetig of a.braucht)
+      if (vm.runInContext('typeof ' + noetig, ctx) !== 'function')
+        throw new Error(noetig + '() aus js/kern.js wurde nicht definiert — Ausschnitt passt nicht');
+  }
+}
 try { vm.runInContext(fs.readFileSync('js/lernen.js','utf8'), ctx, { filename:'js/lernen.js' }); }
 catch (e) { console.log('\n❌ js/lernen.js liess sich nicht laden:', e.message);
   /* Die Fehlermeldung allein sagt nicht, WO es knallt. Die erste
