@@ -218,8 +218,13 @@ function gruppenAus(text){
      verschiedenen Mengen. [[zahlen_ohne_beleg]] */
   /* ⚠ pruefe-taschkil.js zeigt je Gruppe nur die ersten 12 Befunde (ohne
      --alle). Solange keine Gruppe groesser ist, stimmt diese Zahl; danach
-     waere sie zu klein. Am 20.08.2026 ist die groesste Gruppe 11.
-     [[begrenzung_haelt_messung_nicht_stand]] */
+     waere sie zu klein.
+
+     ⛔ Der Satz „Am 20.08.2026 ist die groesste Gruppe 11" stand hier als
+     Beruhigung — und war am 21.08.2026 ueberholt: die Warnung schlaegt an,
+     also IST eine Gruppe groesser. Eine Zahl im Kommentar, die niemand
+     nachzieht, beruhigt genau dann, wenn sie es nicht mehr darf.
+     [[eingefrorenes_feld_ist_kein_zustand]] [[begrenzung_haelt_messung_nicht_stand]] */
   const gekappt = echt.some(g => g.zahl > g.woerter.length && g.zahl > 12);
   /* ⛔ `m ? … : 0` und nicht `Number(m[2])`: faellt pruefe-taschkil.js aus,
      ist m null. Die Absicherung `if (m && …)` steht zwei Zeilen SPAETER —
@@ -233,7 +238,15 @@ function gruppenAus(text){
     titel: 'Taschkīl-Fragen',
     zahl: echteBefunde,
     einheit: 'Befunde',
-    dazu: `in ${echteWoerter} Wörtern` + (ohneMangel ? ` · ${ohneMangel} weitere sind kein Mangel` : ''),
+    /* ⛔ DIE EINSCHRAENKUNG GEHOERT AUF DIE SEITE, nicht nur in die Konsole.
+       Bis zum 21.08.2026 stand die Kappung ausschliesslich als console.log —
+       gesehen hat sie also nur, wer das Werkzeug selbst startet. Auf Elias'
+       Seite stand „in 19 Wörtern" als feste Zahl, obwohl sie nachweislich zu
+       niedrig war. Wer eine Zahl liest, ohne ihren Vorbehalt zu sehen, glaubt
+       sie. [[werkzeug_misst_kleineren_bestand]] [[trefferquote_ohne_preis]] */
+    dazu: `in ${echteWoerter}${gekappt ? '+' : ''} Wörtern`
+        + (ohneMangel ? ` · ${ohneMangel} weitere sind kein Mangel` : '')
+        + (gekappt ? ' · ⚠️ mindestens so viele — eine Gruppe ist länger, als die Prüfung zeigt' : ''),
     /* ⛔⛔ GEMESSEN, NICHT AUFGESCHRIEBEN.
 
        Bis zum 20.08.2026 standen hier drei feste Zeilen und die Angabe „drei
