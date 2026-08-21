@@ -104,5 +104,18 @@ for (const b of befunde){
   console.log('   ' + b.datei + ':' + b.zeile + '   ' + b.ziel + ' = ' + b.wohin);
 }
 console.log('');
-console.log('   Abhilfe:  fs.writeFileSync(X + ".neu", inhalt);  fs.renameSync(X + ".neu", X);');
+/* ⛔ Die Abhilfe nennt seit dem 21.08.2026 den GANZEN Weg, nicht den halben.
+   Hier stand vorher nur `.neu` + rename — und genau das ist die halbe
+   Absicherung: sie faengt den Abbruch mitten im Schreiben, nicht den
+   vollstaendigen Lauf mit falschem Ergebnis. Wer diese Zeile liest, hat gerade
+   einen Befund bekommen und kopiert, was hier steht.
+   [[schreibe_ersetzend]] */
+console.log('   Abhilfe:  import { ersetzeDatei } from \'./schreibe-ersetzend.mjs\';');
+console.log('             ersetzeDatei(X, inhalt, { grund: \'was hier drinsteht\' });');
+console.log('');
+console.log('   Das macht BEIDES: erst daneben schreiben und umbenennen (gegen den Abbruch),');
+console.log('   und vorher die Laenge vergleichen (gegen den Lauf, der vollstaendig schreibt');
+console.log('   und trotzdem die Haelfte verliert). `.neu` + rename allein deckt nur den');
+console.log('   ersten Fall ab — und der Kommentar daneben spricht von "leerer Datei", was');
+console.log('   stimmt und deshalb nicht auffaellt.');
 process.exit(2);

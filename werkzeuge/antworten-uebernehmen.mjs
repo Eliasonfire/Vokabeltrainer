@@ -24,6 +24,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { ersetzeDatei } from './schreibe-ersetzend.mjs';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const ZIEL = path.join(REPO, 'data', 'feld-ausnahmen.js');
@@ -288,10 +289,16 @@ if (NUR_ZEIGEN){
   process.exit(0);
 }
 
-/* ⛔ erst .neu, dann umbenennen. [[leere_datei_besteht_jeden_test]] */
-const tmp = ZIEL + '.neu';
-fs.writeFileSync(tmp, neu, 'utf8');
-fs.renameSync(tmp, ZIEL);
+/* ⛔ Erst daneben schreiben, dann umbenennen — UND die Groesse pruefen. Der
+   erste Teil faengt den Abbruch mitten im Schreiben, der zweite den
+   vollstaendigen Lauf mit falschem Ergebnis: hier werden DREI Bloecke per
+   Textersetzung neu gesetzt, und trifft eine davon zu viel, ist die Datei
+   formal in Ordnung und der Inhalt halb weg.
+   [[leere_datei_besteht_jeden_test]] [[schreibe_ersetzend]] */
+ersetzeDatei(ZIEL, neu, {
+  grund: 'data/feld-ausnahmen.js traegt FELD_ZWEIFEL, FELD_ERGAENZUNGEN und FELD_AUSNAHMEN '
+       + '— die Antworten, die Elias selbst gegeben hat.'
+});
 
 console.log('');
 console.log('Eingetragen in data/feld-ausnahmen.js:');
