@@ -103,6 +103,53 @@ if (abweichend){
   console.log('   node werkzeuge/veroeffentlichen.mjs --mit-daten');
   process.exit(1);
 }
+/* ---------------------------------------------------------------------------
+   ZWEITE FRAGE, und die erste Fassung konnte sie nicht stellen:
+   gibt es Dateien, die index.html oder sw.js LADEN, die aber gar nicht erst
+   in .deploy/ liegen?
+
+   Der Vergleich oben laeuft ueber die Dateien IN .deploy — eine neu
+   angelegte, nie veroeffentlichte Datei kommt dort nicht vor und faellt
+   deshalb durch. Genau die waere aber der schlimmere Fall: sie fehlt bei
+   Elias ganz, und die App scheitert beim Laden, statt nur eine alte Fassung
+   zu zeigen. [[rueckfallliste_nur_ohne_hauptquelle_pruefbar]]
+
+   ⚠️ Gemessen beim Bauen: 68 geladene Pfade, 67 davon in .deploy, 0 fehlend.
+   Die Rechnung ging zuerst nicht auf — der 68. ist eine externe Adresse
+   (https://…), kein Dateipfad. Eine Zahl, die nicht aufgeht, ist ein
+   Geschenk: ohne sie waere die externe Adresse stillschweigend als
+   "vorhanden" durchgelaufen. [[unmoegliche_zahl_ist_ein_geschenk]] */
+const geladen = new Set();
+for (const datei of ['index.html', 'sw.js']){
+  const p = path.join(WURZEL, datei);
+  if (!fs.existsSync(p)) continue;
+  const t = fs.readFileSync(p, 'utf8');
+  for (const m of t.matchAll(/(?:src|href)="([^"?#]+)"/g))
+    geladen.add(m[1].replace(/^\.\//, ''));
+  for (const m of t.matchAll(/["'`]([a-zA-Z0-9_\-/.]+\.(?:js|css|json|html|woff2?))["'`]/g))
+    geladen.add(m[1].replace(/^\.\//, ''));
+}
+
+let nieAusgeliefert = 0, extern = 0;
+for (const rel of geladen){
+  if (/^https?:/.test(rel)){ extern++; continue; }
+  const imRepo   = fs.existsSync(path.join(WURZEL, rel));
+  const imDeploy = fs.existsSync(path.join(DEPLOY, rel));
+  if (imRepo && !imDeploy){
+    console.log('  ⛔  ' + rel + ' — wird geladen, ist aber NIE ausgeliefert worden');
+    nieAusgeliefert++;
+  }
+}
+console.log('  ' + geladen.size + ' Pfad(e) in index.html/sw.js geprueft, davon '
+  + extern + ' extern');
+console.log('');
+
+if (nieAusgeliefert){
+  console.log('⛔ ' + nieAusgeliefert + ' Datei(en) fehlen bei Elias GANZ — die App');
+  console.log('   scheitert dort beim Laden, nicht nur mit einer alten Fassung.');
+  process.exit(1);
+}
+
 if (fehlend){
   console.log('⚠️  ' + fehlend + ' Datei(en) liegen oben, aber nicht mehr hier — beim');
   console.log('   naechsten Veroeffentlichen verschwinden sie. Kein Fehler.');
