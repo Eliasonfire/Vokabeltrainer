@@ -145,8 +145,28 @@ console.log('\n— Hochrollen holt ihn zurueck —');
 rolleAuf(390);
 ok('10 px hoch: noch eingeklappt', eingeklappt(), '(unter der Schwelle)');
 
+/* ⛔ HIER STAND „40 px hoch: wieder AUSGEKLAPPT" — und das war seit dem
+   18.08.2026 falsch. Bis dahin galt in BEIDE Richtungen dieselbe Schwelle
+   (24 px), dann hat Elias ausdruecklich etwas anderes gewuenscht:
+
+     „ebenfalls möchte ich, dass wenn ich im quran hoch scrolle und diese
+      leiste wieder erscheint, das es ein kleinen ticken länger dauert bis
+      diese leiste erscheint."
+
+   Seitdem: KOPF_SCHWELLE 24 px nach unten, KOPF_SCHWELLE_AUF 110 px nach
+   oben. Bei 40 px Aufwaertsweg SOLL die Leiste also noch weg sein — genau
+   das war sein Wunsch. Der Pruefstand hat drei Tage lang das Gegenteil
+   verlangt, ohne dass es jemand sah: er hat keinen Aufrufer.
+
+   ⭐ Jetzt wird die Schwelle von BEIDEN Seiten geprueft statt nur von
+   einer. Eine Grenze, die man nur von unten anfaehrt, kann beliebig weit
+   nach oben rutschen, ohne dass die Pruefung etwas merkt.
+   [[pruefwerkzeug_laedt_mehr_als_die_app]] */
 rolleAuf(360);
-ok('40 px hoch: wieder AUSGEKLAPPT', !eingeklappt());
+ok('40 px hoch: noch eingeklappt', eingeklappt(), '(Elias wollte 110 px statt 24)');
+
+rolleAuf(280);
+ok('120 px hoch: wieder AUSGEKLAPPT', !eingeklappt(), '(ueber KOPF_SCHWELLE_AUF)');
 
 rolleAuf(600);
 ok('wieder runter: erneut eingeklappt', eingeklappt());
