@@ -629,6 +629,80 @@ if (typeof window === 'undefined' || typeof localStorage === 'undefined'){
     return teile.join(' · ');
   });
 
+  /* ---- Lernstand je Karte (21.08.2026) --------------------------------------
+
+     ⛔ ANLASS: derselbe Morgen, eine Ebene tiefer als die Kette darueber.
+     `dueWords()` filtert mit `PROGRESS[w.id] && …` — eine Karte OHNE Eintrag
+     verschwindet damit lautlos aus jeder Lernrunde. Kein Fehler, keine Luecke,
+     die App ist nur kleiner. [[ausfall_ist_unsichtbar_gebaut]]
+
+     Gemessen an diesem Tag: legt man den Nachtrag hinter den Pluralkarten stumm,
+     stehen 518 Karten in der Liste und 70 davon ohne Eintrag — alle 70
+     Pluralkarten, `dueWords()` liefert 448 statt 518.
+
+     ⚠️ Die Kette darueber sieht das NICHT: sie fragt `passtZurAuswahl()`, und
+     das kennt den Lernstand gar nicht. Eine Karte kann die ganze Kette
+     durchlaufen und trotzdem nie faellig werden.
+     [[pruefung_fragt_einen_stellvertreter_ab]]
+
+     ⚠️ Warum das node-Werkzeug es nicht kann: die Pluralkarten entstehen erst
+     im Browser, und `PROGRESS` ist ein Objekt im Arbeitsspeicher. */
+  versuch('Lernstand: Nachtrag fuer neu entstandene Karten', () => {
+    if (typeof PROGRESS === 'undefined') throw new Error('PROGRESS gibt es nicht');
+
+    /* ⛔⛔ DER ERSTE ENTWURF WAR EINE PRUEFUNG MIT EINGEBAUTER ANTWORT.
+       Er zaehlte schlicht, wie viele Karten in VOCAB_DATA keinen Eintrag haben —
+       und das konnte NIE etwas ergeben: dieser Prueflauf laedt selbst alle
+       Buecher, und `setzeBuch()` traegt dabei fuer JEDE Karte nach. Im
+       Stoertest drei Eintraege geloescht, Lauf gestartet: weiter „alle mit
+       Eintrag". Der Block war gruen, weil er gar nicht rot werden konnte.
+       [[pruefwerkzeug_mit_eingebauter_antwort]] [[stoertest_muss_wirkung_nachweisen]]
+
+       Geprueft wird deshalb die ZUSAGE, nicht der Augenblickszustand: entsteht
+       nach dem Laden eine neue Karte — so wie es die Pluralkarten tun —,
+       bekommt sie ihren Eintrag? Das laesst sich hier herstellen und wieder
+       zuruecknehmen, und es geht rot, sobald der Nachtrag fehlt. */
+    if (typeof ergaenzeProgress !== 'function')
+      throw new Error('ergaenzeProgress() gibt es nicht — dann bekommt keine nachtraeglich '
+        + 'entstandene Karte einen Lernstand, und sie faellt lautlos aus dueWords() heraus');
+
+    const PROBE = '__pruefe_lernstand__';
+    if (PROGRESS[PROBE] || VOCAB_DATA.some(w => w.id === PROBE))
+      throw new Error('Probekarte lag schon da — ein frueherer Lauf hat nicht aufgeraeumt');
+
+    let davor = 0, danach = 0, faelligOhne = 0, faelligMit = 0;
+    try {
+      VOCAB_DATA.push({ id: PROBE, ar: 'اِخْتِبَارٌ', de: 'Probe', book: 'madina-1', chapter: 1 });
+      davor = PROGRESS[PROBE] ? 1 : 0;
+      /* ⭐ Die BEGRUENDUNG mitmessen, nicht nur die Zusage: ohne Eintrag faellt
+         die Karte aus dueWords() heraus. Steht diese Zahl nicht daneben, prueft
+         der Block eine Eigenschaft, deren Bedeutung niemand mehr kennt.
+         [[regel_gilt_nur_mit_begruendung]] */
+      faelligOhne = (typeof dueWords === 'function') ? dueWords().filter(w => w.id === PROBE).length : -1;
+      ergaenzeProgress();
+      danach = PROGRESS[PROBE] ? 1 : 0;
+      faelligMit = (typeof dueWords === 'function') ? dueWords().filter(w => w.id === PROBE).length : -1;
+    } finally {
+      /* ⛔ ZUERST aufraeumen, dann urteilen. Ein `throw` im Block darueber
+         liesse sonst eine Probekarte in der Kartei stehen — und die taucht dann
+         in Elias' naechster Lernrunde auf. [[finally_schuetzt_nicht_vor_sich_selbst]] */
+      const i = VOCAB_DATA.findIndex(w => w.id === PROBE);
+      if (i >= 0) VOCAB_DATA.splice(i, 1);
+      delete PROGRESS[PROBE];
+    }
+
+    if (davor !== 0) throw new Error('die Probekarte hatte schon vor ergaenzeProgress() einen Eintrag — der Test misst nichts');
+    if (danach !== 1) throw new Error('ergaenzeProgress() hat der neuen Karte KEINEN Lernstand gegeben — '
+      + 'nachtraeglich entstandene Karten (die Pluralkarten) fallen damit lautlos aus jeder Lernrunde');
+    if (faelligOhne === 1) throw new Error('eine Karte OHNE Lernstand war trotzdem faellig — '
+      + 'dann stimmt die Begruendung dieses Blocks nicht mehr, dueWords() hat sich geaendert');
+    if (faelligMit === 0) throw new Error('die Karte hat einen Eintrag, ist aber nicht faellig — '
+      + 'ergaenzeProgress() setzt kein brauchbares nextReview');
+
+    return `Probekarte: ohne Eintrag nicht faellig, nach ergaenzeProgress() faellig `
+         + `(${VOCAB_DATA.length} Karten in der Liste)`;
+  });
+
   /* Pflichtfelder je Datensatz - dieselbe Ursache, eine Ebene tiefer.
      Ein Wort ohne `book` und ohne Sonderkapitel kann nirgends ankommen. */
   versuch('Kette: kein Datensatz ohne Herkunft', () => {
