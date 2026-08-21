@@ -38,6 +38,7 @@
  *   node werkzeuge/wartet-auf-elias.mjs --zeigen     nur ausgeben, nichts schreiben
  */
 import fs from 'node:fs';
+import vm from 'node:vm';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
@@ -342,6 +343,139 @@ function gruppenAus(text){
       + " soll, ist eine Frage an deinen Unterricht, nicht an mich.",
     zeilen: bsp ? [bsp] : []
   });
+}
+
+/* C2) Bücher, die er anhaken KANN, in denen aber nichts vorbereitet ist.
+
+   Am 21.08.2026 im Browser gemessen: `istBekannt()` und `passtZurAuswahl()`
+   fragen SEINE AUSWAHL, nicht die Freischaltung. In den Einstellungen sind
+   alle acht Bücher wählbar; `FREIGESCHALTET` kennt nur madina-1 und -2.
+   Hakt er bayna-yadayk-1 Kapitel 1 an, bekommt er 27 Karten — 27 davon
+   ohne Eselsbrücke und ohne Satz. [[app_auswahl_entscheidet]]
+
+   ⛔⛔ DIE EICHUNG ENTSCHEIDET, OB DER POSTEN ERSCHEINT.
+   madina-1 ist lückenlos: 298 Wörter, 0 ohne Eselsbrücke, 0 ohne Satz —
+   dreifach gemessen am 21.08. Kommt hier etwas anderes heraus, misst das
+   Werkzeug nicht, was es zu messen behauptet, und der Posten bleibt weg.
+   Lieber kein Posten als eine falsche Zahl auf seiner Seite.
+
+   ⚠️ `vocab-data.js` MUSS dabei sein: dort tragen 171 Wörter ihr `mnemo`
+   und `sentAr` direkt am Eintrag. Ohne die Datei meldet dieselbe Rechnung
+   158 Lücken in madina-1, die es nicht gibt — am 21.08. genau so passiert.
+   [[dritte_satzquelle]] [[unmoegliche_zahl_ist_ein_geschenk]] */
+{
+  const kiste = { window: {} }; kiste.globalThis = kiste; vm.createContext(kiste);
+  const ladeIn = rel => { const f = path.join(REPO, rel);
+    if (!fs.existsSync(f)) return false;
+    try { vm.runInContext(fs.readFileSync(f, "utf8"), kiste, { filename: rel }); return true; }
+    catch { return false; } };
+  const holen = n => { try { return vm.runInContext(
+    "typeof " + n + " !== \"undefined\" ? " + n + " : null", kiste); } catch { return null; } };
+
+  ladeIn("vocab-data.js");
+  ladeIn("data/eselsbruecken.js");
+  ladeIn("data/beispielsaetze.js");
+  fs.readdirSync(path.join(REPO, "data"))
+    .filter(f => /^vokabeln-.*\.js$/.test(f)).forEach(f => ladeIn("data/" + f));
+
+  const ES  = holen("BUCH_ESELSBRUECKEN") || {};
+  const SAE = holen("BEISPIELSAETZE") || {};
+  const VD  = new Map((holen("VOCAB_DATA") || []).map(w => [String(w.id), w]));
+  const BUCH = kiste.window.VOKABELN || {};
+
+  const zaehle = liste => {
+    let ohneE = 0, ohneS = 0;
+    for (const w of liste){
+      const v = VD.get(String(w.id)) || {};
+      if (!ES[w.id] && !v.mnemo) ohneE++;
+      if (!(SAE[w.id] && SAE[w.id].sentAr) && !v.sentAr && !w.sentAr) ohneS++;
+    }
+    return { n: liste.length, ohneE, ohneS };
+  };
+
+  const eich = zaehle(BUCH["madina-1"] || []);
+  const eichungOk = eich.n === 298 && eich.ohneE === 0 && eich.ohneS === 0;
+
+  if (!eichungOk){
+    console.error("  ⚠️ Eichung madina-1 fehlgeschlagen ("
+      + eich.n + " Wörter, " + eich.ohneE + " ohne Eselsbrücke, " + eich.ohneS
+      + " ohne Satz) - der Posten rohe Buecher wird NICHT gezeigt.");
+  } else {
+    const rohe = [];
+    for (const [slug, liste] of Object.entries(BUCH)){
+      if (slug === "madina-1") continue;
+      const e = zaehle(liste || []);
+      if (e.ohneE || e.ohneS) rohe.push({ slug, ...e });
+    }
+    const summe = rohe.reduce((s, r) => s + r.n, 0);
+    if (rohe.length) posten.push({
+      titel: "Andere Bücher: anhakbar, aber leer",
+      zahl: summe, einheit: "Wörter", dazu: rohe.length + " Bücher", auswahl: true,
+      aufwand: "nichts tun ist in Ordnung — du sollst nur wissen, was passiert",
+      warum: "Die Buchauswahl in den Einstellungen zeigt alle acht Bücher, aber vorbereitet"
+        + " ist nur Madina 1 (298 Wörter, 24 von 24 Kapiteln lückenlos). Hakst du eines der"
+        + " anderen an, kommen die Karten ohne Eselsbrücke und ohne Beispielsatz —"
+        + " und ohne Satz gibt es auch keine Markierung und keine Übungsaufgabe."
+        + " Die Freischaltung bremst das nicht: seit v282 entscheidet deine Auswahl.",
+      wie: "Wenn dich das stört, sag Bescheid — dann baue ich einen Hinweis in die"
+        + " Buchauswahl, etwa „Bayna Yadayk 1 · 231 Karten, noch keine Eselsbrücken“."
+        + " Ich habe ihn NICHT gebaut: das ist App-Code und eine Geschmacksfrage.",
+      seite: "", seiteText: "",
+      zeilen: rohe.sort((a, b) => b.n - a.n)
+        .map(r => r.slug + ": " + r.n + " Wörter, " + r.ohneE + " ohne Eselsbrücke, " + r.ohneS + " ohne Satz")
+    });
+  }
+}
+
+/* C3) Eine fertige Funktion, die niemand erreichen kann.
+
+   `paketLoeschen()` steht in js/vokabelpaket.js:64 und wird NIRGENDS
+   aufgerufen — am 21.08.2026 über das ganze Repo gegrept, ohne Klammern,
+   damit auch eine Übergabe als Referenz aufgefallen wäre.
+   [[funktion_als_referenz_sieht_tot_aus]] [[werkzeug_ohne_aufrufer]]
+
+   ⚠️ LIVE geprüft, nicht fest eingetragen: bekommt sie einen Aufrufer,
+   verschwindet der Posten von selbst. [[eingefrorenes_feld_ist_kein_zustand]] */
+{
+  const quelle = path.join(REPO, "js", "vokabelpaket.js");
+  if (fs.existsSync(quelle) && /function paketLoeschen\s*\(/.test(fs.readFileSync(quelle, "utf8"))){
+    let aufrufer = 0;
+    const suchen = dir => {
+      for (const e of fs.readdirSync(dir, { withFileTypes: true })){
+        if (e.name === ".deploy" || e.name === "node_modules" || e.name === ".git") continue;
+        const voll = path.join(dir, e.name);
+        if (e.isDirectory()){ suchen(voll); continue; }
+        if (!/\.(js|html)$/.test(e.name)) continue;
+        const txt = fs.readFileSync(voll, "utf8");
+        for (const m of txt.matchAll(/paketLoeschen/g)){
+          const um = txt.slice(Math.max(0, m.index - 12), m.index);
+          if (!/function\s*$/.test(um)) aufrufer++;
+        }
+      }
+    };
+    suchen(path.join(REPO, "js"));
+    /* Und die Wurzel, aber NUR die .html/.js dort - nicht data/ mit
+       seinen Megabytes. */
+    for (const e of fs.readdirSync(REPO, { withFileTypes: true })){
+      if (!e.isFile() || !/.(js|html)$/.test(e.name)) continue;
+      const txt = fs.readFileSync(path.join(REPO, e.name), "utf8");
+      for (const m of txt.matchAll(/paketLoeschen/g)){
+        const um = txt.slice(Math.max(0, m.index - 12), m.index);
+        if (!/functions*$/.test(um)) aufrufer++;
+      }
+    }
+    if (!aufrufer) posten.push({
+      titel: "Vokabelpaket löschen: fertig, aber kein Knopf",
+      zahl: 1, einheit: "Entscheidung", dazu: "js/vokabelpaket.js:64", auswahl: true,
+      aufwand: "ja oder nein sagen — den Knopf baue ich in zehn Minuten",
+      warum: "Die Funktion zum Entfernen eines geladenen Vokabelpakets ist fertig und"
+        + " getestet, aber sie wird von nirgendwo aufgerufen. Es gibt also derzeit"
+        + " keinen Weg, ein Paket wieder loszuwerden, ohne den Browserspeicher zu leeren.",
+      wie: "Sag mir, ob du den Knopf willst und wo er hin soll — Einstellungen oder"
+        + " direkt neben der Paketanzeige.",
+      seite: "", seiteText: ""
+    });
+  }
 }
 
 /* D) Gestaltungsentscheidungen — sie warten, ohne dass ein Werkzeug sie misst. */
