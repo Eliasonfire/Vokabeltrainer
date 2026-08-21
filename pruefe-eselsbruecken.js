@@ -303,6 +303,35 @@ console.log('=== 4. „das hast du auch" — steht das Wort wirklich im Lernbest
       .forEach(w => bekannt.add(flach(w.ar)));
   } catch (e){ /* Datei fehlt: dann eben ohne */ }
 
+  /* ⭐ WO STEHT DAS WORT SONST? Am 21.08.2026 gemessen: von fuenf Meldungen
+     "steht nicht im Lernbestand" waren nur ZWEI erfundene Woerter.
+
+       أسبوع (Woche)  madina-1 Kapitel 15   er ist bei 12
+       سنة   (Jahr)   madina-1 Kapitel 18
+       خلف   (hinter) quran
+
+     Beides bleibt ein Mangel — eine Bruecke auf ein Wort aus Kapitel 15
+     traegt HEUTE nicht. Aber die Behebung ist eine andere: dort warten,
+     hier neu schreiben. Eine Meldung, die beides gleich nennt, fuehrt bei
+     drei von fuenf in die Irre.
+     [[kennzeichen_mit_zwei_ursachen]] [[kann_ist_nicht_ist]]
+
+     ⛔ BUCH_WOERTER wird oben schon geladen — nicht ein zweites Mal lesen.
+     Eine eigene Ladeschleife waere eine zweite Wahrheit mit eigener
+     Fehlerbehandlung. [[handliste_neben_echter_quelle]] */
+  const anderswo = new Map();
+  for (const w of BUCH_WOERTER){
+    const k = flach(w && w.ar);
+    if (!k || bekannt.has(k) || anderswo.has(k)) continue;
+    anderswo.set(k, (w.book || 'Buch')
+      + (w.chapter != null ? ' Kapitel ' + w.chapter : ''));
+  }
+  /* ⚠️ Ohne Buchvokabeln ist jedes "erfunden" unten unbelegt — das muss
+     dastehen, sonst behauptet die Meldung mehr als sie weiss.
+     [[leere_liste_ist_keine_messung]] */
+  if (!BUCH_WOERTER.length)
+    console.log('  ⚠️ Keine Buchvokabel geladen — "erfunden" unten ist ungeprueft.');
+
   let behauptungen = 0;
   texte.filter(t => t.quelle !== 'mnemo').forEach(t => {
     let m;
@@ -382,7 +411,12 @@ console.log('=== 4. „das hast du auch" — steht das Wort wirklich im Lernbest
       if (eigen && gesucht && (eigen === gesucht || eigen.includes(gesucht))) continue;
       behauptungen++;
       if (!bekannt.has(gesucht))
-        melde(`${t.wort} (${t.quelle}): „${wort} (${glosse})" wird als bekanntes Wort vorgestellt, steht aber NICHT im Lernbestand`);
+        {
+        const wo = anderswo.get(gesucht);
+        melde(`${t.wort} (${t.quelle}): „${wort} (${glosse})" wird als bekanntes Wort`
+          + (wo ? ` vorgestellt — steht aber erst in ${wo}, ausserhalb seines Fensters`
+                : ' vorgestellt, steht aber in KEINER Quelle — erfunden'));
+      }
     }
   });
   console.log(`  ${behauptungen} Behauptung(en) „das hast du" geprueft.`);
