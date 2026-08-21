@@ -99,6 +99,10 @@ const PRUEFER = [
      Ihr erster Lauf fand sofort einen echten Fall: pruefe-sprecher.js.
      [[allgemeine_regel_statt_listeneintrag]] */
   ['werkzeuge/pruefe-sammellauf.mjs', []],
+  /* ⛔ Verhindert die achte Entscheidungsseite, die stumm speichert. Sechs
+     von sieben waren es in der Nacht auf den 21.08.2026, zwei starben dabei
+     sogar beim Laden. [[allgemeine_regel_statt_listeneintrag]] */
+  ['werkzeuge/pruefe-seitenspeicher.mjs', []],
   ['werkzeuge/pruefe-schreibpfade.mjs', []],
   ['werkzeuge/pruefe-volles-programm.mjs', []],
   /* ⛔ SIEBEN PRUEFSTAENDE, DIE BIS ZUM 21.08.2026 NIEMAND GESTARTET HAT.
