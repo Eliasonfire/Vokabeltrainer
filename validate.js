@@ -630,7 +630,20 @@ try {
     assets.filter(a => a.endsWith('.js')).forEach(a => {
       const p = path.join(DIR, a.replace(/^\.\//, ''));
       if (!fs.existsSync(p)) return;
-      try { execFileSync(process.execPath, ['--check', p], { stdio: 'pipe' }); }
+      /* ⛔ Die richtige Betriebsart WAEHLEN, nicht annehmen. `node --check`
+         nimmt bei einer .js-Datei CommonJS an und meldet ESM-Syntaxfehler
+         NICHT — am 21.08.2026 an den Pages Functions gemessen: exit 0 bei
+         nachweislich kaputter Datei. Heute enthaelt keine der ausgelieferten
+         Dateien `export`/`import` (nachgezaehlt: 0 von 35), aber sobald eine
+         es tut, waere die Pruefung dort still blind.
+         [[stoertest_muss_wirkung_nachweisen]] */
+      const roh = fs.readFileSync(p, 'utf8');
+      const istModul = /^\s*(export|import)\s/m.test(roh);
+      try {
+        if (istModul) execFileSync(process.execPath, ['--input-type=module', '--check'],
+                                   { input: roh, stdio: ['pipe', 'pipe', 'pipe'] });
+        else execFileSync(process.execPath, ['--check', p], { stdio: 'pipe' });
+      }
       catch (e) {
         const roh = String(e.stderr || '').split(/\r?\n/);
         const zeile = roh.find(z => /Error/.test(z)) || 'Parserfehler';
