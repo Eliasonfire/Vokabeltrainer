@@ -220,6 +220,14 @@ if (kEigen.median > kBuch.median){
   console.log(`  ⚠ Der Median der verfassten Saetze (${kEigen.median}) liegt ueber dem des Lehrwerks (${kBuch.median}).`);
 }
 
+/* ⛔ Ab dem 21.08.2026 werden die Befunde ALLER Quellen zusammengezaehlt.
+   Vorher hing der Exitcode nur an der Eichung ganz unten (`if (schief)`):
+   ein echter Kasusfehler in einem Beispielsatz wurde gemeldet und dann
+   fallengelassen. Dabei steht dieses Skript im Nachtschicht-Skill als
+   Pflichtpruefung neben validate.js.
+   [[pruefwerkzeug_mit_eingebauter_antwort]] [[ausfall_ist_unsichtbar_gebaut]] */
+let gesamtFehler = 0, gesamtUnklar = 0, gesamtGeprueft = 0;
+
 for (const q of quellen){
   console.log(`\n=== ${q.name} ===`);
   let geprueft = 0, mitFehler = 0, unklar = 0;
@@ -252,6 +260,7 @@ for (const q of quellen){
 
   console.log(`${geprueft} Saetze geprueft, ${mitFehler} mit mindestens einer unpassenden Endung, ` +
               `${unklar} mit einem Wort, dessen Kasusendung fehlt, obwohl sie sichtbar sein muesste.`);
+  gesamtGeprueft += geprueft; gesamtFehler += mitFehler; gesamtUnklar += unklar;
   if (unsichtbarGesamt.length){
     const einmalig = [...new Set(unsichtbarGesamt)];
     console.log(`  dazu ${unsichtbarGesamt.length} Wort/Woerter, deren Endung nach arabischer Regel ` +
@@ -407,3 +416,23 @@ console.log('\n=== LEXIKON-VERGLEICH: sieht die App dasselbe wie diese Pruefung?
   setzeLexikon(wortschatz);
   if (schief) process.exitCode = 1;
 }
+
+/* ---------- Schlussurteil ueber ALLE Abschnitte ----------
+
+   ⛔ Bis zum 21.08.2026 endete das Skript mit dem EICHUNGSergebnis
+   ("6 von 6 Eichfaellen richtig"). Wer nur das Ende liest — und genau das
+   tut werkzeuge/alle-pruefer.mjs —, sah ein Teilergebnis statt des
+   Gesamtbildes. [[erfolgsmeldung_ohne_wirkung]]
+
+   ⚠️ ZWEI DINGE ZAEHLEN BEWUSST NICHT MIT:
+     - die Lexikon-Unterschiede: dass die Zerlegung von der Buchauswahl
+       abhaengt, ist eine Eigenschaft der App, kein Fehler.
+       [[app_auswahl_entscheidet]]
+     - die unsichtbaren Endungen: die Ausgabe nennt sie ausdruecklich
+       "KEIN Mangel" (Yāʾ des Sprechers und Verwandtes). */
+console.log(String.fromCharCode(10) + (gesamtFehler || gesamtUnklar
+  ? `⛔ ${gesamtFehler} Satz/Saetze mit unpassender Endung, ${gesamtUnklar} mit fehlender `
+    + `Kasusendung (von ${gesamtGeprueft} geprueften). Nicht pushen, bevor das geklaert ist.`
+  : `✅ Alle ${gesamtGeprueft} geprueften Saetze sind kasusrein `
+    + '(unsichtbare Endungen und Lexikon-Unterschiede zaehlen bewusst nicht mit).'));
+if (gesamtFehler || gesamtUnklar) process.exitCode = 1;
