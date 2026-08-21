@@ -627,30 +627,82 @@ try {
         .replace(/\/\*[\s\S]*?\*\//g, ' ')
         .replace(/(^|[^:])\/\/[^\n]*/g, '$1');
 
-      if (!/function\s+ergaenzeProgress\s*\(/.test(ohneKommentare(kernRoh))){
-        fail('js/kern.js hat kein ergaenzeProgress() mehr. Dann bekommt keine nachtraeglich '
-           + 'entstandene Karte (die Pluralkarten) einen Lernstand — und eine Karte ohne '
-           + 'Lernstand faellt lautlos aus dueWords() heraus.');
+      /* ⭐ EINE TABELLE, NICHT EIN SONDERFALL. Der erste Entwurf sicherte nur
+         `ergaenzeProgress`. Gemessen sind es aber SECHS Funktionen, die alle
+         dasselbe tun: nachtragen, was beim Laden noch nicht dastand. Jede
+         einzelne ist schon ausgefallen oder waere es beinahe — drei davon
+         stehen mit genau dieser Begruendung als Kommentar im Startlauf.
+         Einen Waechter nur fuer die zuletzt gefundene zu bauen hiesse, beim
+         naechsten Mal dieselbe Nacht noch einmal zu haben.
+         [[entscheidung_gilt_fuer_das_zweite_werkzeug]] [[allgemeine_regel_statt_listeneintrag]]
+
+         ⚠️ `wendeFeldErgaenzungenAn` wird in data/feld-ausnahmen.js deklariert,
+         nicht in js/. Deshalb steht `wo` als Feld in der Tabelle und wird nicht
+         geraten — meine erste Messung hat es genau deshalb uebersehen. */
+      const NACHTRAG = [
+        { name:'ergaenzeProgress', wo:'js/kern.js', nach:'wendePluralKartenAn',
+          folge:'dann stehen 70 von 192 Pluralkarten ohne Lernstand da und fallen lautlos aus '
+              + 'jeder Lernrunde — dueWords() lieferte 448 statt 518 (gemessen 21.08.2026)' },
+        { name:'wendeWortAenderungenAn', wo:'js/kern.js', nach:'wendeFeldErgaenzungenAn',
+          folge:'dann kommen Elias’ eigene Korrekturen an Buchvokabeln beim Neustart nie an. '
+              + 'Die App meldet „Gespeichert", und beim naechsten Start steht der alte Text '
+              + 'wieder da (sein Fehlerbericht vom 21.08.2026, 05:31)' },
+        { name:'wendeFeldErgaenzungenAn', wo:'data/feld-ausnahmen.js', nach:null,
+          folge:'dann bleiben nachgetragene Felder aus data/feld-ausnahmen.js bei allen '
+              + 'Buchvokabeln wirkungslos — heute 0 Eintraege, ab dem ersten still' },
+        { name:'wendePluralKartenAn', wo:'js/kern.js', nach:null,
+          folge:'dann entstehen die Pluralkarten nur aus den Woertern, die schon beim Laden '
+              + 'dastanden: 120 statt 190 (gemessen 18.08.2026)' },
+        { name:'eselsbrueckenNachtragen', wo:'js/buecher.js', nach:null,
+          folge:'dann bekommen die selbst angelegten Woerter keine Eselsbruecke — geschrieben, '
+              + 'gespeichert, ausgeliefert und nie angewandt (20.08.2026)' },
+        { name:'saetzeNachtragen', wo:'js/buecher.js', nach:null,
+          folge:'dasselbe eine Zeile daneben, fuer die Beispielsaetze (20.08.2026)' }
+      ];
+
+      const buch  = ohneKommentare(buchRoh);
+      const iDom  = buch.indexOf("addEventListener('DOMContentLoaded'");
+      if (iDom < 0){
+        fail('js/buecher.js hat keinen DOMContentLoaded-Block mehr — dort haengt der '
+           + 'ganze Startlauf (Buecher laden, Pluralkarten, Nachtraege).');
       } else {
-        const buch  = ohneKommentare(buchRoh);
-        const iDom  = buch.indexOf("addEventListener('DOMContentLoaded'");
-        const start = buch.slice(iDom < 0 ? 0 : iDom);
-        const iPlural = start.indexOf('wendePluralKartenAn(');
-        const iErg    = start.search(/ergaenzeProgress\s*\(\s*\)/);
-        if (iDom < 0){
-          fail('js/buecher.js hat keinen DOMContentLoaded-Block mehr — dort haengt der '
-             + 'ganze Startlauf (Buecher laden, Pluralkarten, Lernstand nachtragen).');
-        } else if (iErg < 0){
-          fail('ergaenzeProgress() wird im Startlauf von js/buecher.js NICHT aufgerufen. '
-             + 'Gemessen am 21.08.2026: dann stehen 70 von 192 Pluralkarten ohne Lernstand da '
-             + 'und fallen lautlos aus jeder Lernrunde — dueWords() lieferte 448 statt 518.');
-        } else if (iPlural >= 0 && iErg < iPlural){
-          fail('ergaenzeProgress() steht im Startlauf VOR wendePluralKartenAn(). Die '
-             + 'Pluralkarten entstehen erst dort — vorher nachzutragen traegt nichts nach.');
-        } else {
-          note('Lernstand: ergaenzeProgress() steht im Startlauf'
-             + (iPlural >= 0 ? ' und nach wendePluralKartenAn().' : '.'));
+        const start = buch.slice(iDom);
+        /* ⛔ WORTGRENZE, und zwar als BEFUND aus dem eigenen Stoertest. Der
+           erste Entwurf suchte schlicht `name\s*\(`. Im Stoertest wurde der
+           Aufruf zu `__weg_ergaenzeProgress(` umbenannt — und die Pruefung
+           blieb gruen, weil der alte Name als TEILKETTE darin steckt. Alle
+           sechs Faelle liefen so durch.
+
+           Ein Waechter, der einen umbenannten Aufruf fuer den echten haelt,
+           haette beim ersten Umbau still geschwiegen — also genau dann, wenn er
+           gebraucht wird. [[stoertest_muss_wirkung_nachweisen]] */
+        const stelle = n => start.search(new RegExp('(?<![\\w$])' + n + '\\s*\\('));
+        const gefunden = [];
+        for (const e of NACHTRAG){
+          /* Erst: gibt es die Funktion ueberhaupt noch? */
+          const quelle = ohneKommentare(fs.readFileSync(path.join(DIR, e.wo), 'utf8'));
+          if (!new RegExp('function\\s+' + e.name + '\\s*\\(').test(quelle)){
+            fail(`${e.wo} hat kein ${e.name}() mehr — ${e.folge}.`);
+            continue;
+          }
+          const i = stelle(e.name);
+          if (i < 0){
+            fail(`${e.name}() wird im Startlauf von js/buecher.js NICHT aufgerufen — ${e.folge}.`);
+            continue;
+          }
+          if (e.nach){
+            const j = stelle(e.nach);
+            if (j >= 0 && i < j){
+              fail(`${e.name}() steht im Startlauf VOR ${e.nach}(). Die Reihenfolge ist keine `
+                 + `Geschmackssache: ${e.folge}.`);
+              continue;
+            }
+          }
+          gefunden.push(e.name);
         }
+        if (gefunden.length === NACHTRAG.length)
+          note(`Startlauf: alle ${NACHTRAG.length} Nachtrags-Funktionen werden aufgerufen, `
+             + 'jede in der richtigen Reihenfolge.');
       }
     }
 
