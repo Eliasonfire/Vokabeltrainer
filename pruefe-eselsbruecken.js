@@ -118,11 +118,51 @@ const melde = (was) => { fehler++; console.log('  FEHL ' + was); };
 
 /* Alle Texte einsammeln: der erste Vorschlag steht an der Vokabel, die
    weiteren in data/eselsbruecken-alt.js. Beide unterliegen denselben Regeln -
-   die Regel gilt dem Inhalt, nicht der Datei. */
+   die Regel gilt dem Inhalt, nicht der Datei.
+
+   ⛔⛔ DRITTE QUELLE, am 21.08.2026 nachgetragen: data/eselsbruecken.js traegt
+   die Merkhilfen der BUCHVOKABELN (154 Texte). Sie fehlten hier - und damit
+   liefen ALLE Regeln dieser Datei an ihnen vorbei: Koranstellen,
+   Zitatlaenge, Mindestlaenge.
+
+   Gemessen: der Abschnitt "Koranstellen nur aus dem auswendigen Bereich"
+   meldete 7 Faelle. Ueber alle drei Quellen sind es 11 - vier Buchtexte
+   zitieren Sure 2:25, und niemand sah es. Die Zahl 7 sah dabei nie falsch
+   aus. [[werkzeug_misst_kleineren_bestand]] [[die_dritte_satzquelle]]
+
+   ⭐ Abschnitt 7 laedt dieselbe Datei seit langem selbst (Zeile ~483) und
+   warnt dort sogar, er saehe sonst "WENIGER als die App". Dieselbe Frage,
+   zwei Antworten in EINER Datei - derselbe Fehler, den der Kommentar unten
+   fuer die Wortsuche beschreibt. [[dieselbe_frage_zwei_antworten]]
+
+   ⚠️ Ausfallsicher wie in Abschnitt 7: fehlt data/, arbeitet die Pruefung
+   ohne sie weiter - die Abzugsdateien duerfen nicht ins Repo. */
+let BUCH_EB_TEXTE = {};
+try { BUCH_EB_TEXTE = ladeAusSkript('data/eselsbruecken.js', 'BUCH_ESELSBRUECKEN'); }
+catch (e){
+  console.log('  ⛔ data/eselsbruecken.js nicht lesbar: ' + e.message);
+  console.log('     Alle Abschnitte pruefen dann OHNE die Buch-Eselsbruecken.');
+}
+
 const texte = [];
 VOCAB_DATA.forEach(w => {
   if (w.mnemo) texte.push({ id: w.id, wort: w.ar, quelle: 'mnemo', text: w.mnemo });
 });
+/* Die Buchvokabeln: ihre Merkhilfe steht nicht am Eintrag, sondern hier.
+   Der Wortname kommt aus BUCH_WOERTER, damit eine Meldung nicht
+   "(unbekannt)" heisst - dieselbe Aufloesung wie bei den Alternativen unten. */
+Object.keys(BUCH_EB_TEXTE).forEach(id => {
+  const t = BUCH_EB_TEXTE[id];
+  if (typeof t !== 'string' || !t.trim()) return;
+  /* ⚠️ Steht dasselbe Wort schon mit `mnemo` da, ist der Buchtext nicht in
+     Gebrauch: die App nimmt das vorhandene mnemo (einhaengen() - Vorhandenes
+     gewinnt). Was nicht angezeigt wird, soll auch nicht gemeldet werden. */
+  const inVocab = VOCAB_DATA.find(x => String(x.id) === String(id));
+  if (inVocab && inVocab.mnemo) return;
+  const w = inVocab || BUCH_WOERTER.find(x => String(x.id) === String(id));
+  texte.push({ id, wort: w ? w.ar : '(unbekannt, id ' + id + ')', quelle: 'buch', text: t });
+});
+
 Object.keys(ALT).forEach(id => {
   /* ⛔ AUCH IM BUCHABZUG NACHSEHEN. Bis zum 19.08.2026 stand hier nur
      VOCAB_DATA — also 171 von 4.446 Woertern. Jede Meldung zu einem Buchwort
