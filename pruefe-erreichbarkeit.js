@@ -186,14 +186,23 @@ try {
     };
 
     const versteckt = [];
+    /* ⛔ Ab dem 21.08.2026 wird auch GEZAEHLT, wie viele Regeln ueberhaupt
+       geprueft wurden. Ohne die Zahl staende bei einer leeren Schleife
+       derselbe gruene Satz - und die beiden Abschnitte darueber nennen
+       ihre Zahlen ja auch. [[leere_liste_ist_keine_messung]] */
+    let mitMarkierung = 0;
     for (const r of repo.GRAMMAR_RULES) {
       const traeger = Object.entries(repo.SENTENCE_TAGS)
         .filter(([, tags]) => tags.some(t => t.ruleId === r.id)).map(([id]) => id);
-      if (traeger.length && !traeger.some(sichtbar)) versteckt.push([r.id, traeger]);
+      if (!traeger.length) continue;
+      mitMarkierung++;
+      if (!traeger.some(sichtbar)) versteckt.push([r.id, traeger]);
     }
     console.log('\n=== Erreichbar HEUTE (Lernstand madina-1 Kapitel ' + stand + ') ===');
     if (!versteckt.length) {
-      console.log('  ✅ Jede Regel hat mindestens eine Markierung in einem Satz, den er sieht.');
+      console.log(`  ✅ Alle ${mitMarkierung} markierten Regeln haben mindestens eine`
+        + ' Markierung in einem Satz, den er sieht.');
+      if (!mitMarkierung) console.log('  ⛔ …aber es sind NULL — hier wurde nichts geprueft.');
     } else {
       befunde++;
       console.log('  ⛔ ' + versteckt.length + ' Regel(n) nur in vorausgeschriebenen Saetzen markiert:');
