@@ -71,6 +71,7 @@ const PRUEFER = [
   ['pruefe-markierungen.js', []],
   ['pruefe-quran.js', []],
   ['pruefe-saetze.js', []],
+  ['pruefe-sprecher.js', []],
   ['pruefe-taschkil.js', []],
   ['pruefe-transkripte.js', []],
   ['pruefe-wortfelder.js', ['--fenster']],
@@ -91,6 +92,13 @@ const PRUEFER = [
      gepusht, ausgeliefert — und nie gestartet. [[werkzeug_ohne_aufrufer]] */
   ['werkzeuge/pruefe-muster.mjs', []],
   ['werkzeuge/pruefe-plural-thema.mjs', []],
+  /* ⛔ Verhindert den siebzehnten Fall: in der Nacht auf den 21.08.2026 kamen
+     SECHZEHN Eintraege hier dazu — acht Pruefstaende, sieben Eichungen, ein
+     Pruefer. Alle waren gebaut, gepusht und nie gestartet worden, und keiner
+     hat es gemerkt. Diese Pruefung meldet, wer kuenftig herumliegt.
+     Ihr erster Lauf fand sofort einen echten Fall: pruefe-sprecher.js.
+     [[allgemeine_regel_statt_listeneintrag]] */
+  ['werkzeuge/pruefe-sammellauf.mjs', []],
   ['werkzeuge/pruefe-schreibpfade.mjs', []],
   ['werkzeuge/pruefe-volles-programm.mjs', []],
   /* ⛔ SIEBEN PRUEFSTAENDE, DIE BIS ZUM 21.08.2026 NIEMAND GESTARTET HAT.
