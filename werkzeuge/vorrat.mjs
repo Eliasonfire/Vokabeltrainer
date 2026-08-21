@@ -737,12 +737,35 @@ if (iStand >= 0){
     if (zuwachs <= 0) return;
     if (typeof l.angabe[b] !== 'number'){
       zurueckgestellt.push(`${b}: +${zuwachs} Kapitel, aber keine Angabe von Elias — nicht uebernommen`);
-    } else if (zuwachs <= FENSTER){
-      const altAngabe = l.angabe[b];
+      return;
+    }
+    /* ⛔⛔ GEMESSEN WIRD AM LERNSTAND, NICHT AM FREISCHALTSTAND (21.08.2026)
+       ==================================================================
+       Bis heute stand hier `zuwachs <= FENSTER` — der Zuwachs des
+       FREIGESCHALTETEN. Veraendert wird aber die ANGABE, und die beiden
+       koennen weit auseinanderliegen: madina-2 steht mit [1..24] offen,
+       waehrend Elias dort nach eigener Aussage nicht arbeitet.
+
+       Der Fall, den `test-lernstand-zuwachs.mjs` festhaelt: sagt er einmal
+       „ich bin bei madina-2 kapitel 3" und arabicroots legt danach EIN
+       Kapitel nach, dann ist der Zuwachs 1 — „im Rahmen" — und die Angabe
+       sprang von 3 auf 25. Sein Lernfenster ginge um 22 Kapitel auf, die er
+       nie genannt hat, und die Meldung dazu lautete `Angabe 3 → 25 (+1, im
+       Rahmen)`: eine Begruendung, die den Fall schliesst.
+       [[erfundene_begruendung_schliesst_den_fall]]
+
+       ⭐ Elias' Zahl „1-3 kapitel sind realistisch" beschreibt SEINEN
+       Lernschritt. Also ist `jetzt - altAngabe` das Mass, nicht
+       `jetzt - vorher`. [[kennzeichen_mit_zwei_ursachen]] */
+    const altAngabe = l.angabe[b];
+    const schritt = jetzt - altAngabe;
+    if (schritt <= 0) return;
+    if (schritt <= FENSTER){
       l.angabe[b] = jetzt;
-      gewachsen.push(`${b}: Angabe ${altAngabe} → ${jetzt} (+${zuwachs}, im Rahmen)`);
+      gewachsen.push(`${b}: Angabe ${altAngabe} → ${jetzt} (+${schritt}, im Rahmen)`);
     } else {
-      zurueckgestellt.push(`${b}: +${zuwachs} Kapitel auf einmal — zu viel fuer einen Lernschritt, NICHT uebernommen`);
+      zurueckgestellt.push(`${b}: Angabe ${altAngabe} → ${jetzt} waere +${schritt} Kapitel auf einmal`
+        + ` (freigeschaltet nur +${zuwachs}) — zu viel fuer einen Lernschritt, NICHT uebernommen`);
     }
   });
   if (gewachsen.length){
