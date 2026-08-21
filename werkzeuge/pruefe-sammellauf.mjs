@@ -18,11 +18,17 @@
  * Diese Pruefung verhindert den siebzehnten: wer einen Pruefer anlegt und
  * das Eintragen vergisst, erfaehrt es beim naechsten Sammellauf.
  *
- * ⛔ SIE PRUEFT NUR DEN SAMMELLAUF, nicht die Wartungsroutine. Der
- * Wartungs-Prompt (Automation/prompts/) fuehrt eine EIGENE Einzelliste und
- * kennt alle-pruefer.mjs gar nicht — dort fehlen dieselben sechzehn. Das
- * laesst sich hier nicht beheben: der Prompt liegt ausserhalb des
- * Vokabeltrainer-Ordners. Es steht in Elias' To-Do.
+ * ⭐ SIE PRUEFT BEIDE LISTEN. Der Sammellauf ist die eine; die
+ * Wartungsroutine (Automation/prompts/) fuehrt eine EIGENE Einzelliste und
+ * kennt alle-pruefer.mjs gar nicht. Ein fehlender Eintrag DORT ist nur ein
+ * Hinweis, kein Fehler: er laesst sich von hier aus nicht beheben, weil der
+ * Prompt ausserhalb des Vokabeltrainer-Ordners liegt. Ein Rot, das dauerhaft
+ * dasteht und das niemand beheben kann, liest irgendwann keiner mehr.
+ *
+ * ⚠️ Die zweite Liste kam nachtraeglich dazu, und zwar aus einem konkreten
+ * Anlass: ich hatte am 21.08.2026 ZWEIMAL geschlossen, ein Werkzeug starte
+ * niemand — beide Male stand es im Wartungs-Prompt. Wer nur eine Quelle
+ * kennt, zieht falsche Schluesse und merkt es nicht.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -83,6 +89,50 @@ console.log('  ' + gefunden.length + ' gefunden · ' + eingetragen.size + ' eing
   + ausgenommen.length + ' benannt ausgenommen (nur im Browser)');
 if (ausgenommen.length) ausgenommen.forEach(r => console.log('      ⓘ  ' + r));
 console.log('');
+
+/* ---------------------------------------------------------------------------
+   ZWEITE LISTE: die Wartungsroutine.
+
+   ⛔ WARUM DAS HIER STEHT UND NICHT NUR IM KOMMENTAR: am 21.08.2026 habe ich
+   ZWEIMAL denselben Fehlschluss gezogen — einmal ueber die sieben Eichungen
+   ("startet niemand"), einmal ueber die vier Artefakt-Werkzeuge ("werden nie
+   neu gebaut"). Beide Male stimmte es nicht, beide Male standen sie im
+   Wartungs-Prompt, und beide Male hatte ich die Einschraenkung ("meine Suche
+   kennt Aufrufer ausserhalb des Ordners nicht") selbst danebengeschrieben.
+
+   Eine Einschraenkung aufzuschreiben ist nicht dasselbe, wie sie anzuwenden.
+   Deshalb liest diese Pruefung die zweite Quelle jetzt SELBST, statt sie dem
+   Leser als Vorbehalt zu ueberlassen.
+   [[begrenzung_haelt_messung_nicht_stand]]
+
+   ⚠️ NUR EIN HINWEIS, kein Fehler. Die 16 Eintraege dieser Nacht fehlen im
+   Wartungs-Prompt und koennen hier auch nicht ergaenzt werden — er liegt
+   ausserhalb des Vokabeltrainer-Ordners. Ein Rot, das dauerhaft dasteht und
+   das niemand beheben kann, liest irgendwann keiner mehr. */
+const PROMPT = path.resolve(WURZEL, '..', 'Automation', 'prompts', 'vokabeltrainer-wartung.md');
+if (!fs.existsSync(PROMPT)){
+  console.log('  ⓘ  Wartungs-Prompt nicht gefunden — die zweite Liste bleibt ungeprueft.');
+  console.log('     (' + PROMPT + ')');
+} else {
+  const wartung = fs.readFileSync(PROMPT, 'utf8');
+  const fehltDort = [];
+  for (const rel of gefunden){
+    if (imBrowser && imBrowser.has(rel)) continue;
+    if (rel === 'werkzeuge/alle-pruefer.mjs') continue;
+    if (!wartung.includes(rel.split('/').pop())) fehltDort.push(rel);
+  }
+  if (fehltDort.length){
+    console.log('  ⚠️  ' + fehltDort.length + ' Pruefer stehen NICHT im Wartungs-Prompt:');
+    fehltDort.slice(0, 6).forEach(r => console.log('        ' + r));
+    if (fehltDort.length > 6) console.log('        … und ' + (fehltDort.length - 6) + ' weitere');
+    console.log('     Sie laufen im Sammellauf, aber nicht mittwochs und sonntags.');
+    console.log('     Es fehlt dort EINE Zeile: node werkzeuge/alle-pruefer.mjs');
+    console.log('     ⛔ Nicht von hier aus zu beheben — der Prompt liegt ausserhalb.');
+  } else {
+    console.log('  ok   auch im Wartungs-Prompt sind alle genannt.');
+  }
+  console.log('');
+}
 
 if (waisen.length){
   waisen.forEach(r => console.log('  ⛔  ' + r + ' — liegt im Projekt, steht aber nicht im Sammellauf'));
