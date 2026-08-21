@@ -441,6 +441,22 @@ function gruppenAus(text){
 
    ⚠️ LIVE geprüft, nicht fest eingetragen: bekommt sie einen Aufrufer,
    verschwindet der Posten von selbst. [[eingefrorenes_feld_ist_kein_zustand]] */
+/* ⛔⛔ KOMMENTARE ZÄHLEN NICHT ALS AUFRUFER — am 21.08.2026 auf die harte Tour
+   gelernt. Ich hatte in js/lernen.js hingeschrieben: „⚠️ `openQuranFreqPopover`
+   hat damit KEINEN Aufrufer mehr". Genau dieser Satz wurde als Aufrufer
+   gezählt, und der Posten, den er ankündigt, erschien deshalb nie.
+
+   ⭐ Die ERKLÄRUNG, warum etwas gemeldet gehört, verhinderte die Meldung.
+   [[stichworttreffer_im_kommentar]] [[kommentar_beschreibt_absicht_markup_wirkung]]
+
+   ⚠️ Grob, aber für diesen Zweck richtig: Blockkommentare und Zeilenreste nach
+   `//` fallen weg. Ein `/*` INNERHALB einer Zeichenkette würde zu viel
+   entfernen — dann fiele die Zählung zu NIEDRIG aus, und der Posten erschiene
+   fälschlich. Deshalb steht unten eine Eichung, die das auffliegen ließe. */
+const ohneKommentare = txt => txt
+  .replace(/\/\*[\s\S]*?\*\//g, " ")
+  .replace(/(^|[^:])\/\/[^\n]*/g, "$1");
+
 {
   const quelle = path.join(REPO, "js", "vokabelpaket.js");
   if (fs.existsSync(quelle) && /function paketLoeschen\s*\(/.test(fs.readFileSync(quelle, "utf8"))){
@@ -451,7 +467,7 @@ function gruppenAus(text){
         const voll = path.join(dir, e.name);
         if (e.isDirectory()){ suchen(voll); continue; }
         if (!/\.(js|html)$/.test(e.name)) continue;
-        const txt = fs.readFileSync(voll, "utf8");
+        const txt = ohneKommentare(fs.readFileSync(voll, "utf8"));
         for (const m of txt.matchAll(/paketLoeschen/g)){
           const um = txt.slice(Math.max(0, m.index - 12), m.index);
           if (!/function\s*$/.test(um)) aufrufer++;
@@ -461,12 +477,30 @@ function gruppenAus(text){
     suchen(path.join(REPO, "js"));
     /* Und die Wurzel, aber NUR die .html/.js dort - nicht data/ mit
        seinen Megabytes. */
+    /* ⛔⛔ ZWEI ZERBROCHENE MUSTER, am 21.08.2026 gefunden. Der Block hier ist
+       der ZWILLING des Blocks darueber, und beim Kopieren haben zwei
+       Backslashes die Shell nicht ueberlebt:
+
+         /.(js|html)$/    war gemeint als  /\.(js|html)$/
+         /functions*$/    war gemeint als  /function\s*$/
+
+       Das zweite ist das gefaehrliche: `um` endet bei einer Deklaration auf
+       "function " MIT Leerzeichen. `/functions*$/` verlangt, dass die
+       Zeichenkette auf "function" plus beliebig viele "s" ENDET — auf ein
+       Leerzeichen trifft das nie zu. Die Deklaration waere also als Aufrufer
+       gezaehlt worden, und der Posten waere still verschwunden.
+
+       ⚠️ Heute traf es NICHT zu: `paketLoeschen` steht nur in js/, und der
+       Block darueber hat die richtigen Muster. Der Fehler haette erst
+       zugeschlagen, wenn das Wort einmal in einer Datei im Wurzelverzeichnis
+       auftaucht — und dann als „Elias hat entschieden", nicht als Fehler.
+       [[python_backslash_b_wird_backspace]] [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
     for (const e of fs.readdirSync(REPO, { withFileTypes: true })){
-      if (!e.isFile() || !/.(js|html)$/.test(e.name)) continue;
-      const txt = fs.readFileSync(path.join(REPO, e.name), "utf8");
+      if (!e.isFile() || !/\.(js|html)$/.test(e.name)) continue;
+      const txt = ohneKommentare(fs.readFileSync(path.join(REPO, e.name), "utf8"));
       for (const m of txt.matchAll(/paketLoeschen/g)){
         const um = txt.slice(Math.max(0, m.index - 12), m.index);
-        if (!/functions*$/.test(um)) aufrufer++;
+        if (!/function\s*$/.test(um)) aufrufer++;
       }
     }
     if (!aufrufer) posten.push({
@@ -481,6 +515,129 @@ function gruppenAus(text){
       seite: "", seiteText: ""
     });
   }
+}
+
+/* ---------- Der Vers-Aufklapper hat keinen Aufrufer mehr (21.08.2026) -------
+
+   Am 21.08.2026 ist das Abzeichen „x× im Quran" von den Karteikarten
+   verschwunden — Elias mit Bild: „das kann man aus den karteikarten komplett
+   raus nehmen". Der Klick darauf war der EINZIGE Weg zum Aufklapper mit den
+   Fundstellen im Quran, und der führt weiter in den Quran-Leser.
+
+   ⚠️ Wie beim Posten darüber LIVE gezählt, nicht fest eingetragen: bekommt
+   `openQuranFreqPopover` wieder einen Aufrufer, verschwindet die Frage von
+   selbst. [[eingefrorenes_feld_ist_kein_zustand]]
+
+   ⛔ Die Prüfdateien zählen NICHT als Aufrufer. `pruefe-oberflaeche.js` ruft
+   die Funktion weiter auf, damit sie nicht unbemerkt verfällt — aber das ist
+   kein Weg, den Elias gehen kann. Zählte man sie mit, wäre die Frage nie
+   gestellt worden. [[pruefwerkzeug_mit_eingebauter_antwort]] */
+{
+  const quelle = path.join(REPO, "js", "lernen.js");
+  if (fs.existsSync(quelle) && /function openQuranFreqPopover\s*\(/.test(fs.readFileSync(quelle, "utf8"))){
+    let aufrufer = 0;
+    const zaehle = (voll, name) => {
+      if (!/\.(js|html)$/.test(name)) return;
+      if (/^pruefe-/.test(name)) return;               /* siehe oben */
+      const txt = ohneKommentare(fs.readFileSync(voll, "utf8"));
+      for (const m of txt.matchAll(/openQuranFreqPopover/g)){
+        const um = txt.slice(Math.max(0, m.index - 12), m.index);
+        if (!/function\s*$/.test(um)) aufrufer++;
+      }
+    };
+    const suchen = dir => {
+      for (const e of fs.readdirSync(dir, { withFileTypes: true })){
+        if (e.name === ".deploy" || e.name === "node_modules" || e.name === ".git") continue;
+        const voll = path.join(dir, e.name);
+        if (e.isDirectory()){ suchen(voll); continue; }
+        zaehle(voll, e.name);
+      }
+    };
+    suchen(path.join(REPO, "js"));
+    for (const e of fs.readdirSync(REPO, { withFileTypes: true })){
+      if (e.isFile()) zaehle(path.join(REPO, e.name), e.name);
+    }
+    /* ⛔ EICHUNG für den Kommentar-Entferner. Wenn er zu viel wegnimmt, fällt
+       die Zählung zu NIEDRIG aus und dieser Posten erscheint fälschlich — ein
+       Fehler, der wie ein Befund aussieht. Die Deklaration selbst muss den
+       Entferner überleben; tut sie es nicht, wird die Frage lieber gar nicht
+       gestellt. [[pruefwerkzeug_mit_eingebauter_antwort]] */
+    const heil = /function openQuranFreqPopover\s*\(/
+      .test(ohneKommentare(fs.readFileSync(quelle, "utf8")));
+    if (!heil) console.log("  ⚠ Kommentar-Entferner hat zu viel entfernt — Posten "
+      + "\"Quran-Fundstellen\" wird nicht gestellt.");
+    if (!aufrufer && heil) posten.push({
+      titel: "Quran-Fundstellen: der Weg dorthin ist weg",
+      zahl: 1, einheit: "Entscheidung", dazu: "js/lernen.js — openQuranFreqPopover", auswahl: true,
+      aufwand: "sagen, wohin er soll — oder ob er ganz raus kann",
+      warum: "Du wolltest das Abzeichen „x× im Quran\" von den Karteikarten haben, und es ist"
+        + " weg. Der Klick darauf war aber der einzige Weg zu der Liste, die zeigt, an welchen"
+        + " Stellen im Quran das Wort vorkommt — und von dort direkt in den Leser springt."
+        + " Diese Liste gibt es noch, sie ist nur nicht mehr erreichbar.",
+      wie: "Sag mir, ob sie auf die Infokarte soll (dort ist Platz, und du gehst sowieso"
+        + " hin, wenn du ein Wort genauer ansiehst) oder ob sie ganz raus kann. Bis dahin"
+        + " bleibt der Code stehen und wird weiter geprüft.",
+      seite: "", seiteText: ""
+    });
+  }
+}
+
+/* ---------- „(gr)" steht ungeklärt auf den Karten (21.08.2026) -------------
+
+   Elias am 21.08.2026 um 05:26, mit Bild einer Karte, auf der nur
+   „(gr) im Nominativ" stand: „was ist eigentlich dieses gr".
+
+   Die Abkürzung kommt aus dem arabicroots-Abzug, nicht aus der App. Sie wird
+   nirgends erklärt — wer sie nicht kennt, muss raten.
+
+   ⚠️ GEZÄHLT, nicht geschätzt, und über ALLE Bücher: die Zahl in der Frage
+   soll stimmen, auch wenn er später ein anderes Buch anhakt.
+   ⛔ Eichung: 50470 (مَرْفُوعٌ, „(gr) im Nominativ") MUSS dabei sein. Zählt die
+   Messung ihn nicht mit, misst sie etwas anderes — dann lieber keine Frage als
+   eine mit erfundener Zahl. [[unmoegliche_zahl_ist_ein_geschenk]] */
+{
+  /* ⛔ ZWEI ZAHLEN, und sie sind NICHT dieselbe Frage. Der erste Entwurf zählte
+     nur `"de": "(gr)` und kam auf 18; ein Grep über „(gr) irgendwo im Text"
+     ergab 23. Beide stimmen — der Unterschied sind fünf Einträge, bei denen die
+     Abkürzung MITTEN im Text steht, etwa „Nachricht; (gr) Prädikat des
+     Nominalsatzes". Genau die sind der Grund, warum die Frage nicht mit einer
+     Zahl auskommt: „Grammatik:" davorzusetzen passt bei 18, bei den anderen
+     fünf müsste die Abkürzung im Satz ersetzt werden.
+     [[widerspruch_liegt_in_der_beschriftung]] */
+  const VORN = '"de": "(gr)';
+  const IRGENDWO = '(gr)';
+  let vorn = 0, gesamt = 0, geeicht = false, buecher = 0;
+  const dat = path.join(REPO, "data");
+  const dateien = fs.existsSync(dat)
+    ? fs.readdirSync(dat).filter(n => n.startsWith("vokabeln-") && n.endsWith(".js")).map(n => path.join(dat, n))
+    : [];
+  for (const f of dateien){
+    const txt = fs.readFileSync(f, "utf8");
+    const v = txt.split(VORN).length - 1;
+    /* Nur Zeilen des Feldes `de` — sonst zählte ein „(gr)" in einem Kommentar mit. */
+    const g = txt.split(/\r?\n/).filter(z => z.includes('"de":') && z.includes(IRGENDWO)).length;
+    vorn += v; gesamt += g;
+    if (g) buecher++;
+    if (txt.includes('"id": "50470"')) geeicht = true;
+  }
+  if (gesamt && geeicht) posten.push({
+    titel: "„(gr)" + '" auf den Karten — soll ich es ausschreiben?',
+    zahl: gesamt, einheit: "Vokabel(n)", dazu: `${vorn} davon beginnen damit · ${buecher} Buchdatei(en)`, auswahl: true,
+    aufwand: "ja oder nein — die Änderung ist eine Zeile",
+    warum: "Du hast heute Morgen gefragt, was „(gr)\" bedeutet. Es heißt „grammatischer"
+      + " Fachbegriff\" und kommt aus dem arabicroots-Abzug, nicht von mir. In der App wird"
+      + " es nirgends erklärt — wer die Abkürzung nicht kennt, sieht auf der Karte nur"
+      + " „(gr) im Nominativ\" und muss raten. In Madina 1 sind es die Wörter aus"
+      + " Kapitel 24, den Iʿrāb-Begriffen.",
+    wie: "Sag ja, dann zeigt die Karte „Grammatik: im Nominativ\" statt „(gr) im"
+      + " Nominativ\". Der Abzug bleibt unangetastet — die Ersetzung passiert beim"
+      + " Anzeigen, wie bei deinen eigenen Korrekturen auch."
+      + " ⚠️ Bei den Einträgen, wo „(gr)\" mitten im Text steht (etwa „Nachricht;"
+      + " (gr) Prädikat des Nominalsatzes\"), passt „Grammatik:\" davor nicht —"
+      + " dort würde ich es zu „grammatisch\" ausschreiben. Sag Bescheid, wenn"
+      + " du das anders willst.",
+    seite: "", seiteText: ""
+  });
 }
 
 /* D) Gestaltungsentscheidungen — sie warten, ohne dass ein Werkzeug sie misst. */
