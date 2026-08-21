@@ -35,25 +35,42 @@ function renderStats(){
      dass Box 3 schon „halb gut" ist, und das sagt das Leitner-System nicht. */
   const BOX_TON = { 1:'schlecht', 5:'gut' };
   const boxCounts = [1,2,3,4,5].map(b => bekannteVokabeln().filter(w=>PROGRESS[w.id] && PROGRESS[w.id].box===b).length);
-  document.getElementById('boxBars').innerHTML = boxCounts.map((n,i)=>{
-    const ton = BOX_TON[i+1] ? ` box-${BOX_TON[i+1]}` : '';
-    return `
-    <div class="box-bar-row${ton}">
-      <span class="bl">Box ${i+1}</span>
-      <div class="box-bar-track"><div class="box-bar-fill" data-width="${total?Math.round(100*n/total):0}"></div></div>
-      <span class="bn">${n}</span>
-    </div>`;
-  }).join('');
-  /* Breite erst im naechsten Frame setzen, damit die Balken sichtbar von 0
-     aufwachsen (CSS-Transition auf width). Bei unsichtbarer Seite feuert rAF
-     nicht - dann sofort setzen, der Wert darf nie von der Animation abhaengen. */
-  const setBars = ()=>{
-    document.querySelectorAll('#boxBars .box-bar-fill').forEach(el=>{
-      el.style.width = el.dataset.width + '%';
-    });
-  };
-  if (REDUCED_MOTION || document.hidden) setBars();
-  else requestAnimationFrame(()=>requestAnimationFrame(setBars));
+  /* ⛔⛔ `#boxBars` GIBT ES SEIT DEM 21.08.2026 NICHT MEHR — und deshalb steht
+     hier eine Abfrage statt eines direkten Zugriffs.
+
+     Die Statistik ist an dem Tag auf den Startbildschirm gewandert, direkt
+     unter die Box-Uebersicht. Die Balken zeigten dieselben fuenf Zahlen wie
+     diese Uebersicht, nur anders gezeichnet; Elias hat sie auf Rueckfrage
+     ausdruecklich weggelassen.
+
+     ⚠️ Ohne diese Abfrage waere `getElementById('boxBars').innerHTML` ein
+     Wurf auf `null` — und alles DANACH in dieser Funktion (Regelstand!) waere
+     nie gelaufen, ohne dass die Oberflaeche etwas meldet. Der Kasten bleibt
+     abgefragt statt geloescht, damit ein spaeteres Wiedereinsetzen des
+     Balken-Kastens ohne Codeaenderung wirkt.
+     [[befund_vor_dem_ende_der_funktion]] [[ausfall_ist_unsichtbar_gebaut]] */
+  const balken = document.getElementById('boxBars');
+  if (balken){
+    balken.innerHTML = boxCounts.map((n,i)=>{
+      const ton = BOX_TON[i+1] ? ` box-${BOX_TON[i+1]}` : '';
+      return `
+      <div class="box-bar-row${ton}">
+        <span class="bl">Box ${i+1}</span>
+        <div class="box-bar-track"><div class="box-bar-fill" data-width="${total?Math.round(100*n/total):0}"></div></div>
+        <span class="bn">${n}</span>
+      </div>`;
+    }).join('');
+    /* Breite erst im naechsten Frame setzen, damit die Balken sichtbar von 0
+       aufwachsen (CSS-Transition auf width). Bei unsichtbarer Seite feuert rAF
+       nicht - dann sofort setzen, der Wert darf nie von der Animation abhaengen. */
+    const setBars = ()=>{
+      document.querySelectorAll('#boxBars .box-bar-fill').forEach(el=>{
+        el.style.width = el.dataset.width + '%';
+      });
+    };
+    if (REDUCED_MOTION || document.hidden) setBars();
+    else requestAnimationFrame(()=>requestAnimationFrame(setBars));
+  }
 
   /* Ohne diese Zeile bliebe die Liste beim Oeffnen leer — und zwar ohne
      jede Fehlermeldung. Genau die Fehlerart, gegen die Punkt 9 gebaut ist. */

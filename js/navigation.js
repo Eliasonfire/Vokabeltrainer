@@ -11,11 +11,40 @@ function zeigeBildschirm(name){
      Zurueck-Taste dorthin zurueckkehrt, nachdem die Runde beendet wurde). */
   if (name === 'learn' && !(SESSION.words.length && !SESSION.fertig)) name = 'home';
 
+  /* ⛔⛔ EIN BILDSCHIRM, DEN ES NICHT GIBT, DARF NICHT INS LEERE FUEHREN.
+     Bis zum 21.08.2026 stand hier `if (el) el.classList.add('active')` — war
+     der Name unbekannt, blieb einfach KEIN Bildschirm sichtbar: eine leere
+     App ohne jede Meldung. Aufgefallen beim Ausbau des Statistik-Bildschirms:
+     dessen Name steckt nach einem Update noch in der Browser-Historie, und
+     die Zurueck-Taste haette genau dorthin gefuehrt.
+     [[ausfall_ist_unsichtbar_gebaut]] */
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  const el = document.getElementById('screen-'+name);
+  let el = document.getElementById('screen-'+name);
+  if (!el){ name = 'home'; el = document.getElementById('screen-home'); }
   if (el) el.classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  const navMap = {home:'home', learn:'learn-entry', categories:'categories', sentences:'sentences', stats:'stats', wordlist:'categories', quran:'home', quranfull:'home', hoeren:'home', wurzeln:'home', settings:'home'};
+  /* Welcher Reiter unten leuchtet, wenn dieser Bildschirm offen ist.
+
+     ⛔⛔ DIESE TABELLE MUSS ZUR LEISTE IN index.html PASSEN. Steht hier ein
+     Reiter, den es nicht (mehr) gibt, leuchtet GAR KEINER — der Aufruf
+     `querySelectorAll('.nav-btn[data-nav="…"]')` findet dann nichts und
+     schweigt dazu. Kein Fehler in der Konsole, nur eine Leiste, die tot
+     aussieht. [[ausfall_ist_unsichtbar_gebaut]]
+
+     Stand 21.08.2026 — die Leiste hat fuenf Knoepfe:
+       home · learn-entry · quranfull · hoeren · sentences
+     Alles andere faellt bewusst auf 'home' zurueck: categories und wurzeln
+     werden ueber eine Kachel des Startbildschirms erreicht, settings ueber
+     das Zahnrad, `quran` ueber die Quran-Bezug-Kachel.
+
+     ⚠️ `stats` steht hier NICHT mehr: den Bildschirm gibt es seit dem
+     21.08.2026 gar nicht, die Statistik sitzt auf dem Start. Ein alter
+     Historieneintrag landet ueber den Rueckfall weiter oben auf 'home'.
+
+     ⚠️ `quran` ist NICHT der Leser, sondern „Vokabeln im Quran". Stuende
+     hier 'quranfull', leuchtete der Quran-Reiter auf einem Bildschirm, den
+     er gar nicht oeffnet. */
+  const navMap = {home:'home', learn:'learn-entry', categories:'home', sentences:'sentences', wordlist:'home', quran:'home', quranfull:'quranfull', hoeren:'hoeren', wurzeln:'home', settings:'home'};
   const navName = navMap[name] || name;
   document.querySelectorAll(`.nav-btn[data-nav="${navName}"]`).forEach(b=>b.classList.add('active'));
 
@@ -47,7 +76,11 @@ function zeigeBildschirm(name){
   const rollkasten = document.getElementById('main');
   if (rollkasten) rollkasten.scrollTo({ top: 0, behavior: 'instant' });
 
-  if (name==='home') renderHome();
+  /* ⭐ `renderStats()` gehoert seit dem 21.08.2026 zum Startbildschirm: die
+     Statistik sitzt dort unter der Box-Uebersicht, einen eigenen Bildschirm
+     dafuer gibt es nicht mehr. NACH renderHome(), weil beide auf dieselben
+     Zahlen zugreifen und renderHome() den Kasten darueber aufbaut. */
+  if (name==='home'){ renderHome(); renderStats(); }
   if (name==='learn') renderCard();          // laufende Runde an derselben Karte fortsetzen
   if (name==='categories') renderCategories();
   if (name==='sentences') openSentences();
@@ -55,7 +88,6 @@ function zeigeBildschirm(name){
   if (name==='hoeren') openHoeren();
   if (name==='wurzeln') oeffneWurzeln();
   if (name==='quranfull') renderSurahList(document.getElementById('surahSearch').value);
-  if (name==='stats') renderStats();
   if (name==='settings') renderSettings();
   /* Hier stand `window.scrollTo(0,0)`. Ersatzlos gestrichen: das Fenster rollt
      in dieser App nicht, die Zeile war ohne Wirkung. Der wirksame Sprung steht

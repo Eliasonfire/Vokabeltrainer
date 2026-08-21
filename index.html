@@ -3664,57 +3664,78 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         </button>
       </div>
 
+      <!-- ⭐⭐ WAS IN DER LEISTE STEHT, BRAUCHT HIER KEINE KACHEL (21.08.2026)
+           Elias: „den satzmodus oben bei den 6 stück braucht man nicht
+           ebensowenig wie den quran dann und auch die kategorien bei den 6
+           braucht man nicht."
+
+           Danach hat er die Aufteilung selbst festgelegt: „ich glaube wurzeln
+           sollten aus der hotbar raus und mit kategorien als die zwei einzigen
+           in den kacheln bleiben. wurzeln links und kategorien rechts."
+
+           Unten in der Leiste: Start · Lernen · Quran · Hören · Sätze.
+           Hier oben nur noch: Wurzeln · Kategorien
+           (dazu „Quran-Bezug", solange die Einstellung dafür an ist).
+
+           ⚠️ Die REIHENFOLGE IM MARKUP ist die Anordnung — das Raster füllt
+           zeilenweise, zwei Spalten. Wurzeln steht deshalb zuerst (links),
+           Kategorien danach (rechts). Die versteckte Quran-Bezug-Kachel steht
+           BEWUSST hinter beiden: stünde sie dazwischen, schöbe sie Kategorien
+           beim Einschalten der Einstellung in die nächste Zeile.
+
+           ⚠️ Wer hier eine Kachel ergänzt, prüft zuerst die Leiste unten —
+           und umgekehrt. Sonst entsteht wieder, was am 21.08. wegfiel: zwei
+           Wege zum selben Bildschirm, ohne dass es jemand so wollte. -->
       <div class="home-grid stagger">
-        <button class="tile" data-nav="sentences">
-          <span class="tile-icon"><svg class="ic"><use href="#ic-chat"/></svg></span>
-          <span class="tile-title">Satz-Modus</span>
-          <span class="tile-sub">Hören &amp; Verstehen</span>
-        </button>
-        <button class="tile" data-nav="hoeren">
-          <span class="tile-icon"><svg class="ic"><use href="#ic-ohr"/></svg></span>
-          <span class="tile-title">Hörverstehen</span>
-          <span class="tile-sub">Nur hören, dann wählen</span>
-        </button>
-        <!-- ⚠️ NICHT #ic-folder: das trägt die Kachel „Kategorien". Die stand
-             bis zum 16.08.2026 direkt daneben und steht seitdem direkt
-             DARUNTER — nah genug, dass zwei gleiche Zeichen weiterhin nicht
-             auseinanderzuhalten wären. #ic-irab steht im Bestand für das
+        <!-- ⚠️ NICHT #ic-folder: das trägt „Kategorien" gleich nebenan und
+             zusätzlich in der Leiste unten. Zwei gleiche Zeichen wären hier
+             nicht auseinanderzuhalten. #ic-irab steht im Bestand für das
              Zerlegen eines Wortes — genau das ist hier die Aufgabe. -->
         <button class="tile" data-nav="wurzeln">
           <span class="tile-icon"><svg class="ic"><use href="#ic-irab"/></svg></span>
           <span class="tile-title">Wurzeln</span>
           <span class="tile-sub">Wortfamilien üben</span>
         </button>
-        <!-- „Quran lesen" und „Kategorien" haben am 16.08.2026 auf Elias' Wunsch
-             die Plätze getauscht: der Leser steht jetzt in der zweiten Reihe
-             rechts, die Kategorien in der dritten links. Die Reihenfolge im
-             Markup IST die Anordnung — das Raster füllt zeilenweise. -->
-        <button class="tile" data-nav="quranfull">
-          <span class="tile-icon"><svg class="ic"><use href="#ic-book"/></svg></span>
-          <span class="tile-title">Quran lesen</span>
-          <span class="tile-sub">Alle 114 Suren</span>
-        </button>
-        <!-- Seit 31.07.2026 an die Einstellung "Quran-Bezüge anzeigen" gehängt
-             und standardmäßig aus. Die Kachel "Quran lesen" darüber bleibt davon
-             unberührt — der Leser ist eine eigene Sache. -->
-        <button class="tile hidden" data-nav="quran" id="quranTile">
-          <span class="tile-icon"><svg class="ic"><use href="#ic-crescent"/></svg></span>
-          <span class="tile-title">Quran-Bezug</span>
-          <span class="tile-sub" id="quranTileSub">Vokabeln im Quran</span>
-        </button>
         <button class="tile" data-nav="categories">
           <span class="tile-icon"><svg class="ic"><use href="#ic-folder"/></svg></span>
           <span class="tile-title">Kategorien</span>
           <span class="tile-sub">Kapitel, Wurzeln, eigene</span>
         </button>
-        <button class="tile" data-nav="stats">
-          <span class="tile-icon"><svg class="ic"><use href="#ic-chart"/></svg></span>
-          <span class="tile-title">Statistik</span>
-          <span class="tile-sub">Fortschritt</span>
+        <!-- Seit 31.07.2026 an die Einstellung "Quran-Bezüge anzeigen" gehängt
+             und standardmäßig aus. ⚠️ Das ist NICHT der Leser: „Quran-Bezug"
+             zeigt, in welchen Versen eine Vokabel vorkommt. Der Leser sitzt
+             seit dem 21.08.2026 in der Leiste unten. -->
+        <button class="tile hidden" data-nav="quran" id="quranTile">
+          <span class="tile-icon"><svg class="ic"><use href="#ic-crescent"/></svg></span>
+          <span class="tile-title">Quran-Bezug</span>
+          <span class="tile-sub" id="quranTileSub">Vokabeln im Quran</span>
         </button>
       </div>
 
       <div class="box-overview" id="boxOverview"></div>
+
+      <!-- ⭐⭐ DIE STATISTIK STEHT SEIT DEM 21.08.2026 HIER, NICHT MEHR AUF
+           EINEM EIGENEN BILDSCHIRM. Elias: „und vielleicht kann man sogar die
+           statistik in den start packen unter den boxen, einfach das ganz
+           normale volle statistikfeld unter den boxen haben."
+
+           ⛔ Die Box-Balken des alten Bildschirms sind BEWUSST nicht mit
+           umgezogen: sie zeigten dieselben fünf Zahlen wie die Box-Übersicht
+           direkt darüber, nur als Balken. Auf seine Rückfrage hin ausdrücklich
+           weggelassen — zweimal dieselbe Zahl untereinander liest niemand als
+           zwei Auskünfte, sondern als Fehler.
+
+           ⚠️ `renderStats()` füllt `#statsGrid` und `#regelStand`. Beide IDs
+           dürfen nicht doppelt vorkommen — sonst füllt `getElementById` nur
+           die erste und die zweite bleibt leer, ohne Fehlermeldung. -->
+      <div class="stats-grid stagger" id="statsGrid"></div>
+      <h3 class="stats-titel">Wie gut sitzen die Regeln?</h3>
+      <div class="regel-sortierung" id="regelSortierung" role="group" aria-label="Sortierung">
+        <button class="rs" data-sort="schwach" aria-pressed="true">schwächste zuerst</button>
+        <button class="rs" data-sort="neu" aria-pressed="false">zuletzt geübt</button>
+        <button class="rs" data-sort="nie" aria-pressed="false">nie geübt</button>
+      </div>
+      <div class="regel-stand" id="regelStand"></div>
     </section>
 
     <!-- ============ LEARN (Leitner Flashcards) ============ -->
@@ -4311,25 +4332,16 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
     </section>
 
     <!-- ============ STATS ============ -->
-    <section class="screen" id="screen-stats" data-screen="stats">
-      <div class="screen-header">
-        <button class="icon-btn" data-back aria-label="Zurück"><svg class="ic"><use href="#ic-left"/></svg></button>
-        <h2>Statistik</h2>
-      </div>
-      <div class="stats-grid stagger" id="statsGrid"></div>
-      <div class="box-bars" id="boxBars"></div>
-      <!-- Nachtplan 9, Elias' Auflage: der Regelfortschritt wird seit v209
-           gemessen (`vt_regelStand`), war aber NIRGENDS zu sehen. Gemessen und
-           unsichtbar ist so gut wie nicht gemessen — und seine Regelauswahl
-           soll sich darauf stützen. -->
-      <h3 class="stats-titel">Wie gut sitzen die Regeln?</h3>
-      <div class="regel-sortierung" id="regelSortierung" role="group" aria-label="Sortierung">
-        <button class="rs" data-sort="schwach" aria-pressed="true">schwächste zuerst</button>
-        <button class="rs" data-sort="neu" aria-pressed="false">zuletzt geübt</button>
-        <button class="rs" data-sort="nie" aria-pressed="false">nie geübt</button>
-      </div>
-      <div class="regel-stand" id="regelStand"></div>
-    </section>
+    <!-- ⛔ HIER STAND BIS ZUM 21.08.2026 DER BILDSCHIRM „STATISTIK".
+         Sein Inhalt sitzt jetzt auf dem Startbildschirm unter der
+         Box-Übersicht (dort steht die Begründung). Der Bildschirm ist
+         ersatzlos entfallen, weil beides zusammen bedeutet hätte: dieselben
+         IDs zweimal im Dokument — `getElementById` füllt dann nur die erste,
+         und die zweite bliebe leer, ohne dass irgendwo etwas meldet.
+
+         Der Regelfortschritt kam aus Nachtplan 9: gemessen wird er seit v209
+         (`vt_regelStand`), sichtbar war er vorher NIRGENDS. Gemessen und
+         unsichtbar ist so gut wie nicht gemessen. -->
 
     <!-- ============ SETTINGS ============ -->
     <section class="screen" id="screen-settings" data-screen="settings">
@@ -4653,14 +4665,16 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
     <button class="nav-btn" data-nav="learn-entry">
       <span class="nav-icon"><svg class="ic"><use href="#ic-cards"/></svg></span><span>Lernen</span>
     </button>
-    <button class="nav-btn" data-nav="categories">
-      <span class="nav-icon"><svg class="ic"><use href="#ic-folder"/></svg></span><span>Kategorien</span>
+    <!-- ⭐ Ziel ist `quranfull` („Quran lesen"), NICHT `quran` — das ist der
+         Bildschirm „Vokabeln im Quran", etwas anderes. -->
+    <button class="nav-btn" data-nav="quranfull">
+      <span class="nav-icon"><svg class="ic"><use href="#ic-book"/></svg></span><span>Quran</span>
+    </button>
+    <button class="nav-btn" data-nav="hoeren">
+      <span class="nav-icon"><svg class="ic"><use href="#ic-ohr"/></svg></span><span>Hören</span>
     </button>
     <button class="nav-btn" data-nav="sentences">
       <span class="nav-icon"><svg class="ic"><use href="#ic-chat"/></svg></span><span>Sätze</span>
-    </button>
-    <button class="nav-btn" data-nav="stats">
-      <span class="nav-icon"><svg class="ic"><use href="#ic-chart"/></svg></span><span>Statistik</span>
     </button>
   </nav>
 
