@@ -52,7 +52,10 @@ const ANGLEICHEN = process.argv.includes('--angleichen');
 let fehler = 0;
 /* Getrennt vom Fehlerzaehler: ein Hinweis darf den Exitcode nicht kippen,
    muss aber in die SCHLUSSZEILE — der Sammellauf zeigt nur die. */
-let hinweisMundtot = null;
+/* Mehrere Hinweise nebeneinander: seit dem 21.08. gibt es zwei, die beide
+   ausserhalb des Ordners liegen und beide in die Schlusszeile muessen.
+   [[erfolgsmeldung_ohne_wirkung]] */
+const hinweise = [];
 const sag = (ok, text) => { console.log('  ' + (ok ? 'ok  ' : '⛔  ') + text); if (!ok) fehler++; };
 
 /* ---------- 0. Die Quelle muss es geben ---------- */
@@ -482,7 +485,7 @@ if (!fs.existsSync(SAMMELPRUEFER)){
     console.log('         Ohne seine Antwort ist unbekannt, wie viele Pruefungen Mi/So fehlen.');
   } else if (treffer){
     console.log('    ⚠️   ' + treffer[1] + ' Pruefungen laufen mittwochs und sonntags NICHT mit.');
-    hinweisMundtot = treffer[1] + ' Pruefungen laufen Mi/So nicht mit (eine Zeile fehlt im Wartungs-Prompt)';
+    hinweise.push(treffer[1] + ' Pruefungen laufen Mi/So nicht mit');
     console.log('         Es fehlt im Wartungs-Prompt genau eine Zeile:');
     console.log('           node werkzeuge/alle-pruefer.mjs');
     console.log('         Sie startet alle auf einmal und veraltet nie.');
@@ -495,12 +498,41 @@ if (!fs.existsSync(SAMMELPRUEFER)){
   }
 }
 console.log('');
+console.log('  Und: ruft die Wartung die Arbeitsmarke ueberhaupt auf?');
+/* ⛔ arbeit.mjs faengt den Lauf, der mitten in einer Aenderung abbricht —
+   Nutzungslimit, Absturz, Fenster zu. Wird die Marke nie gesetzt, meldet
+   der naechste Start "Keine offene Arbeit", obwohl etwas halbfertig liegt.
+   Genau der Fall, fuer den das Werkzeug gebaut wurde.
+
+   ⚠️ Ein Eintrag in der allowedTools-Liste ist KEIN Aufruf. Gemessen am
+   21.08.2026: `arbeit.mjs` steht dort genau einmal, und zwar als
+   `Bash(node werkzeuge/arbeit.mjs)` — eine Berechtigung. vorrat.mjs steht
+   26x im Prompt. [[anleitung_ohne_berechtigung]] [[sein_ist_nicht_wirken]] */
+if (fs.existsSync(PROMPT)){
+  const pt = fs.readFileSync(PROMPT, 'utf8');
+  /* Die Berechtigungszeilen entfernen, dann bleibt nur ein echter Aufruf. */
+  const ohneRechte = pt.replace(/`Bash\([^`]*`/g, ' ');
+  const markeGerufen = /arbeit\.mjs/.test(ohneRechte);
+  if (markeGerufen){
+    console.log('    ok   die Marke wird gesetzt — ein Abbruch bleibt sichtbar.');
+  } else {
+    console.log('    ⚠️   arbeit.mjs steht NUR in der Berechtigungsliste, nirgends als Aufruf.');
+    console.log('         Bricht ein Wartungslauf mitten in einer Aenderung ab, bleibt keine');
+    console.log('         Marke zurueck — der naechste Start meldet dann \'Keine offene Arbeit\'.');
+    console.log('         ⛔ Nicht von hier zu beheben: der Prompt liegt ausserhalb.');
+    hinweise.push('die Arbeitsmarke wird Mi/So nie gesetzt');
+  }
+} else {
+  console.log('    ⓘ   Wartungs-Prompt nicht gefunden — ungeprueft.');
+}
+
+console.log('');
 if (fehler){
   console.log('⛔ ' + fehler + ' Befund(e). „Das volle Programm" ist nicht an allen Orten dasselbe.');
   process.exit(2);
 }
-if (hinweisMundtot){
-  console.log('✅ Deckungsgleich — aber ⚠️ ' + hinweisMundtot + '.');
+if (hinweise.length){
+  console.log('✅ Deckungsgleich — aber ⚠️ ' + hinweise.join(' UND ') + '.');
   process.exit(0);
 }
 console.log('✅ Quelle, Kopie, Wartungs-Prompt und Messwerkzeuge sind deckungsgleich.');
