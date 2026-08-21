@@ -105,6 +105,7 @@ const PRUEFER = [
   ['test-buecher.mjs', []],
   ['test-p1.mjs', []],
   ['test-p6.mjs', []],
+  ['test-p8.mjs', []],
   ['test-p9.mjs', []],
   ['test-sync.mjs', []],
   ['test-sync-anzeige.mjs', []],
@@ -117,20 +118,16 @@ const PRUEFER = [
    jeden Lauf mit einem falschen Rot zu beginnen. */
 const NUR_IM_BROWSER = ['pruefe-oberflaeche.js'];
 
-/* ⛔ test-p8.mjs fehlt in der Liste oben, und zwar mit Absicht: es laedt
-   noch nicht durch. js/lernen.js ruft dort Namen aus js/kern.js auf, die
-   der Pruefstand nicht kennt — 13 offene Namen, statisch gemessen am
-   21.08.2026 (6 in kern.js, 7 aus anderen Modulen).
+/* ⭐ test-p8.mjs stand bis zum 21.08.2026 NICHT in der Liste oben: es
+   stuerzte beim Laden ab, und ein Rot, das immer da ist, liest irgendwann
+   niemand mehr. Seit es 22/22 meldet, laeuft es mit.
 
-   ⚠️ Es hier einzutragen haette den Sammellauf dauerhaft rot gemacht, und
-   ein Rot, das immer da ist, liest irgendwann niemand mehr. Es hier NICHT
-   zu erwaehnen haette es wieder zu einem Werkzeug ohne Aufrufer gemacht,
-   von dem niemand weiss. Deshalb dieser Vermerk statt beidem.
-
-   Naechster Schritt: die sechs kern.js-Funktionen per Klammerzaehlung
-   ausschneiden (Textmarken verfallen), die sieben fremden als Attrappen.
-   ⛔ NICHT kern.js ganz laden — dessen `const LS` ueberschattet die
-   Attrappe lautlos und griffe auf localStorage. Gemessen, nicht vermutet. */
+   Der Weg dorthin steht im Pruefstand selbst; hier nur das, was fuer die
+   Liste wichtig ist: die acht test-*.mjs fahren die ECHTE App-Logik in
+   einem vm gegen einen DOM-Stub hoch. Bricht einer, liegt der Fehler
+   haeufiger im Pruefstand als in der App — von den fuenf roten waren es
+   fuenf von fuenf. Erst lesen, was er misst, dann die App verdaechtigen.
+   [[testfehler_kann_echten_mangel_zeigen]] */
 
 const ergebnisse = [];
 for (const [rel, args] of PRUEFER){
