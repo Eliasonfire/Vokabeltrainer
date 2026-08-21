@@ -312,8 +312,39 @@ der App zu sehen, weil ihr ein Beispielsatz fehlt.</p>
   var feld = document.getElementById('ergebnis');
   var knopf = document.getElementById('kopieren');
 
+  /* ⛔ Der Ladeversuch oben steht in einem try — das Speichern schluckte
+     seinen Fehler bis zum 21.08.2026 aber stumm. Ist der Speicher gesperrt,
+     verschwinden Elias' Urteile lautlos, und beim naechsten Oeffnen faengt
+     er von vorn an.
+
+     Uebernommen aus werkzeuge/freigabe-seite.mjs, wo die Loesung seit einem
+     echten Vorfall steht ("Storage is disabled inside data: URLs") und nie
+     zu den Nachbarseiten gewandert ist.
+     [[entscheidung_gilt_fuer_das_zweite_werkzeug]] [[ausfall_ist_unsichtbar_gebaut]] */
+  var SPEICHER_GEHT = false;
+  try {
+    localStorage.setItem(SPEICHER + '-probe', '1');
+    SPEICHER_GEHT = localStorage.getItem(SPEICHER + '-probe') === '1';
+    localStorage.removeItem(SPEICHER + '-probe');
+  } catch(e){ SPEICHER_GEHT = false; }
+
+  function warneSpeicher(){
+    if (SPEICHER_GEHT || document.getElementById('speicherwarnung')) return;
+    var d = document.createElement('div');
+    d.id = 'speicherwarnung';
+    d.style.cssText = 'background:#210d0c;border:1px solid #5a1f1c;border-left:3px solid #c4483f;'
+      + 'padding:.7rem .9rem;border-radius:6px;margin:0 0 1rem;font-size:.9rem;line-height:1.5';
+    d.innerHTML = '<b style="color:#e0776d">Dieser Browser behält hier nichts.</b> '
+      + 'Deine Urteile stehen nur im Arbeitsspeicher — beim Neuladen oder Schließen '
+      + 'sind sie weg. Kopier dir das Ergebnis heraus, bevor du die Seite verlässt.';
+    var anker = document.getElementById('balken') || document.getElementById('ergebnis');
+    if (anker && anker.parentNode) anker.parentNode.insertBefore(d, anker);
+  }
+
   function sichern(){
-    try { localStorage.setItem(SPEICHER, JSON.stringify(stand)); } catch(e){}
+    if (!SPEICHER_GEHT) return;
+    try { localStorage.setItem(SPEICHER, JSON.stringify(stand)); }
+    catch(e){ SPEICHER_GEHT = false; warneSpeicher(); }
   }
 
   function zeichnen(){
@@ -430,6 +461,10 @@ der App zu sehen, weil ihr ein Beispielsatz fehlt.</p>
   });
 
   zeichnen(); filtern();
+  /* ⛔ AUCH BEIM START warnen. War der Speicher von Anfang an gesperrt, ist
+     SPEICHER_GEHT schon false, sichern() kehrt sofort um und die Warnung
+     kaeme nie — der haeufigere Fall also stumm. */
+  warneSpeicher();
 })();
 </script>
 `;
