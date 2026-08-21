@@ -588,9 +588,23 @@ try {
   const cacheName = sw.match(/const\s+CACHE_NAME\s*=\s*['"]([^'"]+)['"]/);
   if (!cacheName) fail('sw.js: CACHE_NAME nicht gefunden.');
   else note(`sw.js: CACHE_NAME = ${cacheName[1]}`);
-  const assetsBlock = sw.match(/const\s+ASSETS\s*=\s*\[([\s\S]*?)\]/);
+  /* ⛔⛔ `\];` UND NICHT `\]` — am 21.08.2026 teuer gelernt.
+     Das Muster war nicht-gierig und endete am ERSTEN `]`. Ein Kommentar
+     mitten in der Liste, der eckige Klammern enthielt, schnitt sie damit
+     stillschweigend ab: alles darunter war fuer diese Pruefung nicht
+     vorhanden. Sie meldete daraufhin eine Schriftdatei als fehlend, die
+     zwei Zeilen weiter sauber eingetragen war — und haette umgekehrt echte
+     Luecken darunter nie gefunden. Eine Pruefung, die nur die halbe Liste
+     sieht, ist schlimmer als keine. */
+  const assetsBlock = sw.match(/const\s+ASSETS\s*=\s*\[([\s\S]*?)\];/);
   if (assetsBlock){
     const assets = [...assetsBlock[1].matchAll(/['"]([^'"]+)['"]/g)].map(m => m[1]);
+    /* Gegenprobe gegen genau diesen Fall: die Liste hat seit jeher deutlich
+       mehr als 30 Eintraege. Bricht das Muster wieder ab, faellt es hier auf
+       und nicht erst an einer falschen Einzelmeldung. */
+    if (assets.length < 30)
+      fail(`sw.js: nur ${assets.length} ASSETS gelesen — das Muster hat die Liste`
+        + ' vermutlich zu frueh abgeschnitten (eckige Klammer in einem Kommentar?).');
     assets.forEach(a => {
       if (a === './') return;
       const p = path.join(DIR, a.replace(/^\.\//, ''));
