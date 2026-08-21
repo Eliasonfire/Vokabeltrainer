@@ -109,7 +109,39 @@ const PRUEFER = [
   ['test-p9.mjs', []],
   ['test-sync.mjs', []],
   ['test-sync-anzeige.mjs', []],
-  ['test-wurzel.mjs', []]
+  ['test-wurzel.mjs', []],
+  /* ⭐ VIER EICHUNGEN, die bis zum 21.08.2026 ebenfalls niemand gestartet hat.
+     Sie halten Grenzfaelle fest, die teuer erkauft wurden — etwa die
+     Zahlwort-Trennung, deren erster Entwurf 8 von 9 Faellen in beide
+     Richtungen falsch traf.
+
+     ⛔ ES SIND VIER VON SIEBEN, und der Unterschied ist der ganze Punkt:
+     diese vier lesen die Bedingung, die sie pruefen, AUS DER QUELLDATEI.
+       eiche-datumsmuster      <- werkzeuge/pruefe-datumsangaben.mjs
+       eiche-fragenreihenfolge <- werkzeuge/vorrat.mjs, data/feld-ausnahmen.js
+       eiche-wortart-knopf     <- werkzeuge/wartungsfragen-artefakt.mjs
+       eiche-zahlplural        <- validate.js (const ZAHLWORT)
+
+     Die drei anderen (eiche-harf-jarr, eiche-plural-beleg,
+     eiche-taschkil-beleg) haben die Bedingung als KOPIE im eigenen Text.
+     Sie pruefen damit sich selbst und bleiben gruen, egal was sich an der
+     echten Prueflogik aendert. Sie hier einzutragen haette ihnen eine
+     Verlaesslichkeit gegeben, die sie nicht haben.
+     [[handliste_neben_echter_quelle]]
+
+     ⭐ eiche-zahlplural sagt diese Lehre in seinem eigenen Kopf („Die Regex
+     wird NICHT nachgebaut, sondern aus validate.js gelesen") — sie war beim
+     Bauen also bekannt und ist bei den drei anderen trotzdem nicht
+     angewandt worden.
+
+     Stoertest vor dem Eintrag: in validate.js Z. 205 „|drei|" aus der
+     ZAHLWORT-Regex entfernt (Gegenprobe: 0 Treffer danach) -> die Eichung
+     meldet „2 Abweichungen, die Zahlwort-Pruefung trifft nicht mehr, was
+     sie soll". Danach per cp zurueck, sha256 gegengeprueft. */
+  ['werkzeuge/eiche-datumsmuster.mjs', []],
+  ['werkzeuge/eiche-fragenreihenfolge.mjs', []],
+  ['werkzeuge/eiche-wortart-knopf.mjs', []],
+  ['werkzeuge/eiche-zahlplural.mjs', []]
 ];
 
 /* ⛔ pruefe-oberflaeche.js läuft NICHT unter node — es prüft die laufende App
