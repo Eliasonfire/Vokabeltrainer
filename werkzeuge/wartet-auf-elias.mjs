@@ -203,7 +203,13 @@ function gruppenAus(text){
 
 /* B) Taschkīl */
 {
-  const r = messen(path.join(REPO, 'pruefe-taschkil.js'));
+  /* ⭐ MIT --alle, seit 21.08.2026. Ohne das zeigt pruefe-taschkil.js je
+     Gruppe nur die ersten 12 Befunde, und die Woerterzahl dieser Seite wird
+     zu klein — der Generator sagte das selbst („mindestens so viele"), rief
+     aber weiter ohne auf. Gemessen kostet es nichts: 181 ms gegen 182 ms,
+     54 Bytes mehr Ausgabe. Eine Kappung, die nichts spart und die Zahl
+     verfaelscht, hat keinen Grund. [[begrenzung_haelt_messung_nicht_stand]] */
+  const r = messen(path.join(REPO, 'pruefe-taschkil.js'), ['--alle']);
   const m = /^(\d+) Befunde in (\d+)/m.exec(r.text);
   /* ⭐ Die Summenzeile von pruefe-taschkil.js zaehlt ALLE Befunde, auch die
      als „kein Mangel“ gekennzeichneten. Fuer diese Seite gilt nur, was
@@ -225,7 +231,22 @@ function gruppenAus(text){
      also IST eine Gruppe groesser. Eine Zahl im Kommentar, die niemand
      nachzieht, beruhigt genau dann, wenn sie es nicht mehr darf.
      [[eingefrorenes_feld_ist_kein_zustand]] [[begrenzung_haelt_messung_nicht_stand]] */
-  const gekappt = echt.some(g => g.zahl > g.woerter.length && g.zahl > 12);
+  /* ⛔⛔ DAS ALTE KENNZEICHEN HATTE ZWEI URSACHEN (21.08.2026)
+     ========================================================
+     Hier stand `echt.some(g => g.zahl > g.woerter.length && g.zahl > 12)`.
+     Aber `zahl > woerter.length` heisst nicht nur „gekappt" — es heisst auch
+     „ein Wort hat MEHRERE Befunde". Genau das ist der Normalfall: in „Haraka
+     fehlt: 13" steht أَيْضاً zweimal (einmal sentAr, einmal ar), in „Hamzat
+     al-wasl: 10" steht اسْمُ zweimal. Die Warnung schlug also auch dann an,
+     wenn gar nichts gekappt war — und blieb nach der Umstellung auf --alle
+     stehen, obwohl Kappung nun ausgeschlossen ist.
+     [[kennzeichen_mit_zwei_ursachen]]
+
+     ⭐ Gemessen wird jetzt die Kappung selbst: pruefe-taschkil.js schreibt
+     „… N weitere (--alle zeigt sie)", und nur dann. Gegenprobe am 21.08.:
+     ohne --alle 1x in der Ausgabe, mit --alle 0x.
+     [[pruefung_fragt_einen_stellvertreter_ab]] */
+  const gekappt = /--alle zeigt sie/.test(r.text);
   /* ⛔ `m ? … : 0` und nicht `Number(m[2])`: faellt pruefe-taschkil.js aus,
      ist m null. Die Absicherung `if (m && …)` steht zwei Zeilen SPAETER —
      zu spaet, der Generator starb hier mit TypeError. Am 21.08.2026 beim
