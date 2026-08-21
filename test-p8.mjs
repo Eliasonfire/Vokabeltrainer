@@ -20,6 +20,7 @@ const ok = (was, bedingung, zusatz='') => {
 
 /* ---------- DOM-Stub ---------- */
 const ELEMENTE = new Map();
+const AUSWAHL  = new Map();   /* querySelector-Treffer, siehe unten */
 function macheElement(id){
   const klassen = new Set();
   return {
@@ -43,7 +44,20 @@ const wurzel = macheElement('html');
 wurzel.style.setProperty = (k,v)=>{ wurzel.style[k] = v; };
 const document_ = {
   getElementById: hole, documentElement: wurzel,
-  querySelector: ()=>null, querySelectorAll: ()=>[],
+  /* ⛔ Lieferte bis zum 21.08.2026 IMMER null. js/lernen.js holt sich seit
+     Commit 5631d26 die Kartenrueckseite ueber
+       document.querySelector('.flashcard-back')
+     und haengt auf Modulebene einen Rollhinweis daran. Mit null als Antwort
+     starb das ganze Modul beim Laden, und der Test meldete nur „liess sich
+     nicht laden" ohne Fundstelle.
+     Der Cache bedient NUR .klasse und #id — alles andere bleibt null, damit
+     ein Stub nicht auf jede Frage etwas antwortet. */
+  querySelector: (sel)=>{
+    if (typeof sel !== 'string' || !/^[.#][A-Za-z][\w-]*$/.test(sel)) return null;
+    if (!AUSWAHL.has(sel)) AUSWAHL.set(sel, macheElement(sel));
+    return AUSWAHL.get(sel);
+  },
+  querySelectorAll: ()=>[],
   createElement: ()=>macheElement('neu'),
   addEventListener: ()=>{}, head:{ appendChild:()=>{} }, body: macheElement('body'),
 };
@@ -75,7 +89,11 @@ const ctx = vm.createContext({
 });
 
 try { vm.runInContext(fs.readFileSync('js/lernen.js','utf8'), ctx, { filename:'js/lernen.js' }); }
-catch (e) { console.log('\n❌ js/lernen.js liess sich nicht laden:', e.message); process.exit(1); }
+catch (e) { console.log('\n❌ js/lernen.js liess sich nicht laden:', e.message);
+  /* Die Fehlermeldung allein sagt nicht, WO es knallt. Die erste
+     Stack-Zeile aus der geladenen Datei sagt es. */
+  const __ort = String(e.stack || '').split('\n').find(z => z.includes('js/lernen.js'));
+  if (__ort) console.log('   Fundstelle:', __ort.trim()); process.exit(1); }
 
 console.log('\n— Laeuft die neue Fassung? —');
 const quelle = vm.runInContext('renderNotiz.toString()', ctx);
