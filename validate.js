@@ -580,6 +580,80 @@ try {
        ein Wächter, dessen Grund man nicht kennt, wird weggeklickt.
        [[regel_gilt_nur_mit_begruendung]] */
     const fehlerVorher = errors.length;
+    /* ---------- Wer traegt den Lernstand nachtraeglich nach? (21.08.2026) ----
+
+       ⛔ ANLASS und WARUM DIE PRUEFUNG HIER STEHT und nicht im Browser.
+
+       Eine Karte ohne Eintrag in PROGRESS verschwindet lautlos aus dueWords() —
+       die App sieht nicht kaputt aus, sie ist nur kleiner. Nachtraeglich
+       entstehen Karten genau einmal: `wendePluralKartenAn()` legt am Ende des
+       Startlaufs die Pluralkarten an. Danach muss `ergaenzeProgress()` laufen.
+
+       Der naheliegende Waechter waere im Browser: „hat jede Karte einen
+       Eintrag?" Der funktioniert NICHT, und das ist gemessen. PROGRESS steht
+       im localStorage und wird ueber Laeufe hinweg voller — er misst also die
+       Vorgeschichte des Pruefstands, nicht die App:
+
+         gleicher Quelltext, Aufruf stillgelegt, aber vt_progress gefuellt
+           -> „4461 Karten, alle mit Eintrag"      gruen
+         gleicher Quelltext, Aufruf stillgelegt, vt_progress geleert
+           -> 518 Karten, 70 ohne Eintrag, dueWords() 448 statt 518
+         und NACH dem Prueflauf, der selbst alle Buecher laedt
+           -> 4653 Karten, 4205 ohne Eintrag — und der Lauf meldet 0 Fehler
+
+       ⭐ Was fehlen kann, ist nicht der Zustand, sondern der AUFRUF. Und den
+       sieht man im Quelltext, nicht zur Laufzeit.
+       [[werkzeug_ohne_aufrufer]] [[eingefrorenes_feld_ist_kein_zustand]]
+
+       ⚠️ IHRE GRENZE, gemessen und nicht geschaetzt. Stoertest mit drei Faellen:
+
+         Aufruf ganz entfernt           -> exit 1, richtige Meldung   ✅
+         Aufruf VOR den Pluralkarten    -> exit 1, richtige Meldung   ✅
+         Aufruf da, aber tot gestellt
+         (`if (false && …) ergaenz…()`) -> exit 0                     ⛔ nicht erkannt
+
+       Der dritte Fall bleibt offen: die Pruefung sieht, DASS der Aufruf
+       dasteht, nicht ob er laufen kann. Wer eine Bedingung davorsetzt, muss
+       selbst wissen, was er tut. Das hier ist ein Waechter gegen Loeschen und
+       Verschieben, nicht gegen Stilllegen — und dieser Satz steht hier, damit
+       niemand ihm mehr zutraut. [[begrenzung_haelt_messung_nicht_stand]] */
+    {
+      const kernRoh = fs.readFileSync(path.join(DIR, 'js', 'kern.js'), 'utf8');
+      const buchRoh = fs.readFileSync(path.join(DIR, 'js', 'buecher.js'), 'utf8');
+      /* ⛔ Kommentare weg, sonst zaehlt die Erklaerung als Aufruf. Genau das ist
+         am 21.08.2026 in werkzeuge/wartet-auf-elias.mjs passiert.
+         [[stichworttreffer_im_kommentar]] */
+      const ohneKommentare = t => t
+        .replace(/\/\*[\s\S]*?\*\//g, ' ')
+        .replace(/(^|[^:])\/\/[^\n]*/g, '$1');
+
+      if (!/function\s+ergaenzeProgress\s*\(/.test(ohneKommentare(kernRoh))){
+        fail('js/kern.js hat kein ergaenzeProgress() mehr. Dann bekommt keine nachtraeglich '
+           + 'entstandene Karte (die Pluralkarten) einen Lernstand — und eine Karte ohne '
+           + 'Lernstand faellt lautlos aus dueWords() heraus.');
+      } else {
+        const buch  = ohneKommentare(buchRoh);
+        const iDom  = buch.indexOf("addEventListener('DOMContentLoaded'");
+        const start = buch.slice(iDom < 0 ? 0 : iDom);
+        const iPlural = start.indexOf('wendePluralKartenAn(');
+        const iErg    = start.search(/ergaenzeProgress\s*\(\s*\)/);
+        if (iDom < 0){
+          fail('js/buecher.js hat keinen DOMContentLoaded-Block mehr — dort haengt der '
+             + 'ganze Startlauf (Buecher laden, Pluralkarten, Lernstand nachtragen).');
+        } else if (iErg < 0){
+          fail('ergaenzeProgress() wird im Startlauf von js/buecher.js NICHT aufgerufen. '
+             + 'Gemessen am 21.08.2026: dann stehen 70 von 192 Pluralkarten ohne Lernstand da '
+             + 'und fallen lautlos aus jeder Lernrunde — dueWords() lieferte 448 statt 518.');
+        } else if (iPlural >= 0 && iErg < iPlural){
+          fail('ergaenzeProgress() steht im Startlauf VOR wendePluralKartenAn(). Die '
+             + 'Pluralkarten entstehen erst dort — vorher nachzutragen traegt nichts nach.');
+        } else {
+          note('Lernstand: ergaenzeProgress() steht im Startlauf'
+             + (iPlural >= 0 ? ' und nach wendePluralKartenAn().' : '.'));
+        }
+      }
+    }
+
     const swRoh = fs.readFileSync(path.join(DIR, 'sw.js'), 'utf8');
     const fetchBlock = swRoh.slice(swRoh.indexOf("addEventListener('fetch'"));
     if (fetchBlock){
