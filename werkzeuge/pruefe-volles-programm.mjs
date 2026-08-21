@@ -36,6 +36,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { spawnSync } from 'node:child_process';
 
 /* ⛔ fileURLToPath, nicht von Hand: der Ordner heisst «1. Workspace» mit
    Leerstelle, die in import.meta.url als %20 steht. */
@@ -445,6 +446,50 @@ if (ungemessen.length){
   console.log('     ergänzt — die Liste verspricht dort etwas, das nicht stattfindet.');
 }
 
+console.log('');
+console.log('  Und zuletzt: startet die Wartung ueberhaupt ALLE Pruefungen?');
+/* ⭐ Der Grund, warum das ausgerechnet HIER steht und nicht in
+   pruefe-sammellauf.mjs, wo es gemessen wird:
+
+   pruefe-sammellauf.mjs weiss seit dem 21.08., dass Pruefer im
+   Wartungs-Prompt fehlen — aber es steht SELBST nur im Sammellauf, und den
+   ruft die Wartung nicht auf. Der Waechter ueber die Luecke steckte also in
+   der Luecke: die Erkenntnis entstand mittwochs und sonntags nie.
+   [[rueckfallliste_nur_ohne_hauptquelle_pruefbar]] [[werkzeug_ohne_aufrufer]]
+
+   Diese Datei dagegen ist im Wartungs-Prompt genannt und laeuft Mi/So mit.
+   Sie ist damit der einzige Ort, an dem Elias den Befund ueberhaupt zu
+   sehen bekommt, solange die fehlende Zeile nicht eingetragen ist.
+
+   ⛔ Die Zahl wird NICHT nachgebaut, sondern beim Messenden erfragt — sonst
+   haette ich zwei Listen, die auseinanderlaufen. [[handliste_neben_echter_quelle]] */
+const SAMMELPRUEFER = path.join(HIER, 'pruefe-sammellauf.mjs');
+if (!fs.existsSync(SAMMELPRUEFER)){
+  console.log('    ⓘ   pruefe-sammellauf.mjs gibt es nicht mehr — ungeprueft.');
+} else {
+  const lauf = spawnSync(process.execPath, [SAMMELPRUEFER], { encoding: 'utf8' });
+  const text = (lauf.stdout || '') + (lauf.stderr || '');
+  const treffer = text.match(/(\d+) Pruefer stehen NICHT im Wartungs-Prompt/);
+  if (lauf.error || (!treffer && !/im Wartungs-Prompt sind alle genannt/.test(text))){
+    /* ⛔ Kein stilles Durchwinken: antwortet der Messende nicht wie erwartet,
+       ist das ein Befund und keine Entwarnung. [[ausfall_ist_unsichtbar_gebaut]] */
+    fehler++;
+    console.log('    ⛔   pruefe-sammellauf.mjs antwortet nicht wie erwartet'
+      + (lauf.error ? ' (' + lauf.error.message + ')' : ' (Exitcode ' + lauf.status + ')'));
+    console.log('         Ohne seine Antwort ist unbekannt, wie viele Pruefungen Mi/So fehlen.');
+  } else if (treffer){
+    console.log('    ⚠️   ' + treffer[1] + ' Pruefungen laufen mittwochs und sonntags NICHT mit.');
+    console.log('         Es fehlt im Wartungs-Prompt genau eine Zeile:');
+    console.log('           node werkzeuge/alle-pruefer.mjs');
+    console.log('         Sie startet alle auf einmal und veraltet nie.');
+    console.log('         ⛔ Nicht von hier aus zu beheben — der Prompt liegt ausserhalb');
+    console.log('            des Vokabeltrainer-Ordners. Das braucht ein Wort von Elias.');
+    console.log('         (Hinweis, kein Fehler: ein Rot, das niemand beheben kann,');
+    console.log('          liest irgendwann keiner mehr.)');
+  } else {
+    console.log('    ok   die Wartung startet jede Pruefung, die es im Projekt gibt.');
+  }
+}
 console.log('');
 if (fehler){
   console.log('⛔ ' + fehler + ' Befund(e). „Das volle Programm" ist nicht an allen Orten dasselbe.');
