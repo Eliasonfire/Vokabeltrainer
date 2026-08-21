@@ -46,6 +46,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { ersetzeDatei } from './schreibe-ersetzend.mjs';
 
 const HIER  = path.dirname(fileURLToPath(import.meta.url));
 const WURZEL = path.join(HIER, '..');
@@ -228,8 +229,11 @@ if (fehler.length){
        und eine leere Datei besteht jeden Test. Erst daneben, dann umbenennen;
        rename ist auf demselben Laufwerk unteilbar.
        [[leere_datei_besteht_jeden_test]] */
-    fs.writeFileSync(VOCAB + '.neu', vocab);
-    fs.renameSync(VOCAB + '.neu', VOCAB);
+    /* ⭐ Zweite Haelfte derselben Absicherung: `.neu`+rename faengt den ABBRUCH,
+       nicht den vollstaendigen Lauf mit falschem Ergebnis. vocab-data.js traegt
+       171 Lernwoerter — schrumpft die Datei, ist sie formal in Ordnung und der
+       Lernbestand halbiert. [[schreibe_ersetzend]] */
+    ersetzeDatei(VOCAB, vocab, { grund: 'vocab-data.js traegt 171 Lernwoerter mit Saetzen und Quran-Belegen.' });
 /* ⛔ Nie direkt auf die bestehende Datei: data/eselsbruecken-alt.js.
        Bricht der Lauf mitten im Schreiben ab, steht dort eine leere Datei —
        und eine leere Datei besteht jeden Test. Erst daneben, dann umbenennen;

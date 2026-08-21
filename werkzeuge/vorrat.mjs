@@ -67,6 +67,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
+import { ersetzeDatei } from './schreibe-ersetzend.mjs';
 
 /* fileURLToPath, nicht von Hand zerlegen: der Ordner heisst "1. Workspace"
    mit Leerzeichen, das steht in import.meta.url als %20. */
@@ -277,8 +278,13 @@ function freischaltungSchreiben(neu, heute){
        und eine leere Datei besteht jeden Test. Erst daneben, dann umbenennen;
        rename ist auf demselben Laufwerk unteilbar.
        [[leere_datei_besteht_jeden_test]] */
-    fs.writeFileSync(KERN + '.neu', raus, 'utf8');
-    fs.renameSync(KERN + '.neu', KERN);
+    /* ⭐ Und die zweite Haelfte derselben Absicherung: `.neu`+rename faengt den
+       ABBRUCH, nicht den vollstaendigen Lauf mit falschem Ergebnis. Hier steht
+       eine Regex-Ersetzung ueber die ganze App-Datei — trifft sie zu viel, ist
+       js/kern.js formal in Ordnung und die App kaputt. Die Zeile darueber
+       (`raus === q`) faengt nur den Fall, dass GAR NICHTS ersetzt wurde.
+       [[schreibe_ersetzend]] */
+    ersetzeDatei(KERN, raus, { grund: 'js/kern.js traegt die Freischaltliste und den ganzen Kern.' });
 }
 
 /* ---------- Lernstand: wo hat er WIRKLICH geuebt ---------- */
