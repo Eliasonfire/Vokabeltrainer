@@ -1,6 +1,10 @@
 /* test-feld-ergaenzungen.mjs — kommt Elias' Antwort wirklich auf der Karte an?
  * ==========================================================================
  *
+ * Prueft BEIDE Richtungen des Rueckwegs: einen Wert (FELD_ERGAENZUNGEN) und
+ * ein „gibt es nicht“ (FELD_AUSNAHMEN). Der Dateiname nennt nur die erste —
+ * er bleibt, weil ein Umbenennen den Sammellauf-Eintrag brechen wuerde.
+ *
  * Aufruf:  node test-feld-ergaenzungen.mjs
  * Exitcode 0 = die Kette traegt, 1 = eine Antwort verpufft
  *
@@ -112,5 +116,62 @@ if (schlecht){
   console.log('   er beantwortet die Frage, und beim naechsten Lauf steht sie wieder da.');
   process.exit(1);
 }
-console.log('✅ Alle drei Faelle richtig — der Rueckweg traegt bis auf die Karte.');
+console.log('  ok   Ergaenzungen: alle drei Faelle richtig.');
+
+/* ========================================================================
+   AUSNAHMEN — die Gegenrichtung
+
+   Oben ging es um "hier ist der Wert". Hier geht es um "den gibt es nicht".
+   Beides sind Antworten von Elias, und beide koennen verpuffen — nur
+   merkt man es hier anders: die Frage kommt bei JEDEM Lauf wieder, und er
+   beantwortet sie wieder und wieder.
+
+   ⛔ FELD_AUSNAHMEN ist heute ebenfalls LEER. Auch das faellt erst an
+   seiner ersten Antwort auf. [[flaeche_nur_im_gefuellten_zustand]]
+
+   ⚠️ Getrennte Meldung, nicht in die Ergaenzungs-Zaehlung gemischt: eine
+   Fehlermeldung, die auf die falsche Ursache zeigt, ist schlimmer als
+   keine. [[werkzeug_misst_kleineren_bestand]] */
+if (!W.feldAusnahme || !W.FELD_AUSNAHMEN){
+  console.log('⛔ feldAusnahme/FELD_AUSNAHMEN fehlt — „gibt es nicht" wirkt nirgends.');
+  process.exit(1);
+}
+
+W.FELD_AUSNAHMEN['t-ausnahme'] = { pl: 'Elias: gibt es nicht' };
+const wortA = { id: 't-ausnahme', type: 'noun' };
+const wortB = { id: 't-ohne-eintrag', type: 'noun' };
+
+/* ⛔ quelle absichtlich als leere Zeichenkette: sonst koennte eine
+   FELD_REGELN-Regel ueber die Quelle anschlagen und der Test waere gruen,
+   ohne dass Elias Eintrag je gelesen wurde. Fall B beweist, dass hier
+   wirklich NUR sein Eintrag wirkt. [[pruefung_fragt_einen_stellvertreter_ab]] */
+const mitEintrag  = W.feldAusnahme(wortA, 'pl', '');
+const ohneEintrag = W.feldAusnahme(wortB, 'pl', '');
+
+console.log('');
+console.log('=== Legt „gibt es nicht" die Frage still? ===');
+console.log('');
+console.log('  ' + (mitEintrag ? 'ok  ' : '⛔  ') + 'mit seinem Eintrag   -> '
+  + (mitEintrag ? 'Frage entfaellt ("' + mitEintrag + '")' : 'Frage kommt WIEDER'));
+console.log('  ' + (!ohneEintrag ? 'ok  ' : '⛔  ') + 'ohne Eintrag         -> '
+  + (ohneEintrag ? 'faelschlich still ("' + ohneEintrag + '")' : 'Frage wird gestellt'));
+
+/* ⭐ Und der Aufrufer: die Funktion kann richtig antworten und trotzdem
+   wirkungslos sein, wenn niemand sie fragt. [[werkzeug_ohne_aufrufer]] */
+const VORRAT = path.join(HIER, 'werkzeuge', 'vorrat.mjs');
+const rufer = fs.existsSync(VORRAT)
+  && /feldAusnahme\s*&&\s*feldAusnahme\(/.test(fs.readFileSync(VORRAT, 'utf8'));
+console.log('  ' + (rufer ? 'ok  ' : '⛔  ') + 'vorrat.mjs fragt sie ' + (rufer ? '' : 'NICHT ')
+  + '— sonst waere die Antwort richtig und trotzdem wirkungslos');
+
+if (!mitEintrag || ohneEintrag || !rufer){
+  console.log('');
+  console.log('⛔ „Gibt es nicht" wirkt nicht. Elias bekaeme dieselbe Frage bei jedem Lauf');
+  console.log('   wieder vorgelegt — und haette keine Moeglichkeit, sie loszuwerden.');
+  process.exit(1);
+}
+
+console.log('');
+console.log('✅ Alle sechs Faelle richtig — der Rueckweg traegt in BEIDE Richtungen:');
+console.log('   ein Wert kommt auf der Karte an, ein „gibt es nicht“ legt die Frage still.');
 process.exit(0);
