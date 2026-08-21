@@ -80,15 +80,24 @@ if (unsicher.length) {
 }
 
 const ergebnis = [];
-let ohneDaten = 0;
+/* ⛔ Bis zum 21.08.2026 EIN Zaehler fuer DREI Ursachen — und die Beschriftung
+   nannte ausgerechnet die beiden, die nicht auftreten. Gemessen an dem Tag:
+     Buch-Ergaenzung / keine source   12x   <- die tatsaechliche Ursache
+     Folge fehlt in den Sprecherdaten  0x   <- genannt
+     kein Zeitstempel                  0x   <- genannt
+   Je Ursache ein eigener Zaehler, sonst steht am Ende eine Zahl, die man
+   nicht deuten kann. [[kennzeichen_mit_zwei_ursachen]] */
+let ohneQuelle = 0;      // Buch-Ergaenzung oder gar keine source
+let ohneFolge  = 0;      // Sprecherdaten fuer diese Folge fehlen
+let ohneZeit   = 0;      // source da, aber kein lesbarer Zeitstempel
 for (const r of GRAMMAR_RULES) {
   /* Buch-Ergaenzungen haben keine Videofundstelle — hier gibt es nichts zu
      pruefen, und ohne diese Zeile stuerzt der Lauf an `r.source.folge` ab. */
-  if (r.ergaenzung || !r.source) { ohneDaten++; continue; }
+  if (r.ergaenzung || !r.source) { ohneQuelle++; continue; }
   const daten = folgen[r.source.folge];
-  if (!daten) { ohneDaten++; continue; }
+  if (!daten) { ohneFolge++; continue; }
   const t = sekunden(r.source.approxTimestamp);
-  if (t === null) { ohneDaten++; continue; }
+  if (t === null) { ohneZeit++; continue; }
 
   // Redezeit je Sprecher im Fenster um den Zeitstempel
   const von = t - FENSTER, bis = t + FENSTER;
@@ -110,7 +119,15 @@ const zeile = e => `  ${String(e.lehrerProzent).padStart(3)}%  F${String(e.folge
 const belastbar = ergebnis.filter(e => e.belastbar);
 const auffaellig = belastbar.filter(e => e.lehrerProzent < 60);
 
-console.log(`${ergebnis.length} Regeln gegen die Sprecherspur gehalten, ${ohneDaten} ohne Daten (Folge fehlt noch oder kein Zeitstempel).`);
+const ohneDaten = ohneQuelle + ohneFolge + ohneZeit;
+console.log(`${ergebnis.length} von ${GRAMMAR_RULES.length} Regeln gegen die Sprecherspur gehalten.`);
+if (ohneDaten){
+  const gruende = [];
+  if (ohneQuelle) gruende.push(`${ohneQuelle} Buch-Ergaenzung(en) ohne Videofundstelle`);
+  if (ohneFolge)  gruende.push(`${ohneFolge} aus Folgen ohne Sprecherdaten`);
+  if (ohneZeit)   gruende.push(`${ohneZeit} ohne lesbaren Zeitstempel`);
+  console.log(`${ohneDaten} uebersprungen: ` + gruende.join(' · ') + '.');
+}
 console.log(`Davon ${belastbar.length} aus Folgen mit klarem Hauptsprecher.\n`);
 if (!auffaellig.length) {
   console.log('Bei jeder belastbar geprueften Regel redet im Fenster ueberwiegend der Lehrer.');
