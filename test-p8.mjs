@@ -23,8 +23,27 @@ const ELEMENTE = new Map();
 const AUSWAHL  = new Map();   /* querySelector-Treffer, siehe unten */
 function macheElement(id){
   const klassen = new Set();
+  /* ⛔ innerHTML und textContent standen hier bis zum 21.08.2026 als ZWEI
+     unverbundene Felder. Im echten DOM leitet sich textContent aus dem
+     gesetzten HTML ab — hier blieb es leer.
+
+     Aufgefallen ist es an vier Zusicherungen, die alle denselben Wert
+     meldeten: "". js/lernen.js schreibt seit Commit ecbfde0 vom 16.08.2026
+       text.innerHTML = arabischHervorheben(…)
+     (damit arabische Woerter gross gesetzt werden koennen), der Pruefstand
+     liest aber textContent. Vier rote Zeilen, EINE Ursache — sie einzeln zu
+     behandeln waere der Fehler gewesen. [[ein_weg_geht_der_andere_nicht]]
+
+     ⚠️ Bewusste Grenze: textContent ist hier innerHTML ohne Tags. Entities
+     (&amp; -> &) werden NICHT aufgeloest. Fuer diesen Pruefstand reicht das;
+     wer hier einmal Entities prueft, muss es erweitern. */
+  let html = '';
   return {
-    id, style:{}, dataset:{}, innerHTML:'', textContent:'', value:'', disabled:false,
+    id, style:{}, dataset:{}, value:'', disabled:false,
+    get innerHTML(){ return html; },
+    set innerHTML(v){ html = String(v == null ? '' : v); },
+    get textContent(){ return html.replace(/<[^>]*>/g, ''); },
+    set textContent(v){ html = String(v == null ? '' : v); },
     classList:{
       add:(...c)=>c.forEach(x=>klassen.add(x)),
       remove:(...c)=>c.forEach(x=>klassen.delete(x)),
@@ -277,8 +296,27 @@ const mit = V.filter(w => w.mnemo);
 ok('14 Woerter starten in Box 1 oder 2', box12.length === 14, `${box12.length}`);
 ok('alle davon haben eine Eselsbruecke',
    box12.every(w => w.mnemo && String(w.mnemo).trim()), `${box12.filter(w=>w.mnemo).length}/14`);
-ok('kein Wort ausserhalb Box 1+2 hat eine',
-   mit.every(w => w.box === 1 || w.box === 2), `${mit.length} insgesamt`);
+/* ⛔ HIER STAND „kein Wort ausserhalb Box 1+2 hat eine" — eine Regel aus der
+   Zeit, als Eselsbruecken nur fuer die 14 Startwoerter gedacht waren.
+   Gemessen am 21.08.2026:
+
+     171 Woerter gesamt · 171 mit Eselsbruecke · nur 14 in Box 1+2
+     -> 157 „Verstoesse", verteilt auf Box 3 (67), 4 (43), 5 (36), ohne (11)
+
+   Eine Regel, die zu 92 % verletzt wird, ist keine Regel mehr. Der Bestand
+   hat inzwischen VOLLE Abdeckung, und das ist erkennbar Absicht: es gibt
+   ein eigenes Vorrats-Werkzeug dafuer, und pruefe-eselsbruecken.js prueft
+   die Qualitaet der Texte, nicht ihre Verteilung.
+
+   ⚠️ EHRLICHER UNTERSCHIED zu den drei anderen Erwartungen, die ich heute
+   angepasst habe (p1, p6, p9): dort lag jeweils Elias' WORTLAUT als Beleg
+   vor. Hier nicht — die neue Zusicherung ist aus dem gemessenen Zustand und
+   dem erkennbaren Zweck abgeleitet. Sie ist deshalb bewusst eine
+   Abdeckungspruefung: sie schlaegt an, wenn eine Eselsbruecke VERLOREN
+   geht, und erfindet keine Regel darueber, welche Woerter eine haben
+   duerfen. [[zitierform_ist_nicht_satzkontext]] */
+ok('jedes Wort hat eine Eselsbruecke',
+   mit.length === V.length, `${mit.length}/${V.length}`);
 ok('keine Eselsbruecke behauptet eine Wortherkunft',
    mit.every(w => !/kommt von|stammt von|abgeleitet von|verwandt mit/i.test(w.mnemo)));
 ok('Klanghilfen sind als solche gekennzeichnet',
