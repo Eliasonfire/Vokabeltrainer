@@ -732,6 +732,54 @@ const ohneKommentare = txt => txt
 
    ⛔ Beim naechsten Mal zuerst pruefen, ob die FRAGE noch stimmt — nicht nur,
    ob sie beantwortet ist. [[eingefrorenes_feld_ist_kein_zustand]] */
+/* A9) Merksaetze, die den Quran zitieren.
+
+   ⛔ pruefe-eselsbruecken.js ist rot, aber sein Befund stand als EINZIGER
+   der drei roten Pruefer nirgends auf dieser Seite. Wer den Sammellauf
+   liest, sieht "3 rot" und haelt alle drei fuer bekannt.
+   [[daten_ohne_zugang]]
+
+   ⭐ Zwei Fragen, ein Posten — beide betreffen dasselbe: Koranzitate in
+   Merksaetzen. Er kann sie in einem Zug beantworten.
+
+   ⚠️ Die dritte Gruppe der Befunde ("steht erst in Kapitel 15") kommt
+   NICHT auf die Seite: sie loest sich von selbst, sobald er dort ankommt.
+   Ein Posten, den niemand bearbeiten muss, ist Laerm. */
+{
+  const eb = messen(path.join(REPO, 'pruefe-eselsbruecken.js'));
+  const zeilen = eb.text.split(/\r?\n/);
+  let abschnitt = 0;
+  const koranMerksaetze = new Set(), langeMerksaetze = new Set();
+  for (const z of zeilen){
+    const k = z.match(/^=== (\d)\./);
+    if (k){ abschnitt = Number(k[1]); continue; }
+    const f = z.match(/^\s+FEHL\s+(\S+)/);
+    if (!f) continue;
+    if (abschnitt === 1) koranMerksaetze.add(f[1]);
+    if (abschnitt === 2) langeMerksaetze.add(f[1]);
+  }
+  /* Vereinigung, nicht Summe: zwei Merksaetze stehen in BEIDEN Abschnitten,
+     weil dasselbe Zitat beide Regeln verletzt. Eine Entscheidung loest
+     dort zwei Meldungen. [[trefferquote_ohne_preis]] */
+  const alle = new Set([...koranMerksaetze, ...langeMerksaetze]);
+  if (alle.size){
+    posten.push({
+      titel: 'Merksätze, die den Quran zitieren',
+      zahl: alle.size, einheit: 'Merksätze', auswahl: true,
+      dazu: koranMerksaetze.size + ' mit Sure außerhalb deines auswendigen Bereichs · '
+            + langeMerksaetze.size + ' mit mehr als 4 arabischen Wörtern',
+      aufwand: 'zwei Entscheidungen — das Umschreiben mache ich',
+      warum: 'Eine Eselsbrücke trägt nur, wenn das andere Ufer schon steht. '
+           + 'Sure 2 kennst du nicht auswendig, also hilft ein Zitat daraus nicht beim Merken. '
+           + 'Umgekehrt sind zwei der langen Läufe aus Suren, die du KANNST (105 und 67) — '
+           + 'dort ist die Anknüpfung gut, nur der Lauf ist lang.',
+      wie: '1) Sollen die Zitate aus Sure 2 durch etwas ersetzt werden, das du kennst? '
+         + '2) Darf ein Koranzitat länger als 4 Wörter sein, wenn du die Sure auswendig kannst? '
+         + '(Kürzen würde ich es nicht — der Wortlaut gehört der Quelle.)'
+    });
+  }
+}
+
 posten.push({
   titel: 'Wortmarke: welche Farbe?',
   zahl: 1, einheit: 'Entscheidung', dazu: 'Schrift steht bereits', auswahl: true,
