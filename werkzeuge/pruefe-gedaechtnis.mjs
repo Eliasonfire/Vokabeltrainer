@@ -132,6 +132,9 @@ const MUSTER = [
 ];
 
 let gemeldet = 0;
+/* "73 Regeln" -> { stellen: 10, dateien: Set }. Am 21.08.2026 waren zehn der
+   23 Kandidaten dieselbe Angabe in zwei Dateien: EIN Sachverhalt, keine zehn. */
+const buendel = new Map();
 for (const datei of DATEIEN) {
   if (!fs.existsSync(datei)) { console.log(`\n!! fehlt: ${datei}`); continue; }
   const zeilen = fs.readFileSync(datei, 'utf8').split(/\r?\n/);
@@ -173,9 +176,19 @@ for (const datei of DATEIEN) {
   });
 
   if (befunde.length) {
-    gemeldet += befunde.length;
+    const einmalig = [...new Set(befunde)];
+    gemeldet += einmalig.length;
     console.log(`\n${path.basename(datei)}`);
-    [...new Set(befunde)].forEach(b => console.log(b));
+    einmalig.forEach(b => console.log(b));
+    einmalig.forEach(b => {
+      const m = b.match(/"(.+?)"/);
+      if (!m) return;
+      const k = m[1].trim();
+      if (!buendel.has(k)) buendel.set(k, { stellen: 0, dateien: new Set() });
+      const e = buendel.get(k);
+      e.stellen++;
+      e.dateien.add(path.basename(datei));
+    });
   }
 }
 
@@ -190,6 +203,33 @@ console.log(gemeldet
 ${gemeldet} KANDIDAT(EN) ansehen - sie stehen NICHT in einem datierten Abschnitt.
 ⚠️ Die meisten sind Teilangaben, keine Gesamtstaende. Entscheidend ist die Zeile darunter.`
   : '\nKeine widersprechende Zahl ausserhalb der Verlaufsabschnitte.');
+
+/* ⭐ Nach Angabe gebuendelt. Zehn der 23 Kandidaten vom 21.08.2026 waren
+   dieselbe Zahl - gebuendelt sieht man den einen Sachverhalt statt zehn
+   Einzelmeldungen. */
+const gebuendelt = [...buendel.entries()].sort((a, b) => b[1].stellen - a[1].stellen);
+if (gebuendelt.some(([, e]) => e.stellen > 1)){
+  console.log('\nNach Angabe gebuendelt:');
+  for (const [k, e] of gebuendelt)
+    console.log(`   "${k}"  ${e.stellen}x in ${e.dateien.size} Datei(en): ${[...e.dateien].join(", ")}`);
+}
+
+/* ⛔ DIE GEMESSENE TREFFERQUOTE GEHOERT IN DIE AUSGABE, nicht nur in einen
+   Kommentar im Quelltext - gelesen wird der Lauf, nicht die Datei.
+   [[verbesserung_hinter_dem_aufklapper]] [[trefferquote_ohne_preis]]
+
+   Zweimal von Hand nachgelesen, jedes Mal ALLE Kandidaten mit Kontext:
+     20.08.2026   0 von 17 echt
+     21.08.2026   0 von 23 echt
+   Die vier Arten: Zitat mit Datum (die Korrektur steht daneben) / "die 73
+   Regeln" als Bezugsgroesse im Verlauf / Teilmenge nach "in, an, bei,
+   brachte" / Einzelkennung ("mb1-51-1 hatte 4 Markierungen").
+   [[kandidatenliste_ist_keine_fehlerliste]] */
+if (gemeldet){
+  console.log('\nZur Einordnung: bei beiden Handpruefungen dieser Liste war KEIN Kandidat echt');
+  console.log('   (20.08.2026: 0 von 17  ·  21.08.2026: 0 von 23).');
+  console.log('   Kandidatenliste, keine Fehlerliste - jede Zeile im Wortlaut lesen.');
+}
 
 /* ---------- Zweite Pruefung: sagt die Kurzbeschreibung noch dasselbe wie der Text? ----------
  *
