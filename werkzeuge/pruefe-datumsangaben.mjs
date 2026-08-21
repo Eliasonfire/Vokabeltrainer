@@ -332,12 +332,27 @@ for (const r of rueckwaerts){
   console.log('     git log --format=\'%h %cd %s\' --date=format:\'%H:%M\'');
 }
 
-if (!weicht) console.log('\n✅ Keine Überschrift widerspricht ihren Commits.');
+/* ⛔ Bis zum 21.08.2026 stand hier `if (!weicht)` — die gruene Zeile sprach
+   also nur ueber EINE der drei Pruefungen, stand aber ganz unten und las
+   sich als Gesamturteil. An dem Tag lieferte das Skript "✅ Keine
+   Ueberschrift widerspricht ihren Commits." UND Exitcode 1: ein
+   rueckwaerts laufender Block war gefunden, aber unten nicht mehr erwaehnt.
+   Wer die Ausgabe liest, sah gruen; wer den Exitcode prueft, sah rot.
+   [[widerspruch_liegt_in_der_beschriftung]] [[erfolgsmeldung_ohne_wirkung]] */
+const alleSauber = !weicht && !zeitRot.length && !rueckwaerts.length;
+if (alleSauber) console.log('\n✅ Alle drei Pruefungen sauber: Datum, Uhrzeit, Reihenfolge.');
+else if (!weicht) console.log('\n✅ Kein Datum widerspricht seinen Commits'
+  + (rueckwaerts.length || zeitRot.length ? ' — aber siehe unten.' : '.'));
 else console.log('\n⚠️  ' + weicht + ' Überschrift(en) prüfen — und NICHT blind umschreiben:'
   + '\n   Ein Kurzstand darf am Folgetag datiert sein („Stand von wann"), ein'
   + '\n   Verlaufsblock nicht („wann passierte es"). Erst den Block lesen.');
 if (zeitRot.length) console.log('⚠️  ' + zeitRot.length + ' Uhrzeit(en) prüfen — dasselbe gilt hier:'
   + '\n   erst den Block lesen, dann die Zahl korrigieren. Die Commit-Zeit ist'
   + '\n   die bessere Quelle als jede Erinnerung.');
+/* ⛔ Dieser Hinweis fehlte bis zum 21.08.2026 als einziger von dreien —
+   und ausgerechnet er war der, der an dem Tag zuschlug. */
+if (rueckwaerts.length) console.log('⚠️  ' + rueckwaerts.length + ' Block/Bloecke laufen zeitlich RUECKWAERTS.'
+  + '\n   Eine spaetere Zeile mit frueherer Uhrzeit ist nachgetragen oder'
+  + '\n   geschaetzt. Die Fundstellen stehen oben, mit Zeilennummer.');
 
 process.exit(weicht || zeitRot.length || rueckwaerts.length ? 1 : 0);
