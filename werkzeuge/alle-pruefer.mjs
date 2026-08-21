@@ -79,6 +79,7 @@ const PRUEFER = [
   ['werkzeuge/pruefe-eigene-vorrang.mjs', []],
   ['werkzeuge/pruefe-erreichbarkeit-eichung.mjs', []],
   ['werkzeuge/pruefe-gedaechtnis.mjs', []],
+  ['werkzeuge/pruefe-ids.mjs', []],
   ['werkzeuge/pruefe-plural-thema.mjs', []],
   ['werkzeuge/pruefe-schreibpfade.mjs', []],
   ['werkzeuge/pruefe-volles-programm.mjs', []]
