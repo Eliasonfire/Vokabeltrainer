@@ -122,23 +122,20 @@ const PRUEFER = [
        eiche-wortart-knopf     <- werkzeuge/wartungsfragen-artefakt.mjs
        eiche-zahlplural        <- validate.js (const ZAHLWORT)
 
-     ⭐ Am 21.08.2026 waren es noch drei Kopie-Eichungen; zwei davon sind
-     seither umgebaut und stehen jetzt oben mit in der Liste:
-       eiche-harf-jarr     liest harf-jarr-fi-ala-01 aus pruefe-markierungen.js
-       eiche-plural-beleg  prueft ihre Fassung gegen werkzeuge/aussenbelege.mjs
+     ⭐ Am 21.08.2026 trugen DREI von ihnen ihre Bedingung als Kopie und
+     prueften damit sich selbst. Alle drei sind seither umgebaut:
+       eiche-harf-jarr      liest harf-jarr-fi-ala-01 aus pruefe-markierungen.js
+       eiche-plural-beleg   prueft ihre Fassung gegen werkzeuge/aussenbelege.mjs
+       eiche-taschkil-beleg laedt harakaAnStelle aus werkzeuge/aussenbelege.mjs
 
-     ⛔ EINE FEHLT WEITER: eiche-taschkil-beleg. Sie traegt ihre Bedingungen
-     als Kopie und weicht dabei nachweislich ab — ihrem `DIA` fehlen U+200E
-     und U+200F, die beiden RTL-Steuerzeichen, die aussenbelege.mjs ueber
-     seine Konstante STEUER sehr wohl entfernt. Sie prueft also ein anderes
-     Skelett als das, was laeuft, und meldet trotzdem gruen.
-
-     Ein Textvergleich wie bei eiche-plural-beleg traegt dort nicht:
-     harakaJeKonsonant steht in der Quelle INNERHALB von harakaAnStelle, in
-     der Eichung als eigene Funktion daneben. Der Weg waere, beide Bloecke
-     (aussenbelege Z. 97-101 und 455-480) per new Function zu laden und die
-     eigenen Definitionen zu entfernen — praktisch eine Neufassung.
-     [[handliste_neben_echter_quelle]]
+     ⛔ Bei der letzten war es kein blosser Vorsichtsfall: ihre Kopie WICH
+     BEREITS AB. Ihrem DIA fehlten U+200E und U+200F, die beiden
+     RTL-Steuerzeichen, die aussenbelege.mjs ueber seine Konstante STEUER
+     sehr wohl entfernt — sie prueft also ein anderes Skelett als das, was
+     laeuft, und meldete trotzdem gruen. Dazu stand SCH als /ّ/ statt
+     /\u0651/ da, obwohl die Quelle eine Zeile darueber ausdruecklich davor
+     warnt („Als \u-Folgen, nie sichtbar kopiert").
+     [[handliste_neben_echter_quelle]] [[zeichenklasse_nie_sichtbar_kopieren]]
 
      ⭐ eiche-zahlplural sagt diese Lehre in seinem eigenen Kopf („Die Regex
      wird NICHT nachgebaut, sondern aus validate.js gelesen") — sie war beim
@@ -152,6 +149,7 @@ const PRUEFER = [
   ['werkzeuge/eiche-harf-jarr.mjs', []],
   ['werkzeuge/eiche-datumsmuster.mjs', []],
   ['werkzeuge/eiche-plural-beleg.mjs', []],
+  ['werkzeuge/eiche-taschkil-beleg.mjs', []],
   ['werkzeuge/eiche-fragenreihenfolge.mjs', []],
   ['werkzeuge/eiche-wortart-knopf.mjs', []],
   ['werkzeuge/eiche-zahlplural.mjs', []]
