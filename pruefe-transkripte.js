@@ -287,11 +287,18 @@ function spurFuer(folge) {
 }
 
 const ergebnis = [];
+const uebersprungen = [];   // Buch-Ergaenzungen, siehe unten
 for (const r of GRAMMAR_RULES) {
   if (NUR && r.id !== NUR) continue;
   /* Buch-Ergaenzungen stehen in keinem Transkript — sie kommen ja gerade nicht
-     aus dem Unterricht. Ohne diese Zeile stirbt der Lauf an `r.source`. */
-  if (r.ergaenzung || !r.source) continue;
+     aus dem Unterricht. Ohne diese Zeile stirbt der Lauf an `r.source`.
+
+     ⛔ Bis zum 21.08.2026 wurden sie STILL verworfen, und die Kopfzeile
+     meldete "83 von 83 Regeln pruefbar" — das liest sich wie 100 %.
+     grammar-data.js hat 95 Regeln; 12 fallen hier heraus. Der Grund ist
+     gut, aber er stand nur im Quelltext, nicht in der Ausgabe. Jede Quote
+     braucht ihren Nenner. [[trefferquote_ohne_preis]] */
+  if (r.ergaenzung || !r.source){ uebersprungen.push(r); continue; }
   const t = sekunden(r.source.approxTimestamp);
   const spur = spurFuer(r.source.folge);
   const formen = kernformen(r);
@@ -357,7 +364,15 @@ const hand = offen.concat(ohneMuster).filter(e => handGeprueft.has(e.regel));
 
 const folgenMitWhisper = [...new Set(mitWhisper.map(e => e.folge))].sort((a,b)=>a-b);
 console.log(`Zweite Lesart liegt vor fuer Folge ${folgenMitWhisper.join(', ') || '(noch keine)'}`);
-console.log(`${mitWhisper.length} von ${ergebnis.length} Regeln pruefbar | Fenster +/- ${FENSTER}s\n`);
+console.log(`${mitWhisper.length} von ${ergebnis.length} Regeln pruefbar | Fenster +/- ${FENSTER}s`);
+/* ⭐ Der volle Nenner. Ohne ihn sieht "83 von 83" nach Vollstaendigkeit aus. */
+console.log(`${GRAMMAR_RULES.length} Regeln in grammar-data.js, davon ${uebersprungen.length} `
+  + 'ohne Transkriptbezug uebersprungen (Buch-Ergaenzungen — sie kommen nicht '
+  + 'aus dem Unterricht und KOENNEN dort nicht stehen).');
+if (uebersprungen.length)
+  console.log('   ' + uebersprungen.map(r => r.id).join(', ').slice(0, 300)
+    + (uebersprungen.map(r => r.id).join(', ').length > 300 ? ' …' : ''));
+console.log('');
 
 console.log(`  ${String(beide.length).padStart(3)}  beide Lesarten belegen die Kernform  (belastbar)`);
 console.log(`  ${String(nurW.length).padStart(3)}  nur der eigene Whisper-Lauf          (YouTube hat sie verstuemmelt)`);
