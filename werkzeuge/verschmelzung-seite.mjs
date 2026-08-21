@@ -340,11 +340,54 @@ ${gruppenHtml}
    regelkandidaten-v1 liegen im selben localStorage — wer einen davon
    wiederverwendet, loescht Elias die Antworten aus dem anderen Artefakt. */
 const SCHLUESSEL = 'verschmelzung-v1';
-const stand = JSON.parse(localStorage.getItem(SCHLUESSEL) || '{}');
+
+/* ⛔ HIER STAND JSON.parse(localStorage.getItem(...)) OHNE try (bis
+   21.08.2026). Ist der Speicher gesperrt — und bei einer lokal geoeffneten
+   Datei ist er das oft —, wirft schon das getItem, und dann stirbt das
+   ganze Skript BEIM LADEN. Nicht das Speichern ging still schief: die
+   Seite waere gar nicht erst benutzbar gewesen, ohne jede Meldung.
+   [[localstorage_kann_werfen]]
+
+   Uebernommen aus werkzeuge/freigabe-seite.mjs, wo die Loesung seit einem
+   echten Vorfall steht ("Storage is disabled inside data: URLs ... beim
+   naechsten Neuladen waere die Arbeit von einer Stunde weg gewesen") und
+   nie zu den Nachbarseiten gewandert ist.
+   [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+let SPEICHER_GEHT = false;
+try {
+  localStorage.setItem(SCHLUESSEL + '-probe', '1');
+  SPEICHER_GEHT = localStorage.getItem(SCHLUESSEL + '-probe') === '1';
+  localStorage.removeItem(SCHLUESSEL + '-probe');
+} catch(e) { SPEICHER_GEHT = false; }
+
+let stand = {};
+if (SPEICHER_GEHT) {
+  try { stand = JSON.parse(localStorage.getItem(SCHLUESSEL) || '{}'); }
+  catch(e) { stand = {}; }
+}
 
 function sichern(){
-  localStorage.setItem(SCHLUESSEL, JSON.stringify(stand));
+  if (SPEICHER_GEHT) {
+    try { localStorage.setItem(SCHLUESSEL, JSON.stringify(stand)); }
+    catch(e) { SPEICHER_GEHT = false; warneSpeicher(); }
+  }
   zeichnen();
+}
+
+/* Sichtbar machen, wenn nichts behalten wird. Eine stille Fehlfunktion ist
+   hier schlimmer als gar keine Seite: sie sieht aus, als wuerde sie
+   arbeiten. [[ausfall_ist_unsichtbar_gebaut]] */
+function warneSpeicher(){
+  if (SPEICHER_GEHT || document.getElementById('speicherwarnung')) return;
+  const d = document.createElement('div');
+  d.id = 'speicherwarnung';
+  d.style.cssText = 'background:#210d0c;border:1px solid #5a1f1c;border-left:3px solid #c4483f;'
+    + 'padding:.7rem .9rem;border-radius:6px;margin:0 0 1rem;font-size:.9rem;line-height:1.5';
+  d.innerHTML = '<b style="color:#e0776d">Dieser Browser behält hier nichts.</b> '
+    + 'Deine Antworten stehen nur im Arbeitsspeicher — beim Neuladen oder Schließen '
+    + 'sind sie weg. Kopier dir den Text unten heraus, bevor du die Seite verlässt.';
+  const anker = document.getElementById('stand');
+  if (anker && anker.parentNode) anker.parentNode.insertBefore(d, anker);
 }
 function zeichnen(){
   document.querySelectorAll('.gruppe').forEach(sec => {
@@ -385,8 +428,7 @@ document.addEventListener('input', e => {
   const g = e.target.closest('.gruppe').dataset.gruppe;
   stand[g] = stand[g] || {};
   stand[g].notiz = e.target.value;
-  localStorage.setItem(SCHLUESSEL, JSON.stringify(stand));
-  zeichnen();
+  sichern();   /* ueber sichern(), damit die Warnung auch hier greift */
 });
 document.getElementById('btnKopieren').addEventListener('click', async () => {
   const t = document.getElementById('ausgabe');
@@ -402,6 +444,10 @@ document.getElementById('btnZuruecksetzen').addEventListener('click', () => {
   sichern();
 });
 zeichnen();
+/* ⛔ AUCH BEIM START warnen: war der Speicher von Anfang an gesperrt, ist
+   SPEICHER_GEHT schon false, der try-Block in sichern() wird uebersprungen
+   und die Warnung kaeme nie — der haeufigere Fall also stumm. */
+warneSpeicher();
 </script></body></html>`;
 
 const ZIEL = W + 'verschmelzung.html';
