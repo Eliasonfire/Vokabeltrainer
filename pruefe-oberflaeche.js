@@ -75,8 +75,41 @@ if (typeof window === 'undefined' || typeof localStorage === 'undefined'){
 
   /* ---- 1. Alle Bildschirme ---- */
   const bildschirme = [...document.querySelectorAll('.screen')].map(s=>s.dataset.screen).filter(Boolean);
+  /* ⛔ Ohne diese Zeile prueft der ganze Abschnitt nichts: eine Schleife ueber
+     eine leere Liste laeuft fehlerfrei durch und meldet keinen einzigen Punkt.
+     Am 21.08.2026 im Browser gezaehlt: 11 Bildschirme. [[leere_liste_ist_keine_messung]] */
+  versuch('Bildschirme im Markup', ()=>{
+    if (!bildschirme.length) throw new Error('kein einziges .screen[data-screen] gefunden');
+    return `${bildschirme.length} Bildschirme`;
+  });
+  /* ⛔ Und „oeffnet" hiess bis zum 21.08.2026 nur „showScreen() ist nicht
+     abgestuerzt". Ob danach ueberhaupt ein Bildschirm aktiv war, wurde nie
+     geprueft. [[pruefung_fragt_einen_stellvertreter_ab]]
+
+     ⚠️ Sichtbarkeit ueber getComputedStyle, nicht ueber die Klasse .active —
+     eine eigene display-Regel kann sie still aushebeln.
+     [[hidden_verliert_gegen_display]]
+
+     ⚠️ EINE Umleitung ist Absicht und darf nicht als Fehler gelten:
+     js/navigation.js:11 schickt `learn` auf `home`, wenn keine Lernrunde
+     laeuft. Hier steht nur ihr ERGEBNIS, nicht die Bedingung nachgebaut —
+     sonst laufen beide Fassungen auseinander. [[vorabpruefung_kennt_ihr_tor_nicht]] */
+  const ERLAUBTE_UMLEITUNG = { learn: 'home' };
   for (const b of bildschirme){
-    versuch(`Bildschirm "${b}" oeffnet`, ()=>{ showScreen(b); });
+    versuch(`Bildschirm "${b}" oeffnet`, ()=>{
+      showScreen(b);
+      const aktiv = document.querySelector('.screen.active');
+      if (!aktiv) throw new Error('nach showScreen ist KEIN Bildschirm aktiv');
+      const gezeigt = aktiv.dataset.screen;
+      if (getComputedStyle(aktiv).display === 'none')
+        throw new Error(`"${gezeigt}" ist aktiv, steht aber auf display:none`);
+      if (gezeigt !== b){
+        if (ERLAUBTE_UMLEITUNG[b] !== gezeigt)
+          throw new Error(`sollte "${b}" zeigen, zeigt aber "${gezeigt}"`);
+        return `absichtlich auf "${gezeigt}" umgeleitet`;
+      }
+      return 'sichtbar';
+    });
     await warte(30);
   }
 
@@ -84,14 +117,26 @@ if (typeof window === 'undefined' || typeof localStorage === 'undefined'){
   versuch('Satz-Modus baut alle Saetze', ()=>{
     openSentences();
     const n = SENT.list.length;
+    /* ⛔ Bis zum 21.08.2026 fehlte diese Zeile: bei n = 0 laeuft die Schleife
+       nie, der Block meldet „0 Saetze" — und ein Totalausfall der Satzliste
+       sah genauso aus wie ein fehlerfreier Bestand.
+       Am 21.08.2026 im Browser gezaehlt: 216 Saetze. */
+    if (!n) throw new Error('SENT.list ist leer — kein einziger Satz gebaut');
     for (let i=0;i<n;i++){ SENT.idx = i; renderSentence(); }
     return `${n} Saetze`;
   });
+  /* ⛔ Zwei Luecken auf einmal, beide am 21.08.2026 geschlossen:
+     1. Fehlte renderIrab, verschwand die Pruefung OHNE jede Meldung — aus 18
+        Bloecken wurden still 17. [[ausfall_ist_unsichtbar_gebaut]]
+     2. Bei leerer Satzliste meldete sie „0 Zerlegungen" als Erfolg. */
   if (typeof renderIrab === 'function'){
     versuch("I'rab fuer jeden Satz", ()=>{
+      if (!SENT.list.length) throw new Error('SENT.list ist leer — nichts zu zerlegen');
       for (let i=0;i<SENT.list.length;i++){ SENT.idx = i; renderSentence(); renderIrab(); }
       return `${SENT.list.length} Zerlegungen`;
     });
+  } else {
+    fehl("I'rab fuer jeden Satz", 'renderIrab() gibt es nicht — die Zerlegung ist ausgebaut');
   }
 
   /* ---- 3. Markierungen: findet jeder matchText seine Stelle? ---- */
@@ -140,6 +185,10 @@ if (typeof window === 'undefined' || typeof localStorage === 'undefined'){
   /* ---- 5. Lernkarte fuer jede Vokabel ---- */
   versuch('Quran-Anzeige fuer jede Vokabel', ()=>{
     let mit = 0;
+    /* ⛔ Bis zum 21.08.2026 ohne Untergrenze: eine leere Vokabelliste ergab
+       „0 von 0 mit Quran-Bezug" und galt als in Ordnung.
+       Am 21.08.2026 im Browser gezaehlt: 326 Vokabeln. */
+    if (!buchVokabeln().length) throw new Error('buchVokabeln() ist leer — keine einzige Vokabel geladen');
     buchVokabeln().forEach(w=>{
       renderQuranFreqBadge(w);
       const wurzel = w.root && w.root.replace(/\s+/g,'');
@@ -153,7 +202,17 @@ if (typeof window === 'undefined' || typeof localStorage === 'undefined'){
   /* ---- 6. Kategorien: jede Liste einmal oeffnen ---- */
   versuch('Kategorien-Listen', ()=>{
     showScreen('categories');
-    const zeilen = [...document.querySelectorAll('[data-openlist]')];
+    /* ⛔ Zwei Fehler, beide am 21.08.2026 behoben:
+       1. Die Suche lief ueber das GANZE Dokument. Alle Bildschirme liegen
+          gleichzeitig im DOM, nur auf display:none — die Zeile griff deshalb
+          auch die fuenf Box-Kacheln des Startbildschirms (js/start.js) ab und
+          klickte sie an. Gemessen: 55 Treffer im Dokument, 50 im Bildschirm.
+       2. Ohne Untergrenze meldete sie bei leerem Markup „0 Listen" als Erfolg.
+          Verschwinden alle Kategoriezeilen, faellt die Pruefung gruen aus. */
+    const bildschirm = document.querySelector('.screen[data-screen="categories"]');
+    if (!bildschirm) throw new Error('der Kategorien-Bildschirm fehlt im Markup');
+    const zeilen = [...bildschirm.querySelectorAll('[data-openlist]')];
+    if (!zeilen.length) throw new Error('keine einzige [data-openlist]-Zeile im Kategorien-Bildschirm');
     zeilen.forEach(z=>z.click());
     return `${zeilen.length} Listen`;
   });
