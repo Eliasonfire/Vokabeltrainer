@@ -428,3 +428,20 @@ if (hand.length){
     console.log(`        nachgelesen am ${g.am}: "${g.fundstelle.slice(0, 110)}..."`);
   });
 }
+
+/* ⛔ Bis zum 21.08.2026 endete dieses Skript mit einer DETAILZEILE — dem
+   letzten handgeprueften Zitat. Wer nur das Ende liest (etwa
+   werkzeuge/alle-pruefer.mjs, das je Pruefer die letzte Zeile zeigt), sah
+   ein arabisches Zitat statt eines Ergebnisses.
+   [[erfolgsmeldung_ohne_wirkung]] */
+/* ⚠️ `keine`, NICHT `offen`: offen = 2 (keine Lesart findet sie), davon
+   ist eine von Hand nachgelesen und belegt. Der Kopf zeigt deshalb 1 unter
+   „keine von beiden“. Meine erste Fassung sagte 2 und widersprach damit der
+   eigenen Kopfzeile. [[widerspruch_liegt_in_der_beschriftung]] */
+if (keine.length){
+  console.log(String.fromCharCode(10) + `⚠️  ${keine.length} Regel(n) findet KEINE der beiden `
+    + 'Lesarten im Fenster — die Stellen selbst nachhoeren (Liste oben).');
+} else {
+  console.log(String.fromCharCode(10) + `✅ Jede der ${mitWhisper.length} pruefbaren Regeln `
+    + 'ist von mindestens einer Lesart belegt.');
+}
