@@ -78,6 +78,11 @@ const ctx = vm.createContext({
   /* Die Notizen liegen in vt_notes auf dem Geraet. Hier ein Stellvertreter,
      dessen Inhalt der Pruefstand direkt einsehen kann. */
   NOTES: NOTIZEN,
+  /* ⛔ DASSELBE Objekt auch unter dem Namen, den js/kern.js benutzt.
+     getNotiz()/setNotiz() dort greifen auf `NOTIZEN` zu; zeigte das auf ein
+     eigenes Objekt, schriebe setNotiz() daneben und die Zusicherung
+     „vt_notes ist unveraendert leer" waere fuer immer gruen. */
+  NOTIZEN,
   getNote: (id) => (NOTIZEN[id] || '').trim(),
   setNote: (id, t) => { const s = String(t||'').trim(); if (s) NOTIZEN[id] = s; else delete NOTIZEN[id]; },
   saveNotes: ()=>{},
@@ -85,60 +90,119 @@ const ctx = vm.createContext({
   showScreen:()=>{}, zeigeToast:()=>{}, toast:()=>{}, feiere:()=>{}, sprich:()=>{},
   cardDirection:()=>'ar-de', aktivesBuch:()=>'madina1', buchVokabeln:()=>[],
   renderQuranFreqBadge:()=>{}, zeichneStart:()=>{}, geheZurueck:()=>{},
+  /* ⛔ Sieben Namen aus ANDEREN Modulen, die js/lernen.js aufruft und die
+     dieser Pruefstand bewusst nicht laedt (Quran-Leser, Satzbau, Wischgesten,
+     Sprachausgabe, Overlays). Statisch ermittelt am 21.08.2026: benutzte
+     Bezeichner in lernen.js minus dort definierte minus hier gestellte.
+
+     Attrappen sind hier richtig — der Pruefstand prueft den Schutz eigener
+     Eselsbruecken, nicht den Quran-Leser. Fuer die Funktionen aus js/kern.js
+     gilt das AUSDRUECKLICH NICHT: die werden weiter unten echt geladen, weil
+     sie mitentscheiden, WAS angezeigt wird. */
+  buildSentenceHtml:()=>'', hebeVersHervor:()=>{}, openSurah:()=>{},
+  overlayAuf:()=>{}, setupSwipe:()=>{}, speakArabic:()=>{},
+  zeigeGrammatikPopover:()=>{},
   fetch:()=>Promise.reject(new Error('kein Netz im Pruefstand')),
 });
 
-/* ⛔ js/lernen.js ruft in renderNotiz() Funktionen auf, die in js/kern.js
-   stehen — und dieser Pruefstand lud nur lernen.js. Ergebnis war ein
-   „ReferenceError: … is not defined" mitten im Laden, also ein Abbruch VOR
-   der ersten Zusicherung. Seit Commit c8c7f02 vom 18.08.2026, drei Tage
-   lang unbemerkt: der Pruefstand hat naemlich keinen Aufrufer.
+/* ⛔ js/lernen.js braucht Namen aus js/kern.js — dieser Pruefstand laedt aber
+   bewusst nur lernen.js. Ergebnis war ein „ReferenceError: … is not defined"
+   mitten im Laden, also ein Abbruch VOR der ersten Zusicherung. Seit Commit
+   c8c7f02 vom 18.08.2026, unbemerkt: der Pruefstand hatte keinen Aufrufer.
 
-   ⚠️ Bewusst KEINE Attrappen. gewaehlterVorschlag() entscheidet, WELCHER
-   Vorschlag angezeigt wird — ein `()=>0` wuerde etwas anderes pruefen als
-   die App tut, und genau darum geht es hier.
-
-   ⛔ Und bewusst NICHT die ganze js/kern.js: sie definiert unter anderem
-   saveProgress(), todayStr() und buchVokabeln(), die der Kontext oben
-   absichtlich als Attrappen setzt. Ein Vollimport wuerde sie still
-   ueberschreiben, und der Pruefstand schriebe echte Fortschritte.
+   ⛔ NICHT die ganze js/kern.js laden, obwohl das naheliegt. Gemessen am
+   21.08.2026 mit zwei runInContext-Aufrufen auf demselben Kontext: eine
+   `const`-Deklaration UEBERSCHATTET die gleichnamige Kontext-Eigenschaft
+   lautlos fuer alles, was danach kommt — die Eigenschaft selbst bleibt
+   unveraendert daneben stehen. kern.js deklariert `const LS`,
+   `const INTERVALS`, `let NOTES`; der Vollimport wuerde also die Attrappen
+   oben verdecken, und das echte LS griffe auf localStorage, das es hier
+   nicht gibt. Dazu vier Funktionen (escapeHtml, getNote, setNote,
+   saveNotes), die am globalen Objekt landen und die Attrappen ersetzen —
+   der Pruefstand liest seine Notizen genau darueber.
    [[zweiter_aufruf_ueberschreibt_still]]
 
-   Deshalb benannte Ausschnitte statt Einzelfaelle: der zweite fehlende
-   Name war der Anlass, daraus eine Liste zu machen statt zweimal
-   dasselbe zu schreiben. [[allgemeine_regel_statt_listeneintrag]]
-   Geschnitten wird bis zum naechsten Abschnittskommentar, nie bis zu einer
-   Zeile im Funktionskoerper — eine Marke am Funktionsende verfaellt, sobald
-   die Funktion eine Zeile dazubekommt. Genau daran ist test-wurzel.mjs
-   heute gestorben. [[indexof_minus_eins_ist_immer_kleiner]] */
+   ⭐ Deshalb einzelne Funktionen, per KLAMMERZAEHLUNG ausgeschnitten statt
+   per Textmarke. Eine Marke am Funktionsende verfaellt, sobald die Funktion
+   eine Zeile dazubekommt — genau daran ist test-wurzel.mjs gestorben, und
+   dieser Pruefstand hat es zweimal an beiden Kanten des Schnitts
+   wiederholt. [[indexof_minus_eins_ist_immer_kleiner]] */
 {
   const kq = fs.readFileSync('js/kern.js', 'utf8');
-  const AUSSCHNITTE = [
-    { von: 'const VORSCHLAG_SCHLUESSEL', bis: '/* ---------- Lernstand fuer NACHTRAEGLICH',
-      /* ⚠️ Die Endmarke stand zuerst auf „Verworfene Vorschlaege" — und hoerte
-         damit GENAU vor istVorschlagVerworfen() auf, das zeigeVorschlag()
-         braucht. Ein Abschnittskommentar ist eine gute Endmarke, aber nur der
-         RICHTIGE: der erste, der nichts Gebrauchtes mehr enthaelt. */
-      braucht: ['gewaehlterVorschlag', 'setzeGewaehltenVorschlag', 'istVorschlagVerworfen'] },
-    /* ⚠️ Startmarke bewusst DREI Zeilen frueher: arabischHervorheben()
-         benutzt AR_LAUF, das AR_BEREICH benutzt - beide stehen davor. Mit der
-         Funktion als Startmarke fehlten sie. Und die Endmarke ist NOETIG:
-         weiter unten steht toast(), das der Kontext oben als Attrappe setzt. */
-    { von: 'const AR_BEREICH =', bis: 'const FORM_TRENNER',
-      braucht: ['arabischHervorheben'] }
-  ];
-  for (const a of AUSSCHNITTE){
-    const von = kq.indexOf(a.von);
-    if (von < 0) throw new Error('js/kern.js: „' + a.von + '" nicht gefunden — umbenannt?');
-    let bis = kq.length;
-    if (a.bis){
-      bis = kq.indexOf(a.bis, von);
-      if (bis < 0) throw new Error('js/kern.js: Endmarke „' + a.bis + '" nicht gefunden');
+
+  /* Schneidet `function NAME(...){…}` heraus. Zaehlt geschweifte Klammern und
+     ueberspringt Zeichenketten, Vorlagen und Kommentare — ein `{` darin
+     wuerde die Zaehlung verschieben. Verzaehlt sie sich doch, gibt es einen
+     Syntaxfehler oder die Namenspruefung unten schlaegt an; eine stille
+     Luecke kann daraus nicht werden. */
+  const funktionAus = (name) => {
+    const a = kq.indexOf('function ' + name + '(');
+    if (a < 0) throw new Error('js/kern.js: function ' + name + ' nicht gefunden — umbenannt?');
+    let i = kq.indexOf('{', a);
+    if (i < 0) throw new Error('js/kern.js: kein Rumpf bei ' + name);
+    let tiefe = 0;
+    for (; i < kq.length; i++){
+      const c = kq[i], zwei = kq.slice(i, i + 2);
+      if (zwei === '/*'){ const e = kq.indexOf('*/', i + 2); if (e < 0) break; i = e + 1; continue; }
+      if (zwei === '//'){ const e = kq.indexOf('\n', i + 2); if (e < 0) break; i = e; continue; }
+      if (c === '"' || c === "'" || c === '`'){
+        for (i++; i < kq.length && kq[i] !== c; i++) if (kq[i] === '\\') i++;
+        continue;
+      }
+      if (c === '{') tiefe++;
+      else if (c === '}'){ tiefe--; if (tiefe === 0) return kq.slice(a, i + 1); }
     }
-    vm.runInContext(kq.slice(von, bis), ctx, { filename: 'js/kern.js' });
-    for (const noetig of a.braucht)
-      if (vm.runInContext('typeof ' + noetig, ctx) !== 'function')
-        throw new Error(noetig + '() aus js/kern.js wurde nicht definiert — Ausschnitt passt nicht');
+    throw new Error('js/kern.js: Rumpf von ' + name + ' endet nicht — Klammern verzaehlt?');
+  };
+
+  /* Lexikalische Nachbarn: `const`/`let` auf Top-Level von kern.js, die die
+     Funktionen unten brauchen. Die Klammerzaehlung nimmt nur die Funktion
+     selbst mit, nie ihre Nachbarn — deshalb hier, als KONTEXT-Eigenschaften
+     statt lexikalisch (`const ` -> `globalThis.`). So sind sie sichtbar,
+     ohne irgendetwas zu ueberschatten. Die Werte kommen aus der Datei,
+     nichts ist nachgebaut.
+
+     Gemessen am 21.08.2026, nicht einzeln erfahren: fuenf Nachbarn ueber
+     alle zehn Funktionen. [[allgemeine_regel_statt_listeneintrag]] */
+  const BEREICHE = [
+    { von: 'const VORSCHLAG_SCHLUESSEL',     bis: 'function gewaehlterVorschlag',
+      setzt: ['VORSCHLAG_SCHLUESSEL', 'VORSCHLAG_WAHL'] },
+    { von: 'const VORSCHLAG_WEG_SCHLUESSEL', bis: 'function istVorschlagVerworfen',
+      setzt: ['VORSCHLAG_WEG_SCHLUESSEL', 'VORSCHLAG_WEG'] },
+    { von: 'const AR_BEREICH',               bis: 'function arabischHervorheben',
+      setzt: ['AR_BEREICH', 'AR_LAUF'] }
+  ];
+  for (const b of BEREICHE){
+    const von = kq.indexOf(b.von);
+    if (von < 0) throw new Error('js/kern.js: „' + b.von + '" nicht gefunden — umbenannt?');
+    const bis = kq.indexOf(b.bis, von);
+    if (bis < 0) throw new Error('js/kern.js: „' + b.bis + '" nicht gefunden');
+    vm.runInContext(kq.slice(von, bis).replace(/^const |^let /gm, 'globalThis.'), ctx,
+                    { filename: 'js/kern.js (' + b.setzt[0] + ')' });
+    for (const n of b.setzt)
+      if (vm.runInContext('typeof ' + n, ctx) === 'undefined')
+        throw new Error(n + ' aus js/kern.js wurde nicht gesetzt');
+  }
+
+  /* ⛔ NOTIZEN kommt bewusst NICHT aus der Datei. kern.js hat ein eigenes
+     `let NOTIZEN`, und der Pruefstand hat oben seines — laedt man das der
+     Datei, schreibt setNotiz() in ein ANDERES Objekt als das, welches
+     Zusicherung „vt_notes ist unveraendert leer" ansieht. Die waere dann
+     fuer immer gruen, egal was passiert: der Test wuerde blind.
+     Deshalb zeigt der Kontext auf DASSELBE Objekt (siehe oben,
+     `NOTIZEN: NOTIZEN`). [[pruefwerkzeug_mit_eingebauter_antwort]] */
+  if (vm.runInContext('typeof NOTIZEN', ctx) !== 'object')
+    throw new Error('NOTIZEN fehlt im Kontext — die Notiz-Zusicherungen waeren wirkungslos');
+
+  /* Funktionsdeklarationen landen am globalen Objekt und ueberschatten daher
+     keine lexikalische Attrappe. Alle zehn sind gemessen, nicht geraten. */
+  const AUS_KERN = ['gewaehlterVorschlag', 'setzeGewaehltenVorschlag', 'istVorschlagVerworfen',
+                    'schalteVorschlagWeg', 'arabischHervorheben', 'kapitelBeschriftung',
+                    'getNotiz', 'currentPool', 'pruefeNurFalscheModus', 'formenAnzeige'];
+  for (const name of AUS_KERN){
+    vm.runInContext(funktionAus(name), ctx, { filename: 'js/kern.js' });
+    if (vm.runInContext('typeof ' + name, ctx) !== 'function')
+      throw new Error(name + '() aus js/kern.js wurde nicht definiert');
   }
 }
 try { vm.runInContext(fs.readFileSync('js/lernen.js','utf8'), ctx, { filename:'js/lernen.js' }); }
