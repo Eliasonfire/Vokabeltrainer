@@ -141,13 +141,36 @@ const ausBox = b => {
 
 /* ---------- 1. Die Box kommt aus der echten Leitner-Logik ---------- */
 console.log('\n— Die Zahl kommt aus STUFEN, nicht aus einer festen Liste —');
-/* nochmal: immer 1 | schwer: max(1,b-1) | gut: min(5,b+1) | leicht: min(5,b+2) */
+/* ⛔ DIESE TABELLE WAR SEIT DEM 16.08.2026 VERALTET und hat den Pruefstand
+   vier Zusicherungen lang rot gemeldet, obwohl die App richtig lief.
+
+   Sie hielt die Fassung von VOR Commit 559cd0a fest:
+     nochmal: immer 1        schwer: max(1, b-1)
+
+   Elias hat das an diesem Tag ausdruecklich anders gewuenscht:
+
+     „nochmal sollte die selbe funktion haben wie schwer, also dass man
+      einfach nur eine einzige box weiter runter geht. und schwer sollte die
+      funktion haben, dass man in der selben box bleibt."
+
+   Daraus, und NICHT aus den gemessenen Werten abgeschrieben:
+     nochmal: max(1, b-1)    schwer: b
+     gut:     min(5, b+1)    leicht: min(5, b+2)      (beide unveraendert)
+
+   ⚠️ Der Unterschied ist wichtig. Eine Erwartung, die man aus dem Istzustand
+   abschreibt, kann nie wieder etwas finden — sie sagt nur noch „die App tut,
+   was die App tut". Diese hier ist aus seiner Anweisung abgeleitet und wuerde
+   wieder anschlagen, wenn jemand die Stufen erneut verschiebt.
+   [[zitierform_ist_nicht_satzkontext]]
+
+   ⭐ Warum der Fehler ueberhaupt vier Tage ueberleben konnte: dieser
+   Pruefstand hat keinen Aufrufer und lief nie. */
 const erwartet = {
   1: [1,1,2,3],
-  2: [1,1,3,4],
-  3: [1,2,4,5],
-  4: [1,3,5,5],
-  5: [1,4,5,5],
+  2: [1,2,3,4],
+  3: [2,3,4,5],
+  4: [3,4,5,5],
+  5: [4,5,5,5],
 };
 for (const b of [1,2,3,4,5]){
   const g = ausBox(b).map(x=>x.box);
