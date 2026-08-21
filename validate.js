@@ -573,6 +573,40 @@ try {
           warn(`${art}: "${s}" wird von index.html geladen, steht aber nicht in ASSETS von sw.js (offline nicht verfügbar).`);
       });
     }
+    /* ---------- Die Auslieferstrategie selbst ----------
+
+       Drei Eigenschaften, die niemand prüfte und die jede einzelne schon
+       Arbeit gekostet haben. Der Wortlaut der Meldungen nennt den Grund mit —
+       ein Wächter, dessen Grund man nicht kennt, wird weggeklickt.
+       [[regel_gilt_nur_mit_begruendung]] */
+    const fehlerVorher = errors.length;
+    const swRoh = fs.readFileSync(path.join(DIR, 'sw.js'), 'utf8');
+    const fetchBlock = swRoh.slice(swRoh.indexOf("addEventListener('fetch'"));
+    if (fetchBlock){
+      const iNetz  = fetchBlock.indexOf('fetch(new Request');
+      const iCache = fetchBlock.indexOf('caches.match');
+      if (iNetz === -1 || (iCache !== -1 && iCache < iNetz))
+        fail('sw.js liefert nicht mehr NETZ ZUERST. Dann sieht Elias tagelang eine alte '
+           + 'Fassung und meldet Fehler, die laengst behoben sind (18.08.2026). Das Ritual '
+           + '"SW abmelden + Caches leeren" wurde nur deshalb abgeschafft.');
+      if (!/pathname\.startsWith\('\/api\/'\)/.test(fetchBlock))
+        fail('sw.js nimmt /api/ nicht mehr vom Caching aus. Dann bekommt das Geraet beim '
+           + 'naechsten Start den Stand von gestern und laedt ihn als "aktuell" wieder hoch — '
+           + 'der Geraeteabgleich zerstoert die Arbeit, die er schuetzen soll.');
+      if (!/cache:\s*'reload'/.test(fetchBlock))
+        fail("sw.js setzt kein cache: 'reload'. Dann darf der BROWSER-Cache antworten, "
+           + 'und "Netz zuerst" nuetzt nichts.');
+      /* ⛔ NUR wenn wirklich alle drei stehen. Der erste Anlauf setzte diese
+         Zeile UNBEDINGT - dann stand im Stoertest die gruene Meldung neben dem
+         roten Befund. Genau der Fehler, der eine Stunde vorher in
+         pruefe-datumsangaben.mjs behoben wurde, sofort wieder gemacht.
+         [[widerspruch_liegt_in_der_beschriftung]] */
+      if (errors.length === fehlerVorher)
+        note('sw.js: Netz zuerst, /api/ ausgenommen, cache: reload — alle drei gesetzt.');
+    } else {
+      fail('sw.js hat keinen fetch-Handler mehr — die App waere nicht mehr offlinefaehig.');
+    }
+
     note(`sw.js: ${assets.length} Cache-Einträge geprüft, dagegen ${scriptsInHtml.length} Skripte `
       + `und ${weitereGeprueft} weitere Verweise aus index.html (Stylesheets, Bilder, url()).`);
 
