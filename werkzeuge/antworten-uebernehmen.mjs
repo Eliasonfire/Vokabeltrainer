@@ -282,9 +282,19 @@ for (const z of zweifel){
    ECHTE Zeichen stehen. Eine \u-Folge wäre für normalize() unsichtbar, und
    die Taschkil-Prüfung würde sie nie sehen. [[escapes_sind_fuer_normalize_unsichtbar]] */
 const q = (s) => "'" + String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'") + "'";
-function blockBauen(eintraege, einrueckung = '  '){
+function blockBauen(eintraege, einrueckung = '  ', altInhalt = ''){
   const ids = Object.keys(eintraege).sort();
-  if (!ids.length) return '\n  /* (noch leer) */\n';
+  if (!ids.length){
+    /* ⛔ Den BESTEHENDEN Platzhalter erhalten. Er sagt, woher der Block
+       gefuellt wird, und das ist je Block verschieden: FELD_AUSNAHMEN kommt
+       aus Elias Freigaben, die anderen aus seinen Antworten. Ein generischer
+       Text loescht diese Angabe beim ERSTEN Lauf, in dem irgendein anderer
+       Block gefuellt wird — still, und niemand vermisst sie.
+       Gefunden, weil die Datei dabei KLEINER wurde, obwohl Eintraege
+       dazukamen. [[unmoegliche_zahl_ist_ein_geschenk]] */
+    const komm = String(altInhalt).match(/\/\*[\s\S]*?\*\//);
+    return '\n  ' + (komm ? komm[0] : '/* (noch leer) */') + '\n';
+  }
   return '\n' + ids.map(id =>
     einrueckung + q(id) + ': { ' +
     Object.keys(eintraege[id]).sort().map(f => f + ': ' + q(eintraege[id][f])).join(', ') +
@@ -297,7 +307,11 @@ function blockBauen(eintraege, einrueckung = '  '){
 function blockSchreiben(text, name, eintraege){
   const b = blockLesen(text, name);
   if (b.auf < 0) return text;
-  return text.slice(0, b.auf + 1) + blockBauen(Object.assign({}, b.eintraege, eintraege)) + text.slice(b.zu);
+  /* Der alte Blockinhalt geht mit — sonst kann blockBauen den Platzhalter
+     nicht erhalten. [[verwiesene_datei_gehoert_dazu]] */
+  return text.slice(0, b.auf + 1)
+    + blockBauen(Object.assign({}, b.eintraege, eintraege), '  ', text.slice(b.auf + 1, b.zu))
+    + text.slice(b.zu);
 }
 let neu = alt;
 neu = blockSchreiben(neu, 'FELD_ZWEIFEL', Z.eintraege);
