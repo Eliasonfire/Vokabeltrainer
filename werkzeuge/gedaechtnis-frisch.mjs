@@ -100,7 +100,27 @@ for (const n of notizen.slice(0, 3))
    ist. [[pruefung_fragt_einen_stellvertreter_ab]]
 
    Deshalb werden die beiden Pflichtdateien jetzt EINZELN bewertet. Die
-   Gesamtmeldung oben bleibt als Übersicht stehen. */
+   Gesamtmeldung oben bleibt als Übersicht stehen.
+
+   ---------------------------------------------------------------------------
+   ⚠️ IHRE GRENZE, damit ihr niemand mehr zutraut als sie kann:
+
+   Gemessen wird das ÄNDERUNGSDATUM, nicht der Inhalt. Eine Datei, die geöffnet
+   und ohne echte Änderung gespeichert wird, gilt als frisch. Das ist ein
+   Stellvertreter — aber ein unvermeidbarer: mehr als die mtime steht nicht zur
+   Verfügung, ohne den Inhalt zu bewerten, und was in den Tresor gehört,
+   entscheidet nicht dieses Skript (siehe Kopf).
+
+   Praktisch trägt das trotzdem: der Fall, den es fangen soll, ist „seit einer
+   Stunde nichts geschrieben", nicht „geschrieben, aber inhaltsleer".
+   [[pruefung_fragt_einen_stellvertreter_ab]]
+
+   ⚠️ WELCHE Datei der Arbeitsstand ist, war eine Entscheidung. Der Skill nennt
+   an einer Stelle `03 - Projekte\To-Do.md`, sagt aber an anderer Stelle, dass
+   diese Datei ERZEUGT wird (todo-uebersicht.mjs) und dort nicht von Hand
+   gearbeitet wird. Gewählt ist deshalb die PROJEKT-To-Do — dort steht der
+   STAND-Block, den Elias am Morgen liest. Wer das umstellt, stellt beides um:
+   diese Zeile und die Regel im Skill. [[dieselbe_frage_zwei_antworten]] */
 const PFLICHT = [
   ['Arbeitsstand', path.join(TRESOR, '03 - Projekte', 'To-Do Vokabeltrainer.md')],
   ['Erkenntnis',   path.join(TRESOR, '03 - Projekte', 'Vokabeltrainer-Arabisch.md')]
