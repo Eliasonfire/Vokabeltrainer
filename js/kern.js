@@ -967,6 +967,44 @@ function initProgress(){
 let PROGRESS = initProgress();
 function saveProgress(){ LS.set('vt_progress', PROGRESS); }
 
+/* ---------- Lernstand fuer NACHTRAEGLICH entstandene Karten (21.08.2026) ----
+
+   `initProgress()` laeuft beim Laden, `setzeBuch()` fuellt nach jedem
+   geladenen Buch nach. Was danach noch entsteht, hat niemanden mehr: die
+   PLURALKARTEN, die `wendePluralKartenAn()` am Ende des Startlaufs anlegt.
+
+   ⚠️ Und das faellt nicht auf: `dueWords()` filtert mit `PROGRESS[w.id] && …`.
+   Eine Karte ohne Eintrag verschwindet LAUTLOS aus jeder Lernrunde — keine
+   Meldung, keine Luecke, sie ist einfach nicht dabei.
+   [[ausfall_ist_unsichtbar_gebaut]]
+
+   ⛔⛔ DIE ZAHL IST GEMESSEN, UND MEINE ERSTE ANNAHME WAR FALSCH. Ich hatte
+   hier zuerst geschrieben, ohne diesen Aufruf verloeren „155 von 326" Woertern
+   ihren Eintrag. Der Stoertest hat das WIDERLEGT: `setzeBuch()` deckt die
+   Buchvokabeln laengst ab. Richtig ist:
+
+     Stoerung: Aufruf stillgelegt, Pluralkarten AN, vt_progress geleert
+     Ergebnis: 518 Karten, davon 70 ohne Lernstand — ALLE 70 Pluralkarten,
+               dueWords() 448 statt 518.
+
+   ⭐ Haette ich den Stoertest weggelassen, staende hier eine erfundene
+   Begruendung — und eine erfundene wird nie wieder geprueft, weil sie ja
+   plausibel klingt. [[erfundene_begruendung_schliesst_den_fall]]
+
+   ⚠️ Ergaenzt die LEBENDE Liste, statt sie neu aus dem Speicher zu lesen: ein
+   `PROGRESS = initProgress()` wuerde alles verwerfen, was seit dem Start im
+   Arbeitsspeicher steht und noch nicht gesichert ist. */
+function ergaenzeProgress(){
+  let neu = 0;
+  VOCAB_DATA.forEach(w=>{
+    if (PROGRESS[w.id]) return;
+    PROGRESS[w.id] = { box: w.box || 1, nextReview: todayStr(0), correct:0, wrong:0 };
+    neu++;
+  });
+  if (neu) saveProgress();
+  return neu;
+}
+
 let SETTINGS = Object.assign(
   /* showVerbFormen steht bewusst auf FALSE. Die vier Verbformen waren am
      29.07.2026 auf Elias' Wunsch dazugekommen, und am 30.07. hat er sie so
