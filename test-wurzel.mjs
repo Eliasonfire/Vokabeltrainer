@@ -73,9 +73,43 @@ if (!buchDa){
   /* einhaengen() aus js/buecher.js nachbilden waere ein Nachbau. Stattdessen
      die echte Funktion laden - sie braucht nur VOCAB_DATA. */
   const bq = fs.readFileSync(new URL('./js/buecher.js', import.meta.url), 'utf8');
-  const a = bq.indexOf('function einhaengen(liste){');
-  const e = bq.indexOf('\n}', bq.indexOf('return { neu, ergaenzt, verworfen };', a)) + 2;
-  vm.runInContext(bq.slice(bq.indexOf('const ROH_ARAB_FELDER'), e), ctx);
+  /* ⛔ HIER STAND EINE TEXTMARKE, DIE STILL VERFALLEN IST (21.08.2026).
+     Gesucht wurde woertlich `return { neu, ergaenzt, verworfen };` — die
+     Funktion gibt aber inzwischen zwei Felder mehr zurueck:
+
+       return { neu, ergaenzt, verworfen, eselsbruecken, saetze };
+
+     indexOf lieferte -1, der Ausschnitt wurde leer, nichts wurde definiert,
+     und der Test starb eine Zeile spaeter mit „einhaengen is not defined".
+     Ein Absturz, der wie ein fehlendes Modul aussieht und in Wahrheit eine
+     verfallene Marke war. [[indexof_minus_eins_ist_immer_kleiner]]
+
+     ⭐ Der zweite Anlauf mit einer nachgezogenen Marke reichte NICHT: die
+     reparierte Funktion lief los und rief `eselsbrueckenNachtragen()` —
+     einen Nachbarn, den der enge Ausschnitt gar nicht mitgenommen hatte.
+     Eine Marke am Funktionsende ist also grundsaetzlich zu eng, sobald die
+     Funktion Hilfsfunktionen bekommt.
+
+     Deshalb jetzt der ganze FUNKTIONSTEIL der Datei statt einer einzelnen
+     Funktion: von `const ROH_ARAB_FELDER` bis zur ersten Nebenwirkung
+     (`document.addEventListener`). Alles dazwischen sind reine Definitionen,
+     neue Hilfsfunktionen kommen automatisch mit, und nichts davon fasst
+     beim Laden das DOM an.
+
+     Jeder Schnittpunkt wird EINZELN geprueft und bricht mit eigener Meldung
+     ab — vorher war jeder Fehlgriff stumm, und ein stummer Fehlgriff ergibt
+     einen leeren Ausschnitt, der aussieht wie „die Funktion gibt es nicht
+     mehr". [[ausfall_ist_unsichtbar_gebaut]] [[werkzeug_misst_kleineren_bestand]] */
+  const start = bq.indexOf('const ROH_ARAB_FELDER');
+  if (start < 0) throw new Error('js/buecher.js: const ROH_ARAB_FELDER nicht gefunden — Anfang des Funktionsteils weg?');
+  const stop = bq.indexOf("document.addEventListener('click'", start);
+  if (stop < 0) throw new Error("js/buecher.js: document.addEventListener('click' nicht gefunden — Ende des Funktionsteils weg?");
+  if (!bq.slice(start, stop).includes('function einhaengen(liste){'))
+    throw new Error('js/buecher.js: einhaengen() liegt nicht im Ausschnitt — umbenannt oder verschoben?');
+  vm.runInContext(bq.slice(start, stop), ctx);
+  for (const noetig of ['einhaengen', 'eselsbrueckenNachtragen', 'saetzeNachtragen'])
+    if (vm.runInContext('typeof ' + noetig, ctx) !== 'function')
+      throw new Error(noetig + '() wurde nicht definiert — der Ausschnitt passt nicht');
   vm.runInContext('einhaengen(window.VOKABELN["madina-1"])', ctx);
   const nachher = vm.runInContext('VOCAB_DATA.filter(function(w){return w.root;}).length', ctx);
   pruefe(`nach dem Einhängen tragen ${nachher} Wörter eine Wurzel`, nachher > 0, String(nachher));
