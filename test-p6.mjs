@@ -84,7 +84,11 @@ const KLICK_ZUHOERER = [];
 VERSLISTE.addEventListener = (typ, fn) => { if (typ === 'click') KLICK_ZUHOERER.push(fn); };
 
 try { vm.runInContext(fs.readFileSync('js/quran.js','utf8'), ctx, { filename:'js/quran.js' }); }
-catch (e) { console.log('\n❌ js/quran.js liess sich nicht laden:', e.message); process.exit(1); }
+catch (e) { console.log('\n❌ js/quran.js liess sich nicht laden:', e.message);
+  /* Die Fehlermeldung allein sagt nicht, WO es knallt. Die erste
+     Stack-Zeile aus der geladenen Datei sagt es. */
+  const __ort = String(e.stack || '').split('\n').find(z => z.includes('js/quran.js'));
+  if (__ort) console.log('   Fundstelle:', __ort.trim()); process.exit(1); }
 
 /* ---------- Beleg, dass die NEUE Fassung laeuft ----------
    Ein Pruefwort, das es in der alten Fassung UNMOEGLICH geben kann - nicht
