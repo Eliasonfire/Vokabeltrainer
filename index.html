@@ -3074,7 +3074,15 @@ main{
 /* =====================================================================
    STATISTIK
    ===================================================================== */
-.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-3);margin-bottom:var(--sp-6);}
+/* ⚠️ `margin-top` seit dem 21.08.2026. Bis dahin war die Statistik das erste
+   Element unter dem Kopf ihres eigenen Bildschirms und brauchte oben keinen
+   Abstand. Seit sie auf dem Start unter der Box-Uebersicht sitzt, klebte sie
+   dort mit 0 px an den Boxen — gemessen, waehrend alle anderen Bloecke des
+   Startbildschirms 20 bis 24 px Luft haben. Elias: „das ist viel zu nah an
+   den boxen, mach dort normalen abstand."
+   ⭐ Derselbe Wert wie `.box-overview` darueber (`--sp-6`), damit der Rhythmus
+   der Seite durchgehalten wird statt eine eigene Zahl zu erfinden. */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-3);margin-top:var(--sp-6);margin-bottom:var(--sp-6);}
 .stat-card{
   background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-3);padding:var(--sp-4);
   box-shadow:inset 0 1px 0 var(--hairline);
