@@ -31,6 +31,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import crypto from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 
 const HIER   = path.dirname(fileURLToPath(import.meta.url));
 const WURZEL = path.resolve(HIER, '..');
@@ -169,6 +170,52 @@ if (nieAusgeliefert){
   process.exit(1);
 }
 
+/* ---------------------------------------------------------------------------
+   DRITTE FRAGE: liegen Commits nur auf diesem Rechner?
+
+   Dasselbe Muster wie die zwei oben — "ist das, was hier steht, auch
+   woanders angekommen?" —, nur mit git statt Cloudflare als Ziel.
+
+   ⛔ ANLASS, und er steht im eigenen Wartungsprotokoll (19.08.2026):
+   "83 Commits lagen drei Tage lang nur auf diesem Rechner. Dieser Lauf hat
+   sie zufaellig eingesammelt, weil er ohnehin pusht." Zufaellig ist kein
+   Verfahren. Gemessen am 21.08.2026: KEINE Datei im Projekt prueft das.
+
+   ⚠️ NUR EIN HINWEIS. Wer mitten in der Arbeit steht, hat gute Gruende,
+   noch nicht zu pushen — eine Pruefung, die korrektes Verhalten bestraft,
+   wird abgeschaltet. Deshalb steht hier die ZAHL und das ALTER des
+   aeltesten Commits: drei Minuten sind normal, drei Tage nicht.
+   [[erledigt_heisst_nicht_wertlos]] */
+try {
+  const zweig = execFileSync('git', ['rev-parse', '--abbrev-ref', 'HEAD'],
+    { cwd: WURZEL, encoding: 'utf8' }).trim();
+  const gegen = 'origin/' + zweig;
+  /* Gibt es den Remote-Zweig ueberhaupt? Ohne ihn ist die Frage sinnlos,
+     nicht beantwortet — und das ist ein Unterschied. */
+  execFileSync('git', ['rev-parse', '--verify', gegen],
+    { cwd: WURZEL, encoding: 'utf8', stdio: ['ignore', 'ignore', 'ignore'] });
+
+  const roh = execFileSync('git', ['log', gegen + '..HEAD', '--format=%ct'],
+    { cwd: WURZEL, encoding: 'utf8' }).trim();
+  const zeiten = roh ? roh.split('\n').map(Number).filter(n => !isNaN(n)) : [];
+
+  if (!zeiten.length){
+    console.log('  ok   nichts liegt nur auf diesem Rechner.');
+  } else {
+    const aeltest = Math.min(...zeiten);
+    const stunden = (Date.now() / 1000 - aeltest) / 3600;
+    const alter = stunden < 24
+      ? stunden.toFixed(1) + ' Stunden'
+      : (stunden / 24).toFixed(1) + ' Tagen';
+    console.log('  ⚠️  ' + zeiten.length + ' Commit(s) liegen nur auf diesem Rechner,');
+    console.log('     der aelteste seit ' + alter + '. Ein `git push` holt sie ab.');
+  }
+} catch (e){
+  /* Kein git, kein Remote, kein Zweig — die Frage laesst sich hier nicht
+     stellen. Das ist kein Freispruch und wird auch nicht als einer gemeldet. */
+  console.log('  ⓘ  Push-Stand nicht pruefbar (kein Remote-Zweig oder kein git).');
+}
+console.log('');
 if (fehlend){
   console.log('⚠️  ' + fehlend + ' Datei(en) liegen oben, aber nicht mehr hier — beim');
   console.log('   naechsten Veroeffentlichen verschwinden sie. Kein Fehler.');
