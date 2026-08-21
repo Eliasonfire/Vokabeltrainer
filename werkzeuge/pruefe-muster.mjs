@@ -84,6 +84,32 @@ const MUSTER = [
     gemeint: 'gemeint war \\d, \\w oder \\s'
   },
   {
+    name: 'Zeichenklasse ohne Backslash MITTEN im Muster',
+    /* ⭐ Der Fall vom 21.08.2026, 09:0x — und der Beweis, dass die Form
+       darueber nicht reicht. Sie verlangt das `s+` DIREKT hinter dem
+       oeffnenden Schraegstrich; geschrieben wurde aber
+
+         /(?:^|s)[ء-ي]s+[ء-ي]s+$/          statt  \s
+
+       — jedes `s` mitten im Muster. `node --check` blieb gruen, denn der
+       Ausdruck ist GUELTIG, er sucht nur etwas anderes: den Buchstaben s.
+       Die Pruefung lief, meldete unveraendert 222/6, und nichts warnte.
+       [[pruefwerkzeug_laedt_mehr_als_die_app]] — der Fehler sass in der
+       MITTE, und die Extreme decken sie nicht ab.
+
+       Verdaechtig ist d/w/s mit * oder +, wenn davor KEIN Buchstabe steht,
+       der ein echtes Wort bilden koennte — also nach ] ) | ^ oder (.
+       Der Gegenpol steht seit der ersten Fassung in HEIL: /https*:/ hat ein
+       p davor und bleibt deshalb unangetastet.
+
+       Gemessen vor dem Einbau: 3 Treffer im ganzen Bestand, alle drei in
+       KOMMENTAREN, die genau diesen Fehler beschreiben — der Regex-Leser
+       unten sieht Kommentare nicht, die echte Trefferzahl ist 0.
+       [[stichworttreffer_im_kommentar]] */
+    suche: /[\]\)\|\^\(][dws][*+]/g,
+    gemeint: 'auch mitten im Muster gehört \\d, \\w oder \\s'
+  },
+  {
     name: 'Wortgrenze als Buchstabe b',
     /* `\b` wird zum Steuerzeichen 0x08, wenn es durch eine Shell laeuft.
        Bleibt es als nacktes `b` stehen, trifft es den Buchstaben b. */
@@ -113,6 +139,8 @@ const KAPUTT = [
   ['Punkt vor einer Dateiendung nicht maskiert', 'files.filter(n => /.(mjs|cjs|json)$/.test(n))'],
   ['Zeichenklasse ohne Backslash am Musteranfang', 'const zahl = /d+/;'],
   ['Zeichenklasse ohne Backslash am Musteranfang', 'txt.split(/s+/)'],
+  ['Zeichenklasse ohne Backslash MITTEN im Muster', 'if (/(?:^|s)[a-z]s+/.test(v)) continue;'],
+  ['Zeichenklasse ohne Backslash MITTEN im Muster', 'const r = /(ab)d+/;'],
   ['Wortgrenze als Buchstabe b',                 'const w = /bWort\\b/;']
 ];
 
@@ -129,6 +157,8 @@ const HEIL = [
   'const p = "functions*";',           /* in einer Zeichenkette, kein Muster … */
   'const namen = ["news", "const"];',
   'let s = a / b * c;',                /* Division, kein Muster */
+  'const plural = /[a-z]+\\s*/;',      /* korrekt maskiert, mitten im Muster */
+  'if (/(?:ja|nein)\\s+/.test(x)) ok();',
   'const dw = obj.d + obj.w;'
 ];
 

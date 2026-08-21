@@ -326,6 +326,23 @@ console.log('=== 4. „das hast du auch" — steht das Wort wirklich im Lernbest
          darum herum. Mit ±160 Zeichen fing die Pruefung ein „Dein Satz zeigt
          …" zwei Saetze weiter ein und meldete einen Fehler, den es nicht gab. */
       const vorher = t.text.slice(0, m.index);
+      /* ⛔ EIN WURZELBUCHSTABE IST KEIN WORT. Der Glossen-Filter oben faengt
+         „(Wurzel …)" ab — aber bei كَسْلَانُ steht „Wurzel" im SATZ, und die
+         Glosse ist eine echte Bedeutung:
+           „dort ist die Wurzel ك س ر (brechen), hier ك س ل"
+         Gemeldet wurde daraufhin der letzte Wurzelbuchstabe ر als angeblich
+         fehlende Vokabel. Der Text ist voellig richtig — er vergleicht zwei
+         Wurzeln, er behauptet nichts ueber Elias' Bestand.
+
+         Erkennbar am Muster davor: zwei einzelne Buchstaben mit Leerzeichen,
+         die Wurzelschreibweise. Gemessen: das trifft 1 von 221 Klammer-
+         Kandidaten, naemlich genau diesen einen.
+
+         ⚠️ Ein pauschales „Einzelbuchstaben ueberspringen" waere zu grob
+         gewesen: أَ (Fragepartikel), وَ (und) und لِ (fuer) sind echte
+         Vokabeln im Bestand, und eine Eselsbruecke darf auf sie verweisen.
+         [[mein_entwurf_ist_zu_grob]] [[kandidatenliste_ist_keine_fehlerliste]] */
+      if (/(?:^|\s)[ء-ي]\s+[ء-ي]\s+$/.test(vorher)) continue;
       const nachher = t.text.slice(m.index + m[0].length);
       const satz = vorher.slice(vorher.lastIndexOf('. ') + 1)
                  + m[0]
