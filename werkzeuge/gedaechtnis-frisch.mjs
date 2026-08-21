@@ -22,8 +22,34 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+/* Fuer die Ortsbestimmung weiter unten: das Werkzeug muss wissen, in welchem
+   Projekt es liegt, weil seine Pflichtdateien fest verdrahtet sind. */
+import { fileURLToPath } from 'node:url';
 
+const HIER = path.dirname(fileURLToPath(import.meta.url));
 const TRESOR = 'G:\\1. Workspace\\Obsidian\\Gedächtnis\\Elias Gedächtnis';
+
+/* ⛔⛔ DIESE LISTE GILT NUR FUER DEN VOKABELTRAINER — und das muss geprueft
+   werden, nicht angenommen.
+
+   Die vier Startbefehle wurden am 12.08.2026 in den Korantrainer KOPIERT. Ein
+   Werkzeug mit fest verdrahteten Dateinamen meldet nach so einer Kopie
+   froehlich weiter — nur ueber die falschen Dateien. Im schlimmsten Fall
+   „aktuell genug", waehrend im anderen Projekt seit Stunden nichts gesichert
+   wurde. [[entscheidung_gilt_fuer_das_zweite_werkzeug]]
+
+   Deshalb sagt das Werkzeug hier, wo es zu stehen glaubt, und scheitert laut,
+   wenn es woanders liegt. Lieber gar keine Auskunft als eine ueber die
+   falschen Dateien. */
+const PROJEKT = path.basename(path.resolve(HIER, '..'));
+if (PROJEKT !== 'Vokabeltrainer'){
+  console.error('');
+  console.error(`⛔ Dieses Werkzeug liegt in „${PROJEKT}", nicht im Vokabeltrainer.`);
+  console.error('   Die beiden Pflichtdateien unten sind fest auf den Vokabeltrainer');
+  console.error('   verdrahtet — hier wuerde es ueber die falschen Dateien urteilen.');
+  console.error('   Die Namen anpassen, dann diese Sperre mit anpassen.');
+  process.exit(3);
+}
 /* Nicht `Number(x) || 15` - das schluckt eine ausdrueckliche 0 und nimmt
    stillschweigend 15. Beim ersten Test genau so aufgetreten. */
 const roh = process.argv[2];
