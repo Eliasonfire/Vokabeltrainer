@@ -214,8 +214,15 @@ if (typeof window === 'undefined' || typeof localStorage === 'undefined'){
        „0 von 0 mit Quran-Bezug" und galt als in Ordnung.
        Am 21.08.2026 im Browser gezaehlt: 326 Vokabeln. */
     if (!buchVokabeln().length) throw new Error('buchVokabeln() ist leer — keine einzige Vokabel geladen');
+    /* ⛔ `renderQuranFreqBadge(w)` stand hier bis zum 21.08.2026. Das Abzeichen
+       auf der Lernkarte ist an dem Tag entfallen (Elias: „das kann man aus den
+       karteikarten komplett raus nehmen"), die Funktion mit ihm.
+
+       Der Aufklapper bleibt geprueft, obwohl ihn in der App gerade nichts mehr
+       oeffnet: solange er im Quelltext steht, soll er auch funktionieren. Ein
+       ungeprueftes Stueck Code, das spaeter wieder angeschlossen wird, ist
+       schlimmer als eines, das man gleich entfernt. */
     buchVokabeln().forEach(w=>{
-      renderQuranFreqBadge(w);
       const wurzel = w.root && w.root.replace(/\s+/g,'');
       const f = wurzel && QURAN_FREQ[wurzel];
       if (f){ mit++; openQuranFreqPopover(w, f); }

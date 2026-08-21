@@ -287,7 +287,6 @@ function renderCard(){
   document.getElementById('learnCount').textContent = `${SESSION.idx+1}/${SESSION.words.length}`;
   document.getElementById('learnProgressFill').style.width = `${(SESSION.idx/SESSION.words.length)*100}%`;
 
-  renderQuranFreqBadge(w);
   stufenVorschau();
   renderTippfeld(w);
   /* Erst NACH allen Kaesten: vorher steht die Hoehe der Rueckseite noch nicht
@@ -534,34 +533,23 @@ function surenName(nr){
   return s ? (s.name || `Sure ${nr}`) : `Sure ${nr}`;
 }
 
-function renderQuranFreqBadge(w){
-  const badge = document.getElementById('cardQuranFreq');
-  const root = w.root && (typeof QURAN_FREQ!=='undefined') ? w.root.replace(/\s+/g,'') : null;
-  const freq = root && QURAN_FREQ[root];
-  /* Die Marken links oben duerfen nicht unter das Abzeichen laufen. Wie viel
-     Platz es braucht, haengt an der Zahl - deshalb wird es gemessen und als
-     --abzeichen-breite an die Buehne gehaengt; die CSS-Regel .front-marken
-     rechnet damit. Ohne Abzeichen ist der Wert 0. */
-  const buehne = document.getElementById('cardStage');
-  if (!freq){
-    badge.classList.add('hidden');
-    buehne.style.setProperty('--abzeichen-breite', '0px');
-    return;
-  }
-  badge.innerHTML = `${icon('crescent')}<span>${freq[0]}× im Quran</span>`;
-  badge.classList.remove('hidden');
-  /* Beim ersten Aufruf kann die Lernansicht noch ausgeblendet sein, dann ist
-     offsetWidth 0. Der Vorbehalt von 140px deckt das breiteste gemessene
-     Abzeichen (127px bei 2851x) ab; der naechste Frame ersetzt ihn durch die
-     echte Breite. */
-  const merkeBreite = () => {
-    buehne.style.setProperty('--abzeichen-breite', (badge.offsetWidth || 140) + 'px');
-  };
-  merkeBreite();
-  requestAnimationFrame(merkeBreite);
-  badge.onclick = (e)=>{ e.stopPropagation(); openQuranFreqPopover(w, freq); };
-}
+/* ⛔ `renderQuranFreqBadge` ist am 21.08.2026 entfallen. Elias mit Bild, in dem
+   er das Abzeichen rot umrandet hat: „und wie oft es im quran ist das kann man
+   aus den karteikarten komplett raus nehmen, so bekommen wir wieder etwas mehr
+   platz."
 
+   Die Funktion tat zwei Dinge, und beide gibt es nicht mehr: sie fuellte das
+   Abzeichen, und sie MASS seine Breite, um sie als --abzeichen-breite an die
+   Buehne zu haengen, damit die Marken links oben nicht darunter laufen. Der
+   Summand ist in .front-marken ebenfalls entfernt.
+
+   ⚠️ `openQuranFreqPopover` hat damit KEINEN Aufrufer mehr in der App — es war
+   der Klick auf dieses Abzeichen. Der Aufklapper bleibt vorerst stehen: er
+   fuehrt zu den Fundstellen im Quran-Leser, und das ist etwas, das Elias nicht
+   wegzuwerfen verlangt hat, sondern nur von der Karte. Ob er auf die Infokarte
+   wandert oder ganz verschwindet, steht in der To-Do unter „Wartet auf Elias".
+   Bis dahin haelt ihn `pruefe-oberflaeche.js` weiter unter Pruefung — sonst
+   verfiele er unbemerkt. [[werkzeug_ohne_aufrufer]] */
 function openQuranFreqPopover(w, freq){
   const [anzahl, verse] = freq;
   const shown = verse.slice(0, 10);
