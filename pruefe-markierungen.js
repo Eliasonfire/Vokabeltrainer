@@ -393,3 +393,36 @@ for (const s of stumpf)
     + (HANDGEPRUEFT[s.id] ? `\n    ✔ von Hand geprueft: ${HANDGEPRUEFT[s.id]}` : `, von Hand ansehen`));
 console.log(`\n=== Trennschaerfe: ${stumpf.length} von ${Object.keys(PRUEFUNG).filter(id => proRegel[id] && proRegel[id].n).length} `
   + `benutzten Bedingungen lassen ueber ein Viertel aller Woerter durch ===`);
+
+// --- Schlussurteil: kann dieser Pruefer ueberhaupt scheitern? -----------
+/* ⛔ Bis zum 21.08.2026 NICHT. Das Skript steht in Regel 5 der Nachtschicht
+   als Pflichtpruefung vor jedem Push — und endete immer mit Exitcode 0, egal
+   was es gefunden hatte. Wer die Ausgabe nur ueberflog, sah einen Befund
+   nicht; eine Kette konnte ihn gar nicht sehen.
+   [[pruefwerkzeug_mit_eingebauter_antwort]] [[ausfall_ist_unsichtbar_gebaut]]
+
+   ⚠️ ZWEI ZAHLEN ZAEHLEN BEWUSST NICHT MIT:
+     - Trennschaerfe (Pruefung 4): eine stumpfe Bedingung ist kein Fehler,
+       das steht im Kommentar darueber. Sie steht seit dem 19.08.2026 auf 3,
+       alle drei von Hand geprueft und begruendet.
+     - Ueberschneidungen: seit dem 21.08.2026 ausdruecklich erlaubt, die App
+       zeichnet sie verschachtelt.
+   Ein Pruefer, der dauerhaft rot steht, wird beim naechsten echten Fehler
+   weggeklickt — denselben Grund nennt der Kommentar in Pruefung 3. */
+const HART = [
+  ['Satzquellen', OHNE_SATZ.length, 'markierte Saetze ohne Satztext'],
+  ['Regelbedingung', verdacht, 'Markierungen verletzen die Bedingung ihrer Regel'],
+  ['Tanwin', bestimmt, 'Markierungen an einem bestimmten Wort'],
+  ['Wortgrenzen', schief, 'Markierungen sitzen mitten in einem Wort'],
+  ['Unsichtbar', unsichtbar, 'eingetragene Markierungen werden nicht angezeigt']
+];
+const schlimm = HART.filter(([, n]) => n > 0);
+if (schlimm.length){
+  console.log('\n⛔ ' + schlimm.length + ' von ' + HART.length + ' harten Pruefungen sind ROT:');
+  for (const [was, n, text] of schlimm) console.log('   ' + was + ': ' + n + ' ' + text);
+  console.log('   Nicht pushen, bevor das behoben ist.');
+  process.exitCode = 1;
+} else {
+  console.log('\n✅ Alle ' + HART.length + ' harten Pruefungen auf 0. '
+    + '(Trennschaerfe und Ueberschneidungen zaehlen bewusst nicht mit.)');
+}
