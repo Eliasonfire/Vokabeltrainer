@@ -3083,6 +3083,59 @@ main{
    ⭐ Derselbe Wert wie `.box-overview` darueber (`--sp-6`), damit der Rhythmus
    der Seite durchgehalten wird statt eine eigene Zahl zu erfinden. */
 .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-3);margin-top:var(--sp-6);margin-bottom:var(--sp-6);}
+
+/* ---------- Uebungskalender (21.08.2026) ----------
+   Ein Feld je Tag, achtzehn Wochen weit, spaltenweise Montag bis Sonntag.
+
+   ⚠️ Die Feldgroesse ist NICHT fest, sondern `1fr` in einem Gitter mit
+   18 Spalten: auf 375 px ergibt das rund 15 px je Feld, auf einem breiteren
+   Fenster wachsen sie mit. Eine feste Pixelbreite haette entweder auf dem
+   Handy ueberlappt oder auf dem Tablet eine halbleere Zeile gelassen.
+
+   ⚠️ `aspect-ratio:1` statt einer Hoehe — sonst haengt die Hoehe an der
+   Schriftgroesse, und die stellt Elias in den Einstellungen um.
+
+   ⛔ Die vier Fuellstufen sind EINE Farbe in vier Deckkraeften, nicht vier
+   Farben. Eine bunte Skala wuerde behaupten, dass „viel geuebt" besser ist
+   als „regelmaessig geuebt" — der Kalender soll aber zeigen, an welchen
+   Tagen ueberhaupt geuebt wurde. Deshalb traegt die Regelmaessigkeit die
+   Aussage und die Menge nur den Ton. */
+.uebungskalender{margin-bottom:var(--sp-6);}
+/* ⛔ EIN Raster fuer Monatszeile, Wochentagsspalte und Gitter. Die erste
+   Spalte (`auto`) ist so breit wie die Wochentagsnamen, die zweite nimmt den
+   Rest — dadurch stehen Monatsnamen und Gitterspalten zwangslaeufig
+   uebereinander, statt uebereinander gerechnet zu werden.
+
+   ⚠️ Auch die Zeilenhoehe kommt aus dem Raster: stuenden Beschriftung und
+   Gitter nebeneinander in einem Flex-Kasten, naehme die Beschriftung ihre
+   Texthoehe. Gemessen waren das 83 px gegen 122 px — „So" stand 36 px zu
+   hoch und zeigte auf Donnerstag. Vom blossen Ansehen faellt das nicht auf.
+   [[breite_null_ist_kein_layout]] */
+.kal-block{display:grid;grid-template-columns:auto 1fr;column-gap:6px;row-gap:4px;}
+.kal-wtage{display:grid;grid-template-rows:repeat(7,1fr);gap:3px;font-size:.58rem;
+  color:var(--text-dim);text-align:right;}
+.kal-wtage span{display:flex;align-items:center;justify-content:flex-end;line-height:1;}
+.kal-gitter{min-width:0;display:grid;grid-template-rows:repeat(7,1fr);
+  grid-auto-flow:column;grid-auto-columns:1fr;gap:3px;}
+.kal-kopf{display:grid;grid-template-columns:repeat(18,1fr);gap:3px;font-size:.58rem;
+  color:var(--text-dim);min-width:0;}
+.kal-kopf span{white-space:nowrap;}
+.kal-zelle{aspect-ratio:1;border-radius:3px;border:1px solid var(--border);
+  background:var(--surface-2);padding:0;cursor:pointer;}
+.kal-zelle.kal-s1{background:rgba(255,77,106,.28);border-color:transparent;}
+.kal-zelle.kal-s2{background:rgba(255,77,106,.5);border-color:transparent;}
+.kal-zelle.kal-s3{background:rgba(255,77,106,.72);border-color:transparent;}
+.kal-zelle.kal-s4{background:var(--red-bright);border-color:transparent;}
+/* Erschlossen, nicht gemessen: umrandet statt gefuellt. Der Unterschied muss
+   man SEHEN, sonst sieht eine Rueckrechnung aus wie eine Messung. */
+.kal-zelle.kal-erschlossen{background:transparent;border-color:var(--red-bright);}
+.kal-zelle.kal-spaeter{background:transparent;border-color:transparent;cursor:default;}
+.kal-zahlen{display:flex;gap:var(--sp-4);margin-top:var(--sp-4);}
+.kal-zahlen div{display:flex;flex-direction:column;}
+.kal-zahlen b{font-size:1.25rem;color:var(--red-bright);line-height:1.1;
+  font-variant-numeric:tabular-nums;}
+.kal-zahlen span{font-size:.7rem;color:var(--text-dim);}
+.kal-fuss{font-size:.7rem;color:var(--text-dim);margin-top:var(--sp-2);line-height:1.45;}
 .stat-card{
   background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-3);padding:var(--sp-4);
   box-shadow:inset 0 1px 0 var(--hairline);
@@ -3737,6 +3790,14 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
            dürfen nicht doppelt vorkommen — sonst füllt `getElementById` nur
            die erste und die zweite bleibt leer, ohne Fehlermeldung. -->
       <div class="stats-grid stagger" id="statsGrid"></div>
+      <!-- ⭐ Der Kalender hinter der Serie (js/statistik.js, 21.08.2026).
+           Elias wollte bei der Streak-Zahl „so eine art kalender … an welchem
+           datum ich so geübt habe und wann nicht und wie lange das schon so
+           geht". Wird vollständig aus JS gefüllt; ohne den Kasten hier tut
+           `renderUebungskalender()` nichts und meldet das auch nicht — der
+           Kasten ist also Pflicht, nicht Zierde. -->
+      <h3 class="stats-titel">Wann du geübt hast</h3>
+      <div class="uebungskalender" id="uebungskalender"></div>
       <h3 class="stats-titel">Wie gut sitzen die Regeln?</h3>
       <div class="regel-sortierung" id="regelSortierung" role="group" aria-label="Sortierung">
         <button class="rs" data-sort="schwach" aria-pressed="true">schwächste zuerst</button>

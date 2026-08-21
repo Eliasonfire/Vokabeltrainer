@@ -51,6 +51,29 @@ function renderHome(){
   renderBuchChips();
   renderChapterFilterChips();
   document.getElementById('btnWrongOnly').classList.toggle('active', !!SETTINGS.wrongOnly);
+
+  /* ⛔⛔ DIE STATISTIK GEHOERT SEIT DEM 21.08.2026 ZU DIESEM BILDSCHIRM — und
+     muss deshalb HIER mitlaufen, nicht nur beim Bildschirmwechsel.
+
+     Elias mit Bildschirmfoto: „die box 5 mit 13 sicher stimmt nicht mit dem
+     ueberein was die gruene (richtige) box sagt". Gemessen war die Box-Reihe
+     bei 25 und die Statistik darunter bei 13 — und die fuenf Boxen summierten
+     sich auf 240, waehrend „Vokabeln gesamt" 200 sagte. Eine Teilmenge, die
+     groesser ist als ihre Menge: unmoeglich, also war eine der beiden Zahlen
+     alt. [[unmoegliche_zahl_ist_ein_geschenk]]
+
+     Die Ursache: renderHome() wird an DREIZEHN Stellen gerufen (Buchauswahl,
+     Kapitelauswahl, Einstellungen, Zuruecktaste …), renderStats() stand an
+     genau EINER — beim Wechsel auf den Startbildschirm. Wer die Auswahl
+     aenderte, sah die Boxen sofort neu und die Statistik von vorhin.
+
+     ⭐ Deshalb haengt sie jetzt am Ende von renderHome(): wer die eine Zahl
+     neu rechnet, rechnet die andere mit. Ein zweiter Aufrufort waere wieder
+     eine Stelle, die jemand vergisst.
+     [[dieselbe_frage_zwei_antworten]] [[zweiter_aufruf_ueberschreibt_still]]
+
+     ⚠️ `typeof`, weil js/statistik.js nach dieser Datei geladen wird. */
+  if (typeof renderStats === 'function') renderStats();
 }
 
 /* Die Kapitelliste haengt am Buch: Madina 1 hat 24, Madina 3 hat 35, und
