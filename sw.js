@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vokabeltrainer-v292';
+const CACHE_NAME = 'vokabeltrainer-v294';
 
 /* ⚠️ In diese Liste gehoeren KEINE Kommentare zwischen die Eintraege.
    validate.js liest sie zeilenweise und hat am 18.08.2026 einen erklaerenden
@@ -10,6 +10,27 @@ const CACHE_NAME = 'vokabeltrainer-v292';
    laedt js/buecher.js erst beim Umschalten nach, diese elf dagegen stehen bei
    JEDEM Start unter „Eigene Vokabeln". Ohne den Eintrag waeren offline
    ausgerechnet die Woerter weg, die er selbst eingetragen hat. */
+/* ⛔⛔ DIESE LISTE IST AUCH DIE WEISSLISTE DER AUSLIEFERUNG.
+   `werkzeuge/veroeffentlichen.mjs` liest sie mit `ausServiceWorker()`. Eine
+   Datei, die nur in einem CSS-url() in index.html steht, kommt deshalb NICHT
+   mit — sie fehlt dann still, und der Browser faellt auf eine Ersatzschrift
+   zurueck, ohne dass irgendwo etwas meldet. Genau das waere am 21.08.2026
+   mit der Wortmarke passiert: die Schrift stand nur im @font-face, gemessen
+   waren 2 von 28 woff2 in der Weissliste und die neue nicht dabei.
+
+   ⚠️ Zweiter Anlauf derselben Falle wie oben: Der Hinweis „keine Kommentare
+   zwischen die Eintraege" stand seit dem 18.08.2026 hier oben — ich habe am
+   21.08. trotzdem unten in der Liste kommentiert, weil ich dort arbeitete
+   und den Kopf nicht gelesen hatte. Erst beendete eine eckige Klammer im
+   Text die Liste vorzeitig (validate.js sah nur den Teil davor), nach dem
+   Flicken sammelte ein einzelnes ASCII-Anfuehrungszeichen den halben
+   Kommentar als Dateinamen ein. Beide Male meldete die Pruefung Fehler, die
+   es nicht gab — und haette echte Luecken darunter verdecken koennen.
+
+   ⚠️ `./wortmarke-talib.svg` ist am 21.08.2026 entfallen: die Marke ist
+   wieder Text (Scheherazade New, #ff0000, siehe .brand-mark in index.html).
+   Die Datei liegt noch im Ordner als Rueckweg, steht aber in keinem Markup
+   mehr. */
 const ASSETS = [
   './',
   './index.html',
@@ -74,6 +95,7 @@ const ASSETS = [
   './fonts/noto-naskh-arabic-700-ar.woff2',
   './fonts/noto-naskh-arabic-700-latext.woff2',
   './fonts/noto-naskh-arabic-700-lat.woff2',
+  './fonts/scheherazade-new-400-ar.woff2',
   './surah-data.js',
   './quran-seiten.js',
   './grammar-data.js',
@@ -83,7 +105,6 @@ const ASSETS = [
   './quran-text.js',
   './manifest.json',
   './icon.svg',
-  './wortmarke-talib.svg',
   './icon-maskable.svg'
 ];
 

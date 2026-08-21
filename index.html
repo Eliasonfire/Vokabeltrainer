@@ -26,6 +26,23 @@
    28 Dateien, 1399 KB, am 18.08.2026 von Google geladen und gemessen.
    Die unicode-range je Block ist die von Google; sie sorgt dafuer, dass ein
    Geraet nur die Teile holt, die es fuer den angezeigten Text braucht. */
+/* ⭐ SCHEHERAZADE NEW — ausschliesslich fuer die Wortmarke im Kopf.
+   Elias hat die Schrift am 20.08.2026 aus vierzehn Entwuerfen gewaehlt, die
+   Farbe am 21.08.2026: „lass uns pur rot nehmen".
+
+   ⚠️ NUR der arabische Block, 79 KB. Die lateinischen Teile fehlen bewusst —
+   die Marke besteht aus vier arabischen Buchstaben, alles andere waere
+   Ballast. Von Google geladen und an der Signatur geprueft (`wOF2`), nicht
+   von dort nachgeladen: das Gesicht der App darf nicht an einer fremden
+   Datei haengen.
+
+   ⛔ Kein Subset auf genau diese vier Buchstaben, obwohl das ~5 KB waeren:
+   dafuer braeuchte fontTools das Modul `brotli`, und das fehlt hier. Der
+   Unterschied ist bei 7,4 MB Auslieferung nicht der Rede wert — eine
+   Installation dafuer schon. */
+@font-face{font-family:'Scheherazade New';font-style:normal;font-weight:400;font-display:swap;
+  src:url(./fonts/scheherazade-new-400-ar.woff2) format('woff2');
+  unicode-range:U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;}
 @font-face{font-family:'Amiri';font-style:normal;font-weight:400;font-display:swap;
   src:url(./fonts/amiri-400-ar.woff2) format('woff2');
   unicode-range:U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC4, U+10EFC-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;}
@@ -558,14 +575,32 @@ button{font-family:inherit;color:inherit;}
 
 .brand{display:flex;flex-direction:column;line-height:1.15;}
 .brand-ar{font-family:var(--font-ar);color:var(--red-bright);font-size:1.35rem;font-weight:700;}
-/* Wortmarke طالِب العِلْم statt gesetztem Text. Die Hoehe fuehrt, die Breite
-   folgt aus dem Seitenverhaeltnis - waere es umgekehrt, wuerde die Marke in
-   der 1fr-Spalte der Topbar auf schmalen Geraeten unterschiedlich hoch.
-   align-self ist hier PFLICHT, nicht Kosmetik: .brand ist ein Spalten-Flex-
-   container, dessen voreingestelltes align-items:stretch die Grafik auf die
-   volle Spaltenbreite zieht. Ohne die Zeile wurde der Schriftzug von 55 auf
-   116 px auseinandergezogen und war als Haarstrich unlesbar. */
-.brand-mark{display:block;height:2rem;width:auto;align-self:flex-start;}
+/* ⭐⭐ DIE WORTMARKE IST SEIT DEM 21.08.2026 WIEDER TEXT, KEIN BILD.
+   Bis dahin lag sie als SVG-Pfad in wortmarke-talib.svg. Elias hat aus
+   vierzehn Entwuerfen `Scheherazade New` gewaehlt und dann die Farbe:
+   „lass uns pur rot nehmen" — #ff0000, einfarbig, ohne Verlauf.
+
+   ⚠️ Warum Text und nicht wieder ein Pfad: die Schrift wird MITGELIEFERT
+   (fonts/scheherazade-new-400-ar.woff2), also sieht die Marke auf jedem
+   Geraet gleich aus — genau das Argument, das seinerzeit fuer den Pfad
+   sprach. Als Text bleibt sie ausserdem waehlbar, vorlesbar und in der
+   Farbe aenderbar, ohne dass jemand eine Grafik neu bauen muss.
+
+   ⛔ `direction:rtl` ist Pflicht: ohne sie setzt der Browser die Marke im
+   umgebenden LTR-Fluss und die Buchstaben stehen falsch herum zusammen.
+
+   ⚠️ `line-height` grosszuegig — die Kasrah unter dem ب und das Tanwin
+   stehen UNTER der Grundlinie und werden sonst abgeschnitten.
+   ⚠️ align-self bleibt PFLICHT: .brand ist ein Spalten-Flexcontainer, dessen
+   voreingestelltes align-items:stretch das Element auf die volle
+   Spaltenbreite zoege. */
+.brand-mark{
+  display:block;align-self:flex-start;
+  font-family:'Scheherazade New',var(--font-ar);
+  font-size:1.75rem;line-height:1.35;
+  color:#ff0000;
+  direction:rtl;white-space:nowrap;
+}
 .brand-de{font-size:var(--fs-xs);color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;font-weight:600;}
 .streak{
   display:flex;align-items:center;gap:var(--sp-2);
@@ -3684,8 +3719,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 
   <header class="topbar">
     <div class="brand">
-      <img class="brand-mark" src="wortmarke-talib.svg" width="190" height="128"
-           alt="طالب — Student, Suchender">
+      <span class="brand-mark" role="img" aria-label="طالب — Student, Suchender">طَالِبٌ</span>
       <span class="brand-de">Vokabeltrainer</span>
     </div>
     <div class="streak" id="streakBadge" title="Tages-Streak">
