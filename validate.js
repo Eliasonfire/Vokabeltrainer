@@ -25,6 +25,30 @@ function fail(msg){ errors.push(msg); }
 function warn(msg){ warnings.push(msg); }
 function note(msg){ info.push(msg); }
 
+/* ---------- Ein Abschnitt, der allein scheitert (21.08.2026) ----------------
+
+   ⛔ ANLASS, gemessen am selben Tag: ein ReferenceError mitten in einem
+   try-Block, der 20 Pruefungen umspannt, hat ACHTZEHN davon stillgelegt — und
+   validate.js meldete „1 Fehler". Ein einzelner gewoehnlich aussehender Befund
+   statt „der halbe Lauf hat nicht stattgefunden".
+   [[ausfall_ist_unsichtbar_gebaut]]
+
+   `abschnitt()` gibt jedem Teil seinen eigenen Fang. Stuerzt einer ab, faellt
+   NUR er aus, die uebrigen laufen weiter — und die Meldung nennt ihn beim
+   Namen, statt die Ausnahme unter dem Namen einer anderen Pruefung
+   auszugeben. [[kennzeichen_mit_zwei_ursachen]]
+
+   ⚠️ Der Fang macht den Abschnitt NICHT harmlos: ein abgebrochener Abschnitt
+   ist ein FEHLER, kein Hinweis. Wer ihn als Warnung fuehrte, haette am Ende
+   einen gruenen Lauf ueber ungepruefte Dinge. */
+function abschnitt(name, fn){
+  try { fn(); }
+  catch (e){
+    fail(`Abschnitt „${name}" ist ABGEBROCHEN: ${e.message}. Seine Pruefungen sind `
+       + 'AUSGEFALLEN, nicht bestanden — die uebrigen Abschnitte liefen weiter.');
+  }
+}
+
 /* ---------- Datendateien in einer Sandbox laden ---------- */
 const DATA_FILES = ['vocab-data.js', 'surah-data.js', 'grammar-data.js', 'quran-frequency-data.js', 'lehrbuch-saetze.js'];
 let DATA = {};
@@ -660,7 +684,7 @@ try {
       .replace(/\/\*[\s\S]*?\*\//g, ' ')
       .replace(/(^|[^:])\/\/[^\n]*/g, '$1');
 
-    {
+    abschnitt('Startlauf-Nachtraege', () => {
       const kernRoh = fs.readFileSync(path.join(DIR, 'js', 'kern.js'), 'utf8');
       const buchRoh = fs.readFileSync(path.join(DIR, 'js', 'buecher.js'), 'utf8');
 
@@ -741,7 +765,7 @@ try {
           note(`Startlauf: alle ${NACHTRAG.length} Nachtrags-Funktionen werden aufgerufen, `
              + 'jede in der richtigen Reihenfolge.');
       }
-    }
+    });
 
     /* ---------- Der Rollhinweis auf der Kartenrueckseite (21.08.2026) --------
 
@@ -760,7 +784,7 @@ try {
        Hinweis, …)` uebergibt die Funktion OHNE Klammern. Wer nur `name(` sucht,
        haelt diesen dritten Weg fuer tot und verlangt drei Klammer-Aufrufe, die
        es nie geben wird. [[funktion_als_referenz_sieht_tot_aus]] */
-    {
+    abschnitt('Rollhinweis auf der Kartenrueckseite', () => {
       const lernRoh = ohneKommentare(fs.readFileSync(path.join(DIR, 'js', 'lernen.js'), 'utf8'));
       const htmlRoh = fs.readFileSync(path.join(DIR, 'index.html'), 'utf8');
       const NAME = 'aktualisiereMehrHinweis';
@@ -797,7 +821,7 @@ try {
       else
         note('Rollhinweis: Funktion, zwei Aufrufe, scroll-Ereignis, Rollstand-Ruecksetzung '
            + 'und Markup/CSS sind da.');
-    }
+    });
 
     const swRoh = fs.readFileSync(path.join(DIR, 'sw.js'), 'utf8');
     const fetchBlock = swRoh.slice(swRoh.indexOf("addEventListener('fetch'"));
