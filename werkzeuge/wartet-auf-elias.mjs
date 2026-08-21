@@ -699,7 +699,17 @@ const ohneKommentare = txt => txt
       + ' Bildschirm bleibt leer, ein Knopf tut nichts. Du siehst „kaputt", nicht'
       + ' „Fehler in Modul X". Und ich sehe hinterher gar nichts, weil nichts'
       + ' festgehalten wird — die drei Fehler, die du mir heute frueh gemeldet hast,'
-      + ' habe ich nur ueber deine Bilder gefunden.',
+      + ' habe ich nur ueber deine Bilder gefunden.'
+      + ' \n\n⛔ Am 21.08.2026 dazu gemessen, und das ist der greifbarste Fall:'
+      + ' ALLES, was die App speichert — dein Lernfortschritt, deine Einstellungen,'
+      + ' deine Notizen — laeuft ueber eine einzige Funktion (LS.set in'
+      + ' js/kern.js). Die faengt einen Speicherfehler ab und verschluckt ihn'
+      + ' dann. Gegengeprueft: in der ganzen App gibt es KEINE Stelle, die dir'
+      + ' einen Speicherfehler zeigen wuerde. Ist dein Speicher gesperrt (privates'
+      + ' Fenster etwa), lernst du eine Runde durch und beim naechsten Oeffnen ist'
+      + ' alles weg — ohne dass vorher irgendetwas darauf hingedeutet haette.'
+      + ' Voll wird er kaum, gesperrt sein kann er aber: genau das ist in derselben'
+      + ' Nacht bei einer der Entscheidungsseiten real passiert.',
     wie: 'Zwei Wege, such einen aus. (a) STILL: der Fehler wird nur gespeichert, die'
       + ' Oberflaeche bleibt unveraendert — beim naechsten Bericht steht er dann drin.'
       + ' (b) SICHTBAR: zusaetzlich eine schmale Zeile am unteren Rand „Da ist etwas'
