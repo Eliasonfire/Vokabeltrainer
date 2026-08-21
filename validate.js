@@ -827,5 +827,15 @@ if (errors.length){
   console.log(`\n${errors.length} Fehler — NICHT pushen.`);
   process.exit(1);
 }
-console.log(`\nAlles sauber${warnings.length ? ` (${warnings.length} Hinweis${warnings.length===1?'':'e'})` : ''} — Push ist in Ordnung.`);
+/* ⛔ Die Zahl der Pruefungen gehoert in die Schlusszeile. Bis zum 21.08.2026
+   stand dort nur „Alles sauber (3 Hinweise)" — waere `info` leer gewesen,
+   haette derselbe Satz dagestanden. Eine Zahl, die man mit dem erwarteten
+   Umfang vergleichen kann, ist die billigste Eichung, die es gibt.
+   [[leere_liste_ist_keine_messung]] */
+const geprueft = info.length + warnings.length;
+console.log(`\nAlles sauber: ${geprueft} Pruefungen gelaufen`
+  + (warnings.length ? `, ${warnings.length} Hinweis${warnings.length===1?'':'e'}` : '')
+  + ' — Push ist in Ordnung.');
+/* Eine Gesamtpruefung, die NICHTS geprueft hat, ist kein Erfolg. */
+if (!geprueft) console.log('⛔ …aber es waren NULL — hier wurde nichts geprueft.');
 process.exit(0);
