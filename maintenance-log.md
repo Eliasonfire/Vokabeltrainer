@@ -2019,3 +2019,540 @@ Werkzeugen, keine Datei, die sich nicht schreiben ließ.
    zufällig eingesammelt, weil er ohnehin pusht. Wenn das verlässlich sein soll,
    gehört es nicht in die Wartung, sondern in Elias' eigenen Ablauf —
    ein `git push` nach dem Veröffentlichen.
+
+## 2026-08-23 16:23 – Wöchentliche Wartung (So-Check)
+
+**Der Befund des Tages: die Unterrichtspause ist vorbei, es gibt zwei neue
+Folgen — und der Handschrift-Export hängt jetzt 27 Tage hinterher.**
+
+### Schritt 0 – Repo und Prompt-Prüfung
+
+`git pull --ff-only` → `Already up to date.`
+
+`pruefe-volles-programm.mjs` **Exit 0, deckungsgleich** — kein `--angleichen`
+nötig, die Kurzliste in Schritt 1c.4 führt weiterhin 13 Punkte. Zwei
+Hinweise, beide **nicht von hier behebbar**, weil der Prompt außerhalb des
+Vokabeltrainer-Ordners liegt:
+
+- **17 Prüfungen laufen Mi/So nicht mit.** Es fehlt eine Zeile
+  `node werkzeuge/alle-pruefer.mjs` im Wartungs-Prompt.
+- **`arbeit.mjs` steht nur in der Berechtigungsliste, nirgends als Aufruf.**
+  Bricht ein Lauf mitten in einer Änderung ab, bleibt keine Marke zurück.
+
+Beide stehen seit dem 20.08. unverändert da. Sie brauchen ein Wort von Elias.
+
+### Schritt 0a – Sind die vorigen Läufe durchgekommen?
+
+`pruefe-laeufe.mjs --tage 30` → **Exitcode 2, drei Lücken.** Alle drei vom Typ
+**abgebrochen**, keine einzige „gar nicht gelaufen" — der Rechner lief also,
+die Läufe sind gestorben:
+
+| Termin | Routine | Ursache |
+|---|---|---|
+| 29.07.2026 22:00 | vokabeltrainer-wartung | `API Error: 529 Overloaded` |
+| 09.08.2026 13:00 | vokabeltrainer-wartung | `out.log` ist LEER |
+| 18.08.2026 19:00 | eingang-einsortieren | `API Error: 529 Overloaded` |
+
+⭐ **Alle drei sind bekannt und bereits dokumentiert** (die zwei
+Wartungsausfälle im Eintrag vom 19.08., der Backlog-Schaden aus dem 09.08. im
+Eintrag vom 12.08.). **Keine neue Lücke seit dem 18.08.** — das ist die
+eigentliche Nachricht: fünf Termine in Folge sind durchgelaufen.
+
+⚠️ Wartung steht bei **5 ok von 8 Soll**. Die Statusnotiz hinkt vier Tage
+hinterher (Notiz 19.08., Log 23.08.), was der bekannte Effekt ist: sie bekommt
+ihren Abschnitt erst, wenn eine Routine fertig wird.
+
+### Schritt 0b – Samsung-Notes-Export: 🔴 einer von drei hinkt
+
+Selbst gerechnet aus `noteLastModifiedAt > exportedAt`, **nicht** aus `stale`
+abgelesen — das Feld log auch diesmal:
+
+| Notiz | Export | Notiz zuletzt | Rückstand | `stale` sagt |
+|---|---|---|---|---|
+| **Madina Buch 1 (Beschriftet)** | 27.07. 03:10 | **09.08. 11:50** | **+13,4 Tage** | `true` ✅ |
+| Grammatik Heft Medina Buch 1 | 27.07. 03:22 | 27.07. 22:57 | +0,8 Tage | `false` ✅ |
+| Madina Buch 1 Vokabelheft | 27.07. 03:11 | 27.07. 03:21 | +0,01 Tage | `false` ✅ |
+
+⭐ **Diesmal stimmte `stale` bei allen dreien** — anders als am 20.08., wo zwei
+von drei falsch als frisch galten. Das ändert nichts an der Regel: die Zahlen
+oben sind gerechnet, nicht abgelesen.
+
+`export-index.mjs --live` → **Exitcode 2**, eine Notiz neuer als ihr Export.
+`--pruefen` → **0 Beanstandungen** — genau die Blindstelle, vor der der Prompt
+warnt: `--pruefen` vergleicht nur Werte vom Exportzeitpunkt.
+
+**Der Export selbst ist 27 Tage alt.** Die Zeile steht seit heute in
+`03 - Projekte\To-Do Vokabeltrainer.md` unter `## 🔴 Wartet auf Elias`.
+
+⚠️ **In `Routinen-Status.md` habe ich sie NICHT eingetragen**, obwohl der
+Prompt das verlangt: die Datei sagt in ihrem eigenen Kopf, dass
+`run-routine.ps1` sie nach **jedem** Lauf komplett neu schreibt und Handarbeit
+verlorengeht. Eine Zeile dort hätte dieser Lauf selbst wieder gelöscht. Der
+Weg, der trägt, ist der Bericht — der landet als Text in derselben Notiz.
+
+⭐ **Der 09.08. ist derselbe Tag, an dem Folge 16 eingestellt wurde.** Wenn
+Elias damals mitgeschrieben hat, fehlt der App seit zwei Wochen Material.
+Es bleibt trotzdem eine **Frage**: Samsung Notes stempelt auch beim bloßen
+Öffnen.
+
+### Schritt 1 – Neue Aufzeichnungen: 🆕 ZWEI auf einmal
+
+`get_recordings` liefert **18 Einträge statt 16**. Beide neu am **23.08.2026**:
+
+| Folge | Titel | eingestellt | YouTube |
+|---|---|---|---|
+| 17 | MB1 Kapitel 12 | 23.08. 07:58 UTC | https://youtu.be/e-Gw_WNk4JE |
+| 18 | Pronomen & Konjugieren | 23.08. 09:54 UTC | https://youtu.be/2m6q275VpQ0 |
+
+✅ **Die Vermutung vom 19.08. hat sich bestätigt.** Dort stand, zehn Tage ohne
+Folge verließen den bekannten Rahmen und eine Unterrichtspause sei plausibler
+als ein verspäteter Upload. Es wurden **14 Tage** (09.08. → 23.08.), und dann
+kamen gleich zwei Folgen — eine Pause, kein Ausfall.
+
+⚠️ **Folge 18 verlässt zum ersten Mal die Kapitelzählung.** „Pronomen &
+Konjugieren" trägt keine Kapitelangabe. Beim Auswerten nicht auf ein Kapitel
+raten.
+
+⭐ **Folge 17 trägt Kapitel 12** — genau das Kapitel, das `js/kern.js` als
+freigeschaltet führt und arabicroots nicht. Sobald ihr Rohmaterial da ist, ist
+sie der Beleg für Elias' Ansage vom 20.08.
+
+Beide in `transcripts/backlog.md` nachgetragen (Tabelle und Kopf).
+**Rohmaterial liegt für keine von beiden vor** — das holt
+`arabicroots-backfill-retry`, eine Folge je Lauf, also frühestens in zwei
+Läufen beide. Kein Commit, `transcripts/` ist ausgeschlossen.
+
+### Schritt 1b – Rückstand: keiner
+
+`rueckstand.mjs --knapp` → **Exit 0**, „Regelauswertung: kein Rueckstand."
+Die 16 älteren Folgen sind ausgewertet; die zwei neuen haben noch kein
+Rohmaterial und tauchen dort deshalb noch nicht auf. Schritte 1b.2 bis 1b.6
+entfallen, nichts zu veröffentlichen.
+
+### Schritt 1c – Vorrat
+
+**1c.1 Stände nachgezogen.** `vorrat.mjs --stand … --app auto`:
+
+- eigene Wörter (`vt_personalVocab`): **14** → `data/eigene-woerter.json`
+- App-Auswahl aus dem Cloudflare-KV **erreichbar** (Stand 23.08. 04:46):
+  madina-1 bis 12
+- `FREIGESCHALTET` war schon aktuell (Stand 19.08.) — **nicht** neu geschrieben,
+  also kein `CACHE_NAME`-Bump nötig
+
+⛔ **Keine Zeile „Lernstand automatisch mitgewachsen"** — die Angabe steht
+unverändert bei madina-1 Kapitel 12. Nach der Meldepflicht wird das bewusst
+**nicht** als Befund gemeldet. Keine Zeilen unter „NICHT uebernommen" oder
+„⚠️ Nicht zugemacht".
+
+`get_learning_progress` → 549.480 Zeichen, von der Umgebung als Datei abgelegt;
+Pfad direkt an `--lernstand` weitergereicht, Datei nicht gelesen.
+⚠️ **Der Pfad muss mit Schrägstrichen übergeben werden** — mit Backslashes
+frisst die Git-Bash die Trennzeichen, und `node` meldet dann `ENOENT` auf einen
+Pfad ohne jede Trennung (`C:Usersabdur.claude…`). Einmal in diesem Lauf
+passiert, beim zweiten Versuch behoben.
+
+`data/lernstand.json` änderte sich dabei **nur in `gemessenAm`**
+(2026-08-19 → 2026-08-23), per `git diff` nachgesehen. `angabe` unangetastet.
+
+**1c.2 Messung ≠ Lernstand, unverändert:**
+
+| Buch | gemessen (`get_learning_progress`) | Elias' `angabe` |
+|---|---|---|
+| madina-1 | Kapitel **23** (222 Wörter angefasst) | **12** |
+| madina-2 | Kapitel **31** (250 Wörter) | ⛔ keine |
+| bayna-yadayk-1 / -2 / -3 | 16 / 16 / 16 | ⛔ keine |
+| madina-3 | 34 | ⛔ keine |
+
+⚠️ **Die Abweichung madina-1 „23 gemessen gegen 12 gesagt" ist die Frage an
+Elias**, nicht eine Zahl zum Wegsortieren. Sie steht seit dem 19.08.
+unverändert und ist erklärbar: sein eigener Trainer fragt alles ab, was er
+angehakt hat.
+
+**1c.3 Messung** — `vorrat.mjs` **Exit 2**:
+
+```
+  geprueft:                 214 Woerter
+  vollstaendig:             155
+  unvollstaendig:            59
+    fehlende Eselsbruecken:   0
+    fehlende Beispielsaetze:  0
+    fehlende Markierungen:    0
+```
+
+⭐⭐ **Das ist der eigentliche Fortschritt: alle drei Posten, die ICH schreiben
+kann, stehen auf null.** Eselsbrücken, Beispielsätze, Markierungen — nichts
+offen. Die 59 unvollständigen Wörter fehlen **ausschließlich an Feldangaben**,
+die ich ohne Raten nicht beantworten kann.
+
+⛔ **Die nicht gemessene Zahl, die dazugehört:** *224 weitere freigeschaltete
+Wörter — 51 % des freigeschalteten Bestands (438) bleiben ungeprüft.* Wer nur
+„59 von 214 unvollständig" liest, verschweigt, dass über die Hälfte gar nicht
+angesehen wurde. Grund: madina-2 hat keine `angabe`, und der Rückfall auf
+„alles Freigeschaltete" würde 445 Wörter Rückstand melden, die niemand braucht.
+
+**Je Feld, was ohne die Angabe ausfällt** — nicht die Formalie, der Befund:
+
+| Feld | fehlt | was das in der App kostet |
+|---|---|---|
+| `pl` | 25 | 25 Wörter haben keine eigene Pluralkarte |
+| `root` | 25 | 25 Wörter fehlen in Wurzelansicht und Wortfamilie |
+| `type` | 19 | 19 Wörter erzeugen in **Übung 8** keine Aufgabe, fehlen in der Kategorieansicht und in der Funktionsanzeige |
+| `gender` | 8 | **Übungen 11 und 12** erzeugen für 8 Wörter keine einzige Aufgabe |
+| `femSg` | 1 | **Übung 13** erzeugt für 1 Wort keine Aufgabe |
+
+**1c.4 – das volle Programm: nichts zu schreiben.** `VOLLES-PROGRAMM.md` als
+Quelle geprüft (`pruefe-volles-programm.mjs` Exit 0, 13 Punkte). Der
+Arbeitsauftrag `.vorrat-auftrag.json` führt **0 Eselsbrücken und 0
+Beispielsätze** — jedes der 59 Wörter hat bereits drei Merkhaken und einen Satz.
+Was bleibt, ist A1–A4 als Feldfrage und geht damit an die Fragenseite.
+
+**Die fünf Wege in Elias' Reichweite** (Zählung aus `VOLLES-PROGRAMM.md`):
+
+| # | Weg | Zahl | gemessen? |
+|---|---|---|---|
+| 1 | freigeschaltetes Kapitel | 163 (madina-1) | ✅ |
+| 2 | einzeln freigeschaltetes Wort (`vt_einzeln_frei`) | ? | ⛔ **nie** — nur in seinem localStorage |
+| 3a | eigene Vokabel (arabicroots) | 11 | ✅ |
+| 3b | eigene Vokabel (in der App) | 14 | ✅ |
+| 4 | Fachbegriff | 15 | ✅ |
+| 5 | nur in `vocab-data.js` | 11 | ✅ |
+
+⚠️ **Weg 4 bleibt der blinde Fleck mit Ansage:** eine leere Messung ist kein
+Beweis, dass es keine weiteren gibt. Elias kann die Liste über „Liste für die
+Wartung" in den Einstellungen herausgeben — er hat es in diesem Lauf nicht
+getan, also bleibt die Frage offen.
+
+**1c.5 Prüfungen** — `pruefe-eigene-vorrang.mjs` **Exit 0**:
+
+```
+  ok  werkzeuge/vorrat.mjs · pruefe-funktionen.js
+  ok  pruefe-taschkil.js   · pruefe-eselsbruecken.js
+  ok  alle messen 214 Woerter (vorrat / funktionen / wortfelder --fenster)
+```
+
+⭐ **Damit sind die Zahlen oben belastbar** — sie zählen keine Scheinmängel aus
+dem Rohabzug mit. 15 abweichende Feldwerte zwischen `data/vokabeln-eigene.js`
+und `vocab-data.js` sind der **Normalfall**, nicht der Fehler: der Rohabzug hat
+`type:'other'`, die gepflegte Fassung hat `vocab` bzw. `grammar`.
+
+ℹ️ Zwei Formularänderungen von Elias (`vt_wortAenderungen`) kennt kein
+Prüfwerkzeug: `gram-zarf` ظَرْفٌ statt ظَرْف, `gram-nat` نَعْتٌ statt نَعْت.
+Folgenlos, solange keines der beiden Wörter bemängelt wird.
+
+**1c.6 Ausliefern: nichts auszuliefern.** Kein ausgelieferter Inhalt hat sich
+geändert. `pruefe-erreichbarkeit.js`: `.deploy/` **deckt sich mit dem Repo**
+(95 Regeln, 587 Markierungen, 39 Lehrbuchsätze, Cache `vokabeltrainer-v294`).
+`veroeffentlichen.mjs --pruefen`: 87 Dateien, 5,80 MB, nichts ausstehend.
+**`CACHE_NAME` bleibt bei v294** — es hochzusetzen, ohne dass sich etwas
+geändert hat, würde jede Installation grundlos neu laden lassen.
+
+**1c.7 Fragenseite.** `aussenbelege.mjs` zuerst — von 78 offenen Angaben
+betreffen 50 `root`/`type`, davon:
+
+```
+  bestaetigt: 24   verworfen: 18   Wiktionary kennt es nicht: 8   (Nenner 50)
+  Taschkil-Luecken: 7 von 22 belegt
+```
+
+⭐ **Die 18 Verworfenen sind der Wert des Werkzeugs, nicht sein Ausfall.**
+حَالُكْ „dein Zustand" hätte die Wurzel von حَالِك „pechschwarz" bekommen,
+لَكَ „für dich" die von لَكّ „Lack", خَرَجَ hätte als Nomen gegolten. Alle sahen
+wie saubere Treffer aus.
+
+`wartungsfragen-artefakt.mjs` → `artefakte/wartungsfragen.html`,
+**5 Fragen über 78 Wörter**:
+
+| Frage | Wörter |
+|---|---|
+| Welche Wortart? | 19 |
+| Haben diese Wörter einen Plural? | 25 |
+| Wie lautet die Wurzel? | 25 |
+| Welches Geschlecht? | 8 |
+| Wie lautet die weibliche Form? | 1 |
+
+⭐ **Bei 35 der 78 steht die Antwort schon auf der Seite** (12 aus seinem
+eigenen Bestand, 24 aus Wiktionary) — er liest und hakt ab, statt zu
+recherchieren.
+
+**1c.8 Warteseite** — `wartet-auf-elias.mjs` **Exit 2**:
+**14 Entscheidungen**, davon 4 mit Stückarbeit (150 Einzelstücke), 10 nur
+ansehen und wählen. Größte Posten: 78 fehlende Angaben, **45 Regelkandidaten**
+(F14/F15/F16 je 15), 25 Taschkīl-Fragen, 23× „(gr)" auf den Karten.
+
+⛔ **Meldung des Artefakt-Wächters, Richtung 1:**
+**2 Artefakt-Seiten ohne hinterlegte URL: `farbe-wortmarke.html`,
+`stimmen-liste.html`.** Wer sie veröffentlicht, legt eine **zweite** Seite an.
+Erst die URL in `DATEI_ZU_URL` (`werkzeuge/wartet-auf-elias.mjs`) eintragen,
+dann veröffentlichen. Die beiden anderen Richtungen meldeten nichts.
+
+**1c.8b Freigabeseite für Regeln** — `freigabe-artefakt.mjs`:
+`artefakte/freigabe.html`, **45 Fundstellen aus 3 Folgen** (F14: 15 · F15: 15 ·
+F16: 15). Speicherschlüssel `regelkandidaten-v1` (**nicht** `regelpruefung-v1`).
+
+**1c.8c Die drei übrigen Seiten neu gebaut:**
+
+| Werkzeug | Ergebnis |
+|---|---|
+| `regelauswahl-seite.mjs` | 95 Regeln, 12 Kategorien, 38 KB |
+| `regelpruefung-seite.mjs` | 95 Regeln, alle mit Beispielsatz, 159 KB |
+| `verschmelzung-seite.mjs` | 8 Gruppen, 21 Regeln, 42 KB |
+
+`git status --short` danach → **keine der beiden versionierten Seiten hat sich
+geändert** (`regelauswahl.html`, `verschmelzung.html` unverändert). Damit ist
+**nichts davon neu zu veröffentlichen** — anders als am 20.08., wo
+`regelauswahl.html` von `"n":17` auf `"n":24` sprang.
+
+**Pfade für die nächste Sitzung** (die Routine kann nicht veröffentlichen), jede
+unter **ihrer** URL:
+
+| Datei | Artefakt-URL |
+|---|---|
+| `artefakte/wartungsfragen.html` | `724ee9bc-adb7-4dcd-ad75-6a56a552adbd` |
+| `artefakte/wartet-auf-elias.html` | `4c3a7c9e-c288-480c-bb1f-e2d7cd26d856` |
+| `artefakte/freigabe.html` | `d9916aee-b679-4d91-bb0c-c3642f8889ac` |
+| `regelauswahl.html` | `da4af296-67c5-4055-a2e7-35defc375007` |
+| `artefakte/regelpruefung.html` | `1e11a0ef-992b-41ac-9786-1247cc185e83` |
+| `verschmelzung.html` | `9cb296d7-b5ea-4767-8f99-e5e896e6a871` |
+
+### Schritt 2 – Vokabelabzug
+
+`hole-vokabeln.mjs`: **4433 Einträge, 11 eigene Vokabeln.**
+
+| Buch | Vokabeln | Kapitel | Änderung zum letzten Lauf |
+|---|---|---|---|
+| bayna-yadayk-1 | 231 | 17 | — |
+| bayna-yadayk-2 | 552 | 17 | — |
+| bayna-yadayk-3 | 445 | 17 | — |
+| bayna-yadayk-4 | 881 | 16 | — |
+| madina-1 | 298 | 24 | — |
+| madina-2 | 445 | 29 | — |
+| madina-3 | 1238 | 35 | — |
+| quran | 343 | 23 | — |
+
+`baue-vokabelpaket.mjs` → **`UNVERAENDERT`** — dasselbe Paket wie beim letzten
+Lauf, 8 Bücher, 4433 Vokabeln, 1382 KB. Nach der Regel im Prompt **kein**
+`handlungsbedarf`: Elias muss nichts neu einlesen.
+
+`get_unlocked_chapters`: madina-1 **1–11**, madina-2 **1–24** (35 Kapitel).
+⭐ arabicroots kennt madina-1 weiterhin nur bis 11, `js/kern.js` führt 12 — die
+Ansage vom 20.08. bleibt erhalten, `--auch-schliessen` wurde **nicht** benutzt.
+
+### Schritt 3 – `vocab-data.js`
+
+Nicht angefasst. 171 Einträge, 170 mit `sentAr`. Nicht aus dem Abzug erzeugt —
+die Sätze wären weg.
+
+### Schritt 4 – Samsung Notes
+
+Siehe Schritt 0b. Der Export für „Madina Buch 1 (Beschriftet)" ist 27 Tage alt
+und die Notiz 13 Tage jünger; die beiden anderen sind aktuell.
+**Handschrift-Abgleich in diesem Lauf nicht durchgeführt** — er hätte kein
+Ziel: es gab keine neue Regel und keine neue Vokabel, gegen die zu prüfen wäre.
+Neu exportieren kann die Routine nicht.
+
+### Schritt 5 – Lernstand als Hinweis
+
+`get_weak_vocabulary` (Schwelle 0,5): 82 Einträge, alle als Elias' Lernstand
+gewertet, kein Filter auf Buch oder Kapitel.
+
+⚠️ **Der Befund ist derselbe wie am 19.08., und er wird nicht schwächer:** die
+schwächsten Wörter sind seine **eigenen**, und es sind genau die, denen
+Feldangaben fehlen.
+
+| Wort | Bedeutung | Bilanz | zuletzt |
+|---|---|---|---|
+| أَلْمُهَنْدِسٌ | Ingenieur | **0 von 7** | 17.07.2026 |
+| لَحْمٌ | Fleisch | **0 von 5** | 24.07.2026 |
+| إِثْنَانِ | Zwei (2) | 3 von 18 | 17.07.2026 |
+| اِسْمٌ مَجْرُورٌ | Nomen im Genitiv | 1 von 3 | 13.07.2026 |
+
+⭐ **لَحْمٌ ist zugleich der Fall, für den Wiktionary heute einen Beleg geliefert
+hat** (Wurzel ل ح م, Wortart Noun). Ein Wort, das er fünfmal falsch hatte, ist
+auch das Wort ohne Wurzelansicht und ohne Wortfamilie.
+
+Der Rest der Liste ist erwartbar: **bayna-yadayk-2 Kapitel 1–8** stellt allein
+über 40 Einträge, überwiegend Verben. Ein Buch ohne `angabe`, also außerhalb
+des Fensters — kein Handlungsbedarf, nur die Bestätigung, dass er dort übt.
+
+`get_personal_vocabulary`: **11 eigene Vokabeln**, jüngste Änderung 18.07.2026.
+Keine neue seit dem letzten Lauf, keine fehlt in der App (alle 11 auch in
+`vocab-data.js`, per `pruefe-eigene-vorrang.mjs` belegt).
+
+### Schritt 6 – Qualitätssicherung
+
+**`node validate.js` → grün, 30 Prüfungen, 3 Hinweise. Push in Ordnung.**
+
+```
+  ok   GRAMMAR_RULES: 95 Regeln — 83 aus dem Unterricht, 12 aus den Lehrbuechern
+  ok   SENTENCE_TAGS: 587 Markierungen auf 329 Saetzen
+  ok   Satzmodus-Kategorien: alle 12 besetzt, 3–11 erreichbare Regeln je Kategorie
+  ok   sw.js: CACHE_NAME = vokabeltrainer-v294
+```
+
+⭐ **Die Kategoriezeile ist grün** — sie schlägt nicht in „laufen ins Leere" um.
+Keine Streichungsrunde hat eine Kategorie unter zwei erreichbare Regeln
+gedrückt, und keine neue Regel fällt durch alle zwölf.
+
+Die drei Hinweise sind alle bekannt und benannt: لَبَنٌ (Plural ohne `sg`,
+„ar" ist dort der Singular), مِكْوَاةٌ (`sg` ohne Plural, im Abzug ebenso), und
+die **9 Zahlwörter**, die unter „Plural" die andere Genusform zeigen — die
+Beschriftung entscheidet Elias' Lehrer, nicht die Wartung.
+
+**`node pruefe-erreichbarkeit.js` → Exit 0.** 95 von 95 Regeln erreichbar, und
+alle 95 haben eine Markierung in einem Satz, den er **heute** sieht
+(Lernstand madina-1 Kapitel 12). `.deploy/` deckt sich mit dem Repo.
+`ta-marbuta-fem-01` wird als „markiert und trotzdem ausgeblendet" gemeldet —
+**kein Befund**, das ist Elias' Abbestellung vom 29.07.
+
+**Die acht Prüfskripte:**
+
+| Skript | Ergebnis |
+|---|---|
+| `pruefe-markierungen.js` | ✅ alle 5 harten Prüfungen auf 0 · 3 stumpfe Bedingungen, alle am 19.08. von Hand geprüft |
+| `pruefe-saetze.js` | ✅ 369 Sätze kasusrein (170 + 39 Lehrwerk + 160 aus `beispielsaetze.js`) |
+| `pruefe-transkripte.js` | ⚠️ 1 Regel ohne Beleg im Fenster: `ismul-isara-hadha-01` (F1 10:07) |
+| `pruefe-sprecher.js` | ⚠️ 9 Regeln unter 60 % Lehreranteil · Ø 86 % |
+| `pruefe-taschkil.js` | **Exit 1 — 37 Befunde in 31 Wörtern** |
+| `pruefe-wortfelder.js --fenster` | ⚠️ 62 von 214 ohne Bedeutungsfeld, **davon 0 Nomen** |
+| `pruefe-eselsbruecken.js` | **Exit 1 — 10 Verstöße** |
+| `pruefe-quran.js` | ✅ 36 Bezüge, 35 in Ordnung, 1 benannte Ausnahme (67:19) |
+
+⭐ **`pruefe-wortfelder.js`: die Zahl unter „davon N Nomen" ist 0** — und das ist
+die einzige, die zählt. Die 62 sind Partikeln, Adjektive und Fachbegriffe, bei
+denen die Wortart selbst schon die Kategorie ist. Keine echte Lücke.
+
+⚠️ **`pruefe-eselsbruecken.js`, Abschnitt 4 — der einzige neue inhaltliche
+Befund dieses Laufs:**
+
+```
+  FEHL دَقِيقَةٌ (buch): „أُسْبُوعٌ (Woche)" wird als bekanntes Wort vorgestellt
+       — steht aber erst in madina-1 Kapitel 15, ausserhalb seines Fensters
+  FEHL دَقِيقَةٌ (buch): „سَنَةٌ (Jahr)" wird als bekanntes Wort vorgestellt
+       — steht aber erst in madina-1 Kapitel 18, ausserhalb seines Fensters
+```
+
+Die Eselsbrücke zu دَقِيقَةٌ „Minute" beruft sich auf zwei Zeitwörter, die Elias
+**noch nicht hat**. ⛔ Nicht selbst umgeschrieben: sie stehen in
+`data/eselsbruecken-alt.js`, und ein Merkhaken ist Elias' Text. Das Umschreiben
+ist klein — es braucht nur seine Freigabe, welchen Anker er stattdessen will.
+
+Die übrigen 8 Verstöße sind der bekannte Posten „6 Merksätze, die den Quran
+zitieren" von der Warteseite: 4 Stellen aus Sure 2 (außerhalb 1 / 67 / 93–114)
+und 4 arabische Läufe über vier Wörter, der längste mit 7 (كَيْفَ, Sure 105).
+
+✅ **Abschnitt 7 ist sauber:** kein Anker aus einem späteren Kapitel.
+✅ **Abschnitt 6:** alle 163 madina-1-Wörter aus freigeschalteten Kapiteln haben
+Alternativen. madina-2 wird korrekt **nicht** eingefordert (keine `angabe`) —
+der Vorschlag vom 19.08. hat also gewirkt oder war nie nötig.
+
+**`pruefe-taschkil.js`, 37 Befunde:** 13 fehlende Ḥaraka, 10 Hamzat al-waṣl
+ohne Kasra, 8 Regeln mit unvokalisierten Wörtern, 2 fehlende Endungen; dazu 12
+ausdrücklich **kein Mangel** (8 Zitierformen, 4 Alif at-tanwīn).
+⛔ **Nichts selbst vokalisiert** (E.1). 7 der Lücken tragen jetzt einen
+Wiktionary-Beleg aus `data/aussenbelege.json`, u. a. أَيْضاً → أَيْضًا,
+اسْمُ → اِسْم, إِضافة → إِضَافَة.
+
+**Die zwei Werkzeuge für A8 und A13:**
+
+- `pruefe-funktionen.js` → **214 von 214** Infokarten nennen eine Funktion,
+  **0** sagen nur „Wort". ⭐ A8 ist damit vollständig.
+- `pruefe-duplikate.js` → Exit 2, **Eichung an 4 Fällen bestanden**, 2 Befunde:
+  سَيِّدٌ (eigene Vokabel gegen madina-2 K18, **echtes Duplikat**) und
+  ظَرْف gegen ظَرْفٌ — ⛔ **kein Duplikat**, das eine ist „Zeit-/Ortsangabe",
+  das andere „Umschlag". Welche er will, entscheidet er.
+
+**Die elf Eichungen und Wächter — alle grün, zum ersten Mal vollständig:**
+
+| Werkzeug | Ergebnis |
+|---|---|
+| `pruefe-schreibpfade.mjs` | ✅ 78 Werkzeuge, keine Stelle schreibt direkt auf Lerninhalt |
+| `pruefe-artefakt-inhalt.mjs` | ✅ 12 Seiten · `freigabe.html` 41 Treffer, Vorbehalt steht sichtbar |
+| `pruefe-erreichbarkeit-eichung.mjs` | ✅ 3 von 3, inkl. dem Fall, der ausgeblendet bleiben muss |
+| `eiche-fragenreihenfolge.mjs` | ✅ `type` steht vorn, Seite nennt den Zusammenhang bei 19 Wörtern |
+| `eiche-wortart-knopf.mjs` | ✅ 11 Zuordnungen auf echte Knöpfe, „quantifier" wird abgewiesen |
+| `eiche-plural-beleg.mjs` | ✅ 7 von 7, beide Platzhalter-Fälle bleiben draußen |
+| `eiche-taschkil-beleg.mjs` | ✅ 7 von 7, davon 3 die nicht durchgehen dürfen |
+| `eiche-harf-jarr.mjs` | ✅ 17 von 17, عَلِيّ (Name) fällt durch, keine Markierung verloren |
+| `eiche-zahlplural.mjs` | ✅ 17 von 17, am Bestand genau die neun |
+| `pruefe-datumsangaben.mjs` | ✅ 431 Blöcke, **0 Datumsabweichungen, 0 Uhrzeiten daneben** |
+| `eiche-datumsmuster.mjs` | ✅ 16 Fälle, Quranstellen werden **nicht** als Uhrzeit gelesen |
+
+⭐ **`pruefe-datumsangaben.mjs` steht auf null** — beim ersten Lauf am 20.08.
+waren es 5 Datumsabweichungen und 1 Uhrzeit. Der Fehler, der zehnmal passiert
+ist, ist seitdem nicht wiedergekommen.
+
+**`pruefe-gedaechtnis.mjs`:** 23 Kandidaten, alle vom Typ „73 Regeln" gegen
+95 im Code. ⚠️ **Kandidatenliste, keine Fehlerliste** — bei beiden bisherigen
+Handprüfungen war **kein einziger** echt (0 von 17 am 20.08., 0 von 23 am
+21.08.); es sind Teilangaben in datierten Verlaufsblöcken, die damals stimmten.
+Keine der 182 Kurzbeschreibungen widerspricht ihrem eigenen Text.
+
+### Schritt 7 – Commit
+
+Committet mit explizitem Pfad, **kein `git add -A`, kein `-a`**:
+`data/lernstand.json` (nur `gemessenAm`) und dieser Log-Eintrag.
+
+**Nicht committet und auch nicht erzwungen:** `data/vokabeln-*.js`,
+`vokabelpaket.json`, `.vokabelpaket-stand.json`, `transcripts/` — alle per
+`.gitignore` ausgeschlossen, arabicroots-Daten in einem öffentlichen Repo.
+`.gitignore` selbst nicht angefasst.
+
+⛔ **`git push` veröffentlicht nichts** — es wurde in diesem Lauf aber auch
+nichts verändert, was ausgeliefert wird. `CACHE_NAME` bleibt v294,
+`.deploy/` deckt sich mit dem Repo, `veroeffentlichen.mjs --pruefen` meldet
+nichts Ausstehendes. **Es liegt also keine Änderung unveröffentlicht herum.**
+
+ℹ️ **Drei Dateireste, gleicher Fall wie am 19.08.:**
+`.samsung-notes-live.json`, `.unlocked-chapters.json` und `.vorrat-auftrag.json`
+im Wurzelverzeichnis — Zwischenablagen, die der Ablauf ausdrücklich verlangt
+(`export-index.mjs --live`, `vorrat.mjs --stand`, `vorrat.mjs --auftrag`).
+Löschen ist der Routine nicht erlaubt, nur `git` und `node` sind freigegeben.
+Sie sind untracked, gehen nicht in den Commit und nicht nach `.deploy/`.
+⭐ **Die zwei Reste vom 19.08. sind inzwischen weg** — jemand hat aufgeräumt.
+Der Vorschlag von damals gilt unverändert: solche Zwischendateien gehören unter
+`transcripts/`, der Ordner ist ohnehin ausgeschlossen. Das ist eine Änderung am
+Routinen-Prompt und damit Elias' Entscheidung.
+
+**Nichts war blockiert.** Kein abgelehnter Befehl bei den freigegebenen
+Werkzeugen, keine Datei, die sich nicht schreiben ließ.
+⚠️ Zwei Aufrufe wurden von der Freigabe abgewiesen, beide **zu Recht und ohne
+Folgen**: ein `node -e …` (es gibt kein allgemeines `Bash(node:*)`, nur je
+Skript ein Muster) und zwei Befehle mit angehängtem `| tail`. Beide durch einen
+erlaubten Weg ersetzt.
+
+### Vorschläge für den nächsten Schritt (ehrlich priorisiert)
+
+1. ⭐⭐ **Die zwei neuen Folgen sind der Punkt, an dem jetzt etwas hängt.**
+   Folge 17 (Kapitel 12) und Folge 18 (Pronomen & Konjugieren) haben noch kein
+   Rohmaterial, und `arabicroots-backfill-retry` holt **eine Folge je Lauf** —
+   bei stündlichem Takt kein Problem, aber der Backlog stand am 06.08. schon
+   einmal still, weil das 24-h-Fenster nach einem abgebrochenen Wartungslauf
+   nicht neu geschrieben wurde. Dieser Lauf ist sauber durchgelaufen, das
+   Fenster sollte also offen sein. **Beim nächsten Lauf zuerst nachsehen, ob
+   beide angekommen sind.**
+2. ⭐ **Die billigste offene Frage bleibt dieselbe wie am 19.08. — und sie ist
+   seitdem 27 Tage alt geworden:** hat Elias in „Madina Buch 1 (Beschriftet)"
+   zwischen dem 27.07. und dem 09.08. etwas ergänzt? Bei „nein" ist der Punkt
+   für immer erledigt und der Zeitstempel darf nachgeschrieben werden; bei „ja"
+   fehlt der App seit zwei Wochen Material, das nur er exportieren kann. Ohne
+   diese eine Antwort taucht der Punkt in **jedem** künftigen Lauf als
+   Exitcode 2 wieder auf.
+3. ⭐ **Die Warteseite veröffentlichen, und zwar vor der nächsten Lernsitzung.**
+   14 Entscheidungen liegen dort, davon 10 reines Ansehen-und-Antippen. Der
+   größte Einzelposten sind die **45 Regelkandidaten** aus F14–F16, die seit dem
+   18.08. warten — und mit F17 und F18 kommen gleich zwei Folgen nach. Wenn er
+   die 45 nicht durchgeht, bevor die neuen ausgewertet sind, steht der Stapel
+   danach bei 70 oder 75.
+4. **Vor dem Veröffentlichen: die zwei fehlenden URLs eintragen.**
+   `farbe-wortmarke.html` und `stimmen-liste.html` haben keinen Eintrag in
+   `DATEI_ZU_URL`. Wer sie ohne URL veröffentlicht, legt eine zweite Seite an —
+   und die alte, auf die verlinkt wird, wird nie wieder aktuell.
+5. **Die Eselsbrücke zu دَقِيقَةٌ braucht einen anderen Anker.** Sie beruft sich
+   auf أُسْبُوعٌ (Kapitel 15) und سَنَةٌ (Kapitel 18) als „hast du schon" — beide
+   liegen hinter seinem Fenster. Kleine Änderung, aber es ist sein Text: er
+   sagt, worauf sie stattdessen bauen soll.
+6. **Nichts Dringendes bei den Prüfwerkzeugen.** Alle elf Eichungen sind grün,
+   `pruefe-datumsangaben.mjs` steht bei null, A8 ist vollständig (214/214), und
+   die drei Posten, die ich selbst schreiben kann — Eselsbrücken, Beispielsätze,
+   Markierungen — stehen alle auf null offen. Der Rückstand besteht nur noch aus
+   Fragen, die Elias beantworten muss.
