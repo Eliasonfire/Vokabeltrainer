@@ -128,6 +128,34 @@ const AUSNAHMEN = [
     nurMelden: true
   },
   {
+    name: 'Alif al-fariqa nach der Verbendung ـُوا (stumm, richtig so)',
+    keineFrage: true,   /* kein Mangel - zaehlt nicht als Frage an Elias */
+    /* ⭐ Am 24.08.2026 dazu, als ذَهَبُوا aus Folge 18 gemeldet wurde. Das
+       Alif hinter der Pluralendung ـُوا wird nie gesprochen und traegt nie
+       ein Zeichen — genau wie das Alif nach Tanwin Fath eine Ausnahme
+       darueber. Es haette sonst bei JEDER Pluralform eines Verbs gemeldet
+       werden muessen: ذَهَبُوا, كَتَبُوا, قَالُوا.
+       [[allgemeine_regel_statt_listeneintrag]]
+
+       ⚠️ Eng gefasst: nur ا ganz am Ende, direkt hinter و, und davor muss
+       eine Damma stehen. Ohne die Damma-Bedingung traefe es auch أُولَئِكَ
+       und jedes Nomen auf ـوا. */
+    trifft: (wort, i) => {
+      if (wort[i] !== String.fromCharCode(0x627)) return false;   /* ا */
+      if (i !== wort.length - 1) return false;
+      if (wort.charCodeAt(i - 1) !== 0x648) return false;         /* و davor */
+      /* Vor dem و muss die Damma stehen — sie macht die Pluralendung aus. */
+      for (let j = i - 2; j >= 0; j--){
+        const c = wort.charCodeAt(j);
+        if (c === 0x64F) return true;                 /* ُ gefunden */
+        if (c >= 0x64B && c <= 0x652) continue;       /* andere Haraka/Schadda */
+        if (c === 0x670) continue;                    /* Dolch-Alif */
+        return false;
+      }
+      return false;
+    }
+  },
+  {
     /* ⭐ Das Alif nach einem Tanwin Fath ist STUMM (Alif at-tanwin): شُكْرًا,
        جَزِيلًا, جِدًّا. Es wird nicht gesprochen und traegt deshalb weder Haraka
        noch Sukun - "Endung fehlt" ist dort keine Luecke, sondern die Regel.
