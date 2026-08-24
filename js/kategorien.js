@@ -1333,6 +1333,45 @@ function zeichneSuche(){
 }
 
 document.getElementById('sucheEingabe').addEventListener('input', zeichneSuche);
+
+/* ---------- Die Suche vom Startbildschirm aus (24.08.2026) ----------
+
+   Elias wollte die Suche auch auf dem Start haben. Sie ist deshalb NICHT
+   zweimal gebaut: das Feld dort reicht durch an genau dieses hier.
+
+   ⛔ Warum keine zweite Umsetzung: `sucheTreffer()` entscheidet, was ein
+   Treffer ist, in welcher Reihenfolge er steht und was „noch nicht dran"
+   heisst. Zwei Fassungen davon liefen frueher oder spaeter auseinander — und
+   beide saehen richtig aus. [[handliste_neben_echter_quelle]]
+
+   ⚠️ Der Wechsel haengt am `focus`. Beim `input` steht er noch einmal als
+   Netz: auf manchen Handytastaturen kommt das erste Zeichen an, bevor das
+   Feld den Fokus meldet. Beide Wege enden im selben Aufruf, und `uebergeben`
+   ist gegen den zweiten Durchlauf abgesichert — sonst zeichnete die Suche
+   zweimal und der Cursor spraenge. */
+(function(){
+  const start = document.getElementById('startSuche');
+  if (!start) return;
+  const ziel = document.getElementById('sucheEingabe');
+  let laeuft = false;
+  function uebergeben(){
+    if (laeuft) return;
+    laeuft = true;
+    ziel.value = start.value;
+    start.value = '';
+    /* Erst den Wert setzen, DANN wechseln: showScreen ruft renderCategories,
+       und das zeichnet die Suche bereits mit dem neuen Begriff. */
+    if (typeof showScreen === 'function') showScreen('categories');
+    zeichneSuche();
+    /* Hier ist der Fokus ausdruecklich gewollt — er hat auf die Suche
+       getippt, um zu suchen. Das ist der Fall, den Elias am 24.08. vom
+       Notiz-Editor abgegrenzt hat: dort las er, hier schreibt er. */
+    ziel.focus();
+    laeuft = false;
+  }
+  start.addEventListener('focus', uebergeben);
+  start.addEventListener('input', uebergeben);
+})();
 document.getElementById('btnSucheLeeren').addEventListener('click', ()=>{
   document.getElementById('sucheEingabe').value = '';
   zeichneSuche();

@@ -1828,6 +1828,11 @@ main{
   padding:0 var(--sp-2) 0 var(--sp-3);margin-bottom:var(--sp-3);
 }
 .suche-feld > .ic{width:18px;height:18px;color:var(--text-faint);flex:0 0 auto;}
+/* ⚠️ Auf dem Startbildschirm braucht dasselbe Feld oben einen Abstand — in
+   den Kategorien steht es direkt unter dem Kopf und dort waere er zu viel.
+   Derselbe Wert wie zwischen den uebrigen Bloecken des Starts (`--sp-5`),
+   damit die Seite EINEN Rhythmus behaelt statt zwei. */
+.start-suche{margin-top:var(--sp-5);}
 /* `font:inherit` — ein <input> erbt die Schrift der Seite nicht.
    `min-width:0` am Flex-KIND: ohne das gibt das Feld seine Standardbreite nicht
    her und schiebt die Zeile über den Bildschirmrand hinaus. */
@@ -3747,6 +3752,27 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
           <svg class="ic"><use href="#ic-cards"/></svg>Jetzt lernen
         </button>
         <div class="due-sub" id="dueSub"></div>
+      </div>
+
+      <!-- ⭐ Suche auf dem Startbildschirm (24.08.2026). Elias wollte sie
+           genau hier, zwischen der Fälligkeitskarte und der Buchauswahl.
+
+           ⛔⛔ HIER STEHT KEINE ZWEITE SUCHE. Das Feld übergibt an die
+           bestehende in den Kategorien — dieselbe Funktion, dieselbe
+           Trefferliste, dieselbe Sortierung. Eine zweite Umsetzung wäre eine
+           zweite Wahrheit darüber, was „gefunden" heißt, und beide sähen
+           richtig aus. [[handliste_neben_echter_quelle]]
+
+           ⚠️ Der Wechsel hängt am `focus`, nicht am ersten Tastendruck: so
+           bleibt die Tastatur offen (ein anderes Textfeld übernimmt den
+           Fokus) und kein Zeichen geht verloren. Beim `input` steht dieselbe
+           Übergabe noch einmal als Netz — auf manchen Tastaturen kommt das
+           erste Zeichen vor dem Fokus an. -->
+      <div class="suche-feld start-suche">
+        <svg class="ic"><use href="#ic-search"/></svg>
+        <input type="text" id="startSuche" placeholder="Alle Wörter durchsuchen …"
+               autocomplete="off" autocapitalize="off" spellcheck="false"
+               aria-label="Alle Wörter durchsuchen">
       </div>
 
       <div class="session-filters">
