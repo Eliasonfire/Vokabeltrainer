@@ -308,6 +308,21 @@ function eigeneWoerterSchreiben(text){
       try { return JSON.parse((roh.daten && roh.daten.vt_notes) || '{}'); }
       catch (e) { return {}; }
     })(),
+    /* ⛔⛔ ZWEI VERSCHIEDENE FELDER, und bis zum 24.08.2026 kam nur eines mit.
+       `vt_notes` sind die ESELSBRUECKEN, `vt_notizen` seine eigenen NOTIZEN
+       zum Wort („was tut dieses Wort" — js/kern.js unterscheidet sie
+       ausdruecklich). Der Kommentar darueber galt der Notiz, gelesen wurde
+       die Eselsbruecke.
+
+       Aufgefallen beim Pruefen meiner eigenen Ausnahmeliste in
+       pruefe-kreislaeufe.mjs: dort stand als Grund „vorrat.mjs traegt sie in
+       eigene-woerter.json mit" — und das war schlicht falsch. Eine
+       Ausnahmeliste mit falscher Begruendung ist schlimmer als keine.
+       [[stichworttreffer_ist_kein_inhaltstreffer]] */
+    eigeneNotizen: (() => {
+      try { return JSON.parse((roh.daten && roh.daten.vt_notizen) || '{}'); }
+      catch (e) { return {}; }
+    })(),
     /* ⭐ Seine eigenen Korrekturen aus DEMSELBEN Abruf. Sie sind der einzige
        Weg, den FESTWERT type:'noun' von einer geprueften Angabe zu
        unterscheiden: addPersonalVocab() setzt ihn immer, eine Aenderung im

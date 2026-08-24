@@ -64,7 +64,7 @@ const SPEICHER_AUSNAHMEN = {
   'vt_einzeln_frei':  'einzeln freigeschaltete Woerter — nur in seinem Speicher, absichtlich',
   'vt_hifzVerse':     'seit 24.08.2026 ueber data/auswendig.json ausgewertet',
   'vt_hifz':          'seit 24.08.2026 ueber data/auswendig.json ausgewertet',
-  'vt_notizen':       'seine eigenen Notizen — vorrat.mjs traegt sie in eigene-woerter.json mit',
+  'vt_notizen':       'seine eigenen Notizen zum Wort — seit 24.08.2026 in eigene-woerter.json unter `eigeneNotizen`',
 };
 
 /* Erzeugte Dateien und ihre Quellen: veraltet die eine gegen die andere? */
