@@ -267,5 +267,210 @@ const FACHBEGRIFF_VOKABELN = [
     sentAr: 'لِي أُخْتٌ اسْمُهَا آمِنَةُ.',
     sentDe: 'Ich habe eine Schwester, ihr Name ist Āmina.',
     mnemo: 'Deinem Lehrer genügt dafür ein Wort: „Ha, mit Elif“. Genau daran erkennst du sie — dasselbe Hāʾ wie beim „sein“, aber ein Alif dahinter macht es weiblich: اسْمُهُ gegen اسْمُهَا (Seite 61).'
+  },
+
+  /* ---------------------------------------------------------------------
+     DIE VIERZEHN PRONOMEN DER VERGANGENHEIT — Folge 18, Einschub 10:14–24:22
+
+     Elias am 24.08.2026: „wir haben beim letzten video die konjuktionen der
+     vergangenheit besprochen … ich brauche alle konjuktionen aus dem video
+     die da genannt werden als karteikarten bzw als eigene vokabeln."
+     Und danach: „wichtig ist aber auch das es hier um die vergangenheit geht."
+     Deshalb traegt JEDE Karte ihre Maadii-Endung im `deNeben` — das Feld wird
+     angezeigt UND ist suchbar.
+
+     ⭐ Warum sie hier stehen muessen, gemessen am 24.08.2026 ueber alle 4473
+     Woerter aller vier Wege, NFC-normalisiert: SECHS davon (هُوَ هِيَ هُمْ أَنَا
+     نَحْنُ أَنْتَ) stehen in madina-1 Kapitel 24 — Elias ist bei Kapitel 12, sie
+     sind also nicht freigeschaltet. Die anderen SECHS (هُمَا هُنَّ أَنْتِ أَنْتُمَا
+     أَنْتُمْ أَنْتُنَّ) gibt es in keiner Quelle. Sein Lehrer hat damit Stoff
+     vorgezogen, den das Buch erst zwoelf Kapitel spaeter bringt.
+     ⚠️ Ein grep hatte هُمَا zuerst in madina-2 gefunden — das war ein
+     Teiltreffer in einem laengeren Wort. [[namenssuche_trifft_die_welt]]
+
+     ⛔ VIERZEHN FORMEN, ZWOELF WOERTER. هُمَا steht fuer den maennlichen und
+     den weiblichen Dual, أَنْتُمَا ebenso. Zwei Karten mit identischer
+     Vorderseite waeren beim Abfragen nicht unterscheidbar; die Karte fuer
+     هُمَا traegt deshalb BEIDE Verbformen.
+
+     ⛔ HERKUNFT: Nichts hier ist von mir konjugiert. Alle vierzehn Formen hat
+     der Lehrer im Video vorgesagt. Die drei Saetze mit إِلَى الْمَسْجِدِ hat er
+     woertlich gesprochen (هُوَ, هُمَا, هُمْ); die uebrigen neun setzen die
+     belegte Form in denselben belegten Rahmen. مَسْجِدٌ (Kap. 1) und إِلَى
+     (Kap. 4) sind beide freigeschaltet. Goal-Prompt E.1.
+
+     ⭐ ESELSBRUECKEN: Fuenf haben einen Vers aus seinem auswendigen Bereich
+     (gemessen mit einer NFC-Suche an Wortgrenzen ueber Sure 1, 67, 93–114):
+     هُوَ 112:1 · هِيَ 97:5 · هُمْ 107:5 · أَنْتُمْ 109:3 · أَنَا 109:4.
+     Die anderen sieben bekommen den Merkhaken des Lehrers statt eines Verses
+     ausserhalb seines Bereichs. [[quranbezug_nur_auswendiges]]
+     --------------------------------------------------------------------- */
+  {
+    id: "gram-pron-huwa",
+    ar: "هُوَ",
+    de: "er",
+    deNeben: "Vergangenheit ohne Endung: ذَهَبَ (er ging)",
+    type: 'particle',
+    chapter: 'personal',
+    book: 'grammar',
+    regel: 'verb-madi-endungen-01',
+    belegt: 14,
+    sentAr: "هُوَ ذَهَبَ إِلَى الْمَسْجِدِ.",
+    sentDe: "Er ging in die Moschee.",
+    mnemo: "قُلْ هُوَ اللَّهُ أَحَدٌ — der erste Vers von سُورَةُ الْإِخْلَاصِ, den du auswendig kannst. Genau dieses هُوَ. In der Vergangenheit ist er der Einfache: er bekommt gar keine Endung, ذَهَبَ steht nackt da. Alle dreizehn anderen hängen etwas an — er nicht."
+  },
+  {
+    id: "gram-pron-huma-m",
+    ar: "هُمَا",
+    de: "sie beide (zwei Personen)",
+    deNeben: "Vergangenheit: ذَهَبَا (m) · ذَهَبَتَا (f)",
+    type: 'particle',
+    chapter: 'personal',
+    book: 'grammar',
+    regel: 'verb-madi-endungen-01',
+    belegt: 2,
+    sentAr: "هُمَا ذَهَبَا إِلَى الْمَسْجِدِ.",
+    sentDe: "Sie beide gingen in die Moschee.",
+    mnemo: "Das ist der Dual — im Deutschen gibt es ihn nicht, im Arabischen ist er eine eigene Zahl: genau zwei. Ein Wort für Männer und Frauen; welche gemeint sind, sagt erst das Verb. Männlich hängt dein Lehrer nur ein Alif an: ذَهَبَ → ذَهَبَا. Weiblich kommt das تْ der Einzahl davor: ذَهَبَتْ → ذَهَبَتَا. Und das Alif steckt schon im Pronomen — هُمَـا endet darauf, beide Verbformen auch."
+  },
+  {
+    id: "gram-pron-hum",
+    ar: "هُمْ",
+    de: "sie (ab drei, männlich)",
+    deNeben: "Vergangenheit auf ـُوا: ذَهَبُوا (sie gingen)",
+    type: 'particle',
+    chapter: 'personal',
+    book: 'grammar',
+    regel: 'verb-madi-endungen-01',
+    belegt: 3,
+    sentAr: "هُمْ ذَهَبُوا إِلَى الْمَسْجِدِ.",
+    sentDe: "Sie gingen in die Moschee.",
+    mnemo: "الَّذِينَ هُمْ — so fängt Vers 5 von سُورَةُ الْمَاعُونِ an, die du auswendig kannst. Dort steht هُمْ genau so allein, als eigenes Wort. Der Plural fängt im Arabischen erst bei drei an: zwei sind هُمَا. Die Endung ـُوا schreibt man mit einem Alif, das man nicht spricht — wie bei قَالُوا."
+  },
+  {
+    id: "gram-pron-hiya",
+    ar: "هِيَ",
+    de: "sie (eine)",
+    deNeben: "Vergangenheit auf ـَتْ: ذَهَبَتْ (sie ging)",
+    type: 'particle',
+    chapter: 'personal',
+    book: 'grammar',
+    regel: 'verb-madi-endungen-01',
+    belegt: 10,
+    sentAr: "هِيَ ذَهَبَتْ إِلَى الْمَسْجِدِ.",
+    sentDe: "Sie ging in die Moschee.",
+    mnemo: "سَلَامٌ هِيَ — so beginnt der letzte Vers von سُورَةُ الْقَدْرِ (97:5), die du auswendig kannst. Die weibliche Endung ist dasselbe تْ, das du von der تَاء مَرْبُوطَة kennst — nur hier als offenes تَاء مَفْتُوحَة geschrieben, weil noch etwas folgen kann. Dein Lehrer sagt dazu ausdrücklich: „ein offenes Ta.“"
+  },
+  {
+    id: "gram-pron-hunna",
+    ar: "هُنَّ",
+    de: "sie (ab drei, weiblich)",
+    deNeben: "Vergangenheit auf ـْنَ: ذَهَبْنَ (sie gingen)",
+    type: 'particle',
+    chapter: 'personal',
+    book: 'grammar',
+    regel: 'verb-madi-endungen-01',
+    belegt: 1,
+    sentAr: "هُنَّ ذَهَبْنَ إِلَى الْمَسْجِدِ.",
+    sentDe: "Sie (die Frauen) gingen in die Moschee.",
+    mnemo: "Das weibliche Gegenstück zu هُمْ, das du aus سُورَةُ الْمَاعُونِ kennst: هُمْ endet auf م, هُنَّ auf ن. Genau dieses ن hängst du ans Verb — ذَهَبْنَ. Merk dir das ن als das weibliche Zeichen im Plural: هُنَّ ← ذَهَبْنَ."
+  },
+  {
+    id: "gram-pron-anta",
+    ar: "أَنْتَ",
+    de: "du (männlich)",
+    deNeben: "Vergangenheit auf ـْتَ: ذَهَبْتَ (du gingst)",
+    type: 'particle',
+    chapter: 'personal',
+    book: 'grammar',
+    regel: 'verb-madi-endungen-01',
+    belegt: 5,
+    sentAr: "أَنْتَ ذَهَبْتَ إِلَى الْمَسْجِدِ.",
+    sentDe: "Du gingst in die Moschee.",
+    mnemo: "Hier fängt der Trick deines Lehrers an: bei der zweiten Person steckt die Endung schon im Pronomen. أَنْ|تَ — was hinter dem أَنْ steht, hängst du ans Verb: ذَهَبْ|تَ. Das gilt für alle fünf Anredeformen, und deshalb ist die zweite Person die einfachste von allen."
+  },
+  {
+    id: "gram-pron-antuma",
+    ar: "أَنْتُمَا",
+    de: "ihr beide (zwei Personen)",
+    deNeben: "Vergangenheit auf ـْتُمَا: ذَهَبْتُمَا — für Männer und Frauen gleich",
+    type: 'particle',
+    chapter: 'personal',
+    book: 'grammar',
+    regel: 'verb-madi-endungen-01',
+    belegt: 3,
+    sentAr: "أَنْتُمَا ذَهَبْتُمَا إِلَى الْمَسْجِدِ.",
+    sentDe: "Ihr beide gingt in die Moschee.",
+    mnemo: "Der Trick der zweiten Person trägt auch hier: أَنْ|تُمَا wird zu ذَهَبْ|تُمَا. Und dieses eine Wort spart dir eine ganze Form — im Dual der Anrede gibt es keinen Unterschied zwischen Männern und Frauen. Dein Lehrer sagt es ausdrücklich: „Die Dualform bei der zweiten Person ist identisch. Bei der dritten Person nicht.“ Vierzehn Pronomen, aber nur dreizehn verschiedene Verbformen."
+  },
+  {
+    id: "gram-pron-antum",
+    ar: "أَنْتُمْ",
+    de: "ihr (ab drei, männlich)",
+    deNeben: "Vergangenheit auf ـْتُمْ: ذَهَبْتُمْ (ihr gingt)",
+    type: 'particle',
+    chapter: 'personal',
+    book: 'grammar',
+    regel: 'verb-madi-endungen-01',
+    belegt: 2,
+    sentAr: "أَنْتُمْ ذَهَبْتُمْ إِلَى الْمَسْجِدِ.",
+    sentDe: "Ihr gingt in die Moschee.",
+    mnemo: "وَلَا أَنْتُمْ عَابِدُونَ — aus سُورَةُ الْكَافِرُونَ, die du auswendig kannst; dort steht es sogar zweimal, in Vers 3 und Vers 5. Dasselbe م wie in هُمْ zeigt auch hier den männlichen Plural. Und der Trick greift: أَنْ|تُمْ ← ذَهَبْ|تُمْ."
+  },
+  {
+    id: "gram-pron-anti",
+    ar: "أَنْتِ",
+    de: "du (weiblich)",
+    deNeben: "Vergangenheit auf ـْتِ: ذَهَبْتِ (du gingst)",
+    type: 'particle',
+    chapter: 'personal',
+    book: 'grammar',
+    regel: 'verb-madi-endungen-01',
+    belegt: 1,
+    sentAr: "أَنْتِ ذَهَبْتِ إِلَى الْمَسْجِدِ.",
+    sentDe: "Du (Frau) gingst in die Moschee.",
+    mnemo: "Der Unterschied zu أَنْتَ ist ein einziges Zeichen: Fatḥa oben für den Mann, Kasra unten für die Frau. Beim Verb genauso — ذَهَبْتَ gegen ذَهَبْتِ. Die Kasra als weibliches Zeichen kennst du schon von der Besitzendung ـكِ (اسْمُكِ — dein Name, zu einer Frau gesagt)."
+  },
+  {
+    id: "gram-pron-antunna",
+    ar: "أَنْتُنَّ",
+    de: "ihr (ab drei, weiblich)",
+    deNeben: "Vergangenheit auf ـْتُنَّ: ذَهَبْتُنَّ (ihr gingt)",
+    type: 'particle',
+    chapter: 'personal',
+    book: 'grammar',
+    regel: 'verb-madi-endungen-01',
+    belegt: 2,
+    sentAr: "أَنْتُنَّ ذَهَبْتُنَّ إِلَى الْمَسْجِدِ.",
+    sentDe: "Ihr (die Frauen) gingt in die Moschee.",
+    mnemo: "Wieder das ن als weibliches Zeichen im Plural, genau wie bei هُنَّ — und wieder mit Schadda. Setz sie nebeneinander: هُنَّ ذَهَبْنَ für „sie“, أَنْتُنَّ ذَهَبْتُنَّ für „ihr“. Und der Trick der zweiten Person trägt auch hier: أَنْ|تُنَّ ← ذَهَبْ|تُنَّ."
+  },
+  {
+    id: "gram-pron-ana",
+    ar: "أَنَا",
+    de: "ich",
+    deNeben: "Vergangenheit auf ـْتُ: ذَهَبْتُ (ich ging)",
+    type: 'particle',
+    chapter: 'personal',
+    book: 'grammar',
+    regel: 'verb-madi-endungen-01',
+    belegt: 3,
+    sentAr: "أَنَا ذَهَبْتُ إِلَى الْمَسْجِدِ.",
+    sentDe: "Ich ging in die Moschee.",
+    mnemo: "وَلَا أَنَا عَابِدٌ — aus سُورَةُ الْكَافِرُونَ, Vers 4, die du auswendig kannst. Achtung, hier hilft der Trick der zweiten Person NICHT: أَنَا endet auf Alif, die Verbform aber auf ـْتُ. Merk dir stattdessen das Paar am Ende der Tabelle: ich ذَهَبْتُ, wir ذَهَبْنَا — die beiden gehören zusammen."
+  },
+  {
+    id: "gram-pron-nahnu",
+    ar: "نَحْنُ",
+    de: "wir",
+    deNeben: "Vergangenheit auf ـْنَا: ذَهَبْنَا (wir gingen)",
+    type: 'particle',
+    chapter: 'personal',
+    book: 'grammar',
+    regel: 'verb-madi-endungen-01',
+    belegt: 2,
+    sentAr: "نَحْنُ ذَهَبْنَا إِلَى الْمَسْجِدِ.",
+    sentDe: "Wir gingen in die Moschee.",
+    mnemo: "Das ن von نَحْنُ ist dasselbe ن, das ans Verb geht: نَحْنُ ← ذَهَبْنَا. Und daneben das Paar, das man leicht verwechselt: هُنَّ ذَهَبْنَ endet auf نَ ohne Alif, نَحْنُ ذَهَبْنَا mit Alif. Das Alif macht aus „die Frauen“ ein „wir“."
   }
 ];

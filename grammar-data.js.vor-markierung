@@ -2480,42 +2480,6 @@ const SENTENCE_TAGS = {
   ],
   "p_1787184718572": [
     { ruleId: "istifham-liman-01", matchText: "لِمَنِ" }
-  ],
-  "gram-pron-huwa": [
-    { ruleId: "verb-madi-endungen-01", matchText: "ذَهَبَ" }
-  ],
-  "gram-pron-huma-m": [
-    { ruleId: "verb-madi-endungen-01", matchText: "ذَهَبَا" }
-  ],
-  "gram-pron-hum": [
-    { ruleId: "verb-madi-endungen-01", matchText: "ذَهَبُوا" }
-  ],
-  "gram-pron-hiya": [
-    { ruleId: "verb-madi-endungen-01", matchText: "ذَهَبَتْ" }
-  ],
-  "gram-pron-hunna": [
-    { ruleId: "verb-madi-endungen-01", matchText: "ذَهَبْنَ" }
-  ],
-  "gram-pron-anta": [
-    { ruleId: "verb-madi-endungen-01", matchText: "ذَهَبْتَ" }
-  ],
-  "gram-pron-antuma": [
-    { ruleId: "verb-madi-endungen-01", matchText: "ذَهَبْتُمَا" }
-  ],
-  "gram-pron-antum": [
-    { ruleId: "verb-madi-endungen-01", matchText: "ذَهَبْتُمْ" }
-  ],
-  "gram-pron-anti": [
-    { ruleId: "verb-madi-endungen-01", matchText: "ذَهَبْتِ" }
-  ],
-  "gram-pron-antunna": [
-    { ruleId: "verb-madi-endungen-01", matchText: "ذَهَبْتُنَّ" }
-  ],
-  "gram-pron-ana": [
-    { ruleId: "verb-madi-endungen-01", matchText: "ذَهَبْتُ" }
-  ],
-  "gram-pron-nahnu": [
-    { ruleId: "verb-madi-endungen-01", matchText: "ذَهَبْنَا" }
   ]
 };
 
@@ -2594,13 +2558,6 @@ const SATZ_THEMEN = [
   /* ⭐ Neu am 24.08.2026 fuer Folge 18. Vorher passte die Verbkonjugation in
      KEINES der dreizehn Themen — die Regel waere nur unter „Alle" erschienen
      und im Satzmodus unauffindbar gewesen. Das Muster ist bewusst offen fuer
-     `mudari-`: die Gegenwart kommt laut Video als Naechstes.
-
-     ⭐ Es traegt bewusst AUCH verb-enthaelt-pronomen-01 (Folge 05, 27:41,
-     „das er steckt im Verb") — dieselben Verben خَرَجَ / ذَهَبَ, und inhaltlich
-     die Vorstufe: dort lernt er, dass bei هُوَ KEINE Endung steht, hier, dass
-     alle dreizehn anderen eine anhaengen. Ein enger gefasstes Muster liess das
-     neue Thema mit einer einzigen Regel „ins Leere laufen" (validate.js).
-     ⚠️ Diese eine Regel steht damit in ZWEI Themen, Wortarten und Verben. */
-  { id: 'verben',      name: 'Verben',         muster: /^(verb-|madi-|mudari-)/ }
+     `mudari-`: die Gegenwart kommt laut Video als Naechstes. */
+  { id: 'verben',      name: 'Verben',         muster: /^(verb-madi|verb-mudari|madi-|mudari-)/ }
 ];

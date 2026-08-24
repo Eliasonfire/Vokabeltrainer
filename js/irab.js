@@ -162,7 +162,15 @@ function einzelformen(wert){
    Haus", also هَذَا = Subjekt, بَيْتٌ = Aussage darueber.
    Fragewoerter gehoeren NICHT dazu: in أَيْنَ الْكَلْبُ؟ ist الْكَلْبُ das
    Subjekt, nicht أَيْنَ. */
-const PRONOMEN = ['هذا','هذه','ذلك','تلك','هو','هي','أنا','انا','أنت','انت','نحن','هم'];
+/* ⭐ Am 24.08.2026 um die Dual- und die weiblichen Pluralformen ergaenzt
+   (Folge 18, verb-madi-endungen-01). Vorher kannte die Liste nur SECHS der
+   vierzehn Pronomen — bei هُمَا هُنَّ أَنْتِ أَنْتُمَا أَنْتُمْ أَنْتُنَّ haette die
+   Infokarte „Wort" gesagt statt „Pronomen", und im Nominalsatz waeren sie
+   nicht als مُبْتَدَأ erkannt worden.
+   ⛔ Die Eintraege stehen OHNE Vokalzeichen (ohneVokale entfernt sie), aber MIT
+   Hamza — und jeweils zusaetzlich ohne, so wie انت schon neben أنت stand. */
+const PRONOMEN = ['هذا','هذه','ذلك','تلك','هو','هي','أنا','انا','أنت','انت','نحن','هم',
+                  'هما','هن','أنتما','انتما','أنتم','انتم','أنتن','انتن'];
 
 const ohneVokale = s => (s || '').replace(/[ً-ْٰـ]/g, '');
 
@@ -269,9 +277,20 @@ function istInListe(w, liste){
   const roh = ohneVokale(w).replace(/[.،؟!«»:؛]/g, '');
   return liste.includes(roh) || liste.includes(roh.replace(/^[وف]/, ''));
 }
+/* ⭐⭐ PERSONALPRONOMEN kommt bewusst als eigene Bedingung dazu, statt seine
+   Eintraege in INDEKLINABEL zu kopieren. Am 24.08.2026 war das die DRITTE
+   Liste in dieser Datei, der dieselben sechs von vierzehn Pronomen fehlten —
+   und der Kommentar bei هؤلاء beschreibt denselben Fehler vom 20.08. schon
+   einmal. Beim dritten Mal aus demselben Grund gehoert die Regel hin, nicht
+   der Eintrag: EIN PERSONALPRONOMEN IST IMMER مَبْنِيّ. Damit koennen die
+   beiden Listen nie wieder auseinanderlaufen.
+   [[allgemeine_regel_statt_listeneintrag]] · [[entscheidung_gilt_fuer_das_zweite_werkzeug]]
+   ⚠️ PERSONALPRONOMEN steht weiter unten in der Datei. Das geht, weil dies
+   eine Pfeilfunktion ist: ausgewertet wird erst beim Aufruf. */
 const istIndeklinabel = w => INDEKLINABEL.includes(ohneFragepartikel(w))
                          || INDEKLINABEL.includes(ohneFragepartikel(w).replace(/^[وف]/, ""))
-                         || istInListe(w, INDEKLINABEL);
+                         || istInListe(w, INDEKLINABEL)
+                         || istInListe(w, PERSONALPRONOMEN);
 
 /* Ein angeschriebenes لِلْ / بِالْ / كَالْ ist selbst ein حَرْف جَرّ - لِلطَّبِيبِ
    ist nicht "zufaellig Genitiv", sondern لِ + الطبيب.
@@ -483,7 +502,19 @@ const NICHT_VERB = ['صفر', 'عمي', 'جر', 'ل', 'فوق',
    Besonderheit bekommt genau eine Zeile: „Nomen“. */
 const FRAGEWOERTER = ['ما','من','أين','اين','متى','كيف','هل','لماذا','ماذا','كم','أي','اي','لمن'];
 const HINWEISWOERTER = ['هذا','هذه','ذلك','تلك','هؤلاء','أولئك','اولئك'];
-const PERSONALPRONOMEN = ['أنا','انا','نحن','أنت','انت','أنتِ','هو','هي','هم','هن','أنتم','انتم'];
+/* ⭐ Am 24.08.2026 um هما, أنتما und أنتن ergaenzt (Folge 18). Ohne sie nennt
+   die Infokarte bei diesen drei nur „Partikel" statt „ضَمِير — Personal-
+   pronomen" — und pruefe-funktionen.js meldet das NICHT, weil es fragt, ob
+   ueberhaupt eine Funktion dasteht, nicht ob die richtige.
+   [[pruefung_fragt_einen_stellvertreter_ab]]
+   ⚠️ Das ist die ZWEITE Pronomenliste; die erste (PRONOMEN, Zeile 165) steuert
+   die Satzrolle. Wer nur eine ergaenzt, hat die halbe Wirkung.
+   [[entscheidung_gilt_fuer_das_zweite_werkzeug]]
+   ⚠️ Der Eintrag 'أنتِ' kann nie treffen: istInListe entfernt die Vokalzeichen
+   nur am GEPRUEFTEN Wort, nicht an der Liste. Abgedeckt ist er durch 'أنت'.
+   Bleibt stehen, weil er nicht schadet — aber er ist wirkungslos. */
+const PERSONALPRONOMEN = ['أنا','انا','نحن','أنت','انت','أنتِ','هو','هي','هم','هن','أنتم','انتم',
+                          'هما','أنتما','انتما','أنتن','انتن'];
 
 function funktionenVon(w){
   if (!w || !w.ar) return [];
@@ -527,8 +558,13 @@ function funktionenVon(w){
   else if (drin(HURUF_JARR) && !istFragewortMan)
     nenn('Das Wort danach steht im Genitiv');
 
-  /* 4. Unveränderlich (مَبْنِيّ): keine Endung nach der Satzrolle. */
-  if (drin(INDEKLINABEL)) nenn('مَبْنِيّ — die Endung ändert sich nie');
+  /* 4. Unveränderlich (مَبْنِيّ): keine Endung nach der Satzrolle.
+     ⭐ Ueber istIndeklinabel(), NICHT ueber drin(INDEKLINABEL): sonst gilt die
+     Regel „ein Personalpronomen ist immer مَبْنِيّ" nur in der Analyse und
+     nicht in der Anzeige. Am 24.08.2026 stand bei هُمَا, هُنَّ, أَنْتُمَا,
+     أَنْتُمْ und أَنْتُنَّ deshalb keine Zeile — bei den sechs alten schon.
+     [[dieselbe_frage_zwei_antworten]] */
+  if (istIndeklinabel(wort)) nenn('مَبْنِيّ — die Endung ändert sich nie');
 
   /* 5. مَمْنُوع مِنَ الصَّرْف: unbestimmt und trotzdem ohne Tanwin.
      ⚠️ Gemessen statt gelistet — die Farben, die Städtenamen und غَضْبَانُ
@@ -536,7 +572,7 @@ function funktionenVon(w){
   const ohneAl = !/^(اَ?ل|ال)/.test(wort);
   const endetAufDamma = /ُ\s*$/.test(wort);
   const hatTanwin = /[ًٌٍ]/.test(wort);
-  if (ohneAl && endetAufDamma && !hatTanwin && !drin(INDEKLINABEL)
+  if (ohneAl && endetAufDamma && !hatTanwin && !istIndeklinabel(wort)
       && (w.type === 'noun' || w.type === 'adjective'))
     nenn('مَمْنُوع مِنَ الصَّرْف — nie Tanwin, nie Kasra');
 
@@ -612,11 +648,45 @@ function wortartGenau(w){
    jedes einzeln gemeldet und nachgetragen werden.
    [[nomen_wird_zum_verb_gelesen]] · [[skelettvergleich_wirft_information_weg]] */
 const traegtTanwin = w => /[ًٌٍ]/.test(String(w));
+/* ⛔⛔ EINE KONJUGIERTE MAADII-FORM IST AUCH EIN VERB (24.08.2026, Folge 18).
+
+   Gemessen: von den vierzehn Formen, die der Lehrer vorgesagt hat, erkannte
+   giltAlsVerb() genau EINE — die Grundform ذَهَبَ. Die anderen elf galten als
+   اِسْم, und der Erklaerer verlangte von ihnen eine Kasusendung. Auf einer
+   Lernkarte waere das eine falsche Lehre an genau dem Stoff, den Elias
+   gerade lernt.
+
+   ⭐ Die Regel arbeitet auf dem SKELETT und schneidet die Endung ab. Sie ist
+   trotzdem sicher, weil der REST ein bekanntes Verb sein muss: aus ذهبتما
+   wird ذهب, und nur weil ذهب im Lexikon als Verb steht, gilt die Form.
+   Ein Nomen kann so nicht hineinrutschen — und Tanwin faellt eine Zeile
+   weiter oben ohnehin schon durch.
+   [[allgemeine_regel_statt_listeneintrag]] · [[skelettvergleich_wirft_information_weg]]
+
+   ⚠️ Die laengeren Endungen stehen VORN: sonst schneidet ت schon bei ذهبتما
+   zu, und der Rest waere ذهبتم statt ذهب. */
+const MADI_ENDUNGEN = ['تموا', 'تما', 'تن', 'تم', 'نا', 'وا', 'تا', 'ت', 'ن', 'ا'];
+function istMadiForm(w){
+  const skelett = ohneVokale(String(w)).replace(/[.،؟!«»:؛]/g, '').trim();
+  for (const e of MADI_ENDUNGEN){
+    if (!skelett.endsWith(e)) continue;
+    const stamm = skelett.slice(0, -e.length);
+    /* Drei Radikale sind das Mindeste — kuerzer koennte alles sein. */
+    if (stamm.length < 3) continue;
+    if (istInListe(stamm, VERBEN)) return true;
+    if (LEXIKON){
+      for (const [form, art] of LEXIKON)
+        if (art === 'verb' && ohneVokale(form) === stamm) return true;
+    }
+  }
+  return false;
+}
 const giltAlsVerb = w => {
   if (traegtTanwin(w)) return false;
   const genau = wortartGenau(w);
   if (genau && genau !== 'verb') return false;
-  return !istInListe(w, NICHT_VERB) && (wortart(w) === 'verb' || istInListe(w, VERBEN));
+  if (istInListe(w, NICHT_VERB)) return false;
+  return wortart(w) === 'verb' || istInListe(w, VERBEN) || istMadiForm(w);
 };
 
 /* Warum bei manchen Woertern KEINE Kasusendung zu lesen ist — und das kein
