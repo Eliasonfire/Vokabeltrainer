@@ -1835,4 +1835,64 @@ const ESELSBRUECKEN_ALT = {
     'Und in al-Bayyinah, letzter Vers: جَزَاؤُهُمْ عِنْدَ رَبِّهِمْ — „Ihr Lohn BEI ihrem Herrn sind die Gärten Edens" (98:8).',
     '⭐ Der Unterschied zu لِ, den dein Lehrer in Folge 15 ausdrücklich „eine wichtige Regel" nennt: لِ ist für Untrennbares (dein Bruder, dein Name), عِنْدَ für Trennbares (das Buch, das gerade bei dir liegt). Beide heißen auf Deutsch „ich habe" — austauschbar sind sie nicht.'
   ],
+
+  'gram-pron-huwa': [
+    'لَا إِلَهَ إِلَّا هُوَ — die Wendung, die du am häufigsten von allen hörst. Dasselbe هُوَ, und es steht dort für Allah: „Es gibt keinen Gott außer Ihm.“ Wer diesen Satz kann, kann das Wort.',
+    'هُوَ ist die Form, in der ein Verb im Wörterbuch steht. Wenn du ذَهَبَ nachschlägst, findest du wörtlich „er ging“ — nicht „gehen“. Deshalb ist هُوَ ذَهَبَ der Ausgangspunkt: von hier aus baust du alle dreizehn anderen, indem du hinten etwas anhängst.'
+  ],
+
+  'gram-pron-huma-m': [
+    'Den Dual erkennst du am Alif — und du benutzt ihn längst: رَكْعَتَانِ, zwei Rakʿas. Genau dieses ـَانِ macht aus einer zwei. Bei هُمَا steckt das Alif am Ende des Pronomens, und dasselbe Alif hängst du ans Verb: ذَهَبَا.',
+    'Zwei sind nie „Plural“ im Arabischen: هُمَا ist genau zwei, هُمْ ist ab drei. Im Deutschen gibt es dafür kein eigenes Wort, deshalb muss man es sich als eigene Stufe merken — Singular, Dual, Plural. Dein Lehrer sagt jedes Mal die drei in dieser Reihenfolge auf.'
+  ],
+
+  'gram-pron-hum': [
+    'أُولَئِكَ هُمْ خَيْرُ الْبَرِيَّةِ — aus سُورَةُ الْبَيِّنَةِ (98:7), die du auswendig kannst. Auch dort steht هُمْ als eigenes Wort mitten im Satz.',
+    'Das م ist im Arabischen durchgängig das Zeichen des männlichen Plurals, und du sprichst es täglich in der Fātiḥa: أَنْعَمْتَ عَلَيْهِمْ — „denen Du Gunst erwiesen hast“. Dasselbe مْ steckt in هُمْ, in أَنْتُمْ und in عَلَيْكُمْ.'
+  ],
+
+  'gram-pron-hiya': [
+    'Warum ist es in سُورَةُ الْقَدْرِ weiblich? Weil der Vers von لَيْلَة spricht, der Nacht — und لَيْلَة trägt die تَاء مَرْبُوطَة, ist also weiblich. هِيَ bezieht sich immer auf ein weibliches Wort, auch wenn es kein Mensch ist.',
+    'هُوَ und هِيَ unterscheiden sich in einem Buchstaben: و für ihn, ي für sie. Genauso beim Verb — ذَهَبَ ohne alles für ihn, ذَهَبَتْ mit dem تْ für sie. Ein Zeichen macht den Unterschied, auf beiden Seiten.'
+  ],
+
+  'gram-pron-hunna': [
+    'م für die Männer, ن für die Frauen — diese eine Regel trägt vier Wörter auf einmal: هُمْ und هُنَّ, أَنْتُمْ und أَنْتُنَّ. Wenn du dir merkst, dass das ن weiblich ist, hast du die Hälfte der Tabelle.',
+    'Das ن bleibt nicht im Pronomen stehen, es wandert ins Verb: هُنَّ ذَهَبْنَ. Achte auf die Schadda — sie steht im Pronomen (هُنَّ), aber nicht in der Verbendung (ذَهَبْنَ).'
+  ],
+
+  'gram-pron-anta': [
+    'اللَّهُمَّ أَنْتَ السَّلَامُ — das sprichst du nach jedem Gebet. Genau dieses أَنْتَ, und es ist die Anrede an Allah: „O Allah, Du bist der Friede.“ Wer das Gebet beendet, hat das Wort schon gesagt.',
+    'أَنْتَ und أَنْتِ trennt ein einziges Zeichen: die Fatḥa oben spricht einen Mann an, die Kasra unten eine Frau. Und dasselbe Zeichen entscheidet beim Verb — ذَهَبْتَ gegen ذَهَبْتِ.'
+  ],
+
+  'gram-pron-antuma': [
+    'أَنْتُمَا ist أَنْتُمْ mit dem Dual-Alif am Ende — dasselbe Alif wie bei هُمَا und bei رَكْعَتَانِ. Wo ein Alif hinten steht, sind genau zwei gemeint.',
+    'Das ist die einzige Stelle der ganzen Tabelle, an der du nichts Zusätzliches lernen musst: أَنْتُمَا ذَهَبْتُمَا gilt für zwei Männer und für zwei Frauen. Vierzehn Pronomen, aber nur dreizehn verschiedene Verbformen — hier fällt eine weg.'
+  ],
+
+  'gram-pron-antum': [
+    'السَّلَامُ عَلَيْكُمْ — du sagst es jeden Tag. Das كُمْ darin ist dasselbe مْ wie in أَنْتُمْ: die Anrede an mehrere Männer. Wer grüßen kann, hat die Endung schon im Ohr.',
+    'لَكُمْ دِينُكُمْ — der letzte Vers von سُورَةُ الْكَافِرُونَ (109:6), die du auswendig kannst. Zweimal dasselbe كُمْ in vier Wörtern: „Euch eure Religion.“'
+  ],
+
+  'gram-pron-anti': [
+    'Die Kasra ist im Arabischen das weibliche Zeichen der Anrede, und du kennst sie schon von der Besitzendung: اسْمُكِ heißt „dein Name“ zu einer Frau gesagt, اسْمُكَ zu einem Mann. Dasselbe Paar findest du bei أَنْتِ und أَنْتَ wieder.',
+    'Bei أَنْتِ ذَهَبْتِ steht die Kasra zweimal — einmal am Pronomen, einmal am Verb. Das ist kein Zufall: die zweite Person nimmt ihre Endung direkt mit, und bei ihr ist es eben die Kasra.'
+  ],
+
+  'gram-pron-antunna': [
+    'Stell die vier Anredeformen nebeneinander, dann siehst du das System: أَنْتَ ein Mann, أَنْتِ eine Frau, أَنْتُمْ mehrere Männer, أَنْتُنَّ mehrere Frauen. Das م ist männlich, das ن weiblich — genau wie bei هُمْ und هُنَّ.',
+    'Die Schadda auf dem ن hat أَنْتُنَّ mit هُنَّ gemeinsam, und beide behalten sie auch im Verb: هُنَّ ذَهَبْنَ ohne, أَنْتُنَّ ذَهَبْتُنَّ mit. Merk dir die beiden als Paar — das ن gehört den Frauen.'
+  ],
+
+  'gram-pron-ana': [
+    'وَلِيَ دِينِ — der Schluss von سُورَةُ الْكَافِرُونَ, die du auswendig kannst: „und mir meine Religion“. Dieselbe Sure sagt in Vers 4 أَنَا, und beide Male geht es um dasselbe Ich, das sich abgrenzt.',
+    'أَنَا ist die eine Stelle, an der der Trick deines Lehrers NICHT greift: das Pronomen endet auf Alif, die Verbform aber auf ـْتُ. Merk dir stattdessen das Schlusspaar der Tabelle zusammen — أَنَا ذَهَبْتُ und نَحْنُ ذَهَبْنَا stehen immer nebeneinander.'
+  ],
+
+  'gram-pron-nahnu': [
+    'إِيَّاكَ نَعْبُدُ — aus der Fātiḥa, die du in jedem Gebet sprichst: „Dir allein dienen wir.“ Das نَ vorn am Verb ist genau dieses „wir“. In der Vergangenheit steht dasselbe ن hinten statt vorn: نَحْنُ ذَهَبْنَا.',
+    'نَا ist auch die Besitzendung für „unser“, und die kennst du aus dem Bittgebet: رَبَّنَا — „unser Herr“. Dasselbe نَا hängst du ans Verb. Und pass auf den Unterschied zu هُنَّ auf: ذَهَبْنَا mit Alif heißt „wir“, ذَهَبْنَ ohne Alif heißt „die Frauen“.'
+  ],
 };
