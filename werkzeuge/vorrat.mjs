@@ -202,6 +202,85 @@ function auswahlAusKvStand(text){
    ⚠️ Die Datei steht in .gitignore: das Repo ist oeffentlich, und ob seine
    eigenen Eingaben dorthin gehoeren, entscheidet er.
    [[vor_dem_eintragen_messen]] [[daten_ohne_zugang]] */
+/* ⭐⭐ SEIN AUSWENDIGER KORANBEREICH — aus demselben Abruf (24.08.2026).
+ *
+ * ⛔ Bis heute stand er als feste Liste in pruefe-eselsbruecken.js und im Kopf
+ * von anker.mjs, abgeschrieben am 17.08.2026. Hakt Elias im Quran-Leser eine
+ * weitere Sure ab, aenderte sich in den Pruefungen nichts — sein Haken lag im
+ * Speicher, wurde abgeglichen und blieb folgenlos.
+ *
+ * ⛔ `vt_hifzVerse` (einzelne Verse, seit 04.08.2026) hat nie ein Werkzeug
+ * gelesen. Wer 2:255 abhakt, bekam trotzdem „Sure 2 liegt ausserhalb".
+ *
+ * Beides steht jetzt in data/auswendig.json, und werkzeuge/auswendig.js ist
+ * die einzige Stelle, die es auslegt. [[eingefrorenes_feld_ist_kein_zustand]] */
+function auswendigSchreiben(text){
+  let roh;
+  try { roh = JSON.parse(text); } catch (e) { return null; }
+  const hol = (k) => { try { return JSON.parse((roh.daten && roh.daten[k]) || '{}'); }
+                       catch (e) { return {}; } };
+  const suren = Object.keys(hol('vt_hifz')).filter(k => hol('vt_hifz')[k]).map(Number)
+    .filter(n => n >= 1 && n <= 114).sort((a, b) => a - b);
+  const verseRoh = hol('vt_hifzVerse');
+  const verse = Object.keys(verseRoh).filter(k => verseRoh[k]).sort();
+  /* ⛔ Ein leerer Abzug wird NICHT geschrieben. Er saehe aus wie „er kann
+     nichts auswendig" und liesse jede Koranstelle beanstanden — der alte
+     Stand ist dann der bessere. [[leere_liste_ist_keine_messung]] */
+  if (!suren.length && !verse.length) return { suren: 0, verse: 0, geschrieben: false };
+  fs.writeFileSync(p('data/auswendig.json'), JSON.stringify({
+    stempel: (roh.stempel && roh.stempel.vt_hifz) || null,
+    geholt: new Date().toLocaleDateString('de-DE'),
+    suren, verse
+  }, null, 2) + '\n', 'utf8');
+  return { suren: suren.length, verse: verse.length, geschrieben: true };
+}
+
+/* ⭐⭐ WELCHE ESELSBRUECKEN ER ABGELEHNT HAT — aus demselben Abruf (24.08.2026).
+ *
+ * ⛔ Elias am 24.08.: „gibt es eigentlich eine routine fuer die vorschlaege die
+ * ich als schlecht empfinde und in der app schlecht markiere?" — es gab keine.
+ * `werkzeuge/vorschlaege-holen.mjs` konnte die Liste holen, aber niemand rief
+ * es auf; er tippte „Taugt nicht", der Stand wanderte in den Abgleich und
+ * blieb dort liegen. [[werkzeug_ohne_aufrufer]]
+ *
+ * ⚠️ Warum HIER und nicht ueber das eigene Werkzeug: dieses laeuft bei jedem
+ * Wartungslauf ohnehin und hat den Abruf schon in der Hand. Der andere Weg
+ * braeuchte `npx wrangler` — und das ist der Wartungsroutine bewusst NICHT
+ * freigegeben. Ein Schritt, der eine fehlende Berechtigung braucht, waere
+ * wieder ein Kreislauf, der nie laeuft. [[anleitung_ohne_berechtigung]]
+ *
+ * Der TEXT wird mitgespeichert, nicht nur die Nummer: nur so laesst sich
+ * spaeter pruefen, ob ein abgelehnter Vorschlag wieder auftaucht. */
+function abgelehnteSchreiben(text){
+  let roh;
+  try { roh = JSON.parse(text); } catch (e) { return null; }
+  let weg;
+  try { weg = JSON.parse((roh.daten && roh.daten.vt_vorschlagWeg) || '{}'); }
+  catch (e) { return null; }
+  if (!weg || typeof weg !== 'object') return null;
+  const raus = {};
+  let anzahl = 0;
+  for (const id of Object.keys(weg)){
+    const eintraege = weg[id] || {};
+    const liste = Object.keys(eintraege).map(nr => ({
+      nr: Number(nr),
+      text: String((eintraege[nr] || {}).text || ''),
+      zeit: (eintraege[nr] || {}).zeit || null
+    })).filter(e => e.text);
+    if (liste.length){ raus[id] = liste; anzahl += liste.length; }
+  }
+  /* ⛔ Auch hier: ein leerer Abzug wird nicht geschrieben. „Er hat nichts
+     abgelehnt" und „wir haben nichts geholt" sehen sonst gleich aus.
+     [[leere_liste_ist_keine_messung]] */
+  if (!anzahl) return { anzahl: 0, geschrieben: false };
+  fs.writeFileSync(p('data/abgelehnt.json'), JSON.stringify({
+    stempel: (roh.stempel && roh.stempel.vt_vorschlagWeg) || null,
+    geholt: new Date().toLocaleDateString('de-DE'),
+    woerter: raus
+  }, null, 2) + '\n', 'utf8');
+  return { anzahl, woerter: Object.keys(raus).length, geschrieben: true };
+}
+
 function eigeneWoerterSchreiben(text){
   let roh;
   try { roh = JSON.parse(text); } catch (e) { return null; }
@@ -645,6 +724,21 @@ if (iStand >= 0){
         + ' -> data/eigene-woerter.json');
     else
       console.log('  eigene Woerter (vt_personalVocab): keine im Geraeteabgleich');
+    /* Aus DEMSELBEN Abruf: sein auswendiger Koranbereich. */
+    const ausw = auswendigSchreiben(text);
+    if (ausw && ausw.geschrieben)
+      console.log('  auswendig (vt_hifz + vt_hifzVerse): ' + ausw.suren + ' Sure(n), '
+        + ausw.verse + ' einzelne Vers(e) -> data/auswendig.json');
+    else
+      console.log('  auswendig: nichts im Geraeteabgleich — data/auswendig.json bleibt,'
+        + ' wie sie war (ein leerer Abzug waere schlechter als ein alter).');
+    /* Und die abgelehnten Eselsbruecken — derselbe Abruf, dritte Datei. */
+    const abg = abgelehnteSchreiben(text);
+    if (abg && abg.geschrieben)
+      console.log('  abgelehnte Vorschlaege (vt_vorschlagWeg): ' + abg.anzahl
+        + ' an ' + abg.woerter + ' Wort/Woertern -> data/abgelehnt.json');
+    else
+      console.log('  abgelehnte Vorschlaege: keine im Geraeteabgleich');
     console.log('  App-Auswahl (KV, Stand '
       + (a.stempel ? new Date(a.stempel).toLocaleString('de-DE') : 'unbekannt') + '): '
       + (Object.entries(vonApp).map(([b, k]) => `${b} bis ${Math.max(...k)}`).join(' | ') || '—'));

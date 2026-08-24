@@ -35,6 +35,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
 const WURZEL = path.join(HIER, '..');
@@ -51,7 +52,18 @@ const VOCAB_DATA = ladeAusSkript('vocab-data.js', 'VOCAB_DATA');
 /* ⛔ QURAN_TEXT ist bei der SURE 1-basiert und beim VERS 0-basiert:
    QURAN_TEXT[sure][vers-1]. Mit [sure-1] landet man eine Sure zu tief, ohne
    jede Fehlermeldung. */
-const BEREICH = [1, 67, ...Array.from({length: 22}, (_, i) => 93 + i)];
+/* ⭐⭐ SEIT DEM 24.08.2026 AUS DEM SPEICHER, nicht mehr abgeschrieben.
+   Hier stand `[1, 67, 93..114]` — der Stand vom 17.08.2026, von Hand
+   uebertragen. Hakte Elias eine Sure ab, aenderte sich hier nichts, und
+   einzelne Verse (`vt_hifzVerse`) kannte ueberhaupt kein Werkzeug.
+   Dieselbe Quelle wie pruefe-eselsbruecken.js — eine Auslegung, nicht zwei.
+   [[eingefrorenes_feld_ist_kein_zustand]] */
+const { auswendigLesen, umfang } = createRequire(import.meta.url)('./auswendig.js');
+const AUSW = auswendigLesen(WURZEL);
+AUSW.meldungen.forEach(m => console.log('  hinw ' + m));
+console.log('Auswendiger Bereich: ' + umfang(AUSW)
+  + ' (Quelle: ' + (AUSW.quelle === 'datei' ? 'data/auswendig.json, Stand ' + AUSW.stand
+                                            : 'abgeschriebener Stand ' + AUSW.stand) + ')');
 
 /* ⛔⛔ Die Zeichenklasse steht als \u-Folge da und NICHT als sichtbarer Text.
    Genau daran ist die erste Fassung dieses Skripts gescheitert: die Klasse aus
@@ -118,10 +130,25 @@ if (!woerter.length){ console.error('Keine Woerter zu dieser Auswahl.'); process
 
 /* Den Bereich einmal flach vorbereiten, statt je Wort neu. */
 const verse = [];
-BEREICH.forEach(s => {
+const schon = new Set();
+const nimm = (s, nr, v) => {
+  const k = s + ':' + nr;
+  if (schon.has(k)) return;
+  schon.add(k);
+  verse.push({ sure: s, nr, ar: v[0], de: v[1], flach: flach(v[0]) });
+};
+/* Erst die ganz abgehakten Suren ... */
+AUSW.suren.forEach(s => {
   const liste = QURAN_TEXT[s];
   if (!liste) return;
-  liste.forEach((v, i) => verse.push({ sure: s, nr: i + 1, ar: v[0], de: v[1], flach: flach(v[0]) }));
+  liste.forEach((v, i) => nimm(s, i + 1, v));
+});
+/* ... dann die EINZELN abgehakten Verse. `schon` verhindert Doppelte, wenn
+   ein Vers zusaetzlich in einer ganz abgehakten Sure steht. */
+AUSW.verse.forEach(k => {
+  const [s, nr] = String(k).split(':').map(Number);
+  const v = (QURAN_TEXT[s] || [])[nr - 1];
+  if (v) nimm(s, nr, v);
 });
 
 let mit = 0, ohne = 0;

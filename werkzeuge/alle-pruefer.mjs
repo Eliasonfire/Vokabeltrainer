@@ -123,6 +123,11 @@ const PRUEFER = [
   ['test-antwortformat.mjs', []],
   ['test-feld-ergaenzungen.mjs', []],
   ['test-lernstand-zuwachs.mjs', []],
+  /* ⭐ Die Pruefung, die nicht nach Fehlern sucht, sondern nach FEHLENDEN
+     VERBINDUNGEN: welchen Speicher wertet niemand aus, welche erzeugte Datei
+     ist aelter als ihre Quelle. Diese Fehlerart meldet sich nie von selbst —
+     alles sieht richtig aus, es passiert nur nichts. (24.08.2026) */
+  ['werkzeuge/pruefe-kreislaeufe.mjs', []],
   ['test-buecher.mjs', []],
   ['test-p1.mjs', []],
   ['test-p6.mjs', []],
