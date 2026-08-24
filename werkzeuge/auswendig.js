@@ -65,7 +65,29 @@ function auswendigLesen(wurzel){
   if (fs.existsSync(datei)){
     try {
       const d = JSON.parse(fs.readFileSync(datei, 'utf8'));
-      const suren = new Set((d.suren || []).map(Number).filter(n => n >= 1 && n <= 114));
+      /* ⛔⛔ VEREINIGUNG, nicht Ersetzung — am 24.08.2026 an seinem echten
+         Stand gemessen und beinahe falsch gebaut.
+
+         Abgehakt hat er 14 Suren (1, 67, 102-114 ohne 104). Die
+         abgeschriebene Liste kennt 24, denn sie enthaelt zusaetzlich seine
+         ANSAGE vom 17.08.: „und ein paar mehr noch bis sura duha aber die
+         sind nicht ganz richtig gelernt aber sie kann man auch inkludieren."
+
+         Beides sind Aussagen von ihm, und keine widerruft die andere. Haette
+         ich die Datei die Liste ERSETZEN lassen, waeren zehn Suren (93-101,
+         104) stillschweigend aus seinem Bereich gefallen — und Merkhaken, die
+         er kennt, waeren als „ausserhalb" gemeldet worden.
+
+         ⭐ Dasselbe Prinzip wie bei FREIGESCHALTET in js/kern.js: was er
+         einmal genannt hat, verliert er nicht, weil ein Haken fehlt.
+         Zuruecknehmen ist SEINE Entscheidung, nicht die einer Messung.
+         [[kann_ist_nicht_ist]] [[eingefrorenes_feld_ist_kein_zustand]] */
+      const ausDatei = new Set((d.suren || []).map(Number).filter(n => n >= 1 && n <= 114));
+      const suren = new Set([...ausDatei, ...RUECKFALL_SUREN]);
+      const nurAnsage = RUECKFALL_SUREN.filter(s => !ausDatei.has(s));
+      if (nurAnsage.length)
+        meldungen.push('Sure ' + nurAnsage.join(', ') + ' stehen nicht in seinen Haken,'
+          + ' aber in seiner Ansage vom ' + RUECKFALL_STAND + ' — beide zaehlen.');
       const verse = new Set(d.verse || []);
       const alter = tageSeit(d.geholt);
       if (alter === null)
