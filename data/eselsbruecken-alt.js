@@ -309,8 +309,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* قَصِيرٌ - kurz */
   '45786': [
-    'Deine eigenen Beispielsätze halten das Paar fest: الْقَلَمُ قَصِيرٌ gegen الشَّارِعُ طَوِيلٌ. Nimm beide als ein Bild — ein kurzer Stift in der Hand, eine lange Straße davor. Zwei Sätze aus Wörtern, die du alle hast.',
-    '⚠️ Achte auf das ص: das ist der satte, dunkle s-Laut, nicht das leichte س aus سُوقٌ. Im Arabischen sind das zwei verschiedene Buchstaben, keine Schreibvarianten — sprich es einmal langsam und übertrieben: qa-ṣīr, mit rundem Mund.'
+    "Sprich es laut: ka-SIIR — genauso endet صَغِيرٌ (klein), das du sicher kannst. Beide sagen „wenig davon\": صَغِيرٌ wenig Fläche, قَصِيرٌ wenig Länge.",
+    "Bild: dein قَلَمٌ nach dem zehnten Spitzen. Er war كَبِيرٌ, jetzt ist er قَصِيرٌ — ein Stummel zwischen zwei Fingern.",
   ],
 
   /* بَارِدٌ - kalt */
@@ -765,8 +765,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* شَرْقٌ - Osten */
   '45861': [
-    'Die Sonne macht die Eselsbrücke: sie geht im شَرْق auf und im غَرْب unter. Von شَرْق kommt إِشْرَاق, das Aufgehen — und der Name اَلشَّرْق الْأَوْسَط, der Nahe Osten, wörtlich „der mittlere Osten". Ein Wort, das dir in jeder Nachrichtensendung begegnet.',
-    '⚠️ Der erste Buchstabe ش hat drei Punkte und wird „sch" gesprochen — nicht zu verwechseln mit س. Im Paar mit غَرْب: das غ ist der Gurgellaut hinten im Hals. Zwei Himmelsrichtungen, zwei Laute, die es im Deutschen so nicht gibt. Beide einmal übertrieben sprechen.'
+    "Die Sonne steigt im شَرْق über den مَسْجِد. Wer zum Morgengebet geht, hat sie im Rücken — sie kommt aus dem شَرْق.",
+    "Merk es an der Gebetsrichtung: von Deutschland aus liegt die كَعْبَةٌ im شَرْق. Jedes Mal, wenn du dich zum Gebet drehst, drehst du dich Richtung شَرْق.",
   ],
 
   /* أَخٌ - Bruder. ⚠️ Die beiden letzten Woerter dieses Kapitels tragen KEINE
@@ -806,8 +806,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* بَيْضَةٌ - Ei */
   '45865': [
-    'Die Wurzel ب ي ض heißt weiß — das Ei ist „das Weiße“. ⭐ Das ist kein Einzelfall: Sprachen benennen Dinge oft nach ihrer Farbe, und im Arabischen liegt die Farbe hier offen in der Wurzel. Die Farbwörter selbst kommen in einem späteren Kapitel; die Wurzel dazu hast du schon hier.',
-    'Auch hier trennt die تاء مَرْبُوطة das Einzelne von der Menge: بَيْضٌ sind Eier als Sache, بَيْضَةٌ ist das eine Ei. Dieselbe Ordnung wie بَقَرٌ / بَقَرَةٌ und دَجَاجٌ / دَجَاجَةٌ. Drei Paare, eine Regel — wer sie einmal sieht, braucht die Plurale nicht einzeln.'
+    "بَيْضَةٌ und بَيْتٌ fangen gleich an: بَيْ. Und genau das ist es — die بَيْضَةٌ ist das بَيْت des Kükens, seine erste Wohnung.",
+    "Bild: der دِيكٌ kräht auf dem Hof, im Stroh darunter liegt eine بَيْضَةٌ. Hahn und Ei, dasselbe Bild, zwei Wörter.",
   ],
 
   /* مُؤَذِّنٌ - Gebetsrufer */

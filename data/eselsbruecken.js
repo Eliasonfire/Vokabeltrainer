@@ -141,7 +141,7 @@ const BUCH_ESELSBRUECKEN = {
 
   "45924": "Muster فَعِيلٌ wie جَمِيلٌ (schön), قَصِيرٌ (kurz) und مَرِيضٌ (krank), die du alle hast. Der حَفِيدٌ ist der Sohn deines اِبْنٌ (Sohn) — eine Generation weiter. Plural أَحْفَادٌ.",
 
-  "45925": "Form فَعِيلَةٌ, genau wie حَقِيبَةٌ (Tasche), die du schon hast: beide mit ـِيـ vor dem ـة. ⚠️ Und genau deshalb verwechselbar — حَدِيقَةٌ hat ein د, حَقِيبَةٌ ein ق. Plural حَدَائِقُ.",
+  "45925": "Sprich es: ha-DII-qa — „hat ’ne Ecke\". Hinter jedem بَيْت hat einer ’ne Ecke حَدِيقَة, und dort läuft das مَاء.",
 
   "45926": "Einer der Monate des islamischen Kalenders — hier hilft nur der Klang: „Radschab“. ⚠️ Nicht mit رَجُلٌ (Mann) verwechseln, das du schon hast: رَجَب endet auf ب, رَجُل auf ل.",
 
@@ -309,7 +309,7 @@ const BUCH_ESELSBRUECKEN = {
 
   "50338": "⭐ Doppelt verankert: die Wurzel ت ج ر kennst du von تَاجِرٌ (Händler), und das مَـ zeigt wieder den Ort — wie in مَطْبَخٌ und مَكْتَبٌ. Der مَتْجَر ist der Ort des Händlers. Gleiche Bedeutung wie دُكَّانٌ.",
 
-  "50357": "⚠️ Kein Tanwin am Ende — genau wie bei den Farben أَحْمَرُ, أَزْرَقُ, أَخْضَرُ aus Kapitel 22. Diese Wörter tragen nie ein ـٌ. Bild dazu: Wer غَضْبَانُ ist, wird أَحْمَرُ (rot).",
+  "50357": "Bild: der مُدَرِّس kommt غَضْبَان in den فَصْل — und mit einem Schlag ist es still. Das lange -aan am Ende ist das Grollen, das noch nachhallt.",
 
   "50358": "Muster فَاعِلٌ wie جَالِسٌ (sitzend), وَاقِفٌ (stehend) und طَالِبٌ (Student), die du alle hast: die Person im Zustand. عَاقِلٌ ist, wer seinen Verstand gebraucht.",
 

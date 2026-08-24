@@ -2496,7 +2496,7 @@ const VOCAB_DATA = [
   "sentAr": "الْمَسْجِدُ فِي الشَّرْقِ.",
   "sentDe": "Die Moschee ist im Osten.",
   "quran": null,
-  "mnemo": "Als Gegenpaar lernen: شَرْقٌ (Osten) und غَرْبٌ (Westen) — beide stehen in deinen Vokabeln.",
+  "mnemo": "Morgens den شَاي in der Hand und die Sonne kommt hoch: sie kommt immer aus dem شَرْق. Beide fangen mit ش an — Tee und Osten gehören in dasselbe Bild.",
   "source": "vocabulary",
   "box": 2,
   "acc": 49
