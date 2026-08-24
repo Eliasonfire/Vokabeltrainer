@@ -1,0 +1,32 @@
+[
+  {
+    "uuid": "2ab9777c-db3d-cf97-0000-019eb2fa6774",
+    "title": "Madina Buch 1 (Beschriftet)",
+    "folderName": "Grammatik",
+    "createdAt": "2026-06-10T19:20:45.114Z",
+    "lastModifiedAt": "2026-08-09T09:50:46.190Z",
+    "isFavorite": true,
+    "isTextOnly": false,
+    "hasText": true
+  },
+  {
+    "uuid": "2ab9777c-db3d-cf97-0000-019f1f0586ee",
+    "title": "Grammatik Heft Medina Buch 1",
+    "folderName": "Grammatik",
+    "createdAt": "2026-07-01T18:51:52.689Z",
+    "lastModifiedAt": "2026-07-27T20:57:42.356Z",
+    "isFavorite": false,
+    "isTextOnly": false,
+    "hasText": false
+  },
+  {
+    "uuid": "2ab9777c-db3d-cf97-0000-019ef75a5ba8",
+    "title": "Madina Buch 1 Vokabelheft",
+    "folderName": "Grammatik",
+    "createdAt": "2026-06-24T02:02:26.975Z",
+    "lastModifiedAt": "2026-07-27T01:21:48.200Z",
+    "isFavorite": false,
+    "isTextOnly": false,
+    "hasText": false
+  }
+]

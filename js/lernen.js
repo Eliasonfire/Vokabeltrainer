@@ -774,7 +774,22 @@ function oeffneNotizEditor(){
   document.getElementById('btnDeleteNote').style.visibility = getNote(w.id) ? 'visible' : 'hidden';
   document.getElementById('noteBackdrop').classList.remove('hidden');
   document.getElementById('noteEditor').classList.remove('hidden');
-  feld.focus();
+  /* ⛔⛔ KEIN `feld.focus()` MEHR — Elias am 22.08.2026:
+     „mich stört es, dass wenn ich bei den karteikarten auf einen vorschlag
+      drauf drücke, weil ich den nächsten mir zb angucken möchte, dass sich
+      dann immer meine tastatur auf macht und alles nach oben rückt. […] erst
+      wenn ich wirklich aufs textfeld drücke um was zu schreiben, erst dann
+      soll es sich öffnen."
+
+     ⚠️ Der Fokus stand hier, damit man sofort tippen kann. Auf dem Handy
+     kostet das aber mehr, als es bringt: die Tastatur schiebt den halben
+     Bildschirm hoch — und dieser Kasten ist zuerst zum LESEN da. Er zeigt
+     Vorschläge zum Durchblättern; geschrieben wird erst danach, wenn
+     ueberhaupt.
+
+     Wer tippen will, tippt ins Feld — dann oeffnet der Browser die Tastatur
+     von selbst. Das ist genau der Zeitpunkt, den er beschreibt.
+     [[verbesserung_hinter_dem_aufklapper]] */
   overlayAuf('noteEditor');
 }
 function schliesseNotizEditor(){
@@ -793,7 +808,9 @@ document.getElementById('btnVorschlagUebernehmen').addEventListener('click', ()=
   const feld = document.getElementById('neText');
   feld.value = document.getElementById('neVorschlagText').textContent;
   document.getElementById('neVorschlag').classList.add('hidden');
-  feld.focus();
+  /* ⚠️ Auch hier kein `focus()` — aus demselben Grund wie oben. „Uebernehmen"
+     heisst oft: so passt es, jetzt nur noch speichern. Wer doch aendern will,
+     tippt ins Feld. */
 });
 /* „Taugt nicht": merkt den Vorschlag als abgelehnt und blaettert weiter, wenn
    es noch einen gibt. Das Weiterblaettern ist Absicht — er hat gesagt, der
