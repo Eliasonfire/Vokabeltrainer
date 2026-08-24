@@ -75,13 +75,31 @@ try {
   console.log('       sind NICHT geprueft (node werkzeuge/vorrat.mjs --stand <datei> --app auto).');
 }
 
-/* Sein auswendiger Bereich. Belegt aus vt_hifz (seine eigenen Haekchen im
-   Quran-Leser) plus "und ein paar mehr noch bis sura duha". */
+/* ⭐⭐ SEIN AUSWENDIGER BEREICH — seit dem 24.08.2026 aus dem Speicher, nicht
+   mehr abgeschrieben.
+
+   ⛔ Hier stand `new Set([1, 67, 93..114])` mit dem Zusatz „belegt aus
+   vt_hifz". Das war die HERKUNFT der Zahlen (abgeschrieben am 17.08.2026),
+   nicht der Weg: gelesen hat den Speicher niemand. Hakte Elias im Quran-Leser
+   eine Sure ab, aenderte sich hier nichts — und `vt_hifzVerse` (einzelne
+   Verse, seit 04.08.) kannte ueberhaupt kein Werkzeug.
+   [[eingefrorenes_feld_ist_kein_zustand]]
+
+   ⚠️ Die Meldungen aus dem Leser gehoeren IN DIE AUSGABE. Faellt die Datei
+   aus, greift der alte Stand — aber dann muss man das sehen, sonst ist die
+   Pruefung nicht mehr deutbar. [[rueckfallliste_nur_ohne_hauptquelle_pruefbar]] */
+const { auswendigLesen, kannStelle, umfang } = require('./werkzeuge/auswendig.js');
+const BEREICH = auswendigLesen(WURZEL);
+BEREICH.meldungen.forEach(m => console.log('  hinw ' + m));
+console.log('  Auswendiger Bereich: ' + umfang(BEREICH)
+  + ' (Quelle: ' + (BEREICH.quelle === 'datei' ? 'data/auswendig.json, Stand ' + BEREICH.stand
+                                                : 'abgeschriebener Stand ' + BEREICH.stand) + ')');
+
+/* Zeichen und Vereinheitlichung fuer den Textvergleich weiter unten. */
 const ZEICHEN = /[ؐ-ًؚ-ٰٟۖ-ࣰۭ-ࣳ]/g;
 const flach = s => String(s).replace(ZEICHEN, '').replace(/ـ/g, '')
   .replace(/[آأإٱ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي');
 
-const AUSWENDIG = new Set([1, 67, ...Array.from({length: 22}, (_, i) => 93 + i)]);
 const MAX_ZITAT = 4;
 
 /* Die Woerter aus den Buchabzuegen. ⚠️ Sie stehen NICHT in vocab-data.js, und
@@ -184,9 +202,12 @@ Object.keys(ALT).forEach(id => {
 
 console.log('=== 1. Koranstellen nur aus dem auswendigen Bereich ===');
 {
-  /* Sure:Vers, auch als Bereich (93:1-3). Die Sure ist die Zahl vor dem
-     Doppelpunkt; nur sie entscheidet. */
-  const muster = /\b(\d{1,3}):(\d{1,3})(?:\s*[-–]\s*\d{1,3})?\b/g;
+  /* Sure:Vers, auch als Bereich (93:1-3).
+     ⚠️ Das Versende ist seit dem 24.08.2026 eine EIGENE Gruppe: seit einzelne
+     Verse zaehlen, reicht „die Sure entscheidet" nicht mehr. Bei 2:255-260
+     muessen ALLE Verse abgedeckt sein — sonst ginge die Stelle durch, weil
+     zufaellig der erste abgehakt ist. */
+  const muster = /\b(\d{1,3}):(\d{1,3})(?:\s*[-–]\s*(\d{1,3}))?\b/g;
   let stellen = 0;
   texte.forEach(t => {
     let m;
@@ -195,7 +216,12 @@ console.log('=== 1. Koranstellen nur aus dem auswendigen Bereich ===');
       const sure = Number(m[1]);
       if (sure < 1 || sure > 114) continue;      /* keine Koranstelle */
       stellen++;
-      if (AUSWENDIG.has(sure)) continue;
+      const von = Number(m[2]);
+      const bis = m[3] ? Number(m[3]) : von;
+      let alleDrin = true;
+      for (let v = von; v <= bis && alleDrin; v++)
+        if (!kannStelle(BEREICH, sure, v)) alleDrin = false;
+      if (alleDrin) continue;
       /* ⭐ Zwei verschiedene Strengegrade, und der Unterschied ist Elias'
          eigener Wortlaut. Zum BEREICH sagte er "am besten mit den suren die
          ganz am ende sind" - eine Vorliebe. Zur LAENGE sagte er "wichtig ist
@@ -730,8 +756,12 @@ console.log('=== 7. Anker: baut die Eselsbruecke auf etwas, das er SCHON hat? ==
                ⚠️ Nur wenn die Fundstelle IM SELBEN SATZ eine Sure aus seinem
                auswendigen Bereich nennt — sonst wäre jede Erwähnung eines
                beliebigen Verses ein Freibrief. [[quranbezug-nur-auswendiges]] */
-            const suren = [...satz.matchAll(/(\d{1,3}):(\d{1,3})/g)].map(m => Number(m[1]));
-            if (suren.some(n => AUSWENDIG.has(n))) return;
+            /* ⚠️ Seit dem 24.08.2026 zaehlt auch der VERS: kann er 2:255
+               einzeln, ist مَلِكِ daraus ein gueltiger Anker — vorher entschied
+               allein die Sure, und einzeln abgehakte Verse gab es fuer kein
+               Werkzeug. */
+            const stellen = [...satz.matchAll(/(\d{1,3}):(\d{1,3})/g)];
+            if (stellen.some(m => kannStelle(BEREICH, Number(m[1]), Number(m[2])))) return;
             /* ⭐ Zwei Schweregrade, und sie sind nicht dasselbe:
                Steht das erklaerte Wort in einem Kapitel, das er SCHON hat, ist
                die Bruecke heute kaputt — Fehler. Ist es vorausgeschrieben,
@@ -783,6 +813,57 @@ console.log('=== 7. Anker: baut die Eselsbruecke auf etwas, das er SCHON hat? ==
     }
   }
 }
+console.log('');
+console.log('=== 8. Abgelehnte Vorschlaege: steht einer noch drin? ===');
+{
+  /* ⭐⭐ DER KREISLAUF, DER BIS ZUM 24.08.2026 OFFEN WAR.
+     Elias tippt in der App auf „Taugt nicht". Der Stand wandert in den
+     Geraeteabgleich — und blieb dort liegen: `werkzeuge/vorschlaege-holen.mjs`
+     konnte ihn holen, aber niemand rief es auf. Er lehnte ab, und derselbe
+     Text stand beim naechsten Mal wieder da. [[werkzeug_ohne_aufrufer]]
+
+     Seit dem 24.08. schreibt `vorrat.mjs` die Liste bei jedem Abruf nach
+     data/abgelehnt.json, und dieser Abschnitt prueft, ob ich sie beachtet
+     habe.
+
+     ⚠️ Der gespeicherte Text ist auf 400 Zeichen gekuerzt (js/kern.js). Der
+     Vergleich laeuft deshalb ueber den ANFANG, nicht auf Gleichheit — sonst
+     ginge jeder laengere Text durch. */
+  let dateiDa = false, geprueft8 = 0;
+  try {
+    const d = JSON.parse(fs.readFileSync(path.join(WURZEL, 'data', 'abgelehnt.json'), 'utf8'));
+    dateiDa = true;
+    const alter = (() => {
+      const m = String(d.geholt || '').match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+      return m ? Math.floor((Date.now() - new Date(+m[3], +m[2] - 1, +m[1]).getTime()) / 86400000) : null;
+    })();
+    if (alter === null)
+      console.log('  hinw data/abgelehnt.json: wann geholt, steht nicht lesbar da.');
+    else if (alter > 8)
+      console.log('  hinw data/abgelehnt.json ist ' + alter + ' Tage alt — seither'
+        + ' abgelehnte Vorschlaege fehlen hier.');
+    const woerter = d.woerter || {};
+    for (const id of Object.keys(woerter)){
+      for (const e of woerter[id]){
+        const weg = String(e.text || '').trim();
+        if (weg.length < 12) continue;      /* zu kurz fuer einen sicheren Vergleich */
+        geprueft8++;
+        const anfang = weg.slice(0, 60);
+        const treffer = texte.filter(t => t.id === id && String(t.text).trim().startsWith(anfang));
+        treffer.forEach(t => melde(`${t.wort} (${t.quelle}): Vorschlag ${e.nr} hat Elias`
+          + ' ABGELEHNT, steht aber noch da — ersetzen. „' + anfang.slice(0, 40) + '…"'));
+      }
+    }
+  } catch (e){
+    console.log('  hinw data/abgelehnt.json fehlt — seine Ablehnungen sind NICHT geprueft.');
+    console.log('       Sie entsteht bei: node werkzeuge/vorrat.mjs --stand <datei> --app auto');
+  }
+  if (dateiDa){
+    console.log('  ' + geprueft8 + ' abgelehnte(r) Vorschlag/Vorschlaege gegen den Bestand geprueft.');
+    geprueft += geprueft8;
+  }
+}
+
 console.log('');
 if (hinweise.length){
   console.log('=== Hinweise (kein Fehler — Elias entscheidet) ===');
