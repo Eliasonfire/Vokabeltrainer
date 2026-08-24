@@ -97,11 +97,43 @@ function setzeMnemo(inhalt, id, text){
    im Ergebnis unleserlich. */
 function jsText(s){ return "'" + String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'") + "'"; }
 
+/* Einen neuen Block ans ENDE des Objekts haengen, vor die schliessende
+   Klammer. Der Kommentar darueber nennt das Wort — so, wie es die Datei bei
+   allen bisherigen Eintraegen haelt. */
+function legeAltBlockAn(inhalt, id, texte){
+  const ze = zeilenende(inhalt);
+  const zeilen = inhalt.split(/\r?\n/);
+  /* Die schliessende Klammer des Objekts: die letzte Zeile, die genau "};" ist. */
+  let iZu = -1;
+  for (let i = zeilen.length - 1; i >= 0; i--) if (zeilen[i].trim() === '};'){ iZu = i; break; }
+  if (iZu < 0) return { inhalt, meldung: `id ${id}: Ende des Objekts (};) nicht gefunden` };
+  /* ⛔ Der letzte vorhandene Eintrag endet mit "],", nicht "]" — sonst
+     entstuende hier "]" gefolgt von "\u0027id\u0027:" ohne Komma. Geprueft, nicht
+     angenommen. */
+  let iLetzt = -1;
+  for (let i = iZu - 1; i >= 0; i--) if (zeilen[i].trim()){ iLetzt = i; break; }
+  if (iLetzt >= 0 && /^\s*\]\s*$/.test(zeilen[iLetzt]))
+    zeilen[iLetzt] = zeilen[iLetzt].replace(/\s*$/, '') + ',';
+  const neuBlock = [
+    '',
+    `  \u0027${id}\u0027: [`,
+    ...texte.map((t, i) => `    ${jsText(t)}${i < texte.length - 1 ? ',' : ''}`),
+    '  ],'
+  ];
+  zeilen.splice(iZu, 0, ...neuBlock);
+  return { inhalt: zeilen.join(ze), meldung: null, angelegt: true };
+}
+
 function setzeAlt(inhalt, id, texte){
   const ze = zeilenende(inhalt);
   const zeilen = inhalt.split(/\r?\n/);
   const iStart = zeilen.findIndex(z => z.trim().startsWith(`'${id}': [`));
-  if (iStart < 0) return { inhalt, meldung: `id ${id}: kein Block '${id}': [ gefunden` };
+  /* ⭐ Fehlt der Block, wird er ANGELEGT statt gemeldet (24.08.2026).
+     Vorher konnte das Werkzeug fuer ein Wort ohne bisherige Alternative gar
+     nichts — also fuer jedes NEUE Wort. Aufgefallen bei den zwoelf Pronomen
+     aus Folge 18: zwoelfmal dieselbe Meldung, null Wirkung.
+     [[werkzeug_ohne_aufrufer]] */
+  if (iStart < 0) return legeAltBlockAn(inhalt, id, texte);
   let iEnde = -1;
   for (let i = iStart + 1; i < zeilen.length; i++){
     if (/^\s*\],?\s*$/.test(zeilen[i])){ iEnde = i; break; }
