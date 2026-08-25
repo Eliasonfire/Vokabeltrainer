@@ -139,6 +139,35 @@ const LEHRBUCH_SAETZE = [
        dahinter, weil genau sie die إِضافة zeigt, um die es im Kapitel geht. */
     sentDe: 'Nein. Sie ist meine Cousine — die Tochter meines Onkels väterlicherseits.' },
 
+  /* ===== Nachtrag 25.08.2026: die Saetze zu Folge 17 (Kapitel 12) ==========
+   *
+   * Folge 17 war die einzige Folge mit Rohmaterial und NULL Regeln
+   * (rueckstand.mjs: "17 ... OFFEN"). Vier neue Regeln kommen aus ihr; drei
+   * brauchten einen Satz, der sie zeigt.
+   *
+   * Beide Saetze unten stehen im LEKTIONSTEXT auf Buchseite 63 — dort, wo das
+   * Buch vollstaendig vokalisiert druckt. Bei 600 dpi nachgemessen. */
+
+  /* ⭐ Der einzige Beleg fuer بِـ im ganzen Bestand. Gedruckt ist die Kasrah
+     unter dem بـ UND das Kasratan unter dem رٍ — beides eindeutig bei 600 dpi.
+     Genau danach fragt ein Mitschueler in Folge 17 bei 10:47: "Aber warum ist
+     bi khayrin? Warum nicht bi khayri?" — "Weil das Wort khayr unbestimmt
+     ist." Der Satz traegt also die Regel und ihre Begruendung. */
+  { id: 'mb1-63-3', seite: 63, kapitel: 12, vokalisationErgaenzt: true,
+    gedruckt: 'بِخَيْرٍ und الْحَمْدُ vollständig; أنا und و ohne Zeichen',
+    sentAr: 'أَنَا بِخَيْرٍ وَالْحَمْدُ لِلَّهِ.',
+    sentDe: 'Mir geht es gut, und das Lob gebührt Allah.' },
+
+  /* ⭐ Der einzige Beleg fuer الَّتِي. Das Wort ist im Buch VOLL vokalisiert
+     gedruckt — Schadda mit Fatha auf dem Lam, Kasra unter dem Ta —, also
+     nichts daran ergaenzt. Der Rest der Zeile traegt nur die Kasusendungen.
+     Der Lehrer geht in Folge 17 ab 32:06 zehn Uebungssaetze durch, in denen
+     zwischen الَّذِي und الَّتِي zu entscheiden ist. */
+  { id: 'mb1-63-4', seite: 63, kapitel: 12, vokalisationErgaenzt: true,
+    gedruckt: 'الْفَتَاةُ الَّتِي مَعَكِ und أُخْتُكِ vollständig; ومن هذه أهي ohne Zeichen',
+    sentAr: 'وَمَنْ هَذِهِ الْفَتَاةُ الَّتِي مَعَكِ؟ أَهِيَ أُخْتُكِ؟',
+    sentDe: 'Und wer ist dieses Mädchen, das bei dir ist? Ist sie deine Schwester?' },
+
   /* ===== Nachtrag 18.08.2026: die Saetze zu den unerreichbaren Regeln ======
    *
    * Neun Regeln aus Folge 14/15/16 lagen in grammar-data.js, ohne dass ein
@@ -270,6 +299,18 @@ const LEHRBUCH_SAETZE = [
     gedruckt: 'nur die Fatha auf dem كَ von أبوكَ',
     sentAr: 'أَيْنَ أَبُوكَ يَا خَالِدُ؟',
     sentDe: 'Wo ist dein Vater, Khalid?' },
+
+  /* ⭐ Buchseite 65, Uebung (2) Satz 8. Das Buch druckt in dieser ganzen
+     Uebung fast nichts — und ausgerechnet die Fatha auf dem كَ von أَلَكَ
+     steht da. Sie ist der Lernpunkt: aus لِ wird vor einem Suffix لَـ.
+     Die Gegenprobe steht schon im Bestand: mb1-61-2 hat لِي أَخٌ وَاحِدٌ mit
+     Kasra — dieselbe Praeposition, dasselbe Wort أَخ, anderer Vokal.
+
+     ياحامد ist im Buch zusammengeschrieben; hier getrennt, siehe mb1-65-1. */
+  { id: 'mb1-65-2', seite: 65, kapitel: 12, vokalisationErgaenzt: true,
+    gedruckt: 'nur die Fatha auf dem كَ von ألك',
+    sentAr: 'أَلَكَ أَخٌ يَا حَامِدُ؟',
+    sentDe: 'Hast du einen Bruder, Hamid?' },
 
   /* Aus dem deutschen Madina-Schluessel 3, Lektion 1, Seite 7 - dort steht der
    * Abschnitt "c) Die Fuenf Nomen". Der Satz ist das Beispiel des Buchs fuer

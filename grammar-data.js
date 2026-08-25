@@ -1187,10 +1187,59 @@ const GRAMMAR_RULES = [
     shortExplanation: "Im Arabischen gibt es zwei Zeitformen: die Vergangenheit اَلْمَاضِي und die Gegenwart اَلْمُضَارِع. Die Zukunft wird aus der Gegenwart gebildet – „deswegen hat man eigentlich nur zwei“. Im ersten Buch kommt vor allem die Vergangenheit dran. Der Stamm bleibt dabei gleich, nur die Endung wechselt; dein Lehrer nennt es einen Baukasten: „Das ist wie ein Baukasten. Wir müssen die nur zusammenbauen.“ Vierzehn Pronomen, vierzehn Endungen – mehr gibt es nicht. Gemerkt wird in Dreierpaketen, nicht als ich-du-er-sie: 3. Person männlich هُوَ ذَهَبَ · هُمَا ذَهَبَا · هُمْ ذَهَبُوا, 3. Person weiblich هِيَ ذَهَبَتْ · هُمَا ذَهَبَتَا · هُنَّ ذَهَبْنَ, 2. Person männlich أَنْتَ ذَهَبْتَ · أَنْتُمَا ذَهَبْتُمَا · أَنْتُمْ ذَهَبْتُمْ, 2. Person weiblich أَنْتِ ذَهَبْتِ · أَنْتُمَا ذَهَبْتُمَا · أَنْتُنَّ ذَهَبْتُنَّ, und dann nur noch أَنَا ذَهَبْتُ und نَحْنُ ذَهَبْنَا. Dahinter stehen drei Zählformen: Singular (eine Person), Dual (genau zwei) und Plural (ab drei) – der Dual ist eine eigene Zahl, die es im Deutschen nicht gibt. Der Trick bei der zweiten Person: die Endung steckt schon im Pronomen. أَنْتَ → ـْتَ, أَنْتُمْ → ـْتُمْ, أَنْتُنَّ → ـْتُنَّ – „man kann die einfach übernehmen, die Endungen“. Bei der dritten Person geht das nicht: هُوَ hat gar keine Endung, هُمْ bekommt ـُوا. Und die Dualform der Anrede ist für Männer und Frauen gleich (أَنْتُمَا ذَهَبْتُمَا), bei der dritten Person nicht (ذَهَبَا gegen ذَهَبَتَا) – vierzehn Pronomen, aber nur dreizehn verschiedene Verbformen.",
     color: "other",
     source: { folge: 18, video: "Folge 18", approxTimestamp: "10:14", chapter: 12 }
+  },
+
+  /* ===================== Folge 17 · Kapitel 12 ==============================
+     Folge 17 war die einzige Folge mit Rohmaterial und NULL Regeln —
+     rueckstand.mjs meldete sie am 25.08.2026 als einzige OFFEN. Der Lehrer
+     eroeffnet sie mit "Es wird nicht so viel neu dazukommen in diesem
+     Kapitel", und das stimmt fuer den groessten Teil: Suffixe, die fuenf
+     Nomen, das Rufwort — alles schon belegt. Vier Dinge sind es nicht.
+     ========================================================================= */
+
+  {
+    id: "ismun-mawsul-allati-01",
+    name: "الَّتِي (welche — die weibliche Form)",
+    shortExplanation: "الَّتِي ist dasselbe Verbindungswort wie الَّذِي, nur fuer ein weibliches Einzelnes. Welches von beiden hineingehoert, entscheidet allein das GESCHLECHT des Wortes davor – nicht, ob es eine Person ist oder eine Sache. An einer Person zeigt es der Lektionstext: وَمَنْ هَذِهِ الْفَتَاةُ الَّتِي مَعَكِ؟ – فَتَاة ist weiblich, also الَّتِي. An Sachen zeigt es die Uebung: الْكِتَابُ الَّذِي عَلَى الْمَكْتَبِ (كِتَاب maennlich) gegen السَّيَّارَةُ الَّتِي خَرَجَتْ مِنَ الْمُسْتَشْفَى (سَيَّارَة weiblich). Dein Lehrer geht in Folge 17 ab 32:06 genau diese zehn Uebungssaetze durch und sagt dabei, worauf zu achten ist: „muessen wir jetzt entscheiden, kommt الَّذِي rein, welche fuer maennliche Begriffe ist, oder الَّتِي rein fuer weibliche Begriffe. Das sind insgesamt zehn Stueck.“ Merkhilfe: das ت in الَّتِي ist dasselbe ت wie in der تَاء مَرْبُوطَة – wo das Wort weiblich ist, steht ein ت.",
+    color: "other",
+    source: { folge: 17, video: "Folge 17", approxTimestamp: "32:06", chapter: 12 }
+  },
+
+  {
+    id: "harf-jarr-bi-01",
+    name: "بِـ (der sechste حَرْف جَرّ)",
+    shortExplanation: "بِـ ist der sechste حَرْف جَرّ nach فِي، عَلَى، إِلَى، مِنْ، لِ. Wie لِ ist er ein einzelner Buchstabe mit Kasra, der am folgenden Wort klebt und nie allein steht. Er bedeutet „mit“, „durch“, „bei“. Der Lektionstext von Kapitel 12 antwortet auf كَيْفَ حَالُكِ mit أَنَا بِخَيْرٍ وَالْحَمْدُ لِلَّهِ – woertlich „ich bin mit Gutem“. Wie nach jedem حَرْف جَرّ wird das Wort danach مَجْرُور; und weil خَيْر hier unbestimmt ist, steht ein Kasratan, kein einfaches Kasra. Genau danach fragte ein Mitschueler in Folge 17 (10:47): „Aber warum ist bi khayrin? Warum nicht bi khayri?“ – die Antwort des Lehrers: „Weil das Wort khayr unbestimmt ist.“ Das ist dieselbe Regel wie tanwin-nach-harf-jarr-01, nur an einem neuen Buchstaben.",
+    color: "nasab",
+    source: { folge: 17, video: "Folge 17", approxTimestamp: "02:06", chapter: 12 }
+  },
+
+  {
+    id: "li-mit-suffix-01",
+    name: "لِ + Suffix wird لَـ — nur لِي behaelt die Kasra",
+    shortExplanation: "Haengt an لِ ein Personalsuffix, wechselt die Kasra zur Fatha: لَكَ (dir, zu einem Mann) · لَكِ (dir, zu einer Frau) · لَهُ (ihm) · لَهَا (ihr). Eine einzige Form macht die Ausnahme: die erste Person behaelt die Kasra – لِي (mir). Das Buch macht den Unterschied selbst sichtbar, und zwar an demselben Wort: auf Seite 65 steht أَلَكَ أَخٌ يَا حَامِدُ؟ – die Fatha auf dem كَ ist dort das EINZIGE gedruckte Vokalzeichen der ganzen Uebung. Auf Seite 61 steht لِي أَخٌ وَاحِدٌ mit Kasra. Dieselbe Praeposition, dasselbe Wort أَخ, anderer Vokal. In Folge 17 (09:04) weist dein Lehrer eigens auf das لَكِ hin: „Dieses لَكِ, das ist die ganze Zeit, dass eine Frau zu einer Frau redet.“ Warum ueberhaupt ein Wechsel: لِي waere mit Kasra plus ي zweimal derselbe Laut hintereinander – die Fatha vor den anderen Suffixen macht sie hoerbar verschieden.",
+    color: "nasab",
+    source: { folge: 17, video: "Folge 17", approxTimestamp: "09:04", chapter: 12 }
+  },
+
+  {
+    id: "huwa-hiya-weitere-01",
+    name: "أَنْتَ · أَنْتِ · نَحْنُ (die uebrigen Pronomen)",
+    shortExplanation: "huwa-hiya-01 endet mit dem Satz „Weitere Pronomen kommen spaeter“ – hier sind sie. أَنَا (ich) · أَنْتَ (du, zu einem Mann) · أَنْتِ (du, zu einer Frau) · نَحْنُ (wir). Das Arabische unterscheidet beim „du“ etwas, was das Deutsche gar nicht kann: an WEN gesprochen wird, steht im Wort selbst. Dein Lehrer zaehlt sie in Folge 17 (02:57) zusammen: „Wir hatten jetzt أَنْتَ, welches du maennlich ist. Wir hatten أَنْتِ, oder jetzt du weiblich. Und wir hatten نَحْنُ, نَحْنُ heisst wir.“ Dasselbe كَ / كِ, das hier die Anrede trennt, taucht als Suffix am Wortende wieder auf: كَيْفَ حَالُكَ zu einem Mann, كَيْفَ حَالُكِ zu einer Frau – siehe possessiv-endungen-01. Und dieselben vierzehn Pronomen ordnen die Verbendungen der Vergangenheit: verb-madi-endungen-01.",
+    color: "fem",
+    source: { folge: 17, video: "Folge 17", approxTimestamp: "02:57", chapter: 12 }
   }
 ];
 
 const SENTENCE_TAGS = {
+  /* ===== Folge 17, eingetragen am 25.08.2026 ===============================
+     Drei neue Saetze aus Kapitel 12 (Buchseite 63 und 65) und eine
+     Markierung an einem Satz, der laengst da war: mb1-24-1 zeigt أَنْتَ,
+     seit Kapitel 4 — nur hat bis heute keine Regel darauf gezeigt.
+     ======================================================================== */
+  "mb1-63-3": [{ ruleId: "harf-jarr-bi-01", matchText: "بِخَيْرٍ" }],
+  "mb1-63-4": [{ ruleId: "ismun-mawsul-allati-01", matchText: "الَّتِي" }],
+  "mb1-65-2": [{ ruleId: "li-mit-suffix-01", matchText: "أَلَكَ" }],
+
   /* Key = vocab-data.js `id` (stabiler Join-Key, NICHT der Satztext).
      Erzeugt aus den Formen, die im Satz tatsaechlich vorkommen - jede Markierung
      wurde gegen den Satztext geprueft. Hoechstens 3 je Satz, ohne Ueberlappung,
@@ -1831,7 +1880,8 @@ const SENTENCE_TAGS = {
     { ruleId: "huwa-hiya-01", matchText: "هِيَ" }
   ],
   "mb1-24-1": [
-    { ruleId: "min-ayna-01", matchText: "مِنْ أَيْنَ" }
+    { ruleId: "min-ayna-01", matchText: "مِنْ أَيْنَ" },
+    { ruleId: "huwa-hiya-weitere-01", matchText: "أَنْتَ" }
   ],
   "mb1-25-1": [
     { ruleId: "min-man-unterscheiden-01", matchText: "مَنْ مِنَ" },
