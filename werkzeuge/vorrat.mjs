@@ -251,6 +251,50 @@ function auswendigSchreiben(text){
  *
  * Der TEXT wird mitgespeichert, nicht nur die Nummer: nur so laesst sich
  * spaeter pruefen, ob ein abgelehnter Vorschlag wieder auftaucht. */
+/* Der Leitner-Stand je Wort — aus demselben Abruf, vierte Datei.
+
+   ⛔ Ein Wort in Box 1 hat er noch NIE richtig beantwortet. Wer eine
+   Eselsbruecke darauf stuetzt, baut auf einem Ufer, das er nicht betreten
+   hat — genau der Einwand, den Elias am 24.08.2026 erhoben hat.
+
+   ⚠️ Geschrieben wird NUR die Boxnummer je Id, nichts weiter. Die Datei ist
+   ein Messwert fuer Pruefer, kein zweiter Lernstand: massgeblich bleibt,
+   was die App fuehrt. [[eingefrorenes_feld_ist_kein_zustand]]
+
+   ⛔ Ein leerer Abzug wird nicht geschrieben — er saehe aus wie „er kann
+   nichts" und liesse jeden Anker beanstanden. [[leere_liste_ist_keine_messung]] */
+function boxenSchreiben(text){
+  let roh;
+  try { roh = JSON.parse(text); } catch (e) { return null; }
+  let prog;
+  try { prog = JSON.parse((roh.daten && roh.daten.vt_progress) || '{}'); }
+  catch (e) { return null; }
+  if (!prog || typeof prog !== 'object') return null;
+
+  const boxen = {};
+  const verteilung = {};
+  let n = 0;
+  for (const id of Object.keys(prog)) {
+    const e = prog[id];
+    const b = Number(e && e.box);
+    if (!Number.isFinite(b) || b < 1) continue;
+    boxen[id] = b;
+    verteilung[b] = (verteilung[b] || 0) + 1;
+    n++;
+  }
+  if (!n) return { anzahl: 0, geschrieben: false };
+
+  fs.writeFileSync(p('data/boxen.json'), JSON.stringify({
+    _hinweis: "Leitner-Box je Wort-Id aus vt_progress. box 1 = noch nie richtig "
+      + "beantwortet. Nur ein Messwert fuer Pruefer — massgeblich ist die App.",
+    stempel: (roh.stempel && roh.stempel.vt_progress) || null,
+    geholt: new Date().toLocaleDateString('de-DE'),
+    verteilung,
+    boxen
+  }, null, 2) + '\n', 'utf8');
+  return { anzahl: n, verteilung, geschrieben: true };
+}
+
 function abgelehnteSchreiben(text){
   let roh;
   try { roh = JSON.parse(text); } catch (e) { return null; }
@@ -754,6 +798,16 @@ if (iStand >= 0){
         + ' an ' + abg.woerter + ' Wort/Woertern -> data/abgelehnt.json');
     else
       console.log('  abgelehnte Vorschlaege: keine im Geraeteabgleich');
+    /* Und der Leitner-Stand — derselbe Abruf, vierte Datei. */
+    const bx = boxenSchreiben(text);
+    if (bx && bx.geschrieben){
+      const eins = bx.verteilung[1] || 0;
+      console.log('  Leitner-Boxen (vt_progress): ' + bx.anzahl + ' Woerter -> data/boxen.json'
+        + '  (davon ' + eins + ' in Box 1 = noch nie richtig beantwortet)');
+    } else {
+      console.log('  Leitner-Boxen: nichts im Geraeteabgleich — data/boxen.json bleibt,'
+        + ' wie sie war.');
+    }
     console.log('  App-Auswahl (KV, Stand '
       + (a.stempel ? new Date(a.stempel).toLocaleString('de-DE') : 'unbekannt') + '): '
       + (Object.entries(vonApp).map(([b, k]) => `${b} bis ${Math.max(...k)}`).join(' | ') || '—'));

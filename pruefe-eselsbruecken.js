@@ -90,7 +90,22 @@ try {
    Pruefung nicht mehr deutbar. [[rueckfallliste_nur_ohne_hauptquelle_pruefbar]] */
 const { auswendigLesen, kannStelle, umfang } = require('./werkzeuge/auswendig.js');
 const BEREICH = auswendigLesen(WURZEL);
+
+/* ⭐ Der Leitner-Stand je Wort — geschrieben von werkzeuge/vorrat.mjs aus
+   demselben KV-Abruf wie auswendig.json. Fehlt die Datei, laeuft die
+   Pruefung ohne sie weiter und sagt das; eine stille Nullmessung waere
+   schlimmer als keine. [[leere_liste_ist_keine_messung]] */
+let BOXEN = null;
+try {
+  const b = JSON.parse(fs.readFileSync(path.join(WURZEL, 'data', 'boxen.json'), 'utf8'));
+  if (b && b.boxen && Object.keys(b.boxen).length) BOXEN = b;
+} catch (e) { BOXEN = null; }
 BEREICH.meldungen.forEach(m => console.log('  hinw ' + m));
+console.log('  Leitner-Boxen: ' + (BOXEN
+  ? Object.keys(BOXEN.boxen).length + ' Woerter, Stand ' + BOXEN.geholt
+    + ' (Box 1 = nie richtig beantwortet: ' + (BOXEN.verteilung['1'] || 0) + ')'
+  : '⚠️ data/boxen.json fehlt — Anker werden NUR gegen das Kapitel geprueft,'
+    + ' nicht gegen das Koennen. Holen mit: node werkzeuge/vorrat.mjs --stand <datei> --app auto'));
 console.log('  Auswendiger Bereich: ' + umfang(BEREICH)
   + ' (Quelle: ' + (BEREICH.quelle === 'datei' ? 'data/auswendig.json, Stand ' + BEREICH.stand
                                                 : 'abgeschriebener Stand ' + BEREICH.stand) + ')');
@@ -669,6 +684,7 @@ console.log('=== 7. Anker: baut die Eselsbruecke auf etwas, das er SCHON hat? ==
     }
 
     let echt = 0, spaeter = 0, geprueftHier = 0;
+    const schwacherAnker = [];
     const jeWort = {};
 
     Object.entries(ANGABE).forEach(([slug, lernstand]) => {
@@ -683,6 +699,21 @@ console.log('=== 7. Anker: baut die Eselsbruecke auf etwas, das er SCHON hat? ==
 
       /* Verzeichnis: Geruest -> kleinstes Kapitel, in dem es auftaucht. */
       const kapitelVon = new Map(), schreibungVon = new Map();
+      /* ⭐ Dieselbe Schluesselform wie kapitelVon (das Geruest), damit der
+         Vergleich unten mit einem Nachschlagen auskommt. Steht ein Geruest
+         fuer mehrere Woerter, gewinnt die HOECHSTE Box — im Zweifel zu
+         Elias\u0027 Gunsten, sonst meldete ein gleichaussehendes Wort in Box 1
+         ein Wort mit, das er laengst kann.
+         [[skelettvergleich_wirft_information_weg]] */
+      const boxVonGeruest = new Map();
+      const merkeBox = (ar, id) => {
+        if (!BOXEN) return;
+        const b = Number(BOXEN.boxen[String(id)]);
+        if (!Number.isFinite(b)) return;
+        const k = geruest(ar);
+        if (!k || k.length < 2) return;
+        if (!boxVonGeruest.has(k) || b > boxVonGeruest.get(k)) boxVonGeruest.set(k, b);
+      };
       const merke = (ar, kap) => {
         const k = geruest(ar);
         if (!k || k.length < 2) return;
@@ -698,6 +729,7 @@ console.log('=== 7. Anker: baut die Eselsbruecke auf etwas, das er SCHON hat? ==
         /* Anhang des Abzugs im LETZTEN Kapitel: Partikeln, Pronomen, Fragewoerter. */
         if (Number(w.chapter) === letztesKapitel && (w.wordType || w.type) === 'particle') return;
         merke(w.ar, w.chapter);
+        merkeBox(w.ar, w.id);
       });
       /* ⛔ 21.08.2026: die Kapitelzahl aus vocab-data.js ist eine
          madina-1-Zahl. Gegen die Kapitel eines ANDEREN Buches gehalten,
@@ -705,7 +737,7 @@ console.log('=== 7. Anker: baut die Eselsbruecke auf etwas, das er SCHON hat? ==
          Kapitel 24 und haette in bayna-yadayk-1 Kapitel 1 als „spaeter"
          gegolten, obwohl es laengst in seinem Lernbestand liegt.
          Bei einem fremden Buch zaehlen sie deshalb als immer bekannt. */
-      VOCAB_DATA.forEach(w => merke(w.ar, slug === 'madina-1' ? w.chapter : 0));
+      VOCAB_DATA.forEach(w => { merke(w.ar, slug === 'madina-1' ? w.chapter : 0); merkeBox(w.ar, w.id); });
 
       const eigen = new Map(VOCAB_DATA.map(w => [String(w.id), w]));
       liste.forEach(w => {
@@ -731,7 +763,19 @@ console.log('=== 7. Anker: baut die Eselsbruecke auf etwas, das er SCHON hat? ==
                  - das Kapitel des erklaerten Wortes selbst; wer dort ankommt,
                    kennt alles davor. */
             const grenze = Math.max(Number(lernstand), meinKapitel);
-            if (kap <= grenze) return;
+            if (kap <= grenze) {
+              /* ⭐ Das Kapitel passt — aber KANN er das Wort? Elias am
+                 24.08.2026: „wenn es wenigstens ein bekanntes wort ist, ist
+                 okay aber so hilft halt nicht wirklich weil beide unbekannt
+                 sind und sich in meinem kopf nichts tut."
+                 Box 1 heisst: nie richtig beantwortet.
+                 ⚠️ Hinweis, kein Fehler — 1909 von 2021 Woertern liegen in
+                 Box 1, eine harte Schwelle waere unlesbar.
+                 [[kann_ist_nicht_ist]] · [[kandidatenliste_ist_keine_fehlerliste]] */
+              if (BOXEN && boxVonGeruest.get(k) === 1 && k !== geruest(w.ar))
+                schwacherAnker.push({ wort: w.ar, welcher, anker: schreibungVon.get(k) || roh });
+              return;
+            }
             /* ⛔ OFFENGELEGT IST NICHT VORAUSGESETZT.
                Nennt der Satz um die Fundstelle das spaetere Kapitel selbst,
                baut der Text nicht auf dem Wort auf — er zeigt darauf:
@@ -809,6 +853,30 @@ console.log('=== 7. Anker: baut die Eselsbruecke auf etwas, das er SCHON hat? ==
         });
         hinweise.push(`${spaeter} Anker in ${bald.length} vorausgeschriebenen Woertern zeigen auf spaetere Kapitel — kein akuter Fehler, aber vor der Freischaltung zu ersetzen.`);
       }
+    }
+
+    /* ⭐ Die zweite Frage, seit dem 25.08.2026: nicht „liegt der Anker in
+       einem freigeschalteten Kapitel", sondern „kann er das Wort". Elias
+       hat den alten Massstab selbst bestritten. Ausgegeben als HINWEIS und
+       nach Wort gebuendelt — eine Zeile je Anker waere bei 1909 Woertern in
+       Box 1 unlesbar. [[kann_ist_nicht_ist]] */
+    if (BOXEN && schwacherAnker.length){
+      const jeWort2 = new Map();
+      schwacherAnker.forEach(s => {
+        if (!jeWort2.has(s.wort)) jeWort2.set(s.wort, new Set());
+        jeWort2.get(s.wort).add(s.anker);
+      });
+      console.log('');
+      console.log('  hinw ' + schwacherAnker.length + ' Anker in ' + jeWort2.size
+        + ' Wort/Woertern stehen in BOX 1 — freigeschaltet, aber nie richtig'
+        + ' beantwortet. Das Kapitel passt, das Koennen nicht.');
+      [...jeWort2.entries()].sort((a,b) => b[1].size - a[1].size).slice(0, 12)
+        .forEach(([wort, anker]) => {
+          console.log('       ' + wort + '  ← ' + [...anker].join(', '));
+        });
+      if (jeWort2.size > 12) console.log('       … und ' + (jeWort2.size - 12) + ' weitere.');
+      hinweise.push(schwacherAnker.length + ' Anker stehen in Box 1 (nie richtig beantwortet) —'
+        + ' das Kapitel passt, das Koennen nicht.');
     }
     }
   }
