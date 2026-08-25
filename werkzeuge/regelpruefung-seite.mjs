@@ -118,15 +118,15 @@ const html = `<title>Regelprüfung Madina 1</title>
   --bg:#000; --flaeche:#111114; --hoch:#17171c; --rand:#26262c; --rand2:#1c1c21;
   --text:#f4f4f6; --leise:#9a9aa4; --still:#6b6b75;
   --rot:#ff3355; --gruen:#2fd27a; --gelb:#ffc44d;
-  --sp1:6px; --sp2:10px; --sp3:16px; --sp4:24px; --sp5:38px;
+  --sp1:7px; --sp2:12px; --sp3:18px; --sp4:26px; --sp5:40px;
   --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --mono:ui-monospace,Menlo,Consolas,monospace;
   --ar:"Noto Naskh Arabic","Amiri","Segoe UI Historic",serif;
 }
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%;font-size:19px}
 body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);
-     font-size:17px;line-height:1.55;padding:var(--sp5) var(--sp3) 80px}
+     font-size:1.07rem;line-height:1.6;padding:var(--sp5) var(--sp3) 80px}
 .huelle{max-width:760px;margin:0 auto}
 .eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;
          text-transform:uppercase;color:var(--still);margin:0 0 var(--sp2)}
@@ -192,20 +192,20 @@ h2{display:flex;align-items:baseline;gap:var(--sp2);flex-wrap:wrap;
 .regel.verborgen,.kapitel.verborgen{display:none}
 .leermeldung{color:var(--still);font-size:.88rem;margin:var(--sp4) 0;display:none}
 .leermeldung.an{display:block}
-.kern{margin:0 0 var(--sp1);color:var(--text);font-size:.95rem}
+.kern{margin:0 0 var(--sp1);color:var(--text);font-size:1rem;line-height:1.6}
 details{margin:0 0 var(--sp1)}
 summary{cursor:pointer;color:var(--leise);font-size:.85rem;
         font-family:var(--mono);letter-spacing:.04em}
 summary:focus-visible{outline:2px solid var(--rot);outline-offset:2px}
-.rest{margin:var(--sp1) 0 0;color:var(--leise);font-size:.92rem}
+.rest{margin:var(--sp1) 0 0;color:var(--leise);font-size:.97rem;line-height:1.6}
 
 .satz{background:var(--hoch);border:1px solid var(--rand2);border-radius:10px;
       padding:var(--sp2) var(--sp3);margin:var(--sp2) 0}
 .satz-ar{font-family:var(--ar);direction:rtl;unicode-bidi:isolate;
-         font-size:1.45rem;line-height:2;text-align:right}
+         font-size:1.6rem;line-height:2;text-align:right}
 .satz-ar u{text-decoration:none;color:var(--gelb);
            border-bottom:2px solid var(--gelb);padding-bottom:2px}
-.satz-de{color:var(--leise);font-size:.88rem;margin-top:4px}
+.satz-de{color:var(--leise);font-size:.95rem;margin-top:6px}
 
 .quelle{font-family:var(--mono);font-size:.72rem;color:var(--still);
         margin-top:var(--sp2);word-break:break-word}
@@ -238,6 +238,14 @@ summary:focus-visible{outline:2px solid var(--rot);outline-offset:2px}
 .snotiz:focus-visible{outline:2px solid var(--gruen);outline-offset:1px}
 .urteil.satzmodus button[aria-pressed="true"][data-s="aendern"]{background:var(--gelb);border-color:var(--gelb);color:var(--bg)}
 @media (max-width:520px){.ulabel{min-width:auto;width:100%}}
+/* Handy: Raender schmaler, damit die groessere Schrift nicht Zeilenlaenge
+   frisst. Die Zahlen stehen im Kommentar von schmal.mjs. */
+@media (max-width:520px){
+  body{padding:var(--sp4) 12px 80px}
+  .regel{padding:14px}
+  .satz{padding:8px 12px}
+  .huelle{max-width:none}
+}
 
 #ergebnis{width:100%;height:230px;margin-top:var(--sp2);background:#08080a;
           color:var(--leise);border:1px solid var(--rand);border-radius:12px;
