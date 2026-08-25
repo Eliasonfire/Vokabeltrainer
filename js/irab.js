@@ -25,8 +25,14 @@ const KASUS = {
   nasb: { ar: 'مَنْصُوب', de: 'Akkusativ' }
 };
 
-/* Die fuenf Praepositionen aus Madina 1, in der Reihenfolge des Lehrers. */
-const HURUF_JARR = ['في', 'على', 'إلى', 'الى', 'من', 'ل'];
+/* Die SECHS Praepositionen aus Madina 1, in der Reihenfolge des Lehrers.
+   ⚠️ Bis zum 25.08.2026 stand hier "die fuenf" und بـ fehlte. Der Lehrer
+   fuehrt es in Folge 17 (02:06) am Kapiteltext ein: بِخَيْرٍ sei aus بِـ,
+   dem حَرْف جَرّ, plus خَيْر — siehe harf-jarr-bi-01.
+   Wirksam wird der Eintrag nur beim NACKTEN بِ (istHarfJarr verlangt
+   Laenge > 1, ein angeschriebenes بـ faellt also nicht darunter) und bei
+   der Funktionsanzeige. Fuer das angeschriebene بِـ siehe weiter unten. */
+const HURUF_JARR = ['في', 'على', 'إلى', 'الى', 'من', 'ل', 'ب'];
 /* Praeposition MIT angehaengtem Pronomen - فِيهِ, عَلَيْهَا, مِنْهُ. Das ist
    bereits ein vollstaendiges جَارّ وَمَجْرُور: das Pronomen IST der Genitiv,
    es folgt nichts mehr, und die Endung ist مَبْنِيّ, also keine Kasusendung.
@@ -81,8 +87,16 @@ const JARR_LAM_VOLL = [
 /* ⚠️ Exakter Vergleich der VOLLEN Schreibung — nicht ueber istInListe, das
    waere genau der Skelettvergleich, den diese Liste umgeht. NFC, damit eine
    zerlegte Schreibung nicht lautlos danebengeht. [[arabisch_vergleichen_nfc]] */
+/* ⛔ ohneFragepartikel MUSS hier stehen. Das Buch schreibt auf Seite 65
+   أَلَكَ أَخٌ يَا حَامِدُ؟ — mit der Fragepartikel أَ davor. Ohne sie
+   abzuschneiden faellt لَكَ durch diese Liste und bekommt die naechste
+   freie Nomen-Rolle: pruefe-saetze.js meldete am 25.08.2026 "أَلَكَ ist
+   مُبْتَدَأ, das verlangt raf". Ein Pronomen ist مَبْنِيّ und hat gar keine
+   Kasusendung. */
+const ohneFragehamza = s => s.replace(/^\u0623[\u064B-\u0652]?/, '');
 const istJarrLamVoll = w => JARR_LAM_VOLL.includes(
-  String(w).normalize('NFC').replace(/[.،؟!«»:؛]/g, '').replace(/^[وف]/, '').trim());
+  ohneFragehamza(String(w).normalize('NFC').replace(/[.،؟!«»:؛]/g, ''))
+    .replace(/^[وف]/, '').trim());
 const istJarrMitPronomen = w => istInListe(w, JARR_MIT_PRONOMEN) || istJarrLamVoll(w);
 /* Ortsangaben. Der Lehrer nennt sie ظَرْف und sagt ausdruecklich, sie
    funktionierten "wie ein مُضَاف" - das folgende Wort steht im Genitiv. */
@@ -1020,6 +1034,18 @@ function analysiereSatz(satz){
          Am Schriftbild ist das nicht zu entscheiden - also keine
          Kasusaussage statt einer falschen. */
       rolle = 'unklar (لِ + Wort oder eigenes Wort?)';
+    } else if (/^بِ/.test(wort) && !LEXIKON_hat(wort)){
+      /* Dasselbe fuer das angeschriebene بِـ, seit Folge 17 die sechste
+         Praeposition. بِخَيْرٍ ist بِ + خَيْرٍ — aber بِنْتٌ, بِئْرٌ,
+         بِسَاطٌ, بِرٌّ und بِنْصَرٌ fangen genauso an und sind gewoehnliche
+         Nomen. Ueber alle 4.631 Eintraege gemessen: 26 Woerter beginnen
+         mit بِ, die Mehrzahl davon Nomen. Also keine Kasusaussage.
+         ⛔ Verlockend waere gewesen, hier erwartet='jarr' zu setzen und
+         die Bedingung um "endet auf Kasra" zu ergaenzen — dann kann die
+         Pruefung aber gar nicht mehr schlecht ausfallen: sie prueft dann
+         das, was sie selbst vorausgesetzt hat.
+         [[pruefwerkzeug_mit_eingebauter_antwort]] */
+      rolle = 'unklar (بِ + Wort oder eigenes Wort?)';
     } else if (i === mafulIndex + 1 && letzterKasus && !istBestimmt(wort)){
       /* شُكْرًا جَزِيلًا — das zweite Wort ist نَعْت zum مَفْعُول مُطْلَق und
          stimmt mit ihm in Kasus und Unbestimmtheit überein. Ein خَبَر kann es
