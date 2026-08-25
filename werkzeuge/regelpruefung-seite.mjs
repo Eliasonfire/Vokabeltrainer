@@ -90,11 +90,17 @@ for (const k of kapNummern){
   ${rest ? `<details><summary>ausführlich</summary><p class="rest">${esc(rest)}</p></details>` : ''}
   ${satzHtml(r.satz)}
   <div class="quelle">${esc(r.quelle)}${r.buch ? ' · ' + esc(r.buch) : ''}</div>
-  <div class="urteil" role="group" aria-label="Urteil zu ${esc(r.name)}">
+  <div class="urteil" role="group" aria-label="Karteikarte: ${esc(r.name)}">
+    <span class="ulabel">Karteikarte</span>
     <button type="button" data-u="passt">passt</button>
     <button type="button" data-u="aendern">ändern</button>
     <button type="button" data-u="streichen">streichen</button>
     <input type="text" class="notiz" placeholder="Notiz (nur bei ändern/streichen nötig)">
+  </div>
+  <div class="urteil satzmodus" role="group" aria-label="Satzmodus: ${esc(r.name)}">
+    <span class="ulabel">Satzmodus</span>
+    <button type="button" data-s="drin">drin</button>
+    <button type="button" data-s="raus">raus</button>
   </div>
 </article>\n`;
   }
@@ -212,6 +218,17 @@ summary:focus-visible{outline:2px solid var(--rot);outline-offset:2px}
 .notiz{flex:1 1 190px;min-width:0;font:inherit;font-size:.85rem;color:var(--text);
        background:#08080a;border:1px solid var(--rand);border-radius:10px;padding:6px 12px}
 .notiz:focus-visible{outline:2px solid var(--rot);outline-offset:1px}
+/* ⭐ Zwei Entscheidungen je Regel (25.08.2026). Die Beschriftung ist noetig,
+   seit es zwei Reihen sind — „passt/ändern/streichen" allein sagte vorher
+   schon, worum es geht, „drin/raus" daneben waere ohne Label mehrdeutig. */
+.ulabel{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;
+        text-transform:uppercase;color:var(--still);align-self:center;
+        min-width:8.5ch}
+.urteil.satzmodus{border-top:0;padding-top:var(--sp1);margin-top:0}
+.urteil.satzmodus button[aria-pressed="true"][data-s="drin"]{background:var(--gruen);border-color:var(--gruen);color:var(--bg)}
+.urteil.satzmodus button[aria-pressed="true"][data-s="raus"]{background:var(--rot);border-color:var(--rot);color:var(--bg)}
+.regel[data-satz="raus"]{opacity:.72}
+@media (max-width:520px){.ulabel{min-width:auto;width:100%}}
 
 #ergebnis{width:100%;height:230px;margin-top:var(--sp2);background:#08080a;
           color:var(--leise);border:1px solid var(--rand);border-radius:12px;
@@ -230,7 +247,7 @@ summary:focus-visible{outline:2px solid var(--rot);outline-offset:2px}
 </style>
 
 <div class="huelle">
-<p class="eyebrow">Stand ${STAND_HEUTE} · ${regeln.length} Regeln · gilt nur für die Karteikarten</p>
+<p class="eyebrow">Stand ${STAND_HEUTE} · ${regeln.length} Regeln · Karteikarte und Satzmodus</p>
 <h1>Regelprüfung Madina 1</h1>
 <p class="vorspann">Dein Wunsch vom 29.07.: <em>„die regeln selbst aussuchen und
 absegnen damit sie wirklich richtig sind und tatsächlich das sind was mein
@@ -247,20 +264,31 @@ wie vorher. Mit „nur neue" springst du direkt zu den
 ${regeln.filter(r=>r.neu).length}.</p>
 
 <div class="klarkasten">
-<b>Worüber du hier entscheidest: nur die Karteikarten.</b>
-Deine Worte vom 19.08.: <em>„genau die regeln die ich eben bearbeitet habe
-galten nur den karteikarten … seperat mache ich das mit dem satzmodus bzw
-übungsmodus."</em>
+<b>Zwei Entscheidungen je Regel — eine Erklärung.</b>
+Dein Wunsch vom 25.08.: <em>„warum nicht dieses artefakt mit dem wo ich die
+regeln für die sätze im modus bestimmen soll so verschmelzen damit ich nur
+einmal die regel lesen muss und für beides direkt entscheiden kann und nicht
+immer doppelt lesen muss."</em>
+<p>Am 19.08. waren es noch zwei getrennte Fragen (<em>„seperat mache ich das
+mit dem satzmodus bzw übungsmodus"</em>) — getrennt bleiben sie, nur der Weg
+dorthin ist jetzt einer. Deine bisherigen Antworten aus <b>beiden</b> Seiten
+sind übernommen; sie liegen weiter in ihren eigenen Speichern.</p>
 <p><b>„Streichen" heißt hier also:</b> die Regel wird beim Lernen der Vokabel
 <b>nicht mehr als Erklärung eingeblendet</b> — das Wort im Beispielsatz ist
 nicht mehr unterstrichen, das Regel-Pop-up erscheint nicht mehr.</p>
-<p><b>Was dabei NICHT passiert:</b> Die Regel bleibt in den Daten, mit Beleg und
-Fundstelle. Sie bleibt im <b>Satzmodus</b> und im <b>Übungsmodus</b> („Welche
-Regel?") vollständig erhalten. Und sie ist <b>umkehrbar</b> — ein einziges
-Kennzeichen, das man wieder wegnimmt.</p>
-<p class="klar-technik">Technisch: <code>nichtAufKarteikarten: true</code>.
-Bewusst <b>nicht</b> <code>ausgeblendet</code> — das nähme sie auch aus Satz-
-und Übungsmodus.</p>
+<p><b>Was „streichen" NICHT tut:</b> Die Regel bleibt in den Daten, mit Beleg und
+Fundstelle, und sie ist <b>umkehrbar</b> — ein einziges Kennzeichen, das man
+wieder wegnimmt. Ob sie im <b>Satzmodus</b> bleibt, entscheidest du in der
+zweiten Reihe darunter, unabhängig davon.</p>
+<p><b>Die zweite Reihe — Satzmodus:</b> „drin" heißt, die Regel ist im Satzmodus
+als Thema wählbar und erzeugt Übungsaufgaben. „raus" nimmt sie dort heraus,
+ohne die Karteikarte anzutasten. Beides ist unabhängig: eine Regel kann als
+Karteikarte gestrichen und im Satzmodus drin sein, und umgekehrt.</p>
+<p class="klar-technik">Technisch: Karteikarte → <code>nichtAufKarteikarten: true</code>,
+Satzmodus → die Regel fällt aus dem gewählten Thema. Bewusst <b>nicht</b>
+<code>ausgeblendet</code> — das nähme sie aus beidem auf einmal.<br>
+Speicher: <code>regelpruefung-v1</code> und <code>satzmodus-auswahl-v1</code>,
+beide unverändert — die alten Seiten funktionieren weiter.</p>
 </div>
 
 <div class="warnkasten">
@@ -276,6 +304,7 @@ nicht mit und ändert nichts an deiner App.
     <span><b id="zahl">0</b> von <b>${regeln.length}</b> beurteilt</span>
     <button type="button" id="kopieren" disabled>Ergebnis kopieren</button>
   </div>
+  <div class="fzeile" id="satzzeile" style="color:var(--leise);font-size:.85rem"></div>
   <div class="filter" role="group" aria-label="Ansicht">
     <button type="button" data-f="alle" aria-pressed="true">alle ${regeln.length}</button>
     <button type="button" data-f="neu" aria-pressed="false">nur neue ${regeln.filter(r=>r.neu).length}</button>
@@ -305,6 +334,19 @@ der App zu sehen, weil ihr ein Beispielsatz fehlt.</p>
   var SPEICHER = 'regelpruefung-v1';
   var stand = {};
   try { stand = JSON.parse(localStorage.getItem(SPEICHER) || '{}'); } catch(e){ stand = {}; }
+
+  /* ⭐ Der Satzmodus hat seinen EIGENEN Schluessel — denselben wie die alte
+     Auswahlseite, damit dort schon Entschiedenes hier wieder auftaucht.
+     ⛔ Nicht zusammenlegen: ein gemeinsamer Schluessel haette beide
+     Bestaende auf einmal verworfen. [[vier_neue_artefakte]]
+     Format der alten Seite: ein Array der AUSSORTIERTEN Ids. Der Zusatz -drin
+     kommt dazu, damit „ausdruecklich drin" von „noch nicht entschieden"
+     unterscheidbar bleibt — sonst waere der Fortschritt eine Luege. */
+  var S_SATZ = 'satzmodus-auswahl-v1';
+  var satzRaus = {}, satzDrin = {};
+  try { (JSON.parse(localStorage.getItem(S_SATZ) || '[]') || []).forEach(function(i){ satzRaus[i] = 1; }); } catch(e){}
+  try { (JSON.parse(localStorage.getItem(S_SATZ + '-drin') || '[]') || []).forEach(function(i){ satzDrin[i] = 1; }); } catch(e){}
+  var satzGefunden = Object.keys(satzRaus).length + Object.keys(satzDrin).length;
 
   var regeln = [].slice.call(document.querySelectorAll('.regel'));
   var zahl = document.getElementById('zahl');
@@ -343,7 +385,11 @@ der App zu sehen, weil ihr ein Beispielsatz fehlt.</p>
 
   function sichern(){
     if (!SPEICHER_GEHT) return;
-    try { localStorage.setItem(SPEICHER, JSON.stringify(stand)); }
+    try {
+      localStorage.setItem(SPEICHER, JSON.stringify(stand));
+      localStorage.setItem(S_SATZ, JSON.stringify(Object.keys(satzRaus)));
+      localStorage.setItem(S_SATZ + '-drin', JSON.stringify(Object.keys(satzDrin)));
+    }
     catch(e){ SPEICHER_GEHT = false; warneSpeicher(); }
   }
 
@@ -362,15 +408,45 @@ der App zu sehen, weil ihr ein Beispielsatz fehlt.</p>
       });
       var notiz = el.querySelector('.notiz');
       if (e && e.n !== undefined && notiz.value !== e.n) notiz.value = e.n;
+      /* Die zweite Frage. Sie zaehlt bewusst NICHT in den Fortschrittsbalken:
+         der misst seit dem 18.08. die Karteikarten-Durchsicht, und eine
+         Zahl, die ploetzlich etwas anderes bedeutet, ist schlimmer als
+         keine. Der Satzmodus bekommt seine eigene Zeile darunter. */
+      var sWert = satzRaus[id] ? 'raus' : (satzDrin[id] ? 'drin' : '');
+      if (sWert) el.setAttribute('data-satz', sWert); else el.removeAttribute('data-satz');
+      el.querySelectorAll('.urteil.satzmodus button').forEach(function(b){
+        b.setAttribute('aria-pressed', String(sWert === b.dataset.s));
+      });
     });
     zahl.textContent = n;
     balken.style.width = (regeln.length ? (n / regeln.length * 100) : 0) + '%';
+
+    /* Eigene Zeile fuer die zweite Frage. Sie steht NICHT im Balken:
+       der misst die Karteikarten-Durchsicht, und eine Zahl, die ihre
+       Bedeutung wechselt, ist schlimmer als keine.
+       [[widerspruch_liegt_in_der_beschriftung]] */
+    var sZeile = document.getElementById('satzzeile');
+    if (sZeile){
+      var raus = Object.keys(satzRaus).length, drin = Object.keys(satzDrin).length;
+      var off = regeln.length - raus - drin;
+      sZeile.innerHTML = 'Satzmodus: <b>' + drin + '</b> drin · <b>' + raus + '</b> raus · <b>'
+        + off + '</b> offen'
+        + (satzGefunden ? ' <span style="color:var(--still)">(' + satzGefunden
+            + ' aus der alten Auswahlseite übernommen)</span>'
+          : ' <span style="color:var(--gelb)">— aus der alten Auswahlseite kam nichts an;'
+            + ' die beiden Seiten teilen ihren Speicher offenbar nicht.</span>');
+    }
     Object.keys(proKap).forEach(function(k){
       var z = document.querySelector('[data-kap-zahl="' + k + '"]');
       if (z) z.textContent = proKap[k].fertig + '/' + proKap[k].gesamt;
     });
-    knopf.disabled = n === 0;
-    feld.value = n === 0 ? '' : text();
+    /* ⛔ Vorher hing beides an n (den Karteikarten-Urteilen). Wer nur den
+       Satzmodus durchgegangen waere, haette einen toten Kopierknopf gehabt
+       und keinen Text — seine Arbeit waere im Browser gefangen geblieben.
+       [[daten_ohne_zugang]] */
+    var sGesamt = Object.keys(satzRaus).length + Object.keys(satzDrin).length;
+    knopf.disabled = (n === 0 && sGesamt === 0);
+    feld.value = (n === 0 && sGesamt === 0) ? '' : text();
   }
 
   /* Der Text ist der eigentliche Zweck der Seite: kurz genug zum Schicken,
@@ -395,6 +471,20 @@ der App zu sehen, weil ihr ein Beispielsatz fehlt.</p>
       nachU[u].forEach(function(t){ zeilen.push('  ' + t); });
       zeilen.push('');
     });
+    /* ⭐ Beide Entscheidungen in EINEM Text — er schickt ihn einmal, und ich
+       habe alles. Vorher waren es zwei Seiten mit zwei Kopierkaesten. */
+    var raus = [], drin = [];
+    regeln.forEach(function(el){
+      if (satzRaus[el.dataset.id]) raus.push(el.dataset.id);
+      else if (satzDrin[el.dataset.id]) drin.push(el.dataset.id);
+    });
+    if (raus.length || drin.length){
+      zeilen.push('— — — SATZMODUS — — —', '');
+      if (raus.length){ zeilen.push('RAUS (' + raus.length + '):');
+        raus.forEach(function(i){ zeilen.push('  ' + i); }); zeilen.push(''); }
+      if (drin.length){ zeilen.push('DRIN (' + drin.length + '):');
+        drin.forEach(function(i){ zeilen.push('  ' + i); }); zeilen.push(''); }
+    }
     return zeilen.join('\\n');
   }
 
@@ -409,7 +499,12 @@ der App zu sehen, weil ihr ein Beispielsatz fehlt.</p>
       var e = stand[el.dataset.id];
       var zeigen = ansicht === 'alle'
         || (ansicht === 'neu' && el.dataset.neu === '1')
-        || (ansicht === 'offen' && !(e && e.u));
+        /* ⭐ „offen" heisst jetzt: mindestens EINE der beiden Fragen fehlt.
+           Sonst verschwaende die Ansicht genau die Regeln, bei denen nur
+           noch der Satzmodus fehlt — und die sind der Grund, warum diese
+           Seite ueberhaupt verschmolzen wurde. */
+        || (ansicht === 'offen' && (!(e && e.u)
+            || !(satzRaus[el.dataset.id] || satzDrin[el.dataset.id])));
       el.classList.toggle('verborgen', !zeigen);
       if (zeigen) sichtbar++;
     });
@@ -433,6 +528,20 @@ der App zu sehen, weil ihr ein Beispielsatz fehlt.</p>
     var b = ev.target.closest('.urteil button');
     if (!b) return;
     var el = b.closest('.regel'), id = el.dataset.id;
+
+    /* ⛔ Die Satzmodus-Knoepfe liegen im SELBEN .urteil-Behaelter und muessen
+       deshalb VOR der Karteikarten-Logik abgefangen werden — sonst schriebe
+       ein Klick auf „drin" ein leeres Urteil in den Karteikarten-Stand und
+       loeschte das Urteil, das dort schon stand. */
+    if (b.dataset.s){
+      var warRaus = !!satzRaus[id], warDrin = !!satzDrin[id];
+      delete satzRaus[id]; delete satzDrin[id];
+      if (b.dataset.s === 'raus' && !warRaus) satzRaus[id] = 1;
+      if (b.dataset.s === 'drin' && !warDrin) satzDrin[id] = 1;
+      sichern(); zeichnen(); filtern();
+      return;
+    }
+
     stand[id] = stand[id] || {};
     /* Nochmal auf dasselbe tippen nimmt das Urteil zurück — sonst kommt man aus
        einem Fehlgriff nicht mehr heraus. */
