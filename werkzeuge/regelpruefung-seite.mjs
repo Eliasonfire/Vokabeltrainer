@@ -100,7 +100,9 @@ for (const k of kapNummern){
   <div class="urteil satzmodus" role="group" aria-label="Satzmodus: ${esc(r.name)}">
     <span class="ulabel">Satzmodus</span>
     <button type="button" data-s="drin">drin</button>
+    <button type="button" data-s="aendern">ändern</button>
     <button type="button" data-s="raus">raus</button>
+    <input type="text" class="snotiz" placeholder="Notiz zum Satzmodus">
   </div>
 </article>\n`;
   }
@@ -228,6 +230,13 @@ summary:focus-visible{outline:2px solid var(--rot);outline-offset:2px}
 .urteil.satzmodus button[aria-pressed="true"][data-s="drin"]{background:var(--gruen);border-color:var(--gruen);color:var(--bg)}
 .urteil.satzmodus button[aria-pressed="true"][data-s="raus"]{background:var(--rot);border-color:var(--rot);color:var(--bg)}
 .regel[data-satz="raus"]{opacity:.72}
+.regel[data-satz="aendern"]{border-left-color:var(--gelb)}
+/* ⭐ Eigene Klasse, gleiche Gestalt: der input-Handler unterscheidet die
+   beiden Notizfelder daran, in welchen Stand er schreibt. */
+.snotiz{flex:1 1 190px;min-width:0;font:inherit;font-size:.85rem;color:var(--text);
+        background:#08080a;border:1px solid var(--rand);border-radius:10px;padding:6px 12px}
+.snotiz:focus-visible{outline:2px solid var(--gruen);outline-offset:1px}
+.urteil.satzmodus button[aria-pressed="true"][data-s="aendern"]{background:var(--gelb);border-color:var(--gelb);color:var(--bg)}
 @media (max-width:520px){.ulabel{min-width:auto;width:100%}}
 
 #ergebnis{width:100%;height:230px;margin-top:var(--sp2);background:#08080a;
@@ -342,11 +351,22 @@ der App zu sehen, weil ihr ein Beispielsatz fehlt.</p>
      Format der alten Seite: ein Array der AUSSORTIERTEN Ids. Der Zusatz -drin
      kommt dazu, damit „ausdruecklich drin" von „noch nicht entschieden"
      unterscheidbar bleibt — sonst waere der Fortschritt eine Luege. */
-  var S_SATZ = 'satzmodus-auswahl-v1';
-  var satzRaus = {}, satzDrin = {};
-  try { (JSON.parse(localStorage.getItem(S_SATZ) || '[]') || []).forEach(function(i){ satzRaus[i] = 1; }); } catch(e){}
-  try { (JSON.parse(localStorage.getItem(S_SATZ + '-drin') || '[]') || []).forEach(function(i){ satzDrin[i] = 1; }); } catch(e){}
-  var satzGefunden = Object.keys(satzRaus).length + Object.keys(satzDrin).length;
+  var S_SATZ = 'satzmodus-auswahl-v1';   /* das ALTE Array — bleibt in Betrieb */
+  var S_SATZ2 = 'satzmodus-v2';          /* das neue Format: {id: {u, n}} */
+
+  /* ⭐ Erst das neue Format lesen. Gibt es das noch nicht, wird aus den
+     beiden alten Listen uebernommen — so ist beim ersten Oeffnen alles da,
+     was er in der alten Auswahlseite entschieden hat. */
+  var satz = {};
+  try { satz = JSON.parse(localStorage.getItem(S_SATZ2) || 'null') || null; } catch(e){ satz = null; }
+  var ausAlt = 0;
+  if (!satz){
+    satz = {};
+    try { (JSON.parse(localStorage.getItem(S_SATZ) || '[]') || []).forEach(function(i){ satz[i] = {u:'raus'}; ausAlt++; }); } catch(e){}
+    try { (JSON.parse(localStorage.getItem(S_SATZ + '-drin') || '[]') || []).forEach(function(i){ satz[i] = {u:'drin'}; ausAlt++; }); } catch(e){}
+  }
+  var satzGefunden = Object.keys(satz).length;
+  var ausAltEcht = ausAlt;   /* nur beim ERSTEN Oeffnen ungleich 0 */
 
   var regeln = [].slice.call(document.querySelectorAll('.regel'));
   var zahl = document.getElementById('zahl');
@@ -387,8 +407,18 @@ der App zu sehen, weil ihr ein Beispielsatz fehlt.</p>
     if (!SPEICHER_GEHT) return;
     try {
       localStorage.setItem(SPEICHER, JSON.stringify(stand));
-      localStorage.setItem(S_SATZ, JSON.stringify(Object.keys(satzRaus)));
-      localStorage.setItem(S_SATZ + '-drin', JSON.stringify(Object.keys(satzDrin)));
+      localStorage.setItem(S_SATZ2, JSON.stringify(satz));
+      /* ⛔ Die alten Listen WEITER mitschreiben — sonst saehe die alte
+         Auswahlseite ab jetzt nichts mehr von dem, was er hier entscheidet.
+         'aendern' zaehlt dort nicht als 'raus': die Regel bleibt drin, sie
+         soll nur ueberarbeitet werden. */
+      var aRaus = [], aDrin = [];
+      Object.keys(satz).forEach(function(i){
+        if (satz[i].u === 'raus') aRaus.push(i);
+        else if (satz[i].u === 'drin' || satz[i].u === 'aendern') aDrin.push(i);
+      });
+      localStorage.setItem(S_SATZ, JSON.stringify(aRaus));
+      localStorage.setItem(S_SATZ + '-drin', JSON.stringify(aDrin));
     }
     catch(e){ SPEICHER_GEHT = false; warneSpeicher(); }
   }
@@ -412,11 +442,14 @@ der App zu sehen, weil ihr ein Beispielsatz fehlt.</p>
          der misst seit dem 18.08. die Karteikarten-Durchsicht, und eine
          Zahl, die ploetzlich etwas anderes bedeutet, ist schlimmer als
          keine. Der Satzmodus bekommt seine eigene Zeile darunter. */
-      var sWert = satzRaus[id] ? 'raus' : (satzDrin[id] ? 'drin' : '');
+      var se = satz[id];
+      var sWert = (se && se.u) || '';
       if (sWert) el.setAttribute('data-satz', sWert); else el.removeAttribute('data-satz');
       el.querySelectorAll('.urteil.satzmodus button').forEach(function(b){
         b.setAttribute('aria-pressed', String(sWert === b.dataset.s));
       });
+      var sn = el.querySelector('.snotiz');
+      if (sn && se && se.n !== undefined && sn.value !== se.n) sn.value = se.n;
     });
     zahl.textContent = n;
     balken.style.width = (regeln.length ? (n / regeln.length * 100) : 0) + '%';
@@ -427,14 +460,21 @@ der App zu sehen, weil ihr ein Beispielsatz fehlt.</p>
        [[widerspruch_liegt_in_der_beschriftung]] */
     var sZeile = document.getElementById('satzzeile');
     if (sZeile){
-      var raus = Object.keys(satzRaus).length, drin = Object.keys(satzDrin).length;
-      var off = regeln.length - raus - drin;
-      sZeile.innerHTML = 'Satzmodus: <b>' + drin + '</b> drin · <b>' + raus + '</b> raus · <b>'
-        + off + '</b> offen'
-        + (satzGefunden ? ' <span style="color:var(--still)">(' + satzGefunden
+      var raus = 0, drin = 0, aend = 0;
+      Object.keys(satz).forEach(function(i){
+        if (satz[i].u === 'raus') raus++;
+        else if (satz[i].u === 'drin') drin++;
+        else if (satz[i].u === 'aendern') aend++;
+      });
+      var off = regeln.length - raus - drin - aend;
+      sZeile.innerHTML = 'Satzmodus: <b>' + drin + '</b> drin · <b>' + aend + '</b> ändern · <b>'
+        + raus + '</b> raus · <b>' + off + '</b> offen'
+        + (ausAltEcht ? ' <span style="color:var(--still)">(' + ausAltEcht
             + ' aus der alten Auswahlseite übernommen)</span>'
-          : ' <span style="color:var(--gelb)">— aus der alten Auswahlseite kam nichts an;'
-            + ' die beiden Seiten teilen ihren Speicher offenbar nicht.</span>');
+          : satzGefunden ? ''
+          : ' <span style="color:var(--still)">— aus der alten Auswahlseite kam nichts an.'
+            + ' Entweder stand dort nichts, oder die beiden Seiten teilen ihren'
+            + ' Speicher nicht. Beides sieht hier gleich aus.</span>');
     }
     Object.keys(proKap).forEach(function(k){
       var z = document.querySelector('[data-kap-zahl="' + k + '"]');
@@ -444,7 +484,7 @@ der App zu sehen, weil ihr ein Beispielsatz fehlt.</p>
        Satzmodus durchgegangen waere, haette einen toten Kopierknopf gehabt
        und keinen Text — seine Arbeit waere im Browser gefangen geblieben.
        [[daten_ohne_zugang]] */
-    var sGesamt = Object.keys(satzRaus).length + Object.keys(satzDrin).length;
+    var sGesamt = Object.keys(satz).length;
     knopf.disabled = (n === 0 && sGesamt === 0);
     feld.value = (n === 0 && sGesamt === 0) ? '' : text();
   }
@@ -473,17 +513,20 @@ der App zu sehen, weil ihr ein Beispielsatz fehlt.</p>
     });
     /* ⭐ Beide Entscheidungen in EINEM Text — er schickt ihn einmal, und ich
        habe alles. Vorher waren es zwei Seiten mit zwei Kopierkaesten. */
-    var raus = [], drin = [];
+    var nachS = { drin: [], aendern: [], raus: [] };
     regeln.forEach(function(el){
-      if (satzRaus[el.dataset.id]) raus.push(el.dataset.id);
-      else if (satzDrin[el.dataset.id]) drin.push(el.dataset.id);
+      var e2 = satz[el.dataset.id];
+      if (!e2 || !e2.u) return;
+      nachS[e2.u].push(el.dataset.id + (e2.n ? '  — ' + e2.n : ''));
     });
-    if (raus.length || drin.length){
+    if (nachS.drin.length || nachS.aendern.length || nachS.raus.length){
       zeilen.push('— — — SATZMODUS — — —', '');
-      if (raus.length){ zeilen.push('RAUS (' + raus.length + '):');
-        raus.forEach(function(i){ zeilen.push('  ' + i); }); zeilen.push(''); }
-      if (drin.length){ zeilen.push('DRIN (' + drin.length + '):');
-        drin.forEach(function(i){ zeilen.push('  ' + i); }); zeilen.push(''); }
+      ['drin', 'aendern', 'raus'].forEach(function(u){
+        if (!nachS[u].length) return;
+        zeilen.push(u.toUpperCase() + ' (' + nachS[u].length + '):');
+        nachS[u].forEach(function(x){ zeilen.push('  ' + x); });
+        zeilen.push('');
+      });
     }
     return zeilen.join('\\n');
   }
@@ -504,7 +547,7 @@ der App zu sehen, weil ihr ein Beispielsatz fehlt.</p>
            noch der Satzmodus fehlt — und die sind der Grund, warum diese
            Seite ueberhaupt verschmolzen wurde. */
         || (ansicht === 'offen' && (!(e && e.u)
-            || !(satzRaus[el.dataset.id] || satzDrin[el.dataset.id])));
+            || !((satz[el.dataset.id] || {}).u)));
       el.classList.toggle('verborgen', !zeigen);
       if (zeigen) sichtbar++;
     });
@@ -534,10 +577,10 @@ der App zu sehen, weil ihr ein Beispielsatz fehlt.</p>
        ein Klick auf „drin" ein leeres Urteil in den Karteikarten-Stand und
        loeschte das Urteil, das dort schon stand. */
     if (b.dataset.s){
-      var warRaus = !!satzRaus[id], warDrin = !!satzDrin[id];
-      delete satzRaus[id]; delete satzDrin[id];
-      if (b.dataset.s === 'raus' && !warRaus) satzRaus[id] = 1;
-      if (b.dataset.s === 'drin' && !warDrin) satzDrin[id] = 1;
+      satz[id] = satz[id] || {};
+      /* Nochmal auf dasselbe tippen nimmt es zurueck — wie bei der Karteikarte. */
+      satz[id].u = (satz[id].u === b.dataset.s) ? null : b.dataset.s;
+      if (!satz[id].u && !satz[id].n) delete satz[id];
       sichern(); zeichnen(); filtern();
       return;
     }
@@ -551,6 +594,16 @@ der App zu sehen, weil ihr ein Beispielsatz fehlt.</p>
   });
 
   document.addEventListener('input', function(ev){
+    /* ⛔ ZUERST die Satzmodus-Notiz. Sie traegt eine eigene Klasse, weil der
+       Handler darunter sonst in den Karteikarten-Stand schriebe. */
+    if (ev.target.classList.contains('snotiz')){
+      var sEl = ev.target.closest('.regel'), sId = sEl.dataset.id;
+      satz[sId] = satz[sId] || {};
+      satz[sId].n = ev.target.value.trim();
+      if (!satz[sId].n && !satz[sId].u) delete satz[sId];
+      sichern(); zeichnen();
+      return;
+    }
     if (!ev.target.classList.contains('notiz')) return;
     var el = ev.target.closest('.regel'), id = el.dataset.id;
     stand[id] = stand[id] || {};
