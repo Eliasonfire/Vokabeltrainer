@@ -16,7 +16,18 @@
      transcripts/raw/       YouTube-Untertitel je Folge
      transcripts/whisper/   Nachtranskription der Regelstellen
      G:\1. Workspace\Arabicroots-Material\  Video und Ton
-   Kursmaterial-Disclaimer verbietet die Weitergabe. */
+   Kursmaterial-Disclaimer verbietet die Weitergabe.
+
+   ⛔ `nichtAufKarteikarten` WIRKT SEIT DEM 26.08.2026 NICHT MEHR.
+   Das Feld steht bei 27 Regeln und hielt sie von den Karteikarten fern. Seit
+   Elias' Entscheidung, die Grammatik ganz von den Karten zu nehmen ("die
+   saetze nur illustrieren"), entscheidet allein buildSentenceHtml in
+   js/saetze.js — gelesen wird das Feld nirgends mehr. Es bleibt stehen, weil
+   es 27 einzelne Urteile von ihm festhaelt ("das ist selbstverstaendlich, das
+   brauche ich nicht mehr erklaert"), und die sind nicht wertlos geworden, nur
+   weil sie gerade keine Wirkung haben. Wer die Grammatik auf Karten wieder
+   will, aendert die Rueckgabe in buildSentenceHtml — nicht hier etwas.
+   [[erledigt_heisst_nicht_wertlos]] */
 
 const GRAMMAR_RULES = [
   {
