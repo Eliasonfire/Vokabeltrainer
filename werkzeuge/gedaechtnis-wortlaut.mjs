@@ -66,6 +66,13 @@ const RAUS = [
   /^\s*Continue from where you left off\.?\s*$/,
   /^This session is being continued/,
   /^\s*\/[a-zäöü-]+\b.{0,60}$/,          /* reine Slash-Aufrufe */
+  /* ⛔ MEINE EIGENEN CRON-PROMPTS kommen als user-Nachricht zurueck. Ein
+     Auftrag, den ich selbst fuer eine Nachtschicht oder eine Abschaltung
+     geschrieben habe, ist kein Satz von Elias — und er kann im Vault nie
+     woertlich stehen. Erkennungszeichen: er redet ueber Elias in der DRITTEN
+     Person. Elias schreibt seinen eigenen Namen nicht.
+     ⚠️ Nur zusammen mit der Laenge, damit eine kurze Nachricht, in der er
+     seinen Namen doch einmal erwaehnt, nicht stillschweigend wegfaellt. */
   /* ⚠️ Der VOLLTEXT eines Skills landet als user-Nachricht im Transkript,
      sobald Elias ihn aufruft. Das sind Hunderte Zeilen, die natuerlich
      nirgends im Vault stehen — sie wuerden die Ausgabe zumuellen und den
@@ -93,6 +100,23 @@ for (let i = AB; i < zeilen.length; i++) {
   } else continue;
   t = t.trim();
   if (!t || RAUS.some(r => r.test(t))) continue;
+  /* ⛔ ZITIERT ER MICH, GEHOERT MIR DAS ZITAT — nicht ihm.
+     Antwortet Elias, indem er eine Zeile von mir zitiert, kommt die Nachricht
+     als ein Block an:
+         <!-- attach -->
+         > Grammatik-Heft مُضَاف / مُضَاف إِلَيْهِ vertauscht
+         habe bereits geändert
+     Gesucht wurde dann der GANZE Block, und der kann im Vault nie stehen —
+     die Haelfte davon ist mein eigener Text. Am 26.08.2026 meldete das
+     Werkzeug so zwei Nachrichten als "fehlt ganz", deren eigentliche Aussage
+     ("habe bereits geändert", "ja mach") laengst zweimal im Gedaechtnis stand.
+     Eine Fehlmeldung, die man drei Runden lang nachprueft, ist teurer als die
+     Luecke, die sie sucht. [[kandidatenliste_ist_keine_fehlerliste]] */
+  t = t.split(/\r?\n/)
+       .filter(z => !/^\s*<!--\s*attach\s*-->\s*$/.test(z) && !/^\s*>/.test(z))
+       .join('\n').trim();
+  if (!t) continue;
+  if (t.length > 200 && /\bElias\b/.test(t)) continue;   // eigener Cron-Prompt
   roh.push({ i, t });
 }
 const gesehen = new Set();
