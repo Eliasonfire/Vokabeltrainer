@@ -87,6 +87,10 @@ const PRUEFER = [
   ['werkzeuge/pruefe-erreichbarkeit-eichung.mjs', []],
   ['werkzeuge/pruefe-gedaechtnis.mjs', []],
   ['werkzeuge/pruefe-ids.mjs', []],
+  /* Glossen an Markierungen: was die deutsche Uebersetzung nicht traegt.
+     Waechst mit jedem neuen Satz mit — ohne Pruefer faellt eine fehlende
+     Glosse nie auf, weil nichts fehlt, was man sehen koennte. */
+  ['werkzeuge/pruefe-glossen.mjs', []],
   /* ⛔ Ohne diese Zeile haette pruefe-muster.mjs keinen Aufrufer und liefe nie.
      Genau der Fehler, den es selbst sucht, in seiner allgemeinen Form: gebaut,
      gepusht, ausgeliefert — und nie gestartet. [[werkzeug_ohne_aufrufer]] */
