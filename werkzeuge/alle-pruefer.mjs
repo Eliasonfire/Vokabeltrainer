@@ -92,6 +92,11 @@ const PRUEFER = [
      gepusht, ausgeliefert — und nie gestartet. [[werkzeug_ohne_aufrufer]] */
   ['werkzeuge/pruefe-muster.mjs', []],
   ['werkzeuge/pruefe-plural-thema.mjs', []],
+  /* Die Ueberkategorien des Satzmodus altern still: SATZ_THEMEN ordnet ueber
+     ein Muster auf die id zu, eine frei gewaehlte id landet also in KEINER
+     Kategorie — ohne Fehler und ohne Warnung. Elias am 26.08.2026: "darum
+     kuemmert sich aktuell niemand aber stetig geht es hier voran." */
+  ['werkzeuge/pruefe-themen.mjs', []],
   /* ⛔ Verhindert den siebzehnten Fall: in der Nacht auf den 21.08.2026 kamen
      SECHZEHN Eintraege hier dazu — acht Pruefstaende, sieben Eichungen, ein
      Pruefer. Alle waren gebaut, gepusht und nie gestartet worden, und keiner
