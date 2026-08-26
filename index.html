@@ -2308,7 +2308,11 @@ main{
   font-size:var(--fs-xs);font-weight:700;
   text-decoration:underline;text-underline-offset:3px;
 }
-.gram-popover .gp-rest{margin-top:var(--sp-2);color:var(--text-dim);}
+/* white-space:pre-line — Zeilenumbrueche im Regeltext bleiben stehen.
+   Gebraucht fuer verb-madi-endungen-01, wo vierzehn Verbformen als Zeilen
+   stehen; ohne die Regel faellt jeder Umbruch lautlos weg. */
+.gram-popover .gp-rest{margin-top:var(--sp-2);color:var(--text-dim);white-space:pre-line;}
+.gram-popover .gp-kern{white-space:pre-line;}
 /* Zwei Regeln koennen denselben Text markieren (seit dem 21.08.2026 werden
    sie verschachtelt statt weggelassen). Ein Klick trifft nur die innerste —
    diese Zeile macht die anderen erreichbar. */

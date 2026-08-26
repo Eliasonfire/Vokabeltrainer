@@ -216,7 +216,7 @@ const GRAMMAR_RULES = [
   {
     id: "mubtada-khabar-01",
     name: "مُبْتَدَأ وخَبَر (Subjekt und Aussage)",
-    shortExplanation: "Der خَبَر ist **die Benachrichtigung für den مُبْتَدَأ**, also die Aussage über das Subjekt. So definiert es der Lehrer beim Abschluss von Kapitel 9 (Folge 14, 45:15), und er fügt an: »Und wenn wir das wissen, wissen wir immer, wo unser خَبَر ist«. ⚠️ Er hängt dort selbst an: »Das kommt noch mal zu gegebener Zeit« (45:24) – die ausführliche Regel steht im Stoff also noch aus. In Folge 03 wurden die Begriffe nur angekündigt (\"erstmal nicht viel damit machen, sondern erstmal nur wissen\"). خَبَر (khabar) ist die Information über das Nomen – in den Übungen das ergänzte Wort, z.B. جَديدٌ (dschadīdun, neu). مُبْتَدَأ (mubtadaʾ) ist das Subjekt, also das, worum es im Satz geht, z.B. اَلْمُدَرِّسُ (al-mudarrisu, der Lehrer). Zusammen: اَلْمُدَرِّسُ جَديدٌ – der Lehrer ist neu.",
+    shortExplanation: "Ein arabischer Nominalsatz besteht aus zwei Teilen: dem مُبْتَدَأ mubtadaʾ – das, worum es im Satz geht – und dem خَبَر khabar – das, was darüber gesagt wird. In اَلْمُدَرِّسُ جَديدٌ al-mudarrisu jadīdun (der Lehrer ist neu) ist اَلْمُدَرِّسُ der مُبْتَدَأ und جَديدٌ der خَبَر. So definiert es der Lehrer beim Abschluss von Kapitel 9 (Folge 14, 45:15): der خَبَر ist **die Benachrichtigung für den مُبْتَدَأ**, und er fügt an: »Und wenn wir das wissen, wissen wir immer, wo unser خَبَر ist«. In den Übungen ist der خَبَر das ergänzte Wort, zum Beispiel جَديدٌ (dschadīdun, neu). ⚠️ Der Lehrer hängt bei 45:24 selbst an: »Das kommt noch mal zu gegebener Zeit« – die ausführliche Regel steht im Stoff also noch aus. In Folge 03 wurden die Begriffe nur angekündigt („erstmal nicht viel damit machen, sondern erstmal nur wissen“).",
     color: "mubtada",
     source: { folge: 3, video: "Folge 03", approxTimestamp: "13:57", chapter: 3 },
     source2: { schluessel: 2, lektion: 1, seite: 5 }
@@ -471,7 +471,7 @@ const GRAMMAR_RULES = [
   {
     id: "harf-jarr-min-ila-01",
     name: "مِنْ und إِلى (zwei neue حُروف جَرّ)",
-    shortExplanation: "**Jedes neue Glied der حُروف جَرّ wirkt wie فِي und عَلى**: das folgende Nomen wird مَجْرور, egal welche Präposition davorsteht. Die Liste wächst also, die Regel bleibt dieselbe. Der Lehrer führt die beiden genau so ein (Folge 05, 22:54): »Jetzt lernen wir zwei weitere حُروف جَرّ.« Zu فِي und عَلى kommen damit: مِنْ min heißt „von“, إِلى ilā heißt „zu“ oder „nach“. Beide sind Huruf Jarr, das folgende Wort wird also majrūr: مِنَ الْبَيْتِ mina l-baiti (vom Haus), إِلَى الْمَسْجِدِ ilā l-masjidi (zur Moschee).",
+    shortExplanation: "مِنْ min heißt „von“ oder „aus“, إِلى ilā heißt „zu“ oder „nach“ – und beide sind حُروف جَرّ, das folgende Nomen wird also مَجْرور und endet auf Kasra: مِنَ الْبَيْتِ mina l-baiti (vom Haus), إِلَى الْمَسْجِدِ ilā l-masjidi (zur Moschee). **Jedes neue Glied der حُروف جَرّ wirkt dabei genau wie فِي und عَلى** – die Liste wächst, die Regel bleibt dieselbe, egal welche Präposition davorsteht. Der Lehrer führt die beiden genau so ein (Folge 05, 22:54): »Jetzt lernen wir zwei weitere حُروف جَرّ.«",
     color: "nasab",
     source: { folge: 5, video: "Folge 05", approxTimestamp: "22:54", chapter: 4 },
     source2: { schluessel: 1, lektion: 4, seite: 16 }
@@ -504,7 +504,7 @@ const GRAMMAR_RULES = [
   {
     id: "verb-enthaelt-pronomen-01",
     name: "خَرَجَ / ذَهَبَ (das „er“ steckt im Verb)",
-    shortExplanation: "Das »er« steckt **nicht in der Endung**, sondern im Verb selbst. Daran erkennst du es im Satz: es steht **kein eigenes Wort für »er«** da. Der Lehrer widerspricht damit ausdrücklich einem Schüler, der es in der Endung vermutet hatte (Folge 05, 27:44): »Nicht in der Endung, es ist im Verb drinne, sozusagen versteckt.« Die ersten beiden Verben sind خَرَجَ kharaja (er verließ, er ging hinaus) und ذَهَبَ dhahaba (er ging) – beides Vergangenheit. Daran erkennst du es im Satz: **es steht kein eigenes Wort für »er« da.** In ذَهَبَ إِلَى الْمُدِيرِ dhahaba ilā l-mudīri (er ging zum Direktor) trägt allein das Verb den Handelnden – zwischen Verb und Präposition fehlt jedes Pronomen. Der Lehrer bei 27:52: »Das kommt … auch noch mal.«",
+    shortExplanation: "Ein arabisches Verb trägt seinen Handelnden in sich: ذَهَبَ dhahaba heißt bereits „**er** ging“, ohne dass irgendwo ein Wort für „er“ danebenstünde. **Daran erkennst du es im Satz – es steht kein eigenes Wort für „er“ da.** In ذَهَبَ إِلَى الْمُدِيرِ dhahaba ilā l-mudīri (er ging zum Direktor) trägt allein das Verb den Handelnden; zwischen Verb und Präposition fehlt jedes Pronomen. Und es steckt **nicht in der Endung**, sondern im Verb selbst – damit widerspricht der Lehrer ausdrücklich einem Schüler, der es in der Endung vermutet hatte (Folge 05, 27:44): »Nicht in der Endung, es ist im Verb drinne, sozusagen versteckt.« Die ersten beiden Verben sind خَرَجَ kharaja (er verließ, er ging hinaus) und ذَهَبَ dhahaba (er ging) – beides Vergangenheit. Der Lehrer bei 27:52: »Das kommt … auch noch mal.«",
     color: "mubtada",
     source: { folge: 5, video: "Folge 05", approxTimestamp: "27:41", chapter: 4 },
     source2: { schluessel: 1, lektion: 4, seite: 16 }
@@ -512,7 +512,7 @@ const GRAMMAR_RULES = [
   {
     id: "alif-maqsura-01",
     name: "أَلِف مَقْصورة (ى am Wortende)",
-    shortExplanation: "Ein ى am Wortende ohne Punkte ist kein Ya, sondern eine أَلِف مَقْصورة alif maqṣūra – ein „kleines Alif“, gesprochen wie ein langes ā. **Die Punkte entscheiden, nichts sonst** – das ist der ganze Handgriff. Der Lehrer (Folge 05, 29:44): »أَلِف مَقْصورة ist ein Alif, ist ein kleines Alif«, und 29:58: »Muss man aufpassen … weil [es] keine Punkte hat.« Zwei Punkte unter dem Zahn ⇒ echtes ي, gesprochen -ī oder -iyy. Keine Punkte ⇒ ى, gesprochen wie langes ā. Deshalb: عَلى ʿalā heißt „auf“, عَلِيٌّ ʿaliyyun dagegen ist der Name Ali und endet wirklich auf ein Ya. Ohne Taschkil sehen die beiden fast gleich aus.",
+    shortExplanation: "Ein ى am Wortende ohne Punkte ist kein Ya, sondern eine أَلِف مَقْصورة alif maqṣūra – ein „kleines Alif“, gesprochen wie ein langes ā. **Die Punkte entscheiden, nichts sonst:** zwei Punkte unter dem Zahn ⇒ echtes ي, gesprochen -ī oder -iyy; keine Punkte ⇒ ى, gesprochen wie langes ā. Deshalb heißt عَلى ʿalā „auf“, während عَلِيٌّ ʿaliyyun der Name Ali ist und wirklich auf ein Ya endet – ohne Taschkil sehen die beiden fast gleich aus. **Und das ist die Folge fürs Iʿrāb:** ein Wort, das auf ـى endet, zeigt seinen Fall nicht – es bleibt in jedem Fall gleich, siehe alif-maqsura-unveraenderlich-01. ⚠️ Weiter geht der Unterricht an dieser Stelle nicht. Der Lehrer sagt in Folge 05 nur zweierlei: bei 29:44 »أَلِف مَقْصورة ist ein Alif, ist ein kleines Alif«, und bei 29:58 »Muss man aufpassen … weil [es] keine Punkte hat«. Mehr steht dort nicht, und was hier fehlt, fehlt auch im Unterricht.",
     color: "other",
     source: { folge: 5, video: "Folge 05", approxTimestamp: "29:38", chapter: 4 }
   },
@@ -536,7 +536,7 @@ const GRAMMAR_RULES = [
   {
     id: "idafa-01",
     name: "إِضافة (Genitivverbindung)",
-    shortExplanation: "Die إِضافة ist der **zweite Weg, ein Wort مَجْرور zu machen** – der erste ist der حَرْف جَرّ. Der Lehrer stellt sie genau so vor (Folge 07, 1:09): »wir kriegen den مَجْرور durch حَرْف جَرّ … oder wir kriegen ihn durch die إِضافة, durch مُضاف und مُضاف إِلَيْهِ«, und bei 2:00: »es gibt noch eine Regel – diese können auch das Wort مَجْرور machen, das heißt mit كَسْرة am Ende«. Der Grundfall bleibt مَرْفوع; erst wenn etwas hinzukommt, ändert sich die Endung. Mit der إِضافة verbindet man zwei Nomen (اِسْم + اِسْم) zu einem Ausdruck. Das erste Wort heißt مُضَاف (der Besitz), das zweite مُضَاف إِلَيْهِ (der Besitzer): كِتابُ اللهِ kitābu llāhi – das Buch Allahs, بَيْتُ اللهِ baytu llāhi – das Haus Allahs (die Kaaba), بَابُ الْمَسْجِدِ bābu l-masjidi – die Tür der Moschee, سَيّارَةُ حامِدٍ sayyāratu ḥāmidin – das Auto von Hamid. Damit kann man zusammengesetzte Begriffe bilden – der Lehrer zählt auf Deutsch auf: Wörterbuch, Feuertreppe, Trinkbecher, Schreibtisch. Das ging vorher nicht. Die Verbindung funktioniert nur zwischen zwei Nomen, اِسْم und اِسْم.",
+    shortExplanation: "Mit der إِضافة verbindest du zwei Nomen (اِسْم + اِسْم) zu einem Ausdruck: das **erste** Wort heißt مُضَاف (der Besitz), das **zweite** مُضَاف إِلَيْهِ (der Besitzer). كِتابُ اللهِ kitābu llāhi – das Buch Allahs, بَيْتُ اللهِ baytu llāhi – das Haus Allahs (die Kaaba), بَابُ الْمَسْجِدِ bābu l-masjidi – die Tür der Moschee, سَيّارَةُ حامِدٍ sayyāratu ḥāmidin – das Auto von Hamid. Damit ist die إِضافة zugleich der **zweite Weg, ein Wort مَجْرور zu machen** – der erste ist der حَرْف جَرّ. Der Lehrer stellt sie genau so vor (Folge 07, 1:09): »wir kriegen den مَجْرور durch حَرْف جَرّ … oder wir kriegen ihn durch die إِضافة, durch مُضاف und مُضاف إِلَيْهِ«, und bei 2:00: »es gibt noch eine Regel – diese können auch das Wort مَجْرور machen, das heißt mit كَسْرة am Ende«. Der Grundfall bleibt مَرْفوع; erst wenn etwas hinzukommt, ändert sich die Endung. Damit kann man zusammengesetzte Begriffe bilden – der Lehrer zählt auf Deutsch auf: Wörterbuch, Feuertreppe, Trinkbecher, Schreibtisch. Das ging vorher nicht. Die Verbindung funktioniert nur zwischen zwei Nomen, اِسْم und اِسْم.",
     color: "idafa",
     source: { folge: 7, video: "Folge 07", approxTimestamp: "2:24", chapter: 5 },
     source2: { schluessel: 1, lektion: 5, seite: 18 }
@@ -552,7 +552,7 @@ const GRAMMAR_RULES = [
   {
     id: "mudaf-ilayh-01",
     name: "مُضَاف إِلَيْهِ (der Besitzer – zweites Wort)",
-    shortExplanation: "Der مُضَاف إِلَيْهِ, also das zweite Wort, ist **immer** مَجْرُور – daran lässt sich nichts ändern, egal was um die إِضافة herum steht; er endet auf Kasra. Das ist zugleich das Erkennungszeichen: **findest du zwei Nomen hintereinander und das zweite trägt Kasra, ist es eine إِضافة**: كِتابُ الْمُدَرِّسِ kitābu l-mudarrisi – das Buch des Lehrers. Er darf dabei bestimmt oder unbestimmt sein: كِتابُ مُدَرِّسٍ kitābu mudarrisin – das Buch eines Lehrers.",
+    shortExplanation: "Der مُضَاف إِلَيْهِ, also das zweite Wort, ist **immer** مَجْرُور – daran lässt sich nichts ändern, egal was um die إِضافة herum steht; er endet auf Kasra. Das ist zugleich das Erkennungszeichen: **findest du zwei Nomen hintereinander und das zweite trägt Kasra, ist es eine إِضافة**: كِتابُ الْمُدَرِّسِ kitābu l-mudarrisi – das Buch des Lehrers. Er darf dabei bestimmt oder unbestimmt sein: كِتابُ مُدَرِّسٍ kitābu mudarrisin – das Buch eines Lehrers. **Und „immer“ heißt wirklich immer:** während das erste Wort seinen Fall aus dem Satz bekommt und mitwandert – عَلى مَكْتَبِ الْمُدَرِّسِ ʿalā maktabi l-mudarrisi, auf dem Schreibtisch des Lehrers, wo مَكْتَبِ nach dem حَرْف جَرّ selbst Kasra trägt – bleibt das zweite unberührt. Der Lehrer sagt es in Folge 07 zweimal: bei 07:39 »ist immer مَجْرُور, egal was du machst, kannst du nicht ändern«, und bei 08:57 ordnet er sie ein: »diese Regel [der حَرْف جَرّ] und diese Regel mit مُضاف إِلَيْهِ, das sind wenn nicht die beiden wichtigsten Regeln, die man benötigt«.",
     color: "idafa",
     source: { folge: 7, video: "Folge 07", approxTimestamp: "7:39", chapter: 5 },
     source2: { schluessel: 1, lektion: 5, seite: 18 }
@@ -560,7 +560,7 @@ const GRAMMAR_RULES = [
   {
     id: "ya-nida-01",
     name: "يَا (Rufpartikel)",
-    shortExplanation: "يَا ist die Rufpartikel („o …\"). Steht sie vor einem männlichen Namen, fällt dessen Tanwin weg und es bleibt eine Damma: nicht يَا ياسِرٌ yā Yāsirun, sondern يَا ياسِرُ yā Yāsiru. Im Kapiteltext: أَهَذا كِتابُ مُحَمَّدٍ يَا ياسِرُ؟ – „Ist dies Muhammads Buch, o Yasir?\" Der Lehrer zählt im selben Atemzug die männlichen Namen auf, an denen man das prüfen kann (Folge 07, 9:57): مُحَمَّدٌ, حامِدٌ, عَبّاسٌ – alle mit Tanwin. Nach يَا wird daraus yā Muḥammadu, yā Ḥāmidu, yā ʿAbbāsu. (Die Rufformen selbst spricht er nicht aus, deshalb stehen sie hier in Umschrift statt vokalisiert.)",
+    shortExplanation: "يَا ist die Rufpartikel („o …“). Steht sie vor einem Namen, **fällt dessen Tanwin weg und es bleibt eine Damma**. Beide Beispiele stehen so im Buch auf Seite 65: أَيْنَ أَبُوكَ يَا خَالِدُ؟ „Wo ist dein Vater, Khalid?“ und أَلَكَ أَخٌ يَا حَامِدُ؟ „Hast du einen Bruder, Hamid?“ – an beiden siehst du die Damma am Namensende, ohne Tanwin. Dieselbe Form im Kapiteltext von Kapitel 5: أَهَذا كِتابُ مُحَمَّدٍ يَا ياسِرُ؟ „Ist dies Muhammads Buch, o Yasir?“ Der Vergleich macht es sichtbar: im Wörterverzeichnis stehen die Namen mit Tanwin – der Lehrer zählt sie in Folge 07 (9:57) auf: مُحَمَّدٌ, حامِدٌ, عَبّاسٌ – nach يَا verlieren sie es. Und es gilt nicht nur für Namen: auch يَا وَلَدُ „o Junge“ trägt Damma statt Tanwin.",
     color: "nasab",
     source: { folge: 7, video: "Folge 07", approxTimestamp: "9:39", chapter: 5 }
   },
@@ -1203,7 +1203,7 @@ const GRAMMAR_RULES = [
        ⛔ Nichts hier ist von mir konjugiert. Jede Form steht im Video.
        Goal-Prompt E.1: eine selbst gebildete Form waere erfundene Grammatik. */
     name: "Die vierzehn Endungen der Vergangenheit (اَلْمَاضِي)",
-    shortExplanation: "Im Arabischen gibt es zwei Zeitformen: die Vergangenheit اَلْمَاضِي und die Gegenwart اَلْمُضَارِع. Die Zukunft wird aus der Gegenwart gebildet – „deswegen hat man eigentlich nur zwei“. Im ersten Buch kommt vor allem die Vergangenheit dran. Der Stamm bleibt dabei gleich, nur die Endung wechselt; dein Lehrer nennt es einen Baukasten: „Das ist wie ein Baukasten. Wir müssen die nur zusammenbauen.“ Vierzehn Pronomen, vierzehn Endungen – mehr gibt es nicht. Gemerkt wird in Dreierpaketen, nicht als ich-du-er-sie: 3. Person männlich هُوَ ذَهَبَ · هُمَا ذَهَبَا · هُمْ ذَهَبُوا, 3. Person weiblich هِيَ ذَهَبَتْ · هُمَا ذَهَبَتَا · هُنَّ ذَهَبْنَ, 2. Person männlich أَنْتَ ذَهَبْتَ · أَنْتُمَا ذَهَبْتُمَا · أَنْتُمْ ذَهَبْتُمْ, 2. Person weiblich أَنْتِ ذَهَبْتِ · أَنْتُمَا ذَهَبْتُمَا · أَنْتُنَّ ذَهَبْتُنَّ, und dann nur noch أَنَا ذَهَبْتُ und نَحْنُ ذَهَبْنَا. Dahinter stehen drei Zählformen: Singular (eine Person), Dual (genau zwei) und Plural (ab drei) – der Dual ist eine eigene Zahl, die es im Deutschen nicht gibt. Der Trick bei der zweiten Person: die Endung steckt schon im Pronomen. أَنْتَ → ـْتَ, أَنْتُمْ → ـْتُمْ, أَنْتُنَّ → ـْتُنَّ – „man kann die einfach übernehmen, die Endungen“. Bei der dritten Person geht das nicht: هُوَ hat gar keine Endung, هُمْ bekommt ـُوا. Und die Dualform der Anrede ist für Männer und Frauen gleich (أَنْتُمَا ذَهَبْتُمَا), bei der dritten Person nicht (ذَهَبَا gegen ذَهَبَتَا) – vierzehn Pronomen, aber nur dreizehn verschiedene Verbformen.",
+    shortExplanation: "Beim Verb in der Vergangenheit bleibt der **Stamm gleich, nur die Endung wechselt** – vierzehn Pronomen, vierzehn Endungen, mehr gibt es nicht. Dein Lehrer nennt es einen Baukasten: „Das ist wie ein Baukasten. Wir müssen die nur zusammenbauen.“\n\n⭐ **Der Trick bei der 2. Person: die Endung steckt schon im Pronomen.** أَنْتَ → ـْتَ · أَنْتُمْ → ـْتُمْ · أَنْتُنَّ → ـْتُنَّ – „man kann die einfach übernehmen, die Endungen“. Bei der 3. Person geht das nicht: هُوَ hat gar keine Endung, هُمْ bekommt ـُوا.\n\nGemerkt wird in Dreierpaketen, nicht als ich-du-er-sie:\n3. Person männlich: هُوَ ذَهَبَ · هُمَا ذَهَبَا · هُمْ ذَهَبُوا\n3. Person weiblich: هِيَ ذَهَبَتْ · هُمَا ذَهَبَتَا · هُنَّ ذَهَبْنَ\n2. Person männlich: أَنْتَ ذَهَبْتَ · أَنْتُمَا ذَهَبْتُمَا · أَنْتُمْ ذَهَبْتُمْ\n2. Person weiblich: أَنْتِ ذَهَبْتِ · أَنْتُمَا ذَهَبْتُمَا · أَنْتُنَّ ذَهَبْتُنَّ\n1. Person: أَنَا ذَهَبْتُ · نَحْنُ ذَهَبْنَا\n\nDahinter stehen drei Zählformen: Singular (eine Person), Dual (genau zwei) und Plural (ab drei) – der Dual ist eine eigene Zahl, die es im Deutschen nicht gibt.\n\n⚠️ Zwei Stolperstellen: die Dualform der Anrede ist für Männer und Frauen gleich (أَنْتُمَا ذَهَبْتُمَا), bei der dritten Person nicht (ذَهَبَا gegen ذَهَبَتَا). Deshalb sind es vierzehn Pronomen, aber nur **dreizehn** verschiedene Verbformen.\n\nZum Einordnen: Im Arabischen gibt es zwei Zeitformen, die Vergangenheit اَلْمَاضِي und die Gegenwart اَلْمُضَارِع; die Zukunft wird aus der Gegenwart gebildet – „deswegen hat man eigentlich nur zwei“. Im ersten Buch kommt vor allem die Vergangenheit dran.",
     color: "other",
     source: { folge: 18, video: "Folge 18", approxTimestamp: "10:14", chapter: 12 }
   },
@@ -1257,7 +1257,8 @@ const SENTENCE_TAGS = {
      ======================================================================== */
   "mb1-63-3": [{ ruleId: "harf-jarr-bi-01", matchText: "بِخَيْرٍ" }],
   "mb1-63-4": [{ ruleId: "ismun-mawsul-allati-01", matchText: "الَّتِي" }],
-  "mb1-65-2": [{ ruleId: "li-mit-suffix-01", matchText: "أَلَكَ" }],
+  "mb1-65-2": [{ ruleId: "li-mit-suffix-01", matchText: "أَلَكَ" },
+                { ruleId: "ya-nida-01", matchText: "يَا حَامِدُ" }],
 
   /* Key = vocab-data.js `id` (stabiler Join-Key, NICHT der Satztext).
      Erzeugt aus den Formen, die im Satz tatsaechlich vorkommen - jede Markierung
@@ -2036,7 +2037,7 @@ const SENTENCE_TAGS = {
   ],
   "mb1-65-1": [
     { ruleId: "asma-khamsa-01", matchText: "أَبُوكَ", bedeutung: 'ـكَ = dein (männlich)' },
-    { ruleId: "ya-nida-01", matchText: "يَا" }
+    { ruleId: "ya-nida-01", matchText: "يَا خَالِدُ" }
   ],
   "sk3-7-1": [
     { ruleId: "asma-khamsa-vollstaendig-01", matchText: "أَبُو" },
