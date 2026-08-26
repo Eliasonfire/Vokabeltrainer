@@ -129,7 +129,7 @@ const BUCH_ESELSBRUECKEN = {
 
   "45919": "⚠️ Der Plural passt nicht zum Singular: امْرَأَةٌ wird zu نِسَاءٌ — ein ganz anderes Wort. Das lernst du als Paar, Ableiten hilft hier nicht. Gegenstück ist رَجُلٌ (Mann), das du schon hast.",
 
-  "45920": "Gegenstück zu زَوْجَةٌ (Ehefrau), gleiche Wurzel ز و ج. Der Plural أَزْوَاجٌ steht in 2:25: وَلَهُمْ فِيهَآ أَزْوَٰجٌ مُّطَهَّرَةٌ. ⚠️ Nicht mit زَمِيلٌ (Kollege) verwechseln — زَوْج hat das و in der Mitte.",
+  "45920": "Gegenstück zu زَوْجَةٌ (Ehefrau), gleiche Wurzel ز و ج. Der Plural ist أَزْوَاجٌ. ⚠️ Nicht mit زَمِيلٌ (Kollege) verwechseln — زَوْج hat das و in der Mitte.",
 
   /* ---------- Kapitel 14 ---------- */
 
@@ -165,7 +165,7 @@ const BUCH_ESELSBRUECKEN = {
 
   /* ---------- Kapitel 16 ---------- */
 
-  "45935": "Kurzes Wort mit Sukun wie نَجْمٌ (Stern). Der Plural أَنْهَارٌ steht in 2:25: جَنَّٰتٍ تَجْرِي مِن تَحْتِهَا ٱلْأَنْهَٰرُ — „Gärten, durcheilt von Bächen“. Damit hast du ihn schon einmal gelesen.",
+  "45935": "Kurzes Wort mit Sukun wie نَجْمٌ (Stern). Der Plural أَنْهَارٌ steht in al-Bayyinah: تَجْرِي مِن تَحْتِهَا ٱلْأَنْهَٰرُ — „durcheilt von Bächen“ (98:8). Damit hast du ihn schon einmal gelesen.",
 
   "45936": "Paar mit نَهْرٌ (Fluss) aus demselben Kapitel, beide kurz und mit Sukun gebaut: نَهْرٌ das süße Wasser, بَحْرٌ das große salzige. Plural بِحَارٌ.",
 
@@ -241,9 +241,9 @@ const BUCH_ESELSBRUECKEN = {
 
   "45966": "Du hast schon كُوبٌ (Tasse/Becher). Der فِنْجَان ist die kleine Tasse für شَايٌ (Tee) und قَهْوَةٌ (Kaffee) — beide hast du auch. Vierbuchstabige Wurzel, deshalb kein Muster. Plural فَنَاجِينُ.",
 
-  "45967": "Muster فَعِيلَةٌ, Wurzel د ق ق mit doppeltem ق. Häng sie an deine Zeitleiter: دَقِيقَةٌ (Minute) → يَوْمٌ (Tag) → أُسْبُوعٌ (Woche) → سَنَةٌ (Jahr). Plural دَقَائِقُ, ohne Tanwin.",
+  "45967": "Muster فَعِيلَةٌ, Wurzel د ق ق mit doppeltem ق. Häng sie an deine Zeitleiter: دَقِيقَةٌ (Minute) → يَوْمٌ (Tag) → أُسْبُوعٌ (Woche, Kapitel 15) → سَنَةٌ (Jahr, Kapitel 18) — die beiden hinteren Stufen kommen erst noch. Plural دَقَائِقُ, ohne Tanwin.",
 
-  "45968": "Eines der häufigsten Verben im Koran: قَالُوا („sie sagten“) steht zum Beispiel in 2:25. Die Wurzel ق و ل hat ein و in der Mitte, das im Wort zum langen ـَا wird — deshalb siehst du das و gar nicht.",
+  "45968": "Eines der häufigsten Verben im Koran. Dieselbe Wurzel sprichst du in den Suren, die du auswendig kannst: قُلْ هُوَ ٱللَّهُ (112:1) und قُلْ يَٰٓأَيُّهَا ٱلْكَٰفِرُونَ (109:1) — قُلْ ist der Befehl „sag!“. Die Wurzel ق و ل hat ein و in der Mitte, das in قَالَ zum langen ـَا wird — deshalb siehst du das و dort gar nicht.",
 
   /* ---------- Kapitel 23 ---------- */
 
@@ -279,7 +279,7 @@ const BUCH_ESELSBRUECKEN = {
 
   "50165": "Fern und Mehrzahl, Gegenstück zu هَؤُلَاءِ (diese). ⚠️ Schreibfalle: nach أُو folgt ein لَـ, das ا wird nicht gesprochen. Die Endung ـئِكَ teilt es mit ذَلِكَ und تِلْكَ.",
 
-  "50166": "Verbindet zwei Sätze: „der Mann, DER …“. Belegt in 2:25 — هَٰذَا ٱلَّذِي رُزِقْنَا مِن قَبْلُ, „Das ist ja das, womit wir zuvor versorgt wurden“. Merk die Schadda auf dem لّ.",
+  "50166": "Verbindet zwei Sätze: „der Mann, DER …“. Die Mehrzahl ٱلَّذِينَ steht in der Fātiḥah: صِرَٰطَ ٱلَّذِينَ أَنْعَمْتَ عَلَيْهِمْ (1:7) — „den Weg derjenigen, denen Du Gunst erwiesen hast“. Merk die Schadda auf dem لّ.",
 
   /* ---------- Kapitel 24: Frage- und Funktionswörter ---------- */
 
@@ -407,7 +407,7 @@ const BUCH_ESELSBRUECKEN = {
 
   "p_1787188396011": "Ein Ẓarf und zugleich Muḍāf: das Wort danach steht im Genitiv. Dein eigener Satz zeigt es — الْمَكْتَبَةُ بَعْدَ الْمَسْجِدِ, „die Bibliothek ist nach der Moschee\". ⭐ Genau wie تَحْتَ, أَمَامَ und خَلْفَ aus Folge 12, die du schon hast.",
 
-  "p_1787189022107": "Du kennst es aus dem Vers, den du auswendig kannst: أَلَمْ تَرَ كَيْفَ فَعَلَ رَبُّكَ بِأَصْحَابِ الْفِيلِ — „Siehst du nicht, WIE dein Herr mit den Leuten des Elefanten verfuhr\" (105:1, al-Fīl). Das كَيْفَ steht dort an dritter Stelle und fragt genau danach: nach dem WIE.",
+  "p_1787189022107": "Du kennst es aus dem Vers, den du auswendig kannst: أَلَمْ تَرَ كَيْفَ فَعَلَ — „Siehst du nicht, WIE er verfuhr\" (105:1, al-Fīl). Das كَيْفَ steht dort an dritter Stelle und fragt genau danach: nach dem WIE.",
 
   "p_1787189076593": "حَال („Zustand\") + كَ („dein\") — die Besitzendung aus Folge 15. ⭐ Und deine Regel possessiv-ist-idafa-01 aus Folge 16 sagt, warum: die Endung IST ein Muḍāf ilayh, das Wort davor also ein Muḍāf. Es ist eine Iḍāfa wie كِتَابُ الْمُدَرِّسِ, nur mit Endung statt zweitem Wort.",
 
@@ -415,6 +415,6 @@ const BUCH_ESELSBRUECKEN = {
 
   "p_1787189488747": "فِي + هُ, und die Regel für den Vokalwechsel hast du aus Folge 16: nach einem Kasra wird das هُ zu هِ. فِي endet auf Kasra — also فِيهِ, nicht fīhu. Dein Lehrer sagt dazu: „auf ein Kasra folgt nur schwer eine Ḍamma.\"",
 
-  "p_1787190874749": "Du sprichst es in al-Mulk: قُلْ إِنَّمَا الْعِلْمُ عِنْدَ اللَّهِ — „Sag: Nur Allah weiß darüber Bescheid\", wörtlich „das Wissen ist BEI Allah\" (67:26). Dasselbe عِنْدَ, dieselbe Bedeutung."
+  "p_1787190874749": "Du sprichst es in al-Mulk: إِنَّمَا الْعِلْمُ عِنْدَ اللَّهِ — „Nur Allah weiß darüber Bescheid\", wörtlich „das Wissen ist BEI Allah\" (67:26). Dasselbe عِنْدَ, dieselbe Bedeutung."
 
 };
