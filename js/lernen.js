@@ -845,42 +845,33 @@ document.getElementById('btnDeleteNote').addEventListener('click', ()=>{
 
 let __suppressCardClick = false;
 
-/* Welche Satzbau-Markierung liegt unter diesem Klick?
+/* ⛔ HIER STAND markierungUnterKlick (entfallen am 26.08.2026 mit der
+   Grammatik auf den Karteikarten). Der Befund darin ist zu teuer, um ihn
+   mitzuloeschen — falls je wieder etwas auf der Karte anklickbar wird:
 
-   `e.target` allein reicht hier NICHT, und das ist der Kern von Elias' Meldung
-   vom 29.07.2026 ("ich kann die Satzbau-Hinweise nicht anklicken, es wird
-   einfach nur direkt die Karte wieder umgedreht"). Die Karte ist eine
-   3D-Drehung: `.flashcard-inner` steht auf `transform-style:preserve-3d`, die
-   Rueckseite auf `rotateY(180deg)`. In dieser Anordnung benennt Chrome als
-   Klickziel nicht immer das Element, das man sieht - im Browser nachgemessen
-   ergab `document.elementFromPoint` auf der Markierung mal `flashcard-inner`,
-   mal die abgewandte Vorderseite.
-
-   Deshalb wird zusaetzlich der ganze Stapel unter dem Zeiger befragt.
-   `elementsFromPoint` liefert die Markierung auch dann, wenn `elementFromPoint`
-   nur den Behaelter nennt. Das kommt ohne Annahme darueber aus, wie ein
-   bestimmter Browser 3D-Ebenen trifft - und genau darum geht es hier. */
-function markierungUnterKlick(e){
-  const direkt = e.target.closest && e.target.closest('.gram-underline');
-  if (direkt) return direkt;
-  if (typeof e.clientX !== 'number' || !document.elementsFromPoint) return null;
-  for (const el of document.elementsFromPoint(e.clientX, e.clientY)){
-    const treffer = el.closest && el.closest('.gram-underline');
-    if (treffer) return treffer;
-  }
-  return null;
-}
+   `e.target` reicht auf dieser Karte NICHT. Elias' Meldung vom 29.07.2026:
+   "ich kann die Satzbau-Hinweise nicht anklicken, es wird einfach nur direkt
+   die Karte wieder umgedreht". Die Karte ist eine 3D-Drehung —
+   `.flashcard-inner` steht auf `transform-style:preserve-3d`, die Rueckseite
+   auf `rotateY(180deg)`. In dieser Anordnung benennt Chrome als Klickziel
+   nicht immer das Element, das man sieht: im Browser nachgemessen ergab
+   `document.elementFromPoint` auf der Markierung mal `flashcard-inner`, mal
+   die abgewandte Vorderseite. Die Loesung war, zusaetzlich den ganzen Stapel
+   unter dem Zeiger zu befragen — `elementsFromPoint` liefert das Ziel auch
+   dann, ohne Annahme darueber, wie ein Browser 3D-Ebenen trifft.
+   [[erledigt_heisst_nicht_wertlos]] */
 
 document.getElementById('flashcard').addEventListener('click', (e)=>{
   if (e.target.id === 'btnSpeakWord') return;
   if (e.target.closest('#cardNoteBox')) return;   // hat einen eigenen Klick
   if (e.target.closest('#cardTippBox')) return;   // Tippen dreht die Karte nicht um
   if (__suppressCardClick){ __suppressCardClick = false; return; }
-  /* Satzbau-Markierung oeffnet ihre Erklaerung, statt die Karte umzudrehen.
-     Die Erklaerung selbst kommt aus js/saetze.js, damit Satz-Modus und
-     Lernkarte dieselbe zeigen und nicht zwei Fassungen auseinanderlaufen. */
-  const markierung = markierungUnterKlick(e);
-  if (markierung){ zeigeGrammatikPopover(markierung); return; }
+  /* ⛔ HIER STAND bis zum 26.08.2026 der Weg zur Regelerklaerung: ein Klick
+     auf eine Markierung oeffnete das Popover, statt die Karte umzudrehen.
+     Seit die Karte keine Markierungen mehr traegt (buildSentenceHtml in
+     js/saetze.js gibt fuer opts.karteikarte blanken Text zurueck), kann kein
+     Klick mehr eine treffen. Mit dem Zweig ist markierungUnterKlick entfallen,
+     das nur er aufrief. */
   document.getElementById('flashcard').classList.toggle('flipped');
   /* Der Hinweis haengt an BEIDEN Bedingungen — gedreht UND es geht weiter.
      Umdrehen aendert die erste, also muss hier nachgerechnet werden; ein

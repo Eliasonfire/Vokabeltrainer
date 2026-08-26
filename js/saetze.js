@@ -285,6 +285,35 @@ function anWortgrenze(text, von, matchText){
    unklickbar. Es ist am 29.07.2026 entfallen: Elias wollte sie ausdruecklich
    anklicken koennen. */
 function buildSentenceHtml(w, opts){
+  /* ⛔ AUF DER KARTEIKARTE STEHT KEINE GRAMMATIK MEHR (26.08.2026).
+
+     Elias: "bei den karteikarten gibt es halt kein system welche regeln
+     angezeigt werden und es werden ja auch wirklich immer und immer mehr.
+     ausserdem macht die trennung glaube ich sinn zwischen satzmodus mit dem
+     grammatik regeln und den kartekarten wo ich nur die vokabeln lernen und
+     die saetze nur illustrieren sollen" — und danach: "seit dem der satzmodus
+     so gut ist brauchen wir das glaube ich gar nicht".
+
+     Sein erster Satz ist der entscheidende, und er stimmt: WELCHE Regel auf
+     einer Karte auftaucht, war nie ein Lernplan, sondern ein Nebenprodukt der
+     Markierungsarbeit — sichtbar wurde, was zufaellig an diesem Satz getaggt
+     war. Gemessen am 26.08.2026: 405 der 603 Markierungen aus 72 Regeln waren
+     auf Karten sichtbar, 121 der 171 Madina-1-Karten trugen mindestens eine,
+     und 15 dieser Regeln kamen nur ein- oder zweimal vor. Vorher hatte er 27
+     Regeln einzeln von Hand abbestellt — Handarbeit gegen ein Problem, das
+     eine Trennung loest.
+
+     ⭐ Der Satz bleibt auf der Karte, nur ohne Auszeichnung. Er illustriert
+     die Vokabel, er unterrichtet nicht.
+
+     ⛔ DIESE RUECKGABE IST DER EINZIGE ORT, DER DAS ENTSCHEIDET. Der frueher
+     weiter unten stehende Test auf rule.nichtAufKarteikarten ist damit
+     entfallen — er waere jetzt unerreichbar. Das Feld selbst bleibt in
+     grammar-data.js stehen (27 Urteile von ihm), wirkt aber nicht mehr.
+     Wer die Grammatik auf Karten wieder will, aendert HIER etwas.
+     [[werkzeug_ohne_aufrufer]] */
+  if (opts && opts.karteikarte) return escapeHtml(w.sentAr || '');
+
   const ohneLuecke = !!(opts && opts.ohneLuecke);
   if (!ohneLuecke){
     const verdeckt = mitLuecke(w.sentAr || '');
@@ -307,11 +336,6 @@ function buildSentenceHtml(w, opts){
        Unterricht ist ja nicht falsch geworden), werden aber nicht mehr
        angezeigt. Siehe `ausgeblendet` in grammar-data.js. */
     if (rule.ausgeblendet) return;
-    /* Elias am 19.08.2026: drei Regeln sollen "im satzmodus gerne bleiben aber
-       nicht bei den karteikarten als erklaerung". Deshalb wird hier nur
-       unterdrueckt, wenn der Aufrufer eine Karteikarte zeichnet - die
-       Satzansicht (Zeile 212) uebergibt `karteikarte` nicht und zeigt sie. */
-    if (rule.nichtAufKarteikarten && opts && opts.karteikarte) return;
     /* Frueher nur die erste Fundstelle. In «أَهَذَا كِتَابٌ؟ نَعَمْ، هَذَا
        كِتَابٌ.» war damit das erste كِتَابٌ unterstrichen und das zweite nicht -
        dieselbe Regel, willkuerlich nur einmal gezeigt.
