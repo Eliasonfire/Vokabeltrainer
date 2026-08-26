@@ -47,8 +47,14 @@ function satzHtml(satz){
     const i = ar.indexOf(t);
     inner = esc(ar.slice(0, i)) + '<u>' + esc(t) + '</u>' + esc(ar.slice(i + t.length));
   }
+  /* ⭐ WAS DIE MARKIERTE STELLE BEDEUTET (26.08.2026). Elias an
+     مَا اسْمُكِ؟ — "Wie heisst du?": dass das ـكِ die WEIBLICHE Anrede ist,
+     steht in der Uebersetzung nirgends, weil das deutsche "dein" gar kein
+     Geschlecht hat. Nicht versteckt, sondern gar nicht vorhanden. */
+  const gl = satz.bedeutung
+    ? `<div class="satz-bedeutung">${esc(satz.bedeutung)}</div>` : '';
   return `<div class="satz"><div class="satz-ar">${inner}</div>`
-       + `<div class="satz-de">${esc(satz.de)}</div></div>`;
+       + `<div class="satz-de">${esc(satz.de)}</div>${gl}</div>`;
 }
 
 const KAPITEL_NAME = {
@@ -206,6 +212,15 @@ summary:focus-visible{outline:2px solid var(--rot);outline-offset:2px}
 .satz-ar u{text-decoration:none;color:var(--gelb);
            border-bottom:2px solid var(--gelb);padding-bottom:2px}
 .satz-de{color:var(--leise);font-size:.95rem;margin-top:6px}
+/* ⛔ KEIN direction:rtl — der Text ist gemischt ("ـكِ = dein (weiblich)")
+   und ueberwiegend deutsch; rtl wuerfe das Gleichheitszeichen ans falsche
+   Ende. Der Bidi-Algorithmus setzt das arabische Stueck von selbst richtig.
+   line-height 1.9, weil die Kasrah UNTER der Grundlinie steht — und genau
+   sie unterscheidet hier "dein (m.)" von "dein (w.)". */
+.satz-bedeutung{margin-top:8px;padding:.4rem .65rem;border-radius:8px;
+  background:#1a1206;border:1px solid #4a3410;color:var(--gelb);
+  font-family:var(--ar),serif;font-size:1rem;line-height:1.9;
+  direction:ltr;text-align:left}
 
 .quelle{font-family:var(--mono);font-size:.72rem;color:var(--still);
         margin-top:var(--sp2);word-break:break-word}
@@ -505,7 +520,7 @@ der App zu sehen, weil ihr ein Beispielsatz fehlt.</p>
     regeln.forEach(function(el){
       var e = stand[el.dataset.id];
       if (!e || !e.u) return;
-      var t = el.dataset.id + (e.n ? '  — ' + e.n : '');
+      var t = el.dataset.id + (e.n && e.n.trim() ? '  — ' + e.n.trim() : '');
       nachU[e.u].push(t);
     });
     if (nachU.passt.length){
@@ -525,7 +540,7 @@ der App zu sehen, weil ihr ein Beispielsatz fehlt.</p>
     regeln.forEach(function(el){
       var e2 = satz[el.dataset.id];
       if (!e2 || !e2.u) return;
-      nachS[e2.u].push(el.dataset.id + (e2.n ? '  — ' + e2.n : ''));
+      nachS[e2.u].push(el.dataset.id + (e2.n && e2.n.trim() ? '  — ' + e2.n.trim() : ''));
     });
     if (nachS.drin.length || nachS.aendern.length || nachS.raus.length){
       zeilen.push('— — — SATZMODUS — — —', '');
@@ -588,7 +603,7 @@ der App zu sehen, weil ihr ein Beispielsatz fehlt.</p>
       satz[id] = satz[id] || {};
       /* Nochmal auf dasselbe tippen nimmt es zurueck — wie bei der Karteikarte. */
       satz[id].u = (satz[id].u === b.dataset.s) ? null : b.dataset.s;
-      if (!satz[id].u && !satz[id].n) delete satz[id];
+      if (!satz[id].u && !(satz[id].n || '').trim()) delete satz[id];
       sichern(); zeichnen(); filtern();
       return;
     }
@@ -597,7 +612,7 @@ der App zu sehen, weil ihr ein Beispielsatz fehlt.</p>
     /* Nochmal auf dasselbe tippen nimmt das Urteil zurück — sonst kommt man aus
        einem Fehlgriff nicht mehr heraus. */
     stand[id].u = (stand[id].u === b.dataset.u) ? null : b.dataset.u;
-    if (!stand[id].u && !stand[id].n) delete stand[id];
+    if (!stand[id].u && !(stand[id].n || '').trim()) delete stand[id];
     sichern(); zeichnen(); filtern();
   });
 
@@ -607,16 +622,24 @@ der App zu sehen, weil ihr ein Beispielsatz fehlt.</p>
     if (ev.target.classList.contains('snotiz')){
       var sEl = ev.target.closest('.regel'), sId = sEl.dataset.id;
       satz[sId] = satz[sId] || {};
-      satz[sId].n = ev.target.value.trim();
-      if (!satz[sId].n && !satz[sId].u) delete satz[sId];
+      /* ⛔ ROH speichern, NICHT trimmen. zeichnen() schreibt den gespeicherten
+         Wert ins Feld zurueck — ein hier weggeschnittenes Leerzeichen wird
+         dadurch im selben Wimpernschlag aus dem Feld geloescht, und die
+         Leertaste sieht aus, als tue sie nichts. Getrimmt wird bei der
+         AUSGABE, siehe text(). */
+      satz[sId].n = ev.target.value;
+      if (!satz[sId].n.trim() && !satz[sId].u) delete satz[sId];
       sichern(); zeichnen();
       return;
     }
     if (!ev.target.classList.contains('notiz')) return;
     var el = ev.target.closest('.regel'), id = el.dataset.id;
     stand[id] = stand[id] || {};
-    stand[id].n = ev.target.value.trim();
-    if (!stand[id].n && !stand[id].u) delete stand[id];
+    /* Gleiche Behandlung wie oben — hier faellt der trim() nur nicht auf,
+       weil dieser Zweig kein zeichnen() ruft. Ein Unterschied, der keiner
+       sein soll. */
+    stand[id].n = ev.target.value;
+    if (!stand[id].n.trim() && !stand[id].u) delete stand[id];
     sichern();
     feld.value = Object.keys(stand).length ? text() : '';
   });

@@ -2275,6 +2275,25 @@ main{
 }
 .gram-popover.show{opacity:1;pointer-events:auto;transform:none;}
 .gram-popover .gp-title{font-weight:700;color:#fff;margin-bottom:var(--sp-1);}
+/* ⭐ Was die markierte Stelle bedeutet (26.08.2026). Gelb wie die
+   Unterstreichung im Satz, damit der Blick von dort hierher findet.
+
+   ⛔ KEIN direction:rtl. Der Text ist gemischt ("ـكِ = dein (weiblich)") und
+   ueberwiegend deutsch; rtl wuerde das Gleichheitszeichen und die Klammern
+   ans falsche Ende werfen. Der Bidi-Algorithmus setzt das arabische Stueck
+   von selbst richtig, solange die Grundrichtung ltr bleibt.
+   [[rtl_richtung_physisch]]
+
+   line-height 1.9, weil Kasrah und Tanwīn Kasrah UNTER der Grundlinie stehen
+   und bei engem Zeilenabstand abgeschnitten werden — und ausgerechnet die
+   Kasrah ist hier der Unterschied zwischen "dein (m.)" und "dein (w.)".
+   [[line_height_schneidet_harakat_ab]] */
+.gram-popover .gp-bedeutung{
+  font-family:'Noto Naskh Arabic','Amiri',serif;
+  font-size:1.02rem;line-height:1.9;color:#ffc44d;
+  background:#1a1206;border:1px solid #4a3410;border-radius:8px;
+  padding:.4rem .65rem;margin:0 0 var(--sp-2);
+  direction:ltr;text-align:left}
 .gram-popover .gp-source{margin-top:var(--sp-2);font-size:var(--fs-xs);color:var(--text-faint);}
 
 /* Elias am 30.07.2026: „die satzhinweise insgesamt kürzer von ihrer länge sein

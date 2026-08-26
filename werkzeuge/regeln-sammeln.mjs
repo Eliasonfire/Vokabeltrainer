@@ -63,7 +63,10 @@ for (const [wid, tags] of Object.entries(SENTENCE_TAGS)){
            || (BSP[wid] && BSP[wid].sentAr ? BSP[wid] : null)
            || FACH.find(x => String(x.id) === wid);
     if (!w) continue;
-    satzFuer[t.ruleId] = { ar: w.sentAr || w.ar, de: w.sentDe || w.de, treffer: t.matchText };
+    /* `bedeutung` wandert mit — sie haengt an der MARKIERUNG, nicht an der
+       Regel: dieselbe Regel markiert einmal ـكَ und einmal ـكِ. */
+    satzFuer[t.ruleId] = { ar: w.sentAr || w.ar, de: w.sentDe || w.de,
+                           treffer: t.matchText, bedeutung: t.bedeutung };
   }
 }
 

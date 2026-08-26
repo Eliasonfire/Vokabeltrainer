@@ -91,10 +91,51 @@ function saetzeZumThema(themaId){
    zukunft wenn mehr und mehr sachen dazu kommen ist das die beste lösung."
    Der alte Streifen wuchs waagerecht mit jedem Thema; ein Blatt waechst nach
    unten, und senkrecht zu rollen ist die Geste, die man ohnehin macht. */
+/* ⭐ Die Themen stehen nach AKTUALITAET, das Neueste oben (26.08.2026).
+
+   Elias: "die aktuellen sollen oben sein, und wenn sie älter werden von den
+   neueren abgelöst werden und natürlich weiter runter rutschen sobald neuere
+   aktuellere kommen." Deshalb wird die Reihenfolge bei jedem Zeichnen NEU
+   GERECHNET und steht nicht als Reihenfolge in grammar-data.js — sonst muesste
+   sie jemand von Hand nachziehen, und genau das passiert nie.
+   [[eingefrorenes_feld_ist_kein_zustand]]
+
+   Als Mass dient der MEDIAN der Folgennummern, nicht der Hoechstwert und nicht
+   der Durchschnitt: eine einzelne spaete Regel wuerde eine sonst alte Kategorie
+   sonst ganz nach oben ziehen ("Kasus" reicht von F04 bis F15), und ein
+   Durchschnitt liesse sich von einer einzelnen fruehen Regel nach unten
+   ziehen. Der Median ist gegen beide Ausreisser unempfindlich.
+
+   ⛔ Sortiert wird NUR die Anzeige, nicht SATZ_THEMEN selbst. js/uebung.js
+   sucht mit SATZ_THEMEN.find(...) das Thema einer Regel; bei den drei Regeln,
+   die auf zwei Muster passen, entscheidet dort die Reihenfolge im Array,
+   welches gewinnt. Die Liste umzusortieren wuerde das still mitaendern.
+   [[zweiter_aufruf_ueberschreibt_still]] */
+function themaAktualitaet(themaId){
+  const t = (typeof SATZ_THEMEN !== 'undefined') && SATZ_THEMEN.find(x=>x.id===themaId);
+  if (!t || !t.muster || typeof GRAMMAR_RULES === 'undefined') return -1;
+  const folgen = GRAMMAR_RULES
+    .filter(r=>!r.ausgeblendet && t.muster.test(r.id))
+    .map(r=>(r.source && r.source.folge) || (r.source2 && r.source2.folge) || null)
+    .filter(f=>f!=null).sort((a,b)=>a-b);
+  return folgen.length ? folgen[Math.floor(folgen.length/2)] : -1;
+}
+
+/* "Alle" bleibt oben — es ist kein Thema, sondern das Ausschalten des Filters. */
+function themenNachAktualitaet(){
+  if (typeof SATZ_THEMEN === 'undefined') return [];
+  const alle = SATZ_THEMEN.filter(t=>!t.muster);
+  const echte = SATZ_THEMEN.filter(t=>t.muster)
+    .map(t=>({ t, f: themaAktualitaet(t.id) }))
+    .sort((a,b)=> b.f - a.f || String(a.t.name).localeCompare(String(b.t.name), 'de'))
+    .map(x=>x.t);
+  return [...alle, ...echte];
+}
+
 function renderThemenLeiste(){
   const blatt = document.getElementById('themenBlatt');
   if (!blatt || typeof SATZ_THEMEN === 'undefined') return;
-  blatt.innerHTML = SATZ_THEMEN.map(t=>{
+  blatt.innerHTML = themenNachAktualitaet().map(t=>{
     const n = saetzeZumThema(t.id).length;
     /* Die Zahl steht dran, weil sie die Erwartung setzt: "Iḍāfa 16" sagt
        vorher, dass es ein kleines Thema ist, statt es hinterher zu zeigen. */
@@ -358,8 +399,10 @@ function buildSentenceHtml(w, opts){
     let erste = true;
     for (let von = text.indexOf(t.matchText); von !== -1;
              von = text.indexOf(t.matchText, von + 1)){
+      /* ⭐ `bedeutung` wandert mit: die Glosse haengt an DIESER Markierung,
+         nicht an der Regel — dieselbe Regel markiert ـكَ und ـكِ. */
       if (erste || anWortgrenze(text, von, t.matchText))
-        treffer.push({ von, bis: von + t.matchText.length, rule });
+        treffer.push({ von, bis: von + t.matchText.length, rule, bedeutung: t.bedeutung });
       erste = false;
     }
   });
@@ -433,7 +476,9 @@ function buildSentenceHtml(w, opts){
                   blaue Linien 4px uebereinander nicht zuzuordnen. */
                + ';border-bottom-width:1px'
              : '') + '"'
-        + ' data-rule="' + t.rule.id + '">' + stueck + '</span>';
+        + ' data-rule="' + t.rule.id + '"'
+        + (t.bedeutung ? ' data-bedeutung="' + escapeHtml(t.bedeutung) + '"' : '')
+        + '>' + stueck + '</span>';
     }
     html += stueck;
   }
@@ -844,6 +889,20 @@ function zeigeGrammatikPopover(span){
   const kern = kernSatz(voll);
   const rest = voll.slice(kern.length).trim();
   pop.innerHTML = `<div class="gp-title">${escapeHtml(rule.name)}</div>`
+    /* ⭐ WAS DIE MARKIERTE STELLE BEDEUTET — steht VOR der Regel, nicht danach.
+       Elias am 26.08.2026 an مَا اسْمُكِ؟ ("Wie heißt du?"): "wäre es auch
+       glaube ich gut, wenn dann die grammatikregeln kommt das da auch steht,
+       dass كِ 'dein (W)' ist. also wenn es um solche speziellen dinge geht die
+       man auch kaum mit hilfe der übersetzung durchschauen kann".
+
+       Der Fall ist schaerfer als er klingt: das deutsche "dein" hat gar kein
+       Geschlecht. Die Information fehlt in der Uebersetzung nicht versteckt,
+       sondern vollstaendig — kein noch so aufmerksames Lesen bringt sie hervor.
+
+       ⛔ Die Glosse haengt an der MARKIERUNG, nicht an der Regel: dieselbe
+       Regel possessiv-endungen-01 markiert einmal ـكَ und einmal ـكِ. */
+    + (span.dataset.bedeutung
+        ? `<div class="gp-bedeutung">${escapeHtml(span.dataset.bedeutung)}</div>` : '')
     + `<div class="gp-kern">${escapeHtml(kern)}</div>`
     + (rest
         ? `<button class="gp-mehr" type="button">ausführlich</button>`

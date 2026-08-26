@@ -1892,7 +1892,7 @@ const SENTENCE_TAGS = {
   ],
   "mb1-24-1": [
     { ruleId: "min-ayna-01", matchText: "مِنْ أَيْنَ" },
-    { ruleId: "huwa-hiya-weitere-01", matchText: "أَنْتَ" }
+    { ruleId: "huwa-hiya-weitere-01", matchText: "أَنْتَ", bedeutung: 'أَنْتَ = du (männlich)' }
   ],
   "mb1-25-1": [
     { ruleId: "min-man-unterscheiden-01", matchText: "مَنْ مِنَ" },
@@ -1980,7 +1980,7 @@ const SENTENCE_TAGS = {
   "mb1-63-1": [
     { ruleId: "possessiv-ya-01", matchText: "اسْمِي" },
     { ruleId: "istifham-ma-01", matchText: "مَا" },
-    { ruleId: "possessiv-endungen-01", matchText: "اسْمُكِ" }
+    { ruleId: "possessiv-endungen-01", matchText: "اسْمُكِ", bedeutung: 'ـكِ = dein (weiblich)' }
   ],
   "mb1-63-2": [
     { ruleId: "possessiv-ya-01", matchText: "عَمِّي" },
@@ -2027,7 +2027,7 @@ const SENTENCE_TAGS = {
     { ruleId: "zuruf-makan-weitere-01", matchText: "فَوْقَ" }
   ],
   "mb1-65-1": [
-    { ruleId: "asma-khamsa-01", matchText: "أَبُوكَ" },
+    { ruleId: "asma-khamsa-01", matchText: "أَبُوكَ", bedeutung: 'ـكَ = dein (männlich)' },
     { ruleId: "ya-nida-01", matchText: "يَا" }
   ],
   "sk3-7-1": [
@@ -2079,7 +2079,7 @@ const SENTENCE_TAGS = {
     { ruleId: "fragepartikel-alif-01", matchText: "أَ" }
   ],
   "mb1-58-1": [
-    { ruleId: "possessiv-endungen-01", matchText: "قَلَمُكَ" }
+    { ruleId: "possessiv-endungen-01", matchText: "قَلَمُكَ", bedeutung: 'ـكَ = dein (männlich)' }
   ],
   "45899": [
     { ruleId: "possessiv-ist-idafa-01", matchText: "زَمِيلِي" },
@@ -2104,11 +2104,11 @@ const SENTENCE_TAGS = {
     { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" }
   ],
   "gram-suffix-ka": [
-    { ruleId: "possessiv-endungen-01", matchText: "قَلَمُكَ" },
+    { ruleId: "possessiv-endungen-01", matchText: "قَلَمُكَ", bedeutung: 'ـكَ = dein (männlich)' },
     { ruleId: "istifham-ayna-01", matchText: "أَيْنَ" }
   ],
   "gram-suffix-ki": [
-    { ruleId: "possessiv-endungen-01", matchText: "اسْمُكِ" },
+    { ruleId: "possessiv-endungen-01", matchText: "اسْمُكِ", bedeutung: 'ـكِ = dein (weiblich)' },
     { ruleId: "istifham-ma-01", matchText: "مَا" }
   ],
   "gram-suffix-hu": [
@@ -2256,7 +2256,7 @@ const SENTENCE_TAGS = {
   ],
   "50156": [
     { ruleId: "nat-vier-bedingungen-01", matchText: "طَالِبٌ جَدِيدٌ" },
-    { ruleId: "mubtada-khabar-01", matchText: "أَنْتَ طَالِبٌ" }
+    { ruleId: "mubtada-khabar-01", matchText: "أَنْتَ طَالِبٌ", bedeutung: 'أَنْتَ = du (männlich)' }
   ],
   "50157": [
     { ruleId: "mubtada-khabar-01", matchText: "هُوَ طَبِيبٌ" }
@@ -2525,10 +2525,10 @@ const SENTENCE_TAGS = {
     { ruleId: "harf-jarr-fi-ala-01", matchText: "وَفِيهِ" }
   ],
   "p_1787189022107": [
-    { ruleId: "possessiv-ist-idafa-01", matchText: "حَالُكَ" }
+    { ruleId: "possessiv-ist-idafa-01", matchText: "حَالُكَ", bedeutung: 'ـكَ = dein (männlich)' }
   ],
   "p_1787189076593": [
-    { ruleId: "possessiv-ist-idafa-01", matchText: "حَالُكَ" }
+    { ruleId: "possessiv-ist-idafa-01", matchText: "حَالُكَ", bedeutung: 'ـكَ = dein (männlich)' }
   ],
   "p_1787188396011": [
     { ruleId: "zarf-als-mudaf-01", matchText: "بَعْدَ الْمَسْجِدِ" }
