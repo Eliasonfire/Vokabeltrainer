@@ -96,19 +96,11 @@ for (const k of kapNummern){
   ${rest ? `<details><summary>ausführlich</summary><p class="rest">${esc(rest)}</p></details>` : ''}
   ${satzHtml(r.satz)}
   <div class="quelle">${esc(r.quelle)}${r.buch ? ' · ' + esc(r.buch) : ''}</div>
-  <div class="urteil" role="group" aria-label="Karteikarte: ${esc(r.name)}">
-    <span class="ulabel">Karteikarte</span>
-    <button type="button" data-u="passt">passt</button>
-    <button type="button" data-u="aendern">ändern</button>
-    <button type="button" data-u="streichen">streichen</button>
-    <input type="text" class="notiz" placeholder="Notiz (nur bei ändern/streichen nötig)">
-  </div>
   <div class="urteil satzmodus" role="group" aria-label="Satzmodus: ${esc(r.name)}">
-    <span class="ulabel">Satzmodus</span>
     <button type="button" data-s="drin">drin</button>
     <button type="button" data-s="aendern">ändern</button>
     <button type="button" data-s="raus">raus</button>
-    <input type="text" class="snotiz" placeholder="Notiz zum Satzmodus">
+    <input type="text" class="snotiz" placeholder="Notiz">
   </div>
 </article>\n`;
   }
@@ -313,14 +305,18 @@ Fundstelle, und sie ist <b>umkehrbar</b> — ein einziges Kennzeichen, das man
 wieder wegnimmt. Ob sie im <b>Satzmodus</b> bleibt, entscheidest du in der
 zweiten Reihe darunter, unabhängig davon.</p>
 <p><b>Die zweite Reihe — Satzmodus:</b> „drin" heißt, die Regel ist im Satzmodus
-als Thema wählbar und erzeugt Übungsaufgaben. „raus" nimmt sie dort heraus,
-ohne die Karteikarte anzutasten. Beides ist unabhängig: eine Regel kann als
-Karteikarte gestrichen und im Satzmodus drin sein, und umgekehrt.</p>
-<p class="klar-technik">Technisch: Karteikarte → <code>nichtAufKarteikarten: true</code>,
-Satzmodus → die Regel fällt aus dem gewählten Thema. Bewusst <b>nicht</b>
-<code>ausgeblendet</code> — das nähme sie aus beidem auf einmal.<br>
-Speicher: <code>regelpruefung-v1</code> und <code>satzmodus-auswahl-v1</code>,
-beide unverändert — die alten Seiten funktionieren weiter.</p>
+als Thema wählbar und erzeugt Übungsaufgaben. „raus" nimmt sie dort heraus.</p>
+<p class="klar-technik">⛔ <b>„raus" heißt NICHT löschen.</b> Deine Auflage vom
+26.08.2026: <i>„diese und all die anderen regeln sollen nicht gelöscht werden,
+nur aus der app raus genommen werden weil ich sie bereits kenne oder unnötig
+sind"</i>. Technisch <code>ausgeblendet: true</code> — die Regel bleibt mit
+ihrem Unterrichtsbeleg in <code>grammar-data.js</code> stehen und kann jederzeit
+zurück.<br>
+Die frühere zweite Frage nach der <b>Karteikarte</b> ist entfallen: seit dem
+26.08. zeigen die Karteikarten gar keine Grammatik mehr, die Sätze dort
+illustrieren nur noch die Vokabel. Deine 66 Urteile von damals sind
+gespeichert und werden nicht angetastet.<br>
+Speicher: <code>satzmodus-v2</code>, unverändert.</p>
 </div>
 
 <div class="warnkasten">
@@ -333,7 +329,7 @@ nicht mit und ändert nichts an deiner App.
 <div class="fortschritt">
   <div class="balken"><i id="balken"></i></div>
   <div class="fzeile">
-    <span><b id="zahl">0</b> von <b>${regeln.length}</b> beurteilt</span>
+    <span><b id="zahl">0</b> von <b>${regeln.length}</b> Regeln entschieden</span>
     <button type="button" id="kopieren" disabled>Ergebnis kopieren</button>
   </div>
   <div class="fzeile" id="satzzeile" style="color:var(--leise);font-size:.85rem"></div>
@@ -453,21 +449,18 @@ der App zu sehen, weil ihr ein Beispielsatz fehlt.</p>
       var id = el.dataset.id, k = el.dataset.kap;
       proKap[k] = proKap[k] || { fertig: 0, gesamt: 0 };
       proKap[k].gesamt++;
-      var e = stand[id];
-      if (e && e.u){ n++; proKap[k].fertig++; el.setAttribute('data-urteil', e.u); }
-      else el.removeAttribute('data-urteil');
-      el.querySelectorAll('.urteil button').forEach(function(b){
-        b.setAttribute('aria-pressed', String(!!e && e.u === b.dataset.u));
-      });
-      var notiz = el.querySelector('.notiz');
-      if (e && e.n !== undefined && notiz.value !== e.n) notiz.value = e.n;
-      /* Die zweite Frage. Sie zaehlt bewusst NICHT in den Fortschrittsbalken:
-         der misst seit dem 18.08. die Karteikarten-Durchsicht, und eine
-         Zahl, die ploetzlich etwas anderes bedeutet, ist schlimmer als
-         keine. Der Satzmodus bekommt seine eigene Zeile darunter. */
+      /* ⛔ Seit dem 26.08.2026 zaehlt der Balken den SATZMODUS. Vorher zaehlte
+         er die Karteikarten-Durchsicht — die Frage gibt es nicht mehr.
+         Eine Zahl, die ihre Bedeutung wechselt, ohne dass die Beschriftung
+         mitwandert, ist schlimmer als keine Zahl.
+         [[widerspruch_liegt_in_der_beschriftung]] */
       var se = satz[id];
       var sWert = (se && se.u) || '';
+      if (sWert){ n++; proKap[k].fertig++; }
       if (sWert) el.setAttribute('data-satz', sWert); else el.removeAttribute('data-satz');
+      /* ⛔ ".urteil button" traf frueher BEIDE Reihen. Jetzt gibt es nur noch
+         die eine — der Selektor bleibt trotzdem eng, damit er nicht still
+         etwas anderes trifft, wenn wieder eine Reihe dazukommt. */
       el.querySelectorAll('.urteil.satzmodus button').forEach(function(b){
         b.setAttribute('aria-pressed', String(sWert === b.dataset.s));
       });
@@ -477,10 +470,7 @@ der App zu sehen, weil ihr ein Beispielsatz fehlt.</p>
     zahl.textContent = n;
     balken.style.width = (regeln.length ? (n / regeln.length * 100) : 0) + '%';
 
-    /* Eigene Zeile fuer die zweite Frage. Sie steht NICHT im Balken:
-       der misst die Karteikarten-Durchsicht, und eine Zahl, die ihre
-       Bedeutung wechselt, ist schlimmer als keine.
-       [[widerspruch_liegt_in_der_beschriftung]] */
+    /* Die Aufschluesselung darunter — dieselben Zahlen, nur benannt. */
     var sZeile = document.getElementById('satzzeile');
     if (sZeile){
       var raus = 0, drin = 0, aend = 0;
@@ -490,14 +480,10 @@ der App zu sehen, weil ihr ein Beispielsatz fehlt.</p>
         else if (satz[i].u === 'aendern') aend++;
       });
       var off = regeln.length - raus - drin - aend;
-      sZeile.innerHTML = 'Satzmodus: <b>' + drin + '</b> drin · <b>' + aend + '</b> ändern · <b>'
+      sZeile.innerHTML = '<b>' + drin + '</b> drin · <b>' + aend + '</b> ändern · <b>'
         + raus + '</b> raus · <b>' + off + '</b> offen'
         + (ausAltEcht ? ' <span style="color:var(--still)">(' + ausAltEcht
-            + ' aus der alten Auswahlseite übernommen)</span>'
-          : satzGefunden ? ''
-          : ' <span style="color:var(--still)">— aus der alten Auswahlseite kam nichts an.'
-            + ' Entweder stand dort nichts, oder die beiden Seiten teilen ihren'
-            + ' Speicher nicht. Beides sieht hier gleich aus.</span>');
+            + ' aus der alten Auswahlseite übernommen)</span>' : '');
     }
     Object.keys(proKap).forEach(function(k){
       var z = document.querySelector('[data-kap-zahl="' + k + '"]');
@@ -514,43 +500,29 @@ der App zu sehen, weil ihr ein Beispielsatz fehlt.</p>
 
   /* Der Text ist der eigentliche Zweck der Seite: kurz genug zum Schicken,
      vollständig genug, dass ich ohne Rückfrage weiterarbeiten kann. */
+  /* ⛔ NUR NOCH SATZMODUS (26.08.2026). Elias: "wichtig sind eigentlich ab
+     jetzt nur noch der satzmodus, du kannst das artefakt in nur satzmodus
+     umändern". Die Karteikarten-Frage ist gegenstandslos geworden, seit die
+     Grammatik ganz von den Karten genommen wurde.
+
+     ⭐ "stand" (regelpruefung-v1) wird weiter GELESEN und nie geloescht — dort
+     liegen seine 66 Urteile vom 26.08. Sie sind nicht wertlos geworden, nur
+     weil die Frage nicht mehr gestellt wird. [[erledigt_heisst_nicht_wertlos]] */
   function text(){
-    var zeilen = ['Regelprüfung — ' + Object.keys(stand).length + ' beurteilt', ''];
-    var nachU = { passt: [], aendern: [], streichen: [] };
-    regeln.forEach(function(el){
-      var e = stand[el.dataset.id];
-      if (!e || !e.u) return;
-      var t = el.dataset.id + (e.n && e.n.trim() ? '  — ' + e.n.trim() : '');
-      nachU[e.u].push(t);
-    });
-    if (nachU.passt.length){
-      zeilen.push('PASST (' + nachU.passt.length + '):');
-      nachU.passt.forEach(function(t){ zeilen.push('  ' + t); });
-      zeilen.push('');
-    }
-    ['aendern', 'streichen'].forEach(function(u){
-      if (!nachU[u].length) return;
-      zeilen.push(u.toUpperCase() + ' (' + nachU[u].length + '):');
-      nachU[u].forEach(function(t){ zeilen.push('  ' + t); });
-      zeilen.push('');
-    });
-    /* ⭐ Beide Entscheidungen in EINEM Text — er schickt ihn einmal, und ich
-       habe alles. Vorher waren es zwei Seiten mit zwei Kopierkaesten. */
     var nachS = { drin: [], aendern: [], raus: [] };
     regeln.forEach(function(el){
       var e2 = satz[el.dataset.id];
       if (!e2 || !e2.u) return;
       nachS[e2.u].push(el.dataset.id + (e2.n && e2.n.trim() ? '  — ' + e2.n.trim() : ''));
     });
-    if (nachS.drin.length || nachS.aendern.length || nachS.raus.length){
-      zeilen.push('— — — SATZMODUS — — —', '');
-      ['drin', 'aendern', 'raus'].forEach(function(u){
-        if (!nachS[u].length) return;
-        zeilen.push(u.toUpperCase() + ' (' + nachS[u].length + '):');
-        nachS[u].forEach(function(x){ zeilen.push('  ' + x); });
-        zeilen.push('');
-      });
-    }
+    var n = nachS.drin.length + nachS.aendern.length + nachS.raus.length;
+    var zeilen = ['Satzmodus — ' + n + ' von ' + regeln.length + ' beurteilt', ''];
+    ['drin', 'aendern', 'raus'].forEach(function(u){
+      if (!nachS[u].length) return;
+      zeilen.push(u.toUpperCase() + ' (' + nachS[u].length + '):');
+      nachS[u].forEach(function(x){ zeilen.push('  ' + x); });
+      zeilen.push('');
+    });
     return zeilen.join('\\n');
   }
 

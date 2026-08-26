@@ -50,6 +50,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "hadha-stummes-alif-01",
+    ausgeblendet: true,   /* Elias 26.08.2026: aus dem Satzmodus. NICHT loeschen. */
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
@@ -68,6 +69,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "hadha-dies-nicht-das-01",
+    ausgeblendet: true,   /* Elias 26.08.2026: aus dem Satzmodus. NICHT loeschen. */
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
@@ -104,10 +106,10 @@ const GRAMMAR_RULES = [
        Was `ausgeblendet` bewirkt: die 8 Markierungen dieser Regel werden in
        Saetzen nicht mehr unterstrichen (js/saetze.js, buildSentenceHtml).
        Rueckgaengig zu machen, indem diese eine Zeile entfernt wird. */
-    ausgeblendet: true
   },
   {
     id: "nominalsatz-ohne-kopula-01",
+    ausgeblendet: true,   /* Elias 26.08.2026: aus dem Satzmodus. NICHT loeschen. */
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
@@ -126,6 +128,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "istifham-ma-01",
+    ausgeblendet: true,   /* Elias 26.08.2026: aus dem Satzmodus. NICHT loeschen. */
     name: "مَا (Fragewort für Dinge)",
     shortExplanation: "Mit مَا (mā, „was\") fragt man nach Gegenständen und Objekten: مَا هَذَا؟ (mā hādhā) – „Was ist dies?\". Die Antwort ist z.B. هَذَا بَيْتٌ (hādhā baytun) – „Dies ist ein Haus\". مَا benutzt man nicht für Menschen, sondern nur für Dinge.",
     color: "nasab",
@@ -142,6 +145,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "fragepartikel-hal-01",
+    ausgeblendet: true,   /* Elias 26.08.2026: aus dem Satzmodus. NICHT loeschen. */
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
@@ -378,6 +382,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "mudarris-lesung-herkunft-01",
+    ausgeblendet: true,   /* Elias 26.08.2026: aus dem Satzmodus. NICHT loeschen. */
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
@@ -669,6 +674,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "ismul-isara-hadhihi-01",
+    ausgeblendet: true,   /* Elias 26.08.2026: aus dem Satzmodus. NICHT loeschen. */
     name: "هَذِهِ (weibliches Hinweiswort, nah)",
     shortExplanation: "هَذِهِ hādhihi ist die weibliche Form von هَذَا hādhā und zeigt wie dieses auf Nahes (der Lehrer liest die Kapitelüberschrift: »diese sind für die Nähe, diese sind für die Ferne«). Genauso gibt es zu ذَلِكَ dhālika »jenes« die weibliche Form تِلْكَ tilka – die kommt aber erst in Kapitel 7. Der Lehrer sagt ausdrücklich: für هَذِهِ und تِلْكَ gelten genau die gleichen Regeln wie bei هَذَا und ذَلِكَ, nur eben für Begriffe, die weiblich sind. Beispiel aus der Stunde: هَذِهِ بِنْتُ يَاسِرٍ hādhihi bintu Yāsirin – »dies ist die Tochter von Yāsir«.",
     color: "mubtada",
@@ -677,6 +683,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "hadha-al-kein-satz-01",
+    ausgeblendet: true,   /* Elias 26.08.2026: aus dem Satzmodus. NICHT loeschen. */
     name: "هَذَا + اَلْ (»dieses Haus« ist kein Satz)",
     shortExplanation: "Steht nach هَذَا / هَذِهِ ein Nomen mit اَلْ, ist das noch kein vollständiger Satz, sondern nur die Wortgruppe »dieses Haus« – da fehlt noch etwas. Es muss ein Prädikat folgen: هَذَا الْبَيْتُ جَدِيدٌ hādhā l-baytu jadīdun – »dieses Haus ist neu«. Deshalb übersetzt man هَذَا immer mit »dies«, damit man diese Konstellation überhaupt erkennt (genauso: »dieser Stift…«, »diese Moschee…« – da muss noch was kommen).",
     color: "mubtada",
@@ -716,6 +723,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "taschkil-kontext-01",
+    ausgeblendet: true,   /* Elias 26.08.2026: aus dem Satzmodus. NICHT loeschen. */
     name: "تشكيل und Kontext (gleiches Schriftbild)",
     shortExplanation: "Zwei Wörter können identisch geschrieben sein und trotzdem Verschiedenes bedeuten: رَجُلٌ rajulun »Mann« und رِجْلٌ rijlun »Bein« – ohne Taschkīl sieht man keinen Unterschied. Genauso مَدْرَسَة madrasa »Schule« und مُدَرِّسَة mudarrisa »Lehrerin«. Deshalb muss man oft auf den Kontext schauen.",
     color: "other",
