@@ -274,8 +274,10 @@ for (const z of zeitRot) {
    Alles oben haengt an einem Commit. Von 211 datierten Bloecken nennen
    **84 keinen** — fuer die ist jede Uhrzeit ungeprueft.
 
-   Diese Pruefung braucht keinen: die Notiz waechst durch Anhaengen, also
-   muss die Uhrzeit innerhalb eines Tages aufsteigen.
+   Diese Pruefung braucht keinen: innerhalb eines Tages muss die Uhrzeit der
+   Wuchsrichtung der Notiz folgen. ⛔ Und die Richtung wird GEMESSEN, seit sie
+   sich am 25./26.08.2026 in derselben Datei geaendert hat — siehe den Block
+   dazu weiter unten.
 
    ⛔ WAS SIE NICHT KANN, im Stoertest gemessen: eine geschaetzte Zeit, die
    zufaellig SPAETER liegt als der Block davor, faellt nicht auf. Genau so
@@ -298,6 +300,45 @@ for (const z of zeitRot) {
      b) Ein Rueckwaertssprung von mehr als zwoelf Stunden ist ein
         Tageswechsel (Nachtschicht) und kein Fehler.
    [[kandidatenliste_ist_keine_fehlerliste]] [[uhrzeit_messen_nicht_schaetzen]] */
+/* ⛔⛔ DIE RICHTUNG WIRD GEMESSEN, NICHT ANGENOMMEN (26.08.2026).
+
+   Bis heute stand hier die Annahme »die Notiz waechst durch Anhaengen, also
+   muss die Uhrzeit innerhalb eines Tages aufsteigen«. Am 20.08. stimmte das
+   und ergab null Fehlalarme. Seitdem sind mehrere Bloecke OBEN eingefuegt
+   worden statt unten angehaengt — und der Pruefer meldete daraufhin drei
+   Bloecke als »rueckwaerts«, die in einer neueste-oben-Notiz voellig richtig
+   stehen. Eine Annahme, die einmal gestimmt hat, ist keine Messung.
+   [[eingefrorenes_feld_ist_kein_zustand]]
+
+   Deshalb wird die Richtung jetzt aus der Datei selbst bestimmt: an allen
+   Nachbarpaaren, deren DATUM sich unterscheidet (dort ist die Richtung
+   eindeutig, ohne Uhrzeit). Die Mehrheit gibt die Richtung vor; die
+   Minderheit ist der eigentliche Befund, denn sie zeigt, wo jemand gegen
+   die Wuchsrichtung geschrieben hat. */
+const richtungPaare = [];
+for (let i = 1; i < bloecke.length; i++){
+  const a = (bloecke[i - 1].kopf.match(/(\d{2})\.(\d{2})\.(\d{4})/) || []);
+  const b = (bloecke[i].kopf.match(/(\d{2})\.(\d{2})\.(\d{4})/) || []);
+  if (!a[0] || !b[0]) continue;
+  const sa = a[3] + a[2] + a[1], sb = b[3] + b[2] + b[1];
+  if (sa === sb) continue;
+  richtungPaare.push({ i, auf: sb > sa });
+}
+const anzAuf = richtungPaare.filter(p => p.auf).length;
+const anzAb  = richtungPaare.length - anzAuf;
+const AUFSTEIGEND = anzAuf >= anzAb;          // true = aelteste oben, angehaengt
+console.log('');
+console.log('  Wuchsrichtung:       ' + (AUFSTEIGEND ? 'ANGEHAENGT (neueste unten)' : 'VORANGESTELLT (neueste oben)')
+  + '  — ' + Math.max(anzAuf, anzAb) + ' von ' + richtungPaare.length + ' Tageswechseln');
+if (Math.min(anzAuf, anzAb) > 0){
+  console.log('    ⚠️ gegen die Richtung: ' + Math.min(anzAuf, anzAb) + ' Stelle(n)');
+  console.log('       Dort ist jemand von der Wuchsrichtung abgewichen. Das ist kein');
+  console.log('       Datumsfehler, aber es macht die Notiz an dieser Stelle unlesbar:');
+  console.log('       wer von oben liest, springt in der Zeit.');
+  for (const p of richtungPaare.filter(p => p.auf !== AUFSTEIGEND).slice(0, 8))
+    console.log('       Z' + bloecke[p.i].zeile + '  ' + bloecke[p.i].kopf.slice(3, 70));
+}
+
 const zeitBloecke = [];
 for (const b of bloecke){
   const d = b.kopf.match(/(\d{2})\.(\d{2})\.(\d{4})/);
@@ -316,7 +357,9 @@ const rueckwaerts = [];
 for (const [, xs] of jeTag){
   for (let i = 1; i < xs.length; i++){
     if (xs[i].spanne || xs[i - 1].spanne) continue;
-    const d = minuten(xs[i].zeit) - minuten(xs[i - 1].zeit);
+    /* Gegen die GEMESSENE Wuchsrichtung, nicht gegen eine angenommene. */
+    const roh2 = minuten(xs[i].zeit) - minuten(xs[i - 1].zeit);
+    const d = AUFSTEIGEND ? roh2 : -roh2;
     if (d < 0 && d > -12 * 60) rueckwaerts.push({ vor: xs[i - 1], jetzt: xs[i] });
   }
 }
@@ -327,8 +370,9 @@ console.log('    ' + (rueckwaerts.length ? '❌' : '✅') + ' rueckwaerts:      
 for (const r of rueckwaerts){
   console.log('\n❌ Z' + r.jetzt.b.zeile + '  ' + r.jetzt.b.kopf.slice(3, 72));
   console.log('     sagt ' + r.jetzt.zeit + ', der Block davor (Z' + r.vor.b.zeile + ') sagt ' + r.vor.zeit + '.');
-  console.log('     Die Notiz waechst durch Anhaengen — eine spaetere Zeile mit frueherer');
-  console.log('     Uhrzeit ist entweder nachgetragen oder geschaetzt. ⛔ Nicht raten:');
+  console.log('     Die Notiz waechst ' + (AUFSTEIGEND ? 'durch ANHAENGEN' : 'durch VORANSTELLEN')
+    + ' — die Uhrzeit muss innerhalb eines Tages also');
+  console.log('     ' + (AUFSTEIGEND ? 'aufsteigen' : 'absteigen') + '. Eine Abweichung ist nachgetragen oder geschaetzt. ⛔ Nicht raten:');
   console.log('     git log --format=\'%h %cd %s\' --date=format:\'%H:%M\'');
 }
 
