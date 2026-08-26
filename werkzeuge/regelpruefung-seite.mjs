@@ -29,6 +29,10 @@ const esc = s => String(s || '')
 
 /* Erster Satz als Kern, Rest hinter „ausführlich" — genau wie die App es im
    Regel-Pop-up macht. Ohne das sind 84 Regeln eine Textwand. */
+/* **so** wird fett — nach esc(), damit das <b> das einzige Markup bleibt. */
+const STERNCHEN = new RegExp('\\*\\*([^*]+)\\*\\*', 'g');
+const fett = s => String(s).replace(STERNCHEN, '<b>$1</b>');
+
 function kernUndRest(t){
   const s = String(t || '');
   const m = /^(.{40,320}?[.!?])\s/.exec(s);
@@ -92,8 +96,8 @@ for (const k of kapNummern){
     ${r.ergaenzung ? '<span class="marke buch">📖 Buch</span>' : ''}
     ${r.ausgeblendet ? '<span class="marke aus">ausgeblendet</span>' : ''}
   </div>
-  <p class="kern">${esc(kern)}</p>
-  ${rest ? `<details><summary>ausführlich</summary><p class="rest">${esc(rest)}</p></details>` : ''}
+  <p class="kern">${fett(esc(kern))}</p>
+  ${rest ? `<details><summary>ausführlich</summary><p class="rest">${fett(esc(rest))}</p></details>` : ''}
   ${satzHtml(r.satz)}
   <div class="quelle">${esc(r.quelle)}${r.buch ? ' · ' + esc(r.buch) : ''}</div>
   <div class="urteil satzmodus" role="group" aria-label="Satzmodus: ${esc(r.name)}">
@@ -190,12 +194,13 @@ h2{display:flex;align-items:baseline;gap:var(--sp2);flex-wrap:wrap;
 .regel.verborgen,.kapitel.verborgen{display:none}
 .leermeldung{color:var(--still);font-size:.88rem;margin:var(--sp4) 0;display:none}
 .leermeldung.an{display:block}
-.kern{margin:0 0 var(--sp1);color:var(--text);font-size:1rem;line-height:1.6}
+.kern{margin:0 0 var(--sp1);color:var(--text);font-size:1rem;line-height:1.6;white-space:pre-line}
 details{margin:0 0 var(--sp1)}
 summary{cursor:pointer;color:var(--leise);font-size:.85rem;
         font-family:var(--mono);letter-spacing:.04em}
 summary:focus-visible{outline:2px solid var(--rot);outline-offset:2px}
-.rest{margin:var(--sp1) 0 0;color:var(--leise);font-size:.97rem;line-height:1.6}
+/* pre-line: Zeilenumbrueche im Regeltext bleiben stehen (verb-madi-endungen-01). */
+.rest{margin:var(--sp1) 0 0;color:var(--leise);font-size:.97rem;line-height:1.6;white-space:pre-line}
 
 .satz{background:var(--hoch);border:1px solid var(--rand2);border-radius:10px;
       padding:var(--sp2) var(--sp3);margin:var(--sp2) 0}

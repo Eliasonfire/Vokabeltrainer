@@ -860,6 +860,13 @@ function kernSatz(text){
   return t.slice(0, bis);
 }
 
+/* **so** wird fett. Beide Anzeigen escapen den Text und wandelten danach
+   nichts — bei Elias standen die nackten Sternchen. 13 Regeln, 25 Stellen.
+   Erst escapen, dann wandeln: das eingefuegte <b> ist dann das einzige
+   Markup im String. */
+const STERNCHEN = new RegExp('\\*\\*([^*]+)\\*\\*', 'g');
+function fett(s){ return String(s).replace(STERNCHEN, '<b>$1</b>'); }
+
 function zeigeGrammatikPopover(span){
   const pop = document.getElementById('gramPopover');
   const rule = GRAMMAR_RULES.find(r=>r.id===span.dataset.rule);
@@ -903,10 +910,10 @@ function zeigeGrammatikPopover(span){
        Regel possessiv-endungen-01 markiert einmal ـكَ und einmal ـكِ. */
     + (span.dataset.bedeutung
         ? `<div class="gp-bedeutung">${escapeHtml(span.dataset.bedeutung)}</div>` : '')
-    + `<div class="gp-kern">${escapeHtml(kern)}</div>`
+    + `<div class="gp-kern">${fett(escapeHtml(kern))}</div>`
     + (rest
         ? `<button class="gp-mehr" type="button">ausführlich</button>`
-          + `<div class="gp-rest hidden">${escapeHtml(rest)}</div>`
+          + `<div class="gp-rest hidden">${fett(escapeHtml(rest))}</div>`
         : '')
     + `<div class="gp-source">${escapeHtml(quelle.join(' · '))}</div>`
     /* ⛔ 21.08.2026: WEITERE REGELN AN DERSELBEN STELLE.
