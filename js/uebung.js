@@ -373,7 +373,16 @@ const UEBUNGEN = [
                            : 'Welche Regel wird am hervorgehobenen Wort sichtbar?',
           wortIdx:idx, wortIdxBis: bis > idx ? bis : undefined,
           optionen, loesung:rule.id,
-          aufloesung:rule.name,
+          /* ⭐ Traegt die Markierung eine Glosse, steht sie MIT in der
+             Aufloesung (26.08.2026). Elias' Fall: an اسْمُكِ wird nach der
+             Regel gefragt, und die Antwort "Die Besitzendungen" sagt ihm
+             nicht, dass das ـكِ die WEIBLICHE Anrede ist — das deutsche
+             "dein" hat gar kein Geschlecht, die Uebersetzung des Satzes
+             traegt die Information also nirgends. Genau dafuer gibt es das
+             Feld `bedeutung` an der Markierung. Ohne diese Zeile haette es
+             im Satzmodus gewirkt und in der Uebung nicht, und das waere
+             niemandem aufgefallen. [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+          aufloesung: t.bedeutung ? rule.name + ' — ' + t.bedeutung : rule.name,
           /* Fuer den Fortschritt je Regel (19.08.2026). Steht ausdruecklich
              als eigenes Feld da und nicht als `loesung`: `loesung` ist die
              richtige ANTWORT dieser Aufgabe, `regelId` die Regel, die hier
@@ -485,6 +494,20 @@ function uebungAblenker(rule, anzahl, verboten){
   const aus = verboten || new Set();
   const stamm = uebungNamensstamm(rule);
   const brauchbar = r => r.id !== rule.id && !r.ausgeblendet && !aus.has(r.id);
+  /* ⛔ `find` — die ERSTE passende Kategorie gewinnt, und drei Regeln passen
+     auf zwei Muster: verb-enthaelt-pronomen-01 (wortarten + verben),
+     zarf-als-mudaf-01 (idafa + zarf), adjektive-an-ohne-tanwin-01 (nat + al).
+     Fuer sie entscheidet also die REIHENFOLGE in SATZ_THEMEN, welche Regeln
+     als falsche Antworten angeboten werden.
+
+     Am 26.08.2026 geprueft und bewusst SO GELASSEN: hier geht es nur um
+     plausible Ablenker, und beide Kategorien liefern plausible. Ein Fehler
+     waere es erst, wenn davon abhinge, was Elias LERNT.
+
+     ⚠️ Deshalb wird SATZ_THEMEN selbst nicht sortiert. Die Anzeige im
+     Satzmodus steht seit dem 26.08. nach Aktualitaet — das rechnet
+     themenNachAktualitaet() in js/saetze.js auf einer KOPIE. Wer die Liste
+     an der Quelle umsortiert, aendert hier still die Ablenker mit. */
   const thema = (typeof SATZ_THEMEN !== 'undefined')
     ? SATZ_THEMEN.find(t=>t.muster && t.muster.test(rule.id)) : null;
   const imThema = r => thema ? thema.muster.test(r.id) : r.color === rule.color;
