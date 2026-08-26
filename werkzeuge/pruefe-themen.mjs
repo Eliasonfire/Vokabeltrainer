@@ -1,7 +1,8 @@
 /* pruefe-themen.mjs — die Ueberkategorien des Satzmodus im Blick behalten.
  * ==========================================================================
  *
- * Elias am 26.08.2026: "für den satzmodus wäre es auch glaube ich gut, wenn es
+ * Elias am 26.08.2026: "übrigens für den satzmodus wäre es auch glaube ich gut,
+ * wenn es
  * auch einen prüfer oder werkzeug gibt der relativ regelmässig die
  * überkategorien prüft. halt welche überkategorien machen sinn, wann sollte
  * man eine neue hinzufügen, wo kann man das inkludieren oder sogar
