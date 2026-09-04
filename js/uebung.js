@@ -407,7 +407,12 @@ const UEBUNGEN = [
         const v = uebungVokabel(t.wort);
         if (!v || !v.gender) return null;
         const weiblich = v.gender === 'feminine';
-        const hatTa = /ة/.test(String(v.ar).replace(/[ً-ْٰـ]/g,''));
+        /* ⚠️ „Ausnahme ohne ة" gilt nur fuer NOMEN. Seit dem 05.09.2026 tragen
+           auch die acht eindeutigen Personalpronomen ein `gender` (هِيَ, هُنَّ,
+           أَنْتِ, أَنْتُنَّ weiblich) — sie haben nie ein ة, und „eine der
+           Ausnahmen, die man mitlernen muss" waere dort schlicht falsch: ihr
+           Geschlecht steht im Wort selbst, nicht in einer Endung. */
+        const hatTa = /ة/.test(String(v.ar).replace(/[ً-ْٰـ]/g,'')) || v.type !== 'noun';
         return {
           frage:'Ist das hervorgehobene Wort مُذَكَّر oder مُؤَنَّث?',
           wortIdx:i, loesung:weiblich ? 'f' : 'm',

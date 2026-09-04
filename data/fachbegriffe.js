@@ -307,6 +307,7 @@ const FACHBEGRIFF_VOKABELN = [
      --------------------------------------------------------------------- */
   {
     id: "gram-pron-huwa",
+    gender: "masculine",
     ar: "هُوَ",
     de: "er",
     deNeben: "Vergangenheit ohne Endung: ذَهَبَ (er ging)",
@@ -335,6 +336,7 @@ const FACHBEGRIFF_VOKABELN = [
   },
   {
     id: "gram-pron-hum",
+    gender: "masculine",
     ar: "هُمْ",
     de: "sie (ab drei, männlich)",
     deNeben: "Vergangenheit auf ـُوا: ذَهَبُوا (sie gingen)",
@@ -349,6 +351,7 @@ const FACHBEGRIFF_VOKABELN = [
   },
   {
     id: "gram-pron-hiya",
+    gender: "feminine",
     ar: "هِيَ",
     de: "sie (eine)",
     deNeben: "Vergangenheit auf ـَتْ: ذَهَبَتْ (sie ging)",
@@ -363,6 +366,7 @@ const FACHBEGRIFF_VOKABELN = [
   },
   {
     id: "gram-pron-hunna",
+    gender: "feminine",
     ar: "هُنَّ",
     de: "sie (ab drei, weiblich)",
     deNeben: "Vergangenheit auf ـْنَ: ذَهَبْنَ (sie gingen)",
@@ -377,6 +381,7 @@ const FACHBEGRIFF_VOKABELN = [
   },
   {
     id: "gram-pron-anta",
+    gender: "masculine",
     ar: "أَنْتَ",
     de: "du (männlich)",
     deNeben: "Vergangenheit auf ـْتَ: ذَهَبْتَ (du gingst)",
@@ -405,6 +410,7 @@ const FACHBEGRIFF_VOKABELN = [
   },
   {
     id: "gram-pron-antum",
+    gender: "masculine",
     ar: "أَنْتُمْ",
     de: "ihr (ab drei, männlich)",
     deNeben: "Vergangenheit auf ـْتُمْ: ذَهَبْتُمْ (ihr gingt)",
@@ -419,6 +425,7 @@ const FACHBEGRIFF_VOKABELN = [
   },
   {
     id: "gram-pron-anti",
+    gender: "feminine",
     ar: "أَنْتِ",
     de: "du (weiblich)",
     deNeben: "Vergangenheit auf ـْتِ: ذَهَبْتِ (du gingst)",
@@ -433,6 +440,7 @@ const FACHBEGRIFF_VOKABELN = [
   },
   {
     id: "gram-pron-antunna",
+    gender: "feminine",
     ar: "أَنْتُنَّ",
     de: "ihr (ab drei, weiblich)",
     deNeben: "Vergangenheit auf ـْتُنَّ: ذَهَبْتُنَّ (ihr gingt)",
