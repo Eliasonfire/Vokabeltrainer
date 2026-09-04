@@ -415,6 +415,8 @@ const BUCH_ESELSBRUECKEN = {
 
   "p_1787189488747": "فِي + هُ, und die Regel für den Vokalwechsel hast du aus Folge 16: nach einem Kasra wird das هُ zu هِ. فِي endet auf Kasra — also فِيهِ, nicht fīhu. Dein Lehrer sagt dazu: „auf ein Kasra folgt nur schwer eine Ḍamma.\"",
 
-  "p_1787190874749": "Du sprichst es in al-Mulk: إِنَّمَا الْعِلْمُ عِنْدَ اللَّهِ — „Nur Allah weiß darüber Bescheid\", wörtlich „das Wissen ist BEI Allah\" (67:26). Dasselbe عِنْدَ, dieselbe Bedeutung."
+  "p_1787190874749": "Du sprichst es in al-Mulk: إِنَّمَا الْعِلْمُ عِنْدَ اللَّهِ — „Nur Allah weiß darüber Bescheid\", wörtlich „das Wissen ist BEI Allah\" (67:26). Dasselbe عِنْدَ, dieselbe Bedeutung.",
 
+
+  "46401": "نَارُ اللَّهِ الْمُوقَدَةُ · ٱلَّتِي تَطَّلِعُ عَلَى ٱلْأَفْـِٔدَةِ — aus سُورَةُ الْهُمَزَة, die du auswendig kannst. Warum dort الَّتِي und nicht الَّذِي? Weil نَار (Feuer) weiblich ist. ⭐ Das ist die ganze Regel: nicht ob Person oder Sache entscheidet, sondern allein das GESCHLECHT des Wortes davor.",
 };

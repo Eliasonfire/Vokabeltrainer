@@ -1895,4 +1895,9 @@ const ESELSBRUECKEN_ALT = {
     'إِيَّاكَ نَعْبُدُ — aus der Fātiḥa, die du in jedem Gebet sprichst: „Dir allein dienen wir.“ Das نَ vorn am Verb ist genau dieses „wir“. In der Vergangenheit steht dasselbe ن hinten statt vorn: نَحْنُ ذَهَبْنَا.',
     'نَا ist auch die Besitzendung für „unser“, und die kennst du aus dem Bittgebet: رَبَّنَا — „unser Herr“. Dasselbe نَا hängst du ans Verb. Und pass auf den Unterschied zu هُنَّ auf: ذَهَبْنَا mit Alif heißt „wir“, ذَهَبْنَ ohne Alif heißt „die Frauen“.'
   ],
+
+  '46401': [
+    'Das ت in الَّتِي ist dasselbe ت wie in der تَاء مَرْبُوطَة — wo das Wort weiblich ist, steht ein ت. Und wo keins steht, steht الَّذِي: الْكِتَابُ الَّذِي (كِتَاب männlich) gegen السَّيَّارَةُ الَّتِي (سَيَّارَة weiblich).',
+    'Aus deinem Lektionstext: وَمَنْ هَذِهِ الْفَتَاةُ — „und wer ist dieses Mädchen“ — الَّتِي مَعَكِ؟ فَتَاة ist weiblich, also الَّتِي. Dein Lehrer geht in Folge 17 ab 32:06 zehn solcher Sätze durch: „muessen wir jetzt entscheiden, kommt الَّذِي rein, welche fuer maennliche Begriffe ist, oder الَّتِي rein fuer weibliche Begriffe.“'
+  ],
 };

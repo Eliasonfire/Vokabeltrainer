@@ -480,5 +480,74 @@ const FACHBEGRIFF_VOKABELN = [
     sentAr: "نَحْنُ ذَهَبْنَا إِلَى الْمَسْجِدِ.",
     sentDe: "Wir gingen in die Moschee.",
     mnemo: "Das ن von نَحْنُ ist dasselbe ن, das ans Verb geht: نَحْنُ ← ذَهَبْنَا. Und daneben das Paar, das man leicht verwechselt: هُنَّ ذَهَبْنَ endet auf نَ ohne Alif, نَحْنُ ذَهَبْنَا mit Alif. Das Alif macht aus „die Frauen“ ein „wir“."
+  },
+
+  /* ==================================================================
+     Drei Wörter, die Elias am 26.08.2026 freigegeben hat („ja mach").
+     Alle drei fehlten im Bestand, obwohl sie in Suren stehen, die er
+     auswendig kann.
+
+     ⛔ KEIN ERFUNDENER BEISPIELSATZ. Wo es keinen belegten Satz gibt,
+     bleibt sentAr leer und der Koranvers trägt die Illustration —
+     Goal-Prompt E.1 und die Regel aus /volles-programm: „Lieber KEIN
+     Satz als ein gestellter."
+     ================================================================== */
+  {
+    id: "gram-zarf-maa",
+    ar: "مَعَ",
+    de: "mit, bei",
+    /* Wie تَحْتَ in vocab-data.js: ein ظَرْف wird in dieser App als
+       particle geführt. Nicht geraten — dieselbe Wortart wie das
+       Ortswort, das der Unterricht behandelt hat. */
+    type: 'particle',
+    chapter: 'personal',
+    book: 'grammar',
+    /* ⛔ ABSICHTLICH KEINE `regel`. zarf-01 nennt تَحْتَ, أَمامَ und
+       خَلْفَ — مَعَ steht dort NICHT, der Unterricht hat es nicht
+       behandelt. Eine Markierung wäre eine Regelaussage, die kein
+       Lehrer gemacht hat.
+       ⭐ Die App behandelt مَعَ trotzdem richtig: js/irab.js:113 führt
+       es in ZURUF, die Funktionsanzeige stimmt also (A8). */
+    belegt: 1,
+    /* Aus dem Lehrbuch — dort steht مَعَ mit angehängtem Pronomen
+       (مَعَكِ), was genau der Normalfall ist. */
+    sentAr: "وَمَنْ هَذِهِ الْفَتَاةُ الَّتِي مَعَكِ؟ أَهِيَ أُخْتُكِ؟",
+    sentDe: "Und wer ist dieses Mädchen, das bei dir ist? Ist sie deine Schwester?",
+    quran: {
+      surah: "Ash-Sharh",
+      ayah: "94:6",
+      ar: "إِنَّ مَعَ الْعُسْرِ يُسْرًا",
+      de: "gewiß, mit der Erschwernis ist Erleichterung"
+    },
+    mnemo: "إِنَّ مَعَ الْعُسْرِ يُسْرًا — aus سُورَةُ الشَّرْح, die du auswendig kannst, und dort steht مَعَ zweimal hintereinander (Vers 5 und 6). Wie تَحْتَ ist es kein حَرْف جَرّ, wirkt aber genauso: das Wort dahinter wird مَجْرُور — الْعُسْرِ mit Kasra."
+  },
+  {
+    id: "gram-khayr",
+    ar: "خَيْرٌ",
+    de: "besser; das Gute",
+    /* Ein Wort mit Tanwīn ist ein اِسْم — das ist kein Ratschluss,
+       sondern die Probe, die auch js/irab.js benutzt: ein Verb trägt
+       nie Tanwīn, eine Partikel auch nicht.
+       ⚠️ Dass es ein اِسْم تَفْضِيل (Elativ) ist, steht bewusst NICHT
+       als Wortart da — die App kennt diese Kategorie nicht, und sie
+       zu erfinden wäre eine Grammatikaussage ohne Unterrichtsbeleg. */
+    type: 'noun',
+    /* Belegt im arabicroots-Abzug: اِخْتِيَارٌ (Auswahl) und خِيرَة
+       (beste Wahl) tragen beide root "خ ي ر". */
+    root: "خ ي ر",
+    chapter: 'personal',
+    book: 'grammar',
+    belegt: 1,
+    /* ⛔ KEIN sentAr. In allen vier Satzquellen kommt خَيْر kein
+       einziges Mal vor, und einen Satz zu bauen hieße, Vokalisation
+       und Kasus selbst zu setzen. Der Vers unten trägt die
+       Illustration; er ist belegt und steht in seinem Auswendigen. */
+    quran: {
+      surah: "Ad-Duhaa",
+      ayah: "93:4",
+      ar: "وَلَلْآخِرَةُ خَيْرٌ لَكَ مِنَ الْأُولَىٰ",
+      de: "Und das Jenseits ist wahrlich besser für dich als das Diesseits"
+    },
+    mnemo: "وَلَلْآخِرَةُ خَيْرٌ لَكَ مِنَ الْأُولَىٰ — aus سُورَةُ الضُّحَى, die du auswendig kannst. Die Bauform ist immer dieselbe: خَيْرٌ … مِنْ … heißt „besser als“. Und die Wurzel خ ي ر kennst du schon aus اِخْتِيَارٌ (Auswahl) — wer wählt, sucht sich das Bessere aus."
   }
 ];
