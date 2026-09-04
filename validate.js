@@ -987,6 +987,80 @@ try {
            + ' main{padding-top} ueber --topbar-h, Messung mit ResizeObserver verdrahtet.');
     });
 
+    /* ---------- Der Geraeteabgleich in beide Richtungen (05.09.2026) -------
+
+       ⛔ ANLASS: Elias mit zwei Bildern desselben Augenblicks — Handy
+       138/24/13/34/44, Tablet 166/14/23/37/13. „Auf meinem Tablet und Handy
+       wird mir nicht die gleichen Vokabeln in den jeweiligen Boxen angezeigt …
+       ich will das mein Tablet und Handy synchron sind und das immer."
+
+       Der Abgleich war nur zur HAELFTE verdrahtet: `visibilitychange` schickte
+       beim Weglegen, holte beim Zurueckkommen aber nichts — geholt wurde allein
+       bei DOMContentLoaded. Eine installierte PWA bleibt auf Android tagelang
+       geladen; wer zwischen den Geraeten wechselt, ohne die App zu beenden,
+       sieht dort weiter den alten Stand.
+
+       ⭐ Und der Ausfall war unsichtbar: die Statuszeile steht in den
+       EINSTELLUNGEN, wo niemand nachsieht, ob etwas funktioniert, von dem er
+       annimmt, dass es funktioniert. Deshalb prueft dieser Abschnitt auch das
+       Warnband auf dem Startbildschirm. [[ausfall_ist_unsichtbar_gebaut]] */
+    abschnitt('Geraeteabgleich', () => {
+      const syncRoh  = ohneKommentare(fs.readFileSync(path.join(DIR, 'js', 'sync.js'), 'utf8'));
+      const htmlRoh  = fs.readFileSync(path.join(DIR, 'index.html'), 'utf8');
+      const cssOhne  = htmlRoh.replace(/\/\*[\s\S]*?\*\//g, ' ');
+      const syncFehler = [];
+
+      const hoerer = /visibilitychange['"]\s*,\s*\(\s*\)\s*=>\s*\{([\s\S]*?)\n\}\);/.exec(syncRoh);
+      if (!hoerer)
+        syncFehler.push('kein visibilitychange-Hoerer mehr in js/sync.js — dann wird nur noch '
+          + 'beim Neustart der App abgeglichen, und eine installierte PWA startet selten neu');
+      else {
+        if (!/schickeZumServer/.test(hoerer[1]))
+          syncFehler.push('der visibilitychange-Hoerer schickt beim Weglegen nichts mehr');
+        if (!/gleicheAb/.test(hoerer[1]))
+          syncFehler.push('der visibilitychange-Hoerer HOLT beim Zurueckkommen nichts — genau '
+            + 'das war Elias’ Fehler vom 05.09.2026: Handy und Tablet liefen auseinander, '
+            + 'weil nur beim Weglegen gesendet wurde');
+      }
+
+      /* Holen ist billig (100.000 Lesevorgaenge/Tag), Ablegen nicht (1.000).
+         Ohne diese Bedingung koennte man beim Zurueckkommen nicht abgleichen. */
+      if (!/JSON\.stringify\(baueNutzlast\(\)\.daten\)/.test(syncRoh))
+        syncFehler.push('gleicheAb() vergleicht vor dem Ablegen nicht mehr mit dem geholten '
+          + 'Stand — dann schreibt jeder Abgleich, und das KV-Kontingent (1.000/Tag) traegt '
+          + 'den Abgleich beim Zurueckkommen nicht');
+
+      /* Das Warnband — der Grund, warum der Fehler ueberhaupt auffaellt. */
+      if (!/function\s+zeigeAbgleichWarnung\s*\(/.test(syncRoh))
+        syncFehler.push('js/sync.js hat kein zeigeAbgleichWarnung() mehr');
+      else if (!/\.erfolg/.test(syncRoh))
+        syncFehler.push('der Status fuehrt kein `erfolg`-Feld mehr — dann haengt die Warnung '
+          + 'am letzten VERSUCH statt am letzten Erfolg, und ein stuendlich scheiternder '
+          + 'Abgleich sieht taeglich frisch aus');
+      if (!/id="syncWarnung"/.test(htmlRoh))
+        syncFehler.push('index.html hat kein Element mit id="syncWarnung"');
+      if (!/\.sync-warnung\s*\{/.test(cssOhne))
+        syncFehler.push('index.html hat keine CSS-Regel .sync-warnung — dann ist das Band ein '
+          + 'unsichtbares div [[klasse_ohne_css_regel]]');
+      /* Ein <use> auf ein Symbol, das es nicht gibt, zeichnet nichts und meldet
+         nichts. Genau das stand hier im ersten Entwurf (#ic-cloud-off). */
+      const band = /id="syncWarnung"[\s\S]{0,300}?<\/div>/.exec(htmlRoh);
+      if (band){
+        const ikone = /href="#(ic-[a-z-]+)"/.exec(band[0]);
+        if (ikone && !new RegExp('id="' + ikone[1] + '"').test(htmlRoh))
+          syncFehler.push('das Warnband verweist auf das Symbol #' + ikone[1]
+            + ', das es im Sprite nicht gibt — ein solches <use> zeichnet nichts und '
+            + 'meldet auch nichts [[bild_ohne_fehlermeldung_falsch]]');
+      }
+
+      if (syncFehler.length)
+        syncFehler.forEach(f => fail('Geraeteabgleich: ' + f + '. '
+          + 'Damit laufen Handy und Tablet wieder still auseinander.'));
+      else
+        note('Geraeteabgleich: holt beim Zurueckkommen und schickt beim Weglegen, legt nur bei '
+           + 'Unterschied ab, Warnband auf dem Startbildschirm ist verdrahtet.');
+    });
+
     abschnitt('Auslieferstrategie des Service Workers', () => {
     const swRoh = fs.readFileSync(path.join(DIR, 'sw.js'), 'utf8');
     const fetchBlock = swRoh.slice(swRoh.indexOf("addEventListener('fetch'"));

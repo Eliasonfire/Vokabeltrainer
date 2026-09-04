@@ -694,6 +694,18 @@ main{
 /* =====================================================================
    HOME
    ===================================================================== */
+/* Warnung „der Abgleich hakt" auf dem Startbildschirm (05.09.2026).
+   Auffaellig genug, um gelesen zu werden, aber kein Alarm: sie steht ueber der
+   Faelligkeitskarte, nicht davor. */
+.sync-warnung{
+  display:flex;align-items:flex-start;gap:var(--sp-3);
+  margin-bottom:var(--sp-4);padding:var(--sp-3) var(--sp-4);
+  background:var(--red-wash);border:1px solid var(--red-dim);
+  border-radius:var(--r-3);
+  font-size:var(--fs-sm);line-height:1.5;color:var(--text);
+}
+.sync-warnung .ic{flex:0 0 auto;width:18px;height:18px;color:var(--red-bright);margin-top:2px;}
+
 .due-card{
   background:linear-gradient(158deg,var(--surface-2) 0%, var(--surface-1) 100%);
   border:1px solid var(--border);
@@ -3830,6 +3842,29 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 
     <!-- ============ HOME ============ -->
     <section class="screen" id="screen-home" data-screen="home">
+      <!-- ⭐ Warnung, wenn der Geräteabgleich zu lange nicht geglückt ist
+           (05.09.2026). Elias: „ich will das mein Tablet und Handy synchron
+           sind und das immer."
+
+           ⛔ Sie steht HIER und nicht in den Einstellungen. Dort gibt es die
+           Statuszeile längst — und genau deshalb ist der Fehler wochenlang
+           unbemerkt geblieben: niemand öffnet die Einstellungen, um zu prüfen,
+           ob etwas funktioniert, von dem er annimmt, dass es funktioniert.
+           Ein Ausfall muss dort auffallen, wo täglich hingesehen wird.
+           [[ausfall_ist_unsichtbar_gebaut]]
+
+           ⚠️ Kein „Trotzdem hier bleiben"-Knopf wie beim Adressband: dieses
+           Band verschwindet von selbst, sobald ein Abgleich glückt. Ein
+           Wegklicken wäre die Möglichkeit, die Warnung dauerhaft
+           stillzulegen — bei einer Warnung über verlorene Lernstände ist das
+           die falsche Wahl. -->
+      <!-- ⚠️ ic-warning, nicht ein erfundener Name: ein <use> auf ein Symbol,
+           das es nicht gibt, zeichnet NICHTS und meldet auch nichts.
+           [[bild_ohne_fehlermeldung_falsch]] -->
+      <div class="sync-warnung" id="syncWarnung" hidden>
+        <svg class="ic"><use href="#ic-warning"/></svg>
+        <span id="syncWarnungText"></span>
+      </div>
       <div class="due-card">
         <div class="due-number" id="dueCount">0</div>
         <div class="due-label">Karten heute fällig</div>

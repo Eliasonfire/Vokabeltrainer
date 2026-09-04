@@ -104,6 +104,11 @@ const STATUS_SCHLUESSEL = 'vt_syncStatus';
 
 let SYNC_LAEUFT = false;
 let SYNC_GEPLANT = null;
+/* Wann zuletzt wegen Sichtbarkeit abgeglichen wurde — siehe visibilitychange
+   ganz unten. Bewusst im Speicher und nicht im localStorage: die Sperre soll
+   ein schnelles Hin und Her daempfen, nicht einen Neustart. */
+let SYNC_ZULETZT = 0;
+const SICHTBAR_ABSTAND = 60 * 1000;
 
 function syncStempel(){
   try { return JSON.parse(localStorage.getItem(STEMPEL_SCHLUESSEL) || '{}'); }
@@ -131,11 +136,21 @@ function syncMoeglich(){
 
 /* ---------- Anzeigen, was los ist ---------- */
 
+/* ⭐ `erfolg` wird MITGEFUEHRT, nicht ueberschrieben (05.09.2026): der
+   Zeitpunkt des letzten GEGLUECKTEN Abgleichs ist die Zahl, an der ein stilles
+   Auseinanderlaufen sichtbar wird. `zeit` allein sagt nur, wann zuletzt
+   VERSUCHT wurde — und ein Versuch, der jede Minute scheitert, sieht in einer
+   Zeile mit frischem Zeitstempel taeglich neu aus. */
 function merkeStatus(ok, text){
+  let erfolg = 0;
+  try { erfolg = (JSON.parse(localStorage.getItem(STATUS_SCHLUESSEL) || 'null') || {}).erfolg || 0; }
+  catch (e){}
+  if (ok) erfolg = Date.now();
   try {
-    localStorage.setItem(STATUS_SCHLUESSEL, JSON.stringify({ ok, text, zeit: Date.now() }));
+    localStorage.setItem(STATUS_SCHLUESSEL, JSON.stringify({ ok, text, zeit: Date.now(), erfolg }));
   } catch (e){ /* voller Speicher darf den Abgleich nicht kippen */ }
   zeigeStatus();
+  zeigeAbgleichWarnung();
 }
 
 function zeigeStatus(){
@@ -148,6 +163,46 @@ function zeigeStatus(){
   const wann = d.toLocaleDateString('de-DE', { day:'2-digit', month:'2-digit' }) +
                ', ' + d.toLocaleTimeString('de-DE', { hour:'2-digit', minute:'2-digit' });
   feld.textContent = (s.ok ? '✓ ' : '⚠ ') + wann + ' — ' + s.text;
+}
+
+/* ---------- Die Warnung auf dem Startbildschirm (05.09.2026) ---------------
+
+   ⛔ Die Statuszeile in den Einstellungen gibt es seit dem 11.08.2026, und sie
+   hat den Fehler trotzdem nicht aufgedeckt: niemand oeffnet die Einstellungen,
+   um zu pruefen, ob etwas funktioniert, von dem er annimmt, dass es
+   funktioniert. Elias hat es erst gemerkt, als er beide Geraete nebeneinander
+   hielt — Handy 138/24/13/34/44, Tablet 166/14/23/37/13.
+   [[ausfall_ist_unsichtbar_gebaut]]
+
+   ⚠️ Die Schwelle haengt am letzten ERFOLG, nicht am letzten Versuch. Ein
+   Versuch, der stuendlich scheitert, traegt einen frischen Zeitstempel und
+   saehe in jeder anderen Rechnung gesund aus.
+
+   ⚠️ Wer noch NIE abgeglichen hat, bekommt sie auch — aber erst, wenn ein
+   Versuch stattgefunden hat und fehlschlug. Ohne diese Bedingung stuende sie
+   beim allerersten Start einer frischen Installation da, wo sie nichts
+   bedeutet. */
+const ABGLEICH_FRIST = 24 * 60 * 60 * 1000;
+
+function zeigeAbgleichWarnung(){
+  const band = document.getElementById('syncWarnung');
+  if (!band) return;
+  const feld = document.getElementById('syncWarnungText');
+  let s = null;
+  try { s = JSON.parse(localStorage.getItem(STATUS_SCHLUESSEL) || 'null'); } catch (e){}
+  if (!syncMoeglich() || !s || s.ok){ band.hidden = true; return; }
+
+  const her = s.erfolg ? Date.now() - s.erfolg : null;
+  if (her !== null && her < ABGLEICH_FRIST){ band.hidden = true; return; }
+
+  const stunden = her === null ? null : Math.floor(her / 3600000);
+  const wann = stunden === null ? 'noch nie'
+             : stunden >= 48    ? ('vor ' + Math.floor(stunden/24) + ' Tagen')
+                                : ('vor ' + stunden + ' Stunden');
+  if (feld) feld.textContent = 'Dieses Gerät gleicht sich gerade nicht ab — zuletzt geglückt: '
+    + wann + '. Grund: ' + s.text + '. Solange lernst du hier auf einem eigenen Stand, '
+    + 'der auf deinen anderen Geräten nicht ankommt.';
+  band.hidden = false;
 }
 
 /* Wie viele Woerter nach dem Abgleich lokal stehen. Das ist die Zahl, an der
@@ -413,7 +468,15 @@ async function gleicheAb(still){
   try {
     const fern = await holeVomServer();
     const geaendert = fuehreZusammen(fern);
-    await schickeZumServer();
+    /* ⭐ Nur schreiben, wenn sich wirklich etwas unterscheidet (05.09.2026).
+       KV erlaubt im Gratistarif 1.000 Schreibvorgaenge am Tag, aber 100.000
+       Lesevorgaenge — ein Abruf ist also fast gratis, ein Ablegen nicht. Vorher
+       schrieb JEDER Abgleich, auch der, bei dem beide Seiten schon gleich
+       waren. Das ist die Voraussetzung dafuer, beim Zurueckkommen in die App
+       abgleichen zu duerfen (siehe visibilitychange unten). */
+    const gleich = JSON.stringify(baueNutzlast().daten)
+                === JSON.stringify((fern && fern.daten) || {});
+    if (!gleich) await schickeZumServer();
     merkeStatus(true, wortzahl() + ' Wörter' + (geaendert ? ', Stand aktualisiert' : ''));
     if (geaendert){
       /* Die App haelt PROGRESS und SETTINGS im Speicher - nach einer Aenderung
@@ -492,6 +555,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
   const zeile = document.getElementById('syncZeile');
   if (zeile && syncMoeglich()) zeile.hidden = false;
   zeigeStatus();
+  /* Beim Start schon anzeigen, was der letzte Lauf ergeben hat — sonst stuende
+     das Band erst da, wenn der erste Abgleich dieser Sitzung durch ist, und
+     bei einem Geraet ohne Netz waere das nie. */
+  zeigeAbgleichWarnung();
 
   const knopf = document.getElementById('btnAbgleich');
   if (knopf) knopf.addEventListener('click', async ()=>{
@@ -514,5 +581,30 @@ document.addEventListener('visibilitychange', ()=>{
        waere zuverlaessiger, kann aber keine PUT-Anfrage. Der Versuch reicht:
        schlaegt er fehl, holt der naechste Start es nach. */
     schickeZumServer().catch(()=>{});
+    return;
   }
+
+  /* ⭐⭐ UND BEIM ZURUECKKOMMEN WIRD GEHOLT (05.09.2026).
+     Elias mit zwei Bildern desselben Augenblicks: „Auf meinem Tablet und Handy
+     wird mir nicht die gleichen Vokabeln in den jeweiligen Boxen angezeigt …
+     ich will das mein Tablet und Handy synchron sind und das immer."
+     Handy 138/24/13/34/44, Tablet 166/14/23/37/13.
+
+     ⛔ Der Abgleich war nur zur HAELFTE verdrahtet. Beim Weglegen wurde
+     geschickt, beim Zurueckkommen aber nichts geholt — geholt wurde allein bei
+     `DOMContentLoaded`. Auf Android bleibt eine installierte PWA tagelang
+     geladen; wer zwischen Handy und Tablet wechselt, ohne die App wirklich zu
+     BEENDEN, sieht auf dem zweiten Geraet weiter dessen alten Stand. Genau das
+     zeigen seine beiden Bilder.
+
+     Das ist die stille Sorte Fehler: nichts meldet sich, die Statuszeile in den
+     Einstellungen steht auf „✓ abgeglichen" — sie sagt ja die Wahrheit ueber
+     den letzten Abgleich, nur ist der Tage her. [[ausfall_ist_unsichtbar_gebaut]]
+
+     ⚠️ Mit Mindestabstand, sonst loest jedes kurze Wegtippen einen Lauf aus.
+     Eine Minute genuegt: die teure Haelfte (das Ablegen) findet seit heute nur
+     noch statt, wenn sich wirklich etwas unterscheidet. */
+  if (Date.now() - SYNC_ZULETZT < SICHTBAR_ABSTAND) return;
+  SYNC_ZULETZT = Date.now();
+  gleicheAb(true);
 });
