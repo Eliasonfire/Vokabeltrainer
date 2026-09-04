@@ -601,26 +601,44 @@ function renderUebungsLeiste(){
   }).join('');
   const rest = UEBUNGEN.filter(m=>!vergeben.has(m.id));
   if (rest.length) html += '<div class="gruppe">Weitere</div>' + rest.map(zeile).join('');
+
+  /* Gemischt steht GANZ OBEN und in einer eigenen Gruppe — es ist keine der
+     drei Antwortarten, sondern der Verzicht auf die Wahl. Elias' Anlass:
+     „wenn man nicht weiß welchen man jetzt unbedingt üben sollte." Wer das
+     sucht, sucht es vor der Liste, nicht dahinter. */
+  const gesamt = UEBUNGEN.reduce((s,m)=>s + alle[m.id].length, 0);
+  html = '<div class="gruppe">Ohne Auswahl</div>'
+       + `<button class="zeile${UEB.modus===UEB_GEMISCHT?' aktiv':''}${gesamt?'':' leer'}" type="button"`
+       + ` data-uebmodus="${UEB_GEMISCHT}"${gesamt?'':' title="In dieser Auswahl gibt es keine Frage."'}>`
+       + '<span class="links"><span class="ar">Gemischt — alle Modi reihum</span></span>'
+       + `<span class="n">${gesamt}</span></button>`
+       + html;
   blatt.innerHTML = html;
 
   const jetzt = UEBUNGEN.find(m=>m.id===UEB.modus);
   const wert = document.getElementById('uebWert');
   const zahl = document.getElementById('uebZahl');
-  if (wert) wert.textContent = jetzt ? jetzt.name : 'Modus wählen';
+  if (wert) wert.textContent = jetzt ? jetzt.name
+                             : (UEB.modus===UEB_GEMISCHT ? 'Gemischt' : 'Modus wählen');
   if (zahl) zahl.textContent = jetzt ? `${alle[jetzt.id].length} Fragen`
-                                    : `${UEBUNGEN.length} Modi`;
+                             : (UEB.modus===UEB_GEMISCHT ? `${gesamt} Fragen`
+                                                         : `${UEBUNGEN.length} Modi`);
 }
 
 function uebungStarten(modusId){
   const alle = uebungenAufbauen();
-  const liste = alle[modusId] || [];
+  /* Gemischt ordnet reihum an und ist deshalb schon fertig gemischt —
+     ein zweites shuffle() unten wuerde genau die Abwechslung zerstoeren,
+     fuer die Elias den Modus haben wollte. */
+  const gemischt = modusId === UEB_GEMISCHT;
+  const liste = gemischt ? uebungGemischteListe(alle) : (alle[modusId] || []);
   if (!liste.length){
     const m = UEBUNGEN.find(x=>x.id===modusId);
-    toast(`${m ? m.name : 'Dieser Modus'}: in dieser Auswahl keine Frage. Anderes Thema wählen.`);
+    toast(`${gemischt ? 'Gemischt' : (m ? m.name : 'Dieser Modus')}: in dieser Auswahl keine Frage. Anderes Thema wählen.`);
     return;
   }
   if (LUECKE.aktiv) beendeLuecke();
-  UEB = { modus:modusId, liste:shuffle(liste.slice()), idx:0, gewaehlt:new Set(),
+  UEB = { modus:modusId, liste: gemischt ? liste : shuffle(liste.slice()), idx:0, gewaehlt:new Set(),
           beantwortet:false, richtig:0, gestellt:0 };
   document.getElementById('gramPopover').classList.remove('show');
   uebungAnsicht(true);
@@ -654,6 +672,70 @@ function uebungAnsicht(an){
 
 function uebungAktuell(){ return UEB.liste[UEB.idx] || null; }
 
+/* ⭐ Der Modus einer Aufgabe steht AN DER AUFGABE, nicht am Zustand.
+   uebungenAufbauen() haengt jeder Aufgabe `modus:m` an. Solange nur ein Modus
+   auf einmal lief, war das dasselbe wie UEBUNGEN.find(x=>x.id===UEB.modus) —
+   im gemischten Modus ist es das nicht mehr, und dann ist die Aufgabe die
+   Wahrheit. Der Rueckfall haelt die Stellen am Leben, die vor der ersten
+   Aufgabe fragen. */
+function uebungModusVon(a){
+  return (a && a.modus) ? a.modus : UEBUNGEN.find(x=>x.id===UEB.modus);
+}
+
+/* ---------- Der gemischte Modus (05.09.2026) ---------------------------------
+   Elias: „Beim satzmodus sollte es auch einen ‚gemischt' oder ‚Alle' Modus
+   geben wo jedes drankommt und immer unterschiedliche. Damit man einfach alle
+   üben kann wenn man nicht weiß welchen man jetzt unbedingt üben sollte."
+
+   ⛔ Zwei Anforderungen, nicht eine. „wo jedes drankommt" heisst: kein Modus
+   darf hinten liegenbleiben. „und immer unterschiedliche" heisst: nicht
+   fuenfmal dieselbe Sorte hintereinander. Blosses shuffle() ueber alles
+   erfuellt nur die erste — bei 1152 Aufgaben aus Modus 8 und 23 aus Modus 9
+   waeren die ersten zwanzig Fragen mit hoher Wahrscheinlichkeit alle aus
+   demselben Topf.
+
+   Deshalb REIHUM statt gemischt: jede Modusliste wird fuer sich gemischt, dann
+   wird abwechselnd eine Aufgabe je Modus gezogen. Leere Modi fallen weg, kurze
+   laufen frueher aus — die Reihenfolge bleibt bis zuletzt durchmischt.
+
+   ⚠️ Es ist KEIN Eintrag in UEBUNGEN. Ein Eintrag braucht ein eigenes baue(),
+   und der gemischte Modus baut nichts eigenes — er ordnet nur an, was die
+   dreizehn schon gebaut haben. Er stuende sonst in renderUebungsLeiste()
+   zwischen den echten Modi und wuerde in uebungenAufbauen() eine leere Liste
+   erzeugen. */
+const UEB_GEMISCHT = 'gemischt';
+
+function uebungGemischteListe(nachModus){
+  /* ⛔ Auch der ERSTE Durchgang wird gemischt. Ohne das aeussere shuffle()
+     begannen alle drei Probelaeufe im Browser mit exakt „1,2,3,…,13" — die
+     Umsortierung griff erst ab Runde zwei, und die ersten dreizehn Fragen
+     sahen bei jedem Start gleich aus. Genau die sieht Elias zuerst. */
+  let koerbe = shuffle(UEBUNGEN.map(m => shuffle((nachModus[m.id] || []).slice()))
+                               .filter(k => k.length));
+  const raus = [];
+  let i = 0;
+  while (koerbe.length){
+    /* ⭐ Nach jedem vollen Durchgang wird die Reihenfolge der Modi NEU
+       gemischt. Ohne das laeuft die Liste stur 1,2,3,…,13,1,2,3,… — im
+       Browser gemessen, die ersten 26 Aufgaben waren genau das. Reihum
+       allein erfuellt „wo jedes drankommt", aber nicht „und immer
+       unterschiedliche": ab der zweiten Runde weiss man, was kommt. */
+    if (i >= koerbe.length){
+      i = 0;
+      const zuletzt = raus.length ? raus[raus.length-1].modus : null;
+      koerbe = shuffle(koerbe);
+      /* Der erste des neuen Durchgangs darf nicht der letzte des alten sein —
+         sonst erzeugt genau die Naht die Wiederholung, die das Mischen
+         vermeiden soll. */
+      if (zuletzt && koerbe.length > 1 && koerbe[0][koerbe[0].length-1].modus === zuletzt)
+        koerbe.push(koerbe.shift());
+    }
+    raus.push(koerbe[i].pop());
+    if (!koerbe[i].length) koerbe.splice(i, 1); else i++;
+  }
+  return raus;
+}
+
 /* Der Satz mit antippbaren Woertern. Ein Wort kann verdeckt sein (dann ist es
    selbst die Antwort) oder ohne seine Endung stehen (Modus 7). */
 function uebungSatzHtml(a){
@@ -681,7 +763,7 @@ function uebungSatzHtml(a){
 
 function renderUebung(){
   const a = uebungAktuell();
-  const m = UEBUNGEN.find(x=>x.id===UEB.modus);
+  const m = uebungModusVon(a);
   if (!a || !m){ uebungBeenden(); return; }
 
   document.getElementById('uebName').textContent = `${m.nr}. ${m.name}`;
@@ -745,7 +827,8 @@ function uebungAuswerten(richtig){
 function uebungWortTipp(i){
   const a = uebungAktuell();
   if (!a || UEB.beantwortet) return;
-  const m = UEBUNGEN.find(x=>x.id===UEB.modus);
+  const m = uebungModusVon(a);
+  if (!m) return;
   if (m.art === 'mehrfach'){
     if (UEB.gewaehlt.has(i)) UEB.gewaehlt.delete(i); else UEB.gewaehlt.add(i);
     renderUebung();
