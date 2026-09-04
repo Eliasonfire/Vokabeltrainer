@@ -903,6 +903,90 @@ try {
            + 'hinter der Eselsbruecke, deutsche Zeile vorhanden.');
     });
 
+    /* ---------- Die obere Leiste auf dem Tablet (05.09.2026) ---------------
+
+       ⛔ ANLASS: Elias mit Tablet-Bild: „Beim Tablet ist generell die obere
+       leiste(n) verbuggt." Darauf lagen App-Kopfzeile, Bildschirm-Kopfzeile
+       und ein Listeneintrag uebereinander.
+
+       Zwei Ursachen, beide im Breakpoint ab 700 px:
+       1. `.topbar{position:absolute}` OHNE z-index — bei gleichem z-index
+          entscheidet die DOM-Reihenfolge, und `main` steht danach. Gemessen
+          bei 1280x800, scrollTop 400: elementFromPoint(640,20) lieferte
+          `.list-row-eigen`, also den durchlaufenden Listeneintrag.
+       2. `main{padding-top}` war eine feste Zahl (88 bzw. 96 px) fuer eine
+          Leiste, die gemessen 89 px hoch war. Die Differenz ist der Streifen,
+          durch den die Liste lief — `.screen-header` klebt sticky an der
+          PADDING-Box.
+
+       ⛔ Eine feste Zahl KANN hier nicht stimmen: --safe-top, die Abstands-
+       Token des Breakpoints und die Schriftgroesse gehen in die Hoehe ein.
+       Deshalb misst topbarHoeheMessen() (js/kern.js) und setzt --topbar-h.
+       Wer die Variable durch eine Zahl ersetzt, baut den Fehler wieder ein —
+       genau das ist am 20.08. schon einmal passiert, als der Fix fuers Handy
+       im Tablet-Block nicht mitkam. [[regel_wirkt_ueber_die_grenze]] */
+    abschnitt('Obere Leiste auf dem Tablet', () => {
+      const htmlRoh = fs.readFileSync(path.join(DIR, 'index.html'), 'utf8');
+      const kernRoh = ohneKommentare(fs.readFileSync(path.join(DIR, 'js', 'kern.js'), 'utf8'));
+      const leisteFehler = [];
+
+      /* ⛔ OHNE KOMMENTARE SUCHEN — im ersten Lauf meldete dieser Pruefer
+         „main{padding-top:var(--sp-1)` blieb oberhalb jedes“ als Fehler. Das
+         steht in einem ERKLAERTEXT ueber `main`, der beschreibt, warum dort
+         frueher ein 4-px-Streifen offen blieb. Ein Kommentar beschreibt die
+         Absicht, das Markup die Wirkung — wer beide durchsucht, findet
+         Vergangenheit und haelt sie fuer Gegenwart.
+         [[stichworttreffer_im_kommentar]] · [[kommentar_beschreibt_absicht_markup_wirkung]] */
+      const css = htmlRoh.replace(/\/\*[\s\S]*?\*\//g, ' ');
+
+      /* Die absolute Topbar steht nur im Breakpoint — dort auch suchen. */
+      const abs = /\.topbar\s*\{[^}]*position\s*:\s*absolute[^}]*\}/.exec(css);
+      if (!abs)
+        leisteFehler.push('keine .topbar-Regel mit position:absolute gefunden — wenn die '
+          + 'Leiste wieder im Fluss steht, sind die padding-top-Regeln unten sinnlos');
+      else {
+        if (!/z-index\s*:\s*\d/.test(abs[0]))
+          leisteFehler.push('die absolut gesetzte .topbar hat keinen z-index — dann liegt '
+            + 'der durchrollende Listeneintrag ueber ihr, nicht darunter');
+        if (!/background/.test(abs[0]))
+          leisteFehler.push('die absolut gesetzte .topbar hat keinen Hintergrund — dann '
+            + 'scheint der Inhalt durch sie hindurch');
+      }
+
+      /* Jede main-Regel mit padding-top MUSS die gemessene Variable nehmen. */
+      const padRegeln = css.match(/main\s*\{[^}]*padding-top\s*:[^;}]+/g) || [];
+      padRegeln.forEach(reg => {
+        const wert = /padding-top\s*:\s*([^;}]+)/.exec(reg)[1].trim();
+        if (!/var\(\s*--topbar-h/.test(wert))
+          leisteFehler.push('main{padding-top:' + wert + '} ist eine feste Zahl — die Hoehe '
+            + 'der Leiste haengt an --safe-top, den Abstands-Token und der Schriftgroesse '
+            + 'und kann nicht im Stylesheet stehen. Erwartet: var(--topbar-h, <Rueckfall>)');
+      });
+      if (!padRegeln.length)
+        leisteFehler.push('keine main{padding-top}-Regel mehr — dann rutscht der Inhalt '
+          + 'auf dem Tablet unter die absolut gesetzte Leiste');
+
+      /* Und die Messung selbst. */
+      if (!/function\s+topbarHoeheMessen\s*\(/.test(kernRoh))
+        leisteFehler.push('js/kern.js hat kein topbarHoeheMessen() mehr');
+      else {
+        if (!/DOMContentLoaded['"]\s*,\s*topbarHoeheMessen/.test(kernRoh))
+          leisteFehler.push('topbarHoeheMessen wird nicht mehr bei DOMContentLoaded '
+            + 'aufgerufen — dann bleibt --topbar-h leer und der Rueckfallwert gilt');
+        if (!/ResizeObserver/.test(kernRoh))
+          leisteFehler.push('topbarHoeheMessen misst nur einmal (kein ResizeObserver) — die '
+            + 'Leiste aendert ihre Hoehe auch ohne Fensteraenderung, etwa wenn Schriften '
+            + 'nachladen oder der Streak zweistellig wird');
+      }
+
+      if (leisteFehler.length)
+        leisteFehler.forEach(f => fail('Obere Leiste auf dem Tablet: ' + f + '. '
+          + 'Damit kommt Elias’ Meldung vom 05.09.2026 zurueck.'));
+      else
+        note('Obere Leiste: .topbar mit z-index und Hintergrund, ' + padRegeln.length
+           + ' main{padding-top} ueber --topbar-h, Messung mit ResizeObserver verdrahtet.');
+    });
+
     abschnitt('Auslieferstrategie des Service Workers', () => {
     const swRoh = fs.readFileSync(path.join(DIR, 'sw.js'), 'utf8');
     const fetchBlock = swRoh.slice(swRoh.indexOf("addEventListener('fetch'"));

@@ -3660,8 +3660,37 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
     --karte-max:480px;
   }
   #app{max-width:100%;flex-direction:row;}
-  .topbar{position:absolute;top:0;left:0;right:0;max-width:var(--inhalt-max);margin:0 auto;}
-  main{max-width:var(--inhalt-max);margin:0 auto;width:100%;padding-top:88px;}
+  /* ⛔⛔ ZWEI FEHLER, die zusammen Elias' Tablet-Bild vom 05.09.2026 ergaben:
+     „Beim Tablet ist generell die obere leiste(n) verbuggt." Auf dem Bild lagen
+     die Kopfzeile der App, die Bildschirm-Kopfzeile und ein Listeneintrag
+     uebereinander.
+
+     1. `position:absolute` OHNE z-index. Absolut positioniert heisst nicht
+        obenauf: bei gleichem z-index entscheidet die DOM-Reihenfolge, und
+        `main` steht NACH der Topbar. Bei 1280x800, Kategorien, scrollTop 400
+        gemessen: `elementFromPoint(640, 20)` lieferte `.list-row-eigen` — der
+        durchlaufende Listeneintrag lag ueber der Leiste, nicht darunter.
+        Ohne Hintergrund waere selbst mit z-index der Text dahinter zu sehen.
+
+     2. `padding-top` war GERATEN. 88 px hier, 96 px im 1024er-Block — die
+        Leiste war gemessen 89 px hoch. Die 7 px Differenz sind genau der
+        Streifen, durch den die Liste lief: `.screen-header` klebt `sticky` an
+        der PADDING-Box des Scrollports, also bei 96 statt bei 89.
+
+        ⭐ Denselben Fehler beschreibt der Kommentar an `main` weiter oben
+        bereits — er wurde am 20.08.2026 fuers Handy behoben („mach diese
+        untere leiste nach oben damit diese lücke nicht mehr da ist") und hier
+        im Tablet-Block unbemerkt wieder eingebaut.
+        [[regel_wirkt_ueber_die_grenze]] · [[zwei_regeln_selber_selektor]]
+
+     ⚠️ Deshalb steht die Hoehe jetzt nicht mehr im CSS, sondern wird gemessen:
+     `--topbar-h` setzt ein ResizeObserver in js/kern.js. Die Zahl dahinter ist
+     nur der Rueckfall, falls das Skript nicht lief — sie darf nicht stimmen
+     muessen, denn sie kann es gar nicht: --safe-top, Schriftgroesse und
+     Zeilenumbruch aendern die Hoehe. */
+  .topbar{position:absolute;top:0;left:0;right:0;max-width:var(--inhalt-max);margin:0 auto;
+    z-index:40;background:var(--bg);}
+  main{max-width:var(--inhalt-max);margin:0 auto;width:100%;padding-top:var(--topbar-h,88px);}
 
   /* ⚠️ Am 15.08.2026 neu gefasst, nachdem Elias am Tablet-Bild sagte: "das ist
      nicht mal eine leiste unten, bei beiden". Er hatte recht, und zwar
@@ -3714,7 +3743,9 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
      waeren. Ein min() mit fester Obergrenze macht aus einer relativen Angabe
      stillschweigend eine feste. */
   .flashcard{min-height:min(74vh,640px);}
-  main{padding-top:96px;}
+  /* Auch hier gemessen statt geraten — dieselbe Begruendung wie im 700er-Block
+     oben. Die 96 sind nur der Rueckfall ohne Skript. */
+  main{padding-top:var(--topbar-h,96px);}
   /* Drei Kacheln nebeneinander statt zwei - bei 860px Inhaltsbreite sind zwei
      Kacheln so breit, dass Titel und Untertitel verloren darin schwimmen. */
   .home-grid{grid-template-columns:repeat(3,1fr);}
