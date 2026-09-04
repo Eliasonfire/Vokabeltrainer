@@ -837,6 +837,72 @@ try {
            + 'und Markup/CSS sind da.');
     });
 
+    /* ---------- Der Beispielsatz klebt unten (05.09.2026) -------------------
+
+       ⛔ ANLASS: Elias' zweiter Bericht zu demselben Bild-Fehler, 2 Wochen nach
+       dem ersten. 05.09.2026, 02:26, Karte حَقِيبَةٌ: „hier ist das beispielsatz
+       einfach abgeschnitten ab da ... ich glaube das ist aber das einzige."
+
+       Es war nicht das einzige. Bei 375x812 ueber alle 203 Karten mit Satz
+       gemessen: der arabische Satz war auf 119 ganz zu sehen, die deutsche
+       Uebersetzung auf 86. Nach der sticky-Regel: 203 und 203.
+
+       ⛔ WARUM DIE KARTE NICHT EINFACH HOEHER WIRD — durchgemessen, nicht
+       vermutet: ab min-height 520px liegen die Bewertungsknoepfe unter der
+       Navigationsleiste (787 > 746). Erst ab 640px passt der Inhalt, dann sind
+       die Knoepfe 161 px zu tief. Wer diesen Pruefer anschlagen sieht und die
+       Karte vergroessern will, hat den Weg schon gemessen bekommen.
+
+       ⚠️ EHRLICH: Das hier ist ein STELLVERTRETER. Ob der Satz wirklich
+       sichtbar IST, entscheidet das Layout, und Layout gibt es unter node
+       nicht. Geprueft wird deshalb, dass die Regel und die Reihenfolge da sind
+       — faellt eine davon weg, ist der alte Zustand zurueck.
+       [[pruefung_fragt_einen_stellvertreter_ab]] */
+    abschnitt('Beispielsatz auf der Karteikarte', () => {
+      const htmlRoh = fs.readFileSync(path.join(DIR, 'index.html'), 'utf8');
+      const satzFehler = [];
+
+      /* Die Regel selbst. Der Selektor MUSS .flashcard-back tragen: dieselbe
+         Klasse .example-box steht im Vokabel-Popover (js/kategorien.js), das
+         gar nicht rollt — dort waere sticky wirkungslos bis stoerend. */
+      const regel = /\.flashcard-back\s+\.example-box\s*\{([^}]*)\}/.exec(htmlRoh);
+      if (!regel)
+        satzFehler.push('index.html hat keine Regel ".flashcard-back .example-box" mehr — '
+          + 'dann rutscht der Beispielsatz wieder unter die Kartenkante');
+      else {
+        if (!/position\s*:\s*sticky/.test(regel[1]))
+          satzFehler.push('".flashcard-back .example-box" ist nicht mehr position:sticky');
+        if (!/bottom\s*:\s*0/.test(regel[1]))
+          satzFehler.push('".flashcard-back .example-box" hat kein bottom:0 — sticky ohne '
+            + 'Anker klebt nirgends');
+        if (!/background/.test(regel[1]))
+          satzFehler.push('".flashcard-back .example-box" setzt keinen Hintergrund — dann '
+            + 'scheint die Eselsbruecke beim Rollen durch den Satz hindurch');
+      }
+
+      /* Elias' Anordnung vom 21.08.2026: „sollst es so lassen also vorschläge
+         oben und satz unten." Die Reihenfolge im Markup ist die Anzeige-
+         reihenfolge — wer sie tauscht, bricht seine Vorgabe still. */
+      const iNote = htmlRoh.indexOf('id="cardNoteBox"');
+      const iSatz = htmlRoh.indexOf('id="cardSentenceBox"');
+      if (iNote < 0 || iSatz < 0)
+        satzFehler.push('cardNoteBox oder cardSentenceBox fehlt in index.html');
+      else if (iSatz < iNote)
+        satzFehler.push('der Beispielsatz steht im Markup VOR der Eselsbruecke — Elias am '
+          + '21.08.2026: „sollst es so lassen also vorschläge oben und satz unten"');
+
+      if (!/id="cardSentenceDe"/.test(htmlRoh))
+        satzFehler.push('index.html hat kein Element mit id="cardSentenceDe" — dann fehlt '
+          + 'die deutsche Uebersetzung des Beispielsatzes ganz');
+
+      if (satzFehler.length)
+        satzFehler.forEach(f => fail('Beispielsatz auf der Karteikarte: ' + f + '. '
+          + 'Damit kommt Elias’ Meldung vom 05.09.2026 zurueck.'));
+      else
+        note('Beispielsatz: klebt unten (sticky, bottom:0, deckender Hintergrund), steht '
+           + 'hinter der Eselsbruecke, deutsche Zeile vorhanden.');
+    });
+
     abschnitt('Auslieferstrategie des Service Workers', () => {
     const swRoh = fs.readFileSync(path.join(DIR, 'sw.js'), 'utf8');
     const fetchBlock = swRoh.slice(swRoh.indexOf("addEventListener('fetch'"));

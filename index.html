@@ -1152,6 +1152,37 @@ main{
   width:100%;background:var(--surface-3);border:1px solid var(--border);
   border-radius:var(--r-3);padding:var(--sp-4);margin-top:var(--sp-1);
 }
+/* ⭐⭐ Auf der KARTEIKARTE klebt der Beispielsatz unten (05.09.2026).
+   Elias mit Bild um 02:26 (Karte حَقِيبَةٌ): "hier ist das beispielsatz einfach
+   abgeschnitten ab da ... ich glaube das ist aber das einzige."
+
+   Es war nicht das einzige. Bei 375x812 ueber alle 203 Karten mit Satz
+   gemessen: 158 laufen ueber (im Mittel 81 px), der arabische Satz ist nur auf
+   119 ganz zu sehen, die deutsche Uebersetzung nur auf 86. Bei حَقِيبَةٌ
+   selbst: 607 px Inhalt in 458 px Flaeche, die deutsche Zeile stand bei
+   bottom 714 - also 107 px UNTERHALB der Karte.
+
+   ⛔ Die Karte hoeher zu machen ist keine Loesung, und das ist gemessen, nicht
+   vermutet: schon bei min-height 520px liegen die Bewertungsknoepfe unter der
+   Navigationsleiste (787 > 746). Erst ab 640px passt der Inhalt - dann sind die
+   Knoepfe 161 px zu tief. Die Karte ist heute schon so hoch, wie es geht.
+
+   ⛔ Die Reihenfolge darf nicht getauscht werden. Elias am 21.08.2026:
+   "sollst es so lassen also vorschläge oben und satz unten." Deshalb bleibt der
+   Satz unten - er klebt dort nur jetzt fest, statt wegzurutschen.
+
+   ⚠️ Er klebt 25 px ueber dem Kartenrand, nicht buendig: .flashcard-back hat
+   padding-bottom:24px, und sticky rechnet gegen die PADDING-Box. Das ist so
+   richtig - buendig wuerde der Kasten den abgerundeten Rand ueberdecken.
+
+   ⚠️ Nur .flashcard-back: dieselbe Klasse traegt das Vokabel-Popover in
+   js/kategorien.js:745, das gar nicht rollt. */
+.flashcard-back .example-box{
+  position:sticky;bottom:0;z-index:2;
+  /* Der Kasten ist halbdurchsichtig gedacht? Nein - er MUSS decken, sonst
+     scheint die Eselsbruecke beim Rollen durch ihn hindurch. */
+  background:var(--surface-3);
+}
 /* 1,5rem gegen --fs-md ergab 1,70 - jetzt aus dem deutschen Partner abgeleitet. */
 .example-ar{font-family:var(--font-ar);font-size:calc(var(--fs-md) * var(--ar-faktor));direction:rtl;text-align:center;line-height:2;color:#fff;}
 .example-de{font-size:var(--fs-md);color:var(--text-dim);text-align:center;margin-top:var(--sp-2);}
