@@ -1593,3 +1593,49 @@ function toast(msg){
   toast._t = setTimeout(()=>el.classList.remove('show'), 2200);
 }
 
+
+/* ---------- Die Hoehe der Topbar messen, statt sie zu raten (05.09.2026) -----
+
+   Elias mit Tablet-Bild: „Beim Tablet ist generell die obere leiste(n)
+   verbuggt." Auf dem Bild lagen App-Kopfzeile, Bildschirm-Kopfzeile und ein
+   Listeneintrag uebereinander.
+
+   Ab 700 px Breite steht die Topbar `position:absolute` (index.html), ist also
+   aus dem Fluss — den Platz muss `main` als `padding-top` selbst freihalten.
+   Dort stand eine feste Zahl: 88 px im 700er-Block, 96 px im 1024er. Gemessen
+   war die Leiste bei 1280x800 aber 89 px hoch.
+
+   ⛔ Die Zahl KANN nicht stimmen, egal welche man einsetzt: in die Hoehe gehen
+   `--safe-top` (Geraet), `--sp-3`/`--sp-4` (Breakpoint) und die Schriftgroesse
+   ein. Eine feste Zahl ist hier eine Annahme, die als Layout getarnt ist.
+   [[vor_dem_eintragen_messen]]
+
+   Die 7 px Differenz waren genau der Streifen, durch den die Liste lief:
+   `.screen-header` klebt `position:sticky` an der PADDING-Box des Scrollports,
+   also bei 96 statt bei 89. Derselbe Fehler ist am 20.08.2026 schon einmal
+   fuers Handy behoben worden. [[sticky_klebt_an_padding_box]]
+
+   ⚠️ ResizeObserver statt `resize`-Ereignis: die Leiste aendert ihre Hoehe auch
+   ohne Fensteraenderung — wenn Schriften nachladen, wenn der Streak-Zaehler
+   zweistellig wird, wenn der Nutzer die Systemschrift vergroessert. Ein
+   `resize`-Zuhoerer bekaeme davon nichts mit.
+
+   ⚠️ Auch unter 700 px gesetzt, obwohl das CSS die Variable dort nicht braucht:
+   ein Wert, der nur in einem Breakpoint gepflegt wird, ist beim Wechsel ueber
+   die Grenze veraltet. */
+function topbarHoeheMessen(){
+  const leiste = document.querySelector('.topbar');
+  if (!leiste) return;
+  const setzen = () => {
+    const h = Math.ceil(leiste.getBoundingClientRect().height);
+    /* 0 kommt vor, solange der Bildschirm noch nicht gezeigt wird — dann
+       stehen liesse man `main` ohne jeden Abstand unter die Leiste rutschen.
+       [[breite_null_ist_kein_layout]] */
+    if (h > 0) document.documentElement.style.setProperty('--topbar-h', h + 'px');
+  };
+  setzen();
+  if (typeof ResizeObserver === 'function') new ResizeObserver(setzen).observe(leiste);
+  /* Schriften aendern die Hoehe nach dem ersten Anstrich noch einmal. */
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(setzen);
+}
+document.addEventListener('DOMContentLoaded', topbarHoeheMessen);
