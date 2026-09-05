@@ -110,6 +110,20 @@ let SYNC_GEPLANT = null;
 let SYNC_ZULETZT = 0;
 const SICHTBAR_ABSTAND = 60 * 1000;
 
+/* ⭐ Liegt hier ueberhaupt etwas Ungesichertes? (05.09.2026)
+   Der visibilitychange-Zweig fuers WEGLEGEN kann nicht erst holen und
+   vergleichen — der Browser haelt die Seite nicht auf, ein `await` liefe ins
+   Leere. Er schickte deshalb IMMER, bei jedem Wegtippen. Im Netzprotokoll des
+   Pruefstands standen daraufhin PUT-Anfragen im Dutzend hintereinander, und
+   KV erlaubt 1.000 Schreibvorgaenge am Tag.
+
+   Diese Marke ist die Antwort: syncGeaendert() setzt sie, ein geglueckter
+   Upload loescht sie. Ohne Aenderung wird beim Weglegen nichts geschickt.
+   ⚠️ Sie steht im Speicher, nicht im localStorage: nach einem Neustart holt
+   gleicheAb() ohnehin, und eine gespeicherte Marke koennte nach einem Absturz
+   faelschlich „nichts zu tun" behaupten. */
+let SYNC_OFFEN = false;
+
 function syncStempel(){
   try { return JSON.parse(localStorage.getItem(STEMPEL_SCHLUESSEL) || '{}'); }
   catch (e){ return {}; }
@@ -477,6 +491,7 @@ async function gleicheAb(still){
     const gleich = JSON.stringify(baueNutzlast().daten)
                 === JSON.stringify((fern && fern.daten) || {});
     if (!gleich) await schickeZumServer();
+    SYNC_OFFEN = false;
     merkeStatus(true, wortzahl() + ' Wörter' + (geaendert ? ', Stand aktualisiert' : ''));
     if (geaendert){
       /* Die App haelt PROGRESS und SETTINGS im Speicher - nach einer Aenderung
@@ -533,6 +548,7 @@ function syncGeaendert(schluessel){
   if (schluessel === STEMPEL_SCHLUESSEL) return;
   if (SYNC_SCHLUESSEL.indexOf(schluessel) < 0) return;
   merkeAenderung(schluessel);
+  SYNC_OFFEN = true;
   planeAbgleich();
 }
 
@@ -577,10 +593,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
 document.addEventListener('visibilitychange', ()=>{
   if (document.visibilityState === 'hidden'){
     clearTimeout(SYNC_GEPLANT);
+    /* ⭐ Nur wenn hier wirklich etwas Ungesichertes liegt. Vorher schickte
+       JEDES Wegtippen — im Netzprotokoll standen PUT-Anfragen im Dutzend. */
+    if (!SYNC_OFFEN) return;
     /* Kein await moeglich - der Browser haelt die Seite nicht auf. sendBeacon
        waere zuverlaessiger, kann aber keine PUT-Anfrage. Der Versuch reicht:
        schlaegt er fehl, holt der naechste Start es nach. */
-    schickeZumServer().catch(()=>{});
+    schickeZumServer().then(()=>{ SYNC_OFFEN = false; }).catch(()=>{});
     return;
   }
 
