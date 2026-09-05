@@ -483,9 +483,19 @@ const FACHBEGRIFF_VOKABELN = [
   },
 
   /* ==================================================================
-     Drei Wörter, die Elias am 26.08.2026 freigegeben hat („ja mach").
-     Alle drei fehlten im Bestand, obwohl sie in Suren stehen, die er
-     auswendig kann.
+     Wörter, die Elias freigegeben hat: خَيْرٌ und مَعَ am 26.08.2026
+     („ja mach"), الَّذِي am 05.09.2026 („das bräuchte ich aber natürlich als
+     karteikarte").
+
+     ⛔ الَّتِي stand hier auch — und musste wieder raus.
+     pruefe-duplikate.js fand es als Buchvokabel in madina-2 K21 (id 46401),
+     und madina-2 K1-24 IST freigeschaltet. Die To-Do behauptete „Alle drei
+     fehlen im Bestand"; das war gegen vocab-data.js gemessen, nicht gegen
+     den vollen Abzug. Die vorhandene Karte hat stattdessen ihre Merkhaken
+     bekommen (data/eselsbruecken.js). [[werkzeug_misst_kleineren_bestand]]
+
+     ⚠️ مَعَ und الَّذِي stehen beide in madina-1 K24 — freigeschaltet sind
+     dort nur K1-12, also kein Duplikat. Gemessen, nicht angenommen.
 
      ⛔ KEIN ERFUNDENER BEISPIELSATZ. Wo es keinen belegten Satz gibt,
      bleibt sentAr leer und der Koranvers trägt die Illustration —
@@ -549,5 +559,36 @@ const FACHBEGRIFF_VOKABELN = [
       de: "Und das Jenseits ist wahrlich besser für dich als das Diesseits"
     },
     mnemo: "وَلَلْآخِرَةُ خَيْرٌ لَكَ مِنَ الْأُولَىٰ — aus سُورَةُ الضُّحَى, die du auswendig kannst. Die Bauform ist immer dieselbe: خَيْرٌ … مِنْ … heißt „besser als“. Und die Wurzel خ ي ر kennst du schon aus اِخْتِيَارٌ (Auswahl) — wer wählt, sucht sich das Bessere aus."
+  },
+  {
+    id: "gram-mawsul-alladhi",
+    ar: "الَّذِي",
+    de: "der, welcher (männliche Form)",
+    deNeben: "weiblich: الَّتِي",
+    /* Wie die Buchvokabel im Abzug (madina-1 K24, id 50166): particle.
+       Nicht geraten, sondern von dort übernommen. */
+    type: 'particle',
+    /* ⭐ Das Geschlecht IST hier die Lektion: welches der beiden
+       Relativpronomen hineingehört, entscheidet allein das Geschlecht des
+       Wortes davor — nicht, ob es eine Person ist oder eine Sache. Der
+       Genus-Chip auf der Karte zeigt genau das an. */
+    gender: "masculine",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: 'ismun-mawsul-alladhi-01',
+    belegt: 1,
+    /* Aus dem Lehrbuch (lehrbuch-saetze.js) — nicht gebaut. */
+    sentAr: "الْكِتَابُ الَّذِي عَلَى الْمَكْتَبِ لِلْمُدَرِّسِ.",
+    sentDe: "Das Buch, das auf dem Schreibtisch ist, gehört dem Lehrer.",
+    quran: {
+      surah: "Al-Humazah",
+      ayah: "104:2",
+      ar: "الَّذِي جَمَعَ مَالًا وَعَدَّدَهُ",
+      de: "der Besitz zusammenträgt und ihn zählt und immer wieder zählt"
+    },
+    /* ⭐⭐ Beide Formen stehen in DERSELBEN Sure, fünf Verse auseinander —
+       104:2 الَّذِي und 104:7 الَّتِي. Ein Merkhaken, den man nicht bauen
+       muss, weil er schon dasteht. Belegt mit werkzeuge/vers.mjs 104. */
+    mnemo: "سُورَةُ الْهُمَزَة, die du auswendig kannst, hat BEIDE Formen — fünf Verse auseinander. Vers 2: الَّذِي جَمَعَ مَالًا (der Besitz zusammenträgt), Vers 7: نَارُ اللَّهِ … الَّتِي تَطَّلِعُ. ⭐ Warum einmal so und einmal so? نَار (Feuer) ist weiblich, der Stichler aus Vers 1 nicht. Das Geschlecht des Wortes DAVOR entscheidet — nicht, ob es um eine Person geht oder um eine Sache."
   }
 ];
