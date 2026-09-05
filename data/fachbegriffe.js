@@ -558,7 +558,7 @@ const FACHBEGRIFF_VOKABELN = [
       ar: "وَلَلْآخِرَةُ خَيْرٌ لَكَ مِنَ الْأُولَىٰ",
       de: "Und das Jenseits ist wahrlich besser für dich als das Diesseits"
     },
-    mnemo: "وَلَلْآخِرَةُ خَيْرٌ لَكَ مِنَ الْأُولَىٰ — aus سُورَةُ الضُّحَى, die du auswendig kannst. Die Bauform ist immer dieselbe: خَيْرٌ … مِنْ … heißt „besser als“. Und die Wurzel خ ي ر kennst du schon aus اِخْتِيَارٌ (Auswahl) — wer wählt, sucht sich das Bessere aus."
+    mnemo: "وَلَلْآخِرَةُ خَيْرٌ — „und das Jenseits ist besser“ — لَكَ مِنَ الْأُولَىٰ, aus سُورَةُ الضُّحَى, die du auswendig kannst. Die Bauform ist immer dieselbe: خَيْرٌ … مِنْ … heißt „besser als“. Und die Wurzel خ ي ر kennst du schon aus اِخْتِيَارٌ (Auswahl) — wer wählt, sucht sich das Bessere aus."
   },
   {
     id: "gram-mawsul-alladhi",

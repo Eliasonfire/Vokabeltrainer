@@ -230,6 +230,19 @@ console.log('=== 1. Koranstellen nur aus dem auswendigen Bereich ===');
     while ((m = muster.exec(t.text))){
       const sure = Number(m[1]);
       if (sure < 1 || sure > 114) continue;      /* keine Koranstelle */
+      /* ⛔ ZEITMARKEN SEHEN AUS WIE KORANSTELLEN (05.09.2026).
+         Ein Merkhaken zu الَّتِي zitiert den Unterricht mit „Dein Lehrer geht
+         in Folge 17 ab 32:06 …" — der Pruefer las das als Sure 32, Vers 6 und
+         meldete einen Fehler, den es nicht gab. Das ist die Gegenrichtung zu
+         dem, was eiche-datumsmuster.mjs fuer den Datumspruefer festhaelt: dort
+         war „112:1" eine Quranstelle und keine Uhrzeit, hier ist „32:06" eine
+         Uhrzeit und keine Quranstelle.
+
+         Erkennungsmerkmal ist das WORT DAVOR, nicht die Zahl: „ab", „bei",
+         „Minute", „Folge … ab". Eine Quranstelle steht nie hinter „ab".
+         [[kennzeichen_mit_zwei_ursachen]] */
+      const davor = t.text.slice(Math.max(0, m.index - 24), m.index);
+      if (/\b(ab|bei|Minute|min\.?|Zeitmarke)\s+$/i.test(davor)) continue;
       stellen++;
       const von = Number(m[2]);
       const bis = m[3] ? Number(m[3]) : von;
