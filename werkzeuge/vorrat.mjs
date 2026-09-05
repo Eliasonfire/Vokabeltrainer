@@ -227,6 +227,21 @@ function auswendigSchreiben(text){
      nichts auswendig" und liesse jede Koranstelle beanstanden — der alte
      Stand ist dann der bessere. [[leere_liste_ist_keine_messung]] */
   if (!suren.length && !verse.length) return { suren: 0, verse: 0, geschrieben: false };
+  /* ⛔ WAS VERSCHWINDET, WIRD GEMELDET (05.09.2026).
+     Elias nennt Suren manchmal MUENDLICH ("eine, zalzala"), bevor er sie in
+     der App abhakt. Die stehen dann in auswendig.json, aber nicht in vt_hifz —
+     und der naechste Abzug loescht sie STILL wieder heraus. Danach meldet der
+     Merkhaken-Pruefer Verse aus dieser Sure wieder als "ausserhalb", und
+     niemand weiss warum. [[zweiter_aufruf_ueberschreibt_still]] */
+  let verloren = [];
+  try {
+    const alt = JSON.parse(fs.readFileSync(p('data/auswendig.json'), 'utf8'));
+    verloren = (alt.suren || []).filter(n => !suren.includes(n));
+  } catch (e) { /* erste Anlage: nichts zu vergleichen */ }
+  if (verloren.length)
+    console.log('  ⚠️ auswendig.json: ' + verloren.length + ' Sure(n) fallen heraus, weil sie'
+      + ' in vt_hifz fehlen: ' + verloren.join(', ') + '. Falls Elias sie kann, muss er sie'
+      + ' IN DER APP abhaken — sonst kommt derselbe Verlust bei jedem Abzug wieder.');
   fs.writeFileSync(p('data/auswendig.json'), JSON.stringify({
     stempel: (roh.stempel && roh.stempel.vt_hifz) || null,
     geholt: new Date().toLocaleDateString('de-DE'),

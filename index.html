@@ -226,7 +226,22 @@
   --gram-mubtada:#4aa8ff;
   --gram-idafa:#c98bff;
   --gram-nasab:#ffb84d;
-  --gram-fem:#2ee6a6;
+  /* ⭐ ROSA fuer weiblich, nicht mehr Gruen (05.09.2026). Elias auf die
+     ausdrueckliche Frage „gruen oder rosa": „rosa" — sein Grammatikheft
+     fuehrt die weiblichen Formen rosa, die maennlichen blau, und genau diese
+     Zuordnung will er wiedererkennen.
+
+     ⛔ DIESE EINE ZEILE AENDERT ZWEI DINGE, und das ist Absicht: den
+     Genus-Chip auf der Karteikarte (js/lernen.js) UND die Unterstreichung im
+     Satzmodus (js/saetze.js:469 setzt --gram-role aus der Regelfarbe, und
+     mehrere Regeln tragen color:"fem"). Nur eines von beiden umzustellen
+     haette zwei Farben fuer dieselbe Aussage ergeben.
+     [[entscheidung_gilt_fuer_das_zweite_werkzeug]]
+
+     ⚠️ Der Ton ist gegen --red-bright (#ff4d6a) und --gram-idafa (#c98bff)
+     abgesetzt, damit er weder mit der Akzentfarbe noch mit der Idafa-Rolle
+     verwechselt wird. */
+  --gram-fem:#ff6fbf;
   --gram-other:#8a8fa3;
 
   /* --- Schrift --- */
@@ -1082,10 +1097,15 @@ main{
 }
 
 /* Geschlecht auf der Kartenrueckseite (arabicroots-Paritaet D).
-   Bewusst dieselben zwei Farben wie die Grammatik-Unterstreichungen: Grün
-   steht in der App schon fuer "weiblich" (--gram-fem), Blau fuer die
-   Grundform (--gram-mubtada). Wer die Sätze kennt, liest die Farbe hier
-   ohne Legende mit. */
+   Bewusst dieselben zwei Farben wie die Grammatik-Unterstreichungen: ROSA
+   steht in der App fuer "weiblich" (--gram-fem), Blau fuer die Grundform
+   (--gram-mubtada). Wer die Sätze kennt, liest die Farbe hier ohne Legende
+   mit.
+
+   ⚠️ Bis zum 05.09.2026 war Weiblich GRUEN. Elias auf die ausdrueckliche
+   Frage: "rosa" — sein Grammatikheft fuehrt weibliche Formen rosa und
+   maennliche blau. Geaendert wurde nur das Token --gram-fem, damit Karte und
+   Satzmodus nicht auseinanderlaufen. */
 .gender-chip{
   display:inline-flex;align-items:baseline;gap:var(--sp-2);
   /* sp-3 statt sp-4 seit dem 21.08.2026 — „den abstand zwischen beiden etwas

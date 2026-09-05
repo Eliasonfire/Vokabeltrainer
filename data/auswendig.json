@@ -4,6 +4,7 @@
   "suren": [
     1,
     67,
+    99,
     102,
     103,
     105,
@@ -17,5 +18,8 @@
     113,
     114
   ],
-  "verse": []
+  "verse": [],
+  "ergaenzt": {
+    "99": "az-Zalzala — Elias am 05.09.2026 muendlich genannt. ⛔ Steht NICHT in vt_hifz; beim naechsten vorrat.mjs-Abzug faellt sie wieder raus, wenn er sie nicht in der App abhakt."
+  }
 }
