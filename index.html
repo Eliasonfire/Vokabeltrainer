@@ -2230,8 +2230,28 @@ main{
   background:var(--surface-2);border:1px solid var(--border);color:var(--text);
   border-radius:var(--r-2);padding:var(--sp-3);font-size:var(--fs-sm);font-weight:700;
   font-family:var(--font-ui);cursor:pointer;text-align:center;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
   transition:background var(--dur-2) ease, border-color var(--dur-2) ease, transform var(--dur-1) var(--ease-out);
 }
+/* ⛔ ZWEI ZEILEN STATT EINER MIT TRENNPUNKT (06.09.2026).
+
+   Beim Vergroessern des Arabischen auf den vollen Faktor brach
+   „مَرْفُوع · Nominativ" von selbst um — und der Trennpunkt landete
+   dabei auf der FALSCHEN Seite („· مَرْفُوع" / „Nominativ"), weil er
+   zwischen einem isolierten arabischen Stueck und lateinischem Text keine
+   eindeutige Richtung hat. Ein Zufallsumbruch mit verirrtem Zeichen sieht
+   nach Fehler aus, obwohl nur die Schrift groesser wurde.
+
+   Also der Umbruch mit Absicht: Arabisch oben, Deutsch darunter, kein
+   Trennpunkt mehr — damit ist die Richtungsfrage gar nicht erst da, und es
+   ist genau das PAAR-Format, fuer das der doppelte Faktor gilt.
+   [[rtl_richtung_physisch]] */
+.opt-ar{
+  font-family:var(--font-ar,"Noto Naskh Arabic","Amiri",serif);
+  font-size:1.9em;line-height:1.75;unicode-bidi:isolate;font-weight:400;
+}
+.opt-de{font-size:1em;color:var(--text-dim);font-weight:600;line-height:1.35;}
+.ueb-option.richtig .opt-de,.ueb-option.falsch .opt-de{color:inherit;}
 .ueb-option:active{transform:scale(.97);}
 /* ⭐ Arabische Stücke in Antwort und Auflösung (06.09.2026). Elias: „die
    arabischen antowrtmöglichkeiten … sind recht klein und ich kann die nur
@@ -2240,11 +2260,34 @@ main{
    Grundschrift einmal anders eingestellt wird. Dazu die Naskh-Schrift und
    mehr Zeilenhöhe: die Ḥarakāt stehen ÜBER und UNTER der Grundlinie und
    werden sonst abgeschnitten. [[line_height_schneidet_harakat_ab]] */
+/* ⛔ 1,35 WAR ZU WENIG — und an vier von fünf Stellen stand gar nichts.
+   Elias am 06.09.2026 zum Antwortknopf „مَرْفُوع · Nominativ": „die sind so
+   gross wie deutsches und das ist klein, kann schlecht lesen. die sollen
+   etwas groesser sein."
+
+   Nachgemessen ueber alle 13 Uebungen, 64 arabische Stellen:
+     Antwortknopf   .ar-wort       17 px zu 12 px   Faktor 1,40
+     Frage          .ueb-frage     14 px zu 14 px   Faktor 1,00
+     Uebungsname    .ueb-name      14 px zu 14 px   Faktor 1,00
+     Hinweiszeile   .ueb-hinweis   11 px zu 11 px   Faktor 1,00
+     Modusliste     b              14 px zu 14 px   Faktor 1,00
+   Seine feste Vorgabe seit dem 25.07.2026 ist rund das DOPPELTE — bei
+   gleicher Punktgroesse wirkt Arabisch kleiner, weil Buchstabenformen und
+   erst recht die Ḥarakāt mehr Detail auf gleicher Hoehe tragen.
+
+   ⚠️ Zwei Faelle, nicht einer. In einem deutschen Satz („Tippe das خَبَر an")
+   waere das Doppelte ein Sprung mitten in der Zeile; als PAAR daneben
+   (مَرْفُوع · Nominativ) ist es genau die Vorgabe. Deshalb 1,55 im Fliesstext
+   und 1,9 im Knopf. [[vokabeltrainer_design_feedback]] */
 .ar-wort{
   font-family:var(--font-ar,"Noto Naskh Arabic","Amiri",serif);
-  font-size:1.35em;line-height:1.9;unicode-bidi:isolate;
+  font-size:1.55em;line-height:1.9;unicode-bidi:isolate;
   vertical-align:-.06em;
 }
+/* Im Antwortknopf steht das Arabische ALS PAAR über dem deutschen Wort —
+   dort gilt der volle Faktor, siehe .opt-ar. Bleibt ein Knopf einzeilig (etwa
+   „bestimmt (اَلْ)"), greift weiter .ar-wort. */
+.ueb-option .ar-wort{font-size:1.9em;}
 /* Antippbar erst NACH dem Beantworten — vorher gehört der Knopf der Wahl.
    Der gepunktete Strich sagt „hier steckt mehr", ohne wie ein Link auszusehen. */
 .ueb-wahl.beantwortet .ar-wort,
