@@ -472,6 +472,30 @@ const UEBUNGEN = [
         .map(t=>({ t, rule: GRAMMAR_RULES.find(r=>r.id===t.ruleId) }))
         .filter(x=>x.rule && !x.rule.ausgeblendet && x.t.matchText);
       const out = [];
+      /* Vorlauf: welche Stelle im Satz traegt WIE VIELE Markierungen? Muss vor
+         der Schleife stehen, weil jede Aufgabe die Antwort auf ihre eigene
+         Stelle braucht. Dieselbe Suche wie unten, deshalb als Funktion. */
+      const spanneVon = (mt)=>{
+        const w = String(mt).trim().split(/\s+/);
+        if (w.length === 1){
+          let i = z.findIndex(zeile=>zeile.rein === mt);
+          if (i < 0) i = z.findIndex(zeile=>zeile.wort.includes(mt));
+          return i < 0 ? null : (i + '-' + i);
+        }
+        for (let s2 = 0; s2 + w.length <= z.length; s2++){
+          let passt = true;
+          for (let k = 0; k < w.length; k++){
+            if (z[s2+k].rein !== w[k] && !z[s2+k].wort.includes(w[k])){ passt = false; break; }
+          }
+          if (passt) return s2 + '-' + (s2 + w.length - 1);
+        }
+        return null;
+      };
+      const belegteStellen = new Map();
+      tags.forEach(({t})=>{
+        const sp = spanneVon(t.matchText);
+        if (sp) belegteStellen.set(sp, (belegteStellen.get(sp) || 0) + 1);
+      });
       tags.forEach(({t, rule})=>{
         /* Die Markierung sitzt auf einem Textstueck, nicht auf einem Wortindex —
            gesucht ist das Wort, in dem sie steckt. Erst wortgleich, dann
@@ -504,8 +528,22 @@ const UEBUNGEN = [
            beantwortbar - dann sind zwei Antworten gleich richtig. Beim ersten
            Lauf am 30.07.2026 kam genau das heraus: an هَذَا standen drei
            Regeln zur Wahl, die alle ueber هَذَا sprechen. Solche Woerter
-           werden uebersprungen, nicht willkuerlich einer Regel zugeschlagen. */
+           werden uebersprungen, nicht willkuerlich einer Regel zugeschlagen.
+
+           ⛔ GEPRUEFT WURDE ABER NUR DER GLEICHE matchText — und das ist nicht
+           dieselbe Frage (06.09.2026 gemessen). In 45774
+           „أَهَذَا كِتَابٌ؟ نَعَم، هَذَا كِتَابٌ." stehen zwei
+           VERSCHIEDENE Markierungen: marfu-grundfall-01 auf „كِتَابٌ" und
+           fragepartikel-erforderlich-01 auf „؟". Beide landen auf demselben
+           Wort — كِتَابٌ؟ enthaelt beides. Ergebnis: zweimal dieselbe
+           hervorgehobene Stelle mit zwei verschiedenen richtigen Antworten.
+           Was Elias auch waehlt, einmal heisst es falsch.
+
+           Jetzt zaehlt die STELLE, nicht der Text. Genau ein Fall im Bestand
+           (320 Aufgaben), aber es ist derselbe Mangel, den der Kommentar
+           darueber schon beschreibt. [[gegenprobe_sagt_wo_nicht_was]] */
         if (tags.filter(x=>x.t.matchText === t.matchText).length > 1) return;
+        if (belegteStellen.get(idx + '-' + bis) > 1) return;
         /* Und die Ablenker duerfen nicht selbst in diesem Satz markiert sein -
            sie waeren dann ebenfalls richtig, nur an einem anderen Wort. */
         const imSatz = new Set(tags.map(x=>x.rule.id));
