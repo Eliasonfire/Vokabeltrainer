@@ -4126,6 +4126,14 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         <button class="rs" data-sort="nie" aria-pressed="false">nie geübt</button>
       </div>
       <div class="regel-stand" id="regelStand"></div>
+      <!-- ⛔ Fortschritt je Übungsmodus (06.09.2026). Bis dahin hielten zwölf
+           der dreizehn Modi ihr Ergebnis gar nicht fest — nur „Welche Regel?“
+           trägt eine regelId und füllte den Kasten darüber. 4367 von 4682
+           Aufgaben hinterließen keinerlei Spur, und das widersprach Elias' Ziel
+           „inklusive allen funktionen und aufgaben und lösungen usw“.
+           `renderUebungStand()` in js/statistik.js füllt ihn. -->
+      <h3 class="stats-titel">Wie gut sitzen die Übungsarten?</h3>
+      <div class="regel-stand" id="uebungStand"></div>
     </section>
 
     <!-- ============ LEARN (Leitner Flashcards) ============ -->

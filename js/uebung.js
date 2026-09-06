@@ -1273,6 +1273,12 @@ function uebungAuswerten(richtig){
     const a = uebungAktuell();
     if (a && a.regelId) merkeRegel(a.regelId, richtig);
   }
+  /* ⛔ Und der Fortschritt je MODUS (06.09.2026). Bis dahin hinterliessen
+     zwoelf der dreizehn Modi — 4367 von 4682 Aufgaben — keinerlei Spur, weil
+     nur „Welche Regel?" eine regelId traegt. Elias' Ziel nennt „aufgaben und
+     lösungen" ausdruecklich. Ebenfalls HIER und nicht in den Auswertern, aus
+     demselben Grund: kein Modus kann es vergessen. */
+  if (typeof merkeUebung === 'function' && UEB && UEB.modus) merkeUebung(UEB.modus, richtig);
   renderUebung();
   /* Haken fuer die Feier-Effekte (Nachtplan Punkt 8). Solange es js/feier.js
      nicht gibt, passiert hier nichts - der Aufruf ist bewusst wegoptional. */

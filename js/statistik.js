@@ -32,6 +32,7 @@ function renderStats(){
     animateNumber(el, Number(el.dataset.count), el.dataset.suffix || '');
   });
   if (typeof renderUebungskalender === 'function') renderUebungskalender();
+  if (typeof renderUebungStand === 'function') renderUebungStand();
 
   /* Elias am 29.07.2026: "man könnte bei den Boxen auch noch klarer darstellen,
      dass Box 1 schlecht ist und Box 5 sehr gut ist … Box 5 mit so einem
@@ -170,6 +171,60 @@ function renderRegelStand(){
        + 'gefragt werden — sie ist nicht ungeübt, sondern ausgeschaltet.'
      : '')
   + '</div>';
+}
+
+/* ⛔⛔ FORTSCHRITT JE UEBUNGSMODUS (06.09.2026)
+   ============================================
+   Der Kasten darueber wird nur aus „Welche Regel?" gespeist — er sagt das auch
+   selbst. Die uebrigen zwoelf Modi mit 4367 von 4682 Aufgaben hielten ihr
+   Ergebnis bis heute gar nicht fest, weder lokal noch im Abgleich.
+
+   Elias' Ziel: „komplett identische daten […] inklusive allen funktionen und
+   aufgaben und lösungen usw, einfach alles". Ein Stand, den niemand sieht,
+   erfuellt das nicht — deshalb steht er hier und nicht nur in localStorage.
+
+   ⚠️ Die Namen kommen aus UEBUNGEN in js/uebung.js, nicht aus einer zweiten
+   Liste: eine Handliste neben der echten Quelle laeuft auseinander, und
+   niemand merkt es. [[handliste_neben_echter_quelle]] */
+function renderUebungStand(){
+  const kasten = document.getElementById('uebungStand');
+  if (!kasten) return;
+  const modi = (typeof UEBUNGEN !== 'undefined' && Array.isArray(UEBUNGEN)) ? UEBUNGEN : [];
+  const stand = (typeof UEBUNG_STAND !== 'undefined' && UEBUNG_STAND) ? UEBUNG_STAND : {};
+  if (!modi.length){
+    kasten.innerHTML = '<div class="regel-hinweis">Die Übungsliste ist noch nicht geladen.</div>';
+    return;
+  }
+  const zeilen = modi.map(m => {
+    const e = stand[m.id] || { gestellt:0, richtig:0, zuletzt:null };
+    return { nr:m.nr, name:m.name, gestellt:e.gestellt||0, richtig:e.richtig||0,
+             zuletzt:e.zuletzt, quote:(e.gestellt ? (e.richtig||0)/e.gestellt : 0) };
+  }).sort((a,b) => {
+    /* Ungeuebte zuletzt, sonst die schwaechste zuerst — dieselbe Ordnung wie
+       oben bei den Regeln, damit man nicht zweimal umdenken muss. */
+    if (!a.gestellt !== !b.gestellt) return a.gestellt ? -1 : 1;
+    return (a.quote - b.quote) || (b.gestellt - a.gestellt);
+  });
+  const geuebt = zeilen.filter(z => z.gestellt > 0).length;
+  kasten.innerHTML = zeilen.map(z => {
+    const ton = z.gestellt === 0 ? ' leer'
+      : (z.gestellt >= 3 && z.quote < 0.6) ? ' schwach'
+      : (z.gestellt >= 3 && z.quote >= 0.85) ? ' stark' : '';
+    const quote = z.gestellt ? z.richtig + '/' + z.gestellt : '—';
+    const wann = z.zuletzt ? tageHer(z.zuletzt) : 'nie';
+    /* ⚠️ arabischHervor(), nicht escapeHtml(): zehn der dreizehn Namen tragen
+       Arabisch („مُبْتَدَأ / خَبَر"), und ohne den Faktor stuende es so klein
+       da wie das Deutsche. Die Funktion maskiert selbst. */
+    const name = (typeof arabischHervor === 'function')
+      ? arabischHervor(z.nr + '. ' + z.name) : escapeHtml(z.nr + '. ' + z.name);
+    return '<div class="rz' + ton + '">'
+      + '<span class="rn">' + name + '</span>'
+      + '<span class="rq">' + quote + '</span>'
+      + '<span class="rd">' + wann + '</span></div>';
+  }).join('')
+  + '<div class="regel-hinweis">' + geuebt + ' von ' + zeilen.length
+  + ' Übungsarten geübt. Gezählt wird je <b>Art</b>, nicht je Aufgabe — die '
+  + 'Frage ist, welche Übungsart noch nicht sitzt.</div>';
 }
 
 /* „vor 3 Tagen" statt eines Datums: die Frage ist nicht WANN, sondern WIE
