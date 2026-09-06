@@ -372,6 +372,40 @@ const GRAMMAR_RULES = [
     source: { folge: 4, video: "Folge 04", approxTimestamp: "24:07", chapter: 4 },
     source2: { schluessel: 1, lektion: 4, seite: 13 }
   },
+  /* ⭐ DIE ERSTE REGEL AUS FOLGE 6 — und die einzige.
+
+     Folge 6 stand als „null Regeln" in der Statistik, als einzige Lücke
+     zwischen Folge 1 und 19. `werkzeuge/kandidaten.mjs 6` hat fünfzehn
+     Stellen vorgeschlagen (Eichung: Faktor 2,46 gegenüber Zufall); vierzehn
+     davon sind Wiederholung oder gar keine Grammatik — die Stunde ist eine
+     Wiederholungs- und Fragestunde („Kapitel 4 ist durch. Gibt es Fragen?"),
+     dazu Ermahnung zum Dranbleiben. Der stärkste Kandidat (19:45, 10,1
+     Punkte) wiederholt wörtlich marfu-grundfall-01 und irab-drei-faelle-01
+     aus Folge 4.
+
+     Neu ist einzig die BEGRÜNDUNG DES NAMENS, und sie stand in keiner der
+     acht حَرْف-جَرّ-Regeln. Sein Wortlaut bei 11:52:
+
+       „Die heißen die Al-Jarr. Warum? Weil die Majrur machen. …
+        Deswegen heißen sie ja so. Die Buchstaben des Genitivs."
+
+     ⚠️ Bewusst KEINE neue Grammatik: welche Partikeln es gibt und was sie
+     bewirken, steht längst in harf-jarr-01 und den sieben Einzelregeln. Hier
+     steht nur, warum der Name das Ergebnis benennt — genau das, was einen
+     Fachbegriff hängen bleiben lässt. [[eselsbruecken_an_bekanntes_anknuepfen]] */
+  {
+    id: "harf-jarr-name-01",
+    nichtAufKarteikarten: true,
+    name: "Warum die Genitivpartikeln so heißen",
+    shortExplanation: "Der Name sagt bereits, was sie tun. حَرْف جَرّ heißt wörtlich „Buchstabe des Ziehens“ — und was gezogen wird, ist der Fall des Wortes dahinter: es wird مَجْرُور. Dein Lehrer stellt die Frage in Folge 6 selbst und beantwortet sie sofort: „Die heißen die Al-Jarr. Warum? Weil die Majrur machen.“ Und gleich danach nennt er sie „die Buchstaben des Genitivs“. ⭐ Damit hängen drei Begriffe an einer einzigen Wurzel ج ر ر zusammen: جَرّ ist das Ziehen, حَرْف جَرّ das Wort, das zieht, und مَجْرُور das Wort, das gezogen wurde — die Form مَفْعُول, also das, dem etwas angetan wird. Wer den Namen versteht, muss die Wirkung nicht mehr getrennt lernen. ⚠️ Welche Partikeln dazugehören und was jede bedeutet, steht in den anderen Regeln; hier geht es allein um den Namen.",
+    color: "idafa",
+    source: {
+      folge: 6,
+      video: "Folge 06",
+      approxTimestamp: "11:52",
+      chapter: 4
+    }
+  },
   {
     id: "harf-jarr-fi-ala-01",
     name: "فِي und عَلَى (die ersten zwei Genitivpartikeln)",
@@ -2656,6 +2690,12 @@ const SENTENCE_TAGS = {
   ],
   "gram-zarf-maa": [
     { ruleId: "zarf-01", matchText: "مَعَكِ" }
+  ],
+  "50174": [
+    { ruleId: "harf-jarr-name-01", matchText: "فِي" }
+  ],
+  "50338": [
+    { ruleId: "harf-jarr-name-01", matchText: "مِنَ" }
   ]
 };
 
