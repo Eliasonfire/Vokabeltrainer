@@ -8,7 +8,7 @@ function renderSettings(){
   document.getElementById('togglePluralKarten').classList.toggle('on', !!SETTINGS.pluralKarten);
   document.getElementById('toggleVerbFormen').classList.toggle('on', !!SETTINGS.showVerbFormen);
   document.getElementById('toggleQuran').classList.toggle('on', !!SETTINGS.showQuran);
-  document.getElementById('sessionSizeSelect').value = String(SETTINGS.sessionSize);
+  zeigeSitzungsgroesse();
   document.getElementById('directionSelect').value = SETTINGS.direction || 'ar-de';
   document.getElementById('toggleTippen').classList.toggle('on', !!SETTINGS.tippenAbBox4);
   /* Wurzelmodus. Die Ausrichtung ist standardmaessig AN, deshalb wird auf
@@ -341,9 +341,71 @@ document.getElementById('toggleQuran').addEventListener('click', ()=>{
   renderSettings();
   if (typeof renderHome === 'function') renderHome();
 });
+/* ⭐ SITZUNGSGRÖSSE — feste Stufen UND eine eigene Zahl (06.09.2026).
+
+   Elias: „ich will auch bei den karteikarten bei den einstellungen, dass ich
+   selbst entscheiden kann wie viel genau ich trainiere, aktuell gibts die
+   option 10 oder 20 zu lernen, letztens wollte ich aber 15 lernen und das ging
+   nicht, keine option. diese option speziell soll eingefügt werden und auch
+   indiduell selbst zahlen eingeben."
+
+   ⚠️ Beides, nicht nur das Zahlenfeld: die festen Stufen sind mit einem Tipp
+   erledigt, und 15 hat er ausdrücklich verlangt. Das Feld ist für alles
+   andere da.
+
+   ⛔ Die Auswahl allein reicht nicht zum Anzeigen. `select.value = "15"`
+   greift nur, wenn es die Option gibt — steht in den Einstellungen eine 17,
+   bliebe die Auswahl sonst LEER und sähe aus, als wäre nichts eingestellt.
+   Deshalb entscheidet zeigeSitzungsgroesse(), ob eine feste Stufe passt oder
+   „Eigene Zahl" mit gefülltem Feld gezeigt wird. */
+const SITZUNG_STUFEN = ['10','15','20','40','9999'];
+
+function zeigeSitzungsgroesse(){
+  const wahl = document.getElementById('sessionSizeSelect');
+  const feld = document.getElementById('sessionSizeEigen');
+  if (!wahl || !feld) return;
+  const wert = String(SETTINGS.sessionSize);
+  const fest = SITZUNG_STUFEN.indexOf(wert) >= 0;
+  wahl.value = fest ? wert : 'eigen';
+  feld.hidden = fest;
+  if (!fest) feld.value = wert;
+}
+
+/* Grenzen bewusst weit: 1 Karte ist eine sinnvolle Runde (eine schwere Vokabel
+   noch einmal), und mehr als 999 deckt „Alle" ab. Ein leeres oder unsinniges
+   Feld ändert NICHTS — sonst stünde nach einem halb getippten „1" plötzlich
+   eine Einer-Runde in den Einstellungen. */
+function setzeSitzungsgroesse(zahl){
+  const n = Math.round(Number(zahl));
+  if (!Number.isFinite(n) || n < 1 || n > 999) return false;
+  SETTINGS.sessionSize = n;
+  saveSettings();
+  if (typeof renderHome === 'function') renderHome();
+  return true;
+}
+
 document.getElementById('sessionSizeSelect').addEventListener('change', (e)=>{
+  const feld = document.getElementById('sessionSizeEigen');
+  if (e.target.value === 'eigen'){
+    feld.hidden = false;
+    if (!feld.value) feld.value = String(SETTINGS.sessionSize);
+    feld.focus();
+    feld.select();
+    return;                       /* erst die Zahl, dann wird gespeichert */
+  }
+  feld.hidden = true;
   SETTINGS.sessionSize = Number(e.target.value);
   saveSettings();
+  if (typeof renderHome === 'function') renderHome();
+});
+
+document.getElementById('sessionSizeEigen').addEventListener('input', (e)=>{
+  setzeSitzungsgroesse(e.target.value);
+});
+/* Beim Verlassen zurueck auf den gespeicherten Stand, falls die Eingabe
+   unbrauchbar war — sonst behauptet das Feld eine Zahl, die nicht gilt. */
+document.getElementById('sessionSizeEigen').addEventListener('blur', ()=>{
+  zeigeSitzungsgroesse();
 });
 document.getElementById('directionSelect').addEventListener('change', (e)=>{
   SETTINGS.direction = e.target.value;
