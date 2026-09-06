@@ -2623,18 +2623,38 @@ const SATZ_THEMEN = [
   { id: 'nominalsatz', name: 'Nominalsatz',    muster: /^(mubtada|nominalsatz|jumla|wortstellung|satz-vs-wortgruppe)/ },
   { id: 'kasus',       name: 'Kasus',          muster: /^(irab|kasus|marfu|majrur|mansub|tanwin|alif-maqsura|mamnu-min-as-sarf)/ },
   { id: 'nat',         name: 'Adjektiv',       muster: /^(nat|adjektive|mutabaqa|ismun-mawsul)/ },
-  /* HIER STAND ein Thema „Weiblich" (18 Sätze, Regel-Muster
-     /^(ta-marbuta|fem-|nat-fem|eigennamen-fem)/). Elias am 29.07.2026, direkt
-     nachdem er die Themenliste gesehen hat: „das will ich glaube ich nicht."
-     Passt zu seiner Ansage vom selben Abend, die Regel zu den weiblichen
-     Endungen nicht zu brauchen — تاء مربوطة sei als Zeichen schon genug.
+  /* ⭐⭐ „Weiblich" ist am 06.09.2026 ZURÜCKGEKOMMEN — und die Geschichte
+     gehört dazu, weil sie zeigt, wer die Entscheidung getroffen hat.
 
-     ⚠️ Was das NICHT tut: Die Regeln dahinter bleiben alle in der App und
-     werden in den Sätzen weiter unterstrichen — `nat-fem-01` (das Adjektiv muss
-     weiblich werden), `fem-ohne-ta-marbuta-01`, `ta-marbuta-grenzen-01`,
-     `eigennamen-fem-ohne-tanwin-01`. Nur der Reiter ist weg; über „Alle" sind
-     die Sätze weiter erreichbar. Wieder da ist er, indem diese eine Zeile
-     zurückkommt. */
+     Am 29.07.2026 gab es dieses Thema schon einmal (18 Sätze, Muster
+     /^(ta-marbuta|fem-|nat-fem|eigennamen-fem)/). Elias sah die Themenliste
+     und sagte: „das will ich glaube ich nicht." Es flog raus.
+
+     Am 06.09.2026 sagt er: „mach eine, da bietet sich aber männlichkeit dann
+     auch an oder." Dazwischen liegt die ZWISCHENPRÜFUNG SEINES LEHRERS
+     (Samsung Notes, 01.09.), und die fragt fünf Themen ab: Muḍāf · Naʿt ·
+     Ismu l-Ishārah · Ḥarf al-Jarr · **Weiblichkeit (التأنيث)**. Vier davon
+     waren Reiter, das fünfte nicht.
+
+     ⭐ Nicht ich habe ihn umgestimmt, sondern sein Lehrer. Die ältere Absage
+     ist damit nicht falsch gewesen — sie galt für einen Stand, in dem
+     Weiblichkeit kein Prüfungsthema war. [[heft_spaetere_notiz_gilt]]
+
+     ⛔ SEINE RÜCKFRAGE NACH „MÄNNLICHKEIT" IST GEMESSEN UND BEANTWORTET: nein.
+     Von 91 sichtbaren Regeln nennen vier das Wort „männlich" — aber keine
+     einzige behandelt Männlichkeit als eigenes Thema. Zwei davon sind
+     Weiblichkeits- bzw. Naʿt-Regeln, die Kongruenz erklären. Im Arabischen ist
+     Maskulin die Grundform: „männlich" heißt „ohne weibliches Kennzeichen",
+     und genau deshalb fragt auch sein Lehrer nur nach dem weiblichen Wort.
+     Ein Reiter mit null eigenen Regeln wäre eine leere Symmetrie.
+
+     ⚠️ Der Reiter steht NACH „nat" — deshalb bleibt `nat-fem-01` bei
+     „Adjektiv": bei mehreren Treffern gewinnt der erste Eintrag, und dort ist
+     die Regel richtiger aufgehoben (es geht um die Angleichung des Adjektivs,
+     nicht um das Erkennen des Geschlechts). Gemessen: das Muster trifft
+     GENAU die fünf Regeln, die heute in keiner Kategorie liegen — keine
+     andere verliert ihre Heimat. */
+  { id: 'weiblich',    name: 'Weiblich',       muster: /^(ta-marbuta|fem-|eigennamen-fem|koerperteile-genus)/ },
   { id: 'al',          name: 'اَلْ',            muster: /^(al-|schams|qamar|adjektive-an|nakira-marifa)/ },
   { id: 'idafa',       name: 'إِضافة',          muster: /^(idafa|mudaf|zarf-als-mudaf|possessiv-ist-idafa)/ },
 

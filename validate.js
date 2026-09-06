@@ -896,8 +896,7 @@ try {
           + 'die deutsche Uebersetzung des Beispielsatzes ganz');
 
       if (satzFehler.length)
-        satzFehler.forEach(f => fail('Beispielsatz auf der Karteikarte: ' + f + '. '
-          + 'Damit kommt Elias’ Meldung vom 05.09.2026 zurueck.'));
+        satzFehler.forEach(f => fail('Beispielsatz auf der Karteikarte: ' + f + '.'));
       else
         note('Beispielsatz: rollt normal mit (kein sticky), steht hinter der Eselsbruecke, '
            + 'deutsche Zeile vorhanden.');
@@ -1252,14 +1251,22 @@ try {
    ⚠️ Nur ein HINWEIS, nie ein Fehler: die Regel ist ueber „Alle" weiter da,
    nur nicht gezielt uebbar. Das haelt keine Auslieferung auf.
 
-   ⛔ SIEBEN Regeln stehen ABSICHTLICH ohne Kategorie und werden hier nicht
-   gemeldet: fuenf zum Thema „weiblich" (Elias am 29.07.2026 zu einem Reiter
-   dafuer: „das will ich glaube ich nicht"), dazu ya-nida-01 und badal-01,
-   die in keine Gruppe passen, ohne dass man eine erfindet. Wer eine davon
-   doch einsortiert, nimmt sie hier aus der Liste. */
+   ⛔ ZWEI Regeln stehen ABSICHTLICH ohne Kategorie: ya-nida-01 und badal-01
+   passen in keine Gruppe, ohne dass man eine erfindet. Wer eine davon doch
+   einsortiert, nimmt sie hier aus der Liste.
+
+   ⭐ Bis zum 06.09.2026 standen hier SIEBEN — die fünf Weiblichkeits-Regeln
+   waren dabei, weil Elias am 29.07.2026 zu einem Reiter dafür gesagt hatte:
+   „das will ich glaube ich nicht". Am 06.09. sagt er „mach eine", nachdem die
+   Zwischenprüfung seines Lehrers Weiblichkeit (التأنيث) als eigenen
+   Prüfungspunkt gefordert hat. Der Reiter ist zurück, die Ausnahme weg.
+
+   ⚠️ DIESE LISTE MUSS MITWANDERN. Bliebe sie stehen, zählte der Prüfer die
+   fünf weiter als „absichtlich draußen" und meldete 93 statt 98 einsortierte
+   Regeln — grün und falsch. Eine Ausnahmeliste ist die Stelle, an der eine
+   zurückgenommene Entscheidung am längsten weiterlebt.
+   [[eingefrorenes_feld_ist_kein_zustand]] */
 const THEMENLOS_GEWOLLT = new Set([
-  'ta-marbuta-fem-01', 'fem-ohne-ta-marbuta-01', 'koerperteile-genus-01',
-  'eigennamen-fem-ohne-tanwin-01', 'ta-marbuta-grenzen-01',
   'ya-nida-01', 'badal-01',
 ]);
 try {
