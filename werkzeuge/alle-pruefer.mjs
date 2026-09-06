@@ -74,6 +74,15 @@ const PRUEFER = [
   ['pruefe-sprecher.js', []],
   ['pruefe-taschkil.js', []],
   ['pruefe-transkripte.js', []],
+  /* ⛔ Neu am 06.09.2026. Sie wacht darueber, dass keine Uebungsaufgabe ihre
+     eigene Antwort verraet — weder im arabischen Regelnamen noch in der
+     deutschen Uebersetzung. Elias hatte es an تِلْكَ gemeldet: „man kann hier
+     die antwort direkt schon sehen … so ist ja keine uebung."
+     Der Mangel kommt durch JEDE neue Regel und JEDEN neuen Satz zurueck, und
+     die Schranke in js/uebung.js laesst sich lautlos entfernen; deshalb
+     gehoert sie in den Sammellauf und nicht in die Hand des Zufalls.
+     [[wirkung_an_der_quelle_stilllegen]] */
+  ['pruefe-uebungen.js', []],
   ['pruefe-wortfelder.js', ['--fenster']],
   /* ⛔ Die einzige Pruefung, die "Elias hat eine aeltere Fassung" ueberhaupt
      bemerken kann. git push veroeffentlicht hier nichts; wer nur pusht, hat
