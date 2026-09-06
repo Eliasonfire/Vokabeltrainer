@@ -141,6 +141,23 @@ const tB = blockersatz({'2026-09-05':4}, {'2026-09-06':7});
 sag(tB['2026-09-05'] === undefined,
     'Stoertest: mit dem alten Blockersatz waere der Uebungstag 05.09. WEG');
 
+
+/* ---------- Die Serie ---------- */
+sag(/k === 'vt_streak'/.test(sy2), 'vt_streak hat einen eigenen Zweig');
+const streakMerge = (a,b) => {
+  const la=String(a.last||''), lb=String(b.last||'');
+  if (la===lb) return ((Number(a.count)||0)>=(Number(b.count)||0))?a:b;
+  return (la>lb)?a:b;
+};
+sag(streakMerge({count:41,last:'2026-09-06'},{count:39,last:'2026-09-04'}).count===41,
+    'juengerer Tag gewinnt — die Serie vom Handy bleibt');
+sag(streakMerge({count:39,last:'2026-09-04'},{count:41,last:'2026-09-06'}).count===41,
+    '… auch andersherum');
+sag(streakMerge({count:41,last:'2026-09-06'},{count:44,last:'2026-09-06'}).count===44,
+    'gleicher Tag: die laengere Serie gilt');
+sag(streakMerge({count:1,last:'2026-09-06'},{count:40,last:'2026-09-05'}).count===1,
+    '⚠️ ein Ruecksetzer von heute gewinnt gegen gestern — richtig, aber der Grund, warum der 10-Sekunden-Takt dazugehoert');
+
 console.log('');
 console.log(fehler ? '⛔ '+fehler+' Fehler' : '✅ alle Faelle richtig');
 process.exit(fehler?1:0);
