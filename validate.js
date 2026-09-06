@@ -860,25 +860,25 @@ try {
        [[pruefung_fragt_einen_stellvertreter_ab]] */
     abschnitt('Beispielsatz auf der Karteikarte', () => {
       const htmlRoh = fs.readFileSync(path.join(DIR, 'index.html'), 'utf8');
+      /* Ohne Kommentare suchen — der Erklaertext ueber der Regel NENNT
+         `position:sticky`, und ein Treffer darin waere ein Fehlalarm.
+         [[stichworttreffer_im_kommentar]] */
+      const css = htmlRoh.replace(/\/\*[\s\S]*?\*\//g, ' ');
       const satzFehler = [];
 
-      /* Die Regel selbst. Der Selektor MUSS .flashcard-back tragen: dieselbe
-         Klasse .example-box steht im Vokabel-Popover (js/kategorien.js), das
-         gar nicht rollt — dort waere sticky wirkungslos bis stoerend. */
-      const regel = /\.flashcard-back\s+\.example-box\s*\{([^}]*)\}/.exec(htmlRoh);
-      if (!regel)
-        satzFehler.push('index.html hat keine Regel ".flashcard-back .example-box" mehr — '
-          + 'dann rutscht der Beispielsatz wieder unter die Kartenkante');
-      else {
-        if (!/position\s*:\s*sticky/.test(regel[1]))
-          satzFehler.push('".flashcard-back .example-box" ist nicht mehr position:sticky');
-        if (!/bottom\s*:\s*0/.test(regel[1]))
-          satzFehler.push('".flashcard-back .example-box" hat kein bottom:0 — sticky ohne '
-            + 'Anker klebt nirgends');
-        if (!/background/.test(regel[1]))
-          satzFehler.push('".flashcard-back .example-box" setzt keinen Hintergrund — dann '
-            + 'scheint die Eselsbruecke beim Rollen durch den Satz hindurch');
-      }
+      /* ⛔ UMGEDREHT AM 06.09.2026. Bis gestern verlangte dieser Pruefer
+         `position:sticky` — Elias hat den klebenden Satz zurueckgewiesen:
+         "der beispielsatz soll nicht fixiert sein, er soll unter dem vorschlag
+          sein damit ich runter scrollen kann normal".
+         Jetzt wird das Gegenteil geprueft: dass die Regel NICHT wiederkommt.
+         Ein Pruefer, der eine zurueckgenommene Entscheidung weiter einfordert,
+         ist schlimmer als keiner — er baut sie beim naechsten Aufraeumen
+         wieder ein. [[regel_gilt_nur_mit_begruendung]] */
+      const klebt = /\.flashcard-back\s+\.example-box\s*\{([^}]*)\}/.exec(css);
+      if (klebt && /position\s*:\s*sticky/.test(klebt[1]))
+        satzFehler.push('".flashcard-back .example-box" ist wieder position:sticky. '
+          + 'Elias hat das am 06.09.2026 ausdruecklich zurueckgewiesen — der Satz soll '
+          + 'UNTER dem Vorschlag stehen und mitrollen, nicht darueber kleben');
 
       /* Elias' Anordnung vom 21.08.2026: „sollst es so lassen also vorschläge
          oben und satz unten." Die Reihenfolge im Markup ist die Anzeige-
@@ -899,8 +899,8 @@ try {
         satzFehler.forEach(f => fail('Beispielsatz auf der Karteikarte: ' + f + '. '
           + 'Damit kommt Elias’ Meldung vom 05.09.2026 zurueck.'));
       else
-        note('Beispielsatz: klebt unten (sticky, bottom:0, deckender Hintergrund), steht '
-           + 'hinter der Eselsbruecke, deutsche Zeile vorhanden.');
+        note('Beispielsatz: rollt normal mit (kein sticky), steht hinter der Eselsbruecke, '
+           + 'deutsche Zeile vorhanden.');
     });
 
     /* ---------- Die obere Leiste auf dem Tablet (05.09.2026) ---------------
