@@ -1,6 +1,6 @@
 /* test-hifz-sync.mjs — ueberlebt der Hifz-Stand den Geraeteabgleich?
  *
- * ⛔ WARUM ES DIESE DATEI GIBT (07.09.2026)
+ * ⛔ WARUM ES DIESE DATEI GIBT (06.09.2026)
  *
  * Elias, nachdem er auf dem Tablet nachgesehen hatte:
  *   „ich habe eben auf meinem tablet geguckt und die sura zalzala war nicht

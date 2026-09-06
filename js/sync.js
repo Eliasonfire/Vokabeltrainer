@@ -108,7 +108,7 @@ let SYNC_GEPLANT = null;
    ganz unten. Bewusst im Speicher und nicht im localStorage: die Sperre soll
    ein schnelles Hin und Her daempfen, nicht einen Neustart. */
 let SYNC_ZULETZT = 0;
-/* ⛔ Ebenfalls am 07.09.2026 von einer Minute auf zehn Sekunden. Diese Sperre
+/* ⛔ Ebenfalls am 06.09.2026 von einer Minute auf zehn Sekunden. Diese Sperre
    bremst das ABHOLEN beim Zurueckkommen — und genau darauf wartet Elias, wenn
    er vom Handy zum Tablet wechselt. Ein GET kostet kein Schreibkontingent;
    teuer ist nur das Ablegen, und das findet ohnehin nur bei einer echten
@@ -344,7 +344,7 @@ function fuehreZusammen(fern){
        ist {nr:…, zeit:…}, und gebraucht wird genau dasselbe - je Id gewinnt der
        spaetere Zeitstempel. Der Zweig liest ausser `zeit` nichts aus dem
        Eintrag, deshalb reicht die zweite Bedingung statt einer Kopie. */
-    /* ⛔⛔ vt_hifz, vt_hifzVerse und vt_quranFav sind am 07.09.2026 dazugekommen,
+    /* ⛔⛔ vt_hifz, vt_hifzVerse und vt_quranFav sind am 06.09.2026 dazugekommen,
        und das war eine BEHEBUNG, kein Nachruesten. Elias:
 
          „ich habe eben auf meinem tablet geguckt und die sura zalzala war nicht
@@ -587,7 +587,7 @@ async function gleicheAb(still){
    bricht die Wartezeit ab und gleicht sofort ab, sobald die App weggelegt
    wird. Ohne die waere jede Aenderung fuenf Minuten lang ungesichert — und
    auf dem Handy wird eine App selten fuenf Minuten lang bewusst geschlossen. */
-/* ⛔ AM 07.09.2026 VON FUENF MINUTEN AUF ZEHN SEKUNDEN ZURUECK — auf Elias'
+/* ⛔ AM 06.09.2026 VON FUENF MINUTEN AUF ZEHN SEKUNDEN ZURUECK — auf Elias'
    ausdruecklichen Wunsch, und damit gegen seine eigene Entscheidung vom
    19.08.: „ich möchte das es auch nahtlos und sofort syncronisiert wird."
 
