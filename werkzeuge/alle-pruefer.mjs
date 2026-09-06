@@ -103,6 +103,13 @@ const PRUEFER = [
      denkt an SYNC_SCHLUESSEL — der Ausfall ist dann unsichtbar, weil auf jedem
      Geraet etwas Plausibles steht, nur eben Verschiedenes. Genau so lag
      vt_einzeln_frei monatelang. [[allgemeine_regel_statt_listeneintrag]] */
+  /* ⛔ Neu am 07.09.2026, auf Elias' Punkt: „ich will nicht die ganze zeit
+     berechtigungen geben muessen, beim ersten lauf das muss genuegen". Ein
+     Befehl, der im Wartungs-Prompt steht, aber nicht in allowedTools, wird im
+     -p-Modus abgelehnt — und eine abgelehnte Anweisung bricht die Routine
+     NICHT ab: sie ueberspringt und meldet gruen.
+     [[anleitung_ohne_berechtigung]] */
+  ['werkzeuge/pruefe-freigaben.mjs', []],
   ['werkzeuge/pruefe-abgleich.mjs', []],
   ['werkzeuge/pruefe-artefakt-inhalt.mjs', []],
   ['werkzeuge/pruefe-datumsangaben.mjs', []],
