@@ -36,5 +36,5 @@
     "madina-2": "Freigeschaltet, aber Elias lernt dort NICHT. Am 19.08.2026: \"nein, ich bin bei madina-1 kapitel 11, madina-2 ist nur freigeschaltet\", am 06.09.2026 auf die Rueckfrage bestaetigt: \"ich bin immer noch nur bei medina 1\". Die Woerter dieses Buchs bleiben deshalb ABSICHTLICH ausserhalb des Fensters — das ist keine Luecke."
   },
   "nichtInArbeitVom": "06.09.2026",
-  "_wiederhergestellt": "06.09.2026, Wartungslauf So: `vorrat.mjs --lernstand` hat `nichtInArbeit` und `nichtInArbeitVom` beim Neuschreiben KOMMENTARLOS GELOESCHT — obwohl dieselbe Datei sie in Zeile 1022 und 1450 selbst ausliest. Von Hand aus HEAD zurueckgeholt. ⛔ Solange das Werkzeug die Schluessel beim Schreiben nicht uebernimmt, loescht sie JEDER Wartungslauf wieder."
+  "_wiederhergestellt": "06.09.2026, ZWEIMAL am selben Tag: `vorrat.mjs --lernstand` hat `nichtInArbeit` und `nichtInArbeitVom` beim Neuschreiben KOMMENTARLOS GELOESCHT — obwohl dieselbe Datei sie in Zeile 1022 und 1450 selbst ausliest. Erst im Wartungslauf um 14:51, dann erneut im Lauf um 15:44, jedes Mal von Hand aus der vorigen Fassung zurueckgeholt. ⛔ Damit ist der Verlust nicht mehr eine Vermutung, sondern reproduziert: JEDER Lauf loescht Elias' eigene Aussage, und ohne Handarbeit meldet `vorrat.mjs` danach 224 angeblich ungepruefte Woerter."
 }
