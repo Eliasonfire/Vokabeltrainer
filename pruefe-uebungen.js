@@ -153,7 +153,17 @@ const wachen = [
   ['deutsche Schranke gebaut',   /function uebungVerraetDeutsch\s*\(/.test(UEBUNG)],
   ['deutsche Schranke gerufen',  /if\s*\(uebungVerraetDeutsch\(a, satz\)\)\s*return;/.test(UEBUNG)],
   ['arabische Schranke gebaut',  /function uebungNameNennt\s*\(/.test(UEBUNG)],
-  ['arabische Schranke gerufen', /ablenker\.filter\(nenntWort\)\.length < 2\)\s*return;/.test(UEBUNG)]
+  ['arabische Schranke gerufen', /ablenker\.filter\(nenntWort\)\.length < 2\)\s*return;/.test(UEBUNG)],
+  /* ⛔ Dritte Schranke, 06.09.2026: ein Wort in Guillemets ist ZITAT, kein
+     Satzglied. „فِي الْبَيْتِ: «الْبَيْتِ» اِسْمٌ مَجْرُورٌ." erzeugte eine
+     Kasus-Aufgabe mit der Loesung raf — waehrend derselbe Satz danebensagt,
+     das Wort sei مَجْرُور. 25 Aufgaben standen auf solchen Zitaten.
+     [[zitierform_ist_nicht_satzkontext]] */
+  ['Zitat-Schranke gebaut',      /function uebungAufZitat\s*\(/.test(UEBUNG)],
+  ['Zitat-Schranke gerufen',     /if\s*\(uebungAufZitat\(\{ \.\.\.a, zeilen \}\)\)\s*return;/.test(UEBUNG)],
+  /* ⚠️ Und die Zeichenklasse selbst: „ und " statt « und » haetten die halbe
+     Liste getroffen, weil die deutschen Zeichen in den Uebersetzungen stehen. */
+  ['Zitat-Schranke nimmt « »',   /const UEB_ZITAT = \/\[«»\]\//.test(UEBUNG)]
 ];
 const wachFehler = wachen.filter(([, ok]) => !ok);
 console.log('');
