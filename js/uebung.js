@@ -406,7 +406,30 @@ const UEBUNGEN = [
       return z.map((t,i)=>{
         const v = uebungVokabel(t.wort);
         if (!v || !v.gender) return null;
-        const weiblich = v.gender === 'feminine';
+        /* ⛔⛔ GEFRAGT IST DAS WORT IM SATZ, NICHT DIE LEXIKONFORM.
+
+           Elias am 06.09.2026 an اللُّغَةُ الْعَرَبِيَّةُ سَهْلَةٌ: „ich habe
+           weiblich angetippt und mir wurde gesagt das es falsch ist. aber in
+           diesem kontext ist das wort doch weiblich wegen ta marbuta und dem
+           kontext des satzes. ja sahlun ist in seiner grundform männlich aber
+           in diesem satz ist er weiblich."
+
+           Er hat recht, und die Daten belegen es: سَهْلٌ traegt
+           femSg: "سَهْلَةٌ" — genau die Form, die im Satz steht. Die Uebung
+           las aber `v.gender` der GRUNDFORM und antwortete „maennlich", obwohl
+           die Frage lautet „Ist das hervorgehobene Wort …?".
+
+           ⚠️ Nicht einfach „hat ة also weiblich": مَاennliche Namen auf Taʾ
+           marbuta (أُسَامَةُ, حَمْزَةُ) und خَلِيفَة waeren dann falsch. Deshalb
+           wird gegen die GEPFLEGTEN weiblichen Formen verglichen — steht das
+           Satzwort dort, ist es die abgeleitete Form; sonst gilt das Lexikon.
+           [[form_sagt_nicht_welche_beziehung]] */
+        /* ⚠️ Ohne Satzzeichen: t.wort ist das Wort SAMT Punkt, und in der
+           Aufloesung stand dann „سَهْلَةٌ. ist die weibliche Form". */
+        const satzform = String(t.wort || '').replace(/[.،؟!«»:؛]+$/, '');
+        const gleich = (a, b) => a && b && wortKern(a) === wortKern(b);
+        const istFemForm = gleich(satzform, v.femSg) || gleich(satzform, v.femPl);
+        const weiblich = istFemForm || v.gender === 'feminine';
         /* ⚠️ „Ausnahme ohne ة" gilt nur fuer NOMEN. Seit dem 05.09.2026 tragen
            auch die acht eindeutigen Personalpronomen ein `gender` (هِيَ, هُنَّ,
            أَنْتِ, أَنْتُنَّ weiblich) — sie haben nie ein ة, und „eine der
@@ -418,10 +441,16 @@ const UEBUNGEN = [
           wortIdx:i, loesung:weiblich ? 'f' : 'm',
           optionen:[{wert:'m',text:'مُذَكَّر · männlich'},{wert:'f',text:'مُؤَنَّث · weiblich'}],
           /* Dass es eine Ausnahme ist, gehoert in die Aufloesung und nicht in
-             die Frage - in der Frage waere es die Antwort. */
-          aufloesung: (weiblich && !hatTa)
-            ? `${v.ar} (${v.de}) ist weiblich OHNE ة — eine der Ausnahmen, die man mitlernen muss.`
-            : `${v.ar} — ${v.de}`
+             die Frage - in der Frage waere es die Antwort.
+             ⭐ Bei einer abgeleiteten Form nennt die Aufloesung BEIDE Formen.
+             Vorher stand dort nur die Grundform („سَهْلٌ — leicht"), obwohl im
+             Satz سَهْلَةٌ steht — das las sich wie ein Widerspruch zur eigenen
+             Antwort. [[zitierform_ist_nicht_satzkontext]] */
+          aufloesung: istFemForm
+            ? `${satzform} ist die weibliche Form von ${v.ar} (${v.de}) — hier weiblich, weil das Wort davor es ist.`
+            : (weiblich && !hatTa)
+              ? `${v.ar} (${v.de}) ist weiblich OHNE ة — eine der Ausnahmen, die man mitlernen muss.`
+              : `${v.ar} — ${v.de}`
         };
       }).filter(Boolean);
     }
