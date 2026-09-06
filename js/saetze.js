@@ -602,10 +602,22 @@ document.getElementById('btnSentVerdeckt').addEventListener('click', ()=>{
   SETTINGS.satzVerdeckt = !SETTINGS.satzVerdeckt;
   saveSettings();
   verdeckungAnwenden();
-  /* Beim Einschalten gleich vorlesen: das ist der ganze Zweck, und ein
-     zusaetzlicher Griff zum Lautsprecher waere nur im Weg. */
-  if (SETTINGS.satzVerdeckt && SENT.list.length && typeof speakArabic === 'function')
-    speakArabic(SENT.list[SENT.idx].sentAr);
+  /* ⛔ HIER STAND: „Beim Einschalten gleich vorlesen: das ist der ganze Zweck,
+     und ein zusaetzlicher Griff zum Lautsprecher waere nur im Weg."
+     Zurueckgenommen am 06.09.2026 auf Elias' Meldung: „wenn man hier auf dieses
+     auge drückt dann kommt der satz als ton automatisch, das will ich aber
+     nicht. wenn man öfter auf und zu macht dann nervt das und ich reagiere auch
+     nicht so schnell um das zu machen."
+
+     ⭐ Die alte Begruendung war nicht falsch, sie war zu kurz gedacht: sie sah
+     den EINEN Griff, nicht das mehrfache Auf und Zu. Wer den Knopf als Schalter
+     benutzt — auf, nachsehen, wieder zu —, loest damit jedes Mal ungewollt Ton
+     aus und kommt nicht schnell genug hinterher, ihn zu stoppen. Vorgelesen
+     wird jetzt nur noch auf dem Lautsprecherknopf daneben (btnSentSpeak).
+
+     ⭐ Und beim Zumachen wird eine laufende Ausgabe abgebrochen — genau die
+     Lage, in der er „nicht so schnell reagieren" konnte. */
+  if (!SETTINGS.satzVerdeckt && typeof speechSynthesis !== 'undefined') speechSynthesis.cancel();
 });
 
 /* Antippen deckt genau diesen Satz auf, ohne den Modus zu verlassen — der
