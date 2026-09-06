@@ -212,4 +212,23 @@ console.log('');
    schon. [[skelettvergleich_wirft_information_weg]] */
 console.log('⛔ Und zwar mit BEDEUTUNG vergleichen, nicht nur mit Schriftbild:');
 console.log('   ظَرْف = Zeit-/Ortsangabe gegen ظَرْفٌ = Umschlag ist KEIN Duplikat.');
+console.log('');
+/* ⭐ Seit v365 (07.09.2026) handelt die App selbst — Elias' Regel:
+     „wenn so ein fall kommt dann kannst du meine durch die im buch
+      ersetzen. dieses eine wort soll dann schon voher einzeln
+      freigeschalten sein und möglichst identisch durch meins ersetzt werden."
+
+   `tauscheDubletten()` in js/kern.js laeuft bei jedem Start: es schaltet die
+   Buchvokabel einzeln frei, nimmt Fortschritt, Notiz, eigene Eselsbruecke
+   und „kenne ich schon" mit und entfernt erst dann die eigene Karte.
+
+   ⚠️ DIESER PRUEFER MISST DEN REPO-ABZUG, nicht Elias' Geraet. Er meldet
+   eine echte Dublette deshalb so lange, bis Elias die App einmal geoeffnet
+   und der naechste Abzug (hole-vokabeln.mjs) sie mitgenommen hat. Ohne
+   diesen Absatz sieht das aus wie ein ungeloestes Problem.
+   [[pruefserver_ist_nicht_die_app]] [[erledigt_heisst_nicht_wertlos]] */
+console.log('\u2b50 Die App loest ECHTE Dubletten seit v365 beim Start selbst auf');
+console.log('   (tauscheDubletten in js/kern.js, mit Fortschritt-Uebernahme).');
+console.log('   Dieser Lauf misst den Repo-Abzug — ein Befund verschwindet hier');
+console.log('   erst nach dem naechsten hole-vokabeln.mjs.');
 process.exit(2);
