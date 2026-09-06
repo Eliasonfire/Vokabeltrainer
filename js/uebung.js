@@ -591,7 +591,20 @@ function renderUebungsLeiste(){
        ohne Fragen sagt das ehrlich, statt ins Leere zu laufen. */
     return `<button class="zeile${UEB.modus===m.id?' aktiv':''}${n?'':' leer'}" type="button" data-uebmodus="${m.id}"`
          + `${n?'':' title="In dieser Auswahl gibt es dazu keine Frage."'}>`
-         + `<span class="links"><span class="ar">${escapeHtml(m.name)}</span></span>`
+         /* ⭐ Die Nummer steht seit dem 06.09.2026 dabei. Elias: „oben
+            nummeriert er die satzübung gemäß der reihenfolge in der liste, die
+            liste selbst jedoch gibt keine zahlenreihenfolge wider. ich möchte
+            das die liste auch diese zahlenreihenfolge hat damit ich nur die
+            zahl sehen muss und dann potentiell in diese übung intensiver üben
+            kann wenn ich will."
+            Ueber der Aufgabe steht sie laengst („10. Welche Regel?"), nur in
+            der Auswahl fehlte sie — dieselbe Zahl an zwei Orten, einer davon
+            stumm. [[widerspruch_liegt_in_der_beschriftung]] */
+         /* ⚠️ Die Nummer steht INNERHALB von .ar, nicht daneben: .links ist
+            eine Spalte (flex-direction:column), ein Geschwisterknoten stuende
+            also unter dem Namen statt davor. */
+         + `<span class="links"><span class="ar"><span class="unr">${m.nr}.</span>`
+         + `${escapeHtml(m.name)}</span></span>`
          + `<span class="n">${n}</span></button>`;
   };
   /* ⚠️ Erst die bekannten Gruppen, danach alles, was in keine passt. Ohne den
@@ -788,10 +801,13 @@ function renderUebung(){
       let k = 'ueb-option';
       if (UEB.beantwortet && o.wert === a.loesung) k += ' richtig';
       if (UEB.beantwortet && UEB.gewaehlt.has(o.wert) && o.wert !== a.loesung) k += ' falsch';
-      return `<button class="${k}" data-uebwahl="${escapeHtml(String(o.wert))}" lang="ar">${escapeHtml(o.text)}</button>`;
+      return `<button class="${k}" data-uebwahl="${escapeHtml(String(o.wert))}" lang="ar">${arabischHervor(o.text)}</button>`;
     }).join('');
     wahl.classList.remove('hidden');
   } else wahl.classList.add('hidden');
+  /* Traegt das CSS, das die arabischen Woerter erst nach dem Beantworten
+     antippbar aussehen laesst — dieselbe Grenze wie im Klick-Handler. */
+  wahl.classList.toggle('beantwortet', !!UEB.beantwortet);
 
   /* "Prüfen" gibt es nur bei Mehrfachauswahl - sonst zaehlt der erste Tipp,
      und ein zweiter Knopf waere ein Umweg. */
@@ -804,8 +820,63 @@ function renderUebung(){
   if (UEB.beantwortet){
     const teile = [UEB.zuletztRichtig ? 'Richtig.' : 'Nicht ganz.'];
     if (a.aufloesung) teile.push(a.aufloesung);
-    rueck.textContent = teile.join(' ');
+    /* ⭐ innerHTML statt textContent, damit die arabischen Woerter in der
+       Aufloesung dieselbe Behandlung bekommen wie in den Antwortknoepfen:
+       groesser und antippbar. arabischHervor() maskiert selbst. */
+    rueck.innerHTML = arabischHervor(teile.join(' '));
   }
+}
+
+/* ---------- Arabische Wörter größer und antippbar ----------
+
+   Elias am 06.09.2026, an einer Aufgabe „Welche Regel?": „auch sind die
+   arabischen antowrtmöglichkeiten die man da sieht recht klein und ich kann
+   die nur schwer lesen, die sollen etwas größer gemacht werden und ich will
+   auch, dass wenn ich auf die arabischen wörter bei der lösung oder erklärung
+   klicke, dass mir dann eine übersetzung angezeigt wird weil manchmal weiß ich
+   nicht wovon gesprochen wird."
+
+   ⭐ Beides hängt an derselben Voraussetzung: die arabischen Stücke müssen
+   EINZELN ansprechbar sein. Vorher war der ganze Knopf ein Textknoten mit
+   `lang="ar"` — CSS kann darin arabische von deutschen Zeichen nicht
+   unterscheiden, und ein Klickziel gab es auch nicht.
+
+   ⛔ ZERLEGT WIRD MIT arabischHervorheben() AUS js/kern.js — nicht mit einer
+   eigenen Fassung. Der erste Anlauf hatte genau das getan und dabei den Namen
+   `AR_LAUF` ein zweites Mal vergeben; die App warf „Identifier 'AR_LAUF' has
+   already been declared" und diese Datei lud überhaupt nicht mehr. `node
+   --check` sah es nicht (es prüft je Datei), die Browser-Konsole schon.
+   Die Funktion dort nimmt seitdem einen Klassennamen entgegen.
+   [[entscheidung_gilt_fuer_das_zweite_werkzeug]] · [[ein_weg_geht_der_andere_nicht]] */
+function arabischHervor(text){
+  return (typeof arabischHervorheben === 'function')
+    ? arabischHervorheben(text, 'ar-wort')
+    : escapeHtml(String(text || ''));
+}
+
+/* Nachschlagen: erst im gepflegten Bestand, dann in den Fachbegriffen.
+   ⛔ Verglichen wird über wortKern() aus js/saetze.js — dasselbe Maß, mit dem
+   der Satzmodus seine Wörter findet. Zwei verschiedene Normalisierungen für
+   dieselbe Frage wären genau die Sorte Fehler, die niemand meldet.
+   [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+function uebersetzungFuer(stueck){
+  if (typeof wortKern !== 'function') return null;
+  const quelle = [];
+  if (typeof bekannteVokabeln === 'function') quelle.push(...bekannteVokabeln());
+  else if (typeof VOCAB_DATA !== 'undefined') quelle.push(...VOCAB_DATA);
+  if (typeof FACHBEGRIFF_VOKABELN !== 'undefined') quelle.push(...FACHBEGRIFF_VOKABELN);
+
+  const woerter = String(stueck || '').trim().split(/[\s ]+/).filter(Boolean);
+  const gefunden = [];
+  for (const w of woerter){
+    const k = wortKern(w);
+    if (k.length < 2) continue;
+    const t = quelle.find(v => v && (wortKern(v.ar || '') === k
+                                  || wortKern(v.sg || '') === k
+                                  || wortKern(v.pl || '') === k));
+    if (t && t.de) gefunden.push(`${w} — ${t.de}`);
+  }
+  return gefunden.length ? gefunden.join(' · ') : null;
 }
 
 /* Auswertung. Ein Aufruf, drei Arten - und die Zaehlung passiert genau hier,
@@ -892,9 +963,30 @@ document.getElementById('uebSatz').addEventListener('click', (e)=>{
   if (span) uebungWortTipp(Number(span.dataset.uebidx));
 });
 document.getElementById('uebWahl').addEventListener('click', (e)=>{
+  /* ⛔ ZUERST das arabische Wort — aber NUR, wenn schon beantwortet ist.
+     Vorher gehoert der Knopf der Antwortwahl; ein Tipp aufs Wort waere sonst
+     zugleich eine Antwort, und Elias haette sich beim Nachschlagen die Frage
+     verdorben. Er hat es selbst so eingegrenzt: „wenn ich auf die arabischen
+     wörter BEI DER LÖSUNG ODER ERKLÄRUNG klicke". */
+  const wort = e.target.closest('.ar-wort');
+  if (wort && UEB.beantwortet){ zeigeUebersetzung(wort.textContent); return; }
   const knopf = e.target.closest('[data-uebwahl]');
   if (knopf) uebungWahl(knopf.dataset.uebwahl);
 });
+
+/* In der Aufloesung gibt es keine Antwortwahl — dort gilt der Tipp immer. */
+document.getElementById('uebRueckmeldung').addEventListener('click', (e)=>{
+  const wort = e.target.closest('.ar-wort');
+  if (wort) zeigeUebersetzung(wort.textContent);
+});
+
+function zeigeUebersetzung(stueck){
+  const t = uebersetzungFuer(stueck);
+  /* ⭐ Auch das NICHT-Finden wird gesagt. Ein Tipp, der wortlos nichts tut,
+     sieht aus wie ein kaputter Knopf — und Elias haette keinen Anhalt, ob das
+     Wort fehlt oder die Funktion. [[ausfall_ist_unsichtbar_gebaut]] */
+  if (typeof toast === 'function') toast(t || `${stueck} — dazu habe ich keine Vokabel.`);
+}
 document.getElementById('btnUebPruefen').addEventListener('click', uebungMehrfachPruefen);
 document.getElementById('btnUebWeiter').addEventListener('click', uebungWeiter);
 document.getElementById('btnUebBeenden').addEventListener('click', uebungBeenden);

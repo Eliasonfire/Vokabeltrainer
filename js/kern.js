@@ -1564,10 +1564,22 @@ const AR_BEREICH = '\\u0600-\\u06FF\\u0750-\\u077F\\u08A0-\\u08FF\\uFB50-\\uFDFF
 const AR_LAUF = new RegExp(
   '[' + AR_BEREICH + ']+(?:[ \\u00A0\\u200E\\u200F]+[' + AR_BEREICH + ']+)*', 'g');
 
-function arabischHervorheben(text){
+/* ⭐ Der Klassenname ist seit dem 06.09.2026 ein Parameter. Der Uebungsmodus
+   braucht dieselbe Zerlegung, aber eine eigene Klasse: dort werden die
+   arabischen Stuecke groesser gesetzt UND nach dem Beantworten antippbar
+   (js/uebung.js, `ar-wort`).
+
+   ⛔ Beim ersten Anlauf stand dort eine ZWEITE, eigene Fassung mit demselben
+   Namen `AR_LAUF` — die App warf „Identifier 'AR_LAUF' has already been
+   declared" und js/uebung.js lud gar nicht mehr. `node --check` sieht das
+   nicht, weil es je Datei prueft; gefunden hat es erst die Browser-Konsole.
+   Aus dem Fehler wurde die bessere Loesung: eine Funktion, zwei Klassen.
+   [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+function arabischHervorheben(text, klasse){
   /* Erst maskieren, dann verpacken - nie umgekehrt. Der Kasten zeigt auch
      Elias' EIGENE Notizen an, also fremden Text im HTML-Zusammenhang. */
-  return escapeHtml(text).replace(AR_LAUF, lauf => `<span class="mn-ar" lang="ar">${lauf}</span>`);
+  const k = klasse || 'mn-ar';
+  return escapeHtml(text).replace(AR_LAUF, lauf => `<span class="${k}" lang="ar">${lauf}</span>`);
 }
 
 /* Manche Vokabeln haben zwei gueltige Plurale: بُيُوتٌ / أَبْيَاتٌ. arabicroots
