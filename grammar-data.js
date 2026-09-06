@@ -2586,6 +2586,9 @@ const SENTENCE_TAGS = {
   ],
   "gram-pron-nahnu": [
     { ruleId: "verb-madi-endungen-01", matchText: "ذَهَبْنَا" }
+  ],
+  "gram-harf-an": [
+    { ruleId: "harf-jarr-01", matchText: "عَنِ الْمَسْجِدِ" }
   ]
 };
 

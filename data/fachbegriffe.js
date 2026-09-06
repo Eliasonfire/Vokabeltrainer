@@ -559,6 +559,57 @@ const FACHBEGRIFF_VOKABELN = [
     mnemo: "إِنَّ مَعَ الْعُسْرِ يُسْرًا — aus سُورَةُ الشَّرْح, die du auswendig kannst, und dort steht مَعَ zweimal hintereinander (Vers 5 und 6). Wie تَحْتَ ist es kein حَرْف جَرّ, wirkt aber genauso: das Wort dahinter wird مَجْرُور — الْعُسْرِ mit Kasra."
   },
   {
+    /* ⭐⭐ عَنْ — von Elias freigegeben am 06.09.2026: „عَنْ soll rein, mach
+       das volle Programm".
+
+       ⛔ WARUM ES FEHLTE, und warum das auffiel: Sein Lehrer listet in der
+       Musterlösung zur Grammatikabfrage (01.09.2026, Seite ml-05) ACHT
+       حُرُوف الْجَرّ und fragt unter 4a nach „allen, die du bisher gelernt
+       hast, mit Bedeutung". Sieben hatte die App: مِنْ · إِلَى · عَلَى ·
+       فِي · بِ · لِ · كَ. عَنْ stand in KEINER Regel, KEINER Vokabel und
+       KEINEM Satz — dreifach gemessen: Tokenvergleich über Regeln, Vokabeln,
+       Fachbegriffe, Beispiel- und Lehrbuchsätze (0), `grep` über alle fünf
+       Datendateien (5 × 0), und die Gegenprobe an einem Wort, das drin ist.
+
+       ⚠️ Es steht bewusst NICHT in vocab-data.js: ein Eintrag dort zöge das
+       Wort über LERNBESTAND_IDS in „kennt er schon" und verschöbe seinen
+       Lernstand. Derselbe Weg wie bei مَعَ. */
+    id: "gram-harf-an",
+    ar: "عَنْ",
+    /* Wortlaut des Lehrers in der Musterlösung: „عَنْ — von/über". */
+    de: "von, über",
+    /* A1. Wie die übrigen حُرُوف الْجَرّ in dieser App — nicht geraten,
+       dieselbe Wortart wie فِي und مِنْ aus dem Unterricht. */
+    type: 'particle',
+    /* ⛔ A2 entfällt: Partikeln haben keine Wurzel. Das ist kein leeres Feld,
+       sondern die richtige Antwort. */
+    chapter: 'personal',
+    book: 'grammar',
+    regel: 'harf-jarr-01',
+    /* ⛔ belegt: 0 — und genau das ist der Befund. Die Zahl zählt, wie oft die
+       Schreibung in Elias' EIGENEN Regeln vorkommt. Hier ist die Quelle keine
+       Regel, sondern sein Lehrer. Wer die 0 später „korrigiert", löscht den
+       Grund, aus dem dieser Eintrag existiert. */
+    belegt: 0,
+    quelleLehrer: 'Musterlösung Grammatikabfrage Madīna Buch 1, 01.09.2026, Aufgabe 4a',
+    /* A9. Alle vier Wörter im Bestand gemessen: الْبَيْتُ · بَعِيدٌ ·
+       الْمَسْجِدُ sind da, die Bauform ist der Nominalsatz, den er kennt.
+       ⭐ عَنِ mit Kasra statt Sukūn, weil الْمَسْجِدِ mit Hamzat al-waṣl
+       beginnt — belegt am Vers unten (عَنِ النَّعِيمِ), nicht selbst gesetzt. */
+    sentAr: "الْبَيْتُ بَعِيدٌ عَنِ الْمَسْجِدِ.",
+    sentDe: "Das Haus ist weit von der Moschee entfernt.",
+    /* A11. Sure 102 steht mit Häkchen in data/auswendig.json — nicht nur über
+       seine Ansage vom 17.08. Und der Vers zeigt genau die Wirkung:
+       عَنِ + النَّعِيمِ im Genitiv. */
+    quran: {
+      surah: "At-Takathur",
+      ayah: "102:8",
+      ar: "ثُمَّ لَتُسْأَلُنَّ يَوْمَئِذٍ عَنِ النَّعِيمِ",
+      de: "Hierauf werdet ihr an jenem Tag ganz gewiß nach der Wonne gefragt werden"
+    },
+    mnemo: "⭐ Jeder Ḥadīth fängt mit diesem Wort an: عَنْ أَبِي هُرَيْرَةَ — „von Abū Huraira“ —, dann folgt قَالَ رَسُولُ اللهِ. In der Überliefererkette heißt عَنْ „überliefert von“, und das ist dieselbe Grundbedeutung wie „von, über“. Du hörst es in jedem Glied der Kette."
+  },
+  {
     id: "gram-khayr",
     ar: "خَيْرٌ",
     de: "besser; das Gute",

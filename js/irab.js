@@ -32,7 +32,13 @@ const KASUS = {
    Wirksam wird der Eintrag nur beim NACKTEN بِ (istHarfJarr verlangt
    Laenge > 1, ein angeschriebenes بـ faellt also nicht darunter) und bei
    der Funktionsanzeige. Fuer das angeschriebene بِـ siehe weiter unten. */
-const HURUF_JARR = ['في', 'على', 'إلى', 'الى', 'من', 'ل', 'ب'];
+/* ⭐ عن am 06.09.2026 ergaenzt (Elias: „عَنْ soll rein, mach das volle
+   Programm"). Es fehlte hier als einziges der acht حُرُوف الْجَرّ, die sein
+   Lehrer in der Musterloesung vom 01.09. auflistet — und ohne diesen Eintrag
+   sagte die Funktionsanzeige zu عَنْ nur „Wort", ohne die Wirkung auf das
+   naechste. /volles-programm A8. ⚠️ Ohne Vokalzeichen schreiben, wie die
+   uebrigen: istInListe() vergleicht ueber ohneVokale(). */
+const HURUF_JARR = ['في', 'على', 'إلى', 'الى', 'من', 'ل', 'ب', 'عن'];
 /* Praeposition MIT angehaengtem Pronomen - فِيهِ, عَلَيْهَا, مِنْهُ. Das ist
    bereits ein vollstaendiges جَارّ وَمَجْرُور: das Pronomen IST der Genitiv,
    es folgt nichts mehr, und die Endung ist مَبْنِيّ, also keine Kasusendung.

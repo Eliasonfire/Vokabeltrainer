@@ -1915,4 +1915,9 @@ const ESELSBRUECKEN_ALT = {
     'مَعَ gehört zu den ظُرُوف, und die sehen alle gleich aus: تَحْتَ (unter) · أَمَامَ (vor) · خَلْفَ (hinter) · فَوْقَ (über) · عِنْدَ (bei). ⭐ Alle enden auf Fatḥa, und alle machen das folgende Wort مَجْرُور, ohne selbst ein حَرْف جَرّ zu sein. Fünf davon hast du schon — مَعَ ist das sechste am selben Muster.',
     'مَعَ steht fast nie allein: meistens hängt eine Besitzendung dran, und die kennst du alle einzeln als Karteikarte — مَعِي (mit mir) · مَعَكَ (mit dir, zu einem Mann) · مَعَكِ (mit dir, zu einer Frau) · مَعَهُ (mit ihm) · مَعَهَا (mit ihr). ⭐ Genau so steht es in deinem eigenen Beispielsatz: الْفَتَاةُ الَّتِي مَعَكِ — „das Mädchen, das bei dir ist". Nomen + Endung, also مُضَاف und مُضَاف إِلَيْهِ in einem Wort.'
   ],
+
+  'gram-harf-an': [
+    'ثُمَّ لَتُسْأَلُنَّ يَوْمَئِذٍ — „Dann werdet ihr an jenem Tag gefragt" — عَنِ النَّعِيمِ — „nach der Wonne". Der Schlussvers von سُورَةُ التَّكَاثُر (102:8), die du auswendig kannst. ⭐ Zwei Dinge auf einmal: النَّعِيمِ endet auf Kasra, weil عَنْ es مَجْرُور macht — und عَنْ selbst wird zu عَنِ, weil das nächste Wort mit اَلْ beginnt. Dieselbe Verbindung steht in سُورَةُ الْمَاعُون: عَنْ صَلَاتِهِمْ (107:5).',
+    'عَنْ ist der achte im Bund. Dein Lehrer listet in der Musterlösung unter „nenne alle, die du bisher gelernt hast" acht حُرُوف الْجَرّ auf: مِنْ (aus/von) · إِلَى (zu/nach) · عَنْ (von/über) · عَلَى (auf) · فِي (in) · und dazu die drei, die am nächsten Wort kleben. ⭐ Alle acht tun dasselbe: sie machen das folgende Nomen مَجْرُور. Sieben davon standen in dieser App — عَنْ war das einzige, das fehlte.'
+  ],
 };
