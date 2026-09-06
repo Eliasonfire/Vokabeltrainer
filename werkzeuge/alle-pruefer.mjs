@@ -177,6 +177,11 @@ const PRUEFER = [
      Elias sich WIRKLICH erarbeitet hat — auswendig gelernte Suren. Er lief
      bis dahin ueber den Blockersatz und ging beim Geraetewechsel verloren.
      Der Test misst genau seinen Fall: Handy markiert Sure 99, Tablet Sure 112. */
+  /* ⛔ Neu am 07.09.2026. Der Tausch LOESCHT eine Karteikarte — was daran
+     haengt (Fortschritt, Notiz, eigene Eselsbruecke) ist selbst erarbeitet
+     und nicht wiederherstellbar. Ein Fehler hier ist kein
+     Schoenheitsfehler, sondern ein Verlust. */
+  ['test-dublette.mjs', []],
   ['test-hifz-sync.mjs', []],  ['test-sync.mjs', []],
   ['test-sync-anzeige.mjs', []],
   ['test-wurzel.mjs', []],

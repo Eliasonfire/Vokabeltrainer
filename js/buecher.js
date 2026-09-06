@@ -691,6 +691,21 @@ document.addEventListener('DOMContentLoaded', async ()=>{
      nachzutragen, und der Aufruf kostet einen Durchlauf ohne Wirkung. */
   if (typeof ergaenzeProgress === 'function') ergaenzeProgress();
 
+  /* ⛔⛔ SELBST ANGELEGTE DUBLETTEN DURCH DIE BUCHVOKABEL ERSETZEN (07.09.2026)
+     Elias: „wenn so ein fall kommt dann kannst du meine durch die im buch
+     ersetzen. dieses eine wort soll dann schon voher einzeln freigeschalten
+     sein und möglichst identisch durch meins ersetzt werden."
+
+     ⚠️ HIER und nicht früher: der Tausch braucht den vollständigen Bestand.
+     Vor dem Einhängen der Bücher fände er kein Gegenstück, und vor
+     ergaenzeProgress() wäre der Fortschritt, den er mitnimmt, noch nicht
+     vollständig.
+
+     ⭐ Er meldet sich. Ein stiller Tausch löscht eine Karte, ohne dass Elias
+     es erfährt — und die nächste Frage wäre „wo ist mein Wort hin".
+     [[ausfall_ist_unsichtbar_gebaut]] */
+  if (typeof tauscheDubletten === 'function') tauscheDubletten();
+
   renderBuchChips();
   if (typeof renderHome === 'function') renderHome();
   const slug = slugs[0];

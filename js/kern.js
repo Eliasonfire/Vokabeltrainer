@@ -629,6 +629,122 @@ function wasFehlt(w){
   return fehlt;
 }
 
+/* ⛔⛔ SELBST ANGELEGTES WORT DURCH DIE BUCHVOKABEL ERSETZEN (07.09.2026)
+   ============================================================================
+   Elias, nachdem ihm سَيِّدٌ als Dublette vorgelegt wurde:
+
+     „wenn so ein fall kommt dann kannst du meine durch die im buch ersetzen.
+      dieses eine wort soll dann schon voher einzeln freigeschalten sein und
+      möglichst identisch durch meins ersetzt werden."
+
+   Drei Auflagen stecken darin, und alle drei sind Bedingungen, nicht Beiwerk:
+
+     1. die Buchvokabel wird VORHER einzeln freigeschaltet — sonst faellt das
+        Wort aus seiner Reichweite, und die Dublette zu loeschen haette es ihm
+        genommen statt es zu vereinheitlichen;
+     2. `moeglichst identisch`: was an seiner Karte haengt (Fortschritt,
+        Notiz, eigene Eselsbruecke, „kenne ich schon") wandert mit;
+     3. erst danach wird die eigene entfernt.
+
+   ⛔ NUR WO DAS ZIEL NOCH LEER IST. Hat die Buchvokabel bereits Fortschritt,
+   bleibt er stehen — ein Ueberschreiben waere ein Datenverlust in genau dem
+   Schritt, der Daten retten soll. Zusammengezaehlt wird nichts: zwei Karten
+   sind zwei getrennte Uebungsgeschichten, und eine Summe behauptete Uebung,
+   die so nie stattgefunden hat. [[zahlen_ohne_beleg]]
+
+   ⚠️ Der Vergleich ist derselbe wie in pruefe-duplikate.js — NFC, Tatwil weg,
+   Hamzah-Varianten gleich, die Endungs-Haraka ignoriert. Ein Skelettvergleich
+   waere zu grob: مِنْ und مَنْ sehen darin gleich aus.
+   [[skelettvergleich_wirft_information_weg]] [[arabisch_vergleichen_nfc]] */
+const DUB_HARAKA_ENDE = /[\u064B-\u0652]$/;
+function dubForm(x){
+  return String(x == null ? '' : x).normalize('NFC')
+    .replace(/\u0640/g, '')
+    .replace(/[\u0622\u0623\u0625\u0671]/g, '\u0627')
+    .trim()
+    .replace(DUB_HARAKA_ENDE, '');
+}
+function dubGleich(a, b){ const x = dubForm(a); return x.length > 0 && x === dubForm(b); }
+
+/* Findet die Buchvokabel, die dasselbe Wort UND dieselbe Bedeutung trägt.
+   ⛔ Die Bedeutung zaehlt mit: ظَرْف (Fachbegriff) und ظَرْفٌ (Umschlag) haben
+   dasselbe Schriftbild und sind zwei verschiedene Woerter. */
+function dubletteImBuch(eigen){
+  if (!eigen || !eigen.ar) return null;
+  const meineDe = String(eigen.de || '').trim().toLowerCase();
+  return VOCAB_DATA.find(w =>
+    w !== eigen
+    && w.chapter !== 'personal'
+    && dubGleich(w.ar, eigen.ar)
+    && meineDe.length > 0
+    && String(w.de || '').trim().toLowerCase().split(/[\/;,]/).some(t => {
+         const a = t.trim();
+         return a.length > 0 && (meineDe.includes(a) || a.includes(meineDe.split(/[\/;,(]/)[0].trim()));
+       })
+  ) || null;
+}
+
+/* Der Tausch selbst. Gibt zurueck, was geschehen ist — der Aufrufer soll es
+   melden koennen; ein stiller Tausch waere genau die Sorte Aenderung, die
+   niemand nachvollziehen kann. */
+function tauscheDublette(eigen){
+  const buch = dubletteImBuch(eigen);
+  if (!buch) return null;
+  const von = String(eigen.id), nach = String(buch.id);
+
+  /* 1. Erst freischalten — vor allem anderen, damit ein Abbruch danach das
+        Wort nicht aus der Reichweite nimmt. */
+  if (typeof setzeEinzelnFrei === 'function') setzeEinzelnFrei(nach, true);
+
+  /* 2. Mitnehmen, was an der eigenen Karte haengt — nur wo das Ziel leer ist. */
+  const mit = [];
+  if (PROGRESS[von] && !PROGRESS[nach]){ PROGRESS[nach] = PROGRESS[von]; mit.push('Fortschritt'); saveProgress(); }
+  if (typeof NOTES !== 'undefined' && NOTES && NOTES[von] && !NOTES[nach]){
+    NOTES[nach] = NOTES[von]; mit.push('Eselsbruecke');
+    if (typeof saveNotes === 'function') saveNotes();
+  }
+  if (typeof NOTIZEN !== 'undefined' && NOTIZEN && NOTIZEN[von] && !NOTIZEN[nach]){
+    NOTIZEN[nach] = NOTIZEN[von]; mit.push('Notiz');
+    if (typeof saveNotizen === 'function') saveNotizen();
+  }
+  /* ⚠️ BEKANNT hat KEINE save-Funktion — es wird an zwei Stellen direkt ueber
+     LS.set(BEKANNT_SCHLUESSEL, …) geschrieben. Mein erster Entwurf rief
+     `saveBekannt()` hinter einem typeof-Guard: der Eintrag waere gesetzt und
+     nie gespeichert worden, und der Guard haette es lautlos verschluckt.
+     [[werkzeug_ohne_aufrufer]] */
+  if (typeof BEKANNT !== 'undefined' && BEKANNT && BEKANNT[von] && !BEKANNT[nach]){
+    BEKANNT[nach] = BEKANNT[von]; mit.push('kenne ich schon');
+    LS.set(BEKANNT_SCHLUESSEL, BEKANNT);
+  }
+
+  /* 3. Und erst jetzt die eigene weg. */
+  const weg = loeschePersonalVocab(eigen.id);
+  return { von, nach, wort: buch.ar, mitgenommen: mit, geloescht: !!weg };
+}
+
+/* Alle selbst angelegten Wörter durchgehen. Gibt die Liste der Tausche zurück
+   und meldet sie — ein stiller Tausch löscht eine Karte, ohne dass Elias es
+   erfährt.
+
+   ⚠️ Über eine KOPIE der Liste: tauscheDublette() entfernt Einträge aus
+   VOCAB_DATA, und wer währenddessen über das Original läuft, überspringt
+   jeden zweiten Treffer. */
+function tauscheDubletten(){
+  const eigene = VOCAB_DATA.filter(w => w && w.chapter === 'personal').slice();
+  const getauscht = [];
+  for (const w of eigene){
+    const r = tauscheDublette(w);
+    if (r) getauscht.push(r);
+  }
+  if (getauscht.length && typeof toast === 'function'){
+    const namen = getauscht.map(r => r.wort).join(', ');
+    toast(getauscht.length === 1
+      ? namen + ' stand doppelt — deine Karte wurde durch die aus dem Buch ersetzt, der Fortschritt ist mitgewandert.'
+      : getauscht.length + ' Wörter standen doppelt (' + namen + ') — deine Karten wurden durch die aus dem Buch ersetzt.');
+  }
+  return getauscht;
+}
+
 function loeschePersonalVocab(id){
   const w = VOCAB_DATA.find(x => x.id === id);
   if (!w || w.chapter !== 'personal') return false;   /* Fachbegriffe sind seit dem 20.08.2026 selbst 'personal'. */
