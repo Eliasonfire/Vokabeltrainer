@@ -144,6 +144,27 @@ function merkeAenderung(schluessel){
 function aufAlterAdresse(){
   return /(^|\.)github\.io$/i.test(location.hostname);
 }
+
+/* ⭐ Derselbe Fall wie github.io, nur naeher dran: der lokale Vorschauserver.
+   `npx serve` liefert statische Dateien aus und kennt keine Pages Functions —
+   /api/stand endet dort IMMER mit 404, egal ob der echte Abgleich funktioniert.
+
+   Elias am 06.09.2026 mit einem Bildschirmfoto von localhost:8124: „warum ist
+   hier die fehlermeldung?" und, als Begruendung fuer die Antwort gleich mit:
+   „auf dem pc bzw hier der lokale da übe ich ja nicht wirklich, das öffnen wir
+   vorallem wenn wir an der app arbeiten also sind da die daten nicht
+   repräsentativ." Dann: „ich will aber auch diese fehlermeldung dort nicht
+   stehen haben."
+
+   ⛔ Unterdrueckt wird NUR das rote Band, nicht der Abgleich selbst. Wer lokal
+   mit `wrangler pages dev` arbeitet, hat die Function und bekommt sie weiter —
+   und was der Versuch ergeben hat, steht unveraendert in der Statuszeile.
+   Eine Warnung ganz abzuschalten, weil sie an einer Stelle stoert, waere der
+   Fehler: auf seinem Geraet muss sie erscheinen. [[wirkung_an_der_quelle_stilllegen]] */
+function aufLokalerVorschau(){
+  return /^(localhost|127\.0\.0\.1|\[::1\]|.*\.local)$/i.test(location.hostname);
+}
+
 function syncMoeglich(){
   return /^https?:$/.test(location.protocol) && !aufAlterAdresse();
 }
@@ -204,7 +225,9 @@ function zeigeAbgleichWarnung(){
   const feld = document.getElementById('syncWarnungText');
   let s = null;
   try { s = JSON.parse(localStorage.getItem(STATUS_SCHLUESSEL) || 'null'); } catch (e){}
-  if (!syncMoeglich() || !s || s.ok){ band.hidden = true; return; }
+  /* ⛔ aufLokalerVorschau() steht VOR der Statusprüfung: auf localhost gibt es
+     keinen Endpunkt, der 404 sagt also nichts über den echten Abgleich. */
+  if (aufLokalerVorschau() || !syncMoeglich() || !s || s.ok){ band.hidden = true; return; }
 
   const her = s.erfolg ? Date.now() - s.erfolg : null;
   if (her !== null && her < ABGLEICH_FRIST){ band.hidden = true; return; }
