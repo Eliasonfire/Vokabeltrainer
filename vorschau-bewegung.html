@@ -73,6 +73,61 @@ pre{background:var(--hoch);border:1px solid var(--rand);border-radius:10px;
 .notiz{flex:1 1 220px;min-width:0;font:inherit;font-size:.88rem;color:var(--text);
   background:var(--hoch);border:1px solid var(--rand);border-radius:8px;padding:7px 12px}
 .stand{color:var(--still);font-size:.85rem;margin-top:var(--sp2)}
+
+/* ── Die Zeitlupenprobe ───────────────────────────────────────── */
+.probe{background:var(--flaeche);border:1px solid var(--rand);border-radius:12px;
+  padding:var(--sp2);margin:0 0 var(--sp3);--f:1}
+.probe h3{font-size:.95rem;margin:var(--sp3) 0 var(--sp1)}
+.klein{font-size:.86rem;color:var(--leise);max-width:60ch}
+.tempo{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp1);margin-bottom:var(--sp3)}
+.tlabel{color:var(--still);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;margin-right:4px}
+.tempo button{font:inherit;font-size:.85rem;color:var(--leise);background:var(--hoch);
+  border:1px solid var(--rand);border-radius:8px;padding:6px 12px;cursor:pointer}
+.tempo button[aria-pressed="true"]{background:var(--rot);border-color:var(--rot);color:#fff}
+.tempo button:focus-visible{outline:2px solid var(--rot);outline-offset:3px}
+.tempo .ab{margin-left:auto;color:#fff;background:var(--rot-still);border-color:var(--rot)}
+
+.zwilling{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp2)}
+@media (max-width:560px){.zwilling{grid-template-columns:1fr}}
+.spalte h4{margin:0 0 var(--sp1);font-size:.8rem;color:var(--still);
+  text-transform:uppercase;letter-spacing:.06em}
+/* ⚠️ Der Unterschied MUSS in beiden Spalten derselbe sein bis auf die Kurve —
+   sonst misst die Probe etwas anderes als den Befund. Dauern deshalb gleich. */
+.knopf{display:flex;align-items:center;justify-content:center;height:52px;
+  border-radius:12px;background:var(--hoch);border:1px solid var(--rand);
+  color:var(--leise);font-weight:600;user-select:none;cursor:pointer;
+  transform:scale(1)}
+.knopf.heute{transition:transform calc(130ms * var(--f)) cubic-bezier(.22,1,.36,1),
+                        background calc(220ms * var(--f)) ease,
+                        border-color calc(220ms * var(--f)) ease,
+                        color calc(220ms * var(--f)) ease;}
+.knopf.neu{transition:transform calc(130ms * var(--f)) cubic-bezier(.22,1,.36,1),
+                      background calc(220ms * var(--f)) cubic-bezier(.22,1,.36,1),
+                      border-color calc(220ms * var(--f)) cubic-bezier(.22,1,.36,1),
+                      color calc(220ms * var(--f)) cubic-bezier(.22,1,.36,1);}
+.knopf.gedrueckt{transform:scale(.94);background:var(--rot);border-color:var(--rot);color:#fff}
+
+.bahnen{display:flex;flex-direction:column;gap:10px;margin-bottom:var(--sp1)}
+.bahn{display:grid;grid-template-columns:minmax(0,13em) 1fr;gap:var(--sp2);align-items:center}
+@media (max-width:560px){.bahn{grid-template-columns:1fr}}
+.bhn{font-size:.82rem;color:var(--leise)}
+.gleis{position:relative;height:22px;background:var(--hoch);
+  border:1px solid var(--rand);border-radius:11px}
+.punkt{position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;
+  background:var(--still);transform:translateX(0)}
+.punkt.p-out{background:var(--rot)}
+.gleis.los .p-ease{transform:translateX(var(--weg,0px));
+  transition:transform calc(220ms * var(--f)) ease}
+.gleis.los .p-out{transform:translateX(var(--weg,0px));
+  transition:transform calc(220ms * var(--f)) cubic-bezier(.22,1,.36,1)}
+
+.messwert{font-family:var(--mono);font-size:.82rem;color:var(--rot);
+  background:var(--hoch);border:1px solid var(--rand);border-radius:8px;
+  padding:8px 12px;margin:var(--sp1) 0 0;max-width:none}
+.kurvenbild{display:flex;gap:var(--sp2);align-items:flex-start;flex-wrap:wrap;
+  margin-top:var(--sp3)}
+.kurvenbild svg{flex:0 0 auto;background:var(--hoch);border:1px solid var(--rand);
+  border-radius:10px;padding:6px}
 .warn{background:var(--rot-still);border:1px solid var(--rot);border-radius:10px;
   padding:var(--sp2);margin:var(--sp3) 0;font-size:.9rem}
 @media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation-duration:.01ms!important}}
@@ -125,10 +180,86 @@ transition-timing-function: cubic-bezier(.22,1,.36,1), ease, ease
   (220 ms gegen 130 ms). Ein Druck sieht dadurch aus wie zwei Ereignisse.</p>
 </div>
 
+<h2 id="sehen">Der Unterschied dauert 220 Millisekunden — hier ist er in Zeitlupe</h2>
+<p>Bei 1× ist er kaum zu sehen; das ist kein Fehler der Fassung, sondern die
+ganze Größenordnung. Stell auf <b>10×</b>, drück den Knopf und sieh auf die
+<b>Fläche</b>, nicht auf die Form.</p>
+
+<div class="probe">
+  <div class="tempo">
+    <span class="tlabel">Tempo</span>
+    <button type="button" data-f="1" aria-pressed="true">1× echt</button>
+    <button type="button" data-f="4" aria-pressed="false">4×</button>
+    <button type="button" data-f="10" aria-pressed="false">10×</button>
+    <button type="button" id="abspielen" class="ab">▶ beide gleichzeitig drücken</button>
+  </div>
+
+  <div class="zwilling">
+    <div class="spalte">
+      <h4>heute</h4>
+      <div class="knopf heute"><span>Jetzt lernen</span></div>
+      <p class="klein">Form auf <b>deiner</b> Kurve, Fläche und Rahmen auf der
+      <b>Browser-Vorgabe</b>. Die Fläche <em>zögert</em> am Anfang und hängt
+      hinterher.</p>
+    </div>
+    <div class="spalte">
+      <h4>Fassung B</h4>
+      <div class="knopf neu"><span>Jetzt lernen</span></div>
+      <p class="klein">Alles auf <b>deiner</b> Kurve. Die Fläche setzt sich
+      sofort mit in Bewegung und läuft nur länger nach.</p>
+    </div>
+  </div>
+
+  <h3>Und dasselbe als Bild: zwei Punkte, gleicher Start, gleiches Ziel</h3>
+  <div class="bahnen">
+    <div class="bahn"><span class="bhn">Browser-Vorgabe <code>ease</code></span>
+      <div class="gleis"><i class="punkt p-ease"></i></div></div>
+    <div class="bahn"><span class="bhn">deine <code>--ease-out</code></span>
+      <div class="gleis"><i class="punkt p-out"></i></div></div>
+  </div>
+  <p class="klein">Beide brauchen exakt gleich lang. Der obere kommt in der
+  ersten Hälfte kaum vom Fleck und holt am Ende auf — deshalb wirkt eine
+  Oberfläche, die ihn benutzt, träge, obwohl sie nicht langsamer ist.</p>
+  <p class="messwert" id="abstand">Noch nicht gelaufen — drück oben auf
+    „beide gleichzeitig drücken“.</p>
+
+  <div class="kurvenbild">
+    <svg viewBox="0 0 100 100" width="150" height="150" aria-hidden="true">
+      <line x1="0" y1="100" x2="100" y2="100" stroke="#26262c" stroke-width="1"/>
+      <line x1="0" y1="0" x2="0" y2="100" stroke="#26262c" stroke-width="1"/>
+      <line x1="0" y1="100" x2="100" y2="0" stroke="#26262c" stroke-width=".7" stroke-dasharray="3 3"/>
+      <path d="M0,100 C25,90 25,0 100,0" fill="none" stroke="#9a9aa4" stroke-width="2.5"/>
+      <path d="M0,100 C22,0 36,0 100,0" fill="none" stroke="#ff2d43" stroke-width="2.5"/>
+    </svg>
+    <div>
+      <p class="klein" style="margin-top:0"><b style="color:var(--leise)">Grau</b>
+      ist <code>ease</code>: flach am Anfang — in den ersten 60 ms passiert fast
+      nichts.<br>
+      <b style="color:var(--rot)">Rot</b> ist deine <code>--ease-out</code>: steil
+      am Anfang, dann sanft aus. Sie reagiert sofort.</p>
+      <p class="klein">Waagerecht die Zeit, senkrecht der zurückgelegte Weg.</p>
+    </div>
+  </div>
+</div>
+
+<h2>Und worauf du im Rahmen unten achten musst</h2>
+<p>Der Rahmen zeigt die <b>echte</b> App, dort läuft alles in echter
+Geschwindigkeit. Diese vier Stellen zeigen es am deutlichsten — jeweils
+<b>gedrückt halten</b> und auf die <b>Fläche</b> sehen:</p>
+<table>
+  <tr><th>Stelle in der App</th><th>was heute passiert</th></tr>
+  <tr><td>Die Kapitelzahlen <b>1 … 24</b></td><td>Der Kreis wird sofort kleiner, seine Füllung setzt verzögert nach</td></tr>
+  <tr><td>Die Buchknöpfe <b>Madina 1 / Quran</b></td><td>dasselbe, hier am breitesten sichtbar</td></tr>
+  <tr><td>Das <b>Zahnrad</b> oben rechts</td><td>gemessen: Form 130 ms auf deiner Kurve, Rahmen und Fläche 220 ms auf der Vorgabe</td></tr>
+  <tr><td>Die untere Leiste <b>Start / Lernen / …</b></td><td>beim Wechsel färbt sich das Symbol später um, als es sich bewegt</td></tr>
+</table>
+
 <div class="warn">
   ⚠️ <b>Das hier ist ein Vorschlag, keine Änderung.</b> An der App ist nichts
   angefasst. Wenn dir keine der drei Fassungen besser gefällt, bleibt alles wie
-  es ist — so wie beim letzten Mal.
+  es ist — so wie beim letzten Mal. Und wenn du auch in Zeitlupe keinen
+  Unterschied siehst, ist das eine <b>Antwort</b>, kein Versagen: dann lohnt
+  die Änderung nicht.
 </div>
 
 <h2>Fassung wählen</h2>
@@ -254,6 +385,77 @@ dahinterstand:</p>
     marke.textContent = NAME[jetzt];
     anwenden();
   });
+
+  /* ── Zeitlupenprobe ──────────────────────────────────────────────
+     ⛔ Der Unterschied ist 220 ms lang. Elias am 06.09.2026: „ich sehe
+     nirgends einen unterschied, worauf muss ich achten" — berechtigt. Eine
+     Vorfuehrung, deren Wirkung man nicht sehen kann, fuehrt nichts vor.
+     Deshalb: beide Kurven gleichzeitig, wahlweise zehnfach verlangsamt. */
+  var probe = document.querySelector('.probe');
+  var tempo = 1;
+  probe.querySelector('.tempo').addEventListener('click', function(ev){
+    var b = ev.target.closest('button[data-f]');
+    if (!b) return;
+    tempo = Number(b.dataset.f) || 1;
+    probe.style.setProperty('--f', tempo);
+    [].forEach.call(probe.querySelectorAll('.tempo button[data-f]'), function(x){
+      x.setAttribute('aria-pressed', String(x === b));
+    });
+  });
+
+  var knoepfe = probe.querySelectorAll('.knopf');
+  var gleise  = probe.querySelectorAll('.gleis');
+  var laeuft  = false;
+  function abspielen(){
+    if (laeuft) return;
+    laeuft = true;
+    /* Der Weg haengt von der gemessenen Breite ab, nicht von einer Annahme —
+       sonst laeuft der Punkt bei schmalem Fenster aus dem Gleis. */
+    [].forEach.call(gleise, function(g){
+      g.style.setProperty('--weg', (g.clientWidth - 22) + 'px');
+      g.classList.remove('los');
+      void g.offsetWidth;            /* Neuzeichnen erzwingen, sonst kein Uebergang */
+      g.classList.add('los');
+    });
+    [].forEach.call(knoepfe, function(k){ k.classList.add('gedrueckt'); });
+
+    /* ⭐ Der Abstand wird GEMESSEN, nicht behauptet. Zwei Punkte, gleicher
+       Start, gleiches Ziel, gleiche Dauer — was dazwischen auseinanderläuft,
+       ist genau der Unterschied, um den es geht. */
+    var punkte = probe.querySelectorAll('.punkt');
+    var bahn = gleise[0].clientWidth - 22;
+    var maxAbstand = 0;
+    var uhr = setInterval(function(){
+      var a = punkte[0].getBoundingClientRect().left;
+      var b = punkte[1].getBoundingClientRect().left;
+      var d = Math.abs(b - a);
+      if (d > maxAbstand) maxAbstand = d;
+    }, 16);
+
+    var zurueck = 220 * tempo + 260;
+    setTimeout(function(){
+      clearInterval(uhr);
+      var anz = document.getElementById('abstand');
+      if (bahn > 0 && maxAbstand >= 1){
+        anz.textContent = 'gemessen: größter Abstand ' + Math.round(maxAbstand)
+          + ' px auf ' + Math.round(bahn) + ' px Bahn — '
+          + Math.round(maxAbstand / bahn * 100) + ' % der Strecke, '
+          + 'bei gleicher Start- und Ankunftszeit.';
+      } else {
+        anz.textContent = 'gemessen: kein Abstand — dann macht die Änderung hier nichts.';
+      }
+    }, 220 * tempo + 40);
+    setTimeout(function(){
+      [].forEach.call(knoepfe, function(k){ k.classList.remove('gedrueckt'); });
+      [].forEach.call(gleise, function(g){
+        g.classList.remove('los');
+        g.style.setProperty('--weg', '0px');
+      });
+      setTimeout(function(){ laeuft = false; }, 220 * tempo + 60);
+    }, zurueck);
+  }
+  probe.querySelector('#abspielen').addEventListener('click', abspielen);
+  [].forEach.call(knoepfe, function(k){ k.addEventListener('click', abspielen); });
 
   /* Urteil merken — eigener Schlüssel, damit keine andere Vorschauseite
      überschrieben wird. */
