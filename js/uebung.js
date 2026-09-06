@@ -842,6 +842,40 @@ const UEB_DE_WORT = /[a-zäöüß]+/g;
 const uebungDeWorte = t => (String(t || '').toLowerCase().match(UEB_DE_WORT) || [])
   .filter(w => w.length >= 4 && !UEB_DE_STOPP.has(w));
 
+/* ⛔⛔ EIN ZITIERTES WORT IST KEIN SATZGLIED (06.09.2026 gemessen).
+ *
+ * Die Fachbegriff-Saetze sprechen ueber Grammatik und zitieren dabei Woerter
+ * in Guillemets: „فِي الْبَيْتِ: «الْبَيْتِ» اِسْمٌ مَجْرُورٌ." Das zweite
+ * الْبَيْتِ steht dort in seiner ZITIERFORM — es ist Gegenstand der Aussage,
+ * nicht Teil ihres Satzbaus.
+ *
+ * `analysiereSatz()` weiss das nicht und liest es als مُبْتَدَأ. Ergebnis:
+ * eine Aufgabe „In welchem Fall steht das hervorgehobene Wort?" mit der
+ * Loesung **raf** — waehrend im selben Satz daneben steht, es sei
+ * مَجْرُور. Wer richtig antwortet, bekommt „falsch".
+ *
+ * Gemessen: 25 Aufgaben stehen auf einem Wort in Guillemets, 13 davon auf
+ * einem, dessen Endung die Analyse fuer falsch haelt, dazu 8 Tipp-Aufgaben
+ * mit einem Zitatwort als Ziel. Von 4715 sind das 0,5 % — der Verlust ist
+ * kleiner als der Schaden einer Aufgabe, die sich selbst widerspricht.
+ *
+ * ⚠️ Es wird NICHT nach „Anfuehrungszeichen" gesucht, sondern nach den
+ * Guillemets « » — die deutschen „ " kommen in den Uebersetzungen vor und
+ * haetten die halbe Liste getroffen.
+ * [[zitierform_ist_nicht_satzkontext]] [[erfundene_begruendung_schliesst_den_fall]] */
+const UEB_ZITAT = /[«»]/;
+function uebungAufZitat(a){
+  if (!a || !a.zeilen && !a.wortIdx && !a.ziele) return false;
+  const wortAn = i => String((a.zeilen && a.zeilen[i] && a.zeilen[i].wort) || '');
+  if (a.wortIdx != null){
+    /* Auch die Spanne pruefen: eine Markierung kann mehrere Woerter fassen. */
+    const bis = a.wortIdxBis != null ? a.wortIdxBis : a.wortIdx;
+    for (let i = a.wortIdx; i <= bis; i++) if (UEB_ZITAT.test(wortAn(i))) return true;
+  }
+  if (Array.isArray(a.ziele)) for (const i of a.ziele) if (UEB_ZITAT.test(wortAn(i))) return true;
+  return false;
+}
+
 function uebungVerraetDeutsch(a, satz){
   if (!a || !a.optionen || a.loesung == null) return false;
   const de = String((satz && satz.sentDe) || '').toLowerCase();
@@ -867,6 +901,9 @@ function uebungenAufbauen(){
       catch(e){ aufgaben = []; }   // ein kaputter Modus darf nicht die anderen mitnehmen
       aufgaben.forEach(a=>{
         if (uebungVerraetDeutsch(a, satz)) return;
+        /* ⛔ Die Zeilen muessen VOR der Pruefung dran sein — uebungAufZitat()
+           schlaegt sonst im Leeren nach und laesst alles durch. */
+        if (uebungAufZitat({ ...a, zeilen })) return;
         nachModus[m.id].push({ ...a, satz, zeilen, modus:m });
       });
     });
