@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bewegung — drei Fassungen zum Durchklicken</title>
+<style>
+/* Farben und Schriften kommen aus der App selbst. Diese Seite legt sich nur
+   darum herum und ändert an der App nichts Dauerhaftes. */
+:root{
+  --bg:#000; --flaeche:#111114; --hoch:#17171c; --rand:#26262c;
+  --text:#f4f4f6; --leise:#9a9aa4; --still:#6b6b75;
+  --rot:#ff2d43; --rot-still:#7a0f1c;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sp1:8px; --sp2:16px; --sp3:24px; --sp4:40px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font:15px/1.6 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  padding:var(--sp3) var(--sp2) var(--sp4);}
+.huelle{max-width:1080px;margin:0 auto}
+h1{font-size:1.5rem;line-height:1.25;margin:0 0 var(--sp1);text-wrap:balance}
+.unter{color:var(--leise);margin:0 0 var(--sp3);max-width:62ch}
+h2{font-size:1.05rem;margin:var(--sp4) 0 var(--sp1)}
+p{max-width:68ch}
+code{font-family:var(--mono);font-size:.86em;background:var(--hoch);
+  border:1px solid var(--rand);border-radius:4px;padding:1px 5px}
+
+/* ── Der gemessene Befund ─────────────────────────────────────── */
+.befund{background:var(--flaeche);border:1px solid var(--rand);border-radius:12px;
+  padding:var(--sp2);margin:0 0 var(--sp3)}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;padding:6px 10px 6px 0;border-bottom:1px solid var(--rand2,#1c1c21)}
+th{color:var(--still);font-weight:500;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em}
+td.zahl{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;width:5.5em}
+.gut{color:#4ade80}.schlecht{color:var(--rot)}
+
+/* ── Die Auswahl ──────────────────────────────────────────────── */
+.wahl{display:flex;flex-wrap:wrap;gap:var(--sp1);margin:0 0 var(--sp2)}
+.wahl button{font:inherit;font-size:.9rem;font-weight:500;color:var(--leise);
+  background:var(--flaeche);border:1px solid var(--rand);border-radius:999px;
+  padding:8px 16px;cursor:pointer;
+  transition:color 220ms cubic-bezier(.22,1,.36,1),
+             background 220ms cubic-bezier(.22,1,.36,1),
+             border-color 220ms cubic-bezier(.22,1,.36,1),
+             transform 130ms cubic-bezier(.22,1,.36,1);}
+.wahl button:hover{color:var(--text);border-color:var(--still)}
+.wahl button:active{transform:scale(.97)}
+.wahl button[aria-pressed="true"]{background:var(--rot);border-color:var(--rot);color:#fff}
+.wahl button:focus-visible{outline:2px solid var(--rot);outline-offset:3px}
+
+.buehne{display:grid;grid-template-columns:minmax(0,375px) minmax(0,1fr);
+  gap:var(--sp3);align-items:start}
+@media (max-width:820px){.buehne{grid-template-columns:1fr}}
+.rahmen{background:var(--flaeche);border:1px solid var(--rand);border-radius:18px;
+  padding:10px;position:sticky;top:var(--sp2)}
+iframe{width:100%;height:720px;border:0;border-radius:10px;display:block;background:#000}
+.rahmen small{display:block;color:var(--still);font-size:.75rem;
+  font-family:var(--mono);padding:6px 4px 0}
+
+.erklaerung h3{font-size:1rem;margin:0 0 var(--sp1)}
+.erklaerung .weg{display:none}
+.erklaerung .weg.an{display:block}
+pre{background:var(--hoch);border:1px solid var(--rand);border-radius:10px;
+  padding:var(--sp2);overflow-x:auto;font-family:var(--mono);font-size:.82rem;line-height:1.55}
+
+.urteil{display:flex;flex-wrap:wrap;gap:var(--sp1);margin-top:var(--sp3);
+  padding-top:var(--sp2);border-top:1px solid var(--rand)}
+.urteil button{font:inherit;font-size:.88rem;color:var(--leise);background:transparent;
+  border:1px solid var(--rand);border-radius:8px;padding:7px 14px;cursor:pointer;
+  transition:color 220ms cubic-bezier(.22,1,.36,1),border-color 220ms cubic-bezier(.22,1,.36,1)}
+.urteil button[aria-pressed="true"]{color:#fff;background:var(--rot-still);border-color:var(--rot)}
+.notiz{flex:1 1 220px;min-width:0;font:inherit;font-size:.88rem;color:var(--text);
+  background:var(--hoch);border:1px solid var(--rand);border-radius:8px;padding:7px 12px}
+.stand{color:var(--still);font-size:.85rem;margin-top:var(--sp2)}
+.warn{background:var(--rot-still);border:1px solid var(--rot);border-radius:10px;
+  padding:var(--sp2);margin:var(--sp3) 0;font-size:.9rem}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="huelle">
+
+<h1>Bewegung — drei Fassungen zum Durchklicken</h1>
+<p class="unter">Links steht <b>deine echte App</b> in einem Rahmen, nicht ein
+Nachbau. Die Knöpfe darüber schalten nur die <b>Zeitkurve</b> der Bewegungen um
+— Farben, Schriften und Größen bleiben unangetastet. Drück in der App auf
+Knöpfe, Kapitelzahlen und die untere Leiste; der Unterschied ist beim
+<em>Antippen</em> zu spüren, nicht im Standbild.</p>
+
+<div class="befund">
+  <h2 style="margin-top:0">Was gemessen wurde (06.09.2026)</h2>
+  <p style="margin-top:0">Die App hat ein fertiges Bewegungssystem in
+  <code>index.html</code>: vier Dauern und drei Kurven als Variablen. Die
+  <b>Dauern</b> werden fast überall benutzt — die <b>Kurven</b> nur zu einem
+  Drittel.</p>
+  <table>
+    <tr><th>in den <code>transition</code>-Angaben</th><th class="zahl">Anzahl</th><th>Anteil</th></tr>
+    <tr><td>Dauer aus einer Variablen (<code>--dur-1…4</code>)</td><td class="zahl">128</td><td class="gut">99 %</td></tr>
+    <tr><td>Dauer fest eingetippt</td><td class="zahl">2</td><td>1 %</td></tr>
+    <tr><td>Kurve aus einer Variablen (<code>--ease-out</code>, <code>--ease-spring</code>)</td><td class="zahl">42</td><td class="schlecht">33 %</td></tr>
+    <tr><td>Kurve als bloßes <code>ease</code> — die Voreinstellung des Browsers</td><td class="zahl">85</td><td class="schlecht">66 %</td></tr>
+  </table>
+  <p><b>An der laufenden App nachgemessen, nicht nur im Quelltext:</b> von
+  <b>133</b> Bauteilen mit Übergängen bewegen <b>114</b> ihre eigenen Teile auf
+  <b>zwei oder mehr verschiedenen Kurven</b>. In Fassung B und C sind es
+  <b>0</b> — dieselbe Messung, direkt im Rahmen links.</p>
+  <p>Das ist kein Geschmacksurteil, sondern eine Unstimmigkeit <b>innerhalb
+  eines Bauteils</b>. Beispiel <code>.icon-btn</code>, das Zahnrad oben rechts —
+  gemessen kommt dort heraus:</p>
+<pre>transition-property:        transform, background, border-color
+transition-duration:        0.13s,     0.22s,      0.22s
+transition-timing-function: cubic-bezier(.22,1,.36,1), ease, ease
+                            └ deine Kurve            └ Browser-Vorgabe</pre>
+  <p>Und so steht es im Quelltext bei <code>.pressable</code>, dem Knopf, den du
+  am häufigsten drückst:</p>
+<pre>transition: transform     var(--dur-1) var(--ease-out)   ← deine Kurve
+            border-color  var(--dur-2) ease              ← Browser-Vorgabe
+            background    var(--dur-2) ease              ← Browser-Vorgabe
+            box-shadow    var(--dur-2) ease;             ← Browser-Vorgabe</pre>
+  <p><code>ease</code> läuft am Anfang <b>langsam an</b>,
+  <code>--ease-out</code> (<code>cubic-bezier(.22,1,.36,1)</code>) startet
+  sofort. Beim Antippen setzt sich also die Form in Bewegung, während Rahmen
+  und Fläche noch zögern — und sie sind zusätzlich doppelt so lange unterwegs
+  (220 ms gegen 130 ms). Ein Druck sieht dadurch aus wie zwei Ereignisse.</p>
+</div>
+
+<div class="warn">
+  ⚠️ <b>Das hier ist ein Vorschlag, keine Änderung.</b> An der App ist nichts
+  angefasst. Wenn dir keine der drei Fassungen besser gefällt, bleibt alles wie
+  es ist — so wie beim letzten Mal.
+</div>
+
+<h2>Fassung wählen</h2>
+<div class="wahl" role="group" aria-label="Fassung">
+  <button type="button" data-w="a" aria-pressed="true">A · wie jetzt</button>
+  <button type="button" data-w="b" aria-pressed="false">B · eine Kurve für alles</button>
+  <button type="button" data-w="c" aria-pressed="false">C · B, plus Feder beim Druck</button>
+</div>
+
+<div class="buehne">
+  <div class="rahmen">
+    <iframe id="app" src="index.html" title="Die App"></iframe>
+    <small id="marke">A · unverändert</small>
+  </div>
+
+  <div class="erklaerung">
+    <div class="weg an" data-w="a">
+      <h3>A · wie jetzt</h3>
+      <p>Der heutige Stand, ohne jeden Eingriff. Er ist als Bezugspunkt da:
+      Wer B und C vergleicht, muss wissen, wovon.</p>
+      <p>Bewegung ist reichlich vorhanden — <b>63</b> Übergänge, <b>20</b>
+      Animationen, <b>15</b> Bewegungsabläufe, und an drei Stellen wird
+      „weniger Bewegung“ aus den Systemeinstellungen beachtet. Es fehlt also
+      nicht an Bewegung, sondern an <b>einer</b> Bewegung.</p>
+    </div>
+
+    <div class="weg" data-w="b">
+      <h3>B · eine Kurve für alles</h3>
+      <p>Jeder Übergang läuft auf <code>--ease-out</code>, der Kurve, die schon
+      in deiner Datei steht. Nichts wird schneller oder langsamer, nichts wird
+      bunter — Form, Rahmen und Fläche kommen nur <b>gemeinsam</b> an.</p>
+      <p>Der Eingriff ist genau eine Zeile:</p>
+<pre>*, *::before, *::after{
+  transition-timing-function: var(--ease-out) !important;
+}</pre>
+      <p>Für die Vorschau reicht diese Zeile. Eingebaut würde stattdessen an
+      den <b>85</b> Stellen <code>ease</code> durch <code>var(--ease-out)</code>
+      ersetzt — dasselbe Ergebnis, ohne <code>!important</code>.</p>
+    </div>
+
+    <div class="weg" data-w="c">
+      <h3>C · B, plus Feder beim Druck</h3>
+      <p>Wie B, aber was du <b>anfasst</b>, bekommt
+      <code>--ease-spring</code> (<code>cubic-bezier(.34,1.4,.64,1)</code>) —
+      die Kurve, die in deiner Datei schon steht und heute nur an zehn Stellen
+      benutzt wird. Sie schwingt am Ende minimal über, deshalb fühlt sich ein
+      Knopf an, als hätte er nachgegeben.</p>
+      <p>⚠️ Bewusst nur beim <b>Druck</b> und nur auf <code>transform</code>.
+      Eine Feder auf Farben sieht nach Wackeln aus, und auf großen Flächen wird
+      sie schnell albern.</p>
+<pre>.pressable:active, button:active, .chip:active{
+  transition-timing-function: var(--ease-spring) !important;
+}</pre>
+    </div>
+
+    <div class="urteil" role="group" aria-label="Dein Urteil">
+      <button type="button" data-u="a">A nehmen</button>
+      <button type="button" data-u="b">B nehmen</button>
+      <button type="button" data-u="c">C nehmen</button>
+      <button type="button" data-u="nichts">nichts davon</button>
+      <input class="notiz" type="text" placeholder="Notiz (was fehlt dir?)">
+    </div>
+    <p class="stand" id="stand">Noch nichts gewählt. Deine Wahl bleibt in
+    diesem Browser — sag sie mir, damit sie ankommt.</p>
+  </div>
+</div>
+
+<h2>Was ich <em>nicht</em> vorschlage</h2>
+<p>Die naheliegenden Griffe habe ich gemessen und verworfen, weil kein Mangel
+dahinterstand:</p>
+<table>
+  <tr><th>geprüft</th><th class="zahl">gemessen</th><th>Urteil</th></tr>
+  <tr><td>Startseite auf 375 px</td><td class="zahl">1,9</td><td>Bildschirme — kein Rollproblem</td></tr>
+  <tr><td>verschiedene Breiten auf der Startseite</td><td class="zahl">19</td><td>keine Gleichförmigkeit wie damals beim Korantrainer</td></tr>
+  <tr><td>Bildschirme, die auf eine Seite passen</td><td class="zahl">4 von 6</td><td>nur Einstellungen (3,2) ist lang</td></tr>
+  <tr><td>Farben, Schriften, Größe des Arabischen</td><td class="zahl">—</td><td>feste Vorgabe, wird nicht angefasst</td></tr>
+</table>
+
+<script>
+(function(){
+  var SPEICHER = 'bewegung-v1';
+  var rahmen = document.getElementById('app');
+  var marke  = document.getElementById('marke');
+  var stand  = document.getElementById('stand');
+
+  var CSS = {
+    a: '',
+    b: '*,*::before,*::after{transition-timing-function:var(--ease-out)!important}',
+    c: '*,*::before,*::after{transition-timing-function:var(--ease-out)!important}'
+       + '.pressable:active,button:active,.chip:active,[role="button"]:active'
+       + '{transition-timing-function:var(--ease-spring)!important}'
+  };
+  var NAME = { a:'A · unverändert', b:'B · eine Kurve für alles', c:'C · B, plus Feder beim Druck' };
+  var jetzt = 'a';
+
+  /* ⚠️ Der Rahmen liegt auf DERSELBEN Adresse wie diese Seite, sonst käme man
+     nicht an sein Dokument. Deshalb liegt die Datei in der App und nicht als
+     eigenes Artefakt. */
+  function anwenden(){
+    var d;
+    try { d = rahmen.contentDocument; } catch(e){ return; }
+    if (!d || !d.head) return;
+    var alt = d.getElementById('bewegung-probe');
+    if (alt) alt.remove();
+    if (!CSS[jetzt]) return;
+    var s = d.createElement('style');
+    s.id = 'bewegung-probe';
+    s.textContent = CSS[jetzt];
+    d.head.appendChild(s);
+  }
+  rahmen.addEventListener('load', anwenden);
+
+  document.querySelector('.wahl').addEventListener('click', function(ev){
+    var b = ev.target.closest('button[data-w]');
+    if (!b) return;
+    jetzt = b.dataset.w;
+    [].forEach.call(document.querySelectorAll('.wahl button'), function(x){
+      x.setAttribute('aria-pressed', String(x === b));
+    });
+    [].forEach.call(document.querySelectorAll('.erklaerung .weg'), function(x){
+      x.classList.toggle('an', x.dataset.w === jetzt);
+    });
+    marke.textContent = NAME[jetzt];
+    anwenden();
+  });
+
+  /* Urteil merken — eigener Schlüssel, damit keine andere Vorschauseite
+     überschrieben wird. */
+  function lesen(){
+    try { return JSON.parse(localStorage.getItem(SPEICHER) || '{}'); }
+    catch(e){ return {}; }
+  }
+  function schreiben(o){
+    try { localStorage.setItem(SPEICHER, JSON.stringify(o)); } catch(e){}
+  }
+  function zeichnen(){
+    var o = lesen();
+    [].forEach.call(document.querySelectorAll('.urteil button'), function(x){
+      x.setAttribute('aria-pressed', String(x.dataset.u === o.u));
+    });
+    document.querySelector('.notiz').value = o.n || '';
+    stand.textContent = o.u
+      ? 'Gewählt: ' + o.u.toUpperCase() + (o.n ? ' — „' + o.n + '"' : '')
+        + '. Sag es mir, damit es ankommt — ich kann diesen Speicher nicht lesen.'
+      : 'Noch nichts gewählt. Deine Wahl bleibt in diesem Browser — sag sie mir, damit sie ankommt.';
+  }
+  document.querySelector('.urteil').addEventListener('click', function(ev){
+    var b = ev.target.closest('button[data-u]');
+    if (!b) return;
+    var o = lesen(); o.u = b.dataset.u; schreiben(o); zeichnen();
+  });
+  document.querySelector('.notiz').addEventListener('input', function(ev){
+    var o = lesen(); o.n = ev.target.value; schreiben(o); zeichnen();
+  });
+  zeichnen();
+})();
+</script>
+</div>
+</body>
+</html>
