@@ -127,7 +127,13 @@ if (!fs.existsSync(PROMPT)){
     if (fehltDort.length > 6) console.log('        … und ' + (fehltDort.length - 6) + ' weitere');
     console.log('     Sie laufen im Sammellauf, aber nicht mittwochs und sonntags.');
     console.log('     Es fehlt dort EINE Zeile: node werkzeuge/alle-pruefer.mjs');
-    console.log('     ⛔ Nicht von hier aus zu beheben — der Prompt liegt ausserhalb.');
+    /* ⚠️ Hier stand „Nicht von hier aus zu beheben — der Prompt liegt
+       ausserhalb". Erreichbar ist er sehr wohl (pruefe-volles-programm.mjs
+       liest ihn in jedem Lauf); er gehoert nur zu einem anderen Vorhaben.
+       Eine falsche Begruendung schliesst den Fall, eine richtige nicht. */
+    console.log('     ⛔ Braucht ein Wort von Elias: der Prompt gehoert zur');
+    console.log('        Automation (..\\Automation\\prompts\\vokabeltrainer-wartung.md),');
+    console.log('        nicht zu diesem Projekt — erreichbar ist er.');
   } else {
     console.log('  ok   auch im Wartungs-Prompt sind alle genannt.');
   }

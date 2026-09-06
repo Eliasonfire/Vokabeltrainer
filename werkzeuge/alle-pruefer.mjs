@@ -72,6 +72,14 @@ const PRUEFER = [
   ['pruefe-quran.js', []],
   ['pruefe-saetze.js', []],
   ['pruefe-sprecher.js', []],
+  /* ⛔ Neu am 06.09.2026 — und der Anlass ist, dass es sie schon geben SOLLTE:
+     ueber SUCH_ZEICHEN in js/kategorien.js stand seit Wochen „danach an
+     bekannten Faellen geeicht (siehe pruefe-suche.js)", und die Datei hat nie
+     existiert. Die Zeichenklasse der Suche ist genau die Sorte, die lautlos
+     kaputtgeht: verschluckt sie einen Grundbuchstaben, findet die Suche
+     nichts mehr — und ein Nicht-Treffer sieht aus wie ein Wort, das es nicht
+     gibt. [[erfundene_begruendung_schliesst_den_fall]] */
+  ['pruefe-suche.js', []],
   ['pruefe-taschkil.js', []],
   ['pruefe-transkripte.js', []],
   /* ⛔ Neu am 06.09.2026. Sie wacht darueber, dass keine Uebungsaufgabe ihre

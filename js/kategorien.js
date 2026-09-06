@@ -1228,14 +1228,24 @@ document.getElementById('wortKarte').addEventListener('keydown', (e)=>{
    ⛔ Die Zeichenklasse steht als \u-Folgen da und wird NIE sichtbar kopiert.
    Eine kopierte Klasse sieht Zeichen fuer Zeichen gleich aus und trifft etwas
    anderes; am 17.08.2026 hat genau das ein Werkzeug lautlos unbrauchbar
-   gemacht. Danach an bekannten Faellen geeicht (siehe pruefe-suche.js).
+   gemacht. Geeicht wird sie von `pruefe-suche.js`.
+
+   ⚠️ Beide Saetze waren bis zum 06.09.2026 UNWAHR, und zwar in derselben
+   Zeile, die vor genau dieser Falle warnt: die Klasse stand mit sichtbaren
+   arabischen Zeichen da, und `pruefe-suche.js` gab es nicht — `git log --all`
+   kennt keinen einzigen Eintrag dazu. Nachgemessen war sie trotzdem richtig
+   (61 Zeichen, kein Grundbuchstabe), aber das war Glueck: eine Zusicherung,
+   die niemand prueft, ist keine. Seitdem stimmt beides — die Folgen unten
+   sind die fuenf gemessenen Spannen, und der Pruefer liest sie aus DIESER
+   Datei, statt sie abzutippen.
+   [[erfundene_begruendung_schliesst_den_fall]] [[werkzeug_ohne_aufrufer]]
 
    ⭐ Gesucht wird ueber VOCAB_DATA, nicht ueber bekannteVokabeln(): wer sucht,
    will wissen, OB es das Wort gibt. Treffer aus gesperrten Kapiteln werden
    angezeigt und als „noch nicht dran" markiert - weglassen waere eine
    unsichtbare Einschraenkung, und genau die hat Elias schon einmal als Fehler
    gemeldet. */
-const SUCH_ZEICHEN = /[ؐ-ًؚ-ٰٟۖ-ࣰۭ-ࣳ]/g;
+const SUCH_ZEICHEN = /[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u08F0-\u08F3]/g;
 function suchFlach(s){
   return String(s || '')
     .replace(SUCH_ZEICHEN, '')
