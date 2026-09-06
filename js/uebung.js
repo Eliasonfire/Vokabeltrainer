@@ -145,6 +145,98 @@ function uebungWortart(wort){
 const uebungIstBestimmt = w => /^(ال|وال|فال|بال|كال|لل)/
   .test(String(w||'').replace(/[ً-ْٰـ]/g,'').replace(/^[وف](?=ال)/,''));
 
+/* Wort ohne Zeichen und ohne Artikel — fuer die Frage „endet es auf ة?".
+   Nicht `wortKern`: der wird zum VERGLEICHEN gebraucht und darf hier nicht
+   die Endung mitnehmen. */
+const uebungNackt = s => String(s||'')
+  .replace(/[.،؟!«»:؛]+$/,'').replace(/[ً-ْٰـ]/g,'').replace(/^(?:وَ?|فَ?)?(?:ال|أل)/,'');
+
+/* ⛔⛔ WORAN richtet sich die Form? — und die ehrliche Antwort „an nichts".
+
+   Elias am 06.09.2026, nachdem die Genus-Uebung سَهْلَةٌ als maennlich
+   gewertet hatte: „du sollst ja nicht nur dieses eine einzige wort verbessern
+   sondern der fehler soll nicht mehr da sein."
+
+   Beim Nachmessen ueber alle Aufgaben kam derselbe Fehler ein zweites Mal
+   heraus, in Uebung 13: bei „هَذِهِ سَيَّارَةُ الْمُدِيرِ" stand als Begruendung
+   „Es richtet sich nach سَيَّارَةُ." — das tut es nicht. الْمُدِيرِ ist
+   مُضَاف إِلَيْه und traegt sein Geschlecht selbst; der Direktor kann eine
+   Direktorin sein, ohne dass am Satz irgendetwas falsch waere. Wer der
+   angegebenen Begruendung folgt, waehlt مُدِيرَةٌ und bekommt „falsch".
+
+   Deshalb gibt diese Funktion `null` zurueck, wenn es KEIN Bezugswort gibt.
+   Wer sie benutzt, baut die Aufgabe dann gar nicht erst. Gemessen am
+   06.09.2026: 31 der 199 Aufgaben von Uebung 13 waren so nicht loesbar
+   (16 مُبْتَدَأ am Satzanfang, 11 مُضَاف إِلَيْه, 3 nach حَرْف جَرّ, 1 فَاعِل).
+   [[form_sagt_nicht_welche_beziehung]] */
+/* Ist DIESE Wortform im Satz weiblich? — dieselbe Frage, die Uebung 11 stellt,
+   hier als eigener Baustein, damit die Antwort an beiden Stellen gleich
+   ausfaellt. [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+function uebungIstWeiblichImSatz(wort){
+  const form = String(wort || '').replace(/[.،؟!«»:؛]+$/, '');
+  /* Die Hinweiswoerter tragen ihr Geschlecht im Wort selbst und stehen in den
+     Daten ohne `gender` — ohne diese vier Zeilen gilt ausgerechnet das
+     haeufigste Bezugswort als „unbekannt". */
+  const h = uebungNackt(form);
+  if (h === 'هذه' || h === 'هٰذه' || h === 'تلك') return true;
+  if (h === 'هذا' || h === 'هٰذا' || h === 'ذلك') return false;
+  const v = uebungVokabel(form);
+  if (!v) return null;
+  const gleich = (a, b) => a && b && wortKern(a) === wortKern(b);
+  if (gleich(form, v.femSg) || gleich(form, v.femPl)) return true;
+  if (!gleich(form, v.ar) && !gleich(form, v.sg)
+      && /ة$/.test(uebungNackt(form)) && !/ة$/.test(uebungNackt(v.ar))) return true;
+  if (!v.gender) return null;
+  return v.gender === 'feminine';
+}
+
+function uebungBezugswort(z, i, weiblich){
+  const rolle = String((z[i] || {}).rolle || '');
+  /* ⛔ Und das Gefundene wird GEGENGEPRUEFT, bevor es genannt wird.
+
+     Bei „لِي أَخٌ وَاحِدٌ اسْمُهُ أُسَامَةُ، وَلِي أُخْتٌ وَاحِدَةٌ …" liest der
+     Iʿrāb-Erklaerer alles ab dem zweiten Wort als خَبَر — die Suche nach dem
+     مُبْتَدَأ landet deshalb ueber die Satzgrenze hinweg bei أَخٌ, obwohl
+     وَاحِدَةٌ zu أُخْتٌ gehoert. Die erste Fassung schrieb dann „hier weiblich
+     wegen أَخٌ", also die weibliche Form begruendet mit einem maennlichen
+     Wort. Ein Bezug, der der eigenen Antwort widerspricht, wird verschwiegen,
+     nicht behauptet. [[vergleichsfunktion_widerspricht_sich]] */
+  /* ⚠️ „unbekannt" ist NICHT „widerspricht". Die erste Fassung warf beides in
+     einen Topf und verwarf damit 164 richtige Bezuege — allen voran هَذَا,
+     das haeufigste Bezugswort ueberhaupt. Verworfen wird nur, was dem eigenen
+     Ergebnis nachweislich widerspricht. [[kennzeichen_mit_zwei_ursachen]] */
+  const passt = w => {
+    if (!w) return false;
+    if (weiblich == null) return true;
+    const f = uebungIstWeiblichImSatz(w);
+    return f == null || f === weiblich;
+  };
+  /* نَعْت richtet sich nach dem Wort davor — ueber weitere نَعْت hinweg, denn
+     „بَيْتٌ جَمِيلٌ وَنَظِيفٌ": نَظِيفٌ gehoert zu بَيْتٌ, nicht zu جَمِيلٌ. */
+  if (/نَعْت/.test(rolle)){
+    for (let k = i - 1; k >= 0; k--){
+      if (!/نَعْت/.test(String((z[k]||{}).rolle||''))){
+        const w = (z[k]||{}).rein || null;
+        return passt(w) ? w : null;
+      }
+    }
+    return null;
+  }
+  /* خَبَر richtet sich nach dem مُبْتَدَأ — und der wird BENANNT, nicht der
+     linke Nachbar: bei „الطَّالِبُ الْجَدِيدُ جَالِسٌ" waere das sonst
+     الْجَدِيدُ, also ein نَعْت statt des Satzgegenstands. */
+  if (/خَبَر/.test(rolle)){
+    for (let k = i - 1; k >= 0; k--){
+      if (/مُبْتَدَأ/.test(String((z[k]||{}).rolle||''))){
+        const w = (z[k]||{}).rein || null;
+        return passt(w) ? w : null;
+      }
+    }
+    return null;
+  }
+  return null;
+}
+
 /* ---------- Antwortvorraete ----------
    Einmal hier, damit dieselbe Frage in mehreren Modi gleich heisst. */
 const KASUS_WAHL = [
@@ -428,8 +520,32 @@ const UEBUNGEN = [
            Aufloesung stand dann „سَهْلَةٌ. ist die weibliche Form". */
         const satzform = String(t.wort || '').replace(/[.،؟!«»:؛]+$/, '');
         const gleich = (a, b) => a && b && wortKern(a) === wortKern(b);
-        const istFemForm = gleich(satzform, v.femSg) || gleich(satzform, v.femPl);
+        const gepflegteForm = gleich(satzform, v.femSg) || gleich(satzform, v.femPl);
+        /* ⛔⛔ UND der Fall, den `femSg` NICHT abdeckt — der eigentliche Fehler.
+
+           Nach Elias' Satz „der fehler soll nicht mehr da sein" ueber alle 507
+           Aufgaben nachgemessen (06.09.2026). Der femSg-Vergleich allein deckte
+           43 ab; uebrig blieb einer, und er war falsch gewertet:
+           „لِي أُخْتٌ وَاحِدَةٌ" — وَاحِدَةٌ steht in den Daten als `pl` von
+           وَاحِدٌ, also greift weder `femSg` noch `femPl`, und die Uebung
+           antwortete „maennlich".
+
+           Ein gepflegtes Feld ist also keine Bedingung mehr: traegt die
+           Satzform ein ة, das die Lexikonform NICHT hat, ist sie die
+           abgeleitete weibliche Form. Damit haengt die Antwort an dem, was
+           dasteht, statt an der Vollstaendigkeit der Daten.
+
+           ⚠️ Die zweite Haelfte der Bedingung ist die wichtige: خَلِيفَةٌ,
+           أُسَامَةُ und حَمْزَةُ tragen das ة schon im Lexikon und bleiben
+           maennlich. Gepruefte Wirkung: genau eine Aufgabe aendert sich. */
+        const abgeleitetesTa = !gleich(satzform, v.ar) && !gleich(satzform, v.sg)
+          && /ة$/.test(uebungNackt(satzform)) && !/ة$/.test(uebungNackt(v.ar));
+        const istFemForm = gepflegteForm || abgeleitetesTa;
         const weiblich = istFemForm || v.gender === 'feminine';
+        /* Woran es liegt, wird BENANNT — und nur, wenn es wirklich daran
+           liegt. „weil das Wort davor es ist" stimmte bei einem مُضَاف إِلَيْه
+           nicht, siehe uebungBezugswort(). */
+        const bezug = uebungBezugswort(z, i, weiblich);
         /* ⚠️ „Ausnahme ohne ة" gilt nur fuer NOMEN. Seit dem 05.09.2026 tragen
            auch die acht eindeutigen Personalpronomen ein `gender` (هِيَ, هُنَّ,
            أَنْتِ, أَنْتُنَّ weiblich) — sie haben nie ein ة, und „eine der
@@ -447,7 +563,9 @@ const UEBUNGEN = [
              Satz سَهْلَةٌ steht — das las sich wie ein Widerspruch zur eigenen
              Antwort. [[zitierform_ist_nicht_satzkontext]] */
           aufloesung: istFemForm
-            ? `${satzform} ist die weibliche Form von ${v.ar} (${v.de}) — hier weiblich, weil das Wort davor es ist.`
+            ? (bezug
+                ? `${satzform} ist die weibliche Form von ${v.ar} (${v.de}) — hier weiblich wegen ${bezug}.`
+                : `${satzform} ist die weibliche Form von ${v.ar} (${v.de}).`)
             : (weiblich && !hatTa)
               ? `${v.ar} (${v.de}) ist weiblich OHNE ة — eine der Ausnahmen, die man mitlernen muss.`
               : `${v.ar} — ${v.de}`
@@ -498,12 +616,25 @@ const UEBUNGEN = [
         const istMaennlich = formen.includes(uebungOhneEndung(maennlich));
         /* Nur fragen, wenn eindeutig ist, WELCHE der beiden Formen dasteht. */
         if (istWeiblich === istMaennlich) return null;
+        /* ⛔⛔ UND nur fragen, wenn die Antwort AM SATZ ablesbar ist.
+
+           Das Wort ist verdeckt — wer raten soll, braucht einen Anhaltspunkt.
+           Bei „هَذِهِ سَيَّارَةُ الْمُدِيرِ" gibt es keinen: الْمُدِيرِ ist
+           مُضَاف إِلَيْه, مُدِيرَةٌ waere genauso richtig. Die Aufgabe stand
+           trotzdem da, mit der falschen Begruendung „Es richtet sich nach
+           سَيَّارَةُ." — sie nannte einfach den linken Nachbarn.
+
+           Am 06.09.2026 gemessen: 31 der 199 Aufgaben waren so gebaut, 11
+           davon mit dieser irrefuehrenden Begruendung. Sie fallen jetzt weg;
+           168 bleiben. [[bedingung_wird_durch_die_handlung_ungueltig]] */
+        const bezug = uebungBezugswort(z, i, istWeiblich);
+        if (!bezug) return null;
         return {
           frage:'Welche Form gehört hierhin?',
           wortIdx:i, verdeckt:true,
           loesung: istWeiblich ? 'f' : 'm',
           optionen:[{wert:'m',text:maennlich},{wert:'f',text:weiblich}],
-          aufloesung: i > 0 ? `Es richtet sich nach ${z[i-1].rein}.` : `${v.ar} — ${v.de}`
+          aufloesung: `Es richtet sich nach ${bezug}.`
         };
       }).filter(Boolean);
     }
