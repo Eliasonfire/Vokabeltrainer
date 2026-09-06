@@ -763,8 +763,12 @@ function renderUebungsLeiste(){
          /* ⚠️ Die Nummer steht INNERHALB von .ar, nicht daneben: .links ist
             eine Spalte (flex-direction:column), ein Geschwisterknoten stuende
             also unter dem Namen statt davor. */
+         /* ⚠️ arabischHervor() maskiert selbst — escapeHtml() daneben würde
+            die eingesetzten <span> gleich wieder unkenntlich machen. Der Name
+            traegt bei zehn der dreizehn Uebungen Arabisch („مُبْتَدَأ / خَبَر"),
+            und das stand hier bei Faktor 1,00. */
          + `<span class="links"><span class="ar"><span class="unr">${m.nr}.</span>`
-         + `${escapeHtml(m.name)}</span></span>`
+         + `${arabischHervor(m.name)}</span></span>`
          + `<span class="n">${n}</span></button>`;
   };
   /* ⚠️ Erst die bekannten Gruppen, danach alles, was in keine passt. Ohne den
@@ -939,20 +943,51 @@ function uebungSatzHtml(a){
   }).join(' ');
 }
 
+/* „مَرْفُوع · Nominativ" wird zu zwei Zeilen — Arabisch oben, Deutsch
+   darunter, ohne Trennpunkt. Warum, steht bei .opt-ar in index.html.
+
+   ⚠️ Nicht jede Option ist ein Paar: „هَذَا" steht allein, „bestimmt (اَلْ)"
+   traegt das Arabische MITTEN im deutschen Wort. Beide bleiben einzeilig und
+   laufen weiter ueber arabischHervor() — sonst zerrisse die Klammer.
+
+   Getrennt wird an „ · " oder an zwei Leerzeichen (الحركة-Optionen heissen
+   „ـُ  Ḍamma"), und nur, wenn der linke Teil arabisch ist und der rechte
+   nicht. */
+const AR_ZEICHEN = /[؀-ۿݐ-ݿ]/;
+function uebungOptionHtml(text){
+  const t = String(text == null ? '' : text);
+  const m = /^(.+?)(?:\s+·\s+|\s{2,})(.+)$/.exec(t);
+  if (m && AR_ZEICHEN.test(m[1]) && !AR_ZEICHEN.test(m[2]))
+    return `<span class="opt-ar" lang="ar">${escapeHtml(m[1].trim())}</span>`
+         + `<span class="opt-de">${escapeHtml(m[2].trim())}</span>`;
+  return arabischHervor(t);
+}
+
 function renderUebung(){
   const a = uebungAktuell();
   const m = uebungModusVon(a);
   if (!a || !m){ uebungBeenden(); return; }
 
-  document.getElementById('uebName').textContent = `${m.nr}. ${m.name}`;
+  /* ⛔ ARABISCH GEHÖRT ÜBERALL HERVORGEHOBEN, NICHT NUR IM ANTWORTKNOPF.
+
+     Elias am 06.09.2026: „die sind so gross wie deutsches und das ist klein,
+     kann schlecht lesen. die sollen etwas groesser sein." Er zeigte auf die
+     Antwortknoepfe — die waren die EINZIGE Stelle, die überhaupt schon
+     hervorgehoben war (Faktor 1,40). Name, Frage und Hinweis standen bei
+     Faktor 1,00, also genau so gross wie das Deutsche daneben.
+
+     `textContent` war der Grund: es setzt reinen Text, da kann kein `<span>`
+     entstehen. Deshalb hier `innerHTML` mit arabischHervor(), das selbst
+     maskiert. [[allgemeine_regel_statt_listeneintrag]] */
+  document.getElementById('uebName').innerHTML = arabischHervor(`${m.nr}. ${m.name}`);
   document.getElementById('uebStand').textContent = `${UEB.idx+1} / ${UEB.liste.length} · ${UEB.richtig} richtig`;
-  document.getElementById('uebFrage').textContent = a.frage;
+  document.getElementById('uebFrage').innerHTML = arabischHervor(a.frage);
   document.getElementById('uebSatz').innerHTML = uebungSatzHtml(a);
   document.getElementById('uebDe').textContent = a.satz.sentDe || '';
   document.getElementById('uebHerkunft').textContent = herkunft(a.satz);
 
   const hinweis = document.getElementById('uebHinweis');
-  hinweis.textContent = m.hinweis || '';
+  hinweis.innerHTML = arabischHervor(m.hinweis || '');
   hinweis.classList.toggle('hidden', !m.hinweis);
 
   const wahl = document.getElementById('uebWahl');
@@ -961,7 +996,7 @@ function renderUebung(){
       let k = 'ueb-option';
       if (UEB.beantwortet && o.wert === a.loesung) k += ' richtig';
       if (UEB.beantwortet && UEB.gewaehlt.has(o.wert) && o.wert !== a.loesung) k += ' falsch';
-      return `<button class="${k}" data-uebwahl="${escapeHtml(String(o.wert))}" lang="ar">${arabischHervor(o.text)}</button>`;
+      return `<button class="${k}" data-uebwahl="${escapeHtml(String(o.wert))}" lang="ar">${uebungOptionHtml(o.text)}</button>`;
     }).join('');
     wahl.classList.remove('hidden');
   } else wahl.classList.add('hidden');
