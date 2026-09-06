@@ -118,7 +118,15 @@ const PRUEFUNG = {
   'li-al-lil-01':           w => /^لل/.test(blank(w)),
   'lil-vs-li-01':           w => /^ل/.test(blank(w)),
   'li-eigenname-01':        w => /^ل/.test(blank(w)),
-  'harf-jarr-01':           w => /^(في|على|من|إلى|الى|ل)/.test(blank(w)),
+  /* ⭐ عن und ب am 06.09.2026 ergaenzt — vorher kannte diese Bedingung nur
+     sechs der acht حُرُوف الْجَرّ, und eine Markierung an عَنِ الْمَسْجِدِ
+     wurde als Regelverletzung gemeldet, obwohl sie richtig war.
+     ⛔ عن MUSS eine Wortgrenze bekommen: ohne sie ginge auch عِنْدَ durch,
+     das mit denselben zwei Buchstaben anfaengt und KEIN حَرْف جَرّ ist.
+     Deshalb عن nur vor Leerzeichen, Wortende oder einem angehaengten
+     Pronomen — genau wie es harf-jarr-fi-ala-01 fuer في/على macht.
+     [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+  'harf-jarr-01':           w => /^(?:في|على|من|إلى|الى|ل|ب|عن(?:\s|$|ه|ها|هم|هن|هما|ك|كم|كن|ي|نا))/.test(blank(w)),
   'ismul-isara-hadha-01':   w => /^ه?ذا$/.test(blank(w)),
   'hadha-stummes-alif-01':  w => /^ه?ذا$/.test(blank(w)),
   'hadha-dies-nicht-das-01':w => /^ه?ذا$/.test(blank(w)),
