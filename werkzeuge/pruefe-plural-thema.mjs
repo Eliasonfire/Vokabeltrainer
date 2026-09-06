@@ -1,9 +1,17 @@
-/* pruefe3.mjs -- schaerferer Nachfolger von pruefe2.mjs
+/* werkzeuge/pruefe-plural-thema.mjs -- schaerferer Nachfolger eines
+   Wegwerf-Werkzeugs, das hier frueher „pruefe2.mjs" hiess
    =========================================================================
+
+   ⚠️ Der Kopf nannte bis zum 06.09.2026 „pruefe3.mjs" als Namen DIESER Datei
+   und verwies auf „pruefe2.mjs" — beide gibt es nicht mehr. Eine Datei, die
+   sich mit einem Namen vorstellt, den sie nicht traegt, ist im Projekt nicht
+   auffindbar: wer der Zeile glaubt und danach sucht, findet nichts und haelt
+   das Werkzeug fuer geloescht. Die Vorgeschichte unten bleibt stehen, sie
+   erklaert das Warum — nur der Name oben ist jetzt der richtige.
 
    WARUM ES DEN ZWEITEN ANLAUF BRAUCHT
 
-   pruefe2.mjs misst den ANTEIL des Textes ab der ersten Plural-Erwaehnung.
+   Der Vorgaenger mass den ANTEIL des Textes ab der ersten Plural-Erwaehnung.
    Damit stand بَابٌ mit 100 % in der Liste - und sein Text lautet:
 
        „أَبْوَابُ الْجَنَّةِ — die Tore des Paradieses, acht an der Zahl.
@@ -55,7 +63,7 @@ for (const f of ['vocab-data.js','data/fachbegriffe.js','data/eselsbruecken-alt.
 const V = [...vm.runInContext('VOCAB_DATA', ctx), ...vm.runInContext('FACHBEGRIFF_VOKABELN', ctx)];
 const A = vm.runInContext('ESELSBRUECKEN_ALT', ctx);
 
-/* ⚠️ NICHT am Doppelpunkt trennen. pruefe2.mjs tut das, und genau daran ist
+/* ⚠️ NICHT am Doppelpunkt trennen. Der Vorgaenger tat das, und genau daran ist
    die erste Fassung dieses Skripts durch die Eichung gefallen: der Ausloeser
    heisst „Der Plural hat eine Hamzah mitten im Wort: حَقِيبَةٌ → حَقَائِبُ" —
    mit Trennung am Doppelpunkt bestand der „erste Satz" nur aus dem Teil VOR
