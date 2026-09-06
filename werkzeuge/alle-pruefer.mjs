@@ -98,6 +98,12 @@ const PRUEFER = [
      Lehre stand bisher nur in CLAUDE.md und im Gedaechtnis — gemessen hat
      sie niemand. [[deploy_meldet_erfolg_ohne_produktion]] */
   ['werkzeuge/pruefe-ausgeliefert.mjs', []],
+  /* ⛔ Neu am 06.09.2026, zu Elias' Ziel „komplett identische daten […] einfach
+     alles". Ein neuer localStorage-Schluessel entsteht beilaeufig, und niemand
+     denkt an SYNC_SCHLUESSEL — der Ausfall ist dann unsichtbar, weil auf jedem
+     Geraet etwas Plausibles steht, nur eben Verschiedenes. Genau so lag
+     vt_einzeln_frei monatelang. [[allgemeine_regel_statt_listeneintrag]] */
+  ['werkzeuge/pruefe-abgleich.mjs', []],
   ['werkzeuge/pruefe-artefakt-inhalt.mjs', []],
   ['werkzeuge/pruefe-datumsangaben.mjs', []],
   ['werkzeuge/pruefe-eigene-vorrang.mjs', []],

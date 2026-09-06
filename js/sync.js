@@ -89,7 +89,14 @@ const SYNC_SCHLUESSEL = [
      des anderen Geraets weg, Summieren zaehlte nach jedem Abgleich doppelt.
      Das Maximum verliert hoechstens, was BEIDE parallel geuebt haben, und
      richtig<=gestellt bleibt erhalten, weil es je Seite gilt. */
-  'vt_regelStand'
+  'vt_regelStand',
+  /* ⛔ Erreichte Meilensteine (06.09.2026 nachgetragen). Ohne sie feiert das
+     zweite Geraet den Sieben-Tage-Konfetti ein zweites Mal — kein Datenverlust,
+     aber Elias' Ziel lautet ausdruecklich „komplett identische daten […]
+     einfach alles". Zusammengefuehrt wird je Marke mit dem FRUEHEREN Datum:
+     wann ein Meilenstein erreicht wurde, aendert sich durch einen zweiten
+     Blick nicht. */
+  'vt_feiern'
 ];
 
 /* Je Schluessel merken, wann er zuletzt lokal geaendert wurde. Ohne das kann
@@ -113,7 +120,7 @@ let SYNC_ZULETZT = 0;
    er vom Handy zum Tablet wechselt. Ein GET kostet kein Schreibkontingent;
    teuer ist nur das Ablegen, und das findet ohnehin nur bei einer echten
    Aenderung statt (SYNC_OFFEN). */
-const SICHTBAR_ABSTAND = 10 * 1000;
+const SICHTBAR_ABSTAND = 3 * 1000;
 
 /* ⭐ Liegt hier ueberhaupt etwas Ungesichertes? (05.09.2026)
    Der visibilitychange-Zweig fuers WEGLEGEN kann nicht erst holen und
@@ -561,6 +568,19 @@ function fuehreZusammen(fern){
       return;
     }
 
+    /* Meilensteine: Vereinigung je Marke, der FRUEHERE Zeitpunkt gewinnt. */
+    if (k === 'vt_feiern'){
+      try {
+        const a = JSON.parse(hierRoh) || {}, b = JSON.parse(dortRoh) || {};
+        const raus = Object.assign({}, a);
+        for (const [marke, datum] of Object.entries(b))
+          if (!raus[marke] || String(datum) < String(raus[marke])) raus[marke] = datum;
+        const neu = JSON.stringify(raus);
+        if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
+      } catch (e){ /* kaputtes JSON auf einer Seite: lokal behalten */ }
+      return;
+    }
+
     if (k === 'vt_uebungstage'){
       try {
         const a = JSON.parse(hierRoh) || {}, b = JSON.parse(dortRoh) || {};
@@ -695,12 +715,22 @@ async function gleicheAb(still){
    syncGeaendert(), also erst, wenn wirklich etwas gespeichert wurde. Wer nur
    hineinschaut, loest weiterhin nichts aus.
 
-   ⚠️ Zehn Sekunden buendeln eine Lernrunde weiterhin: wer zuegig antwortet,
-   erzeugt EINEN Schreibvorgang fuer mehrere Karten. Bei 138 faelligen Woertern
-   und je zehn Sekunden Denkzeit waeren es im schlimmsten Fall 138 von 1.000
+   ⚠️ Am selben Tag weiter auf FUENF Sekunden, zusammen mit einem laufenden
+   Abholtakt von acht — Elias' Ziel lautet „das was auf dem einen gerät
+   passiert auch auf dem anderen sofort passiert". Damit liegt die
+   schlechteste Verzoegerung bei rund dreizehn Sekunden.
+
+   ⚠️ Fuenf Sekunden buendeln eine Lernrunde noch: wer zuegig antwortet,
+   erzeugt EINEN Schreibvorgang fuer mehrere Karten. Bei 216 Karten und je
+   fuenf Sekunden Denkzeit waeren es im schlimmsten Fall 216 von 1.000
    erlaubten am Tag. Wird es je knapp, ist die Zahl hier zu erhoehen — nicht
-   die Sicherung wegzunehmen. */
-const SYNC_WARTEZEIT = 10 * 1000;
+   die Sicherung wegzunehmen.
+
+   ⛔ Schneller geht es mit diesem Aufbau nicht ehrlich: KV kennt kein Push.
+   Wirklich „sofort" braeuchte eine stehende Verbindung (SSE oder WebSocket),
+   und die gibt es auf Pages Functions nicht ohne Durable Objects. Das waere
+   ein eigener Umbau, keine Zahl. */
+const SYNC_WARTEZEIT = 5 * 1000;
 function planeAbgleich(){
   clearTimeout(SYNC_GEPLANT);
   SYNC_GEPLANT = setTimeout(()=> gleicheAb(true), SYNC_WARTEZEIT);
@@ -725,7 +755,7 @@ function planeAbgleich(){
    ⚠️ Nur bei SICHTBARER Seite. Ein Hintergrundtab soll nicht im Minutentakt
    ans Netz — und Android drosselt Timer dort ohnehin.
    [[hintergrund_tab_drosselt_timer]] */
-const SYNC_TAKT = 20 * 1000;
+const SYNC_TAKT = 8 * 1000;
 let SYNC_UHR = null;
 function taktStarten(){
   if (SYNC_UHR || !syncMoeglich()) return;
