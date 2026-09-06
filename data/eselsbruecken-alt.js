@@ -260,7 +260,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* إِمَامٌ - Imam */
   '45779': [
-    'إِمَامُ الْمَسْجِدِ — das ist genau die إِضافة, die du gerade gelernt hast: das erste Wort ohne اَلْ und ohne Tanwīn (إِمَامُ), das zweite bestimmt und im Genitiv (الْمَسْجِدِ). Eine Vokabel und eine Regel im selben Ausdruck, und مَسْجِدٌ hast du seit Kapitel 1.',
+    'إِمَامُ الْمَسْجِدِ — das ist genau die إِضَافَة, die du gerade gelernt hast: das erste Wort ohne اَلْ und ohne Tanwīn (إِمَامُ), das zweite bestimmt und im Genitiv (الْمَسْجِدِ). Eine Vokabel und eine Regel im selben Ausdruck, und مَسْجِدٌ hast du seit Kapitel 1.',
     'Der إِمَام ist der, der vorne steht — im Gebet buchstäblich. Wer hinter ihm steht, heißt مَأْمُوم. Zwei Rollen aus demselben Stamm أ م م: der Führende und der Geführte, und du bist jeden Freitag einer von beiden.'
   ],
 
@@ -675,14 +675,14 @@ const ESELSBRUECKEN_ALT = {
 
   /* أُمٌّ - Mutter */
   '45846': [
-    'Der bekannteste Ausdruck damit ist einer, den du kennst: أُمُّ الْقُرَى, „die Mutter der Städte“ — Mekka. Und die Fātiḥa heißt أُمُّ الْكِتَابِ, die Mutter des Buches. „Mutter“ heißt im Arabischen also auch „Ursprung, Hauptsache“. Beides sind إِضافة-Verbindungen, wie du sie gerade lernst.',
+    'Der bekannteste Ausdruck damit ist einer, den du kennst: أُمُّ الْقُرَى, „die Mutter der Städte“ — Mekka. Und die Fātiḥa heißt أُمُّ الْكِتَابِ, die Mutter des Buches. „Mutter“ heißt im Arabischen also auch „Ursprung, Hauptsache“. Beides sind إِضَافَة-Verbindungen, wie du sie gerade lernst.',
     '⭐ Die Wurzel أ م م heißt „vorangehen“ — und daraus kommt إِمَامٌ, das du auch hast: der, der vorangeht. Die Mutter ist die Erste, der Imam steht vorn, أَمَامَ heißt „vor“. Ein Bild trägt drei Wörter: was am Anfang steht.'
   ],
 
   /* أَبٌ - Vater */
   '45847': [
-    'In Sūrat al-Masad, die du auswendig kannst, steht das Wort als Namensteil: أَبِي لَهَبٍ (111:1) — „Abū Lahab". Das أَبِي ist dein أَبٌ im Genitiv, weil es Teil einer إِضافة ist. Ein Vers, den du sowieso sprichst, mit deiner Vokabel darin.',
-    '⚠️ Zwei Wörter deiner Liste verhalten sich gleich und gehören zusammen gelernt: أَبٌ und أَخٌ verlängern sich zu أَبُو und أَخُو, sobald etwas folgt — أَبُو بَكْرٍ, أَخُو مُحَمَّدٍ. Allein stehen sie kurz, in einer إِضافة werden sie lang. Das ist keine Ausnahme, das ist ihre Art.'
+    'In Sūrat al-Masad, die du auswendig kannst, steht das Wort als Namensteil: أَبِي لَهَبٍ (111:1) — „Abū Lahab". Das أَبِي ist dein أَبٌ im Genitiv, weil es Teil einer إِضَافَة ist. Ein Vers, den du sowieso sprichst, mit deiner Vokabel darin.',
+    '⚠️ Zwei Wörter deiner Liste verhalten sich gleich und gehören zusammen gelernt: أَبٌ und أَخٌ verlängern sich zu أَبُو und أَخُو, sobald etwas folgt — أَبُو بَكْرٍ, أَخُو مُحَمَّدٍ. Allein stehen sie kurz, in einer إِضَافَة werden sie lang. Das ist keine Ausnahme, das ist ihre Art.'
   ],
 
   /* ثَلَّاجَةٌ - Kühlschrank */
@@ -735,7 +735,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* عَيْنٌ - Auge */
   '45856': [
-    'In Sūrat at-Takāthur, die du auswendig kannst, steht dein Wort wörtlich: عَيْنَ ٱلْيَقِينِ (102:7) — „mit dem Auge der Gewissheit". Eine إِضافة, wie du sie gerade lernst: erstes Wort ohne Tanwīn, zweites im Genitiv.',
+    'In Sūrat at-Takāthur, die du auswendig kannst, steht dein Wort wörtlich: عَيْنَ ٱلْيَقِينِ (102:7) — „mit dem Auge der Gewissheit". Eine إِضَافَة, wie du sie gerade lernst: erstes Wort ohne Tanwīn, zweites im Genitiv.',
     'عَيْنٌ heißt Auge UND Quelle — beides Stellen, aus denen Wasser kommt. ⭐ Genau das steht am Ende von 67:30, das du kennst: بِمَآءٍ مَّعِينٍ, „mit hervorquellendem Wasser". Dieselbe Wurzel ع ي ن. Ein Wort, zwei Bilder, und der Koran benutzt beide.'
   ],
 
@@ -773,7 +773,7 @@ const ESELSBRUECKEN_ALT = {
      Zahl als Id, sondern einen sprechenden Schluessel - sie stammen aus dem
      Madina-Schluessel und nicht aus dem arabicroots-Abzug. */
   'madina1-l6-ach': [
-    '⚠️ أَبٌ und أَخٌ verhalten sich gleich und gehören zusammen gelernt: beide verlängern sich, sobald etwas folgt — أَبُو بَكْرٍ, أَخُو مُحَمَّدٍ. Allein stehen sie kurz (أَبٌ, أَخٌ), in einer إِضافة werden sie lang. Wer eines kann, kann beide.',
+    '⚠️ أَبٌ und أَخٌ verhalten sich gleich und gehören zusammen gelernt: beide verlängern sich, sobald etwas folgt — أَبُو بَكْرٍ, أَخُو مُحَمَّدٍ. Allein stehen sie kurz (أَبٌ, أَخٌ), in einer إِضَافَة werden sie lang. Wer eines kann, kann beide.',
     'Der Begriff, der es festhält, ist einer, den du oft hörst: أَخٌ فِي الْإِسْلَام, der Bruder im Islam — und die Anrede يَا أَخِي, „o mein Bruder". Das يَا davor ist die Rufpartikel aus deinen Regeln, das ـِي am Ende heißt „mein". Ein Ausdruck, drei Bausteine.'
   ],
 
@@ -890,7 +890,7 @@ const ESELSBRUECKEN_ALT = {
   /* عَرَبِيَّةٌ - Arabisch */
   '45878': [
     'Die Endung ـِيَّة macht aus einem Namen eine Zugehörigkeit, und du hast drei Beispiele: عَرَبِيَّةٌ (arabisch), إِنْجِلِيزِيَّةٌ (englisch), ثَانَوِيَّةٌ (die zweite Stufe). Immer ein ي mit شَدَّة, dann eine تاء مَرْبُوطة. Wer das Muster hat, bildet jede weitere Sprache selbst.',
-    'Zusammen mit لُغَةٌ (Sprache) ergibt es اللُّغَةُ الْعَرَبِيَّةُ — genau das, was du gerade lernst. ⚠️ Und es ist eine Wortgruppe mit نَعْت, keine إِضافة: BEIDE Wörter tragen اَلْ, und beide stehen im selben Fall. Bei einer إِضافة hätte nur das zweite den Artikel.'
+    'Zusammen mit لُغَةٌ (Sprache) ergibt es اللُّغَةُ الْعَرَبِيَّةُ — genau das, was du gerade lernst. ⚠️ Und es ist eine Wortgruppe mit نَعْت, keine إِضَافَة: BEIDE Wörter tragen اَلْ, und beide stehen im selben Fall. Bei einer إِضَافَة hätte nur das zweite den Artikel.'
   ],
 
   /* لُغَةٌ - Sprache */
@@ -943,7 +943,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* يَوْمٌ - Tag */
   '45887': [
-    'Du sprichst es in jedem Gebet: مَٰلِكِ يَوْمِ ٱلدِّينِ (1:4) — „dem Herrscher am Tag des Gerichts“. Das ist zugleich eine إِضافة in einer إِضافة: مَالِكِ zu يَوْمِ, und يَوْمِ zu الدِّينِ. Deine Vokabel steht mitten in einem Satz, den du auswendig kannst.',
+    'Du sprichst es in jedem Gebet: مَٰلِكِ يَوْمِ ٱلدِّينِ (1:4) — „dem Herrscher am Tag des Gerichts“. Das ist zugleich eine إِضَافَة in einer إِضَافَة: مَالِكِ zu يَوْمِ, und يَوْمِ zu الدِّينِ. Deine Vokabel steht mitten in einem Satz, den du auswendig kannst.',
     '⭐ In den kurzen Suren, die du auswendig kannst, hörst du يَوْمَئِذٍ ständig — „an jenem Tag“. Es steckt in 99:6 und in 100:11, und es ist nichts anderes als dein Wort mit einem Anhängsel. Wer die Suren spricht, hat die Vokabel Dutzende Male gesagt.'
   ],
 
@@ -1047,7 +1047,7 @@ const ESELSBRUECKEN_ALT = {
   /* اِسْمٌ مَجْرُورٌ - Nomen im Genitiv */
   '397cfa89-5bc0-4ce7-ae45-30fe8ea64fe2': [
     'Merke es NIE einzeln, sondern immer als Zweiergespann: erst der حَرْفُ الْجَرِّ, dann das اِسْمٌ مَجْرُورٌ. فِي الْبَيْتِ, مِنَ الْمَسْجِدِ, عَلَى الْمَكْتَبِ — dreimal dasselbe Muster mit deinen eigenen Vokabeln. Die Partikel zieht, das Nomen folgt.',
-    'Das Anzeichen ist sichtbar: مَجْرُور heißt Kasra ـِ am Ende, oder zwei Kasra ـٍ beim unbestimmten Wort. ⚠️ Und drei Dinge lösen es aus, nicht nur eines: ein حَرْف جَرّ, eine إِضافة, oder eine ظَرْف wie تَحْتَ. Wer die drei Auslöser kennt, erkennt den Fall am Satz statt an der Endung.'
+    'Das Anzeichen ist sichtbar: مَجْرُور heißt Kasra ـِ am Ende, oder zwei Kasra ـٍ beim unbestimmten Wort. ⚠️ Und drei Dinge lösen es aus, nicht nur eines: ein حَرْف جَرّ, eine إِضَافَة, oder eine ظَرْف wie تَحْتَ. Wer die drei Auslöser kennt, erkennt den Fall am Satz statt an der Endung.'
   ],
 
   /* أَلْمُهَنْدِسٌ - Ingenieur */
@@ -1153,13 +1153,13 @@ const ESELSBRUECKEN_ALT = {
 
   /* مُضَاف - der Besitz, erstes Wort */
   'gram-mudaf': [
-    'So erkennst du ihn beim Lesen, ohne die Regel aufzusagen: ein Nomen OHNE Tanwīn, direkt gefolgt von einem zweiten Nomen — das ist eine إِضافة, und das erste ist der مُضَاف. Sieh dir بَابُ الْمَسْجِدِ an: بَابُ hat kein Tanwīn, obwohl es unbestimmt aussieht. Genau das ist das Zeichen.',
+    'So erkennst du ihn beim Lesen, ohne die Regel aufzusagen: ein Nomen OHNE Tanwīn, direkt gefolgt von einem zweiten Nomen — das ist eine إِضَافَة, und das erste ist der مُضَاف. Sieh dir بَابُ الْمَسْجِدِ an: بَابُ hat kein Tanwīn, obwohl es unbestimmt aussieht. Genau das ist das Zeichen.',
     '⚠️ Der مُضَاف kann jeden Fall annehmen — er bekommt ihn aus dem Satz, nicht aus der Verbindung: كِتَابُ اللهِ im Grundfall, aber عَلَى مَكْتَبِ الْمُدَرِّسِ mit Kasra nach dem حَرْف جَرّ. Nur اَلْ und Tanwīn sind ihm verboten; die Endung selbst ist frei.'
   ],
 
   /* مَجْرُور - Genitiv */
   'gram-majrur': [
-    'Drei Dinge lösen den Genitiv aus, und nur drei — merke sie als Liste, dann erkennst du den Fall am SATZ statt an der Endung: (1) ein حَرْفُ الْجَرِّ davor, (2) eine إِضافة, (3) eine ظَرْف wie تَحْتَ. Alle drei hast du als eigene Fachbegriffe.',
+    'Drei Dinge lösen den Genitiv aus, und nur drei — merke sie als Liste, dann erkennst du den Fall am SATZ statt an der Endung: (1) ein حَرْفُ الْجَرِّ davor, (2) eine إِضَافَة, (3) eine ظَرْف wie تَحْتَ. Alle drei hast du als eigene Fachbegriffe.',
     'Das Anzeichen ist sichtbar und leicht zu prüfen: Kasra ـِ beim bestimmten Wort, zwei Kasra ـٍ beim unbestimmten. فِي الْبَيْتِ gegen فِي بَيْتٍ. ⚠️ Es gibt Wörter, die stattdessen ein Fatḥah bekommen — die begegnen dir später als eigene Regel; wundere dich vorerst nicht darüber.'
   ],
 
@@ -1175,9 +1175,9 @@ const ESELSBRUECKEN_ALT = {
     '⚠️ Genau hier entscheidet sich, ob ein SATZ dasteht oder nur eine Wortgruppe: اَلْبَيْتُ جَمِيلٌ heißt „das Haus ist schön" — eine Aussage. اَلْبَيْتُ الْجَمِيلُ heißt nur „das schöne Haus" — kein Satz, nur eine Benennung. Der Unterschied ist ein einziges اَلْ.'
   ],
 
-  /* إِضافة - Genitivverbindung */
+  /* إِضَافَة - Genitivverbindung */
   'gram-idafa': [
-    '⚠️ Das zweite Glied darf KEIN Adjektiv sein — nur ein Nomen. كِتَابُ اللهِ geht, كِتَابُ الْجَمِيلِ als „das schöne Buch" nicht. Wer ein Adjektiv anhängen will, braucht ein نَعْت, keine إِضافة. Zwei Regeln, die gleich aussehen und Verschiedenes tun.',
+    '⚠️ Das zweite Glied darf KEIN Adjektiv sein — nur ein Nomen. كِتَابُ اللهِ geht, كِتَابُ الْجَمِيلِ als „das schöne Buch" nicht. Wer ein Adjektiv anhängen will, braucht ein نَعْت, keine إِضَافَة. Zwei Regeln, die gleich aussehen und Verschiedenes tun.',
     'Die Verbindung lässt sich verketten: بَابُ بَيْتِ الْمُدَرِّسِ — „die Tür des Hauses des Lehrers". Das mittlere Wort ist gleichzeitig مُضَاف إِلَيْهِ zum ersten und مُضَاف zum letzten. ⚠️ Nur das LETZTE Glied darf اَلْ tragen; alle davor stehen nackt.'
   ],
 
@@ -1193,10 +1193,10 @@ const ESELSBRUECKEN_ALT = {
     '⚠️ Einzahl und Gesamtheit heißen verschieden: EIN Zeichen ist ein شَكْل, ALLE zusammen heißen تَشْكيل. Wenn jemand sagt „schreib es mit Taschkīl", meint er die vollständige Vokalisierung — nicht ein einzelnes Zeichen.'
   ],
 
-  /* اسْمُ الْإِشَارَة - Hinweiswort */
+  /* اِسْمُ الْإِشَارَة - Hinweiswort */
   'gram-ismul-isara': [
     'Vier Stück, geordnet nach zwei Fragen — nah oder fern, männlich oder weiblich: هَذَا (nah, m), هَذِهِ (nah, w), ذَلِكَ (fern, m), تِلْكَ (fern, w). ⚠️ Das كَ in ذَلِكَ und تِلْكَ ist der Zeigefinger in die Ferne, genau wie in هُنَاكَ, das du als Vokabel hast.',
-    '⚠️ Ein اسْمُ الْإِشَارَة plus Nomen ergibt noch KEINEN Satz, sobald das Nomen ein اَلْ trägt: هَذَا بَيْتٌ ist „dies ist ein Haus" — eine Aussage. هَذَا الْبَيْتُ ist nur „dieses Haus" — kein Satz. Derselbe Unterschied wie beim نَعْت, und er hängt wieder an einem einzigen اَلْ.'
+    '⚠️ Ein اِسْمُ الْإِشَارَة plus Nomen ergibt noch KEINEN Satz, sobald das Nomen ein اَلْ trägt: هَذَا بَيْتٌ ist „dies ist ein Haus" — eine Aussage. هَذَا الْبَيْتُ ist nur „dieses Haus" — kein Satz. Derselbe Unterschied wie beim نَعْت, und er hängt wieder an einem einzigen اَلْ.'
   ],
 
   /* تاء مَرْبُوطة - weibliche Endung */
