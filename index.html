@@ -879,6 +879,29 @@ main{
   min-width:38px;
   transition:transform var(--dur-1) var(--ease-out), background var(--dur-2) ease, color var(--dur-2) ease, border-color var(--dur-2) ease;
 }
+/* ⛔ DIE TREFFERFLÄCHE IST GRÖSSER ALS DER CHIP (06.09.2026).
+
+   Auf 375 px gemessen: alle 34 Buch- und Kapitel-Chips sind **33 px** hoch.
+   Apple nennt 44 pt als Minimum, Google 48 dp — und es sind ausgerechnet die
+   Knöpfe, die Elias am häufigsten mit dem Daumen trifft, die Kapitelzahlen
+   dazu dicht nebeneinander.
+
+   ⚠️ 44 px sind hier NICHT unsichtbar zu haben: der senkrechte Abstand
+   zwischen zwei Chip-Reihen beträgt 8 px. Für 44 bräuchte jeder Chip 5,5 px
+   nach oben und unten, zwei benachbarte also 11 px — sie würden sich um 3 px
+   überlappen, und ein Tipp im Zwischenraum träfe mal die eine, mal die andere
+   Reihe. Das wäre schlechter als jetzt.
+
+   Deshalb der Weg, der ohne Überlappung geht: die Fläche wächst um genau die
+   vorhandenen 8 px auf **41 px**, je 4 px nach oben und unten. Der Chip sieht
+   unverändert aus, die Reihen rücken nicht auseinander, und die Trefferfläche
+   ist ein Viertel größer. Die restlichen 3 px zu 44 gingen nur, wenn die
+   Reihen weiter auseinanderrücken — das ist eine Gestaltungsfrage und gehört
+   Elias. */
+.chip-toggle{position:relative;}
+.chip-toggle::after{
+  content:'';position:absolute;left:0;right:0;top:-4px;bottom:-4px;
+}
 .chip-toggle:hover{border-color:var(--border-strong);color:var(--text);}
 .chip-toggle:active{transform:scale(.94);}
 .chip-toggle.active{background:var(--accent-grad);color:#fff;border-color:transparent;box-shadow:var(--sh-glow);}
