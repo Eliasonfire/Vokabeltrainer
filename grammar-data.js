@@ -2749,8 +2749,17 @@ const SATZ_THEMEN = [
   { id: 'alle',        name: 'Alle' },
   { id: 'isara',       name: 'Hinweiswörter',  muster: /^(ismul-isara|hadha|isara|tilka|kaf-der-entfernung)/ },
   { id: 'jarr',        name: 'Genitiv',        muster: /^(harf-jarr|min-ila|fi-ala|mina-al|li-|lil-|hurufu-jarr)/ },
-  { id: 'nominalsatz', name: 'Nominalsatz',    muster: /^(mubtada|nominalsatz|jumla|wortstellung|satz-vs-wortgruppe)/ },
-  { id: 'kasus',       name: 'Kasus',          muster: /^(irab|kasus|marfu|majrur|mansub|tanwin|alif-maqsura|mamnu-min-as-sarf)/ },
+  /* ⛔ `badal` kam am 07.09.2026 dazu — die Regel lag in KEINER Ueberkategorie
+     und war im Satzmodus nur ueber „Alle" erreichbar. Sie gehoert hierher, weil
+     بَدَل erklaert, warum „هَذَا الْكِتَابُ" noch kein Satz ist, sondern eine
+     Wortgruppe. Elias: „ja am besten noch die anderen wenn möglich".
+     ⭐ Vorher simuliert: 318 Aufgaben in Uebung 10 und 4682 insgesamt, vorher
+     wie nachher — es aendert nur, woher die falschen Antworten kommen. */
+  { id: 'nominalsatz', name: 'Nominalsatz',    muster: /^(mubtada|nominalsatz|jumla|wortstellung|satz-vs-wortgruppe|badal)/ },
+  /* ⛔ `ya-nida` ebenso (07.09.2026). Sie gehoert zum Kasus, weil die
+     Rufpartikel يَا den Fall des Namens dahinter bestimmt — مُنَادَى steht in
+     der Fallanzeige laengst. */
+  { id: 'kasus',       name: 'Kasus',          muster: /^(irab|kasus|marfu|majrur|mansub|tanwin|alif-maqsura|mamnu-min-as-sarf|ya-nida)/ },
   { id: 'nat',         name: 'Adjektiv',       muster: /^(nat|adjektive|mutabaqa|ismun-mawsul)/ },
   /* ⭐⭐ „Weiblich" ist am 06.09.2026 ZURÜCKGEKOMMEN — und die Geschichte
      gehört dazu, weil sie zeigt, wer die Entscheidung getroffen hat.
