@@ -46,6 +46,19 @@ function baueUmgebung(host, protokoll = 'https:'){
       setItem: (k, v) => speicher.set(k, String(v)),
     },
     setTimeout, clearTimeout,
+    /* ⚠️ Seit dem laufenden Abgleich-Takt (06.09.2026) braucht der Pruefstand
+       auch diese beiden — ohne sie stirbt er beim DOMContentLoaded mit
+       „setInterval is not defined", und zwar NACH den ersten gruenen Zeilen.
+       Ein Prueflauf, der mittendrin abbricht, sieht aus wie einer, der laeuft.
+
+       ⛔⛔ Und mit `unref()`: ein laufender Intervall-Timer haelt den
+       Node-Prozess offen. Der erste Anlauf lief EINZELN durch (der Aufraeumer
+       am Ende erwischte den einen Kontext), blieb im Sammellauf aber haengen —
+       dort werden mehrere Kontexte gebaut, und execFileSync wartet ewig.
+       `unref()` loest das an der Wurzel: der Timer laeuft, haelt den Prozess
+       aber nicht mehr am Leben. [[node_exit_bei_offenem_socket]] */
+    setInterval: (fn, ms) => { const t = setInterval(fn, ms); if (t && t.unref) t.unref(); return t; },
+    clearInterval,
     fetch: async () => { throw new Error('kein Netz im Pruefstand'); },
     Date, JSON, Object, Set, Error, Number, String,
   };
@@ -60,7 +73,12 @@ const faelle = [
   ['eliasonfire.github.io',        'https:', true,  false],
   ['vokabeltrainer.elias-lueck.de','https:', false, true ],
   ['vokabeltrainer.pages.dev',     'https:', false, true ],
-  ['localhost',                    'http:',  false, true ],
+  /* ⛔ Seit dem 06.09.2026 FALSE — auf Elias' ausdruecklichen Wunsch:
+     „aber der pc bzw lokalhost hier soll nicht synchron sein mit handy und
+      tablet weil hier übe ich nicht sondern hier testen wir und fixen wir
+      sachen". Die Zeile stand vorher auf true und wurde durch die Aenderung
+     rot — richtig so, sie ist die Zusicherung. */
+  ['localhost',                    'http:',  false, false],
   ['eliasonfire.github.io',        'file:',  true,  false],
   ['github.io',                    'https:', true,  false],
   ['notgithub.io',                 'https:', false, true ],
@@ -132,6 +150,10 @@ console.log('\n4. Keine Schleife über den Statusschlüssel');
   vm.runInContext('syncGeaendert("vt_progress")', a.ctx);
   pruefe('vt_progress plant sehr wohl einen', vm.runInContext('SYNC_GEPLANT', a.ctx) !== nachher);
   clearTimeout(vm.runInContext('SYNC_GEPLANT', a.ctx));
+  /* ⛔ UND DEN LAUFENDEN TAKT. Ohne das haelt der Intervall-Timer den
+     Node-Prozess offen und der Pruefstand haengt, bis ihn jemand abschiesst —
+     beim ersten Lauf genau so passiert. [[node_exit_bei_offenem_socket]] */
+  try { clearInterval(vm.runInContext('SYNC_UHR', a.ctx)); } catch (e) {}
 }
 
 console.log(`\n${ok} bestanden, ${schlecht} gescheitert.`);

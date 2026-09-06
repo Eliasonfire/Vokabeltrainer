@@ -1123,6 +1123,23 @@ function ladeStandNeu(){
     WORT_AENDERUNGEN = aendFrisch;
     wendeWortAenderungenAn();
   }
+  /* ⛔⛔ DIE LISTEN UND DIE QURAN-HAKEN EBENSO (06.09.2026).
+     PERSONAL_VOCAB, CUSTOM_CATS und die drei Quran-Speicher liegen genauso als
+     Variablen im Speicher wie BEKANNT darueber. Ohne dieses Nachlesen holt der
+     Abgleich sie zwar, die laufende Seite arbeitet aber weiter mit dem alten
+     Stand — und der naechste Schreibvorgang macht das Geholte wieder zunichte.
+
+     ⚠️ Das ist der ZWEITE Weg, auf dem Elias' Sure az-Zalzala verschwinden
+     konnte. Der erste war der Blockersatz im Abgleich (v355); dieser hier
+     haette ihn auch danach noch verschwinden lassen. Ein behobener Weg reicht
+     nicht, wenn zwei zum selben Verlust fuehren.
+     [[fehler_trifft_mehr_als_gemeldet]] */
+  const pvFrisch = LS.get('vt_personalVocab', null);
+  if (Array.isArray(pvFrisch)) PERSONAL_VOCAB = pvFrisch;
+  const ccFrisch = LS.get('vt_customCats', null);
+  if (Array.isArray(ccFrisch)) CUSTOM_CATS = ccFrisch;
+  if (typeof ladeQuranStandNeu === 'function') ladeQuranStandNeu();
+
   if (typeof renderHome === 'function') renderHome();
   if (typeof renderCategories === 'function') renderCategories();
   /* ⚠️ Auch den Einstellungs-Bildschirm nachziehen (17.08.2026). Ohne das zeigt

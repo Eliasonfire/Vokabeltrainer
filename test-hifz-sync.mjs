@@ -158,6 +158,28 @@ sag(streakMerge({count:41,last:'2026-09-06'},{count:44,last:'2026-09-06'}).count
 sag(streakMerge({count:1,last:'2026-09-06'},{count:40,last:'2026-09-05'}).count===1,
     '⚠️ ein Ruecksetzer von heute gewinnt gegen gestern — richtig, aber der Grund, warum der 10-Sekunden-Takt dazugehoert');
 
+
+/* ---------- Der PC bleibt draussen, und die Anzeige zieht nach ---------- */
+sag(/!aufLokalerVorschau\(\)/.test(sy2),
+    'syncMoeglich() schliesst die lokale Vorschau aus — der PC gleicht nicht ab');
+sag(/const SYNC_TAKT/.test(sy2) && /setInterval/.test(sy2),
+    'es gibt einen laufenden Takt, solange die App offen ist');
+sag(/document\.hidden/.test(sy2),
+    '… und er ruht, wenn die Seite nicht sichtbar ist');
+
+const kern = fs.readFileSync(W+'js/kern.js','utf8');
+sag(/PERSONAL_VOCAB = pvFrisch/.test(kern),
+    'ladeStandNeu() liest die eigenen Vokabeln neu ein');
+sag(/CUSTOM_CATS = ccFrisch/.test(kern),
+    'ladeStandNeu() liest die eigenen Kategorien neu ein');
+sag(/ladeQuranStandNeu/.test(kern),
+    'ladeStandNeu() ruft ladeQuranStandNeu()');
+const qu = fs.readFileSync(W+'js/quran.js','utf8');
+sag(/function ladeQuranStandNeu/.test(qu) && /HIFZ = h\.schlank/.test(qu),
+    '… und die frischt HIFZ, HIFZ_VERSE und QURAN_FAV auf');
+sag(/renderSurahList/.test(qu.split('function ladeQuranStandNeu')[1] || ''),
+    '… und zeichnet die Surenliste neu');
+
 console.log('');
 console.log(fehler ? '⛔ '+fehler+' Fehler' : '✅ alle Faelle richtig');
 process.exit(fehler?1:0);

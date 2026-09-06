@@ -239,6 +239,32 @@ function renderWeiterlesen(){
 const _fav0 = hakenLaden('vt_quranFav');
 let QURAN_FAV = _fav0.schlank, QURAN_FAV_ZEIT = _fav0.reich;
 function saveQuranFav(){ QURAN_FAV_ZEIT = hakenSpeichern('vt_quranFav', QURAN_FAV, QURAN_FAV_ZEIT); }
+
+/* ⛔⛔ NACH EINEM ABGLEICH NEU EINLESEN (06.09.2026)
+   ==================================================
+   HIFZ, HIFZ_VERSE und QURAN_FAV liegen als Modulvariablen im Speicher. Holt
+   der Abgleich neue Markierungen, arbeitet die laufende Seite trotzdem mit dem
+   alten Stand weiter — und der naechste saveHifz() schreibt ihn zurueck. Die
+   geholte Markierung ist dann wieder weg, ohne dass irgendetwas meldet.
+
+   Genau diese Falle steht in js/kern.js bei BEKANNT und SETTINGS ausdruecklich
+   beschrieben („der naechste Griff an den Knopf schriebe ihn zurueck"). Fuer
+   die Quran-Speicher hatte sie niemand angewandt — und sie ist der Grund,
+   warum Elias' Sure az-Zalzala auf dem Tablet verschwand, obwohl der Abgleich
+   sie geholt hatte. Der Blockersatz war der eine Weg, DAS hier der zweite.
+   [[allgemeine_regel_statt_listeneintrag]] [[erfolgsmeldung_ohne_wirkung]]
+
+   ⚠️ Wird von ladeStandNeu() gerufen, nicht von sync.js: die Reihenfolge
+   gehoert an eine Stelle. */
+function ladeQuranStandNeu(){
+  const h = hakenLaden('vt_hifz');       HIFZ = h.schlank;        HIFZ_ZEIT = h.reich;
+  const v = hakenLaden('vt_hifzVerse');  HIFZ_VERSE = v.schlank;  HIFZ_VERSE_ZEIT = v.reich;
+  const f = hakenLaden('vt_quranFav');   QURAN_FAV = f.schlank;   QURAN_FAV_ZEIT = f.reich;
+  /* Die Surenliste zeigt die Haken — ohne Neuzeichnen stuende dort der alte
+     Stand, und ein Tipp darauf schriebe ihn zurueck. */
+  if (typeof renderSurahList === 'function') renderSurahList();
+  else if (typeof zeichneSurenListe === 'function') zeichneSurenListe();
+}
 function istFavorit(id){ return !!QURAN_FAV[id]; }
 
 /* Der Juz einer Sure, als kurzer Text.
