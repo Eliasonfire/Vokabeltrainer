@@ -122,8 +122,68 @@ for (const w of mit){
     console.log('     Vers: ' + String(text).slice(0, 70));
   } else ok++;
 }
+/* ---------- Ist der Offline-Quran überhaupt vollständig? (06.09.2026) ----
+ *
+ * ⛔ Diese Frage war nie gestellt worden, obwohl Elias mit dem Reader Hifz
+ * macht. Ein fehlender oder leerer Vers fiele beim Lesen erst auf, wenn man
+ * ihn schon auswendig kann — also genau dann nicht, wenn man ihn lernt.
+ *
+ * Geprüft wird NICHT, ob der Text richtig ist (dafür bräuchte es eine zweite
+ * Quelle), sondern ob so viele Verse da sind, wie die App selbst behauptet:
+ * surah-data.js gegen quran-text.js. Beides liegt hier ohnehin schon geladen.
+ *
+ * ⚠️ Die Eichung oben (1:1, 112:1, 89:1) gilt auch hier — QURAN_TEXT ist
+ * Sure 1-basiert und Vers 0-basiert. [[quran_text_schluessel_null_basiert]] */
+let quranLuecken = 0;
+{
+  const sPfad = W + 'surah-data.js';
+  if (!fs.existsSync(sPfad)) {
+    console.log('  ⓘ surah-data.js fehlt — Vollständigkeit ungeprüft.');
+  } else {
+    vm.runInContext(fs.readFileSync(sPfad, 'utf8'), kiste, { filename: 's' });
+    const SD = vm.runInContext('typeof SURAH_DATA !== "undefined" ? SURAH_DATA : null', kiste);
+    if (!SD) console.log('  ⓘ SURAH_DATA nicht gefunden — Vollständigkeit ungeprüft.');
+    else {
+      let soll = 0, leer = 0, abweichend = 0;
+      for (const su of SD) {
+        const nr = su.number ?? su.nummer ?? su.id;
+        const n = su.verses ?? su.ayahs ?? su.verse;
+        if (!nr || !n) continue;
+        soll += n;
+        const ist = QT[nr] ? QT[nr].length : 0;
+        if (ist !== n) {
+          abweichend++; quranLuecken++;
+          console.log('  ⛔ Sure ' + nr + ': ' + ist + ' Verse im Text, ' + n + ' laut surah-data.js');
+        }
+        for (let v = 1; v <= Math.min(n, ist); v++) {
+          const e = QT[nr][v - 1];
+          const t = Array.isArray(e) ? e[0] : e;
+          if (!t || !String(t).trim()) { leer++; quranLuecken++; console.log('  ⛔ Sure ' + nr + ':' + v + ' ist leer'); }
+        }
+      }
+      console.log('  Offline-Quran: ' + SD.length + ' Suren, ' + soll + ' Verse erwartet — '
+        + (abweichend || leer ? abweichend + ' Sure(n) mit falscher Verszahl, ' + leer + ' leere Verse'
+                              : 'vollständig, kein leerer Vers'));
+
+      /* ⛔ „0 Lücken" ist erst dann eine Messung, wenn diese Prüfung auch
+         anschlagen KANN. Also einmal an einer Kopie stören: ein Vers weniger
+         und ein leerer Vers müssen beide gefunden werden.
+         [[leere_liste_ist_keine_messung]] [[stoertest_muss_wirkung_nachweisen]] */
+      const nr114 = 114, soll114 = (SD.find(s => (s.number ?? s.nummer ?? s.id) === nr114) || {});
+      const n114 = soll114.verses ?? soll114.ayahs ?? soll114.verse;
+      const kopie = QT[nr114].slice();
+      const fehltErkannt = (kopie.length - 1) !== n114;
+      const leerErkannt = (() => { const k = kopie.slice(); k[0] = ''; const e = k[0];
+                                   return !(Array.isArray(e) ? e[0] : e); })();
+      console.log('  Störtest: ein fehlender Vers ' + (fehltErkannt ? 'wird' : '⛔ wird NICHT')
+        + ' erkannt, ein leerer ' + (leerErkannt ? 'wird' : '⛔ wird NICHT') + ' erkannt.');
+      if (!fehltErkannt || !leerErkannt) quranLuecken++;
+    }
+  }
+}
+
 console.log('');
-const befunde = zitatWeicht + wortFehlt + stelleFehlt;
+const befunde = zitatWeicht + wortFehlt + stelleFehlt + quranLuecken;
 console.log('  ' + mit.length + ' Bezüge: ' + ok + ' in Ordnung · ' + bekannt + ' benannte Ausnahme(n) · '
           + zitatWeicht + ' Zitat weicht ab · ' + wortFehlt + ' Wort fehlt · ' + stelleFehlt + ' Stelle unbrauchbar');
 for (const [stelle, grund] of Object.entries(BEKANNT)) console.log('     (' + stelle + ': ' + grund + ')');
