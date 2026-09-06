@@ -829,12 +829,20 @@ main{
 .box-pip:hover{background:var(--surface-3);}
 .box-pip:active{transform:scale(.95);border-color:var(--red-dim);}
 .box-pip .n{font-weight:800;font-size:var(--fs-xl);font-variant-numeric:tabular-nums;}
-.box-pip .l{font-size:.6rem;color:var(--text-faint);text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-top:2px;}
+/* ⭐ 0,6rem waren 10 px, das Intervall darunter 9 — die kleinste Schrift der
+   ganzen App (06.09.2026 gemessen: 34 Textstellen unter 12 px, davon 13 bei
+   9 px, und sie stehen alle hier und im Kalender).
+
+   Nachgemessen, ob mehr hineinpasst: das breiteste Label („Box 3") braucht bei
+   0,7rem 35 px, das breiteste Intervall („16 Tage") bei 0,64rem 37 px — beide
+   in einer Kachel mit **51 px** Textbreite. Es bricht also nichts um, und die
+   Kacheln bleiben 61 px breit. */
+.box-pip .l{font-size:.7rem;color:var(--text-faint);text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-top:2px;}
 /* Das Wiederhol-Intervall (18.08.2026). Kleiner und blasser als die
    Box-Nummer: es ist die Erklärung zur Zahl, nicht die Zahl selbst.
    `white-space:nowrap`, damit „16 Tage" auf fünf Kacheln nebeneinander nicht
    umbricht — bei 375 px Breite ist jede Kachel nur rund 66 px breit. */
-.box-pip .iv{font-size:.56rem;color:var(--text-faint);opacity:.75;font-weight:600;margin-top:1px;white-space:nowrap;}
+.box-pip .iv{font-size:.64rem;color:var(--text-faint);opacity:.75;font-weight:600;margin-top:1px;white-space:nowrap;}
 /* Box 1 = eben falsch gehabt, Box 5 = sitzt. Dieselben zwei Farben wie das
    Antwort-Feedback auf der Lernkarte.
    ⚠️ Diese Kacheln auf der STARTSEITE hatte ich beim ersten Bau übersehen — nur
