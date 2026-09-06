@@ -1163,6 +1163,10 @@ function felderPruefen(w, quelle){
 
 const offen = [];      /* { slug, kapitel, id, ar, de, fehltEB, fehltSatz, fehltFelder } */
 let geprueft = 0;
+/* Alle Woerter im Fenster, fuer die Wurzelprobe ganz unten. Gesammelt an
+   denselben zwei Stellen wie `geprueft++`, damit beide Zahlen nicht
+   auseinanderlaufen koennen. */
+const _imFenster = [];
 /* ⛔⛔ DER FUENFTE WEG: was nur in vocab-data.js steht.
    Wird unten gebraucht — hier gefuellt, damit `kapitelImFenster()` NICHT
    ein zweites Mal laufen muss. Sie ist nicht rein (schreibt in
@@ -1178,6 +1182,7 @@ BUECHER.forEach(b => {
   const liste = (kiste.window.VOKABELN && kiste.window.VOKABELN[b.slug]) || [];
   liste.filter(w => kapitel.includes(Number(w.chapter))).forEach(w => {
     geprueft++;
+    _imFenster.push(w);
     const id = String(w.id);
     _imAbzug.add(id);
     const n = vorschlagsZahl(id, w);
@@ -1360,6 +1365,7 @@ function fachbegriffErreichbar(w){
 [['eigene', EIGENE], ['fachbegriffe', FACH], ['selbst', SELBST], ['vocab-data', NUR_VOCAB]].forEach(([slug, liste]) => {
   liste.forEach(w => {
     geprueft++;
+    _imFenster.push(w);
     const id = String(w.id);
     const n = vorschlagsZahl(id, w);
     const ff = felderPruefen(w, slug);
@@ -1469,6 +1475,69 @@ if (!hatSaetze) console.log('  data/beispielsaetze.js liegt noch nicht vor — S
 console.log('');
 console.log('  geprueft:                 ' + geprueft + ' Woerter aus freigeschalteten Kapiteln');
 console.log('  vollstaendig:             ' + (geprueft - offen.length));
+
+/* ---------- Steckt die Wurzel wirklich im Wort? (06.09.2026) ----------
+ *
+ * ⛔ validate.js prueft das seit dem 20.08. — aber nur ueber VOCAB_DATA, und
+ * das sind in Node die 171 Lernwoerter. Der Wurzelbaum zeigt jedoch ALLE
+ * Woerter im Fenster. Ueber die vollen 4446 gemessen fanden sich zehn
+ * Wurzelangaben, die nicht aufgehen (Buchstabendreher wie
+ * التصق mit „ل ق ص" statt „ل ص ق", oder تبغ mit „ت ب ع" statt „ت ب غ").
+ * ⭐ KEINE davon liegt in Elias' Reichweite — und genau deshalb steht die
+ * Probe hier und nicht in validate.js: sie prueft das FENSTER. Sie ist heute
+ * gruen und schlaegt an, sobald ein Kapitel freigeschaltet wird, in dem so
+ * ein Wort steht. Ein Pruefer, der die zehn dauerhaft meldet, waere ein Rot,
+ * das niemand beheben kann — die Angaben kommen aus dem arabicroots-Abzug
+ * und werden von hole-vokabeln.mjs jedes Mal neu geschrieben.
+ * [[werkzeug_misst_kleineren_bestand]] [[kandidatenliste_ist_keine_fehlerliste]]
+ *
+ * ⛔⛔ DIE SCHADDA VERDOPPELT, SIE LOESCHT NICHT — und sie steht NICHT direkt
+ * hinter ihrem Buchstaben: „رَّ" ist ر + Fatha + Schadda. Wer erst verdoppelt
+ * und dann die Zeichen wegwirft, verdoppelt die Fatha. Erst alles ausser der
+ * Schadda weg, dann verdoppeln. Beim Bauen kostete das zwei Anlaeufe: 182
+ * Fehlalarme, dann 99, dann die richtigen 10. */
+{
+  const nfcW = x => String(x).normalize('NFC');
+  const buchst = x => nfcW(x)
+    .replace(/[ؐ-ًؚ-ِْ-ٰٟۖ-ࣰۭ-ࣳـ]/g, '')
+    .replace(/(.)ّ/g, '$1$1')
+    .replace(/ّ/g, '')
+    .replace(/[أإآٱ]/g, 'ا')
+    .replace(/[^ء-ي]/g, '');
+  const SCHWACH = new Set(['و', 'ي', 'ا']);
+  const drin = (wort, rad) => {
+    let i = 0;
+    for (const r of rad){ const q = wort.indexOf(r, i); if (q < 0) return false; i = q + 1; }
+    return true;
+  };
+  /* ⛔ Die benannten Sonderfaelle NICHT abschreiben, sondern aus validate.js
+     lesen: zwei Listen laufen auseinander, und niemand merkt es. Dort stehen
+     sie mit Begruendung (45802 ماء < mawah, 45853 فم urspruenglich f-w-h).
+     [[handliste_neben_echter_quelle]] */
+  let SONDER = new Set();
+  try {
+    const vq = fs.readFileSync(p('validate.js'), 'utf8');
+    const m = vq.match(/WURZEL_SONDERFALL = new Set\(\[([^\]]*)\]\)/);
+    if (m) SONDER = new Set(m[1].split(',').map(x => x.trim().replace(/^['"]|['"]$/g, '')).filter(Boolean));
+  } catch (e) { /* ohne validate.js laeuft die Probe strenger, nicht falsch */ }
+
+  let wOk = 0, wSchwach = 0, wSonder = 0;
+  const wBefunde = [];
+  for (const w of _imFenster){
+    if (!w || !w.root) continue;
+    if (SONDER.has(String(w.id))){ wSonder++; continue; }
+    const rad = nfcW(w.root).split(/\s+/).filter(Boolean).map(buchst);
+    if (rad.length < 2 || rad.some(r => r.length !== 1)) continue;   /* Form prueft validate.js */
+    const wort = buchst(w.ar);
+    if (drin(wort, rad)){ wOk++; continue; }
+    const fest = rad.filter(r => !SCHWACH.has(r));
+    if (fest.length && drin(wort, fest)){ wOk++; wSchwach++; continue; }
+    wBefunde.push(w.ar + ' (' + (w.de || '') + '): Wurzel ' + w.root);
+  }
+  console.log('  Wurzeln im Fenster:       ' + wOk + ' gehen auf (' + wSchwach
+    + ' erst ohne die schwachen Radikale, ' + wSonder + ' benannte Sonderfaelle)'
+    + (wBefunde.length ? '   ⛔ ' + wBefunde.length + ' NICHT: ' + wBefunde.slice(0, 3).join(' | ') : ''));
+}
 console.log('  unvollstaendig:           ' + offen.length);
 console.log('    fehlende Eselsbruecken: ' + fehlendeEB);
 /* ⛔ DIE ZAHL OHNE DEN NAMEN IST NICHT BEARBEITBAR (06.09.2026).
