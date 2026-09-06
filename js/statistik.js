@@ -215,9 +215,17 @@ document.addEventListener('click', (e)=>{
    [[zahlen_ohne_beleg]] [[eingefrorenes_feld_ist_kein_zustand]] */
 const KAL_WOCHEN = 18;
 
-/* Wie viele Karten sind viel? Die Stufen sind an Elias' Sitzungsgroesse
-   ausgerichtet (20 Karten je Runde), nicht frei geraten: eine Runde ist Stufe
-   2, drei Runden sind die hoechste. */
+/* Wie viele Karten sind viel? Die Stufen stammen von seiner damaligen
+   Sitzungsgroesse (20 je Runde): eine Runde war Stufe 2, drei Runden die
+   hoechste.
+
+   ⚠️ Seit dem 06.09.2026 kann er die Rundengroesse frei eintragen, der Satz
+   „eine Runde ist Stufe 2" stimmt also nicht mehr zwangslaeufig. Die Zahlen
+   bleiben trotzdem FEST und wandern NICHT mit der Einstellung mit: der
+   Kalender zeigt vergangene Tage, und ein vergangener Tag darf seine Farbe
+   nicht aendern, weil heute eine Einstellung anders steht. Es ist eine
+   absolute Skala „wie viel habe ich an dem Tag geschafft", keine relative.
+   [[eingefrorenes_feld_ist_kein_zustand]] */
 function kalStufe(n){
   if (n >= 60) return 4;
   if (n >= 30) return 3;
