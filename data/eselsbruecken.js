@@ -91,7 +91,7 @@ const BUCH_ESELSBRUECKEN = {
 
   /* ---------- Kapitel 11 ---------- */
 
-  "45903": "Wurzel ح ب ب mit doppeltem ب — deshalb die Schadda auf dem بّ. Dasselbe siehst du bei قِطٌّ (Katze, ق ط ط) und حَارٌّ (heiß, ح ر ر), die du schon hast: wo zwei gleiche Buchstaben zusammenstoßen, steht ein Zeichen statt zweier.",
+  "45903": "⭐ In سُورَةُ الْعَادِيَات, die in deinem auswendigen Bereich liegt, steht die Wurzel als Nomen: وَإِنَّهُ لِحُبِّ الْخَيْرِ — „und er ist in seiner Liebe zum Guten\" — لَشَدِيدٌ (100:8). Das لِحُبِّ trägt genau deine Wurzel ح ب ب, und خَيْرٌ hast du seit Kurzem als eigene Karte. Ein Vers, zwei deiner Wörter.",
 
   /* ---------- Kapitel 12 ---------- */
 
