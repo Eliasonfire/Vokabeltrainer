@@ -6,6 +6,23 @@
  *
  * Danach steht der Bericht in der Konsole.
  *
+ * ⛔ DAS GEHT NUR AN EINEM SERVER, DER DEN GANZEN ORDNER AUSLIEFERT
+ *    (06.09.2026 gemessen). Die Vorschau, mit der hier gearbeitet wird,
+ *    liefert nur die Weissliste aus — also genau das, was auch
+ *    veroeffentlicht wird. Gegenprobe aus der laufenden Seite heraus:
+ *      /js/uebung.js            200 ok
+ *      /grammar-data.js         200 ok
+ *      /pruefe-oberflaeche.js   Failed to fetch
+ *    Das ist RICHTIG so: die Datei ist Werkzeug und hat im Netz nichts
+ *    verloren (steht drei Absaetze weiter unten schon). Nur der Aufruf
+ *    oben laeuft dann ins Leere, und die Meldung "Failed to fetch" sieht
+ *    aus wie ein Fehler der App.
+ *
+ *    Weg, der immer geht: den Dateiinhalt von Hand in die Konsole legen
+ *    (Datei oeffnen, alles kopieren, einfuegen). Wer einen eigenen
+ *    Dateiserver auf dem Ordner laufen laesst — etwa `npx serve .` —,
+ *    kann den fetch-Aufruf oben unveraendert benutzen.
+ *
  * Warum es das gibt: Goal-Prompt E.6 verlangt, dass bestehende Bildschirme
  * nicht kaputtgehen. Geprueft wurde das bisher jedes Mal von Hand mit einem
  * frisch getippten Konsolenschnipsel - bei neun Bildschirmen, acht Buechern
