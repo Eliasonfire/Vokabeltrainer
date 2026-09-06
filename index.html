@@ -2304,6 +2304,10 @@ main{
 .ueb-rueck.schlecht{background:var(--red-wash);color:var(--red-bright);}
 .ueb-hinweis{color:var(--text-faint);font-size:var(--fs-xs);line-height:1.5;}
 
+/* Sitzungsgröße: Auswahl und eigenes Zahlenfeld nebeneinander in einer Zeile. */
+.sitzung-wahl{display:flex;align-items:center;gap:var(--sp-2);flex-wrap:wrap;justify-content:flex-end;}
+.sitzung-eigen{width:5.5em;text-align:center;font-variant-numeric:tabular-nums;}
+
 /* Der Fuß mit Beenden / Prüfen / Weiter steht FEST, aus demselben Grund wie
    .sent-nav: sonst wandert er mit der Länge des Satzes. Am 30.07.2026 auf
    375×812 gemessen — der Kasten reichte 56 px unter den Bildschirmrand, die
@@ -4867,12 +4871,26 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
           <div class="setting-title">Sitzungsgröße</div>
           <div class="setting-sub">Wie viele Karten pro Lernrunde</div>
         </div>
-        <select id="sessionSizeSelect" class="select-input">
-          <option value="10">10</option>
-          <option value="20" selected>20</option>
-          <option value="40">40</option>
-          <option value="9999">Alle</option>
-        </select>
+        <!-- ⭐ 15 und die eigene Zahl seit dem 06.09.2026. Elias: „letztens
+             wollte ich aber 15 lernen und das ging nicht, keine option. diese
+             option speziell soll eingefügt werden und auch indiduell selbst
+             zahlen eingeben."
+             ⚠️ Das Feld steht NEBEN der Auswahl, nicht darunter: die
+             .setting-row ist eine Zeile, ein Block darunter würde die
+             Beschriftung von ihrem Bedienelement trennen. -->
+        <div class="sitzung-wahl">
+          <select id="sessionSizeSelect" class="select-input">
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20" selected>20</option>
+            <option value="40">40</option>
+            <option value="9999">Alle</option>
+            <option value="eigen">Eigene Zahl …</option>
+          </select>
+          <input id="sessionSizeEigen" class="select-input sitzung-eigen" type="number"
+                 inputmode="numeric" min="1" max="999" step="1" hidden
+                 aria-label="Eigene Sitzungsgröße in Karten">
+        </div>
       </div>
       <div class="setting-row">
         <div>
