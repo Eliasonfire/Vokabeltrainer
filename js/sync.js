@@ -170,8 +170,27 @@ function aufLokalerVorschau(){
   return /^(localhost|127\.0\.0\.1|\[::1\]|.*\.local)$/i.test(location.hostname);
 }
 
+/* ⛔⛔ DER PC BLEIBT DRAUSSEN — Elias am 06.09.2026:
+     „aber der pc bzw lokalhost hier soll nicht synchron sein mit handy und
+      tablet weil hier übe ich nicht sondern hier testen wir und fixen wir
+      sachen"
+
+   Das ist keine Bequemlichkeit, sondern eine Sicherung. Der Stand auf dem PC
+   ist nicht sein Lernstand: dort stehen 216 Karten mit einem Termin von heute,
+   entstanden beim ersten Start aus data/boxen.json — er hat ausdruecklich
+   gesagt, die Daten seien nicht repraesentativ. Ein Abgleich von hier aus
+   koennte seinen echten Fortschritt ueberschreiben.
+
+   ⚠️ Bis heute fiel das nicht auf, weil `npx serve` keine Pages Functions
+   kennt und /api/stand hier ohnehin 404 gibt — der Abgleich scheiterte also
+   von selbst. Mit `wrangler pages dev` haette er funktioniert, und seit dem
+   laufenden Takt (unten) waere daraus ein Schreibvorgang alle zwanzig
+   Sekunden geworden. Ein Schutz, der nur zufaellig haelt, ist keiner.
+   [[pc_daten_sind_nicht_sein_lernstand]] [[ausfall_ist_unsichtbar_gebaut]] */
 function syncMoeglich(){
-  return /^https?:$/.test(location.protocol) && !aufAlterAdresse();
+  return /^https?:$/.test(location.protocol)
+      && !aufAlterAdresse()
+      && !aufLokalerVorschau();
 }
 
 /* ---------- Anzeigen, was los ist ---------- */
@@ -687,6 +706,36 @@ function planeAbgleich(){
   SYNC_GEPLANT = setTimeout(()=> gleicheAb(true), SYNC_WARTEZEIT);
 }
 
+/* ⛔⛔ UND EIN LAUFENDER TAKT, SOLANGE DIE APP OFFEN IST (06.09.2026)
+   ==================================================================
+   Elias: „egal was ich auf welchem gerät mache wird auch sofort auf dem
+   anderen gerät angezeigt".
+
+   Bis hierher stimmte das nur fuer den Weg HIN: eine Aenderung ging nach zehn
+   Sekunden hoch. Geholt wurde aber ausschliesslich beim Start und beim
+   Sichtbarwerden — ein Tablet, das offen danebenliegt, bekam NICHTS mit,
+   solange man es nicht wegtippte und zurueckkam. Genau die Lage, in der Elias
+   fragt: er sitzt vor beiden Geraeten.
+
+   ⚠️ Der Takt holt nur (GET). Das kostet kein Schreibkontingent — die 1.000
+   Schreibvorgaenge am Tag gelten fuer PUT, und der laeuft weiterhin nur bei
+   einer echten Aenderung. Zwanzig Sekunden ergeben bei vier Stunden offener
+   App rund 720 Leseanfragen; die Grenze liegt bei 100.000.
+
+   ⚠️ Nur bei SICHTBARER Seite. Ein Hintergrundtab soll nicht im Minutentakt
+   ans Netz — und Android drosselt Timer dort ohnehin.
+   [[hintergrund_tab_drosselt_timer]] */
+const SYNC_TAKT = 20 * 1000;
+let SYNC_UHR = null;
+function taktStarten(){
+  if (SYNC_UHR || !syncMoeglich()) return;
+  SYNC_UHR = setInterval(()=>{
+    if (document.hidden) return;
+    gleicheAb(true);
+  }, SYNC_TAKT);
+}
+function taktStoppen(){ clearInterval(SYNC_UHR); SYNC_UHR = null; }
+
 /* Von aussen aufrufbar - LS.set() in js/kern.js meldet JEDE Speicherung hierher.
    Der Filter sitzt deshalb hier: die App muss nicht wissen, was abgeglichen
    wird, und ein neuer Schluessel taucht nicht versehentlich im Abgleich auf.
@@ -720,6 +769,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
      keine - sie sieht nach einem Defekt aus. */
   const zeile = document.getElementById('syncZeile');
   if (zeile && syncMoeglich()) zeile.hidden = false;
+  /* Der laufende Takt beginnt mit der Seite und endet mit ihr. */
+  taktStarten();
   zeigeStatus();
   /* Beim Start schon anzeigen, was der letzte Lauf ergeben hat — sonst stuende
      das Band erst da, wenn der erste Abgleich dieser Sitzung durch ist, und
