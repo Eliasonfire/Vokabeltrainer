@@ -1,7 +1,48 @@
 {
-  "stempel": 1787534911056,
-  "geholt": "24.8.2026",
+  "stempel": 1788223019447,
+  "geholt": "6.9.2026",
   "woerter": {
+    "45760": [
+      {
+        "nr": 0,
+        "text": "Wurzel ن ج م. Die نُجُوم stehen im Koran, Sure 53 heißt النَّجْم, „der Stern\". Klanghilfe: „nadschm\" — nachts am Himmel. Nur der Klang.",
+        "zeit": 1787622465352
+      },
+      {
+        "nr": 1,
+        "text": "Sure 53 trägt diesen Namen: النَّجْم. Wenn dir der Surenname begegnet, hast du die Vokabel — Stern.",
+        "zeit": 1787622466099
+      },
+      {
+        "nr": 2,
+        "text": "Deutsch und Arabisch machen dasselbe Bild: ein berühmter Mensch heißt im Deutschen „Star“, im Arabischen نَجْم. Beide Sprachen nehmen dafür den Himmelskörper. Wer نَجْم als „Star“ hört, hat beide Bedeutungen auf einmal.",
+        "zeit": 1787622464121
+      }
+    ],
+    "45761": [
+      {
+        "nr": 0,
+        "text": "Wurzel ط ب ب (Heilkunde). ⚠️ Verwechslungsgefahr: طَبِيبٌ (Arzt) hat ط ب ب, aber مَطْبَخٌ (Küche) hat ط ب خ — mit خ am Ende. Arzt heilt, Küche kocht. Ein Buchstabe entscheidet.",
+        "zeit": 1787622264718
+      },
+      {
+        "nr": 1,
+        "text": "Wurzel ط ب ب steckt in الطِّبّ, der Heilkunde — der Begriff aus الطِّبُّ النَّبَوِيّ, der „prophetischen Medizin\".",
+        "zeit": 1787622288416
+      },
+      {
+        "nr": 2,
+        "text": "Muster فَعِيل wie سَرِيرٌ (Bett) und جَمِيلٌ (schön). ⚠️ Nicht mit مَطْبَخٌ (Küche) verwechseln: dort steht خ, hier ب. Der Arzt heilt, die Küche kocht.",
+        "zeit": 1787622307551
+      }
+    ],
+    "45773": [
+      {
+        "nr": 2,
+        "text": "Langes ī in der Mitte wie bei دِيكٌ, سَرِيرٌ, طَبِيبٌ. Sprich min-dīl mit gezogenem ī, dann sitzt die Vokalisierung.",
+        "zeit": 1787623627649
+      }
+    ],
     "45786": [
       {
         "nr": 1,
@@ -12,6 +53,102 @@
         "nr": 2,
         "text": "⚠️ Achte auf das ص: das ist der satte, dunkle s-Laut, nicht das leichte س aus سُوقٌ. Im Arabischen sind das zwei verschiedene Buchstaben, keine Schreibvarianten — sprich es einmal langsam und übertrieben: qa-ṣīr, mit rundem Mund.",
         "zeit": 1787534674122
+      }
+    ],
+    "45787": [
+      {
+        "nr": 0,
+        "text": "Gegenpaar zu حَارٌّ (heiß). Klanghilfe: „bārid\" — wer im Kalten steht, wird ganz „barsch\". Nur der Klang. Beide immer zusammen abfragen.",
+        "zeit": 1787622558089
+      },
+      {
+        "nr": 1,
+        "text": "Das Muster ist hier der eigentliche Gewinn: بَارِد folgt NICHT der Form فَعِيل wie die meisten Adjektive dieses Kapitels, sondern فَاعِل — dieselbe Form wie جَالِسٌ (sitzend), وَاقِفٌ (stehend), طَالِبٌ (Student), تَاجِرٌ (Händler). Alle vier hast du. فَاعِل beschreibt den, der gerade etwas tut oder in einem Zustand ist.",
+        "zeit": 1787622521939
+      },
+      {
+        "nr": 2,
+        "text": "Der Unterschied zum Gegenwort springt ins Auge, sobald man hinsieht: بَارِد zeigt seine drei Wurzelbuchstaben offen (ب ر د), حَارّ nur zwei — die beiden ر sind zu einer شَدَّة zusammengezogen. Sprich beide: bā-rid gegen ḥārr.",
+        "zeit": 1787622548454
+      }
+    ],
+    "45791": [
+      {
+        "nr": 0,
+        "text": "Gegenpaar zu قَدِيمٌ (alt). Wurzel ج د د mit doppeltem د. Klanghilfe: „dschadīd\" — was neu ist, ist „gerade da\". Nur der Klang.",
+        "zeit": 1788222305330
+      },
+      {
+        "nr": 1,
+        "text": "Die Wurzel ج د د trägt „neu machen, erneuern\". Deshalb heißt تَجْدِيد die Erneuerung — ein Begriff, der dir in Vorträgen begegnet. Wer das einmal verknüpft hat, braucht die Klanghilfe nicht mehr.",
+        "zeit": 1788222305853
+      },
+      {
+        "nr": 2,
+        "text": "Gegenpaar mit قَدِيمٌ, und beide sind Form فَعِيل. Der Plural bricht anders auf als sonst in diesem Kapitel: جَدِيدٌ → جُدُدٌ, ganz ohne langen Vokal. Sprich ihn einmal: ju-dud. Bei قَدِيمٌ → قُدَمَاءُ läuft es wieder wie bei فُقَرَاءُ.",
+        "zeit": 1788222295800
+      }
+    ],
+    "45794": [
+      {
+        "nr": 0,
+        "text": "Gegenpaar zu قَرِيبٌ (nah). Klanghilfe: „ba'īd\" hat ein langes ī in der Mitte — der Vokal zieht sich in die Ferne. Nur als Klanghaken.",
+        "zeit": 1788046764504
+      },
+      {
+        "nr": 1,
+        "text": "Merke es über die Präposition, die du schon hast: مِنَ heißt „von, aus“ — und بَعِيدٌ مِنْ heißt „weit weg VON“. Nah und fern arbeiten im Arabischen mit derselben Präposition; nur das Adjektiv dreht die Richtung um.",
+        "zeit": 1788046778681
+      },
+      {
+        "nr": 2,
+        "text": "⚠️ Nicht mit بَعْدَ („nach, danach“) verwechseln — dieselben drei Buchstaben ب ع د, aber ein anderes Wort. Der Unterschied ist hörbar: ba-ʿīd mit langem ī gegen baʿ-da. Wenn du im Koran بَعْدُ liest, ist die Zeit gemeint und nicht die Entfernung.",
+        "zeit": 1788046786659
+      }
+    ],
+    "45806": [
+      {
+        "nr": 0,
+        "text": "Wurzel ح ل و. Klanghilfe: „ḥulw\" steckt in „Halva\", der Süßigkeit — die kennst du vielleicht. Merke es gegen مُرّ (bitter) ab, auch wenn das noch nicht in deinen Vokabeln steht.",
+        "zeit": 1788222873135
+      }
+    ],
+    "45821": [
+      {
+        "nr": 0,
+        "text": "Wurzel غ ر ف. Klanghilfe: „ghurfa\" — nur der Klang. Merke es mit den anderen Räumen, die du hast: حَمَّامٌ (Bad), مَطْبَخٌ (Küche), مِرْحَاضٌ (Toilette). Vier Räume, ein Haus (بَيْتٌ).",
+        "zeit": 1787622812279
+      },
+      {
+        "nr": 1,
+        "text": "Bau dir das Haus aus deinen eigenen Vokabeln: ein بَيْت hat eine غُرْفَة (Zimmer), einen مَطْبَخ (Küche), ein حَمَّام (Bad) und einen مِرْحَاض (Toilette). Alle fünf Wörter hast du. Geh das Haus einmal in Gedanken ab und benenne die Räume — das hält besser als fünf einzelne Karten.",
+        "zeit": 1787622882967
+      }
+    ],
+    "45840": [
+      {
+        "nr": 0,
+        "text": "Warum dieser Klang „Tasche\" heißt: die Wurzel ح ق ب meint das Festschnallen. حَقَب ist der Gurt am Kamelsattel, und eine حَقِيبَة ist das, was hinten am Sattel festgemacht wird — also wörtlich das, was mitgetragen wird. (Aus den Wörterbüchern, nicht aus dem Unterricht.)",
+        "zeit": 1788222478430
+      },
+      {
+        "nr": 2,
+        "text": "Warum auf der Karte zwei deutsche Wörter stehen: حَقِيبَة allein ist die Tasche. Der Rucksack heißt حَقِيبَةُ الظَّهْرِ, die Tasche des Rückens. Ein Wort deckt beides, weil erst der Zusatz die Art bestimmt.",
+        "zeit": 1788222470209
+      }
+    ],
+    "45853": [
+      {
+        "nr": 0,
+        "text": "Der Siwāk ist «مَطْهَرَةٌ لِلْفَمِ» — „eine Reinigung für den Mund“. In diesem Satz, den du kennst, steht das Wort mit Artikel: لِلْفَمِ. (Buḫārī und Muslim.)",
+        "zeit": 1788133184515
+      }
+    ],
+    "45859": [
+      {
+        "nr": 1,
+        "text": "Muster فَعِيل wie das halbe Kapitel 3 — كَبِير, صَغِير, قَرِيب, جَمِيل. ⭐ Und der Plural läuft wie dort: سَرِيعٌ → سِرَاعٌ, genau wie طَوِيلٌ → طِوَالٌ und قَصِيرٌ → قِصَارٌ. Ein Muster für Singular und Plural gleichzeitig.",
+        "zeit": 1787623161576
       }
     ],
     "45861": [
@@ -41,6 +178,20 @@
         "nr": 2,
         "text": "Auch hier trennt die تاء مَرْبُوطة das Einzelne von der Menge: بَيْضٌ sind Eier als Sache, بَيْضَةٌ ist das eine Ei. Dieselbe Ordnung wie بَقَرٌ / بَقَرَةٌ und دَجَاجٌ / دَجَاجَةٌ. Drei Paare, eine Regel — wer sie einmal sieht, braucht die Plurale nicht einzeln.",
         "zeit": 1787534902324
+      }
+    ],
+    "45901": [
+      {
+        "nr": 1,
+        "text": "Der Plural folgt dem Muster, das du von vier eigenen Wörtern kennst: طِفْلٌ → أَطْفَالٌ, wie بَابٌ → أَبْوَابٌ, قَلَمٌ → أَقْلَامٌ, وَلَدٌ → أَوْلَادٌ, وَرَقٌ → أَوْرَاقٌ. Ein أَ vorne, ein langes ا vor dem letzten Buchstaben.",
+        "zeit": 1788223019446
+      }
+    ],
+    "45903": [
+      {
+        "nr": 0,
+        "text": "Wurzel ح ب ب mit doppeltem ب — deshalb die Schadda auf dem بّ. Dasselbe siehst du bei قِطٌّ (Katze, ق ط ط) und حَارٌّ (heiß, ح ر ر), die du schon hast: wo zwei gleiche Buchstaben zusammenstoßen, steht ein Zeichen statt zweier.",
+        "zeit": 1788222944652
       }
     ],
     "45925": [

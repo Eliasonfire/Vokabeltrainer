@@ -142,14 +142,14 @@ const ESELSBRUECKEN_ALT = {
 
   /* نَجْمٌ - Stern */
   '45760': [
-    'Sure 53 trägt diesen Namen: النَّجْم. Wenn dir der Surenname begegnet, hast du die Vokabel — Stern.',
-    'Deutsch und Arabisch machen dasselbe Bild: ein berühmter Mensch heißt im Deutschen „Star“, im Arabischen نَجْم. Beide Sprachen nehmen dafür den Himmelskörper. Wer نَجْم als „Star“ hört, hat beide Bedeutungen auf einmal.'
+    'Dein eigener Beispielsatz hängt drei Vokabeln aneinander: هَذَا نَجْمٌ بَعِيدٌ — „dies ist ein ferner Stern" — فِي السَّمَاءِ. نَجْمٌ, بَعِيدٌ und سَمَاءٌ hast du alle drei, dazu هَذَا aus Kapitel 1 und فِي mit seinem Genitiv. Ein Satz, und der Stern steht nicht mehr allein.',
+    '⭐ Nimm den Plural als Bauplan mit, nicht als Extrakarte: نَجْمٌ → نُجُومٌ. Dasselbe Muster tragen بَيْتٌ → بُيُوتٌ und عَيْنٌ → عُيُونٌ, die du beide hast — kurzer Vokal vorne, langes ū hinten. Drei Wörter, ein Plural, und du musst ihn nur einmal lernen.'
   ],
 
   /* طَبِيبٌ - Arzt */
   '45761': [
-    'Wurzel ط ب ب steckt in الطِّبّ, der Heilkunde — der Begriff aus الطِّبُّ النَّبَوِيّ, der „prophetischen Medizin".',
-    'Muster فَعِيل wie سَرِيرٌ (Bett) und جَمِيلٌ (schön). ⚠️ Nicht mit مَطْبَخٌ (Küche) verwechseln: dort steht خ, hier ب. Der Arzt heilt, die Küche kocht.'
+    'Muster فَعِيل, und damit hast du schon ein halbes Kapitel: كَبِيرٌ, صَغِيرٌ, قَصِيرٌ, جَمِيلٌ, نَظِيفٌ. ⭐ Bei diesen fünf beschreibt das Muster eine Eigenschaft, bei طَبِيبٌ und وَزِيرٌ einen Menschen. Dieselbe Form, zwei Aufgaben — du erkennst sie am Rhythmus, nicht an der Bedeutung.',
+    '⚠️ Das ط ist der satte, dunkle t-Laut, nicht das leichte ت — im Arabischen zwei Buchstaben, keine Schreibvarianten. Sprich طَبِيبٌ einmal übertrieben mit rundem Mund. Denselben Unterschied hörst du zwischen طَالِبٌ und تَاجِرٌ, die du beide hast.'
   ],
 
   /* وَلَدٌ - Junge */
@@ -221,7 +221,7 @@ const ESELSBRUECKEN_ALT = {
   /* مِنْدِيلٌ - Tuch */
   '45773': [
     'Drei Geräte mit مِـ aus deinem Bestand: مِفْتَاحٌ (Schlüssel), مِكْوَاةٌ (Bügeleisen), مِلْعَقَةٌ (Löffel). Das Tuch gehört dazu. ⚠️ مِـ heißt Gerät, مَـ heißt Ort — ein Vokalzeichen entscheidet.',
-    'Langes ī in der Mitte wie bei دِيكٌ, سَرِيرٌ, طَبِيبٌ. Sprich min-dīl mit gezogenem ī, dann sitzt die Vokalisierung.'
+    'Sprich es in zwei Stücken, dann sitzt die Schreibung: مِنْ + دِيل. Das erste Stück ist genau der Ḥarf ǧarr مِنْ, den du aus deinen Regeln kennst, samt Sukūn auf dem ن. ⚠️ Mit der Präposition hat das Tuch nichts zu tun — das ist nur ein Griff, um die Buchstabenfolge zu behalten.'
   ],
 
   /* نَعَمْ - ja */
@@ -315,8 +315,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* بَارِدٌ - kalt */
   '45787': [
-    'Das Muster ist hier der eigentliche Gewinn: بَارِد folgt NICHT der Form فَعِيل wie die meisten Adjektive dieses Kapitels, sondern فَاعِل — dieselbe Form wie جَالِسٌ (sitzend), وَاقِفٌ (stehend), طَالِبٌ (Student), تَاجِرٌ (Händler). Alle vier hast du. فَاعِل beschreibt den, der gerade etwas tut oder in einem Zustand ist.',
-    'Der Unterschied zum Gegenwort springt ins Auge, sobald man hinsieht: بَارِد zeigt seine drei Wurzelbuchstaben offen (ب ر د), حَارّ nur zwei — die beiden ر sind zu einer شَدَّة zusammengezogen. Sprich beide: bā-rid gegen ḥārr.'
+    '⚠️ Der Fallstrick steckt im Vokal: بَارِدٌ hat KEIN langes ī wie die Adjektive daneben (كَبِيرٌ, صَغِيرٌ, قَصِيرٌ), sondern ein langes ā gleich vorne — bā-rid. Wer es nach dem Muster der anderen bildet, sagt بَرِيد, und das heißt „Post". Ein Vokal an der falschen Stelle ergibt ein anderes Wort.',
+    'Das Wort trägt mehr als Temperatur: بَارِدٌ heißt auch „kühl" im Sinn von unaufgeregt. ⚠️ Für dich zählt zunächst nur die Temperatur — merk dir aber, dass ein arabisches Adjektiv selten genau ein deutsches Wort abdeckt. Dieselbe Weite hat طَوِيلٌ, das du hast: lang in der Zeit UND im Raum.'
   ],
 
   /* حَارٌّ - heiß */
@@ -339,8 +339,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* جَدِيدٌ - neu */
   '45791': [
-    'Die Wurzel ج د د trägt „neu machen, erneuern". Deshalb heißt تَجْدِيد die Erneuerung — ein Begriff, der dir in Vorträgen begegnet. Wer das einmal verknüpft hat, braucht die Klanghilfe nicht mehr.',
-    'Gegenpaar mit قَدِيمٌ, und beide sind Form فَعِيل. Der Plural bricht anders auf als sonst in diesem Kapitel: جَدِيدٌ → جُدُدٌ, ganz ohne langen Vokal. Sprich ihn einmal: ju-dud. Bei قَدِيمٌ → قُدَمَاءُ läuft es wieder wie bei فُقَرَاءُ.'
+    '⚠️ Die Wurzel ist ج د د mit doppeltem د — im Wort selbst siehst du nur einen, weil das lange ī dazwischensteht. Genau dasselbe hat طَبِيبٌ (ط ب ب), das du schon hast: zwei gleiche Wurzelbuchstaben, vom Muster فَعِيل auseinandergezogen. Wer das einmal sieht, sucht die Wurzel nicht mehr im Schriftbild.',
+    'Setz es an die Wörter, an denen du es brauchst: بَيْتٌ جَدِيدٌ, مَدْرَسَةٌ جَدِيدَةٌ, قَلَمٌ جَدِيدٌ. ⭐ Nur beim zweiten kommt das ة dazu, weil مَدْرَسَةٌ weiblich ist. Drei eigene Vokabeln, ein Adjektiv — und die Angleichung übt sich von selbst mit.'
   ],
 
   /* قَدِيمٌ - alt */
@@ -357,8 +357,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* بَعِيدٌ - fern */
   '45794': [
-    'Merke es über die Präposition, die du schon hast: مِنَ heißt „von, aus“ — und بَعِيدٌ مِنْ heißt „weit weg VON“. Nah und fern arbeiten im Arabischen mit derselben Präposition; nur das Adjektiv dreht die Richtung um.',
-    '⚠️ Nicht mit بَعْدَ („nach, danach“) verwechseln — dieselben drei Buchstaben ب ع د, aber ein anderes Wort. Der Unterschied ist hörbar: ba-ʿīd mit langem ī gegen baʿ-da. Wenn du im Koran بَعْدُ liest, ist die Zeit gemeint und nicht die Entfernung.'
+    '⭐ Im Satz trägt das Wort meistens die weibliche Form, weil die Orte, die weit weg sind, oft weiblich sind: الْمَدْرَسَةُ بَعِيدَةٌ, الْحَدِيقَةُ بَعِيدَةٌ. Bei مَسْجِدٌ und سُوقٌ dagegen ohne ة. ⚠️ Nicht das Adjektiv entscheidet über die Endung, sondern das Wort davor.',
+    'Merke es an einer Bewegung statt an einem Klang: was قَرِيبٌ ist, erreichst du zu Fuß; wofür du die سَيَّارَةٌ brauchst, ist بَعِيدٌ. Alle drei Wörter hast du — und damit einen Unterschied, den du jeden Tag erlebst, statt einer Klanghilfe.'
   ],
 
   /* نَظِيفٌ - sauber */
@@ -521,8 +521,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* غُرْفَةٌ - Zimmer */
   '45821': [
-    'Bau dir das Haus aus deinen eigenen Vokabeln: ein بَيْت hat eine غُرْفَة (Zimmer), einen مَطْبَخ (Küche), ein حَمَّام (Bad) und einen مِرْحَاض (Toilette). Alle fünf Wörter hast du. Geh das Haus einmal in Gedanken ab und benenne die Räume — das hält besser als fünf einzelne Karten.',
-    'Die Wurzel غ ر ف heißt schöpfen — mit der hohlen Hand Wasser nehmen. Eine غُرْفَة ist danach benannt: ein Raum ist etwas aus dem Haus Herausgeschöpftes, eine Höhlung. Von derselben Wurzel kommt die Schöpfkelle, مِغْرَفَة. ⚠️ Nicht mit dem ähnlich klingenden عَرَفَ („kennen“) verwechseln: das fängt mit ع an, nicht mit غ.'
+    '⭐ Die Vokabel schenkt dir sofort einen zweiten Ausdruck: فِي الْغُرْفَةِ — „im Zimmer". Nach فِي steht Genitiv, und weil das Wort ein ة trägt, hörst du die Kasra deutlich. Dein Ḥarf ǧarr und deine neue Vokabel in einem Atemzug.',
+    'Die Wurzel غ ر ف heißt schöpfen — mit der hohlen Hand Wasser nehmen. Eine غُرْفَة ist danach benannt: ein Raum ist etwas aus dem Haus Herausgeschöpftes, eine Höhlung. Von derselben Wurzel kommt die Schöpfkelle, مِغْرَفَة. ⚠️ Nicht mit dem ähnlich klingenden عَرَفَ („kennen") verwechseln: das fängt mit ع an, nicht mit غ.'
   ],
 
   /* حَمَّامٌ - Badezimmer */
@@ -638,7 +638,7 @@ const ESELSBRUECKEN_ALT = {
   /* حَقِيبَةٌ - Tasche / Rucksack */
   '45840': [
     'Im ganzen Wortschatz gibt es genau ein zweites Wort mit diesem Rhythmus: مَدِينَةٌ, ma-dī-na, der Name des Lehrbuchs. حَقِيبَةٌ läuft gleich — ḥa-qī-ba, kurz–lang–kurz, hinten das ة.',
-    'Warum auf der Karte zwei deutsche Wörter stehen: حَقِيبَة allein ist die Tasche. Der Rucksack heißt حَقِيبَةُ الظَّهْرِ, die Tasche des Rückens. Ein Wort deckt beides, weil erst der Zusatz die Art bestimmt.'
+    'Setz sie zu dem, was hineingehört — alles aus deinem Bestand: كِتَابٌ, قَلَمٌ, وَرَقٌ, مِنْدِيلٌ. ⭐ Pack die حَقِيبَة in Gedanken und benenne dabei jedes Stück. Vier Vokabeln an einer fünften aufgehängt halten länger als fünf einzelne Karten.'
   ],
 
   /* ===================== Kapitel 6 — Haushalt, Familie, Körper ====== */
@@ -753,7 +753,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* سَرِيعٌ - schnell */
   '45859': [
-    'Muster فَعِيل wie das halbe Kapitel 3 — كَبِير, صَغِير, قَرِيب, جَمِيل. ⭐ Und der Plural läuft wie dort: سَرِيعٌ → سِرَاعٌ, genau wie طَوِيلٌ → طِوَالٌ und قَصِيرٌ → قِصَارٌ. Ein Muster für Singular und Plural gleichzeitig.',
+    '⭐ Der Ausdruck, in dem dir das Wort am häufigsten begegnet, beschreibt Allah: سَرِيعُ الْحِسَابِ — „schnell im Abrechnen". Zwei Wörter, und das erste ist genau deine Vokabel. ⚠️ Es steht dort in einer إِضَافَة und trägt deshalb kein Tanwīn: سَرِيعُ, nicht سَرِيعٌ.',
     'Von derselben Wurzel س ر ع kommt أَسْرَعَ (sich beeilen) und سُرْعَة (die Geschwindigkeit) — das Wort, das auf Verkehrsschildern steht. Wer die Wurzel hat, liest auch das Schild.'
   ],
 
@@ -1228,7 +1228,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* طِفْلٌ - Kind */
   '45901': [
-    'Der Plural folgt dem Muster, das du von vier eigenen Wörtern kennst: طِفْلٌ → أَطْفَالٌ, wie بَابٌ → أَبْوَابٌ, قَلَمٌ → أَقْلَامٌ, وَلَدٌ → أَوْلَادٌ, وَرَقٌ → أَوْرَاقٌ. Ein أَ vorne, ein langes ا vor dem letzten Buchstaben.',
+    '⭐ Die Wurzel ط ف ل trägt das Kleine und Zarte — davon kommt auch طُفُولَة, die Kindheit. Ein Wort für den Menschen, eines für den Lebensabschnitt, dieselben drei Buchstaben. ⚠️ Nicht mit ط ب ب von طَبِيبٌ verwechseln, das du auch hast: dort steht ب an zweiter Stelle, hier ف.',
     'Setz es in die Familie, die du schon vollständig hast: أَبٌ, أُمٌّ, اِبْنٌ, بِنْتٌ, أَخٌ, أُخْتٌ, عَمٌّ, خَالٌ. Alle acht sagen, WER jemand ist; طِفْلٌ sagt nur, WIE ALT — und lässt das Geschlecht offen. ⚠️ Achte auf das ط: der satte, dunkle t-Laut, nicht das leichte ت aus بِنْتٌ.'
   ],
 

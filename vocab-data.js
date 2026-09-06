@@ -226,7 +226,7 @@ const VOCAB_DATA = [
  {
   "id": "45760",
 
-  "mnemo": "Wurzel ن ج م. Die نُجُوم stehen im Koran, Sure 53 heißt النَّجْم, „der Stern\". Klanghilfe: „nadschm\" — nachts am Himmel. Nur der Klang.",
+  "mnemo": "⭐ In سُورَةُ الْمُلْك, die du auswendig kannst, wird der Nachthimmel geschmückt: وَلَقَدْ زَيَّنَّا السَّمَاءَ — „Wir haben ja den Himmel geschmückt\" — الدُّنْيَا بِمَصَابِيحَ (67:5). ⚠️ Das Wort dort ist مَصَابِيح („Lampen\"), nicht نَجْم — gemeint ist trotzdem genau das, was du am Himmel siehst. Der Vers gibt dir das Bild, die Karte das Wort.",
   "ar": "نَجْمٌ",
   "de": "Stern",
   "type": "noun",
@@ -253,7 +253,7 @@ const VOCAB_DATA = [
  {
   "id": "45761",
 
-  "mnemo": "Wurzel ط ب ب (Heilkunde). ⚠️ Verwechslungsgefahr: طَبِيبٌ (Arzt) hat ط ب ب, aber مَطْبَخٌ (Küche) hat ط ب خ — mit خ am Ende. Arzt heilt, Küche kocht. Ein Buchstabe entscheidet.",
+  "mnemo": "Ort und Person in einem Satz, den du schon hast: الطَّبِيبُ فِي الْمُسْتَشْفَى — „der Arzt ist im Krankenhaus\". ⭐ Nimm die weibliche Form gleich mit: طَبِيبَةٌ. Ein ة, und aus dem Arzt wird die Ärztin — dieselbe Regel wie bei مُدَرِّسٌ und مُدَرِّسَةٌ, die du auch hast.",
   "ar": "طَبِيبٌ",
   "de": "Arzt",
   "type": "noun",
@@ -828,7 +828,7 @@ const VOCAB_DATA = [
  {
   "id": "45787",
 
-  "mnemo": "Gegenpaar zu حَارٌّ (heiß). Klanghilfe: „bārid\" — wer im Kalten steht, wird ganz „barsch\". Nur der Klang. Beide immer zusammen abfragen.",
+  "mnemo": "⭐ Das Wort richtet sich nach dem, was kalt ist: الْمَاءُ بَارِدٌ, aber الْقَهْوَةُ بَارِدَةٌ — mit ة, weil قَهْوَةٌ weiblich ist. Genau deine Regel نَعْت. Vier Getränke hast du (مَاءٌ, شَايٌ, قَهْوَةٌ, لَبَنٌ), eines davon weiblich — geh sie einmal durch und setz jedes Mal die richtige Form.",
   "ar": "بَارِدٌ",
   "de": "kalt",
   "type": "adjective",
@@ -918,7 +918,7 @@ const VOCAB_DATA = [
  {
   "id": "45791",
 
-  "mnemo": "Gegenpaar zu قَدِيمٌ (alt). Wurzel ج د د mit doppeltem د. Klanghilfe: „dschadīd\" — was neu ist, ist „gerade da\". Nur der Klang.",
+  "mnemo": "Das Gegenpaar arbeitet an einem Ding, das du täglich in der Hand hast: كِتَابٌ جَدِيدٌ gegen كِتَابٌ قَدِيمٌ. ⭐ Dein eigener Satz sagt es schon: هَذَا الْكِتَابُ جَدِيدٌ. Geh dein Regal durch — jedes Buch ist das eine oder das andere, und du übst das Paar an zehn Beispielen, ohne eine Karte umzudrehen.",
   "ar": "جَدِيدٌ",
   "de": "neu",
   "type": "adjective",
@@ -993,7 +993,7 @@ const VOCAB_DATA = [
  {
   "id": "45794",
 
-  "mnemo": "Gegenpaar zu قَرِيبٌ (nah). Klanghilfe: „ba'īd\" hat ein langes ī in der Mitte — der Vokal zieht sich in die Ferne. Nur als Klanghaken.",
+  "mnemo": "Das Paar hängt an Orten, die du alle hast: الْمَسْجِدُ قَرِيبٌ und الْجَامِعَةُ بَعِيدَةٌ. ⭐ Zeichne dir dein Viertel auf — بَيْتٌ in der Mitte, ringsum مَسْجِدٌ, سُوقٌ, مَدْرَسَةٌ, جَامِعَةٌ. Was nah liegt, ist قَرِيبٌ, was weit liegt, بَعِيدٌ. Fünf Vokabeln und ein Gegenpaar in einem Bild.",
   "ar": "بَعِيدٌ",
   "de": "fern",
   "type": "adjective",
@@ -1275,7 +1275,7 @@ const VOCAB_DATA = [
  {
   "id": "45806",
 
-  "mnemo": "Wurzel ح ل و. Klanghilfe: „ḥulw\" steckt in „Halva\", der Süßigkeit — die kennst du vielleicht. Merke es gegen مُرّ (bitter) ab, auch wenn das noch nicht in deinen Vokabeln steht.",
+  "mnemo": "⭐ Über den Propheten ﷺ ist überliefert, er habe das Süße und den Honig gemocht: كَانَ يُحِبُّ الْحَلْوَاءَ — „er liebte das Süße\" (Buḫārī). الْحَلْوَاء trägt genau deine Wurzel ح ل و. ⚠️ Dein Wort ist das Adjektiv dazu: حُلْوٌ heißt „süß\", الْحَلْوَاء ist die Süßigkeit selbst.",
   "ar": "حُلْوٌ",
   "de": "süß",
   "type": "adjective",
@@ -1602,7 +1602,7 @@ const VOCAB_DATA = [
  {
   "id": "45821",
 
-  "mnemo": "Wurzel غ ر ف. Klanghilfe: „ghurfa\" — nur der Klang. Merke es mit den anderen Räumen, die du hast: حَمَّامٌ (Bad), مَطْبَخٌ (Küche), مِرْحَاضٌ (Toilette). Vier Räume, ein Haus (بَيْتٌ).",
+  "mnemo": "Dein eigener Satz zeigt das Wort mit allem, was dazugehört: هَذِهِ غُرْفَةٌ نَظِيفَةٌ — „dies ist ein sauberes Zimmer\". ⚠️ Dreimal weiblich hintereinander: هَذِهِ, غُرْفَةٌ, نَظِيفَةٌ. Genau daran erkennst du im Arabischen das Geschlecht eines Wortes — nicht am Wort selbst, sondern an dem, was sich danach richtet.",
   "ar": "غُرْفَةٌ",
   "de": "Zimmer",
   "type": "noun",
@@ -2031,7 +2031,7 @@ const VOCAB_DATA = [
  {
   "id": "45840",
 
-  "mnemo": "Warum dieser Klang „Tasche\" heißt: die Wurzel ح ق ب meint das Festschnallen. حَقَب ist der Gurt am Kamelsattel, und eine حَقِيبَة ist das, was hinten am Sattel festgemacht wird — also wörtlich das, was mitgetragen wird. (Aus den Wörterbüchern, nicht aus dem Unterricht.)",
+  "mnemo": "Dein eigener Satz macht daraus gleich eine إِضَافَة: هَذِهِ حَقِيبَةُ الطَّالِبِ — „dies ist die Tasche des Studenten\". ⚠️ Beachte, dass حَقِيبَةٌ dort ihr Tanwīn verliert und zu حَقِيبَةُ wird: das erste Wort einer إِضَافَة trägt weder اَلْ noch Tanwīn. Eine Vokabel und deine Regel in einem Satz.",
   "ar": "حَقِيبَةٌ",
   "de": "Tasche / Rucksack",
   "type": "noun",
@@ -2304,7 +2304,7 @@ const VOCAB_DATA = [
  {
   "id": "45853",
 
-  "mnemo": "Der Siwāk ist «مَطْهَرَةٌ لِلْفَمِ» — „eine Reinigung für den Mund“. In diesem Satz, den du kennst, steht das Wort mit Artikel: لِلْفَمِ. (Buḫārī und Muslim.)",
+  "mnemo": "⚠️ Das Wort wächst, sobald etwas drankommt: فَمٌ steht allein, aber der Plural heißt أَفْوَاهٌ — dort taucht plötzlich ein و auf. Die eigentliche Wurzel ist ف و ه; im kurzen فَمٌ ist das و verschwunden. ⭐ Dasselbe Verschwinden kennst du von مَاءٌ, dessen Wurzel م و ه lautet.",
   "ar": "فَمٌ",
   "de": "Mund",
   "type": "noun",
