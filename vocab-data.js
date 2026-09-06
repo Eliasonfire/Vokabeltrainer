@@ -1179,7 +1179,7 @@ const VOCAB_DATA = [
  {
   "id": "45802",
 
-  "mnemo": "مَاءٌ ist eines der kürzesten und häufigsten Wörter. Im Koran heißt es, Allah habe مِنَ الْمَاءِ — „aus dem Wasser“ — alles Lebendige gemacht (Sure 21:30). Lerne es mit den anderen Getränken: شَايٌ, قَهْوَةٌ, لَبَنٌ.",
+  "mnemo": "قُلْ أَرَأَيْتُمْ — „Sag: was meint ihr\" — إِنْ أَصْبَحَ مَاؤُكُمْ غَوْرًا — „wenn euer Wasser versickert wäre\" — فَمَنْ يَأْتِيكُمْ بِمَاءٍ مَعِينٍ — „wer brächte euch dann fließendes Wasser?\" Aus سُورَةُ الْمُلْك (67:30), die du auswendig kannst. ⭐ Das Wort steht dort zweimal und jedes Mal anders: مَاؤُكُمْ mit deiner Besitzendung, und بِمَاءٍ nach einem حَرْف جَرّ, also مَجْرُور mit Kasra. Ein Vers, zwei Formen. Lerne es mit den anderen Getränken: شَايٌ, قَهْوَةٌ, لَبَنٌ.",
   "ar": "مَاءٌ",
   "de": "Wasser",
   "type": "noun",
@@ -2762,7 +2762,7 @@ const VOCAB_DATA = [
  {
   "id": "45874",
 
-  "mnemo": "⭐ Muster مُسْتَفْعَل: das سْتَـ heißt „suchen nach\". Wurzel ش ف ي = Heilung — das Krankenhaus ist der Ort, wo man Heilung SUCHT. Du kennst شِفَاء aus dem Koran (Sure 17:82).",
+  "mnemo": "⭐ Muster مُسْتَفْعَل: das سْتَـ heißt „suchen nach\". Wurzel ش ف ي = Heilung — das Krankenhaus ist der Ort, wo man Heilung SUCHT. Dieselbe Wurzel sprichst du, wenn du einem Kranken شَفَاكَ اللهُ wünschst, „möge Allah dich heilen\". Und dasselbe سْتَـ steckt in اِسْتِغْفَار: um Vergebung bitten, also Vergebung suchen.",
   "ar": "مُسْتَشْفًى",
   "de": "Krankenhaus",
   "type": "noun",
