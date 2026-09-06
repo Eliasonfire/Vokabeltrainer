@@ -1471,7 +1471,14 @@ console.log('  geprueft:                 ' + geprueft + ' Woerter aus freigescha
 console.log('  vollstaendig:             ' + (geprueft - offen.length));
 console.log('  unvollstaendig:           ' + offen.length);
 console.log('    fehlende Eselsbruecken: ' + fehlendeEB);
-console.log('    fehlende Beispielsaetze:' + fehlendeSatz);
+/* ⛔ DIE ZAHL OHNE DEN NAMEN IST NICHT BEARBEITBAR (06.09.2026).
+   Die Zeile meldete jahrelang „fehlende Beispielsaetze: 1", und um zu
+   erfahren WELCHES Wort, musste man das Werkzeug aufschneiden. Bei den
+   Markierungen darunter stand der Name laengst dabei.
+   [[kandidatenliste_ist_keine_fehlerliste]] */
+console.log('    fehlende Beispielsaetze:' + fehlendeSatz
+  + (fehlendeSatz ? '   ' + offen.filter(w => w.fehltSatz)
+      .map(w => w.ar + ' (' + w.de + ')').join(' · ') : ''));
 console.log('    fehlende Markierungen:  ' + fehlendeMark + (fehlendeMark ? '   ⛔ diese Saetze stehen in KEINEM Thema' : ''));
 if (metaQuelle && metaQuelle.startsWith('⛔'))
   console.log('      ⚠️ Aufzaehlungserkennung: ' + metaQuelle);
