@@ -65,6 +65,13 @@ const SPEICHER_AUSNAHMEN = {
   'vt_hifzVerse':     'seit 24.08.2026 ueber data/auswendig.json ausgewertet',
   'vt_hifz':          'seit 24.08.2026 ueber data/auswendig.json ausgewertet',
   'vt_notizen':       'seine eigenen Notizen zum Wort — seit 24.08.2026 in eigene-woerter.json unter `eigeneNotizen`',
+  /* ⛔ Kein Werkzeug kann ihn lesen, und das ist kein Versaeumnis: er entsteht
+     beim UEBEN und liegt nur in Elias' localStorage. Dasselbe gilt fuer
+     vt_regelStand, das aus demselben Grund nie hier stand. Ausgewertet wird er
+     in der App selbst — renderUebungStand() in js/statistik.js zeigt je
+     Uebungsart, wie oft sie dran war und wie gut sie sass. Ein Werkzeug hier
+     koennte nur behaupten, was es nicht weiss. [[daten_ohne_zugang]] */
+  'vt_uebungStand':   'Fortschritt je Uebungsmodus — liegt nur auf seinem Geraet, die App zeigt ihn unter „Wie gut sitzen die Übungsarten?"',
 };
 
 /* Erzeugte Dateien und ihre Quellen: veraltet die eine gegen die andere? */

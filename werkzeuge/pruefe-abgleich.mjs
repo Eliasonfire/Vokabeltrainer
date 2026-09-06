@@ -101,6 +101,7 @@ const PFLICHT = [
   ['HIFZ',           /HIFZ = /],
   ['HIFZ_VERSE',     /HIFZ_VERSE = /],
   ['QURAN_FAV',      /QURAN_FAV = /],
+  ['UEBUNG_STAND',   /UEBUNG_STAND = /],
 ];
 for (const [name, muster] of PFLICHT)
   sag(muster.test(zusammen), name + ' wird nach einem Abgleich neu eingelesen');

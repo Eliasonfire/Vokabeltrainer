@@ -90,6 +90,11 @@ const SYNC_SCHLUESSEL = [
      Das Maximum verliert hoechstens, was BEIDE parallel geuebt haben, und
      richtig<=gestellt bleibt erhalten, weil es je Seite gilt. */
   'vt_regelStand',
+  /* ⛔ Fortschritt je Uebungsmodus (06.09.2026). Zwoelf der dreizehn Modi
+     hielten ihr Ergebnis vorher gar nicht fest — siehe merkeUebung() in
+     js/kern.js. Gleiche Form wie vt_regelStand, laeuft deshalb ueber
+     denselben Zweig: Maximum je Feld, juengstes Datum. */
+  'vt_uebungStand',
   /* ⛔ Erreichte Meilensteine (06.09.2026 nachgetragen). Ohne sie feiert das
      zweite Geraet den Sieben-Tage-Konfetti ein zweites Mal — kein Datenverlust,
      aber Elias' Ziel lautet ausdruecklich „komplett identische daten […]
@@ -478,8 +483,11 @@ function fuehreZusammen(fern){
       return;
     }
 
-    /* Fortschritt je Regel: monotone Zaehler, feldweises Maximum. */
-    if (k === 'vt_regelStand'){
+    /* Fortschritt je Regel UND je Uebungsmodus: monotone Zaehler, feldweises
+       Maximum. ⚠️ Das Maximum, nicht die Summe: derselbe Abgleich kann zweimal
+       laufen, und eine Summe zaehlte dann Uebung, die nicht stattfand.
+       [[zahlen_ohne_beleg]] */
+    if (k === 'vt_regelStand' || k === 'vt_uebungStand'){
       try {
         const a = JSON.parse(hierRoh) || {}, b = JSON.parse(dortRoh) || {};
         const raus = Object.assign({}, a);
@@ -720,6 +728,14 @@ async function gleicheAb(still){
    passiert auch auf dem anderen sofort passiert". Damit liegt die
    schlechteste Verzoegerung bei rund dreizehn Sekunden.
 
+   ⭐ Am selben Tag noch einmal nachgeschaerft: senden nach 3 s, holen alle
+   4 s — schlechtestenfalls rund SIEBEN Sekunden, typisch vier.
+
+   ⚠️ Der Normalfall ist ohnehin schneller als jede dieser Zahlen: legt Elias
+   ein Geraet weg, wird SOFORT geschickt (visibilitychange unten), und nimmt er
+   das andere, wird SOFORT geholt. Die Sekundenwerte greifen nur, wenn beide
+   Geraete gleichzeitig offen nebeneinanderliegen.
+
    ⚠️ Fuenf Sekunden buendeln eine Lernrunde noch: wer zuegig antwortet,
    erzeugt EINEN Schreibvorgang fuer mehrere Karten. Bei 216 Karten und je
    fuenf Sekunden Denkzeit waeren es im schlimmsten Fall 216 von 1.000
@@ -730,7 +746,7 @@ async function gleicheAb(still){
    Wirklich „sofort" braeuchte eine stehende Verbindung (SSE oder WebSocket),
    und die gibt es auf Pages Functions nicht ohne Durable Objects. Das waere
    ein eigener Umbau, keine Zahl. */
-const SYNC_WARTEZEIT = 5 * 1000;
+const SYNC_WARTEZEIT = 3 * 1000;
 function planeAbgleich(){
   clearTimeout(SYNC_GEPLANT);
   SYNC_GEPLANT = setTimeout(()=> gleicheAb(true), SYNC_WARTEZEIT);
@@ -755,7 +771,7 @@ function planeAbgleich(){
    ⚠️ Nur bei SICHTBARER Seite. Ein Hintergrundtab soll nicht im Minutentakt
    ans Netz — und Android drosselt Timer dort ohnehin.
    [[hintergrund_tab_drosselt_timer]] */
-const SYNC_TAKT = 8 * 1000;
+const SYNC_TAKT = 4 * 1000;
 let SYNC_UHR = null;
 function taktStarten(){
   if (SYNC_UHR || !syncMoeglich()) return;

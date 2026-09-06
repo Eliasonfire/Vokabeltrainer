@@ -279,6 +279,34 @@ function merkeRegel(regelId, richtig){
   LS.set('vt_regelStand', REGEL_STAND);
 }
 
+/* ⛔⛔ FORTSCHRITT JE UEBUNGSMODUS (06.09.2026)
+   ============================================
+   Elias' Ziel: „komplett identische daten […] inklusive allen funktionen und
+   aufgaben und lösungen usw, einfach alles".
+
+   Gemessen war die Lage klar: von 4682 Uebungsaufgaben trugen nur die 315 aus
+   „Welche Regel?" eine `regelId` und landeten ueber merkeRegel() in
+   vt_regelStand. Die uebrigen **4367 Aufgaben aus zwoelf Modi hinterliessen
+   keinerlei Spur** — nicht lokal, nicht im Abgleich, nirgends. Auf beiden
+   Geraeten fehlte derselbe Stand, sie waren also formal identisch und
+   inhaltlich beide leer.
+
+   ⭐ Bewusst je MODUS, nicht je Aufgabe: 4682 Einzeleintraege waeren bei jedem
+   Abgleich mitzuschleppen, und die Frage, die Elias interessiert, lautet
+   „welche Uebungsart sitzt noch nicht" — nicht „welche der 599 Kasusfragen".
+   Dieselbe Form wie vt_regelStand, damit auch derselbe Merge-Zweig greift
+   (Maximum je Feld, juengstes Datum). */
+let UEBUNG_STAND = LS.get('vt_uebungStand', {});
+function merkeUebung(modusId, richtig){
+  if (!modusId) return;
+  const e = UEBUNG_STAND[modusId] || { gestellt:0, richtig:0, zuletzt:null };
+  e.gestellt++;
+  if (richtig) e.richtig++;
+  e.zuletzt = todayStr(0);
+  UEBUNG_STAND[modusId] = e;
+  LS.set('vt_uebungStand', UEBUNG_STAND);
+}
+
 /* ---------- Fachbegriffe aus dem Unterricht (17.08.2026) ----------
 
    Elias: „die müssen inkludiert werden und als eigene vokabeln hinzugefügt
@@ -1136,6 +1164,8 @@ function ladeStandNeu(){
      [[fehler_trifft_mehr_als_gemeldet]] */
   const pvFrisch = LS.get('vt_personalVocab', null);
   if (Array.isArray(pvFrisch)) PERSONAL_VOCAB = pvFrisch;
+  const usFrisch = LS.get('vt_uebungStand', null);
+  if (usFrisch && typeof usFrisch === 'object' && !Array.isArray(usFrisch)) UEBUNG_STAND = usFrisch;
   const ccFrisch = LS.get('vt_customCats', null);
   if (Array.isArray(ccFrisch)) CUSTOM_CATS = ccFrisch;
   if (typeof ladeQuranStandNeu === 'function') ladeQuranStandNeu();
@@ -1172,6 +1202,7 @@ function ladeStandNeu(){
   if (typeof renderStats === 'function' && sichtbar('screen-home')) renderStats();
   if (typeof renderRegelStand === 'function' && sichtbar('screen-home')) renderRegelStand();
   if (typeof renderUebungskalender === 'function' && sichtbar('screen-home')) renderUebungskalender();
+  if (typeof renderUebungStand === 'function' && sichtbar('screen-home')) renderUebungStand();
   /* Der Satzmodus: die Themenleiste haengt an den Markierungen, der Satz
      selbst an den Wortdaten. */
   if (sichtbar('screen-sentences')){
