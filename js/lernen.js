@@ -38,6 +38,22 @@ function fachbegriffTakt(pool, size){
   /* Platz 6, 12, 18 … also Index 5, 11, 17. */
   const plaetze = [];
   for (let i = FACH_TAKT - 1; i < laenge; i += FACH_TAKT) plaetze.push(i);
+  /* ⛔ KURZE RUNDEN HATTEN GAR KEINEN TAKT (06.09.2026).
+
+     Bis heute war 10 die kleinste Rundengröße, und die Schleife oben lieferte
+     immer mindestens einen Platz. Seit Elias eine eigene Zahl eintragen kann
+     („letztens wollte ich aber 15 lernen"), sind auch 1 bis 5 möglich — und
+     dort blieb `plaetze` LEER. Dann greift `nimm = 0` und die Funktion gibt
+     den rohen Pool zurück.
+
+     Gemessen bei Größe 5: Fachbegriffe auf den Plätzen 1, 2 und 4 — drei von
+     fünf Karten, weil der Pool zufällig mit zweien beginnt. Aus „regelmäßig
+     eingestreut" wurde „überwiegend Grammatik".
+
+     Deshalb bekommt eine kurze Runde EINEN Platz, und zwar den letzten: so
+     steht am Anfang das, wofür er die Runde gestartet hat.
+     [[bedingung_wird_durch_die_handlung_ungueltig]] */
+  if (!plaetze.length && laenge > 0) plaetze.push(laenge - 1);
   const nimm = Math.min(plaetze.length, fach.length);
   if (!nimm) return pool.slice(0, laenge);
 
