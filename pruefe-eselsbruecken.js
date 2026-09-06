@@ -182,8 +182,39 @@ catch (e){
   console.log('     Alle Abschnitte pruefen dann OHNE die Buch-Eselsbruecken.');
 }
 
+/* ⛔ DIE ERSETZUNGEN ZUERST ANWENDEN (07.09.2026).
+   ESELSBRUECKEN_ERSATZ in data/eselsbruecken.js ueberschreibt einen
+   vorhandenen mnemo — Elias hatte zwei Merkhaken selbst geschrieben, die seine
+   eigene Vier-Woerter-Regel brechen, und zugestimmt, sie zu kuerzen.
+   `eselsbrueckenErsetzen()` in js/buecher.js wendet sie in der App an.
+
+   Ohne diesen Schritt misst dieser Pruefer den GERAETEABZUG und meldet die
+   langen Fassungen weiter, waehrend die App laengst die kurzen zeigt. Ein
+   Werkzeug, das etwas anderes misst als die App zeigt, erzeugt genau die
+   Sorte Rot, die niemand mehr liest.
+   [[werkzeug_misst_kleineren_bestand]] [[pruefserver_ist_nicht_die_app]] */
+let ERSATZ = {};
+try {
+  const eq = fs.readFileSync(path.join(WURZEL, 'data', 'eselsbruecken.js'), 'utf8');
+  const auf = eq.indexOf('const ESELSBRUECKEN_ERSATZ');
+  const zu  = auf < 0 ? -1 : eq.indexOf('};', auf);
+  if (auf >= 0 && zu > auf)
+    ERSATZ = new Function(eq.slice(auf, zu + 2)
+      + String.fromCharCode(10) + 'return ESELSBRUECKEN_ERSATZ;')();
+} catch (e) {
+  /* ⛔ NICHT still verschlucken. Der erste Anlauf tat genau das — die
+     Pfadvariable hiess W statt WURZEL, der catch schluckte den ReferenceError,
+     und der Pruefer meldete die langen Fassungen weiter, als waere nichts
+     geschehen. Ein Fehler, der zu einem falschen BEFUND fuehrt, muss sichtbar
+     sein. [[ausfall_ist_unsichtbar_gebaut]] */
+  console.log('  ⚠️ ESELSBRUECKEN_ERSATZ nicht lesbar (' + e.message + ') —');
+  console.log('     die Ersetzungen sind in dieser Messung NICHT beruecksichtigt.');
+}
+
 const texte = [];
 VOCAB_DATA.forEach(w => {
+  const ersatz = ERSATZ[String(w.id)];
+  if (ersatz) w = Object.assign({}, w, { mnemo: ersatz });
   if (w.mnemo) texte.push({ id: w.id, wort: w.ar, quelle: 'mnemo', text: w.mnemo });
 });
 /* Die Buchvokabeln: ihre Merkhilfe steht nicht am Eintrag, sondern hier.

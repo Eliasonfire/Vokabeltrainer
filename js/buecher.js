@@ -253,6 +253,7 @@ function einhaengen(liste){
     if (hatErgaenzt) ergaenzt++;
   });
   const eselsbruecken = eselsbrueckenNachtragen(liste);
+  eselsbrueckenErsetzen();
   const saetze = saetzeNachtragen(liste);
   return { neu, ergaenzt, verworfen, eselsbruecken, saetze };
 }
@@ -304,6 +305,26 @@ function saetzeNachtragen(liste){
    VOCAB_DATA.push() dazugekommenen Woerter sollen ihre Eselsbruecke ja auch
    bekommen. Mit einer vorher gebauten Karte waeren genau die leer ausgegangen -
    also gerade die 140, um die es geht. */
+/* ⛔ DER UMGEKEHRTE FALL: einen VORHANDENEN Merkhaken ersetzen (07.09.2026).
+   Die Funktion darunter traegt nur nach, wo nichts steht — richtig so. Elias
+   hat sich aber zwei Merkhaken selbst in die App geschrieben, die seine eigene
+   Regel brechen (hoechstens vier arabische Woerter am Stueck). Sie liegen in
+   seinem Geraetespeicher, wo kein Werkzeug herankommt; ohne diese Ersetzung
+   waeren die kuerzeren Fassungen geschrieben und nie angezeigt.
+
+   ⚠️ Die Liste in data/eselsbruecken.js waechst NUR durch seine Zustimmung —
+   sie ueberschreibt selbst geschriebenen Text. Jeder Eintrag dort nennt Grund
+   und Datum. */
+function eselsbrueckenErsetzen(){
+  if (typeof ESELSBRUECKEN_ERSATZ === 'undefined') return 0;
+  let n = 0;
+  VOCAB_DATA.forEach(w => {
+    const text = ESELSBRUECKEN_ERSATZ[String(w.id)];
+    if (text && w.mnemo !== text){ w.mnemo = text; n++; }
+  });
+  return n;
+}
+
 function eselsbrueckenNachtragen(liste){
   if (typeof BUCH_ESELSBRUECKEN === 'undefined') return 0;
   const nachId = new Map(VOCAB_DATA.map(w=>[String(w.id), w]));
@@ -561,6 +582,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   if (typeof PERSONAL_VOCAB !== 'undefined' && Array.isArray(PERSONAL_VOCAB)
       && PERSONAL_VOCAB.length){
     eselsbrueckenNachtragen(PERSONAL_VOCAB);
+    eselsbrueckenErsetzen();
     /* ⛔⛔ UND DIE BEISPIELSAETZE, aus genau demselben Grund.
 
        Am 20.08.2026 wurde oben der Eselsbruecken-Weg repariert — und die

@@ -59,6 +59,44 @@
    Koranstellen sind belegt, nicht aus dem Gedaechtnis zitiert:
    114:1 und 2:25 wurden mit `node werkzeuge/vers.mjs` nachgeschlagen. */
 
+/* ⛔⛔ MERKHAKEN, DIE EINEN VORHANDENEN ERSETZEN — nur mit Elias' Wort
+   ============================================================================
+   `eselsbrueckenNachtragen()` in js/buecher.js traegt einen Text NUR nach, wo
+   noch keiner steht (`if (w.mnemo) return;`), und das ist richtig: eine
+   Buch-Eselsbruecke darf die handverlesene nicht ueberschreiben.
+
+   Es gibt aber den umgekehrten Fall. Elias hat sich zwei Merkhaken selbst in
+   die App geschrieben, die seine EIGENE Regel brechen — hoechstens vier
+   arabische Woerter am Stueck, sonst ist das Zitat selbst neuer Stoff. Sie
+   liegen in seinem Geraetespeicher (`vt_personalVocab`), wo kein Werkzeug
+   herankommt; die kuerzeren Fassungen unten wuerden ohne diese Liste nie
+   angewandt.
+
+   Elias am 07.09.2026, auf die Frage ob kuerzen: „ja kürzern".
+
+   ⛔ DIESE LISTE WAECHST NUR DURCH SEINE ENTSCHEIDUNG. Sie ueberschreibt
+   selbst geschriebenen Text — was ich fuer verbesserungswuerdig halte, gehoert
+   ihm vorgelegt, nicht hier eingetragen. Jeder Eintrag nennt den Grund und das
+   Datum seiner Zustimmung.
+   [[kennzeichen_mit_zwei_ursachen]] [[regel_gilt_nur_mit_begruendung]] */
+const ESELSBRUECKEN_ERSATZ = {
+  /* 105:1 — sieben Woerter am Stueck, seine Regel erlaubt vier. Gekuerzt auf
+     den Teil, der das Wort traegt: كَيْفَ steht darin an dritter Stelle.
+     Die deutsche Bedeutung bleibt vollstaendig, nur das arabische Zitat ist
+     kuerzer. Zugestimmt am 07.09.2026. */
+  'p_1787189022107':
+    'Aus dem Vers, den du auswendig kannst: أَلَمْ تَرَ كَيْفَ فَعَلَ — „Siehst du '
+    + 'nicht, WIE er verfuhr" (105:1, al-Fīl). Das كَيْفَ steht an dritter Stelle '
+    + 'und fragt genau danach: nach dem WIE.',
+
+  /* 67:26 — fuenf Woerter. Das قُلْ faellt weg; es gehoert zur Redeeinleitung
+     und nicht zu dem, woran عِنْدَ haengt. Zugestimmt am 07.09.2026. */
+  'p_1787190874749':
+    'Du sprichst es in al-Mulk: إِنَّمَا الْعِلْمُ عِنْدَ اللَّهِ — „Nur Allah weiß '
+    + 'darüber Bescheid", wörtlich „das Wissen ist BEI Allah" (67:26, der Vers '
+    + 'beginnt mit قُلْ). Dasselbe عِنْدَ, dieselbe Bedeutung.',
+};
+
 const BUCH_ESELSBRUECKEN = {
 
   /* ---------- Selbst angelegte Woerter (vt_personalVocab, 20.08.2026) ----------
