@@ -1150,6 +1150,44 @@ function ladeStandNeu(){
   if (typeof renderSettings === 'function' &&
       document.getElementById('screen-settings') &&
       document.getElementById('screen-settings').classList.contains('active')) renderSettings();
+  /* ⛔⛔ UND DEN BILDSCHIRM, AUF DEM ELIAS GERADE STEHT (06.09.2026)
+     ================================================================
+     Sein Ziel: „das was auf dem einen gerät passiert auch auf dem anderen
+     sofort passiert […] einfach alles". Bis hierher wurden nur Startseite,
+     Kategorien, Einstellungen und die Surenliste nachgezogen — steht er auf
+     der Statistik, im Satzmodus oder auf einer Lernkarte, sah er weiter den
+     alten Stand, obwohl die Daten laengst da waren.
+
+     ⚠️ Jede dieser Funktionen wird ueber `typeof` geprueft: die Module werden
+     einzeln geladen, und ein fehlendes darf den Rest nicht mitnehmen.
+
+     ⛔ NICHT nachgezogen wird eine LAUFENDE Uebungs- oder Lernrunde. Ihre
+     Aufgabenliste ist Sitzungszustand, kein gespeicherter Stand — sie mitten
+     im Beantworten auszutauschen waere kein Abgleich, sondern ein Sprung.
+     Die naechste Runde baut ohnehin aus den frischen Daten. */
+  const sichtbar = id => {
+    const el = document.getElementById(id);
+    return el && el.classList.contains('active');
+  };
+  if (typeof renderStats === 'function' && sichtbar('screen-home')) renderStats();
+  if (typeof renderRegelStand === 'function' && sichtbar('screen-home')) renderRegelStand();
+  if (typeof renderUebungskalender === 'function' && sichtbar('screen-home')) renderUebungskalender();
+  /* Der Satzmodus: die Themenleiste haengt an den Markierungen, der Satz
+     selbst an den Wortdaten. */
+  if (sichtbar('screen-sentences')){
+    if (typeof renderThemenLeiste === 'function') renderThemenLeiste();
+    if (typeof renderSentence === 'function') renderSentence();
+  }
+  /* ⛔ Die Lernkarte wird NICHT neu gezeichnet, und das ist Absicht: sie traegt
+     eine offene Frage. Ein Neuzeichnen mitten im Ueberlegen waere kein
+     Abgleich, sondern ein Sprung — und ein Umdrehen der Karte gaebe die
+     Antwort preis. Die naechste Karte baut ohnehin aus den frischen Daten.
+
+     ⚠️ Der Wurzelbaum ebenso wenig: js/wurzel.js hat gar keine
+     render-Funktion, die von aussen aufrufbar waere (gemessen 06.09.2026 —
+     alle Funktionen dort heissen wz*). Wer hier eine erfindet, baut einen
+     Aufruf ins Leere, und niemand merkt es. [[werkzeug_ohne_aufrufer]] */
+
   if (typeof passeRundeAnAuswahlAn === 'function') passeRundeAnAuswahlAn();
 }
 
