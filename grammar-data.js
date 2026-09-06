@@ -392,12 +392,27 @@ const GRAMMAR_RULES = [
      ⚠️ Bewusst KEINE neue Grammatik: welche Partikeln es gibt und was sie
      bewirken, steht längst in harf-jarr-01 und den sieben Einzelregeln. Hier
      steht nur, warum der Name das Ergebnis benennt — genau das, was einen
-     Fachbegriff hängen bleiben lässt. [[eselsbruecken_an_bekanntes_anknuepfen]] */
+     Fachbegriff hängen bleiben lässt. [[eselsbruecken_an_bekanntes_anknuepfen]]
+
+     ⭐ ZWEI unabhängige Belege, nachgeschlagen am 06.09.2026: der eigene
+     Whisper-Durchlauf UND die maschinellen YouTube-Untertitel geben denselben
+     Satz. YouTube: „Alle, die heißen Aljar, warum? Weil die Majrur machen …
+     deswegen heißen sie ja so die Buchstaben des Genitivs." Dazu die Präzision
+     „Aber sie machen was, Majrur? Den Ism danach" und sein Rat „am besten
+     merkt ihr euch die Begriffe auf Arabisch … Haruf Jarr hätte eigentlich
+     komplett reichen sollen" — er hält „Präposition" selbst nur für eine
+     Annäherung.
+
+     ⛔ `pruefe-transkripte.js` findet diese Regel trotzdem nicht und wird sie
+     nie finden: es sucht die arabischen Kernformen جر und مفعول im Text, und
+     der Lehrer SPRICHT die Begriffe, er schreibt sie nicht. Die Meldung „keine
+     von beiden — selbst nachhören" ist hier also kein Zweifel am Beleg,
+     sondern eine Grenze des Werkzeugs. [[stichworttreffer_ist_kein_inhaltstreffer]] */
   {
     id: "harf-jarr-name-01",
     nichtAufKarteikarten: true,
     name: "Warum die Genitivpartikeln so heißen",
-    shortExplanation: "Der Name sagt bereits, was sie tun. حَرْف جَرّ heißt wörtlich „Buchstabe des Ziehens“ — und was gezogen wird, ist der Fall des Wortes dahinter: es wird مَجْرُور. Dein Lehrer stellt die Frage in Folge 6 selbst und beantwortet sie sofort: „Die heißen die Al-Jarr. Warum? Weil die Majrur machen.“ Und gleich danach nennt er sie „die Buchstaben des Genitivs“. ⭐ Damit hängen drei Begriffe an einer einzigen Wurzel ج ر ر zusammen: جَرّ ist das Ziehen, حَرْف جَرّ das Wort, das zieht, und مَجْرُور das Wort, das gezogen wurde — die Form مَفْعُول, also das, dem etwas angetan wird. Wer den Namen versteht, muss die Wirkung nicht mehr getrennt lernen. ⚠️ Welche Partikeln dazugehören und was jede bedeutet, steht in den anderen Regeln; hier geht es allein um den Namen.",
+    shortExplanation: "Der Name sagt bereits, was sie tun. حَرْف جَرّ heißt wörtlich „Buchstabe des Ziehens“ — und was gezogen wird, ist der Fall des Wortes dahinter: es wird مَجْرُور. Dein Lehrer stellt die Frage in Folge 6 selbst und beantwortet sie sofort: „Die heißen die Al-Jarr. Warum? Weil die Majrur machen.“ Und gleich danach nennt er sie „die Buchstaben des Genitivs“. ⭐ Damit hängen drei Begriffe an einer einzigen Wurzel ج ر ر zusammen: جَرّ ist das Ziehen, حَرْف جَرّ das Wort, das zieht, und مَجْرُور das Wort, das gezogen wurde — die Form مَفْعُول, also das, dem etwas angetan wird. Wer den Namen versteht, muss die Wirkung nicht mehr getrennt lernen. ⭐ Er sagt auch genau, WEN sie ziehen: „Aber sie machen was, مَجْرُور? Den اِسْم danach“ — also das Nomen unmittelbar dahinter, nicht irgendein Wort im Satz. ⚠️ Und er rät ausdrücklich, den arabischen Begriff zu lernen statt „Präposition“: „am besten merkt ihr euch die Begriffe auf Arabisch … حَرْف جَرّ hätte eigentlich komplett reichen sollen“ — das deutsche Wort sei „nur eine Annäherung, damit man das Konzept ein bisschen versteht“. Welche Partikeln dazugehören und was jede bedeutet, steht in den anderen Regeln; hier geht es allein um den Namen.",
     color: "idafa",
     source: {
       folge: 6,
