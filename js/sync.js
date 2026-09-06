@@ -517,6 +517,31 @@ function fuehreZusammen(fern){
       return;
     }
 
+    /* ⛔ Die Serie (06.09.2026). Sie lief ebenfalls ueber den Blockersatz, und
+       der Schaden ist hier subtiler als ein fehlender Eintrag: uebt Elias
+       taeglich am Handy und einmal am Tablet, das seit Tagen nicht abgeglichen
+       hat, sieht `touchStreak()` dort einen alten `last` — und setzt die Serie
+       auf 1 zurueck. Vierzig Tage weg, ohne dass irgendetwas gemeldet wird.
+
+       Regel: der juengere `last` gewinnt, denn er beschreibt den aktuelleren
+       Stand. Bei GLEICHEM Tag gewinnt der hoehere `count` — dann haben beide
+       Geraete denselben Tag gezaehlt, und die laengere Serie ist die wahre.
+       `gnadeAm` reist mit dem gewinnenden Eintrag: es gehoert zu dessen
+       Zaehlung und waere einzeln genommen eine Behauptung ueber einen Tag,
+       den dieser Stand gar nicht kennt. */
+    if (k === 'vt_streak'){
+      try {
+        const a = JSON.parse(hierRoh) || {}, b = JSON.parse(dortRoh) || {};
+        const la = String(a.last || ''), lb = String(b.last || '');
+        let sieger;
+        if (la === lb) sieger = ((Number(a.count) || 0) >= (Number(b.count) || 0)) ? a : b;
+        else sieger = (la > lb) ? a : b;
+        const neu = JSON.stringify(sieger);
+        if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
+      } catch (e){ /* kaputtes JSON auf einer Seite: lokal behalten */ }
+      return;
+    }
+
     if (k === 'vt_uebungstage'){
       try {
         const a = JSON.parse(hierRoh) || {}, b = JSON.parse(dortRoh) || {};
