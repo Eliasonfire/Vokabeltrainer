@@ -279,6 +279,19 @@ function navLeisteAnpassen(){
 
 function setzeThema(themaId){
   SATZ_THEMA = themaId;
+  /* ⛔ Gemerkt seit dem 07.09.2026. Bis dahin vergass die App bei JEDEM Start,
+     welches Thema zuletzt offen war — auf jedem Geraet einzeln, und beim
+     Geraetewechsel erst recht. Elias' Ziel: „komplett identische daten […]
+     einfach alles".
+
+     ⭐ Ueber SETTINGS und nicht ueber einen eigenen Schluessel: `vt_settings`
+     wird feldweise zusammengefuehrt (je Feld ein eigener Zeitstempel), also
+     verteidigt eine alte Themenwahl nicht die neuere Lernrichtung vom anderen
+     Geraet. Ein neuer Schluessel haette das nicht. */
+  if (typeof SETTINGS !== 'undefined'){
+    SETTINGS.satzThema = themaId;
+    if (typeof saveSettings === 'function') saveSettings();
+  }
   if (LUECKE.aktiv) beendeLuecke();
   SENT.list = saetzeZumThema(themaId);
   SENT.idx = 0;
@@ -295,6 +308,15 @@ function setzeThema(themaId){
 let SENT = { list: alleSaetze(), idx:0 };
 
 function openSentences(){
+  /* ⛔ Das gemerkte Thema zurueckholen — aber NUR, wenn es es noch gibt.
+     Eine Themen-id kann verschwinden (SATZ_THEMEN aendert sich), und ein
+     Thema, das keine Saetze mehr hat, zeigte einen leeren Satzmodus, ohne
+     dass irgendetwas meldet. [[ausfall_ist_unsichtbar_gebaut]] */
+  if (typeof SETTINGS !== 'undefined' && SETTINGS.satzThema && SETTINGS.satzThema !== SATZ_THEMA){
+    const gibtEs = SETTINGS.satzThema === 'alle'
+      || (typeof SATZ_THEMEN !== 'undefined' && SATZ_THEMEN.some(t => t.id === SETTINGS.satzThema));
+    if (gibtEs && saetzeZumThema(SETTINGS.satzThema).length) SATZ_THEMA = SETTINGS.satzThema;
+  }
   SENT.list = saetzeZumThema(SATZ_THEMA);
   if (SENT.idx >= SENT.list.length) SENT.idx = 0;
   renderThemenLeiste();
