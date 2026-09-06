@@ -124,6 +124,42 @@ sag(!tot.length, tot.length
   ? tot.length + ' davon gibt es NICHT: ' + tot.join(', ')
   : 'Jede gerufene Zeichenfunktion existiert.');
 
+/* ---------- Wie schnell kommt es an? ---------- */
+/* ⛔ Elias' Ziel heisst „sofort". Erreichbar ist das mit KV nicht (kein Push),
+   ABER sein Normalfall — Handy weglegen, Tablet nehmen — ist es praktisch:
+   beim Verstecken wird SOFORT geschickt, beim Sichtbarwerden SOFORT geholt.
+   Die Sekundenwerte greifen nur, wenn beide Geraete gleichzeitig offen sind.
+
+   Diese Pruefung haelt genau das fest. Wer eine der drei Zahlen erhoeht oder
+   den Sofort-Pfad entfernt, macht das Ziel kaputt — und zwar unsichtbar, weil
+   nichts fehlt, sondern nur alles langsamer wird. */
+console.log('');
+console.log('=== Wie schnell kommt eine Aenderung an? ===');
+const zahl = (name, muster) => {
+  const m = SYNC.match(muster);
+  return m ? Number(m[1]) * (m[2] ? Number(m[2]) : 1) : null;
+};
+const senden  = zahl('senden',  /SYNC_WARTEZEIT = (\d+) \* (\d+)/);
+const holen   = zahl('holen',   /SYNC_TAKT = (\d+) \* (\d+)/);
+const zurueck = zahl('zurueck', /SICHTBAR_ABSTAND = (\d+) \* (\d+)/);
+console.log('  senden nach einer Aenderung: ' + (senden/1000) + ' s'
+  + ' | laufender Abholtakt: ' + (holen/1000) + ' s'
+  + ' | Sperre beim Zurueckkommen: ' + (zurueck/1000) + ' s');
+sag(senden <= 10000,  'gesendet wird spaetestens nach 10 s');
+sag(holen  <= 15000,  'geholt wird spaetestens alle 15 s, solange die App offen ist');
+sag(zurueck <= 5000,  'beim Zurueckkommen wird fast ohne Sperre geholt');
+
+/* Der Sofort-Pfad: beim Weglegen schicken, ohne auf den Takt zu warten. */
+const versteckt = SYNC.slice(SYNC.indexOf(String.fromCharCode(39) + 'visibilitychange'));
+sag(/if \(!SYNC_OFFEN\) return;[\s\S]{0,400}schickeZumServer\(\)/.test(versteckt),
+    'beim Weglegen wird SOFORT geschickt (nicht erst nach der Sammelfrist)');
+/* ⚠️ Der Handler prueft `document.visibilityState === 'hidden'`, nicht
+   `document.hidden` — mein erstes Muster suchte das Falsche und meldete einen
+   Mangel, den es nicht gab. Gepruefte Bedingung statt gerater Schreibweise.
+   [[testfehler_kann_echten_mangel_zeigen]] */
+sag(/visibilityState/.test(versteckt) && /gleicheAb\(true\)/.test(versteckt),
+    '… und beim Zurueckkommen sofort geholt');
+
 /* ---------- Störtest ---------- */
 console.log('');
 const probe = 'vt_gibtesnicht';
