@@ -489,9 +489,12 @@ if (!fs.existsSync(SAMMELPRUEFER)){
     console.log('         Es fehlt im Wartungs-Prompt genau eine Zeile:');
     console.log('           node werkzeuge/alle-pruefer.mjs');
     console.log('         Sie startet alle auf einmal und veraltet nie.');
-    console.log('         ⛔ Nicht von hier aus zu beheben — der Prompt liegt ausserhalb');
-    console.log('            des Vokabeltrainer-Ordners. Das braucht ein Wort von Elias.');
-    console.log('         (Hinweis, kein Fehler: ein Rot, das niemand beheben kann,');
+    console.log('         Einzutragen in: ' + PROMPT);
+    console.log('         ⛔ Es braucht ein Wort von Elias — aber NICHT, weil die Datei');
+    console.log('            unerreichbar waere: dieser Prueflauf liest sie weiter unten');
+    console.log('            selbst. Sie gehoert nur zu einem anderen Vorhaben (Automation),');
+    console.log('            und wessen Routine man aendert, den fragt man.');
+    console.log('         (Hinweis, kein Fehler: ein Rot, das niemand beheben DARF,');
     console.log('          liest irgendwann keiner mehr.)');
   } else {
     console.log('    ok   die Wartung startet jede Pruefung, die es im Projekt gibt.');
@@ -519,7 +522,9 @@ if (fs.existsSync(PROMPT)){
     console.log('    ⚠️   arbeit.mjs steht NUR in der Berechtigungsliste, nirgends als Aufruf.');
     console.log('         Bricht ein Wartungslauf mitten in einer Aenderung ab, bleibt keine');
     console.log('         Marke zurueck — der naechste Start meldet dann \'Keine offene Arbeit\'.');
-    console.log('         ⛔ Nicht von hier zu beheben: der Prompt liegt ausserhalb.');
+    console.log('         Einzutragen in: ' + PROMPT);
+    console.log('         ⛔ Auch hier: erreichbar ist die Datei (sie wurde eben gelesen),');
+    console.log('            aber sie gehoert zur Automation — das entscheidet Elias.');
     hinweise.push('die Arbeitsmarke wird Mi/So nie gesetzt');
   }
 } else {
