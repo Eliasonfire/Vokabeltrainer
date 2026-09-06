@@ -262,8 +262,14 @@ function ladeQuranStandNeu(){
   const f = hakenLaden('vt_quranFav');   QURAN_FAV = f.schlank;   QURAN_FAV_ZEIT = f.reich;
   /* Die Surenliste zeigt die Haken — ohne Neuzeichnen stuende dort der alte
      Stand, und ein Tipp darauf schriebe ihn zurueck. */
+  /* ⚠️ NUR renderSurahList(). Der zweite Zweig hiess `zeichneSurenListe` und
+     war geraten — die Funktion gibt es in js/quran.js nicht. Ein
+     typeof-Guard verschluckt so einen Tippfehler lautlos: der Aufruf tut
+     still gar nichts, und wer den Zweig liest, haelt ihn fuer einen
+     Rueckfall. Hier war er harmlos, weil der erste greift; als ALLEINIGER
+     Zweig waere die Surenliste nach einem Abgleich nie neu gezeichnet worden.
+     [[werkzeug_ohne_aufrufer]] */
   if (typeof renderSurahList === 'function') renderSurahList();
-  else if (typeof zeichneSurenListe === 'function') zeichneSurenListe();
 }
 function istFavorit(id){ return !!QURAN_FAV[id]; }
 
