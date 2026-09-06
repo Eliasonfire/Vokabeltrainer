@@ -182,6 +182,30 @@ sag(!nichtNackt.length, nichtNackt.length
     + nichtNackt.slice(0, 5).map(w => w.ar).join(' · ')
   : 'Jedes davon findet sich auch nackt getippt.');
 
+/* ⭐ Und der DEUTSCHE Weg — bis zum 06.09.2026 fehlte er hier, obwohl Elias
+   ihn genauso benutzt („такой wie arabic roots" hiess für ihn beides). Die
+   Bedingung in sucheTreffer() lautet dort schlicht
+   `(w.de||'').toLowerCase().includes(de)`, also ohne jede Normalisierung:
+   ein Wort mit Grossbuchstaben oder Umlaut findet sich nur, weil beide
+   Seiten kleingeschrieben werden. Genau das wird hier gemessen. */
+const mitDe = WOERTER.filter(w => (w.de || '').trim().length > 1);
+const findetDe = (eingabe, w) => (w.de || '').toLowerCase().includes(String(eingabe).trim().toLowerCase());
+const nichtDe = mitDe.filter(w => !findetDe(w.de, w));
+console.log('  ' + mitDe.length + ' Wörter mit deutscher Bedeutung');
+sag(!nichtDe.length, nichtDe.length
+  ? nichtDe.length + ' finden sich nicht über ihre eigene Bedeutung: '
+    + nichtDe.slice(0, 5).map(w => w.de).join(' · ')
+  : 'Jedes findet sich über seine eigene deutsche Bedeutung.');
+
+/* ⛔ Die Suche verlangt mindestens ZWEI Zeichen (`roh.length < 2` → []).
+   Eine Bedeutung, die nur ein Zeichen lang ist, waere über sich selbst nie
+   auffindbar — hier wird gezählt, ob es solche gibt. */
+const zuKurz = WOERTER.filter(w => (w.de || '').trim().length === 1);
+sag(!zuKurz.length, zuKurz.length
+  ? zuKurz.length + ' Bedeutung(en) sind einzeichig und damit unsuchbar: '
+    + zuKurz.slice(0, 5).map(w => w.ar + '=' + w.de).join(' · ')
+  : 'Keine Bedeutung ist so kurz, dass die Zwei-Zeichen-Schranke sie ausschliesst.');
+
 /* ---------- 4. Störtest: kann diese Prüfung überhaupt scheitern? ---------- */
 console.log('\n=== 4. Störtest ===\n');
 /* Eine absichtlich zu breite Klasse — sie frisst auch die Buchstaben. Fällt
