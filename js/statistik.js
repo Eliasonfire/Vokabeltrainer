@@ -127,6 +127,15 @@ function regelZeilen(){
 function renderRegelStand(){
   const kasten = document.getElementById('regelStand');
   if (!kasten) return;
+  /* Die gemerkte Sortierung zurueckholen — nur einen der drei bekannten Werte,
+     sonst zeigte ein alter oder fremder Eintrag eine leere Liste. */
+  if (typeof SETTINGS !== 'undefined' && SETTINGS.regelSort
+      && ['schwach','neu','nie'].indexOf(SETTINGS.regelSort) >= 0
+      && SETTINGS.regelSort !== REGEL_SORT.art){
+    REGEL_SORT.art = SETTINGS.regelSort;
+    document.querySelectorAll('#regelSortierung .rs').forEach(x =>
+      x.setAttribute('aria-pressed', String(x.dataset.sort === REGEL_SORT.art)));
+  }
   const alle = regelZeilen();
   const geuebt = alle.filter(z => z.gestellt > 0);
   let liste;
@@ -244,6 +253,13 @@ document.addEventListener('click', (e)=>{
   const b = e.target.closest('#regelSortierung .rs');
   if (!b) return;
   REGEL_SORT.art = b.dataset.sort;
+  /* Gemerkt seit dem 07.09.2026: die Sortierung ist eine Entscheidung, keine
+     Laune, und sie ging bei jedem Start verloren. Ueber SETTINGS, damit sie
+     feldweise mit dem anderen Geraet zusammengefuehrt wird. */
+  if (typeof SETTINGS !== 'undefined'){
+    SETTINGS.regelSort = REGEL_SORT.art;
+    if (typeof saveSettings === 'function') saveSettings();
+  }
   document.querySelectorAll('#regelSortierung .rs').forEach(x =>
     x.setAttribute('aria-pressed', String(x === b)));
   renderRegelStand();
