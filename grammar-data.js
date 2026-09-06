@@ -2632,9 +2632,16 @@ const SATZ_THEMEN = [
 
      Am 06.09.2026 sagt er: „mach eine, da bietet sich aber männlichkeit dann
      auch an oder." Dazwischen liegt die ZWISCHENPRÜFUNG SEINES LEHRERS
-     (Samsung Notes, 01.09.), und die fragt fünf Themen ab: Muḍāf · Naʿt ·
-     Ismu l-Ishārah · Ḥarf al-Jarr · **Weiblichkeit (التأنيث)**. Vier davon
-     waren Reiter, das fünfte nicht.
+     (Samsung Notes, 01.09.), und die fragt ZEHN Themen ab: Muḍāf · Naʿt ·
+     Ismu l-Ishārah · Ḥarf al-Jarr · **Weiblichkeit (التأنيث)** · اَلْ mit
+     Sonnen-/Mondbuchstaben · Pronomen · Fälle · Fragewörter · Übersetzen.
+     Von den neun Sachthemen hatten acht einen Reiter, Weiblichkeit nicht.
+
+     ⛔ HIER STAND „fünf Themen" — falsch, und der Irrtum ist lehrreich: die
+     Prüfung hat ZWEI Seiten, gemessen war nur die erste. Sie bricht mitten in
+     Thema 5 ab (5a–5c unten, 5d–5e oben auf Seite 2), und ein Abbruch mitten
+     in einer Aufzählung sieht aus wie ein Ende. Am 06.09.2026 an den
+     gerenderten Seiten nachgezählt. [[ausschnitt_amputiert_die_harakat]]
 
      ⭐ Nicht ich habe ihn umgestimmt, sondern sein Lehrer. Die ältere Absage
      ist damit nicht falsch gewesen — sie galt für einen Stand, in dem

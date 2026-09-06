@@ -1900,4 +1900,19 @@ const ESELSBRUECKEN_ALT = {
     'Das ت in الَّتِي ist dasselbe ت wie in der تَاء مَرْبُوطَة — wo das Wort weiblich ist, steht ein ت. Und wo keins steht, steht الَّذِي: الْكِتَابُ الَّذِي (كِتَاب männlich) gegen السَّيَّارَةُ الَّتِي (سَيَّارَة weiblich).',
     'Aus deinem Lektionstext: وَمَنْ هَذِهِ الْفَتَاةُ — „und wer ist dieses Mädchen“ — الَّتِي مَعَكِ؟ فَتَاة ist weiblich, also الَّتِي. Dein Lehrer geht in Folge 17 ab 32:06 zehn solcher Sätze durch: „muessen wir jetzt entscheiden, kommt الَّذِي rein, welche fuer maennliche Begriffe ist, oder الَّتِي rein fuer weibliche Begriffe.“'
   ],
+
+  'gram-khayr': [
+    'فَمَنْ يَعْمَلْ مِثْقَالَ ذَرَّةٍ — „wer im Gewicht eines Stäubchens" — خَيْرًا يَرَهُ — „Gutes tut, wird es sehen." Aus سُورَةُ الزَّلْزَلَة (99:7). ⭐ Achte auf die Endung: hier steht خَيْرًا mit Fatḥatān, also مَنْصُوب — es ist das, was getan wird, das Objekt von يَعْمَلْ. Dasselbe Wort, ein anderer Fall: das ist der Beweis, dass خَيْر ein اِسْم ist und keine Partikel.',
+    'جَزَاكَ اللهُ خَيْرًا — die Formel, mit der man sich auf Arabisch bedankt: „möge Allah dir Gutes vergelten." ⭐ Wieder خَيْرًا مَنْصُوب, und aus demselben Grund: es ist das, was vergolten wird. Du hörst das Wort in dieser Wendung öfter als in jedem Satz aus dem Buch — und es steht dort in genau der Form, die du dir merken sollst.'
+  ],
+
+  'gram-mawsul-alladhi': [
+    'أَرَأَيْتَ الَّذِي يُكَذِّبُ بِالدِّينِ · فَذَٰلِكَ الَّذِي يَدُعُّ الْيَتِيمَ — die ersten beiden Verse von سُورَةُ الْمَاعُون (107:1–2). ⭐ Zweimal hintereinander dasselbe الَّذِي, beide Male „derjenige, der …". Und im zweiten Vers steht ذَٰلِكَ direkt davor: ذَٰلِكَ zeigt hin, الَّذِي schließt an — das Hinweiswort und das Verbindungswort in einem Atemzug.',
+    'الَّذِي يُوَسْوِسُ — „der einflüstert" — فِي صُدُورِ النَّاسِ — „in die Brüste der Menschen": der vorletzte Vers des Qurʾān (114:5). ⭐ Hier bezieht sich الَّذِي nicht auf einen Menschen, sondern auf الْوَسْوَاسِ aus dem Vers davor (114:4) — ein männliches Wort. Genau das ist die Regel: nicht ob Person oder Sache entscheidet zwischen الَّذِي und الَّتِي, sondern allein das Geschlecht des Wortes davor.'
+  ],
+
+  'gram-zarf-maa': [
+    'مَعَ gehört zu den ظُرُوف, und die sehen alle gleich aus: تَحْتَ (unter) · أَمَامَ (vor) · خَلْفَ (hinter) · فَوْقَ (über) · عِنْدَ (bei). ⭐ Alle enden auf Fatḥa, und alle machen das folgende Wort مَجْرُور, ohne selbst ein حَرْف جَرّ zu sein. Fünf davon hast du schon — مَعَ ist das sechste am selben Muster.',
+    'مَعَ steht fast nie allein: meistens hängt eine Besitzendung dran, und die kennst du alle einzeln als Karteikarte — مَعِي (mit mir) · مَعَكَ (mit dir, zu einem Mann) · مَعَكِ (mit dir, zu einer Frau) · مَعَهُ (mit ihm) · مَعَهَا (mit ihr). ⭐ Genau so steht es in deinem eigenen Beispielsatz: الْفَتَاةُ الَّتِي مَعَكِ — „das Mädchen, das bei dir ist". Nomen + Endung, also مُضَاف und مُضَاف إِلَيْهِ in einem Wort.'
+  ],
 };
