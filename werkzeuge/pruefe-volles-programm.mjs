@@ -476,7 +476,14 @@ if (!fs.existsSync(SAMMELPRUEFER)){
   const lauf = spawnSync(process.execPath, [SAMMELPRUEFER], { encoding: 'utf8' });
   const text = (lauf.stdout || '') + (lauf.stderr || '');
   const treffer = text.match(/(\d+) Pruefer stehen NICHT im Wartungs-Prompt/);
-  if (lauf.error || (!treffer && !/im Wartungs-Prompt sind alle genannt/.test(text))){
+  /* ⭐ Seit dem 06.09.2026 gibt es einen DRITTEN gueltigen Ausgang: der
+     Wartungs-Prompt ruft `alle-pruefer.mjs`, dann sind alle abgedeckt, ohne
+     dass jeder Name einzeln dastehen muss. Ohne diesen Zweig meldete diese
+     Pruefung „antwortet nicht wie erwartet" — die andere Seite hatte recht,
+     nur der Wortlaut war neu. Zwei Werkzeuge, eine Frage, ein Wortlaut.
+     [[dieselbe_frage_zwei_antworten]] */
+  const ueberSammellauf = /ruft `alle-pruefer\.mjs`/.test(text);
+  if (lauf.error || (!treffer && !ueberSammellauf && !/im Wartungs-Prompt sind alle genannt/.test(text))){
     /* ⛔ Kein stilles Durchwinken: antwortet der Messende nicht wie erwartet,
        ist das ein Befund und keine Entwarnung. [[ausfall_ist_unsichtbar_gebaut]] */
     fehler++;

@@ -115,6 +115,16 @@ if (!fs.existsSync(PROMPT)){
   console.log('     (' + PROMPT + ')');
 } else {
   const wartung = fs.readFileSync(PROMPT, 'utf8');
+  /* ⭐ Steht der Sammellauf selbst im Prompt, sind ALLE Pruefer abgedeckt —
+     dann ist die Einzelaufzaehlung unnoetig. Bis zum 06.09.2026 zaehlte diese
+     Pruefung stur die Einzelnamen und haette den Eintrag „node
+     werkzeuge/alle-pruefer.mjs" nie als Loesung anerkannt, obwohl sie ihn
+     selbst vorschlaegt. Eine Pruefung, die ihren eigenen Rat nicht gelten
+     laesst, bleibt fuer immer rot. [[widerspruch_liegt_in_der_beschriftung]] */
+  if (/alle-pruefer\.mjs/.test(wartung)){
+    console.log('  ok   der Wartungs-Prompt ruft `alle-pruefer.mjs` — damit laufen ALLE '
+      + gefunden.length + ' Pruefer mittwochs und sonntags mit.');
+  } else {
   const fehltDort = [];
   for (const rel of gefunden){
     if (imBrowser && imBrowser.has(rel)) continue;
@@ -134,10 +144,11 @@ if (!fs.existsSync(PROMPT)){
     console.log('     ⛔ Braucht ein Wort von Elias: der Prompt gehoert zur');
     console.log('        Automation (..\\Automation\\prompts\\vokabeltrainer-wartung.md),');
     console.log('        nicht zu diesem Projekt — erreichbar ist er.');
-  } else {
+  }
+  else {
     console.log('  ok   auch im Wartungs-Prompt sind alle genannt.');
   }
-  console.log('');
+  }
 }
 
 if (waisen.length){
