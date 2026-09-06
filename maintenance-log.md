@@ -3038,9 +3038,11 @@ einzige, `ta-marbuta-fem-01`, Elias' Abbestellung vom 29.07.):
 ```
 
 Das Werkzeug sagt dazu ausdrücklich „nachsehen, nicht entsperren". ⛔ **Nichts
-entsperrt.** Das Muster passt zu einer Streichungsrunde von Elias
-(`nichtAufKarteikarten`) zwischen dem 23.08. und heute — dieselbe Bewegung, die
-auch die 34 abgelehnten Eselsbrücken erzeugt hat. Bestätigen kann das nur er.
+entsperrt** — und nachgesehen ergibt: **es ist seine eigene Ansage.**
+`Vokabeltrainer-Arabisch.md` führt im Standblock vom 06.09. 07:33 wörtlich
+*„Regeln 100, davon 9 auf deinen Wunsch ausgeblendet → 91 sichtbar"*. Dieselbe
+Streichungsrunde hat auch die 34 abgelehnten Eselsbrücken erzeugt. **Kein
+Befund.**
 
 **Die acht Prüfskripte:**
 
