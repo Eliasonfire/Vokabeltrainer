@@ -178,6 +178,54 @@ let quranLuecken = 0;
       console.log('  Störtest: ein fehlender Vers ' + (fehltErkannt ? 'wird' : '⛔ wird NICHT')
         + ' erkannt, ein leerer ' + (leerErkannt ? 'wird' : '⛔ wird NICHT') + ' erkannt.');
       if (!fehltErkannt || !leerErkannt) quranLuecken++;
+
+      /* ---------- Und die Seitengrenzen (06.09.2026) ----------
+       *
+       * quran-seiten.js trägt die 604 Seitenanfänge des Muṣḥaf. Der Kopf der
+       * Datei sagt, sie sei „geprueft gegen surah-data.js" — das stimmt, aber
+       * nur EINMAL, beim Erzeugen durch werkzeuge/seiten-holen.mjs, und das
+       * braucht Netz. Wird die Datei später beschädigt, merkt es niemand:
+       * eine falsche Seitenzahl unter dem Text sieht aus wie eine richtige.
+       * [[erfundene_begruendung_schliesst_den_fall]] */
+      const pPfad = W + 'quran-seiten.js';
+      if (fs.existsSync(pPfad)) {
+        vm.runInContext(fs.readFileSync(pPfad, 'utf8'), kiste, { filename: 'p' });
+        const P = vm.runInContext('typeof QURAN_SEITEN !== "undefined" ? QURAN_SEITEN : null', kiste);
+        if (!P) console.log('  ⓘ QURAN_SEITEN nicht gefunden — Seitengrenzen ungeprüft.');
+        else {
+          const verse = new Map(SD.map(s => [(s.number ?? s.nummer ?? s.id), (s.verses ?? s.ayahs ?? s.verse)]));
+          let ungueltig = 0, rueckwaerts = 0, vor = [0, 0];
+          for (let i = 0; i < P.length; i++) {
+            const [su, ay] = P[i];
+            if (!verse.has(su) || ay < 1 || ay > verse.get(su)) {
+              ungueltig++; console.log('  ⛔ Seite ' + (i + 1) + ' beginnt bei ' + su + ':' + ay + ' — die Stelle gibt es nicht');
+            } else {
+              const e = QT[su] && QT[su][ay - 1];
+              const t = Array.isArray(e) ? e[0] : e;
+              if (!t || !String(t).trim()) { ungueltig++; console.log('  ⛔ Seite ' + (i + 1) + ': ' + su + ':' + ay + ' hat keinen Text'); }
+            }
+            /* ⛔ Streng aufsteigend, nicht nur „nicht kleiner": zwei Seiten,
+               die an derselben Stelle beginnen, wären eine leere Seite. */
+            if (su < vor[0] || (su === vor[0] && ay <= vor[1])) {
+              rueckwaerts++; console.log('  ⛔ Seite ' + (i + 1) + ' (' + su + ':' + ay + ') läuft nicht vorwärts (vorher ' + vor.join(':') + ')');
+            }
+            vor = [su, ay];
+          }
+          quranLuecken += ungueltig + rueckwaerts;
+          /* Störtest, sonst ist auch diese Null keine Messung. */
+          let stoer = 0, v2 = [0, 0];
+          for (const [su, ay] of P.map((p, i) => i === 5 ? [1, 1] : p)) {
+            if (su < v2[0] || (su === v2[0] && ay <= v2[1])) stoer++;
+            v2 = [su, ay];
+          }
+          console.log('  Seitengrenzen: ' + P.length + ' Seiten von ' + P[0].join(':')
+            + ' bis ' + P[P.length - 1].join(':') + ' — '
+            + (ungueltig || rueckwaerts ? ungueltig + ' ungültig, ' + rueckwaerts + ' nicht vorwärts'
+                                        : 'alle gültig und streng aufsteigend')
+            + ' · Störtest: ' + (stoer > 0 ? 'greift' : '⛔ greift nicht'));
+          if (!stoer) quranLuecken++;
+        }
+      }
     }
   }
 }
