@@ -160,7 +160,7 @@ const PRUEFER = [
   ['test-p8.mjs', []],
   ['test-p9.mjs', []],
 
-  /* ⛔ Neu am 07.09.2026. Der Hifz-Stand ist das Einzige in dieser App, das
+  /* ⛔ Neu am 06.09.2026. Der Hifz-Stand ist das Einzige in dieser App, das
      Elias sich WIRKLICH erarbeitet hat — auswendig gelernte Suren. Er lief
      bis dahin ueber den Blockersatz und ging beim Geraetewechsel verloren.
      Der Test misst genau seinen Fall: Handy markiert Sure 99, Tablet Sure 112. */

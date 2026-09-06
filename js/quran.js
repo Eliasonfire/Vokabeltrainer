@@ -54,9 +54,9 @@ function renderQuranList(){
 
    Beides ist verlustfrei umkehrbar: der Haken traegt dieselbe Auskunft wie die
    vollstaendige Einzelliste. */
-/* ⛔⛔ DIE SPEICHERFORM TRAEGT SEIT DEM 07.09.2026 JE EINTRAG EINEN ZEITSTEMPEL
+/* ⛔⛔ DIE SPEICHERFORM TRAEGT SEIT DEM 06.09.2026 JE EINTRAG EINEN ZEITSTEMPEL
    ==========================================================================
-   Elias am 07.09.2026, nachdem er auf dem Tablet nachgesehen hatte:
+   Elias am 06.09.2026, nachdem er auf dem Tablet nachgesehen hatte:
 
      „ich habe eben auf meinem tablet geguckt und die sura zalzala war nicht
       als gelernt markiert […] ich möchte das alles was sowohl auf meinem
