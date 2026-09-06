@@ -1363,7 +1363,9 @@ const SENTENCE_TAGS = {
      seit Kapitel 4 — nur hat bis heute keine Regel darauf gezeigt.
      ======================================================================== */
   "mb1-63-3": [{ ruleId: "harf-jarr-bi-01", matchText: "بِخَيْرٍ" }],
-  "mb1-63-4": [{ ruleId: "ismun-mawsul-allati-01", matchText: "الَّتِي" }],
+  "mb1-63-4": [{ ruleId: "ismun-mawsul-allati-01", matchText: "الَّتِي" },
+    { ruleId: "possessiv-endungen-01", matchText: "أُخْتُكِ" }
+  ],
   "mb1-65-2": [{ ruleId: "li-mit-suffix-01", matchText: "أَلَكَ" },
                 { ruleId: "ya-nida-01", matchText: "يَا حَامِدُ" }],
 
