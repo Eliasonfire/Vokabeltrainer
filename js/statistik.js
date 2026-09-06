@@ -143,7 +143,7 @@ function renderRegelStand(){
     kasten.innerHTML = '<div class="regel-hinweis">'
       + (REGEL_SORT.art === 'nie'
         ? 'Keine Regel ist ungeübt — alle 94 abfragbaren waren schon dran.'
-        : 'Noch keine Regel geübt. Der Übungsmodus <b>„Welche Regel?"</b> füllt diese Liste.')
+        : 'Noch keine Regel geübt. Der Übungsmodus <b>„Welche Regel?“</b> füllt diese Liste.')
       + '</div>';
     return;
   }
@@ -162,7 +162,7 @@ function renderRegelStand(){
       + '<span class="rd">' + wann + '</span></div>';
   }).join('')
   + '<div class="regel-hinweis">' + geuebt.length + ' von 94 abfragbaren Regeln geübt. '
-  + 'Gespeist wird das nur aus <b>„Welche Regel?"</b> — die anderen zwölf Modi '
+  + 'Gespeist wird das nur aus <b>„Welche Regel?“</b> — die anderen zwölf Modi '
   + 'fragen Rollen und Fälle ab, keine benannte Regel.'
   + (REGEL_SORT.art === 'nie'
      ? ' ⛔ Eine Zeile trägt <b>abbestellt</b> statt <b>nie</b>: das ist '

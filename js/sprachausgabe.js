@@ -120,7 +120,7 @@ function speakArabic(text){
     if ((text || '').trim().length < 2) return;
     toast(ARABIC_VOICES.length
       ? 'Kein Ton — die Stimme hat nichts gesprochen. Einstellungen → andere Stimme wählen.'
-      : 'Dieses Gerät hat keine arabische Stimme installiert — in den Geräte-Einstellungen unter „Sprachausgabe / Text-in-Sprache" nachrüsten.');
+      : 'Dieses Gerät hat keine arabische Stimme installiert — in den Geräte-Einstellungen unter „Sprachausgabe / Text-in-Sprache“ nachrüsten.');
   };
   speechSynthesis.speak(u);
 

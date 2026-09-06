@@ -538,7 +538,7 @@ document.getElementById('customCatList').addEventListener('click', (e)=>{
   saveCustomCats();
   frischeEigeneAuf();
   zeichneKatAuswahl();
-  toast(`${w ? w.ar : 'Wort'} aus „${cat.name}" entfernt.`);
+  toast(`${w ? w.ar : 'Wort'} aus „${cat.name}“ entfernt.`);
 });
 
 /* Kategorie antippen: alle markierten Woerter hinein. */
