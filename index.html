@@ -1184,37 +1184,33 @@ main{
   width:100%;background:var(--surface-3);border:1px solid var(--border);
   border-radius:var(--r-3);padding:var(--sp-4);margin-top:var(--sp-1);
 }
-/* ⭐⭐ Auf der KARTEIKARTE klebt der Beispielsatz unten (05.09.2026).
-   Elias mit Bild um 02:26 (Karte حَقِيبَةٌ): "hier ist das beispielsatz einfach
-   abgeschnitten ab da ... ich glaube das ist aber das einzige."
+/* ⛔⛔ DER BEISPIELSATZ KLEBT NICHT — zurueckgenommen am 06.09.2026.
 
-   Es war nicht das einzige. Bei 375x812 ueber alle 203 Karten mit Satz
-   gemessen: 158 laufen ueber (im Mittel 81 px), der arabische Satz ist nur auf
-   119 ganz zu sehen, die deutsche Uebersetzung nur auf 86. Bei حَقِيبَةٌ
-   selbst: 607 px Inhalt in 458 px Flaeche, die deutsche Zeile stand bei
-   bottom 714 - also 107 px UNTERHALB der Karte.
+   Am 05.09. bekam .example-box auf der Rueckseite `position:sticky;bottom:0`,
+   damit der Satz nicht mehr unter die Kartenkante rutscht. Gemessen war das
+   ein Erfolg: vorher waren der arabische Satz auf 119 und die deutsche
+   Uebersetzung auf 86 von 203 Karten ohne Rollen zu sehen, danach auf 203.
 
-   ⛔ Die Karte hoeher zu machen ist keine Loesung, und das ist gemessen, nicht
-   vermutet: schon bei min-height 520px liegen die Bewertungsknoepfe unter der
-   Navigationsleiste (787 > 746). Erst ab 640px passt der Inhalt - dann sind die
-   Knoepfe 161 px zu tief. Die Karte ist heute schon so hoch, wie es geht.
+   ⛔ Elias hat es trotzdem zurueckgewiesen, mit Bild um 05:57:
+   "der beispielsatz soll nicht fixiert sein, er soll unter dem vorschlag sein
+    damit ich runter scrollen kann normal damit die zwei sachen auf der
+    gleichen ebene sind wie frueher. das muss unbedingt gefixt werden."
 
-   ⛔ Die Reihenfolge darf nicht getauscht werden. Elias am 21.08.2026:
-   "sollst es so lassen also vorschläge oben und satz unten." Deshalb bleibt der
-   Satz unten - er klebt dort nur jetzt fest, statt wegzurutschen.
+   ⭐ Und er hat recht, das Bild zeigt es: ein klebender Kasten liegt UEBER
+   dem Vorschlag und schneidet ihn an. Meine Messung zaehlte, wie viel vom SATZ
+   sichtbar ist — sie hat nie gezaehlt, wie viel er dafuer von der
+   Eselsbruecke verdeckt. Eine Zahl, die nur eine Seite der Rechnung misst,
+   sieht aus wie ein Beweis. [[trefferquote_ohne_preis]]
 
-   ⚠️ Er klebt 25 px ueber dem Kartenrand, nicht buendig: .flashcard-back hat
-   padding-bottom:24px, und sticky rechnet gegen die PADDING-Box. Das ist so
-   richtig - buendig wuerde der Kasten den abgerundeten Rand ueberdecken.
+   Beide Kaesten stehen deshalb wieder im normalen Fluss, untereinander, und
+   die Rueckseite rollt. Dass der Satz dabei unter die Kante rutschen kann, ist
+   BEKANNT und gewollt — dafuer gibt es den Streifen "Es geht noch weiter"
+   (aktualisiereMehrHinweis in js/lernen.js).
 
-   ⚠️ Nur .flashcard-back: dieselbe Klasse traegt das Vokabel-Popover in
-   js/kategorien.js:745, das gar nicht rollt. */
-.flashcard-back .example-box{
-  position:sticky;bottom:0;z-index:2;
-  /* Der Kasten ist halbdurchsichtig gedacht? Nein - er MUSS decken, sonst
-     scheint die Eselsbruecke beim Rollen durch ihn hindurch. */
-  background:var(--surface-3);
-}
+   ⛔ Wer hier wieder `position:sticky` einbaut, macht dieselbe Sache zum
+   zweiten Mal. Die Reihenfolge selbst ist ebenfalls gesetzt — Elias am
+   21.08.2026: "sollst es so lassen also vorschläge oben und satz unten". */
+
 /* 1,5rem gegen --fs-md ergab 1,70 - jetzt aus dem deutschen Partner abgeleitet. */
 .example-ar{font-family:var(--font-ar);font-size:calc(var(--fs-md) * var(--ar-faktor));direction:rtl;text-align:center;line-height:2;color:#fff;}
 .example-de{font-size:var(--fs-md);color:var(--text-dim);text-align:center;margin-top:var(--sp-2);}
