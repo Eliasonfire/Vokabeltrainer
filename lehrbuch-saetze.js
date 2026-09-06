@@ -136,7 +136,7 @@ const LEHRBUCH_SAETZE = [
     sentAr: 'لَا. هِيَ بِنْتُ عَمِّي.',
     /* عَمّ ist ausdrücklich der Onkel väterlicherseits (mütterlicherseits wäre
        خَال). "Cousine" zuerst, weil das die Bedeutung ist; die wörtliche Form
-       dahinter, weil genau sie die إِضافة zeigt, um die es im Kapitel geht. */
+       dahinter, weil genau sie die إِضَافَة zeigt, um die es im Kapitel geht. */
     sentDe: 'Nein. Sie ist meine Cousine — die Tochter meines Onkels väterlicherseits.' },
 
   /* ===== Nachtrag 25.08.2026: die Saetze zu Folge 17 (Kapitel 12) ==========

@@ -20,19 +20,36 @@
    kommt; `belegt` zählt, wie oft die Schreibung dort vorkommt (gemessen am
    17.08.2026 mit einem Abgleich ohne Vokalzeichen über die ganze Datei).
 
-   ⚠️ Zwei Schreibungen sind in der Quelle UNVOLLSTÄNDIG vokalisiert und wurden
-   trotzdem so übernommen, statt ein Taschkīl zu erfinden:
-     · إِضافة   — ohne Zeichen auf ض ا ف   (9× so in grammar-data.js)
+   ⚠️ Vier Schreibungen waren in der Quelle UNVOLLSTÄNDIG vokalisiert und wurden
+   trotzdem so übernommen, statt ein Taschkīl zu erfinden. Der Satz dazu lautete:
+   „Das gehört auf die Liste für Elias: er kann seinen Lehrer fragen. Ein
+   geratenes Taschkīl wäre hier schlimmer als eine sichtbare Lücke, weil er es
+   auswendig lernen würde."
+
+   ⭐⭐ AM 06.09.2026 HAT DER LEHRER GEANTWORTET. Elias' Musterlösung zur
+   Grammatikabfrage (Samsung Notes, 01.09.) schreibt zwei davon voll aus, und
+   damit war es kein Raten mehr, sondern Abschreiben:
+
+     · إِضَافَة  — ml-01, Überschrift 1 („اَلْإِضَافَة / مُضَاف") und Fließtext
+                  („Eine إِضَافَة (Iḍāfa) verbindet zwei Nomen"). Vorher stand
+                  hier إِضافة ohne Zeichen auf ض ا ف, 42× im ganzen Bestand.
+     · اِسْمُ الْإِشَارَة — ml-04, Überschrift 3. Vorher stand die Form OHNE
+                  Kasra unter dem Hamzat al-waṣl. ⭐ Die Datei wusste es
+                  eigentlich schon: hier stand der Hinweis, dass es in der
+                  Quelle ZWEI Schreibungen gebe (2× ohne, 1× mit Kasra) und die
+                  häufigere genommen sei. Die seltenere war die richtige.
+
+   ⛔ ZWEI SIND WEITERHIN OFFEN — der Lehrer erwähnt sie in der Musterlösung
+   nicht, also bleibt es beim Original:
      · شَكْل    — vollständig, aber der Plural تَشْكيل daneben nicht
      · تاء مَرْبُوطة — das erste Wort ohne jedes Zeichen (4× so, 3× ganz nackt)
      · أَلِف مَقْصورة — مقصورة ohne Zeichen auf ص و ر  (3× so)
-   Das gehört auf die Liste für Elias: er kann seinen Lehrer fragen. Ein
-   geratenes Taschkīl wäre hier schlimmer als eine sichtbare Lücke, weil er es
-   auswendig lernen würde.
 
-   ⚠️ Bei اسْمُ الْإِشَارَة gibt es in der Quelle ZWEI Schreibungen:
-   اسْمُ الْإِشَارَة (2×) und اِسْمُ الإِشارَةِ (1×). Genommen ist die häufigere;
-   die zweite steht hier, damit die Abweichung nicht unsichtbar verschwindet.
+   ⚠️ Wer hier wieder etwas vereinheitlicht, prüfe DIESEN Kommentar mit: die
+   Ersetzung vom 06.09. hat ihn beim ersten Lauf selbst getroffen und aus
+   „إِضافة — ohne Zeichen auf ض ا ف" ein „إِضَافَة — ohne Zeichen auf ض ا ف"
+   gemacht, also einen Satz, der sich selbst widerspricht.
+   [[eingefrorenes_feld_ist_kein_zustand]]
 
    ---------------------------------------------------------------------------
    TECHNISCH: `book: 'grammar'` (die Herkunft) und `chapter: 'personal'`.
@@ -60,7 +77,7 @@ const FACHBEGRIFF_VOKABELN = [
     book: 'grammar',
     regel: 'mudaf-01',
     belegt: 23,
-    mnemo: 'Das ERSTE Wort einer إِضافة: بَيْتُ اللهِ — das Haus Allahs, die Kaaba. بَيْتٌ hast du als Vokabel; hier steht es als مُضَاف. Du erkennst ihn an dem, was FEHLT: kein اَلْ und kein Tanwīn. Also nicht اَلْبَيْتُ und nicht بَيْتٌ, sondern nacktes بَيْتُ — es braucht keine eigene Bestimmung, das Wort dahinter bestimmt es schon.'
+    mnemo: 'Das ERSTE Wort einer إِضَافَة: بَيْتُ اللهِ — das Haus Allahs, die Kaaba. بَيْتٌ hast du als Vokabel; hier steht es als مُضَاف. Du erkennst ihn an dem, was FEHLT: kein اَلْ und kein Tanwīn. Also nicht اَلْبَيْتُ und nicht بَيْتٌ, sondern nacktes بَيْتُ — es braucht keine eigene Bestimmung, das Wort dahinter bestimmt es schon.'
   },
   {
     id: 'gram-majrur',
@@ -82,7 +99,7 @@ const FACHBEGRIFF_VOKABELN = [
     book: 'grammar',
     regel: 'marfu-grundfall-01',
     belegt: 8,
-    mnemo: 'Der Ruhezustand, kein Sonderfall: solange nichts dazukommt, steht jedes Nomen mit Damma am Ende — اَلْبَيْتُ. Erst ein حَرْف جَرّ oder eine إِضافة macht daraus مَجْرُور. Wenn du also ein Wort ohne besonderen Grund siehst, ist es مَرْفُوع.'
+    mnemo: 'Der Ruhezustand, kein Sonderfall: solange nichts dazukommt, steht jedes Nomen mit Damma am Ende — اَلْبَيْتُ. Erst ein حَرْف جَرّ oder eine إِضَافَة macht daraus مَجْرُور. Wenn du also ein Wort ohne besonderen Grund siehst, ist es مَرْفُوع.'
   },
   {
     id: 'gram-nat',
@@ -97,14 +114,18 @@ const FACHBEGRIFF_VOKABELN = [
   },
   {
     id: 'gram-idafa',
-    ar: 'إِضافة',
+    ar: 'إِضَافَة',
     de: 'Genitivverbindung — zwei Nomen werden ein Ausdruck',
     type: 'noun',
     chapter: 'personal',
     book: 'grammar',
     regel: 'idafa-01',
-    belegt: 9,
-    mnemo: 'بابُ الْمَسْجِدِ — die Tür der Moschee. بَابٌ und مَسْجِدٌ hast du einzeln gelernt, die إِضافة setzt sie zu einem Begriff zusammen. Erstes Wort: مُضَاف. Zweites Wort: مُضَاف إِلَيْهِ, und das steht im Genitiv. Damit kannst du zusammengesetzte Wörter bauen, die es im Arabischen sonst nicht gäbe — Schreibtisch, Wörterbuch, Feuertreppe.'
+    /* ⭐ 06.09.2026: 9 → 14. Nicht weil neue Regeln dazukamen, sondern weil
+       die Schreibung vereinheitlicht wurde — vorher stand إِضافة (ohne
+       Zeichen auf ض ا ف) daneben, jetzt zählen alle Stellen mit.
+       Beleg für die volle Form: die Musterlösung des Lehrers, ml-01. */
+    belegt: 14,
+    mnemo: 'بابُ الْمَسْجِدِ — die Tür der Moschee. بَابٌ und مَسْجِدٌ hast du einzeln gelernt, die إِضَافَة setzt sie zu einem Begriff zusammen. Erstes Wort: مُضَاف. Zweites Wort: مُضَاف إِلَيْهِ, und das steht im Genitiv. Damit kannst du zusammengesetzte Wörter bauen, die es im Arabischen sonst nicht gäbe — Schreibtisch, Wörterbuch, Feuertreppe.'
   },
   {
     id: 'gram-zarf',
@@ -115,7 +136,7 @@ const FACHBEGRIFF_VOKABELN = [
     book: 'grammar',
     regel: 'zarf-01',
     belegt: 3,
-    mnemo: 'Die DRITTE Sache, die den Fall steuert — neben حَرْف جَرّ und إِضافة. تَحْتَ الْمَكْتَبِ: تَحْتَ hast du als Vokabel, und das Wort dahinter wird مَجْرُور, genau wie hinter einem مُضَاف. Dein Lehrer stellt ausdrücklich klar: تَحْتَ selbst ist KEIN حَرْف جَرّ — es wirkt nur so.',
+    mnemo: 'Die DRITTE Sache, die den Fall steuert — neben حَرْف جَرّ und إِضَافَة. تَحْتَ الْمَكْتَبِ: تَحْتَ hast du als Vokabel, und das Wort dahinter wird مَجْرُور, genau wie hinter einem مُضَاف. Dein Lehrer stellt ausdrücklich klar: تَحْتَ selbst ist KEIN حَرْف جَرّ — es wirkt nur so.',
     /* ⛔ Der EINZIGE Fachbegriff, der einen Satz bekommt -- und zwar mit Grund.
        Von den zehn Begriffen ohne Beispielsatz haben neun eine Regel mit 3 bis 13
        Markierungen, ihr Konzept ist also erreichbar. `zarf-01` stand bei EINER.
@@ -137,13 +158,19 @@ const FACHBEGRIFF_VOKABELN = [
   },
   {
     id: 'gram-ismul-isara',
-    ar: 'اسْمُ الْإِشَارَة',
+    ar: 'اِسْمُ الْإِشَارَة',
     de: 'Hinweiswort (dieser, jener)',
     type: 'noun',
     chapter: 'personal',
     book: 'grammar',
     regel: 'ismul-isara-hadha-01',
+    /* ⭐ 06.09.2026: die Zahl bleibt 2, ihre Bedeutung nicht. Vorher waren es
+       zwei Stellen OHNE Kasra unter dem Hamzat al-waṣl, jetzt zwei MIT — die
+       Schreibung folgt seit heute der Musterlösung des Lehrers (ml-04). */
     belegt: 2,
+    /* ⚠️ Steht nur noch als historischer Beleg da: dies WAR die seltenere
+       Variante in der Quelle (1×), und sie hatte recht. Der Unterschied zur
+       Hauptform ist jetzt nur noch die Endung und das Lām-Alif. */
     varianteInQuelle: 'اِسْمُ الإِشارَةِ',
     mnemo: 'Wörtlich „der Name des Zeigens" — اِسْم ist das Wort für „Nomen", das du aus den drei Wortarten kennst (اِسْم – فِعْل – حَرْف). Vier davon hattest du im Unterricht: هَذَا und هَذِهِ für Nahes, ذَلِكَ und تِلْكَ für Fernes. هَذَا بَيْتٌ — dies ist ein Haus.'
   },

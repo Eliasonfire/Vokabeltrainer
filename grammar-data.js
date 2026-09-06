@@ -43,7 +43,7 @@ const GRAMMAR_RULES = [
        `ausgeblendet` - das naehme sie auch aus Satz- und Uebungsmodus. */
     nichtAufKarteikarten: true,
     name: "هَذَا (dies)",
-    shortExplanation: "هَذَا (hadha) ist ein اسْمُ الْإِشَارَة (Hinweiswort/Demonstrativpronomen). Es wird für das benutzt, was (a) in der Nähe ist und (b) männlich – nicht für weibliche Wörter, dafür steht هَذِهِ. Menschen und Dinge gleichermaßen: Sharḥ Madīnah S. 3 definiert es als لِلْمُفْرَدِ الْمُذَكَّرِ الْقَرِيبِ الْعَاقِلِ، وَغَيْرِ الْعَاقِلِ – für das männliche Einzelne in der Nähe, ob vernunftbegabt oder nicht. Die Nähe muss nicht räumlich sein: der Lehrer erklärt am Beispiel يَوْمُ الْقِيامَة (der Tag der Auferstehung), dass dieser Tag im Koran mit هَذَا bezeichnet wird und nicht mit ذَلِكَ (jenes) – weil er als nah empfunden wird, nicht als fern.",
+    shortExplanation: "هَذَا (hadha) ist ein اِسْمُ الْإِشَارَة (Hinweiswort/Demonstrativpronomen). Es wird für das benutzt, was (a) in der Nähe ist und (b) männlich – nicht für weibliche Wörter, dafür steht هَذِهِ. Menschen und Dinge gleichermaßen: Sharḥ Madīnah S. 3 definiert es als لِلْمُفْرَدِ الْمُذَكَّرِ الْقَرِيبِ الْعَاقِلِ، وَغَيْرِ الْعَاقِلِ – für das männliche Einzelne in der Nähe, ob vernunftbegabt oder nicht. Die Nähe muss nicht räumlich sein: der Lehrer erklärt am Beispiel يَوْمُ الْقِيامَة (der Tag der Auferstehung), dass dieser Tag im Koran mit هَذَا bezeichnet wird und nicht mit ذَلِكَ (jenes) – weil er als nah empfunden wird, nicht als fern.",
     color: "mubtada",
     source: { folge: 1, video: "Folge 01", approxTimestamp: "10:07", chapter: 1 },
     source2: { schluessel: 1, lektion: 1, seite: 3 }
@@ -172,7 +172,7 @@ const GRAMMAR_RULES = [
   {
     id: "ismul-isara-dhalika-01",
     name: "ذَلِكَ (jenes)",
-    shortExplanation: "ذَلِكَ (dhalika) ist wie هَذَا ein اسْمُ الْإِشَارَة (Hinweiswort), aber für Dinge in der Ferne statt in der Nähe. Gilt ebenfalls nur für männliche Wörter. Kann auch auf zuvor Erwähntes zurückverweisen, nicht nur auf räumlich Entferntes.",
+    shortExplanation: "ذَلِكَ (dhalika) ist wie هَذَا ein اِسْمُ الْإِشَارَة (Hinweiswort), aber für Dinge in der Ferne statt in der Nähe. Gilt ebenfalls nur für männliche Wörter. Kann auch auf zuvor Erwähntes zurückverweisen, nicht nur auf räumlich Entferntes.",
     color: "mubtada",
     source: { folge: 2, video: "Folge 02", approxTimestamp: "20:07", chapter: 2 },
     source2: { schluessel: 1, lektion: 2, seite: 8 }
@@ -535,8 +535,8 @@ const GRAMMAR_RULES = [
   },
   {
     id: "idafa-01",
-    name: "إِضافة (Genitivverbindung)",
-    shortExplanation: "Mit der إِضافة verbindest du zwei Nomen (اِسْم + اِسْم) zu einem Ausdruck: das **erste** Wort heißt مُضَاف (der Besitz), das **zweite** مُضَاف إِلَيْهِ (der Besitzer). كِتابُ اللهِ kitābu llāhi – das Buch Allahs, بَيْتُ اللهِ baytu llāhi – das Haus Allahs (die Kaaba), بَابُ الْمَسْجِدِ bābu l-masjidi – die Tür der Moschee, سَيّارَةُ حامِدٍ sayyāratu ḥāmidin – das Auto von Hamid. Damit ist die إِضافة zugleich der **zweite Weg, ein Wort مَجْرور zu machen** – der erste ist der حَرْف جَرّ. Der Lehrer stellt sie genau so vor (Folge 07, 1:09): »wir kriegen den مَجْرور durch حَرْف جَرّ … oder wir kriegen ihn durch die إِضافة, durch مُضاف und مُضاف إِلَيْهِ«, und bei 2:00: »es gibt noch eine Regel – diese können auch das Wort مَجْرور machen, das heißt mit كَسْرة am Ende«. Der Grundfall bleibt مَرْفوع; erst wenn etwas hinzukommt, ändert sich die Endung. Damit kann man zusammengesetzte Begriffe bilden – der Lehrer zählt auf Deutsch auf: Wörterbuch, Feuertreppe, Trinkbecher, Schreibtisch. Das ging vorher nicht. Die Verbindung funktioniert nur zwischen zwei Nomen, اِسْم und اِسْم.",
+    name: "إِضَافَة (Genitivverbindung)",
+    shortExplanation: "Mit der إِضَافَة verbindest du zwei Nomen (اِسْم + اِسْم) zu einem Ausdruck: das **erste** Wort heißt مُضَاف (der Besitz), das **zweite** مُضَاف إِلَيْهِ (der Besitzer). كِتابُ اللهِ kitābu llāhi – das Buch Allahs, بَيْتُ اللهِ baytu llāhi – das Haus Allahs (die Kaaba), بَابُ الْمَسْجِدِ bābu l-masjidi – die Tür der Moschee, سَيّارَةُ حامِدٍ sayyāratu ḥāmidin – das Auto von Hamid. Damit ist die إِضَافَة zugleich der **zweite Weg, ein Wort مَجْرور zu machen** – der erste ist der حَرْف جَرّ. Der Lehrer stellt sie genau so vor (Folge 07, 1:09): »wir kriegen den مَجْرور durch حَرْف جَرّ … oder wir kriegen ihn durch die إِضَافَة, durch مُضاف und مُضاف إِلَيْهِ«, und bei 2:00: »es gibt noch eine Regel – diese können auch das Wort مَجْرور machen, das heißt mit كَسْرة am Ende«. Der Grundfall bleibt مَرْفوع; erst wenn etwas hinzukommt, ändert sich die Endung. Damit kann man zusammengesetzte Begriffe bilden – der Lehrer zählt auf Deutsch auf: Wörterbuch, Feuertreppe, Trinkbecher, Schreibtisch. Das ging vorher nicht. Die Verbindung funktioniert nur zwischen zwei Nomen, اِسْم und اِسْم.",
     color: "idafa",
     source: { folge: 7, video: "Folge 07", approxTimestamp: "2:24", chapter: 5 },
     source2: { schluessel: 1, lektion: 5, seite: 18 }
@@ -552,7 +552,7 @@ const GRAMMAR_RULES = [
   {
     id: "mudaf-ilayh-01",
     name: "مُضَاف إِلَيْهِ (der Besitzer – zweites Wort)",
-    shortExplanation: "Der مُضَاف إِلَيْهِ, also das zweite Wort, ist **immer** مَجْرُور – daran lässt sich nichts ändern, egal was um die إِضافة herum steht; er endet auf Kasra. Das ist zugleich das Erkennungszeichen: **findest du zwei Nomen hintereinander und das zweite trägt Kasra, ist es eine إِضافة**: كِتابُ الْمُدَرِّسِ kitābu l-mudarrisi – das Buch des Lehrers. Er darf dabei bestimmt oder unbestimmt sein: كِتابُ مُدَرِّسٍ kitābu mudarrisin – das Buch eines Lehrers. **Und „immer“ heißt wirklich immer:** während das erste Wort seinen Fall aus dem Satz bekommt und mitwandert – عَلى مَكْتَبِ الْمُدَرِّسِ ʿalā maktabi l-mudarrisi, auf dem Schreibtisch des Lehrers, wo مَكْتَبِ nach dem حَرْف جَرّ selbst Kasra trägt – bleibt das zweite unberührt. Der Lehrer sagt es in Folge 07 zweimal: bei 07:39 »ist immer مَجْرُور, egal was du machst, kannst du nicht ändern«, und bei 08:57 ordnet er sie ein: »diese Regel [der حَرْف جَرّ] und diese Regel mit مُضاف إِلَيْهِ, das sind wenn nicht die beiden wichtigsten Regeln, die man benötigt«.",
+    shortExplanation: "Der مُضَاف إِلَيْهِ, also das zweite Wort, ist **immer** مَجْرُور – daran lässt sich nichts ändern, egal was um die إِضَافَة herum steht; er endet auf Kasra. Das ist zugleich das Erkennungszeichen: **findest du zwei Nomen hintereinander und das zweite trägt Kasra, ist es eine إِضَافَة**: كِتابُ الْمُدَرِّسِ kitābu l-mudarrisi – das Buch des Lehrers. Er darf dabei bestimmt oder unbestimmt sein: كِتابُ مُدَرِّسٍ kitābu mudarrisin – das Buch eines Lehrers. **Und „immer“ heißt wirklich immer:** während das erste Wort seinen Fall aus dem Satz bekommt und mitwandert – عَلى مَكْتَبِ الْمُدَرِّسِ ʿalā maktabi l-mudarrisi, auf dem Schreibtisch des Lehrers, wo مَكْتَبِ nach dem حَرْف جَرّ selbst Kasra trägt – bleibt das zweite unberührt. Der Lehrer sagt es in Folge 07 zweimal: bei 07:39 »ist immer مَجْرُور, egal was du machst, kannst du nicht ändern«, und bei 08:57 ordnet er sie ein: »diese Regel [der حَرْف جَرّ] und diese Regel mit مُضاف إِلَيْهِ, das sind wenn nicht die beiden wichtigsten Regeln, die man benötigt«.",
     color: "idafa",
     source: { folge: 7, video: "Folge 07", approxTimestamp: "7:39", chapter: 5 },
     source2: { schluessel: 1, lektion: 5, seite: 18 }
@@ -574,8 +574,8 @@ const GRAMMAR_RULES = [
   },
   {
     id: "harf-jarr-idafa-01",
-    name: "حَرْف جَرّ + إِضافة (Verkettung)",
-    shortExplanation: "Trifft ein حَرْف جَرّ auf eine إِضافة, bekommen **beide** Wörter eine Kasra — denn der حَرْف جَرّ macht den مُضَاف مَجْرُور, und der مُضَاف إِلَيْهِ ist ohnehin مَجْرُور. Der Lehrer nennt das eine „Verkettung\". عَلى مَكْتَبِ الْمُدَرِّسِ ʿalā maktabi l-mudarrisi – auf dem Schreibtisch des Lehrers (مَكْتَب kann jeden Fall annehmen, durch عَلى muss es مَجْرُور werden); فِي كِتابِ اللهِ fī kitābi llāhi – im Buch Allahs (genau diesen Fall zerlegt der Lehrer: فِي ist ein حَرْف جَرّ und macht كِتاب مَجْرُور, und كِتاب ist zugleich مُضَاف und macht اللّٰه مَجْرُور); مِنْ بَيْتِ الْمُدَرِّسِ min bayti l-mudarrisi – vom Haus des Lehrers.",
+    name: "حَرْف جَرّ + إِضَافَة (Verkettung)",
+    shortExplanation: "Trifft ein حَرْف جَرّ auf eine إِضَافَة, bekommen **beide** Wörter eine Kasra — denn der حَرْف جَرّ macht den مُضَاف مَجْرُور, und der مُضَاف إِلَيْهِ ist ohnehin مَجْرُور. Der Lehrer nennt das eine „Verkettung\". عَلى مَكْتَبِ الْمُدَرِّسِ ʿalā maktabi l-mudarrisi – auf dem Schreibtisch des Lehrers (مَكْتَب kann jeden Fall annehmen, durch عَلى muss es مَجْرُور werden); فِي كِتابِ اللهِ fī kitābi llāhi – im Buch Allahs (genau diesen Fall zerlegt der Lehrer: فِي ist ein حَرْف جَرّ und macht كِتاب مَجْرُور, und كِتاب ist zugleich مُضَاف und macht اللّٰه مَجْرُور); مِنْ بَيْتِ الْمُدَرِّسِ min bayti l-mudarrisi – vom Haus des Lehrers.",
     color: "nasab",
     source: { folge: 7, video: "Folge 07", approxTimestamp: "12:57", chapter: 5 },
     source2: { schluessel: 1, lektion: 5, seite: 19 }
@@ -583,7 +583,7 @@ const GRAMMAR_RULES = [
   {
     id: "zarf-01",
     name: "ظَرْف (Zeit-/Ortsangabe)",
-    shortExplanation: "Neben حَرْف جَرّ und إِضافة gibt es eine dritte Sache, die den Fall steuert: die ظَرْف – Zeit- und Ortsangaben (Adverbien). Eine Ortsangabe verhält sich wie ein مُضَاف, das heißt das Nomen dahinter wird مَجْرُور: تَحْتَ الْمَكْتَبِ taḥta l-maktabi – unter dem Schreibtisch. Genauso أَمامَ الْمَسْجِدِ (amāma l-masjidi) \"vor der Moschee\" und خَلْفَ الْمَدْرَسَةِ (khalfa l-madrasati) \"hinter der Schule\". Der Lehrer stellt dazu ausdrücklich klar: تَحْتَ zählt selbst NICHT zu den حُروف الجَرّ – es ist \"eine Art Verb\" (gemeint: eine eigene Kategorie), auch wenn es genauso wie ein حَرْف جَرّ das folgende Nomen in den Genitiv setzt. Der Lehrer hat das in dieser Stunde nur kurz angerissen und angekündigt, es später zu wiederholen.",
+    shortExplanation: "Neben حَرْف جَرّ und إِضَافَة gibt es eine dritte Sache, die den Fall steuert: die ظَرْف – Zeit- und Ortsangaben (Adverbien). Eine Ortsangabe verhält sich wie ein مُضَاف, das heißt das Nomen dahinter wird مَجْرُور: تَحْتَ الْمَكْتَبِ taḥta l-maktabi – unter dem Schreibtisch. Genauso أَمامَ الْمَسْجِدِ (amāma l-masjidi) \"vor der Moschee\" und خَلْفَ الْمَدْرَسَةِ (khalfa l-madrasati) \"hinter der Schule\". Der Lehrer stellt dazu ausdrücklich klar: تَحْتَ zählt selbst NICHT zu den حُروف الجَرّ – es ist \"eine Art Verb\" (gemeint: eine eigene Kategorie), auch wenn es genauso wie ein حَرْف جَرّ das folgende Nomen in den Genitiv setzt. Der Lehrer hat das in dieser Stunde nur kurz angerissen und angekündigt, es später zu wiederholen.",
     color: "nasab",
     source: { folge: 7, video: "Folge 07", approxTimestamp: "14:46", chapter: 5 },
     source2: { schluessel: 1, lektion: 5, seite: 19 }
@@ -641,14 +641,14 @@ const GRAMMAR_RULES = [
   },
   {
     id: "idafa-kein-adjektiv-01",
-    name: "إِضافة – kein Adjektiv als Zweitglied",
+    name: "إِضَافَة – kein Adjektiv als Zweitglied",
     shortExplanation: "اَلرَّجُلُ مَرِيضٌ ar-rajulu marīdun »der Mann ist krank« ist ein normaler Satz und enthält keine Iḍāfa. Man kann daraus keine Genitivverbindung machen: مَرِيضٍ marīdin würde »der Mann des Kranken« bzw. »der Krankheitsmann« bedeuten – und das geht nicht.",
     color: "idafa",
     source: { folge: 9, video: "Folge 09", approxTimestamp: "7:29", chapter: 5 }
   },
   {
     id: "idafa-verkettung-01",
-    name: "إِضافة – Verkettung (mehrgliedrige Genitivverbindung)",
+    name: "إِضَافَة – Verkettung (mehrgliedrige Genitivverbindung)",
     shortExplanation: "Eine Iḍāfa kann verkettet (»verschachtelt«) werden: هَذَا اِبْنُ إِمَامِ الْمَسْجِدِ hādhā ibnu imāmi l-masjidi – »dies ist der Sohn des Imams der Moschee«. Das mittlere Wort ist gleichzeitig مُضَاف إِلَيْهِ (deshalb Kasra) und مُضَاف für das nächste Wort – und bekommt deshalb kein Tanwīn. Genauso im Beispiel هَذَا مَسْجِدُ رَسُولِ اللهِ hādhā masjidu rasūli llāhi: رَسُولِ müsste eigentlich رَسُولٍ heißen, weil kein اَلْ dransteht – es bleibt aber ohne Tanwīn, weil es Mudāf für اللهِ ist.",
     color: "idafa",
     source: { folge: 9, video: "Folge 09", approxTimestamp: "18:37", chapter: 5 },
@@ -666,7 +666,7 @@ const GRAMMAR_RULES = [
        das mit dem satzmodus bzw uebungsmodus." Deshalb NICHT
        `ausgeblendet` - das naehme sie auch aus Satz- und Uebungsmodus. */
     nichtAufKarteikarten: true,
-    name: "إِضافة – Zweitglied bestimmt oder unbestimmt",
+    name: "إِضَافَة – Zweitglied bestimmt oder unbestimmt",
     shortExplanation: "Beim zweiten Wort der Iḍāfa entscheidest du selbst: بَيْتُ الْإِمَامِ baytu l-imāmi – »das Haus des Imams« (bestimmt mit اَلْ) oder بَيْتُ إِمَامٍ baytu imāmin – »das Haus eines Imams« (unbestimmt mit Tanwīn). Bei männlichen Eigennamen gibt es diese Wahl nicht: sie stehen immer mit Tanwīn – مُحَمَّدٍ Muhammadin, حَامِدٍ Hāmidin, عَمَّارٍ ʿAmmārin. Achtung: für weibliche Eigennamen gilt das nicht, die tragen laut Lehrer gar kein Tanwīn (51:14). (Baut auf der Regel zu اَلْ auf.)",
     color: "idafa",
     source: { folge: 9, video: "Folge 09", approxTimestamp: "20:49", chapter: 5 },
@@ -2663,7 +2663,7 @@ const SATZ_THEMEN = [
      andere verliert ihre Heimat. */
   { id: 'weiblich',    name: 'Weiblich',       muster: /^(ta-marbuta|fem-|eigennamen-fem|koerperteile-genus)/ },
   { id: 'al',          name: 'اَلْ',            muster: /^(al-|schams|qamar|adjektive-an|nakira-marifa)/ },
-  { id: 'idafa',       name: 'إِضافة',          muster: /^(idafa|mudaf|zarf-als-mudaf|possessiv-ist-idafa)/ },
+  { id: 'idafa',       name: 'إِضَافَة',          muster: /^(idafa|mudaf|zarf-als-mudaf|possessiv-ist-idafa)/ },
 
   /* ===== Fuenf neue Reiter, 19.08.2026 =========================
      Elias: „da müssen auch die kategorien aktualisiert werden aufs neueste
