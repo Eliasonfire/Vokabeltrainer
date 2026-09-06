@@ -55,6 +55,14 @@ function wortformen(text){
     out.push(w);
     const ohneAl = w.replace(/^(?:و|ف)?(?:ال|أل)/, '');
     if (ohneAl !== w && ohneAl.length >= 2) out.push(ohneAl);
+    /* ⛔ Auch ohne Pronomensuffix — عِنْدِي gegen eine Regel, die عِنْدَ
+       heisst. Dieselbe Liste wie uebungHervorWorte() in js/uebung.js. */
+    for (const suf of ['كما','كم','كن','هما','هم','هن','ها','نا','ي','ك','ه']){
+      if (!ohneAl.endsWith(suf)) continue;
+      const stamm = ohneAl.slice(0, -suf.length);
+      if (stamm.length >= 3) out.push(stamm);
+      break;
+    }
   }
   return out.filter(w => w.length >= 2);
 }

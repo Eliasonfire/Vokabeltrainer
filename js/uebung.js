@@ -182,6 +182,18 @@ function uebungHervorWorte(z, von, bis){
     /* Mit UND ohne Artikel: im Satz steht الْفَتَاةُ, die Regel heisst فَتَاة. */
     const ohneAl = roh.replace(/^(?:و|ف)?(?:ال|أل)/, '');
     if (ohneAl !== roh && ohneAl.length >= 2) out.push(ohneAl);
+    /* ⛔ UND OHNE PRONOMENSUFFIX (06.09.2026, nachgemessen).
+       Die Wortpruefung verglich nur ganze Woerter. Im Satz steht aber
+       عِنْدِي, und die Regel heisst „لِ oder عِنْدَ?" — für mich zwei
+       verschiedene Zeichenketten, für einen Lesenden dasselbe Wort. Genau
+       ein Fall im Bestand, aber es ist derselbe Verrat, den Elias gemeldet
+       hat. Der Stamm muss drei Zeichen behalten, sonst trifft er alles. */
+    for (const suf of ['كما','كم','كن','هما','هم','هن','ها','نا','ي','ك','ه']){
+      if (!ohneAl.endsWith(suf)) continue;
+      const stamm = ohneAl.slice(0, -suf.length);
+      if (stamm.length >= 3) out.push(stamm);
+      break;
+    }
   }
   return out.filter(w => w.length >= 2);
 }
