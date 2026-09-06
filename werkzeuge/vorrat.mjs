@@ -981,6 +981,9 @@ if (iStand >= 0){
 const lern = lernstandLesen();
 const fensterInfo = [];
 const fehlendeAngabe = [];
+/* Buecher, die Elias ausdruecklich NICHT lernt — ihre Woerter fehlen nicht,
+   sie gehoeren nicht dazu. Siehe kapitelImFenster(). */
+const bewusstDraussen = [];
 
 /* Welche Kapitel eines Buchs zaehlen? Der Schnitt aus
      freigeschaltet  ∩  [1 .. Lernstand + FENSTER]
@@ -1000,6 +1003,28 @@ function kapitelImFenster(slug){
      Unsinn meldet, wird nach dem dritten Mal ignoriert.
      Lieber laut sagen, dass die Angabe fehlt. */
   if (typeof gesagt !== 'number'){
+    /* ⭐ ZWEI GRUENDE, WARUM EIN BUCH KEINE ANGABE HAT — und nur einer ist
+       eine Luecke (06.09.2026). Bis heute meldete das Werkzeug beide gleich:
+       "⛔ NICHT gemessen … 49 % des freigeschalteten Bestands bleiben
+       ungeprueft". Bei madina-2 ist das aber KORREKT und gewollt: Elias hat
+       am 19.08.2026 gesagt "madina-2 ist nur freigeschaltet" und es am
+       06.09. auf Rueckfrage bestaetigt — er lernt dort nicht.
+
+       Eine bewusste Entscheidung als Mangel zu melden ist derselbe Fehler wie
+       ein Waechter, der den ausgeschalteten Rechner meldet: die Zahl stimmt,
+       der Alarm ist falsch, und beim dritten Mal liest ihn niemand mehr.
+       [[waechter_meldet_ausgeschalteten_rechner]] [[kennzeichen_mit_zwei_ursachen]]
+
+       ⚠️ Der Vermerk steht in lernstand.json unter `nichtInArbeit`, mit
+       seinem Wortlaut daneben — nicht hier im Quelltext. Sagt er morgen, dass
+       er madina-2 anfaengt, gehoert der Eintrag WEG und das Buch bekommt eine
+       `angabe`; eine im Code verdrahtete Ausnahme haette man dabei vergessen. */
+    const ausgelassen = lern && lern.nichtInArbeit && lern.nichtInArbeit[slug];
+    if (ausgelassen){
+      bewusstDraussen.push(slug);
+      fensterInfo.push(`${slug}: ✓ absichtlich draussen — ${String(ausgelassen).slice(0, 90)}…`);
+      return null;
+    }
     fehlendeAngabe.push(slug);
     fensterInfo.push(`${slug}: ⛔ keine Angabe von Elias → NICHT gemessen`
       + (gemess ? ` (abgefragt wurde bis Kapitel ${gemess.hoechstesKapitel}, das ist aber kein Lernstand)` : ''));
@@ -1395,7 +1420,7 @@ if (KNAPP){
     : `Vorrat: alle ${geprueft} freigeschalteten Woerter sind nach allen 13 Punkten des vollen Programms vollstaendig. (Freischaltstand ${datum}${standWarnung === -1 ? ' — ⛔ DATUM UNLESBAR, Alter unbekannt' : standWarnung ? ' — ⚠️ ' + standWarnung + ' Tage alt, die Mi/So-Abfrage hat ausgesetzt' : ''})`);
   /* ⛔ Auch die knappe Fassung traegt den Nenner — sie ist die, die in den
      Routinenbericht wandert, und dort faellt eine Luecke sonst nie auf. */
-  if (UNGEMESSEN_SUMME)
+  if (UNGEMESSEN_SUMME && fehlendeAngabe.length)
     console.log(`  ⛔ NICHT gemessen: ${UNGEMESSEN_SUMME} weitere freigeschaltete Woerter `
       + `= ${Math.round(UNGEMESSEN_SUMME / (UNGEMESSEN_SUMME + geprueft) * 100)} % des freigeschalteten `
       + `Bestands (${ungemessenZeile()}) — fuer diese Buecher fehlt Elias' Lernstand.`);
@@ -1412,10 +1437,19 @@ else console.log('  ⚠️ Keine Angabe von Elias hinterlegt — es zaehlt alles
   + ' Eintragen unter "angabe" in ' + LERNDATEI + '.');
 console.log('  Fenster: ' + FENSTER + ' Kapitel voraus');
 fensterInfo.forEach(z => console.log('    ' + z));
-if (UNGEMESSEN_SUMME)
-  console.log('    ⛔ NICHT gemessen: ' + UNGEMESSEN_SUMME + ' weitere freigeschaltete Woerter'
+if (UNGEMESSEN_SUMME){
+  /* ⭐ Nur ein ECHTES Fehlen ist ein ⛔. Was Elias ausdruecklich nicht lernt,
+     wird mit ✓ aufgefuehrt — die Zahl bleibt sichtbar, der Alarm faellt weg. */
+  const nurBewusst = bewusstDraussen.length && !fehlendeAngabe.length;
+  console.log('    ' + (nurBewusst ? '✓ ' : '⛔ ') + 'NICHT gemessen: ' + UNGEMESSEN_SUMME
+    + ' weitere freigeschaltete Woerter'
     + ' — ' + Math.round(UNGEMESSEN_SUMME / (UNGEMESSEN_SUMME + geprueft) * 100) + ' % des'
-    + ' freigeschalteten Bestands (' + (UNGEMESSEN_SUMME + geprueft) + ') bleiben damit ungeprueft.');
+    + ' freigeschalteten Bestands (' + (UNGEMESSEN_SUMME + geprueft) + ')'
+    + (nurBewusst
+        ? '. Das ist KEINE Luecke: ' + bewusstDraussen.join(', ')
+          + ' steht unter "nichtInArbeit" in ' + LERNDATEI + ' — Elias lernt dort nicht.'
+        : ' bleiben damit ungeprueft.'));
+}
 if (!hatSaetze) console.log('  data/beispielsaetze.js liegt noch nicht vor — Saetze zaehlen als fehlend.');
 console.log('');
 console.log('  geprueft:                 ' + geprueft + ' Woerter aus freigeschalteten Kapiteln');

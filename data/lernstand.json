@@ -31,5 +31,9 @@
       "hoechstesKapitel": 31,
       "geuebteWoerter": 250
     }
-  }
+  },
+  "nichtInArbeit": {
+    "madina-2": "Freigeschaltet, aber Elias lernt dort NICHT. Am 19.08.2026: \"nein, ich bin bei madina-1 kapitel 11, madina-2 ist nur freigeschaltet\", am 06.09.2026 auf die Rueckfrage bestaetigt: \"ich bin immer noch nur bei medina 1\". Die Woerter dieses Buchs bleiben deshalb ABSICHTLICH ausserhalb des Fensters — das ist keine Luecke."
+  },
+  "nichtInArbeitVom": "06.09.2026"
 }
