@@ -1449,7 +1449,8 @@ const SENTENCE_TAGS = {
     { ruleId: "schakl-01", matchText: "مُجْتَهِدٌ" }
   ],
   "45763": [
-    { ruleId: "ta-marbuta-fem-01", matchText: "الْجَامِعَةِ" }
+    { ruleId: "ta-marbuta-fem-01", matchText: "الْجَامِعَةِ" },
+    { ruleId: "harf-jarr-name-01", matchText: "فِي" }
   ],
   "45764": [
     { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
@@ -1631,7 +1632,8 @@ const SENTENCE_TAGS = {
     { ruleId: "madd-tabii-01", matchText: "هَذَا" }
   ],
   "45807": [
-    { ruleId: "alif-maqsura-01", matchText: "الْمُسْتَشْفَى" }
+    { ruleId: "alif-maqsura-01", matchText: "الْمُسْتَشْفَى" },
+    { ruleId: "harf-jarr-name-01", matchText: "فِي" }
   ],
   "45808": [
     { ruleId: "mina-al-01", matchText: "مِنَ الْيَابَانِ" }
