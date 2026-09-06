@@ -848,6 +848,30 @@ const GRAMMAR_RULES = [
     source: { folge: 13, video: "Folge 13", approxTimestamp: "18:21", chapter: 9 }
   },
   {
+    /* ⭐⭐ Aus Folge 19 (Grammatikabfrage 1), eingetragen am 06.09.2026.
+
+       ⛔ WARUM SIE FAST NICHT KAM: Der erste Whisper-Lauf haenge sich ab 5:33
+       in eine Schleife — „Al-Talibu" stand 582-mal in der Datei, und genau
+       diese Stelle war unlesbar. Die YouTube-Untertitel schrieben den
+       tragenden Satz als „ein Fat und dann ein Tab rein". Daraus eine Regel
+       zu bauen waere Erfinden gewesen.
+
+       ⭐ Der zweite Lauf mit `-mc 0` (max-context 0) hat sie freigelegt: 582
+       Wiederholungen -> 1. Ein blosser zweiter Durchlauf haette nichts
+       gebracht — die Schleife ist reproduzierbar, es braucht den Schalter.
+       [[whisper_schleife_mc0]]
+
+       ⭐ ZWEI unabhaengige Quellen sagen dasselbe: der Lehrer im Video (11:49
+       und noch einmal 12:00) und seine Musterloesung zur Grammatikabfrage
+       (01.09.2026, Aufgabe 5d) mit denselben Beispielpaaren. Deshalb steht
+       hier ein Wortlaut und keine Rekonstruktion. */
+    id: "fem-bildung-01",
+    name: "Wie ein Wort weiblich wird (مُسْلِمٌ → مُسْلِمَةٌ)",
+    shortExplanation: "Der Lehrer sagt den Handgriff zweimal, fast wortgleich: „Auf den ursprünglichen letzten Buchstaben kommt ein Fatḥa, und da kommt ein Tāʾ marbūṭa.\" Das Wort selbst bleibt bis dahin unverändert — مُسْلِمٌ wird zu مُسْلِمَةٌ, طَالِبٌ zu طَالِبَةٌ, مُدَرِّسٌ zu مُدَرِّسَةٌ. ⭐ Und es ist kein Selbstzweck: die Angleichung des Adjektivs braucht genau diesen Schritt. Er leitet ihn so ein: „Wir haben gesagt, alle vier Fälle müssen übereinstimmen, und einer dieser Fälle ist das Geschlecht — dementsprechend müssen wir das mitnehmen, wenn wir ein Adjektiv haben wollen.\" Sein Beispielpaar dazu: الطَّالِبُ الْجَدِيدُ und الطَّالِبَةُ الْجَدِيدَةُ. ⚠️ Nicht jedes Wort lässt sich so umformen — die Grenzen stehen in ta-marbuta-grenzen-01, die Ausnahmen (أُمٌّ · بِنْتٌ · شَمْسٌ) in fem-ohne-ta-marbuta-01.",
+    color: "fem",
+    source: { folge: 19, video: "Folge 19", approxTimestamp: "11:49", chapter: 6 }
+  },
+  {
     id: "adjektive-an-ohne-tanwin-01",
     name: "كَسْلَانُ – Adjektive auf ـانُ ohne Tanwin",
     shortExplanation: "Adjektive, die auf ـان (Alif + Nun) enden, koennen kein Tanwin bekommen – sie haben immer nur eine Endung. Beispiel: طَالِبٌ كَسْلَانُ (talibun kaslanu) „ein fauler Student\"; كَسْلَانُ steht ohne Tanwin, ist aber trotzdem unbestimmt. Der Lehrer nennt weitere Adjektive dieser Art (faul, hungrig, durstig, wuetend, voll) und sagt ausdruecklich, die Begruendung dafuer komme erst spaeter im Buch (etwa Kapitel 20/21).",
@@ -2516,7 +2540,8 @@ const SENTENCE_TAGS = {
     { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْبَيْتِ" }
   ],
   "p_1787185031977": [
-    { ruleId: "mubtada-khabar-genus-01", matchText: "مُدَرِّسَةٌ" }
+    { ruleId: "mubtada-khabar-genus-01", matchText: "مُدَرِّسَةٌ" },
+    { ruleId: "fem-bildung-01", matchText: "السَّيِّدَةُ" }
   ],
   "p_1787189845886": [
     { ruleId: "jumla-ismiya-filiya-01", matchText: "خَرَجَ" }
