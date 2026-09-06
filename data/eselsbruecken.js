@@ -12,7 +12,7 @@
       dort waere beim naechsten Abzug spurlos weg - ohne Fehlermeldung, ohne
       dass es jemand merkt.
 
-   ⛔ AUCH NICHT in vocab-data.js. Dort haengt LERNBESTAND_IDS (js/kern.js:97)
+   ⛔ AUCH NICHT in vocab-data.js. Dort haengt LERNBESTAND_IDS (in js/kern.js)
       dran und steuert damit die Freischaltung der Kapitel. 140 neue Eintraege
       haetten die Nebenwirkung, dass diese Woerter als "kennt er schon" gelten.
       Das ist kein Schoenheitsfehler, sondern verschiebt Elias' Lernstand.
