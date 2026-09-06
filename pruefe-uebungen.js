@@ -35,12 +35,41 @@ function lade(datei, namen){
 const G = lade('grammar-data.js', ['GRAMMAR_RULES', 'SENTENCE_TAGS']);
 const B = lade('data/beispielsaetze.js', ['BEISPIELSAETZE']);
 const L = lade('lehrbuch-saetze.js', ['LEHRBUCH_SAETZE']);
+/* ⛔ ZWEI WEITERE SATZQUELLEN. Ein Wort mit `sentAr` an der Karte ist zugleich
+   ein Satz im Satzmodus (`alleSaetze()` in js/saetze.js liest
+   VOCAB_DATA.filter(w => w.sentAr)). Wer nur beispielsaetze.js und
+   lehrbuch-saetze.js laedt, misst einen kleineren Bestand als die App zeigt.
+
+   Am 06.09.2026 gemessen: mit den Fachbegriffen stieg der arabische Verrat
+   von 71 auf 73 und der deutsche von 9 auf 10 — zwei bzw. eine Stelle, die
+   der Pruefer nie gesehen hatte.
+
+   ⚠️ Und die vier Saetze mit Guillemets stehen in KEINER von beiden, sondern
+   in data/vokabeln-eigene.js: es sind Elias' SELBST ANGELEGTE Karten fuer
+   Grammatikbegriffe („اِسْمٌ مَجْرُورٌ" als Vokabel mit Beispielsatz). Ich
+   hatte sie zuerst fuer Fachbegriffe gehalten und die Zaehlung meldete
+   folgerichtig „0 in 0 Saetzen".
+   [[dritte_satzquelle]] [[werkzeug_misst_kleineren_bestand]] */
+const F = lade('data/fachbegriffe.js', ['FACHBEGRIFF_VOKABELN']);
+/* ⛔⛔ UND DIE QUELLE, DIE ICH ZULETZT GEFUNDEN HABE: vocab-data.js selbst.
+   Ein Lernwort mit `sentAr` ist ebenfalls ein Satz im Satzmodus. Die vier
+   Saetze mit Guillemets stehen genau dort — es sind Elias' selbst angelegte
+   Karten fuer Grammatikbegriffe (اِسْمٌ مَجْرُورٌ, مُضَافْ إِلَيْهِ,
+   حَرْفُ الْجَرِّ), deren Beispielsaetze hier nachgetragen wurden.
+
+   ⚠️ NICHT in data/vokabeln-eigene.js: der arabicroots-Abzug kennt zwar
+   dieselben elf Woerter, aber gar kein Satzfeld — abgefragt am 06.09.2026,
+   alle elf ohne Beispielsatz. Wer dort sucht, findet nichts und haelt die
+   Null fuer einen Befund. [[dritte_satzquelle]] */
+const V = lade('vocab-data.js', ['VOCAB_DATA']);
 
 const REGELN = G.GRAMMAR_RULES || [];
 const TAGS   = G.SENTENCE_TAGS || {};
 const SAETZE = {};
 Object.entries(B.BEISPIELSAETZE || {}).forEach(([id, s]) => SAETZE[id] = s);
 (L.LEHRBUCH_SAETZE || []).forEach(s => { if (s && s.id) SAETZE[s.id] = s; });
+(F.FACHBEGRIFF_VOKABELN || []).forEach(w => { if (w && w.id && w.sentAr) SAETZE[w.id] = w; });
+(V.VOCAB_DATA || []).forEach(w => { if (w && w.id && w.sentAr) SAETZE[w.id] = w; });
 
 /* ── Arabisch: traegt der Regelname das markierte Wort? ───────────────── */
 const ohneZeichen = s => String(s || '')
@@ -180,8 +209,25 @@ if (eichFehler.length){
   console.log('⛔ Die Eichung ist rot — die Zahlen oben sind wertlos.');
   process.exit(2);
 }
-const summe = arVerrat.length + deVerrat.length;
+/* ⛔ Die dritte Schranke gehoert auch in die BILANZ, nicht nur in die
+   Wachenliste. Bis zum 06.09.2026 wachte diese Datei ueber drei Schranken
+   und zaehlte zwei — wer die Zahl las, hielt sie fuer vollstaendig.
+   [[widerspruch_liegt_in_der_beschriftung]]
+
+   Gezaehlt werden hier die WOERTER in Guillemets, nicht die weggefallenen
+   Aufgaben: wie viele Aufgaben daraus geworden waeren, haengt an allen 13
+   Modi und ist nur in der laufenden App zu messen (gemessen waren es 33). */
+const zitatSaetze = Object.values(SAETZE).filter(s => s && s.sentAr && /[«»]/.test(s.sentAr));
+const zitatWorte = zitatSaetze.reduce((n, s) =>
+  n + s.sentAr.split(/\s+/).filter(w => /[«»]/.test(w)).length, 0);
+console.log('');
+console.log('--- Woerter in Guillemets (Zitat, kein Satzglied): ' + zitatWorte
+  + ' in ' + zitatSaetze.length + ' Satz/Saetzen ---');
+zitatSaetze.forEach(s => console.log('  ' + s.sentAr.slice(0, 62)));
+
+const summe = arVerrat.length + deVerrat.length + zitatWorte;
 console.log('✅ Die Schranke steht. ' + summe + ' Stelle(n) werden deshalb NICHT zur Aufgabe');
-console.log('   gemacht (' + arVerrat.length + ' arabisch, ' + deVerrat.length + ' deutsch) — das ist der gewollte Zustand,');
+console.log('   gemacht (' + arVerrat.length + ' arabisch, ' + deVerrat.length + ' deutsch, '
+  + zitatWorte + ' zitiert) — das ist der gewollte Zustand,');
 console.log('   kein Mangel. Wer eine davon zurueckhaben will, braucht einen zweiten');
 console.log('   Regelnamen mit demselben Wort oder einen anderen Beispielsatz.');
