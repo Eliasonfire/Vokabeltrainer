@@ -2653,6 +2653,9 @@ const SENTENCE_TAGS = {
   ],
   "50169": [
     { ruleId: "istifham-uebersicht-01", matchText: "مَتَى" }
+  ],
+  "gram-zarf-maa": [
+    { ruleId: "zarf-01", matchText: "مَعَكِ" }
   ]
 };
 
