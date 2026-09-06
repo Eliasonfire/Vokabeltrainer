@@ -108,7 +108,12 @@ let SYNC_GEPLANT = null;
    ganz unten. Bewusst im Speicher und nicht im localStorage: die Sperre soll
    ein schnelles Hin und Her daempfen, nicht einen Neustart. */
 let SYNC_ZULETZT = 0;
-const SICHTBAR_ABSTAND = 60 * 1000;
+/* ⛔ Ebenfalls am 07.09.2026 von einer Minute auf zehn Sekunden. Diese Sperre
+   bremst das ABHOLEN beim Zurueckkommen — und genau darauf wartet Elias, wenn
+   er vom Handy zum Tablet wechselt. Ein GET kostet kein Schreibkontingent;
+   teuer ist nur das Ablegen, und das findet ohnehin nur bei einer echten
+   Aenderung statt (SYNC_OFFEN). */
+const SICHTBAR_ABSTAND = 10 * 1000;
 
 /* ⭐ Liegt hier ueberhaupt etwas Ungesichertes? (05.09.2026)
    Der visibilitychange-Zweig fuers WEGLEGEN kann nicht erst holen und
@@ -339,9 +344,37 @@ function fuehreZusammen(fern){
        ist {nr:…, zeit:…}, und gebraucht wird genau dasselbe - je Id gewinnt der
        spaetere Zeitstempel. Der Zweig liest ausser `zeit` nichts aus dem
        Eintrag, deshalb reicht die zweite Bedingung statt einer Kopie. */
-    if (k === 'vt_bekannt' || k === 'vt_einzeln_frei' || k === 'vt_vorschlagNr' || k === 'vt_wortAenderungen' || k === 'vt_geloescht'){
+    /* ⛔⛔ vt_hifz, vt_hifzVerse und vt_quranFav sind am 07.09.2026 dazugekommen,
+       und das war eine BEHEBUNG, kein Nachruesten. Elias:
+
+         „ich habe eben auf meinem tablet geguckt und die sura zalzala war nicht
+          als gelernt markiert […] ich möchte das alles was sowohl auf meinem
+          handy, als auch auf meinem tablat 1:1 identisch ist."
+
+       Sie liefen ueber den Schlusszweig unten — „der juengere Stempel gewinnt",
+       als ganzer Block. Markiert er auf dem Handy eine Sure und auf dem Tablet
+       eine andere, ueberlebte nur die vom juengeren Geraet. Genau der Fehler,
+       der hier fuer vt_bekannt und weiter unten fuer vt_notes schon behoben war.
+       [[allgemeine_regel_statt_listeneintrag]] */
+    if (k === 'vt_bekannt' || k === 'vt_einzeln_frei' || k === 'vt_vorschlagNr' || k === 'vt_wortAenderungen' || k === 'vt_geloescht'
+        || k === 'vt_hifz' || k === 'vt_hifzVerse' || k === 'vt_quranFav'){
       try {
-        const a = JSON.parse(hierRoh) || {}, b = JSON.parse(dortRoh) || {};
+        /* ⚠️ Das andere Geraet kann noch die ALTE Fassung fahren und die alte
+           Form schicken ({id: true}). Beide Seiten werden deshalb erst auf
+           {an, zeit} gebracht. Zeit 0 heisst „schon immer" und verliert gegen
+           jede echte Aenderung — ohne das gaebe es einen Datenverlust genau in
+           der Uebergangszeit, in der Elias noch nicht beide Geraete neu
+           geladen hat. */
+        const reich = o => {
+          const raus = {};
+          for (const [id, v] of Object.entries(o || {}))
+            raus[id] = (v && typeof v === 'object') ? { an: !!v.an, zeit: Number(v.zeit) || 0 }
+                                                    : { an: !!v, zeit: 0 };
+          return raus;
+        };
+        const zeitform = (k === 'vt_hifz' || k === 'vt_hifzVerse' || k === 'vt_quranFav');
+        const a = zeitform ? reich(JSON.parse(hierRoh)) : (JSON.parse(hierRoh) || {});
+        const b = zeitform ? reich(JSON.parse(dortRoh)) : (JSON.parse(dortRoh) || {});
         const raus = Object.assign({}, a);
         Object.keys(b).forEach(id => {
           const hier = raus[id], dort = b[id];
@@ -554,7 +587,21 @@ async function gleicheAb(still){
    bricht die Wartezeit ab und gleicht sofort ab, sobald die App weggelegt
    wird. Ohne die waere jede Aenderung fuenf Minuten lang ungesichert — und
    auf dem Handy wird eine App selten fuenf Minuten lang bewusst geschlossen. */
-const SYNC_WARTEZEIT = 5 * 60 * 1000;
+/* ⛔ AM 07.09.2026 VON FUENF MINUTEN AUF ZEHN SEKUNDEN ZURUECK — auf Elias'
+   ausdruecklichen Wunsch, und damit gegen seine eigene Entscheidung vom
+   19.08.: „ich möchte das es auch nahtlos und sofort syncronisiert wird."
+
+   Sein Grund von damals bleibt gueltig, trifft aber nicht: „ein Blick in die
+   App ist noch keine Entscheidung" — der Takt startet nur ueber
+   syncGeaendert(), also erst, wenn wirklich etwas gespeichert wurde. Wer nur
+   hineinschaut, loest weiterhin nichts aus.
+
+   ⚠️ Zehn Sekunden buendeln eine Lernrunde weiterhin: wer zuegig antwortet,
+   erzeugt EINEN Schreibvorgang fuer mehrere Karten. Bei 138 faelligen Woertern
+   und je zehn Sekunden Denkzeit waeren es im schlimmsten Fall 138 von 1.000
+   erlaubten am Tag. Wird es je knapp, ist die Zahl hier zu erhoehen — nicht
+   die Sicherung wegzunehmen. */
+const SYNC_WARTEZEIT = 10 * 1000;
 function planeAbgleich(){
   clearTimeout(SYNC_GEPLANT);
   SYNC_GEPLANT = setTimeout(()=> gleicheAb(true), SYNC_WARTEZEIT);

@@ -159,7 +159,12 @@ const PRUEFER = [
   ['test-p6.mjs', []],
   ['test-p8.mjs', []],
   ['test-p9.mjs', []],
-  ['test-sync.mjs', []],
+
+  /* ⛔ Neu am 07.09.2026. Der Hifz-Stand ist das Einzige in dieser App, das
+     Elias sich WIRKLICH erarbeitet hat — auswendig gelernte Suren. Er lief
+     bis dahin ueber den Blockersatz und ging beim Geraetewechsel verloren.
+     Der Test misst genau seinen Fall: Handy markiert Sure 99, Tablet Sure 112. */
+  ['test-hifz-sync.mjs', []],  ['test-sync.mjs', []],
   ['test-sync-anzeige.mjs', []],
   ['test-wurzel.mjs', []],
   /* ⭐ VIER EICHUNGEN, die bis zum 21.08.2026 ebenfalls niemand gestartet hat.

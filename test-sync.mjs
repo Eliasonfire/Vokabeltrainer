@@ -107,11 +107,34 @@ console.log('=== Zusammenfuehren der uebrigen Schluessel ===');
   fuehreZusammen({ stempel: { vt_notes: 9000 }, daten: { vt_notes: '{"1":"vom Server"}' } });
   pruefe('neuere Server-Notiz wird übernommen', speicher['vt_notes'] === '{"1":"vom Server"}', speicher['vt_notes']);
 
-  /* Gleichstand -> lokal behalten, nichts wegwerfen. */
-  speicher['vt_hifz'] = '{"67":true}';
+  /* Gleichstand -> lokal behalten, nichts wegwerfen.
+     ⚠️ Nicht mehr mit vt_hifz geprueft: der Schluessel laeuft seit dem
+     07.09.2026 ueber den EINTRAGS-Zweig, weil sonst beim Geraetewechsel
+     ganze Hifz-Staende verlorengingen. Fuer den Schlusszweig steht hier
+     vt_lesestand — ein Wert ohne Eintraege, fuer den Blockersatz richtig ist.
+     [[testfehler_kann_echten_mangel_zeigen]] */
+  speicher['vt_lesestand'] = '{"sure":67}';
+  speicher[STEMPEL] = JSON.stringify({ vt_lesestand: 5000 });
+  fuehreZusammen({ stempel: { vt_lesestand: 5000 }, daten: { vt_lesestand: '{"sure":2}' } });
+  pruefe('bei Gleichstand bleibt das Lokale', speicher['vt_lesestand'] === '{"sure":67}', speicher['vt_lesestand']);
+
+  /* ⭐ Und der Fall, um den es Elias am 07.09.2026 ging: Hifz je Eintrag.
+     Handy hat Sure 99, Tablet Sure 112 — beide muessen ueberleben. */
+  speicher['vt_hifz'] = '{"99":{"an":true,"zeit":5000}}';
   speicher[STEMPEL] = JSON.stringify({ vt_hifz: 5000 });
-  fuehreZusammen({ stempel: { vt_hifz: 5000 }, daten: { vt_hifz: '{"67":false}' } });
-  pruefe('bei Gleichstand bleibt das Lokale', speicher['vt_hifz'] === '{"67":true}', speicher['vt_hifz']);
+  fuehreZusammen({ stempel: { vt_hifz: 4000 },
+                   daten: { vt_hifz: '{"112":{"an":true,"zeit":4000}}' } });
+  const h = JSON.parse(speicher['vt_hifz'] || '{}');
+  pruefe('Hifz: Markierungen beider Geraete bleiben erhalten',
+         h['99'] && h['99'].an && h['112'] && h['112'].an, speicher['vt_hifz']);
+
+  /* Und die alte Form vom noch nicht aktualisierten Geraet kommt mit. */
+  speicher['vt_hifz'] = '{"99":{"an":true,"zeit":5000}}';
+  speicher[STEMPEL] = JSON.stringify({ vt_hifz: 5000 });
+  fuehreZusammen({ stempel: { vt_hifz: 4000 }, daten: { vt_hifz: '{"55":true}' } });
+  const h2 = JSON.parse(speicher['vt_hifz'] || '{}');
+  pruefe('Hifz: alte Form { id: true } vom anderen Geraet kommt an',
+         h2['99'] && h2['99'].an && h2['55'] && h2['55'].an, speicher['vt_hifz']);
 
   /* Schluessel, den nur der Server kennt -> uebernehmen. */
   delete speicher['vt_lesestand'];
