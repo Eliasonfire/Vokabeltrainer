@@ -703,6 +703,26 @@ function istMadiForm(w){
 }
 const giltAlsVerb = w => {
   if (traegtTanwin(w)) return false;
+  /* ⛔⛔ EIN PERSONALPRONOMEN IST NIE EIN VERB (06.09.2026).
+
+     هم stand als EINZELNER Eintrag in NICHT_VERB — nachgetragen am 20.08.,
+     weil sein Skelett هم das Verb هَمَّ (bekuemmern) aus madina-3 trifft. Die
+     elf anderen Pronomen standen dort nie, und in der To-Do wartete seitdem
+     „NICHT_VERB braucht هُنَّ und أَنْتُمْ".
+
+     Gemessen am 06.09.2026 mit madina-1 und madina-2 geladen: alle zwoelf
+     liefern schon `false` (Eichung: ذَهَبَ liefert `true`, der Test kann also
+     scheitern). Sie sind aber nur deshalb sicher, weil in DIESEN beiden
+     Buechern kein Verb mit ihrem Skelett steht — `wortart()` eine Zeile
+     tiefer vergleicht ohne Vokalzeichen. Mit einem weiteren Buch faellt
+     jederzeit das naechste um, und es meldet sich nicht.
+
+     Also die Regel statt des dreizehnten Listeneintrags. Sie steht VOR dem
+     Lexikonvergleich, damit kein geladenes Buch sie ueberstimmt.
+     ⚠️ PERSONALPRONOMEN wird erst hier unten deklariert — das geht, weil
+     diese Funktion erst zur Laufzeit aufgerufen wird.
+     [[allgemeine_regel_statt_listeneintrag]] · [[nomen_wird_zum_verb_gelesen]] */
+  if (istInListe(w, PERSONALPRONOMEN)) return false;
   const genau = wortartGenau(w);
   if (genau && genau !== 'verb') return false;
   if (istInListe(w, NICHT_VERB)) return false;
