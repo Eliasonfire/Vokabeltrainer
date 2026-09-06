@@ -187,6 +187,31 @@ let quranLuecken = 0;
        * braucht Netz. Wird die Datei später beschädigt, merkt es niemand:
        * eine falsche Seitenzahl unter dem Text sieht aus wie eine richtige.
        * [[erfundene_begruendung_schliesst_den_fall]] */
+      /* Und die Juz-Angaben, aus demselben Grund: der Kopf von surah-data.js
+         beschreibt eine gründliche Probe — aber sie lief einmal, in
+         werkzeuge/juz-holen.mjs, gegen eine API. Hier steht nur noch, ob das
+         Ergebnis in sich stimmt: alle 30 Teile kommen vor, keiner läuft
+         rückwärts, keine Sure ohne Angabe. */
+      {
+        const ohne = SD.filter(s => s.juz === undefined).length;
+        const alle = new Set();
+        let rueck = 0, hoechster = 0;
+        for (const s of SD) {
+          if (s.juz === undefined) continue;
+          const js = Array.isArray(s.juz) ? s.juz : [s.juz];
+          js.forEach(j => alle.add(j));
+          if (Math.min(...js) < hoechster) {
+            rueck++;
+            console.log('  ⛔ Sure ' + (s.number ?? s.id) + ': Juz ' + js.join(',') + ' steht nach Juz ' + hoechster);
+          }
+          hoechster = Math.max(hoechster, ...js);
+        }
+        const fehlend = []; for (let j = 1; j <= 30; j++) if (!alle.has(j)) fehlend.push(j);
+        quranLuecken += ohne + rueck + fehlend.length;
+        console.log('  Juz: ' + alle.size + ' von 30 vertreten' + (fehlend.length ? ' (es fehlen ' + fehlend.join(', ') + ')' : '')
+          + ' · ' + ohne + ' Sure(n) ohne Angabe · ' + rueck + ' rückwärts');
+      }
+
       const pPfad = W + 'quran-seiten.js';
       if (fs.existsSync(pPfad)) {
         vm.runInContext(fs.readFileSync(pPfad, 'utf8'), kiste, { filename: 'p' });
