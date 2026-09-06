@@ -54,10 +54,70 @@ function renderQuranList(){
 
    Beides ist verlustfrei umkehrbar: der Haken traegt dieselbe Auskunft wie die
    vollstaendige Einzelliste. */
-let HIFZ = LS.get('vt_hifz', {});
-function saveHifz(){ LS.set('vt_hifz', HIFZ); }
-let HIFZ_VERSE = LS.get('vt_hifzVerse', {});
-function saveHifzVerse(){ LS.set('vt_hifzVerse', HIFZ_VERSE); }
+/* ⛔⛔ DIE SPEICHERFORM TRAEGT SEIT DEM 07.09.2026 JE EINTRAG EINEN ZEITSTEMPEL
+   ==========================================================================
+   Elias am 07.09.2026, nachdem er auf dem Tablet nachgesehen hatte:
+
+     „ich habe eben auf meinem tablet geguckt und die sura zalzala war nicht
+      als gelernt markiert […] ich möchte das alles was sowohl auf meinem
+      handy, als auch auf meinem tablat 1:1 identisch ist."
+
+   Die Ursache lag im Abgleich: `vt_hifz` und `vt_hifzVerse` liefen ueber den
+   Schlusszweig von fuehreZusammen() — „der juengere Stempel gewinnt", und zwar
+   als GANZER BLOCK. Markiert er auf dem Handy Sure 99 und auf dem Tablet eine
+   andere, ueberlebt nur die vom juengeren Geraet. Die andere ist weg.
+
+   Es ist derselbe Fehler, der bei `vt_bekannt` (17.08.) und bei `vt_notes`
+   (20.08.) schon behoben wurde. Die Loesung ist dieselbe Form:
+
+       { id: { an: true|false, zeit: ms } }
+
+   ⭐ `an: false` ist der Grund, warum es nicht einfach eine Vereinigung sein
+   darf: nimmt er einen Haken WEG, muss auch das ankommen. Eine Vereinigung
+   holte ihn vom anderen Geraet zurueck.
+
+   ⚠️ NACH AUSSEN aendert sich nichts: `HIFZ` und `HIFZ_VERSE` bleiben die
+   schlanke Form `{ id: true }`, damit die fuenfzehn Lesestellen unten
+   unveraendert bleiben. Nur Laden und Speichern gehen durch die zwei
+   Funktionen hier. Die reiche Form liegt daneben in `*_ZEIT`.
+
+   ⚠️ Alte Daten werden beim Laden mitgenommen (`true` / `1` → `{an:true,
+   zeit:0}`). Zeit 0 heisst „schon immer" und verliert gegen jede echte
+   Aenderung — richtig so, denn wann der Haken gesetzt wurde, weiss niemand.
+   [[eingefrorenes_feld_ist_kein_zustand]] */
+function hakenLaden(schluessel){
+  const roh = LS.get(schluessel, {}) || {};
+  const schlank = {}, reich = {};
+  for (const [id, v] of Object.entries(roh)){
+    const e = (v && typeof v === 'object') ? { an: !!v.an, zeit: Number(v.zeit) || 0 }
+                                           : { an: !!v, zeit: 0 };
+    reich[id] = e;
+    if (e.an) schlank[id] = true;
+  }
+  return { schlank, reich };
+}
+/* Schreibt die reiche Form und gibt sie zurueck. Ein Eintrag, dessen Zustand
+   sich NICHT geaendert hat, behaelt seinen alten Zeitstempel — sonst gaelte
+   jeder Speichervorgang als Aenderung und das zuletzt gestartete Geraet
+   gewaenne immer. */
+function hakenSpeichern(schluessel, schlank, reichAlt){
+  const jetzt = Date.now();
+  const reich = {};
+  for (const id of new Set([...Object.keys(schlank), ...Object.keys(reichAlt || {})])){
+    const an = !!schlank[id];
+    const vorher = (reichAlt || {})[id];
+    reich[id] = (vorher && !!vorher.an === an) ? vorher : { an, zeit: jetzt };
+  }
+  LS.set(schluessel, reich);
+  return reich;
+}
+
+const _hifz0 = hakenLaden('vt_hifz');
+let HIFZ = _hifz0.schlank, HIFZ_ZEIT = _hifz0.reich;
+function saveHifz(){ HIFZ_ZEIT = hakenSpeichern('vt_hifz', HIFZ, HIFZ_ZEIT); }
+const _hifzV0 = hakenLaden('vt_hifzVerse');
+let HIFZ_VERSE = _hifzV0.schlank, HIFZ_VERSE_ZEIT = _hifzV0.reich;
+function saveHifzVerse(){ HIFZ_VERSE_ZEIT = hakenSpeichern('vt_hifzVerse', HIFZ_VERSE, HIFZ_VERSE_ZEIT); }
 function kannVers(sure, vers){ return !!HIFZ_VERSE[`${sure}:${vers}`]; }
 function zaehleVerse(sure){
   const prefix = sure + ':';
@@ -174,8 +234,11 @@ function renderWeiterlesen(){
    Eigener Speicher, nicht in HIFZ mit hineingerechnet: "ich lerne das gerade"
    und "ich kann das auswendig" sind zwei verschiedene Aussagen. Eine kurze Sure
    kann Favorit sein, WEIL sie noch nicht sitzt. */
-let QURAN_FAV = LS.get('vt_quranFav', {});
-function saveQuranFav(){ LS.set('vt_quranFav', QURAN_FAV); }
+/* Dieselbe Form wie HIFZ, aus demselben Grund: ein Favorit, den er auf einem
+   Geraet wegnimmt, muss auch auf dem anderen weg sein. */
+const _fav0 = hakenLaden('vt_quranFav');
+let QURAN_FAV = _fav0.schlank, QURAN_FAV_ZEIT = _fav0.reich;
+function saveQuranFav(){ QURAN_FAV_ZEIT = hakenSpeichern('vt_quranFav', QURAN_FAV, QURAN_FAV_ZEIT); }
 function istFavorit(id){ return !!QURAN_FAV[id]; }
 
 /* Der Juz einer Sure, als kurzer Text.
