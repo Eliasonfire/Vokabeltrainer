@@ -546,19 +546,34 @@ if (iLern >= 0){
      Messung steht als `gemessen` daneben und dient nur der Gegenprobe.
      [[kennzeichen_mit_zwei_ursachen]] */
   const vorher = lernstandLesen();
+  /* ⛔⛔ ERHALTEN STATT AUFZAEHLEN — der Unterschied ist der ganze Fix (06.09.2026).
+     Bis hierher baute dieser Aufruf das Objekt aus einer FESTEN LISTE von
+     Feldnamen neu auf. Jedes Feld, das jemand spaeter dazuschrieb und das hier
+     nicht namentlich stand, war nach einem einzigen `--lernstand` weg.
+
+     Das ist zweimal passiert, und beim zweiten Mal war die Lehre aus dem ersten
+     Mal schon im Quelltext dokumentiert:
+       19.08.2026  `_angabeWortlaut` fiel weg  -> Zeile fuer dieses EINE Feld ergaenzt
+       06.09.2026  `nichtInArbeit`, `nichtInArbeitVom` fielen weg — zweimal am
+                   selben Tag (14:51 und 15:44), beide Male von Hand zurueckgeholt
+
+     Die Reparatur von damals hat den Fall behoben und die URSACHE stehen lassen:
+     eine Aufzaehlung ist nur so vollstaendig wie am Tag, an dem sie geschrieben
+     wurde. Deshalb jetzt umgekehrt — den vorigen Stand uebernehmen und NUR das
+     ueberschreiben, was dieser Aufruf wirklich besitzt (`gemessen`, `gemessenAm`).
+     Damit ueberlebt auch ein Feld, das es heute noch gar nicht gibt.
+
+     ⚠️ `angabe` steht bewusst weiter unten und kommt aus `vorher`: sie ist Elias'
+     eigene Aussage und wird hier NIE aus der Messung gesetzt (siehe der Block
+     darueber). Der Spread aendert daran nichts, er traegt sie nur mit.
+     [[leere_datei_besteht_jeden_test]] */
   fs.writeFileSync(p(LERNDATEI), JSON.stringify({
+    ...(vorher || {}),
     _hinweis: 'angabe = was Elias selbst gesagt hat, MASSGEBLICH fuer das Fenster. '
             + 'gemessen = abgeleitet aus get_learning_progress, nur Gegenprobe — '
             + 'die Zahl misst, womit abgefragt wurde, nicht wo er im Kurs steht.',
     angabe: (vorher && vorher.angabe) || {},
     angabeVom: (vorher && vorher.angabeVom) || null,
-    /* ⛔ Der Wortlaut ist der BELEG fuer `angabe` und muss mit ihr zusammen
-       ueberleben. Bis zum 19.08.2026 fehlte diese Zeile: `--lernstand` baute
-       das Objekt neu auf und liess `_angabeWortlaut` dabei jedes Mal fallen.
-       Beim Wartungslauf am 19.08. 22:00 ist genau das passiert — Elias' Satz
-       „nein, ich bin bei madina-1 kapitel 11, madina-2 ist nur freigeschaltet"
-       war nach einem einzigen Aufruf weg. Uebrig blieb eine Zahl ohne Quelle,
-       und die ist nach E.1 nichts wert. */
     _angabeWortlaut: (vorher && vorher._angabeWortlaut) || null,
     gemessenAm: new Date().toISOString().slice(0, 10),
     gemessen: neu
