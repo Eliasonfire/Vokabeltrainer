@@ -416,6 +416,40 @@ const GRAMMAR_RULES = [
     source: { folge: 4, video: "Folge 04", approxTimestamp: "15:25", chapter: 4 },
     source2: { schluessel: 1, lektion: 1, seite: 6 }
   },
+  /* ⭐ Elias am 06.09.2026 auf die Meldung „fünf Fragewörter ohne Regel":
+     „sollen aber drinne stehen."
+
+     Die Regel fasst zusammen, was der Lehrer in Folge 19 ab 17:07 selbst
+     aufzählt — sie erfindet nichts. Sein Wortlaut (Whisper, Folge 19, 17:07
+     und 17:20; die Umschrift ist maschinell und stellenweise entstellt):
+
+       „Wie viele Wörter um Fragen zu stellen kennst du?
+        Wir haben einen Mann, wer? Wir haben einer, wo? Wir haben mehr, was?
+        Wir hatten Käfer, wie? »Mette«, »Wann«, »Limèða«, »Warum«, »Kem«,
+        »Wieviel« und eben »Hel« und »Elif«."
+
+     Aufgelöst: مَنْ (wer) · أَيْنَ (wo) · مَا (was) · كَيْفَ (wie) ·
+     مَتَى (wann) · لِمَاذَا (warum) · كَمْ (wie viel) · هَلْ · أَ.
+     Direkt danach: „nenne zu jedem Wort wie ein Beispielsatz" — genau die
+     Aufgabe 9c seiner Prüfung.
+
+     ⚠️ إِلَى أَيْنَ (wohin) steht bewusst NICHT hier: der Lehrer nennt es in
+     dieser Aufzählung nicht, und istifham-ayna-01 sagt bereits, dass أَيْنَ
+     auch „wohin" abdeckt. Eine zehnte Zeile wäre erfunden.
+     [[regeln_selbst_auswerten]] */
+  {
+    id: "istifham-uebersicht-01",
+    nichtAufKarteikarten: true,
+    name: "Die neun Fragewörter im Überblick",
+    shortExplanation: "In Folge 19 geht dein Lehrer die Frageform noch einmal im Ganzen durch und zählt auf, womit man bis hierhin fragt: **مَنْ** (wer) · **أَيْنَ** (wo) · **مَا** (was) · **كَيْفَ** (wie) · **مَتَى** (wann) · **لِمَاذَا** (warum) · **كَمْ** (wie viel) — dazu die beiden Partikeln **هَلْ** und **أَ**, mit denen man eine Ja/Nein-Frage baut. Er sagt dazu: „Wie viele Wörter um Fragen zu stellen kennst du?“ und gleich danach „nenne zu jedem Wort wie ein Beispielsatz“ — das ist Aufgabe 9c seiner Prüfung, und deshalb steht diese Liste hier zusammen statt verstreut. ⭐ Sieben davon fragen nach etwas Bestimmtem und stehen selbst am Satzanfang; هَلْ und أَ fragen nach dem ganzen Satz und erwarten nur ja oder nein. ⚠️ أَ ist eher rhetorisch, هَلْ die echte Entscheidungsfrage — auch das sagt er dort. Für „wohin“ gibt es kein eigenes Wort: أَيْنَ deckt es mit ab.",
+    color: "mubtada",
+    source: {
+      folge: 19,
+      video: "Folge 19",
+      approxTimestamp: "17:07",
+      chapter: 1
+    }
+  },
   {
     id: "istifham-ayna-01",
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen — erklaert keine neue Grammatik, nur die Uebersetzung.
@@ -2559,10 +2593,12 @@ const SENTENCE_TAGS = {
     { ruleId: "harf-jarr-fi-ala-01", matchText: "وَفِيهِ" }
   ],
   "p_1787189022107": [
-    { ruleId: "possessiv-ist-idafa-01", matchText: "حَالُكَ", bedeutung: 'ـكَ = dein (männlich)' }
+    { ruleId: "possessiv-ist-idafa-01", matchText: "حَالُكَ", bedeutung: 'ـكَ = dein (männlich)' },
+    { ruleId: "istifham-uebersicht-01", matchText: "كَيْفَ" }
   ],
   "p_1787189076593": [
-    { ruleId: "possessiv-ist-idafa-01", matchText: "حَالُكَ", bedeutung: 'ـكَ = dein (männlich)' }
+    { ruleId: "possessiv-ist-idafa-01", matchText: "حَالُكَ", bedeutung: 'ـكَ = dein (männlich)' },
+    { ruleId: "istifham-uebersicht-01", matchText: "كَيْفَ" }
   ],
   "p_1787188396011": [
     { ruleId: "zarf-als-mudaf-01", matchText: "بَعْدَ الْمَسْجِدِ" }
@@ -2614,6 +2650,9 @@ const SENTENCE_TAGS = {
   ],
   "gram-harf-an": [
     { ruleId: "harf-jarr-01", matchText: "عَنِ الْمَسْجِدِ" }
+  ],
+  "50169": [
+    { ruleId: "istifham-uebersicht-01", matchText: "مَتَى" }
   ]
 };
 
