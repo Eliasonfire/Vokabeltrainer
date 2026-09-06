@@ -474,6 +474,61 @@ function fuehreZusammen(fern){
       return;
     }
 
+    /* ⛔⛔ LISTEN UND SAMMLUNGEN, die bis zum 06.09.2026 ebenfalls als BLOCK
+       ersetzt wurden — dieselbe Klasse wie vt_hifz, gefunden bei der Suche
+       nach weiteren Faellen, nachdem Elias „alles andere an funktionen soll
+       syncron sein" verlangt hatte.
+
+       vt_personalVocab  seine SELBST ANGELEGTEN Vokabeln, Array mit `id`.
+                         Legt er am Handy eine an und am Tablet eine andere,
+                         ueberlebte nur die Liste des juengeren Geraets.
+                         ⭐ Vereinigung ist hier sicher, weil das LOESCHEN
+                         ueber einen eigenen Schluessel laeuft: `vt_geloescht`
+                         (js/buecher.js prueft `weg[w.id] && weg[w.id].an`).
+       vt_customCats     eigene Kategorien, Array mit `id` und `wordIds`.
+                         Bei gleicher id werden die Wortlisten vereinigt.
+                         ⚠️ Eine geloeschte Kategorie kann dadurch von einem
+                         Geraet zurueckkommen, das die Loeschung nicht kennt —
+                         sichtbar und mit einem Tipp wieder weg. Der Verlust
+                         einer selbst angelegten Kategorie waere schlimmer.
+       vt_uebungstage    der Uebungskalender, { "2026-09-06": 12 }. Vereinigung
+                         je Tag, bei Kollision das MAXIMUM. Nicht die Summe:
+                         ein zweiter Abgleich desselben Tages wuerde sonst
+                         aufaddieren, und der Kalender behauptete Uebung, die
+                         nicht stattgefunden hat. [[zahlen_ohne_beleg]] */
+    if (k === 'vt_personalVocab' || k === 'vt_customCats'){
+      try {
+        const a = JSON.parse(hierRoh), b = JSON.parse(dortRoh);
+        if (!Array.isArray(a) || !Array.isArray(b)) throw new Error('kein Array');
+        const raus = a.slice();
+        const stelle = new Map(raus.map((x, i) => [String(x && x.id), i]));
+        for (const x of b){
+          if (!x || x.id == null) continue;
+          const i = stelle.get(String(x.id));
+          if (i === undefined){ stelle.set(String(x.id), raus.length); raus.push(x); continue; }
+          if (k === 'vt_customCats' && Array.isArray(raus[i].wordIds) && Array.isArray(x.wordIds)){
+            raus[i] = Object.assign({}, raus[i],
+              { wordIds: [...new Set([...raus[i].wordIds, ...x.wordIds])] });
+          }
+        }
+        const neu = JSON.stringify(raus);
+        if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
+      } catch (e){ /* kaputtes JSON oder unerwartete Form: lokal behalten */ }
+      return;
+    }
+
+    if (k === 'vt_uebungstage'){
+      try {
+        const a = JSON.parse(hierRoh) || {}, b = JSON.parse(dortRoh) || {};
+        const raus = Object.assign({}, a);
+        for (const [tag, n] of Object.entries(b))
+          raus[tag] = Math.max(Number(raus[tag]) || 0, Number(n) || 0);
+        const neu = JSON.stringify(raus);
+        if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
+      } catch (e){ /* kaputtes JSON auf einer Seite: lokal behalten */ }
+      return;
+    }
+
     if (k === 'vt_progress'){
       try {
         const zusammen = fuehreFortschrittZusammen(JSON.parse(hierRoh), JSON.parse(dortRoh));

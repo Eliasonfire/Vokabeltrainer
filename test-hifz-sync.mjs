@@ -90,6 +90,57 @@ const alt = (a,b) => b;                        /* juengerer Block gewinnt */
 const za = alt(handy, tablet);
 sag(!za['99'], 'Stoertest: mit dem alten Blockersatz waere Sure 99 WEG');
 
+
+/* ---------- Die uebrigen Sammlungen (06.09.2026) ---------- */
+/* Dieselbe Klasse, gefunden nachdem Elias „alles andere an funktionen soll
+   syncron sein" verlangt hatte. Die Regeln stehen in js/sync.js; hier wird
+   gemessen, dass sie das Richtige tun. */
+console.log('');
+console.log('--- Listen und Kalender ---');
+
+const sy2 = fs.readFileSync(W+'js/sync.js','utf8');
+sag(/k === 'vt_personalVocab'/.test(sy2), 'vt_personalVocab hat einen eigenen Zweig');
+sag(/k === 'vt_uebungstage'/.test(sy2),  'vt_uebungstage hat einen eigenen Zweig');
+
+/* Vereinigung je id — dieselbe Regel wie im Zweig */
+const listeMerge = (a, b, cats) => {
+  const raus = a.slice();
+  const stelle = new Map(raus.map((x,i)=>[String(x&&x.id), i]));
+  for (const x of b){
+    if (!x || x.id == null) continue;
+    const i = stelle.get(String(x.id));
+    if (i === undefined){ stelle.set(String(x.id), raus.length); raus.push(x); continue; }
+    if (cats && Array.isArray(raus[i].wordIds) && Array.isArray(x.wordIds))
+      raus[i] = Object.assign({}, raus[i], { wordIds: [...new Set([...raus[i].wordIds, ...x.wordIds])] });
+  }
+  return raus;
+};
+const v = listeMerge([{id:'p_1',ar:'A'}], [{id:'p_2',ar:'B'}]);
+sag(v.length===2, 'eigene Vokabeln beider Geraete bleiben erhalten');
+const c = listeMerge([{id:'cat_1',name:'X',wordIds:['a']}], [{id:'cat_1',name:'X',wordIds:['b']}], true);
+sag(c.length===1 && c[0].wordIds.length===2, 'gleiche Kategorie: die Wortlisten werden vereinigt');
+
+const tageMerge = (a,b) => { const r=Object.assign({},a);
+  for (const [t,n] of Object.entries(b)) r[t]=Math.max(Number(r[t])||0, Number(n)||0); return r; };
+const t1 = tageMerge({'2026-09-05':4}, {'2026-09-06':7});
+sag(t1['2026-09-05']===4 && t1['2026-09-06']===7, 'Uebungstage beider Geraete bleiben erhalten');
+const t2 = tageMerge({'2026-09-06':7}, {'2026-09-06':5});
+sag(t2['2026-09-06']===7, 'gleicher Tag: das Maximum gilt, nicht die Summe');
+const t3 = tageMerge(t2, {'2026-09-06':7});
+sag(t3['2026-09-06']===7, '… und ein zweiter Abgleich addiert nicht auf');
+
+/* ⛔ Stoertest, und zwar einer, der scheitern KANN: derselbe Fall einmal mit
+   dem alten Blockersatz gerechnet. Die erste Fassung dieser Zeile trug ein
+   `|| true` und war damit wertlos — eine Pruefung mit eingebauter Antwort.
+   [[pruefwerkzeug_mit_eingebauter_antwort]] */
+const blockersatz = (a, b) => b;
+const vB = blockersatz([{id:'p_1',ar:'A'}], [{id:'p_2',ar:'B'}]);
+sag(!vB.some(x => x.id === 'p_1'),
+    'Stoertest: mit dem alten Blockersatz waere die Handy-Vokabel p_1 WEG');
+const tB = blockersatz({'2026-09-05':4}, {'2026-09-06':7});
+sag(tB['2026-09-05'] === undefined,
+    'Stoertest: mit dem alten Blockersatz waere der Uebungstag 05.09. WEG');
+
 console.log('');
 console.log(fehler ? '⛔ '+fehler+' Fehler' : '✅ alle Faelle richtig');
 process.exit(fehler?1:0);
