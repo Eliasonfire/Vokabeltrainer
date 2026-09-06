@@ -151,6 +151,46 @@ const uebungIstBestimmt = w => /^(ال|وال|فال|بال|كال|لل)/
 const uebungNackt = s => String(s||'')
   .replace(/[.،؟!«»:؛]+$/,'').replace(/[ً-ْٰـ]/g,'').replace(/^(?:وَ?|فَ?)?(?:ال|أل)/,'');
 
+/* ⛔⛔ DER NAME DER RICHTIGEN ANTWORT DARF DAS GEFRAGTE WORT NICHT NENNEN.
+
+   Elias am 06.09.2026 zu Uebung 10 an تِلْكَ, wo „تِلْكَ (jene)" zur Wahl
+   stand: „man kann hier die antwort direkt schon sehen. entweder sind die
+   antwortmoeglickeiten schlecht gewaehlt oder diese spezifische regel bzw
+   frageform ist nicht gut umgesetzt und man muesste aendern oder raus nehmen
+   aber so ist ja keine uebung."
+
+   Er hat recht, und der Hinweis unter der Frage behauptete sogar das
+   Gegenteil: „es reicht nicht, den Namen zu erkennen." Gemessen ueber alle
+   387 Aufgaben: bei 85 traegt der Name der richtigen Regel das hervorgehobene
+   Wort, und bei 70 davon traegt es KEIN Ablenker — die Aufgabe ist durch
+   blosses Abgleichen loesbar, ohne die Regel zu kennen.
+
+   ⛔ Bessere Ablenker koennen das nicht heilen: fuer 37 der 85 nennt im
+   ganzen Bestand ueberhaupt keine zweite Regel dieses Wort, fuer 27 genau
+   eine. Nur ein einziger Fall haette zwei. Deshalb wird die Aufgabe nicht
+   gebaut, statt sie mit einer Notloesung zu retten.
+   [[prueffrage_muss_scheitern_koennen]] */
+const uebungOhneZeichen = s => String(s || '')
+  .replace(/[ً-ْٰـ]/g, '').replace(/[.،؟!«»:؛]/g, '').trim();
+
+function uebungHervorWorte(z, von, bis){
+  const out = [];
+  for (let i = von; i <= bis && i < z.length; i++){
+    const roh = uebungOhneZeichen((z[i] || {}).wort);
+    if (!roh) continue;
+    out.push(roh);
+    /* Mit UND ohne Artikel: im Satz steht الْفَتَاةُ, die Regel heisst فَتَاة. */
+    const ohneAl = roh.replace(/^(?:و|ف)?(?:ال|أل)/, '');
+    if (ohneAl !== roh && ohneAl.length >= 2) out.push(ohneAl);
+  }
+  return out.filter(w => w.length >= 2);
+}
+
+function uebungNameNennt(rule, worte){
+  const n = uebungOhneZeichen(rule && (rule.name || rule.text));
+  return !!n && worte.some(w => n.includes(w));
+}
+
 /* ⛔⛔ WORAN richtet sich die Form? — und die ehrliche Antwort „an nichts".
 
    Elias am 06.09.2026, nachdem die Genus-Uebung سَهْلَةٌ als maennlich
@@ -457,8 +497,16 @@ const UEBUNGEN = [
         /* Und die Ablenker duerfen nicht selbst in diesem Satz markiert sein -
            sie waeren dann ebenfalls richtig, nur an einem anderen Wort. */
         const imSatz = new Set(tags.map(x=>x.rule.id));
-        const ablenker = uebungAblenker(rule, 3, imSatz);
+        /* ⛔ Verraet der Name der richtigen Regel das Wort? Dann Ablenker
+           bevorzugen, die es AUCH tragen — und wenn davon weniger als zwei
+           zusammenkommen, die Aufgabe gar nicht bauen. Warum das so streng
+           ist, steht bei uebungNameNennt(). */
+        const hervorWorte = uebungHervorWorte(z, idx, bis);
+        const nenntWort   = r => uebungNameNennt(r, hervorWorte);
+        const verraet     = hervorWorte.length > 0 && nenntWort(rule);
+        const ablenker = uebungAblenker(rule, 3, imSatz, verraet ? nenntWort : null);
         if (ablenker.length < 2) return;   // sonst ist es keine Wahl
+        if (verraet && ablenker.filter(nenntWort).length < 2) return;
         const optionen = shuffle([rule, ...ablenker]).map(r=>({ wert:r.id, text:r.name }));
         out.push({
           frage: bis > idx ? 'Welche Regel wird an der hervorgehobenen Stelle sichtbar?'
@@ -655,7 +703,7 @@ const UEBUNGEN = [
    vor der Klammer - als letzte Wahl. */
 const uebungNamensstamm = r => String(r.name || '').split('(')[0].trim();
 
-function uebungAblenker(rule, anzahl, verboten){
+function uebungAblenker(rule, anzahl, verboten, bevorzugt){
   const aus = verboten || new Set();
   const stamm = uebungNamensstamm(rule);
   const brauchbar = r => r.id !== rule.id && !r.ausgeblendet && !aus.has(r.id);
@@ -680,7 +728,13 @@ function uebungAblenker(rule, anzahl, verboten){
   const nah        = kandidaten.filter(r=>uebungNamensstamm(r) === stamm);
   const passend    = kandidaten.filter(r=>!nah.includes(r) && imThema(r));
   const rest       = kandidaten.filter(r=>!nah.includes(r) && !passend.includes(r));
-  return shuffle(passend).concat(shuffle(rest)).concat(shuffle(nah)).slice(0, anzahl);
+  const reihe = shuffle(passend).concat(shuffle(rest)).concat(shuffle(nah));
+  /* ⛐ Bevorzugte zuerst — aber NICHT gefiltert: wer nur sie zuliesse, saehe
+     bei einem seltenen Wort gar keine Ablenker mehr und verloere die Aufgabe,
+     obwohl der Aufrufer sie danach ohnehin selbst prueft. */
+  if (typeof bevorzugt === 'function')
+    return reihe.filter(bevorzugt).concat(reihe.filter(r=>!bevorzugt(r))).slice(0, anzahl);
+  return reihe.slice(0, anzahl);
 }
 
 /* ===================== Ablauf =====================
@@ -707,6 +761,46 @@ let UEB_CACHE = { thema:null, liste:null, nachModus:null };
 const uebListenAbdruck = () => (typeof SENT !== 'undefined' && SENT.list)
   ? SENT.list.map(s=>s.id).join(',') : '';
 
+/* ⛔⛔ KEINE AUFGABE, DEREN ANTWORT IN DER DEUTSCHEN UEBERSETZUNG STEHT.
+
+   Elias am 06.09.2026, nachdem der arabische Verrat in Uebung 10 behoben war:
+   „wenn die deutsche uebersetzung von einer antwortmoeglichkeit bereits
+   verraet (so wie bei unseren beispiel zb) dann muss das auch geaendert
+   werden" — und danach: „guck ob es irgendsowas gibt".
+
+   Es gibt es, und nicht nur in Uebung 10. Gemessen ueber alle dreizehn:
+     10 regel     5 Aufgaben   „jenes"  in „dies ist Zucker und JENES ist Milch."
+      8 wortart   6 Aufgaben   „Nomen"  in „«al-bayti» ist ein NOMEN im Genitiv."
+      6 kasus     2 Aufgaben   „Genitiv" in „das sind die fuenf GENITIV-Praepositionen."
+   Es sind Saetze, die selbst von Grammatik handeln — dort steht die Antwort
+   auf Deutsch daneben.
+
+   ⚠️ Verglichen wird WORTWEISE, nicht als Teilzeichenkette. Die erste Fassung
+   meldete zusaetzlich fuenf Treffer in Uebung 7, weil „amma" aus „Ḍamma" in
+   „Ammars Heft" und in „Muhammad" steckt. Das waren meine Fehler, nicht die
+   der Uebung. [[stichworttreffer_ist_kein_inhaltstreffer]]
+
+   ⭐ Die Schranke sitzt in uebungenAufbauen() und gilt damit fuer ALLE Modi,
+   auch fuer kuenftige — statt in jedem baue() einzeln.
+   [[allgemeine_regel_statt_listeneintrag]] */
+const UEB_DE_STOPP = new Set(['dies','das','der','die','den','dem','ein','eine',
+  'einer','eines','und','oder','nach','mit','ohne','wird','sind','ist','sich',
+  'sein','seine','nicht','auch','beim','vom','zum','zur','für','aus','bei',
+  'als','wie','vor','steht','stehen','zwei','drei','alle','man','kann','wenn',
+  'dann','immer','nur','hier','dort','dieser','diese','dieses']);
+const UEB_DE_WORT = /[a-zäöüß]+/g;
+const uebungDeWorte = t => (String(t || '').toLowerCase().match(UEB_DE_WORT) || [])
+  .filter(w => w.length >= 4 && !UEB_DE_STOPP.has(w));
+
+function uebungVerraetDeutsch(a, satz){
+  if (!a || !a.optionen || a.loesung == null) return false;
+  const de = String((satz && satz.sentDe) || '').toLowerCase();
+  if (!de) return false;
+  const imSatz = new Set(de.match(UEB_DE_WORT) || []);
+  const treffer = a.optionen.filter(o => uebungDeWorte(o.text).some(w => imSatz.has(w)));
+  return treffer.length === 1 && treffer[0].wert === a.loesung;
+}
+
 function uebungenAufbauen(){
   const abdruck = uebListenAbdruck();
   if (UEB_CACHE.thema === SATZ_THEMA && UEB_CACHE.liste === abdruck && UEB_CACHE.nachModus)
@@ -721,7 +815,10 @@ function uebungenAufbauen(){
       let aufgaben = [];
       try { aufgaben = m.baue(zeilen, satz) || []; }
       catch(e){ aufgaben = []; }   // ein kaputter Modus darf nicht die anderen mitnehmen
-      aufgaben.forEach(a=>nachModus[m.id].push({ ...a, satz, zeilen, modus:m }));
+      aufgaben.forEach(a=>{
+        if (uebungVerraetDeutsch(a, satz)) return;
+        nachModus[m.id].push({ ...a, satz, zeilen, modus:m });
+      });
     });
   });
   UEB_CACHE = { thema:SATZ_THEMA, liste:abdruck, nachModus };
