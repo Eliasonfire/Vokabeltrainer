@@ -327,11 +327,28 @@ function herkunft(w){
    Grammatik-Unterstreichungen bleiben dabei aussen vor: sie wuerden verraten,
    was fehlt. */
 function mitLuecke(text){
-  if (!LUECKE.aktiv || LUECKE.geloest || !LUECKE.wort) return null;
+  if (!LUECKE.aktiv || !LUECKE.wort) return null;
   const von = text.indexOf(LUECKE.wort);
   if (von === -1) return null;
+  /* ⛔⛔ HIER STAND `|| LUECKE.geloest` in der Bedingung: nach dem Aufloesen
+     kam der Satz wieder ganz normal heraus — samt Grammatik-Unterstreichungen,
+     und OHNE jedes Zeichen, welches Wort die Luecke gewesen war.
+
+     Elias am 06.09.2026 an genau so einem Satz: „ich hab die lösung angetiptt
+     um zu sehen und dann das genau gleiche wort eingegeben und es hat es immer
+     noch nicht als richtig angezeigt." Gemessen: der Satz war
+     هُمَا ذَهَبَا إِلَى الْمَسْجِدِ., das Zielwort هُمَا — die einzige sichtbare
+     Unterstreichung sass aber unter ذَهَبَا, und das ist die
+     GRAMMATIK-Markierung. Er hat sie fuer die aufgeloeste Luecke gehalten,
+     ذَهَبَا eingegeben, und bekam „Noch nicht" zu hoeren. Der Vergleich war
+     richtig; die Anzeige hat ihn in die Irre gefuehrt.
+
+     ⭐ Zwei Striche mit verschiedener Bedeutung im selben Satz, und einer davon
+     erscheint erst, wenn der andere verschwindet.
+     [[kennzeichen_mit_zwei_ursachen]] · [[bild_ohne_fehlermeldung_falsch]] */
+  const klasse = LUECKE.geloest ? 'satz-luecke auf' : 'satz-luecke';
   return escapeHtml(text.slice(0, von))
-       + `<span class="satz-luecke">${escapeHtml(LUECKE.wort)}</span>`
+       + `<span class="${klasse}">${escapeHtml(LUECKE.wort)}</span>`
        + escapeHtml(text.slice(von + LUECKE.wort.length));
 }
 
@@ -782,6 +799,15 @@ function pruefeLuecke(aufloesen){
        Wort darin zu (js/feier.js). Elias hat den Lueckentext ausdruecklich
        gelobt - hier lohnt die Rueckmeldung. */
     if (richtig && typeof feiere === 'function') feiere('luecke-richtig');
+    return;
+  }
+  /* ⛔ Wer schon aufgeloest hat, bekommt kein „Noch nicht" mehr. Die Aufgabe
+     ist vorbei; ein weiterer Fehlversuch sagt nur, dass er sich das falsche
+     Wort gemerkt hat — und genau das soll dastehen, nicht eine Aufforderung,
+     es nochmal zu versuchen. */
+  if (LUECKE.geloest){
+    feld.className = 'luecke-antwort falsch';
+    feld.innerHTML = `Aufgelöst war <span class="luecke-wort" lang="ar" dir="rtl">${escapeHtml(LUECKE.wort)}</span> — im Satz oben unterstrichen.`;
     return;
   }
   feld.className = 'luecke-antwort falsch';

@@ -1997,6 +1997,15 @@ main{
   display:inline-block;min-width:4.5em;border-bottom:2px dashed var(--red-dim);
   color:transparent;user-select:none;
 }
+/* ⭐ Aufgeloest: dasselbe Wort, jetzt LESBAR und weiter markiert. Ohne diese
+   Klasse verschwand die Luecke nach dem Aufloesen spurlos, und die einzige
+   Unterstreichung im Satz war die der Grammatik — an einer anderen Stelle.
+   Genau daran ist Elias am 06.09.2026 haengengeblieben. Durchgezogen statt
+   gestrichelt, damit die beiden Striche nicht dasselbe sagen. */
+.satz-luecke.auf{
+  min-width:0;color:inherit;user-select:auto;
+  border-bottom:2px solid var(--red-dim);
+}
 
 /* I’rab-Tabelle: je Zeile ein Wort mit seiner Satzrolle und dem Kasus, den
    diese Rolle verlangt. Bewusst als Liste und nicht als Tabelle - am Handy
