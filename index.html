@@ -2159,6 +2159,15 @@ main{
   color:var(--text);font-weight:700;unicode-bidi:isolate;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
+/* ⭐ Die Übungsnummer vor dem Namen (06.09.2026). Feste Breite und
+   tabular-nums, damit die Namen untereinander auf einer Kante stehen —
+   sonst rutscht „10." die Zeile weiter nach rechts als „1.". Gedimmt, weil
+   sie zum Wiederfinden da ist, nicht zum Lesen. */
+.blatt .zeile .ar .unr{
+  display:inline-block;min-width:2.4ch;margin-inline-end:.45em;
+  color:var(--text-faint);font-weight:600;
+  font-variant-numeric:tabular-nums;font-family:var(--font-ui);
+}
 .blatt .zeile .de{font-size:var(--fs-xs);color:var(--text-faint);font-weight:700;}
 .blatt .zeile .n{
   font-size:var(--fs-xs);color:var(--text-faint);
@@ -2224,6 +2233,27 @@ main{
   transition:background var(--dur-2) ease, border-color var(--dur-2) ease, transform var(--dur-1) var(--ease-out);
 }
 .ueb-option:active{transform:scale(.97);}
+/* ⭐ Arabische Stücke in Antwort und Auflösung (06.09.2026). Elias: „die
+   arabischen antowrtmöglichkeiten … sind recht klein und ich kann die nur
+   schwer lesen."
+   1.35em relativ zur Umgebung, nicht absolut — dann wächst es mit, wenn die
+   Grundschrift einmal anders eingestellt wird. Dazu die Naskh-Schrift und
+   mehr Zeilenhöhe: die Ḥarakāt stehen ÜBER und UNTER der Grundlinie und
+   werden sonst abgeschnitten. [[line_height_schneidet_harakat_ab]] */
+.ar-wort{
+  font-family:var(--font-ar,"Noto Naskh Arabic","Amiri",serif);
+  font-size:1.35em;line-height:1.9;unicode-bidi:isolate;
+  vertical-align:-.06em;
+}
+/* Antippbar erst NACH dem Beantworten — vorher gehört der Knopf der Wahl.
+   Der gepunktete Strich sagt „hier steckt mehr", ohne wie ein Link auszusehen. */
+.ueb-wahl.beantwortet .ar-wort,
+.ueb-rueck .ar-wort{
+  cursor:pointer;border-bottom:1px dotted currentColor;
+}
+.ueb-wahl.beantwortet .ar-wort:active,
+.ueb-rueck .ar-wort:active{opacity:.6;}
+.ar-wort:focus-visible{outline:2px solid var(--accent,currentColor);outline-offset:2px;border-radius:3px;}
 .ueb-option.richtig{background:var(--green-wash);border-color:var(--green-dim);color:var(--green);}
 .ueb-option.falsch{background:var(--red-wash);border-color:var(--red-dim);color:var(--red-bright);}
 .ueb-rueck{border-radius:var(--r-2);padding:var(--sp-3);font-size:var(--fs-sm);line-height:1.5;}
