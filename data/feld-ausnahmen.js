@@ -51,7 +51,19 @@ const FELD_REGELN = {
        (js/wurzel.js), und Metasprache in einer Wortfamilie verwässert sie.
        ⚠️ Umkehrbar — steht Elias als EINE Frage vor, nicht als zehn. */
     quellen: ['fachbegriffe'],
-    grund: 'Ein حَرْف ist nicht ableitbar; ein Fachbegriff gehört nicht in die Wurzelansicht.'
+    /* ⭐⭐ WORTGRUPPEN HABEN KEINE WURZEL — eine Regel aus der Sache, kein
+       Einzelfall (07.09.2026). Eine Wurzel gehört zu EINEM Wort; اِسْمٌ
+       مَجْرُورٌ, مُضَافْ إِلَيْهِ und حَرْفُ الْجَرِّ sind Fügungen aus zweien.
+       Ihre Bestandteile haben je eine Wurzel, die Fügung selbst nicht.
+
+       ⛔ Aufgefallen bei der Suche nach einer Wurzel-QUELLE: von den 18
+       gemeldeten Lücken waren neun Dubletten und sechs Wortgruppen oder
+       Partikeln. Ein einziges Wort — أَلْمُهَنْدِسٌ — hatte wirklich eine
+       fehlende Wurzel. Eine Kandidatenliste ist keine Fehlerliste.
+       [[kandidatenliste_ist_keine_fehlerliste]] [[allgemeine_regel_statt_listeneintrag]] */
+    wortgruppe: true,
+    grund: 'Ein حَرْف ist nicht ableitbar; ein Fachbegriff gehört nicht in die '
+         + 'Wurzelansicht; eine Wortgruppe hat keine eigene Wurzel.'
   },
 
   /* Fachbegriffe sind METASPRACHE: مُضَاف beschreibt eine Satzstellung, es ist
@@ -159,6 +171,11 @@ function feldAusnahme(w, feld, quelle){
   if (!r) return null;
   if (r.quellen && r.quellen.includes(quelle)) return r.grund;
   if (r.typen && r.typen.includes(String(w && w.type || ''))) return r.grund;
+  /* ⭐ Wortgruppen (07.09.2026). Erkannt am Leerzeichen im arabischen Text —
+     das ist die Sache selbst, nicht ein Namensmuster: was aus zwei Wörtern
+     besteht, hat keine EIGENE Wurzel. ⚠️ NFC und trim, weil ein Wort mit
+     schließendem Leerzeichen sonst als Gruppe gälte. */
+  if (r.wortgruppe && /\s/.test(String(w && w.ar || '').normalize('NFC').trim())) return r.grund;
   return null;
 }
 
