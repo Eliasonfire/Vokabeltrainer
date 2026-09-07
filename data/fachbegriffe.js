@@ -613,6 +613,15 @@ const FACHBEGRIFF_VOKABELN = [
     id: "gram-khayr",
     ar: "خَيْرٌ",
     de: "besser; das Gute",
+    /* ⭐ Der Beispielsatz baut die Bauform des Verses nach, den er auswendig
+       kann (93:4, وَلَلْآخِرَةُ خَيْرٌ لَكَ مِنَ الْأُولَىٰ): X خَيْرٌ مِنْ Y.
+       Der Vers selbst geht nicht — الْآخِرَة und الْأُولَىٰ stehen nicht in
+       seinem Bestand, und A9 verlangt Wörter, die er hat. مَسْجِدٌ und بَيْتٌ
+       stehen beide in Kapitel 1, مِنْ in Kapitel 4.
+       ⚠️ مِنَ mit Fatḥa vor dem Artikel-Alif — dieselbe Stelle wie im Vers
+       (مِنَ الْأُولَىٰ), nicht eine eigene Entscheidung. */
+    sentAr: 'الْمَسْجِدُ خَيْرٌ مِنَ الْبَيْتِ.',
+    sentDe: 'Die Moschee ist besser als das Haus.',
     /* Ein Wort mit Tanwīn ist ein اِسْم — das ist kein Ratschluss,
        sondern die Probe, die auch js/irab.js benutzt: ein Verb trägt
        nie Tanwīn, eine Partikel auch nicht.

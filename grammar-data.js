@@ -2715,6 +2715,10 @@ const SENTENCE_TAGS = {
   ],
   "50338": [
     { ruleId: "harf-jarr-name-01", matchText: "مِنَ" }
+  ],
+  "gram-khayr": [
+    { ruleId: "mubtada-khabar-01", matchText: "الْمَسْجِدُ خَيْرٌ" },
+    { ruleId: "harf-jarr-min-ila-01", matchText: "مِنَ الْبَيْتِ" }
   ]
 };
 
