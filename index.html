@@ -222,6 +222,18 @@
   --green-dim:#0c3a2c;
   --green-wash:rgba(46,230,166,.12);
 
+  /* ⭐ „Laut sagen" — eigene Farbe, bewusst NICHT gruen und NICHT rot.
+     Gruen und Rot sind auf der Karte mit „richtig" und „falsch" belegt; eine
+     Aufforderung, die aussieht wie eine Bewertung, wuerde vor dem Umdrehen
+     als Antwort gelesen. Amber ist auf der Lernkarte sonst unbenutzt.
+     ⚠️ Nicht --gram-nasab wiederverwenden, auch wenn der Ton aehnlich ist:
+     die Grammatikfarben tragen im Satzmodus eine Bedeutung, und zwei
+     Bedeutungen an einer Variablen loesen sich beim ersten Aendern nicht mehr
+     auf. [[zwei_regeln_selber_selektor]] */
+  --laut:#ffc46b;
+  --laut-dim:#4a3512;
+  --laut-wash:rgba(255,196,107,.14);
+
   /* --- Grammatik-Rollen --- */
   --gram-mubtada:#4aa8ff;
   --gram-idafa:#c98bff;
@@ -2711,6 +2723,17 @@ main{
    ein Flex-Kind gibt sonst seine Inhaltsbreite nicht her. Gekürzt wird der
    Kapitelname, nie das Notiz-Zeichen — das hat flex-shrink:0. */
 .front-marken .chip{position:static;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* ⭐ „laut sagen" — die Aufforderung auf etwa der Haelfte der Karten.
+   flex-shrink:0, damit bei engem Platz der KAPITELNAME gekuerzt wird und nicht
+   die Aufforderung: ein halb abgeschnittenes „laut sa…" waere schlechter als
+   ein gekuerztes Kapitel, das ohnehin nur eine Herkunftsangabe ist.
+   ⚠️ .hidden traegt !important (Zeile 1284), die Klasse gewinnt also gegen
+   dieses display — geprueft, nicht angenommen. [[hidden_verliert_gegen_display]] */
+.chip-laut{
+  display:inline-flex;align-items:center;gap:4px;flex-shrink:0;
+  background:var(--laut-wash);color:var(--laut);border-color:var(--laut-dim);
+}
+.chip-laut .ic{width:12px;height:12px;}
 .note-dot{
   display:inline-flex;align-items:center;justify-content:center;
   width:26px;height:26px;border-radius:var(--r-full);flex-shrink:0;
@@ -4172,6 +4195,14 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
                    schwebt und es verdeckt hat. -->
               <div class="front-marken">
                 <div class="chip chip-chapter" id="cardChapter">Kap. 1</div>
+                <!-- „Laut sagen" steht auf etwa der Hälfte der Karten einer
+                     Runde und wandert von Runde zu Runde weiter. Der Grund für
+                     das Wandern steht in js/kern.js bei LAUT_STAND: der
+                     Produktionseffekt ist ein Item-Effekt, und der Kontrast zu
+                     den unmarkierten Karten trägt ihn. -->
+                <div class="chip chip-laut hidden" id="cardLaut" title="Diese Karte laut mitsprechen">
+                  <svg class="ic"><use href="#ic-speaker"/></svg> laut sagen
+                </div>
                 <span class="note-dot hidden" id="cardNoteDot" title="Eselsbrücke vorhanden" aria-label="Eselsbrücke vorhanden"><svg class="ic"><use href="#ic-note"/></svg></span>
               </div>
               <div class="arabic-word" id="cardArabic" lang="ar" dir="rtl">بَيْتٌ</div>

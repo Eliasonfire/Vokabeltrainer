@@ -71,6 +71,46 @@ function fachbegriffTakt(pool, size){
   return runde;
 }
 
+/* ⭐ Etwa die Hälfte der Runde bekommt „laut mitsprechen" — und zwar REIHUM.
+   ================================================================
+   Der Zustand liegt in `LAUT_STAND` (js/kern.js), dort steht auch, warum das
+   Wandern kein Beiwerk ist: der Produktionseffekt ist ein Item-Effekt, und der
+   Kontrast zu den nicht markierten Karten trägt ihn.
+
+   Gewählt werden die Wörter, die am längsten nicht dran waren. `-1` für „nie
+   dran" sorgt dafür, dass neue Wörter zuerst kommen; bei Gleichstand
+   entscheidet die Stellung in der Runde, damit die Auswahl bei gleicher Lage
+   reproduzierbar bleibt und nicht bei jedem Aufruf springt.
+
+   ⚠️ Gibt der Speicher nichts her (privates Fenster, gelöschte Daten), ist
+   `LAUT_STAND` ein leeres Objekt — dann sind alle „nie dran", und die erste
+   Hälfte der Runde wird markiert. Das ist der richtige Rückfall: lieber die
+   Hälfte ohne Gedächtnis als gar keine. [[localstorage_kann_werfen]] */
+function waehleLautKarten(words){
+  if (typeof LAUT_STAND !== 'object' || !LAUT_STAND) return new Set();
+  if (!words.length) return new Set();
+  /* Bei einer einzelnen Karte wäre „die Hälfte" 0 oder 1 — 1 ist richtig,
+     sonst gäbe es in kurzen Runden nie eine Aufforderung. */
+  const wieViele = Math.max(1, Math.round(words.length / 2));
+
+  const reihe = words.map((w, i) => ({ i, id: String(w && w.id),
+    zuletzt: Number.isFinite(LAUT_STAND[String(w && w.id)]) ? LAUT_STAND[String(w && w.id)] : -1 }));
+  reihe.sort((a, b) => (a.zuletzt - b.zuletzt) || (a.i - b.i));
+
+  LAUT_RUNDE = (Number(LAUT_RUNDE) || 0) + 1;
+  const gewaehlt = new Set();
+  for (const e of reihe.slice(0, wieViele)){
+    gewaehlt.add(e.i);
+    LAUT_STAND[e.id] = LAUT_RUNDE;
+  }
+  /* ⛔ Der Stand wird beim AUFBAU der Runde geschrieben, nicht am Ende.
+     Bricht Elias mitten in der Runde ab — bei ADHS der Normalfall, nicht die
+     Ausnahme —, wäre am Ende nichts gespeichert und dieselben Wörter kämen
+     wieder. Genau das soll nicht passieren. */
+  if (typeof saveLautStand === 'function') saveLautStand();
+  return gewaehlt;
+}
+
 function startLearningSession(){
   let words = currentPool();
   if (words.length === 0){ toast(SETTINGS.wrongOnly ? 'Keine schwachen Wörter mit dieser Auswahl – stark!' : 'Nichts fällig – schau später wieder vorbei.'); showScreen('home'); return; }
@@ -78,7 +118,7 @@ function startLearningSession(){
   /* Auch wenn die ganze Auswahl in eine Runde passt: der Takt sortiert die
      Fachbegriffe auf die Plaetze 6/12/18, statt sie irgendwo zu lassen. */
   words = fachbegriffTakt(words, size);
-  SESSION = { words, idx:0, dirs:[], fertig:false };
+  SESSION = { words, idx:0, dirs:[], fertig:false, laut: waehleLautKarten(words) };
   showScreen('learn');
 }
 
@@ -109,7 +149,15 @@ function passeRundeAnAuswahlAn(){
      Karten weg, ist dieselbe Karte jetzt Nummer 9. Sonst springt die Runde. */
   let neuerIdx = bleibt.indexOf(aktuellesWort);
   if (neuerIdx < 0) neuerIdx = Math.min(SESSION.idx, bleibt.length - 1);
-  SESSION = { words: bleibt, idx: neuerIdx, dirs: [], fertig: false };
+  /* ⛔ Die Laut-Markierung hängt am INDEX, und der verschiebt sich hier genau
+     so wie `idx`. Ohne diese Umrechnung trüge nach dem Abwählen eines Kapitels
+     die falsche Karte das Zeichen — und niemand merkte es, weil beide
+     Zustände für sich stimmig aussähen. Also über die WÖRTER umrechnen, nicht
+     über die Zahlen. [[treffer_und_fundstelle_trennen]] */
+  const lautWoerter = new Set([...(SESSION.laut || [])].map(i => bisher[i]));
+  const neueLaut = new Set();
+  bleibt.forEach((w, i) => { if (lautWoerter.has(w)) neueLaut.add(i); });
+  SESSION = { words: bleibt, idx: neuerIdx, dirs: [], fertig: false, laut: neueLaut };
   renderCard();
   toast(`${entfernt} Wort${entfernt===1?'':'e'} aus abgewählten Kapiteln entfernt.`);
   return true;
@@ -165,6 +213,15 @@ function renderCard(){
   if (pop) pop.classList.remove('show');
 
   document.getElementById('cardChapter').textContent = kapitelBeschriftung(w);
+
+  /* ⭐ „Laut sagen" — auf etwa der Hälfte der Karten, reihum wechselnd.
+     Die Auswahl trifft `waehleLautKarten()` beim Rundenaufbau; hier wird sie
+     nur angezeigt. ⚠️ `hidden` per Klasse, wie bei `cardNoteDot`: ein
+     `style.display` verliert gegen die Klassenregel, und dann steht das
+     Zeichen auf jeder Karte. [[hidden_verliert_gegen_display]] */
+  const lautChip = document.getElementById('cardLaut');
+  if (lautChip) lautChip.classList.toggle('hidden',
+    !(SESSION.laut && SESSION.laut.has && SESSION.laut.has(SESSION.idx)));
 
   const dir = cardDirection(SESSION.idx);
   const frontEl = document.getElementById('cardArabic');
