@@ -704,7 +704,12 @@ main{
   background:var(--surface-2);
   border:1px solid var(--border);
   color:var(--text);
-  width:40px;height:40px;border-radius:var(--r-2);
+  /* ⭐ 44×44 statt 40×40 (07.09.2026). Gemessen bei 375×812 waren „Lernen
+     beenden“ und „Einstellungen“ die einzigen Ziele der Lernkarte unter der
+     Mindestgröße — WCAG 2.5.5 verlangt 44×44 CSS-Pixel. Elias will die App
+     im GEHEN bedienen können; dort ist jeder Pixel Zielflaeche einer, den man
+     nicht zweimal treffen muss. */
+  width:44px;height:44px;border-radius:var(--r-2);
   font-size:1.05rem;display:flex;align-items:center;justify-content:center;
   cursor:pointer;flex-shrink:0;
   transition:transform var(--dur-1) var(--ease-out), background var(--dur-2) ease, border-color var(--dur-2) ease;
@@ -773,6 +778,12 @@ main{
   font-family:var(--font-ui);
   font-weight:700;
   cursor:pointer;
+  /* ⭐ 44 px Mindesthöhe (07.09.2026). Gemessen waren „Zurück“ und „Weiter“
+     im Satzmodus 43 px hoch. Die Regel gilt fuer ALLE .btn — das ist
+     Absicht: ein Knopf, der kleiner sein muesste, waere ein eigener Fall
+     und braeuchte eine eigene Klasse, keine stille Ausnahme.
+     [[allgemeine_regel_statt_listeneintrag]] */
+  min-height:44px;
   display:inline-flex;align-items:center;justify-content:center;gap:var(--sp-2);
   transition:transform var(--dur-1) var(--ease-out), filter var(--dur-2) ease, background var(--dur-2) ease, border-color var(--dur-2) ease, box-shadow var(--dur-2) ease;
 }
@@ -1312,7 +1323,10 @@ main{
   display:inline-flex;align-items:center;gap:6px;
   background:none;border:none;cursor:pointer;
   color:var(--text-dim);padding:var(--sp-2) var(--sp-3);border-radius:var(--r-2);
-  min-height:40px;   /* Daumenflaeche: mit dem blossen Text waeren es 32 px */
+  /* ⭐ 44 statt 40 (07.09.2026, WCAG 2.5.5). Der Kommentar von damals hatte
+     recht — mit dem blossen Text wären es 32 px —, nur war die gewählte
+     Zahl noch unter der Mindestgröße. */
+  min-height:44px;
 }
 .kenne-schon-btn:hover{color:var(--text);background:var(--surface-2);}
 .kenne-schon-btn .ic{width:16px;height:16px;}
@@ -2159,6 +2173,10 @@ main{
   display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);
   width:100%;background:var(--surface-2);border:1px solid var(--border);
   border-radius:var(--r-2);padding:var(--sp-3) var(--sp-4);
+  /* ⭐ Gemessen 43 px — ein Pixel unter WCAG 2.5.5. Betrifft die Modus- und
+     Themenwahl im Satzmodus, also genau die zwei Ziele, die man vor dem
+     Losgehen trifft. */
+  min-height:44px;
   color:var(--text);font-size:var(--fs-md);font-weight:700;
   font-family:var(--font-ui);cursor:pointer;text-align:left;
   transition:border-color var(--dur-2) ease;
@@ -3323,6 +3341,11 @@ main{
 .hoer-optionen{display:flex;flex-direction:column;gap:var(--sp-2);margin-top:var(--sp-5);}
 .hoer-option{
   padding:var(--sp-3) var(--sp-4);border-radius:var(--r-2);cursor:pointer;
+  /* ⭐ Gemessen 43 px hoch — EIN Pixel unter der Mindestgröße. Genau die
+     Sorte Abweichung, die niemand sieht und die im Gehen den Fehlgriff
+     erzeugt. min-height statt größerem padding, damit lange Antworten
+     unverändert umbrechen. */
+  min-height:44px;
   background:var(--surface-3);border:1px solid var(--rand-option);color:var(--text);
   font-size:var(--fs-md);text-align:left;
   transition:background var(--dur-2) ease, border-color var(--dur-2) ease;
@@ -3660,6 +3683,9 @@ main{
 .select-input{
   background:var(--surface-3);border:1px solid var(--rand-select);color:var(--text);
   border-radius:var(--r-2);padding:var(--sp-2) var(--sp-3);font-family:var(--font-ui);font-size:var(--fs-md);
+  /* ⭐ Ebenfalls 43 px gemessen — betrifft Modus- und Themenwahl im
+     Satzmodus und jede Auswahl in den Einstellungen. */
+  min-height:44px;
   transition:border-color var(--dur-2) ease;
 }
 .select-input:focus{border-color:var(--red-dim);outline:none;}
