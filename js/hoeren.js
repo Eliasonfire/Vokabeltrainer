@@ -204,6 +204,12 @@ function beantworteHoerfrage(i){
   hoerTagSpeichern(t);
   hoerStandSchreiben();
 
+  /* ⭐ Die Trefferquote je TAG (07.09.2026). Der Hoermodus zaehlt mit, weil
+     „richtig" hier objektiv feststeht — anders als bei den vier
+     Bewertungsstufen der Karteikarte, wo Elias selbst einschaetzt. Die
+     Begruendung steht bei `merkeQuote()` in js/kern.js. */
+  if (typeof merkeQuote === 'function') merkeQuote(richtig);
+
   const zielJetztErreicht = vorher < HOER_TAGESZIEL && t.gesamt >= HOER_TAGESZIEL;
   if (zielJetztErreicht){
     HOER.fertig = true;

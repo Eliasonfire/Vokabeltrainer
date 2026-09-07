@@ -1321,6 +1321,11 @@ function uebungAuswerten(richtig){
      lösungen" ausdruecklich. Ebenfalls HIER und nicht in den Auswertern, aus
      demselben Grund: kein Modus kann es vergessen. */
   if (typeof merkeUebung === 'function' && UEB && UEB.modus) merkeUebung(UEB.modus, richtig);
+  /* ⭐ Und die Trefferquote je TAG (07.09.2026) — die Grundlage für den
+     Rauschversuch und für jede spätere Frage „hat das etwas gebracht".
+     Ebenfalls HIER, aus demselben Grund wie die zwei Zeilen darüber: kein
+     Modus kann es vergessen. Die Begründung steht bei `merkeQuote()`. */
+  if (typeof merkeQuote === 'function') merkeQuote(richtig);
   /* ⭐ Der Tageszaehler des Satzmodus. HIER, aus demselben Grund wie
      UEB.gestellt und merkeUebung darueber: kein Modus kann es vergessen.
      ⛔ VOR renderUebung(), damit die Standzeile den neuen Stand zeigt und

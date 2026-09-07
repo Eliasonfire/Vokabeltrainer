@@ -3371,6 +3371,28 @@ main{
    Tagen ueberhaupt geuebt wurde. Deshalb traegt die Regelmaessigkeit die
    Aussage und die Menge nur den Ton. */
 .uebungskalender{margin-bottom:var(--sp-6);}
+/* ⭐ Trefferquote je Woche — bewusst als BALKENREIHE, nicht als Zahlenliste.
+   Elias vergleicht damit zwei Zeiträume (Rauschversuch); ein Unterschied
+   zwischen 68 % und 74 % ist als Höhe sofort zu sehen und als Zahlenpaar erst
+   nach dem Lesen. Die Zahl steht trotzdem dabei — der Balken allein wäre eine
+   Schätzung, und verglichen wird am Ende mit Zahlen.
+   ⚠️ `align-items:end`, damit die Balken auf einer Grundlinie stehen: von
+   oben hängende Balken lesen sich als Rückstand, nicht als Ergebnis. */
+.wochenquote{
+  display:flex; align-items:end; gap:var(--sp-2);
+  margin-bottom:var(--sp-6); overflow-x:auto; padding-bottom:var(--sp-1);
+}
+.wq-woche{ display:flex; flex-direction:column; align-items:center; gap:4px; flex:1 0 42px; min-width:42px; }
+.wq-saeule{ width:100%; height:76px; display:flex; align-items:end;
+  background:var(--surface-3); border-radius:var(--r-sm); overflow:hidden; }
+.wq-fuellung{ width:100%; background:var(--green-wash); border-top:2px solid var(--green); }
+/* ⛔ Eine Woche ohne Aufgaben ist NICHT „0 %". Sie bekommt deshalb gar keine
+   Füllung und ein „—" als Zahl: ein Nullbalken behauptete, alles sei falsch
+   gewesen. [[kennzeichen_mit_zwei_ursachen]] */
+.wq-leer .wq-saeule{ opacity:.45; }
+.wq-zahl{ font-size:var(--fs-xs); font-weight:700; font-variant-numeric:tabular-nums; }
+.wq-datum{ font-size:10px; color:var(--text-faint); white-space:nowrap; }
+.wq-hinweis{ font-size:var(--fs-xs); color:var(--text-dim); line-height:1.5; }
 /* ⛔ EIN Raster fuer Monatszeile, Wochentagsspalte und Gitter. Die erste
    Spalte (`auto`) ist so breit wie die Wochentagsnamen, die zweite nimmt den
    Rest — dadurch stehen Monatsnamen und Gitterspalten zwangslaeufig
@@ -4142,6 +4164,15 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
            Kasten ist also Pflicht, nicht Zierde. -->
       <h3 class="stats-titel">Wann du geübt hast</h3>
       <div class="uebungskalender" id="uebungskalender"></div>
+      <!-- ⭐ Trefferquote je Woche (07.09.2026). Elias hat sich entschieden,
+           den Rauschversuch zu machen — „du hast recht, dann sollte ich das
+           ausprobieren" —, und dafür müssen zwei Zeiträume nebeneinander
+           stehen können. Ein Gesamtstand taugt nicht: dort mischt sich der
+           Lernfortschritt in die Messung und überdeckt den Effekt.
+           ⚠️ Der Kasten steht unter dem Kalender, weil beide dasselbe zeigen:
+           die Zeitachse. Getrennte Orte hätten sie entkoppelt. -->
+      <h3 class="stats-titel">Trefferquote je Woche</h3>
+      <div class="wochenquote" id="wochenquote"></div>
       <h3 class="stats-titel">Wie gut sitzen die Regeln?</h3>
       <div class="regel-sortierung" id="regelSortierung" role="group" aria-label="Sortierung">
         <button class="rs" data-sort="schwach" aria-pressed="true">schwächste zuerst</button>
