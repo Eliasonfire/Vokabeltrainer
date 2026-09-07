@@ -989,6 +989,18 @@ function renderUebungsLeiste(){
   if (zahl) zahl.textContent = jetzt ? `${alle[jetzt.id].length} Fragen`
                              : (UEB.modus===UEB_GEMISCHT ? `${gesamt} Fragen`
                                                          : `${UEBUNGEN.length} Modi`);
+
+  /* ⭐ Der Direktweg (07.09.2026). Er erscheint nur, solange KEINE Übung läuft:
+     wer schon übt, braucht keinen Startknopf, und im gemischten Modus stünde er
+     als Angebot da, das man gerade benutzt. Und er verschwindet, wenn die
+     aktuelle Auswahl null Fragen hergibt — ein Knopf, der nur eine Absage
+     auslösen kann, ist keiner. [[flaeche_nur_im_gefuellten_zustand]] */
+  const direkt = document.getElementById('btnUebGemischtStart');
+  if (direkt){
+    direkt.classList.toggle('hidden', !!UEB.modus || !gesamt);
+    const dz = document.getElementById('uebGemischtZahl');
+    if (dz) dz.textContent = gesamt ? `${gesamt} Fragen aus allen ${UEBUNGEN.length} Modi` : '';
+  }
 }
 
 function uebungStarten(modusId){
@@ -1409,6 +1421,15 @@ document.getElementById('uebBlatt').addEventListener('click', (e)=>{
   if (UEB.modus === id) uebungBeenden(); else uebungStarten(id);
   /* Zu — sonst steht das Blatt ueber der Aufgabe, die es gerade gestartet hat. */
   blattUmschalten('uebWaehler', 'uebBlatt', false);
+});
+/* Der Direktweg. ⛔ Er ruft `uebungStarten` und baut nichts eigenes — sonst
+   gäbe es zwei Stellen, an denen eine Übung anfängt, und die zweite bekäme
+   jede spätere Änderung nicht mit. [[entscheidung_gilt_fuer_das_zweite_werkzeug]]
+   Auch das Blatt wird geschlossen: es kann offen stehen, wenn er darin gestöbert
+   und dann doch den Knopf darunter genommen hat. */
+document.getElementById('btnUebGemischtStart').addEventListener('click', ()=>{
+  blattUmschalten('uebWaehler', 'uebBlatt', false);
+  uebungStarten(UEB_GEMISCHT);
 });
 document.getElementById('uebSatz').addEventListener('click', (e)=>{
   const span = e.target.closest('[data-uebidx]');
