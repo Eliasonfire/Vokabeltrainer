@@ -172,6 +172,7 @@ const PRUEFER = [
   ['test-p6.mjs', []],
   ['test-p8.mjs', []],
   ['test-woerterbuch-belege.mjs', []],
+  ['test-langenscheidt.mjs', []],
   ['test-schreibweisen.mjs', []],
   ['test-p9.mjs', []],
 
