@@ -1342,6 +1342,18 @@ main{
   padding:var(--sp-2) 0;border-bottom:1px solid var(--hairline);
 }
 .kenne-schon-eintrag:last-child{border-bottom:none;}
+/* Die wieder zugemachten Woerter (07.09.2026). Elias hatte eins probeweise
+   zugemacht und fand keinen Weg zurueck — sie stehen jetzt abgesetzt darunter.
+   Gedaempft und kleiner: der Ausnahmefall soll auffindbar sein, aber nicht um
+   Aufmerksamkeit mit den mitlaufenden Woertern konkurrieren. */
+.einzeln-zu-titel{
+  color:var(--text-dim);font-size:var(--fs-xs, var(--fs-sm));
+  padding:var(--sp-3) 0 var(--sp-1);border-top:1px solid var(--hairline);
+  margin-top:var(--sp-2);text-transform:uppercase;letter-spacing:.06em;
+}
+/* ⚠️ Ohne das erbt der erste zugemachte Eintrag die Trennlinie doppelt — die
+   des Titels und seine eigene obere Kante liegen dann uebereinander. */
+.einzeln-zu-titel + .kenne-schon-eintrag{border-top:none;}
 /* ⚠️ min-width:0 am Flex-KIND, nicht am Elternteil: ohne das laeuft die
    Ellipsis unten ins Leere und die ganze Seite rollt quer. */
 .kenne-schon-wort{display:flex;align-items:baseline;gap:var(--sp-2);min-width:0;}

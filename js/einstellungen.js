@@ -48,19 +48,45 @@ function zeichneEinzelnFreiListe(){
   if (!kasten || !stand) return;
   const woerter = (typeof einzelnFreigeschaltete === 'function') ? einzelnFreigeschaltete() : [];
 
+  /* ⚠️ Der Text hiess bis zum 07.09.2026 „… laufen mit, obwohl das Kapitel
+     noch zu ist“ — und das stimmt seit demselben Tag nicht mehr uneingeschränkt:
+     passtZurAuswahl() behandelt diese Wörter jetzt wie eigene Vokabeln, sie
+     laufen also nur mit, solange kein Kapitel eingeengt ist oder „Eigene“
+     angehakt ist. Ein Stand, der mehr verspricht als er hält, ist schlimmer
+     als keiner. [[widerspruch_liegt_in_der_beschriftung]] */
   stand.textContent = woerter.length
-    ? `${woerter.length} ${woerter.length===1?'Wort läuft':'Wörter laufen'} mit, obwohl das Kapitel noch zu ist`
+    ? `${woerter.length} ${woerter.length===1?'Wort ist':'Wörter sind'} freigeschaltet, obwohl das Kapitel noch zu ist — sie laufen wie deine eigenen Vokabeln mit`
     : 'Noch keins freigeschaltet';
   if (alle) alle.disabled = !woerter.length;
 
-  kasten.innerHTML = woerter.map(w =>
+  const eintrag = (w, knopf, marke) =>
     `<div class="kenne-schon-eintrag">
        <div class="kenne-schon-wort">
          <span class="ar" lang="ar" dir="rtl">${escapeHtml(w.sg || w.ar)}</span>
          <span class="de">${escapeHtml(w.de)} · ${escapeHtml(kapitelBeschriftung(w))}</span>
        </div>
-       <button class="kenne-schon-zurueck" data-einzelnzurueck="${escapeHtml(String(w.id))}">Wieder zumachen</button>
-     </div>`).join('');
+       <button class="kenne-schon-zurueck" ${marke}="${escapeHtml(String(w.id))}">${knopf}</button>
+     </div>`;
+
+  /* ⛔⛔ DER RUECKWEG (07.09.2026). Elias: „ich habe testweise mal aladhi zu
+     gemacht und es ist verschwunden … warum man die dann nicht wieder aufmachen
+     kann“
+
+     Ueber dieser Funktion steht seit dem 20.08.2026, die Liste sei der
+     Rueckweg, damit der Knopf in der Wortkarte keine Einbahnstrasse ist. Sie
+     war dann selbst eine: „Wieder zumachen“ nahm das Wort aus genau der Liste,
+     in der es danach haette stehen muessen.
+     [[bedingung_wird_durch_die_handlung_ungueltig]]
+
+     Die zugemachten stehen bewusst UNTEN und abgesetzt: sie sind der
+     Ausnahmefall, und wer sie nicht braucht, soll sie nicht zuerst lesen. */
+  const zu = (typeof einzelnZugemachte === 'function') ? einzelnZugemachte() : [];
+  kasten.innerHTML =
+    woerter.map(w => eintrag(w, 'Wieder zumachen', 'data-einzelnzurueck')).join('')
+    + (zu.length
+        ? `<div class="einzeln-zu-titel">Wieder zugemacht — ${zu.length === 1 ? 'läuft' : 'laufen'} nicht mehr mit</div>`
+          + zu.map(w => eintrag(w, 'Wieder aufmachen', 'data-einzelnauf')).join('')
+        : '');
 
   /* Die Kopierzeile erscheint nur, wenn es etwas zu kopieren gibt — und das
      ist seit dem 20.08.2026 MEHR als die freigeschalteten Wörter: auch seine
@@ -194,6 +220,21 @@ async function kopiereEinzelnFrei(){
 }
 
 document.getElementById('einzelnFreiListe').addEventListener('click', (e)=>{
+  /* ⭐ Beide Richtungen an EINEM Zuhoerer, damit sie nicht auseinanderlaufen
+     koennen: was der eine Weg tut, muss der andere zurueckdrehen — dieselbe
+     Neuzeichnung, derselbe Aufruf von nachAuswahlwechsel(). Zwei getrennte
+     Zuhoerer waeren zwei Stellen fuer dieselbe Entscheidung.
+     [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+  const auf = e.target.closest('[data-einzelnauf]');
+  if (auf){
+    const id = auf.dataset.einzelnauf;
+    setzeEinzelnFrei(id, true);
+    zeichneEinzelnFreiListe();
+    if (typeof nachAuswahlwechsel === 'function') nachAuswahlwechsel();
+    const w = VOCAB_DATA.find(x => String(x.id) === id);
+    toast(w ? `${w.de} läuft wieder mit.` : 'Wieder aufgemacht.');
+    return;
+  }
   const knopf = e.target.closest('[data-einzelnzurueck]');
   if (!knopf) return;
   const id = knopf.dataset.einzelnzurueck;
