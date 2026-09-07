@@ -81,7 +81,12 @@ const RICHTUNG = 'ar_de';
    Rueckstand von Tausenden Versuchen wird portionsweise gearbeitet: der Rest
    kommt beim naechsten Abgleich. Eine Anfrage, die in die Zeitgrenze laeuft,
    liefert gar nichts — und hinterliesse einen halb geschriebenen Stand. */
-const HOECHSTENS_JE_LAUF = 400;
+/* ⚠️ 400 → 1000 am 07.09.2026, nachdem der Rückstand gemessen war: 625 Versuche
+   aus 192 Karten seit dem 14.08.2026. Mit 400 hätte Elias die App zweimal
+   weglegen müssen, ohne dass irgendwo steht warum. In Blöcken zu 100 sind das
+   sieben Anfragen — von der Zeitgrenze weit entfernt. Die Portionierung bleibt
+   trotzdem: sie ist die Notbremse, falls der Rückstand einmal groß wird. */
+const HOECHSTENS_JE_LAUF = 1000;
 
 function antwort(daten, status = 200){
   return new Response(JSON.stringify(daten), {
