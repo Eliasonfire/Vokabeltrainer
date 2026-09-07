@@ -92,6 +92,20 @@ function zeigeBildschirm(name){
   /* Hier stand `window.scrollTo(0,0)`. Ersatzlos gestrichen: das Fenster rollt
      in dieser App nicht, die Zeile war ohne Wirkung. Der wirksame Sprung steht
      jetzt weiter oben, vor den Render-Aufrufen. */
+  /* ⭐ Die stille Zeitmessung (08.09.2026, js/zeitmessung.js). Hier und nur
+     hier, weil JEDER Bildschirmwechsel durch diese Funktion geht — auch der
+     ueber die Zurueck-Taste. ⛔ Sie zeigt nichts an; das ist Elias' Vorgabe
+     („am besten mir nicht sagen"), nicht ein vergessener Bildschirm. */
+  if (typeof zeitBildschirm === 'function') zeitBildschirm(name);
+  /* ⛔⛔ Den Geh-Modus beim Verlassen abschalten (08.09.2026). Er spricht von
+     allein weiter — ohne diese Zeile redete die App auf der Startseite, in den
+     Einstellungen und im Quran-Leser einfach weiter, und man fände den
+     Ausschalter nicht, weil er auf einem Bildschirm liegt, den man verlassen
+     hat. ⚠️ `GEH.an` pruefen, nicht blind setzen: gehModusSetzen() ruft
+     naechsteHoerfrage(), und das auf jedem Bildschirmwechsel zu tun waere
+     Arbeit fuer nichts. */
+  if (name !== 'hoeren' && typeof GEH === 'object' && GEH.an && typeof gehModusSetzen === 'function')
+    gehModusSetzen(false);
   return name;
 }
 

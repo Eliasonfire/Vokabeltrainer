@@ -68,6 +68,25 @@ const SPEICHER_AUSNAHMEN = {
   'vt_hifzVerse':     'seit 24.08.2026 ueber data/auswendig.json ausgewertet',
   'vt_hifz':          'seit 24.08.2026 ueber data/auswendig.json ausgewertet',
   'vt_notizen':       'seine eigenen Notizen zum Wort — seit 24.08.2026 in eigene-woerter.json unter `eigeneNotizen`',
+  /* ⛔⛔ Die zwei Schluessel der stillen Zeitmessung (08.09.2026). Sie stehen
+     hier NICHT, weil die Auswertung vergessen wurde, sondern weil Elias
+     ausdruecklich verlangt hat, dass die Zahl NICHT in der Oberflaeche
+     erscheint: „am besten mir nicht sagen aber wenn ich es bei dir wissen
+     will".
+
+     ⭐ Der Abrufweg ist deshalb `zeitBericht()` in der laufenden App — von mir
+     im Browser-Pane aufgerufen, genau wie `bekannteVokabeln()`. Ein Werkzeug
+     hier koennte es gar nicht: die Daten entstehen beim Ueben und liegen in
+     seinem localStorage; kein Werkzeug in diesem Ordner greift auf /api/stand
+     zu (gemessen am 08.09.2026). Dieselbe Lage wie bei vt_uebungStand und
+     vt_regelStand eine Zeile darunter. */
+  /* ⚠️ `vt_geraetId` stand hier beim Nachtragen kurz ZWEIMAL — ein Objekt
+     nimmt das klaglos an, der letzte Eintrag gewinnt, und die verwaiste Zeile
+     haette fuer immer wie eine gueltige Begruendung ausgesehen. Sofort wieder
+     entfernt. [[zweiter_aufruf_ueberschreibt_still]] */
+  'vt_gehLog':        'Diagnose des Geh-Modus (08.09.2026) — misst BEIM NUTZER, ob die Sprachausgabe bei gesperrtem Bildschirm anspringt; abgerufen mit gehProtokoll() im Browser-Pane',
+  'vt_zeit':          'stille Zeitmessung (08.09.2026) — absichtlich nicht in der Oberflaeche; abgerufen mit zeitBericht() im Browser-Pane',
+  'vt_geraetId':      'trennt die Zeitzweige der Geraete; wird bewusst NICHT abgeglichen und hat ausserhalb der App keine Bedeutung',
   /* ⛔ Kein Werkzeug kann ihn lesen, und das ist kein Versaeumnis: er entsteht
      beim UEBEN und liegt nur in Elias' localStorage. Dasselbe gilt fuer
      vt_regelStand, das aus demselben Grund nie hier stand. Ausgewertet wird er

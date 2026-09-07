@@ -10,6 +10,7 @@ function renderSettings(){
   document.getElementById('toggleQuran').classList.toggle('on', !!SETTINGS.showQuran);
   zeigeSitzungsgroesse();
   if (typeof zeigeTagesDeckel === 'function') zeigeTagesDeckel();
+  if (typeof zeigeHoerZiel === 'function') zeigeHoerZiel();
   document.getElementById('directionSelect').value = SETTINGS.direction || 'ar-de';
   document.getElementById('toggleTippen').classList.toggle('on', !!SETTINGS.tippenAbBox4);
   /* Wurzelmodus. Die Ausrichtung ist standardmaessig AN, deshalb wird auf
@@ -350,6 +351,58 @@ document.getElementById('btnKenneSchonListe')
   .addEventListener('click', ()=> schalteListeUm('btnKenneSchonListe', 'kenneSchonListe'));
 document.getElementById('btnEinzelnFreiListe')
   .addEventListener('click', ()=> schalteListeUm('btnEinzelnFreiListe', 'einzelnFreiListe'));
+/* ---------- Die Gruppen in den Einstellungen (08.09.2026) ----------
+
+   Elias: „guck mal ob man in meiner app die einstellungen etwas aufräumen
+   kann." Vorher standen 24 Zeilen in EINER Liste, ohne eine einzige
+   Überschrift und in gewachsener statt sortierter Reihenfolge.
+
+   ⭐ Dasselbe Bauteil wie `schalteListeUm()` eine Ebene tiefer, nur über
+   `aria-controls` statt über ein zweites Argument — damit die Zuordnung im
+   HTML steht und nicht in zwei Dateien gleichzeitig gepflegt werden muss.
+
+   ⭐ DER ZUSTAND WIRD GEMERKT, und das ist der eigentliche Punkt. Welche
+   Gruppe er täglich braucht, weiß ich nicht — er schon. Das HTML gibt nur
+   den ERSTEN Eindruck vor („Daten & App" zu, der Rest offen); ab dem ersten
+   eigenen Klick entscheidet, was er selbst zuletzt eingestellt hat.
+   [[pc_daten_sind_nicht_sein_lernstand]] */
+const EINST_GRUPPEN_SCHLUESSEL = 'vt_einstGruppen';
+
+function schalteEinstGruppe(knopf){
+  const inhalt = document.getElementById(knopf.getAttribute('aria-controls'));
+  if (!inhalt) return;
+  const zu = inhalt.classList.toggle('hidden');
+  knopf.setAttribute('aria-expanded', String(!zu));
+  merkeEinstGruppen();
+}
+
+function merkeEinstGruppen(){
+  const stand = {};
+  document.querySelectorAll('.einst-gruppe').forEach(k => {
+    stand[k.id] = k.getAttribute('aria-expanded') === 'true';
+  });
+  LS.set(EINST_GRUPPEN_SCHLUESSEL, stand);
+}
+
+function stelleEinstGruppenHer(){
+  const stand = LS.get(EINST_GRUPPEN_SCHLUESSEL, null);
+  document.querySelectorAll('.einst-gruppe').forEach(knopf => {
+    knopf.addEventListener('click', ()=> schalteEinstGruppe(knopf));
+    /* ⛔ Kein gespeicherter Wert heisst NICHT „zugeklappt": dann gilt, was im
+       HTML steht. Ein `stand[k.id] || false` haette beim allerersten Start
+       ALLE Gruppen zugeklappt — und die Einstellungen wären leer gewesen.
+       [[vorgabewert_greift_nicht_bei_null]] */
+    if (!stand || !(knopf.id in stand)) return;
+    const inhalt = document.getElementById(knopf.getAttribute('aria-controls'));
+    if (!inhalt) return;
+    const offen = stand[knopf.id] === true;
+    inhalt.classList.toggle('hidden', !offen);
+    knopf.setAttribute('aria-expanded', String(offen));
+  });
+}
+
+stelleEinstGruppenHer();
+
 
 document.getElementById('kenneSchonListe').addEventListener('click', (e)=>{
   const knopf = e.target.closest('[data-zurueck]');
@@ -529,6 +582,74 @@ if (deckelWahl) deckelWahl.addEventListener('change', (e)=>{
   saveSettings();
   if (typeof renderHome === 'function') renderHome();
 });
+
+/* ⭐ Das Hör-Tagesziel (08.09.2026). Bis dahin stand es als feste `10` in
+   js/hoeren.js. Vorgabe ist jetzt 5 — die Begründung steht bei den
+   SETTINGS-Vorgaben in js/kern.js.
+
+   ⭐ Mit eigener Zahl seit demselben Abend, eine halbe Stunde später. Elias:
+   „ich will auch individuell eingeben können." Ich hatte oben noch geschrieben,
+   die Stufen 3 bis 30 deckten den Bereich ab — dieselbe Fehleinschätzung wie
+   am 06.09.2026 bei der Sitzungsgröße („letztens wollte ich aber 15 lernen und
+   das ging nicht, keine option"). ⛔ Zweimal dieselbe Annahme, zweimal von ihm
+   widerlegt: **Eine Stufenliste, die ich für ausreichend halte, ist keine
+   Messung seines Bedarfs.** [[kann_ist_nicht_ist]]
+
+   ⛔ Die Auswahl allein reicht nicht zum Anzeigen: `select.value = "7"` greift
+   nur, wenn es die Option gibt — sonst bliebe sie LEER und sähe aus, als wäre
+   nichts eingestellt. Deshalb entscheidet zeigeHoerZiel(), ob eine feste Stufe
+   passt oder „Eigene Zahl" mit gefülltem Feld gezeigt wird. */
+const HOER_STUFEN = ['3','5','10','15','20','30'];
+
+function zeigeHoerZiel(){
+  const wahl = document.getElementById('hoerZielSelect');
+  const feld = document.getElementById('hoerZielEigen');
+  if (!wahl || !feld) return;
+  const wert = String(hoerTagesziel());
+  const fest = HOER_STUFEN.indexOf(wert) >= 0;
+  wahl.value = fest ? wert : 'eigen';
+  feld.hidden = fest;
+  if (!fest) feld.value = wert;
+}
+
+/* Grenzen wie bei der Sitzungsgröße, und aus demselben Grund weit: 1 Wort ist
+   an einem schlechten Tag ein sinnvolles Ziel — genau dafür ist die Zahl da.
+   Ein leeres oder unsinniges Feld ändert NICHTS, sonst stünde nach einem halb
+   getippten „1" plötzlich ein Einer-Ziel in den Einstellungen. */
+function setzeHoerZiel(zahl){
+  const n = Math.round(Number(zahl));
+  if (!Number.isFinite(n) || n < 1 || n > 999) return false;
+  SETTINGS.hoerZiel = n;
+  saveSettings();
+  /* ⚠️ Die Standzeile im Hörmodus trägt die Zahl im Text („Tagesziel 2 von
+     5"). Ohne dieses Nachziehen behauptet sie die alte Zahl weiter, bis der
+     Modus neu geöffnet wird — der Klassiker: die Einstellung wirkt, aber man
+     sieht es nicht, und das sieht aus wie ein Fehler. */
+  if (typeof hoerStandSchreiben === 'function' && document.getElementById('hoerStand')) hoerStandSchreiben();
+  return true;
+}
+
+const hoerZielWahl = document.getElementById('hoerZielSelect');
+if (hoerZielWahl) hoerZielWahl.addEventListener('change', (e)=>{
+  const feld = document.getElementById('hoerZielEigen');
+  if (e.target.value === 'eigen'){
+    feld.hidden = false;
+    if (!feld.value) feld.value = String(hoerTagesziel());
+    feld.focus();
+    feld.select();
+    return;                       /* erst die Zahl, dann wird gespeichert */
+  }
+  feld.hidden = true;
+  setzeHoerZiel(e.target.value);
+});
+
+const hoerZielFeld = document.getElementById('hoerZielEigen');
+if (hoerZielFeld){
+  hoerZielFeld.addEventListener('input', (e)=>{ setzeHoerZiel(e.target.value); });
+  /* Beim Verlassen zurueck auf den gespeicherten Stand, falls die Eingabe
+     unbrauchbar war — sonst behauptet das Feld eine Zahl, die nicht gilt. */
+  hoerZielFeld.addEventListener('blur', ()=>{ zeigeHoerZiel(); });
+}
 
 document.getElementById('sessionSizeSelect').addEventListener('change', (e)=>{
   const feld = document.getElementById('sessionSizeEigen');

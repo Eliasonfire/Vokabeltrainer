@@ -1317,6 +1317,22 @@ main{
    <button> erbt die Schrift der Seite NICHT, er faellt sonst auf die
    Browser-Voreinstellung zurueck und sieht kleiner und grau aus, ohne dass es
    jemand angeordnet hat. */
+/* Geh-Modus (08.09.2026). Der Schalter sitzt im Hörmodus selbst, oberhalb der
+   Karte — er wird unterwegs betätigt, nicht am Schreibtisch vorbereitet.
+   ⚠️ `align-items:flex-start`, weil der Untertitel zweizeilig werden kann: bei
+   `center` säße der Schalter dann auf halber Texthöhe statt neben der Zeile,
+   auf die er sich bezieht. */
+.geh-zeile{display:flex;align-items:flex-start;gap:var(--sp-3);
+  padding:var(--sp-3) var(--gutter) 0;max-width:var(--inhalt-max);margin:0 auto;}
+.geh-zeile .switch{flex:0 0 auto;margin-top:2px;}
+.geh-text{min-width:0;}
+.geh-titel{font-weight:600;}
+.geh-sub{color:var(--text-dim);font-size:var(--fs-sm);line-height:1.4;}
+/* Im laufenden Geh-Modus sind die vier Antwortknöpfe sinnlos — es gibt nichts
+   zu tippen. Sie werden ausgeblendet statt nur deaktiviert: ein grauer Knopf
+   sieht nach einem Fehler aus, ein fehlender nach Absicht. */
+.geht .hoer-optionen,
+.geht .kenne-schon-zeile{display:none;}
 .kenne-schon-zeile{display:flex;justify-content:center;padding:var(--sp-2) var(--gutter) 0;}
 .kenne-schon-btn{
   font:inherit;font-size:var(--fs-sm);
@@ -1357,6 +1373,43 @@ main{
 .listen-schalter .ic{transition:transform var(--dur-2) var(--ease-out);display:inline-block;}
 .listen-schalter[aria-expanded="true"] .ic{transform:rotate(90deg);}
 .listen-schalter:active{color:var(--text-dim);}
+
+/* ---------- Gruppen in den Einstellungen (08.09.2026) ----------
+   Elias: „guck mal ob man in meiner app die einstellungen etwas aufräumen
+   kann. wenn nicht ist auch okay." Es ging: 24 Zeilen standen in EINER Liste,
+   ohne eine einzige Überschrift, in gewachsener statt sortierter Reihenfolge
+   — „Ab Box 4 eintippen" zwischen der TTS-Stimme und den Wortlisten.
+
+   ⭐ Dieselbe Bauart wie `.listen-schalter` eine Ebene tiefer: derselbe
+   Pfeil ▸, dieselbe Drehung, dieselbe Klasse `hidden`. Zwei Bauarten für
+   dasselbe Verhalten wären zwei Stellen für eine Entscheidung — und die
+   zweite zieht beim nächsten Umbau nicht mit.
+   [[entscheidung_gilt_fuer_das_zweite_werkzeug]]
+
+   ⚠️ Größer und dunkler als `.listen-schalter`: das hier ist eine
+   Abschnittsüberschrift, jener ein Schalter INNERHALB eines Abschnitts.
+   Sähen beide gleich aus, wäre die Rangfolge weg, die der Umbau erst
+   herstellt. */
+.einst-gruppe{
+  display:flex;align-items:center;gap:var(--sp-2);width:100%;
+  background:none;border:none;cursor:pointer;text-align:start;
+  padding:var(--sp-4) 0 var(--sp-2);margin:0;
+  font-family:var(--font-ui);font-size:var(--fs-sm);color:var(--text-dim);
+  font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+}
+.einst-gruppe .ic{
+  transition:transform var(--dur-2) var(--ease-out);
+  display:inline-block;color:var(--text-faint);
+}
+.einst-gruppe[aria-expanded="true"] .ic{transform:rotate(90deg);}
+.einst-gruppe:active{color:var(--text);}
+.einst-gruppe-name{flex:1;}
+/* Die Zahl steht IM Schalter, nicht darüber: zugeklappt ist sie sonst die
+   einzige Auskunft, die fehlt — genau wie beim `.listen-schalter`. */
+.einst-gruppe-zahl{
+  font-size:var(--fs-xs);color:var(--text-faint);
+  font-weight:600;letter-spacing:0;text-transform:none;
+}
 .kenne-schon-eintrag{
   display:flex;align-items:center;justify-content:space-between;gap:var(--sp-2);
   padding:var(--sp-2) 0;border-bottom:1px solid var(--hairline);
@@ -4766,6 +4819,26 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         <h2>Hörverstehen</h2>
       </div>
 
+      <!-- ⭐ Der Geh-Modus (08.09.2026). Elias: „klingt gut aber am besten kann
+           ich ihn im modus selbst an und ausschalten."
+           ⚠️ Deshalb steht der Schalter HIER und nicht in den Einstellungen:
+           man schaltet ihn ein, wenn man losgeht — nicht vorher am Schreibtisch.
+           Beleg für den Modus: Schmidt-Kassow u. a. 2013 (Bewegung WÄHREND des
+           Lernens, d = 0,84 nach 48 h; bei schwachen Lernern d = 1,2).
+           ⚠️ Der Widerspruch gehört dazu: Amico & Schaefer 2020 fanden den
+           Effekt nur bei Kindern. Steht in Lernen-mit-ADHS.md, Teil 18. -->
+      <div class="geh-zeile">
+        <button class="switch" id="toggleGehModus" aria-label="Geh-Modus umschalten"><span class="knob"></span></button>
+        <div class="geh-text">
+          <div class="geh-titel">Geh-Modus</div>
+          <!-- ⚠️ Hier steht bewusst NICHT „läuft mit ausgeschaltetem Bildschirm".
+               Dass die Seite wach bleibt, ist gebaut und belegt; ob Android die
+               Sprachausgabe im gesperrten Zustand zulässt, ist es NICHT. Eine
+               Zusage, die das Gerät bricht, wäre schlimmer als keine. -->
+          <div class="geh-sub">Nur hören: Wort, Pause zum Selbstantworten, Lösung. Kein Tippen, kein Hinsehen — anhalten geht auch über den Sperrbildschirm.</div>
+        </div>
+      </div>
+
       <div class="hoer-karte" id="hoerKarte">
         <div class="hoer-stand" id="hoerStand"></div>
         <button class="hoer-play" id="btnHoerPlay" aria-label="Nochmal hören">
@@ -4919,6 +4992,10 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         <h2>Einstellungen</h2>
       </div>
 
+
+      <button class="einst-gruppe" id="grp-aussehen" type="button"
+              aria-expanded="true" aria-controls="grpInhalt-aussehen"><span class="ic">▸</span><span class="einst-gruppe-name">Aussehen</span><span class="einst-gruppe-zahl">3</span></button>
+      <div class="einst-inhalt" id="grpInhalt-aussehen">
       <!-- Akzentfarbe. Elias am 20.08.2026, nachdem er die Vergleichsseite
            durchgesehen hatte: „die farben die ich umrahmt habe gefallen mir,
            die anderen koennen verworfen werden. du sollst am besten alle die
@@ -4968,6 +5045,43 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
           </button>
         </div>
       </div>
+      <!-- ⚠️ Die drei Wurzel-Zeilen liegen seit dem 08.09.2026 in ZWEI
+           Gruppen, und die Trennlinie ist „sieht anders aus“ gegen
+           „lernt anders“: „Wurzel hervorheben“ und „Wurzel ausrichten“
+           ändern nur die Darstellung und stehen unter „Aussehen“;
+           „Neue Wörter im Wurzelmodus“ entscheidet, WAS abgefragt wird,
+           und steht unter „Wie du lernst“. Vorher hielt sie ein
+           Kommentarbalken zusammen, den in der App niemand sehen konnte.
+           Elias am 10.08.2026 zur Umkehrung: "vielleicht könnte man auch
+           umgekehrt die wurzeln ausgrauen und den rest weiß lassen … es geht ja
+           um den rest, die wurzel hebt sich so oder so immer ab" — und danach:
+           "in den einstellungen eine option machen, in der wir das umkehren
+           können". Deshalb ein Schalter und nicht die neue Voreinstellung:
+           gemessen bestehen 32 von 113 Wörtern restlos aus ihrer Wurzel, die
+           stünden umgekehrt komplett grau da. -->
+      <div class="setting-row">
+        <div>
+          <div class="setting-title">Wurzel hervorheben</div>
+          <div class="setting-sub">Was leuchtet: die Wurzel oder der Rest des Wortes</div>
+        </div>
+        <select id="wurzelFarbeSelect" class="select-input">
+          <option value="normal">Wurzel leuchtet</option>
+          <option value="um">Umgekehrt: der Rest leuchtet</option>
+          <option value="aus">Nichts hervorheben</option>
+        </select>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-title">Wurzel ausrichten</div>
+          <div class="setting-sub">Die Wurzelbuchstaben stehen in der Familienansicht untereinander</div>
+        </div>
+        <button class="switch" id="toggleWurzelAusrichten" aria-label="Wurzel ausrichten umschalten"><span class="knob"></span></button>
+      </div>
+      </div>
+
+      <button class="einst-gruppe" id="grp-karte" type="button"
+              aria-expanded="true" aria-controls="grpInhalt-karte"><span class="ic">▸</span><span class="einst-gruppe-name">Was auf der Karte steht</span><span class="einst-gruppe-zahl">5</span></button>
+      <div class="einst-inhalt" id="grpInhalt-karte">
       <!-- Grammatik-Hinweise: am 19.08.2026 aus dem Satz-Modus hierher
            verschoben. Elias: „das kannst du in die einstellungen verschieben."
            Auf dem Satz-Modus kostete die Zeile 78 px plus Abstand — Platz,
@@ -5022,48 +5136,11 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         </div>
         <button class="switch" id="toggleQuran" aria-label="Quran-Bezüge umschalten"><span class="knob"></span></button>
       </div>
-      <!-- ============ WURZELMODUS ============
-           Elias am 10.08.2026 zur Umkehrung: "vielleicht könnte man auch
-           umgekehrt die wurzeln ausgrauen und den rest weiß lassen … es geht ja
-           um den rest, die wurzel hebt sich so oder so immer ab" — und danach:
-           "in den einstellungen eine option machen, in der wir das umkehren
-           können". Deshalb ein Schalter und nicht die neue Voreinstellung:
-           gemessen bestehen 32 von 113 Wörtern restlos aus ihrer Wurzel, die
-           stünden umgekehrt komplett grau da. -->
-      <div class="setting-row">
-        <div>
-          <div class="setting-title">Wurzel hervorheben</div>
-          <div class="setting-sub">Was leuchtet: die Wurzel oder der Rest des Wortes</div>
-        </div>
-        <select id="wurzelFarbeSelect" class="select-input">
-          <option value="normal">Wurzel leuchtet</option>
-          <option value="um">Umgekehrt: der Rest leuchtet</option>
-          <option value="aus">Nichts hervorheben</option>
-        </select>
       </div>
-      <div class="setting-row">
-        <div>
-          <div class="setting-title">Wurzel ausrichten</div>
-          <div class="setting-sub">Die Wurzelbuchstaben stehen in der Familienansicht untereinander</div>
-        </div>
-        <button class="switch" id="toggleWurzelAusrichten" aria-label="Wurzel ausrichten umschalten"><span class="knob"></span></button>
-      </div>
-      <!-- Elias' Vorgabe war "nur neue wörter … die sich mit meinem aktuellen
-           wissenstand decken". Gemessen gibt es auf genau diesem Stand NULL neue
-           Wörter — eine still gesetzte Grenze hätte Schritt 3 dauerhaft
-           verschwinden lassen, ohne dass irgendwo stünde warum. Deshalb ein
-           sichtbarer Schalter; der Hinweis im Wurzelmodus nennt die Zahl. -->
-      <div class="setting-row">
-        <div>
-          <div class="setting-title">Neue Wörter im Wurzelmodus</div>
-          <div class="setting-sub">Woher die unbekannten Wörter für Schritt 3 kommen dürfen</div>
-        </div>
-        <select id="wurzelNiveauSelect" class="select-input">
-          <option value="stand">Nur mein Stand</option>
-          <option value="buch">Ganze Bücher</option>
-          <option value="alles">Alles Geladene</option>
-        </select>
-      </div>
+
+      <button class="einst-gruppe" id="grp-lernen" type="button"
+              aria-expanded="true" aria-controls="grpInhalt-lernen"><span class="ic">▸</span><span class="einst-gruppe-name">Wie du lernst</span><span class="einst-gruppe-zahl">5</span></button>
+      <div class="einst-inhalt" id="grpInhalt-lernen">
 
       <div class="setting-row">
         <div>
@@ -5074,6 +5151,28 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
           <option value="ar-de">Arabisch → Deutsch</option>
           <option value="de-ar">Deutsch → Arabisch</option>
           <option value="mixed">Gemischt (zufällig)</option>
+        </select>
+      </div>
+      <!-- ⭐ Der Tagesdeckel (07.09.2026). Elias: „das ist gut" — und sein
+           Argument: „wenn die runden durchschnittlich 15 min dauern und ich
+           dann weiß das sie wirklich ewig dauern dann ist doch auch nicht gut
+           oder."
+           ⚠️ Steht direkt UNTER der Sitzungsgröße, weil beide zusammen
+           entscheiden, wie lang ein Tag wird: der Deckel sagt, wie viel
+           überhaupt angeboten wird, die Sitzungsgröße, wie es sich auf Runden
+           verteilt. Getrennte Orte hätten die zwei Zahlen entkoppelt. -->
+      <div class="setting-row">
+        <div>
+          <div class="setting-title">Karten pro Tag</div>
+          <div class="setting-sub">Der Rest wartet auf morgen – der Rückstand bleibt erhalten</div>
+        </div>
+        <select id="tagesDeckelSelect" class="select-input">
+          <option value="5">5</option>
+          <option value="10" selected>10</option>
+          <option value="15">15</option>
+          <option value="20">20</option>
+          <option value="30">30</option>
+          <option value="0">Aus – alle fälligen</option>
         </select>
       </div>
       <div class="setting-row">
@@ -5102,27 +5201,67 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
                  aria-label="Eigene Sitzungsgröße in Karten">
         </div>
       </div>
-      <!-- ⭐ Der Tagesdeckel (07.09.2026). Elias: „das ist gut" — und sein
-           Argument: „wenn die runden durchschnittlich 15 min dauern und ich
-           dann weiß das sie wirklich ewig dauern dann ist doch auch nicht gut
-           oder."
-           ⚠️ Steht direkt UNTER der Sitzungsgröße, weil beide zusammen
-           entscheiden, wie lang ein Tag wird: der Deckel sagt, wie viel
-           überhaupt angeboten wird, die Sitzungsgröße, wie es sich auf Runden
-           verteilt. Getrennte Orte hätten die zwei Zahlen entkoppelt. -->
       <div class="setting-row">
         <div>
-          <div class="setting-title">Karten pro Tag</div>
-          <div class="setting-sub">Der Rest wartet auf morgen – der Rückstand bleibt erhalten</div>
+          <div class="setting-title">Ab Box 4 eintippen</div>
+          <div class="setting-sub">Statt nur umdrehen: die Antwort selbst schreiben — arabisch oder deutsch, je nach Richtung der Karte. „Überspringen" steht darunter. Für die arabische Richtung brauchst du eine arabische Tastatur.</div>
         </div>
-        <select id="tagesDeckelSelect" class="select-input">
-          <option value="5">5</option>
-          <option value="10" selected>10</option>
-          <option value="15">15</option>
-          <option value="20">20</option>
-          <option value="30">30</option>
-          <option value="0">Aus – alle fälligen</option>
+        <button class="switch" id="toggleTippen" aria-label="Tippen ab Box 4 umschalten"><span class="knob"></span></button>
+      </div>
+
+      <!-- Elias' Vorgabe war "nur neue wörter … die sich mit meinem aktuellen
+           wissenstand decken". Gemessen gibt es auf genau diesem Stand NULL neue
+           Wörter — eine still gesetzte Grenze hätte Schritt 3 dauerhaft
+           verschwinden lassen, ohne dass irgendwo stünde warum. Deshalb ein
+           sichtbarer Schalter; der Hinweis im Wurzelmodus nennt die Zahl. -->
+      <div class="setting-row">
+        <div>
+          <div class="setting-title">Neue Wörter im Wurzelmodus</div>
+          <div class="setting-sub">Woher die unbekannten Wörter für Schritt 3 kommen dürfen</div>
+        </div>
+        <select id="wurzelNiveauSelect" class="select-input">
+          <option value="stand">Nur mein Stand</option>
+          <option value="buch">Ganze Bücher</option>
+          <option value="alles">Alles Geladene</option>
         </select>
+      </div>
+      </div>
+
+      <button class="einst-gruppe" id="grp-hoeren" type="button"
+              aria-expanded="true" aria-controls="grpInhalt-hoeren"><span class="ic">▸</span><span class="einst-gruppe-name">Hören</span><span class="einst-gruppe-zahl">2</span></button>
+      <div class="einst-inhalt" id="grpInhalt-hoeren">
+      <!-- ⭐ Das Hör-Tagesziel (08.09.2026). Elias: „ich will auch einstellen,
+           was mein tagesziel beim hörmodus ist in den einstellungen und ich
+           will erstmal nur 5 wörter machen als tagesziel."
+           ⚠️ Steht bei den anderen Tagesmengen, nicht beim Hörmodus selbst:
+           „Karten pro Tag" und „Wörter hören pro Tag" sind dieselbe Sorte
+           Entscheidung — wie lang wird ein Tag. Zwei Orte hätten sie getrennt.
+           ⛔ Kein „Aus": der Hörmodus hat keinen Vorrat, die Zahl IST das Ende. -->
+      <div class="setting-row">
+        <div>
+          <div class="setting-title">Wörter hören pro Tag</div>
+          <div class="setting-sub">Tagesziel im Hörmodus – danach läuft der Zähler weiter, gesperrt wird nichts</div>
+        </div>
+        <!-- ⭐ Die eigene Zahl seit 08.09.2026, eine halbe Stunde nach den
+             festen Stufen. Elias: „ich will auch individuell eingeben können."
+             ⚠️ Derselbe Aufbau wie bei der Sitzungsgröße — der Kommentar bei
+             `zeigeTagesDeckel()` hatte genau das vorgezeichnet: „Kommt eine
+             eigene Zahl später dazu, ist das Muster von zeigeSitzungsgroesse()
+             das Vorbild." -->
+        <div class="sitzung-wahl">
+          <select id="hoerZielSelect" class="select-input">
+            <option value="3">3</option>
+            <option value="5" selected>5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+            <option value="eigen">Eigene Zahl …</option>
+          </select>
+          <input id="hoerZielEigen" class="select-input sitzung-eigen" type="number"
+                 inputmode="numeric" min="1" max="999" step="1" hidden
+                 aria-label="Eigenes Tagesziel im Hörmodus, in Wörtern">
+        </div>
       </div>
       <div class="setting-row">
         <div>
@@ -5132,14 +5271,11 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
       </div>
       <select id="voiceSelect" class="select-input select-full"></select>
 
-      <div class="setting-row">
-        <div>
-          <div class="setting-title">Ab Box 4 eintippen</div>
-          <div class="setting-sub">Statt nur umdrehen: die Antwort selbst schreiben — arabisch oder deutsch, je nach Richtung der Karte. „Überspringen" steht darunter. Für die arabische Richtung brauchst du eine arabische Tastatur.</div>
-        </div>
-        <button class="switch" id="toggleTippen" aria-label="Tippen ab Box 4 umschalten"><span class="knob"></span></button>
       </div>
 
+      <button class="einst-gruppe" id="grp-listen" type="button"
+              aria-expanded="true" aria-controls="grpInhalt-listen"><span class="ic">▸</span><span class="einst-gruppe-name">Deine Wortlisten</span><span class="einst-gruppe-zahl">3</span></button>
+      <div class="einst-inhalt" id="grpInhalt-listen">
       <!-- Der Rückweg zum „Kenne ich schon"-Knopf auf der Lernkarte. Ohne diese
            Liste wäre der Knopf eine Einbahnstraße: ein Fehlgriff, und das Wort
            wäre für immer weg, ohne dass irgendwo stünde welches. -->
@@ -5187,6 +5323,11 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         <button class="btn btn-secondary" id="btnEinzelnFreiKopieren">Kopieren</button>
       </div>
 
+      </div>
+
+      <button class="einst-gruppe" id="grp-daten" type="button"
+              aria-expanded="false" aria-controls="grpInhalt-daten"><span class="ic">▸</span><span class="einst-gruppe-name">Daten &amp; App</span><span class="einst-gruppe-zahl">6</span></button>
+      <div class="einst-inhalt hidden" id="grpInhalt-daten">
       <!-- ⭐ Neu am 30.07.2026, und der Anlass war ein Kreislauf, in dem Elias
            festhing: Das Ziehen zum Aktualisieren war kaputt, also kam kein neuer
            Stand an — auch nicht der Fix für das Ziehen. Er hat drei Änderungen
@@ -5251,6 +5392,8 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         </div>
         <button class="btn btn-secondary" id="btnResetProgress">Zurücksetzen</button>
       </div>
+      </div>
+
       <!-- „Streak zurücksetzen" ist am 29.07.2026 auf Elias' Wunsch entfernt
            worden: "die Einstellung Tagestreak auf null setzen sollte entfernt
            werden". Ein Knopf, der die eigene Serie löscht, hat keinen
@@ -5409,6 +5552,9 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 <script src="js/hoeren.js"></script>
 <script src="js/wurzel.js"></script>
 <script src="js/statistik.js"></script>
+<!-- ⚠️ NACH kern.js: braucht `LS` und `todayStr`. Der Takt startet beim Laden,
+     schreibt aber erst, wenn ein gemessener Bildschirm offen ist. -->
+<script src="js/zeitmessung.js"></script>
 <script src="js/einstellungen.js"></script>
 <!-- Geraeteabgleich. Bewusst NACH kern.js (braucht LS und PROGRESS) und vor
      init.js, damit der erste Abgleich vor dem Aufbau der Oberflaeche laeuft. -->
