@@ -331,8 +331,8 @@ function renderWochenquote(){
        soll erfahren, WARUM nichts da ist — sonst sieht es nach einem Fehler
        aus. [[leere_liste_ist_keine_messung]] */
     kasten.innerHTML = `<div class="wq-hinweis">Noch keine Daten. Die Trefferquote wird `
-      + `seit dem 07.09.2026 je Tag mitgeschrieben — gezählt werden Satzmodus `
-      + `und Hörmodus, wo „richtig" feststeht.</div>`;
+      + `seit dem 07.09.2026 je Tag mitgeschrieben — Karteikarten, Satzmodus `
+      + `und Hörmodus zusammen.</div>`;
     return;
   }
 
@@ -344,8 +344,16 @@ function renderWochenquote(){
        lügt. Eine gestreckte Skala würde kleine Unterschiede aufblasen, und
        genau die will Elias beurteilen. */
     const hoehe = leer ? 0 : Math.max(2, w.quote);
+    /* ⭐ Die Aufschlüsselung gehört in den Tooltip, nicht unter die Säule: die
+       Reihe soll acht Wochen nebeneinander vergleichbar halten. Sie steht aber
+       da — sonst wüsste beim Rauschversuch niemand mehr, wie viel von welcher
+       Sorte in einer Woche steckt. [[stand_besteht_aus_mehreren_zahlen]] */
+    const teile = [];
+    if (w.karten)  teile.push(`${w.kartenR} von ${w.karten} Karteikarten`);
+    if (w.abfrage) teile.push(`${w.abfrageR} von ${w.abfrage} Abfragen`);
     return `<div class="wq-woche${leer ? ' wq-leer' : ''}" title="${escapeHtml(w.von)} bis ${escapeHtml(w.bis)}${
-      leer ? ' — keine Aufgaben' : ` — ${w.richtig} von ${w.gestellt} richtig`}">
+      leer ? ' — keine Aufgaben' : ` — ${w.richtig} von ${w.gestellt} richtig`
+        + (teile.length > 1 ? ` (${teile.join(' · ')})` : '')}">
       <div class="wq-zahl">${leer ? '—' : w.quote + '%'}</div>
       <div class="wq-saeule"><div class="wq-fuellung" style="height:${hoehe}%"></div></div>
       <div class="wq-datum">${kurz(w.von)}</div>

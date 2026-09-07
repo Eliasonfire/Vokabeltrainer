@@ -1282,6 +1282,16 @@ function answer(stufe){
      Der Unterschied ist, dass die Serie nur den letzten Tag behaelt und der
      Kalender jeden. */
   if (typeof tagZaehlen === 'function') tagZaehlen();
+  /* ⭐ Die Trefferquote je Tag (07.09.2026). Elias: „trefferquote sollte doch
+     auch die karteikarten zählen weil der fortschritt da ist ja wirklich sehr
+     wichtig." Die Karte schreibt in eigene Felder (`kGestellt`/`kRichtig`) —
+     die Begründung steht bei `merkeQuote()` in js/kern.js.
+
+     ⛔ `s.richtig` und nichts Eigenes: dieselbe Grenze wie `p.correct` drei
+     Zeilen darüber und wie die Gesamtstatistik. Eine zweite Definition von
+     „richtig" daneben hieße, dass zwei Ansichten dasselbe Üben verschieden
+     zählen. [[dieselbe_frage_zwei_antworten]] */
+  if (typeof merkeQuote === 'function') merkeQuote(s.richtig, 'karte');
 
   /* ---------- Meilensteine (js/feier.js) ----------
      Erst gespeichert, DANN gefeiert. Ein Effekt darf den Endzustand nie tragen:
