@@ -49,6 +49,23 @@ const SYNC_SCHLUESSEL = [
      Bei einem Zaehler, der ohnehin nur waehrend des Uebens waechst, ist das
      tragbar: gewinnt das Geraet, an dem gerade geuebt wurde. */
   'vt_hoerTag',
+  /* ⛔ Der Tageszaehler des SATZMODUS (07.09.2026) — aus genau demselben Grund
+     wie 'vt_hoerTag' eine Zeile darueber: ohne Abgleich haette Elias zwei
+     getrennte Tagesziele und muesste die 13 Aufgaben auf jedem Geraet einzeln
+     machen. Ebenfalls als Block, juengerer Stempel gewinnt: ein Zaehler, der
+     nur waehrend des Uebens waechst, ist damit gut bedient.
+     ⚠️ Gefunden hat das nicht ich, sondern `pruefe-kreislaeufe.mjs` —
+     ich hatte den Schluessel angelegt und den Abgleich vergessen. Das ist die
+     Fehlerart, die sich nie von selbst meldet. [[daten_ohne_zugang]] */
+  'vt_satzTag',
+  /* ⭐ „Laut sagen": welche Karte wann zuletzt markiert war, und die laufende
+     Rundennummer (07.09.2026). Ohne Abgleich wandert die Markierung auf jedem
+     Geraet fuer sich — kein Datenverlust, aber „jedes Wort kommt mal dran"
+     wird schlechter erfuellt, und genau das war Elias' Punkt.
+     ⚠️ `vt_lautStand` bekommt einen eigenen Zweig (Maximum JE WORT): als Block
+     verloere man die Markierungen des anderen Geraets. `vt_lautRunde` ist eine
+     einzelne Zahl und laeuft ueber den Schlusszweig. */
+  'vt_lautStand', 'vt_lautRunde',
   /* „Kenne ich schon" (17.08.2026). ⚠️ Wird JE WORT zusammengefuehrt, nicht als
      Block - siehe den eigenen Zweig in fuehreZusammen(). Als Block waere er ein
      Rueckschritt hinter genau den Fehler, der heute Nacht bei den Einstellungen
@@ -621,6 +638,23 @@ function fuehreZusammen(fern){
        genau deshalb steht die Zahl in der Statistik immer MIT ihrem Nenner.
        ⭐ `richtig` kann dabei nie ueber `gestellt` steigen: auf jedem Geraet
        gilt richtig ≤ gestellt, also gilt es auch fuer die beiden Maxima. */
+    /* ⭐ „Laut sagen" je Wort: { wortId: Rundennummer }. Die HÖHERE Nummer
+       gewinnt — sie heißt „zuletzt dran", und wer zuletzt dran war, ist auf
+       beiden Geräten dieselbe Aussage. Ein Blockstempel würde die Markierungen
+       des anderen Geräts wegwerfen; das Wort käme dort sofort wieder dran und
+       ein anderes nie. */
+    if (k === 'vt_lautStand'){
+      try {
+        const a = JSON.parse(hierRoh) || {}, b = JSON.parse(dortRoh) || {};
+        const raus = Object.assign({}, a);
+        for (const [id, nr] of Object.entries(b))
+          raus[id] = Math.max(Number(raus[id]) || 0, Number(nr) || 0);
+        const neu = JSON.stringify(raus);
+        if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
+      } catch (e){ /* kaputtes JSON auf einer Seite: lokal behalten */ }
+      return;
+    }
+
     if (k === 'vt_quoteTage'){
       try {
         const a = JSON.parse(hierRoh) || {}, b = JSON.parse(dortRoh) || {};

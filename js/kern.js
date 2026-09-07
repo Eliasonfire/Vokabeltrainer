@@ -1350,6 +1350,22 @@ function ladeStandNeu(){
   if (usFrisch && typeof usFrisch === 'object' && !Array.isArray(usFrisch)) UEBUNG_STAND = usFrisch;
   const ccFrisch = LS.get('vt_customCats', null);
   if (Array.isArray(ccFrisch)) CUSTOM_CATS = ccFrisch;
+  /* ⛔⛔ DIE DREI VOM 07.09.2026 — und sie waeren beinahe genau in dieselbe
+     Falle gelaufen wie oben beschrieben. `LAUT_STAND` und `QUOTE_TAGE` stehen
+     im Abgleich, aber ohne dieses Nachlesen arbeitete die laufende Seite
+     weiter mit dem alten Stand — und der naechste `saveLautStand()` bzw.
+     `merkeQuote()` schriebe das Geholte wieder weg.
+
+     ⚠️ Gefunden hat es nicht der Abgleich-Pruefer (der war gruen), sondern
+     ein Blick auf die Zeile darueber: `UEBUNG_STAND` wird nachgelesen, meine
+     drei neuen nicht. Ein gruener Pruefer ist kein Beweis fuer das, was er
+     nicht prueft. [[einstellung_wirkt_nicht_weil_zurueckgelesen]] */
+  const lsFrisch = LS.get('vt_lautStand', null);
+  if (lsFrisch && typeof lsFrisch === 'object' && !Array.isArray(lsFrisch)) LAUT_STAND = lsFrisch;
+  const lrFrisch = LS.get('vt_lautRunde', null);
+  if (Number.isFinite(lrFrisch)) LAUT_RUNDE = lrFrisch;
+  const qtFrisch = LS.get('vt_quoteTage', null);
+  if (qtFrisch && typeof qtFrisch === 'object' && !Array.isArray(qtFrisch)) QUOTE_TAGE = qtFrisch;
   if (typeof ladeQuranStandNeu === 'function') ladeQuranStandNeu();
 
   if (typeof renderHome === 'function') renderHome();
