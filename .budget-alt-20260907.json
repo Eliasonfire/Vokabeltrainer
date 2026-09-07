@@ -1,0 +1,13 @@
+{
+  "start": "2026-08-26T01:47:54.695Z",
+  "startProzent": 7,
+  "budgetProzent": 93,
+  "grenzeStunden": null,
+  "posten": [],
+  "ablesungen": [
+    {
+      "zeit": "2026-09-07T01:28:02.967Z",
+      "prozent": 50
+    }
+  ]
+}

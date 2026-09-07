@@ -53,20 +53,40 @@
  * Werkzeug meldete Erfolg. Deshalb `data/woerterbuch-belege.json`, und
  * `vorrat.mjs` liest beide. [[angleichen_loescht_handarbeit]]
  *
+ * ================== DRITTE QUELLE: LANGENSCHEIDT, NUR FÜR `pl` ============
+ *
+ * Seit dem 07.09.2026 beantwortet **Langenscheidt** das Feld `pl` — die
+ * größte offene Feldlücke (**25** Wörter, `node werkzeuge/vorrat.mjs`).
+ * Elias hatte es angestoßen: „ja mach das mit langenscheidt für die plurale".
+ *
+ * ⛔ Es beantwortet NUR `pl`. Die Wortart bleibt bei arabdict und Reverso —
+ * eine Quelle, die drei Fragen beantwortet, ist bei einer falschen Antwort
+ * dreifach falsch, und die Filter sind je Feld verschieden.
+ *
+ * ⛔ Und es sagt NIE „hat keinen Plural". Gemessen schweigt Langenscheidt bei
+ * مهندس (Plural مهندسون) und سيارة (سيارات) genauso wie bei سكر (Zucker, der
+ * wirklich keinen hat). Null Treffer hat zwei Ursachen, die die Quelle nicht
+ * trennt. Der Kopf von `langenscheidt.mjs` führt das aus.
+ *
  * Aufruf:
  *   node werkzeuge/woerterbuch-belege.mjs            fragen und ablegen
  *   node werkzeuge/woerterbuch-belege.mjs --pruefen  nur zeigen
+ *   node werkzeuge/woerterbuch-belege.mjs --nur-pl   nur die Pluralfrage
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import vm from 'node:vm';
+import { schlageNach as ausLangenscheidt } from './langenscheidt.mjs';
 
 const WURZEL = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const ZIEL = path.join(WURZEL, 'data', 'woerterbuch-belege.json');
 const MCP = 'G:/1. Workspace/MCP-Servers/arabdict/src/';
 
 const nurZeigen = process.argv.includes('--pruefen');
+/* ⭐ Reverso startet je Wort ein echtes Browserfenster. Wer nur die Plurale
+   nachfragen will, soll dafür nicht 25 Fenster öffnen müssen. */
+const nurPlural = process.argv.includes('--nur-pl');
 
 /* ---------- Die Quellen ---------- */
 let ausArabdict, ausReverso, nackt;
@@ -224,18 +244,64 @@ function zusammengesetzt(w) {
 /* Zwei Fragen, dieselbe Abfrage: die Wortart und — bei Nomen — das
    Geschlecht. Reverso nennt es als „nm." bzw. „nf.", also faellt es ohnehin
    an; ein zweiter Lauf dafuer waere ein zweiter Browserstart je Wort. */
+/* ⛔⛔ `type: 'noun'` IST NICHT IMMER EINE ANGABE.
+ *
+ * `js/kern.js:530` setzt in `addPersonalVocab()` `type:'noun'` **fest** — für
+ * jedes in der App angelegte Wort, ohne zu fragen. Gemessen am 07.09.2026:
+ * **14 von 14** Wörtern in `data/eigene-woerter.json` tragen 'noun', darunter
+ * ein Verb (خَرَجَ), ein Fragewort (كَيْفَ), drei Ẓarf (بَعْدَ, أَمَامَ,
+ * عِنْدَ), zwei Adjektive (مَكْسُورٌ, كَسْلَانُ) und drei Partikeln.
+ *
+ * Der erste Pluralalauf glaubte dieser Angabe und legte prompt vier falsche
+ * Belege an — jeweils den Plural eines gleichgeschriebenen NOMENS:
+ *     بَعْدَ („nach")        → أبعاد  (Plural von بُعْد, „Abstand")
+ *     كَيْفَ („wie")         → كيوف   (Plural von كَيْف, „Laune")
+ *     خَرَجَ („herausgehen") → أخراج  (Plural von خَرْج, „Ausgabe")
+ * Von fünf Belegen war genau einer richtig (سَيِّدٌ → سادة).
+ *
+ * ⭐ Ein Vorgabewert sieht aus wie ein Befund und ist keiner.
+ * [[eingefrorenes_feld_ist_kein_zustand]] [[kann_ist_nicht_ist]]
+ */
+const EIGENE_IDS = new Set((() => {
+  const p = path.join(WURZEL, 'data', 'eigene-woerter.json');
+  if (!fs.existsSync(p)) return [];
+  try {
+    const j = JSON.parse(fs.readFileSync(p, 'utf8'));
+    return (Array.isArray(j) ? j : (j.woerter || [])).map(w => String(w.id));
+  } catch { return []; }
+})());
+/* Belegt ist die Wortart, wenn sie NICHT dieser Vorgabewert sein kann. Bei den
+   eigenen Wörtern zählt sie nur, wenn etwas anderes als 'noun' dasteht — dann
+   hat Elias sie über das Bearbeitungsformular selbst gesetzt. */
+const wortartBelegt = (w) => !(EIGENE_IDS.has(String(w.id)) && w.type === 'noun');
+
 function brauchtWas(w) {
   const b = SCHON[String(w.id)] || {};
   const noetig = [];
-  if (leer(w.type) && !b.typeApp && !erklaert(w, "type")) noetig.push("type");
-  if (w.type === "noun" && leer(w.gender) && !b.gender && !erklaert(w, "gender")) noetig.push("gender");
+  /* ⭐ Auch ein 'noun', das nur der Vorgabewert ist, ist eine offene Frage.
+     Vorher fielen die 14 eigenen Wörter durch jedes Raster: `leer()` sah
+     'noun' und schwieg, und die Pluralfrage glaubte demselben 'noun'.
+     Jetzt landen sie dort, wo sie hingehören — bei der Wortart. */
+  if (!nurPlural && (leer(w.type) || !wortartBelegt(w)) && !b.typeApp && !erklaert(w, "type")) noetig.push("type");
+  if (!nurPlural && w.type === "noun" && wortartBelegt(w)
+      && leer(w.gender) && !b.gender && !erklaert(w, "gender")) noetig.push("gender");
+  /* ⛔ Nur bei Nomen — und nur bei BELEGTEN Nomen, siehe oben. Ein Verb hat
+     keinen Plural, und ein Fachbegriff wie مَجْرُور ist Metasprache;
+     `FELD_REGELN` sagt beides, und `erklaert()` ist die EINE Stelle, die es
+     weiß. Eine zweite Liste hier wäre eine zweite Wahrheit.
+     [[dieselbe_frage_zwei_antworten]] */
+  if (w.type === "noun" && wortartBelegt(w) && leer(w.pl) && !b.pl && !erklaert(w, "pl")) noetig.push("pl");
   return noetig;
 }
 
 const offen = BESTAND.filter(w => w && w.ar && brauchtWas(w).length);
+const zaehle = (feld) => offen.filter(w => brauchtWas(w).includes(feld)).length;
 
-console.log('Wörterbuch-Belege — ' + offen.length + ' Wörter mit offener Wortart oder offenem Geschlecht');
-console.log('Quellen: arabdict + Reverso. ⛔ Vorschläge, keine Einträge.\n');
+console.log('Wörterbuch-Belege — ' + offen.length + ' Wörter mit offener Frage'
+  + '  (Wortart ' + zaehle('type') + ' · Geschlecht ' + zaehle('gender')
+  + ' · Plural ' + zaehle('pl') + ')');
+console.log('Quellen: arabdict + Reverso für die Wortart, Langenscheidt für den Plural.');
+console.log('⛔ Vorschläge, keine Einträge.' + (nurPlural ? '  (--nur-pl: nur die Pluralfrage)' : '') + '\n');
 
 /* ---------- Die Übersetzung in das, was die App kennt ---------- */
 /* ⚠️ Nur Eindeutiges. „nm." heißt „nom masculin" — das ist ein Nomen UND eine
@@ -280,9 +346,15 @@ for (const w of offen) {
   const such = nackt(w.ar).replace(/^ال/, '');   /* Artikel weg: أَلْمُهَنْدِسٌ → مهندس */
   const eintrag = {};
   const quellen = [];
+  const noetig = brauchtWas(w);
+  /* ⭐ Nur die Quelle fragen, die für die offene Frage zuständig ist. Vorher
+     lief für JEDES Wort arabdict und ggf. Reverso — und Reverso öffnet je Wort
+     ein echtes Browserfenster. Mit der Pluralfrage kamen 25 Wörter dazu, für
+     die keine der beiden etwas beizutragen hat. */
+  const brauchtWortart = noetig.includes('type') || noetig.includes('gender');
 
   /* --- arabdict --- */
-  try {
+  if (brauchtWortart) try {
     const a = await ausArabdict(such);
     const passend = (a.formen || []).filter(f =>
       f.genauDasWort && f.angabe && !f.wortgruppe && formPasstZu(f.form, w.ar));
@@ -302,7 +374,7 @@ for (const w of offen) {
   } catch (e) { bericht.verworfen.push(w.ar + ' — arabdict: ' + e.message); }
 
   /* --- Reverso, nur wenn arabdict nichts Eindeutiges hatte --- */
-  if (!eintrag.typeApp) {
+  if (brauchtWortart && !eintrag.typeApp) {
     try {
       const r = await ausReverso(such, 'arabisch-deutsch');
       const z = r.zumSuchwort;
@@ -336,15 +408,52 @@ for (const w of offen) {
     } catch (e) { bericht.verworfen.push(w.ar + ' — reverso: ' + e.message); }
   }
 
-  if (eintrag.typeApp) {
+  /* --- Langenscheidt, nur für den Plural --- */
+  if (noetig.includes('pl')) {
+    try {
+      /* ⛔ NICHT `such` übergeben. Das ist arabdicts `nackt()`, und das macht
+         aus ة ein ه — in einer Langenscheidt-Adresse ist das ein anderes Wort
+         (`اربعه` statt `أربعة`, leere Seite). Langenscheidt bekommt das Wort
+         mit seinen Buchstaben und zieht selbst nur die Ḥarakāt ab.
+         [[gleiche_messreihe_falsche_ursache]] */
+      const l = await ausLangenscheidt(String(w.ar).normalize('NFC').replace(/^اَ?لْ?|^أَلْ?/, ''));
+      if (l.eindeutig) {
+        eintrag.pl = l.plural;
+        eintrag.plUrl = l.url;
+        quellen.push('langenscheidt');
+        bericht.bestaetigt.push(w.ar + ' (' + (w.de || '') + ') → Plural ' + l.plural
+          + '  [langenscheidt]');
+      } else if (l.alle.length > 1) {
+        /* ⛔ Der Homograph-Fall. رجل liefert رجال („Männer", von رَجُل) UND
+           أرجل („Beine", von رِجْل) — zwei Wörter, ein Schriftbild, und
+           Langenscheidt vokalisiert seine Lemmata nicht. Ein einzelner davon
+           wäre geraten. Elias bekommt die Fundstelle und entscheidet.
+           [[skelettvergleich_wirft_information_weg]] */
+        bericht.verworfen.push(w.ar + ' (' + (w.de || '') + ') — ' + l.grund
+          + '  ' + l.url);
+      } else {
+        /* ⛔ NICHT als „hat keinen Plural" ablegen — siehe Kopf. */
+        bericht.verworfen.push(w.ar + ' (' + (w.de || '') + ') — Langenscheidt nennt keinen '
+          + 'Plural. Das ist KEIN Beleg dafür, dass es keinen gibt.');
+      }
+    } catch (e) { bericht.verworfen.push(w.ar + ' — langenscheidt: ' + e.message); }
+    /* Höflich bleiben — ein Abruf je Sekunde reicht für 25 Wörter. */
+    await new Promise(x => setTimeout(x, 900));
+  }
+
+  if (eintrag.typeApp || eintrag.pl) {
     eintrag.woher = quellen.join(' + ');
-    eintrag.url = quellen[0] === 'arabdict'
-      ? 'https://www.arabdict.com/de/deutsch-arabisch/' + encodeURIComponent(such)
-      : 'https://woerterbuch.reverso.net/arabisch-deutsch/' + encodeURIComponent(such);
+    if (eintrag.typeApp) {
+      eintrag.url = quellen[0] === 'arabdict'
+        ? 'https://www.arabdict.com/de/deutsch-arabisch/' + encodeURIComponent(such)
+        : 'https://woerterbuch.reverso.net/arabisch-deutsch/' + encodeURIComponent(such);
+    }
     belege[String(w.id)] = eintrag;
-    bericht.bestaetigt.push(w.ar + ' (' + (w.de || '') + ') → ' + eintrag.typeApp
-      + '  [' + eintrag.type + ', ' + eintrag.woher + ']'
-      + (eintrag.gender ? ' · Geschlecht ' + eintrag.gender : ''));
+    if (eintrag.typeApp) {
+      bericht.bestaetigt.push(w.ar + ' (' + (w.de || '') + ') → ' + eintrag.typeApp
+        + '  [' + eintrag.type + ', ' + eintrag.woher + ']'
+        + (eintrag.gender ? ' · Geschlecht ' + eintrag.gender : ''));
+    }
   }
 }
 
@@ -364,15 +473,41 @@ if (nurZeigen) {
 } else {
   const inhalt = {
     erzeugt: new Date().toISOString(),
-    quelle: 'arabdict.com und woerterbuch.reverso.net',
+    quelle: 'arabdict.com und woerterbuch.reverso.net (Wortart), de.langenscheidt.com (Plural)',
     hinweis: 'Vorschläge, keine Einträge. Erscheinen als Beleg neben der Frage auf '
            + 'der Wartungsfragen-Seite; eingetragen wird nur, was Elias antippt. '
-           + 'Ein Beleg steht hier nur, wenn die Quelle GENAU EINE Wortart nennt '
-           + 'und die Form dem gesuchten Wort entspricht.',
+           + 'Ein Beleg steht hier nur, wenn die Quelle GENAU EINE Wortart bzw. '
+           + 'GENAU EINEN Plural nennt und die Form dem gesuchten Wort entspricht. '
+           + '⛔ Ein fehlender Plural bedeutet NICHT, dass es keinen gibt — '
+           + 'Langenscheidt schweigt auch bei Wörtern, die einen haben.',
     belege,
   };
+  /* ⛔⛔ WAS DER LAUF WEGNIMMT, MUSS ER SAGEN.
+     Am 07.09.2026 schrieb ein zweiter Lauf die Datei von 11 auf 9 Belege
+     herunter — und meldete nur „9 Belege". Verschwunden waren مَكْسُورٌ
+     (adjective) und ein zweites eigenes Wort; beide fielen durch die neue
+     Schranke `wortartBelegt()`, was richtig war. Aber richtig oder falsch
+     entscheidet sich nicht an der Endzahl: ein stiller Abgang sieht aus wie
+     „war nie da". [[zweiter_aufruf_ueberschreibt_still]] [[angleichen_loescht_handarbeit]] */
+  let vorher = {};
+  try {
+    if (fs.existsSync(ZIEL)) vorher = JSON.parse(fs.readFileSync(ZIEL, 'utf8')).belege || {};
+  } catch { /* unlesbar? dann gibt es eben keinen Vergleich */ }
+  const alt = Object.keys(vorher), neu = Object.keys(belege);
+  const weg = alt.filter(id => !neu.includes(id));
+  const dazu = neu.filter(id => !alt.includes(id));
+
   fs.writeFileSync(ZIEL + '.neu', JSON.stringify(inhalt, null, 2), 'utf8');
   fs.renameSync(ZIEL + '.neu', ZIEL);
   console.log('Geschrieben: ' + path.relative(WURZEL, ZIEL)
-    + '  (' + Object.keys(belege).length + ' Belege)');
+    + '  (' + neu.length + ' Belege, vorher ' + alt.length + ')');
+  if (dazu.length) console.log('  + ' + dazu.length + ' neu:  ' + dazu.join(', '));
+  if (weg.length) {
+    console.log('  ⚠️ ' + weg.length + ' Beleg(e) FALLEN WEG — nachsehen, ob das gewollt ist:');
+    for (const id of weg) {
+      const v = vorher[id];
+      console.log('      ' + id + '  war: ' + (v.typeApp || v.pl || '?')
+        + (v.type ? '  [' + v.type + ']' : '') + '  von ' + (v.woher || '?'));
+    }
+  }
 }
