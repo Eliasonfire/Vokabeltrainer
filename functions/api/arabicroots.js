@@ -89,18 +89,65 @@ function antwort(daten, status = 200){
   });
 }
 
-/* Anmeldung bei Supabase mit E-Mail und Passwort. ⚠️ Die Werte stehen als
-   Cloudflare-Secrets und tauchen weder im Quelltext noch in einer Antwort auf. */
-async function anmelden(env){
-  const res = await fetch(`${env.AR_SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+/* ---------- Anmeldung: Refresh-Token, nicht Passwort ----------
+
+   ⛔⛔ Hier stand zuerst eine Anmeldung mit E-Mail und Passwort. Elias am
+   07.09.2026: „ich melde mich normalerweise mit google ein." Damit gibt es gar
+   kein Passwort — der Weg konnte nie funktionieren. Der arabicroots-MCP löst
+   es genauso: `SUPABASE_REFRESH_TOKEN`, und in seiner .env steht der Hinweis
+   dazu ausdrücklich als „Option B, falls du dich per Google/Apple anmeldest".
+   [[kann_ist_nicht_ist]]
+
+   ⛔⛔ UND EIN REFRESH-TOKEN IST EINMALIG. Supabase gibt bei jeder Erneuerung
+   einen NEUEN aus und macht den alten ungültig. Stünde hier fest der Wert aus
+   dem Secret, liefe der erste Aufruf und jeder weitere nicht mehr — und zwar
+   ohne dass irgendwo etwas meldet, weil diese Funktion ihre Fehler
+   absichtlich schluckt. Deshalb:
+
+     1. Zuerst der zuletzt gespeicherte Token aus KV.
+     2. Nur beim allerersten Mal (oder wenn der gespeicherte nicht mehr geht)
+        der aus dem Secret.
+     3. Der neu erhaltene wird SOFORT abgelegt, bevor irgendetwas anderes
+        passiert — geht der Aufruf danach schief, ist die Kette trotzdem heil.
+
+   ⚠️ Der Token gehört einer EIGENEN Sitzung. Wird derselbe benutzt, den auch
+   Elias' Browser hält, macht die Rotation hier seine Anmeldung drüben kaputt
+   und er fliegt aus arabicroots. Deshalb: nach dem Kopieren arabicroots.de
+   einmal neu laden — dann hat sein Browser einen frischen und die beiden
+   Ketten laufen getrennt weiter. */
+const KV_REFRESH = 'arabicroots:refresh';
+
+async function tokenHolen(env, refresh){
+  const res = await fetch(`${env.AR_SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`, {
     method: 'POST',
     headers: { apikey: env.AR_ANON_KEY, 'content-type': 'application/json' },
-    body: JSON.stringify({ email: env.AR_EMAIL, password: env.AR_PASSWORT }),
+    body: JSON.stringify({ refresh_token: refresh }),
   });
-  if (!res.ok) throw new Error('Anmeldung bei arabicroots fehlgeschlagen: ' + res.status);
+  if (!res.ok) return null;
   const daten = await res.json();
-  if (!daten.access_token) throw new Error('Kein Zugangstoken erhalten');
-  return { token: daten.access_token, userId: daten.user && daten.user.id };
+  if (!daten.access_token) return null;
+  return daten;
+}
+
+async function anmelden(env){
+  const gespeichert = env.STAND ? await env.STAND.get(KV_REFRESH) : null;
+  /* Der gespeicherte zuerst — und nur wenn er versagt, der aus dem Secret.
+     Andersherum wäre der Secret-Token nach dem ersten Lauf tot und jeder
+     weitere Aufruf begänne mit einem sicheren Fehlschlag. */
+  let daten = gespeichert ? await tokenHolen(env, gespeichert) : null;
+  let quelle = 'gespeichert';
+  if (!daten && env.AR_REFRESH_TOKEN){
+    daten = await tokenHolen(env, env.AR_REFRESH_TOKEN);
+    quelle = 'Secret';
+  }
+  if (!daten)
+    throw new Error('Anmeldung bei arabicroots fehlgeschlagen — Refresh-Token abgelaufen. '
+      + 'Einen neuen aus dem Browser holen und AR_REFRESH_TOKEN neu setzen.');
+
+  if (env.STAND && daten.refresh_token && daten.refresh_token !== gespeichert)
+    await env.STAND.put(KV_REFRESH, daten.refresh_token);
+
+  return { token: daten.access_token, userId: daten.user && daten.user.id, quelle };
 }
 
 async function rest(env, token, pfad, optionen = {}){
@@ -154,12 +201,35 @@ export function offeneVersuche(fortschritt, schonDa, bekannt){
 export async function onRequest(context){
   const { request, env } = context;
 
-  if (request.method !== 'POST')
-    return antwort({ fehler: 'nur POST' }, 405);
   if (!nutzerKennung(request))
     return antwort({ fehler: 'keine Kennung im Access-Token' }, 401);
 
-  const fehlend = ['AR_SUPABASE_URL', 'AR_ANON_KEY', 'AR_EMAIL', 'AR_PASSWORT']
+  /* ⭐ GET sagt, ob es überhaupt läuft — ohne etwas zu schreiben.
+     ⛔ Ohne diesen Weg wäre der Ausfall unsichtbar gebaut: die Übertragung
+     schluckt ihre Fehler absichtlich (sie darf den Lernstand nie aufhalten),
+     und Elias sähe monatelang nichts drüben, ohne zu wissen warum. Ein
+     stiller Dienst braucht eine Stelle, an der man ihn fragen kann.
+     [[ausfall_ist_unsichtbar_gebaut]] */
+  if (request.method === 'GET'){
+    const fehlt = ['AR_SUPABASE_URL', 'AR_ANON_KEY', 'AR_REFRESH_TOKEN'].filter(k => !env[k]);
+    if (fehlt.length) return antwort({ eingerichtet: false, fehlend: fehlt });
+    try {
+      const { token, userId, quelle } = await anmelden(env);
+      const eigene = await rest(env, token,
+        `attempts?device_id=eq.${GERAET_VOKABELTRAINER}&select=vocabulary_id&limit=20000`);
+      return antwort({ eingerichtet: true, anmeldung: 'geht (' + quelle + ')',
+        nutzerkennung: userId ? 'vorhanden' : 'fehlt',
+        bereitsUebertragen: (eigene || []).length });
+    } catch (e){
+      return antwort({ eingerichtet: true, anmeldung: 'FEHLER',
+        fehler: String(e && e.message || e) }, 502);
+    }
+  }
+
+  if (request.method !== 'POST')
+    return antwort({ fehler: 'nur GET oder POST' }, 405);
+
+  const fehlend = ['AR_SUPABASE_URL', 'AR_ANON_KEY', 'AR_REFRESH_TOKEN']
     .filter(k => !env[k]);
   if (fehlend.length)
     return antwort({ eingerichtet: false, fehlend,
