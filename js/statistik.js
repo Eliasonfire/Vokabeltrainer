@@ -32,6 +32,7 @@ function renderStats(){
     animateNumber(el, Number(el.dataset.count), el.dataset.suffix || '');
   });
   if (typeof renderUebungskalender === 'function') renderUebungskalender();
+  if (typeof renderWochenquote === 'function') renderWochenquote();
   if (typeof renderUebungStand === 'function') renderUebungStand();
 
   /* Elias am 29.07.2026: "man könnte bei den Boxen auch noch klarer darstellen,
@@ -302,6 +303,54 @@ function kalStufe(n){
   if (n >= 30) return 3;
   if (n >= 10) return 2;
   return 1;
+}
+
+/* ⭐⭐ Trefferquote je Woche (07.09.2026) — die Grundlage für den
+   Rauschversuch. Elias: „du hast recht, dann sollte ich das ausprobieren."
+
+   ⛔ Die Zahlen fangen bei null an, und das ist keine Nachlässigkeit: die
+   Trefferquote je Tag wurde nie mitgeschrieben (siehe `merkeQuote()` in
+   js/kern.js). Rückwirkend lässt sich daraus nichts bauen, der Versuch kann
+   frühestens ab heute laufen. Genau derselbe Fall wie beim Übungskalender am
+   21.08.2026. [[daten_ohne_zugang]]
+
+   ⚠️ Acht Wochen, nicht 18 wie der Kalender: der Versuch läuft über zwei mal
+   zwei Wochen, und eine Reihe aus 18 schmalen Säulen wäre auf dem Handy nicht
+   mehr zu unterscheiden. */
+const QUOTE_WOCHEN = 8;
+
+function renderWochenquote(){
+  const kasten = document.getElementById('wochenquote');
+  if (!kasten) return;
+  if (typeof quoteJeWoche !== 'function'){ kasten.innerHTML = ''; return; }
+  const reihe = quoteJeWoche(QUOTE_WOCHEN);
+  const hatDaten = reihe.some(w => w.gestellt > 0);
+
+  if (!hatDaten){
+    /* ⛔ Kein leerer Kasten und keine Reihe aus Nullbalken. Wer hier steht,
+       soll erfahren, WARUM nichts da ist — sonst sieht es nach einem Fehler
+       aus. [[leere_liste_ist_keine_messung]] */
+    kasten.innerHTML = `<div class="wq-hinweis">Noch keine Daten. Die Trefferquote wird `
+      + `seit dem 07.09.2026 je Tag mitgeschrieben — gezählt werden Satzmodus `
+      + `und Hörmodus, wo „richtig" feststeht.</div>`;
+    return;
+  }
+
+  const monate = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+  const kurz = (d) => { const x = new Date(d); return x.getDate() + '. ' + monate[x.getMonth()]; };
+  kasten.innerHTML = reihe.map(w => {
+    const leer = !w.gestellt;
+    /* Die Säulenhöhe ist die Quote in Prozent — 1 : 1, damit die Höhe nicht
+       lügt. Eine gestreckte Skala würde kleine Unterschiede aufblasen, und
+       genau die will Elias beurteilen. */
+    const hoehe = leer ? 0 : Math.max(2, w.quote);
+    return `<div class="wq-woche${leer ? ' wq-leer' : ''}" title="${escapeHtml(w.von)} bis ${escapeHtml(w.bis)}${
+      leer ? ' — keine Aufgaben' : ` — ${w.richtig} von ${w.gestellt} richtig`}">
+      <div class="wq-zahl">${leer ? '—' : w.quote + '%'}</div>
+      <div class="wq-saeule"><div class="wq-fuellung" style="height:${hoehe}%"></div></div>
+      <div class="wq-datum">${kurz(w.von)}</div>
+    </div>`;
+  }).join('');
 }
 
 function renderUebungskalender(){

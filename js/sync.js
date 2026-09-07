@@ -36,6 +36,10 @@ const SYNC_SCHLUESSEL = [
      'vt_streak': Elias uebt auf Handy UND Tablet, und ein Kalender, der nur
      die Tage EINES Geraets kennt, zeigt Luecken, die es nie gab. */
   'vt_uebungstage',
+  /* Die Trefferquote je Tag (07.09.2026) — aus demselben Grund wie
+     'vt_uebungstage': er uebt auf Handy UND Tablet, und der Rauschversuch
+     vergleicht Zeitraeume. Eigener Merge-Zweig weiter unten. */
+  'vt_quoteTage',
   'vt_personalVocab', 'vt_customCats', 'vt_hifz', 'vt_hifzVerse',
   'vt_quranFav', 'vt_lesestand',
   /* Der Tageszaehler des Hoermodus (17.08.2026). Er gehoert dazu, weil Elias
@@ -595,6 +599,39 @@ function fuehreZusammen(fern){
         const raus = Object.assign({}, a);
         for (const [tag, n] of Object.entries(b))
           raus[tag] = Math.max(Number(raus[tag]) || 0, Number(n) || 0);
+        const neu = JSON.stringify(raus);
+        if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
+      } catch (e){ /* kaputtes JSON auf einer Seite: lokal behalten */ }
+      return;
+    }
+
+    /* ⭐ Die Trefferquote je Tag (07.09.2026). Sie gehoert aus demselben Grund
+       hierher wie `vt_uebungstage`: Elias uebt auf Handy UND Tablet, und eine
+       Quote, die nur die Aufgaben EINES Geraets kennt, taugt fuer den
+       Rauschversuch nicht.
+
+       ⛔ MAXIMUM je Feld, NICHT Summe. Beide Geraete gleichen sich gegenseitig
+       ab — eine Summe waere beim naechsten Durchlauf noch einmal summiert und
+       die Zahl verdoppelte sich stillschweigend. Genau deshalb nimmt
+       `vt_uebungstage` daneben ebenfalls das Maximum.
+
+       ⚠️ Das UNTERSCHAETZT einen Tag, an dem er auf beiden Geraeten geuebt hat.
+       Fuer den Vergleich zweier Zeitraeume ist das hinnehmbar (der Fehler
+       trifft beide Seiten gleich), fuer eine absolute Aussage nicht — und
+       genau deshalb steht die Zahl in der Statistik immer MIT ihrem Nenner.
+       ⭐ `richtig` kann dabei nie ueber `gestellt` steigen: auf jedem Geraet
+       gilt richtig ≤ gestellt, also gilt es auch fuer die beiden Maxima. */
+    if (k === 'vt_quoteTage'){
+      try {
+        const a = JSON.parse(hierRoh) || {}, b = JSON.parse(dortRoh) || {};
+        const raus = Object.assign({}, a);
+        for (const [tag, e] of Object.entries(b)){
+          const hier = raus[tag] || { gestellt: 0, richtig: 0 };
+          raus[tag] = {
+            gestellt: Math.max(Number(hier.gestellt) || 0, Number(e && e.gestellt) || 0),
+            richtig:  Math.max(Number(hier.richtig)  || 0, Number(e && e.richtig)  || 0),
+          };
+        }
         const neu = JSON.stringify(raus);
         if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
       } catch (e){ /* kaputtes JSON auf einer Seite: lokal behalten */ }

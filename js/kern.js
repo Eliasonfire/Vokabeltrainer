@@ -307,6 +307,65 @@ function merkeUebung(modusId, richtig){
   LS.set('vt_uebungStand', UEBUNG_STAND);
 }
 
+/* ---------- ⭐⭐ TREFFERQUOTE JE TAG (07.09.2026) --------------------------
+
+   Elias hat sich am 07.09.2026 entschieden, den Rauschversuch zu machen: „du
+   hast recht, dann sollte ich das ausprobieren." Zwei Wochen mit weissem
+   Rauschen lernen, zwei ohne, Trefferquoten vergleichen.
+
+   ⛔⛔ DAS GEHT MIT DER HEUTIGEN STATISTIK NICHT. Sie ist eine Momentaufnahme:
+   `vt_uebungStand` haelt je Modus eine Gesamtsumme, `vt_regelStand` je Regel.
+   Aus einer Gesamtsumme laesst sich kein Zeitraum herausrechnen — und ein
+   Gesamtstand taugt fuer den Versuch ohnehin nicht, weil sich der
+   Lernfortschritt in die Messung mischt und den Effekt ueberdeckt.
+
+   ⛔ UND ES LAESST SICH NICHT NACHTRAEGLICH FUELLEN. Genau wie beim
+   Uebungskalender am 21.08.2026: die Daten gab es nie, sie muessen ab jetzt
+   mitgeschrieben werden. Der Versuch kann also fruehestens ab heute beginnen —
+   das ist eine ehrliche Grenze und keine Nachlaessigkeit. [[daten_ohne_zugang]]
+
+   ⭐ NUR ECHTE ABFRAGEN, keine Selbsteinschaetzung. Gezaehlt werden der
+   Satzmodus und der Hoermodus, wo „richtig" objektiv feststeht. Die vier
+   Bewertungsstufen der Karteikarte sind ein anderes Mass: dort sagt Elias
+   selbst, wie gut er es wusste. Beides in einen Topf zu werfen ergaebe eine
+   Zahl, die weder das eine noch das andere misst. [[pruefung_fragt_einen_stellvertreter_ab]]
+
+   Form: { "2026-09-07": { gestellt: 20, richtig: 14 } } */
+let QUOTE_TAGE = LS.get('vt_quoteTage', {});
+function merkeQuote(richtig){
+  const t = todayStr(0);
+  const e = QUOTE_TAGE[t] || { gestellt: 0, richtig: 0 };
+  e.gestellt++;
+  if (richtig) e.richtig++;
+  QUOTE_TAGE[t] = e;
+  try { LS.set('vt_quoteTage', QUOTE_TAGE); } catch (err) { /* privates Fenster */ }
+}
+
+/** Die Trefferquote je Kalenderwoche, juengste zuletzt.
+ *  @param {number} wochen  wie viele Wochen zurueck (einschliesslich der laufenden)
+ *  @returns {Array<{von:string, bis:string, gestellt:number, richtig:number, quote:number|null}>}
+ */
+function quoteJeWoche(wochen){
+  const n = Number.isFinite(wochen) && wochen > 0 ? Math.round(wochen) : 8;
+  const heute = todayStr(0);
+  /* Montag als Wochenanfang — dieselbe Rechnung wie im Uebungskalender
+     (`(getDay() + 6) % 7`), damit beide Ansichten dieselben Wochen zeigen.
+     Zwei verschiedene Wochenanfaenge nebeneinander waeren eine stille Falle. */
+  const wtag = (new Date(heute).getDay() + 6) % 7;
+  const reihe = [];
+  for (let w = n - 1; w >= 0; w--){
+    const von = todayStr(-(wtag + w * 7));
+    const bis = todayStr(-(wtag + w * 7) + 6);
+    let gestellt = 0, richtig = 0;
+    for (const [tag, e] of Object.entries(QUOTE_TAGE || {})){
+      if (tag >= von && tag <= bis && e){ gestellt += e.gestellt || 0; richtig += e.richtig || 0; }
+    }
+    reihe.push({ von, bis, gestellt, richtig,
+      quote: gestellt ? Math.round(richtig / gestellt * 100) : null });
+  }
+  return reihe;
+}
+
 /* ---------- Fachbegriffe aus dem Unterricht (17.08.2026) ----------
 
    Elias: „die müssen inkludiert werden und als eigene vokabeln hinzugefügt
