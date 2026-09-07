@@ -3,10 +3,22 @@
    teilt sich mit den uebrigen js/-Dateien den globalen Namensraum. */
 /* ===================== HOME ===================== */
 function renderHome(){
-  const pool = currentPool();
+  /* ⭐⭐ „heute 10 · 42 warten" statt „52 fällig".
+     Elias am 07.09.2026: „das ist gut". Der Rückstand bleibt bestehen, er hört
+     nur auf, als Zahl im Weg zu stehen — bei ADHS ist die typische
+     Verlaufsform nicht Nachlassen, sondern Abbruch.
+     ⛔ Die grosse Zahl zeigt die TAGESRATION, nicht den Rückstand: sie ist
+     das, was er heute tun soll. Der Rest steht klein darunter und wird nicht
+     verschwiegen — eine Zahl zu verstecken wäre eine andere Sache als sie
+     einzuordnen. */
+  const alle = currentPool();
+  const pool = (typeof tagesPool === 'function') ? tagesAuswahl(alle, tagesDeckel()) : alle;
+  const wartet = alle.length - pool.length;
   animateNumber(document.getElementById('dueCount'), pool.length);
   document.getElementById('dueSub').textContent = pool.length
-    ? `Sitzungsgröße: ${SETTINGS.sessionSize===9999?'alle':SETTINGS.sessionSize} Karten pro Runde${SETTINGS.wrongOnly?' · Nur falsche Wörter':''}`
+    ? (wartet > 0 ? `Heute dran · ${wartet} warten noch` : '')
+        + (wartet > 0 ? ' · ' : '')
+        + `Sitzungsgröße: ${SETTINGS.sessionSize===9999?'alle':SETTINGS.sessionSize} Karten pro Runde${SETTINGS.wrongOnly?' · Nur falsche Wörter':''}`
     : (SETTINGS.wrongOnly ? 'Keine schwachen Wörter mit dieser Auswahl.' : 'Alles erledigt für heute – super gemacht.');
   document.getElementById('streakCount').textContent = getStreak().count;
 

@@ -1169,7 +1169,14 @@ let SETTINGS = Object.assign(
      noch nicht in Betrieb genommen („brauche sie deswegen noch nicht" /
      „du kannst sie schonmal bauen"). Der Schalter liegt in den Einstellungen
      unter „Lernkarte". */
-  { showPlural:false, pluralKarten:false, showVerbFormen:false, showQuran:false, sessionSize:20, voiceURI:null, direction:'ar-de', selectedChapters:[], wrongOnly:false, grammarHighlight:true },
+  /* ⭐ tagesDeckel: wie viele fällige Karten HEUTE angeboten werden (0 = alle).
+     Die 10 ist keine runde Zahl, sondern gerechnet: 171 Lernwörter durch die
+     16 Tage von Box 5 ergeben **10,7** Karten je Tag im Gleichgewicht. Bei
+     20 dauert eine Runde nach Elias' eigener Schätzung „durchschnittlich 15
+     min" — „fünf Minuten fängt man an, fünfzehn schiebt man auf".
+     ⚠️ Das ist eine Einstellung, keine Festlegung: `sessionSize` bleibt
+     unberührt, und mit 0 ist der Deckel aus. */
+  { showPlural:false, pluralKarten:false, showVerbFormen:false, showQuran:false, sessionSize:20, tagesDeckel:10, voiceURI:null, direction:'ar-de', selectedChapters:[], wrongOnly:false, grammarHighlight:true },
   LS.get('vt_settings', {})
 );
 /* ---------- Zeitstempel JE EINSTELLUNG (17.08.2026) ----------
@@ -1735,6 +1742,75 @@ function passtZurAuswahl(w){
 function currentPool(){
   const pool = SETTINGS.wrongOnly ? weakWords() : dueWords();
   return pool.filter(passtZurAuswahl);
+}
+
+/* ⭐⭐ DER TAGESDECKEL — „heute 10, der Rest wartet" statt „312 fällig"
+   ================================================================
+   Elias am 07.09.2026 zum Vorschlag: „das ist gut". Und sein eigenes Argument
+   dafür, aus dem Kommentarfaden davor: „wenn die runden durchschnittlich 15
+   min dauern und ich dann weiß das sie wirklich ewig dauern dann ist doch auch
+   nicht gut oder."
+
+   Der Rückstand verschwindet nicht — er hört nur auf, als Zahl im Weg zu
+   stehen. Bei ADHS ist die typische Verlaufsform nicht Nachlassen, sondern
+   **Abbruch**; Anki-Nutzer steigen ab etwa 200–300 offenen Karten aus.
+
+   ⛔⛔ DIE ZUSAMMENSETZUNG IST DIE EIGENTLICHE ARBEIT, NICHT DIE ZAHL.
+   Eine reine Sortierung nach Fälligkeit funktioniert hier NICHT: Box 1 hat
+   Intervall 0, ihre Wörter sind also JEDEN Tag fällig (gemessen 06.09.2026:
+   80 von 171). Sie würden alle Plätze dauerhaft belegen, und Box 4 und 5
+   (zusammen 70 Wörter) kämen nie dran — sie verfielen still, während die
+   Anzeige „alles erledigt" zeigt. Genau die Sorte Ausfall, die sich nie meldet.
+   [[ausfall_ist_unsichtbar_gebaut]]
+
+   Deshalb eine feste Quote: ein Teil der Plätze gehört den Wiederholungen aus
+   Box 2–5, der Rest dem Stau in Box 1. Fehlt eine Seite, füllt die andere auf —
+   ein leerer Platz wäre schlechter als ein Platz aus der falschen Gruppe.
+
+   ⚠️ Die Sortierung stimmt schon (`dueWords()`: am längsten überfällig zuerst,
+   dann niedrige Box). Der Deckel schneidet also oben ab, nicht irgendwo.
+
+   ⛔ Und er verstellt die WAHRHEIT nicht: `currentPool()` bleibt ungedeckelt.
+   Wer wissen will, wie viel wirklich offen ist — die Statistik, der
+   „nur falsche Wörter"-Schalter —, fragt weiter dort. */
+const DECKEL_AUS = 0;
+/* 4 von 10 für Box 1: das baut den Stau von 80 in 20 Tagen ab und lässt
+   trotzdem 6 Plätze für die Wiederholungen, an denen das Behalten hängt. */
+const DECKEL_ANTEIL_BOX1 = 0.4;
+
+function tagesDeckel(){
+  const d = SETTINGS && SETTINGS.tagesDeckel;
+  return Number.isFinite(d) && d > 0 ? d : DECKEL_AUS;
+}
+
+/**
+ * Die Tagesration aus einem bereits sortierten Pool.
+ * @param {Array} pool  Ergebnis von currentPool(), Reihenfolge zählt
+ * @param {number} deckel  0 = kein Deckel, dann kommt der Pool unverändert zurück
+ */
+function tagesAuswahl(pool, deckel){
+  if (!Array.isArray(pool) || !deckel || pool.length <= deckel) return pool || [];
+  const box = w => (PROGRESS[w.id] && PROGRESS[w.id].box) || 1;
+  const neu  = pool.filter(w => box(w) <= 1);
+  const wdh  = pool.filter(w => box(w) > 1);
+
+  let platzNeu = Math.round(deckel * DECKEL_ANTEIL_BOX1);
+  let platzWdh = deckel - platzNeu;
+  /* Auffüllen, wenn eine Seite nicht genug hergibt. */
+  if (neu.length < platzNeu) { platzWdh += platzNeu - neu.length; platzNeu = neu.length; }
+  if (wdh.length < platzWdh) { platzNeu += platzWdh - wdh.length; platzWdh = wdh.length; }
+
+  const gewaehlt = neu.slice(0, platzNeu).concat(wdh.slice(0, platzWdh));
+  /* ⛔ Die Reihenfolge des Pools wiederherstellen. Ohne das kämen erst alle
+     Box-1-Karten und dann alle Wiederholungen — und der Fachbegriff-Takt in
+     `fachbegriffTakt()` würde auf eine sortierte statt gemischte Liste
+     treffen. */
+  return pool.filter(w => gewaehlt.includes(w));
+}
+
+/** Was heute drankommt — gedeckelt. Für Anzeige und Runde. */
+function tagesPool(){
+  return tagesAuswahl(currentPool(), tagesDeckel());
 }
 
 /* "Nur falsche Wörter" wieder abschalten, sobald keine mehr da sind
