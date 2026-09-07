@@ -254,6 +254,7 @@ function einhaengen(liste){
   });
   const eselsbruecken = eselsbrueckenNachtragen(liste);
   eselsbrueckenErsetzen();
+  schreibweisenErsetzen();
   const saetze = saetzeNachtragen(liste);
   return { neu, ergaenzt, verworfen, eselsbruecken, saetze };
 }
@@ -321,6 +322,40 @@ function eselsbrueckenErsetzen(){
   VOCAB_DATA.forEach(w => {
     const text = ESELSBRUECKEN_ERSATZ[String(w.id)];
     if (text && w.mnemo !== text){ w.mnemo = text; n++; }
+  });
+  return n;
+}
+
+/* ⛔⛔ KORRIGIERTE SCHREIBWEISEN — dieselbe Bauform wie eselsbrueckenErsetzen().
+ *
+ * Elias' eigene Vokabeln kommen aus dem arabicroots-Abzug und aus seinem
+ * Geraetespeicher; beide werden bei jedem Abzug neu geschrieben. Eine
+ * Korrektur dort waere beim naechsten hole-vokabeln.mjs spurlos weg.
+ * `FELD_ERGAENZUNGEN` fuellt nur LEERE Felder und greift hier nicht.
+ *
+ * ⚠️ ZWEI Felder je Eintrag, nicht eines: dasselbe Wort steht in `ar` UND
+ * im Beispielsatz `sentAr`. Nur `ar` zu aendern hiesse, dass Karte und Satz
+ * verschieden schreiben — und der Satz ist genau die Stelle, an der Elias
+ * die Schreibung im Zusammenhang sieht.
+ *
+ * ⚠️ Die Liste in data/eselsbruecken.js waechst NUR durch seine Zustimmung.
+ */
+function schreibweisenErsetzen(){
+  if (typeof SCHREIBWEISEN === 'undefined') return 0;
+  let n = 0;
+  VOCAB_DATA.forEach(w => {
+    const e = SCHREIBWEISEN[String(w.id)];
+    if (!e) return;
+    if (e.ar && w.ar !== e.ar){ w.ar = e.ar; n++; }
+    /* Der Satz wird nur an DER Stelle geaendert, die genannt ist — nie der
+       ganze Satz ersetzt. Sonst traegt eine spaetere Satzaenderung von ihm
+       die alte Fassung zurueck. */
+    if (e.sentArVon && e.sentArNach && typeof w.sentAr === 'string'
+        && w.sentAr.includes(e.sentArVon)){
+      w.sentAr = w.sentAr.split(e.sentArVon).join(e.sentArNach); n++;
+    }
+    /* Auch die Singularform, falls sie dieselbe Schreibung traegt. */
+    if (e.ar && w.sg === e.sentArVon){ w.sg = e.ar; n++; }
   });
   return n;
 }
@@ -583,6 +618,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
       && PERSONAL_VOCAB.length){
     eselsbrueckenNachtragen(PERSONAL_VOCAB);
     eselsbrueckenErsetzen();
+  schreibweisenErsetzen();
     /* ⛔⛔ UND DIE BEISPIELSAETZE, aus genau demselben Grund.
 
        Am 20.08.2026 wurde oben der Eselsbruecken-Weg repariert — und die

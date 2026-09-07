@@ -415,6 +415,44 @@ node pruefe-taschkil.js
 ⛔ **Nicht selbst vokalisieren.** Beleg aus dem Madina-Schlüssel oder dem
 Lehrbuch holen — sonst ihm vorlegen. [[taschkil_immer_vollstaendig]]
 
+
+⭐ **Zu A12 gibt es seit dem 07.09.2026 zwei Wörterbücher als MCP** — arabdict
+und Reverso. `node werkzeuge/taschkil-belegen.mjs` schickt jedes Wort ohne
+vollständige Vokalisierung durch **beide** und stellt die Antworten gegenüber.
+
+⭐ **Beide laufen immer**, und das ist Elias' Entscheidung vom 07.09.2026:
+
+> „kann man so machen, vielleicht aber auch immer reverso gegenprüfen lassen,
+>  an sich ist der aufwand für dich auch nicht so groß bei reverso"
+
+Mit `--schnell` bliebe nur arabdict — das ist der Ausnahmefall, nicht der
+Normalfall.
+
+⛔⛔ **ES TRÄGT NICHTS EIN, und der Wartungslauf tut es auch nicht.** E.1 gilt
+unverändert: nicht selbst vokalisieren. Eine Wörterbuchform ist ein Vorschlag,
+kein Beleg aus dem Unterricht. Was die Quellen liefern, gehört unter
+„🔴 Wartet auf Elias" — nicht in `vocab-data.js`.
+
+⚠️ Drei Fallen, alle am 07.09.2026 gemessen:
+
+* **Die Suchform ist nicht die Lexikonform.** الامتحان steht in keinem
+  Wörterbuch, امتحان schon. Ohne Abtrennen von Artikel und Suffix meldeten
+  11 von 19 Wörtern fälschlich „keine Quelle kennt es".
+* **arabdict zitiert mit Tanwīn, Reverso ohne** (اِمْتِحَانٌ gegen اِمْتِحَان).
+  Das ist kein Widerspruch, sondern eine andere Zitierweise — von 19 Wörtern
+  sah es bei 7 nur so aus. Echte Abweichungen sind die **Schadda**
+  (كُرْسِيّ gegen كُرْسِي, zwei Aussprachen) und die **Stellung des Tanwīn**
+  (أَيْضاً gegen أَيْضًا).
+* **Reversos `grundformKandidaten` sind KEINE Wurzeln.** امتحان → متح ist
+  falsch, richtig wäre محن; مربوطة → مربوط ist das Partizip, nicht die Wurzel.
+  Niemals als `root` übernehmen — das Feld wäre gefüllt, und keine Prüfung
+  meldete es.
+
+⚠️ Reverso weist maschinelle Abrufe mit **HTTP 403** ab und startet deshalb je
+Wort einen echten Chrome (~8 s, Fenster aus dem Bild geschoben, leeres Profil).
+Für die knapp 20 Wörter sind das rund drei Minuten.
+
+
 ## A13 · Kein Duplikat
 
 Gibt es das Wort schon als Buchvokabel, **und hat er die freigeschaltet**, ist
@@ -424,6 +462,50 @@ seine eigene Fassung doppelt und gehört weg.
 seine eigene der einzige Zugang.
 ⛔ Vergleich **mit** Ḥarakāt: صِفْر (Null) und صَفَرَ (pfeifen) sehen ohne sie
 gleich aus.
+
+```
+node pruefe-duplikate.js
+```
+
+⛔⛔ **DIESER BEFEHL STAND HIER NICHT, und genau das hat am 07.09.2026 drei
+Dubletten in die ausgelieferte App gebracht (v368, zurückgenommen mit v369).**
+
+Nach dem Einfügen liefen `validate.js`, `pruefe-saetze.js` und
+`pruefe-markierungen.js` — alle grün. `pruefe-duplikate.js` ist der **einzige**
+Prüfer, der Dubletten findet, und er lief nicht. Er hätte خَيْرٌ gefunden: es
+stand längst als `gram-khayr` in `data/fachbegriffe.js`, und der Prüfer deckt
+Fachbegriffe ab.
+
+⛔⛔ **UND EIN BEFEHL REICHT NICHT — die App muss gefragt werden.**
+
+Zwei der drei Dubletten (مَعَ und الَّذِي) hätte **kein** Werkzeug im Repo
+gefunden. Sie stehen in `data/vokabeln-madina-1.js` **Kapitel 24**, und
+madina-1 ist nur bis Kapitel 12 freigeschaltet — aus Sicht jeder Datei sahen
+sie wie Lücken aus. Elias hatte sie **einzeln freigeschaltet**, und diese Liste
+(`vt_einzeln_frei`) liegt ausschließlich in seinem localStorage.
+
+**Deshalb vor jeder neuen Karteikarte im Browser-Pane messen:**
+
+```js
+const n = s => String(s||'').normalize('NFC').replace(/[ً-ْٰـ]/g,'').replace(/[آأإٱ]/g,'ا');
+bekannteVokabeln().filter(w => n(w.ar) === n('<das Wort>'))
+  .map(w => ({ id: String(w.id), de: w.de, kap: String(w.chapter),
+               einzelnFrei: typeof istEinzelnFrei === 'function' ? istEinzelnFrei(w) : '?' }))
+```
+
+Ist die Liste **nicht leer**, gibt es das Wort schon — egal, was die Dateien
+sagen. `einzelnFrei: true` nennt den Grund.
+
+⚠️ Und vorher die Frischeprobe: `LERNBESTAND_IDS.size` muss der Länge von
+`vocab-data.js` entsprechen, sonst misst man eine alte Fassung aus dem
+Service-Worker-Cache. [[vorschau_laeuft_aus_dem_cache_weiter]]
+
+⚠️ Am 07.09.2026 waren **10** Wörter einzeln freigeschaltet, alle aus madina-1
+Kapitel 24: أَنَا · نَحْنُ · أَنْتَ · هُوَ · هِيَ · هُمْ · الَّذِي · مَعَ ·
+نَعْتٌ · مَجْرُورٌ. ⛔ Diese Liste ist ein **Abzug vom PC** und kann veralten —
+sein Handy und Tablet sind untereinander synchron, der PC bewusst nicht. Sie
+ersetzt die Messung oben nicht, sie erklärt sie nur.
+[[pc_daten_sind_nicht_sein_lernstand]]
 
 ---
 

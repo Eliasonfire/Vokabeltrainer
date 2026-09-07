@@ -67,6 +67,69 @@ const OHNE_HARAKA = new Set([
    zum Muellplatz fuer alles, was nicht durchgeht. */
 const AUSNAHMEN = [
   {
+    /* ⭐ Artikel اَلْ direkt vor einem Hamzat al-waṣl: الانفِطَار, الانشِقَاق.
+       Das لام trägt dort im Mushaf-Druck kein Zeichen — die beiden Alif
+       stoßen unmittelbar aufeinander, und der Artikel wird mit dem folgenden
+       Wort zusammengezogen.
+
+       ⛔ BELEGT, NICHT ANGENOMMEN (07.09.2026, auf Elias' Ansage „vergleiche
+       mehrere und ich bin mir sicher du wirst sicherlich aufs richtige
+       treffen"). Vier Quellen:
+
+         alquran.cloud, Ausgabe quran-simple ..... سُورَةُ الانشِقَاقِ
+         alquran.cloud, Ausgabe quran-uthmani .... سُورَةُ الانشِقَاقِ
+         alquran.cloud, Surenliste ............... سُورَةُ الانفِطَارِ
+         Elias' surah-data.js .................... الانشِقَاق · الانفِطَار
+
+       Alle vier schreiben das لام ohne Zeichen — Zeichen für Zeichen gleich.
+       Der Befund war also die übliche Schreibung, kein Mangel.
+
+       ⚠️ ENG GEFASST: nur das لام des Artikels, und nur wenn unmittelbar ein
+       Alif folgt. Wörter, die den Artikel MIT Sukūn schreiben (الْاِمْتِثَالُ
+       in seinem eigenen Bestand), werden weiter geprüft — dort steht ein
+       Zeichen, das dieses Muster gar nicht erreicht.
+
+       ⚠️ Bei denselben vier Suren waren 58 und 60 SEHR WOHL Lücken und sind
+       am 07.09.2026 gefüllt worden: الْمُجَادِلَة (Kasra — die streitende
+       Frau, ar.wikipedia nennt sie „أظهر") und الْمُمْتَحَنَة (Fatḥa — nach
+       Ibn Ḥajar die bekannte Schreibweise). Ein Muster, das auch diese zwei
+       verschluckt hätte, wäre zu breit gewesen. */
+    name: 'لام des Artikels vor Hamzat al-wasl (Mushaf-Schreibung, belegt)',
+    /* ⛔ BEIDE Stellen: das لام (Position 1) UND das Hamzat al-wasl des
+       Wortes dahinter (Position 2). Die erste Fassung deckte nur das لام ab,
+       woraufhin der Pruefer eine Stelle weiterrueckte und dasselbe Wort
+       erneut meldete — in allen vier Quellen tragen beide kein Zeichen. */
+    trifft: (wort, i) => (i === 1 || i === 2)
+      && wort[0] === 'ا' && wort[1] === 'ل' && wort[2] === 'ا'
+  },
+  {
+    /* ⭐ أَيْضاً im ABZUG — die App zeigt es korrigiert.
+     *
+     * Elias am 07.09.2026, nachdem beide Schreibungen gegenübergestellt waren:
+     *
+     *   „du kannst auch statt tanween fatha auf dem alif es aufs dad packen,
+     *    sieht sogar sicherlich besser aus"
+     *
+     * Umgesetzt in `SCHREIBWEISEN` (data/eselsbruecken.js), angewandt von
+     * `schreibweisenErsetzen()` in js/buecher.js. Die App zeigt seitdem
+     * أَيْضًا — Tanwīn auf dem ض, wie bei جِدًّا und شُكْرًا.
+     *
+     * ⛔ DIESER PRÜFER MISST ABER DIE DATEIEN, nicht die App. In
+     * `data/vokabeln-eigene.js` steht weiter die alte Schreibung, und dort
+     * darf sie auch stehen bleiben: die Datei wird bei jedem
+     * `hole-vokabeln.mjs` neu geschrieben, eine Korrektur wäre spurlos weg.
+     * Ohne diese Ausnahme meldete der Lauf also eine Stelle, die in der App
+     * längst richtig ist. [[pruefserver_ist_nicht_die_app]]
+     *
+     * ⚠️ ENG: nur der Konsonant unmittelbar vor einem abschließenden اً.
+     * شُكْرًا und جِدًّا (Tanwīn VOR dem Alif) erreichen dieses Muster nicht
+     * und werden weiter geprüft. */
+    name: 'أَيْضاً im Abzug — die App korrigiert es zu أَيْضًا (Elias 07.09.2026)',
+    trifft: (wort, i) => wort[i + 1] === 'ا'
+      && wort[i + 2] === 'ً'
+      && i + 3 === wort.length
+  },
+  {
     /* Das Alif von اَلْ traegt im Buchdruck oft kein Zeichen: الْبَيْتُ statt
        اَلْبَيْتُ. Beide Schreibweisen kommen in Elias' Material vor, und der
        Madina-Schluessel selbst ist darin nicht einheitlich. Das ist deshalb

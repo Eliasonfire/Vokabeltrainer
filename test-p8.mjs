@@ -293,9 +293,28 @@ vm.runInContext(fs.readFileSync('vocab-data.js','utf8') + ';globalThis.__=VOCAB_
 const V = c2.__;
 const box12 = V.filter(w => w.box === 1 || w.box === 2);
 const mit = V.filter(w => w.mnemo);
-ok('14 Woerter starten in Box 1 oder 2', box12.length === 14, `${box12.length}`);
+/* ⚠️ Die Zahl ist ein WAECHTER ueber den Startbestand, keine Prueffrage — sie
+   soll auffallen, wenn sich Box 1+2 aendert, ohne dass jemand es wollte.
+
+     14 → 17 am 07.09.2026: drei neue Karteikarten (خَيْرٌ, مَعَ, الَّذِي).
+     17 → 14 wenige Stunden spaeter: alle drei waren DUBLETTEN und sind
+     zurueckgenommen. مَعَ und الَّذِي hatte Elias laengst einzeln
+     freigeschaltet (`vt_einzeln_frei`, sichtbar nur in seinem localStorage),
+     خَيْرٌ stand als `gram-khayr` in data/fachbegriffe.js. In der laufenden
+     App standen daraufhin ZWEI Karten fuer خَيْرٌ.
+
+   ⭐ Genau dafuer ist der Waechter da: die 17 fielen auf, die Rueckkehr auf 14
+   ist der Beleg, dass die Ruecknahme vollstaendig war.
+
+   ⛔ Wer die Zahl beim naechsten Mal blind hochsetzt, macht aus dem Waechter
+   eine Formalie. Erst nachsehen, WELCHE Woerter dazugekommen sind — und ob
+   es sie nicht schon gibt. [[app_auswahl_entscheidet]] */
+const BOX12_ERWARTET = 14;
+ok(BOX12_ERWARTET + ' Woerter starten in Box 1 oder 2',
+   box12.length === BOX12_ERWARTET, `${box12.length}`);
 ok('alle davon haben eine Eselsbruecke',
-   box12.every(w => w.mnemo && String(w.mnemo).trim()), `${box12.filter(w=>w.mnemo).length}/14`);
+   box12.every(w => w.mnemo && String(w.mnemo).trim()),
+   `${box12.filter(w => w.mnemo).length}/${box12.length}`);
 /* ⛔ HIER STAND „kein Wort ausserhalb Box 1+2 hat eine" — eine Regel aus der
    Zeit, als Eselsbruecken nur fuer die 14 Startwoerter gedacht waren.
    Gemessen am 21.08.2026:
