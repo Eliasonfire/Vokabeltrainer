@@ -1337,6 +1337,26 @@ main{
 
 .kenne-schon-liste{padding:0 var(--gutter);}
 .kenne-schon-liste:empty{display:none;}
+/* ⭐ Aufklapper vor beiden Listen (07.09.2026). Elias mit Bild der
+   Einstellungen, auf dem 28 freigeschaltete Wörter untereinander standen:
+   „ich möchte das diese auflistung der wörter in einem punkt gepackt werden
+   und beim aufklappen dann eine liste ergeben, damit die einstellungen nicht
+   zur hälfte von dieser riesen liste eingenommen werden."
+
+   Die Zahl steht IM Schalter, nicht nur im Stand darüber: zugeklappt ist sie
+   sonst die einzige Auskunft, die fehlt — und genau sie sucht man hier.
+   Dieselbe Bauart wie `.pool-schalter` in den Kategorien. */
+.listen-schalter{
+  display:none;align-items:center;gap:var(--sp-2);width:100%;
+  background:none;border:none;cursor:pointer;
+  padding:var(--sp-2) var(--gutter);margin:0;
+  font-family:var(--font-ui);font-size:var(--fs-xs);color:var(--text-faint);
+  font-weight:700;text-transform:uppercase;letter-spacing:.08em;text-align:start;
+}
+.listen-schalter.da{display:flex;}
+.listen-schalter .ic{transition:transform var(--dur-2) var(--ease-out);display:inline-block;}
+.listen-schalter[aria-expanded="true"] .ic{transform:rotate(90deg);}
+.listen-schalter:active{color:var(--text-dim);}
 .kenne-schon-eintrag{
   display:flex;align-items:center;justify-content:space-between;gap:var(--sp-2);
   padding:var(--sp-2) 0;border-bottom:1px solid var(--hairline);
@@ -2041,8 +2061,25 @@ main{
 }
 /* Tippfeld auf der Kartenvorderseite. Erscheint nur ab Box 4 und nur, wenn
    der Schalter in den Einstellungen an ist. */
-.tipp-box{width:100%;max-width:320px;margin-top:var(--sp-4);}
+/* 320 → 420 px am 07.09.2026, Elias am Vorschlag R2: „das schreibfeld sollte
+   auch etwas größer sein damit man besser lesen kann." Nicht nur breiter,
+   sondern auch höher und in größerer Schrift — „lesen" meint das Geschriebene,
+   und das stand vorher in der normalen Feldgröße. Arabisch braucht davon mehr
+   als Deutsch: die Ḥarakāt sitzen über und unter der Zeile.
+   [[line_height_schneidet_harakat_ab]] */
+.tipp-box{width:100%;max-width:420px;margin-top:var(--sp-4);}
+.tipp-box .select-input{font-size:var(--fs-xl);padding:var(--sp-3) var(--sp-4);
+  line-height:1.9;text-align:center;height:auto;}
 .tipp-antwort{margin-top:var(--sp-2);font-size:var(--fs-sm);min-height:1.3em;text-align:center;}
+/* Der Ausweg, wenn die Tastatur gerade zu mühsam ist. Bewusst leise gestaltet:
+   er soll dastehen, ohne der bequemere Weg zu sein. */
+.tipp-ueberspringen{
+  display:block;margin:var(--sp-2) auto 0;
+  background:none;border:none;cursor:pointer;padding:var(--sp-2) var(--sp-3);
+  font-family:var(--font-ui);font-size:var(--fs-sm);color:var(--text-faint);
+  text-decoration:underline;text-underline-offset:3px;
+}
+.tipp-ueberspringen:active{color:var(--text-dim);}
 .tipp-antwort.richtig{color:var(--green);}
 .tipp-antwort.falsch{color:var(--red-soft);}
 
@@ -3926,7 +3963,29 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
      Zeilenumbruch aendern die Hoehe. */
   .topbar{position:absolute;top:0;left:0;right:0;max-width:var(--inhalt-max);margin:0 auto;
     z-index:40;background:var(--bg);}
-  main{max-width:var(--inhalt-max);margin:0 auto;width:100%;padding-top:var(--topbar-h,88px);}
+  /* ⛔⛔ NICHT `max-width` an main zurückgeben (07.09.2026). Elias vom Tablet:
+     „bei meinem tablat gibt es recht viel platz rechts und links bei der app
+     das einfach schwarz sind balken so, und wenn ich runter scrollen möchte
+     dann kann ich das nicht bei den schwarzen balken machen sondern wirklich
+     nur da wo auch der rest der app in der mitte ist."
+
+     `main` IST der Rollbereich (`overflow-y:auto` in der Grundregel). Solange
+     es selbst auf --inhalt-max begrenzt und zentriert war, endete die
+     Rollfläche an der Inhaltskante; links und rechts davon lag #app, und
+     html/body stehen auf `overflow:hidden` — dort gab es also gar nichts zu
+     rollen. Der schwarze Rand war nicht Zierde, sondern toter Raum.
+
+     Jetzt ist main so breit wie das Fenster und der INHALT wird durch das
+     Innenmaß zentriert. Optisch identisch, aber die ganze Breite nimmt Wisch,
+     Rad und Zeigergeste an.
+
+     ⚠️ Der Summand `+ var(--gutter)` ist kein Schönheitsmaß: ohne ihn wäre die
+     Inhaltsbox --inhalt-max breit statt --inhalt-max minus zweimal Rinne, und
+     alles würde um 2×gutter breiter als vorher. `max()` fängt den Fall ab, dass
+     das Fenster schmaler als --inhalt-max ist — dann bleibt die normale Rinne.
+     [[flaeche_nur_im_gefuellten_zustand]] */
+  main{max-width:none;margin:0;width:100%;padding-top:var(--topbar-h,88px);
+    padding-inline:max(var(--gutter), (100% - var(--inhalt-max)) / 2 + var(--gutter));}
 
   /* ⚠️ Am 15.08.2026 neu gefasst, nachdem Elias am Tablet-Bild sagte: "das ist
      nicht mal eine leiste unten, bei beiden". Er hatte recht, und zwar
@@ -4278,10 +4337,15 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
               <button class="speak-btn" id="btnSpeakWord" title="Vorlesen" aria-label="Vorlesen">
                 <svg class="ic"><use href="#ic-speaker"/></svg>
               </button>
+              <!-- Elias' Kommentar am Vorschlag R2 (07.09.2026): „auch fände ich es
+                   gut wenn ich das eintippen überspringen kann wenn ich mal keine
+                   lust darauf habe oder die zeit mal eng ist. das schreibfeld sollte
+                   auch etwas größer sein damit man besser lesen kann." -->
               <div class="tipp-box hidden" id="cardTippBox">
                 <input type="text" id="cardTippEingabe" class="select-input select-full" lang="ar" dir="rtl"
                        placeholder="Wort eintippen …" autocomplete="off" autocapitalize="off" spellcheck="false">
                 <div class="tipp-antwort" id="cardTippAntwort"></div>
+                <button type="button" class="tipp-ueberspringen" id="btnTippUeberspringen">Überspringen</button>
               </div>
               <div class="tap-hint">Antippen zum Umdrehen</div>
             </div>
@@ -5064,7 +5128,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
       <div class="setting-row">
         <div>
           <div class="setting-title">Ab Box 4 eintippen</div>
-          <div class="setting-sub">Statt nur umdrehen: das Wort selbst schreiben. Braucht eine arabische Tastatur.</div>
+          <div class="setting-sub">Statt nur umdrehen: die Antwort selbst schreiben — arabisch oder deutsch, je nach Richtung der Karte. „Überspringen" steht darunter. Für die arabische Richtung brauchst du eine arabische Tastatur.</div>
         </div>
         <button class="switch" id="toggleTippen" aria-label="Tippen ab Box 4 umschalten"><span class="knob"></span></button>
       </div>
@@ -5079,7 +5143,9 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         </div>
         <button class="btn btn-secondary" id="btnKenneSchonAlle">Alle zurück</button>
       </div>
-      <div class="kenne-schon-liste" id="kenneSchonListe"></div>
+      <button class="listen-schalter" id="btnKenneSchonListe" type="button"
+              aria-expanded="false" aria-controls="kenneSchonListe"><span class="ic">▸</span><span class="txt">Liste zeigen</span></button>
+      <div class="kenne-schon-liste hidden" id="kenneSchonListe"></div>
 
       <!-- Der Rückweg zur einzelnen Freischaltung (20.08.2026). Bis hierher ging
            das Zurücknehmen nur über die Wortkarte des Wortes selbst — und die
@@ -5092,7 +5158,9 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         </div>
         <button class="btn btn-secondary" id="btnEinzelnFreiAlle">Alle zurück</button>
       </div>
-      <div class="kenne-schon-liste" id="einzelnFreiListe"></div>
+      <button class="listen-schalter" id="btnEinzelnFreiListe" type="button"
+              aria-expanded="false" aria-controls="einzelnFreiListe"><span class="ic">▸</span><span class="txt">Liste zeigen</span></button>
+      <div class="kenne-schon-liste hidden" id="einzelnFreiListe"></div>
       <!-- ⭐⭐ DIE BRÜCKE ÜBER DIE SPEICHERGRENZE (20.08.2026).
            Einzeln freigeschaltete Wörter stehen in `vt_einzeln_frei`, also im
            localStorage seines Browsers. Kein Werkzeug außerhalb der App kommt
