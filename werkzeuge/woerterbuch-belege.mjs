@@ -165,6 +165,11 @@ function erklaert(w, feld) {
   if (!r) return false;
   if (Array.isArray(r.typen) && r.typen.includes(w.type)) return true;
   if (Array.isArray(r.quellen) && r.quellen.includes(quelleVon(w))) return true;
+  /* ⚠️ Diese Zeile MUSS mit `feldAusnahme()` in data/feld-ausnahmen.js
+     übereinstimmen — sonst gäbe es zwei Antworten auf dieselbe Frage, und beim
+     ersten Widerspruch löst sie niemand mehr auf. Der Grund für die Regel
+     steht dort. [[dieselbe_frage_zwei_antworten]] */
+  if (r.wortgruppe && /\s/.test(String(w.ar || '').normalize('NFC').trim())) return true;
   return false;
 }
 
