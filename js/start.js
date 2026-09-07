@@ -14,11 +14,17 @@ function renderHome(){
   const alle = currentPool();
   const pool = (typeof tagesPool === 'function') ? tagesAuswahl(alle, tagesDeckel()) : alle;
   const wartet = alle.length - pool.length;
+  /* ⭐ Beim Wiedereinstieg nach einer Pause fällt die Wartezahl weg (B2). Der
+     Grund steht bei `istWiedereinstieg()` in js/kern.js: nach zwei Wochen ist
+     der Berg genau das, was zum Aufhören führt. Für einen Tag reicht
+     „heute 10". Ab morgen steht die Zahl wieder da. */
+  const zurueck = (typeof istWiedereinstieg === 'function') && istWiedereinstieg();
+  const groesse = `Sitzungsgröße: ${SETTINGS.sessionSize===9999?'alle':SETTINGS.sessionSize} Karten pro Runde${SETTINGS.wrongOnly?' · Nur falsche Wörter':''}`;
   animateNumber(document.getElementById('dueCount'), pool.length);
   document.getElementById('dueSub').textContent = pool.length
-    ? (wartet > 0 ? `Heute dran · ${wartet} warten noch` : '')
-        + (wartet > 0 ? ' · ' : '')
-        + `Sitzungsgröße: ${SETTINGS.sessionSize===9999?'alle':SETTINGS.sessionSize} Karten pro Runde${SETTINGS.wrongOnly?' · Nur falsche Wörter':''}`
+    ? (zurueck ? `Willkommen zurück – wir fangen klein an · ${groesse}`
+       : wartet > 0 ? `Heute dran · ${wartet} warten noch · ${groesse}`
+       : groesse)
     : (SETTINGS.wrongOnly ? 'Keine schwachen Wörter mit dieser Auswahl.' : 'Alles erledigt für heute – super gemacht.');
   document.getElementById('streakCount').textContent = getStreak().count;
 

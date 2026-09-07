@@ -1813,6 +1813,41 @@ function tagesPool(){
   return tagesAuswahl(currentPool(), tagesDeckel());
 }
 
+/* ⭐ WIEDEREINSTIEG NACH EINER PAUSE (B2, 07.09.2026)
+   ================================================================
+   Elias zum Vorschlag: „klingt gut".
+
+   Nach zwei Wochen Pause zeigt die App den ganzen Berg — und das ist genau der
+   Moment, in dem jemand aufhört. Bei ADHS ist die typische Verlaufsform nicht
+   Nachlassen, sondern **Abbruch**; die Zahl trifft dann auf eine gut
+   beschriebene Scham-Schleife.
+
+   ⛔ Der Punkt hängt an B1 und wäre ohne ihn wirkungslos: erst der Tagesdeckel
+   macht aus „312 fällig" ein „heute 10". Was hier dazukommt, ist, dass beim
+   Wiedereinstieg auch die **Wartezahl** verschwindet — für einen Tag reicht
+   „heute 10", ohne dass daneben steht, wie tief das Loch ist.
+
+   ⚠️ Verschwiegen wird nichts: die Statistik führt den Bestand unverändert,
+   und ab dem zweiten Tag steht die Zahl wieder da. Es ist eine Frage des
+   Zeitpunkts, nicht der Wahrheit. */
+const PAUSE_AB_TAGEN = 7;
+
+/** Tage seit der letzten Übung. `null`, wenn noch nie geübt wurde. */
+function pauseInTagen(){
+  let s;
+  try { s = getStreak(); } catch (e) { return null; }
+  if (!s || !s.last) return null;
+  const heute = new Date(todayStr(0)), letzte = new Date(s.last);
+  if (isNaN(heute) || isNaN(letzte)) return null;
+  return Math.max(0, Math.round((heute - letzte) / 86400000));
+}
+
+/** Ist das hier ein Wiedereinstieg — also lag eine längere Pause dazwischen? */
+function istWiedereinstieg(){
+  const t = pauseInTagen();
+  return t !== null && t >= PAUSE_AB_TAGEN;
+}
+
 /* "Nur falsche Wörter" wieder abschalten, sobald keine mehr da sind
    (arabicroots-Paritaet D). Der Schalter war bisher dauerhaft: hat man die
    letzte schwache Vokabel geschafft, blieb er an, "Lernen" meldete jedes Mal

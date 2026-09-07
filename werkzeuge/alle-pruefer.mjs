@@ -175,6 +175,7 @@ const PRUEFER = [
   ['test-langenscheidt.mjs', []],
   ['test-laut.mjs', []],
   ['test-tagesdeckel.mjs', []],
+  ['test-wiedereinstieg.mjs', []],
   ['test-schreibweisen.mjs', []],
   ['test-p9.mjs', []],
 
