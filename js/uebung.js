@@ -1164,7 +1164,17 @@ function renderUebung(){
      entstehen. Deshalb hier `innerHTML` mit arabischHervor(), das selbst
      maskiert. [[allgemeine_regel_statt_listeneintrag]] */
   document.getElementById('uebName').innerHTML = arabischHervor(`${m.nr}. ${m.name}`);
-  document.getElementById('uebStand').textContent = `${UEB.idx+1} / ${UEB.liste.length} · ${UEB.richtig} richtig`;
+  /* ⭐ Die Standzeile fuehrt das Tagesziel mit (07.09.2026). Ohne das waere die
+     Feier nach 13 Aufgaben eine Ueberraschung aus dem Nichts: man saehe nur
+     „7 / 4750", also eine Zahl, die nie kleiner wird. Dieselbe Ueberlegung wie
+     im Hoermodus, wo die Standzeile aus demselben Grund erweitert wurde. */
+  const st = (typeof satzTag === 'function') ? satzTag() : null;
+  const zielText = !st ? ''
+    : st.gesamt >= SATZ_TAGESZIEL
+      ? ` · Tagesziel geschafft (${st.gesamt})`
+      : ` · Tagesziel ${st.gesamt} von ${SATZ_TAGESZIEL}`;
+  document.getElementById('uebStand').textContent =
+    `${UEB.idx+1} / ${UEB.liste.length} · ${UEB.richtig} richtig${zielText}`;
   document.getElementById('uebFrage').innerHTML = arabischHervor(a.frage);
   document.getElementById('uebSatz').innerHTML = uebungSatzHtml(a);
   document.getElementById('uebDe').textContent = a.satz.sentDe || '';
@@ -1258,6 +1268,38 @@ function uebersetzungFuer(stueck){
   return gefunden.length ? gefunden.join(' · ') : null;
 }
 
+/* ⭐⭐ DAS TAGESZIEL IM SATZMODUS (B4, 07.09.2026)
+   ================================================================
+   Elias' eigener Vorschlag, im Wortlaut: „bei karteikarten braucht man das
+   nicht aber bei dem gemischten satzmodus nach 13 aufgaben könnte man das
+   einfügen. danach kann man noch weiter üben aber nach diesen 13 aufgaben
+   könnte auch so eine animation kommen wie bei karteikarten die dann zeigt
+   das man sein tagesziel erreicht hat"
+
+   ⭐ WARUM 13, und warum das keine willkuerliche Zahl ist: der gemischte Modus
+   zieht reihum eine Aufgabe je Uebungsart. Nach 13 ist jede der 13 Uebungsarten
+   genau einmal drangewesen — eine natuerliche Grenze, keine gesetzte.
+
+   ⭐ Der DRITTE Faelle nach demselben Muster: die Karteikarten haben
+   'alles-faellig', der Hoermodus hat 'hoer-tagesziel' mit `vt_hoerTag`.
+   Ein eigener Zaehler ist richtig, weil die drei Modi verschiedene Vorraete
+   haben — ein gemeinsamer wuerde behaupten, 13 Satzaufgaben und 10 gehoerte
+   Woerter seien dasselbe.
+
+   ⚠️ NACH DEM ZIEL WIRD NICHT GESPERRT. „danach kann man noch weiter üben" —
+   der Zaehler laeuft weiter, gefeiert wird `einmalig` je Tag.
+   Dieselbe Entscheidung wie im Hoermodus (js/hoeren.js, Zeile 37). */
+const SATZ_TAGESZIEL = 13;
+
+function satzTag(){
+  const heute = todayStr(0);
+  let t = null;
+  try { t = LS.get('vt_satzTag', null); } catch (e) { t = null; }
+  if (!t || t.tag !== heute) t = { tag: heute, gesamt: 0, richtig: 0 };
+  return t;
+}
+function satzTagSpeichern(t){ try { LS.set('vt_satzTag', t); } catch (e) { /* privates Fenster */ } }
+
 /* Auswertung. Ein Aufruf, drei Arten - und die Zaehlung passiert genau hier,
    damit kein Modus sie vergessen kann. */
 function uebungAuswerten(richtig){
@@ -1279,10 +1321,30 @@ function uebungAuswerten(richtig){
      lösungen" ausdruecklich. Ebenfalls HIER und nicht in den Auswertern, aus
      demselben Grund: kein Modus kann es vergessen. */
   if (typeof merkeUebung === 'function' && UEB && UEB.modus) merkeUebung(UEB.modus, richtig);
+  /* ⭐ Der Tageszaehler des Satzmodus. HIER, aus demselben Grund wie
+     UEB.gestellt und merkeUebung darueber: kein Modus kann es vergessen.
+     ⛔ VOR renderUebung(), damit die Standzeile den neuen Stand zeigt und
+     nicht den von vor der Antwort. */
+  const satzT = satzTag();
+  const satzVorher = satzT.gesamt;
+  satzT.gesamt++;
+  if (richtig) satzT.richtig++;
+  satzTagSpeichern(satzT);
+
   renderUebung();
   /* Haken fuer die Feier-Effekte (Nachtplan Punkt 8). Solange es js/feier.js
      nicht gibt, passiert hier nichts - der Aufruf ist bewusst wegoptional. */
   if (typeof feiereUebung === 'function') feiereUebung(richtig, UEB);
+
+  /* ⭐ Das Tagesziel — genau beim UEBERGANG, nicht bei jedem Stand darueber.
+     Ohne den Vorher-Vergleich feuerte es bei Aufgabe 14, 15, 16 … erneut; dass
+     der Anlass `einmalig` je Tag ist, faengt das zwar ab, aber eine Bedingung,
+     die sich auf eine zweite Sperre verlaesst, ist eine Falle fuer den
+     naechsten, der die Sperre anfasst. */
+  if (satzVorher < SATZ_TAGESZIEL && satzT.gesamt >= SATZ_TAGESZIEL
+      && typeof feiere === 'function'){
+    feiere('satz-tagesziel', { zahl: satzT.gesamt, richtig: satzT.richtig });
+  }
 }
 
 function uebungWortTipp(i){

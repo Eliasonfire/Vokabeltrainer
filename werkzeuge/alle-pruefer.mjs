@@ -176,6 +176,7 @@ const PRUEFER = [
   ['test-laut.mjs', []],
   ['test-tagesdeckel.mjs', []],
   ['test-wiedereinstieg.mjs', []],
+  ['test-satz-tagesziel.mjs', []],
   ['test-schreibweisen.mjs', []],
   ['test-p9.mjs', []],
 
