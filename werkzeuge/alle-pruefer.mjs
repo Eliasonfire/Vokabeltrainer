@@ -191,6 +191,7 @@ const PRUEFER = [
      und nicht wiederherstellbar. Ein Fehler hier ist kein
      Schoenheitsfehler, sondern ein Verlust. */
   ['test-dublette.mjs', []],
+  ['test-auswahl-einzelnfrei.mjs', []],
   ['test-hifz-sync.mjs', []],  ['test-sync.mjs', []],
   ['test-sync-anzeige.mjs', []],
   ['test-wurzel.mjs', []],

@@ -242,7 +242,27 @@ function todayStr(offsetDays=0){
 /* ---------- Eigene Vokabeln (lokal, nicht Teil von vocab-data.js) ---------- */
 let PERSONAL_VOCAB = LS.get('vt_personalVocab', []);
 function savePersonalVocab(){ LS.set('vt_personalVocab', PERSONAL_VOCAB); }
-VOCAB_DATA.push(...PERSONAL_VOCAB);
+/* ⛔⛔ DIE AUSGEBLENDETEN UEBERSPRINGEN (07.09.2026)
+
+   Bis heute stand hier `VOCAB_DATA.push(...PERSONAL_VOCAB)` ohne Filter — als
+   einzige der drei 'personal'-Quellen (Fachbegriffe und vokabeln-eigene.js
+   pruefen beide gegen vt_geloescht).
+
+   Das war unauffaellig, solange das Loeschen die Liste selbst kuerzt. Der
+   Geraeteabgleich vereinigt vt_personalVocab aber je Eintrag (js/sync.js:554),
+   und eine Loeschung, die nur als ABWESENHEIT in der Liste steht, ueberlebt
+   eine Vereinigung nicht: das andere Geraet kennt das Wort noch und bringt es
+   zurueck. Genau daran haben sich die Dubletten-Meldung und der Tausch
+   dahinter bei jedem Start wiederholt. [[bedingung_wird_durch_die_handlung_ungueltig]]
+
+   ⚠️ Die Liste direkt aus dem Speicher, nicht ueber istGeloescht(): GELOESCHT
+   ist ein `let` und wird erst weiter unten angelegt — derselbe Grund wie bei
+   den Fachbegriffen. */
+{
+  const wegRoh = LS.get('vt_geloescht', {});
+  const weg = (wegRoh && typeof wegRoh === 'object' && !Array.isArray(wegRoh)) ? wegRoh : {};
+  VOCAB_DATA.push(...PERSONAL_VOCAB.filter(w => !(w && weg[w.id] && weg[w.id].an)));
+}
 
 /* ---------- Fortschritt je GRAMMATIKREGEL (19.08.2026) ----------
 
@@ -819,14 +839,35 @@ function loeschePersonalVocab(id){
      Scheinfunktion: es verschwaende aus der Liste und stuende beim naechsten
      Start wieder da. Genau diese Art Fehler faellt niemandem auf, weil sie im
      Moment des Klickens richtig aussieht. */
-  const ausDatei = w.source === 'personal_vocabulary';
-  if (w.chapter === 'personal' && !ausDatei){
-    PERSONAL_VOCAB = PERSONAL_VOCAB.filter(x => x.id !== id);
+  /* ⛔⛔ ZWEI FEHLER, BEIDE AM 07.09.2026 GEMESSEN — hier stand:
+
+         const ausDatei = w.source === 'personal_vocabulary';
+         if (w.chapter === 'personal' && !ausDatei) { … } else { GELOESCHT … }
+
+     1. `source` RAET die Herkunft. Die fuenfzehn Fachbegriffe tragen
+        `chapter:'personal'`, aber KEIN `source` — sie liefen also in den
+        ersten Zweig, der sie aus PERSONAL_VOCAB filtert, wo sie nie standen.
+        Ergebnis: nichts entfernt, nichts vermerkt, und beim naechsten Start
+        stand das Wort wieder da. Der Kommentar darueber nannte die
+        Fachbegriffe sogar — die Bedingung fragte sie nur nicht ab.
+        [[kennzeichen_mit_zwei_ursachen]]
+
+     2. Die Loeschung stand NUR als Abwesenheit in der Liste. Der
+        Geraeteabgleich vereinigt vt_personalVocab je Eintrag — das andere
+        Geraet kennt das Wort noch und bringt es zurueck.
+
+     Deshalb jetzt: die Herkunft MESSEN (steht es wirklich in PERSONAL_VOCAB?)
+     und den Vermerk IMMER setzen. Er ist auch fuer ein Wort aus dem
+     Geraetespeicher richtig — vt_geloescht wird je Eintrag zusammengefuehrt
+     (js/sync.js:411) und ueberlebt damit, was die Liste selbst nicht ueberlebt.
+     [[leere_liste_ist_keine_messung]] */
+  const imSpeicher = PERSONAL_VOCAB.some(x => String(x && x.id) === String(id));
+  if (imSpeicher){
+    PERSONAL_VOCAB = PERSONAL_VOCAB.filter(x => String(x.id) !== String(id));
     savePersonalVocab();
-  } else {
-    GELOESCHT[id] = { an: true, zeit: Date.now() };
-    LS.set(GELOESCHT_SCHLUESSEL, GELOESCHT);
   }
+  GELOESCHT[id] = { an: true, zeit: Date.now() };
+  LS.set(GELOESCHT_SCHLUESSEL, GELOESCHT);
 
   const i = VOCAB_DATA.findIndex(x => x.id === id);
   if (i >= 0) VOCAB_DATA.splice(i, 1);
@@ -1051,6 +1092,29 @@ function setzeEinzelnFrei(id, an){
 function einzelnFreigeschaltete(){
   return Object.keys(EINZELN)
     .filter(id => EINZELN[id] && EINZELN[id].an)
+    .map(id => VOCAB_DATA.find(w => String(w.id) === String(id)))
+    .filter(Boolean)
+    .sort((a,b) => (EINZELN[b.id].zeit || 0) - (EINZELN[a.id].zeit || 0));
+}
+/* ⛔⛔ DIE GEGENRICHTUNG — und der Grund, warum es sie geben MUSS (07.09.2026)
+
+   Elias: „ich habe testweise mal aladhi zu gemacht und es ist verschwunden,
+   ich will das es wieder zurück kommt und ich möchte wissen was das für eine
+   einstellungn ist und warum man die dann nicht wieder aufmachen kann“
+
+   ⭐ Ueber der Liste in js/einstellungen.js steht seit dem 20.08.2026, sie sei
+   der Rueckweg, damit der Knopf in der Wortkarte „keine Einbahnstrasse“ ist.
+   Sie war dann selbst eine: „Wieder zumachen“ nimmt das Wort aus GENAU DER
+   Liste, in der der Rueckweg stehen muesste. Die Handlung macht ihre eigene
+   Bedingung ungueltig. [[bedingung_wird_durch_die_handlung_ungueltig]]
+
+   ⭐ Die Daten trugen den Rueckweg die ganze Zeit: setzeEinzelnFrei(id,false)
+   LOESCHT den Eintrag nicht, es setzt `an:false`. Es fehlte allein die
+   Anzeige. Verloren war nie etwas — es war nur nirgends zu sehen, und das ist
+   fuer den, der davorsitzt, dasselbe. [[daten_ohne_zugang]] */
+function einzelnZugemachte(){
+  return Object.keys(EINZELN)
+    .filter(id => EINZELN[id] && !EINZELN[id].an)
     .map(id => VOCAB_DATA.find(w => String(w.id) === String(id)))
     .filter(Boolean)
     .sort((a,b) => (EINZELN[b.id].zeit || 0) - (EINZELN[a.id].zeit || 0));
@@ -1787,13 +1851,29 @@ function passtZurAuswahl(w){
      Vokabeln, Fachbegriffe) - stuende die Pruefung dahinter, waere sie fuer
      genau die Woerter wirkungslos, ohne dass es je auffiele. */
   if (typeof kennErSchon === 'function' && kennErSchon(w)) return false;
-  /* ⛔ Auch HIER, nicht nur in istBekannt(). Die Wissensgrenze oben lässt das
-     Wort durch, der Buchfilter unten wirft es wieder hinaus: wer Kapitel 1–12
-     angehakt hat, sähe ein einzeln freigeschaltetes Wort aus Kapitel 24 nie.
-     Ohne diese Zeile wäre das Freischalten in der Kartei, im Satzmodus, in den
-     Wortfeldern und in der Statistik wirkungslos — alle vier hängen an dieser
-     einen Funktion. */
-  if (typeof istEinzelnFrei === 'function' && istEinzelnFrei(w)) return true;
+  /* ⛔⛔ HIER STAND EIN BEDINGUNGSLOSES `return true` FUER EINZELN
+     FREIGESCHALTETE WOERTER — und das war zu viel. (07.09.2026)
+
+     Elias: „ich habe eben nur kapitel 1 ausgewählt weil ich was gucken wollte
+     bei den karteikarten und habe die seite neu geladen und app geschlossen
+     udn wieder geöffnet und trotzdem kommt eine kartei aus kapitel 24. ja ich
+     habe kapitel 24 nicht aktiv angehabt, es ist eine ausnahme freigeschaltete
+     vokabel aber sie sollte so wie meine eigenen hinzugefügten vokabeln
+     behandelt werden solange ich nicht wirklich bis an das kapitel angekommen
+     bin beziehungsweise es freigeschalten habe“
+
+     ⭐ Die alte Begruendung („sonst waere das Freischalten wirkungslos“) war
+     richtig und ist es weiter — sie rechtfertigt nur kein `return true` VOR
+     dem Kapitelfilter. Beides zusammen geht: der Filter entscheidet zuerst,
+     und erst wenn er das Wort ablehnt, greift die Regel fuer die eigenen
+     Woerter ein Stueck weiter unten. Damit ist ein einzeln freigeschaltetes
+     Wort aus einem GEWAEHLTEN Kapitel weiter ganz normal dabei.
+
+     ⚠️ Die Wissensgrenze in istBekannt() (Zeile 165) bleibt unberuehrt: das
+     Wort gilt weiter als gekonnt und zaehlt in Statistik und Wortfeldern mit.
+     Es faellt nur aus einer Auswahl heraus, in der er es nicht sehen will —
+     das sind zwei verschiedene Fragen, und genau ihre Vermischung war der
+     Fehler. [[sein_ist_nicht_wirken]] */
   const karte = (SETTINGS.buecher && typeof SETTINGS.buecher === 'object')
     ? SETTINGS.buecher : { 'madina-1': [] };
   /* ⚠️ Hier stand bis zum 20.08.2026 ein eigener Zweig fuer die Fachbegriffe
@@ -1808,9 +1888,20 @@ function passtZurAuswahl(w){
     const eng = (typeof irgendwoEingeengt === 'function') ? irgendwoEingeengt() : false;
     return !eng || !!SETTINGS.eigeneGewaehlt;
   }
+  /* ⭐ Dieselbe Regel wie fuer 'personal' vier Zeilen weiter oben — bewusst
+     woertlich dieselbe, denn Elias hat genau das verlangt: „sie sollte so wie
+     meine eigenen hinzugefügten vokabeln behandelt werden“. Solange nirgends
+     eingeengt ist, laeuft das Wort mit; sobald er Kapitel gewaehlt hat, nur
+     noch ueber den „Eigene“-Chip. */
+  const wieEigene = () => {
+    if (!(typeof istEinzelnFrei === 'function' && istEinzelnFrei(w))) return false;
+    const eng = (typeof irgendwoEingeengt === 'function') ? irgendwoEingeengt() : false;
+    return !eng || !!SETTINGS.eigeneGewaehlt;
+  };
+
   const kapitel = karte[w.book];
-  if (!Array.isArray(kapitel)) return false;         /* Buch nicht gewaehlt */
-  if (kapitel.length && kapitel.indexOf(w.chapter) < 0) return false;
+  if (!Array.isArray(kapitel)) return wieEigene();    /* Buch nicht gewaehlt */
+  if (kapitel.length && kapitel.indexOf(w.chapter) < 0) return wieEigene();
   return true;
 }
 
@@ -2011,7 +2102,41 @@ function formen(wert){
 }
 function formenAnzeige(wert){ return formen(wert).join(' / '); }
 
+/* ---------- Kein Briefing beim Start (07.09.2026) --------------------------
+
+   Elias mit Bild einer Meldung, die bei jedem Laden kam: „ich möchte einfach
+   beim starten der app nicht irgeneine benachrichtigung bekommen oder eine
+   checkliste was gemacht wurde. ich habe nichts gedrückt oder gemacht und
+   trotzdem wird mir was angezeigt woran ich nicht mal interesse habe. wenn ich
+   ein wort verändere und dann dort steht ,,gespeichert“ oder so dann ist das
+   gut zu wissen aber nicht am anfang vom start der app wie ein briefing was
+   alles passiert ist und was verändert wurde usw“
+
+   ⭐ Die Trennlinie steht damit in SEINEN Worten und ist keine Zahl, die ich
+   raten muesste: hat er die App angefasst, ist eine Rueckmeldung die Antwort
+   auf seine Handlung. Hat er sie nicht angefasst, ist sie ein Briefing.
+
+   ⛔ Deshalb ein RIEGEL an der einen Stelle, durch die alle 66 Aufrufe gehen,
+   und keine Liste einzelner Fundstellen. Eine Liste erwischt nur, was heute da
+   ist — beim naechsten neuen Hinweis faengt es von vorn an.
+   [[allgemeine_regel_statt_listeneintrag]]
+
+   ⚠️ `pointerdown` und nicht `click`: es feuert VOR click. Ein Hinweis, den
+   sein eigener Tipp ausloest, kaeme sonst eine Wimpernschlaglaenge zu frueh
+   und wuerde vom Riegel verschluckt — genau die Sorte Fehler, die man nur
+   einmal pro hundert Tipps sieht und nie wiederfindet.
+
+   `once:true` an allen dreien: der erste Eingriff hebt auf, danach kosten sie
+   nichts mehr. `capture:true`, damit ein Element, das das Ereignis abfaengt,
+   den Riegel nicht offen laesst. */
+let TOAST_FREI = false;
+for (const ereignis of ['pointerdown', 'keydown', 'touchstart']){
+  document.addEventListener(ereignis, () => { TOAST_FREI = true; },
+    { once: true, capture: true, passive: true });
+}
+
 function toast(msg){
+  if (!TOAST_FREI) return;          /* Startphase: Elias hat nichts getan. */
   const el = document.getElementById('toast');
   el.textContent = msg; el.classList.add('show');
   clearTimeout(toast._t);
