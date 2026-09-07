@@ -660,11 +660,19 @@ function fuehreZusammen(fern){
         const a = JSON.parse(hierRoh) || {}, b = JSON.parse(dortRoh) || {};
         const raus = Object.assign({}, a);
         for (const [tag, e] of Object.entries(b)){
-          const hier = raus[tag] || { gestellt: 0, richtig: 0 };
-          raus[tag] = {
-            gestellt: Math.max(Number(hier.gestellt) || 0, Number(e && e.gestellt) || 0),
-            richtig:  Math.max(Number(hier.richtig)  || 0, Number(e && e.richtig)  || 0),
-          };
+          const hier = raus[tag] || {};
+          /* ⛔⛔ ÜBER DIE FELDER LAUFEN, nicht zwei fest hinschreiben. Hier
+             stand bis zum 07.09.2026 ein Objektliteral mit genau `gestellt`
+             und `richtig` — als an diesem Tag `kGestellt`/`kRichtig` für die
+             Karteikarten dazukamen, hätte es sie beim ersten Abgleich
+             stillschweigend weggeworfen: das Literal ERSETZT den Eintrag, es
+             ergänzt ihn nicht. Kein Fehler, keine Meldung, nur eine Zahl, die
+             auf beiden Geräten wieder bei null steht.
+             [[angleichen_loescht_handarbeit]] · [[ausfall_ist_unsichtbar_gebaut]] */
+          const zusammen = {};
+          for (const feld of new Set([...Object.keys(hier), ...Object.keys(e || {})]))
+            zusammen[feld] = Math.max(Number(hier[feld]) || 0, Number(e && e[feld]) || 0);
+          raus[tag] = zusammen;
         }
         const neu = JSON.stringify(raus);
         if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }

@@ -344,19 +344,51 @@ function merkeUebung(modusId, richtig){
    mitgeschrieben werden. Der Versuch kann also fruehestens ab heute beginnen —
    das ist eine ehrliche Grenze und keine Nachlaessigkeit. [[daten_ohne_zugang]]
 
-   ⭐ NUR ECHTE ABFRAGEN, keine Selbsteinschaetzung. Gezaehlt werden der
-   Satzmodus und der Hoermodus, wo „richtig" objektiv feststeht. Die vier
-   Bewertungsstufen der Karteikarte sind ein anderes Mass: dort sagt Elias
-   selbst, wie gut er es wusste. Beides in einen Topf zu werfen ergaebe eine
-   Zahl, die weder das eine noch das andere misst. [[pruefung_fragt_einen_stellvertreter_ab]]
+   ⛔⛔ DIE KARTEIKARTEN ZAEHLEN MIT — aber in EIGENEN Feldern (07.09.2026).
 
-   Form: { "2026-09-07": { gestellt: 20, richtig: 14 } } */
+   Hier stand bis dahin: „NUR ECHTE ABFRAGEN, keine Selbsteinschaetzung.
+   Gezaehlt werden der Satzmodus und der Hoermodus, wo ‚richtig' objektiv
+   feststeht. Die vier Bewertungsstufen der Karteikarte sind ein anderes Mass
+   […]. Beides in einen Topf zu werfen ergaebe eine Zahl, die weder das eine
+   noch das andere misst."
+
+   Elias hat widersprochen: *„trefferquote sollte doch auch die karteikarten
+   zählen weil der fortschritt da ist ja wirklich sehr wichtig."* Und er hat
+   recht — die Karteikarten sind der Hauptteil seines Uebens; eine Quote, die
+   den Hauptteil auslaesst, beschreibt nicht sein Lernen, sondern einen
+   Nebenzweig davon. Ein Mass ist wertlos, wenn es das Wichtigste nicht misst.
+
+   ⭐ Der Einwand war trotzdem richtig — deshalb kein „Topf", sondern ZWEI
+   Paare in derselben Zeile:
+
+     gestellt / richtig    Satzmodus + Hoermodus (objektiv geprueft)
+     kGestellt / kRichtig  Karteikarten (seine eigene Bewertung)
+
+   Die Anzeige addiert beide, der Rauschversuch kann die Reihen trennen — und
+   es ist jederzeit nachvollziehbar, wie viel von welcher Sorte in einer Zahl
+   steckt. Eine einzige Summe koennte man nie wieder auseinandernehmen.
+   [[pruefung_fragt_einen_stellvertreter_ab]] · [[stand_besteht_aus_mehreren_zahlen]]
+
+   ⚠️ Als „richtig" gilt bei der Karte dasselbe wie in der uebrigen Statistik:
+   „gut" und „leicht" ja, „nochmal" und „schwer" nein (STUFEN in js/lernen.js).
+   Keine zweite Grenze daneben, sonst zaehlten zwei Ansichten verschieden.
+
+   ⚠️ Alte Tage haben die beiden k-Felder nicht. Sie fehlen dann schlicht und
+   zaehlen als 0 — nachtragen laesst sich nichts, die Daten gab es nie.
+   [[daten_ohne_zugang]]
+
+   Form: { "2026-09-07": { gestellt: 20, richtig: 14, kGestellt: 60, kRichtig: 41 } } */
 let QUOTE_TAGE = LS.get('vt_quoteTage', {});
-function merkeQuote(richtig){
+function merkeQuote(richtig, art){
   const t = todayStr(0);
   const e = QUOTE_TAGE[t] || { gestellt: 0, richtig: 0 };
-  e.gestellt++;
-  if (richtig) e.richtig++;
+  if (art === 'karte'){
+    e.kGestellt = (e.kGestellt || 0) + 1;
+    if (richtig) e.kRichtig = (e.kRichtig || 0) + 1;
+  } else {
+    e.gestellt++;
+    if (richtig) e.richtig++;
+  }
   QUOTE_TAGE[t] = e;
   try { LS.set('vt_quoteTage', QUOTE_TAGE); } catch (err) { /* privates Fenster */ }
 }
@@ -376,11 +408,19 @@ function quoteJeWoche(wochen){
   for (let w = n - 1; w >= 0; w--){
     const von = todayStr(-(wtag + w * 7));
     const bis = todayStr(-(wtag + w * 7) + 6);
-    let gestellt = 0, richtig = 0;
+    /* ⭐ Vier Zahlen statt zwei (07.09.2026): die geprueften Abfragen und die
+       Karteikarten bleiben getrennt zaehlbar, `gestellt`/`richtig` sind ihre
+       Summe. Wer nur die Quote will, nimmt `quote`; wer den Rauschversuch
+       auswertet, kann die Karten herausrechnen. */
+    let abfrage = 0, abfrageR = 0, karten = 0, kartenR = 0;
     for (const [tag, e] of Object.entries(QUOTE_TAGE || {})){
-      if (tag >= von && tag <= bis && e){ gestellt += e.gestellt || 0; richtig += e.richtig || 0; }
+      if (tag >= von && tag <= bis && e){
+        abfrage  += e.gestellt  || 0;  abfrageR += e.richtig  || 0;
+        karten   += e.kGestellt || 0;  kartenR  += e.kRichtig || 0;
+      }
     }
-    reihe.push({ von, bis, gestellt, richtig,
+    const gestellt = abfrage + karten, richtig = abfrageR + kartenR;
+    reihe.push({ von, bis, gestellt, richtig, abfrage, abfrageR, karten, kartenR,
       quote: gestellt ? Math.round(richtig / gestellt * 100) : null });
   }
   return reihe;
