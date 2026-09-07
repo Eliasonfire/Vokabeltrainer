@@ -233,10 +233,50 @@ const LS = {
   }
 };
 
+/* ---------- Der Lerntag beginnt um 8 Uhr morgens (08.09.2026) ----------
+
+   Elias: "ja will ich am besten so um 8 uhr morgens"
+
+   ⛔⛔ DAS IST DER TAGESBEGRIFF DER GANZEN APP — 32 Stellen haengen daran:
+   die Leitner-Faelligkeit (`nextReview`), die Serie, der Uebungskalender, die
+   Tagesquote, alle drei Tagesziele, die Feiern und die Zeitmessung.
+
+   ⛔ Bis heute stand hier `d.toISOString()`, und das rechnet in **UTC**.
+   Gemessen am 08.09.2026 um **00:52 MESZ**: geschrieben wurde der Tag
+   "2026-09-07". Der Tag wechselte also um 2 Uhr nachts (Sommerzeit) bzw. um
+   1 Uhr (Winterzeit) — nicht aus einer Entscheidung heraus, sondern als
+   Nebenwirkung der Zeitzone. [[tagesbegriff_der_app_ist_utc]]
+
+   ⭐ Warum 8 Uhr die richtige Wahl ist und nicht Mitternacht: Elias schlaeft
+   von 6 bis 13/14 Uhr. Um 8 wechselt der Tag also **mitten in seinem Schlaf**
+   — der Punkt, an dem garantiert keine Uebungssitzung auseinandergerissen
+   wird. Bei Mitternacht waere genau das der Normalfall: Er uebt abends und
+   nachts, und das Tagesziel spraenge ihm mitten in der Sitzung um.
+   [[elias_schlafrhythmus]]
+
+   ⚠️ ZWEI Aenderungen in einer: der 8-Stunden-Versatz UND die Umstellung von
+   UTC auf ORTSZEIT. Beides gehoert zusammen — "8 Uhr morgens" ist eine Angabe
+   in seiner Zeit, nicht in UTC.
+
+   ⭐ Warum kein Datenumbau noetig war: `nextReview` wird nur als String mit
+   `todayStr(0)` verglichen (js/kern.js:1742), und die Serie rechnet die
+   Differenz zweier Werte derselben Funktion. Beide Seiten verschieben sich
+   also gemeinsam. Umgestellt wurde ausserdem in der Stunde, in der alte und
+   neue Rechnung **denselben** Wert liefern (01:0x MESZ → beide "2026-09-07"):
+   der einzige Zeitpunkt, an dem der Wechsel keinen Tag doppelt zaehlt und
+   keinen ueberspringt.
+
+   ⚠️ `toISOString()` waere hier jetzt falsch — es wuerde den Versatz sofort
+   wieder in UTC zurueckrechnen. Deshalb von Hand aus den lokalen Feldern. */
+const TAG_BEGINN_STUNDE = 8;
+
 function todayStr(offsetDays=0){
   const d = new Date();
+  d.setHours(d.getHours() - TAG_BEGINN_STUNDE);   /* vor 8 Uhr zaehlt zum Vortag */
   d.setDate(d.getDate()+offsetDays);
-  return d.toISOString().slice(0,10);
+  return d.getFullYear() + '-'
+    + String(d.getMonth()+1).padStart(2,'0') + '-'
+    + String(d.getDate()).padStart(2,'0');
 }
 
 /* ---------- Eigene Vokabeln (lokal, nicht Teil von vocab-data.js) ---------- */
@@ -1339,7 +1379,22 @@ let SETTINGS = Object.assign(
      min" — „fünf Minuten fängt man an, fünfzehn schiebt man auf".
      ⚠️ Das ist eine Einstellung, keine Festlegung: `sessionSize` bleibt
      unberührt, und mit 0 ist der Deckel aus. */
-  { showPlural:false, pluralKarten:false, showVerbFormen:false, showQuran:false, sessionSize:20, tagesDeckel:10, voiceURI:null, direction:'ar-de', selectedChapters:[], wrongOnly:false, grammarHighlight:true },
+  /* ⭐ hoerZiel: das Tagesziel im Hörmodus, seit dem 08.09.2026 einstellbar.
+     Elias: „ich will auch einstellen, was mein tagesziel beim hörmodus ist in
+     den einstellungen und ich will erstmal nur 5 wörter machen als tagesziel."
+
+     ⚠️ Die 5 ist bewusst KLEINER als die alte feste 10. Der Grund kommt aus
+     der ADHS-Recherche vom 07.09.2026: Hulme u. a. 2019 fanden **keine
+     Schwelle** an Wortkontakten, ab der ein Wort sitzt — der Zusammenhang ist
+     linear, jeder Kontakt trägt seinen Anteil. Damit ist die Tageszahl keine
+     Lern-, sondern eine Gewohnheitsentscheidung: sie muss so klein sein, dass
+     sie am schlechten Tag noch zustande kommt. [[vokabeln_sind_der_teuerste_teil]]
+
+     ⛔ Kein „Aus" in der Auswahl, anders als beim tagesDeckel. Der Hörmodus
+     hat keinen Vorrat, der leer werden könnte — ohne Zahl gäbe es wieder kein
+     sichtbares Ende, und genau das hatte Elias am 17.08.2026 beanstandet
+     („aktuell sieht es aus als gäbe es da kein ende"). */
+  { showPlural:false, pluralKarten:false, showVerbFormen:false, showQuran:false, sessionSize:20, tagesDeckel:10, hoerZiel:5, voiceURI:null, direction:'ar-de', selectedChapters:[], wrongOnly:false, grammarHighlight:true },
   LS.get('vt_settings', {})
 );
 /* ---------- Zeitstempel JE EINSTELLUNG (17.08.2026) ----------

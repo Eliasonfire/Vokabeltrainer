@@ -58,6 +58,14 @@ const SYNC_SCHLUESSEL = [
      ich hatte den Schluessel angelegt und den Abgleich vergessen. Das ist die
      Fehlerart, die sich nie von selbst meldet. [[daten_ohne_zugang]] */
   'vt_satzTag',
+  /* ⭐ Die stille Zeitmessung (08.09.2026). Eigener Merge-Zweig weiter unten,
+     und der ist hier nicht optional: Zeit ist ADDITIV. Als Block gemergt
+     verlöre ein Tag, an dem Elias auf beiden Geräten geübt hat, die Hälfte —
+     genau der Fehler, den `vt_uebungstage` mit seinem Maximum bewusst in Kauf
+     nimmt und den eine Zeitangabe nicht vertragen würde.
+     ⚠️ `vt_geraetId` steht ABSICHTLICH NICHT hier: würde sie abgeglichen,
+     hätten beide Geräte dieselbe Kennung und die Trennung wäre hinfällig. */
+  'vt_zeit',
   /* ⭐ „Laut sagen": welche Karte wann zuletzt markiert war, und die laufende
      Rundennummer (07.09.2026). Ohne Abgleich wandert die Markierung auf jedem
      Geraet fuer sich — kein Datenverlust, aber „jedes Wort kommt mal dran"
@@ -643,6 +651,34 @@ function fuehreZusammen(fern){
        beiden Geräten dieselbe Aussage. Ein Blockstempel würde die Markierungen
        des anderen Geräts wegwerfen; das Wort käme dort sofort wieder dran und
        ein anderes nie. */
+    /* ⭐ Die stille Zeitmessung: { Tag: { Gerät: { learn, sentences, hoeren } } }.
+       Vereinigt über beide Ebenen, je Modus das MAXIMUM.
+
+       ⭐ Warum das Maximum hier verlustfrei ist, anders als bei
+       `vt_uebungstage`: Dort steht eine Zahl JE TAG, und zwei Geräte
+       überschreiben einander. Hier steht sie je Tag UND Gerät — innerhalb
+       eines Geräts wächst der Zähler monoton, also ist der größere Wert immer
+       der jüngere. Über die Geräte hinweg wird nichts verglichen, sondern
+       nebeneinandergelegt; summiert wird erst beim Lesen in `zeitBericht()`. */
+    if (k === 'vt_zeit'){
+      try {
+        const a = JSON.parse(hierRoh) || {}, b = JSON.parse(dortRoh) || {};
+        const raus = {};
+        for (const tag of new Set([...Object.keys(a), ...Object.keys(b)])){
+          raus[tag] = {};
+          const ga = a[tag] || {}, gb = b[tag] || {};
+          for (const g of new Set([...Object.keys(ga), ...Object.keys(gb)])){
+            raus[tag][g] = {};
+            const ma = ga[g] || {}, mb = gb[g] || {};
+            for (const m of new Set([...Object.keys(ma), ...Object.keys(mb)]))
+              raus[tag][g][m] = Math.max(Number(ma[m]) || 0, Number(mb[m]) || 0);
+          }
+        }
+        const neu = JSON.stringify(raus);
+        if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
+      } catch (e){ /* kaputtes JSON auf einer Seite: lokal behalten */ }
+      return;
+    }
     if (k === 'vt_lautStand'){
       try {
         const a = JSON.parse(hierRoh) || {}, b = JSON.parse(dortRoh) || {};

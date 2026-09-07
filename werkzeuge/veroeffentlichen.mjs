@@ -78,13 +78,46 @@ function ausIndex(){
   }
   return raus;
 }
+/* ⛔⛔ DIESE ENDUNGSLISTE IST EINE STILLE FALLE (gefunden am 08.09.2026).
+   Sie kannte `wav` nicht. Am 08.09. kam `stille.wav` als Wachhalter fuer den
+   Geh-Modus in die sw.js-Liste — und wurde beim Ausliefern **kommentarlos
+   uebergangen**. Der Deploy meldete Erfolg, 87 Dateien, alles gruen. In der App
+   haette `new Audio('stille.wav')` einen 404 bekommen, der Wachhalter waere nie
+   gelaufen, und der Geh-Modus waere bei gesperrtem Bildschirm stehengeblieben —
+   ohne dass irgendwo etwas meldet. [[ausfall_ist_unsichtbar_gebaut]]
+
+   Aufgefallen nur, weil nach dem Deploy `ls .deploy/stille.wav` gelaufen ist.
+   Deshalb steht unten jetzt eine Pruefung, die das von selbst findet. */
+const CACHE_ENDUNGEN = 'js|css|html|json|svg|png|jpe?g|webp|ico|woff2?|wav|mp3|m4a|ogg|txt';
+
 function ausServiceWorker(){
   const sw = fs.readFileSync(path.join(WURZEL, 'sw.js'), 'utf8');
   const raus = new Set();
   /* die Cache-Liste besteht aus String-Literalen mit Dateiendung */
-  const muster = /['"]\.?\/?([A-Za-z0-9_\-./]+\.(?:js|css|html|json|svg|png|woff2?))['"]/g;
+  const muster = new RegExp("['\"]\\.?/?([A-Za-z0-9_\\-./]+\\.(?:" + CACHE_ENDUNGEN + "))['\"]", 'g');
   let t;
   while ((t = muster.exec(sw))) raus.add(t[1].replace(/^\.\//, ''));
+
+  /* ⭐ Die Gegenprobe: Was steht in der ASSETS-Liste, das der Regex NICHT
+     erwischt hat? Eine Datei, die der Service Worker cachen soll, die aber
+     nicht ausgeliefert wird, ist immer ein Fehler — entweder fehlt die Endung
+     oben, oder der Eintrag ist ein Tippfehler. Beides muss laut werden. */
+  const block = sw.match(/const ASSETS\s*=\s*\[([\s\S]*?)\n\];/);
+  if (block){
+    const alle = [...block[1].matchAll(/['"]\.?\/?([A-Za-z0-9_\-./]+\.[A-Za-z0-9]+)['"]/g)]
+      .map(m => m[1].replace(/^\.\//, ''));
+    const uebergangen = alle.filter(f => !raus.has(f));
+    if (uebergangen.length){
+      console.error('\n⛔ In sw.js stehen Dateien, die die Weissliste NICHT erkennt:');
+      uebergangen.forEach(f => console.error('   ' + f));
+      console.error('   Ergaenze die Endung in CACHE_ENDUNGEN (werkzeuge/veroeffentlichen.mjs).');
+      console.error('   Ohne das gingen sie lautlos NICHT mit hoch.\n');
+      process.exit(2);
+    }
+  } else {
+    console.error('⛔ Die ASSETS-Liste in sw.js ist nicht auffindbar — die Gegenprobe lief ins Leere.');
+    process.exit(2);
+  }
   return raus;
 }
 

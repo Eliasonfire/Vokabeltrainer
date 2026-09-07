@@ -36,8 +36,22 @@ const HOER = { wort: null, optionen: [], beantwortet: false, richtig: 0, gesamt:
 
    ⚠️ Nach dem Ziel wird NICHT gesperrt. "es reicht" heisst: er soll wissen,
    wann genug ist - nicht, dass ihm die Uebung weggenommen wird. Der Zaehler
-   laeuft weiter ("12 von 10"), der Zustand sieht nur deutlich anders aus. */
-const HOER_TAGESZIEL = 10;
+   laeuft weiter ("12 von 10"), der Zustand sieht nur deutlich anders aus.
+
+   ⭐ Seit dem 08.09.2026 EINSTELLBAR (Einstellungen → "Wörter hören pro Tag").
+   Elias: "ich will auch einstellen, was mein tagesziel beim hörmodus ist in den
+   einstellungen und ich will erstmal nur 5 wörter machen als tagesziel."
+   Die feste 10 war ein Jahr lang eine geratene Zahl; die neue Vorgabe ist 5,
+   und der Grund dafuer steht bei den SETTINGS-Vorgaben in js/kern.js.
+
+   ⛔ Die Zahl NICHT in einer Konstanten zwischenspeichern. Sie kann sich
+   aendern, waehrend der Hoermodus offen ist - eine `const` am Dateianfang
+   haette den alten Wert bis zum Neuladen festgehalten. */
+const HOER_ZIEL_VORGABE = 5;
+function hoerTagesziel(){
+  const n = (typeof SETTINGS === 'object' && SETTINGS) ? Number(SETTINGS.hoerZiel) : NaN;
+  return (Number.isFinite(n) && n >= 1) ? n : HOER_ZIEL_VORGABE;
+}
 
 function hoerTag(){
   const heute = todayStr(0);
@@ -52,10 +66,21 @@ function hoerTagSpeichern(t){ LS.set('vt_hoerTag', t); }
    darueber, wie weit man ist. */
 function hoerStandSchreiben(){
   const t = hoerTag();
-  const geschafft = t.gesamt >= HOER_TAGESZIEL;
+  const ziel = hoerTagesziel();
+  const geschafft = t.gesamt >= ziel;
+  /* ⛔ Die Quote laeuft ueber `beantwortet`, nicht ueber `gesamt` — seit dem
+     Geh-Modus (08.09.2026) sind das zwei verschiedene Zahlen: dort waechst
+     `gesamt`, aber niemand tippt eine Antwort an. Stuende hier weiter `gesamt`,
+     sagte die Zeile nach zehn gelaufenen Woertern „3 richtig" und meinte
+     3 von 3 — sie saehe aber aus wie 3 von 10.
+     ⚠️ `?? t.gesamt` fuer alte Staende, die das Feld noch nicht haben; ein
+     `||` waere hier falsch, weil eine echte 0 sonst auf `gesamt` zurueckfiele.
+     [[vorgabewert_greift_nicht_bei_null]] */
+  const beantwortet = (t.beantwortet ?? t.gesamt);
+  const quote = beantwortet ? ` · ${t.richtig} von ${beantwortet} richtig` : '';
   document.getElementById('hoerStand').textContent = geschafft
-    ? `Tagesziel geschafft — ${t.gesamt} Wörter, ${t.richtig} richtig`
-    : `Tagesziel ${t.gesamt} von ${HOER_TAGESZIEL}` + (t.gesamt ? ` · ${t.richtig} richtig` : '');
+    ? `Tagesziel geschafft — ${t.gesamt} Wörter${quote}`
+    : `Tagesziel ${t.gesamt} von ${ziel}${quote}`;
 }
 
 /* Nur Vokabeln mit brauchbarer deutscher Bedeutung - ohne die gaebe es keine
@@ -200,6 +225,10 @@ function beantworteHoerfrage(i){
   const t = hoerTag();
   const vorher = t.gesamt;
   t.gesamt++;
+  /* ⭐ Der Zaehler der WIRKLICH beantworteten Fragen (08.09.2026). Er trennt
+     sich hier von `gesamt`, weil der Geh-Modus mitzaehlt, ohne dass jemand
+     antwortet — siehe hoerStandSchreiben(). */
+  t.beantwortet = (t.beantwortet ?? 0) + 1;
   if (richtig) t.richtig++;
   hoerTagSpeichern(t);
   hoerStandSchreiben();
@@ -210,7 +239,8 @@ function beantworteHoerfrage(i){
      Begruendung steht bei `merkeQuote()` in js/kern.js. */
   if (typeof merkeQuote === 'function') merkeQuote(richtig);
 
-  const zielJetztErreicht = vorher < HOER_TAGESZIEL && t.gesamt >= HOER_TAGESZIEL;
+  const ziel = hoerTagesziel();
+  const zielJetztErreicht = vorher < ziel && t.gesamt >= ziel;
   if (zielJetztErreicht){
     HOER.fertig = true;
     document.getElementById('hoerHinweis').textContent =
@@ -333,6 +363,290 @@ document.getElementById('btnHoerKenneSchon').addEventListener('click', ()=>{
   toast(jetztAn
     ? `${w.de} kommt nicht mehr — zurückholen in den Einstellungen.`
     : `${w.de} wird wieder abgefragt.`);
+});
+
+/* ================= GEH-MODUS (08.09.2026) =================
+
+   Elias am 08.09.2026 um 01:1x, nachdem ich ihm den Modus beschrieben hatte:
+
+     "klingt gut aber am besten kann ich ihn im modus selbst an und ausschalten"
+
+   ⭐ Deshalb sitzt der Schalter im Hoermodus selbst und NICHT in den
+   Einstellungen: Man schaltet ihn ein, wenn man die Wohnung verlaesst — nicht
+   vorher am Schreibtisch, wo man noch gar nicht weiss, ob man laufen wird.
+
+   ---------- Was er tut ----------
+
+   Wort (arabisch) → Pause zum Selbstantworten → Bedeutung (deutsch) → weiter.
+   Kein Tippen, kein Hinsehen, kein Ende ausser dem Ausschalten.
+
+   ---------- Der Beleg, und der Widerspruch dazu ----------
+
+   Schmidt-Kassow u. a. 2013 (N=81, Polnisch-Vokabeln ueber Kopfhoerer):
+   Bewegung WAEHREND des Lernens schlug Sitzen mit d = 0,84 nach 48 h; bei den
+   anfangs schwachen Lernern d = 1,2. Bewegung VORHER brachte nichts.
+   ⚠️ Amico & Schaefer 2020 fanden denselben Effekt NUR bei Kindern, nicht bei
+   jungen Erwachsenen (Ø 21,5 J.). Beide stehen nebeneinander in
+   Lernen-mit-ADHS.md, Teil 18 — der Widerspruch ist nicht aufgeloest.
+
+   ---------- Drei Entscheidungen, die man im Code nicht sieht ----------
+
+   ⭐ 1. ER ZAEHLT AUFS TAGESZIEL, ABER NICHT AUF DIE TREFFERQUOTE.
+   `t.gesamt` waechst, `t.richtig` und `t.beantwortet` bleiben unberuehrt, und
+   `merkeQuote()` wird NICHT gerufen. Hier gibt es keine objektiv richtige oder
+   falsche Antwort — niemand tippt etwas an. Eine Quote, die stillschweigend
+   Ungemessenes mitzaehlt, waere schlimmer als keine.
+   [[kennzeichen_mit_zwei_ursachen]]
+
+   ⭐ 2. `zeitRegung()` BEI JEDEM WORT. Die stille Zeitmessung pausiert nach
+   60 s ohne Beruehrung — und im Geh-Modus beruehrt er 20 Minuten lang nichts.
+   Ohne diese Zeile haette die Messung ausgerechnet die Uebungsform nicht
+   gesehen, fuer die sie am interessantesten ist. Gefunden beim Bauen, nicht
+   beim Testen. [[ausfall_ist_unsichtbar_gebaut]]
+
+   ⭐ 3. DER LEITNER-FORTSCHRITT WIRD NICHT ANGEFASST — wie im uebrigen
+   Hoermodus auch. Hoeren und Lesen sind verschiedene Faehigkeiten.
+
+   ⚠️ WAS ER NICHT KANN: Sperrt das Handy den Bildschirm, drosseln Android und
+   iOS die Timer der Seite, und die Kette kann stehenbleiben. Bildschirm an
+   lassen. Ein Modus, der das ueberlebt, braeuchte die Media Session API mit
+   echtem Audio — das ist ein eigener Bau, kein Zusatz hier. */
+const GEH = { an:false, lauf:0 };
+
+const GEH_PAUSE_ANTWORT = 4500;   /* Zeit zum Selbstantworten */
+const GEH_PAUSE_DANACH  = 1800;   /* Luft vor dem naechsten Wort */
+
+/* ================= BEI GESPERRTEM BILDSCHIRM (08.09.2026) =================
+
+   Elias: "kann man es auch zum funktionieren bringen auch bei ausgeschaltetem
+   bildschrim, das wäre mir wichtig"
+
+   ---------- Was das Problem ist ----------
+
+   Sperrt das Handy den Bildschirm, friert der Browser die Seite ein (Page
+   Lifecycle: `frozen`). `setTimeout` laeuft nicht mehr, die Kette bleibt
+   stehen. ⛔ Die EINE Ausnahme, die der Browser macht: **eine Seite, die
+   Audio abspielt, wird nicht eingefroren** — sonst wuerde jede Musik-App beim
+   Sperren verstummen.
+
+   ---------- Was hier deshalb gebaut ist ----------
+
+   1. ⭐ Ein **stiller Ton in Endlosschleife** (`stille.wav`, 5 s, 39 KB) laeuft,
+      solange der Geh-Modus an ist. Damit gilt die Seite als "spielt Medien ab"
+      und bleibt wach. Die Datei ist echte Stille (8-bit-Mitte 128), kein
+      Rauschen — man hoert sie nicht, der Browser sieht sie.
+
+   2. ⭐ **MediaSession**: Auf dem Sperrbildschirm erscheint eine Steuerung, mit
+      der er den Geh-Modus **anhalten kann, ohne das Handy zu entsperren**. Das
+      ist unabhaengig vom Rest ein Gewinn.
+
+   3. ⛔ **Ein Protokoll, das BEIM NUTZER misst.** Ob die Sprachausgabe bei
+      gesperrtem Bildschirm wirklich spricht, ist geraeteabhaengig und konnte
+      hier nicht geprueft werden: Der Pruefbrowser hat keinen Sperrbildschirm.
+      Statt zu raten, schreibt jedes Wort einen Eintrag mit Zeitstempel,
+      Sichtbarkeit und der Frage, ob `speechSynthesis` ueberhaupt angefangen
+      hat. Nach dem Spaziergang steht dort, ob es lief — und wenn nicht, wo es
+      aufhoerte. [[diagnose_statt_raten]]
+
+   ⚠️ EHRLICHE GRENZE: Punkt 1 haelt die TIMER am Leben, das ist gut belegt.
+   Ob Android die SPRACHAUSGABE im gesperrten Zustand zulaesst, ist es nicht —
+   die Recherche am 08.09.2026 fand dazu nur Plattform-Beschraenkungen ohne
+   verlaesslichen Ausweg. Bleibt sie stumm, ist der naechste Schritt, die
+   Woerter als echte Audiodateien vorzurendern; dann spielt der Geh-Modus
+   Dateien statt TTS und funktioniert wie ein Podcast. Das ist ein eigener Bau
+   und erst sinnvoll, wenn das Protokoll zeigt, dass er noetig ist. */
+let GEH_STILLE = null;
+
+function gehStilleAn(){
+  try {
+    if (!GEH_STILLE){
+      GEH_STILLE = new Audio('stille.wav');
+      GEH_STILLE.loop = true;
+      GEH_STILLE.volume = 1;          /* die DATEI ist still, nicht der Regler —
+                                         ein Element auf volume 0 zaehlt bei
+                                         manchen Browsern nicht als Wiedergabe */
+    }
+    /* ⚠️ Braucht eine Nutzergeste. Der Schalter IST eine — deshalb wird das
+       hier und nirgends sonst gestartet. */
+    const p = GEH_STILLE.play();
+    if (p && p.catch) p.catch(()=>{ gehNotiz('stille-abgelehnt'); });
+  } catch (e){ gehNotiz('stille-fehler'); }
+
+  if ('mediaSession' in navigator){
+    try {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: 'Geh-Modus', artist: 'Vokabeltrainer', album: 'Hörverstehen'
+      });
+      navigator.mediaSession.playbackState = 'playing';
+      /* Beide Wege belegen, damit der Knopf auf dem Sperrbildschirm in jedem
+         Fall etwas tut: manche Oberflaechen schicken `pause`, andere `stop`. */
+      navigator.mediaSession.setActionHandler('pause', ()=>gehModusSetzen(false));
+      navigator.mediaSession.setActionHandler('stop',  ()=>gehModusSetzen(false));
+      navigator.mediaSession.setActionHandler('play',  ()=>gehModusSetzen(true));
+    } catch (e){ }
+  }
+}
+
+function gehStilleAus(){
+  try { if (GEH_STILLE) GEH_STILLE.pause(); } catch (e){ }
+  if ('mediaSession' in navigator){
+    try { navigator.mediaSession.playbackState = 'paused'; } catch (e){ }
+  }
+}
+
+/* ---------- Das Protokoll ----------
+
+   ⚠️ Nur die letzten 200 Eintraege, und nur der laufende Tag. Es ist ein
+   Diagnosewerkzeug, kein Archiv — ein unbegrenzt wachsender Speicher waere
+   nach zwei Wochen das groessere Problem als der Fehler, den er finden soll. */
+const GEH_LOG_SCHLUESSEL = 'vt_gehLog';
+
+function gehNotiz(was, dazu){
+  try {
+    let log = LS.get(GEH_LOG_SCHLUESSEL, null);
+    if (!log || log.tag !== todayStr(0)) log = { tag: todayStr(0), zeilen: [] };
+    log.zeilen.push(Object.assign({
+      uhr: new Date().toTimeString().slice(0,8),
+      was: was,
+      sichtbar: document.visibilityState
+    }, dazu || {}));
+    if (log.zeilen.length > 200) log.zeilen = log.zeilen.slice(-200);
+    LS.set(GEH_LOG_SCHLUESSEL, log);
+  } catch (e){ }
+}
+
+/* Abruf in der Konsole: gehProtokoll() */
+function gehProtokoll(){
+  const log = LS.get(GEH_LOG_SCHLUESSEL, null);
+  if (!log || !log.zeilen || !log.zeilen.length){ console.log('Noch kein Geh-Modus gelaufen.'); return []; }
+  console.table(log.zeilen);
+  const stumm = log.zeilen.filter(z => z.was === 'wort' && z.sprach === false).length;
+  const woerter = log.zeilen.filter(z => z.was === 'wort').length;
+  console.log(`${woerter} Wörter · davon ${stumm} ohne Ton`
+    + ` · ${log.zeilen.filter(z => z.sichtbar === 'hidden').length} bei ausgeschaltetem Bildschirm`);
+  return log.zeilen;
+}
+
+/* Sprechen mit Warten auf das Ende. ⛔ Die Notbremse ist keine Kuer: manche
+   Geraete melden weder `onend` noch `onerror`, und ohne sie bliebe die Kette
+   fuer immer stehen — lautlos, mitten im Gehen. */
+function gehSprich(text, sprache){
+  return new Promise((fertig)=>{
+    if (!('speechSynthesis' in window) || !text) return fertig();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = sprache;
+    if (sprache.startsWith('ar')){
+      const stimme = ARABIC_VOICES.find(v => v.voiceURI === SETTINGS.voiceURI) || ARABIC_VOICES[0];
+      if (stimme) u.voice = stimme;
+      u.rate = 0.85;
+    } else {
+      u.rate = 0.95;
+    }
+    /* ⭐ `begonnen` ist die Diagnose fuer den gesperrten Bildschirm: Kommt
+       `onstart` nicht, hat die Sprachausgabe gar nicht angefangen — genau der
+       Fall, den wir bei ausgeschaltetem Bildschirm vermuten und nicht selbst
+       messen koennen. Das Ergebnis wandert ins Protokoll. */
+    let raus = false, begonnen = false;
+    const ende = ()=>{ if (!raus){ raus = true; clearTimeout(uhr); fertig(begonnen); } };
+    const uhr = setTimeout(ende, 8000);
+    u.onstart = ()=>{ begonnen = true; };
+    u.onend = ende; u.onerror = ende;
+    /* Wie in speakArabic(): Android laesst die Sprachausgabe gelegentlich
+       PAUSIERT zurueck, nimmt danach jede Aeusserung an und sagt nichts. */
+    if (speechSynthesis.paused) speechSynthesis.resume();
+    speechSynthesis.speak(u);
+  });
+}
+
+function gehWarte(ms){ return new Promise(f => setTimeout(f, ms)); }
+
+/* ⚠️ Nach JEDEM await pruefen, ob dieser Lauf noch der aktuelle ist. Wer den
+   Schalter zweimal schnell drueckt, haette sonst zwei Schleifen, die sich
+   gegenseitig ins Wort fallen — und zwar hoerbar. */
+async function gehSchleife(){
+  const meiner = ++GEH.lauf;
+  const gilt = () => GEH.an && GEH.lauf === meiner;
+
+  while (gilt()){
+    const pool = hoerbareVokabeln();
+    if (!pool.length){
+      document.getElementById('hoerHinweis').textContent =
+        'Keine Wörter zum Hören — wähle oben auf der Startseite mehr aus.';
+      gehModusSetzen(false);
+      return;
+    }
+    const fragbar = pool.filter(w => !(typeof kennErSchon === 'function' && kennErSchon(w)));
+    const w = shuffle(fragbar.length ? fragbar : pool)[0];
+    HOER.wort = w;                      /* damit der Lautsprecherknopf weiterhin dieses Wort spricht */
+    HOER.beantwortet = false;
+
+    /* ⭐ Die Zeitmessung wachhalten — hier wird 20 Minuten lang nichts berührt. */
+    if (typeof zeitRegung === 'function') zeitRegung();
+
+    document.getElementById('hoerHinweis').textContent = 'Hör hin — was bedeutet es?';
+    document.getElementById('hoerLoesung').classList.add('hidden');
+    const knopf = document.getElementById('btnHoerPlay');
+    knopf.classList.add('spielt');
+    const sprach = await gehSprich(sprechText(w), 'ar-SA');
+    knopf.classList.remove('spielt');
+    /* ⛔ Der Eintrag steht NACH dem Sprechen, nicht davor: `sprach` ist die
+       eigentliche Frage („hat die Stimme ueberhaupt angefangen?"), und
+       `sichtbar` sagt, ob der Bildschirm da gerade aus war. Zusammen
+       beantworten die beiden, was ich hier nicht pruefen kann. */
+    gehNotiz('wort', { wort: w.de, sprach: sprach, stille: !!(GEH_STILLE && !GEH_STILLE.paused) });
+    if (!gilt()) return;
+
+    await gehWarte(GEH_PAUSE_ANTWORT);
+    if (!gilt()) return;
+
+    /* Erst jetzt die Schrift zeigen: Wer doch hinsieht, soll die Lösung sehen,
+       nicht die Frage. Wer nicht hinsieht, verliert nichts. */
+    const loesung = document.getElementById('hoerLoesung');
+    /* ⛔ `hl-ar` / `hl-de` — genau die Klassen, die beantworteHoerfrage() setzt.
+       Ich hatte hier zuerst eigene Namen erfunden; die haetten keine CSS-Regel
+       getroffen, und die Schrift waere lateinisch-klein und ohne RTL erschienen,
+       ohne dass irgendwo etwas meldet. [[klasse_ohne_css_regel]] */
+    loesung.innerHTML = `<div class="hl-ar" lang="ar" dir="rtl">${escapeHtml(w.sg || w.ar)}</div>`
+      + `<div class="hl-de">${escapeHtml(w.de)}</div>`;
+    loesung.classList.remove('hidden');
+    document.getElementById('hoerHinweis').textContent = '';
+    await gehSprich(w.de, 'de-DE');
+    if (!gilt()) return;
+
+    /* ⛔ Tagesziel ja, Trefferquote nein — die Begründung steht im Kopf. */
+    const t = hoerTag();
+    t.gesamt++;
+    hoerTagSpeichern(t);
+    hoerStandSchreiben();
+
+    await gehWarte(GEH_PAUSE_DANACH);
+  }
+}
+
+function gehModusSetzen(an){
+  GEH.an = !!an;
+  GEH.lauf++;                                   /* laufende Schleife ungültig machen */
+  const schalter = document.getElementById('toggleGehModus');
+  if (schalter) schalter.classList.toggle('on', GEH.an);
+  document.getElementById('screen-hoeren').classList.toggle('geht', GEH.an);
+  if (GEH.an){
+    gehStilleAn();                 /* ⛔ VOR der Schleife: der Klick auf den Schalter
+                                      ist die Nutzergeste, die `play()` erlaubt.
+                                      Nach dem ersten `await` waere sie verbraucht. */
+    gehNotiz('start');
+    gehSchleife();
+  } else {
+    gehStilleAus();
+    gehNotiz('stop');
+    try { speechSynthesis.cancel(); } catch (e){ }
+    /* Zurück in den normalen Betrieb: eine frische Frage mit Antwortknöpfen.
+       Ohne das stünde die letzte Lösung da und nichts ginge weiter. */
+    if (document.getElementById('screen-hoeren').classList.contains('active')) naechsteHoerfrage();
+  }
+}
+
+document.getElementById('toggleGehModus').addEventListener('click', ()=>{
+  gehModusSetzen(!GEH.an);
 });
 
 function openHoeren(){
