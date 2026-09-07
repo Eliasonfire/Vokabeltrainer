@@ -34,13 +34,69 @@ function renderSettings(){
    Genau daran ist die Idee beim Aufschreiben der Anleitung gescheitert („dann
    holst du es dir zurück, indem du …" - es gab kein Indem).
 
-   Die Liste steht bewusst offen da und nicht hinter einem Aufklapper: sie ist
-   normalerweise leer und stört dann nicht (`:empty{display:none}`), und wenn
-   sie etwas enthält, ist genau das die Auskunft, die man sucht. */
+   ⛔ Bis zum 07.09.2026 stand hier, die Liste stehe „bewusst offen da und nicht
+   hinter einem Aufklapper: sie ist normalerweise leer und stört dann nicht".
+   Die Begründung war richtig — für DIESE Liste. Sie galt aber ungeprüft auch
+   für die zweite darunter, und die ist nicht leer: 28 Einträge auf Elias' Bild.
+   Beide liegen jetzt hinter `pflegeListenSchalter`, und der Schalter erscheint
+   nur, wenn es etwas zu zeigen gibt — der leere Fall bleibt also so ruhig wie
+   vorher. [[regel_gilt_nur_mit_begruendung]] */
 /* ⭐ Die Wörter, die er einzeln freigeschaltet hat, obwohl ihr Kapitel noch zu
    ist (20.08.2026). Ohne diese Liste ist der Knopf in der Wortkarte eine
    Einbahnstraße: zurücknehmen ginge nur dort, wo man das Wort erst wieder
    suchen muss. Genau dieselbe Überlegung wie eine Liste weiter oben. */
+/* ---------- Die beiden Listen hinter einen Aufklapper (07.09.2026) ----------
+
+   Elias mit Bild der Einstellungen, auf dem 28 freigeschaltete Wörter
+   untereinander standen: „ich möchte das diese auflistung der wörter in einem
+   punkt gepackt werden und beim aufklappen dann eine liste ergeben, damit die
+   einstellungen nicht zur hälfte von dieser riesen liste eingenommen werden."
+
+   ⛔ Damit ist die Begründung über `zeichneKenneSchonListe` überholt, die Liste
+   stehe „bewusst offen da": sie galt für den Fall, dass die Liste normalerweise
+   leer ist. Bei den einzeln freigeschalteten Wörtern trifft das nicht zu — dort
+   sind es 28. Der Kommentar dort ist entsprechend geändert; eine Begründung,
+   die nicht mehr trägt, aber stehen bleibt, ist die nächste falsche Fährte.
+   [[widerspruch_liegt_in_der_beschriftung]]
+
+   ⭐ EIN Bauteil für beide Listen. Zwei getrennte Fassungen wären zwei Stellen
+   für dieselbe Entscheidung. [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+function pflegeListenSchalter(knopfId, listenId, anzahl){
+  const knopf = document.getElementById(knopfId);
+  const liste = document.getElementById(listenId);
+  if (!knopf || !liste) return;
+  knopf.dataset.n = String(anzahl);
+  knopf.classList.toggle('da', anzahl > 0);
+  /* ⛔ Eine leer gewordene Liste muss auch ZUgehen. Sonst bliebe der Schalter
+     auf „offen" stehen, verschwände (weil `.da` fällt), und beim nächsten Wort
+     käme die Liste ohne Zutun aufgeklappt zurück — genau das Bild, das er
+     nicht mehr sehen will. */
+  if (!anzahl){
+    liste.classList.add('hidden');
+    knopf.setAttribute('aria-expanded', 'false');
+  }
+  beschrifteListenSchalter(knopf);
+}
+
+function beschrifteListenSchalter(knopf){
+  const txt = knopf.querySelector('.txt');
+  if (!txt) return;
+  const offen = knopf.getAttribute('aria-expanded') === 'true';
+  const n = Number(knopf.dataset.n || 0);
+  /* Die Zahl gehört in den Schalter, nicht nur in den Stand darüber:
+     zugeklappt ist sie sonst die einzige Auskunft, die fehlt. */
+  txt.textContent = (offen ? 'Liste ausblenden' : 'Liste zeigen') + ' (' + n + ')';
+}
+
+function schalteListeUm(knopfId, listenId){
+  const knopf = document.getElementById(knopfId);
+  const liste = document.getElementById(listenId);
+  if (!knopf || !liste) return;
+  const zu = liste.classList.toggle('hidden');
+  knopf.setAttribute('aria-expanded', String(!zu));
+  beschrifteListenSchalter(knopf);
+}
+
 function zeichneEinzelnFreiListe(){
   const kasten = document.getElementById('einzelnFreiListe');
   const stand  = document.getElementById('einzelnFreiStand');
@@ -93,6 +149,13 @@ function zeichneEinzelnFreiListe(){
      eigenen Korrekturen an Vokabeln stehen nur im localStorage. */
   const zeile = document.getElementById('einzelnFreiExportZeile');
   if (zeile) zeile.hidden = !(woerter.length || aenderungsZahl());
+
+  /* ⚠️ Der Schalter zählt BEIDE Gruppen — die freigeschalteten und die wieder
+     zugemachten. Zählte er nur `woerter`, verschwände er, sobald Elias das
+     letzte Wort zumacht, und mit ihm der einzige Weg zurück: die zugemachten
+     stehen in derselben Liste. Genau die Einbahnstraße, die am 07.09.2026
+     behoben wurde. [[bedingung_wird_durch_die_handlung_ungueltig]] */
+  pflegeListenSchalter('btnEinzelnFreiListe', 'einzelnFreiListe', woerter.length + zu.length);
 }
 
 /* Wie viele Vokabeln hat Elias selbst korrigiert? Die Zahl steht in der
@@ -278,7 +341,15 @@ function zeichneKenneSchonListe(){
        </div>
        <button class="kenne-schon-zurueck" data-zurueck="${escapeHtml(String(w.id))}">Wieder abfragen</button>
      </div>`).join('');
+
+  pflegeListenSchalter('btnKenneSchonListe', 'kenneSchonListe', woerter.length);
 }
+
+/* Ein Zuhörer für beide Schalter — sie tun dasselbe an zwei Listen. */
+document.getElementById('btnKenneSchonListe')
+  .addEventListener('click', ()=> schalteListeUm('btnKenneSchonListe', 'kenneSchonListe'));
+document.getElementById('btnEinzelnFreiListe')
+  .addEventListener('click', ()=> schalteListeUm('btnEinzelnFreiListe', 'einzelnFreiListe'));
 
 document.getElementById('kenneSchonListe').addEventListener('click', (e)=>{
   const knopf = e.target.closest('[data-zurueck]');
@@ -329,7 +400,10 @@ document.getElementById('toggleTippen').addEventListener('click', ()=>{
   renderSettings();
   /* Der Hinweis erklaert, warum nach dem Einschalten erst mal nichts passiert:
      Karten in Box 1 bis 3 bleiben unveraendert. */
-  if (SETTINGS.tippenAbBox4) toast('Ab Box 4 wird eingetippt — in Richtung Deutsch → Arabisch.');
+  /* ⚠️ Hier stand „— in Richtung Deutsch → Arabisch". Seit dem 07.09.2026 wird
+     in BEIDEN Richtungen getippt; der Satz hätte die Hälfte der Übung
+     verschwiegen. [[widerspruch_liegt_in_der_beschriftung]] */
+  if (SETTINGS.tippenAbBox4) toast('Ab Box 4 wird eingetippt — in beide Richtungen, mit „Überspringen".');
 });
 document.getElementById('btnSettings').addEventListener('click', ()=>showScreen('settings'));
 document.getElementById('toggleShowPlural').addEventListener('click', ()=>{

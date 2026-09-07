@@ -192,6 +192,7 @@ const PRUEFER = [
      Schoenheitsfehler, sondern ein Verlust. */
   ['test-dublette.mjs', []],
   ['test-auswahl-einzelnfrei.mjs', []],
+  ['test-tippen-beide-richtungen.mjs', []],
   ['test-hifz-sync.mjs', []],  ['test-sync.mjs', []],
   ['test-sync-anzeige.mjs', []],
   ['test-wurzel.mjs', []],
