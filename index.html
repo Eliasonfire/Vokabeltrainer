@@ -2169,21 +2169,13 @@ main{
    Bildschirm — derselbe Satzvorrat, derselbe Themenfilter.
    ===================================================================== */
 .ueb-leiste{margin-bottom:var(--sp-4);}
-/* Der Direktweg in den gemischten Modus (07.09.2026). Er steht UNTER dem
-   Wähler und ist deutlich schmaler: er nimmt dem Wähler nichts weg, sondern
-   überspringt ihn für den einen Fall, den Elias am häufigsten will. */
-.ueb-direkt{
-  display:flex;align-items:center;justify-content:center;gap:var(--sp-2);
-  width:100%;margin-top:var(--sp-2);
-  background:var(--red-wash);border:1px solid var(--red-dim);
-  border-radius:var(--r-2);padding:var(--sp-3);
-  font-family:var(--font-ui);font-size:var(--fs-sm);font-weight:700;
-  color:var(--red-bright);cursor:pointer;
-  transition:transform var(--dur-1) var(--ease-out);
-}
-.ueb-direkt:active{transform:scale(.98);}
-.ueb-direkt i{font-style:normal;font-weight:400;color:var(--text-faint);
-  font-variant-numeric:tabular-nums;}
+/* ⛔ Hier stand am 07.09.2026 ein Knopf „Gemischt starten". Elias hat ihn noch
+   am selben Abend wieder abbestellt: „ich will nicht diesen gemischt starten
+   button haben sondern einfach das ich schon direkt drinnen bin in dem modus
+   und direkt anfangen kann mit dem lesen der frage." Der gemischte Modus
+   startet jetzt beim Öffnen von selbst (openSentences in js/saetze.js) — ein
+   Knopf, der zu etwas führt, das ohnehin schon läuft, ist Zierde.
+   [[schweigen_ist_kein_auftrag]] */
 .ueb-label{
   color:var(--text-faint);font-size:var(--fs-xs);font-weight:700;
   text-transform:uppercase;letter-spacing:.06em;margin-bottom:var(--sp-2);
@@ -4563,20 +4555,6 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
           <span class="pfeil">▾</span>
         </button>
         <div class="blatt ueben hidden" id="uebBlatt"></div>
-        <!-- ⭐ Elias am 07.09.2026, mit Bild dieser Fläche: „wenn ich hier auf
-             der fläche sätze bin will ich das mir standart mässig der gemischte
-             modus angezeigt wird damit ich den leichter direkt benutzen kann."
-
-             Bewusst ein EIGENER Knopf und nicht der Wähler mit „Gemischt"
-             vorbelegt: der Wähler trägt seit dem 19.08.2026 die Auskunft, WO er
-             gerade ist („der aktive trägt seinen Wert, der andere die
-             Aufforderung"). Stünde dort „Gemischt", ohne dass etwas läuft, wäre
-             genau die Auskunft wieder falsch, die damals repariert wurde.
-             So kostet der gemischte Modus einen Tipp statt drei, und der
-             Lesemodus bleibt der Einstieg. -->
-        <button class="ueb-direkt hidden" id="btnUebGemischtStart" type="button">
-          Gemischt starten<i id="uebGemischtZahl"></i>
-        </button>
       </div>
 
       <!-- Themenfilter. Die Zahl an jedem Reiter kommt aus den Daten und sagt
