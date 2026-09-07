@@ -194,6 +194,7 @@ const PRUEFER = [
   ['test-auswahl-einzelnfrei.mjs', []],
   ['test-tippen-beide-richtungen.mjs', []],
   ['test-quote-karteikarten.mjs', []],
+  ['test-arabicroots-differenz.mjs', []],
   ['test-hifz-sync.mjs', []],  ['test-sync.mjs', []],
   ['test-sync-anzeige.mjs', []],
   ['test-wurzel.mjs', []],
