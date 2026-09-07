@@ -732,6 +732,44 @@ async function schickeZumServer(){
 
 /* ---------- Ablauf ---------- */
 
+/* ---------- Zurueck nach arabicroots (07.09.2026) ----------
+
+   Elias mit Bild der Klassenrangliste: „damit der lehrer oder auch die anderen
+   sehen können das ich noch weiter arbeite. weil der stand ist gleich geblieben
+   seit dem ich meine vokabeltrainer app benutze."
+
+   ⛔ NUR die Karteikarten-Zahlen (`correct`/`wrong` je Wort) und der
+   Zeitstempel. Bewusst nicht der ganze Lernstand: drueben zaehlt eine
+   Vokabelabfrage, und nur die ist mit dem vergleichbar, was die anderen zehn
+   in der Liste gemacht haben — Elias' eigene Vorgabe („für die berechnung der
+   quote soll nur die karteikarten übung zählen").
+
+   ⚠️ Der Rest ist Sache von functions/api/arabicroots.js: was drueben schon
+   steht, wie die Differenz gebildet wird, ob ueberhaupt Zugangsdaten
+   eingerichtet sind. Hier wird nur geschickt und geschwiegen.
+
+   ⛔ Und es MELDET NICHTS. Elias hat nichts gedrueckt — der Abgleich laeuft von
+   selbst beim Weglegen der App. Ein Hinweis daraus waere genau das Briefing,
+   das er abbestellt hat. [[keine_meldung_ohne_seine_handlung]] */
+async function schickeNachArabicroots(){
+  try {
+    if (typeof PROGRESS === 'undefined' || !PROGRESS) return;
+    const fortschritt = {};
+    for (const [id, p] of Object.entries(PROGRESS)){
+      if (!p) continue;
+      const c = Number(p.correct) || 0, w = Number(p.wrong) || 0;
+      if (!c && !w) continue;          /* nie beantwortet — nichts zu melden */
+      fortschritt[id] = { correct: c, wrong: w, ts: Number(p.ts) || 0 };
+    }
+    if (!Object.keys(fortschritt).length) return;
+    await fetch('/api/arabicroots', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ fortschritt }),
+    });
+  } catch (e){ /* offline, nicht eingerichtet, Zeitgrenze: alles folgenlos */ }
+}
+
 async function gleicheAb(still){
   if (SYNC_LAEUFT) return;
   if (!syncMoeglich()){
@@ -762,6 +800,17 @@ async function gleicheAb(still){
       if (typeof ladeStandNeu === 'function') ladeStandNeu();
       if (!still && typeof toast === 'function') toast('Lernstand abgeglichen.');
     }
+    /* ⭐ Und danach nach arabicroots zurueckschreiben (07.09.2026). Elias:
+       „meine versuche sollen sich laufend aktualisiern die prozentzahl soll
+       weiter auf der bisherigen aufbauen." Hier ist die Stelle dafuer: der
+       Abgleich laeuft ohnehin bei jedem Weglegen der App, auf Handy wie
+       Tablet, und der Stand ist gerade frisch zusammengefuehrt.
+
+       ⛔ NACH dem Abgleich und bewusst OHNE `await` im Erfolgspfad: was drueben
+       passiert, darf den Lernstand hier nie aufhalten. Ist arabicroots
+       langsam, nicht eingerichtet oder gerade weg, ist das fuer den
+       Vokabeltrainer folgenlos. [[fehler_trifft_mehr_als_gemeldet]] */
+    schickeNachArabicroots();
   } catch (e){
     /* Offline oder abgemeldet ist kein Fehler, sondern der Normalfall
        unterwegs. Es wird nichts kaputtgemacht - beim naechsten Start laeuft es
