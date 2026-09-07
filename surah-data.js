@@ -603,7 +603,7 @@ const SURAH_DATA = [
  {
   "id": 58,
   "ar": "المجادلة",
-  "arTaschkil": "الْمُجَادلَة",
+  "arTaschkil": "الْمُجَادِلَة",
   "name": "Al-Mujadila",
   "verses": 22,
   "juz": [
@@ -623,7 +623,7 @@ const SURAH_DATA = [
  {
   "id": 60,
   "ar": "الممتحنة",
-  "arTaschkil": "الْمُمْتَحنَة",
+  "arTaschkil": "الْمُمْتَحَنَة",
   "name": "Al-Mumtahanah",
   "verses": 13,
   "juz": [

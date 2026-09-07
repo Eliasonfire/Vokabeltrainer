@@ -171,6 +171,8 @@ const PRUEFER = [
   ['test-p1.mjs', []],
   ['test-p6.mjs', []],
   ['test-p8.mjs', []],
+  ['test-woerterbuch-belege.mjs', []],
+  ['test-schreibweisen.mjs', []],
   ['test-p9.mjs', []],
 
   /* ⛔ Neu am 06.09.2026. Der Hifz-Stand ist das Einzige in dieser App, das

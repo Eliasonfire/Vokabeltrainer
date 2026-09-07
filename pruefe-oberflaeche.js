@@ -1,5 +1,24 @@
 /* pruefe-oberflaeche.js -- Regressionslauf durch die laufende App
  *
+ * ⛔⛔ WARUM ER IM SAMMELLAUF FEHLT — und was das kostet (07.09.2026)
+ *
+ * `alle-pruefer.mjs` startet 53 Pruefer; dieser ist nicht dabei und kann es
+ * auch nicht sein: er braucht ein DOM und die geladene App.
+ *
+ * Der naheliegende Ausweg — den Code ueber den Browser-Pane einspeisen —
+ * wurde am 07.09.2026 abgewogen und VERWORFEN: die Datei ist 46 KB, der
+ * Bericht 805 Zeilen. Beides muesste durch das Kontextfenster, und Elias
+ * hat ausdruecklich gesagt: „das verbraucht nur alles tokens."
+ *
+ * ⚠️ Er schreibt ausserdem in `vt_progress`, `vt_regelStand` und ruft
+ *    `.click()` — sorgfaeltig mit `finally` zurueckgesetzt, aber ein
+ *    `finally` schuetzt nicht vor sich selbst. Vor einem Lauf gehoert der
+ *    Lernstand gesichert, und auch DAS kostet (27 KB beim Versuch).
+ *
+ * ⭐ Was stattdessen traegt: Was hier geprueft wird und ohne DOM messbar
+ * ist, gehoert in einen eigenen Pruefer, der im Sammellauf mitlaeuft.
+ * [[pruefserver_ist_nicht_die_app]]
+ *
  * Aufruf: die App im Browser oeffnen, Entwicklerkonsole auf, und
  *
  *   fetch('pruefe-oberflaeche.js').then(r=>r.text()).then(eval)

@@ -1701,6 +1701,23 @@ if (ARG.includes('--offene-fragen')){
       + ' aus ' + (ab.quelle || '?') + ', geholt ' + String(ab.erzeugt || '?').slice(0, 10));
   } catch { /* keine da — dann eben nur der eigene Bestand */ }
 
+  /* ⭐ Zweite Aussenquelle seit dem 07.09.2026: arabdict und Reverso, geholt
+     von werkzeuge/woerterbuch-belege.mjs. Sie greift NUR dort, wo
+     en.wiktionary nichts hat — deshalb steht sie hier hinten und überschreibt
+     nichts.
+
+     ⛔ EIGENE DATEI, und das ist kein Zufall: `aussenbelege.mjs` schreibt
+     `aussenbelege.json` bei jedem Lauf neu. Etwas hineinzuschreiben wäre beim
+     nächsten Lauf spurlos weg — und beide Werkzeuge meldeten Erfolg.
+     [[angleichen_loescht_handarbeit]] */
+  let WOERTERBUCH = null;
+  try {
+    const wb = JSON.parse(fs.readFileSync(p('data/woerterbuch-belege.json'), 'utf8'));
+    WOERTERBUCH = wb.belege || null;
+    if (WOERTERBUCH) console.log('  Woerterbuch-Belege: ' + Object.keys(WOERTERBUCH).length
+      + ' aus ' + (wb.quelle || '?') + ', geholt ' + String(wb.erzeugt || '?').slice(0, 10));
+  } catch { /* auch das ist eine Zugabe, keine Voraussetzung */ }
+
   /* Je Feld EINE Frage, mit allen betroffenen Wörtern. Ein Durchgang je Feld
      statt einer je Wort — bei 25 Plural-Fragen ist das der ganze Unterschied. */
   const FRAGE_TEXT = {
@@ -1809,9 +1826,20 @@ if (ARG.includes('--offene-fragen')){
      nichts — sie ist eine Zugabe, keine Voraussetzung. Deshalb hier auch
      kein Fehler bei fehlender Datei. */
   function aussenBeleg(w, feld){
-    if (!AUSSEN) return null;
-    const b = AUSSEN[String(w.id)];
+    const b = (AUSSEN && AUSSEN[String(w.id)] && AUSSEN[String(w.id)][feld])
+      ? AUSSEN[String(w.id)]
+      /* Rückfall auf arabdict/Reverso — nur wo Wiktionary schweigt. */
+      : (WOERTERBUCH && WOERTERBUCH[String(w.id)] && WOERTERBUCH[String(w.id)][feld])
+        ? WOERTERBUCH[String(w.id)]
+        : null;
     if (!b || !b[feld]) return null;
+    /* Welche Quelle es am Ende war, steht im Beleg selbst — sonst stünde
+       „en.wiktionary.org" unter einer Angabe von arabdict. */
+    const woher = b.woher
+      ? (b.woher === 'arabdict' ? 'arabdict.com'
+        : b.woher === 'reverso' ? 'woerterbuch.reverso.net'
+        : b.woher)
+      : 'en.wiktionary.org';
     /* ⭐ Bei `pl` ist die Antwort keine Form, sondern ein Nein: Wiktionary
        fuehrt das Wort ausschliesslich als Eigennamen, und Eigennamen haben
        keinen Plural. Der Beleg sagt das im Klartext — `__eigenname__` ist die
@@ -1819,7 +1847,7 @@ if (ARG.includes('--offene-fragen')){
     const eigenname = b[feld] === '__eigenname__';
     return {
       wert:   eigenname ? 'kein Plural' : String(b[feld]),
-      woher:  'en.wiktionary.org',
+      woher,
       de:     b.gloss || '',
       aussen: true,
       grund:  eigenname ? 'führt es ausschließlich als Eigennamen' : '',

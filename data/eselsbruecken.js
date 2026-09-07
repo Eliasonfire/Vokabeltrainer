@@ -458,3 +458,47 @@ const BUCH_ESELSBRUECKEN = {
 
   "46401": "نَارُ اللَّهِ الْمُوقَدَةُ · ٱلَّتِي تَطَّلِعُ عَلَى ٱلْأَفْـِٔدَةِ — aus سُورَةُ الْهُمَزَة, die du auswendig kannst. Warum dort الَّتِي und nicht الَّذِي? Weil نَار (Feuer) weiblich ist. ⭐ Das ist die ganze Regel: nicht ob Person oder Sache entscheidet, sondern allein das GESCHLECHT des Wortes davor.",
 };
+
+/* ---------- Korrigierte Schreibweisen ----------
+ *
+ * ⛔⛔ WOZU: Elias' eigene Vokabeln kommen aus dem arabicroots-Abzug
+ * (`data/vokabeln-eigene.js`) bzw. aus seinem Gerätespeicher
+ * (`data/eigene-woerter.json`). BEIDE werden bei jedem Abzug NEU
+ * GESCHRIEBEN — eine dort eingetragene Korrektur wäre beim nächsten
+ * `hole-vokabeln.mjs` spurlos weg, und das Werkzeug meldete Erfolg.
+ *
+ * `FELD_ERGAENZUNGEN` hilft hier nicht: es füllt nur LEERE Felder. Eine
+ * Schreibweise, die schon dasteht, bleibt davon unberührt.
+ *
+ * ⭐ Deshalb dieselbe Bauform wie `ESELSBRUECKEN_ERSATZ` in
+ * `data/eselsbruecken.js`: eine Liste hier, angewandt nach dem Laden.
+ *
+ * ⛔⛔ DIESE LISTE WÄCHST NUR DURCH ELIAS' ZUSTIMMUNG. Sie überschreibt
+ * Text, den er selbst geschrieben oder bezahlt hat. Jeder Eintrag nennt
+ * sein Wort, den Grund und das Datum. Goal E.1 („nicht selbst
+ * vokalisieren") gilt hier besonders scharf.
+ */
+const SCHREIBWEISEN = {
+  /* أَيْضاً → أَيْضًا, das Tanwīn wandert vom Alif auf das ض.
+   *
+   * Elias am 07.09.2026, nachdem beide Schreibungen gegenübergestellt waren
+   * (arabdict schreibt wie er, Reverso und en.wiktionary anders):
+   *
+   *   „du kannst auch statt tanween fatha auf dem alif es aufs dad packen,
+   *    sieht sogar sicherlich besser aus"
+   *
+   * ⭐ Damit ist das Wort auch mit seinen eigenen Nachbarn einheitlich:
+   * جِدًّا und شُكْرًا in `lehrbuch-saetze.js` tragen das Tanwīn ebenfalls
+   * auf dem Konsonanten. Seine eigene Eselsbrücke stellt die drei
+   * nebeneinander — sie passte vorher nicht zur Schreibung.
+   *
+   * ⚠️ Zwei Felder, nicht eines: das Wort steht in `ar` UND im Beispielsatz
+   * `sentAr` derselben Karte. Nur `ar` zu ändern hieße, dass Karte und Satz
+   * verschieden schreiben. */
+  '0e23a52d-e2f5-4a57-9082-58eb9f362d88': {
+    ar: 'أَيْضًا',
+    sentArVon: 'أَيْضاً',
+    sentArNach: 'أَيْضًا',
+    grund: 'Elias 07.09.2026: „es aufs dad packen, sieht sogar sicherlich besser aus"',
+  },
+};
