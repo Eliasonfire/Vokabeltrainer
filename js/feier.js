@@ -280,6 +280,26 @@ const FEIER_ANLAESSE = {
     }
   },
 
+  /* ⭐ Der Satzmodus, seit dem 07.09.2026 — Elias' eigener Vorschlag: „nach 13
+     aufgaben könnte auch so eine animation kommen wie bei karteikarten die dann
+     zeigt das man sein tagesziel erreicht hat".
+
+     ⛔ STAERKE WIE BEIM HOEREN, nicht wie bei 'alles-faellig'. Konfetti 90 und
+     Banner 'mittel' — der grosse Anlass bleibt der leere Tagesvorrat der
+     Karteikarten (160 / 'gross'). Elias am 30.07.2026 zu genau dieser
+     Abstufung: „sonst wirkt der grosse entwertet."
+
+     `einmalig` je Tag, aus demselben Grund wie beim Hoeren: er darf weiteruben,
+     soll aber nicht bei jeder weiteren Aufgabe wieder gefeiert werden. */
+  'satz-tagesziel': {
+    einmalig: () => `satz-${todayStr(0)}`,
+    effekt: d => {
+      feierKonfetti(90);
+      feierBanner('Satzmodus: Tagesziel geschafft',
+        `${d.zahl} Aufgaben, ${d.richtig} richtig — jede Übungsart einmal.`, 'mittel');
+    }
+  },
+
   /* Rueckmeldung genau dort, wo man hinsieht. Kein Meilenstein, darf oft. */
   'luecke-richtig': {
     /* Nicht der Satz: nach dem Loesen baut renderSentence() den Satz neu auf
