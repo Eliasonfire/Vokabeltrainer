@@ -4962,6 +4962,28 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
                  aria-label="Eigene Sitzungsgröße in Karten">
         </div>
       </div>
+      <!-- ⭐ Der Tagesdeckel (07.09.2026). Elias: „das ist gut" — und sein
+           Argument: „wenn die runden durchschnittlich 15 min dauern und ich
+           dann weiß das sie wirklich ewig dauern dann ist doch auch nicht gut
+           oder."
+           ⚠️ Steht direkt UNTER der Sitzungsgröße, weil beide zusammen
+           entscheiden, wie lang ein Tag wird: der Deckel sagt, wie viel
+           überhaupt angeboten wird, die Sitzungsgröße, wie es sich auf Runden
+           verteilt. Getrennte Orte hätten die zwei Zahlen entkoppelt. -->
+      <div class="setting-row">
+        <div>
+          <div class="setting-title">Karten pro Tag</div>
+          <div class="setting-sub">Der Rest wartet auf morgen – der Rückstand bleibt erhalten</div>
+        </div>
+        <select id="tagesDeckelSelect" class="select-input">
+          <option value="5">5</option>
+          <option value="10" selected>10</option>
+          <option value="15">15</option>
+          <option value="20">20</option>
+          <option value="30">30</option>
+          <option value="0">Aus – alle fälligen</option>
+        </select>
+      </div>
       <div class="setting-row">
         <div>
           <div class="setting-title">TTS-Stimme</div>

@@ -9,6 +9,7 @@ function renderSettings(){
   document.getElementById('toggleVerbFormen').classList.toggle('on', !!SETTINGS.showVerbFormen);
   document.getElementById('toggleQuran').classList.toggle('on', !!SETTINGS.showQuran);
   zeigeSitzungsgroesse();
+  if (typeof zeigeTagesDeckel === 'function') zeigeTagesDeckel();
   document.getElementById('directionSelect').value = SETTINGS.direction || 'ar-de';
   document.getElementById('toggleTippen').classList.toggle('on', !!SETTINGS.tippenAbBox4);
   /* Wurzelmodus. Die Ausrichtung ist standardmaessig AN, deshalb wird auf
@@ -384,6 +385,36 @@ function setzeSitzungsgroesse(zahl){
   return true;
 }
 
+/* ⭐ Der Tagesdeckel — wie viele fällige Karten heute überhaupt angeboten
+   werden. Die Rechnung dahinter steht bei `tagesAuswahl()` in js/kern.js.
+   ⚠️ Einfacher gebaut als die Sitzungsgröße: dort brauchte Elias eine eigene
+   Zahl („letztens wollte ich aber 15 lernen"), hier sind die Stufen von 5 bis
+   30 breit genug, und „Aus" ist die wichtigste Option — sie muss ohne Umweg
+   erreichbar sein. Kommt eine eigene Zahl später dazu, ist das Muster von
+   `zeigeSitzungsgroesse()` das Vorbild. */
+function zeigeTagesDeckel(){
+  const wahl = document.getElementById('tagesDeckelSelect');
+  if (!wahl) return;
+  const wert = String(Number.isFinite(SETTINGS.tagesDeckel) ? SETTINGS.tagesDeckel : 10);
+  /* ⛔ Steht dort eine Zahl, die es als Option nicht gibt, bliebe die Auswahl
+     LEER und sähe aus, als wäre nichts eingestellt — derselbe Fehler, der bei
+     der Sitzungsgröße schon einmal auftrat. Dann lieber die nächstliegende
+     Stufe zeigen als gar nichts. */
+  const stufen = [...wahl.options].map(o => o.value);
+  wahl.value = stufen.includes(wert) ? wert
+    : String(stufen.map(Number).filter(n => n > 0)
+        .reduce((a, b) => Math.abs(b - Number(wert)) < Math.abs(a - Number(wert)) ? b : a, 10));
+}
+
+const deckelWahl = document.getElementById('tagesDeckelSelect');
+if (deckelWahl) deckelWahl.addEventListener('change', (e)=>{
+  const n = Number(e.target.value);
+  if (!Number.isFinite(n) || n < 0) return;
+  SETTINGS.tagesDeckel = n;
+  saveSettings();
+  if (typeof renderHome === 'function') renderHome();
+});
+
 document.getElementById('sessionSizeSelect').addEventListener('change', (e)=>{
   const feld = document.getElementById('sessionSizeEigen');
   if (e.target.value === 'eigen'){
@@ -406,6 +437,7 @@ document.getElementById('sessionSizeEigen').addEventListener('input', (e)=>{
    unbrauchbar war — sonst behauptet das Feld eine Zahl, die nicht gilt. */
 document.getElementById('sessionSizeEigen').addEventListener('blur', ()=>{
   zeigeSitzungsgroesse();
+  if (typeof zeigeTagesDeckel === 'function') zeigeTagesDeckel();
 });
 document.getElementById('directionSelect').addEventListener('change', (e)=>{
   SETTINGS.direction = e.target.value;

@@ -112,7 +112,11 @@ function waehleLautKarten(words){
 }
 
 function startLearningSession(){
-  let words = currentPool();
+  /* ⭐ Die Runde kommt aus der TAGESRATION, nicht aus dem ganzen Rückstand.
+     Ohne den Deckel bestünde sie bei 80 täglich fälligen Box-1-Wörtern
+     praktisch immer aus Box 1 — die Wiederholungen aus Box 4 und 5 kämen nie
+     dran. Die Begründung steht bei `tagesAuswahl()` in js/kern.js. */
+  let words = (typeof tagesPool === 'function') ? tagesPool() : currentPool();
   if (words.length === 0){ toast(SETTINGS.wrongOnly ? 'Keine schwachen Wörter mit dieser Auswahl – stark!' : 'Nichts fällig – schau später wieder vorbei.'); showScreen('home'); return; }
   const size = SETTINGS.sessionSize;
   /* Auch wenn die ganze Auswahl in eine Runde passt: der Takt sortiert die
@@ -1233,8 +1237,16 @@ function answer(stufe){
          das Tagesziel ist der seltenere und deshalb groessere Anlass. Waeren
          beide gleich, wuerde der grosse entwertet.
          Gemessen wird das Tagesziel an currentPool(): ist der Vorrat nach dieser
-         Runde leer, ist fuer heute nichts mehr faellig. */
-      const restVorrat = (typeof currentPool === 'function') ? currentPool().length : 0;
+         Runde leer, ist fuer heute nichts mehr faellig.
+
+         ⛔⛔ SEIT DEM TAGESDECKEL (07.09.2026) an `tagesPool()`, NICHT an
+         `currentPool()`. Sonst feiert „alles faellig" NIE mehr: der Rueckstand
+         ist ja absichtlich groesser als die Tagesration, und `currentPool()`
+         bliebe dauerhaft gefuellt. Das Tagesziel waere still unerreichbar
+         geworden — eine Funktion, die es noch gibt und die niemand mehr
+         auslösen kann. [[bedingung_wird_durch_die_handlung_ungueltig]] */
+      const restVorrat = (typeof tagesPool === 'function') ? tagesPool().length
+                       : (typeof currentPool === 'function') ? currentPool().length : 0;
       if (typeof feiere === 'function'){
         feiere('runde-fertig', { karten: SESSION.words.length });
         if (!restVorrat) feiere('alles-faellig', { zahl: SESSION.words.length });
