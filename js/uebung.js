@@ -990,17 +990,29 @@ function renderUebungsLeiste(){
                              : (UEB.modus===UEB_GEMISCHT ? `${gesamt} Fragen`
                                                          : `${UEBUNGEN.length} Modi`);
 
-  /* ⭐ Der Direktweg (07.09.2026). Er erscheint nur, solange KEINE Übung läuft:
-     wer schon übt, braucht keinen Startknopf, und im gemischten Modus stünde er
-     als Angebot da, das man gerade benutzt. Und er verschwindet, wenn die
-     aktuelle Auswahl null Fragen hergibt — ein Knopf, der nur eine Absage
-     auslösen kann, ist keiner. [[flaeche_nur_im_gefuellten_zustand]] */
-  const direkt = document.getElementById('btnUebGemischtStart');
-  if (direkt){
-    direkt.classList.toggle('hidden', !!UEB.modus || !gesamt);
-    const dz = document.getElementById('uebGemischtZahl');
-    if (dz) dz.textContent = gesamt ? `${gesamt} Fragen aus allen ${UEBUNGEN.length} Modi` : '';
-  }
+}
+
+/* ---------- Gemischt läuft beim Öffnen von selbst (07.09.2026) ----------
+
+   Elias, nachdem der erste Versuch ein Knopf war: „ich will nicht diesen
+   gemischt starten button haben sondern einfach das ich schon direkt drinnen
+   bin in dem modus und direkt anfangen kann mit dem lesen der frage."
+
+   ⛔ Nur, wenn gerade NICHTS läuft. Wer den Satzmodus mit einer laufenden
+   Übung verlässt und zurückkommt, bekäme sonst statt seiner Übung den
+   gemischten Modus — und der Zwischenstand („4 von 7 richtig") wäre weg, ohne
+   dass etwas meldet. [[zweiter_aufruf_ueberschreibt_still]]
+
+   ⚠️ `uebungStarten()` gibt bei leerer Auswahl selbst auf und meldet es per
+   Hinweis. Das darf hier NICHT passieren — Elias hat nichts getan, es ist der
+   Start. Deshalb wird vorher gezählt und bei null stillschweigend gelesen.
+   [[keine_meldung_ohne_seine_handlung]] */
+function starteGemischtFallsFrei(){
+  if (UEB.modus) return;
+  const alle = uebungenAufbauen();
+  const gesamt = UEBUNGEN.reduce((s, m) => s + (alle[m.id] || []).length, 0);
+  if (!gesamt) return;
+  uebungStarten(UEB_GEMISCHT);
 }
 
 function uebungStarten(modusId){
@@ -1421,15 +1433,6 @@ document.getElementById('uebBlatt').addEventListener('click', (e)=>{
   if (UEB.modus === id) uebungBeenden(); else uebungStarten(id);
   /* Zu — sonst steht das Blatt ueber der Aufgabe, die es gerade gestartet hat. */
   blattUmschalten('uebWaehler', 'uebBlatt', false);
-});
-/* Der Direktweg. ⛔ Er ruft `uebungStarten` und baut nichts eigenes — sonst
-   gäbe es zwei Stellen, an denen eine Übung anfängt, und die zweite bekäme
-   jede spätere Änderung nicht mit. [[entscheidung_gilt_fuer_das_zweite_werkzeug]]
-   Auch das Blatt wird geschlossen: es kann offen stehen, wenn er darin gestöbert
-   und dann doch den Knopf darunter genommen hat. */
-document.getElementById('btnUebGemischtStart').addEventListener('click', ()=>{
-  blattUmschalten('uebWaehler', 'uebBlatt', false);
-  uebungStarten(UEB_GEMISCHT);
 });
 document.getElementById('uebSatz').addEventListener('click', (e)=>{
   const span = e.target.closest('[data-uebidx]');

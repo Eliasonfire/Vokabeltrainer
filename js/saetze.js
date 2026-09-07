@@ -322,6 +322,18 @@ function openSentences(){
   renderThemenLeiste();
   if (typeof renderUebungsLeiste === 'function') renderUebungsLeiste();
   renderSentence();
+  /* ⭐ Elias am 07.09.2026: „ich will … einfach das ich schon direkt drinnen bin
+     in dem modus und direkt anfangen kann mit dem lesen der frage."
+
+     ⛔ NACH renderSentence(), nicht davor: `uebungStarten()` blendet die
+     Satzansicht aus und die Übung ein. Liefe es andersherum, zeichnete
+     renderSentence() den Satz in eine Fläche, die gerade verschwindet — und
+     der erste Eindruck wäre ein Aufblitzen. [[befund_vor_dem_ende_der_funktion]]
+
+     ⛔ Und nur hier, nicht in `waehleThema()`: dort wird eine laufende Übung
+     bewusst beendet, weil der Vorrat wechselt. Ein Neustart an dieser Stelle
+     würde die Beendigung sofort rückgängig machen. */
+  if (typeof starteGemischtFallsFrei === 'function') starteGemischtFallsFrei();
 }
 
 document.getElementById('themenWaehler').addEventListener('click', ()=>{
