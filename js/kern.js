@@ -1343,6 +1343,31 @@ function ladeStandNeu(){
    was Elias sich selbst ausgedacht hat, nicht mit weggeworfen werden. */
 let NOTES = LS.get('vt_notes', {});
 function saveNotes(){ LS.set('vt_notes', NOTES); }
+
+/* ⭐ LAUT MITSPRECHEN — welche Karte wann zuletzt dran war.
+   ================================================================
+   Elias am 07.09.2026: „das ist gut, dass sollte man einbauen. am besten aber
+   sind das immer wieder andere wörter und nicht immer die selben die man laut
+   und leise sagen soll."
+
+   ⛔⛔ DASS DIE MARKIERUNG WANDERT, IST KEINE VERFEINERUNG. Der
+   Produktionseffekt (MacLeod u. a., JEP:LMC) ist ein ITEM-Effekt: es
+   profitieren die Wörter, die laut gelesen wurden, nicht der Lernende
+   allgemein. Bliebe die Markierung fest, profitierten immer dieselben Wörter
+   und die anderen nie — und ein festes Zeichen würde mit der Zeit zum Merkmal
+   des Wortes statt zur Aufforderung.
+
+   ⛔ Und die naheliegende Variante wäre die falsche: eine Sprechaufforderung
+   auf JEDER Karte. Der Effekt entsteht aus dem Kontrast; wird alles laut
+   gelesen, verschwindet er. Deshalb etwa die Hälfte je Runde — so war die
+   Aufteilung in den Experimenten.
+
+   `LAUT_STAND[id]` ist die Nummer der Runde, in der das Wort zuletzt markiert
+   war. Wer nie dran war, fehlt hier und kommt zuerst. Das ergibt ein Reihum,
+   kein Zufall: bei Zufall kann ein Wort über Wochen nie drankommen. */
+let LAUT_STAND = LS.get('vt_lautStand', {});
+let LAUT_RUNDE = LS.get('vt_lautRunde', 0);
+function saveLautStand(){ LS.set('vt_lautStand', LAUT_STAND); LS.set('vt_lautRunde', LAUT_RUNDE); }
 function getNote(id){ return (NOTES[id] || '').trim(); }
 function setNote(id, text){
   const t = (text || '').trim();
