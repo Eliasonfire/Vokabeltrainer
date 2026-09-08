@@ -75,6 +75,28 @@ data/eigene-woerter.json
 # Kostet nichts: das Werkzeug erzeugt die Datei jederzeit neu.
 data/aussenbelege.json
 
+# ⛔⛔ DIESELBE ERWAEGUNG, und sie war bis zum 08.09.2026 nur bei EINER der drei
+# Belegdateien angewandt. woerterbuch-belege.json ordnet genauso jeden Beleg
+# einer Karten-ID zu — {"50297": {"gloss": "drei", ...}} — und lag seit
+# c005f25 (07.09.2026) im oeffentlichen Repo. Der Absatz drei Zeilen weiter
+# oben begruendet den Ausschluss und endet mit dem Satz, der hier haette
+# greifen muessen: "Traegt ein Teil einer Liste eine Einschraenkung, gilt sie
+# fuer alle."
+#
+# ⚠️ Diese beiden Zeilen stoppen nur, was AB JETZT hochgeht. Die alten Staende
+# stehen weiter in der Historie; sie zu entfernen hiesse, die Historie eines
+# oeffentlichen Repos umzuschreiben — das ist Elias' Entscheidung, nicht meine.
+# Der Punkt steht in To-Do Vokabeltrainer unter "Was auf dich wartet".
+# [[entscheidung_gilt_fuer_das_zweite_werkzeug]] · [[regel_wirkt_ueber_die_grenze]]
+data/woerterbuch-belege.json
+
+# Belege aus Elias' eigenem Vokabelbestand, gebaut mit
+#   node werkzeuge/bestandsbelege.mjs
+# Enthaelt Belegwoerter und deren deutsche Bedeutung DIREKT aus dem Abzug
+# (data/vokabeln-*.js) — also genau das Material, das eine Zeile weiter oben
+# draussen bleibt. Wird bei jedem Lauf neu erzeugt.
+data/bestandsbelege.json
+
 # Zwischenstaende der Werkzeuge (aussenbelege.mjs legt hier die Fragenliste ab,
 # die es von vorrat.mjs geholt hat). Wird bei jedem Lauf neu geschrieben.
 .state/
