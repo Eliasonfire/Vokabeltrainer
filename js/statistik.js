@@ -361,6 +361,58 @@ function renderWochenquote(){
   }).join('');
 }
 
+/* ---------- Die Trefferquote eines einzelnen Tages (R4, 08.09.2026) -------
+
+   ⭐ Elias' Vorschlag r4: „Neben der Kartenzahl auch richtig/falsch je Tag
+   speichern. Ohne sie sind der Rauschversuch und der Geh-Versuch nicht
+   auswertbar." Gespeichert wird seit dem 07.09.2026 (`merkeQuote()` in
+   js/kern.js), gezeigt wurde es bisher nur je WOCHE. Wer einen Versuch
+   auswertet, braucht aber den einzelnen Tag: „an dem Tag bin ich gegangen —
+   was ist dabei herausgekommen?"
+
+   ⛔ Gerechnet wird wie in `renderWochenquote()`: Karteikarten UND Abfragen
+   zusammen. Nicht weil das die einzige denkbare Zaehlweise waere, sondern
+   weil zwei verschiedene Prozentzahlen im selben Bildschirm eine stille
+   Falle sind — niemand wuesste, welche gilt. Die Aufschluesselung steht
+   daneben, damit die Sorten trotzdem trennbar bleiben.
+   [[dieselbe_frage_zwei_antworten]] · [[stand_besteht_aus_mehreren_zahlen]]
+
+   ⚠️ Ein Tag OHNE Eintrag ist kein Tag mit 0 %. `vt_quoteTage` wird erst seit
+   dem 07.09.2026 geschrieben; alles davor hat schlicht keine Quote. Beide
+   Funktionen geben dann `null` zurueck, und der Aufrufer laesst die Angabe
+   weg. [[leere_liste_ist_keine_messung]] */
+function tagesQuote(tag){
+  const q = (typeof QUOTE_TAGE === 'object' && QUOTE_TAGE) ? QUOTE_TAGE[tag] : null;
+  if (!q) return null;
+  const karten = Number(q.kGestellt) || 0, kartenR = Number(q.kRichtig) || 0;
+  const abfrage = Number(q.gestellt) || 0, abfrageR = Number(q.richtig) || 0;
+  const gestellt = karten + abfrage, richtig = kartenR + abfrageR;
+  if (!gestellt) return null;
+  return { gestellt, richtig, karten, kartenR, abfrage, abfrageR,
+    quote: Math.round(richtig / gestellt * 100) };
+}
+
+/** Dieselbe Rechnung ueber alle aufgezeichneten Tage. `null`, solange nichts
+ *  aufgezeichnet ist — ein „0 %" saehe aus wie eine schlechte Leistung statt
+ *  wie eine fehlende Messung. */
+function gesamtQuote(){
+  let gestellt = 0, richtig = 0;
+  for (const q of Object.values((typeof QUOTE_TAGE === 'object' && QUOTE_TAGE) || {})){
+    if (!q) continue;
+    gestellt += (Number(q.kGestellt) || 0) + (Number(q.gestellt) || 0);
+    richtig  += (Number(q.kRichtig)  || 0) + (Number(q.richtig)  || 0);
+  }
+  return gestellt ? { gestellt, richtig, quote: Math.round(richtig / gestellt * 100) } : null;
+}
+
+/** Die Aufschluesselung als Text — nur dann, wenn es wirklich zwei Sorten
+ *  gibt. Bei reinem Karteikartenlernen waere „(41 von 60 Karteikarten)" nur
+ *  eine Wiederholung der Prozentzahl mit mehr Zeichen. */
+function quoteAufschluesselung(q){
+  if (!q || !q.karten || !q.abfrage) return '';
+  return q.kartenR + '/' + q.karten + ' Karteikarten, '
+       + q.abfrageR + '/' + q.abfrage + ' Abfragen';
+}
 function renderUebungskalender(){
   const kasten = document.getElementById('uebungskalender');
   if (!kasten) return;
@@ -419,6 +471,10 @@ function renderUebungskalender(){
      Bei anderer Schriftgroesse — und die stellt Elias selbst ein — waere es
      auseinandergelaufen. Ein gemeinsames Raster kann gar nicht verrutschen.
      [[handliste_neben_echter_quelle]] */
+  /* ⛔ Die vierte Kennzahl erscheint nur, wenn es sie GIBT. Vor dem
+     07.09.2026 wurde keine Quote aufgezeichnet, und eine leere Spalte an
+     dieser Stelle saehe aus wie ein Fehler. [[leere_liste_ist_keine_messung]] */
+  const gq = gesamtQuote();
   kasten.innerHTML = `
     <div class="kal-block">
       <div></div>
@@ -430,9 +486,10 @@ function renderUebungskalender(){
       <div><b>${getStreak().count}</b><span>Tage am Stück</span></div>
       <div><b>${laengste}</b><span>längste Serie</span></div>
       <div><b>${alle.length}</b><span>Tage geübt</span></div>
+      ${gq ? `<div><b>${gq.quote} %</b><span>richtig insgesamt</span></div>` : ''}
     </div>
     <p class="kal-fuss">${seit
-      ? `Aufgezeichnet seit ${seit}. Umrandete Felder sind aus deiner Serie erschlossen — dass du geübt hast, steht fest, die Kartenzahl nicht.`
+      ? `Aufgezeichnet seit ${seit}. Umrandete Felder sind aus deiner Serie erschlossen — dass du geübt hast, steht fest, die Kartenzahl nicht.${gq ? ' Die Trefferquote läuft erst seit dem 7. September — ältere Tage haben keine.' : ''}`
       : 'Der Kalender füllt sich, sobald du das erste Mal übst.'}</p>
   `;
 }
@@ -448,7 +505,17 @@ document.addEventListener('click', (e)=>{
   const wert = tage[tag];
   const datum = new Date(tag).toLocaleDateString('de-DE',
     { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-  toast(wert === undefined ? `${datum}: nicht geübt`
-      : wert === 0 ? `${datum}: geübt (Anzahl nicht mehr bekannt)`
-      : `${datum}: ${wert} ${wert === 1 ? 'Karte' : 'Karten'}`);
+  if (wert === undefined){ toast(`${datum}: nicht geübt`); return; }
+  /* ⭐ Menge und Guete stehen nebeneinander — das ist der ganze Punkt von r4:
+     „ohne sie sind der Rauschversuch und der Geh-Versuch nicht auswertbar".
+     Wer wissen will, ob ein Versuch etwas gebracht hat, braucht beides an
+     einem Tag. [[stand_besteht_aus_mehreren_zahlen]] */
+  const teile = [wert === 0 ? 'geübt (Anzahl nicht mehr bekannt)'
+                            : wert + (wert === 1 ? ' Karte' : ' Karten')];
+  const q = (typeof tagesQuote === 'function') ? tagesQuote(tag) : null;
+  if (q){
+    const auf = quoteAufschluesselung(q);
+    teile.push(q.quote + ' % richtig' + (auf ? ' (' + auf + ')' : ''));
+  }
+  toast(`${datum}: ${teile.join(' · ')}`);
 });
