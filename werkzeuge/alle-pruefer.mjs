@@ -29,12 +29,19 @@
  * die Übersicht die letzte Ausgabezeile mit — die sagt, was der Code meint.
  *
  * ==========================================================================
- * ⚠️ ZWEI PRÜFER STEHEN DAUERHAFT ROT, UND DAS IST IN ORDNUNG
+ * ⚠️ DREI PRÜFER STEHEN DAUERHAFT ROT, UND DAS IST IN ORDNUNG
  *
- * pruefe-duplikate.js (2 Befunde) und pruefe-taschkil.js (25 echte von 37)
- * warten auf Elias' Entscheidung — beide stehen auf seiner Seite „Was auf dich
- * wartet". Automation/routines.json sagt dazu ausdrücklich: „Beide Skripte
+ * pruefe-duplikate.js, pruefe-taschkil.js und werkzeuge/pruefe-themen.mjs
+ * warten auf Elias' Entscheidung — alle drei stehen auf seiner Seite „Was auf
+ * dich wartet". Automation/routines.json sagt dazu ausdrücklich: „Beide Skripte
  * gehen ueber ein 'warn' hinaus, blockieren aber keinen Push."
+ *
+ * ⛔ HIER STEHT ABSICHTLICH KEINE ZAHL MEHR (08.09.2026). Bis heute stand da
+ * „taschkil (25 echte von 37)" — gemessen waren es „30 Befunde in 26
+ * verschiedenen Woertern". Weder 25 noch 37 kam in der Ausgabe vor. Eine von
+ * Hand gepflegte Zahl in einem WERKZEUG ist die gefaehrlichste Sorte: man
+ * glaubt ihr. Der Pruefer nennt seine Zahl selbst, und zwar richtig.
+ * [[zahlen_ohne_beleg]]
  *
  * Deshalb trennt die Schlusszeile: „rot, wartet auf Elias" von „rot, echter
  * Mangel". Ein Werkzeug, das dauerhaft rot steht, wird sonst überlesen.
@@ -315,8 +322,9 @@ if (rot.length){
   console.log('     pruefe-duplikate.js: 2 = Befunde für Elias, 1 = Werkzeugfehler');
   console.log('     pruefe-taschkil.js:  1 = BEIDES');
   console.log('     Die letzte Zeile oben sagt, was gemeint ist — sie lesen, nicht nur den Code.');
-  console.log('     Bekannt und in Ordnung: duplikate (2 Befunde) und taschkil (25 echte)');
-  console.log('     warten auf Elias und stehen auf seiner Seite „Was auf dich wartet".');
+  console.log('     Bekannt und in Ordnung: duplikate, taschkil und themen warten auf');
+  console.log('     Elias und stehen auf seiner Seite „Was auf dich wartet". Ihre Zahlen');
+  console.log('     nennen sie selbst — hier steht keine nachgepflegte mehr.');
 }
 
 /* ⛔ Der eigene Exitcode meldet nur, ob ALLE gelaufen sind — nicht, ob alle
