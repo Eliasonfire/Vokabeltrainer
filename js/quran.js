@@ -614,10 +614,14 @@ function hatAyahZeichen(){
      stand dort fest `var(--font-ar)`: gemessen wurde immer Amiri, angezeigt
      aber die gewaehlte. Eine Pruefung, die einen Stellvertreter befragt.
      [[pruefung_fragt_einen_stellvertreter_ab]] */
-  const schrift = (typeof quranSchrift === 'function') ? quranSchrift() : 'amiri';
+  /* ⛔ Gemessen wird die Schrift, in der das Zeichen WIRKLICH gesetzt ist —
+     und das ist seit dem 08.09.2026 wieder fest `--font-ar`, nicht die
+     gewaehlte Leseschrift (siehe .ayah-schluss in index.html). Der Schluessel
+     bleibt trotzdem je Schrift: faellt die Bindung eines Tages weg, misst diese
+     Funktion sofort richtig weiter, statt eine alte Antwort zu behalten. */
+  const schrift = 'font-ar';
   if (AYAH_ZEICHEN[schrift] !== undefined) return AYAH_ZEICHEN[schrift];
-  const fam = (typeof QURAN_SCHRIFTEN === 'object' && QURAN_SCHRIFTEN[schrift])
-    ? QURAN_SCHRIFTEN[schrift] : 'var(--font-ar)';
+  const fam = 'var(--font-ar)';
   const miss = (t) => {
     const s = document.createElement('span');
     s.textContent = t;
