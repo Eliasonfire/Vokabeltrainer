@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vokabeltrainer-v402';
+const CACHE_NAME = 'vokabeltrainer-v403';
 
 /* ⚠️ In diese Liste gehoeren KEINE Kommentare zwischen die Eintraege.
    validate.js liest sie zeilenweise und hat am 18.08.2026 einen erklaerenden
@@ -69,6 +69,13 @@ const ASSETS = [
      genau ihr Fehlen war der Anlass: ohne Cache-Eintrag haengt die Schrift
      offline am Browser-Cache, und ein weggeworfener Cache laesst die
      Harakat verrutschen, ohne einen Fehler zu melden. */
+  /* ⭐ KFGQPC Uthmanic Hafs (08.09.2026), umschaltbar in den Quran-Einstellungen.
+     ⛔ Diese Zeile ist der ganze Unterschied zwischen einer Datei, die im
+     Ordner liegt, und einer, die offline da ist — genau der Fall, den
+     validate.js hier gemeldet hat. ⚠️ Und KEINE einfachen Anfuehrungszeichen
+     im Kommentar: der Pruefer liest jede solche Zeichenkette als Dateipfad,
+     auch im Kommentar. [[stichworttreffer_im_kommentar]] */
+  './fonts/kfgqpc-hafs-18.woff2',
   './fonts/amiri-400-ar.woff2',
   './fonts/amiri-400-latext.woff2',
   './fonts/amiri-400-lat.woff2',
