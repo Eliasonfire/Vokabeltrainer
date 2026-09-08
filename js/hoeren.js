@@ -17,7 +17,10 @@
    soll eine sicher gelesene Vokabel nicht zurueckwerfen. Der Modus zaehlt
    nur seine eigene Runde. */
 
-const HOER = { wort: null, optionen: [], beantwortet: false, richtig: 0, gesamt: 0, fertig: false };
+const HOER = { wort: null, optionen: [], beantwortet: false, richtig: 0, gesamt: 0, fertig: false,
+  /* ⭐ `zielOffen`: das Tagesziel ist erreicht, aber noch nicht gefeiert —
+     siehe hoerZielPruefen(). Nur im Geh-Modus moeglich. */
+  zielOffen: false };
 
 /* ---------- Tagesziel (Elias, 17.08.2026) ----------
 
@@ -60,6 +63,41 @@ function hoerTag(){
   return t;
 }
 function hoerTagSpeichern(t){ LS.set('vt_hoerTag', t); }
+
+/* ⭐⭐ EIN Weg zum Tagesziel, nicht zwei (08.09.2026)
+
+   Elias: „wie wäre es wenn ich mein tagesziel beim hören und gemischte sätze
+   (13 aufgaben) beendet habe das danach auch irgendwie konfetti kommt."
+
+   Es GAB das Konfetti schon — 'hoer-tagesziel' steht seit v156 in js/feier.js.
+   Nur kam es beim Laufen nie an: `vt_hoerTag.gesamt` waechst an ZWEI Stellen,
+   beim Antworten und im Geh-Modus (gehSchleife), und die Feier hing nur an
+   der ersten.
+
+   ⛔ Und schlimmer als „einmal verpasst": die Schwelle war danach VERBRANNT.
+   Die alte Bedingung fragte den UEBERGANG (`vorher < ziel && gesamt >= ziel`).
+   Hatte der Geh-Modus `gesamt` schon ueber das Ziel geschoben, traf sie beim
+   naechsten echten Antworten nicht mehr zu — der ganze Tag blieb ohne Feier,
+   ohne dass irgendwo etwas meldet. [[ausfall_ist_unsichtbar_gebaut]]
+
+   Deshalb fragt sie jetzt den ZUSTAND statt den Uebergang, steht an EINER
+   Stelle und wird von jedem Weg aufgerufen. Dass daraus trotzdem genau eine
+   Feier je Tag wird, macht der `einmalig`-Riegel in js/feier.js — die
+   Buchfuehrung bleibt dort, wo sie ohnehin schon lag.
+   [[endpunkt_der_zuerst_steht]] */
+function hoerZielPruefen(){
+  const t = hoerTag();
+  if (t.gesamt < hoerTagesziel()) return;
+  /* ⛔ Im Geh-Modus sieht niemand hin — er laeuft, das Handy steckt in der
+     Tasche. Konfetti dort abzufeuern hiesse, den Anlass zu verbrennen, denn
+     `einmalig` laesst ihn heute kein zweites Mal zu. Also vormerken und
+     nachholen, sobald er wieder auf den Bildschirm schaut: beim Ausschalten
+     des Geh-Modus oder beim naechsten Betreten des Hoermodus. Die ANSAGE
+     uebernimmt gehSchleife(), die einzige Stelle, die sprechen kann. */
+  if (typeof GEH === 'object' && GEH && GEH.an){ HOER.zielOffen = true; return; }
+  HOER.zielOffen = false;
+  if (typeof feiere === 'function') feiere('hoer-tagesziel', { zahl: t.gesamt, richtig: t.richtig });
+}
 
 /* Die Standzeile fuehrt das Tagesziel mit - vorher stand dort nur "x von y
    richtig", also die Trefferquote der laufenden Sitzung. Die sagt nichts
@@ -245,14 +283,16 @@ function beantworteHoerfrage(i){
     HOER.fertig = true;
     document.getElementById('hoerHinweis').textContent =
       'Tagesziel geschafft — tippe, wenn du trotzdem weitermachen willst.';
-    /* Der Anlass ist `einmalig` je Tag, siehe js/feier.js - zweimal am selben
-       Tag zu feiern wuerde die Feier entwerten. */
-    if (typeof feiere === 'function') feiere('hoer-tagesziel', { zahl: t.gesamt, richtig: t.richtig });
   } else {
     document.getElementById('hoerHinweis').textContent = richtig
       ? 'Richtig — tippe für das nächste Wort.'
       : 'Nicht ganz — tippe für das nächste Wort.';
   }
+
+  /* ⭐ AUSSERHALB des Uebergangs, und deshalb auch dann, wenn das Ziel schon
+     im Geh-Modus gefallen ist: hier wird die aufgeschobene Feier nachgeholt.
+     Ein zweites Mal am selben Tag passiert dabei nichts — `einmalig`. */
+  hoerZielPruefen();
 
   /* Nach der Antwort noch einmal vorsprechen: jetzt sieht man die Schrift
      dazu, und genau dabei praegt sich der Klang ein. */
@@ -615,9 +655,19 @@ async function gehSchleife(){
 
     /* ⛔ Tagesziel ja, Trefferquote nein — die Begründung steht im Kopf. */
     const t = hoerTag();
+    const zielVorher = t.gesamt;
     t.gesamt++;
     hoerTagSpeichern(t);
     hoerStandSchreiben();
+
+    /* ⭐ Das Ziel kann genau hier fallen, und bis zum 08.09.2026 blieb das
+       folgenlos. Gesehen wird beim Laufen nichts — also SAGEN wir es, und
+       hoerZielPruefen() hebt die sichtbare Feier auf, bis er hinschaut. */
+    if (zielVorher < hoerTagesziel() && t.gesamt >= hoerTagesziel()){
+      hoerZielPruefen();
+      await gehSprich('Tagesziel geschafft. ' + t.gesamt + ' Wörter.', 'de-DE');
+      if (!gilt()) return;
+    }
 
     await gehWarte(GEH_PAUSE_DANACH);
   }
@@ -638,6 +688,10 @@ function gehModusSetzen(an){
   } else {
     gehStilleAus();
     gehNotiz('stop');
+    /* ⭐ Jetzt schaut er wieder hin: eine im Laufen aufgeschobene Feier wird
+       hier faellig. Ohne dieses eine Wort waere die Aufschiebung oben eine
+       Beerdigung. [[werkzeug_ohne_aufrufer]] */
+    hoerZielPruefen();
     try { speechSynthesis.cancel(); } catch (e){ }
     /* Zurück in den normalen Betrieb: eine frische Frage mit Antwortknöpfen.
        Ohne das stünde die letzte Lösung da und nichts ginge weiter. */
@@ -661,4 +715,9 @@ function openHoeren(){
   }
   HOER.richtig = 0; HOER.gesamt = 0;
   naechsteHoerfrage();
+  /* ⭐ Der dritte Weg, und der einzige, der einen App-Neustart ueberlebt:
+     `HOER.zielOffen` liegt nur im Arbeitsspeicher, der `einmalig`-Riegel
+     dagegen in localStorage. Wer im Geh-Modus sein Ziel erreicht und die App
+     schliesst, bekommt seine Feier beim naechsten Oeffnen. */
+  hoerZielPruefen();
 }
