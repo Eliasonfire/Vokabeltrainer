@@ -455,11 +455,31 @@ const QURAN_MIN = 70, QURAN_MAX = 300, QURAN_SCHRITT = 10;
 /* Die englischen Ausgaben, die api.quran.com am 08.09.2026 wirklich
    ausgeliefert hat. ⛔ Nicht aus der Ressourcenliste abgeschrieben, sondern
    je Ausgabe an Sure 67 geprueft. */
+/* ⭐ Seit dem 08.09.2026 nur noch EINE, auf Elias' Entscheidung: „dann lass
+   nur ihn nehmen." Vorher standen hier vier zur Wahl.
+
+   Sein Kriterium war nicht Wortnaehe, sondern Lesbarkeit: „einen der mir
+   sinngemäß widergibt was da steht, wo ich flüssig lesen kann und nicht wie
+   18tes jahrhundert klingt und ich die kernaussagen gut verstehe."
+
+   An Sure 67 (30 Verse) gemessen — Haleem gewinnt in jeder Groesse:
+     Haleem   3302 Zeichen, Ø Satzlaenge 15,5, 0 altertuemliche Woerter
+     Saheeh   3500                        16,1   0   (zieht die arabische
+                                                      Wortstellung durch)
+     Usmani   3763                        17,3   0   (Klammern, „RaHmān")
+     Yusuf Ali 4011                       21,1  21   (hath, thou, thy, ye…)
+   Maududi waere der Zweitbeste (16,0), hat aber in Sure 67 VIERZIG
+   Fussnotenziffern im laufenden Text und stellenweise schiefes Englisch.
+
+   ⚠️ Der Preis: Haleem schreibt „God" statt „Allah" und „the Lord of Mercy"
+   statt „ar-Rahman" — die Entscheidung der Oxford-Ausgabe. Elias kennt sie
+   und hat sie in Kauf genommen.
+
+   ⭐ quranEnAusgabe() faellt auf QURAN_EN_AUSGABEN[0] zurueck, wenn die
+   gespeicherte id nicht mehr in der Liste steht. Wer vorher Saheeh gewaehlt
+   hatte, landet dadurch von selbst hier — ohne kaputten Zustand. */
 const QURAN_EN_AUSGABEN = [
-  { id: 20, kurz: 'Saheeh', name: 'Saheeh International' },
-  { id: 85, kurz: 'Haleem', name: 'M.A.S. Abdel Haleem' },
-  { id: 84, kurz: 'Usmani', name: 'Mufti Taqi Usmani' },
-  { id: 19, kurz: 'Pickthall', name: 'M. Pickthall' }
+  { id: 85, kurz: 'Haleem', name: 'M.A.S. Abdel Haleem' }
 ];
 const QURAN_EN_KEY = 'vt_quranEn';
 /* ⚠️ Hoechstens so viele Suren im Zwischenspeicher. Al-Baqarah sind rund
