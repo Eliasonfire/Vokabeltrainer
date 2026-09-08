@@ -22,10 +22,24 @@ const ok = (was, bedingung, zusatz='') => {
 
 /* ---------- DOM-Stub ---------- */
 const ELEMENTE = new Map();
+/* Ein style-Objekt, das sich wie CSSStyleDeclaration verhaelt — gesetzte
+   Eigenschaften liegen direkt darauf, setProperty schreibt dorthin. */
+function macheStil(){
+  const s = {};
+  s.setProperty      = (k, v) => { s[k] = v; };
+  s.getPropertyValue = (k)    => (s[k] === undefined ? '' : s[k]);
+  s.removeProperty   = (k)    => { delete s[k]; };
+  return s;
+}
+
 function macheElement(id){
   const klassen = new Set();
   return {
-    id, style:{}, dataset:{}, scrollTop:0, scrollHeight:0, clientHeight:0, scrollWidth:0,
+    /* ⛔⛔ style braucht setProperty — siehe dieselbe Stelle in test-p1.mjs.
+       Ohne sie stirbt js/quran.js beim Laden (seit v403), und dieser Pruefer
+       kommt gar nicht bis zu seinen Zusicherungen.
+       [[testvorlage_selbst_nachgebaut]] */
+    id, style: macheStil(), dataset:{}, scrollTop:0, scrollHeight:0, clientHeight:0, scrollWidth:0,
     innerHTML:'', textContent:'', value:'', disabled:false, _klassen: klassen,
     classList:{
       add:(...c)=>c.forEach(x=>klassen.add(x)),
@@ -125,7 +139,13 @@ const verse = Array.from({length:10}, (_,i) => ({
   translations:[{ text:`Uebersetzung ${i+1}` }]
 }));
 vm.runInContext('VERSE_CACHE[2] = VERSE_TEST', Object.assign(ctx, { VERSE_TEST: verse }));
-vm.runInContext('AYAH_ZEICHEN = false', ctx);      // Ersatzkreis erzwingen
+/* ⛔ Seit v403 ist AYAH_ZEICHEN kein Schalter mehr, sondern ein `const`-Objekt
+   mit einem Eintrag JE SCHRIFT — `hatAyahZeichen()` fragt den Schluessel
+   'font-ar'. Die alte Zuweisung `AYAH_ZEICHEN = false` schreibt auf die
+   const-Bindung und wirft; sichtbar wurde das aber erst, nachdem der
+   style-Stub oben repariert war — vorher starb der Pruefer schon beim Laden.
+   Ein Fehler kann einen zweiten verdecken. [[zweiter_fix_deckt_ersten_zu]] */
+vm.runInContext("AYAH_ZEICHEN['font-ar'] = false", ctx);   // Ersatzkreis erzwingen
 vm.runInContext('renderVerses(2)', ctx);
 const html = verseListe.innerHTML;
 
@@ -147,7 +167,7 @@ ok('Ersatzkreis, weil die Schrift im Pruefstand nichts kann',
 ok('Versnummer steht im Ersatzkreis', /ayah-schluss ersatz[^>]*>7</.test(html));
 
 /* ---------- dasselbe mit echtem ۝ ---------- */
-vm.runInContext('AYAH_ZEICHEN = true', ctx);
+vm.runInContext("AYAH_ZEICHEN['font-ar'] = true", ctx);   // siehe oben, Zeile ~145
 vm.runInContext('renderVerses(2)', ctx);
 const html2 = verseListe.innerHTML;
 ok('mit ۝ kein Ersatzkreis mehr', !/ayah-schluss ersatz/.test(html2));
