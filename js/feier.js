@@ -201,6 +201,10 @@ function feierPuls(el, klasse, ms){
    passiert nichts. Fehlt die Funktion, darf der Anlass beliebig oft feuern -
    das ist bei Rueckmeldung am Ort der Antwort richtig und bei Meilensteinen
    falsch. */
+/* ⭐ K2: die Schwellen fuer 'sitzt-meilenstein'. Bewusst als eigene Liste und
+   nicht als Rechnung `zahl % 25 === 0` — so laesst sich der Abstand oben
+   groesser machen, ohne die Bedingung anzufassen. */
+const SITZT_MEILEN = [25, 50, 75, 100, 150, 200, 300];
 const FEIER_ANLAESSE = {
 
   /* Elias' ausdruecklicher Wunsch, und der einzige Anlass mit Konfetti. Genau
@@ -234,6 +238,43 @@ const FEIER_ANLAESSE = {
     }
   },
 
+  /* ⭐ K2 (08.09.2026). Elias: „vielleicht kann man aber noch mehr davon in
+     meine app einbauen vorallem vielleicht so etwas mehr wie das konfetti oder
+     so." Der Beleg dafuer, dass das kein Spielzeug ist, steht im Artefakt
+     „Elf Vorschlaege zur Wahl": drei Dinge schwaechen den Leistungsabfall bei
+     Daueraufmerksamkeit messbar ab — Zielsetzung, sofortige Rueckmeldung und
+     grosse Anreize (Silawi, Degani & Prior 2025). Der Trainer hat alle drei.
+
+     ⛔ Ein Wort, das abgestuerzt war und seine alte Box WIEDER erreicht, ist
+     der teuerste Erfolg der App — und war bisher voellig unsichtbar. Er zaehlt
+     doppelt: einmal fuer das Wort, einmal dafuer, dass jemand an einem Wort
+     drangeblieben ist, das ihm entglitten war.
+
+     ⚠️ KEIN Konfetti. Die Auflage steht oben bei 'serie-meilenstein': Konfetti
+     soll der seltenste Effekt bleiben. Ein Wort zurueckzuerobern ist selten,
+     aber nicht so selten wie 30 Tage Serie. */
+  'wort-zurueck': {
+    effekt: d => {
+      feierPuls(document.getElementById('flashcard'), 'feier-rand', 900);
+      feierBanner('Zurückerobert', `${d.wort} ist wieder in Box ${d.box}.`, 'mittel');
+    }
+  },
+
+  /* ⭐ K2, zweiter Anlass: der Bestand als Ganzes. Die Einzelkarte hat ihren
+     Moment ('box-5'), der GESAMTSTAND hatte keinen — und der ist das, was
+     ueber Monate waechst.
+
+     ⛔ Alle 25, nicht jede Zahl: bei 215 freigeschalteten Woertern sind das
+     hoechstens acht Anlaesse ueber Monate hinweg. Und `einmalig` sorgt dafuer,
+     dass eine Schwelle, die schon ueberschritten war, nicht nachtraeglich
+     feiert — wer heute bei 80 steht, hoert erst bei 100 wieder etwas. */
+  'sitzt-meilenstein': {
+    einmalig: d => `sitzt-${d.zahl}`,
+    effekt: d => {
+      feierKonfetti(d.zahl >= 100 ? 120 : 70);
+      feierBanner(`${d.zahl} Wörter sitzen`, 'Alle in Box 5.', 'gross');
+    }
+  },
   /* Die Boxaenderung passiert heute unsichtbar. Ein Chip, der aufsteigt und
      verblasst, sagt sie ohne den Lernfluss zu bremsen. */
   'box-auf': {
