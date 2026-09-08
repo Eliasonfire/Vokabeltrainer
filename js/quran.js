@@ -418,9 +418,135 @@ function renderSurahList(filter){
    herum die feine Einstellung weg, die er beim Lesen eher braucht. */
 const QURAN_MIN = 70, QURAN_MAX = 300, QURAN_SCHRITT = 10;
 
+/* ---------- Englische Uebersetzung, zuschaltbar (08.09.2026) ---------------
+
+   Elias: „ich will auch die englische übersetzung von Dr. Mustafa Khattab von
+   quran.com und möchte in den quran einstellungen ankreuzen, ob ich den einen
+   oder den anderen will oder beide"
+
+   ⛔⛔ KHATTAB GIBT DIE API NICHT HER — gemessen, nicht vermutet:
+
+     /resources/translations  liefert 126 Ausgaben, davon 9 englische.
+     Khattab (131) ist NICHT darunter.
+     /verses/by_chapter/67?translations=131  antwortet mit Status 200 und
+     einem LEEREN Uebersetzungsfeld, waehrend 20 und 85 am selben Aufruf
+     Text liefern.
+
+   Ein Status 200 ohne Inhalt ist die gefaehrlichste Antwort: nichts meldet
+   sich, die Zeile bleibt einfach leer. Deshalb steht die Messung hier.
+   „The Clear Quran" ist urheberrechtlich geschuetzt; quran.com darf sie
+   anzeigen, aber offenbar nicht ueber die offene API weiterreichen. Das ist
+   nichts, was sich umgehen liesse — und soll es auch nicht.
+
+   ⭐ Gebaut ist deshalb die UMSCHALTUNG, die er wollte, mit den Ausgaben, die
+   die API wirklich hergibt. Welche davon er will, entscheidet er im Menue.
+
+   ⛔ Und der Text wird ABGERUFEN, nicht mitgeliefert. Ein Volltext-Abzug einer
+   geschuetzten Uebersetzung gehoert weder ins Repo noch auf den oeffentlichen
+   Server — die API ist genau dafuer da, und der Zwischenspeicher liegt im
+   Browser des Nutzers. Nach dem ersten Lesen ist die Sure auch offline da. */
+
+/* Die englischen Ausgaben, die api.quran.com am 08.09.2026 wirklich
+   ausgeliefert hat. ⛔ Nicht aus der Ressourcenliste abgeschrieben, sondern
+   je Ausgabe an Sure 67 geprueft. */
+const QURAN_EN_AUSGABEN = [
+  { id: 20, kurz: 'Saheeh', name: 'Saheeh International' },
+  { id: 85, kurz: 'Haleem', name: 'M.A.S. Abdel Haleem' },
+  { id: 84, kurz: 'Usmani', name: 'Mufti Taqi Usmani' },
+  { id: 19, kurz: 'Pickthall', name: 'M. Pickthall' }
+];
+const QURAN_EN_KEY = 'vt_quranEn';
+/* ⚠️ Hoechstens so viele Suren im Zwischenspeicher. Al-Baqarah sind rund
+   50 KB, die meisten Suren weit weniger — zwoelf bleiben klar unter dem, was
+   localStorage vertraegt, und decken das Lesen von Wochen ab.
+   [[localstorage_kann_werfen]] */
+const QURAN_EN_MAX = 12;
+
+function quranEnAusgabe(){
+  const id = Number(SETTINGS.quranEnAusgabe);
+  return QURAN_EN_AUSGABEN.some(a => a.id === id) ? id : QURAN_EN_AUSGABEN[0].id;
+}
+function quranEnSpeicher(){
+  try { const o = LS.get(QURAN_EN_KEY, null); return (o && typeof o === 'object') ? o : {}; }
+  catch (e) { return {}; }
+}
+/** Holt die englischen Verse einer Sure — erst aus dem Zwischenspeicher, sonst
+ *  von der API. Gibt ein Array von Strings zurueck (Index 0 = Vers 1) oder
+ *  null, wenn nichts zu holen war. */
+async function holeQuranEn(sureId){
+  const ausgabe = quranEnAusgabe();
+  const schluessel = sureId + ':' + ausgabe;
+  const speicher = quranEnSpeicher();
+  if (Array.isArray(speicher[schluessel])) return speicher[schluessel];
+  const verse = [];
+  try {
+    for (let page = 1; page <= 12; page++){
+      const res = await fetch('https://api.quran.com/api/v4/verses/by_chapter/' + sureId
+        + '?language=en&translations=' + ausgabe + '&per_page=50&page=' + page);
+      if (!res.ok) return null;
+      const j = await res.json();
+      const teil = j.verses || [];
+      teil.forEach(v => {
+        const t = (v.translations && v.translations[0] && v.translations[0].text) || '';
+        /* ⛔ Fussnotenmarken der API sind HTML (<sup foot_note=…>). Sie stehen
+           mitten im Satz und wuerden als Ziffer ohne Bezug erscheinen. */
+        verse.push(String(t).replace(/<sup[^>]*>.*?<\/sup>/g, '').trim());
+      });
+      const gesamt = (j.pagination && j.pagination.total_pages) || 1;
+      if (page >= gesamt) break;
+    }
+  } catch (e) { return null; }
+  /* ⛔ Eine leere Antwort NICHT speichern: genau so verhaelt sich eine Ausgabe,
+     die die API nicht herausgibt (Status 200, kein Text). Sonst merkte sich
+     der Speicher fuer immer, dass es nichts gibt. */
+  if (!verse.length || !verse.some(t => t)) return null;
+  speicher[schluessel] = verse;
+  /* Aeltere Eintraege abraeumen, bevor localStorage wirft. */
+  const schluessel_alle = Object.keys(speicher);
+  while (schluessel_alle.length > QURAN_EN_MAX) delete speicher[schluessel_alle.shift()];
+  try { LS.set(QURAN_EN_KEY, speicher); } catch (e) { /* voll oder privat */ }
+  return verse;
+}
+
+/** Traegt die englischen Zeilen in die schon gebaute Sure nach. Wird NICHT
+ *  abgewartet: der Leser steht sofort, das Englische kommt, wenn es da ist. */
+async function zeigeQuranEn(sureId){
+  const liste = document.getElementById('verseList');
+  if (!liste) return;
+  const an = quranUebersetzung() !== 'de';
+  if (!an) return;
+  const verse = await holeQuranEn(sureId);
+  /* ⚠️ Zwischenzeitlich koennte eine andere Sure offen sein. */
+  if (OFFENE_SURE !== sureId) return;
+  liste.querySelectorAll('.verse-item').forEach(el => {
+    const nr = Number(el.dataset.versnr);
+    const ziel = el.querySelector('.verse-en');
+    if (!ziel) return;
+    const t = verse && verse[nr - 1];
+    ziel.textContent = t || '';
+    /* Ohne Text keine leere Zeile — und ein sichtbarer Hinweis nur, wenn gar
+       nichts kam. [[breite_null_ist_kein_layout]] */
+    ziel.classList.toggle('leer', !t);
+  });
+  const nichts = !verse;
+  const hinweis = document.getElementById('qaHinweisEn');
+  if (hinweis) hinweis.classList.toggle('hidden', !nichts);
+}
+
+/** Welche Uebersetzung(en): 'de' (Vorgabe), 'en' oder 'beide'.
+ *  ⛔ Vorgabe bleibt 'de' — eine zugeschaltete Ausgabe darf sich nicht selbst
+ *  einschalten, sonst findet er seinen Leser nach dem Update nicht wieder.
+ *  Dieselbe Ueberlegung wie bei `darstellung` unten. */
+function quranUebersetzung(){
+  const u = SETTINGS.quranUeb;
+  return (u === 'en' || u === 'beide') ? u : 'de';
+}
+
 function quranAnsicht(){
   return {
     modus: SETTINGS.quranModus || 'beide',
+    uebersetzung: quranUebersetzung(),
+    enAusgabe: quranEnAusgabe(),
     /* Elias' Punkt 6 vom 10.08.2026. Vorgabe ist die BISHERIGE Ansicht: eine
        neue Darstellung darf sich nicht selbst einschalten, sonst findet er
        seinen Leser nach dem Update nicht wieder. */
@@ -496,6 +622,10 @@ function wendeQuranAnsichtAn(){
      Markup. Deshalb kein renderVerses() hier: Umschalten kostet nichts, und
      der Lesestand bleibt genau da, wo er war. */
   liste.classList.toggle('liste', a.darstellung === 'liste');
+  /* ⭐ Die Uebersetzungswahl: 'de' | 'en' | 'beide'. Zwei Klassen statt einer,
+     weil beide Zeilen unabhaengig voneinander verschwinden koennen. */
+  liste.classList.toggle('ohne-de', a.uebersetzung === 'en');
+  liste.classList.toggle('ohne-en', a.uebersetzung === 'de');
 
   /* ⚠️ Die Basmala-Ligatur muss nach JEDER Groessenaenderung neu eingepasst
      werden, nicht nur beim Aufbau der Sure. Bei 300 % lief sie sonst ueber den
@@ -508,6 +638,14 @@ function wendeQuranAnsichtAn(){
     b.classList.toggle('active', b.dataset.quranmodus === a.modus));
   document.querySelectorAll('[data-qurandarstellung]').forEach(b =>
     b.classList.toggle('active', b.dataset.qurandarstellung === a.darstellung));
+  document.querySelectorAll('[data-quranueb]').forEach(b =>
+    b.classList.toggle('active', b.dataset.quranueb === a.uebersetzung));
+  document.querySelectorAll('[data-quranenausgabe]').forEach(b =>
+    b.classList.toggle('active', Number(b.dataset.quranenausgabe) === a.enAusgabe));
+  /* Die Wahl der englischen Ausgabe hat nur Sinn, wenn Englisch ueberhaupt
+     angezeigt wird — sonst waere es eine Einstellung, die ins Leere wirkt. */
+  const zeileEn = document.getElementById('qaZeileEnAusgabe');
+  if (zeileEn) zeileEn.classList.toggle('hidden', a.uebersetzung === 'de');
   document.getElementById('qaWertAr').textContent = a.ar + ' %';
   document.getElementById('qaWertDe').textContent = a.de + ' %';
   /* Was gerade nicht angezeigt wird, laesst sich auch nicht sinnvoll groesser
@@ -577,6 +715,27 @@ document.getElementById('quranModi').addEventListener('click', (e)=>{
   wendeQuranAnsichtAn();
 });
 
+document.getElementById('quranUeb').addEventListener('click', (e)=>{
+  const knopf = e.target.closest('[data-quranueb]');
+  if (!knopf) return;
+  SETTINGS.quranUeb = knopf.dataset.quranueb;
+  saveSettings();
+  wendeQuranAnsichtAn();
+  /* ⛔ Beim EINSCHALTEN muss geholt werden — die Zeilen sind leer, solange
+     niemand sie gefuellt hat. Ohne diesen Aufruf schaltet er um und sieht
+     nichts, bis er die Sure neu oeffnet. [[werkzeug_ohne_aufrufer]] */
+  if (OFFENE_SURE) zeigeQuranEn(OFFENE_SURE);
+});
+document.getElementById('quranEnAusgabe').addEventListener('click', (e)=>{
+  const knopf = e.target.closest('[data-quranenausgabe]');
+  if (!knopf) return;
+  SETTINGS.quranEnAusgabe = Number(knopf.dataset.quranenausgabe);
+  saveSettings();
+  wendeQuranAnsichtAn();
+  /* ⚠️ Andere Ausgabe heisst anderer Zwischenspeicher-Schluessel — der Text
+     muss neu geholt werden, sonst steht die alte Ausgabe weiter da. */
+  if (OFFENE_SURE) zeigeQuranEn(OFFENE_SURE);
+});
 document.getElementById('quranDarstellung').addEventListener('click', (e)=>{
   const knopf = e.target.closest('[data-qurandarstellung]');
   if (!knopf) return;
@@ -1209,8 +1368,17 @@ function renderVerses(id){
       </div>
       <div class="verse-ar${verdeckt}" lang="ar" dir="rtl">${v.text_uthmani}</div>${ayahSchlussHtml(id, nr)}
       <div class="verse-de">${(v.translations && v.translations[0] && v.translations[0].text) || ''}</div>
+      <!-- ⚠️ Steht IMMER im Markup und wird nur ein- und ausgeblendet, genau
+           wie das Ayah-Schlusszeichen. So bleibt der DOM in allen Ansichten
+           derselbe, und das Umschalten braucht keinen Neuaufbau. Gefuellt
+           wird sie nachtraeglich von zeigeQuranEn(). -->
+      <div class="verse-en" lang="en"></div>
     </div>${trenner}`; }).join('');
   aktualisiereHifzLeiste(id, surah);
+  /* ⛔ OHNE await: der Leser steht sofort, das Englische kommt nach. Ein
+     Netzabruf darf den Aufbau nie aufhalten — sonst haengt der ganze Leser an
+     einer Verbindung, die es beim Lesen im Bus nicht gibt. */
+  zeigeQuranEn(id);
   renderAyahListe(id);
   renderSuraNav(id);
   beobachteLesestand(id);

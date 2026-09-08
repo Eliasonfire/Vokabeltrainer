@@ -49,6 +49,7 @@ const imAbgleich = new Set([...block[1].matchAll(/'(vt_[A-Za-z_]+)'/g)].map(m =>
    gefiltert — eine stille Ausnahme ist eine, die niemand mehr prüft. */
 const AUSGENOMMEN = new Map([
   ['vt_syncStempel', 'die Zeitstempel des Abgleichs selbst — würde sich endlos abgleichen'],
+  ['vt_quranEn',     'Zwischenspeicher der englischen Uebersetzung von api.quran.com — abgerufener Fremdtext, kein Lernstand. Er gehoert absichtlich NICHT auf andere Geraete: jedes holt sich beim Lesen selbst, was es braucht, und ein Abgleich wuerde nur Text hin- und herschieben, den die API ohnehin liefert. Verworfen wird er von selbst (QURAN_EN_MAX in js/quran.js)'],
   ['vt_syncStatus',  'der Zustand der letzten Übertragung, gilt nur für DIESES Gerät'],
   /* ⭐ Drei weitere, deren Begründung bis zum 08.09.2026 nur im
      KREISLAUFprüfer stand. Dieselbe Entscheidung, zwei Werkzeuge — und das

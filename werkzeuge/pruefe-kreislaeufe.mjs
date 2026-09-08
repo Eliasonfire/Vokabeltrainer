@@ -87,6 +87,7 @@ const SPEICHER_AUSNAHMEN = {
      entfernt. [[zweiter_aufruf_ueberschreibt_still]] */
   'vt_gehLog':        'Diagnose des Geh-Modus (08.09.2026) — misst BEIM NUTZER, ob die Sprachausgabe bei gesperrtem Bildschirm anspringt; abgerufen mit gehProtokoll() im Browser-Pane',
   'vt_zeit':          'stille Zeitmessung (08.09.2026) — absichtlich nicht in der Oberflaeche; abgerufen mit zeitBericht() im Browser-Pane',
+  'vt_quranEn':       'Zwischenspeicher der englischen Uebersetzung von api.quran.com — abgerufener Fremdtext, kein Lernstand. Er gehoert absichtlich NICHT auf andere Geraete: jedes holt sich beim Lesen selbst, was es braucht, und ein Abgleich wuerde nur Text hin- und herschieben, den die API ohnehin liefert. Verworfen wird er von selbst (QURAN_EN_MAX in js/quran.js)',
   'vt_wortQuote':     'Q3, Trefferquote je Wort (08.09.2026) — absichtlich NICHT angezeigt, genau darin liegt ihr Wert; ausgewertet mit wortQuoteBericht() im Browser-Pane, das die Interferenzfrage beantwortet (Woerter mit Wurzelgeschwistern gegen Einzelgaenger)',
   'vt_geraetId':      'trennt die Zeitzweige der Geraete; wird bewusst NICHT abgeglichen und hat ausserhalb der App keine Bedeutung',
   /* ⛔ Kein Werkzeug kann ihn lesen, und das ist kein Versaeumnis: er entsteht
