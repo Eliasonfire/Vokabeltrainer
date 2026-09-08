@@ -90,6 +90,23 @@ data/aussenbelege.json
 # [[entscheidung_gilt_fuer_das_zweite_werkzeug]] · [[regel_wirkt_ueber_die_grenze]]
 data/woerterbuch-belege.json
 
+# ⛔⛔ Gespiegelte Langenscheidt-Seiten. Sie liegen hier als TESTVORLAGE fuer
+# test-langenscheidt.mjs — vier komplette Woerterbuchseiten, je rund 60 KB.
+#
+# Elias am 08.09.2026, auf die Frage, ob „oeffentlich abrufbar" reicht:
+#   „stimmt, ich will das risiko nicht eingehen"
+#
+# Der Punkt ist die Unterscheidung: die TATSACHE „بيت = Haus" ist nicht
+# geschuetzt und darf uebernommen werden. Eine vollstaendige HTML-Seite mit
+# Aufbau, Beispielsaetzen und Formulierungen weiterzuverbreiten ist etwas
+# anderes — „frei abrufbar" heisst nicht „frei weiterverbreitbar".
+#
+# Die Dateien bleiben LOKAL liegen, damit der Test weiterlaeuft. Am 08.09.2026
+# wurden sie zusammen mit data/woerterbuch-belege.json auch aus der HISTORIE
+# entfernt (git filter-branch, danach force-push); das Vollbackup davor liegt
+# als Bundle im Scratchpad dieser Sitzung.
+test-vorlagen/langenscheidt/
+
 # Belege aus Elias' eigenem Vokabelbestand, gebaut mit
 #   node werkzeuge/bestandsbelege.mjs
 # Enthaelt Belegwoerter und deren deutsche Bedeutung DIREKT aus dem Abzug
