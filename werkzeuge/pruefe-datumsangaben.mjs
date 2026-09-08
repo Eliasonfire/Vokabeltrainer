@@ -63,8 +63,24 @@ catch {
 }
 
 /* Blöcke abgrenzen: von einer „## "-Überschrift bis zur nächsten. */
+/* ⭐ Ein Block INNERHALB eines `<details>` ist ein archivierter Vorgaenger
+   (08.09.2026). Der Kurzstand oben wird ueberschrieben, der alte wandert
+   eingeklappt darunter — er steht dort absichtlich unter seinem Nachfolger und
+   laeuft deshalb zwangslaeufig "rueckwaerts". Ohne diese Unterscheidung meldet
+   der Pruefer bei JEDEM neuen Kurzstand einen Fehlalarm, und ein Pruefer, der
+   regelmaessig grundlos rot ist, wird ab dem dritten Mal ignoriert.
+
+   ⛔ Die Regel wird dadurch nicht gelockert: ausgenommen ist ausschliesslich,
+   was zwischen `<details>` und `</details>` steht. Ein Verlaufsblock im
+   offenen Text wird weiterhin gemeldet. */
 const bloecke = [];
-zeilen.forEach((z, i) => { if (z.startsWith('## ')) bloecke.push({ zeile: i + 1, kopf: z, von: i }); });
+let tiefe = 0;
+zeilen.forEach((z, i) => {
+  const auf = (z.match(/<details/g) || []).length;
+  const zu  = (z.match(/<\/details>/g) || []).length;
+  if (z.startsWith('## ')) bloecke.push({ zeile: i + 1, kopf: z, von: i, imArchiv: tiefe > 0 });
+  tiefe = Math.max(0, tiefe + auf - zu);
+});
 bloecke.forEach((b, i) => { b.bis = i + 1 < bloecke.length ? bloecke[i + 1].von : zeilen.length; });
 
 const cache = new Map();
@@ -346,7 +362,7 @@ for (const b of bloecke){
   if (!d || !u) continue;
   /* Zwei Uhrzeiten im Kopf = Spanne. */
   const spanne = (b.kopf.match(/\d{2}:\d[0-9x]/g) || []).length > 1;
-  zeitBloecke.push({ b, tag: d[0], zeit: u[1].replace(/x$/, '5'), spanne });
+  zeitBloecke.push({ b, tag: d[0], zeit: u[1].replace(/x$/, '5'), spanne, imArchiv: b.imArchiv });
 }
 const jeTag = new Map();
 for (const x of zeitBloecke){
@@ -357,6 +373,8 @@ const rueckwaerts = [];
 for (const [, xs] of jeTag){
   for (let i = 1; i < xs.length; i++){
     if (xs[i].spanne || xs[i - 1].spanne) continue;
+    /* Archivierte Vorgaenger stehen absichtlich unter ihrem Nachfolger. */
+    if (xs[i].imArchiv || xs[i - 1].imArchiv) continue;
     /* Gegen die GEMESSENE Wuchsrichtung, nicht gegen eine angenommene. */
     const roh2 = minuten(xs[i].zeit) - minuten(xs[i - 1].zeit);
     const d = AUFSTEIGEND ? roh2 : -roh2;
@@ -364,8 +382,10 @@ for (const [, xs] of jeTag){
   }
 }
 console.log('');
-console.log('  Reihenfolge:         ' + zeitBloecke.filter(x => !x.spanne).length
+const imArchiv = zeitBloecke.filter(x => x.imArchiv).length;
+console.log('  Reihenfolge:         ' + zeitBloecke.filter(x => !x.spanne && !x.imArchiv).length
   + ' Bloecke ohne Zeitspanne   (mit Spanne, ausgenommen: ' + zeitBloecke.filter(x => x.spanne).length + ')');
+if (imArchiv) console.log('    ⓘ eingeklappt (archivierter Kurzstand), ausgenommen: ' + imArchiv);
 console.log('    ' + (rueckwaerts.length ? '❌' : '✅') + ' rueckwaerts:      ' + rueckwaerts.length);
 for (const r of rueckwaerts){
   console.log('\n❌ Z' + r.jetzt.b.zeile + '  ' + r.jetzt.b.kopf.slice(3, 72));
