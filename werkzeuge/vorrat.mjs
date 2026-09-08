@@ -1718,6 +1718,23 @@ if (ARG.includes('--offene-fragen')){
       + ' aus ' + (wb.quelle || '?') + ', geholt ' + String(wb.erzeugt || '?').slice(0, 10));
   } catch { /* auch das ist eine Zugabe, keine Voraussetzung */ }
 
+  /* ⭐ Dritte Quelle seit dem 08.09.2026: Belege aus Elias' EIGENEM Bestand,
+     die ein Vergleich auf Gleichheit nicht sieht — das Wort mit Artikel, die
+     weibliche Form, die Form mit Personalsuffix, und der Fall, dass dasselbe
+     Wort anderswo im Bestand das Feld absichtlich LEER lässt.
+     Gefuellt von werkzeuge/bestandsbelege.mjs.
+
+     ⛔ Sie steht in `belegSuchen` VOR den Woerterbuechern, weil sein eigener
+     Bestand in seiner Rangfolge oben steht — und wie die beiden anderen ist
+     sie eine Zugabe: fehlt die Datei, aendert sich nichts. */
+  let BESTANDSBELEG = null;
+  try {
+    const bb = JSON.parse(fs.readFileSync(p('data/bestandsbelege.json'), 'utf8'));
+    BESTANDSBELEG = bb.belege || null;
+    if (BESTANDSBELEG) console.log('  Bestandsbelege: ' + Object.keys(BESTANDSBELEG).length
+      + ' Wort(e) aus dem eigenen Bestand, erzeugt ' + String(bb.erzeugt || '?').slice(0, 10));
+  } catch { /* ebenfalls eine Zugabe */ }
+
   /* Je Feld EINE Frage, mit allen betroffenen Wörtern. Ein Durchgang je Feld
      statt einer je Wort — bei 25 Plural-Fragen ist das der ganze Unterschied. */
   const FRAGE_TEXT = {
@@ -1814,7 +1831,22 @@ if (ARG.includes('--offene-fragen')){
             || wv(seins).some(x => meineW.has(x)))) continue;
       return { wert, woher: x.book || x.chapter || 'Bestand', de: String(x.de || '') };
     }
-    return aussenBeleg(w, feld);
+    return bestandsBeleg(w, feld) || aussenBeleg(w, feld);
+  }
+
+  /* ---------- Zwischenstufe: der eigene Bestand, ueber die Gleichheit hinaus ----------
+     ⛔ R0 liefert bewusst `wert: null` — „dasselbe Wort steht anderswo im
+     Bestand und laesst das Feld leer". Das ist eine ANTWORT (es gibt keinen
+     Plural, keine Wurzel) und darf nicht als fehlender Beleg durchfallen,
+     sonst fragt das Artefakt weiter danach. */
+  function bestandsBeleg(w, feld){
+    const b = BESTANDSBELEG && BESTANDSBELEG[String(w.id)] && BESTANDSBELEG[String(w.id)][feld];
+    if (!b) return null;
+    return {
+      wert: b.wert === null ? '—' : b.wert,
+      woher: 'eigener Bestand: ' + b.belegwort + (b.belegBedeutung ? ' (' + b.belegBedeutung + ')' : ''),
+      de: b.regel,
+    };
   }
 
   /* ---------- Rueckfall: Beleg von aussen ----------
