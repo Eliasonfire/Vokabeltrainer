@@ -813,6 +813,25 @@ function renderNotiz(w){
      "davon weiss ich selbst schon etwas", und die waere sonst gelogen. */
   punkt.classList.toggle('hidden', !notiz);
 
+  /* ⭐ r6: der Ruf ueber dem Kasten. Er erscheint NUR, wenn es auch etwas zu
+     lesen gibt — eine eigene Notiz oder einen Vorschlag. Ueber einem leeren
+     „Eselsbruecke hinzufuegen" waere er eine Aufforderung zum Tippen mitten
+     im Abfragen, und genau das will hier niemand.
+
+     ⚠️ `w.id` und nicht `SESSION.words[SESSION.idx]`: renderNotiz wird auch
+     aus dem Vorschlags-Fenster gerufen, und dort ist der Index nicht
+     zwangslaeufig derselbe. */
+  const ruf  = document.getElementById('cardNoteRuf');
+  const vonBox = (PROGRESS[w.id] && PROGRESS[w.id].rueckfall) || 0;
+  const zeigen = !!vonBox && !!(notiz || vorschlag);
+  if (ruf){
+    ruf.textContent = zeigen
+      ? `Das saß schon mal — aus Box ${vonBox} gefallen. Lies die Eselsbrücke nochmal.`
+      : '';
+    ruf.classList.toggle('hidden', !zeigen);
+  }
+  kasten.classList.toggle('braucht-hilfe', zeigen);
+
   /* ⭐ Seine eigene Notiz (20.08.2026): „notizfeld soll auch erstmal bei den
      karteikarten angezeigt werden."
 
@@ -1265,6 +1284,24 @@ function answer(stufe){
   const p = PROGRESS[w.id];
   const boxVorher = p.box;
   p.box = s.box(p.box);
+
+  /* ⭐ r6 (08.09.2026): faellt ein Wort aus Box 3 oder hoeher zurueck, wird das
+     am Fortschritt vermerkt. Beim naechsten Mal faellt die Eselsbruecke dann
+     auf — siehe renderNotiz(). Elias' Vorschlag im Wortlaut: „Ein Wort, das
+     aus Box 4 herunterfaellt, hat sie nicht mehr — genau in dem Moment, in dem
+     es sie braeuchte."
+
+     ⛔ Erst ab Box 3, nicht bei jedem Rueckfall. Von 2 auf 1 ist der Alltag
+     eines neuen Wortes; erst wer eine Karte schon zweimal richtig hatte und
+     sie dann verliert, hat etwas verloren, das er konnte. Bei jedem Fehler
+     waere der Ruf dauernd da und damit unsichtbar.
+
+     ⛔ Und er verschwindet erst beim AUFSTIEG, nicht schon beim naechsten
+     Richtig auf derselben Box („schwer" laesst die Box stehen). Sonst waere er
+     genau eine Karte lang zu sehen — und wer in dem Moment nicht hinschaut,
+     saehe ihn nie. [[bedingung_wird_durch_die_handlung_ungueltig]] */
+  if (p.box < boxVorher && boxVorher >= 3) p.rueckfall = boxVorher;
+  else if (p.box > boxVorher) delete p.rueckfall;
   if (s.richtig) p.correct = (p.correct||0)+1;
   else           p.wrong   = (p.wrong||0)+1;
   p.nextReview = todayStr(INTERVALS[p.box]);
