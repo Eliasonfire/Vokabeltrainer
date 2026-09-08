@@ -20,7 +20,9 @@
 const HOER = { wort: null, optionen: [], beantwortet: false, richtig: 0, gesamt: 0, fertig: false,
   /* ⭐ `zielOffen`: das Tagesziel ist erreicht, aber noch nicht gefeiert —
      siehe hoerZielPruefen(). Nur im Geh-Modus moeglich. */
-  zielOffen: false };
+  zielOffen: false,
+  /* ⭐ Q8: bis wann das Weitertippen nach einer falschen Antwort wartet. */
+  sperreBis: 0 };
 
 /* ---------- Tagesziel (Elias, 17.08.2026) ----------
 
@@ -97,6 +99,10 @@ function hoerZielPruefen(){
   if (typeof GEH === 'object' && GEH && GEH.an){ HOER.zielOffen = true; return; }
   HOER.zielOffen = false;
   if (typeof feiere === 'function') feiere('hoer-tagesziel', { zahl: t.gesamt, richtig: t.richtig });
+  /* ⭐ Und danach: war das der dritte von drei? Ausserhalb des `einmalig`-
+     Riegels oben, weil der Tag auch komplett werden kann, NACHDEM das
+     Hoerziel laengst gefeiert wurde. */
+  if (typeof tagKomplettPruefen === 'function') tagKomplettPruefen();
 }
 
 /* Die Standzeile fuehrt das Tagesziel mit - vorher stand dort nur "x von y
@@ -212,6 +218,7 @@ function naechsteHoerfrage(){
   HOER.optionen = shuffle([HOER.wort, ...waehleAblenker(HOER.wort, pool, 3)]);
   HOER.beantwortet = false;
   HOER.fertig = false;
+  HOER.sperreBis = 0;
 
   hoerStandSchreiben();
   document.getElementById('hoerHinweis').textContent = 'Was bedeutet das Wort?';
@@ -275,7 +282,9 @@ function beantworteHoerfrage(i){
      „richtig" hier objektiv feststeht — anders als bei den vier
      Bewertungsstufen der Karteikarte, wo Elias selbst einschaetzt. Die
      Begruendung steht bei `merkeQuote()` in js/kern.js. */
-  if (typeof merkeQuote === 'function') merkeQuote(richtig);
+  /* ⭐ Q3 (08.09.2026): und je WORT. Der Hoermodus ist neben der Karteikarte
+     die zweite Stelle, an der eine Antwort eindeutig EINEM Wort gehoert. */
+  if (typeof merkeQuote === 'function') merkeQuote(richtig, undefined, w && w.id);
 
   const ziel = hoerTagesziel();
   const zielJetztErreicht = vorher < ziel && t.gesamt >= ziel;
@@ -286,8 +295,21 @@ function beantworteHoerfrage(i){
   } else {
     document.getElementById('hoerHinweis').textContent = richtig
       ? 'Richtig — tippe für das nächste Wort.'
-      : 'Nicht ganz — tippe für das nächste Wort.';
+      : 'Nicht ganz — sieh dir die Lösung an.';
   }
+  /* ⭐⭐ Q8 (08.09.2026): nach einer FALSCHEN Antwort zwei Sekunden Sperre.
+     Hier gibt es keinen Knopf, sondern einen Tipp auf die Karte — gesperrt
+     wird deshalb die Zeit, nicht ein Element. Die Loesung steht trotzdem
+     sofort da; nur das Weitertippen wartet.
+     Begruendung und Zahl bei `Q8_SPERRE_MS` in js/kern.js. */
+  HOER.sperreBis = richtig ? 0
+    : Date.now() + (typeof Q8_SPERRE_MS === 'number' ? Q8_SPERRE_MS : 2500);
+  if (!richtig) setTimeout(() => {
+    /* Nur wenn immer noch dieselbe Frage steht — sonst ueberschreibt die
+       Meldung den Hinweis der naechsten. */
+    if (HOER.beantwortet && Date.now() >= HOER.sperreBis)
+      document.getElementById('hoerHinweis').textContent = 'Tippe für das nächste Wort.';
+  }, (typeof Q8_SPERRE_MS === 'number' ? Q8_SPERRE_MS : 2500) + 30);
 
   /* ⭐ AUSSERHALB des Uebergangs, und deshalb auch dann, wenn das Ziel schon
      im Geh-Modus gefallen ist: hier wird die aufgeschobene Feier nachgeholt.
@@ -332,7 +354,13 @@ document.getElementById('hoerOptionen').addEventListener('click', (e)=>{
    `pointer-events:none` (siehe index.html). */
 document.getElementById('hoerKarte').addEventListener('click', (e)=>{
   if (e._hatBeantwortet) return;                        /* genau dieser Klick war die Antwort */
-  if (HOER.beantwortet){ naechsteHoerfrage(); return; } /* egal wo auf der Karte, auch nach dem Tagesziel */
+  if (HOER.beantwortet){
+    /* ⛔ Q8: waehrend der Sperre passiert nichts — auch keine Fehlermeldung.
+       Ein Ton oder ein Ruckeln waere Strafe; gewollt ist nur, dass der Blick
+       zwei Sekunden auf der Loesung bleibt. */
+    if (HOER.sperreBis && Date.now() < HOER.sperreBis) return;
+    naechsteHoerfrage(); return; /* egal wo auf der Karte, auch nach dem Tagesziel */
+  }
   if (e.target.closest('#btnHoerPlay')) hoerAbspielen();
 });
 

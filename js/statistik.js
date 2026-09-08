@@ -519,3 +519,65 @@ document.addEventListener('click', (e)=>{
   }
   toast(`${datum}: ${teile.join(' · ')}`);
 });
+
+/* ---------- Q3: der Bericht zur Trefferquote je Wort (08.09.2026) ----------
+
+   ⛔ Ohne diese Funktion waere `vt_wortQuote` totes Sammeln. `pruefe-kreislaeufe.mjs`
+   hat genau das gemeldet, eine Minute nachdem der Speicher gebaut war:
+   „wird gesammelt, aber von keinem Werkzeug gelesen". Vier Wochen zu sammeln
+   und dann festzustellen, dass niemand drankommt, waere der teuerste
+   denkbare Ausgang. [[werkzeug_ohne_aufrufer]] · [[daten_ohne_zugang]]
+
+   ⭐ Und er beantwortet genau EINE Frage, naemlich die, fuer die Q3 gebaut
+   wurde: STOEREN SICH WOERTER DERSELBEN WURZEL? Die Literatur steht dazu 7:7
+   (siehe [[Lernen-mit-ADHS]], Teil 29.5). An seinem eigenen Bestand ist es
+   messbar — Woerter mit Wurzelgeschwistern gegen Einzelgaenger.
+
+   ⚠️ Absichtlich NICHT in der Oberflaeche, wie `zeitBericht()`. Der ganze Wert
+   von Q3 liegt darin, dass es beim Ueben nichts kostet — keine Zahl, die
+   ablenkt. Aufgerufen wird er im Browser-Pane: `wortQuoteBericht()`.
+
+   ⚠️ `minGestellt` filtert das Rauschen: bei zwei Abfragen ist jede Quote
+   entweder 0, 50 oder 100 %. Vorgabe 4. */
+function wortQuoteBericht(minGestellt){
+  const min = Number(minGestellt) || 4;
+  const q = (typeof WORT_QUOTE === 'object' && WORT_QUOTE) ? WORT_QUOTE : {};
+  const alle = (typeof bekannteVokabeln === 'function') ? bekannteVokabeln() : [];
+  /* Wie oft kommt jede Wurzel im BESTAND vor — nicht in den Daten. Ein Wort
+     hat Geschwister, wenn seine Wurzel mindestens zweimal auftaucht. */
+  const proWurzel = {};
+  alle.forEach(w => { if (w.root) proWurzel[w.root] = (proWurzel[w.root] || 0) + 1; });
+
+  const gruppen = { familie: { g: 0, r: 0, n: 0 }, einzeln: { g: 0, r: 0, n: 0 } };
+  const zeilen = [];
+  alle.forEach(w => {
+    const e = q[w.id];
+    if (!e || (Number(e.g) || 0) < min) return;
+    const gs = Number(e.g) || 0, ri = Number(e.r) || 0;
+    const hatGeschwister = !!(w.root && proWurzel[w.root] > 1);
+    const k = hatGeschwister ? 'familie' : 'einzeln';
+    gruppen[k].g += gs; gruppen[k].r += ri; gruppen[k].n++;
+    zeilen.push({ wort: w.ar, de: w.de, wurzel: w.root || '—',
+      geschwister: w.root ? (proWurzel[w.root] - 1) : 0,
+      gestellt: gs, richtig: ri, quote: Math.round(ri / gs * 100) });
+  });
+
+  const quote = (x) => x.g ? Math.round(x.r / x.g * 100) + ' %' : '—';
+  console.log('Trefferquote je Wort — nur Wörter mit mindestens ' + min + ' Abfragen');
+  console.log('  erfasst insgesamt: ' + Object.keys(q).length + ' Wörter, ausgewertet: ' + zeilen.length);
+  console.log('');
+  console.log('  mit Wurzelgeschwistern: ' + quote(gruppen.familie)
+    + '   (' + gruppen.familie.n + ' Wörter, ' + gruppen.familie.g + ' Abfragen)');
+  console.log('  Einzelgänger:           ' + quote(gruppen.einzeln)
+    + '   (' + gruppen.einzeln.n + ' Wörter, ' + gruppen.einzeln.g + ' Abfragen)');
+  /* ⛔ Kein Urteil aus wenigen Abfragen. Unter 100 je Gruppe ist der
+     Unterschied Rauschen, und ein vorschnelles „Wurzeln stören" waere genau
+     die Art Befund, die man nie wieder los wird. [[zahlen_ohne_beleg]] */
+  const genug = gruppen.familie.g >= 100 && gruppen.einzeln.g >= 100;
+  console.log('');
+  console.log(genug ? '  → auswertbar.' : '  → NOCH NICHT auswertbar: unter 100 Abfragen je Gruppe ist der'
+    + '\n    Unterschied Rauschen. Weiterüben, in ein paar Wochen erneut fragen.');
+  zeilen.sort((a, b) => a.quote - b.quote);
+  console.table(zeilen.slice(0, 25));
+  return { familie: gruppen.familie, einzeln: gruppen.einzeln, auswertbar: genug, zeilen };
+}

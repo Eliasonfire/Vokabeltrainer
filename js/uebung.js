@@ -1226,7 +1226,13 @@ function renderUebung(){
      und ein zweiter Knopf waere ein Umweg. */
   document.getElementById('btnUebPruefen').classList.toggle('hidden',
     m.art !== 'mehrfach' || UEB.beantwortet);
-  document.getElementById('btnUebWeiter').classList.toggle('hidden', !UEB.beantwortet);
+  const weiterKnopf = document.getElementById('btnUebWeiter');
+  weiterKnopf.classList.toggle('hidden', !UEB.beantwortet);
+  /* ⭐ Q8: der Zaehler laeuft im Knopf mit. `q8Sperre` ist gegen
+     Mehrfachaufruf gesichert — renderUebung() laeuft oefter als einmal je
+     Aufgabe. */
+  if (typeof q8Sperre === 'function')
+    q8Sperre(weiterKnopf, UEB.beantwortet ? (UEB.sperreBis || 0) : 0, 'Weiter');
 
   const rueck = document.getElementById('uebRueckmeldung');
   rueck.className = 'ueb-rueck' + (UEB.beantwortet ? (UEB.zuletztRichtig ? ' gut' : ' schlecht') : ' hidden');
@@ -1329,6 +1335,14 @@ function satzTagSpeichern(t){ try { LS.set('vt_satzTag', t); } catch (e) { /* pr
 function uebungAuswerten(richtig){
   UEB.beantwortet = true;
   UEB.zuletztRichtig = richtig;
+  /* ⭐⭐ Q8 (08.09.2026): nach einer FALSCHEN Antwort ist „Weiter" zwei
+     Sekunden gesperrt, mit sichtbarem Zaehler. Die Loesung steht sofort da —
+     gewollt ist nur, dass der Blick sie erreicht.
+     ⛔ HIER und nicht in renderUebung(): dort wuerde die Sperre bei jedem
+     Neuzeichnen von vorn beginnen, und das Neuzeichnen passiert oefter, als
+     man denkt. Begruendung und Zahl bei `Q8_SPERRE_MS` in js/kern.js. */
+  UEB.sperreBis = richtig ? 0
+    : Date.now() + (typeof Q8_SPERRE_MS === 'number' ? Q8_SPERRE_MS : 2500);
   UEB.gestellt++;
   if (richtig) UEB.richtig++;
   /* Fortschritt je Regel. Bewusst HIER und nicht in den drei Auswertern
@@ -1374,6 +1388,10 @@ function uebungAuswerten(richtig){
       && typeof feiere === 'function'){
     feiere('satz-tagesziel', { zahl: satzT.gesamt, richtig: satzT.richtig });
   }
+  /* ⭐ Und danach: war das der dritte von drei? Bewusst AUSSERHALB der
+     Uebergangsbedingung darueber — der Tag kann auch bei Aufgabe 20 komplett
+     werden, wenn Hoeren und Karten erst danach kamen. */
+  if (typeof tagKomplettPruefen === 'function') tagKomplettPruefen();
 }
 
 function uebungWortTipp(i){

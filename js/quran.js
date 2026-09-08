@@ -977,6 +977,12 @@ async function openSurah(id, opt){
      mehr, dass gerade noch die Liste zu sehen war. */
   merkeListenRollstand();
   OFFENE_SURE = id;
+  /* ⛔ HIER, nicht nur beim Laden. Beim ersten Anstrich ist der Leser
+     `display:none` und die Titelzeile 0 px hoch — gemessen: der
+     ResizeObserver unten allein hat die Variable auf ihrem geratenen
+     Startwert 48px stehen lassen. Wer die richtige Stelle sucht, erkennt
+     sie an der Wirkung, nicht am Namen. [[endpunkt_der_zuerst_steht]] */
+  if (typeof quranKopfHoeheMessen === 'function') quranKopfHoeheMessen();
   /* Eine frisch geoeffnete Sure faengt mit sichtbarem Kopf an, egal wie der
      Stand beim Verlassen der vorigen war. */
   kopfZuruecksetzen();
@@ -1539,3 +1545,59 @@ document.getElementById('btnHifzVerdecken').addEventListener('click', ()=>{
    Menue einmal geoeffnet wurde. Sonst startet der Leser immer in 100 % und
    springt erst um, sobald man die Einstellung anfasst. */
 wendeQuranAnsichtAn();
+
+/* ---------- Die Klebekante MESSEN statt raten (08.09.2026) ------------------
+
+   Elias mit Bildschirmfoto aus Al-Mulk: „hier ist es etwas zu abgeschnittten
+   … die auswendig verdecken und ayah und generell diese leiste ist zu weit
+   oben, die wird etwas abgeschnitten. das soll so nicht sein."
+
+   ⛔ Gemessen bei 375 px: `--quran-kopf-h` stand auf **48px**, die Titelzeile
+   ist aber **52px** hoch. `.quran-sticky` klebt an dieser Variablen — also
+   vier Pixel zu hoch, und weil die Titelzeile `z-index:30` hat und die Leiste
+   nur 25, verschwindet ihr oberer Rand darunter. Sichtbar wird es erst beim
+   Rollen: ungerollt stehen beide ohnehin aufeinander.
+
+   ⭐ Die 48 waren nie falsch abgeschrieben, sie waren eine RECHNUNG: der
+   Kommentar in index.html sagt „40 px Knopfhoehe + 2 × 4 px". Die Knopfhoehe
+   ist seither eine andere. Eine feste Zahl, die eine gemessene Groesse
+   nachbildet, veraltet lautlos — und niemand prueft sie, weil sie aussieht
+   wie eine Entscheidung. [[vor_dem_eintragen_messen]] · [[zahlen_ohne_beleg]]
+
+   ⚠️ Genau dasselbe Muster wie `--topbar-h` in js/kern.js, dort seit dem
+   21.08.2026 aus demselben Grund. Deshalb hier derselbe Bau, nicht ein
+   zweiter erfundener. [[entscheidung_gilt_fuer_das_zweite_werkzeug]]
+
+   ⚠️ ResizeObserver statt `resize`: die Zeile aendert ihre Hoehe auch ohne
+   Fensteraenderung — laengerer Surenname, groessere Systemschrift,
+   nachgeladene arabische Schrift. Ein `resize`-Zuhoerer bekaeme davon nichts
+   mit.
+
+   ⚠️ `transform` beim Einklappen stoert nicht: es verschiebt das Bild, die
+   gemessene Hoehe bleibt dieselbe. */
+function quranKopfHoeheMessen(){
+  const kopf = document.querySelector('#screen-quranfull .screen-header');
+  const screen = document.getElementById('screen-quranfull');
+  if (!kopf || !screen) return;
+  /* ⚠️ Die Funktion wird bei JEDEM Surenwechsel gerufen — ohne diese Marke
+     haengt nach zwanzig Suren ein Stapel von zwanzig Beobachtern am selben
+     Element, die alle dasselbe tun. Messen darf sie trotzdem jedes Mal. */
+  const schonBeobachtet = kopf.dataset.hoeheBeobachtet === '1';
+  const setzen = () => {
+    const h = Math.ceil(kopf.getBoundingClientRect().height);
+    /* 0 kommt vor, solange der Leser nicht gezeigt wird — der alte Wert ist
+       dann besser als keiner. [[breite_null_ist_kein_layout]] */
+    if (h > 0) screen.style.setProperty('--quran-kopf-h', h + 'px');
+  };
+  setzen();
+  if (schonBeobachtet) return;
+  kopf.dataset.hoeheBeobachtet = '1';
+  if (typeof ResizeObserver === 'function') new ResizeObserver(setzen).observe(kopf);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(setzen);
+}
+/* ⚠️ Nicht blind auf DOMContentLoaded warten: die Skripte stehen am Ende des
+   Body, und wer diese Datei spaeter einbindet oder nachlaedt, wartet auf ein
+   Ereignis, das schon vorbei ist. [[werkzeug_ohne_aufrufer]] */
+if (document.readyState === 'loading')
+  document.addEventListener('DOMContentLoaded', quranKopfHoeheMessen);
+else quranKopfHoeheMessen();
