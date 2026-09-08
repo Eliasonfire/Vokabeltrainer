@@ -50,6 +50,13 @@ const imAbgleich = new Set([...block[1].matchAll(/'(vt_[A-Za-z_]+)'/g)].map(m =>
 const AUSGENOMMEN = new Map([
   ['vt_syncStempel', 'die Zeitstempel des Abgleichs selbst — würde sich endlos abgleichen'],
   ['vt_syncStatus',  'der Zustand der letzten Übertragung, gilt nur für DIESES Gerät'],
+  /* ⭐ Drei weitere, deren Begründung bis zum 08.09.2026 nur im
+     KREISLAUFprüfer stand. Dieselbe Entscheidung, zwei Werkzeuge — und das
+     zweite blieb deshalb rot, ohne dass etwas offen gewesen wäre.
+     [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+  ['vt_einstGruppen', 'welche Einstellungsgruppe zugeklappt ist — eine Anzeigevorliebe des Geräts, an dem man gerade sitzt. Über den Abgleich getragen hieße: ein Griff am Handy baut die Ansicht am Tablet um, ohne dass dort jemand etwas getan hat'],
+  ['vt_gehLog',       'Diagnose des Geh-Modus — misst auf DIESEM Gerät, ob die Sprachausgabe bei gesperrtem Bildschirm anspringt; genau diese Gerätebindung ist der Zweck'],
+  ['vt_geraetId',     'trennt die Zeitzweige der Geräte. Abgeglichen wäre sie auf beiden gleich und könnte nichts mehr trennen'],
 ]);
 
 const gefunden = new Map();          /* schlüssel -> datei */

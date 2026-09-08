@@ -60,6 +60,7 @@ const SPEICHER_AUSNAHMEN = {
   'vt_lesestand':     'wo er im Leser stehengeblieben ist',
   'vt_quranFav':      'seine Lesezeichen im Quran',
   'vt_customCats':    'eigene Kategorien, reine Ansichtssache',
+  'vt_einstGruppen':  'welche Einstellungsgruppe zugeklappt ist (08.09.2026) — eine Anzeigevorliebe des Geraets, an dem man gerade sitzt',
   'vt_bekannt':       'seine „kenne ich schon"-Auswahl — wirkt ueber istBekannt() in der App',
   'vt_streak':        'Serie; der Kalender darunter wertet sie aus',
   'vt_uebungstage':   'Uebungskalender, seit 21.08.2026 — die App zeichnet ihn selbst',
