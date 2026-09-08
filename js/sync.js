@@ -183,6 +183,13 @@ function merkeAenderung(schluessel){
   const s = syncStempel();
   s[schluessel] = Date.now();
   localStorage.setItem(STEMPEL_SCHLUESSEL, JSON.stringify(s));
+  /* ⭐ „Hier ist gerade etwas passiert" — der Takt schaltet dadurch auf schnell.
+     Genau das haelt Elias' Anspruch („sofort auf dem anderen Geraet") am Leben,
+     ohne im Leerlauf weiterzufeuern. Siehe SYNC_TAKT_AKTIV weiter unten.
+     ⚠️ syncRegung() steht erst spaeter in der Datei — beim AUFRUF existiert es,
+     weil merkeAenderung() nie vor dem Laden des ganzen Moduls lauft. Der
+     typeof-Test kostet nichts und macht die Reihenfolge egal. */
+  if (typeof syncRegung === 'function') syncRegung();
 }
 
 /* ---------- Wo der Abgleich ueberhaupt moeglich ist ---------- */
@@ -835,6 +842,10 @@ async function gleicheAb(still){
     SYNC_OFFEN = false;
     merkeStatus(true, wortzahl() + ' Wörter' + (geaendert ? ', Stand aktualisiert' : ''));
     if (geaendert){
+      /* ⭐ Von fern kam etwas — also sitzt er wahrscheinlich gerade an beiden
+         Geraeten. Den Takt wach halten, damit die naechste Aenderung nicht
+         90 Sekunden braucht. */
+      if (typeof syncRegung === 'function') syncRegung();
       /* Die App haelt PROGRESS und SETTINGS im Speicher - nach einer Aenderung
          von aussen muessen sie neu eingelesen werden, sonst ueberschreibt der
          naechste lokale Schreibvorgang das gerade Geholte wieder. */
@@ -940,16 +951,76 @@ function planeAbgleich(){
    ⚠️ Nur bei SICHTBARER Seite. Ein Hintergrundtab soll nicht im Minutentakt
    ans Netz — und Android drosselt Timer dort ohnehin.
    [[hintergrund_tab_drosselt_timer]] */
-const SYNC_TAKT = 4 * 1000;
+/* ⛔⛔ HIER STAND `4 * 1000` — UND DER KOMMENTAR DARÜBER RECHNETE MIT ZWANZIG
+   SEKUNDEN. Jemand hat den Wert gefuenftelt und die Begruendung stehen lassen;
+   seitdem stimmte die Rechnung im Text nicht mehr mit dem Code ueberein.
+   [[kommentar_beschreibt_absicht_markup_wirkung]]
+
+   Cloudflare hat es am 08.09.2026 um 12:17 UTC gemeldet: „50% of the daily
+   Workers KV free tier limit". Nachgerechnet:
+
+     alle 4 s          =    15 Abrufe/Minute =   900/Stunde
+     ein Geraet, 24 h  = 21.600 Abrufe/Tag
+     Handy + Tablet + PC (der PC laeuft durch) ≈ 65.000/Tag
+     Gratistarif                                100.000/Tag
+
+   Reisst die Grenze, antwortet KV mit 429 — dann gleicht sich GAR NICHTS mehr
+   ab, und zwar stumm. Der teure Teil war nie das Schreiben, sondern das
+   ununterbrochene Lesen im Leerlauf.
+
+   ⭐ Die Loesung ist nicht „einfach langsamer". Elias will „egal was ich auf
+   welchem geraet mache wird auch sofort auf dem anderen geraet angezeigt" —
+   also bleibt es schnell, SOLANGE ETWAS PASSIERT, und wird im Leerlauf ruhig:
+
+     lokale Aenderung ODER Aenderung von fern  →  6 s, fuer 2 Minuten
+     nichts davon                              →  90 s
+
+   Gerechnet fuer einen Tag mit einer Stunde echter Nutzung und 23 Stunden
+   offener App: 600 + 920 ≈ 1.500 Abrufe statt 21.600 — Faktor 14. */
+const SYNC_TAKT_AKTIV = 6 * 1000;
+const SYNC_TAKT_RUHE  = 90 * 1000;
+/* Wie lange nach der letzten Regung schnell weitergetaktet wird. */
+const SYNC_NACHLAUF   = 120 * 1000;
 let SYNC_UHR = null;
-function taktStarten(){
-  if (SYNC_UHR || !syncMoeglich()) return;
+let SYNC_LETZTE_REGUNG = 0;
+let SYNC_TAKT_JETZT = 0;
+
+/* Von merkeAenderung() und von gleicheAb() gerufen: „hier ist gerade etwas
+   passiert, bleib eine Weile wach." */
+function syncRegung(){
+  SYNC_LETZTE_REGUNG = Date.now();
+  /* Laeuft die Uhr gerade im Ruhetakt, sofort auf den schnellen umstellen —
+     sonst wartet die naechste Abfrage bis zu 90 Sekunden. */
+  if (SYNC_UHR && SYNC_TAKT_JETZT !== SYNC_TAKT_AKTIV) taktNeuSetzen();
+}
+
+function taktNeuSetzen(){
+  const wach = (Date.now() - SYNC_LETZTE_REGUNG) < SYNC_NACHLAUF;
+  const takt = wach ? SYNC_TAKT_AKTIV : SYNC_TAKT_RUHE;
+  if (SYNC_UHR && takt === SYNC_TAKT_JETZT) return;   // nichts zu tun
+  clearInterval(SYNC_UHR);
+  SYNC_TAKT_JETZT = takt;
   SYNC_UHR = setInterval(()=>{
+    /* ⚠️ Der Wechsel zurueck in den Ruhetakt passiert HIER und nicht ueber
+       einen zweiten Timer: ein Intervall, das sich selbst neu setzt, ist eine
+       Uhr weniger, die man vergessen kann. */
+    const sollWach = (Date.now() - SYNC_LETZTE_REGUNG) < SYNC_NACHLAUF;
+    if ((sollWach ? SYNC_TAKT_AKTIV : SYNC_TAKT_RUHE) !== SYNC_TAKT_JETZT){
+      taktNeuSetzen();
+      return;
+    }
     if (document.hidden) return;
     gleicheAb(true);
-  }, SYNC_TAKT);
+  }, takt);
 }
-function taktStoppen(){ clearInterval(SYNC_UHR); SYNC_UHR = null; }
+
+function taktStarten(){
+  if (SYNC_UHR || !syncMoeglich()) return;
+  /* Beim Start ist gerade etwas passiert — die App wurde geoeffnet. */
+  SYNC_LETZTE_REGUNG = Date.now();
+  taktNeuSetzen();
+}
+function taktStoppen(){ clearInterval(SYNC_UHR); SYNC_UHR = null; SYNC_TAKT_JETZT = 0; }
 
 /* Von aussen aufrufbar - LS.set() in js/kern.js meldet JEDE Speicherung hierher.
    Der Filter sitzt deshalb hier: die App muss nicht wissen, was abgeglichen
