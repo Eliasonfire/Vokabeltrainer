@@ -120,6 +120,17 @@ const PRUEFER = [
   ['werkzeuge/pruefe-abgleich.mjs', []],
   ['werkzeuge/pruefe-artefakt-inhalt.mjs', []],
   ['werkzeuge/pruefe-datumsangaben.mjs', []],
+  /* ⛔ Die EICHUNG dazu, und sie gehoert genauso in den Sammellauf wie der
+     Pruefer selbst: sie weist nach, dass die 'Davor:'-Ausnahme nicht zu viel
+     herausnimmt. Eine Ausnahme, die zu weit greift, macht den Pruefer blind —
+     und ein blinder Pruefer sieht aus wie ein gruener.
+     [[stoertest_muss_wirkung_nachweisen]] */
+  ['werkzeuge/eiche-abschnittsfolge.mjs', []],
+  /* ⛔ Prueft die ZAHLEN im Gedaechtnis gegen den Quelltext — ein anderer
+     Blickwinkel als pruefe-gedaechtnis.mjs, das den Wortlaut prueft. Eine
+     falsche Zahl ist schlimmer als eine fehlende, weil man ihr glaubt.
+     [[blickwinkel_durchprobieren]] */
+  ['werkzeuge/pruefe-gedaechtnis-zahlen.mjs', []],
   ['werkzeuge/pruefe-eigene-vorrang.mjs', []],
   ['werkzeuge/pruefe-erreichbarkeit-eichung.mjs', []],
   ['werkzeuge/pruefe-gedaechtnis.mjs', []],
@@ -128,6 +139,12 @@ const PRUEFER = [
      Waechst mit jedem neuen Satz mit — ohne Pruefer faellt eine fehlende
      Glosse nie auf, weil nichts fehlt, was man sehen koennte. */
   ['werkzeuge/pruefe-glossen.mjs', []],
+  /* ⭐ K4: feiert das Hoer-Tagesziel auf ALLEN Wegen? Der Tageszaehler waechst
+     an zwei Stellen — beim Antworten und im Geh-Modus —, und die Feier hing bis
+     zum 08.09.2026 nur an der ersten. Der Pruefer schneidet hoerZielPruefen()
+     aus js/hoeren.js heraus und faehrt sie; ein Nachbau haette den Fehler nie
+     enthalten. [[testvorlage_selbst_nachgebaut]] */
+  ['werkzeuge/pruefe-hoerziel.mjs', []],
   /* ⛔ Ohne diese Zeile haette pruefe-muster.mjs keinen Aufrufer und liefe nie.
      Genau der Fehler, den es selbst sucht, in seiner allgemeinen Form: gebaut,
      gepusht, ausgeliefert — und nie gestartet. [[werkzeug_ohne_aufrufer]] */
