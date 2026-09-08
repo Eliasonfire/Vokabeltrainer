@@ -1300,8 +1300,22 @@ function answer(stufe){
      Richtig auf derselben Box („schwer" laesst die Box stehen). Sonst waere er
      genau eine Karte lang zu sehen — und wer in dem Moment nicht hinschaut,
      saehe ihn nie. [[bedingung_wird_durch_die_handlung_ungueltig]] */
-  if (p.box < boxVorher && boxVorher >= 3) p.rueckfall = boxVorher;
-  else if (p.box > boxVorher) delete p.rueckfall;
+  if (p.box < boxVorher && boxVorher >= 3 && !(p.rueckfall >= boxVorher))
+    p.rueckfall = boxVorher;
+
+  /* ⭐⭐ K2 (08.09.2026) — und zugleich eine Korrektur an r6 von vor zwei
+     Stunden. Bis eben verschwand der Merker beim ERSTEN Aufstieg: ein Wort,
+     das aus Box 4 auf 2 gefallen war, verlor den Ruf schon bei Box 3, obwohl
+     es noch zwei Stufen unter seinem alten Stand lag. Jetzt bleibt er, bis die
+     alte Box WIEDER ERREICHT ist — und dieser Moment ist der Anlass.
+
+     ⛔ Der Wert wird vor dem Loeschen gesichert, sonst steht in der Feier eine
+     Zahl, die es nicht mehr gibt. [[bedingung_wird_durch_die_handlung_ungueltig]] */
+  let zurueckerobert = 0;
+  if (p.rueckfall && p.box >= p.rueckfall){
+    zurueckerobert = p.rueckfall;
+    delete p.rueckfall;
+  }
   if (s.richtig) p.correct = (p.correct||0)+1;
   else           p.wrong   = (p.wrong||0)+1;
   p.nextReview = todayStr(INTERVALS[p.box]);
@@ -1343,6 +1357,17 @@ function answer(stufe){
     if (p.box !== boxVorher)
       feiere(p.box > boxVorher ? 'box-auf' : 'box-ab', { von: boxVorher, nach: p.box });
     if (p.box === 5 && boxVorher !== 5) feiere('box-5', { id: w.id, wort: w.ar });
+    /* ⭐ K2: der teuerste Erfolg der App — ein Wort, das entglitten war, ist
+       wieder oben. Er steht NACH 'box-5', damit die Premiere in Box 5 nicht
+       von der Rueckkehr ueberdeckt wird, wenn beides zusammenfaellt. */
+    if (zurueckerobert) feiere('wort-zurueck', { wort: w.ar, box: zurueckerobert });
+    /* ⭐ K2: der Gesamtstand. Nur zaehlen, wenn gerade eine Karte in Box 5
+       angekommen ist — sonst liefe die Schleife ueber alle 331 Eintraege bei
+       JEDER Antwort, und zwar fuer nichts. */
+    if (p.box === 5 && boxVorher !== 5 && typeof SITZT_MEILEN !== 'undefined'){
+      const sitzen = Object.values(PROGRESS).filter(e => e && e.box === 5).length;
+      if (SITZT_MEILEN.includes(sitzen)) feiere('sitzt-meilenstein', { zahl: sitzen });
+    }
     /* Alle fuenf, nicht nur beim fuenften: eine Serie von zehn soll zweimal
        etwas sagen. Aber bewusst nicht bei jeder Karte - genau das hat Elias
        abgelehnt. */
