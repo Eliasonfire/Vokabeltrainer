@@ -101,6 +101,16 @@ if (typeof window === 'undefined' || typeof localStorage === 'undefined'){
                    eigene: !!SETTINGS.eigeneGewaehlt,
                    kapitel: (SETTINGS.selectedChapters || []).slice(),
                    fortschritt: localStorage.getItem('vt_progress'),
+                   /* ⛔⛔ ZWEI WEITERE, 08.09.2026 gemessen. Der Lauf ruft
+                      answer() und damit tagZaehlen() UND merkeQuote() — er
+                      schrieb `vt_uebungstage` und `vt_quoteTage` und setzte
+                      BEIDE nicht zurueck. Folge auf Elias' Geraet: ein
+                      Uebungstag zuviel im Kalender und ein paar Antworten
+                      zuviel in der Trefferquote, beides lautlos.
+                      `vt_quoteTage` gibt es erst seit dem 07.09.2026 — der
+                      Pruefer kannte es noch gar nicht. */
+                   uebungstage: localStorage.getItem('vt_uebungstage'),
+                   quoteTage:   localStorage.getItem('vt_quoteTage'),
                    /* Auch die laufende Lernrunde sichern: die Stufenpruefung
                       unten baut sich eine eigene SESSION. Ohne das waere eine
                       angefangene Runde nach dem Lauf weg. */
@@ -189,7 +199,20 @@ if (typeof window === 'undefined' || typeof localStorage === 'undefined'){
      Fehler weggeklickt. Deshalb wird jetzt unterschieden, statt zu melden.
      [[kennzeichen_mit_zwei_ursachen]] */
   versuch('Satzmarkierungen loesen auf', ()=>{
-    const alle = SENT.list.concat(VOCAB_DATA);
+    /* ⛔ DRITTE LISTE, 08.09.2026 — und ohne sie meldete dieser Punkt acht
+       Fehlalarme. Die acht Kennungen gram-pron-* und gram-zarf-maa stehen in
+       FACHBEGRIFF_VOKABELN (data/fachbegriffe.js, 31 Eintraege), nicht in
+       SENT.list und nicht in VOCAB_DATA. Sie HABEN ihren Satz — gemessen in
+       der laufenden App: gram-pron-huwa traegt
+       „هُوَ ذَهَبَ إِلَى الْمَسْجِدِ." und darin steht der matchText ذَهَبَ.
+       Der Pruefer hat nur an der falschen Stelle gesucht.
+
+       Das war der EINZIGE Fehler des ganzen Laufs, und er endet mit
+       „1 Fehler - nicht pushen." Genau so wird ein Pruefer entwertet.
+       [[kennzeichen_mit_zwei_ursachen]] [[werkzeug_misst_kleineren_bestand]] */
+    const alle = SENT.list.concat(VOCAB_DATA,
+      (typeof FACHBEGRIFF_VOKABELN !== 'undefined' && Array.isArray(FACHBEGRIFF_VOKABELN))
+        ? FACHBEGRIFF_VOKABELN : []);
     const ausBeispielen = (typeof BEISPIELSAETZE !== 'undefined') ? Object.keys(BEISPIELSAETZE) : [];
     const fehlend = [], nochNichtDa = [];
     Object.entries(SENTENCE_TAGS).forEach(([id, tags])=>{
@@ -807,6 +830,22 @@ if (typeof window === 'undefined' || typeof localStorage === 'undefined'){
       Object.assign(PROGRESS, alt);
     }
     warn('Fortschritt', 'wurde vom Lauf beruehrt und vollstaendig zurueckgeschrieben');
+  }
+  /* ⛔ Dieselbe Ruecknahme fuer die beiden Tageszaehler — und ebenso wie beim
+     Fortschritt reicht der localStorage allein NICHT: QUOTE_TAGE ist ein
+     Objekt im Arbeitsspeicher, und das naechste merkeQuote() schriebe den
+     veraenderten Stand zurueck. [[einstellung_wirkt_nicht_weil_zurueckgelesen]] */
+  for (const [schluessel, wert, variable] of
+       [['vt_uebungstage', vorher.uebungstage, null],
+        ['vt_quoteTage',   vorher.quoteTage,   'QUOTE_TAGE']]){
+    if (localStorage.getItem(schluessel) === wert) continue;
+    if (wert === null) localStorage.removeItem(schluessel);
+    else localStorage.setItem(schluessel, wert);
+    if (variable === 'QUOTE_TAGE' && typeof QUOTE_TAGE !== 'undefined'){
+      Object.keys(QUOTE_TAGE).forEach(k => { delete QUOTE_TAGE[k]; });
+      if (wert) Object.assign(QUOTE_TAGE, JSON.parse(wert));
+    }
+    warn(schluessel, 'wurde vom Lauf beruehrt und zurueckgeschrieben');
   }
   if (vorher.session && typeof SESSION !== 'undefined') SESSION = vorher.session;
   showScreen('home');
