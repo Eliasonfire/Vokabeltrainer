@@ -381,6 +381,61 @@ for (const [, xs] of jeTag){
     if (d < 0 && d > -12 * 60) rueckwaerts.push({ vor: xs[i - 1], jetzt: xs[i] });
   }
 }
+/* ---- Die Unterabschnitte einer Nacht (08.09.2026) -------------------------
+
+   ⛔ Bis heute sah dieser Pruefer nur `## `-Bloecke. Ein Verlaufsabschnitt
+   INNERHALB einer Nacht ist aber eine `### `-Zeile, und genau dort standen am
+   08.09.2026 zwei Abschnitte verkehrt herum: „### 02:40 — sechs rote Pruefer"
+   vor „### 02:39 — K3 durchgerechnet". Beide Zeiten waren geschaetzt, die
+   Commits sagten 02:34 und 02:40. Der Pruefer schwieg.
+
+   ⚠️ Gezaehlt werden NUR `### `-Zeilen MIT Uhrzeit, und nur gegeneinander
+   innerhalb desselben `## `-Blocks. Ueberschriften ohne Uhrzeit sind
+   Gliederung, keine Chronologie — sie mitzunehmen ergaebe lauter Fehlalarme.
+   [[kandidatenliste_ist_keine_fehlerliste]]
+
+   ⚠️ Und dieselbe Archiv-Ausnahme wie oben: was in einem `<details>` steht,
+   ist ein archivierter Vorgaenger. */
+const unterBloecke = [];
+let unterArchiv = 0;
+{
+  let tiefe = 0, imArchiv = false, blockStart = 0;
+  zeilen.forEach((z, i) => {
+    const auf = (z.match(/<details/g) || []).length;
+    const zu  = (z.match(/<\/details>/g) || []).length;
+    imArchiv = tiefe > 0;
+    if (z.startsWith('## ')) blockStart = i;
+    else if (z.startsWith('### ') && !imArchiv){
+      const u = z.match(/(?:^|[\s,~(])(\d{2}:\d{2})(?=\s|[-–—,)]|$)/);
+      /* ⛔ „Davor:" kennzeichnet einen ARCHIVIERTEN Vorgaenger — eine Reihe
+         aelterer Staende, absichtlich absteigend sortiert. Ohne diese Ausnahme
+         meldete der Pruefer beim ersten Lauf FUENF Fehlalarme aus einer
+         einzigen solchen Reihe (10.08.2026: 06:44 → 05:56 → 05:15 → 05:10 →
+         04:15). Dieselbe Sache wie der eingeklappte Kurzstand, nur ohne
+         <details>. [[kandidatenliste_ist_keine_fehlerliste]] */
+      const archivMarke = /^###\s*(?:[^\p{L}\d]*\s*)?Davor\s*:/u.test(z);
+      if (u && archivMarke) unterArchiv++;
+      else if (u) unterBloecke.push({ zeile: i + 1, kopf: z, block: blockStart, zeit: u[1] });
+    }
+    tiefe = Math.max(0, tiefe + auf - zu);
+  });
+}
+const unterRueckwaerts = [];
+for (let i = 1; i < unterBloecke.length; i++){
+  const a = unterBloecke[i - 1], b = unterBloecke[i];
+  if (a.block !== b.block) continue;
+  if (minuten(b.zeit) - minuten(a.zeit) < 0) unterRueckwaerts.push({ vor: a, jetzt: b });
+}
+console.log('');
+console.log('  Unterabschnitte:     ' + unterBloecke.length + ' \'###\'-Zeilen mit Uhrzeit');
+if (unterArchiv) console.log('    ⓘ mit „Davor:" gekennzeichnet (archiviert), ausgenommen: ' + unterArchiv);
+console.log('    ' + (unterRueckwaerts.length ? '❌' : '✅') + ' rueckwaerts:      ' + unterRueckwaerts.length);
+for (const r of unterRueckwaerts.slice(0, 8)){
+  console.log('\n❌ Z' + r.jetzt.zeile + '  ' + r.jetzt.kopf.slice(4, 72));
+  console.log('     sagt ' + r.jetzt.zeit + ', der Abschnitt davor (Z' + r.vor.zeile + ') sagt ' + r.vor.zeit + '.');
+  console.log('     ⛔ Nicht raten: git log --format=\'%h %cd %s\' --date=format:\'%H:%M\'');
+}
+
 console.log('');
 const imArchiv = zeitBloecke.filter(x => x.imArchiv).length;
 console.log('  Reihenfolge:         ' + zeitBloecke.filter(x => !x.spanne && !x.imArchiv).length
@@ -403,7 +458,7 @@ for (const r of rueckwaerts){
    rueckwaerts laufender Block war gefunden, aber unten nicht mehr erwaehnt.
    Wer die Ausgabe liest, sah gruen; wer den Exitcode prueft, sah rot.
    [[widerspruch_liegt_in_der_beschriftung]] [[erfolgsmeldung_ohne_wirkung]] */
-const alleSauber = !weicht && !zeitRot.length && !rueckwaerts.length;
+const alleSauber = !weicht && !zeitRot.length && !rueckwaerts.length && !unterRueckwaerts.length;
 if (alleSauber) console.log('\n✅ Alle drei Pruefungen sauber: Datum, Uhrzeit, Reihenfolge.');
 else if (!weicht) console.log('\n✅ Kein Datum widerspricht seinen Commits'
   + (rueckwaerts.length || zeitRot.length ? ' — aber siehe unten.' : '.'));
@@ -419,4 +474,6 @@ if (rueckwaerts.length) console.log('⚠️  ' + rueckwaerts.length + ' Block/Bl
   + '\n   Eine spaetere Zeile mit frueherer Uhrzeit ist nachgetragen oder'
   + '\n   geschaetzt. Die Fundstellen stehen oben, mit Zeilennummer.');
 
-process.exit(weicht || zeitRot.length || rueckwaerts.length ? 1 : 0);
+if (unterRueckwaerts.length) console.log('⚠️  ' + unterRueckwaerts.length + ' Unterabschnitt(e) laufen zeitlich RUECKWAERTS.'
+  + '\n   Innerhalb EINER Nacht — der haeufigste Fall geschaetzter Uhrzeiten.');
+process.exit(weicht || zeitRot.length || rueckwaerts.length || unterRueckwaerts.length ? 1 : 0);
