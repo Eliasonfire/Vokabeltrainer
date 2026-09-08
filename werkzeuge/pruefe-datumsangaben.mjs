@@ -426,10 +426,69 @@ for (let i = 1; i < unterBloecke.length; i++){
   if (a.block !== b.block) continue;
   if (minuten(b.zeit) - minuten(a.zeit) < 0) unterRueckwaerts.push({ vor: a, jetzt: b });
 }
+/* ---- Eine Uhrzeit, die noch gar nicht da war (08.09.2026) -----------------
+
+   ⛔ Der Rueckwaerts-Test faengt nur VERTAUSCHTE Abschnitte. Steigen alle
+   Zeiten sauber an, schweigt er — auch dann, wenn sie insgesamt erfunden sind.
+
+   Genau das passierte in derselben Nacht, in der die ###-Pruefung entstand.
+   Zwei Stunden nachdem sie gebaut war (gegen geschaetzte Uhrzeiten!), schrieb
+   ich zwei Abschnitte mit „03:35" und „03:40" — in richtiger Reihenfolge.
+   Gemessen: der letzte Commit lag um 03:09, die Datei war um 03:07 zuletzt
+   geschrieben. Beide Zeiten waren um rund eine halbe Stunde zu spaet, und der
+   frische Pruefer sah nichts.
+   [[uhrzeit_messen_nicht_schaetzen]] · [[zweiter_fix_deckt_ersten_zu]]
+
+   ⭐ Eine Zeit, die noch nicht eingetreten ist, kann niemand aufgeschrieben
+   haben. Das braucht keine Commits und keine Heuristik — nur die Uhr.
+
+   ⚠️ Nur Bloecke, deren Datum HEUTE ist. Ein Abschnitt „01:55" im Block vom
+   Vortag ist keine Zukunft, sondern eine Nachtschicht ueber Mitternacht.
+   ⚠️ Zwei Minuten Toleranz, benannt statt still: wer „03:21" schreibt, waehrend
+   die Uhr 03:20:50 zeigt, hat aufgerundet und nicht erfunden. */
+const jetzt = new Date();
+const HEUTE_DE = String(jetzt.getDate()).padStart(2, '0') + '.'
+  + String(jetzt.getMonth() + 1).padStart(2, '0') + '.' + jetzt.getFullYear();
+const JETZT_MIN = jetzt.getHours() * 60 + jetzt.getMinutes();
+const JETZT_HHMM = String(jetzt.getHours()).padStart(2, '0') + ':'
+  + String(jetzt.getMinutes()).padStart(2, '0');
+const TOLERANZ_MIN = 2;
+const zuSpaet = (hhmm) => minuten(hhmm) > JETZT_MIN + TOLERANZ_MIN;
+const datumDerZeile = (i) => ((zeilen[i] || '').match(/(\d{2}\.\d{2}\.\d{4})/) || [])[1] || null;
+const zukunft = [];
+for (const b of unterBloecke){
+  if (datumDerZeile(b.block) !== HEUTE_DE) continue;
+  if (zuSpaet(b.zeit)) zukunft.push(b);
+}
+/* Die `## `-Bloecke selbst tragen oft ebenfalls eine Uhrzeit ("NACHTPLAN
+   08.09.2026, 01:55") — dieselbe Pruefung, dieselbe Begruendung. */
+zeilen.forEach((z, i) => {
+  if (!z.startsWith('## ') || datumDerZeile(i) !== HEUTE_DE) return;
+  const u = z.match(/(?:^|[\s,~(])(\d{2}:\d{2})(?=\s|[-–—,)]|$)/);
+  if (u && zuSpaet(u[1])) zukunft.push({ zeile: i + 1, kopf: z, zeit: u[1] });
+});
+/* ⛔ Der Stoertest. Ohne ihn beweist eine leere Liste nur, dass die Schleife
+   gelaufen ist. Beide Richtungen, denn eine Pruefung, die ALLES meldet, ist
+   genauso blind wie eine, die nichts meldet.
+   [[stoertest_muss_wirkung_nachweisen]] */
+const hhmm = (min) => String(Math.floor((min % 1440) / 60)).padStart(2, '0') + ':'
+  + String(min % 60).padStart(2, '0');
+const stoerOk = (JETZT_MIN + 90 < 1440) ? zuSpaet(hhmm(JETZT_MIN + 90)) : true;
+const eichOk  = (JETZT_MIN - 90 >= 0)   ? !zuSpaet(hhmm(JETZT_MIN - 90)) : true;
 console.log('');
 console.log('  Unterabschnitte:     ' + unterBloecke.length + ' \'###\'-Zeilen mit Uhrzeit');
 if (unterArchiv) console.log('    ⓘ mit „Davor:" gekennzeichnet (archiviert), ausgenommen: ' + unterArchiv);
 console.log('    ' + (unterRueckwaerts.length ? '❌' : '✅') + ' rueckwaerts:      ' + unterRueckwaerts.length);
+console.log('    ' + (zukunft.length ? '❌' : '✅') + ' in der Zukunft:   ' + zukunft.length
+  + '   (heutige Abschnitte gegen die Uhr, jetzt ' + JETZT_HHMM + ')');
+if (!stoerOk || !eichOk) console.log('    ⛔ STOERTEST: die Zukunftspruefung misst nichts —'
+  + (stoerOk ? '' : ' +90 min gilt als Vergangenheit;')
+  + (eichOk ? '' : ' -90 min gilt als Zukunft.'));
+for (const z of zukunft.slice(0, 8)){
+  console.log('\n❌ Z' + z.zeile + '  ' + z.kopf.slice(0, 72));
+  console.log('     sagt ' + z.zeit + ', die Uhr sagt ' + JETZT_HHMM + ' — diese Zeit war noch nicht.');
+  console.log('     ⛔ Nicht raten, MESSEN: node -e "new Date().toLocaleString(\'de-DE\')"');
+}
 for (const r of unterRueckwaerts.slice(0, 8)){
   console.log('\n❌ Z' + r.jetzt.zeile + '  ' + r.jetzt.kopf.slice(4, 72));
   console.log('     sagt ' + r.jetzt.zeit + ', der Abschnitt davor (Z' + r.vor.zeile + ') sagt ' + r.vor.zeit + '.');
@@ -458,7 +517,7 @@ for (const r of rueckwaerts){
    rueckwaerts laufender Block war gefunden, aber unten nicht mehr erwaehnt.
    Wer die Ausgabe liest, sah gruen; wer den Exitcode prueft, sah rot.
    [[widerspruch_liegt_in_der_beschriftung]] [[erfolgsmeldung_ohne_wirkung]] */
-const alleSauber = !weicht && !zeitRot.length && !rueckwaerts.length && !unterRueckwaerts.length;
+const alleSauber = !weicht && !zeitRot.length && !rueckwaerts.length && !unterRueckwaerts.length && !zukunft.length;
 if (alleSauber) console.log('\n✅ Alle drei Pruefungen sauber: Datum, Uhrzeit, Reihenfolge.');
 else if (!weicht) console.log('\n✅ Kein Datum widerspricht seinen Commits'
   + (rueckwaerts.length || zeitRot.length ? ' — aber siehe unten.' : '.'));
@@ -476,4 +535,9 @@ if (rueckwaerts.length) console.log('⚠️  ' + rueckwaerts.length + ' Block/Bl
 
 if (unterRueckwaerts.length) console.log('⚠️  ' + unterRueckwaerts.length + ' Unterabschnitt(e) laufen zeitlich RUECKWAERTS.'
   + '\n   Innerhalb EINER Nacht — der haeufigste Fall geschaetzter Uhrzeiten.');
-process.exit(weicht || zeitRot.length || rueckwaerts.length || unterRueckwaerts.length ? 1 : 0);
+if (zukunft.length){
+  console.log('⚠️  ' + zukunft.length + ' Uhrzeit(en) liegen in der ZUKUNFT.');
+  console.log('   Die kann niemand geschrieben haben — sie sind geschaetzt. Die Uhr');
+  console.log('   und die Commit-Zeit sind die Quellen, nicht die Erinnerung.');
+}
+process.exit(weicht || zeitRot.length || rueckwaerts.length || unterRueckwaerts.length || zukunft.length ? 1 : 0);
