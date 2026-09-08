@@ -36,6 +36,11 @@ const SYNC_SCHLUESSEL = [
      'vt_streak': Elias uebt auf Handy UND Tablet, und ein Kalender, der nur
      die Tage EINES Geraets kennt, zeigt Luecken, die es nie gab. */
   'vt_uebungstage',
+  /* ⭐ Q3 (08.09.2026): die Trefferquote je Wort. Sie gehoert hierher aus
+     genau demselben Grund wie vt_uebungstage darueber — er uebt auf Handy UND
+     Tablet, und die Interferenzfrage ist nur an der SUMME beider beantwortbar.
+     Ein Bestand, der je Geraet halb gefuellt ist, beantwortet sie nicht. */
+  'vt_wortQuote',
   /* Die Trefferquote je Tag (07.09.2026) — aus demselben Grund wie
      'vt_uebungstage': er uebt auf Handy UND Tablet, und der Rauschversuch
      vergleicht Zeitraeume. Eigener Merge-Zweig weiter unten. */

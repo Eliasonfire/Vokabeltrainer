@@ -419,7 +419,77 @@ function merkeUebung(modusId, richtig){
 
    Form: { "2026-09-07": { gestellt: 20, richtig: 14, kGestellt: 60, kRichtig: 41 } } */
 let QUOTE_TAGE = LS.get('vt_quoteTage', {});
-function merkeQuote(richtig, art){
+/* ⭐⭐ Q3 (08.09.2026) — die Trefferquote JE WORT. Elias: „mach das."
+
+   `QUOTE_TAGE` beantwortet „wie lief HEUTE", `WORT_QUOTE` beantwortet „wie
+   laeuft DIESES WORT". Das ist der Unterschied zwischen einer Tagesform und
+   einer Eigenschaft der Vokabel — und nur die zweite macht die
+   INTERFERENZFRAGE entscheidbar: stoeren sich Woerter derselben Wurzel
+   gegenseitig? Die Literatur steht dazu 7:7; an seinem eigenen Bestand ist es
+   in vier Wochen messbar.
+
+   ⛔ Wird NICHT angezeigt. Der ganze Wert liegt darin, dass es nichts kostet:
+   keine Aufmerksamkeit, keine Zeit, ein paar KB. Wer es anzeigt, macht daraus
+   eine weitere Zahl, die beim Ueben ablenkt.
+
+   Aufbau `{ id: { g: gestellt, r: richtig } }` — kurze Namen, weil je Wort ein
+   Eintrag entsteht und der Abgleich das Ganze uebertraegt. */
+let WORT_QUOTE = LS.get('vt_wortQuote', {});
+/* ⭐⭐ Q8 (08.09.2026) — die Zwangspause nach einer FALSCHEN Antwort.
+
+   Elias: „mach das." Der Beleg steht in [[Lernen-mit-ADHS]], Teil 35.2:
+   **d = 0,42** — die Verlangsamung nach einem Fehler, die Gesunde von selbst
+   zeigen, bleibt bei ADHS aus; bei langen Abstaenden wird sogar beschleunigt.
+   Wer nach dem Fehler sofort weiterklickt, sieht die Loesung nie an.
+
+   ⚠️ Es widerspricht der Sofort-Rueckmeldung NICHT: die Information steht
+   sofort da, nur das Weiterklicken wartet.
+
+   ⛔ Er wird es SPUEREN, und das ist Absicht — eine Sperre, die man nicht
+   merkt, wirkt auch nicht. Der Zaehler im Knopf macht sichtbar, dass es kein
+   Haenger ist, sondern gewollt. */
+/* ⛔ 3000 und nicht 2500: der Zaehler im Knopf zeigt aufgerundete Sekunden.
+   Bei 2500 ms stuende dort zuerst eine „3", die es nie gab — eine Zahl, die
+   sichtbar nicht stimmt, macht die ganze Sperre unglaubwuerdig. Drei Sekunden
+   sind die Obergrenze aus Teil 35.2 und liegen damit im Vorschlag.
+   [[zahlen_ohne_beleg]] */
+const Q8_SPERRE_MS = 3000;
+
+/** Sperrt einen Knopf bis `bis` (Zeitstempel) und zaehlt im Text herunter.
+ *  Mehrfachaufruf ist harmlos: der laufende Timer wird am Knopf gemerkt. */
+function q8Sperre(knopf, bis, text){
+  if (!knopf) return;
+  const beschriftung = text || knopf.dataset.q8Text || knopf.textContent;
+  knopf.dataset.q8Text = beschriftung;
+  if (knopf._q8) { clearInterval(knopf._q8); knopf._q8 = null; }
+  const tick = () => {
+    const rest = bis - Date.now();
+    if (rest <= 0){
+      knopf.disabled = false;
+      knopf.classList.remove('q8-gesperrt');
+      knopf.textContent = beschriftung;
+      if (knopf._q8) { clearInterval(knopf._q8); knopf._q8 = null; }
+      return;
+    }
+    knopf.disabled = true;
+    knopf.classList.add('q8-gesperrt');
+    knopf.textContent = beschriftung + ' (' + Math.ceil(rest / 1000) + ')';
+  };
+  tick();
+  if (bis > Date.now()) knopf._q8 = setInterval(tick, 200);
+}
+
+function merkeQuote(richtig, art, wortId){
+  /* ⭐ Q3: dieselbe Zaehlung je Wort, wenn der Aufrufer eines nennen kann.
+     ⛔ Der Satzmodus nennt keines und soll auch keines nennen: eine Aufgabe
+     dort haengt an einem SATZ, nicht an einer Vokabel. Eine erfundene
+     Zuordnung waere schlimmer als keine. [[kann_ist_nicht_ist]] */
+  if (wortId !== undefined && wortId !== null && wortId !== ''){
+    const w = WORT_QUOTE[wortId] || { g: 0, r: 0 };
+    w.g++; if (richtig) w.r++;
+    WORT_QUOTE[wortId] = w;
+    try { LS.set('vt_wortQuote', WORT_QUOTE); } catch (err) { /* privates Fenster */ }
+  }
   const t = todayStr(0);
   const e = QUOTE_TAGE[t] || { gestellt: 0, richtig: 0 };
   if (art === 'karte'){
@@ -1525,6 +1595,12 @@ function ladeStandNeu(){
   if (Number.isFinite(lrFrisch)) LAUT_RUNDE = lrFrisch;
   const qtFrisch = LS.get('vt_quoteTage', null);
   if (qtFrisch && typeof qtFrisch === 'object' && !Array.isArray(qtFrisch)) QUOTE_TAGE = qtFrisch;
+  /* ⛔ Dieselbe Zeile fuer WORT_QUOTE. Ohne sie arbeitet die laufende Seite
+     nach dem Abgleich mit dem alten Stand weiter und schreibt ihn beim
+     naechsten Mal zurueck — das Geholte waere weg.
+     [[einstellung_wirkt_nicht_weil_zurueckgelesen]] */
+  const wqFrisch = LS.get('vt_wortQuote', null);
+  if (wqFrisch && typeof wqFrisch === 'object' && !Array.isArray(wqFrisch)) WORT_QUOTE = wqFrisch;
   if (typeof ladeQuranStandNeu === 'function') ladeQuranStandNeu();
 
   if (typeof renderHome === 'function') renderHome();

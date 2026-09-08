@@ -1342,7 +1342,10 @@ function answer(stufe){
      Zeilen darüber und wie die Gesamtstatistik. Eine zweite Definition von
      „richtig" daneben hieße, dass zwei Ansichten dasselbe Üben verschieden
      zählen. [[dieselbe_frage_zwei_antworten]] */
-  if (typeof merkeQuote === 'function') merkeQuote(s.richtig, 'karte');
+  /* ⭐ Q3 (08.09.2026): dieselbe Antwort zaehlt jetzt auch JE WORT — dritter
+     Parameter. Kein zweiter Aufruf und keine zweite Definition von „richtig",
+     aus demselben Grund wie oben. [[dieselbe_frage_zwei_antworten]] */
+  if (typeof merkeQuote === 'function') merkeQuote(s.richtig, 'karte', w.id);
 
   /* ---------- Meilensteine (js/feier.js) ----------
      Erst gespeichert, DANN gefeiert. Ein Effekt darf den Endzustand nie tragen:
@@ -1410,6 +1413,8 @@ function answer(stufe){
       if (typeof feiere === 'function'){
         feiere('runde-fertig', { karten: SESSION.words.length });
         if (!restVorrat) feiere('alles-faellig', { zahl: SESSION.words.length });
+        /* ⭐ Und danach: war das der dritte von drei? */
+        if (typeof tagKomplettPruefen === 'function') tagKomplettPruefen();
       } else if (!anderes) toast('Runde geschafft!');
       /* Beendete Runde ersetzt den Lern-Eintrag in der Historie, statt einen
          neuen anzulegen - sonst landet die Zurueck-Taste auf einer Runde,

@@ -325,6 +325,20 @@
      eine Abweichung von 4 px sieht man als genau den Spalt, den Elias am
      18.08.2026 zweimal gemeldet hat. Wer die Polsterung unten ändert, ändert
      diesen Wert mit; im Browser nachgemessen: 40 px Knopfhöhe + 2 × 4 px. */
+  /* ⛔ NUR EIN STARTWERT (08.09.2026). Die echte Zahl misst
+     `quranKopfHoeheMessen()` in js/quran.js und setzt sie auf
+     #screen-quranfull; diese 48 gelten nur bis zum ersten Surenaufruf.
+
+     Warum: die 48 waren eine RECHNUNG („40 px Knopfhoehe + 2 × 4 px"), und
+     die Knopfhoehe ist seither eine andere. Gemessen bei 375 px sind es
+     52 px — also klebte die Hifz-Leiste vier Pixel zu hoch und verschwand
+     unter der Titelzeile (z-index 30 gegen 25). Elias sah genau das:
+     „die auswendig verdecken und ayah und generell diese leiste ist zu
+     weit oben, die wird etwas abgeschnitten."
+
+     ⭐ Eine feste Zahl, die eine gemessene Groesse nachbildet, veraltet
+     lautlos — und niemand prueft sie, weil sie aussieht wie eine
+     Entscheidung. [[vor_dem_eintragen_messen]] [[zahlen_ohne_beleg]] */
   --quran-kopf-h:48px;
 
   /* --- Breiten ---
@@ -3092,6 +3106,21 @@ main{
    weil sie an `--quran-kopf-h` hängt und nicht an dieser Leiste. */
 #screen-quranfull .hifz-bar{ padding-top:0; }
 
+/* ---------- Q8: der gesperrte „Weiter"-Knopf (08.09.2026) ----------
+
+   Zwei bis drei Sekunden nach einer FALSCHEN Antwort. Die Lösung steht
+   sofort da, nur das Weiterklicken wartet — Begründung bei `Q8_SPERRE_MS`
+   in js/kern.js.
+
+   ⛔ Er soll SEHEN, dass es Absicht ist und kein Hänger: deshalb der
+   Zähler im Knopftext und eine gedämpfte, aber nicht ausgegraute Farbe.
+   Ein Knopf, der aussieht wie kaputt, erzeugt einen zweiten Klick — und
+   der landet dann auf der nächsten Aufgabe. */
+.btn.q8-gesperrt{opacity:.6;cursor:default;}
+/* ⚠️ Kein `transform:none` auf :active — den gibt es hier gar nicht, weil
+   `disabled` das Ereignis schluckt. Nur die Farbe wird gedämpft. */
+button:disabled{cursor:default;}
+
 /* ---------- Kopf einklappen beim Weiterlesen (Elias' Punkt 1, 10.08.2026) ----
 
    Sein Wunsch, mit Bild der rot umkreisten Fläche: „Ich will das dieser Bereich
@@ -3263,10 +3292,51 @@ main{
    gefüllten Häkchen oben rechts (`.hifz-check.on`) — die Klasse `auswendig`
    bleibt am Kasten, weil der Verdecken-Modus sie liest. Nicht "reparieren". */
 
+/* ---------- Reines OLED-Schwarz auch in der Kaesten-Ansicht (08.09.2026) --
+
+   Elias in drei Schritten, mit Bildschirmfoto:
+   1. „wie wäre es wenn du dies grauen kasten auch oled schwarz machst, nur
+      eventuell einen dünnen grauen faden drum herum lässt damit man weiß wo
+      der kasten genau ist."
+   2. „füge am besten auch die hier am Ende eines Satzes hinzu" (Bild des
+      Ayah-Schlusszeichens ۝) „und mach die roten markierungen die zeigen
+      welche ayah und sura man ist weg" · „dann kannst du auch das viereck
+      das anzeigt ob man auswendig kann auch weg machen"
+   3. „dann braucht man nicht mal mehr den dünnen grauen faden um die box,
+      dann kann alles oled schwarz sein"
+
+   ⭐ Der dritte Schritt folgt aus dem zweiten: ohne Kopfzeile trennt nichts
+   mehr zwei Verse ausser dem Kasten — und die Nummer steht jetzt IM
+   Schlusszeichen am Satzende, dort wo sie im Muṣḥaf auch steht. Damit
+   braucht der Kasten keine Kante mehr, um sich zu erklaeren.
+
+   ⚠️ Das Markup bleibt unangetastet. Der Unterschied zwischen den beiden
+   Ansichten ist weiterhin reines CSS — genau wie unten bei .liste
+   beschrieben. Nichts, was #verseList abfragt (Ayah-Sprung, Lesestand,
+   Verdecken, Abhaken), kann davon kaputt gehen.
+
+   ⚠️ Die seitliche Polsterung faellt mit: ohne sichtbare Kante ist sie nur
+   noch eine Einrueckung ohne Grund, und auf 375 px ist jeder Pixel Breite
+   fuer den arabischen Text da. Der Abstand NACH UNTEN waechst dafuer von
+   sp-2 auf sp-5 — er ist ab jetzt das Einzige, was zwei Verse trennt. */
 .verse-item{
-  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-3);
-  padding:var(--sp-4);margin-bottom:var(--sp-2);
+  background:var(--bg);border:0;border-radius:0;
+  padding:var(--sp-3) 0;margin-bottom:var(--sp-5);
+  /* ⛔ RTL am KASTEN, damit das Schlusszeichen hinter dem letzten Wort
+     landet und nicht in einer eigenen Zeile links darunter. Es ist ein
+     eigenes Element NACH `.verse-ar`; solange der Kasten links-nach-rechts
+     fliesst, beginnt dort eine neue Zeile am linken Rand — genau das war im
+     ersten Versuch zu sehen. [[rtl_richtung_physisch]] */
+  direction:rtl;
 }
+/* Beide im selben Textfluss: nur so schliesst das ۝ direkt an das letzte
+   Wort an. Dieselbe Loesung wie in der Listen-Ansicht, nur mit der
+   Zeilenhoehe der Kaesten. */
+.verse-item .verse-ar{ display:inline; }
+/* ⛔ Und die deutsche Zeile ausdruecklich zurueck auf links-nach-rechts —
+   sie erbt sonst das rtl von oben, und dann stuende der Punkt am Satzanfang.
+   [[rtl_richtung_physisch]] */
+.verse-item .verse-de{ direction:ltr; text-align:left; display:block; }
 
 /* ===================== LISTENMODUS (Elias' Punkt 6, 10.08.2026) ===========
    „reines OLED-Schwarz, Ayah direkt an Ayah ohne Unterbrechung, jede Ayah
@@ -3297,8 +3367,18 @@ main{
   padding:0; margin:0;
 }
 /* Kopfzeile mit Nummer und Haken hat im Fliesstext keinen Platz — der Haken
-   wandert in das Versschlusszeichen selbst (siehe .ayah-schluss unten). */
-#verseList.liste .verse-kopf{ display:none; }
+   wandert in das Versschlusszeichen selbst (siehe .ayah-schluss unten).
+
+   ⭐ Seit dem 08.09.2026 gilt das fuer BEIDE Ansichten, auf Elias' Wunsch:
+   „mach die roten markierungen die zeigen welche ayah und sura man ist weg"
+   und „dann kannst du auch das viereck das anzeigt ob man auswendig kann
+   auch weg machen". Beides sass in dieser Zeile.
+
+   ⛔ Damit ist das Schlusszeichen der EINZIGE Weg zum Abhaken — es traegt
+   `data-versmerk` und denselben Klick-Handler, das war schon in der
+   Listen-Ansicht so. Ohne die Zeile darunter (.ayah-schluss sichtbar) waere
+   das Abhaken in der Kaesten-Ansicht unerreichbar. [[daten_ohne_zugang]] */
+.verse-kopf{ display:none; }
 #verseList.liste .verse-de{ display:none; }
 #verseList.liste .verse-ar{
   display:inline; line-height:2.35;
@@ -3310,9 +3390,12 @@ main{
    das Umschalten braucht keinen Neuaufbau, und nichts, was #verseList
    abfragt (Ayah-Sprung, Lesestand, Verdecken, Abhaken), kann davon kaputt
    gehen. Der Unterschied zwischen den Ansichten ist reines CSS. */
-.ayah-schluss{ display:none; }
+/* ⭐ 08.09.2026: in BEIDEN Ansichten sichtbar. Elias mit Bild des Zeichens:
+   „füge am besten auch die hier am ende eines satzes hinzu". Es stand schon
+   immer im Markup und war in der Kaesten-Ansicht nur ausgeblendet — es
+   einzublenden ist deshalb eine Zeile und kein Umbau. */
+.ayah-schluss{ display:inline-block; }
 .seiten-ende{ display:none; }
-#verseList.liste .ayah-schluss{ display:inline-block; }
 #verseList.liste .seiten-ende{ display:flex; }
 
 .ayah-schluss{

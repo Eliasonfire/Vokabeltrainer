@@ -341,6 +341,29 @@ const FEIER_ANLAESSE = {
     }
   },
 
+  /* ⭐⭐ ALLE DREI TAGESZIELE AN EINEM TAG (08.09.2026)
+
+     Elias' eigene Formulierung nannte beide zusammen: „wenn ich mein tagesziel
+     beim hoeren UND gemischte saetze (13 aufgaben) beendet habe". Auf die
+     Rueckfrage, ob es dafuer etwas Eigenes geben soll: „könnte man machen."
+
+     ⛔ Der vierte Konfetti-Anlass — und der einzige, der ihn rechtfertigt.
+     Seine Auflage vom 30.07.2026 lautet: „sonst wirkt der grosse entwertet."
+     Genau deshalb steht dieser hier GANZ oben: Karteikarten leer UND Hoerziel
+     UND 13 Satzaufgaben an einem Tag ist seltener als jedes einzelne davon.
+     160 Konfetti wie 'alles-faellig', Banner 'gross'.
+
+     ⚠️ Die Reihenfolge der Feiern bleibt richtig: der letzte der drei feiert
+     zuerst sich selbst und danach den Tag — zwei Banner hintereinander, nicht
+     gleichzeitig, weil tagKomplettPruefen() nach dem jeweiligen Anlass laeuft. */
+  'tag-komplett': {
+    einmalig: () => `tagkomplett-${todayStr(0)}`,
+    effekt: () => {
+      feierKonfetti(180);
+      feierBanner('Alles geschafft', 'Karteikarten, Hören und Sätze — alle drei heute.', 'gross');
+    }
+  },
+
   /* Rueckmeldung genau dort, wo man hinsieht. Kein Meilenstein, darf oft. */
   'luecke-richtig': {
     /* Nicht der Satz: nach dem Loesen baut renderSentence() den Satz neu auf
@@ -361,6 +384,41 @@ const FEIER_ANLAESSE = {
     effekt: d => feierChip(`${d.serie}× richtig`, 'gut')
   }
 };
+
+/* ---------- Sind heute alle drei Tagesziele voll? ----------
+
+   ⛔ Gefragt wird der ZUSTAND, nicht der Uebergang — dieselbe Lehre wie beim
+   Hoer-Tagesziel am selben Tag: sonst zaehlt nur, welches Ziel zuletzt fiel,
+   und wer die Reihenfolge anders waehlt, sieht nie etwas.
+   [[bedingung_wird_durch_die_handlung_ungueltig]]
+
+   ⛔⛔ Und die Karteikarten brauchen ZWEI Bedingungen, nicht eine. „Nichts
+   mehr faellig" ist am Morgen von selbst wahr, bevor irgendetwas getan wurde —
+   an einem Tag ohne faellige Karten waere das Ziel geschenkt. Deshalb
+   zusaetzlich `vt_uebungstage`: hat er heute ueberhaupt eine Karte geuebt?
+   [[leere_liste_ist_keine_messung]] */
+function tagesZieleStand(){
+  const heute = todayStr(0);
+  const tage = (typeof getUebungstage === 'function') ? getUebungstage() : {};
+  const heuteGeuebt = (Number(tage[heute]) || 0) > 0;
+  const restVorrat = (typeof tagesPool === 'function') ? tagesPool().length : null;
+  const h = (typeof hoerTag === 'function' && typeof hoerTagesziel === 'function') ? hoerTag() : null;
+  const s = (typeof satzTag === 'function' && typeof SATZ_TAGESZIEL === 'number') ? satzTag() : null;
+  return {
+    karten: restVorrat === null ? null : (heuteGeuebt && restVorrat === 0),
+    hoeren: h === null ? null : (h.gesamt >= hoerTagesziel()),
+    saetze: s === null ? null : (s.gesamt >= SATZ_TAGESZIEL)
+  };
+}
+
+/** Feiert den vollen Tag, sobald alle drei stehen. Beliebig oft aufrufbar —
+ *  `einmalig` in der Tabelle laesst genau eine Feier je Tag zu. */
+function tagKomplettPruefen(){
+  const z = tagesZieleStand();
+  /* ⚠️ `=== true`, nicht truthy: `null` heisst „diesen Teil der App gibt es
+     hier nicht", und ein fehlender Teil darf den Tag nicht komplett machen. */
+  if (z.karten === true && z.hoeren === true && z.saetze === true) feiere('tag-komplett', z);
+}
 
 /* ---------- Der einzige Eingang ----------
    Alle Ausloeser im uebrigen Code rufen diese Funktion. Sie ist absichtlich
