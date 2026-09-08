@@ -3466,9 +3466,25 @@ button:disabled{cursor:default;}
 }
 .verse-ar{font-family:var(--font-ar);font-size:calc(1.55rem * var(--quran-ar, 1));direction:rtl;text-align:right;line-height:2.15;color:#fff;}
 .verse-de{font-size:calc(var(--fs-md) * var(--quran-de, 1));color:var(--text-dim);margin-top:var(--sp-2);line-height:1.6;}
+/* ⭐ Die englische Zeile (08.09.2026). Sie erbt die Deutsch-Größe: es ist
+   dieselbe Sorte Text an derselben Stelle, und zwei Größenregler für zwei
+   Übersetzungen wären eine Einstellung zu viel. */
+.verse-en{font-size:calc(var(--fs-md) * var(--quran-de, 1));color:var(--text-dim);
+  margin-top:var(--sp-2);line-height:1.6;direction:ltr;text-align:left;}
+/* Leer heißt weg — sonst klafft unter jedem Vers eine Lücke, solange der
+   Abruf läuft oder wenn er nichts gebracht hat. */
+.verse-en:empty, .verse-en.leer{display:none;}
+/* Die Wahl aus dem Menü. Zwei Klassen, weil beide Zeilen unabhängig
+   voneinander verschwinden können. */
+#verseList.ohne-de .verse-de{display:none;}
+#verseList.ohne-en .verse-en{display:none;}
+/* ⛔ Im Listenmodus läuft nur der arabische Text durch — dort fällt die
+   englische Zeile weg, aus genau demselben Grund wie die deutsche. */
+#verseList.liste .verse-en{display:none;}
 /* Lesemodus. display:none und nicht nur Ausblenden: wer "nur Arabisch" wählt,
    will den Platz auch zurück, sonst bliebe zwischen den Versen eine Lücke. */
 #verseList.nur-ar .verse-de{display:none;}
+#verseList.nur-ar .verse-en{display:none;}
 #verseList.nur-de .verse-ar{display:none;}
 /* Im Deutsch-Modus gibt es nichts zu verdecken - ein Ḥifẓ-Selbsttest ohne
    arabischen Text wäre sinnlos. */
@@ -4852,6 +4868,36 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
             <button class="qa-modus" data-quranmodus="de">Deutsch</button>
           </div>
         </div>
+        <!-- Elias am 08.09.2026: „ich will auch die englische übersetzung
+             von Dr. Mustafa Khattab von quran.com und möchte in den quran
+             einstellungen ankreuzen, ob ich den einen oder den anderen will
+             oder beide"
+
+             ⛔ Khattab gibt die API NICHT her — gemessen, siehe
+             QURAN_EN_AUSGABEN in js/quran.js. Angeboten wird deshalb, was
+             api.quran.com wirklich ausliefert. -->
+        <div class="qa-zeile" id="qaZeileUeb">
+          <span class="qa-titel">Übersetzung</span>
+          <div class="qa-modi" id="quranUeb">
+            <button class="qa-modus" data-quranueb="de">Deutsch</button>
+            <button class="qa-modus" data-quranueb="en">English</button>
+            <button class="qa-modus" data-quranueb="beide">Beide</button>
+          </div>
+        </div>
+        <div class="qa-zeile hidden" id="qaZeileEnAusgabe">
+          <span class="qa-titel">Englische Ausgabe</span>
+          <div class="qa-modi" id="quranEnAusgabe">
+            <button class="qa-modus" data-quranenausgabe="20">Saheeh</button>
+            <button class="qa-modus" data-quranenausgabe="85">Haleem</button>
+            <button class="qa-modus" data-quranenausgabe="84">Usmani</button>
+            <button class="qa-modus" data-quranenausgabe="19">Pickthall</button>
+          </div>
+        </div>
+        <!-- Sichtbar nur, wenn der Abruf nichts geliefert hat. Ein leerer
+             Absatz ohne Erklärung sähe aus wie ein Fehler in der App. -->
+        <p class="qa-hinweis hidden" id="qaHinweisEn">Die englische Übersetzung
+          kommt von api.quran.com und braucht beim ersten Mal Internet.
+          Danach steht sie auch offline.</p>
         <div class="qa-zeile" id="qaZeileAr">
           <span class="qa-titel">Arabisch</span>
           <div class="qa-stufen">
