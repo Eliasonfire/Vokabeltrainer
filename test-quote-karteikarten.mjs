@@ -142,7 +142,13 @@ console.log('\nVerdrahtung');
 {
   const lernen = fs.readFileSync('js/lernen.js', 'utf8');
   pruefe("js/lernen.js ruft merkeQuote(s.richtig,'karte')",
-    /merkeQuote\(s\.richtig,\s*'karte'\)/.test(lernen), true);
+    /* ⛔ KEINE schliessende Klammer im Muster. Der Aufruf in js/lernen.js
+       lautet inzwischen `merkeQuote(s.richtig, 'karte', w.id)` — die Wort-ID
+       kam als drittes Argument dazu, der Aufruf ist also RICHTIGER geworden,
+       und der Pruefer meldete genau das als Fehler. Ein Muster, das die Zahl
+       der Argumente festschreibt, prueft die Schreibweise statt der Sache.
+       [[pruefung_fragt_einen_stellvertreter_ab]] */
+    /merkeQuote\(s\.richtig,\s*'karte'\s*[,)]/.test(lernen), true);
   /* ⛔ Die Grenze muss `s.richtig` sein — dieselbe wie bei p.correct. Eine
      eigene Bedingung daneben hiesse, dass zwei Ansichten verschieden zaehlen. */
   pruefe('keine zweite Definition von „richtig" daneben',

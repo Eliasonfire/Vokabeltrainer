@@ -8,10 +8,25 @@ let fehler = 0;
 
 for (const n of ['let unterArchiv = 0;',
                  'const archivMarke = /^###\\s*(?:[^\\p{L}\\d]*\\s*)?Davor\\s*:/u.test(z);',
-                 'if (a.block !== b.block) continue;',
-                 '|| unterRueckwaerts.length ? 1 : 0);']){
+                 'if (a.block !== b.block) continue;']){
   if (quelle.includes(n)) console.log('  ok  Stelle da: ' + n.slice(0, 46) + '…');
   else { fehler++; console.log('  X   FEHLT: ' + n); }
+}
+
+/* ⛔⛔ Hier stand bis zum 08.09.2026 der Suchtext
+   `|| unterRueckwaerts.length ? 1 : 0);`. Er ist gescheitert, obwohl die Sache
+   in Ordnung war: jemand hat spaeter `|| zukunft.length` ergaenzt, und damit
+   war die Zeichenfolge weg — die WIRKUNG aber unveraendert. Ein Wortlaut-Test
+   auf eine Zeile, an die noch etwas angehaengt werden kann, meldet jede
+   Erweiterung als Fehler. [[pruefung_fragt_einen_stellvertreter_ab]]
+
+   Jetzt wird gefragt, was gemeint war: geht `unterRueckwaerts` ueberhaupt in
+   den Exitcode ein? */
+{
+  const exitZeile = (quelle.match(/process\.exit\([^)]*\)/g) || [])
+    .find(z => z.includes('unterRueckwaerts'));
+  if (exitZeile) console.log('  ok  unterRueckwaerts steht im Exitcode: ' + exitZeile.slice(0, 46) + '…');
+  else { fehler++; console.log('  X   FEHLT: unterRueckwaerts geht in keinen process.exit() ein'); }
 }
 
 /* Die Logik woertlich nachvollziehen — dieselben Zeilen wie im Pruefer. */

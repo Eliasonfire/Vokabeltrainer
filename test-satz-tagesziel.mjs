@@ -99,8 +99,19 @@ console.log('test-satz-tagesziel.mjs — das Tagesziel im Satzmodus\n');
 
 /* ---------- 4. ⭐ Die Auslösung sitzt am Übergang ---------- */
 {
-  const stelle = uebung.slice(uebung.indexOf('function uebungAuswerten'),
-                              uebung.indexOf('function uebungAuswerten') + 2600);
+  /* ⛔⛔ NICHT mehr „+ 2600 Zeichen". Die Bedingung steht 52 Zeilen nach dem
+     Funktionskopf, und der feste Ausschnitt endete knapp davor, sobald in der
+     Funktion ein Kommentar dazukam: der Pruefer meldete „Bedingung nicht
+     gefunden" fuer Code, der unveraendert dasteht (js/uebung.js:1387).
+     Eine Schablone mit Stellenzahl misst die Laenge, nicht die Sache.
+     [[schablone_mit_stellenzahl]]
+     Jetzt bis zur naechsten Funktion auf oberster Ebene — das ist die echte
+     Grenze; Deklarationen INNERHALB stehen eingerueckt und treffen nicht. */
+  const start = uebung.indexOf('function uebungAuswerten');
+  const bisEnde = uebung.slice(start + 1);
+  const naechste = bisEnde.search(/\nfunction /);
+  const stelle = naechste < 0 ? uebung.slice(start)
+                              : uebung.slice(start, start + 1 + naechste);
   pruefe('die Feier hängt am Übergang (satzVorher < ZIEL && jetzt >= ZIEL)',
     /satzVorher\s*<\s*SATZ_TAGESZIEL\s*&&\s*satzT\.gesamt\s*>=\s*SATZ_TAGESZIEL/.test(stelle),
     'Bedingung nicht gefunden');

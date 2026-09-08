@@ -22,11 +22,31 @@ const ok = (was, bedingung, zusatz='') => {
 
 /* ---------- DOM-Stub ---------- */
 const ELEMENTE = new Map();
+
+/* Ein style-Objekt, das sich wie CSSStyleDeclaration verhaelt: gesetzte
+   Eigenschaften liegen direkt darauf, und setProperty/getPropertyValue tun
+   dasselbe. So sieht ein Test, der `el.style.color` liest, weiterhin, was
+   `setProperty('color', …)` geschrieben hat. */
+function macheStil(){
+  const s = {};
+  s.setProperty      = (k, v) => { s[k] = v; };
+  s.getPropertyValue = (k)    => (s[k] === undefined ? '' : s[k]);
+  s.removeProperty   = (k)    => { delete s[k]; };
+  return s;
+}
+
 function macheElement(id){
   const klassen = new Set();
   const zuhoerer = {};
   const el = {
-    id, style:{}, dataset:{}, scrollTop:0, scrollHeight:0, clientHeight:0,
+    /* ⛔⛔ style braucht setProperty — JEDES Element, nicht nur die Wurzel.
+       Seit v403 setzt js/quran.js `screenQ.style.setProperty('--quran-font', …)`.
+       Das leere `{}` liess das ganze Modul beim Laden werfen, und test-p1 und
+       test-p6 pruefen seither NICHTS mehr: sie melden rot, kommen aber gar
+       nicht bis zu ihren Zusicherungen. Ein Pruefer, der am Aufbau stirbt,
+       sieht aus wie ein Befund und ist keiner.
+       [[testvorlage_selbst_nachgebaut]] · [[fehler_den_der_entwickler_nie_erlebt]] */
+    id, style: macheStil(), dataset:{}, scrollTop:0, scrollHeight:0, clientHeight:0,
     innerHTML:'', textContent:'', value:'',
     _klassen: klassen, _zuhoerer: zuhoerer,
     classList:{
