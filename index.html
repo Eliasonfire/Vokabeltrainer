@@ -40,6 +40,31 @@
    dafuer braeuchte fontTools das Modul `brotli`, und das fehlt hier. Der
    Unterschied ist bei 7,4 MB Auslieferung nicht der Rede wert — eine
    Installation dafuer schon. */
+/* ---------- KFGQPC Uthmanic Hafs (08.09.2026) ----------
+
+   Elias mit Bildschirmfoto von diegebetszeiten.de: „ich möchte unebdingt
+   diese schriftart haben". Gemessen auf jener Seite: `UthmanicHafs1`, geladen
+   aus `UH1_Ver17.woff2` — die Schrift des König-Fahd-Komplexes für den Druck
+   des Muṣḥaf, dieselbe, die auch quran.com verwendet.
+
+   ⛔ KEIN Subsetting und keine `unicode-range`. Die Lizenz erlaubt Nutzung,
+   Kopie und Weitergabe kostenlos, verbietet aber ausdrücklich das VERÄNDERN
+   der Schriftdatei — und ein Subset ist eine Veränderung. Die Datei liegt
+   deshalb unangetastet bei (87.760 Bytes, sha256 8c00e7a7d5f773bc…).
+
+   ⭐ Warum Version 18 und nicht „Hafs Smart 8": beide wurden an den 63
+   verschiedenen Zeichen UNSERES Quran-Textes geprüft (Canvas-Breite gegen
+   einen leeren Fallback, geeicht an einer erfundenen Schrift, die 63 von 63
+   als fehlend meldet). Ergebnis: Hafs 18 hat **alle 63**, Hafs Smart **keines
+   davon** — die „Smart"-Fassung arbeitet mit anderen Codepoints. Sie klingt
+   nach der besseren und wäre hier vollständig unbrauchbar gewesen.
+   [[stoertest_muss_wirkung_nachweisen]] · [[vor_dem_eintragen_messen]]
+
+   Herkunft: qurancomplex.gov.sa (techquran/dev), bezogen über den
+   Entwickler-Spiegel thetruetruth/quran-data-kfgqpc auf jsDelivr — die
+   offizielle Seite war am 08.09.2026 nicht erreichbar. */
+@font-face{font-family:'Uthmanic Hafs';font-style:normal;font-weight:400;font-display:swap;
+  src:url(./fonts/kfgqpc-hafs-18.woff2) format('woff2');}
 @font-face{font-family:'Scheherazade New';font-style:normal;font-weight:400;font-display:swap;
   src:url(./fonts/scheherazade-new-400-ar.woff2) format('woff2');
   unicode-range:U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;}
@@ -266,6 +291,11 @@
 
   /* --- Schrift --- */
   --font-ar:'Noto Naskh Arabic','Amiri',serif;
+  /* ⭐ Die Schrift NUR im Quran-Leser, umschaltbar in dessen Einstellungen.
+     Vorgabe ist die bisherige — eine neue Schrift darf sich nicht selbst
+     einschalten. Gesetzt wird sie von wendeQuranAnsichtAn() auf
+     #screen-quranfull, nicht hier. */
+  --quran-font:var(--font-ar);
   --font-ui:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
   /* Arabisch zu Deutsch: EINE Stellschraube fuer die ganze App.
      Elias' Vorgabe (29.07.2026): "mir ist einfach wichtig, dass arabisch gut
@@ -3399,7 +3429,7 @@ button:disabled{cursor:default;}
 #verseList.liste .seiten-ende{ display:flex; }
 
 .ayah-schluss{
-  font-family:var(--font-ar);background:none;border:0;padding:0 .12em;
+  font-family:var(--quran-font);background:none;border:0;padding:0 .12em;
   color:var(--text-dim);font-size:calc(var(--fs-lg) * var(--quran-ar, 1) * 1.5);
   line-height:1;vertical-align:-.1em;cursor:pointer;
   transition:color var(--dur-2) ease, transform var(--dur-1) var(--ease-out);
@@ -3464,7 +3494,7 @@ button:disabled{cursor:default;}
   white-space:nowrap;line-height:2.6;color:var(--text);
   padding:var(--sp-2) var(--sp-4) var(--sp-6);
 }
-.verse-ar{font-family:var(--font-ar);font-size:calc(1.55rem * var(--quran-ar, 1));direction:rtl;text-align:right;line-height:2.15;color:#fff;}
+.verse-ar{font-family:var(--quran-font);font-size:calc(1.55rem * var(--quran-ar, 1));direction:rtl;text-align:right;line-height:2.15;color:#fff;}
 .verse-de{font-size:calc(var(--fs-md) * var(--quran-de, 1));color:var(--text-dim);margin-top:var(--sp-2);line-height:1.6;}
 /* ⭐ Die englische Zeile (08.09.2026). Sie erbt die Deutsch-Größe: es ist
    dieselbe Sorte Text an derselben Stelle, und zwei Größenregler für zwei
@@ -4876,6 +4906,18 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
              ⛔ Khattab gibt die API NICHT her — gemessen, siehe
              QURAN_EN_AUSGABEN in js/quran.js. Angeboten wird deshalb, was
              api.quran.com wirklich ausliefert. -->
+        <!-- Elias am 08.09.2026, mit Bild von diegebetszeiten.de: „ich möchte
+             unebdingt diese schriftart haben". Gemessen war es KFGQPC Uthmanic
+             Hafs — die Muṣḥaf-Schrift des König-Fahd-Komplexes. Sie ist die
+             Vorgabe NICHT: wer seinen Leser kennt, soll ihn wiederfinden. -->
+        <div class="qa-zeile" id="qaZeileSchrift">
+          <span class="qa-titel">Schriftart</span>
+          <div class="qa-modi" id="quranSchrift">
+            <button class="qa-modus" data-quranschrift="amiri">Amiri</button>
+            <button class="qa-modus" data-quranschrift="uthmani" lang="ar">عُثمانی</button>
+            <button class="qa-modus" data-quranschrift="scheherazade">Scheherazade</button>
+          </div>
+        </div>
         <div class="qa-zeile" id="qaZeileUeb">
           <span class="qa-titel">Übersetzung</span>
           <div class="qa-modi" id="quranUeb">

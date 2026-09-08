@@ -542,11 +542,28 @@ function quranUebersetzung(){
   return (u === 'en' || u === 'beide') ? u : 'de';
 }
 
+/* ⭐ Die Schriftart des Lesers (08.09.2026). Elias mit Bild von
+   diegebetszeiten.de: „ich möchte unebdingt diese schriftart haben" — gemessen
+   war es KFGQPC Uthmanic Hafs, die Muṣḥaf-Schrift des König-Fahd-Komplexes.
+
+   ⛔ Vorgabe bleibt 'amiri'. Dieselbe Ueberlegung wie bei `darstellung` und
+   `uebersetzung`: eine neue Schrift darf sich nicht selbst einschalten. */
+const QURAN_SCHRIFTEN = {
+  amiri:        "var(--font-ar)",
+  uthmani:      "'Uthmanic Hafs', var(--font-ar)",
+  scheherazade: "'Scheherazade New', var(--font-ar)"
+};
+function quranSchrift(){
+  const w = SETTINGS.quranSchrift;
+  return Object.prototype.hasOwnProperty.call(QURAN_SCHRIFTEN, w) ? w : 'amiri';
+}
+
 function quranAnsicht(){
   return {
     modus: SETTINGS.quranModus || 'beide',
     uebersetzung: quranUebersetzung(),
     enAusgabe: quranEnAusgabe(),
+    schrift: quranSchrift(),
     /* Elias' Punkt 6 vom 10.08.2026. Vorgabe ist die BISHERIGE Ansicht: eine
        neue Darstellung darf sich nicht selbst einschalten, sonst findet er
        seinen Leser nach dem Update nicht wieder. */
@@ -581,13 +598,30 @@ function seiteVon(sure, ayah){
    waechst sie um deren volle Breite. Faellt die Probe negativ aus, kommt ein
    gezeichneter Kreis mit der Nummer darin (.ayah-schluss.ersatz) - das ist
    ein Ersatz fuer die DARSTELLUNG, keine erfundene Schreibung. */
-let AYAH_ZEICHEN = null;
+/* ⛔⛔ JE SCHRIFT, nicht einmal fuer immer (08.09.2026).
+
+   Die Antwort haengt an der SCHRIFT, und die ist seit heute umschaltbar. Ein
+   einzelner Zwischenspeicher hiess: gemessen wurde einmal, danach galt das
+   Ergebnis auch fuer jede andere Schrift.
+
+   Elias sah es sofort — „es sind jetzt zwei punkte da": nach dem Wechsel auf
+   Uthmanic Hafs standen ۝ und die Ziffer als ZWEI Zeichen nebeneinander,
+   statt der Ziffer im Zeichen. */
+const AYAH_ZEICHEN = {};
 function hatAyahZeichen(){
-  if (AYAH_ZEICHEN !== null) return AYAH_ZEICHEN;
+  /* ⛔ Die Frage lautet „legt DIESE Schrift die Ziffern ins Zeichen?" — also
+     gehoert die eingestellte Schrift in die Messung, nicht `--font-ar`. Vorher
+     stand dort fest `var(--font-ar)`: gemessen wurde immer Amiri, angezeigt
+     aber die gewaehlte. Eine Pruefung, die einen Stellvertreter befragt.
+     [[pruefung_fragt_einen_stellvertreter_ab]] */
+  const schrift = (typeof quranSchrift === 'function') ? quranSchrift() : 'amiri';
+  if (AYAH_ZEICHEN[schrift] !== undefined) return AYAH_ZEICHEN[schrift];
+  const fam = (typeof QURAN_SCHRIFTEN === 'object' && QURAN_SCHRIFTEN[schrift])
+    ? QURAN_SCHRIFTEN[schrift] : 'var(--font-ar)';
   const miss = (t) => {
     const s = document.createElement('span');
     s.textContent = t;
-    s.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;font-size:100px;font-family:var(--font-ar);';
+    s.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;font-size:100px;font-family:' + fam + ';';
     document.body.appendChild(s);
     const b = s.getBoundingClientRect().width;
     s.remove();
@@ -595,8 +629,12 @@ function hatAyahZeichen(){
   };
   const ohne = miss('۝');
   const mit  = miss('۝١٢٣');   // ۝ + ١٢٣
-  AYAH_ZEICHEN = ohne > 0 && mit / ohne < 1.25;
-  return AYAH_ZEICHEN;
+  /* ⚠️ Solange die Schrift noch laedt, misst man den Fallback. Ein `ohne` von
+     0 heisst „noch nichts da" — dann NICHT merken, sonst steht die falsche
+     Antwort fuer den Rest der Sitzung fest. [[breite_null_ist_kein_layout]] */
+  if (!ohne) return true;
+  AYAH_ZEICHEN[schrift] = mit / ohne < 1.25;
+  return AYAH_ZEICHEN[schrift];
 }
 function arabischeZiffern(n){
   return String(n).replace(/\d/g, d => String.fromCharCode(0x0660 + Number(d)));
@@ -624,6 +662,11 @@ function wendeQuranAnsichtAn(){
   liste.classList.toggle('liste', a.darstellung === 'liste');
   /* ⭐ Die Uebersetzungswahl: 'de' | 'en' | 'beide'. Zwei Klassen statt einer,
      weil beide Zeilen unabhaengig voneinander verschwinden koennen. */
+  /* ⚠️ Auf dem SCREEN, nicht auf documentElement: die Schrift gilt nur im
+     Leser. Die Karteikarten und der Satzmodus behalten Amiri — dort geht es um
+     Lernwoerter, nicht um den Muṣḥaf-Satz. */
+  const screenQ = document.getElementById('screen-quranfull');
+  if (screenQ) screenQ.style.setProperty('--quran-font', QURAN_SCHRIFTEN[a.schrift]);
   liste.classList.toggle('ohne-de', a.uebersetzung === 'en');
   liste.classList.toggle('ohne-en', a.uebersetzung === 'de');
 
@@ -640,6 +683,8 @@ function wendeQuranAnsichtAn(){
     b.classList.toggle('active', b.dataset.qurandarstellung === a.darstellung));
   document.querySelectorAll('[data-quranueb]').forEach(b =>
     b.classList.toggle('active', b.dataset.quranueb === a.uebersetzung));
+  document.querySelectorAll('[data-quranschrift]').forEach(b =>
+    b.classList.toggle('active', b.dataset.quranschrift === a.schrift));
   document.querySelectorAll('[data-quranenausgabe]').forEach(b =>
     b.classList.toggle('active', Number(b.dataset.quranenausgabe) === a.enAusgabe));
   /* Die Wahl der englischen Ausgabe hat nur Sinn, wenn Englisch ueberhaupt
@@ -715,6 +760,37 @@ document.getElementById('quranModi').addEventListener('click', (e)=>{
   wendeQuranAnsichtAn();
 });
 
+document.getElementById('quranSchrift').addEventListener('click', async (e)=>{
+  const knopf = e.target.closest('[data-quranschrift]');
+  if (!knopf) return;
+  const vorher = (typeof hatAyahZeichen === 'function') ? hatAyahZeichen() : null;
+  SETTINGS.quranSchrift = knopf.dataset.quranschrift;
+  saveSettings();
+  wendeQuranAnsichtAn();
+  /* ⛔ Die Schrift muss GELADEN sein, bevor gemessen wird — sonst misst man den
+     Fallback und merkt sich dessen Antwort. */
+  if (document.fonts && document.fonts.ready) await document.fonts.ready;
+  const nachher = (typeof hatAyahZeichen === 'function') ? hatAyahZeichen() : null;
+  /* ⛔ Aendert sich die Antwort, muss die Sure NEU GEBAUT werden: die
+     Entscheidung steckt im Markup jedes Versschlusses (Klasse `ersatz`), und
+     CSS allein kommt da nicht heran. Genau das war „es sind jetzt zwei punkte
+     da". [[erfolgsmeldung_ohne_wirkung]] */
+  if (vorher !== nachher && OFFENE_SURE && typeof openSurah === 'function'){
+    /* ⛔ Den Rollstand SELBST merken. `openSurah` kennt genau eine Option,
+       `ausHistorie` — nachgesehen, nicht angenommen. Ein erfundenes
+       `{ rollstandHalten: true }` waere stillschweigend ignoriert worden, und
+       der Leser spraenge nach dem Schriftwechsel an den Anfang der Sure.
+       [[kann_ist_nicht_ist]] */
+    const roller = document.querySelector('main');
+    const stand = roller ? roller.scrollTop : 0;
+    await openSurah(OFFENE_SURE);
+    if (roller) roller.scrollTop = stand;
+  }
+  /* ⚠️ Die Basmala ist eine EINZELNE Ligatur, deren Breite an der Schrift
+     haengt — nach dem Wechsel muss sie neu eingepasst werden, sonst laeuft sie
+     ueber den Rand oder steht zu klein da. */
+  passeBasmalaAn();
+});
 document.getElementById('quranUeb').addEventListener('click', (e)=>{
   const knopf = e.target.closest('[data-quranueb]');
   if (!knopf) return;
