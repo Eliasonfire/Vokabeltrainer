@@ -2748,6 +2748,23 @@ main{
 .note-box.ist-vorschlag #cardNoteText::before{
   content:"Vorschlag: ";color:var(--red-soft);font-weight:700;
 }
+/* ⭐ r6: ein Wort, das aus Box 3 oder höher zurückgefallen ist. Der Kasten
+   bekommt eine durchgezogene Kante in der Akzentfarbe und darüber einen Satz,
+   der sagt WARUM — „hervorgehoben" allein ließe offen, was die Farbe bedeutet.
+
+   ⚠️ Kein `background` in Rot: der Kasten steht auf der Rückseite zwischen
+   Beispielsatz und Formen, und eine Farbfläche dort zieht mehr Aufmerksamkeit
+   als der Beispielsatz selbst. Kante und Vorzeile reichen. */
+.note-ruf{
+  margin-bottom:var(--sp-2);
+  color:var(--red-soft);font-size:var(--fs-xs);font-weight:700;
+  line-height:1.5;letter-spacing:.02em;
+}
+.note-box.braucht-hilfe{
+  border-style:solid;border-color:var(--red-soft);
+  color:var(--text);
+}
+.note-box.braucht-hilfe:hover{border-color:var(--red);}
 .ne-vorschlag{
   margin-bottom:var(--sp-3);padding:var(--sp-3);
   background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-2);
@@ -4418,6 +4435,12 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
               <div class="gender-chip hidden" id="cardGender"></div>
               <div class="word-forms" id="cardForms"></div>
               <div class="verb-forms hidden" id="cardVerbForms"></div>
+              <!-- ⭐ r6 (08.09.2026): der Ruf steht ÜBER dem Kasten, nicht
+                   darin. Im Kasten setzt `.ist-vorschlag` bereits ein
+                   `::before` mit „Vorschlag: " auf denselben Text — zwei
+                   Vorsätze hintereinander läsen sich als „Vorschlag: Das saß
+                   schon mal …". [[zwei_regeln_selber_selektor]] -->
+              <div class="note-ruf hidden" id="cardNoteRuf"></div>
               <button class="note-box" id="cardNoteBox">
                 <svg class="ic"><use href="#ic-note"/></svg>
                 <span id="cardNoteText">Eselsbrücke hinzufügen</span>
