@@ -360,6 +360,12 @@ function renderSurahList(filter){
   document.getElementById('btnAyahListe').classList.add('hidden');
   document.getElementById('suraNav').classList.add('hidden');
   OFFENE_SURE = null;
+  /* ⛔ Der Ton gehoert zur offenen Sure. Wer zurueck in die Liste geht, hat
+     sie verlassen — eine Rezitation, die dann weiterlaeuft, ist ein Geraet
+     ohne sichtbaren Ausschalter. Die Leiste ist naemlich weg.
+     ⚠️ Nur beim Verlassen einer Sure: renderSurahList laeuft auch bei jedem
+     Tastendruck in der Suche, und dort ist OFFENE_SURE schon null. */
+  if (kamAusSure && typeof audioAus === 'function') audioAus();
   /* Zurueck in der Liste ist der Kopf immer da - sonst stuende man ohne
      Zurueck-Pfeil vor 114 Zeilen. Siehe kopfZuruecksetzen weiter unten. */
   kopfZuruecksetzen();
@@ -695,6 +701,26 @@ function wendeQuranAnsichtAn(){
      angezeigt wird — sonst waere es eine Einstellung, die ins Leere wirkt. */
   const zeileEn = document.getElementById('qaZeileEnAusgabe');
   if (zeileEn) zeileEn.classList.toggle('hidden', a.uebersetzung === 'de');
+  /* ---------- Rezitation (08.09.2026) ----------
+     ⛔ Alles hier ist gegen `typeof` abgesichert: js/quran-audio.js wird NACH
+     dieser Datei geladen. Beim ersten Aufruf aus einem Ereignis steht es
+     laengst bereit — aber eine Reihenfolge, auf die man sich verlaesst, ohne
+     sie zu pruefen, ist genau die Sorte Annahme, die spaeter still bricht. */
+  const rezAn = (typeof quranRezitationAn === 'function') && quranRezitationAn();
+  const mitlesen = (typeof quranMitlesen === 'function') ? quranMitlesen() : true;
+  document.querySelectorAll('[data-quranrezitation]').forEach(b =>
+    b.classList.toggle('active', (b.dataset.quranrezitation === 'an') === rezAn));
+  document.querySelectorAll('[data-quranmitlesen]').forEach(b =>
+    b.classList.toggle('active', (b.dataset.quranmitlesen === 'an') === mitlesen));
+  /* Rezitator und Mitlesen haben nur Sinn, wenn die Rezitation an ist —
+     dieselbe Regel wie bei der englischen Ausgabe eine Zeile hoeher. */
+  ['qaZeileRezitator', 'qaZeileMitlesen'].forEach(id => {
+    const z = document.getElementById(id);
+    if (z) z.classList.toggle('hidden', !rezAn);
+  });
+  const rezWahl = document.getElementById('quranRezitatorWahl');
+  if (rezWahl && typeof quranRezitator === 'function') rezWahl.value = String(quranRezitator());
+  if (typeof zeigeSpieler === 'function') zeigeSpieler();
   document.getElementById('qaWertAr').textContent = a.ar + ' %';
   document.getElementById('qaWertDe').textContent = a.de + ' %';
   /* Was gerade nicht angezeigt wird, laesst sich auch nicht sinnvoll groesser
@@ -1222,6 +1248,9 @@ async function openSurah(id, opt){
      Startwert 48px stehen lassen. Wer die richtige Stelle sucht, erkennt
      sie an der Wirkung, nicht am Namen. [[endpunkt_der_zuerst_steht]] */
   if (typeof quranKopfHoeheMessen === 'function') quranKopfHoeheMessen();
+  /* Eine ANDERE Sure beendet die laufende Rezitation; dieselbe laesst sie
+     stehen (etwa beim Zurueckkommen aus den Einstellungen). */
+  if (typeof audioSureWechsel === 'function') audioSureWechsel(id);
   /* Eine frisch geoeffnete Sure faengt mit sichtbarem Kopf an, egal wie der
      Stand beim Verlassen der vorigen war. */
   kopfZuruecksetzen();

@@ -62,8 +62,19 @@ fehler += unbekannt;
 
 /* ---------- 2. Die Zahlen aus den Abschnitten dieser Nacht ---------- */
 const sw = fs.readFileSync(REPO + '/sw.js', 'utf8');
-pruefe('CACHE_NAME laut sw.js', 'vokabeltrainer-v399',
-  (sw.match(/CACHE_NAME = '([^']+)'/) || [])[1]);
+/* ⛔ NICHT die Zahl von damals eintippen. Genau das stand hier bis zum
+   08.09.2026 ('vokabeltrainer-v399') — und der Pruefer wurde bei der naechsten
+   Auslieferung rot, ohne dass am Gedaechtnis etwas fehlte. Eine Erwartung, die
+   von Hand gepflegt werden muss, ist eine Zeitbombe mit Datum.
+   [[pruefwerkzeug_mit_eingebauter_antwort]]
+
+   Die richtige Frage lautet: steht der AKTUELLE Stand im Gedaechtnis? Also die
+   hoechste im Vault genannte Fassung gegen sw.js. */
+const vaultVersionen = [...text.matchAll(/vokabeltrainer-v([0-9]+)|(?:^|[\s(])v([0-9]{3})(?![0-9])/g)]
+  .map(m => Number(m[1] || m[2])).filter(n => n >= 100 && n < 999);
+const hoechsteImVault = vaultVersionen.length ? Math.max(...vaultVersionen) : null;
+const inSw = Number(((sw.match(/CACHE_NAME = 'vokabeltrainer-v([0-9]+)'/) || [])[1]) || 0);
+pruefe('hoechste Fassung im Gedaechtnis = sw.js', inSw, hoechsteImVault);
 
 const stat = fs.readFileSync(REPO + '/js/statistik.js', 'utf8');
 pruefe('r4: tagesQuote existiert', true, /function tagesQuote\(/.test(stat));

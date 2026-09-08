@@ -3220,6 +3220,76 @@ button:disabled{cursor:default;}
 .sura-nav .sn-knopf.sn-zurueck .sn-text{margin-inline-start:auto;}
 .sura-nav .ic{width:18px;height:18px;flex-shrink:0;color:var(--text-faint);}
 .sura-nav .sn-text{min-width:0;}
+
+/* ---------- Rezitation: Leiste und Mitlesen (08.09.2026) ----------
+
+   Geometrie wörtlich von .sent-nav übernommen, samt Begründung: eine
+   Bedienleiste, die mit der Inhaltslänge wandert, muss man jedes Mal
+   suchen. `#app` ist selbst `position:fixed`, deshalb bezieht sich das
+   Kind auf das Ansichtsfenster — Breite und Zentrierung von Hand.
+
+   ⚠️ `bottom:var(--leiste-unten)` hält sie über der Navigationsleiste
+   (gemessen 66 px). Ein eigener Zahlenwert hier wäre die zweite Stelle,
+   an die niemand mehr denkt. */
+.quran-spieler{
+  display:flex;align-items:center;gap:var(--sp-2);
+  position:fixed;
+  bottom:var(--leiste-unten);
+  left:50%;transform:translateX(-50%);
+  width:calc(100% - var(--gutter) * 2);
+  max-width:calc(var(--inhalt-max) - var(--gutter) * 2);
+  z-index:20;
+  padding:var(--sp-2);
+  border:1px solid var(--border);border-radius:var(--r-3);
+  background:var(--surface-2);box-shadow:var(--sh-2);
+}
+.qs-knopf{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:40px;height:40px;flex-shrink:0;
+  border:0;border-radius:var(--r-full);background:transparent;
+  color:var(--text-dim);font-size:20px;cursor:pointer;
+  transition:background var(--dur-2) ease, color var(--dur-2) ease;
+}
+.qs-knopf:hover:not(:disabled){background:var(--surface-3);color:var(--text);}
+.qs-knopf:disabled{opacity:.35;}
+/* Der Abspielknopf ist der einzige, der immer etwas tut — er trägt deshalb
+   als einziger Farbe. Alles andere daneben bleibt ruhig. */
+.qs-knopf.qs-play{color:var(--red-bright);}
+.qs-knopf.qs-play.an{background:var(--red-wash);}
+.qs-text{
+  display:flex;flex-direction:column;justify-content:center;
+  min-width:0;flex:1;padding-inline-start:var(--sp-2);
+}
+.qs-stand{
+  font-size:var(--fs-sm);color:var(--text);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  font-variant-numeric:tabular-nums;
+}
+.qs-stand.qs-warnung{color:var(--red-bright);}
+.qs-name{
+  font-size:var(--fs-xs);color:var(--text-faint);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+/* Platz für die Leiste, damit der LETZTE Vers nicht dahinter verschwindet —
+   und der letzte Vers einer Sure ist beim Auswendiglernen der wichtigste.
+   Die Klasse setzt zeigeSpieler(), nicht das Markup: die Leiste ist nur bei
+   eingeschalteter Rezitation da, und ohne sie wäre die Polsterung leerer
+   Platz am Ende jeder Sure. */
+#screen-quranfull.mit-spieler{padding-bottom:76px;}
+
+/* Der mitlaufende Vers. ⛔ KEIN Rahmen und keine zusätzliche Polsterung:
+   beides würde den Text bei jedem Verswechsel um ein paar Pixel verschieben,
+   und genau das liest sich unruhig. Nur Fläche und Radius — das kostet kein
+   Layout. Der negative Außenabstand gleicht die Innenpolsterung aus, damit
+   auch die Zeilenbreite gleich bleibt. */
+#verseList .verse-item{transition:background var(--dur-2) ease;}
+#verseList .verse-item.laeuft{
+  background:var(--red-wash);border-radius:var(--r-2);
+  padding-inline:var(--sp-3);margin-inline:calc(var(--sp-3) * -1);
+}
+@media (prefers-reduced-motion: reduce){
+  #verseList .verse-item{transition:none;}
+}
 .sura-nav .sn-label{display:block;font-size:var(--fs-xs);color:var(--text-faint);font-weight:700;}
 .sura-nav .sn-sure{display:block;font-size:var(--fs-sm);color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 /* Am Anfang und am Ende des Quran fehlt eine Seite. Ein leerer Platzhalter
@@ -4281,6 +4351,8 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
   <symbol id="ic-book" viewBox="0 0 24 24"><path d="M4 5.5A2 2 0 0 1 6 3.5h5v16H6a2 2 0 0 0-2 2z"/><path d="M20 5.5a2 2 0 0 0-2-2h-5v16h5a2 2 0 0 1 2 2z"/></symbol>
   <symbol id="ic-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.2 14.4a1.6 1.6 0 0 0 .32 1.77l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.6 1.6 0 0 0-1.77-.32 1.6 1.6 0 0 0-.97 1.47V20a2 2 0 1 1-4 0v-.11a1.6 1.6 0 0 0-1.05-1.46 1.6 1.6 0 0 0-1.77.32l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.6 1.6 0 0 0 .32-1.77 1.6 1.6 0 0 0-1.47-.97H4a2 2 0 1 1 0-4h.11a1.6 1.6 0 0 0 1.46-1.05 1.6 1.6 0 0 0-.32-1.77l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.6 1.6 0 0 0 1.77.32H9.9a1.6 1.6 0 0 0 .97-1.47V4a2 2 0 1 1 4 0v.11a1.6 1.6 0 0 0 .97 1.47 1.6 1.6 0 0 0 1.77-.32l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.6 1.6 0 0 0-.32 1.77v.05a1.6 1.6 0 0 0 1.47.97H20a2 2 0 1 1 0 4h-.11a1.6 1.6 0 0 0-1.47.97Z"/></symbol>
   <symbol id="ic-speaker" viewBox="0 0 24 24"><path d="M11 5 6.5 8.8H3.5v6.4h3L11 19z"/><path d="M15.2 9.2a4 4 0 0 1 0 5.6"/><path d="M17.9 6.5a7.8 7.8 0 0 1 0 11"/></symbol>
+  <symbol id="ic-play" viewBox="0 0 24 24"><path d="M8.5 5.5 18 12l-9.5 6.5z"/></symbol>
+  <symbol id="ic-pause" viewBox="0 0 24 24"><path d="M9.5 5.5v13"/><path d="M14.5 5.5v13"/></symbol>
   <symbol id="ic-close" viewBox="0 0 24 24"><path d="m6.5 6.5 11 11"/><path d="m17.5 6.5-11 11"/></symbol>
   <symbol id="ic-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
   <symbol id="ic-left" viewBox="0 0 24 24"><path d="M14.5 5.5 8 12l6.5 6.5"/></symbol>
@@ -4947,6 +5019,37 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         <p class="qa-hinweis hidden" id="qaHinweisEn">Die englische Übersetzung
           kommt von api.quran.com und braucht beim ersten Mal Internet.
           Danach steht sie auch offline.</p>
+        <!-- Elias am 08.09.2026: „was ist mit den rezitatoren, können wir die
+             auch nehmen und auch die funktion einbauen die diese seite hat mit
+             dem mitlesen (wenn dan aber in den quran einstellungen aktivieren
+             bzw laufen lassen)"
+
+             ⛔ Vorgabe ist AUS, und das ist keine Vorsicht, sondern seine
+             Ansage: „wenn dan aber in den quran einstellungen aktivieren".
+             Die Leiste unten nimmt dauerhaft Platz vom Verstext — sie darf
+             sich nicht selbst einschalten. Begründung bei
+             quranRezitationAn() in js/quran-audio.js. -->
+        <div class="qa-zeile">
+          <span class="qa-titel">Rezitation</span>
+          <div class="qa-modi" id="quranRezitation">
+            <button class="qa-modus" data-quranrezitation="aus">Aus</button>
+            <button class="qa-modus" data-quranrezitation="an">An</button>
+          </div>
+        </div>
+        <!-- ⚠️ Ein Auswahlfeld und keine Knöpfe: zwölf Stimmen passen nicht
+             in eine Zeile. Die Schriftart-Zeile daneben füllt die Breite
+             schon mit dreien. -->
+        <div class="qa-zeile hidden" id="qaZeileRezitator">
+          <span class="qa-titel">Rezitator</span>
+          <select class="select-input qa-wahl" id="quranRezitatorWahl" aria-label="Rezitator"></select>
+        </div>
+        <div class="qa-zeile hidden" id="qaZeileMitlesen">
+          <span class="qa-titel">Mitlesen</span>
+          <div class="qa-modi" id="quranMitlesen">
+            <button class="qa-modus" data-quranmitlesen="aus">Aus</button>
+            <button class="qa-modus" data-quranmitlesen="an">An</button>
+          </div>
+        </div>
         <div class="qa-zeile" id="qaZeileAr">
           <span class="qa-titel">Arabisch</span>
           <div class="qa-stufen">
@@ -5011,6 +5114,24 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
            Ayah-Sprungliste greift über `:nth-of-type` auf die Versblöcke zu, und
            ein zusätzliches div dazwischen würde jede Nummer um eins verschieben. -->
       <div class="sura-nav hidden" id="suraNav"></div>
+      <!-- Die Rezitationsleiste. Feste Stelle am unteren Rand, gleiche
+           Geometrie wie .sent-nav und .ueb-fuss — dieselbe Begründung: sie
+           darf nicht mit der Länge der Sure wandern.
+
+           ⛔ Vor- und Zurück-Knopf sind immer DA und nur gesperrt, solange
+           nichts läuft. Wären sie ausgeblendet, spränge der Abspielknopf
+           beim Start eine Knopfbreite nach rechts — und der Finger, der
+           gerade dort war, träfe danach „vorheriger Vers". -->
+      <div class="quran-spieler hidden" id="quranSpieler">
+        <button class="qs-knopf" id="btnQsZurueck" aria-label="Vorheriger Vers" disabled><svg class="ic"><use href="#ic-left"/></svg></button>
+        <button class="qs-knopf qs-play" id="btnQsPlay" aria-label="Rezitation abspielen"><svg class="ic"><use href="#ic-play"/></svg></button>
+        <button class="qs-knopf" id="btnQsVor" aria-label="Nächster Vers" disabled><svg class="ic"><use href="#ic-right"/></svg></button>
+        <div class="qs-text">
+          <span class="qs-stand" id="qsStand"></span>
+          <span class="qs-name" id="qsName"></span>
+        </div>
+        <button class="qs-knopf" id="btnQsAus" aria-label="Rezitation beenden" disabled><svg class="ic"><use href="#ic-close"/></svg></button>
+      </div>
     </section>
 
     <!-- ============ HÖRVERSTEHEN ============ -->
@@ -5750,6 +5871,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 <script src="js/saetze.js"></script>
 <script src="js/uebung.js"></script>
 <script src="js/quran.js"></script>
+<script src="js/quran-audio.js"></script>
 <script src="js/hoeren.js"></script>
 <script src="js/wurzel.js"></script>
 <script src="js/statistik.js"></script>
