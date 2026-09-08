@@ -3428,8 +3428,15 @@ button:disabled{cursor:default;}
 .seiten-ende{ display:none; }
 #verseList.liste .seiten-ende{ display:flex; }
 
+/* ⛔ Das Schlusszeichen bleibt bei `--font-ar` und folgt der Schriftwahl NICHT.
+   Elias am 08.09.2026, nachdem es kurz mitgewandert war: „die punkte sehen
+   überhaupt nicht schön aus, die vorherigen waren viel besser und arabisch."
+   Amiri legt die Ayah-Ziffern INS ۝ (gemessen), Uthmanic Hafs nicht — dort
+   fiel es auf den gezeichneten Ersatzkreis mit lateinischer Ziffer zurück.
+   Ein Zeichen aus einer zweiten Schrift ist hier das kleinere Übel als ein
+   Kreis, der nicht arabisch aussieht. */
 .ayah-schluss{
-  font-family:var(--quran-font);background:none;border:0;padding:0 .12em;
+  font-family:var(--font-ar);background:none;border:0;padding:0 .12em;
   color:var(--text-dim);font-size:calc(var(--fs-lg) * var(--quran-ar, 1) * 1.5);
   line-height:1;vertical-align:-.1em;cursor:pointer;
   transition:color var(--dur-2) ease, transform var(--dur-1) var(--ease-out);
