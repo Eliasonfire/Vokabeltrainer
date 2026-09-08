@@ -542,8 +542,15 @@ function gehStilleAn(){
 
   if ('mediaSession' in navigator){
     try {
+      /* ⛔ NICHT „Geh-Modus". Elias am 08.09.2026 mit einem Bild der
+         Benachrichtigung: „auch die betitelung soll geändert werden, ich will
+         nicht geh modus da stehen haben." Der Name ist eine INTERNE
+         Bezeichnung; auf dem Sperrbildschirm steht er neben Musik-Apps und
+         sagt niemandem etwas.
+         ⚠️ Bewusst NICHT das laufende Wort: das waere die Loesung, bevor er
+         geraten hat — auf dem Sperrbildschirm und in jeder Vorschau. */
       navigator.mediaSession.metadata = new MediaMetadata({
-        title: 'Geh-Modus', artist: 'Vokabeltrainer', album: 'Hörverstehen'
+        title: 'Vokabeln hören', artist: 'Vokabeltrainer', album: 'Arabisch'
       });
       navigator.mediaSession.playbackState = 'playing';
       /* Beide Wege belegen, damit der Knopf auf dem Sperrbildschirm in jedem
