@@ -951,9 +951,21 @@ console.log('=== 8. Abgelehnte Vorschlaege: steht einer noch drin? ===');
     })();
     if (alter === null)
       console.log('  hinw data/abgelehnt.json: wann geholt, steht nicht lesbar da.');
-    else if (alter > 8)
+    /* ⛔ Von 8 auf 3 Tage heruntergesetzt (09.09.2026), und mit dem Befehl
+       dabei. Am 09.09. war die Datei DREI Tage alt und damit unter der alten
+       Schwelle — genau in diesen drei Tagen hatte Elias einen Vorschlag
+       abgelehnt, der noch in der App stand. Der Pruefer meldete gruen.
+
+       ⚠️ Die 8 Tage waren nicht falsch gedacht, sondern gedacht fuer eine
+       Zeit, in der das Auffrischen den ganzen vorrat.mjs-Lauf brauchte (der
+       zugleich FREIGESCHALTET anfasst). Seit `vorschlaege-holen.mjs
+       --schreiben` ist es ein Befehl ohne Nebenwirkung — und dann darf die
+       Schwelle so eng sein, wie die Sache es verdient.
+       [[begrenzung_haelt_messung_nicht_stand]] */
+    else if (alter > 3)
       console.log('  hinw data/abgelehnt.json ist ' + alter + ' Tage alt — seither'
-        + ' abgelehnte Vorschlaege fehlen hier.');
+        + ' abgelehnte Vorschlaege fehlen hier.'
+        + ' Auffrischen: node werkzeuge/vorschlaege-holen.mjs --schreiben');
     const woerter = d.woerter || {};
     for (const id of Object.keys(woerter)){
       for (const e of woerter[id]){
