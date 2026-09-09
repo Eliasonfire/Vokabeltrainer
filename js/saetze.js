@@ -1038,7 +1038,7 @@ function zeigeGrammatikPopover(span){
        ⛔ Die Glosse haengt an der MARKIERUNG, nicht an der Regel: dieselbe
        Regel possessiv-endungen-01 markiert einmal ـكَ und einmal ـكِ. */
     + (span.dataset.bedeutung
-        ? `<div class="gp-bedeutung">${escapeHtml(span.dataset.bedeutung)}</div>` : '')
+        ? `<div class="gp-bedeutung">${mitAr(span.dataset.bedeutung)}</div>` : '')
     + `<div class="gp-kern">${fett(mitAr(kern))}</div>`
     + (rest
         ? `<button class="gp-mehr" type="button">ausführlich</button>`
@@ -1065,9 +1065,26 @@ function zeigeGrammatikPopover(span){
               && andere.indexOf(el.dataset.rule) < 0) andere.push(el.dataset.rule);
         });
         if (!andere.length) return '';
+        /* ⛔⛔ DERSELBE STRING, ZWEIMAL IM SELBEN AUFKLAPPER — und heute Nacht
+           war nur die eine Haelfte behoben. Oben steht `mitAr(rule.name)`, hier
+           stand `escapeHtml(r.name)`. Von den 103 Regeln tragen ELF einen Namen
+           mit zwei arabischen Laeufen und einem neutralen Zeichen dazwischen
+           (اَلْقَمَر / اَلشَّمْس · هُوَ / هِيَ · نَكِرَة / مَعْرِفَة · …); im
+           Titel stehen sie seit v458 richtig herum, in diesem Knopf haetten sie
+           weiter gekippt.
+
+           ⚠️ Ein CSS-`isolate` am Knopf haette NICHT gereicht: es trennt den
+           Knopf von seiner Umgebung, nicht die beiden Laeufe voneinander. Nur
+           `arabischHervorheben` verpackt JEDEN Lauf einzeln — erst dann nimmt
+           das Zeichen dazwischen die Absatzrichtung.
+
+           ⭐ Gemessen: alle elf sind in Saetzen markiert, aber KEINE der vier
+           heute verschachtelten Markierungen betrifft sie — der Fehler war also
+           angelegt und nicht sichtbar. Bewacht von werkzeuge/pruefe-bidi.mjs.
+           [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
         const namen = andere.map(id => {
           const r = GRAMMAR_RULES.find(x => x.id === id);
-          return r ? `<button class="gp-andere" type="button" data-rule="${id}">${escapeHtml(r.name)}</button>` : '';
+          return r ? `<button class="gp-andere" type="button" data-rule="${id}">${mitAr(r.name)}</button>` : '';
         }).filter(Boolean);
         return namen.length
           ? `<div class="gp-auch">Hier gilt auch: ${namen.join(' ')}</div>` : '';

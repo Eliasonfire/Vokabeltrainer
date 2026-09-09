@@ -677,6 +677,56 @@ if (typeof window === 'undefined' || typeof localStorage === 'undefined'){
     } finally { kasten.remove(); }
   });
 
+  /* ⛔⛔ UND JETZT AM ECHTEN AUFKLAPPER, NICHT AN EINEM NACHBAU (09.09.2026).
+     Die Probe darueber ruft `arabischHervorheben()` selbst auf und beweist
+     damit nur, dass die CSS-Regel wirkt. Sie haette den zweiten Fund dieser
+     Nacht NICHT gefunden: `rule.name` stand ZWEIMAL im selben Aufklapper — im
+     Titel verpackt, im Knopf „Hier gilt auch:" roh. Gemessen an genau diesem
+     Knopf, mit der alten Fassung: erstes Wort bei x=68, zweites bei x=32;
+     nach der Reparatur 32 und 65. Dieselbe Stelle, umgekehrte Reihenfolge.
+
+     Deshalb laeuft diese Probe durch `zeigeGrammatikPopover()` — den Weg, den
+     Elias auch geht. [[testvorlage_selbst_nachgebaut]]
+
+     ⭐ Die Regel wird AUS DEN DATEN gesucht, nicht hier eingetragen: die erste,
+     deren Name zwei arabische Laeufe mit einem neutralen Zeichen dazwischen
+     traegt (heute elf von 103). Faellt die letzte davon weg, sagt die Probe
+     das, statt an einer festen Id zu zerbrechen. */
+  versuch('Aufklapper: „Hier gilt auch:" steht richtig herum', ()=>{
+    if (typeof zeigeGrammatikPopover !== 'function') throw new Error('zeigeGrammatikPopover fehlt');
+    const pop = document.getElementById('gramPopover');
+    if (!pop) throw new Error('#gramPopover fehlt');
+    /* ⭐ „Zwei arabische Laeufe" wird NICHT mit einem eigenen Muster bestimmt,
+       sondern mit `arabischHervorheben()` selbst — der Funktion, die im Ernst
+       auch die Spans setzt. Ein nachgebautes Muster koennte anders zerlegen als
+       die App, und dann prueft die Probe eine andere Frage als die gestellte.
+       Nebenbei steht damit kein einziges abgeschriebenes arabisches Zeichen in
+       dieser Datei. [[zeichenklasse_nie_sichtbar_kopieren]] */
+    const laeufeIm = (s) => (arabischHervorheben(String(s == null ? '' : s)).match(/<span/g) || []).length;
+    const innen = GRAMMAR_RULES.find(r => laeufeIm(r.name) >= 2);
+    if (!innen) throw new Error('keine Regel mit zwei arabischen Laeufen im Namen — Probe nicht mehr moeglich');
+    const aussen = GRAMMAR_RULES.find(r => r.id !== innen.id);
+    const wirt = document.createElement('div');
+    wirt.style.cssText = 'position:fixed;left:0;top:0;width:360px;z-index:-1';
+    wirt.innerHTML = `<span class="gram-underline" data-rule="${aussen.id}">`
+                   + `<span class="gram-underline" data-rule="${innen.id}">x</span></span>`;
+    document.body.appendChild(wirt);
+    try {
+      zeigeGrammatikPopover(wirt.firstElementChild);
+      const knopf = pop.querySelector('.gp-andere');
+      if (!knopf) throw new Error('kein Knopf „Hier gilt auch:" — die verschachtelte Markierung wurde nicht erkannt');
+      const spans = [...knopf.querySelectorAll('span[lang="ar"]')];
+      if (spans.length < 2)
+        throw new Error(`der Knopf zeigt „${knopf.textContent}" ohne verpackte Laeufe `
+          + `(${spans.length} Span(s)) — dort steht der Name verkehrt herum`);
+      const x = spans.map(s => Math.round(s.getBoundingClientRect().left));
+      for (let i = 1; i < x.length; i++) if (!(x[i-1] < x[i]))
+        throw new Error(`im Knopf steht Lauf ${i} bei ${x[i-1]} und Lauf ${i+1} bei ${x[i]} `
+          + `— die Reihenfolge ist gedreht (${knopf.textContent})`);
+      return `${innen.id}: ${spans.length} Laeufe bei ${x.join(', ')}`;
+    } finally { pop.classList.remove('show'); wirt.remove(); }
+  });
+
   versuch('Icons: Sprite und App-Icon', ()=>{
     const vorhanden = new Set([...document.querySelectorAll('svg symbol[id^="ic-"]')].map(s=>s.id.slice(3)));
     if (!vorhanden.size) throw new Error('kein einziges Sprite-Symbol gefunden');
