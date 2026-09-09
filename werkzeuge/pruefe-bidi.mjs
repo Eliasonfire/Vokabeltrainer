@@ -32,6 +32,21 @@
  * die arabische Laeufe in deutschem Text verpackt. Was sie erzeugt, ist der
  * vollstaendige Satz der Orte, an denen das Problem auftreten kann.
  *
+ * ⚠️ WAS ER NICHT SIEHT — und das gehoert dazu:
+ *
+ * Er prueft, dass jede erzeugte Klasse isoliert ist. Er prueft NICHT, ob ein
+ * Text ueberhaupt durch `arabischHervorheben()` laeuft. Genau daran lag der
+ * Fehler im Regel-Aufklapper: dort stand `escapeHtml(text)` als reiner Text,
+ * ohne Span — und ohne Span gibt es nichts zu isolieren. Baut jemand einen
+ * neuen Bildschirm, der arabischen Text roh einsetzt, meldet dieser Pruefer
+ * weiter gruen.
+ *
+ * ⭐ Die Gegenprobe dafuer ist der Browser: zwei `getBoundingClientRect().left`
+ * an den beiden arabischen Laeufen, und man sieht in zehn Sekunden, ob die
+ * Reihenfolge stimmt. Sie steht in pruefe-oberflaeche.js NICHT — dort waere
+ * ihr Platz, wenn der Fall noch einmal auftritt.
+ * [[gruener_pruefer_beweist_nur_geprueftes]]
+ *
  * Aufruf:  node werkzeuge/pruefe-bidi.mjs
  * Exit 0 = jede Klasse ist isoliert · 1 = Stoertest greift nicht
  *       2 = eine Klasse ohne Isolation — dort steht „X → Y" verkehrt herum
