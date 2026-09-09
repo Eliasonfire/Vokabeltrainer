@@ -495,8 +495,37 @@ for (const [, xs] of jeTag){
 
    ⚠️ Und dieselbe Archiv-Ausnahme wie oben: was in einem `<details>` steht,
    ist ein archivierter Vorgaenger. */
+/* ---- Die BELEGTE Ausnahme (09.09.2026) -----------------------------------
+
+   ⛔ Ein Pruefer, der dauerhaft rot steht, wird nicht mehr gelesen. Genau eine
+   Stelle stand seit dem 08.09.2026 dauerhaft in der Liste: „### ⛔⛔ 03:45 —
+   der teuerste Fund der Nacht". Sie wurde nachgesehen, und die Uhrzeit ist
+   RICHTIG — die Auto-Gedaechtnisdatei traegt den Stempel 2026-09-07T02:04:57Z.
+   Rueckwaerts laeuft nicht die Uhr, sondern der Abschnitt: seine
+   Unterabschnitte stehen in der Reihenfolge der ERZAEHLUNG.
+
+   ⚠️ Eine Ausnahme, die man nur behaupten muss, waere ein Schalter zum
+   Ausschalten des Pruefers. Deshalb zwei Bedingungen, die BEIDE erfuellt sein
+   muessen, und beide stehen im Text selbst:
+
+     1. der Satz „geprueft, nicht geschaetzt" (auch mit ü) im Abschnitt
+     2. ein BELEG im selben Abschnitt — ein ISO-Stempel, ein Datum oder ein
+        Commit-Kuerzel. Ohne Beleg bleibt der Befund stehen.
+
+   ⚠️ Die Ausnahme gilt NUR fuer die Reihenfolge, nie fuer „liegt in der
+   Zukunft" — eine Uhrzeit, die noch nicht war, kann niemand belegt haben.
+   [[regel_gilt_nur_mit_begruendung]] [[zusicherung_im_kommentar_ist_keine_pruefung]] */
+const SATZ  = /gepr[üu]ft,\s*nicht\s*gesch[äa]tzt/i;
+const BELEG = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}|\d{2}\.\d{2}\.\d{4}|\b[0-9a-f]{7}\b/;
+function belegteAusnahme(zeilen, ab){
+  let text = '';
+  for (let i = ab + 1; i < zeilen.length && !/^#{1,3} /.test(zeilen[i]); i++) text += zeilen[i] + '\n';
+  return SATZ.test(text) && BELEG.test(text);
+}
+
 const unterBloecke = [];
 let unterArchiv = 0;
+const unterBelegt = [];
 {
   let tiefe = 0, imArchiv = false, blockStart = 0;
   zeilen.forEach((z, i) => {
@@ -514,7 +543,8 @@ let unterArchiv = 0;
          <details>. [[kandidatenliste_ist_keine_fehlerliste]] */
       const archivMarke = /^###\s*(?:[^\p{L}\d]*\s*)?Davor\s*:/u.test(z);
       if (u && archivMarke) unterArchiv++;
-      else if (u) unterBloecke.push({ zeile: i + 1, kopf: z, block: blockStart, zeit: u[1] });
+      else if (u) unterBloecke.push({ zeile: i + 1, kopf: z, block: blockStart, zeit: u[1],
+                                      belegt: belegteAusnahme(zeilen, i) });
     }
     tiefe = Math.max(0, tiefe + auf - zu);
   });
@@ -523,7 +553,11 @@ const unterRueckwaerts = [];
 for (let i = 1; i < unterBloecke.length; i++){
   const a = unterBloecke[i - 1], b = unterBloecke[i];
   if (a.block !== b.block) continue;
-  if (minuten(b.zeit) - minuten(a.zeit) < 0) unterRueckwaerts.push({ vor: a, jetzt: b });
+  if (minuten(b.zeit) - minuten(a.zeit) >= 0) continue;
+  /* ⚠️ Ausgenommen wird EINZELN und mit Namen — eine stille Ausnahme waere
+     dasselbe wie ein abgeschalteter Pruefer. */
+  if (b.belegt){ unterBelegt.push(b); continue; }
+  unterRueckwaerts.push({ vor: a, jetzt: b });
 }
 /* ---- Eine Uhrzeit, die noch gar nicht da war (08.09.2026) -----------------
 
@@ -574,15 +608,31 @@ const hhmm = (min) => String(Math.floor((min % 1440) / 60)).padStart(2, '0') + '
   + String(min % 60).padStart(2, '0');
 const stoerOk = (JETZT_MIN + 90 < 1440) ? zuSpaet(hhmm(JETZT_MIN + 90)) : true;
 const eichOk  = (JETZT_MIN - 90 >= 0)   ? !zuSpaet(hhmm(JETZT_MIN - 90)) : true;
+
+/* Stoertest fuer die belegte Ausnahme: sie darf NUR greifen, wenn Satz UND
+   Beleg dastehen. Sonst waere sie ein Schalter zum Ausschalten des Pruefers. */
+const ausnahmeOk = (() => {
+  const bau = (koerper) => ['### 03:45 — Beispiel'].concat(koerper.split('\n')).concat(['## Ende']);
+  const mit   = belegteAusnahme(bau('ℹ️ Die 03:45 ist geprüft, nicht geschätzt (2026-09-07T02:04).'), 0);
+  const ohne  = belegteAusnahme(bau('ℹ️ Die 03:45 ist geprüft, nicht geschätzt.'), 0);
+  const nurB  = belegteAusnahme(bau('Nachgesehen am 2026-09-07T02:04, sah gut aus.'), 0);
+  const leer  = belegteAusnahme(bau('Nichts dazu.'), 0);
+  return mit === true && ohne === false && nurB === false && leer === false;
+})();
 console.log('');
 console.log('  Unterabschnitte:     ' + unterBloecke.length + ' \'###\'-Zeilen mit Uhrzeit');
 if (unterArchiv) console.log('    ⓘ mit „Davor:" gekennzeichnet (archiviert), ausgenommen: ' + unterArchiv);
+for (const b of unterBelegt)
+  console.log('    ⓘ Z' + b.zeile + ' ausgenommen: „geprueft, nicht geschaetzt" MIT Beleg — '
+    + b.kopf.slice(4, 58));
 console.log('    ' + (unterRueckwaerts.length ? '❌' : '✅') + ' rueckwaerts:      ' + unterRueckwaerts.length);
 console.log('    ' + (zukunft.length ? '❌' : '✅') + ' in der Zukunft:   ' + zukunft.length
   + '   (heutige Abschnitte gegen die Uhr, jetzt ' + JETZT_HHMM + ')');
 if (!stoerOk || !eichOk) console.log('    ⛔ STOERTEST: die Zukunftspruefung misst nichts —'
   + (stoerOk ? '' : ' +90 min gilt als Vergangenheit;')
   + (eichOk ? '' : ' -90 min gilt als Zukunft.'));
+console.log('    ' + (ausnahmeOk ? '✅' : '⛔') + ' Stoertest: die belegte Ausnahme greift nur mit '
+  + 'Satz UND Beleg' + (ausnahmeOk ? '' : ' — sie greift zu leicht, jeder Befund waere abschaltbar'));
 for (const z of zukunft.slice(0, 8)){
   console.log('\n❌ Z' + z.zeile + '  ' + z.kopf.slice(0, 72));
   console.log('     sagt ' + z.zeit + ', die Uhr sagt ' + JETZT_HHMM + ' — diese Zeit war noch nicht.');
