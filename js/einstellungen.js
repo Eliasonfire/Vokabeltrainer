@@ -1051,6 +1051,29 @@ function diagnoseText(){
       + (z.sprach === false ? '  ⛔ stumm' : '')));
   }
 
+  /* ---------- Aufgebrauchte Eselsbrücken (09.09.2026) ----------
+     ⛔⛔ Elias: „bei dem wort stern da habe ich alle 3 vorschläge damals schon
+     als unbrauchbar markiert. scheinbar hast du alle eselsbrücken gemacht aber
+     sie nicht ersetzt bzw live gemacht."
+     Seine Ablehnungen stehen nur in SEINEM Browser — ohne diese Zeilen erfährt
+     niemand je, für welches Wort eine neue Eselsbrücke fällig ist. Ein
+     Bildschirmfoto der Karte genügt jetzt. [[einzeln_frei_ist_nur_im_browser]] */
+  zeilen.push('');
+  try {
+    const g = (typeof vorschlaegeAbgelehntGesamt === 'function') ? vorschlaegeAbgelehntGesamt() : null;
+    const leer = (typeof vorschlaegeAufgebraucht === 'function') ? vorschlaegeAufgebraucht() : [];
+    if (!g) zeilen.push('Eselsbrücken: — (Zählung fehlt)');
+    else {
+      zeilen.push('Eselsbrücken abgelehnt: ' + g.ablehnungen + ' bei ' + g.woerter + ' Wörtern');
+      if (!leer.length) zeilen.push('  kein Wort ist aufgebraucht — überall steht noch einer offen');
+      else {
+        zeilen.push('  AUFGEBRAUCHT (alle Vorschläge weg) — hier fehlt eine neue:');
+        leer.slice(0, 12).forEach(w => zeilen.push('    ' + w.ar + '  ' + w.de + '  (' + w.anzahl + ' Vorschläge, alle weg)'));
+        if (leer.length > 12) zeilen.push('    … und ' + (leer.length - 12) + ' weitere');
+      }
+    }
+  } catch (e){ stillerFehler('Diagnose: Eselsbrücken-Zählung', e); zeilen.push('Eselsbrücken: — (Zählung ausgefallen)'); }
+
   /* ---------- Geschluckte Fehler (09.09.2026) ----------
      ⭐⭐ Der Abschnitt, der den Konfetti-Fall in einer Zeile geloest haette.
      Er steht ZULETZT und damit unten auf dem Bildschirmfoto — davor stehen

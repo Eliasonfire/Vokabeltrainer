@@ -1420,6 +1420,53 @@ function schalteVorschlagWeg(id, nr, text){
   return !!(VORSCHLAG_WEG[id] && VORSCHLAG_WEG[id][schl]);
 }
 
+/* ---------- Welche Woerter sind AUFGEBRAUCHT? (09.09.2026) ----------
+
+   ⛔⛔ DER ANLASS, in seinen Worten: „bei dem wort stern da habe ich alle 3
+   vorschläge damals schon als unbrauchbar markiert. scheinbar hast du alle
+   eselsbrücken gemacht aber sie nicht ersetzt bzw live gemacht."
+
+   Er hat recht, und die Ursache ist nicht Faulheit, sondern eine LUECKE:
+   `vt_vorschlagWeg` steht ausschliesslich in SEINEM Browser. Ich kann von
+   hier aus nicht sehen, welche Vorschlaege er abgelehnt hat — also erfahre
+   ich auch nie, fuer welches Wort eine neue Eselsbruecke faellig ist. Er
+   lehnt ab, und niemand hoert es. [[einzeln_frei_ist_nur_im_browser]]
+
+   ⭐ Deshalb zaehlt die App es jetzt selbst und zeigt es in der Diagnosekarte
+   — dem einen Weg, auf dem sein Geraet uns etwas sagen kann. Ein
+   Bildschirmfoto genuegt dann. [[diagnose_statt_raten]]
+
+   ⚠️ AUFGEBRAUCHT heisst: JEDER vorhandene Vorschlag ist abgelehnt. Ein Wort
+   mit drei Vorschlaegen, von denen zwei abgelehnt sind, steht NICHT hier —
+   dort gibt es ja noch einen, den er nehmen koennte.
+
+   ⚠️ Gezaehlt wird gegen die Zahl der Vorschlaege, die es HEUTE gibt, nicht
+   gegen die von damals. Kommt eine vierte dazu, faellt das Wort von selbst
+   aus der Liste — genau das ist die erwuenschte Wirkung. */
+function vorschlaegeAufgebraucht(){
+  const raus = [];
+  const woerter = (typeof VOCAB_DATA !== 'undefined' && Array.isArray(VOCAB_DATA)) ? VOCAB_DATA : [];
+  for (const w of woerter){
+    const abgelehnt = VORSCHLAG_WEG[w.id];
+    if (!abgelehnt) continue;
+    const anzahl = (typeof vorschlagsListe === 'function') ? vorschlagsListe(w).length : 0;
+    if (!anzahl) continue;
+    let alle = true;
+    for (let i = 0; i < anzahl; i++) if (!abgelehnt[String(i)]) { alle = false; break; }
+    if (alle) raus.push({ id: w.id, ar: w.ar, de: w.de, anzahl });
+  }
+  return raus;
+}
+
+/* Wie viele Ablehnungen es ueberhaupt gibt — die Zahl daneben verhindert den
+   Fehlschluss „keine aufgebrauchten Woerter, also hat er nie abgelehnt".
+   [[leere_liste_ist_keine_messung]] */
+function vorschlaegeAbgelehntGesamt(){
+  let n = 0;
+  for (const id of Object.keys(VORSCHLAG_WEG)) n += Object.keys(VORSCHLAG_WEG[id] || {}).length;
+  return { woerter: Object.keys(VORSCHLAG_WEG).length, ablehnungen: n };
+}
+
 /* Fortschritt initialisieren: Startbox aus Arabic-Roots-Daten importieren.
    WICHTIG: Laeuft NICHT nur beim allerersten Start. Frueher stieg die Funktion bei
    vorhandenem Speicherstand sofort aus - Vokabeln, die spaeter zu VOCAB_DATA
