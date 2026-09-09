@@ -802,6 +802,67 @@ const ohneKommentare = txt => txt
   }
 }
 
+/* ---------- Die Buchvokabeln im Offline-Vorrat (09.09.2026) ----------
+
+   ⛔ ANLASS: die Reparatur von v462. Ein fehlendes Buch liess bis dahin alle
+   sieben aus der Auswahl verschwinden — und dabei kam heraus, WARUM ueberhaupt
+   eines fehlen kann: von den `data/vokabeln-*.js` steht nur `vokabeln-eigene.js`
+   in der ASSETS-Liste von sw.js. Die uebrigen landen erst im Cache, nachdem sie
+   einmal mit Netz geladen wurden.
+
+   ⭐ Die Reparatur war meine; DIESE Frage ist seine. Sie ist ein Abwaegen —
+   1,75 MB je Auslieferung gegen „ohne Netz sind alle Buecher da" — und dafuer
+   gibt es keine technisch richtige Antwort. [[schweigen_ist_kein_auftrag]]
+
+   ⚠️ Gerechnet wird aus den echten Dateien, nichts steht hier als Zahl. Faellt
+   die Messung aus (kein data/, ASSETS-Liste nicht lesbar), erscheint der Posten
+   gar nicht — lieber keine Frage als eine mit erfundener Zahl.
+   [[zahlen_ohne_beleg]] */
+{
+  const datOrdner = path.join(REPO, 'data');
+  const swPfad = path.join(REPO, 'sw.js');
+  if (fs.existsSync(datOrdner) && fs.existsSync(swPfad)){
+    const swText = fs.readFileSync(swPfad, 'utf8');
+    const block = swText.match(/const\s+ASSETS\s*=\s*\[([\s\S]*?)\];/);
+    /* Zeilenweise, damit auskommentierte Eintraege draussen bleiben —
+       derselbe Griff wie in validate.js. */
+    const imVorrat = new Set();
+    if (block){
+      for (const z of block[1].split(/\r?\n/)){
+        if (/^\s*\/\//.test(z)) continue;
+        const t = z.match(/['"`]([^'"`]+)['"`]/);
+        if (t) imVorrat.add(t[1].replace(/^\.\//, ''));
+      }
+    }
+    const buchDateien = fs.readdirSync(datOrdner)
+      .filter(n => n.startsWith('vokabeln-') && n.endsWith('.js'));
+    const draussen = buchDateien.filter(n => !imVorrat.has('data/' + n));
+    const mb = (namen) => namen.reduce((s, n) =>
+      s + fs.statSync(path.join(datOrdner, n)).size, 0) / 1048576;
+    /* Eichung: die Liste muss ueberhaupt gelesen worden sein, und mindestens
+       eine Datei muss DRIN stehen — sonst misst dieser Block nichts. */
+    if (block && imVorrat.size > 10 && draussen.length && draussen.length < buchDateien.length){
+      posten.push({
+        titel: 'Sollen die Buchvokabeln ohne Netz da sein?',
+        zahl: draussen.length, einheit: 'Buchdatei(en)', auswahl: true,
+        dazu: mb(draussen).toFixed(2) + ' MB stehen nicht im Offline-Vorrat · '
+              + (buchDateien.length - draussen.length) + ' von ' + buchDateien.length + ' schon',
+        aufwand: 'ja oder nein — die Änderung sind ' + draussen.length + ' Zeilen in sw.js',
+        warum: 'Die App holt eine Buchdatei erst, wenn du das Buch antippst — und legt sie '
+             + 'dann im Cache ab. Ein Buch, das du noch nie mit Netz geöffnet hast, ist '
+             + 'unterwegs also nicht da. Seit v462 verschwindet deswegen wenigstens nicht '
+             + 'mehr die ganze Buchzeile, sondern nur dieses eine Buch. Ob es überhaupt '
+             + 'fehlen soll, ist die eigentliche Frage.',
+        wie: 'Sag ja, dann kommen die ' + draussen.length + ' Dateien in die ASSETS-Liste '
+           + 'und liegen nach dem ersten Start ohne Netz bereit. ⚠️ Der Preis: jede neue '
+           + 'Fassung lädt ' + mb(draussen).toFixed(2) + ' MB zusätzlich vor — bei '
+           + 'mobilen Daten spürbar, im WLAN nicht. Sag nein, und es bleibt wie jetzt: '
+           + 'was du einmal geöffnet hast, ist danach offline da.'
+      });
+    }
+  }
+}
+
 posten.push({
   titel: 'Wortmarke: welche Farbe?',
   zahl: 1, einheit: 'Entscheidung', dazu: 'Schrift steht bereits', auswahl: true,
