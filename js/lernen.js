@@ -913,7 +913,19 @@ function vorschlagsListe(w){
        ist einer zu spaet. [[bedingung_wird_durch_die_handlung_ungueltig]] */
     if (sg && !istPluralKarte(sg.id)){
       const vorn = '⭐ Vom Singular ' + (sg.ar || sgId) + ' — die Karte hier fragt den Plural: ';
-      vorschlagsListe(sg).forEach(t => {
+      /* ⭐ Wer den Plural erklaert, kommt zuerst (09.09.2026). Manche
+         Eselsbruecken des Singulars sprechen ausdruecklich ueber die
+         Pluralbildung (نَجْمٌ → نُجُومٌ, dasselbe Muster wie بَيْتٌ → بُيُوتٌ) —
+         auf einer Pluralkarte ist genau die die nuetzlichste. Die uebrigen
+         erklaeren die BEDEUTUNG und sind auch hier richtig, nur eben zweite
+         Wahl. Sortiert wird stabil: gleichrangige behalten ihre Reihenfolge.
+         ⚠️ Erkannt am Wort „Plural" ODER an der Pluralform selbst im Text —
+         zwei Kennzeichen, weil das eine deutsch und das andere arabisch ist. */
+      const plForm = String(w.ar || '').split('/')[0].trim();
+      const passt = (t) => /\bPlural\b/i.test(t) || (plForm && t.indexOf(plForm) >= 0);
+      const geerbt = vorschlagsListe(sg);
+      const sortiert = geerbt.filter(passt).concat(geerbt.filter(t => !passt(t)));
+      sortiert.forEach(t => {
         const s = vorn + t;
         if (liste.indexOf(s) < 0) liste.push(s);
       });
