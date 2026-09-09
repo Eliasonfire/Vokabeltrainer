@@ -374,5 +374,46 @@ if (errors.length){
   console.log(`\n${errors.length} Fehler in der Tabelle — NICHT pushen.`);
   process.exit(1);
 }
+/* ---------- ⛔ STOERTEST (09.09.2026) ----------
+ *
+ * ⛔ Dieses Skript schneidet `passtInsFeld()` aus js/kern.js aus und fuehrt es
+ * aus. Wird die Funktion umgebaut oder verschoben, kann der Ausschnitt still
+ * etwas anderes tun — und ein `passtInsFeld()`, das immer `false` liefert,
+ * meldet „0 Fehler in der Tabelle". Also die beste aller Nachrichten, ohne
+ * dass etwas geprueft waere.
+ * [[stoertest_muss_wirkung_nachweisen]] [[testvorlage_selbst_nachgebaut]]
+ *
+ * Vier Faelle, deren Antwort unabhaengig feststeht.
+ */
+console.log('\n=== Stoertest ===');
+{
+  let stoer = 0;
+  const sProbe = (was, ist, soll) => {
+    if (ist !== soll) { stoer++; console.log('  ⛔  ' + was + ': ' + ist + ' statt ' + soll); }
+    else console.log('  ok   ' + was);
+  };
+  sProbe('die Wortfeldtabelle ist geladen (>= 5 Felder)', WORTFELDER.length >= 5, true);
+  sProbe('passtInsFeld ist eine Funktion', typeof passtInsFeld, 'function');
+
+  /* ⭐ Der Fall aus dem Kopf dieser Datei: „Eine neue Vokabel mit ‚Hund' in der
+     Uebersetzung landet ohne jede Aenderung unter Tiere." */
+  const tiere = WORTFELDER.find(f => /tier/i.test(f.name || f.id || ''));
+  if (tiere) {
+    sProbe('ein Hund gehoert zu den Tieren',
+      passtInsFeld({ de: 'Hund', ar: 'كَلْبٌ', type: 'noun' }, tiere), true);
+    sProbe('ein Buch gehoert NICHT zu den Tieren',
+      passtInsFeld({ de: 'Buch', ar: 'كِتَابٌ', type: 'noun' }, tiere), false);
+  } else {
+    stoer++; console.log('  ⛔  kein Wortfeld mit „Tier" gefunden — die Probe greift ins Leere');
+  }
+
+  if (stoer) {
+    console.log('');
+    console.log('⛔ ' + stoer + ' Stoertest(s) gescheitert — die ausgeschnittene Logik misst nicht,');
+    console.log('   und damit ist „Tabelle in Ordnung" wertlos.');
+    process.exit(1);
+  }
+}
+
 console.log(`\nTabelle in Ordnung. ${gesamt - fehlend} von ${gesamt} Vokabeln haben ein Bedeutungsfeld.`);
 process.exit(0);
