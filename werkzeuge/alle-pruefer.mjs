@@ -179,6 +179,13 @@ const PRUEFER = [
      Ablehnung von ihm seit Stunden unbearbeitet.
      [[werkzeug_ohne_aufrufer]] [[ein_weg_geht_der_andere_nicht]] */
   ['werkzeuge/pruefe-werkzeugaufrufe.mjs', []],
+  /* ⭐⭐ Neu am 09.09.2026. An diesem Tag haben 77 Pluralkarten einen eigenen
+     Text bekommen, und in jedem steht eine ZAHL („11 deiner Woerter …") und
+     stehen BEISPIELE („كَلْبٌ → كِلَابٌ"). Beides war beim Schreiben gemessen —
+     und beides veraltet lautlos, sobald eine Vokabel dazukommt oder eine
+     Pluralform korrigiert wird. Eine Zahl im Fliesstext ist die haltbarste Art,
+     still falsch zu werden. [[zahlen_ohne_beleg]] */
+  ['werkzeuge/pruefe-pluraltexte.mjs', []],
   /* ⭐⭐ Neu am 09.09.2026, die Schwesterpruefung zu pruefe-abgleich.mjs: dort
      zwei GERAETE, hier zwei ZEITPUNKTE. In js/einstellungen.js stand zweimal
      derselbe Satz („wer eine Sicherung einspielte, verlor X lautlos") — und
