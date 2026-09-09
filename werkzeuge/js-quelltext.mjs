@@ -31,6 +31,57 @@ const VOR_REGEX = new Set(['(', ',', '=', ':', '[', '!', '&', '|', '?', '{', '}'
  *  gemeldet, ohne etwas gemessen zu haben.
  *  [[leere_liste_ist_keine_messung]] [[gruener_pruefer_beweist_nur_geprueftes]]
  */
+/* Ueberspringt EINE Zeichenkette ab `start` und gibt den Index dahinter zurueck.
+ *
+ * ⛔⛔ VERSCHACHTELTE TEMPLATE-LITERALE (der Fehler, gefunden am 09.09.2026).
+ * `js/kategorien.js:142` baut Markup so:
+ *
+ *     box.innerHTML = CUSTOM_CATS.map(cat => `
+ *       <div …>${cat.wordIds.map(id => { … return `<span …`; })}</div>`
+ *
+ * Die alte Fassung suchte stumpf den naechsten Backtick — und der gehoerte zur
+ * INNEREN Zeichenkette. Ab da war alles vertauscht: Code galt als Text, Text
+ * als Code, und ein `/*` wurde nicht mehr als Kommentaranfang gesehen. VIER
+ * Pruefer haben dadurch in dieser Datei (1398 Zeilen) und in js/statistik.js
+ * still zu wenig gemessen — ohne dass einer davon rot wurde.
+ *
+ * ⭐ Gefunden hat es der Stoertest eines fuenften Pruefers: ein absichtlich
+ * eingebauter, ECHTER Aufruf wurde nicht gefunden. Ohne diesen Stoertest waere
+ * der Fehler unentdeckt geblieben — die vier anderen meldeten weiter gruen.
+ * [[gruener_pruefer_beweist_nur_geprueftes]] [[stoertest_muss_wirkung_nachweisen]]
+ *
+ * Im Einschub `${ … }` steht wieder CODE, also wird dort rekursiv weiter
+ * unterschieden statt blind bis zum naechsten Backtick zu springen.
+ */
+function zeichenketteUeberspringen(q, start, aus, texte, leeren) {
+  const n = q.length;
+  const anf = q[start];
+  let i = start + 1;
+  while (i < n) {
+    if (q[i] === '\\') { i += 2; continue; }
+    if (q[i] === anf) { i++; break; }
+    if (anf === '`' && q[i] === '$' && q[i + 1] === '{') {
+      /* Der Textteil davor darf geleert werden, der Einschub nicht. */
+      if (texte) leeren(start + 1, i);
+      let tiefe = 1;
+      i += 2;
+      while (i < n && tiefe > 0) {
+        const z = q[i];
+        if (z === '\\') { i += 2; continue; }
+        if (z === '"' || z === "'" || z === '`') { i = zeichenketteUeberspringen(q, i, aus, texte, leeren); continue; }
+        if (z === '{') tiefe++;
+        else if (z === '}') tiefe--;
+        i++;
+      }
+      start = i - 1;                 /* der Text nach dem Einschub faengt hier an */
+      continue;
+    }
+    i++;
+  }
+  if (texte) leeren(start + 1, Math.max(start + 1, i - 1));
+  return i;
+}
+
 export function ohneKommentareUndTexte(quelle, { texte = true } = {}) {
   const aus = quelle.split('');
   const n = quelle.length;
@@ -63,14 +114,7 @@ export function ohneKommentareUndTexte(quelle, { texte = true } = {}) {
       continue;
     }
     if (c === '"' || c === "'" || c === '`') {
-      let j = i + 1;
-      while (j < n) {
-        if (quelle[j] === '\\') { j += 2; continue; }
-        if (quelle[j] === c) { j++; break; }
-        j++;
-      }
-      if (texte) leeren(i + 1, Math.max(i + 1, j - 1));
-      i = j;
+      i = zeichenketteUeberspringen(quelle, i, aus, texte, leeren);
       davor = c;
       continue;
     }

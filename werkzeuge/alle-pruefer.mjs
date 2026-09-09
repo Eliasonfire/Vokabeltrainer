@@ -185,6 +185,20 @@ const PRUEFER = [
      umbenannt, steht dort still ein Strich, und der Ausfall des Messwerkzeugs
      sieht aus wie „nichts zu melden". [[leere_liste_ist_keine_messung]] */
   ['werkzeuge/pruefe-diagnosekarte.mjs', []],
+  /* ⭐⭐ Neu am 09.09.2026. `js/zeitmessung.js` (195 Zeilen) wurde bis dahin von
+     KEINEM Pruefer genannt — ausgerechnet die Stelle, die alle 5 Sekunden
+     schreibt und in der Nacht davor 750 von 1000 KV-Schreibvorgaengen
+     verursacht hat. Geprueft wird beides: dass sie richtig rechnet (zwei
+     Geraete am selben Tag werden SUMMIERT, nicht maximiert) und dass ihre
+     Zahl in KEINER Oberflaeche auftaucht — Elias am 08.09.: „am besten mir
+     nicht sagen." [[adhs_enkodieren_ist_die_luecke]] */
+  ['werkzeuge/pruefe-zeitmessung.mjs', []],
+  /* ⭐⭐ Und der Waechter ueber das Werkzeug, auf dem vier Pruefer stehen:
+     `js-quelltext.mjs` verlor bei VERSCHACHTELTEN Template-Literalen den
+     Faden (js/kategorien.js:142). Ab dort galt Code als Zeichenkette — vier
+     Pruefer massen still zu wenig, keiner wurde rot. Gefunden hat es der
+     Stoertest eines fuenften. [[gruener_pruefer_beweist_nur_geprueftes]] */
+  ['werkzeuge/pruefe-stripper.mjs', []],
   /* ⭐ Neu am 09.09.2026 (Punkt 5). Von 545 definierten CSS-Klassen haben 8
      keine Fundstelle; 16 weitere sahen so aus und werden zur Laufzeit
      zusammengesetzt — der Pruefer liefert je Verdacht den BELEG mit, weil ein
