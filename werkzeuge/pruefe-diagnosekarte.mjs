@@ -72,6 +72,20 @@ for (const n of namen) {
   console.log('  ' + (da ? 'ok  ' : '⛔  ') + n + (da ? '' : '   — der Riegel greift, und in der Karte steht still ein Strich'));
 }
 
+/* ---------- ⛔ Stoertest: haengt die Zaehlung am echten Text? ----------
+   Eine Eichung sagt „ich messe ueberhaupt etwas". Ein Stoertest sagt
+   zusaetzlich, dass die Zahl vom geprueften TEXT abhaengt und nicht von
+   irgendwoher. [[stoertest_muss_wirkung_nachweisen]] */
+{
+  const einerWeg = karte.replace(/typeof\s+stilleFehlerZeilen\s*===?\s*['"]function['"]/, 'typeof x === "irgendwas"');
+  const nachher = new Set([...einerWeg.matchAll(/typeof\s+([A-Za-zÄÖÜäöü_$][\w$]*)\s*===?\s*['"]function['"]/g)].map(m => m[1]));
+  const ok = nachher.size === namen.length - 1 && !nachher.has('stilleFehlerZeilen');
+  console.log('');
+  console.log('  ' + (ok ? 'ok  ' : '⛔  ') + 'Stoertest: faellt ein Riegel weg, sinkt die Zahl um genau eins'
+    + (ok ? '' : ' — die Zaehlung haengt NICHT am Text (' + nachher.size + ' statt ' + (namen.length - 1) + ')'));
+  if (!ok) fehlen++;
+}
+
 console.log('');
 if (fehlen) {
   console.log('⛔ ' + fehlen + ' Funktion(en) gibt es nicht mehr. Die Karte meldet dann NICHTS,');
