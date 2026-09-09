@@ -1327,6 +1327,51 @@ try {
   fail(`manifest.json ist kein gültiges JSON: ${e.message}`);
 }
 
+/* ---------- 7c. DIE LEISTE UND IHRE TABELLE MUESSEN ZUSAMMENPASSEN ---------
+ *
+ * ⛔⛔ Der Kommentar ueber `navMap` in js/navigation.js sagt es selbst: „Steht
+ * hier ein Reiter, den es nicht (mehr) gibt, leuchtet GAR KEINER — der Aufruf
+ * `querySelectorAll('.nav-btn[data-nav=…]')` findet dann nichts und schweigt
+ * dazu. Kein Fehler in der Konsole, nur eine Leiste, die tot aussieht."
+ *
+ * Genau diese Zusicherung hat bis zum 09.09.2026 niemand nachgemessen. Sie ist
+ * die klassische Zwei-Stellen-Entscheidung: die Tabelle steht in js/, die
+ * Knoepfe in index.html, und beide koennen einzeln geaendert werden.
+ * [[entscheidung_gilt_fuer_das_zweite_werkzeug]] [[ausfall_ist_unsichtbar_gebaut]]
+ *
+ * Beide Richtungen zaehlen:
+ *   - ein WERT der Tabelle ohne Knopf  → beim Wechsel leuchtet nichts
+ *   - ein KNOPF ohne Wert              → ein Reiter, der nie leuchten kann
+ *
+ * ⚠️ Verglichen wird gegen `.nav-btn`, nicht gegen jedes `data-nav`: die
+ * Kacheln des Startbildschirms tragen dasselbe Attribut, gehoeren aber nicht
+ * zur Leiste. Am 09.09.2026 nachgezaehlt: 8 Elemente mit `data-nav`, davon 5
+ * in der Leiste. Wer alle vergleicht, meldet drei Fehler, die keine sind.
+ */
+const fehlerVorherNav = errors.length;
+try {
+  const navSrc = fs.readFileSync(path.join(DIR, 'js', 'navigation.js'), 'utf8')
+    .replace(/\/\*[\s\S]*?\*\//g, ' ');                    // Kommentare raus
+  const m = navSrc.match(/const navMap\s*=\s*\{([\s\S]*?)\}/);
+  const html = fs.readFileSync(path.join(DIR, 'index.html'), 'utf8')
+    .replace(/<!--[\s\S]*?-->/g, ' ');
+  const knoepfe = new Set([...html.matchAll(/<button[^>]*\bclass="[^"]*\bnav-btn\b[^"]*"[^>]*\bdata-nav="([a-z-]+)"/gi)]
+    .map(x => x[1]));
+  if (!m) fail('js/navigation.js: `navMap` nicht gefunden — die Leiste kann nicht mehr geprueft werden.');
+  else if (!knoepfe.size) fail('index.html: kein einziger `.nav-btn` mit `data-nav` gefunden — die Leiste fehlt oder heisst anders.');
+  else {
+    const werte = new Set([...m[1].matchAll(/:\s*'([a-z-]+)'/g)].map(x => x[1]));
+    for (const w of werte)
+      if (!knoepfe.has(w)) fail(`js/navigation.js: navMap zeigt auf "${w}", aber die Leiste hat keinen solchen Knopf — beim Wechsel dorthin leuchtet GAR KEINER.`);
+    for (const k of knoepfe)
+      if (!werte.has(k)) fail(`index.html: der Leistenknopf "${k}" kommt in navMap nicht vor — er kann nie leuchten.`);
+    if (errors.length === fehlerVorherNav)
+      note(`Leiste: ${knoepfe.size} Knoepfe, ${werte.size} Ziele in navMap — sie passen zusammen.`);
+  }
+} catch (e) {
+  fail(`Leiste nicht pruefbar: ${e.message}`);
+}
+
 /* ---------- 8a. DER WEG, AUF DEM EINE NEUE FASSUNG BEI IHM ANKOMMT ---------
  *
  * ⛔⛔ Die wichtigste Regel dieses Projekts lautet „⭐⭐ Alte Fassung beim
