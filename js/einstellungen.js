@@ -1065,6 +1065,15 @@ function diagnoseText(){
     if (!g) zeilen.push('Eselsbrücken: — (Zählung fehlt)');
     else {
       zeilen.push('Eselsbrücken abgelehnt: ' + g.ablehnungen + ' bei ' + g.woerter + ' Wörtern');
+      /* ⭐ Die Vorwarnung: Wörter mit nur EINEM Vorschlag sind der nächste
+         Stern-Fall. Heute sind es null in seinem Bestand — steht hier je eine
+         Zahl, ist eine zweite Eselsbrücke fällig, BEVOR er sie braucht. */
+      const knapp = (typeof vorschlaegeKnapp === 'function') ? vorschlaegeKnapp() : [];
+      if (knapp.length){
+        zeilen.push('  ⚠️ nur EIN Vorschlag (nächster Stern-Fall): ' + knapp.length + ' Wörter');
+        knapp.slice(0, 8).forEach(w => zeilen.push('    ' + w.ar + '  ' + w.de));
+        if (knapp.length > 8) zeilen.push('    … und ' + (knapp.length - 8) + ' weitere');
+      }
       if (!leer.length) zeilen.push('  kein Wort ist aufgebraucht — überall steht noch einer offen');
       else {
         zeilen.push('  AUFGEBRAUCHT (alle Vorschläge weg) — hier fehlt eine neue:');
