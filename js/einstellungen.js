@@ -950,6 +950,46 @@ function diagnoseText(){
           'Version: ' + v + (navigator.serviceWorker && navigator.serviceWorker.controller ? '' : ' (SW steuert nicht)'));
     });
   } catch (e){ stillerFehler('Diagnose: Version lesen', e); }
+
+  /* ---------- Was fehlt im Offline-Vorrat? (09.09.2026) ----------
+     ⛔ Der Service Worker legt jede Datei einzeln ab und zaehlt Fehlschlaege
+     nur in die Konsole — die sieht auf dem Handy niemand. Gefragt wird deshalb
+     nach dem ZUSTAND des Zwischenspeichers, nicht nach dem, was der letzte
+     Lauf gemeldet hat. Antwort kommt asynchron und wird nachgetragen, genau
+     wie die Versionszeile darueber. */
+  zeilen.push('Offline-Vorrat: … (wird gefragt)');
+  try {
+    const sw = navigator.serviceWorker && navigator.serviceWorker.controller;
+    if (!sw) throw new Error('kein Service Worker steuert diese Seite');
+    const kanal = new MessageChannel();
+    /* ⚠️ Mit Zeitgrenze: antwortet der Worker nicht, muss in der Karte etwas
+       stehen. Ein Platzhalter, der ewig „wird gefragt" sagt, ist schlimmer als
+       eine ehrliche Fehlanzeige. [[ausfall_ist_unsichtbar_gebaut]] */
+    let beantwortet = false;
+    const eintragen = (text) => {
+      const kasten = document.getElementById('diagnoseText');
+      if (kasten && !kasten.classList.contains('hidden'))
+        kasten.textContent = kasten.textContent.replace('Offline-Vorrat: … (wird gefragt)', 'Offline-Vorrat: ' + text);
+    };
+    kanal.port1.onmessage = (ev) => {
+      beantwortet = true;
+      const d = ev.data || {};
+      if (d.fehler) return eintragen('— (' + d.fehler + ')');
+      eintragen(d.fehlend && d.fehlend.length
+        ? '⛔ ' + d.fehlend.length + ' von ' + d.gesamt + ' Dateien FEHLEN: ' + d.fehlend.slice(0, 6).join(', ')
+          + (d.fehlend.length > 6 ? ' …' : '')
+        : 'vollständig (' + d.gesamt + ' Dateien)');
+    };
+    sw.postMessage({ frage: 'vorrat' }, [kanal.port2]);
+    setTimeout(() => { if (!beantwortet) eintragen('— (keine Antwort vom Service Worker)'); }, 3000);
+  } catch (e){
+    const kasten = document.getElementById('diagnoseText');
+    setTimeout(() => {
+      if (kasten && !kasten.classList.contains('hidden'))
+        kasten.textContent = kasten.textContent.replace('Offline-Vorrat: … (wird gefragt)', 'Offline-Vorrat: — (' + (e && e.message) + ')');
+    }, 0);
+  }
+
   sicher('Bildschirm', () => window.innerWidth + '×' + window.innerHeight
     + ' · Gerät ' + (screen && screen.width) + '×' + (screen && screen.height)
     + ' · Pixelverhältnis ' + (window.devicePixelRatio || 1));
