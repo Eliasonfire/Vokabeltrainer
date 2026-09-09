@@ -469,6 +469,30 @@ console.log('');
 console.log('  ' + ergebnisse.length + ' Prüfer gelaufen, ' + rot.length + ' rot.');
 console.log('  (' + NUR_IM_BROWSER.join(', ') + ' läuft nur im Browser und ist nicht dabei.)');
 
+/* ⛔⛔ WANN LIEF ER ZULETZT? (09.09.2026)
+   Die Zeile darüber sagte bisher nur, DASS er nicht dabei ist. Damit wusste
+   niemand, ob er vor einer Stunde oder vor sechs Wochen lief — und ein
+   Prüfer, an den sich jemand erinnern muss, ist ein unbewachter.
+   [[routine_ohne_termin_ist_unbewacht]] [[waechter_meldet_ausgeschalteten_rechner]]
+
+   ⚠️ Das ist bewusst KEIN Rot: der Lauf braucht einen Browser, und ein Rot,
+   das man in einer Terminalsitzung nicht abstellen kann, wird nach dreimal
+   überlesen. Es ist eine Zeile, die auffällt, solange sie zutrifft.
+   Der Stempel wird von Hand geschrieben — von dem, der den Lauf gemacht hat;
+   die Anleitung dazu steht in der Datei selbst. */
+try {
+  const p = new URL('../data/oberflaeche-lauf.json', import.meta.url);
+  const s = JSON.parse(fs.readFileSync(p, 'utf8'));
+  const tage = Math.floor((Date.now() - new Date(s.gelaufen + 'T12:00:00').getTime()) / 86400000);
+  const zeile = '  └ zuletzt gelaufen: ' + s.gelaufen + ' (' + s.fassung + ') — '
+    + s.pruefungen + ' Prüfungen, ' + s.fehler + ' Fehler, ' + s.hinweise + ' Hinweise';
+  if (tage > 7) console.log(zeile + '  ⚠️ das ist ' + tage + ' Tage her.');
+  else console.log(zeile + '.');
+} catch (e) {
+  console.log('  └ ⚠️ data/oberflaeche-lauf.json fehlt oder ist unlesbar — es ist NICHT');
+  console.log('    bekannt, wann die Oberfläche zuletzt geprüft wurde.');
+}
+
 if (rot.length){
   console.log('');
   console.log('  ⚠️ ROT heißt NICHT automatisch „kaputt". Die Exitcodes sind uneinheitlich:');
