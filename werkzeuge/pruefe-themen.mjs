@@ -217,6 +217,55 @@ if (!nurReihenfolge) {
   }
 }
 
+/* ---------- ⛔ STOERTEST (09.09.2026) ----------
+
+   ⛔ Dieser Pruefer steht dauerhaft auf Exitcode 2 („Punkte fuer Elias").
+   Genau deshalb braucht er den Nachweis, dass die Zuordnung ueberhaupt
+   arbeitet: eine kaputte `muster`-Regel wuerde „0 ohne Kategorie" melden —
+   also eine gute Nachricht — und dabei nichts geprueft haben.
+   [[stoertest_muss_wirkung_nachweisen]] [[leere_liste_ist_keine_messung]]
+
+   ⚠️ Die Muster sind `RegExp` mit `test()`. Ein Muster mit `/g` wuerde sich
+   `lastIndex` merken und bei jedem zweiten Aufruf danebenliegen — auch das
+   faellt hier auf. [[regexp_g_merkt_sich_lastindex]] */
+{
+  console.log('');
+  console.log('=== Stoertest ===');
+  let stoer = 0;
+  const sProbe = (was, ist, soll) => {
+    if (ist !== soll){ stoer++; console.log('  ⛔  ' + was + ': ' + ist + ' statt ' + soll); }
+    else console.log('  ok   ' + was);
+  };
+
+  sProbe('es gibt ueberhaupt Kategorien mit Muster (>= 5)', THEMEN.length >= 5, true);
+  sProbe('es gibt ueberhaupt sichtbare Regeln (>= 20)', REGELN.filter(sichtbar).length >= 20, true);
+
+  /* Eine erfundene Regel-Id darf in KEINE Kategorie fallen. */
+  const erfunden = 'gibt-es-garantiert-nicht-xyz-99';
+  sProbe('eine erfundene Regel-Id faellt in keine Kategorie',
+    THEMEN.filter(t => t.muster.test(erfunden)).length, 0);
+
+  /* Und eine echte Id muss weiterhin treffen — sonst ordnet das Muster nichts. */
+  const echte = REGELN.filter(sichtbar).find(r => zuordnung.get(r.id).length > 0);
+  sProbe('eine echte Regel-Id trifft ihre Kategorie',
+    !!echte && THEMEN.filter(t => t.muster.test(echte.id)).length > 0, true);
+
+  /* ⛔ Zweimal dieselbe Frage muss dieselbe Antwort geben. Bei einem Muster
+     mit `/g` waere die zweite Antwort falsch. */
+  if (echte){
+    const a = THEMEN.filter(t => t.muster.test(echte.id)).map(t => t.id).join(',');
+    const b = THEMEN.filter(t => t.muster.test(echte.id)).map(t => t.id).join(',');
+    sProbe('dieselbe Frage zweimal gibt dieselbe Antwort (kein /g)', a, b);
+  }
+
+  if (stoer){
+    console.log('');
+    console.log('⛔ ' + stoer + ' Stoertest(s) gescheitert — die Zuordnung misst nicht,');
+    console.log('   und damit sind die Zahlen oben wertlos.');
+    process.exit(1);
+  }
+}
+
 /* ---------- Schluss ---------- */
 console.log('\n' + (befunde
   ? '⚠️  ' + befunde + ' Punkt(e) fuer Elias — Kandidaten, kein Urteil.'
