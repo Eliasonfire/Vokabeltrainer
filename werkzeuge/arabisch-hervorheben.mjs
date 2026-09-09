@@ -49,6 +49,8 @@ import { fileURLToPath } from 'node:url';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
+let QUELLE = '';   // der herausgeschnittene Block, wortwoertlich
+
 function schneiden(){
   const src = fs.readFileSync(path.join(REPO, 'js', 'kern.js'), 'utf8');
   const a = src.indexOf('function escapeHtml(');
@@ -65,7 +67,8 @@ function schneiden(){
   }
   if (tiefe) throw new Error('js/kern.js: die Klammern von arabischHervorheben gehen nicht auf.');
   const block = src.slice(a, ende + 1);
-  const raus = new Function(block + '; return {escapeHtml, arabischHervorheben};')();
+  QUELLE = block;
+  const raus = new Function(block + '; return {escapeHtml, arabischHervorheben, AR_LAUF};')();
 
   /* ⛔ Sofort nachsehen, ob das Herausgeschnittene auch WIRKT. Ein Schnitt, der
      eine Funktion liefert, die nichts mehr zerlegt, wäre die schlimmere Sorte
@@ -83,10 +86,85 @@ function schneiden(){
   return raus;
 }
 
-const { escapeHtml, arabischHervorheben } = schneiden();
+const { escapeHtml, arabischHervorheben, AR_LAUF } = schneiden();
+
+/* ⭐⭐ DER EINE HANDGRIFF FUER EINE GANZE ERZEUGTE SEITE.
+ *
+ * Die Alternative waere gewesen, in jedem Seitenbauer jedes `esc(x)` von Hand
+ * durchzugehen und die arabischen davon zu ersetzen. Vier Dateien, ueber
+ * fuenfzig Stellen, und bei jeder die Frage, ob sie in einem ATTRIBUT steht —
+ * dort waere ein eingesetzter <span> ein Fehler. Genau die Sorte Arbeit, bei
+ * der die fuenfzigste Stelle vergessen wird.
+ *
+ * Stattdessen einmal am Ende ueber die fertige Seite: Text ausserhalb von
+ * Tags wird verpackt, alles andere bleibt, wie es ist.
+ *
+ *   - `<script>`- und `<style>`-Bloecke werden UEBERSPRUNGEN. Dort stehen
+ *     Daten und Regeln; ein <span> darin waere Unsinn oder Schaden.
+ *   - Tag-Inneres (`<a href="…">`, `data-…="…"`) wird uebersprungen, weil die
+ *     Zerlegung nur auf den Textstuecken DAZWISCHEN laeuft.
+ *   - Kommentare bleiben unberuehrt.
+ *
+ * ⚠️ Der Text ist zu diesem Zeitpunkt bereits maskiert. Deshalb wird NICHT
+ * `arabischHervorheben()` benutzt (die maskiert selbst und wuerde `&amp;` zu
+ * `&amp;amp;` machen), sondern nur deren Muster `AR_LAUF`.
+ *
+ * ⚠️ `AR_LAUF` traegt das `g`-Flag und merkt sich damit `lastIndex`. Mit
+ * `.replace()` ist das harmlos (es setzt zurueck) — `.test()` waere es NICHT.
+ * [[regexp_g_merkt_sich_lastindex]]
+ */
+export function arabischInSeite(html, klasse = 'ar'){
+  const verpacke = (t) => t.replace(AR_LAUF,
+    (lauf) => '<span class="' + klasse + '" lang="ar">' + lauf + '</span>');
+  /* ⛔ Ein schon verpackter Lauf wird UEBERSPRUNGEN — sonst steckt beim
+     zweiten Aufruf ein Span im Span. Gefunden hat das der eigene Test
+     (test-arabisch-hervorheben.mjs, „zweimal angewandt aendert nichts mehr"):
+     in der Anwendung passiert es nie, aber ein Handgriff, der beim zweiten Mal
+     etwas anderes tut, ist eine Falle fuer den naechsten Seitenbauer.
+     ⚠️ Der uebersprungene Bereich muss VOR der allgemeinen Tag-Regel stehen —
+     sonst frisst `<[^>]*>` schon das oeffnende <span>. */
+  const TEIL = new RegExp(
+    '<span class="' + klasse + '" lang="ar">[\\s\\S]*?</span>'
+    + '|<script\\b[\\s\\S]*?</script>|<style\\b[\\s\\S]*?</style>'
+    + '|<!--[\\s\\S]*?-->|<[^>]*>', 'gi');
+  let raus = '', letzte = 0, m;
+  TEIL.lastIndex = 0;
+  while ((m = TEIL.exec(html))){
+    raus += verpacke(html.slice(letzte, m.index)) + m[0];
+    letzte = m.index + m[0].length;
+  }
+  return raus + verpacke(html.slice(letzte));
+}
 
 /* Die CSS-Zeile, die dazugehört. Sie steht HIER und nicht in jeder erzeugten
    Seite einzeln — sonst hat die nächste Seite sie wieder nicht. */
 export const BIDI_CSS = '.ar{unicode-bidi:isolate}';
+
+/* ⭐⭐ FUER SEITEN, DIE IM BROWSER ZEICHNEN.
+ *
+ * `artefakte/freigabe.html`, `regelpruefung.html` und `wartungsfragen.html`
+ * tragen ihre Daten als JSON in der Seite und bauen die Liste erst dort
+ * zusammen. Dort nuetzt eine Reparatur am Server-`esc()` nichts — die Zerlegung
+ * muss IM Browser passieren.
+ *
+ * Also wandert der herausgeschnittene Block wortwörtlich in das `<script>` der
+ * Seite. Das ist zwar eine Kopie, aber keine HANDGESCHRIEBENE: sie stammt bei
+ * jedem Bauen frisch aus `js/kern.js`. Aendert sich die Zerlegung dort, aendert
+ * sie sich beim naechsten Bauen hier mit — genau das, was einer von Hand
+ * gepflegten zweiten Fassung fehlt.
+ * [[entscheidung_gilt_fuer_das_zweite_werkzeug]]
+ *
+ * Benutzung im Generator:
+ *   <script>${BROWSER_QUELLE}
+ *     const ar = (s) => arabischHervorheben(String(s == null ? '' : s), 'ar');
+ *     …
+ *   </script>
+ *
+ * ⚠️ `escapeHtml` kommt mit — die Seite hat danach also ihre eigene Fassung.
+ * Hat sie schon eine, ist eine davon zu loeschen, sonst wirft der Browser
+ * „Identifier has already been declared" und die GANZE Seite bleibt leer.
+ * Genau so ist am 06.09.2026 js/uebung.js ausgefallen (AR_LAUF doppelt).
+ */
+export const BROWSER_QUELLE = QUELLE;
 
 export { escapeHtml, arabischHervorheben };

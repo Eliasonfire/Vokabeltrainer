@@ -11,6 +11,7 @@
  * damit unter Regel 7a (arabicroots-AGB Ziffer 9 und 3.7).
  */
 import fs from 'node:fs';
+import { arabischInSeite, BIDI_CSS } from './arabisch-hervorheben.mjs';
 
 /* ⛔ Das Datum stand FEST als "Stand 19.08.2026" in der Seite — derselbe
    Fehler wie in freigabe-artefakt.mjs, eine Datei daneben. Eine erzeugte
@@ -113,6 +114,7 @@ for (const k of kapNummern){
 
 const html = `<title>Regelprüfung Madina 1</title>
 <style>
+${BIDI_CSS}
 /* Farbraum der App selbst: --bg/--flaeche/--rand/--text/--leise aus index.html,
    dazu die fünf Grammatikfarben, die Elias in der App an den Sätzen sieht.
    Bewusst EIN Thema (OLED-Schwarz), aber alles explizit gemalt. */
@@ -639,7 +641,7 @@ der App zu sehen, weil ihr ein Beispielsatz fehlt.</p>
 </script>
 `;
 
-fs.writeFileSync(S + 'regelpruefung.html', html, 'utf8');
+fs.writeFileSync(S + 'regelpruefung.html', arabischInSeite(html), 'utf8');
 console.log('geschrieben:', Math.round(html.length / 1024), 'KB');
 console.log('Regeln:', regeln.length, '| Kapitel:', kapNummern.join(', '));
 console.log('mit Beispielsatz:', regeln.filter(r => r.satz).length);

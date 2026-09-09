@@ -358,6 +358,12 @@ const PRUEFER = [
   ['test-hifz-sync.mjs', []],  ['test-sync.mjs', []],
   ['test-sync-anzeige.mjs', []],
   ['test-wurzel.mjs', []],
+  /* ⭐ Neu am 09.09.2026: `arabischInSeite()` laeuft EINMAL ueber jede erzeugte
+     Seite und verpackt dort die arabischen Laeufe — vier Entscheidungsseiten
+     zeigten „X → Y" verkehrt herum (19 + 49 + 60 + 7 Paare). Ein Muster, das
+     ueber fertiges HTML laeuft, muss beweisen, dass es Attribute, <script> und
+     <style> in Ruhe laesst; genau das steht in diesem Test. */
+  ['test-arabisch-hervorheben.mjs', []],
   /* ⭐ VIER EICHUNGEN, die bis zum 21.08.2026 ebenfalls niemand gestartet hat.
      Sie halten Grenzfaelle fest, die teuer erkauft wurden — etwa die
      Zahlwort-Trennung, deren erster Entwurf 8 von 9 Faellen in beide
