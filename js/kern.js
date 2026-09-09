@@ -1467,6 +1467,32 @@ function vorschlaegeAbgelehntGesamt(){
   return { woerter: Object.keys(VORSCHLAG_WEG).length, ablehnungen: n };
 }
 
+/* ---------- Die Vorwarnung (09.09.2026) ----------
+
+   ⭐ Gemessen am selben Abend: von Elias' 335 aktiven Woertern hat KEINES nur
+   einen Vorschlag — aber 78 von 521 im ganzen Bestand. Alle 78 liegen in
+   Kapiteln, die noch nicht freigeschaltet sind. Sobald das naechste Kapitel
+   aufgeht, ist der Stern-Fall vorprogrammiert: er lehnt den einen ab, und es
+   bleibt nichts.
+
+   ⛔ Ein node-Pruefer kann das NICHT sehen. `vocab-data.js` kennt 171 Woerter,
+   die Buchvokabeln liegen im arabicroots-Abzug und duerfen nicht ins Repo.
+   Gemessen werden kann es nur DORT, wo die Daten sind — also hier.
+   [[werkzeug_misst_kleineren_bestand]]
+
+   ⚠️ „Knapp" heisst weniger als ZWEI. Bei genau einem gibt es keinen zweiten
+   Weg, wenn ihm der erste nicht taugt — und der Knopf verspricht dann auch
+   keinen Ersatz mehr (siehe zeigeVorschlag() in js/lernen.js). */
+function vorschlaegeKnapp(){
+  const raus = [];
+  const woerter = (typeof bekannteVokabeln === 'function') ? bekannteVokabeln() : [];
+  for (const w of woerter){
+    const n = (typeof vorschlagsListe === 'function') ? vorschlagsListe(w).length : 2;
+    if (n < 2) raus.push({ id: w.id, ar: w.ar, de: w.de, anzahl: n });
+  }
+  return raus;
+}
+
 /* Fortschritt initialisieren: Startbox aus Arabic-Roots-Daten importieren.
    WICHTIG: Laeuft NICHT nur beim allerersten Start. Frueher stieg die Funktion bei
    vorhandenem Speicherstand sofort aus - Vokabeln, die spaeter zu VOCAB_DATA
