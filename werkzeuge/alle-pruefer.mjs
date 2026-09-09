@@ -218,6 +218,13 @@ const PRUEFER = [
      gemeinsamer Sammelschluessel waere bequem und genau der Fehler, der
      spaeter fremde Lernstaende vermischt." Genau das faellt jetzt auf. */
   ['werkzeuge/pruefe-stand-api.mjs', []],
+  /* ⛔⛔ Neu am 09.09.2026 und mit den groessten Folgen von allen: die
+     Sperrliste in veroeffentlichen.mjs haelt die Transkripte (268 MB), den
+     Vokabelabzug und das Arbeitsmaterial aus der Auslieferung heraus — AGB
+     3.7 und 9. Ein Tippfehler in einem der dreizehn Ausdruecke sperrt still
+     nicht mehr, und die Seite sieht genauso aus wie vorher. Geprueft wird die
+     WIRKUNG auf die Pfade, die wirklich im Ordner liegen. [[daten_ohne_zugang]] */
+  ['werkzeuge/pruefe-auslieferliste.mjs', []],
   /* ⭐⭐ Neu am 09.09.2026, die Schwesterpruefung zu pruefe-abgleich.mjs: dort
      zwei GERAETE, hier zwei ZEITPUNKTE. In js/einstellungen.js stand zweimal
      derselbe Satz („wer eine Sicherung einspielte, verlor X lautlos") — und
