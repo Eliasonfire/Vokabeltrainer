@@ -13,6 +13,8 @@
  */
 import fs from 'node:fs';
 import vm from 'node:vm';
+import { ohneKommentareUndTexte } from './werkzeuge/js-quelltext.mjs';
+const nurCode = (t) => ohneKommentareUndTexte(String(t), { texte: false });
 
 let ok = 0, schlecht = 0;
 function pruefe(was, bedingung, zusatz){
@@ -208,7 +210,11 @@ console.log('\n4. Was das Mini-Spiel hergibt');
 /* ---------- 5. Nichts wird in den Lernstand geschrieben ---------- */
 console.log('\n5. Der Wurzelmodus fasst den Lernstand nicht an');
 {
-  const quelle = fs.readFileSync(new URL('./js/wurzel.js', import.meta.url), 'utf8');
+  /* ⛔ Kommentarfrei. Hier sind die Zusicherungen VERNEINEND („kein
+     saveProgress") — ein Kommentar, der das Wort nennt, haette also einen
+     FEHLALARM ausgeloest statt eines stillen Durchwinkens. Falsch ist beides.
+     [[stichworttreffer_im_kommentar]] */
+  const quelle = nurCode(fs.readFileSync(new URL('./js/wurzel.js', import.meta.url), 'utf8'));
   pruefe('kein saveProgress()', quelle.indexOf('saveProgress') < 0);
   pruefe('kein Schreiben in PROGRESS', !/PROGRESS\s*\[[^\]]*\]\s*=/.test(quelle));
   pruefe('kein LS.set', quelle.indexOf('LS.set') < 0);
