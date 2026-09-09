@@ -25,9 +25,27 @@
  *
  * Danach steht der Bericht in der Konsole.
  *
+ * ⭐⭐ NACHTRAG 09.09.2026: DIE VORSCHAU AUS `.claude/launch.json` LIEFERT IHN
+ *    AUS. Dort steht `npx serve -l 5177 "G:/1. Workspace/Vokabeltrainer"` —
+ *    also der GANZE Ordner. Gemessen an diesem Morgen:
+ *      fetch('pruefe-oberflaeche.js') → 200, 49 KB
+ *    Der Absatz darunter galt einer anderen Vorschau (der aus `.deploy/`) und
+ *    hat seitdem jeden davon abgehalten, es ueberhaupt zu versuchen.
+ *    [[begrenzung_haelt_messung_nicht_stand]]
+ *
+ * ⭐ Und der Bericht muss NICHT durchs Kontextfenster: `console.*` vorher
+ *    umlenken, hinterher nur die Zeilen lesen, die nicht "ok" sind. Der ganze
+ *    Lauf kostete so ein paar hundert Token statt 805 Zeilen.
+ *    Ergebnis am 09.09.2026: 38 Pruefungen, KEIN Fehler, 4 Hinweise (drei
+ *    davon nur "dieser Lauf hat den Schluessel beruehrt und zurueckgeschrieben").
+ *
+ * ⚠️ Vorher den `localStorage` der Vorschau sichern — er schreibt in
+ *    `vt_progress` und `vt_regelStand`. `sessionStorage` ueberlebt das
+ *    Neuladen und ist ein anderer Speicher.
+ *
  * ⛔ DAS GEHT NUR AN EINEM SERVER, DER DEN GANZEN ORDNER AUSLIEFERT
- *    (06.09.2026 gemessen). Die Vorschau, mit der hier gearbeitet wird,
- *    liefert nur die Weissliste aus — also genau das, was auch
+ *    (06.09.2026 gemessen). Die Vorschau, mit der DAMALS gearbeitet wurde,
+ *    lieferte nur die Weissliste aus — also genau das, was auch
  *    veroeffentlicht wird. Gegenprobe aus der laufenden Seite heraus:
  *      /js/uebung.js            200 ok
  *      /grammar-data.js         200 ok
