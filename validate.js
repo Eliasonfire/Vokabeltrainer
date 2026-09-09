@@ -1292,6 +1292,51 @@ try {
   fail(`manifest.json ist kein gültiges JSON: ${e.message}`);
 }
 
+/* ---------- 8b. Der KOPF von index.html: vier Zeilen, die alles tragen ------
+ *
+ * ⛔⛔ Am 09.09.2026 kam heraus, dass `<meta name="darkreader-lock">` seit dem
+ * 08.09. dasteht und KEIN Pruefer sie je angesehen hat. Danach dieselbe Frage
+ * an den restlichen Kopf gestellt: von neun Angaben dort waren SIEBEN von
+ * keinem Werkzeug erwaehnt. Vier davon tragen etwas, das ohne sie lautlos
+ * kaputtgeht — und keine davon meldet sich, wenn sie fehlt:
+ *
+ *   charset=UTF-8      ohne sie wird aus jedem arabischen Wort Buchstabensalat
+ *   dir="ltr"          kippt das auf "rtl", spiegelt sich die GANZE Oberflaeche
+ *                      — und genau das ist die Richtungsfrage dieses Tages
+ *   viewport           ohne sie ist die App am Handy unbrauchbar klein
+ *   rel="manifest"     ohne sie laesst sie sich nicht mehr als App ablegen
+ *
+ * ⚠️ `apple-touch-icon` und `description` stehen bewusst NICHT hier: das eine
+ * gilt fuer iOS (er hat ein Samsung), das andere fuer Suchmaschinen (die Seite
+ * liegt hinter einem Login). Eine Pruefung, die alles einsammelt, was dasteht,
+ * meldet spaeter Dinge, die niemanden stoeren. [[kandidatenliste_ist_keine_fehlerliste]]
+ *
+ * ⚠️ Ohne HTML-Kommentare gesucht — ein auskommentiertes Meta ist wirkungslos,
+ * steht aber im Rohtext. [[stichworttreffer_im_kommentar]] */
+try {
+  const kopf = fs.readFileSync(path.join(DIR, 'index.html'), 'utf8')
+    .slice(0, 8000).replace(/<!--[\s\S]*?-->/g, ' ');
+  const KOPF_PFLICHT = [
+    [/<meta[^>]*charset\s*=\s*["']?utf-8/i, 'charset=UTF-8', 'arabische Schrift wird zu Buchstabensalat'],
+    [/<html[^>]*\bdir\s*=\s*["']ltr["']/i, 'dir="ltr" am <html>', 'die ganze Oberflaeche spiegelt sich'],
+    [/<meta[^>]*name=["']viewport["']/i, 'viewport', 'am Handy unbrauchbar klein'],
+    [/<link[^>]*rel=["']manifest["']/i, 'rel="manifest"', 'nicht mehr als App ablegbar'],
+  ];
+  let fehltImKopf = 0;
+  for (const [re, was, folge] of KOPF_PFLICHT)
+    if (!re.test(kopf)){ fehltImKopf++; fail(`index.html: ${was} fehlt im Kopf — ${folge}.`); }
+  /* ⛔ Gegenprobe: kann diese Pruefung ueberhaupt rot werden? Ohne sie waere
+     „alles da" auch dann gruen, wenn ein Muster nie passt.
+     [[stoertest_muss_wirkung_nachweisen]] */
+  const leer = '<html><head></head>';
+  const trifftNichts = KOPF_PFLICHT.filter(([re]) => re.test(leer)).length;
+  if (trifftNichts) fail(`validate.js: ${trifftNichts} Kopf-Muster passen auf einen leeren Kopf — sie pruefen nichts.`);
+  if (!fehltImKopf && !trifftNichts)
+    note(`index.html: alle ${KOPF_PFLICHT.length} tragenden Kopfzeilen da (charset, dir, viewport, manifest).`);
+} catch (e) {
+  fail(`index.html nicht lesbar: ${e.message}`);
+}
+
 /* ---------- 9. Wortfelder ----------
    Bewusst nur ein HINWEIS und niemals ein Fehler: ein frischer Abzug von
    arabicroots bringt zwangslaeufig Woerter mit, fuer die noch kein deutsches
