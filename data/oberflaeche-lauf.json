@@ -1,14 +1,16 @@
 {
   "_hinweis": "Wann lief pruefe-oberflaeche.js zuletzt? Er braucht ein DOM und die geladene App und kann deshalb nicht im Sammellauf mitlaufen. Ohne diesen Stempel weiss niemand, ob er seit Wochen nicht mehr lief - und ein Pruefer, an den sich jemand erinnern muss, ist ein unbewachter. [[routine_ohne_termin_ist_unbewacht]]",
   "_wie": "App im Vorschaubrowser oeffnen (preview_start vokabeltrainer), ZUERST die Frischeprobe (caches.keys() muss die Fassung aus sw.js nennen), dann in der Konsole: alle console.* einsammeln, fetch('pruefe-oberflaeche.js').then(r=>r.text()).then(eval), und nur die Zeilen lesen, die nicht 'ok' sind. Der Bericht kommt als console.table - das Umlenken muss console.table mitnehmen, sonst zaehlt man 2 Zeilen statt 41.",
+  "_wie_2": "⛔ Der Lauf ist eine ASYNCHRONE IIFE. `then(eval)` gibt ein Promise zurueck - wer nicht AWAITET, stellt console.* zurueck, bevor die erste Zeile faellt, und bekommt EINEN LEEREN Bericht ohne jede Fehlermeldung. Am 09.09.2026 sah das aus wie 'nichts zu melden'. Also: `await (0, eval)(text)` und den Rueckgabewert lesen (`{fehler, ergebnis}`), nicht die eingesammelten Zeilen. Die Felder heissen `status`/`was`/`zusatz`, nicht `name`/`info`. [[leere_liste_ist_keine_messung]]",
   "gelaufen": "2026-09-09",
-  "fassung": "vokabeltrainer-v458",
-  "pruefungen": 42,
+  "fassung": "vokabeltrainer-v459",
+  "pruefungen": 43,
   "fehler": 0,
   "hinweise": 4,
   "hinweis_inhalt": [
     "Selbst angelegte Woerter nicht im Speicher: 14 Kennungen mit p_-Praefix haben Satz und Markierung, aber kein Wort (sie liegen in vt_personalVocab). Auf einem Geraet ohne diesen Speicher bleiben die Markierungen unsichtbar - ein zweiter Lauf aendert daran nichts.",
     "vt_progress, vt_uebungstage, vt_quoteTage wurden vom Lauf beruehrt und zurueckgeschrieben"
   ],
-  "_laeufe_heute": "v451 09:55 · v454 10:53 · v456 11:18 · v458 12:05 (jetzt 42 Pruefungen: die Bidi-Probe ist dazugekommen)"
+  "_laeufe_heute": "v451 09:55 · v454 10:53 · v456 11:18 · v458 12:05 · v459 12:29 (jetzt 43 Pruefungen: der Aufklapper wird am ECHTEN Weg gemessen, nicht am Nachbau)",
+  "_belegt": "Die neue Probe ist rot gewesen, bevor sie gruen war: mit der zurueckgedrehten Zeile in js/saetze.js meldete sie 'der Knopf zeigt ... ohne verpackte Laeufe (0 Span(s))', mit der reparierten '2 Laeufe bei 33, 65'. Dieselbe Stelle, gemessene Umkehr. [[stoertest_muss_wirkung_nachweisen]]"
 }
