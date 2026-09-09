@@ -51,6 +51,20 @@ pruefe('Division bleibt Division', leereCatch('const q = a / b; try{c()}catch(e)
 const mitApostroph = "const s = 'it\\'s';\ntry { a(); } catch (e){ }";
 pruefe('maskiertes Anfuehrungszeichen beendet die Kette nicht', leereCatch(mitApostroph), [2]);
 
+/* ---- Seite 4: VERSCHACHTELTE Template-Literale (09.09.2026) ----
+   ⛔ Der Fehler, der vier Pruefer still zu wenig messen liess. Die alte
+   Fassung suchte den naechsten Backtick — und der gehoerte zur INNEREN
+   Zeichenkette. Ab da war alles vertauscht. */
+const verschachtelt = 'const h = `<a>${ liste.map(x => `<b>${x}</b>`).join("") }</a>`;\ntry { a(); } catch (e){ }';
+pruefe('verschachteltes Template: das catch danach wird gefunden', leereCatch(verschachtelt), [2]);
+pruefe('verschachteltes Template: der Kommentar danach verschwindet',
+  ohneKommentareUndTexte(verschachtelt + '\n/* weg */ const z = 1;').includes('weg'), false);
+const mitKommentarDanach = 'const h = `${ f(`x`) }`;\n/* dieser Kommentar muss weg */\nconst a = 1;';
+pruefe('nach zwei Ebenen ist der Faden noch da',
+  /Kommentar/.test(ohneKommentareUndTexte(mitKommentarDanach)), false);
+pruefe('der Code nach dem Template bleibt stehen',
+  /const a = 1;/.test(ohneKommentareUndTexte(mitKommentarDanach)), true);
+
 /* Zeilennummern muessen erhalten bleiben — sonst ist ein Befund nicht auffindbar. */
 const lang = 'a\nb\nc\n/* weg */\ntry{a()}catch(e){}';
 pruefe('Zeilennummern verschieben sich nicht', leereCatch(lang), [5]);
