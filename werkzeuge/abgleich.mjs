@@ -73,8 +73,21 @@ const SCHWELLE = 0.45;
 const glatt = t => t.toLowerCase()
   .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss')
   .replace(/dsch/g, 'j').replace(/sch/g, 'sh').replace(/['`´']/g, '');
+/* ⛔ Ein LEERER Stempel ergab bis zum 09.09.2026 die Zahl 0 statt null:
+   ''.split(':') ist [''], Number('') ist 0, und isNaN(0) ist falsch.
+   regelbelege() unten prueft ausdruecklich auf null („s == null ? null :
+   belegtext(…)") — diese Zeile hat den Schutz umgangen und den Beleg am
+   ANFANG der Folge gesucht statt gar keinen zu liefern. Ein Belegtext aus
+   der Begruessung sieht aus wie ein Beleg. [[ausfall_ist_unsichtbar_gebaut]]
+
+   ⚠️ Dieselbe Zeile stand in VIER Dateien: pruefe-sprecher.js,
+   pruefe-transkripte.js, werkzeuge/kandidaten.mjs und hier.
+   werkzeuge/pruefe-zeitmarken.mjs bewacht sie jetzt alle.
+   [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
 const zeitS = s => {
-  const t = String(s || '').trim().split(':').map(Number);
+  const roh = String(s == null ? '' : s).trim();
+  if (!roh) return null;
+  const t = roh.split(':').map(Number);
   return (!t.length || t.some(isNaN)) ? null : t.reduce((a, b) => a * 60 + b, 0);
 };
 const mmss = s => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`;
