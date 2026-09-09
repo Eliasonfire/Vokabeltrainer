@@ -123,12 +123,39 @@ for (const n of namen) {
     const kurz  = kappen(viele);
     const wenig = kappen(['  a', '  b']);
     const leer  = kappen([]);
+    /* ⛔ DREI LUECKEN, gefunden am 09.09.2026 — und zwar dadurch, dass ich aus
+       Versehen einen ZWEITEN Test fuer dieselbe Funktion gebaut habe. Der
+       Sammellauf zeigte beide nebeneinander, und beim Vergleich blieb genau
+       das uebrig, was hier fehlte. Der zweite Test ist wieder weg; seine drei
+       zusaetzlichen Faelle stehen jetzt hier.
+       [[werkzeug_ohne_aufrufer]] [[mein_neues_werkzeug_ist_verdaechtig]]
+
+       (1) Die UEBERGEBENE Liste darf nicht veraendert werden — `slice` statt
+           `splice`. Der Aufrufer zeigt dieselbe Liste auch anderswo; waere sie
+           hinterher gekuerzt, fiele das erst an der zweiten Anzeige auf, und
+           dort sieht es nach einem anderen Fehler aus.
+       (2) `null`/`undefined` duerfen die Karte nicht kippen. Sie ist das
+           Werkzeug fuer den Fall, dass etwas kaputt ist — sie muss gerade dann
+           halten. [[localstorage_kann_werfen]]
+       (3) Ein eigener Deckel als zweites Argument muss beachtet werden, sonst
+           ist der Parameter Zierde. */
+    const eingabe = Array.from({ length: 20 }, (_, i) => '  E' + i);
+    kappen(eingabe);
+    let haeltNull = true, haeltUndef = true;
+    try { haeltNull = kappen(null).length === 0; } catch (e){ haeltNull = false; }
+    try { haeltUndef = kappen(undefined).length === 0; } catch (e){ haeltUndef = false; }
+    const eigenerDeckel = kappen(['  a', '  b', '  c', '  d', '  e'], 2);
     const proben = [
       ['30 Eintraege werden gekappt',        kurz.length <= 8],
       ['und die Restzahl steht dabei',       /und 24 weitere/.test(kurz.join('\n'))],
       ['die neuesten bleiben stehen',        kurz[0] === '  Fehler 0'],
       ['wenige bleiben unveraendert',        wenig.length === 2 && wenig[1] === '  b'],
       ['leer bleibt leer',                   leer.length === 0],
+      ['die uebergebene Liste bleibt unveraendert', eingabe.length === 20],
+      ['null kippt die Karte nicht',         haeltNull],
+      ['undefined kippt die Karte nicht',    haeltUndef],
+      ['ein eigener Deckel wird beachtet',
+        eigenerDeckel.length === 3 && /und 3 weitere/.test(eigenerDeckel[2])],
     ];
     for (const [was, ok] of proben){
       if (!ok) zuLang++;
