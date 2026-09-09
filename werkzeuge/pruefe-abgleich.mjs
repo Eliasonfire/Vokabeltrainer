@@ -30,6 +30,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { ohneKommentareUndTexte } from './js-quelltext.mjs';
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.resolve(HIER, '..');
@@ -37,7 +38,18 @@ let fehler = 0;
 const sag = (ok, text) => { if (!ok) fehler++; console.log('  ' + (ok ? 'ok  ' : '⛔  ') + text); };
 
 /* ---------- Was der Abgleich kennt ---------- */
-const SYNC = fs.readFileSync(path.join(REPO, 'js', 'sync.js'), 'utf8');
+/* ⛔ OHNE KOMMENTARE. Vier Zusicherungen weiter unten behaupten „dieses Stueck
+   steht im Quelltext" — und js/sync.js ist voller Kommentare, die genau solche
+   Stuecke ZITIEREN. Eine geloeschte Schreibbremse waere unbemerkt geblieben,
+   weil die Begruendung darueber sie weiterhin nennt. Nachgemessen: heute
+   treffen alle vier auch kommentarfrei, sie waren also nicht falsch, sondern
+   falsch ERFUELLBAR — dieselbe Lage wie in validate.js an diesem Tag.
+   ⚠️ `texte: false`: SYNC_SCHLUESSEL und der Anker 'visibilitychange' sind
+   String-Literale und muessen stehen bleiben. Die Laenge bleibt gleich, alle
+   `indexOf`/`slice` weiter unten passen also weiter.
+   [[stichworttreffer_im_kommentar]] */
+const SYNC = ohneKommentareUndTexte(
+  fs.readFileSync(path.join(REPO, 'js', 'sync.js'), 'utf8'), { texte: false });
 const block = SYNC.match(/const SYNC_SCHLUESSEL = \[([\s\S]*?)\n\];/);
 if (!block) { console.error('⛔ SYNC_SCHLUESSEL nicht gefunden — hat sync.js einen neuen Aufbau?'); process.exit(1); }
 const imAbgleich = new Set([...block[1].matchAll(/['"`](vt_[A-Za-z0-9_]+)['"`]/g)].map(m => m[1]));
