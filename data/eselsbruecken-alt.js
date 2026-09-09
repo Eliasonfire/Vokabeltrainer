@@ -2179,12 +2179,12 @@ const ESELSBRUECKEN_ALT = {
     '⭐ Die Form heißt مَفَاعِل: das مَ bleibt vorn, dahinter kommt ein ا, und vor dem Schluss steht ein Kasra — مِرْوَحَةٌ → مَرَاوِحُ. Genauso مَسْجِدٌ → مَسَاجِدُ und مَكْتَبٌ → مَكَاتِبُ (6 Wörter bei dir, dazu 3 mit einem ي mehr). ⚠️ Sieh dir das ENDE an: مَرَاوِحُ trägt ein einfaches Damma, KEIN Tanwin. Diese Pluralform ist مَمْنُوع مِنَ الصَّرْف — sie bekommt nie ein ـٌ.'
   ],
   '45756#pl': [   /* مِفْتَاحٌ → مَفَاتِيحُ */
-    '⭐ Die Form heißt مَفَاعِيل: das مَ bleibt vorn, dahinter kommt ein ا, und vor dem Schluss steht ein Kasra — مِفْتَاحٌ → مَفَاتِيحُ. Genauso مِنْدِيلٌ → مَنَادِيلُ und مِرْحَاضٌ → مَرَاحِيضُ (3 Wörter bei dir, dazu 6 mit einem ي mehr). ⚠️ Sieh dir das ENDE an: مَفَاتِيحُ trägt ein einfaches Damma, KEIN Tanwin. Diese Pluralform ist مَمْنُوع مِنَ الصَّرْف — sie bekommt nie ein ـٌ.'
+    '⭐ Die Form heißt مَفَاعِيل: das مَ bleibt vorn, dahinter kommt ein ا, und vor dem Schluss steht ein Kasra — مِفْتَاحٌ → مَفَاتِيحُ. Genauso مِنْدِيلٌ → مَنَادِيلُ und مِرْحَاضٌ → مَرَاحِيضُ (3 Wörter bei dir; die anderen 6 dieser Art haben ein ي weniger). ⚠️ Sieh dir das ENDE an: مَفَاتِيحُ trägt ein einfaches Damma, KEIN Tanwin. Diese Pluralform ist مَمْنُوع مِنَ الصَّرْف — sie bekommt nie ein ـٌ.'
   ],
   '45773#pl': [   /* مِنْدِيلٌ → مَنَادِيلُ */
-    '⭐ Die Form heißt مَفَاعِيل: das مَ bleibt vorn, dahinter kommt ein ا, und vor dem Schluss steht ein Kasra — مِنْدِيلٌ → مَنَادِيلُ. Genauso مِرْحَاضٌ → مَرَاحِيضُ und مِفْتَاحٌ → مَفَاتِيحُ (3 Wörter bei dir, dazu 6 mit einem ي mehr). ⚠️ Sieh dir das ENDE an: مَنَادِيلُ trägt ein einfaches Damma, KEIN Tanwin. Diese Pluralform ist مَمْنُوع مِنَ الصَّرْف — sie bekommt nie ein ـٌ.'
+    '⭐ Die Form heißt مَفَاعِيل: das مَ bleibt vorn, dahinter kommt ein ا, und vor dem Schluss steht ein Kasra — مِنْدِيلٌ → مَنَادِيلُ. Genauso مِرْحَاضٌ → مَرَاحِيضُ und مِفْتَاحٌ → مَفَاتِيحُ (3 Wörter bei dir; die anderen 6 dieser Art haben ein ي weniger). ⚠️ Sieh dir das ENDE an: مَنَادِيلُ trägt ein einfaches Damma, KEIN Tanwin. Diese Pluralform ist مَمْنُوع مِنَ الصَّرْف — sie bekommt nie ein ـٌ.'
   ],
   '45826#pl': [   /* مِرْحَاضٌ → مَرَاحِيضُ */
-    '⭐ Die Form heißt مَفَاعِيل: das مَ bleibt vorn, dahinter kommt ein ا, und vor dem Schluss steht ein Kasra — مِرْحَاضٌ → مَرَاحِيضُ. Genauso مِفْتَاحٌ → مَفَاتِيحُ und مِنْدِيلٌ → مَنَادِيلُ (3 Wörter bei dir, dazu 6 mit einem ي mehr). ⚠️ Sieh dir das ENDE an: مَرَاحِيضُ trägt ein einfaches Damma, KEIN Tanwin. Diese Pluralform ist مَمْنُوع مِنَ الصَّرْف — sie bekommt nie ein ـٌ.'
+    '⭐ Die Form heißt مَفَاعِيل: das مَ bleibt vorn, dahinter kommt ein ا, und vor dem Schluss steht ein Kasra — مِرْحَاضٌ → مَرَاحِيضُ. Genauso مِفْتَاحٌ → مَفَاتِيحُ und مِنْدِيلٌ → مَنَادِيلُ (3 Wörter bei dir; die anderen 6 dieser Art haben ein ي weniger). ⚠️ Sieh dir das ENDE an: مَرَاحِيضُ trägt ein einfaches Damma, KEIN Tanwin. Diese Pluralform ist مَمْنُوع مِنَ الصَّرْف — sie bekommt nie ein ـٌ.'
   ],
 };
