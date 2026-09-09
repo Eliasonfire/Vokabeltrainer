@@ -171,6 +171,14 @@ const PRUEFER = [
      Lernzeit. Der Rundlauf laeuft mit der ECHTEN baueSicherung().
      [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
   ['werkzeuge/pruefe-sicherung.mjs', []],
+  /* ⭐ Neu am 09.09.2026 (Punkt 4 der Warteschlange). Er hat drei Anlaeufe
+     gebraucht, und jeder Fehler war lehrreich: durch die Shell geschrieben
+     verlor das `\b` seine Bedeutung (0 Befunde statt 2); im kommentarfreien
+     Text gesucht sahen 25 Funktionen tot aus, weil ihre Aufrufe in einem
+     `onclick="…"` stehen — also in einer Zeichenkette; und fuenf benannte
+     IIFEs brauchen ueberhaupt keinen Aufrufer. Uebrig bleibt genau EINE,
+     und die wartet auf Elias. [[mein_neues_werkzeug_ist_verdaechtig]] */
+  ['werkzeuge/funktionen-ohne-aufrufer.mjs', []],
   /* ⛔ Ohne diese Zeile haette pruefe-muster.mjs keinen Aufrufer und liefe nie.
      Genau der Fehler, den es selbst sucht, in seiner allgemeinen Form: gebaut,
      gepusht, ausgeliefert — und nie gestartet. [[werkzeug_ohne_aufrufer]] */
