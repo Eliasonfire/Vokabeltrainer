@@ -1327,6 +1327,56 @@ try {
   fail(`manifest.json ist kein gültiges JSON: ${e.message}`);
 }
 
+/* ---------- 7b. DER TAGESBEGRIFF KOMMT AUS EINER HAND -----------------------
+ *
+ * ⛔⛔ `todayStr()` in js/kern.js ist der Tagesbegriff der GANZEN App: Leitner-
+ * Fälligkeit, Serie, Übungskalender, Tagesquote, drei Tagesziele, Feiern,
+ * Zeitmessung — 32 Stellen hängen daran. Der Tag beginnt dort um **8 Uhr**,
+ * und zwar aus einem Grund: Elias schläft von 6 bis 13/14 Uhr, um 8 wechselt
+ * der Tag also mitten im Schlaf. Bei Mitternacht spränge ihm das Tagesziel
+ * regelmäßig mitten in der Abendsitzung um. [[tagesbegriff_der_app_ist_utc]]
+ *
+ * Wer irgendwo sonst ein frisches „heute" baut — `new Date().toISOString()
+ * .slice(0,10)` oder `toDateString()` —, bekommt den MITTERNACHTS-Tag zurück.
+ * Das sieht identisch aus und ist acht Stunden verschoben; auffallen würde es
+ * nur an einem Zähler, der nachts umspringt.
+ *
+ * ⚠️ EINE Ausnahme, und sie ist keine Nachlässigkeit: der Tageszähler der
+ * KV-Schreibvorgänge in js/sync.js zählt gegen Cloudflares Kontingent, und das
+ * läuft nach UTC. Dort wäre der 8-Uhr-Tag falsch. Sie steht namentlich unten.
+ */
+const fehlerVorherTag = errors.length;
+try {
+  const AUSNAHME = {
+    'sync.js': 'Tageszaehler der KV-Schreibvorgaenge — er zaehlt gegen Cloudflares '
+      + 'Kontingent, und das laeuft nach UTC. Der 8-Uhr-Tag waere hier falsch.',
+  };
+  const FRISCH = /new Date\(\s*\)\s*\.(?:toISOString\(\)\s*\.slice\(\s*0\s*,\s*10\s*\)|toDateString\(\))/;
+  let gefunden = 0;
+  for (const datei of fs.readdirSync(path.join(DIR, 'js')).filter(f => f.endsWith('.js'))){
+    const roh = fs.readFileSync(path.join(DIR, 'js', datei), 'utf8');
+    const ohneKomm = roh.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:])\/\/.*$/gm, '$1');
+    ohneKomm.split('\n').forEach((z, i) => {
+      if (!FRISCH.test(z)) return;
+      gefunden++;
+      if (AUSNAHME[datei]) return;
+      fail(`js/${datei}:${i + 1} baut ein eigenes „heute" statt todayStr() — das waere der `
+        + `Mitternachts-Tag, acht Stunden neben dem Tagesbegriff der App.`);
+    });
+  }
+  /* Gegenprobe: das Muster muss ueberhaupt etwas finden koennen — sonst waere
+     „keine Stelle" nur die Aussage, dass die Suche nicht laeuft. */
+  if (!FRISCH.test("const heute = new Date().toISOString().slice(0, 10);"))
+    fail('validate.js: das Muster fuer den Tagesbegriff trifft nicht einmal das eigene Beispiel.');
+  if (FRISCH.test('const x = todayStr();'))
+    fail('validate.js: das Muster fuer den Tagesbegriff trifft zu viel.');
+  if (errors.length === fehlerVorherTag)
+    note(`Tagesbegriff: ${gefunden} eigene „heute"-Berechnung(en), alle benannt ausgenommen `
+      + `(${Object.keys(AUSNAHME).join(', ')}).`);
+} catch (e) {
+  fail(`Tagesbegriff nicht pruefbar: ${e.message}`);
+}
+
 /* ---------- 7c. DIE LEISTE UND IHRE TABELLE MUESSEN ZUSAMMENPASSEN ---------
  *
  * ⛔⛔ Der Kommentar ueber `navMap` in js/navigation.js sagt es selbst: „Steht
