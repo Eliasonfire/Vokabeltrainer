@@ -48,16 +48,25 @@ if (!fs.existsSync(WHISPER) && !fs.existsSync(YOUTUBE)) {
 const { GRAMMAR_RULES } = (new Function(
   fs.readFileSync(path.join(REPO, 'grammar-data.js'), 'utf8') + ';return {GRAMMAR_RULES};'))();
 
+/* ⛔ Ein LEERER Stempel ergab bis zum 09.09.2026 die Zahl 0 statt null:
+   ''.split(':') ist [''], Number('') ist 0, und isNaN(0) ist falsch. Die Regel
+   waere damit nicht als „kein Zeitstempel" behandelt, sondern am ANFANG der
+   Folge gesucht worden — und dort steht sie natuerlich nicht, also haette sie
+   als unbelegt gegolten. Dieselbe Stelle stand in pruefe-sprecher.js.
+   [[ausfall_ist_unsichtbar_gebaut]] [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
 function sekunden(stempel) {
-  const teile = String(stempel || '').trim().split(':').map(Number);
+  const roh = String(stempel == null ? '' : stempel).trim();
+  if (!roh) return null;
+  const teile = roh.split(':').map(Number);
   if (teile.some(isNaN) || !teile.length) return null;
   return teile.reduce((a, b) => a * 60 + b, 0);
 }
 
-/* ---------- Whisper-SRT ---------- */
-function ladeSrt(datei) {
-  if (!fs.existsSync(datei)) return null;
-  const bloecke = fs.readFileSync(datei, 'utf8').split(/\r?\n\r?\n/);
+/* ---------- Whisper-SRT ----------
+   ⭐ Das Lesen ist vom Dateizugriff getrennt, damit der Stoertest unten DIESE
+   Zerlegung prueft und nicht eine nachgebaute. [[testvorlage_selbst_nachgebaut]] */
+function srtLesen(text) {
+  const bloecke = text.split(/\r?\n\r?\n/);
   const out = [];
   for (const b of bloecke) {
     const z = b.split(/\r?\n/).filter(Boolean);
@@ -72,11 +81,14 @@ function ladeSrt(datei) {
   }
   return out;
 }
+function ladeSrt(datei) {
+  if (!fs.existsSync(datei)) return null;
+  return srtLesen(fs.readFileSync(datei, 'utf8'));
+}
 
 /* ---------- YouTube-Rohtranskript ("0:09 Text") ---------- */
-function ladeYoutube(datei) {
-  if (!fs.existsSync(datei)) return null;
-  const zeilen = fs.readFileSync(datei, 'utf8').split(/\r?\n/);
+function youtubeLesen(text) {
+  const zeilen = text.split(/\r?\n/);
   const out = [];
   for (const z of zeilen) {
     const m = z.match(/^(\d+):(\d+)(?::(\d+))?\s+(.*)$/);
@@ -87,6 +99,10 @@ function ladeYoutube(datei) {
     out.push({ von: sek, bis: sek + 8, text: m[4].trim() });
   }
   return out;
+}
+function ladeYoutube(datei) {
+  if (!fs.existsSync(datei)) return null;
+  return youtubeLesen(fs.readFileSync(datei, 'utf8'));
 }
 
 function segmenteImFenster(spur, mitte, weite = FENSTER) {
@@ -272,6 +288,125 @@ function ladeSprecher() {
   return map;
 }
 const lehrerAnteil = ladeSprecher();
+
+/* ---------- ⛔ STOERTEST (09.09.2026) ----------
+ *
+ * ⛔ Auch dieses Skript hat kein Exitcode-Gate (siehe Kopf) — es sortiert
+ * Regeln in Faecher. Eine Fassung, die falsch sucht, sortiert sie nur anders,
+ * und keine Zeile sieht danach falsch aus.
+ *
+ * ⭐⭐ Und die gefaehrliche Richtung ist die LEISE: `lautMuster()` ist
+ * absichtlich grosszuegig. Wird es zu grosszuegig, trifft es in deutschem
+ * Fliesstext ueberall — dann wandern Regeln aus „keine von beiden" nach
+ * „belastbar", die Liste zum Nachhoeren wird kuerzer, und der Bericht sieht
+ * besser aus als vorher. Genau das kann niemand am Ergebnis erkennen.
+ * [[milder_bezugspunkt_verdeckt_mangel]] [[stoertest_muss_wirkung_nachweisen]]
+ *
+ * ⭐ Die Beispiele unten sind keine erfundenen: es sind die Faelle, an denen
+ * das Muster nachweislich schon einmal gescheitert ist und die weiter oben im
+ * Quelltext einzeln begruendet stehen — Rabbi (Schadda), Li Muhammadin
+ * (angehaengtes Ein-Buchstaben-Wort), El-Baytu (Bindestrich), Marfu'
+ * (Apostroph). Jede dieser Zeilen hat einmal eine Regel faelschlich als
+ * unbelegt gemeldet.
+ *
+ * ⚠️ Der deutsche Kontrolltext ist SELBST GESCHRIEBEN, nicht aus den
+ * Transkripten kopiert — Kursmaterial gehoert nicht ins Repo (AGB 3.7/9).
+ * [[stichworttreffer_ist_kein_inhaltstreffer]] */
+console.log('=== Stoertest ===');
+let stoer = 0;
+const sProbe = (was, ist, soll) => {
+  if (ist !== soll) { stoer++; console.log('  ⛔  ' + was + ': ' + JSON.stringify(ist) + ' statt ' + JSON.stringify(soll)); }
+  else console.log('  ok   ' + was);
+};
+{
+  /* 1. Zeitstempel. 46*60+29 = 2789, (1*60+2)*60+11 = 3731. */
+  sProbe('46:29 sind 2789 Sekunden', sekunden('46:29'), 2789);
+  sProbe('1:02:11 sind 3731 Sekunden', sekunden('1:02:11'), 3731);
+  sProbe('ein leerer Stempel ist null, nicht Sekunde 0', sekunden(''), null);
+
+  /* 2. Die beiden Spurformate. */
+  const s1 = srtLesen('7\n00:01:05,120 --> 00:01:09,900\nHal hatha baytun?\n')[0];
+  sProbe('SRT: Beginn 00:01:05 sind 65 s', s1 ? s1.von : null, 65);
+  sProbe('SRT: Ende 00:01:09 sind 69 s', s1 ? s1.bis : null, 69);
+  sProbe('SRT: der Text steht ab Zeile 3', s1 ? s1.text : null, 'Hal hatha baytun?');
+  const y = youtubeLesen('0:09 erste Zeile\n1:02:11 spaeter\nkeine Zeit hier');
+  sProbe('YouTube: „0:09" sind 9 Sekunden', y[0] ? y[0].von : null, 9);
+  sProbe('YouTube: „1:02:11" sind 3731 Sekunden', y[1] ? y[1].von : null, 3731);
+  sProbe('YouTube: Zeilen ohne Zeit fallen weg', y.length, 2);
+
+  /* 3. Das Fenster schneidet wirklich. */
+  const spur = [{ von: 0, bis: 10, text: 'drin' }, { von: 500, bis: 510, text: 'weit weg' }];
+  sProbe('Fenster +/-90 s um Sekunde 5 nimmt nur das nahe Segment',
+    imFenster(spur, 5, 90), 'drin');
+
+  /* 4. Die Kernformen. Das angeschriebene و muss weg — sonst sucht das Muster
+     nach w-kh-b-r und findet „Khabar" nie. Metabegriffe aus der ERKLAERUNG
+     fliegen raus, aus dem NAMEN nicht: dort sind sie der Gegenstand. */
+  const kf = kernformen({ name: 'مُبْتَدَأ وخَبَر', shortExplanation: 'Ein اسم am Satzanfang.' });
+  sProbe('Kernform: das angeschriebene و faellt weg', kf.includes('خبر'), true);
+  sProbe('Kernform: Metabegriff aus der Erklaerung faellt weg', kf.includes('اسم'), false);
+  sProbe('Kernform: der Name bleibt erhalten', kf.includes('مبتدأ'), true);
+
+  /* 5. Zu kurze Formen bekommen kein Muster — zwei Buchstaben traefen im
+     deutschen Text staendig. */
+  sProbe('هل ist zu kurz fuer ein Lautmuster', lautMuster('هل'), null);
+
+  /* 6. Die vier Faelle, an denen das Muster schon einmal gescheitert ist. */
+  sProbe('Schadda: „Rabbi" belegt ربي', enthaelt('wir haben Rabbi gesagt', ['ربي']).length, 1);
+  sProbe('Proklitikon: „Li Muhammadin" belegt لمحمد',
+    enthaelt('wie bei Li Muhammadin, Li Khalidin', ['لمحمد']).length, 1);
+  sProbe('Bindestrich: „El-Baytu" belegt البيت',
+    enthaelt('das ist El-Baytu, das Haus', ['البيت']).length, 1);
+  sProbe('Apostroph: „Marfu\'" belegt مرفوع',
+    enthaelt("Marfu' ist immer der Grundsatz", ['مرفوع']).length, 1);
+  sProbe('arabisch geschrieben wird auch gefunden',
+    enthaelt('er schreibt هَذَا an die Tafel', ['هذا']).length, 1);
+
+  /* 7. ⛔⛔ DIE WICHTIGSTE PROBE — die Gegenrichtung. Ein Muster, das in
+     deutschem Fliesstext anschlaegt, macht die Liste zum Nachhoeren KUERZER
+     und faellt deshalb niemandem auf. */
+  const deutsch = 'Wir haben gestern besprochen, warum die Endung sich hier '
+    + 'aendert und weshalb man das beim Schreiben beachten sollte. Bitte '
+    + 'schaut noch einmal in euer Heft und vergleicht die beiden Beispiele '
+    + 'miteinander, dann wird der Unterschied deutlich sichtbar.';
+  sProbe('deutscher Fliesstext loest KEINEN Treffer aus',
+    enthaelt(deutsch, ['ربي', 'لمحمد', 'البيت', 'مرفوع', 'هذا', 'خبر']).length, 0);
+
+  /* ⛔⛔ Und die Probe, die genau EINE Schraube bewacht: das Leerzeichen darf
+     nur in EINER Luecke stehen, naemlich hinter dem vorangestellten
+     Ein-Buchstaben-Wort. Erlaubt man es ueberall, sucht das Muster ueber
+     Wortgrenzen hinweg zusammen — und der Satz unten belegt dann مرفوع
+     (m-r-f-w-ʿ) aus „mir fuer". Gemessen am 09.09.2026: mit dieser einen
+     Aenderung wanderten zwei von Hand nachgelesene Regeln nach „belastbar",
+     die Liste sah SAUBERER aus, und kein Zeichen wies darauf hin.
+
+     ⚠️ „fuer" steht hier absichtlich ohne Umlaut. Mit „für" trifft auch das
+     zu grosszuegige Muster nicht (ü steht in keiner Zeichenklasse), und die
+     Probe waere still wirkungslos — sie muss den Fall treffen, den sie
+     bewachen soll. Nicht „verbessern". [[frischeprobe_braucht_geaenderte_zahl]] */
+  sProbe('das Muster springt NICHT ueber eine Wortgrenze',
+    enthaelt('Das hat er mir fuer die naechste Stunde mitgegeben.', ['مرفوع']).length, 0);
+
+  /* 8. Die Whisper-Schleife: ein Fenster mit derselben Zeile x10 ist keine
+     Lesart, in der „steht nicht drin" etwas bedeuten wuerde. */
+  const schleife = Array.from({ length: 10 }, () => ({ text: 'Die Lektion haben wir bereits.' }));
+  const bunt = Array.from({ length: 10 }, (_, i) => ({ text: 'Satz Nummer ' + i + ' mit Inhalt.' }));
+  sProbe('zehnmal derselbe Satz ist eine Schleife', hatWiederholungsschleife(schleife), true);
+  sProbe('zehn verschiedene Saetze sind keine', hatWiederholungsschleife(bunt), false);
+
+  /* ⚠️ Und die Probe auf die Probe: ohne Spuren und ohne Regeln waere alles
+     darunter ein Bericht ueber nichts. Am 09.09.2026: 19 Folgen, 103 Regeln. */
+  sProbe('grammar-data.js ist geladen (>= 50 Regeln)', GRAMMAR_RULES.length >= 50, true);
+  sProbe('es liegen Whisper-Spuren vor',
+    fs.existsSync(WHISPER) && fs.readdirSync(WHISPER).filter(f => /\.srt$/.test(f)).length >= 5, true);
+}
+if (stoer) {
+  console.log('');
+  console.log('⛔ ' + stoer + ' Stoertest(s) gescheitert — dieses Skript sortiert die Regeln');
+  console.log('   dann nach einem Massstab, der nicht der beschriebene ist. Nicht verwenden.');
+  process.exit(1);
+}
+console.log('');
 
 /* ---------- Auswertung ---------- */
 const spuren = {};
