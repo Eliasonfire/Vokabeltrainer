@@ -53,6 +53,45 @@ const werte = (zeilen) => {
   return { rueckwaerts: r, archiv: unterArchiv, gezaehlt: unter.length };
 };
 
+/* ---- Die belegte Ausnahme (09.09.2026) ----------------------------------
+   ⭐ Diese wird NICHT nachgebaut, sondern aus dem Pruefer GESCHNITTEN und
+   aufgerufen. `werte()` oben ist eine Kopie — die traegt sich, weil daneben
+   geprueft wird, ob die Zeilen im Original noch so dastehen. Bei einer
+   Ausnahme waere das zu wenig: eine Kopie, die grosszuegiger ist als das
+   Original, macht jeden Befund abschaltbar, ohne dass es auffaellt.
+   [[testvorlage_selbst_nachgebaut]] */
+let belegteAusnahme = null;
+{
+  const a = quelle.indexOf('const SATZ');
+  const b = quelle.indexOf('const unterBloecke');
+  if (a < 0 || b < 0 || b <= a){ fehler++; console.log('  X   belegteAusnahme() nicht ausschneidbar'); }
+  else {
+    try { belegteAusnahme = new Function(quelle.slice(a, b) + '\n;return belegteAusnahme;')(); }
+    catch (e){ fehler++; console.log('  X   belegteAusnahme() nicht ausfuehrbar: ' + e.message); }
+  }
+}
+if (belegteAusnahme){
+  const bau = (koerper) => ['### 03:45 — Beispiel'].concat(koerper.split('\n')).concat(['## Ende']);
+  const faelle = [
+    ['Satz UND Beleg → ausgenommen',       'Die Zeit ist geprüft, nicht geschätzt (2026-09-07T02:04).', true],
+    ['Satz OHNE Beleg → NICHT ausgenommen', 'Die Zeit ist geprüft, nicht geschätzt.',                    false],
+    ['Beleg ohne Satz → NICHT ausgenommen', 'Nachgesehen am 2026-09-07T02:04, sah gut aus.',             false],
+    ['Commit-Kuerzel gilt als Beleg',       'Geprüft, nicht geschätzt — siehe b186776.',                  true],
+    ['gar nichts → NICHT ausgenommen',      'Nichts dazu.',                                              false],
+  ];
+  for (const [name, koerper, soll] of faelle){
+    const ist = belegteAusnahme(bau(koerper), 0);
+    const ok = ist === soll;
+    console.log((ok ? '  ok  ' : '  X   ') + name + ' → ' + ist + ' (erwartet ' + soll + ')');
+    if (!ok) fehler++;
+  }
+  /* ⛔ Und die Stelle, die sie ueberhaupt erst wirksam macht. Ohne sie stuende
+     die Funktion da und niemand fragte sie. [[werkzeug_ohne_aufrufer]] */
+  if (!/if \(b\.belegt\)\{? unterBelegt\.push/.test(quelle)){
+    fehler++; console.log('  X   FEHLT: die Ausnahme wird in der Rueckwaertspruefung gar nicht abgefragt');
+  } else console.log('  ok  die Ausnahme wird in der Rueckwaertspruefung abgefragt');
+}
+
 const pruefe = (name, zeilen, sollR, sollArchiv) => {
   const e = werte(zeilen);
   const ok = e.rueckwaerts === sollR && e.archiv === sollArchiv;
