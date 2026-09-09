@@ -153,6 +153,16 @@ const PRUEFER = [
      verlangt, dass sie den zweiten Ladevorgang zeigt. [[hintergrund_tab_drosselt_timer]] */
   ['werkzeuge/pruefe-zweipuffer.mjs', []],
   ['werkzeuge/pruefe-schreibanlass.mjs', []],
+  /* ⭐⭐ Neu am 09.09.2026, aus dem Konfetti-Fall heraus: der Fehler sass in
+     einem leeren `catch {}` und war auf Elias' Geraet deshalb nicht
+     auffindbar. Seitdem traegt JEDER schweigende catch-Block entweder seine
+     Begruendung oder meldet ueber `stillerFehler()` in die Diagnosekarte.
+     ⚠️ Zuerst laeuft die EICHUNG des Werkzeugs, das beide zaehlt: die erste
+     Zaehlung meldete „37, darunter feier.js 1" — und der Treffer in feier.js
+     sass in einem Kommentar, der genau dieses Problem beschreibt.
+     [[stichworttreffer_im_kommentar]] */
+  ['werkzeuge/pruefe-js-quelltext.mjs', []],
+  ['werkzeuge/pruefe-stille-fehler.mjs', []],
   /* ⛔ Ohne diese Zeile haette pruefe-muster.mjs keinen Aufrufer und liefe nie.
      Genau der Fehler, den es selbst sucht, in seiner allgemeinen Form: gebaut,
      gepusht, ausgeliefert — und nie gestartet. [[werkzeug_ohne_aufrufer]] */

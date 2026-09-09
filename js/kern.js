@@ -218,6 +218,65 @@ function freigeschalteteBeschriftung(){
   return lueckenlos && s.length > 1 ? `Kapitel ${s[0]}–${s[s.length-1]}` : `Kapitel ${s.join(', ')}`;
 }
 
+/* ---------- Das Ringprotokoll fuer geschluckte Fehler (09.09.2026) ----------
+
+   ⛔⛔ DER ANLASS: „habe eben 5 wörter angehört und konfeti kam erst bei
+   startseite, das soll aber doch kommen beim hörmodus" (Elias, 08.09.2026).
+   Der Fehler steckte in einem leeren `catch {}` — und war deshalb auf seinem
+   Geraet nicht auffindbar. Im Pruefbrowser lief alles.
+   [[ausfall_ist_unsichtbar_gebaut]]
+
+   ⭐ EIN gemeinsames Protokoll, nicht zehn einzelne. Ein Fehler, den man an
+   zehn Stellen suchen muss, wird an neun davon nicht gesucht.
+
+   ⛔ NUR IM ARBEITSSPEICHER. Es waere naheliegend, das in `localStorage` zu
+   legen — und genau falsch: jedes `LS.set` meldet dem Geraeteabgleich eine
+   Aenderung, und ein Fehler, der oft auftritt, schriebe dann im Sekundentakt
+   nach Cloudflare. Am 09.09.2026 hat ein Sekundenzaehler auf diesem Weg
+   750 von 1000 Schreibvorgaengen des Tageskontingents verbraucht. Ein
+   Diagnosewerkzeug, das die Diagnose verfaelscht, ist keins.
+
+   ⚠️ Es geht mit dem Neuladen verloren. Das ist Absicht und kein Mangel: was
+   Elias meldet, meldet er aus der LAUFENDEN Sitzung heraus, mit einem
+   Bildschirmfoto der Diagnosekarte. Ein dauerhaftes Protokoll waere ein
+   zweiter Speicherschluessel mit allen Folgen und ohne zusaetzlichen Nutzen.
+
+   ⚠️ Gleiche Fehler an gleicher Stelle werden GEZAEHLT, nicht angehaengt —
+   ein Fehler in einer Schleife wuerde den Ring sonst in einer Sekunde mit
+   sich selbst fuellen und alles andere hinausdruecken. */
+const STILLE_FEHLER = [];
+const STILLE_FEHLER_MAX = 30;
+
+/* Meldet einen Fehler, der bewusst nicht weitergereicht wird.
+   `wo` ist der Ort im Klartext ("hoeren: Sperrbildschirm"), `e` der Fehler.
+   ⛔ Diese Funktion darf selbst NIE werfen — sie steht in jedem catch-Zweig
+   der App, und ein Fehler hier wuerde den Zweig kippen, den sie retten soll.
+   [[finally_schuetzt_nicht_vor_sich_selbst]] */
+function stillerFehler(wo, e){
+  try {
+    const text = (e && (e.message || e.name)) ? String(e.message || e.name) : String(e);
+    const treffer = STILLE_FEHLER.find(z => z.wo === wo && z.text === text);
+    if (treffer){ treffer.mal++; treffer.uhr = new Date().toTimeString().slice(0,8); return; }
+    STILLE_FEHLER.push({
+      uhr:  new Date().toTimeString().slice(0,8),
+      wo:   wo,
+      text: text,
+      mal:  1
+    });
+    if (STILLE_FEHLER.length > STILLE_FEHLER_MAX) STILLE_FEHLER.shift();
+    /* Auf dem Rechner steht damit auch in der Konsole, was passiert ist —
+       am Handy gibt es keine, dort traegt die Diagnosekarte. */
+    if (typeof console !== 'undefined' && console.warn) console.warn('[still] ' + wo + ': ' + text);
+  } catch (_){ /* ein Protokoll, das wirft, waere schlimmer als keins */ }
+}
+
+/* Die Zeilen fuer die Diagnosekarte. Neueste zuerst — auf einem
+   Bildschirmfoto ist oben, was zaehlt. */
+function stilleFehlerZeilen(){
+  return STILLE_FEHLER.slice().reverse().map(z =>
+    '  ' + z.uhr + '  ' + z.wo + ': ' + z.text + (z.mal > 1 ? '  (' + z.mal + '×)' : ''));
+}
+
 /* ---------- Storage ---------- */
 const LS = {
   get(key, fallback){ try{ const v = localStorage.getItem(key); return v?JSON.parse(v):fallback; }catch(e){ return fallback; } },
@@ -228,7 +287,7 @@ const LS = {
      betreffen. Der typeof-Test haelt die App lauffaehig, falls js/sync.js
      einmal nicht geladen ist. */
   set(key, val){
-    try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){}
+    try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){ /* voller oder gesperrter Speicher; der Abgleich unten laeuft trotzdem */ }
     if (typeof syncGeaendert === 'function') syncGeaendert(key);
   }
 };
@@ -1510,11 +1569,11 @@ function settingsFeldStempel(){
   try {
     const s = JSON.parse(localStorage.getItem('vt_syncStempel') || '{}');
     block = s['vt_settings'] || 0;
-  } catch (e){ }
+  } catch (e){ /* kaputte Stempelkarte: dann gilt 0, also kein Block */ }
   if (!block) return {};                    /* nie abgeglichen: nichts zu erben */
   const gesetzt = {};
   Object.keys(SETTINGS).forEach(f => { gesetzt[f] = block; });
-  try { localStorage.setItem(SETTINGS_FELD_SCHLUESSEL, JSON.stringify(gesetzt)); } catch (e){ }
+  try { localStorage.setItem(SETTINGS_FELD_SCHLUESSEL, JSON.stringify(gesetzt)); } catch (e){ /* privates Fenster */ }
   return gesetzt;
 }
 
@@ -1522,13 +1581,13 @@ function saveSettings(){
   /* Nur die WIRKLICH geaenderten Felder stempeln. Wer alle stempelt, hat den
      Blockfehler nur eine Ebene tiefer wiederholt. */
   let alt = {};
-  try { alt = JSON.parse(localStorage.getItem('vt_settings') || '{}'); } catch (e){}
+  try { alt = JSON.parse(localStorage.getItem('vt_settings') || '{}'); } catch (e){ /* kaputtes JSON: dann gilt {} */ }
   const stempel = settingsFeldStempel();
   const jetzt = Date.now();
   Object.keys(SETTINGS).forEach(f => {
     if (JSON.stringify(SETTINGS[f]) !== JSON.stringify(alt[f])) stempel[f] = jetzt;
   });
-  try { localStorage.setItem(SETTINGS_FELD_SCHLUESSEL, JSON.stringify(stempel)); } catch (e){}
+  try { localStorage.setItem(SETTINGS_FELD_SCHLUESSEL, JSON.stringify(stempel)); } catch (e){ /* privates Fenster */ }
   LS.set('vt_settings', SETTINGS);
 }
 
