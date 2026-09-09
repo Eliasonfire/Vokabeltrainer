@@ -219,10 +219,54 @@ if (!befunde.length) {
   console.log('✅ Kein Wort steht doppelt.');
   process.exit(0);
 }
+/* ⭐⭐ WAS BRINGT JEDE SEITE MIT? (09.09.2026)
+ *
+ * „Zwei Karten fuer dasselbe Wort — welche willst du?" ist ohne diese Zeile
+ * nicht zu beantworten. Entscheidend ist, was beim Wegwerfen VERLOREN geht:
+ * eine Eselsbruecke, ein Beispielsatz, ein Plural, eine Wurzel. Steht das
+ * alles nur auf einer Seite, ist die Antwort in zwei Sekunden da; steht es auf
+ * beiden verschieden, ist es eine echte Abwaegung.
+ *
+ * ⛔ Die Zeile URTEILT nicht — sie zaehlt gefuellte Felder. Welche Karte
+ * bleibt, entscheidet Elias. [[kandidatenliste_ist_keine_fehlerliste]]
+ */
+const FELDER = ['mnemo', 'sentAr', 'sentDe', 'pl', 'sg', 'root', 'type', 'gender',
+                'femSg', 'femPl', 'note', 'deNeben', 'quran'];
+const mitbringt = (w) => {
+  const da = FELDER.filter(f => {
+    const v = w && w[f];
+    return v != null && v !== '' && !(typeof v === 'object' && !Object.keys(v).length);
+  });
+  return da.length ? da.join(', ') : '— nichts ausser Wort und Bedeutung';
+};
+/* ⛔ Eichung fuer diese Zeile — sie muss ein leeres Feld von einem gefuellten
+   unterscheiden koennen, sonst steht ueberall dasselbe da und die Auskunft ist
+   wertlos, ohne dass es auffaellt. Exit 1 = Werkzeugfehler (wie bei der
+   Eichung oben), NICHT 2 = Befund. */
+{
+  const proben = [
+    [{ mnemo: 'x', sentAr: 'y' },        'mnemo, sentAr'],
+    [{ mnemo: '', pl: null, root: 'r' }, 'root'],
+    [{},                                 '— nichts ausser Wort und Bedeutung'],
+    [{ quran: {} },                      '— nichts ausser Wort und Bedeutung'],
+    [{ quran: { surah: 1 } },            'quran'],
+  ];
+  const schief = proben.filter(([w, soll]) => mitbringt(w) !== soll);
+  if (schief.length){
+    console.error('⛔ EICHUNG „bringt mit" FEHLGESCHLAGEN — die Zeile misst nicht:');
+    schief.forEach(([w, soll]) => console.error('   ' + JSON.stringify(w)
+      + ': erwartet „' + soll + '", bekam „' + mitbringt(w) + '"'));
+    process.exit(1);
+  }
+}
 console.log('=== ' + befunde.length + ' Befund(e) ===');
 for (const b of befunde) {
   console.log('  ' + String(b.e.ar).padEnd(22) + '(' + b.herkunft + ', id ' + b.e.id + ')  ' + (b.e.de || ''));
-  b.t.forEach(x => console.log('      == ' + String(x.ar).padEnd(20) + x.book + ' K' + x.chapter + '  id ' + x.id + '  ' + (x.de || '')));
+  console.log('        bringt mit: ' + mitbringt(b.e));
+  b.t.forEach(x => {
+    console.log('      == ' + String(x.ar).padEnd(20) + x.book + ' K' + x.chapter + '  id ' + x.id + '  ' + (x.de || ''));
+    console.log('        bringt mit: ' + mitbringt(x));
+  });
 }
 console.log('');
 console.log('⚠️ Ein Befund ist noch keine Aufforderung: ein Fachbegriff und eine');
