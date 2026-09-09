@@ -131,6 +131,13 @@ const PRUEFER = [
      falsche Zahl ist schlimmer als eine fehlende, weil man ihr glaubt.
      [[blickwinkel_durchprobieren]] */
   ['werkzeuge/pruefe-gedaechtnis-zahlen.mjs', []],
+  /* ⛔⛔ Neu am 09.09.2026, und der Anlass ist eine Frage von Elias: „ist
+     gedaechtnis wirklich aktuell". Drei Pruefer standen auf Gruen und waren
+     trotzdem keine Antwort — sie messen Frische, Zahlen und Datumsfolge, aber
+     keiner von ihnen prueft, ob etwas FEHLT. Nachgemessen: 91 von 92 Commits
+     des Tages waren auffindbar. Vollstaendigkeit braucht eine Liste von
+     AUSSEN, hier `git log`. [[gruener_pruefer_beweist_nur_geprueftes]] */
+  ['werkzeuge/pruefe-gedaechtnis-luecken.mjs', []],
   ['werkzeuge/pruefe-eigene-vorrang.mjs', []],
   ['werkzeuge/pruefe-erreichbarkeit-eichung.mjs', []],
   ['werkzeuge/pruefe-gedaechtnis.mjs', []],
