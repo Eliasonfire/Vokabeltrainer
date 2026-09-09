@@ -1448,9 +1448,76 @@ const VORSCHLAG_WEG_SCHLUESSEL = 'vt_vorschlagWeg';
 let VORSCHLAG_WEG = LS.get(VORSCHLAG_WEG_SCHLUESSEL, {});
 if (!VORSCHLAG_WEG || typeof VORSCHLAG_WEG !== 'object' || Array.isArray(VORSCHLAG_WEG)) VORSCHLAG_WEG = {};
 
-function istVorschlagVerworfen(id, nr){
+/* ⛔⛔ DIE ABLEHNUNG HAENGT AM TEXT, NICHT AN DER NUMMER (09.09.2026).
+
+   Der Kommentar zwei Absaetze weiter oben sagt es seit dem 19.08. selbst:
+   „eine gespeicherte 2 zeigte dann auf einen anderen Vorschlag als den, den er
+   abgelehnt hat. Der Text ueberlebt das." Gespeichert wird der Text seitdem
+   auch — nur GELESEN wurde er nie. [[eingefrorenes_feld_ist_kein_zustand]]
+
+   ⭐ Aufgefallen an seinen echten Daten (09.09., 08:15): `vorschlaege-holen.mjs`
+   holte den abgeglichenen Stand aus dem KV. Achtzehn Woerter tragen
+   Ablehnungen, ALLE vom 24./25.08.2026 — und bei jeder einzelnen meldete das
+   Werkzeug: „An Nr. 1 steht heute etwas anderes, die Liste hat sich
+   geaendert." Seitdem sind Eselsbruecken dazugekommen und umsortiert worden.
+
+   ⛔ Die Folge war beidseitig falsch:
+     · ein Vorschlag, den er NIE gesehen hat, trug seine Marke „taugt nicht"
+     · ein Vorschlag, den er WIRKLICH abgelehnt hat, stand wieder blank da
+
+   Jetzt gilt die Ablehnung genau dann, wenn der gespeicherte Text mit dem
+   heutigen uebereinstimmt. Passt er nicht, ist die Marke gegenstandslos —
+   und das ist die ehrliche Antwort, nicht das Festhalten an einer Nummer.
+
+   ⚠️ `text` fehlt bei ganz alten Eintraegen. Dann bleibt es bei der Nummer:
+   lieber eine Marke zu viel als eine Ablehnung stillschweigend wegwerfen. */
+function istVorschlagVerworfen(id, nr, text){
   const e = VORSCHLAG_WEG[id];
-  return !!(e && e[String(nr)]);
+  if (!e) return false;
+  const eintrag = e[String(nr)];
+
+  /* Ohne Text gefragt (alte Aufrufer): es bleibt bei der Nummer. */
+  if (text === undefined || text === null) return !!eintrag;
+
+  const kurz = String(text).slice(0, 400);
+  /* 1. Steht an DIESER Nummer genau dieser Text? Der Normalfall. */
+  if (eintrag && typeof eintrag === 'object' && eintrag.text
+      && String(eintrag.text).slice(0, 400) === kurz) return true;
+
+  /* ⭐ 2. WANDERT DIE MARKE MIT (09.09.2026). Hat er denselben Text unter einer
+     ANDEREN Nummer abgelehnt, gilt die Ablehnung trotzdem — sie gehoert dem
+     Text, nicht der Stelle. Ohne diesen Schritt waere seine Arbeit vom August
+     bei jeder Umsortierung weg, und er muesste alles noch einmal durchgehen.
+     [[erledigt_heisst_nicht_wertlos]] */
+  for (const k of Object.keys(e)){
+    const x = e[k];
+    if (x && typeof x === 'object' && x.text && String(x.text).slice(0, 400) === kurz) return true;
+  }
+
+  /* 3. Ein alter Eintrag OHNE Text an dieser Nummer: dann bleibt die Nummer
+     das einzige Kennzeichen. Lieber eine Marke zu viel als eine Ablehnung
+     stillschweigend wegwerfen. */
+  if (eintrag && (typeof eintrag !== 'object' || !eintrag.text)) return true;
+  return false;
+}
+
+/* Welche Ablehnungen zeigen ins Leere, weil der Text sich geaendert hat?
+   ⭐ Fuer die Diagnosekarte: sie sind der Grund, warum eine Marke verschwindet,
+   die er gesetzt hat — ohne diese Zahl sieht es aus wie ein Fehler. */
+function vorschlaegeVerwaisteMarken(){
+  let gesamt = 0, verwaist = 0;
+  const woerter = (typeof VOCAB_DATA !== 'undefined' && Array.isArray(VOCAB_DATA)) ? VOCAB_DATA : [];
+  for (const w of woerter){
+    const e = VORSCHLAG_WEG[w.id];
+    if (!e) continue;
+    const liste = (typeof vorschlagsListe === 'function') ? vorschlagsListe(w) : [];
+    for (const nr of Object.keys(e)){
+      gesamt++;
+      const heute = liste[Number(nr)];
+      if (heute === undefined || !istVorschlagVerworfen(w.id, nr, heute)) verwaist++;
+    }
+  }
+  return { gesamt, verwaist };
 }
 
 /* Nochmal derselbe Knopf nimmt die Ablehnung zurueck — ohne das kaeme er aus
@@ -1494,11 +1561,15 @@ function vorschlaegeAufgebraucht(){
   for (const w of woerter){
     const abgelehnt = VORSCHLAG_WEG[w.id];
     if (!abgelehnt) continue;
-    const anzahl = (typeof vorschlagsListe === 'function') ? vorschlagsListe(w).length : 0;
-    if (!anzahl) continue;
+    const liste = (typeof vorschlagsListe === 'function') ? vorschlagsListe(w) : [];
+    if (!liste.length) continue;
+    /* ⛔ Mit dem TEXT gefragt, nicht nur mit der Nummer (09.09.2026). Sonst
+       gilt ein Wort als aufgebraucht, obwohl die drei abgelehnten Texte von
+       damals gar nicht mehr in der Liste stehen. */
     let alle = true;
-    for (let i = 0; i < anzahl; i++) if (!abgelehnt[String(i)]) { alle = false; break; }
-    if (alle) raus.push({ id: w.id, ar: w.ar, de: w.de, anzahl });
+    for (let i = 0; i < liste.length; i++)
+      if (!istVorschlagVerworfen(w.id, i, liste[i])) { alle = false; break; }
+    if (alle) raus.push({ id: w.id, ar: w.ar, de: w.de, anzahl: liste.length });
   }
   return raus;
 }

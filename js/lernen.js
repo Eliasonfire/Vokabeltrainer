@@ -961,7 +961,12 @@ function zeigeVorschlag(){
      Blaettern noch die Antwort des vorigen Vorschlags an — und man haette
      zweimal getippt, um einen zu verwerfen, den man gar nicht meinte. */
   const w = SESSION.words[SESSION.idx];
-  const weg = !!(w && istVorschlagVerworfen(w.id, VORSCHLAG_NR));
+  /* ⛔ MIT DEM TEXT fragen (09.09.2026). Seine Ablehnungen stammen vom
+     24./25.08.; seitdem sind Eselsbruecken dazugekommen und umsortiert worden.
+     Nur ueber die Nummer gefragt, trug ein Vorschlag, den er NIE gesehen hat,
+     seine Marke „taugt nicht" — und einer, den er wirklich abgelehnt hat,
+     stand wieder blank da. [[eingefrorenes_feld_ist_kein_zustand]] */
+  const weg = !!(w && istVorschlagVerworfen(w.id, VORSCHLAG_NR, text));
   const knopf = document.getElementById('btnVorschlagWeg');
   if (knopf){
     knopf.setAttribute('aria-pressed', String(weg));
