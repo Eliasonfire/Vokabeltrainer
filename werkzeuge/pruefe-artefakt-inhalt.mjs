@@ -146,5 +146,44 @@ if (befunde){
   console.log('   nicht nur in den Kommentar des erzeugenden Skripts.');
   process.exit(2);
 }
+/* ---------- ⛔ STOERTEST (09.09.2026) ----------
+
+   ⛔ Hier haengt Rechtliches dran (arabicroots AGB 3.7 und 9). Ein Pruefer,
+   der still nichts sucht, sieht genauso aus wie einer, der nichts findet —
+   und dann glaubt man, es sei geprueft. Der Kopf dieser Datei sagt das an
+   einer Stelle schon selbst („Das ist KEIN gruener Befund — es wurde nichts
+   geprueft"), aber nur fuer den Fall ohne Transkripte.
+   [[stoertest_muss_wirkung_nachweisen]] [[leere_liste_ist_keine_messung]]
+
+   Drei Faelle, deren Antwort feststeht — mit derselben Erkennung wie oben. */
+console.log('=== Stoertest ===');
+let stoer = 0;
+const sProbe = (was, ist, soll) => {
+  if (ist !== soll){ stoer++; console.log('  ⛔  ' + was + ': ' + ist + ' statt ' + soll); }
+  else console.log('  ok   ' + was);
+};
+{
+  const beispiel = proben[0].text;
+  const ohneHinweis = '<html><body><p>' + beispiel + '</p></body></html>';
+  const mitHinweis  = '<html><body><p>⛔ Bitte nicht teilen.</p><p>' + beispiel + '</p></body></html>';
+  const leer        = '<html><body><p>Nichts davon.</p></body></html>';
+  const zaehle = (h) => proben.filter(p => h.includes(p.text)).length;
+
+  sProbe('eine Seite MIT Wortlaut wird gefunden', zaehle(ohneHinweis) > 0, true);
+  sProbe('und ohne Vorbehalt waere sie ein Befund', HINWEIS.test(ohneHinweis), false);
+  sProbe('mit sichtbarem Vorbehalt ist sie in Ordnung', HINWEIS.test(mitHinweis), true);
+  sProbe('eine Seite OHNE Wortlaut bleibt still', zaehle(leer), 0);
+  /* ⚠️ Und die Probe auf die Probe: gaebe es keine Textproben, waere alles
+     oben bedeutungslos. Am 09.09.2026 waren es 253. */
+  sProbe('es gibt ueberhaupt Textproben (>= 20)', proben.length >= 20, true);
+}
+if (stoer){
+  console.log('');
+  console.log('⛔ ' + stoer + ' Stoertest(s) gescheitert — dieser Pruefer misst nicht,');
+  console.log('   und sein „alles in Ordnung" ist damit wertlos.');
+  process.exit(1);
+}
+console.log('');
+
 console.log('✅ Jede Seite mit Kursmaterial traegt ihren Vorbehalt sichtbar,');
 console.log('   und die Zitate in grammar-data.js bleiben Kurzzitate.');
