@@ -199,6 +199,13 @@ const PRUEFER = [
      Pruefer massen still zu wenig, keiner wurde rot. Gefunden hat es der
      Stoertest eines fuenften. [[gruener_pruefer_beweist_nur_geprueftes]] */
   ['werkzeuge/pruefe-stripper.mjs', []],
+  /* ⭐⭐ Neu am 09.09.2026. `js/sprachausgabe.js` hatte bis zum 16.08. KEINEN
+     Fehlerpfad — Elias' Tablet schwieg, und aus der Ferne war nichts zu
+     messen. Seitdem meldet die Datei DREI Arten von Schweigen; geprueft hat
+     das bisher niemand. Der Pruefer schneidet `speakArabic()` aus und stellt
+     jede der drei nach, darunter den gefaehrlichsten Fall: onstart und acht
+     Millisekunden spaeter onend — kein Fehler, kein Ton. */
+  ['werkzeuge/pruefe-sprachausgabe.mjs', []],
   /* ⭐ Neu am 09.09.2026 (Punkt 5). Von 545 definierten CSS-Klassen haben 8
      keine Fundstelle; 16 weitere sahen so aus und werden zur Laufzeit
      zusammengesetzt — der Pruefer liefert je Verdacht den BELEG mit, weil ein
