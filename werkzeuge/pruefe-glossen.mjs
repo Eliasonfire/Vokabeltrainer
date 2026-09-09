@@ -158,6 +158,37 @@ for (const m of meldungen) {
     console.log('\nℹ️  ZUSÄTZLICH  ' + m.satzId + '  ' + m.t.matchText
       + '\n   ' + m.t.bedeutung + '  — vom Kriterium nicht verlangt, von Hand gesetzt.');
 }
+/* ---------- ⛔ STOERTEST (09.09.2026) ----------
+
+   ⭐ Der Anlass steht nicht in dieser Datei, sondern in derselben Nacht: der
+   Stoertest EINES Pruefers deckte einen Fehler in VIER anderen auf — sie
+   standen alle auf einem Werkzeug, das still ausfiel, und meldeten weiter
+   gruen. Ein Pruefer ohne eigene Stoerprobe kann „nichts gefunden" nicht von
+   „nichts gesehen" unterscheiden. [[stoertest_muss_wirkung_nachweisen]]
+
+   Zweiseitig, an Faellen, deren Antwort unabhaengig feststeht:
+     · ein Suffix, das eine Glosse BRAUCHT, muss eine bekommen
+     · ein Wort ohne Suffix darf KEINE verlangen
+   Kommt bei einem der beiden das Falsche heraus, misst `braucht()` nichts —
+   und dann ist auch die „10 von 10"-Meldung oben wertlos. */
+console.log('');
+let stoer = 0;
+const probe = (was, ist, soll) => {
+  const ok = (soll === null) ? (ist === null) : (typeof ist === 'string' && ist.includes(soll));
+  if (!ok) { stoer++; console.log('  ⛔  Stoertest ' + was + ': ' + JSON.stringify(ist)); }
+  else console.log('  ok   Stoertest ' + was);
+};
+probe('weibliches ـكِ verlangt eine Glosse', braucht('اسْمُكِ'), 'weiblich');
+probe('männliches ـكَ verlangt eine Glosse', braucht('اسْمُكَ'), 'männlich');
+probe('أَنْتِ verlangt eine Glosse', braucht('أَنْتِ'), 'weiblich');
+probe('ein Wort ohne Suffix verlangt KEINE', braucht('كِتَابٌ'), null);
+probe('ein erfundenes Wort verlangt KEINE', braucht('زززز'), null);
+if (stoer){
+  console.log('\n⛔ ' + stoer + ' Stoertest(s) gescheitert — braucht() misst nicht,');
+  console.log('   und damit ist die Zahl oben wertlos.');
+  process.exit(1);
+}
+
 console.log('\n' + (fehlend
   ? '⛔ ' + fehlend + ' Markierung(en) ohne Glosse.'
   : '✅ Jede Stelle, die eine Glosse braucht, hat eine.'));

@@ -94,6 +94,52 @@ for (const datei of dateien){
 }
 
 console.log(dateien.length + ' Werkzeuge durchgesehen.');
+
+/* ---------- ⛔ STOERTEST (09.09.2026) ----------
+
+   ⭐ „Keine Stelle gefunden" und „nichts gesehen" sehen gleich aus. In
+   derselben Nacht hat der Stoertest EINES Pruefers einen Fehler in vier
+   anderen aufgedeckt; dieser hier hatte bis heute keinen.
+   [[stoertest_muss_wirkung_nachweisen]]
+
+   Geprueft wird an einem erfundenen Werkzeug, dessen Antwort feststeht:
+   dieselbe Erkennung muss den unsicheren Weg FINDEN und den sicheren
+   (erst `.neu`, dann `renameSync`) durchlassen. */
+const erkenne = (quelle) => {
+  const zn = quelle.split('\n');
+  const gel = new Set();
+  for (const m of quelle.matchAll(/readFileSync\(\s*([A-Za-z_$][\w$]*)/g)) gel.add(m[1]);
+  let treffer = 0;
+  for (let i = 0; i < zn.length; i++){
+    const m = /writeFileSync\(\s*([A-Za-z_$][\w$]*)\s*[,)]/.exec(zn[i]);
+    if (!m || !gel.has(m[1])) continue;
+    if (/renameSync/.test(zn.slice(Math.max(0, i - 4), i + 5).join(' '))) continue;
+    const zu = new RegExp('(?:const|let|var)\\s+' + m[1] + '\\s*=\\s*([^;\\n]+)').exec(quelle);
+    const wohin = zu ? zu[1] : '';
+    if (Object.keys(ZUSTAND).some(k => wohin.includes(k))) continue;
+    if (!KOSTBAR.test(wohin)) continue;
+    treffer++;
+  }
+  return treffer;
+};
+const unsicher = "const p = 'vocab-data.js';\nconst t = fs.readFileSync(p, 'utf8');\nfs.writeFileSync(p, t + 'x');\n";
+const sicher   = "const p = 'vocab-data.js';\nconst t = fs.readFileSync(p, 'utf8');\nfs.writeFileSync(p + '.neu', t + 'x');\nfs.renameSync(p + '.neu', p);\n";
+const harmlos  = "const p = 'artefakte/bericht.html';\nconst t = fs.readFileSync(p, 'utf8');\nfs.writeFileSync(p, t);\n";
+console.log('');
+let stoer = 0;
+const probe = (was, ist, soll) => {
+  if (ist !== soll){ stoer++; console.log('  ⛔  Stoertest ' + was + ': ' + ist + ' statt ' + soll); }
+  else console.log('  ok   Stoertest ' + was);
+};
+probe('der unsichere Weg wird GEFUNDEN', erkenne(unsicher), 1);
+probe('erst .neu, dann rename geht durch', erkenne(sicher), 0);
+probe('eine erzeugte Seite ist kein Lerninhalt', erkenne(harmlos), 0);
+if (stoer){
+  console.log('\n⛔ ' + stoer + ' Stoertest(s) gescheitert — die Erkennung misst nicht,');
+  console.log('   und damit ist die Meldung unten wertlos.');
+  process.exit(1);
+}
+
 console.log('');
 if (!befunde.length){
   console.log('✅ Keine Stelle schreibt direkt auf Lerninhalt oder App-Code.');
