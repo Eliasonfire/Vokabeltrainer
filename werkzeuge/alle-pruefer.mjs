@@ -179,6 +179,12 @@ const PRUEFER = [
      IIFEs brauchen ueberhaupt keinen Aufrufer. Uebrig bleibt genau EINE,
      und die wartet auf Elias. [[mein_neues_werkzeug_ist_verdaechtig]] */
   ['werkzeuge/funktionen-ohne-aufrufer.mjs', []],
+  /* ⭐⭐ Neu am 09.09.2026. Seit dieser Nacht laeuft die ganze Fehlermeldung
+     der App ueber die Diagnosekarte — und die fragt jede ihrer neun Quellen
+     mit `typeof x === 'function'` ab. Das ist richtig, heisst aber: wird eine
+     umbenannt, steht dort still ein Strich, und der Ausfall des Messwerkzeugs
+     sieht aus wie „nichts zu melden". [[leere_liste_ist_keine_messung]] */
+  ['werkzeuge/pruefe-diagnosekarte.mjs', []],
   /* ⭐ Neu am 09.09.2026 (Punkt 5). Von 545 definierten CSS-Klassen haben 8
      keine Fundstelle; 16 weitere sahen so aus und werden zur Laufzeit
      zusammengesetzt — der Pruefer liefert je Verdacht den BELEG mit, weil ein

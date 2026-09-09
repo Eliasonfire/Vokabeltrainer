@@ -21,8 +21,17 @@
 
 const VOR_REGEX = new Set(['(', ',', '=', ':', '[', '!', '&', '|', '?', '{', '}', ';', '+', '-', '*', '%', '<', '>', '~', '^']);
 
-/** Ersetzt Kommentare und Zeichenketten durch Leerzeichen gleicher Laenge. */
-export function ohneKommentareUndTexte(quelle) {
+/** Ersetzt Kommentare und Zeichenketten durch Leerzeichen gleicher Laenge.
+ *
+ *  ⚠️ `{ texte: false }` laesst den INHALT der Zeichenketten stehen und
+ *  entfernt nur Kommentare. Der Anlass (09.09.2026): eine Pruefung suchte
+ *  `typeof x === 'function'` — und fand null Treffer, weil der Stripper das
+ *  Wort `function` in den Anfuehrungszeichen geleert hatte. Ihre Eichung
+ *  meldete es sofort („nur 0 Riegel gefunden"); ohne die haette sie gruen
+ *  gemeldet, ohne etwas gemessen zu haben.
+ *  [[leere_liste_ist_keine_messung]] [[gruener_pruefer_beweist_nur_geprueftes]]
+ */
+export function ohneKommentareUndTexte(quelle, { texte = true } = {}) {
   const aus = quelle.split('');
   const n = quelle.length;
   let i = 0;
@@ -60,7 +69,7 @@ export function ohneKommentareUndTexte(quelle) {
         if (quelle[j] === c) { j++; break; }
         j++;
       }
-      leeren(i + 1, Math.max(i + 1, j - 1));
+      if (texte) leeren(i + 1, Math.max(i + 1, j - 1));
       i = j;
       davor = c;
       continue;
