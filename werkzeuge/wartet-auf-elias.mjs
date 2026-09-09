@@ -1462,7 +1462,36 @@ try {
     console.log('     Eine Adresse, die man nicht findet, ist so gut wie keine.');
   }
 } catch (e) { console.log('  ⚠️ artefakte/ nicht lesbar: ' + e.message); }
+/* ⛔⛔ DIE URL KOMMT AUS DER TABELLE, NICHT NOCH EINMAL VON HAND (09.09.2026).
+   Hier stand sie ein zweites Mal als Zeichenkette. Zwei Stellen, eine
+   Tatsache — sie koennen auseinanderlaufen, ohne dass etwas meldet.
+   [[dieselbe_frage_zwei_antworten]]
+
+   ⛔⛔ UND SIE IST NICHT BESTAETIGT. Am 09.09.2026 nach 16:05 aus einer Sitzung
+   nachgesehen: die Artefaktliste dieses Kontos umfasst **22** Seiten, und
+   SECHS der hier hinterlegten Adressen sind nicht darunter —
+
+       wartet-auf-elias.html   4c3a7c9e…   (diese Seite!)
+       wartungskreislauf.html  9ec136ba…
+       freigabe.html           d9916aee…
+       lagebericht.html        3eb1fcc3…
+       ../regelauswahl.html    da4af296…
+       ../befunde.html         bc9b71c0…
+
+   Ein Abruf von 4c3a7c9e ergab woertlich „artifact not found — it may have
+   been deleted, or it has not been shared with you". Wer der Zeile darunter
+   folgt und „dieselbe URL wiederverwendet", bekommt also einen Fehlschlag —
+   und legt beim naechsten Versuch genau die zweite Seite an, vor der hier
+   gewarnt wird.
+
+   ⚠️ Was das WERKZEUG nicht kann: nachsehen. Es hat keinen Zugang zur
+   Artefaktliste; das geht nur aus einer Sitzung. Deshalb steht hier keine
+   Automatik, sondern das Datum der letzten Bestaetigung — eine Adresse ohne
+   Datum ist eine Behauptung. [[zahlen_ohne_beleg]] [[daten_ohne_zugang]] */
+const eigeneId = DATEI_ZU_URL['wartet-auf-elias.html'];
 console.log('  ⚠️ Veroeffentlichen kann die Routine nicht selbst — das braucht eine Sitzung.');
-console.log('     DIESELBE URL wiederverwenden, keine neue anlegen:');
-console.log('     https://claude.ai/code/artifact/4c3a7c9e-c288-480c-bb1f-e2d7cd26d856');
+console.log('     ⛔ Die hinterlegte Adresse war am 09.09.2026 (nach 16:05) NICHT abrufbar');
+console.log('        („artifact not found"). Erst nachsehen, welche Seite Elias wirklich');
+console.log('        offen hat, dann DIESE wiederverwenden — keine neue anlegen:');
+console.log('     https://claude.ai/code/artifact/' + eigeneId);
 process.exit(posten.length ? 2 : 0);
