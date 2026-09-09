@@ -129,6 +129,38 @@ function commitTag(hash) {
   return d;
 }
 
+/* ---------- Haengengebliebene Hashes (09.09.2026) ----------
+
+   ⛔⛔ Am 08.09.2026 wurden „zwei Belegdateien und vier Langenscheidt-Seiten
+   aus allen Commits entfernt". Eine Umschreibung der Historie **vergibt neue
+   Hashes**. Die alten Commits existieren als Objekt weiter — `git cat-file -e`
+   findet sie —, stehen aber nicht mehr im `git log`.
+
+   Gemessen am 09.09.: von 651 Hashes in der Notiz sind 482 erreichbar,
+   **31 nur noch als Objekt**, 138 gar keine Commits.
+
+   ⭐ Ohne diese Unterscheidung meldet der Pruefer sie als ABWEICHUNG — also
+   als Fehler in der Notiz, obwohl die Ueberschrift stimmt und nur der Beleg
+   entwertet ist. Genau daran ist am 09.09. eine Diagnose zwei Stunden lang
+   vorbeigelaufen: gesucht wurde in der Notiz, gelegen hat es an der Historie.
+   [[zahlen_ohne_beleg]] [[kennzeichen_mit_zwei_ursachen]]
+
+   ⚠️ `git cat-file -e` allein beantwortet die Frage NICHT — es findet auch
+   Objekte, die kein Zweig mehr erreicht. Gefragt werden muss, ob der Hash im
+   `git log` steht; das tut `commitTag()` bereits. Hier geht es nur darum, die
+   beiden Faelle im BERICHT auseinanderzuhalten. */
+const haengendCache = new Map();
+function haengenGeblieben(hash) {
+  if (haengendCache.has(hash)) return haengendCache.get(hash);
+  let ja = false;
+  try {
+    execFileSync('git', ['-C', REPO, 'cat-file', '-e', hash + '^{commit}'], { stdio: 'ignore' });
+    ja = true;                              /* Objekt da, aber nicht im log */
+  } catch { ja = false; }                   /* gar kein Commit */
+  haengendCache.set(hash, ja);
+  return ja;
+}
+
 /* Der erste Commit ist die Grenze der Prüfbarkeit. ⛔ Nicht fest eintragen —
  * er verschiebt sich, wenn je der Verlauf umgeschrieben wird. */
 let ersterCommit = null;
@@ -138,7 +170,7 @@ try {
 } catch { /* kein Repo */ }
 
 let stimmt = 0, weicht = 0, nichtPruefbar = 0, ohneDatum = 0;
-const rot = [], erklaert = [];
+const rot = [], erklaert = [], entwertet = [];
 
 /* ⛔⛔ AUCH DIE UHRZEIT, nicht nur der Tag — nachgerüstet am 20.08.2026.
  *
@@ -190,6 +222,17 @@ for (const b of bloecke) {
   const echte = hashes.map((h) => ({ h, d: commitTag(h) })).filter((x) => x.d);
 
   if (!echte.length) { nichtPruefbar++; continue; }
+
+  /* ⛔ Steht der Hash aus der UEBERSCHRIFT nicht mehr im `git log`, ist die
+     Ueberschrift nicht falsch — ihr Beleg ist entwertet. Das gehoert unter
+     „nicht pruefbar", nicht unter „weicht ab". Sonst sucht man den Fehler in
+     der Notiz, und er liegt in der Historie. */
+  const kopfHash = (b.kopf.match(/`([0-9a-f]{7,40})`/) || [])[1];
+  if (kopfHash && !commitTag(kopfHash) && haengenGeblieben(kopfHash)) {
+    entwertet.push({ b, hash: kopfHash, behauptet: m[0] });
+    nichtPruefbar++;
+    continue;
+  }
 
   const marke = text.match(MARKE);
   const tage = [...new Set(echte.map((x) => x.d.slice(0, 10)))];
@@ -247,6 +290,31 @@ for (const b of bloecke) {
     else zeitRot.push({ b, sagt: u[1], naechster, commits: echte.filter((x) => x.d.slice(0, 10) === m[0]) });
     continue;
   }
+  /* ⛔ LETZTE FRAGE VOR DEM ROT (09.09.2026): Traegt einer der Hashes, die es
+     im `git log` NICHT mehr gibt, genau das behauptete Datum? Dann ist die
+     Ueberschrift richtig und nur ihr Beleg entwertet.
+
+     Der Fall, an dem das auffiel: Der Block vom 07.09.2026 nennt acht
+     Commits, ALLE vom 07.09. und ALLE bei der Umschreibung vom 08.09. ersetzt.
+     Erreichbar blieb allein `20dbc82` (11.08.) — eine historische Erwaehnung
+     im Fliesstext. Der Pruefer verglich also die Ueberschrift mit dem einzigen
+     Hash, der nichts mit ihr zu tun hat. [[historisch_oder_aktuell_steht_im_wort_davor]] */
+  const verloren = hashes.filter((h) => !commitTag(h) && haengenGeblieben(h));
+  const verloreneTage = [];
+  for (const h of verloren) {
+    let d = null;
+    try {
+      d = execFileSync('git', ['-C', REPO, 'log', '-1', '--format=%ad', '--date=format:%d.%m.%Y', h],
+        { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+    } catch { /* nicht lesbar — dann eben nicht */ }
+    if (d) verloreneTage.push({ h, d });
+  }
+  if (verloreneTage.some((x) => x.d === m[0])) {
+    entwertet.push({ b, hash: verloreneTage.find((x) => x.d === m[0]).h, behauptet: m[0] });
+    nichtPruefbar++;
+    continue;
+  }
+
   weicht++;
   rot.push({ b, behauptet: m[0], echte, tage });
 }
@@ -256,7 +324,19 @@ if (ersterCommit) console.log('Erster Commit im Repo: ' + ersterCommit + '  (all
 console.log('');
 console.log('  mit Datum im Kopf:   ' + (stimmt + weicht + nichtPruefbar) + '   (ohne Datum: ' + ohneDatum + ')');
 console.log('    ✅ stimmt:          ' + stimmt);
-console.log('    ⬜ nicht prüfbar:   ' + nichtPruefbar + '   (kein Commit im Block genannt)');
+console.log('    ⬜ nicht prüfbar:   ' + nichtPruefbar + '   (kein Commit im Block genannt'
+  + (entwertet.length ? ', davon ' + entwertet.length + ' mit entwertetem Beleg' : '') + ')');
+if (entwertet.length){
+  console.log('');
+  console.log('  ⚠️ ' + entwertet.length + ' Block/Bloecke nennen im Kopf einen Commit, den es im');
+  console.log('     `git log` NICHT mehr gibt — er wurde bei einer Umschreibung der');
+  console.log('     Historie ersetzt (08.09.2026: Belegdateien aus allen Commits entfernt).');
+  console.log('     ⛔ Die Ueberschrift ist deshalb nicht falsch, nur ihr Beleg ist weg.');
+  for (const e of entwertet)
+    console.log('       Z' + e.b.zeile + '  ' + e.behauptet + '  `' + e.hash + '`  ' + e.b.kopf.slice(3, 58));
+  console.log('     ⚠️ Die Hashes NICHT durch die neuen ersetzen: ein Verlaufseintrag sagt,');
+  console.log('        welchen Hash ein Commit DAMALS trug. [[zahlen_ohne_beleg]]');
+}
 console.log('    📌 erklärt:         ' + erklaert.length + '   (Marke im Text, siehe --alle)');
 console.log('    ❌ weicht ab:       ' + weicht);
 
@@ -362,7 +442,24 @@ for (const b of bloecke){
   if (!d || !u) continue;
   /* Zwei Uhrzeiten im Kopf = Spanne. */
   const spanne = (b.kopf.match(/\d{2}:\d[0-9x]/g) || []).length > 1;
-  zeitBloecke.push({ b, tag: d[0], zeit: u[1].replace(/x$/, '5'), spanne, imArchiv: b.imArchiv });
+  /* ⛔⛔ EIN KURZSTAND IST KEIN VERLAUFSBLOCK (09.09.2026).
+
+     Ein Block, der mit „Stand" beginnt, ist eine Momentaufnahme — und die
+     steht in dieser Notiz absichtlich OBEN, neueste zuerst. Der Pruefer
+     verglich sie bisher gegen die gemessene Wuchsrichtung des Rests
+     (angehaengt, neueste unten) und meldete dadurch jeden Kurzstand als
+     „laeuft rueckwaerts". Am 09.09. waren das zehn von elf Befunden — alle
+     falsch, alle vom selben Typ.
+
+     ⭐ Der Unterschied steht schon weiter oben in dieser Datei: „Ein
+     Kurzstand darf am Folgetag datiert sein („Stand von wann"), ein
+     Verlaufsblock nicht." Dieselbe Unterscheidung gilt fuer die Reihenfolge.
+
+     ⚠️ Das entschuldigt NICHT, neun Kurzstaende an einem Abend uebereinander
+     zu stapeln — ein Kurzstand ist EINER und wird ueberschrieben. Dafuer ist
+     dieser Pruefer aber nicht zustaendig. [[kurzstand_veraltet_beim_anhaengen]] */
+  const kurzstand = /^##+\s*(⛔+\s*)?Stand\b/.test(b.kopf);
+  zeitBloecke.push({ b, tag: d[0], zeit: u[1].replace(/x$/, '5'), spanne, kurzstand, imArchiv: b.imArchiv });
 }
 const jeTag = new Map();
 for (const x of zeitBloecke){
@@ -375,6 +472,8 @@ for (const [, xs] of jeTag){
     if (xs[i].spanne || xs[i - 1].spanne) continue;
     /* Archivierte Vorgaenger stehen absichtlich unter ihrem Nachfolger. */
     if (xs[i].imArchiv || xs[i - 1].imArchiv) continue;
+    /* Kurzstaende stehen absichtlich neueste-zuerst — siehe oben. */
+    if (xs[i].kurzstand || xs[i - 1].kurzstand) continue;
     /* Gegen die GEMESSENE Wuchsrichtung, nicht gegen eine angenommene. */
     const roh2 = minuten(xs[i].zeit) - minuten(xs[i - 1].zeit);
     const d = AUFSTEIGEND ? roh2 : -roh2;
