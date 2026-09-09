@@ -330,9 +330,25 @@ console.log('=== 2. Kein arabischer Textlauf laenger als ' + MAX_ZITAT + ' Woert
 console.log('');
 console.log('=== 3. Ids, Anzahl und Doppelungen ===');
 {
+  /* ⛔⛔ PLURALKARTEN (09.09.2026). Eine Karte mit der Id `<id>#pl` steht in
+     KEINER Datei — `bauePluralKarte()` in js/kern.js baut sie beim Start aus
+     der Grundvokabel. Seit sie eigene Vorschlaege haben duerfen, meldete
+     dieser Abschnitt 16-mal „gehoert zu keiner Vokabel". Gueltig ist so eine
+     Id genau dann, wenn es die Grundvokabel gibt UND sie einen Plural hat —
+     ohne `pl` entsteht die Karte naemlich nicht, und der Vorschlag waere
+     unerreichbar. [[daten_ohne_zugang]] */
+  const PL_MARKE = '#pl';
   Object.keys(ALT).forEach(id => {
-    const w = VOCAB_DATA.find(x => String(x.id) === id)
-           || BUCH_WOERTER.find(x => String(x.id) === id);
+    const basis = id.endsWith(PL_MARKE) ? id.slice(0, -PL_MARKE.length) : id;
+    const grund = VOCAB_DATA.find(x => String(x.id) === basis)
+               || BUCH_WOERTER.find(x => String(x.id) === basis);
+    if (grund && id.endsWith(PL_MARKE) && !grund.pl){
+      melde(`Id ${id}: ${grund.ar} hat keinen Plural — diese Karte entsteht nie`);
+      return;
+    }
+    const w = id.endsWith(PL_MARKE) && grund
+      ? { ...grund, id, ar: String(grund.pl).split('/')[0].trim(), mnemo: null }
+      : grund;
     if (!w){ melde(`Id ${id} gehoert zu keiner Vokabel`); return; }
     const liste = ALT[id] || [];
     if (!liste.length) melde(`${w.ar}: leere Liste`);
