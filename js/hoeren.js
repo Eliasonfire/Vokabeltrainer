@@ -602,14 +602,18 @@ function gehStilleAn(){
       navigator.mediaSession.setActionHandler('pause', ()=>gehModusSetzen(false));
       navigator.mediaSession.setActionHandler('stop',  ()=>gehModusSetzen(false));
       navigator.mediaSession.setActionHandler('play',  ()=>gehModusSetzen(true));
-    } catch (e){ }
+      /* ⚠️ Wirft schon `new MediaMetadata(...)`, sind die drei Knoepfe
+         darunter NIE angemeldet worden — der Sperrbildschirm zeigt dann
+         Knoepfe, die nichts tun. Von aussen sieht das aus wie ein haengender
+         Geh-Modus. [[befund_vor_dem_ende_der_funktion]] */
+    } catch (e){ stillerFehler('Hoeren: Sperrbildschirm einrichten', e); }
   }
 }
 
 function gehStilleAus(){
-  try { if (GEH_STILLE) GEH_STILLE.pause(); } catch (e){ }
+  try { if (GEH_STILLE) GEH_STILLE.pause(); } catch (e){ /* nichts zu pausieren ist kein Fehler */ }
   if ('mediaSession' in navigator){
-    try { navigator.mediaSession.playbackState = 'paused'; } catch (e){ }
+    try { navigator.mediaSession.playbackState = 'paused'; } catch (e){ /* ohne MediaSession gibt es nichts zu setzen */ }
     /* ⛔ Die Knoepfe werden WIEDER FREIGEGEBEN. Ohne das bliebe der
        Pause-Handler des Geh-Modus liegen, und der naechste Ton der App —
        eine Rezitation — bekaeme auf dem Sperrbildschirm einen Knopf, der den
@@ -617,7 +621,7 @@ function gehStilleAus(){
        (`quranMedienKnoepfe(false)`); es fehlte nur auf dieser Seite.
        [[wirkung_an_der_quelle_stilllegen]] */
     ['play', 'pause', 'stop'].forEach(n => {
-      try { navigator.mediaSession.setActionHandler(n, null); } catch (e){ }
+      try { navigator.mediaSession.setActionHandler(n, null); } catch (e){ /* Abmelden einer nie angemeldeten Taste */ }
     });
   }
 }
@@ -640,7 +644,12 @@ function gehNotiz(was, dazu){
     }, dazu || {}));
     if (log.zeilen.length > 200) log.zeilen = log.zeilen.slice(-200);
     LS.set(GEH_LOG_SCHLUESSEL, log);
-  } catch (e){ }
+    /* ⛔⛔ Das ist das MESSWERKZEUG selbst. Faellt es aus, zeigt die
+       Diagnosekarte „(nicht gelaufen)" — und wir suchen den Fehler dann im
+       Geh-Modus statt im Protokoll. Ein Werkzeug, das still ausfaellt,
+       verfaelscht jede Messung, die danach kommt.
+       [[leere_liste_ist_keine_messung]] */
+  } catch (e){ stillerFehler('Geh-Protokoll schreiben', e); }
 }
 
 /** Die Zeilen des laufenden Tages, ohne Ausgabe. Die Diagnosekarte in den
@@ -789,7 +798,7 @@ function gehModusSetzen(an){
        hier faellig. Ohne dieses eine Wort waere die Aufschiebung oben eine
        Beerdigung. [[werkzeug_ohne_aufrufer]] */
     hoerZielPruefen();
-    try { speechSynthesis.cancel(); } catch (e){ }
+    try { speechSynthesis.cancel(); } catch (e){ /* nichts zu unterbrechen ist kein Fehler */ }
     /* Zurück in den normalen Betrieb: eine frische Frage mit Antwortknöpfen.
        Ohne das stünde die letzte Lösung da und nichts ginge weiter. */
     if (document.getElementById('screen-hoeren').classList.contains('active')) naechsteHoerfrage();

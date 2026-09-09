@@ -314,7 +314,7 @@ function audioVorladen(sure, vers){
      Bildschirm. Ein eigener Vorlader konnte das nie, weil seine Datei danach
      trotzdem in das spielende Element neu geladen werden musste. */
   const b = audioAnderes();
-  if (b.src !== url){ b.src = url; try { b.load(); } catch (e){ } }
+  if (b.src !== url){ b.src = url; try { b.load(); } catch (e){ /* laedt spaetestens beim play() */ } }
 }
 
 async function audioSpiele(sure, vers){
@@ -329,9 +329,12 @@ async function audioSpiele(sure, vers){
      blossen `typeof` einen ReferenceError. Ohne die Klammer risse ein Fehler
      im Hoermodus den Quran-Leser mit. [[const_ist_im_vm_kontext_unsichtbar]] */
   if (QAUDIO.sure === null){
+    /* ⛔⛔ Faellt das hier aus, laeuft der Geh-Modus WEITER, waehrend die
+       Rezitation anfaengt — zwei Stimmen gleichzeitig in seinem Zimmer. Das
+       ist der teuerste Fehler dieser Datei und darf nicht still bleiben. */
     try {
       if (GEH && GEH.an && typeof gehModusSetzen === 'function') gehModusSetzen(false);
-    } catch (e){ }
+    } catch (e){ stillerFehler('Quran-Ton: Geh-Modus liess sich nicht abschalten', e); }
   }
   const anzahl = audioVersZahl(sure);
   if (!anzahl || vers < 1 || vers > anzahl){ audioAus(); return; }
@@ -354,12 +357,12 @@ async function audioSpiele(sure, vers){
     const alt = QAUDIO.el;
     QAUDIO.el = b;
     el = b;
-    try { el.currentTime = 0; } catch (e){ }
-    if (alt && alt !== b){ try { alt.pause(); } catch (e){ } }
+    try { el.currentTime = 0; } catch (e){ /* Quelle noch nicht bereit: startet ohnehin bei 0 */ }
+    if (alt && alt !== b){ try { alt.pause(); } catch (e){ /* schon angehalten */ } }
   } else {
     el = QAUDIO.el;
     if (el.src !== url) el.src = url;
-    else { try { el.currentTime = 0; } catch (e){ } }
+    else { try { el.currentTime = 0; } catch (e){ /* Quelle noch nicht bereit: startet ohnehin bei 0 */ } }
   }
   markiereLaufendenVers(sure, vers);
   wortModusVorbereiten();
@@ -471,7 +474,7 @@ function audioAus(){
      Speicher und beim naechsten Start spraenge der Leser auf einen Vers, den
      niemand gewaehlt hat. [[fehler_trifft_mehr_als_gemeldet]] */
   for (const el of (QAUDIO.paar || [])){
-    try { el.pause(); el.removeAttribute('src'); el.load(); } catch (e) {}
+    try { el.pause(); el.removeAttribute('src'); el.load(); } catch (e) { /* Aufraeumen auf einem schon leeren Element */ }
   }
   quranStilleAus();
   quranMedienKnoepfe(false);
@@ -547,12 +550,16 @@ function quranStilleAn(){
     }
     if (QAUDIO_STILLE.paused){
       const p = QAUDIO_STILLE.play();
-      if (p && p.catch) p.catch(() => {});
+      /* ⛔ Auch der abgelehnte Abspielversuch wird gemeldet. Genau hier bricht
+         die Ueberbrueckung ab, wenn der Browser sie ohne Geste verweigert —
+         und der Ausfall sieht von aussen aus wie „die Rezitation stoppt beim
+         Bildschirm aus", also wie ein ganz anderer Fehler. */
+      if (p && p.catch) p.catch(e => stillerFehler('Quran-Ton: stille.wav abgelehnt', e));
     }
-  } catch (e){ }
+  } catch (e){ stillerFehler('Quran-Ton: stille Schleife', e); }
 }
 function quranStilleAus(){
-  try { if (QAUDIO_STILLE) QAUDIO_STILLE.pause(); } catch (e){ }
+  try { if (QAUDIO_STILLE) QAUDIO_STILLE.pause(); } catch (e){ /* nichts zu pausieren ist kein Fehler */ }
 }
 
 /** Der Name der Sure, wie er in der Liste steht. */
@@ -581,7 +588,11 @@ function quranMedienInfo(){
     });
     navigator.mediaSession.playbackState = QAUDIO.laeuft ? 'playing' : 'paused';
     quranMedienPosition();
-  } catch (e){ }
+    /* ⚠️ Hier steht eigene Logik, nicht nur eine Browser-Schnittstelle:
+       `sureName`, `rezitatorTitel` und `quranRezitator` koennen werfen. Dann
+       bleibt der Sperrbildschirm bei der VORIGEN Sure stehen — sichtbar
+       falsch, aber ohne Fehlermeldung. */
+  } catch (e){ stillerFehler('Quran-Ton: Sperrbildschirm beschriften', e); }
 }
 
 /** ⭐ Die Fortschrittsanzeige auf dem Sperrbildschirm — der „Tonbalken, der wie
@@ -612,7 +623,7 @@ function quranMedienPosition(){
     navigator.mediaSession.setPositionState({
       duration: dauer, playbackRate: rate, position: stelle
     });
-  } catch (e){ }
+  } catch (e){ /* setPositionState fehlt oder mag die Werte nicht; nur der Fortschrittsbalken fehlt dann */ }
 }
 
 /** Die Knoepfe auf dem Sperrbildschirm. Einmal belegt, solange rezitiert wird.
@@ -623,7 +634,7 @@ function quranMedienPosition(){
 function quranMedienKnoepfe(an){
   if (!('mediaSession' in navigator)) return;
   const setze = (name, fn) => {
-    try { navigator.mediaSession.setActionHandler(name, fn); } catch (e){ }
+    try { navigator.mediaSession.setActionHandler(name, fn); } catch (e){ /* diese Taste kennt der Browser nicht */ }
   };
   if (!an){
     ['play', 'pause', 'stop', 'nexttrack', 'previoustrack'].forEach(n => setze(n, null));

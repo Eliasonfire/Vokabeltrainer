@@ -256,7 +256,7 @@ function syncMoeglich(){
 function merkeStatus(ok, text){
   let erfolg = 0;
   try { erfolg = (JSON.parse(localStorage.getItem(STATUS_SCHLUESSEL) || 'null') || {}).erfolg || 0; }
-  catch (e){}
+  catch (e){ /* kaputter Status: dann gilt 0 Erfolge */ }
   if (ok) erfolg = Date.now();
   try {
     localStorage.setItem(STATUS_SCHLUESSEL, JSON.stringify({ ok, text, zeit: Date.now(), erfolg }));
@@ -269,7 +269,7 @@ function zeigeStatus(){
   const feld = document.getElementById('syncStand');
   if (!feld) return;
   let s = null;
-  try { s = JSON.parse(localStorage.getItem(STATUS_SCHLUESSEL) || 'null'); } catch (e){}
+  try { s = JSON.parse(localStorage.getItem(STATUS_SCHLUESSEL) || 'null'); } catch (e){ /* kaputter Status: dann gilt null */ }
   if (!s){ feld.textContent = 'Noch nicht abgeglichen'; return; }
   const d = new Date(s.zeit);
   const wann = d.toLocaleDateString('de-DE', { day:'2-digit', month:'2-digit' }) +
@@ -301,7 +301,7 @@ function zeigeAbgleichWarnung(){
   if (!band) return;
   const feld = document.getElementById('syncWarnungText');
   let s = null;
-  try { s = JSON.parse(localStorage.getItem(STATUS_SCHLUESSEL) || 'null'); } catch (e){}
+  try { s = JSON.parse(localStorage.getItem(STATUS_SCHLUESSEL) || 'null'); } catch (e){ /* kaputter Status: dann gilt null */ }
   /* ⛔ aufLokalerVorschau() steht VOR der Statusprüfung: auf localhost gibt es
      keinen Endpunkt, der 404 sagt also nichts über den echten Abgleich. */
   if (aufLokalerVorschau() || !syncMoeglich() || !s || s.ok){ band.hidden = true; return; }
@@ -402,7 +402,11 @@ function fuehreZusammen(fern){
         Object.keys(b).forEach(f => { if ((b[f]||0) > (raus[f]||0)) raus[f] = b[f]; });
         const neu = JSON.stringify(raus);
         if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
-      } catch (e){ }
+        /* ⛔ Faellt das aus, gilt die STEMPELKARTE als unveraendert — und
+           damit gewinnt bei der naechsten Zusammenfuehrung von vt_settings
+           womoeglich das aeltere Geraet. Ein stiller Datenverlust, der erst
+           auffaellt, wenn eine Einstellung „von selbst zurueckspringt". */
+      } catch (e){ stillerFehler('Abgleich: Stempelkarte zusammenfuehren', e); }
       return;
     }
 
@@ -1158,14 +1162,14 @@ let   SYNC_NACHZUEGLER    = null;
 function syncPutZaehler(){
   const heute = new Date().toISOString().slice(0, 10);
   let z = null;
-  try { z = JSON.parse(localStorage.getItem('vt_syncPuts') || 'null'); } catch (e){ }
+  try { z = JSON.parse(localStorage.getItem('vt_syncPuts') || 'null'); } catch (e){ /* kaputter Zaehler: faengt bei null wieder an */ }
   if (!z || z.tag !== heute) z = { tag: heute, n: 0 };
   return z;
 }
 function syncPutGezaehlt(){
   const z = syncPutZaehler();
   z.n++;
-  try { localStorage.setItem('vt_syncPuts', JSON.stringify(z)); } catch (e){ }
+  try { localStorage.setItem('vt_syncPuts', JSON.stringify(z)); } catch (e){ /* nur der Zaehler der Diagnosekarte */ }
   return z.n;
 }
 /** Für die Diagnose auf SEINEM Gerät — eine Reparatur ohne Messung wäre hier

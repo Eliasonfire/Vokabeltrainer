@@ -919,7 +919,7 @@ function diagnoseText(){
         kasten.textContent = kasten.textContent.replace('Version: … (wird geladen)',
           'Version: ' + v + (navigator.serviceWorker && navigator.serviceWorker.controller ? '' : ' (SW steuert nicht)'));
     });
-  } catch (e){ }
+  } catch (e){ stillerFehler('Diagnose: Version lesen', e); }
   sicher('Bildschirm', () => window.innerWidth + '×' + window.innerHeight
     + ' · Gerät ' + (screen && screen.width) + '×' + (screen && screen.height)
     + ' · Pixelverhältnis ' + (window.devicePixelRatio || 1));
@@ -993,7 +993,11 @@ function diagnoseText(){
   zeilen.push('');
   zeilen.push('Feiern heute:');
   let feiern = [];
-  try { feiern = (typeof feierProtokoll === 'function') ? feierProtokoll() : []; } catch (e){ }
+  /* ⛔ Ohne Meldung waere ein Fehler hier die schlimmste Sorte: die Karte
+     zeigte dann „(noch keine)" — also einen BEFUND, wo in Wahrheit die
+     Messung ausgefallen ist. [[leere_liste_ist_keine_messung]] */
+  try { feiern = (typeof feierProtokoll === 'function') ? feierProtokoll() : []; }
+  catch (e){ stillerFehler('Diagnose: Feier-Protokoll', e); }
   if (!feiern.length) zeilen.push('  (noch keine)');
   else feiern.forEach(z => zeilen.push('  ' + z.uhr + '  ' + z.anlass + '  @ ' + z.wo
     + (z.fehler ? '  ⛔ ' + z.fehler : '')));
@@ -1001,7 +1005,10 @@ function diagnoseText(){
   zeilen.push('');
   zeilen.push('Geh-Modus heute:');
   let geh = [];
-  try { geh = (typeof gehProtokollZeilen === 'function') ? gehProtokollZeilen() : []; } catch (e){ }
+  /* ⛔ Gleiche Falle wie oben: „(nicht gelaufen)" waere sonst eine Aussage
+     ueber den Geh-Modus, obwohl sie eine ueber das Auslesen ist. */
+  try { geh = (typeof gehProtokollZeilen === 'function') ? gehProtokollZeilen() : []; }
+  catch (e){ stillerFehler('Diagnose: Geh-Protokoll', e); }
   if (!geh.length) zeilen.push('  (nicht gelaufen)');
   else {
     const woerter = geh.filter(z => z.was === 'wort');
@@ -1013,6 +1020,21 @@ function diagnoseText(){
     geh.slice(-8).forEach(z => zeilen.push('  ' + z.uhr + '  ' + z.was + '  ' + z.sichtbar
       + (z.sprach === false ? '  ⛔ stumm' : '')));
   }
+
+  /* ---------- Geschluckte Fehler (09.09.2026) ----------
+     ⭐⭐ Der Abschnitt, der den Konfetti-Fall in einer Zeile geloest haette.
+     Er steht ZULETZT und damit unten auf dem Bildschirmfoto — davor stehen
+     die Werte, die man in jedem Fall braucht. Ist er leer, ist das eine
+     echte Aussage: seit dem Start ist kein Fehler geschluckt worden.
+     [[ausfall_ist_unsichtbar_gebaut]] */
+  zeilen.push('');
+  zeilen.push('Geschluckte Fehler seit dem Start:');
+  let still = [];
+  try { still = (typeof stilleFehlerZeilen === 'function') ? stilleFehlerZeilen() : ['  — (Protokoll fehlt)']; }
+  catch (e){ still = ['  — (Protokoll unlesbar: ' + (e && e.message) + ')']; }
+  if (!still.length) zeilen.push('  (keine — gut)');
+  else still.forEach(z => zeilen.push(z));
+
   return zeilen.join('\n');
 }
 
@@ -1051,8 +1073,15 @@ document.getElementById('btnAktualisieren').addEventListener('click', async ()=>
       .filter(s => s && !/^https?:/.test(s))
       .concat(['index.html', 'manifest.json']);
     /* Einzeln und mit abgefangenem Fehler: eine Datei, die gerade nicht
-       erreichbar ist, darf das Aktualisieren nicht verhindern. */
-    for (const d of dateien){ try { await fetch(d, { cache: 'reload' }); } catch(_){} }
+       erreichbar ist, darf das Aktualisieren nicht verhindern.
+       ⛔ Gemeldet wird sie trotzdem. Genau hier entsteht sonst der Fall, an
+       dem Elias am 18.08.2026 stundenlang Fehler gemeldet hat, die laengst
+       behoben waren: der Knopf sagt „fertig", eine Datei blieb aber alt, und
+       niemand erfaehrt welche. [[alte_fassung_beim_nutzer]] */
+    for (const d of dateien){
+      try { await fetch(d, { cache: 'reload' }); }
+      catch(e){ stillerFehler('Aktualisieren: ' + d, e); }
+    }
     /* Den Service-Worker-Cache mitnehmen, sonst liefert er beim nächsten
        Offline-Start weiter den alten Stand. */
     if ('caches' in window){

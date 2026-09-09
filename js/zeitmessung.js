@@ -75,10 +75,10 @@ const ZEIT_LAUF = { modus: null, letzteRegung: 0, ticker: null };
    in der Schluesselliste von js/sync.js. */
 function zeitGeraet(){
   let g = null;
-  try { g = localStorage.getItem('vt_geraetId'); } catch (e){ }
+  try { g = localStorage.getItem('vt_geraetId'); } catch (e){ /* privates Fenster: unten wird eine neue Kennung gewuerfelt */ }
   if (!g){
     g = 'g' + Math.random().toString(36).slice(2, 8);
-    try { localStorage.setItem('vt_geraetId', g); } catch (e){ }
+    try { localStorage.setItem('vt_geraetId', g); } catch (e){ /* privates Fenster: die Kennung gilt dann nur fuer diese Sitzung */ }
   }
   return g;
 }

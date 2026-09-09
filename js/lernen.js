@@ -1108,7 +1108,7 @@ document.getElementById('btnExitLearn').addEventListener('click', ()=>{
        passiert bei 90px Schwelle staendig. endDrag laeuft dann nie, die Karte
        bleibt schraeg stehen und die naechste Beruehrung wirkt wie ein Klick. */
     zeiger = e.pointerId;
-    try { card.setPointerCapture(zeiger); } catch(_){}
+    try { card.setPointerCapture(zeiger); } catch(_){ /* Zeiger schon losgelassen: die Geste laeuft ohne Fang weiter */ }
   });
   card.addEventListener('pointermove', (e)=>{
     if (!dragging) return;
@@ -1170,7 +1170,7 @@ document.getElementById('btnExitLearn').addEventListener('click', ()=>{
   function endDrag(e){
     if (!dragging) return;
     dragging=false;
-    if (zeiger !== null){ try { card.releasePointerCapture(zeiger); } catch(_){} zeiger = null; }
+    if (zeiger !== null){ try { card.releasePointerCapture(zeiger); } catch(_){ /* nie gefangen oder schon frei */ } zeiger = null; }
     card.classList.remove('swiping');
     hintR.classList.remove('show'); hintL.classList.remove('show');
     const threshold = 90;
