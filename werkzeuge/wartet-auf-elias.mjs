@@ -42,7 +42,7 @@ import vm from 'node:vm';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
-import { arabischHervorheben, BIDI_CSS } from './arabisch-hervorheben.mjs';
+import { arabischInSeite, BIDI_CSS } from './arabisch-hervorheben.mjs';
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.resolve(HIER, '..');
@@ -1129,14 +1129,16 @@ const esc = (s) => String(s == null ? '' : s)
    Browsers. Das beweist, dass es NICHT reicht: Isolation am aeusseren Kasten
    trennt ihn von der Umgebung, nicht die beiden Laeufe voneinander.
 
-   ⭐ `txt()` benutzt dieselbe Funktion wie die App — herausgeschnitten aus
-   js/kern.js, nicht nachgebaut. Sie maskiert SELBST, deshalb hier kein
-   zusaetzliches esc(). `esc()` bleibt fuer Attribute (href), dort waere ein
-   eingesetzter <span> ein Fehler.
+   ⭐ Verpackt wird NICHT hier an jeder einzelnen Stelle, sondern EINMAL am
+   Ende ueber die fertige Seite: `arabischInSeite(html)`. Der erste Anlauf
+   ersetzte jedes `esc(x)` von Hand durch ein `txt(x)` — bei vier Seiten und
+   ueber fuenfzig Stellen ist das genau die Arbeit, bei der die letzte Stelle
+   vergessen wird, und bei jeder stellt sich die Frage, ob sie in einem
+   ATTRIBUT steht (dort waere ein <span> ein Fehler). Der Handgriff am Ende
+   kennt den Unterschied.
    [[rtl_richtung_physisch]] [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
-const txt = (s) => arabischHervorheben(String(s == null ? '' : s), 'ar');
 /* Fettschrift und Code aus den To-Do-Zeilen behalten — sie tragen Bedeutung. */
-const md = (s) => txt(s)
+const md = (s) => esc(s)
   .replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>')
   .replace(/`([^`]+)`/g, '<code>$1</code>');
 
@@ -1144,14 +1146,14 @@ const karten = posten.map((p, i) => `
 <article class="posten" data-nr="${i}">
   <header>
     <span class="zahl">${p.zahl}</span>
-    <span class="einheit">${txt(p.einheit)}</span>
-    <h2>${txt(p.titel)}</h2>
-    ${p.dazu ? `<span class="dazu">${txt(p.dazu)}</span>` : ''}
+    <span class="einheit">${esc(p.einheit)}</span>
+    <h2>${esc(p.titel)}</h2>
+    ${p.dazu ? `<span class="dazu">${esc(p.dazu)}</span>` : ''}
   </header>
-  <p class="aufwand"><span class="marke">Aufwand</span> ${txt(p.aufwand)}</p>
-  <p class="warum">${txt(p.warum)}</p>
-  <p class="wie"><span class="marke">So geht es</span> ${txt(p.wie)}</p>
-  ${p.beispiel ? `<p class="warum"><span class="marke">Beispiel</span> ${txt(p.beispiel)}</p>` : ''}
+  <p class="aufwand"><span class="marke">Aufwand</span> ${esc(p.aufwand)}</p>
+  <p class="warum">${esc(p.warum)}</p>
+  <p class="wie"><span class="marke">So geht es</span> ${esc(p.wie)}</p>
+  ${p.beispiel ? `<p class="warum"><span class="marke">Beispiel</span> ${esc(p.beispiel)}</p>` : ''}
   ${p.zeilen && p.zeilen.length ? `<ul class="zeilen">${p.zeilen.map(z => `<li>${md(z)}</li>`).join('')}</ul>` : ''}
   ${p.seite ? `<a class="knopf" href="${esc(p.seite)}" target="_blank" rel="noopener">${esc(p.seiteText || 'Öffnen')} →</a>` : ''}
 </article>`).join('\n');
@@ -1276,7 +1278,7 @@ Zahlen kommen aus <code>vorrat.mjs</code>, <code>pruefe-taschkil.js</code>,
 
 const ZIEL = path.join(REPO, 'artefakte', 'wartet-auf-elias.html');
 fs.mkdirSync(path.dirname(ZIEL), { recursive: true });
-fs.writeFileSync(ZIEL + '.neu', html, 'utf8');
+fs.writeFileSync(ZIEL + '.neu', arabischInSeite(html), 'utf8');
 fs.renameSync(ZIEL + '.neu', ZIEL);
 console.log('');
 console.log('Seite gebaut: ' + path.relative(REPO, ZIEL));

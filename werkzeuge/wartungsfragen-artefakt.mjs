@@ -38,6 +38,7 @@
  * [[vier_neue_artefakte]]
  */
 import fs from 'node:fs';
+import { arabischInSeite, BIDI_CSS } from './arabisch-hervorheben.mjs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
@@ -212,6 +213,7 @@ const html = `<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Offene Fragen der Wartung</title>
 <style>
+${BIDI_CSS}
 /* Gleiche Bauform wie das Regelprüfungs- und das Freigabe-Artefakt:
    OLED-Schwarz, ein Thema, alles ausdrücklich gemalt. */
 :root{
@@ -521,8 +523,15 @@ ${fragen.map((f, i) => abschnitt(f, i + 1)).join('\n')}
 fs.mkdirSync(path.dirname(ZIEL), { recursive: true });
 /* ⛔ erst .neu, dann umbenennen: ein Abbruch beim Schreiben hinterliesse sonst
    eine leere Datei, und die besteht jeden Test. [[leere_datei_besteht_jeden_test]] */
+/* ⛔⛔ EINMAL ueber die fertige Seite: arabische Laeufe einzeln verpacken.
+   Vorher standen hier 7 von 7 Paaren VERKEHRT HERUM — „مِيَاه · أَمْوَاه ·
+   أَمْوَاء" ist eine Auswahlliste, und die Reihenfolge war gedreht. Ein
+   neutrales Zeichen zwischen zwei arabischen Laeufen bekommt deren Richtung.
+   Der Handgriff laesst Attribute, <script> und <style> in Ruhe.
+   [[rtl_richtung_physisch]] */
+const seite = arabischInSeite(html);
 const tmp = ZIEL + '.neu';
-fs.writeFileSync(tmp, html, 'utf8');
+fs.writeFileSync(tmp, seite, 'utf8');
 fs.renameSync(tmp, ZIEL);
 
 /* ---------- Zweite Fassung für die Veröffentlichung als Artefakt ----------
@@ -541,7 +550,7 @@ fs.renameSync(tmp, ZIEL);
    neue Fassung bereitliegt — sonst sieht Elias am Handy den Stand von letzter
    Woche und hält ihn für aktuell. [[alte_fassung_beim_nutzer]] */
 const ZIEL_ART = path.join(REPO, 'artefakte', 'wartungsfragen-artefakt.html');
-const nurInhalt = html
+const nurInhalt = seite
   .replace(/^[\s\S]*?<title>/, '<title>')
   .replace(/<\/head>\s*<body>/, '')
   .replace(/<\/body>\s*<\/html>\s*$/, '')

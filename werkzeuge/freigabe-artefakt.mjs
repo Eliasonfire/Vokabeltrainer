@@ -49,6 +49,7 @@
  * ihren Preis eine Trefferquote vortaeuscht, die es nicht gibt.
  */
 import fs from 'node:fs';
+import { arabischInSeite, BIDI_CSS } from './arabisch-hervorheben.mjs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -144,6 +145,7 @@ for (const datei of dateien) {
 
 const html = `<title>Regelkandidaten freigeben</title>
 <style>
+${BIDI_CSS}
 /* Gleiche Bauform wie das Regelpruefungs-Artefakt: OLED-Schwarz, ein Thema,
    alles explizit gemalt. Elias hat ausdruecklich "genauso" gesagt. */
 :root{
@@ -443,7 +445,7 @@ if (!gesamt) {
 }
 
 const ziel = path.join(AUS, 'freigabe.html');
-fs.writeFileSync(ziel, html, 'utf8');
+fs.writeFileSync(ziel, arabischInSeite(html), 'utf8');
 console.log('geschrieben: ' + ziel);
 console.log('Fundstellen: ' + gesamt + ' aus ' + folgen.length + ' Folge(n) — '
   + folgen.map(f => 'F' + f.folge + ': ' + f.n).join(' · '));
