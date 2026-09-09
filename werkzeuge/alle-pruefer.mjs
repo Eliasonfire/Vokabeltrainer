@@ -208,6 +208,16 @@ const PRUEFER = [
      mit der erlaubten und mit vier fremden Adressen.
      [[daten_ohne_zugang]] [[ausfall_ist_unsichtbar_gebaut]] */
   ['werkzeuge/pruefe-hostsperre.mjs', []],
+  /* ⛔⛔ Neu am 09.09.2026, aus derselben Frage: `functions/api/stand.js` ist
+     die Ablage fuer Elias' GANZEN Lernstand — Boxen, bekannte Woerter, eigene
+     Vokabeln, Notizen. validate.js prueft, dass die Datei parst; wie sie sich
+     VERHAELT, hat nie jemand gemessen. Der Pruefer ruft sie mit gefaelschten
+     Anfragen und einem gefaelschten KV: ohne Kennung 401, je Adresse ein
+     eigener Schluessel, kaputtes JSON und uebergrosse Koerper draussen.
+     Der Kopfkommentar der Datei nennt den gefaehrlichen Fall selbst: „ein
+     gemeinsamer Sammelschluessel waere bequem und genau der Fehler, der
+     spaeter fremde Lernstaende vermischt." Genau das faellt jetzt auf. */
+  ['werkzeuge/pruefe-stand-api.mjs', []],
   /* ⭐⭐ Neu am 09.09.2026, die Schwesterpruefung zu pruefe-abgleich.mjs: dort
      zwei GERAETE, hier zwei ZEITPUNKTE. In js/einstellungen.js stand zweimal
      derselbe Satz („wer eine Sicherung einspielte, verlor X lautlos") — und
