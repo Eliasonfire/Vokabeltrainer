@@ -66,7 +66,8 @@ if (definiert('gibtEsGarNichtXyz')) {
 
 console.log('Die Diagnosekarte fragt ' + namen.length + ' Funktionen ueber einen typeof-Riegel ab.\n');
 let fehlen = 0;
-let zuLang = 0;   /* zweite Ursache, eigener Zaehler — siehe ganz unten */
+let zuLang = 0;      /* zweite Ursache, eigener Zaehler — siehe ganz unten */
+let ersatzRot = 0;   /* dritte: das Nachtragen einer Zeile */
 for (const n of namen) {
   const da = definiert(n);
   if (!da) fehlen++;
@@ -136,6 +137,44 @@ for (const n of namen) {
   }
 }
 
+/* ---------- Wird eine Zeile SICHER nachgetragen? ----------
+
+   ⛔⛔ Zwei Angaben der Karte kommen asynchron (die Fassung aus caches.keys(),
+   der Offline-Vorrat vom Service Worker) und ersetzen einen Platzhalter.
+   `String.replace` liest im ERSATZ Sonderzeichen: `$&`, `$'`, `` $` ``, `$1`.
+   Ein einziges `$'` in einer Fehlermeldung fuegt den ganzen Rest der Karte ein
+   zweites Mal ein — auf dem einzigen Bildschirmfoto, das Elias schickt, und
+   ausgerechnet im Fehlerfall. Die Funktionsform ist dicht.
+   [[replace_dollar_ist_sonderzeichen]] */
+{
+  /* ⚠️ `trageNach()` steht VOR diagnoseText() und damit ausserhalb des
+     Kartenausschnitts — deshalb zwei Blickwinkel: im Ausschnitt darf gar nicht
+     mehr direkt ersetzt werden, in der ganzen Datei muss die eine Stelle die
+     Funktionsform benutzen. [[blickwinkel_durchprobieren]] */
+  const roh = [...ohneKommentareUndTexte(E, { texte: false })
+    .matchAll(/textContent\s*\.replace\s*\(/g)];
+  const imAusschnitt = [...karte.matchAll(/textContent\s*\.replace\s*\(/g)].length;
+  const funktionsform = /textContent\s*\.replace\s*\([^,]*,\s*\(\s*\)\s*=>/
+    .test(ohneKommentareUndTexte(E, { texte: false }));
+  const hatHelfer = /function\s+trageNach\s*\(/.test(E);
+
+  if (!hatHelfer || !roh.length){
+    ersatzRot++;
+    console.log('  ⛔  trageNach() fehlt — die asynchronen Zeilen der Karte blieben');
+    console.log('      auf „(wird geladen)" stehen.');
+  } else if (imAusschnitt){
+    ersatzRot++;
+    console.log('  ⛔  die Karte ersetzt an ' + imAusschnitt + ' Stelle(n) selbst im Text,'
+      + ' statt ueber trageNach() zu gehen.');
+  } else if (roh.length > 1 || !funktionsform){
+    ersatzRot++;
+    console.log('  ⛔  ' + roh.length + ' Ersetzung(en) im Kartentext, nicht alle in'
+      + ' Funktionsform — ein „$\'" in einer Fehlermeldung verdoppelt die Karte.');
+  } else {
+    console.log('  ok  die nachgetragene Zeile geht durch EINE Stelle, in Funktionsform');
+  }
+}
+
 console.log('');
 /* ⚠️ Zwei Ursachen, zwei Zaehler — sonst steht am Ende „2 Funktion(en) gibt es
    nicht mehr" ueber einer zu langen Karte, und man sucht an der falschen
@@ -149,6 +188,11 @@ if (zuLang) {
   console.log('   als ein Bildschirmfoto. Sie ist Elias’ einziger Kanal — was unten');
   console.log('   herausfaellt, sieht niemand.');
 }
-if (fehlen || zuLang) process.exit(1);
+if (ersatzRot) {
+  console.log('⛔ Das Nachtragen einer Kartenzeile ist nicht mehr sicher. Ein „$\'" in');
+  console.log('   einer Fehlermeldung fuegt den Rest der Karte ein zweites Mal ein —');
+  console.log('   auf dem einen Bildschirmfoto, das er schickt.');
+}
+if (fehlen || zuLang || ersatzRot) process.exit(1);
 console.log('✅ Jede Quelle der Diagnosekarte existiert, und sie passt auf ein Bild.');
 process.exit(0);

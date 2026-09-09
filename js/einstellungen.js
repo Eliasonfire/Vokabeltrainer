@@ -902,6 +902,34 @@ document.getElementById('btnQuranMarkenWeg')?.addEventListener('click', ()=>{
    erst bei Bedarf geladen), darf das nicht die ganze Karte leeren — sonst
    sieht man statt der Diagnose nichts und weiß wieder nicht, warum.
    [[ausfall_ist_unsichtbar_gebaut]] */
+/* ⛔⛔ EINE ZEILE DER KARTE NACHTRAGEN — und warum das eine eigene Funktion ist.
+ *
+ * Zwei Angaben stehen erst da, wenn eine asynchrone Antwort kommt (die Fassung
+ * aus `caches.keys()`, der Offline-Vorrat vom Service Worker). Bis dahin steht
+ * ein Platzhalter im Text, der danach ersetzt wird.
+ *
+ * ⛔ `String.replace` liest im ERSATZ Sonderzeichen: `$&`, `$'`, `` $` `` und
+ * `$1`. Ein einziges `$'` in einer Fehlermeldung wuerde den ganzen Rest der
+ * Karte ein zweites Mal einfuegen — auf dem einzigen Bildschirmfoto, das Elias
+ * schickt, und ausgerechnet im Fehlerfall. Die Funktionsform ist dagegen
+ * dicht: was sie zurueckgibt, wird woertlich eingesetzt.
+ * [[replace_dollar_ist_sonderzeichen]]
+ *
+ * ⚠️ Findet sich der Platzhalter nicht mehr (die Karte wurde inzwischen neu
+ * aufgebaut), passiert nichts — das ist richtig so, aber es wird GEMELDET,
+ * damit ein dauerhaft leerer Platz nicht wie eine Auskunft aussieht.
+ * [[ausfall_ist_unsichtbar_gebaut]] */
+function trageNach(platzhalter, neu){
+  const kasten = document.getElementById('diagnoseText');
+  if (!kasten || kasten.classList.contains('hidden')) return false;
+  if (kasten.textContent.indexOf(platzhalter) < 0){
+    stillerFehler('Diagnose: Platzhalter weg', new Error(platzhalter.split(':')[0]));
+    return false;
+  }
+  kasten.textContent = kasten.textContent.replace(platzhalter, () => neu);
+  return true;
+}
+
 function diagnoseText(){
   const zeilen = [];
   const dazu = (name, wert) => zeilen.push(name + ': ' + wert);
@@ -964,10 +992,8 @@ function diagnoseText(){
   try {
     if (window.caches && caches.keys) caches.keys().then(namen => {
       const v = namen.filter(n => /vokabeltrainer-v/.test(n)).sort().join(', ') || 'kein Zwischenspeicher';
-      const kasten = document.getElementById('diagnoseText');
-      if (kasten && !kasten.classList.contains('hidden'))
-        kasten.textContent = kasten.textContent.replace('Version: … (wird geladen)',
-          'Version: ' + v + (navigator.serviceWorker && navigator.serviceWorker.controller ? '' : ' (SW steuert nicht)'));
+      trageNach('Version: … (wird geladen)',
+        'Version: ' + v + (navigator.serviceWorker && navigator.serviceWorker.controller ? '' : ' (SW steuert nicht)'));
     });
   } catch (e){ stillerFehler('Diagnose: Version lesen', e); }
 
@@ -986,11 +1012,7 @@ function diagnoseText(){
        stehen. Ein Platzhalter, der ewig „wird gefragt" sagt, ist schlimmer als
        eine ehrliche Fehlanzeige. [[ausfall_ist_unsichtbar_gebaut]] */
     let beantwortet = false;
-    const eintragen = (text) => {
-      const kasten = document.getElementById('diagnoseText');
-      if (kasten && !kasten.classList.contains('hidden'))
-        kasten.textContent = kasten.textContent.replace('Offline-Vorrat: … (wird gefragt)', 'Offline-Vorrat: ' + text);
-    };
+    const eintragen = (text) => trageNach('Offline-Vorrat: … (wird gefragt)', 'Offline-Vorrat: ' + text);
     kanal.port1.onmessage = (ev) => {
       beantwortet = true;
       const d = ev.data || {};
@@ -1003,11 +1025,8 @@ function diagnoseText(){
     sw.postMessage({ frage: 'vorrat' }, [kanal.port2]);
     setTimeout(() => { if (!beantwortet) eintragen('— (keine Antwort vom Service Worker)'); }, 3000);
   } catch (e){
-    const kasten = document.getElementById('diagnoseText');
-    setTimeout(() => {
-      if (kasten && !kasten.classList.contains('hidden'))
-        kasten.textContent = kasten.textContent.replace('Offline-Vorrat: … (wird gefragt)', 'Offline-Vorrat: — (' + (e && e.message) + ')');
-    }, 0);
+    setTimeout(() => trageNach('Offline-Vorrat: … (wird gefragt)',
+      'Offline-Vorrat: — (' + (e && e.message) + ')'), 0);
   }
 
   sicher('Bildschirm', () => window.innerWidth + '×' + window.innerHeight
