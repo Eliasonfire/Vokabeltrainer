@@ -996,32 +996,46 @@ try {
 try {
   const zp = (c) => String.fromCharCode(c);
   const AR = '[' + zp(0x621) + '-' + zp(0x652) + zp(0x640) + ']';
-  const PAAR = new RegExp('(' + AR + '+(?: +' + AR + '+)*)( *['
-    + zp(0x2192) + zp(0x2190) + '/' + zp(0xB7) + '=' + '] *)(' + AR + '+)', 'g');
+  /* ⛔ ZWEI Zaehlungen, und der Unterschied ist eine Aussage, keine Ungenauigkeit.
+     Beide Sorten stehen auf dem Schirm rueckwaerts. Aber nur bei einem
+     RICHTUNGSZEICHEN traegt die Reihenfolge die Bedeutung („Singular →
+     Plural"); bei Komma und Semikolon ist es eine Aufzaehlung, in der die
+     Umkehrung stoert, aber nichts verfaelscht. Wer nur eine Zahl nennt, waehlt
+     zwischen „zu klein" und „zu gross" — hier stehen beide.
+     [[sammelaussage_einzeln_belegen]] */
+  const bau = (trenner) => new RegExp('(' + AR + '+(?: +' + AR + '+)*)( *['
+    + trenner + '] *)(' + AR + '+)', 'g');
+  const PAAR      = bau(zp(0x2192) + zp(0x2190) + '/' + zp(0xB7) + '=');
+  const PAAR_WEIT = bau(zp(0x2192) + zp(0x2190) + '/' + zp(0xB7) + '=,;');
   const ISOLAT = new RegExp('[' + zp(0x2066) + '-' + zp(0x2069) + zp(0x200E) + ']', 'g');
   const NOTIZEN = [
     ['To-Do Vokabeltrainer.md', TODO],
     ['Vokabeltrainer-Arabisch.md',
       'G:\\1. Workspace\\Obsidian\\Gedächtnis\\Elias Gedächtnis\\03 - Projekte\\Vokabeltrainer-Arabisch.md'],
   ];
-  let paare = 0, isolate = 0; const proNotiz = [];
+  let paare = 0, alle = 0, isolate = 0; const proNotiz = [];
   for (const [name, pfad] of NOTIZEN){
     if (!fs.existsSync(pfad)) continue;
     const t = fs.readFileSync(pfad, 'utf8');
     const p = (t.match(PAAR) || []).length;
-    paare += p;
+    const w = (t.match(PAAR_WEIT) || []).length;
+    paare += p; alle += w;
     isolate += (t.match(ISOLAT) || []).length;
-    proNotiz.push(name + ': ' + p);
+    proNotiz.push(name + ': ' + p + ' von ' + w);
   }
   if (paare > 0 && isolate === 0) posten.push({
     titel: 'Arabisch steht in deinen Notizen rückwärts',
-    zahl: paare, einheit: 'Stellen', dazu: proNotiz.join(' · '), auswahl: true,
+    zahl: alle, einheit: 'Stellen', auswahl: true,
+    dazu: paare + ' davon mit einem Richtungszeichen (→ ← / · =) · ' + proNotiz.join(' · '),
     aufwand: 'eine Entscheidung — ja oder nein; die Änderung selbst macht ein Werkzeug',
     warum: 'Nicht die App, sondern der Text, den du in Obsidian liest. Wo zwei arabische'
-      + ' Wörter mit einem Pfeil oder Schrägstrich dazwischen stehen, bekommt das Zeichen'
-      + ' deren Richtung und der ganze Ausdruck kippt: „Singular → Plural" liest sich bei'
-      + ' dir als „Plural → Singular". Im Browser nachgestellt und gemessen — dasselbe'
-      + ' Muster, das heute in der App und auf vier Entscheidungsseiten behoben wurde.',
+      + ' Wörter mit einem Zeichen dazwischen stehen, bekommt das Zeichen deren Richtung'
+      + ' und der ganze Ausdruck kippt: „Singular → Plural" liest sich bei dir als'
+      + ' „Plural → Singular". Im Browser nachgestellt und gemessen — dasselbe Muster,'
+      + ' das heute in der App und auf vier Entscheidungsseiten behoben wurde.'
+      + ' ⚠️ Die beiden Zahlen sagen Verschiedenes: bei einem RICHTUNGSZEICHEN trägt die'
+      + ' Reihenfolge die Bedeutung, bei Komma oder Semikolon ist es eine Aufzählung —'
+      + ' dort stört die Umkehrung, verfälscht aber nichts.',
     wie: 'Hier hilft KEIN CSS — in Markdown gibt es kein Element um die Läufe. Was wirkt,'
       + ' sind unsichtbare Steuerzeichen im Text (U+2068/U+2069 oder U+200E), also'
       + ' mehrere hundert Zeichen in deinen Notizen. Sag ja, dann baue ich ein Werkzeug,'
