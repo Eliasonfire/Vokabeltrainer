@@ -727,6 +727,61 @@ if (typeof window === 'undefined' || typeof localStorage === 'undefined'){
     } finally { pop.classList.remove('show'); wirt.remove(); }
   });
 
+  /* ⛔⛔ DIE DIAGNOSEKARTE — der Weg, den NIEMAND geht, bis er gebraucht wird.
+     In der Nacht auf den 09.09.2026 sind fuenf stille `catch` in der App
+     aufgemacht worden: sie melden jetzt ueber `stillerFehler()`, und was dabei
+     herauskommt, steht in der Diagnosekarte. Nur: solange nichts schiefgeht,
+     ist die Karte leer — und ein leerer Weg ist ein ungeprueter Weg. Genau so
+     entsteht die Sorte Ausfall, die man erst im Ernstfall bemerkt.
+     [[ausfall_ist_unsichtbar_gebaut]] [[flaeche_nur_im_gefuellten_zustand]]
+
+     Die Probe spritzt deshalb ACHT Meldungen ein — eine mehr als der Deckel
+     von sechs, plus eine Wiederholung — und verlangt drei Dinge:
+       1. die Karte nennt die Zahl,
+       2. sie zeigt hoechstens sechs Zeilen und sagt „… und N weitere",
+       3. die Wiederholung steht als „(2×)" da, nicht zweimal.
+
+     ⚠️ `STILLE_FEHLER` liegt nur im Arbeitsspeicher (kein localStorage),
+     trotzdem wird der Stand vorher gesichert und im `finally` zurueckgelegt —
+     sonst traegt ein Lauf seine eigenen Testmeldungen in Elias' Karte. */
+  versuch('Diagnosekarte: geschluckte Fehler stehen drin (gedeckelt)', ()=>{
+    if (typeof stillerFehler !== 'function') throw new Error('stillerFehler fehlt');
+    if (typeof diagnoseText !== 'function')   throw new Error('diagnoseText fehlt');
+    if (typeof STILLE_FEHLER === 'undefined') throw new Error('STILLE_FEHLER fehlt');
+    const gesichert = STILLE_FEHLER.slice();
+    try {
+      STILLE_FEHLER.length = 0;
+      for (let i = 1; i <= 7; i++) stillerFehler('probe.stelle' + i, new Error('Testfall ' + i));
+      stillerFehler('probe.stelle7', new Error('Testfall 7'));      // Wiederholung
+      const zeilen = String(diagnoseText()).split('\n');
+      const meldungen = zeilen.filter(z => /probe\.stelle/.test(z));
+      const weitere   = zeilen.find(z => /… und \d+ weitere/.test(z));
+      const kopf      = zeilen.find(z => /geschluckte\(r\) Fehler/.test(z));
+      if (!kopf) throw new Error('die Karte nennt die Zahl der geschluckten Fehler nicht');
+      /* ⛔ HIER STAND EINE 8, UND DAS WAR EIN FEHLER DER PROBE, NICHT DER APP.
+         Acht AUFRUFE ergeben sieben EINTRAEGE — die Wiederholung erhoeht `mal`,
+         statt eine zweite Zeile anzulegen, und die Kopfzeile zaehlt
+         `STILLE_FEHLER.length`, also die verschiedenen Probleme. Das ist so
+         gewollt (die Wiederholung steht als „(2×)" in ihrer Zeile).
+         Die Erwartung kam aus einem Handlauf, bei dem noch ein fremder Eintrag
+         im Speicher lag — eine Zahl aus einem unsauberen Stand.
+         Jetzt wird sie GEMESSEN statt eingetragen.
+         [[mein_neues_werkzeug_ist_verdaechtig]] [[vor_dem_eintragen_messen]] */
+      const erwartet = STILLE_FEHLER.length;
+      if (!new RegExp('\\b' + erwartet + '\\b').test(kopf))
+        throw new Error('die Karte nennt nicht ' + erwartet + ': „' + kopf.trim() + '"');
+      if (meldungen.length > 6)
+        throw new Error(meldungen.length + ' Meldungen in der Karte — der Deckel von 6 greift nicht');
+      if (!weitere) throw new Error('kein „… und N weitere" trotz ' + meldungen.length + ' von 7 Meldungen');
+      if (!meldungen.some(z => /\(2×\)/.test(z)))
+        throw new Error('die Wiederholung steht nicht als „(2×)" da');
+      return meldungen.length + ' Zeilen + „' + weitere.trim() + '"';
+    } finally {
+      STILLE_FEHLER.length = 0;
+      gesichert.forEach(x => STILLE_FEHLER.push(x));
+    }
+  });
+
   versuch('Icons: Sprite und App-Icon', ()=>{
     const vorhanden = new Set([...document.querySelectorAll('svg symbol[id^="ic-"]')].map(s=>s.id.slice(3)));
     if (!vorhanden.size) throw new Error('kein einziges Sprite-Symbol gefunden');
