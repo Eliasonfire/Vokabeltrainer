@@ -297,7 +297,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* فَقِيرٌ - arm */
   '45784': [
-    'Die فُقَرَاء stehen an erster Stelle der acht Gruppen, denen die Zakāh zusteht — den Begriff hörst du in jedem Ramadan. Nimm den Plural gleich mit: فَقِيرٌ → فُقَرَاءُ. ⚠️ Am Ende steht ein ُ und KEIN Tanwīn — das ist kein Tippfehler, sondern eine eigene Wortsorte, die dir später als Regel begegnet.',
+    'Die فُقَرَاء stehen an erster Stelle der acht Gruppen, denen die Zakāh zusteht — den Begriff hörst du in jedem Ramadan. Nimm den Plural gleich mit: فَقِيرٌ → فُقَرَاءُ. ⚠️ Am Ende steht ein ـُ und KEIN Tanwīn — das ist kein Tippfehler, sondern eine eigene Wortsorte, die dir später als Regel begegnet.',
     'Die beiden gehören zusammen wie zwei Seiten einer Münze, und der Unterschied liegt nicht im Besitz: غَنِيّ ist der, der auf niemanden angewiesen ist, فَقِير der, der angewiesen ist. Deshalb heißt الْغَنِيّ auch ein Name Allahs, aber الْفَقِير nie.',
     '⭐ Eine Stelle aus deinem auswendigen Bereich, und sie trifft genau das Gegenpaar: وَوَجَدَكَ عَآئِلًا فَأَغْنَىٰ — «und dich arm gefunden und dann reich gemacht» (93:8, aḍ-Ḍuḥā). Das Wort dort ist عَآئِلًا, nicht فَقِير — aber فَأَغْنَىٰ ist dieselbe Wurzel wie dein غَنِيٌّ. Wer den Vers kann, hat das Paar arm/reich schon im Ohr, und فَقِيرٌ hängt sich daran.'
   ],
@@ -999,7 +999,7 @@ const ESELSBRUECKEN_ALT = {
   /* وَزِيرٌ - Minister */
   '45896': [
     '⭐ Es gibt eine Stelle aus deinem auswendigen Bereich, und sie ist besser als die bekannte: وَوَضَعْنَا عَنكَ وِزْرَكَ (94:2) — „und dir deine Last abgenommen", in Sūrat ash-Sharḥ. وِزْر ist die Last; ein وَزِير ist der, der sie mitträgt. Damit hängt die Vokabel an einer Sure, die du sprichst.',
-    'Muster فَعِيل wie كَبِيرٌ, قَرِيبٌ, سَرِيعٌ. ⚠️ Der Plural bricht auf zu وُزَرَاءُ — dasselbe Muster wie فَقِيرٌ → فُقَرَاءُ und غَنِيٌّ → أَغْنِيَاءُ, die du beide hast. Alle drei enden auf ُ ohne Tanwīn.'
+    'Muster فَعِيل wie كَبِيرٌ, قَرِيبٌ, سَرِيعٌ. ⚠️ Der Plural bricht auf zu وُزَرَاءُ — dasselbe Muster wie فَقِيرٌ → فُقَرَاءُ und غَنِيٌّ → أَغْنِيَاءُ, die du beide hast. Alle drei enden auf ـُ ohne Tanwīn.'
   ],
 
   /* حَادٌّ - scharf */
@@ -1217,7 +1217,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* زَمِيلٌ - Kollege / Mitschüler */
   '45899': [
-    'Der Plural lohnt sich, weil du das Muster schon dreimal hast: زَمِيلٌ → زُمَلَاءُ, wie فَقِيرٌ → فُقَرَاءُ, غَنِيٌّ → أَغْنِيَاءُ und وَزِيرٌ → وُزَرَاءُ. ⚠️ Alle vier enden auf ُ **ohne Tanwīn** — das ist kein Tippfehler, sondern eine eigene Wortsorte.',
+    'Der Plural lohnt sich, weil du das Muster schon dreimal hast: زَمِيلٌ → زُمَلَاءُ, wie فَقِيرٌ → فُقَرَاءُ, غَنِيٌّ → أَغْنِيَاءُ und وَزِيرٌ → وُزَرَاءُ. ⚠️ Alle vier enden auf ـُ **ohne Tanwīn** — das ist kein Tippfehler, sondern eine eigene Wortsorte.',
     '⚠️ Ein زَمِيل ist an einen ORT gebunden, nicht an Freundschaft: der, der in derselben مَدْرَسَة, derselben جَامِعَة oder am selben مَكْتَب sitzt. Alle drei Orte hast du als Vokabel. Wer den Ort mitdenkt, trifft die Bedeutung genauer als mit „Freund".'
   ],
 
