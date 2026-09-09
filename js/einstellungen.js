@@ -902,6 +902,18 @@ function diagnoseText(){
   };
 
   dazu('Stand', new Date().toLocaleString('de-DE'));
+  /* ⭐ DIE WARNZEILE GANZ OBEN (09.09.2026). Die Karte ist auf 36 Zeilen
+     gewachsen und passt heute knapp auf ein Bildschirmfoto (674 von 812 px bei
+     375 px Breite). Kommen geschluckte Fehler dazu, wandert der wichtigste
+     Abschnitt aus dem Bild — und der steht ganz unten.
+     ⛔ Deshalb hier oben EINE Zeile, die sagt, dass es etwas zu sehen gibt.
+     Sie erscheint nur, wenn es wirklich etwas gibt: eine Zeile, die immer
+     dasteht, liest nach drei Tagen niemand mehr.
+     [[keine_meldung_ohne_seine_handlung]] */
+  try {
+    const n = (typeof STILLE_FEHLER !== 'undefined') ? STILLE_FEHLER.length : 0;
+    if (n) zeilen.push('⛔ ' + n + ' geschluckte(r) Fehler — ganz unten in dieser Karte');
+  } catch (e){ /* die Warnzeile darf die Karte nicht kippen */ }
   /* ⭐ Der LERNTAG neben der Uhrzeit (09.09.2026). Seine Karte um 02:46 zeigte
      „Hören heute: 5 gehört · Ziel 5" und darunter „Feiern heute: (noch
      keine)" — das sah nach einem Fehler aus und war keiner: um 02:46 läuft
