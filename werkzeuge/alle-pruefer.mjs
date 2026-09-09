@@ -163,6 +163,14 @@ const PRUEFER = [
      [[stichworttreffer_im_kommentar]] */
   ['werkzeuge/pruefe-js-quelltext.mjs', []],
   ['werkzeuge/pruefe-stille-fehler.mjs', []],
+  /* ⭐⭐ Neu am 09.09.2026. Vier Dateien lasen „46:29" in Sekunden um, alle vier
+     mit derselben abgeschriebenen Zeile — und alle vier machten aus einem
+     LEEREN Stempel die Zahl 0 statt null. Jeder Aufrufer prueft ausdruecklich
+     auf null; an dieser Zeile lief der Schutz ins Leere, und gemessen wurde
+     der Anfang der Folge. Der Pruefer schneidet jede solche Funktion aus dem
+     Quelltext und BEFRAGT sie — kein Blick auf einen Kommentar.
+     [[entscheidung_gilt_fuer_das_zweite_werkzeug]] [[ausfall_ist_unsichtbar_gebaut]] */
+  ['werkzeuge/pruefe-zeitmarken.mjs', []],
   /* ⭐⭐ Neu am 09.09.2026, die Schwesterpruefung zu pruefe-abgleich.mjs: dort
      zwei GERAETE, hier zwei ZEITPUNKTE. In js/einstellungen.js stand zweimal
      derselbe Satz („wer eine Sicherung einspielte, verlor X lautlos") — und

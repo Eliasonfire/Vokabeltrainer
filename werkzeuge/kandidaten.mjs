@@ -90,8 +90,17 @@ const glatt = t => t.toLowerCase()
   .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss')
   .replace(/dsch/g, 'j').replace(/sch/g, 'sh').replace(/['`´']/g, '');
 
+/* ⛔ Ein LEERER Stempel ergab bis zum 09.09.2026 die Zahl 0 statt null:
+   ''.split(':') ist [''], Number('') ist 0, und isNaN(0) ist falsch. Alle drei
+   Aufrufer filtern ausdruecklich mit `.filter(s => s != null)` — an dieser
+   Zeile lief der Filter ins Leere, und die Regel zaehlte mit einer Zeitmarke
+   bei Sekunde 0 mit. [[ausfall_ist_unsichtbar_gebaut]]
+   Bewacht von werkzeuge/pruefe-zeitmarken.mjs.
+   [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
 const zeit = s => {
-  const t = String(s || '').trim().split(':').map(Number);
+  const roh = String(s == null ? '' : s).trim();
+  if (!roh) return null;
+  const t = roh.split(':').map(Number);
   return (!t.length || t.some(isNaN)) ? null : t.reduce((a, b) => a * 60 + b, 0);
 };
 const mmss = s => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`;
