@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vokabeltrainer-v441';
+const CACHE_NAME = 'vokabeltrainer-v442';
 
 /* ⚠️ In diese Liste gehoeren KEINE Kommentare zwischen die Eintraege.
    validate.js liest sie zeilenweise und hat am 18.08.2026 einen erklaerenden
@@ -140,6 +140,41 @@ self.addEventListener('activate', (e)=>{
     caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE_NAME).map(k=>caches.delete(k))))
   );
   self.clients.claim();
+});
+
+/* ---------- Was fehlt im Vorrat? (09.09.2026) ----------
+
+   ⛔ ANLASS: Der install-Handler oben zaehlt Fehlschlaege und schreibt eine
+   Konsolenwarnung — auf dem Handy sieht die niemand. Faellt eine Datei durch,
+   fehlt sie OFFLINE, und die App merkt es erst, wenn sie gebraucht wird. Genau
+   die Sorte Ausfall, um die es in dieser Nacht dreimal ging.
+   [[ausfall_ist_unsichtbar_gebaut]]
+
+   ⭐ Gefragt wird nicht nach dem, was der letzte Lauf gemeldet hat, sondern
+   nach dem ZUSTAND DES CACHES. Ein Service Worker wird zwischendurch beendet
+   und neu gestartet; eine Liste im Arbeitsspeicher waere dann leer und saehe
+   aus wie „alles in Ordnung". Der Cache dagegen ist die Wahrheit.
+   [[eingefrorenes_feld_ist_kein_zustand]]
+
+   Antwort geht ueber den MessagePort zurueck, den der Frager mitschickt —
+   damit kann die Diagnosekarte gezielt warten statt zu lauschen. */
+self.addEventListener('message', (e)=>{
+  if (!e.data || e.data.frage !== 'vorrat') return;
+  const port = e.ports && e.ports[0];
+  if (!port) return;
+  e.waitUntil((async ()=>{
+    try {
+      const cache = await caches.open(CACHE_NAME);
+      const fehlend = [];
+      for (const a of ASSETS){
+        const treffer = await cache.match(a);
+        if (!treffer) fehlend.push(a.replace(/^\.\//, ''));
+      }
+      port.postMessage({ cache: CACHE_NAME, gesamt: ASSETS.length, fehlend });
+    } catch (err){
+      port.postMessage({ fehler: String((err && err.message) || err) });
+    }
+  })());
 });
 
 /* Netz zuerst, Cache als Rueckfallebene.
