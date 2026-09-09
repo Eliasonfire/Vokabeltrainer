@@ -206,17 +206,92 @@ if (!woerter.length){
   process.exit(0);
 }
 
+/* ---------- Das Urteil, an EINER Stelle ----------
+   „Wort" ist der Rueckfallwert in js/irab.js: WORTART.vocab === 'Wort'. Er
+   heisst genau das, was Elias bemaengelt hat — keine Auskunft.
+
+   ⭐ Der Stoertest unten fragt DIESE Funktion, nicht eine zweite mit derselben
+   Bedingung. Ein nachgebautes Urteil wuerde mit der Zeit auseinanderlaufen und
+   dann etwas anderes bezeugen als der Lauf darunter misst.
+   [[testvorlage_selbst_nachgebaut]] */
+function funktionen(w){
+  try { return funktionenVon(w) || []; } catch (e){ return []; }
+}
+function nurWortKarte(w){
+  const f = funktionen(w);
+  return !f.length || (f.length === 1 && String(f[0]).trim() === 'Wort');
+}
+
+/* ---------- ⛔ STOERTEST (09.09.2026) ----------
+
+   ⛔ Dieser Pruefer zaehlt EINE Sorte Mangel: Karten, die nur „Wort" sagen.
+   Heute sind das 0 von 230 — und genau darin liegt die Gefahr. Eine Fassung,
+   die gar nicht mehr misst, meldet dieselbe Null. Der Kopf dieser Datei faengt
+   nur den groben Fall ab („Wurde sie umbenannt?").
+
+   ⭐⭐ Der haeufigere Fall waere UNSICHTBAR: die Listen in js/irab.js sind da,
+   die Sonderrollen aber nicht mehr. Faellt ZURUF aus, verliert عِنْدَ seine
+   Zeile „Zeit- oder Ortsangabe" und bekommt vom Rueckfall in Punkt 6 ein
+   sauberes „Partikel" — kein „Wort", also kein Befund. Ausgerechnet das Wort,
+   an dem Elias die Funktionsanzeige am 20.08.2026 bestellt hat, waere still
+   auf die Auskunft zurueckgefallen, die ihm nicht genuegte.
+   [[stoertest_muss_wirkung_nachweisen]] [[gruener_pruefer_beweist_nur_geprueftes]]
+
+   Sechs Faelle, deren Antwort feststeht — mit derselben Funktion gemessen,
+   die die App aufruft. */
+console.log('=== Stoertest ===');
+let stoer = 0;
+const sProbe = (was, ist, soll) => {
+  if (ist !== soll){ stoer++; console.log('  ⛔  ' + was + ': ' + JSON.stringify(ist) + ' statt ' + JSON.stringify(soll)); }
+  else console.log('  ok   ' + was);
+};
+{
+  const zeile = w => funktionen(w).join(' | ');
+
+  /* 1. Der rote Weg. Ohne ihn koennte der Zaehler festgeschraubt sein:
+     ein Wort ohne Wortart und ohne Listeneintrag MUSS auffallen. */
+  sProbe('ein Wort ganz ohne Auskunft faellt auf',
+    nurWortKarte({ ar: 'زززز', type: 'vocab' }), true);
+
+  /* 2. Elias' eigenes Beispiel vom 20.08.2026. Beide Zeilen muessen stehen —
+     die Benennung UND die Wirkung auf das naechste Wort. */
+  sProbe('عِنْدَ nennt seine Rolle als Zeit-/Ortsangabe',
+    /ظَرْف/.test(zeile({ ar: 'عِنْدَ', type: 'particle' })), true);
+  sProbe('عِنْدَ nennt die Wirkung (Genitiv danach)',
+    /Genitiv/.test(zeile({ ar: 'عِنْدَ', type: 'particle' })), true);
+
+  /* 3. Die Genitivpraeposition — und die Verwechslung, die js/irab.js:546
+     ausdruecklich abwehrt: مَنْ (wer) ist KEINE. Ohne Harakat sehen beide
+     gleich aus, und auf einer Lernkarte waere das eine falsche Lehre. */
+  sProbe('مِنْ ist eine Genitivpraeposition',
+    /حَرْف جَرّ/.test(zeile({ ar: 'مِنْ', type: 'particle' })), true);
+  sProbe('مَنْ (wer) ist KEINE Genitivpraeposition',
+    /حَرْف جَرّ/.test(zeile({ ar: 'مَنْ', type: 'particle' })), false);
+
+  /* 4. Der Fall aus seinem Bildschirmfoto: type:'vocab' heisst intern „Wort",
+     und genau dafuer wurde erschlosseneWortart() gebaut. لَحْمٌ traegt Tanwin,
+     also ist es ein اِسْم — das darf nicht wieder zu „Wort" werden. */
+  sProbe('لَحْمٌ (type vocab) sagt „Nomen", nicht „Wort"',
+    zeile({ ar: 'لَحْمٌ', type: 'vocab' }), 'Nomen');
+
+  /* ⚠️ Und die Probe auf die Probe: bei einem fast leeren Bestand waeren
+     „0 nur Wort" ebenfalls null Befunde. Am 09.09.2026 waren es 230. */
+  sProbe('es steht ueberhaupt ein Bestand da (>= 50)', woerter.length >= 50, true);
+}
+if (stoer){
+  console.log('');
+  console.log('⛔ ' + stoer + ' Stoertest(s) gescheitert — dieser Pruefer misst nicht,');
+  console.log('   und seine „0 nur Wort" sind damit wertlos.');
+  process.exit(1);
+}
+console.log('');
+
 /* ---------- Messen ---------- */
-/* „Wort" ist der Rueckfallwert in js/irab.js: WORTART.vocab === 'Wort'. Er
-   heisst genau das, was Elias bemaengelt hat — keine Auskunft. */
 const ohne = [];
 let gemessen = 0;
 for (const w of woerter){
-  let f = [];
-  try { f = funktionenVon(w) || []; } catch (e){ f = []; }
   gemessen++;
-  const nurWort = !f.length || (f.length === 1 && String(f[0]).trim() === 'Wort');
-  if (nurWort) ohne.push(w);
+  if (nurWortKarte(w)) ohne.push(w);
 }
 
 console.log('  gemessen:        ' + gemessen + ' Woerter'
