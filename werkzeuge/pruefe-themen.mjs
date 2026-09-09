@@ -140,15 +140,47 @@ if (!nurReihenfolge && ohne.length) {
   }
 }
 
+/* Welche Alternative eines Kategoriemusters hat eine Regel-Id getroffen?
+   Steht ausserhalb des Berichts, damit der Stoertest sie erreicht. */
+const alternativen = (muster) => {
+  const m = String(muster.source).match(/^\^\((.+)\)$/);
+  return m ? m[1].split('|') : [String(muster.source)];
+};
+const trefferIn = (id, katId) => {
+  const t = THEMEN.find(x => x.id === katId);
+  if (!t || !t.muster) return '?';
+  const treffer = alternativen(t.muster).filter(a => id.startsWith(a));
+  return treffer.length ? treffer.join(', ') : '(kein Anfang — Muster ist keine einfache Liste)';
+};
+
 /* ---------- 3. Regeln in mehreren Kategorien ---------- */
 if (!nurReihenfolge && mehrfach.length) {
   H('ℹ️  Regeln, die in mehreren Kategorien auftauchen');
   sag('Kein Fehler — aber ungewollt, wenn zwei Muster einander ueberlappen,');
   sag('statt dass die Regel wirklich zu beidem gehoert.\n');
+  /* ⭐⭐ WELCHE ALTERNATIVE hat getroffen? Ohne diese Zeile ist der Punkt eine
+     Frage („ueberlappen die Muster?"), mit ihr eine Antwort.
+
+     Am 09.09.2026 nachgesehen: bei ALLEN DREI Regeln nennt eine der beiden
+     Kategorien den Regelanfang AUSDRUECKLICH — `wortarten` schreibt
+     `verb-enthaelt` hin, `idafa` schreibt `zarf-als-mudaf`, `al` schreibt
+     `adjektive-an`. Das ist also keine Musterkollision, sondern jemand hat die
+     Regel bewusst in beide Kategorien gelegt. Genau das konnte man dem Bericht
+     vorher nicht ansehen, und deshalb stand der Punkt seit Wochen offen.
+
+     ⚠️ Die Zeile URTEILT nicht — sie legt nur die Belegstelle daneben. Ob eine
+     Regel in zwei Menuepunkten stehen SOLL, entscheidet der Unterricht.
+     [[kandidatenliste_ist_keine_fehlerliste]] */
   for (const r of mehrfach) {
-    sag('   ' + r.id.padEnd(34) + zuordnung.get(r.id).join(' + '));
+    const kats = zuordnung.get(r.id);
+    sag('   ' + r.id.padEnd(34) + kats.join(' + '));
     sag('      ' + r.name);
+    for (const k of kats) sag('         ' + k.padEnd(12) + ' traf auf: ' + trefferIn(r.id, k));
   }
+  sag('');
+  sag('   ⭐ Steht der Regelanfang in einer Kategorie AUSGESCHRIEBEN, hat ihn');
+  sag('      jemand dort hineingelegt — dann ist die Doppelung gewollt und');
+  sag('      keine Kollision zweier allgemeiner Anfaenge.');
   befunde++;
 }
 
@@ -256,6 +288,22 @@ if (!nurReihenfolge) {
     const a = THEMEN.filter(t => t.muster.test(echte.id)).map(t => t.id).join(',');
     const b = THEMEN.filter(t => t.muster.test(echte.id)).map(t => t.id).join(',');
     sProbe('dieselbe Frage zweimal gibt dieselbe Antwort (kein /g)', a, b);
+  }
+
+  /* ⛔ Die Belegzeile bei den Doppelungen: sie ist nur etwas wert, wenn sie den
+     Unterschied zwischen ausgeschriebenem und allgemeinem Anfang wirklich
+     zeigt. Beide Richtungen, an einem Muster, das es hier gibt. */
+  {
+    const kat = THEMEN.find(t => t.muster && /verb-enthaelt/.test(String(t.muster.source)));
+    sProbe('das Muster mit dem ausgeschriebenen Anfang ist noch da', !!kat, true);
+    if (kat){
+      sProbe('der ausgeschriebene Anfang wird als Treffer genannt',
+        trefferIn('verb-enthaelt-pronomen-01', kat.id), 'verb-enthaelt');
+      sProbe('eine fremde Id trifft dort nichts',
+        trefferIn('gibt-es-nicht-01', kat.id).startsWith('(kein Anfang'), true);
+    }
+    sProbe('ein Muster ohne Alternativenliste faellt nicht auseinander',
+      alternativen(/^einzeln/).length, 1);
   }
 
   if (stoer){
