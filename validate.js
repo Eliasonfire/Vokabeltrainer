@@ -1415,8 +1415,28 @@ try {
       if (!knoepfe.has(w)) fail(`js/navigation.js: navMap zeigt auf "${w}", aber die Leiste hat keinen solchen Knopf — beim Wechsel dorthin leuchtet GAR KEINER.`);
     for (const k of knoepfe)
       if (!werte.has(k)) fail(`index.html: der Leistenknopf "${k}" kommt in navMap nicht vor — er kann nie leuchten.`);
+    /* ⛔⛔ UND JEDES data-nav MUSS IRGENDWOHIN FUEHREN.
+       Der Klickfänger in js/navigation.js schickt JEDEN `[data-nav]`-Wert an
+       `showScreen(target)` — bis auf 'learn-entry', das einen eigenen Zweig
+       hat. Ein Tippfehler im Attribut landet also beim Rückfall und öffnet
+       stillschweigend die Startseite: kein Fehler, keine Meldung, nur ein
+       Knopf, der etwas anderes tut, als draufsteht.
+       Am 09.09.2026 nachgezählt: 8 Werte, 10 Bildschirme, ein Sonderfall.
+       [[ausfall_ist_unsichtbar_gebaut]] */
+    const SONDERFALL = new Set(['learn-entry']);
+    const schirme = new Set([...html.matchAll(/id="screen-([a-z-]+)"/gi)].map(x => x[1]));
+    const alleNav = new Set([...html.matchAll(/\bdata-nav="([a-z-]+)"/gi)].map(x => x[1]));
+    if (!schirme.size) fail('index.html: kein einziges `id="screen-…"` gefunden — die Bildschirmpruefung faellt aus.');
+    for (const n of alleNav)
+      if (!schirme.has(n) && !SONDERFALL.has(n))
+        fail(`index.html: data-nav="${n}" ist weder ein Bildschirm noch ein Sonderfall — der Knopf faellt still auf die Startseite zurueck.`);
+    /* Ein Sonderfall ohne Zweig im Quelltext waere derselbe stille Rückfall. */
+    for (const s of SONDERFALL)
+      if (!navSrc.includes(`'${s}'`))
+        fail(`js/navigation.js: der Sonderfall "${s}" hat keinen eigenen Zweig mehr — er faellt still auf die Startseite.`);
     if (errors.length === fehlerVorherNav)
-      note(`Leiste: ${knoepfe.size} Knoepfe, ${werte.size} Ziele in navMap — sie passen zusammen.`);
+      note(`Leiste: ${knoepfe.size} Knoepfe, ${werte.size} Ziele in navMap, `
+        + `${alleNav.size} data-nav-Werte auf ${schirme.size} Bildschirme (+${SONDERFALL.size} Sonderfall) — alles passt.`);
   }
 } catch (e) {
   fail(`Leiste nicht pruefbar: ${e.message}`);
