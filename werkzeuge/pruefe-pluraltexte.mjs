@@ -18,6 +18,17 @@
  * traf; und meine Gesamtzahl hiess 122, weil das Skript nur vocab-data.js las,
  * waehrend die App 192 Karten baut. [[werkzeug_misst_kleineren_bestand]]
  *
+ * ⛔⛔ DIE 192 IST EIN MESSWERT VOM 20.08.2026, KEINE KONSTANTE.
+ *
+ * `bauePluralKarte()` (js/kern.js) baut aus JEDER Vokabel mit `pl` eine Karte —
+ * wie viele das sind, haengt an Elias' Auswahl und seinem Freischaltstand, und
+ * beides liegt in SEINEM Browser. Am 09.09.2026 im Vorschaubrowser gezaehlt:
+ * ueber den ganzen geladenen Bestand haben **1674** Vokabeln ein `pl`-Feld.
+ * Das ist nicht die Gegenzahl zu 192, sondern eine andere Frage — dort ohne
+ * Auswahl, hier mit. Wer die 192 nachrechnen will, muss es in SEINEM Browser
+ * tun, mit seiner Auswahl.
+ * [[einzeln_frei_ist_nur_im_browser]] [[pc_daten_sind_nicht_sein_lernstand]]
+ *
  * ==========================================================================
  * ZWEI REGELN
  *
