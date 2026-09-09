@@ -1117,6 +1117,13 @@ function diagnoseText(){
     if (!g) zeilen.push('Eselsbrücken: — (Zählung fehlt)');
     else {
       zeilen.push('Eselsbrücken abgelehnt: ' + g.ablehnungen + ' bei ' + g.woerter + ' Wörtern');
+      /* ⭐ Verwaiste Marken sichtbar machen (09.09.2026): eine Ablehnung von
+         damals zeigt auf eine Nummer, an der heute ein anderer Text steht.
+         Ohne diese Zeile sieht das Verschwinden einer Marke wie ein Fehler
+         aus. [[eingefrorenes_feld_ist_kein_zustand]] */
+      const vm = (typeof vorschlaegeVerwaisteMarken === 'function') ? vorschlaegeVerwaisteMarken() : null;
+      if (vm && vm.verwaist)
+        zeilen.push('  ⚠️ ' + vm.verwaist + ' von ' + vm.gesamt + ' Marken zeigen ins Leere — der Text an der Stelle hat sich geändert');
       /* ⭐ Die Vorwarnung: Wörter mit nur EINEM Vorschlag sind der nächste
          Stern-Fall. Heute sind es null in seinem Bestand — steht hier je eine
          Zahl, ist eine zweite Eselsbrücke fällig, BEVOR er sie braucht. */
