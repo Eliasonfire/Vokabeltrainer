@@ -216,6 +216,49 @@ try {
   console.log('\n⚠️ Abschnitt "Erreichbar HEUTE" nicht lauffaehig: ' + e.message);
 }
 
+/* ---------- ⛔ STOERTEST (09.09.2026) ----------
+ *
+ * ⛔ Dieses Skript existiert, WEIL zwei andere gruen meldeten und trotzdem
+ * 13 Regeln unerreichbar waren. Genau deshalb muss es selbst zeigen, dass
+ * seine Auswertung arbeitet: liefe `auswerten()` ins Leere, meldete es
+ * „0 unsichtbar" — also die beste aller Nachrichten — und haette nichts
+ * gesehen. [[stoertest_muss_wirkung_nachweisen]] [[leere_liste_ist_keine_messung]]
+ *
+ * Vier gestellte Faelle, deren Antwort feststeht.
+ */
+console.log('');
+console.log('=== Stoertest ===');
+{
+  var stoer = 0;
+  var sProbe = function (was, ist, soll) {
+    if (JSON.stringify(ist) !== JSON.stringify(soll)) {
+      stoer++; console.log('  ⛔  ' + was + ': ' + JSON.stringify(ist) + ' statt ' + JSON.stringify(soll));
+    } else console.log('  ok   ' + was);
+  };
+  var gestellt = {
+    GRAMMAR_RULES: [{ id: 'a' }, { id: 'b' }, { id: 'c', ausgeblendet: true }],
+    SENTENCE_TAGS: { s1: [{ ruleId: 'a' }], s2: [{ ruleId: 'c' }] },
+    saetze: 2, cache: 'v0',
+  };
+  var g = auswerten(gestellt);
+  sProbe('drei Regeln werden gezaehlt', g.regeln, 3);
+  sProbe('„b" ist unsichtbar und nicht ausgeblendet', g.wederNoch.map(function (r) { return r.id; }), ['b']);
+  sProbe('„c" ist ausgeblendet UND markiert', g.ausgeblendetMitMarke.map(function (r) { return r.id; }), ['c']);
+  /* ⛔ Und die Gegenrichtung: ist alles markiert, darf NICHTS gemeldet werden. */
+  var alles = auswerten({
+    GRAMMAR_RULES: [{ id: 'a' }, { id: 'b' }],
+    SENTENCE_TAGS: { s1: [{ ruleId: 'a' }, { ruleId: 'b' }] }, saetze: 1, cache: 'v0',
+  });
+  sProbe('ist alles markiert, meldet er nichts', alles.wederNoch.length, 0);
+
+  if (stoer) {
+    console.log('');
+    console.log('⛔ ' + stoer + ' Stoertest(s) gescheitert — auswerten() misst nicht,');
+    console.log('   und damit ist „jede Regel erreichbar" wertlos.');
+    process.exit(1);
+  }
+}
+
 console.log('\n' + (befunde
   ? '⛔ ' + befunde + ' Befund(e) — siehe oben.'
   : '✅ Jede Regel ist erreichbar, und der ausgelieferte Stand ist aktuell.'));
