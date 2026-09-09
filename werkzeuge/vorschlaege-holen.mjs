@@ -29,16 +29,36 @@ const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const NAMENSRAUM = '3bdaa890a2ef4cf382edf335da1067df';   /* STAND, aus wrangler.toml */
 const KV_SCHLUESSEL = 'stand:abdurahman.tunk@gmail.com';
 
-const datei = process.argv[2];
+/* ⚠️ Schalter sind keine Dateinamen. Bis zum 09.09.2026 stand hier
+   `process.argv[2]`, und `--schreiben` landete als Pfad in readFileSync:
+   „ENOENT … \--schreiben". [[freigabe_ist_die_ganze_befehlszeile]] */
+const datei = process.argv.slice(2).find(a => !a.startsWith('--'));
 let roh;
 if (datei) {
   roh = fs.readFileSync(datei, 'utf8');
   console.log('Gelesen aus: ' + datei);
 } else {
   try {
-    roh = execFileSync('npx.cmd', ['wrangler', 'kv', 'key', 'get', KV_SCHLUESSEL,
-      '--namespace-id=' + NAMENSRAUM, '--remote', '--text'],
-      { cwd: REPO, encoding: 'utf8', maxBuffer: 40 * 1024 * 1024, timeout: 120000 });
+    /* ⛔⛔ ZWEI WINDOWS-FALLEN HINTEREINANDER (hier erst am 09.09.2026 behoben).
+       `npx` allein wirft ENOENT — es heisst `npx.cmd`. Und seit Node 20 wirft
+       ein DIREKT aufgerufenes .cmd `EINVAL`. Der Weg, der beides umgeht, ist
+       `cmd /c npx …`. [[npm_global_windows_fallen]]
+
+       ⚠️ Genau das stand seit dem 20.08.2026 in werkzeuge/vorrat.mjs, mit
+       Begruendung — nur hier nicht. Dieses Werkzeug war deshalb auf Elias'
+       Rechner UNBENUTZBAR: jeder Aufruf endete mit „spawnSync npx.cmd EINVAL"
+       und dem Rat, es von Hand zu tun. Es sah aus wie ein Werkzeug ohne
+       Aufrufer und war eines, das gar nicht laufen konnte.
+       [[entscheidung_gilt_fuer_das_zweite_werkzeug]] [[ein_weg_geht_der_andere_nicht]]
+
+       ⚠️ Die Fassung wird festgenagelt wie in vorrat.mjs — ein `npx wrangler`
+       ohne Version holt bei jedem Lauf die neueste und kann ohne Vorwarnung
+       andere Ausgaben liefern. */
+    const win = process.platform === 'win32';
+    const args = ['wrangler@4.124.0', 'kv', 'key', 'get', KV_SCHLUESSEL,
+      '--namespace-id=' + NAMENSRAUM, '--remote', '--text'];
+    roh = execFileSync(win ? 'cmd' : 'npx', win ? ['/c', 'npx', ...args] : args,
+      { cwd: REPO, encoding: 'utf8', maxBuffer: 40 * 1024 * 1024, timeout: 180000 });
   } catch (e) {
     console.log('⛔ KV nicht erreichbar: ' + (e.message || e).split('\n')[0]);
     console.log('   Ersatzweg: den Stand von Hand holen und die Datei uebergeben —');
@@ -91,15 +111,38 @@ for (const id of woerter) {
   const liste = w ? vorschlagsListe(w) : [];
   const eintraege = verworfen[id] || {};
   const nrs = Object.keys(eintraege).map(Number).sort((a, b) => a - b);
-  const uebrig = liste.length - nrs.length;
   offenGesamt += nrs.length;
-  if (uebrig <= 0) ohneErsatz++;
+
+  /* ⛔⛔ GEZAEHLT WIRD DER TEXT, NICHT DIE NUMMER (09.09.2026).
+     Hier stand `liste.length - nrs.length`. Das rechnete jede Ablehnung gegen
+     die HEUTIGE Liste, auch wenn an der Nummer laengst etwas anderes steht —
+     und die Ersetzungen sind ja genau der Zweck der Uebung. Ergebnis an
+     diesem Morgen: „Bei 10 Woertern ist KEIN Vorschlag mehr uebrig", obwohl
+     bei KEINEM einzigen ein abgelehnter Text noch dastand. Vier davon
+     meldeten sogar `uebrig: -1` — eine unmoegliche Zahl, und damit der
+     Hinweis, dass die Rechnung nicht stimmt.
+     [[unmoegliche_zahl_ist_ein_geschenk]] [[kandidatenliste_ist_keine_fehlerliste]]
+
+     ⭐ Dieselbe Regel wie in der App: `istVorschlagVerworfen()` vergleicht
+     seit v447 den Text (auf 400 Zeichen gekuerzt, so speichert js/kern.js
+     ihn), nicht den Platz in der Liste. Zwei Werkzeuge, eine Frage — jetzt
+     auch dieselbe Antwort. [[dieselbe_frage_zwei_antworten]] */
+  const kurz = (t) => String(t == null ? '' : t).trim().slice(0, 400);
+  const abgelehnteTexte = new Set(nrs.map(nr => kurz((eintraege[String(nr)] || {}).text)).filter(Boolean));
+  const nochAbgelehnt = liste.filter(t => abgelehnteTexte.has(kurz(t))).length;
+  const uebrig = liste.length - nochAbgelehnt;
+  /* ⚠️ Ein Wort, das gar nicht in vocab-data.js steht, hat hier 0 Vorschlaege —
+     das ist kein fehlender Ersatz, sondern ein fehlendes Wort. Es wird eine
+     Zeile weiter unten ohnehin als „nicht gefunden" ausgewiesen. */
+  if (w && uebrig <= 0) ohneErsatz++;
 
   console.log((w ? w.ar + '  ' + (w.de || '') : '(Wort ' + id + ' nicht gefunden)')
     + '   [' + id + ']');
   console.log('   Vorschlaege gesamt: ' + liste.length
     + ' · abgelehnt: ' + nrs.length
-    + ' · uebrig: ' + uebrig + (uebrig <= 0 ? '   ⛔ KEIN ERSATZ MEHR' : ''));
+    + ' · davon heute noch da: ' + nochAbgelehnt
+    + ' · brauchbar: ' + uebrig
+    + (w && uebrig <= 0 ? '   ⛔ KEIN ERSATZ MEHR' : ''));
   for (const nr of nrs) {
     const e = eintraege[String(nr)] || {};
     const jetzt = liste[nr];
@@ -112,5 +155,51 @@ for (const id of woerter) {
   }
   console.log('');
 }
+/* ---------- --schreiben: data/abgelehnt.json nachziehen ----------
+
+   ⛔ WARUM DAS HIER DAZUGEHOERT (09.09.2026). pruefe-eselsbruecken.js liest
+   data/abgelehnt.json und meldet jeden abgelehnten Text, der noch dasteht.
+   Geschrieben wurde die Datei bisher NUR von `vorrat.mjs --stand … --app auto`
+   — und das Werkzeug zieht zugleich FREIGESCHALTET nach, greift also in den
+   Lernfenster-Stand ein. Wer nur die Ablehnungen auffrischen will, musste
+   deshalb den ganzen Lauf nehmen oder es lassen.
+
+   Gelassen wurde es: die Datei war am 09.09.2026 drei Tage alt, und in dieser
+   Zeit hatte Elias einen weiteren Vorschlag abgelehnt (غُرْفَةٌ Nr. 3, um
+   04:07 abgeglichen). Der Pruefer konnte ihn nicht sehen und meldete gruen.
+   [[werkzeug_ohne_aufrufer]] [[historisch_oder_aktuell_steht_im_wort_davor]]
+
+   ⚠️ DIESELBE DATEI, ZWEI SCHREIBER. Die Form muss deckungsgleich bleiben mit
+   `abgelehnteSchreiben()` in werkzeuge/vorrat.mjs — Felder `stempel`,
+   `geholt`, `woerter`. Wer eine aendert, aendert beide.
+   [[dieselbe_frage_zwei_antworten]]
+
+   ⚠️ Und wie dort: ein LEERES Ergebnis wird nicht geschrieben. „Er hat nichts
+   abgelehnt" und „wir haben nichts geholt" saehen sonst gleich aus.
+   [[leere_liste_ist_keine_messung]] */
+if (process.argv.includes('--schreiben')) {
+  const raus = {};
+  let anzahl = 0;
+  for (const id of woerter) {
+    const e = verworfen[id] || {};
+    const l = Object.keys(e).map(Number).sort((a, b) => a - b).map(nr => ({
+      nr, text: String((e[String(nr)] || {}).text || ''), zeit: (e[String(nr)] || {}).zeit || null
+    })).filter(x => x.text);
+    if (l.length) { raus[id] = l; anzahl += l.length; }
+  }
+  if (!anzahl) {
+    console.log('\n⚠️ Nichts zu schreiben — data/abgelehnt.json bleibt, wie sie war.');
+  } else {
+    const ziel = path.join(REPO, 'data', 'abgelehnt.json');
+    fs.writeFileSync(ziel, JSON.stringify({
+      stempel: (ablage.stempel && ablage.stempel.vt_vorschlagWeg) || null,
+      geholt: new Date().toLocaleDateString('de-DE'),
+      woerter: raus
+    }, null, 2) + '\n', 'utf8');
+    console.log('\n→ data/abgelehnt.json geschrieben: ' + anzahl + ' Ablehnung(en) in '
+      + Object.keys(raus).length + ' Woertern.');
+  }
+}
+
 console.log('Zusammen: ' + offenGesamt + ' abgelehnte Vorschlaege in ' + woerter.length + ' Woertern.');
 if (ohneErsatz) console.log('⛔ Bei ' + ohneErsatz + ' Wort/Woertern ist KEIN Vorschlag mehr uebrig — dort muss einer neu geschrieben werden.');
