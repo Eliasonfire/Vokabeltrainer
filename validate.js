@@ -267,15 +267,75 @@ try {
    Syntaxfehler, sondern eine neue Datei, die jemand anzulegen vergisst zu
    verlinken - oder die in index.html steht, aber nicht in der ASSETS-Liste des
    Service Workers. Das faellt online nicht auf und bricht erst offline. */
+/* ⛔⛔ OHNE KOMMENTARE SUCHEN (09.09.2026).
+   Bis heute lief die Suche auf dem ROHTEXT. Ein auskommentiertes
+   `<!-- <script src="js/foo.js"></script> -->` oder eine auskommentierte Zeile
+   in der ASSETS-Liste haette den Test zufriedengestellt — die Datei waere als
+   „eingebunden" gemeldet worden und beim Nutzer nie geladen. Das ist genau der
+   Fall, den es hier schon einmal gab: 36 gruene Pruefer, und die Datei lud gar
+   nicht.
+   ⚠️ Der Dateiname steht in index.html in einem ATTRIBUT und in sw.js in einem
+   STRING — beides muss stehen bleiben, deshalb wird nur der Kommentar
+   entfernt, nicht die Texte. [[stichworttreffer_im_kommentar]] */
+const ohneHtmlKommentare = (s) => s.replace(/<!--[\s\S]*?-->/g, ' ');
+const ohneJsKommentare = (s) => s
+  .replace(/\/\*[\s\S]*?\*\//g, ' ')
+  .split('\n').map(z => {
+    /* Zeilenkommentar nur, wenn das `//` nicht in einem String steht — grob,
+       aber hier reicht es: die ASSETS-Liste enthaelt keine `//` in Strings. */
+    const i = z.indexOf('//');
+    if (i < 0) return z;
+    const davor = z.slice(0, i);
+    const hoch = (davor.match(/'/g) || []).length, doppel = (davor.match(/"/g) || []).length;
+    return (hoch % 2 || doppel % 2) ? z : davor;
+  }).join('\n');
+/* ⛔⛔ NICHT IM TEXT SUCHEN, SONDERN DIE LISTEN AUSLESEN.
+   Der erste Reparaturversuch blendete nur die Kommentare aus — und die
+   Fehlereinspritzung zeigte sofort, dass das NICHT reicht: `js/kern.js` steht
+   in index.html noch an SIEBEN weiteren Stellen, in CSS- und JS-Kommentaren
+   INNERHALB der Datei („das Wandern steht in js/kern.js bei LAUT_STAND"). Ein
+   auskommentiertes <script> blieb damit unbemerkt.
+   Jetzt werden die beiden Listen wirklich gelesen: die `src`-Werte aller
+   <script>-Tags, und die Zeichenketten in der ASSETS-Liste von sw.js.
+   [[stichworttreffer_im_kommentar]] [[stoertest_muss_wirkung_nachweisen]] */
+const skriptQuellen = (html) => new Set(
+  [...ohneHtmlKommentare(html).matchAll(/<script\b[^>]*\bsrc\s*=\s*["']([^"']+)["']/gi)]
+    .map(m => m[1].replace(/^\.\//, '')));
+const assetListe = (sw) => {
+  const auf = sw.indexOf('const ASSETS');
+  const zu = auf < 0 ? -1 : sw.indexOf('];', auf);
+  if (auf < 0 || zu < 0) return null;                 // Aufbau geaendert — sagen, nicht raten
+  return new Set([...ohneJsKommentare(sw.slice(auf, zu)).matchAll(/["']([^"']+)["']/g)]
+    .map(m => m[1].replace(/^\.\//, '')));
+};
+const fehlerVorherModule = errors.length;
 try {
   const dateien = fs.readdirSync(path.join(DIR, 'js')).filter(f => f.endsWith('.js')).sort();
-  const html = fs.readFileSync(path.join(DIR, 'index.html'), 'utf8');
-  const sw = fs.readFileSync(path.join(DIR, 'sw.js'), 'utf8');
+  const geladen = skriptQuellen(fs.readFileSync(path.join(DIR, 'index.html'), 'utf8'));
+  const gecacht = assetListe(fs.readFileSync(path.join(DIR, 'sw.js'), 'utf8'));
+  if (!gecacht) fail('sw.js: die ASSETS-Liste ist nicht mehr als `const ASSETS = [ … ];` zu finden — die Offline-Pruefung faellt aus.');
   dateien.forEach(f => {
-    if (!html.includes(`js/${f}`)) fail(`js/${f} liegt im Ordner, wird aber in index.html nicht geladen.`);
-    if (!sw.includes(`js/${f}`))   fail(`js/${f} fehlt in der ASSETS-Liste von sw.js — offline nicht verfügbar.`);
+    if (!geladen.has(`js/${f}`)) fail(`js/${f} liegt im Ordner, wird aber von keinem <script src> in index.html geladen.`);
+    if (gecacht && !gecacht.has(`js/${f}`)) fail(`js/${f} fehlt in der ASSETS-Liste von sw.js — offline nicht verfügbar.`);
   });
-  note(`js/: ${dateien.length} Module, alle eingebunden und im Offline-Cache.`);
+  /* ⛔ Die gruene Zeile NUR, wenn hier auch nichts gescheitert ist. Beim ersten
+     Anlauf stand „alle eingebunden und im Offline-Cache" direkt neben einem
+     FEHLER derselben Pruefung — die beruhigende Zeile liest man zuerst.
+     [[widerspruch_liegt_in_der_beschriftung]] */
+  if (errors.length === fehlerVorherModule)
+    note(`js/: ${dateien.length} Module, alle eingebunden und im Offline-Cache `
+      + `(${geladen.size} <script src>, ${gecacht ? gecacht.size : '?'} ASSETS-Eintraege).`);
+  /* ⛔ Gegenprobe: greifen die beiden Auslesefunktionen ueberhaupt? Ohne sie
+     waere „alle eingebunden" auch dann gruen, wenn sie leere Mengen liefern —
+     dann naemlich waere jede Datei ein Befund … oder, bei einem Denkfehler
+     andersherum, keine. */
+  const pHtml = '<!-- <script src="js/aus.js"></script> --><script src="./js/da.js"></script>';
+  const pSw = "const ASSETS = [\n  './js/da.js',\n  // './js/aus.js',\n];";
+  const a = skriptQuellen(pHtml), b = assetListe(pSw);
+  if (a.has('js/aus.js'))  fail('validate.js: ein auskommentiertes <script> wird noch mitgezaehlt.');
+  if (!a.has('js/da.js'))  fail('validate.js: ein echtes <script src> wird NICHT gefunden.');
+  if (!b || b.has('js/aus.js')) fail('validate.js: ein auskommentierter ASSETS-Eintrag wird noch mitgezaehlt.');
+  if (!b.has('js/da.js'))  fail('validate.js: ein echter ASSETS-Eintrag wird NICHT gefunden.');
 } catch (e) {
   fail(`js/-Ordner nicht lesbar: ${e.message}`);
 }
