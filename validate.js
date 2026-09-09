@@ -1327,6 +1327,53 @@ try {
   fail(`manifest.json ist kein gültiges JSON: ${e.message}`);
 }
 
+/* ---------- 8a. DER WEG, AUF DEM EINE NEUE FASSUNG BEI IHM ANKOMMT ---------
+ *
+ * ⛔⛔ Die wichtigste Regel dieses Projekts lautet „⭐⭐ Alte Fassung beim
+ * Nutzer" — jede Meldung an Elias beginnt mit „App schliessen und neu
+ * oeffnen". Der Grund dafuer steht in DREI Zeilen von sw.js, und keine davon
+ * wurde je von einem Werkzeug angesehen (am 09.09.2026 nachgemessen: weder
+ * `skipWaiting` noch `clients.claim` noch `caches.delete` kommt in irgendeinem
+ * Pruefer vor).
+ *
+ *   self.skipWaiting()   ohne sie WARTET die neue Fassung, bis alle Tabs zu
+ *                        sind. Dann hilft auch Neuladen nicht, und die
+ *                        Anweisung „schliess die App und oeffne sie neu" wird
+ *                        zu einem Rat, der nicht mehr stimmt.
+ *   self.clients.claim() ohne sie bedient die ALTE Fassung die schon offene
+ *                        Seite weiter — der Nutzer hat aktualisiert und sieht
+ *                        trotzdem von gestern.
+ *   caches.delete(alt)   ohne sie bleibt jede alte Fassung im Speicher liegen.
+ *
+ * ⭐ Das ist die Sorte Zeile, die beim Aufraeumen faellt, weil sie nirgends
+ * gebraucht aussieht — und deren Fehlen erst WOCHEN spaeter auffaellt, an
+ * einem Fehler, den es im Code laengst nicht mehr gibt.
+ * [[alte_fassung_beim_nutzer]] [[deploy_meldet_erfolg_ohne_produktion]]
+ *
+ * ⚠️ Ohne Kommentare gesucht: eine auskommentierte Zeile wirkt nicht.
+ */
+const fehlerVorherSw = errors.length;
+try {
+  const swCode = ohneJsKommentare(fs.readFileSync(path.join(DIR, 'sw.js'), 'utf8'));
+  const SW_PFLICHT = [
+    [/self\.skipWaiting\s*\(/, 'self.skipWaiting()',
+      'eine neue Fassung wartet dann, bis ALLE Tabs zu sind'],
+    [/self\.clients\.claim\s*\(/, 'self.clients.claim()',
+      'die alte Fassung bedient die offene Seite weiter'],
+    [/caches\.delete\s*\(/, 'caches.delete() im activate',
+      'jede alte Fassung bleibt im Speicher liegen'],
+  ];
+  for (const [re, was, folge] of SW_PFLICHT)
+    if (!re.test(swCode)) fail(`sw.js: ${was} fehlt — ${folge}. Elias saehe weiter die alte Fassung.`);
+  /* Gegenprobe: die Muster duerfen nicht auf einen leeren Text passen. */
+  if (SW_PFLICHT.some(([re]) => re.test('const x = 1;')))
+    fail('validate.js: die sw.js-Muster passen auf beliebigen Text — sie pruefen nichts.');
+  if (errors.length === fehlerVorherSw)
+    note('sw.js: der Weg zur neuen Fassung ist offen (skipWaiting, clients.claim, alte Caches werden geloescht).');
+} catch (e) {
+  fail(`sw.js nicht lesbar: ${e.message}`);
+}
+
 /* ---------- 8b. Der KOPF von index.html: vier Zeilen, die alles tragen ------
  *
  * ⛔⛔ Am 09.09.2026 kam heraus, dass `<meta name="darkreader-lock">` seit dem
