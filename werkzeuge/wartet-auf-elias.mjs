@@ -42,6 +42,7 @@ import vm from 'node:vm';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
+import { arabischHervorheben, BIDI_CSS } from './arabisch-hervorheben.mjs';
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.resolve(HIER, '..');
@@ -1117,8 +1118,25 @@ if (NUR_ZEIGEN) process.exit(0);
 /* ---------- 4. Die Seite ---------- */
 const esc = (s) => String(s == null ? '' : s)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+/* ⛔⛔ ARABISCHE LAEUFE EINZELN VERPACKEN (09.09.2026, im Browser gemessen).
+   Auf DIESER Seite standen **7 von 7** Stellen mit zwei arabischen Laeufen
+   verkehrt herum, darunter „وَاحِدٌ → وَاحِدَةٌ" (x=110 gegen x=60). Ein Pfeil,
+   ein Schraegstrich oder ein „·" zwischen zwei arabischen Laeufen ist ein
+   NEUTRALES Zeichen und bekommt deren Richtung — der ganze Ausdruck kippt.
+
+   ⚠️ Auf dem `<li>` stand `unicode-bidi: isolate` schon, als Vorgabe des
+   Browsers. Das beweist, dass es NICHT reicht: Isolation am aeusseren Kasten
+   trennt ihn von der Umgebung, nicht die beiden Laeufe voneinander.
+
+   ⭐ `txt()` benutzt dieselbe Funktion wie die App — herausgeschnitten aus
+   js/kern.js, nicht nachgebaut. Sie maskiert SELBST, deshalb hier kein
+   zusaetzliches esc(). `esc()` bleibt fuer Attribute (href), dort waere ein
+   eingesetzter <span> ein Fehler.
+   [[rtl_richtung_physisch]] [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+const txt = (s) => arabischHervorheben(String(s == null ? '' : s), 'ar');
 /* Fettschrift und Code aus den To-Do-Zeilen behalten — sie tragen Bedeutung. */
-const md = (s) => esc(s)
+const md = (s) => txt(s)
   .replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>')
   .replace(/`([^`]+)`/g, '<code>$1</code>');
 
@@ -1126,20 +1144,23 @@ const karten = posten.map((p, i) => `
 <article class="posten" data-nr="${i}">
   <header>
     <span class="zahl">${p.zahl}</span>
-    <span class="einheit">${esc(p.einheit)}</span>
-    <h2>${esc(p.titel)}</h2>
-    ${p.dazu ? `<span class="dazu">${esc(p.dazu)}</span>` : ''}
+    <span class="einheit">${txt(p.einheit)}</span>
+    <h2>${txt(p.titel)}</h2>
+    ${p.dazu ? `<span class="dazu">${txt(p.dazu)}</span>` : ''}
   </header>
-  <p class="aufwand"><span class="marke">Aufwand</span> ${esc(p.aufwand)}</p>
-  <p class="warum">${esc(p.warum)}</p>
-  <p class="wie"><span class="marke">So geht es</span> ${esc(p.wie)}</p>
-  ${p.beispiel ? `<p class="warum"><span class="marke">Beispiel</span> ${esc(p.beispiel)}</p>` : ''}
+  <p class="aufwand"><span class="marke">Aufwand</span> ${txt(p.aufwand)}</p>
+  <p class="warum">${txt(p.warum)}</p>
+  <p class="wie"><span class="marke">So geht es</span> ${txt(p.wie)}</p>
+  ${p.beispiel ? `<p class="warum"><span class="marke">Beispiel</span> ${txt(p.beispiel)}</p>` : ''}
   ${p.zeilen && p.zeilen.length ? `<ul class="zeilen">${p.zeilen.map(z => `<li>${md(z)}</li>`).join('')}</ul>` : ''}
   ${p.seite ? `<a class="knopf" href="${esc(p.seite)}" target="_blank" rel="noopener">${esc(p.seiteText || 'Öffnen')} →</a>` : ''}
 </article>`).join('\n');
 
 const html = `<title>Was auf dich wartet</title>
 <style>
+/* Die Zeile kommt aus werkzeuge/arabisch-hervorheben.mjs — dort steht sie
+   EINMAL, damit die naechste erzeugte Seite sie nicht wieder vergisst. */
+${BIDI_CSS}
 :root{
   --bg:#000; --flaeche:#111114; --hoch:#17171c; --rand:#26262c; --rand2:#1c1c21;
   --text:#f4f4f6; --leise:#9a9aa4; --still:#6b6b75;
