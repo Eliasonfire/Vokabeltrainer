@@ -219,6 +219,7 @@ else console.log('  ok   Die Diagnosekarte zeigt die geschluckten Fehler.');
    [[regel_gilt_nur_mit_begruendung]] */
 const PFLICHT = [
   ['einstellungen.js', 'Diagnose: Version lesen',        'sonst steht in der Karte ewig „(wird geladen)"'],
+  ['einstellungen.js', 'Diagnose: Platzhalter weg',      'die nachgetragene Zeile faende ihren Platz nicht und bliebe ewig „(wird gefragt)"'],
   ['einstellungen.js', 'Diagnose: Feier-Protokoll',      'sonst zeigt die Karte „(noch keine)" — ein Befund statt eines Ausfalls'],
   ['einstellungen.js', 'Diagnose: Geh-Protokoll',        'sonst zeigt die Karte „(nicht gelaufen)"'],
   ['einstellungen.js', 'Aktualisieren: ',                'eine Datei bleibt alt, der Knopf meldet trotzdem fertig'],
