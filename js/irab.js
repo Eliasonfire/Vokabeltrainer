@@ -541,7 +541,19 @@ function funktionenVon(w){
   const aus = [];
   const nenn = t => { if (aus.indexOf(t) < 0) aus.push(t); };
   const wort = String(w.ar).trim();
-  const drin = liste => { try { return istInListe(wort, liste); } catch(e){ return false; } };
+  /* ⛔ `false` heisst hier „steht nicht in der Liste" — und genau das behauptete
+     diese Zeile bis zum 09.09.2026 auch dann, wenn istInListe() gar nicht
+     antworten konnte. Die Karte verliert dann still ihre Sonderrolle und faellt
+     auf die blosse Wortart zurueck: عِنْدَ stuende nur noch als „Partikel" da,
+     ohne „Zeit- oder Ortsangabe" und ohne die Wirkung auf das naechste Wort.
+     Kein Fehler, kein leeres Feld — nur eine aermere Auskunft.
+     [[vorgabewert_sieht_aus_wie_befund]]
+     ⚠️ stillerFehler() fasst gleiche Meldungen zusammen und zaehlt sie, es
+     wird hier also nichts geflutet, obwohl die Zeile je Wort mehrfach laeuft. */
+  const drin = liste => {
+    try { return istInListe(wort, liste); }
+    catch(e){ stillerFehler('irab.funktionenVon: Listenabgleich', e); return false; }
+  };
 
   /* ⛔ مِنْ UND مَنْ SEHEN OHNE ḤARĀKĀT GLEICH AUS. istInListe() wirft die
      Vokalzeichen weg, und dadurch galt مَنْ (wer) als حَرْف جَرّ — auf einer

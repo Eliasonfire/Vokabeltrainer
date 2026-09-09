@@ -110,6 +110,87 @@ else {
   else console.log('  ok   Stoertest: findet `.catch(()=>{})`, schweigt bei `.catch(e => melde(e))`.');
 }
 
+/* ---------- 1c. Der DRITTE Weg: ein plausibler Rueckgabewert ----------
+
+   ⛔⛔ Am 09.09.2026 nachgetragen. Punkt 1 und 1b suchen Bloecke, die NICHTS
+   tun. Der gefaehrlichere Fall tut etwas — er gibt eine Zahl zurueck:
+
+       function wortzahl(){
+         try { return Object.keys(JSON.parse(localStorage.getItem(…))).length; }
+         catch (e){ return 0; }        // <- kein leerer Block, trotzdem still
+       }
+
+   Diese Zahl stand in js/sync.js in der Erfolgsmeldung des Geraeteabgleichs:
+   „12 Wörter, Stand aktualisiert". Wirft `localStorage` — und das kann es
+   [[localstorage_kann_werfen]] —, las Elias dort „0 Wörter, Stand
+   aktualisiert". Eine Erfolgsmeldung mit einer Null, die aussieht wie ein
+   Messwert. [[vorgabewert_sieht_aus_wie_befund]]
+
+   ⭐ Fuenf solche Stellen gab es am 09.09.2026 in js/, und KEINE davon faellt
+   unter Punkt 1 oder 1b — beide Regeln waren gruen. Ein dritter Weg, den zwei
+   Regeln nicht sehen: genau die Sorte Luecke, wegen der dieses Skript
+   existiert. [[gruener_pruefer_beweist_nur_geprueftes]] [[blickwinkel_durchprobieren]]
+
+   ⚠️ Der Massstab ist derselbe wie oben: ENTWEDER melden (`stillerFehler`)
+   ODER einen Grund hinschreiben. Nicht „kein Rueckgabewert im catch" — den
+   braucht es oft, und ein Verbot waere schlechter als der Fehler.
+
+   ⚠️ Gesucht wird auf der kommentarfreien Maske, nachgesehen im Original an
+   derselben Stelle — sonst zerlegt eine geschweifte Klammer im Kommentar das
+   Rumpfmuster, und der Block faellt aus BEIDEN Toepfen. Derselbe Grund wie
+   bei Punkt 1. */
+const VORGABE_CATCH = /catch\s*(?:\([^)]*\))?\s*\{([^{}]{1,240})\}/g;
+const PLAUSIBEL = /return\s+(?:0|''|""|\[\]|\{\}|null|false|true|-1|NaN)\s*;?\s*$/;
+let vorgabeOffen = 0, vorgabeGesamt = 0;
+for (const f of dateien) {
+  const q = fs.readFileSync(path.join(JS, f), 'utf8');
+  const rein = ohneKommentareUndTexte(q);
+  let m; VORGABE_CATCH.lastIndex = 0;
+  while ((m = VORGABE_CATCH.exec(rein))) {
+    if (!PLAUSIBEL.test(m[1].trim())) continue;
+    vorgabeGesamt++;
+    /* meldet er? — auf der Maske, denn das ist Quelltext, kein Kommentar */
+    if (/stillerFehler\s*\(/.test(m[1])) continue;
+    /* traegt er einen Grund? — im ORIGINAL an derselben Stelle */
+    const original = q.slice(m.index, m.index + m[0].length);
+    const maske    = rein.slice(m.index, m.index + m[0].length);
+    let kommentar = false;
+    for (let i = 0; i < original.length; i++)
+      if (original[i] !== maske[i] && original[i].trim()){ kommentar = true; break; }
+    if (kommentar) continue;
+    vorgabeOffen++;
+    rot('js/' + f + ':' + zeileVon(q, m.index) + ': `catch` gibt einen plausiblen Wert zurueck ('
+      + m[1].trim().slice(0, 40) + ') — der Ausfall sieht dann aus wie ein Messwert. '
+      + 'Entweder `stillerFehler(...)` oder einen Grund als Kommentar.');
+  }
+}
+if (!vorgabeOffen)
+  console.log('  ok   ' + vorgabeGesamt + ' catch-Bloecke mit Vorgabewert melden oder begruenden ihn.');
+
+/* Stoertest fuer 1c — an einem Fall, dessen Antwort feststeht. */
+{
+  const pruefe = (quelle) => {
+    const rein = ohneKommentareUndTexte(quelle);
+    VORGABE_CATCH.lastIndex = 0;
+    const m = VORGABE_CATCH.exec(rein);
+    if (!m || !PLAUSIBEL.test(m[1].trim())) return 'nicht gefunden';
+    if (/stillerFehler\s*\(/.test(m[1])) return 'meldet';
+    const o = quelle.slice(m.index, m.index + m[0].length);
+    const k = rein.slice(m.index, m.index + m[0].length);
+    for (let i = 0; i < o.length; i++) if (o[i] !== k[i] && o[i].trim()) return 'begruendet';
+    return 'offen';
+  };
+  const roh    = pruefe('function f(){ try { a(); } catch (e){ return 0; } }');
+  const meldet = pruefe('function f(){ try { a(); } catch (e){ stillerFehler("x", e); return 0; } }');
+  const grund  = pruefe('function f(){ try { a(); } catch (e){ /* darf 0 sein */ return 0; } }');
+  const echt   = pruefe('function f(){ try { a(); } catch (e){ return berechneErsatz(); } }');
+  if (roh !== 'offen')          rot('Stoertest 1c wirkungslos: `return 0` ohne alles wird nicht gemeldet.');
+  else if (meldet !== 'meldet') rot('Stoertest 1c wirkungslos: eine gemeldete Stelle gilt trotzdem als offen.');
+  else if (grund !== 'begruendet') rot('Stoertest 1c wirkungslos: ein geschriebener Grund zaehlt nicht.');
+  else if (echt !== 'nicht gefunden') rot('Stoertest 1c wirkungslos: ein echter Ersatzwert wird faelschlich gemeldet.');
+  else console.log('  ok   Stoertest: findet `catch { return 0 }`, schweigt bei Meldung, Grund und echtem Ersatz.');
+}
+
 /* ---------- 2. Das Protokoll selbst muss vorhanden und verdrahtet sein ----------
    ⛔ Ein Melder ohne Anzeige ist genau der Ausfall, den er verhindern soll.
    [[werkzeug_ohne_aufrufer]] */

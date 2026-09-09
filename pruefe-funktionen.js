@@ -85,10 +85,19 @@ for (const b of (hol('BUECHER') || [])) laden(b.datei, false);
    laden scheitert am fehlenden DOM. Deshalb genau die Stuecke nachreichen, die
    funktionenVon() anfasst — und wenn eines fehlt, bricht es hier sichtbar ab
    statt still etwas Falsches zu messen. */
+/* ⚠️ `stillerFehler` gehoert dazu, seit funktionenVon() seinen Listenabgleich
+   meldet (09.09.2026). In der App kommt es aus js/kern.js, das zuerst laedt.
+   Ohne den Ersatz hier wuerde ausgerechnet der Fehlerfall eine ReferenceError
+   werfen — der Melder waere dann schlimmer als das Schweigen.
+   ⭐ Er ZAEHLT mit, damit die Messung unten nicht auf einer stillen Panne
+   steht: eine Stelle, an der die Listen nicht antworten, faellt auf.
+   [[pruefwerkzeug_laedt_mehr_als_die_app]] */
 vm.runInContext(`
   function escapeHtml(s){ return String(s == null ? '' : s); }
   var SETTINGS = { buecher: null };
   function aktivesBuch(){ return 'madina-1'; }
+  var STILLE_FEHLER_HIER = [];
+  function stillerFehler(wo, e){ STILLE_FEHLER_HIER.push(wo + ': ' + (e && e.message || e)); }
 `, ctx);
 laden('js/irab.js');
 
@@ -277,6 +286,13 @@ const sProbe = (was, ist, soll) => {
   /* ⚠️ Und die Probe auf die Probe: bei einem fast leeren Bestand waeren
      „0 nur Wort" ebenfalls null Befunde. Am 09.09.2026 waren es 230. */
   sProbe('es steht ueberhaupt ein Bestand da (>= 50)', woerter.length >= 50, true);
+
+  /* ⚠️ Und ob waehrend der Proben oben etwas still danebengegangen ist. Ein
+     Listenabgleich, der wirft, liefert `false` — die Karte verlöre ihre
+     Sonderrolle, und die Zaehlung unten saehe trotzdem sauber aus. */
+  const still = hol('STILLE_FEHLER_HIER') || [];
+  sProbe('kein stiller Listenfehler waehrend der Proben', still.length, 0);
+  if (still.length) still.slice(0, 3).forEach(z => console.log('       ' + z));
 }
 if (stoer){
   console.log('');

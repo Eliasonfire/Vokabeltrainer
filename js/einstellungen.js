@@ -161,8 +161,13 @@ function zeichneEinzelnFreiListe(){
 
 /* Wie viele Vokabeln hat Elias selbst korrigiert? Die Zahl steht in der
    Beschriftung, damit er sieht, dass da etwas ist. */
+/* ⚠️ Die 0 im catch bleibt — als Beschriftungswert ist sie richtig, wenn nichts
+   zu zeigen ist. Gemeldet wird sie trotzdem: sonst sähe „keine Korrekturen"
+   genauso aus wie „die Korrekturen sind nicht lesbar", und auf der
+   Diagnosekarte steht die Zahl als Messwert. [[vorgabewert_sieht_aus_wie_befund]] */
 function aenderungsZahl(){
-  try { return Object.keys(WORT_AENDERUNGEN || {}).length; } catch (e) { return 0; }
+  try { return Object.keys(WORT_AENDERUNGEN || {}).length; }
+  catch (e) { stillerFehler('einstellungen.aenderungsZahl', e); return 0; }
 }
 
 /* ---------- Die Liste für die Wartung herausgeben (20.08.2026) ----------
@@ -210,7 +215,10 @@ function einzelnFreiAlsText(){
    [[eingefrorenes_feld_ist_kein_zustand]] */
 function aenderungenAlsText(){
   let eintraege;
-  try { eintraege = WORT_AENDERUNGEN || {}; } catch (e) { return ''; }
+  /* Der leere Text heisst „nichts zu berichten". Ist er in Wahrheit ein Ausfall,
+     steht das wenigstens unter „Geschluckte Fehler" auf der Diagnosekarte. */
+  try { eintraege = WORT_AENDERUNGEN || {}; }
+  catch (e) { stillerFehler('einstellungen.aenderungenAlsText', e); return ''; }
   const ids = Object.keys(eintraege);
   if (!ids.length) return '';
 
