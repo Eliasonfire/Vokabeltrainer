@@ -219,7 +219,31 @@ if (mitDaten){
   }
   console.log('⚠️  --mit-daten: arabicroots-Abzug ist dabei (' +
     dabei.filter(d => d.rel.startsWith('data/vokabeln-')).length + ' Dateien).');
-  console.log('   Access-Nachweis vom ' + JSON.parse(fs.readFileSync(nachweis,'utf8')).geprueft);
+  const nw = JSON.parse(fs.readFileSync(nachweis, 'utf8'));
+  console.log('   Access-Nachweis vom ' + nw.geprueft);
+  /* ⛔⛔ DAS ALTER GEHOERT DAZU (09.09.2026). Geprueft wurde bisher nur, DASS
+     es die Datei gibt — und sie war 29 Tage alt, ohne dass es jemandem auffiel.
+     Sie ist die Freigabe fuer Material, das nach arabicroots AGB 3.7 und 9
+     nicht weitergegeben werden darf; ihre eigene Notiz sagt, dass sie mit
+     jeder geaenderten Access-Regel ungueltig wird. Ein Nachweis, dessen Alter
+     niemand sieht, ist eine Zusicherung von damals.
+     [[kann_ist_nicht_ist]] [[historisch_oder_aktuell_steht_im_wort_davor]]
+
+     ⚠️ Kein Abbruch: die Regel kann seit Wochen unveraendert gelten, und ein
+     Deploy zu verweigern, weil ein Datum alt ist, waere eine Sperre ohne
+     Befund. Aber die Zahl steht da, und der Befehl zum Nachmessen steht in der
+     Datei selbst. */
+  const tage = Math.floor((Date.now() - new Date(nw.geprueft).getTime()) / 86400000);
+  if (!isFinite(tage)) console.log('   ⚠️ Das Datum im Nachweis ist nicht lesbar.');
+  /* ⚠️ Ein Datum in der ZUKUNFT heisst: es wurde geschaetzt, nicht gemessen —
+     und dann ist auch der Rest der Datei eine Erinnerung, keine Messung. Mir
+     selbst am 09.09.2026 passiert (UTC gegen Ortszeit verwechselt).
+     [[uhrzeit_messen_nicht_schaetzen]] */
+  else if (tage < 0) console.log('   ⚠️ Das Datum liegt in der ZUKUNFT — es ist geschaetzt,'
+    + ' nicht gemessen. Nachweis neu schreiben mit new Date().toISOString().');
+  else if (tage > 14) console.log('   ⚠️ Das ist ' + tage + ' Tage her — die Access-Regeln'
+    + ' wurden seither nicht nachgemessen. Nachweis-Datei lesen, dort steht der Befehl.');
+  else console.log('   (' + tage + ' Tage alt)');
   console.log('');
 }
 
