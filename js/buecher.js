@@ -134,6 +134,39 @@ const GELADENE_BUECHER = new Set();
    entschieden hat, ob sein Vokabelabzug ins oeffentliche Repo darf. */
 const BUCH_FEHLT = new Set();
 
+/* ---------- „Ein Buch fehlt" ist nicht „der Ordner fehlt" (09.09.2026) ------
+
+   ⛔ HIER STAND `BUCH_FEHLT.has(slugs[0])` — also: scheitert das ERSTE der
+   gemerkten Buecher, gelten alle sieben als weg. Die Begruendung dazu war
+   richtig gedacht und nur fuer EINEN der beiden Faelle wahr:
+
+     online   data/ wird als Ganzes ausgeliefert oder gar nicht (ohne
+              `--mit-daten`). Faellt eines aus, fehlen alle. Stimmt.
+     offline  der Cache haelt EINZELNE Dateien. Gemessen: von den neun
+              `data/vokabeln-*.js` steht genau EINE in der ASSETS-Liste von
+              sw.js (`vokabeln-eigene.js`, 4,5 KB von 1,76 MB). Die anderen
+              acht landen erst im Cache, NACHDEM sie einmal mit Netz geladen
+              wurden — der fetch-Handler legt jede 200er-Antwort ab. Ein Buch
+              da, das naechste nicht, ist offline also der Normalfall.
+
+   Die Folge im zweiten Fall: Elias hat vier Buecher gewaehlt, drei liegen im
+   Cache, das erste nicht — und es verschwinden ALLE VIER aus der Auswahl,
+   obwohl die drei geladen sind und ihre Vokabeln bereits in VOCAB_DATA
+   stehen. Und dieselbe Lage endet je nach Reihenfolge anders: faellt statt
+   des ersten das zweite Buch aus, verschwindet nur dieses eine.
+   [[kennzeichen_mit_zwei_ursachen]] [[erfundene_begruendung_schliesst_den_fall]]
+
+   ⭐ Der Schluss auf „der ganze Ordner fehlt" ist erst zulaessig, wenn KEIN
+   einziges versuchtes Buch geladen hat. Hat eines geladen, ist der Ordner
+   nachweislich da — dann ist die Annahme durch die eigenen Daten widerlegt.
+   Der urspruengliche Zweck bleibt dabei vollstaendig erhalten: bei fehlendem
+   data/ scheitern alle versuchten, und die untersuchten Buecher werden
+   weiterhin gar nicht erst angeboten. */
+function fehltDerGanzeOrdner(versucht){
+  if (!Array.isArray(versucht) || !versucht.length) return false;
+  return versucht.every(s => BUCH_FEHLT.has(s));
+}
+
 function buchInfo(slug){
   return (typeof BUECHER !== 'undefined' ? BUECHER : []).find(b=>b.slug===slug);
 }
@@ -744,13 +777,13 @@ document.addEventListener('DOMContentLoaded', async ()=>{
 
   renderBuchChips();
   if (typeof renderHome === 'function') renderHome();
-  const slug = slugs[0];
-  /* Scheitert schon der Start, fehlt nicht dieses eine Buch, sondern der
-     ganze Ordner data/ - die Dateien werden immer zusammen ausgeliefert.
-     Dann verschwindet die Buchzeile ganz, statt sieben Knoepfe anzubieten,
-     die alle ins Leere fuehren. Die App faellt auf das zurueck, was in
-     vocab-data.js steht: Madina 1, Kapitel 1 bis 9. */
-  if (BUCH_FEHLT.has(slug)){
+  /* Scheitert KEIN einziges der versuchten Buecher am Netz, sondern scheitern
+     sie alle, fehlt nicht ein Buch, sondern der ganze Ordner data/ - dann
+     werden die gar nicht erst versuchten auch nicht angeboten. Die App faellt
+     auf das zurueck, was in vocab-data.js steht: Madina 1, Kapitel 1 bis 9.
+     Warum die Bedingung „alle" heisst und nicht „das erste": siehe
+     fehltDerGanzeOrdner() weiter oben. */
+  if (fehltDerGanzeOrdner(slugs)){
     (typeof BUECHER !== 'undefined' ? BUECHER : []).forEach(b => BUCH_FEHLT.add(b.slug));
     renderBuchChips();
     renderChapterFilterChips();
