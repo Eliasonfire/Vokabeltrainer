@@ -1,13 +1,13 @@
 {
   "_hinweis": "Leitner-Box je Wort-Id aus vt_progress. box 1 = noch nie richtig beantwortet. Nur ein Messwert fuer Pruefer — massgeblich ist die App.",
-  "stempel": 1788919635731,
+  "stempel": 1788954530027,
   "geholt": "9.9.2026",
   "verteilung": {
     "1": 4373,
     "2": 21,
     "3": 15,
-    "4": 21,
-    "5": 63
+    "4": 20,
+    "5": 64
   },
   "boxen": {
     "45751": 5,
@@ -16,7 +16,7 @@
     "45754": 5,
     "45755": 5,
     "45756": 2,
-    "45757": 4,
+    "45757": 5,
     "45758": 1,
     "45759": 5,
     "45760": 1,
