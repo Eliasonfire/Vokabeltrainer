@@ -883,6 +883,42 @@ function vorschlagsListe(w){
       if (s && liste.indexOf(s) < 0) liste.push(s);
     });
   }
+
+  /* ---------- Pluralkarten erben vom Singular (09.09.2026) ----------
+
+     ⛔⛔ GEMESSEN, nicht vermutet: Die App kennt 521 Woerter. 192 davon hatten
+     KEINEN einzigen Vorschlag — und alle 192 waren Pluralkarten. **132 davon
+     stehen in Elias' aktivem Lernbestand.** Bei ihnen blieb der Kasten leer,
+     nicht weil nichts passte, sondern weil niemand nachgesehen hat.
+
+     ⭐ Der Rueckweg ist im Namen eingebaut: eine Pluralkarte heisst
+     `<id-des-singulars>#pl` (PLURAL_MARKE in js/kern.js). Der Singular ist
+     also immer auffindbar — es fehlte nur der Griff danach.
+
+     ⚠️ MIT ANSAGE, nicht heimlich. Der Text spricht vom Singular („نَجْمٌ"),
+     die Karte zeigt den Plural („نُجُومٌ") — ohne die Vorbemerkung saehe das
+     nach einem falschen Vorschlag aus. Sie nennt das Wort, zu dem er gehoert.
+     [[historisch_oder_aktuell_steht_im_wort_davor]]
+
+     ⚠️ Erst NACH den eigenen: haette eine Pluralkarte einmal einen eigenen
+     Vorschlag, stuende der vorn. Heute hat keine einen. */
+  if (w && typeof istPluralKarte === 'function' && istPluralKarte(w.id)
+      && typeof PLURAL_MARKE === 'string'){
+    const sgId = String(w.id).slice(0, -PLURAL_MARKE.length);
+    const sg = (typeof VOCAB_DATA !== 'undefined')
+      ? VOCAB_DATA.find(x => String(x.id) === sgId) : null;
+    /* ⚠️ Der Riegel gegen einen Kreislauf: waere der „Singular" selbst wieder
+       eine Pluralkarte (`x#pl#pl`), riefe sich die Funktion endlos auf. Das
+       gibt es heute nicht — ein Riegel, den man erst nach dem Absturz einbaut,
+       ist einer zu spaet. [[bedingung_wird_durch_die_handlung_ungueltig]] */
+    if (sg && !istPluralKarte(sg.id)){
+      const vorn = '⭐ Vom Singular ' + (sg.ar || sgId) + ' — die Karte hier fragt den Plural: ';
+      vorschlagsListe(sg).forEach(t => {
+        const s = vorn + t;
+        if (liste.indexOf(s) < 0) liste.push(s);
+      });
+    }
+  }
   return liste;
 }
 
