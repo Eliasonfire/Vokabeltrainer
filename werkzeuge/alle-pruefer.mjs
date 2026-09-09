@@ -206,6 +206,13 @@ const PRUEFER = [
      jede der drei nach, darunter den gefaehrlichsten Fall: onstart und acht
      Millisekunden spaeter onend — kein Fehler, kein Ton. */
   ['werkzeuge/pruefe-sprachausgabe.mjs', []],
+  /* ⭐⭐ Neu am 09.09.2026, die dritte und letzte Datei ohne Pruefer.
+     `js/init.js` sperrt das Browsermenue („grundsaetzlich auf der app nichts
+     zu suchen") — MIT einer Ausnahme fuer Eingabefelder, denn dort ist das
+     lange Druecken der einzige Weg zu „Einfuegen". Genau solche Ausnahmen
+     verschwinden bei der naechsten Vereinfachung als „unnoetig".
+     Stoertest: Ausnahme entfernt -> 7 Befunde. */
+  ['werkzeuge/pruefe-start.mjs', []],
   /* ⭐ Neu am 09.09.2026 (Punkt 5). Von 545 definierten CSS-Klassen haben 8
      keine Fundstelle; 16 weitere sahen so aus und werden zur Laufzeit
      zusammengesetzt — der Pruefer liefert je Verdacht den BELEG mit, weil ein
