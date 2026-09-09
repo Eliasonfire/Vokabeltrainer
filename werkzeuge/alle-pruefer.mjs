@@ -222,6 +222,14 @@ const PRUEFER = [
      AKZENT_HEUTE) und dass die Adressleiste schwarz bleibt.
      [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
   ['werkzeuge/pruefe-akzentfarbe.mjs', []],
+  /* ⭐⭐ Neu am 09.09.2026, die letzte Datei in js/ ohne Pruefer. Der Satz, um
+     den es geht, steht als Kommentar in js/vokabelpaket.js: „Bereits
+     ausgelieferte Dateien gewinnen — sie sind die Quelle, an der validate.js
+     und die Pruefskripte haengen." Faellt der Vorrang weg, ueberschreibt ein
+     aelteres Paket die ausgelieferten Daten, und danach messen ALLE Pruefer
+     gegen einen Bestand, den niemand mehr kontrolliert.
+     Stoertest: Vorrang entfernt -> gemeldet. [[eigener_bestand_vor_woerterbuch]] */
+  ['werkzeuge/pruefe-vokabelpaket.mjs', []],
   /* ⭐ Neu am 09.09.2026 (Punkt 5). Von 545 definierten CSS-Klassen haben 8
      keine Fundstelle; 16 weitere sahen so aus und werden zur Laufzeit
      zusammengesetzt — der Pruefer liefert je Verdacht den BELEG mit, weil ein
