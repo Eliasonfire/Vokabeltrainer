@@ -1298,7 +1298,21 @@ function taktStarten(){
   SYNC_LETZTE_REGUNG = Date.now();
   taktNeuSetzen();
 }
-function taktStoppen(){ clearInterval(SYNC_UHR); SYNC_UHR = null; SYNC_TAKT_JETZT = 0; }
+/* ⛔ HIER STAND `taktStoppen()` — entfernt am 09.09.2026.
+
+   Sie war das symmetrische Gegenstueck zu `taktStarten()` und wurde von
+   NIRGENDS gerufen: 526 Funktionen durchsucht, ihre eigene Definition war die
+   einzige Fundstelle. [[werkzeug_ohne_aufrufer]]
+
+   ⭐ Und sie kann auch nicht gebraucht werden, das ist der Unterschied zu
+   einem Knopf, der nie angeschlossen wurde: `syncMoeglich()` haengt allein an
+   Protokoll und Adresse, nicht an einer Einstellung. Es gibt in der App keinen
+   Weg, den Abgleich im Betrieb abzuschalten — „der laufende Takt beginnt mit
+   der Seite und endet mit ihr" (der Kommentar am Aufruf von `taktStarten()`).
+
+   ⚠️ Sollte je ein Schalter dazukommen, gehoert sie zurueck — dann aber MIT
+   dem Aufrufer, nicht wieder auf Vorrat. Eine Funktion auf Vorrat sieht bei
+   jeder spaeteren Durchsicht aus wie ein vergessener Anschluss. */
 
 /* Von aussen aufrufbar - LS.set() in js/kern.js meldet JEDE Speicherung hierher.
    Der Filter sitzt deshalb hier: die App muss nicht wissen, was abgeglichen
