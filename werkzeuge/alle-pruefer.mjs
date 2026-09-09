@@ -171,6 +171,14 @@ const PRUEFER = [
      Quelltext und BEFRAGT sie — kein Blick auf einen Kommentar.
      [[entscheidung_gilt_fuer_das_zweite_werkzeug]] [[ausfall_ist_unsichtbar_gebaut]] */
   ['werkzeuge/pruefe-zeitmarken.mjs', []],
+  /* ⭐⭐ Neu am 09.09.2026. werkzeuge/vorschlaege-holen.mjs lief auf Elias'
+     Rechner NIE — `execFileSync('npx.cmd', …)` wirft unter Windows seit
+     Node 20 EINVAL. Der Schaden war nicht der Absturz, sondern was er
+     verdeckte: das Werkzeug sah aus wie eines ohne Aufrufer und war eines,
+     das gar nicht laufen konnte. Beim ersten geglueckten Lauf lag eine
+     Ablehnung von ihm seit Stunden unbearbeitet.
+     [[werkzeug_ohne_aufrufer]] [[ein_weg_geht_der_andere_nicht]] */
+  ['werkzeuge/pruefe-werkzeugaufrufe.mjs', []],
   /* ⭐⭐ Neu am 09.09.2026, die Schwesterpruefung zu pruefe-abgleich.mjs: dort
      zwei GERAETE, hier zwei ZEITPUNKTE. In js/einstellungen.js stand zweimal
      derselbe Satz („wer eine Sicherung einspielte, verlor X lautlos") — und
