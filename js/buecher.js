@@ -137,7 +137,9 @@ const BUCH_FEHLT = new Set();
 /* ---------- „Ein Buch fehlt" ist nicht „der Ordner fehlt" (09.09.2026) ------
 
    ⛔ HIER STAND `BUCH_FEHLT.has(slugs[0])` — also: scheitert das ERSTE der
-   gemerkten Buecher, gelten alle sieben als weg. Die Begruendung dazu war
+   gemerkten Buecher, gelten alle acht als weg (BUECHER hat heute ACHT
+   Eintraege — die alte Fassung dieses Kommentars sprach von sieben und war
+   damit ueberholt; nachgezaehlt in data/buecher.js). Die Begruendung dazu war
    richtig gedacht und nur fuer EINEN der beiden Faelle wahr:
 
      online   data/ wird als Ganzes ausgeliefert oder gar nicht (ohne

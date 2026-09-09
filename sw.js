@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vokabeltrainer-v462';
+const CACHE_NAME = 'vokabeltrainer-v463';
 
 /* ⚠️ In diese Liste gehoeren KEINE Kommentare zwischen die Eintraege.
    validate.js liest sie zeilenweise und hat am 18.08.2026 einen erklaerenden
@@ -170,7 +170,26 @@ self.addEventListener('message', (e)=>{
         const treffer = await cache.match(a);
         if (!treffer) fehlend.push(a.replace(/^\.\//, ''));
       }
-      port.postMessage({ cache: CACHE_NAME, gesamt: ASSETS.length, fehlend });
+      /* ---------- Und die Buchdateien, die NICHT in ASSETS stehen ----------
+
+         ⛔ Die Schleife darueber sieht nur den Vorrat, der beim Einbau angelegt
+         wird. Die Buchvokabeln stehen nicht darin: von den neun
+         `data/vokabeln-*.js` ist nur `vokabeln-eigene.js` in ASSETS, die
+         uebrigen acht kommen erst hierher, NACHDEM Elias das Buch einmal mit
+         Netz geoeffnet hat (der fetch-Handler unten legt jede 200er-Antwort
+         ab). „Vorrat vollstaendig" hiess also bisher nichts darueber, ob seine
+         Buecher unterwegs da sind — und genau danach fragt er.
+
+         ⭐ Gemeldet werden TATSACHEN (was liegt im Cache), nicht ein Urteil.
+         Welche Buecher das sind, weiss die Seite: dort steht BUECHER mit den
+         Dateinamen. Der Worker kennt die Liste nicht und soll sie nicht raten.
+         [[endpunkt_der_zuerst_steht]] */
+      const daten = [];
+      for (const req of await cache.keys()){
+        const t = new URL(req.url).pathname.match(/\/data\/(vokabeln-[^/]+\.js)$/);
+        if (t) daten.push('data/' + t[1]);
+      }
+      port.postMessage({ cache: CACHE_NAME, gesamt: ASSETS.length, fehlend, daten });
     } catch (err){
       port.postMessage({ fehler: String((err && err.message) || err) });
     }

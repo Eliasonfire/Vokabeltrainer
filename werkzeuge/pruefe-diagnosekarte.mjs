@@ -68,6 +68,7 @@ console.log('Die Diagnosekarte fragt ' + namen.length + ' Funktionen ueber einen
 let fehlen = 0;
 let zuLang = 0;      /* zweite Ursache, eigener Zaehler — siehe ganz unten */
 let ersatzRot = 0;   /* dritte: das Nachtragen einer Zeile */
+let platzRot = 0;    /* vierte: ein Platzhalter, der auf einem Weg stehenbleibt */
 for (const n of namen) {
   const da = definiert(n);
   if (!da) fehlen++;
@@ -202,6 +203,59 @@ for (const n of namen) {
   }
 }
 
+/* ---------- Wird JEDER Platzhalter auf JEDEM Weg gefuellt? (09.09.2026) -----
+
+   ⛔⛔ ANLASS: eine zweite asynchrone Zeile („Buecher offline") kam dazu, und
+   sie hing beim ersten Anlauf nur am Erfolgsfall. Antwortete der Service
+   Worker nicht, bekam „Offline-Vorrat" seine ehrliche Fehlanzeige — und die
+   neue Zeile blieb fuer immer bei „… (wird gefragt)". Also genau der Zustand,
+   gegen den der Hinweis eine Zeile darueber geschrieben worden war.
+   [[zweiter_fix_deckt_ersten_zu]] [[ausfall_ist_unsichtbar_gebaut]]
+
+   ⭐ Geprueft wird die Sache selbst, nicht ein Stellvertreter: jeder Helfer,
+   der einen Platzhalter ersetzt, muss im ERFOLGSFALL, in der ZEITGRENZE und im
+   catch vorkommen. Eine Gleichheit der Aufrufzahlen waere nur ein Ersatzmass —
+   sie kann stimmen, waehrend derselbe Weg zweimal bedient wird.
+   [[pruefung_fragt_einen_stellvertreter_ab]] */
+{
+  const anfang = E.indexOf("zeilen.push('Offline-Vorrat");
+  const ende = E.indexOf("sicher('Bildschirm'", anfang);
+  if (anfang < 0 || ende < 0){
+    platzRot++;
+    console.log('  ⛔  der Offline-Abschnitt der Karte ist nicht mehr auffindbar —');
+    console.log('      diese Pruefung faellt aus und darf nicht gruen melden.');
+  } else {
+    const block = ohneKommentareUndTexte(E.slice(anfang, ende), { texte: false });
+    const helfer = [...block.matchAll(/const\s+(\w+)\s*=\s*\(text\)\s*=>\s*trageNach\(/g)].map(m => m[1]);
+    /* Die drei Wege, auf denen der Abschnitt enden kann. */
+    const zeitgrenze = block.slice(block.indexOf('setTimeout('), block.indexOf('} catch'));
+    const fang = block.slice(block.indexOf('} catch'));
+    const erfolg = block.slice(0, block.indexOf('sw.postMessage'));
+    if (!helfer.length || !zeitgrenze || !fang){
+      platzRot++;
+      console.log('  ⛔  ' + helfer.length + ' Helfer, Zeitgrenze/catch nicht gefunden —');
+      console.log('      der Aufbau hat sich geaendert, hier wurde nichts geprueft.');
+    } else {
+      const luecken = [];
+      for (const h of helfer){
+        const fehltIn = [];
+        if (!erfolg.includes(h + '(')) fehltIn.push('Erfolgsfall');
+        if (!zeitgrenze.includes(h + '(')) fehltIn.push('Zeitgrenze');
+        if (!fang.includes(h + '(')) fehltIn.push('catch');
+        if (fehltIn.length) luecken.push(h + ' fehlt im ' + fehltIn.join(' und im '));
+      }
+      if (luecken.length){
+        platzRot++;
+        console.log('  ⛔  ' + luecken.length + ' Platzhalter der Karte bleibt/bleiben auf einem Weg stehen:');
+        for (const l of luecken) console.log('      ' + l);
+      } else {
+        console.log('  ok  alle ' + helfer.length + ' Platzhalter der Offline-Zeilen werden auf'
+          + ' allen drei Wegen gefuellt (Erfolg, Zeitgrenze, catch)');
+      }
+    }
+  }
+}
+
 console.log('');
 /* ⚠️ Zwei Ursachen, zwei Zaehler — sonst steht am Ende „2 Funktion(en) gibt es
    nicht mehr" ueber einer zu langen Karte, und man sucht an der falschen
@@ -220,6 +274,11 @@ if (ersatzRot) {
   console.log('   einer Fehlermeldung fuegt den Rest der Karte ein zweites Mal ein —');
   console.log('   auf dem einen Bildschirmfoto, das er schickt.');
 }
-if (fehlen || zuLang || ersatzRot) process.exit(1);
+if (platzRot) {
+  console.log('⛔ Ein Platzhalter der Karte bleibt auf mindestens einem Weg stehen.');
+  console.log('   Dann sagt die Zeile fuer immer „… (wird gefragt)" — und das liest sich');
+  console.log('   wie „noch am Laden", nicht wie „ausgefallen".');
+}
+if (fehlen || zuLang || ersatzRot || platzRot) process.exit(1);
 console.log('✅ Jede Quelle der Diagnosekarte existiert, und sie passt auf ein Bild.');
 process.exit(0);
