@@ -213,6 +213,15 @@ const PRUEFER = [
      verschwinden bei der naechsten Vereinfachung als „unnoetig".
      Stoertest: Ausnahme entfernt -> 7 Befunde. */
   ['werkzeuge/pruefe-start.mjs', []],
+  /* ⭐⭐ Neu am 09.09.2026, aus einem Satz von Elias derselben Nacht: „warum
+     ist cyan immer standart hier am pc als farbe? das habe ich nie gewollt,
+     ich will tirch red haben satndartmässig". Eine Vorgabefarbe kippt beim
+     Umsortieren einer Liste unbemerkt — und er sieht es Tage spaeter an einem
+     Bildschirm, der ploetzlich anders aussieht. Geprueft wird zusaetzlich,
+     dass alle DREI Stellen dieselbe Farbe meinen (Marke „heute", Rueckfall,
+     AKZENT_HEUTE) und dass die Adressleiste schwarz bleibt.
+     [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+  ['werkzeuge/pruefe-akzentfarbe.mjs', []],
   /* ⭐ Neu am 09.09.2026 (Punkt 5). Von 545 definierten CSS-Klassen haben 8
      keine Fundstelle; 16 weitere sahen so aus und werden zur Laufzeit
      zusammengesetzt — der Pruefer liefert je Verdacht den BELEG mit, weil ein
