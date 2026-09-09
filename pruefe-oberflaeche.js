@@ -647,6 +647,36 @@ if (typeof window === 'undefined' || typeof localStorage === 'undefined'){
        - die App-Icons aus manifest.json (icon.svg, icon-maskable.svg), die
          auf dem Startbildschirm landen.
      Der erste Fall ist der haeufigere und der stillere. */
+  /* ⛔⛔ STEHT „X → Y" AUCH IN DIESER REIHENFOLGE AUF DEM SCHIRM? (09.09.2026)
+     „مَدْرَسَةٌ → مَدَارِسُ" stand rueckwaerts: gemessen erstes Wort x=93,
+     Pfeil x=73, zweites x=0 — gelesen wurde Plural → Singular. Ein Pfeil ist
+     ein NEUTRALES Zeichen und bekommt zwischen zwei arabischen Laeufen deren
+     Richtung. 125 Texte haengen daran.
+
+     ⭐ Diese Probe gehoert HIERHER und nicht in einen node-Pruefer:
+     `werkzeuge/pruefe-bidi.mjs` kann nur pruefen, dass die CSS-Regel DA ist —
+     ob sie WIRKT, sagt allein der Browser. Genau der Fall, den der
+     Regel-Aufklapper hatte: dort stand der Text ganz ohne Span.
+     [[rtl_richtung_physisch]] [[gruener_pruefer_beweist_nur_geprueftes]] */
+  versuch('Arabisch: „X → Y" steht richtig herum', ()=>{
+    if (typeof arabischHervorheben !== 'function') throw new Error('arabischHervorheben fehlt');
+    const kasten = document.createElement('div');
+    kasten.style.cssText = 'position:fixed;left:0;top:0;width:360px;visibility:hidden;z-index:-1';
+    const A = 'مَدْرَسَةٌ', B = 'مَدَارِسُ';
+    kasten.innerHTML = arabischHervorheben(`Beispiel: ${A} → ${B}.`);
+    document.body.appendChild(kasten);
+    try {
+      const spans = [...kasten.querySelectorAll('span[lang="ar"]')];
+      if (spans.length !== 2) throw new Error('erwartet 2 arabische Laeufe, gefunden ' + spans.length);
+      const x = spans.map(s => Math.round(s.getBoundingClientRect().left));
+      const bidi = getComputedStyle(spans[0]).unicodeBidi;
+      if (!(x[0] < x[1]))
+        throw new Error(`${A} steht bei ${x[0]}, ${B} bei ${x[1]} — der Pfeil hat die Richtung `
+          + `gedreht (unicode-bidi: ${bidi})`);
+      return `${A} bei ${x[0]}, ${B} bei ${x[1]} · unicode-bidi: ${bidi}`;
+    } finally { kasten.remove(); }
+  });
+
   versuch('Icons: Sprite und App-Icon', ()=>{
     const vorhanden = new Set([...document.querySelectorAll('svg symbol[id^="ic-"]')].map(s=>s.id.slice(3)));
     if (!vorhanden.size) throw new Error('kein einziges Sprite-Symbol gefunden');

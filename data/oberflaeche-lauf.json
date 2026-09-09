@@ -2,13 +2,13 @@
   "_hinweis": "Wann lief pruefe-oberflaeche.js zuletzt? Er braucht ein DOM und die geladene App und kann deshalb nicht im Sammellauf mitlaufen. Ohne diesen Stempel weiss niemand, ob er seit Wochen nicht mehr lief - und ein Pruefer, an den sich jemand erinnern muss, ist ein unbewachter. [[routine_ohne_termin_ist_unbewacht]]",
   "_wie": "App im Vorschaubrowser oeffnen (preview_start vokabeltrainer), ZUERST die Frischeprobe (caches.keys() muss die Fassung aus sw.js nennen), dann in der Konsole: alle console.* einsammeln, fetch('pruefe-oberflaeche.js').then(r=>r.text()).then(eval), und nur die Zeilen lesen, die nicht 'ok' sind. Der Bericht kommt als console.table - das Umlenken muss console.table mitnehmen, sonst zaehlt man 2 Zeilen statt 41.",
   "gelaufen": "2026-09-09",
-  "fassung": "vokabeltrainer-v456",
-  "pruefungen": 41,
+  "fassung": "vokabeltrainer-v458",
+  "pruefungen": 42,
   "fehler": 0,
   "hinweise": 4,
   "hinweis_inhalt": [
     "Selbst angelegte Woerter nicht im Speicher: 14 Kennungen mit p_-Praefix haben Satz und Markierung, aber kein Wort (sie liegen in vt_personalVocab). Auf einem Geraet ohne diesen Speicher bleiben die Markierungen unsichtbar - ein zweiter Lauf aendert daran nichts.",
     "vt_progress, vt_uebungstage, vt_quoteTage wurden vom Lauf beruehrt und zurueckgeschrieben"
   ],
-  "_laeufe_heute": "v451 um 09:55, v454 um 10:53, v456 um 11:18 — jedes Mal 41/0/4"
+  "_laeufe_heute": "v451 09:55 · v454 10:53 · v456 11:18 · v458 12:05 (jetzt 42 Pruefungen: die Bidi-Probe ist dazugekommen)"
 }
