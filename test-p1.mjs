@@ -12,6 +12,8 @@
  */
 import fs from 'fs';
 import vm from 'vm';
+import { ohneKommentareUndTexte } from './werkzeuge/js-quelltext.mjs';
+const nurCode = (t) => ohneKommentareUndTexte(String(t), { texte: false });
 
 let fehler = 0, geprueft = 0;
 const ok = (was, bedingung, zusatz='') => {
@@ -121,7 +123,9 @@ try {
 
 /* ---------- Beleg, dass die NEUE Fassung laeuft ---------- */
 console.log('\n— Lauefer prueft sich selbst —');
-const quellText = vm.runInContext('pruefeLeseRichtung', ctx).toString();
+/* ⛔ Kommentarfrei: eine Zusicherung „steht im Quelltext" darf nicht vom
+   Kommentar erfuellt werden. [[stichworttreffer_im_kommentar]] */
+const quellText = nurCode(vm.runInContext('pruefeLeseRichtung', ctx).toString());
 ok('pruefeLeseRichtung ist die neue Fassung', quellText.includes('KOPF_SCHWELLE'));
 ok('Ueberroll-Schutz ist drin', quellText.includes('scrollHeight'));
 

@@ -12,11 +12,15 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
+import { ohneKommentareUndTexte } from './werkzeuge/js-quelltext.mjs';
+const nurCode = (t) => ohneKommentareUndTexte(String(t), { texte: false });
 import { fileURLToPath } from 'node:url';
 
 const WURZEL = path.dirname(fileURLToPath(import.meta.url));
 const uebung = fs.readFileSync(path.join(WURZEL, 'js', 'uebung.js'), 'utf8');
-const feier  = fs.readFileSync(path.join(WURZEL, 'js', 'feier.js'), 'utf8');
+/* ⛔ Kommentarfrei: „js/feier.js kennt 'satz-tagesziel'" darf nicht von einem
+   Kommentar erfuellt werden. [[stichworttreffer_im_kommentar]] */
+const feier  = nurCode(fs.readFileSync(path.join(WURZEL, 'js', 'feier.js'), 'utf8'));
 
 let ok = 0, schlecht = 0;
 const pruefe = (was, bedingung, gemessen) => {

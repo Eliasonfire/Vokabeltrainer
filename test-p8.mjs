@@ -10,6 +10,8 @@
  */
 import fs from 'fs';
 import vm from 'vm';
+import { ohneKommentareUndTexte } from './werkzeuge/js-quelltext.mjs';
+const nurCode = (t) => ohneKommentareUndTexte(String(t), { texte: false });
 
 let fehler = 0, geprueft = 0;
 const ok = (was, bedingung, zusatz='') => {
@@ -232,7 +234,8 @@ catch (e) { console.log('\n❌ js/lernen.js liess sich nicht laden:', e.message)
   if (__ort) console.log('   Fundstelle:', __ort.trim()); process.exit(1); }
 
 console.log('\n— Laeuft die neue Fassung? —');
-const quelle = vm.runInContext('renderNotiz.toString()', ctx);
+/* ⛔ Kommentarfrei — siehe [[stichworttreffer_im_kommentar]] */
+const quelle = nurCode(vm.runInContext('renderNotiz.toString()', ctx));
 ok('renderNotiz kennt den Vorschlag', quelle.includes('ist-vorschlag'), 'Pruefwort "ist-vorschlag"');
 
 const kasten = hole('cardNoteBox'), text = hole('cardNoteText'), punkt = hole('cardNoteDot');

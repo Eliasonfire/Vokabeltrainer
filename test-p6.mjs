@@ -12,6 +12,8 @@
  */
 import fs from 'fs';
 import vm from 'vm';
+import { ohneKommentareUndTexte } from './werkzeuge/js-quelltext.mjs';
+const nurCode = (t) => ohneKommentareUndTexte(String(t), { texte: false });
 
 let fehler = 0, geprueft = 0;
 const ok = (was, bedingung, zusatz='') => {
@@ -109,7 +111,8 @@ catch (e) { console.log('\n❌ js/quran.js liess sich nicht laden:', e.message);
    nur eines, das in der neuen vorkommt. Genau daran ist am 10.08.2026 eine
    Gegenprobe falsch positiv geworden. */
 console.log('\n— Laeuft die neue Fassung? —');
-const quelle = vm.runInContext('renderVerses.toString()', ctx);
+/* ⛔ Kommentarfrei — siehe [[stichworttreffer_im_kommentar]] */
+const quelle = nurCode(vm.runInContext('renderVerses.toString()', ctx));
 ok('renderVerses kennt die Seitentrennung',
    quelle.includes('seiten-ende'), 'Pruefwort "seiten-ende"');
 ok('renderVerses setzt das Versschlusszeichen',
