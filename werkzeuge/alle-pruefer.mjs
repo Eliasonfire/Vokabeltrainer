@@ -534,6 +534,47 @@ for (const e of ergebnisse)
 const rot = ergebnisse.filter(e => e.code !== 0);
 console.log('');
 console.log('  ' + ergebnisse.length + ' Prüfer gelaufen, ' + rot.length + ' rot.');
+
+/* ---------- ⛔ EINE URSACHE, VIELE SYMPTOME (09.09.2026) ----------
+
+   ⛔ ANLASS, und zwar gemessen: `ohneKommentareUndTexte()` in
+   werkzeuge/js-quelltext.mjs wurde probeweise stillgelegt (gab die Quelle
+   unveraendert zurueck). Ergebnis: **12 rot statt 3** — neun Pruefer meldeten
+   gleichzeitig, und keiner von ihnen sagte, warum. Wer diese Uebersicht liest,
+   sieht neun unabhaengige Baustellen und faengt bei der falschen an.
+
+   ⭐ Zwei von ihnen sind die BESTIMMTEN Waechter des gemeinsamen Werkzeugs
+   (pruefe-stripper, pruefe-js-quelltext). Ist einer davon rot, ist das
+   Fundament die wahrscheinliche Ursache und alles andere Folge. Genau diese
+   Reihenfolge wird hier ausgesprochen — sonst kostet sie jedes Mal zwanzig
+   Minuten. [[erst_ursache_dann_zweite_massnahme]] [[gleiche_messreihe_falsche_ursache]]
+
+   ⚠️ Die Abhaengigen werden NICHT von Hand gepflegt, sondern aus den `import`-
+   Zeilen gelesen. Eine Handliste neben der echten Quelle laeuft auseinander,
+   sobald ein Pruefer dazukommt. [[handliste_neben_echter_quelle]]
+
+   ⚠️ Es ist ein HINWEIS, kein Urteil: die neun koennen auch echte eigene
+   Befunde haben. Deshalb „zuerst dort nachsehen", nicht „ignorieren".
+   [[kandidatenliste_ist_keine_fehlerliste]] */
+{
+  const WAECHTER = ['werkzeuge/pruefe-stripper.mjs', 'werkzeuge/pruefe-js-quelltext.mjs'];
+  const rotesFundament = WAECHTER.filter(w => rot.some(e => e.rel === w));
+  if (rotesFundament.length){
+    const haengtDran = (rel) => {
+      try {
+        return fs.readFileSync(path.join(REPO, rel), 'utf8').includes('js-quelltext.mjs');
+      } catch { return false; }
+    };
+    const folgen = rot.filter(e => !WAECHTER.includes(e.rel) && haengtDran(e.rel));
+    console.log('');
+    console.log('  ⛔⛔ ZUERST HIER: ' + rotesFundament.join(', ')
+      + (rotesFundament.length > 1 ? ' sind rot.' : ' ist rot.'));
+    console.log('     Das ist das gemeinsame Werkzeug js-quelltext.mjs — ' + folgen.length
+      + ' weitere(r) roter Prüfer steht/stehen darauf');
+    if (folgen.length) console.log('     (' + folgen.map(e => e.rel.replace(/^werkzeuge\//, '')).join(', ') + ').');
+    console.log('     Solange das Fundament nicht steht, sagen ihre Befunde wenig.');
+  }
+}
 console.log('  (' + NUR_IM_BROWSER.join(', ') + ' läuft nur im Browser und ist nicht dabei.)');
 
 /* ⛔⛔ WANN LIEF ER ZULETZT? (09.09.2026)
