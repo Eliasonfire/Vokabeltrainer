@@ -975,6 +975,65 @@ try {
   console.log('  ⚠️ Regelkandidaten nicht lesbar: ' + e.message);
 }
 
+/* ---------- Arabisch, das in SEINEN Notizen rueckwaerts steht (09.09.2026) --
+ *
+ * ⛔⛔ Die Bidi-Drehung dieses Tages steckt nicht nur in der App und in den
+ * erzeugten Seiten, sondern auch in den beiden Obsidian-Notizen, die er
+ * taeglich liest. Im Browser nachgestellt (reiner Text, LTR-Absatz — genau
+ * Obsidians Lesemodus): das erste Wort landet RECHTS. Jedes „Singular →
+ * Plural", das dort steht, liest er verkehrt herum.
+ *
+ * ⛔ In Markdown hilft KEIN CSS: es gibt kein Element um die Laeufe, das man
+ * isolieren koennte. Was wirkt, sind Steuerzeichen IM TEXT (U+2068/U+2069 oder
+ * U+200E) — und das sind ein paar hundert unsichtbare Zeichen in seinen
+ * Notizen, die meine eigenen Pruefwerkzeuge mit Mustern lesen. Deshalb
+ * vorgelegt statt eingebaut. [[rtl_richtung_physisch]] [[schweigen_ist_kein_auftrag]]
+ *
+ * ⚠️ Gezaehlt wird ueber dieselbe Regel wie in werkzeuge/pruefe-bidi.mjs:
+ * zwei arabische Laeufe mit einem neutralen Zeichen dazwischen. Die
+ * Zeichenklassen stehen als Codepunkte da, nicht abgeschrieben.
+ */
+try {
+  const zp = (c) => String.fromCharCode(c);
+  const AR = '[' + zp(0x621) + '-' + zp(0x652) + zp(0x640) + ']';
+  const PAAR = new RegExp('(' + AR + '+(?: +' + AR + '+)*)( *['
+    + zp(0x2192) + zp(0x2190) + '/' + zp(0xB7) + '=' + '] *)(' + AR + '+)', 'g');
+  const ISOLAT = new RegExp('[' + zp(0x2066) + '-' + zp(0x2069) + zp(0x200E) + ']', 'g');
+  const NOTIZEN = [
+    ['To-Do Vokabeltrainer.md', TODO],
+    ['Vokabeltrainer-Arabisch.md',
+      'G:\\1. Workspace\\Obsidian\\Gedächtnis\\Elias Gedächtnis\\03 - Projekte\\Vokabeltrainer-Arabisch.md'],
+  ];
+  let paare = 0, isolate = 0; const proNotiz = [];
+  for (const [name, pfad] of NOTIZEN){
+    if (!fs.existsSync(pfad)) continue;
+    const t = fs.readFileSync(pfad, 'utf8');
+    const p = (t.match(PAAR) || []).length;
+    paare += p;
+    isolate += (t.match(ISOLAT) || []).length;
+    proNotiz.push(name + ': ' + p);
+  }
+  if (paare > 0 && isolate === 0) posten.push({
+    titel: 'Arabisch steht in deinen Notizen rückwärts',
+    zahl: paare, einheit: 'Stellen', dazu: proNotiz.join(' · '), auswahl: true,
+    aufwand: 'eine Entscheidung — ja oder nein; die Änderung selbst macht ein Werkzeug',
+    warum: 'Nicht die App, sondern der Text, den du in Obsidian liest. Wo zwei arabische'
+      + ' Wörter mit einem Pfeil oder Schrägstrich dazwischen stehen, bekommt das Zeichen'
+      + ' deren Richtung und der ganze Ausdruck kippt: „Singular → Plural" liest sich bei'
+      + ' dir als „Plural → Singular". Im Browser nachgestellt und gemessen — dasselbe'
+      + ' Muster, das heute in der App und auf vier Entscheidungsseiten behoben wurde.',
+    wie: 'Hier hilft KEIN CSS — in Markdown gibt es kein Element um die Läufe. Was wirkt,'
+      + ' sind unsichtbare Steuerzeichen im Text (U+2068/U+2069 oder U+200E), also'
+      + ' mehrere hundert Zeichen in deinen Notizen. Sag ja, dann baue ich ein Werkzeug,'
+      + ' das sie setzt — mit Sicherung vorher und einer Gegenprobe, dass sich sonst'
+      + ' nichts ändert. Sag nein, dann bleibt es, wie es ist, und ich schreibe künftige'
+      + ' Paare so, dass sie ohne Steuerzeichen richtig stehen (Wort, Doppelpunkt, Wort).',
+    seite: '', seiteText: ''
+  });
+} catch (e){
+  console.log('  ⚠️ Bidi-Zaehlung in den Notizen nicht moeglich: ' + e.message);
+}
+
 /* ⭐ Alle Seiten, die es fuer ihn gibt. Sie stehen HIER, weil diese Seite die
    ist, die er aufmacht — eine Adresse, die man nicht findet, ist so gut wie
    keine. ⚠️ Beim Anlegen eines neuen Artefakts hier ergaenzen; die URL bleibt
