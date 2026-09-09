@@ -1282,12 +1282,47 @@ try {
 }
 
 /* ---------- 8. manifest.json muss gültiges JSON sein ---------- */
+/* ⛔ DIESELBE ENTSCHEIDUNG WIE BEI DEN MODULEN, zweite Stelle: die gruene
+   Zeile nur, wenn hier auch nichts gescheitert ist. Ohne sie stand eben
+   „display=browser, 3 Symbol(e) vorhanden" als ok-Zeile direkt neben dem
+   FEHLER derselben Pruefung. [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+const fehlerVorherManifest = errors.length;
 try {
   const raw = fs.readFileSync(path.join(DIR, 'manifest.json'), 'utf8');
   const mf = JSON.parse(raw);
   if (!mf.name) warn('manifest.json: "name" fehlt.');
   if (!mf.start_url) warn('manifest.json: "start_url" fehlt.');
-  note('manifest.json: gültiges JSON.');
+  /* ⛔⛔ Drei Angaben, die entscheiden, ob die App eine APP bleibt (09.09.2026).
+     Geprueft wurden bisher nur `name` und `start_url` — und beide nur auf
+     Vorhandensein, nicht darauf, ob sie irgendwohin zeigen.
+
+       display: "standalone"  faellt das weg, oeffnet sich die App als
+                              Browser-Tab mit Adresszeile. Das sieht Elias
+                              sofort, aber niemand koennte sagen warum.
+       icons[].src            zeigt eine Datei ins Leere, fehlt das Symbol auf
+                              dem Startbildschirm — lautlos, denn ein fehlendes
+                              Bild meldet sich nie. [[bild_ohne_fehlermeldung_falsch]]
+       start_url              dasselbe: eine Datei, die es nicht gibt, faellt
+                              erst beim Start von der Kachel auf.
+
+     ⚠️ Die Pfade sind relativ zum Ordner der manifest.json — hier also zum
+     Projektordner. `./` wird abgeschnitten, sonst sucht `existsSync` daneben. */
+  const relativ = (p) => path.join(DIR, String(p).replace(/^\.\//, '').split(/[?#]/)[0]);
+  if (mf.display !== 'standalone')
+    fail(`manifest.json: "display" ist "${mf.display}" statt "standalone" — die App oeffnet sich dann als Browser-Tab.`);
+  if (mf.start_url && !fs.existsSync(relativ(mf.start_url)))
+    fail(`manifest.json: "start_url" zeigt auf ${mf.start_url}, und die Datei gibt es nicht.`);
+  const iconListe = Array.isArray(mf.icons) ? mf.icons : [];
+  if (!iconListe.length) fail('manifest.json: keine "icons" — auf dem Startbildschirm bleibt die Kachel leer.');
+  for (const ic of iconListe)
+    if (!ic.src || !fs.existsSync(relativ(ic.src)))
+      fail(`manifest.json: Symbol "${ic.src}" gibt es nicht — die Kachel bleibt leer.`);
+  /* Gegenprobe: der Pfadumbau muss einen echten Pfad finden UND einen
+     erfundenen verfehlen. Sonst waere „alle Symbole da" bedeutungslos. */
+  if (!fs.existsSync(relativ('./index.html')) || fs.existsSync(relativ('./gibt-es-nicht.svg')))
+    fail('validate.js: die Pfadpruefung der manifest.json misst nicht.');
+  if (errors.length === fehlerVorherManifest)
+    note(`manifest.json: gültiges JSON, display=${mf.display}, ${iconListe.length} Symbol(e) vorhanden.`);
 } catch (e) {
   fail(`manifest.json ist kein gültiges JSON: ${e.message}`);
 }
