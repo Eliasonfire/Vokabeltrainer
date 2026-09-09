@@ -321,9 +321,18 @@ function zeigeAbgleichWarnung(){
 
 /* Wie viele Woerter nach dem Abgleich lokal stehen. Das ist die Zahl, an der
    Elias erkennt, ob etwas angekommen ist - "abgeglichen" allein sagt nichts. */
+/* ⛔⛔ NICHT `return 0` (bis 09.09.2026). Die Zahl steht in der Erfolgsmeldung:
+   „12 Wörter, Stand aktualisiert". Wirft `localStorage` — und das kann es, im
+   privaten Fenster, bei vollem Speicher oder wenn der Browser Websitedaten
+   sperrt [[localstorage_kann_werfen]] —, dann las Elias dort „0 Wörter, Stand
+   aktualisiert". Eine Erfolgsmeldung mit einer Null, die aussieht wie ein
+   Messwert: der Abgleich hätte gerade alles gelöscht, und die Meldung sagt
+   „geglückt". Genau der Satz, den er nachts um drei nicht sehen soll.
+   [[vorgabewert_sieht_aus_wie_befund]] [[ausfall_ist_unsichtbar_gebaut]]
+   `null` heißt „nicht gezählt" — der Aufrufer schreibt das dann auch hin. */
 function wortzahl(){
   try { return Object.keys(JSON.parse(localStorage.getItem('vt_progress') || '{}')).length; }
-  catch (e){ return 0; }
+  catch (e){ stillerFehler('sync.wortzahl', e); return null; }
 }
 
 /* ---------- Zusammenfuehren ---------- */
@@ -977,7 +986,11 @@ async function gleicheAb(still){
        zu schreiben gab. Beim rein stillen Unterschied trifft beides nicht zu —
        SYNC_OFFEN bleibt stehen und das Weglegen der App erledigt es. */
     if (geschrieben || gleich) SYNC_OFFEN = false;
-    merkeStatus(true, wortzahl() + ' Wörter' + (geaendert ? ', Stand aktualisiert' : ''));
+    /* `null` heisst: die Zahl liess sich nicht lesen (siehe wortzahl()). Dann
+       wird das gesagt — eine erfundene Null waere hier die schlimmere Auskunft. */
+    const zahl = wortzahl();
+    merkeStatus(true, (zahl === null ? 'Wortzahl nicht lesbar' : zahl + ' Wörter')
+      + (geaendert ? ', Stand aktualisiert' : ''));
     if (geaendert){
       /* ⭐ Von fern kam etwas — also sitzt er wahrscheinlich gerade an beiden
          Geraeten. Den Takt wach halten, damit die naechste Aenderung nicht

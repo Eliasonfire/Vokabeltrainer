@@ -2420,7 +2420,12 @@ const PAUSE_AB_TAGEN = 7;
 /** Tage seit der letzten Übung. `null`, wenn noch nie geübt wurde. */
 function pauseInTagen(){
   let s;
-  try { s = getStreak(); } catch (e) { return null; }
+  /* ⛔ `null` bedeutet hier „noch nie geübt" — und genau das behauptete diese
+     Zeile bis zum 09.09.2026 auch dann, wenn `getStreak()` gar nicht antworten
+     KONNTE. Wer seit Wochen übt, bekäme lautlos die Auskunft eines Anfängers.
+     Die Rückgabe bleibt (der Aufrufer kennt nur diese beiden Fälle), aber der
+     Ausfall wird gemeldet. [[vorgabewert_sieht_aus_wie_befund]] */
+  try { s = getStreak(); } catch (e) { stillerFehler('kern.pauseInTagen', e); return null; }
   if (!s || !s.last) return null;
   const heute = new Date(todayStr(0)), letzte = new Date(s.last);
   if (isNaN(heute) || isNaN(letzte)) return null;

@@ -521,7 +521,10 @@ async function holeQuranEn(sureId){
       const gesamt = (j.pagination && j.pagination.total_pages) || 1;
       if (page >= gesamt) break;
     }
-  } catch (e) { return null; }
+  /* `null` heisst „nicht geholt" — der Aufrufer speichert dann nichts, und das
+     ist richtig. Gemeldet wird es trotzdem: eine Uebersetzung, die nie
+     ankommt, sieht sonst genauso aus wie eine, die es nicht gibt. */
+  } catch (e) { stillerFehler('quran.holeQuranEn', e); return null; }
   /* ⛔ Eine leere Antwort NICHT speichern: genau so verhaelt sich eine Ausgabe,
      die die API nicht herausgibt (Status 200, kein Text). Sonst merkte sich
      der Speicher fuer immer, dass es nichts gibt. */

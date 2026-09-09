@@ -37,7 +37,15 @@ const mGrenze = quelle.match(/const PAUSE_AB_TAGEN\s*=\s*(\d+)/);
 if (!mGrenze) { console.log('⛔ PAUSE_AB_TAGEN nicht gefunden'); process.exit(1); }
 const GRENZE = Number(mGrenze[1]);
 
+/* ⚠️ `stillerFehler` gehoert seit dem 09.09.2026 dazu: pauseInTagen() meldet
+   seitdem, wenn getStreak() nicht antwortet. In der App steht es weiter oben in
+   derselben Datei; hier muss der Kontext es nachreichen, sonst wirft
+   ausgerechnet der Fehlerpfad. ⭐ Es SAMMELT — damit Fall 4 unten nicht nur
+   „nicht abgestuerzt" prueft, sondern auch, dass die Meldung wirklich kommt.
+   [[pruefwerkzeug_laedt_mehr_als_die_app]] */
 const c = { Date, Math, Number, isNaN, console, streak: null, heute: '2026-09-07',
+  gemeldet: [],
+  stillerFehler(wo){ c.gemeldet.push(wo); },
   getStreak(){ return c.streak; }, todayStr(){ return c.heute; } };
 vm.createContext(c);
 vm.runInContext('const PAUSE_AB_TAGEN = ' + GRENZE + ';\n' + teile.join('\n')
@@ -90,9 +98,16 @@ console.log('  (Grenze aus der Quelle gelesen: ' + GRENZE + ' Tage)\n');
 /* ---------- 4. Der Störfall: getStreak wirft ---------- */
 {
   c.getStreak = () => { throw new Error('localStorage gesperrt'); };
+  c.gemeldet.length = 0;
   let warf = false, r;
   try { r = pause(); } catch (e) { warf = true; }
   pruefe('getStreak() wirft → null statt Absturz', !warf && r === null, warf ? 'hat geworfen' : r);
+  /* ⛔ `null` heisst hier „noch nie geübt". Ohne die Meldung bekaeme jemand,
+     der seit Wochen übt, lautlos die Auskunft eines Anfaengers — die Rueckgabe
+     allein unterscheidet die beiden Faelle nicht.
+     [[vorgabewert_sieht_aus_wie_befund]] */
+  pruefe('und der Ausfall wird gemeldet, nicht verschluckt',
+    c.gemeldet.length === 1, c.gemeldet.join(', ') || '(nichts gemeldet)');
   c.getStreak = () => c.streak;
 }
 

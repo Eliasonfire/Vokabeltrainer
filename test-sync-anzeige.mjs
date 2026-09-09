@@ -61,6 +61,13 @@ function baueUmgebung(host, protokoll = 'https:'){
     clearInterval,
     fetch: async () => { throw new Error('kein Netz im Pruefstand'); },
     Date, JSON, Object, Set, Error, Number, String,
+    /* ⚠️ `stillerFehler` kommt in der App aus js/kern.js, das vor sync.js
+       laedt. Seit dem 09.09.2026 meldet wortzahl() darueber — ohne den Ersatz
+       hier wuerde ausgerechnet der Fehlerpfad eine ReferenceError werfen.
+       ⭐ Der Ersatz SAMMELT, damit unten geprueft werden kann, dass die
+       Meldung wirklich kommt. [[pruefwerkzeug_laedt_mehr_als_die_app]] */
+    gemeldet: [],
+    stillerFehler: (wo) => { ctx.gemeldet.push(wo); },
   };
   vm.createContext(ctx);
   vm.runInContext(QUELLE, ctx);
@@ -133,9 +140,28 @@ console.log('\n3. Statuszeile — sagt sie, was wirklich war?');
      darf die Anzeige nicht mitreissen. */
   const d = baueUmgebung('vokabeltrainer.elias-lueck.de');
   d.speicher.set('vt_progress', '{kaputt');
-  let geflogen = false;
-  try { vm.runInContext('wortzahl()', d.ctx); } catch (e){ geflogen = true; }
+  let geflogen = false, wert;
+  try { wert = vm.runInContext('wortzahl()', d.ctx); } catch (e){ geflogen = true; }
   pruefe('kaputtes vt_progress wirft nicht', !geflogen);
+
+  /* ⛔⛔ Und die Zahl darf dann NICHT 0 sein (09.09.2026). Bis dahin gab
+     wortzahl() im Fehlerfall 0 zurueck, und die Erfolgsmeldung lautete
+     „0 Wörter, Stand aktualisiert" — eine Null, die aussieht wie ein Messwert,
+     an genau der Stelle, an der Elias erkennen soll, ob etwas angekommen ist.
+     [[vorgabewert_sieht_aus_wie_befund]] */
+  pruefe('kaputtes vt_progress ergibt null, nicht 0', wert === null, wert);
+  pruefe('und der Ausfall wird gemeldet', d.ctx.gemeldet.length === 1,
+    d.ctx.gemeldet.join(', ') || '(nichts gemeldet)');
+
+  /* Der ganze Satz, so wie er auf dem Bildschirm steht. */
+  const e2 = baueUmgebung('vokabeltrainer.elias-lueck.de');
+  e2.speicher.set('vt_progress', '{kaputt');
+  vm.runInContext('const z = wortzahl();'
+    + ' merkeStatus(true, (z === null ? "Wortzahl nicht lesbar" : z + " Wörter"))', e2.ctx);
+  pruefe('die Anzeige sagt „nicht lesbar" statt „0 Wörter"',
+    /Wortzahl nicht lesbar/.test(e2.knoten.syncStand.textContent)
+    && !/0 Wörter/.test(e2.knoten.syncStand.textContent),
+    e2.knoten.syncStand.textContent);
 }
 
 /* ---------- 4. Der Statusschluessel darf keinen Abgleich ausloesen ---------- */
