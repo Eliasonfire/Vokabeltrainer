@@ -92,7 +92,18 @@ const vaultVersionen = [...text.matchAll(/vokabeltrainer-v([0-9]+)|(?:^|[\s(*_�
 }
 const hoechsteImVault = vaultVersionen.length ? Math.max(...vaultVersionen) : null;
 const inSw = Number(((sw.match(/CACHE_NAME = 'vokabeltrainer-v([0-9]+)'/) || [])[1]) || 0);
-pruefe('hoechste Fassung im Gedaechtnis = sw.js', inSw, hoechsteImVault);
+/* ⛔ DIE REIHENFOLGE DER ZWEI ZAHLEN (09.09.2026). Hier stand
+   `pruefe(…, inSw, hoechsteImVault)` — also vertauscht: `pruefe` beschriftet
+   das zweite Argument mit „Vault:" und das dritte mit „GEMESSEN:". Die Meldung
+   nannte damit zu jeder Zahl die falsche Quelle.
+
+   ⚠️ Und sie hat schon einmal in die Irre gefuehrt: der Absatz oben zitiert
+   „Vault: 461, GEMESSEN: 460" und liest ihn so, als haette der Vault 461
+   gesagt. Tatsaechlich war 461 die Fassung aus sw.js und 460 der Fund im
+   Vault. Der Schluss stimmte trotzdem, aber aus dem falschen Grund — und
+   genau dafuer ist diese Zeile da: sie soll in einer Sekunde entscheidbar
+   sein. [[widerspruch_liegt_in_der_beschriftung]] [[zahlen_ohne_beleg]] */
+pruefe('hoechste Fassung im Gedaechtnis = sw.js', hoechsteImVault, inSw);
 
 const stat = fs.readFileSync(REPO + '/js/statistik.js', 'utf8');
 pruefe('r4: tagesQuote existiert', true, /function tagesQuote\(/.test(stat));

@@ -11,6 +11,7 @@
  */
 import fs from 'node:fs';
 import vm from 'node:vm';
+import { ohneKommentareUndTexte } from './werkzeuge/js-quelltext.mjs';
 
 let ok = 0, schlecht = 0;
 function pruefe(was, bedingung, zusatz){
@@ -174,5 +175,109 @@ console.log('\n5. Schutz gegen die leere Auswahl');
     JSON.stringify(s.buecher['madina-1']) === '[1,2]', JSON.stringify(s.buecher));
 }
 
+/* ---------- 6. „Ein Buch fehlt" ist nicht „der Ordner fehlt" (09.09.2026) ----
+
+   Beim Start laedt buecher.js alle gemerkten Buecher nacheinander. Bisher
+   entschied allein das ERSTE darueber, ob die ganze Buchzeile verschwindet.
+   Online stimmt das (data/ kommt als Ganzes oder gar nicht), offline nicht:
+   der Cache haelt einzelne Dateien, und von den neun `data/vokabeln-*.js`
+   steht genau eine in der ASSETS-Liste von sw.js. Ein Buch da, das naechste
+   nicht, ist offline der Normalfall.
+
+   Geprueft wird die Entscheidung, nicht die Anzeige — sie sitzt jetzt in der
+   benannten Funktion `fehltDerGanzeOrdner()`. */
+console.log('\n6. Der Schluss auf „der ganze Ordner fehlt"');
+{
+  const ctx = baue({ buecher:{ 'madina-1':[] } }, woerter);
+  const fehlt = (menge, versucht) => {
+    const set = ruf(ctx, 'BUCH_FEHLT');
+    set.clear();
+    menge.forEach(s => set.add(s));
+    return ruf(ctx, 'fehltDerGanzeOrdner')(versucht);
+  };
+  const DREI = ['madina-1','madina-2','bayna-yadayk-1'];
+
+  pruefe('kein Buch gescheitert → der Ordner ist da', fehlt([], DREI) === false);
+  pruefe('NUR DAS ERSTE gescheitert → die anderen zwei bleiben',
+    fehlt(['madina-1'], DREI) === false);
+  pruefe('nur das mittlere gescheitert → ebenso',
+    fehlt(['madina-2'], DREI) === false);
+  pruefe('zwei von drei gescheitert → immer noch kein Ordnerausfall',
+    fehlt(['madina-1','madina-2'], DREI) === false);
+  pruefe('ALLE drei gescheitert → der Ordner fehlt',
+    fehlt(DREI, DREI) === true);
+  pruefe('ein einziges gemerktes Buch, und das fehlt → Ordner fehlt',
+    fehlt(['madina-1'], ['madina-1']) === true);
+  pruefe('nichts versucht → nichts zu schliessen',
+    fehlt(['madina-1'], []) === false);
+  pruefe('kein Array → nichts zu schliessen',
+    fehlt(['madina-1'], null) === false);
+
+  /* ⛔ Und der Aufrufer. Eine Reparatur ohne Aufrufer besteht jeden Test der
+     Funktion und wirkt in der App nicht. [[werkzeug_ohne_aufrufer]]
+     Gesucht wird im KOMMENTARFREIEN Text: der Kopfkommentar von buecher.js
+     zitiert die alte Bedingung woertlich, um sie zu erklaeren — roh gesucht
+     faende man die eigene Dokumentation. [[stichworttreffer_im_kommentar]]
+
+     ⚠️ Das sind Aussagen ueber die APP und gehoeren deshalb hierher, nicht in
+     den Stoertest: sonst meldet ein fehlender Aufrufer sich als „der
+     Stoertest greift nicht" und der Exitcode liegt ueber die Ursache. */
+  const roh = fs.readFileSync(new URL('./js/buecher.js', import.meta.url), 'utf8');
+  const nurCode = ohneKommentareUndTexte(roh, { texte: false });
+  pruefe('js/buecher.js ruft fehltDerGanzeOrdner(slugs) auf',
+    nurCode.includes('fehltDerGanzeOrdner(slugs)'));
+  pruefe('die alte Bedingung steht nirgends mehr im Code',
+    !nurCode.includes('BUCH_FEHLT.has(slug)'));
+}
+
+/* ---------- ⛔ STOERTEST — nur Aussagen ueber DIESES WERKZEUG ----------
+
+   ⛔ Hier steht bewusst keine Aussage ueber die App. Zweimal in dieser Nacht
+   hat ein App-Befund im Stoertest dazu gefuehrt, dass eine kaputte Sperre sich
+   als kaputter Pruefer meldete — der Exitcode log dann ueber die Ursache.
+   [[stoertest_muss_wirkung_nachweisen]] */
+let stoer = 0;
+console.log('\n=== Stoertest ===');
+{
+  const sP = (was, ist, soll) => { if (ist !== soll){ stoer++; console.log('  ⛔  ' + was
+    + ': ' + JSON.stringify(ist)); } else console.log('  ok   ' + was); };
+
+  /* ⭐ Koennen die acht Faelle oben ueberhaupt scheitern? Beantwortet wird das
+     nicht durch Nachdenken, sondern indem die ALTE Regel eingesetzt wird —
+     `BUCH_FEHLT.has(versucht[0])`, also „das erste entscheidet". Mindestens
+     einer der acht muss sie zurueckweisen. Tut das keiner, sind es acht
+     gruene Behauptungen ohne Trennschaerfe.
+     [[pruefwerkzeug_mit_eingebauter_antwort]] [[gruener_pruefer_beweist_nur_geprueftes]] */
+  const alteRegel = (menge, versucht) =>
+    Array.isArray(versucht) && versucht.length ? menge.includes(versucht[0]) : false;
+  const DREI = ['madina-1','madina-2','bayna-yadayk-1'];
+  const FAELLE = [
+    { menge: [],                          versucht: DREI,          soll: false },
+    { menge: ['madina-1'],                versucht: DREI,          soll: false },
+    { menge: ['madina-2'],                versucht: DREI,          soll: false },
+    { menge: ['madina-1','madina-2'],     versucht: DREI,          soll: false },
+    { menge: DREI,                        versucht: DREI,          soll: true  },
+    { menge: ['madina-1'],                versucht: ['madina-1'],  soll: true  },
+    { menge: ['madina-1'],                versucht: [],            soll: false },
+    { menge: ['madina-1'],                versucht: null,          soll: false },
+  ];
+  const abgewiesen = FAELLE.filter(f => alteRegel(f.menge, f.versucht) !== f.soll).length;
+  sP('die Faelle weisen die alte Regel zurueck', abgewiesen > 0, true);
+  sP('… und zwar nicht alle acht (sonst pruefen sie etwas anderes)',
+    abgewiesen < FAELLE.length, true);
+
+  /* Der Kommentarfilter, an einer eigenen Vorlage statt an der App: sonst
+     haenge diese Aussage daran, dass mein Kommentar oben stehen bleibt. */
+  const probe = '/* weg */ const a = 1;';
+  const gefiltert = ohneKommentareUndTexte(probe, { texte: false });
+  sP('der Filter entfernt Kommentartext', gefiltert.includes('weg'), false);
+  sP('… laesst den Code stehen', gefiltert.includes('const a = 1;'), true);
+  sP('… und behaelt die Laenge, damit Versaetze weiter passen',
+    gefiltert.length === probe.length, true);
+}
+
 console.log(`\n${ok} bestanden, ${schlecht} gescheitert.`);
-process.exitCode = schlecht ? 1 : 0;
+if (stoer){
+  console.log('⛔ Der Stoertest greift nicht — die Faelle oben sagen nichts.');
+  process.exitCode = 3;
+} else process.exitCode = schlecht ? 1 : 0;
