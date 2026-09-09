@@ -345,6 +345,35 @@ const NUR_IM_BROWSER = ['pruefe-oberflaeche.js'];
    werden. Die Zahl oben stand bis zum 21.08.2026 auf „acht" —
    nachgezaehlt waren es zehn. [[stand_besteht_aus_mehreren_zahlen]] */
 
+/* ---------- Wer prueft, ob jeder Pruefer aufgerufen wird? (09.09.2026) ----------
+
+   ⛔⛔ Der Fehler, den diese Datei an zwei Stellen selbst beschreibt („Ohne
+   diese Zeile haette pruefe-muster.mjs keinen Aufrufer … gebaut, gepusht,
+   ausgeliefert — und nie gestartet"), wurde bisher von NIEMANDEM gemessen. Ein
+   neuer Pruefer, den man einzutragen vergisst, faellt nicht auf: der
+   Sammellauf meldet gruen, weil er ihn gar nicht kennt.
+   [[werkzeug_ohne_aufrufer]] [[allgemeine_regel_statt_listeneintrag]]
+
+   ⭐ Gemessen am 09.09.2026: 35 in werkzeuge/, 40 im Wurzelordner, keiner
+   fehlte. Die Pruefung kostet einen readdir und haelt das so. */
+{
+  const inListe = new Set(PRUEFER.map(([rel]) => rel));
+  const vergessen = [];
+  for (const f of fs.readdirSync(path.join(REPO, 'werkzeuge')))
+    if (/^(?:pruefe|eiche|test)-.*\.mjs$/.test(f) && !inListe.has('werkzeuge/' + f)) vergessen.push('werkzeuge/' + f);
+  for (const f of fs.readdirSync(REPO))
+    if (/^(?:pruefe|test)-.*\.(?:js|mjs)$/.test(f) && !inListe.has(f) && !NUR_IM_BROWSER.includes(f)) vergessen.push(f);
+  if (vergessen.length){
+    console.log('');
+    console.log('⛔ ' + vergessen.length + ' Pruefer stehen im Ordner, aber NICHT in der Liste oben —');
+    console.log('   sie sind gebaut und laufen nie:');
+    vergessen.forEach(f => console.log('     ' + f));
+    console.log('   Eintragen (mit einem Satz, wozu) oder loeschen. Ein dritter Weg waere,');
+    console.log('   sie liegen zu lassen und zu vergessen — genau das soll das hier verhindern.');
+    console.log('');
+  }
+}
+
 const ergebnisse = [];
 for (const [rel, args] of PRUEFER){
   const datei = path.join(REPO, rel);
