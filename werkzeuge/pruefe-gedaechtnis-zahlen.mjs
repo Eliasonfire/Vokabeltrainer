@@ -12,6 +12,7 @@
 import fs from 'node:fs';
 import { execSync } from 'node:child_process';
 import vm from 'node:vm';
+import { ohneKommentareUndTexte } from './js-quelltext.mjs';
 
 const VAULT = 'G:/1. Workspace/Obsidian/Gedächtnis/Elias Gedächtnis/03 - Projekte/Vokabeltrainer-Arabisch.md';
 const TODO  = 'G:/1. Workspace/Obsidian/Gedächtnis/Elias Gedächtnis/03 - Projekte/To-Do Vokabeltrainer.md';
@@ -115,14 +116,30 @@ const ktxF = {}; vm.createContext(ktxF);
 vm.runInContext(fach + '\nthis.F = (typeof FACHBEGRIFF_VOKABELN !== "undefined") ? FACHBEGRIFF_VOKABELN : null;', ktxF);
 pruefe('Oberflaeche: 31 Fachbegriffe', 31, ktxF.F ? ktxF.F.length : 'FACHBEGRIFF_VOKABELN fehlt');
 
-/* Die neuen Ausnahmen in den Pruefern */
-const abgl = fs.readFileSync(REPO + '/werkzeuge/pruefe-abgleich.mjs', 'utf8');
+/* Die neuen Ausnahmen in den Pruefern
+   ⛔⛔ OHNE KOMMENTARE. Diese vier Zeilen behaupten „steht im Code" — und ein
+   Kommentar, der den Namen nur ERWAEHNT, haette sie zufriedengestellt. Genau
+   so haette man eine geloeschte Ausnahme nicht bemerkt: die Begruendung
+   darueber nennt sie ja weiter. Am 09.09.2026 ist dieselbe Falle an zwei
+   anderen Stellen zugeschnappt (pruefe-bidi, validate.js).
+   ⚠️ `texte: false`, denn die gesuchten Zeichenketten SIND String-Literale —
+   wer die Texte mitmaskiert, sucht ins Leere.
+   [[stichworttreffer_im_kommentar]] [[zusicherung_im_kommentar_ist_keine_pruefung]] */
+const nurCode = (p) => ohneKommentareUndTexte(fs.readFileSync(REPO + p, 'utf8'), { texte: false });
+const abgl = nurCode('/werkzeuge/pruefe-abgleich.mjs');
 pruefe('vt_einstGruppen im Abgleich ausgenommen', true, abgl.includes("'vt_einstGruppen'"));
-const kreis = fs.readFileSync(REPO + '/werkzeuge/pruefe-kreislaeufe.mjs', 'utf8');
+const kreis = nurCode('/werkzeuge/pruefe-kreislaeufe.mjs');
 pruefe('vt_einstGruppen im Kreislauf ausgenommen', true, kreis.includes("'vt_einstGruppen'"));
-const datum = fs.readFileSync(REPO + '/werkzeuge/pruefe-datumsangaben.mjs', 'utf8');
+const datum = nurCode('/werkzeuge/pruefe-datumsangaben.mjs');
 pruefe('###-Pruefung eingebaut', true, datum.includes('unterBloecke'));
 pruefe('Davor-Ausnahme eingebaut', true, datum.includes('archivMarke'));
+/* Und die Gegenprobe: blendet `nurCode` ueberhaupt etwas aus? Ohne sie waeren
+   die vier Zeilen daruber auch dann gruen, wenn die Maskierung nichts tut. */
+{
+  const roh = fs.readFileSync(REPO + '/werkzeuge/pruefe-abgleich.mjs', 'utf8');
+  pruefe('nurCode blendet wirklich aus (weniger Zeichen als roh)', true, abgl.length === roh.length
+    && abgl !== roh);
+}
 
 /* Werkzeuge, die im Vault genannt werden, muessen existieren */
 for (const w of ['werkzeuge/rechne-boxenverteilung.mjs', 'werkzeuge/eiche-abschnittsfolge.mjs',
