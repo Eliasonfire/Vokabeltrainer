@@ -170,6 +170,41 @@ pruefe('resume() gegen das pausierte Android', /speechSynthesis\.paused/.test(sp
 pruefe('die gewaehlte Stimme wird gegen die Geraeteliste geprueft',
   /ARABIC_VOICES\.find\(/.test(speakQuelle), true);
 
+/* ---------- ⛔ Stoertest: haengt die Probe wirklich am echten Code? ----------
+
+   Am 09.09.2026 hat der Stoertest EINES Pruefers einen Fehler in vier anderen
+   aufgedeckt — sie standen alle auf einem Werkzeug, das still ausfiel, und
+   meldeten weiter gruen. Ein Pruefer ohne eigene Stoerprobe kann nicht
+   zwischen „nichts gefunden" und „nichts gesehen" unterscheiden.
+   [[stoertest_muss_wirkung_nachweisen]]
+
+   Hier wird die 250-ms-Schwelle im AUSGESCHNITTENEN Quelltext auf 0 gesetzt.
+   Danach darf der 8-ms-Fall KEINE Meldung mehr geben — tut er es doch, kommt
+   die Meldung nicht aus dem geprueften Code, sondern von woanders. */
+console.log('\n=== Stoertest: haengt die Probe am echten Code? ===\n');
+{
+  const echteQuelle = schneide('speakArabic');
+  const treffer = (echteQuelle.match(/>= 250/g) || []).length;
+  pruefe('die 250-ms-Schwelle steht genau einmal im Quelltext', treffer, 1);
+  if (treffer === 1) {
+    const verbogen = echteQuelle.replace('>= 250', '>= 0');
+    /* Dieselbe Buehne, aber mit der verbogenen Fassung. */
+    const meldungen = [];
+    let jetzt = 1000;
+    class U { constructor(t){ this.text = t; } }
+    const ss = { paused:false, speaking:false, pending:false, cancel(){}, resume(){},
+      getVoices: () => [{ lang:'ar-SA', voiceURI:'v0', name:'S' }],
+      speak(u){ if(u.onstart) u.onstart(); jetzt += 8; if(u.onend) u.onend(); } };
+    const f = new Function('window','speechSynthesis','SpeechSynthesisUtterance','SETTINGS','toast','setTimeout','clearTimeout','Date',
+      'let ARABIC_VOICES = [];\n' + schneide('arabischeStimmen') + '\n' + schneide('tonFehlertext') + '\n' + verbogen
+      + '\nreturn speakArabic;')(
+      { speechSynthesis: ss }, ss, U, { voiceURI: null }, (t)=>meldungen.push(t), ()=>0, ()=>{}, { now: () => jetzt });
+    f('كِتَابٌ');
+    pruefe('mit verbogener Schwelle bleibt der 8-ms-Fall still — die Probe misst also den echten Code',
+      meldungen.length, 0);
+  }
+}
+
 console.log('');
 console.log(fehler ? '⛔ ' + fehler + ' Befund(e).' : '✅ Die Sprachausgabe sagt, warum sie schweigt.');
 process.exit(fehler ? 1 : 0);
