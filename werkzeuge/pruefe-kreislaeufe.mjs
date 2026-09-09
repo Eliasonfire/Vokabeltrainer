@@ -216,6 +216,49 @@ if (fehler){
   console.log('   alles sieht richtig aus, es passiert nur nichts.');
   process.exit(1);
 }
+/* ---------- ⛔ STOERTEST (09.09.2026) ----------
+
+   ⭐ Dieser Pruefer sucht die Fehlerart, „die sich nie von selbst meldet".
+   Genau deshalb muss er selbst beweisen, dass er ueberhaupt etwas sieht:
+   findet er nichts, weil er nichts FINDET, oder weil er nichts SUCHT? Ohne
+   diese Probe sind beide Ausgaenge identisch — und in derselben Nacht hat der
+   Stoertest eines anderen Pruefers einen Fehler in vier weiteren aufgedeckt.
+   [[stoertest_muss_wirkung_nachweisen]] [[leere_liste_ist_keine_messung]]
+
+   Drei Faelle, deren Antwort unabhaengig feststeht. */
+console.log('');
+console.log('=== Stoertest ===');
+let stoer = 0;
+const sProbe = (was, ist, soll) => {
+  if (ist !== soll){ stoer++; console.log('  ⛔  ' + was + ': ' + ist + ' statt ' + soll); }
+  else console.log('  ok   ' + was);
+};
+
+/* 1. Die Schluesselerhebung muss ueberhaupt Schluessel finden. Am 09.09.2026
+   waren es 37; faellt die Zahl unter zehn, liest sie js/ nicht mehr. */
+sProbe('die App-Schluessel werden gefunden (>= 10)', schluessel.length >= 10, true);
+
+/* 2. Ein erfundener Schluessel darf NICHT als „ausgewertet" durchgehen — er
+   steht nirgends, also findet ihn auch kein Werkzeug. */
+const erfunden = 'vt_gibtEsGarNichtXyz';
+const orteErfunden = quellen.filter(q => !/[\\/]js[\\/]/.test(q) && lies(q).includes(erfunden))
+  .filter(q => !nichtAuswertung.test(q));
+sProbe('ein erfundener Schluessel hat keine Auswertung', orteErfunden.length, 0);
+
+/* 3. ⛔ Und der Kern: der Abgleich zaehlt NICHT als Auswertung. Genau darin lag
+   der Irrtum bei vt_vorschlagWeg — es sah versorgt aus, weil es
+   synchronisiert wurde. Die Ausnahme muss also greifen. */
+sProbe('js/sync.js gilt nicht als Auswertung', nichtAuswertung.test('werkzeuge/../js/sync.js'), true);
+sProbe('ein echtes Werkzeug gilt als Auswertung', nichtAuswertung.test('werkzeuge/vorrat.mjs'), false);
+
+if (stoer){
+  console.log('');
+  console.log('⛔ ' + stoer + ' Stoertest(s) gescheitert — dieser Pruefer misst nicht,');
+  console.log('   und damit ist sein „alles geschlossen" wertlos.');
+  process.exit(1);
+}
+
+console.log('');
 console.log('✅ Jeder Kreislauf ist geschlossen'
   + (hinweise ? ' (' + hinweise + ' Hinweis(e) oben).' : '.'));
 process.exit(0);
