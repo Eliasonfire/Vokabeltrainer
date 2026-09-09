@@ -51,6 +51,20 @@ for (const f of fs.readdirSync(HIER).filter(n => n.endsWith('.mjs'))){
      und die ausdrueckliche Ausnahme. */
   if (f === 'pruefe-seitenspeicher.mjs') continue;
   if (!/localStorage\.setItem\(/.test(t)) continue;
+  /* ⛔ UND es muss auch wirklich eine SEITE sein (09.09.2026). Der Test auf
+     `localStorage.setItem(` allein traf am 09.09. `pruefe-sicherung.mjs` —
+     einen reinen node-Pruefer, der den Speicher nur im Arbeitsspeicher
+     NACHSTELLT, um den Rundlauf einer Sicherungsdatei zu messen. Er erzeugt
+     keine Seite, und Elias gibt dort nichts ein; die Meldung war ein
+     Stichworttreffer. [[stichworttreffer_ist_kein_inhaltstreffer]]
+
+     ⭐ Die Grenze ist gemessen, nicht geschaetzt: alle sieben echten
+     Seitenwerkzeuge tragen mindestens DREI HTML-Signale, der Pruefer null.
+     ⚠️ Eine Verengung kann eine Pruefung blind machen — deshalb steht unten
+     ein Stoertest, der genau das ausschliesst.
+     [[begrenzung_haelt_messung_nicht_stand]] */
+  const htmlSignale = (t.match(/\.html|<html|<!DOCTYPE|<script/gi) || []).length;
+  if (!htmlSignale) continue;
   (/SPEICHER_GEHT/.test(t) ? mit : ohne).push(f);
 }
 
@@ -66,6 +80,21 @@ for (const f of ohne){
 console.log('  ' + mit.length + ' Werkzeug(e) mit Absicherung'
   + (ohne.length ? ', ' + ohne.length + ' OHNE' : ' — keines ohne'));
 console.log('');
+
+/* ⛔ STOERTEST ZUR VERENGUNG (09.09.2026). Seit dem HTML-Signal-Test koennte
+   diese Pruefung still blind werden — findet sie GAR nichts mehr, meldet sie
+   trotzdem „alles in Ordnung". Deshalb eine Untergrenze: am 09.09.2026 gab es
+   sieben echte Seitenwerkzeuge. Faellt die Zahl darunter, ist das ein Befund
+   ueber die PRUEFUNG, nicht ueber die Seiten.
+   [[begrenzung_haelt_messung_nicht_stand]] [[leere_liste_ist_keine_messung]] */
+const MINDESTENS = 7;
+if (mit.length + ohne.length < MINDESTENS){
+  console.log('⛔ Diese Pruefung sieht nur noch ' + (mit.length + ohne.length)
+    + ' Seitenwerkzeug(e), am 09.09.2026 waren es ' + MINDESTENS + '.');
+  console.log('   Entweder wurden welche entfernt — dann diese Zahl anpassen —');
+  console.log('   oder der HTML-Signal-Test ist zu eng und die Pruefung ist blind.');
+  process.exit(1);
+}
 
 if (ohne.length){
   console.log('⛔ ' + ohne.length + ' Seite(n) speichern stumm.');

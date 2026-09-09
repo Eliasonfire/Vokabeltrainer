@@ -143,7 +143,8 @@ const ESELSBRUECKEN_ALT = {
   /* نَجْمٌ - Stern */
   '45760': [
     'Dein eigener Beispielsatz hängt drei Vokabeln aneinander: هَذَا نَجْمٌ بَعِيدٌ — „dies ist ein ferner Stern" — فِي السَّمَاءِ. نَجْمٌ, بَعِيدٌ und سَمَاءٌ hast du alle drei, dazu هَذَا aus Kapitel 1 und فِي mit seinem Genitiv. Ein Satz, und der Stern steht nicht mehr allein.',
-    '⭐ Nimm den Plural als Bauplan mit, nicht als Extrakarte: نَجْمٌ → نُجُومٌ. Dasselbe Muster tragen بَيْتٌ → بُيُوتٌ und عَيْنٌ → عُيُونٌ, die du beide hast — kurzer Vokal vorne, langes ū hinten. Drei Wörter, ein Plural, und du musst ihn nur einmal lernen.'
+    '⭐ Nimm den Plural als Bauplan mit, nicht als Extrakarte: نَجْمٌ → نُجُومٌ. Dasselbe Muster tragen بَيْتٌ → بُيُوتٌ und عَيْنٌ → عُيُونٌ, die du beide hast — kurzer Vokal vorne, langes ū hinten. Drei Wörter, ein Plural, und du musst ihn nur einmal lernen.',
+    '⭐ Das Wort steht in deiner eigenen Grammatikregel als DAS Beispiel für Sonnenbuchstaben (Kapitel 3, حُروف شَمْسِيّة): نَجْمٌ wird mit Artikel zu اَلنَّجْمُ — an-nadschmu, nicht „al-nadschmu". Das ن schluckt das لْ und bekommt dafür ein Schadda. ⭐ Und genau so siehst du es in deiner Surenliste wieder: Sure 53 heißt سُورَةُ النَّجْم — „Der Stern". Ein Wort, das dir zweimal begegnet: einmal als Regel, einmal als Surenname.'
   ],
 
   /* طَبِيبٌ - Arzt */
