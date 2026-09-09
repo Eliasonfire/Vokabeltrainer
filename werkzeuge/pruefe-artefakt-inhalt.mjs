@@ -140,6 +140,74 @@ if (fs.existsSync(gd) && fs.existsSync(KAND)){
   console.log('');
 }
 
+/* ---------- Und alles ANDERE, was wirklich ausgeliefert wird (09.09.2026) ----
+ *
+ * ⛔⛔ DIE LUECKE: oben stehen `artefakte/` (privat) und `grammar-data.js`
+ * (ausgeliefert). Nicht angesehen wurde der REST von `.deploy/` — und dort
+ * liegen 18 `vorschau-*.html`, die ueber eine MUSTERregel in die Weissliste
+ * kommen:
+ *
+ *     fs.readdirSync(WURZEL).filter(f => /^vorschau.*\.html$/.test(f))
+ *
+ * Also ohne dass jemand die einzelne Seite je freigegeben haette. Genau die
+ * Sorte Seite, bei der der Fall am 21.08. aufgefallen ist: von Hand gebautes
+ * HTML, in das Inhalt hineinkopiert wurde. Eine Entscheidung, die fuer
+ * `artefakte/` getroffen wurde, gilt auch fuer den zweiten Ort.
+ * [[entscheidung_gilt_fuer_das_zweite_werkzeug]]
+ *
+ * ⭐ GEMESSEN, bevor gebaut wurde: 58 ausgelieferte Textdateien (68 abzueglich
+ * der 10, die das Material sein duerfen), **0 Treffer** aus 79
+ * Unterrichtsproben. Die Seiten sind sauber — der Abschnitt bewacht also den
+ * naechsten Einfuegevorgang, er raeumt nichts auf.
+ *
+ * ⚠️ Die erste Messung nannte „68 geprueft" und meinte die Zahl VOR dem
+ * Ueberspringen — die Zaehlung stand neben einer Schleife, die zehn Dateien
+ * auslaesst. Hier wird gezaehlt, was wirklich angesehen wurde.
+ * [[aufgabenzahl_haengt_am_filter]]
+ *
+ * ⛔ VERWORFEN, mit Grund: als zweite Probe lagen die deutschen Bedeutungen
+ * des Abzugs nahe (2040 Stueck ab 18 Zeichen). Sie melden 11 Dateien —
+ * darunter `vocab-data.js`, `quran-text.js` und `js/kern.js` — und **jeder
+ * einzelne Treffer war Zufall**: „Onkel vaeterlicherseits", „weiterfuehrende
+ * Schule", „zur Rechenschaft ziehen". Eine deutsche Glosse ist die kuerzeste
+ * Fassung ihrer Bedeutung und entsteht unabhaengig wieder; sie taugt nicht als
+ * Fingerabdruck. Die Transkriptproben (40-60 Zeichen gesprochener Satz) tun es.
+ * Nicht wieder einbauen. [[stichworttreffer_ist_kein_inhaltstreffer]] */
+let deployGeprueft = null;   /* null = kein .deploy/ da; sonst die Anzahl */
+{
+  const DEPLOY = path.join(REPO, '.deploy');
+  if (!fs.existsSync(DEPLOY)){
+    console.log('⚠️ Kein .deploy/ — die ausgelieferten Dateien wurden NICHT geprueft.');
+    console.log('   Erst `node werkzeuge/veroeffentlichen.mjs --pruefen`, dann hier nachsehen.');
+  } else {
+    /* Die Dateien, die das Material sein DUERFEN: der Abzug selbst, und
+       grammar-data.js — dort misst der Abschnitt darueber die Laenge. */
+    const ERLAUBT = /^data[\\/]vokabeln-|^grammar-data\.js$/;
+    const dateien = [];
+    (function lauf(d, praefix){
+      for (const e of fs.readdirSync(d, { withFileTypes: true })){
+        const p = path.join(d, e.name);
+        if (e.isDirectory()) lauf(p, praefix + e.name + '/');
+        else if (/\.(html|js|json|css|txt)$/i.test(e.name)) dateien.push({ rel: praefix + e.name, p });
+      }
+    })(DEPLOY, '');
+    let mitTreffer = 0, geprueft = 0;
+    for (const { rel, p } of dateien){
+      if (ERLAUBT.test(rel)) continue;
+      geprueft++;
+      const h = fs.readFileSync(p, 'utf8');
+      const treffer = proben.filter(x => h.includes(x.text)).length;
+      if (!treffer) continue;
+      mitTreffer++; befunde++;
+      console.log('  ⛔   ' + rel.padEnd(34) + treffer + ' Unterrichtsstelle(n) WOERTLICH — und die Datei wird ausgeliefert');
+    }
+    deployGeprueft = geprueft;
+    console.log('Ausgeliefert (.deploy/): ' + geprueft + ' Textdatei(en) gegen '
+      + proben.length + ' Unterrichtsproben, ' + mitTreffer + ' mit Treffern.');
+    console.log('');
+  }
+}
+
 if (befunde){
   console.log('⛔ ' + befunde + ' Befund(e).');
   console.log('   Bei Artefaktseiten: den Vorbehalt in den KOPF der Seite schreiben,');
@@ -174,8 +242,25 @@ const sProbe = (was, ist, soll) => {
   sProbe('mit sichtbarem Vorbehalt ist sie in Ordnung', HINWEIS.test(mitHinweis), true);
   sProbe('eine Seite OHNE Wortlaut bleibt still', zaehle(leer), 0);
   /* ⚠️ Und die Probe auf die Probe: gaebe es keine Textproben, waere alles
-     oben bedeutungslos. Am 09.09.2026 waren es 253. */
+     oben bedeutungslos.
+
+     ⛔ HIER STAND „Am 09.09.2026 waren es 253" — nachgezaehlt am selben Tag
+     sind es **79**, aus 6 Folgendateien, und zwar ALLE Kandidaten (jeder ist
+     laenger als 40 Zeichen, die Schwelle wirft keinen weg). Woher die 253 kam,
+     ist nicht mehr feststellbar; sie ist jedenfalls nicht diese Zahl. Eine
+     Zahl im Kommentar wird spaeter zitiert, als waere sie gemessen.
+     [[zahlen_ohne_beleg]]
+     Nachzaehlen:
+       node -e "…transcripts/kandidaten/folge-*.json → kandidaten.length" */
   sProbe('es gibt ueberhaupt Textproben (>= 20)', proben.length >= 20, true);
+
+  /* ⭐ Und dasselbe fuer den Abschnitt ueber `.deploy/`: laeuft der Durchlauf
+     ins Leere (falscher Pfad, leerer Ordner, Endungsfilter zu eng), meldet er
+     „0 mit Treffern" und sieht aus wie ein sauberer Befund. Ist gar kein
+     .deploy/ da, wurde oben gewarnt — dann steht hier `null` und die Probe
+     entfaellt bewusst. [[leere_liste_ist_keine_messung]] */
+  sProbe('der Durchlauf durch .deploy/ hat etwas angesehen (>= 20 oder kein Ordner)',
+    deployGeprueft === null || deployGeprueft >= 20, true);
 }
 if (stoer){
   console.log('');
