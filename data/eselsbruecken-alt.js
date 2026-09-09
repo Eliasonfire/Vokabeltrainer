@@ -1979,4 +1979,212 @@ const ESELSBRUECKEN_ALT = {
   '45882#pl': [   /* مَشْهُورٌ → مَشْهُورُونَ */
     '⭐ Dieser Plural ist kein neues Wort: an مَشْهُورٌ hängt sich nur ـُونَ — مَشْهُورُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel مُدَرِّسٌ → مُدَرِّسُونَ und بَارِدٌ → بَارِدُونَ. Wer den Singular kann, kann diesen Plural.'
   ],
+
+  /* ===== Pluralkarten: die Endung ـَات =====
+     ⛔ Drei Sorten, jede Zeichen fuer Zeichen nachgerechnet (09.09.2026):
+     8 Woerter mit ة, an dessen Stelle ات tritt · 2 ohne ة, wo ـَات angehaengt wird ·
+     5, bei denen das Muster NICHT traegt (سَمَاءٌ, بِنْتٌ, أُمٌّ, مُسْتَشْفًى, أُخْتٌ).
+     ⭐ Die dritte Sorte bekommt KEINEN Mustertext, sondern die Warnung davor —
+     das ist die Stelle, an der man sich sonst verrechnet.
+     [[regeln_selbst_auswerten]] [[eselsbruecken_an_bekanntes_anknuepfen]] */
+  '45819#pl': [   /* جَامِعَةٌ → جَامِعَاتٌ */
+    '⭐ Hier musst du nichts umbauen: das ة des Singulars macht Platz, ات tritt an seine Stelle — جَامِعَةٌ → جَامِعَاتٌ. ⚠️ 8 deiner Wörter mit ة gehen genau so, zum Beispiel سَيَّارَةٌ → سَيَّارَاتٌ und دَرَّاجَةٌ → دَرَّاجَاتٌ.'
+  ],
+  '45832#pl': [   /* سَيَّارَةٌ → سَيَّارَاتٌ */
+    '⭐ Hier musst du nichts umbauen: das ة des Singulars macht Platz, ات tritt an seine Stelle — سَيَّارَةٌ → سَيَّارَاتٌ. ⚠️ 8 deiner Wörter mit ة gehen genau so, zum Beispiel دَرَّاجَةٌ → دَرَّاجَاتٌ und ثَلَّاجَةٌ → ثَلَّاجَاتٌ.'
+  ],
+  '45843#pl': [   /* دَرَّاجَةٌ → دَرَّاجَاتٌ */
+    '⭐ Hier musst du nichts umbauen: das ة des Singulars macht Platz, ات tritt an seine Stelle — دَرَّاجَةٌ → دَرَّاجَاتٌ. ⚠️ 8 deiner Wörter mit ة gehen genau so, zum Beispiel ثَلَّاجَةٌ → ثَلَّاجَاتٌ und مُمَرِّضَةٌ → مُمَرِّضَاتٌ.'
+  ],
+  '45848#pl': [   /* ثَلَّاجَةٌ → ثَلَّاجَاتٌ */
+    '⭐ Hier musst du nichts umbauen: das ة des Singulars macht Platz, ات tritt an seine Stelle — ثَلَّاجَةٌ → ثَلَّاجَاتٌ. ⚠️ 8 deiner Wörter mit ة gehen genau so, zum Beispiel مُمَرِّضَةٌ → مُمَرِّضَاتٌ und لُغَةٌ → لُغَاتٌ.'
+  ],
+  '45864#pl': [   /* مُمَرِّضَةٌ → مُمَرِّضَاتٌ */
+    '⭐ Hier musst du nichts umbauen: das ة des Singulars macht Platz, ات tritt an seine Stelle — مُمَرِّضَةٌ → مُمَرِّضَاتٌ. ⚠️ 8 deiner Wörter mit ة gehen genau so, zum Beispiel لُغَةٌ → لُغَاتٌ und مَكْتَبَةٌ → مَكْتَبَاتٌ.'
+  ],
+  '45879#pl': [   /* لُغَةٌ → لُغَاتٌ */
+    '⭐ Hier musst du nichts umbauen: das ة des Singulars macht Platz, ات tritt an seine Stelle — لُغَةٌ → لُغَاتٌ. ⚠️ 8 deiner Wörter mit ة gehen genau so, zum Beispiel مَكْتَبَةٌ → مَكْتَبَاتٌ und ثَانَوِيَّةٌ → ثَانَوِيَّاتٌ.'
+  ],
+  '45890#pl': [   /* مَكْتَبَةٌ → مَكْتَبَاتٌ */
+    '⭐ Hier musst du nichts umbauen: das ة des Singulars macht Platz, ات tritt an seine Stelle — مَكْتَبَةٌ → مَكْتَبَاتٌ. ⚠️ 8 deiner Wörter mit ة gehen genau so, zum Beispiel ثَانَوِيَّةٌ → ثَانَوِيَّاتٌ und جَامِعَةٌ → جَامِعَاتٌ.'
+  ],
+  '45895#pl': [   /* ثَانَوِيَّةٌ → ثَانَوِيَّاتٌ */
+    '⭐ Hier musst du nichts umbauen: das ة des Singulars macht Platz, ات tritt an seine Stelle — ثَانَوِيَّةٌ → ثَانَوِيَّاتٌ. ⚠️ 8 deiner Wörter mit ة gehen genau so, zum Beispiel جَامِعَةٌ → جَامِعَاتٌ und سَيَّارَةٌ → سَيَّارَاتٌ.'
+  ],
+  '45822#pl': [   /* حَمَّامٌ → حَمَّامَاتٌ */
+    '⭐ Der Singular bleibt ganz stehen, ـَات kommt einfach dahinter: حَمَّامٌ → حَمَّامَاتٌ. ⚠️ Bei deinen Wörtern mit ة macht dieselbe Endung etwas anderes — dort tritt ات an die Stelle des ة (جَامِعَةٌ → جَامِعَاتٌ). Gleiche Endung, zwei Wege dorthin.'
+  ],
+  '45892#pl': [   /* مُسْتَوْصَفٌ → مُسْتَوْصَفَاتٌ */
+    '⭐ Der Singular bleibt ganz stehen, ـَات kommt einfach dahinter: مُسْتَوْصَفٌ → مُسْتَوْصَفَاتٌ. ⚠️ Bei deinen Wörtern mit ة macht dieselbe Endung etwas anderes — dort tritt ات an die Stelle des ة (سَيَّارَةٌ → سَيَّارَاتٌ). Gleiche Endung, zwei Wege dorthin.'
+  ],
+  '45824#pl': [   /* سَمَاءٌ → سَمَاوَاتٌ */
+    '⚠️ Hier trägt das Muster NICHT. Bei deinen anderen ـَات-Wörtern tritt ات einfach an die Stelle des ة (جَامِعَةٌ → جَامِعَاتٌ) — سَمَاءٌ → سَمَاوَاتٌ geht diesen Weg nicht: die Form ändert sich davor. ⭐ Genau deshalb ist dieses Wort einzeln zu merken, und genau deshalb steht es hier.'
+  ],
+  '45838#pl': [   /* بِنْتٌ → بَنَاتٌ */
+    '⚠️ Hier trägt das Muster NICHT. Bei deinen anderen ـَات-Wörtern tritt ات einfach an die Stelle des ة (سَيَّارَةٌ → سَيَّارَاتٌ) — بِنْتٌ → بَنَاتٌ geht diesen Weg nicht: die Form ändert sich davor. ⭐ Genau deshalb ist dieses Wort einzeln zu merken, und genau deshalb steht es hier.'
+  ],
+  '45846#pl': [   /* أُمٌّ → أُمَّهَاتٌ */
+    '⚠️ Hier trägt das Muster NICHT. Bei deinen anderen ـَات-Wörtern tritt ات einfach an die Stelle des ة (دَرَّاجَةٌ → دَرَّاجَاتٌ) — أُمٌّ → أُمَّهَاتٌ geht diesen Weg nicht: die Form ändert sich davor. ⭐ Genau deshalb ist dieses Wort einzeln zu merken, und genau deshalb steht es hier.'
+  ],
+  '45874#pl': [   /* مُسْتَشْفًى → مُسْتَشْفَيَاتٌ */
+    '⚠️ Hier trägt das Muster NICHT. Bei deinen anderen ـَات-Wörtern tritt ات einfach an die Stelle des ة (ثَلَّاجَةٌ → ثَلَّاجَاتٌ) — مُسْتَشْفًى → مُسْتَشْفَيَاتٌ geht diesen Weg nicht: die Form ändert sich davor. ⭐ Genau deshalb ist dieses Wort einzeln zu merken, und genau deshalb steht es hier.'
+  ],
+  'madina1-l6-ucht#pl': [   /* أُخْتٌ → أَخَوَاتٌ */
+    '⚠️ Hier trägt das Muster NICHT. Bei deinen anderen ـَات-Wörtern tritt ات einfach an die Stelle des ة (مُمَرِّضَةٌ → مُمَرِّضَاتٌ) — أُخْتٌ → أَخَوَاتٌ geht diesen Weg nicht: die Form ändert sich davor. ⭐ Genau deshalb ist dieses Wort einzeln zu merken, und genau deshalb steht es hier.'
+  ],
+
+  /* ===== Pluralkarten: die gebrochenen Plurale =====
+     ⛔ KEINE Wurzelableitung — bei schwachen Radikalen ginge sie schief
+     (طَوِيل hat vier Buchstaben, die Wurzel drei). Geprueft wurde die FORM
+     DES PLURALS gegen eine Schablone, Zeichen fuer Zeichen; nur was passt,
+     hat einen Text bekommen, und der Text sagt genau das Gemessene.
+     Gruppen ab drei Woertern (09.09.2026): فِعَال 11 · أَفْعَال 12 · فُعُول 9 · فُعُل 5
+     [[regeln_selbst_auswerten]] [[skelettvergleich_wirft_information_weg]] */
+  '45764#pl': [   /* فِعَال: رَجُلٌ → رِجَالٌ */
+    '⭐ Die Form heißt فِعَال: erster Buchstabe mit Kasra, dann ein ا vor dem letzten — رَجُلٌ → رِجَالٌ. ⚠️ 11 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel كَلْبٌ → كِلَابٌ und جَمَلٌ → جِمَالٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45766#pl': [   /* فِعَال: كَلْبٌ → كِلَابٌ */
+    '⭐ Die Form heißt فِعَال: erster Buchstabe mit Kasra, dann ein ا vor dem letzten — كَلْبٌ → كِلَابٌ. ⚠️ 11 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel جَمَلٌ → جِمَالٌ und طَوِيلٌ → طِوَالٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45770#pl': [   /* فِعَال: جَمَلٌ → جِمَالٌ */
+    '⭐ Die Form heißt فِعَال: erster Buchstabe mit Kasra, dann ein ا vor dem letzten — جَمَلٌ → جِمَالٌ. ⚠️ 11 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel طَوِيلٌ → طِوَالٌ und قَصِيرٌ → قِصَارٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45785#pl': [   /* فِعَال: طَوِيلٌ → طِوَالٌ */
+    '⭐ Die Form heißt فِعَال: erster Buchstabe mit Kasra, dann ein ا vor dem letzten — طَوِيلٌ → طِوَالٌ. ⚠️ 11 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel قَصِيرٌ → قِصَارٌ und صَغِيرٌ → صِغَارٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45786#pl': [   /* فِعَال: قَصِيرٌ → قِصَارٌ */
+    '⭐ Die Form heißt فِعَال: erster Buchstabe mit Kasra, dann ein ا vor dem letzten — قَصِيرٌ → قِصَارٌ. ⚠️ 11 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel صَغِيرٌ → صِغَارٌ und كَبِيرٌ → كِبَارٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45797#pl': [   /* فِعَال: صَغِيرٌ → صِغَارٌ */
+    '⭐ Die Form heißt فِعَال: erster Buchstabe mit Kasra, dann ein ا vor dem letzten — صَغِيرٌ → صِغَارٌ. ⚠️ 11 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel كَبِيرٌ → كِبَارٌ und خَفِيفٌ → خِفَافٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45798#pl': [   /* فِعَال: كَبِيرٌ → كِبَارٌ */
+    '⭐ Die Form heißt فِعَال: erster Buchstabe mit Kasra, dann ein ا vor dem letzten — كَبِيرٌ → كِبَارٌ. ⚠️ 11 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel خَفِيفٌ → خِفَافٌ und ثَقِيلٌ → ثِقَالٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45799#pl': [   /* فِعَال: خَفِيفٌ → خِفَافٌ */
+    '⭐ Die Form heißt فِعَال: erster Buchstabe mit Kasra, dann ein ا vor dem letzten — خَفِيفٌ → خِفَافٌ. ⚠️ 11 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel ثَقِيلٌ → ثِقَالٌ und سَرِيعٌ → سِرَاعٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45800#pl': [   /* فِعَال: ثَقِيلٌ → ثِقَالٌ */
+    '⭐ Die Form heißt فِعَال: erster Buchstabe mit Kasra, dann ein ا vor dem letzten — ثَقِيلٌ → ثِقَالٌ. ⚠️ 11 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel سَرِيعٌ → سِرَاعٌ und صَعْبٌ → صِعَابٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45859#pl': [   /* فِعَال: سَرِيعٌ → سِرَاعٌ */
+    '⭐ Die Form heißt فِعَال: erster Buchstabe mit Kasra, dann ein ا vor dem letzten — سَرِيعٌ → سِرَاعٌ. ⚠️ 11 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel صَعْبٌ → صِعَابٌ und رَجُلٌ → رِجَالٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45884#pl': [   /* فِعَال: صَعْبٌ → صِعَابٌ */
+    '⭐ Die Form heißt فِعَال: erster Buchstabe mit Kasra, dann ein ا vor dem letzten — صَعْبٌ → صِعَابٌ. ⚠️ 11 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel رَجُلٌ → رِجَالٌ und كَلْبٌ → كِلَابٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45753#pl': [   /* أَفْعَال: بَابٌ → أَبْوَابٌ */
+    '⭐ Die Form heißt أَفْعَال: vorne kommt ein أَ dazu, und vor den letzten Buchstaben ein ا — بَابٌ → أَبْوَابٌ. ⚠️ 12 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel قَلَمٌ → أَقْلَامٌ und وَلَدٌ → أَوْلَادٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45755#pl': [   /* أَفْعَال: قَلَمٌ → أَقْلَامٌ */
+    '⭐ Die Form heißt أَفْعَال: vorne kommt ein أَ dazu, und vor den letzten Buchstaben ein ا — قَلَمٌ → أَقْلَامٌ. ⚠️ 12 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel وَلَدٌ → أَوْلَادٌ und لَبَنٌ → أَلْبَان. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45762#pl': [   /* أَفْعَال: وَلَدٌ → أَوْلَادٌ */
+    '⭐ Die Form heißt أَفْعَال: vorne kommt ein أَ dazu, und vor den letzten Buchstaben ein ا — وَلَدٌ → أَوْلَادٌ. ⚠️ 12 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel لَبَنٌ → أَلْبَان und وَرَقٌ → أَوْرَاقٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45782#pl': [   /* أَفْعَال: لَبَنٌ → أَلْبَان */
+    '⭐ Die Form heißt أَفْعَال: vorne kommt ein أَ dazu, und vor den letzten Buchstaben ein ا — لَبَنٌ → أَلْبَان. ⚠️ 12 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel وَرَقٌ → أَوْرَاقٌ und سُوقٌ → أَسْوَاقٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45801#pl': [   /* أَفْعَال: وَرَقٌ → أَوْرَاقٌ */
+    '⭐ Die Form heißt أَفْعَال: vorne kommt ein أَ dazu, und vor den letzten Buchstaben ein ا — وَرَقٌ → أَوْرَاقٌ. ⚠️ 12 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel سُوقٌ → أَسْوَاقٌ und عَمٌّ → أَعْمَامٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45818#pl': [   /* أَفْعَال: سُوقٌ → أَسْوَاقٌ */
+    '⭐ Die Form heißt أَفْعَال: vorne kommt ein أَ dazu, und vor den letzten Buchstaben ein ا — سُوقٌ → أَسْوَاقٌ. ⚠️ 12 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel عَمٌّ → أَعْمَامٌ und اِبْنٌ → أَبْنَاءٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45829#pl': [   /* أَفْعَال: عَمٌّ → أَعْمَامٌ */
+    '⭐ Die Form heißt أَفْعَال: vorne kommt ein أَ dazu, und vor den letzten Buchstaben ein ا — عَمٌّ → أَعْمَامٌ. ⚠️ 12 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel اِبْنٌ → أَبْنَاءٌ und خَالٌ → أَخْوَالٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45830#pl': [   /* أَفْعَال: اِبْنٌ → أَبْنَاءٌ */
+    '⭐ Die Form heißt أَفْعَال: vorne kommt ein أَ dazu, und vor den letzten Buchstaben ein ا — اِبْنٌ → أَبْنَاءٌ. ⚠️ 12 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel خَالٌ → أَخْوَالٌ und اِسْمٌ → أَسْمَاءٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45835#pl': [   /* أَفْعَال: خَالٌ → أَخْوَالٌ */
+    '⭐ Die Form heißt أَفْعَال: vorne kommt ein أَ dazu, und vor den letzten Buchstaben ein ا — خَالٌ → أَخْوَالٌ. ⚠️ 12 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel اِسْمٌ → أَسْمَاءٌ und فَمٌ → أَفْوَاهٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45839#pl': [   /* أَفْعَال: اِسْمٌ → أَسْمَاءٌ */
+    '⭐ Die Form heißt أَفْعَال: vorne kommt ein أَ dazu, und vor den letzten Buchstaben ein ا — اِسْمٌ → أَسْمَاءٌ. ⚠️ 12 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel فَمٌ → أَفْوَاهٌ und كُوبٌ → أَكْوَابٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45853#pl': [   /* أَفْعَال: فَمٌ → أَفْوَاهٌ */
+    '⭐ Die Form heißt أَفْعَال: vorne kommt ein أَ dazu, und vor den letzten Buchstaben ein ا — فَمٌ → أَفْوَاهٌ. ⚠️ 12 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel كُوبٌ → أَكْوَابٌ und بَابٌ → أَبْوَابٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45889#pl': [   /* أَفْعَال: كُوبٌ → أَكْوَابٌ */
+    '⭐ Die Form heißt أَفْعَال: vorne kommt ein أَ dazu, und vor den letzten Buchstaben ein ا — كُوبٌ → أَكْوَابٌ. ⚠️ 12 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel بَابٌ → أَبْوَابٌ und قَلَمٌ → أَقْلَامٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45751#pl': [   /* فُعُول: بَيْتٌ → بُيُوتٌ */
+    '⭐ Die Form heißt فُعُول: zweimal Damma, dann ein و vor dem letzten Buchstaben — بَيْتٌ → بُيُوتٌ. ⚠️ 9 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel نَجْمٌ → نُجُومٌ und دِيكٌ → دُيُوكٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45760#pl': [   /* فُعُول: نَجْمٌ → نُجُومٌ */
+    '⭐ Die Form heißt فُعُول: zweimal Damma, dann ein و vor dem letzten Buchstaben — نَجْمٌ → نُجُومٌ. ⚠️ 9 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel دِيكٌ → دُيُوكٌ und فَصْلٌ → فُصُولٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45771#pl': [   /* فُعُول: دِيكٌ → دُيُوكٌ */
+    '⭐ Die Form heißt فُعُول: zweimal Damma, dann ein و vor dem letzten Buchstaben — دِيكٌ → دُيُوكٌ. ⚠️ 9 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel فَصْلٌ → فُصُولٌ und أَنْفٌ → أُنُوفٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45825#pl': [   /* فُعُول: فَصْلٌ → فُصُولٌ */
+    '⭐ Die Form heißt فُعُول: zweimal Damma, dann ein و vor dem letzten Buchstaben — فَصْلٌ → فُصُولٌ. ⚠️ 9 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel أَنْفٌ → أُنُوفٌ und قِدْرٌ → قُدُورٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45852#pl': [   /* فُعُول: أَنْفٌ → أُنُوفٌ */
+    '⭐ Die Form heißt فُعُول: zweimal Damma, dann ein و vor dem letzten Buchstaben — أَنْفٌ → أُنُوفٌ. ⚠️ 9 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel قِدْرٌ → قُدُورٌ und عَيْنٌ → عُيُونٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45854#pl': [   /* فُعُول: قِدْرٌ → قُدُورٌ */
+    '⭐ Die Form heißt فُعُول: zweimal Damma, dann ein و vor dem letzten Buchstaben — قِدْرٌ → قُدُورٌ. ⚠️ 9 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel عَيْنٌ → عُيُونٌ und طَائِرٌ → طُيُورٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45856#pl': [   /* فُعُول: عَيْنٌ → عُيُونٌ */
+    '⭐ Die Form heißt فُعُول: zweimal Damma, dann ein و vor dem letzten Buchstaben — عَيْنٌ → عُيُونٌ. ⚠️ 9 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel طَائِرٌ → طُيُورٌ und سَهْلٌ → سُهُولٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45877#pl': [   /* فُعُول: طَائِرٌ → طُيُورٌ */
+    '⭐ Die Form heißt فُعُول: zweimal Damma, dann ein و vor dem letzten Buchstaben — طَائِرٌ → طُيُورٌ. ⚠️ 9 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel سَهْلٌ → سُهُولٌ und بَيْتٌ → بُيُوتٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45880#pl': [   /* فُعُول: سَهْلٌ → سُهُولٌ */
+    '⭐ Die Form heißt فُعُول: zweimal Damma, dann ein و vor dem letzten Buchstaben — سَهْلٌ → سُهُولٌ. ⚠️ 9 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel بَيْتٌ → بُيُوتٌ und نَجْمٌ → نُجُومٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45754#pl': [   /* فُعُل: كِتَابٌ → كُتُبٌ */
+    '⭐ Die Form heißt فُعُل: dieselben Buchstaben, nur zweimal Damma und sonst nichts — كِتَابٌ → كُتُبٌ. ⚠️ 5 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel حِمَارٌ → حُمُرٌ und جَدِيدٌ → جُدُدٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45768#pl': [   /* فُعُل: حِمَارٌ → حُمُرٌ */
+    '⭐ Die Form heißt فُعُل: dieselben Buchstaben, nur zweimal Damma und sonst nichts — حِمَارٌ → حُمُرٌ. ⚠️ 5 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel جَدِيدٌ → جُدُدٌ und رَسُولٌ → رُسُلٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45791#pl': [   /* فُعُل: جَدِيدٌ → جُدُدٌ */
+    '⭐ Die Form heißt فُعُل: dieselben Buchstaben, nur zweimal Damma und sonst nichts — جَدِيدٌ → جُدُدٌ. ⚠️ 5 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel رَسُولٌ → رُسُلٌ und مَدِينَةٌ → مُدُنٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45827#pl': [   /* فُعُل: رَسُولٌ → رُسُلٌ */
+    '⭐ Die Form heißt فُعُل: dieselben Buchstaben, nur zweimal Damma und sonst nichts — رَسُولٌ → رُسُلٌ. ⚠️ 5 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel مَدِينَةٌ → مُدُنٌ und كِتَابٌ → كُتُبٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+  '45885#pl': [   /* فُعُل: مَدِينَةٌ → مُدُنٌ */
+    '⭐ Die Form heißt فُعُل: dieselben Buchstaben, nur zweimal Damma und sonst nichts — مَدِينَةٌ → مُدُنٌ. ⚠️ 5 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel كِتَابٌ → كُتُبٌ und حِمَارٌ → حُمُرٌ. Wer eines davon sieht, kennt die anderen.'
+  ],
+
+  /* ===== Pluralkarten: die Formen mit مَـ =====
+     Gemessen am 09.09.2026: مَفَاعِل 6 · مَفَاعِيل 3.
+     ⛔ Getrennt gezaehlt, weil beide mit مَـ anfangen: eine erste Fassung
+     schrieb „alle deine Plurale mit مَـ" und behauptete damit zehn, wo die
+     Schablone sechs traf. Jeder Text nennt nur die Zahl SEINER Gruppe.
+     ⭐ Zweite gemessene Aussage: der Schluss traegt ein einfaches Damma und
+     kein Tanwin — مَمْنُوع مِنَ الصَّرْف, dieselbe Kategorie wie in js/irab.js.
+     [[sammelaussage_einzeln_belegen]] [[regeln_selbst_auswerten]] */
+  '45752#pl': [   /* مَسْجِدٌ → مَسَاجِدُ */
+    '⭐ Die Form heißt مَفَاعِل: das مَ bleibt vorn, dahinter kommt ein ا, und vor dem Schluss steht ein Kasra — مَسْجِدٌ → مَسَاجِدُ. Genauso مَكْتَبٌ → مَكَاتِبُ und مَدْرَسَةٌ → مَدَارِسُ (6 Wörter bei dir, dazu 3 mit einem ي mehr). ⚠️ Sieh dir das ENDE an: مَسَاجِدُ trägt ein einfaches Damma, KEIN Tanwin. Diese Pluralform ist مَمْنُوع مِنَ الصَّرْف — sie bekommt nie ein ـٌ.'
+  ],
+  '45757#pl': [   /* مَكْتَبٌ → مَكَاتِبُ */
+    '⭐ Die Form heißt مَفَاعِل: das مَ bleibt vorn, dahinter kommt ein ا, und vor dem Schluss steht ein Kasra — مَكْتَبٌ → مَكَاتِبُ. Genauso مَدْرَسَةٌ → مَدَارِسُ und مَطْبَخٌ → مَطَابِخُ (6 Wörter bei dir, dazu 3 mit einem ي mehr). ⚠️ Sieh dir das ENDE an: مَكَاتِبُ trägt ein einfaches Damma, KEIN Tanwin. Diese Pluralform ist مَمْنُوع مِنَ الصَّرْف — sie bekommt nie ein ـٌ.'
+  ],
+  '45817#pl': [   /* مَدْرَسَةٌ → مَدَارِسُ */
+    '⭐ Die Form heißt مَفَاعِل: das مَ bleibt vorn, dahinter kommt ein ا, und vor dem Schluss steht ein Kasra — مَدْرَسَةٌ → مَدَارِسُ. Genauso مَطْبَخٌ → مَطَابِخُ und مِلْعَقَةٌ → مَلَاعِقُ (6 Wörter bei dir, dazu 3 mit einem ي mehr). ⚠️ Sieh dir das ENDE an: مَدَارِسُ trägt ein einfaches Damma, KEIN Tanwin. Diese Pluralform ist مَمْنُوع مِنَ الصَّرْف — sie bekommt nie ein ـٌ.'
+  ],
+  '45823#pl': [   /* مَطْبَخٌ → مَطَابِخُ */
+    '⭐ Die Form heißt مَفَاعِل: das مَ bleibt vorn, dahinter kommt ein ا, und vor dem Schluss steht ein Kasra — مَطْبَخٌ → مَطَابِخُ. Genauso مِلْعَقَةٌ → مَلَاعِقُ und مِرْوَحَةٌ → مَرَاوِحُ (6 Wörter bei dir, dazu 3 mit einem ي mehr). ⚠️ Sieh dir das ENDE an: مَطَابِخُ trägt ein einfaches Damma, KEIN Tanwin. Diese Pluralform ist مَمْنُوع مِنَ الصَّرْف — sie bekommt nie ein ـٌ.'
+  ],
+  '45844#pl': [   /* مِلْعَقَةٌ → مَلَاعِقُ */
+    '⭐ Die Form heißt مَفَاعِل: das مَ bleibt vorn, dahinter kommt ein ا, und vor dem Schluss steht ein Kasra — مِلْعَقَةٌ → مَلَاعِقُ. Genauso مِرْوَحَةٌ → مَرَاوِحُ und مَسْجِدٌ → مَسَاجِدُ (6 Wörter bei dir, dazu 3 mit einem ي mehr). ⚠️ Sieh dir das ENDE an: مَلَاعِقُ trägt ein einfaches Damma, KEIN Tanwin. Diese Pluralform ist مَمْنُوع مِنَ الصَّرْف — sie bekommt nie ein ـٌ.'
+  ],
+  '45893#pl': [   /* مِرْوَحَةٌ → مَرَاوِحُ */
+    '⭐ Die Form heißt مَفَاعِل: das مَ bleibt vorn, dahinter kommt ein ا, und vor dem Schluss steht ein Kasra — مِرْوَحَةٌ → مَرَاوِحُ. Genauso مَسْجِدٌ → مَسَاجِدُ und مَكْتَبٌ → مَكَاتِبُ (6 Wörter bei dir, dazu 3 mit einem ي mehr). ⚠️ Sieh dir das ENDE an: مَرَاوِحُ trägt ein einfaches Damma, KEIN Tanwin. Diese Pluralform ist مَمْنُوع مِنَ الصَّرْف — sie bekommt nie ein ـٌ.'
+  ],
+  '45756#pl': [   /* مِفْتَاحٌ → مَفَاتِيحُ */
+    '⭐ Die Form heißt مَفَاعِيل: das مَ bleibt vorn, dahinter kommt ein ا, und vor dem Schluss steht ein Kasra — مِفْتَاحٌ → مَفَاتِيحُ. Genauso مِنْدِيلٌ → مَنَادِيلُ und مِرْحَاضٌ → مَرَاحِيضُ (3 Wörter bei dir, dazu 6 mit einem ي mehr). ⚠️ Sieh dir das ENDE an: مَفَاتِيحُ trägt ein einfaches Damma, KEIN Tanwin. Diese Pluralform ist مَمْنُوع مِنَ الصَّرْف — sie bekommt nie ein ـٌ.'
+  ],
+  '45773#pl': [   /* مِنْدِيلٌ → مَنَادِيلُ */
+    '⭐ Die Form heißt مَفَاعِيل: das مَ bleibt vorn, dahinter kommt ein ا, und vor dem Schluss steht ein Kasra — مِنْدِيلٌ → مَنَادِيلُ. Genauso مِرْحَاضٌ → مَرَاحِيضُ und مِفْتَاحٌ → مَفَاتِيحُ (3 Wörter bei dir, dazu 6 mit einem ي mehr). ⚠️ Sieh dir das ENDE an: مَنَادِيلُ trägt ein einfaches Damma, KEIN Tanwin. Diese Pluralform ist مَمْنُوع مِنَ الصَّرْف — sie bekommt nie ein ـٌ.'
+  ],
+  '45826#pl': [   /* مِرْحَاضٌ → مَرَاحِيضُ */
+    '⭐ Die Form heißt مَفَاعِيل: das مَ bleibt vorn, dahinter kommt ein ا, und vor dem Schluss steht ein Kasra — مِرْحَاضٌ → مَرَاحِيضُ. Genauso مِفْتَاحٌ → مَفَاتِيحُ und مِنْدِيلٌ → مَنَادِيلُ (3 Wörter bei dir, dazu 6 mit einem ي mehr). ⚠️ Sieh dir das ENDE an: مَرَاحِيضُ trägt ein einfaches Damma, KEIN Tanwin. Diese Pluralform ist مَمْنُوع مِنَ الصَّرْف — sie bekommt nie ein ـٌ.'
+  ],
 };
