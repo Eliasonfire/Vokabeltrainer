@@ -523,7 +523,7 @@ const ESELSBRUECKEN_ALT = {
   /* غُرْفَةٌ - Zimmer */
   '45821': [
     '⭐ Die Vokabel schenkt dir sofort einen zweiten Ausdruck: فِي الْغُرْفَةِ — „im Zimmer". Nach فِي steht Genitiv, und weil das Wort ein ة trägt, hörst du die Kasra deutlich. Dein Ḥarf ǧarr und deine neue Vokabel in einem Atemzug.',
-    'Die Wurzel غ ر ف heißt schöpfen — mit der hohlen Hand Wasser nehmen. Eine غُرْفَة ist danach benannt: ein Raum ist etwas aus dem Haus Herausgeschöpftes, eine Höhlung. Von derselben Wurzel kommt die Schöpfkelle, مِغْرَفَة. ⚠️ Nicht mit dem ähnlich klingenden عَرَفَ („kennen") verwechseln: das fängt mit ع an, nicht mit غ.'
+    'Der Plural steht nicht im Wort: غُرْفَةٌ → غُرَفٌ. ⚠️ Raten hilft hier nicht — sieh dir deine drei Karten aus Kapitel 4 nebeneinander an, alle drei mit ة, alle drei anders im Plural: غُرْفَةٌ → غُرَفٌ (das ة fällt weg, die Vokale rutschen), مَدْرَسَةٌ → مَدَارِسُ (das ة fällt weg, dafür kommt eine Silbe dazu), جَامِعَةٌ → جَامِعَاتٌ (aus dem ة wird ات). Das ة sagt dir also, dass es weiblich ist — über den Plural sagt es nichts.'
   ],
 
   /* حَمَّامٌ - Badezimmer */
