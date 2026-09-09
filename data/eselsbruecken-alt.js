@@ -2137,19 +2137,19 @@ const ESELSBRUECKEN_ALT = {
     '⭐ Die Form heißt فُعُول: zweimal Damma, dann ein و vor dem letzten Buchstaben — سَهْلٌ → سُهُولٌ. ⚠️ 9 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel بَيْتٌ → بُيُوتٌ und نَجْمٌ → نُجُومٌ. Wer eines davon sieht, kennt die anderen.'
   ],
   '45754#pl': [   /* فُعُل: كِتَابٌ → كُتُبٌ */
-    '⭐ Die Form heißt فُعُل: dieselben Buchstaben, nur zweimal Damma und sonst nichts — كِتَابٌ → كُتُبٌ. ⚠️ 5 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel حِمَارٌ → حُمُرٌ und جَدِيدٌ → جُدُدٌ. Wer eines davon sieht, kennt die anderen.'
+    '⭐ Die Form heißt فُعُل: der lange Vokal in der Mitte fällt weg (ا), übrig bleiben drei Buchstaben mit zweimal Damma — كِتَابٌ → كُتُبٌ. ⚠️ 5 deiner Wörter bilden den Plural nach dieser Form, zum Beispiel حِمَارٌ → حُمُرٌ und جَدِيدٌ → جُدُدٌ. Wer eines davon sieht, kennt die anderen.'
   ],
   '45768#pl': [   /* فُعُل: حِمَارٌ → حُمُرٌ */
-    '⭐ Die Form heißt فُعُل: dieselben Buchstaben, nur zweimal Damma und sonst nichts — حِمَارٌ → حُمُرٌ. ⚠️ 5 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel جَدِيدٌ → جُدُدٌ und رَسُولٌ → رُسُلٌ. Wer eines davon sieht, kennt die anderen.'
+    '⭐ Die Form heißt فُعُل: der lange Vokal in der Mitte fällt weg (ا), übrig bleiben drei Buchstaben mit zweimal Damma — حِمَارٌ → حُمُرٌ. ⚠️ 5 deiner Wörter bilden den Plural nach dieser Form, zum Beispiel جَدِيدٌ → جُدُدٌ und رَسُولٌ → رُسُلٌ. Wer eines davon sieht, kennt die anderen.'
   ],
   '45791#pl': [   /* فُعُل: جَدِيدٌ → جُدُدٌ */
-    '⭐ Die Form heißt فُعُل: dieselben Buchstaben, nur zweimal Damma und sonst nichts — جَدِيدٌ → جُدُدٌ. ⚠️ 5 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel رَسُولٌ → رُسُلٌ und مَدِينَةٌ → مُدُنٌ. Wer eines davon sieht, kennt die anderen.'
+    '⭐ Die Form heißt فُعُل: der lange Vokal in der Mitte fällt weg (ي), übrig bleiben drei Buchstaben mit zweimal Damma — جَدِيدٌ → جُدُدٌ. ⚠️ 5 deiner Wörter bilden den Plural nach dieser Form, zum Beispiel رَسُولٌ → رُسُلٌ und مَدِينَةٌ → مُدُنٌ. Wer eines davon sieht, kennt die anderen.'
   ],
   '45827#pl': [   /* فُعُل: رَسُولٌ → رُسُلٌ */
-    '⭐ Die Form heißt فُعُل: dieselben Buchstaben, nur zweimal Damma und sonst nichts — رَسُولٌ → رُسُلٌ. ⚠️ 5 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel مَدِينَةٌ → مُدُنٌ und كِتَابٌ → كُتُبٌ. Wer eines davon sieht, kennt die anderen.'
+    '⭐ Die Form heißt فُعُل: der lange Vokal in der Mitte fällt weg (و), übrig bleiben drei Buchstaben mit zweimal Damma — رَسُولٌ → رُسُلٌ. ⚠️ 5 deiner Wörter bilden den Plural nach dieser Form, zum Beispiel مَدِينَةٌ → مُدُنٌ und كِتَابٌ → كُتُبٌ. Wer eines davon sieht, kennt die anderen.'
   ],
   '45885#pl': [   /* فُعُل: مَدِينَةٌ → مُدُنٌ */
-    '⭐ Die Form heißt فُعُل: dieselben Buchstaben, nur zweimal Damma und sonst nichts — مَدِينَةٌ → مُدُنٌ. ⚠️ 5 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel كِتَابٌ → كُتُبٌ und حِمَارٌ → حُمُرٌ. Wer eines davon sieht, kennt die anderen.'
+    '⭐ Die Form heißt فُعُل: der lange Vokal (ي) UND das ة fallen weg, übrig bleiben drei Buchstaben mit zweimal Damma — مَدِينَةٌ → مُدُنٌ. ⚠️ 5 deiner Wörter bilden den Plural nach dieser Form, zum Beispiel كِتَابٌ → كُتُبٌ und حِمَارٌ → حُمُرٌ. Wer eines davon sieht, kennt die anderen.'
   ],
 
   /* ===== Pluralkarten: die Formen mit مَـ =====
