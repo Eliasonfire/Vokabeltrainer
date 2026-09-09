@@ -37,6 +37,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const VAULT = 'G:/1. Workspace/Obsidian/Gedächtnis/Elias Gedächtnis/';
 const AUTO  = 'C:/Users/abdur/.claude/projects/G--1--Workspace/memory/';
@@ -52,6 +53,45 @@ if (!datei || datei === '--letzte') {
   if (!kandidaten.length) { console.error('Keine .jsonl gefunden in ' + SITZUNGEN); process.exit(2); }
   datei = SITZUNGEN + kandidaten[0].f;
   console.log('Sitzung: ' + kandidaten[0].f);
+
+  /* ---------- ⛔⛔ WAS DIESER LAUF NICHT ANGESEHEN HAT (09.09.2026) --------
+
+     ANLASS: Elias' Frage „ist gedächtnis wirklich aktuell?" — zum zweiten Mal
+     an diesem Tag, und zum zweiten Mal fand sie etwas. `--letzte` nimmt genau
+     EINE Datei. An diesem Tag lief die Arbeit in ZWEI: die Nachtschicht (14
+     Aussagen) und die Sitzung danach (5). Der Lauf meldete „4 wörtlich, 0
+     fehlen" — richtig, und er hatte 14 der 18 Aussagen nie angesehen. Darin
+     eine, die im Vault fehlte: seine Absage des Aufwach-Auftrags um 05:22.
+
+     ⭐ Deshalb steht hier ein HINWEIS und keine Automatik. Ein Versuch,
+     einfach „alle Sitzungen von heute" mitzuprüfen, war schlechter: im selben
+     Ordner liegen auch Sitzungen zu anderen Themen, und der Sammelwert
+     („236 fehlen ganz") lädt zu einem falschen Schluss ein. Eine Zahl, die
+     mehr misst als die Frage, ist keine bessere Antwort.
+     [[werkzeug_misst_kleineren_bestand]] [[kandidatenliste_ist_keine_fehlerliste]]
+
+     ⚠️ Gefiltert wird über den ZEITSTEMPEL der letzten Zeile, nicht über die
+     mtime: eine alte Sitzungsdatei bekommt eine neue mtime, sobald irgendetwas
+     sie liest. Nach mtime waren es 13 Dateien, nach Inhalt 11. */
+  const anderswo = [];
+  for (const k of kandidaten.slice(1)) {
+    let letzte = null;
+    try {
+      for (const z of fs.readFileSync(SITZUNGEN + k.f, 'utf8').split(/\r?\n/)) {
+        const t = z.indexOf('"timestamp":"');
+        if (t < 0) continue;
+        letzte = z.slice(t + 13, z.indexOf('"', t + 13));
+      }
+    } catch { continue; }
+    if (letzte && new Date(letzte).toDateString() === new Date().toDateString())
+      anderswo.push(k.f);
+  }
+  if (anderswo.length) {
+    console.log('⚠️ ' + anderswo.length + ' weitere Sitzung(en) waren heute aktiv und sind hier NICHT geprüft:');
+    for (const f of anderswo.slice(0, 6)) console.log('     ' + f);
+    if (anderswo.length > 6) console.log('     … und ' + (anderswo.length - 6) + ' weitere');
+    console.log('   Gehört eine davon zu dieser Arbeit, mit ihrem Pfad als Argument nachfahren.');
+  }
 }
 const AB = Number(process.argv[3] || 0);
 
