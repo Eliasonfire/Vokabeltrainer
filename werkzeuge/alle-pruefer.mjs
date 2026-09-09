@@ -193,6 +193,13 @@ const PRUEFER = [
      und `.ar-wort` trug sie laengst, `.mn-ar` nicht.
      [[rtl_richtung_physisch]] [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
   ['werkzeuge/pruefe-bidi.mjs', []],
+  /* ⭐ Neu am 09.09.2026, gefunden beim ersten wirklichen HINSEHEN auf eine
+     Pluralkarte: „Am Ende steht ein ُ" — ein Damma ohne Buchstaben darunter.
+     Eine kombinierende Marke hat keine eigene Breite; ohne Traeger setzt sie
+     sich auf das Leerzeichen davor, und was daraus wird, entscheidet die
+     Schrift. 91 Marken im Bestand sitzen auf einem Tatweel, drei taten es
+     nicht. [[kombinierende_marke_einzeln]] */
+  ['werkzeuge/pruefe-marken.mjs', []],
   /* ⭐⭐ Neu am 09.09.2026, die Schwesterpruefung zu pruefe-abgleich.mjs: dort
      zwei GERAETE, hier zwei ZEITPUNKTE. In js/einstellungen.js stand zweimal
      derselbe Satz („wer eine Sicherung einspielte, verlor X lautlos") — und
