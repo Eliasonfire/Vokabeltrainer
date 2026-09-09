@@ -3012,6 +3012,24 @@ main{
      Grundlinie, der Kasten bot 24. Hier hilft die Zeilenhoehe wirklich, denn
      .mn-ar ist inline und traegt den Zeilenkasten selbst mit. */
   line-height:1.65;
+  /* ⛔⛔ „مَدْرَسَةٌ → مَدَارِسُ" STAND VERKEHRT HERUM (09.09.2026, im Browser
+     gemessen). Zwischen zwei arabischen Laeufen ist der Pfeil ein neutrales
+     Zeichen; der Bidi-Algorithmus gibt ihn dann der UMGEBENDEN Richtung, und
+     die ist dort rechts-nach-links. Gemessen: erstes Wort x=93, Pfeil x=73,
+     zweites Wort x=0 — auf dem Schirm las sich also Plural → Singular.
+     Betroffen war jede Eselsbruecke mit einem Pfeil zwischen zwei arabischen
+     Woertern, auch die aelteren (مُدَرِّسٌ → مُدَرِّسَةٌ).
+
+     `isolate` schneidet jeden arabischen Lauf aus dem Bidi-Zusammenhang heraus:
+     innen bleibt er rechts-nach-links, aussen zaehlt wieder die Richtung des
+     Absatzes. Danach x=0 / 69 / 90 — richtig herum.
+
+     ⚠️ KEIN `dir="rtl"` dazu, und das ist der Unterschied zur Warnung weiter
+     oben in js/kern.js: ein gesetztes `dir` zoege die Klammer hinter قَرِيبٌ
+     auf die falsche Seite. Beide Faelle nachgemessen — mit `isolate` allein
+     bleibt die Klammer, wo sie war (0 / 41 / 93 vorher wie nachher).
+     [[rtl_richtung_physisch]] [[breite_null_ist_kein_layout]] */
+  unicode-bidi:isolate;
 }
 .note-box.hat-notiz{
   border-style:solid;border-color:var(--red-dim);
