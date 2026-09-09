@@ -295,3 +295,42 @@ if (!widersprueche && beschriebene)
   console.log(`Keine der ${beschriebene} Kurzbeschreibungen widerspricht ihrem eigenen Text.`);
 else if (beschriebene)
   console.log(`\n${widersprueche} von ${beschriebene} Kurzbeschreibungen widersprechen ihrem Text.`);
+
+/* ---------- ⛔ STOERTEST (09.09.2026) ----------
+
+   ⛔ Dieser Pruefer entscheidet an JEDER Zeile, ob sie Verlauf oder Gegenwart
+   ist — und nur Gegenwart wird gegen den Code gehalten. Greift die
+   Verlaufserkennung zu weit, faellt alles heraus und er meldet „nichts
+   gefunden". Genau das ist laut seinem eigenen Kommentar schon einmal
+   passiert („eine veraltete Zahl im Ziel-Prompt fiel dadurch heraus").
+   [[stoertest_muss_wirkung_nachweisen]] [[begrenzung_haelt_messung_nicht_stand]]
+
+   Fuenf Faelle, deren Antwort feststeht. */
+console.log('');
+console.log('=== Stoertest ===');
+{
+  let stoer = 0;
+  const sProbe = (was, ist, soll) => {
+    if (ist !== soll){ stoer++; console.log('  ⛔  ' + was + ': ' + ist + ' statt ' + soll); }
+    else console.log('  ok   ' + was);
+  };
+  /* Die drei Wachen, die eine Zeile als Verlauf abtun. */
+  sProbe('eine Zeile mit Datum gilt als Verlauf', DATUM.test('am 28.07.2026 waren es 73 Regeln'), true);
+  sProbe('eine Zeile mit Commit gilt als Verlauf', COMMIT.test('siehe `a1b2c3d`'), true);
+  sProbe('„damals" gilt als Rueckblick', RUECKBLICK.test('damals 73 Regeln'), true);
+  /* ⛔ Und die Gegenrichtung: eine schlichte Gegenwartsaussage darf NICHT
+     als Verlauf durchgehen — sonst prueft er gar nichts mehr. */
+  const jetzt = 'Der Satzmodus hat 999 Regeln.';
+  sProbe('eine Gegenwartszeile faellt NICHT durch die Verlaufswache',
+    DATUM.test(jetzt) || COMMIT.test(jetzt) || RUECKBLICK.test(jetzt), false);
+  /* Und das Zahlenmuster muss sie dann auch fassen. */
+  const re = MUSTER[0][0]; re.lastIndex = 0;
+  sProbe('das Zahlenmuster findet „999 Regeln"', re.test(jetzt), true);
+
+  if (stoer){
+    console.log('');
+    console.log('⛔ ' + stoer + ' Stoertest(s) gescheitert — die Verlaufserkennung misst nicht,');
+    console.log('   und damit ist „keine veraltete Zahl" wertlos.');
+    process.exit(1);
+  }
+}
