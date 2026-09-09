@@ -179,6 +179,13 @@ const PRUEFER = [
      IIFEs brauchen ueberhaupt keinen Aufrufer. Uebrig bleibt genau EINE,
      und die wartet auf Elias. [[mein_neues_werkzeug_ist_verdaechtig]] */
   ['werkzeuge/funktionen-ohne-aufrufer.mjs', []],
+  /* ⭐ Neu am 09.09.2026 (Punkt 5). Von 545 definierten CSS-Klassen haben 8
+     keine Fundstelle; 16 weitere sahen so aus und werden zur Laufzeit
+     zusammengesetzt — der Pruefer liefert je Verdacht den BELEG mit, weil ein
+     reiner Praefixtest zu grosszuegig ist (er hielt `sent-thema` fuer „gebaut
+     aus sent"). Rot wird er nur, wenn die Zahl STEIGT.
+     [[kandidatenliste_ist_keine_fehlerliste]] */
+  ['werkzeuge/klassen-ohne-fundstelle.mjs', []],
   /* ⛔ Ohne diese Zeile haette pruefe-muster.mjs keinen Aufrufer und liefe nie.
      Genau der Fehler, den es selbst sucht, in seiner allgemeinen Form: gebaut,
      gepusht, ausgeliefert — und nie gestartet. [[werkzeug_ohne_aufrufer]] */
