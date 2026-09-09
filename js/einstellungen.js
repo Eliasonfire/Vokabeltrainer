@@ -1004,6 +1004,22 @@ function diagnoseText(){
      Lauf gemeldet hat. Antwort kommt asynchron und wird nachgetragen, genau
      wie die Versionszeile darueber. */
   zeilen.push('Offline-Vorrat: … (wird gefragt)');
+  /* ⛔⛔ ZWEITE ZEILE, weil „Vorrat vollständig" die Frage NICHT beantwortet,
+     die Elias unterwegs hat. Die Buchvokabeln stehen nicht in ASSETS (eine von
+     neun Dateien tut es); die übrigen liegen erst im Zwischenspeicher, nachdem
+     er das Buch einmal mit Netz geöffnet hat. Ein Buch, das er nur ausgewählt,
+     aber nie geladen hat, fehlt in der U-Bahn — und bis v462 verschwand
+     deswegen sogar die ganze Buchzeile. Die Karte sagt jetzt, welche wirklich
+     da sind. [[diagnose_statt_raten]] */
+  zeilen.push('Bücher offline: … (wird gefragt)');
+  /* ⛔ BEIDE Eintragungen stehen VOR dem try, und beide Ausfallwege füllen
+     BEIDE Zeilen. Beim ersten Anlauf lagen sie innen: antwortete der Worker
+     nicht, bekam „Offline-Vorrat" seine ehrliche Fehlanzeige — und „Bücher
+     offline" blieb für immer bei „wird gefragt". Also genau der Zustand, gegen
+     den der Hinweis darunter geschrieben wurde, nur eine Zeile tiefer.
+     [[zweiter_fix_deckt_ersten_zu]] */
+  const eintragen = (text) => trageNach('Offline-Vorrat: … (wird gefragt)', 'Offline-Vorrat: ' + text);
+  const eintragenBuch = (text) => trageNach('Bücher offline: … (wird gefragt)', 'Bücher offline: ' + text);
   try {
     const sw = navigator.serviceWorker && navigator.serviceWorker.controller;
     if (!sw) throw new Error('kein Service Worker steuert diese Seite');
@@ -1012,21 +1028,46 @@ function diagnoseText(){
        stehen. Ein Platzhalter, der ewig „wird gefragt" sagt, ist schlimmer als
        eine ehrliche Fehlanzeige. [[ausfall_ist_unsichtbar_gebaut]] */
     let beantwortet = false;
-    const eintragen = (text) => trageNach('Offline-Vorrat: … (wird gefragt)', 'Offline-Vorrat: ' + text);
     kanal.port1.onmessage = (ev) => {
       beantwortet = true;
       const d = ev.data || {};
-      if (d.fehler) return eintragen('— (' + d.fehler + ')');
+      if (d.fehler){ eintragenBuch('— (' + d.fehler + ')'); return eintragen('— (' + d.fehler + ')'); }
       eintragen(d.fehlend && d.fehlend.length
         ? '⛔ ' + d.fehlend.length + ' von ' + d.gesamt + ' Dateien FEHLEN: ' + d.fehlend.slice(0, 6).join(', ')
           + (d.fehlend.length > 6 ? ' …' : '')
         : 'vollständig (' + d.gesamt + ' Dateien)');
+      /* ⚠️ Die Deutung passiert HIER, nicht im Service Worker: er meldet, was
+         im Zwischenspeicher liegt, und die Seite weiß über BUECHER, welche
+         Datei zu welchem Buch gehört. Fehlt `daten` ganz, läuft noch die alte
+         Fassung des Workers — dann sagt die Zeile das, statt „0 von 7" zu
+         behaupten. [[alte_fassung_beim_nutzer]] */
+      if (!Array.isArray(d.daten)) return eintragenBuch('— (Service Worker meldet es noch nicht; App schließen und neu öffnen)');
+      const buecher = (typeof BUECHER !== 'undefined' ? BUECHER : []);
+      if (!buecher.length) return eintragenBuch('— (kein Buchverzeichnis geladen)');
+      const da = new Set(d.daten);
+      const fehlen = buecher.filter(b => !da.has(b.datei));
+      /* ⚠️ GEKAPPT wie die Zeile darüber. Gemessen am 09.09.2026 standen hier
+         sieben Namen und die Zeile war 177 Zeichen lang — auf 375 px sind das
+         vier bis fünf gedruckte Zeilen für eine Angabe. Die Karte ist Elias'
+         einziger Kanal und muss auf ein Bildschirmfoto passen; die ZAHL ist
+         die Aussage, die Namen sind der Hinweis. */
+      eintragenBuch((buecher.length - fehlen.length) + ' von ' + buecher.length
+        + (fehlen.length
+            ? ' · ohne Netz fehlen: ' + fehlen.slice(0, 4).map(b => b.slug).join(', ')
+              + (fehlen.length > 4 ? ' …' : '') + ' (einmal mit Netz antippen)'
+            : ' · alle da'));
     };
     sw.postMessage({ frage: 'vorrat' }, [kanal.port2]);
-    setTimeout(() => { if (!beantwortet) eintragen('— (keine Antwort vom Service Worker)'); }, 3000);
+    setTimeout(() => {
+      if (beantwortet) return;
+      eintragen('— (keine Antwort vom Service Worker)');
+      eintragenBuch('— (keine Antwort vom Service Worker)');
+    }, 3000);
   } catch (e){
-    setTimeout(() => trageNach('Offline-Vorrat: … (wird gefragt)',
-      'Offline-Vorrat: — (' + (e && e.message) + ')'), 0);
+    setTimeout(() => {
+      eintragen('— (' + (e && e.message) + ')');
+      eintragenBuch('— (' + (e && e.message) + ')');
+    }, 0);
   }
 
   sicher('Bildschirm', () => window.innerWidth + '×' + window.innerHeight
