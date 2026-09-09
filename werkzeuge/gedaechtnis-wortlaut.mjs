@@ -123,7 +123,14 @@ const RAUS = [
   /^\s*Arbeite unbeaufsichtigt weiter/,
   /^\s*Schreib eine Übergabe-Notiz/,
   /^\s*Prüft vor dem Start, ob sich Agenten/,
-  /^\s*Skill \/[a-zäöü-]+ was loaded earlier/,
+  /* ⚠️ ZWEI Wortlaute, nicht einer (09.09.2026). Ruft Elias einen Skill zum
+     zweiten Mal in derselben Sitzung auf, antwortet die Umgebung mit
+     „Skill /x is already loaded above; instructions unchanged." statt mit
+     „was loaded earlier". Der Filter kannte nur die erste Fassung — und der
+     Lauf meldete prompt „1 fehlt ganz" fuer einen Satz, den Elias nie gesagt
+     hat. Ein Pruefer, der Falsches meldet, wird beim naechsten Mal ueberlesen.
+     [[allgemeine_regel_statt_listeneintrag]] */
+  /^\s*Skill \/[a-zäöü-]+ (?:was loaded earlier|is already loaded)/,
 ];
 
 const roh = [];
@@ -184,7 +191,12 @@ const norm = s => String(s).toLowerCase()
   .replace(/\s+/g, ' ').trim();
 
 const vault = new Map();
-for (const p of DATEIEN) { try { vault.set(path.basename(p), norm(fs.readFileSync(p, 'utf8'))); } catch {} }
+for (const p of DATEIEN) {
+  try {
+    vault.set(path.basename(p), norm(fs.readFileSync(p, 'utf8')));
+  } catch {}
+}
+const fundorte = [];
 console.log('Dateien: ' + vault.size + ' | Aussagen: ' + saetze.length + '\n');
 
 /* ---------- 3. Suchen ---------- */
@@ -192,7 +204,34 @@ let woertlich = 0, teile = 0, fehlt = 0;
 for (const s of saetze) {
   const ganz = norm(s.t);
   const treffer = [...vault].filter(([, t]) => t.includes(ganz)).map(([n]) => n);
-  if (treffer.length) { woertlich++; continue; }
+  if (treffer.length) {
+    woertlich++;
+    /* ---------- ⛔⛔ WO steht der Satz eigentlich? (09.09.2026) ----------
+
+       ANLASS, und schon wieder Elias' Frage „ist gedächtnis wirklich aktuell?":
+       Er bat um einen Kurzbericht — *„gib mir einen kurzen bericht was du alles
+       seit 2 uhr nachts heute gemacht hast"* —, das Werkzeug meldete
+       „6 wörtlich · 0 fehlen", und der Satz stand in keiner Vokabeltrainer-Notiz.
+       Gefunden wurde er in `03 - Projekte/Quran-Lesen-Lernen-App.md`: dieselbe
+       Bitte, ANDERES PROJEKT, anderer Tag.
+
+       ⭐ Die Suche fragt „steht dieser Satz IRGENDWO", die eigentliche Frage
+       lautet „ist er DIESMAL aufgeschrieben worden". Ein gleichlautender Satz
+       von früher beantwortet sie nicht.
+
+       ⛔ Ein erster Versuch, das über das ALTER der Fundstelle zu entscheiden
+       („liegt jede Fundstelle in einer Datei, die seit Sitzungsbeginn nicht
+       angefasst wurde"), ging daneben: die Quran-Notiz war um 20:21 von einer
+       PARALLEL laufenden Sitzung geschrieben worden und galt damit als frisch.
+       Das Alter einer Datei sagt nichts darüber, WER sie geschrieben hat.
+       [[zwei_sitzungen_eine_todo]] [[mein_neues_werkzeug_ist_verdaechtig]]
+
+       ⭐ Deshalb kein Urteil, sondern die Tatsache: am Ende steht, WO jeder
+       Satz gefunden wurde. Eine Fundstelle im falschen Projekt sieht man dann
+       in einer Sekunde. [[zahlen_ohne_beleg]] */
+    fundorte.push({ i: s.i, t: s.t, wo: treffer });
+    continue;
+  }
 
   /* Nicht woertlich — welches STUECK fehlt? Sechs Woerter, Schritt drei. */
   const w = ganz.split(' ');
@@ -212,6 +251,18 @@ for (const s of saetze) {
     const offen = stuecke.filter(st => !belegt.includes(st));
     console.log('   nicht belegt: \u201e' + offen.slice(0, 2).join('\u201c \u00b7 \u201e') + '\u201c\n');
   }
+}
+/* \u2b50 WO die woertlichen Treffer stehen \u2014 die Tatsache, nicht ein Urteil.
+   Ein Satz, der nur in der Notiz eines ANDEREN Projekts steht, ist hier in
+   einer Sekunde zu sehen; genau so ist der Kurzbericht-Auftrag am 09.09.
+   durchgerutscht (gefunden in Quran-Lesen-Lernen-App.md). */
+if (fundorte.length) {
+  console.log('Wo die woertlichen Treffer stehen:');
+  for (const f of fundorte)
+    console.log('  [Z' + String(f.i).padStart(5) + '] '
+      + f.t.replace(/\s+/g, ' ').slice(0, 46).padEnd(48)
+      + f.wo.slice(0, 2).join(', ') + (f.wo.length > 2 ? ' +' + (f.wo.length - 2) : ''));
+  console.log('');
 }
 console.log('=== ' + woertlich + ' w\u00f6rtlich \u00b7 ' + teile + ' nur sinngem\u00e4ss \u00b7 ' + fehlt + ' fehlen ganz ===');
 if (teile) console.log('   (Eine mit \u201e\u2026\u201c gekennzeichnete K\u00fcrzung ist in Ordnung \u2014 jede Zeile lesen,');
