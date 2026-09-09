@@ -913,12 +913,59 @@ try {
     const e = JSON.parse(fs.readFileSync(ent, 'utf8'));
     beantwortet = (e.entscheidungen || []).length;
   }
+  /* ⭐ Wie viele liegen in einem Fenster, aus dem SCHON eine Regel stammt?
+     (09.09.2026) Das sortiert die Arbeit vor: solche Fundstellen sind mit
+     hoher Wahrscheinlichkeit das, was schon dasteht.
+     ⚠️ Es ist eine RANGFOLGE, kein Filter — der Lehrer kann in dreissig
+     Sekunden zwei verschiedene Dinge sagen. Deshalb steht die Zahl im Text und
+     nicht als Abzug in `rest`. [[kandidatenliste_ist_keine_fehlerliste]] */
+  let schonErfasst = 0;
+  try {
+    const { GRAMMAR_RULES: GR } = (new Function(
+      fs.readFileSync(path.join(REPO, "grammar-data.js"), 'utf8') + ';return {GRAMMAR_RULES};'))();
+    const sek = (s) => {
+      const roh = String(s == null ? '' : s).trim();
+      if (!roh) return null;
+      const t = roh.split(':').map(Number);
+      return (t.some(isNaN) || !t.length) ? null : t.reduce((a, b) => a * 60 + b, 0);
+    };
+    const jeFolge = new Map();
+    for (const r of GR){
+      if (r.ergaenzung || !r.source) continue;
+      const s = sek(r.source.approxTimestamp);
+      if (s === null) continue;
+      const f = Number(r.source.folge);
+      if (!jeFolge.has(f)) jeFolge.set(f, []);
+      jeFolge.get(f).push(s);
+    }
+    for (const d of dateien){
+      const o = JSON.parse(fs.readFileSync(path.join(kand, d), 'utf8'));
+      const regeln = jeFolge.get(Number(o.folge)) || [];
+      for (const k of (o.kandidaten || []))
+        if (regeln.some(s => s >= Number(k.von) - 30 && s <= Number(k.bis) + 30)) schonErfasst++;
+    }
+  /* ⛔ NICHT schweigen. Die erste Fassung stand hier mit „ohne diese Zahl ist
+     der Posten weiterhin richtig" — und verschluckte damit einen
+     ReferenceError (`WURZEL` statt `REPO`). Der Satz fehlte auf der Seite, der
+     Lauf meldete Erfolg, und aufgefallen ist es nur, weil ich die erzeugte
+     Datei danach durchsucht habe. Genau die Sorte catch, die ich heute Nacht
+     an fuenf Stellen der App aufgemacht habe.
+     [[ausfall_ist_unsichtbar_gebaut]] [[erfolgsmeldung_ohne_wirkung]] */
+  } catch (e){
+    console.log('  ⚠️ Vorsortierung der Regelkandidaten nicht moeglich: ' + e.message);
+    console.log('     Der Posten steht trotzdem, nur ohne die Zeile „X der Y liegen …".');
+  }
+
   const rest = Math.max(0, offen - beantwortet);
   if (rest) posten.push({
     titel: 'Regelkandidaten aus dem Unterricht',
     zahl: rest, einheit: 'Fundstellen', dazu: folgen.join(' · '),
     aufwand: 'durchsehen und je Fundstelle ja/nein/später — das Zusammenfassen mache ich',
-    warum: 'Aus ihnen werden neue Grammatikregeln. Ohne dein Ja trage ich keine ein — eine Regel ohne Quelle waere geraten, und geraten wird hier nicht.',
+    warum: 'Aus ihnen werden neue Grammatikregeln. Ohne dein Ja trage ich keine ein — eine Regel ohne Quelle waere geraten, und geraten wird hier nicht.'
+      + (schonErfasst ? ' ⭐ ' + schonErfasst + ' der ' + rest + ' liegen in einem Zeitfenster, aus dem'
+        + ' bereits eine Regel stammt — mit denen faengst du am besten an, sie sind vermutlich'
+        + ' schnell abgehakt. Es ist eine Rangfolge, kein Filter: in dreissig Sekunden kann'
+        + ' der Lehrer zwei verschiedene Dinge sagen.' : ''),
     wie: 'Auf der Freigabeseite antippen, unten den Text kopieren, in den Chat schicken.',
     seite: 'https://claude.ai/code/artifact/d9916aee-b679-4d91-bb0c-c3642f8889ac',
     seiteText: 'Die Freigabeseite'
