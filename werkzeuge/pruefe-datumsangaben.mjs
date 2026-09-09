@@ -35,7 +35,7 @@
  * Aufruf:  node werkzeuge/pruefe-datumsangaben.mjs [--alle]
  *          --alle zeigt auch die Blöcke, die stimmen.
  */
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, statSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -666,8 +666,119 @@ for (const r of rueckwaerts){
    rueckwaerts laufender Block war gefunden, aber unten nicht mehr erwaehnt.
    Wer die Ausgabe liest, sah gruen; wer den Exitcode prueft, sah rot.
    [[widerspruch_liegt_in_der_beschriftung]] [[erfolgsmeldung_ohne_wirkung]] */
-const alleSauber = !weicht && !zeitRot.length && !rueckwaerts.length && !unterRueckwaerts.length && !zukunft.length;
-if (alleSauber) console.log('\n✅ Alle drei Pruefungen sauber: Datum, Uhrzeit, Reihenfolge.');
+/* ---------- 4. DIE ZEILEN DER TO-DO GEGEN IHRE COMMITS UND DIE DATEI -------
+ *
+ * ⛔⛔ DER ANLASS: ACHT MAL AN EINEM TAG (09.09.2026)
+ *
+ * Die Abschnitte oben pruefen `Vokabeltrainer-Arabisch.md`. Die Uhrzeiten, die
+ * ich an diesem Tag ACHT MAL nach oben gerundet habe, standen aber woanders:
+ * in der Tabelle „✅ Erledigt in dieser Schicht" der To-Do — Zeilen der Form
+ *   | 13:54 | … | `4c7dd93` |
+ * und die hat bis heute niemand angesehen.
+ *
+ * ⭐ Der Mechanismus des Fehlers: messen, einen langen Eintrag schreiben, und
+ * beim Tippen des Zeitstempels die Schreibdauer dazurechnen. Ein Zeitstempel
+ * darf altern, aber nicht wachsen. [[uhrzeit_messen_nicht_schaetzen]]
+ *
+ * ZWEI REGELN, beide ohne Ermessen:
+ *
+ *   (a) Keine Zeile darf spaeter sein als die DATEI selbst. Die mtime sagt,
+ *       wann zuletzt geschrieben wurde; eine Zeile, die danach liegt, kann
+ *       niemand getippt haben.
+ *   (b) Keine Zeile darf frueher sein als der Commit, den sie NENNT. Man kann
+ *       nicht berichten, was noch nicht passiert ist.
+ *
+ * ⚠️ Was sie NICHT prueft: eine Zeile, die absichtlich einen frueheren Vorgang
+ * nachtraegt („| 10:45 | …" um 13:00 geschrieben). Das ist erlaubt und haeufig.
+ * Deshalb greift (a) nur nach oben und (b) nur nach unten.
+ */
+/* Das Urteil steht als eigene Funktion da, damit der Stoertest darunter GENAU
+   sie prueft und keinen Nachbau. [[testvorlage_selbst_nachgebaut]] */
+function zeileWiderspricht(zeitMin, mtimeMin, commitMin){
+  if (zeitMin > mtimeMin + TOLERANZ_MIN) return 'spaeter als die Datei';
+  if (commitMin != null && zeitMin + TOLERANZ_MIN < commitMin) return 'frueher als ihr Commit';
+  return null;
+}
+const todoRot = [];
+let todoZeilen = 0;
+try {
+  const TODO = 'G:\\1. Workspace\\Obsidian\\Gedächtnis\\Elias Gedächtnis\\03 - Projekte\\To-Do Vokabeltrainer.md';
+  if (existsSync(TODO)){
+    const roh = readFileSync(TODO, 'utf8').split(/\r?\n/);
+    const stat = statSync(TODO);
+    const mtimeMin = stat.mtime.getHours() * 60 + stat.mtime.getMinutes();
+    const heuteDatei = String(stat.mtime.getDate()).padStart(2, '0') + '.'
+      + String(stat.mtime.getMonth() + 1).padStart(2, '0') + '.' + stat.mtime.getFullYear();
+    /* ⛔⛔ NUR DIE TABELLE DER LAUFENDEN SCHICHT. Der erste Lauf durchsuchte die
+       ganze Datei und meldete sieben Zeilen — alle sieben waren Fehlalarme:
+       vier Zitatzeilen einer aelteren Nacht („| 22:49 | „Das heisst, immer wenn
+       ihr seht …"") und drei VIDEOSTELLEN aus einem Transkript („| 45:10 |").
+       45:10 ist gar keine Uhrzeit. Ein Muster, das ueberall sucht, findet
+       ueberall etwas. [[kandidatenliste_ist_keine_fehlerliste]]
+       Der Anker ist die Ueberschrift der Tabelle; sie endet am naechsten `---`
+       oder an der naechsten Ueberschrift. */
+    const von = roh.findIndex(z => /^###\s+✅\s+Erledigt in dieser Schicht/.test(z));
+    let bis = roh.length;
+    if (von >= 0){
+      for (let k = von + 1; k < roh.length; k++){
+        if (/^---\s*$/.test(roh[k]) || /^#{2,3}\s/.test(roh[k])){ bis = k; break; }
+      }
+    }
+    /* Nur solange die Datei von HEUTE ist — sonst vergleicht man Tage. */
+    if (heuteDatei === HEUTE_DE && von >= 0){
+      for (let i = von; i < bis; i++){
+        const m = roh[i].match(/^\|\s*(\d{2}:\d{2})\s*\|/);
+        if (!m || Number(m[1].slice(0, 2)) > 23) continue;
+        todoZeilen++;
+        const t = minuten(m[1]);
+        /* Der genannte Commit, wenn es einen gibt und er von heute ist. */
+        let commitMin = null, cHash = null, cZeit = null;
+        const h = roh[i].match(/`([0-9a-f]{7})`/);
+        if (h){
+          const cz = commitTag(h[1]);          // aus der schon geladenen Karte
+          const cm = cz && cz.match(/^(\d{2}\.\d{2}\.\d{4}) (\d{2}:\d{2})$/);
+          if (cm && cm[1] === HEUTE_DE){ commitMin = minuten(cm[2]); cHash = h[1]; cZeit = cm[2]; }
+        }
+        const grund = zeileWiderspricht(t, mtimeMin, commitMin);
+        if (grund) todoRot.push({ zeile: i + 1, zeit: m[1], grund: grund === 'spaeter als die Datei'
+          ? 'spaeter als die Datei zuletzt geschrieben wurde ('
+            + String(stat.mtime.getHours()).padStart(2, '0') + ':'
+            + String(stat.mtime.getMinutes()).padStart(2, '0') + ')'
+          : 'frueher als der genannte Commit ' + cHash + ' (' + cZeit + ')' });
+      }
+    }
+  }
+} catch (e){
+  todoRot.push({ zeile: 0, zeit: '--:--', grund: 'To-Do nicht pruefbar: ' + e.message });
+}
+/* ⛔ STOERTEST fuer Abschnitt 4. Ohne ihn heisst „keine widerspricht sich" nur,
+   dass die Schleife gelaufen ist. Beide Richtungen, und die Toleranz mit. */
+{
+  const p = [];
+  const sp = (was, ist, soll) => { if (ist !== soll) p.push(was + ': ' + JSON.stringify(ist)); };
+  sp('eine Zeile NACH der Datei faellt auf', zeileWiderspricht(800, 700, null), 'spaeter als die Datei');
+  sp('eine Zeile VOR der Datei nicht',       zeileWiderspricht(600, 700, null), null);
+  sp('genau die Toleranz geht noch durch',   zeileWiderspricht(700 + TOLERANZ_MIN, 700, null), null);
+  sp('eine Minute mehr nicht',               zeileWiderspricht(700 + TOLERANZ_MIN + 1, 700, null), 'spaeter als die Datei');
+  sp('eine Zeile VOR ihrem Commit faellt auf', zeileWiderspricht(600, 900, 650), 'frueher als ihr Commit');
+  sp('eine Zeile NACH ihrem Commit nicht',     zeileWiderspricht(700, 900, 650), null);
+  sp('ohne Commit wird nur die Datei geprueft', zeileWiderspricht(600, 900, null), null);
+  if (p.length){
+    console.log('');
+    console.log('⛔ Der Stoertest von Abschnitt 4 greift nicht — die Zeile darunter misst nichts:');
+    for (const x of p) console.log('     ' + x);
+    todoRot.push({ zeile: 0, zeit: '--:--', grund: 'Stoertest gescheitert' });
+  }
+}
+console.log('');
+console.log('  Zeilen der To-Do (heute):  ' + todoZeilen + ' geprueft, '
+  + (todoRot.length ? '❌ ' + todoRot.length + ' widersprechen sich' : '✅ keine widerspricht sich'));
+for (const r of todoRot.slice(0, 8))
+  console.log('     ❌ Z' + String(r.zeile).padStart(5) + '  ' + r.zeit + '  ' + r.grund);
+if (todoRot.length > 8) console.log('     … und ' + (todoRot.length - 8) + ' weitere');
+
+const alleSauber = !weicht && !zeitRot.length && !rueckwaerts.length && !unterRueckwaerts.length && !zukunft.length && !todoRot.length;
+if (alleSauber) console.log('\n✅ Alle vier Pruefungen sauber: Datum, Uhrzeit, Reihenfolge, To-Do-Zeilen.');
 else if (!weicht) console.log('\n✅ Kein Datum widerspricht seinen Commits'
   + (rueckwaerts.length || zeitRot.length ? ' — aber siehe unten.' : '.'));
 else console.log('\n⚠️  ' + weicht + ' Überschrift(en) prüfen — und NICHT blind umschreiben:'
@@ -689,4 +800,4 @@ if (zukunft.length){
   console.log('   Die kann niemand geschrieben haben — sie sind geschaetzt. Die Uhr');
   console.log('   und die Commit-Zeit sind die Quellen, nicht die Erinnerung.');
 }
-process.exit(weicht || zeitRot.length || rueckwaerts.length || unterRueckwaerts.length || zukunft.length ? 1 : 0);
+process.exit(weicht || zeitRot.length || rueckwaerts.length || unterRueckwaerts.length || zukunft.length || todoRot.length ? 1 : 0);
