@@ -63,8 +63,15 @@ if ('serviceWorker' in navigator){
      altes JavaScript, bis sie ein zweites Mal geöffnet wird) gilt weiter;
      er ist im Gedächtnis festgehalten, nicht in der App.
      [[schweigen_ist_kein_auftrag]] [[keine_meldung_ohne_seine_handlung]] */
+  /* ⛔⛔ NICHT MEHR STILL (09.09.2026). Scheitert die Anmeldung, hat die App
+     KEINEN Offline-Betrieb und keinen Weg, sich zu erneuern — und niemand
+     erfaehrt es. Das ist der teuerste geschluckte Fehler der ganzen App:
+     ohne Service Worker ist sie ein Browser-Tab mit Internetzwang.
+     Der Fehler wird weiter abgefangen (ein Absturz waere schlimmer), aber er
+     steht jetzt in der Diagnosekarte. [[ausfall_ist_unsichtbar_gebaut]] */
   window.addEventListener('load', ()=>{
-    navigator.serviceWorker.register('sw.js').catch(()=>{});
+    navigator.serviceWorker.register('sw.js')
+      .catch(e => stillerFehler('Service Worker meldet sich nicht an — kein Offline-Betrieb', e));
   });
 }
 

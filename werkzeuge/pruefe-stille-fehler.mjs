@@ -74,6 +74,42 @@ for (const f of dateien) {
 }
 console.log('  ok   ' + begruendet + ' von ' + leerGesamt + ' schweigenden catch-Bloecken tragen ihre Begruendung.');
 
+/* ---------- 1b. Der ZWEITE Weg, einen Fehler zu schlucken ----------
+
+   ⛔ Am 09.09.2026 nachgetragen, nachdem Punkt 1 fertig schien: `catch {}` ist
+   nur die eine Schreibweise. `promise.catch(() => {})` schluckt genauso — und
+   davon gab es VIER, darunter der teuerste der ganzen App:
+
+     js/init.js:  navigator.serviceWorker.register('sw.js').catch(()=>{})
+
+   Scheitert die Anmeldung, hat die App keinen Offline-Betrieb und keinen Weg,
+   sich zu erneuern. Sie ist dann ein Browser-Tab mit Internetzwang, und
+   niemand erfaehrt es. Ein Pruefer, der nur eine Schreibweise kennt, meldet
+   gruen und beweist nur die geprueften.
+   [[gruener_pruefer_beweist_nur_geprueftes]] [[blickwinkel_durchprobieren]] */
+const STILL_PROMISE = /\.catch\s*\(\s*(?:\(\s*[A-Za-z_$][\w$]*\s*\)|[A-Za-z_$][\w$]*|\(\s*\))\s*=>\s*(?:\{\s*\}|null|undefined|0|false)\s*\)/g;
+let promiseOffen = 0;
+for (const f of dateien) {
+  const q = fs.readFileSync(path.join(JS, f), 'utf8');
+  const rein = ohneKommentareUndTexte(q);
+  let m; STILL_PROMISE.lastIndex = 0;
+  while ((m = STILL_PROMISE.exec(rein))) {
+    promiseOffen++;
+    rot('js/' + f + ':' + zeileVon(q, m.index) + ': `.catch(() => {})` schluckt eine abgelehnte Zusage stumm — '
+      + 'entweder `stillerFehler(...)` hineinschreiben oder einen Grund als Kommentar.');
+  }
+}
+if (!promiseOffen) console.log('  ok   Keine abgelehnte Zusage wird stumm geschluckt.');
+
+/* Stoertest fuer 1b: das Muster muss den bekannten Fall FINDEN. */
+STILL_PROMISE.lastIndex = 0;
+if (!STILL_PROMISE.test("register('sw.js').catch(()=>{});")) rot('Stoertest 1b wirkungslos: das Muster findet den bekannten Fall nicht.');
+else {
+  STILL_PROMISE.lastIndex = 0;
+  if (STILL_PROMISE.test("register('sw.js').catch(e => melde(e));")) rot('Stoertest 1b wirkungslos: das Muster meldet auch einen echten Melder.');
+  else console.log('  ok   Stoertest: findet `.catch(()=>{})`, schweigt bei `.catch(e => melde(e))`.');
+}
+
 /* ---------- 2. Das Protokoll selbst muss vorhanden und verdrahtet sein ----------
    ⛔ Ein Melder ohne Anzeige ist genau der Ausfall, den er verhindern soll.
    [[werkzeug_ohne_aufrufer]] */
