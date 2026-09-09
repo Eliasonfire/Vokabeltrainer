@@ -2999,6 +2999,10 @@ main{
    arabische Schrift auseinander (am 10.08.2026 mit +23,3 % Breite gemessen).
    Die groessere Zeilenhoehe ist Absicht: die Harakat sitzen ueber und unter
    dem Wort und stiessen sonst in die Zeile darueber. */
+/* ⛔ Nur die Bidi-Isolation, keine Schriftgroesse: der Regel-Aufklapper
+   soll aussehen wie bisher, aber „مُسْلِمٌ → مُسْلِمَةٌ" darf nicht
+   rueckwaerts stehen. Begruendung bei .mn-ar darunter. */
+.gp-ar{unicode-bidi:isolate}
 .mn-ar{
   font-family:var(--font-ar);
   /* 1⅔ statt der doppelten Groesse. Erst stand hier `1em * --ar-faktor`, also

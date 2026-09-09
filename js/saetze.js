@@ -1011,7 +1011,20 @@ function zeigeGrammatikPopover(span){
   const voll = String(rule.shortExplanation || '');
   const kern = kernSatz(voll);
   const rest = voll.slice(kern.length).trim();
-  pop.innerHTML = `<div class="gp-title">${escapeHtml(rule.name)}</div>`
+  /* ⛔⛔ ARABISCHE LAEUFE EINPACKEN, sonst kippt ein Pfeil dazwischen den
+     ganzen Ausdruck (09.09.2026, im Browser gemessen). Drei Regeln zeigen eine
+     Umformung: „اَلْمَسْجِدُ → فِي الْمَسْجِدِ", „مُسْلِمٌ → مُسْلِمَةٌ" und die
+     Kette „أَنْتَ → ـْتَ · أَنْتُمْ → ـْتُمْ". Der Pfeil ist ein NEUTRALES
+     Zeichen; zwischen zwei arabischen Laeufen bekommt er deren Richtung, und
+     die Umformung stand rueckwaerts da — also genau falsch herum gelesen.
+
+     ⭐ `gp-ar` setzt NUR `unicode-bidi:isolate`, keine Schriftgroesse: das
+     Aussehen des Aufklappers bleibt, die Reihenfolge wird richtig.
+     ⚠️ `arabischHervorheben` maskiert selbst — deshalb hier KEIN
+     zusaetzliches escapeHtml, sonst stuenden die Entities im Text.
+     [[rtl_richtung_physisch]] */
+  const mitAr = (s) => arabischHervorheben(String(s == null ? '' : s), 'gp-ar');
+  pop.innerHTML = `<div class="gp-title">${mitAr(rule.name)}</div>`
     /* ⭐ WAS DIE MARKIERTE STELLE BEDEUTET — steht VOR der Regel, nicht danach.
        Elias am 26.08.2026 an مَا اسْمُكِ؟ ("Wie heißt du?"): "wäre es auch
        glaube ich gut, wenn dann die grammatikregeln kommt das da auch steht,
@@ -1026,10 +1039,10 @@ function zeigeGrammatikPopover(span){
        Regel possessiv-endungen-01 markiert einmal ـكَ und einmal ـكِ. */
     + (span.dataset.bedeutung
         ? `<div class="gp-bedeutung">${escapeHtml(span.dataset.bedeutung)}</div>` : '')
-    + `<div class="gp-kern">${fett(escapeHtml(kern))}</div>`
+    + `<div class="gp-kern">${fett(mitAr(kern))}</div>`
     + (rest
         ? `<button class="gp-mehr" type="button">ausführlich</button>`
-          + `<div class="gp-rest hidden">${fett(escapeHtml(rest))}</div>`
+          + `<div class="gp-rest hidden">${fett(mitAr(rest))}</div>`
         : '')
     + `<div class="gp-source">${escapeHtml(quelle.join(' · '))}</div>`
     /* ⛔ 21.08.2026: WEITERE REGELN AN DERSELBEN STELLE.
