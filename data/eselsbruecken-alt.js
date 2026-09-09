@@ -1921,4 +1921,62 @@ const ESELSBRUECKEN_ALT = {
     'ثُمَّ لَتُسْأَلُنَّ يَوْمَئِذٍ — „Dann werdet ihr an jenem Tag gefragt" — عَنِ النَّعِيمِ — „nach der Wonne". Der Schlussvers von سُورَةُ التَّكَاثُر (102:8), die du auswendig kannst. ⭐ Zwei Dinge auf einmal: النَّعِيمِ endet auf Kasra, weil عَنْ es مَجْرُور macht — und عَنْ selbst wird zu عَنِ, weil das nächste Wort mit اَلْ beginnt. Dieselbe Verbindung steht in سُورَةُ الْمَاعُون: عَنْ صَلَاتِهِمْ (107:5).',
     'عَنْ ist der achte im Bund. Dein Lehrer listet in der Musterlösung unter „nenne alle, die du bisher gelernt hast" acht حُرُوف الْجَرّ auf: مِنْ (aus/von) · إِلَى (zu/nach) · عَنْ (von/über) · عَلَى (auf) · فِي (in) · und dazu die drei, die am nächsten Wort kleben. ⭐ Alle acht tun dasselbe: sie machen das folgende Nomen مَجْرُور. Sieben davon standen in dieser App — عَنْ war das einzige, das fehlte.'
   ],
+
+  /* ===== Pluralkarten: der gesunde Maskulinplural auf ـُونَ =====
+     ⛔ Am 09.09.2026 gemessen: 122 Woerter haben eine Pluralkarte, und bei
+     103 davon sprach KEIN geerbter Text vom Plural — sie erklaerten die
+     Bedeutung, waehrend die Karte nach der Form fragt.
+     ⭐ Diese 16 Texte stehen VOR den geerbten (js/lernen.js nimmt eigene
+     Eintraege zuerst). Sie behaupten nichts: fuer jedes einzelne Wort wurde
+     nachgerechnet, dass der Plural exakt „Singular ohne Tanwin + ـُونَ" ist —
+     16 von 16. Die Beispiele sind seine eigenen Woerter, keine fremden.
+     [[eselsbruecken_an_bekanntes_anknuepfen]] [[regeln_selbst_auswerten]] */
+  '45772#pl': [   /* مُدَرِّسٌ → مُدَرِّسُونَ */
+    '⭐ Dieser Plural ist kein neues Wort: an مُدَرِّسٌ hängt sich nur ـُونَ — مُدَرِّسُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel بَارِدٌ → بَارِدُونَ und جَالِسٌ → جَالِسُونَ. Wer den Singular kann, kann diesen Plural.'
+  ],
+  '45787#pl': [   /* بَارِدٌ → بَارِدُونَ */
+    '⭐ Dieser Plural ist kein neues Wort: an بَارِدٌ hängt sich nur ـُونَ — بَارِدُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel جَالِسٌ → جَالِسُونَ und وَاقِفٌ → وَاقِفُونَ. Wer den Singular kann, kann diesen Plural.'
+  ],
+  '45789#pl': [   /* جَالِسٌ → جَالِسُونَ */
+    '⭐ Dieser Plural ist kein neues Wort: an جَالِسٌ hängt sich nur ـُونَ — جَالِسُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel وَاقِفٌ → وَاقِفُونَ und قَرِيبٌ → قَرِيبُونَ. Wer den Singular kann, kann diesen Plural.'
+  ],
+  '45790#pl': [   /* وَاقِفٌ → وَاقِفُونَ */
+    '⭐ Dieser Plural ist kein neues Wort: an وَاقِفٌ hängt sich nur ـُونَ — وَاقِفُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel قَرِيبٌ → قَرِيبُونَ und بَعِيدٌ → بَعِيدُونَ. Wer den Singular kann, kann diesen Plural.'
+  ],
+  '45793#pl': [   /* قَرِيبٌ → قَرِيبُونَ */
+    '⭐ Dieser Plural ist kein neues Wort: an قَرِيبٌ hängt sich nur ـُونَ — قَرِيبُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel بَعِيدٌ → بَعِيدُونَ und نَظِيفٌ → نَظِيفُونَ. Wer den Singular kann, kann diesen Plural.'
+  ],
+  '45794#pl': [   /* بَعِيدٌ → بَعِيدُونَ */
+    '⭐ Dieser Plural ist kein neues Wort: an بَعِيدٌ hängt sich nur ـُونَ — بَعِيدُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel نَظِيفٌ → نَظِيفُونَ und وَسِخٌ → وَسِخُونَ. Wer den Singular kann, kann diesen Plural.'
+  ],
+  '45795#pl': [   /* نَظِيفٌ → نَظِيفُونَ */
+    '⭐ Dieser Plural ist kein neues Wort: an نَظِيفٌ hängt sich nur ـُونَ — نَظِيفُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel وَسِخٌ → وَسِخُونَ und جَمِيلٌ → جَمِيلُونَ. Wer den Singular kann, kann diesen Plural.'
+  ],
+  '45796#pl': [   /* وَسِخٌ → وَسِخُونَ */
+    '⭐ Dieser Plural ist kein neues Wort: an وَسِخٌ hängt sich nur ـُونَ — وَسِخُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel جَمِيلٌ → جَمِيلُونَ und حُلْوٌ → حُلْوُونَ. Wer den Singular kann, kann diesen Plural.'
+  ],
+  '45805#pl': [   /* جَمِيلٌ → جَمِيلُونَ */
+    '⭐ Dieser Plural ist kein neues Wort: an جَمِيلٌ hängt sich nur ـُونَ — جَمِيلُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel حُلْوٌ → حُلْوُونَ und مُدِيرٌ → مُدِيرُونَ. Wer den Singular kann, kann diesen Plural.'
+  ],
+  '45806#pl': [   /* حُلْوٌ → حُلْوُونَ */
+    '⭐ Dieser Plural ist kein neues Wort: an حُلْوٌ hängt sich nur ـُونَ — حُلْوُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel مُدِيرٌ → مُدِيرُونَ und مُغْلَقٌ → مُغْلَقُونَ. Wer den Singular kann, kann diesen Plural.'
+  ],
+  '45820#pl': [   /* مُدِيرٌ → مُدِيرُونَ */
+    '⭐ Dieser Plural ist kein neues Wort: an مُدِيرٌ hängt sich nur ـُونَ — مُدِيرُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel مُغْلَقٌ → مُغْلَقُونَ und فَلَّاحٌ → فَلَّاحُونَ. Wer den Singular kann, kann diesen Plural.'
+  ],
+  '45837#pl': [   /* مُغْلَقٌ → مُغْلَقُونَ */
+    '⭐ Dieser Plural ist kein neues Wort: an مُغْلَقٌ hängt sich nur ـُونَ — مُغْلَقُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel فَلَّاحٌ → فَلَّاحُونَ und مُؤَذِّنٌ → مُؤَذِّنُونَ. Wer den Singular kann, kann diesen Plural.'
+  ],
+  '45845#pl': [   /* فَلَّاحٌ → فَلَّاحُونَ */
+    '⭐ Dieser Plural ist kein neues Wort: an فَلَّاحٌ hängt sich nur ـُونَ — فَلَّاحُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel مُؤَذِّنٌ → مُؤَذِّنُونَ und مُجْتَهِدٌ → مُجْتَهِدُونَ. Wer den Singular kann, kann diesen Plural.'
+  ],
+  '45866#pl': [   /* مُؤَذِّنٌ → مُؤَذِّنُونَ */
+    '⭐ Dieser Plural ist kein neues Wort: an مُؤَذِّنٌ hängt sich nur ـُونَ — مُؤَذِّنُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel مُجْتَهِدٌ → مُجْتَهِدُونَ und مَشْهُورٌ → مَشْهُورُونَ. Wer den Singular kann, kann diesen Plural.'
+  ],
+  '45881#pl': [   /* مُجْتَهِدٌ → مُجْتَهِدُونَ */
+    '⭐ Dieser Plural ist kein neues Wort: an مُجْتَهِدٌ hängt sich nur ـُونَ — مُجْتَهِدُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel مَشْهُورٌ → مَشْهُورُونَ und مُدَرِّسٌ → مُدَرِّسُونَ. Wer den Singular kann, kann diesen Plural.'
+  ],
+  '45882#pl': [   /* مَشْهُورٌ → مَشْهُورُونَ */
+    '⭐ Dieser Plural ist kein neues Wort: an مَشْهُورٌ hängt sich nur ـُونَ — مَشْهُورُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel مُدَرِّسٌ → مُدَرِّسُونَ und بَارِدٌ → بَارِدُونَ. Wer den Singular kann, kann diesen Plural.'
+  ],
 };
