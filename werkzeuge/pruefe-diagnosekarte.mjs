@@ -66,6 +66,7 @@ if (definiert('gibtEsGarNichtXyz')) {
 
 console.log('Die Diagnosekarte fragt ' + namen.length + ' Funktionen ueber einen typeof-Riegel ab.\n');
 let fehlen = 0;
+let zuLang = 0;   /* zweite Ursache, eigener Zaehler — siehe ganz unten */
 for (const n of namen) {
   const da = definiert(n);
   if (!da) fehlen++;
@@ -86,11 +87,68 @@ for (const n of namen) {
   if (!ok) fehlen++;
 }
 
+/* ---------- Passt die Karte noch auf ein Bildschirmfoto? ----------
+
+   ⛔⛔ Sie ist Elias' einziger Kanal: er fotografiert sie. Bei 375 px Breite
+   belegt sie 674 von 812 px — knapp, gemessen am 09.09.2026. Das
+   Ringprotokoll der geschluckten Fehler fasst bis zu 30 Eintraege, und die
+   stehen ganz UNTEN. Kaemen sie alle, waere die Karte doppelt so lang wie der
+   Bildschirm — ausgerechnet dann, wenn sie am meisten zu sagen hat.
+
+   ⚠️ Geprueft wird nicht, ob die Begrenzung im Quelltext STEHT, sondern was
+   sie TUT: die Funktion wird aus js/einstellungen.js geschnitten und
+   aufgerufen. [[zusicherung_im_kommentar_ist_keine_pruefung]]
+   [[testvorlage_selbst_nachgebaut]] */
+{
+  const a = karte.indexOf('const KARTE_FEHLER_MAX');
+  let kappen = null;
+  if (a >= 0){
+    let tiefe = 0, ende = -1;
+    for (let i = karte.indexOf('{', karte.indexOf('function stilleFehlerFuerKarte', a)); i < karte.length; i++){
+      if (karte[i] === '{') tiefe++;
+      else if (karte[i] === '}'){ tiefe--; if (!tiefe){ ende = i; break; } }
+    }
+    if (ende > 0){
+      try { kappen = new Function(karte.slice(a, ende + 1) + '\n;return stilleFehlerFuerKarte;')(); }
+      catch (e){ /* faellt unten als „fehlt" auf */ }
+    }
+  }
+  if (typeof kappen !== 'function'){
+    zuLang++;
+    console.log('  ⛔  stilleFehlerFuerKarte() fehlt — die Karte kann auf 30+ Zeilen wachsen');
+    console.log('      und passt dann auf kein Bildschirmfoto mehr.');
+  } else {
+    const viele = Array.from({ length: 30 }, (_, i) => '  Fehler ' + i);
+    const kurz  = kappen(viele);
+    const wenig = kappen(['  a', '  b']);
+    const leer  = kappen([]);
+    const proben = [
+      ['30 Eintraege werden gekappt',        kurz.length <= 8],
+      ['und die Restzahl steht dabei',       /und 24 weitere/.test(kurz.join('\n'))],
+      ['die neuesten bleiben stehen',        kurz[0] === '  Fehler 0'],
+      ['wenige bleiben unveraendert',        wenig.length === 2 && wenig[1] === '  b'],
+      ['leer bleibt leer',                   leer.length === 0],
+    ];
+    for (const [was, ok] of proben){
+      if (!ok) zuLang++;
+      console.log('  ' + (ok ? 'ok  ' : '⛔  ') + was);
+    }
+  }
+}
+
 console.log('');
+/* ⚠️ Zwei Ursachen, zwei Zaehler — sonst steht am Ende „2 Funktion(en) gibt es
+   nicht mehr" ueber einer zu langen Karte, und man sucht an der falschen
+   Stelle. [[kennzeichen_mit_zwei_ursachen]] [[widerspruch_liegt_in_der_beschriftung]] */
 if (fehlen) {
   console.log('⛔ ' + fehlen + ' Funktion(en) gibt es nicht mehr. Die Karte meldet dann NICHTS,');
   console.log('   und das sieht aus wie „nichts zu melden".');
-  process.exit(1);
 }
-console.log('✅ Jede Quelle der Diagnosekarte existiert.');
+if (zuLang) {
+  console.log('⛔ ' + zuLang + ' Probe(n) zur Laenge gescheitert: die Karte kann laenger werden');
+  console.log('   als ein Bildschirmfoto. Sie ist Elias’ einziger Kanal — was unten');
+  console.log('   herausfaellt, sieht niemand.');
+}
+if (fehlen || zuLang) process.exit(1);
+console.log('✅ Jede Quelle der Diagnosekarte existiert, und sie passt auf ein Bild.');
 process.exit(0);

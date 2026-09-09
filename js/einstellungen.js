@@ -1162,9 +1162,29 @@ function diagnoseText(){
   try { still = (typeof stilleFehlerZeilen === 'function') ? stilleFehlerZeilen() : ['  — (Protokoll fehlt)']; }
   catch (e){ still = ['  — (Protokoll unlesbar: ' + (e && e.message) + ')']; }
   if (!still.length) zeilen.push('  (keine — gut)');
-  else still.forEach(z => zeilen.push(z));
+  else stilleFehlerFuerKarte(still).forEach(z => zeilen.push(z));
 
   return zeilen.join('\n');
+}
+
+/* ⛔⛔ DIE KARTE MUSS AUF EIN BILDSCHIRMFOTO PASSEN (09.09.2026).
+ *
+ * Sie ist Elias' einziger Kanal: er fotografiert sie und schickt das Bild.
+ * Bei 375 px Breite belegt sie 674 von 812 px — knapp, gemessen. Das
+ * Ringprotokoll fasst aber bis zu 30 Einträge, und die stehen ganz unten.
+ * Kämen sie alle, wäre die Karte doppelt so lang wie der Bildschirm, und
+ * ausgerechnet in dem Moment, in dem sie am meisten zu sagen hat, wäre sie
+ * nicht mehr in einem Bild zu erfassen.
+ *
+ * ⭐ Die Zahl steht trotzdem vollständig da — oben in der Warnzeile und hier
+ * im „… und N weitere". Gekürzt wird die Liste, nicht die Auskunft.
+ * [[zwischenstand_wird_nicht_mitgebaut]] */
+const KARTE_FEHLER_MAX = 6;
+function stilleFehlerFuerKarte(zeilen, max = KARTE_FEHLER_MAX){
+  const alle = Array.isArray(zeilen) ? zeilen : [];
+  if (alle.length <= max) return alle.slice();
+  return alle.slice(0, max)
+    .concat(['  … und ' + (alle.length - max) + ' weitere (die neuesten stehen oben)']);
 }
 
 document.getElementById('btnDiagnose')?.addEventListener('click', ()=>{
