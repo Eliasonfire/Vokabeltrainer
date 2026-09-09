@@ -976,6 +976,84 @@ console.log('=== 8. Abgelehnte Vorschlaege: steht einer noch drin? ===');
   }
 }
 
+/* ---------- 8b. Erbt die Pluralkarte, was er am Singular weggeworfen hat? ----
+
+   ⛔⛔ Seit dem 09.09.2026 erben Pluralkarten die Eselsbruecken ihres Singulars
+   (js/lernen.js, „⭐ Vom Singular … — die Karte hier fragt den Plural: "). Das
+   fuellt 192 leere Karten — und traegt zugleich die Gefahr, dass ein Text, den
+   Elias am Singular als unbrauchbar markiert hat, auf der Pluralkarte wieder
+   auftaucht. Mit einer Vorbemerkung davor, also nicht einmal als derselbe Text
+   erkennbar. Genau darueber hat er sich in derselben Nacht beschwert.
+
+   Geprueft wird BEIDES, weil eines ohne das andere nichts wert ist:
+     a) das Werkzeug wirkt  — istVorschlagVerworfen() wird aus js/kern.js
+        geschnitten und an den ECHTEN Ablehnungen befragt
+     b) es wird benutzt     — die Erbzeile in js/lernen.js ruft es auf
+   Ein Melder ohne Aufrufer ist genau der Ausfall, den er verhindern soll.
+   [[werkzeug_ohne_aufrufer]] [[zusicherung_im_kommentar_ist_keine_pruefung]] */
+{
+  const kern = fs.readFileSync(path.join(WURZEL, 'js', 'kern.js'), 'utf8');
+  const a = kern.indexOf('function istVorschlagVerworfen');
+  let fn = null;
+  if (a >= 0){
+    let tiefe = 0, ende = -1;
+    for (let i = kern.indexOf('{', a); i < kern.length; i++){
+      if (kern[i] === '{') tiefe++;
+      else if (kern[i] === '}'){ tiefe--; if (!tiefe){ ende = i; break; } }
+    }
+    if (ende > 0){
+      try {
+        fn = new Function('VORSCHLAG_WEG',
+          kern.slice(a, ende + 1) + '\n;return istVorschlagVerworfen;');
+      } catch (e){ fn = null; }
+    }
+  }
+  if (!fn) melde('istVorschlagVerworfen() liess sich nicht aus js/kern.js schneiden —'
+    + ' die Ablehnungen sind hier NICHT gemessen.');
+  else {
+    /* Der Speicher, wie ihn die App fuehrt: je Wort ein Objekt {nr: {text}}. */
+    let woerter = {};
+    try { woerter = JSON.parse(fs.readFileSync(path.join(WURZEL, 'data', 'abgelehnt.json'), 'utf8')).woerter || {}; }
+    catch (e){ /* Abschnitt 8 hat das schon gemeldet */ }
+    const speicher = {};
+    for (const id of Object.keys(woerter)){
+      speicher[id] = {};
+      woerter[id].forEach(e => { speicher[id][String(e.nr)] = { text: String(e.text || '') }; });
+    }
+    const verworfen = fn(speicher);
+    let ok = 0, schief = 0;
+    for (const id of Object.keys(woerter)){
+      for (const e of woerter[id]){
+        if (verworfen(id, e.nr, e.text)) ok++;
+        else { schief++; melde('Ablehnung nicht wiedererkannt: ' + id + ' Nr. ' + e.nr); }
+      }
+      /* Gegenprobe: ein Text, den es nicht gibt, darf NICHT als abgelehnt
+         gelten — sonst bestuende auch eine Funktion, die immer true sagt.
+         [[leere_datei_besteht_jeden_test]] */
+      if (verworfen(id, 0, 'Diesen Satz hat nie jemand vorgeschlagen.'))
+        melde('istVorschlagVerworfen() haelt einen fremden Text fuer abgelehnt (' + id + ')');
+    }
+    console.log('  ' + ok + ' Ablehnung(en) werden von istVorschlagVerworfen() wiedererkannt'
+      + (schief ? ', ' + schief + ' NICHT' : '') + '.');
+    geprueft += ok;
+
+    /* ---- und ob die Erbzeile sie ueberhaupt fragt ---- */
+    const lern = fs.readFileSync(path.join(WURZEL, 'js', 'lernen.js'), 'utf8');
+    const erbe = (t) => {
+      const i = t.indexOf('const geerbt = vorschlagsListe(sg)');
+      return i >= 0 && /istVorschlagVerworfen/.test(t.slice(i, i + 260));
+    };
+    if (!erbe(lern))
+      melde('js/lernen.js: die Pluralkarte erbt UNGEFILTERT — ein am Singular'
+        + ' abgelehnter Text kaeme dort wieder, mit einer Vorbemerkung davor.');
+    else console.log('  ok   die Pluralkarte erbt nur, was am Singular nicht abgelehnt ist.');
+    /* Stoertest: faellt der Aufruf weg, muss es auffallen. */
+    if (erbe(lern.replace(/istVorschlagVerworfen/g, 'xxx')))
+      melde('Stoertest 8b wirkungslos: auch ohne den Aufruf gilt die Erbzeile als gefiltert.');
+    else console.log('  ok   Stoertest: ohne den Aufruf wuerde es gemeldet.');
+  }
+}
+
 console.log('');
 if (hinweise.length){
   console.log('=== Hinweise (kein Fehler — Elias entscheidet) ===');

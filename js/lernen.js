@@ -923,7 +923,20 @@ function vorschlagsListe(w){
          zwei Kennzeichen, weil das eine deutsch und das andere arabisch ist. */
       const plForm = String(w.ar || '').split('/')[0].trim();
       const passt = (t) => /\bPlural\b/i.test(t) || (plForm && t.indexOf(plForm) >= 0);
-      const geerbt = vorschlagsListe(sg);
+      /* ⛔⛔ WAS ER AM SINGULAR WEGGEWORFEN HAT, KOMMT HIER NICHT WIEDER
+         (09.09.2026). Sonst muesste er denselben Text zweimal ablehnen — und
+         beim zweiten Mal saehe er ihn mit einer Vorbemerkung davor, also nicht
+         einmal als denselben. Genau darueber hat er sich heute Nacht
+         beschwert: „bei dem wort stern da habe ich alle 3 vorschläge damals
+         schon als unbrauchbar markiert."
+
+         ⚠️ Heute trifft es 0 Karten (122 Woerter mit Pluralkarte, 372 geerbte
+         Texte, gemessen am 09.09.2026) — weil die abgelehnten Texte beim
+         Ersetzen aus den Listen verschwunden sind. Es ist der Riegel fuer das
+         NAECHSTE Mal, dass er den Knopf drueckt. Bewacht von
+         pruefe-eselsbruecken.js. [[bedingung_wird_durch_die_handlung_ungueltig]] */
+      const geerbt = vorschlagsListe(sg).filter((t, i) =>
+        !(typeof istVorschlagVerworfen === 'function' && istVorschlagVerworfen(sg.id, i, t)));
       const sortiert = geerbt.filter(passt).concat(geerbt.filter(t => !passt(t)));
       sortiert.forEach(t => {
         const s = vorn + t;
