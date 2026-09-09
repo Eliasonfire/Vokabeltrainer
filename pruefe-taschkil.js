@@ -956,6 +956,42 @@ const andereFormen = (wort) => {
   return s ? [...s].filter(f => f !== wort) : [];
 };
 
+/* ⭐⭐ WIE VIELE FRAGEN SIND ES WIRKLICH? (09.09.2026)
+ *
+ * „9 Befunde" klingt nach neun Entscheidungen. Tatsaechlich sind acht davon
+ * dasselbe Wort mit anderen Endungen — اسْمُ · اسْمُكِ · اسْمِي · اسْمُهُ ·
+ * اسْمُهَا — und der Befund steht bei allen an Stelle 0 auf demselben
+ * Buchstaben. Wer das eine beantwortet, hat alle acht beantwortet.
+ *
+ * ⛔ Das ist BEWUSST keine Wurzelanalyse. Gebuendelt wird rein mechanisch:
+ * gleiche Stelle, gleicher Buchstabe, und das kuerzere Skelett ist der ANFANG
+ * des laengeren. Damit ist es buchstaeblich derselbe Buchstabe an derselben
+ * Stelle desselben Wortanfangs — eine Aussage ueber Zeichen, nicht ueber
+ * Sprache. E.1 bleibt unberuehrt: was dort stehen SOLL, entscheidet Elias.
+ * [[skelettvergleich_wirft_information_weg]] [[sammelaussage_einzeln_belegen]]
+ */
+function buendel(liste){
+  /* ⛔ Die Zeichenklasse aus Codepunkten, nicht abgeschrieben: 064B–0652 sind
+     die Ḥarakāt bis Sukūn, 0670 das hochgestellte Alif, 0640 das Tatweel.
+     Sie muss sich genauso verhalten wie die zwei bestehenden `ohneH` weiter
+     oben — deshalb steht sie im Stoertest daneben.
+     [[zeichenklasse_nie_sichtbar_kopieren]] */
+  const z = (c) => String.fromCharCode(c);
+  const WEG = new RegExp('[' + z(0x64B) + '-' + z(0x652) + z(0x670) + z(0x640) + ']', 'g');
+  const skelett = (s) => String(s || '').replace(WEG, '');
+  const eintraege = liste.map(b => ({ b, sk: skelett(b.wort) }))
+    .sort((x, y) => x.sk.length - y.sk.length || x.sk.localeCompare(y.sk));
+  const gruppen = [];
+  for (const e of eintraege){
+    const passt = gruppen.find(g => g.stelle === e.b.stelle && g.zeichen === e.b.zeichen
+      && e.sk.startsWith(g.anfang));
+    if (passt){ passt.n++; if (passt.beispiele.length < 4) passt.beispiele.push(e.b.wort); }
+    else gruppen.push({ anfang: e.sk, stelle: e.b.stelle, zeichen: e.b.zeichen,
+                        n: 1, beispiele: [e.b.wort] });
+  }
+  return gruppen;
+}
+
 Object.entries(nachGruppe)
   .sort((a, b) => b[1].length - a[1].length)
   .forEach(([gruppe, liste]) => {
@@ -972,10 +1008,58 @@ Object.entries(nachGruppe)
     });
     if (!ALLE && liste.length > zeigen.length)
       console.log(`  … ${liste.length - zeigen.length} weitere (--alle zeigt sie)`);
+    const b = buendel(liste);
+    if (b.length < liste.length){
+      console.log(`  ⭐ ${liste.length} Befunde, aber nur ${b.length} Frage(n) —`
+        + ` gleicher Wortanfang, gleiche Stelle, gleicher Buchstabe:`);
+      for (const g of b)
+        console.log(`       ${g.anfang.padEnd(14)} Stelle ${String(g.stelle).padStart(2)}`
+          + ` (${g.zeichen})  ${g.n}×  ${g.beispiele.join(' · ')}`);
+    }
   });
 
+/* ---------- ⛔ STOERTEST fuer die Buendelung ----------
+   Sie ist neu (09.09.2026) und trifft eine Aussage, die Arbeit spart: „9
+   Befunde, aber nur 2 Fragen". Waere sie zu grosszuegig, verschwaende sie acht
+   Entscheidungen in einer — deshalb muss sie beweisen, dass sie NICHT
+   buendelt, wo es nicht zusammengehoert. [[stoertest_muss_wirkung_nachweisen]] */
+{
+  console.log('\n=== Stoertest (Buendelung) ===');
+  let stoer = 0;
+  const sP = (was, ist, soll) => {
+    if (ist !== soll){ stoer++; console.log('  ⛔  ' + was + ': ' + JSON.stringify(ist)
+      + ' statt ' + JSON.stringify(soll)); }
+    else console.log('  ok   ' + was);
+  };
+  const z = (c) => String.fromCharCode(c);
+  const ALIF = z(0x627), SIN = z(0x633), MIM = z(0x645), KAF = z(0x643), SUKUN = z(0x652);
+  const B = (wort, stelle, zeichen) => ({ wort, stelle, zeichen, feld: 'ar', id: 'probe' });
+  const stamm = ALIF + SIN + MIM;                       // اسم
+  sP('gleicher Anfang, gleiche Stelle, gleicher Buchstabe: EINE Frage',
+    buendel([B(stamm, 0, ALIF), B(stamm + SUKUN + KAF, 0, ALIF)]).length, 1);
+  sP('andere Stelle: ZWEI Fragen',
+    buendel([B(stamm, 0, ALIF), B(stamm + KAF, 2, MIM)]).length, 2);
+  sP('anderer Buchstabe: ZWEI Fragen',
+    buendel([B(stamm, 0, ALIF), B(stamm + KAF, 0, SIN)]).length, 2);
+  sP('anderer Wortanfang: ZWEI Fragen',
+    buendel([B(stamm, 0, ALIF), B(ALIF + MIM + SIN, 0, ALIF)]).length, 2);
+  sP('Harakat spielen fuer den Anfang keine Rolle',
+    buendel([B(stamm, 0, ALIF), B(ALIF + SUKUN + SIN + SUKUN + MIM, 0, ALIF)]).length, 1);
+  sP('eine leere Liste gibt keine Frage', buendel([]).length, 0);
+  if (stoer){
+    console.log('\n⛔ ' + stoer + ' Stoertest(s) gescheitert — die Buendelung oben ist NICHT');
+    console.log('   belastbar. Die Zahl „X Befunde, aber nur Y Fragen" nicht benutzen.');
+  }
+}
+
 const woerter = new Set(befunde.map(b => b.wort));
-console.log(`\n${befunde.length} Befunde in ${woerter.size} verschiedenen Woertern.`);
+/* ⭐ Die dritte Zahl ist die, nach der Elias fragt: wie oft muss er wirklich
+   entscheiden? Gebuendelt wird je Abschnitt, denn zwei Abschnitte stellen
+   verschiedene Fragen — „Haraka fehlt" und „Endung fehlt" gehen nicht zusammen,
+   auch wenn dasselbe Wort darin steht. */
+const fragen = Object.values(nachGruppe).reduce((a, l) => a + buendel(l).length, 0);
+console.log(`\n${befunde.length} Befunde in ${woerter.size} verschiedenen Woertern`
+  + ` — gebuendelt sind es ${fragen} Frage(n).`);
 /* ⚠️ Der Skelettvergleich kennt keine Bedeutung: أَلِف, أَلْفٌ und أَلَّفَ
    haben dasselbe Skelett und sind drei verschiedene Woerter. Die Zeile ist ein
    Hinweis zum Nachsehen, kein Urteil. [[skelettvergleich_wirft_information_weg]] */
@@ -984,5 +1068,6 @@ console.log('   Meist ist es dasselbe Wort — bei أَلِف/أَلْفٌ/أَ�
 console.log('   nicht uebernehmen.');
 console.log('⚠️  Nicht selbst vokalisieren: Beleg aus dem Madina-Schluessel oder');
 console.log('   dem Lehrbuch holen, sonst Elias vorlegen (E.1 gilt auch fuer Harakat).');
+
 zeigeBuchBericht();
 process.exit(1);
