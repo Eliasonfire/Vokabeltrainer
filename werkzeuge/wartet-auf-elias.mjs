@@ -834,6 +834,21 @@ posten.push({
   seite: '', seiteText: ''
 });
 posten.push({
+  titel: 'Deine Fachbegriffe: mit Endung oder ohne?',
+  zahl: 7, einheit: 'Karten', dazu: 'aus 30 Taschkīl-Befunden herausgelöst', auswahl: true,
+  aufwand: 'eine von zwei Antworten, den Rest mache ich',
+  warum: 'Sieben deiner Fachbegriff-Karten stehen OHNE Schlussendung — مُضَاف, مَجْرُور, '
+    + 'مَرْفُوع, نَعْت, إِضَافَة, ظَرْف, شَكْل. Dein Buch schreibt dieselben Wörter MIT '
+    + '(مَجْرُورٌ, نَعْتٌ, ظَرْفٌ …). Bisher standen die sieben als sieben einzelne '
+    + '„Haraka fehlt"-Zeilen in pruefe-taschkil und sahen nach sieben Problemen aus. '
+    + 'Es ist eines.',
+  wie: 'Zwei Möglichkeiten: (1) Pausalform lassen — so steht ein Stichwort im '
+    + 'Wörterbuch, und die Karte fragt ja nach dem Begriff, nicht nach einer Satzform. '
+    + '(2) Endung ergänzen wie im Buch. Sag eine Zahl, dann trage ich alle sieben '
+    + 'gleich ein — die Formen stehen belegt in deinem Abzug.',
+  seite: '', seiteText: ''
+});
+posten.push({
   titel: 'In den Pluraltexten steht eine Zahl — worauf bezieht sie sich?',
   zahl: 77, einheit: 'Pluralkarten mit eigenem Text', dazu: 'seit v453/v454', auswahl: true,
   aufwand: 'eine von drei Antworten, dann rechne ich alles um',
