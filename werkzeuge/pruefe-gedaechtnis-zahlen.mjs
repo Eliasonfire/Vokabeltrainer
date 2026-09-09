@@ -71,8 +71,25 @@ const sw = fs.readFileSync(REPO + '/sw.js', 'utf8');
 
    Die richtige Frage lautet: steht der AKTUELLE Stand im Gedaechtnis? Also die
    hoechste im Vault genannte Fassung gegen sw.js. */
-const vaultVersionen = [...text.matchAll(/vokabeltrainer-v([0-9]+)|(?:^|[\s(])v([0-9]{3})(?![0-9])/g)]
+/* ⛔ HERVORHEBUNG ZAEHLT MIT (09.09.2026). Der Vorspann erlaubte vor `v461`
+   nur Zeilenanfang, Leerzeichen oder Klammer — `**v461**` fiel also durch, und
+   der Pruefer meldete „Vault: 461, GEMESSEN: 460", obwohl die Fassung dastand.
+   Ein Fehlalarm ist die harmlose Richtung; die andere waere schlimmer: stuende
+   die Fassung NUR fettgedruckt da, haette der Pruefer den veralteten Stand
+   nicht bemerkt. In diesen Notizen ist Fettschrift der Normalfall.
+   [[zeichenklasse_nie_sichtbar_kopieren]] [[gruener_pruefer_beweist_nur_geprueftes]] */
+const vaultVersionen = [...text.matchAll(/vokabeltrainer-v([0-9]+)|(?:^|[\s(*_„"'])v([0-9]{3})(?![0-9])/g)]
   .map(m => Number(m[1] || m[2])).filter(n => n >= 100 && n < 999);
+/* Gegenprobe an Ort und Stelle: beide Schreibweisen muessen gefunden werden,
+   und eine Zahl mitten im Wort darf NICHT als Fassung durchgehen. */
+{
+  const probe = (s) => [...s.matchAll(/vokabeltrainer-v([0-9]+)|(?:^|[\s(*_„"'])v([0-9]{3})(?![0-9])/g)]
+    .map(m => Number(m[1] || m[2]));
+  pruefe('Fassungsmuster: „ v123" wird gefunden', '[123]', JSON.stringify(probe('Stand v123 heute')));
+  pruefe('Fassungsmuster: „**v123**" auch',       '[123]', JSON.stringify(probe('Stand **v123** heute')));
+  pruefe('Fassungsmuster: „(v123)" auch',         '[123]', JSON.stringify(probe('Stand (v123) heute')));
+  pruefe('Fassungsmuster: „abcv123" NICHT',       '[]',    JSON.stringify(probe('abcv123')));
+}
 const hoechsteImVault = vaultVersionen.length ? Math.max(...vaultVersionen) : null;
 const inSw = Number(((sw.match(/CACHE_NAME = 'vokabeltrainer-v([0-9]+)'/) || [])[1]) || 0);
 pruefe('hoechste Fassung im Gedaechtnis = sw.js', inSw, hoechsteImVault);
