@@ -331,8 +331,29 @@ const LS = {
      jemandem auffiele. sync.js entscheidet selbst, welche Schluessel es
      betreffen. Der typeof-Test haelt die App lauffaehig, falls js/sync.js
      einmal nicht geladen ist. */
+  /* ⛔⛔ DER TEUERSTE STILLE AUSFALL DER APP (09.09.2026).
+     Hier stand ein leeres `catch(e){}` mit der Begruendung „voller oder
+     gesperrter Speicher; der Abgleich unten laeuft trotzdem" — also mit
+     Erklaerung, aber ohne ein Wort nach aussen. Diese Zeile ist der Weg, ueber
+     den JEDE Aenderung gespeichert wird: Leitner-Boxen, bekannte Woerter,
+     Notizen, Einstellungen. Scheitert sie, uebt Elias weiter und nichts davon
+     bleibt — er merkt es beim naechsten Start.
+
+     ⚠️ Und die alte Begruendung („der Abgleich unten laeuft trotzdem") stimmt
+     nur halb: `syncGeaendert(key)` merkt den Schluessel vor, der Abgleich liest
+     ihn danach aber wieder aus dem localStorage — also den ALTEN Wert. Ein
+     gescheiterter Schreibvorgang wuerde so als „abgeglichen" durchgehen.
+
+     ⭐ Das Verhalten bleibt unveraendert (die App laeuft weiter, der Abgleich
+     wird gemeldet); dazu kommt nur die Meldung. Sie landet in der
+     Diagnosekarte, die er als Bild schickt — die einzige Stelle, an der so
+     etwas ueberhaupt sichtbar werden kann.
+     [[ausfall_ist_unsichtbar_gebaut]] [[localstorage_kann_werfen]] */
   set(key, val){
-    try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){ /* voller oder gesperrter Speicher; der Abgleich unten laeuft trotzdem */ }
+    try{ localStorage.setItem(key, JSON.stringify(val)); }
+    catch(e){
+      if (typeof stillerFehler === 'function') stillerFehler('Speichern: ' + key, e);
+    }
     if (typeof syncGeaendert === 'function') syncGeaendert(key);
   }
 };
