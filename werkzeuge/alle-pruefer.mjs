@@ -200,6 +200,14 @@ const PRUEFER = [
      Schrift. 91 Marken im Bestand sitzen auf einem Tatweel, drei taten es
      nicht. [[kombinierende_marke_einzeln]] */
   ['werkzeuge/pruefe-marken.mjs', []],
+  /* ⛔⛔ Neu am 09.09.2026, und es ist die Zeile mit den hoechsten Folgen im
+     ganzen Projekt: `functions/_middleware.js` gibt jeder fremden Adresse 404.
+     Dahinter liegt Kursmaterial von arabicroots, das nach AGB 3.7/9 nicht
+     weitergegeben werden darf. validate.js prueft, dass die Datei PARST — ob
+     sie noch SPERRT, hat nie jemand gemessen. Dieser Pruefer FUEHRT sie aus,
+     mit der erlaubten und mit vier fremden Adressen.
+     [[daten_ohne_zugang]] [[ausfall_ist_unsichtbar_gebaut]] */
+  ['werkzeuge/pruefe-hostsperre.mjs', []],
   /* ⭐⭐ Neu am 09.09.2026, die Schwesterpruefung zu pruefe-abgleich.mjs: dort
      zwei GERAETE, hier zwei ZEITPUNKTE. In js/einstellungen.js stand zweimal
      derselbe Satz („wer eine Sicherung einspielte, verlor X lautlos") — und
