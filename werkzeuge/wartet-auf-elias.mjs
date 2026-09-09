@@ -819,6 +819,34 @@ posten.push({
   seite: '',
   seiteText: ''
 });
+/* ⭐ Zwei Posten vom 09.09.2026. Beide sind gemessen, beide sind deine
+   Entscheidung — und beide entstanden aus derselben Nacht, in der die
+   Pluralkarten ihre Texte bekommen haben. */
+posten.push({
+  titel: 'شدة steht in 19 Eselsbrücken und hat keine Karte',
+  zahl: 19, einheit: 'Eselsbrücken', dazu: 'über alle 519 Texte gezählt', auswahl: true,
+  aufwand: 'ja oder nein — die Karte schreibe ich',
+  warum: 'Deine Eselsbrücken verweisen 19-mal auf die شدة, und die App erklärt sie nirgends. '
+    + 'تاء مَرْبُوطة und أَلِف مَقْصورة haben je eine Fachbegriff-Karte, die شدة nicht. '
+    + 'Eine neue Karte ist aber neuer Lernstoff — deshalb entscheidest du das.',
+  wie: 'Sag Bescheid, dann kommt sie zu den 31 Fachbegriffen dazu. Sagst du nein, '
+    + 'bleibt es dabei — die 19 Stellen erklären sich aus dem Zusammenhang.',
+  seite: '', seiteText: ''
+});
+posten.push({
+  titel: 'In den Pluraltexten steht eine Zahl — worauf bezieht sie sich?',
+  zahl: 77, einheit: 'Pluralkarten mit eigenem Text', dazu: 'seit v453/v454', auswahl: true,
+  aufwand: 'eine von drei Antworten, dann rechne ich alles um',
+  warum: 'In jedem der 77 neuen Texte steht „N deiner Wörter machen das genau so". '
+    + 'N zählt heute die 171 gepflegten Vokabeln. Nehme ich die Buchvokabeln dazu, '
+    + 'ändert sich jede dieser Zahlen — und 33 weitere Pluralkarten könnten denselben '
+    + 'Text bekommen. Eine Zahl, deren Bezugsgröße unklar ist, ist schlimmer als keine.',
+  wie: 'Drei Möglichkeiten: (1) so lassen — N zählt die gepflegten 171. '
+    + '(2) alle Buchvokabeln zählen (~4.600, auch was du nie gesehen hast). '
+    + '(3) die Zahl ganz raus, nur noch Beispiele („auch مَدْرَسَةٌ → مَدَارِسُ geht so") — '
+    + 'immer wahr, aber weniger griffig.',
+  seite: '', seiteText: ''
+});
 posten.push({
   /* ⭐ Am 21.08. dreifach nachgemessen — und der Posten fängt damit früher an
      als gedacht: es geht nicht um die BESTE Stimme, sondern erst einmal um
