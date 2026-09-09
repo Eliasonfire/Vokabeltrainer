@@ -163,6 +163,14 @@ const PRUEFER = [
      [[stichworttreffer_im_kommentar]] */
   ['werkzeuge/pruefe-js-quelltext.mjs', []],
   ['werkzeuge/pruefe-stille-fehler.mjs', []],
+  /* ⭐⭐ Neu am 09.09.2026, die Schwesterpruefung zu pruefe-abgleich.mjs: dort
+     zwei GERAETE, hier zwei ZEITPUNKTE. In js/einstellungen.js stand zweimal
+     derselbe Satz („wer eine Sicherung einspielte, verlor X lautlos") — und
+     gemessen fehlten elf Abgleich-Schluessel in der Sicherung, darunter der
+     Uebungsstand, die einzeln freigeschalteten Woerter und die gemessene
+     Lernzeit. Der Rundlauf laeuft mit der ECHTEN baueSicherung().
+     [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+  ['werkzeuge/pruefe-sicherung.mjs', []],
   /* ⛔ Ohne diese Zeile haette pruefe-muster.mjs keinen Aufrufer und liefe nie.
      Genau der Fehler, den es selbst sucht, in seiner allgemeinen Form: gebaut,
      gepusht, ausgeliefert — und nie gestartet. [[werkzeug_ohne_aufrufer]] */

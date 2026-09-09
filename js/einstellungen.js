@@ -712,7 +712,37 @@ const SICHERUNGS_SCHLUESSEL = [
   /* Seine eigenen Grammatiknotizen an den Wortkarten (20.08.2026). Sie stehen
      nirgends sonst — geht die Liste hier daran vorbei, ist die Sicherung eine
      Sicherung ohne sie, und das faellt erst beim Einspielen auf. */
-  'vt_notizen'
+  'vt_notizen',
+
+  /* ---------- Elf Schluessel, nachgetragen am 09.09.2026 ----------
+
+     ⛔⛔ ZWEIMAL stand oben schon der Satz „wer eine Sicherung einspielte,
+     verlor X lautlos" — beim dritten Mal ist es kein Einzelfall mehr, sondern
+     eine fehlende Regel. Gemessen: die App schreibt 37 Schluessel, der
+     Geraeteabgleich kennt 29, die Sicherung kannte nur 18. Diese elf standen
+     im ABGLEICH und fehlten in der SICHERUNG.
+
+     ⭐ Die Regel, die daraus folgt und die `pruefe-sicherung.mjs` jetzt
+     durchsetzt: **was es wert ist, auf ein anderes Geraet getragen zu werden,
+     ist es auch wert, ein Einspielen zu ueberleben.** Ein Schluessel darf hier
+     nur fehlen, wenn er benannt ausgenommen ist.
+     [[allgemeine_regel_statt_listeneintrag]]
+
+     ⚠️ Was ohne sie beim Einspielen still verloren ging: der Uebungsstand, die
+     einzeln freigeschalteten Woerter, die Aussprache-Runde, die gemessene
+     Lernzeit und der Riegel, der jede Feier nur einmal am Tag zulaesst. */
+  'vt_feiern',        /* welche Feier heute schon lief — der `einmalig`-Riegel */
+  'vt_regelStand',    /* Fortschritt in den Grammatikregeln */
+  'vt_uebungStand',   /* laufende Uebung */
+  'vt_quoteTage',     /* Tage der Tagesquote */
+  'vt_wortQuote',     /* Wortquote */
+  'vt_einzeln_frei',  /* einzeln freigeschaltete Woerter — steht nirgends sonst */
+  'vt_settingsFeld',  /* Stempelkarte je Einstellungsfeld; ohne sie gewinnt beim
+                         naechsten Abgleich womoeglich das aeltere Geraet */
+  'vt_lautStand',     /* Aussprache: Stand */
+  'vt_lautRunde',     /* Aussprache: laufende Runde */
+  'vt_satzTag',       /* Tageszaehler Satzmodus */
+  'vt_zeit'           /* die gemessene Lernzeit */
 ];
 
 function baueSicherung(){
