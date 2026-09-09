@@ -501,7 +501,10 @@ function audioUmschalten(){
   }
   const el = audioElement();
   if (QAUDIO.laeuft) el.pause();
-  else el.play().catch(() => {});
+  /* ⛔ Ein abgelehntes play() ist der haeufigste Grund, warum „nichts
+     passiert": der Browser verweigert Ton ohne Geste, oder die Datei fehlt.
+     Von aussen sieht beides gleich aus — ein Knopf, der nichts tut. */
+  else el.play().catch(e => stillerFehler('Quran-Ton: play() abgelehnt', e));
 }
 
 /* ============================================================================
@@ -640,7 +643,7 @@ function quranMedienKnoepfe(an){
     ['play', 'pause', 'stop', 'nexttrack', 'previoustrack'].forEach(n => setze(n, null));
     return;
   }
-  setze('play',          () => { const el = audioElement(); el.play().catch(() => {}); });
+  setze('play',          () => { const el = audioElement(); el.play().catch(e => stillerFehler('Quran-Ton: play() vom Sperrbildschirm abgelehnt', e)); });
   setze('pause',         () => { const el = audioElement(); el.pause(); });
   setze('stop',          () => audioAus());
   setze('nexttrack',     () => audioNaechster());

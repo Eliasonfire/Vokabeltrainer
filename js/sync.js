@@ -1385,7 +1385,12 @@ document.addEventListener('visibilitychange', ()=>{
     /* ⛔ `SYNC_OFFEN` nur löschen, wenn wirklich geschrieben wurde. Weist die
        Bremse ab (`null`), bleibt die Änderung offen und der nächste Start holt
        sie nach — genau wie ein Fehlschlag. */
-    schickeZumServer().then(a => { if (a !== null) SYNC_OFFEN = false; }).catch(()=>{});
+    /* ⚠️ Gemeldet, aber nicht dramatisiert: der naechste Start holt es nach,
+       und beim Weglegen der App ist ein Fehlschlag der Normalfall (das Netz
+       ist oft schon weg). In der Diagnosekarte steht er trotzdem — sonst ist
+       „mein Tablet hat den Stand nicht" wieder eine Suche im Dunkeln. */
+    schickeZumServer().then(a => { if (a !== null) SYNC_OFFEN = false; })
+      .catch(e => stillerFehler('Abgleich beim Weglegen fehlgeschlagen', e));
     return;
   }
 
