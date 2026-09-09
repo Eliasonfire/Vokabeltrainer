@@ -97,6 +97,39 @@ for (const datei of fs.readdirSync(path.join(REPO, 'js'))) {
     if (!gefunden.has(m[1])) gefunden.set(m[1], 'js/' + datei);
 }
 
+/* ---------- ⛔ Der blinde Fleck dieser Erhebung (09.09.2026) ----------
+
+   Die Sammlung oben sucht `vt_*` als ZEICHENKETTE. Das trägt genau so lange,
+   wie jeder Schlüssel irgendwo einmal am Stück dasteht — auch wenn er über
+   eine Konstante benutzt wird (`const FEIER_LOG_KEY = 'vt_feierLog'`, gemessen:
+   17 der 37 Schlüssel laufen so).
+
+   ⛔ Es trägt NICHT mehr, sobald ein Schlüssel aus Teilen gebaut wird
+   (`'vt_' + name`, `` `vt_${name}` ``). Der stünde dann nirgends am Stück, die
+   Erhebung sähe ihn nicht, und er fehlte still im Geräteabgleich — also genau
+   der Ausfall, gegen den diese Datei geschrieben wurde. Dieselbe Lücke wie bei
+   den zusammengesetzten CSS-Klassen in klassen-ohne-fundstelle.mjs.
+   [[funktion_als_referenz_sieht_tot_aus]] [[gruener_pruefer_beweist_nur_geprueftes]]
+
+   ⭐ Heute gemessen: **null** solche Stellen. Deshalb kein Aufwand, sie zu
+   erkennen — nur die Bedingung, unter der die Erhebung gilt, wird bewacht.
+   Kommt eine dazu, sagt diese Zeile es, statt dass die Sammlung stillschweigend
+   unvollständig wird. */
+{
+  const gebaut = [];
+  for (const datei of fs.readdirSync(path.join(REPO, 'js'))){
+    if (!datei.endsWith('.js')) continue;
+    const text = ohneKommentareUndTexte(
+      fs.readFileSync(path.join(REPO, 'js', datei), 'utf8'), { texte: false });
+    for (const m of text.matchAll(/['"`]vt_[A-Za-z0-9_]*['"`]\s*\+|`vt_[A-Za-z0-9_]*\$\{/g))
+      gebaut.push('js/' + datei + ': ' + m[0].replace(/\s+/g, ' '));
+  }
+  sag(!gebaut.length, gebaut.length
+    ? gebaut.length + ' Schlüssel wird/werden aus Teilen gebaut — die Erhebung unten sieht ihn/sie NICHT: '
+      + gebaut.slice(0, 4).join(' · ')
+    : 'Kein Schlüssel wird aus Teilen gebaut — die Erhebung unten kann vollständig sein.');
+}
+
 console.log('=== Schlüssel im Geräteabgleich ===\n');
 console.log('  Die App schreibt ' + gefunden.size + ' Schlüssel, der Abgleich kennt ' + imAbgleich.size + '.');
 
