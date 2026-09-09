@@ -904,6 +904,58 @@ try {
 } catch { /* keine da */ }
 const belegFuer = (b) => TASCHKIL_BELEG[b.id + '|' + b.feld + '|' + b.stelle];
 
+/* ---------- Der beste Beleg ist sein EIGENER Bestand (09.09.2026) ----------
+
+   ⛔⛔ „Haraka fehlt: اسْمُ Stelle 0" sagt nicht, WAS dort stehen soll — und
+   selbst setzen darf ich sie nicht (E.1). Aber oft steht die Antwort schon im
+   Bestand: dasselbe Wort, an anderer Stelle, vollstaendig vokalisiert.
+
+   Gemessen an diesem Tag: das Skelett اسم kommt im Wortschatz als اِسْمٌ und
+   اِسْمُ vor — mit Kasra auf dem Alif. Gemeldet wird اسْمُ aus einem
+   BEISPIELSATZ, also ohne. Dieselbe Vokabel, zwei Schreibweisen im selben
+   Datenbestand. [[zwei_rechtschreibungen_ein_text]] [[dieselbe_frage_zwei_antworten]]
+
+   ⭐ Das ist kein Urteil und keine Reparatur — es ist die Frage, die Elias
+   beantworten muss, in einer Form, die er in zwei Sekunden entscheiden kann:
+   „so oder so?" statt „hier fehlt etwas".
+   [[mein_entwurf_ist_zu_grob]] */
+const nachSkelett = new Map();
+{
+  const ohneH = (s) => String(s || '').replace(/[ً-ْٰـ]/g, '');
+  const dazu = (t) => {
+    const form = String(t || '').trim();
+    if (!form || !/[ء-ي]/.test(form)) return;
+    const k = ohneH(form);
+    if (!nachSkelett.has(k)) nachSkelett.set(k, new Set());
+    nachSkelett.get(k).add(form);
+  };
+  for (const w of (VOCAB_DATA || []))
+    for (const feld of ['ar', 'pl', 'sg']) String(w[feld] || '').split(/[\s\/،.؟!]+/).forEach(dazu);
+  /* ⭐ UND die Buchabzuege — das ist arabicroots' eigene Vokalisierung und
+     damit der beste Beleg, den es hier gibt. Ohne sie fand der Vergleich nur
+     drei Stellen; die Woerter mit Besitzendung (اسْمُكِ, اسْمِي …) stehen nur
+     dort. ⚠️ Sie liegen lokal und nicht im Repo (AGB 3.7/9) — fehlen sie,
+     faellt der Vergleich still weg, und das steht dann in der Ausgabe.
+     [[werkzeug_misst_kleineren_bestand]] */
+  try {
+    const dir = path.join(DIR, 'data');
+    for (const f of fs.readdirSync(dir).filter(x => /^vokabeln-.*\.js$/.test(x))){
+      const win = {};
+      try { (new Function('window', fs.readFileSync(path.join(dir, f), 'utf8')))(win); } catch (e){ continue; }
+      for (const liste of Object.values(win.VOKABELN || {}))
+        for (const w of (liste || []))
+          for (const feld of ['ar', 'pl', 'sg', 'sentAr'])
+            String(w[feld] || '').split(/[\s\/،.؟!]+/).forEach(dazu);
+    }
+  } catch (e){ /* ohne Abzuege: der Vergleich ist dann kleiner, siehe Ausgabe */ }
+}
+/* Andere Schreibweisen desselben Wortes — die eigene nicht mitgezaehlt. */
+const andereFormen = (wort) => {
+  const ohneH = (s) => String(s || '').replace(/[ً-ْٰـ]/g, '');
+  const s = nachSkelett.get(ohneH(wort));
+  return s ? [...s].filter(f => f !== wort) : [];
+};
+
 Object.entries(nachGruppe)
   .sort((a, b) => b[1].length - a[1].length)
   .forEach(([gruppe, liste]) => {
@@ -911,9 +963,11 @@ Object.entries(nachGruppe)
     const zeigen = ALLE ? liste : liste.slice(0, 12);
     zeigen.forEach(b => {
       const bl = belegFuer(b);
+      const eigen = andereFormen(b.wort);
       console.log(
       `  ${b.wort.padEnd(18)} Stelle ${String(b.stelle).padStart(2)} ` +
       `(${b.zeichen})  ${b.feld}  id ${b.id}` +
+      (eigen.length ? `\n      ↳ DEIN Bestand schreibt dasselbe Wort als ${eigen.join(' · ')}` : '') +
       (bl ? `\n      ↳ en.wiktionary fuehrt ${bl.form}` : ''));
     });
     if (!ALLE && liste.length > zeigen.length)
@@ -922,6 +976,12 @@ Object.entries(nachGruppe)
 
 const woerter = new Set(befunde.map(b => b.wort));
 console.log(`\n${befunde.length} Befunde in ${woerter.size} verschiedenen Woertern.`);
+/* ⚠️ Der Skelettvergleich kennt keine Bedeutung: أَلِف, أَلْفٌ und أَلَّفَ
+   haben dasselbe Skelett und sind drei verschiedene Woerter. Die Zeile ist ein
+   Hinweis zum Nachsehen, kein Urteil. [[skelettvergleich_wirft_information_weg]] */
+console.log('\n⭐ „DEIN Bestand schreibt …" vergleicht ueber das SKELETT (ohne Harakat).');
+console.log('   Meist ist es dasselbe Wort — bei أَلِف/أَلْفٌ/أَلَّفَ aber nicht. Ansehen,');
+console.log('   nicht uebernehmen.');
 console.log('⚠️  Nicht selbst vokalisieren: Beleg aus dem Madina-Schluessel oder');
 console.log('   dem Lehrbuch holen, sonst Elias vorlegen (E.1 gilt auch fuer Harakat).');
 zeigeBuchBericht();
