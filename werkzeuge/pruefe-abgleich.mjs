@@ -40,7 +40,7 @@ const sag = (ok, text) => { if (!ok) fehler++; console.log('  ' + (ok ? 'ok  ' :
 const SYNC = fs.readFileSync(path.join(REPO, 'js', 'sync.js'), 'utf8');
 const block = SYNC.match(/const SYNC_SCHLUESSEL = \[([\s\S]*?)\n\];/);
 if (!block) { console.error('⛔ SYNC_SCHLUESSEL nicht gefunden — hat sync.js einen neuen Aufbau?'); process.exit(1); }
-const imAbgleich = new Set([...block[1].matchAll(/'(vt_[A-Za-z_]+)'/g)].map(m => m[1]));
+const imAbgleich = new Set([...block[1].matchAll(/['"`](vt_[A-Za-z0-9_]+)['"`]/g)].map(m => m[1]));
 
 /* ---------- Was die App wirklich schreibt ---------- */
 /* ⛔ Zwei Schlüssel gehören AUSDRÜCKLICH nicht hinein, und der Grund steht in
@@ -70,11 +70,18 @@ const AUSGENOMMEN = new Map([
   ['vt_syncPuts',     'Tageszähler der KV-Schreibvorgänge dieses Geräts. Abgeglichen würde er sich gegenseitig überschreiben — und jedes Übertragen wäre selbst ein Schreibvorgang, also genau das, was er begrenzen soll'],
 ]);
 
+/* ⛔ Alle drei Zitierweisen UND Ziffern (09.09.2026). Bis dahin fand diese
+   Zeile nur `'vt_x'` — ein `"vt_x"` oder `vt_hifz2` war unsichtbar, und ein
+   Schluessel, den das Werkzeug nicht sieht, kann auch nicht fehlen. Aufgefallen
+   an einem Stoertest in pruefe-sicherung.mjs, das dieselbe Erhebung machte;
+   pruefe-kreislaeufe.mjs war schon breiter. Drei Werkzeuge, eine Frage — jetzt
+   auch dieselbe Antwort. [[entscheidung_gilt_fuer_das_zweite_werkzeug]]
+   [[gruener_pruefer_beweist_nur_geprueftes]] */
 const gefunden = new Map();          /* schlüssel -> datei */
 for (const datei of fs.readdirSync(path.join(REPO, 'js'))) {
   if (!datei.endsWith('.js')) continue;
   const text = fs.readFileSync(path.join(REPO, 'js', datei), 'utf8');
-  for (const m of text.matchAll(/'(vt_[A-Za-z_]+)'/g))
+  for (const m of text.matchAll(/['"`](vt_[A-Za-z0-9_]+)['"`]/g))
     if (!gefunden.has(m[1])) gefunden.set(m[1], 'js/' + datei);
 }
 
