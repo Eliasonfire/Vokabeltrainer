@@ -790,6 +790,245 @@ document.getElementById('btnResetProgress').addEventListener('click', ()=>{
 /* HIER STAND „Streak zurücksetzen". Am 29.07.2026 auf Elias' Wunsch entfernt.
    Der Schlüssel `vt_streak` bleibt selbstverständlich — nur der Knopf ist weg. */
 
+/* ---------- Quran-Markierungen aufräumen (09.09.2026) ----------
+
+   Elias mit Bild der Surenliste: „und mach überall auf dem pc die fav und
+   gelernten markierung weg, nur mulk kann beides bleiben".
+
+   ⛔ Drei Speicher, nicht einer — und der dritte ist der, den man vergisst:
+     `QURAN_FAV`   Stern je Sure          → saveQuranFav()
+     `HIFZ`        Auswendig-Haken je Sure → saveHifz()
+     `HIFZ_VERSE`  Haken je EINZELVERS     → saveHifzVerse()
+   Bliebe der dritte stehen, sähe die Liste aufgeräumt aus und beim Öffnen
+   einer Sure wären die Verse weiter abgehakt. [[fehler_trifft_mehr_als_gemeldet]]
+
+   ⭐ Al-Mulk ist Sure 67 — die Zahl steht hier EINMAL als Konstante, damit
+   niemand sie in drei Schleifen einzeln pflegen muss.
+
+   ⚠️ `saveHifz()` & Co. schreiben die Zeitstempel-Form: ein Eintrag, dessen
+   Zustand sich ändert, bekommt `Date.now()`. Damit gewinnt das Aufräumen im
+   Abgleich gegen die alten Marken auf Handy und Tablet — das ist gewollt
+   („überall"), und genau deshalb steht es auch in der Rückfrage. */
+const QURAN_MARKEN_BEHALTEN = 67;
+
+document.getElementById('btnQuranMarkenWeg')?.addEventListener('click', ()=>{
+  const zaehle = (o) => Object.keys(o || {}).length;
+  const sterne = zaehle(typeof QURAN_FAV === 'object' ? QURAN_FAV : {});
+  const haken  = zaehle(typeof HIFZ === 'object' ? HIFZ : {});
+  const verse  = zaehle(typeof HIFZ_VERSE === 'object' ? HIFZ_VERSE : {});
+  if (!sterne && !haken && !verse){ toast('Es gibt keine Markierungen zum Aufräumen.'); return; }
+
+  const frage = 'Sterne und Auswendig-Haken entfernen?\n\n'
+    + sterne + ' Sterne · ' + haken + ' abgehakte Suren · ' + verse + ' abgehakte Verse\n\n'
+    + 'Al-Mulk (67) behält beides. Das gilt nach dem Abgleich auf allen Geräten.';
+  if (!confirm(frage)) return;
+
+  let weg = 0;
+  const nurMulk = (o) => {
+    for (const k of Object.keys(o)){
+      if (Number(k) === QURAN_MARKEN_BEHALTEN) continue;
+      delete o[k]; weg++;
+    }
+  };
+  if (typeof QURAN_FAV === 'object'){ nurMulk(QURAN_FAV); saveQuranFav(); }
+  if (typeof HIFZ === 'object'){ nurMulk(HIFZ); saveHifz(); }
+  /* ⛔ Die Verse tragen `sure:vers`, nicht die Surennummer allein — hier zählt
+     der Teil VOR dem Doppelpunkt. Ein `Number(k)` auf „67:12" ergibt NaN und
+     hätte auch al-Mulks Verse gelöscht. [[regex_erzwingt_zweite_zahl]] */
+  if (typeof HIFZ_VERSE === 'object'){
+    for (const k of Object.keys(HIFZ_VERSE)){
+      if (Number(String(k).split(':')[0]) === QURAN_MARKEN_BEHALTEN) continue;
+      delete HIFZ_VERSE[k]; weg++;
+    }
+    saveHifzVerse();
+  }
+  toast(weg + ' Markierungen entfernt — al-Mulk ist geblieben.');
+  if (typeof renderSurahList === 'function')
+    renderSurahList(document.getElementById('surahSearch').value);
+  if (typeof renderHome === 'function') renderHome();
+});
+
+/* ---------- Diagnose ----------
+
+   ⭐ Anlass: „habe eben 5 wörter angehört und konfeti kam erst bei startseite,
+   das soll aber doch kommen beim hörmodus" (Elias, 08.09.2026). Im Prüfbrowser
+   kam das Konfetti sofort und an der richtigen Stelle — der Fall ist nur auf
+   SEINEM Gerät zu sehen. Eine zweite Reparatur ohne Messung wäre geraten.
+   [[diagnose_statt_raten]]
+
+   ⛔ Ausgegeben wird TEXT, kein Diagramm: Elias schickt Bildschirmfotos, das
+   ist sein eingespielter Weg. Ein Text, den man abfotografieren kann, kommt
+   damit vollständig an — eine Konsole auf dem Handy nicht.
+
+   ⚠️ Jede Quelle wird EINZELN abgesichert. Fehlt ein Modul (der Hörmodus wird
+   erst bei Bedarf geladen), darf das nicht die ganze Karte leeren — sonst
+   sieht man statt der Diagnose nichts und weiß wieder nicht, warum.
+   [[ausfall_ist_unsichtbar_gebaut]] */
+function diagnoseText(){
+  const zeilen = [];
+  const dazu = (name, wert) => zeilen.push(name + ': ' + wert);
+  const sicher = (name, fn) => {
+    try { dazu(name, fn()); } catch (e){ dazu(name, '— (' + (e && e.message) + ')'); }
+  };
+
+  dazu('Stand', new Date().toLocaleString('de-DE'));
+  /* ⭐ Der LERNTAG neben der Uhrzeit (09.09.2026). Seine Karte um 02:46 zeigte
+     „Hören heute: 5 gehört · Ziel 5" und darunter „Feiern heute: (noch
+     keine)" — das sah nach einem Fehler aus und war keiner: um 02:46 läuft
+     noch der Lerntag vom Vortag (Tagesgrenze 8 Uhr), und dessen Feier war am
+     Nachmittag längst durch. Ohne diese Zeile muss man das wissen; mit ihr
+     steht es da. [[tagesbegriff_der_app_ist_utc]] */
+  sicher('Lerntag', () => (typeof todayStr === 'function' ? todayStr(0) : '—')
+    + ' (beginnt 8 Uhr — davor zählt der Vortag)');
+  /* ⭐ Die Selbstmeldung zum Dark-Reader-Riegel (09.09.2026). Das
+     `<meta name="darkreader-lock">` im Kopf sperrt die Erweiterung aus — aber
+     ein Gegenmittel, das still ausfallen kann, ist dieselbe Falle wie vorher,
+     nur unsichtbarer. In Dark Reader 4.9.86 gab es einen Fehler, durch den das
+     Tag ignoriert wurde. [[ausfall_ist_unsichtbar_gebaut]]
+     ⚠️ Die Erweiterung setzt ihre Marken ERST NACH dem Laden. Sofort gefragt
+     meldete sie im Korantrainer fälschlich „nicht aktiv" — hier wird deshalb
+     zum Zeitpunkt des Knopfdrucks gemessen, und das ist lange danach. */
+  sicher('Dark Reader', () => {
+    const marke = document.documentElement.dataset.darkreaderMode
+               || document.documentElement.dataset.darkreaderScheme;
+    const knoten = document.querySelectorAll('style.darkreader, style[class*="darkreader"]').length;
+    if (!marke && !knoten) return 'ausgesperrt (Farben stimmen)';
+    return '⛔ LÄUFT TROTZDEM (' + (marke || 'ohne Marke') + ', ' + knoten
+      + ' Stilknoten) — die Farben auf diesem Gerät sind nicht die der App';
+  });
+  sicher('Akzentfarbe', () => {
+    const w = getComputedStyle(document.documentElement).getPropertyValue('--red').trim();
+    const soll = (typeof SETTINGS === 'object' && SETTINGS && SETTINGS.akzentFarbe) || '#ff1744';
+    return w + (w.toLowerCase() === soll.toLowerCase() ? ' (wie eingestellt)' : ' — eingestellt ist ' + soll);
+  });
+  /* ⛔⛔ DIE VERSION MUSS OBEN STEHEN (09.09.2026). „Service Worker aktiv"
+     sagte nur, DASS einer läuft — nicht WELCHE Fassung er ausliefert. Genau
+     das war zweimal hintereinander die offene Frage („die lücke beim tablet
+     ist immer noch da"): behoben oder nur nicht angekommen?
+     ⭐ Gelesen wird der Name des Zwischenspeichers, denn der ist die Wahrheit
+     darüber, was die Seite gerade bedient — nicht eine Zahl, die jemand ins
+     Markup schreibt und beim nächsten Mal vergisst.
+     [[alte_fassung_beim_nutzer]] [[frischeprobe_braucht_geaenderte_zahl]] */
+  zeilen.push('Version: … (wird geladen)');
+  const versionZeile = zeilen.length - 1;
+  try {
+    if (window.caches && caches.keys) caches.keys().then(namen => {
+      const v = namen.filter(n => /vokabeltrainer-v/.test(n)).sort().join(', ') || 'kein Zwischenspeicher';
+      const kasten = document.getElementById('diagnoseText');
+      if (kasten && !kasten.classList.contains('hidden'))
+        kasten.textContent = kasten.textContent.replace('Version: … (wird geladen)',
+          'Version: ' + v + (navigator.serviceWorker && navigator.serviceWorker.controller ? '' : ' (SW steuert nicht)'));
+    });
+  } catch (e){ }
+  sicher('Bildschirm', () => window.innerWidth + '×' + window.innerHeight
+    + ' · Gerät ' + (screen && screen.width) + '×' + (screen && screen.height)
+    + ' · Pixelverhältnis ' + (window.devicePixelRatio || 1));
+  /* ⛔⛔ WO LÄUFT DIE APP? (09.09.2026, nach der fünften Meldung „lücke ist
+     immer noch da und der weiße streifen auch"). Alles, was die App selbst
+     malt, ist gemessen schwarz — bleibt ein heller Streifen, kommt er von dem,
+     was AUSSEN HERUM ist: Chromes eigene Leiste, das Fenster eines geteilten
+     Bildschirms, die Systemleiste. Ob die App installiert läuft oder im
+     Browser, ob das Fenster das ganze Gerät ausfüllt und ob eine
+     Sicherheitszone oben liegt, entscheidet, welche dieser drei es ist.
+     [[diagnose_statt_raten]] */
+  sicher('Läuft als', () => {
+    const modi = ['standalone', 'fullscreen', 'minimal-ui', 'browser'];
+    const m = modi.find(x => window.matchMedia('(display-mode: ' + x + ')').matches) || '?';
+    return (m === 'browser' ? 'Browser-Tab (nicht installiert)' : 'installierte App (' + m + ')');
+  });
+  sicher('Sicherheitszone oben', () => {
+    const v = getComputedStyle(document.documentElement).getPropertyValue('--safe-top').trim();
+    const px = document.createElement('div');
+    px.style.cssText = 'position:fixed;top:0;height:env(safe-area-inset-top,0px);width:1px;visibility:hidden';
+    document.body.appendChild(px);
+    const h = px.getBoundingClientRect().height; px.remove();
+    return v + ' (gemessen ' + Math.round(h) + ' px)';
+  });
+  sicher('Fenster füllt Gerät', () => {
+    const vv = window.visualViewport;
+    const fenster = window.innerWidth + '×' + window.innerHeight;
+    const sicht = vv ? Math.round(vv.width) + '×' + Math.round(vv.height) + ' (Versatz ' + Math.round(vv.offsetTop) + ')' : '—';
+    const voll = (screen.width === window.innerWidth) ? 'ja' : 'NEIN — ' + (screen.width - window.innerWidth) + ' px schmaler';
+    return voll + ' · Fenster ' + fenster + ' · sichtbar ' + sicht;
+  });
+  sicher('Oberste 3 px', () => {
+    /* Was liegt ganz oben, und wie wird es GEMALT — Farbe UND Bild. Ein
+       Verlauf hat backgroundColor rgb(0,0,0) und ist trotzdem rot. */
+    const e = document.elementFromPoint(Math.round(window.innerWidth / 2), 1);
+    if (!e) return 'nichts (Punkt außerhalb der Seite)';
+    const s = getComputedStyle(e);
+    return (e.id ? '#' + e.id : e.tagName.toLowerCase() + '.' + String(e.className).split(' ')[0])
+      + ' · Farbe ' + s.backgroundColor + ' · Bild ' + (s.backgroundImage === 'none' ? 'keins' : s.backgroundImage.slice(0, 38) + '…');
+  });
+  /* ⭐ Die Kopfzeile, Zahl für Zahl — der Fall, an dem zwei Reparaturen
+     gescheitert sind. Wer diese vier Werte sieht, weiß sofort, WO die Lücke
+     entsteht: passt die Polsterung nicht zur gemessenen Höhe, oder wurde gar
+     nicht gemessen? [[diagnose_statt_raten]] */
+  sicher('Kopfzeile', () => {
+    const tb = document.querySelector('header.topbar');
+    const main = document.getElementById('main');
+    if (!tb || !main) return '—';
+    const h = Math.round(tb.getBoundingClientRect().height);
+    const gesetzt = document.documentElement.style.getPropertyValue('--topbar-h').trim() || '(nicht gesetzt)';
+    const pad = Math.round(parseFloat(getComputedStyle(main).paddingTop) || 0);
+    return 'hoch ' + h + ' · gemessen ' + gesetzt + ' · Polsterung ' + pad
+      + ' → Lücke ' + (pad - h) + ' px';
+  });
+  sicher('Quran-Kopf', () => {
+    const tb = document.querySelector('header.topbar');
+    const sh = document.querySelector('#screen-quranfull .screen-header');
+    if (!tb || !sh) return '—';
+    const a = tb.getBoundingClientRect().bottom, b = sh.getBoundingClientRect().top;
+    if (!sh.offsetParent) return 'Leser gerade nicht offen';
+    return 'Abstand Kopfzeile → Surentitel: ' + Math.round(b - a) + ' px';
+  });
+  sicher('Abgleich', () => (typeof syncPutStand === 'function') ? syncPutStand() : '—');
+  sicher('Hören heute', () => {
+    if (typeof hoerTag !== 'function') return '—';
+    const t = hoerTag();
+    return t.gesamt + ' gehört, ' + t.richtig + ' richtig · Ziel '
+      + (typeof hoerTagesziel === 'function' ? hoerTagesziel() : '?');
+  });
+
+  zeilen.push('');
+  zeilen.push('Feiern heute:');
+  let feiern = [];
+  try { feiern = (typeof feierProtokoll === 'function') ? feierProtokoll() : []; } catch (e){ }
+  if (!feiern.length) zeilen.push('  (noch keine)');
+  else feiern.forEach(z => zeilen.push('  ' + z.uhr + '  ' + z.anlass + '  @ ' + z.wo
+    + (z.fehler ? '  ⛔ ' + z.fehler : '')));
+
+  zeilen.push('');
+  zeilen.push('Geh-Modus heute:');
+  let geh = [];
+  try { geh = (typeof gehProtokollZeilen === 'function') ? gehProtokollZeilen() : []; } catch (e){ }
+  if (!geh.length) zeilen.push('  (nicht gelaufen)');
+  else {
+    const woerter = geh.filter(z => z.was === 'wort');
+    const stumm   = woerter.filter(z => z.sprach === false).length;
+    const dunkel  = geh.filter(z => z.sichtbar === 'hidden').length;
+    zeilen.push('  ' + woerter.length + ' Wörter · ' + stumm + ' ohne Ton · '
+      + dunkel + ' bei ausgeschaltetem Bildschirm');
+    /* Nur die letzten acht Zeilen — der Rest passt auf kein Bildschirmfoto. */
+    geh.slice(-8).forEach(z => zeilen.push('  ' + z.uhr + '  ' + z.was + '  ' + z.sichtbar
+      + (z.sprach === false ? '  ⛔ stumm' : '')));
+  }
+  return zeilen.join('\n');
+}
+
+document.getElementById('btnDiagnose')?.addEventListener('click', ()=>{
+  const kasten = document.getElementById('diagnoseText');
+  const knopf  = document.getElementById('btnDiagnose');
+  if (!kasten) return;
+  /* ⚠️ `hidden` als KLASSE, nicht als Attribut — die App führt beides, und die
+     Klasse `.hidden` gewinnt gegen ein `display` aus der Regel darüber.
+     [[hidden_verliert_gegen_display]] */
+  const zu = kasten.classList.contains('hidden');
+  if (zu) kasten.textContent = diagnoseText();
+  kasten.classList.toggle('hidden', !zu);
+  if (knopf) knopf.textContent = zu ? 'Verbergen' : 'Anzeigen';
+});
+
 /* ---------- App aktualisieren ----------
    Notausgang aus einem Kreislauf, in dem Elias am 30.07.2026 festhing: Die
    Ziehgeste zum Aktualisieren war kaputt, also kam kein neuer Stand an — auch

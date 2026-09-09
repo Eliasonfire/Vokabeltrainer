@@ -436,7 +436,59 @@ function feiere(anlass, daten){
   /* REDUCED_MOTION: die Meilenstein-Marke wird trotzdem gesetzt (sonst feiert
      die App denselben Meilenstein spaeter nachtraeglich), nur der Effekt
      entfaellt. Ein Banner ohne Bewegung ist erlaubt und bleibt. */
-  try { a.effekt(d); } catch (e) { /* Effekte duerfen nie stoeren */ }
+  let fehler = null;
+  try { a.effekt(d); } catch (e) { fehler = e; }
+  feierNotiz(anlass, fehler);
+}
+
+/* ---------- Das Feier-Protokoll ----------
+
+   ⭐ Der Anlass: „habe eben 5 wörter angehört und konfeti kam erst bei
+   startseite, das soll aber doch kommen beim hörmodus" (Elias, 08.09.2026).
+   Im Pruefbrowser kam das Konfetti sofort und an der richtigen Stelle — der
+   Fall ist also nur AUF SEINEM GERAET zu sehen. Statt ein zweites Mal zu
+   raten, schreibt jede Feier mit, WANN sie lief und AUF WELCHEM BILDSCHIRM.
+   [[diagnose_statt_raten]]
+
+   ⭐⭐ Der Bildschirm ist die eigentliche Frage, und er trennt zwei ganz
+   verschiedene Ursachen:
+
+   | im Protokoll steht | dann |
+   |---|---|
+   | `hoer-tagesziel` auf `screen-hoeren` | der Ausloeser sitzt richtig, sichtbar war der Effekt trotzdem nicht |
+   | `hoer-tagesziel` auf `screen-home`   | die Feier kam wirklich zu spaet — erst nach dem Zurueckgehen |
+
+   ⛔ Ein Fehler im Effekt wird weiter GESCHLUCKT — ein Effekt darf das Lernen
+   nie unterbrechen, das bleibt richtig. Aber er wird nicht mehr vergessen: das
+   leere `catch {}` hat genau diesen Fall unauffindbar gemacht.
+   [[ausfall_ist_unsichtbar_gebaut]]
+
+   ⚠️ Hoechstens 40 Eintraege und nur der laufende Tag — ein Protokoll, das
+   mitwaechst, ist nach zwei Wochen das groessere Problem als der Fehler, den
+   es finden soll. */
+const FEIER_LOG_KEY = 'vt_feierLog';
+
+function feierNotiz(anlass, fehler){
+  try {
+    let log = LS.get(FEIER_LOG_KEY, null);
+    if (!log || log.tag !== todayStr(0)) log = { tag: todayStr(0), zeilen: [] };
+    const zeile = {
+      uhr: new Date().toTimeString().slice(0, 8),
+      anlass: anlass,
+      wo: (document.querySelector('.screen.active') || {}).id || '?'
+    };
+    if (fehler) zeile.fehler = String((fehler && fehler.message) || fehler);
+    log.zeilen.push(zeile);
+    if (log.zeilen.length > 40) log.zeilen = log.zeilen.slice(-40);
+    LS.set(FEIER_LOG_KEY, log);
+  } catch (e){ /* die Diagnose selbst darf erst recht nichts umwerfen */ }
+}
+
+/** Abruf: feierProtokoll() — dieselben Zeilen zeigt die Diagnosekarte in den
+ *  Einstellungen, weil auf dem Handy niemand eine Konsole oeffnet. */
+function feierProtokoll(){
+  const log = LS.get(FEIER_LOG_KEY, null);
+  return (log && log.tag === todayStr(0) && log.zeilen) ? log.zeilen : [];
 }
 
 /* Von js/uebung.js aufgerufen. Zaehlt die Serie innerhalb der Uebungsrunde. */

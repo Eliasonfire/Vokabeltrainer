@@ -190,6 +190,31 @@ for (const w of bezug) {
   else gesehen.set(f, w);
 }
 
+/* ---------- Bewusst nebeneinander ----------
+   ⛔ Ein Paar, das der Pruefer jeden Lauf als Befund fuehrt und im selben Atemzug
+   selbst fuer KEIN Duplikat erklaert, ist kein Kandidat mehr — es ist Rauschen,
+   das den echten Kandidaten daneben unsichtbar macht. Seit dem 09.09.2026 steht
+   es deshalb hier, MIT dem Grund; die Bedeutungen unterscheiden sich, und das
+   ist eine Tatsache aus den Daten, keine Entscheidung.
+   ⚠️ Nur Paare mit VERSCHIEDENER Bedeutung gehoeren hierher. Ein Paar mit
+   gleicher Bedeutung (سَيِّدٌ „Herr" gegen madina-2 K18 „Herr") bleibt Befund —
+   welche Karte Elias behaelt, entscheidet er. [[kandidatenliste_ist_keine_fehlerliste]] */
+const BEWUSST_NEBENEINANDER = [
+  { a: 'gram-zarf', b: 46352, grund: 'ظَرْف = Zeit-/Ortsangabe (Fachbegriff) gegen ظَرْفٌ = Umschlag (madina-2 K17) — anderes Wort, gleiches Schriftbild' }
+];
+const bewusst = [];
+for (let i = befunde.length - 1; i >= 0; i--) {
+  const f = befunde[i];
+  const treffer = BEWUSST_NEBENEINANDER.find(p =>
+    String(f.e.id) === String(p.a) && f.t.some(x => String(x.id) === String(p.b)));
+  if (treffer) { bewusst.push({ f, grund: treffer.grund }); befunde.splice(i, 1); }
+}
+if (bewusst.length) {
+  console.log('=== bewusst nebeneinander (kein Befund): ' + bewusst.length + ' ===');
+  bewusst.forEach(({ f, grund }) => console.log('  ' + f.e.ar.padEnd(20) + ' ' + grund));
+  console.log('');
+}
+
 if (!befunde.length) {
   console.log('✅ Kein Wort steht doppelt.');
   process.exit(0);

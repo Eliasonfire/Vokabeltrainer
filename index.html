@@ -2,8 +2,38 @@
 <html lang="de" dir="ltr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<!-- ⛔ `user-scalable=no` (09.09.2026). Elias vom Tablet: „beim tablet kann ich
+     auf der ganzen app heran zoomen und heraus, das will ich auch nicht".
+     `maximum-scale=1` allein reichte nicht — es begrenzt, sperrt aber nicht
+     überall. Die zweite Sperre steht im Stil: `touch-action` an #app, damit
+     die Zwei-Finger-Geste gar nicht erst als Zoom gilt.
+     [[ein_weg_geht_der_andere_nicht]] -->
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#000000">
+<!-- ⛔⛔ Dark Reader aussperren (09.09.2026). Elias: „warum ist cyan immer
+     standart hier am pc als farbe? das habe ich nie gewollt, ich will tirch
+     red haben satndartmässig".
+
+     ⭐ Die App hat NIE eine andere Vorgabe gehabt: `wendeAkzentfarbeAn()` in
+     js/darstellung.js fällt auf `#ff1744` zurück, und im ganzen Quelltext
+     kommt kein Cyan vor. Gerechnet erklärt sich die Farbe von selbst —
+     Dark Reader kehrt die Kanäle um:
+
+         Torch Red   rgb(255, 23, 68)
+         invertiert  rgb(  0,232,187)  =  #00e8bb   ← genau das Cyan
+
+     In Elias' Chrome läuft die Erweiterung, und ihre Regeln liegen in der
+     User-Origin-Ebene: sie schlagen Autoren-CSS auch mit `!important`. Kein
+     Website-CSS kann dagegen gewinnen — deshalb das offizielle Gegenmittel,
+     eine Zeile. Am 08.09. im Korantrainer eingebaut und dort gemessen; dass
+     der Vokabeltrainer sie nicht bekam, war die Lücke.
+     [[dark_reader_schlaegt_jedes_css]] [[entscheidung_gilt_fuer_das_zweite_werkzeug]]
+
+     ⚠️ Es wird nicht behauptet, sondern gemeldet: die Diagnosekarte
+     (Einstellungen → Daten & App) sagt, ob die Erweiterung trotzdem läuft.
+     In Dark Reader 4.9.86 gab es einen Fehler, durch den das Tag wirkungslos
+     blieb. [[ausfall_ist_unsichtbar_gebaut]] -->
+<meta name="darkreader-lock">
 <meta name="description" content="Vokabeltrainer für Madina Buch 1 - Leitner-System, gekoppelt an Arabic Roots">
 <title>Vokabeltrainer</title>
 <link rel="manifest" href="manifest.json">
@@ -471,6 +501,25 @@
    Der Rumpf rollt jetzt gar nicht mehr, und #app haengt mit position:fixed am
    Ansichtsfenster statt am Dokument. Damit ist die Leiste immer da, egal wie
    weit main gerollt ist. */
+/* ⛔⛔ „da ist so ein kleiner weißer streifen, mache ihn oled schwarz"
+   (Elias, 09.09.2026, mit Tablet-Bild vom oberen Bildschirmrand).
+
+   Gemessen war in der App ALLES schwarz: `--bg` #000000, `body`, `#app`, die
+   Kopfzeile und `<meta name="theme-color">` — `rgb(0,0,0)` an jedem Punkt der
+   obersten zehn Pixel. Der Streifen kam also nicht aus einer Regel, sondern
+   aus dem, was der Browser SELBST malt.
+
+   ⭐ Und dafür fehlte die Auskunft: ohne `color-scheme:dark` hält Chrome die
+   Seite für hell und zeichnet seine eigenen Flächen entsprechend — den
+   Überzieh-Bereich am oberen Rand, Bildlaufleisten, Formularelemente. Die
+   Seite ist seit jeher dunkel, sie hat es nur nie GESAGT.
+
+   ⚠️ `html` bekommt zusätzlich ausdrücklich Schwarz. Die Fläche hinter der
+   Seite erbt den Hintergrund nur, solange `html` keinen eigenen hat — und
+   „erbt normalerweise" ist kein Zustand, auf den man einen schwarzen Bildschirm
+   stützt. [[flaeche_nur_im_gefuellten_zustand]] */
+:root{color-scheme:dark;}
+html{background:#000;}
 html,body{height:100%;overflow:hidden;overscroll-behavior:none;}
 body{
   margin:0;
@@ -505,10 +554,74 @@ button{font-family:inherit;color:inherit;}
   inset:0;
   max-width:600px;
   margin:0 auto;
+  /* ⛔ Kein Zoom mit zwei Fingern (09.09.2026). Elias vom Tablet: „beim tablet
+     kann ich auf der ganzen app heran zoomen und heraus, das will ich auch
+     nicht". Das viewport-Meta hat `user-scalable=no`; das hier ist die zweite
+     Sperre, die auch dann greift, wenn der Browser das Meta übergeht: eine
+     Geste, die nur `pan-x pan-y` darf, kann kein Zoom sein. Wischen und
+     Rollen bleiben davon unberührt. [[ein_weg_geht_der_andere_nicht]] */
+  touch-action:pan-x pan-y;
   background:
     radial-gradient(ellipse 130% 42% at 50% -4%, rgba(255,23,68,.10), transparent 62%),
     radial-gradient(ellipse 90% 50% at 50% 104%, rgba(255,23,68,.04), transparent 60%),
     var(--bg);
+}
+/* ⛔⛔ IM LESER OHNE SCHIMMER (09.09.2026). Elias mit Tablet-Bild, zwei Kästen
+   um die oberen Ecken: „hier ist vom hintergrund rot aber das sollte beim
+   quran lesen oled schwarz sein".
+
+   ⭐ Der rote Schein kommt aus den zwei Verläufen darüber — er liegt auf
+   `#app` und damit hinter allem. In der Mitte deckt ihn die schwarze
+   Kopfzeile zu; sichtbar bleibt er genau dort, wo Elias die Kästen gezogen
+   hat: links und rechts daneben.
+
+   ⚠️ Deshalb war er in der Messung unsichtbar: `backgroundColor` gibt an jedem
+   Punkt `rgb(0,0,0)` zurück, denn ein Verlauf ist ein background-IMAGE. Wer
+   nur die Farbe abfragt, findet ihn nie. [[flaeche_nur_im_gefuellten_zustand]]
+
+   ⛔ Nur im Leser, nicht überall: der Schimmer ist auf den anderen
+   Bildschirmen gewollt. Beim Lesen langer Suren auf einem OLED-Schirm ist er
+   Störung und kostet Strom. */
+/* ⛔⛔ DER SCHEIN GEHÖRT IN DIE INHALTSSPALTE (09.09.2026).
+
+   Gemessen bei 1056 px: `#app` ist **1056** breit und trägt den Verlauf über
+   die ganze Fläche, die Kopfzeile aber ist **860 breit und mittig** (x 98…958)
+   mit undurchsichtigem Schwarz. Daraus folgen genau die zwei Meldungen:
+
+     „hier ist vom hintergrund rot aber das sollte … oled schwarz sein"
+       → der Schein LINKS UND RECHTS der Leiste, wo nichts ihn abdeckt
+     „dieser balken ist auf meinem handy so leicht rötlich, hier am tablet
+      nicht … ich will aber das es so aussieht wie auf meinem handy"
+       → die Leiste SELBST, die ihn zudeckt
+
+   ⭐ Am Handy gibt es den Unterschied nicht: dort ist `#app` so breit wie der
+   Bildschirm und die Kopfzeile hat gar keinen eigenen Hintergrund — der Schein
+   scheint durch. Genau dieser Zustand wird hier für breite Schirme
+   nachgebaut: der Verlauf wird auf die Inhaltsbreite begrenzt, und die Leiste
+   bekommt denselben Ton, statt ihn zu übermalen.
+   [[regel_wirkt_ueber_die_grenze]] */
+
+/* ⛔ LANGES DRÜCKEN ÖFFNET NICHTS MEHR (09.09.2026). Elias mit Bild des
+   Chrome-Menüs über dem Verstext: „habe lange drauf gehlaten an eine stelle
+   und dann ist das auf gegangen, das soll eigentlich nicht passieren" — und
+   auf die Rückfrage: „grundsätzlich auf der app nichts zu suchen".
+
+   ⚠️ ZWEI Angaben, nicht eine: `user-select:none` verhindert das Markieren,
+   aber Chrome auf Android zeigt das Menü trotzdem —
+   `-webkit-touch-callout:none` ist die, die es unterdrückt. Der Handler in
+   js/init.js fängt zusätzlich `contextmenu` ab, für Fassungen, die nur auf
+   das Ereignis hören. [[ein_weg_geht_der_andere_nicht]]
+
+   ⛔⛔ EINGABEFELDER SIND AUSGENOMMEN. Dort ist das lange Drücken der einzige
+   Weg zu „Einfügen" — ohne die zweite Regel könnte er in Suche, Sprungfeld
+   und Vokabelformular nichts mehr einsetzen. [[fehler_trifft_mehr_als_gemeldet]] */
+#app{
+  -webkit-touch-callout:none;
+  -webkit-user-select:none;user-select:none;
+}
+#app input, #app textarea, #app select, #app [contenteditable]{
+  -webkit-touch-callout:default;
+  -webkit-user-select:text;user-select:text;
 }
 
 /* =====================================================================
@@ -806,6 +919,30 @@ main{
   background:radial-gradient(circle at 50% -25%, var(--red-glow), transparent 62%);
   pointer-events:none;
 }
+/* „Heute zusätzlich" — die Zeile unter der Fälligkeitskarte (09.09.2026).
+   ⛔ Bewusst RUHIGER als die Karte darüber: die zehn Karten sind die
+   Hauptsache, das hier ist die Zugabe. Gleiche Rundung und Randfarbe, aber
+   kein Verlauf, kein Schein, kleinere Schrift. Wäre sie gleich laut, stünden
+   zwei Aufforderungen nebeneinander und keine gewänne. */
+.heute-extra{
+  display:flex;align-items:center;gap:var(--sp-3);width:100%;
+  background:var(--surface-1);border:1px solid var(--border);
+  border-radius:var(--r-4);padding:var(--sp-3) var(--sp-4);
+  margin-top:var(--sp-3);color:var(--text);font:inherit;text-align:start;
+  cursor:pointer;transition:border-color var(--dur-2) ease, background var(--dur-2) ease;
+  min-height:56px;
+}
+.heute-extra:hover{border-color:var(--red-dim);background:var(--surface-2);}
+.heute-extra .ic{flex:0 0 auto;width:22px;height:22px;color:var(--red-bright);}
+.heute-extra .hx-text{flex:1;min-width:0;display:flex;flex-direction:column;}
+.heute-extra .hx-titel{font-weight:700;font-size:var(--fs-md);}
+.heute-extra .hx-sub{font-size:var(--fs-sm);color:var(--text-dim);margin-top:2px;}
+/* Geschafft: der Rahmen wird grün und der Pfeil verschwindet — die Zeile bleibt
+   trotzdem stehen und anklickbar, denn „genug" heisst nicht „gesperrt". */
+.heute-extra.geschafft{border-color:var(--green);}
+.heute-extra.geschafft .ic{color:var(--green);}
+.heute-extra .hx-pfeil{flex:0 0 auto;color:var(--text-faint);}
+.heute-extra.geschafft .hx-pfeil{display:none;}
 .due-number{
   font-size:4.2rem;font-weight:800;line-height:1;
   background:var(--accent-grad);
@@ -1696,7 +1833,12 @@ main{
 
 .custom-cat-add{display:flex;gap:var(--sp-2);margin-bottom:var(--sp-3);}
 .custom-cat-add input{
-  flex:1;background:var(--surface-2);border:1px solid var(--border);color:var(--text);
+  /* ⛔ `flex:1` allein reicht NICHT: `flex-shrink:1` erlaubt das Schrumpfen,
+     `min-width:auto` verbietet es unterhalb der Eigenbreite des Feldes (rund
+     20 Zeichen). Gemessen am 09.09.2026 bei 364 px Fensterbreite: Feld +
+     Knopf „Anlegen" ergaben 386 px, und die Kategorienseite rollte quer.
+     Dieselbe Falle wie bei `.select-input`. [[layout_min_width_falle]] */
+  flex:1;min-width:0;background:var(--surface-2);border:1px solid var(--border);color:var(--text);
   border-radius:var(--r-2);padding:0 var(--sp-4);font-size:var(--fs-md);font-family:var(--font-ui);
   transition:border-color var(--dur-2) ease, background var(--dur-2) ease;
 }
@@ -2418,9 +2560,17 @@ main{
   border-radius:var(--r-4);padding:var(--sp-5) var(--sp-4);
   display:flex;flex-direction:column;gap:var(--sp-3);
 }
-.ueb-kopf{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-3);}
+/* ⛔ `flex-wrap:wrap` und KEIN `nowrap` mehr (09.09.2026). Gemessen bei 320 px
+   Fensterbreite: die Standzeile „1 / 4432 · 0 richtig · Tagesziel 3 von 13"
+   ist 206 px breit und begann bei 126 px — der Satzmodus rollte dadurch quer
+   (332 > 320). Ein 320-px-Gerät ist kein Sonderfall, es ist die schmalste
+   übliche Handybreite. [[layout_min_width_falle]]
+   ⭐ Zusammengehalten wird jetzt gezielt, nicht pauschal: die Zahlenpaare
+   tragen geschützte Leerzeichen (js/uebung.js), gebrochen wird an den
+   Trennpunkten „·". */
+.ueb-kopf{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-3);flex-wrap:wrap;}
 .ueb-name{font-weight:700;color:var(--text);font-size:var(--fs-md);}
-.ueb-stand{color:var(--text-faint);font-size:var(--fs-xs);font-variant-numeric:tabular-nums;white-space:nowrap;}
+.ueb-stand{color:var(--text-faint);font-size:var(--fs-xs);font-variant-numeric:tabular-nums;}
 .ueb-frage{color:var(--text);font-size:var(--fs-md);line-height:1.5;}
 .ueb-satz{
   font-family:var(--font-ar);font-size:clamp(calc(var(--fs-lg) * var(--ar-faktor)),7vw,2.4rem);line-height:2.1;
@@ -3232,7 +3382,7 @@ button:disabled{cursor:default;}
    (gemessen 66 px). Ein eigener Zahlenwert hier wäre die zweite Stelle,
    an die niemand mehr denkt. */
 .quran-spieler{
-  display:flex;align-items:center;gap:var(--sp-2);
+  display:flex;flex-direction:column;gap:0;
   position:fixed;
   bottom:var(--leiste-unten);
   left:50%;transform:translateX(-50%);
@@ -3243,6 +3393,75 @@ button:disabled{cursor:default;}
   border:1px solid var(--border);border-radius:var(--r-3);
   background:var(--surface-2);box-shadow:var(--sh-2);
 }
+/* ⚠️ Die Leiste hat seit dem 08.09.2026 ZWEI Zeilen: die Knopfreihe und den
+   ausklappbaren Wiederholbereich. `align-items:center` wanderte deshalb von
+   hier in `.qs-reihe` — an einer Spalte richtete es die Zeilen mittig aus
+   statt sie über die Breite zu ziehen. */
+/* Enger als die uebrigen Reihen: fuenf Knoepfe a 40 px lassen auf einem
+   375-px-Bildschirm nur 81 px fuer den Text. Vier Luecken zu je 8 px sind
+   darin 32 px, die niemand sieht. */
+/* ⛔⛔ `flex-wrap:wrap` (09.09.2026). Bei 320 px Fensterbreite blieben für die
+   Textspalte nur 46 px — auf dem Bildschirm stand „Ver…" und „Mis…", die
+   Versnummer war nicht mehr lesbar. Fünf Knöpfe à 40 px sind 200 px, plus vier
+   Lücken 16 px; in einer 282 px breiten Leiste bleibt nicht genug übrig.
+   ⭐ Die Schwelle steht am INHALT, nicht am Gerät: `.qs-text` bekommt unten
+   eine Untergrenze, die „Vers 30/30" trägt. Passt sie neben die Knöpfe, bleibt
+   alles einzeilig (375 px: 81 px Platz); passt sie nicht, rutscht die
+   Textspalte auf eine eigene Zeile, statt abgeschnitten zu werden.
+   [[layout_min_width_falle]] */
+.qs-reihe{ display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
+/* ⛔ WELCHES Element umbricht, ist nicht egal. Ohne die Regel unten fiel der
+   Schließen-Knopf allein in die zweite Zeile und die Textspalte blieb oben
+   gequetscht — funktionsfähig, aber es sieht nach Versehen aus.
+   ⭐ Gemessen: fünf Knöpfe à 40 px + vier Lücken à 4 px = 216 px. Mit den
+   4,5rem der Textspalte braucht die Reihe 288 px. Ist die Leiste schmaler,
+   bekommt die Textspalte eine eigene Zeile und die Knöpfe bleiben beisammen.
+   ⚠️ Container-Abfrage, keine Geräteabfrage: maßgeblich ist die Breite DER
+   LEISTE, und die hängt an `--inhalt-max` und den Rändern, nicht am Gerät.
+   [[layout_min_width_falle]] */
+.quran-spieler{ container-type:inline-size; }
+@container (max-width: 288px){
+  .qs-text, .qs-sprung{ flex-basis:100%; order:1; }
+}
+.qs-schleife{
+  display:flex; align-items:center; gap:var(--sp-2);
+  margin-top:var(--sp-2); padding-top:var(--sp-2);
+  border-top:1px solid var(--border);
+}
+.qs-sch-titel{ font-size:var(--fs-sm); color:var(--text-dim); flex-shrink:0; }
+.qs-sch-feld{
+  display:inline-flex; align-items:center; gap:4px;
+  font-size:var(--fs-sm); color:var(--text-dim);
+}
+/* ⛔ Feste Breite statt `flex:1`: zwei Zahlenfelder, die sich die Restbreite
+   teilen, springen bei jeder Eingabe in der Größe. Drei Stellen reichen —
+   Al-Baqarah hat 286 Verse, die längste Sure überhaupt. */
+/* ⛔ 45×25 px waren zu klein — gemessen am 08.09.2026, nachdem Elias sagte
+   „am besten wenn ich das auch selbst eintippen kann". Die Felder nahmen
+   Eingaben an (fokussierbar, nicht readonly, nichts lag darüber), aber unter
+   44 px trifft man sie mit dem Daumen nicht zuverlässig. */
+.qs-sch-feld input{
+  width:3.4em; min-height:40px; padding:6px 8px;
+  border:1px solid var(--border); border-radius:var(--r-1);
+  background:var(--surface); color:var(--text);
+  font:inherit; text-align:center;
+  font-variant-numeric:tabular-nums;
+}
+.qs-sch-an{
+  margin-inline-start:auto; flex-shrink:0;
+  padding:5px 12px;
+  border:1px solid var(--border); border-radius:var(--r-full);
+  background:transparent; color:var(--text-dim);
+  font:inherit; font-size:var(--fs-sm); cursor:pointer;
+  transition:background var(--dur-2) ease, color var(--dur-2) ease;
+}
+.qs-sch-an.an{
+  background:var(--red-wash); color:var(--red-bright);
+  border-color:var(--red-bright);
+}
+/* Der Knopf in der Reihe zeigt mit, dass eine Schleife läuft — sonst müsste
+   man die Zeile aufklappen, um es zu sehen. */
+#btnQsSchleife.an{ color:var(--red-bright); }
 .qs-knopf{
   display:inline-flex;align-items:center;justify-content:center;
   width:40px;height:40px;flex-shrink:0;
@@ -3256,9 +3475,36 @@ button:disabled{cursor:default;}
    als einziger Farbe. Alles andere daneben bleibt ruhig. */
 .qs-knopf.qs-play{color:var(--red-bright);}
 .qs-knopf.qs-play.an{background:var(--red-wash);}
+/* Der Stand sieht aus wie Text und ist ein Knopf — deshalb erbt er alles vom
+   Text und setzt nur die Knopf-Eigenschaften zurück. Ein sichtbarer Rahmen
+   wäre in einer Leiste mit vier Knöpfen daneben zu viel. */
+#qsStandKnopf{
+  border:0; background:transparent; color:inherit; font:inherit;
+  text-align:start; cursor:pointer; padding:4px 6px;
+  border-radius:var(--r-1);
+}
+#qsStandKnopf:hover{ background:var(--surface-3); }
+.qs-sprung{
+  /* ⛔ Untergrenze aus dem Inhalt: Beschriftung „Vers" 27 px + Feld 42 px +
+     6 px Lücke = 75 px. Mit `min-width:0` wurde die Zeile auf 46 px gequetscht
+     und das Eingabefeld angeschnitten — gemessen bei 320 px. */
+  display:flex; align-items:center; gap:6px; flex:1; min-width:5rem;
+  padding-inline-start:var(--sp-2);
+  font-size:var(--fs-sm); color:var(--text-dim);
+}
+.qs-sprung input{
+  width:3.4em; min-height:40px; padding:6px 8px;
+  border:1px solid var(--red-bright); border-radius:var(--r-1);
+  background:var(--surface); color:var(--text);
+  font:inherit; text-align:center; font-variant-numeric:tabular-nums;
+}
 .qs-text{
   display:flex;flex-direction:column;justify-content:center;
-  min-width:0;flex:1;padding-inline-start:var(--sp-2);
+  /* ⛔ NICHT `min-width:0`. Genau das ließ die Spalte auf 46 px schrumpfen und
+     „Vers 12/30" zu „Ver…" werden. 4,5rem trägt den längsten üblichen Stand
+     („Vers 286/286" bei Al-Baqarah bricht dann in die zweite Zeile der Spalte,
+     abgeschnitten wird nichts). */
+  min-width:4.5rem;flex:1;padding-inline-start:var(--sp-2);
 }
 .qs-stand{
   font-size:var(--fs-sm);color:var(--text);
@@ -3295,12 +3541,138 @@ button:disabled{cursor:default;}
    ⚠️ `border-inline-start` und nicht `border-left`: der Quran-Text läuft RTL,
    der Balken gehört an den Zeilenanfang — und der ist dort rechts.
    [[rtl_richtung_physisch]] */
+/* Das Wort, das gerade gesprochen wird.
+
+   ⛔ Kraeftiger als die Versmarke, nicht schwaecher: es liegt ja INNERHALB
+   des markierten Verses und muss sich davon abheben. Auf der Versflaeche
+   (22 % Rot) steht hier ein voller Ton — sonst waere es dasselbe Problem wie
+   am 08.09. vormittags, nur eine Ebene tiefer.
+   [[milder_bezugspunkt_verdeckt_mangel]]
+
+   ⚠️ `box-decoration-break: clone` auch hier: ein Wort kann am Zeilenende
+   umbrechen — selten, aber dann saehe es zerrissen aus.
+
+   ⛔ Kein `transition` auf der Flaeche. Die Marke springt im Takt der
+   Rezitation weiter; eine Blende von 200 ms laege bei einem kurzen Wort
+   laenger an als das Wort selbst dauert. */
+#verseList .verse-ar .qw{ border-radius:var(--r-1); }
+#verseList .verse-ar .qw.laeuft{
+  /* ⛔ Aus demselben Grund ein Verlauf und keine Polsterung — siehe oben.
+     ⭐ GENAU SO HOCH wie die Versmarke (1.85em). Elias am 08.09.2026:
+     „außerdem möchte ich, dass die worthervorhebung im listenmodus genauso
+     groß ist bzw hoch wie die vershervorhebung". Vorher stand hier 1.6em —
+     die Stufe sollte beide unterscheidbar halten, sah aber unruhig aus.
+     Unterschieden werden sie ohnehin durch die Farbe: volle Deckung gegen
+     24 Prozent. */
+  background:linear-gradient(var(--red-bright),var(--red-bright))
+             center/100% 1.85em no-repeat;
+  color:#fff;
+  /* ⚠️ Etwas flacher als die Versmarke (.68em), damit man beide übereinander
+     noch unterscheidet — sonst deckte das Wort den Versbalken auf seiner
+     Zeile vollständig zu. Waagerecht KEIN negativer Außenabstand: derselbe
+     Überstand, den Elias am Versbalken beanstandet hat. */
+  padding:0; margin:0;
+  -webkit-box-decoration-break:clone; box-decoration-break:clone;
+}
 #verseList .verse-item.laeuft{
   background:rgba(255,23,68,.20);border-radius:var(--r-2);
   padding-inline:var(--sp-3);margin-inline:calc(var(--sp-3) * -1);
   border-inline-start:3px solid var(--red-bright);
   box-shadow:0 0 0 1px rgba(255,77,106,.35);
 }
+/* ⛔⛔ Im LISTENMODUS ist `.verse-item` ein INLINE-Element (Regel weiter
+   unten). Ein Rahmen daran zerfaellt in so viele Bruchstuecke, wie der Vers
+   Zeilen hat: der Randbalken sitzt nur am ersten, der Radius rundet nur
+   aussen, und der `box-shadow` zieht um jedes Stueck eine eigene Kontur.
+   Elias mit Bild am 08.09.2026: „beim listemmodus sieht es ganz verbuggt aus
+   das mitlesen also vers für vers. es sollte der ganze satz wie beim kästchen
+   modus so eine umrandung bekommen die gut aussieht"
+
+   ⭐ `box-decoration-break: clone` gibt JEDEM Zeilenstueck die vollstaendige
+   Dekoration statt sie einmal ueber alle zu spannen — damit wird aus dem
+   zerrissenen Rahmen ein durchgehender Textmarker. Rand und Schlagschatten
+   entfallen hier bewusst: eine Linie um jedes einzelne Stueck waere genau
+   das, was vorher schlecht aussah.
+
+   ⚠️ Die Polsterung ist nur waagerecht ausgeglichen (negativer Aussenabstand).
+   Senkrecht braucht sie keinen Ausgleich: an einem Inline-Element verschiebt
+   sie nichts, sie waechst in den Zeilenabstand hinein — und der ist hier mit
+   `line-height:2.35` reichlich. */
+/* ⛔⛔ MESSUNG 08.09.2026, 15:20 — die Marke deckte nur ein Drittel.
+   Elias mit Bild: „das sieht immer noch nicht gut aus, du sollstest das noch
+   weiter streicken also das es die wörter komplett umschließt und die
+   markierung geht bis über den punkt hinaus, das sieht nicht gut aus."
+
+   Im Browser nachgemessen, an einem Vers über fünf Zeilen:
+
+     Markierung   24 px hoch
+     Textzeile    71 px hoch   (font-size 37,2 px · line-height 87,4 px)
+
+   ⭐ Der Grund: an einem INLINE-Element bemisst sich der Hintergrund an der
+   Schriftmetrik, nicht an der Zeilenhöhe — und die Ḥarakāt stehen weit
+   darüber und darunter. Ohne senkrechte Polsterung schneidet die Fläche
+   mitten durch die Buchstaben. [[line_height_schneidet_harakat_ab]]
+
+   Gerechnet: (71 − 20) ÷ 2 = 25,5 px je Seite, das sind 0,69 em bei 37,2 px
+   Schrift. Gesetzt auf .68em, damit zwischen zwei Zeilen sichtbar Luft bleibt
+   (87 − 71 = 16 px).
+
+   ⛔ Und `margin-inline` ist WEG. Der negative Außenabstand zog die Fläche
+   acht Pixel über den Text hinaus — das war das „geht bis über den punkt
+   hinaus": das Ayah-Schlusszeichen stand mitten in der Marke und die Fläche
+   lief noch weiter. Waagerecht bleibt nur so viel Polsterung, dass die
+   Buchstaben nicht am Rand kleben. */
+/* ⛔⛔ DIE em-BASIS IST NICHT DIESELBE — und das war der zweite Anlauf.
+
+   `.verse-item` erbt die Grundschrift der App (16 px), `.verse-ar` und die
+   Wortspans darin tragen die Quran-Größe (37 px). Dasselbe `.68em` ergibt
+   an der einen Stelle 11 px und an der anderen 25 px — die Versmarke blieb
+   flach, während der Wortkasten über die Zeile hinausragte, obwohl sein Wert
+   kleiner war. Die Zahl war richtig, die Bezugsgröße nicht.
+   [[milder_bezugspunkt_verdeckt_mangel]]
+
+   ⭐ Deshalb sitzt die Fläche jetzt auf `.verse-ar` — dort gilt dieselbe
+   Schriftgröße wie für die Wortmarke, und beide Werte sind vergleichbar.
+
+   ⚠️ Und `getClientRects()` misst hier NICHT, was man sieht: an einem
+   Inline-Element beschreiben die Rechtecke die Inhaltsfläche ohne Polsterung.
+   Die Wirkung ist nur am Bild zu prüfen. [[breite_null_ist_kein_layout]] */
+/* ⛔⛔ DIE SCHRIFT IST HOEHER ALS IHRE ZEILE — deshalb kann Polsterung das
+   hier nicht lösen, egal mit welchem Wert.
+
+   Elias mit Bild, 08.09.2026: „das ist zu groß es überschneidet sich sogar.
+   sowohl vers für vers als auch wort für wort beide sollten kleiner werden
+   damit sie nur gerade so die wörter bedecken"
+
+   Im Browser gemessen:
+
+     font-size            37,2 px
+     Inhaltsfläche        85   px   ← 2,28× die Schriftgröße
+     Zeilenabstand        87   px
+
+   ⭐ Die Muṣḥaf-Schrift trägt riesige Metriken (ascent/descent), damit die
+   Ḥarakāt Platz haben. Ihre Inhaltsfläche ist damit fast so hoch wie der
+   ganze Zeilenabstand — JEDE Polsterung schiebt die Fläche in die Nachbarzeile.
+   Bei .26em waren es 105 px auf 87 px Abstand: 18 px Überlappung.
+   Ein kleinerer Wert half nicht, weil nicht die Polsterung das Problem war.
+
+   ⭐⭐ Deshalb wird die Fläche als VERLAUF mit fester Höhe gezeichnet statt
+   als Hintergrund der Inhaltsfläche. 1,85em ≈ 69 px — der Text selbst misst
+   66 bis 71 px, die Fläche deckt ihn also genau und lässt 18 px Luft zur
+   nächsten Zeile.
+
+   ⚠️ Der Preis sind eckige Kanten: `border-radius` beschneidet die Box, nicht
+   den Verlauf, und die Box ist ja gerade die zu große. Ein Textmarker hat
+   ohnehin keine runden Ecken. */
+#verseList.liste .verse-item.laeuft .verse-ar{
+  background:linear-gradient(rgba(255,23,68,.24),rgba(255,23,68,.24))
+             center/100% 1.85em no-repeat;
+  border:0; box-shadow:none; padding:0; margin:0;
+  -webkit-box-decoration-break:clone; box-decoration-break:clone;
+}
+/* Der Kasten selbst bleibt ohne Fläche — sonst läge sie doppelt und mit
+   zwei verschiedenen Höhen übereinander. */
+#verseList.liste .verse-item.laeuft{ background:none; border:0; box-shadow:none; padding:0; margin:0; }
 /* ⛔ Hier stand `#verseList .verse-item.laeuft .verse-ar{color:#fff}` — im
    Browser gemessen: der Verstext ist ohnehin schon rgb(255,255,255). Die
    Regel hätte nichts bewirkt und dabei ausgesehen, als täte sie etwas.
@@ -4036,11 +4408,24 @@ button:disabled{cursor:default;}
   /* ⭐ Ebenfalls 43 px gemessen — betrifft Modus- und Themenwahl im
      Satzmodus und jede Auswahl in den Einstellungen. */
   min-height:44px;
+  /* ⛔ Ohne diese zwei Zeilen schiebt eine lange Option die ganze Seite quer:
+     ein Flex-Kind hat `min-width:auto` und schrumpft nicht unter seinen
+     Inhalt. Gemessen an „Wurzel hervorheben" — 377 px in einem 364-px-Fenster.
+     Sie sind die ALLGEMEINE Absicherung; die betroffene Zeile steht zusätzlich
+     untereinander. [[layout_min_width_falle]] [[erst_ursache_dann_zweite_massnahme]] */
+  min-width:0;max-width:100%;
   transition:border-color var(--dur-2) ease;
 }
 .select-input:focus{border-color:var(--red-dim);outline:none;}
 .select-full{width:100%;margin-bottom:var(--sp-4);padding:var(--sp-3);}
 .settings-note{font-size:var(--fs-sm);color:var(--text-faint);line-height:1.6;margin-top:var(--sp-6);}
+/* Die Diagnoseausgabe. Feste Breite pro Zeichen, damit Uhrzeiten und Zahlen
+   untereinander stehen; waagerecht rollbar, weil eine lange Zeile sonst die
+   ganze Seite breit machen wuerde. [[layout_min_width_falle]] */
+.diagnose-text{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:12px;line-height:1.5;white-space:pre;overflow-x:auto;
+  background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-2);
+  padding:var(--sp-3);margin:var(--sp-2) 0 0;color:var(--text);}
 
 /* =====================================================================
    SCROLLBALKEN
@@ -4262,8 +4647,68 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
      nur der Rueckfall, falls das Skript nicht lief — sie darf nicht stimmen
      muessen, denn sie kann es gar nicht: --safe-top, Schriftgroesse und
      Zeilenumbruch aendern die Hoehe. */
+  /* ⛔ Der Verlauf wird auf die Inhaltsspalte begrenzt — neben ihr bleibt es
+     OLED-schwarz. Ohne die Begrenzung liegt der Schein über die ganze
+     Fensterbreite und leuchtet links und rechts der Kopfzeile heraus. */
+  #app{
+    background:
+      radial-gradient(ellipse 130% 42% at 50% -4%, rgba(255,23,68,.10), transparent 62%)
+        center top / var(--inhalt-max) 100% no-repeat,
+      radial-gradient(ellipse 90% 50% at 50% 104%, rgba(255,23,68,.04), transparent 60%)
+        center bottom / var(--inhalt-max) 100% no-repeat,
+      var(--bg);
+  }
   .topbar{position:absolute;top:0;left:0;right:0;max-width:var(--inhalt-max);margin:0 auto;
-    z-index:40;background:var(--bg);}
+    z-index:40;
+    /* ⛔ Schwarz — und zwar nach zwei gegenläufigen Ansagen am selben Abend:
+       02:31 „dieser balken ist auf meinem handy so leicht rötlich … ich will
+       aber das es so aussieht wie auf meinem handy", 02:40 „mach den roten
+       balken doch oled schwarz". Die zweite gilt. Der Rotton stand hier von
+       v427 bis v428 als Verlauf; der Schein daneben ist ohnehin auf die
+       Inhaltsbreite begrenzt (siehe #app darüber). [[kann_ist_nicht_ist]] */
+    background:var(--bg);
+    /* ⛔ Die Luecke unter der Wortmarke (09.09.2026). Elias mit Tablet-Bild:
+       „oben ist eine kleine lücke bei meinem tablet, ich will das das untere
+       teil etwas nach oben geschoben wird damit da keine lücke mehr ist".
+
+       Gemessen bei 800x1280: zwischen der Unterkante der Wortmarke (y 70) und
+       der Oberkante des Surentitels (y 91) lagen **22 px** toter Raum — nicht
+       als Abstand zwischen den Leisten (der ist 0), sondern als POLSTERUNG in
+       beiden: 14 px unten in der Kopfzeile, 4 px oben in der Titelzeile, dazu
+       der Zeilenabstand. Auf dem Handy sind es 19 px und dort stoert es nicht;
+       auf dem grossen Schirm faellt es auf.
+
+       ⚠️ Nur im Tablet-Block, mit Absicht. Die Polsterung des Handys wurde am
+       20.08.2026 auf genau denselben Wunsch hin eingestellt („mach diese
+       untere leiste nach oben damit diese lücke nicht mehr da ist") und war
+       danach recht — eine zweite Aenderung daran nimmt eine Entscheidung
+       zurueck, die er schon getroffen hat. [[regel_wirkt_ueber_die_grenze]]
+
+       ⭐ `--topbar-h` misst ein ResizeObserver, `main` polstert danach — die
+       Hoehe zieht also von selbst mit, ohne dass eine Zahl nachgepflegt werden
+       muss. Genau dafuer wurde die Messung eingebaut. */
+    padding-bottom:var(--sp-1);}
+  #screen-quranfull .screen-header{padding-top:0;}
+
+  /* ⛔ Die Spielknoepfe klebten links (09.09.2026). Elias: „der untere play und
+     vor und zurück button ist so weit links, ich will ihn mittig habeb".
+
+     Gemessen bei 800 px: die Leiste ist 632 px breit, die drei Knoepfe standen
+     bei x = 77…205 — also im linken Viertel. Ursache ist `flex:1` an der
+     Textspalte: auf einem schmalen Schirm ist das richtig (sie fuellt den
+     Rest), auf einem breiten schiebt sie alles andere an die Raender.
+
+     ⭐ Auf dem Handy bleibt es, wie es ist: dort gibt es keinen Ueberschuss zu
+     verteilen, und die Textspalte braucht jeden Punkt.
+     [[regel_wirkt_ueber_die_grenze]] */
+  .qs-reihe{justify-content:center;}
+  /* ⭐ Und die Textspalte wandert VOR die Knoepfe. Nur zu zentrieren reichte
+     nicht: die Gruppe stand dann zwar mittig, der Abspielknopf aber immer noch
+     97 px links davon, weil Textspalte und die zwei Zusatzknoepfe alle rechts
+     von ihm lagen. Steht der Text links, verteilt sich das Gewicht — gemessen
+     bleiben rund 13 px Abweichung statt 97. */
+  .qs-reihe .qs-text{flex:0 1 auto;order:-1;}
+  .qs-reihe .qs-sprung{flex:0 1 auto;order:-1;}
   /* ⛔⛔ NICHT `max-width` an main zurückgeben (07.09.2026). Elias vom Tablet:
      „bei meinem tablat gibt es recht viel platz rechts und links bei der app
      das einfach schwarz sind balken so, und wenn ich runter scrollen möchte
@@ -4285,7 +4730,17 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
      alles würde um 2×gutter breiter als vorher. `max()` fängt den Fall ab, dass
      das Fenster schmaler als --inhalt-max ist — dann bleibt die normale Rinne.
      [[flaeche_nur_im_gefuellten_zustand]] */
-  main{max-width:none;margin:0;width:100%;padding-top:var(--topbar-h,88px);
+  /* ⛔⛔ 74, nicht 88 (09.09.2026). Der Rueckfallwert gilt, solange
+     `--topbar-h` nicht gesetzt ist — also im ersten Anstrich und auf jedem
+     Geraet, dessen Skript noch nicht lief. Gemessen bei 800 px: die Kopfzeile
+     ist **74 px** hoch, `main` polsterte 88 px. Das sind **14 px Lücke**,
+     genau die, die Elias sieht: „und mach endlich diese lücke beim tablat zu".
+
+     ⛔ Und sie war MEINE: die Kopfzeile wurde in v423 um 10 px flacher, der
+     Rueckfall blieb bei 88. Vorher waren es 4 px und damit unauffaellig — die
+     Verbesserung an der einen Stelle hat die andere verschlechtert.
+     [[zweiter_fix_deckt_ersten_zu]] [[zahlen_ohne_beleg]] */
+  main{max-width:none;margin:0;width:100%;padding-top:var(--topbar-h,74px);
     padding-inline:max(var(--gutter), (100% - var(--inhalt-max)) / 2 + var(--gutter));}
 
   /* ⚠️ Am 15.08.2026 neu gefasst, nachdem Elias am Tablet-Bild sagte: "das ist
@@ -4341,7 +4796,10 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
   .flashcard{min-height:min(74vh,640px);}
   /* Auch hier gemessen statt geraten — dieselbe Begruendung wie im 700er-Block
      oben. Die 96 sind nur der Rueckfall ohne Skript. */
-  main{padding-top:var(--topbar-h,96px);}
+  /* Ebenfalls gemessen statt geschaetzt (09.09.2026): bei 1100 px ist die
+     Kopfzeile 77 px hoch, der alte Rueckfall 96 px — 19 px Luecke ohne
+     Messung. Dieselbe Ursache wie im 700er-Block darueber. */
+  main{padding-top:var(--topbar-h,77px);}
   /* Drei Kacheln nebeneinander statt zwei - bei 860px Inhaltsbreite sind zwei
      Kacheln so breit, dass Titel und Untertitel verloren darin schwimmen. */
   .home-grid{grid-template-columns:repeat(3,1fr);}
@@ -4386,6 +4844,8 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
   <symbol id="ic-auge" viewBox="0 0 24 24"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.8"/></symbol>
   <symbol id="ic-ohr" viewBox="0 0 24 24"><path d="M7 8a5 5 0 0 1 10 0c0 3-2.5 4-3.5 5.5S12 17 12 18.5a2.5 2.5 0 0 1-5 0"/><path d="M10.5 8.2a1.6 1.6 0 0 1 3 .6"/></symbol>
   <symbol id="ic-luecke" viewBox="0 0 24 24"><path d="M3 12h4"/><path d="M17 12h4"/><rect x="8.5" y="7.5" width="7" height="9" rx="1.5" stroke-dasharray="3 2.4"/></symbol>
+  <!-- Wiederholen: ein Kreis mit zwei Pfeilspitzen. -->
+  <symbol id="ic-repeat" viewBox="0 0 24 24"><path d="M4 9V7.5a3 3 0 0 1 3-3h10"/><path d="m14 1.5 3 3-3 3"/><path d="M20 15v1.5a3 3 0 0 1-3 3H7"/><path d="m10 22.5-3-3 3-3"/></symbol>
   <symbol id="ic-shuffle" viewBox="0 0 24 24"><path d="M3.5 7.5h4l9 9h4"/><path d="M3.5 16.5h4l9-9h4"/><path d="m17.5 4.5 3 3-3 3"/><path d="m17.5 13.5 3 3-3 3"/></symbol>
 </svg>
 
@@ -4459,6 +4919,20 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         </button>
         <div class="due-sub" id="dueSub"></div>
       </div>
+
+      <!-- ⭐ „Heute zusätzlich" (09.09.2026). Elias: „es wäre auch gut, wenn du
+           mir auf dem startbildschirm noch täglich sagst das ich zusätzlich zu
+           den 10 karten entweder im satzmodus noch übe oder am nächsten tag
+           dann den hörmodus übe. immer abwechselnd soll das passieren."
+
+           ⛔ Der Wechsel wird GERECHNET, nicht gespeichert: aus dem Lerntag
+           selbst. Ein gemerkter Zähler liefe auf Handy und Tablet
+           auseinander, sobald er einen Tag nur auf einem Gerät öffnet — und
+           dann stünde auf beiden etwas anderes.
+           ⚠️ Die Zeile ist ein KNOPF: sie sagt nicht nur, was dran ist,
+           sondern führt auch dorthin. Ein Hinweis, der einen Umweg über die
+           untere Leiste verlangt, wird übergangen. -->
+      <button class="heute-extra" id="heuteExtra" hidden></button>
 
       <!-- ⭐ Suche auf dem Startbildschirm (24.08.2026). Elias wollte sie
            genau hier, zwischen der Fälligkeitskarte und der Buchauswahl.
@@ -4992,7 +5466,13 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
           <div class="qa-modi" id="quranModi">
             <button class="qa-modus" data-quranmodus="beide">Beides</button>
             <button class="qa-modus" data-quranmodus="ar" lang="ar">عربي</button>
-            <button class="qa-modus" data-quranmodus="de">Deutsch</button>
+            <!-- ⭐ Die Beschriftung folgt der GEWÄHLTEN Übersetzung. Elias am
+                 08.09.2026: „ich glaube da sollte bei deutsch so
+                 deutsch/englisch stehen" — der Knopf hieß fest „Deutsch" und
+                 zeigte trotzdem Englisch, wenn er Englisch gewählt hatte.
+                 Gesetzt wird der Text in wendeQuranAnsichtAn().
+                 [[widerspruch_liegt_in_der_beschriftung]] -->
+            <button class="qa-modus" id="qaModusUeb" data-quranmodus="de">Deutsch</button>
           </div>
         </div>
         <!-- Elias am 08.09.2026: „ich will auch die englische übersetzung
@@ -5007,6 +5487,17 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
              unebdingt diese schriftart haben". Gemessen war es KFGQPC Uthmanic
              Hafs — die Muṣḥaf-Schrift des König-Fahd-Komplexes. Sie ist die
              Vorgabe NICHT: wer seinen Leser kennt, soll ihn wiederfinden. -->
+        <!-- ⛔ AUSGEBAUT am 08.09.2026 auf Elias' Wunsch: „als schiftart kannst du
+             amiri und scheherazade weg machen, aber kannst sie bei dir gespeichert
+             lassen damit wir wieder darauf zurück kommen können (so können wir uns
+             den ‚schriftarten‘ punkt auch sparen, sollten wir mehr schriftarten
+             bekommen können wir den wieder zurück machen)".
+             
+             ⭐ Der Leser läuft seitdem fest auf der Muṣḥaf-Schrift — siehe
+             quranSchrift() in js/quran.js. Die Schriftdateien BLEIBEN alle liegen
+             und werden weiter ausgeliefert: Amiri trägt die Oberfläche (--font-ar),
+             Scheherazade die Wortmarke der App. Zum Zurückbauen genügt es, diesen
+             Block freizulegen und in quranSchrift() die feste Rückgabe zu entfernen.
         <div class="qa-zeile" id="qaZeileSchrift">
           <span class="qa-titel">Schriftart</span>
           <div class="qa-modi" id="quranSchrift">
@@ -5015,6 +5506,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
             <button class="qa-modus" data-quranschrift="scheherazade">Scheherazade</button>
           </div>
         </div>
+        -->
         <div class="qa-zeile" id="qaZeileUeb">
           <span class="qa-titel">Übersetzung</span>
           <div class="qa-modi" id="quranUeb">
@@ -5023,17 +5515,18 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
             <button class="qa-modus" data-quranueb="beide">Beide</button>
           </div>
         </div>
+        <!-- ⛔ AUSGEBAUT am 08.09.2026: „auch bei dem punkt englische ausgabe, das
+             können wir auch eigentlich entfernen weil gibt ja nur einen". Haleem
+             ist seitdem fest; quranEnAusgabe() fällt ohnehin auf
+             QURAN_EN_AUSGABEN[0] zurück — die Begründung für die Wahl steht dort.
+             Kommt eine zweite Ausgabe dazu, wird dieser Block wieder freigelegt.
         <div class="qa-zeile hidden" id="qaZeileEnAusgabe">
           <span class="qa-titel">Englische Ausgabe</span>
           <div class="qa-modi" id="quranEnAusgabe">
-            <!-- ⭐ Nur noch eine Ausgabe, auf Elias' Entscheidung vom
-                 08.09.2026 („dann lass nur ihn nehmen"). Der Knopf bleibt
-                 stehen, damit sichtbar ist, WELCHE Übersetzung man liest —
-                 die Begründung für die Wahl steht bei QURAN_EN_AUSGABEN
-                 in js/quran.js. -->
             <button class="qa-modus" data-quranenausgabe="85">Haleem</button>
           </div>
         </div>
+        -->
         <!-- Sichtbar nur, wenn der Abruf nichts geliefert hat. Ein leerer
              Absatz ohne Erklärung sähe aus wie ein Fehler in der App. -->
         <p class="qa-hinweis hidden" id="qaHinweisEn">Die englische Übersetzung
@@ -5063,11 +5556,42 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
           <span class="qa-titel">Rezitator</span>
           <select class="select-input qa-wahl" id="quranRezitatorWahl" aria-label="Rezitator"></select>
         </div>
+        <!-- ⭐ Drei Stufen seit dem 08.09.2026. Elias: „obwohl lass für
+             vokabeltrainer erstmal das vers für vers hervorhebung und füge
+             noch die option hinzu wort für wort hervorhebung".
+             ⚠️ „Wort" braucht Internet (Zeitmarken von api.quran.com) und
+             fällt bei Versen, deren Wortzahl nicht zu den Marken passt, still
+             auf „Vers" zurück — Begründung bei segmenteJetzt(). -->
+        <!-- ⭐ ZWEI Schalter, nicht eine Stufenwahl. Elias am 08.09.2026:
+             „hast du auch option eingebaut das mit dem vers hervorheben und
+             wort hervorheben? ich will beide an und aus machen können" — also
+             auch „nur das Wort, kein Versbalken", was drei Stufen nicht
+             hergeben.
+             ⚠️ „Wort" braucht Internet (Zeitmarken von api.quran.com) und
+             fällt bei Versen, deren Wortzahl nicht zu den Marken passt, still
+             auf den ganzen Vers zurück — Begründung bei segmenteJetzt(). -->
         <div class="qa-zeile hidden" id="qaZeileMitlesen">
-          <span class="qa-titel">Mitlesen</span>
-          <div class="qa-modi" id="quranMitlesen">
-            <button class="qa-modus" data-quranmitlesen="aus">Aus</button>
-            <button class="qa-modus" data-quranmitlesen="an">An</button>
+          <span class="qa-titel">Vers hervorheben</span>
+          <div class="qa-modi" id="quranMitleseVers">
+            <button class="qa-modus" data-quranmitlesevers="an">An</button>
+            <button class="qa-modus" data-quranmitlesevers="aus">Aus</button>
+          </div>
+        </div>
+        <div class="qa-zeile hidden" id="qaZeileMitleseWort">
+          <span class="qa-titel">Wort hervorheben</span>
+          <div class="qa-modi" id="quranMitleseWort">
+            <button class="qa-modus" data-quranmitlesewort="an">An</button>
+            <button class="qa-modus" data-quranmitlesewort="aus">Aus</button>
+          </div>
+        </div>
+        <!-- ⛔ Eigene Zeile und nicht Teil des Mitlesens: „die hervorhebung
+             finde ich gut aber das automatisch gescrollt wird will ich nicht
+             immer" (08.09.2026). Zwei Wünsche, zwei Schalter. -->
+        <div class="qa-zeile hidden" id="qaZeileVerfolgen">
+          <span class="qa-titel">Verfolgen</span>
+          <div class="qa-modi" id="quranVerfolgen">
+            <button class="qa-modus" data-quranverfolgen="an">An</button>
+            <button class="qa-modus" data-quranverfolgen="aus">Aus</button>
           </div>
         </div>
         <div class="qa-zeile" id="qaZeileAr">
@@ -5142,15 +5666,43 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
            nichts läuft. Wären sie ausgeblendet, spränge der Abspielknopf
            beim Start eine Knopfbreite nach rechts — und der Finger, der
            gerade dort war, träfe danach „vorheriger Vers". -->
+      <!-- ⭐ Der Wiederholbereich (08.09.2026). Elias: „ich will auch die
+           option haben einen vers oder nur bestimmte verse öfter wiederholen
+           zu lassen also wenn ich zb vers 10-20 von mulk auswendig lernen will
+           und nur mir diese anhören möchte dann möchte ich das können."
+
+           ⚠️ Zwei Zeilen statt einer: die Knopfreihe war schon voll, und die
+           Zahlenfelder brauchen Platz zum Tippen. Ausgeklappt wird nur auf
+           Druck — wer nicht wiederholt, sieht die Zeile nie. -->
       <div class="quran-spieler hidden" id="quranSpieler">
-        <button class="qs-knopf" id="btnQsZurueck" aria-label="Vorheriger Vers" disabled><svg class="ic"><use href="#ic-left"/></svg></button>
-        <button class="qs-knopf qs-play" id="btnQsPlay" aria-label="Rezitation abspielen"><svg class="ic"><use href="#ic-play"/></svg></button>
-        <button class="qs-knopf" id="btnQsVor" aria-label="Nächster Vers" disabled><svg class="ic"><use href="#ic-right"/></svg></button>
-        <div class="qs-text">
-          <span class="qs-stand" id="qsStand"></span>
-          <span class="qs-name" id="qsName"></span>
+        <div class="qs-reihe">
+          <button class="qs-knopf" id="btnQsZurueck" aria-label="Vorheriger Vers" disabled><svg class="ic"><use href="#ic-left"/></svg></button>
+          <button class="qs-knopf qs-play" id="btnQsPlay" aria-label="Rezitation abspielen"><svg class="ic"><use href="#ic-play"/></svg></button>
+          <button class="qs-knopf" id="btnQsVor" aria-label="Nächster Vers" disabled><svg class="ic"><use href="#ic-right"/></svg></button>
+          <!-- ⭐ Der Stand ist ein KNOPF: ein Druck macht daraus ein Feld,
+               in das man die Versnummer tippt. Elias am 08.09.2026: „am
+               besten wenn ich das auch selbst eintippen kann". -->
+          <button class="qs-text" id="qsStandKnopf" aria-label="Zu einem Vers springen">
+            <span class="qs-stand" id="qsStand"></span>
+            <span class="qs-name" id="qsName"></span>
+          </button>
+          <label class="qs-sprung hidden" id="qsSprungFeld">
+            <span>Vers</span>
+            <input type="text" id="qsSprung" inputmode="numeric" pattern="[0-9]*" maxlength="3" aria-label="Versnummer">
+          </label>
+          <button class="qs-knopf" id="btnQsSchleife" aria-label="Verse wiederholen" aria-expanded="false"><svg class="ic"><use href="#ic-repeat"/></svg></button>
+          <button class="qs-knopf" id="btnQsAus" aria-label="Rezitation beenden" disabled><svg class="ic"><use href="#ic-close"/></svg></button>
         </div>
-        <button class="qs-knopf" id="btnQsAus" aria-label="Rezitation beenden" disabled><svg class="ic"><use href="#ic-close"/></svg></button>
+        <div class="qs-schleife hidden" id="qsSchleife">
+          <span class="qs-sch-titel">Wiederholen</span>
+          <label class="qs-sch-feld">von
+            <input type="text" id="qsVon" inputmode="numeric" pattern="[0-9]*" maxlength="3" aria-label="Erster Vers">
+          </label>
+          <label class="qs-sch-feld">bis
+            <input type="text" id="qsBis" inputmode="numeric" pattern="[0-9]*" maxlength="3" aria-label="Letzter Vers">
+          </label>
+          <button class="qs-sch-an" id="btnQsSchleifeAn">Aus</button>
+        </div>
       </div>
     </section>
 
@@ -5401,7 +5953,14 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
            können". Deshalb ein Schalter und nicht die neue Voreinstellung:
            gemessen bestehen 32 von 113 Wörtern restlos aus ihrer Wurzel, die
            stünden umgekehrt komplett grau da. -->
-      <div class="setting-row">
+      <!-- ⛔ `setting-row-block`, nicht die einfache Zeile (09.09.2026):
+           gemessen bei 364 px Fensterbreite lief die Auswahl bis 377 px und
+           machte damit die GANZE Einstellungsseite quer rollbar. Ursache ist
+           die längste Option („Umgekehrt: der Rest leuchtet") — ein Flex-Kind
+           schrumpft nicht unter seine Inhaltsbreite. Untereinander hat beides
+           Platz, und keine Option wird abgeschnitten.
+           [[layout_min_width_falle]] -->
+      <div class="setting-row setting-row-block">
         <div>
           <div class="setting-title">Wurzel hervorheben</div>
           <div class="setting-sub">Was leuchtet: die Wurzel oder der Rest des Wortes</div>
@@ -5668,7 +6227,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
       </div>
 
       <button class="einst-gruppe" id="grp-daten" type="button"
-              aria-expanded="false" aria-controls="grpInhalt-daten"><span class="ic">▸</span><span class="einst-gruppe-name">Daten &amp; App</span><span class="einst-gruppe-zahl">6</span></button>
+              aria-expanded="false" aria-controls="grpInhalt-daten"><span class="ic">▸</span><span class="einst-gruppe-name">Daten &amp; App</span><span class="einst-gruppe-zahl">7</span></button>
       <div class="einst-inhalt hidden" id="grpInhalt-daten">
       <!-- ⭐ Neu am 30.07.2026, und der Anlass war ein Kreislauf, in dem Elias
            festhing: Das Ziehen zum Aktualisieren war kaputt, also kam kein neuer
@@ -5734,6 +6293,43 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         </div>
         <button class="btn btn-secondary" id="btnResetProgress">Zurücksetzen</button>
       </div>
+
+      <!-- ⭐ Quran-Markierungen aufräumen (09.09.2026). Elias mit Bild der
+           Surenliste: „und mach überall auf dem pc die fav und gelernten
+           markierung weg, nur mulk kann beides bleiben".
+
+           ⛔ Als KNOPF und nicht als stille Aufräumaktion: Sterne und Haken
+           sind sein Stand, kein Zwischenspeicher. Etwas davon ohne seinen
+           Druck zu löschen wäre dasselbe wie Lernfortschritt anzufassen.
+           Ich komme an seinen Speicher ohnehin nicht heran — der Knopf ist
+           auch der einzige Weg, den es gibt.
+
+           ⚠️ Die Marken werden abgeglichen: was hier fällt, fällt auf allen
+           Geräten. Das steht in der Rückfrage, nicht nur hier. -->
+      <div class="setting-row">
+        <div>
+          <div class="setting-title">Quran-Markierungen aufräumen</div>
+          <div class="setting-sub">Sterne und Auswendig-Haken entfernen — al-Mulk behält beides</div>
+        </div>
+        <button class="btn btn-secondary" id="btnQuranMarkenWeg">Aufräumen</button>
+      </div>
+
+      <!-- ⭐ Die Diagnosekarte (09.09.2026). Anlass: „habe eben 5 wörter
+           angehört und konfeti kam erst bei startseite, das soll aber doch
+           kommen beim hörmodus" — im Prüfbrowser kam das Konfetti sofort und
+           an der richtigen Stelle. Der Fall ist nur AUF SEINEM GERÄT zu sehen,
+           und auf dem Handy öffnet niemand eine Konsole.
+
+           ⛔ Deshalb steht hier TEXT, den er abfotografieren kann — sein
+           eingespielter Weg, uns etwas zu zeigen. [[diagnose_statt_raten]] -->
+      <div class="setting-row setting-row-block">
+        <div>
+          <div class="setting-title">Diagnose</div>
+          <div class="setting-sub">Was heute passiert ist — zum Abfotografieren, wenn etwas nicht stimmt</div>
+        </div>
+        <button class="btn btn-secondary" id="btnDiagnose">Anzeigen</button>
+      </div>
+      <pre class="diagnose-text hidden" id="diagnoseText"></pre>
       </div>
 
       <!-- „Streak zurücksetzen" ist am 29.07.2026 auf Elias' Wunsch entfernt
@@ -5774,6 +6370,9 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 
 </div>
 
+<!-- ⛔ Hier stand von v426 bis v428 „Neue Fassung ist da · Jetzt laden".
+     Elias: „diese nachricht will ich auch nicht bekommen, ich lade schon
+     selbst immer". Weg, samt Stil und Handler in js/init.js. -->
 <div class="toast" id="toast"></div>
 <div class="gram-popover" id="gramPopover"></div>
 <div class="qfp-backdrop hidden" id="ayahBackdrop"></div>

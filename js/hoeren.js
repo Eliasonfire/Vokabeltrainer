@@ -97,6 +97,30 @@ function hoerZielPruefen(){
      des Geh-Modus oder beim naechsten Betreten des Hoermodus. Die ANSAGE
      uebernimmt gehSchleife(), die einzige Stelle, die sprechen kann. */
   if (typeof GEH === 'object' && GEH && GEH.an){ HOER.zielOffen = true; return; }
+  /* ⛔⛔ UND: nur feiern, wenn er auch hinsieht (09.09.2026).
+     Elias: „habe eben 5 wörter angehört und konfeti kam erst bei startseite,
+     das soll aber doch kommen beim hörmodus".
+
+     ⭐ Die Kette, nachgelesen statt geraten: Er hört im Geh-Modus, das Ziel
+     fällt → oben wird vorgemerkt. Dann drückt er zurück. `zeigeBildschirm()`
+     wechselt ZUERST den Bildschirm und schaltet ERST DANACH den Geh-Modus ab
+     (js/navigation.js) — `gehModusSetzen(false)` holt die Feier nach, und die
+     landet auf der Startseite. Der Aufschub war richtig, nur sein Endpunkt
+     lag falsch. [[endpunkt_der_zuerst_steht]]
+
+     ⭐ Diese eine Bedingung deckt ALLE Wege ab, nicht nur den Rückweg: auch
+     der Pause-Knopf auf dem Sperrbildschirm ruft gehModusSetzen(false), und
+     zwar während das Handy in der Tasche steckt. Konfetti dort verbrennt den
+     `einmalig`-Riegel für den ganzen Tag.
+     [[bedingung_wird_durch_die_handlung_ungueltig]]
+
+     ⚠️ Verloren geht nichts: `openHoeren()` ruft hoerZielPruefen() bei jedem
+     Betreten erneut, und der Riegel liegt in localStorage — die Feier wartet
+     also auch über einen Neustart hinweg. */
+  const sichtbar = document.visibilityState !== 'hidden'
+    && !!document.getElementById('screen-hoeren')
+    && document.getElementById('screen-hoeren').classList.contains('active');
+  if (!sichtbar){ HOER.zielOffen = true; return; }
   HOER.zielOffen = false;
   if (typeof feiere === 'function') feiere('hoer-tagesziel', { zahl: t.gesamt, richtig: t.richtig });
   /* ⭐ Und danach: war das der dritte von drei? Ausserhalb des `einmalig`-
@@ -525,7 +549,27 @@ const GEH_PAUSE_DANACH  = 1800;   /* Luft vor dem naechsten Wort */
    und erst sinnvoll, wenn das Protokoll zeigt, dass er noetig ist. */
 let GEH_STILLE = null;
 
+/* ⛔⛔ Zwei Stimmen gleichzeitig (09.09.2026)
+
+   Der Geh-Modus und der Quran-Leser sind zwei unabhaengige Tonquellen, und
+   beide beschriften DIESELBE Mediensitzung (`navigator.mediaSession` gibt es
+   im Fenster nur einmal). Wer zuletzt schreibt, gewinnt — die Folge waere eine
+   Benachrichtigung, die „Vokabeln hören" anzeigt, deren Pause-Knopf aber die
+   Rezitation anhaelt, oder umgekehrt. Genau so entsteht „ich kann ihn hier
+   nicht anhalten".
+
+   ⭐ Deshalb schliessen sie einander aus: wer anfaengt, beendet den anderen.
+   Die umgekehrte Richtung steht in `audioSpiele()` in js/quran-audio.js — an
+   BEIDEN Stellen, weil jede fuer sich zuerst dran sein kann.
+   [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+function gehAnderenTonAus(){
+  try {
+    if (QAUDIO && QAUDIO.sure !== null && typeof audioAus === 'function') audioAus();
+  } catch (e){ gehNotiz('quran-aus-fehler'); }
+}
+
 function gehStilleAn(){
+  gehAnderenTonAus();
   try {
     if (!GEH_STILLE){
       GEH_STILLE = new Audio('stille.wav');
@@ -566,6 +610,15 @@ function gehStilleAus(){
   try { if (GEH_STILLE) GEH_STILLE.pause(); } catch (e){ }
   if ('mediaSession' in navigator){
     try { navigator.mediaSession.playbackState = 'paused'; } catch (e){ }
+    /* ⛔ Die Knoepfe werden WIEDER FREIGEGEBEN. Ohne das bliebe der
+       Pause-Handler des Geh-Modus liegen, und der naechste Ton der App —
+       eine Rezitation — bekaeme auf dem Sperrbildschirm einen Knopf, der den
+       falschen Modus anhaelt. Der Quran-Leser macht dasselbe beim Beenden
+       (`quranMedienKnoepfe(false)`); es fehlte nur auf dieser Seite.
+       [[wirkung_an_der_quelle_stilllegen]] */
+    ['play', 'pause', 'stop'].forEach(n => {
+      try { navigator.mediaSession.setActionHandler(n, null); } catch (e){ }
+    });
   }
 }
 
@@ -588,6 +641,15 @@ function gehNotiz(was, dazu){
     if (log.zeilen.length > 200) log.zeilen = log.zeilen.slice(-200);
     LS.set(GEH_LOG_SCHLUESSEL, log);
   } catch (e){ }
+}
+
+/** Die Zeilen des laufenden Tages, ohne Ausgabe. Die Diagnosekarte in den
+ *  Einstellungen liest sie — auf dem Handy öffnet niemand eine Konsole.
+ *  ⚠️ Der Tag wird geprüft: ein Protokoll von gestern wäre kein Befund über
+ *  heute, sondern eine falsche Fährte. */
+function gehProtokollZeilen(){
+  const log = LS.get(GEH_LOG_SCHLUESSEL, null);
+  return (log && log.tag === todayStr(0) && log.zeilen) ? log.zeilen : [];
 }
 
 /* Abruf in der Konsole: gehProtokoll() */
@@ -736,6 +798,19 @@ function gehModusSetzen(an){
 
 document.getElementById('toggleGehModus').addEventListener('click', ()=>{
   gehModusSetzen(!GEH.an);
+});
+
+/* ⭐ Der letzte Weg zurück zur aufgeschobenen Feier (09.09.2026).
+   Ohne ihn bliebe eine Lücke: Wer im Geh-Modus sein Ziel erreicht und den
+   PAUSE-Knopf auf dem SPERRBILDSCHIRM drückt, bleibt anschließend im
+   Hörmodus — `openHoeren()` läuft dann nicht mehr, weil der Bildschirm gar
+   nicht gewechselt wird. Die Feier wartete bis zum nächsten Wechsel.
+   ⚠️ `hoerZielPruefen()` prüft selbst, ob überhaupt etwas offen ist; ein
+   Aufruf bei jedem Zurückschalten kostet nichts. [[werkzeug_ohne_aufrufer]] */
+document.addEventListener('visibilitychange', ()=>{
+  if (document.visibilityState !== 'visible') return;
+  const s = document.getElementById('screen-hoeren');
+  if (s && s.classList.contains('active') && typeof hoerZielPruefen === 'function') hoerZielPruefen();
 });
 
 function openHoeren(){

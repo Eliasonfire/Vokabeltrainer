@@ -58,6 +58,16 @@ const AUSGENOMMEN = new Map([
   ['vt_einstGruppen', 'welche Einstellungsgruppe zugeklappt ist — eine Anzeigevorliebe des Geräts, an dem man gerade sitzt. Über den Abgleich getragen hieße: ein Griff am Handy baut die Ansicht am Tablet um, ohne dass dort jemand etwas getan hat'],
   ['vt_gehLog',       'Diagnose des Geh-Modus — misst auf DIESEM Gerät, ob die Sprachausgabe bei gesperrtem Bildschirm anspringt; genau diese Gerätebindung ist der Zweck'],
   ['vt_geraetId',     'trennt die Zeitzweige der Geräte. Abgeglichen wäre sie auf beiden gleich und könnte nichts mehr trennen'],
+  /* ⭐ Zwei Diagnoseschlüssel vom 09.09.2026. Beide sind absichtlich
+     gerätegebunden — und beim zweiten wäre der Abgleich sogar widersinnig:
+     der Zähler misst die Schreibvorgänge DIESES Geräts gegen ein Kontingent,
+     das sich alle Geräte teilen. Übertragen würde er sich gegenseitig
+     überschreiben, und jedes Gerät läse die Zahl eines anderen.
+     ⛔ Und er ist der einzige Schlüssel, dessen Abgleich das kostet, was er
+     misst: jedes Übertragen wäre selbst ein Schreibvorgang.
+     [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+  ['vt_feierLog',     'Feier-Protokoll — welche Feier auf WELCHEM Bildschirm lief. Eine Messung an diesem Gerät; die Feiern eines anderen Geräts hier zu sehen wäre eine falsche Fährte'],
+  ['vt_syncPuts',     'Tageszähler der KV-Schreibvorgänge dieses Geräts. Abgeglichen würde er sich gegenseitig überschreiben — und jedes Übertragen wäre selbst ein Schreibvorgang, also genau das, was er begrenzen soll'],
 ]);
 
 const gefunden = new Map();          /* schlüssel -> datei */
@@ -160,8 +170,25 @@ sag(zurueck <= 5000,  'beim Zurueckkommen wird fast ohne Sperre geholt');
 
 /* Der Sofort-Pfad: beim Weglegen schicken, ohne auf den Takt zu warten. */
 const versteckt = SYNC.slice(SYNC.indexOf(String.fromCharCode(39) + 'visibilitychange'));
-sag(/if \(!SYNC_OFFEN\) return;[\s\S]{0,400}schickeZumServer\(\)/.test(versteckt),
+/* ⚠️ Das Fenster war 400 Zeichen und riss am 09.09.2026, als zwischen die
+   beiden Marken eine Begründung geschrieben wurde. Ein Abstandsmaß in
+   ZEICHEN misst die Länge der Kommentare, nicht die Nähe der Anweisungen —
+   deshalb großzügig, die Marken tragen die Aussage.
+   [[pruefung_fragt_einen_stellvertreter_ab]] */
+sag(/if \(!SYNC_OFFEN\) return;[\s\S]{0,1200}schickeZumServer\(/.test(versteckt),
     'beim Weglegen wird SOFORT geschickt (nicht erst nach der Sammelfrist)');
+/* ⛔ Und seit dem 09.09.2026 gilt eine zweite Zusicherung an derselben Stelle:
+   Die Bremse darf den Versuch abweisen (`null`), und dann muss `SYNC_OFFEN`
+   STEHEN BLEIBEN. Andernfalls hielte die App eine Änderung für gesichert, die
+   nie abging — die schlimmste der drei möglichen Ausgänge, weil sie sich nie
+   von selbst meldet. [[erfolgsmeldung_ohne_wirkung]] */
+sag(/schickeZumServer\(\)\.then\(\s*a\s*=>\s*\{\s*if \(a !== null\) SYNC_OFFEN = false/.test(versteckt),
+    'eine abgewiesene Übertragung gilt NICHT als gesichert');
+/* Und die Bremse sitzt an der Stelle, durch die alle drei Wege müssen. */
+sag(/async function schickeZumServer\(absicht\)\{[\s\S]{0,1600}if \(absicht !== .knopf. && !syncDarfSchreiben\(\)\) return null;/.test(SYNC),
+    'die Schreibbremse sitzt in schickeZumServer(), nicht bei einem Aufrufer');
+sag(/gleicheAb\(false\)/.test(SYNC) && /still \? undefined : .knopf./.test(SYNC),
+    '„Jetzt abgleichen" überholt die Bremse (sonst täte der Knopf nichts)');
 /* ⚠️ Der Handler prueft `document.visibilityState === 'hidden'`, nicht
    `document.hidden` — mein erstes Muster suchte das Falsche und meldete einen
    Mangel, den es nicht gab. Gepruefte Bedingung statt gerater Schreibweise.

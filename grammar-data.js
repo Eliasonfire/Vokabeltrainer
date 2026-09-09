@@ -88,8 +88,8 @@ const GRAMMAR_RULES = [
   },
   {
     id: "ta-marbuta-fem-01",
-    name: "تاء مربوطة (weibliche Endung)",
-    shortExplanation: "Die تاء مربوطة (das ة am Wortende, geschrieben wie ein Kreis mit zwei Punkten) wird für Wörter benutzt, die weiblich sind. Wenn ein Wort ein ة hat, weißt du: das Wort ist weiblich – z.B. مَدْرَسَةٌ (madrasatun) „Schule“. بَيْتٌ (baytun) „Haus“ wird dagegen mit normalem ت geschrieben und ist männlich. (Umgekehrt gilt bei بَيْت NICHT, dass jedes Wort mit normalem ت männlich sei, sagt der Lehrer nicht.)",
+    name: "تَاء مَرْبُوطَة (weibliche Endung)",
+    shortExplanation: "Die تَاء مَرْبُوطَة (das ة am Wortende, geschrieben wie ein Kreis mit zwei Punkten) wird für Wörter benutzt, die weiblich sind. Wenn ein Wort ein ة hat, weißt du: das Wort ist weiblich – z.B. مَدْرَسَةٌ (madrasatun) „Schule“. بَيْتٌ (baytun) „Haus“ wird dagegen mit normalem ت geschrieben und ist männlich. (Umgekehrt gilt bei بَيْت NICHT, dass jedes Wort mit normalem ت männlich sei, sagt der Lehrer nicht.)",
     color: "fem",
     source: { folge: 1, video: "Folge 01", approxTimestamp: "15:17", chapter: 1 },
     source2: { schluessel: 1, lektion: 6, seite: 22 },
@@ -798,7 +798,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "fem-ohne-ta-marbuta-01",
-    name: "مُؤَنَّث بلا تاء (weiblich ohne Tāʾ marbūṭa)",
+    name: "مُؤَنَّث بلا تَاء (weiblich ohne Tāʾ marbūṭa)",
     shortExplanation: "Es gibt drei Gruppen weiblicher Wörter: solche mit Tāʾ marbūṭa, solche die von der Bedeutung her weiblich sind (Tochter, Mutter, Tante) und solche, die einfach weiblich sind – ohne erkennbaren Grund, z.B. اَلنَّار an-nār »das Feuer«. Auch قِدْرٌ qidrun »Kochtopf« ist weiblich, obwohl kein Tāʾ marbūṭa dransteht. Die dritte Gruppe muss man auswendig lernen.",
     color: "fem",
     source: { folge: 9, video: "Folge 09", approxTimestamp: "42:53", chapter: 6 },
@@ -855,7 +855,7 @@ const GRAMMAR_RULES = [
   {
     id: "li-al-lil-01",
     name: "لِ + اَلْ = لِلـ",
-    shortExplanation: "لِ ist ein حَرْف جَرّ (ḥarf jarr, Präposition). Vor einem unbestimmten Wort heißt es لِطَبيبٍ (li-ṭabībin, „gehört einem Arzt\"). Kommt لِ aber vor ein bestimmtes Wort, treffen لِ und اَلْ aufeinander und das أَلِف fällt weg – übrig bleiben zwei لام hintereinander: لِلطَّبيبِ. Bei einem Sonnenbuchstaben springt man beim Sprechen über das لام (liṭ-ṭabībi), bei einem Mondbuchstaben spricht man es mit: لِلْقَلَمِ (lil-qalami), لِلْبَيْتِ (lil-baiti).",
+    shortExplanation: "لِ ist ein حَرْف جَرّ (ḥarf jarr, Präposition). Vor einem unbestimmten Wort heißt es لِطَبيبٍ (li-ṭabībin, „gehört einem Arzt\"). Kommt لِ aber vor ein bestimmtes Wort, treffen لِ und اَلْ aufeinander und das أَلِف fällt weg – übrig bleiben zwei لَام hintereinander: لِلطَّبيبِ. Bei einem Sonnenbuchstaben springt man beim Sprechen über das لَام (liṭ-ṭabībi), bei einem Mondbuchstaben spricht man es mit: لِلْقَلَمِ (lil-qalami), لِلْبَيْتِ (lil-baiti).",
     color: "other",
     source: { folge: 11, video: "Folge 11", approxTimestamp: "29:57", chapter: 8 },
     source2: { schluessel: 1, lektion: 9, seite: 33 }
@@ -911,7 +911,7 @@ const GRAMMAR_RULES = [
   {
     id: "nat-fem-01",
     name: "نَعْت bei weiblichen Nomen (بِنْتٌ صَغِيرَةٌ)",
-    shortExplanation: "Ist das beschriebene Nomen weiblich, muss auch das Adjektiv weiblich sein, also die تاء مَرْبُوطة bekommen. بِنْتٌ صَغِيرٌ geht nicht, richtig ist بِنْتٌ صَغِيرَةٌ (bintun saghiratun) „ein kleines Maedchen\". Genauso لُغَةٌ جَمِيلَةٌ (lughatun jamilatun) „eine schoene Sprache\".",
+    shortExplanation: "Ist das beschriebene Nomen weiblich, muss auch das Adjektiv weiblich sein, also die تَاء مَرْبُوطَة bekommen. بِنْتٌ صَغِيرٌ geht nicht, richtig ist بِنْتٌ صَغِيرَةٌ (bintun saghiratun) „ein kleines Maedchen\". Genauso لُغَةٌ جَمِيلَةٌ (lughatun jamilatun) „eine schoene Sprache\".",
     color: "fem",
     source: { folge: 13, video: "Folge 13", approxTimestamp: "9:23", chapter: 9 },
     source2: { schluessel: 1, lektion: 9, seite: 30 }
@@ -925,8 +925,8 @@ const GRAMMAR_RULES = [
   },
   {
     id: "ta-marbuta-grenzen-01",
-    name: "تاء مَرْبُوطة – nicht jedes Wort laesst sich weiblich machen",
-    shortExplanation: "Man kann nicht jedes Nomen einfach mit einer تاء مَرْبُوطة weiblich machen. Das geht nur dort, wo es ein weibliches Gegenstueck gibt oder wo es Sinn ergibt – der Lehrer nennt als Beispiele Personengruppen wie Handwerker/Handwerkerin und Esel/Eselin. Bei Sachwoertern geht es nicht; er vergleicht es mit „Hose\", wo es zwar „Hoeschen\", aber kein „Hosi\" gibt. Beim Wort طَائِر (ta'ir, Vogel) wuerde die تاء مَرْبُوطة sogar ein ganz anderes Wort ergeben, naemlich طَائِرَة (ta'ira, Flugzeug) – deshalb bleibt طَائِر maennlich.",
+    name: "تَاء مَرْبُوطَة – nicht jedes Wort laesst sich weiblich machen",
+    shortExplanation: "Man kann nicht jedes Nomen einfach mit einer تَاء مَرْبُوطَة weiblich machen. Das geht nur dort, wo es ein weibliches Gegenstueck gibt oder wo es Sinn ergibt – der Lehrer nennt als Beispiele Personengruppen wie Handwerker/Handwerkerin und Esel/Eselin. Bei Sachwoertern geht es nicht; er vergleicht es mit „Hose\", wo es zwar „Hoeschen\", aber kein „Hosi\" gibt. Beim Wort طَائِر (ta'ir, Vogel) wuerde die تَاء مَرْبُوطَة sogar ein ganz anderes Wort ergeben, naemlich طَائِرَة (ta'ira, Flugzeug) – deshalb bleibt طَائِر maennlich.",
     color: "fem",
     source: { folge: 13, video: "Folge 13", approxTimestamp: "18:21", chapter: 9 }
   },

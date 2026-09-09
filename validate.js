@@ -1024,10 +1024,30 @@ try {
 
       /* Holen ist billig (100.000 Lesevorgaenge/Tag), Ablegen nicht (1.000).
          Ohne diese Bedingung koennte man beim Zurueckkommen nicht abgleichen. */
-      if (!/JSON\.stringify\(baueNutzlast\(\)\.daten\)/.test(syncRoh))
+      if (!/nutzlastVergleich\(/.test(syncRoh))
         syncFehler.push('gleicheAb() vergleicht vor dem Ablegen nicht mehr mit dem geholten '
           + 'Stand — dann schreibt jeder Abgleich, und das KV-Kontingent (1.000/Tag) traegt '
           + 'den Abgleich beim Zurueckkommen nicht');
+
+      /* ⛔⛔ UND DER VERGLEICH MUSS ZWEI FRAGEN TRENNEN (09.09.2026).
+         »Ist ueberhaupt etwas offen?« ist nicht »muss JETZT geschrieben werden?«.
+         js/zeitmessung.js schreibt vt_zeit alle FUENF Sekunden; zaehlte der Wert
+         beim Schreib-Vergleich mit, waere jeder Takt ein Schreibvorgang — bis zu
+         60 in der Stunde je Geraet. Genau so lief das Kontingent am 08.09.2026
+         leer, und die Reparatur am Lesestand allein hat es nicht aufgehalten:
+         der TAKT rief gleicheAb ohnehin, und dort war er wieder ein Grund.
+         Geprueft wird die Wirkung — ein Vergleich MIT und einer OHNE die stillen
+         Schluessel. Der Nachweis dazu: werkzeuge/pruefe-schreibanlass.mjs */
+      else if (!/nutzlastVergleich\([^,)]+,\s*false\)/.test(syncRoh)
+            || !/nutzlastVergleich\([^,)]+,\s*true\)/.test(syncRoh))
+        syncFehler.push('gleicheAb() unterscheidet nicht mehr zwischen »ist etwas offen?« '
+          + 'und »muss JETZT geschrieben werden?« — dann ist jede Regung des Zeitzaehlers '
+          + 'wieder ein Schreibvorgang');
+
+      if (!/SYNC_STILLE_SCHLUESSEL\s*=\s*\[[^\]]*'vt_zeit'/.test(syncRoh))
+        syncFehler.push("vt_zeit steht nicht mehr in SYNC_STILLE_SCHLUESSEL — der Zeitzaehler "
+          + 'tickt alle fuenf Sekunden und stiesse damit wieder bei jedem Tick einen '
+          + 'Abgleich an');
 
       /* Das Warnband — der Grund, warum der Fehler ueberhaupt auffaellt. */
       if (!/function\s+zeigeAbgleichWarnung\s*\(/.test(syncRoh))

@@ -92,6 +92,79 @@ function renderHome(){
 
      ⚠️ `typeof`, weil js/statistik.js nach dieser Datei geladen wird. */
   if (typeof renderStats === 'function') renderStats();
+  renderHeuteExtra();
+}
+
+/* ---------- „Heute zusätzlich" (09.09.2026) ----------
+
+   Elias: „es wäre auch gut, wenn du mir auf dem startbildschirm noch täglich
+   sagst das ich zusätzlich zu den 10 karten entweder im satzmodus noch übe
+   oder am nächsten tag dann den hörmodus übe. immer abwechselnd soll das
+   passieren."
+
+   ⛔ Der Wechsel wird aus dem LERNTAG GERECHNET, nicht gespeichert. Ein
+   gemerkter Zähler liefe zwischen Handy und Tablet auseinander, sobald er
+   einen Tag nur auf einem Gerät öffnet — dann stünde auf beiden etwas
+   anderes, und keiner der beiden Stände wäre falsch genug, um aufzufallen.
+   Aus `todayStr(0)` folgt auf jedem Gerät dieselbe Zahl.
+   [[dieselbe_frage_zwei_antworten]]
+
+   ⚠️ `todayStr(0)` und nicht `new Date()`: der Lerntag der App beginnt um
+   8 Uhr morgens, nicht um Mitternacht. Wer um 2 Uhr nachts übt, ist noch im
+   Tag davor — und soll dann auch noch dieselbe Zusatzübung sehen.
+   [[tagesbegriff_der_app_ist_utc]]
+
+   ⭐ Die Zeile zeigt auch den STAND und wird grün, wenn das Tagesziel des
+   jeweiligen Modus erreicht ist. Ein Hinweis, der nach dem Üben unverändert
+   dasteht, sieht aus wie eine Mahnung — und wird ab dem dritten Tag
+   überlesen. */
+function heuteExtraModus(){
+  /* Tage seit dem 1.1.1970 aus dem Lerntag; gerade → Sätze, ungerade → Hören. */
+  const t = (typeof todayStr === 'function') ? todayStr(0) : '';
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(t);
+  if (!m) return 'saetze';
+  const tage = Math.floor(Date.UTC(+m[1], +m[2] - 1, +m[3]) / 86400000);
+  return (tage % 2 === 0) ? 'saetze' : 'hoeren';
+}
+
+function renderHeuteExtra(){
+  const knopf = document.getElementById('heuteExtra');
+  if (!knopf) return;
+  const modus = heuteExtraModus();
+  let stand = null, ziel = null, name, symbol, ziel_nav;
+
+  if (modus === 'hoeren'){
+    name = 'Hörmodus'; symbol = 'ic-ohr'; ziel_nav = 'hoeren';
+    if (typeof hoerTag === 'function' && typeof hoerTagesziel === 'function'){
+      stand = hoerTag().gesamt; ziel = hoerTagesziel();
+    }
+  } else {
+    name = 'Satzmodus'; symbol = 'ic-chat'; ziel_nav = 'sentences';
+    if (typeof satzTag === 'function' && typeof SATZ_TAGESZIEL === 'number'){
+      stand = satzTag().gesamt; ziel = SATZ_TAGESZIEL;
+    }
+  }
+
+  /* ⚠️ Fehlt der Zähler (das Modul ist nicht geladen), wird die Zeile trotzdem
+     gezeigt — nur ohne Stand. Sie ganz wegzulassen hiesse, den Hinweis
+     ausgerechnet dann zu verschlucken, wenn etwas nicht stimmt.
+     [[ausfall_ist_unsichtbar_gebaut]] */
+  const geschafft = (stand !== null && ziel !== null && stand >= ziel);
+  const unten = (stand === null || ziel === null)
+    ? 'Zusätzlich zu den Karteikarten'
+    : geschafft ? `Geschafft — ${stand} von ${ziel}`
+                : `${stand} von ${ziel} · zusätzlich zu den Karteikarten`;
+
+  knopf.hidden = false;
+  knopf.classList.toggle('geschafft', geschafft);
+  knopf.dataset.nav = ziel_nav;
+  knopf.innerHTML =
+    '<svg class="ic"><use href="#' + (geschafft ? 'ic-check' : symbol) + '"/></svg>'
+    + '<span class="hx-text">'
+    +   '<span class="hx-titel">Heute zusätzlich: ' + name + '</span>'
+    +   '<span class="hx-sub">' + unten + '</span>'
+    + '</span>'
+    + '<svg class="ic hx-pfeil"><use href="#ic-right"/></svg>';
 }
 
 /* Die Kapitelliste haengt am Buch: Madina 1 hat 24, Madina 3 hat 35, und

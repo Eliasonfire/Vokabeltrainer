@@ -568,6 +568,12 @@ function quranUebersetzung(){
   return (u === 'en' || u === 'beide') ? u : 'de';
 }
 
+/** Beschriftung des dritten „Anzeigen"-Knopfes, passend zur gewaehlten
+ *  Uebersetzung. ⛔ Die Schluessel sind dieselben drei Werte, die
+ *  quranUebersetzung() zurueckgibt — kommt dort einer dazu, faellt er hier auf
+ *  „Deutsch" zurueck und ist damit sichtbar falsch, nicht still. */
+const QURAN_UEB_TITEL = { de: 'Deutsch', en: 'English', beide: 'Deutsch/English' };
+
 /* ⭐ Die Schriftart des Lesers (08.09.2026). Elias mit Bild von
    diegebetszeiten.de: „ich möchte unebdingt diese schriftart haben" — gemessen
    war es KFGQPC Uthmanic Hafs, die Muṣḥaf-Schrift des König-Fahd-Komplexes.
@@ -579,9 +585,86 @@ const QURAN_SCHRIFTEN = {
   uthmani:      "'Uthmanic Hafs', var(--font-ar)",
   scheherazade: "'Scheherazade New', var(--font-ar)"
 };
+/* ⛔ FEST auf der Muṣḥaf-Schrift seit dem 08.09.2026. Elias: „als schiftart
+   kannst du amiri und scheherazade weg machen, aber kannst sie bei dir
+   gespeichert lassen damit wir wieder darauf zurück kommen können (so können
+   wir uns den ‚schriftarten‘ punkt auch sparen, sollten wir mehr schriftarten
+   bekommen können wir den wieder zurück machen)".
+
+   ⭐ Die Tabelle darueber bleibt VOLLSTAENDIG stehen — sie ist das
+   Gespeicherte, von dem er spricht. Zum Zurueckbauen: diese Funktion auf die
+   alte Fassung zurueckdrehen (auskommentiert darunter) und die Zeile
+   `qaZeileSchrift` in index.html wieder freilegen. Zwei Handgriffe.
+
+   ⚠️ Der gespeicherte Wert wird NICHT geloescht. Wer vorher Amiri gewaehlt
+   hatte, bekommt jetzt Uthmani — beim Zurueckbauen aber wieder seine alte
+   Wahl, statt bei der Vorgabe zu landen. */
 function quranSchrift(){
-  const w = SETTINGS.quranSchrift;
-  return Object.prototype.hasOwnProperty.call(QURAN_SCHRIFTEN, w) ? w : 'amiri';
+  return 'uthmani';
+  /* const w = SETTINGS.quranSchrift;
+     return Object.prototype.hasOwnProperty.call(QURAN_SCHRIFTEN, w) ? w : 'amiri'; */
+}
+
+/* ============================================================================
+   WORTGRENZEN IM VERSTEXT                              (08.09.2026)
+   ============================================================================
+
+   Elias: „füge noch die option hinzu wort für wort hervorhebung". Dafür muss
+   jedes Wort ein eigenes Element sein — an einem durchgehenden Textknoten
+   lässt sich nichts hervorheben.
+
+   ⛔⛔ UNSER TEXT ZÄHLT ANDERS ALS DIE ZEITMARKEN — und das ist der Grund,
+   warum hier eine Regel steht und kein schlichtes `split`.
+
+   Gemessen am 08.09.2026 über 1193 Verse aus 15 Suren: bei **235** stimmte
+   die Zahl der Leerzeichen-Wörter nicht mit der Zahl der Zeitmarken überein.
+   Nebeneinandergelegt zeigte sich immer dasselbe Bild (67:2):
+
+       unser Text   …  أَحْسَنُ · عَمَلً · اۚ · وَهُوَ  …
+       quran.com    …  أَحْسَنُ · عَمَلًۭا ۚ  · وَهُوَ  …
+
+   Das Trägeralif der Tanwīn-Fatḥ-Schreibung steht bei uns durch ein
+   Leerzeichen getrennt. Orthographisch ist `عَمَلًا` EIN Wort — also wird es
+   auch als eines gezählt: endet ein Stück auf Tanwīn Fatḥ und beginnt das
+   nächste mit einem Alif, gehören sie zusammen.
+
+   ⭐ Damit passten **1177 von 1193** Versen. Die Regel ist keine Schätzung,
+   sondern die Schreibregel selbst.
+
+   ⚠️ Die restlichen 16 weichen in BEIDE Richtungen ab (mal eines zu viel,
+   mal eines zu wenig) — dort greift der Rückfall in js/quran-audio.js: passt
+   die Zahl nicht, wird der Vers als Ganzes markiert. Ein falsch markiertes
+   Wort wäre schlimmer als gar keines. [[ausfall_ist_unsichtbar_gebaut]]
+
+   ⛔ Der Text wird NICHT verändert. Zwei zusammengehörende Stücke teilen sich
+   ein Element und behalten ihr Leerzeichen — sonst stünde im Leser ein anderer
+   Wortlaut als im Muṣḥaf. [[zitieren_am_original]] */
+const QW_TANWIN_FATH = /\u064B[\u0670\u06E1\u06DF]?$/;
+const QW_START_ALIF  = /^[\u0627\u0649\u0671]/;
+
+/** Die Wörter eines Verses — als Liste, ohne HTML. Auch von der Prüfung in
+ *  js/quran-audio.js benutzt, damit beide dieselbe Zählung sehen.
+ *  [[dieselbe_frage_zwei_antworten]] */
+function quranWorte(text){
+  const roh = String(text || '').trim().split(/\s+/).filter(Boolean);
+  const out = [];
+  for (const t of roh){
+    const v = out.length ? out[out.length - 1] : null;
+    if (v && QW_TANWIN_FATH.test(v) && QW_START_ALIF.test(t)) out[out.length - 1] = v + ' ' + t;
+    else out.push(t);
+  }
+  return out;
+}
+
+/** Derselbe Text, jedes Wort in einem `<span>`. Die Nummer ist 1-basiert und
+ *  entspricht der Nummer der Zeitmarke.
+ *  ⚠️ Die Spans stehen IMMER im Markup, auch wenn wortweises Mitlesen aus ist —
+ *  dasselbe Prinzip wie bei `.verse-en` und `.ayah-schluss`: ein DOM für alle
+ *  Ansichten, und das Umschalten braucht keinen Neuaufbau. */
+function quranWortSpans(text){
+  return quranWorte(text)
+    .map((w, i) => '<span class="qw" data-w="' + (i + 1) + '">' + w + '</span>')
+    .join(' ');
 }
 
 function quranAnsicht(){
@@ -713,6 +796,12 @@ function wendeQuranAnsichtAn(){
     b.classList.toggle('active', b.dataset.qurandarstellung === a.darstellung));
   document.querySelectorAll('[data-quranueb]').forEach(b =>
     b.classList.toggle('active', b.dataset.quranueb === a.uebersetzung));
+  /* ⭐ Der dritte Knopf unter „Anzeigen" heisst nicht mehr fest „Deutsch".
+     Er schaltet die UEBERSETZUNGSzeile ein — welche das ist, entscheidet die
+     Zeile „Uebersetzung" darunter. Elias: „ich glaube da sollte bei deutsch so
+     deutsch/englisch stehen". [[widerspruch_liegt_in_der_beschriftung]] */
+  const knopfUeb = document.getElementById('qaModusUeb');
+  if (knopfUeb) knopfUeb.textContent = QURAN_UEB_TITEL[a.uebersetzung] || 'Deutsch';
   document.querySelectorAll('[data-quranschrift]').forEach(b =>
     b.classList.toggle('active', b.dataset.quranschrift === a.schrift));
   document.querySelectorAll('[data-quranenausgabe]').forEach(b =>
@@ -727,14 +816,20 @@ function wendeQuranAnsichtAn(){
      laengst bereit — aber eine Reihenfolge, auf die man sich verlaesst, ohne
      sie zu pruefen, ist genau die Sorte Annahme, die spaeter still bricht. */
   const rezAn = (typeof quranRezitationAn === 'function') && quranRezitationAn();
-  const mitlesen = (typeof quranMitlesen === 'function') ? quranMitlesen() : true;
   document.querySelectorAll('[data-quranrezitation]').forEach(b =>
     b.classList.toggle('active', (b.dataset.quranrezitation === 'an') === rezAn));
-  document.querySelectorAll('[data-quranmitlesen]').forEach(b =>
-    b.classList.toggle('active', (b.dataset.quranmitlesen === 'an') === mitlesen));
+  const versMarke = (typeof quranMitleseVers === 'function') ? quranMitleseVers() : true;
+  const wortMarke = (typeof quranMitleseWort === 'function') ? quranMitleseWort() : false;
+  document.querySelectorAll('[data-quranmitlesevers]').forEach(b =>
+    b.classList.toggle('active', (b.dataset.quranmitlesevers === 'an') === versMarke));
+  document.querySelectorAll('[data-quranmitlesewort]').forEach(b =>
+    b.classList.toggle('active', (b.dataset.quranmitlesewort === 'an') === wortMarke));
+  const verfolgt = (typeof quranVerfolgen === 'function') ? quranVerfolgen() : true;
+  document.querySelectorAll('[data-quranverfolgen]').forEach(b =>
+    b.classList.toggle('active', (b.dataset.quranverfolgen === 'an') === verfolgt));
   /* Rezitator und Mitlesen haben nur Sinn, wenn die Rezitation an ist —
      dieselbe Regel wie bei der englischen Ausgabe eine Zeile hoeher. */
-  ['qaZeileRezitator', 'qaZeileMitlesen'].forEach(id => {
+  ['qaZeileRezitator', 'qaZeileMitlesen', 'qaZeileMitleseWort', 'qaZeileVerfolgen'].forEach(id => {
     const z = document.getElementById(id);
     if (z) z.classList.toggle('hidden', !rezAn);
   });
@@ -810,7 +905,7 @@ document.getElementById('quranModi').addEventListener('click', (e)=>{
   wendeQuranAnsichtAn();
 });
 
-document.getElementById('quranSchrift').addEventListener('click', async (e)=>{
+document.getElementById('quranSchrift')?.addEventListener('click', async (e)=>{
   const knopf = e.target.closest('[data-quranschrift]');
   if (!knopf) return;
   const vorher = (typeof hatAyahZeichen === 'function') ? hatAyahZeichen() : null;
@@ -852,7 +947,7 @@ document.getElementById('quranUeb').addEventListener('click', (e)=>{
      nichts, bis er die Sure neu oeffnet. [[werkzeug_ohne_aufrufer]] */
   if (OFFENE_SURE) zeigeQuranEn(OFFENE_SURE);
 });
-document.getElementById('quranEnAusgabe').addEventListener('click', (e)=>{
+document.getElementById('quranEnAusgabe')?.addEventListener('click', (e)=>{
   const knopf = e.target.closest('[data-quranenausgabe]');
   if (!knopf) return;
   SETTINGS.quranEnAusgabe = Number(knopf.dataset.quranenausgabe);
@@ -1495,7 +1590,7 @@ function renderVerses(id){
         <button class="hifz-check${kann?' on':''}" data-versmerk="${id}:${nr}"
                 aria-label="Vers ${nr} als auswendig markieren">${icon('check')}</button>
       </div>
-      <div class="verse-ar${verdeckt}" lang="ar" dir="rtl">${v.text_uthmani}</div>${ayahSchlussHtml(id, nr)}
+      <div class="verse-ar${verdeckt}" lang="ar" dir="rtl">${quranWortSpans(v.text_uthmani)}</div>${ayahSchlussHtml(id, nr)}
       <div class="verse-de">${(v.translations && v.translations[0] && v.translations[0].text) || ''}</div>
       <!-- ⚠️ Steht IMMER im Markup und wird nur ein- und ausgeblendet, genau
            wie das Ayah-Schlusszeichen. So bleibt der DOM in allen Ansichten
