@@ -270,6 +270,51 @@ function stillerFehler(wo, e){
   } catch (_){ /* ein Protokoll, das wirft, waere schlimmer als keins */ }
 }
 
+/* ---------- Und was NIEMAND abgefangen hat (09.09.2026) ----------
+
+   ⛔⛔ Der Schlussstein der ganzen Aufraeumaktion. In dieser Nacht sind zwei
+   Wege gefunden worden, auf denen ein Fehler still verschwindet — `catch {}`
+   und `.catch(() => {})`. Beide sind jetzt zu. Der dritte Weg ist der, an dem
+   ueberhaupt niemand steht: ein Fehler, den KEIN try umschliesst.
+
+   Bis heute gab es dafuer nichts. Auf dem Rechner steht so etwas in der
+   Konsole; auf Elias' Handy gibt es keine Konsole, und die App sieht danach
+   einfach „kaputt" aus, ohne dass irgendwo etwas steht.
+   [[ausfall_ist_unsichtbar_gebaut]] [[diagnose_statt_raten]]
+
+   ⚠️ Es wird NICHTS unterdrueckt: kein preventDefault(), kein return true.
+   Der Fehler nimmt seinen Weg wie bisher, er wird nur zusaetzlich notiert.
+   Ein Protokoll, das nebenbei das Verhalten aendert, waere schlimmer als
+   keines.
+
+   ⚠️ `capture: true` nimmt auch die Ladefehler von <script>, <img> und <link>
+   mit — die melden sich sonst nirgends. Genau die Sorte, die aus einer
+   fehlenden Datei einen scheinbar grundlosen Ausfall macht.
+   [[weissliste_kennt_die_endung_nicht]]
+
+   ⛔ Die Reihenfolge zaehlt: das steht hier, gleich hinter `stillerFehler()`
+   und damit VOR allen anderen Modulen. Ein Wachposten, der erst am Ende der
+   Ladekette aufgestellt wird, verpasst genau die Fehler beim Laden. */
+if (typeof window !== 'undefined'){
+  window.addEventListener('error', (e) => {
+    /* Ein Ladefehler traegt ein Element als Ziel, ein Skriptfehler nicht. */
+    const ziel = e && e.target;
+    if (ziel && ziel !== window && ziel.tagName){
+      const quelle = ziel.src || ziel.href || '(ohne Adresse)';
+      stillerFehler('Datei laedt nicht: ' + String(quelle).split('/').slice(-1)[0],
+        new Error(ziel.tagName.toLowerCase()));
+      return;
+    }
+    const wo = (e && e.filename) ? String(e.filename).split('/').slice(-1)[0] + ':' + e.lineno : 'unbekannte Stelle';
+    stillerFehler('Unbehandelter Fehler in ' + wo, (e && (e.error || e.message)) || e);
+  }, true);
+
+  window.addEventListener('unhandledrejection', (e) => {
+    const grund = e && e.reason;
+    stillerFehler('Unbehandelte abgelehnte Zusage', (grund && (grund.message || grund)) || grund);
+  });
+}
+
 /* Die Zeilen fuer die Diagnosekarte. Neueste zuerst — auf einem
    Bildschirmfoto ist oben, was zaehlt. */
 function stilleFehlerZeilen(){
