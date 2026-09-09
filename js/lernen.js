@@ -1275,6 +1275,19 @@ function answer(stufe){
   /* Schutz gegen Doppelauslösung: waehrend das Antwort-Feedback laeuft, wird ein
      zweiter Klick/Swipe ignoriert - sonst ueberspringt die Runde eine Karte. */
   if (answer._busy) return;
+  /* ⛔⛔ UND nach der letzten Karte ist Schluss (09.09.2026).
+     `answer._busy` deckt nur die 210 ms des Farbsignals ab. Danach bleibt der
+     Bildschirm noch **900 ms** stehen, bevor `showScreen('home')` greift — und
+     in diesem Fenster sind die Antwortknoepfe weiter anklickbar. Ein zweiter
+     Tipp lief dann noch einmal durch das Rundenende: Kartenstand ein zweites
+     Mal fortgeschrieben, `runde-fertig` ein zweites Mal gefeiert.
+     ⭐ Gemessen im Pruefbrowser, und zwar erst durch das neue Feier-Protokoll:
+        runde-fertig  01:28:46  @ screen-learn
+        runde-fertig  01:28:48  @ screen-home     ← zwei Sekunden spaeter
+     Das zweite Konfetti faellt auf der STARTSEITE — dasselbe Bild, das Elias
+     am 08.09. vom Hoermodus gemeldet hat, nur auf einem anderen Weg dorthin.
+     [[zweiter_aufruf_ueberschreibt_still]] [[endpunkt_der_zuerst_steht]] */
+  if (SESSION.fertig) return;
   /* Die Wischgeste und aeltere Aufrufe geben weiter true/false herein. */
   if (stufe === true) stufe = 'gut';
   if (stufe === false) stufe = 'nochmal';

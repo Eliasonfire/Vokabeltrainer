@@ -1195,10 +1195,13 @@ function renderUebung(){
   const st = (typeof satzTag === 'function') ? satzTag() : null;
   const zielText = !st ? ''
     : st.gesamt >= SATZ_TAGESZIEL
-      ? ` · Tagesziel geschafft (${st.gesamt})`
-      : ` · Tagesziel ${st.gesamt} von ${SATZ_TAGESZIEL}`;
+      /* ⚠️ Geschuetzte Leerzeichen (U+00A0) in den Zahlenpaaren: die Zeile
+         darf an den Trennpunkten umbrechen, aber nie zwischen einer Zahl und
+         ihrem Bezugswort. Sichtbar ist der Unterschied nicht, im Umbruch schon. */
+      ? ` · Tagesziel geschafft (${st.gesamt})`
+      : ` · Tagesziel ${st.gesamt} von ${SATZ_TAGESZIEL}`;
   document.getElementById('uebStand').textContent =
-    `${UEB.idx+1} / ${UEB.liste.length} · ${UEB.richtig} richtig${zielText}`;
+    `${UEB.idx+1} / ${UEB.liste.length} · ${UEB.richtig} richtig${zielText}`;
   document.getElementById('uebFrage').innerHTML = arabischHervor(a.frage);
   document.getElementById('uebSatz').innerHTML = uebungSatzHtml(a);
   document.getElementById('uebDe').textContent = a.satz.sentDe || '';

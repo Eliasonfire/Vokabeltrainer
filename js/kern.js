@@ -2359,4 +2359,10 @@ function topbarHoeheMessen(){
   /* Schriften aendern die Hoehe nach dem ersten Anstrich noch einmal. */
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(setzen);
 }
-document.addEventListener('DOMContentLoaded', topbarHoeheMessen);
+/* ⛔ Sofort messen, wenn das Dokument schon steht — und sonst beim Ereignis.
+   Der Rueckfallwert im CSS ist eine gemessene Zahl, aber er gilt nur, solange
+   `--topbar-h` fehlt; jede Millisekunde darin ist eine Millisekunde, in der
+   die Polsterung raten muss. Am 09.09.2026 hat genau diese Luecke 14 px
+   ausgemacht. [[breite_null_ist_kein_layout]] */
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', topbarHoeheMessen);
+else topbarHoeheMessen();

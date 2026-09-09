@@ -145,10 +145,25 @@ const PRUEFER = [
      aus js/hoeren.js heraus und faehrt sie; ein Nachbau haette den Fehler nie
      enthalten. [[testvorlage_selbst_nachgebaut]] */
   ['werkzeuge/pruefe-hoerziel.mjs', []],
+  /* ⭐ Neu am 09.09.2026. „genau 2 ayaht und das wars" — der Rezitator brach
+     bei ausgeschaltetem Bildschirm nach zwei Versen ab, weil Vers 3 einen
+     neuen Ladevorgang brauchte. Seitdem zwei Elemente im Wechsel; der Pruefer
+     schneidet die echten Funktionen aus js/quran-audio.js und zaehlt
+     Ladevorgaenge. Sein Stoertest baut die alte Ein-Element-Fassung nach und
+     verlangt, dass sie den zweiten Ladevorgang zeigt. [[hintergrund_tab_drosselt_timer]] */
+  ['werkzeuge/pruefe-zweipuffer.mjs', []],
+  ['werkzeuge/pruefe-schreibanlass.mjs', []],
   /* ⛔ Ohne diese Zeile haette pruefe-muster.mjs keinen Aufrufer und liefe nie.
      Genau der Fehler, den es selbst sucht, in seiner allgemeinen Form: gebaut,
      gepusht, ausgeliefert — und nie gestartet. [[werkzeug_ohne_aufrufer]] */
   ['werkzeuge/pruefe-muster.mjs', []],
+  /* ⭐ Neu am 09.09.2026. An einem Abend drei Stellen gefunden, an denen die
+     App auf schmalen Handys quer rollte — und keine davon hatte Elias je
+     gemeldet. Immer dieselbe Ursache: ein schrumpfbares Flex-Kind ohne
+     `min-width:0`. Kein anderer Pruefer kann das sehen; Ueberlauf ist Layout.
+     ⚠️ Der Pruefer meldet KANDIDATEN und wird nur rot, wenn sein eigener
+     Stoertest nicht greift. [[layout_min_width_falle]] */
+  ['werkzeuge/pruefe-flexbreite.mjs', []],
   ['werkzeuge/pruefe-plural-thema.mjs', []],
   /* Die Ueberkategorien des Satzmodus altern still: SATZ_THEMEN ordnet ueber
      ein Muster auf die id zu, eine frei gewaehlte id landet also in KEINER

@@ -211,7 +211,19 @@ ok('ohne Einstellung gilt die bisherige Ansicht',
 console.log('\n— Die Stelle geht nicht mehr verloren —');
 /* 1. Die Ausrichtung liegt am BLOCK, nicht an den Versen. */
 const css = fs.readFileSync('index.html', 'utf8');
-const block = css.slice(css.indexOf('#verseList.liste{'), css.indexOf('#verseList.liste .verse-item'));
+/* ⛔ Der Block wird bis zu SEINER schliessenden Klammer gelesen, nicht bis zum
+   naechsten Selektor mit aehnlichem Namen.
+   Bis zum 09.09.2026 stand hier `css.indexOf('#verseList.liste .verse-item')`
+   als Endmarke. Am 08.09. kam mit dem Mitlesen die Regel
+   `#verseList.liste .verse-item.laeuft .verse-ar` dazu — und die steht 184
+   Zeilen WEITER OBEN. Damit lag das Ende vor dem Anfang, der Ausschnitt war
+   leer, und drei Zusicherungen fielen um. Das CSS war die ganze Zeit richtig:
+   `display:block; direction:rtl; text-align:center` stehen unveraendert da.
+   ⭐ Ein Ausschnitt zwischen zwei Fundstellen misst die Reihenfolge im
+   Quelltext — nicht den Block, um den es geht.
+   [[pruefung_fragt_einen_stellvertreter_ab]] */
+const blockAb = css.indexOf('#verseList.liste{');
+const block = blockAb < 0 ? '' : css.slice(blockAb, css.indexOf('}', blockAb) + 1);
 ok('der Listenmodus schaltet die Flexbox ab', /display:\s*block/.test(block), block.trim().split('\n')[0]);
 ok('Laufrichtung steht am Block', /direction:\s*rtl/.test(block));
 ok('und die Ausrichtung ebenfalls', /text-align:\s*center/.test(block));

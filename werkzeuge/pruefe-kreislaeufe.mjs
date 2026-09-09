@@ -85,7 +85,15 @@ const SPEICHER_AUSNAHMEN = {
      nimmt das klaglos an, der letzte Eintrag gewinnt, und die verwaiste Zeile
      haette fuer immer wie eine gueltige Begruendung ausgesehen. Sofort wieder
      entfernt. [[zweiter_aufruf_ueberschreibt_still]] */
-  'vt_gehLog':        'Diagnose des Geh-Modus (08.09.2026) — misst BEIM NUTZER, ob die Sprachausgabe bei gesperrtem Bildschirm anspringt; abgerufen mit gehProtokoll() im Browser-Pane',
+  'vt_gehLog':        'Diagnose des Geh-Modus (08.09.2026) — misst BEIM NUTZER, ob die Sprachausgabe bei gesperrtem Bildschirm anspringt; abgerufen mit gehProtokoll() im Browser-Pane UND seit dem 09.09.2026 in der Diagnosekarte (Einstellungen → Daten & App), weil auf dem Handy niemand eine Konsole oeffnet',
+  /* ⭐ Diese beiden werden sehr wohl ausgewertet — nur nicht von einem Werkzeug
+     HIER, und das ist ihr ganzer Zweck. Sie entstehen auf SEINEM Geraet und
+     sollen dort ablesbar sein, ohne Konsole und ohne Kabel: die Diagnosekarte
+     gibt sie als Text aus, den er abfotografieren kann. Ein Werkzeug in diesem
+     Ordner koennte sie gar nicht lesen — kein Werkzeug greift auf /api/stand
+     zu, und in KV stehen sie ohnehin nicht. [[diagnose_statt_raten]] */
+  'vt_feierLog':      'Feier-Protokoll (09.09.2026) — welche Feier wann und auf WELCHEM Bildschirm lief. Der Anlass: „konfeti kam erst bei startseite"; die Frage nach dem Bildschirm trennt „Ausloeser sitzt falsch" von „Effekt war unsichtbar". Ausgewertet in der Diagnosekarte und mit feierProtokoll()',
+  'vt_syncPuts':      'Tageszaehler der KV-Schreibvorgaenge (08.09.2026) — die Messung, mit der das Cloudflare-Kontingent ueberhaupt beobachtbar wurde. Ausgewertet in der Diagnosekarte und mit syncPutStand(); ein Werkzeug hier saehe nur den eigenen Rechner, gebraucht wird die Zahl von SEINEN Geraeten',
   'vt_zeit':          'stille Zeitmessung (08.09.2026) — absichtlich nicht in der Oberflaeche; abgerufen mit zeitBericht() im Browser-Pane',
   'vt_quranEn':       'Zwischenspeicher der englischen Uebersetzung von api.quran.com — abgerufener Fremdtext, kein Lernstand. Er gehoert absichtlich NICHT auf andere Geraete: jedes holt sich beim Lesen selbst, was es braucht, und ein Abgleich wuerde nur Text hin- und herschieben, den die API ohnehin liefert. Verworfen wird er von selbst (QURAN_EN_MAX in js/quran.js)',
   'vt_wortQuote':     'Q3, Trefferquote je Wort (08.09.2026) — absichtlich NICHT angezeigt, genau darin liegt ihr Wert; ausgewertet mit wortQuoteBericht() im Browser-Pane, das die Interferenzfrage beantwortet (Woerter mit Wurzelgeschwistern gegen Einzelgaenger)',

@@ -97,6 +97,14 @@ function zeigeBildschirm(name){
      ueber die Zurueck-Taste. ⛔ Sie zeigt nichts an; das ist Elias' Vorgabe
      („am besten mir nicht sagen"), nicht ein vergessener Bildschirm. */
   if (typeof zeitBildschirm === 'function') zeitBildschirm(name);
+  /* ⛔ HIER STAND EINE KLASSE `leser`, die den roten Schein im Quran-Leser ganz
+     abschaltete — eine halbe Stunde lang, dann nahm Elias es zurück: „dieser
+     balken ist auf meinem handy so leicht rötlich … ich will aber das es so
+     aussieht wie auf meinem handy also leicht rötlich da".
+     ⭐ Gemeint war nie „kein Rot", sondern „kein Rot NEBEN der Leiste". Das
+     steht jetzt im Stil (der Verlauf endet an der Inhaltsbreite) und braucht
+     keine Klasse mehr. Ersatzlos gestrichen statt als wirkungslose Zeile
+     stehenzubleiben. [[kann_ist_nicht_ist]] */
   /* ⛔⛔ Den Geh-Modus beim Verlassen abschalten (08.09.2026). Er spricht von
      allein weiter — ohne diese Zeile redete die App auf der Startseite, in den
      Einstellungen und im Quran-Leser einfach weiter, und man fände den

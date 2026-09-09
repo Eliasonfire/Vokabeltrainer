@@ -758,6 +758,36 @@ function baueNutzlast(){
   return { fassung: 1, geaendert: Date.now(), stempel: syncStempel(), daten };
 }
 
+/** Vergleichsform der Nutzlast — die Grundlage der Frage „muss geschrieben
+ *  werden?".
+ *
+ *  ⛔ Zwei Dinge, die `JSON.stringify(daten)` NICHT leistet und die beide
+ *  Schreibvorgänge gekostet haben:
+ *
+ *  1. Es hängt an der SCHLÜSSELREIHENFOLGE des Objekts. Die ferne Nutzlast
+ *     kommt aus einer älteren Fassung von SYNC_SCHLUESSEL; kam dort ein
+ *     Schlüssel in der Mitte dazu, meldete der Vergleich „ungleich", obwohl
+ *     jeder Wert gleich war. Hier wird deshalb über SYNC_SCHLUESSEL gelaufen,
+ *     nicht über Object.keys.
+ *
+ *  2. Es zählt die stillen Schlüssel mit. Genau das machte die Stille des
+ *     Lesestands wirkungslos: er stieß zwar keinen Abgleich mehr an, aber der
+ *     TAKT rief ohnehin alle 90 Sekunden `gleicheAb`, und dort war er wieder
+ *     ein Grund zu schreiben. [[zweiter_fix_deckt_ersten_zu]]
+ *
+ *  @param mitStillen  true = alles vergleichen (》ist überhaupt etwas offen?《)
+ *                     false = ohne die stillen (》muss JETZT geschrieben werden?《)
+ */
+function nutzlastVergleich(daten, mitStillen){
+  const teile = [];
+  for (const k of SYNC_SCHLUESSEL){
+    if (!mitStillen && SYNC_STILLE_SCHLUESSEL.indexOf(k) >= 0) continue;
+    const v = (daten || {})[k];
+    if (v !== undefined && v !== null) teile.push(k + '\u0000' + v);
+  }
+  return teile.join('\u0001');
+}
+
 async function holeVomServer(){
   const antwort = await fetch('/api/stand', { headers: { 'accept': 'application/json' }});
   if (!antwort.ok) throw new Error('Abruf fehlgeschlagen: ' + antwort.status);
@@ -768,13 +798,47 @@ async function holeVomServer(){
   return antwort.json();
 }
 
-async function schickeZumServer(){
+/* ⚠️ Gezaehlt wird HIER und nicht bei den Aufrufern: es gibt drei davon, und
+   ein vierter wuerde sonst still am Zaehler vorbeischreiben.
+   [[endpunkt_der_zuerst_steht]] */
+async function schickeZumServer(absicht){
+  /* ⛔⛔ UND GEBREMST WIRD AUCH HIER (09.09.2026).
+     Der Kommentar oben stand seit gestern richtig da — und galt nur fuer den
+     ZAEHLER. Die Bremse `syncDarfSchreiben()` hing weiter an genau EINEM der
+     drei Aufrufer (`planeAbgleich`). Die anderen beiden schrieben daran
+     vorbei: der Abgleich beim Start und der beim Weglegen der App.
+
+     ⭐ Gemessen im Pruefbrowser: EIN Seitenaufbau erzeugte ACHT PUT-Anfragen,
+     waehrend `syncDarfSchreiben()` gleichzeitig `false` sagte und der
+     Tageszaehler auf 0 stand. Bei 1.000 erlaubten Schreibvorgaengen am Tag ist
+     das genau der Weg, auf dem das Kontingent am 08.09. gerissen ist.
+     [[endpunkt_der_zuerst_steht]] [[erst_ursache_dann_zweite_massnahme]]
+
+     ⚠️ `absicht === 'knopf'` geht durch: das ist „Jetzt abgleichen". Wer den
+     Knopf drueckt, will genau jetzt schreiben — ihn zu bremsen waere ein
+     Knopf, der nichts tut. [[erfolgsmeldung_ohne_wirkung]]
+
+     ⚠️ Rueckgabe `null` heisst „nicht geschrieben". Die Aufrufer duerfen
+     `SYNC_OFFEN` dann NICHT loeschen, sonst faellt die Aenderung unter den
+     Tisch — sie wartet stattdessen auf den naechsten Versuch. */
+  if (absicht !== 'knopf' && !syncDarfSchreiben()) return null;
+  SYNC_LETZTER_PUT = Date.now();
+  /* ⛔ Die 60-Sekunden-Sperre steht VOR dem Versuch: sie soll Sturmlaeufe
+     verhindern, und ein gescheiterter Versuch, der sofort wiederholt wird,
+     ist genau so einer. Der TAGESZAEHLER dagegen steht unten. */
   const antwort = await fetch('/api/stand', {
     method: 'PUT',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(baueNutzlast())
   });
   if (!antwort.ok) throw new Error('Ablegen fehlgeschlagen: ' + antwort.status);
+  /* ⛔⛔ Der Tageszaehler erst NACH der Antwort — beim Nachmessen am
+     08.09.2026 stand er ueber dem fetch, also zaehlte auch jeder Versuch mit,
+     der nie ankam. Ein Geraet ohne Netz haette so sein Budget leergezaehlt,
+     ohne ein einziges Mal geschrieben zu haben — und der Zaehler haette
+     danach behauptet, es seien 250 Schreibvorgaenge gewesen.
+     [[erfolgsmeldung_ohne_wirkung]] */
+  syncPutGezaehlt();
   return antwort.json();
 }
 
@@ -799,6 +863,43 @@ async function schickeZumServer(){
    ⛔ Und es MELDET NICHTS. Elias hat nichts gedrueckt — der Abgleich laeuft von
    selbst beim Weglegen der App. Ein Hinweis daraus waere genau das Briefing,
    das er abbestellt hat. [[keine_meldung_ohne_seine_handlung]] */
+/* ⛔⛔ DER ZWEITE SCHREIBER — und er ist der größere (08.09.2026, 16:30)
+
+   Auf Elias' Frage „sonst haben wir aber keine probleme ja" nachgesehen, wer
+   außer /api/stand noch in KV schreibt. Es gibt genau einen:
+
+     functions/api/arabicroots.js:153
+     if (env.STAND && daten.refresh_token && daten.refresh_token !== gespeichert)
+       await env.STAND.put(KV_REFRESH, daten.refresh_token);
+
+   ⚠️ Supabase gibt bei jedem `refresh_token`-Grant standardmäßig einen NEUEN
+   Refresh-Token zurück (Rotation). Ist das hier so — gemessen ist es nicht,
+   das KV-Kontingent war bereits gesperrt —, dann trifft die Bedingung bei
+   JEDEM Aufruf zu, und jeder Aufruf kostet einen Schreibvorgang.
+
+   ⭐⭐ Und gerufen wurde bei JEDEM Abgleich. Der Kommentar an der Aufrufstelle
+   sagte: „der Abgleich läuft ohnehin bei jedem Weglegen der App" — das stimmte,
+   als er geschrieben wurde (07.09.). Seit dem 08.09. läuft der Abgleich im
+   TAKT, alle 6 bzw. 90 Sekunden. Der Kommentar beschrieb einen Zustand, den es
+   nicht mehr gab, und las sich dabei wie eine geprüfte Begründung.
+   [[kommentar_beschreibt_absicht_markup_wirkung]]
+
+   Gerechnet mit dem Ruhetakt: 86400 ÷ 90 = **960 Aufrufe pro Tag und Gerät**.
+   Bei Aktivität (6 s) sind es 600 in der Stunde. Das Konto hat 1000
+   Schreibvorgänge am Tag — für ALLE Geräte zusammen.
+
+   ⭐ Die Reparatur ist nicht „seltener", sondern „nur wenn es etwas zu melden
+   gibt": Der Fortschritt ändert sich, wenn Elias eine Karte beantwortet, nicht
+   alle neunzig Sekunden. Verglichen wird der Inhalt, nicht die Uhr.
+
+   ⚠️ Der Vergleichswert liegt im Speicher und nicht im localStorage: nach
+   einem Neustart der App soll EINMAL geschrieben werden, auch wenn sich nichts
+   geändert hat — das ist der Fall, in dem ein früherer Versuch fehlgeschlagen
+   sein könnte. */
+let AR_LETZTE_MELDUNG = null;
+const AR_MINDESTABSTAND = 5 * 60 * 1000;
+let   AR_LETZTE_ZEIT = 0;
+
 async function schickeNachArabicroots(){
   try {
     if (typeof PROGRESS === 'undefined' || !PROGRESS) return;
@@ -810,6 +911,20 @@ async function schickeNachArabicroots(){
       fortschritt[id] = { correct: c, wrong: w, ts: Number(p.ts) || 0 };
     }
     if (!Object.keys(fortschritt).length) return;
+    /* ⛔ Nur melden, wenn sich wirklich etwas geändert hat. Sonst schreibt
+       jeder Takt drüben einen neuen Refresh-Token in KV — 960 mal am Tag.
+       Der Vergleich steht HIER und nicht beim Aufrufer: es gibt heute einen,
+       aber ein zweiter würde sonst still daran vorbeischreiben.
+       [[endpunkt_der_zuerst_steht]] */
+    const merkmal = JSON.stringify(fortschritt);
+    const jetzt = Date.now();
+    if (merkmal === AR_LETZTE_MELDUNG) return;
+    /* Und selbst bei echter Änderung nicht öfter als alle fünf Minuten: wer
+       zehn Karten hintereinander beantwortet, erzeugt sonst zehn Meldungen.
+       Drüben zählt der Stand, nicht der Weg dorthin. */
+    if (AR_LETZTE_ZEIT && (jetzt - AR_LETZTE_ZEIT) < AR_MINDESTABSTAND) return;
+    AR_LETZTE_MELDUNG = merkmal;
+    AR_LETZTE_ZEIT = jetzt;
     await fetch('/api/arabicroots', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
@@ -836,10 +951,28 @@ async function gleicheAb(still){
        schrieb JEDER Abgleich, auch der, bei dem beide Seiten schon gleich
        waren. Das ist die Voraussetzung dafuer, beim Zurueckkommen in die App
        abgleichen zu duerfen (siehe visibilitychange unten). */
-    const gleich = JSON.stringify(baueNutzlast().daten)
-                === JSON.stringify((fern && fern.daten) || {});
-    if (!gleich) await schickeZumServer();
-    SYNC_OFFEN = false;
+    /* ⛔⛔ ZWEI Vergleiche, weil es zwei Fragen sind (09.09.2026).
+       `gleichLaut` entscheidet, ob JETZT geschrieben wird — die stillen
+       Schlüssel zählen dabei nicht mit. `gleich` entscheidet, ob überhaupt
+       nichts mehr offen ist. Ein rein stiller Unterschied ist NICHT nichts:
+       er fährt beim nächsten Vorgang mit, und bis dahin muss SYNC_OFFEN
+       stehen bleiben, sonst ginge die gemessene Zeit still verloren.
+       [[bedingung_wird_durch_die_handlung_ungueltig]] */
+    const hier = baueNutzlast().daten;
+    const dort = (fern && fern.daten) || {};
+    const gleich     = nutzlastVergleich(hier, true)  === nutzlastVergleich(dort, true);
+    const gleichLaut = nutzlastVergleich(hier, false) === nutzlastVergleich(dort, false);
+    /* ⚠️ `still` unterscheidet den Takt vom Knopf: `gleicheAb(false)` kommt vom
+       Knopf „Jetzt abgleichen" und darf die Bremse überholen.
+       ⛔ Und `SYNC_OFFEN` wird nur gelöscht, wenn WIRKLICH geschrieben wurde
+       (oder es nichts zu schreiben gab). Sonst hielte die App eine Änderung
+       für gesichert, die die Bremse gerade abgewiesen hat. */
+    let geschrieben = false;
+    if (!gleichLaut) geschrieben = (await schickeZumServer(still ? undefined : 'knopf')) !== null;
+    /* Gesichert ist der Stand, wenn wirklich geschrieben wurde ODER es nichts
+       zu schreiben gab. Beim rein stillen Unterschied trifft beides nicht zu —
+       SYNC_OFFEN bleibt stehen und das Weglegen der App erledigt es. */
+    if (geschrieben || gleich) SYNC_OFFEN = false;
     merkeStatus(true, wortzahl() + ' Wörter' + (geaendert ? ', Stand aktualisiert' : ''));
     if (geaendert){
       /* ⭐ Von fern kam etwas — also sitzt er wahrscheinlich gerade an beiden
@@ -926,10 +1059,151 @@ async function gleicheAb(still){
    Wirklich „sofort" braeuchte eine stehende Verbindung (SSE oder WebSocket),
    und die gibt es auf Pages Functions nicht ohne Durable Objects. Das waere
    ein eigener Umbau, keine Zahl. */
+/* ============================================================================
+   ⛔⛔ DIE SCHREIBBREMSE                                (08.09.2026, 15:30)
+   ============================================================================
+
+   Cloudflare, am selben Tag, drei Mails:
+
+     12:17 UTC   50 % des Tageskontingents
+     13:24 UTC   90 %
+     13:24 UTC   ÜBERSCHRITTEN — „Operations are blocked until the limit
+                 resets on 2026-09-09 at 00:00:00 UTC"
+
+   ⛔⛔ UND DIE ZAHL, AN DER DIE GANZE FRÜHERE RECHNUNG SCHEITERTE:
+
+       „daily Workers KV free tier limit of 1000 put operations"
+       Operation: put   ·   Operation limit: 1000
+
+   Am Vormittag desselben Tages war der Lesetakt von 4 auf 6/90 Sekunden
+   gebremst worden — mit einer sauberen Rechnung gegen ein Limit von 100.000
+   LESEoperationen. Die Rechnung stimmte, sie galt nur der falschen Größe: es
+   reißt nicht das Lese-, sondern das SCHREIBlimit, und das ist hundertmal
+   kleiner. [[kann_ist_nicht_ist]] · [[unmoegliche_zahl_ist_ein_geschenk]]
+
+   ---------------------------------------------------------------------------
+   ⭐⭐ WOHER DIE SCHREIBVORGÄNGE KAMEN
+   ---------------------------------------------------------------------------
+
+   Nachgegangen: `vt_lesestand` steht in SYNC_SCHLUESSEL. Geschrieben wird er
+   in js/quran.js von `merkeLesestand()` — bei JEDEM Vers, der beim Rollen
+   obenauf kommt. Und `LS.set` meldet jede Speicherung an `syncGeaendert()`,
+   das drei Sekunden später einen PUT auslöst.
+
+   Damit kostet **jeder gerollte Vers einen Schreibvorgang**. Al-Mulk hat 30.
+
+   ⛔ Und seit dem 08.09.2026 rollt die App beim Rezitieren VON SELBST mit —
+   das Mitlesen wurde am selben Vormittag gebaut. Eine durchgehörte Sure
+   erzeugt seitdem eine Kette von Schreibvorgängen, ohne dass jemand etwas tut.
+   Genau zwischen 12:17 und 13:24 UTC hat Elias rezitiert.
+
+   ---------------------------------------------------------------------------
+   DREI SCHICHTEN, WEIL EINE NICHT REICHT
+   ---------------------------------------------------------------------------
+
+   1. Der Lesestand LÖST NICHTS MEHR AUS. Er wird weiter abgeglichen — er fährt
+      beim nächsten Schreibvorgang mit — aber er verursacht keinen mehr. Das
+      ist die eigentliche Reparatur: „wird abgeglichen" und „ist ein Anlass zu
+      schreiben" waren bisher dieselbe Liste, und das sind zwei Fragen.
+
+   2. MINDESTABSTAND zwischen zwei Schreibvorgängen. Was in der Sperrzeit
+      anfällt, wird gesammelt und danach in EINEM Vorgang geschickt.
+
+   3. TAGESBUDGET. Ist es aufgebraucht, wird nur noch beim Weglegen der App
+      geschrieben — der eine Vorgang, der wirklich zählt.
+
+   ⚠️ Alle drei greifen nur beim AUTOMATISCHEN Schreiben. Das Weglegen der App
+   und der Knopf „Jetzt abgleichen" gehen immer durch: dort steht Elias davor
+   und erwartet eine Wirkung. */
+
+/* Schlüssel, die mitfahren, aber keinen Abgleich anstoßen.
+
+   ⛔⛔ 'vt_zeit' KAM AM 09.09.2026 DAZU, und der Fall ist derselbe wie beim
+   Lesestand — nur teurer. Elias schickte um 03:20 eine zweite Cloudflare-Mail;
+   sie war eine verspätete Zustellung vom Vortag (für den 09.09. kam weder eine
+   50-%- noch eine 90-%-Warnung, und ohne 50 % gibt es keine 100 %). Beim
+   Nachmessen fiel aber auf, WARUM das Kontingent überhaupt so schnell voll ist:
+
+     js/zeitmessung.js:142   setInterval(zeitTakt, 5000)
+     zeitTakt -> zeitGutschreiben -> LS.set('vt_zeit', ...)
+     LS.set -> syncGeaendert('vt_zeit') -> planeAbgleich()
+
+   Also alle fünf Sekunden ein Anlass zu schreiben, und das einzige, was ihn
+   aufhielt, war der Mindestabstand von 60 Sekunden. Eine offene App schrieb
+   damit rund 60-mal je Stunde — ohne dass Elias eine einzige Karte beantwortet
+   hatte. Seine Diagnosekarte vom 09.09., 02:47 belegt es: 36 Schreibvorgänge
+   in 47 Minuten, also einer alle 78 Sekunden.
+
+   ⭐ Bei 250 je Gerät und drei Geräten sind das 750 von 1000 Schreibvorgängen
+   des ganzen Kontos — verbraucht von einem Sekundenzähler.
+
+   ⚠️ Die Zeit geht dadurch NICHT verloren: sie fährt beim nächsten echten
+   Schreibvorgang mit, und das Weglegen der App holt sie ohnehin nach
+   (SYNC_OFFEN bleibt gesetzt, siehe gleicheAb weiter oben).
+   [[allgemeine_regel_statt_listeneintrag]] [[endpunkt_der_zuerst_steht]] */
+const SYNC_STILLE_SCHLUESSEL = ['vt_lesestand', 'vt_zeit'];
+
+const SYNC_MINDESTABSTAND = 60 * 1000;   /* zwischen zwei automatischen PUTs */
+const SYNC_TAGESBUDGET    = 250;         /* von 1000 des ganzen Kontos */
+let   SYNC_LETZTER_PUT    = 0;
+let   SYNC_NACHZUEGLER    = null;
+
+/** Der Zähler liegt im localStorage, nicht im Speicher: er muss einen
+ *  Neustart der App überleben, sonst fängt jedes Öffnen wieder bei null an
+ *  und das Budget ist wirkungslos.
+ *
+ *  ⚠️ Der Tag ist UTC — dasselbe Datum, nach dem Cloudflare zurücksetzt
+ *  („resets 2026-09-09 at 00:00:00 UTC"). Ein lokaler Tageswechsel läge zwei
+ *  Stunden daneben und wäre genau die Sorte Fehler, die niemand bemerkt. */
+function syncPutZaehler(){
+  const heute = new Date().toISOString().slice(0, 10);
+  let z = null;
+  try { z = JSON.parse(localStorage.getItem('vt_syncPuts') || 'null'); } catch (e){ }
+  if (!z || z.tag !== heute) z = { tag: heute, n: 0 };
+  return z;
+}
+function syncPutGezaehlt(){
+  const z = syncPutZaehler();
+  z.n++;
+  try { localStorage.setItem('vt_syncPuts', JSON.stringify(z)); } catch (e){ }
+  return z.n;
+}
+/** Für die Diagnose auf SEINEM Gerät — eine Reparatur ohne Messung wäre hier
+ *  die zweite in Folge. [[diagnose_statt_raten]] */
+function syncPutStand(){
+  const z = syncPutZaehler();
+  /* ⚠️ „UTC" gehört ausdrücklich dazu. Der Zähler folgt bewusst NICHT dem
+     Lerntag der App (der um 8 Uhr beginnt), sondern dem Tag, an dem Cloudflare
+     sein Kontingent zurücksetzt — Mitternacht UTC. Ohne den Zusatz sieht die
+     Zeile nachts falsch aus: oben steht der 9., hier der 8.
+     [[dieselbe_frage_zwei_antworten]] [[tagesbegriff_der_app_ist_utc]] */
+  return z.n + ' von ' + SYNC_TAGESBUDGET + ' Schreibvorgängen · Kontingenttag '
+    + z.tag + ' (UTC)';
+}
+
+/** Darf jetzt automatisch geschrieben werden? */
+function syncDarfSchreiben(){
+  if (syncPutZaehler().n >= SYNC_TAGESBUDGET) return false;
+  return (Date.now() - SYNC_LETZTER_PUT) >= SYNC_MINDESTABSTAND;
+}
+
 const SYNC_WARTEZEIT = 3 * 1000;
 function planeAbgleich(){
   clearTimeout(SYNC_GEPLANT);
-  SYNC_GEPLANT = setTimeout(()=> gleicheAb(true), SYNC_WARTEZEIT);
+  SYNC_GEPLANT = setTimeout(()=>{
+    /* ⛔ Darf gerade nicht geschrieben werden, wird der Vorgang NICHT
+       verworfen, sondern auf das Ende der Sperrzeit gelegt. Sonst ginge die
+       letzte Aenderung vor einer Pause verloren — und das waere schlimmer als
+       ein Schreibvorgang zu viel. SYNC_OFFEN bleibt gesetzt, das Weglegen der
+       App holt es ohnehin nach. */
+    if (!syncDarfSchreiben()){
+      clearTimeout(SYNC_NACHZUEGLER);
+      const wartet = Math.max(1000, SYNC_MINDESTABSTAND - (Date.now() - SYNC_LETZTER_PUT));
+      SYNC_NACHZUEGLER = setTimeout(()=>{ if (syncDarfSchreiben()) gleicheAb(true); }, wartet);
+      return;
+    }
+    gleicheAb(true);
+  }, SYNC_WARTEZEIT);
 }
 
 /* ⛔⛔ UND EIN LAUFENDER TAKT, SOLANGE DIE APP OFFEN IST (06.09.2026)
@@ -1034,6 +1308,10 @@ function syncGeaendert(schluessel){
   if (SYNC_SCHLUESSEL.indexOf(schluessel) < 0) return;
   merkeAenderung(schluessel);
   SYNC_OFFEN = true;
+  /* ⛔ Der Lesestand faehrt mit, stoesst aber nichts an. Er aendert sich bei
+     JEDEM gerollten Vers — und seit dem Mitlesen rollt die App von selbst.
+     Begruendung bei der Schreibbremse weiter oben. */
+  if (SYNC_STILLE_SCHLUESSEL.indexOf(schluessel) >= 0) return;
   planeAbgleich();
 }
 
@@ -1086,7 +1364,10 @@ document.addEventListener('visibilitychange', ()=>{
     /* Kein await moeglich - der Browser haelt die Seite nicht auf. sendBeacon
        waere zuverlaessiger, kann aber keine PUT-Anfrage. Der Versuch reicht:
        schlaegt er fehl, holt der naechste Start es nach. */
-    schickeZumServer().then(()=>{ SYNC_OFFEN = false; }).catch(()=>{});
+    /* ⛔ `SYNC_OFFEN` nur löschen, wenn wirklich geschrieben wurde. Weist die
+       Bremse ab (`null`), bleibt die Änderung offen und der nächste Start holt
+       sie nach — genau wie ein Fehlschlag. */
+    schickeZumServer().then(a => { if (a !== null) SYNC_OFFEN = false; }).catch(()=>{});
     return;
   }
 

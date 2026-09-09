@@ -1,4 +1,5 @@
-/* Faellt die Hoer-Tagesziel-Feier aus, wenn das Ziel im GEH-MODUS faellt?
+/* Faellt die Hoer-Tagesziel-Feier aus, wenn das Ziel im GEH-MODUS faellt —
+ * und faellt sie auch aus, wenn gerade NIEMAND HINSIEHT?
  *
  * ⛔ Die Funktion wird aus js/hoeren.js HERAUSGESCHNITTEN und im vm gefahren —
  *    nicht nachgebaut. Ein nachgebauter Pruefling besteht jeden Test, weil er
@@ -26,8 +27,14 @@ const pruefe = (was, erwartet, ist) => {
     + (ok ? '' : 'erwartet ' + JSON.stringify(erwartet) + ', ist ' + JSON.stringify(ist)));
 };
 
-/* Ein Lauf: Zaehlerstand, Ziel, Geh-Modus an? -> wurde gefeiert, steht etwas offen? */
-function lauf(gesamt, ziel, gehAn, zielOffenVorher){
+/* Ein Lauf. Die beiden letzten Schalter bilden die Umgebung nach:
+ *   `imHoermodus` — traegt `#screen-hoeren` die Klasse `active`?
+ *   `sichtbar`    — `document.visibilityState` (Display aus / App im Hintergrund)
+ *
+ * ⚠️ Das ist ein DOM-Doppel, kein DOM. Es darf nur so viel koennen, wie die
+ *    Funktion fragt — sonst prueft der Test das Doppel und nicht die Sache.
+ *    [[pruefung_fragt_einen_stellvertreter_ab]] */
+function lauf(gesamt, ziel, gehAn, zielOffenVorher, imHoermodus = true, sichtbar = true){
   const feiern = [];
   const ctx = {
     hoerTag: () => ({ tag: 'x', gesamt, richtig: gesamt }),
@@ -35,6 +42,12 @@ function lauf(gesamt, ziel, gehAn, zielOffenVorher){
     GEH: { an: gehAn },
     HOER: { zielOffen: !!zielOffenVorher },
     feiere: (a, d) => feiern.push([a, d.zahl]),
+    document: {
+      visibilityState: sichtbar ? 'visible' : 'hidden',
+      getElementById: (id) => id === 'screen-hoeren'
+        ? { classList: { contains: (k) => k === 'active' && imHoermodus } }
+        : null
+    }
   };
   vm.createContext(ctx);
   vm.runInContext(m[0] + '\nthis.RUF = hoerZielPruefen;', ctx);
@@ -42,12 +55,28 @@ function lauf(gesamt, ziel, gehAn, zielOffenVorher){
   return { gefeiert: feiern.length, offen: ctx.HOER.zielOffen };
 }
 
-console.log('Der neue Weg:');
+console.log('Der Geh-Modus:');
 pruefe('Ziel nicht erreicht -> nichts',            { gefeiert: 0, offen: false }, lauf(4, 5, false, false));
 pruefe('Ziel erreicht, am Bildschirm -> Feier',    { gefeiert: 1, offen: false }, lauf(5, 5, false, false));
 pruefe('Ziel im Geh-Modus -> aufgeschoben',        { gefeiert: 0, offen: true  }, lauf(5, 5, true,  false));
 pruefe('danach Geh-Modus aus -> nachgeholt',       { gefeiert: 1, offen: false }, lauf(5, 5, false, true));
 pruefe('weit ueber dem Ziel -> feiert trotzdem',   { gefeiert: 1, offen: false }, lauf(30, 5, false, false));
+
+/* ---------- Und sieht ueberhaupt jemand hin? (09.09.2026) ----------
+   Elias: „habe eben 5 wörter angehört und konfeti kam erst bei startseite,
+   das soll aber doch kommen beim hörmodus". Der Aufschub oben war richtig,
+   nur sein Endpunkt lag falsch: `zeigeBildschirm()` wechselt ZUERST den
+   Bildschirm und schaltet ERST DANACH den Geh-Modus ab — die nachgeholte
+   Feier fiel deshalb auf die Startseite. [[endpunkt_der_zuerst_steht]] */
+console.log('\nSieht jemand hin?');
+pruefe('nachgeholt, aber schon auf der Startseite', { gefeiert: 0, offen: true },
+  lauf(5, 5, false, true, /*imHoermodus*/ false, /*sichtbar*/ true));
+pruefe('im Hoermodus, aber Display aus',            { gefeiert: 0, offen: true },
+  lauf(5, 5, false, true, true, /*sichtbar*/ false));
+pruefe('beides gut -> Feier',                       { gefeiert: 1, offen: false },
+  lauf(5, 5, false, true, true, true));
+pruefe('erstes Erreichen ausserhalb -> aufgeschoben',{ gefeiert: 0, offen: true },
+  lauf(5, 5, false, false, false, true));
 
 /* ---------- Der Stoertest: haette die ALTE Fassung das gemerkt? ----------
    ⛔ Ohne diesen Teil beweist die gruene Liste oben nur, dass die neue
@@ -70,5 +99,34 @@ const alt2 = (v, n, z) => { if (v < z && n >= z) altFeiern2.push(n); };
 alt2(4, 5, 5);
 pruefe('alte Fassung feuerte am Bildschirm (Eichung)', 1, altFeiern2.length);
 
-console.log('\n' + (fehler ? 'FEHLER: ' + fehler : 'Das Hoer-Tagesziel feiert auf allen drei Wegen'));
+/* ---------- Stoertest zur Sichtbarkeitsregel ----------
+   ⛔ Dieselbe Frage noch einmal, aber fuer die NEUE Bedingung: laesst sich
+      zeigen, dass ohne sie das Konfetti auf der Startseite gefallen waere?
+      Dafuer wird die Bedingung aus dem echten Quelltext HERAUSGESCHNITTEN und
+      die so entstandene Fassung am selben Fall gefahren.
+      [[stoertest_muss_wirkung_nachweisen]] */
+console.log('\nOhne die Sichtbarkeitsregel (herausgeschnitten aus derselben Quelle):');
+const ohne = m[0].replace(/\n\s*const sichtbar = [\s\S]*?if \(!sichtbar\)\{[^}]*\}\n/, '\n');
+if (ohne === m[0]){
+  console.log('  X  Die Regel liess sich nicht herausschneiden — Stoertest wirkungslos.');
+  fehler++;
+} else {
+  const feiern = [];
+  const ctx = {
+    hoerTag: () => ({ tag: 'x', gesamt: 5, richtig: 5 }),
+    hoerTagesziel: () => 5,
+    GEH: { an: false },
+    HOER: { zielOffen: true },
+    feiere: (a, d) => feiern.push([a, d.zahl]),
+    document: { visibilityState: 'visible',
+      getElementById: () => ({ classList: { contains: () => false } }) }   /* Startseite */
+  };
+  vm.createContext(ctx);
+  vm.runInContext(ohne + '\nthis.RUF = hoerZielPruefen;', ctx);
+  ctx.RUF();
+  pruefe('ohne die Regel faellt das Konfetti auf der Startseite', 1, feiern.length);
+}
+
+console.log('\n' + (fehler ? 'FEHLER: ' + fehler
+  : 'Das Hoer-Tagesziel feiert nur, wenn er auch hinsieht'));
 process.exit(fehler ? 1 : 0);
