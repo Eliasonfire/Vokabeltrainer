@@ -132,12 +132,53 @@ console.log('\n=== Bleibt die Adressleiste schwarz? ===\n');
   pruefe('index.html setzt theme-color auf Schwarz', /#000000|#000\b/.test(meta), true);
 }
 
+/* ---------- Und was jede Farbe zunichte machen kann: Dark Reader ----------
+ *
+ * ⛔⛔ In Elias' Chrome laeuft Dark Reader, und die Erweiterung schlaegt JEDES
+ * CSS — auch `!important`. Was dieser Pruefer oben feststellt („Torch Red ist
+ * die Vorgabe"), erreicht ihn dann gar nicht.
+ *
+ * Das Gegenmittel ist EINE Zeile im Kopf: `<meta name="darkreader-lock">`.
+ * Sie steht in index.html — und wurde bisher von KEINEM Pruefer bewacht. Eine
+ * einzelne Metazeile ist genau die Sorte, die bei einem Aufraeumen als
+ * „braucht doch niemand" verschwindet, und danach sieht seine App wieder
+ * anders aus als hier. [[dark_reader_schlaegt_jedes_css]]
+ *
+ * ⭐ Und die zweite Haelfte derselben Entscheidung: In Dark Reader 4.9.86 gab
+ * es einen Fehler, durch den das Tag ignoriert wurde. Ein Gegenmittel, das
+ * still ausfallen kann, braucht eine SELBSTMELDUNG — die steht in
+ * js/einstellungen.js und liest `data-darkreader-mode` am `<html>`. Beide
+ * Haelften werden hier geprueft, nicht nur die bequemere.
+ * [[ausfall_ist_unsichtbar_gebaut]] [[entscheidung_gilt_fuer_das_zweite_werkzeug]]
+ */
+{
+  const html = fs.readFileSync(path.join(REPO, 'index.html'), 'utf8');
+  /* Ohne HTML-Kommentare: ein auskommentiertes Meta waere wirkungslos, stuende
+     aber im Rohtext. Dieselbe Falle wie heute in validate.js.
+     [[stichworttreffer_im_kommentar]] */
+  const ohneKommentar = html.replace(/<!--[\s\S]*?-->/g, ' ');
+  pruefe('index.html sperrt Dark Reader aus',
+    /<meta[^>]*name=["']darkreader-lock["']/.test(ohneKommentar), true);
+  const E = ohneKommentareUndTexte(
+    fs.readFileSync(path.join(REPO, 'js', 'einstellungen.js'), 'utf8'), { texte: false });
+  pruefe('die App meldet selbst, wenn Dark Reader trotzdem laeuft',
+    /darkreaderMode|darkreaderScheme/.test(E), true);
+}
+
 console.log('\n=== Stoertest ===\n');
 {
   /* Eine Fassung ohne Rueckfall — die Probe muss sie melden. */
   const ohne = new Function('return (hex) => hex;')();
   pruefe('ohne Rueckfall wuerde eine unbekannte Farbe durchgehen', ohne('#123456'), '#123456');
   pruefe('und die echte Fassung tut das NICHT', A.wendeAkzentfarbeAn('#123456') === '#123456', false);
+  /* Die Dark-Reader-Proben muessen ebenfalls scheitern koennen — sonst ist
+     „ok" dort nur ein Muster, das immer passt. Beide Richtungen an einem
+     kleinen Text, nicht an der echten Datei. */
+  const mitTag = '<head><meta name="darkreader-lock"><title>x</title></head>';
+  const ohneTag = '<head><!-- <meta name="darkreader-lock"> --><title>x</title></head>';
+  const findet = (s) => /<meta[^>]*name=["']darkreader-lock["']/.test(s.replace(/<!--[\s\S]*?-->/g, ' '));
+  pruefe('das Tag wird gefunden, wenn es dasteht', findet(mitTag), true);
+  pruefe('ein auskommentiertes Tag zaehlt NICHT', findet(ohneTag), false);
 }
 
 console.log('');
