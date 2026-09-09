@@ -290,6 +290,101 @@ for (const [p, ort] of Object.entries(ORTE)){
   }
 }
 
+/* ---------- 5. DIE ERZEUGTEN SEITEN --------------------------------------
+ *
+ * ⛔⛔ Die App war nur die eine Haelfte. Am 09.09.2026 stand dieselbe Drehung
+ * auf VIER Seiten, die Elias zum ENTSCHEIDEN oeffnet — gemessen, jeweils
+ * vorher/nachher: wartet-auf-elias 19→0 · freigabe 49→0 · regelpruefung 60→0 ·
+ * wartungsfragen 7→0. Am schwersten wiegt es bei den Auswahllisten: dort steht
+ * eine Reihe von Kandidaten, aus der er waehlen soll.
+ *
+ * Behoben mit EINEM Handgriff je Seitenbauer: `arabischInSeite(html)` aus
+ * werkzeuge/arabisch-hervorheben.mjs, einmal am Ende. Hier wird nachgesehen,
+ * ob das Ergebnis stimmt — nicht am Quelltext, sondern an der fertigen Seite.
+ *
+ * ⚠️ WAS ER NICHT ENTSCHEIDEN KANN: ob eine Stelle in einem Kasten mit
+ * `direction: rtl` steht. Dort IST rechts-nach-links richtig, und ein Befund
+ * waere falsch. Solche Seiten stehen unten mit Begruendung in AUSNAHMEN — das
+ * laesst sich ohne Browser nicht ausrechnen, wohl aber einmal nachsehen und
+ * aufschreiben. [[kandidatenliste_ist_keine_fehlerliste]]
+ */
+/* ⛔ Die Zeichenklasse wird aus CODEPUNKTEN gebaut, nicht abgeschrieben:
+   0621–0652 sind Alif bis Sukūn, 0640 das Tatweel. Eine sichtbar kopierte
+   Klasse kann eine Variante enthalten, die man nicht sieht.
+   [[zeichenklasse_nie_sichtbar_kopieren]] */
+const zp = (c) => String.fromCharCode(c);
+const AR_KLASSE = '[' + zp(0x621) + '-' + zp(0x652) + zp(0x640) + ']';
+const AR_EINZELN = new RegExp(AR_KLASSE.slice(0, -1) + ']', 'g');
+
+const SEITEN_AUSNAHMEN = {
+  'wartungskreislauf.html':
+    'Die eine Stelle steht in `<span class="ar">`, und `.ar` setzt dort '
+    + 'BEIDES: `direction:rtl` und `unicode-bidi:isolate`. Der Inhalt ist rein '
+    + 'arabisch — in einem ausdruecklich rechtslaeufigen Kasten ist die '
+    + 'Rechts-nach-links-Lesung die richtige. Am 09.09.2026 nachgesehen.',
+};
+
+const SEITEN = path.join(REPO, 'artefakte');
+/* Textstellen einer Seite: alles ausserhalb von Tags, <script>, <style>,
+   Kommentaren und bereits verpackten Laeufen. Dieselbe Aufteilung wie in
+   arabischInSeite() — absichtlich, sonst pruefte er eine andere Frage. */
+const SEITEN_TEIL = /<span class="ar" lang="ar">[\s\S]*?<\/span>|<script\b[\s\S]*?<\/script>|<style\b[\s\S]*?<\/style>|<!--[\s\S]*?-->|<[^>]*>/gi;
+const SEITEN_PAAR = new RegExp('(' + AR_KLASSE + '+(?: +' + AR_KLASSE + '+)*)'
+  + '( *[\\u2192\\u2190/\\u00b7=,;] *)(' + AR_KLASSE + '+)');
+function ungeschuetztePaare(html){
+  let treffer = 0, letzte = 0, m;
+  SEITEN_TEIL.lastIndex = 0;
+  const stuecke = [];
+  while ((m = SEITEN_TEIL.exec(html))){ stuecke.push(html.slice(letzte, m.index)); letzte = m.index + m[0].length; }
+  stuecke.push(html.slice(letzte));
+  for (const t of stuecke){
+    let von = 0, p;
+    while ((p = SEITEN_PAAR.exec(t.slice(von)))){ treffer++; von += p.index + p[1].length + p[2].length; }
+  }
+  return treffer;
+}
+
+console.log('');
+console.log('--- Die erzeugten Seiten (artefakte/) ---');
+let seitenBefunde = 0;
+if (!fs.existsSync(SEITEN)){
+  console.log('  ⓘ artefakte/ gibt es hier nicht — nichts zu pruefen.');
+} else {
+  const dateien = fs.readdirSync(SEITEN).filter(n => n.endsWith('.html')).sort();
+  if (!dateien.length) console.log('  ⓘ keine erzeugte Seite vorhanden.');
+  for (const d of dateien){
+    const html = fs.readFileSync(path.join(SEITEN, d), 'utf8');
+    AR_EINZELN.lastIndex = 0;                 // [[regexp_g_merkt_sich_lastindex]]
+    const arabisch = (html.match(AR_EINZELN) || []).length;
+    if (!arabisch) continue;
+    const offen = ungeschuetztePaare(html);
+    const verpackt = (html.match(/<span class="ar" lang="ar">/g) || []).length;
+    const ausnahme = SEITEN_AUSNAHMEN[d];
+    const marke = !offen ? 'ok' : (ausnahme ? '~ ' : '⛔');
+    if (offen && !ausnahme) seitenBefunde++;
+    console.log('  ' + marke + '  ' + d.padEnd(30)
+      + String(arabisch).padStart(6) + ' arab. Zeichen, '
+      + String(verpackt).padStart(4) + ' verpackt, '
+      + offen + ' offen');
+    if (offen && ausnahme) console.log('        ' + ausnahme);
+    if (offen && !ausnahme){
+      console.log('        Dort steht „X → Y" verkehrt herum. Der Seitenbauer muss');
+      console.log('        `arabischInSeite(html)` aus werkzeuge/arabisch-hervorheben.mjs');
+      console.log('        einmal am Ende rufen — oder die Stelle gehoert mit Begruendung');
+      console.log('        oben in SEITEN_AUSNAHMEN.');
+    }
+  }
+  /* Einordnung, kein Urteil: wer den Handgriff schon hat. */
+  const bauer = fs.readdirSync(path.join(REPO, 'werkzeuge'))
+    .filter(n => n.endsWith('.mjs'))
+    .filter(n => { const s = lies('werkzeuge', n);
+      return /writeFileSync/.test(s) && /<style>|<title>/.test(s); });
+  const mit = bauer.filter(n => lies('werkzeuge', n).includes('arabischInSeite'));
+  console.log('  ' + mit.length + ' von ' + bauer.length + ' Seitenbauern rufen arabischInSeite().');
+  console.log('  (Die uebrigen erzeugen entweder kein Arabisch im Markup oder bauen');
+  console.log('   ihre Liste erst im Browser — dort wirkt der Handgriff nicht.)');
+}
+
 /* ---------- ⛔ STOERTEST ---------- */
 console.log('');
 console.log('=== Stoertest ===');
@@ -356,6 +451,27 @@ const sProbe = (was, ist, soll) => {
      [[stoertest_muss_wirkung_nachweisen]] */
   sProbe('die Rueckfallsperre kann ueberhaupt fuendig werden',
     S.includes('escapeHtml(quelle.join'), true);
+
+  /* --- Abschnitt 5: die erzeugten Seiten --- */
+  const A1 = zp(0x645), A2 = zp(0x643), PF = zp(0x2192);
+  sProbe('ein Paar im Fliesstext faellt auf',
+    ungeschuetztePaare('<p>x ' + A1 + ' ' + PF + ' ' + A2 + ' y</p>'), 1);
+  sProbe('dasselbe Paar VERPACKT faellt nicht auf',
+    ungeschuetztePaare('<p><span class="ar" lang="ar">' + A1 + '</span> ' + PF
+      + ' <span class="ar" lang="ar">' + A2 + '</span></p>'), 0);
+  sProbe('ein Paar im <script> faellt nicht auf',
+    ungeschuetztePaare('<script>var x="' + A1 + ' ' + PF + ' ' + A2 + '";</script>'), 0);
+  sProbe('ein Paar in einem Attribut faellt nicht auf',
+    ungeschuetztePaare('<b title="' + A1 + ' ' + PF + ' ' + A2 + '">x</b>'), 0);
+  sProbe('zwei Woerter mit Leerzeichen sind KEIN Paar',
+    ungeschuetztePaare('<p>' + A1 + ' ' + A2 + '</p>'), 0);
+  sProbe('deutscher Text ist kein Paar',
+    ungeschuetztePaare('<p>erst das eine, dann das andere</p>'), 0);
+  /* Eine Ausnahme, deren Datei es nicht mehr gibt, ist eine Behauptung ohne
+     Gegenstand — und deckt beim naechsten Mal etwas Echtes zu. */
+  for (const d of Object.keys(SEITEN_AUSNAHMEN))
+    sProbe('die Ausnahme ' + d + ' hat noch eine Datei',
+      fs.existsSync(path.join(SEITEN, d)), true);
 }
 if (stoer){
   console.log('');
@@ -376,6 +492,11 @@ if (roh){
   console.log('   einzeln. Ein CSS-`isolate` am aeusseren Kasten reicht NICHT — es');
   console.log('   trennt ihn von der Umgebung, nicht die beiden Laeufe voneinander.');
 }
-if (befunde || roh) process.exit(2);
-console.log('✅ Jede Klasse für arabische Läufe ist isoliert, und jedes Feld mit dem');
-console.log('   Muster wird verpackt — „X → Y" steht richtig herum.');
+if (seitenBefunde){
+  console.log('⛔ ' + seitenBefunde + ' erzeugte Seite(n) mit unverpackten Paaren.');
+  console.log('   Im Seitenbauer `arabischInSeite(html)` einmal am Ende rufen —');
+  console.log('   siehe werkzeuge/arabisch-hervorheben.mjs.');
+}
+if (befunde || roh || seitenBefunde) process.exit(2);
+console.log('✅ Jede Klasse für arabische Läufe ist isoliert, jedes Feld mit dem Muster');
+console.log('   wird verpackt, und keine erzeugte Seite zeigt „X → Y" verkehrt herum.');
