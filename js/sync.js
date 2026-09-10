@@ -138,6 +138,70 @@ const SYNC_SCHLUESSEL = [
   'vt_feiern'
 ];
 
+/* ---------- ⛔ Die eine Ausnahme: die Quran-Ansicht (10.09.2026) ----------
+
+   Elias:
+     „ich hatte gesagt alles soll zwischen handy und tablet synchron sein, aber
+      die koran einstellungen sollen getrennt sein. weil auf tablet hab ich viel
+      größeres bildschirm und dann mache ich die arabische größe größer und
+      jetzt auf handy ist es viel zu groß. deswegen nur die koran einstellungen
+      sollen seperat sein"
+
+   ⛔ Das ist eine AUSNAHME von seinem Ziel vom 06.09.2026 („komplett identische
+   daten […] einfach alles"), und genau deshalb ist sie gefährdet: wer diese
+   Zeilen bei der nächsten Vereinfachung sieht, hält sie für einen vergessenen
+   Rest und gleicht das Feld wieder mit ab. Deshalb steht sein Wortlaut hier —
+   und werkzeuge/pruefe-abgleich.mjs bewacht ihn.
+   [[wirkung_an_der_quelle_stilllegen]] [[regel_gilt_nur_mit_begruendung]]
+
+   ⭐ Warum die ganze Tafel und nicht nur die Schriftgröße: Er sagt „die koran
+   einstellungen", nicht „die arabische größe". Die Größe ist sein BEISPIEL, der
+   Grund ist der Bildschirm — und der gilt für jede Zeile der Ansichtstafel.
+   Eine Ausnahme, die nur das genannte Beispiel abdeckt, ließe ihn beim nächsten
+   Punkt derselben Tafel wieder anrufen.
+
+   ⚠️ Die Regel greift am PRÄFIX des Einstellungsfeldes, nicht an einer Liste:
+   jede Zeile der Tafel heißt `quran…` (quranAr, quranDe, quranModus,
+   quranDarstellung, quranUeb, quranRezitation, quranRezitator, quranMitleseVers,
+   quranMitleseWort, quranVerfolgen, quranSchrift, quranEnAusgabe). Eine Liste
+   wäre am Tag der nächsten neuen Zeile still unvollständig.
+   [[allgemeine_regel_statt_listeneintrag]]
+
+   ⛔ `showQuran` ist NICHT betroffen — ob auf einer Vokabelkarte ein Quranvers
+   erscheint, gehört zum Lernen und nicht zur Ansicht des Lesers. Das Feld
+   beginnt mit `show` und trifft das Muster deshalb nicht; das ist Absicht.
+
+   ⚠️ Ebenso wenig betroffen ist der echte STAND des Lesers: `vt_hifz`,
+   `vt_hifzVerse`, `vt_quranFav` und `vt_lesestand` sind eigene Schlüssel und
+   werden weiter abgeglichen. Getrennt ist die Ansicht, nicht das Auswendige. */
+const GERAET_EIGENE_EINSTELLUNG = /^quran/;
+
+/** Aus einer rohen `vt_settings`- oder `vt_settingsFeld`-Zeichenkette alles
+ *  entfernen, was dem Gerät gehört.
+ *
+ *  ⚠️ Bei kaputtem JSON kommt der Text UNVERÄNDERT zurück. Lieber einmal zu
+ *  viel übertragen als eine Einstellung wegwerfen, weil ein Parser stolpert.
+ */
+function ohneGeraetEinstellungen(roh){
+  try {
+    const o = JSON.parse(roh);
+    if (!o || typeof o !== 'object' || Array.isArray(o)) return roh;
+    const raus = {};
+    let getroffen = false;
+    for (const f of Object.keys(o)){
+      if (GERAET_EIGENE_EINSTELLUNG.test(f)) getroffen = true;
+      else raus[f] = o[f];
+    }
+    return getroffen ? JSON.stringify(raus) : roh;
+  } catch (e){ return roh; }
+}
+/* Nur diese beiden Schlüssel tragen Einstellungsfelder. Als eigene Funktion,
+   damit die drei Aufrufer unten nicht jeder ihre eigene Liste führen —
+   dieselbe Frage, dieselbe Antwort. [[dieselbe_frage_zwei_antworten]] */
+function traegtEinstellungsfelder(k){
+  return k === 'vt_settings' || k === 'vt_settingsFeld';
+}
+
 /* Je Schluessel merken, wann er zuletzt lokal geaendert wurde. Ohne das kann
    nicht entschieden werden, welche Seite neuer ist. */
 const STEMPEL_SCHLUESSEL = 'vt_syncStempel';
@@ -363,6 +427,10 @@ function fuehreFortschrittZusammen(hier, dort){
 function fuehreEinstellungenZusammen(hier, dort, stempelHier, stempelDort){
   const raus = Object.assign({}, hier || {});
   Object.keys(dort || {}).forEach(f => {
+    /* ⛔ Die Quran-Ansicht gehört dem Gerät: der fremde Wert wird nicht einmal
+       angesehen, auch wenn er jünger ist. Begründung im Wortlaut bei
+       GERAET_EIGENE_EINSTELLUNG ganz oben (Elias, 10.09.2026). */
+    if (GERAET_EIGENE_EINSTELLUNG.test(f)) return;
     const a = (stempelHier && stempelHier[f]) || 0;
     const b = (stempelDort && stempelDort[f]) || 0;
     if (b > a) raus[f] = dort[f];
@@ -382,7 +450,11 @@ function fuehreZusammen(fern){
     const dortRoh = fernDaten[k];
     if (dortRoh == null) return;                 /* Gegenseite kennt ihn nicht */
     if (hierRoh == null){                        /* wir kennen ihn nicht */
-      localStorage.setItem(k, dortRoh);
+      /* ⛔ Auch der erste Abgleich eines frisch eingerichteten Geräts darf die
+         Schriftgröße des Tablets nicht als Startwert bekommen. Ältere
+         Nutzlasten tragen die Felder noch — bis zum 10.09.2026 wurden sie
+         mit hochgeladen. */
+      localStorage.setItem(k, traegtEinstellungsfelder(k) ? ohneGeraetEinstellungen(dortRoh) : dortRoh);
       etwasGeaendert = true;
       return;
     }
@@ -408,7 +480,14 @@ function fuehreZusammen(fern){
       try {
         const a = JSON.parse(hierRoh), b = JSON.parse(dortRoh);
         const raus = Object.assign({}, a);
-        Object.keys(b).forEach(f => { if ((b[f]||0) > (raus[f]||0)) raus[f] = b[f]; });
+        Object.keys(b).forEach(f => {
+          /* Dieselbe Ausnahme wie eine Ebene höher. Der Stempel eines Feldes,
+             das nie von drüben kommt, hätte hier nichts zu entscheiden — aber
+             ein fremder, jüngerer Stempel würde den eigenen überschreiben und
+             wäre bei einer späteren Lockerung der Regel sofort schädlich. */
+          if (GERAET_EIGENE_EINSTELLUNG.test(f)) return;
+          if ((b[f]||0) > (raus[f]||0)) raus[f] = b[f];
+        });
         const neu = JSON.stringify(raus);
         if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
         /* ⛔ Faellt das aus, gilt die STEMPELKARTE als unveraendert — und
@@ -766,7 +845,15 @@ function baueNutzlast(){
   const daten = {};
   SYNC_SCHLUESSEL.forEach(k => {
     const v = localStorage.getItem(k);
-    if (v !== null) daten[k] = v;
+    if (v === null) return;
+    /* ⛔ Die Quran-Ansicht verlässt das Gerät gar nicht erst. Sie nur beim
+       Zusammenführen zu überspringen hätte gereicht, damit nichts ankommt —
+       aber dann läge die Tablet-Schriftgröße trotzdem im KV, und das nächste
+       neu eingerichtete Gerät bekäme sie beim allerersten Abgleich.
+       ⭐ Nebenwirkung, und eine erwünschte: eine Änderung an der Ansicht
+       verändert die Nutzlast nicht mehr und kostet damit auch keinen
+       Schreibvorgang des Tageskontingents. [[zweiter_fix_deckt_ersten_zu]] */
+    daten[k] = traegtEinstellungsfelder(k) ? ohneGeraetEinstellungen(v) : v;
   });
   return { fassung: 1, geaendert: Date.now(), stempel: syncStempel(), daten };
 }
