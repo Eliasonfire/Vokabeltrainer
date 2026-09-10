@@ -240,6 +240,99 @@ console.log('=== Gewaehlter Eselsbruecken-Vorschlag (vt_vorschlagNr) ===');
 }
 
 console.log('');
+console.log('=== Quran-Ansicht bleibt auf ihrem Geraet (10.09.2026) ===');
+{
+  /* Elias: „ich hatte gesagt alles soll zwischen handy und tablet synchron
+     sein, aber die koran einstellungen sollen getrennt sein. weil auf tablet
+     hab ich viel größeres bildschirm und dann mache ich die arabische größe
+     größer und jetzt auf handy ist es viel zu groß."
+
+     ⛔ Die Faelle hier pruefen BEIDE Richtungen der Ausnahme: dass die
+     Quran-Felder nicht ankommen UND dass alles andere weiterhin ankommt. Ohne
+     die zweite Haelfte wuerde ein Muster, das versehentlich alles trifft,
+     genauso gruen melden. [[gruener_pruefer_beweist_nur_geprueftes]] */
+
+  /* 1. Der Kern des Anrufs: das Tablet hat die arabische Schrift groesser
+        gestellt, das Handy behaelt seine Groesse - auch wenn drueben spaeter
+        gestellt wurde. */
+  const { ctx, speicher } = baueUmgebung();
+  const fuehreZusammen = vm.runInContext('fuehreZusammen', ctx);
+  speicher['vt_settings']     = JSON.stringify({ quranAr: 100, direction: 'ar-de' });
+  speicher['vt_settingsFeld'] = JSON.stringify({ quranAr: 100, direction: 100 });
+  fuehreZusammen({ stempel: {}, daten: {
+    vt_settings:     JSON.stringify({ quranAr: 175, direction: 'mixed' }),
+    vt_settingsFeld: JSON.stringify({ quranAr: 900, direction: 900 })
+  }});
+  let s = JSON.parse(speicher['vt_settings']);
+  pruefe('die groessere Schrift des Tablets kommt NICHT aufs Handy',
+    s.quranAr === 100, JSON.stringify(s));
+
+  /* 2. ⭐ Die Gegenprobe, und sie ist der wichtigere der beiden Faelle: die
+        Ausnahme darf nur die Quran-Felder betreffen. Ein Muster, das zu breit
+        greift, macht aus einer Sonderregel einen abgeschalteten Abgleich. */
+  pruefe('die Lernrichtung kommt weiterhin an (Ausnahme greift nur beim Leser)',
+    s.direction === 'mixed', JSON.stringify(s));
+
+  /* 3. Der fremde STEMPEL darf den eigenen ebenfalls nicht ueberschreiben. */
+  const st = JSON.parse(speicher['vt_settingsFeld']);
+  pruefe('der fremde Stempel der Schriftgroesse gilt nicht',
+    st.quranAr === 100, JSON.stringify(st));
+  pruefe('der fremde Stempel der Lernrichtung gilt sehr wohl',
+    st.direction === 900, JSON.stringify(st));
+
+  /* 4. `showQuran` faengt mit `show` an und ist eine LERN-Einstellung (steht
+        auf der Vokabelkarte ein Vers?). Sie muss weiter mitfahren - sonst
+        haette das Praefixmuster still zu viel eingesammelt. */
+  const { ctx: c4, speicher: s4 } = baueUmgebung();
+  const fz4 = vm.runInContext('fuehreZusammen', c4);
+  s4['vt_settings']     = JSON.stringify({ showQuran: false });
+  s4['vt_settingsFeld'] = JSON.stringify({ showQuran: 100 });
+  fz4({ stempel: {}, daten: {
+    vt_settings:     JSON.stringify({ showQuran: true }),
+    vt_settingsFeld: JSON.stringify({ showQuran: 900 })
+  }});
+  pruefe('showQuran wird weiterhin abgeglichen',
+    JSON.parse(s4['vt_settings']).showQuran === true, s4['vt_settings']);
+
+  /* 5. Der Erstabgleich eines frisch eingerichteten Geraets. Es hat noch gar
+        keine `vt_settings` - dort greift ein anderer Zweig, und der hat die
+        Ausnahme beim Bau am 10.09.2026 zuerst NICHT gekannt. */
+  const { ctx: c5, speicher: s5 } = baueUmgebung();
+  const fz5 = vm.runInContext('fuehreZusammen', c5);
+  fz5({ stempel: {}, daten: {
+    vt_settings: JSON.stringify({ quranAr: 175, direction: 'mixed' })
+  }});
+  const s5o = JSON.parse(s5['vt_settings']);
+  pruefe('ein neues Geraet erbt die fremde Schriftgroesse nicht',
+    s5o.quranAr === undefined, s5['vt_settings']);
+  pruefe('… bekommt aber alles andere beim ersten Abgleich',
+    s5o.direction === 'mixed', s5['vt_settings']);
+
+  /* 6. Und die zweite Haelfte der Reparatur: die Felder verlassen das Geraet
+        gar nicht erst. Sonst laege die Tablet-Groesse weiterhin im KV.
+        [[zweiter_fix_deckt_ersten_zu]] */
+  const { ctx: c6, speicher: s6 } = baueUmgebung();
+  const baue = vm.runInContext('baueNutzlast', c6);
+  s6['vt_settings']     = JSON.stringify({ quranAr: 175, quranModus: 'ar', direction: 'ar-de' });
+  s6['vt_settingsFeld'] = JSON.stringify({ quranAr: 900, direction: 900 });
+  const nutz = baue();
+  const hoch = JSON.parse(nutz.daten['vt_settings']);
+  pruefe('die Quran-Ansicht wird nicht hochgeladen',
+    hoch.quranAr === undefined && hoch.quranModus === undefined, nutz.daten['vt_settings']);
+  pruefe('alles andere wird weiterhin hochgeladen',
+    hoch.direction === 'ar-de', nutz.daten['vt_settings']);
+  pruefe('auch ihr Stempel bleibt hier',
+    JSON.parse(nutz.daten['vt_settingsFeld']).quranAr === undefined,
+    nutz.daten['vt_settingsFeld']);
+
+  /* 7. Kaputtes JSON darf nichts wegwerfen - dieselbe Zusicherung wie beim
+        Zusammenfuehren oben, nur an der Filterfunktion selbst. */
+  const ohne = vm.runInContext('ohneGeraetEinstellungen', c6);
+  pruefe('kaputtes JSON kommt unveraendert zurueck',
+    ohne('kein json {{{') === 'kein json {{{');
+}
+
+console.log('');
 console.log('=== Filter: was wird ueberhaupt abgeglichen ===');
 {
   const { ctx, speicher } = baueUmgebung();

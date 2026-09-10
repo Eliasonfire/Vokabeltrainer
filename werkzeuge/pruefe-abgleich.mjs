@@ -248,6 +248,72 @@ sag(/gleicheAb\(false\)/.test(SYNC) && /still \? undefined : .knopf./.test(SYNC)
 sag(/visibilityState/.test(versteckt) && /gleicheAb\(true\)/.test(versteckt),
     '… und beim Zurueckkommen sofort geholt');
 
+/* ---------- Die eine Ausnahme: die Quran-Ansicht (10.09.2026) ---------- */
+/* ⛔ WARUM DIESER ABSCHNITT DIE WICHTIGSTE ZEILE DIESER DATEI IST
+ *
+ * Alles darüber bewacht dieselbe Richtung: kein Schlüssel darf FEHLEN. Hier
+ * steht die Gegenrichtung — ein Feld, das ausdrücklich NICHT mitfahren soll:
+ *
+ *   „ich hatte gesagt alles soll zwischen handy und tablet synchron sein, aber
+ *    die koran einstellungen sollen getrennt sein. weil auf tablet hab ich viel
+ *    größeres bildschirm und dann mache ich die arabische größe größer und
+ *    jetzt auf handy ist es viel zu groß."
+ *
+ * ⭐ Eine Ausnahme ist das, was bei der nächsten Vereinfachung als „unnötig"
+ * wegfällt — sie sieht ja aus wie ein vergessener Sonderfall, und der Abgleich
+ * läuft danach scheinbar sauberer. Deshalb wird hier nicht nur die Technik
+ * geprüft, sondern SEIN SATZ: steht die Begründung nicht mehr im Quelltext,
+ * ist die Regel bereits verwaist, auch wenn sie technisch noch greift.
+ * [[wirkung_an_der_quelle_stilllegen]] [[regel_gilt_nur_mit_begruendung]]
+ *
+ * ⚠️ Der Wortlaut wird am ROHEN Quelltext gesucht, nicht an `SYNC`: er steht in
+ * einem Kommentar, und `SYNC` ist genau davon befreit. Hier ist das kein
+ * Fehler, sondern der Zweck — die Zusicherungen darunter dagegen laufen weiter
+ * über `SYNC`. [[stichworttreffer_im_kommentar]] */
+console.log('');
+console.log('=== Bleibt die Quran-Ansicht auf ihrem Gerät? ===');
+const SYNC_ROH = fs.readFileSync(path.join(REPO, 'js', 'sync.js'), 'utf8');
+sag(/die koran einstellungen sollen getrennt sein/.test(SYNC_ROH),
+    'Elias’ Begründung steht im Wortlaut in js/sync.js');
+/* ⚠️ ZWEI Zusicherungen, weil jede nur an ihrer eigenen Quelle gilt — und der
+   erste Anlauf prüfte beide an der falschen. `ohneKommentareUndTexte` leert
+   auch REGEX-Literale (längentreu): dort steht `/      /`, das Muster `^quran`
+   ist im kommentarfreien Text also gar nicht mehr da. Umgekehrt beweist erst
+   der kommentarfreie Text, dass die Zeile ECHTER CODE ist und nicht eine
+   Erwähnung in einem der langen Kommentare darüber.
+   [[stichworttreffer_im_kommentar]] [[zeichen_sind_nicht_bytes]] */
+sag(/const GERAET_EIGENE_EINSTELLUNG = \//.test(SYNC),
+    'die Ausnahme ist eine echte Anweisung, nicht nur ein Kommentar');
+sag((SYNC_ROH.match(/const GERAET_EIGENE_EINSTELLUNG = \/\^quran\/;/g) || []).length === 1,
+    'sie greift am Präfix `quran`, nicht an einer Liste einzelner Felder');
+
+/* Alle vier Stellen einzeln. Drei hätten gereicht, damit auf dem anderen Gerät
+   nichts ankommt — die vierte (das Hochladen) entscheidet, ob der Wert
+   überhaupt das Gerät verlässt. Genau so eine halbe Reparatur war der Fall
+   „zweiter Fix deckt den ersten zu". [[zweiter_fix_deckt_ersten_zu]] */
+const zusammenfuehren = (SYNC.match(/function fuehreEinstellungenZusammen\([\s\S]*?\n\}/) || [''])[0];
+const nutzlast        = (SYNC.match(/function baueNutzlast\(\)\{[\s\S]*?\n\}/) || [''])[0];
+sag(/GERAET_EIGENE_EINSTELLUNG\.test\(/.test(zusammenfuehren),
+    'beim Zusammenführen wird der fremde Wert übersprungen');
+sag(/k === 'vt_settingsFeld'[\s\S]{0,800}GERAET_EIGENE_EINSTELLUNG\.test\(/.test(SYNC),
+    '… und der fremde Stempel ebenfalls');
+sag(/ohneGeraetEinstellungen\(/.test(nutzlast),
+    'die Felder werden gar nicht erst hochgeladen');
+/* ⚠️ 600 statt der zuerst geschätzten 300: gemessen liegen 391 Zeichen
+   dazwischen, weil der Stripper die Begründung LÄNGENTREU leert statt sie zu
+   entfernen. Ein Abstandsmaß in Zeichen misst hier die Länge der Kommentare,
+   nicht die Nähe der Anweisungen. [[pruefung_fragt_einen_stellvertreter_ab]] */
+sag(/if \(hierRoh == null\)\{[\s\S]{0,600}ohneGeraetEinstellungen\(/.test(SYNC),
+    'auch der allererste Abgleich eines neuen Geräts erbt sie nicht');
+
+/* ⛔ Und die Ausnahme muss SICHTBAR sein. Überall sonst gilt „einfach alles";
+   eine stille Sonderregel sieht für Elias aus wie ein kaputter Abgleich.
+   [[ausfall_ist_unsichtbar_gebaut]] */
+const HTML = fs.readFileSync(path.join(REPO, 'index.html'), 'utf8');
+const tafel = HTML.slice(HTML.indexOf('id="quranAnsicht"'));
+sag(/gilt nur auf[\s\S]{0,40}diesem Gerät/.test(tafel.slice(0, tafel.indexOf('quran-source'))),
+    'die Ansichtstafel sagt dem Leser, dass sie nur für dieses Gerät gilt');
+
 /* ---------- Störtest ---------- */
 console.log('');
 const probe = 'vt_gibtesnicht';
@@ -255,6 +321,13 @@ sag(!imAbgleich.has(probe), 'Störtest: ein erfundener Schlüssel gilt als fehle
 sag(!/vt_gibtesnicht/.test(zusammen), 'Störtest: eine erfundene Variable gilt als nicht nachgelesen');
 sag(!alleJs.includes('function rendergibtesnicht('),
     'Störtest: eine erfundene Zeichenfunktion gilt als nicht vorhanden');
+/* ⚠️ Nur Aussagen ÜBER DAS WERKZEUG. Ein „die Ausnahme greift" gehörte hier
+   nicht hin — dann meldete ein echter Mangel oben den Störtest als kaputt und
+   der Rückgabewert benennte die falsche Ursache. Dreimal passiert. */
+sag(!/GERAETGIBTESNICHT\.test\(/.test(zusammenfuehren),
+    'Störtest: eine erfundene Ausnahme gilt als nicht angewandt');
+sag(!/gilt nur auf diesem Fahrrad/.test(HTML),
+    'Störtest: ein erfundener Hinweistext gilt als nicht vorhanden');
 
 console.log('');
 if (fehler) { console.log('⛔ ' + fehler + ' Befund(e).'); process.exit(1); }
