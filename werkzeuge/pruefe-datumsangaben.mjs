@@ -701,6 +701,8 @@ function zeileWiderspricht(zeitMin, mtimeMin, commitMin){
 }
 const todoRot = [];
 let todoZeilen = 0;
+/* Warum heute nichts geprueft wurde, falls nichts geprueft wurde. */
+let todoGrund = null;
 try {
   const TODO = 'G:\\1. Workspace\\Obsidian\\Gedächtnis\\Elias Gedächtnis\\03 - Projekte\\To-Do Vokabeltrainer.md';
   if (existsSync(TODO)){
@@ -724,8 +726,39 @@ try {
         if (/^---\s*$/.test(roh[k]) || /^#{2,3}\s/.test(roh[k])){ bis = k; break; }
       }
     }
-    /* Nur solange die Datei von HEUTE ist — sonst vergleicht man Tage. */
-    if (heuteDatei === HEUTE_DE && von >= 0){
+    /* ⛔⛔ ZWEI Daten, nicht eins (berichtigt 10.09.2026, beim ersten Lauf nach
+       Mitternacht, an dem beides auseinanderfiel).
+
+       Bis hierhin stand nur `heuteDatei === HEUTE_DE`, also: *die Datei* wurde
+       heute geschrieben. Gemeint war aber: *die Tabelle* gehört zu heute. An
+       jedem Tag bis zum 09.09. war das dasselbe — die To-Do wurde in derselben
+       Schicht geschrieben, deren Tabelle oben stand.
+
+       Am 10.09. um 05:32 bekam die Datei einen neuen Tagesabschnitt OBEN,
+       während die erste „Erledigt in dieser Schicht"-Tabelle noch die vom
+       09.09. war. Die Prüfung verglich daraufhin **125 Zeilen von gestern**
+       (07:32 … 16:xx) mit der mtime von **heute 05:32** und meldete sie alle
+       als „später als die Datei" — 125 Fehlalarme aus einer richtigen Regel an
+       der falschen Tabelle. Ein Prüfer, der so ruft, wird abgeschaltet.
+       [[dieselbe_frage_zwei_antworten]] [[kandidatenliste_ist_keine_fehlerliste]]
+
+       ⚠️ Die To-Do steht NEUESTES ZUERST: die oberste solche Tabelle ist die
+       jüngste. Ihr Datum ist das der nächsten Überschrift DARÜBER, die eines
+       nennt. */
+    let tabellenTag = null;
+    for (let k = von; k >= 0 && tabellenTag == null; k--){
+      const t = roh[k].match(/^#{2,3}[^\n]*?(\d{2}\.\d{2}\.\d{4})/);
+      if (t) tabellenTag = t[1];
+    }
+    /* ⭐ Und wenn die Tabelle nicht von heute ist, wird das GESAGT statt still
+       übersprungen — sonst liest sich „0 geprueft, keine widerspricht sich" wie
+       ein Beweis. [[gruener_pruefer_beweist_nur_geprueftes]] */
+    if (von >= 0 && tabellenTag !== HEUTE_DE)
+      todoGrund = 'die oberste „Erledigt"-Tabelle gehört zum ' + (tabellenTag || '(kein Datum darüber)')
+        + ', nicht zu heute — Abschnitt 4 misst heute nichts';
+    else if (von < 0) todoGrund = 'keine „Erledigt in dieser Schicht"-Tabelle in der To-Do';
+    else if (heuteDatei !== HEUTE_DE) todoGrund = 'die To-Do wurde zuletzt am ' + heuteDatei + ' geschrieben';
+    if (heuteDatei === HEUTE_DE && tabellenTag === HEUTE_DE && von >= 0){
       for (let i = von; i < bis; i++){
         const m = roh[i].match(/^\|\s*(\d{2}:\d{2})\s*\|/);
         if (!m || Number(m[1].slice(0, 2)) > 23) continue;
@@ -773,6 +806,7 @@ try {
 console.log('');
 console.log('  Zeilen der To-Do (heute):  ' + todoZeilen + ' geprueft, '
   + (todoRot.length ? '❌ ' + todoRot.length + ' widersprechen sich' : '✅ keine widerspricht sich'));
+if (todoGrund) console.log('     ⓘ ' + todoGrund);
 for (const r of todoRot.slice(0, 8))
   console.log('     ❌ Z' + String(r.zeile).padStart(5) + '  ' + r.zeit + '  ' + r.grund);
 if (todoRot.length > 8) console.log('     … und ' + (todoRot.length - 8) + ' weitere');
