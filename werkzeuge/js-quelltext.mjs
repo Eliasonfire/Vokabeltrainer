@@ -148,3 +148,43 @@ export function zeileVon(quelle, versatz) {
   for (let i = 0; i < versatz && i < quelle.length; i++) if (quelle[i] === '\n') z++;
   return z;
 }
+
+/* ⛔⛔ EICHUNG BEIM LADEN (11.09.2026) — ein kaputter Stripper wirft, statt zu schweigen.
+
+   Gemessen am 11.09.2026: ohneKommentareUndTexte() probeweise stillgelegt (gibt
+   die Quelle unveraendert zurueck), dann der Sammellauf — 13 rot statt 3, aber
+   NEUN der Pruefer, die auf diesem Werkzeug stehen, blieben gruen:
+   pruefe-abgleich, pruefe-diagnosekarte, pruefe-zeitmarken,
+   funktionen-ohne-aufrufer, test-wurzel, test-satz-tagesziel, test-p1, test-p6,
+   test-p8. Bei der Sorte „X hat kein Y" heisst Schweigen: die Befunde
+   verschwinden — nicht, dass alles in Ordnung ist.
+
+   ⭐ Statt neun Pruefern je eine eigene Eichung einzubauen, prueft sich das
+   Werkzeug beim Laden selbst — an den Faellen, an denen es schon einmal
+   gescheitert ist (verschachtelte Template-Literale, `//` im Regex-Literal,
+   `texte:false`). Faellt eine Probe durch, wirft der Import, und JEDER
+   Abhaengige wird rot, auch einer, der morgen dazukommt.
+   [[stoertest_muss_wirkung_nachweisen]] [[allgemeine_regel_statt_listeneintrag]] */
+{
+  const probe = [
+    'a(); // weg-eins',
+    '/* weg-zwei */ b();',
+    'c("weg-drei");',
+    'const t = `<a>${x.map(y => `<b weg-vier>`)}</a>`; /* weg-fuenf */ e();',
+    'f(/\\/\\/x/); // weg-sechs',
+    'g();'
+  ].join('\n');
+  const ist = ohneKommentareUndTexte(probe);
+  const fehler = [];
+  if (ist.length !== probe.length) fehler.push('die Laenge hat sich veraendert');
+  if (ist.split('\n').length !== probe.split('\n').length) fehler.push('Zeilen verschoben');
+  for (const w of ['weg-eins', 'weg-zwei', 'weg-drei', 'weg-vier', 'weg-fuenf', 'weg-sechs'])
+    if (ist.includes(w)) fehler.push('„' + w + '" steht noch da');
+  for (const code of ['a();', 'b();', 'c(', 'e();', 'f(', 'g();'])
+    if (!ist.includes(code)) fehler.push('Code „' + code + '" ist verschwunden');
+  if (!ohneKommentareUndTexte("h('function'); // x", { texte: false }).includes("'function'"))
+    fehler.push('texte:false leert die Zeichenkette trotzdem');
+  if (fehler.length)
+    throw new Error('js-quelltext.mjs besteht seine eigene Eichung nicht: ' + fehler.join(' · ')
+      + ' — jeder Pruefer, der hierauf steht, faende sonst still zu wenig.');
+}
