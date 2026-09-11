@@ -70,6 +70,39 @@ function nichtVorausgeschrieben(s){
    einem Thema, das in ihm gar nicht mehr unterstrichen wird. */
 let SATZ_THEMA = 'alle';
 
+/* ---------- Regelfilter aus der Regelsammlung (11.09.2026) ----------
+   Goal, Punkt 9: „Karte: „im Satzmodus üben" öffnet genau ihre Sätze."
+   Ein Filter NEBEN dem Thema, nicht ein weiteres Thema: SATZ_THEMEN ist die
+   Einteilung, die er ausgewählt hat, und eine Karte gehört zu keinem davon
+   ganz. Er gilt, bis er ein Thema wählt oder den Satzmodus verlässt — und die
+   Kopfzeile sagt die ganze Zeit, dass er gilt. Ein stiller Filter sähe aus wie
+   „es gibt nur drei Sätze". [[ausfall_ist_unsichtbar_gebaut]] */
+let SATZ_REGELFILTER = null;
+
+function satzListe(themaId){
+  if (!SATZ_REGELFILTER) return saetzeZumThema(themaId);
+  const ids = SATZ_REGELFILTER.ids;
+  return alleSaetze()
+    .filter(w => {
+      const tags = (typeof SENTENCE_TAGS !== 'undefined') && SENTENCE_TAGS[w.id];
+      return tags && tags.some(t => ids.has(t.ruleId));
+    })
+    .map((w, i) => ({ w, i, f: satzAktualitaet(w, ids) }))
+    .sort((a, b) => b.f - a.f || a.i - b.i)
+    .map(x => x.w);
+}
+
+function setzeRegelfilter(ids, name){
+  SATZ_REGELFILTER = (ids && ids.length) ? { ids: new Set(ids), name: String(name || '') } : null;
+  SENT.idx = 0;
+}
+
+function regelfilterLoesen(){
+  if (!SATZ_REGELFILTER) return false;
+  SATZ_REGELFILTER = null;
+  return true;
+}
+
 function themaRegelIds(themaId){
   const t = (typeof SATZ_THEMEN !== 'undefined') && SATZ_THEMEN.find(x=>x.id===themaId);
   if (!t || !t.muster) return null;
@@ -209,6 +242,18 @@ function renderThemenLeiste(){
   if (wert) wert.textContent = uebtGerade ? 'Modus wählen' : (jetzt ? jetzt.name : 'Modus wählen');
   if (zahl) zahl.textContent = uebtGerade ? `${SATZ_THEMEN.length} Themen`
                                           : (jetzt ? `${saetzeZumThema(jetzt.id).length} Sätze` : '');
+  /* Der Regelfilter aus der Sammlung steht über allem, solange er gilt — auch
+     während geübt wird: dann trägt der Knopf weiter „Modus wählen" (seine
+     Vorgabe vom 19.08.), und die Zeile darunter sagt, woraus die Aufgaben
+     gerade gebaut sind. */
+  if (SATZ_REGELFILTER){
+    if (uebtGerade){
+      if (zahl) zahl.textContent = `Regel: ${SATZ_REGELFILTER.name} · ${SENT.list.length} Sätze`;
+    } else {
+      if (wert) wert.textContent = 'Regel: ' + SATZ_REGELFILTER.name;
+      if (zahl) zahl.textContent = `${SENT.list.length} Sätze · Thema wählen hebt es auf`;
+    }
+  }
 }
 
 /* Auf- und zuklappen. `aria-expanded` traegt zugleich den Pfeil (CSS) — ein
@@ -297,7 +342,9 @@ function setzeThema(themaId){
     if (typeof saveSettings === 'function') saveSettings();
   }
   if (LUECKE.aktiv) beendeLuecke();
-  SENT.list = saetzeZumThema(themaId);
+  /* Ein gewähltes Thema beendet den Regelfilter aus der Sammlung. */
+  regelfilterLoesen();
+  SENT.list = satzListe(themaId);
   SENT.idx = 0;
   renderThemenLeiste();
   /* Der Themenwechsel tauscht den Vorrat aus, aus dem die Uebungsaufgaben
@@ -321,7 +368,7 @@ function openSentences(){
       || (typeof SATZ_THEMEN !== 'undefined' && SATZ_THEMEN.some(t => t.id === SETTINGS.satzThema));
     if (gibtEs && saetzeZumThema(SETTINGS.satzThema).length) SATZ_THEMA = SETTINGS.satzThema;
   }
-  SENT.list = saetzeZumThema(SATZ_THEMA);
+  SENT.list = satzListe(SATZ_THEMA);
   if (SENT.idx >= SENT.list.length) SENT.idx = 0;
   renderThemenLeiste();
   if (typeof renderUebungsLeiste === 'function') renderUebungsLeiste();
@@ -1049,6 +1096,10 @@ function zeigeGrammatikPopover(span){
           + `<div class="gp-rest hidden">${fett(mitAr(rest))}</div>`
         : '')
     + `<div class="gp-source">${escapeHtml(quelle.join(' · '))}</div>`
+    /* Goal, Punkt 9 (11.09.2026): vom Aufklapper in die Sammlung — dort stehen
+       seine Notiz, seine Fassung, der Schalter und die Folge-19-Karte. */
+    + (typeof oeffneRegelKarte === 'function'
+        ? `<button class="gp-sammlung" type="button" data-regelkarte="${escapeHtml(rule.id)}">in der Sammlung öffnen</button>` : '')
     /* ⛔ 21.08.2026: WEITERE REGELN AN DERSELBEN STELLE.
        Seit die Zerlegung ueberschneidende Markierungen verschachtelt statt
        sie wegzulassen, koennen zwei Regeln denselben Text tragen — in

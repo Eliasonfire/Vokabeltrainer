@@ -167,7 +167,10 @@ function renderRegelStand(){
       ? z.richtig + '/' + z.gestellt
       : '—';
     const wann = z.zuletzt ? tageHer(z.zuletzt) : (z.abbestellt ? 'abbestellt' : 'nie');
-    return '<div class="rz' + ton + '">'
+    /* Goal, Punkt 9 (11.09.2026): ein Tipp auf die Zeile öffnet die Regel in
+       der Sammlung (js/regeln.js). Bewusst ein <div> mit role=button: die
+       Zeile behält ihr Raster, ein <button> brächte eigene Abstände mit. */
+    return '<div class="rz' + ton + '" role="button" tabindex="0" data-regelkarte="' + escapeHtml(z.id) + '">'
       + '<span class="rn">' + escapeHtml(z.name) + '</span>'
       + '<span class="rq">' + quote + '</span>'
       + '<span class="rd">' + wann + '</span></div>';

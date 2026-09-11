@@ -1245,7 +1245,9 @@ function renderUebung(){
     /* ⭐ innerHTML statt textContent, damit die arabischen Woerter in der
        Aufloesung dieselbe Behandlung bekommen wie in den Antwortknoepfen:
        groesser und antippbar. arabischHervor() maskiert selbst. */
-    rueck.innerHTML = arabischHervor(teile.join(' '));
+    const warum = uebungWarum(a);
+    rueck.innerHTML = arabischHervor(teile.join(' '))
+      + (warum ? `<button class="ueb-warum" type="button" data-regelkarte="${escapeHtml(warum.id)}">Warum? → ${arabischHervor(warum.name)}</button>` : '');
   }
 }
 
@@ -1274,6 +1276,63 @@ function arabischHervor(text){
   return (typeof arabischHervorheben === 'function')
     ? arabischHervorheben(text, 'ar-wort')
     : escapeHtml(String(text || ''));
+}
+
+/* ---------- „Warum? → Regel" (Goal, Punkt 8, 11.09.2026) ----------
+
+   Elias am 11.09.2026: „vielleicht könnte dann auch im satzmodus sobald das
+   steht dort irgendwie drauf hingewiesen werden als eine art begründung warum
+   etwas richtig oder falsch ist."
+
+   Nach „Richtig." / „Nicht ganz." steht ein Knopf, der die passende Karte der
+   Regelsammlung ÜBER der Aufgabe öffnet — die Aufgabe bleibt, wie sie ist.
+
+   ⭐ Zuordnung für alle dreizehn Modi, und zuerst die Folge-19-Karte, wo es
+   eine gibt: „primär will ich eigentlich die regeln von folge 19".
+     1  mubtada-khabar  mubtada-khabar-01 (keine Folge-19-Karte zum Nominalsatz)
+     2  nat             f19-nat
+     3  idafa           f19-idafa
+     4  jarr-paar       f19-jarr
+     5  alle-majrur     f19-irab — der Genitiv hat mehrere Gründe, die Karte der Fälle nennt sie
+     6  kasus           nach der ROLLE des Wortes (siehe warumNachRolle), sonst f19-irab
+     7  haraka          ebenso
+     8  wortart         wortarten-01
+     9  bestimmtheit    al-tanwin-tilgung-01 (sagt genau, was der Hinweis des Modus sagt)
+     10 regel           die gefragte Regel selbst (regelId)
+     11 genus           f19-tanith
+     12 isara           f19-isara
+     13 fem-form        f19-tanith (das Adjektiv passt sich an — Merkmal auf der Karte)
+   Keiner der dreizehn bleibt ohne Karte. */
+const UEBUNG_WARUM = {
+  'mubtada-khabar': 'mubtada-khabar-01', 'nat': 'f19-nat', 'idafa': 'f19-idafa',
+  'jarr-paar': 'f19-jarr', 'alle-majrur': 'f19-irab', 'kasus': 'f19-irab', 'haraka': 'f19-irab',
+  'wortart': 'wortarten-01', 'bestimmtheit': 'al-tanwin-tilgung-01', 'regel': null,
+  'genus': 'f19-tanith', 'isara': 'f19-isara', 'fem-form': 'f19-tanith'
+};
+
+/* Bei „Welcher Fall?" und „Welche Endung?" entscheidet die Rolle des Wortes,
+   WARUM es in diesem Fall steht — die allgemeine Karte der Fälle nur dann,
+   wenn keine genauere passt. Die Rollennamen kommen aus js/irab.js. */
+function warumNachRolle(rolle){
+  const r = String(rolle || '');
+  if (r.includes('مُضَاف إِلَيْه') || r.includes('(مُضَاف)')) return 'f19-idafa';
+  if (r.includes('نَعْت')) return 'f19-nat';
+  if (r.includes('حَرْف جَرّ') || r.includes('جَارّ وَمَجْرُور')) return 'f19-jarr';
+  if (r.startsWith('مُبْتَدَأ') || r === 'خَبَر') return 'mubtada-khabar-01';
+  if (r.startsWith('ظَرْف')) return 'zarf-01';
+  if (r === 'مُنَادَى') return 'ya-nida-01';
+  return null;
+}
+
+function uebungWarum(a){
+  if (!a || !a.modus || typeof regelArt !== 'function') return null;
+  let id = UEBUNG_WARUM[a.modus.id];
+  if (a.modus.id === 'regel') id = a.regelId || null;
+  if ((a.modus.id === 'kasus' || a.modus.id === 'haraka') && a.zeilen && a.zeilen[a.wortIdx])
+    id = warumNachRolle(a.zeilen[a.wortIdx].rolle) || id;
+  if (!id || !regelArt(id)) return null;
+  const t = (typeof regelText === 'function') ? regelText(id) : null;
+  return { id, name: t ? t.name : id };
 }
 
 /* Nachschlagen: erst im gepflegten Bestand, dann in den Fachbegriffen.
@@ -1473,6 +1532,10 @@ document.getElementById('uebWahl').addEventListener('click', (e)=>{
 
 /* In der Aufloesung gibt es keine Antwortwahl — dort gilt der Tipp immer. */
 document.getElementById('uebRueckmeldung').addEventListener('click', (e)=>{
+  /* „Warum? → Regel" zuerst: der Knopf trägt selbst arabische Stücke, und ein
+     Tipp darauf soll die Karte öffnen, nicht die Übersetzung eines Wortes. Die
+     Karte öffnet der Handler in js/regeln.js. */
+  if (e.target.closest('.ueb-warum')) return;
   const wort = e.target.closest('.ar-wort');
   if (wort) zeigeUebersetzung(wort.textContent);
 });
