@@ -63,13 +63,16 @@ const GUT = { id: 'gram-nakira-test', ar: 'نَكِرَة', de: 'unbestimmtes No
 const setzen = (auftrag, extra = []) => lauf(SETZEN, [schreib('auftrag-' + Math.random().toString(36).slice(2) + '.json', auftrag), '--ziel', kopie, '--entscheidungen', entsch, ...extra]);
 /* ⚠️ Der erste Fall hieß anfangs تَنْوين. Seit gram-tanwin in der App steht,
    wurde er AUCH als Dublette abgewiesen — der Fall war grün, egal ob die
-   Taschkīl-Prüfung lebt. Aufgedeckt hat es Störtest 1 unten. Deshalb jetzt
-   كَسْرة: unvollständig, belegt, aber weder Fachbegriff noch Vokabel — die
-   Taschkīl-Prüfung ist der EINZIGE Grund zur Abweisung.
-   [[stoertest_muss_wirkung_nachweisen]] */
-const UNVOLLSTAENDIG = { ...GUT, id: 'gram-t1', ar: 'كَسْرة', regel: 'hu-nach-kasra-01' };
+   Taschkīl-Prüfung lebt. Aufgedeckt hat es Störtest 1 unten. Danach كَسْرة —
+   und am selben Abend DASSELBE noch einmal: seit gram-kasra aus den
+   Wörterbüchern kam, war auch das eine Dublette, und wieder fand es Störtest 1.
+   Jetzt جُمْلة اسْمِيّة: unvollständig (auf dem ل fehlt das Zeichen), wörtlich
+   in der Regel, als Frage offen — weder Fachbegriff noch Vokabel. Wer hier
+   wieder tauscht: vorher `fachbegriffe-finden.mjs --alle` fragen, was noch
+   „frage" ist. [[stoertest_muss_wirkung_nachweisen]] */
+const UNVOLLSTAENDIG = { ...GUT, id: 'gram-t1', ar: 'جُمْلة اسْمِيّة', regel: 'jumla-ismiya-filiya-01' };
 const faelle = [
-  ['unvollständiges Taschkīl (كَسْرة)', UNVOLLSTAENDIG, /Taschkīl unvollständig/],
+  ['unvollständiges Taschkīl (جُمْلة اسْمِيّة)', UNVOLLSTAENDIG, /Taschkīl unvollständig/],
   ['eine Schreibung, die so in keiner Regel steht (مُبْتَدِأ)', { ...GUT, id: 'gram-t2', ar: 'مُبْتَدِأ', regel: 'mubtada-khabar-01' }, /nicht belegt/],
   ['Dublette eines Fachbegriffs (مُضَاف)', { ...GUT, id: 'gram-t3', ar: 'مُضَاف', regel: 'mudaf-01' }, /schon Fachbegriff/],
   ['Dublette einer Vokabel aus vocab-data.js (حَرْفُ الْجَرِّ)', { ...GUT, id: 'gram-t4', ar: 'حَرْفُ الْجَرِّ', regel: 'harf-jarr-01' }, /vocab-data\.js/],
@@ -109,6 +112,26 @@ const MANSUB = { id: 'gram-mansub-test', ar: 'مَنْصُوب', de: 'Akkusativ 
   r = setzenOhne({ aufnehmen: [{ ...MANSUB, id: 'gram-harf-test', ar: 'حَرْف', de: 'Partikel — eine der drei Wortarten', regel: 'wortarten-01',
     mnemo: 'Dein Lehrer kennt nur drei Wortarten: اِسْم, فِعْل und حَرْف — und nichts sonst.' }] });
   pruefe(r.code === 0, 'حَرْف als „Partikel — eine der drei Wortarten": kein Tausch, angenommen', r.code + ' ' + r.text);
+}
+
+/* ⭐ WÖRTERBUCH-BELEGE (Elias, 11.09.2026, 21:20:26: „guck es doch nach bei den
+   wörterbüchern die ich dir gegeben habe"). Bekannte Antworten aus
+   werkzeuge/fachbegriffe-belege.json: كَسْرَة hat zwei übereinstimmende Quellen
+   (arabdict, en.wiktionary), قَمَرِيَّة nur eine. Geprüft auf einer Kopie ohne
+   gram-kasra, sonst wiese „ist schon Fachbegriff" ab. */
+console.log('\n=== B3. Wörterbuch-Belege: zwei Quellen ja, eine nein ===');
+{
+  const liste = new Function(fs.readFileSync(FACH, 'utf8') + '; return FACHBEGRIFF_VOKABELN;')().filter(f => f.id !== 'gram-kasra');
+  const ohneKasra = schreib('fachbegriffe-ohne-kasra.js', 'const FACHBEGRIFF_VOKABELN = ' + JSON.stringify(liste, null, 2).replace(/\n\]$/, '\n];') + '\n');
+  const lauf3 = (auftrag) => lauf(SETZEN, [schreib('auftrag-b3-' + Math.random().toString(36).slice(2) + '.json', auftrag), '--ziel', ohneKasra, '--entscheidungen', path.join(tmp, 'e-b3.json'), '--pruefen']);
+  const KASRA = { id: 'gram-kasra-test', ar: 'كَسْرَة', de: 'Kasra — das Vokalzeichen i', type: 'noun', regel: 'hu-nach-kasra-01',
+    mnemo: 'Der kleine Strich unter dem Buchstaben, gesprochen »i« — so wie am Ende von فِي الْبَيْتِ.' };
+  let r = lauf3({ aufnehmen: [KASRA] });
+  pruefe(r.code === 0, 'كَسْرَة: zwei übereinstimmende Wörterbuch-Quellen — angenommen', r.code + ' ' + r.text);
+  r = lauf3({ aufnehmen: [{ ...KASRA, id: 'gram-qamar-test', ar: 'حُرُوف قَمَرِيَّة', de: 'Mondbuchstaben — das l wird gelesen', regel: 'schams-qamar-01' }] });
+  pruefe(r.code === 1 && /nicht belegt: „قَمَرِيَّة"/.test(r.text), 'قَمَرِيَّة: nur eine vollständige Quelle — abgewiesen', r.code + ' ' + r.text);
+  r = lauf3({ aufnehmen: [{ ...KASRA, id: 'gram-kisra-test', ar: 'كِسْرَة', de: 'Stück, Krume' }] });
+  pruefe(r.code === 1 && /nicht belegt/.test(r.text), 'كِسْرَة (das andere Wort): nicht belegt — abgewiesen', r.code + ' ' + r.text);
 }
 
 console.log('\n=== C. Ein richtiger Eintrag landet — auf der Kopie ===');
@@ -165,7 +188,7 @@ try {
   if (s1){
     const k2 = schreib('fachbegriffe-2.js', fs.readFileSync(FACH, 'utf8'));
     const r = lauf(s1, [schreib('auftrag-stoer.json', { aufnehmen: [{ ...UNVOLLSTAENDIG, id: 'gram-stoer' }] }), '--ziel', k2, '--entscheidungen', path.join(tmp, 'e2.json'), '--pruefen']);
-    pruefe(r.code === 0, 'Störtest 1: ohne sie geht كَسْرة durch — die Abweisung in B hängt an ihr', r.code + ' ' + r.text);
+    pruefe(r.code === 0, 'Störtest 1: ohne sie geht جُمْلة اسْمِيّة durch — die Abweisung in B hängt an ihr', r.code + ' ' + r.text);
   }
   const s3 = stoer(SETZEN, 'setzen-ohne-tausch', 'try { tausch = buchDublette({ id: a.id, ar, de: String(a.de), chapter: \'personal\' }); }', 'try { tausch = null; }');
   pruefe(!!s3, 'Störtest 3: die Tausch-Prüfung im Eintragwerkzeug ist auffindbar');

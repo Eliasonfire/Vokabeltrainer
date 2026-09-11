@@ -308,38 +308,26 @@
       "am": "2026-09-11"
     },
     "كسرة": {
-      "entscheidung": "frage",
-      "frage": "Kasra: in deinen Regeln steht nur كَسْرة — auf dem ر fehlt das Vokalzeichen. Wie schreibt dein Lehrer den Begriff vollständig?",
-      "form": "كَسْرة",
-      "regeln": [
-        "schakl-01",
-        "idafa-01",
-        "hu-nach-kasra-01"
-      ],
+      "entscheidung": "aufgenommen",
+      "id": "gram-kasra",
+      "form": "كَسْرَة",
       "am": "2026-09-11"
     },
     "تشكيل": {
-      "entscheidung": "frage",
-      "frage": "Taschkīl: in deinen Regeln steht nur تَشْكيل — auf ك und ي fehlen Zeichen. Wie schreibt dein Lehrer den Begriff vollständig?",
-      "form": "تَشْكيل",
-      "regeln": [
-        "schakl-01",
-        "taschkil-kontext-01"
-      ],
+      "entscheidung": "aufgenommen",
+      "id": "gram-taschkil",
+      "form": "تَشْكِيل",
       "am": "2026-09-11"
     },
     "همزة وصل": {
-      "entscheidung": "frage",
-      "frage": "Hamzat al-waṣl: in deinen Regeln steht nur هَمْزَةُ الوَصْل — auf dem lām des Artikels fehlt das Sukūn. Wie schreibt dein Lehrer den Begriff vollständig?",
-      "form": "هَمْزَةُ الوَصْل",
-      "regeln": [
-        "hamzatul-wasl-01"
-      ],
+      "entscheidung": "aufgenommen",
+      "id": "gram-hamzat-wasl",
+      "form": "هَمْزَة وَصْل",
       "am": "2026-09-11"
     },
     "جملة اسمية": {
       "entscheidung": "frage",
-      "frage": "Nominalsatz: in deinen Regeln steht nur جُمْلة اسْمِيّة — mehrere Zeichen fehlen. Wie schreibt dein Lehrer den Begriff vollständig?",
+      "frage": "Nominalsatz: جملة ist belegt (arabdict, Reverso, Wiktionary), aber اسمية vokalisiert keine der Quellen vollständig (arabdict und Wiktionary haben keinen Eintrag, Reverso nur die Grundform). Wie schreibt dein Lehrer اسمية?",
       "form": "جُمْلة اسْمِيّة",
       "regeln": [
         "jumla-ismiya-filiya-01"
@@ -347,39 +335,26 @@
       "am": "2026-09-11"
     },
     "جملة فعلية": {
-      "entscheidung": "frage",
-      "frage": "Verbalsatz: in deinen Regeln steht nur جُمْلة فِعْلِيّة — mehrere Zeichen fehlen. Wie schreibt dein Lehrer den Begriff vollständig?",
-      "form": "جُمْلة فِعْلِيّة",
-      "regeln": [
-        "jumla-ismiya-filiya-01"
-      ],
+      "entscheidung": "aufgenommen",
+      "id": "gram-jumla-filiya",
+      "form": "جُمْلَة فِعْلِيَّة",
       "am": "2026-09-11"
     },
     "تقديم": {
-      "entscheidung": "frage",
-      "frage": "Taqdīm (Voranstellung): in deinen Regeln steht nur تَقْديم — auf د und ي fehlen Zeichen. Nennt dein Lehrer den Begriff so, und wie schreibt er ihn vollständig?",
-      "form": "تَقْديم",
-      "regeln": [
-        "wortstellung-fokus-01"
-      ],
+      "entscheidung": "aufgenommen",
+      "id": "gram-taqdim",
+      "form": "تَقْدِيم",
       "am": "2026-09-11"
     },
     "اعراب": {
-      "entscheidung": "frage",
-      "frage": "Iʿrāb: in deinen Regeln steht nur اَلْإِعْراب bzw. الإِعْرَاب — nirgends vollständig. Wie schreibt dein Lehrer den Begriff?",
-      "form": "اَلْإِعْراب",
-      "regeln": [
-        "irab-drei-faelle-01"
-      ],
+      "entscheidung": "aufgenommen",
+      "id": "gram-irab",
+      "form": "إِعْرَاب",
       "am": "2026-09-11"
     },
     "حروف شمسية وقمرية": {
-      "entscheidung": "frage",
-      "frage": "Sonnen- und Mondbuchstaben: in deinen Regeln steht nur حُروف شَمْسِيّة وقَمَرِيّة — mehrere Zeichen fehlen. Wie schreibt dein Lehrer die beiden Begriffe vollständig?",
-      "form": "حُروف شَمْسِيّة وقَمَرِيّة",
-      "regeln": [
-        "schams-qamar-01"
-      ],
+      "entscheidung": "abgelehnt",
+      "grund": "Regelname aus zwei Begriffen — einzeln: die Sonnenbuchstaben aufgenommen (gram-huruf-schamsiya), die Mondbuchstaben als Frage",
       "am": "2026-09-11"
     },
     "نكرة": {
@@ -457,6 +432,21 @@
         "madd-tabii-01",
         "al-tanwin-tilgung-01",
         "mubtada-khabar-genus-01"
+      ],
+      "am": "2026-09-11"
+    },
+    "حروف شمسية": {
+      "entscheidung": "aufgenommen",
+      "id": "gram-huruf-schamsiya",
+      "form": "حُرُوف شَمْسِيَّة",
+      "am": "2026-09-11"
+    },
+    "حروف قمرية": {
+      "entscheidung": "frage",
+      "frage": "Mondbuchstaben: قمرية steht nur bei en.wiktionary vollständig vokalisiert; arabdict nennt ein anderes Wort (Turteltaube), Reverso vokalisiert nicht, in deinen Regeln fehlt ein Zeichen. Wie schreibt dein Lehrer قمرية?",
+      "form": "حروف قمرية",
+      "regeln": [
+        "schams-qamar-merkhilfe-01"
       ],
       "am": "2026-09-11"
     }

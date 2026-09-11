@@ -148,9 +148,9 @@ const fach = fs.readFileSync(REPO + '/data/fachbegriffe.js', 'utf8');
 const ktxF = {}; vm.createContext(ktxF);
 vm.runInContext(fach + '\nthis.F = (typeof FACHBEGRIFF_VOKABELN !== "undefined") ? FACHBEGRIFF_VOKABELN : null;', ktxF);
 /* 31 bis zum 11.09.2026 abends; seit Wartungsschritt 1f (fachbegriffe-setzen.mjs)
-   40 — und die Zahl waechst ab jetzt mit neuen Folgen. Wer sie hier nachzieht,
-   zieht sie im Vault mit (Abschnitt „11.09.2026, Abend"). */
-pruefe('Oberflaeche: 40 Fachbegriffe', 40, ktxF.F ? ktxF.F.length : 'FACHBEGRIFF_VOKABELN fehlt');
+   40, nach den Woerterbuch-Belegen desselben Abends 47 — und die Zahl waechst
+   ab jetzt mit neuen Folgen. Wer sie hier nachzieht, zieht sie im Vault mit. */
+pruefe('Oberflaeche: 47 Fachbegriffe', 47, ktxF.F ? ktxF.F.length : 'FACHBEGRIFF_VOKABELN fehlt');
 
 /* Die neuen Ausnahmen in den Pruefern
    ⛔⛔ OHNE KOMMENTARE. Diese vier Zeilen behaupten „steht im Code" — und ein
