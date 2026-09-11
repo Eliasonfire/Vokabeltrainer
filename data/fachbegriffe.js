@@ -803,5 +803,89 @@ const FACHBEGRIFF_VOKABELN = [
     regel: "tanwin-eigennamen-01",
     belegt: 4,
     mnemo: "In مُحَمَّدٌ hörst du am Ende ein »n« (Muḥammadun), das nicht als Buchstabe dasteht — das ist التَّنْوِينُ, und im Wort »Tanwīn« steckt das n schon drin. Dein Lehrer: männliche Eigennamen tragen es, weibliche wie فَاطِمَةُ nicht."
+  },
+  {
+    /* Eingetragen am 2026-09-11 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel hu-nach-kasra-01. */
+    id: "gram-kasra",
+    ar: "كَسْرَة",
+    de: "Kasra — das Vokalzeichen i",
+    type: "noun",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "hu-nach-kasra-01",
+    belegt: 4,
+    mnemo: "Der kleine Strich unter dem Buchstaben, gesprochen »i«. Dein Lehrer: auf eine كَسْرَة folgt nur schwer eine Damma — deshalb heißt es فِيهِ und nicht fīhu. Nach فِي steht sie am Ende: فِي الْبَيْتِ."
+  },
+  {
+    /* Eingetragen am 2026-09-11 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel taschkil-kontext-01. */
+    id: "gram-taschkil",
+    ar: "تَشْكِيل",
+    de: "Taschkīl — die Vokalzeichen",
+    type: "noun",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "taschkil-kontext-01",
+    belegt: 2,
+    mnemo: "Ohne تَشْكِيل sehen رَجُلٌ (Mann) und رِجْلٌ (Bein) gleich aus — dein Lehrer: dann muss man auf den Kontext schauen. تَشْكِيل ist alles, was zu den nackten Buchstaben dazukommt: Fatha, Damma, Kasra, Sukūn, Schadda."
+  },
+  {
+    /* Eingetragen am 2026-09-11 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel hamzatul-wasl-01. */
+    id: "gram-hamzat-wasl",
+    ar: "هَمْزَة وَصْل",
+    de: "Hamzat al-waṣl — das Verbindungs-Alif",
+    type: "noun",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "hamzatul-wasl-01",
+    belegt: 2,
+    mnemo: "Das Alif, das verbindet: bleibst du davor stehen, liest du es; liest du weiter, springst du drüber — in وَالْقَلَمُ hörst du wa-l-qalamu, kein a vor dem l. Dein Lehrer: die Araber mögen das Stoppen nicht und verbinden lieber."
+  },
+  {
+    /* Eingetragen am 2026-09-11 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel jumla-ismiya-filiya-01. */
+    id: "gram-jumla-filiya",
+    ar: "جُمْلَة فِعْلِيَّة",
+    de: "Verbalsatz — der Satz beginnt mit einem Verb",
+    type: "noun",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "jumla-ismiya-filiya-01",
+    belegt: 2,
+    mnemo: "فِعْلِيَّة steckt in فِعْل, dem Verb: die جُمْلَة فِعْلِيَّة fängt mit dem Verb an — ذَهَبَ مُحَمَّدٌ. Dein Lehrer: im Madina Buch 1 kommen erst die Nominalsätze, die Verben später."
+  },
+  {
+    /* Eingetragen am 2026-09-11 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel wortstellung-fokus-01. */
+    id: "gram-taqdim",
+    ar: "تَقْدِيم",
+    de: "Voranstellung — was am Satzanfang steht, wird betont",
+    type: "noun",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "wortstellung-fokus-01",
+    belegt: 1,
+    mnemo: "Dein Lehrer dreht den Satz um: مُحَمَّدٌ ذَهَبَ und ذَهَبَ مُحَمَّدٌ heißen beide »Mohammed ging« — aber womit der Satz beginnt, darauf liegt der Fokus. تَقْدِيم heißt: etwas nach vorne stellen."
+  },
+  {
+    /* Eingetragen am 2026-09-11 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel irab-drei-faelle-01. */
+    id: "gram-irab",
+    ar: "إِعْرَاب",
+    de: "Iʿrāb — die Fallendungen am Wortende",
+    type: "noun",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "irab-drei-faelle-01",
+    belegt: 1,
+    mnemo: "Die Endung zeigt den Fall: مُحَمَّدٌ ist مَرْفُوع, مُحَمَّدٍ ist مَجْرُور, مُحَمَّدًا ist مَنْصُوب — dasselbe Wort, drei Endungen. إِعْرَاب ist das Lesen dieser Endungen."
+  },
+  {
+    /* Eingetragen am 2026-09-11 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel schams-qamar-01. */
+    id: "gram-huruf-schamsiya",
+    ar: "حُرُوف شَمْسِيَّة",
+    de: "Sonnenbuchstaben — das l des Artikels wird verschluckt",
+    type: "noun",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "schams-qamar-01",
+    belegt: 2,
+    mnemo: "اَلشَّمْس, die Sonne, zeigt es selbst: das l des Artikels hörst du nicht, dafür steht eine Schadda auf dem ش — asch-schams. So geht es bei 14 von 28 Buchstaben, den حُرُوف شَمْسِيَّة."
   }
 ];

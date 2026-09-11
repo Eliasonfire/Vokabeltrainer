@@ -72,8 +72,47 @@ const regelNach = new Map(G.map(r => [r.id, r]));
 const belegText = [grammarText, kartenText, lies(ZIEL), lies('vocab-data.js')].join('\n');
 const WORT = new RegExp('[' + BUCHSTABE + '][\\u0610-\\u061A\\u064B-\\u065F\\u0670\\u0640' + BUCHSTABE + ']*', 'g');
 
+/* ⭐⭐ WÖRTERBUCH-BELEGE — Elias am 11.09.2026, 21:20:26, auf meine Zeile, er
+   solle seinen Lehrer nach acht Schreibungen fragen: „guck es doch nach bei den
+   wörterbüchern die ich dir gegeben habe".
+   Ein Wort gilt deshalb auch dann als belegt, wenn es nicht in den Regeln steht,
+   aber (a) wörtlich in seinem eigenen Bestand — arabicroots-Abzug aller Bücher,
+   Vokabeln, Sätze, Fachbegriffe —, oder (b) in werkzeuge/fachbegriffe-belege.json
+   mit mindestens ZWEI verschiedenen Quellen, deren Formen übereinstimmen.
+   Verglichen wird bis auf den Schlussvokal (arabdict zitiert mit Tanwīn, Reverso
+   ohne — taschkil-belegen.mjs hat es gemessen); die Schadda zählt mit.
+   ⛔ Eine einzelne Quelle genügt nie, und nach Analogie gebildet wird nichts. */
+const BELEGE_DATEI = path.join(REPO, 'werkzeuge', 'fachbegriffe-belege.json');
+const ohneSchluss = (w) => {
+  const t = String(w || '').normalize('NFC');
+  let letzter = -1;
+  for (let i = 0; i < t.length; i++) if (new RegExp('[' + BUCHSTABE + ']').test(t[i])) letzter = i;
+  return letzter < 0 ? t : t.slice(0, letzter + 1) + t.slice(letzter + 1).replace(/[ً-ِْٰ]/g, '');
+};
+const BESTAND_DATEIEN = ['vocab-data.js', 'lehrbuch-saetze.js', 'data/beispielsaetze.js', 'data/fachbegriffe.js',
+  ...fs.readdirSync(path.join(REPO, 'data')).filter(f => /^vokabeln-.*\.js$/.test(f)).map(f => 'data/' + f)];
+const lokaleFormen = new Map();
+for (const [name, text] of [['grammar-data.js', grammarText], ['regelsammlung-data.js', kartenText], ...BESTAND_DATEIEN.map(f => [f, lies(f)])]){
+  for (const m of text.normalize('NFC').match(WORT) || []){ const s = ohneSchluss(m); if (!lokaleFormen.has(s)) lokaleFormen.set(s, name); }
+}
+let WOERTERBUCH = {};
+try { WOERTERBUCH = JSON.parse(lies(BELEGE_DATEI)).belege || {}; } catch (e) { /* ohne Datei nur der eigene Bestand */ }
+function wortBelegt(w){
+  const s = ohneSchluss(w);
+  if (lokaleFormen.has(s)) return lokaleFormen.get(s);
+  for (const [form, b] of Object.entries(WOERTERBUCH)){
+    if (ohneSchluss(form) !== s) continue;
+    const passend = new Set((b.quellen || []).filter(q => ohneSchluss(q.form) === s).map(q => q.quelle));
+    if (passend.size >= 2) return [...passend].join(' + ');
+  }
+  return null;
+}
+
 const neu = [];
 const entscheidungen = { ...((E && E.entscheidungen) || {}) };
+/* Die Wörter der Begriffe dieses Auftrags dürfen in ihren eigenen Eselsbrücken
+   stehen — sie sind ja gerade die belegten Formen. */
+const auftragsWoerter = new Set((auftrag.aufnehmen || []).flatMap(a => String(a.ar || '').normalize('NFC').split(/\s+/).filter(Boolean)));
 const schonImAuftrag = new Set();
 const zuerst = (k, wo) => { if (schonImAuftrag.has(k)){ fehler.push(wo + ': „' + k + '" steht zweimal im Auftrag'); return false; } schonImAuftrag.add(k); return true; };
 
@@ -85,7 +124,10 @@ for (const [i, a] of (auftrag.aufnehmen || []).entries()){
   if (!ar) f.push('ar fehlt');
   else {
     if (!zuerst(k, wo)) continue;
-    if (!stehtWoertlich(grammarText, ar) && !stehtWoertlich(kartenText, ar)) f.push('„' + ar + '" steht nicht wörtlich in grammar-data.js oder regelsammlung-data.js — nicht belegt');
+    if (!stehtWoertlich(grammarText, ar) && !stehtWoertlich(kartenText, ar)){
+      const ohne = ar.split(/\s+/).filter(w => !wortBelegt(w));
+      if (ohne.length) f.push('nicht belegt: ' + ohne.map(w => '„' + w + '"').join(', ') + ' — steht weder so in seinem Bestand noch mit zwei übereinstimmenden Quellen in werkzeuge/fachbegriffe-belege.json');
+    }
     const l = taschkilLuecken(ar);
     if (l.length) f.push('Taschkīl unvollständig (' + l.join('; ') + ') → unter „fragen"');
     if (bestandNackt.has(k)) f.push('ist schon Fachbegriff');
@@ -95,7 +137,12 @@ for (const [i, a] of (auftrag.aufnehmen || []).entries()){
   else if (ids.has(a.id)) f.push('id ' + a.id + ' ist vergeben');
   const r = regelNach.get(a.regel);
   if (!r) f.push('Regel ' + a.regel + ' gibt es nicht');
-  else if (ar && !nackt(r.name + ' ' + r.shortExplanation).includes(k)) f.push('Regel ' + a.regel + ' erwähnt den Begriff nicht');
+  else if (ar){
+    /* Jedes Wort des Begriffs steht in der Regel — auch wenn sie ihn anders
+       verbindet („حُروف شَمْسِيّة وقَمَرِيّة" nennt beide Begriffe in einem). */
+    const inRegel = new Set(nackt(r.name + ' ' + r.shortExplanation).split(/\s+/).map(x => x.replace(/^و(?=\S{3})/, '')));
+    if (!k.split(' ').every(x => inRegel.has(x))) f.push('Regel ' + a.regel + ' erwähnt den Begriff nicht');
+  }
   if (!a.type) f.push('type fehlt — keine Vorgabe');
   else if (!typen.has(a.type)) f.push('type „' + a.type + '" kommt im Bestand nicht vor (' + [...typen].join(', ') + ')');
   if (!a.de || String(a.de).trim().length < 3) f.push('de fehlt');
@@ -115,7 +162,7 @@ for (const [i, a] of (auftrag.aufnehmen || []).entries()){
   }
   if (!a.mnemo || String(a.mnemo).trim().length < 40) f.push('mnemo fehlt oder ist kürzer als 40 Zeichen');
   else for (const w of String(a.mnemo).match(WORT) || []){
-    if (!stehtWoertlich(belegText, w)) f.push('Eselsbrücke: „' + w + '" steht so nirgends in Vokabeln, Regeln oder Fachbegriffen');
+    if (!stehtWoertlich(belegText, w) && !auftragsWoerter.has(w)) f.push('Eselsbrücke: „' + w + '" steht so nirgends in Vokabeln, Regeln oder Fachbegriffen');
   }
   if (f.length){ fehler.push(wo + ': ' + f.join(' · ')); continue; }
   ids.add(a.id);

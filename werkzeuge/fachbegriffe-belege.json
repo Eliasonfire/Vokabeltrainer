@@ -1,0 +1,66 @@
+{
+  "_zweck": "Belege für die Schreibung von Fachbegriffen, die in seinen Regeln nur unvollständig vokalisiert stehen. Elias am 11.09.2026, 21:20:26, statt den Lehrer zu fragen: „guck es doch nach bei den wörterbüchern die ich dir gegeben habe“. fachbegriffe-setzen.mjs nimmt ein Wort an, wenn es wörtlich in seinem eigenen Bestand steht (arabicroots-Abzug, Regeln, Sätze, Fachbegriffe) ODER hier mit mindestens ZWEI verschiedenen Quellen, deren Formen bis auf den Schlussvokal übereinstimmen.",
+  "_rangfolge": "Elias' Rangfolge (taschkil-belegen.mjs): 1. arabicroots · 2. seine Bücher · 3. sonstige Belege · 4. arabdict · 5. Langenscheidt nur im Notfall. Reverso ist Gegenprobe. Eine einzelne Quelle genügt nie — arabdict und Reverso zitieren verschieden (Tanwīn, Schadda).",
+  "_format": "belege[<vokalisiertes Wort>] = { bedeutung, quellen: [ { quelle, form, url?, datei?, hinweis? } ], am }",
+  "belege": {
+    "كَسْرَة": {
+      "bedeutung": "Kasra, das Vokalzeichen i",
+      "quellen": [
+        { "quelle": "arabdict", "form": "كَسْرَة", "url": "https://www.arabdict.com/de/deutsch-arabisch/%D9%83%D8%B3%D8%B1%D8%A9", "hinweis": "mehrdeutig: daneben كِسْرَة (Stück, Krume)" },
+        { "quelle": "en.wiktionary", "form": "كَسْرَة", "url": "https://en.wiktionary.org/wiki/%D9%83%D8%B3%D8%B1%D8%A9#Arabic", "hinweis": "„kasra, a vowel in Arabic sign“ — كِسْرَة ist dort der eigene Eintrag „fragment“" }
+      ],
+      "am": "2026-09-11"
+    },
+    "تَشْكِيل": {
+      "bedeutung": "Vokalisierung, die Vokalzeichen",
+      "quellen": [
+        { "quelle": "arabdict", "form": "تَشْكِيل", "url": "https://www.arabdict.com/de/deutsch-arabisch/%D8%AA%D8%B4%D9%83%D9%8A%D9%84" },
+        { "quelle": "en.wiktionary", "form": "تَشْكِيل", "url": "https://en.wiktionary.org/wiki/%D8%AA%D8%B4%D9%83%D9%8A%D9%84#Arabic", "hinweis": "„Arabic diacritics, vocalization“" }
+      ],
+      "am": "2026-09-11"
+    },
+    "جُمْلَة": {
+      "bedeutung": "Satz",
+      "quellen": [
+        { "quelle": "arabdict", "form": "جُمْلَةٌ" },
+        { "quelle": "Reverso", "form": "جُمْلَة", "hinweis": "Umschrift jumla" },
+        { "quelle": "en.wiktionary", "form": "جُمْلَة", "hinweis": "„sentence“" }
+      ],
+      "am": "2026-09-11"
+    },
+    "فِعْلِيَّة": {
+      "bedeutung": "verbal (weiblich) — in جُمْلَة فِعْلِيَّة",
+      "quellen": [
+        { "quelle": "arabdict", "form": "فِعْلِيَّة" },
+        { "quelle": "Reverso", "form": "فِعْلِيَّة", "hinweis": "Umschrift fiʿliyya" },
+        { "quelle": "en.wiktionary", "form": "فِعْلِيَّة" }
+      ],
+      "am": "2026-09-11"
+    },
+    "شَمْسِيَّة": {
+      "bedeutung": "solar, Sonnen- (weiblich) — in حُرُوف شَمْسِيَّة",
+      "quellen": [
+        { "quelle": "Reverso", "form": "شَمْسِيَّة", "hinweis": "Umschrift shamsiyya" },
+        { "quelle": "en.wiktionary", "form": "شَمْسِيَّة" }
+      ],
+      "am": "2026-09-11"
+    },
+    "قَمَرِيَّة": {
+      "bedeutung": "lunar, Mond- (weiblich) — in حُرُوف قَمَرِيَّة",
+      "quellen": [
+        { "quelle": "en.wiktionary", "form": "قَمَرِيَّة" },
+        { "quelle": "grammar-data.js (Regel schams-qamar-01)", "form": "قَمَرِيّة", "hinweis": "die Fatḥa nach der Schadda fehlt — stimmt also NICHT wörtlich überein" }
+      ],
+      "hinweis": "⛔ NUR EINE vollständige Quelle. arabdict liefert قُمْرِيَّة — ein anderes Wort („Turteltaube“), Reverso vokalisiert nicht. Die Form nach شَمْسِيَّة zu bilden, wäre selbst vokalisiert. Deshalb bleibt „Mondbuchstaben“ eine Frage an Elias.",
+      "am": "2026-09-11"
+    },
+    "حُرُوف": {
+      "bedeutung": "Buchstaben (Plural von حَرْف)",
+      "quellen": [
+        { "quelle": "grammar-data.js", "form": "حُرُوفُ", "hinweis": "in حُرُوفُ الْجَرِّ" },
+        { "quelle": "arabdict", "form": "حُروفٌ", "hinweis": "ohne Ḍamma auf dem ر — dieselbe Lesung, unvollständig geschrieben" }
+      ],
+      "am": "2026-09-11"
+    }
+  }
+}
