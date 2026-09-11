@@ -297,6 +297,10 @@ if (!fs.existsSync(PROMPT)){
         "prueft die Datumsangaben der Vault-Notiz gegen die Commits - eine Frage an das Gedaechtnis, nicht an eine Vokabel",
       "werkzeuge/pruefe-schreibpfade.mjs":
         "prueft, ob ein Werkzeug Lerninhalt ohne .neu-Zwischenschritt ueberschreibt - eine Frage an den CODE, nicht an eine Vokabel",
+      /* ⭐ Am 11.09.2026 abends dazugekommen, und wieder hat dieser Waechter es
+         selbst gemeldet — beim ersten Sammellauf nach Schritt 1e. */
+      "werkzeuge/pruefe-pflegeplan.mjs":
+        "prueft, ob jede FUNKTION der App eine Pflege hat (Elias, 11.09.2026) - eine Frage an Routinen und Plan, nicht an eine Vokabel",
     };
     const pruefend = gefordert.filter(w =>
       (w.includes("pruefe-") || w === "validate.js" || w === "werkzeuge/vorrat.mjs")
