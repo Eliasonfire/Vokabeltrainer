@@ -171,7 +171,7 @@ const FOLGE19_KARTEN = [
       { ar: 'جِئْتُ مِنَ الْمَدْرَسَةِ.', de: 'Ich kam aus der Schule.' }
     ],
     lehrer: [
-      { zeit: '8:17', text: 'diese vier, die sind uns von Anfang an begegnet und dann kam noch ein paar mehr dazu und dann kam B dazu mit und dann kam Li dazu um zu sagen, dass jemanden etwas gehört.' }
+      { zeit: '8:21', text: 'und dann kam B dazu mit und dann kam Li dazu um zu sagen, dass jemanden etwas gehört.' }
     ],
     quelle: { folge: '7:57–9:56', muster: 'Nr. 4, S. 5–6' },
     regeln: ['harf-jarr-01', 'harf-jarr-name-01', 'harf-jarr-fi-ala-01', 'harf-jarr-min-ila-01', 'harf-jarr-li-01',

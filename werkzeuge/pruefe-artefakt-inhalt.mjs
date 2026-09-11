@@ -110,7 +110,18 @@ for (const f of seiten){
  * Rechtsurteil, sondern eine Marke, an der eine Veraenderung auffaellt.
  */
 const GRENZE = 200;
-const gd = path.join(REPO, 'grammar-data.js');
+/* ⭐ Seit dem 11.09.2026 ZWEI ausgelieferte Dateien mit Unterrichtszitaten:
+   grammar-data.js und regelsammlung-data.js (die neun Karten aus Folge 19 mit
+   Lehrer-Zitaten und Minute). Dieselbe Marke gilt für beide — eine Entscheidung
+   für die erste Datei gilt auch für die zweite.
+   [[entscheidung_gilt_fuer_das_zweite_werkzeug]]
+   Gemessen beim Bau, gegen das GANZE Rohtranskript der Folge 19: das längste
+   Stück in regelsammlung-data.js war zuerst 170 Zeichen („diese vier, die sind
+   uns von Anfang an begegnet …"), auf 123 gekürzt. ⚠️ Diese Prüfung misst
+   gegen transcripts/kandidaten/ — nur Ausschnitte — und findet deshalb
+   weniger (74 am 11.09.2026). Sie ist eine Untergrenze, keine Vollmessung. */
+for (const zielDatei of ['grammar-data.js', 'regelsammlung-data.js']){
+const gd = path.join(REPO, zielDatei);
 let laengste = 0, laengstesStueck = '', summe = 0, anzahl = 0;
 if (fs.existsSync(gd) && fs.existsSync(KAND)){
   const ziel = fs.readFileSync(gd, 'utf8');
@@ -128,16 +139,17 @@ if (fs.existsSync(gd) && fs.existsSync(KAND)){
       }
     }
   }
-  console.log('grammar-data.js — woertliche Uebernahmen aus dem Unterricht:');
+  console.log(zielDatei + ' — woertliche Uebernahmen aus dem Unterricht:');
   console.log('  ' + anzahl + ' Stueck(e) ab 40 Zeichen, zusammen ' + summe + ' Zeichen.');
   console.log('  laengstes: ' + laengste + ' Zeichen (Grenze ' + GRENZE + ')');
   if (laengste) console.log('    ' + JSON.stringify(laengstesStueck.slice(0, 110)));
   if (laengste > GRENZE){
     befunde++;
     console.log('  ⛔ Das ist kein Kurzzitat mehr. Nachsehen, ob der Abschnitt');
-    console.log('     wirklich als Beleg gebraucht wird — grammar-data.js WIRD ausgeliefert.');
+    console.log('     wirklich als Beleg gebraucht wird — ' + zielDatei + ' WIRD ausgeliefert.');
   }
   console.log('');
+}
 }
 
 /* ---------- Und alles ANDERE, was wirklich ausgeliefert wird (09.09.2026) ----
