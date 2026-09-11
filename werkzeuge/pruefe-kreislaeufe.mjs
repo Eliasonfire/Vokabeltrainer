@@ -105,14 +105,23 @@ const SPEICHER_AUSNAHMEN = {
      Uebungsart, wie oft sie dran war und wie gut sie sass. Ein Werkzeug hier
      koennte nur behaupten, was es nicht weiss. [[daten_ohne_zugang]] */
   'vt_uebungStand':   'Fortschritt je Uebungsmodus — liegt nur auf seinem Geraet, die App zeigt ihn unter „Wie gut sitzen die Übungsarten?"',
-  /* ⚠️ Die Regelsammlung (11.09.2026) wird sehr wohl ausgewertet — von der App
-     selbst: js/regeln.js liest seine Schalter bei jeder Satzmodus-Entscheidung
-     (regelAusgeblendet), die Karte zeigt Fassungen, Notizen und den Papierkorb.
-     Ein Werkzeug HIER koennte den Stand gar nicht lesen (er liegt in seinem
-     localStorage und in KV). ⛔ Offen und bewusst NICHT gebaut: ein Rueckweg
-     seiner bearbeiteten Fassungen nach grammar-data.js — das waere eine
-     Entscheidung, welche Fassung die gueltige ist, und die trifft er. */
-  'vt_regeln':        'Regelsammlung — Schalter „im Satzmodus", seine Fassungen, Notizen, Papierkorb und eigene Regeln; die App wertet sie selbst aus (js/regeln.js, regelAusgeblendet). Rueckweg nach grammar-data.js wartet auf Elias',
+  /* ⛔⛔ BERICHTIGT 11.09.2026, abends — gemessen, nicht gefolgert.
+     Hier stand zu vt_regeln: „Ein Werkzeug HIER koennte den Stand gar nicht
+     lesen (er liegt in seinem localStorage und in KV)". Das war falsch, und
+     dieselbe Begruendung steht oben bei vt_zeit und vt_uebungStand. Der
+     abgeglichene Stand im KV (`stand:<mail>`) enthielt an diesem Abend 28
+     Schluessel, darunter vt_uebungStand, vt_regelStand und vt_zeit — lesbar mit
+     `wrangler kv key get`, wie es werkzeuge/vorschlaege-holen.mjs seit dem
+     19.08.2026 tut. Fuer JEDEN Schluessel in SYNC_SCHLUESSEL (js/sync.js) gilt
+     also: ein Werkzeug KANN ihn lesen. Wo oben „kein Werkzeug kann ihn lesen"
+     als Grund steht, traegt nur der andere Teil — „die App zeigt ihn selbst".
+     Nicht im KV und damit wirklich nur beim Nutzer: vt_gehLog, vt_feierLog,
+     vt_syncPuts, vt_geraetId.
+     vt_regeln steht deshalb nicht mehr in dieser Liste: seit dem 11.09.2026
+     liest werkzeuge/regeln-holen.mjs ihn in der Wartung (Schritt 1d) — auf
+     Elias' Frage, ob die Routinen die Regelsammlung kennen muessen. Der
+     Rueckweg seiner Fassungen nach grammar-data.js bleibt seine Entscheidung.
+     [[zusicherung_im_kommentar_ist_keine_pruefung]] */
 };
 
 /* Erzeugte Dateien und ihre Quellen: veraltet die eine gegen die andere? */

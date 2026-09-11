@@ -159,6 +159,17 @@ const PRUEFER = [
      vocab-data.js gegen den Zufall und legt Aehnlichkeit, Bedeutungsschutz
      und die Fuenf per Stoertest still. [[stoertest_muss_wirkung_nachweisen]] */
   ['werkzeuge/pruefe-hoerablenker.mjs', []],
+  /* ⭐ Neu am 11.09.2026 abends. Elias: „wenn eine neue funktion da ist … das
+     geguckt wird wie wird sie weiterhin gepflegt … du sollst dich dann darum
+     kümmern". Jede Datei und jeder Bildschirm der App braucht einen Eintrag in
+     werkzeuge/pflegeplan.mjs; eine Antwort „die Routine macht das" gilt nur,
+     wenn der Wartungs-Prompt den Schritt nennt und das Werkzeug freigibt.
+     Exitcode 2 = eine eingetragene Lücke, die noch niemand geschlossen hat. */
+  ['werkzeuge/pruefe-pflegeplan.mjs', []],
+  /* ⭐ Neu am 11.09.2026 abends: die zwei Werkzeuge, mit denen die Wartung die
+     Regelsammlung pflegt (regeln-holen, regelsammlung-wache) — mit Köder gegen
+     ein Durchsickern seines Lernstands und Störtests am echten Quelltext. */
+  ['werkzeuge/pruefe-regelsammlung-routinen.mjs', []],
   /* ⭐ Neu am 09.09.2026. „genau 2 ayaht und das wars" — der Rezitator brach
      bei ausgeschaltetem Bildschirm nach zwei Versen ab, weil Vers 3 einen
      neuen Ladevorgang brauchte. Seitdem zwei Elemente im Wechsel; der Pruefer

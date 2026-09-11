@@ -134,3 +134,13 @@ data/bestandsbelege.json
 # auf, wenn eine hereinkommt.
 *madina-buch*.pdf
 *-beschriftet.pdf
+
+# Zustand der Regelsammlungs-Pflege (11.09.2026): was die Wartung schon gezeigt
+# hat. regeln-holen.mjs merkt nur IDs und Zeiten seiner Einträge, keine Texte —
+# trotzdem sein Stand, nicht Quelltext. .aufnahmen.json ist die Ausgabe von
+# get_recordings, die die Wartung für regelsammlung-wache.mjs hinlegt. Die
+# .stoer-Kopien legt pruefe-regelsammlung-routinen.mjs an und löscht sie wieder.
+.regeln-stand*.json
+.regelsammlung-wache*.json
+.aufnahmen.json
+werkzeuge/.stoer-*

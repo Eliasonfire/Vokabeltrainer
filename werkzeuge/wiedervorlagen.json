@@ -1,0 +1,28 @@
+{
+  "_zweck": "Regeln, die Elias zurückgestellt hat, bis sein Lehrer sie aufgreift. werkzeuge/regelsammlung-wache.mjs hält jede neue Folge ab `abFolge` gegen die Stichworte und meldet einen Treffer — die Wartung fragt ihn dann. NIE selbst zurückholen: die Entscheidung trifft er.",
+  "_format": "regelId: die Regel · seit: Datum seiner Aussage · abFolge: erste Folge, die zählt (die nach seiner Aussage) · zitat: SEIN Wortlaut, nicht umformuliert · quelle: wo er es gesagt hat · stichworte: so, wie der Lehrer es sagen würde — verglichen wird ohne Groß/Klein, Akzente, Leer- und Satzzeichen, über je zwei Zeilen · frage: was die Wartung ihn bei einem Treffer fragt · erledigt: null, bis er entschieden hat; dann {\"am\": \"JJJJ-MM-TT\", \"entscheidung\": \"sein Wortlaut\"}",
+  "_eichung": "Gemessen am 11.09.2026 über alle Transkripte (raw + whisper-voll, Folge 01–19): „Ausnahmew“ trifft genau eine Zeile — Folge 16, whisper-voll, „fünf Ausnahmewörter“, die bekannte Stelle von asma-khamsa-01. Bewusst NICHT als Stichwort: „asma“ (trifft „Asma-Ul-Ishara“, Folge 10) und „hamsa“ (trifft den Namen Hamza, 10 Zeilen in Folge 9, 15, 16, 19). pruefe-regelsammlung-routinen.mjs wiederholt diese Messung.",
+  "eintraege": [
+    {
+      "regelId": "asma-khamsa-vollstaendig-01",
+      "seit": "2026-09-11",
+      "abFolge": 20,
+      "zitat": "später wenn mein lehrer es aufgreift und das erklärt dann kann man das rein nehmen aber jetzt noch nicht. man sollte es aber aufbewahren für später",
+      "quelle": "Satzmodus-Export aus dem Regelprüfungs-Artefakt, 11.09.2026, 04:08 (To-Do Vokabeltrainer, Abschnitt 03:43)",
+      "stichworte": [
+        "Ausnahmewörter",
+        "Ausnahmewort",
+        "fünf Nomen",
+        "fünf Namen",
+        "Asma ul Khamsa",
+        "Asma al Khamsa",
+        "Asma ul Chamsa",
+        "Asma ul Hamsa",
+        "Asma al Hamsa",
+        "Asmaa ul Khamsa"
+      ],
+      "frage": "Dein Lehrer greift die fünf Ausnahmewörter (asmāʾ khamsa) auf. Du wolltest die vollständige Regel dann „rein nehmen“ — soll sie jetzt in den Satzmodus?",
+      "erledigt": null
+    }
+  ]
+}
