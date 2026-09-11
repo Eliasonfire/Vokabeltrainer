@@ -50,8 +50,13 @@ for (const r of ['Vokabeltrainer', 'Automation', 'Quran Trainer', 'Parfum-Websit
    `97c56f1` liegt in whisper.cpp außerhalb des Arbeitsbereichs, und `8e70b3c`
    ist ein ERFUNDENER Hash aus einer alten Lehre — der Text daneben sagt selbst
    „der echte ist `f23adaa`". Benannt statt still gefiltert: eine stille
-   Ausnahme ist eine, die niemand mehr prüft. */
-for (const h of ['97c56f1', '8e70b3c']) alleHashes.add(h);
+   Ausnahme ist eine, die niemand mehr prüft.
+   ⛔ Dazu seit dem 11.09.2026 `22364eb`: der Commit der CLOUD-Sitzung
+   „Hörverstehen mit ähnlichen Wörtern". Er lag nur in ihrem flüchtigen
+   Container — GitHub lehnte jeden Push mit 403 ab —, und am PC wurde dieselbe
+   Aufgabe als `4d00489` neu gebaut. Der Vault nennt ihn, weil die Eingang-Notiz
+   der Cloud-Sitzung auf ihn verweist. */
+for (const h of ['97c56f1', '8e70b3c', '22364eb']) alleHashes.add(h);
 let unbekannt = 0;
 for (const h of hashes){
   if (!alleHashes.has(h)){ unbekannt++; if (unbekannt <= 12) console.log('  X   Commit gibt es nicht: ' + h); }
