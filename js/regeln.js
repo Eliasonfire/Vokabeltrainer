@@ -339,6 +339,109 @@ function regelBeispielsaetze(ids, max){
   return raus;
 }
 
+/* ---------- Suche (Goal, Punkt 10, 11.09.2026) ----------
+   „Kategorien-Suche findet auch Regeln (eigener Block über den Wörtern):
+   Deutsch, Arabisch mit/ohne Ḥarakāt, Umschrift (mudaf, idafa); dieselbe
+   Suche oben in „Regeln"."
+
+   ⛔ EINE Suchfunktion für beide Stellen — dieselbe Frage, dieselbe Antwort.
+   Arabisch wird über suchFlach() aus js/kategorien.js verglichen, also genau
+   so wie die Wörter: wer مضاف ohne Ḥarakāt tippt, findet مُضَاف.
+   [[dieselbe_frage_zwei_antworten]]
+
+   ⭐ Umschrift: Unterpunkte und Längen fallen weg (Iḍāfa → idafa, Muḍāf →
+   mudaf), ʿ und ʾ ebenso. Dazu zählt die Regel-Id als Umschrift
+   (mudaf-ohne-al-01 → „mudaf ohne al"). */
+function regelnFlachDe(s){
+  return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[ʿʾ'’`]/g, '').toLowerCase();
+}
+
+function regelSuche(begriff){
+  const roh = String(begriff || '').trim();
+  if (roh.length < 2) return [];
+  const arabisch = /[؀-ۿ]/.test(roh);
+  const flachAr = (typeof suchFlach === 'function') ? suchFlach : (s => String(s || ''));
+  const q = arabisch ? flachAr(roh) : regelnFlachDe(roh);
+  if (!q) return [];
+  const passt = texte => texte.some(t => t && (arabisch ? flachAr(t).includes(q) : regelnFlachDe(t).includes(q)));
+  const raus = [];
+  f19Karten().forEach(k => {
+    const t = regelText(k.id);
+    /* Die Rollen (Muḍāf, Naʿt, Sonnenbuchstaben …) zählen wie der Titel: wer
+       „mudaf" sucht, meint die Karte, auf der der Muḍāf seine Merkmale hat. */
+    const titel = [t.name, k.titel, k.untertitel, k.ar].concat((k.gruppen || []).flatMap(g => [g.ar, g.name]));
+    const inhalt = [t.kurz, k.hinweis, regelNotiz(k.id)]
+      .concat((k.gruppen || []).flatMap(g => [g.rolle].concat(g.merkmale || [])))
+      .concat((k.beispiele || []).flatMap(b => [b.ar, b.de]));
+    if (passt(titel)) raus.push({ id: k.id, stufe: 0, rang: 0 });
+    else if (passt(inhalt)) raus.push({ id: k.id, stufe: 1, rang: 0 });
+  });
+  ((typeof GRAMMAR_RULES !== 'undefined') ? GRAMMAR_RULES : []).forEach(r => {
+    const t = regelText(r.id);
+    const umschrift = r.id.replace(/-\d+$/, '').replace(/-/g, ' ');
+    if (passt([t.name, umschrift])) raus.push({ id: r.id, stufe: 0, rang: 1 });
+    else if (passt([t.kurz, regelNotiz(r.id)])) raus.push({ id: r.id, stufe: 1, rang: 1 });
+  });
+  Object.keys(regelnStand().eigene).forEach(id => {
+    const e = regelnStand().eigene[id];
+    if (passt([e.name])) raus.push({ id, stufe: 0, rang: 2 });
+    else if (passt([e.kurz, e.beispielAr, e.beispielDe, regelNotiz(id)])) raus.push({ id, stufe: 1, rang: 2 });
+  });
+  /* Treffer im Namen vor Treffern im Text; bei gleicher Stufe zuerst die
+     Folge-19-Karten — „primär will ich eigentlich die regeln von folge 19". */
+  return raus.sort((a, b) => (a.stufe - b.stufe) || (a.rang - b.rang));
+}
+
+/* Die Trefferzeilen — dieselben Zeilen wie in der Sammlung, mit dem Hinweis,
+   wo eine gefundene Regel gerade liegt. Eine verborgene oder weggeworfene
+   Regel wird gefunden und als solche markiert, statt zu fehlen. */
+function regelSuchZeilenHtml(treffer, max){
+  return treffer.slice(0, max || treffer.length).map(x => {
+    const t = regelText(x.id);
+    const k = f19Karte(x.id);
+    const unter = [];
+    if (k) unter.push('Folge 19');
+    else if (regelArt(x.id) === 'eigen') unter.push('von dir');
+    if (regelImPapierkorb(x.id)) unter.push('im Papierkorb');
+    else if (regelVerborgen(x.id)) unter.push('verborgen');
+    const titel = k ? `<span class="rz-nr">${k.nr}</span><span>${escapeHtml(t.name)}</span>` : regelnAr(t.name);
+    return regelZeileHtml(x.id, titel, escapeHtml(unter.join(' · ')), regelMarken(x.id));
+  }).join('');
+}
+
+/* ---------- „im Satzmodus üben" (Goal, Punkt 9) ---------- */
+
+function regelSatzIds(id){
+  const k = f19Karte(id);
+  const ids = k ? (k.regeln || []).filter(grammatikRegel) : (grammatikRegel(id) ? [id] : []);
+  return ids;
+}
+
+function regelSatzZahl(id){
+  const ids = new Set(regelSatzIds(id));
+  if (!ids.size || typeof alleSaetze !== 'function' || typeof SENTENCE_TAGS === 'undefined') return 0;
+  return alleSaetze().filter(w => (SENTENCE_TAGS[w.id] || []).some(t => ids.has(t.ruleId))).length;
+}
+
+function regelImSatzmodusUeben(id){
+  const ids = regelSatzIds(id);
+  if (!ids.length || typeof setzeRegelfilter !== 'function') return;
+  const t = regelText(id);
+  speichereOffeneRegelEingaben();
+  setzeRegelfilter(ids, t ? t.name : id);
+  /* Die Karte schließen, OHNE über die Historie zu gehen: history.back() wirkt
+     erst im nächsten Zug und nähme sonst den gleich angelegten Satzmodus-
+     Eintrag wieder mit. Stattdessen ersetzt der Satzmodus den Eintrag der
+     Karte — die Zurück-Taste führt dann in die Sammlung. */
+  const box = document.getElementById('regelKarte');
+  const hinter = document.getElementById('regelKarteBackdrop');
+  if (box) box.classList.add('hidden');
+  if (hinter) hinter.classList.add('hidden');
+  RK_ID = null; RK_MODUS = 'ansehen';
+  showScreen('sentences', { ersetzen: true });
+}
+
 /* ========================= Anzeige ========================= */
 
 function regelnDatum(ms){
@@ -400,6 +503,18 @@ const REGELN_AUF = { verborgen: false, papierkorb: false };
 function renderRegeln(){
   const box = document.getElementById('regelnInhalt');
   if (!box) return;
+  /* Sucht er, stehen nur die Treffer da — wie in den Kategorien, wo die
+     Reiter während der Suche verschwinden. */
+  const feld = document.getElementById('regelnSuche');
+  const begriff = feld ? feld.value.trim() : '';
+  if (begriff.length >= 2){
+    const treffer = regelSuche(begriff);
+    box.innerHTML = `<div class="pane-hinweis">${treffer.length
+        ? `${treffer.length} ${treffer.length === 1 ? 'Regel' : 'Regeln'} für „${escapeHtml(begriff)}"`
+        : `Keine Regel für „${escapeHtml(begriff)}". Arabisch geht auch ohne Ḥarakāt, Umschrift ohne Punkte (mudaf, idafa).`}</div>`
+      + regelSuchZeilenHtml(treffer);
+    return;
+  }
   const g = sammlungsGliederung();
 
   const karten = g.karten.map(k => {
@@ -497,10 +612,31 @@ function rkSatzSchalterHtml(r){
     (woher ? `<div class="rk-klein">${escapeHtml(woher)}</div>` : '') + ueberholt);
 }
 
+/* Ältere Fassungen, die der Abgleich nicht wegwerfen durfte (js/sync.js,
+   fuehreRegelnZusammen): schreibt er dieselbe Notiz auf zwei Geräten, steht
+   hier, was auf dem anderen stand — mit einem Tipp zurückzuholen. */
+function rkFrueherHtml(eintrag, feldName){
+  const liste = (eintrag && Array.isArray(eintrag.frueher)) ? eintrag.frueher : [];
+  if (!liste.length) return '';
+  return `<div class="rk-klein">Ältere Fassung${liste.length > 1 ? 'en' : ''} (vom anderen Gerät oder vorher):</div>` +
+    liste.map((f, i) => `<div class="rk-frueher"><div class="de">„${regelnAr(f.text)}"${f.zeit ? ` <span class="rk-zeit">${regelnDatum(f.zeit)}</span>` : ''}</div>` +
+      `<button class="rk-link" type="button" data-rkfrueher="${feldName}:${i}">diese zurückholen</button></div>`).join('');
+}
+
 function rkNotizHtml(id){
   return rkAbschnitt('Deine Notiz',
     `<textarea class="rk-notiz" data-rknotiz rows="3" placeholder="Was du dir dazu merken willst …">${escapeHtml(regelNotiz(id))}</textarea>` +
-    `<button class="btn btn-secondary rk-klein-knopf" type="button" data-rknotizspeichern>Notiz speichern</button>`, 'wk-notiz');
+    `<button class="btn btn-secondary rk-klein-knopf" type="button" data-rknotizspeichern>Notiz speichern</button>` +
+    rkFrueherHtml(regelnStand().notiz[id], 'notiz'), 'wk-notiz');
+}
+
+function rkUebenHtml(id){
+  const n = regelSatzZahl(id);
+  if (!n) return '';
+  const r = grammatikRegel(id);
+  const aus = r && regelAusgeblendet(r);
+  return `<button class="btn btn-secondary rk-ueben" type="button" data-rkueben>${icon('chat')}im Satzmodus üben <span class="regeln-zahl">${n} ${n === 1 ? 'Satz' : 'Sätze'}</span></button>` +
+    (aus ? '<div class="rk-klein">Die Regel steht gerade nicht im Satzmodus — die Sätze kommen, aber sie wird darin nicht unterstrichen.</div>' : '');
 }
 
 function rkAktionenHtml(id, art){
@@ -526,6 +662,7 @@ function rkTextBlockHtml(id){
     html += `<button class="rk-link" type="button" data-rkoriginal>Original zeigen</button>
       <div class="rk-original hidden">${rkAbschnitt('Original', `<div class="rk-titel-klein">${regelnAr(t.original.name)}</div><div class="de">${regelnFett(regelnAr(t.original.kurz))}</div>`)}</div>`;
   }
+  if (regelArt(id) !== 'eigen') html += rkFrueherHtml(regelnStand().text[id], 'text');
   return html;
 }
 
@@ -567,6 +704,7 @@ function zeichneF19Karte(k){
     + (k.untertitel ? `<div class="rk-klein">${escapeHtml(k.untertitel)}</div>` : '')
     + gruppen + zerlegung + abgrenzung + hinweis + beispiele
     + rkBeispielsatzHtml(verwandt)
+    + rkUebenHtml(id)
     + genauer + lehrer + verwandtHtml
     + `<div class="wk-quelle">Folge 19, ${escapeHtml(k.quelle.folge)} · Musterlösung ${escapeHtml(k.quelle.muster)}</div>`
     + rkNotizHtml(id) + rkAktionenHtml(id, 'f19');
@@ -588,6 +726,7 @@ function zeichneRegelKarteInhalt(id){
       (regelImPapierkorb(id) ? '<span class="chip chip-fremd">im Papierkorb</span>' : ''))
     + rkTextBlockHtml(id)
     + rkBeispielsatzHtml([id])
+    + rkUebenHtml(id)
     + `<div class="wk-quelle">${escapeHtml(regelQuelleText(r))}</div>`
     + pruefung
     + rkSatzSchalterHtml(r)
@@ -759,6 +898,17 @@ function regelnVerdrahten(){
     }
     if (ziel.dataset.regelkarte){ oeffneRegelKarte(ziel.dataset.regelkarte); return; }
     if (!RK_ID && RK_MODUS !== 'anlegen') return;
+    if (ziel.hasAttribute('data-rkueben')){ regelImSatzmodusUeben(RK_ID); return; }
+    if (ziel.dataset.rkfrueher){
+      const [feldName, nr] = ziel.dataset.rkfrueher.split(':');
+      const eintrag = regelnStand()[feldName] && regelnStand()[feldName][RK_ID];
+      const alt = eintrag && Array.isArray(eintrag.frueher) ? eintrag.frueher[Number(nr)] : null;
+      if (!alt) return;
+      if (feldName === 'notiz'){ regelNotizSetzen(RK_ID, alt.text); toast('Ältere Notiz zurückgeholt'); }
+      else { const t = regelText(RK_ID); regelTextSetzen(RK_ID, t ? t.name : '', alt.text); toast('Ältere Fassung zurückgeholt'); }
+      zeichneRegelKarte(); regelnNachziehen();
+      return;
+    }
     if (ziel.hasAttribute('data-rknotizspeichern')){
       const feld = karte.querySelector('[data-rknotiz]');
       regelNotizSetzen(RK_ID, feld ? feld.value : '');
@@ -822,7 +972,32 @@ function regelnVerdrahten(){
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && !karte.classList.contains('hidden')) schliesseRegelKarte();
+    /* Die Zeilen „Wie gut sitzen die Regeln?" sind <div role=button>. */
+    if ((e.key === 'Enter' || e.key === ' ') && e.target && e.target.matches
+        && e.target.matches('[role="button"][data-regelkarte]')){
+      e.preventDefault();
+      oeffneRegelKarte(e.target.dataset.regelkarte);
+    }
   });
+
+  /* ⭐ Überall sonst in der App: ein Element mit data-regelkarte öffnet die
+     Karte (Goal, Punkte 8 und 9) — der Knopf „Warum? → Regel" im
+     Übungsmodus, „in der Sammlung öffnen" im Aufklapper des Lesemodus, die
+     Zeilen „Wie gut sitzen die Regeln?" auf dem Start und die Regeltreffer der
+     Kategorien-Suche. EIN Handler statt vier: sonst öffnete eine Stelle die
+     Karte mit Historieneintrag und eine andere ohne.
+     Die Sammlung und die Karte selbst haben ihre eigenen Handler oben. */
+  document.addEventListener('click', (e) => {
+    const el = e.target.closest('[data-regelkarte]');
+    if (!el || el.closest('#regelKarte') || el.closest('#screen-regeln')) return;
+    e.preventDefault();
+    const pop = document.getElementById('gramPopover');
+    if (pop) pop.classList.remove('show');
+    oeffneRegelKarte(el.dataset.regelkarte);
+  });
+
+  const suche = document.getElementById('regelnSuche');
+  if (suche) suche.addEventListener('input', renderRegeln);
 }
 
 if (typeof document !== 'undefined' && document.getElementById && document.getElementById('regelKarte')) regelnVerdrahten();

@@ -1137,11 +1137,22 @@ function zeichneSuche(){
   }
 
   const liste = sucheTreffer(begriff);
-  hinweis.textContent = liste.length
-    ? `${liste.length} Treffer für „${begriff}“`
+  /* ⭐ Regeln zuerst, in einem eigenen Block ÜBER den Wörtern (Goal, Punkt 10,
+     11.09.2026). Die Suche selbst steht in js/regeln.js (regelSuche) — dieselbe,
+     die oben in „Regeln" sucht; hier wird nur gezeichnet. Ein Tipp öffnet die
+     Karte über den globalen Handler dort. */
+  const regeln = (typeof regelSuche === 'function') ? regelSuche(begriff) : [];
+  hinweis.textContent = (liste.length || regeln.length)
+    ? `${liste.length} Treffer für „${begriff}“` + (regeln.length ? ` · ${regeln.length} ${regeln.length === 1 ? 'Regel' : 'Regeln'}` : '')
     : `Nichts gefunden für „${begriff}“. Arabisch geht auch ohne Ḥarakāt.`;
 
-  treffer.innerHTML = liste.slice(0, 60).map(w => {
+  const regelBlock = regeln.length && typeof regelSuchZeilenHtml === 'function'
+    ? `<div class="such-regeln"><div class="such-regeln-kopf">Regeln · ${regeln.length}</div>${regelSuchZeilenHtml(regeln, 8)}`
+      + (regeln.length > 8 ? `<div class="pane-hinweis">Die ersten 8 — alle stehen in „Regeln" unter derselben Suche.</div>` : '')
+      + `</div>`
+    : '';
+
+  treffer.innerHTML = regelBlock + liste.slice(0, 60).map(w => {
     const freq = quranHaeufigkeit(w);
     const fremd = !istBekannt(w);
     return `<div class="word-list-item" data-suchwort="${escapeHtml(String(w.id))}">

@@ -2182,6 +2182,15 @@ main{
 .rk-feld{display:flex;flex-direction:column;gap:4px;font-size:var(--fs-sm);color:var(--text-dim);}
 .rk-feld input,.rk-feld textarea{background:var(--surface-1);border:1px solid var(--border);border-radius:var(--r-2);color:var(--text);padding:var(--sp-2) var(--sp-3);font:inherit;font-size:var(--fs-md);line-height:1.6;min-width:0;}
 .rk-feld textarea{resize:vertical;}
+.rk-ueben{align-self:stretch;justify-content:center;gap:var(--sp-2);}
+.rk-frueher{border-top:1px dashed var(--border);padding-top:4px;}
+.regeln-suche{margin-bottom:var(--sp-3);}
+/* Die drei Wege IN die Sammlung (Goal, Punkte 8–10). */
+.gp-sammlung{display:block;margin-top:var(--sp-2);background:none;border:none;padding:0;color:var(--red-soft);font:inherit;font-size:var(--fs-sm);font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+.ueb-warum{display:inline-flex;align-items:center;gap:6px;margin-top:var(--sp-2);background:var(--surface-3);border:1px solid var(--border-strong);border-radius:var(--r-full);color:var(--text);padding:6px 12px;font:inherit;font-size:var(--fs-sm);font-weight:700;cursor:pointer;line-height:1.8;max-width:100%;flex-wrap:wrap;}
+.rz[data-regelkarte]{cursor:pointer;}
+.such-regeln{margin-bottom:var(--sp-4);}
+.such-regeln-kopf{font-size:var(--fs-xs);font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);margin:0 0 var(--sp-2);}
 .wk-tippbar:focus-visible{outline:2px solid var(--red);outline-offset:2px;}
 /* Die Blätterknöpfe liegen IM tippbaren Kasten und behalten ihren eigenen
    Zeiger — sie tun etwas anderes als der Kasten um sie herum. */
@@ -5822,6 +5831,13 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
       <div class="screen-header">
         <button class="icon-btn" data-back aria-label="Zurück"><svg class="ic"><use href="#ic-left"/></svg></button>
         <h2>Regeln</h2>
+      </div>
+      <!-- Goal, Punkt 10: „dieselbe Suche oben in „Regeln"" — dieselbe
+           Funktion wie der Regelblock der Kategorien-Suche (regelSuche). -->
+      <div class="suche-feld regeln-suche">
+        <svg class="ic"><use href="#ic-search"/></svg>
+        <input type="text" id="regelnSuche" placeholder="Regel suchen — Deutsch, Arabisch, mudaf …"
+               autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Regeln durchsuchen">
       </div>
       <div id="regelnInhalt"></div>
     </section>

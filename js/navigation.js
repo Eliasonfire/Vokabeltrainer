@@ -90,6 +90,10 @@ function zeigeBildschirm(name){
   if (name==='hoeren') openHoeren();
   if (name==='wurzeln') oeffneWurzeln();
   if (name==='regeln' && typeof renderRegeln === 'function') renderRegeln();
+  /* Der Regelfilter aus der Sammlung (js/saetze.js) gilt nur für den einen
+     Besuch im Satzmodus — kommt er später über die Leiste zurück, soll dort
+     wieder sein Thema stehen, nicht still die drei Sätze von damals. */
+  if (name !== 'sentences' && typeof regelfilterLoesen === 'function') regelfilterLoesen();
   if (name==='quranfull') renderSurahList(document.getElementById('surahSearch').value);
   if (name==='settings') renderSettings();
   /* Hier stand `window.scrollTo(0,0)`. Ersatzlos gestrichen: das Fenster rollt

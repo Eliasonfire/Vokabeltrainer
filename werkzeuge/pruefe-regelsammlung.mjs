@@ -267,6 +267,44 @@ console.log('\n=== 6. vt_regeln im Abgleich und in der Sicherung ===');
   pruefe('test-sync.mjs prüft die Regelsammlung', /vt_regeln/.test(lies('test-sync.mjs')));
 }
 
+/* ======================================================= 7. Stufe 2: die Wege hinein */
+console.log('\n=== 7. Stufe 2 — „so gut wie möglich in die app integriert" ===');
+{
+  const ueb = lies('js/uebung.js');
+  const modi = [...ueb.matchAll(/id:'([a-z-]+)', nr:(\d+),/g)].map(m => m[1]);
+  const block = (ueb.match(/const UEBUNG_WARUM = \{([\s\S]*?)\};/) || [])[1] || '';
+  const karte = Object.fromEntries([...block.matchAll(/'([a-z-]+)':\s*(null|'([a-z0-9-]+)')/g)].map(m => [m[1], m[3] || null]));
+  const app = baueApp(lies('js/regeln.js'));
+  const regelArt = app.hol('regelArt');
+  const ohne = modi.filter(id => !(id in karte));
+  const tot = Object.entries(karte).filter(([, ziel]) => ziel && !regelArt(ziel)).map(([m, z]) => m + '→' + z);
+  pruefe(`„Warum? → Regel": alle ${modi.length} Übungsmodi zugeordnet, jedes Ziel existiert`,
+    modi.length === 13 && !ohne.length && !tot.length, 'ohne: ' + ohne.join(',') + ' · tot: ' + tot.join(','));
+  pruefe('„Welche Regel?" öffnet die gefragte Regel selbst (regelId)', /a\.modus\.id === 'regel'\) id = a\.regelId/.test(ueb));
+  pruefe('der Knopf steht in der Rückmeldung und öffnet über data-regelkarte', /class="ueb-warum"[^`]*data-regelkarte=/.test(ueb));
+  pruefe('Lesemodus-Aufklapper: „in der Sammlung öffnen"', /gp-sammlung[^`]*data-regelkarte=/.test(lies('js/saetze.js')));
+  pruefe('„Wie gut sitzen die Regeln?": jede Zeile öffnet ihre Karte', /class="rz' \+ ton \+ '" role="button"[^;]*data-regelkarte=/.test(lies('js/statistik.js')));
+  pruefe('Karte: „im Satzmodus üben" setzt den Regelfilter', /setzeRegelfilter\(ids,/.test(lies('js/regeln.js')) && /function satzListe\(/.test(lies('js/saetze.js')));
+  pruefe('die Kategorien-Suche zeichnet einen Regelblock über den Wörtern', /treffer\.innerHTML = regelBlock \+/.test(lies('js/kategorien.js')));
+
+  /* Die Suche wirklich laufen lassen — mit dem ECHTEN suchFlach aus
+     js/kategorien.js, herausgeschnitten wie in pruefe-markierungen.js. */
+  const kat = lies('js/kategorien.js');
+  const zeichen = (kat.match(/^const SUCH_ZEICHEN = .*$/m) || [''])[0];
+  const i = kat.indexOf('function suchFlach(');
+  const j = kat.indexOf('\n}', i);
+  if (!zeichen || i < 0 || j < 0) rot('suchFlach() in js/kategorien.js nicht gefunden — die Suchprobe prüft nichts');
+  else {
+    vm.runInContext(zeichen + '\n' + kat.slice(i, j + 2), app.ctx);
+    const suche = app.hol('regelSuche');
+    const faelle = [['mudaf', 'f19-idafa'], ['idafa', 'f19-idafa'], ['مضاف', 'mudaf-01'], ['مُضَاف', 'mudaf-01'],
+                    ['Genitivverbindung', 'f19-idafa'], ['Sonnenbuchstaben', 'f19-schams'], ['nat', 'f19-nat']];
+    const falsch = faelle.filter(([q, soll]) => !suche(q).some(x => x.id === soll)).map(([q, soll]) => q + '→' + soll);
+    pruefe('die Suche findet Deutsch, Arabisch mit und ohne Ḥarakāt und Umschrift', !falsch.length, falsch.join(', '));
+    pruefe('Eichung: ein Unsinnsbegriff findet nichts', suche('qqxqq').length === 0);
+  }
+}
+
 console.log('');
 if (fehler){ console.log('⛔ ' + fehler + ' Befund(e).'); process.exit(1); }
 console.log('✅ Die Regelsammlung hält: Artefakt und Schalter, umkehrbares Löschen, neun belegte Karten.');
