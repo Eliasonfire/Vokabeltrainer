@@ -677,5 +677,131 @@ const FACHBEGRIFF_VOKABELN = [
        104:2 الَّذِي und 104:7 الَّتِي. Ein Merkhaken, den man nicht bauen
        muss, weil er schon dasteht. Belegt mit werkzeuge/vers.mjs 104. */
     mnemo: "سُورَةُ الْهُمَزَة, die du auswendig kannst, hat BEIDE Formen — fünf Verse auseinander. Vers 2: الَّذِي جَمَعَ مَالًا (der Besitz zusammenträgt), Vers 7: نَارُ اللَّهِ … الَّتِي تَطَّلِعُ. ⭐ Warum einmal so und einmal so? نَار (Feuer) ist weiblich, der Stichler aus Vers 1 nicht. Das Geschlecht des Wortes DAVOR entscheidet — nicht, ob es um eine Person geht oder um eine Sache."
+  },
+  {
+    /* Eingetragen am 2026-09-11 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel mubtada-khabar-01. */
+    id: "gram-mubtada",
+    ar: "مُبْتَدَأ",
+    de: "Subjekt des Nominalsatzes — das, worum es geht",
+    type: "noun",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "mubtada-khabar-01",
+    belegt: 8,
+    mnemo: "Womit fängt der Satz an? Mit dem, worum es geht: in اَلْمُدَرِّسُ جَدِيدٌ (der Lehrer ist neu) ist اَلْمُدَرِّسُ der مُبْتَدَأ. Wie beim Erzählen: erst sagen, WORÜBER du sprichst — was du darüber sagst, ist dann der خَبَر."
+  },
+  {
+    /* Eingetragen am 2026-09-11 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel mubtada-khabar-01. */
+    id: "gram-khabar",
+    ar: "خَبَر",
+    de: "Aussage des Nominalsatzes — das, was darüber gesagt wird",
+    type: "noun",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "mubtada-khabar-01",
+    belegt: 9,
+    mnemo: "Dein Lehrer nennt den خَبَر »die Benachrichtigung für den مُبْتَدَأ«: in اَلْمُدَرِّسُ جَدِيدٌ ist جَدِيدٌ die Nachricht über den Lehrer — er ist neu. Fragst du »und was ist mit ihm?«, ist die Antwort der خَبَر."
+  },
+  {
+    /* Eingetragen am 2026-09-11 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel irab-drei-faelle-01. */
+    id: "gram-mansub",
+    ar: "مَنْصُوب",
+    /* ⚠️ BUCHTAUSCH, ABSICHTLICH: dasselbe Wort mit derselben Bedeutung steht
+       im Buch (madina-1, Kapitel 24, id 50471, „(gr) im Akkusativ").
+       tauscheDubletten() in js/kern.js ersetzt diese Karte beim Start durch die
+       Buchvokabel und schaltet sie einzeln frei — genau Elias' Regel vom
+       07.09.2026: „wenn so ein fall kommt dann kannst du meine durch die im buch
+       ersetzen. dieses eine wort soll dann schon voher einzeln freigeschalten
+       sein". Fachbegriffe gelten seit dem 20.08. als seine eigenen. Im
+       Browser-Pane am 11.09.2026 gemessen: 50471 steht danach einzeln frei.
+       Anders bei gram-harf darunter — dort wäre die BEDEUTUNG getauscht worden. */
+    de: "Akkusativ (Frage: wen oder was?)",
+    type: "noun",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "irab-drei-faelle-01",
+    belegt: 5,
+    mnemo: "Die drei Fälle deines Lehrers am Endvokal: مَرْفُوع mit Damma, مَجْرُور mit Kasra, مَنْصُوب mit Fatha — so wie مُحَمَّدًا mit zwei Fatha. Fatha und Akkusativ fangen beide mit »A« an: wen oder was?"
+  },
+  {
+    /* Eingetragen am 2026-09-11 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel wortarten-01. */
+    id: "gram-harf",
+    ar: "حَرْف",
+    /* ⚠️ Zuerst „Partikel — eine der drei Wortarten (auch: Buchstabe)". Das
+       „Buchstabe" traf die Bedeutung der Buchvokabel حَرْفٌ (madina-1 K20, id
+       45954), und dubletteImBuch() hielt beide für DASSELBE Wort. Es sind zwei:
+       die Wortart hier, der Buchstabe im Buch — wie bei ظَرْف und ظَرْفٌ. */
+    de: "Partikel — eine der drei Wortarten",
+    type: "noun",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "wortarten-01",
+    belegt: 34,
+    mnemo: "Dein Lehrer kennt nur drei Wortarten: اِسْم, فِعْل und حَرْف. حَرْف sind die kleinen Wörter wie فِي und عَلَى — und laut deinem Lehrer auch die Fragepartikel. Du kennst das Wort schon aus حَرْفُ الْجَرِّ."
+  },
+  {
+    /* Eingetragen am 2026-09-11 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel wortarten-01. */
+    id: "gram-fil",
+    ar: "فِعْل",
+    de: "Verb — eine der drei Wortarten",
+    type: "noun",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "wortarten-01",
+    belegt: 4,
+    mnemo: "Die drei Wortarten deines Lehrers: اِسْم, فِعْل, حَرْف. فِعْل ist das Tun-Wort — ذَهَبَ und خَرَجَ aus deinen Regeln sind beide فِعْل. Was weder فِعْل noch حَرْف ist, ist automatisch اِسْم."
+  },
+  {
+    /* Eingetragen am 2026-09-11 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel madd-tabii-01. */
+    id: "gram-madd",
+    ar: "مَدّ",
+    de: "Dehnung — der lang gelesene Vokal",
+    type: "noun",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "madd-tabii-01",
+    belegt: 2,
+    mnemo: "Trifft ein Vokalzeichen auf »seinen« Buchstaben, wird der Laut lang: Fatha auf ا, Damma auf و, Kasra auf ي — »sein kleiner Bruder«, sagt dein Lehrer. Darum liest du لَذِيذٌ lang. Und مَدّ selbst trägt eine Shadda: das doppelte d zieht das Wort in die Länge."
+  },
+  {
+    /* Eingetragen am 2026-09-11 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel mutabaqa-genus-01. */
+    id: "gram-mutabaqa",
+    ar: "مُطَابَقَة",
+    /* ⚠️ Buchtausch bestätigt: مُطَابَقَةٌ „Übereinstimmung" steht in madina-3,
+       Kapitel 11 (id 47239) — gleiche Bedeutung. Ist dieses Buchwort beim Start
+       geladen, ersetzt tauscheDubletten() die Karte und schaltet es einzeln frei
+       (Regel vom 07.09.2026). Im Browser-Pane am 11.09. NICHT getauscht: dort
+       war das Wort nicht geladen. */
+    de: "Übereinstimmung — die Aussage passt sich im Geschlecht an",
+    type: "noun",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "mutabaqa-genus-01",
+    belegt: 1,
+    mnemo: "Das Beispiel deines Lehrers: das Fahrrad ist im Arabischen weiblich — also nicht جَدِيدٌ, sondern جَدِيدَةٌ, nicht قَدِيمٌ, sondern قَدِيمَةٌ. مُطَابَقَة heißt: die Aussage zieht mit — ist das Wort weiblich, bekommt sie ebenfalls die Tāʾ marbūṭa."
+  },
+  {
+    /* Eingetragen am 2026-09-11 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel verb-madi-endungen-01. */
+    id: "gram-madi",
+    ar: "اَلْمَاضِي",
+    de: "Vergangenheit (Verbform)",
+    type: "noun",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "verb-madi-endungen-01",
+    belegt: 2,
+    mnemo: "Dein Lehrer nennt es einen Baukasten: in اَلْمَاضِي bleibt der Stamm gleich, nur die Endung wechselt — vierzehn Pronomen, vierzehn Endungen. Bei أَنْتَ steckt die Endung sogar schon im Pronomen. اَلْمَاضِي ist das, was schon vorbei ist."
+  },
+  {
+    /* Eingetragen am 2026-09-11 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel tanwin-eigennamen-01. */
+    id: "gram-tanwin",
+    ar: "التَّنْوِينُ",
+    de: "Tanwīn — die doppelte Endung (-un, -in, -an)",
+    type: "noun",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "tanwin-eigennamen-01",
+    belegt: 4,
+    mnemo: "In مُحَمَّدٌ hörst du am Ende ein »n« (Muḥammadun), das nicht als Buchstabe dasteht — das ist التَّنْوِينُ, und im Wort »Tanwīn« steckt das n schon drin. Dein Lehrer: männliche Eigennamen tragen es, weibliche wie فَاطِمَةُ nicht."
   }
 ];

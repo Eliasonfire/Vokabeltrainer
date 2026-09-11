@@ -298,10 +298,15 @@ const AUSNAHMEN = [
        Hauptliste. */
     name: 'Zitierform eines Fachbegriffs (ohne Endung, richtig so)',
     keineFrage: true,   /* kein Mangel - zaehlt nicht als Frage an Elias */
+    /* ⚠️ „letzter Buchstabe" heißt: danach kommen nur noch Zeichen, kein
+       Buchstabe. Hier stand `i === wort.length - 1` — das traf nur, wenn der
+       letzte Buchstabe GAR KEIN Zeichen trägt. Bei مَدّ (gram-madd, 11.09.2026)
+       steht hinter dem د eine Shadda, und die Nennform landete unter „Endung
+       fehlt", obwohl sie genauso belegt ist wie مُضَاف. */
     trifft: (wort, i, eintrag) =>
       !!eintrag && typeof eintrag.id === 'string'
       && eintrag.id.indexOf('gram-') === 0
-      && i === wort.length - 1,
+      && wort.slice(i + 1).replace(/[ً-ْٰ]/g, '') === '',
     nurMelden: true
   }
 ];

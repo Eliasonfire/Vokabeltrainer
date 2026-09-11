@@ -90,8 +90,16 @@ export const PFLEGEPLAN = [
     funktion: 'Fachbegriffe aus dem Unterricht',
     dateien: ['data/fachbegriffe.js'],
     bildschirme: [],
-    neuerInhalt: { luecke: 'Neue Fachbegriffe aus neuen Unterrichtsfolgen trägt keine Routine ein — Schritt 1b wertet Regeln aus, keine Begriffe. Der Bestand stammt aus einer Sitzung (Auftrag vom 17.08.2026 im Kopf der Datei).',
-      seit: '2026-09-11', todo: 'Fachbegriffe aus neuen Folgen' },
+    /* Bis 11.09.2026, 20:4x eine `luecke` — der erste Fund dieses Plans. Elias:
+       „das muss gefixt werden", Wahl „Direkt eintragen". Geschlossen mit
+       Schritt 1f; die Kandidaten kommen aus den Regeln, weil das Zählen im
+       Transkript an bekannten Antworten scheiterte. */
+    neuerInhalt: [
+      { routine: W, schritt: '1f', beleg: 'node werkzeuge/fachbegriffe-finden.mjs', werkzeug: 'werkzeuge/fachbegriffe-finden.mjs',
+        wie: 'Begriffe, die eine neue Regel benennen oder in mehreren wiederkehren, werden entschieden' },
+      { routine: W, schritt: '1f', beleg: 'node werkzeuge/fachbegriffe-setzen.mjs', werkzeug: 'werkzeuge/fachbegriffe-setzen.mjs',
+        wie: 'belegte, voll vokalisierte Begriffe direkt eintragen — Elias: „Direkt eintragen"' },
+    ],
     eingaben: { nein: 'Er blendet Fachbegriffe höchstens aus (vt_geloescht); das wertet die App selbst aus und gleicht es zwischen den Geräten ab.' },
     veralten: { routine: W, schritt: '1c.4', beleg: 'FACHBEGRIFF_VOKABELN',
       wie: 'Fachbegriffe bekommen wie Vokabeln Eselsbrücken und Beispielsatz' },
