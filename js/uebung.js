@@ -470,7 +470,7 @@ const UEBUNGEN = [
     baue(z, satz){
       const tags = ((typeof SENTENCE_TAGS!=='undefined' && SENTENCE_TAGS[satz.id]) || [])
         .map(t=>({ t, rule: GRAMMAR_RULES.find(r=>r.id===t.ruleId) }))
-        .filter(x=>x.rule && !x.rule.ausgeblendet && x.t.matchText);
+        .filter(x=>x.rule && !regelAusgeblendet(x.rule) && x.t.matchText);
       const out = [];
       /* Vorlauf: welche Stelle im Satz traegt WIE VIELE Markierungen? Muss vor
          der Schleife stehen, weil jede Aufgabe die Antwort auf ihre eigene
@@ -756,7 +756,7 @@ const uebungNamensstamm = r => String(r.name || '').split('(')[0].trim();
 function uebungAblenker(rule, anzahl, verboten, bevorzugt){
   const aus = verboten || new Set();
   const stamm = uebungNamensstamm(rule);
-  const brauchbar = r => r.id !== rule.id && !r.ausgeblendet && !aus.has(r.id);
+  const brauchbar = r => r.id !== rule.id && !regelAusgeblendet(r) && !aus.has(r.id);
   /* ⛔ `find` — die ERSTE passende Kategorie gewinnt, und drei Regeln passen
      auf zwei Muster: verb-enthaelt-pronomen-01 (wortarten + verben),
      zarf-als-mudaf-01 (idafa + zarf), adjektive-an-ohne-tanwin-01 (nat + al).

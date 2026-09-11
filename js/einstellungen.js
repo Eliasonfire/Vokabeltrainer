@@ -750,7 +750,9 @@ const SICHERUNGS_SCHLUESSEL = [
   'vt_lautStand',     /* Aussprache: Stand */
   'vt_lautRunde',     /* Aussprache: laufende Runde */
   'vt_satzTag',       /* Tageszaehler Satzmodus */
-  'vt_zeit'           /* die gemessene Lernzeit */
+  'vt_zeit',          /* die gemessene Lernzeit */
+  'vt_regeln'         /* Regelsammlung (11.09.2026): seine Fassungen, Notizen,
+                         eigenen Regeln, Papierkorb — steht nirgends sonst */
 ];
 
 function baueSicherung(){

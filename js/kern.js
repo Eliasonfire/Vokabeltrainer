@@ -1911,6 +1911,10 @@ function ladeStandNeu(){
     if (typeof renderThemenLeiste === 'function') renderThemenLeiste();
     if (typeof renderSentence === 'function') renderSentence();
   }
+  /* Die Regelsammlung (11.09.2026): Schalter, Notizen und Papierkorb kommen
+     über vt_regeln — die Liste liest den Speicher selbst, muss aber neu
+     gezeichnet werden. */
+  if (typeof renderRegeln === 'function' && sichtbar('screen-regeln')) renderRegeln();
   /* ⛔ Die Lernkarte wird NICHT neu gezeichnet, und das ist Absicht: sie traegt
      eine offene Frage. Ein Neuzeichnen mitten im Ueberlegen waere kein
      Abgleich, sondern ein Sprung — und ein Umdrehen der Karte gaebe die

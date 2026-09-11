@@ -371,5 +371,79 @@ console.log('=== Echte Sicherung vom 11.08. gegen einen leeren Server ===');
 }
 
 console.log('');
+console.log('=== Die Regelsammlung (vt_regeln, 11.09.2026) ===');
+{
+  /* Elias im Goal vom 11.09.2026: „Alles synchron Handy ↔ Tablet … Quran-Ausnahme
+     darf es nicht erfassen; Änderungen an zwei Geräten gehen nicht still
+     verloren." Jede der drei Hälften bekommt hier einen eigenen Fall. */
+  const { ctx, speicher } = baueUmgebung();
+  const liste = vm.runInContext('SYNC_SCHLUESSEL', ctx);
+  pruefe('vt_regeln steht in SYNC_SCHLUESSEL', liste.indexOf('vt_regeln') >= 0);
+  const fuehreZusammen = vm.runInContext('fuehreZusammen', ctx);
+
+  /* 1. Handy bearbeitet Regel A, Tablet schreibt eine Notiz zu Regel B:
+        beides muss auf beiden Geräten stehen. */
+  speicher['vt_regeln'] = JSON.stringify({
+    text: { 'idafa-01': { name: 'Iḍāfa', kurz: 'meine Fassung', zeit: 100 } },
+    satz: { 'harf-jarr-01': { an: false, zeit: 100 } }
+  });
+  fuehreZusammen({ stempel: {}, daten: { vt_regeln: JSON.stringify({
+    notiz: { 'mudaf-01': { text: 'vom Tablet', zeit: 200 } },
+    satz:  { 'harf-jarr-01': { an: true, zeit: 50 } }
+  }) } });
+  let r = JSON.parse(speicher['vt_regeln']);
+  pruefe('Bearbeitung vom Handy bleibt', r.text && r.text['idafa-01'] && r.text['idafa-01'].kurz === 'meine Fassung', JSON.stringify(r));
+  pruefe('Notiz vom Tablet kommt an', r.notiz && r.notiz['mudaf-01'] && r.notiz['mudaf-01'].text === 'vom Tablet', JSON.stringify(r));
+  pruefe('beim Satzmodus-Schalter gewinnt der jüngere', r.satz['harf-jarr-01'].an === false, JSON.stringify(r.satz));
+
+  /* 2. DIESELBE Notiz auf beiden Geräten: die jüngere steht vorn, die ältere
+        geht NICHT still verloren, sondern steht unter `frueher`. */
+  speicher['vt_regeln'] = JSON.stringify({ notiz: { 'mudaf-01': { text: 'Handy, älter', zeit: 100 } } });
+  const fern = { notiz: { 'mudaf-01': { text: 'Tablet, jünger', zeit: 300 } } };
+  fuehreZusammen({ stempel: {}, daten: { vt_regeln: JSON.stringify(fern) } });
+  r = JSON.parse(speicher['vt_regeln']);
+  const n = r.notiz['mudaf-01'];
+  pruefe('die jüngere Notiz steht vorn', n.text === 'Tablet, jünger', JSON.stringify(n));
+  pruefe('die ältere Notiz bleibt unter frueher', Array.isArray(n.frueher) && n.frueher.some(f => f.text === 'Handy, älter'), JSON.stringify(n));
+
+  /* 3. Derselbe Abgleich zweimal: nichts wird doppelt aufgenommen. */
+  const vorher = speicher['vt_regeln'];
+  fuehreZusammen({ stempel: {}, daten: { vt_regeln: JSON.stringify(fern) } });
+  pruefe('ein zweiter Abgleich ändert nichts mehr', speicher['vt_regeln'] === vorher, speicher['vt_regeln']);
+
+  /* 4. Zurücksetzen und Wiederherstellen sind Einträge mit Zeit — sie kommen
+        an, statt von der älteren Fassung des anderen Geräts überschrieben zu
+        werden. */
+  speicher['vt_regeln'] = JSON.stringify({
+    text: { 'idafa-01': { name: null, kurz: null, zeit: 500 } },
+    weg:  { 'f19-idafa': { an: false, zeit: 500 } }
+  });
+  fuehreZusammen({ stempel: {}, daten: { vt_regeln: JSON.stringify({
+    text: { 'idafa-01': { name: 'x', kurz: 'alte Bearbeitung', zeit: 400 } },
+    weg:  { 'f19-idafa': { an: true, zeit: 400 } }
+  }) } });
+  r = JSON.parse(speicher['vt_regeln']);
+  pruefe('Zurücksetzen gewinnt gegen die ältere Bearbeitung', r.text['idafa-01'].kurz === null, JSON.stringify(r.text));
+  pruefe('… und die alte Bearbeitung steht noch unter frueher',
+    (r.text['idafa-01'].frueher || []).some(f => f.text === 'alte Bearbeitung'), JSON.stringify(r.text));
+  pruefe('Wiederherstellen gewinnt gegen das ältere Löschen', r.weg['f19-idafa'].an === false, JSON.stringify(r.weg));
+
+  /* 5. ⛔ Die Quran-Ausnahme darf die Regelsammlung NICHT erfassen — auch
+        nicht einen Eintrag, der zufällig mit `quran` beginnt. */
+  speicher['vt_regeln'] = JSON.stringify({});
+  fuehreZusammen({ stempel: {}, daten: { vt_regeln: JSON.stringify({
+    notiz: { quranAr: { text: 'darf ankommen', zeit: 10 } }
+  }) } });
+  r = JSON.parse(speicher['vt_regeln']);
+  pruefe('ein Eintrag „quran…" in der Regelsammlung kommt an', r.notiz && r.notiz.quranAr && r.notiz.quranAr.text === 'darf ankommen', JSON.stringify(r));
+
+  /* 6. Kaputtes JSON drüben zerstört den eigenen Stand nicht. */
+  speicher['vt_regeln'] = JSON.stringify({ notiz: { a: { text: 'meins', zeit: 1 } } });
+  const eigen = speicher['vt_regeln'];
+  fuehreZusammen({ stempel: {}, daten: { vt_regeln: '{kaputt' } });
+  pruefe('kaputtes JSON drüben lässt die Regelsammlung stehen', speicher['vt_regeln'] === eigen);
+}
+
+console.log('');
 console.log(bestanden + ' bestanden, ' + gescheitert + ' gescheitert');
 process.exit(gescheitert ? 1 : 0);

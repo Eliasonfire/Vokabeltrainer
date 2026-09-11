@@ -6,6 +6,7 @@
  *
  *   Einstellungen  `select#wurzelFarbeSelect`   377 px in einem 364-px-Fenster
  *   Kategorien     `.custom-cat-add input`      386 px in einem 375-px-Fenster
+ *                  (seit 11.09.2026 mit dem Reiter „Eigene" entfernt)
  *   Satzmodus      `.ueb-stand` (white-space:nowrap)  332 px in 320 px
  *
  * ⛔ Immer dieselbe Ursache: `flex:1` erlaubt das Schrumpfen, aber
@@ -132,9 +133,19 @@ if (!funde.length){
    ⛔ Ohne ihn beweist ein gruener Lauf nur, dass das Skript durchlief.
    Aus der ECHTEN Quelle wird eine bekannte Absicherung entfernt; die Stelle
    muss danach in der Liste stehen. [[stoertest_muss_wirkung_nachweisen]] */
-console.log('\n--- Stoertest: `min-width:0` bei `.custom-cat-add input` entfernt ---');
-const ZIEL = '.custom-cat-add input';
-const ohne = quelle.replace(/(\.custom-cat-add input\{[\s\S]*?)flex:1;min-width:0;/, '$1flex:1;');
+/* ⚠️ Bis zum 11.09.2026 stand hier `.custom-cat-add input` — der Eichfall aus
+   dem Anlass oben. Die Werkbank im Reiter „Eigene" gibt es nicht mehr (Elias:
+   „weil ich das wirklich nicht nutze"), damit fiel der Stoertest aus und der
+   Pruefer wurde ROT, statt still gruen zu bleiben — genau so soll es sein.
+   Neuer Eichfall: das Eingabefeld der Regelkarte, dasselbe Muster (ein
+   <input> in einem Flex-Behaelter, abgesichert durch `min-width:0`).
+   ⚠️ NICHT `.suche-feld input`, obwohl naheliegend — der erste Versuch damit
+   griff nicht: vor jener Regel steht ein Kommentar, und regelnLesen() nimmt
+   ihn in den Selektor auf. Der Selektor beginnt dann mit „/*", und der
+   Behaelter wird nicht erkannt. [[stoertest_muss_wirkung_nachweisen]] */
+console.log('\n--- Stoertest: `min-width:0` bei `.rk-feld input` entfernt ---');
+const ZIEL = '.rk-feld input';
+const ohne = quelle.replace(/(\.rk-feld input,\.rk-feld textarea\{[^}]*?)min-width:0;/, '$1');
 if (ohne === quelle){
   console.log('  X  Die Absicherung liess sich nicht entfernen — Stoertest wirkungslos.');
   process.exit(1);

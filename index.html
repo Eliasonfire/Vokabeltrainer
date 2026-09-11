@@ -1831,45 +1831,19 @@ main{
 .list-row-eigen .list-row-title{display:flex;align-items:center;gap:var(--sp-2);}
 .eigen-stern{color:var(--red-bright);font-size:var(--fs-sm);line-height:1;}
 
-.custom-cat-add{display:flex;gap:var(--sp-2);margin-bottom:var(--sp-3);}
-.custom-cat-add input{
-  /* ⛔ `flex:1` allein reicht NICHT: `flex-shrink:1` erlaubt das Schrumpfen,
-     `min-width:auto` verbietet es unterhalb der Eigenbreite des Feldes (rund
-     20 Zeichen). Gemessen am 09.09.2026 bei 364 px Fensterbreite: Feld +
-     Knopf „Anlegen" ergaben 386 px, und die Kategorienseite rollte quer.
-     Dieselbe Falle wie bei `.select-input`. [[layout_min_width_falle]] */
-  flex:1;min-width:0;background:var(--surface-2);border:1px solid var(--border);color:var(--text);
-  border-radius:var(--r-2);padding:0 var(--sp-4);font-size:var(--fs-md);font-family:var(--font-ui);
-  transition:border-color var(--dur-2) ease, background var(--dur-2) ease;
-}
-.custom-cat-add input:focus{border-color:var(--red-dim);background:var(--surface-3);outline:none;}
-.drag-hint{font-size:var(--fs-sm);color:var(--text-faint);margin-bottom:var(--sp-4);line-height:1.55;}
-
-.custom-cat-box{
-  background:var(--surface-1);border:2px dashed var(--border);border-radius:var(--r-3);
-  padding:var(--sp-3);margin-bottom:var(--sp-4);min-height:64px;
-  transition:border-color var(--dur-2) ease, background var(--dur-2) ease, transform var(--dur-2) var(--ease-out);
-}
-.custom-cat-box.drop-hover{border-color:var(--red);background:var(--red-wash);transform:scale(1.01);}
-.custom-cat-box .cat-title{font-weight:700;font-size:var(--fs-md);margin-bottom:var(--sp-2);display:flex;justify-content:space-between;align-items:center;gap:var(--sp-2);}
-.custom-cat-box .cat-title span{cursor:pointer;}
-.custom-cat-box .cat-title button{
-  background:none;border:none;color:var(--text-faint);font-size:var(--fs-sm);cursor:pointer;
-  display:flex;align-items:center;gap:var(--sp-1);padding:var(--sp-1) var(--sp-2);border-radius:var(--r-1);
-  transition:color var(--dur-2) ease, background var(--dur-2) ease;
-}
-.custom-cat-box .cat-title button:hover{color:var(--red-soft);background:var(--red-wash);}
-/* ⚠️ Bewusst LTR, also von links laufend — obwohl der Inhalt arabisch ist.
-   Elias am 10.08.2026 erst „sollten die wörter rechts orientiert sein", dann
-   direkt danach „vergiss was ich eben gesagt habe, ist schon gut das sie links
-   orientiert sind". Nicht wieder umstellen. Der Chip selbst bleibt `direction:rtl`,
-   damit innerhalb der Kachel Arabisch rechts und die deutsche Lesart links steht. */
-.chips-wrap{display:flex;flex-wrap:wrap;gap:var(--sp-2);}
+/* ⛔ Hier standen bis zum 11.09.2026 die Regeln der Werkbank im Reiter „Eigene"
+   (.custom-cat-add, .drag-hint, .custom-cat-box, .chips-wrap, .unassigned-pool,
+   .pool-label). Den Reiter gibt es nicht mehr — Elias: „weil ich das wirklich
+   nicht nutze". Seine Entscheidung zur Laufrichtung der Wortchips dort (10.08.:
+   „ist schon gut das sie links orientiert sind") steht im Vault, falls die
+   Werkbank je zurückkommt. */
 
 .word-chip{
   font-family:var(--font-ar);direction:rtl;
   background:var(--surface-3);border:1px solid var(--border);
-  /* Der deutsche Partner ist hier `.weak-de` mit --fs-sm, nicht --fs-md wie
+  /* (Stand bis 11.09.2026 — `.weak-de` ist mit der Werkbank im Reiter „Eigene"
+     entfallen; der Faktor unten blieb unverändert.)
+     Der deutsche Partner ist hier `.weak-de` mit --fs-sm, nicht --fs-md wie
      sonst - der Faktor haengt deshalb an --fs-sm. Sonst waere der Chip 2,25x
      statt 2x so gross wie das Deutsche daneben. */
   border-radius:var(--r-2);padding:7px var(--sp-3);font-size:calc(var(--fs-sm) * var(--ar-faktor));color:#fff;
@@ -1889,17 +1863,12 @@ main{
 .word-chip.dragging{opacity:.35;transform:scale(.94);}
 /* Sichtbare Rueckmeldung waehrend der 400 ms, damit man merkt, dass Halten
    etwas bewirkt - sonst fuehlt sich der lange Druck wie eine tote Stelle an. */
-.word-chip .weak-de{font-family:var(--font-ui);direction:ltr;color:var(--text-dim);font-size:var(--fs-sm);margin-inline-start:var(--sp-1);}
-.list-row-title .weak-de{font-family:var(--font-ui);color:var(--text-dim);font-size:var(--fs-md);}
-.unassigned-pool{margin-top:var(--sp-5);}
-.pool-label{font-size:var(--fs-xs);color:var(--text-faint);margin-bottom:var(--sp-2);font-weight:700;text-transform:uppercase;letter-spacing:.08em;}
 /* Sagt, woraus eine Liste gebaut ist. Bewusst leise gesetzt: eine Auskunft,
    keine Warnung. */
 .pane-hinweis{
   color:var(--text-faint);font-size:var(--fs-xs);line-height:1.5;
   margin-bottom:var(--sp-3);
 }
-.pool-zahl{color:var(--text-dim);font-variant-numeric:tabular-nums;}
 /* Aufklapper für die schon einsortierten Wörter. Standardmäßig zu: die Liste
    ist der Grund, warum die Trennung überhaupt gebraucht wird. */
 .pool-schalter{
@@ -1983,15 +1952,6 @@ main{
    Zeilen der Wortliste verdecken — auf einer gerollten Liste genau die, die
    man gerade markiert hat. */
 #screen-wordlist.leiste-offen .word-list{padding-bottom:140px;}
-/* Ein Wort, das schon in Kategorien liegt, zeigt an, in wie vielen — sonst
-   sieht man der Liste nicht an, warum ein Wort dort steht. */
-.word-chip .in-kat{
-  font-family:var(--font-ui);direction:ltr;
-  background:var(--red-wash);color:var(--red-bright);
-  border-radius:var(--r-full);padding:0 6px;margin-inline-start:var(--sp-2);
-  font-size:var(--fs-xs);font-weight:700;
-}
-.pool-words{display:flex;flex-wrap:wrap;gap:var(--sp-2);max-height:38vh;overflow-y:auto;padding-bottom:var(--sp-3);}
 
 /* =====================================================================
    EIGENE VOKABEL ANLEGEN
@@ -2169,6 +2129,59 @@ main{
    Fingertipp auf, auch wenn gar keine Tastatur im Spiel ist. */
 .wk-tippbar{cursor:pointer;-webkit-tap-highlight-color:transparent;}
 .wk-tippbar:hover{border-color:var(--red-dim);}
+
+/* =====================================================================
+   REGELSAMMLUNG (Elias, 11.09.2026) — js/regeln.js
+   ===================================================================== */
+/* Auf dem Handy (zwei Spalten) stünde die dritte Kachel allein links in der
+   zweiten Reihe — sie nimmt dort die ganze Breite. Im Dreispalter unten wieder
+   eine Spalte. */
+.home-grid .tile-regeln{grid-column:1 / -1;}
+.regeln-abschnitt{margin-bottom:var(--sp-5);}
+.regeln-kopf{font-size:var(--fs-md);font-weight:800;margin:var(--sp-3) 0 var(--sp-1);display:flex;align-items:baseline;gap:var(--sp-2);}
+.regeln-zahl{color:var(--text-dim);font-weight:600;font-size:var(--fs-sm);font-variant-numeric:tabular-nums;}
+.regeln-thema{font-size:var(--fs-xs);font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);margin:var(--sp-4) 0 var(--sp-2);}
+.regel-zeile-rahmen{display:flex;align-items:stretch;gap:var(--sp-2);margin-bottom:var(--sp-2);min-width:0;}
+.regel-zeile{flex:1;min-width:0;width:100%;margin-bottom:0;text-align:left;font:inherit;color:var(--text);padding:var(--sp-3) var(--sp-4);}
+.rz-haupt{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.rz-titel{font-weight:700;font-size:var(--fs-md);display:flex;align-items:center;gap:var(--sp-2);min-width:0;flex-wrap:wrap;line-height:1.7;}
+.rz-unter{color:var(--text-dim);font-size:var(--fs-sm);display:flex;align-items:center;gap:var(--sp-2);flex-wrap:wrap;min-width:0;}
+.rz-nr{display:inline-flex;align-items:center;justify-content:center;min-width:1.6em;height:1.6em;border-radius:var(--r-full);background:var(--red-wash);color:var(--red-bright);font-size:var(--fs-xs);font-weight:800;}
+.rz-ar{font-family:var(--font-ar);color:var(--red-bright);font-size:calc(var(--fs-sm) * var(--ar-faktor));unicode-bidi:isolate;line-height:1.8;}
+.rz-marken{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+.rz-marke{font-size:var(--fs-xs);color:var(--text-faint);border:1px solid var(--border);border-radius:var(--r-full);padding:1px 8px;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;}
+.rz-aendern{color:var(--red-soft);border-color:var(--red-dim);}
+.rz-aktion{flex-shrink:0;align-self:center;padding:var(--sp-2) var(--sp-3);font-size:var(--fs-sm);}
+.regeln-anlegen{width:100%;justify-content:center;margin-top:var(--sp-2);}
+.regeln-schalter{margin-top:var(--sp-2);}
+/* Die Karte: Bauart der Wortkarte (.wortkarte, .wk-*), hier nur, was sie
+   darüber hinaus braucht. */
+.regelkarte{width:min(480px,94vw);}
+.rk-ar-gross{font-family:var(--font-ar);direction:rtl;unicode-bidi:isolate;text-align:center;color:#fff;font-size:calc(var(--fs-xl) * var(--ar-faktor));line-height:1.9;}
+.rk-titel{font-weight:800;font-size:var(--fs-lg);line-height:1.6;}
+.rk-titel-klein{font-weight:700;line-height:1.6;}
+.rk-kern{line-height:1.75;}
+.rk-rest{line-height:1.75;color:var(--text-dim);}
+.rk-link{background:none;border:none;padding:0;color:var(--red-soft);font:inherit;font-size:var(--fs-sm);cursor:pointer;text-align:left;text-decoration:underline;text-underline-offset:3px;line-height:1.8;}
+.rk-klein{font-size:var(--fs-xs);color:var(--text-faint);line-height:1.6;}
+.rk-hinweis{font-size:var(--fs-sm);color:var(--text-dim);line-height:1.7;border-left:3px solid var(--border-strong);padding-left:var(--sp-3);}
+.rk-warnung{font-size:var(--fs-sm);color:var(--red-soft);display:flex;gap:var(--sp-2);align-items:flex-start;line-height:1.6;}
+.rk-gruppe{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-3);padding:var(--sp-3);min-width:0;}
+.rk-gruppe-kopf{display:flex;align-items:center;gap:var(--sp-2);flex-wrap:wrap;margin-bottom:var(--sp-1);}
+.rk-ar{font-family:var(--font-ar);direction:rtl;unicode-bidi:isolate;font-size:calc(var(--fs-md) * var(--ar-faktor));line-height:1.9;color:var(--red-bright);}
+.rk-merkmale{margin:0;padding-inline-start:1.2em;display:flex;flex-direction:column;gap:4px;line-height:1.8;}
+.rk-zerlegung{line-height:1.9;}
+.rk-beispiel + .rk-beispiel,.rk-genauer + .rk-genauer{border-top:1px solid var(--border);padding-top:6px;}
+.rk-verwandt{display:flex;flex-direction:column;align-items:flex-start;gap:2px;}
+.rk-zeit{font-variant-numeric:tabular-nums;color:var(--text-faint);margin-inline-end:var(--sp-1);}
+.rk-treffer{background:var(--red-wash);color:inherit;border-radius:4px;}
+.rk-schalter{display:flex;align-items:center;gap:var(--sp-2);font-weight:700;cursor:pointer;min-height:44px;}
+.rk-schalter input{width:22px;height:22px;min-width:0;flex-shrink:0;accent-color:var(--red);}
+.rk-notiz{width:100%;min-height:4.5em;resize:vertical;background:var(--surface-1);border:1px solid var(--border);border-radius:var(--r-2);color:var(--text);padding:var(--sp-2) var(--sp-3);font:inherit;line-height:1.6;}
+.rk-klein-knopf{align-self:flex-start;padding:var(--sp-2) var(--sp-3);font-size:var(--fs-sm);}
+.rk-feld{display:flex;flex-direction:column;gap:4px;font-size:var(--fs-sm);color:var(--text-dim);}
+.rk-feld input,.rk-feld textarea{background:var(--surface-1);border:1px solid var(--border);border-radius:var(--r-2);color:var(--text);padding:var(--sp-2) var(--sp-3);font:inherit;font-size:var(--fs-md);line-height:1.6;min-width:0;}
+.rk-feld textarea{resize:vertical;}
 .wk-tippbar:focus-visible{outline:2px solid var(--red);outline-offset:2px;}
 /* Die Blätterknöpfe liegen IM tippbaren Kasten und behalten ihren eigenen
    Zeiger — sie tun etwas anderes als der Kasten um sie herum. */
@@ -4463,8 +4476,8 @@ button:disabled{cursor:default;}
    Größe für etwas, das mit dem Finger getroffen werden soll. Der Rollweg je
    Daumenpixel ändert sich dadurch kaum (26 → 28), die Trefferfläche aber um
    das Viereinhalbfache. */
-main::-webkit-scrollbar,.pool-words::-webkit-scrollbar,.qfp-list::-webkit-scrollbar{width:8px;}
-main::-webkit-scrollbar-thumb,.pool-words::-webkit-scrollbar-thumb,.qfp-list::-webkit-scrollbar-thumb{
+main::-webkit-scrollbar,.qfp-list::-webkit-scrollbar{width:8px;}
+main::-webkit-scrollbar-thumb,.qfp-list::-webkit-scrollbar-thumb{
   background:var(--surface-4);border-radius:var(--r-full);min-height:44px;
 }
 
@@ -4825,6 +4838,8 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
   /* Drei Kacheln nebeneinander statt zwei - bei 860px Inhaltsbreite sind zwei
      Kacheln so breit, dass Titel und Untertitel verloren darin schwimmen. */
   .home-grid{grid-template-columns:repeat(3,1fr);}
+  /* Die Regeln-Kachel nimmt nur auf dem Zweispalter die ganze Reihe. */
+  .home-grid .tile-regeln{grid-column:auto;}
 
   /* ⚠️ .nav-btn und .nav-icon haengen an FESTEN rem-Werten (.62rem / 1.3rem),
      nicht an --fs-*. Die Token-Anhebung weiter oben erreicht sie deshalb
@@ -4869,6 +4884,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
   <!-- Wiederholen: ein Kreis mit zwei Pfeilspitzen. -->
   <symbol id="ic-repeat" viewBox="0 0 24 24"><path d="M4 9V7.5a3 3 0 0 1 3-3h10"/><path d="m14 1.5 3 3-3 3"/><path d="M20 15v1.5a3 3 0 0 1-3 3H7"/><path d="m10 22.5-3-3 3-3"/></symbol>
   <symbol id="ic-shuffle" viewBox="0 0 24 24"><path d="M3.5 7.5h4l9 9h4"/><path d="M3.5 16.5h4l9-9h4"/><path d="m17.5 4.5 3 3-3 3"/><path d="m17.5 13.5 3 3-3 3"/></symbol>
+  <symbol id="ic-regeln" viewBox="0 0 24 24"><path d="M9.5 6.5h10"/><path d="M9.5 12h10"/><path d="M9.5 17.5h10"/><path d="m3.8 6.3 1.3 1.3 2.3-2.6"/><path d="M4.5 12h.01"/><path d="M4.5 17.5h.01"/></symbol>
 </svg>
 
 <div id="app">
@@ -5008,7 +5024,18 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 
            ⚠️ Wer hier eine Kachel ergänzt, prüft zuerst die Leiste unten —
            und umgekehrt. Sonst entsteht wieder, was am 21.08. wegfiel: zwei
-           Wege zum selben Bildschirm, ohne dass es jemand so wollte. -->
+           Wege zum selben Bildschirm, ohne dass es jemand so wollte.
+
+           ⭐⭐ DRITTE KACHEL „REGELN" (11.09.2026) — SEINE JÜNGERE ENTSCHEIDUNG.
+           Die Zwei-Kachel-Vorgabe oben ist damit aufgehoben, nicht vergessen:
+           Elias hat für die Regelsammlung selbst die Kachel gewählt („Kachel
+           „Regeln"" — dritte Kachel neben Wurzeln und Kategorien) statt des
+           Reiters „Eigene" in den Kategorien. Wer die dritte Kachel für einen
+           Verstoß gegen den Satz vom 21.08. hält, liest hier weiter.
+           [[historisch_oder_aktuell_steht_im_wort_davor]]
+           ⚠️ Auf dem Handy (zwei Spalten) steht „Regeln" allein in der zweiten
+           Reihe und nimmt deshalb die ganze Breite — ab 1100 px stehen alle
+           drei nebeneinander. Die Quran-Bezug-Kachel bleibt dahinter. -->
       <div class="home-grid stagger">
         <!-- ⚠️ NICHT #ic-folder: das trägt „Kategorien" gleich nebenan und
              zusätzlich in der Leiste unten. Zwei gleiche Zeichen wären hier
@@ -5022,7 +5049,18 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         <button class="tile" data-nav="categories">
           <span class="tile-icon"><svg class="ic"><use href="#ic-folder"/></svg></span>
           <span class="tile-title">Kategorien</span>
-          <span class="tile-sub">Kapitel, Wurzeln, eigene</span>
+          <!-- Stand bis 11.09.2026: „Kapitel, Wurzeln, eigene". Den Reiter
+               „Eigene" gibt es nicht mehr, und „Wurzeln" heißt dort seit dem
+               29.07.2026 „Wortfelder". Eigene Wörter stehen weiter unter Kapitel. -->
+          <span class="tile-sub">Kapitel, Wortfelder, eigene Wörter</span>
+        </button>
+        <!-- Die Regelsammlung (11.09.2026, js/regeln.js). Eigenes Zeichen
+             #ic-regeln: #ic-book trägt der Quran-Reiter unten, #ic-note die
+             Notizen — ein doppeltes Zeichen wäre nicht auseinanderzuhalten. -->
+        <button class="tile tile-regeln" data-nav="regeln">
+          <span class="tile-icon"><svg class="ic"><use href="#ic-regeln"/></svg></span>
+          <span class="tile-title">Regeln</span>
+          <span class="tile-sub">Folge 19 und deine Regeln</span>
         </button>
         <!-- Seit 31.07.2026 an die Einstellung "Quran-Bezüge anzeigen" gehängt
              und standardmäßig aus. ⚠️ Das ist NICHT der Leser: „Quran-Bezug"
@@ -5251,55 +5289,24 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
       <div class="suche-hinweis hidden" id="sucheHinweis"></div>
       <div class="word-list hidden" id="sucheTreffer"></div>
 
+      <!-- ⛔ DER REITER „EIGENE" IST WEG (11.09.2026). Elias: „wir entfernen in
+           den kategorien das feld ,,eigene" weil ich das wirklich nicht nutze
+           und packe stattdessen diese regelsammlung dahin" — gewählt hat er
+           dann die dritte Kachel „Regeln" auf dem Start.
+           ⚠️ „Eigene" ist ZWEIERLEI, und nur das eine fällt weg:
+             weg      der Reiter mit den selbst angelegten KATEGORIEN (Werkbank)
+             bleibt   „Eigene Vokabeln" oben im Reiter Kapitel (js/kategorien.js,
+                      eigeneOben) — dort trägt er eigene Wörter ein
+             bleibt   seine gespeicherten Kategorien (vt_customCats): sie stehen
+                      weiter mit Stern oben in „Wortfelder", öffnen ihre Wortliste
+                      und werden abgeglichen. Nur neue anlegen geht nicht mehr. -->
       <div class="cat-tabs" id="catTabs">
         <button class="cat-tab active" data-cattab="chapters">Kapitel</button>
         <button class="cat-tab" data-cattab="roots">Wortfelder</button>
-        <button class="cat-tab" data-cattab="custom">Eigene</button>
       </div>
 
       <div class="cat-pane stagger" id="catPane-chapters"></div>
       <div class="cat-pane hidden stagger" id="catPane-roots"></div>
-      <div class="cat-pane hidden" id="catPane-custom">
-        <div class="custom-cat-add">
-          <input type="text" id="newCatName" placeholder="Neue Kategorie, z.B. Schwierige Wörter" maxlength="30">
-          <button class="btn btn-primary" id="btnAddCat"><svg class="ic"><use href="#ic-plus"/></svg>Anlegen</button>
-        </div>
-        <div class="drag-hint">Wort kurz <strong>gedrückt halten</strong>, dann in eine Kategorie-Box ziehen. Nur Wischen rollt die Liste. Zum Entfernen wieder aus der Box heraus in den Pool ziehen. Antippen des Kategorie-Namens zeigt die Wortliste.</div>
-        <div id="customCatList"></div>
-        <!-- Zwei Listen statt einer. Elias am 29.07.2026: "Ich möchte, dass ich
-             nicht bei allen Vokabeln eine riesige lange Vokabelliste habe und
-             die ganze Zeit die Vokabeln suchen muss, die ich noch nicht
-             einkategorisiert habe." Oben also, was noch offen ist; darunter
-             einklappbar, was schon irgendwo liegt — und zwar dauerhaft, damit
-             ein Wort in mehreren Kategorien landen kann. -->
-        <div class="unassigned-pool" id="unassignedPool">
-          <!-- Elias am 30.07.2026: „auch bei den eigenen kategorien sollen nur
-               wörter sein die ich auch kenne." Die Zeile sagt, was das heißt —
-               eine unsichtbare Einschränkung hat er heute schon einmal als
-               Fehler gemeldet. Text kommt aus js/kategorien.js. -->
-          <div class="pane-hinweis" id="poolHinweis"></div>
-          <div class="pool-label">Noch nicht einsortiert <span class="pool-zahl" id="poolOffenZahl"></span></div>
-          <div class="pool-words" id="poolWords"></div>
-
-          <button class="pool-schalter" id="btnPoolFertig" aria-expanded="false">
-            <svg class="ic"><use href="#ic-right"/></svg>
-            <span>Schon einsortiert <span class="pool-zahl" id="poolFertigZahl"></span></span>
-          </button>
-          <div class="pool-words hidden" id="poolWordsFertig"></div>
-
-          <!-- Zielleiste für das Einsortieren durch ANTIPPEN. Ersetzt das Ziehen
-               und Ablegen, das Elias dreimal als Fehler gemeldet hat — zuletzt
-               nach meinem Gesten-Fix: „ich kann das wort nicht vernünftig in die
-               kategorie packen." Begründung in js/kategorien.js. -->
-          <div class="kat-zielleiste hidden" id="katZielLeiste">
-            <div class="kat-zeile">
-              <span class="kat-zahl" id="katAuswahlZahl"></span>
-              <button class="kat-aus" id="btnKatAuswahlAus" aria-label="Auswahl aufheben">Auswahl aufheben</button>
-            </div>
-            <div class="kat-ziele" id="katZiele"></div>
-          </div>
-        </div>
-      </div>
     </section>
 
     <!-- ============ WORD LIST (drill into a category) ============ -->
@@ -5807,6 +5814,18 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
          das Sortierspiel. Elias, 10.08.2026: "ich hab halt adhs und ich brauche
          so spiele artig mein lernen" — deshalb eine Übung und keine Ansicht.
          Die Schalter (Färbung, Ausrichtung, Niveau) stehen unter Einstellungen. -->
+    <!-- ============ REGELN (Elias, 11.09.2026) ============
+         „ich würde aber gerne auch einen bereich haben wo ich alle regeln
+         nachschlagen kann". Der Inhalt wird in js/regeln.js gezeichnet;
+         die Karte liegt als Overlay #regelKarte am Ende der Seite. -->
+    <section class="screen" id="screen-regeln" data-screen="regeln">
+      <div class="screen-header">
+        <button class="icon-btn" data-back aria-label="Zurück"><svg class="ic"><use href="#ic-left"/></svg></button>
+        <h2>Regeln</h2>
+      </div>
+      <div id="regelnInhalt"></div>
+    </section>
+
     <section class="screen" id="screen-wurzeln" data-screen="wurzeln">
       <div class="screen-header">
         <button class="icon-btn" data-back aria-label="Zurück"><svg class="ic"><use href="#ic-left"/></svg></button>
@@ -6471,6 +6490,11 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
      Kästchen in der Liste und die Leiste unten. -->
 <div class="qfp-backdrop hidden" id="wortKarteBackdrop"></div>
 <div class="wortkarte hidden" id="wortKarte" role="dialog" aria-label="Wortkarte"></div>
+<!-- Die Regelkarte (11.09.2026, js/regeln.js). Dieselbe Bauart wie die
+     Wortkarte, damit sie sich genauso öffnet, schließt und mit der
+     Zurück-Taste verschwindet (OVERLAYS in js/navigation.js). -->
+<div class="qfp-backdrop hidden" id="regelKarteBackdrop"></div>
+<div class="wortkarte regelkarte hidden" id="regelKarte" role="dialog" aria-label="Regel"></div>
 
 <!-- Reine Daten, keine Logik (E.7). Muessen vor der App-Logik stehen. -->
 <script src="vocab-data.js"></script>
@@ -6497,6 +6521,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
      gegen surah-data.js geprüft (114/114 Verszahlen, 604 Seiten lückenlos). -->
 <script src="quran-seiten.js"></script>
 <script src="grammar-data.js"></script>
+<script src="regelsammlung-data.js"></script>
 <script src="wortfelder-data.js"></script>
 <script src="lehrbuch-saetze.js"></script>
 <script src="quran-frequency-data.js"></script>
@@ -6518,6 +6543,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 <script src="js/lernen.js"></script>
 <script src="js/sprachausgabe.js"></script>
 <script src="js/kategorien.js"></script>
+<script src="js/regeln.js"></script>
 <script src="js/saetze.js"></script>
 <script src="js/uebung.js"></script>
 <script src="js/quran.js"></script>

@@ -32,6 +32,7 @@
 const GRAMMAR_RULES = [
   {
     id: "ismul-isara-hadha-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
@@ -50,6 +51,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "hadha-stummes-alif-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     ausgeblendet: true,   /* Elias 26.08.2026: aus dem Satzmodus. NICHT loeschen. */
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
@@ -69,6 +71,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "hadha-dies-nicht-das-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     ausgeblendet: true,   /* Elias 26.08.2026: aus dem Satzmodus. NICHT loeschen. */
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
@@ -88,6 +91,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "ta-marbuta-fem-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "تَاء مَرْبُوطَة (weibliche Endung)",
     shortExplanation: "Die تَاء مَرْبُوطَة (das ة am Wortende, geschrieben wie ein Kreis mit zwei Punkten) wird für Wörter benutzt, die weiblich sind. Wenn ein Wort ein ة hat, weißt du: das Wort ist weiblich – z.B. مَدْرَسَةٌ (madrasatun) „Schule“. بَيْتٌ (baytun) „Haus“ wird dagegen mit normalem ت geschrieben und ist männlich. (Umgekehrt gilt bei بَيْت NICHT, dass jedes Wort mit normalem ت männlich sei, sagt der Lehrer nicht.)",
     color: "fem",
@@ -109,6 +113,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "nominalsatz-ohne-kopula-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     ausgeblendet: true,   /* Elias 26.08.2026: aus dem Satzmodus. NICHT loeschen. */
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
@@ -128,6 +133,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "istifham-ma-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     ausgeblendet: true,   /* Elias 26.08.2026: aus dem Satzmodus. NICHT loeschen. */
     name: "مَا (Fragewort für Dinge)",
     shortExplanation: "Mit مَا (mā, „was\") fragt man nach Gegenständen und Objekten: مَا هَذَا؟ (mā hādhā) – „Was ist dies?\". Die Antwort ist z.B. هَذَا بَيْتٌ (hādhā baytun) – „Dies ist ein Haus\". مَا benutzt man nicht für Menschen, sondern nur für Dinge.",
@@ -137,6 +143,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "fragepartikel-alif-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "أَ (Fragepartikel)",
     shortExplanation: "Ein أَ vor einen vollständigen Satz gestellt macht aus einer Aussage eine Frage. Zuerst und vor allem ist es eine Ja/Nein-Frage — der Madina-Schlüssel zeigt es in Lektion 1 genau so: أَهَذَا بَيْتٌ؟ „Ist dies ein Haus?\", Antwort نَعَمْ، هَذَا بَيْتٌ. „Ja, dies ist ein Haus.\" oder لَا، هَذَا مَسْجِدٌ. „Nein, dies ist eine Moschee.\" Die Wörterliste des Schlüssels sagt dasselbe: أَ steht vor Entscheidungsfragen, direkt vor dem Folgewort. Dein Lehrer stellt أَ zusätzlich dem هَلْ gegenüber und ordnet أَ dabei eher der allgemeinen oder rhetorischen Frage zu — das ist eine Vereinfachung zur Unterscheidung der beiden Partikeln, kein Widerspruch: أَ kann beides, und darüber hinaus in Alternativfragen mit أَمْ stehen. هَلْ kommt in Lektion 1 des Buchs gar nicht vor, es ist eine Ergänzung des Unterrichts.",
     color: "nasab",
@@ -145,6 +152,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "fragepartikel-hal-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     ausgeblendet: true,   /* Elias 26.08.2026: aus dem Satzmodus. NICHT loeschen. */
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
@@ -163,6 +171,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "istifham-men-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "مَنْ (wer)",
     shortExplanation: "مَنْ (men) ist das Fragewort für Personen (\"wer ist dies?\"), im Unterschied zu هَذَا/Fragen nach Gegenständen. Nicht verwechseln mit مِنْ (min, \"von\") - men hat Fatha, min hat Sukun.",
     color: "nasab",
@@ -171,6 +180,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "ismul-isara-dhalika-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "ذَلِكَ (jenes)",
     shortExplanation: "ذَلِكَ (dhalika) ist wie هَذَا ein اِسْمُ الْإِشَارَة (Hinweiswort), aber für Dinge in der Ferne statt in der Nähe. Gilt ebenfalls nur für männliche Wörter. Kann auch auf zuvor Erwähntes zurückverweisen, nicht nur auf räumlich Entferntes.",
     color: "mubtada",
@@ -431,6 +441,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "mudarris-lesung-herkunft-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     ausgeblendet: true,   /* Elias 26.08.2026: aus dem Satzmodus. NICHT loeschen. */
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
@@ -757,6 +768,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "ismul-isara-hadhihi-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     ausgeblendet: true,   /* Elias 26.08.2026: aus dem Satzmodus. NICHT loeschen. */
     name: "هَذِهِ (weibliches Hinweiswort, nah)",
     shortExplanation: "هَذِهِ hādhihi ist die weibliche Form von هَذَا hādhā und zeigt wie dieses auf Nahes (der Lehrer liest die Kapitelüberschrift: »diese sind für die Nähe, diese sind für die Ferne«). Genauso gibt es zu ذَلِكَ dhālika »jenes« die weibliche Form تِلْكَ tilka – die kommt aber erst in Kapitel 7. Der Lehrer sagt ausdrücklich: für هَذِهِ und تِلْكَ gelten genau die gleichen Regeln wie bei هَذَا und ذَلِكَ, nur eben für Begriffe, die weiblich sind. Beispiel aus der Stunde: هَذِهِ بِنْتُ يَاسِرٍ hādhihi bintu Yāsirin – »dies ist die Tochter von Yāsir«.",
@@ -766,6 +778,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "hadha-al-kein-satz-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     ausgeblendet: true,   /* Elias 26.08.2026: aus dem Satzmodus. NICHT loeschen. */
     name: "هَذَا + اَلْ (»dieses Haus« ist kein Satz)",
     shortExplanation: "Steht nach هَذَا / هَذِهِ ein Nomen mit اَلْ, ist das noch kein vollständiger Satz, sondern nur die Wortgruppe »dieses Haus« – da fehlt noch etwas. Es muss ein Prädikat folgen: هَذَا الْبَيْتُ جَدِيدٌ hādhā l-baytu jadīdun – »dieses Haus ist neu«. Deshalb übersetzt man هَذَا immer mit »dies«, damit man diese Konstellation überhaupt erkennt (genauso: »dieser Stift…«, »diese Moschee…« – da muss noch was kommen).",
@@ -774,6 +787,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "istifham-liman-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "لِمَنْ (Fragewort »wem gehört«)",
     shortExplanation: "لِمَنْ li-man ist das Fragewort für »wessen / von wem / wem gehört das«: لِمَنْ هَذِهِ؟ li-man hādhihi – »wem gehört diese hier?«. Die Antwort kommt dann mit لِ: هَذِهِ لِخَالِدٍ hādhihi li-Khālidin – »diese gehört Khalid«. Der Lehrer nennt es ausdrücklich »ein wichtiges Fragewort«.",
     color: "mubtada",
@@ -790,6 +804,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "mutabaqa-genus-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "مُطَابَقَة (Angleichung des Prädikats an das Genus)",
     shortExplanation: "Das Wort, das über etwas Weibliches aussagt, bekommt selbst die weibliche Form mit Tāʾ marbūṭa. Beispiel des Lehrers: das Wort für »Fahrrad« ist im Arabischen weiblich, deshalb heißt es nicht جَدِيدٌ jadīdun, sondern جَدِيدَةٌ jadīdatun »neu« – und nicht قَدِيمٌ qadīmun, sondern قَدِيمَةٌ qadīmatun »alt«.",
     color: "fem",
@@ -798,6 +813,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "fem-ohne-ta-marbuta-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "مُؤَنَّث بلا تَاء (weiblich ohne Tāʾ marbūṭa)",
     shortExplanation: "Es gibt drei Gruppen weiblicher Wörter: solche mit Tāʾ marbūṭa, solche die von der Bedeutung her weiblich sind (Tochter, Mutter, Tante) und solche, die einfach weiblich sind – ohne erkennbaren Grund, z.B. اَلنَّار an-nār »das Feuer«. Auch قِدْرٌ qidrun »Kochtopf« ist weiblich, obwohl kein Tāʾ marbūṭa dransteht. Die dritte Gruppe muss man auswendig lernen.",
     color: "fem",
@@ -806,6 +822,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "taschkil-kontext-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     ausgeblendet: true,   /* Elias 26.08.2026: aus dem Satzmodus. NICHT loeschen. */
     name: "تشكيل und Kontext (gleiches Schriftbild)",
     shortExplanation: "Zwei Wörter können identisch geschrieben sein und trotzdem Verschiedenes bedeuten: رَجُلٌ rajulun »Mann« und رِجْلٌ rijlun »Bein« – ohne Taschkīl sieht man keinen Unterschied. Genauso مَدْرَسَة madrasa »Schule« und مُدَرِّسَة mudarrisa »Lehrerin«. Deshalb muss man oft auf den Kontext schauen.",
@@ -814,6 +831,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "koerperteile-genus-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "أَعْضَاء مزدوجة (doppelte Körperteile sind weiblich)",
     shortExplanation: "Körperteile, die es doppelt gibt, sind im Arabischen weiblich: يَدٌ yadun »Hand«, رِجْلٌ rijlun »Bein«, أُذُنٌ udhunun »Ohr«, عَيْنٌ ʿaynun »Auge«. Körperteile, die es nur einmal gibt, sind männlich – أَنْفٌ anfun »Nase« und فَمٌ famun »Mund«. Der Lehrer nennt das eine »Ausnahmeregel«, die man sich bei Körperteilen gut merken kann.",
     color: "fem",
@@ -1069,6 +1087,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "mubtada-khabar-genus-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "مُبْتَدَأ und خَبَر müssen im Geschlecht übereinstimmen",
     shortExplanation: "Im Nominalsatz richtet sich das Prädikat im Geschlecht nach dem Subjekt. Sharḥ Madīnah setzt es als Gegensatzpaar: الْغُرْفَةُ مَفْتُوحٌ ist falsch, الْغُرْفَةُ مَفْتُوحَةٌ ist richtig — غُرْفَة ist weiblich, also muss auch مَفْتُوحَة weiblich sein. Ebenso in seiner Beispielreihe: مُحَمَّدٌ طَالِبٌ neben فَاطِمَةُ طَالِبَةٌ, الْبَابُ مُغْلَقٌ neben النَّافِذَةُ مَفْتُوحَةٌ. Du hast nat-vier-bedingungen-01 für das Adjektiv am Nomen (مَسْجِدٌ كَبِيرٌ), aber der Nominalsatz ist ein anderer Bau — satz-vs-wortgruppe-01 unterscheidet die beiden sogar ausdrücklich („Das Hemd ist sauber\" ≠ „das saubere Hemd\"), ohne die Kongruenz für den Satzfall zu nennen.",
     color: "mubtada",
@@ -1171,6 +1190,7 @@ const GRAMMAR_RULES = [
   },
   {
     "id": "kaf-der-entfernung-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     "name": "Das كَ der Entfernung: ذَلِكَ · تِلْكَ · هُنَاكَ",
     "shortExplanation": "Ein angehängtes كَ bedeutet Entfernung. Der Lehrer zeigt es an drei Wörtern, die Elias schon kennt: هُنَا heißt „hier\", هُنَاكَ heißt „dort\" — und dasselbe كَ steckt in ذَلِكَ und تِلْكَ, den Hinweiswörtern für das Ferne. Seine Worte: „Dieses كَ hier symbolisiert die Ferne … Das كَ steht für die Entfernung.\" Damit hängen vier Wörter an einem einzigen Merkmal statt an vier Einzelheiten.",
     "color": "other",
@@ -1184,6 +1204,7 @@ const GRAMMAR_RULES = [
   },
   {
     "id": "inda-ort-und-zeit-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     "name": "عِنْدَ ist ein ظَرْف — für Ort UND für Zeit",
     "shortExplanation": "عِنْدَ heißt „bei\" und ist ein ظَرْف. Der Lehrer betont, dass es beides kann: „عِنْدَ kann sowohl Ortsangabe sein, als auch Zeitangabe.\" Örtlich in seinem Beispiel „ich bin beim Direktor\", zeitlich in „zum Faǧr\" und „zum Ẓuhr\". Und es verhält sich wie ein مُضَاف: das folgende Wort steht im Genitiv. ⚠️ Die beiden Gebetsnamen stehen hier absichtlich in Umschrift — ihre vokalisierte arabische Schreibung ist im vorhandenen Bestand nicht belegt und wird nicht erfunden.",
     "color": "idafa",
@@ -1197,6 +1218,7 @@ const GRAMMAR_RULES = [
   },
   {
     "id": "possessiv-endungen-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     "name": "Die Besitzendungen ـِي · ـكَ · ـكِ · ـهُ · ـهَا",
     "shortExplanation": "Besitz wird durch eine Endung am Nomen ausgedrückt, nicht durch ein eigenes Wort. Der Lehrer geht sie der Reihe nach durch und nennt jede mit ihrem Vokal: ـِي „meins\", ـكَ „deins\" für Männer („Kev, mit Fetha\"), ـكِ „deins\" für Frauen, ـهُ „seins\", ـهَا „ihres\" („Ha, mit Elif\"). ⭐ Und das Entscheidende: **das Tanwīn fällt weg**, sobald eine Besitzendung dazukommt — aus كِتَابٌ wird kitābu-ka „dein Buch\", aus قَلَمٌ wird qalamu-ka „dein Stift\". Seine Worte: „Tanwīn fällt weg, wird dann verbunden.\" Dasselbe an اِسْم, das nach ihm zweierlei heißen kann, „entweder Name oder Nomen\". ⭐ Damit lernt man nach seinen Worten „durch die Besitzanzeigen ganz, ganz viele Wörter\" auf einmal: أَخٌ · أُخْتٌ · لُغَةٌ · كِتَابٌ tragen alle dieselben fünf Endungen. Ergänzt possessiv-ya-01, das nur das ـِي behandelt.",
     "color": "idafa",
@@ -1210,6 +1232,7 @@ const GRAMMAR_RULES = [
   },
   {
     "id": "li-vs-inda-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     "name": "لِ oder عِنْدَ? Untrennbar gegen trennbar",
     "shortExplanation": "Beide heißen auf Deutsch „ich habe\", aber sie sind nicht austauschbar — der Lehrer nennt das ausdrücklich „eine wichtige Regel\". **لِ steht für Dinge, die untrennbar zu einem gehören**: Verwandtschaftsbande (Geschwister, Eltern, Kinder) und Körperteile. **عِنْدَ steht für Dinge, die man von sich trennen kann.** Seine Gegenüberstellung: wir sagen عِنْدِي كِتَابٌ „bei mir ist ein Buch\" und wir sagen لِي أَخٌ „mir gehört ein Bruder\" — aber wir sagen NICHT عِنْدِي أَخٌ. Wörtlich unterscheidet er auch die Bedeutung: عِنْدَ heißt „bei mir ist\", لِ heißt „mir gehört\".",
     "color": "idafa",
@@ -1223,6 +1246,7 @@ const GRAMMAR_RULES = [
   },
   {
     "id": "tanwin-maennername-ta-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     "name": "Männliche Namen auf Tāʾ marbūṭa tragen kein تَنْوين",
     "shortExplanation": "Die dritte und letzte Regel zum Tanwīn bei Eigennamen — der Lehrer baut sie ausdrücklich auf den zwei bekannten auf: „Wir hatten erstmal gesagt, männliche Namen haben Tanwīn. Und dann haben wir gesagt, zweitens, weibliche Namen tragen kein Tanwīn. Drittens, männliche Namen, die auf Tāʾ marbūṭa enden, haben auch kein Tanwīn.\" Seine Beispiele: Ḥamzatu, Usāmatu, Muʿāwiyatu — alle männlich, alle auf Tāʾ marbūṭa, alle ohne Tanwīn. Und er sagt dazu, warum es sich zu merken lohnt: „Wir brauchen diese Regel, die ist wichtig für am Ende des Buches.\" Ergänzt tanwin-eigennamen-01, das nur männlich mit und weiblich ohne Tanwīn behandelt. ⚠️ Die drei Namen stehen in Umschrift: sie sind im vorhandenen Wortbestand nicht vokalisiert belegt.",
     "color": "fem",
@@ -1237,6 +1261,7 @@ const GRAMMAR_RULES = [
   },
   {
     "id": "asma-khamsa-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     "name": "Die fünf Ausnahmewörter: أَبٌ und أَخٌ nehmen ein Wāw",
     "shortExplanation": "Normalerweise hängt die Besitzendung direkt ans Wort. Bei fünf Wörtern nicht — der Lehrer: „es gibt in der arabischen Sprache fünf Ausnahmewörter … bei أَبٌ und bei أَخٌ und bei drei anderen kommt nicht das direkt hinten ran.\" Dort schiebt sich erst ein **Wāw** dazwischen: abū-ka „dein Vater\", aḫū-ka „dein Bruder\" — statt des erwarteten abu-ka. ⭐ **Eine Ausnahme von der Ausnahme:** Bei „mein\" kommt kein Wāw, sondern das Yāʾ direkt dahinter — abī „mein Vater\". Seine Worte: „Außer bei mein. Da kommt das Yāʾ direkt hinten dran. Bei einem anderen kommt immer ein Wāw.\" Die drei übrigen der fünf nennt er nicht: sie kommen erst im zweiten Buch. Das ist hier so festgehalten, statt sie zu ergänzen. ⚠️ abūka, aḫūka und abī stehen in Umschrift — ihre vokalisierte Schreibung ist im vorhandenen Wortbestand nicht belegt.",
     "color": "idafa",
@@ -1250,6 +1275,7 @@ const GRAMMAR_RULES = [
   },
   {
     "id": "hu-nach-kasra-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     "name": "Nach كَسْرة wird das هُ zu هِ — فِيهِ statt fīhu",
     "shortExplanation": "Eine Regel, die man hört, bevor man sie versteht: Auf eine كَسْرة folgt nur schwer eine ضَمّة. Der Lehrer beschreibt es an فِي + هُ: „Weil auf ein Kasra auf einmal ein Damma folgt. Das stört die. Deswegen haben sie gesagt: ey warte mal, wir haben ein Kasra … Fīhi ist einfacher als fīhu. Deswegen kriegt das هُ bei فِي ein Kasra.\" Ergebnis: فِيهِ, nicht fīhu. ⭐ Dasselbe Prinzip wie bei اِلْتِقَاءُ السَّاكِنَيْنِ und bei مِنَ الْبَيْتِ — die Sprache weicht der unbequemen Lautfolge aus. Wer das einmal als Muster sieht, muss nicht jede Einzelform lernen.",
     "color": "other",
@@ -1264,6 +1290,7 @@ const GRAMMAR_RULES = [
   },
   {
     "id": "possessiv-ist-idafa-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     "name": "Die Besitzendung IST ein مُضَاف إِلَيْهِ",
     "shortExplanation": "Das ist der Satz, der die Besitzendungen mit etwas verbindet, das du schon kennst. Der Lehrer nimmt كِتَاب + كَ auseinander: das Nomen ist مُضَاف, die Endung ist مُضَاف إِلَيْهِ — „in einem einzigen Wort\". Seine Worte: „Und immer wenn wir so ein Wort haben … ist immer مُضَاف und مُضَاف إِلَيْهِ in einem einzigen Wort.\" Er zeigt es auch an der längeren Kette نَافِذَةٌ + غُرْفَةٌ + „meins\": nāfidatu ġurfatī, „das Fenster meines Zimmers\" — نَافِذَة ist مُضَاف, غُرْفَة ist مُضَاف إِلَيْهِ, und die Besitzendung hängt am Ende noch einmal dasselbe Verhältnis an. ⭐ Damit ist keine neue Grammatik zu lernen: die Besitzanzeige ist die إِضَافَة, die aus Kapitel 5 schon bekannt ist — nur zusammengeschrieben.",
     "color": "idafa",
@@ -1277,6 +1304,13 @@ const GRAMMAR_RULES = [
   },
   {
     "id": "asma-khamsa-vollstaendig-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
+    ausgeblendet: true,   /* Elias: aus dem Satzmodus. NICHT loeschen. */
+    /* ⛔ WIEDERVORLAGE. Elias am 11.09.2026 dazu: „später wenn mein lehrer es
+       aufgreift und das erklärt dann kann man das rein nehmen aber jetzt noch
+       nicht. man sollte es aber aufbewahren für später". Behandelt eine neue
+       Folge die fünf Ausnahmewörter vollständig: IHN fragen, nicht selbst
+       zurückholen. */
     "name": "الأَسْمَاءُ الخَمْسَةُ — alle fünf, und wann sie gelten",
     "shortExplanation": "Dein Lehrer nennt in Folge 16 nur أَبٌ und أَخٌ und sagt ausdrücklich, die drei übrigen kämen erst im zweiten Buch (asma-khamsa-01). Der deutsche Madina-Schlüssel 3 nennt sie vollständig: أَبٌ، أَخٌ، حَمٌ، فَمٌ، ذُو. ⭐ Und er nennt die Bedingung, unter der die besonderen Endungen überhaupt gelten — im Wortlaut des Buchs: «Diese Nomen bekommen die Sekundären Endungen nur, wenn sie مُضافٌ sind und der مُضافٌ إِلَيْهِ nicht ein Pronomen der ersten Person Singular ist. In dieser Gruppe ist die rafʿ-Endung wāw, die naṣb-Endung alif und die jarr-Endung ist yāʾ.» Damit sind beide Ausnahmen deines Lehrers erklärt: أَبِي (mein Vater) hat kein Wāw, weil dort das Ich-Pronomen steht — und هُوَ أَخٌ hat keins, weil أَخٌ dort gar kein مُضَاف ist. حَمٌ ist laut Fußnote des Buchs «der männliche Verwandte des Ehemanns so wie sein Bruder oder sein Vater». فَمٌ (Mund) geht auf zwei Arten: mit مـ wird es normal dekliniert (فَمُكَ نَظِيفٌ), ohne مـ wie die fünf (فُوكَ صَغِيرٌ).",
     "color": "idafa",
@@ -1290,6 +1324,7 @@ const GRAMMAR_RULES = [
   },
   {
     "id": "mamnu-min-as-sarf-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     "name": "المَمْنُوعُ مِنَ الصَّرْفِ — warum manche Wörter kein Tanwīn haben",
     "shortExplanation": "Drei deiner Regeln beschreiben dasselbe Phänomen, ohne es zu benennen: كَسْلَانُ ohne Tanwīn (adjektive-an-ohne-tanwin-01), weibliche Eigennamen ohne Tanwīn (tanwin-eigennamen-01) und männliche Namen auf ة wie أُسَامَةُ (tanwin-maennername-ta-01). Der Name dafür ist المَمْنُوعُ مِنَ الصَّرْفِ — im Wortlaut des Madina-Schlüssels 3: «Es ist ein muʿrab Nomen, welches kein tanwīn akzeptiert.» ⭐ Und bei zweien davon hat dein Lehrer die Begründung ausdrücklich vertagt («die Begründung dafür komme erst später im Buch, etwa Kapitel 20/21»). Hier ist sie, jeweils nur der Teil, der deine Regeln betrifft. **Adjektive:** kein Tanwīn, «wenn sie das Schema فَعْلانُ haben» — das Buch nennt جَوْعانُ، شَبْعانُ، عَطْشانُ، مَلْآنُ, also genau die Reihe deines Lehrers (faul, hungrig, durstig, wütend, voll). **Eigennamen:** kein Tanwīn, «wenn sie weiblich sind» — und dazu der Satz, der أُسَامَةُ erklärt: das Buch nennt Ḥamza als Beispiel und schreibt daneben, es sei «der Name eines Mannes, aber das Wort ist weiblich, da es auf tāʾ marbūṭah (ة) endet». ⚠️ Das ist bewusst nur ein Ausschnitt. Der Schlüssel behandelt in Lektion 34 neun weitere Gründe (Alif der Weiblichkeit, der Plural nach مَفَاعِل, nichtarabische Namen, verbähnliche Formen und andere) — die brauchst du erst, wenn du dort ankommst.",
     "color": "fem",
@@ -1303,6 +1338,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "verb-madi-endungen-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     /* ⭐ Folge 18, Einschub 10:14–24:22. Der Lehrer hat ALLE vierzehn Formen
        vorgesagt und mit drei Verben durchgespielt (ذَهَبَ, خَرَجَ, كَتَبَ); als
        Hausaufgabe gab er دَرَسَ, رَجَعَ, ضَرَبَ und فَعَلَ auf.
@@ -1325,6 +1361,7 @@ const GRAMMAR_RULES = [
 
   {
     id: "ismun-mawsul-allati-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "الَّتِي (welche — die weibliche Form)",
     shortExplanation: "الَّتِي ist dasselbe Verbindungswort wie الَّذِي, nur fuer ein weibliches Einzelnes. Welches von beiden hineingehoert, entscheidet allein das GESCHLECHT des Wortes davor – nicht, ob es eine Person ist oder eine Sache. An einer Person zeigt es der Lektionstext: وَمَنْ هَذِهِ الْفَتَاةُ الَّتِي مَعَكِ؟ – فَتَاة ist weiblich, also الَّتِي. An Sachen zeigt es die Uebung: الْكِتَابُ الَّذِي عَلَى الْمَكْتَبِ (كِتَاب maennlich) gegen السَّيَّارَةُ الَّتِي خَرَجَتْ مِنَ الْمُسْتَشْفَى (سَيَّارَة weiblich). Dein Lehrer geht in Folge 17 ab 32:06 genau diese zehn Uebungssaetze durch und sagt dabei, worauf zu achten ist: „muessen wir jetzt entscheiden, kommt الَّذِي rein, welche fuer maennliche Begriffe ist, oder الَّتِي rein fuer weibliche Begriffe. Das sind insgesamt zehn Stueck.“ Merkhilfe: das ت in الَّتِي ist dasselbe ت wie in der تَاء مَرْبُوطَة – wo das Wort weiblich ist, steht ein ت.",
     color: "other",
@@ -1333,6 +1370,7 @@ const GRAMMAR_RULES = [
 
   {
     id: "harf-jarr-bi-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "بِـ (der sechste حَرْف جَرّ)",
     shortExplanation: "بِـ ist der sechste حَرْف جَرّ nach فِي، عَلَى، إِلَى، مِنْ، لِ. Wie لِ ist er ein einzelner Buchstabe mit Kasra, der am folgenden Wort klebt und nie allein steht. Er bedeutet „mit“, „durch“, „bei“. Der Lektionstext von Kapitel 12 antwortet auf كَيْفَ حَالُكِ mit أَنَا بِخَيْرٍ وَالْحَمْدُ لِلَّهِ – woertlich „ich bin mit Gutem“. Wie nach jedem حَرْف جَرّ wird das Wort danach مَجْرُور; und weil خَيْر hier unbestimmt ist, steht ein Kasratan, kein einfaches Kasra. Genau danach fragte ein Mitschueler in Folge 17 (10:47): „Aber warum ist bi khayrin? Warum nicht bi khayri?“ – die Antwort des Lehrers: „Weil das Wort khayr unbestimmt ist.“ Das ist dieselbe Regel wie tanwin-nach-harf-jarr-01, nur an einem neuen Buchstaben.",
     color: "nasab",
@@ -1341,6 +1379,7 @@ const GRAMMAR_RULES = [
 
   {
     id: "li-mit-suffix-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "لِ + Suffix wird لَـ — nur لِي behaelt die Kasra",
     shortExplanation: "Haengt an لِ ein Personalsuffix, wechselt die Kasra zur Fatha: لَكَ (dir, zu einem Mann) · لَكِ (dir, zu einer Frau) · لَهُ (ihm) · لَهَا (ihr). Eine einzige Form macht die Ausnahme: die erste Person behaelt die Kasra – لِي (mir). Das Buch macht den Unterschied selbst sichtbar, und zwar an demselben Wort: auf Seite 65 steht أَلَكَ أَخٌ يَا حَامِدُ؟ – die Fatha auf dem كَ ist dort das EINZIGE gedruckte Vokalzeichen der ganzen Uebung. Auf Seite 61 steht لِي أَخٌ وَاحِدٌ mit Kasra. Dieselbe Praeposition, dasselbe Wort أَخ, anderer Vokal. In Folge 17 (09:04) weist dein Lehrer eigens auf das لَكِ hin: „Dieses لَكِ, das ist die ganze Zeit, dass eine Frau zu einer Frau redet.“ Warum ueberhaupt ein Wechsel: لِي waere mit Kasra plus ي zweimal derselbe Laut hintereinander – die Fatha vor den anderen Suffixen macht sie hoerbar verschieden.",
     color: "nasab",
@@ -1349,6 +1388,7 @@ const GRAMMAR_RULES = [
 
   {
     id: "huwa-hiya-weitere-01",
+    satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "أَنْتَ · أَنْتِ · نَحْنُ (die uebrigen Pronomen)",
     shortExplanation: "huwa-hiya-01 endet mit dem Satz „Weitere Pronomen kommen spaeter“ – hier sind sie. أَنَا (ich) · أَنْتَ (du, zu einem Mann) · أَنْتِ (du, zu einer Frau) · نَحْنُ (wir). Das Arabische unterscheidet beim „du“ etwas, was das Deutsche gar nicht kann: an WEN gesprochen wird, steht im Wort selbst. Dein Lehrer zaehlt sie in Folge 17 (02:57) zusammen: „Wir hatten jetzt أَنْتَ, welches du maennlich ist. Wir hatten أَنْتِ, oder jetzt du weiblich. Und wir hatten نَحْنُ, نَحْنُ heisst wir.“ Dasselbe كَ / كِ, das hier die Anrede trennt, taucht als Suffix am Wortende wieder auf: كَيْفَ حَالُكَ zu einem Mann, كَيْفَ حَالُكِ zu einer Frau – siehe possessiv-endungen-01. Und dieselben vierzehn Pronomen ordnen die Verbendungen der Vergangenheit: verb-madi-endungen-01.",
     color: "fem",

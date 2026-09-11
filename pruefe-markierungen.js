@@ -288,6 +288,14 @@ function ladeSatzbauer(){
   kiste.globalThis = kiste;
   vmModul.createContext(kiste);
   vmModul.runInContext(lies('grammar-data.js'), kiste);
+  /* ⛔ Seit dem 11.09.2026 fragt buildSentenceHtml regelAusgeblendet() statt
+     des Feldes (js/regeln.js — sein Schalter „im Satzmodus" entscheidet mit).
+     Ohne diese Zeile warf JEDER Satz, und der Pruefer meldete 326 unsichtbare
+     Markierungen. Geladen wird die ECHTE Datei, kein nachgebauter Ersatz; der
+     leere Speicher entspricht einem Geraet ohne Schalter — dort gilt allein
+     grammar-data.js. [[testvorlage_selbst_nachgebaut]] */
+  vmModul.runInContext('const localStorage = { getItem(){ return null; } };\n'
+    + lies('js/regeln.js') + '\nglobalThis.regelAus = regelAusgeblendet;', kiste);
   vmModul.runInContext(
     'const SETTINGS = { grammarHighlight: true };\n'
     + 'function mitLuecke(){ return null; }\n'
@@ -296,6 +304,7 @@ function ladeSatzbauer(){
     + schneide(saetzeText, 'function anWortgrenze(') + '\n'
     + schneide(saetzeText, 'function buildSentenceHtml(')
     + '\nglobalThis.bau = buildSentenceHtml;', kiste);
+  kiste.bau.regelAus = kiste.regelAus;
   return kiste.bau;
 }
 
@@ -308,7 +317,7 @@ try {
     /* Ausgeblendete Regeln sollen NICHT erscheinen — sie zaehlen nicht. */
     const erwartet = SENTENCE_TAGS[k]
       .map(t => t.ruleId)
-      .filter(id => { const r = GRAMMAR_RULES.find(x => x.id === id); return r && !r.ausgeblendet; });
+      .filter(id => { const r = GRAMMAR_RULES.find(x => x.id === id); return r && !bau.regelAus(r); });
     if (!erwartet.length) continue;
     let html;
     try { html = bau({ id: k, sentAr: s }, { ohneLuecke: true }); }

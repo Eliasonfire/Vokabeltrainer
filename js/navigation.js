@@ -44,7 +44,9 @@ function zeigeBildschirm(name){
      ⚠️ `quran` ist NICHT der Leser, sondern „Vokabeln im Quran". Stuende
      hier 'quranfull', leuchtete der Quran-Reiter auf einem Bildschirm, den
      er gar nicht oeffnet. */
-  const navMap = {home:'home', learn:'learn-entry', categories:'home', sentences:'sentences', wordlist:'home', quran:'home', quranfull:'quranfull', hoeren:'hoeren', wurzeln:'home', settings:'home'};
+  /* ⚠️ `regeln` (11.09.2026) wie categories und wurzeln: erreicht über eine
+     Kachel des Startbildschirms, unten leuchtet deshalb Start. */
+  const navMap = {home:'home', learn:'learn-entry', categories:'home', sentences:'sentences', wordlist:'home', quran:'home', quranfull:'quranfull', hoeren:'hoeren', wurzeln:'home', regeln:'home', settings:'home'};
   const navName = navMap[name] || name;
   document.querySelectorAll(`.nav-btn[data-nav="${navName}"]`).forEach(b=>b.classList.add('active'));
 
@@ -87,6 +89,7 @@ function zeigeBildschirm(name){
   if (name==='quran') renderQuranList();
   if (name==='hoeren') openHoeren();
   if (name==='wurzeln') oeffneWurzeln();
+  if (name==='regeln' && typeof renderRegeln === 'function') renderRegeln();
   if (name==='quranfull') renderSurahList(document.getElementById('surahSearch').value);
   if (name==='settings') renderSettings();
   /* Hier stand `window.scrollTo(0,0)`. Ersatzlos gestrichen: das Fenster rollt
@@ -191,7 +194,10 @@ const OVERLAYS = [
   { id: 'noteEditor',       zu: 'schliesseNotizEditor'  },
   { id: 'quranFreqPopover', zu: 'closeQuranFreqPopover' },
   { id: 'ayahPopover',      zu: 'schliesseAyahListe'    },
-  { id: 'wortKarte',        zu: 'schliesseWortKarte'    }
+  { id: 'wortKarte',        zu: 'schliesseWortKarte'    },
+  /* Die Regelkarte (11.09.2026, js/regeln.js) — dieselbe Ebene in der
+     Historie, sonst liesse die Zurück-Taste sie über dem Bildschirm stehen. */
+  { id: 'regelKarte',       zu: 'schliesseRegelKarte'   }
 ];
 
 /* Welches Overlay liegt gerade oben? Gelesen wird der DOM, nicht eine

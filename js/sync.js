@@ -135,7 +135,16 @@ const SYNC_SCHLUESSEL = [
      einfach alles". Zusammengefuehrt wird je Marke mit dem FRUEHEREN Datum:
      wann ein Meilenstein erreicht wurde, aendert sich durch einen zweiten
      Blick nicht. */
-  'vt_feiern'
+  'vt_feiern',
+  /* ⭐ Die Regelsammlung (11.09.2026, js/regeln.js): seine Schalter „im
+     Satzmodus", bearbeiteten Fassungen, Notizen, der Papierkorb und seine
+     eigenen Regeln. Elias im Goal dazu: „Alles synchron Handy ↔ Tablet …
+     Änderungen an zwei Geräten gehen nicht still verloren."
+     ⚠️ Eigener Zweig in fuehreZusammen(): JE EINTRAG der jüngere, und bei
+     Texten wird der ältere nicht weggeworfen, sondern unter `frueher`
+     mitgeführt. Als Block verlöre eine Notiz am Handy gegen eine Bearbeitung
+     am Tablet. */
+  'vt_regeln'
 ];
 
 /* ---------- ⛔ Die eine Ausnahme: die Quran-Ansicht (10.09.2026) ----------
@@ -439,6 +448,69 @@ function fuehreEinstellungenZusammen(hier, dort, stempelHier, stempelDort){
   return raus;
 }
 
+/* ---------- Die Regelsammlung zusammenfuehren (11.09.2026) ----------
+
+   vt_regeln = { satz, text, notiz, weg, zeigen, eigene }, jeder Abschnitt
+   { id: {…, zeit} }. Je Eintrag gewinnt die juengere `zeit` — ein Zurücksetzen
+   oder Wiederherstellen ist selbst ein Eintrag mit Zeit, keine Luecke, und
+   kommt deshalb genauso an wie das Bearbeiten.
+
+   ⛔ „Änderungen an zwei Geräten gehen nicht still verloren" (Elias, Goal
+   vom 11.09.2026). Bei VERSCHIEDENEN Einträgen ist das mit „je Eintrag" schon
+   erfüllt. Bearbeitet er aber DIESELBE Notiz auf beiden Geräten, kann nur eine
+   Fassung vorne stehen — die ältere wandert deshalb unter `frueher` (höchstens
+   drei), statt zu verschwinden. Doppelt aufgenommen wird nichts: derselbe
+   Abgleich darf zweimal laufen.
+
+   ⚠️ Gleiche Zeit, verschiedener Inhalt: entschieden wird über den Text des
+   Eintrags, damit beide Geräte DIESELBE Wahl treffen — sonst tauschten sie
+   bei jedem Abgleich hin und her.
+
+   ⚠️ Die Quran-Ausnahme (GERAET_EIGENE_EINSTELLUNG) gilt hier NICHT: sie
+   betrifft Felder in vt_settings, und dieser Zweig liest sie absichtlich
+   nicht. test-sync.mjs prueft das mit einem Eintrag, der `quran…` heisst. */
+const REGELN_TEXTFELD = { text: 'kurz', notiz: 'text', eigene: 'kurz' };
+function fuehreRegelnZusammen(hier, dort){
+  const a = (hier && typeof hier === 'object' && !Array.isArray(hier)) ? hier : {};
+  const b = (dort && typeof dort === 'object' && !Array.isArray(dort)) ? dort : {};
+  const raus = Object.assign({}, b, a);
+  const abschnitte = new Set([...Object.keys(a), ...Object.keys(b)]);
+  abschnitte.forEach(ab => {
+    const x = (a[ab] && typeof a[ab] === 'object' && !Array.isArray(a[ab])) ? a[ab] : null;
+    const y = (b[ab] && typeof b[ab] === 'object' && !Array.isArray(b[ab])) ? b[ab] : null;
+    if (!x || !y){ raus[ab] = x || y || a[ab]; return; }
+    const zusammen = Object.assign({}, x);
+    Object.keys(y).forEach(id => {
+      const h = zusammen[id], d = y[id];
+      if (!d || typeof d !== 'object') return;
+      if (!h || typeof h !== 'object'){ zusammen[id] = d; return; }
+      const zh = Number(h.zeit) || 0, zd = Number(d.zeit) || 0;
+      let sieger = h, verlierer = d;
+      if (zd > zh || (zd === zh && JSON.stringify(d) > JSON.stringify(h))){ sieger = d; verlierer = h; }
+      const feld = REGELN_TEXTFELD[ab];
+      if (feld){
+        const alt = verlierer[feld];
+        const liste = []
+          .concat(Array.isArray(sieger.frueher) ? sieger.frueher : [])
+          .concat(Array.isArray(verlierer.frueher) ? verlierer.frueher : []);
+        if (typeof alt === 'string' && alt.trim() && alt !== sieger[feld])
+          liste.push({ text: alt, zeit: Number(verlierer.zeit) || 0 });
+        const gesehen = new Set();
+        const frueher = liste
+          .filter(f => f && typeof f.text === 'string' && f.text !== sieger[feld])
+          .filter(f => { const s = f.zeit + '|' + f.text; if (gesehen.has(s)) return false; gesehen.add(s); return true; })
+          .sort((p, q) => (q.zeit || 0) - (p.zeit || 0))
+          .slice(0, 3);
+        sieger = Object.assign({}, sieger);
+        if (frueher.length) sieger.frueher = frueher; else delete sieger.frueher;
+      }
+      zusammen[id] = sieger;
+    });
+    raus[ab] = zusammen;
+  });
+  return raus;
+}
+
 function fuehreZusammen(fern){
   const meine = syncStempel();
   const fremde = (fern && fern.stempel) || {};
@@ -611,6 +683,16 @@ function fuehreZusammen(fern){
           if (hier !== dort && fremdIstNeuer) raus[id] = dort;
         });
         const neu = JSON.stringify(raus);
+        if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
+      } catch (e){ /* kaputtes JSON auf einer Seite: lokal behalten */ }
+      return;
+    }
+
+    /* Die Regelsammlung: je Abschnitt, je Eintrag der juengere — siehe
+       fuehreRegelnZusammen() weiter unten. */
+    if (k === 'vt_regeln'){
+      try {
+        const neu = JSON.stringify(fuehreRegelnZusammen(JSON.parse(hierRoh), JSON.parse(dortRoh)));
         if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
       } catch (e){ /* kaputtes JSON auf einer Seite: lokal behalten */ }
       return;
