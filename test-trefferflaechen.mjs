@@ -59,7 +59,7 @@ const ZIELE = [
   ['.icon-btn',      'Lernen beenden, Einstellungen — waren 40×40'],
   ['.btn',           'Zurück/Weiter im Satzmodus — waren 43 px hoch'],
   ['.waehler',       'Modus- und Themenwahl — waren 43 px hoch'],
-  ['.hoer-option',   'die vier Antworten im Hörmodus — waren 43 px hoch'],
+  ['.hoer-option',   'die Antworten im Hörmodus (seit 11.09.2026 fünf) — waren 43 px hoch'],
   ['.select-input',  'jede Auswahl in den Einstellungen — war 43 px hoch'],
 ];
 

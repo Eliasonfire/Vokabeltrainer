@@ -34,7 +34,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { ohneKommentareUndTexte } from './js-quelltext.mjs';
 
@@ -227,8 +227,11 @@ console.log('\n=== 3. Die neun Karten aus Folge 19 ===');
 
   if (!fs.existsSync(PDF)){
     console.log('  ⚠️   Musterlösungs-PDF nicht auf diesem Rechner — die Abschrift wurde am 11.09.2026 gegen seine Textebene geprüft, hier nur gegen die Liste.');
+  } else if (!popplerPdftotext()){
+    pruefe('PDF-Gegenprobe: ein pdftotext von Poppler ist da', false,
+      'gefunden nur pdftotext ohne -bbox-layout (xpdf) — Poppler fehlt oder steht nicht im PATH');
   } else {
-    const befunde = pruefeAbschriftGegenPdf(abschrift);
+    const befunde = pruefeAbschriftGegenPdf(abschrift, popplerPdftotext());
     pruefe(`die Abschrift (${abschrift.length} Zeilen) stimmt mit der Textebene des PDFs überein`, !befunde.length, befunde.slice(0, 5).join(' · '));
   }
 }
@@ -331,12 +334,44 @@ console.log('✅ Die Regelsammlung hält: Artefakt und Schalter, umkehrbares Lö
    grammar-data.js gehalten (طَالِبٌ 23×, ذَلِكَ 24×, أَنَا 16× …). Eine Probe,
    die jedes Mal dieselben 25 Fehlalarme meldet, stünde hier nur als Rauschen —
    deshalb läuft sie nicht mit. [[mein_neues_werkzeug_ist_verdaechtig]] */
-function pruefeAbschriftGegenPdf(eintraege){
+/* ⛔ NICHT einfach 'pdftotext' aufrufen (11.09.2026, nachmittags gemessen).
+   In Git Bash steht /mingw64/bin/pdftotext vorn — das ist xpdf 4.06, es kennt
+   -bbox-layout nicht, der Aufruf warf, und der GANZE Pruefer brach ab, mitten
+   im Sammellauf. In PowerShell liegt Poppler (WinGet) vorn, dort lief er
+   gruen: derselbe Pruefer, zwei Ergebnisse, je nach Shell.
+   [[fehler_den_der_entwickler_nie_erlebt]]
+   Deshalb wird der Poppler-pdftotext gesucht — erst im PATH, dann im
+   WinGet-Paketordner — und an seiner eigenen Versionszeile erkannt. */
+function popplerPdftotext(){
+  const kandidaten = [];
+  for (const ordner of (process.env.PATH || '').split(path.delimiter)){
+    for (const name of ['pdftotext.exe', 'pdftotext']){
+      const p = path.join(ordner, name);
+      if (ordner && fs.existsSync(p)) kandidaten.push(p);
+    }
+  }
+  const winget = path.join(process.env.LOCALAPPDATA || '', 'Microsoft', 'WinGet', 'Packages');
+  if (process.env.LOCALAPPDATA && fs.existsSync(winget)){
+    for (const paket of fs.readdirSync(winget, { withFileTypes: true })){
+      if (!paket.isDirectory() || !/poppler/i.test(paket.name)) continue;
+      for (const version of fs.readdirSync(path.join(winget, paket.name), { withFileTypes: true })){
+        const p = path.join(winget, paket.name, version.name, 'Library', 'bin', 'pdftotext.exe');
+        if (version.isDirectory() && fs.existsSync(p)) kandidaten.push(p);
+      }
+    }
+  }
+  for (const p of kandidaten){
+    const r = spawnSync(p, ['-v'], { encoding: 'utf8' });
+    if (/poppler/i.test(String(r.stdout || '') + String(r.stderr || ''))) return p;
+  }
+  return null;
+}
+function pruefeAbschriftGegenPdf(eintraege, pdftotext){
   const istAr = c => /[ً-ْٰء-غف-يٱ]/.test(c);
   const cache = new Map();
   const zeilen = seite => {
     if (cache.has(seite)) return cache.get(seite);
-    const html = execFileSync('pdftotext', ['-enc', 'UTF-8', '-bbox-layout', '-f', String(seite), '-l', String(seite), PDF, '-'], { encoding: 'utf8' });
+    const html = execFileSync(pdftotext, ['-enc', 'UTF-8', '-bbox-layout', '-f', String(seite), '-l', String(seite), PDF, '-'], { encoding: 'utf8' });
     const gruppen = [];
     const re = /<word xMin="[\d.]+" yMin="([\d.]+)" xMax="[\d.]+" yMax="([\d.]+)">([^<]*)<\/word>/g;
     let m;

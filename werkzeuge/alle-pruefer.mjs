@@ -152,6 +152,13 @@ const PRUEFER = [
      aus js/hoeren.js heraus und faehrt sie; ein Nachbau haette den Fehler nie
      enthalten. [[testvorlage_selbst_nachgebaut]] */
   ['werkzeuge/pruefe-hoerziel.mjs', []],
+  /* ⭐ Neu am 11.09.2026. Elias: „beim Hörverstehen sollen 5 Auswahl
+     Möglichkeiten sein und es soll schwerer gemacht werden" — mit Woertern,
+     die sich aehnlich anhoeren oder aehnlich schreiben. Der Pruefer schneidet
+     den Block „AEHNLICHE ABLENKER" aus js/hoeren.js, misst die Wirkung an
+     vocab-data.js gegen den Zufall und legt Aehnlichkeit, Bedeutungsschutz
+     und die Fuenf per Stoertest still. [[stoertest_muss_wirkung_nachweisen]] */
+  ['werkzeuge/pruefe-hoerablenker.mjs', []],
   /* ⭐ Neu am 09.09.2026. „genau 2 ayaht und das wars" — der Rezitator brach
      bei ausgeschaltetem Bildschirm nach zwei Versen ab, weil Vers 3 einen
      neuen Ladevorgang brauchte. Seitdem zwei Elemente im Wechsel; der Pruefer
