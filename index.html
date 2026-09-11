@@ -2201,8 +2201,16 @@ main{
 .gp-sammlung{display:block;margin-top:var(--sp-2);background:none;border:none;padding:0;color:var(--red-soft);font:inherit;font-size:var(--fs-sm);font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
 .ueb-warum{display:inline-flex;align-items:center;gap:6px;margin-top:var(--sp-2);background:var(--surface-3);border:1px solid var(--border-strong);border-radius:var(--r-full);color:var(--text);padding:6px 12px;font:inherit;font-size:var(--fs-sm);font-weight:700;cursor:pointer;line-height:1.8;max-width:100%;flex-wrap:wrap;}
 .rz[data-regelkarte]{cursor:pointer;}
-.such-regeln{margin-bottom:var(--sp-4);}
-.such-regeln-kopf{font-size:var(--fs-xs);font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);margin:0 0 var(--sp-2);}
+/* Die Suche vom Start (11.09.2026 abends): oben die Wörter, darunter die
+   Regeln — je ein Block mit Kopfzeile. Bis dahin stand hier `.such-regeln`,
+   der Regelblock ÜBER den Wörtern in den Kategorien; den gibt es nicht mehr.
+   ⚠️ Ein Block ist kein Flex-Kasten: die Regelzeilen bringen ihren Abstand
+   selbst mit (margin-bottom), im Flex-Abstand stünden sie doppelt so weit
+   auseinander wie in „Regeln". Die Wortzeilen bekommen ihren Abstand deshalb
+   hier, wie sonst über `gap` in `.word-list`. */
+.such-block + .such-block{margin-top:var(--sp-3);}
+.such-block > .word-list-item + .word-list-item{margin-top:var(--sp-2);}
+.such-kopf{font-size:var(--fs-xs);font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);margin:0 0 var(--sp-2);}
 .wk-tippbar:focus-visible{outline:2px solid var(--red);outline-offset:2px;}
 /* Die Blätterknöpfe liegen IM tippbaren Kasten und behalten ihren eigenen
    Zeiger — sie tun etwas anderes als der Kasten um sie herum. */
@@ -4996,11 +5004,18 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
       <!-- ⭐ Suche auf dem Startbildschirm (24.08.2026). Elias wollte sie
            genau hier, zwischen der Fälligkeitskarte und der Buchauswahl.
 
-           ⛔⛔ HIER STEHT KEINE ZWEITE SUCHE. Das Feld übergibt an die
-           bestehende in den Kategorien — dieselbe Funktion, dieselbe
-           Trefferliste, dieselbe Sortierung. Eine zweite Umsetzung wäre eine
-           zweite Wahrheit darüber, was „gefunden" heißt, und beide sähen
-           richtig aus. [[handliste_neben_echter_quelle]]
+           ⭐ Seit 11.09.2026 abends sucht sie Wörter UND Regeln, die Wörter
+           oben. Elias: „im startbildschirm kann es nach beidem suchen aber die
+           wörter sollen immer über den regeln angezeigt werden" — und in den
+           Kategorien „wirklich nur die wörter". Deshalb übergibt das Feld
+           nicht mehr an die Kategorien, sondern an den Bildschirm „Suche"
+           (#screen-suche).
+
+           ⛔⛔ HIER STEHT KEINE ZWEITE SUCHE. Gesucht wird mit denselben
+           Funktionen wie in den Kategorien (sucheTreffer) und in „Regeln"
+           (regelSuche) — dieselbe Trefferliste, dieselbe Sortierung. Eine
+           zweite Umsetzung wäre eine zweite Wahrheit darüber, was „gefunden"
+           heißt, und beide sähen richtig aus. [[handliste_neben_echter_quelle]]
 
            ⚠️ Der Wechsel hängt am `focus`, nicht am ersten Tastendruck: so
            bleibt die Tastatur offen (ein anderes Textfeld übernimmt den
@@ -5009,9 +5024,9 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
            erste Zeichen vor dem Fokus an. -->
       <div class="suche-feld start-suche">
         <svg class="ic"><use href="#ic-search"/></svg>
-        <input type="text" id="startSuche" placeholder="Alle Wörter durchsuchen …"
+        <input type="text" id="startSuche" placeholder="Wörter und Regeln durchsuchen …"
                autocomplete="off" autocapitalize="off" spellcheck="false"
-               aria-label="Alle Wörter durchsuchen">
+               aria-label="Wörter und Regeln durchsuchen">
       </div>
 
       <div class="session-filters">
@@ -5328,6 +5343,33 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 
       <div class="cat-pane stagger" id="catPane-chapters"></div>
       <div class="cat-pane hidden stagger" id="catPane-roots"></div>
+    </section>
+
+    <!-- ============ SUCHE (vom Start: Wörter UND Regeln) ============
+         Elias, 11.09.2026, 22:39: „ich möchte das wenn ich bei den kategorien
+         suche es wirklich nur die wörter finden soll und nicht die regeln und
+         wenn ich bei den regeln bin dann soll es auch wirklich nur nach regeln
+         suchen. im startbildschirm kann es nach beidem suchen aber die wörter
+         sollen immer über den regeln angezeigt werden"
+
+         ⭐ Ein eigener Bildschirm, weil das Startfeld bisher in die Kategorien
+         durchreichte — dort gehören Regeln jetzt nicht mehr hin. Aufbau wie die
+         Suche der Kategorien: das Feld oben, damit die Treffer über der
+         Tastatur stehen. Gezeichnet von zeichneAlleSuche() in js/kategorien.js,
+         bewacht von werkzeuge/pruefe-suchorte.mjs. -->
+    <section class="screen" id="screen-suche" data-screen="suche">
+      <div class="screen-header">
+        <button class="icon-btn" data-back aria-label="Zurück"><svg class="ic"><use href="#ic-left"/></svg></button>
+        <h2>Suche</h2>
+      </div>
+      <div class="suche-feld">
+        <svg class="ic"><use href="#ic-search"/></svg>
+        <input type="text" id="alleSuche" placeholder="Wörter und Regeln durchsuchen …"
+               autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Wörter und Regeln durchsuchen">
+        <button class="icon-btn hidden" id="btnAlleSucheLeeren" aria-label="Suche leeren"><svg class="ic"><use href="#ic-close"/></svg></button>
+      </div>
+      <div class="suche-hinweis hidden" id="alleSucheHinweis"></div>
+      <div class="word-list hidden" id="alleSucheTreffer"></div>
     </section>
 
     <!-- ============ WORD LIST (drill into a category) ============ -->
@@ -5845,7 +5887,10 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         <h2>Regeln</h2>
       </div>
       <!-- Goal, Punkt 10: „dieselbe Suche oben in „Regeln"" — dieselbe
-           Funktion wie der Regelblock der Kategorien-Suche (regelSuche). -->
+           Funktion (regelSuche) wie der Regelblock der Suche vom Start.
+           Hier NUR Regeln — Elias, 11.09.2026, 22:39: „wenn ich bei den regeln
+           bin dann soll es auch wirklich nur nach regeln suchen". Die
+           Kategorien-Suche zeigt seitdem keine Regeln mehr. -->
       <div class="suche-feld regeln-suche">
         <svg class="ic"><use href="#ic-search"/></svg>
         <input type="text" id="regelnSuche" placeholder="Regel suchen — Deutsch, Arabisch, mudaf …"
@@ -6124,12 +6169,18 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
       <div class="setting-row">
         <div>
           <div class="setting-title">Lernrichtung</div>
-          <div class="setting-sub">Was zuerst auf der Karte steht</div>
+          <div class="setting-sub" id="directionSub">Was zuerst auf der Karte steht</div>
         </div>
+        <!-- ⭐ „Nach Box" (11.09.2026 abends). Elias: „was hälst du dann davon wenn
+             wir die ersten zwei boxen nur auf arabisch anzeigen lassen und ab box 3
+             wieder gemischt machen?" — „arbeite erstmal daran". Was die Wahl tut,
+             steht in der Unterzeile (zeigeRichtungHinweis in js/einstellungen.js);
+             „Gemischt" bleibt, wie er es am 07.09.2026 verlangt hat. -->
         <select id="directionSelect" class="select-input">
           <option value="ar-de">Arabisch → Deutsch</option>
           <option value="de-ar">Deutsch → Arabisch</option>
           <option value="mixed">Gemischt (zufällig)</option>
+          <option value="box">Nach Box</option>
         </select>
       </div>
       <!-- ⭐ Der Tagesdeckel (07.09.2026). Elias: „das ist gut" — und sein

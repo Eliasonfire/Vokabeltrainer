@@ -167,12 +167,43 @@ function passeRundeAnAuswahlAn(){
   return true;
 }
 
+/* ⭐ „Nach Box" (11.09.2026 abends). Elias: „was hälst du dann davon wenn wir
+   die ersten zwei boxen nur auf arabisch anzeigen lassen und ab box 3 wieder
+   gemischt machen? wenn ich so doch besser lernen sollte" — und dann: „arbeite
+   erstmal daran".
+
+   Box 1 und 2 fragen nur Arabisch → Deutsch, ab Box 3 wie „Gemischt". Grund:
+   Terai, Yamashita & Pasich 2021 — schwächere Lerner lernen in Richtung
+   L2 → L1 wirksamer, stärkere in L1 → L2. ⚠️ Die Studie hat 28 Teilnehmer und
+   teilt LERNER nach ihrem Niveau ein, nicht Wörter nach ihrer Box; dass die
+   Box dafür ein brauchbares Maß ist, ist plausibel, aber nicht gemessen
+   (Nachrecherche 08.09.2026, 04 - Wissen/Lernen-mit-ADHS.md). Die Grenze bei
+   Box 3 ist Elias' Wahl, keine Zahl aus einer Studie.
+
+   ⛔ „Gemischt (zufällig)" bleibt eine eigene Wahl und würfelt weiter bei JEDER
+   Box — Elias am 07.09.2026: „option für gemischt soll trotzdem in
+   einstellungen bleiben".
+
+   ⚠️ Die Richtung wird je Karte EINMAL festgelegt (SESSION.dirs), auch bei
+   „Nach Box" — sonst wechselte sie zwischen Vorderseite und Antwortprüfung,
+   wenn die Bewertung die Box dazwischen verschiebt. Ein neues Wort ohne
+   Fortschritt zählt als Box 1. Bewacht von test-richtung-nach-box.mjs. */
+const RICHTUNG_NUR_ARABISCH_BIS_BOX = 2;
+
 function cardDirection(idx){
-  if (SETTINGS.direction === 'mixed'){
-    if (SESSION.dirs[idx] === undefined) SESSION.dirs[idx] = Math.random()<0.5 ? 'ar-de' : 'de-ar';
+  const wahl = SETTINGS.direction;
+  if (wahl === 'mixed' || wahl === 'box'){
+    if (SESSION.dirs[idx] === undefined){
+      const w = SESSION.words[idx];
+      const p = w ? PROGRESS[w.id] : null;
+      const box = (p && p.box) || 1;
+      SESSION.dirs[idx] = (wahl === 'box' && box <= RICHTUNG_NUR_ARABISCH_BIS_BOX)
+        ? 'ar-de'
+        : (Math.random() < 0.5 ? 'ar-de' : 'de-ar');
+    }
     return SESSION.dirs[idx];
   }
-  return SETTINGS.direction || 'ar-de';
+  return wahl || 'ar-de';
 }
 
 function renderCard(){

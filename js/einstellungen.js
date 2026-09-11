@@ -12,6 +12,7 @@ function renderSettings(){
   if (typeof zeigeTagesDeckel === 'function') zeigeTagesDeckel();
   if (typeof zeigeHoerZiel === 'function') zeigeHoerZiel();
   document.getElementById('directionSelect').value = SETTINGS.direction || 'ar-de';
+  zeigeRichtungHinweis();
   document.getElementById('toggleTippen').classList.toggle('on', !!SETTINGS.tippenAbBox4);
   /* Wurzelmodus. Die Ausrichtung ist standardmaessig AN, deshalb wird auf
      `!== false` geprueft und nicht auf Wahrheit - ein fehlender Eintrag ist
@@ -686,7 +687,19 @@ document.getElementById('sessionSizeEigen').addEventListener('blur', ()=>{
 document.getElementById('directionSelect').addEventListener('change', (e)=>{
   SETTINGS.direction = e.target.value;
   saveSettings();
+  zeigeRichtungHinweis();
 });
+/* Die Unterzeile sagt bei „Nach Box", was die Wahl tut — der Name allein
+   verrät es nicht, und für eine lange Beschriftung ist die Auswahl auf dem
+   Handy zu schmal. Elias, 11.09.2026 abends: „die ersten zwei boxen nur auf
+   arabisch … und ab box 3 wieder gemischt". */
+function zeigeRichtungHinweis(){
+  const unter = document.getElementById('directionSub');
+  if (!unter) return;
+  unter.textContent = (SETTINGS.direction === 'box')
+    ? 'Box 1–2 nur Arabisch → Deutsch, ab Box 3 gemischt'
+    : 'Was zuerst auf der Karte steht';
+}
 document.getElementById('voiceSelect').addEventListener('change', (e)=>{
   SETTINGS.voiceURI = e.target.value;
   saveSettings();

@@ -297,7 +297,12 @@ console.log('\n=== 7. Stufe 2 — „so gut wie möglich in die app integriert" 
   pruefe('Lesemodus-Aufklapper: „in der Sammlung öffnen"', /gp-sammlung[^`]*data-regelkarte=/.test(lies('js/saetze.js')));
   pruefe('„Wie gut sitzen die Regeln?": jede Zeile öffnet ihre Karte', /class="rz' \+ ton \+ '" role="button"[^;]*data-regelkarte=/.test(lies('js/statistik.js')));
   pruefe('Karte: „im Satzmodus üben" setzt den Regelfilter', /setzeRegelfilter\(ids,/.test(lies('js/regeln.js')) && /function satzListe\(/.test(lies('js/saetze.js')));
-  pruefe('die Kategorien-Suche zeichnet einen Regelblock über den Wörtern', /treffer\.innerHTML = regelBlock \+/.test(lies('js/kategorien.js')));
+  /* ⛔ Bis 11.09.2026, 22:39 stand hier „die Kategorien-Suche zeichnet einen
+     Regelblock über den Wörtern" (Punkt 10). Elias hat es am selben Abend neu
+     bestimmt: Kategorien nur Wörter, Regeln nur Regeln, Start beides mit den
+     Wörtern oben. Wo welche Suche was zeigt, bewacht jetzt
+     werkzeuge/pruefe-suchorte.mjs am echten Quelltext, mit Störtests. */
+  pruefe('die Suche vom Start zeigt die Regeln UNTER den Wörtern (Einzelheiten: pruefe-suchorte.mjs)', /treffer\.innerHTML = wortBlock \+ regelBlock;/.test(lies('js/kategorien.js')));
 
   /* Die Suche wirklich laufen lassen — mit dem ECHTEN suchFlach aus
      js/kategorien.js, herausgeschnitten wie in pruefe-markierungen.js. */

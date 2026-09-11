@@ -45,8 +45,9 @@ function zeigeBildschirm(name){
      hier 'quranfull', leuchtete der Quran-Reiter auf einem Bildschirm, den
      er gar nicht oeffnet. */
   /* ⚠️ `regeln` (11.09.2026) wie categories und wurzeln: erreicht über eine
-     Kachel des Startbildschirms, unten leuchtet deshalb Start. */
-  const navMap = {home:'home', learn:'learn-entry', categories:'home', sentences:'sentences', wordlist:'home', quran:'home', quranfull:'quranfull', hoeren:'hoeren', wurzeln:'home', regeln:'home', settings:'home'};
+     Kachel des Startbildschirms, unten leuchtet deshalb Start. Ebenso `suche`
+     (11.09.2026 abends): erreicht über das Suchfeld auf dem Start. */
+  const navMap = {home:'home', learn:'learn-entry', categories:'home', sentences:'sentences', wordlist:'home', quran:'home', quranfull:'quranfull', hoeren:'hoeren', wurzeln:'home', regeln:'home', suche:'home', settings:'home'};
   const navName = navMap[name] || name;
   document.querySelectorAll(`.nav-btn[data-nav="${navName}"]`).forEach(b=>b.classList.add('active'));
 
@@ -90,6 +91,10 @@ function zeigeBildschirm(name){
   if (name==='hoeren') openHoeren();
   if (name==='wurzeln') oeffneWurzeln();
   if (name==='regeln' && typeof renderRegeln === 'function') renderRegeln();
+  /* Die Suche vom Start (11.09.2026 abends, js/kategorien.js): beim Öffnen und
+     beim Zurückkommen neu zeichnen — der Begriff steht noch im Feld, und eine
+     Regel kann inzwischen bearbeitet oder weggeworfen sein. */
+  if (name==='suche' && typeof zeichneAlleSuche === 'function') zeichneAlleSuche();
   /* Der Regelfilter aus der Sammlung (js/saetze.js) gilt nur für den einen
      Besuch im Satzmodus — kommt er später über die Leiste zurück, soll dort
      wieder sein Thema stehen, nicht still die drei Sätze von damals. */
