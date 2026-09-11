@@ -170,6 +170,10 @@ const PRUEFER = [
      Regelsammlung pflegt (regeln-holen, regelsammlung-wache) — mit Köder gegen
      ein Durchsickern seines Lernstands und Störtests am echten Quelltext. */
   ['werkzeuge/pruefe-regelsammlung-routinen.mjs', []],
+  /* ⭐ Neu am 11.09.2026 abends: neue Fachbegriffe finden und direkt eintragen
+     (Elias: „Direkt eintragen"). Eichung an den zehn vom 17.08., Abweisungen
+     mit je EINEM Grund, alles-oder-nichts, Störtests am echten Quelltext. */
+  ['werkzeuge/pruefe-fachbegriffe-kette.mjs', []],
   /* ⭐ Neu am 09.09.2026. „genau 2 ayaht und das wars" — der Rezitator brach
      bei ausgeschaltetem Bildschirm nach zwei Versen ab, weil Vers 3 einen
      neuen Ladevorgang brauchte. Seitdem zwei Elemente im Wechsel; der Pruefer

@@ -1,0 +1,464 @@
+{
+  "_zweck": "Entscheidungen über Fachbegriff-Kandidaten aus fachbegriffe-finden.mjs — jeder Begriff (Vergleichsform ohne Vokalzeichen und Artikel) wird nur einmal entschieden.",
+  "entscheidungen": {
+    "مبتدا": {
+      "entscheidung": "aufgenommen",
+      "id": "gram-mubtada",
+      "form": "مُبْتَدَأ",
+      "am": "2026-09-11"
+    },
+    "خبر": {
+      "entscheidung": "aufgenommen",
+      "id": "gram-khabar",
+      "form": "خَبَر",
+      "am": "2026-09-11"
+    },
+    "منصوب": {
+      "entscheidung": "aufgenommen",
+      "id": "gram-mansub",
+      "form": "مَنْصُوب",
+      "buchTausch": "50471",
+      "am": "2026-09-11"
+    },
+    "حرف": {
+      "entscheidung": "aufgenommen",
+      "id": "gram-harf",
+      "form": "حَرْف",
+      "am": "2026-09-11"
+    },
+    "فعل": {
+      "entscheidung": "aufgenommen",
+      "id": "gram-fil",
+      "form": "فِعْل",
+      "am": "2026-09-11"
+    },
+    "مد": {
+      "entscheidung": "aufgenommen",
+      "id": "gram-madd",
+      "form": "مَدّ",
+      "am": "2026-09-11"
+    },
+    "مطابقة": {
+      "entscheidung": "aufgenommen",
+      "id": "gram-mutabaqa",
+      "form": "مُطَابَقَة",
+      "buchTausch": "47239",
+      "am": "2026-09-11"
+    },
+    "ماضي": {
+      "entscheidung": "aufgenommen",
+      "id": "gram-madi",
+      "form": "اَلْمَاضِي",
+      "am": "2026-09-11"
+    },
+    "تنوين": {
+      "entscheidung": "aufgenommen",
+      "id": "gram-tanwin",
+      "form": "التَّنْوِينُ",
+      "am": "2026-09-11"
+    },
+    "هذا": {
+      "entscheidung": "abgelehnt",
+      "grund": "Hinweiswort — eine Buchvokabel, kein Fachbegriff",
+      "am": "2026-09-11"
+    },
+    "هذه": {
+      "entscheidung": "abgelehnt",
+      "grund": "Hinweiswort — eine Buchvokabel, kein Fachbegriff",
+      "am": "2026-09-11"
+    },
+    "ذلك": {
+      "entscheidung": "abgelehnt",
+      "grund": "Hinweiswort — eine Buchvokabel, kein Fachbegriff",
+      "am": "2026-09-11"
+    },
+    "تلك": {
+      "entscheidung": "abgelehnt",
+      "grund": "Hinweiswort — eine Buchvokabel, kein Fachbegriff",
+      "am": "2026-09-11"
+    },
+    "هل": {
+      "entscheidung": "abgelehnt",
+      "grund": "Fragepartikel — eine Buchvokabel, kein Fachbegriff",
+      "am": "2026-09-11"
+    },
+    "ماذا": {
+      "entscheidung": "abgelehnt",
+      "grund": "Fragewort — eine Buchvokabel, kein Fachbegriff",
+      "am": "2026-09-11"
+    },
+    "لمن": {
+      "entscheidung": "abgelehnt",
+      "grund": "Fragewort — eine Buchvokabel, kein Fachbegriff",
+      "am": "2026-09-11"
+    },
+    "من اين": {
+      "entscheidung": "abgelehnt",
+      "grund": "Fragewort — eine Buchvokabel, kein Fachbegriff",
+      "am": "2026-09-11"
+    },
+    "كيف": {
+      "entscheidung": "abgelehnt",
+      "grund": "Fragewort — eine Buchvokabel, kein Fachbegriff",
+      "am": "2026-09-11"
+    },
+    "ما هذا": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielfrage „was ist das?“ — kein Begriff",
+      "am": "2026-09-11"
+    },
+    "خلف": {
+      "entscheidung": "abgelehnt",
+      "grund": "Ortsangabe als Beispielwort einer Regel — Buchvokabel, kein Fachbegriff",
+      "am": "2026-09-11"
+    },
+    "عند": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielwort einer Regel — Buchvokabel, kein Fachbegriff",
+      "am": "2026-09-11"
+    },
+    "ذهب": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielverb einer Regel — Buchvokabel, kein Fachbegriff",
+      "am": "2026-09-11"
+    },
+    "خرج": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielverb einer Regel — Buchvokabel, kein Fachbegriff",
+      "am": "2026-09-11"
+    },
+    "كسلان": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispieladjektiv einer Regel — Buchvokabel, kein Fachbegriff",
+      "am": "2026-09-11"
+    },
+    "مسلم": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielwort einer Regel — Buchvokabel, kein Fachbegriff",
+      "am": "2026-09-11"
+    },
+    "مسلمة": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielwort einer Regel — Buchvokabel, kein Fachbegriff",
+      "am": "2026-09-11"
+    },
+    "شمس": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielwort (Sonnenbuchstaben-Merkhilfe) — kein Fachbegriff",
+      "am": "2026-09-11"
+    },
+    "قمر": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielwort (Mondbuchstaben-Merkhilfe) — kein Fachbegriff",
+      "am": "2026-09-11"
+    },
+    "هذا بيت": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielsatz einer Regel — kein Begriff",
+      "am": "2026-09-11"
+    },
+    "قميص نظيف": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielsatz einer Regel — kein Begriff",
+      "am": "2026-09-11"
+    },
+    "بنت صغيرة": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispiel einer Regel — kein Begriff",
+      "am": "2026-09-11"
+    },
+    "على مكتب": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielgruppe aus Regeln — kein Begriff",
+      "am": "2026-09-11"
+    },
+    "من بيت": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielgruppe aus Regeln — kein Begriff",
+      "am": "2026-09-11"
+    },
+    "كتاب له": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielgruppe aus Regeln — kein Begriff",
+      "am": "2026-09-11"
+    },
+    "في بيت": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielgruppe aus Regeln — kein Begriff",
+      "am": "2026-09-11"
+    },
+    "مكتب مدرس": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielgruppe aus Regeln — kein Begriff",
+      "am": "2026-09-11"
+    },
+    "مسجد كبير": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielgruppe aus Regeln — kein Begriff",
+      "am": "2026-09-11"
+    },
+    "اعضاء مزدوجة": {
+      "entscheidung": "abgelehnt",
+      "grund": "Regelbeschreibung („paarige Körperteile“) — kein fester Begriff",
+      "am": "2026-09-11"
+    },
+    "مؤنث بلا تاء": {
+      "entscheidung": "abgelehnt",
+      "grund": "Regelbeschreibung („weiblich ohne Tāʾ“) — kein fester Begriff",
+      "am": "2026-09-11"
+    },
+    "مبتدا وخبر": {
+      "entscheidung": "abgelehnt",
+      "grund": "Regelname aus zwei Begriffen — beide einzeln aufgenommen (gram-mubtada, gram-khabar)",
+      "am": "2026-09-11"
+    },
+    "محمد": {
+      "entscheidung": "abgelehnt",
+      "grund": "Eigenname aus Beispielsätzen",
+      "am": "2026-09-11"
+    },
+    "حامد": {
+      "entscheidung": "abgelehnt",
+      "grund": "Eigenname aus Beispielsätzen",
+      "am": "2026-09-11"
+    },
+    "فاطمة": {
+      "entscheidung": "abgelehnt",
+      "grund": "Eigenname aus Beispielsätzen",
+      "am": "2026-09-11"
+    },
+    "خالد": {
+      "entscheidung": "abgelehnt",
+      "grund": "Eigenname aus Beispielsätzen",
+      "am": "2026-09-11"
+    },
+    "ياسر": {
+      "entscheidung": "abgelehnt",
+      "grund": "Eigenname aus Beispielsätzen",
+      "am": "2026-09-11"
+    },
+    "عمار": {
+      "entscheidung": "abgelehnt",
+      "grund": "Eigenname aus Beispielsätzen",
+      "am": "2026-09-11"
+    },
+    "عباس": {
+      "entscheidung": "abgelehnt",
+      "grund": "Eigenname aus Beispielsätzen",
+      "am": "2026-09-11"
+    },
+    "لخالد": {
+      "entscheidung": "abgelehnt",
+      "grund": "Eigenname mit Präposition aus Beispielsätzen",
+      "am": "2026-09-11"
+    },
+    "ال": {
+      "entscheidung": "abgelehnt",
+      "grund": "Artikel — Wortbestandteil, kein eigener Begriff",
+      "am": "2026-09-11"
+    },
+    "لل": {
+      "entscheidung": "abgelehnt",
+      "grund": "Präposition mit Artikel — Wortbestandteil, kein eigener Begriff",
+      "am": "2026-09-11"
+    },
+    "من ال": {
+      "entscheidung": "abgelehnt",
+      "grund": "Präposition mit Artikel — Wortbestandteil, kein eigener Begriff",
+      "am": "2026-09-11"
+    },
+    "له": {
+      "entscheidung": "abgelehnt",
+      "grund": "Präposition mit Endung — Wortbestandteil, kein eigener Begriff",
+      "am": "2026-09-11"
+    },
+    "لي": {
+      "entscheidung": "abgelehnt",
+      "grund": "Präposition mit Endung — Wortbestandteil, kein eigener Begriff",
+      "am": "2026-09-11"
+    },
+    "فيه": {
+      "entscheidung": "abgelehnt",
+      "grund": "Präposition mit Endung — Wortbestandteil, kein eigener Begriff",
+      "am": "2026-09-11"
+    },
+    "تي": {
+      "entscheidung": "abgelehnt",
+      "grund": "Wortbruchstück (aus الَّتِي) — kein Begriff",
+      "am": "2026-09-11"
+    },
+    "يه": {
+      "entscheidung": "abgelehnt",
+      "grund": "Wortbruchstück (aus فِيهِ/إِلَيْهِ) — kein Begriff",
+      "am": "2026-09-11"
+    },
+    "جر": {
+      "entscheidung": "abgelehnt",
+      "grund": "Nur als Teil von حَرْفُ الْجَرِّ und مَجْرُور — beide schon Vokabel bzw. Fachbegriff",
+      "am": "2026-09-11"
+    },
+    "حروف": {
+      "entscheidung": "abgelehnt",
+      "grund": "Plural von حَرْف — derselbe Begriff, aufgenommen als gram-harf",
+      "am": "2026-09-11"
+    },
+    "حروف جر": {
+      "entscheidung": "abgelehnt",
+      "grund": "Plural von حَرْفُ الْجَرِّ, das schon eigene Vokabel ist",
+      "am": "2026-09-11"
+    },
+    "كسرة": {
+      "entscheidung": "frage",
+      "frage": "Kasra: in deinen Regeln steht nur كَسْرة — auf dem ر fehlt das Vokalzeichen. Wie schreibt dein Lehrer den Begriff vollständig?",
+      "form": "كَسْرة",
+      "regeln": [
+        "schakl-01",
+        "idafa-01",
+        "hu-nach-kasra-01"
+      ],
+      "am": "2026-09-11"
+    },
+    "تشكيل": {
+      "entscheidung": "frage",
+      "frage": "Taschkīl: in deinen Regeln steht nur تَشْكيل — auf ك und ي fehlen Zeichen. Wie schreibt dein Lehrer den Begriff vollständig?",
+      "form": "تَشْكيل",
+      "regeln": [
+        "schakl-01",
+        "taschkil-kontext-01"
+      ],
+      "am": "2026-09-11"
+    },
+    "همزة وصل": {
+      "entscheidung": "frage",
+      "frage": "Hamzat al-waṣl: in deinen Regeln steht nur هَمْزَةُ الوَصْل — auf dem lām des Artikels fehlt das Sukūn. Wie schreibt dein Lehrer den Begriff vollständig?",
+      "form": "هَمْزَةُ الوَصْل",
+      "regeln": [
+        "hamzatul-wasl-01"
+      ],
+      "am": "2026-09-11"
+    },
+    "جملة اسمية": {
+      "entscheidung": "frage",
+      "frage": "Nominalsatz: in deinen Regeln steht nur جُمْلة اسْمِيّة — mehrere Zeichen fehlen. Wie schreibt dein Lehrer den Begriff vollständig?",
+      "form": "جُمْلة اسْمِيّة",
+      "regeln": [
+        "jumla-ismiya-filiya-01"
+      ],
+      "am": "2026-09-11"
+    },
+    "جملة فعلية": {
+      "entscheidung": "frage",
+      "frage": "Verbalsatz: in deinen Regeln steht nur جُمْلة فِعْلِيّة — mehrere Zeichen fehlen. Wie schreibt dein Lehrer den Begriff vollständig?",
+      "form": "جُمْلة فِعْلِيّة",
+      "regeln": [
+        "jumla-ismiya-filiya-01"
+      ],
+      "am": "2026-09-11"
+    },
+    "تقديم": {
+      "entscheidung": "frage",
+      "frage": "Taqdīm (Voranstellung): in deinen Regeln steht nur تَقْديم — auf د und ي fehlen Zeichen. Nennt dein Lehrer den Begriff so, und wie schreibt er ihn vollständig?",
+      "form": "تَقْديم",
+      "regeln": [
+        "wortstellung-fokus-01"
+      ],
+      "am": "2026-09-11"
+    },
+    "اعراب": {
+      "entscheidung": "frage",
+      "frage": "Iʿrāb: in deinen Regeln steht nur اَلْإِعْراب bzw. الإِعْرَاب — nirgends vollständig. Wie schreibt dein Lehrer den Begriff?",
+      "form": "اَلْإِعْراب",
+      "regeln": [
+        "irab-drei-faelle-01"
+      ],
+      "am": "2026-09-11"
+    },
+    "حروف شمسية وقمرية": {
+      "entscheidung": "frage",
+      "frage": "Sonnen- und Mondbuchstaben: in deinen Regeln steht nur حُروف شَمْسِيّة وقَمَرِيّة — mehrere Zeichen fehlen. Wie schreibt dein Lehrer die beiden Begriffe vollständig?",
+      "form": "حُروف شَمْسِيّة وقَمَرِيّة",
+      "regeln": [
+        "schams-qamar-01"
+      ],
+      "am": "2026-09-11"
+    },
+    "نكرة": {
+      "entscheidung": "zurueckgestellt",
+      "grund": "Nur aus einer Buchregel (nakira-marifa-01), im Unterricht noch nicht gefallen — kommt wieder, sobald eine Unterrichtsregel ihn nennt.",
+      "regeln": [
+        "nakira-marifa-01"
+      ],
+      "am": "2026-09-11"
+    },
+    "معرفة": {
+      "entscheidung": "zurueckgestellt",
+      "grund": "Nur aus einer Buchregel (nakira-marifa-01), im Unterricht noch nicht gefallen — kommt wieder, sobald eine Unterrichtsregel ihn nennt.",
+      "regeln": [
+        "nakira-marifa-01"
+      ],
+      "am": "2026-09-11"
+    },
+    "بدل": {
+      "entscheidung": "zurueckgestellt",
+      "grund": "Nur aus einer Buchregel (badal-01), im Unterricht noch nicht gefallen.",
+      "regeln": [
+        "badal-01"
+      ],
+      "am": "2026-09-11"
+    },
+    "ظرف مكان": {
+      "entscheidung": "zurueckgestellt",
+      "grund": "Nur aus Buchregeln (zarf-makan-rollenname-01, zarf-mansub-01), im Unterricht noch nicht gefallen.",
+      "regeln": [
+        "zarf-makan-rollenname-01",
+        "zarf-mansub-01"
+      ],
+      "am": "2026-09-11"
+    },
+    "تقاء ساكنين": {
+      "entscheidung": "zurueckgestellt",
+      "grund": "Buchregel; in Folge 16 nur als Querverweis in der Erklärung, nicht als Wort des Lehrers belegt.",
+      "regeln": [
+        "iltiqa-sakinain-01",
+        "hu-nach-kasra-01"
+      ],
+      "am": "2026-09-11"
+    },
+    "اسماء خمسة": {
+      "entscheidung": "zurueckgestellt",
+      "grund": "Buchregel und Wiedervorlage (wiedervorlagen.json): Elias will sie erst, wenn sein Lehrer die fünf Wörter aufgreift.",
+      "regeln": [
+        "asma-khamsa-vollstaendig-01"
+      ],
+      "am": "2026-09-11"
+    },
+    "ممنوع من صرف": {
+      "entscheidung": "zurueckgestellt",
+      "grund": "Nur aus einer Buchregel, im Unterricht noch nicht gefallen.",
+      "regeln": [
+        "mamnu-min-as-sarf-01"
+      ],
+      "am": "2026-09-11"
+    },
+    "عاقل": {
+      "entscheidung": "zurueckgestellt",
+      "grund": "Steht in Erklärungen („für Vernunftbegabte“); nicht belegt, dass der Lehrer den arabischen Begriff selbst benutzt.",
+      "regeln": [
+        "ismul-isara-hadha-01",
+        "istifham-madha-01",
+        "ismun-mawsul-alladhi-01"
+      ],
+      "am": "2026-09-11"
+    },
+    "مفتوح": {
+      "entscheidung": "zurueckgestellt",
+      "grund": "Steht als Beispielwort und Beschreibung; nicht belegt, dass der Lehrer den Begriff als Fachwort benutzt.",
+      "regeln": [
+        "madd-tabii-01",
+        "al-tanwin-tilgung-01",
+        "mubtada-khabar-genus-01"
+      ],
+      "am": "2026-09-11"
+    }
+  }
+}

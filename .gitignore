@@ -143,4 +143,6 @@ data/bestandsbelege.json
 .regeln-stand*.json
 .regelsammlung-wache*.json
 .aufnahmen.json
+.fachbegriffe-auftrag.json
 werkzeuge/.stoer-*
+.stoer-*
