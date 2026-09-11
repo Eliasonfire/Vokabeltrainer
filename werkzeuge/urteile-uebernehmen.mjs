@@ -44,6 +44,26 @@
  *
  * ⚠️ Geschrieben wird ERST AM ENDE. Bricht das Skript in der Mitte ab, ist die
  * Datei unverändert — nicht halb bearbeitet.
+ *
+ * ================== ⛔ --zeit: DIE JÜNGERE ENTSCHEIDUNG GILT (11.09.2026) ===
+ *
+ *   node werkzeuge/urteile-uebernehmen.mjs <datei> --zeit 2026-09-11T04:08:22+02:00
+ *
+ * Seit der Regelsammlung gibt es in der App einen Schalter „im Satzmodus" je
+ * Regel — und das Artefakt bleibt (Elias, 11.09.2026: „artefakt soll da
+ * bleiben"). Zwei Stellen, eine Entscheidung: sie dürfen sich nicht still
+ * überschreiben. Deshalb trägt jede Regel aus einem Export den Zeitpunkt, an
+ * dem er ihn kopiert hat (`satzmodusUrteil`), und js/regeln.js vergleicht ihn
+ * mit der Zeit seines Schalters.
+ *
+ * ⚠️ Der Zeitstempel wird nur gesetzt, wo der Export etwas ENTSCHEIDET:
+ *   - die Regel wechselt ihren Zustand (raus → drin oder umgekehrt), oder
+ *   - sie hatte noch gar keinen Zeitstempel.
+ * Steht eine Regel im Export genauso wie in der Datei, bleibt ihr ALTER
+ * Zeitpunkt. Sonst gälte ein unveränderter Export-Eintrag vom 26.08., nur weil
+ * er am 14.09. erneut kopiert wurde, als jünger als ein Schalter vom 12.09. —
+ * und der Schalter spränge still zurück. Das Artefakt kennt die Schalter der
+ * App nicht; es kann sie nicht bewusst überstimmen.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -54,8 +74,21 @@ const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DATEN = path.join(REPO, 'grammar-data.js');
 
 const ARG = process.argv.slice(2);
-const QUELLE = ARG.find(a => !a.startsWith('--'));
+const ZEIT_I = ARG.indexOf('--zeit');
+const ZEIT = ZEIT_I >= 0 ? ARG[ZEIT_I + 1] : null;
+/* ⚠️ ZEIT_I kann -1 sein — dann ist ZEIT_I + 1 die 0, und genau dort steht
+   meist die Datei. Beim ersten Lauf fand das Skript deshalb keine Quelle. */
+const QUELLE = ARG.find((a, i) => !a.startsWith('--') && (ZEIT_I < 0 || i !== ZEIT_I + 1));
 const NUR_MESSEN = ARG.includes('--pruefen');
+if (ZEIT !== null && !(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?([+-]\d{2}:\d{2}|Z)$/.test(ZEIT) && Number.isFinite(Date.parse(ZEIT)))) {
+  console.error('⛔ --zeit braucht einen Zeitpunkt mit Zeitzone, z. B. 2026-09-11T04:08:22+02:00');
+  process.exit(1);
+}
+if (!ZEIT && !NUR_MESSEN) {
+  console.error('⛔ --zeit fehlt: wann hat Elias den Export kopiert? (Zeit seiner Nachricht, mit Zeitzone)');
+  console.error('   Ohne sie gewänne jeder Schalter in der App gegen diesen Export — siehe Kopfkommentar.');
+  process.exit(1);
+}
 
 if (!QUELLE) {
   console.error('Aufruf: node werkzeuge/urteile-uebernehmen.mjs <datei> [--pruefen]');
@@ -155,7 +188,26 @@ for (const id of zurueck) {
     if (/^\s*ausgeblendet:\s*true/.test(z2[k])) { z2.splice(k, 1); entfernt++; break; }
   }
 }
+/* ---------- Zeitstempel: nur wo der Export etwas entscheidet ---------- */
+const ID_ZEILE = /^\s*["']?id["']?\s*:\s*["']/;
+const geaendert = new Set([...neuRaus, ...zurueck]);
+const hatZeit = id => !!(R.find(r => r.id === id) || {}).satzmodusUrteil;
+let zeitGesetzt = 0;
+for (const id of [...listen.drin, ...listen.aendern, ...listen.raus]) {
+  if (!geaendert.has(id) && hatZeit(id)) continue;
+  const i = zeileVonId(id);
+  if (i < 0) throw new Error('id-Zeile fehlt: ' + id);
+  let ende = z2.length;
+  for (let k = i + 1; k < z2.length; k++) if (ID_ZEILE.test(z2[k])) { ende = k; break; }
+  const zeile = (z2[i].match(/^\s*/) || [''])[0] + 'satzmodusUrteil: "' + ZEIT + '",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */';
+  let k = i + 1;
+  for (; k < ende; k++) if (/^\s*satzmodusUrteil:/.test(z2[k])) break;
+  if (k < ende) z2[k] = zeile; else z2.splice(i + 1, 0, zeile);
+  zeitGesetzt++;
+}
+
 fs.writeFileSync(DATEN + '.neu', z2.join(ZE), 'utf8');
 fs.renameSync(DATEN + '.neu', DATEN);
-console.log('\n✅ ' + gesetzt + ' ausgeblendet gesetzt, ' + entfernt + ' wieder sichtbar gemacht.');
+console.log('\n✅ ' + gesetzt + ' ausgeblendet gesetzt, ' + entfernt + ' wieder sichtbar gemacht, '
+  + zeitGesetzt + ' Zeitstempel (' + ZEIT + ').');
 console.log('   ⛔ Jetzt: node validate.js · CACHE_NAME hoch · node werkzeuge/veroeffentlichen.mjs --mit-daten');

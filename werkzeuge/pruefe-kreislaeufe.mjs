@@ -105,6 +105,14 @@ const SPEICHER_AUSNAHMEN = {
      Uebungsart, wie oft sie dran war und wie gut sie sass. Ein Werkzeug hier
      koennte nur behaupten, was es nicht weiss. [[daten_ohne_zugang]] */
   'vt_uebungStand':   'Fortschritt je Uebungsmodus — liegt nur auf seinem Geraet, die App zeigt ihn unter „Wie gut sitzen die Übungsarten?"',
+  /* ⚠️ Die Regelsammlung (11.09.2026) wird sehr wohl ausgewertet — von der App
+     selbst: js/regeln.js liest seine Schalter bei jeder Satzmodus-Entscheidung
+     (regelAusgeblendet), die Karte zeigt Fassungen, Notizen und den Papierkorb.
+     Ein Werkzeug HIER koennte den Stand gar nicht lesen (er liegt in seinem
+     localStorage und in KV). ⛔ Offen und bewusst NICHT gebaut: ein Rueckweg
+     seiner bearbeiteten Fassungen nach grammar-data.js — das waere eine
+     Entscheidung, welche Fassung die gueltige ist, und die trifft er. */
+  'vt_regeln':        'Regelsammlung — Schalter „im Satzmodus", seine Fassungen, Notizen, Papierkorb und eigene Regeln; die App wertet sie selbst aus (js/regeln.js, regelAusgeblendet). Rueckweg nach grammar-data.js wartet auf Elias',
 };
 
 /* Erzeugte Dateien und ihre Quellen: veraltet die eine gegen die andere? */

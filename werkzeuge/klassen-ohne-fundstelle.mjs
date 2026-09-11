@@ -122,14 +122,20 @@ console.log('   zusammengesetzt werden (`\'kal-s\' + n`) und steht dann nirgends
    Fundstelle (die 8 unten plus box-bars, sent-thema, sent-themen, die der
    Praefixtest zu grosszuegig eingeordnet hat — ihre Belege daneben zeigen
    das sofort). Kommt eine dazu, ist das ein Befund; wird eine aufgeraeumt,
-   gehoert die Zahl hier heruntergesetzt. */
-const STAND_09_09_2026 = 8;
-if (ohne.length > STAND_09_09_2026){
-  console.log('\n⛔ ' + (ohne.length - STAND_09_09_2026) + ' Klasse(n) MEHR ohne Fundstelle als am 09.09.2026 (' + STAND_09_09_2026 + ').');
+   gehoert die Zahl hier heruntergesetzt.
+
+   ⭐ 11.09.2026: 7. Mit dem Reiter „Eigene" fielen zuerst ZWEI Klassen MEHR an
+   (pool-words, pool-zahl — ihr Markup war weg, die Regeln standen noch), der
+   Pruefer wurde rot; die verwaisten Regeln sind entfernt, dazu .weak-de. Die
+   sieben uebrigen: brand-ar, du-de, ic-fill, pressable, sn-zurueck, ueb-modi,
+   ueb-modus. */
+const STAND = 7, STAND_TAG = '11.09.2026';
+if (ohne.length > STAND){
+  console.log('\n⛔ ' + (ohne.length - STAND) + ' Klasse(n) MEHR ohne Fundstelle als am ' + STAND_TAG + ' (' + STAND + ').');
   console.log('   Entweder ist eine Regel verwaist — dann weg — oder sie wird zur Laufzeit');
   console.log('   gebaut und der Beleg oben fehlt. Beides gehoert angesehen, nicht ignoriert.');
   process.exit(1);
 }
-if (ohne.length < STAND_09_09_2026)
-  console.log('\n⭐ Weniger als am 09.09.2026 (' + STAND_09_09_2026 + ') — die Zahl oben im Quelltext bitte nachziehen.');
+if (ohne.length < STAND)
+  console.log('\n⭐ Weniger als am ' + STAND_TAG + ' (' + STAND + ') — die Zahl oben im Quelltext bitte nachziehen.');
 process.exit(0);

@@ -119,7 +119,7 @@ function regelZeilen(){
       gestellt: e.gestellt || 0,
       richtig: e.richtig || 0,
       zuletzt: e.zuletzt || null,
-      abbestellt: !!r.ausgeblendet,
+      abbestellt: regelAusgeblendet(r),
       quote: e.gestellt ? e.richtig / e.gestellt : null
     };
   });

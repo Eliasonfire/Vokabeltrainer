@@ -317,6 +317,12 @@ const PRUEFER = [
      ⚠️ Der Pruefer meldet KANDIDATEN und wird nur rot, wenn sein eigener
      Stoertest nicht greift. [[layout_min_width_falle]] */
   ['werkzeuge/pruefe-flexbreite.mjs', []],
+  /* ⭐ Die Regelsammlung (11.09.2026). Bewacht zuerst Elias' Saetze — „artefakt
+     soll da bleiben" (Export und App-Schalter: die juengere Entscheidung gilt)
+     und „nicht geloescht, nur raus genommen" (Papierkorb, umkehrbar) — dann
+     die neun Karten aus Folge 19 samt ihrem abgeschriebenen Arabisch. Beide
+     Kernpruefungen tragen einen eigenen Stoertest. */
+  ['werkzeuge/pruefe-regelsammlung.mjs', []],
   ['werkzeuge/pruefe-plural-thema.mjs', []],
   /* Die Ueberkategorien des Satzmodus altern still: SATZ_THEMEN ordnet ueber
      ein Muster auf die id zu, eine frei gewaehlte id landet also in KEINER

@@ -73,7 +73,11 @@ let SATZ_THEMA = 'alle';
 function themaRegelIds(themaId){
   const t = (typeof SATZ_THEMEN !== 'undefined') && SATZ_THEMEN.find(x=>x.id===themaId);
   if (!t || !t.muster) return null;
-  return new Set(GRAMMAR_RULES.filter(r=>t.muster.test(r.id) && !r.ausgeblendet).map(r=>r.id));
+  /* ⛔ regelAusgeblendet() statt des Feldes (11.09.2026): seit der
+     Regelsammlung entscheidet auch sein Schalter „im Satzmodus" mit — die
+     jüngere Entscheidung gilt. Wer hier wieder `r.ausgeblendet` liest, zeigt
+     im Satzmodus etwas anderes als auf der Karte. js/regeln.js */
+  return new Set(GRAMMAR_RULES.filter(r=>t.muster.test(r.id) && !regelAusgeblendet(r)).map(r=>r.id));
 }
 
 /* ⭐⭐ Wie neu ist ein Satz? Die hoechste Folgennummer unter den Regeln, die an
@@ -93,7 +97,7 @@ function satzAktualitaet(w, ids){
   for (const t of tags){
     if (ids && !ids.has(t.ruleId)) continue;
     const r = GRAMMAR_RULES.find(x => x.id === t.ruleId);
-    if (!r || r.ausgeblendet) continue;
+    if (!r || regelAusgeblendet(r)) continue;
     const f = (r.source && r.source.folge)
            || (r.source2 && r.source2.folge)
            || (r.kapitel ? 0 : null);      /* Buchregel ohne Folge: aelter als jede Folge */
@@ -159,7 +163,7 @@ function themaAktualitaet(themaId){
   const t = (typeof SATZ_THEMEN !== 'undefined') && SATZ_THEMEN.find(x=>x.id===themaId);
   if (!t || !t.muster || typeof GRAMMAR_RULES === 'undefined') return -1;
   const folgen = GRAMMAR_RULES
-    .filter(r=>!r.ausgeblendet && t.muster.test(r.id))
+    .filter(r=>!regelAusgeblendet(r) && t.muster.test(r.id))
     .map(r=>(r.source && r.source.folge) || (r.source2 && r.source2.folge) || null)
     .filter(f=>f!=null).sort((a,b)=>a-b);
   return folgen.length ? folgen[Math.floor(folgen.length/2)] : -1;
@@ -471,7 +475,7 @@ function buildSentenceHtml(w, opts){
     /* Von Elias abbestellte Regeln bleiben in den Daten (ihr Beleg aus dem
        Unterricht ist ja nicht falsch geworden), werden aber nicht mehr
        angezeigt. Siehe `ausgeblendet` in grammar-data.js. */
-    if (rule.ausgeblendet) return;
+    if (regelAusgeblendet(rule)) return;
     /* Frueher nur die erste Fundstelle. In «أَهَذَا كِتَابٌ؟ نَعَمْ، هَذَا
        كِتَابٌ.» war damit das erste كِتَابٌ unterstrichen und das zweite nicht -
        dieselbe Regel, willkuerlich nur einmal gezeigt.

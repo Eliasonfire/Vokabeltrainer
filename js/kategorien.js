@@ -11,10 +11,13 @@ document.querySelectorAll('.cat-tab').forEach(tab=>{
   });
 });
 
+/* ⛔ renderCustomCats() ist seit dem 11.09.2026 weg — mit dem Reiter „Eigene"
+   (Elias: „weil ich das wirklich nicht nutze"). Seine gespeicherten
+   Kategorien bleiben: renderWortfeldCats() zeigt sie weiter mit Stern oben in
+   den Wortfeldern, openWordList('cat:…') öffnet sie, der Abgleich trägt sie. */
 function renderCategories(){
   renderChapterCats();
   renderWortfeldCats();
-  renderCustomCats();
 }
 
 function renderChapterCats(){
@@ -126,104 +129,6 @@ function renderWortfeldCats(){
       : '<div class="empty-state">Für dieses Buch sind noch keine Wortfelder belegt.</div>');
 }
 
-/* Jede Aenderung an den eigenen Kategorien muss BEIDE Ansichten auffrischen:
-   die Werkbank im Reiter "Eigene" und die Sternzeilen oben in der
-   Wortfelder-Liste (Moeglichkeit B, Elias' Wahl vom 29.07.2026). Ohne das zeigt
-   die Wortfelder-Liste eine gerade geloeschte Kategorie weiter an, bis der
-   Bildschirm neu aufgebaut wird. Deshalb rufen alle Stellen, die CUSTOM_CATS
-   aendern, diese Funktion und nicht mehr renderCustomCats() allein. */
-function frischeEigeneAuf(){
-  renderCustomCats();
-  renderWortfeldCats();
-}
-
-function renderCustomCats(){
-  const box = document.getElementById('customCatList');
-  box.innerHTML = CUSTOM_CATS.map(cat => `
-    <div class="custom-cat-box" data-catid="${cat.id}">
-      <div class="cat-title"><span data-openlist="cat:${cat.id}">${cat.name} (${cat.wordIds.length})</span><button data-delcat="${cat.id}">${icon('trash')}Löschen</button></div>
-      <div class="chips-wrap" data-dropzone="${cat.id}">
-        ${cat.wordIds.map(id=>{ const w=byId(id); if(!w) return ''; return `<span class="word-chip" draggable-id="${id}">${w.ar}<span class="weak-de">(${w.de})</span></span>`; }).join('')}
-      </div>
-    </div>
-  `).join('');
-
-  /* ---------- Zwei Listen: offen und schon einsortiert ----------
-     Elias' Entwurf vom 29.07.2026, in seinen Worten:
-
-       "Die beste Lösung wäre, wenn man diese Vokabelliste in bereits
-        einkategorisierte und nicht einkategorisierte Vokabeln unterteilt und
-        jedes Wort aber in der Vokabelliste permanent lässt. … Mein Gedanke
-        dahinter ist, dass ich dann nicht die ganze Zeit die Vokabeln suchen
-        muss, die ich noch nicht einkategorisiert habe."
-
-     Der springende Punkt ist das PERMANENT. Vorher verschwand ein Wort aus der
-     Liste, sobald es irgendwo lag — damit war es unmöglich, „Lehrer" sowohl
-     unter Schule als auch unter Berufe zu legen, obwohl beides stimmt.
-
-     Beide Listen werden BERECHNET, nicht gespeichert. Das erledigt nebenbei
-     Elias' letzte Bedingung von selbst: liegt ein Wort in drei Kategorien und
-     man löscht sie alle, taucht es genau EINMAL wieder oben auf — eine
-     Mengenberechnung kann gar keine Dubletten erzeugen. */
-  const zugeordnet = new Map();          // Vokabel-ID -> Anzahl Kategorien
-  CUSTOM_CATS.forEach(c => c.wordIds.forEach(id =>
-    zugeordnet.set(id, (zugeordnet.get(id) || 0) + 1)));
-
-  /* Nur die Woerter, die Elias kennt - seine Vorgabe vom 30.07.2026: "auch bei
-     den eigenen kategorien sollen nur woerter sein die ich auch kenne."
-     Vorher standen hier alle 24 Kapitel des geladenen Buchs, also rund 300
-     Woerter, davon die meisten aus Kapiteln, die er im Kurs noch nicht hatte -
-     und das war zugleich der Grund, warum die Liste so lang war, dass er sie
-     kaum durchwischen konnte.
-
-     ⚠️ Die schon ZUGEORDNETEN Chips in den Kategorien oben werden NICHT
-     beschnitten. Was er selbst einsortiert hat, bleibt stehen, auch wenn es aus
-     einem spaeteren Kapitel kommt - stillschweigend etwas aus seinen eigenen
-     Kategorien zu entfernen waere Datenverlust. */
-  const alle   = (typeof bekannteVokabeln === 'function') ? bekannteVokabeln() : buchVokabeln();
-  const offen  = alle.filter(w => !zugeordnet.has(w.id));
-  const fertig = alle.filter(w =>  zugeordnet.has(w.id));
-
-  const chip = (w, n) => `<span class="word-chip" draggable-id="${w.id}">${w.ar}` +
-    `<span class="weak-de">(${w.de})</span>` +
-    (n ? `<span class="in-kat" title="in ${n} Kategorie${n>1?'n':''}">${n}×</span>` : '') +
-    `</span>`;
-
-  document.getElementById('poolWords').innerHTML =
-    offen.map(w => chip(w, 0)).join('') ||
-    '<div class="empty-state">Alles einsortiert.</div>';
-  document.getElementById('poolWordsFertig').innerHTML =
-    fertig.map(w => chip(w, zugeordnet.get(w.id))).join('');
-  document.getElementById('poolOffenZahl').textContent  = `(${offen.length})`;
-  document.getElementById('poolFertigZahl').textContent = `(${fertig.length})`;
-  const hinweis = document.getElementById('poolHinweis');
-  if (hinweis){
-    const umfang = (typeof freigeschalteteBeschriftung === 'function') ? freigeschalteteBeschriftung() : null;
-    hinweis.textContent = umfang
-      ? `Nur Wörter, die du kennst: ${umfang} und deine eigenen.` : '';
-    hinweis.classList.toggle('hidden', !umfang);
-  }
-
-  document.querySelectorAll('[data-delcat]').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      CUSTOM_CATS = CUSTOM_CATS.filter(c=>c.id!==btn.dataset.delcat);
-      saveCustomCats(); frischeEigeneAuf();
-    });
-  });
-  /* Die Markierung ueberlebt den Neuaufbau der Listen. */
-  if (typeof zeichneKatAuswahl === "function") zeichneKatAuswahl();
-}
-
-document.getElementById('btnAddCat').addEventListener('click', ()=>{
-  const input = document.getElementById('newCatName');
-  const name = input.value.trim();
-  if (!name) return;
-  CUSTOM_CATS.push({ id: 'cat_'+Date.now(), name, wordIds: [] });
-  saveCustomCats();
-  input.value = '';
-  frischeEigeneAuf();
-});
-
 document.querySelectorAll('[data-openlist]').forEach(()=>{}); // delegated below
 document.getElementById('main').addEventListener('click', (e)=>{
   const row = e.target.closest('[data-openlist]');
@@ -300,7 +205,7 @@ function openWordList(key){
 
    Dieselbe Geste wie beim Einsortieren in eigene Kategorien: antippen,
    markieren, unten das Ziel antippen. Bewusst KEIN Ziehen und Ablegen - die
-   ausfuehrliche Begruendung steht weiter unten bei KAT_AUSWAHL und gilt hier
+   ausfuehrliche Begruendung steht weiter unten („Einsortieren durch ANTIPPEN") und gilt hier
    unveraendert, denn die Wortliste rollt genauso.
 
    ⚠️ Warum nextReview mitgesetzt werden MUSS: Die Box allein bestimmt nicht,
@@ -483,97 +388,13 @@ document.getElementById('btnAddPersonalVocab').addEventListener('click', ()=>{
    Ein Wort IN einer Kategorie antippen nimmt es wieder heraus.
 
    Mehrfachauswahl ist kein Beiwerk: Elias sortiert 171 Woerter ein. Einzeln
-   waeren das 171 mal zwei Tipper, mit Auswahl deutlich weniger. */
+   waeren das 171 mal zwei Tipper, mit Auswahl deutlich weniger.
 
-let KAT_AUSWAHL = new Set();
-
-function katAuswahlLeer(){
-  KAT_AUSWAHL = new Set();
-  zeichneKatAuswahl();
-}
-
-/* Markierung an den Chips und die Leiste unten. Bewusst OHNE die Listen neu zu
-   bauen: renderCustomCats() wuerde die Rollposition auf den Anfang setzen, und
-   dann sucht man nach jedem Tipp die Stelle wieder, an der man war. */
-function zeichneKatAuswahl(){
-  document.querySelectorAll('#poolWords .word-chip, #poolWordsFertig .word-chip')
-    .forEach(chip => chip.classList.toggle('gewaehlt', KAT_AUSWAHL.has(chip.getAttribute('draggable-id'))));
-
-  const leiste = document.getElementById('katZielLeiste');
-  if (!leiste) return;
-  const n = KAT_AUSWAHL.size;
-  leiste.classList.toggle('hidden', n === 0);
-  if (!n) return;
-
-  document.getElementById('katAuswahlZahl').textContent =
-    n === 1 ? '1 Wort ausgewählt' : `${n} Wörter ausgewählt`;
-  const ziele = document.getElementById('katZiele');
-  ziele.innerHTML = CUSTOM_CATS.length
-    ? CUSTOM_CATS.map(c => `<button class="kat-ziel" data-katziel="${c.id}">${escapeHtml(c.name)}</button>`).join('')
-    : '<span class="kat-ziel-leer">Erst oben eine Kategorie anlegen.</span>';
-}
-
-/* Ein Tipp auf ein Wort im Vorrat: markieren oder Markierung wegnehmen. */
-document.getElementById('unassignedPool').addEventListener('click', (e)=>{
-  const chip = e.target.closest('.word-chip');
-  if (!chip) return;
-  const id = chip.getAttribute('draggable-id');
-  if (!id) return;
-  if (KAT_AUSWAHL.has(id)) KAT_AUSWAHL.delete(id); else KAT_AUSWAHL.add(id);
-  zeichneKatAuswahl();
-});
-
-/* Ein Tipp auf ein Wort INNERHALB einer Kategorie nimmt es dort heraus. Das ist
-   der Weg, der beim Ziehen "aus der Box herausziehen" war. */
-document.getElementById('customCatList').addEventListener('click', (e)=>{
-  const chip = e.target.closest('.word-chip');
-  if (!chip) return;
-  const box = chip.closest('[data-catid]');
-  const id = chip.getAttribute('draggable-id');
-  if (!box || !id) return;
-  const cat = CUSTOM_CATS.find(c => c.id === box.dataset.catid);
-  const w = byId(id);
-  if (!cat) return;
-  cat.wordIds = cat.wordIds.filter(x => x !== id);
-  saveCustomCats();
-  frischeEigeneAuf();
-  zeichneKatAuswahl();
-  toast(`${w ? w.ar : 'Wort'} aus „${cat.name}“ entfernt.`);
-});
-
-/* Kategorie antippen: alle markierten Woerter hinein. */
-document.getElementById('katZiele').addEventListener('click', (e)=>{
-  const knopf = e.target.closest('[data-katziel]');
-  if (!knopf) return;
-  const cat = CUSTOM_CATS.find(c => c.id === knopf.dataset.katziel);
-  if (!cat || !KAT_AUSWAHL.size) return;
-  let neu = 0, schonDrin = 0;
-  KAT_AUSWAHL.forEach(id => {
-    if (cat.wordIds.includes(id)) { schonDrin++; return; }
-    cat.wordIds.push(id);
-    neu++;
-  });
-  saveCustomCats();
-  katAuswahlLeer();
-  frischeEigeneAuf();
-  const teile = [];
-  if (neu) teile.push(`${neu} Wort${neu===1?'':'e'} → „${cat.name}"`);
-  if (schonDrin) teile.push(`${schonDrin} lag${schonDrin===1?'':'en'} dort schon`);
-  toast(teile.join(' · '));
-});
-
-document.getElementById('btnKatAuswahlAus').addEventListener('click', katAuswahlLeer);
-
-/* Aufklapper für die schon einsortierten Wörter. Die Liste haengt am Ende des
-   Bildschirms; sie standardmaessig zuzuklappen ist der halbe Zweck der
-   Trennung — offen waere es wieder die eine lange Liste von vorher. */
-document.getElementById('btnPoolFertig').addEventListener('click', ()=>{
-  const knopf = document.getElementById('btnPoolFertig');
-  const liste = document.getElementById('poolWordsFertig');
-  const auf = liste.classList.toggle('hidden');
-  knopf.setAttribute('aria-expanded', String(!auf));
-});
-
+   ⛔ Die Werkbank, fuer die das gebaut war, ist seit dem 11.09.2026 weg (Reiter
+   „Eigene", Elias: „weil ich das wirklich nicht nutze"). Der Kommentar bleibt
+   stehen, weil seine Begruendung weiter gilt: das Verlegen in andere Boxen
+   (BOX_AUSWAHL weiter oben) benutzt dieselbe Antipp-Geste aus demselben Grund.
+   [[erledigt_heisst_nicht_wertlos]] */
 
 /* ---------- Die Wortkarte zum Nachschlagen (Elias, 18.08.2026) ----------
 
