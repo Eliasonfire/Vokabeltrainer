@@ -174,6 +174,13 @@ const PRUEFER = [
      (Elias: „Direkt eintragen"). Eichung an den zehn vom 17.08., Abweisungen
      mit je EINEM Grund, alles-oder-nichts, Störtests am echten Quelltext. */
   ['werkzeuge/pruefe-fachbegriffe-kette.mjs', []],
+  /* ⭐ Neu am 11.09.2026, 22:39. Elias: „wenn ich bei den kategorien suche es
+     wirklich nur die wörter finden soll und nicht die regeln … im
+     startbildschirm kann es nach beidem suchen aber die wörter sollen immer
+     über den regeln angezeigt werden". Schneidet die Zeichenfunktionen aus
+     js/kategorien.js und js/regeln.js, fährt sie gegen einen Schein-DOM und
+     legt Ort und Reihenfolge per Störtest still. */
+  ['werkzeuge/pruefe-suchorte.mjs', []],
   /* ⭐ Neu am 09.09.2026. „genau 2 ayaht und das wars" — der Rezitator brach
      bei ausgeschaltetem Bildschirm nach zwei Versen ab, weil Vers 3 einen
      neuen Ladevorgang brauchte. Seitdem zwei Elemente im Wechsel; der Pruefer
@@ -413,6 +420,12 @@ const PRUEFER = [
   ['test-dublette.mjs', []],
   ['test-auswahl-einzelnfrei.mjs', []],
   ['test-tippen-beide-richtungen.mjs', []],
+  /* ⭐ Neu am 11.09.2026 abends. Elias: „wenn wir die ersten zwei boxen nur auf
+     arabisch anzeigen lassen und ab box 3 wieder gemischt machen" — „arbeite
+     erstmal daran". Schneidet cardDirection() aus js/lernen.js, zieht je 400
+     Karten pro Box und legt Grenze, Gemischt und die feste Richtung je Karte
+     per Störtest still. */
+  ['test-richtung-nach-box.mjs', []],
   ['test-quote-karteikarten.mjs', []],
   ['test-arabicroots-differenz.mjs', []],
   ['test-hifz-sync.mjs', []],  ['test-sync.mjs', []],

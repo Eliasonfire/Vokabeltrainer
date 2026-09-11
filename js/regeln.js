@@ -344,6 +344,14 @@ function regelBeispielsaetze(ids, max){
    Deutsch, Arabisch mit/ohne Ḥarakāt, Umschrift (mudaf, idafa); dieselbe
    Suche oben in „Regeln"."
 
+   ⛔ WO sie läuft, hat Elias am selben Abend (22:39) neu bestimmt: „wenn ich bei
+   den kategorien suche es wirklich nur die wörter finden soll und nicht die
+   regeln … im startbildschirm kann es nach beidem suchen aber die wörter sollen
+   immer über den regeln angezeigt werden". Also oben in „Regeln" (nur Regeln,
+   renderRegeln) und auf dem Bildschirm „Suche" vom Start — dort UNTER den
+   Wörtern (js/kategorien.js, zeichneSuchfeld). In den Kategorien nicht mehr.
+   Bewacht von werkzeuge/pruefe-suchorte.mjs.
+
    ⛔ EINE Suchfunktion für beide Stellen — dieselbe Frage, dieselbe Antwort.
    Arabisch wird über suchFlach() aus js/kategorien.js verglichen, also genau
    so wie die Wörter: wer مضاف ohne Ḥarakāt tippt, findet مُضَاف.

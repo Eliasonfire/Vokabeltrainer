@@ -1112,47 +1112,33 @@ function quranHaeufigkeit(w){
   return eintrag ? eintrag[0] : null;
 }
 
-function zeichneSuche(){
-  const feld    = document.getElementById('sucheEingabe');
-  const treffer = document.getElementById('sucheTreffer');
-  const hinweis = document.getElementById('sucheHinweis');
-  const leeren  = document.getElementById('btnSucheLeeren');
-  const tabs    = document.getElementById('catTabs');
-  if (!feld) return;
-  const begriff = feld.value.trim();
+/* ---------- Welche Suche findet was (Elias, 11.09.2026, 22:39) ----------
 
-  leeren.classList.toggle('hidden', !begriff);
-  /* Bei leerer Suche sind die Reiter wieder da. Sie zu verstecken, solange
-     nichts gesucht wird, nähme ihm den normalen Weg durch die Kategorien. */
-  const sucht = begriff.length >= 2;
-  tabs.classList.toggle('hidden', sucht);
-  document.querySelectorAll('.cat-pane').forEach(p => p.classList.toggle('such-aus', sucht));
-  treffer.classList.toggle('hidden', !sucht);
-  hinweis.classList.toggle('hidden', !begriff);
+   „ich möchte das wenn ich bei den kategorien suche es wirklich nur die wörter
+   finden soll und nicht die regeln und wenn ich bei den regeln bin dann soll es
+   auch wirklich nur nach regeln suchen. im startbildschirm kann es nach beidem
+   suchen aber die wörter sollen immer über den regeln angezeigt werden"
 
-  if (!sucht){
-    hinweis.textContent = begriff ? 'Mindestens zwei Zeichen eingeben.' : '';
-    treffer.innerHTML = '';
-    return;
-  }
+     Kategorien   nur Wörter                zeichneSuche()
+     Regeln       nur Regeln                renderRegeln() in js/regeln.js
+     Start        Wörter, DARUNTER Regeln   zeichneAlleSuche(), Bildschirm „Suche"
 
-  const liste = sucheTreffer(begriff);
-  /* ⭐ Regeln zuerst, in einem eigenen Block ÜBER den Wörtern (Goal, Punkt 10,
-     11.09.2026). Die Suche selbst steht in js/regeln.js (regelSuche) — dieselbe,
-     die oben in „Regeln" sucht; hier wird nur gezeichnet. Ein Tipp öffnet die
-     Karte über den globalen Handler dort. */
-  const regeln = (typeof regelSuche === 'function') ? regelSuche(begriff) : [];
-  hinweis.textContent = (liste.length || regeln.length)
-    ? `${liste.length} Treffer für „${begriff}“` + (regeln.length ? ` · ${regeln.length} ${regeln.length === 1 ? 'Regel' : 'Regeln'}` : '')
-    : `Nichts gefunden für „${begriff}“. Arabisch geht auch ohne Ḥarakāt.`;
+   ⛔ Bis dahin (Goal Regelsammlung, Punkt 10 — am selben Tag gebaut) stand in
+   den Kategorien ein Regelblock ÜBER den Wörtern, und das Feld auf dem Start
+   reichte in die Kategorien durch. Beides hat er damit aufgehoben.
 
-  const regelBlock = regeln.length && typeof regelSuchZeilenHtml === 'function'
-    ? `<div class="such-regeln"><div class="such-regeln-kopf">Regeln · ${regeln.length}</div>${regelSuchZeilenHtml(regeln, 8)}`
-      + (regeln.length > 8 ? `<div class="pane-hinweis">Die ersten 8 — alle stehen in „Regeln" unter derselben Suche.</div>` : '')
-      + `</div>`
-    : '';
+   ⭐ Der Start reicht deshalb auf einen EIGENEN Bildschirm durch und nicht mehr
+   in die Kategorien — sonst zeigten die Kategorien je nach Weg einmal Regeln
+   und einmal nicht. Gesucht wird weiter mit genau einer Funktion je Art:
+   sucheTreffer() für Wörter, regelSuche() für Regeln. Zweimal gibt es nur den
+   Ort, und beide Orte zeichnen über zeichneSuchfeld().
+   Bewacht von werkzeuge/pruefe-suchorte.mjs — er schneidet diesen Block bis
+   zur Zeile „Ende: Welche Suche findet was" heraus und fährt ihn.
+   [[dieselbe_frage_zwei_antworten]] */
 
-  treffer.innerHTML = regelBlock + liste.slice(0, 60).map(w => {
+/* Die Wortzeilen, an beiden Orten dieselben. */
+function suchWortZeilenHtml(liste){
+  return liste.slice(0, 60).map(w => {
     const freq = quranHaeufigkeit(w);
     const fremd = !istBekannt(w);
     return `<div class="word-list-item" data-suchwort="${escapeHtml(String(w.id))}">
@@ -1166,20 +1152,95 @@ function zeichneSuche(){
       </div>
     </div>`;
   }).join('');
+}
+
+/* ort = { feld, treffer, hinweis, leeren }: die Ids der vier Elemente;
+   mitRegeln: ob Regeln dazugehören; beimSuchen(sucht): was sonst noch
+   umschaltet, sobald gesucht wird (in den Kategorien die Reiter). */
+function zeichneSuchfeld(ort){
+  const feld    = document.getElementById(ort.feld);
+  const treffer = document.getElementById(ort.treffer);
+  const hinweis = document.getElementById(ort.hinweis);
+  const leeren  = document.getElementById(ort.leeren);
+  if (!feld || !treffer || !hinweis) return;
+  const begriff = feld.value.trim();
+
+  if (leeren) leeren.classList.toggle('hidden', !begriff);
+  const sucht = begriff.length >= 2;
+  if (ort.beimSuchen) ort.beimSuchen(sucht);
+  treffer.classList.toggle('hidden', !sucht);
+  hinweis.classList.toggle('hidden', !begriff);
+
+  if (!sucht){
+    hinweis.textContent = begriff ? 'Mindestens zwei Zeichen eingeben.' : '';
+    treffer.innerHTML = '';
+    return;
+  }
+
+  const liste = sucheTreffer(begriff);
+
+  if (!ort.mitRegeln){
+    hinweis.textContent = liste.length
+      ? `${liste.length} Treffer für „${begriff}“`
+      : `Nichts gefunden für „${begriff}“. Arabisch geht auch ohne Ḥarakāt.`;
+    treffer.innerHTML = suchWortZeilenHtml(liste);
+  } else {
+    /* Die Regelsuche steht in js/regeln.js (regelSuche) — dieselbe, die oben in
+       „Regeln" sucht; hier wird nur gezeichnet. Ein Tipp auf eine Regel öffnet
+       die Karte über den globalen Handler dort. */
+    const regeln = (typeof regelSuche === 'function') ? regelSuche(begriff) : [];
+    hinweis.textContent = (liste.length || regeln.length)
+      ? `${liste.length} ${liste.length === 1 ? 'Wort' : 'Wörter'} · ${regeln.length} ${regeln.length === 1 ? 'Regel' : 'Regeln'} für „${begriff}“`
+      : `Nichts gefunden für „${begriff}“. Arabisch geht auch ohne Ḥarakāt, Regeln auch in Umschrift (mudaf, idafa).`;
+    /* ⛔ Die Reihenfolge IST seine Vorgabe: „die wörter sollen immer über den
+       regeln angezeigt werden" — auch bei einer Regel, die genau den Begriff
+       im Namen trägt. Die Zahl im Hinweis oben sagt, dass unten Regeln kommen. */
+    const wortBlock = liste.length
+      ? `<div class="such-block"><div class="such-kopf">Wörter · ${liste.length}</div>${suchWortZeilenHtml(liste)}</div>`
+      : '';
+    const regelBlock = (regeln.length && typeof regelSuchZeilenHtml === 'function')
+      ? `<div class="such-block"><div class="such-kopf">Regeln · ${regeln.length}</div>${regelSuchZeilenHtml(regeln)}</div>`
+      : '';
+    treffer.innerHTML = wortBlock + regelBlock;
+  }
 
   /* Sagen, dass gekürzt wurde. Eine stille Obergrenze sieht aus wie „mehr gibt
      es nicht" — und das wäre gelogen. */
   if (liste.length > 60){
-    hinweis.textContent += ` — die ersten 60 werden gezeigt.`;
+    hinweis.textContent += ort.mitRegeln ? ` — die ersten 60 Wörter werden gezeigt.` : ` — die ersten 60 werden gezeigt.`;
   }
 }
 
+function zeichneSuche(){
+  zeichneSuchfeld({
+    feld: 'sucheEingabe', treffer: 'sucheTreffer', hinweis: 'sucheHinweis', leeren: 'btnSucheLeeren',
+    mitRegeln: false,
+    /* Bei leerer Suche sind die Reiter wieder da. Sie zu verstecken, solange
+       nichts gesucht wird, nähme ihm den normalen Weg durch die Kategorien. */
+    beimSuchen: sucht => {
+      const tabs = document.getElementById('catTabs');
+      if (tabs) tabs.classList.toggle('hidden', sucht);
+      document.querySelectorAll('.cat-pane').forEach(p => p.classList.toggle('such-aus', sucht));
+    }
+  });
+}
+
+function zeichneAlleSuche(){
+  zeichneSuchfeld({
+    feld: 'alleSuche', treffer: 'alleSucheTreffer', hinweis: 'alleSucheHinweis', leeren: 'btnAlleSucheLeeren',
+    mitRegeln: true
+  });
+}
+
 document.getElementById('sucheEingabe').addEventListener('input', zeichneSuche);
+document.getElementById('alleSuche').addEventListener('input', zeichneAlleSuche);
 
 /* ---------- Die Suche vom Startbildschirm aus (24.08.2026) ----------
 
    Elias wollte die Suche auch auf dem Start haben. Sie ist deshalb NICHT
-   zweimal gebaut: das Feld dort reicht durch an genau dieses hier.
+   zweimal gebaut: das Feld dort reicht durch — seit 11.09.2026 abends auf den
+   Bildschirm „Suche" (Wörter UND Regeln, die Wörter oben), vorher in die
+   Kategorien, die seitdem nur noch Wörter zeigen.
 
    ⛔ Warum keine zweite Umsetzung: `sucheTreffer()` entscheidet, was ein
    Treffer ist, in welcher Reihenfolge er steht und was „noch nicht dran"
@@ -1194,17 +1255,17 @@ document.getElementById('sucheEingabe').addEventListener('input', zeichneSuche);
 (function(){
   const start = document.getElementById('startSuche');
   if (!start) return;
-  const ziel = document.getElementById('sucheEingabe');
+  const ziel = document.getElementById('alleSuche');
   let laeuft = false;
   function uebergeben(){
     if (laeuft) return;
     laeuft = true;
     ziel.value = start.value;
     start.value = '';
-    /* Erst den Wert setzen, DANN wechseln: showScreen ruft renderCategories,
-       und das zeichnet die Suche bereits mit dem neuen Begriff. */
-    if (typeof showScreen === 'function') showScreen('categories');
-    zeichneSuche();
+    /* Erst den Wert setzen, DANN wechseln: zeigeBildschirm() zeichnet die
+       Suche beim Öffnen (js/navigation.js) — mit dem Begriff, der dann schon
+       im Feld steht. */
+    if (typeof showScreen === 'function') showScreen('suche');
     /* Hier ist der Fokus ausdruecklich gewollt — er hat auf die Suche
        getippt, um zu suchen. Das ist der Fall, den Elias am 24.08. vom
        Notiz-Editor abgegrenzt hat: dort las er, hier schreibt er. */
@@ -1219,11 +1280,20 @@ document.getElementById('btnSucheLeeren').addEventListener('click', ()=>{
   zeichneSuche();
   document.getElementById('sucheEingabe').focus();
 });
+document.getElementById('btnAlleSucheLeeren').addEventListener('click', ()=>{
+  document.getElementById('alleSuche').value = '';
+  zeichneAlleSuche();
+  document.getElementById('alleSuche').focus();
+});
 /* Ein Tipp auf einen Treffer öffnet die Wortkarte — Elias' ausdrücklicher
    Wunsch: „am besten soll mir das dann auch die karteikarte anzeigen wenn ich
    drauf drücke." Kein Kästchen zum Auswählen: hier wird nachgeschlagen, nicht
-   einsortiert. */
-document.getElementById('sucheTreffer').addEventListener('click', (e)=>{
+   einsortiert. Eine Regelzeile trägt kein data-suchwort; sie öffnet ihre
+   Karte über den globalen Handler in js/regeln.js. */
+function suchTrefferAntippen(e){
   const zeile = e.target.closest('[data-suchwort]');
   if (zeile) zeigeWortKarte(zeile.dataset.suchwort);
-});
+}
+document.getElementById('sucheTreffer').addEventListener('click', suchTrefferAntippen);
+document.getElementById('alleSucheTreffer').addEventListener('click', suchTrefferAntippen);
+/* ---------- Ende: Welche Suche findet was ---------- */

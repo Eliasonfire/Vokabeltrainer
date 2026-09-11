@@ -114,6 +114,18 @@ export const PFLEGEPLAN = [
     veralten: { nein: 'Die Listen entstehen beim Öffnen aus den aktuellen Vokabeln; es wird nichts gespeichert, das alt werden kann.' },
   },
   {
+    /* 11.09.2026, 22:39 — Elias: „im startbildschirm kann es nach beidem suchen
+       aber die wörter sollen immer über den regeln angezeigt werden". Der
+       Bildschirm wird in js/kategorien.js gezeichnet (zeichneAlleSuche); die
+       Datei steht deshalb schon oben bei den Kategorien. */
+    funktion: 'Suche vom Start (Wörter und Regeln)',
+    dateien: [],
+    bildschirme: ['screen-suche'],
+    neuerInhalt: { nein: 'Die Suche liest nur, was schon in der App steht (VOCAB_DATA und die Regeln); neue Wörter und Regeln sind ohne Zutun dabei.' },
+    eingaben: { nein: 'Der Suchbegriff wird nirgends gespeichert und nicht abgeglichen; es entsteht nichts, das jemand weiterverarbeiten muss.' },
+    veralten: { nein: 'Die Treffer entstehen bei jedem Tastendruck und jedem Öffnen neu aus den aktuellen Daten.' },
+  },
+  {
     funktion: 'Satzmodus und Grammatik-Hervorhebung',
     dateien: ['js/saetze.js', 'js/uebung.js', 'grammar-data.js', 'lehrbuch-saetze.js'],
     bildschirme: ['screen-sentences'],
