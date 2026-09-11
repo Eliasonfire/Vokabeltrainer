@@ -6,11 +6,12 @@
    Wer es liest, uebt Lesen - nicht Hoeren. Hier ist die Schrift bis zur
    Antwort weg, es gibt nur den Ton.
 
-   Die Ablenker sind nicht beliebig gewuerfelt. Sie kommen bevorzugt aus
-   demselben Kapitel und, wenn es geht, mit derselben Wortart - Woerter, die
-   Elias gerade wirklich lernt und die sich aehnlich anhoeren koennen. Ein
-   Ablenker aus einem Buch, das er nie geoeffnet hat, macht die Aufgabe nur
-   scheinbar schwerer.
+   Die Ablenker sind nicht beliebig gewuerfelt. Seit dem 11.09.2026 kommen
+   zuerst Woerter, die sich AEHNLICH ANHOEREN ODER AEHNLICH SCHREIBEN (Block
+   „AEHNLICHE ABLENKER" weiter unten), danach wie vorher bevorzugt Woerter aus
+   demselben Kapitel und mit derselben Wortart. Alle stammen aus seinem
+   Lernbestand — ein Ablenker aus einem Buch, das er nie geoeffnet hat, macht
+   die Aufgabe nur scheinbar schwerer.
 
    Der Fortschritt aus dem Leitner-System wird hier NICHT angefasst: Hoeren
    und Lesen sind verschiedene Faehigkeiten, und eine falsche Hoerantwort
@@ -23,6 +24,13 @@ const HOER = { wort: null, optionen: [], beantwortet: false, richtig: 0, gesamt:
   zielOffen: false,
   /* ⭐ Q8: bis wann das Weitertippen nach einer falschen Antwort wartet. */
   sperreBis: 0 };
+
+/* ⭐ Fuenf Antworten statt vier (Elias, 11.09.2026: „beim Hörverstehen sollen
+   5 Auswahl Möglichkeiten sein"). Die Zahl steht an EINER Stelle — die
+   Vorratspruefung, die Ablenkerzahl und die Leermeldung lesen sie alle.
+   ⚠️ Hier oben und nicht beim Block der Ablenker: `hoerbareVokabeln()` steht
+   davor und liest sie ebenfalls. */
+const HOER_ANTWORTEN = 5;
 
 /* ---------- Tagesziel (Elias, 17.08.2026) ----------
 
@@ -171,7 +179,7 @@ function hoerbareVokabeln(){
   let pool = bekannteVokabeln().filter(w => w.ar && w.de && String(w.de).trim().length > 1);
   /* Die Kapitelauswahl von der Startseite gilt auch hier - sonst uebt man das
      halbe Buch, obwohl oben "Kapitel 3" eingestellt ist. Nur wenn dabei zu
-     wenig uebrig bleibt, um vier Antworten zu bilden, wird sie ignoriert;
+     wenig uebrig bleibt, um alle Antworten zu bilden, wird sie ignoriert;
      eine leere Karte waere unbrauchbarer als ein Ablenker aus Kapitel 4. */
   /* ⚠️ Seit dem 11.08.2026 je Buch: ein Wort zaehlt, wenn SEIN Buch keine
      Kapitel eingeengt hat oder sein Kapitel darin steht. Eine gemeinsame Liste
@@ -184,31 +192,261 @@ function hoerbareVokabeln(){
       const sel = kapitelAuswahl(w.book);
       return !sel.length || sel.indexOf(w.chapter) >= 0;
     });
-    if (eng.length >= 4) pool = eng;
+    if (eng.length >= HOER_ANTWORTEN) pool = eng;
   }
   return pool;
 }
 
-function waehleAblenker(ziel, pool, anzahl){
-  const anders = w => w.id !== ziel.id && w.de !== ziel.de;
-  const gleichesKapitel = pool.filter(w => anders(w) && w.chapter === ziel.chapter);
-  const gleicheWortart  = gleichesKapitel.filter(w => w.type === ziel.type);
-  /* Erst Kapitel + Wortart, dann nur Kapitel, dann alles - so bleibt die
-     Auswahl auch in kleinen Kapiteln vollstaendig. */
-  const stufen = [gleicheWortart, gleichesKapitel, pool.filter(anders)];
-  const raus = [];
-  const gesehen = new Set();
-  for (const stufe of stufen){
-    for (const w of shuffle(stufe)){
-      if (raus.length >= anzahl) break;
-      if (gesehen.has(w.de)) continue;
-      gesehen.add(w.de);
-      raus.push(w);
+/* ===== AEHNLICHE ABLENKER — Anfang =====
+   ⛔ Diese Markierung und die am Ende NICHT entfernen: werkzeuge/pruefe-hoerablenker.mjs
+   schneidet genau diesen Block heraus und misst ihn an den echten Vokabeln.
+
+   Elias am 11.09.2026, unterwegs in einer Claude-Sitzung im Web: „Also beim
+   Hörverstehen sollen 5 Auswahl Möglichkeiten sein und es soll schwerer
+   gemacht werden und zwar in den man ähnliche Wörter die die sich entweder
+   ähnlich anhören oder ähnlich geschrieben werden beim vokabeltrainer"
+
+   ⭐ ZWEI BILDER JE WORT — beide ohne Ḥarakāt, ohne Artikel und ohne ة am Ende:
+   - LAUTBILD: was ein deutsches Ohr leicht verwechselt, faellt zusammen —
+     die s-Laute, die z-Laute, t/ṭ, d/ḍ, k/q, h/ḥ, Hamza/ʿAin, ḫ/ġ.
+   - SCHRIFTBILD: was sich nur durch Punkte unterscheidet, faellt zusammen —
+     am Wortende aber NICHT ن und ي, die dort eine eigene Form haben (sonst
+     gaelte „jetzt" als Schriftzwilling von „Vater").
+   Aehnlichkeit = 1 − Editierabstand / Laenge, der hoehere der beiden Werte.
+
+   ⚠️ Die Vokale zaehlen bewusst NICHT mit: „Mann" und „Bein" (رجل) sind
+   genau das Paar, das man hoerend auseinanderhalten soll.
+
+   ⛔ NIE ALS ABLENKER: dasselbe Wort mit Artikel oder anderer Endung („Tag" /
+   „heute", „Name" / „Nomen") und eine gleiche Bedeutung („groß (lang)" /
+   „groß") — sonst stehen zwei richtige Antworten auf der Karte. Die alte
+   Auswahl verglich nur den ganzen deutschen Text; gemessen vor dem Umbau
+   (Lernbestand, 171 Woerter, je Wort 20 Karten, drei Laeufe) setzte sie 10,
+   13 und 19 Mal zwei gleichwertige Antworten nebeneinander.
+   ⚠️ Zusaetze in Klammern trennen dagegen: „du (m.)" und „du (w.)" sind zwei
+   verschiedene Antworten und ein gutes Hoerpaar. */
+
+/* Ḥarakāt, Tanwīn, Šadda, Sukūn, Quranzeichen und Tatwīl — dieselben Bereiche
+   wie SUCH_ZEICHEN in js/kategorien.js, dazu U+0640. ⛔ Als \u-Folgen, nie als
+   sichtbare Zeichen: eine kopierte Klasse sieht gleich aus und trifft anderes. */
+const HOER_TASCHKIL = /[ؐ-ًؚ-ٰٟۖ-ࣰۭ-ࣳـ]/g;
+
+/* Je Gruppe steht der erste Buchstabe fuer alle. ⛔ Nur Codepunkte aus dem
+   arabischen Grundblock U+0621–U+064A und U+0671 — ein persisches ی oder ک
+   saehe gleich aus und traefe kein einziges Wort; der Pruefer eicht jede
+   Gruppe an Buchstaben aus echten Vokabeln. */
+const HOER_LAUTGRUPPEN = [
+  'سصث',                          /* s-Laute:  sīn ṣād ṯāʾ */
+  'زذظ',                          /* z-Laute:  zāy ḏāl ẓāʾ */
+  'تطة',                          /* t-Laute:  tāʾ ṭāʾ tāʾ marbūṭa */
+  'دض',                                /* dāl ḍād */
+  'كق',                                /* kāf qāf */
+  'هح',                                /* hāʾ ḥāʾ */
+  'ءأإآؤئع',  /* Hamza in allen Formen, ʿAin */
+  'خغ',                                /* ḫāʾ ġain */
+  'يى',                                /* yāʾ, alif maqṣūra */
+];
+const HOER_SCHRIFTGRUPPEN = [
+  'بتثنيىئ',  /* der Zahn: bāʾ tāʾ ṯāʾ nūn yāʾ */
+  'جحخ',                          /* ǧīm ḥāʾ ḫāʾ */
+  'دذ',                                /* dāl ḏāl */
+  'رز',                                /* rāʾ zāy */
+  'سش',                                /* sīn šīn */
+  'صض',                                /* ṣād ḍād */
+  'طظ',                                /* ṭāʾ ẓāʾ */
+  'عغ',                                /* ʿain ġain */
+  'فق',                                /* fāʾ qāf */
+  'هة',                                /* hāʾ tāʾ marbūṭa */
+  'اأإآٱ',              /* Alif in allen Formen */
+  'وؤ',                                /* wāw */
+];
+function hoerKarte(gruppen){
+  const karte = {};
+  for (const g of gruppen) for (const z of g) karte[z] = g[0];
+  return karte;
+}
+const HOER_LAUTKARTE = hoerKarte(HOER_LAUTGRUPPEN);
+const HOER_SCHRIFTKARTE = hoerKarte(HOER_SCHRIFTGRUPPEN);
+
+/* ⭐ Die Schwelle, gemessen am 11.09.2026 an seinen Woertern: 0,65 heisst bei
+   drei bis vier Buchstaben hoechstens ein Unterschied, ab sechs hoechstens
+   zwei. Das Band darunter (0,5 bis 0,6) war beim Durchsehen ueberwiegend
+   Zufall — „Student" / „Hund", „alt" / „Stadt". */
+const HOER_AEHNLICH = 0.65;
+/* Aus wie vielen der naechstbesten gemischt wird — damit eine Karte nicht
+   jedes Mal gleich aussieht und man sie am Ende wiedererkennt statt hinhoert. */
+const HOER_BAND = 6;
+
+/* Grundbuchstaben ohne Vokalzeichen; der Artikel ال faellt weg, weil er sonst
+   jedes bestimmte Wort jedem anderen aehnlich machte. */
+function hoerGeruest(text){
+  let s = String(text || '').normalize('NFC')
+    .replace(HOER_TASCHKIL, '')
+    .replace(/[^ء-يٱ]/g, '');
+  if (/^[اٱ]ل/.test(s) && s.length >= 4) s = s.slice(2);
+  return s;
+}
+
+/* Das Wort ohne Artikel und ohne Endung, MIT seinen Vokalen — daran erkennt
+   man dasselbe Wort in zwei Eintraegen („Tag" / „heute"), ohne die
+   verschiedenen Woerter „Mann" / „Bein" zusammenzuwerfen. */
+function hoerWortkern(text){
+  let s = String(text || '').normalize('NFC').replace(/ـ/g, '').replace(/\s+/g, ' ').trim()
+    .replace(/[آأإٱ]/g, 'ا');
+  const artikel = s.match(/^الْ?/);
+  if (artikel && s.length > artikel[0].length + 1){
+    /* ⚠️ Beim Sonnenbuchstaben traegt der erste Buchstabe danach eine Šadda,
+       die das Wort ohne Artikel nicht hat. */
+    s = s.slice(artikel[0].length).replace(/^([^ً-ْ])([ً-ِْ]*)ّ/, '$1$2');
+  }
+  /* Endung weg; eine Šadda am letzten Buchstaben gehoert zum Wort und bleibt. */
+  return s.replace(/[ً-ْ]+$/, m => (m.includes('ّ') ? 'ّ' : ''));
+}
+
+/* Die Bedeutungen einzeln, je mit ihrem Klammerzusatz. */
+function hoerBedeutungen(w){
+  return [w.de, w.deNeben].filter(Boolean).join('/')
+    .toLowerCase()
+    .split(/[\/;,]/)
+    .map(t => ({
+      kern: t.replace(/\([^)]*\)/g, ' ')
+        .replace(/[.!?„“”"']/g, '')
+        .replace(/^\s*(der|die|das|ein|eine|einen)\s+/, '')
+        .replace(/\s+/g, ' ').trim(),
+      zusatz: (t.match(/\([^)]*\)/g) || []).join(' ').replace(/[()]/g, '').replace(/\s+/g, ' ').trim(),
+    }))
+    .filter(b => b.kern);
+}
+
+/* ⚠️ Zwischengespeichert je Wortobjekt — jede Frage vergleicht das gefragte
+   Wort mit dem ganzen Vorrat. Die vier Texte werden mitgemerkt und bei jedem
+   Zugriff verglichen, damit ein bearbeitetes eigenes Wort nicht mit seiner
+   alten Fassung weiterlaeuft. */
+const HOER_MERKMALE = new WeakMap();
+function hoerMerkmale(w){
+  const alt = HOER_MERKMALE.get(w);
+  if (alt && alt.ar === w.ar && alt.sg === w.sg && alt.de === w.de && alt.deNeben === w.deNeben) return alt;
+  const text = sprechText(w);
+  const voll = hoerGeruest(text);
+  const g = voll.replace(/ة$/, '');
+  let laut = Array.from(g, z => HOER_LAUTKARTE[z] || z).join('');
+  /* Ein Alif am Wortanfang wird mit einem Stimmeinsatz gesprochen — fuer das
+     Ohr dasselbe wie ein Hamza. */
+  if (laut[0] === 'ا' || laut[0] === 'ٱ') laut = 'ء' + laut.slice(1);
+  const letzter = g.length - 1;
+  const schrift = Array.from(g, (z, i) => {
+    if (i === letzter && z === 'ن') return 'ن';
+    if (i === letzter && (z === 'ي' || z === 'ى' || z === 'ئ')) return 'ى';
+    return HOER_SCHRIFTKARTE[z] || z;
+  }).join('');
+  const neu = { ar: w.ar, sg: w.sg, de: w.de, deNeben: w.deNeben, laut, schrift, laenge: voll.length,
+    kern: hoerWortkern(text), bedeutungen: hoerBedeutungen(w) };
+  HOER_MERKMALE.set(w, neu);
+  return neu;
+}
+
+/* Editierabstand mit zwei wiederverwendeten Zeilen — er laeuft je Frage einmal
+   gegen jedes Wort des Vorrats, neue Arrays je Aufruf waeren reiner Muell. */
+let HOER_ZEILE_VORHER = new Int32Array(64), HOER_ZEILE_JETZT = new Int32Array(64);
+function hoerAbstand(a, b){
+  if (a === b) return 0;
+  if (!a.length) return b.length;
+  if (!b.length) return a.length;
+  if (b.length + 1 > HOER_ZEILE_VORHER.length){
+    HOER_ZEILE_VORHER = new Int32Array(b.length + 1);
+    HOER_ZEILE_JETZT = new Int32Array(b.length + 1);
+  }
+  let vorher = HOER_ZEILE_VORHER, jetzt = HOER_ZEILE_JETZT;
+  for (let j = 0; j <= b.length; j++) vorher[j] = j;
+  for (let i = 1; i <= a.length; i++){
+    jetzt[0] = i;
+    for (let j = 1; j <= b.length; j++){
+      jetzt[j] = Math.min(vorher[j] + 1, jetzt[j - 1] + 1,
+        vorher[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
     }
-    if (raus.length >= anzahl) break;
+    [vorher, jetzt] = [jetzt, vorher];
+  }
+  return vorher[b.length];
+}
+function hoerMass(a, b){
+  const n = Math.max(a.length, b.length);
+  return n ? 1 - hoerAbstand(a, b) / n : 0;
+}
+
+function hoerAehnlichkeit(ziel, w){
+  const a = hoerMerkmale(ziel), b = hoerMerkmale(w);
+  const laut = hoerMass(a.laut, b.laut);
+  const schrift = hoerMass(a.schrift, b.schrift);
+  const wert = Math.max(laut, schrift);
+  /* ⚠️ Unter drei Buchstaben nur bei vollem Gleichklang: bei zwei Buchstaben
+     waere sonst jedes Wort aehnlich, das einen davon teilt. */
+  const kurz = Math.min(a.laenge, b.laenge) < 3;
+  return { wert, laut, schrift, aehnlich: wert >= HOER_AEHNLICH && (!kurz || wert === 1) };
+}
+
+function hoerGleicheBedeutung(a, b){
+  const liste = hoerMerkmale(b).bedeutungen;
+  for (const x of hoerMerkmale(a).bedeutungen) for (const y of liste){
+    if (x.kern !== y.kern) continue;
+    if (!x.zusatz || !y.zusatz || x.zusatz === y.zusatz) return true;
+  }
+  return false;
+}
+
+function hoerTaugtAlsAblenker(ziel, w){
+  return w.id !== ziel.id
+    && hoerMerkmale(w).kern !== hoerMerkmale(ziel).kern
+    && !hoerGleicheBedeutung(ziel, w);
+}
+
+function waehleAblenker(ziel, pool, anzahl){
+  /* Gemischt VOR dem Sortieren: die Sortierung ist stabil, Gleichstaende
+     bleiben also zufaellig verteilt. Bei gleichem Wert zuerst das Hoerpaar. */
+  const kandidaten = shuffle(pool.filter(w => hoerTaugtAlsAblenker(ziel, w)))
+    .map(w => ({ w, ...hoerAehnlichkeit(ziel, w) }))
+    .sort((a, b) => (b.wert - a.wert) || (b.laut - a.laut));
+  const raus = [];
+  const nimm = x => {
+    if (raus.length >= anzahl || raus.includes(x.w)) return;
+    /* Auch untereinander keine zwei gleichwertigen Antworten. */
+    if (raus.some(r => !hoerTaugtAlsAblenker(r, x.w))) return;
+    raus.push(x.w);
+  };
+
+  /* 1. Der aehnlichste kommt immer mit — genau dieses Paar soll er
+     auseinanderhalten lernen. */
+  const aehnlich = kandidaten.filter(x => x.aehnlich);
+  if (aehnlich.length) nimm(aehnlich[0]);
+  /* 2. Dazu hoechstens zwei weitere aus den naechstbesten, gemischt. Ein
+     Platz bleibt frei: waeren alle vier Ablenker fest, saehe die Karte zu
+     diesem Wort jedes Mal gleich aus. */
+  for (const x of shuffle(aehnlich.slice(1, 1 + HOER_BAND))){
+    if (raus.length >= Math.max(1, anzahl - 1)) break;
+    nimm(x);
+  }
+  /* 3. Der Rest wie bisher — erst Kapitel und Wortart, dann Kapitel, dann
+     alles, innerhalb jeder Stufe die aehnlicheren zuerst. Gezogen wird aus
+     einem Fenster, das immer etwas groesser ist als noetig: sonst liefert ein
+     Kapitel mit genau vier passenden Woertern jedes Mal dieselben vier
+     (gemessen vorher: 8 von 171 Woertern mit immer gleichem Satz, jetzt 0). */
+  const stufen = [
+    x => x.w.chapter === ziel.chapter && x.w.type === ziel.type,
+    x => x.w.chapter === ziel.chapter,
+    () => true,
+  ];
+  const rest = [];
+  const eingereiht = new Set();
+  for (const passt of stufen) for (const x of kandidaten){
+    if (passt(x) && !eingereiht.has(x)){ eingereiht.add(x); rest.push(x); }
+  }
+  while (raus.length < anzahl && rest.length){
+    const fenster = Math.min(rest.length, Math.max(HOER_BAND, anzahl - raus.length + 2));
+    const [x] = rest.splice(Math.floor(Math.random() * fenster), 1);
+    nimm(x);
   }
   return raus;
 }
+/* ===== AEHNLICHE ABLENKER — Ende ===== */
 
 function naechsteHoerfrage(){
   const pool = hoerbareVokabeln();
@@ -218,7 +456,7 @@ function naechsteHoerfrage(){
      deshalb bei jeder neuen Frage weggeschaltet, auch im Leer-Fall - sonst
      zeigte er auf das Wort davor und wuerde das Falsche ausblenden. */
   document.getElementById('hoerKenneSchonZeile').classList.add('hidden');
-  if (pool.length < 4){
+  if (pool.length < HOER_ANTWORTEN){
     karte.classList.add('hidden');
     leer.classList.remove('hidden');
     /* Alle gewaehlten Buecher nennen, nicht nur das erste - sonst sucht man in
@@ -226,7 +464,7 @@ function naechsteHoerfrage(){
     const namen = (typeof aktiveBuecher === 'function' ? aktiveBuecher() : [aktivesBuch()])
       .map(buchTitel).join(', ');
     leer.textContent = `In ${namen} stehen zu wenige Vokabeln mit Bedeutung `
-      + `(${pool.length}), um vier Antworten anzubieten. Waehle oben auf der Startseite mehr aus.`;
+      + `(${pool.length}), um ${HOER_ANTWORTEN} Antworten anzubieten. Waehle oben auf der Startseite mehr aus.`;
     return;
   }
   karte.classList.remove('hidden');
@@ -236,10 +474,10 @@ function naechsteHoerfrage(){
      Ablenker. Ein Wort, das Elias sicher kann, ist als falsche Antwort sogar
      besonders brauchbar: er erkennt es und schliesst es aus. Wuerde man es aus
      dem ganzen Pool nehmen, verloere der Modus die besten Ablenker und
-     schrumpfte womoeglich unter die vier noetigen Antworten. */
+     schrumpfte womoeglich unter die noetigen Antworten. */
   const fragbar = pool.filter(w => !(typeof kennErSchon === 'function' && kennErSchon(w)));
   HOER.wort = shuffle(fragbar.length ? fragbar : pool)[0];
-  HOER.optionen = shuffle([HOER.wort, ...waehleAblenker(HOER.wort, pool, 3)]);
+  HOER.optionen = shuffle([HOER.wort, ...waehleAblenker(HOER.wort, pool, HOER_ANTWORTEN - 1)]);
   HOER.beantwortet = false;
   HOER.fertig = false;
   HOER.sperreBis = 0;
@@ -249,6 +487,12 @@ function naechsteHoerfrage(){
   document.getElementById('hoerLoesung').classList.add('hidden');
   document.getElementById('hoerOptionen').innerHTML = HOER.optionen.map((w, i)=>
     `<button class="hoer-option" data-hoerwahl="${i}">${escapeHtml(w.de)}</button>`).join('');
+  /* ⚠️ Seit es fuenf Antworten sind (11.09.2026): bei den laengsten Bedeutungen
+     — den Fachbegriffen — lag die fuenfte gemessen 23 px UNTER der unteren
+     Leiste, in 3 von 300 Fragen (Browser 375×812, Vorrat 215 Woerter). Nichts
+     deutete darauf hin, dass da noch eine Antwort steht. freiRollen() rollt
+     nur, wenn wirklich etwas verdeckt ist. */
+  freiRollen(document.getElementById('hoerOptionen'));
 
   hoerAbspielen();
 }
