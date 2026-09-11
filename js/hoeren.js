@@ -224,7 +224,24 @@ function hoerbareVokabeln(){
    (Lernbestand, 171 Woerter, je Wort 20 Karten, drei Laeufe) setzte sie 10,
    13 und 19 Mal zwei gleichwertige Antworten nebeneinander.
    ⚠️ Zusaetze in Klammern trennen dagegen: „du (m.)" und „du (w.)" sind zwei
-   verschiedene Antworten und ein gutes Hoerpaar. */
+   verschiedene Antworten und ein gutes Hoerpaar.
+
+   ⭐⭐ NOCH SCHWERER — Elias am 11.09.2026, 20:38:46, am PC:
+     „und das hörverstehen muss noch schwieriger gemacht werden. wie gesagt
+      nimmt wörter in eine abfrage die entweder ähnlich geschrieben werden oder
+      die selbe wortwuzel haben oder ähnlich sind wie zb mund und nase oder sonst
+      was. ich glaube da kann man sich bei kategorien bei wortfelder etwas
+      inspririeren lassen … weil sehr oft kann ich einfach per ausschluss
+      kriterium das richtig machen"
+   Gemessen VOR dem Umbau (vocab-data.js, 171 Woerter × 10 Karten): bei 52,4 %
+   der Karten, fuer die es Woerter aus demselben Wortfeld gab, stand KEINES
+   davon auf der Karte — die richtige Antwort war das einzige Thema, also per
+   Ausschluss zu finden. Ein Wort derselben Wurzel kam bei 66,8 % der moeglichen
+   Karten mit. Deshalb zwei weitere Arten von Aehnlichkeit mit festem Platz:
+   - WURZEL: gleiche Wurzel (`root`), z. B. مَكْتَبٌ zu كِتَابٌ;
+   - WORTFELD: gemeinsames Bedeutungsfeld aus wortfelder-data.js (Koerperteile:
+     „Mund" zu „Nase") — nur die Bedeutungsfelder, nicht die Wortart-Felder,
+     sonst waere jedes Nomen jedem Nomen „aehnlich". */
 
 /* Ḥarakāt, Tanwīn, Šadda, Sukūn, Quranzeichen und Tatwīl — dieselben Bereiche
    wie SUCH_ZEICHEN in js/kategorien.js, dazu U+0640. ⛔ Als \u-Folgen, nie als
@@ -322,10 +339,26 @@ function hoerBedeutungen(w){
    Wort mit dem ganzen Vorrat. Die vier Texte werden mitgemerkt und bei jedem
    Zugriff verglichen, damit ein bearbeitetes eigenes Wort nicht mit seiner
    alten Fassung weiterlaeuft. */
+/* Die Wurzel als reine Buchstabenfolge: im Bestand steht sie mal „ك ت ب",
+   mal ohne Leerzeichen; Hamza-Formen fallen zusammen (أ م م / ء م م). */
+function hoerWurzel(w){
+  const r = String((w && w.root) || '').normalize('NFC').replace(HOER_TASCHKIL, '')
+    .replace(/[^ء-يٱ]/g, '').replace(/[أإآٱؤئ]/g, 'ء').replace(/ى/g, 'ي');
+  return r.length >= 2 ? r : '';
+}
+
+/* Die Bedeutungsfelder eines Wortes — dieselbe Zuordnung wie im Reiter
+   „Wortfelder" (passtInsFeld() in js/kern.js), aber ohne die Wortart-Felder. */
+function hoerFelder(w){
+  if (typeof WORTFELDER === 'undefined' || typeof passtInsFeld !== 'function') return [];
+  return WORTFELDER.filter(f => !f.wortart && passtInsFeld(w, f)).map(f => f.name);
+}
+
 const HOER_MERKMALE = new WeakMap();
 function hoerMerkmale(w){
   const alt = HOER_MERKMALE.get(w);
-  if (alt && alt.ar === w.ar && alt.sg === w.sg && alt.de === w.de && alt.deNeben === w.deNeben) return alt;
+  if (alt && alt.ar === w.ar && alt.sg === w.sg && alt.de === w.de && alt.deNeben === w.deNeben
+      && alt.type === w.type && alt.root === w.root) return alt;
   const text = sprechText(w);
   const voll = hoerGeruest(text);
   const g = voll.replace(/ة$/, '');
@@ -339,8 +372,8 @@ function hoerMerkmale(w){
     if (i === letzter && (z === 'ي' || z === 'ى' || z === 'ئ')) return 'ى';
     return HOER_SCHRIFTKARTE[z] || z;
   }).join('');
-  const neu = { ar: w.ar, sg: w.sg, de: w.de, deNeben: w.deNeben, laut, schrift, laenge: voll.length,
-    kern: hoerWortkern(text), bedeutungen: hoerBedeutungen(w) };
+  const neu = { ar: w.ar, sg: w.sg, de: w.de, deNeben: w.deNeben, type: w.type, root: w.root, laut, schrift, laenge: voll.length,
+    kern: hoerWortkern(text), bedeutungen: hoerBedeutungen(w), wurzel: hoerWurzel(w), felder: hoerFelder(w) };
   HOER_MERKMALE.set(w, neu);
   return neu;
 }
@@ -399,38 +432,76 @@ function hoerTaugtAlsAblenker(ziel, w){
     && !hoerGleicheBedeutung(ziel, w);
 }
 
+/* Wie viele Plaetze aus demselben Wortfeld kommen: EINER immer, ein ZWEITER
+   nur, wenn es kein Hoerpaar oder kein Wort derselben Wurzel gab.
+   ⭐ Gemessen am 11.09.2026 (171 Woerter × 10 Karten): mit zwei festen
+   Plaetzen fiel das Hoeren zurueck — nur noch Ø 0,68 Ablenker ueber der
+   Klang-/Schriftschwelle statt 1,02 —, mit einem festen Platz Ø 0,90, und das
+   Thema verriet die Antwort in beiden Faellen auf 0,0 % der Karten. Der
+   zweite Platz springt deshalb nur ein, wo er keinem Hoerpaar den Platz nimmt
+   — so bekommt „Mund" (kein Hoerpaar) im Mittel 2,0 Koerperteile. */
+const HOER_FELD_PLAETZE = 1;
+const HOER_FELD_PLAETZE_HOECHSTENS = 2;
+
 function waehleAblenker(ziel, pool, anzahl){
+  const zm = hoerMerkmale(ziel);
   /* Gemischt VOR dem Sortieren: die Sortierung ist stabil, Gleichstaende
      bleiben also zufaellig verteilt. Bei gleichem Wert zuerst das Hoerpaar. */
   const kandidaten = shuffle(pool.filter(w => hoerTaugtAlsAblenker(ziel, w)))
-    .map(w => ({ w, ...hoerAehnlichkeit(ziel, w) }))
+    .map(w => {
+      const m = hoerMerkmale(w);
+      return { w, ...hoerAehnlichkeit(ziel, w),
+        wurzel: !!zm.wurzel && m.wurzel === zm.wurzel,
+        feld: zm.felder.some(f => m.felder.includes(f)),
+        typ: !!ziel.type && w.type === ziel.type };
+    })
     .sort((a, b) => (b.wert - a.wert) || (b.laut - a.laut));
   const raus = [];
   const nimm = x => {
-    if (raus.length >= anzahl || raus.includes(x.w)) return;
+    if (raus.length >= anzahl || raus.includes(x.w)) return false;
     /* Auch untereinander keine zwei gleichwertigen Antworten. */
-    if (raus.some(r => !hoerTaugtAlsAblenker(r, x.w))) return;
+    if (raus.some(r => !hoerTaugtAlsAblenker(r, x.w))) return false;
     raus.push(x.w);
+    return true;
   };
 
   /* 1. Der aehnlichste kommt immer mit — genau dieses Paar soll er
      auseinanderhalten lernen. */
   const aehnlich = kandidaten.filter(x => x.aehnlich);
   if (aehnlich.length) nimm(aehnlich[0]);
-  /* 2. Dazu hoechstens zwei weitere aus den naechstbesten, gemischt. Ein
-     Platz bleibt frei: waeren alle vier Ablenker fest, saehe die Karte zu
-     diesem Wort jedes Mal gleich aus. */
+  /* 2. Ein Wort DERSELBEN WURZEL, wenn es eines gibt — zufaellig gewaehlt.
+     Es teilt Buchstaben UND Bedeutungsnaehe: „Buch" neben „Bibliothek". */
+  for (const x of shuffle(kandidaten.filter(x => x.wurzel))) if (nimm(x)) break;
+  /* 3. Aus DEMSELBEN WORTFELD, gleiche Wortart zuerst — damit das Thema die
+     richtige Antwort nicht verraet („Mund" unter lauter Nicht-Koerperteilen).
+     Was Schritt 1 oder 2 schon aus dem Feld gebracht haben, zaehlt mit. */
+  const imFeld = w => zm.felder.some(f => hoerMerkmale(w).felder.includes(f));
+  /* ⚠️ Erster Versuch: der zweite Platz auch dann, wenn es kein Wort derselben
+     Wurzel gab. Das trifft auf fast jedes Wort zu (nur 190 von 1710 Karten
+     haben ueberhaupt einen Wurzelpartner) — gemessen fiel das Hoeren wieder auf
+     Ø 0,69. Nur ein fehlendes HOERPAAR gibt den Platz frei. */
+  const feldPlaetze = Math.min(HOER_FELD_PLAETZE_HOECHSTENS, HOER_FELD_PLAETZE + (aehnlich.length ? 0 : 1));
+  let feld = raus.filter(imFeld).length;
+  for (const x of [...shuffle(kandidaten.filter(x => x.feld && x.typ)), ...shuffle(kandidaten.filter(x => x.feld && !x.typ))]){
+    if (feld >= feldPlaetze || raus.length >= anzahl) break;
+    if (nimm(x)) feld++;
+  }
+  /* 4. Dazu weitere Hoerpaare aus den naechstbesten, gemischt. Ein Platz
+     bleibt frei: waeren alle vier Ablenker fest, saehe die Karte zu diesem
+     Wort jedes Mal gleich aus. */
   for (const x of shuffle(aehnlich.slice(1, 1 + HOER_BAND))){
     if (raus.length >= Math.max(1, anzahl - 1)) break;
     nimm(x);
   }
-  /* 3. Der Rest wie bisher — erst Kapitel und Wortart, dann Kapitel, dann
-     alles, innerhalb jeder Stufe die aehnlicheren zuerst. Gezogen wird aus
-     einem Fenster, das immer etwas groesser ist als noetig: sonst liefert ein
-     Kapitel mit genau vier passenden Woertern jedes Mal dieselben vier
-     (gemessen vorher: 8 von 171 Woertern mit immer gleichem Satz, jetzt 0). */
+  /* 5. Der Rest — erst gleiche Wortart im Kapitel, dann gleiche Wortart, dann
+     das Kapitel, dann alles; innerhalb jeder Stufe die aehnlicheren zuerst.
+     Gezogen wird aus einem Fenster, das immer etwas groesser ist als noetig:
+     sonst liefert ein Kapitel mit genau vier passenden Woertern jedes Mal
+     dieselben vier (gemessen vor v469: 8 von 171 Woertern mit immer gleichem
+     Satz, danach 0). */
   const stufen = [
-    x => x.w.chapter === ziel.chapter && x.w.type === ziel.type,
+    x => x.typ && x.w.chapter === ziel.chapter,
+    x => x.typ,
     x => x.w.chapter === ziel.chapter,
     () => true,
   ];

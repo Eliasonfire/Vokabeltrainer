@@ -71,17 +71,26 @@ function funktion(quelle, name){
 }
 
 const BLOCK = block(HOEREN);
-const HILFEN = ['sprechText', 'shuffle'].map(n => funktion(KERN, n));
-if (!BLOCK || HILFEN.some(h => !h)){
-  console.log('⛔ Block „AEHNLICHE ABLENKER" in js/hoeren.js oder sprechText/shuffle in js/kern.js nicht gefunden.');
+/* ⛔⛔ Seit dem 11.09.2026 abends gehoeren die WORTFELDER dazu (Elias,
+   20:38:46: „… oder ähnlich sind wie zb mund und nase …"). hoerFelder() fragt
+   sie mit `typeof WORTFELDER` ab und liefert ohne sie still ein leeres Feld.
+   Beim ersten Lauf nach dem Umbau fehlten sie hier — der Pruefer war gruen und
+   hatte die neue Auswahl OHNE Wortfeld gemessen, also nicht die, die in der
+   App laeuft. [[pruefwerkzeug_laedt_mehr_als_die_app]] */
+const WORTFELD_DATEN = lies('wortfelder-data.js');
+const TRENNER = (KERN.match(/const WORTFELD_TRENNER = [^\n]*\n/) || [null])[0];
+const HILFEN = ['sprechText', 'shuffle', 'wortfeldForm', 'wortfeldTreffer', 'istEineDerFormen', 'passtInsFeld'].map(n => funktion(KERN, n));
+if (!BLOCK || HILFEN.some(h => !h) || !TRENNER){
+  console.log('⛔ Block „AEHNLICHE ABLENKER" in js/hoeren.js oder eine Hilfsfunktion in js/kern.js (sprechText, shuffle, passtInsFeld, WORTFELD_TRENNER …) nicht gefunden.');
   process.exit(1);
 }
 
 function lade(blockQuelle){
   const ctx = {};
   vm.createContext(ctx);
-  vm.runInContext(HILFEN.join('\n') + '\n' + blockQuelle
-    + '\n;globalThis.__H = { waehleAblenker, hoerTaugtAlsAblenker, hoerAehnlichkeit, HOER_LAUTGRUPPEN, HOER_SCHRIFTGRUPPEN };',
+  vm.runInContext(WORTFELD_DATEN + '\n' + TRENNER + HILFEN.join('\n') + '\n' + blockQuelle
+    + '\n;globalThis.__H = { waehleAblenker, hoerTaugtAlsAblenker, hoerAehnlichkeit, hoerMerkmale, HOER_LAUTGRUPPEN, HOER_SCHRIFTGRUPPEN,'
+    + ' wortfelderGeladen: typeof WORTFELDER !== "undefined" && WORTFELDER.length > 0 };',
     ctx, { filename: 'js/hoeren.js (Block)' });
   return ctx.__H;
 }
@@ -145,6 +154,11 @@ function eichung(H){
     [T('Tag', 'heute') === false, '„Tag" / „heute" ist dasselbe Wort — nie zusammen auf einer Karte'],
     [T('groß (lang)', 'groß') === false, '„groß (lang)" / „groß" haben dieselbe Bedeutung — nie zusammen'],
     [T('Mann', 'Bein / Fuß') === true, '„Mann" / „Bein" sind verschiedene Woerter — ein erlaubtes Hoerpaar'],
+    [H.wortfelderGeladen === true, 'die Wortfelder sind geladen — sonst misst dieser Pruefer eine Auswahl ohne Themen'],
+    [H.hoerMerkmale(nachBedeutung('Mund')).felder.includes('Körperteile') && H.hoerMerkmale(nachBedeutung('Nase')).felder.includes('Körperteile'),
+      '„Mund" und „Nase" liegen beide im Feld „Körperteile"'],
+    [H.hoerMerkmale(nachBedeutung('Lehrer')).wurzel !== '' && H.hoerMerkmale(nachBedeutung('Lehrer')).wurzel === H.hoerMerkmale(nachBedeutung('Schule')).wurzel,
+      '„Lehrer" und „Schule" haben dieselbe Wurzel (د ر س)'],
   ];
   for (const [ok, text] of faelle) if (!ok) befunde.push(text + ' — trifft nicht mehr zu');
   return { befunde, anzahl: faelle.length };
@@ -163,9 +177,17 @@ const ANZAHL = 4;             /* fuenf Antworten = das gefragte Wort + vier Able
 const LAEUFE = 10;
 function messeKarten(H, laeufe = LAEUFE){
   let karten = 0, zuWenig = 0, zielDrin = 0, verstoesse = 0, wertApp = 0, wertZufall = 0, aehnlich = 0, immerGleich = 0;
+  let feldMoeglich = 0, feldAllein = 0, wurzelMoeglich = 0, wurzelDabei = 0, typMoeglich = 0, typAllein = 0, mundKoerper = 0, mundKarten = 0;
   const paare = { 'Mann': ['Bein / Fuß', 0], 'Lehrer': ['Schule', 0] };
+  /* Das ECHTE Mass fuer Feld und Wurzel — auch wenn H gestoert ist. */
+  const M = w => ECHT.hoerMerkmale(w);
+  const teiltFeld = (a, b) => M(a).felder.some(f => M(b).felder.includes(f));
   for (const ziel of POOL){
     const saetze = new Set();
+    const erlaubt = POOL.filter(w => ECHT.hoerTaugtAlsAblenker(ziel, w));
+    const gibtFeld = M(ziel).felder.length > 0 && erlaubt.some(w => teiltFeld(ziel, w));
+    const gibtWurzel = M(ziel).wurzel !== '' && erlaubt.some(w => M(w).wurzel === M(ziel).wurzel);
+    const gibtTyp = erlaubt.filter(w => w.type === ziel.type).length >= ANZAHL;
     for (let r = 0; r < laeufe; r++){
       const ab = H.waehleAblenker(ziel, POOL, ANZAHL);
       karten++;
@@ -185,11 +207,21 @@ function messeKarten(H, laeufe = LAEUFE){
       wertZufall += zufall.reduce((s, w) => s + ECHT.hoerAehnlichkeit(ziel, w).wert, 0) / ANZAHL;
       saetze.add(ab.map(w => w.id).sort().join(','));
       if (paare[ziel.de] && ab.some(w => w.de === paare[ziel.de][0])) paare[ziel.de][1]++;
+      /* „per ausschluss": steht die richtige Antwort als EINZIGE ihres Themas
+         oder ihrer Wortart auf der Karte, braucht man nicht hinzuhoeren. */
+      if (gibtFeld){ feldMoeglich++; if (!ab.some(w => teiltFeld(ziel, w))) feldAllein++; }
+      if (gibtWurzel){ wurzelMoeglich++; if (ab.some(w => M(w).wurzel === M(ziel).wurzel)) wurzelDabei++; }
+      if (gibtTyp){ typMoeglich++; if (!ab.some(w => w.type === ziel.type)) typAllein++; }
+      if (ziel.de === 'Mund'){ mundKarten++; mundKoerper += ab.filter(w => M(w).felder.includes('Körperteile')).length; }
     }
     if (saetze.size === 1) immerGleich++;
   }
   return { karten, laeufe, zuWenig, zielDrin, verstoesse, wertApp: wertApp / karten, wertZufall: wertZufall / karten,
-    aehnlich: aehnlich / karten, immerGleich, paare };
+    aehnlich: aehnlich / karten, immerGleich, paare,
+    feldAllein: feldMoeglich ? feldAllein / feldMoeglich : 0, feldMoeglich,
+    wurzelDabei: wurzelMoeglich ? wurzelDabei / wurzelMoeglich : 1, wurzelMoeglich,
+    typAllein: typMoeglich ? typAllein / typMoeglich : 0,
+    mundKoerper: mundKarten ? mundKoerper / mundKarten : 0 };
 }
 function urteile(m){
   const befunde = [];
@@ -199,10 +231,23 @@ function urteile(m){
   /* Gemessen am 11.09.2026: 0,38 gegen 0,15 — die Grenzen lassen Luft fuer den Zufall. */
   if (!(m.wertApp >= 0.30 && m.wertApp >= 2 * m.wertZufall))
     befunde.push(`Ablenker nicht aehnlicher als der Zufall: Ø ${m.wertApp.toFixed(3)} gegen ${m.wertZufall.toFixed(3)} (verlangt ≥ 0,30 und das Doppelte)`);
-  if (!(m.aehnlich >= 0.8)) befunde.push(`im Mittel nur ${m.aehnlich.toFixed(2)} Ablenker ueber der Schwelle (gemessen am 11.09.2026: 1,02; verlangt ≥ 0,8)`);
+  /* v469: 1,02 · seit dem Wortfeld-Platz (11.09.2026 abends): 0,90 — das
+     Hoerpaar bleibt, ein Platz geht an das Thema. Die Grenze bewacht, dass das
+     Thema das Hoeren nicht verdraengt (mit zwei festen Feld-Plaetzen: 0,68). */
+  if (!(m.aehnlich >= 0.8)) befunde.push(`im Mittel nur ${m.aehnlich.toFixed(2)} Ablenker ueber der Schwelle (gemessen am 11.09.2026: 1,02 vor, 0,90 nach dem Wortfeld-Platz; verlangt ≥ 0,8)`);
   if (m.immerGleich > POOL.length * 0.05) befunde.push(`${m.immerGleich} Woerter bekamen in ${m.laeufe} Laeufen immer dieselben Ablenker`);
   for (const [wort, [partner, n]] of Object.entries(m.paare))
     if (n !== m.laeufe) befunde.push(`„${wort}": der aehnlichste Ablenker „${partner}" kam nur ${n} von ${m.laeufe} Mal`);
+  /* Elias, 20:38:46: „sehr oft kann ich einfach per ausschluss kriterium das
+     richtig machen". Gemessen am 11.09.2026 (171 Woerter × 10 Karten):
+       vorher (v469)  Thema allein 52,4 % · Wurzel dabei 66,8 % · Wortart allein 2,5 % · „Mund" 0,67 Koerperteile
+       nachher        Thema allein  0,0 % · Wurzel dabei 100 %  · Wortart allein 0,2 % · „Mund" 2,00 Koerperteile
+       Zufall         Thema allein 79 %   · Wurzel dabei 2,6 %  · Wortart allein 21 %
+     Die Grenzen lassen Luft fuer den Zufall, aber nicht fuer den alten Stand. */
+  if (m.feldAllein > 0.10) befunde.push(`bei ${(100 * m.feldAllein).toFixed(1)} % der Karten ist die richtige Antwort das einzige Wort ihres Wortfelds — per Ausschluss loesbar (verlangt ≤ 10 %)`);
+  if (m.wurzelDabei < 0.90) befunde.push(`nur bei ${(100 * m.wurzelDabei).toFixed(1)} % der moeglichen Karten ein Wort derselben Wurzel (verlangt ≥ 90 %)`);
+  if (m.typAllein > 0.05) befunde.push(`bei ${(100 * m.typAllein).toFixed(1)} % der Karten ist die richtige Antwort die einzige ihrer Wortart (verlangt ≤ 5 %)`);
+  if (m.mundKoerper < 1.5) befunde.push(`„Mund" bekommt im Mittel nur ${m.mundKoerper.toFixed(2)} Koerperteile als Ablenker (verlangt ≥ 1,5)`);
   return befunde;
 }
 console.log(`\n3.–5. ${POOL.length} Woerter × ${LAEUFE} Karten mit ${ANZAHL} Ablenkern`);
@@ -210,6 +255,7 @@ const M = messeKarten(ECHT);
 {
   const befunde = urteile(M);
   console.log(`  gemessen: Ø Aehnlichkeit ${M.wertApp.toFixed(3)} (Zufall ${M.wertZufall.toFixed(3)}) · Ø ${M.aehnlich.toFixed(2)} von ${ANZAHL} ueber der Schwelle · immer gleicher Satz: ${M.immerGleich} · gleichwertige Antworten: ${M.verstoesse}`);
+  console.log(`  per Ausschluss: Thema allein ${(100 * M.feldAllein).toFixed(1)} % (${M.feldMoeglich} Karten) · Wurzel dabei ${(100 * M.wurzelDabei).toFixed(1)} % (${M.wurzelMoeglich} Karten) · Wortart allein ${(100 * M.typAllein).toFixed(1)} % · „Mund": Ø ${M.mundKoerper.toFixed(2)} Koerperteile`);
   if (!befunde.length){
     gut('jede Karte hat vier Ablenker, nie das gefragte Wort, nie zwei gleichwertige Antworten');
     gut('die Ablenker sind deutlich aehnlicher als ein zufaelliger Griff, und sie wandern');
@@ -234,8 +280,13 @@ stoere('bedeutungsschutz stillgelegt', '&& !hoerGleicheBedeutung(ziel, w);', ';'
   q => eichung(lade(q)).befunde);
 stoere('wortkern stillgelegt', '&& hoerMerkmale(w).kern !== hoerMerkmale(ziel).kern', '',
   q => eichung(lade(q)).befunde);
+/* Die zwei neuen Plaetze: legt man einen still, muss genau seine Messung rot werden. */
+stoere('wurzel stillgelegt', 'wurzel: !!zm.wurzel && m.wurzel === zm.wurzel,', 'wurzel: false,',
+  q => urteile(messeKarten(lade(q), 5)).filter(b => /Wurzel/.test(b)));
+stoere('wortfeld stillgelegt', 'feld: zm.felder.some(f => m.felder.includes(f)),', 'feld: false,',
+  q => urteile(messeKarten(lade(q), 5)).filter(b => /Wortfeld|Koerperteile/.test(b)));
 
 console.log(fehler
   ? `\n⛔ ${fehler} Befund(e) — die Ablenker im Hoermodus tun nicht, was Elias verlangt hat.`
-  : '\n✅ Fuenf Antworten, und die falschen klingen oder sehen aehnlich aus — ohne zweite richtige.');
+  : '\n✅ Fuenf Antworten; die falschen klingen aehnlich, teilen die Wurzel oder das Thema — kein Ausschluss, keine zweite richtige.');
 process.exitCode = fehler ? 1 : 0;
