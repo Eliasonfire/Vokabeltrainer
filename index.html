@@ -2160,8 +2160,20 @@ main{
 .rk-ar-gross{font-family:var(--font-ar);direction:rtl;unicode-bidi:isolate;text-align:center;color:#fff;font-size:calc(var(--fs-xl) * var(--ar-faktor));line-height:1.9;}
 .rk-titel{font-weight:800;font-size:var(--fs-lg);line-height:1.6;}
 .rk-titel-klein{font-weight:700;line-height:1.6;}
-.rk-kern{line-height:1.75;}
-.rk-rest{line-height:1.75;color:var(--text-dim);}
+/* ⛔ white-space:pre-line wie im Aufklapper (.gp-kern/.gp-rest): mehrere Regeln
+   tragen Absätze und Zeilen (verb-madi-endungen-01 eine ganze Formenliste).
+   Ohne diese Zeile lief die erste Fassung der Karte alles zu einem Block
+   zusammen — gefunden erst beim Entwurf dafür. */
+.rk-kern{line-height:1.75;white-space:pre-line;}
+.rk-rest{line-height:1.75;color:var(--text-dim);white-space:pre-line;}
+.rk-original .de{white-space:pre-line;}
+.rk-entwurf{border-left:3px solid var(--border-strong);}
+.rk-tabelle-rahmen{overflow-x:auto;max-width:100%;}
+.rk-tabelle{border-collapse:collapse;width:100%;font-size:var(--fs-sm);}
+.rk-tabelle th,.rk-tabelle td{border:1px solid var(--border);padding:4px 6px;text-align:center;vertical-align:middle;}
+.rk-tabelle thead th{color:var(--text-faint);font-weight:700;}
+.rk-tabelle tbody th{color:var(--text-dim);font-weight:600;white-space:nowrap;text-align:left;}
+.rk-tabelle td{font-family:var(--font-ar);font-size:calc(var(--fs-sm) * var(--ar-faktor));line-height:1.9;unicode-bidi:isolate;}
 .rk-link{background:none;border:none;padding:0;color:var(--red-soft);font:inherit;font-size:var(--fs-sm);cursor:pointer;text-align:left;text-decoration:underline;text-underline-offset:3px;line-height:1.8;}
 .rk-klein{font-size:var(--fs-xs);color:var(--text-faint);line-height:1.6;}
 .rk-hinweis{font-size:var(--fs-sm);color:var(--text-dim);line-height:1.7;border-left:3px solid var(--border-strong);padding-left:var(--sp-3);}

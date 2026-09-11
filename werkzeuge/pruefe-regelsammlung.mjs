@@ -208,9 +208,18 @@ console.log('\n=== 3. Die neun Karten aus Folge 19 ===');
   const texte = [];
   const sammle = v => { if (typeof v === 'string') texte.push(v); else if (Array.isArray(v)) v.forEach(sammle); else if (v && typeof v === 'object') Object.values(v).forEach(sammle); };
   karten.forEach(k => sammle(k));
+  /* Die Entwürfe gehören dazu: ein Entwurf, der ein Wort selbst vokalisiert,
+     wäre genau das, was die Karten nicht dürfen. */
+  const entwuerfe = app.hol('REGEL_ENTWUERFE');
+  sammle(entwuerfe);
   const unbelegt = [...new Set(texte.flatMap(woerter))].filter(w => !bestand.has(w));
-  pruefe(`jedes arabische Wort der Karten ist belegt (${new Set(texte.flatMap(woerter)).size} verschiedene)`,
+  pruefe(`jedes arabische Wort der Karten und Entwürfe ist belegt (${new Set(texte.flatMap(woerter)).size} verschiedene)`,
     !unbelegt.length, 'unbelegt: ' + unbelegt.join(' '));
+
+  /* „verb-madi-endungen-01: gute Fassung als Entwurf, alte bleibt." */
+  const madi = regeln.find(r => r.id === 'verb-madi-endungen-01');
+  pruefe('verb-madi-endungen-01: der Entwurf steht daneben, die alte Fassung ist unverändert in grammar-data.js',
+    !!(entwuerfe && entwuerfe['verb-madi-endungen-01']) && !!madi && madi.shortExplanation.includes('Das ist wie ein Baukasten'));
 
   /* Eichung des Wortvergleichs: ein bekanntes Wort wird gefunden, eine
      falsch vokalisierte Fassung desselben Wortes nicht. */

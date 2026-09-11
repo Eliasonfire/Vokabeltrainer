@@ -710,6 +710,43 @@ function zeichneF19Karte(k){
     + rkNotizHtml(id) + rkAktionenHtml(id, 'f19');
 }
 
+/* ---------- Entwurf für eine bessere Fassung (regelsammlung-data.js) ---------- */
+
+function regelEntwurf(id){
+  return (typeof REGEL_ENTWUERFE !== 'undefined' && REGEL_ENTWUERFE[id]) || null;
+}
+
+/* Übernimmt er den Entwurf, wird daraus SEINE Fassung als Text — die Tabelle
+   Zeile für Zeile, damit sie auch dort lesbar bleibt, wo nur Text steht (der
+   Aufklapper im Lesemodus). */
+function entwurfAlsText(e){
+  const zeilen = (e.tabelle && e.tabelle.zeilen || []).map(z => z[0] + ': ' + z.slice(1).filter(Boolean).join(' · '));
+  return [e.kern, zeilen.join('\n') + (e.tabelle && e.tabelle.hinweis ? '\n' + e.tabelle.hinweis : '')]
+    .concat(e.merksaetze || []).filter(Boolean).join('\n\n');
+}
+
+function rkEntwurfHtml(id){
+  const e = regelEntwurf(id);
+  if (!e) return '';
+  const t = regelText(id);
+  const uebernommen = t && t.bearbeitet && t.kurz === entwurfAlsText(e);
+  const tab = e.tabelle
+    ? `<div class="rk-tabelle-rahmen"><table class="rk-tabelle"><thead><tr>${e.tabelle.kopf.map(k => `<th>${escapeHtml(k)}</th>`).join('')}</tr></thead>
+        <tbody>${e.tabelle.zeilen.map(z => `<tr><th>${escapeHtml(z[0])}</th>${z.slice(1).map(c => `<td lang="ar" dir="rtl">${escapeHtml(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`
+      + (e.tabelle.hinweis ? `<div class="de">${regelnAr(e.tabelle.hinweis)}</div>` : '')
+    : '';
+  return rkAbschnitt('Entwurf für eine bessere Fassung',
+    `<div class="rk-klein">Du im Satzmodus-Export: „${escapeHtml(e.anlass)}". Entwurf von Claude, ${escapeHtml(e.vom.split('-').reverse().join('.'))} — die Regel oben ist unverändert.</div>`
+    + `<div class="rk-titel-klein">${regelnAr(e.name)}</div>`
+    + `<div class="rk-kern">${regelnFett(regelnAr(e.kern))}</div>`
+    + tab
+    + (e.merksaetze || []).map(m => `<div class="de">${regelnFett(regelnAr(m))}</div>`).join('')
+    + (uebernommen
+        ? '<div class="rk-klein">✓ Als deine Fassung übernommen — „Auf Original zurücksetzen" nimmt es zurück.</div>'
+        : '<button class="btn btn-secondary rk-klein-knopf" type="button" data-rkentwurf>als meine Fassung übernehmen</button>'),
+    'rk-entwurf');
+}
+
 function zeichneRegelKarteInhalt(id){
   const r = grammatikRegel(id);
   const p = regelPruefung(id);
@@ -725,6 +762,7 @@ function zeichneRegelKarteInhalt(id){
   return rkKopfHtml((f ? `<span class="chip">${escapeHtml(f)}</span>` : '') +
       (regelImPapierkorb(id) ? '<span class="chip chip-fremd">im Papierkorb</span>' : ''))
     + rkTextBlockHtml(id)
+    + rkEntwurfHtml(id)
     + rkBeispielsatzHtml([id])
     + rkUebenHtml(id)
     + `<div class="wk-quelle">${escapeHtml(regelQuelleText(r))}</div>`
@@ -899,6 +937,14 @@ function regelnVerdrahten(){
     if (ziel.dataset.regelkarte){ oeffneRegelKarte(ziel.dataset.regelkarte); return; }
     if (!RK_ID && RK_MODUS !== 'anlegen') return;
     if (ziel.hasAttribute('data-rkueben')){ regelImSatzmodusUeben(RK_ID); return; }
+    if (ziel.hasAttribute('data-rkentwurf')){
+      const e = regelEntwurf(RK_ID);
+      if (!e) return;
+      regelTextSetzen(RK_ID, e.name, entwurfAlsText(e));
+      toast('Entwurf ist jetzt deine Fassung — das Original bleibt einen Tipp entfernt');
+      zeichneRegelKarte(); regelnNachziehen();
+      return;
+    }
     if (ziel.dataset.rkfrueher){
       const [feldName, nr] = ziel.dataset.rkfrueher.split(':');
       const eintrag = regelnStand()[feldName] && regelnStand()[feldName][RK_ID];
