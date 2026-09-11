@@ -351,6 +351,51 @@ const FOLGE19_KARTEN = [
   }
 ];
 
+/* ---------- Entwürfe für bessere Fassungen (11.09.2026) ----------
+
+   Elias im Satzmodus-Export vom 11.09.2026 zu verb-madi-endungen-01: „hier
+   muss man wirklich eine gute regel draus machen weil das komlex ist, man muss
+   gucken wie man das widergibt". Das Goal dazu: „gute Fassung als Entwurf,
+   alte bleibt".
+
+   ⛔ EIN ENTWURF ERSETZT NICHTS. grammar-data.js bleibt unverändert; die Karte
+   zeigt den Entwurf daneben, und erst SEIN Tipp auf „als meine Fassung
+   übernehmen" macht ihn zu seiner Fassung — mit dem Original einen Tipp
+   entfernt, zurücksetzbar. [[schweigen_ist_kein_auftrag]]
+
+   ⚠️ Kein neuer Inhalt: jede Aussage und jedes arabische Wort steht schon in
+   der Regel selbst (Folge 18). Neu ist nur die Form — die vierzehn Formen als
+   Tabelle statt als Fließtext, der Kern vorneweg. pruefe-regelsammlung.mjs
+   hält das Arabisch gegen den Bestand. */
+const REGEL_ENTWUERFE = {
+  'verb-madi-endungen-01': {
+    vom: '2026-09-11',
+    anlass: 'hier muss man wirklich eine gute regel draus machen weil das komlex ist, man muss gucken wie man das widergibt',
+    name: 'Die Vergangenheit (اَلْمَاضِي): gleicher Stamm, andere Endung',
+    kern: 'Im اَلْمَاضِي bleibt der Stamm gleich — nur die Endung sagt, WER es getan hat. Vierzehn Pronomen, dreizehn verschiedene Formen.',
+    tabelle: {
+      kopf: ['', 'Singular', 'Dual', 'Plural'],
+      zeilen: [
+        ['3. Person m.', 'هُوَ ذَهَبَ', 'هُمَا ذَهَبَا', 'هُمْ ذَهَبُوا'],
+        ['3. Person w.', 'هِيَ ذَهَبَتْ', 'هُمَا ذَهَبَتَا', 'هُنَّ ذَهَبْنَ'],
+        ['2. Person m.', 'أَنْتَ ذَهَبْتَ', 'أَنْتُمَا ذَهَبْتُمَا', 'أَنْتُمْ ذَهَبْتُمْ'],
+        ['2. Person w.', 'أَنْتِ ذَهَبْتِ', 'أَنْتُمَا ذَهَبْتُمَا', 'أَنْتُنَّ ذَهَبْتُنَّ']
+      ],
+      /* ⚠️ Die erste Person steht NICHT in der Tabelle: sie hat nur zwei
+         Formen, und in welche Spalte نَحْنُ gehört, sagt die Regel nicht —
+         eine Zelle dafür wäre eine Behauptung. Also wörtlich wie in der Regel,
+         unter der Tabelle (4 × 3 + 2 = vierzehn). */
+      hinweis: '1. Person — nur zwei Formen: أَنَا ذَهَبْتُ · نَحْنُ ذَهَبْنَا'
+    },
+    merksaetze: [
+      '**2. Person — die Endung steckt schon im Pronomen:** أَنْتَ → ـْتَ · أَنْتُمْ → ـْتُمْ · أَنْتُنَّ → ـْتُنَّ.',
+      '**3. Person — da hilft das nicht:** هُوَ hat gar keine Endung, هُمْ bekommt ـُوا.',
+      '**Stolperstelle:** أَنْتُمَا ذَهَبْتُمَا ist für Männer und Frauen gleich, bei der 3. Person nicht (ذَهَبَا gegen ذَهَبَتَا) — deshalb vierzehn Pronomen, aber dreizehn Formen.',
+      'Dein Lehrer (Folge 18): „Das ist wie ein Baukasten. Wir müssen die nur zusammenbauen."'
+    ]
+  }
+};
+
 /* ---------- Seine Inhalts-Urteile aus dem Regelprüfungs-Artefakt ----------
 
    Wortgetreu aus „Regelprüfung-Export 26.08.2026.md" (Vault), erzeugt am
