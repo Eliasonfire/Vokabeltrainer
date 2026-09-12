@@ -4318,7 +4318,19 @@ button:disabled{cursor:default;}
    Milchglas-Wirkung der Knopfreihe bleibt, die Kante darunter verschwindet.
    ⚠️ Was CSS nicht erreicht: zeichnet Android dort seine EIGENE Navigations-
    leiste (Drei-Knopf-Bedienung statt Gestensteuerung), liegt sie ausserhalb
-   der Seite. Dann hilft nur die Geraeteeinstellung. */
+   der Seite. Dann hilft nur die Geraeteeinstellung.
+
+   ⭐ Am 12.09.2026 ist genau dieser Fall eingetreten — er mit Bild vom Handy:
+   „kriegst du es eigentlich in diesen blauen balken da oled schwarz zu machen
+   oder den balken dadrüber wo die menüs sind einfach weiter nach unten zu
+   schieben?" Nachgemessen im Handyformat (375×812, Quran-Leser, `document.
+   elementFromPoint` alle 6 px): die untersten 90 px gehoeren nur der Leiste
+   (`rgba(8,8,9,.86)`) und darunter `#000` — in der Seite ist dort NICHTS
+   Blaues, und `manifest.json` steht seit dem ersten Commit auf `#000000`.
+   Der Balken ist Androids eigene Leiste; die Seite reicht gar nicht so weit,
+   deshalb laesst sich die Knopfreihe auch nicht dorthin schieben.
+   `display:fullscreen` haette ihn entfernt, aber die Uhr gleich mit — „uhr ist
+   schon wichtig", danach „egal dann". ⛔ Nicht noch einmal per CSS versuchen. */
 .bottombar::before{
   content:"";position:absolute;left:0;right:0;bottom:0;
   height:var(--safe-bottom);
