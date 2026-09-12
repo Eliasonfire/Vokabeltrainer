@@ -669,9 +669,13 @@ function baueWortKarte(w){
   }
 
   /* Sagen, was der Knopf tut — und vor allem, was er NICHT tut. Ohne den Satz
-     läge der Verdacht nahe, damit werde das ganze Kapitel aufgemacht. */
+     läge der Verdacht nahe, damit werde das ganze Kapitel aufgemacht.
+     ⚠️ Hier stand bis zum 12.09.2026 „Kategorien" — der Satz zaehlt Orte in der
+     App auf, und der Bereich heisst seit dem Tag „Vokabeln" (Begruendung an der
+     Kachel in index.html). Ein alter Name in einem Hinweistext schickt ihn
+     suchen. */
   if (wkNochNicht && !wkEigen)
-    t.push(`<div class="wk-hinweis">Steht in einem Kapitel, das du noch nicht hast. Freischalten holt <b>nur dieses eine Wort</b> in deine Karteikarten, Kategorien, Sätze und Statistik — der Rest des Kapitels bleibt zu.</div>`);
+    t.push(`<div class="wk-hinweis">Steht in einem Kapitel, das du noch nicht hast. Freischalten holt <b>nur dieses eine Wort</b> in deine Karteikarten, Vokabeln, Sätze und Statistik — der Rest des Kapitels bleibt zu.</div>`);
   else if (wkEinzeln)
     t.push(`<div class="wk-hinweis">Dieses Wort hast du einzeln freigeschaltet, obwohl sein Kapitel noch zu ist.</div>`);
 
