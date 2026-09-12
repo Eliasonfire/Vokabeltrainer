@@ -5085,8 +5085,8 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
            Reihe und nimmt deshalb die ganze Breite — ab 1100 px stehen alle
            drei nebeneinander. Die Quran-Bezug-Kachel bleibt dahinter. -->
       <div class="home-grid stagger">
-        <!-- ⚠️ NICHT #ic-folder: das trägt „Kategorien" gleich nebenan und
-             zusätzlich in der Leiste unten. Zwei gleiche Zeichen wären hier
+        <!-- ⚠️ NICHT #ic-folder: das trägt die Kachel „Vokabeln" gleich
+             nebenan. Zwei gleiche Zeichen wären hier
              nicht auseinanderzuhalten. #ic-irab steht im Bestand für das
              Zerlegen eines Wortes — genau das ist hier die Aufgabe. -->
         <button class="tile" data-nav="wurzeln">
@@ -5094,9 +5094,20 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
           <span class="tile-title">Wurzeln</span>
           <span class="tile-sub">Wortfamilien üben</span>
         </button>
+        <!-- ⭐ Hiess bis zum 12.09.2026 „Kategorien". Elias an dem Tag um
+             14:18: „ich finde man sollte die kategorien in vokabeln umbenennen
+             weil tatsächlich sind nur noch die vokabeln in dem bereich" — und
+             das stimmt: der Regelblock ist am 11.09.2026 als eigener Bildschirm
+             ausgezogen (js/regeln.js, Kachel „Regeln" rechts daneben), der
+             Reiter „Eigene" ist am selben Tag weggefallen. Uebrig sind Kapitel
+             und Wortfelder, und in beiden stehen nur Woerter.
+             ⛔ Nur die Beschriftung wandert. `data-nav="categories"`,
+             `#screen-categories` und `js/kategorien.js` behalten ihre Namen —
+             daran haengen Ansteuerung, CSS und der Vorrat des Service Workers;
+             eine Umbenennung im Code brächte Risiko ohne sichtbaren Gewinn. -->
         <button class="tile" data-nav="categories">
           <span class="tile-icon"><svg class="ic"><use href="#ic-folder"/></svg></span>
-          <span class="tile-title">Kategorien</span>
+          <span class="tile-title">Vokabeln</span>
           <!-- Stand bis 11.09.2026: „Kapitel, Wurzeln, eigene". Den Reiter
                „Eigene" gibt es nicht mehr, und „Wurzeln" heißt dort seit dem
                29.07.2026 „Wortfelder". Eigene Wörter stehen weiter unter Kapitel. -->
@@ -5316,7 +5327,10 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
     <section class="screen" id="screen-categories" data-screen="categories">
       <div class="screen-header">
         <button class="icon-btn" data-back aria-label="Zurück"><svg class="ic"><use href="#ic-left"/></svg></button>
-        <h2>Kategorien</h2>
+        <!-- ⭐ Zweite von zwei Stellen, an denen der Bereich seinen Namen
+             traegt (die andere ist die Kachel auf dem Startbildschirm). Beide
+             hiessen bis zum 12.09.2026 „Kategorien" — Begruendung dort. -->
+        <h2>Vokabeln</h2>
       </div>
 
       <!-- ⭐ Die Suche steht GANZ OBEN, über den Reitern. Elias, 18.08.2026:
