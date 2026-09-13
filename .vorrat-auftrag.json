@@ -1,7 +1,7 @@
 # Arbeitsauftrag Vorrat — erzeugt von werkzeuge/vorrat.mjs
 
 Freischaltstand: madina-1 Kap. 1,2,3,4,5,6,7,8,9,10,11,12 | madina-2 Kap. 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24
-Offen: 61 Woerter, 0 Eselsbruecken, 1 Beispielsaetze.
+Offen: 72 Woerter, 32 Eselsbruecken, 0 Beispielsaetze.
 
 ## 45781  سُكَّرٌ  — Zucker
    madina-1 Kapitel 2 · Wurzel س ك ر
@@ -265,15 +265,6 @@ Offen: 61 Woerter, 0 Eselsbruecken, 1 Beispielsaetze.
    alt 3: Merke die Stellung mit: أَيْضاً steht meist ganz am Ende, dort wo auch الْيَوْمَ und الْآنَ landen. Drei Wörter, die um dieselbe Stelle konkurrieren — wer eines davon platzieren kann, kann alle drei.
    Beispielsatz: vorhanden
 
-## 397cfa89-5bc0-4ce7-ae45-30fe8ea64fe2  اِسْمٌ مَجْرُورٌ  — Nomen das in Genitiv steht
-   eigene Kapitel 0
-   FEHLENDE FELDER: root (Wurzelansicht und Wortfamilie)
-   Eselsbruecken: hat 3, braucht 0 mehr
-   vorhanden: Nie einzeln merken, immer als Paar: erst der حَرْف جَرّ, dann das اِسْم مَجْرُور — عَلَى طَعَامٍ.
-   alt 2: Merke es NIE einzeln, sondern immer als Zweiergespann: erst der حَرْفُ الْجَرِّ, dann das اِسْمٌ مَجْرُورٌ. فِي الْبَيْتِ, مِنَ الْمَسْجِدِ, عَلَى الْمَكْتَبِ — dreimal dasselbe Muster mit deinen eigenen Vokabeln. Die Partikel zieht, das Nomen folgt.
-   alt 3: Das Anzeichen ist sichtbar: مَجْرُور heißt Kasra ـِ am Ende, oder zwei Kasra ـٍ beim unbestimmten Wort. ⚠️ Und drei Dinge lösen es aus, nicht nur eines: ein حَرْف جَرّ, eine إِضَافَة, oder eine ظَرْف wie تَحْتَ. Wer die drei Auslöser kennt, erkennt den Fall am Satz statt an der Endung.
-   Beispielsatz: vorhanden
-
 ## 36e01b96-9367-4f09-acaf-31a82bdcf061  أَلْمُهَنْدِسٌ  — Ingenieur
    eigene Kapitel 0
    FEHLENDE FELDER: type (Kategorie, Statistik, Funktionsanzeige, Uebung 8), root (Wurzelansicht und Wortfamilie)
@@ -301,15 +292,6 @@ Offen: 61 Woerter, 0 Eselsbruecken, 1 Beispielsaetze.
    alt 3: ⚠️ Nach يَا verliert der Name sein Tanwīn: يَا مُحَمَّدُ, nicht يَا مُحَمَّدٌ. Das ist kein Zufall — die Rufform hat ihre eigene Endung. Merke fürs Erste nur: nach يَا wird es kürzer, nicht länger.
    Beispielsatz: vorhanden
 
-## c73787a3-8f9c-4033-b1ff-5644f34995d3  مُضَافْ إِلَيْهِ  — Besitzer
-   eigene Kapitel 0
-   FEHLENDE FELDER: root (Wurzelansicht und Wortfamilie)
-   Eselsbruecken: hat 3, braucht 0 mehr
-   vorhanden: Zwei Wörter, ein Besitz: das ERSTE ist der Besitz (مُضَاف), das ZWEITE der Besitzer (مُضَاف إِلَيْهِ) — كِتَابُ اللهِ, „das Buch Allahs".
-   alt 2: Die Reihenfolge ist im Deutschen umgekehrt, und genau daran verrutscht es: كِتَابُ اللهِ heißt „das Buch Allahs" — das ERSTE Wort ist der Besitz, das ZWEITE der Besitzer. Im Deutschen steht der Besitzer hinten mit „-s" oder „von", im Arabischen ebenfalls hinten, aber im Genitiv.
-   alt 3: Woran du den مُضَاف إِلَيْهِ erkennst: er steht im Genitiv und darf einen Artikel tragen — الْمَسْجِدِ in بَابُ الْمَسْجِدِ. Der مُضَاف davor darf beides NICHT: kein اَلْ, kein Tanwīn. ⚠️ Zwei Wörter, zwei entgegengesetzte Regeln — deshalb immer als Paar prüfen.
-   Beispielsatz: vorhanden
-
 ## d3cca272-90df-4963-a3dd-2653d009a77d  إِثْنَانِ  — Zwei (2)
    eigene Kapitel 0
    FEHLENDE FELDER: type (Kategorie, Statistik, Funktionsanzeige, Uebung 8), root (Wurzelansicht und Wortfamilie)
@@ -328,28 +310,85 @@ Offen: 61 Woerter, 0 Eselsbruecken, 1 Beispielsaetze.
    alt 3: Nimm die Zahlen als Reihe statt einzeln — sprich sie einmal am Stück: صِفْر, وَاحِد, إِثْنَانِ, ثَلَاثَة, أَرْبَعَة, خَمْسَة, سِتَّة, سَبْعَة, ثَمَانِيَة, تِسْعَة, عَشَرَة. Elf Wörter, die du alle hast. Eine Reihe lernt sich als Melodie, einzelne Karten nicht.
    Beispielsatz: vorhanden
 
-## c623f2fb-57a5-48b6-b176-55df461b2ada  حَرْفُ الْجَرِّ  — Genitiv-Präposition
-   eigene Kapitel 0
-   FEHLENDE FELDER: root (Wurzelansicht und Wortfamilie)
-   Eselsbruecken: hat 3, braucht 0 mehr
-   vorhanden: حَرْف heißt Partikel. Nach ihm steht immer ein اِسْم مَجْرُور — das Paar merken, nicht die Einzelteile.
-   alt 2: Der Name erklärt sich selbst, wenn man ihn zerlegt: حَرْف heißt Partikel, und اَلْجَرّ kommt von مَجْرُور, dem Genitiv. Ein حَرْفُ الْجَرِّ ist also wörtlich „die Partikel des Ziehens" — sie zieht das folgende Nomen in den Genitiv. Merksatz deines Lehrers: der ḥarf al-jarr macht sein Nomen zu majrūr.
-   alt 3: Du hast fünf davon als eigene Vokabeln: مِنْ (von), إِلَى (zu), فِي (in), عَلَى (auf), لِ (für). ⚠️ تَحْتَ gehört NICHT dazu, auch wenn es genauso wirkt — dein Lehrer stellt das ausdrücklich klar; das ist eine ظَرْف. Fünf Partikeln und eine Ausnahme, die man kennen muss.
-   Beispielsatz: vorhanden
-
-## gram-zarf-maa  مَعَ  — mit, bei
+## gram-mubtada  مُبْتَدَأ  — Subjekt des Nominalsatzes — das, worum es geht
    fachbegriffe Kapitel 0
-   Eselsbruecken: hat 3, braucht 0 mehr
-   alt 2: مَعَ gehört zu den ظُرُوف, und die sehen alle gleich aus: تَحْتَ (unter) · أَمَامَ (vor) · خَلْفَ (hinter) · فَوْقَ (über) · عِنْدَ (bei). ⭐ Alle enden auf Fatḥa, und alle machen das folgende Wort مَجْرُور, ohne selbst ein حَرْف جَرّ zu sein. Fünf davon hast du schon — مَعَ ist das sechste am selben Muster.
-   alt 3: مَعَ steht fast nie allein: meistens hängt eine Besitzendung dran, und die kennst du alle einzeln als Karteikarte — مَعِي (mit mir) · مَعَكَ (mit dir, zu einem Mann) · مَعَكِ (mit dir, zu einer Frau) · مَعَهُ (mit ihm) · مَعَهَا (mit ihr). ⭐ Genau so steht es in deinem eigenen Beispielsatz: الْفَتَاةُ الَّتِي مَعَكِ — „das Mädchen, das bei dir ist". Nomen + Endung, also مُضَاف und مُضَاف إِلَيْهِ in einem Wort.
+   Eselsbruecken: hat 1, braucht 2 mehr
    Beispielsatz: vorhanden
 
-## gram-khayr  خَيْرٌ  — besser; das Gute
-   fachbegriffe Kapitel 0 · Wurzel خ ي ر
-   Eselsbruecken: hat 3, braucht 0 mehr
-   alt 2: فَمَنْ يَعْمَلْ مِثْقَالَ ذَرَّةٍ — „wer im Gewicht eines Stäubchens" — خَيْرًا يَرَهُ — „Gutes tut, wird es sehen." Aus سُورَةُ الزَّلْزَلَة (99:7). ⭐ Achte auf die Endung: hier steht خَيْرًا mit Fatḥatān, also مَنْصُوب — es ist das, was getan wird, das Objekt von يَعْمَلْ. Dasselbe Wort, ein anderer Fall: das ist der Beweis, dass خَيْر ein اِسْم ist und keine Partikel.
-   alt 3: جَزَاكَ اللهُ خَيْرًا — die Formel, mit der man sich auf Arabisch bedankt: „möge Allah dir Gutes vergelten." ⭐ Wieder خَيْرًا مَنْصُوب, und aus demselben Grund: es ist das, was vergolten wird. Du hörst das Wort in dieser Wendung öfter als in jedem Satz aus dem Buch — und es steht dort in genau der Form, die du dir merken sollst.
-   Beispielsatz: FEHLT
+## gram-khabar  خَبَر  — Aussage des Nominalsatzes — das, was darüber gesagt wird
+   fachbegriffe Kapitel 0
+   Eselsbruecken: hat 1, braucht 2 mehr
+   Beispielsatz: vorhanden
+
+## gram-mansub  مَنْصُوب  — Akkusativ (Frage: wen oder was?)
+   fachbegriffe Kapitel 0
+   Eselsbruecken: hat 1, braucht 2 mehr
+   Beispielsatz: vorhanden
+
+## gram-harf  حَرْف  — Partikel — eine der drei Wortarten
+   fachbegriffe Kapitel 0
+   Eselsbruecken: hat 1, braucht 2 mehr
+   Beispielsatz: vorhanden
+
+## gram-fil  فِعْل  — Verb — eine der drei Wortarten
+   fachbegriffe Kapitel 0
+   Eselsbruecken: hat 1, braucht 2 mehr
+   Beispielsatz: vorhanden
+
+## gram-madd  مَدّ  — Dehnung — der lang gelesene Vokal
+   fachbegriffe Kapitel 0
+   Eselsbruecken: hat 1, braucht 2 mehr
+   Beispielsatz: vorhanden
+
+## gram-mutabaqa  مُطَابَقَة  — Übereinstimmung — die Aussage passt sich im Geschlecht an
+   fachbegriffe Kapitel 0
+   Eselsbruecken: hat 1, braucht 2 mehr
+   Beispielsatz: vorhanden
+
+## gram-madi  اَلْمَاضِي  — Vergangenheit (Verbform)
+   fachbegriffe Kapitel 0
+   Eselsbruecken: hat 1, braucht 2 mehr
+   Beispielsatz: vorhanden
+
+## gram-tanwin  التَّنْوِينُ  — Tanwīn — die doppelte Endung (-un, -in, -an)
+   fachbegriffe Kapitel 0
+   Eselsbruecken: hat 1, braucht 2 mehr
+   Beispielsatz: vorhanden
+
+## gram-kasra  كَسْرَة  — Kasra — das Vokalzeichen i
+   fachbegriffe Kapitel 0
+   Eselsbruecken: hat 1, braucht 2 mehr
+   Beispielsatz: vorhanden
+
+## gram-taschkil  تَشْكِيل  — Taschkīl — die Vokalzeichen
+   fachbegriffe Kapitel 0
+   Eselsbruecken: hat 1, braucht 2 mehr
+   Beispielsatz: vorhanden
+
+## gram-hamzat-wasl  هَمْزَة وَصْل  — Hamzat al-waṣl — das Verbindungs-Alif
+   fachbegriffe Kapitel 0
+   Eselsbruecken: hat 1, braucht 2 mehr
+   Beispielsatz: vorhanden
+
+## gram-jumla-filiya  جُمْلَة فِعْلِيَّة  — Verbalsatz — der Satz beginnt mit einem Verb
+   fachbegriffe Kapitel 0
+   Eselsbruecken: hat 1, braucht 2 mehr
+   Beispielsatz: vorhanden
+
+## gram-taqdim  تَقْدِيم  — Voranstellung — was am Satzanfang steht, wird betont
+   fachbegriffe Kapitel 0
+   Eselsbruecken: hat 1, braucht 2 mehr
+   Beispielsatz: vorhanden
+
+## gram-irab  إِعْرَاب  — Iʿrāb — die Fallendungen am Wortende
+   fachbegriffe Kapitel 0
+   Eselsbruecken: hat 1, braucht 2 mehr
+   Beispielsatz: vorhanden
+
+## gram-huruf-schamsiya  حُرُوف شَمْسِيَّة  — Sonnenbuchstaben — das l des Artikels wird verschluckt
+   fachbegriffe Kapitel 0
+   Eselsbruecken: hat 1, braucht 2 mehr
+   Beispielsatz: vorhanden
 
 ## p_1787183484954  مَكْسُورٌ  — Kaputt
    selbst Kapitel 0
