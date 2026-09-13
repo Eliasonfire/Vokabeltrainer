@@ -4408,3 +4408,426 @@ seit Wochen, dass dieselben neun unter „Plural" die andere Genusform zeigen
 Lauf. Aber die Frage steht auf seiner Warteseite und kostet ihn **eine** Antwort
 für alle neun. Sie zuerst zu beantworten wäre der billigste Weg zu einer
 messbaren Verbesserung.
+
+## 2026-09-13 16:20 – Wöchentliche Wartung (So-Check)
+
+**In einem Satz:** Der Rückstand aus dem vollen Programm ist erstmals seit
+Wochen bei **null Eselsbrücken** — die 32 fehlenden Alternativen für die
+sechzehn Fachbegriffe sind geschrieben, geprüft und ausgeliefert (**v478**).
+Zwei Messwerkzeuge haben dabei falsch gemeldet; eins ist repariert, zwei Befunde
+stehen als Punkte in der To-Do.
+
+⭐ **Erster Satz an Elias: App schließen und neu öffnen (v478).**
+
+### Schritt 0 – Marke, Angleich, Repo
+
+`git pull --ff-only` → *Already up to date.* · Arbeitsmarke gesetzt
+(`arbeit.mjs --beginne "Wartungslauf" --schritte 7`).
+`pruefe-volles-programm.mjs` → **Exit 0**: Quelle, Kopie, Prompt und
+Messwerkzeuge deckungsgleich, 13 Punkte, alle 52 im Prompt genannten Werkzeuge
+freigegeben.
+
+### Schritt 0a – Sind die vorigen Läufe durchgekommen?
+
+`node ../Automation/pruefe-laeufe.mjs --tage 30` → **Exit 0**: jeder geplante
+Termin der letzten 30 Tage hat einen abgeschlossenen Lauf. (6 quittierte Lücken,
+13 Termine mit ausgeschaltetem Rechner — beides bekannt und kein Befund.)
+
+### Schritt 0b / Schritt 4 – Samsung-Notes-Export
+
+🔴 **Export veraltet:** „Madina Buch 1 (Beschriftet)" ist seit **48 Tagen** nicht
+neu exportiert (Export 27.07.2026 03:10). Die Notiz selbst steht in der lebenden
+Datenbank auf **01.09.2026 22:02**, also **36,8 Tage nach** ihrem Export. Neue
+Vokabeln und Regeln aus seiner Handschrift kommen bis dahin **nicht** in die App.
+Weg: Samsung Notes → Notiz → „Als Datei speichern → PDF" nach
+`G:\1. Workspace\SamsungNotes-Export\2ab9777c-db3d-cf97-0000-019eb2fa6774.pdf`.
+
+⚠️ **Es bleibt eine Frage, kein Vorwurf** — Samsung Notes stempelt auch beim
+bloßen Öffnen. Der Zeitstempel steht seit dem 01.09. still; erst sein Ja macht
+einen neuen Export fällig.
+
+Die zwei anderen Notizen sind aktuell: „Grammatik Heft Medina Buch 1" (0,8 Tage
+zwischen Export und letzter Änderung) und „Madina Buch 1 Vokabelheft" (10 Minuten).
+
+⛔ **Und wieder der Fall, vor dem der Prompt warnt:** `list_export_status` meldet
+`noteLastModifiedAt` = **28.07.**, die lebende Datenbank den **01.09.** — 35 Tage
+Unterschied. Wer das Feld liest, hält den Rückstand für einen Tag statt für 36.
+Gemessen mit `export-index.mjs --live` (Exit 2). `export-index.mjs --pruefen`
+meldet dazu weiterhin **0 Beanstandungen**, weil es nur Werte vom Exportzeitpunkt
+gegeneinanderhält.
+
+Die Zeile in der To-Do (`## 🔴 Wartet auf Elias`) wurde **aktualisiert, nicht
+verdoppelt**: 44 → 48 Tage, Nachmessung auf den 13.09. umgeschrieben.
+⚠️ **Nicht** von Hand in `Routinen-Status.md` nachgetragen: die Notiz sagt in
+ihrem eigenen Kopf, dass `run-routine.ps1` sie nach jedem Lauf komplett neu
+schreibt. Ein Handeintrag dort wäre beim nächsten Lauf weg — der Weg dorthin ist
+dieser Bericht.
+
+### Schritt 1 – Neue Aufzeichnungen
+
+`get_recordings` → **19 Folgen**, keine neue seit Folge 19 „Grammatikabfrage 1"
+(06.09.2026). `transcripts/backlog.md` ist vollständig, nichts nachzutragen.
+
+### Schritt 1b – Rückstand Regelauswertung
+
+`node werkzeuge/rueckstand.mjs` → **kein Rückstand**: 19 Folgen mit Rohmaterial,
+**19 ausgewertet, 0 offen**, und `backlog.md` stimmt mit der Messung überein.
+Damit entfallen 1b.2 bis 1b.7 — keine neuen Regeln, kein Eintrag unter
+„Wartet auf Elias".
+
+### Schritt 1c – Das volle Programm
+
+**1c.1 – die zwei Stände.** `get_unlocked_chapters` → madina-1 Kap. 1–11,
+madina-2 Kap. 1–24. `vorrat.mjs --stand … --app auto`:
+
+- ⚠️ **KV nicht erreichbar** (`wrangler kv key get … stand:…` schlug fehl) — es
+  zählt nur arabicroots, die App-Auswahl wurde übersprungen. **Das gehört in den
+  Bericht:** `data/eigene-woerter.json`, `data/auswendig.json` und
+  `data/abgelehnt.json` sind damit **nicht** aufgefrischt worden; die Werkzeuge
+  rechnen mit dem Stand vom **09.09.2026** und sagen das auch (14 selbst
+  angelegte Wörter, 24 auswendige Suren, 35 abgelehnte Vorschläge).
+- ⚠️ **Nicht zugemacht:** madina-1 Kapitel 12 steht in `js/kern.js`, aber nicht
+  in den gemessenen Quellen — **behalten**. Das ist Elias' Ansage vom 20.08.;
+  `--auch-schliessen` wurde bewusst nicht benutzt.
+- ⛔ **Keine Zeile „Lernstand automatisch mitgewachsen"** — seine Angabe wurde in
+  diesem Lauf nicht verändert.
+
+`get_learning_progress` → über `vorrat.mjs --lernstand` weitergereicht (Datei
+nicht gelesen): madina-1 höchstes geübtes Kapitel **24**, madina-2 **31**,
+bayna-yadayk-1/2 je 16, madina-3 34 — **unverändert** gegenüber dem letzten Lauf.
+
+⚠️ **Die Abweichung bleibt offen und ist die Frage an ihn:** gemessen madina-1
+Kapitel **24**, seine Angabe **12**. Nicht nachgezogen (1c.2).
+
+**1c.3 / 1c.4 – gemessen und geschrieben.**
+
+| | vorher | nachher |
+|---|---|---|
+| unvollständige Wörter (von 246) | **72** | **56** |
+| fehlende Eselsbrücken | **32** | **0** |
+| Wörter mit Alternativen (`pruefe-eselsbruecken.js`) | 216 von 232 | **232 von 232** |
+
+⭐ **Die 32 Eselsbrücken sind die eigentliche Arbeit dieses Laufs.** Sie gehören
+zu den sechzehn Fachbegriffen, die Schritt 1f am 11.09. eingetragen hat
+(v470–v473); jeder hatte eine Eselsbrücke und brauchte zwei weitere. Geschrieben
+über `werkzeuge/eselsbruecken-setzen.mjs <datei.json>` — **Text über eine Datei,
+nie über die Kommandozeile.**
+
+Gebaut nach seiner Rangfolge, in dieser Reihenfolge:
+
+1. **Bekannter islamischer Begriff oder eine Wendung** — اللَّهُ أَكْبَرُ für
+   مُبْتَدَأ, die Schahāda مُحَمَّدٌ رَسُولُ اللَّهِ für خَبَر, die Basmala für
+   حَرْف. Kein Vers nötig, und es ist das Stärkste, was er hat.
+2. **Ein Vers aus seinem auswendigen Bereich** (Sure 1, 67, 93–114) — **14
+   Stellen, jede einzeln mit `node werkzeuge/vers.mjs` belegt**: 1:2, 1:5, 96:1,
+   105:1, 108:1, 110:1, 111:1, 111:4, 112:1, 112:2, 113:1, 114:1.
+   ⭐ Zwei Beispiele, bei denen der Vers die Regel besser zeigt als jede
+   Erklärung: **112:1 gegen 112:2** — أَحَدٌ mit Tanwīn, الصَّمَدُ ohne, ein Vers
+   Abstand, und der Unterschied ist genau das الْ. Und **111:1** تَبَّتْ … وَتَبَّ
+   — dasselbe Verb zweimal im Māḍī, einmal mit Endung, einmal ohne: der
+   „Baukasten", von dem sein Lehrer spricht, in einer Zeile.
+3. **Wurzel oder Muster, aber nur mit Anhang** — قَدِيمٌ für تَقْدِيم (Wurzel
+   ق د م), عَرَبِيَّةٌ für إِعْرَاب (ع ر ب), das Muster مَفْعُول an مَشْهُورٌ /
+   مَكْسُورٌ / اِسْمٌ مَجْرُورٌ für مَنْصُوب, und für die Sonnenbuchstaben das Paar
+   aus seinen eigenen Länderkarten: **الصِّينُ** (aṣ-ṣīn, Schadda auf dem ص) gegen
+   **الْهِنْدُ** (al-hind, Sukūn auf dem ل).
+
+⛔ **Jedes „…wie X, das du schon hast" wurde nachgeschlagen** — gegen die 171
+Einträge in `vocab-data.js`, seine eigenen Wörter und die Fachbegriffe. Kein
+Anker aus einem späteren Kapitel (`pruefe-eselsbruecken.js`, Abschnitt 7: ✅),
+kein arabischer Lauf über 4 Wörter, keine Koranstelle außerhalb seines
+auswendigen Bereichs.
+
+**Was danach noch fehlt — je Feld, mit dem, was ohne es ausfällt:**
+
+| Feld | fehlt | was ausfällt |
+|---|---|---|
+| `pl` | 25 | die Pluralanzeige auf der Karte bleibt leer |
+| `root` | 22 | Wurzelansicht und Wortfamilie greifen für diese Wörter nicht |
+| `type` | 19 | Kategorie, Statistik, Funktionsanzeige und Übung 8 |
+| `gender` | 8 | Übung 11 (مُذَكَّر/مُؤَنَّث) und Übung 12 (هَذَا/هَذِهِ) erzeugen dafür keine Aufgabe |
+| `femSg` | 1 | Übung 13 (صَغِيرٌ/صَغِيرَةٌ) |
+
+⛔ **Das sind Fragen an Elias, keine Arbeit, die liegen bleibt.** Sie stehen auf
+der Fragenseite (1c.7) — deshalb ist die Zeile „0 Eselsbrücken, 0 Beispielsätze,
+0 Markierungen, 0 Kategorien" die eigentliche Nachricht: was ich schreiben kann,
+ist geschrieben.
+
+⚠️ **Keine „NICHT gemessen"-Zahl in diesem Lauf** — der Bestand im Fenster ist
+vollständig angesehen (246 Wörter; `vorrat.mjs`, `pruefe-funktionen.js` und
+`pruefe-wortfelder.js --fenster` messen übereinstimmend 246).
+
+**1c.5 – geprüft.**
+
+| Prüfung | Ergebnis |
+|---|---|
+| `pruefe-saetze.js` | ✅ **388** Sätze kasusrein (170 verfasst + 42 Lehrwerk + 176 aus `data/beispielsaetze.js`), 0 Kasusfehler |
+| `pruefe-funktionen.js` | ✅ **246 von 246** Infokarten nennen eine Funktion, „nur Wort": 0 |
+| `pruefe-duplikate.js` | ⚠️ Exit 2, **1 Befund** (سَيِّدٌ, eigene Vokabel gegen madina-2 K18, id 46368) + 1 bewusst nebeneinander (ظَرْف). Eichung 4/4. Elias' Entscheidung |
+| `werkzeuge/pruefe-eigene-vorrang.mjs` | ✅ alle 4 Werkzeuge sehen dieselbe Fassung wie die App |
+| `validate.js` | ✅ 37 Prüfungen, 0 Fehler, 3 Hinweise |
+
+**1c.7 – Belege von außen, dann die Fragenseite.**
+
+- `aussenbelege.mjs`: 47 Wörter gefragt → **24 bestätigt**, 17 verworfen („das
+  wären die falschen Belege gewesen"), 6 kennt Wiktionary nicht. Dazu **3 von 15**
+  Taschkīl-Lücken belegt (تَاء, اِسْم, اِمْرَأَة).
+- `woerterbuch-belege.mjs`: 32 Wörter → **9 belegt** (die Zahlwörter drei bis zehn
+  und لِ, alle über Reverso), 14 verworfen, 9 gar nicht gefragt (zusammengesetzte
+  Formen).
+- `wartungsfragen-artefakt.mjs`: **`artefakte/wartungsfragen.html`**, **5 Fragen
+  über 75 Wörter** — type 19 · pl 25 · root 22 · gender 8 · femSg 1. Bei **37**
+  steht die Antwort schon als Beleg daneben.
+  ⛔ Veröffentlichen unter **derselben** URL:
+  https://claude.ai/code/artifact/724ee9bc-adb7-4dcd-ad75-6a56a552adbd
+
+**1c.8 – die Warteseite.** `wartet-auf-elias.mjs` → Exit 2,
+**`artefakte/wartet-auf-elias.html`**, **17 Entscheidungen** (4 mit Stückarbeit,
+172 Einzelstücke; 13 nur ansehen und wählen). Größte Posten: 75 fehlende Angaben,
+79 Regelkandidaten aus 6 Folgen, 387 rückwärts stehende arabische Stellen in den
+Notizen, 77 Pluraltexte mit unklarem Zahlbezug.
+
+⛔ **Der Artefakt-Wächter meldet weiterhin 2 Seiten ohne hinterlegte URL** —
+`farbe-wortmarke.html` und `stimmen-liste.html`. Wer sie ohne Eintrag in
+`DATEI_ZU_URL` veröffentlicht, legt eine **zweite** Seite an. Unverändert
+gegenüber dem 09.09.
+⛔ Und die hinterlegte Adresse der Warteseite war am 09.09. **nicht abrufbar**
+(„artifact not found"). Vor dem nächsten Veröffentlichen klären, welche Seite er
+wirklich offen hat.
+
+**1c.8b – Freigabeseite für neue Regeln.** `freigabe-artefakt.mjs` →
+`artefakte/freigabe.html`, **79 Fundstellen aus 6 Folgen** (F6 15 · F14 15 ·
+F15 15 · F16 15 · F17 15 · F19 4). Speicherschlüssel `regelkandidaten-v1`.
+URL: https://claude.ai/code/artifact/d9916aee-b679-4d91-bb0c-c3642f8889ac
+
+**1c.8c – die drei übrigen Seiten.** Alle drei gebaut, `git status --short`
+danach gelesen: **nur `verschmelzung.html` hat sich geändert** (8 Gruppen, 21
+Regeln). `regelauswahl.html` ist unverändert (103 Regeln, 14 Kategorien, 0 ohne
+Kategorie). `artefakte/regelpruefung.html` (103 Regeln, alle mit Beispielsatz)
+kann `git status` **grundsätzlich nicht** melden — `artefakte/` steht in
+`.gitignore`. Derselbe blinde Fleck wie am 09.09.
+
+### Schritt 1d – Regelsammlung
+
+`regeln-holen.mjs` → **Exit 0**, keine Regelsammlung im abgeglichenen Stand;
+letzter Abgleich **13.09.2026 07:38:18**. Das heißt nicht „nichts eingetragen",
+sondern: bis dahin stand dort nichts. `--merken` meldet folgerichtig „nichts zu
+merken" — gemerkt wird nur, was gezeigt wurde.
+
+`regelsammlung-wache.mjs --aufnahmen .aufnahmen.json` →
+
+1. ✅ `asma-khamsa-vollstaendig-01` wartet seit dem 11.09., kein Treffer ab Folge
+   20 (Transkripte reichen bis 19).
+2. ✅ Folge 19 „Grammatikabfrage 1" hat ihre Karten (`FOLGE19_KARTEN`).
+3. ⛔ **Und hier lief die Messung ins Leere** — siehe Befund 1.
+
+### ⛔ Befund 1: die Grammatik-Notiz-Wache hat nie etwas gemessen (behoben)
+
+`regelsammlung-wache.mjs` suchte die lesbaren Samsung-Notizen unter
+`…\SamsungNotes-Sicherung\Lesbar\Arabisch\Grammatik`. **Dieses Verzeichnis gibt
+es nicht und hat es nie gegeben.** Die Sicherung legt sie unter
+`…\SamsungNotes-Sicherung\Samsung Notes Archiv\Arabisch\Grammatik` ab — belegt
+mit `sicherung-log.txt`, wo der Lauf von heute 13:55 UTC 1083 unveränderte
+Dateien meldet, die Sicherung also einwandfrei läuft.
+
+Folge: Messung 3 endete bei **jedem** Wartungslauf mit „⛔ … fehlt — läuft die
+Samsung-Sicherung? Nichts gemessen" und Exitcode 1. Eine neue Grammatik-Notiz
+wäre niemandem aufgefallen — **genau der Ausfall, gegen den das Werkzeug am
+11.09. gebaut wurde.** [[werkzeug_ohne_aufrufer]]
+
+**Behoben:** Vorgabepfad in `werkzeuge/regelsammlung-wache.mjs` korrigiert, mit
+Begründung im Quelltext. Danach misst es: **8 Notizen im Ordner**, darunter
+„Musterlösung – Grammatikabfrage Madīna Buch 1" und „Pronomen & Endungen
+(Vergangenheit)". **Keine neue** — die acht Meldungen sind nur weitergerückte
+Änderungsstempel („auch bloßes Öffnen stempelt"). Mit `--merken` festgehalten.
+
+### Schritt 1e – Pflegeplan
+
+`pruefe-pflegeplan.mjs` → **Exit 0.** 39 Dateien und 12 Bildschirme, 14
+Funktionen, jede zugeordnet; 20 Antworten über eine Routine, 1 in einer Sitzung,
+25 ohne Pflegebedarf, **0 Lücken**. Alle 7 Störtests greifen.
+
+### Schritt 1f – Neue Fachbegriffe
+
+`fachbegriffe-finden.mjs` → **0 unentschiedene Kandidaten** aus 103 Regeln.
+Nichts einzutragen, nichts zu fragen.
+
+### Schritt 2 – Vokabelabzug
+
+`hole-vokabeln.mjs`: 4433 Einträge, 11 eigene Vokabeln.
+
+| Buch | Vokabeln | Kapitel |
+|---|---|---|
+| bayna-yadayk-1 | 231 | 17 |
+| bayna-yadayk-2 | 552 | 17 |
+| bayna-yadayk-3 | 445 | 17 |
+| bayna-yadayk-4 | 881 | 16 |
+| madina-1 | 298 | 24 |
+| madina-2 | 445 | 29 |
+| madina-3 | 1238 | 35 |
+| quran | 343 | 23 |
+
+**Gegenüber dem letzten Lauf keine einzige Änderung** — dieselben acht Zahlen.
+
+`baue-vokabelpaket.mjs` → **UNVERAENDERT**, dasselbe Paket wie beim letzten Lauf
+(8 Bücher, 4433 Vokabeln, 1382 KB). **Kein Handlungsbedarf**, er muss nichts neu
+einlesen.
+
+### Schritt 3 – `vocab-data.js`
+
+Nicht angefasst. Die 32 neuen Texte liegen in `data/eselsbruecken-alt.js`, wo die
+Alternativen hingehören — ein Eintrag in `vocab-data.js` hätte über
+`LERNBESTAND_IDS` seinen Lernstand verschoben.
+
+### Schritt 5 – Lernstand als Hinweis
+
+`get_weak_vocabulary` (Schwelle 0,35) → **24 Einträge**, `get_personal_vocabulary`
+→ **11 eigene Vokabeln, keine neue seit dem 18.07.** Beide Zahlen wie am 09.09.
+
+⭐ **Der Block vom 09.09. hat sich bestätigt und ist frischer geworden.** Der
+jüngste Versuch liegt jetzt auf dem **11.09.2026 02:55** (ثَمَانِيَةٌ) statt auf
+dem 07.09. Es sind dieselben Wörter: `madina-1`, `chapterPosition` **24**, alle
+bei **0 richtig** — وَاحِدٌ · أَرْبَعَةٌ · خَمْسَةٌ · سِتَّةٌ · سَبْعَةٌ ·
+ثَمَانِيَةٌ · تِسْعَةٌ · عَشَرَةٌ · غَضْبَانُ · نَعْتٌ · مَنْصُوبٌ · نَحْنُ · هُمْ.
+**Zahlen und Grammatikbegriffe bleiben sein Schwachpunkt**, und er übt weiter
+daran.
+
+⚠️ Unverändert 0 von 7 an seiner eigenen Vokabel أَلْمُهَنْدِسٌ „Ingenieur" — der
+Artikel steht als أَل statt اَلْ und das Tanwīn steht trotz Artikel noch da.
+⛔ Nicht geändert, es ist sein Eintrag.
+
+### Schritt 6 – Qualitätssicherung
+
+`node werkzeuge/alle-pruefer.mjs` → **100 Prüfer gelaufen, 5 rot.**
+
+**Drei der fünf sind die bekannten, die auf Elias warten** und auf seiner Seite
+stehen: `pruefe-duplikate.js` (1 Befund), `pruefe-taschkil.js`,
+`werkzeuge/pruefe-themen.mjs` (3 Punkte, „Kandidaten, kein Urteil").
+`pruefe-eselsbruecken.js` ist zum zweiten Mal in Folge grün.
+
+| Prüfung | Ergebnis |
+|---|---|
+| `pruefe-erreichbarkeit.js` | ✅ **103 von 103** Regeln erreichbar, `.deploy/` deckt sich mit dem Repo |
+| `validate.js` | ✅ 37 Prüfungen, 0 Fehler, 3 Hinweise; **alle 14 Satzmodus-Kategorien besetzt**, 2–14 erreichbare Regeln je Kategorie |
+| `pruefe-markierungen.js` | ✅ alle 5 harten Prüfungen auf 0 (617 Markierungen auf 350 Sätzen) |
+| `pruefe-saetze.js` | ✅ 388 Sätze kasusrein |
+| `pruefe-eselsbruecken.js` | ✅ **1275** Einzelprüfungen, 6 Hinweise, **232 von 232** mit Alternativen |
+| `pruefe-quran.js` | ✅ |
+| `pruefe-transkripte.js` | ⚠️ **1 Regel** findet keine Lesart im Fenster — `li-mit-suffix-01`, F17 09:04, am 06.09. nachgelesen. Unverändert |
+| `pruefe-sprecher.js` | ✅ |
+| `pruefe-wortfelder.js --fenster` | ✅ **163 von 246** mit Bedeutungsfeld (09.09.: 158 von 230) |
+| `pruefe-suche.js` | ✅ an 4446 Wörtern gemessen |
+| `pruefe-uebungen.js` | ✅ der gewollte Zustand (105 arabisch, 11 deutsch, 7 zitiert) |
+
+**Die Eichungen und Wächter, alle grün:** `pruefe-schreibpfade.mjs` ·
+`pruefe-artefakt-inhalt.mjs` · `pruefe-erreichbarkeit-eichung.mjs` ·
+`eiche-fragenreihenfolge.mjs` · `eiche-wortart-knopf.mjs` ·
+`eiche-plural-beleg.mjs` 7/7 · `eiche-taschkil-beleg.mjs` 7/7 ·
+`eiche-harf-jarr.mjs` 17/17 · `eiche-zahlplural.mjs` 17/17 ·
+`eiche-datumsmuster.mjs` 16 Fälle · `pruefe-datumsangaben.mjs` (Datum, Uhrzeit,
+Reihenfolge, To-Do-Zeilen) · `pruefe-sammellauf.mjs` · `pruefe-freigaben.mjs` ·
+`pruefe-volles-programm.mjs` (Abnahme).
+
+⚠️ **`pruefe-erreichbarkeit.js` nennt 10 Regeln, die Markierungen haben und
+trotzdem ausgeblendet sind** (u. a. `taschkil-kontext-01`,
+`asma-khamsa-vollstaendig-01`, `fragepartikel-hal-01`). Das Werkzeug sagt selbst:
+in Ordnung, wenn Elias sie abbestellt hat — **nachsehen, nicht entsperren.** Kein
+Eingriff.
+
+### ⛔ Befund 2: `pruefe-gedaechtnis-luecken.mjs` wird jeden Sonntag rot
+
+Der vierte und fünfte rote Prüfer waren **keine** Elias-Frage:
+
+- `werkzeuge/pruefe-ausgeliefert.mjs` (Exit 1) — „1 Datei ist neuer als das, was
+  Elias hat". Richtig gemeldet, und in diesem Lauf mit dem Veröffentlichen behoben.
+- `werkzeuge/pruefe-gedaechtnis-luecken.mjs` (Exit 1) — **ein falscher Alarm.**
+  Sein Fenster ist „seit Mitternacht". Der Störtest verlangt
+  `git log hat etwas geliefert: true` und fällt durch, sobald an dem Tag noch
+  **nichts** committet wurde; dann meldet er „⛔ Der Störtest greift nicht — diese
+  Messung sagt nichts." Der Sonntagslauf um 13:00 trifft genau das.
+
+⛔ **Nicht angefasst**, und das ist Absicht: der Störtest ist bewusst streng
+([[pruefwerkzeug_mit_eingebauter_antwort]]), und das Werkzeug lässt sich aus
+dieser Routine gar nicht einzeln starten (kein eigenes Muster in `allowedTools`).
+Richtig wäre, „`git log` lief, lieferte aber null Zeilen" von „`git log` ging
+nicht" zu trennen. Als Punkt unter „⬜ Offen" eingetragen.
+
+### ⛔ Befund 3: `vorrat.mjs` warnt, die Abfrage habe ausgesetzt — sie lief
+
+`vorrat.mjs --knapp` hängt an jede Zeile „(Freischaltstand 19.8.2026 — ⚠️ 25 Tage
+alt, die Mi/So-Abfrage hat ausgesetzt)". **Die Abfrage lief heute.** Der Stempel
+`// arabicroots, abgefragt am 19.8.2026` in `js/kern.js` wird nur mitgeschrieben,
+wenn sich die Kapitelliste **ändert** — und die ist seit dem 19.08. dieselbe. Eine
+Warnung, die bei jedem Lauf ohne Änderung erscheint, wird beim dritten Mal
+überlesen. Ebenfalls unter „⬜ Offen".
+
+### Auslieferung (1b.6 / 1c.6)
+
+1. `CACHE_NAME` in `sw.js`: **v477 → v478**.
+2. `alle-pruefer.mjs` (siehe oben).
+3. `node werkzeuge/veroeffentlichen.mjs --mit-daten` → 103 Dateien, 8,35 MB,
+   „Uploaded 2 files (98 already uploaded)". Access-Nachweis vom 09.09.2026,
+   4 Tage alt.
+4. **`.deploy/` gegengeprüft:** `sw.js` dort trägt `vokabeltrainer-v478`,
+   `pruefe-erreichbarkeit.js` meldet für Repo **und** `.deploy/` je 103 Regeln,
+   103 erreichbar, 617 Markierungen — **„deckt sich mit dem Repo"**.
+
+⭐ **Elias muss die App schließen und neu öffnen.**
+
+### Schritt 7 – Commit
+
+Explizite Pfade, alle in diesem Lauf selbst geändert: `data/eselsbruecken-alt.js`,
+`sw.js`, `werkzeuge/regelsammlung-wache.mjs`, `verschmelzung.html`,
+`data/lernstand.json`, `.vorrat-auftrag.json` und dieser Log-Eintrag.
+**Kein `git add -A`.** `.gitignore` nicht angefasst. `data/vokabeln-*.js`,
+`vokabelpaket.json` und `transcripts/` bleiben draußen (arabicroots-Daten,
+öffentliches Repo).
+
+### Was offen bleibt
+
+1. 🔴 **Samsung-Notes-Export, 48 Tage** — Handschrift seit dem 27.07. nicht in der
+   App. Nur Elias kann exportieren, und erst sein Ja macht es fällig.
+2. 🔴 **17 Entscheidungen** auf `artefakte/wartet-auf-elias.html`, darunter die
+   **5 Fragen zu 75 Wörtern** und die **79 Regelkandidaten** aus 6 Folgen.
+3. ⚠️ **2 Artefakt-Seiten ohne URL** (`farbe-wortmarke.html`, `stimmen-liste.html`)
+   — vor dem nächsten Veröffentlichen in `DATEI_ZU_URL` eintragen, sonst entsteht
+   eine zweite Seite.
+4. ⚠️ **Die URL der Warteseite war am 09.09. nicht abrufbar** — vor dem nächsten
+   Veröffentlichen klären, welche Seite Elias offen hat.
+5. ⚠️ **`verschmelzung.html` wartet auf Veröffentlichung** (hat sich in diesem Lauf
+   geändert). Kann die Routine nicht selbst.
+6. ⛔ **Schritt 1c.8c ist für `artefakte/regelpruefung.html` blind** — `artefakte/`
+   steht in `.gitignore`, `git status --short` kann sie nie melden. Vorschlag
+   unverändert: Prüfsumme je Seite in einer Zustandsdatei.
+7. ⚠️ **KV nicht erreichbar** — `eigene-woerter.json`, `auswendig.json` und
+   `abgelehnt.json` stammen vom 09.09. Beim nächsten Lauf nachsehen, ob es wieder
+   geht; hält es an, ist es ein eigener Befund.
+8. ⚠️ **`pruefe-gedaechtnis-luecken.mjs`** (Befund 2) und **`vorrat.mjs`-Stempel**
+   (Befund 3) — beide in der To-Do unter „⬜ Offen".
+9. ⚠️ **`werkzeuge/urteile-uebernehmen.mjs` hat keinen Aufrufer** — einbauen oder
+   in `VON_HAND` aufnehmen. Unverändert.
+10. ⚠️ **`js/irab.js`: `NICHT_VERB` braucht هُنَّ und أَنْتُمْ** — unverändert offen
+    seit dem 06.09.
+11. ⚠️ **`vorrat.mjs --lernstand` meldet madina-1 bei Kapitel 24, Elias' Angabe ist
+    12.** Frage an ihn, kein Nachziehen.
+
+### Vorschlag für den nächsten Schritt
+
+**Die Zahlwörter — zum zweiten Mal, und die Belege sind seitdem stärker
+geworden.** Am 09.09. stand hier schon, dass acht von ihnen mit **0 richtigen
+Antworten** in der Schwachliste stehen und `validate.js` seit Wochen warnt, dass
+dieselben neun unter „Plural" die andere Genusform zeigen (ثَلَاثَةٌ → ثَلَاثٌ).
+Heute kommt zweierlei hinzu: der jüngste Übungsversuch daran ist vom **11.09.**,
+er arbeitet also aktiv gegen eine Karte, die „drei (Plural)" behauptet — und
+`woerterbuch-belege.mjs` hat für **acht** dieser Zahlwörter inzwischen den
+`type`-Beleg geholt (Reverso: `num.`), sie stehen also ohnehin auf seiner
+Fragenseite.
+
+⛔ Was statt „Plural" dort stehen soll, entscheidet sein Lehrer, nicht dieser Lauf.
+Aber es ist **eine** Antwort für alle neun, sie steht auf seiner Warteseite, und
+sie betrifft genau die Wörter, an denen er gerade scheitert.
+
+Zweitbester Kandidat, falls er dafür keine Zeit hat: die **zwei Artefakt-Seiten
+ohne URL** eintragen (Punkt 3). Das kostet zwei Zeilen und verhindert, dass beim
+nächsten Veröffentlichen eine zweite Seite entsteht, auf der seine gespeicherten
+Antworten fehlen.

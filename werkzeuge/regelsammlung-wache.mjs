@@ -53,7 +53,15 @@ const VORGEMERKT  = path.join(ZUSTAND, '.regelsammlung-wache.neu.json');
 const WIEDERVORL  = path.resolve(wert('--wiedervorlagen') || path.join(REPO, 'werkzeuge', 'wiedervorlagen.json'));
 const TRANSKRIPTE = path.resolve(wert('--transkripte') || path.join(REPO, 'transcripts'));
 const KARTEN      = path.resolve(wert('--karten') || path.join(REPO, 'regelsammlung-data.js'));
-const NOTIZORDNER = path.resolve(wert('--notizordner') || path.join(REPO, '..', 'SamsungNotes-Sicherung', 'Lesbar', 'Arabisch', 'Grammatik'));
+/* ⛔ Der Vorgabepfad hiess bis zum 13.09.2026 „…\SamsungNotes-Sicherung\Lesbar\
+   Arabisch\Grammatik" — dieses Verzeichnis gibt es nicht und hat es nie gegeben.
+   Die Sicherung legt ihre lesbaren Notizen unter „Samsung Notes Archiv" ab
+   (belegt: sicherung-log.txt, Lauf vom 13.09.2026, 1083 Dateien unveraendert).
+   Folge: Messung 3 lief bei JEDEM Wartungslauf ins Leere und meldete Exitcode 1
+   („Nichts gemessen") — eine neue Grammatik-Notiz waere niemandem aufgefallen,
+   also genau der Ausfall, gegen den dieses Werkzeug am 11.09. gebaut wurde.
+   Mit dem richtigen Pfad misst es 8 Notizen. [[werkzeug_ohne_aufrufer]] */
+const NOTIZORDNER = path.resolve(wert('--notizordner') || path.join(REPO, '..', 'SamsungNotes-Sicherung', 'Samsung Notes Archiv', 'Arabisch', 'Grammatik'));
 const AUFNAHMEN   = wert('--aufnahmen');
 
 /* ---------- --merken ---------- */
