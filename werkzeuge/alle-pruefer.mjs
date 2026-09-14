@@ -415,6 +415,11 @@ const PRUEFER = [
      fehlender Schutz aus und wird beim naechsten Aufraeumen sonst „aus
      Vernunft" zurueckgebaut. [[wirkung_an_der_quelle_stilllegen]] */
   ['test-serie-toleranztag.mjs', []],
+  /* ⛔ Neu am 14.09.2026. Elias fand eine Aufgabe, bei der zwei Antworten
+     richtig waren und nur eine gewertet wurde — gemessen waren es 179 von 862
+     Tipp-Aufgaben. Sein Auftrag dazu: „sorge auch dafür das bei ähnlichen
+     aufgaben, ähnliche fehler nicht stattfinden." Das ist dieser Prüfer. */
+  ['test-eindeutige-ziele.mjs', []],
 
   /* ⛔ Neu am 06.09.2026. Der Hifz-Stand ist das Einzige in dieser App, das
      Elias sich WIRKLICH erarbeitet hat — auswendig gelernte Suren. Er lief

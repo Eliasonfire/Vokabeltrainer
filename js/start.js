@@ -140,8 +140,8 @@ function renderHeuteExtra(){
     }
   } else {
     name = 'Satzmodus'; symbol = 'ic-chat'; ziel_nav = 'sentences';
-    if (typeof satzTag === 'function' && typeof SATZ_TAGESZIEL === 'number'){
-      stand = satzTag().gesamt; ziel = SATZ_TAGESZIEL;
+    if (typeof satzTag === 'function' && typeof satzTagesziel === 'function'){
+      stand = satzTag().gesamt; ziel = satzTagesziel();
     }
   }
 

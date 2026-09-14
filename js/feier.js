@@ -403,11 +403,11 @@ function tagesZieleStand(){
   const heuteGeuebt = (Number(tage[heute]) || 0) > 0;
   const restVorrat = (typeof tagesPool === 'function') ? tagesPool().length : null;
   const h = (typeof hoerTag === 'function' && typeof hoerTagesziel === 'function') ? hoerTag() : null;
-  const s = (typeof satzTag === 'function' && typeof SATZ_TAGESZIEL === 'number') ? satzTag() : null;
+  const s = (typeof satzTag === 'function' && typeof satzTagesziel === 'function') ? satzTag() : null;
   return {
     karten: restVorrat === null ? null : (heuteGeuebt && restVorrat === 0),
     hoeren: h === null ? null : (h.gesamt >= hoerTagesziel()),
-    saetze: s === null ? null : (s.gesamt >= SATZ_TAGESZIEL)
+    saetze: s === null ? null : (s.gesamt >= satzTagesziel())
   };
 }
 

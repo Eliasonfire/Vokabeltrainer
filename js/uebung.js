@@ -326,6 +326,27 @@ const HARAKA_WAHL = [
    Und alle arabischen Begriffe hier sind voll vokalisiert - seine stehende
    Vorgabe. مَجْرُور, مُضَاف, مَرْفُوع und مَنْصُوب standen vorher ohne die
    Damma auf dem dritten Buchstaben da. */
+/* ⭐⭐ EINE STELLE FUER „es kann mehrere geben" (14.09.2026)
+
+   Vier der dreizehn Modi bauten je Fundstelle eine eigene Aufgabe mit genau
+   einem Ziel. Steht dieselbe Rolle zweimal im Satz, war die zweite Fundstelle
+   eine zweite Aufgabe — und in jeder galt nur ein Wort, obwohl beide richtig
+   sind. Elias hat das an „مَنْ مِنَ الصِّينِ؟ عَمَّارٌ مِنَ الصِّينِ."
+   gemeldet: „hier sind aber beide antworten richtig".
+
+   ⛔ Diese Funktion ist der Grund, warum es nicht wieder passiert: wer eine
+   neue Tipp-Uebung baut, sammelt seine Treffer und gibt sie HIER ab, statt
+   selbst `ziele:[i]` zu schreiben. `test-eindeutige-ziele.mjs` prueft das.
+   [[wirkung_an_der_quelle_stilllegen]]
+
+   `einzeln` ist die Frage bei genau einem Treffer, `viele(n)` die bei mehreren
+   — sie muss die Zahl nennen, sonst raet man, wie viele noch fehlen. */
+function uebungSammel(treffer, einzeln, viele){
+  if (!treffer || !treffer.length) return null;
+  if (treffer.length === 1) return { frage: einzeln, ziele: treffer };
+  return { frage: viele(treffer.length), ziele: treffer, art: 'mehrfach' };
+}
+
 const UEBUNGEN = [
   {
     id:'mubtada-khabar', nr:1, name:'مُبْتَدَأ / خَبَر — Satzteile', art:'tippen',
@@ -339,50 +360,87 @@ const UEBUNGEN = [
        der Aufgabe, nicht erst in der Aufloesung. */
     hinweis:'مُبْتَدَأ + خَبَر bilden einen ganzen Satz („der Lehrer ist neu"). Ein Adjektiv, das nur beschreibt („eine große Moschee"), ist نَعْت.',
     baue(z){
-      const out = [];
+      const mub = [], kha = [];
       z.forEach((t,i)=>{
-        if (/^مُبْتَدَأ/.test(t.rolle)) out.push({ frage:'Tippe das مُبْتَدَأ an — worüber wird etwas gesagt?', ziele:[i] });
-        else if (t.rolle === 'خَبَر') out.push({ frage:'Tippe das خَبَر an — was wird darüber ausgesagt?', ziele:[i] });
+        if (/^مُبْتَدَأ/.test(t.rolle)) mub.push(i);
+        else if (t.rolle === 'خَبَر') kha.push(i);
       });
-      return out;
+      return [
+        uebungSammel(mub, 'Tippe das مُبْتَدَأ an — worüber wird etwas gesagt?',
+          n => `Tippe alle ${n} مُبْتَدَأ an — worüber wird jeweils etwas gesagt?`),
+        uebungSammel(kha, 'Tippe das خَبَر an — was wird darüber ausgesagt?',
+          n => `Tippe alle ${n} خَبَر an — was wird jeweils ausgesagt?`)
+      ].filter(Boolean);
     }
   },
   {
     id:'nat', nr:2, name:'نَعْت — Adjektiv zum Nomen', art:'tippen',
     hinweis:'Das نَعْت stimmt mit seinem Wort in Fall, Zahl, Geschlecht UND Bestimmtheit überein.',
     baue(z){
-      return z.map((t,i)=>t.rolle.includes('نَعْت')
-        ? { frage:'Tippe das نَعْت an — das Wort, das ein anderes beschreibt.', ziele:[i] } : null).filter(Boolean);
+      const treffer = [];
+      z.forEach((t,i)=>{ if (t.rolle.includes('نَعْت')) treffer.push(i); });
+      const a = uebungSammel(treffer,
+        'Tippe das نَعْت an — das Wort, das ein anderes beschreibt.',
+        n => `Tippe alle ${n} نَعْت an — die Wörter, die andere beschreiben.`);
+      return a ? [a] : [];
     }
   },
   {
     id:'idafa', nr:3, name:'مُضَاف / مُضَاف إِلَيْهِ — Besitz', art:'tippen',
     hinweis:'Der مُضَاف trägt weder Tanwīn noch Artikel; das مُضَاف إِلَيْهِ steht im Genitiv.',
     baue(z){
-      const mudaf = z.findIndex(t=>t.rolle.includes('(مُضَاف)'));
-      const zu    = z.findIndex(t=>t.rolle.startsWith('مُضَاف إِلَيْه'));
-      if (mudaf < 0 || zu < 0) return [];
-      /* Zwei Aufgaben statt einer mit zwei Antippen: so sagt die Rueckmeldung,
-         WELCHER Teil sass und welcher nicht. */
+      /* ⛔ Vorher stand hier zweimal `findIndex` — das nahm nur das ERSTE
+         Vorkommen. In „اسْمُ التَّاجِرِ مَحْمُودٌ وَاسْمُ الطَّبِيبِ سَعِيدٌ."
+         stehen zwei Iḍāfa-Paare, und das zweite galt als falsch. */
+      const mudaf = [], zu = [];
+      z.forEach((t,i)=>{
+        if (t.rolle.includes('(مُضَاف)')) mudaf.push(i);
+        if (t.rolle.startsWith('مُضَاف إِلَيْه')) zu.push(i);
+      });
+      if (!mudaf.length || !zu.length) return [];
+      /* ⭐ Zwei Aufgaben statt einer mit zwei Antippen bleibt: so sagt die
+         Rueckmeldung, WELCHER Teil sass und welcher nicht. Neu ist nur, dass
+         jede von beiden alle ihre Fundstellen kennt. */
       return [
-        { frage:'Tippe den مُضَاف an — das Wort, das besessen wird.', ziele:[mudaf] },
-        { frage:'Tippe das مُضَاف إِلَيْهِ an — den Besitzer.', ziele:[zu] }
-      ];
+        uebungSammel(mudaf, 'Tippe den مُضَاف an — das Wort, das besessen wird.',
+          n => `Tippe alle ${n} مُضَاف an — die Wörter, die besessen werden.`),
+        uebungSammel(zu, 'Tippe das مُضَاف إِلَيْهِ an — den Besitzer.',
+          n => `Tippe alle ${n} مُضَاف إِلَيْهِ an — die Besitzer.`)
+      ].filter(Boolean);
     }
   },
   {
     id:'jarr-paar', nr:4, name:'حَرْف جَرّ + مَجْرُور — Präposition', art:'tippen',
     hinweis:'Der حَرْف جَرّ setzt das Nomen dahinter in den Genitiv.',
     baue(z){
-      const out = [];
+      /* ⛔ DER FALL, DEN ELIAS GEMELDET HAT. Vorher entstand je Partikel eine
+         eigene Aufgabe mit genau einer gueltigen Stelle. In
+         „مَنْ مِنَ الصِّينِ؟ عَمَّارٌ مِنَ الصِّينِ." sind beide مِنَ حَرْف جَرّ —
+         wer das erste antippte, bekam „Nicht ganz". */
+      /* ⛔⛔ DIE ZWEITE LISTE IST ENGER ALS DIE ERSTE — und das ist der Kern.
+         In „مِنْ أَيْنَ أَنْتَ؟ أَنَا مِنَ الْيَابَانِ." sind BEIDE مِنْ ein
+         حَرْف جَرّ, aber nur hinter dem zweiten steht ein Nomen im Genitiv:
+         أَيْنَ ist مبني, die App führt es als „unveränderlich".
+
+         Vorher hing die Partikel-Frage an derselben Bedingung wie die
+         Genitiv-Frage — also galt das erste مِنْ als falsch, obwohl die Frage
+         „Tippe den حَرْف جَرّ an" lautet. Beim Nachmessen nach der grossen
+         Reparatur war das die EINE Aufgabe, die noch mehrdeutig blieb.
+         [[bedingung_wird_durch_die_handlung_ungueltig]] */
+      const partikel = [], nomen = [];
       z.forEach((t,i)=>{
         if (t.rolle !== 'حَرْف جَرّ') return;
+        partikel.push(i);                       /* jeder حَرْف جَرّ zählt */
         const n = z[i+1];
-        if (!n || n.erwartet !== 'jarr') return;
-        out.push({ frage:'Tippe den حَرْف جَرّ an.', ziele:[i] });
-        out.push({ frage:'Welches Wort steht dadurch im Genitiv (مَجْرُور)?', ziele:[i+1] });
+        if (n && n.erwartet === 'jarr') nomen.push(i+1);   /* nur mit Nomen dahinter */
       });
-      return out;
+      if (!partikel.length || !nomen.length) return [];
+      return [
+        uebungSammel(partikel, 'Tippe den حَرْف جَرّ an.',
+          n => `Tippe alle ${n} حُرُوف جَرّ an.`),
+        uebungSammel(nomen, 'Welches Wort steht dadurch im Genitiv (مَجْرُور)?',
+          n => `Welche ${n} Wörter stehen dadurch im Genitiv (مَجْرُور)?`)
+      ].filter(Boolean);
     }
   },
   {
@@ -1194,12 +1252,12 @@ function renderUebung(){
      im Hoermodus, wo die Standzeile aus demselben Grund erweitert wurde. */
   const st = (typeof satzTag === 'function') ? satzTag() : null;
   const zielText = !st ? ''
-    : st.gesamt >= SATZ_TAGESZIEL
+    : st.gesamt >= satzTagesziel()
       /* ⚠️ Geschuetzte Leerzeichen (U+00A0) in den Zahlenpaaren: die Zeile
          darf an den Trennpunkten umbrechen, aber nie zwischen einer Zahl und
          ihrem Bezugswort. Sichtbar ist der Unterschied nicht, im Umbruch schon. */
       ? ` · Tagesziel geschafft (${st.gesamt})`
-      : ` · Tagesziel ${st.gesamt} von ${SATZ_TAGESZIEL}`;
+      : ` · Tagesziel ${st.gesamt} von ${satzTagesziel()}`;
   document.getElementById('uebStand').textContent =
     `${UEB.idx+1} / ${UEB.liste.length} · ${UEB.richtig} richtig${zielText}`;
   document.getElementById('uebFrage').innerHTML = arabischHervor(a.frage);
@@ -1228,7 +1286,7 @@ function renderUebung(){
   /* "Prüfen" gibt es nur bei Mehrfachauswahl - sonst zaehlt der erste Tipp,
      und ein zweiter Knopf waere ein Umweg. */
   document.getElementById('btnUebPruefen').classList.toggle('hidden',
-    m.art !== 'mehrfach' || UEB.beantwortet);
+    uebungArtVon(a) !== 'mehrfach' || UEB.beantwortet);
   const weiterKnopf = document.getElementById('btnUebWeiter');
   weiterKnopf.classList.toggle('hidden', !UEB.beantwortet);
   /* ⭐ Q8: der Zaehler laeuft im Knopf mit. `q8Sperre` ist gegen
@@ -1380,8 +1438,24 @@ function uebersetzungFuer(stueck){
 
    ⚠️ NACH DEM ZIEL WIRD NICHT GESPERRT. „danach kann man noch weiter üben" —
    der Zaehler laeuft weiter, gefeiert wird `einmalig` je Tag.
-   Dieselbe Entscheidung wie im Hoermodus (js/hoeren.js, Zeile 37). */
-const SATZ_TAGESZIEL = 13;
+   Dieselbe Entscheidung wie im Hoermodus (js/hoeren.js, Zeile 37).
+
+   ⭐ SEIT DEM 14.09.2026 EINSTELLBAR. Elias an dem Tag: „man [soll] dort keine
+   zahl haben, jedoch in den einstellungen einstellen kann wie viel das
+   tagesziel ist" — fuer alle vier Modi, in einem eigenen Bereich. Die 13
+   bleibt die Vorgabe, weil ihre Begruendung oben unveraendert gilt: sie ist
+   die Zahl, nach der jede Uebungsart einmal dran war.
+
+   ⛔ Als FUNKTION, nicht als Konstante — dieselbe Lehre wie im Hoermodus
+   (js/hoeren.js, Zeile 60): „Die Zahl NICHT in einer Konstanten
+   zwischenspeichern. Sie kann sich aendern, waehrend der Modus offen ist."
+   Eine `const` haette den alten Wert bis zum Neuladen festgehalten.
+   [[einstellung_wirkt_nicht_weil_zurueckgelesen]] */
+const SATZ_ZIEL_VORGABE = 13;
+function satzTagesziel(){
+  const n = (typeof SETTINGS === 'object' && SETTINGS) ? Number(SETTINGS.satzZiel) : NaN;
+  return (Number.isFinite(n) && n >= 1) ? n : SATZ_ZIEL_VORGABE;
+}
 
 function satzTag(){
   const heute = todayStr(0);
@@ -1452,7 +1526,7 @@ function uebungAuswerten(richtig){
      der Anlass `einmalig` je Tag ist, faengt das zwar ab, aber eine Bedingung,
      die sich auf eine zweite Sperre verlaesst, ist eine Falle fuer den
      naechsten, der die Sperre anfasst. */
-  if (satzVorher < SATZ_TAGESZIEL && satzT.gesamt >= SATZ_TAGESZIEL
+  if (satzVorher < satzTagesziel() && satzT.gesamt >= satzTagesziel()
       && typeof feiere === 'function'){
     feiere('satz-tagesziel', { zahl: satzT.gesamt, richtig: satzT.richtig });
   }
@@ -1462,17 +1536,41 @@ function uebungAuswerten(richtig){
   if (typeof tagKomplettPruefen === 'function') tagKomplettPruefen();
 }
 
+/* ⭐⭐ DIE ART GEHOERT ZUR AUFGABE, NICHT NUR ZUM MODUS (14.09.2026)
+
+   Elias mit einem Bildschirmfoto: „hier sind aber beide antworten richtig".
+   Der Satz war „مَنْ مِنَ الصِّينِ؟ عَمَّارٌ مِنَ الصِّينِ." — zwei Mal مِنَ,
+   beide حَرْف جَرّ, und die Aufgabe liess nur eines gelten.
+
+   ⛔ Gemessen am selben Tag ueber alle 862 Tipp-Aufgaben: **179 waren
+   mehrdeutig** — 107 in mubtada-khabar, 56 in nat, 13 in jarr-paar, 3 in
+   idafa. Nur `alle-majrur` war sauber, und zwar weil es von vornherein nach
+   ALLEN fragt. Genau dieses Muster bekommen die anderen jetzt auch.
+
+   Elias' eigener Vorschlag dazu: „vielleicht kann man auch sagen das es
+   mehrere gibt und das man mehrere antippen soll."
+
+   Deshalb entscheidet ab jetzt die AUFGABE ueber ihre Art: ein Treffer bleibt
+   `tippen` (ein Antippen, sofortige Rueckmeldung), mehrere werden `mehrfach`
+   (alle antippen, dann „Pruefen"). Der Modus gibt nur noch die Vorgabe.
+   [[kandidatenliste_ist_keine_fehlerliste]] */
+function uebungArtVon(a){
+  if (a && a.art) return a.art;
+  const m = uebungModusVon(a);
+  return m ? m.art : null;
+}
+
 function uebungWortTipp(i){
   const a = uebungAktuell();
   if (!a || UEB.beantwortet) return;
   const m = uebungModusVon(a);
   if (!m) return;
-  if (m.art === 'mehrfach'){
+  if (uebungArtVon(a) === 'mehrfach'){
     if (UEB.gewaehlt.has(i)) UEB.gewaehlt.delete(i); else UEB.gewaehlt.add(i);
     renderUebung();
     return;
   }
-  if (m.art !== 'tippen') return;
+  if (uebungArtVon(a) !== 'tippen') return;
   UEB.gewaehlt = new Set([i]);
   uebungAuswerten(a.ziele.includes(i));
 }
