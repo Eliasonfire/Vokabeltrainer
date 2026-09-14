@@ -4708,7 +4708,14 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 /* ---- Der Lesestrich in der offenen Sure (15.09.2026) ----
    3 px, volle Breite, kein Text. Er sitzt in der Sticky-Leiste und fährt mit
    der Kopfzeile weg — beim Lesen ist er dann nicht da. */
-.lese-strich{height:3px;background:var(--surface-4);overflow:hidden;}
+/* ⚠️ Luft nach unten: Elias mit Bild — „zwischen fortschrittbalken und ayah
+   und verbergen ist recht wenig platz, mach da bissi mehr". Gemessen waren es
+   0 px, der Strich saß direkt auf der Ḥifẓ-Leiste.
+   ⛔ Der Abstand gehört HIER hin, nicht als `padding-top` an die Leiste: die
+   gibt es auch ohne Strich (in einer Sure, die nie gelesen wurde), und dann
+   stünde dort eine Lücke ohne Grund. */
+.lese-strich{height:3px;background:var(--surface-4);overflow:hidden;
+  margin-bottom:var(--sp-3);}
 .lese-strich > i{display:block;height:100%;background:var(--red-bright);opacity:.8;
   transition:width var(--dur-4,.6s) var(--ease-out);}
 @media (prefers-reduced-motion:reduce){ .lese-strich > i{transition:none;} }
