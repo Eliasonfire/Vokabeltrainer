@@ -1435,6 +1435,12 @@ function uebungAuswerten(richtig){
   satzT.gesamt++;
   if (richtig) satzT.richtig++;
   satzTagSpeichern(satzT);
+  /* ⛔ HIER FEHLT KEIN touchStreak() — das ist Absicht und Elias' Entscheidung
+     vom 14.09.2026. Die Serie haengt allein an den Karteikarten
+     (js/lernen.js, in answer()); ein Tag mit nur Saetzen zaehlt fuer sie
+     nicht. Ihm genau so berichtet und angeboten, es zu aendern, seine
+     Antwort: „nein ist gut so". Die ausfuehrliche Begruendung steht an der
+     Aufrufstelle in js/lernen.js. ⛔ Nicht „nachruesten". */
 
   renderUebung();
   /* Haken fuer die Feier-Effekte (Nachtplan Punkt 8). Solange es js/feier.js

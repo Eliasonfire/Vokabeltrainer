@@ -213,5 +213,44 @@ const setzeSerie = s => { c.speicher['vt_streak'] = s; c.toasts = []; };
     'Satz fehlt in js/statistik.js');
 }
 
+/* ---------- 8. ⛔ Nur die Karteikarten schreiben die Serie fort ---------- */
+/* Elias am 14.09.2026: „und die streak wird auch nur fortgesetzt wenn das
+   tagesziel der karteikarten erreicht ist richtig?" — nein, eine Karte
+   genuegt. Dabei kam heraus, dass Satz- und Hoermodus die Serie gar nicht
+   anruehren, obwohl beide ein eigenes Tagesziel haben. Angeboten, das zu
+   aendern; seine Antwort: **„nein ist gut so"**.
+
+   ⛔ Genau so ein Befund wird spaeter als Bug gelesen und „behoben". Diese
+   vier Faelle sind die Sperre davor. [[wirkung_an_der_quelle_stilllegen]]
+
+   ⚠️ Kommentarfrei gezaehlt: seit dem 14.09. steht `touchStreak()` in
+   lernen.js AUCH im Erklaerkommentar, und in uebung.js/hoeren.js steht es in
+   den ⛔-Hinweisen. Ein rohes grep zaehlte diese mit und der Test waere
+   sinnlos gruen — bzw. hier sogar rot.
+   [[stichworttreffer_im_kommentar]] */
+{
+  const ohneKommentare = s => s
+    .replace(/\/\*[\s\S]*?\*\//g, ' ')
+    .replace(/(^|[^:])\/\/[^\n]*/g, '$1');
+  const zaehle = (datei, name) => {
+    const t = ohneKommentare(fs.readFileSync(path.join(WURZEL, 'js', datei), 'utf8'));
+    return (t.match(new RegExp(name + '\\s*\\(\\s*\\)', 'g')) || []).length;
+  };
+  const inLernen = zaehle('lernen.js', 'touchStreak');
+  pruefe('die Serie wird genau einmal fortgeschrieben, in js/lernen.js',
+    inLernen === 1, inLernen + ' Aufruf(e)');
+  const inUebung = zaehle('uebung.js', 'touchStreak');
+  pruefe('der Satzmodus rührt die Serie nicht an — „nein ist gut so"',
+    inUebung === 0, inUebung + ' Aufruf(e) in uebung.js');
+  const inHoeren = zaehle('hoeren.js', 'touchStreak');
+  pruefe('der Hörmodus rührt die Serie nicht an — „nein ist gut so"',
+    inHoeren === 0, inHoeren + ' Aufruf(e) in hoeren.js');
+  /* ⭐ Und beide haengen an DERSELBEN Stelle: nur deshalb koennen Kalender und
+     Serie nicht auseinanderlaufen. */
+  const kalender = zaehle('lernen.js', 'tagZaehlen');
+  pruefe('Kalender und Serie hängen an derselben Stelle',
+    kalender === 1, kalender + ' tagZaehlen()-Aufruf(e) in lernen.js');
+}
+
 console.log('\n' + (schlecht ? '✘ ' : '✔ ') + ok + ' bestanden, ' + schlecht + ' gescheitert');
 process.exit(schlecht ? 1 : 0);
