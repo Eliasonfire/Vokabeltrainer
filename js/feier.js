@@ -404,8 +404,30 @@ function tagesZieleStand(){
   const restVorrat = (typeof tagesPool === 'function') ? tagesPool().length : null;
   const h = (typeof hoerTag === 'function' && typeof hoerTagesziel === 'function') ? hoerTag() : null;
   const s = (typeof satzTag === 'function' && typeof satzTagesziel === 'function') ? satzTag() : null;
+  /* ⛔⛔ ANGEGLICHEN am 15.09.2026 — vorher stand hier `restVorrat === 0`, und
+     das wurde mit einem Tagesdeckel praktisch nie wahr.
+
+     `tagesAuswahl()` gibt immer bis zu `deckel` Karten zurück, solange
+     ueberhaupt etwas faellig ist. Bei 200 faelligen und Deckel 10 sind nach
+     zehn Antworten wieder zehn da. Der Vorrat war also nur an einem Tag leer,
+     an dem der ganze Rueckstand abgearbeitet war — und genau dafuer gibt es
+     den Deckel ja nicht.
+
+     Damit hat `tag-komplett` (Konfetti fuer alle drei Ziele) praktisch nie
+     gefeuert. Gebaut, geprueft, ausgeliefert — und wirkungslos.
+     [[ausfall_ist_unsichtbar_gebaut]]
+
+     Jetzt gilt dieselbe Definition wie beim Ring auf dem Startbildschirm:
+     „Karten pro Tag" IST das Ziel. Ohne Deckel bleibt es beim leeren Vorrat.
+     ⛔ Zwei Stellen, eine Antwort. [[dieselbe_frage_zwei_antworten]] */
+  const deckel = (typeof tagesDeckel === 'function') ? Number(tagesDeckel()) : 0;
+  const heuteZahl = Number(tage[heute]) || 0;
+  const kartenZiel = deckel > 0
+    ? (heuteZahl >= deckel)
+    : (heuteGeuebt && restVorrat === 0);
+
   return {
-    karten: restVorrat === null ? null : (heuteGeuebt && restVorrat === 0),
+    karten: restVorrat === null ? null : kartenZiel,
     hoeren: h === null ? null : (h.gesamt >= hoerTagesziel()),
     saetze: s === null ? null : (s.gesamt >= satzTagesziel())
   };

@@ -1260,6 +1260,12 @@ function renderUebung(){
       : ` · Tagesziel ${st.gesamt} von ${satzTagesziel()}`;
   document.getElementById('uebStand').textContent =
     `${UEB.idx+1} / ${UEB.liste.length} · ${UEB.richtig} richtig${zielText}`;
+  /* ⭐ Ring und Balken (15.09.2026): der Ring zeigt den TAG, der Balken die
+     RUNDE. Beides stand vorher nur als Text in der Zeile darüber. */
+  if (typeof modusRingZeichnen === 'function')
+    modusRingZeichnen('satzRing', st.gesamt, satzTagesziel());
+  if (typeof modusBalkenZeichnen === 'function')
+    modusBalkenZeichnen('uebBalken', UEB.idx + 1, UEB.liste.length);
   document.getElementById('uebFrage').innerHTML = arabischHervor(a.frage);
   document.getElementById('uebSatz').innerHTML = uebungSatzHtml(a);
   document.getElementById('uebDe').textContent = a.satz.sentDe || '';

@@ -157,6 +157,14 @@ function hoerStandSchreiben(){
   document.getElementById('hoerStand').textContent = geschafft
     ? `Tagesziel geschafft — ${t.gesamt} Wörter${quote}`
     : `Tagesziel ${t.gesamt} von ${ziel}${quote}`;
+  /* ⭐ Ring und Balken (15.09.2026). Der Hörmodus ist der Sonderfall: er hat
+     keine Runde, die Fragen gehen nie aus. Beide zeigen deshalb dasselbe —
+     Elias' ausdrückliche Entscheidung: „es soll einen balken geben und genau
+     das soll das tagesziel abbilden." */
+  if (typeof modusRingZeichnen === 'function')
+    modusRingZeichnen('hoerRing', t.gesamt, ziel);
+  if (typeof modusBalkenZeichnen === 'function')
+    modusBalkenZeichnen('hoerBalken', t.gesamt, ziel);
 }
 
 /* Nur Vokabeln mit brauchbarer deutscher Bedeutung - ohne die gaebe es keine

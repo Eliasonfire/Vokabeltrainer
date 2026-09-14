@@ -1,6 +1,72 @@
 /* kategorien.js -- Kategorien, Wortliste, Ziehen und Ablegen
    Teil der App-Logik; wird in index.html in fester Reihenfolge geladen und
    teilt sich mit den uebrigen js/-Dateien den globalen Namensraum. */
+/* ===================== ⭐⭐ FORTSCHRITT JE KAPITEL (15.09.2026) ==============
+
+   Die Kapitelliste zeigte bis heute nur eine nackte Zahl: „Kap. 5 — 14". Das
+   sagt, wie viele Wörter drin sind, nicht wie weit man ist. Ein Kapitel, das
+   ganz sitzt, sah aus wie eines, das nie angefasst wurde.
+
+   ⛔ WELCHE WÖRTER ZÄHLEN — Elias' Regel im Wortlaut:
+     „bei den kapiteln die die ich noch nicht angefangen habe weil ich einfach
+      noch nicht bei einem kapitel bin sollten gar keinen ring anzeigen. nur
+      sobald dort wirklich mindestens ein wort ist welches abgefragt wird soll
+      ein ring angezeigt werden. sollten es dort jedoch nur wörter geben die
+      ich eigenhändig früher freigeschalten habe noch bevor ich das kapitel
+      freigeschalten habe sollen die gesamtheit der freigeschalteten wörter
+      100% ergeben und dann abhängig davon wie viele wörter ich kann der ring
+      hoch gehen. sollte ich aber dann das kapitel freischalten muss natürlich
+      wieder alle wörter gelten."
+
+   Also: Der Nenner ist das, was WIRKLICH abgefragt wird — nicht, was
+   theoretisch im Kapitel steht.
+
+   ⚠️ Der Einbruch beim Freischalten ist gewollt. Kapitel 24 mit drei einzeln
+   freigeschalteten Wörtern steht bei zwei Dritteln; nach dem Freischalten
+   zählen alle 19, und derselbe Ring fällt auf ein Zehntel. Elias dazu: „ja
+   finde ich auch, so sollte auch sein."
+
+   ⛔⛔ UND „IM KASTEN" HEISST NICHT „SITZT". Gemessen wird der Leitner-
+   Füllstand, keine Schwelle: js/kern.js hält aus der ADHS-Recherche fest, dass
+   Hulme u. a. 2019 KEINEN Schwellenwert fanden, ab dem ein Wort sitzt — der
+   Zusammenhang ist linear, jeder Kontakt trägt seinen Anteil. Eine Anzeige
+   „18 von 23 sitzen" würde eine Grenze erfinden, die die eigene Recherche
+   verworfen hat. [[vokabeln_sind_der_teuerste_teil]] */
+function kapitelFortschritt(ch, words){
+  if (!Array.isArray(words) || !words.length) return '';
+  /* Der Nenner: was aus diesem Kapitel überhaupt abgefragt wird. */
+  /* ⭐ `istBekannt()` ist genau diese Frage und beantwortet sie schon:
+     Lernbestand, einzeln freigeschaltet, eigene Auswahl, freigeschaltetes
+     Kapitel — alles in einer Funktion (js/kern.js:147). Eine zweite Fassung
+     hier wäre eine zweite Wahrheit. [[dieselbe_frage_zwei_antworten]] */
+  const zaehlbar = (typeof istBekannt === 'function')
+    ? words.filter(istBekannt) : [];
+  if (!zaehlbar.length) return '';          /* kein Wort dabei → kein Balken */
+
+  /* Füllstand aus den Leitner-Boxen. Box 1 ist der Anfang, Box 5 das Ende;
+     ein nie abgefragtes Wort steht auf 0, nicht auf Box 1 — sonst wäre ein
+     unangetastetes Kapitel schon zu einem Viertel gefüllt. */
+  const stufen = (typeof INTERVALS === 'object') ? Object.keys(INTERVALS).length : 5;
+  let summe = 0, begonnen = 0;
+  zaehlbar.forEach(w => {
+    const p = (typeof PROGRESS === 'object') ? PROGRESS[w.id] : null;
+    if (!p) return;
+    begonnen++;
+    summe += Math.max(0, Math.min((Number(p.box) || 1) - 1, stufen - 1));
+  });
+  const anteil = summe / (zaehlbar.length * (stufen - 1));
+  const proz = (typeof ringBogen === 'function') ? ringBogen(anteil) : anteil * 100;
+
+  const text = !begonnen
+    ? 'noch nicht begonnen'
+    : Math.round(anteil * 100) + ' % im Kasten'
+      + (zaehlbar.length < words.length
+          ? ' · ' + zaehlbar.length + ' von ' + words.length + ' freigeschaltet' : '');
+
+  return '<div class="kap-balken"><i style="width:' + proz + '%"></i></div>'
+       + '<div class="kap-stand">' + text + '</div>';
+}
+
 /* ===================== CATEGORIES ===================== */
 document.querySelectorAll('.cat-tab').forEach(tab=>{
   tab.addEventListener('click', ()=>{
@@ -44,6 +110,8 @@ function renderChapterCats(){
      Wörter — es gibt keine zweite Kachel mehr. */
   const eigeneOben = ['personal'];
   const chapters = [...eigeneOben, ...kapitelDesBuchs()];
+  /* Kapitel 12 wäre sonst „Kap. 12" ohne Hinweis darauf, wie weit es sitzt.
+     Der Balken steht zwischen Titel und Unterzeile — siehe kapitelFortschritt(). */
   const html = chapters.map(ch=>{
     const words = buchVokabeln().filter(w=>w.chapter===ch);
     const name = CHAPTER_NAMES[ch] || `Kapitel ${ch}`;
@@ -65,6 +133,7 @@ function renderChapterCats(){
     return `<div class="list-row${eigen ? ' list-row-eigen' : ''}" data-openlist="chapter:${ch}">
       <div class="list-row-haupt">
         <div class="list-row-title">${label}</div>
+        ${kapitelFortschritt(ch, words)}
         ${unterzeile}
       </div>
       <div class="list-row-count">${words.length}</div>
