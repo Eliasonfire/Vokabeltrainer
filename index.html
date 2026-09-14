@@ -6548,6 +6548,25 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         <button class="btn btn-secondary" id="btnDiagnose">Anzeigen</button>
       </div>
       <pre class="diagnose-text hidden" id="diagnoseText"></pre>
+      <!-- ⭐ Weitergeben statt abfotografieren (15.09.2026). Elias: „es sollte
+           bei dieser diagnose auch einen knopf geben wo ich dir die ganze
+           diagnose einfach per knopf zuschicken kann in der app."
+
+           ⚠️ Die App hat kein Backend und kann nichts verschicken — was sie
+           kann, ist den Text bereitlegen: in die Zwischenablage, und auf dem
+           Handy zusätzlich in den Teilen-Dialog. Beides führt zum selben Ziel,
+           nur ohne Tippfehler und ohne Bildschirmfoto, auf dem die Hälfte
+           abgeschnitten ist. -->
+      <div class="diagnose-knoepfe hidden" id="diagnoseKnoepfe">
+        <!-- ⭐ Der eigentliche Knopf. Elias: „der soll direkt zu dir gehen das
+             ich einfach nur sagen muss hab die diagnose geschickt." Er legt den
+             Text in denselben Cloudflare-Speicher, in dem der Lernstand liegt;
+             Claude holt ihn mit `node werkzeuge/diagnose-holen.mjs`.
+             ⛔ Ohne Netz geht das nicht — dann bleibt „Kopieren". -->
+        <button class="btn btn-primary" id="btnDiagnoseSenden">An Claude schicken</button>
+        <button class="btn btn-secondary" id="btnDiagnoseKopieren">Kopieren</button>
+        <button class="btn btn-secondary hidden" id="btnDiagnoseTeilen">Teilen</button>
+      </div>
       </div>
 
       <!-- „Streak zurücksetzen" ist am 29.07.2026 auf Elias' Wunsch entfernt

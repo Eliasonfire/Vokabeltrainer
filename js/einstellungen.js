@@ -1273,7 +1273,117 @@ document.getElementById('btnDiagnose')?.addEventListener('click', ()=>{
   if (zu) kasten.textContent = diagnoseText();
   kasten.classList.toggle('hidden', !zu);
   if (knopf) knopf.textContent = zu ? 'Verbergen' : 'Anzeigen';
+  /* Die Weitergabe-Knöpfe erscheinen mit dem Text und verschwinden mit ihm. */
+  document.getElementById('diagnoseKnoepfe')?.classList.toggle('hidden', !zu);
 });
+
+/* ---------- ⭐ Die Diagnose weitergeben (15.09.2026) ----------
+
+   Elias: „es sollte bei dieser diagnose auch einen knopf geben wo ich dir die
+   ganze diagnose einfach per knopf zuschicken kann in der app."
+
+   ⛔ Die App hat kein Backend und kann nichts verschicken — sie kann den Text
+   nur bereitlegen. Zwei Wege, beide ohne Bildschirmfoto:
+     „Kopieren" in die Zwischenablage, dann einfügen wo er will,
+     „Teilen"    über den Teilen-Dialog des Geräts (nur wo es ihn gibt).
+
+   ⚠️ `navigator.clipboard` gibt es nur in sicheren Kontexten und kann trotzdem
+   abgelehnt werden (Fokus, Berechtigung). Deshalb der Rückfall über ein
+   verstecktes Textfeld und `execCommand` — veraltet, aber es ist der einzige
+   Weg, der auch dann noch greift. Ohne ihn stünde am Ende ein Knopf, der
+   nichts tut und nichts sagt. [[ausfall_ist_unsichtbar_gebaut]] */
+async function diagnoseInZwischenablage(){
+  const text = document.getElementById('diagnoseText')?.textContent || diagnoseText();
+  try {
+    if (navigator.clipboard && window.isSecureContext){
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch (e){ /* weiter zum Rückfall */ }
+  try {
+    const feld = document.createElement('textarea');
+    feld.value = text;
+    feld.setAttribute('readonly', '');
+    feld.style.cssText = 'position:fixed;top:-1000px;opacity:0;';
+    document.body.appendChild(feld);
+    feld.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(feld);
+    return ok;
+  } catch (e){ return false; }
+}
+
+document.getElementById('btnDiagnoseKopieren')?.addEventListener('click', async (e)=>{
+  const knopf = e.currentTarget;
+  const ok = await diagnoseInZwischenablage();
+  /* ⛔ Die Rückmeldung steht im Knopf selbst, nicht in einem Toast: wer gerade
+     auf den Knopf gesehen hat, sieht sie dort auch. */
+  knopf.textContent = ok ? 'Kopiert ✓' : 'Ging nicht — bitte markieren';
+  setTimeout(()=>{ knopf.textContent = 'Kopieren'; }, 2600);
+});
+
+/* ---------- ⭐⭐ „An Claude schicken" (15.09.2026) ----------
+
+   Elias, nachdem er mir die Diagnose zweimal abfotografiert hatte und beide
+   Male der Text abgeschnitten war: „der soll direkt zu dir gehen das ich
+   einfach nur sagen muss hab die diagnose geschickt."
+
+   Der Weg: PUT auf /api/diagnose, dieselbe Cloudflare-Ablage wie beim
+   Lernstand. Claude liest sie mit `node werkzeuge/diagnose-holen.mjs`.
+
+   ⛔ Der Knopf sagt, was WIRKLICH passiert ist. Ein „Geschickt ✓", das auch
+   bei einem Fehler erscheint, ist schlimmer als kein Knopf: Elias sagt dann
+   „hab die diagnose geschickt", und auf meiner Seite liegt nichts.
+   [[ausfall_ist_unsichtbar_gebaut]] */
+document.getElementById('btnDiagnoseSenden')?.addEventListener('click', async (e)=>{
+  const knopf = e.currentTarget;
+  const text = document.getElementById('diagnoseText')?.textContent || diagnoseText();
+  const zurueck = () => setTimeout(()=>{ knopf.textContent = 'An Claude schicken';
+                                         knopf.disabled = false; }, 3200);
+  knopf.disabled = true;
+  knopf.textContent = 'Wird geschickt …';
+  try {
+    const antwort = await fetch('/api/diagnose', {
+      method: 'PUT',
+      headers: { 'content-type': 'text/plain; charset=utf-8' },
+      body: text
+    });
+    if (antwort.ok){
+      knopf.textContent = 'Geschickt ✓ — sag Claude Bescheid';
+    } else {
+      /* Die Zahl mitgeben: 401 heisst „nicht angemeldet", 404 „Funktion nicht
+         da" — zwei ganz verschiedene Ursachen, und beide sieht man sonst nicht. */
+      let grund = '';
+      try { const d = await antwort.json(); grund = d && d.fehler ? ' (' + d.fehler + ')' : ''; }
+      catch (x){ /* keine JSON-Antwort */ }
+      knopf.textContent = 'Ging nicht: ' + antwort.status + grund;
+    }
+  } catch (err){
+    /* Offline oder kein Netz — das ist der haeufigste Fall und kein Fehler. */
+    knopf.textContent = 'Kein Netz — bitte „Kopieren"';
+  }
+  zurueck();
+});
+
+/* Der Teilen-Knopf erscheint nur, wenn das Gerät ihn wirklich anbietet.
+   Auf dem PC gibt es `navigator.share` meist nicht — ein Knopf, der dort
+   nichts tun kann, wäre schlimmer als keiner. */
+(function teilenKnopfVorbereiten(){
+  const knopf = document.getElementById('btnDiagnoseTeilen');
+  if (!knopf || typeof navigator.share !== 'function') return;
+  knopf.classList.remove('hidden');
+  knopf.addEventListener('click', async ()=>{
+    const text = document.getElementById('diagnoseText')?.textContent || diagnoseText();
+    try {
+      await navigator.share({ title: 'Vokabeltrainer — Diagnose', text });
+    } catch (e){
+      /* Abbrechen ist kein Fehler: wer den Dialog wegwischt, will nichts sehen. */
+      if (e && e.name !== 'AbortError')
+        knopf.textContent = 'Ging nicht';
+      setTimeout(()=>{ knopf.textContent = 'Teilen'; }, 2600);
+    }
+  });
+})();
 
 /* ---------- App aktualisieren ----------
    Notausgang aus einem Kreislauf, in dem Elias am 30.07.2026 festhing: Die

@@ -166,12 +166,19 @@ export const PFLEGEPLAN = [
   },
   {
     funktion: 'Quran-Leser und Quranbezug der Vokabeln',
-    dateien: ['js/quran.js', 'js/quran-audio.js', 'surah-data.js', 'quran-seiten.js', 'quran-frequency-data.js', 'quran-text.js'],
+    dateien: ['js/quran.js', 'js/quran-audio.js', 'surah-data.js', 'quran-seiten.js', 'quran-verszeichen.js', 'quran-frequency-data.js', 'quran-text.js'],
     bildschirme: ['screen-quran', 'screen-quranfull'],
     neuerInhalt: { routine: W, schritt: '6', beleg: 'node pruefe-quran.js',
       wie: 'Quranbezüge neuer Vokabeln werden gegen den Qurantext gehalten' },
     eingaben: { nein: 'Lesezeichen, Lesestand und Audio-Einstellungen sind Zustand seines Geräts; vt_hifz führt pruefe-kreislaeufe.mjs als ausgewertet über data/auswendig.json.' },
-    veralten: { nein: 'Qurantext, Suren und Seitengrenzen ändern sich nicht. quran-frequency-data.js wird aus dem Quran-Korpus berechnet (baue-quran-frequenz.mjs); neue Wurzeln brächte nur ein neues Lehrwerk.' },
+    /* ⭐ quran-verszeichen.js kam am 15.09.2026 für den Juz-Ring dazu: 6236
+       Zahlen, die Zeichen je Vers ohne Taschkīl. Erzeugt von
+       werkzeuge/verszeichen-bauen.mjs aus quran-text.js.
+       ⚠️ Sie veraltet nur, wenn sich der Qurantext ändert — und der ändert
+       sich nicht. Deshalb kein Routineschritt: eine Wartung, die nie etwas zu
+       tun hat, ist eine, die niemand mehr liest. Das Werkzeug bricht ab, wenn
+       ein Vers ohne Text bleibt, und das ist der einzige Fall, der zählt. */
+    veralten: { nein: 'Qurantext, Suren und Seitengrenzen ändern sich nicht. quran-frequency-data.js wird aus dem Quran-Korpus berechnet (baue-quran-frequenz.mjs), quran-verszeichen.js aus dem Qurantext (verszeichen-bauen.mjs) — beide nur neu zu erzeugen, wenn sich ihre Quelle ändert; neue Wurzeln brächte nur ein neues Lehrwerk.' },
   },
   {
     funktion: 'Hörverstehen',
