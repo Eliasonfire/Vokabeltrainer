@@ -478,6 +478,15 @@ function renderUebungskalender(){
      07.09.2026 wurde keine Quote aufgezeichnet, und eine leere Spalte an
      dieser Stelle saehe aus wie ein Fehler. [[leere_liste_ist_keine_messung]] */
   const gq = gesamtQuote();
+  /* ⭐ Der erste Fusstext erklaert die zwei Regeln hinter der Serie, und das
+     ist der eigentliche Anlass vom 14.09.2026. Beide waren zu dem Zeitpunkt
+     seit Wochen gebaut — der Toleranztag seit dem 29.07., die 8-Uhr-Grenze auf
+     Elias' eigenen Wunsch seit dem 08.09. — und trotzdem hat er sie sich neu
+     gewuenscht. Konnte er auch: die einzige Spur des Toleranztags war ein
+     Toast im Moment des Eintretens, und die 8-Uhr-Grenze stand nur im
+     Quelltext. Eine Funktion, von der der Nutzer nichts weiss, ist fuer ihn
+     nicht vorhanden. ⛔ Deshalb steht sie hier, wo er die Tage sieht, und
+     nicht in einem Hilfetext, den niemand aufschlaegt. */
   kasten.innerHTML = `
     <div class="kal-block">
       <div></div>
@@ -491,6 +500,7 @@ function renderUebungskalender(){
       <div><b>${alle.length}</b><span>Tage geübt</span></div>
       ${gq ? `<div><b>${gq.quote} %</b><span>richtig insgesamt</span></div>` : ''}
     </div>
+    <p class="kal-fuss">Lässt du einen Tag aus, läuft die Serie trotzdem weiter — erst bei zwei Tagen hintereinander fängt sie wieder bei 1 an. Ein Tag beginnt um 8 Uhr morgens, nicht um Mitternacht: Was du um 3 Uhr nachts lernst, zählt noch zum Tag davor.</p>
     <p class="kal-fuss">${seit
       ? `Aufgezeichnet seit ${seit}. Umrandete Felder sind aus deiner Serie erschlossen — dass du geübt hast, steht fest, die Kartenzahl nicht.${gq ? ' Die Trefferquote läuft erst seit dem 7. September — ältere Tage haben keine.' : ''}`
       : 'Der Kalender füllt sich, sobald du das erste Mal übst.'}</p>
