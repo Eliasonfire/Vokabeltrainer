@@ -4524,6 +4524,11 @@ button:disabled{cursor:default;}
   font-size:12px;line-height:1.5;white-space:pre;overflow-x:auto;
   background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-2);
   padding:var(--sp-3);margin:var(--sp-2) 0 0;color:var(--text);}
+/* Die drei Handgriffe unter der Diagnose: schicken, kopieren, teilen.
+   Nebeneinander, und bei schmalem Bildschirm umbrechend statt gequetscht —
+   „An Claude schicken" ist die längste Beschriftung der App. */
+.diagnose-knoepfe{display:flex;gap:var(--sp-2);flex-wrap:wrap;margin-top:var(--sp-2);}
+.diagnose-knoepfe .btn{flex:1 1 auto;}
 
 /* =====================================================================
    SCROLLBALKEN
@@ -6563,7 +6568,12 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
              Text in denselben Cloudflare-Speicher, in dem der Lernstand liegt;
              Claude holt ihn mit `node werkzeuge/diagnose-holen.mjs`.
              ⛔ Ohne Netz geht das nicht — dann bleibt „Kopieren". -->
-        <button class="btn btn-primary" id="btnDiagnoseSenden">An Claude schicken</button>
+        <!-- ⚠️ btn-secondary wie die zwei daneben, nicht btn-primary. Elias am
+             15.09.2026: „mach den schicken button etwas kleiner so groß wie die
+             anderen zwei, das sieht so off aus." Der hervorgehobene Knopf war
+             höher und trug die Akzentfarbe — in einer Reihe von drei gleichen
+             Handgriffen sah er aus wie ein Fremdkörper. -->
+        <button class="btn btn-secondary" id="btnDiagnoseSenden">An Claude schicken</button>
         <button class="btn btn-secondary" id="btnDiagnoseKopieren">Kopieren</button>
         <button class="btn btn-secondary hidden" id="btnDiagnoseTeilen">Teilen</button>
       </div>
