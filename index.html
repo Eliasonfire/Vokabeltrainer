@@ -4378,8 +4378,23 @@ button:disabled{cursor:default;}
 .bottombar{
   position:absolute;bottom:0;left:0;right:0;
   display:flex;
-  background:rgba(8,8,9,.86);
-  backdrop-filter:blur(18px) saturate(140%);
+  /* ⭐ Undurchsichtig seit dem 15.09.2026. Elias: „mache die hotbar nicht
+       durchsehbar."
+
+     Bis dahin stand hier `rgba(8,8,9,.86)` mit `backdrop-filter: blur(18px)
+     saturate(140%)` — aus dem Design-Pass vom 27.07.2026. Aufgefallen ist es
+     ihm erst jetzt, und das hat einen Grund: der Startbildschirm ist mit den
+     Ringen länger geworden. Wo vorher am Ende leerer Grund unter die Leiste
+     rollte, liegt jetzt Inhalt, und der schimmerte durch.
+
+     ⚠️ `backdrop-filter` ist mit entfallen. Ohne Durchsicht rechnet er an
+     jedem Bild eine Unschärfe über einen Bereich, den niemand sieht — auf dem
+     Handy kostet das Bildrate beim Rollen, ohne etwas zu zeigen. */
+  /* ⚠️ `--surface-1`, keine erfundene Variable. Beim ersten Anlauf stand hier
+     `var(--surface-0, …)` — die gibt es nicht, nur der Ersatzwert hätte
+     gegriffen. Genau derselbe Fehler wie heute Nacht bei `var(--accent)`, wo
+     sieben Ringe deshalb grau blieben. [[klasse_ohne_css_regel]] */
+  background:var(--surface-1);
   border-top:1px solid var(--border);
   padding:var(--sp-2) var(--sp-1) calc(var(--sp-2) + var(--safe-bottom));
   flex-shrink:0;
