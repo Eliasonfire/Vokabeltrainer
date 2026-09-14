@@ -4051,8 +4051,30 @@ button:disabled{cursor:default;}
    arabischen Text wäre sinnlos. */
 #verseList.nur-de .verse-ar.verdeckt{display:none;}
 
+/* ---- Der Juz-Ring in der Kopfzeile (14.09.2026) ----
+   ⚠️ `margin-left:auto` sitzt jetzt HIER, nicht mehr am Ansicht-Knopf: der
+   Ring steht zwischen Titel und Zahnrad, und die Lücke gehört vor ihn. Stünde
+   sie weiter am Knopf, klebte der Ring am Titel und das Zahnrad wanderte
+   allein nach rechts. */
+.juz-ring{
+  margin-left:auto; display:flex; align-items:center; gap:7px;
+  background:none; border:0; padding:2px 2px 2px 6px; cursor:pointer;
+  color:var(--text-dim); font:inherit; font-size:var(--fs-xs);
+  font-variant-numeric:tabular-nums;
+}
+.juz-ring svg{width:26px; height:26px; flex-shrink:0;}
+.juz-ring .spur{fill:none; stroke:var(--surface-4); stroke-width:4;}
+.juz-ring .fuell{
+  fill:none; stroke:var(--accent); stroke-width:4; stroke-linecap:round;
+  transform:rotate(-90deg); transform-origin:50% 50%;
+  transition:stroke-dasharray .6s var(--ease-out);
+}
+.juz-ring.voll .fuell{stroke:var(--green);}
+.juz-ring.voll{color:var(--green);}
+.juz-ring:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:10px;}
+@media (prefers-reduced-motion:reduce){ .juz-ring .fuell{transition:none;} }
+
 /* ---- Ansicht-Menü des Quran-Lesers ---- */
-.quran-ansicht-knopf{margin-left:auto;}
 /* ⚠️ Der Kasten stand bis zum 04.08.2026 abends IN der Seite, gleich unter der
    Kopfzeile. Elias: „wenn ich hier die einstellungen öffne dann wird sie mir
    nur ganz oben angezeigt, ich will aber auch mitten in der sura die
@@ -5577,6 +5599,15 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
       <div class="screen-header">
         <button class="icon-btn" id="btnQuranFullBack" aria-label="Zurück"><svg class="ic"><use href="#ic-left"/></svg></button>
         <h2 id="quranFullTitle">Quran lesen</h2>
+        <!-- ⭐ Der Juz-Ring (14.09.2026). Elias hat die Stelle selbst gewählt,
+             mit einem Bildschirmfoto und einem Rahmen genau hier: „am besten
+             hier machst du so den juz ring ungefähr".
+             Er zeigt, wie viel von EINEM Juz auswendig sitzt — in Seiten des
+             Muṣḥaf, nicht in Versen. Die Rechnung steht bei juzStand() in
+             js/quran.js, dort auch der Grund.
+             ⚠️ Bleibt verborgen, solange nichts abgehakt ist: ein Ring bei
+             null erklärt sich nicht von selbst. -->
+        <button class="juz-ring" id="juzRing" type="button" hidden></button>
         <!-- Ansicht-Menü oben rechts, wie Elias es von quran.com kennt. -->
         <button class="icon-btn quran-ansicht-knopf" id="btnQuranAnsicht" aria-label="Ansicht einstellen" aria-expanded="false"><svg class="ic"><use href="#ic-settings"/></svg></button>
       </div>
@@ -5760,7 +5791,17 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
           diesem Gerät — Handy und Tablet haben je eigene Größen. Hifz,
           Favoriten, Lesestand und Lernstand werden weiter abgeglichen.</p>
       </div>
-      <p class="quran-source" id="quranFullIntro">Vollständiger Quran, offline in der App (Uthmani-Arabisch + Bubenheim &amp; Elyas Deutsch). Hake einzelne Verse ab, wenn du sie auswendig kannst — oder gleich die ganze Sure.</p>
+      <!-- ⭐ Hier stand bis zum 14.09.2026 eine Einleitung: „Vollständiger
+           Quran, offline in der App (Uthmani-Arabisch + Bubenheim & Elyas
+           Deutsch). Hake einzelne Verse ab, wenn du sie auswendig kannst —
+           oder gleich die ganze Sure." Elias hat sie mit einem Bildschirmfoto
+           eingerahmt und gesagt: „das hier kannst du weg machen".
+
+           ⚠️ Die Quellenangabe selbst ist damit NICHT verschwunden — sie steht
+           weiter bei der Quran-Bezug-Tafel (`.quran-source` oben in diesem
+           Bildschirm, Zeile ~5571) und nennt dort dieselbe Übersetzung. Was
+           hier wegfiel, war die Wiederholung plus eine Bedienanleitung für
+           etwas, das er längst täglich tut. -->
       <input type="text" id="surahSearch" class="select-input select-full" placeholder="Sure suchen (Name oder Nummer)…">
       <!-- Favoriten stehen ÜBER der vollständigen Liste. Elias' Wunsch vom
            04.08.2026: die kurzen Suren, die er gerade braucht, stehen im Quran
@@ -6647,6 +6688,11 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 <!-- Seitengrenzen des Muṣḥaf, erzeugt von werkzeuge/seiten-holen.mjs und dort
      gegen surah-data.js geprüft (114/114 Verszahlen, 604 Seiten lückenlos). -->
 <script src="quran-seiten.js"></script>
+<!-- Zeichen je Vers, erzeugt von werkzeuge/verszeichen-bauen.mjs (20 KB).
+     Der Juz-Ring rechnet daraus die Seitenanteile. ⛔ Nicht aus quran-text.js
+     zur Laufzeit zählen — die 2,3 MB werden erst beim Öffnen einer Sure
+     nachgeladen, der Ring wäre in der Surenliste leer. -->
+<script src="quran-verszeichen.js"></script>
 <script src="grammar-data.js"></script>
 <script src="regelsammlung-data.js"></script>
 <script src="wortfelder-data.js"></script>

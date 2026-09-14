@@ -114,10 +114,14 @@ function hakenSpeichern(schluessel, schlank, reichAlt){
 
 const _hifz0 = hakenLaden('vt_hifz');
 let HIFZ = _hifz0.schlank, HIFZ_ZEIT = _hifz0.reich;
-function saveHifz(){ HIFZ_ZEIT = hakenSpeichern('vt_hifz', HIFZ, HIFZ_ZEIT); }
+/* ⭐ `juzStandNeu()` steht in BEIDEN Speicherfunktionen — das ist die Stelle
+   an der Quelle. Jede Änderung am Ḥifẓ-Stand läuft hier durch, ganz gleich ob
+   sie von einem Haken, vom Geräteabgleich oder vom Rückgängigmachen kommt.
+   An den Aufrufern hätte man eine Stelle vergessen. [[wirkung_an_der_quelle_stilllegen]] */
+function saveHifz(){ HIFZ_ZEIT = hakenSpeichern('vt_hifz', HIFZ, HIFZ_ZEIT); juzStandNeu(); }
 const _hifzV0 = hakenLaden('vt_hifzVerse');
 let HIFZ_VERSE = _hifzV0.schlank, HIFZ_VERSE_ZEIT = _hifzV0.reich;
-function saveHifzVerse(){ HIFZ_VERSE_ZEIT = hakenSpeichern('vt_hifzVerse', HIFZ_VERSE, HIFZ_VERSE_ZEIT); }
+function saveHifzVerse(){ HIFZ_VERSE_ZEIT = hakenSpeichern('vt_hifzVerse', HIFZ_VERSE, HIFZ_VERSE_ZEIT); juzStandNeu(); }
 function kannVers(sure, vers){ return !!HIFZ_VERSE[`${sure}:${vers}`]; }
 function zaehleVerse(sure){
   const prefix = sure + ':';
@@ -403,6 +407,9 @@ function renderSurahList(filter){
     const kasten = document.getElementById('main');
     if (kasten) kasten.scrollTo({ top: 0, behavior: 'instant' });
   }
+  /* Der Juz-Ring gehört zur Liste, nicht zur einzelnen Sure — er steht in der
+     Kopfzeile und sagt, wie viel von einem Juz insgesamt sitzt. */
+  renderJuzRing();
 }
 
 /* ---------- Lesemodus und Schriftgroessen ----------
@@ -690,6 +697,111 @@ function quranAnsicht(){
    und geprueft von werkzeuge/seiten-holen.mjs). Fehlt die Datei - etwa weil
    ein alter Cache sie noch nicht hat -, gibt es einfach keine Trennlinien
    statt eines Fehlers: der Leser funktioniert ohne sie vollstaendig. */
+/* ---------- ⭐⭐ DER JUZ-RING (14.09.2026) ----------------------------------
+
+   Elias' Ziel, im Wortlaut: „ich habe ein ziel und das ist einen juz insgesamt
+   aus dem koran zu können. ein juz sind ja so 20 seiten insgesamt. ich finde
+   es sollte angezeigt werden wie weit ich innerhalb eines juzs bin. weil ich
+   will auch suren lernen außerhalb von juz 30 und wenn die dann nicht
+   mitzählen dann wäre das ja schlecht."
+
+   ⛔ NICHT Juz 30, sondern EIN Juz an Menge — egal aus welchem Teil.
+
+   ⛔⛔ UND NICHT IN VERSEN. Gemessen am 14.09.2026: Juz 1 hat 293 Verse,
+   Juz 30 hat 564, weil die Verse dort viel kuerzer sind. Wer in Versen zaehlt,
+   bekommt fuer dieselbe Muehe je nach Sure das Doppelte angezeigt.
+
+   Gerechnet wird in SEITEN des Muṣḥaf — das traditionelle Mass und Elias'
+   eigenes. Ein Juz sind 604 ÷ 30 = 20,13 Seiten. Steht nur ein Teil einer
+   Seite, zaehlt der Anteil nach TEXTMENGE, nicht nach Verszahl: auch das war
+   ein Messfehler auf dem Weg hierher (59,3 % gegen 39,4 %, weil zwanzig kurze
+   Verse einer Seite in Juz 30 sonst so viel wogen wie zwanzig lange).
+   [[naechstliegender_wert_ist_nicht_zuverlaessigster]]
+
+   ⚠️ Juz 30 bleibt in Seiten etwas „teurer": dort stehen 455 Zeichen je Seite
+   statt 577 im Schnitt (Basmala und Surenueberschriften). Das ist richtig so —
+   zweiundzwanzig kurze Suren sind mehr Arbeit als ein gleichlanger Abschnitt
+   am Stueck. */
+let JUZ_TABELLE = null;
+
+/* Seite → { zeichen, verse:[{k, z}] }. Einmal gebaut, dann gemerkt: 6236
+   Verse durchzugehen kostet Millisekunden, aber nicht bei jedem Zeichnen. */
+function juzTabelle(){
+  if (JUZ_TABELLE) return JUZ_TABELLE;
+  if (typeof QURAN_VERSZEICHEN === 'undefined' || typeof SURAH_DATA === 'undefined') return null;
+  const t = new Map();
+  for (const s of SURAH_DATA){
+    const zahlen = QURAN_VERSZEICHEN[s.id] || [];
+    for (let v = 1; v <= s.verses; v++){
+      const seite = seiteVon(s.id, v);
+      if (!seite) continue;
+      let e = t.get(seite);
+      if (!e){ e = { zeichen: 0, verse: [] }; t.set(seite, e); }
+      const z = Number(zahlen[v - 1]) || 0;
+      e.zeichen += z;
+      e.verse.push({ s: s.id, v, z });
+    }
+  }
+  JUZ_TABELLE = t;
+  return t;
+}
+
+/* ⛔ Nach jeder Aenderung am Hifz-Stand aufrufen — sonst steht der Ring still.
+   Die Tabelle selbst bleibt, nur der gerechnete Stand faellt weg. */
+function juzStandNeu(){ JUZ_STAND = null; renderJuzRing(); }
+let JUZ_STAND = null;
+
+/* Zeichnet den Ring in die Kopfzeile des Lesers.
+   ⛔ Verborgen, solange nichts abgehakt ist: ein leerer Ring mit „0 %" ist
+   keine Auskunft, sondern ein Vorwurf. Er erscheint mit dem ersten Vers. */
+function renderJuzRing(){
+  const knopf = document.getElementById('juzRing');
+  if (!knopf) return;
+  const s = juzStand();
+  if (!s || s.seiten <= 0){ knopf.hidden = true; return; }
+
+  const anteil = Math.min(s.anteil, 1);
+  /* Vorschuss 10 % — Elias' Vorgabe vom 14.09.2026 für alle Fortschritts-
+     anzeigen: „lasse die ringe nicht bei 0 anfangen sondern lass sie schon
+     etwas ausfüllen". Ein erreichtes Ziel zeigt trotzdem exakt voll. */
+  const laenge = anteil >= 1 ? 100 : Math.round((0.10 + 0.90 * anteil) * 1000) / 10;
+  const proz = Math.round(anteil * 100);
+  const offen = Math.max(0, s.einJuz - s.seiten);
+
+  knopf.hidden = false;
+  knopf.classList.toggle('voll', anteil >= 1);
+  knopf.title = s.seiten.toFixed(1).replace('.', ',') + ' von '
+    + s.einJuz.toFixed(1).replace('.', ',') + ' Seiten auswendig — noch '
+    + offen.toFixed(1).replace('.', ',') + ' Seiten bis zu einem ganzen Juz';
+  knopf.setAttribute('aria-label', proz + ' Prozent eines Juz auswendig');
+  knopf.innerHTML =
+    '<svg viewBox="0 0 40 40" aria-hidden="true">'
+    + '<circle class="spur" cx="20" cy="20" r="15.9155"></circle>'
+    + '<circle class="fuell" cx="20" cy="20" r="15.9155" pathLength="100"'
+    + ' stroke-dasharray="' + laenge + ' 100"></circle></svg>'
+    + '<span>' + proz + ' %</span>';
+}
+
+function juzStand(){
+  if (JUZ_STAND) return JUZ_STAND;
+  const t = juzTabelle();
+  if (!t) return null;
+  let seiten = 0, ganze = 0, teile = 0;
+  for (const [, e] of t){
+    if (!e.zeichen) continue;
+    let kann = 0;
+    for (const x of e.verse)
+      if (HIFZ[x.s] || HIFZ_VERSE[x.s + ':' + x.v]) kann += x.z;
+    if (!kann) continue;
+    const anteil = kann / e.zeichen;
+    seiten += anteil;
+    if (anteil >= 0.999) ganze++; else teile++;
+  }
+  const einJuz = (typeof QURAN_SEITEN !== 'undefined' ? QURAN_SEITEN.length : 604) / 30;
+  JUZ_STAND = { seiten, einJuz, anteil: einJuz ? seiten / einJuz : 0, ganze, teile };
+  return JUZ_STAND;
+}
+
 function seiteVon(sure, ayah){
   if (typeof QURAN_SEITEN === 'undefined' || !Array.isArray(QURAN_SEITEN)) return 0;
   /* Rueckwaerts suchen: die gesuchte Seite ist die letzte, die nicht hinter
