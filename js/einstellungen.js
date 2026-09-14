@@ -1147,6 +1147,35 @@ function diagnoseText(){
     if (!sh.offsetParent) return 'Leser gerade nicht offen';
     return 'Abstand Kopfzeile → Surentitel: ' + Math.round(b - a) + ' px';
   });
+  /* ⭐ Der Juz-Ring (15.09.2026). Elias sah ihn nach dem Ausliefern nicht, und
+     ich habe dreimal geraten statt gemessen — die Diagnose soll das künftig
+     beantworten, ohne dass er den Leser offen haben muss.
+     ⛔ Alle vier Teile einzeln: gibt es das Element, rechnet die Tabelle, was
+     kommt heraus, und wird der Knopf gezeigt? Ein einzelnes „geht nicht"
+     sagt nicht, WELCHER Teil fehlt. [[fehler_trifft_mehr_als_gemeldet]] */
+  sicher('Juz-Ring', () => {
+    const el = document.getElementById('juzRing');
+    if (!el) return '⛔ Element fehlt — alte index.html';
+    if (typeof QURAN_VERSZEICHEN === 'undefined') return '⛔ quran-verszeichen.js nicht geladen';
+    if (typeof juzStand !== 'function') return '⛔ juzStand() fehlt — altes js/quran.js';
+    const s = juzStand();
+    if (!s) return '⛔ Tabelle leer (SURAH_DATA oder Seitengrenzen fehlen)';
+    const teile = [];
+    teile.push(s.seiten.toFixed(2).replace('.', ',') + ' von '
+      + s.einJuz.toFixed(2).replace('.', ',') + ' Seiten = ' + Math.round(s.anteil * 100) + ' %');
+    teile.push(el.hidden ? 'VERBORGEN' : 'sichtbar');
+    teile.push('Breite ' + Math.round(el.getBoundingClientRect().width) + ' px');
+    return teile.join(' · ');
+  });
+  /* Woraus sich das rechnet — sonst steht oben eine Zahl ohne Herkunft. */
+  sicher('Auswendig', () => {
+    if (typeof HIFZ === 'undefined') return '—';
+    const suren = Object.keys(HIFZ).filter(k => HIFZ[k]);
+    const verse = (typeof HIFZ_VERSE !== 'undefined')
+      ? Object.keys(HIFZ_VERSE).filter(k => HIFZ_VERSE[k]).length : 0;
+    return suren.length + ' ganze Sure(n)' + (suren.length ? ' [' + suren.join(', ') + ']' : '')
+      + ' · ' + verse + ' einzelne Verse';
+  });
   sicher('Abgleich', () => (typeof syncPutStand === 'function') ? syncPutStand() : '—');
   sicher('Hören heute', () => {
     if (typeof hoerTag !== 'function') return '—';

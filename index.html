@@ -4529,6 +4529,15 @@ button:disabled{cursor:default;}
    „An Claude schicken" ist die längste Beschriftung der App. */
 .diagnose-knoepfe{display:flex;gap:var(--sp-2);flex-wrap:wrap;margin-top:var(--sp-2);}
 .diagnose-knoepfe .btn{flex:1 1 auto;}
+/* ⭐ Rot, aber in der Größe der Nachbarn. Elias in zwei Schritten am
+   15.09.2026: erst „mach den schicken button etwas kleiner so groß wie die
+   anderen zwei, das sieht so off aus", dann „an claude schicken den knopf
+   kannst du trotzdem mit akzent farbe machen also rot".
+   Deshalb btn-secondary für die Form und nur Farbe darüber — btn-primary
+   brächte die Höhe und den Farbverlauf zurück, die er eben weghaben wollte.
+   ⚠️ `--accent`, nicht #ff1744: die Akzentfarbe ist einstellbar. */
+.btn.btn-akzent{color:var(--accent);border-color:var(--accent);}
+.btn.btn-akzent:active{background:var(--accent-wash,rgba(255,23,68,.12));}
 
 /* =====================================================================
    SCROLLBALKEN
@@ -6573,7 +6582,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
              anderen zwei, das sieht so off aus." Der hervorgehobene Knopf war
              höher und trug die Akzentfarbe — in einer Reihe von drei gleichen
              Handgriffen sah er aus wie ein Fremdkörper. -->
-        <button class="btn btn-secondary" id="btnDiagnoseSenden">An Claude schicken</button>
+        <button class="btn btn-secondary btn-akzent" id="btnDiagnoseSenden">An Claude schicken</button>
         <button class="btn btn-secondary" id="btnDiagnoseKopieren">Kopieren</button>
         <button class="btn btn-secondary hidden" id="btnDiagnoseTeilen">Teilen</button>
       </div>
