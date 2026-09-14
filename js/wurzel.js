@@ -33,6 +33,65 @@
    ist bewusst nicht gebaut: gemessen haben 102 von 171 Woertern Verwandte, und
    automatisch aufgenommen waeren das +247 Woerter an einem Tag. */
 
+/* ================= Tageszaehler (14.09.2026) =================
+
+   ⭐ Elias an dem Tag: „der wurzelmodus sollte anfangen daten zu speichern"
+   und „mach im wurzelmodus selbst einen ring aber noch nicht in der heute
+   ansicht bzw startbildschirm".
+
+   ⛔ DAS WIDERSPRICHT DEM SATZ IM KOPF OBEN NICHT. Dort steht, der
+   Wurzelmodus schreibt nichts in den LERNSTAND — keine Leitner-Box, keine
+   verschobenen Karten. Das bleibt unveraendert: hier entsteht ein eigener
+   Tageszaehler neben dem Modus, so wie `vt_hoerTag` und `vt_satzTag` bei den
+   anderen beiden. Der Lernstand wird nicht angefasst.
+
+   ⛔ Bis zum 14.09.2026 speicherte dieser Modus ueberhaupt nichts — kein
+   `LS.set`, kein `merkeUebung`, nichts. Gemessen an dem Tag: von allen
+   Uebungsmodi war er der einzige ohne jede Spur. Deshalb faengt jede Zaehlung
+   hier bei NULL an; rueckwirkend gibt es nichts, und der Ring sagt die ersten
+   Tage entsprechend wenig. [[daten_ohne_zugang]]
+
+   ⚠️ Die Vorgabe 8 ist eine Gewohnheits-, keine Lernentscheidung — dieselbe
+   Ueberlegung wie beim Hoerziel (js/hoeren.js): eine Sitzung sind drei
+   Familien mit je rund drei Schritten, acht Antworten sind also knapp eine
+   Sitzung und an einem schlechten Tag noch zu schaffen. Einstellbar ist sie
+   ohnehin. */
+var WURZEL_ZIEL_VORGABE = 8;
+function wurzelTagesziel(){
+  var n = (typeof SETTINGS === 'object' && SETTINGS) ? Number(SETTINGS.wurzelZiel) : NaN;
+  return (Number.isFinite(n) && n >= 1) ? n : WURZEL_ZIEL_VORGABE;
+}
+
+function wzTag(){
+  var heute = todayStr(0);
+  var t = null;
+  try { t = LS.get('vt_wurzelTag', null); } catch (e) { t = null; }
+  if (!t || t.tag !== heute) t = { tag: heute, gesamt: 0, richtig: 0 };
+  return t;
+}
+function wzTagSpeichern(t){ try { LS.set('vt_wurzelTag', t); } catch (e) { /* privates Fenster */ } }
+
+/* ⭐ EINE Zaehlstelle fuer alle vier Schritte — dieselbe Ueberlegung wie im
+   Satzmodus: „die Zaehlung passiert genau hier, damit kein Modus sie vergessen
+   kann". Vorher zaehlten drei Stellen einzeln in WZ_SITZUNG, und eine vierte
+   haette man beim naechsten Umbau uebersehen. [[wirkung_an_der_quelle_stilllegen]]
+
+   ⚠️ `merkeQuote()` wird hier bewusst NICHT gerufen. Die Tagesquote zaehlt
+   laut ihrem eigenen Kommentar „Karteikarten, Satzmodus und Hoermodus
+   zusammen"; den Wurzelmodus dazuzunehmen waere eine stille Aenderung an einer
+   Kennzahl, die Elias fuer seinen Rauschversuch braucht. Das ist eine eigene
+   Entscheidung und steht in der To-Do. [[dieselbe_frage_zwei_antworten]] */
+function wzZaehle(richtig){
+  WZ_SITZUNG.gesamt++;
+  if (richtig) WZ_SITZUNG.richtig++;
+  var t = wzTag();
+  t.gesamt++;
+  if (richtig) t.richtig++;
+  wzTagSpeichern(t);
+  if (typeof merkeUebung === 'function') merkeUebung('wurzeln', !!richtig);
+  if (typeof wzRingZeichnen === 'function') wzRingZeichnen();
+}
+
 /* ================= Buchstaben und Vokalzeichen ================= */
 
 var WZ_HARAKA = /[ً-ْٰٓ-ٕ]/;
@@ -687,13 +746,13 @@ document.addEventListener('click', function(e){
     if (ein.classList.contains('tr')) return;
     if (ein.dataset.wz === '1'){
       ein.classList.add('tr'); WZ_S2_TREFFER++;
-      WZ_SITZUNG.gesamt++; WZ_SITZUNG.richtig++;
+      wzZaehle(true);
       if (WZ_S2_TREFFER >= WZ_S2_ZIEL){
         document.getElementById('wzS2Meldung').innerHTML = '<b>Alle gefunden.</b>';
         document.getElementById('wzS2Weiter').hidden = false;
       }
     } else {
-      WZ_SITZUNG.gesamt++;
+      wzZaehle(false);
       ein.classList.add('fl');
       document.getElementById('wzS2Meldung').textContent = 'Der gehört zur Form, nicht zur Wurzel.';
       setTimeout(function(){ ein.classList.remove('fl'); }, 600);
@@ -708,8 +767,9 @@ document.addEventListener('click', function(e){
     if (feld.dataset.fertig === '1') return;
     feld.dataset.fertig = '1';
     var richtig = feld.dataset.richtig;
-    WZ_SITZUNG.gesamt++;
-    if (wahl.dataset.de === richtig){ WZ_SITZUNG.richtig++; wahl.classList.add('richtig'); }
+    var istRichtig = (wahl.dataset.de === richtig);
+    wzZaehle(istRichtig);
+    if (istRichtig){ wahl.classList.add('richtig'); }
     else {
       wahl.classList.add('falsch');
       [].forEach.call(feld.querySelectorAll('.wz-wahl'), function(x){
@@ -732,9 +792,9 @@ document.addEventListener('click', function(e){
     var df = document.getElementById('wzS4Auswahl');
     if (df.dataset.fertig === '1') return;
     df.dataset.fertig = '1';
-    WZ_SITZUNG.gesamt++;
-    if (duell.dataset.id === df.dataset.richtig){
-      WZ_SITZUNG.richtig++;
+    var duellRichtig = (duell.dataset.id === df.dataset.richtig);
+    wzZaehle(duellRichtig);
+    if (duellRichtig){
       duell.classList.add('richtig');
     } else {
       duell.classList.add('falsch');
@@ -769,6 +829,10 @@ document.addEventListener('click', function(e){
     if (!s) return;
     WZ_SPIEL.offen = false;
     var stimmt = korb.dataset.wurzel === s.wurzel;
+    /* ⭐ Das Mini-Spiel zaehlt seit dem 14.09.2026 mit. Es fuehrt weiter seinen
+       eigenen Stand (`WZ_SPIEL.richtig` fuer die Anzeige „Wort 3 von 8 ·
+       richtig: 2"), aber die Antwort ist eine Antwort wie jede andere. */
+    wzZaehle(stimmt);
     if (stimmt){ WZ_SPIEL.richtig++; korb.classList.add('richtig'); }
     else {
       korb.classList.add('falsch');
