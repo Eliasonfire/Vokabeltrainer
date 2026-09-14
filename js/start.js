@@ -153,6 +153,46 @@ function heuteExtraModus(){
    seinen Ring im Modus selbst. */
 const RING_VORSCHUSS = 0.10;
 
+/* ---------- ⭐⭐ STILLE MESSUNG DER ZIELERFÜLLUNG (15.09.2026) ----------
+
+   Elias: „du sollst messen wie oft ich täglich meinen soll pro tag erfülle und
+   wie oft wie viel davon ausgefüllt ist täglich aber nicht mir sagen in app
+   sondern nur messen."
+
+   ⛔ NICHTS DAVON WIRD ANGEZEIGT. Kein Ring, keine Zeile, keine Feier. Der
+   Speicher wird geschrieben und sonst nichts — sichtbar ist er nur in der
+   Diagnose, also dort, wo Elias selbst nachsieht, wenn er will.
+
+   ⭐ Warum das etwas anderes ist als der Übungskalender: der zählt KARTEN
+   („2026-09-14: 9"). Hier steht, welcher ANTEIL des jeweiligen Ziels erreicht
+   war — und zwar je Ziel getrennt. „9 Karten" sagt nichts darüber, ob das
+   Tagesziel 10 oder 30 war. [[ein_stand_sind_mehrere_zahlen]]
+
+   Form: { "2026-09-14": { karten:[9,10], saetze:[13,13], hoeren:[0,5], … } }
+   Erster Wert Stand, zweiter Ziel. Zwei Zahlen statt eines Anteils, weil sich
+   aus 0,9 nicht mehr rekonstruieren lässt, ob es 9/10 oder 27/30 waren.
+
+   ⚠️ Geschrieben wird bei jedem Zeichnen der Ringe — also oft. Deshalb nur,
+   wenn sich wirklich etwas geändert hat; sonst entstünde bei jedem Blick auf
+   den Startbildschirm ein Schreibvorgang. */
+function merkeZielstand(teil, stand, ziel){
+  if (stand === null || !ziel) return;
+  const heute = todayStr(0);
+  let v;
+  try { v = LS.get('vt_zielverlauf', {}) || {}; } catch (e){ return; }
+  const tag = v[heute] || (v[heute] = {});
+  const alt = tag[teil];
+  if (alt && alt[0] === stand && alt[1] === ziel) return;   /* unverändert */
+  tag[teil] = [stand, ziel];
+  /* ⛔ Nicht unbegrenzt wachsen lassen: 120 Tage sind vier Monate und reichen
+     für jede Frage, die Elias stellen würde. Ohne Grenze läge nach einem Jahr
+     ein Vielfaches im Abgleich, das niemand je liest.
+     [[obsidian_notizgroesse]] */
+  const tage = Object.keys(v).sort();
+  while (tage.length > 120) delete v[tage.shift()];
+  try { LS.set('vt_zielverlauf', v); } catch (e){ /* privates Fenster */ }
+}
+
 function ringBogen(anteil){
   if (!(anteil > 0)) return Math.round(RING_VORSCHUSS * 1000) / 10;
   if (anteil >= 1) return 100;
@@ -224,22 +264,55 @@ function renderTagesringe(){
     }
   }
 
-  /* ⚠️ Fehlt BEIDES, bleibt der Kasten weg. Ein Kasten „Heute" mit zwei leeren
+  /* ⭐ Die Quran-Ringe stehen seit dem 15.09.2026 hier mit drin — al-Mulk
+     täglich, dazu die Wiederholung und die Favoriten-Sure. Elias: „ich finde
+     die sollten einfach bei heute stehen." */
+  const quran = (typeof quranRingDaten === 'function') ? quranRingDaten() : [];
+
+  /* ⚠️ Fehlt ALLES, bleibt der Kasten weg. Ein Kasten „Heute" mit leeren
      Ringen und ohne Zahl sagt nichts — anders als die alte Zeile, die
      wenigstens einen Hinweis trug. [[leere_liste_ist_keine_messung]] */
-  if (kZiel === null && zZiel === null){ kasten.hidden = true; return; }
+  if (kZiel === null && zZiel === null && !quran.length){ kasten.hidden = true; return; }
 
   const kVoll = (kStand !== null && kZiel) ? kStand >= kZiel : false;
   const zVoll = (zStand !== null && zZiel) ? zStand >= zZiel : false;
-  const beides = kVoll && zVoll;
+  const alles = kVoll && zVoll && quran.every(r => r.voll);
+
+  /* Ein Ring ohne Zwischenstufe: eine Sure ist heute gelesen oder nicht.
+     Der Vorschuss gilt trotzdem — sonst stünden hier als einzige Ringe der
+     App leere Kreise. */
+  const surenRing = r =>
+    '<button class="tr-feld' + (r.voll ? ' voll' : '') + '" type="button" data-nav="' + r.nav + '">'
+    + '<svg viewBox="0 0 40 40" aria-hidden="true">'
+    +   '<circle class="tr-spur" cx="20" cy="20" r="15.9155"></circle>'
+    +   '<circle class="tr-fuell" cx="20" cy="20" r="15.9155" pathLength="100"'
+    +     ' stroke-dasharray="' + ringBogen(r.voll ? 1 : 0) + ' 100"></circle>'
+    +   '<path class="tr-haken" d="M13.5 20.5 18 25 26.5 15.5"></path>'
+    + '</svg><span class="tr-name">' + r.txt + '</span></button>';
+
+  /* ⚠️ Ab vier Ringen wird es auf 375 px eng — dann kleiner statt gequetscht.
+     Gemessen: vier Ringe à 76 px plus Lücken passen nicht in eine Reihe. */
+  const anzahl = (kZiel !== null ? 1 : 0) + (zZiel !== null ? 1 : 0) + quran.length;
+
+  /* ⭐ Still mitschreiben, was heute erreicht war — angezeigt wird davon
+     nichts. Hier, weil alle Zahlen ohnehin gerade beisammen sind. */
+  merkeZielstand('karten', kStand, kZiel);
+  merkeZielstand(modus === 'hoeren' ? 'hoeren' : 'saetze', zStand, zZiel);
+  quran.forEach(r => {
+    const teil = r.txt.indexOf('Täglich') === 0 ? 'mulk'
+               : r.txt.indexOf('Wiederholen') === 0 ? 'wiederholen' : 'neulernen';
+    merkeZielstand(teil, r.voll ? 1 : 0, 1);
+  });
 
   kasten.hidden = false;
+  kasten.className = 'tagesringe' + (anzahl >= 4 ? ' viele' : '');
   kasten.innerHTML =
     '<div class="tr-kopf"><span class="tr-titel">Heute</span>'
-    + '<span class="tr-sub">' + (beides ? 'beides geschafft' : 'Karteikarten und ' + zName) + '</span></div>'
+    + '<span class="tr-sub">' + (alles ? 'alles geschafft' : 'dein Tag') + '</span></div>'
     + '<div class="tr-reihe">'
     +   (kZiel !== null ? ringKnopf('Karteikarten', kStand, kZiel, 'learn-entry') : '')
     +   (zZiel !== null ? ringKnopf(zName, zStand, zZiel, zNav) : '')
+    +   quran.map(surenRing).join('')
     + '</div>';
 }
 
@@ -261,44 +334,41 @@ function renderHeuteExtra(){ renderTagesringe(); renderQuranRinge(); }
 
    ⚠️ Der Kasten fehlt ganz, solange nichts auswendig ist. Zwei leere Ringe
    ohne Sure wären kein Ziel, sondern ein Vorwurf. */
-function renderQuranRinge(){
-  const kasten = document.getElementById('quranRinge');
-  if (!kasten) return;
-  if (typeof wdhHeute !== 'function'){ kasten.hidden = true; return; }
+/* ⭐ Die Quran-Ringe stehen seit dem 15.09.2026 IM „Heute"-Kasten, nicht mehr
+   in einem eigenen. Elias mit Bild: „ich finde die sollten einfach bei heute
+   stehen und mach noch eine extra für mulk (die soll täglich sein)."
 
-  const wdh = wdhHeute();
-  const fav = (typeof wdhFavorit === 'function') ? wdhFavorit() : null;
-  if (!wdh && !fav){ kasten.hidden = true; return; }
-
+   Diese Funktion liefert sie nur noch — gezeichnet wird in renderTagesringe().
+   Der alte Kasten bleibt leer und verborgen. */
+function quranRingDaten(){
+  if (typeof wdhHeute !== 'function' || typeof SURAH_DATA === 'undefined') return [];
+  const heute = todayStr(0);
   const name = id => {
-    const s = (typeof SURAH_DATA !== 'undefined') ? SURAH_DATA.find(x => x.id === id) : null;
+    const s = SURAH_DATA.find(x => x.id === id);
     return s ? s.name : ('Sure ' + id);
   };
-  /* Ein Ring je Sache, voll oder leer — hier gibt es keine Zwischenstufe:
-     eine Sure ist heute gelesen oder nicht. Der Vorschuss gilt trotzdem,
-     sonst stünde hier als einziger Ring in der App ein leerer Kreis. */
+  const gelesen = id => (typeof WDH === 'object' && WDH[id] === heute);
   const ringe = [];
-  if (wdh) ringe.push({ txt: 'Wiederholen<br>' + name(wdh.sure), voll: wdh.erledigt });
-  if (fav) ringe.push({ txt: 'Neu lernen<br>' + name(fav),
-                        voll: (typeof WDH === 'object' && WDH[fav] === todayStr(0)) });
 
-  const alle = ringe.every(r => r.voll);
-  kasten.hidden = false;
-  kasten.innerHTML =
-    '<div class="tr-kopf"><span class="tr-titel">Quran</span>'
-    + '<span class="tr-sub">' + (alle ? 'heute erledigt'
-        : (wdh ? 'eine auswendige Sure frisch halten' : 'deine Favoriten-Sure')) + '</span></div>'
-    + '<div class="tr-reihe">'
-    + ringe.map(r =>
-        '<button class="tr-feld' + (r.voll ? ' voll' : '') + '" type="button" data-nav="quranfull">'
-        + '<svg viewBox="0 0 40 40" aria-hidden="true">'
-        +   '<circle class="tr-spur" cx="20" cy="20" r="15.9155"></circle>'
-        +   '<circle class="tr-fuell" cx="20" cy="20" r="15.9155" pathLength="100"'
-        +     ' stroke-dasharray="' + ringBogen(r.voll ? 1 : 0) + ' 100"></circle>'
-        +   '<path class="tr-haken" d="M13.5 20.5 18 25 26.5 15.5"></path>'
-        + '</svg><span class="tr-name">' + r.txt + '</span></button>').join('')
-    + '</div>';
+  /* ⭐ Al-Mulk TÄGLICH — eigener Ring, nicht in der Rotation. Elias' Vorgabe:
+     „mach noch eine extra für mulk (die soll täglich sein)". Er liest sie
+     ohnehin jeden Tag; der Ring hält fest, ob es heute schon war. */
+  if (HIFZ[67]) ringe.push({ txt: 'Täglich<br>Al-Mulk', voll: gelesen(67) });
+
+  /* Die Rotation über alles andere, was auswendig sitzt. */
+  const wdh = wdhHeute();
+  if (wdh) ringe.push({ txt: 'Wiederholen<br>' + name(wdh.sure), voll: wdh.erledigt });
+
+  /* Die Sure, die gerade gelernt wird. */
+  const fav = (typeof wdhFavorit === 'function') ? wdhFavorit() : null;
+  if (fav) ringe.push({ txt: 'Neu lernen<br>' + name(fav), voll: gelesen(fav) });
+
+  return ringe.map(r => Object.assign(r, { nav: 'quranfull' }));
 }
+
+/* ⛔ Bleibt als Weiterleitung: merkeWiederholung() in js/quran.js ruft sie,
+   und der Aufruf soll nicht ins Leere gehen, wenn die Ringe umziehen. */
+function renderQuranRinge(){ renderTagesringe(); }
 
 /* ---------- ⭐⭐ Die Tagesringe IN den Modi (15.09.2026) ----------
 

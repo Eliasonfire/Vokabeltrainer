@@ -154,9 +154,14 @@ function hoerStandSchreiben(){
      [[vorgabewert_greift_nicht_bei_null]] */
   const beantwortet = (t.beantwortet ?? t.gesamt);
   const quote = beantwortet ? ` · ${t.richtig} von ${beantwortet} richtig` : '';
-  document.getElementById('hoerStand').textContent = geschafft
-    ? `Tagesziel geschafft — ${t.gesamt} Wörter${quote}`
-    : `Tagesziel ${t.gesamt} von ${ziel}${quote}`;
+  /* ⭐ „Tagesziel 1 von 10" ist am 15.09.2026 entfallen — Elias mit Bild:
+     „das muss auch ncith da stehen". Der Ring daneben sagt dasselbe, und zwar
+     ohne Zahl; sie zweimal hinzuschreiben war der Zustand von einer Stunde,
+     in der der Ring noch nicht da war.
+     ⚠️ Die Trefferquote bleibt: sie steht in keinem Ring. */
+  document.getElementById('hoerStand').textContent = quote
+    ? quote.replace(/^\s*·\s*/, '')
+    : (geschafft ? 'Tagesziel geschafft' : '');
   /* ⭐ Ring und Balken (15.09.2026). Der Hörmodus ist der Sonderfall: er hat
      keine Runde, die Fragen gehen nie aus. Beide zeigen deshalb dasselbe —
      Elias' ausdrückliche Entscheidung: „es soll einen balken geben und genau
@@ -573,7 +578,18 @@ function naechsteHoerfrage(){
      nur, wenn wirklich etwas verdeckt ist. */
   freiRollen(document.getElementById('hoerOptionen'));
 
-  hoerAbspielen();
+  /* ⛔ BEIM BETRETEN WIRD NICHT ABGESPIELT (15.09.2026). Elias: „ich will wenn
+     ich auf den hörmodus gehe das es nicht direkt abspielt sondern erst dann
+     wenn ich auf den ton button drauf drücke."
+
+     ⚠️ Nur das ERSTE Wort. Ab dem zweiten spielt es weiter von selbst — sonst
+     wäre der Modus ein Knopfdrücken zwischen zwei Knopfdrücken, und genau das
+     ist er nicht: er heißt Hörverstehen, und der Ton IST die Aufgabe. Was er
+     abgestellt haben wollte, ist der Ton, der losgeht, während man noch
+     ankommt — womöglich neben jemandem, der schläft.
+     [[pane_ist_nicht_meine_werkbank]] */
+  if (HOER_ERSTES_WORT){ HOER_ERSTES_WORT = false; }
+  else hoerAbspielen();
 }
 
 function hoerAbspielen(){
@@ -1152,7 +1168,13 @@ document.addEventListener('visibilitychange', ()=>{
   if (s && s.classList.contains('active') && typeof hoerZielPruefen === 'function') hoerZielPruefen();
 });
 
+/* ⛔ Beim Betreten des Modus bleibt das erste Wort stumm — Elias' Vorgabe vom
+   15.09.2026. Die Marke wird hier gesetzt und in hoerZeigeWort() einmal
+   verbraucht. Siehe dort. */
+let HOER_ERSTES_WORT = true;
+
 function openHoeren(){
+  HOER_ERSTES_WORT = true;
   /* Ohne arabische Stimme waere der Modus stumm und damit sinnlos - das
      lieber sagen als eine leere Karte zeigen. */
   if (!('speechSynthesis' in window)){

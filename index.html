@@ -935,7 +935,14 @@ main{
 .tr-kopf{display:flex;align-items:baseline;gap:var(--sp-2);margin-bottom:var(--sp-3);}
 .tr-titel{font-weight:700;font-size:var(--fs-md);}
 .tr-sub{font-size:var(--fs-sm);color:var(--text-dim);margin-left:auto;}
-.tr-reihe{display:flex;gap:var(--sp-4);justify-content:center;}
+.tr-reihe{display:flex;gap:var(--sp-4);justify-content:center;flex-wrap:wrap;}
+/* ⚠️ Ab vier Ringen wird es auf 375 px eng: vier à 76 px plus drei Lücken à
+   16 px sind 352 px, und die Karte hat innen keine 340. Deshalb dort kleiner —
+   und `flex-wrap` als Netz darunter, falls einmal fünf zusammenkommen
+   (Karteikarten, Modus, Mulk, Wiederholen, Neu lernen). */
+.tagesringe.viele .tr-reihe{gap:var(--sp-3);}
+.tagesringe.viele .tr-feld svg{width:62px;height:62px;}
+.tagesringe.viele .tr-name{font-size:var(--fs-xs);}
 .tr-feld{
   display:flex;flex-direction:column;align-items:center;gap:var(--sp-2);
   background:none;border:0;padding:0;font:inherit;color:inherit;cursor:pointer;
@@ -4704,7 +4711,10 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 @media (prefers-reduced-motion:reduce){ .modus-ring .fuell{transition:none;} }
 
 /* Die Rundenbalken in Satz- und Hörmodus. Im Lernmodus gibt es ihn schon. */
-.ueb-balken,.hoer-balken{margin-top:var(--sp-2);}
+.ueb-balken{margin-top:var(--sp-2);}
+/* ⚠️ Unten mehr Luft als oben: darunter kommt der Lautsprecher, und der
+   stand dem Balken zu nah. Elias mit Bild: „abstand hier ist etwas klein." */
+.hoer-balken{margin-top:var(--sp-2);margin-bottom:var(--sp-4);}
 .hoer-kopfzeile{display:flex;align-items:center;gap:var(--sp-2);}
 .hoer-kopfzeile .hoer-stand{flex:1;min-width:0;}
 
@@ -6108,7 +6118,11 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
                Dass die Seite wach bleibt, ist gebaut und belegt; ob Android die
                Sprachausgabe im gesperrten Zustand zulässt, ist es NICHT. Eine
                Zusage, die das Gerät bricht, wäre schlimmer als keine. -->
-          <div class="geh-sub">Nur hören: Wort, Pause zum Selbstantworten, Lösung. Kein Tippen, kein Hinsehen — anhalten geht auch über den Sperrbildschirm.</div>
+          <!-- ⭐ Hier stand bis zum 15.09.2026: „Nur hören: Wort, Pause zum
+               Selbstantworten, Lösung. Kein Tippen, kein Hinsehen — anhalten
+               geht auch über den Sperrbildschirm." Elias hat sie eingerahmt:
+               „die beschreibung kann weg". Er kennt den Modus; die Zeile
+               erklärte ihm jedes Mal aufs Neue, was er längst tut. -->
         </div>
       </div>
 
