@@ -615,6 +615,13 @@ function beantworteHoerfrage(i){
   t.beantwortet = (t.beantwortet ?? 0) + 1;
   if (richtig) t.richtig++;
   hoerTagSpeichern(t);
+  /* ⛔ HIER FEHLT KEIN touchStreak() — das ist Absicht und Elias' Entscheidung
+     vom 14.09.2026. Die Serie haengt allein an den Karteikarten
+     (js/lernen.js, in answer()); ein Tag mit nur Hoeren zaehlt fuer sie nicht,
+     obwohl der Hoermodus ein eigenes Tagesziel hat. Ihm genau so berichtet und
+     angeboten, es zu aendern, seine Antwort: „nein ist gut so". Die
+     ausfuehrliche Begruendung steht an der Aufrufstelle in js/lernen.js.
+     ⛔ Nicht „nachruesten". */
   hoerStandSchreiben();
 
   /* ⭐ Die Trefferquote je TAG (07.09.2026). Der Hoermodus zaehlt mit, weil

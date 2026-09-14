@@ -1437,11 +1437,29 @@ function answer(stufe){
      Aenderungen haben, die erhalten bleiben muessen. */
   p.ts = Date.now();
   saveProgress();
+  /* ⛔⛔ DIE EINZIGE STELLE, die die Serie fortschreibt — und das ist Elias'
+     ausdrueckliche Entscheidung vom 14.09.2026, nicht ein Versehen.
+
+     Er fragte an dem Tag: „und die streak wird auch nur fortgesetzt wenn das
+     tagesziel der karteikarten erreicht ist richtig?" Nachgemessen und ihm so
+     berichtet: nein — EINE beantwortete Karte genuegt, richtig oder falsch,
+     ein Tagesziel wird nirgends geprueft. Dabei faellt zwangslaeufig das hier
+     auf: Satzmodus (js/uebung.js) und Hoermodus (js/hoeren.js) haben eigene
+     Tagesziele, ruehren die Serie aber nicht an. Ein Tag mit nur Saetzen oder
+     nur Hoeren reisst sie ab. Angeboten, das zu aendern; seine Antwort:
+     **„nein ist gut so"**.
+
+     ⛔ Also NICHT „reparieren". Wer in uebung.js oder hoeren.js ein fehlendes
+     touchStreak() vermutet, liest hier, dass es dort nie hingehoert hat.
+     Dieselbe Entscheidung steht als Hinweis an beiden Stellen.
+     [[antwort_auf_meine_frage_ist_keine_freigabe]]
+
+     Der Kalender zaehlt eine Zeile weiter mit — beide meinen dasselbe
+     Ereignis: heute wurde geuebt. Der Unterschied ist, dass die Serie nur den
+     letzten Tag behaelt und der Kalender jeden. ⭐ Dass beide an DERSELBEN
+     Stelle haengen, ist der Grund, warum Kalender und Serie nie
+     auseinanderlaufen koennen. [[dieselbe_frage_zwei_antworten]] */
   touchStreak();
-  /* Der Kalender unter der Serie zaehlt hier mit — eine Zeile neben
-     touchStreak(), weil beide dasselbe Ereignis meinen: heute wurde geuebt.
-     Der Unterschied ist, dass die Serie nur den letzten Tag behaelt und der
-     Kalender jeden. */
   if (typeof tagZaehlen === 'function') tagZaehlen();
   /* ⭐ Die Trefferquote je Tag (07.09.2026). Elias: „trefferquote sollte doch
      auch die karteikarten zählen weil der fortschritt da ist ja wirklich sehr
