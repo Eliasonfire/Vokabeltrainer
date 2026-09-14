@@ -4652,6 +4652,52 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 .wz-kopfzeile{display:flex;justify-content:space-between;align-items:center;
   font-size:var(--fs-xs);letter-spacing:.06em;text-transform:uppercase;
   color:var(--text-faint);margin-bottom:var(--sp-2);position:relative;}
+/* ---- Der Lesestrich in der offenen Sure (15.09.2026) ----
+   3 px, volle Breite, kein Text. Er sitzt in der Sticky-Leiste und fährt mit
+   der Kopfzeile weg — beim Lesen ist er dann nicht da. */
+.lese-strich{height:3px;background:var(--surface-4);overflow:hidden;}
+.lese-strich > i{display:block;height:100%;background:var(--red-bright);opacity:.8;
+  transition:width var(--dur-4,.6s) var(--ease-out);}
+@media (prefers-reduced-motion:reduce){ .lese-strich > i{transition:none;} }
+
+/* ---- Fortschritt je Kapitel (15.09.2026) ----
+   Ein dünner Balken unter dem Kapitelnamen. ⛔ Kein Ring: die Zeile ist
+   schmal, und rechts steht schon die Wortzahl — ein Ring daneben wäre das
+   dritte Element in einer Reihe, die von einem Namen leben soll. */
+.kap-balken{height:4px;background:var(--surface-4);border-radius:var(--r-full);
+  overflow:hidden;margin:6px 0 4px;max-width:220px;}
+.kap-balken > i{display:block;height:100%;border-radius:var(--r-full);
+  background:linear-gradient(90deg,var(--red) 0%,var(--red-bright) 100%);
+  transition:width var(--dur-4,.6s) var(--ease-out);}
+.kap-stand{font-size:var(--fs-xs);color:var(--text-faint);}
+@media (prefers-reduced-motion:reduce){ .kap-balken > i{transition:none;} }
+
+/* ---- ⭐⭐ Der Tagesring in den Modi (15.09.2026) ----
+   Eine Form für Lernen, Sätze und Hören — der Wurzelmodus hat seine eigene
+   (`.wz-ring`), weil er in einer Kopfzeile mit Versalien sitzt.
+
+   ⚠️ Klein und still: im Modus geht es um die Aufgabe, nicht um den Tag. Der
+   Ring sagt nebenbei, wie weit man ist, und soll den Blick nicht abziehen. */
+.modus-ring{
+  display:inline-flex;align-items:center;gap:6px;flex:0 0 auto;
+  font-size:var(--fs-xs);color:var(--text-dim);font-variant-numeric:tabular-nums;
+}
+.modus-ring svg{width:22px;height:22px;display:block;}
+.modus-ring .spur{fill:none;stroke:var(--surface-4);stroke-width:4.5;}
+.modus-ring .fuell{
+  fill:none;stroke:var(--red-bright);stroke-width:4.5;stroke-linecap:round;
+  transform:rotate(-90deg);transform-origin:50% 50%;
+  transition:stroke-dasharray var(--dur-4,.6s) var(--ease-out);
+}
+.modus-ring.voll .fuell{stroke:var(--green);}
+.modus-ring.voll{color:var(--green);}
+@media (prefers-reduced-motion:reduce){ .modus-ring .fuell{transition:none;} }
+
+/* Die Rundenbalken in Satz- und Hörmodus. Im Lernmodus gibt es ihn schon. */
+.ueb-balken,.hoer-balken{margin-top:var(--sp-2);}
+.hoer-kopfzeile{display:flex;align-items:center;gap:var(--sp-2);}
+.hoer-kopfzeile .hoer-stand{flex:1;min-width:0;}
+
 /* ---- Tagesring im Wurzelmodus (15.09.2026) ----
    Klein und still: er steht zwischen „Familie 2 von 7" und den Punkten, wo
    ohnehin der Blick hingeht, und soll den Schritt nicht überstrahlen. */
@@ -5336,6 +5382,11 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         </button>
         <div class="progress-track"><div class="progress-fill" id="learnProgressFill"></div></div>
         <span class="learn-count" id="learnCount">0/0</span>
+        <!-- ⭐ Der Tagesring im Lernmodus (15.09.2026). Der Balken daneben
+             zeigt die RUNDE (20 Karten), dieser Ring den TAG — zwei
+             verschiedene Zeiträume, und genau deshalb stehen beide da.
+             Elias: „der Ring fürs Tagesziel kommt in alle vier Modi." -->
+        <span class="modus-ring" id="lernRing" hidden></span>
       </div>
 
       <div class="card-stage" id="cardStage">
@@ -5611,7 +5662,14 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         <div class="ueb-kopf">
           <span class="ueb-name" id="uebName"></span>
           <span class="ueb-stand" id="uebStand"></span>
+          <!-- ⭐ Tagesring im Satzmodus (15.09.2026), neben dem Stand. -->
+          <span class="modus-ring" id="satzRing" hidden></span>
         </div>
+        <!-- ⭐ Der Balken zeigt die Runde. Er stand bisher nur als Text im
+             Stand („3 / 12"), und Elias wollte ihn sichtbar: „der Balken nur
+             in Karteikarten und Satzmodus, weil es dort eine Runde mit Ende
+             gibt" — später erweitert auf alle vier. -->
+        <div class="progress-track ueb-balken"><div class="progress-fill" id="uebBalken"></div></div>
         <div class="ueb-frage" id="uebFrage"></div>
         <div class="ueb-satz" id="uebSatz" lang="ar" dir="rtl"></div>
         <div class="ueb-de" id="uebDe"></div>
@@ -5926,6 +5984,21 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
            des ersten kennt — die steht aber nirgends fest und ändert sich mit
            der Schriftgröße. Ein gemeinsamer Kasten klebt als Ganzes. -->
       <div class="quran-sticky" id="quranSticky">
+        <!-- ⭐ Der Lesestrich (15.09.2026). Elias wollte ihn subtil und hat
+             die Stelle selbst gewählt: „entweder über dem wo die sura steht
+             und dann einmal in die breite durchzuehen … oder man sieht es nur
+             wenn man nach oben scrollt" — und zur Vorschau mit beiden
+             Varianten: „so find ich gut" (an der Kopfzeile).
+
+             Deshalb hier IN der Sticky-Leiste: sie fährt beim Runterrollen
+             mit der Kopfzeile weg (`#screen-quranfull.kopf-eingeklappt`) und
+             kommt beim Hochrollen zurück. Beim Lesen stört nichts.
+
+             ⛔ Rot, nicht grün. Im Quelltext steht seit dem 04.08.2026:
+             „Gelesen und auswendig sind zwei verschiedene Aussagen — die grüne
+             Farbe gehört schon Ḥifẓ." Grün heißt in dieser App weiter: das
+             kannst du auswendig. -->
+        <div class="lese-strich hidden" id="leseStrich"><i></i></div>
         <div class="hifz-bar hidden" id="hifzBar">
           <div class="hifz-stand" id="hifzStand"></div>
           <!-- Elias am 04.08.2026: "innerhalb einer Sura […] eine Liste […] und
@@ -6025,7 +6098,18 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
       </div>
 
       <div class="hoer-karte" id="hoerKarte">
-        <div class="hoer-stand" id="hoerStand"></div>
+        <!-- ⭐ Stand, Ring und Balken (15.09.2026). Der Hörmodus ist der
+             Sonderfall: er hat KEINE Runde — die Fragen werden aus dem ganzen
+             Wortschatz gewürfelt und gehen nie aus. Elias wollte den Balken
+             trotzdem: „es soll einen balken geben und genau das soll das
+             tagesziel abbilden." Ring und Balken zeigen hier also dasselbe,
+             und das ist seine ausdrückliche Entscheidung: „ich glaube das ist
+             überall so aber das ist auch denke ich okay so." -->
+        <div class="hoer-kopfzeile">
+          <div class="hoer-stand" id="hoerStand"></div>
+          <span class="modus-ring" id="hoerRing" hidden></span>
+        </div>
+        <div class="progress-track hoer-balken"><div class="progress-fill" id="hoerBalken"></div></div>
         <button class="hoer-play" id="btnHoerPlay" aria-label="Nochmal hören">
           <svg class="ic"><use href="#ic-speaker"/></svg>
         </button>

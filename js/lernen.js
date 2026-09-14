@@ -393,7 +393,16 @@ function renderCard(){
   renderNotiz(w);
 
   document.getElementById('learnCount').textContent = `${SESSION.idx+1}/${SESSION.words.length}`;
-  document.getElementById('learnProgressFill').style.width = `${(SESSION.idx/SESSION.words.length)*100}%`;
+  /* ⭐ Der Vorschuss gilt auch hier (15.09.2026). Elias: „und generell alle
+     leisten die einen forstschirtt zeigen lasse sie bereits etwas ausgefüllt
+     haben nicht nur bei 0." Die Runde beginnt also nicht bei einem leeren
+     Strich, sondern bei einem Zehntel. */
+  document.getElementById('learnProgressFill').style.width =
+    (typeof ringBogen === 'function'
+      ? ringBogen(SESSION.idx / SESSION.words.length)
+      : (SESSION.idx / SESSION.words.length) * 100) + '%';
+  /* Der Tagesring neben der Rundenleiste: Balken = diese Runde, Ring = heute. */
+  if (typeof lernRingZeichnen === 'function') lernRingZeichnen();
 
   stufenVorschau();
   renderTippfeld(w);

@@ -179,15 +179,33 @@ function renderTagesringe(){
   const kasten = document.getElementById('tagesringe');
   if (!kasten) return;
 
-  /* Karteikarten: Ziel ist, was heute überhaupt angeboten wird. „Geschafft"
-     heisst hier leerer Tagesvorrat — dieselbe Definition wie bei
-     tagesZieleStand() in js/feier.js, damit nicht zwei Stellen verschiedene
-     Antworten auf dieselbe Frage geben. [[dieselbe_frage_zwei_antworten]] */
+  /* ⛔⛔ DAS ZIEL IST DER TAGESDECKEL, NICHT DER RESTVORRAT.
+
+     Erster Versuch war `kZiel = erledigte + tagesPool().length` — und Elias
+     meldete sofort: „der ring der karteikarten auf dem startbildschirm zeigt
+     mir nicht voll an obwohl ich die karteikarten heute 10 stück (tagesziel)
+     gemacht habe."
+
+     Der Grund steht in tagesAuswahl() (js/kern.js): sie gibt IMMER bis zu
+     `deckel` Karten zurück, solange überhaupt etwas fällig ist. Und
+     Box-1-Karten bleiben nach dem Beantworten heute fällig (INTERVALS[1] = 0).
+     Der Restvorrat wird also nie leer, das Ziel wuchs mit jeder Antwort mit,
+     und der Ring konnte sich nicht füllen. Eine Zahl, die sich beim Erreichen
+     selbst verschiebt, ist kein Ziel.
+     [[bedingung_wird_durch_die_handlung_ungueltig]]
+
+     „Karten pro Tag" in den Einstellungen IST das Tagesziel — es steht dort
+     wörtlich so. Genau die Zahl gilt.
+
+     ⚠️ Beim Deckel „Aus – alle fälligen" gibt es keine feste Zahl. Dann zählt
+     der Anfangsbestand des Tages: erledigte plus Rest. Er wächst zwar auch,
+     aber ohne Deckel hat Elias sich bewusst gegen ein Tagesende entschieden. */
   let kStand = null, kZiel = null;
   if (typeof getUebungstage === 'function' && typeof tagesPool === 'function'){
     const heute = todayStr(0);
     kStand = Number((getUebungstage() || {})[heute]) || 0;
-    kZiel = kStand + tagesPool().length;
+    const deckel = (typeof tagesDeckel === 'function') ? Number(tagesDeckel()) : 0;
+    kZiel = deckel > 0 ? deckel : (kStand + tagesPool().length);
     if (!kZiel) kZiel = null;               /* nichts fällig: kein Ziel, kein Ring */
   }
 
@@ -230,6 +248,55 @@ function renderTagesringe(){
    umzubenennen hiesse, eine Stelle zu übersehen — und die fiele erst auf,
    wenn die Ringe irgendwo nicht nachziehen. [[werkzeug_ohne_aufrufer]] */
 function renderHeuteExtra(){ renderTagesringe(); }
+
+/* ---------- ⭐⭐ Die Tagesringe IN den Modi (15.09.2026) ----------
+
+   Elias: „der Ring fürs Tagesziel kommt in alle vier Modi — dieselbe Form wie
+   auf dem Startbildschirm." Der Wurzelmodus hat seinen eigenen (wzRing in
+   js/wurzel.js), weil er in einer Kopfzeile mit Versalien sitzt.
+
+   ⛔ EINE Funktion für alle drei. Drei Abschriften desselben Rings wären drei
+   Orte, an denen der Vorschuss auseinanderlaufen kann.
+   [[allgemeine_regel_statt_listeneintrag]]
+
+   ⚠️ Verborgen, solange es kein Ziel gibt — nicht „0 %" anzeigen. */
+function modusRingZeichnen(id, stand, ziel){
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (stand === null || !ziel){ el.hidden = true; return; }
+  const anteil = Math.min(stand / ziel, 1);
+  el.hidden = false;
+  el.classList.toggle('voll', anteil >= 1);
+  el.title = stand + ' von ' + ziel + ' heute';
+  el.innerHTML =
+    '<svg viewBox="0 0 40 40" aria-hidden="true">'
+    + '<circle class="spur" cx="20" cy="20" r="15.9155"></circle>'
+    + '<circle class="fuell" cx="20" cy="20" r="15.9155" pathLength="100"'
+    + ' stroke-dasharray="' + ringBogen(anteil) + ' 100"></circle></svg>'
+    + '<span>' + stand + '/' + ziel + '</span>';
+}
+
+/* Ein Balken für eine Runde. `voll` heisst hier NICHT grün — eine Runde ist
+   keine Leistung, sondern eine Strecke. Grün bleibt dem Tagesziel. */
+function modusBalkenZeichnen(id, stand, ziel){
+  const el = document.getElementById(id);
+  if (!el) return;
+  const kasten = el.parentElement;
+  if (!ziel){ if (kasten) kasten.hidden = true; return; }
+  if (kasten) kasten.hidden = false;
+  el.style.width = ringBogen(Math.min(stand / ziel, 1)) + '%';
+}
+
+/* Der Tagesring im Lernmodus. Dieselbe Rechnung wie auf dem Startbildschirm —
+   deshalb hier und nicht in js/lernen.js: eine Quelle für „Karten pro Tag". */
+function lernRingZeichnen(){
+  if (typeof getUebungstage !== 'function' || typeof tagesPool !== 'function') return;
+  const heute = todayStr(0);
+  const stand = Number((getUebungstage() || {})[heute]) || 0;
+  const deckel = (typeof tagesDeckel === 'function') ? Number(tagesDeckel()) : 0;
+  const ziel = deckel > 0 ? deckel : (stand + tagesPool().length);
+  modusRingZeichnen('lernRing', stand, ziel || null);
+}
 
 /* Die Kapitelliste haengt am Buch: Madina 1 hat 24, Madina 3 hat 35, und
    frueher stand hier fest 1-9.

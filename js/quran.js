@@ -198,8 +198,40 @@ let LESE_SCHREIBUHR = null;
 function merkeLesestand(sure, vers){
   if (LESESTAND && LESESTAND.sure === sure && LESESTAND.vers === vers) return;
   LESESTAND = { sure, vers };
+  /* ⭐ Der Strich zieht sofort mit — er hängt am Beobachter und nicht am
+     Schreiben, das 800 ms wartet. Sonst hinkte er beim Rollen hinterher. */
+  leseStrichZeichnen();
   clearTimeout(LESE_SCHREIBUHR);
   LESE_SCHREIBUHR = setTimeout(() => LS.set('vt_lesestand', LESESTAND), 800);
+}
+
+/* ⭐ Der Lesestrich in der offenen Sure (15.09.2026).
+   Elias wollte ihn subtil: „ich wills eher subtil haben … einmal in die breite
+   durchzuehen", und zur Vorschau mit beiden Varianten: „so find ich gut" —
+   an der Kopfzeile, die beim Runterrollen wegfährt.
+
+   ⛔ Nur in einer offenen Sure. In der Liste gibt es keine Strecke, und der
+   Juz-Ring oben sagt dort etwas ganz anderes.
+
+   ⚠️ Der Vorschuss gilt auch hier („generell alle leisten … nicht nur bei 0"),
+   und beim letzten Vers steht er exakt auf 100. */
+function leseStrichZeichnen(){
+  const el = document.getElementById('leseStrich');
+  if (!el) return;
+  const balken = el.querySelector('i');
+  if (OFFENE_SURE === null){ el.classList.add('hidden'); return; }
+  const gesamt = versZahl(OFFENE_SURE);
+  if (!gesamt){ el.classList.add('hidden'); return; }
+  /* ⛔ Ohne gespeicherten Stand fängt die Strecke bei Vers 1 an — nicht
+     verborgen. Erster Versuch versteckte den Strich, solange `LESESTAND` noch
+     nicht auf dieser Sure stand; beim Öffnen einer Sure war das IMMER der
+     Fall, und er erschien erst beim ersten Rollen. Eine Strecke, die erst
+     sichtbar wird, wenn man sie schon geht, zeigt nicht, wie lang sie ist. */
+  const beiVers = (LESESTAND && LESESTAND.sure === OFFENE_SURE) ? LESESTAND.vers : 1;
+  const anteil = Math.min(Math.max(beiVers, 1) / gesamt, 1);
+  const laenge = anteil >= 1 ? 100 : Math.round((0.10 + 0.90 * anteil) * 1000) / 10;
+  el.classList.remove('hidden');
+  if (balken) balken.style.width = laenge + '%';
 }
 
 function beobachteLesestand(id){
@@ -420,6 +452,9 @@ function renderSurahList(filter){
   /* Der Juz-Ring gehört zur Liste, nicht zur einzelnen Sure — er steht in der
      Kopfzeile und sagt, wie viel von einem Juz insgesamt sitzt. */
   renderJuzRing();
+  /* Und der Lesestrich gehört zur Sure: in der Liste ist er weg. */
+  const ls = document.getElementById('leseStrich');
+  if (ls) ls.classList.add('hidden');
 }
 
 /* ---------- Lesemodus und Schriftgroessen ----------
@@ -1522,6 +1557,8 @@ async function openSurah(id, opt){
      Gesamtfortschritt daneben gehört zu einer anderen Frage. */
   const jr = document.getElementById('juzRing');
   if (jr) jr.hidden = true;
+  /* Der Lesestrich gehört zur offenen Sure — hier beginnt seine Strecke. */
+  leseStrichZeichnen();
   document.getElementById('surahSearch').classList.add('hidden');
   document.getElementById('surahList').classList.add('hidden');
   /* Der Favoritenblock gehoert zur Surenliste und muss mitverschwinden - sonst
