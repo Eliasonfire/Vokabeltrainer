@@ -408,6 +408,13 @@ const PRUEFER = [
   ['test-trefferflaechen.mjs', []],
   ['test-schreibweisen.mjs', []],
   ['test-p9.mjs', []],
+  /* ⛔ Neu am 14.09.2026. Die Serie war bis dahin durch NICHTS abgesichert —
+     test-p8 und test-p9 stubben `touchStreak` nur weg (`touchStreak:()=>{}`),
+     pruefen sie also nicht. Bewacht wird hier zuerst Elias' Entscheidung, die
+     Sperrfrist des Gnadentags aufzuheben: die sieht im Quelltext wie ein
+     fehlender Schutz aus und wird beim naechsten Aufraeumen sonst „aus
+     Vernunft" zurueckgebaut. [[wirkung_an_der_quelle_stilllegen]] */
+  ['test-serie-toleranztag.mjs', []],
 
   /* ⛔ Neu am 06.09.2026. Der Hifz-Stand ist das Einzige in dieser App, das
      Elias sich WIRKLICH erarbeitet hat — auswendig gelernte Suren. Er lief

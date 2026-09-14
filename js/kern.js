@@ -2003,17 +2003,54 @@ function saveCustomCats(){ LS.set('vt_customCats', CUSTOM_CATS); }
    vierzig Tagen einmal krank ist oder eine Klausur schreibt, faengt bei null
    an - das bestraft das Leben, nicht die Nachlaessigkeit. Deshalb ein
    Gnadentag: EIN uebersprungener Tag laesst die Serie stehen, statt sie zu
-   loeschen. Sie waechst an so einem Tag aber auch nicht, und der naechste
-   Gnadentag ist erst nach einer Woche wieder zu haben - sonst waere es kein
-   Gnadentag mehr, sondern jeder zweite Tag frei. */
+   loeschen. Sie waechst an so einem Tag aber auch nicht - gezaehlt wird nur der
+   Tag, an dem wieder gelernt wird.
+
+   ⭐ Bis zum 14.09.2026 war der naechste Gnadentag erst nach SIEBEN Tagen
+   wieder zu haben. Diese Sperre stand seit dem 29.07.2026 hier, und sie war
+   meine eigene Ableitung — begruendet mit „sonst waere es kein Gnadentag mehr,
+   sondern jeder zweite Tag frei". Elias hat sie nie verlangt und nie gesehen.
+   Sein Wunsch vom 14.09.2026 (ueber `05 - Eingang unterwegs`) nennt keine
+   Einschraenkung: die Serie soll nicht abreissen, wenn er einen Tag aussetzt
+   und am naechsten weiterlernt. Auf die Wahl zwischen „Sperre bleibt: 1x pro
+   Woche", „1x pro Monat" und „Sperre weg: gilt immer" — mit der Folge im Text,
+   dass dauerhaft jeder zweite Tag die Serie wachsen laesst — hat er
+   **„Sperre weg: gilt immer"** gewaehlt. Die alte Begruendung steht hier nur
+   noch als historische Angabe: sie ist gehoert und ueberstimmt worden.
+   ⛔ Nicht „aus Vernunft" wieder einbauen.
+   [[antwort_auf_meine_frage_ist_keine_freigabe]] [[regel_gilt_nur_mit_begruendung]]
+
+   ⛔ FOLGE weiter unten: `uebungstageAusSerieErgaenzen()` hat sich auf genau
+   diese Sperre gestuetzt („in den letzten acht Uebungstagen kann hoechstens
+   einer liegen"). Ohne sie traegt die Rueckrechnung Tage als geuebt ein, an
+   denen nichts war. Im selben Zug mitgeaendert.
+   [[entscheidung_gilt_fuer_das_zweite_werkzeug]]
+
+   ⭐ Der Tag beginnt um 8 Uhr, nicht um Mitternacht — Elias am 14.09.2026:
+   „und die frist soll dann ab 8 uhr laufen". Dafuer war nichts zu tun:
+   touchStreak() rechnet ausschliesslich ueber todayStr(), und das zieht
+   TAG_BEGINN_STUNDE ab (oben, Zeile ~396). Die 8-Uhr-Grenze gilt also
+   automatisch mit. Es steht hier, damit die Frage beim naechsten Lesen nicht
+   erneut aufkommt — und weil „gilt schon" ohne die Stelle daneben eine blosse
+   Behauptung waere.
+
+   ⚠️ Gerechnet wird in Lerntagen von 8 bis 8 Uhr, nicht mit einer rollenden
+   Stoppuhr. Der verziehene Abstand ist deshalb nicht genau 48 Stunden, sondern
+   liegt je nach Uhrzeit zwischen gut 24 und knapp 72. Beispiel: letzte Karte
+   Dienstag 7:59 gehoert noch zum Montags-Lerntag, die naechste Mittwoch 8:00
+   zum Mittwochs-Lerntag — ein ausgelassener Tag bei nur 24 Stunden Abstand.
+   Fuer den Alltag ist die Tagesrechnung die freundlichere, weil sie sich nach
+   dem Tag richtet und nicht nach der Uhrzeit der letzten Karte. */
 function touchStreak(){
   let s = LS.get('vt_streak', {count:0,last:null,gnadeAm:null});
   const t = todayStr(0), y = todayStr(-1), vy = todayStr(-2);
   const vorher = s.count;
   if (s.last === t) { /* schon heute gezaehlt */ }
   else if (s.last === y) { s.count += 1; s.last = t; }
-  else if (s.last === vy && gnadeVerfuegbar(s, t)) {
-    /* Genau ein Tag ausgelassen und die Gnade ist frei: Serie bleibt stehen. */
+  else if (s.last === vy) {
+    /* Genau ein Tag ausgelassen: Serie bleibt stehen. Ohne Sperrfrist — siehe
+       oben, Elias' Entscheidung vom 14.09.2026. `gnadeAm` wird weiter gesetzt:
+       der Uebungskalender braucht es, um den ausgelassenen Tag zu erkennen. */
     s.count += 1; s.last = t; s.gnadeAm = t;
     toast('Gestern ausgelassen — die Serie zählt trotzdem weiter.');
   }
@@ -2041,13 +2078,13 @@ function touchStreak(){
   }
   return s;
 }
-/* Sieben Tage Abstand, gerechnet in Tagen statt in Millisekunden - die
-   Datumsstrings sind ohnehin schon auf den Tag genau. */
-function gnadeVerfuegbar(s, heute){
-  if (!s.gnadeAm) return true;
-  const tage = (new Date(heute) - new Date(s.gnadeAm)) / 86400000;
-  return tage >= 7;
-}
+/* ⛔ Hier stand bis zum 14.09.2026 `gnadeVerfuegbar(s, heute)` — die Pruefung
+   auf sieben Tage Abstand zum letzten Gnadentag. Sie ist ersatzlos entfallen,
+   weil Elias die Sperrfrist aufgehoben hat (Begruendung oben bei
+   touchStreak()). Nicht als „tote" Funktion stehengelassen: ein Rest, den
+   niemand mehr aufruft, sieht beim naechsten Lesen wie ein Versehen aus und
+   wird entweder wieder angeschlossen oder als Fehler gemeldet.
+   [[funktion_als_referenz_sieht_tot_aus]] */
 function getStreak(){ return LS.get('vt_streak', {count:0,last:null,gnadeAm:null}); }
 
 /* ---------- Uebungstage: der Kalender hinter der Serie (21.08.2026) --------
@@ -2082,12 +2119,27 @@ function tagZaehlen(){
 
    ⛔ Und zwar hoechstens ACHT Uebungstage zurueck, nicht `count` Tage. Grund:
    die Serie kennt einen Gnadentag (ein ausgelassener Tag laesst sie stehen),
-   und gespeichert ist nur der LETZTE davon. In den letzten acht Uebungstagen
-   kann hoechstens einer liegen — die Gnade ist erst nach sieben Tagen wieder
-   zu haben —, und den kenne ich aus `gnadeAm`. Weiter zurueck waeren es
+   und gespeichert ist nur der LETZTE davon. Weiter zurueck waeren es
    moeglicherweise mehrere unbekannte Luecken, und dann traege der Kalender
    Tage ein, an denen niemand geuebt hat.
-   [[kennzeichen_mit_zwei_ursachen]] [[begrenzung_haelt_messung_nicht_stand]] */
+   [[kennzeichen_mit_zwei_ursachen]] [[begrenzung_haelt_messung_nicht_stand]]
+
+   ⛔⛔ NACHGEZOGEN am 14.09.2026, und das ist der Kern der Sache. Hier stand:
+   „In den letzten acht Uebungstagen kann hoechstens einer liegen — die Gnade
+   ist erst nach sieben Tagen wieder zu haben —, und den kenne ich aus
+   `gnadeAm`." Genau diese Annahme ist mit Elias' Entscheidung weggefallen:
+   ohne Sperrfrist koennen in acht Tagen bis zu VIER Gnadentage liegen, und
+   `gnadeAm` kennt nur den letzten. Der Kalender haette die uebrigen drei als
+   geuebt eingetragen — eine erfundene Angabe ueber Tage, an denen nichts war,
+   also genau das, was dieser Kommentar verhindern wollte.
+
+   ⭐ Neue Grenze, und sie ist exakt statt vorsichtig: Zwischen `gnadeAm` und
+   `s.last` liegt sicher keine Luecke — haette es dort eine gegeben, stuende
+   `gnadeAm` spaeter. Der Tag VOR `gnadeAm` ist sicher ausgelassen. Und alles
+   davor ist unbekannt. Also wird bis dorthin eingetragen und dann abgebrochen,
+   statt den einen Tag zu ueberspringen und weiterzulaufen. Ohne `gnadeAm` gab
+   es nie eine Gnade, die Serie ist lueckenlos, und es bleibt bei den acht.
+   [[zahlen_ohne_beleg]] */
 function uebungstageAusSerieErgaenzen(){
   const tage = getUebungstage();
   const s = getStreak();
@@ -2098,10 +2150,11 @@ function uebungstageAusSerieErgaenzen(){
   let d = new Date(s.last), offen = Math.min(s.count, 8), geaendert = false;
   while (offen > 0){
     const tag = d.toISOString().slice(0, 10);
-    if (tag !== ausgelassen){
-      if (tage[tag] === undefined){ tage[tag] = 0; geaendert = true; }
-      offen--;
-    }
+    /* ⛔ Abbrechen, nicht ueberspringen: hinter dem ausgelassenen Tag koennen
+       ohne Sperrfrist weitere liegen, die hier niemand kennt. */
+    if (tag === ausgelassen) break;
+    if (tage[tag] === undefined){ tage[tag] = 0; geaendert = true; }
+    offen--;
     d = new Date(d.getTime() - 86400000);
   }
   if (geaendert) LS.set('vt_uebungstage', tage);
