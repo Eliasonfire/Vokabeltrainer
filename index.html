@@ -1547,8 +1547,21 @@ main{
    ⚠️ `align-items:flex-start`, weil der Untertitel zweizeilig werden kann: bei
    `center` säße der Schalter dann auf halber Texthöhe statt neben der Zeile,
    auf die er sich bezieht. */
+/* ⭐ Abstände am 15.09.2026 neu gesetzt. Elias: „den geh modus kannst du viel
+   weiter nach oben machen aber mit schönem abstand zu dem hörverstehen weil
+   das ist aktuell zu eng und den rest kann dann auch nach oben."
+
+   Gemessen war der Befund eindeutig: zwischen Geh-Zeile und Karte lagen
+   ⛔ 0 px — sie klebten aneinander —, während unter der Karte 135 px frei
+   blieben. Oben Platz, unten Gedränge.
+
+   Jetzt: kein Polster mehr nach oben (die Zeile rutscht um 12 px hoch) und
+   dafür echte Luft nach unten zur Karte. Der Abstand zur Überschrift kommt
+   allein aus dem `margin-bottom` der Kopfzeile und bleibt damit derselbe wie
+   auf jedem anderen Bildschirm. */
 .geh-zeile{display:flex;align-items:flex-start;gap:var(--sp-3);
-  padding:var(--sp-3) var(--gutter) 0;max-width:var(--inhalt-max);margin:0 auto;}
+  padding:0 var(--gutter);margin:0 auto var(--sp-4);
+  max-width:var(--inhalt-max);}
 .geh-zeile .switch{flex:0 0 auto;margin-top:2px;}
 .geh-text{min-width:0;}
 .geh-titel{font-weight:600;}
@@ -4195,7 +4208,15 @@ button:disabled{cursor:default;}
   background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-3);
   padding:var(--sp-6) var(--sp-4);text-align:center;
 }
-.hoer-stand{color:var(--text-dim);font-size:var(--fs-sm);font-variant-numeric:tabular-nums;margin-bottom:var(--sp-4);}
+/* ⭐ Linksbündig seit dem 15.09.2026. Elias mit Bild auf „1 von 1 richtig":
+   „das kannst du ganz nach links machen." Die Karte ist zentriert (das Wort
+   gehört in die Mitte), die Kopfzeile darüber nicht — dort stehen Quote links
+   und Ring rechts, und beide haben einen festen Platz statt in der Mitte zu
+   wandern, sobald die Zahl zweistellig wird.
+   ⚠️ `margin-bottom` ist entfallen: den Abstand nach unten setzt jetzt der
+   Balken (`.hoer-balken`), sonst addierten sich zwei Lücken. */
+.hoer-stand{color:var(--text-dim);font-size:var(--fs-sm);font-variant-numeric:tabular-nums;
+  text-align:left;}
 .hoer-play{
   width:96px;height:96px;border-radius:var(--r-full);border:none;cursor:pointer;
   background:var(--red-wash);color:var(--red-bright);
