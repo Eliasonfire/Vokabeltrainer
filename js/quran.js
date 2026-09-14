@@ -1516,6 +1516,12 @@ async function openSurah(id, opt){
   /* ⛔ Zweite Stelle, die auf das entfallene `quranFullIntro` zeigte — sie
      hätte das Öffnen einer Sure genauso stillgelegt wie die Liste. Siehe den
      Kommentar bei renderSurahList(). */
+  /* ⭐ Der Juz-Ring gehört zur LISTE, nicht zur offenen Sure. Elias am
+     15.09.2026: „man sieht ihn während ich in einer sura bin. er soll nur bei
+     der sura liste sein." In der Sure steht im Kopf der Surenname — ein
+     Gesamtfortschritt daneben gehört zu einer anderen Frage. */
+  const jr = document.getElementById('juzRing');
+  if (jr) jr.hidden = true;
   document.getElementById('surahSearch').classList.add('hidden');
   document.getElementById('surahList').classList.add('hidden');
   /* Der Favoritenblock gehoert zur Surenliste und muss mitverschwinden - sonst
