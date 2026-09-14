@@ -4652,6 +4652,16 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 .wz-kopfzeile{display:flex;justify-content:space-between;align-items:center;
   font-size:var(--fs-xs);letter-spacing:.06em;text-transform:uppercase;
   color:var(--text-faint);margin-bottom:var(--sp-2);position:relative;}
+/* ---- Balken je Regel (15.09.2026) ----
+   Dünn und unter dem Namen, damit die Zeile ihr Raster behält: rechts stehen
+   weiter Quote und „vor X Tagen". */
+.rz .rb{height:3px;background:var(--surface-4);border-radius:var(--r-full);
+  overflow:hidden;margin-top:5px;max-width:180px;}
+.rz .rb > i{display:block;height:100%;border-radius:var(--r-full);
+  background:var(--red-bright);transition:width var(--dur-4,.6s) var(--ease-out);}
+.rz.stark .rb > i{background:var(--green);}
+@media (prefers-reduced-motion:reduce){ .rz .rb > i{transition:none;} }
+
 /* ---- Der Lesestrich in der offenen Sure (15.09.2026) ----
    3 px, volle Breite, kein Text. Er sitzt in der Sticky-Leiste und fährt mit
    der Kopfzeile weg — beim Lesen ist er dann nicht da. */
@@ -5181,6 +5191,11 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
            zweite Anzeige daneben sein. Ihre zweite Aufgabe — der Weg in den
            Modus — bleibt: die Ringe sind Knöpfe. -->
       <div class="tagesringe" id="tagesringe" hidden></div>
+      <!-- ⭐ Die Quran-Ringe (15.09.2026): eine auswendige Sure frisch halten,
+           dazu die Favoriten-Sure zum Neulernen. Eigener Kasten, weil es eine
+           andere Sorte Ziel ist als Karteikarten und Sätze — und weil er
+           verschwindet, wenn Elias noch nichts auswendig kann. -->
+      <div class="tagesringe" id="quranRinge" hidden></div>
 
       <!-- ⭐ Suche auf dem Startbildschirm (24.08.2026). Elias wollte sie
            genau hier, zwischen der Fälligkeitskarte und der Buchauswahl.
