@@ -1472,6 +1472,42 @@ function satzTag(){
 }
 function satzTagSpeichern(t){ try { LS.set('vt_satzTag', t); } catch (e) { /* privates Fenster */ } }
 
+/* ⭐⭐ DIE REGEL EINER AUFGABE, DIE KEINE regelId TRAEGT (15.09.2026)
+
+   Elias: „ich habe ja zumindest einmal bei gemischt 13/13 durchgägngen gemacht
+   und das bedeutet alle regeln die gemessen werden können wurden bereits
+   einmal gemacht. das bedeutet das man das auch auf die regeln beziehen kann
+   die nicht zu gemischt gehören sondern wirklich nur die regel ist die ich
+   beantortet habe. zb wenn ich in gemischt weiblich richtig gemacht habe dann
+   kann bei der isolierten regel weiblich ja auch ein fortschritt sein."
+
+   Er hat recht, und es geht: jede Markierung am Satz traegt ihre `ruleId`.
+   Bis heute zaehlte nur „Welche Regel?" mit — 315 von 4682 Aufgaben.
+
+   ⛔ NUR BEI EINDEUTIGKEIT. Die Markierung wird ueber ihren TEXT gefunden
+   (`matchText`), und derselbe Text kann im Satz mehrfach stehen. Passen zwei,
+   ist nicht entscheidbar, welche Regel geuebt wurde — dann lieber nichts
+   zaehlen als die falsche. Gemessen am 15.09.2026: von 4279 Aufgaben sind
+   1297 eindeutig zuordenbar, 5 mehrdeutig, der Rest hat an der gefragten
+   Stelle gar keine Markierung. [[kandidatenliste_ist_keine_fehlerliste]]
+
+   ⚠️ Das Benennen („Welche Regel?") und das Anwenden (die uebrigen zwoelf)
+   sind zwei verschiedene Nachweise. Beide landen hier im selben Zaehler —
+   der Balken in der Statistik misst deshalb Bestaendigkeit, nicht Verstehen. */
+function uebungRegelVon(a){
+  if (!a || a.wortIdx == null || !a.zeilen || !a.satz) return null;
+  if (typeof SENTENCE_TAGS === 'undefined') return null;
+  const tags = SENTENCE_TAGS[a.satz.id] || [];
+  if (!tags.length) return null;
+  const bis = (a.wortIdxBis != null) ? a.wortIdxBis : a.wortIdx;
+  const stueck = a.zeilen.slice(a.wortIdx, bis + 1)
+    .map(z => z.wort || '').join(' ').trim();
+  if (!stueck) return null;
+  const treffer = tags.filter(t => t.matchText
+    && (t.matchText === stueck || stueck.indexOf(t.matchText) >= 0));
+  return treffer.length === 1 ? treffer[0].ruleId : null;
+}
+
 /* Auswertung. Ein Aufruf, drei Arten - und die Zaehlung passiert genau hier,
    damit kein Modus sie vergessen kann. */
 function uebungAuswerten(richtig){
@@ -1493,7 +1529,8 @@ function uebungAuswerten(richtig){
      laufen wirkungslos durch, merkeRegel prueft das selbst. */
   if (typeof merkeRegel === 'function'){
     const a = uebungAktuell();
-    if (a && a.regelId) merkeRegel(a.regelId, richtig);
+    const rid = (a && a.regelId) ? a.regelId : uebungRegelVon(a);
+    if (rid) merkeRegel(rid, richtig);
   }
   /* ⛔ Und der Fortschritt je MODUS (06.09.2026). Bis dahin hinterliessen
      zwoelf der dreizehn Modi — 4367 von 4682 Aufgaben — keinerlei Spur, weil

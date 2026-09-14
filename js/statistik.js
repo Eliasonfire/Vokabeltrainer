@@ -170,8 +170,31 @@ function renderRegelStand(){
     /* Goal, Punkt 9 (11.09.2026): ein Tipp auf die Zeile öffnet die Regel in
        der Sammlung (js/regeln.js). Bewusst ein <div> mit role=button: die
        Zeile behält ihr Raster, ein <button> brächte eigene Abstände mit. */
+    /* ⭐⭐ DER BALKEN JE REGEL (15.09.2026)
+
+       ⛔ NICHT die Trefferquote. Gemessen und Elias so vorgelegt: sie zählt
+       Raten mit (drei Ablenker = ein Viertel Zufall), alte Fehler bleiben ewig
+       drin, und „4 von 4 = 100 %" ist zu wenig Beleg. Eine Regel, die im
+       August zweimal danebenging und seither sitzt, stünde dauerhaft bei 86 %.
+
+       ⭐ Stattdessen die BESTÄNDIGKEIT: richtig hebt, falsch senkt doppelt,
+       voll bei fünf. Das misst den heutigen Stand statt der Geschichte — und
+       es ist dieselbe Idee wie der Leitner-Kasten bei den Wörtern, nur ohne
+       Fälligkeiten.
+
+       ⚠️ Die Zahl rechts bleibt die Quote. Der Balken behauptet nichts über
+       Verstehen; er zeigt, wie sicher die Regel zuletzt saß. Was eine App
+       wirklich messen kann, ist Anwenden unter verschiedenen Bedingungen —
+       und dafür fehlt noch, dass alle zwölf Modi ihre Regel mitzählen.
+       [[trefferquote_ohne_preis]] */
+    const punkte = Math.max(0, Math.min(5, z.richtig - 2 * (z.gestellt - z.richtig)));
+    const balken = z.gestellt
+      ? '<div class="rb"><i style="width:'
+        + (typeof ringBogen === 'function' ? ringBogen(punkte / 5) : punkte / 5 * 100)
+        + '%"></i></div>'
+      : '';
     return '<div class="rz' + ton + '" role="button" tabindex="0" data-regelkarte="' + escapeHtml(z.id) + '">'
-      + '<span class="rn">' + escapeHtml(z.name) + '</span>'
+      + '<span class="rn">' + escapeHtml(z.name) + balken + '</span>'
       + '<span class="rq">' + quote + '</span>'
       + '<span class="rd">' + wann + '</span></div>';
   }).join('')

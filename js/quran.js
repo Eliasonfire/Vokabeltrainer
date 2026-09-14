@@ -205,6 +205,80 @@ function merkeLesestand(sure, vers){
   LESE_SCHREIBUHR = setTimeout(() => LS.set('vt_lesestand', LESESTAND), 800);
 }
 
+/* ---------- ⭐⭐ WIEDERHOLEN: JEDE AUSWENDIGE SURE FRISCH HALTEN ----------
+
+   Elias am 15.09.2026, statt einer Anzeige „zuletzt wiederholt vor X Tagen":
+
+     „man könnte außer fatiha und mulk pro tag dort verlagen das ich eine sura
+      lese von denen die ich bereits auswendig kann um sie wieder frisch zu
+      halten. pro tag dann immer eine andere sura die ich auswenig kann + auch
+      noch einen ring für immer die sura die ich als favorieten hinzufüge."
+
+   und zur Reihenfolge:
+
+     „jede sura die ich auswenig kann sollte in einem interval dran kommen also
+      zb ich kann 10 suren auswendig und am ersten tag ist halt die erste sure.
+      ich muss alle 9 anderen suren lesen und dann kommt erst wieder die erste
+      sura."
+
+   ⛔ FĀTIḤA UND AL-MULK SIND AUSGENOMMEN — seine Vorgabe. Beide liest er
+   ohnehin täglich; sie in die Runde zu nehmen hiesse, ihm etwas abzuverlangen,
+   was längst geschieht.
+
+   ⛔ RÜCKWIRKEND GIBT ES NICHTS. Bis heute hat die App nirgends festgehalten,
+   welche Sure wann gelesen wurde — `vt_lesestand` merkt nur, WO er zuletzt
+   war. Die Runde beginnt also bei null und ist erst nach einem Durchgang
+   aussagekräftig. [[daten_ohne_zugang]] */
+let WDH = LS.get('vt_suraGelesen', {});      /* { Sure: 'JJJJ-MM-TT' } */
+
+const WDH_AUSGENOMMEN = new Set([1, 67]);    /* Fātiḥa und al-Mulk */
+
+function merkeWiederholung(sure){
+  const heute = todayStr(0);
+  if (WDH[sure] === heute) return;           /* schon heute gezählt */
+  WDH[sure] = heute;
+  LS.set('vt_suraGelesen', WDH);
+  if (typeof renderQuranRinge === 'function') renderQuranRinge();
+}
+
+/* Welche auswendigen Suren stehen überhaupt in der Runde? */
+function wdhVorrat(){
+  if (typeof SURAH_DATA === 'undefined') return [];
+  return SURAH_DATA
+    .filter(s => HIFZ[s.id] && !WDH_AUSGENOMMEN.has(s.id))
+    .map(s => s.id);
+}
+
+/* ⭐ Die Rotation, genau wie er sie beschrieben hat: dran ist die Sure, die am
+   LÄNGSTEN nicht gelesen wurde. Nie gelesene zuerst. Damit kommt keine ein
+   zweites Mal, bevor alle anderen einmal dran waren — ohne dass irgendwo eine
+   Position mitgeführt werden muss, die beim Dazulernen einer Sure verrutschen
+   würde. [[allgemeine_regel_statt_listeneintrag]] */
+function wdhHeute(){
+  const vorrat = wdhVorrat();
+  if (!vorrat.length) return null;
+  const heute = todayStr(0);
+  /* Heute schon eine gelesen? Dann ist die Aufgabe erledigt. */
+  const schonHeute = vorrat.find(id => WDH[id] === heute);
+  if (schonHeute) return { sure: schonHeute, erledigt: true, vorrat: vorrat.length };
+  let dran = vorrat[0], aeltestes = WDH[vorrat[0]] || '';
+  for (const id of vorrat){
+    const d = WDH[id] || '';                 /* nie gelesen sortiert sich vor */
+    if (d < aeltestes){ aeltestes = d; dran = id; }
+  }
+  return { sure: dran, erledigt: false, vorrat: vorrat.length };
+}
+
+/* Die Favoriten-Sure zum Neulernen — alles, was er als Favorit markiert hat
+   außer al-Mulk. Elias: „ich habe nur mulk hinzugefügt und immer jeweils die
+   sura die ich auswendig lernen will … ist nichts außer mulk als favourit
+   hinzugefügt so kann der ring weg." */
+function wdhFavorit(){
+  if (typeof SURAH_DATA === 'undefined') return null;
+  const f = SURAH_DATA.find(s => istFavorit(s.id) && s.id !== 67 && !HIFZ[s.id]);
+  return f ? f.id : null;
+}
+
 /* ⭐ Der Lesestrich in der offenen Sure (15.09.2026).
    Elias wollte ihn subtil: „ich wills eher subtil haben … einmal in die breite
    durchzuehen", und zur Vorschau mit beiden Varianten: „so find ich gut" —
@@ -249,6 +323,10 @@ function beobachteLesestand(id){
        unterste: wer wieder einsteigt, will den Vers noch einmal sehen, mit dem
        er aufgehoert hat, und nicht den ersten, den er noch nicht kennt. */
     merkeLesestand(id, Math.min(...LESE_SICHTBAR));
+    /* ⭐ Und die Wiederholung: sichtbar der LETZTE Vers heisst, die Sure ist
+       durch. Dieselbe Quelle, ein Beobachter — ein zweiter würde dieselben
+       Rechtecke ein zweites Mal ausmessen. */
+    if (LESE_SICHTBAR.has(versZahl(id))) merkeWiederholung(id);
   }, { rootMargin: '-64px 0px -60% 0px' });
   verse.forEach(v => LESE_BEOBACHTER.observe(v));
 }

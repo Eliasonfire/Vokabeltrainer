@@ -247,7 +247,58 @@ function renderTagesringe(){
    aus js/navigation.js und weiter unten in dieser Datei gerufen. Ihn überall
    umzubenennen hiesse, eine Stelle zu übersehen — und die fiele erst auf,
    wenn die Ringe irgendwo nicht nachziehen. [[werkzeug_ohne_aufrufer]] */
-function renderHeuteExtra(){ renderTagesringe(); }
+function renderHeuteExtra(){ renderTagesringe(); renderQuranRinge(); }
+
+/* ---------- ⭐⭐ Die Quran-Ringe auf dem Startbildschirm (15.09.2026) -------
+
+   Elias: „man könnte außer fatiha und mulk pro tag dort verlagen das ich eine
+   sura lese von denen die ich bereits auswendig kann um sie wieder frisch zu
+   halten … + auch noch einen ring für immer die sura die ich als favorieten
+   hinzufüge."
+
+   ⛔ KEIN RUNDENBALKEN. Er hatte drei Orte zur Wahl und sich entschieden:
+   „Gar nicht" — der Ring sagt, welche Sure heute dran ist, mehr nicht.
+
+   ⚠️ Der Kasten fehlt ganz, solange nichts auswendig ist. Zwei leere Ringe
+   ohne Sure wären kein Ziel, sondern ein Vorwurf. */
+function renderQuranRinge(){
+  const kasten = document.getElementById('quranRinge');
+  if (!kasten) return;
+  if (typeof wdhHeute !== 'function'){ kasten.hidden = true; return; }
+
+  const wdh = wdhHeute();
+  const fav = (typeof wdhFavorit === 'function') ? wdhFavorit() : null;
+  if (!wdh && !fav){ kasten.hidden = true; return; }
+
+  const name = id => {
+    const s = (typeof SURAH_DATA !== 'undefined') ? SURAH_DATA.find(x => x.id === id) : null;
+    return s ? s.name : ('Sure ' + id);
+  };
+  /* Ein Ring je Sache, voll oder leer — hier gibt es keine Zwischenstufe:
+     eine Sure ist heute gelesen oder nicht. Der Vorschuss gilt trotzdem,
+     sonst stünde hier als einziger Ring in der App ein leerer Kreis. */
+  const ringe = [];
+  if (wdh) ringe.push({ txt: 'Wiederholen<br>' + name(wdh.sure), voll: wdh.erledigt });
+  if (fav) ringe.push({ txt: 'Neu lernen<br>' + name(fav),
+                        voll: (typeof WDH === 'object' && WDH[fav] === todayStr(0)) });
+
+  const alle = ringe.every(r => r.voll);
+  kasten.hidden = false;
+  kasten.innerHTML =
+    '<div class="tr-kopf"><span class="tr-titel">Quran</span>'
+    + '<span class="tr-sub">' + (alle ? 'heute erledigt'
+        : (wdh ? 'eine auswendige Sure frisch halten' : 'deine Favoriten-Sure')) + '</span></div>'
+    + '<div class="tr-reihe">'
+    + ringe.map(r =>
+        '<button class="tr-feld' + (r.voll ? ' voll' : '') + '" type="button" data-nav="quranfull">'
+        + '<svg viewBox="0 0 40 40" aria-hidden="true">'
+        +   '<circle class="tr-spur" cx="20" cy="20" r="15.9155"></circle>'
+        +   '<circle class="tr-fuell" cx="20" cy="20" r="15.9155" pathLength="100"'
+        +     ' stroke-dasharray="' + ringBogen(r.voll ? 1 : 0) + ' 100"></circle>'
+        +   '<path class="tr-haken" d="M13.5 20.5 18 25 26.5 15.5"></path>'
+        + '</svg><span class="tr-name">' + r.txt + '</span></button>').join('')
+    + '</div>';
+}
 
 /* ---------- ⭐⭐ Die Tagesringe IN den Modi (15.09.2026) ----------
 
