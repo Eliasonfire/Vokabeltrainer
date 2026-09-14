@@ -89,7 +89,34 @@ function wzZaehle(richtig){
   if (richtig) t.richtig++;
   wzTagSpeichern(t);
   if (typeof merkeUebung === 'function') merkeUebung('wurzeln', !!richtig);
-  if (typeof wzRingZeichnen === 'function') wzRingZeichnen();
+  wzRingZeichnen();
+}
+
+/* ⭐ Der Tagesring im Kopf des Wurzelmodus. Elias: „mach im wurzelmodus selbst
+   einen ring aber noch nicht in der heute ansicht bzw startbildschirm."
+
+   ⛔ Verborgen, solange heute nichts beantwortet wurde. Dieser Modus hat erst
+   seit dem 15.09.2026 einen Zähler; ein Ring bei null wäre am ersten Tag die
+   Regel und sagte trotzdem nichts. Er erscheint mit der ersten Antwort.
+
+   ⚠️ Vorschuss 10 % wie überall („lasse die ringe nicht bei 0 anfangen"),
+   und ein erreichtes Ziel zeigt trotzdem exakt voll. */
+function wzRingZeichnen(){
+  var el = document.getElementById('wzRing');
+  if (!el) return;
+  var t = wzTag(), ziel = wurzelTagesziel();
+  if (!t.gesamt){ el.hidden = true; return; }
+  var anteil = Math.min(t.gesamt / ziel, 1);
+  var laenge = anteil >= 1 ? 100 : Math.round((0.10 + 0.90 * anteil) * 1000) / 10;
+  el.hidden = false;
+  el.classList.toggle('voll', anteil >= 1);
+  el.title = t.gesamt + ' von ' + ziel + ' heute · ' + t.richtig + ' richtig';
+  el.innerHTML =
+    '<svg viewBox="0 0 40 40" aria-hidden="true">'
+    + '<circle class="spur" cx="20" cy="20" r="15.9155"></circle>'
+    + '<circle class="fuell" cx="20" cy="20" r="15.9155" pathLength="100"'
+    + ' stroke-dasharray="' + laenge + ' 100"></circle></svg>'
+    + '<span>' + t.gesamt + '/' + ziel + '</span>';
 }
 
 /* ================= Buchstaben und Vokalzeichen ================= */
@@ -354,6 +381,9 @@ function wzStarteFamilie(){
   document.getElementById('wzKopfWurzel').textContent = f.wurzel;
   document.getElementById('wzKopfZahl').textContent =
     f.eigene + ' kennst du · ' + (f.woerter.length - f.eigene) + ' neu';
+  /* Der Tagesring gehört in den Kopf und wird mit ihm neu gezeichnet — sonst
+     stünde er beim Öffnen des Modus auf dem Stand von gestern. */
+  wzRingZeichnen();
   wzSchritt1();
 }
 

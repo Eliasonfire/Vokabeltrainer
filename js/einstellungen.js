@@ -652,6 +652,76 @@ if (hoerZielWahl) hoerZielWahl.addEventListener('change', (e)=>{
   setzeHoerZiel(e.target.value);
 });
 
+/* ---------- ⭐⭐ Satz- und Wurzelziel (15.09.2026) ----------
+
+   Elias: „ich glaube es wäre gut bei den karteikarten, hören sätze und
+   wurzeln, dass man dort keine zahl hat, jedoch in den einstellungen
+   einstellen kann wie viel das tagesziel ist."
+
+   ⭐ EINE Fassung für beide statt zweimal derselbe Code. Das Hörziel darüber
+   ist bewusst nicht mit umgebaut: es hat eine Eigenheit, die die anderen
+   nicht haben (es zieht die Standzeile im Hörmodus nach). Zwei Ziele, die
+   sich gleich verhalten, gehören zusammen; ein drittes, das es nicht tut,
+   hineinzuzwingen wäre die teurere Vereinfachung.
+   [[allgemeine_regel_statt_listeneintrag]] */
+const ZIEL_FELDER = [
+  { id:'satz',   stufen:['5','10','13','20','30'],  schluessel:'satzZiel',
+    lies:()=> (typeof satzTagesziel === 'function') ? satzTagesziel() : 13,
+    /* Die Standzeile im Satzmodus trägt die Zahl im Text („Tagesziel 2 von
+       13") — ohne Nachziehen behauptet sie die alte, bis der Modus neu
+       geöffnet wird. Dieselbe Falle wie beim Hörziel.
+       [[einstellung_wirkt_nicht_weil_zurueckgelesen]] */
+    nachziehen:()=>{ if (typeof renderUebung === 'function'
+                         && document.getElementById('uebSatz')) renderUebung(); } },
+  { id:'wurzel', stufen:['4','8','12','16','24'],   schluessel:'wurzelZiel',
+    lies:()=> (typeof wurzelTagesziel === 'function') ? wurzelTagesziel() : 8,
+    nachziehen:()=>{ if (typeof wzRingZeichnen === 'function') wzRingZeichnen(); } }
+];
+
+function zeigeZielFeld(z){
+  const wahl = document.getElementById(z.id + 'ZielSelect');
+  const feld = document.getElementById(z.id + 'ZielEigen');
+  if (!wahl || !feld) return;
+  const wert = String(z.lies());
+  const fest = z.stufen.indexOf(wert) >= 0;
+  wahl.value = fest ? wert : 'eigen';
+  feld.hidden = fest;
+  if (!fest) feld.value = wert;
+}
+
+/* Grenzen wie beim Hörziel und aus demselben Grund weit: 1 Aufgabe ist an
+   einem schlechten Tag ein sinnvolles Ziel. Ein leeres oder unsinniges Feld
+   ändert NICHTS — sonst stünde nach einem halb getippten „1" plötzlich ein
+   Einer-Ziel in den Einstellungen. */
+function setzeZielFeld(z, zahl){
+  const n = Math.round(Number(zahl));
+  if (!Number.isFinite(n) || n < 1 || n > 999) return false;
+  SETTINGS[z.schluessel] = n;
+  saveSettings();
+  try { z.nachziehen(); } catch (e){ /* Modus gerade nicht offen */ }
+  if (typeof renderTagesringe === 'function') renderTagesringe();
+  return true;
+}
+
+ZIEL_FELDER.forEach(z => {
+  const wahl = document.getElementById(z.id + 'ZielSelect');
+  const feld = document.getElementById(z.id + 'ZielEigen');
+  if (!wahl || !feld) return;
+  wahl.addEventListener('change', (e)=>{
+    if (e.target.value === 'eigen'){
+      feld.hidden = false;
+      if (!feld.value) feld.value = String(z.lies());
+      feld.focus(); feld.select();
+      return;                       /* erst die Zahl, dann wird gespeichert */
+    }
+    feld.hidden = true;
+    setzeZielFeld(z, e.target.value);
+  });
+  feld.addEventListener('input', (e)=>{ setzeZielFeld(z, e.target.value); });
+  feld.addEventListener('blur', ()=>{ zeigeZielFeld(z); });
+  zeigeZielFeld(z);
+});
+
 const hoerZielFeld = document.getElementById('hoerZielEigen');
 if (hoerZielFeld){
   hoerZielFeld.addEventListener('input', (e)=>{ setzeHoerZiel(e.target.value); });

@@ -127,45 +127,109 @@ function heuteExtraModus(){
   return (tage % 2 === 0) ? 'saetze' : 'hoeren';
 }
 
-function renderHeuteExtra(){
-  const knopf = document.getElementById('heuteExtra');
-  if (!knopf) return;
-  const modus = heuteExtraModus();
-  let stand = null, ziel = null, name, symbol, ziel_nav;
+/* ⭐⭐ DIE TAGESRINGE (15.09.2026) — sie ersetzen die Zeile „Heute zusätzlich".
 
+   Elias' Vorgaben, alle von diesem Abend:
+     „nebeneinander finde ich auch besser, da möchte ich aber, dass erstmal
+      immer die karteikarten stehen und dann abwechselnd halt sätze oder
+      hörmodus"
+     „dass man dort keine zahl hat, jedoch in den einstellungen einstellen kann
+      wie viel das tagesziel ist"
+     „vorschuss sollte so 10% sein"
+
+   ⛔ WARUM 10 % UND NICHT 0. Der Ring startet nicht leer. Belegt ist das durch
+   Nunes & Drèze 2006 (Autowaschkarte): acht leere Stempel gegen zehn mit zwei
+   bereits gefüllten — bei gleicher Arbeit fast die doppelte Abschlussrate. Der
+   Ring darf ermutigen; die Zahl, die zählt, steht in den Einstellungen und
+   bleibt exakt.
+
+   ⛔ EIN ERREICHTES ZIEL ZEIGT EXAKT VOLL. Sonst hiesse „geschafft" plötzlich
+   97 %, und der Vorschuss hätte aus einer Ermutigung eine Lüge gemacht.
+
+   ⚠️ Der Wurzelmodus ist bewusst NICHT dabei — Elias: „später sobald der
+   wurzelmodus mehr geworden ist und wir mehr damit anfangen können (du
+   solltest mir dann auch empfehlen ihn mit einzubinden weil aktuell ja zu
+   wenig vokabeln und damit variation und funktion darunter leiden)". Er hat
+   seinen Ring im Modus selbst. */
+const RING_VORSCHUSS = 0.10;
+
+function ringBogen(anteil){
+  if (!(anteil > 0)) return Math.round(RING_VORSCHUSS * 1000) / 10;
+  if (anteil >= 1) return 100;
+  return Math.round((RING_VORSCHUSS + (1 - RING_VORSCHUSS) * anteil) * 1000) / 10;
+}
+
+/* Ein Ring als Knopf. `nav` führt in den Modus — das war die zweite Aufgabe
+   der alten Zeile, und sie bleibt. */
+function ringKnopf(name, stand, ziel, nav){
+  const voll = (stand !== null && ziel) ? stand >= ziel : false;
+  const anteil = (stand !== null && ziel) ? stand / ziel : 0;
+  return '<button class="tr-feld' + (voll ? ' voll' : '') + '" type="button"'
+    + ' data-nav="' + nav + '"'
+    + ' aria-label="' + name + ': ' + (stand === null ? 'kein Stand' : stand + ' von ' + ziel) + '">'
+    + '<svg viewBox="0 0 40 40" aria-hidden="true">'
+    +   '<circle class="tr-spur" cx="20" cy="20" r="15.9155"></circle>'
+    +   '<circle class="tr-fuell" cx="20" cy="20" r="15.9155" pathLength="100"'
+    +     ' stroke-dasharray="' + ringBogen(anteil) + ' 100"></circle>'
+    +   '<path class="tr-haken" d="M13.5 20.5 18 25 26.5 15.5"></path>'
+    + '</svg><span class="tr-name">' + name + '</span></button>';
+}
+
+function renderTagesringe(){
+  const kasten = document.getElementById('tagesringe');
+  if (!kasten) return;
+
+  /* Karteikarten: Ziel ist, was heute überhaupt angeboten wird. „Geschafft"
+     heisst hier leerer Tagesvorrat — dieselbe Definition wie bei
+     tagesZieleStand() in js/feier.js, damit nicht zwei Stellen verschiedene
+     Antworten auf dieselbe Frage geben. [[dieselbe_frage_zwei_antworten]] */
+  let kStand = null, kZiel = null;
+  if (typeof getUebungstage === 'function' && typeof tagesPool === 'function'){
+    const heute = todayStr(0);
+    kStand = Number((getUebungstage() || {})[heute]) || 0;
+    kZiel = kStand + tagesPool().length;
+    if (!kZiel) kZiel = null;               /* nichts fällig: kein Ziel, kein Ring */
+  }
+
+  /* Der Modus des Tages — dieselbe Abwechslung wie bisher. */
+  const modus = heuteExtraModus();
+  let zStand = null, zZiel = null, zName, zNav;
   if (modus === 'hoeren'){
-    name = 'Hörmodus'; symbol = 'ic-ohr'; ziel_nav = 'hoeren';
+    zName = 'Hören'; zNav = 'hoeren';
     if (typeof hoerTag === 'function' && typeof hoerTagesziel === 'function'){
-      stand = hoerTag().gesamt; ziel = hoerTagesziel();
+      zStand = hoerTag().gesamt; zZiel = hoerTagesziel();
     }
   } else {
-    name = 'Satzmodus'; symbol = 'ic-chat'; ziel_nav = 'sentences';
+    zName = 'Sätze'; zNav = 'sentences';
     if (typeof satzTag === 'function' && typeof satzTagesziel === 'function'){
-      stand = satzTag().gesamt; ziel = satzTagesziel();
+      zStand = satzTag().gesamt; zZiel = satzTagesziel();
     }
   }
 
-  /* ⚠️ Fehlt der Zähler (das Modul ist nicht geladen), wird die Zeile trotzdem
-     gezeigt — nur ohne Stand. Sie ganz wegzulassen hiesse, den Hinweis
-     ausgerechnet dann zu verschlucken, wenn etwas nicht stimmt.
-     [[ausfall_ist_unsichtbar_gebaut]] */
-  const geschafft = (stand !== null && ziel !== null && stand >= ziel);
-  const unten = (stand === null || ziel === null)
-    ? 'Zusätzlich zu den Karteikarten'
-    : geschafft ? `Geschafft — ${stand} von ${ziel}`
-                : `${stand} von ${ziel} · zusätzlich zu den Karteikarten`;
+  /* ⚠️ Fehlt BEIDES, bleibt der Kasten weg. Ein Kasten „Heute" mit zwei leeren
+     Ringen und ohne Zahl sagt nichts — anders als die alte Zeile, die
+     wenigstens einen Hinweis trug. [[leere_liste_ist_keine_messung]] */
+  if (kZiel === null && zZiel === null){ kasten.hidden = true; return; }
 
-  knopf.hidden = false;
-  knopf.classList.toggle('geschafft', geschafft);
-  knopf.dataset.nav = ziel_nav;
-  knopf.innerHTML =
-    '<svg class="ic"><use href="#' + (geschafft ? 'ic-check' : symbol) + '"/></svg>'
-    + '<span class="hx-text">'
-    +   '<span class="hx-titel">Heute zusätzlich: ' + name + '</span>'
-    +   '<span class="hx-sub">' + unten + '</span>'
-    + '</span>'
-    + '<svg class="ic hx-pfeil"><use href="#ic-right"/></svg>';
+  const kVoll = (kStand !== null && kZiel) ? kStand >= kZiel : false;
+  const zVoll = (zStand !== null && zZiel) ? zStand >= zZiel : false;
+  const beides = kVoll && zVoll;
+
+  kasten.hidden = false;
+  kasten.innerHTML =
+    '<div class="tr-kopf"><span class="tr-titel">Heute</span>'
+    + '<span class="tr-sub">' + (beides ? 'beides geschafft' : 'Karteikarten und ' + zName) + '</span></div>'
+    + '<div class="tr-reihe">'
+    +   (kZiel !== null ? ringKnopf('Karteikarten', kStand, kZiel, 'learn-entry') : '')
+    +   (zZiel !== null ? ringKnopf(zName, zStand, zZiel, zNav) : '')
+    + '</div>';
 }
+
+/* ⛔ Der alte Name bleibt als Weiterleitung stehen: renderHeuteExtra() wird
+   aus js/navigation.js und weiter unten in dieser Datei gerufen. Ihn überall
+   umzubenennen hiesse, eine Stelle zu übersehen — und die fiele erst auf,
+   wenn die Ringe irgendwo nicht nachziehen. [[werkzeug_ohne_aufrufer]] */
+function renderHeuteExtra(){ renderTagesringe(); }
 
 /* Die Kapitelliste haengt am Buch: Madina 1 hat 24, Madina 3 hat 35, und
    frueher stand hier fest 1-9.
