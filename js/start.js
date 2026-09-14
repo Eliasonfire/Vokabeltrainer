@@ -381,7 +381,14 @@ function renderQuranRinge(){ renderTagesringe(); }
    [[allgemeine_regel_statt_listeneintrag]]
 
    ⚠️ Verborgen, solange es kein Ziel gibt — nicht „0 %" anzeigen. */
-function modusRingZeichnen(id, stand, ziel){
+/* ⛔ `ohneZahl` für den Lernmodus. Elias mit Bild: „und hier ist es scheinbar
+   doppelt" — dort stand rechts schon „1/10" für die RUNDE, und der Ring
+   schrieb „0/10" für den TAG daneben. Zwei Zahlen im selben Format, die
+   Verschiedenes meinen, sind schlimmer als eine Zahl weniger.
+
+   In den anderen Modi bleibt die Zahl: dort gibt es keine zweite.
+   Was der Ring meint, steht beim langen Drücken (`title`). */
+function modusRingZeichnen(id, stand, ziel, ohneZahl){
   const el = document.getElementById(id);
   if (!el) return;
   if (stand === null || !ziel){ el.hidden = true; return; }
@@ -394,7 +401,7 @@ function modusRingZeichnen(id, stand, ziel){
     + '<circle class="spur" cx="20" cy="20" r="15.9155"></circle>'
     + '<circle class="fuell" cx="20" cy="20" r="15.9155" pathLength="100"'
     + ' stroke-dasharray="' + ringBogen(anteil) + ' 100"></circle></svg>'
-    + '<span>' + stand + '/' + ziel + '</span>';
+    + (ohneZahl ? '' : '<span>' + stand + '/' + ziel + '</span>');
 }
 
 /* Ein Balken für eine Runde. `voll` heisst hier NICHT grün — eine Runde ist
@@ -416,7 +423,8 @@ function lernRingZeichnen(){
   const stand = Number((getUebungstage() || {})[heute]) || 0;
   const deckel = (typeof tagesDeckel === 'function') ? Number(tagesDeckel()) : 0;
   const ziel = deckel > 0 ? deckel : (stand + tagesPool().length);
-  modusRingZeichnen('lernRing', stand, ziel || null);
+  /* ⛔ Ohne Zahl — rechts daneben steht schon „1/10" für die Runde. */
+  modusRingZeichnen('lernRing', stand, ziel || null, true);
 }
 
 /* Die Kapitelliste haengt am Buch: Madina 1 hat 24, Madina 3 hat 35, und
