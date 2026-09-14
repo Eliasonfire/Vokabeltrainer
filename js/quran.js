@@ -356,7 +356,17 @@ function renderSurahList(filter){
   const kamAusSure = OFFENE_SURE !== null;
   const list = SURAH_DATA.filter(s => !q || s.name.toLowerCase().includes(q) || s.ar.includes(q) || String(s.id)===q);
   document.getElementById('quranFullTitle').textContent = 'Quran lesen';
-  document.getElementById('quranFullIntro').classList.remove('hidden');
+  /* ⛔⛔ HIER STAND `quranFullIntro` — und sein Fehlen hat am 15.09.2026 die
+     ganze Surenliste stillgelegt. Die Einleitung darüber ist auf Elias' Wunsch
+     entfallen („das hier kannst du weg machen"); die zwei Zeilen, die sie
+     ein- und ausblendeten, sind mir dabei entgangen. `getElementById()` gab
+     null, `.classList` darauf warf, und die Funktion brach an dieser Stelle
+     ab — vor dem Aufbau der Liste. Ausgeliefert als v482.
+
+     ⚠️ Kein Prüfer hat das gefunden: validate.js kennt die Icon-Verweise
+     (`<use href>`), aber nicht die IDs, die der Code anspricht. Genau das
+     bewacht jetzt `test-element-verweise.mjs`.
+     [[verwiesene_datei_gehoert_dazu]] [[ausfall_ist_unsichtbar_gebaut]] */
   document.getElementById('surahSearch').classList.remove('hidden');
   document.getElementById('surahList').classList.remove('hidden');
   document.getElementById('verseList').classList.add('hidden');
@@ -1503,7 +1513,9 @@ async function openSurah(id, opt){
     `<span class="qt-nr">${id}.</span>` +
     `<span class="qt-ar" lang="ar" dir="rtl">${escapeHtml(surenTitel(surah))}</span>` +
     `<span class="qt-um">${escapeHtml(surah.name)}</span>`;
-  document.getElementById('quranFullIntro').classList.add('hidden');
+  /* ⛔ Zweite Stelle, die auf das entfallene `quranFullIntro` zeigte — sie
+     hätte das Öffnen einer Sure genauso stillgelegt wie die Liste. Siehe den
+     Kommentar bei renderSurahList(). */
   document.getElementById('surahSearch').classList.add('hidden');
   document.getElementById('surahList').classList.add('hidden');
   /* Der Favoritenblock gehoert zur Surenliste und muss mitverschwinden - sonst
