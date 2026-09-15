@@ -176,7 +176,7 @@ const FACHBEGRIFF_VOKABELN = [
   },
   {
     id: 'gram-ta-marbuta',
-    ar: 'تاء مَرْبُوطة',
+    ar: 'تَاء مَرْبُوطَة',
     de: 'die weibliche Endung ة',
     type: 'noun',
     chapter: 'personal',
