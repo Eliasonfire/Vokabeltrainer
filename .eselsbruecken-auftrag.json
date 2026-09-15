@@ -1,0 +1,98 @@
+{
+  "gram-mubtada": {
+    "alt": [
+      "⭐ Der kürzeste Nominalsatz, den du kennst, steht im Gebet: اللَّهُ أَكْبَرُ. اللَّهُ ist der مُبْتَدَأ — das, worum es geht; أَكْبَرُ ist das, was darüber gesagt wird. Kein Verb, und trotzdem ein vollständiger Satz.",
+      "Auch die Fātiḥa fängt so an: الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ (1:2). الْحَمْدُ ist der مُبْتَدَأ und trägt deshalb ein Damma. ⭐ Die Frage beim Lesen lautet immer gleich: Worüber wird hier geredet? Die Antwort ist der مُبْتَدَأ."
+    ]
+  },
+  "gram-khabar": {
+    "alt": [
+      "Die Schahāda ist ein Nominalsatz: مُحَمَّدٌ رَسُولُ اللَّهِ. مُحَمَّدٌ ist der مُبْتَدَأ, رَسُولُ اللَّهِ ist der خَبَر — das, was über ihn ausgesagt wird. Streich den خَبَر weg, und es bleibt nur ein Name übrig, kein Satz.",
+      "Zwei Wörter, ein ganzer Satz: اللَّهُ الصَّمَدُ (112:2), aus einer Sure, die du auswendig kannst. الصَّمَدُ ist der خَبَر. ⭐ Sieh auf die Endungen: beide Wörter tragen ein Damma."
+    ]
+  },
+  "gram-mansub": {
+    "alt": [
+      "Die Namen der drei Fälle sind alle nach demselben Muster gebaut: مَرْفُوع, مَنْصُوب, مَجْرُور. ⭐ Du kennst das Muster schon von مَشْهُورٌ (berühmt) und von deinem eigenen Wort مَكْسُورٌ (kaputt), und deine Karte اِسْمٌ مَجْرُورٌ trägt es im Namen. Ein Muster, und die halbe Grammatikliste liest sich von selbst.",
+      "Ein مَنْصُوب zum Anfassen: إِنَّا أَعْطَيْنَاكَ الْكَوْثَرَ (108:1). الْكَوْثَرَ endet auf Fatha, weil es das ist, was gegeben wurde. Wen oder was? Genau danach fragt der Akkusativ."
+    ]
+  },
+  "gram-harf": {
+    "alt": [
+      "Der Satz, mit dem du jede Sure beginnst, fängt mit einem حَرْف an: بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ. Das بِ ist ein حَرْف — allein bedeutet es nichts, erst am Wort wird es zu „im, mit\". Genau das macht ein حَرْف aus: es steht nie für sich.",
+      "Vier deiner Karten sind حَرْف, und alle vier haben dasselbe Problem: فِي, عَلَى, مِنْ, إِلَى lassen sich einzeln kaum übersetzen. ⭐ Das ist der Test: Kannst du ein Wort allein hinstellen, ist es اِسْم oder فِعْل. Braucht es einen Nachbarn, ist es حَرْف."
+    ]
+  },
+  "gram-fil": {
+    "alt": [
+      "Das erste Wort der Offenbarung ist ein فِعْل: اقْرَأْ بِاسْمِ رَبِّكَ (96:1) — „Lies!\". Ein Befehl ist immer ein فِعْل. ⭐ Und gleich der nächste Vers hat noch einen: خَلَقَ, „er erschuf\".",
+      "In قُلْ أَعُوذُ بِرَبِّ النَّاسِ (114:1) stehen zwei فِعْل direkt nebeneinander: قُلْ ist der Befehl „sag\", أَعُوذُ die Gegenwart „ich nehme Zuflucht\". ⭐ Daran erkennst du ein فِعْل: es hat eine Zeit. Ein اِسْم hat keine."
+    ]
+  },
+  "gram-madd": {
+    "alt": [
+      "Vier deiner Karten zeigen den مَدّ im Schriftbild: كِتَابٌ, بَابٌ, مَاءٌ, سَمَاءٌ. Überall steht ein ا hinter einer Fatha, und überall liest du das a lang. ⭐ Das ا ist hier kein eigener Laut, es ist die Dehnung des Vokals davor.",
+      "سُورَةُ النَّاس, die du auswendig kannst, hämmert es ein: النَّاسِ steht in jedem Vers, und jedes Mal ziehst du das a in die Länge — an-nās. Das ا nach der Fatha ist der مَدّ."
+    ]
+  },
+  "gram-mutabaqa": {
+    "alt": [
+      "An zwei deiner Karten siehst du es nebeneinander: مُدَرِّسٌ جَدِيدٌ (ein neuer Lehrer), aber مَدْرَسَةٌ جَدِيدَةٌ (eine neue Schule). Dasselbe Eigenschaftswort, zweimal anders geschrieben — weil مَدْرَسَةٌ die Tāʾ marbūṭa trägt. Das ist مُطَابَقَة: das zweite Wort zieht mit.",
+      "Auch im Quran: وَامْرَأَتُهُ حَمَّالَةَ الْحَطَبِ (111:4). حَمَّالَةَ trägt die Tāʾ marbūṭa, weil von einer Frau die Rede ist. ⭐ Wer das Geschlecht des ersten Worts kennt, weiß schon, wie das zweite endet."
+    ]
+  },
+  "gram-madi": {
+    "alt": [
+      "Ein Vers zeigt den Baukasten deines Lehrers in einer Zeile: تَبَّتْ يَدَا أَبِي لَهَبٍ — und am Versende noch einmal وَتَبَّ (111:1). Zweimal dasselbe Verb im مَاضِي: einmal mit der Endung ـتْ, einmal ohne. Der Stamm bleibt, nur die Endung wechselt.",
+      "Das Musterwort für „Verb\" steht selbst im مَاضِي: كَيْفَ فَعَلَ رَبُّكَ (105:1) — „wie dein Herr verfuhr\". فَعَلَ ist erledigt, vorbei; genau das heißt اَلْمَاضِي."
+    ]
+  },
+  "gram-tanwin": {
+    "alt": [
+      "Die kürzeste Sure, die du kannst, zeigt beides in zwei Versen: أَحَدٌ (112:1) endet auf zwei Damma — das ist التَّنْوِينُ, du hörst -un. Im Vers danach steht الصَّمَدُ (112:2) mit nur einem Damma. ⭐ Der Unterschied ist das الْ.",
+      "Zähl deine Karten durch: بَيْتٌ, كِتَابٌ, قَلَمٌ, رَجُلٌ — fast alle enden auf zwei Damma. Setz الْ davor, und das zweite fällt weg: وَالْقَلَمُ trägt nur noch eins. التَّنْوِينُ und der Artikel vertragen sich nicht."
+    ]
+  },
+  "gram-kasra": {
+    "alt": [
+      "In قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ (113:1) steht sie dreimal: unter dem بِ, unter dem ب von رَبِّ und am Ende von الْفَلَقِ. ⭐ Das ist der Zusammenhang, den du dir hier merken kannst: steht ein حَرْفُ الْجَرِّ davor, endet das Wort danach auf كَسْرَة.",
+      "Du liest sie längst, ohne sie zu benennen: das i in مِنْ, in فِي, in بِنْتٌ, in رِجْلٌ ist jedes Mal eine كَسْرَة. ⭐ Merk dir die Richtung: Damma und Fatha stehen oben, die كَسْرَة als einzige unten."
+    ]
+  },
+  "gram-taschkil": {
+    "alt": [
+      "Zähl es an einem einzigen deiner Wörter ab: مُدَرِّسٌ trägt ein Damma, eine Fatha, eine Schadda mit Kasra und am Ende das Tanwīn-Damma. Nimm alles davon weg, und es bleibt ein nacktes Gerüst aus vier Buchstaben übrig. Was du weggenommen hast, war تَشْكِيل.",
+      "Der Quran ist der einzige arabische Text, der durchgehend تَشْكِيل trägt — deshalb kannst du سُورَةُ الْإِخْلَاص laut lesen, auch wenn du nicht jedes Wort kennst. In einer arabischen Zeitung steht nichts davon; dort muss man die Wörter schon können."
+    ]
+  },
+  "gram-hamzat-wasl": {
+    "alt": [
+      "Der bekannteste Fall steht in 96:1: اقْرَأْ بِاسْمِ رَبِّكَ. Das Wort dahinter ist اِسْمٌ — deine eigene Karte —, aber nach dem بِ liest du bi-smi, nicht bi-ismi. Das Alif steht noch da, gehört wird es nicht. Das ist die هَمْزَة وَصْل.",
+      "Zwei deiner Karten fangen damit an: اِسْمٌ und اِبْنٌ. Sprichst du sie allein, hörst du das i am Anfang; steht ein Wort davor, fällt es weg. ⭐ Daran erkennst du die هَمْزَة وَصْل: sie ist eine Anlaufhilfe, kein eigener Laut."
+    ]
+  },
+  "gram-jumla-filiya": {
+    "alt": [
+      "سُورَةُ النَّصْر fängt genau so an: إِذَا جَاءَ نَصْرُ اللَّهِ (110:1) — erst جَاءَ (kam), dann نَصْرُ اللَّهِ (Allahs Hilfe). Im Deutschen ginge diese Reihenfolge nicht. ⭐ Steht das Verb vorn, ist es eine جُمْلَة فِعْلِيَّة.",
+      "Zwei Suren, die du kannst, machen den Unterschied auf: In سُورَةُ الْإِخْلَاص folgt auf قُلْ der Satz هُوَ اللَّهُ أَحَدٌ — ein Nomen zuerst, also جُمْلَة اِسْمِيَّة. سُورَةُ النَّصْر dagegen setzt إِذَا جَاءَ an den Anfang — ein Verb, also جُمْلَة فِعْلِيَّة. Das erste Wort entscheidet."
+    ]
+  },
+  "gram-taqdim": {
+    "alt": [
+      "Die Fātiḥa führt es vor: إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ (1:5). Nicht „wir dienen Dir\", sondern „Dir allein dienen wir\" — das إِيَّاكَ steht vor dem Verb, und genau deshalb heißt es „allein\". Das ist تَقْدِيم: was vorn steht, ist betont.",
+      "⭐ Dieselbe Wurzel ق د م steckt in قَدِيمٌ (alt), das du schon hast: was قَدِيم ist, liegt weit vorn in der Zeit. تَقْدِيم ist genau das — etwas nach vorne stellen."
+    ]
+  },
+  "gram-irab": {
+    "alt": [
+      "⭐ Dieselbe Wurzel ع ر ب wie in عَرَبِيَّةٌ (arabisch), das du schon hast. إِعْرَاب heißt so viel wie „deutlich machen\" — und deutlich wird durch die Endung, welche Rolle ein Wort im Satz hat. Ohne sie sieht man es dem Wort nicht an.",
+      "Du hast zwei إِعْرَاب-Karten, ohne es zu merken: حَرْفُ الْجَرِّ und اِسْمٌ مَجْرُورٌ. Die erste ist der Auslöser, die zweite das Ergebnis — und das Ergebnis liest man am Wortende ab. Genau das ist إِعْرَاب."
+    ]
+  },
+  "gram-huruf-schamsiya": {
+    "alt": [
+      "Zwei deiner Länderkarten stehen sich direkt gegenüber: الصِّينُ liest du aṣ-ṣīn — das l ist weg, dafür sitzt eine Schadda auf dem ص. الْهِنْدُ liest du al-hind, mit hörbarem l und einem Sukūn auf dem ل. ⭐ ص gehört zu den حُرُوف شَمْسِيَّة, ه nicht.",
+      "سُورَةُ النَّاس sagt es in jedem Vers: geschrieben steht النَّاسِ, gesprochen an-nās. Das ن schluckt das l und trägt dafür eine Schadda — ein Sonnenbuchstabe, und die Schrift zeigt es selbst."
+    ]
+  }
+}

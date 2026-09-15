@@ -2840,12 +2840,24 @@ main{
    Gemessen unter der Überschrift „Satz-Modus": 12 px Innenabstand plus 20 px
    Außenabstand = 32 px leere Fläche. Hier bleiben 12 px.
 
-   ⛔ Bewusst NUR auf diesem Bildschirm. `.screen-header` trägt alle zehn
-   Bildschirme; dort ist der Abstand kein Problem, sondern Luft. Auf dem
-   Satz-Modus stehen dagegen Kopf, Grammatik-Schalter, zwei Wähler und die
-   Satzkarte übereinander — und genau um diesen Platz ging die ganze
-   Umstellung auf A3/B3. */
-#screen-sentences .screen-header{
+   ⛔ Bewusst NUR auf diesen Bildschirmen. `.screen-header` trägt alle zehn;
+   dort ist der Abstand kein Problem, sondern Luft. Auf dem Satz-Modus stehen
+   dagegen Kopf, Grammatik-Schalter, zwei Wähler und die Satzkarte
+   übereinander — und genau um diesen Platz ging die ganze Umstellung auf
+   A3/B3.
+
+   ⭐ Der Hörmodus ist am 15.09.2026 dazugekommen, mit Bild und demselben
+   Befund: „dieser abstand kann noch gut verringert werden und der rest nach
+   oben rutschen dann." Gemessen bei 375×812 zwischen der Unterkante von
+   „Hörverstehen" und der Oberkante von „Geh-Modus": **42 px**, davon 12 px
+   Innen- und 20 px Außenabstand des Kopfes. Mit derselben Regel wie im
+   Satz-Modus bleiben **22 px** — und alles darunter rutscht um 20 px hoch.
+
+   ⚠️ Dieselben Werte für beide, nicht zwei eigene: sonst laufen zwei
+   Bildschirme mit derselben Absicht auseinander, sobald einer angefasst wird.
+   [[zwei_regeln_selber_selektor]] */
+#screen-sentences .screen-header,
+#screen-hoeren .screen-header{
   margin-bottom:var(--sp-2);
   padding-bottom:var(--sp-1);
 }
@@ -4713,9 +4725,19 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
    0 px, der Strich saß direkt auf der Ḥifẓ-Leiste.
    ⛔ Der Abstand gehört HIER hin, nicht als `padding-top` an die Leiste: die
    gibt es auch ohne Strich (in einer Sure, die nie gelesen wurde), und dann
-   stünde dort eine Lücke ohne Grund. */
+   stünde dort eine Lücke ohne Grund.
+
+   ⭐ Und am 15.09.2026, wieder mit Bild: „der balken kann genau in die mitte
+   von den beiden anderen balken gehen." Gemessen bei 375×812 klebte er oben:
+   0 px zur Kopfzeile, 12 px zur Ḥifẓ-Leiste. Jetzt **6 px zu beiden** — die
+   Hälfte des alten Abstands nach oben und nach unten.
+
+   ⛔ `calc(var(--sp-3) / 2)` statt einer festen 6, damit die Gesamthöhe
+   gleich bleibt UND der Wert in den Media-Queries mitwächst (--sp-3 ist 12,
+   14 und 16 px). Eine harte Zahl hier hieße: auf dem Tablet sitzt er wieder
+   schief. [[allgemeine_regel_statt_listeneintrag]] */
 .lese-strich{height:3px;background:var(--surface-4);overflow:hidden;
-  margin-bottom:var(--sp-3);}
+  margin:calc(var(--sp-3) / 2) 0;}
 .lese-strich > i{display:block;height:100%;background:var(--red-bright);opacity:.8;
   transition:width var(--dur-4,.6s) var(--ease-out);}
 @media (prefers-reduced-motion:reduce){ .lese-strich > i{transition:none;} }

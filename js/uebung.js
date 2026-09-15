@@ -1536,8 +1536,35 @@ function uebungAuswerten(richtig){
      zwoelf der dreizehn Modi — 4367 von 4682 Aufgaben — keinerlei Spur, weil
      nur „Welche Regel?" eine regelId traegt. Elias' Ziel nennt „aufgaben und
      lösungen" ausdruecklich. Ebenfalls HIER und nicht in den Auswertern, aus
-     demselben Grund: kein Modus kann es vergessen. */
-  if (typeof merkeUebung === 'function' && UEB && UEB.modus) merkeUebung(UEB.modus, richtig);
+     demselben Grund: kein Modus kann es vergessen.
+
+     ⛔⛔ DIE ART DER AUFGABE, NICHT DER GEWAEHLTE MODUS (15.09.2026).
+
+     Hier stand bis heute `UEB.modus`. Im gemischten Modus ist das
+     `'gemischt'` — jede Antwort landete unter diesem einen Schluessel, und
+     alle dreizehn Uebungsarten blieben auf „nie" stehen, egal wie oft er sie
+     gerade beantwortet hatte.
+
+     Elias mit Bild der Statistik: „weil heute hab ich wieder 13 gemischte
+     geübt und sehe jetzt das obwohl ich das erste scheinbar nie geübte heute
+     tatsächlich geübt habe und sicherlich noch mehr." Er hatte recht: auf
+     seinem Bild stehen die ersten vier Uebungsarten auf „nie", obwohl der
+     gemischte Durchgang von jeder genau eine stellt.
+
+     `a.modus` traegt die echte Art — uebungenAufbauen() haengt sie an jede
+     Aufgabe (`{ ...a, satz, zeilen, modus:m }`), und uebungModusVon() liest
+     schon seit dem 06.09. genau daraus.
+
+     ⛔ NICHT zusaetzlich unter 'gemischt' mitzaehlen: renderUebungStand()
+     geht allein UEBUNGEN durch, der Eintrag wuerde nie angezeigt — und zwei
+     Zaehler fuer dieselbe Antwort sind zwei Wahrheiten.
+     [[dieselbe_frage_zwei_antworten]] */
+  if (typeof merkeUebung === 'function'){
+    const aM = uebungAktuell();
+    const art = (aM && aM.modus && aM.modus.id) ? aM.modus.id
+              : (UEB && UEB.modus !== UEB_GEMISCHT ? UEB.modus : null);
+    if (art) merkeUebung(art, richtig);
+  }
   /* ⭐ Und die Trefferquote je TAG (07.09.2026) — die Grundlage für den
      Rauschversuch und für jede spätere Frage „hat das etwas gebracht".
      Ebenfalls HIER, aus demselben Grund wie die zwei Zeilen darüber: kein
