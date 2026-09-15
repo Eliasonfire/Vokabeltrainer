@@ -84,7 +84,12 @@ export const PFLEGEPLAN = [
     eingaben: { routine: W, schritt: '1c.1', beleg: '--app auto', werkzeug: 'werkzeuge/vorrat.mjs',
       wie: 'welche Kapitel er freigeschaltet hat, kommt aus seinem abgeglichenen Stand' },
     veralten: { routine: W, schritt: '2', beleg: 'node werkzeuge/baue-vokabelpaket.mjs', werkzeug: 'werkzeuge/baue-vokabelpaket.mjs',
-      wie: 'das Vokabelpaket wird nach dem Abzug neu gebaut' },
+      wie: 'das Vokabelpaket wird nach dem Abzug neu gebaut; das ABFRAGEDATUM der '
+        + 'Freischaltung pflegt vorrat.mjs selbst in werkzeuge/freischaltung-abfrage.json '
+        + '(15.09.2026) — vorher stand es nur als Kommentar in der ausgelieferten '
+        + 'js/kern.js und wurde bei einem Lauf ohne Änderung nicht erneuert, worauf '
+        + 'die Warnung „die Mi/So-Abfrage hat ausgesetzt" jeden Sonntag zu Unrecht kam. '
+        + 'Bewacht von test-freischaltung-abfragemarke.mjs' },
   },
   {
     funktion: 'Fachbegriffe aus dem Unterricht',
