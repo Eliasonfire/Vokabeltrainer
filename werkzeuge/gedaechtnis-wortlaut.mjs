@@ -159,8 +159,23 @@ for (let i = AB; i < zeilen.length; i++) {
      ("habe bereits geändert", "ja mach") laengst zweimal im Gedaechtnis stand.
      Eine Fehlmeldung, die man drei Runden lang nachprueft, ist teurer als die
      Luecke, die sie sucht. [[kandidatenliste_ist_keine_fehlerliste]] */
+  /* ⛔ ERWEITERT 15.09.2026: nicht nur `attach`, sondern JEDE Marke dieser Art.
+     Elias fragte „ist gedächtnis wirklich aktuell?" — und der Lauf meldete vier
+     seiner Sätze als „fehlt ganz", die längst im Vault standen:
+         <!-- reply --> mach
+         <!-- reply --> ja bitte
+         <!-- reply --> hast du fertig gebaut?
+         <!-- reply --> nicht das sondern die regeln
+     Gesucht wurde samt Präfix, und das steht im Gedächtnis natürlich nie.
+     ⚠️ Das Teuerste daran war nicht die Fehlmeldung selbst, sondern dass sie
+     die ECHTEN Lücken verdeckt hat: „9 fehlen" sah nach Systemtexten aus, und
+     drei wirklich fehlende Sätze gingen in derselben Zahl unter.
+     ⛔ Eine Marke steht am ZEILENANFANG, auch wenn Text dahinter folgt —
+     deshalb wird sie herausgeschnitten, nicht die ganze Zeile verworfen.
+     [[kandidatenliste_ist_keine_fehlerliste]] */
   t = t.split(/\r?\n/)
-       .filter(z => !/^\s*<!--\s*attach\s*-->\s*$/.test(z) && !/^\s*>/.test(z))
+       .map(z => z.replace(/^\s*<!--[^>]*-->\s*/, ''))
+       .filter(z => !/^\s*>/.test(z))
        .join('\n').trim();
   if (!t) continue;
   if (t.length > 200 && /\bElias\b/.test(t)) continue;   // eigener Cron-Prompt
