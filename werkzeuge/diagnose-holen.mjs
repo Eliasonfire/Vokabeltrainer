@@ -39,9 +39,22 @@ const namespace = treffer[1];
 const args = process.argv.slice(2);
 const wrangler = ['--yes', 'wrangler@4.120.1'];
 
+/* ⛔ `npx` heisst unter Windows `npx.cmd`, und ein direkt aufgerufenes .cmd
+   wirft seit Node 20 EINVAL — `cmd /c npx` geht durch die Shell und
+   funktioniert. Genau so machen es regeln-holen.mjs, vorschlaege-holen.mjs
+   und veroeffentlichen.mjs; `pruefe-werkzeugaufrufe.mjs` bewacht es.
+
+   ⚠️ Hier stand bis zum 15.09.2026 `execFileSync('npx', …, { shell: true })`.
+   Auf MEINEM Rechner lief das, weil die Shell das .cmd aufloest — auf Elias'
+   nicht zwingend, und der Fehler waere erst aufgetreten, wenn er das Werkzeug
+   selbst braucht. Ein Aufruf, der nur beim Entwickler funktioniert, ist kein
+   funktionierender Aufruf. [[befehle_fuer_elias_powershell]] */
+const WIN = process.platform === 'win32';
+
 function ruf(unter){
-  return execFileSync('npx', [...wrangler, ...unter], {
-    cwd: WURZEL, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], shell: true
+  const args = [...wrangler, ...unter];
+  return execFileSync(WIN ? 'cmd' : 'npx', WIN ? ['/c', 'npx', ...args] : args, {
+    cwd: WURZEL, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe']
   });
 }
 

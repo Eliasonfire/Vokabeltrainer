@@ -97,6 +97,23 @@ const SPEICHER_AUSNAHMEN = {
   'vt_zeit':          'stille Zeitmessung (08.09.2026) — absichtlich nicht in der Oberflaeche; abgerufen mit zeitBericht() im Browser-Pane',
   'vt_quranEn':       'Zwischenspeicher der englischen Uebersetzung von api.quran.com — abgerufener Fremdtext, kein Lernstand. Er gehoert absichtlich NICHT auf andere Geraete: jedes holt sich beim Lesen selbst, was es braucht, und ein Abgleich wuerde nur Text hin- und herschieben, den die API ohnehin liefert. Verworfen wird er von selbst (QURAN_EN_MAX in js/quran.js)',
   'vt_wortQuote':     'Q3, Trefferquote je Wort (08.09.2026) — absichtlich NICHT angezeigt, genau darin liegt ihr Wert; ausgewertet mit wortQuoteBericht() im Browser-Pane, das die Interferenzfrage beantwortet (Woerter mit Wurzelgeschwistern gegen Einzelgaenger)',
+  /* ---- Die drei Schluessel aus der Nacht der Ringe (15.09.2026) ----
+
+     ⛔⛔ Sie standen hier NICHT, und das war kein Streit ueber Zustaendigkeit,
+     sondern schlicht vergessen: gebaut in der Nacht, eingetragen erst, als
+     dieser Pruefer sie meldete. Genau die Regel aus Vokabeltrainer\\CLAUDE.md
+     — neue Funktion = Pflegeplan im selben Zug — und sie wurde verfehlt,
+     obwohl sie seit dem 11.09. dasteht. [[werkzeug_ohne_aufrufer]] */
+  'vt_wurzelTag':     'Tageszaehler des Wurzelmodus (15.09.2026) — wie vt_satzTag und vt_hoerTag ein reiner App-Zustand: er zaehlt, was heute im Wurzelmodus lief, und wird vom Ring im Kopf der Seite selbst gelesen (wzRingZeichnen in js/wurzel.js). ⚠️ Der Wurzelmodus hat auf Elias\' Wunsch noch KEINEN Ring auf dem Startbildschirm („mach im wurzelmodus selbst einen ring aber noch nicht in der heute ansicht bzw startbildschirm") — sobald er dazukommt, liest ihn auch renderTagesringe()',
+  'vt_suraGelesen':   'welche Sure wann zuletzt gelesen wurde (15.09.2026) — er wird sehr wohl ausgewertet, nur nicht von einem Werkzeug: wdhVorrat() und wdhHeute() in js/quran.js bauen daraus die Wiederholungsrunde, und zwei der Quran-Ringe auf dem Startbildschirm zeigen sein Ergebnis. Gefuellt wird er vom Lesebeobachter, wenn der LETZTE Vers sichtbar war',
+  /* ⭐⭐ Der einzige der drei, fuer den eine Ausnahme NICHT gereicht haette.
+     Elias hat die Messung ausdruecklich bestellt: „du sollst messen wie oft
+     ich täglich meinen soll pro tag erfülle und wie viel davon ausgefüllt ist
+     täglich aber nicht mir sagen in app sondern nur messen." Wer nur sammelt
+     und nie nachsieht, hat den Auftrag zur Haelfte erfuellt — und zwar der
+     Haelfte, die man nicht sieht. Deshalb gibt es jetzt den Bericht.
+     [[zwischenstand_wird_nicht_mitgebaut]] */
+  'vt_zielverlauf':   'der stille Zielverlauf (15.09.2026) — je Tag und Bereich [stand, ziel], 120 Tage. Absichtlich NICHT in der Oberflaeche, genau das war Elias\' Vorgabe; ausgewertet mit zielverlaufBericht() im Browser-Pane, das je Bereich zeigt, an wie vielen Tagen das Ziel erfuellt war und wie weit der Ring im Schnitt kam. Dieselbe Lage wie vt_zeit und vt_wortQuote: die Daten entstehen beim Ueben und liegen in seinem localStorage, ein Werkzeug hier koennte sie gar nicht lesen',
   'vt_geraetId':      'trennt die Zeitzweige der Geraete; wird bewusst NICHT abgeglichen und hat ausserhalb der App keine Bedeutung',
   /* ⛔ Kein Werkzeug kann ihn lesen, und das ist kein Versaeumnis: er entsteht
      beim UEBEN und liegt nur in Elias' localStorage. Dasselbe gilt fuer

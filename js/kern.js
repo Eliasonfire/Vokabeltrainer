@@ -444,15 +444,23 @@ function savePersonalVocab(){ LS.set('vt_personalVocab', PERSONAL_VOCAB); }
    Markierung traegt — egal aus welchem Modus.
 
    ⭐ Gemessen am 15.09.2026 im laufenden Browser ueber alle 4602 Aufgaben:
-   **1431 zaehlen** (315 mit eigener `regelId` aus „Welche Regel?", 1116 ueber
-   die Markierung), **3171 nicht** — dort steht an der gefragten Stelle keine.
+   **1714 zaehlen** (315 mit eigener `regelId` aus „Welche Regel?", 1399 ueber
+   die Markierung), **2888 nicht** — dort steht an der gefragten Stelle keine
+   oder eine mehrdeutige.
 
-   ⛔ Fuenf Modi zahlen auf GAR KEINE Regel ein, und das ist kein Zufall:
-   mubtada-khabar (415), jarr-paar (167), alle-majrur (121), nat (93) und
-   idafa (56) fragen seit dem 15.09. nach MEHREREN Stellen auf einmal und
-   tragen deshalb `ziele:[…]` statt `wortIdx` — uebungRegelVon() steigt bei
-   fehlendem `wortIdx` sofort aus. 852 Aufgaben ohne Spur. Steht als offener
-   Punkt in der To-Do. [[zwischenstand_wird_nicht_mitgebaut]]
+   ⛔ Fuenf Modi zahlten am selben Tag fuenf Stunden lang auf GAR KEINE Regel
+   ein: mubtada-khabar (415), jarr-paar (167), alle-majrur (121), nat (93) und
+   idafa (56) sind auf Mehrfachauswahl umgestellt worden und tragen seitdem
+   `ziele:[…]` statt `wortIdx` — uebungRegelVon() stieg bei fehlendem
+   `wortIdx` sofort aus. 852 Aufgaben ohne Spur, ohne dass irgendetwas kaputt
+   aussah. Behoben am 15.09.2026: die Funktion versteht jetzt `ziele` und
+   verlangt, dass ALLE auf dieselbe Regel zeigen. Vorher 1431 (31,1 %),
+   nachher 1714 (37,2 %) — davon mubtada-khabar 180, idafa 35, alle-majrur 32,
+   jarr-paar 19, nat 17. Bewacht von `test-eindeutige-ziele.mjs`.
+   [[zwischenstand_wird_nicht_mitgebaut]]
+
+   ⚠️ Die restlichen 2888 sind KEIN Codefehler, sondern fehlende Markierungen
+   im Material — eigener Punkt in der To-Do.
 
    ⭐ Am 19.08.2026 nachgemessen: dieser eine Modus erreicht **94 der 95
    Regeln**. Hier stand vorher 73, und das war der Stand VOR der

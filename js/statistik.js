@@ -201,13 +201,13 @@ function renderRegelStand(){
   /* ⛔ Der Satz stimmte bis zum 15.09.2026 und stimmt seitdem nicht mehr:
      seit `uebungRegelVon()` zahlt auch eine Aufgabe aus jedem anderen Modus
      auf ihre Regel ein, wenn die gefragte Stelle eine eindeutige Markierung
-     traegt. Gemessen am 15.09. über alle 4602 Aufgaben: **1431 zählen** (315
-     aus „Welche Regel?", 1116 über die Markierung), 3171 nicht — bei ihnen
-     steht an der gefragten Stelle gar keine.
-     ⚠️ Fünf Modi zählen auf GAR KEINE Regel ein, weil sie nach mehreren
-     Stellen auf einmal fragen und dann kein einzelner Text mehr passt:
-     Satzteile, Naʿt, Iḍāfa, Präposition+Majrūr und „alle Majrūr". Das steht
-     als offener Punkt in der To-Do. */
+     traegt. Gemessen am 15.09. über alle 4602 Aufgaben: **1714 zählen** (315
+     aus „Welche Regel?", 1399 über die Markierung), 2888 nicht — bei ihnen
+     steht an der gefragten Stelle keine oder eine mehrdeutige.
+     ⚠️ Die fünf Modi mit Mehrfachauswahl zählten am selben Tag fünf Stunden
+     lang gar nicht mit (852 Aufgaben); seit uebungRegelVon() auch `ziele`
+     versteht, tun sie es wieder. Dass zwei Drittel offen bleiben, liegt am
+     Material und steht als eigener Punkt in der To-Do. */
   + '<div class="regel-hinweis">' + geuebt.length + ' von 94 abfragbaren Regeln geübt. '
   + 'Gezählt wird jede Aufgabe, deren gefragte Stelle zu genau einer Regel gehört — '
   + 'nicht nur die aus <b>„Welche Regel?“</b>. Bei rund zwei Dritteln der Aufgaben '

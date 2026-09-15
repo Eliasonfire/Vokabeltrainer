@@ -217,7 +217,23 @@ console.log('\n5. Der Wurzelmodus fasst den Lernstand nicht an');
   const quelle = nurCode(fs.readFileSync(new URL('./js/wurzel.js', import.meta.url), 'utf8'));
   pruefe('kein saveProgress()', quelle.indexOf('saveProgress') < 0);
   pruefe('kein Schreiben in PROGRESS', !/PROGRESS\s*\[[^\]]*\]\s*=/.test(quelle));
-  pruefe('kein LS.set', quelle.indexOf('LS.set') < 0);
+  /* ⛔ Bis zum 15.09.2026 stand hier „kein LS.set" — ueberhaupt keins. Das war
+     richtig, solange der Wurzelmodus gar nichts speicherte. Seit der Nacht der
+     Ringe hat er einen eigenen Tageszaehler (`vt_wurzelTag`), weil Elias ihn
+     bestellt hat: „der wurzelmodus sollte anfangen daten zu speichern."
+
+     ⚠️ Die Zusicherung wird deshalb GENAUER statt aufgehoben: er darf seinen
+     eigenen Tageszaehler schreiben und sonst nichts. Ein Test, den man bei
+     jeder neuen Funktion einfach weglaesst, bewacht am Ende nichts mehr —
+     ein Test, der die erlaubte Ausnahme benennt, bewacht weiterhin alles
+     andere. [[regel_gilt_nur_mit_begruendung]] */
+  const schreibt = [...quelle.matchAll(/LS\.set\(\s*['"]([^'"]+)['"]/g)].map(x => x[1]);
+  const ERLAUBT = new Set(['vt_wurzelTag']);
+  const verboten = schreibt.filter(k => !ERLAUBT.has(k));
+  pruefe('LS.set nur auf vt_wurzelTag — sonst nichts',
+    verboten.length === 0, verboten.join(', ') || '(keins)');
+  pruefe('und der Tageszaehler wird wirklich geschrieben',
+    schreibt.indexOf('vt_wurzelTag') >= 0, schreibt.join(', ') || '(keins)');
 }
 
 console.log(`\n${ok} bestanden, ${schlecht} gescheitert.`);
