@@ -146,3 +146,12 @@ data/bestandsbelege.json
 .fachbegriffe-auftrag.json
 werkzeuge/.stoer-*
 .stoer-*
+
+# ⭐ Die Abfragemarke der Freischaltung (15.09.2026). Sie haelt fest, wann
+# `vorrat.mjs` zuletzt `get_unlocked_chapters` ABGEFRAGT hat — nicht, wann sich
+# die Liste zuletzt geaendert hat; das steht im Kommentar in js/kern.js.
+# ⛔ Bewusst NICHT im Repo: sie aendert sich zweimal die Woche auf jedem
+# Rechner, der die Wartung laeuft, und waere damit ein Dauerkonflikt ohne
+# jeden Nutzen. Fehlt sie, gilt der Kommentar in js/kern.js — die Messung wird
+# dann pessimistisch, aber nie falsch in die andere Richtung.
+werkzeuge/freischaltung-abfrage.json

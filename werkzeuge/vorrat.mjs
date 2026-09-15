@@ -136,7 +136,22 @@ function freischaltungLesen(){
     if (m) frei[m[1]] = m[2].split(',').map(x => Number(x.trim()))
                             .filter(n => !Number.isNaN(n)).sort((a, b) => a - b);
   });
-  const datum = (block[1].match(/abgefragt am ([0-9.]+)/) || [])[1] || 'unbekannt';
+  const ausKern = (block[1].match(/abgefragt am ([0-9.]+)/) || [])[1] || 'unbekannt';
+
+  /* ⭐ ZWEI DATEN, UND DAS JÜNGERE GILT — seit dem 15.09.2026.
+     `js/kern.js` sagt, wann die LISTE zuletzt anders war; die Marke daneben
+     sagt, wann zuletzt ABGEFRAGT wurde. Vorher gab es nur das erste, und ein
+     Lauf ohne Änderung sah aus wie ein ausgefallener Lauf. Warum die Marke
+     nicht in js/kern.js gehört, steht bei `abfrageVermerken()`. */
+  const marke = abfrageMarkeLesen();
+  let datum = ausKern, herkunft = 'js/kern.js';
+  if (marke && marke.abgefragt){
+    const tKern = tageSeit(ausKern), tMarke = tageSeit(marke.abgefragt);
+    if (tMarke !== null && (tKern === null || tMarke < tKern)){
+      datum = marke.abgefragt; herkunft = 'Abfragemarke';
+    }
+  }
+
   /* ⛔ Das Datum allein warnt nicht — es steht nur da, und niemand rechnet.
      Die Routine zieht Mi/So nach; faellt das aus, altert der Stand still und
      neu freigeschaltete Kapitel tauchen nie im Vorrat auf.
@@ -147,7 +162,48 @@ function freischaltungLesen(){
   const tage = tageSeit(datum);
   if (tage === null) standWarnung = -1;      // unlesbar ist auch ein Befund
   else if (tage > 8) standWarnung = tage;
-  return { frei, datum, standWarnung };
+  return { frei, datum, standWarnung, herkunft, datumKern: ausKern };
+}
+
+/* ---------- Die Abfragemarke ----------
+
+   ⛔ Sie steht bewusst NICHT in js/kern.js: das ist eine ausgelieferte Datei,
+   und ein Kommentar, den zweimal die Woche eine neue App-Version transportiert,
+   ist Auslieferung ohne Gegenwert. Hier daneben kostet sie nichts.
+
+   ⚠️ Sie ist ein Zusatz, kein Ersatz. Fehlt sie (frischer Klon, anderer
+   Rechner), gilt weiterhin der Kommentar in js/kern.js — die Messung wird dann
+   wieder pessimistisch, aber nie falsch in die andere Richtung. */
+const ABFRAGE_MARKE = p('werkzeuge/freischaltung-abfrage.json');
+
+function abfrageMarkeLesen(){
+  try {
+    if (!fs.existsSync(ABFRAGE_MARKE)) return null;
+    return JSON.parse(fs.readFileSync(ABFRAGE_MARKE, 'utf8'));
+  } catch (e){
+    /* ⛔ Eine kaputte Marke darf den Lauf nicht anhalten — sie ist eine
+       Zusatzinformation. Aber stillschweigend übergehen wäre auch falsch. */
+    console.log('  ⚠️ Abfragemarke unlesbar (' + e.message + ') — es gilt js/kern.js.');
+    return null;
+  }
+}
+
+function abfrageVermerken(){
+  const heute = new Date().toLocaleDateString('de-DE');
+  const inhalt = {
+    _zweck: 'Wann wurden die freigeschalteten Kapitel zuletzt ABGEFRAGT? Nicht, '
+      + 'wann sie sich zuletzt geaendert haben — das steht im Kommentar in '
+      + 'js/kern.js. Geschrieben von werkzeuge/vorrat.mjs bei jedem Lauf, der '
+      + 'die Quellen wirklich erreicht hat.',
+    abgefragt: heute,
+    quelle: 'arabicroots get_unlocked_chapters' + (ARG.includes('--app') ? ' + App-Auswahl' : ''),
+  };
+  try {
+    ersetzeDatei(ABFRAGE_MARKE, JSON.stringify(inhalt, null, 2) + '\n',
+      { grund: 'Abfragemarke der Freischaltung.' });
+  } catch (e){
+    console.log('  ⚠️ Abfragemarke nicht schreibbar (' + e.message + ') — kein Abbruch.');
+  }
 }
 
 /* ⭐⭐ ZWEI QUELLEN, UND DIE GROESSERE GILT
@@ -762,7 +818,19 @@ function hatKategorie(w){
 }
 
 /* ---------- Hauptteil ---------- */
-const { frei, datum, standWarnung } = freischaltungLesen();
+const { frei, datum, standWarnung, herkunft, datumKern } = freischaltungLesen();
+
+/* ⭐ Der Zusatz zur Standzeile, einmal gebaut statt zweimal abgeschrieben.
+   Er sagt jetzt auch, WORAUS das Datum stammt — sonst liest man „Freischaltstand
+   15.9." und denkt, die Liste habe sich geändert. Sie hat nicht; nur die Abfrage
+   lief. [[widerspruch_liegt_in_der_beschriftung]] */
+const standZusatz = standWarnung === -1
+  ? ' — ⛔ DATUM UNLESBAR, Alter unbekannt'
+  : standWarnung
+    ? ' — ⚠️ ' + standWarnung + ' Tage alt, die Mi/So-Abfrage hat ausgesetzt'
+    : (herkunft === 'Abfragemarke' && datum !== datumKern
+        ? ' — zuletzt abgefragt, Liste unverändert seit ' + datumKern
+        : '');
 
 if (iStand >= 0){
   const quelle = ARG[iStand + 1];
@@ -894,6 +962,32 @@ if (iStand >= 0){
       neu[b] = [...new Set([...(neu[b] || []), ...fehlend])].sort((x, y) => x - y);
     });
   }
+
+  /* ⭐⭐ DIE ABFRAGE HAT STATTGEFUNDEN — das wird JETZT vermerkt, nicht erst,
+     wenn sich etwas geändert hat.
+
+     ⛔ DER ANLASS (gefunden im Wartungslauf am 13.09.2026): Der Lauf hatte
+     `get_unlocked_chapters` an dem Tag abgefragt. Weil die Liste dieselbe
+     blieb, stieg die Funktion unten mit `process.exit(0)` aus, ohne
+     js/kern.js anzufassen — dort stand weiter „abgefragt am 19.8.2026". Und
+     `vorrat.mjs --knapp` hängte daran die Warnung „⚠️ 25 Tage alt, die
+     Mi/So-Abfrage hat ausgesetzt". **Die war falsch: die Abfrage lief.**
+
+     ⚠️ Eine Warnung, die bei jedem Lauf ohne Änderung erscheint, wird beim
+     dritten Mal überlesen — und dann auch dort, wo sie recht hat.
+     [[kennzeichen_mit_zwei_ursachen]]
+
+     ⛔⛔ WARUM NICHT EINFACH DEN KOMMENTAR IN js/kern.js ERNEUERN: das ist
+     eine AUSGELIEFERTE Datei. Jede Änderung verlangt einen CACHE_NAME-Bump und
+     eine Auslieferung — zweimal die Woche eine neue App-Version wegen eines
+     Kommentars, den kein Nutzer je sieht. Ein Abfragedatum ist eine
+     Wartungsinformation, kein App-Inhalt, und gehört deshalb daneben.
+
+     ⚠️ Der Kommentar in js/kern.js bleibt trotzdem stehen: er ist der
+     Rückfallwert auf einem Rechner, der diese Marke nicht hat, und er sagt
+     weiterhin, wann die LISTE zuletzt anders war. Gelesen wird das jüngere von
+     beiden. */
+  abfrageVermerken();
 
   const aenderungen = [];
   new Set([...Object.keys(alt), ...Object.keys(neu)]).forEach(b => {
@@ -1437,8 +1531,8 @@ if (KNAPP){
     ? ', ' + Object.entries(jeFeld).sort((a, b) => b[1] - a[1]).map(([f, n]) => n + '× ' + f).join(', ')
     : '';
   console.log(offen.length
-    ? `Vorrat: ${offen.length} von ${geprueft} freigeschalteten Woertern unvollstaendig — ${fehlendeEB} Eselsbruecken, ${fehlendeSatz} Beispielsaetze, ${fehlendeMark} Markierungen, ${fehlendeKat} Kategorien${felderText}. (Freischaltstand ${datum}${standWarnung === -1 ? ' — ⛔ DATUM UNLESBAR, Alter unbekannt' : standWarnung ? ' — ⚠️ ' + standWarnung + ' Tage alt, die Mi/So-Abfrage hat ausgesetzt' : ''})`
-    : `Vorrat: alle ${geprueft} freigeschalteten Woerter sind nach allen 13 Punkten des vollen Programms vollstaendig. (Freischaltstand ${datum}${standWarnung === -1 ? ' — ⛔ DATUM UNLESBAR, Alter unbekannt' : standWarnung ? ' — ⚠️ ' + standWarnung + ' Tage alt, die Mi/So-Abfrage hat ausgesetzt' : ''})`);
+    ? `Vorrat: ${offen.length} von ${geprueft} freigeschalteten Woertern unvollstaendig — ${fehlendeEB} Eselsbruecken, ${fehlendeSatz} Beispielsaetze, ${fehlendeMark} Markierungen, ${fehlendeKat} Kategorien${felderText}. (Freischaltstand ${datum}${standZusatz})`
+    : `Vorrat: alle ${geprueft} freigeschalteten Woerter sind nach allen 13 Punkten des vollen Programms vollstaendig. (Freischaltstand ${datum}${standZusatz})`);
   /* ⛔ Auch die knappe Fassung traegt den Nenner — sie ist die, die in den
      Routinenbericht wandert, und dort faellt eine Luecke sonst nie auf. */
   if (UNGEMESSEN_SUMME && fehlendeAngabe.length)

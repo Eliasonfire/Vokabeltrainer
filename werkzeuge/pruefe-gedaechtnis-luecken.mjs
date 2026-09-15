@@ -101,6 +101,49 @@ try {
 }
 console.log('  ' + zeilen.length + ' Commit(s) ' + FENSTER + '.');
 
+/* ⛔⛔ „`git log` LIEF UND FAND NICHTS" IST NICHT „`git log` GING NICHT".
+ *
+ * Gefunden im Wartungslauf am 13.09.2026: der Prüfer wurde **jeden Sonntag
+ * rot**, ohne dass irgendetwas kaputt war. Der Sonntagslauf feuert um 13:00,
+ * und an dem Tag war um diese Zeit noch nichts committet. Dann ist
+ * `zeilen.length === 0` — und zwei Störtest-Proben, die es gut meinen, fallen
+ * durch: „git log hat etwas geliefert" und „ein Hash, der dasteht, wird auch
+ * gefunden". Ergebnis: Exitcode 1, „diese Messung sagt nichts".
+ *
+ * ⚠️ Das war formal richtig und praktisch schädlich. Ein Prüfer, der
+ * regelmäßig rot wird, ohne dass etwas zu tun ist, wird beim dritten Mal
+ * überlesen — und dann auch an dem Tag, an dem er recht hat.
+ * [[kandidatenliste_ist_keine_fehlerliste]]
+ *
+ * ⛔ Der Störtest wird dafür NICHT weichgespült. Er ist absichtlich streng
+ * ([[pruefwerkzeug_mit_eingebauter_antwort]]), und eine gelockerte Schwelle
+ * wäre genau der Fehler, vor dem er selbst warnt. Stattdessen wird der Fall
+ * getrennt: ein echter Fehler von `git log` fliegt oben in den catch und endet
+ * mit Exit 2. Kommt die Abfrage durch und liefert null Zeilen, gibt es
+ * schlicht nichts zu prüfen.
+ *
+ * ⭐ Was trotzdem geprüft wird, weil es auch ohne Commits etwas aussagt: dass
+ * die Notizen wirklich gelesen wurden, und dass die Suche überhaupt etwas
+ * NICHT finden kann. Fällt eine davon durch, ist das ein Befund — auch an
+ * einem Tag ohne Commit. */
+if (!zeilen.length){
+  console.log('\n=== Stoertest (die zwei Proben, die ohne Commits etwas aussagen) ===');
+  let s = 0;
+  const sP = (was, ist, soll) => { if (ist !== soll){ s++; console.log('  ⛔  ' + was
+    + ': ' + JSON.stringify(ist)); } else console.log('  ok   ' + was); };
+  sP('ein erfundener Hash steht nicht im Gedaechtnis', text.includes('0000000'), false);
+  sP('die Notizen wurden wirklich gelesen (>= 100k Zeichen)', text.length > 100000, true);
+  if (s){
+    console.log('\n⛔ Der Stoertest greift nicht — diese Messung sagt nichts.');
+    process.exit(1);
+  }
+  console.log('\n✅ Nichts zu pruefen: seit ' + (TAGE ? FENSTER : 'Mitternacht')
+    + ' wurde nichts committet.');
+  console.log('   ⚠️ Das ist KEINE Aussage darueber, ob das Gedaechtnis aktuell ist —');
+  console.log('   nur darueber, dass es hier nichts nachzutragen gibt.');
+  process.exit(0);
+}
+
 const fehlend = [];
 for (const z of zeilen){
   const [hash, wann, betreff] = z.split('\t');
