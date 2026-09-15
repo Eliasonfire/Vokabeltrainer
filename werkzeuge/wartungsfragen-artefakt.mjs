@@ -30,6 +30,28 @@
  * und Städtenamen. Als 48 Einzelfragen ist das eine halbe Stunde; als vier
  * Abschnitte mit „alle auswählen" sind es zwei Minuten.
  *
+ * ==========================================================================
+ * ⛔⛔ DIE ARTEFAKT-URL UNTEN IST TOT (gemessen 15.09.2026, gegen 04:23)
+ *
+ * `724ee9bc-adb7-4dcd-ad75-6a56a552adbd` gibt es nicht: `Artifact action:read`
+ * antwortet „artifact not found", und in `Artifact action:list` (25 eigene
+ * Artefakte) steht sie nicht. Sie ist entweder gelöscht oder wurde nie
+ * veröffentlicht.
+ *
+ * ⚠️ **Das heißt: Elias hat diese Fragenseite nie gesehen.** Jeder Lauf meldet
+ * seit Wochen brav „zum Veröffentlichen … DIESELBE URL wiederverwenden", und
+ * die Zeile zeigt ins Leere. Genau die Sorte Ausfall, die sich nie selbst
+ * meldet: alles sieht richtig aus, es passiert nur nichts.
+ * [[ausfall_ist_unsichtbar_gebaut]] · [[deploy_meldet_erfolg_ohne_produktion]]
+ *
+ * ⛔ NICHT einfach eine neue anlegen: der Vermerk „keine neue anlegen" steht
+ * hier, weil Elias keinen Artefakt-Wildwuchs will. Ob es eine neue Seite geben
+ * soll, ist seine Entscheidung — der Punkt steht auf seiner Liste, mitsamt dem
+ * Hinweis, dass die Seite gebaut in `artefakte/` liegt und einen Klick
+ * entfernt ist. Wer die neue URL hat, ersetzt sie an allen SIEBEN Stellen:
+ * hier 2×, in `werkzeuge/wartet-auf-elias.mjs` 4×, im Wartungs-Prompt 1×.
+ *
+ * ==========================================================================
  * ⛔ EIGENER SPEICHERSCHLUESSEL: 'wartungsfragen-v1'.
  * NICHT 'regelpruefung-v1' (dort liegen seine 55 Regelurteile), nicht
  * 'regelkandidaten-v1', nicht 'satzmodus-auswahl-v1'. Zwei Seiten auf einem
