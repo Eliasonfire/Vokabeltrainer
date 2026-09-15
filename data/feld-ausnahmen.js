@@ -136,12 +136,19 @@ const FELD_AUSNAHMEN = {
 
 const FELD_ERGAENZUNGEN = {
   '0e23a52d-e2f5-4a57-9082-58eb9f362d88': { type: 'adverb' },
-  '59e30a8a-e400-4380-8adf-89e811852a1d': { root: 'ل ح م', type: 'noun' },
-  'p_1787183484954': { type: 'adjective' },
-  'p_1787185012359': { root: 'س و د', type: 'noun' },
+  '45802': { pl: 'مِيَاه / أَمْوَاه / أَمْوَاء' },
+  '45841': { pl: 'مَكَاوٍ' },
+  '45851': { pl: 'قَهَوَات / قَهَاوٍ' },
+  '59e30a8a-e400-4380-8adf-89e811852a1d': { gender: 'masculine', pl: 'لُحُوم / لِحَام / لِحْمَان / لُحْمَان / أَلْحُم', root: 'ل ح م', sg: 'لَحْمٌ', type: 'noun' },
+  'a540cdfa-cbaf-4d63-8250-b0b664d3b2b9': { root: 'ص ف ر' },
+  'p_1787183484954': { root: 'ك س ر', type: 'adjective' },
+  'p_1787185012359': { gender: 'masculine', pl: 'سَادَةٌ', root: 'س و د', sg: 'سَيِّدٌ', type: 'noun' },
   'p_1787185031977': { type: 'noun' },
+  'p_1787188396011': { type: 'particle' },
+  'p_1787189022107': { root: 'ك ي ف', type: 'particle' },
+  'p_1787189287368': { root: 'ء م م' },
   'p_1787189845886': { root: 'خ ر ج', type: 'verb' },
-  'p_1787190874749': { root: 'ع ن د' },
+  'p_1787190874749': { root: 'ع ن د', type: 'particle' },
   'p_1787191371934': { root: 'ك س ل', type: 'adjective' }
 };
 
@@ -173,7 +180,10 @@ const FELD_ERGAENZUNGEN = {
 
 const FELD_ZWEIFEL = {
   'p_1787183484954': { type: 'von Elias bestritten am 15.9.2026 — مَكْسُورٌ (Kaputt)' },
+  'p_1787188396011': { type: 'von Elias bestritten am 15.9.2026 — بَعْدَ ((von) nach / danach)' },
+  'p_1787189022107': { type: 'von Elias bestritten am 15.9.2026 — كَيْفَ (Wie)' },
   'p_1787189845886': { type: 'von Elias bestritten am 15.9.2026 — خَرَجَ (Herausgehen/ herauskommen)' },
+  'p_1787190874749': { type: 'von Elias bestritten am 15.9.2026 — عِنْدَ (Bei)' },
   'p_1787191371934': { type: 'von Elias bestritten am 15.9.2026 — كَسْلَانُ (Faul)' }
 };
 
