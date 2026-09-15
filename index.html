@@ -4213,15 +4213,10 @@ button:disabled{cursor:default;}
   background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-3);
   padding:var(--sp-6) var(--sp-4);text-align:center;
 }
-/* ⭐ Linksbündig seit dem 15.09.2026. Elias mit Bild auf „1 von 1 richtig":
-   „das kannst du ganz nach links machen." Die Karte ist zentriert (das Wort
-   gehört in die Mitte), die Kopfzeile darüber nicht — dort stehen Quote links
-   und Ring rechts, und beide haben einen festen Platz statt in der Mitte zu
-   wandern, sobald die Zahl zweistellig wird.
-   ⚠️ `margin-bottom` ist entfallen: den Abstand nach unten setzt jetzt der
-   Balken (`.hoer-balken`), sonst addierten sich zwei Lücken. */
-.hoer-stand{color:var(--text-dim);font-size:var(--fs-sm);font-variant-numeric:tabular-nums;
-  text-align:left;}
+/* ⛔ `.hoer-stand` ist am 15.09.2026 entfallen — mitsamt der Zeile
+   „N von M richtig", für die sie da war. Elias: „ohne richtig oder falsch
+   einfach nur balken mit 1/10". Die Kopfzeile trägt jetzt die Rundenleiste,
+   und die bringt ihre eigene Ausrichtung mit. */
 .hoer-play{
   width:96px;height:96px;border-radius:var(--r-full);border:none;cursor:pointer;
   background:var(--red-wash);color:var(--red-bright);
@@ -4768,13 +4763,18 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 .modus-ring.voll{color:var(--green);}
 @media (prefers-reduced-motion:reduce){ .modus-ring .fuell{transition:none;} }
 
-/* Die Rundenbalken in Satz- und Hörmodus. Im Lernmodus gibt es ihn schon. */
+/* Der Rundenbalken im Satzmodus. Lern- und Hörmodus teilen sich
+   `.learn-topbar` bzw. `.hoer-kopfzeile` und brauchen ihn nicht. */
 .ueb-balken{margin-top:var(--sp-2);}
-/* ⚠️ Unten mehr Luft als oben: darunter kommt der Lautsprecher, und der
-   stand dem Balken zu nah. Elias mit Bild: „abstand hier ist etwas klein." */
-.hoer-balken{margin-top:var(--sp-2);margin-bottom:var(--sp-4);}
-.hoer-kopfzeile{display:flex;align-items:center;gap:var(--sp-2);}
-.hoer-kopfzeile .hoer-stand{flex:1;min-width:0;}
+/* Die Rundenleiste im Hörmodus: Balken und Zahl in einer Zeile, Aufbau und
+   Abstände wie `.learn-topbar` im Lernmodus — Elias: „genau so wie bei den
+   karteikarten." `.progress-track` bringt `flex:1` schon mit.
+   ⚠️ Der Abstand nach unten steht hier und NICHT mehr an einer eigenen
+   `.hoer-balken`-Regel: darunter kommt der Lautsprecher, und der stand dem
+   Balken zu nah („abstand hier ist etwas klein"). Zwei Regeln für denselben
+   Abstand hatten sich davor addiert. */
+.hoer-kopfzeile{display:flex;align-items:center;gap:var(--sp-3);
+  margin-top:var(--sp-2);margin-bottom:var(--sp-4);}
 
 /* ---- Tagesring im Wurzelmodus (15.09.2026) ----
    Klein und still: er steht zwischen „Familie 2 von 7" und den Punkten, wo
@@ -5465,11 +5465,14 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         </button>
         <div class="progress-track"><div class="progress-fill" id="learnProgressFill"></div></div>
         <span class="learn-count" id="learnCount">0/0</span>
-        <!-- ⭐ Der Tagesring im Lernmodus (15.09.2026). Der Balken daneben
-             zeigt die RUNDE (20 Karten), dieser Ring den TAG — zwei
-             verschiedene Zeiträume, und genau deshalb stehen beide da.
-             Elias: „der Ring fürs Tagesziel kommt in alle vier Modi." -->
-        <span class="modus-ring" id="lernRing" hidden></span>
+        <!-- ⛔ Hier stand am 15.09.2026 für drei Stunden ein Tagesring neben
+             dem Balken. Elias mit Bild, beide rot umrandet: „hier sind ring
+             und balken, ring soll raus."
+             Die Begründung dafür war nicht falsch (Balken = diese Runde,
+             Ring = heute), sie war nur ein Unterschied, den beim Üben
+             niemand macht. Die Zahl rechts sagt schon, wie weit er ist.
+             ⛔ Wer wieder einen Ring einbauen will: erst nachsehen, ob im
+             selben Blick bereits eine Zahl steht. Hier tut sie das. -->
       </div>
 
       <div class="card-stage" id="cardStage">
@@ -6185,18 +6188,25 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
       </div>
 
       <div class="hoer-karte" id="hoerKarte">
-        <!-- ⭐ Stand, Ring und Balken (15.09.2026). Der Hörmodus ist der
-             Sonderfall: er hat KEINE Runde — die Fragen werden aus dem ganzen
-             Wortschatz gewürfelt und gehen nie aus. Elias wollte den Balken
-             trotzdem: „es soll einen balken geben und genau das soll das
-             tagesziel abbilden." Ring und Balken zeigen hier also dasselbe,
-             und das ist seine ausdrückliche Entscheidung: „ich glaube das ist
-             überall so aber das ist auch denke ich okay so." -->
+        <!-- ⭐ Die Rundenleiste — genau wie bei den Karteikarten (15.09.2026).
+             Elias mit Bild der alten Kopfzeile: „mach es hier einfach genau so
+             wie bei den karteikarten. ohne richtig oder falsch einfach nur
+             balken mit 1/10 und dann geht es hoch normal wie bei krateikarten."
+
+             ⛔ Weg sind damit DREI Dinge, die alle dasselbe sagten: die Quote
+             „1 von 1 richtig", der Ring und die getrennte Balkenzeile.
+             Und „richtig" war ohnehin die falsche Größe — beim Üben zählt,
+             wie weit er ist, nicht wie gut. Die Trefferquote steht weiterhin
+             in der Statistik, sie ist nicht gelöscht, nur nicht mehr hier.
+
+             ⚠️ `learn-count` ist mit Absicht dieselbe Klasse wie im
+             Lernmodus, nicht Schlamperei: „genau so" heißt auch dieselbe
+             Mindestbreite und dieselbe Ziffernstellung — sonst springt die
+             Leiste, sobald die Zahl zweistellig wird. -->
         <div class="hoer-kopfzeile">
-          <div class="hoer-stand" id="hoerStand"></div>
-          <span class="modus-ring" id="hoerRing" hidden></span>
+          <div class="progress-track"><div class="progress-fill" id="hoerBalken"></div></div>
+          <span class="learn-count" id="hoerCount">0/0</span>
         </div>
-        <div class="progress-track hoer-balken"><div class="progress-fill" id="hoerBalken"></div></div>
         <button class="hoer-play" id="btnHoerPlay" aria-label="Nochmal hören">
           <svg class="ic"><use href="#ic-speaker"/></svg>
         </button>

@@ -473,16 +473,62 @@ function modusBalkenZeichnen(id, stand, ziel){
   el.style.width = ringBogen(Math.min(stand / ziel, 1)) + '%';
 }
 
-/* Der Tagesring im Lernmodus. Dieselbe Rechnung wie auf dem Startbildschirm —
-   deshalb hier und nicht in js/lernen.js: eine Quelle für „Karten pro Tag". */
-function lernRingZeichnen(){
-  if (typeof getUebungstage !== 'function' || typeof tagesPool !== 'function') return;
-  const heute = todayStr(0);
-  const stand = Number((getUebungstage() || {})[heute]) || 0;
-  const deckel = (typeof tagesDeckel === 'function') ? Number(tagesDeckel()) : 0;
-  const ziel = deckel > 0 ? deckel : (stand + tagesPool().length);
-  /* ⛔ Ohne Zahl — rechts daneben steht schon „1/10" für die Runde. */
-  modusRingZeichnen('lernRing', stand, ziel || null, true);
+/* ⛔⛔ DER TAGESRING IM LERNMODUS IST WEG (15.09.2026, 03:00).
+
+   Elias mit Bild der Kopfzeile, Ring und Balken rot umrandet:
+       „hier sind ring und balken, ring soll raus"
+
+   Er hat recht, und es war mein Fehler aus der Nacht davor: die Lernleiste mit
+   „1/10" stand dort längst, und ich habe einen Ring danebengesetzt, weil der
+   Auftrag „in alle vier Modi" lautete. Zwei Anzeigen nebeneinander für
+   denselben Blick sind keine doppelte Information, sondern geteilte
+   Aufmerksamkeit — der Balken gewinnt, weil er die Zahl schon trägt.
+
+   ⚠️ Die Rechnung war nicht falsch (Ring = Tag, Balken = Runde). Sie war nur
+   ein Unterschied, den beim Üben niemand macht. [[zwei_regeln_selber_selektor]]
+
+   ⛔ Wer hier wieder einen Ring einbauen will: erst nachsehen, ob im selben
+   Blick schon eine Zahl steht. Im Lernmodus und im Hörmodus tut sie das.
+   [[zwei_regeln_selber_selektor]] */
+
+/* ⭐ DIE RUNDENLEISTE — Balken und Zahl, eine Funktion für beide Modi.
+
+   Elias am 15.09.2026 zum Hörmodus, mit Bild:
+       „mach es hier einfach genau so wie bei den karteikarten. ohne richtig
+        oder falsch einfach nur balken mit 1/10 und dann geht es hoch normal
+        wie bei krateikarten"
+
+   „Genau so" heißt wörtlich genommen: dieselbe Rechnung, nicht nur dasselbe
+   Aussehen. Deshalb steht sie hier einmal statt zweimal abgeschrieben — sonst
+   laufen die beiden beim nächsten Anfassen auseinander, und zwar lautlos.
+
+   ⚠️ Balken und Zahl zeigen absichtlich VERSCHIEDENE Werte:
+     · der Balken den ERLEDIGTEN Anteil (`erledigt / ziel`),
+     · die Zahl die LAUFENDE Nummer (`erledigt + 1`).
+   Beim Betrachten von Karte 1 sind null Karten geschafft — der Balken steht
+   also am Anfang, die Zahl sagt trotzdem „1/10". Das ist kein Widerspruch,
+   sondern der Grund, warum es zwei Angaben gibt. So stand es im Lernmodus seit
+   jeher; der Hörmodus übernimmt es hiermit unverändert.
+
+   ⚠️ Die Zahl wird bei `ziel` gedeckelt. Der Lernmodus braucht das nicht (eine
+   Runde ist endlich), der Hörmodus schon: dort gehen die Fragen nie aus, und
+   ohne Deckel stünde nach dem Tagesziel „13/10". Der Balken deckelt aus
+   demselben Grund über `Math.min(…, 1)`.
+
+   ⛔ Nicht mit `modusBalkenZeichnen()` zusammenlegen: die versteckt ihren
+   Elternknoten, wenn kein Ziel gesetzt ist. Im Lernmodus wäre dieser
+   Elternknoten die ganze Kopfzeile — mitsamt dem Knopf zum Beenden. */
+function rundenLeiste(balkenId, zahlId, erledigt, ziel){
+  const balken = document.getElementById(balkenId);
+  /* ⭐ Der Vorschuss (Nunes & Drèze 2006) steckt in `ringBogen()`: bei 0 sind
+     es 10 %. Elias: „und generell alle leisten die einen forstschirtt zeigen
+     lasse sie bereits etwas ausgefüllt haben nicht nur bei 0." */
+  if (balken) balken.style.width =
+    (ziel ? ringBogen(Math.min(erledigt / ziel, 1)) : ringBogen(0)) + '%';
+  const zahl = zahlId && document.getElementById(zahlId);
+  if (zahl) zahl.textContent = ziel
+    ? Math.min(erledigt + 1, ziel) + '/' + ziel
+    : '';
 }
 
 /* Die Kapitelliste haengt am Buch: Madina 1 hat 24, Madina 3 hat 35, und

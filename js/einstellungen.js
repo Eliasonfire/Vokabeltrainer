@@ -630,11 +630,18 @@ function setzeHoerZiel(zahl){
   if (!Number.isFinite(n) || n < 1 || n > 999) return false;
   SETTINGS.hoerZiel = n;
   saveSettings();
-  /* ⚠️ Die Standzeile im Hörmodus trägt die Zahl im Text („Tagesziel 2 von
-     5"). Ohne dieses Nachziehen behauptet sie die alte Zahl weiter, bis der
-     Modus neu geöffnet wird — der Klassiker: die Einstellung wirkt, aber man
-     sieht es nicht, und das sieht aus wie ein Fehler. */
-  if (typeof hoerStandSchreiben === 'function' && document.getElementById('hoerStand')) hoerStandSchreiben();
+  /* ⚠️ Die Rundenleiste im Hörmodus trägt die Zahl im Text („2/5"). Ohne
+     dieses Nachziehen behauptet sie die alte Zahl weiter, bis der Modus neu
+     geöffnet wird — der Klassiker: die Einstellung wirkt, aber man sieht es
+     nicht, und das sieht aus wie ein Fehler.
+
+     ⛔ Der Wächter fragt nach `hoerCount`, nicht mehr nach `hoerStand`: die
+     Standzeile ist am 15.09.2026 entfallen (Elias: „ohne richtig oder falsch
+     einfach nur balken mit 1/10"). Stünde hier weiter der alte Name, wäre die
+     Bedingung für immer falsch und dieses Nachziehen lautlos abgeschaltet —
+     kein Fehler, keine Meldung, nur eine Zahl, die nicht mitgeht.
+     [[wirkung_an_der_quelle_stilllegen]] */
+  if (typeof hoerStandSchreiben === 'function' && document.getElementById('hoerCount')) hoerStandSchreiben();
   return true;
 }
 

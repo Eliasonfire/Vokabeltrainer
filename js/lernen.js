@@ -392,17 +392,20 @@ function renderCard(){
 
   renderNotiz(w);
 
-  document.getElementById('learnCount').textContent = `${SESSION.idx+1}/${SESSION.words.length}`;
-  /* ⭐ Der Vorschuss gilt auch hier (15.09.2026). Elias: „und generell alle
-     leisten die einen forstschirtt zeigen lasse sie bereits etwas ausgefüllt
-     haben nicht nur bei 0." Die Runde beginnt also nicht bei einem leeren
-     Strich, sondern bei einem Zehntel. */
-  document.getElementById('learnProgressFill').style.width =
-    (typeof ringBogen === 'function'
-      ? ringBogen(SESSION.idx / SESSION.words.length)
-      : (SESSION.idx / SESSION.words.length) * 100) + '%';
-  /* Der Tagesring neben der Rundenleiste: Balken = diese Runde, Ring = heute. */
-  if (typeof lernRingZeichnen === 'function') lernRingZeichnen();
+  /* ⭐ Balken und Zahl kommen seit dem 15.09.2026 aus EINER Funktion
+     (`rundenLeiste()` in js/start.js) — der Hörmodus hat dieselbe Leiste
+     bekommen, und Elias' Auftrag dort lautete wörtlich „mach es hier einfach
+     genau so wie bei den karteikarten". „Genau so" hält nur, wenn es eine
+     Rechnung ist und nicht zwei gleich aussehende.
+     Der Vorschuss („nicht nur bei 0") steckt darin.
+
+     ⛔ Hier stand vom 15.09.2026, 00:xx bis 03:xx zusätzlich ein Tagesring.
+     Elias mit Bild, beide Anzeigen rot umrandet: „hier sind ring und balken,
+     ring soll raus." Er hatte recht — die Zahl stand ja schon daneben.
+
+     ⚠️ `rundenLeiste` ist hier immer da: js/start.js steht in index.html VOR
+     js/lernen.js, und beide sind klassische Skripte ohne `defer`. */
+  rundenLeiste('learnProgressFill', 'learnCount', SESSION.idx, SESSION.words.length);
 
   stufenVorschau();
   renderTippfeld(w);
