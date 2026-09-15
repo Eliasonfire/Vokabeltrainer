@@ -824,7 +824,7 @@ const GRAMMAR_RULES = [
     id: "taschkil-kontext-01",
     satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     ausgeblendet: true,   /* Elias 26.08.2026: aus dem Satzmodus. NICHT loeschen. */
-    name: "تشكيل und Kontext (gleiches Schriftbild)",
+    name: "تَشْكِيل und Kontext (gleiches Schriftbild)",
     shortExplanation: "Zwei Wörter können identisch geschrieben sein und trotzdem Verschiedenes bedeuten: رَجُلٌ rajulun »Mann« und رِجْلٌ rijlun »Bein« – ohne Taschkīl sieht man keinen Unterschied. Genauso مَدْرَسَة madrasa »Schule« und مُدَرِّسَة mudarrisa »Lehrerin«. Deshalb muss man oft auf den Kontext schauen.",
     color: "other",
     source: { folge: 9, video: "Folge 09", approxTimestamp: "46:25", chapter: 6 }
