@@ -420,6 +420,12 @@ const PRUEFER = [
      Tipp-Aufgaben. Sein Auftrag dazu: „sorge auch dafür das bei ähnlichen
      aufgaben, ähnliche fehler nicht stattfinden." Das ist dieser Prüfer. */
   ['test-eindeutige-ziele.mjs', []],
+  /* ⛔ Neu am 15.09.2026. Die drei Quran-Ringe auf dem Startbildschirm nannten
+     eine Sure und fuehrten auf die Liste aller 114. Elias mit Bild: „ich will
+     das die jeweiligen koran suren mich direkt zu den jeweiligen suren
+     bringt." Faellt das `sure`-Feld spaeter weg, bricht nichts sichtbar —
+     der Knopf landet nur wieder einen Bildschirm zu frueh. */
+  ['test-surenringe.mjs', []],
 
   /* ⛔ Neu am 06.09.2026. Der Hifz-Stand ist das Einzige in dieser App, das
      Elias sich WIRKLICH erarbeitet hat — auswendig gelernte Suren. Er lief

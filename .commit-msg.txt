@@ -1,0 +1,62 @@
+Alle Ringe in einem Kasten, al-Mulk taeglich, kein Ton beim Betreten (v490)
+
+Fuenf Ansagen von Elias, alle aus derselben halben Stunde nach dem Ausliefern
+von v489.
+
+1. "ich finde die sollten einfach bei heute stehen und mach noch eine extra
+   fuer mulk (die soll taeglich sein)"
+
+Die Quran-Ringe standen in einem eigenen Kasten unter "Heute" - jetzt sind sie
+drin. Dazu al-Mulk als eigener TAEGLICHER Ring, ausserhalb der Rotation: er
+liest sie ohnehin jeden Tag, der Ring haelt nur fest, ob es heute schon war.
+
+⚠️ Damit koennen fuenf Ringe zusammenkommen (Karteikarten, Modus, Mulk,
+Wiederholen, Neu lernen). Gemessen bei 375 px: ab vier werden sie von 76 auf
+61 px verkleinert, ab fuenf bricht die Reihe in zwei Zeilen um. Kein Ueberlauf.
+
+2. "und du sollst messen wie oft ich taeglich meinen soll pro tag erfuelle und
+   wie oft wie viel davon ausgefuellt ist taeglich aber nicht mir sagen in app
+   sondern nur messen"
+
+Neu: vt_zielverlauf. Je Tag und je Ziel zwei Zahlen - Stand und Ziel, nicht
+ein Anteil: aus 0,9 liesse sich nicht mehr sagen, ob es 9/10 oder 27/30 waren.
+⛔ Angezeigt wird davon NICHTS. Der Uebungskalender zaehlt Karten; diese
+Messung zaehlt Zielerfuellung, und das ist etwas anderes. 120 Tage Fenster.
+
+3. "ich will wenn ich auf den hoermodus gehe das es nicht direkt abspielt
+   sondern erst dann wenn ich auf den ton button drauf druecke"
+
+Das erste Wort nach dem Betreten bleibt stumm. ⚠️ Nur das erste - ab dem
+zweiten spielt es weiter von selbst, sonst waere der Modus ein Knopfdruecken
+zwischen zwei Knopfdruecken. Was er abgestellt haben wollte, ist der Ton, der
+losgeht, waehrend man noch ankommt. Gemessen: beim Betreten 0 Aufrufe der
+Sprachausgabe, nach dem Knopfdruck 1.
+
+4. "die beschreibung kann weg" (Geh-Modus) und "das muss auch ncith da stehen"
+   (Tagesziel 1 von 10)
+
+Beide raus. Die Tagesziel-Zeile sagte dasselbe wie der Ring daneben - sie war
+der Zustand einer Stunde, in der es den Ring noch nicht gab. Die Trefferquote
+bleibt: die steht in keinem Ring.
+
+5. "abstand hier ist etwas klein"
+
+Zwischen Hoer-Balken und Lautsprecher: war 8 px, jetzt 16.
+
+AUSSERDEM GEMESSEN, NICHT GEAENDERT
+
+Elias: "mache karteikarten fuer mich fuer heute auf erledigt weil das habe ich
+getan." Sein Lernstand aus dem Cloudflare-Abgleich gelesen:
+
+    2026-09-13: 10 Karten
+    2026-09-14:  9 Karten      (Deckel 10)
+
+Es sind neun, nicht zehn - der Ring hat recht. ⛔ Nichts eingetragen: eine
+erfundene Karte im Lernstand waere genau die Sorte Zahl, der man spaeter
+glaubt. [[zahlen_ohne_beleg]]
+
+validate.js 37/0 · pruefe-pflegeplan gruen · beide Testlaeufe gruen.
+Hifz-, Favoriten- und Wiederholungsstand des Vorschaufensters vor und nach
+jeder Probe geprueft, unveraendert.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>

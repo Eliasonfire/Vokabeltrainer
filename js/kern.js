@@ -438,8 +438,21 @@ function savePersonalVocab(){ LS.set('vt_personalVocab', PERSONAL_VOCAB); }
    Aufbau: { <regel-id>: { gestellt, richtig, zuletzt } }. Mehr braucht es
    nicht; die Trefferquote ergibt sich daraus und altert nicht.
 
-   ⚠️ Gespeist wird das NUR aus dem Uebungsmodus „Welche Regel?" — die
-   anderen zwoelf fragen Rollen und Faelle ab, keine benannte Regel.
+   ⚠️ Das galt bis zum 15.09.2026: „Gespeist wird das NUR aus dem
+   Uebungsmodus „Welche Regel?"". Seit `uebungRegelVon()` (js/uebung.js) zahlt
+   jede Aufgabe auf ihre Regel ein, deren gefragte Stelle eine EINDEUTIGE
+   Markierung traegt — egal aus welchem Modus.
+
+   ⭐ Gemessen am 15.09.2026 im laufenden Browser ueber alle 4602 Aufgaben:
+   **1431 zaehlen** (315 mit eigener `regelId` aus „Welche Regel?", 1116 ueber
+   die Markierung), **3171 nicht** — dort steht an der gefragten Stelle keine.
+
+   ⛔ Fuenf Modi zahlen auf GAR KEINE Regel ein, und das ist kein Zufall:
+   mubtada-khabar (415), jarr-paar (167), alle-majrur (121), nat (93) und
+   idafa (56) fragen seit dem 15.09. nach MEHREREN Stellen auf einmal und
+   tragen deshalb `ziele:[…]` statt `wortIdx` — uebungRegelVon() steigt bei
+   fehlendem `wortIdx` sofort aus. 852 Aufgaben ohne Spur. Steht als offener
+   Punkt in der To-Do. [[zwischenstand_wird_nicht_mitgebaut]]
 
    ⭐ Am 19.08.2026 nachgemessen: dieser eine Modus erreicht **94 der 95
    Regeln**. Hier stand vorher 73, und das war der Stand VOR der

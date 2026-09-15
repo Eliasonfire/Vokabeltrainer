@@ -200,18 +200,21 @@ const setzeSerie = s => { c.speicher['vt_streak'] = s; c.toasts = []; };
     tage2.length === 5, tage2.length + ' Tage: ' + tage2.join(', '));
 }
 
-/* ---------- 7. Der Erklaertext steht in der App ---------- */
-/* ⛔ Der Anlass des ganzen Auftrags: beides war gebaut und fuer Elias
-   unsichtbar. Faellt der Satz weg, ist die Funktion wieder nicht vorhanden. */
-{
-  const statistik = fs.readFileSync(path.join(WURZEL, 'js', 'statistik.js'), 'utf8');
-  pruefe('der Uebungskalender erklaert den Toleranztag',
-    /Lässt du einen Tag aus, läuft die Serie trotzdem weiter/.test(statistik),
-    'Satz fehlt in js/statistik.js');
-  pruefe('der Uebungskalender nennt den Tagesbeginn um 8 Uhr',
-    /Ein Tag beginnt um 8 Uhr morgens/.test(statistik),
-    'Satz fehlt in js/statistik.js');
-}
+/* ---------- 7. Der Erklaertext ist WEG, und das ist Absicht ---------- */
+/* ⛔⛔ Hier standen bis zum 15.09.2026 zwei Pruefungen: dass der
+   Uebungskalender den Toleranztag erklaert und den Tagesbeginn um 8 Uhr
+   nennt. Der Anlass war richtig — beides war gebaut und fuer Elias
+   unsichtbar.
+
+   Am 15.09.2026 hat er den Block abbestellt, mit Bild: „das kannst du
+   entfernen." Damit ist der Auftrag erfuellt, nicht zurueckgenommen: er
+   kennt die Regeln jetzt, der Text kostete nur noch Platz.
+
+   ⚠️ Die Pruefungen sind geloescht und nicht etwa umgedreht. Ein Pruefer, der
+   das FEHLEN eines Satzes erzwingt, verbietet jede spaetere Erklaerung an
+   dieser Stelle — und das hat Elias nicht gesagt. Was bleibt, ist diese
+   Notiz: wer den Absatz wieder einbaut, soll vorher wissen, dass er schon
+   einmal dastand und abbestellt wurde. [[regel_gilt_nur_mit_begruendung]] */
 
 /* ---------- 8. ⛔ Nur die Karteikarten schreiben die Serie fort ---------- */
 /* Elias am 14.09.2026: „und die streak wird auch nur fortgesetzt wenn das

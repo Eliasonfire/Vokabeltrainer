@@ -282,7 +282,9 @@ function renderTagesringe(){
      Der Vorschuss gilt trotzdem — sonst stünden hier als einzige Ringe der
      App leere Kreise. */
   const surenRing = r =>
-    '<button class="tr-feld' + (r.voll ? ' voll' : '') + '" type="button" data-nav="' + r.nav + '">'
+    '<button class="tr-feld' + (r.voll ? ' voll' : '') + '" type="button"'
+    + (r.sure ? ' data-surering="' + r.sure + '"' : ' data-nav="' + r.nav + '"')
+    + ' aria-label="' + r.txt.replace('<br>', ': ') + (r.voll ? ', heute gelesen' : '') + '">'
     + '<svg viewBox="0 0 40 40" aria-hidden="true">'
     +   '<circle class="tr-spur" cx="20" cy="20" r="15.9155"></circle>'
     +   '<circle class="tr-fuell" cx="20" cy="20" r="15.9155" pathLength="100"'
@@ -304,11 +306,29 @@ function renderTagesringe(){
     merkeZielstand(teil, r.voll ? 1 : 0, 1);
   });
 
+  /* ⭐ Die Unterzeile sagt jetzt, WO er steht — nicht mehr „dein Tag".
+
+     Elias mit Bild der Kopfzeile: „hier sollte sowas wie aufgaben oder so
+     stehen, oder was denkst du sollte da stehen?" — „dein Tag" war eine
+     Floskel: sie stand immer da und änderte sich nie, also trug sie nichts.
+
+     Stattdessen die einzige Zahl, die an dieser Stelle etwas beantwortet:
+     wie viele der Ringe darunter schon voll sind. Sie ändert sich mit jeder
+     erledigten Sache und passt genau zu dem, was direkt darunter steht.
+
+     ⛔ Kein Widerspruch zu „keine Zahl an den Ringen" (Elias am 14.09.): die
+     Zahlen dort waren pro Modus und lenkten vom Ring ab. Das hier ist die
+     Übersicht über alle — und sie ersetzt eine Floskel, sie kommt nicht
+     zusätzlich. */
+  const vollZahl = (kZiel !== null && kVoll ? 1 : 0) + (zZiel !== null && zVoll ? 1 : 0)
+                 + quran.filter(r => r.voll).length;
+
   kasten.hidden = false;
   kasten.className = 'tagesringe' + (anzahl >= 4 ? ' viele' : '');
   kasten.innerHTML =
     '<div class="tr-kopf"><span class="tr-titel">Heute</span>'
-    + '<span class="tr-sub">' + (alles ? 'alles geschafft' : 'dein Tag') + '</span></div>'
+    + '<span class="tr-sub">' + (alles ? 'alles geschafft' : vollZahl + ' von ' + anzahl)
+    + '</span></div>'
     + '<div class="tr-reihe">'
     +   (kZiel !== null ? ringKnopf('Karteikarten', kStand, kZiel, 'learn-entry') : '')
     +   (zZiel !== null ? ringKnopf(zName, zStand, zZiel, zNav) : '')
@@ -353,22 +373,60 @@ function quranRingDaten(){
   /* ⭐ Al-Mulk TÄGLICH — eigener Ring, nicht in der Rotation. Elias' Vorgabe:
      „mach noch eine extra für mulk (die soll täglich sein)". Er liest sie
      ohnehin jeden Tag; der Ring hält fest, ob es heute schon war. */
-  if (HIFZ[67]) ringe.push({ txt: 'Täglich<br>Al-Mulk', voll: gelesen(67) });
+  if (HIFZ[67]) ringe.push({ txt: 'Täglich<br>Al-Mulk', voll: gelesen(67), sure: 67 });
 
   /* Die Rotation über alles andere, was auswendig sitzt. */
   const wdh = wdhHeute();
-  if (wdh) ringe.push({ txt: 'Wiederholen<br>' + name(wdh.sure), voll: wdh.erledigt });
+  if (wdh) ringe.push({ txt: 'Wiederholen<br>' + name(wdh.sure), voll: wdh.erledigt, sure: wdh.sure });
 
   /* Die Sure, die gerade gelernt wird. */
   const fav = (typeof wdhFavorit === 'function') ? wdhFavorit() : null;
-  if (fav) ringe.push({ txt: 'Neu lernen<br>' + name(fav), voll: gelesen(fav) });
+  if (fav) ringe.push({ txt: 'Neu lernen<br>' + name(fav), voll: gelesen(fav), sure: fav });
 
+  /* ⛔⛔ JEDER Quran-Ring trägt seine Sure — `sure` oben, nicht nur `nav`.
+
+     Bis zum 15.09.2026 stand hier allein `nav: 'quranfull'`. Alle drei Ringe
+     landeten damit auf der Surenliste, und Elias musste genau die Sure, die
+     der Ring gerade nennt, dort von Hand suchen. Er mit Bild: „ich will das
+     die jeweiligen koran suren mich direkt zu den jeweiligen suren bringt."
+
+     Ein Ring, der eine Sure NENNT, muss sie auch ÖFFNEN. `nav` bleibt als
+     Rückfallweg stehen: fehlte `sure` einmal, führt der Knopf wenigstens noch
+     auf die Liste statt ins Leere. */
   return ringe.map(r => Object.assign(r, { nav: 'quranfull' }));
 }
 
 /* ⛔ Bleibt als Weiterleitung: merkeWiederholung() in js/quran.js ruft sie,
    und der Aufruf soll nicht ins Leere gehen, wenn die Ringe umziehen. */
 function renderQuranRinge(){ renderTagesringe(); }
+
+/* ⭐⭐ Ein Quran-Ring öffnet SEINE Sure (15.09.2026)
+
+   Elias mit Bild vom Startbildschirm: „ich will das die jeweiligen koran suren
+   mich direkt zu den jeweiligen suren bringt."
+
+   ⛔ Am `document`, nicht am Kasten: `#tagesringe` wird bei jedem Anstrich per
+   innerHTML neu befüllt, und `renderTagesringe()` läuft auch, bevor diese
+   Datei fertig geladen ist. Ein Handler am Kasten selbst überlebt das zwar
+   (das Element bleibt), aber er hinge an einer Reihenfolge, die niemand
+   bewacht. Die Delegation am Dokument ist derselbe Weg, den [data-nav] in
+   js/navigation.js geht.
+
+   ⚠️ Der Knopf trägt ENTWEDER data-surering ODER data-nav, nie beides —
+   sonst schöbe der Handler in js/navigation.js zusätzlich `quranfull` in die
+   Historie, und die Gerätetaste „zurück" landete zweimal hintereinander auf
+   der Surenliste statt auf dem Startbildschirm. */
+document.addEventListener('click', async (e)=>{
+  const knopf = e.target.closest('[data-surering]');
+  if (!knopf) return;
+  const id = Number(knopf.dataset.surering);
+  if (!id) return;
+  /* Erst der Bildschirm, dann die Sure — genau wie in oeffneVersImLeser()
+     (js/lernen.js). openSurah() allein zeigt nichts an, solange der
+     Quran-Bildschirm nicht sichtbar ist. */
+  if (typeof showScreen === 'function') showScreen('quranfull');
+  if (typeof openSurah === 'function') await openSurah(id);
+});
 
 /* ---------- ⭐⭐ Die Tagesringe IN den Modi (15.09.2026) ----------
 

@@ -32,9 +32,21 @@ console.log('test-satz-tagesziel.mjs — das Tagesziel im Satzmodus\n');
 
 /* ---------- 1. Die Zahl steht in der Quelle und ist begründet ---------- */
 {
-  const m = uebung.match(/const SATZ_TAGESZIEL\s*=\s*(\d+)/);
-  pruefe('SATZ_TAGESZIEL steht in js/uebung.js', !!m, String(m));
+  /* ⛔ Bis zum 15.09.2026 hiess die Zahl `SATZ_TAGESZIEL` und war fest. Seit
+     Elias das Ziel in den Einstellungen verstellen kann („jedoch in den
+     einstellungen einstellen kann wie viel das tagesziel ist") ist daraus
+     `SATZ_ZIEL_VORGABE` plus die Funktion `satzTagesziel()` geworden.
+
+     ⚠️ Der Test hat das nicht mitbekommen und war seitdem rot — und, schlimmer,
+     er hat in dieser Zeit AUFGEHOERT, die Feier-Bedingung weiter unten zu
+     bewachen: sie sucht denselben alten Namen. Ein Test, der am falschen
+     Namen scheitert, prueft nicht mehr, was er soll. [[ausfall_ist_unsichtbar_gebaut]] */
+  const m = uebung.match(/const SATZ_ZIEL_VORGABE\s*=\s*(\d+)/);
+  pruefe('SATZ_ZIEL_VORGABE steht in js/uebung.js', !!m, String(m));
   pruefe('und ist 13 — eine Aufgabe je Übungsart', m && Number(m[1]) === 13, m && m[1]);
+  pruefe('satzTagesziel() liest Elias’ eigene Zahl aus den Einstellungen',
+    /function satzTagesziel\(\)[\s\S]{0,220}SETTINGS\.satzZiel/.test(uebung),
+    'Funktion oder SETTINGS.satzZiel fehlt');
   /* ⛔ Die 13 hängt an der Zahl der Übungsarten. Wächst UEBUNGEN, muss die
      Begründung neu bewertet werden — dieser Fall meldet das. */
   const modi = (uebung.match(/\bbaue\s*[:(]/g) || []).length;
@@ -116,8 +128,12 @@ console.log('test-satz-tagesziel.mjs — das Tagesziel im Satzmodus\n');
   const naechste = bisEnde.search(/\nfunction /);
   const stelle = naechste < 0 ? uebung.slice(start)
                               : uebung.slice(start, start + 1 + naechste);
+  /* ⛔ Der Übergang, nicht der Zustand: `>= ZIEL` allein feuerte bei JEDER
+     weiteren Aufgabe des Tages erneut. Seit dem 15.09.2026 ist das Ziel
+     verstellbar, also steht hier `satzTagesziel()` statt der alten
+     Konstanten — dieselbe Bedingung, anderer Name. */
   pruefe('die Feier hängt am Übergang (satzVorher < ZIEL && jetzt >= ZIEL)',
-    /satzVorher\s*<\s*SATZ_TAGESZIEL\s*&&\s*satzT\.gesamt\s*>=\s*SATZ_TAGESZIEL/.test(stelle),
+    /satzVorher\s*<\s*satzTagesziel\(\)\s*&&\s*satzT\.gesamt\s*>=\s*satzTagesziel\(\)/.test(stelle),
     'Bedingung nicht gefunden');
   pruefe('gezählt wird in uebungAuswerten() — der einen Stelle für alle 13 Modi',
     /satzT\.gesamt\+\+/.test(stelle), 'Zählung nicht gefunden');

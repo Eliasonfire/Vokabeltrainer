@@ -198,9 +198,20 @@ function renderRegelStand(){
       + '<span class="rq">' + quote + '</span>'
       + '<span class="rd">' + wann + '</span></div>';
   }).join('')
+  /* ⛔ Der Satz stimmte bis zum 15.09.2026 und stimmt seitdem nicht mehr:
+     seit `uebungRegelVon()` zahlt auch eine Aufgabe aus jedem anderen Modus
+     auf ihre Regel ein, wenn die gefragte Stelle eine eindeutige Markierung
+     traegt. Gemessen am 15.09. über alle 4602 Aufgaben: **1431 zählen** (315
+     aus „Welche Regel?", 1116 über die Markierung), 3171 nicht — bei ihnen
+     steht an der gefragten Stelle gar keine.
+     ⚠️ Fünf Modi zählen auf GAR KEINE Regel ein, weil sie nach mehreren
+     Stellen auf einmal fragen und dann kein einzelner Text mehr passt:
+     Satzteile, Naʿt, Iḍāfa, Präposition+Majrūr und „alle Majrūr". Das steht
+     als offener Punkt in der To-Do. */
   + '<div class="regel-hinweis">' + geuebt.length + ' von 94 abfragbaren Regeln geübt. '
-  + 'Gespeist wird das nur aus <b>„Welche Regel?“</b> — die anderen zwölf Modi '
-  + 'fragen Rollen und Fälle ab, keine benannte Regel.'
+  + 'Gezählt wird jede Aufgabe, deren gefragte Stelle zu genau einer Regel gehört — '
+  + 'nicht nur die aus <b>„Welche Regel?“</b>. Bei rund zwei Dritteln der Aufgaben '
+  + 'ist die Stelle keiner einzelnen Regel zugeordnet; die zählen hier nicht mit.'
   + (REGEL_SORT.art === 'nie'
      ? ' ⛔ Eine Zeile trägt <b>abbestellt</b> statt <b>nie</b>: das ist '
        + '<b>تاء مربوطة</b>, die du am 29.07. abbestellt hast. Sie kann gar nicht '
@@ -501,15 +512,24 @@ function renderUebungskalender(){
      07.09.2026 wurde keine Quote aufgezeichnet, und eine leere Spalte an
      dieser Stelle saehe aus wie ein Fehler. [[leere_liste_ist_keine_messung]] */
   const gq = gesamtQuote();
-  /* ⭐ Der erste Fusstext erklaert die zwei Regeln hinter der Serie, und das
-     ist der eigentliche Anlass vom 14.09.2026. Beide waren zu dem Zeitpunkt
-     seit Wochen gebaut — der Toleranztag seit dem 29.07., die 8-Uhr-Grenze auf
-     Elias' eigenen Wunsch seit dem 08.09. — und trotzdem hat er sie sich neu
-     gewuenscht. Konnte er auch: die einzige Spur des Toleranztags war ein
-     Toast im Moment des Eintretens, und die 8-Uhr-Grenze stand nur im
-     Quelltext. Eine Funktion, von der der Nutzer nichts weiss, ist fuer ihn
-     nicht vorhanden. ⛔ Deshalb steht sie hier, wo er die Tage sieht, und
-     nicht in einem Hilfetext, den niemand aufschlaegt. */
+  /* ⛔⛔ HIER STANDEN ZWEI FUSSTEXTE. SIE SIND WEG — auf Elias' Wunsch vom
+     15.09.2026, mit Bild des rot umrandeten Blocks: „das kannst du
+     entfernen."
+
+     Der erste erklaerte die zwei Regeln hinter der Serie (Toleranztag,
+     Tagesbeginn 8 Uhr), der zweite den Aufzeichnungsbeginn und die
+     umrandeten Felder.
+
+     ⚠️ Das ist KEINE Ruecknahme des Auftrags vom 14.09.2026, sondern sein
+     Abschluss. Der Anlass damals war, dass beide Regeln seit Wochen gebaut
+     und fuer ihn unsichtbar waren — der Toleranztag seit dem 29.07., die
+     8-Uhr-Grenze seit dem 08.09.; die einzige Spur war ein Toast im Moment
+     des Eintretens. Jetzt kennt er sie, und der Text kostet nur noch Platz.
+
+     ⛔ Nicht „wiederherstellen", weil eine Notiz von damals ihn verlangt.
+     Kommt die Frage nach der Serie wieder, ist der Weg ein anderer als
+     nochmal dieser Absatz — sonst steht er in vier Wochen wieder da und wird
+     wieder abbestellt. [[regel_gilt_nur_mit_begruendung]] */
   kasten.innerHTML = `
     <div class="kal-block">
       <div></div>
@@ -523,10 +543,7 @@ function renderUebungskalender(){
       <div><b>${alle.length}</b><span>Tage geübt</span></div>
       ${gq ? `<div><b>${gq.quote} %</b><span>richtig insgesamt</span></div>` : ''}
     </div>
-    <p class="kal-fuss">Lässt du einen Tag aus, läuft die Serie trotzdem weiter — erst bei zwei Tagen hintereinander fängt sie wieder bei 1 an. Ein Tag beginnt um 8 Uhr morgens, nicht um Mitternacht: Was du um 3 Uhr nachts lernst, zählt noch zum Tag davor.</p>
-    <p class="kal-fuss">${seit
-      ? `Aufgezeichnet seit ${seit}. Umrandete Felder sind aus deiner Serie erschlossen — dass du geübt hast, steht fest, die Kartenzahl nicht.${gq ? ' Die Trefferquote läuft erst seit dem 7. September — ältere Tage haben keine.' : ''}`
-      : 'Der Kalender füllt sich, sobald du das erste Mal übst.'}</p>
+    ${seit ? '' : '<p class="kal-fuss">Der Kalender füllt sich, sobald du das erste Mal übst.</p>'}
   `;
 }
 
