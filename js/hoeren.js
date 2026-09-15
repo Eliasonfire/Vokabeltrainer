@@ -143,33 +143,38 @@ function hoerZielPruefen(){
 function hoerStandSchreiben(){
   const t = hoerTag();
   const ziel = hoerTagesziel();
-  const geschafft = t.gesamt >= ziel;
-  /* ⛔ Die Quote laeuft ueber `beantwortet`, nicht ueber `gesamt` — seit dem
-     Geh-Modus (08.09.2026) sind das zwei verschiedene Zahlen: dort waechst
-     `gesamt`, aber niemand tippt eine Antwort an. Stuende hier weiter `gesamt`,
-     sagte die Zeile nach zehn gelaufenen Woertern „3 richtig" und meinte
-     3 von 3 — sie saehe aber aus wie 3 von 10.
-     ⚠️ `?? t.gesamt` fuer alte Staende, die das Feld noch nicht haben; ein
-     `||` waere hier falsch, weil eine echte 0 sonst auf `gesamt` zurueckfiele.
-     [[vorgabewert_greift_nicht_bei_null]] */
-  const beantwortet = (t.beantwortet ?? t.gesamt);
-  const quote = beantwortet ? ` · ${t.richtig} von ${beantwortet} richtig` : '';
-  /* ⭐ „Tagesziel 1 von 10" ist am 15.09.2026 entfallen — Elias mit Bild:
-     „das muss auch ncith da stehen". Der Ring daneben sagt dasselbe, und zwar
-     ohne Zahl; sie zweimal hinzuschreiben war der Zustand von einer Stunde,
-     in der der Ring noch nicht da war.
-     ⚠️ Die Trefferquote bleibt: sie steht in keinem Ring. */
-  document.getElementById('hoerStand').textContent = quote
-    ? quote.replace(/^\s*·\s*/, '')
-    : (geschafft ? 'Tagesziel geschafft' : '');
-  /* ⭐ Ring und Balken (15.09.2026). Der Hörmodus ist der Sonderfall: er hat
-     keine Runde, die Fragen gehen nie aus. Beide zeigen deshalb dasselbe —
-     Elias' ausdrückliche Entscheidung: „es soll einen balken geben und genau
-     das soll das tagesziel abbilden." */
-  if (typeof modusRingZeichnen === 'function')
-    modusRingZeichnen('hoerRing', t.gesamt, ziel);
-  if (typeof modusBalkenZeichnen === 'function')
-    modusBalkenZeichnen('hoerBalken', t.gesamt, ziel);
+  /* ⭐⭐ SEIT DEM 15.09.2026 STEHT HIER DASSELBE WIE BEI DEN KARTEIKARTEN —
+     ein Balken, eine Zahl, sonst nichts. Elias mit Bild der Kopfzeile:
+
+         „mach es hier einfach genau so wie bei den karteikarten. ohne richtig
+          oder falsch einfach nur balken mit 1/10 und dann geht es hoch normal
+          wie bei krateikarten"
+
+     Davor standen dort DREI Dinge für eine Aussage: „1 von 1 richtig" links,
+     ein Balken darunter und rechts ein Ring mit derselben Zahl.
+
+     ⛔ Und „richtig" war dabei die falsche Aussage. Beim Üben will er wissen,
+     WIE WEIT er ist, nicht WIE GUT — eine Quote, die nach der ersten falschen
+     Antwort auf 0 % fällt, bremst genau den, der gerade weitermachen sollte.
+     Deshalb ist es keine Verschiebung an eine ruhigere Stelle, sondern eine
+     andere Größe: Fortschritt statt Leistung. [[adhs_enkodieren_ist_die_luecke]]
+
+     ⚠️ DIE TREFFERQUOTE IST NICHT WEG, NUR NICHT MEHR HIER. `t.richtig` und
+     `t.beantwortet` werden unverändert weitergeschrieben; sie stehen in der
+     Statistik unter „Trefferquote in dieser App" und in `vt_hoerTag`. Wer die
+     Felder für tot hält und aufräumt, löscht seinen Verlauf.
+
+     ⚠️ Die Unterscheidung `beantwortet` ≠ `gesamt` (Geh-Modus, 08.09.2026:
+     dort wächst `gesamt`, ohne dass jemand antwortet) gilt weiter und steckt
+     in `hoerAntwort()`. Die Leiste hier zeigt bewusst `gesamt` — das Tagesziel
+     zählt auch die Wörter, die im Gehen gelaufen sind.
+
+     ⛔ Ebenfalls weg: der Ring. Elias am selben Abend zum Lernmodus, und es
+     gilt hier genauso: „hier sind ring und balken, ring soll raus."
+     Seine frühere Zustimmung zu Ring UND Balken („ich glaube das ist überall
+     so aber das ist auch denke ich okay so", 15.09., 00:xx) ist damit
+     überholt — sie war ein „okay", kein Wunsch. */
+  rundenLeiste('hoerBalken', 'hoerCount', t.gesamt, ziel);
 }
 
 /* Nur Vokabeln mit brauchbarer deutscher Bedeutung - ohne die gaebe es keine
