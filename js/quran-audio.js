@@ -191,7 +191,13 @@ function audioAdresse(rezId, sure, vers){
   return p.startsWith('//') ? 'https:' + p : QURAN_AUDIO_BASIS + p;
 }
 
-const QAUDIO = { el:null, paar:null, sure:null, vers:0, laeuft:false, hinweis:'' };
+/* `versuche`/`versuchFuer` seit 15.09.2026: der Ton kommt ueber das Netz, und
+   ein einzelner Aussetzer soll die Wiedergabe nicht mehr beenden.
+   ⛔ DIESE ZEILE MUSS EINZEILIG BLEIBEN. werkzeuge/pruefe-zweipuffer.mjs
+   schneidet sie mit `\nconst QAUDIO = \{[^\n]*\n` heraus, um audioSpiele
+   isoliert laufen zu lassen. Ein Umbruch liefert dort ein halbes Objekt und
+   einen SyntaxError — genau so ist der Pruefer am 15.09.2026 rot geworden. */
+const QAUDIO = { el:null, paar:null, sure:null, vers:0, laeuft:false, hinweis:'', versuche:0, versuchFuer:null };
 
 /** Wie viele Verse hat die Sure? Erst der aufgebaute Leser, dann die Surenliste
  *  — der Leser ist die Wahrheit, weil er den Text wirklich vor sich hat. */
@@ -380,12 +386,68 @@ async function audioSpiele(sure, vers){
        meldet das als AbortError. Das ist kein Fehler, sondern genau das, was
        beim Weiterblaettern passieren SOLL. */
     if (err && err.name === 'AbortError') return;
+
+    /* ⛔⛔ HIER STAND NUR EINE MELDUNG UND SONST NICHTS (bis 15.09.2026).
+       Elias: „wollte die sura mehrmals hintereinander hören und manchmal hat
+       es auch gestockt", dazu der Screenshot mit „Ton lässt sich nicht
+       starten" bei Sure 97 in der Schleife 1–5.
+
+       Der Ton kommt von `verses.quran.com`, also ueber das Netz. Ein einziger
+       Aussetzer beendete die ganze Wiedergabe — und beim Wiederholen trifft
+       das frueher oder spaeter, weil jeder Rundlauf fuenf neue Abrufe macht.
+       Es gab KEINEN Neuversuch.
+
+       ⭐ Zwei verschiedene Ursachen, die bisher dieselbe Meldung bekamen:
+         NotAllowedError  der Browser will eine Geste — ein Neuversuch hilft
+                          NIE, er muss tippen
+         alles andere     Netz oder Datei — ein Neuversuch hilft meistens */
+    if (err && err.name === 'NotAllowedError'){
+      QAUDIO.laeuft = false;
+      QAUDIO.hinweis = 'Tippe auf ▶, der Browser braucht einen Druck';
+      zeigeSpieler();
+      return;
+    }
+    /* ⛔ Die Kennung verhindert, dass ein Neuversuch einen Vers startet, den
+       er inzwischen weggeblaettert hat. [[handlung_macht_ihre_bedingung_ungueltig]] */
+    const kennung = sure + ':' + vers;
+    QAUDIO.versuche = (QAUDIO.versuchFuer === kennung ? (QAUDIO.versuche || 0) : 0) + 1;
+    QAUDIO.versuchFuer = kennung;
+    if (QAUDIO.versuche <= 3){
+      QAUDIO.hinweis = 'Ton stockt — Versuch ' + QAUDIO.versuche + ' von 3 …';
+      zeigeSpieler();
+      setTimeout(function(){
+        /* Nur weitermachen, wenn genau dieser Vers noch gewaehlt ist. */
+        if (QAUDIO.sure === sure && QAUDIO.vers === vers && QAUDIO.versuchFuer === kennung){
+          audioSpiele(sure, vers);
+        }
+      }, 350 * QAUDIO.versuche);
+      return;
+    }
     QAUDIO.laeuft = false;
-    QAUDIO.hinweis = 'Ton lässt sich nicht starten';
+    QAUDIO.versuche = 0; QAUDIO.versuchFuer = null;
+    /* ⭐ Die Meldung nennt jetzt die Ursache. „Ton laesst sich nicht starten"
+       allein sagte weder ihm noch mir, wo man suchen soll. */
+    QAUDIO.hinweis = (navigator && navigator.onLine === false)
+      ? 'Kein Netz — die Rezitation kommt von quran.com'
+      : 'Ton kam nach 3 Versuchen nicht (' + ((err && err.name) || 'unbekannt') + ')';
     zeigeSpieler();
     return;
   }
-  audioVorladen(sure, vers + 1);
+  /* Gelungen: den Zaehler zuruecksetzen, sonst zaehlt der naechste Aussetzer
+     auf einem alten Stand weiter. */
+  QAUDIO.versuche = 0; QAUDIO.versuchFuer = null;
+  /* ⛔⛔ HIER STAND `audioVorladen(sure, vers + 1)` — und genau das war Elias'
+     „manchmal hat es gestockt" (15.09.2026).
+
+     Bei Sure 97 (5 Verse) und der Schleife 1–5 laedt Vers 5 den Vers 6 vor.
+     Den gibt es nicht, `audioVorladen` steigt sofort aus — und der Ruecksprung
+     auf Vers 1 findet ein LEERES zweites Element. Statt „play() auf eine
+     fertige Datei" beginnt ein neuer Abruf ueber das Netz, und das hoert man.
+     Es traf jeden Rundlauf an derselben Stelle.
+
+     ⭐ Vorgeladen wird jetzt, was WIRKLICH als naechstes kommt — die Schleife
+     eingerechnet. [[zwischenstand_wird_nicht_mitgebaut]] */
+  audioVorladen(sure, (schleifeGilt() && vers >= QSCHLEIFE.bis) ? QSCHLEIFE.von : vers + 1);
 }
 
 /* ============================================================================

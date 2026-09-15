@@ -442,6 +442,11 @@ const PRUEFER = [
      jemand ansieht. */
   ['test-luecken-ohne-commit.mjs', []],
   ['test-freischaltung-abfragemarke.mjs', []],
+  /* 15.09.2026: Elias hoerte Sure 97 in der Schleife und es stockte jeden
+     Rundlauf an derselben Stelle — das Vorladen kannte die Schleife nicht.
+     Der Ton selbst ist nicht pruefbar (der Pane darf keinen machen), also
+     prueft dieser Test die Entscheidung. */
+  ['test-quran-vorladen.mjs', []],
 
   /* ⛔ Neu am 06.09.2026. Der Hifz-Stand ist das Einzige in dieser App, das
      Elias sich WIRKLICH erarbeitet hat — auswendig gelernte Suren. Er lief
