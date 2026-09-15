@@ -526,3 +526,79 @@ function renderChapterFilterChips(){
     : reihen + eigene;
 }
 
+
+/* ---------- ⭐⭐ Der stille Zielverlauf: die AUSWERTUNG (15.09.2026) --------
+
+   Elias am 15.09.2026: „und du sollst messen wie oft ich täglich meinen soll
+   pro tag erfülle und wie viel davon ausgefüllt ist täglich aber nicht mir
+   sagen in app sondern nur messen."
+
+   ⛔ Bis zu dieser Funktion war nur die HAELFTE davon gebaut.
+   `merkeZielstand()` schrieb jeden Tag mit, und **kein einziges Werkzeug las
+   je nach** — gefunden hat das `werkzeuge/pruefe-kreislaeufe.mjs`, nicht ich.
+   Eine stille Messung ist besonders heimtueckisch: sie SOLL nichts anzeigen,
+   also sieht „nichts zu sehen" nach Absicht aus, auch wenn niemand mehr
+   hinschaut. [[werkzeug_ohne_aufrufer]] [[zwischenstand_wird_nicht_mitgebaut]]
+
+   ⚠️ Der Abrufweg ist die laufende App, nicht ein Werkzeug im Ordner: die
+   Daten entstehen beim Ueben und liegen in Elias' localStorage. Dieselbe Lage
+   wie bei `zeitBericht()` und `wortQuoteBericht()` — im Browser-Pane
+   aufrufen, nicht in der Oberflaeche zeigen.
+
+   Aufruf:  zielverlaufBericht()        letzte 30 Tage
+            zielverlaufBericht(120)     alles, was da ist              */
+function zielverlaufBericht(tage){
+  tage = Number(tage) || 30;
+  let v;
+  try { v = LS.get('vt_zielverlauf', {}) || {}; } catch (e){ v = {}; }
+  const namen = { karten:'Karteikarten', saetze:'Sätze', hoeren:'Hören',
+                  mulk:'al-Mulk', wiederholen:'Wiederholen', neulernen:'Neu lernen' };
+  const tageListe = Object.keys(v).sort().slice(-tage);
+  if (!tageListe.length){ console.log('Noch nichts aufgezeichnet.'); return []; }
+
+  const zeilen = [];
+  /* je Bereich: an wie vielen Tagen kam er vor, wie oft war er voll, und wie
+     weit im Schnitt. */
+  const summe = {};
+  for (const tag of tageListe){
+    const eintrag = v[tag] || {};
+    const zeile = { Tag: tag };
+    let voll = 0, offen = 0;
+    for (const teil of Object.keys(namen)){
+      const p = eintrag[teil];
+      if (!Array.isArray(p)){ zeile[namen[teil]] = '—'; continue; }
+      const [stand, ziel] = p;
+      const anteil = ziel ? Math.min(1, stand / ziel) : 0;
+      zeile[namen[teil]] = stand + '/' + ziel;
+      const s = summe[teil] || (summe[teil] = { tage:0, voll:0, anteil:0 });
+      s.tage++; s.anteil += anteil;
+      if (anteil >= 1){ s.voll++; voll++; } else offen++;
+    }
+    zeile['voll'] = voll + ' von ' + (voll + offen);
+    zeilen.push(zeile);
+  }
+  console.table(zeilen);
+
+  const uebersicht = Object.keys(summe).map(teil => ({
+    Bereich: namen[teil],
+    'Tage mit Ziel': summe[teil].tage,
+    'davon erfüllt': summe[teil].voll,
+    'Quote': Math.round(summe[teil].voll / summe[teil].tage * 100) + ' %',
+    'im Schnitt gefüllt': Math.round(summe[teil].anteil / summe[teil].tage * 100) + ' %'
+  }));
+  console.table(uebersicht);
+
+  /* ⚠️ Die Quote bezieht sich auf Tage, an denen es das Ziel ueberhaupt GAB —
+     nicht auf `tage`. Ein Ring, den es an 8 von 30 Tagen nicht gab (nichts
+     faellig, keine Sure in der Runde), haette sonst eine Quote, die nur
+     aussagt, wie selten er erschien. [[historisch_oder_aktuell_steht_im_wort_davor]] */
+  const alleTage = tageListe.length;
+  const ganzVoll = zeilen.filter(z => {
+    const m = String(z['voll']).match(/^(\d+) von (\d+)$/);
+    return m && m[1] === m[2] && Number(m[2]) > 0;
+  }).length;
+  console.log('Aufgezeichnet: ' + alleTage + ' Tage'
+    + ' · an ' + ganzVoll + ' davon war ALLES voll'
+    + ' (' + Math.round(ganzVoll / alleTage * 100) + ' %)');
+  return { zeilen, uebersicht };
+}

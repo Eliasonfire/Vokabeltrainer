@@ -1495,17 +1495,49 @@ function satzTagSpeichern(t){ try { LS.set('vt_satzTag', t); } catch (e) { /* pr
    sind zwei verschiedene Nachweise. Beide landen hier im selben Zaehler —
    der Balken in der Statistik misst deshalb Bestaendigkeit, nicht Verstehen. */
 function uebungRegelVon(a){
-  if (!a || a.wortIdx == null || !a.zeilen || !a.satz) return null;
+  if (!a || !a.zeilen || !a.satz) return null;
   if (typeof SENTENCE_TAGS === 'undefined') return null;
   const tags = SENTENCE_TAGS[a.satz.id] || [];
   if (!tags.length) return null;
+
+  /* Die Regel an EINER Stelle (oder einer Wortfolge von..bis). Eindeutig oder
+     gar nicht — zwei passende Markierungen heissen, dass die Aufgabe nicht
+     sagt, welche gemeint war. */
+  const regelAn = (von, bis) => {
+    const stueck = a.zeilen.slice(von, bis + 1)
+      .map(z => z.wort || '').join(' ').trim();
+    if (!stueck) return null;
+    const treffer = tags.filter(t => t.matchText
+      && (t.matchText === stueck || stueck.indexOf(t.matchText) >= 0));
+    return treffer.length === 1 ? treffer[0].ruleId : null;
+  };
+
+  /* ⛔⛔ MEHRFACHAUSWAHL (15.09.2026). Seit der Umstellung auf „mehrere
+     antippen" tragen fuenf Modi `ziele:[…]` statt `wortIdx` —
+     mubtada-khabar, nat, idafa, jarr-paar und alle-majrur. Die alte Fassung
+     stieg bei fehlendem `wortIdx` in der ERSTEN Zeile aus, und damit zahlten
+     **852 Aufgaben** auf gar keine Regel mehr ein.
+
+     Gemerkt hat es Elias, nicht ich: „aber du hast jetzt gemacht, dass wenn
+     ich bei gemischt die übungen mache das auch die einzelnen übungen von
+     ihrer prozent hoch gehen ja? also das das nicht einfach alles nur unter
+     gemischt betrachtet wird". Die Frage galt dem gemischten Modus — beim
+     Nachmessen fiel diese zweite, groessere Luecke mit auf.
+
+     ⭐ Die Bedingung ist streng: ALLE Ziele muessen auf DIESELBE Regel
+     zeigen. Eine Aufgabe „tippe beide مُضَاف إِلَيْه an" ist ein Nachweis fuer
+     genau eine Regel, auch wenn sie zwei Stellen hat. Zeigt auch nur ein Ziel
+     woanders hin oder nirgendwohin, wird NICHTS gezaehlt — lieber keine Zahl
+     als eine erfundene. [[kandidatenliste_ist_keine_fehlerliste]] */
+  if (Array.isArray(a.ziele) && a.ziele.length){
+    const regeln = a.ziele.map(i => regelAn(i, i));
+    if (regeln.some(r => !r)) return null;
+    return regeln.every(r => r === regeln[0]) ? regeln[0] : null;
+  }
+
+  if (a.wortIdx == null) return null;
   const bis = (a.wortIdxBis != null) ? a.wortIdxBis : a.wortIdx;
-  const stueck = a.zeilen.slice(a.wortIdx, bis + 1)
-    .map(z => z.wort || '').join(' ').trim();
-  if (!stueck) return null;
-  const treffer = tags.filter(t => t.matchText
-    && (t.matchText === stueck || stueck.indexOf(t.matchText) >= 0));
-  return treffer.length === 1 ? treffer[0].ruleId : null;
+  return regelAn(a.wortIdx, bis);
 }
 
 /* Auswertung. Ein Aufruf, drei Arten - und die Zaehlung passiert genau hier,

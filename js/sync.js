@@ -63,6 +63,36 @@ const SYNC_SCHLUESSEL = [
      ich hatte den Schluessel angelegt und den Abgleich vergessen. Das ist die
      Fehlerart, die sich nie von selbst meldet. [[daten_ohne_zugang]] */
   'vt_satzTag',
+  /* ⛔ Der Tageszaehler des WURZELMODUS (15.09.2026) — dritter Fall derselben
+     Art, und wieder hat ihn `pruefe-kreislaeufe.mjs` gefunden und nicht ich:
+     der Schluessel wurde in der Nacht der Ringe angelegt und der Abgleich
+     vergessen. Block, juengerer Stempel gewinnt, genau wie die zwei Zeilen
+     darueber.
+     ⚠️ Der Wurzelmodus hat (noch) KEINEN Ring auf dem Startbildschirm —
+     Elias: „mach im wurzelmodus selbst einen ring aber noch nicht in der heute
+     ansicht bzw startbildschirm". Der Zaehler gehoert trotzdem in den
+     Abgleich: er zaehlt schon, und sobald der Ring dazukommt, waeren sonst
+     zwei getrennte Tagesziele da. [[zwischenstand_wird_nicht_mitgebaut]] */
+  'vt_wurzelTag',
+  /* ⭐ Welche Sure wann zuletzt gelesen wurde (15.09.2026, js/quran.js) —
+     `{ Sure: 'JJJJ-MM-TT' }`. Sie speist die Wiederholungsrunde und die zwei
+     Quran-Ringe auf dem Startbildschirm.
+     ⚠️ EIGENER Merge-Zweig weiter unten, und der ist nicht optional: liest
+     Elias auf dem Handy Sure 99 und am Tablet Sure 97, sind das zwei Fakten,
+     nicht zwei Fassungen desselben. Als Block gemergt verschwaende der
+     juengere Stempel die Lesung des anderen Geraets — und die Runde boete
+     eine Sure erneut an, die er laengst durchhatte. */
+  'vt_suraGelesen',
+  /* ⭐ Der stille Zielverlauf (15.09.2026, js/start.js) — je Tag, je Bereich
+     `[stand, ziel]`, 120 Tage lang. Er wird in der App bewusst NICHT gezeigt;
+     Elias: „du sollst messen wie oft ich täglich meinen soll pro tag erfülle
+     und wie viel davon ausgefüllt ist täglich aber nicht mir sagen in app
+     sondern nur messen."
+     ⚠️ Ebenfalls eigener Zweig: je Tag und Bereich der HOEHERE Stand. Ein
+     Blockstempel loeschte ganze Tage des anderen Geraets — bei einer Messung,
+     die gerade davon lebt, vollstaendig zu sein, waere das der schlimmste
+     Fall. [[daten_ohne_zugang]] */
+  'vt_zielverlauf',
   /* ⭐ Die stille Zeitmessung (08.09.2026). Eigener Merge-Zweig weiter unten,
      und der ist hier nicht optional: Zeit ist ADDITIV. Als Block gemergt
      verlöre ein Tag, an dem Elias auf beiden Geräten geübt hat, die Hälfte —
@@ -717,6 +747,66 @@ function fuehreZusammen(fern){
             zuletzt:  (String(h.zuletzt || '') >= String(d.zuletzt || '')) ? h.zuletzt : d.zuletzt
           };
         });
+        const neu = JSON.stringify(raus);
+        if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
+      } catch (e){ /* kaputtes JSON auf einer Seite: lokal behalten */ }
+      return;
+    }
+
+    /* ⭐ Welche Sure wann zuletzt gelesen wurde (15.09.2026): je Sure das
+       JUENGERE Datum. Zwei Geraete lesen verschiedene Suren — das sind zwei
+       Fakten, keine zwei Fassungen. Als Block gemergt verloere die Runde die
+       Lesung des anderen Geraets und boete eine Sure erneut an, die er
+       durchhatte.
+       ⚠️ Datumsvergleich als Zeichenkette: 'JJJJ-MM-TT' sortiert genau so,
+       wie es soll, und kennt keine Zeitzone. */
+    if (k === 'vt_suraGelesen'){
+      try {
+        const a = JSON.parse(hierRoh) || {}, b = JSON.parse(dortRoh) || {};
+        const raus = Object.assign({}, a);
+        Object.keys(b).forEach(sure => {
+          const hier = String(raus[sure] || ''), dort = String(b[sure] || '');
+          if (dort > hier) raus[sure] = b[sure];
+        });
+        const neu = JSON.stringify(raus);
+        if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
+      } catch (e){ /* kaputtes JSON auf einer Seite: lokal behalten */ }
+      return;
+    }
+
+    /* ⭐ Der stille Zielverlauf (15.09.2026): je Tag UND je Bereich der
+       hoehere Stand, das Ziel vom selben Eintrag.
+       ⛔ Zwei Ebenen, nicht eine: `{ "2026-09-15": { karten:[9,10], … } }`.
+       Ein Blockstempel loeschte ganze Tage des anderen Geraets, ein Merge nur
+       auf Tagesebene die Bereiche, die dort nicht vorkamen.
+       ⚠️ Das MAXIMUM, nicht die Summe — derselbe Grund wie bei vt_uebungstage:
+       ein zweiter Abgleich desselben Tages zaehlte sonst auf, und die Messung
+       behauptete Uebung, die nicht stattfand. Das Ziel wird vom gewinnenden
+       Stand mitgenommen, weil es zu ihm gehoert: stellt Elias das Tagesziel
+       an einem Geraet um, ist der Stand dort mit diesem Ziel gemessen.
+       [[zahlen_ohne_beleg]] */
+    if (k === 'vt_zielverlauf'){
+      try {
+        const a = JSON.parse(hierRoh) || {}, b = JSON.parse(dortRoh) || {};
+        const raus = Object.assign({}, a);
+        Object.keys(b).forEach(tag => {
+          const dort = b[tag];
+          if (!dort || typeof dort !== 'object') return;
+          const hier = raus[tag];
+          if (!hier){ raus[tag] = dort; return; }
+          const zusammen = Object.assign({}, hier);
+          Object.keys(dort).forEach(teil => {
+            const d = dort[teil], h = zusammen[teil];
+            if (!Array.isArray(d)) return;
+            if (!Array.isArray(h) || (Number(d[0]) || 0) > (Number(h[0]) || 0)) zusammen[teil] = d;
+          });
+          raus[tag] = zusammen;
+        });
+        /* ⛔ Dieselbe 120-Tage-Grenze wie in merkeZielstand(): sonst waechst
+           der Schluessel ueber den Abgleich unbegrenzt weiter, weil jedes
+           Geraet die alten Tage des anderen wieder hereinholt. */
+        const tage = Object.keys(raus).sort();
+        while (tage.length > 120) delete raus[tage.shift()];
         const neu = JSON.stringify(raus);
         if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
       } catch (e){ /* kaputtes JSON auf einer Seite: lokal behalten */ }

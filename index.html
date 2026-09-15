@@ -968,25 +968,16 @@ main{
   .tr-fuell,.tr-haken{transition:none;}
 }
 
-.heute-extra{
-  display:flex;align-items:center;gap:var(--sp-3);width:100%;
-  background:var(--surface-1);border:1px solid var(--border);
-  border-radius:var(--r-4);padding:var(--sp-3) var(--sp-4);
-  margin-top:var(--sp-3);color:var(--text);font:inherit;text-align:start;
-  cursor:pointer;transition:border-color var(--dur-2) ease, background var(--dur-2) ease;
-  min-height:56px;
-}
-.heute-extra:hover{border-color:var(--red-dim);background:var(--surface-2);}
-.heute-extra .ic{flex:0 0 auto;width:22px;height:22px;color:var(--red-bright);}
-.heute-extra .hx-text{flex:1;min-width:0;display:flex;flex-direction:column;}
-.heute-extra .hx-titel{font-weight:700;font-size:var(--fs-md);}
-.heute-extra .hx-sub{font-size:var(--fs-sm);color:var(--text-dim);margin-top:2px;}
-/* Geschafft: der Rahmen wird grün und der Pfeil verschwindet — die Zeile bleibt
-   trotzdem stehen und anklickbar, denn „genug" heisst nicht „gesperrt". */
-.heute-extra.geschafft{border-color:var(--green);}
-.heute-extra.geschafft .ic{color:var(--green);}
-.heute-extra .hx-pfeil{flex:0 0 auto;color:var(--text-faint);}
-.heute-extra.geschafft .hx-pfeil{display:none;}
+/* ⛔ Hier stand bis zum 15.09.2026 der Block `.heute-extra` mit seinen fünf
+   `hx-*`-Klassen — die alte Zeile „Heute zusätzlich: Sätze". Sie ist von den
+   Tagesringen darüber abgelöst worden und stand seitdem ohne ein einziges
+   Element im Markup da.
+
+   ⭐ Gefunden hat das `werkzeuge/klassen-ohne-fundstelle.mjs`, nicht ich: es
+   zählte 12 Klassen ohne Fundstelle gegen 7 am 11.09. Fünf mehr — vier davon
+   `hx-*`, die fünfte `.geh-sub` weiter unten. Eine verwaiste CSS-Regel tut
+   nichts und meldet nichts; sie wird nur beim nächsten Lesen für gültig
+   gehalten. [[klasse_ohne_css_regel]] */
 .due-number{
   font-size:4.2rem;font-weight:800;line-height:1;
   background:var(--accent-grad);
@@ -1565,7 +1556,9 @@ main{
 .geh-zeile .switch{flex:0 0 auto;margin-top:2px;}
 .geh-text{min-width:0;}
 .geh-titel{font-weight:600;}
-.geh-sub{color:var(--text-dim);font-size:var(--fs-sm);line-height:1.4;}
+/* ⛔ `.geh-sub` ist am 15.09.2026 weg: Elias hat die Unterzeile des
+   Geh-Modus abbestellt („die beschreibung kann weg"). Die Regel blieb stehen
+   und wurde von klassen-ohne-fundstelle.mjs gemeldet. */
 /* Im laufenden Geh-Modus sind die vier Antwortknöpfe sinnlos — es gibt nichts
    zu tippen. Sie werden ausgeblendet statt nur deaktiviert: ein grauer Knopf
    sieht nach einem Fehler aus, ein fehlender nach Absicht. */

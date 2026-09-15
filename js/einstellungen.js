@@ -833,6 +833,13 @@ const SICHERUNGS_SCHLUESSEL = [
   'vt_lautStand',     /* Aussprache: Stand */
   'vt_lautRunde',     /* Aussprache: laufende Runde */
   'vt_satzTag',       /* Tageszaehler Satzmodus */
+  'vt_wurzelTag',     /* Tageszaehler Wurzelmodus (15.09.2026) */
+  'vt_suraGelesen',   /* welche Sure wann gelesen wurde — speist die
+                         Wiederholungsrunde und zwei der Quran-Ringe */
+  'vt_zielverlauf',   /* der stille Zielverlauf, 120 Tage. ⛔ Gerade WEIL ihn
+                         niemand in der App sieht, faellt sein Fehlen beim
+                         Einspielen nicht auf — und die Messung, um die Elias
+                         gebeten hat, hat dann eine Luecke, die niemand bemerkt */
   'vt_zeit',          /* die gemessene Lernzeit */
   'vt_regeln'         /* Regelsammlung (11.09.2026): seine Fassungen, Notizen,
                          eigenen Regeln, Papierkorb — steht nirgends sonst */
@@ -1409,7 +1416,15 @@ async function diagnoseInZwischenablage(){
     const ok = document.execCommand('copy');
     document.body.removeChild(feld);
     return ok;
-  } catch (e){ return false; }
+  /* ⛔ `false` ist hier KEIN plausibler Messwert, sondern die ehrliche
+     Antwort: „das Kopieren hat nicht geklappt". Der Aufrufer schreibt sie
+     sofort in den Knopf, Elias sieht es also. Gemeldet wird trotzdem —
+     scheitert auch der Rueckfallweg, will ich in der Diagnose sehen, woran.
+     [[ausfall_ist_unsichtbar_gebaut]] */
+  } catch (e){
+    if (typeof stillerFehler === 'function') stillerFehler('diagnoseInZwischenablage/execCommand', e);
+    return false;
+  }
 }
 
 document.getElementById('btnDiagnoseKopieren')?.addEventListener('click', async (e)=>{

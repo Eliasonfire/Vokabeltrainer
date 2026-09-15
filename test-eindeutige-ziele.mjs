@@ -143,5 +143,46 @@ if (sammel){
   }
 }
 
+/* ---------- 4. Die Mehrfachauswahl zahlt auf ihre Regel ein ---------- */
+/* ⛔⛔ Die Kehrseite des ganzen Umbaus, und sie war fuenf Stunden lang kaputt.
+
+   `uebungSammel()` hat fuenf Modi von `wortIdx` auf `ziele:[…]` umgestellt.
+   `uebungRegelVon()` stieg aber bei fehlendem `wortIdx` in der ERSTEN Zeile
+   aus — damit zahlten **852 Aufgaben** (mubtada-khabar 415, jarr-paar 167,
+   alle-majrur 121, nat 93, idafa 56) auf gar keine Regel mehr ein. Sichtbar
+   war nichts: die Aufgaben liefen normal, nur die Liste „Wie gut sitzen die
+   Regeln?" bekam davon nichts mehr mit.
+
+   Gemessen im laufenden Browser ueber alle 4602 Aufgaben:
+     vorher 1431 zaehlen (31,1 %) · nachher **1714** (37,2 %), also +283.
+   Je Modus: mubtada-khabar 180, idafa 35, alle-majrur 32, jarr-paar 19,
+   nat 17. Der Rest der 852 bleibt liegen, weil an diesen Stellen gar keine
+   oder mehrdeutige Markierungen stehen — das ist Arbeit am Material, kein
+   Fehler im Code, und steht als eigener Punkt in der To-Do.
+   [[zwischenstand_wird_nicht_mitgebaut]] */
+console.log('\n4. Die Mehrfachauswahl zahlt auf ihre Regel ein');
+{
+  const fn = schneide(ohneKommentare, 'uebungRegelVon');
+  pruefe('uebungRegelVon() gibt es', !!fn);
+  if (fn){
+    pruefe('sie versteht ziele:[…]', /Array\.isArray\(\s*a\.ziele\s*\)/.test(fn));
+    /* ⛔ Der Riegel, auf den es ankommt: ALLE Ziele muessen auf DIESELBE Regel
+       zeigen. Faellt er weg, zaehlt die erste gefundene Regel — und eine
+       Aufgabe mit zwei verschiedenen Rollen behauptete Uebung an einer Regel,
+       die sie gar nicht abfragt. */
+    pruefe('alle Ziele muessen auf DIESELBE Regel zeigen',
+      /\.every\(\s*r\s*=>\s*r\s*===\s*regeln\[0\]\s*\)/.test(fn), 'every-Riegel fehlt');
+    pruefe('ein Ziel ohne Regel laesst die ganze Aufgabe durchfallen',
+      /\.some\(\s*r\s*=>\s*!r\s*\)\s*\)\s*return null/.test(fn), 'some-Riegel fehlt');
+    /* Der alte Weg muss bleiben: acht Modi tragen weiterhin `wortIdx`. */
+    pruefe('der Weg ueber wortIdx bleibt erhalten',
+      /a\.wortIdx\s*==\s*null\s*\)\s*return null/.test(fn) && /a\.wortIdxBis/.test(fn));
+    /* ⚠️ Die Eindeutigkeit je Stelle darf nicht verlorengehen: zwei passende
+       Markierungen an EINER Stelle heissen weiterhin „keine Aussage". */
+    pruefe('je Stelle zaehlt nur eine eindeutige Markierung',
+      /treffer\.length\s*===\s*1/.test(fn));
+  }
+}
+
 console.log('\n' + (schlecht ? '✘ ' : '✔ ') + ok + ' bestanden, ' + schlecht + ' gescheitert');
 process.exit(schlecht ? 1 : 0);
