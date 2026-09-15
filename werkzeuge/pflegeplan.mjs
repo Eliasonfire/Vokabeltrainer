@@ -104,6 +104,15 @@ export const PFLEGEPLAN = [
         wie: 'Begriffe, die eine neue Regel benennen oder in mehreren wiederkehren, werden entschieden' },
       { routine: W, schritt: '1f', beleg: 'node werkzeuge/fachbegriffe-setzen.mjs', werkzeug: 'werkzeuge/fachbegriffe-setzen.mjs',
         wie: 'belegte, voll vokalisierte Begriffe direkt eintragen — Elias: „Direkt eintragen"' },
+      /* ⭐ Seit 15.09.2026: der Schritt schlägt jetzt SELBST nach, statt zu
+         fragen. Elias am 11.09.: „guck es doch nach bei den wörterbüchern die
+         ich dir gegeben habe" — bis dahin stand jeder unbelegte Begriff unter
+         „Offen", und eine Sitzung musste ihn von Hand nachschlagen. */
+      { routine: W, schritt: '1f', beleg: 'node werkzeuge/fachbegriffe-nachschlagen.mjs', werkzeug: 'werkzeuge/fachbegriffe-nachschlagen.mjs',
+        wie: 'unbelegte Schreibungen bei arabdict und en.wiktionary holen (ohne Browser) '
+          + 'und nur bei ZWEI übereinstimmenden Quellen in fachbegriffe-belege.json ablegen; '
+          + 'eingetragen wird davon nichts — das bleibt fachbegriffe-setzen.mjs. '
+          + 'Zweiseitig geeicht mit --eichen (zwei Fälle MÜSSEN leer ausgehen)' },
     ],
     eingaben: { nein: 'Er blendet Fachbegriffe höchstens aus (vt_geloescht); das wertet die App selbst aus und gleicht es zwischen den Geräten ab.' },
     veralten: { routine: W, schritt: '1c.4', beleg: 'FACHBEGRIFF_VOKABELN',
