@@ -33,7 +33,7 @@
  * ==========================================================================
  * ⛔⛔ DIE ARTEFAKT-URL UNTEN IST TOT (gemessen 15.09.2026, gegen 04:23)
  *
- * `724ee9bc-adb7-4dcd-ad75-6a56a552adbd` gibt es nicht: `Artifact action:read`
+ * `5ChpdN9n7PAiTY4B5ZHud3` gibt es nicht: `Artifact action:read`
  * antwortet „artifact not found", und in `Artifact action:list` (25 eigene
  * Artefakte) steht sie nicht. Sie ist entweder gelöscht oder wurde nie
  * veröffentlicht.
@@ -121,7 +121,7 @@ if (!anzahl) {
   console.log('Nichts offen — alle Angaben da. Seite zeigt jetzt "✓ Nichts offen".');
   console.log('  ' + path.relative(REPO, zielArtLeer));
   console.log('  ⚠️ Trotzdem veroeffentlichen, sonst zeigt das Artefakt die alten Fragen:');
-  console.log('     https://claude.ai/code/artifact/724ee9bc-adb7-4dcd-ad75-6a56a552adbd');
+  console.log('     https://claude.ai/artifact/5ChpdN9n7PAiTY4B5ZHud3');
   process.exit(0);
 }
 
@@ -591,6 +591,6 @@ console.log('  zum Veröffentlichen: ' + path.relative(REPO, ZIEL_ART));
    [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
 console.log('  ⚠️ Veroeffentlichen kann die Routine nicht selbst - das braucht eine Sitzung.');
 console.log('     DIESELBE URL wiederverwenden, keine neue anlegen:');
-console.log('     https://claude.ai/code/artifact/724ee9bc-adb7-4dcd-ad75-6a56a552adbd');
+console.log('     https://claude.ai/artifact/5ChpdN9n7PAiTY4B5ZHud3');
 console.log('  ' + fragen.length + ' Frage(n), ' + anzahl + ' Wörter.');
 fragen.forEach(f => console.log('    ' + f.feld.padEnd(9) + String(f.woerter.length).padStart(3) + '  ' + f.titel));
