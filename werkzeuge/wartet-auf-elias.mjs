@@ -96,7 +96,7 @@ const posten = [];
       + (belegt ? `; bei ${belegt} steht die Antwort schon auf der Seite` : ''),
     warum: 'Ohne sie fallen Übungen aus und die Satzanalyse liest den Satz anders.',
     wie: 'Auf der Fragenseite antippen, unten den Text kopieren, in den Chat schicken.',
-    seite: 'https://claude.ai/code/artifact/724ee9bc-adb7-4dcd-ad75-6a56a552adbd',
+    seite: 'https://claude.ai/artifact/5ChpdN9n7PAiTY4B5ZHud3',
     seiteText: 'Fragenseite öffnen',
     zeilen: fragen.map(f => `${f.woerter.length}× ${f.titel}`)
   });
@@ -318,7 +318,7 @@ function gruppenAus(text){
     aufwand: 'ein Durchgang — sie stehen auch auf der Fragenseite',
     warum: 'Die Infokarte kann die Funktion im Satz nicht benennen.',
     wie: 'Löst sich mit der Wortart-Frage auf der Fragenseite von selbst.',
-    seite: 'https://claude.ai/code/artifact/724ee9bc-adb7-4dcd-ad75-6a56a552adbd',
+    seite: 'https://claude.ai/artifact/5ChpdN9n7PAiTY4B5ZHud3',
     seiteText: 'Fragenseite öffnen'
   });
 }
@@ -869,7 +869,7 @@ posten.push({
   aufwand: 'eine Farbe nennen, den Rest baue ich',
   warum: 'Die Schrift hast du gewählt (Scheherazade New) und dazu gesagt: „die farbe muss noch schöner sein". Sobald sie feststeht, wird die Marke zu einem SVG-Pfad — dann bleibt die App unabhängig von Google.',
   wie: 'Eine der fünf Akzentfarben aus deinen Einstellungen nennen, oder eine eigene.',
-  seite: 'https://claude.ai/code/artifact/21463a39-a852-43e0-ad80-7c3bbf78714b',
+  seite: 'https://claude.ai/artifact/57KC3EW5mc9AvkUCt6pnF4',
   seiteText: 'Die Schriftentwürfe'
 });
 posten.push({
@@ -935,7 +935,7 @@ posten.push({
   aufwand: 'einmal in den Windows-Einstellungen, kostenlos',
   warum: 'Auf deinem PC ist KEINE arabische Stimme — dreifach gemessen (SAPI, OneCore, speechSynthesis im Browser). Die App kann heute gar nicht arabisch sprechen; das ist keine Frage der Qualität.',
   wie: 'Einstellungen → Zeit und Sprache → Sprache und Region → Sprache hinzufügen → Arabisch → Optionen → Sprachausgabe. Danach sage ich dir in zehn Sekunden, ob sie deine Ḥarakāt liest: رَجُلٌ gegen رِجْلٌ. Spricht sie beide gleich, ist sie unbrauchbar — und eine kostenlose, die sie liest, schlägt jede bezahlte, die rät.',
-  seite: 'https://claude.ai/code/artifact/15b48598-2cda-4516-81bd-6a7e730dd4cc',
+  seite: 'https://claude.ai/artifact/3gTMBWufBfG52T8KDRqL3m',
   seiteText: 'Der Bericht'
 });
 
@@ -1029,7 +1029,7 @@ try {
         + ' schnell abgehakt. Es ist eine Rangfolge, kein Filter: in dreissig Sekunden kann'
         + ' der Lehrer zwei verschiedene Dinge sagen.' : ''),
     wie: 'Auf der Freigabeseite antippen, unten den Text kopieren, in den Chat schicken.',
-    seite: 'https://claude.ai/code/artifact/d9916aee-b679-4d91-bb0c-c3642f8889ac',
+    seite: 'https://claude.ai/artifact/d9916aee-b679-4d91-bb0c-c3642f8889ac',
     seiteText: 'Die Freigabeseite'
   });
 } catch (e) {
@@ -1115,15 +1115,15 @@ try {
    ueber Aktualisierungen hinweg dieselbe. */
 const ARTEFAKTE = [
   ['Was auf dich wartet',   '4c3a7c9e-c288-480c-bb1f-e2d7cd26d856', 'diese Seite — alle offenen Entscheidungen'],
-  ['Die Fragenseite',       '724ee9bc-adb7-4dcd-ad75-6a56a552adbd', 'die offenen Feldangaben, ein Durchgang je Frage'],
+  ['Die Fragenseite',       '5ChpdN9n7PAiTY4B5ZHud3', 'die offenen Feldangaben, ein Durchgang je Frage'],
   ['Der Wartungskreislauf', '9ec136ba-019d-438b-98af-e57939eb4a99', 'wie das System läuft — vier Phasen, dreizehn Prüfungen'],
   /* ⭐ Am 21.08. vom eigenen Wächter gemeldet: „1 Seite hat eine URL, steht
      aber auf KEINER Liste, die Elias sieht." Genau der Fall, für den er
      gebaut wurde — eine Adresse, die man nicht findet, ist so gut wie keine. */
   ['Lagebericht', '3eb1fcc3-e2ca-4c89-947c-9e382068e9e3', '48 Stunden Arbeit, der Stand des Goal-Prompts, mit Nachtrag vom 21.08.'],
-  ['Vierzehn Schriften',    '21463a39-a852-43e0-ad80-7c3bbf78714b', 'die Wortmarke طالب zur Auswahl'],
-  ['Das Farbgerüst',        '4e9ce030-17a6-46be-ba47-02ccb56bc32a', 'acht Akzentfarben an dreizehn Flächen'],
-  ['Eine Stimme fürs Arabische', '15b48598-2cda-4516-81bd-6a7e730dd4cc', 'vier Wege, mit den gemessenen Kosten']
+  ['Vierzehn Schriften',    '57KC3EW5mc9AvkUCt6pnF4', 'die Wortmarke طالب zur Auswahl'],
+  ['Das Farbgerüst',        'Ai2qerHN3q9xxeLoeD3f3o', 'acht Akzentfarben an dreizehn Flächen'],
+  ['Eine Stimme fürs Arabische', '3gTMBWufBfG52T8KDRqL3m', 'vier Wege, mit den gemessenen Kosten']
 ];
 
 /* ⭐ Zwei Seiten, die NICHT zu den Entscheidungen gehören, sondern laufend
@@ -1138,7 +1138,7 @@ const ARTEFAKTE = [
 const LAUFEND = [
   ['Regelauswahl Satzmodus', 'da4af296-67c5-4055-a2e7-35defc375007',
    'welche der 95 Regeln im Satzmodus bleiben — Schlüssel satzmodus-auswahl-v1'],
-  ['Regelprüfung Madina 1', '1e11a0ef-992b-41ac-9786-1247cc185e83',
+  ['Regelprüfung Madina 1', '4iMdxRvKkFHj699cfyHbra',
    'deine Beurteilung der Regeln — Schlüssel regelpruefung-v1, deine Antworten liegen darin'],
   ['Regelkandidaten freigeben', 'd9916aee-b679-4d91-bb0c-c3642f8889ac',
    'neue Regeln vor dem Eintragen — Schlüssel regelkandidaten-v1'],
@@ -1146,11 +1146,11 @@ const LAUFEND = [
      standen bis zum 20.08.2026 auf KEINER Liste. Eine Adresse, die man nicht
      findet, ist so gut wie keine; und wer eine davon ohne ihre URL neu
      veroeffentlicht, laesst die Antworten in der alten Fassung zurueck. */
-  ['Ähnliche Regeln zusammenfassen?', '9cb296d7-b5ea-4767-8f99-e5e896e6a871',
+  ['Ähnliche Regeln zusammenfassen?', 'LMHMc79nzyNS3BZpm76kqW',
    'acht gemessene Regelgruppen zum Verschmelzen — Schlüssel verschmelzung-v1'],
   ['Neun Befunde', 'bc9b71c0-5ea6-451b-9f02-0fbc9fbdd63d',
    'die Befunde aus der Nacht auf den 19.08. — Schlüssel befunde-v1'],
-  ['Die Wortmarke im Kopf der App', '75f11c5e-c9ae-4a57-87cc-d8b86338c621',
+  ['Die Wortmarke im Kopf der App', 'FZiAaexEgyEVxPKyZqURCC',
    'die aeltere Wortmarken-Frage — Schlüssel wortmarke-v1']
 ];
 
@@ -1167,12 +1167,13 @@ const LAUFEND = [
    Seite. [[entscheidung_gilt_fuer_das_zweite_werkzeug]] [[werkzeug_ohne_aufrufer]] */
 const DATEI_ZU_URL = {
   'wartet-auf-elias.html':        '4c3a7c9e-c288-480c-bb1f-e2d7cd26d856',
-  'wartungsfragen-artefakt.html': '724ee9bc-adb7-4dcd-ad75-6a56a552adbd',
+  'wartungsfragen-artefakt.html': '5ChpdN9n7PAiTY4B5ZHud3',
+  'regelkategorien.html':         'DHhYFwtTNJADVwE2tVUDz3',
   'wartungskreislauf.html':       '9ec136ba-019d-438b-98af-e57939eb4a99',
-  'schriften-talib-artefakt.html':'21463a39-a852-43e0-ad80-7c3bbf78714b',
-  'farben-artefakt.html':         '4e9ce030-17a6-46be-ba47-02ccb56bc32a',
-  'stimme-artefakt.html':         '15b48598-2cda-4516-81bd-6a7e730dd4cc',
-  'regelpruefung.html':           '1e11a0ef-992b-41ac-9786-1247cc185e83',
+  'schriften-talib-artefakt.html':'57KC3EW5mc9AvkUCt6pnF4',
+  'farben-artefakt.html':         'Ai2qerHN3q9xxeLoeD3f3o',
+  'stimme-artefakt.html':         '3gTMBWufBfG52T8KDRqL3m',
+  'regelpruefung.html':           '4iMdxRvKkFHj699cfyHbra',
   'freigabe.html':                'd9916aee-b679-4d91-bb0c-c3642f8889ac',
   /* Der 48-Stunden-Bericht vom 20.08. Er lag bis zum 21.08. NUR im
      Scratchpad — also ausserhalb jeder Sicherung und ohne Eintrag hier.
@@ -1193,10 +1194,10 @@ const DATEI_ZU_URL = {
      Zugeordnet ueber den <title>, der in Datei und Artefaktliste gleich ist. */
   '../regelauswahl.html':         'da4af296-67c5-4055-a2e7-35defc375007',   /* satzmodus-auswahl-v1 */
   '../befunde.html':              'bc9b71c0-5ea6-451b-9f02-0fbc9fbdd63d',   /* befunde-v1 */
-  '../verschmelzung.html':        '9cb296d7-b5ea-4767-8f99-e5e896e6a871',   /* verschmelzung-v1 */
-  '../wortmarke-entwuerfe.html':  '75f11c5e-c9ae-4a57-87cc-d8b86338c621',   /* wortmarke-v1 */
-  '../vorschau-stamm.html':       '488ce289-f5ae-4c8d-b597-ebd83d275cc2',
-  '../vorschau-modusleisten.html':'13414c89-616d-4280-84fa-eef11e9b29e0',
+  '../verschmelzung.html':        'LMHMc79nzyNS3BZpm76kqW',   /* verschmelzung-v1 */
+  '../wortmarke-entwuerfe.html':  'FZiAaexEgyEVxPKyZqURCC',   /* wortmarke-v1 */
+  '../vorschau-stamm.html':       '9xcV7t9qPqQzzQ76DDEc6m',
+  '../vorschau-modusleisten.html':'3NuaY9Gm44TmrHrpSQwFAX',
   /* ⚠️ wartungsfragen.html ist die Vorschaufassung derselben Seite und wird
      NICHT veroeffentlicht - deshalb bewusst ohne URL, aber genannt, damit der
      Waechter sie nicht jedes Mal meldet. */
@@ -1398,11 +1399,11 @@ ${ausTodo.length ? `<h3>Dazu aus der To-Do</h3>
 
 <h3>Laufend gebraucht — deine Antworten liegen darin</h3>
 <ul class="seiten">${LAUFEND.map(([n, id, was]) =>
-  `<li><a href="https://claude.ai/code/artifact/${id}">${esc(n)}</a> <span>${esc(was)}</span></li>`).join('')}</ul>
+  `<li><a href="https://claude.ai/artifact/${id}">${esc(n)}</a> <span>${esc(was)}</span></li>`).join('')}</ul>
 
 <h3>Alle Seiten für dich</h3>
 <ul class="seiten">${ARTEFAKTE.map(([n, id, was]) =>
-  `<li><a href="https://claude.ai/code/artifact/${id}">${esc(n)}</a> <span>${esc(was)}</span></li>`).join('')}</ul>
+  `<li><a href="https://claude.ai/artifact/${id}">${esc(n)}</a> <span>${esc(was)}</span></li>`).join('')}</ul>
 
 <p class="fuss">Erzeugt von <code>werkzeuge/wartet-auf-elias.mjs</code>. Die
 Zahlen kommen aus <code>vorrat.mjs</code>, <code>pruefe-taschkil.js</code>,
@@ -1493,5 +1494,5 @@ console.log('  ⚠️ Veroeffentlichen kann die Routine nicht selbst — das bra
 console.log('     ⛔ Die hinterlegte Adresse war am 09.09.2026 (nach 16:05) NICHT abrufbar');
 console.log('        („artifact not found"). Erst nachsehen, welche Seite Elias wirklich');
 console.log('        offen hat, dann DIESE wiederverwenden — keine neue anlegen:');
-console.log('     https://claude.ai/code/artifact/' + eigeneId);
+console.log('     https://claude.ai/artifact/' + eigeneId);
 process.exit(posten.length ? 2 : 0);

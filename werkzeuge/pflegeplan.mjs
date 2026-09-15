@@ -170,6 +170,26 @@ export const PFLEGEPLAN = [
       wie: 'zurückgestellte Regeln werden gegen jede neue Folge gehalten' },
   },
   {
+    /* Neu am 15.09.2026. Elias: „dass du das artefakt nochmals in kategorien
+       unterteilst mit den aktuellen regeln die wir haben und dann kann ich
+       entscheiden ob diese einzelne regel dazu gehört oder nicht."
+       ⛔ EINE Frage je Regel, nicht zwei: Regeln-Bereich und Satzmodus zeigen
+       dieselben 93, und auf den Karteikarten steht seit dem 26.08.2026 gar
+       keine Grammatik mehr. */
+    funktion: 'Regelkategorien-Seite (Artefakt)',
+    /* ⚠️ KEINE App-Dateien: die Seite ist ein Artefakt für ihn, kein Teil der
+       App. Standen sie hier, meldete der Prüfer zu Recht „lädt die App nicht
+       mehr — Eintrag veraltet". */
+    dateien: [],
+    bildschirme: [],
+    neuerInhalt: { routine: W, schritt: '1d.3', beleg: 'node werkzeuge/regelkategorien-seite.mjs', werkzeug: 'werkzeuge/regelkategorien-seite.mjs',
+      wie: 'jede neue Regel erscheint beim nächsten Bau in ihrer Kategorie — die Einteilung kommt aus SATZ_THEMEN, nicht aus einer zweiten Liste' },
+    eingaben: { routine: W, schritt: "1d.3", beleg: "node werkzeuge/urteile-uebernehmen.mjs", werkzeug: 'werkzeuge/urteile-uebernehmen.mjs',
+      wie: 'seine Entscheidungen kommen im Format DRIN/RAUS/AENDERN heraus, das dieses Werkzeug schon liest — deshalb kein zweites gebaut' },
+    veralten: { routine: W, schritt: '1d.3', beleg: 'werkzeuge/regelkategorien-seite.mjs',
+      wie: 'die Seite trägt ihr Baudatum und wird bei jedem Lauf neu erzeugt; eine Regel, die aus SATZ_THEMEN fällt, landet sichtbar unter „Nicht zuordbar"' },
+  },
+  {
     funktion: 'Iʿrāb-Erklärer',
     dateien: ['js/irab.js'],
     bildschirme: [],

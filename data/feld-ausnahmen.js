@@ -96,7 +96,21 @@ const FELD_REGELN = {
  */
 
 const FELD_AUSNAHMEN = {
-  /* (noch leer — wird aus seinen Freigaben gefüllt) */
+  '45813': { pl: 'von Elias bestätigt am 15.9.2026 — الفِلِيبِّينُ (Philippinen)' },
+  '45814': { pl: 'von Elias bestätigt am 15.9.2026 — اليَابَانُ (Japan)' },
+  '45815': { pl: 'von Elias bestätigt am 15.9.2026 — الصِّينُ (China)' },
+  '45816': { pl: 'von Elias bestätigt am 15.9.2026 — الهِنْدُ (Indien)' },
+  '45833': { pl: 'von Elias bestätigt am 15.9.2026 — كَعْبَةٌ (Kaaba)' },
+  '45868': { pl: 'von Elias bestätigt am 15.9.2026 — أَمْرِيكَا (Amerika)' },
+  '45870': { pl: 'von Elias bestätigt am 15.9.2026 — أَلْمَانِيَا (Deutschland)' },
+  '45871': { pl: 'von Elias bestätigt am 15.9.2026 — إِنْجِلْتَرَا (England)' },
+  '45872': { pl: 'von Elias bestätigt am 15.9.2026 — العِرَاقُ (Irak)' },
+  '45873': { pl: 'von Elias bestätigt am 15.9.2026 — سُويسْرَا (Schweiz)' },
+  '45886': { pl: 'von Elias bestätigt am 15.9.2026 — القَاهِرَةُ (Kairo)' },
+  '45894': { pl: 'von Elias bestätigt am 15.9.2026 — الكُوَيْتُ (Kuwait)' },
+  '45898': { pl: 'von Elias bestätigt am 15.9.2026 — إِنْدُونِيسِيَا (Indonesien)' },
+  '45907': { pl: 'von Elias bestätigt am 15.9.2026 — سُورِيَا (Syrien)' },
+  '45911': { pl: 'von Elias bestätigt am 15.9.2026 — مَالِيزِيَا (Malaysia)' }
 };
 
 /* ---------- Ebene 3: Werte, die Elias nachgetragen hat ----------
@@ -121,7 +135,14 @@ const FELD_AUSNAHMEN = {
  */
 
 const FELD_ERGAENZUNGEN = {
-  /* (noch leer — wird aus seinen Antworten gefüllt) */
+  '0e23a52d-e2f5-4a57-9082-58eb9f362d88': { type: 'adverb' },
+  '59e30a8a-e400-4380-8adf-89e811852a1d': { root: 'ل ح م', type: 'noun' },
+  'p_1787183484954': { type: 'adjective' },
+  'p_1787185012359': { root: 'س و د', type: 'noun' },
+  'p_1787185031977': { type: 'noun' },
+  'p_1787189845886': { root: 'خ ر ج', type: 'verb' },
+  'p_1787190874749': { root: 'ع ن د' },
+  'p_1787191371934': { root: 'ك س ل', type: 'adjective' }
 };
 
 /* ---------- Ebene 4: Wortarten, die Elias bestritten hat ----------
@@ -151,7 +172,9 @@ const FELD_ERGAENZUNGEN = {
  */
 
 const FELD_ZWEIFEL = {
-  /* (noch leer — wird aus seinen Antworten gefüllt) */
+  'p_1787183484954': { type: 'von Elias bestritten am 15.9.2026 — مَكْسُورٌ (Kaputt)' },
+  'p_1787189845886': { type: 'von Elias bestritten am 15.9.2026 — خَرَجَ (Herausgehen/ herauskommen)' },
+  'p_1787191371934': { type: 'von Elias bestritten am 15.9.2026 — كَسْلَانُ (Faul)' }
 };
 
 /* ---------- Prüffunktion ---------- */
