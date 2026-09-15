@@ -427,6 +427,22 @@ const PRUEFER = [
      der Knopf landet nur wieder einen Bildschirm zu frueh. */
   ['test-surenringe.mjs', []],
 
+  /* ⛔ Neu am 15.09.2026. Beide bewachen einen Prüfer, der zu UNRECHT rot
+     wurde — und das ist eine eigene Fehlerart: ein Werkzeug, das regelmäßig
+     ohne Grund meldet, wird beim dritten Mal überlesen, und dann auch an dem
+     Tag, an dem es recht hat.
+
+     `luecken-ohne-commit` hält fest, dass ein Tag ohne Commit kein Befund ist
+     (der Sonntagslauf um 13:00 traf genau das). `freischaltung-abfragemarke`
+     hält fest, dass eine Abfrage ohne Änderung trotzdem eine Abfrage ist.
+
+     ⚠️ Der zweite ruft `vorrat.mjs --knapp` dreimal auf und braucht darum
+     rund eine halbe Minute — bewusst in Kauf genommen: er prüft auch den
+     kaputten Fall (Marke ist kein JSON), und das ist der Pfad, der sonst nie
+     jemand ansieht. */
+  ['test-luecken-ohne-commit.mjs', []],
+  ['test-freischaltung-abfragemarke.mjs', []],
+
   /* ⛔ Neu am 06.09.2026. Der Hifz-Stand ist das Einzige in dieser App, das
      Elias sich WIRKLICH erarbeitet hat — auswendig gelernte Suren. Er lief
      bis dahin ueber den Blockersatz und ging beim Geraetewechsel verloren.
