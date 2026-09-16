@@ -2759,6 +2759,30 @@ const SENTENCE_TAGS = {
   "gram-khayr": [
     { ruleId: "mubtada-khabar-01", matchText: "الْمَسْجِدُ خَيْرٌ" },
     { ruleId: "harf-jarr-min-ila-01", matchText: "مِنَ الْبَيْتِ" }
+  ],
+  "gram-isara-hadhani": [
+    { ruleId: "tanwin-eigennamen-01", matchText: "حَامِدٌ" }
+  ],
+  "gram-isara-hatani": [
+    { ruleId: "fem-bildung-01", matchText: "مُدَرِّسَةٌ" }
+  ],
+  "gram-isara-dhanika": [
+    { ruleId: "tanwin-eigennamen-01", matchText: "مُحَمَّدٌ" }
+  ],
+  "gram-isara-tanika": [
+    { ruleId: "fem-bildung-01", matchText: "طَالِبَةٌ" }
+  ],
+  "gram-frage-madha": [
+    { ruleId: "istifham-madha-01", matchText: "مَاذَا" }
+  ],
+  "gram-frage-kam": [
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْفَصْلِ" }
+  ],
+  "gram-frage-min-ayna": [
+    { ruleId: "min-ayna-01", matchText: "مِنْ أَيْنَ" }
+  ],
+  "gram-frage-ila-ayna": [
+    { ruleId: "istifham-ayna-01", matchText: "أَيْنَ" }
   ]
 };
 

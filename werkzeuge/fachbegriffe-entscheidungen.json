@@ -83,9 +83,12 @@
       "am": "2026-09-11"
     },
     "ماذا": {
-      "entscheidung": "abgelehnt",
-      "grund": "Fragewort — eine Buchvokabel, kein Fachbegriff",
-      "am": "2026-09-11"
+      "entscheidung": "aufgenommen",
+      "id": "gram-frage-madha",
+      "form": "مَاذَا",
+      "buchTausch": "49827",
+      "am": "2026-09-16",
+      "anlass": "Elias 16.09.2026 zu seiner Musterlösung: „hab ich die auch schon als karteikarten die mich abfragen? das sind auch wichtige vokabeln“. Die Absage vom 11.09. („Fragewort — eine Buchvokabel, kein Fachbegriff“) war eine Einordnung der Wartung, nicht seine Entscheidung; im aktiven Buch steht das Wort nicht."
     },
     "لمن": {
       "entscheidung": "abgelehnt",
@@ -93,9 +96,11 @@
       "am": "2026-09-11"
     },
     "من اين": {
-      "entscheidung": "abgelehnt",
-      "grund": "Fragewort — eine Buchvokabel, kein Fachbegriff",
-      "am": "2026-09-11"
+      "entscheidung": "aufgenommen",
+      "id": "gram-frage-min-ayna",
+      "form": "مِنْ أَيْنَ",
+      "am": "2026-09-16",
+      "anlass": "Elias 16.09.2026 zu seiner Musterlösung: „hab ich die auch schon als karteikarten die mich abfragen? das sind auch wichtige vokabeln“. Die Absage vom 11.09. war eine Einordnung der Wartung, nicht seine Entscheidung; als Wortpaar gibt es keine Buchkarte."
     },
     "كيف": {
       "entscheidung": "abgelehnt",
@@ -474,6 +479,21 @@
       "form": "تَانِكَ",
       "buchTausch": "47225",
       "am": "2026-09-16"
+    },
+    "كم": {
+      "entscheidung": "aufgenommen",
+      "id": "gram-frage-kam",
+      "form": "كَمْ",
+      "buchTausch": "49830",
+      "am": "2026-09-16",
+      "anlass": "Elias 16.09.2026 zu seiner Musterlösung: „hab ich die auch schon als karteikarten die mich abfragen? das sind auch wichtige vokabeln“. Im aktiven Buch steht das Wort nicht."
+    },
+    "الى اين": {
+      "entscheidung": "aufgenommen",
+      "id": "gram-frage-ila-ayna",
+      "form": "إِلَى أَيْنَ",
+      "am": "2026-09-16",
+      "anlass": "Elias 16.09.2026 zu seiner Musterlösung: „hab ich die auch schon als karteikarten die mich abfragen? das sind auch wichtige vokabeln“. Als Wortpaar gibt es keine Buchkarte."
     }
   }
 }
