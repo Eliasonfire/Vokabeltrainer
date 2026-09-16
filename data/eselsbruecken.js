@@ -457,6 +457,78 @@ const BUCH_ESELSBRUECKEN = {
 
 
   "46401": "نَارُ اللَّهِ الْمُوقَدَةُ · ٱلَّتِي تَطَّلِعُ عَلَى ٱلْأَفْـِٔدَةِ — aus سُورَةُ الْهُمَزَة, die du auswendig kannst. Warum dort الَّتِي und nicht الَّذِي? Weil نَار (Feuer) weiblich ist. ⭐ Das ist die ganze Regel: nicht ob Person oder Sache entscheidet, sondern allein das GESCHLECHT des Wortes davor.",
+
+  "45972": "Die Wurzel ن ظ ر steht zweimal in den Kapiteln 1 und 2 von Bayna Yadayk 1: نَظَرَ (anschauen) und نَظَّارَةٌ (Brille). Die Brille ist das Gerät zum نَظَرَ — wer das eine behält, hat das andere mit.",
+  "45973": "اِسْتَمَعَ ist das absichtliche Zuhören — die Vorsilbe اِسْتَـ heißt „von sich aus, gezielt\". Dieselbe Vorsilbe steckt in zwei Wörtern, die du schon hast: مُسْتَشْفًى (Krankenhaus) und مُسْتَوْصَفٌ (Klinik). Wer اِسْتَمَعَ sagt, hört nicht zufällig, sondern setzt sich hin und hört zu.",
+
+  "45974": "Das Fest ʿĪd heißt wörtlich „das Wiederkehrende\" — und kommt von genau dieser Wurzel ع و د. أَعَادَ ist also „etwas wiederkommen lassen\", auf Deutsch: wiederholen. Jedes Jahr kehrt das Fest zurück; jedes Mal, wenn du eine Vokabel wiederholst, lässt du sie zurückkehren.",
+
+  "45975": "Du kennst den Fachbegriff اِسْمُ الْإِشَارَة — das Hinweiswort (هَذَا, ذَلِكَ, هَذِهِ). Genau daher kommt أَشَارَ: es heißt „hinweisen, zeigen\". Ein اِسْمُ الْإِشَارَة ist das Wort, mit dem man zeigt.",
+
+  "45976": "Sure asch-Scharḥ sagt zu dir: وَوَضَعْنَا عَنْكَ وِزْرَكَ — „und Wir haben dir deine Last abgenommen\" (94:2). Dort steht genau dein Verb: etwas ablegen, niederlegen. وَضَعَ ist das Hinlegen.",
+
+  "45977": "Beim Aufrichten aus der Verbeugung im Gebet sagt man „samiʿa llāhu li-man ḥamidah\" — „Allah hört den, der Ihn lobt\". Das allererste Wort davon ist genau deine Vokabel: سَمِعَ.",
+
+  "45978": "Das doppelte ت in رَتَّبَ ist eine شَدَّة — eines der fünf شَكْل aus deinen Regeln. Die شَدَّة macht aus einem einfachen Verb ein „mit Nachdruck\"-Verb: nicht nur hinlegen, sondern ordnen, sortieren, in eine Reihe bringen.",
+  "45979": "تَبَادَلَ heißt „gegenseitig austauschen\" — und das Gegenseitige steckt im Bauplan: تَـ am Anfang plus ein langes ā in der Mitte bedeutet immer „miteinander, hin und her\". Zwei Leute tauschen Bilder aus, keiner tut es allein.",
+
+  "45980": "أَجَابَ (antworten) und جَوَابٌ (Antwort) stehen im selben Kapitel und haben dieselbe Wurzel ج و ب. Das eine ist die Tat, das andere das Ergebnis. Wer das Paar zusammen lernt, hat zwei Vokabeln für eine.",
+
+  "45981": "Das erste Wort, das überhaupt herabgesandt wurde: اِقْرَأْ بِاسْمِ رَبِّكَ — „Lies im Namen deines Herrn\" (96:1). Und al-Qurʾān, der Name des Buches selbst, kommt aus derselben Wurzel ق ر أ: das, was gelesen und vorgetragen wird.",
+
+  "45982": "مَرَّ hat nur zwei sichtbare Buchstaben und eine شَدَّة, weil der zweite und dritte Wurzelbuchstabe derselbe sind (م ر ر). Genau so ist حَارٌّ (heiß) aus Kapitel 3 gebaut — zwei gleiche Buchstaben verschmelzen zu einem mit شَدَّة.",
+
+  "45983": "نَسَخَ heißt abschreiben, kopieren — und der Schreiber, der einen Text von Hand vervielfältigt, heißt danach nāsiḫ. Wer eine نُسْخَة (nusḫa, „Kopie\") in der Hand hält, hält das Ergebnis von نَسَخَ.",
+
+  "45984": "أَخٌ (Bruder) gehört zu den Wörtern, die sich verlängern, sobald etwas folgt: alleinstehend nur أَخٌ, in der Verbindung wird daraus aḫū. Genau dasselbe tut أَبٌ (Vater) aus Kapitel 6, das du schon hast — zwei Wörter, eine Besonderheit.",
+
+  "45985": "Die Wurzel ص د ق heißt „wahrhaftig sein\". Abū Bakr trägt deshalb den Beinamen aṣ-Ṣiddīq — „der Wahrhaftige\". Ein صَدِيقٌ ist danach kein beliebiger Bekannter, sondern der, bei dem du dich auf die Wahrheit verlassen kannst.",
+
+  "45986": "أُخْتٌ endet auf ein echtes ت, nicht auf die تَاء مَرْبُوطَة — obwohl das Wort weiblich ist. Genau dieselbe Ausnahme ist بِنْتٌ (Tochter) aus Kapitel 5, die du schon hast. Zwei weibliche Wörter ohne ة: merke sie als Paar.",
+
+  "45987": "Einer der Namen Allahs ist al-Muṣawwir, „der Gestaltgebende\" — aus genau dieser Wurzel ص و ر. Eine صُورَةٌ ist eine Gestalt, ein Bild, eine Form. Wer das Bild sieht, sieht eine Gestalt.",
+
+  "45988": "جَوَابٌ (Antwort) und أَجَابَ (antworten) stehen im selben Kapitel und teilen die Wurzel ج و ب. Frage und Antwort lernst du als Paar: سَأَلَ fragt, جَوَابٌ ist, was zurückkommt.",
+
+  "45989": "Du kennst den Fachbegriff جُمْلَة فِعْلِيَّة — den Verbalsatz. Das erste Wort darin ist genau diese Vokabel: جُمْلَةٌ heißt Satz. Wenn dein Lehrer vom Verbalsatz spricht, hat er das Wort schon benutzt.",
+
+  "45990": "Die Wurzel و ح د ist die Wurzel des Tauḥīd — des Bekenntnisses, dass Allah einer ist. Eine وَحْدَةٌ ist danach eine Einheit: das, was zusammengehört und eins ist. Im Buch ist es die Lektion, die eine Einheit bildet.",
+
+  "45991": "Die Endung ـِيَّةٌ macht aus einem Ding eine Zugehörigkeit. Du hast das Muster schon dreimal: عَرَبِيَّةٌ (Arabisch), إِنْجِلِيزِيَّةٌ (Englisch), ثَانَوِيَّةٌ (weiterführende Schule). جِنْسِيَّةٌ ist genauso gebaut — die Zugehörigkeit zu einem Volk, also die Nationalität.",
+  "45992": "Das مُـ am Wortanfang macht aus einer Tätigkeit den, der sie tut. Du hast das Muster schon mehrfach: مُدَرِّسٌ (Lehrer), مُدِيرٌ (Direktor), مُؤَذِّنٌ (Gebetsrufer). مُهَنْدِسٌ reiht sich ein — der, der die هَنْدَسَة, die Ingenieurskunst, betreibt.",
+
+  "45993": "تَدْرِيبٌ ist eine Übung — gebaut nach dem Muster تَـ vorn, langes ī hinten. Genau so sind zwei Fachbegriffe gebaut, die du schon hast: تَشْكِيل (die Vokalzeichen) und تَقْدِيمٌ (die Voranstellung). Drei Wörter, ein Bauplan.",
+
+  "45994": "Sure al-Humaza beschreibt den, الَّذِي جَمَعَ مَالًا وَعَدَّدَهُ — „der Besitz zusammenträgt und ihn immer wieder zählt\" (104:2). Das Zählen dort ist deine Wurzel ع د د. Ein عَدَدٌ ist eine Zahl, eine Anzahl.",
+
+  "45995": "Das Muster مِفْعَال kennst du aus deinen Werkzeugen: مِفْتَاحٌ (Schlüssel) und مِرْحَاضٌ (Toilette). مِثَالٌ ist genauso gebaut — und tut dasselbe: es ist das Werkzeug, mit dem etwas gezeigt wird, ein Beispiel.",
+
+  "45996": "رَقْمٌ ist die Ziffer, die Nummer — das Zeichen, das für eine Zahl steht. Du kennst die Ziffer صِفْرٌ (Null) bereits; das arabische Wort für Null ist über das Lateinische zu unserer „Ziffer\" geworden, und رَقْمٌ ist der Oberbegriff dafür.",
+
+  "45997": "Die Wurzel ع ل م ist die Wurzel des Wissens — dieselbe wie in الَّذِي عَلَّمَ بِالْقَلَمِ, „Der mit dem Schreibrohr gelehrt hat\" (96:4). Eine عَلَامَةٌ ist das Zeichen, an dem man etwas erkennt: das, was wissen lässt.",
+
+  "45998": "سَأَلَ (fragen) und أَجَابَ (antworten) sind das Paar, aus dem der ganze Unterricht besteht. Beide stehen in Kapitel 1. Der Lehrer fragt, der Schüler antwortet — und das Ergebnis heißt جَوَابٌ.",
+  "45999": "تَوَضَّأَ ist das Verb zum Wuḍūʾ, der Gebetswaschung — das Wort, das du bei jedem Gebet brauchst. Die شَدَّة auf dem ض ist hörbar: ta-waḍ-ḍaʾa.",
+
+  "46000": "Sure al-ʿAlaq spricht von عَبْدًا إِذَا صَلَّى — „einem Diener, wenn er betet\" (96:10). Dort steht genau deine Vokabel. صَلَّى ist das Verb, صَلَاةٌ das Gebet selbst.",
+
+  "46001": "Sure al-Fīl fragt, wie فَعَلَ رَبُّكَ — „wie dein Herr verfuhr\" mit den Leuten des Elefanten (105:1). Das Verb dort ist genau deine Vokabel. فَعَلَ heißt tun, machen.",
+  "46002": "Eine أُسْرَةٌ ist die Familie — die Leute, die zusammengebunden sind. Die Wurzel أ س ر heißt „binden, fesseln\"; eine Familie ist das, was zusammenhält.",
+  "46003": "Sure al-Iḫlāṣ sagt von Allah: لَمْ يَلِدْ وَلَمْ يُولَدْ — „Er hat nicht gezeugt und ist nicht gezeugt worden\" (112:3). Genau diese Wurzel و ل د steckt in وَالِدَةٌ: die, die geboren hat — die Mutter.",
+
+  "46004": "Das doppelte د in جَدٌّ ist eine شَدَّة und muss hörbar sein: ǧadd. Dieselbe Doppelung am Wortende hast du bei قِطٌّ (Katze) und حَارٌّ (heiß) — beide aus deinen ersten Kapiteln.",
+
+  "46005": "ابْنَةٌ ist die Tochter — dasselbe Wort wie ابْنٌ (Sohn) aus Kapitel 5, nur mit der تَاء مَرْبُوطَة. Du hast den Sohn schon; die Tochter ist ein Zeichen mehr.",
+
+  "46006": "Die Wurzel ع ل م ist die des Wissens — dieselbe wie in الَّذِي عَلَّمَ بِالْقَلَمِ (96:4). Ein مُعَلِّمٌ ist wörtlich „einer, der wissen lässt\". Das مُـ vorn macht aus der Tätigkeit den, der sie tut.",
+
+  "46007": "Das Muster مِفْعَل steht im Arabischen für Geräte und Dinge, die man benutzt. Du hast die Gruppe schon: مِفْتَاحٌ (Schlüssel), مِكْوَاةٌ (Bügeleisen), مِلْعَقَةٌ (Löffel), مِرْوَحَةٌ (Ventilator). مِعْطَفٌ, der Mantel, gehört dort hinein — das Ding, das man umlegt.",
+
+  "46008": "جَدَّةٌ ist die Großmutter — dasselbe Wort wie جَدٌّ (Großvater) aus demselben Kapitel, nur mit der تَاء مَرْبُوطَة. Dieselbe Regel wie bei وَالِدٌ / وَالِدَةٌ: ein Zeichen trennt die Geschlechter.",
+
+  "46009": "Eine نَظَّارَةٌ ist das Gerät zum Schauen — von نَظَرَ (anschauen) aus Kapitel 1. Das Muster فَعَّالَة mit شَدَّة ist im Arabischen das Muster für Geräte, und du hast es schon dreimal: سَيَّارَةٌ (Auto), ثَلَّاجَةٌ (Kühlschrank), دَرَّاجَةٌ (Fahrrad).",
+
+  "46010": "Sure al-Iḫlāṣ sagt von Allah: لَمْ يَلِدْ وَلَمْ يُولَدْ — „Er hat nicht gezeugt und ist nicht gezeugt worden\" (112:3). Genau diese Wurzel و ل د steckt in وَالِدٌ: der, der gezeugt hat — der Vater."
 };
 
 /* ---------- Korrigierte Schreibweisen ----------

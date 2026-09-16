@@ -7,7 +7,7 @@
   "angabeVom": "20.08.2026",
   "_angabeBaynaYadayk": "Elias am 16.09.2026, 20:20:56: „hab eben bayna yadayk kapitel 1 und 2 freigeschaltet“ — in der App, sein abgeglichener Stand um 20:21:19 zeigt bayna-yadayk-1 [1,2]. Davor hatte er ab 20:10 aus seiner Notiz „Arabya Bayna Yadayk 1A“ einzelne Wörter als Karteikarten verlangt (جِنْسِيَّة, صُورَة, جَدّ, جَدَّة) — er arbeitet also aktiv mit dem Buch, wie bei madina-1 Kapitel 12 zählt die Meldung als Lernstand, nicht als „nur freigeschaltet“. Bei arabicroots ist das Buch am selben Abend NICHT freigeschaltet (get_unlocked_chapters).",
   "_angabeWortlaut": "Elias am 20.08.2026, 01:5x: \"ich habe übrigens kapitel 12 freigeschaltet\" — davor am 19.08.: \"nein, ich bin bei madina-1 kapitel 11, madina-2 ist nur freigeschaltet\". ⚠️ Er unterscheidet selbst zwischen \"ich bin bei\" und \"nur freigeschaltet\" (so gesagt über madina-2, das deshalb gar nicht in `angabe` steht). Hier meldet er den Fortschritt aktiv und im Zusammenhang mit der App, also zählt es als Erweiterung des Fensters auf 12.",
-  "gemessenAm": "2026-09-13",
+  "gemessenAm": "2026-09-16",
   "gemessen": {
     "madina-1": {
       "hoechstesKapitel": 24,

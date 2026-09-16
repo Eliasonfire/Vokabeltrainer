@@ -1406,4 +1406,263 @@ const BEISPIELSAETZE = {
     sentAr: 'لِمَنِ الْكِتَابُ؟',
     sentDe: 'Wem gehört das Buch?'
   },
+
+  /* ===================================================================
+     Bayna Yadayk 1, Kapitel 1 und 2 — geschrieben am 16.09.2026 (Wartung Mi)
+
+     Elias hat die beiden Kapitel am 16.09.2026 um 20:20 freigeschaltet; damit
+     kamen 39 Wörter ohne Satz ins Fenster. Alle Sätze unten benutzen
+     ausschließlich Wörter aus madina-1 Kapitel 1–12 (sein bestätigter Stand)
+     oder aus eben diesen beiden Kapiteln.
+
+     Bauformen bewusst eng gehalten: einfacher Verbalsatz (Verb + Subjekt im
+     Nominativ + Objekt im Akkusativ), Iḍāfa und Nominalsatz mit نَعْت. Kein
+     Passiv, kein Nebensatz, keine Form aus späteren Kapiteln.
+     =================================================================== */
+
+  /* نَظَرَ — anschauen · Verbalsatz mit إِلَى, das den Genitiv verlangt. */
+  '45972': {
+    sentAr: 'نَظَرَ الطَّالِبُ إِلَى النَّجْمِ.',
+    sentDe: 'Der Student schaute zum Stern.'
+  },
+
+  /* اِسْتَمَعَ — zuhören · dasselbe Muster: اِسْتَمَعَ إِلَى + Genitiv. */
+  '45973': {
+    sentAr: 'اِسْتَمَعَ الْوَلَدُ إِلَى الْمُدَرِّسِ.',
+    sentDe: 'Der Junge hörte dem Lehrer zu.'
+  },
+
+  /* أَعَادَ — wiederholen · Objekt im Akkusativ (مَفْعُول بِهِ). */
+  '45974': {
+    sentAr: 'أَعَادَ الطَّالِبُ الْجُمْلَةَ.',
+    sentDe: 'Der Student wiederholte den Satz.'
+  },
+
+  /* أَشَارَ — zeigen · أَشَارَ إِلَى ist die feste Verbindung. */
+  '45975': {
+    sentAr: 'أَشَارَ الْمُدَرِّسُ إِلَى الْبَابِ.',
+    sentDe: 'Der Lehrer zeigte auf die Tür.'
+  },
+
+  /* وَضَعَ — legen · Objekt im Akkusativ, dazu عَلَى mit Genitiv. */
+  '45976': {
+    sentAr: 'وَضَعَ التَّاجِرُ الْقَلَمَ عَلَى الْمَكْتَبِ.',
+    sentDe: 'Der Händler legte den Stift auf den Schreibtisch.'
+  },
+
+  /* سَمِعَ — hören · direktes Objekt, ohne Präposition (anders als اِسْتَمَعَ). */
+  '45977': {
+    sentAr: 'سَمِعَ الرَّجُلُ الْمُؤَذِّنَ.',
+    sentDe: 'Der Mann hörte den Gebetsrufer.'
+  },
+
+  /* رَتَّبَ — ordnen · Objekt im Akkusativ. */
+  '45978': {
+    sentAr: 'رَتَّبَ الطَّالِبُ الْغُرْفَةَ.',
+    sentDe: 'Der Student ordnete das Zimmer.'
+  },
+
+  /* تَبَادَلَ — austauschen · مَعَ verlangt den Genitiv. */
+  '45979': {
+    sentAr: 'تَبَادَلَ الطَّالِبُ الْكِتَابَ مَعَ الصَّدِيقِ.',
+    sentDe: 'Der Student tauschte das Buch mit dem Freund.'
+  },
+
+  /* أَجَابَ — antworten · der Angesprochene steht im Akkusativ. */
+  '45980': {
+    sentAr: 'أَجَابَ الطَّالِبُ الْمُدَرِّسَ.',
+    sentDe: 'Der Student antwortete dem Lehrer.'
+  },
+
+  /* قَرَأَ — lesen · der einfachste Verbalsatz des Kapitels. */
+  '45981': {
+    sentAr: 'قَرَأَ الْوَلَدُ الْكِتَابَ.',
+    sentDe: 'Der Junge las das Buch.'
+  },
+
+  /* مَرَّ — vorbeigehen · kein Objekt, dafür فِي mit Genitiv.
+     ⚠️ Gegenwartsform gewählt, nicht مَرَّ. Der Iʿrāb-Erklärer liest das
+     dreibuchstabige مَرَّ mit Šadda ohne geladenes Buch als Nomen und macht
+     daraus einen مُبْتَدَأ — dann stünde am Satz eine falsche Zerlegung.
+     يَمُرُّ trägt das يَـ und ist eindeutig ein Verb. Befund vom 16.09.2026
+     steht im maintenance-log. */
+  '45982': {
+    sentAr: 'يَمُرُّ الْحِمَارُ فِي الشَّارِعِ.',
+    sentDe: 'Der Esel geht auf der Straße vorbei.'
+  },
+
+  /* نَسَخَ — kopieren · Objekt im Akkusativ. */
+  '45983': {
+    sentAr: 'نَسَخَ الطَّالِبُ الْجُمْلَةَ.',
+    sentDe: 'Der Student kopierte den Satz.'
+  },
+
+  /* أَخٌ — Bruder · zeigt die Iḍāfa: الْأَخُ wird zum مُضَاف, الطَّالِبِ zum مُضَاف إِلَيْهِ. */
+  '45984': {
+    sentAr: 'أَخُ الطَّالِبِ طَبِيبٌ.',
+    sentDe: 'Der Bruder des Studenten ist Arzt.'
+  },
+
+  /* صَدِيقٌ — Freund · Nominalsatz mit نَعْت und Präposition. */
+  '45985': {
+    sentAr: 'الصَّدِيقُ الْجَدِيدُ فِي الْمَدْرَسَةِ.',
+    sentDe: 'Der neue Freund ist in der Schule.'
+  },
+
+  /* أُخْتٌ — Schwester · Iḍāfa als مُبْتَدَأ, dazu فِي mit Genitiv. */
+  '45986': {
+    sentAr: 'أُخْتُ الْوَلَدِ فِي الْجَامِعَةِ.',
+    sentDe: 'Die Schwester des Jungen ist in der Universität.'
+  },
+
+  /* صُورَةٌ — Bild · Iḍāfa als مُبْتَدَأ, خَبَر im Nominativ. */
+  '45987': {
+    sentAr: 'صُورَةُ الْمَسْجِدِ جَمِيلَةٌ.',
+    sentDe: 'Das Bild der Moschee ist schön.'
+  },
+
+  /* جَوَابٌ — Antwort · Iḍāfa als مُبْتَدَأ. */
+  '45988': {
+    sentAr: 'جَوَابُ الطَّالِبِ سَهْلٌ.',
+    sentDe: 'Die Antwort des Studenten ist leicht.'
+  },
+
+  /* جُمْلَةٌ — Satz · Iḍāfa als مُبْتَدَأ, فِي mit Genitiv als خَبَر. */
+  '45989': {
+    sentAr: 'جُمْلَةُ الْمُدَرِّسِ فِي الْكِتَابِ.',
+    sentDe: 'Der Satz des Lehrers steht im Buch.'
+  },
+
+  /* وَحْدَةٌ — Kapitel / Einheit · Iḍāfa, خَبَر mit Präposition. */
+  '45990': {
+    sentAr: 'وَحْدَةُ الْكِتَابِ فِي الْفَصْلِ.',
+    sentDe: 'Die Einheit des Buches ist im Klassenzimmer.'
+  },
+
+  /* جِنْسِيَّةٌ — Nationalität · Frage mit مَا über einer Iḍāfa. */
+  '45991': {
+    sentAr: 'مَا جِنْسِيَّةُ الطَّالِبِ؟',
+    sentDe: 'Welche Nationalität hat der Student?'
+  },
+
+  /* مُهَنْدِسٌ — Ingenieur · Nominalsatz mit فِي. */
+  '45992': {
+    sentAr: 'الْمُهَنْدِسُ فِي الْمَكْتَبِ.',
+    sentDe: 'Der Ingenieur ist im Büro.'
+  },
+
+  /* تَدْرِيبٌ — Übung · نَعْت im Nominativ, خَبَر im Nominativ. */
+  '45993': {
+    sentAr: 'التَّدْرِيبُ الْجَدِيدُ سَهْلٌ.',
+    sentDe: 'Die neue Übung ist leicht.'
+  },
+
+  /* عَدَدٌ — Zahl · Hinweiswort als مُبْتَدَأ. */
+  '45994': {
+    sentAr: 'هَذَا عَدَدٌ كَبِيرٌ.',
+    sentDe: 'Das ist eine große Zahl.'
+  },
+
+  /* مِثَالٌ — Beispiel · Hinweiswort als مُبْتَدَأ, نَعْت dahinter. */
+  '45995': {
+    sentAr: 'هَذَا مِثَالٌ سَهْلٌ.',
+    sentDe: 'Dies ist ein leichtes Beispiel.'
+  },
+
+  /* رَقْمٌ — Nummer · Iḍāfa als مُبْتَدَأ. */
+  '45996': {
+    sentAr: 'رَقْمُ الْبَيْتِ جَدِيدٌ.',
+    sentDe: 'Die Hausnummer ist neu.'
+  },
+
+  /* عَلَامَةٌ — Zeichen · Nominalsatz mit عَلَى und Genitiv. */
+  '45997': {
+    sentAr: 'الْعَلَامَةُ عَلَى الْوَرَقِ.',
+    sentDe: 'Das Zeichen ist auf dem Papier.'
+  },
+
+  /* سَأَلَ — fragen · der Gefragte steht im Akkusativ. */
+  '45998': {
+    sentAr: 'سَأَلَ الْمُدَرِّسُ الطَّالِبَ.',
+    sentDe: 'Der Lehrer fragte den Studenten.'
+  },
+
+  /* تَوَضَّأَ — Wudu machen · kein Objekt, فِي mit Genitiv. */
+  '45999': {
+    sentAr: 'تَوَضَّأَ الرَّجُلُ فِي الْحَمَّامِ.',
+    sentDe: 'Der Mann machte Wudu im Badezimmer.'
+  },
+
+  /* صَلَّى — beten · kein Objekt, فِي mit Genitiv. */
+  '46000': {
+    sentAr: 'صَلَّى الْإِمَامُ فِي الْمَسْجِدِ.',
+    sentDe: 'Der Imam betete in der Moschee.'
+  },
+
+  /* فَعَلَ — tun · Frage mit مَاذَا vor dem Verbalsatz. */
+  '46001': {
+    sentAr: 'مَاذَا فَعَلَ الطَّالِبُ؟',
+    sentDe: 'Was tat der Student?'
+  },
+
+  /* أُسْرَةٌ — Familie · Iḍāfa als مُبْتَدَأ. */
+  '46002': {
+    sentAr: 'أُسْرَةُ الْمُدَرِّسِ فِي الْبَيْتِ.',
+    sentDe: 'Die Familie des Lehrers ist im Haus.'
+  },
+
+  /* وَالِدَةٌ — Mutter · einfacher Nominalsatz mit فِي.
+     ⚠️ Keine Iḍāfa: وَالِدَة hat das Muster فَاعِلَة, und der Iʿrāb-Erklärer
+     liest es deshalb als Adjektiv — ein folgendes Wort würde zum نَعْت
+     erklärt statt zum مُضَاف إِلَيْه. Befund vom 16.09.2026 im
+     maintenance-log; bis er behoben ist, bleibt der Satz ohne Iḍāfa. */
+  '46003': {
+    sentAr: 'الْوَالِدَةُ فِي الْمَطْبَخِ.',
+    sentDe: 'Die Mutter ist in der Küche.'
+  },
+
+  /* جَدٌّ — Großvater · Iḍāfa als مُبْتَدَأ, خَبَر im Nominativ. */
+  '46004': {
+    sentAr: 'جَدُّ الطَّالِبِ مَرِيضٌ.',
+    sentDe: 'Der Großvater des Studenten ist krank.'
+  },
+
+  /* ابْنَةٌ — Tochter · Iḍāfa als مُبْتَدَأ. */
+  '46005': {
+    sentAr: 'ابْنَةُ التَّاجِرِ فِي الْمَدْرَسَةِ.',
+    sentDe: 'Die Tochter des Händlers ist in der Schule.'
+  },
+
+  /* مُعَلِّمٌ — Lehrer · Nominalsatz mit فِي. */
+  '46006': {
+    sentAr: 'الْمُعَلِّمُ فِي الْفَصْلِ.',
+    sentDe: 'Der Lehrer ist im Klassenzimmer.'
+  },
+
+  /* مِعْطَفٌ — Mantel · نَعْت im Nominativ, عَلَى mit Genitiv. */
+  '46007': {
+    sentAr: 'الْمِعْطَفُ الْجَدِيدُ عَلَى السَّرِيرِ.',
+    sentDe: 'Der neue Mantel ist auf dem Bett.'
+  },
+
+  /* جَدَّةٌ — Großmutter · Iḍāfa als مُبْتَدَأ. */
+  '46008': {
+    sentAr: 'جَدَّةُ الْبِنْتِ فِي الْغُرْفَةِ.',
+    sentDe: 'Die Großmutter des Mädchens ist im Zimmer.'
+  },
+
+  /* نَظَّارَةٌ — Brille · Iḍāfa als مُبْتَدَأ, عَلَى mit Genitiv. */
+  '46009': {
+    sentAr: 'نَظَّارَةُ الطَّبِيبِ عَلَى الْمَكْتَبِ.',
+    sentDe: 'Die Brille des Arztes ist auf dem Schreibtisch.'
+  },
+
+  /* وَالِدٌ — Vater · Nominalsatz, خَبَر im Nominativ.
+     ⚠️ Wie bei وَالِدَة oben: das Muster فَاعِل lässt den Iʿrāb-Erklärer
+     وَالِد für ein Adjektiv halten, ein folgendes Wort würde zum نَعْت.
+     Deshalb hier ohne Iḍāfa. */
+  '46010': {
+    sentAr: 'الْوَالِدُ مُهَنْدِسٌ.',
+    sentDe: 'Der Vater ist Ingenieur.'
+  },
 };
