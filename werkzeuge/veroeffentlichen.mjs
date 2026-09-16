@@ -154,6 +154,26 @@ if (mitDaten){
     fs.readdirSync(d).filter(f => /^vokabeln-.*\.js$/.test(f)).forEach(f => liste.add('data/' + f));
 }
 
+/* ⛔⛔ DER ABZUG IN DER CACHE-LISTE (16.09.2026).
+   Elias auf seiner Seite, zu „Sollen die Buchvokabeln ohne Netz da sein?":
+   „soll unterwegs auch verfügbar sein als oja". Seitdem stehen die Buchdateien
+   in ASSETS von sw.js — und ASSETS ist die Weissliste hier (ausServiceWorker).
+   Ohne diese Sperre gingen sie bei JEDEM Ausliefern mit hoch, auch ohne
+   --mit-daten und damit OHNE den Access-Nachweis weiter unten; die Schranke
+   fuer AGB 3.7/9 waere still weg. Umgekehrt fehlten sie nach einer
+   Auslieferung ohne Daten auf der Seite, obwohl sw.js sie vorladen will.
+   Deshalb: cacht sw.js einen Buchabzug, geht es nur mit --mit-daten.
+   `vokabeln-eigene.js` (seine eigenen Woerter) steht seit dem 18.08.2026 in
+   ASSETS und geht wie bisher immer mit. Bewacht von pruefe-auslieferliste.mjs.
+   [[ausfall_ist_unsichtbar_gebaut]] [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+const buchAbzugInSw = [...ausServiceWorker()].filter(f => /^data\/vokabeln-(?!eigene\.js$)[^/]*\.js$/.test(f));
+if (buchAbzugInSw.length && !mitDaten){
+  console.error('⛔ sw.js laedt ' + buchAbzugInSw.length + ' Buchabzuege vor (' + buchAbzugInSw.join(', ') + ').');
+  console.error('   Die gehen nur mit --mit-daten hoch — nur dort wird der Access-Nachweis geprueft.');
+  console.error('   node werkzeuge/veroeffentlichen.mjs --mit-daten');
+  process.exit(1);
+}
+
 /* ---------- Pruefen ---------- */
 const dabei = [], fehlend = [], abgelehnt = [];
 [...liste].sort().forEach(rel => {

@@ -857,6 +857,11 @@ const ohneKommentare = txt => txt
    1,75 MB je Auslieferung gegen „ohne Netz sind alle Buecher da" — und dafuer
    gibt es keine technisch richtige Antwort. [[schweigen_ist_kein_auftrag]]
 
+   ✅ BEANTWORTET 16.09.2026 auf dieser Seite: „soll unterwegs auch verfügbar
+   sein als oja" → v515, alle Buchabzuege in ASSETS. Der Posten verschwindet
+   von selbst, solange keine Buchdatei ausserhalb der Liste liegt; kommt ein
+   neues Buch dazu, fragt er wieder — dann gilt diese Antwort, nicht die Frage.
+
    ⚠️ Gerechnet wird aus den echten Dateien, nichts steht hier als Zahl. Faellt
    die Messung aus (kein data/, ASSETS-Liste nicht lesbar), erscheint der Posten
    gar nicht — lieber keine Frage als eine mit erfundener Zahl.

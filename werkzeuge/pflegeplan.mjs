@@ -77,7 +77,16 @@ export const PFLEGEPLAN = [
   },
   {
     funktion: 'Lehrwerke (die acht Bücher und seine arabicroots-Wörter)',
-    dateien: ['js/buecher.js', 'js/vokabelpaket.js', 'data/buecher.js', 'data/vokabeln-eigene.js'],
+    /* 16.09.2026 (v515): die acht Buchabzüge stehen jetzt in ASSETS von sw.js —
+       Elias: „soll unterwegs auch verfügbar sein als oja". Damit zählt der
+       Prüfer sie als App-Dateien. Kein neuer Pflegebedarf: hole-vokabeln.mjs
+       (Schritt 2) frischt sie wie bisher auf, und ausgeliefert werden sie nur
+       mit --mit-daten — veroeffentlichen.mjs verweigert sonst, bewacht von
+       pruefe-auslieferliste.mjs (Abschnitt 5). */
+    dateien: ['js/buecher.js', 'js/vokabelpaket.js', 'data/buecher.js', 'data/vokabeln-eigene.js',
+      'data/vokabeln-madina-1.js', 'data/vokabeln-madina-2.js', 'data/vokabeln-madina-3.js',
+      'data/vokabeln-bayna-yadayk-1.js', 'data/vokabeln-bayna-yadayk-2.js', 'data/vokabeln-bayna-yadayk-3.js',
+      'data/vokabeln-bayna-yadayk-4.js', 'data/vokabeln-quran.js'],
     bildschirme: [],
     neuerInhalt: { routine: W, schritt: '2', beleg: 'node werkzeuge/hole-vokabeln.mjs', werkzeug: 'werkzeuge/hole-vokabeln.mjs',
       wie: 'frischt die Lehrwerke und seine eigenen Wörter aus arabicroots auf' },
