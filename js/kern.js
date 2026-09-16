@@ -113,7 +113,14 @@ function kapitelBeschriftung(w){
    eingefrorenen Feld. */
 const FREIGESCHALTET = {
   'madina-1': [1,2,3,4,5,6,7,8,9,10,11,12],   // Elias am 20.08.2026: „ich habe übrigens kapitel 12 freigeschaltet“
-  'madina-2': [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]   // arabicroots, abgefragt am 19.8.2026
+  'madina-2': [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24],   // arabicroots, abgefragt am 19.8.2026
+  /* Elias am 16.09.2026, 20:20:56, mitten im Unterricht mit „Arabya Bayna Yadayk 1A":
+     „hab eben bayna yadayk kapitel 1 und 2 freigeschaltet" — in der App (sein
+     abgeglichener Stand um 20:21:19: bayna-yadayk-1 [1,2]). Bei arabicroots ist das
+     Buch NICHT freigeschaltet (get_unlocked_chapters am selben Abend: nur Madina).
+     Hier steht es, damit die Werkzeuge und die Wartung seinen Lernstand kennen —
+     in der App entscheidet ohnehin seine eigene Auswahl zuerst (istBekannt). */
+  'bayna-yadayk-1': [1,2]
 };
 
 /* Die Woerter, die Elias kennt. Drei Quellen, und die dritte ist der Grund,

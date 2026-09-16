@@ -146,18 +146,19 @@ console.log('\nWiederholen: eine heute gelernte Sure zählt heute nicht mit:');
   const konstante = (text, name) => (text.match(new RegExp('const ' + name + '\\s*=[^;]+;')) || [''])[0];
   const baue = quranText => {
     const stuecke = [konstante(kern, 'TAG_BEGINN_STUNDE'), ...teileAus(kern, ['todayStr', 'lerntagVon']),
-      konstante(quranText, 'WDH_AUSGENOMMEN'), ...teileAus(quranText, ['wdhVorrat', 'wdhHeute'])];
+      konstante(quranText, 'WDH_AUSGENOMMEN'),
+      ...teileAus(quranText, ['heuteAuswendigAbgehakt', 'wdhVorrat', 'wdhHeute', 'istFavorit', 'wdhFavorit'])];
     if (stuecke.some(s => !s)) return null;
-    return stuecke.join('\n') + '\n;globalThis.__heute = wdhHeute; globalThis.__tag = todayStr;';
+    return stuecke.join('\n') + '\n;globalThis.__heute = wdhHeute; globalThis.__tag = todayStr; globalThis.__fav = wdhFavorit;';
   };
   const lauf = (code, stand) => {
-    const c = { SURAH_DATA: [1, 67, 97, 99, 102].map(id => ({ id })), ...stand };
+    const c = { SURAH_DATA: [1, 67, 96, 97, 99, 102].map(id => ({ id })), QURAN_FAV: {}, ...stand };
     vm.createContext(c);
     vm.runInContext(code, c);
     return c;
   };
   const code = baue(quran);
-  pruefe('wdhHeute(), wdhVorrat(), todayStr() und lerntagVon() sind zu finden', !!code);
+  pruefe('wdhHeute(), wdhVorrat(), wdhFavorit(), heuteAuswendigAbgehakt(), todayStr() und lerntagVon() sind zu finden', !!code);
   if (code){
     const probe = lauf(code, { HIFZ: {}, HIFZ_ZEIT: {}, WDH: {} });
     const heute = probe.__tag(0), gestern = probe.__tag(-1);
@@ -198,10 +199,47 @@ console.log('\nWiederholen: eine heute gelernte Sure zählt heute nicht mit:');
 
     /* ⛔ Gegenprobe: ohne die Sperre muss sein Fehler wieder auftauchen —
        sonst prüfte Fall a) nichts. [[stoertest_muss_wirkung_nachweisen]] */
-    const ohneSperre = baue(quran.replace('const vorrat = alle.filter(id => !heuteGelernt(id));', 'const vorrat = alle;'));
+    const ohneSperre = baue(quran.replace('const vorrat = alle.filter(id => !heuteAuswendigAbgehakt(id));', 'const vorrat = alle;'));
     const g = ohneSperre && lauf(ohneSperre, { HIFZ: auswendig, HIFZ_ZEIT: { 97: { an: true, zeit: jetzt } },
       WDH: { 97: heute, 99: heute } }).__heute();
     pruefe('Gegenprobe: ohne die Sperre stünde wieder „Al-Qadr" da', !!g && g.sure === 97, JSON.stringify(g));
+
+    /* ---------- 6. Der Ring „Neu lernen" verschwindet nicht am Tag des Abhakens ----------
+       ⭐ Sein Tag, zweiter Teil. Nach v505 schrieb er um 20:20:25: „sura qadr ist
+       jetzt als ring weg aber zalzala wieder da" — und vorher schon „beides wurde
+       gezeigt". Gemessen an seinem Stand um 20:21:19: Favoriten 67 und 97,
+       auswendig u. a. 97 (18:47:36) und 99, gelesen heute 96, 97, 99. */
+    console.log('\nNeu lernen: eine heute abgehakte Favoritensure bleibt heute stehen:');
+    const favoriten = { 67: true, 97: true };
+    const auswendigMitQadr = { 1: true, 67: true, 97: true, 99: true, 102: true };
+
+    const f1 = lauf(code, { HIFZ: auswendigMitQadr, HIFZ_ZEIT: { 97: { an: true, zeit: jetzt } },
+      QURAN_FAV: favoriten, WDH: { 96: heute, 97: heute, 99: heute } }).__fav();
+    pruefe('sein Tag: „Neu lernen" zeigt weiter al-Qadr', f1 === 97, JSON.stringify(f1));
+
+    const f2 = lauf(code, { HIFZ: auswendigMitQadr, HIFZ_ZEIT: { 97: { an: true, zeit: vorEinerWoche } },
+      QURAN_FAV: favoriten, WDH: {} }).__fav();
+    pruefe('vor einer Woche abgehakt: der Ring ist weg (kein weiterer Favorit)', f2 === null, JSON.stringify(f2));
+
+    const f3 = lauf(code, { HIFZ: auswendigMitQadr, HIFZ_ZEIT: { 97: { an: true, zeit: jetzt } },
+      QURAN_FAV: { 67: true, 96: true, 97: true }, WDH: {} }).__fav();
+    pruefe('heute abgehakt UND schon ein neuer Favorit: heute noch al-Qadr', f3 === 97, JSON.stringify(f3));
+
+    const f4 = lauf(code, { HIFZ: auswendigMitQadr, HIFZ_ZEIT: { 97: { an: true, zeit: vorEinerWoche } },
+      QURAN_FAV: { 67: true, 96: true, 97: true }, WDH: {} }).__fav();
+    pruefe('früher abgehakt, neuer Favorit: jetzt die neue Sure', f4 === 96, JSON.stringify(f4));
+
+    const f5 = lauf(code, { HIFZ: { 67: true }, HIFZ_ZEIT: {}, QURAN_FAV: { 67: true, 97: true }, WDH: {} }).__fav();
+    pruefe('noch nicht auswendig: der Favorit ist der Ring (wie immer)', f5 === 97, JSON.stringify(f5));
+
+    const f6 = lauf(code, { HIFZ: { 67: true }, HIFZ_ZEIT: {}, QURAN_FAV: { 67: true }, WDH: {} }).__fav();
+    pruefe('nur al-Mulk als Favorit: kein Ring „Neu lernen"', f6 === null, JSON.stringify(f6));
+
+    /* ⛔ Gegenprobe: die alte Fassung muss seinen Fehler wieder zeigen. */
+    const alteFassung = baue(quran.replace('const f = heuteGelernt || favoriten.find(s => !HIFZ[s.id]);', 'const f = favoriten.find(s => !HIFZ[s.id]);'));
+    const f7 = alteFassung && lauf(alteFassung, { HIFZ: auswendigMitQadr, HIFZ_ZEIT: { 97: { an: true, zeit: jetzt } },
+      QURAN_FAV: favoriten, WDH: { 97: heute } }).__fav();
+    pruefe('Gegenprobe: ohne die Regel wäre der Ring wieder weg', !!alteFassung && f7 === null, JSON.stringify(f7));
   }
 }
 
