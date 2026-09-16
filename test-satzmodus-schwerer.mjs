@@ -19,8 +19,11 @@
  *       ausschluss prinzip machen kann"
  *    → keine Tipp-Aufgabe verrät mehr, WIE VIELE Wörter richtig sind, und
  *      jede ist Mehrfachauswahl mit „Prüfen" — auch bei nur einem Treffer.
- *      (Die längeren Sätze sind Material, kein Code; die prüft dieser Test
- *      nicht.)
+ *    → Und seit dem Abend (auf „Ich schreibe neue, längere Sätze, nur mit
+ *      Wörtern, die du schon hast", 18:55:17: „mach das") acht längere Sätze
+ *      `satz-lang-…` in data/beispielsaetze.js — Abschnitt 2g prüft, dass jede
+ *      Form belegt ist, die Analyse sie richtig liest und der Satz-Modus sie
+ *      bekommt.
  *
  * 3. Zu الْمُسْتَشْفَى, richtig als Genitiv gezählt:
  *      „und das wort steht gar nicht im genitiv weil es kein kasra hat. oder
@@ -51,6 +54,18 @@ const STOERTEST = process.argv.includes('--stoertest');
 const ORIGINAL = fs.readFileSync(path.join(WURZEL, 'js', 'uebung.js'), 'utf8');
 let FACH_QUELLE = fs.readFileSync(path.join(WURZEL, 'data', 'fachbegriffe.js'), 'utf8');
 let KERN_QUELLE = fs.readFileSync(path.join(WURZEL, 'js', 'kern.js'), 'utf8');
+/* Für 2g: die längeren Sätze, js/saetze.js und die Wortfelder aus dem Abzug
+   (data/vokabeln-madina-1.js liegt nur auf diesem Rechner — fehlt er, sagt 2g das). */
+let BEISPIEL_QUELLE = '';
+try { BEISPIEL_QUELLE = fs.readFileSync(path.join(WURZEL, 'data', 'beispielsaetze.js'), 'utf8'); } catch (e) { /* 2g meldet es */ }
+let SAETZE_QUELLE = fs.readFileSync(path.join(WURZEL, 'js', 'saetze.js'), 'utf8');
+const MADINA1 = (() => {
+  try {
+    const fenster = {};
+    new Function('window', fs.readFileSync(path.join(WURZEL, 'data', 'vokabeln-madina-1.js'), 'utf8'))(fenster);
+    return (fenster.VOKABELN && fenster.VOKABELN['madina-1']) || [];
+  } catch (e) { return []; }
+})();
 const GRAMMATIK = fs.readFileSync(path.join(WURZEL, 'grammar-data.js'), 'utf8');
 const irab = require('./js/irab.js');
 
@@ -281,6 +296,77 @@ function laufe(quelle, still){
     ['50164', '50165', '50169', '50170'].every(id => freiListe.includes("'" + id + "'")), freiListe || 'Liste fehlt');
   pruefe('… aber nur, wenn er das Wort nie angefasst hat', /if \(!EINZELN\[id\]\)/.test(kern), 'Bedingung fehlt');
 
+  /* ---------- 2g. Längere Sätze aus seinen Wörtern ---------- */
+  /* Elias zu „Tippe alle مُضَافٌ an": „hier sollte es auch ein etwas längerer satz
+     sein mit mehr mudaf bzw etwas einfach schwieriger damit man so super leicht es
+     einfach per ausschluss prinzip machen kann" — und auf „Ich schreibe neue,
+     längere Sätze, nur mit Wörtern, die du schon hast" (18:55:17): „mach das".
+     ⛔ Kein Zeichen selbst vokalisiert: jede Form steht GENAU SO in einem Satz
+     seines Lehrbuchs oder in einem Wortfeld seines freigeschalteten Bestands.
+     Ein Satz, den eine Sitzung geschrieben hat, zählt nicht — sonst belegt sich
+     ein Fehler selbst. [[zitat_ueber_die_stelle]] */
+  log('\n2g. Längere Sätze: jede Form belegt, richtig gelesen, im Satz-Modus');
+  let bsp = {};
+  try { bsp = BEISPIEL_QUELLE ? (new Function(BEISPIEL_QUELLE + ';return BEISPIELSAETZE;'))() : {}; } catch (e) { bsp = {}; }
+  const lang = Object.entries(bsp).filter(([id, s]) => id.startsWith('satz-lang-') && s && s.sentAr);
+  pruefe('mindestens acht längere Sätze stehen in data/beispielsaetze.js', lang.length >= 8, lang.length);
+  const nurForm = t => String(t).normalize('NFC').replace(/^[.،؟!:«»؛()]+|[.،؟!:«»؛()]+$/g, '');
+  const BELEG = new Set();
+  const merke = f => { const t = nurForm(f); if (/[ً-ْ]/.test(t)) BELEG.add(t); };
+  LEHRBUCH_SAETZE.forEach(s => String(s.sentAr || '').split(/\s+/).forEach(merke));
+  const freiM1 = ((KERN_QUELLE.match(/'madina-1':\s*\[([0-9,\s]*)\]/) || [])[1] || '')
+    .split(',').map(Number).filter(Boolean);
+  pruefe('der Abzug madina-1 und seine Freischaltung sind lesbar (sonst fehlen die Wortfelder als Beleg)',
+    MADINA1.length > 0 && freiM1.length > 0, MADINA1.length + ' Wörter, Kapitel ' + freiM1.join(','));
+  for (const w of VOCAB_DATA.concat(MADINA1.filter(x => freiM1.includes(Number(x.chapter))))){
+    ['ar', 'sg', 'femSg', 'femPl'].forEach(f => { if (w[f]) merke(w[f]); });
+    if (w.pl) String(w.pl).split(/\s*\/\s*/).forEach(merke);
+  }
+  const unbelegt = [];
+  for (const [id, s] of lang)
+    for (const t of String(s.sentAr).split(/\s+/)) if (!BELEG.has(nurForm(t))) unbelegt.push(id + ': ' + nurForm(t));
+  pruefe('jede Form steht so in seinem Buch oder einem Wortfeld', lang.length > 0 && unbelegt.length === 0, unbelegt.join(' · '));
+  const laenge = lang.filter(([, s]) => { const n = String(s.sentAr).trim().split(/\s+/).length; return n < 4 || n > 10; });
+  pruefe('4 bis 10 Wörter (10 = der längste Satz seines Buchs)', laenge.length === 0, laenge.map(([id]) => id).join(' · '));
+
+  const modusIdafa = U.find(m => m.id === 'idafa');
+  const widerspruch = [];
+  let zweiMudaf = 0, genitivOhneIdafa = 0;
+  for (const [id, s] of lang){
+    const zeilen = irab.analysiereSatz(s.sentAr);
+    zeilen.filter(z => z.stimmt === false).forEach(z => widerspruch.push(id + ': ' + z.wort + ' (' + z.rolle + ')'));
+    let auf = [];
+    try { auf = modusIdafa ? (modusIdafa.baue(zeilen, { sentAr: s.sentAr, id }) || []) : []; } catch (e) { auf = []; }
+    const mudaf = auf.find(a => /Besessene/.test(String(a.frage)));
+    if (mudaf && Array.isArray(mudaf.ziele) && mudaf.ziele.length >= 2) zweiMudaf++;
+    if (zeilen.some(z => /^نَعْت/.test(String(z.rolle)) && z.gelesen && z.gelesen.kasus === 'jarr')) genitivOhneIdafa++;
+  }
+  pruefe('die Analyse liest jeden längeren Satz ohne Widerspruch', lang.length > 0 && widerspruch.length === 0, widerspruch.join(' · '));
+  pruefe('mindestens drei haben zwei مُضَاف — die Frage ist nicht mehr per Ausschluss lösbar', zweiMudaf >= 3, zweiMudaf);
+  pruefe('mindestens einer hat ein Wort im Genitiv, das KEIN مُضَاف إِلَيْهِ ist (نَعْت)', genitivOhneIdafa >= 1, genitivOhneIdafa);
+
+  const fnAlle = schneideFunktion(SAETZE_QUELLE, 'alleSaetze');
+  const fnLang = schneideFunktion(SAETZE_QUELLE, 'laengereSaetze');
+  const fnVorn = schneideFunktion(SAETZE_QUELLE, 'nichtVorausgeschrieben');
+  const fnHerk = schneideFunktion(SAETZE_QUELLE, 'herkunft');
+  pruefe('alleSaetze(), laengereSaetze() und herkunft() stehen in js/saetze.js', !!fnAlle && !!fnLang && !!fnVorn && !!fnHerk,
+    [!fnAlle && 'alleSaetze', !fnLang && 'laengereSaetze', !fnVorn && 'nichtVorausgeschrieben', !fnHerk && 'herkunft'].filter(Boolean).join(', '));
+  if (fnAlle && fnLang && fnVorn && fnHerk){
+    const welt = { VOCAB_DATA: [], LEHRBUCH_SAETZE: [], BEISPIELSAETZE: bsp, kapitelBeschriftung: () => 'Kap. ?' };
+    vm.createContext(welt);
+    try {
+      vm.runInContext(fnVorn + '\n' + fnLang + '\n' + fnAlle + '\n' + fnHerk
+        + '\n;globalThis.__A = alleSaetze; globalThis.__H = herkunft;', welt);
+      const imModus = welt.__A().filter(s => String(s.id).startsWith('satz-lang-'));
+      pruefe('der Satz-Modus bekommt alle längeren Sätze (alleSaetze())', lang.length > 0 && imModus.length === lang.length,
+        imModus.length + ' von ' + lang.length);
+      const kopf = imModus.length ? welt.__H(imModus[0]) : '';
+      pruefe('über ihnen steht „Längerer Satz aus deinen Wörtern", nicht „Kap. …"', kopf === 'Längerer Satz aus deinen Wörtern', kopf);
+    } catch (e) {
+      pruefe('js/saetze.js lässt sich für den Test laden', false, e.message);
+    }
+  }
+
   /* ---------- 3. „Warum?" bei unsichtbarer Endung ---------- */
   log('\n3. „Warum?" zeigt bei ى/ا die Karte zur unsichtbaren Endung');
   pruefe('uebungUnsichtbarerFall() ist ladbar', typeof F === 'function', typeof F);
@@ -396,6 +482,24 @@ for (const [name, stoere] of STOERUNGEN){
     else { alleRot = false; console.log('  ✘ مَتَى fehlt in der Freischaltliste → blieb grün'); }
   }
   KERN_QUELLE = kernEcht;
+
+  /* 2g: die längeren Sätze. Eine selbst gesetzte Ḥaraka, ein Satz-Modus ohne sie,
+     eine Kopfzeile „Kap. undefined" — jede Störung einzeln. */
+  const bspEcht = BEISPIEL_QUELLE, saetzeEcht = SAETZE_QUELLE;
+  const STOERUNGEN_2G = [
+    ['eine Ḥaraka selbst gesetzt (حَقِيبَةَ statt حَقِيبَةُ)', () => { BEISPIEL_QUELLE = bspEcht.replace("'حَقِيبَةُ الطَّالِبِ الْجَدِيدِ عَلَى", "'حَقِيبَةَ الطَّالِبِ الْجَدِيدِ عَلَى"); return BEISPIEL_QUELLE !== bspEcht; }],
+    ['der Satz-Modus holt die längeren Sätze nicht mehr', () => { SAETZE_QUELLE = saetzeEcht.replace('ausLehrbuch, laengereSaetze()', 'ausLehrbuch'); return SAETZE_QUELLE !== saetzeEcht; }],
+    ['über dem Satz stünde wieder „Kap. …"', () => { SAETZE_QUELLE = saetzeEcht.replace("if (w.laengerSatz) return 'Längerer Satz aus deinen Wörtern';", ''); return SAETZE_QUELLE !== saetzeEcht; }]
+  ];
+  for (const [name, stoere] of STOERUNGEN_2G){
+    if (!stoere()){ alleRot = false; console.log('  ✘ ' + name + ' — Störung griff nicht'); }
+    else {
+      const schlecht = laufe(ORIGINAL, true);
+      if (schlecht > 0) console.log('  ✔ ' + name + ' → ' + schlecht + ' rot');
+      else { alleRot = false; console.log('  ✘ ' + name + ' → blieb grün'); }
+    }
+    BEISPIEL_QUELLE = bspEcht; SAETZE_QUELLE = saetzeEcht;
+  }
 }
 console.log('\n' + (alleRot ? '✔ jede Störung wurde erkannt' : '✘ mindestens eine Störung blieb unbemerkt'));
 process.exit(alleRot ? 0 : 1);
