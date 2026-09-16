@@ -434,6 +434,13 @@ const PRUEFER = [
      Tipp-Aufgaben. Sein Auftrag dazu: „sorge auch dafür das bei ähnlichen
      aufgaben, ähnliche fehler nicht stattfinden." Das ist dieser Prüfer. */
   ['test-eindeutige-ziele.mjs', []],
+  /* ⛔ Neu am 16.09.2026. Drei Wünsche von Elias an einem Abend, alle mit
+     Bildschirmfoto: „Bestimmt?" raus („die regel soll natürlich in der app
+     bleiben aber die übung im satzmodus brauche ich nicht"), die Anzahl nicht
+     mehr verraten („damit man [nicht] so super leicht es einfach per
+     ausschluss prinzip machen kann") und bei الْمُسْتَشْفَى die Karte zur
+     unsichtbaren Endung statt der Kasra, die er vermisst hat. */
+  ['test-satzmodus-schwerer.mjs', []],
   /* ⛔ Neu am 15.09.2026. Die drei Quran-Ringe auf dem Startbildschirm nannten
      eine Sure und fuehrten auf die Liste aller 114. Elias mit Bild: „ich will
      das die jeweiligen koran suren mich direkt zu den jeweiligen suren
