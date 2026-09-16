@@ -289,10 +289,20 @@ function uebungBezugswort(z, i, weiblich){
 
 /* ---------- Antwortvorraete ----------
    Einmal hier, damit dieselbe Frage in mehreren Modi gleich heisst. */
+/* ⭐ FACHBEGRIFFE MIT ENDUNG (16.09.2026). Elias, gefragt „Sollen Fachbegriffe
+   mit Endung stehen, also حَرْفُ جَرٍّ statt حَرْف جَرّ, so wie auf deiner
+   Regelkarte?": „ja". Jede Form unten steht so in seinem eigenen Material
+   (gezählt über vocab-data.js, grammar-data.js, regelsammlung-data.js,
+   data/beispielsaetze.js, data/eselsbruecken.js und die Buchabzüge):
+   مَرْفُوعٌ 8× · مَجْرُورٌ 22× · مَنْصُوبٌ 7× · مُبْتَدَأٌ 9× · خَبَرٌ 3× ·
+   نَعْتٌ 7× · مُضَافٌ 10× · مُضَافٌ إِلَيْهِ 2× · حَرْفُ جَرٍّ 4× ·
+   حُرُوفُ جَرٍّ 1× · اِسْمٌ 17× · فِعْلٌ 3× · حَرْفٌ 5×.
+   ⛔ Ohne Beleg und deshalb NOCH OHNE Endung: مُذَكَّر (0×, arabdict nur
+   مُذكَّر) — nicht selbst ergänzen. */
 const KASUS_WAHL = [
-  { wert:'raf',  text:'مَرْفُوع · Nominativ' },
-  { wert:'jarr', text:'مَجْرُور · Genitiv' },
-  { wert:'nasb', text:'مَنْصُوب · Akkusativ' }
+  { wert:'raf',  text:'مَرْفُوعٌ · Nominativ' },
+  { wert:'jarr', text:'مَجْرُورٌ · Genitiv' },
+  { wert:'nasb', text:'مَنْصُوبٌ · Akkusativ' }
 ];
 /* Die sechs Endzeichen, die in den Daten wirklich vorkommen (an vocab-data.js
    ausgezaehlt). Bewusst MIT Tanwin-Unterscheidung: genau daran korrigiert der
@@ -360,7 +370,7 @@ function uebungSammel(treffer, frage){
 
 const UEBUNGEN = [
   {
-    id:'mubtada-khabar', nr:1, name:'مُبْتَدَأ / خَبَر — Satzteile', art:'mehrfach',
+    id:'mubtada-khabar', nr:1, name:'مُبْتَدَأٌ / خَبَرٌ — Satzteile', art:'mehrfach',
     /* ⭐ Dieser Modus ist aus Elias' eigener Rueckfrage vom 30.07. entstanden:
        "war es nicht so, dass mubtadi (nomen) und baat (adjektiv) zusammen
        sind?" Er hatte مُبْتَدَأ+خَبَر mit مَنْعُوت+نَعْت verwechselt. Der
@@ -369,7 +379,7 @@ const UEBUNGEN = [
        ist die Bestimmtheit (`nat-bestimmtheit-01`, Folge 13 ca. 3:11,
        Schluessel 1 L9 S. 30). Deshalb steht die Unterscheidung als Hinweis an
        der Aufgabe, nicht erst in der Aufloesung. */
-    hinweis:'مُبْتَدَأ + خَبَر bilden einen ganzen Satz („der Lehrer ist neu"). Ein Adjektiv, das nur beschreibt („eine große Moschee"), ist نَعْت.',
+    hinweis:'مُبْتَدَأٌ + خَبَرٌ bilden einen ganzen Satz („der Lehrer ist neu"). Ein Adjektiv, das nur beschreibt („eine große Moschee"), ist نَعْتٌ.',
     baue(z){
       const mub = [], kha = [];
       z.forEach((t,i)=>{
@@ -383,26 +393,33 @@ const UEBUNGEN = [
            gesagtr sollte stehen was ist das subjekt weil sonst verstehe ich
            nicht und weiß nicht was von mir verlangt wrid". Subjekt und Aussage
            sind die Wörter seiner Regelkarte (grammar-data.js: „مُبْتَدَأ وخَبَر
-           (Subjekt und Aussage)"). */
-        uebungSammel(mub, 'Tippe alle مُبْتَدَأ an — was ist das Subjekt?'),
-        uebungSammel(kha, 'Tippe alle خَبَر an — was ist die Aussage über das Subjekt?')
+           (Subjekt und Aussage)").
+           ⭐ Und die Form: ARABISCH MIT ENDUNG, DEUTSCH IN KLAMMERN. Elias um
+           18:52:49: „du kannst sowohl arabisch als auch deutsch, am besten sogar
+           auf arabisch und dann in klammern auf deutsch die übersetzung)" — und
+           um 18:53:56 „ja" zu den Endungen (Belege bei KASUS_WAHL oben). */
+        uebungSammel(mub, 'Tippe alle مُبْتَدَأٌ (Subjekt) an.'),
+        uebungSammel(kha, 'Tippe alle خَبَرٌ (Aussage über das Subjekt) an.')
       ].filter(Boolean);
     }
   },
   {
-    id:'nat', nr:2, name:'نَعْت — Adjektiv zum Nomen', art:'mehrfach',
-    hinweis:'Das نَعْت stimmt mit seinem Wort in Fall, Zahl, Geschlecht UND Bestimmtheit überein.',
+    id:'nat', nr:2, name:'نَعْتٌ — Adjektiv zum Nomen', art:'mehrfach',
+    hinweis:'Das نَعْتٌ stimmt mit seinem Wort in Fall, Zahl, Geschlecht UND Bestimmtheit überein.',
     baue(z){
       const treffer = [];
       z.forEach((t,i)=>{ if (t.rolle.includes('نَعْت')) treffer.push(i); });
       const a = uebungSammel(treffer,
-        'Tippe alle نَعْت an — Wörter, die ein anderes beschreiben.');
+        'Tippe alle نَعْتٌ (Adjektiv zum Nomen) an.');
       return a ? [a] : [];
     }
   },
   {
-    id:'idafa', nr:3, name:'مُضَاف / مُضَاف إِلَيْهِ — Besitz', art:'mehrfach',
-    hinweis:'Der مُضَاف trägt weder Tanwīn noch Artikel; das مُضَاف إِلَيْهِ steht im Genitiv.',
+    id:'idafa', nr:3, name:'مُضَافٌ / مُضَافٌ إِلَيْهِ — Besitz', art:'mehrfach',
+    /* ⚠️ „im Satz": der Begriff مُضَافٌ trägt als Name selbst ein Tanwīn — das
+       Wort, das er bezeichnet, trägt im Satz keines. Ohne den Zusatz sähe der
+       Hinweis aus, als widerspräche er sich. */
+    hinweis:'Der مُضَافٌ trägt im Satz weder Tanwīn noch Artikel; das مُضَافٌ إِلَيْهِ steht im Genitiv.',
     baue(z){
       /* ⛔ Vorher stand hier zweimal `findIndex` — das nahm nur das ERSTE
          Vorkommen. In „اسْمُ التَّاجِرِ مَحْمُودٌ وَاسْمُ الطَّبِيبِ سَعِيدٌ."
@@ -417,14 +434,14 @@ const UEBUNGEN = [
          Rueckmeldung, WELCHER Teil sass und welcher nicht. Neu ist nur, dass
          jede von beiden alle ihre Fundstellen kennt. */
       return [
-        uebungSammel(mudaf, 'Tippe alle مُضَاف an — Wörter, die besessen werden.'),
-        uebungSammel(zu, 'Tippe alle مُضَاف إِلَيْهِ an — die Besitzer.')
+        uebungSammel(mudaf, 'Tippe alle مُضَافٌ (das Besessene) an.'),
+        uebungSammel(zu, 'Tippe alle مُضَافٌ إِلَيْهِ (der Besitzer) an.')
       ].filter(Boolean);
     }
   },
   {
-    id:'jarr-paar', nr:4, name:'حَرْف جَرّ + مَجْرُور — Präposition', art:'mehrfach',
-    hinweis:'Der حَرْف جَرّ setzt das Nomen dahinter in den Genitiv.',
+    id:'jarr-paar', nr:4, name:'حَرْفُ جَرٍّ + مَجْرُورٌ — Präposition', art:'mehrfach',
+    hinweis:'Der حَرْفُ جَرٍّ setzt das Nomen dahinter in den Genitiv.',
     baue(z){
       /* ⛔ DER FALL, DEN ELIAS GEMELDET HAT. Vorher entstand je Partikel eine
          eigene Aufgabe mit genau einer gueltigen Stelle. In
@@ -451,21 +468,21 @@ const UEBUNGEN = [
       return [
         /* Deutsch mit dazu, aus demselben Grund wie beim مُبْتَدَأ: die Frage
            stand hier nur auf Arabisch. */
-        uebungSammel(partikel, 'Tippe alle حُرُوف جَرّ an — die Präpositionen.'),
-        uebungSammel(nomen, 'Tippe alle Wörter an, die dadurch im Genitiv (مَجْرُور) stehen.')
+        uebungSammel(partikel, 'Tippe alle حُرُوفُ جَرٍّ (Präpositionen) an.'),
+        uebungSammel(nomen, 'Tippe alle Wörter an, die dadurch مَجْرُورٌ (im Genitiv) sind.')
       ].filter(Boolean);
     }
   },
   {
-    id:'alle-majrur', nr:5, name:'Alle مَجْرُور — Genitiv', art:'mehrfach',
-    hinweis:'Genitiv steht nach حَرْف جَرّ, nach ظَرْف, als مُضَاف إِلَيْهِ — und als نَعْت zu einem Wort im Genitiv.',
+    id:'alle-majrur', nr:5, name:'Alle مَجْرُورٌ — Genitiv', art:'mehrfach',
+    hinweis:'Genitiv steht nach einem حَرْفُ جَرٍّ, nach einem ظَرْفٌ, als مُضَافٌ إِلَيْهِ — und als نَعْتٌ zu einem Wort im Genitiv.',
     baue(z){
       const ziele = z.map((t,i)=>t.erwartet==='jarr' ? i : -1).filter(i=>i>=0);
       /* ⛔ Hier stand „— es ist genau eines." bzw. „— es sind N.". Elias am
          16.09.2026 an genau dieser Aufgabe: „außerdem muss man das auch
          schwerer machen". Die Anzahl verraten heißt: die übrigen Wörter
          wegstreichen und fertig. Jetzt über uebungSammel wie die anderen. */
-      const a = uebungSammel(ziele, 'Tippe alle Wörter im Genitiv an.');
+      const a = uebungSammel(ziele, 'Tippe alle مَجْرُورٌ (Wörter im Genitiv) an.');
       return a ? [a] : [];
     }
   },
@@ -500,8 +517,8 @@ const UEBUNGEN = [
     }
   },
   {
-    id:'wortart', nr:8, name:'اِسْم / فِعْل / حَرْف — Wortart', art:'wahl',
-    hinweis:'Im Arabischen zählen auch Adjektive, Adverbien und Ortsangaben als اِسْم — تَحْتَ und هُنَا also auch.',
+    id:'wortart', nr:8, name:'اِسْمٌ / فِعْلٌ / حَرْفٌ — Wortart', art:'wahl',
+    hinweis:'Im Arabischen zählen auch Adjektive, Adverbien und Ortsangaben als اِسْمٌ — تَحْتَ und هُنَا also auch.',
     baue(z){
       return z.map((t,i)=>{
         const a = uebungWortart(t.wort);
@@ -509,7 +526,9 @@ const UEBUNGEN = [
         return {
           frage:'Welche Wortart hat das hervorgehobene Wort?',
           wortIdx:i, loesung:a,
-          optionen:[{wert:'اِسْم',text:'اِسْم · Nomen'},{wert:'فِعْل',text:'فِعْل · Verb'},{wert:'حَرْف',text:'حَرْف · Partikel'}]
+          /* `wert` bleibt ohne Endung — damit vergleicht uebungWortart(); nur
+             die Anzeige trägt seit dem 16.09.2026 die Endung. */
+          optionen:[{wert:'اِسْم',text:'اِسْمٌ · Nomen'},{wert:'فِعْل',text:'فِعْلٌ · Verb'},{wert:'حَرْف',text:'حَرْفٌ · Partikel'}]
         };
       }).filter(Boolean);
     }

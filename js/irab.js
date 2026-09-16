@@ -19,10 +19,14 @@
      Geschlecht und Bestimmtheit)
    - zuruf-makan-01  (ظَرْف, danach folgt ein مَجْرُور wie bei der Idafa) */
 
+/* ⭐ Mit Endung seit dem 16.09.2026 — Elias' „ja" auf „Sollen Fachbegriffe mit
+   Endung stehen … wie auf deiner Regelkarte?". Belege in seinem Material:
+   مَرْفُوعٌ 8× · مَجْرُورٌ 22× · مَنْصُوبٌ 7×. Nur Anzeige: `.ar` wird nirgends
+   verglichen (gesucht: kasusAr und die drei Formen als Vergleichswert). */
 const KASUS = {
-  raf:  { ar: 'مَرْفُوع', de: 'Nominativ' },
-  jarr: { ar: 'مَجْرُور', de: 'Genitiv'   },
-  nasb: { ar: 'مَنْصُوب', de: 'Akkusativ' }
+  raf:  { ar: 'مَرْفُوعٌ', de: 'Nominativ' },
+  jarr: { ar: 'مَجْرُورٌ', de: 'Genitiv'   },
+  nasb: { ar: 'مَنْصُوبٌ', de: 'Akkusativ' }
 };
 
 /* Die SECHS Praepositionen aus Madina 1, in der Reihenfolge des Lehrers.

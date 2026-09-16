@@ -404,6 +404,18 @@ function todayStr(offsetDays=0){
     + String(d.getDate()).padStart(2,'0');
 }
 
+/* Derselbe Tagesbegriff für einen gespeicherten ZEITPUNKT (ms), etwa die
+   `zeit` eines Hakens (16.09.2026, für die Wiederholungsrunde in js/quran.js).
+   Dieselbe Rechnung wie todayStr() — vor 8 Uhr zählt zum Vortag —, damit
+   „heute abgehakt" und „heute gelesen" denselben Tag meinen. */
+function lerntagVon(zeit){
+  const d = new Date(Number(zeit));
+  d.setHours(d.getHours() - TAG_BEGINN_STUNDE);
+  return d.getFullYear() + '-'
+    + String(d.getMonth()+1).padStart(2,'0') + '-'
+    + String(d.getDate()).padStart(2,'0');
+}
+
 /* ---------- Eigene Vokabeln (lokal, nicht Teil von vocab-data.js) ---------- */
 let PERSONAL_VOCAB = LS.get('vt_personalVocab', []);
 function savePersonalVocab(){ LS.set('vt_personalVocab', PERSONAL_VOCAB); }
