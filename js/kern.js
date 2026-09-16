@@ -1086,11 +1086,13 @@ function wasFehlt(w){
         Notiz, eigene Eselsbruecke, „kenne ich schon") wandert mit;
      3. erst danach wird die eigene entfernt.
 
-   ⛔ NUR WO DAS ZIEL NOCH LEER IST. Hat die Buchvokabel bereits Fortschritt,
-   bleibt er stehen — ein Ueberschreiben waere ein Datenverlust in genau dem
-   Schritt, der Daten retten soll. Zusammengezaehlt wird nichts: zwei Karten
-   sind zwei getrennte Uebungsgeschichten, und eine Summe behauptete Uebung,
-   die so nie stattgefunden hat. [[zahlen_ohne_beleg]]
+   ⛔ Bis v517 stand hier „NUR WO DAS ZIEL NOCH LEER IST" — geprüft als „hat die
+   Buchvokabel einen Eintrag?". Jede hat einen, also wanderte nie etwas. Seit dem
+   16.09.2026 gilt Elias' Grundregel (Wortlaut bei hatFortschritt() unten): die
+   Kapitelkarte bleibt und bekommt seinen Stand; haben beide Fortschritt, gewinnt
+   die höhere Box. Zusammengezaehlt wird weiterhin nichts: zwei Karten sind zwei
+   getrennte Uebungsgeschichten, und eine Summe behauptete Uebung, die so nie
+   stattgefunden hat. [[zahlen_ohne_beleg]]
 
    ⚠️ Der Vergleich ist derselbe wie in pruefe-duplikate.js — NFC, Tatwil weg,
    Hamzah-Varianten gleich, die Endungs-Haraka ignoriert. Ein Skelettvergleich
@@ -1115,24 +1117,126 @@ function dubForm(x, endungBehalten){
     .trim();
   return endungBehalten ? s : s.replace(DUB_HARAKA_ENDE, '');
 }
-function dubGleich(a, b, endungBehalten){ const x = dubForm(a, endungBehalten); return x.length > 0 && x === dubForm(b, endungBehalten); }
+/* ⛔⛔ DER ARTIKEL GEHÖRT NICHT ZUM WORT (16.09.2026)
+   Seine eigene Karte أَلْمُهَنْدِسٌ „Ingenieur" (arabicroots, viermal beantwortet) und
+   مُهَنْدِسٌ „Ingenieur" aus Bayna Yadayk 1 Kapitel 1 sind dasselbe Wort — der Vergleich
+   sah zwei, weil vorne ال stand. Gemessen an seinem Stand vom 16.09., 21:58: genau
+   dieses eine Paar kommt durch die Regel dazu, sonst keins.
+   Erkannt wird nur der VOKALISIERTE Artikel: Sukun auf dem Lam (اَلْ, auch أَلْ wie
+   in seiner Karte) oder Schadda auf dem Buchstaben danach (الشَّمْسُ → شَمْسُ; die
+   Schadda gehört dort zum Artikel und fällt mit weg). Ein unvokalisiertes ال bleibt
+   stehen — ohne Zeichen ist nicht zu sehen, ob ال Artikel oder Wortanfang ist.
+   ⚠️ أَلْ ist auch der Anfang echter Wörter (أَلْوَانٌ „Farben", Wurzel ل و ن). Deshalb
+   bleiben mindestens zwei Buchstaben übrig, und dubletteImBuch() prüft danach immer
+   die BEDEUTUNG. Nicht bei Partikeln (الْآنَ, الَّذِي sind ganze Funktionswörter) und
+   nicht bei Verben (اِلْتَقَى ist Stamm VIII) — das entscheiden die Aufrufer über
+   `artikelWeg`. [[allgemeine_regel_statt_listeneintrag]] */
+function dubOhneArtikel(x){
+  const s = String(x == null ? '' : x).normalize('NFC').replace(/ـ/g, '');
+  const m = /^[اأإٱ][َُِ]?ل(ْ?)([ء-ي])([ً-ْٰ]*)/.exec(s);
+  if (!m) return s;
+  const sonne = m[3].indexOf('ّ') >= 0;
+  if (!m[1] && !sonne) return s;
+  const rest = m[2] + m[3].replace('ّ', '') + s.slice(m[0].length);
+  return rest.replace(/[ً-ْٰ]/g, '').length >= 2 ? rest : s;
+}
+function dubGleich(a, b, endungBehalten, artikelWeg){
+  const f = v => dubForm(artikelWeg ? dubOhneArtikel(v) : v, endungBehalten);
+  const x = f(a); return x.length > 0 && x === f(b);
+}
+
+/* Trägt `w` die Bedeutung von `eigen`? Ein Teil der Angabe von `w` steckt in der
+   von `eigen`, oder der Kopf von `eigen` steckt in einem Teil von `w`.
+   ⛔ Der Kopf ohne Klammern: bei „(von) nach / danach" war er bis zum 16.09.2026
+   LEER — und ein leerer Text steckt in jedem, die Prüfung sagte dann immer ja.
+   Gemessen: 2 eigene Karten und 59 Buchkarten beginnen mit einer Klammer. */
+function dubBedeutungGleich(eigen, w){
+  const meineDe = String((eigen && eigen.de) || '').trim().toLowerCase();
+  const kopf = meineDe.replace(/\([^)]*\)/g, ' ').split(/[\/;,(]/)[0].trim();
+  return meineDe.length > 0 && String((w && w.de) || '').trim().toLowerCase().split(/[\/;,]/).some(t => {
+    const a = t.trim();
+    return a.length > 0 && (meineDe.includes(a) || (kopf.length > 0 && a.includes(kopf)));
+  });
+}
 
 /* Findet die Buchvokabel, die dasselbe Wort UND dieselbe Bedeutung trägt.
    ⛔ Die Bedeutung zaehlt mit: ظَرْف (Fachbegriff) und ظَرْفٌ (Umschlag) haben
    dasselbe Schriftbild und sind zwei verschiedene Woerter. */
 function dubletteImBuch(eigen){
   if (!eigen || !eigen.ar) return null;
-  const meineDe = String(eigen.de || '').trim().toLowerCase();
-  return VOCAB_DATA.find(w =>
-    w !== eigen
-    && w.chapter !== 'personal'
-    && dubGleich(w.ar, eigen.ar, w.type === 'particle' || eigen.type === 'particle')
-    && meineDe.length > 0
-    && String(w.de || '').trim().toLowerCase().split(/[\/;,]/).some(t => {
-         const a = t.trim();
-         return a.length > 0 && (meineDe.includes(a) || a.includes(meineDe.split(/[\/;,(]/)[0].trim()));
-       })
-  ) || null;
+  return VOCAB_DATA.find(w => {
+    if (w === eigen || w.chapter === 'personal') return false;
+    const endung = w.type === 'particle' || eigen.type === 'particle';
+    const artikel = !endung && w.type !== 'verb' && eigen.type !== 'verb';
+    return dubGleich(w.ar, eigen.ar, endung, artikel) && dubBedeutungGleich(eigen, w);
+  }) || null;
+}
+
+/* ⛔⛔ DIE GRUNDREGEL: DIE KARTE MIT FORTSCHRITT BLEIBT (16.09.2026)
+   Gefragt, ob seine eigene Karte أَلْمُهَنْدِسٌ gegen مُهَنْدِسٌ aus Bayna Yadayk 1
+   getauscht werden soll — Elias, in drei Nachrichten:
+
+     „das ist eine grundregel: wenn zwei identisch sind und eines davon aber
+      fortschritt hat dann sollte man immer das behalten was fortschritt hat"
+     „also wenn er hier um zwei vokabeln geht die beide in kapiteln vorkommen"
+     „sollte es jedoch um ein meine eigenen wörter handeln dann soll man das was
+      im kapitel ist bevorzugen und auf den gleichen stand bringen mit den daten
+      wie zb welche box sie drin sit"
+
+   Fortschritt heißt: eine Box über 1 (auch von Hand verlegt oder aus arabicroots
+   mitgebracht) ODER mindestens eine Antwort, richtig oder falsch — أَلْمُهَنْدِسٌ
+   steht in Box 1 und war viermal falsch, genau darüber hat er gesprochen.
+   ⛔ Ein Eintrag allein ist KEIN Fortschritt: ergaenzeProgress() legt jeder Karte
+   beim Start einen an (Box 1, nie beantwortet). Bis zum 16.09.2026 fragte der
+   Tausch nur „gibt es einen Eintrag?" — und nahm den Stand deshalb NIE mit.
+   Gemessen an seinem Gerät: لَحْمٌ „Fleisch" (eigene Karte, Box 4, 4 richtig) wurde
+   am 16.09. um 21:57:54 gegen Bayna Yadayk 1 K5 getauscht und stand danach in Box 1.
+   [[vorgabewert_sieht_aus_wie_befund]] */
+function hatFortschritt(id){
+  const p = PROGRESS[String(id)];
+  return !!p && ((Number(p.box) || 1) > 1 || Number(p.correct) > 0 || Number(p.wrong) > 0);
+}
+
+/* Den Stand einer Karte auf eine andere bringen. Gibt zurück, was geschah.
+   - Ziel ohne Fortschritt: es bekommt den Stand, samt Zeitstempel der letzten
+     Antwort — ein NEUER Stempel schlüge beim Abgleich auch Antworten, die er auf
+     dem anderen Gerät seither gegeben hat.
+   - beide mit Fortschritt (`beideVergleichen`): die höhere Box gewinnt. So bleibt
+     nach Satz 1 immer der größere Fortschritt, und nach Satz 3 bekommt die
+     Kapitelkarte den Stand der eigenen, wo der weiter ist. Hier ein neuer Stempel,
+     sonst holte der Abgleich den kleineren Stand vom anderen Gerät zurück.
+     Zusammengezählt wird nie: eine Summe behauptete Übung, die so nie stattfand.
+   - sonst nichts. */
+function uebertrageFortschritt(von, nach, beideVergleichen){
+  const quelle = PROGRESS[String(von)];
+  if (!quelle || !hatFortschritt(von)) return '';
+  const kopie = Object.assign({}, quelle);
+  delete kopie.uebertragen;
+  if (!hatFortschritt(nach)){
+    PROGRESS[String(nach)] = kopie; saveProgress();
+    return 'Fortschritt';
+  }
+  if (beideVergleichen && (Number(quelle.box) || 1) > (Number(PROGRESS[String(nach)].box) || 1)){
+    kopie.ts = Date.now();
+    PROGRESS[String(nach)] = kopie; saveProgress();
+    return 'Fortschritt (höhere Box)';
+  }
+  return '';
+}
+
+/* ⛔ Die weggenommene Karte behält einen LEEREN Eintrag mit Vermerk. Löschen hilft
+   nicht: der Geräteabgleich vereinigt vt_progress je Eintrag und holt den alten
+   Stand vom anderen Gerät zurück (so steht لَحْمٌ mit Box 4 heute noch im Abgleich,
+   obwohl die Karte gelöscht ist). Stünde der alte Stand weiter da, nähme
+   holeFortschrittNach() ihn bei jedem Start wieder — auch nachdem er die
+   Kapitelkarte von Hand nach Box 1 gelegt hat. Der neue Stempel sorgt dafür, dass
+   der leere Eintrag beim Abgleich gewinnt; leer (0/0, Box 1) auch, damit die
+   Statistik nichts doppelt zählt. `uebertragen` sagt jedem, der vt_progress liest,
+   wohin der Stand gegangen ist. */
+function merkeUebertragen(von, nach, alt){
+  if (!alt || !((Number(alt.box) || 1) > 1 || Number(alt.correct) > 0 || Number(alt.wrong) > 0)) return;
+  PROGRESS[String(von)] = { box: 1, nextReview: alt.nextReview || '', correct: 0, wrong: 0, ts: Date.now(), uebertragen: String(nach) };
+  saveProgress();
 }
 
 /* Der Tausch selbst. Gibt zurueck, was geschehen ist — der Aufrufer soll es
@@ -1147,9 +1251,13 @@ function tauscheDublette(eigen){
         Wort nicht aus der Reichweite nimmt. */
   if (typeof setzeEinzelnFrei === 'function') setzeEinzelnFrei(nach, true);
 
-  /* 2. Mitnehmen, was an der eigenen Karte haengt — nur wo das Ziel leer ist. */
+  /* 2. Mitnehmen, was an der eigenen Karte haengt. Der Fortschritt nach der
+        Grundregel oben (uebertrageFortschritt); alles andere nur, wo das Ziel
+        leer ist — zwei Texte lassen sich nicht zu einem vereinen. */
   const mit = [];
-  if (PROGRESS[von] && !PROGRESS[nach]){ PROGRESS[nach] = PROGRESS[von]; mit.push('Fortschritt'); saveProgress(); }
+  const altStand = PROGRESS[von] ? Object.assign({}, PROGRESS[von]) : null;
+  const fortschritt = uebertrageFortschritt(von, nach, true);
+  if (fortschritt) mit.push(fortschritt);
   if (typeof NOTES !== 'undefined' && NOTES && NOTES[von] && !NOTES[nach]){
     NOTES[nach] = NOTES[von]; mit.push('Eselsbruecke');
     if (typeof saveNotes === 'function') saveNotes();
@@ -1168,9 +1276,49 @@ function tauscheDublette(eigen){
     LS.set(BEKANNT_SCHLUESSEL, BEKANNT);
   }
 
-  /* 3. Und erst jetzt die eigene weg. */
+  /* 3. Und erst jetzt die eigene weg — mit Vermerk, siehe merkeUebertragen(). */
   const weg = loeschePersonalVocab(eigen.id);
+  merkeUebertragen(von, nach, altStand);
   return { von, nach, wort: buch.ar, mitgenommen: mit, geloescht: !!weg };
+}
+
+/* ⛔⛔ NACHHOLEN: getauscht, aber der Stand blieb zurück (16.09.2026)
+   Bis v517 nahm der Tausch den Fortschritt nur in eine Karte OHNE Eintrag mit —
+   und jede Buchkarte hat beim Tausch schon einen (siehe hatFortschritt). An seinem
+   Gerät gemessen, beide am 16.09.2026:
+     لَحْمٌ „Fleisch"   eigene Karte Box 4 (4 richtig, 1 falsch) → Bayna Yadayk 1 K5, Box 1
+     كَسْلَانُ „faul"   eigene Karte Box 1 (1 falsch)           → Bayna Yadayk 1 K6, Box 1
+   Die eigenen Karten sind gelöscht, ihr Stand liegt aber noch in vt_progress (der
+   Abgleich hat ihn zurückgeholt). Hier wird er nachgetragen — ⛔ NUR in eine Karte
+   ohne jeden Fortschritt: hat er die Kapitelkarte seither beantwortet, ist das sein
+   neuerer Stand, und ein alter darf ihn nie überschreiben. Danach der Vermerk,
+   damit es genau einmal geschieht.
+   Die Wörter selbst kommen aus den drei Quellen seiner eigenen Karten; eine
+   gelöschte steht dort weiter (vokabeln-eigene.js und die Fachbegriffe sind
+   Dateien, vt_personalVocab holt der Abgleich zurück). */
+function holeFortschrittNach(){
+  const quellen = [].concat(
+    (typeof window !== 'undefined' && window && Array.isArray(window.EIGENE_VOKABELN)) ? window.EIGENE_VOKABELN : [],
+    (typeof FACHBEGRIFF_VOKABELN !== 'undefined' && Array.isArray(FACHBEGRIFF_VOKABELN)) ? FACHBEGRIFF_VOKABELN : [],
+    (typeof PERSONAL_VOCAB !== 'undefined' && Array.isArray(PERSONAL_VOCAB)) ? PERSONAL_VOCAB : []);
+  const nachgeholt = [];
+  const gesehen = new Set();
+  for (const e of quellen){
+    if (!e || !e.ar || gesehen.has(String(e.id))) continue;
+    gesehen.add(String(e.id));
+    const von = String(e.id);
+    if (!istGeloescht(von)) continue;            /* noch da: das erledigt tauscheDublette() */
+    const stand = PROGRESS[von];
+    if (!stand || !hatFortschritt(von)) continue;   /* auch: schon übertragen, dann ist er leer */
+    const buch = dubletteImBuch(Object.assign({}, e, { chapter: 'personal' }));
+    if (!buch || hatFortschritt(buch.id)) continue;
+    const alt = Object.assign({}, stand);
+    if (uebertrageFortschritt(von, buch.id, false)){
+      merkeUebertragen(von, buch.id, alt);
+      nachgeholt.push({ von, nach: String(buch.id), wort: buch.ar });
+    }
+  }
+  return nachgeholt;
 }
 
 /* Alle selbst angelegten Wörter durchgehen. Gibt die Liste der Tausche zurück
@@ -1187,13 +1335,70 @@ function tauscheDubletten(){
     const r = tauscheDublette(w);
     if (r) getauscht.push(r);
   }
+  /* Erst die frischen Tausche, dann das Nachholen: ein Tausch von eben trägt schon
+     seinen Vermerk und wird dort übersprungen. */
+  holeFortschrittNach();
   if (getauscht.length && typeof toast === 'function'){
     const namen = getauscht.map(r => r.wort).join(', ');
+    const mitStand = getauscht.some(r => r.mitgenommen.some(m => m.indexOf('Fortschritt') === 0));
     toast(getauscht.length === 1
-      ? namen + ' stand doppelt — deine Karte wurde durch die aus dem Buch ersetzt, der Fortschritt ist mitgewandert.'
+      ? namen + ' stand doppelt — deine Karte wurde durch die aus dem Buch ersetzt'
+        + (mitStand ? ', dein Stand ist mitgewandert.' : '.')
       : getauscht.length + ' Wörter standen doppelt (' + namen + ') — deine Karten wurden durch die aus dem Buch ersetzt.');
   }
   return getauscht;
+}
+
+/* ⛔⛔ ZWEI KAPITELKARTEN FÜR DASSELBE WORT (16.09.2026)
+   Satz 1 und 2 der Grundregel oben: stehen zwei gleiche Wörter in Kapiteln und hat
+   eine davon Fortschritt, bleibt die — die ohne Fortschritt fällt beim Start aus
+   VOCAB_DATA, so wie seit v512 أَخٌ/أُخْتٌ aus Bayna Yadayk (BUCHDUBLETTEN_AUSBLENDEN
+   in js/buecher.js; diese Liste bleibt, sie ist seine Einzelentscheidung von vorher).
+   Gleich heißt hier: dieselbe Form wie im Tausch oben UND dieselbe Bedeutung in
+   einer der beiden Richtungen — keine der Karten ist „die eigene".
+   ⛔ Haben BEIDE Fortschritt oder KEINE, sagt seine Regel nichts: dann bleiben
+   beide stehen, hier wird nichts geraten. Keine hat: das entscheidet sich von
+   selbst, sobald er eine davon beantwortet hat. Beide haben: das zeigt
+   pruefe-duplikate.js auf seiner Seite als Frage.
+   ⚠️ War die ausgeblendete Karte für ihn erreichbar, die bleibende aber nicht (ihr
+   Kapitel ist nicht gewählt), wird die bleibende einzeln freigeschaltet — sonst
+   nähme die Regel ihm das Wort, statt es zu vereinheitlichen (dieselbe Auflage wie
+   beim Tausch, 07.09.2026).
+   Gemessen am 16.09.2026 an seiner Auswahl (Madina 1 und Bayna Yadayk 1, beide ganz
+   geladen): 0 Paare. Mit dem Quran-Buch wären es viele (بَيْتٌ, كِتَابٌ, رَجُلٌ …).
+   Nach der Form vorsortiert, nicht jede mit jeder: mit allen Büchern sind es über
+   4000 Karten. */
+function blendeKapitelDublettenAus(){
+  const gruppen = new Map();
+  for (const w of VOCAB_DATA){
+    if (!w || !w.ar || w.chapter === 'personal') continue;
+    if (typeof istPluralKarte === 'function' && istPluralKarte(w.id)) continue;
+    const k = dubForm(dubOhneArtikel(w.ar), false);
+    if (!k) continue;
+    if (!gruppen.has(k)) gruppen.set(k, []);
+    gruppen.get(k).push(w);
+  }
+  const gleichesWort = (a, b) => {
+    const endung = a.type === 'particle' || b.type === 'particle';
+    const artikel = !endung && a.type !== 'verb' && b.type !== 'verb';
+    return dubGleich(a.ar, b.ar, endung, artikel) && (dubBedeutungGleich(a, b) || dubBedeutungGleich(b, a));
+  };
+  const weg = new Set();
+  const bericht = [];
+  for (const g of gruppen.values()){
+    if (g.length < 2) continue;
+    for (const w of g){
+      if (hatFortschritt(w.id)) continue;
+      const bleibt = g.find(v => String(v.id) !== String(w.id) && hatFortschritt(v.id) && gleichesWort(v, w));
+      if (!bleibt) continue;
+      if (typeof istBekannt === 'function' && istBekannt(w) && !istBekannt(bleibt) && typeof setzeEinzelnFrei === 'function')
+        setzeEinzelnFrei(String(bleibt.id), true);
+      weg.add(String(w.id));
+      bericht.push({ weg: String(w.id), bleibt: String(bleibt.id), wort: bleibt.ar });
+    }
+  }
+  if (weg.size) for (let i = VOCAB_DATA.length - 1; i >= 0; i--) if (weg.has(String(VOCAB_DATA[i].id))) VOCAB_DATA.splice(i, 1);
+  return bericht;
 }
 
 function loeschePersonalVocab(id){

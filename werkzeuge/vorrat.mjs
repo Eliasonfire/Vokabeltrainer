@@ -344,6 +344,13 @@ function boxenSchreiben(text){
 
   const boxen = {};
   const verteilung = {};
+  /* ⭐ 16.09.2026: auch, welche Box-1-Karten er schon BEANTWORTET hat. Elias'
+     Grundregel für doppelte Karten („immer das behalten was fortschritt hat")
+     zählt eine falsche Antwort als Fortschritt — seine أَلْمُهَنْدِسٌ stand in Box 1
+     und war viermal falsch. pruefe-duplikate.js entscheidet damit, ob ihm eine
+     Doppelung als Frage vorgelegt wird; aus der Box allein sähe diese Karte aus
+     wie nie geübt. [[vorgabewert_sieht_aus_wie_befund]] */
+  const angefangen = [];
   let n = 0;
   for (const id of Object.keys(prog)) {
     const e = prog[id];
@@ -351,16 +358,20 @@ function boxenSchreiben(text){
     if (!Number.isFinite(b) || b < 1) continue;
     boxen[id] = b;
     verteilung[b] = (verteilung[b] || 0) + 1;
+    if (b === 1 && (Number(e.correct) > 0 || Number(e.wrong) > 0)) angefangen.push(id);
     n++;
   }
   if (!n) return { anzahl: 0, geschrieben: false };
 
   fs.writeFileSync(p('data/boxen.json'), JSON.stringify({
     _hinweis: "Leitner-Box je Wort-Id aus vt_progress. box 1 = noch nie richtig "
-      + "beantwortet. Nur ein Messwert fuer Pruefer — massgeblich ist die App.",
+      + "beantwortet; `angefangen` = davon die, die er schon einmal beantwortet hat "
+      + "(Fortschritt nach seiner Grundregel). Nur ein Messwert fuer Pruefer — "
+      + "massgeblich ist die App.",
     stempel: (roh.stempel && roh.stempel.vt_progress) || null,
     geholt: new Date().toLocaleDateString('de-DE'),
     verteilung,
+    angefangen,
     boxen
   }, null, 2) + '\n', 'utf8');
   return { anzahl: n, verteilung, geschrieben: true };

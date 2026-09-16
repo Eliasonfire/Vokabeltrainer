@@ -119,12 +119,23 @@ export const PFLEGEPLAN = [
     funktion: 'Doppelte Wörter in zwei Büchern (BUCHDUBLETTEN_AUSBLENDEN)',
     dateien: [],
     bildschirme: [],
+    /* ⭐ 16.09.2026, abends: seine GRUNDREGEL — „das ist eine grundregel: wenn zwei
+       identisch sind und eines davon aber fortschritt hat dann sollte man immer das
+       behalten was fortschritt hat". Neu in BESTEHENDEN Dateien (js/kern.js:
+       hatFortschritt, holeFortschrittNach, blendeKapitelDublettenAus; js/buecher.js
+       ruft sie beim Start) — deshalb von Hand hier nachgetragen (CLAUDE.md). Die drei
+       Fragen: neuer Inhalt? ja, jedes Kapitel und jedes Buch kann Paare bringen — die
+       App entscheidet sie selbst, pruefe-duplikate.js legt ihm nur vor, was die Regel
+       nicht entscheidet · verarbeiten? seine Antwort je Wort, nur für diese Reste ·
+       veralten? die Prüfung liest den Fortschritt aus data/boxen.json (1c.1); fehlt
+       die Datei, bleiben Kapitel-Paare Befund und die Prüfung sagt es. Kein neuer
+       Speicherschlüssel: der Vermerk `uebertragen` steht in vt_progress. */
     neuerInhalt: { routine: W, schritt: '1c.5', beleg: 'node pruefe-duplikate.js', werkzeug: 'pruefe-duplikate.js',
-      wie: 'jedes neu freigeschaltete Kapitel eines zweiten Buchs kann Wörter bringen, die er aus dem ersten schon hat; '
-        + 'sie erscheinen als Befund „Buchvokabel" und auf seiner Seite „Was auf dich wartet" als Frage je Wort' },
-    eingaben: { sitzung: 'Ob ein Wort im zweiten Buch ausgeblendet wird, entscheidet Elias je Wort — es gibt keine allgemeine Regel, '
-        + 'nur zwei einzelne Antworten. Erst nach seinem Ja trägt eine Sitzung die Kennung in BUCHDUBLETTEN_AUSBLENDEN ein; '
-        + 'die Routine nie.',
+      wie: 'jedes neu freigeschaltete Kapitel oder Buch kann Wörter bringen, die er schon hat; die App behält beim Start die Karte '
+        + 'mit Fortschritt (eigene Wörter: die Kapitelkarte bekommt seinen Stand). Als Befund „Buchvokabel" und auf seiner Seite '
+        + 'erscheint nur, was die Regel nicht entscheidet — beide mit Fortschritt oder Bedeutung nicht sicher gleich' },
+    eingaben: { sitzung: 'Die Reste (beide Karten mit Fortschritt, Bedeutung unsicher) entscheidet Elias je Wort. Erst nach seinem Ja '
+        + 'trägt eine Sitzung die Kennung in BUCHDUBLETTEN_AUSBLENDEN ein; die Routine nie.',
       werkzeug: 'pruefe-duplikate.js' },
     veralten: { routine: W, schritt: '1c.5', beleg: 'node pruefe-duplikate.js', werkzeug: 'pruefe-duplikate.js',
       wie: 'eine Kennung, die kein Buch mehr hat oder deren Zwilling fehlt, blendet ein Wort aus, das er dann gar nicht mehr hat — '

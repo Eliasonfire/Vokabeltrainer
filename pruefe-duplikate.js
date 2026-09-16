@@ -166,6 +166,67 @@ const AUSGEBLENDET = (() => {
 for (let i = bezug.length - 1; i >= 0; i--)
   if (AUSGEBLENDET.has(String(bezug[i].id))) bezug.splice(i, 1);
 
+/* ---------- Die Grundregel der App (16.09.2026) ----------
+   Elias: „das ist eine grundregel: wenn zwei identisch sind und eines davon aber
+   fortschritt hat dann sollte man immer das behalten was fortschritt hat" — „also
+   wenn er hier um zwei vokabeln geht die beide in kapiteln vorkommen" — „sollte es
+   jedoch um ein meine eigenen wörter handeln dann soll man das was im kapitel ist
+   bevorzugen und auf den gleichen stand bringen …".
+   Die App entscheidet damit beim Start selbst (tauscheDubletten und
+   blendeKapitelDublettenAus in js/kern.js). Eine Doppelung, die sie entscheidet, ist
+   KEINE Frage an ihn — sonst fragte ihn seine Seite nach etwas, das er beantwortet
+   hat. Offen bleiben nur: zwei Kapitelkarten, die BEIDE Fortschritt haben (dazu sagt
+   die Regel nichts), und Paare, deren Bedeutung die App nicht als gleich erkennt.
+   ⛔ Gleich heißt hier, was die App gleich nennt: die Vergleichsfunktionen werden
+   aus js/kern.js GESCHNITTEN, nicht nachgebaut — auch der Artikel (أَلْمُهَنْدِسٌ =
+   مُهَنْدِسٌ) und die Bedeutung kommen von dort. [[entscheidung_gilt_fuer_das_zweite_werkzeug]]
+   Der Fortschritt kommt aus data/boxen.json (vorrat.mjs schreibt sie in jedem
+   Wartungslauf aus seinem Geräteabgleich). */
+const APP = (() => {
+  const schneideKern = (name) => {
+    const auf = kern.indexOf('function ' + name + '(');
+    const zu = auf < 0 ? -1 : kern.indexOf('\n}', auf);
+    return auf < 0 || zu < 0 ? null : kern.slice(auf, zu + 2);
+  };
+  const namen = ['dubForm', 'dubOhneArtikel', 'dubGleich', 'dubBedeutungGleich'];
+  const teile = namen.map(schneideKern);
+  const konst = (/const DUB_HARAKA_ENDE = [^\n]*/.exec(kern) || [])[0];
+  if (!konst || teile.some(t => !t)) {
+    console.error('⛔ Die Vergleichsfunktionen der App (' + namen.join(', ') + ') stehen nicht mehr in js/kern.js.');
+    process.exit(1);
+  }
+  return new Function(konst + '\n' + teile.join('\n') + '\nreturn { dubGleich, dubBedeutungGleich, dubOhneArtikel };')();
+})();
+const artikelUndEndung = (a, b) => {
+  const endung = a.type === 'particle' || b.type === 'particle';
+  return { endung, artikel: !endung && a.type !== 'verb' && b.type !== 'verb' };
+};
+/* wie dubletteImBuch(): die eigene Karte trägt die Bedeutung */
+const appGleichEigen = (eigen, w) => {
+  const { endung, artikel } = artikelUndEndung(eigen, w);
+  return APP.dubGleich(w.ar, eigen.ar, endung, artikel) && APP.dubBedeutungGleich(eigen, w);
+};
+/* wie blendeKapitelDublettenAus(): keine ist die eigene, Bedeutung in einer Richtung */
+const appGleichKapitel = (a, b) => {
+  const { endung, artikel } = artikelUndEndung(a, b);
+  return APP.dubGleich(a.ar, b.ar, endung, artikel) && (APP.dubBedeutungGleich(a, b) || APP.dubBedeutungGleich(b, a));
+};
+
+const BOXEN_DATEI = path.join(REPO, 'data', 'boxen.json');
+const BOXEN = (() => {
+  try {
+    const b = JSON.parse(fs.readFileSync(BOXEN_DATEI, 'utf8'));
+    return (b && b.boxen && typeof b.boxen === 'object') ? b : null;
+  } catch (e) { return null; }
+})();
+/* true / false — oder null, wenn es sich nicht messen lässt (dann fragt die Seite lieber). */
+const hatFortschritt = (id) => {
+  if (!BOXEN) return null;
+  const box = Number(BOXEN.boxen[String(id)]);
+  if (box > 1) return true;
+  return Array.isArray(BOXEN.angefangen) ? BOXEN.angefangen.includes(String(id)) : false;
+};
+
 /* ---------- Vergleich ---------- */
 const HARAKA_ENDE = /[ًٌٍَُِْ]$/;
 function form(s) {
@@ -257,7 +318,9 @@ if (ausblendung.veraltet.length) {
 const befunde = [];
 for (const [herkunft, liste] of [['eigene Vokabel', EIGENE], ['Fachbegriff', FACH]]) {
   for (const e of liste) {
-    const t = bezug.filter(x => gleich(x.ar, e.ar));
+    /* ⭐ Dazu, was die App ohne Artikel als gleich erkennt (16.09.2026) —
+       أَلْمُهَنْدِسٌ fand die Schriftbild-Suche nicht. */
+    const t = bezug.filter(x => gleich(x.ar, e.ar) || appGleichEigen(e, x));
     if (t.length) befunde.push({ herkunft, e, t });
   }
 }
@@ -268,6 +331,18 @@ for (const w of bezug) {
   if (!f) continue;
   if (gesehen.has(f)) befunde.push({ herkunft: 'Buchvokabel', e: w, t: [gesehen.get(f)] });
   else gesehen.set(f, w);
+}
+/* ⭐ Dazu Paare, die sich NUR im Artikel unterscheiden — aber nur, wenn auch die
+   App sie gleich nennt (Bedeutung). Sonst stünde الْيَوْمُ „heute" gegen يَوْمٌ „Tag"
+   als Frage auf seiner Seite (so im ersten Lauf am 16.09.2026). */
+const ohneArtikel = new Map();
+for (const w of bezug) {
+  if (w.type === 'particle' || w.type === 'verb') continue;
+  const f = form(APP.dubOhneArtikel(w.ar));
+  if (!f) continue;
+  for (const v of (ohneArtikel.get(f) || []))
+    if (form(v.ar) !== form(w.ar) && appGleichKapitel(v, w)) befunde.push({ herkunft: 'Buchvokabel', e: w, t: [v] });
+  ohneArtikel.set(f, (ohneArtikel.get(f) || []).concat(w));
 }
 
 /* ---------- Bewusst nebeneinander ----------
@@ -295,9 +370,43 @@ if (bewusst.length) {
   console.log('');
 }
 
+/* ---------- Was die App nach seiner Grundregel selbst entscheidet ---------- */
+const entschiedenApp = [];
+for (let i = befunde.length - 1; i >= 0; i--) {
+  const f = befunde[i];
+  if (f.herkunft === 'Buchvokabel') {
+    const a = f.e, b = f.t[0];
+    if (!appGleichKapitel(a, b)) continue;          /* Bedeutung nicht sicher gleich: er entscheidet */
+    const fa = hatFortschritt(a.id), fb = hatFortschritt(b.id);
+    if (fa === null || fb === null) continue;        /* nicht messbar: lieber fragen als raten */
+    if (fa && fb) continue;                          /* beide: dazu sagt seine Regel nichts */
+    const bleibt = fa ? a : fb ? b : null;
+    entschiedenApp.push({ f, grund: bleibt
+      ? 'die Karte mit Fortschritt bleibt (' + (bleibt.book || 'vocab-data') + ' K' + bleibt.chapter + ' id ' + bleibt.id + '), die andere blendet die App beim Start aus'
+      : 'noch keine mit Fortschritt — beide bleiben, bis er eine beantwortet hat; dann blendet die App die andere aus' });
+    befunde.splice(i, 1);
+  } else {
+    const treffer = f.t.filter(x => appGleichEigen(f.e, x));
+    if (!treffer.length) continue;                   /* Bedeutung nicht sicher gleich: er entscheidet */
+    entschiedenApp.push({ f, grund: 'seine Karte geht, ' + (treffer[0].book || 'vocab-data') + ' K' + treffer[0].chapter
+      + ' id ' + treffer[0].id + ' bleibt und bekommt seinen Stand — sobald das Buch geladen ist' });
+    befunde.splice(i, 1);
+  }
+}
+if (!BOXEN) console.log('  ⚠ data/boxen.json fehlt oder ist unlesbar — zwei Kapitelkarten bleiben Befund (Fortschritt nicht messbar).\n');
+else if (!Array.isArray(BOXEN.angefangen)) console.log('  ⚠ data/boxen.json ohne `angefangen` (älter als 16.09.2026) — eine Karte in Box 1 mit Antworten zählt bis zum nächsten Abruf als „ohne Fortschritt".\n');
+if (entschiedenApp.length) {
+  console.log('=== entscheidet die App nach seiner Grundregel (kein Befund): ' + entschiedenApp.length + ' ===');
+  entschiedenApp.forEach(({ f, grund }) => console.log('  ' + String(f.e.ar).padEnd(20) + ' ' + f.herkunft + ' id ' + f.e.id
+    + ' == ' + f.t.map(x => x.id).join(' / ') + ' — ' + grund));
+  console.log('  (Elias, 16.09.2026: „das ist eine grundregel: wenn zwei identisch sind und eines davon aber fortschritt hat');
+  console.log('   dann sollte man immer das behalten was fortschritt hat" — tauscheDubletten / blendeKapitelDublettenAus in js/kern.js)');
+  console.log('');
+}
+
 if (!befunde.length) {
   console.log(ausblendung.veraltet.length ? '⛔ Kein neues Wort steht doppelt — aber die Ausblendliste ist veraltet (oben).'
-                                          : '✅ Kein Wort steht doppelt.');
+                                          : '✅ Keine Doppelung, die er entscheiden muss.');
   process.exit(ausblendung.veraltet.length ? 2 : 0);
 }
 /* ⭐⭐ WAS BRINGT JEDE SEITE MIT? (09.09.2026)
@@ -354,13 +463,13 @@ console.log('⚠️ Ein Befund ist noch keine Aufforderung: ein Fachbegriff und 
 console.log('   Buchvokabel koennen bewusst nebeneinander stehen (Grammatikkarte');
 console.log('   gegen Wortschatzkarte). Welche Elias will, entscheidet er.');
 console.log('');
-/* ⛔ Zwei Bücher sind ein anderer Fall als „eigene gegen Buch": dort gilt seine
-   Regel vom 20.08. (die eigene geht), hier gibt es keine allgemeine Regel —
-   nur zwei einzelne Antworten. Die Liste wächst deshalb nur durch ihn. */
+/* ⛔ Was hier noch als Befund steht, entscheidet seine Grundregel NICHT: zwei
+   Kapitelkarten mit Fortschritt auf BEIDEN, oder eine Bedeutung, die die App nicht
+   als gleich erkennt (dann ist es vielleicht gar kein Duplikat). */
 if (befunde.some(b => b.herkunft === 'Buchvokabel')) {
-  console.log('⭐ In zwei Büchern: am 16.09.2026 hat Elias أَخٌ und أُخْتٌ im zweiten Buch');
-  console.log('   (Bayna Yadayk) ausblenden lassen. Das gilt nur für diese zwei — jedes');
-  console.log('   weitere Wort entscheidet er, erst dann kommt es in BUCHDUBLETTEN_AUSBLENDEN.');
+  console.log('⭐ In zwei Kapiteln: die App behält seit dem 16.09.2026 selbst die Karte mit');
+  console.log('   Fortschritt. Hier stehen nur Paare, bei denen BEIDE Fortschritt haben oder die');
+  console.log('   Bedeutung nicht sicher gleich ist — die entscheidet er je Wort.');
   console.log('');
 }
 /* ⭐ Die BEDEUTUNG steht seit dem 20.08.2026 hinter jedem Eintrag — ohne sie
