@@ -128,6 +128,83 @@ console.log('\nDie Begruendung:');
 pruefe('sein Auftrag steht wortwoertlich in js/start.js',
        quelle.includes('direkt zu den jeweiligen suren'));
 
+/* ---------- 5. Eine heute gelernte Sure verdrängt die Wiederholung nicht ----------
+   ⭐ ELIAS' TAG, NACHGESPIELT (16.09.2026). Gelesen: al-Qadr (als „Neu lernen")
+   und az-Zalzala (als „Wiederholen"). Um 18:47 hakte er al-Qadr als auswendig
+   ab — danach hieß der Ring „Wiederholen Al-Qadr", und Zalzala war weg. Er:
+   „zalzala als ring ist verschwunden und ich habs geselen, soll das so sein"
+   und „nicht statt. es zeigt nur qadr. beides wurde gezeigt aber jetzt fehtl
+   zalzala". Gemessen an seinem abgeglichenen Stand: vt_suraGelesen 97 und 99
+   am 2026-09-16, vt_hifz[97] { an: true, zeit: 18:47:36 }.
+   Diesmal wird die Funktion AUSGEFÜHRT, nicht nur gelesen — die Sperre ist
+   eine Bedingung, und die sieht man einem Quelltext nicht an. */
+console.log('\nWiederholen: eine heute gelernte Sure zählt heute nicht mit:');
+{
+  const vm = await import('node:vm');
+  const kern = fs.readFileSync(path.join(WURZEL, 'js', 'kern.js'), 'utf8');
+  const teileAus = (text, namen) => namen.map(n => schneide(text, n));
+  const konstante = (text, name) => (text.match(new RegExp('const ' + name + '\\s*=[^;]+;')) || [''])[0];
+  const baue = quranText => {
+    const stuecke = [konstante(kern, 'TAG_BEGINN_STUNDE'), ...teileAus(kern, ['todayStr', 'lerntagVon']),
+      konstante(quranText, 'WDH_AUSGENOMMEN'), ...teileAus(quranText, ['wdhVorrat', 'wdhHeute'])];
+    if (stuecke.some(s => !s)) return null;
+    return stuecke.join('\n') + '\n;globalThis.__heute = wdhHeute; globalThis.__tag = todayStr;';
+  };
+  const lauf = (code, stand) => {
+    const c = { SURAH_DATA: [1, 67, 97, 99, 102].map(id => ({ id })), ...stand };
+    vm.createContext(c);
+    vm.runInContext(code, c);
+    return c;
+  };
+  const code = baue(quran);
+  pruefe('wdhHeute(), wdhVorrat(), todayStr() und lerntagVon() sind zu finden', !!code);
+  if (code){
+    const probe = lauf(code, { HIFZ: {}, HIFZ_ZEIT: {}, WDH: {} });
+    const heute = probe.__tag(0), gestern = probe.__tag(-1);
+    const jetzt = Date.now(), vorEinerWoche = jetzt - 7 * 864e5;
+    const auswendig = { 97: true, 99: true, 102: true };
+
+    /* a) sein Tag */
+    const a = lauf(code, { HIFZ: auswendig, HIFZ_ZEIT: { 97: { an: true, zeit: jetzt } },
+      WDH: { 97: heute, 99: heute } }).__heute();
+    pruefe('sein Tag: der Ring zeigt Zalzala, erledigt', a && a.sure === 99 && a.erledigt === true, JSON.stringify(a));
+
+    /* b) heute gelernt, noch nicht gelesen: sie ist heute auch nicht „dran" */
+    const b = lauf(code, { HIFZ: auswendig, HIFZ_ZEIT: { 97: { an: true, zeit: jetzt } },
+      WDH: { 102: gestern } }).__heute();
+    pruefe('heute gelernt und ungelesen: dran ist eine ältere, nicht die neue', b && b.sure === 99 && !b.erledigt, JSON.stringify(b));
+
+    /* c) nur die neue gelesen: die Wiederholung ist noch offen */
+    const c2 = lauf(code, { HIFZ: auswendig, HIFZ_ZEIT: { 97: { an: true, zeit: jetzt } },
+      WDH: { 97: heute } }).__heute();
+    pruefe('nur die heute gelernte gelesen: Wiederholen bleibt offen', c2 && !c2.erledigt && c2.sure !== 97, JSON.stringify(c2));
+
+    /* d) Normalfall bleibt: vor einer Woche gelernt, heute gelesen → zählt */
+    const d = lauf(code, { HIFZ: auswendig, HIFZ_ZEIT: { 97: { an: true, zeit: vorEinerWoche } },
+      WDH: { 97: heute } }).__heute();
+    pruefe('früher gelernt und heute gelesen: zählt wie immer', d && d.sure === 97 && d.erledigt === true, JSON.stringify(d));
+
+    /* e) alte Haken tragen zeit 0 — sie dürfen nicht als „heute" gelten */
+    const e = lauf(code, { HIFZ: auswendig, HIFZ_ZEIT: { 97: { an: true, zeit: 0 } },
+      WDH: { 97: heute } }).__heute();
+    pruefe('Haken ohne Zeitpunkt (zeit 0): zählt wie immer', e && e.sure === 97 && e.erledigt === true, JSON.stringify(e));
+
+    /* f) die 8-Uhr-Grenze: 07:59 gehört zum Vortag */
+    const t = lauf(code, { HIFZ: {}, HIFZ_ZEIT: {}, WDH: {} });
+    const lt = vm.runInContext('lerntagVon', t);
+    pruefe('lerntagVon: 16.09. 07:59 zählt zum 15.09., 08:00 zum 16.09.',
+      lt(new Date(2026, 8, 16, 7, 59).getTime()) === '2026-09-15' && lt(new Date(2026, 8, 16, 8, 0).getTime()) === '2026-09-16',
+      lt(new Date(2026, 8, 16, 7, 59).getTime()) + ' / ' + lt(new Date(2026, 8, 16, 8, 0).getTime()));
+
+    /* ⛔ Gegenprobe: ohne die Sperre muss sein Fehler wieder auftauchen —
+       sonst prüfte Fall a) nichts. [[stoertest_muss_wirkung_nachweisen]] */
+    const ohneSperre = baue(quran.replace('const vorrat = alle.filter(id => !heuteGelernt(id));', 'const vorrat = alle;'));
+    const g = ohneSperre && lauf(ohneSperre, { HIFZ: auswendig, HIFZ_ZEIT: { 97: { an: true, zeit: jetzt } },
+      WDH: { 97: heute, 99: heute } }).__heute();
+    pruefe('Gegenprobe: ohne die Sperre stünde wieder „Al-Qadr" da', !!g && g.sure === 97, JSON.stringify(g));
+  }
+}
+
 console.log('\n' + (schlecht ? '✘ ' + schlecht + ' von ' + (ok + schlecht) + ' Faellen falsch'
                              : '✔ alle ' + ok + ' gruen'));
 process.exit(schlecht ? 1 : 0);

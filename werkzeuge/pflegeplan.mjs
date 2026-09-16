@@ -211,6 +211,10 @@ export const PFLEGEPLAN = [
     neuerInhalt: { routine: W, schritt: '6', beleg: 'node pruefe-quran.js',
       wie: 'Quranbezüge neuer Vokabeln werden gegen den Qurantext gehalten' },
     eingaben: { nein: 'Lesezeichen, Lesestand und Audio-Einstellungen sind Zustand seines Geräts; vt_hifz führt pruefe-kreislaeufe.mjs als ausgewertet über data/auswendig.json. vt_suraGelesen (welche Sure wann gelesen wurde, seit 15.09.2026) ebenso — die App wertet es selbst aus, für die Wiederholungsringe auf der Startseite.' },
+    /* 16.09.2026 abends (v505): eine heute als auswendig abgehakte Sure zählt
+       heute nicht als Wiederholung (sie hatte az-Zalzala vom Ring verdrängt).
+       Liest nur HIFZ_ZEIT, das es schon gab; neu ist lerntagVon() in js/kern.js.
+       Kein neuer Pflegebedarf — test-surenringe.mjs spielt den Tag nach. */
     /* ⭐⭐ WANN EINE SURE ALS GELESEN ZÄHLT (16.09.2026) — die Stelle, an der
        diese Funktion schon einmal still ausgefallen ist.
 

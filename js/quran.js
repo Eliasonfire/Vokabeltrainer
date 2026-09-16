@@ -419,9 +419,32 @@ function wdhVorrat(){
    Position mitgeführt werden muss, die beim Dazulernen einer Sure verrutschen
    würde. [[allgemeine_regel_statt_listeneintrag]] */
 function wdhHeute(){
-  const vorrat = wdhVorrat();
-  if (!vorrat.length) return null;
+  const alle = wdhVorrat();
+  if (!alle.length) return null;
   const heute = todayStr(0);
+  /* ⛔⛔ EINE SURE, DIE HEUTE ERST AUSWENDIG ABGEHAKT WURDE, IST KEINE
+     WIEDERHOLUNG (16.09.2026).
+
+     Elias las an dem Tag al-Qadr (Ring „Neu lernen") und az-Zalzala (Ring
+     „Wiederholen") und hakte al-Qadr um 18:47 als auswendig ab. Damit rutschte
+     al-Qadr in diese Runde — mit dem Lesedatum von heute —, und `find` nahm sie
+     als erste nach Surennummer: der Ring hieß „Wiederholen Al-Qadr", Zalzala
+     war verschwunden. Er mit Bild: „zalzala als ring ist verschwunden und ich
+     habs geselen, soll das so sein" und dann: „nicht statt. es zeigt nur qadr.
+     beides wurde gezeigt aber jetzt fehtl zalzala".
+
+     Wer eine Sure heute gelernt hat, muss sie heute nicht „frisch halten" —
+     so war die Runde gemeint: „eine sura lese von denen die ich bereits
+     auswendig kann um sie wieder frisch zu halten". Deshalb zählt eine heute
+     abgehakte Sure heute weder als erledigt noch als dran; ab morgen gehört sie
+     normal zur Runde. Der Zeitpunkt steht im Haken selbst (HIFZ_ZEIT[id].zeit,
+     0 bei alten Haken). test-surenringe.mjs spielt genau diesen Tag nach. */
+  const heuteGelernt = id => {
+    const z = (typeof HIFZ_ZEIT === 'object' && HIFZ_ZEIT && HIFZ_ZEIT[id]) ? Number(HIFZ_ZEIT[id].zeit) : 0;
+    return z > 0 && typeof lerntagVon === 'function' && lerntagVon(z) === heute;
+  };
+  const vorrat = alle.filter(id => !heuteGelernt(id));
+  if (!vorrat.length) return null;
   /* Heute schon eine gelesen? Dann ist die Aufgabe erledigt. */
   const schonHeute = vorrat.find(id => WDH[id] === heute);
   if (schonHeute) return { sure: schonHeute, erledigt: true, vorrat: vorrat.length };

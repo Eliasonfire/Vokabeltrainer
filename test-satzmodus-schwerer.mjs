@@ -182,6 +182,38 @@ function laufe(quelle, still){
   pruefe('und sie sagt „Subjekt" — sein Wort', subjekt.length > 0 && subjekt.every(([, f]) => /Subjekt/.test(f)),
     subjekt.map(([, f]) => f).join(' · '));
 
+  /* ---------- 2c. Arabisch zuerst, Deutsch in Klammern dahinter ---------- */
+  /* Elias, 18:52:49: „du kannst sowohl arabisch als auch deutsch, am besten
+     sogar auf arabisch und dann in klammern auf deutsch die übersetzung)" */
+  log('\n2c. Jeder arabische Begriff in einer Tipp-Frage hat seine deutsche Klammer dahinter');
+  const ohneKlammer = fragen.filter(([, f]) => {
+    const laeufe = [...f.matchAll(/[؀-ۿ]+(?:\s+[؀-ۿ]+)*/g)];
+    return laeufe.some(m => !/^\s*\([A-Za-zÄÖÜäöüß][^)]*\)/.test(f.slice(m.index + m[0].length)));
+  });
+  const mitArabisch = fragen.filter(([, f]) => /[؀-ۿ]/.test(f));
+  pruefe('es gibt Fragen mit arabischem Begriff (sonst prüft die nächste Zeile nichts)', mitArabisch.length >= 5, mitArabisch.length);
+  pruefe('hinter jedem arabischen Begriff steht „(Deutsch)"', ohneKlammer.length === 0,
+    ohneKlammer.map(([id, f]) => id + ': ' + f).join(' · '));
+
+  /* ---------- 2d. Fachbegriffe mit Endung ---------- */
+  /* Elias, 18:53:56, auf „Sollen Fachbegriffe mit Endung stehen, also حَرْفُ جَرٍّ
+     statt حَرْف جَرّ, so wie auf deiner Regelkarte?": „ja". Geprüft werden die
+     Formen, für die sein eigenes Material die Endung belegt; مُذَكَّر fehlt mit
+     Absicht (kein Beleg, siehe js/uebung.js bei KASUS_WAHL). */
+  log('\n2d. In Namen, Hinweisen, Fragen und Antworten stehen die Fachbegriffe mit Endung');
+  const OHNE_ENDUNG = ['مُبْتَدَأ', 'خَبَر', 'نَعْت', 'مُضَاف', 'حَرْف جَرّ', 'حُرُوف جَرّ',
+    'مَجْرُور', 'مَرْفُوع', 'مَنْصُوب', 'اِسْم', 'فِعْل', 'حَرْف'];
+  const sichtbar = [
+    ...U.map(m => m.name), ...U.map(m => m.hinweis || ''),
+    ...fragen.map(([, f]) => f),
+    ...[...quelle.matchAll(/text\s*:\s*'([^']*)'/g)].map(m => m[1])
+  ];
+  const nackt = [];
+  for (const text of sichtbar)
+    for (const form of OHNE_ENDUNG)
+      if (new RegExp('(?<![\\u0600-\\u06FF])' + form + '(?![\\u0600-\\u06FF])').test(text)) nackt.push(form + ' in „' + text.slice(0, 50) + '"');
+  pruefe('kein belegter Fachbegriff steht mehr ohne Endung', nackt.length === 0, nackt.slice(0, 4).join(' · '));
+
   /* ---------- 3. „Warum?" bei unsichtbarer Endung ---------- */
   log('\n3. „Warum?" zeigt bei ى/ا die Karte zur unsichtbaren Endung');
   pruefe('uebungUnsichtbarerFall() ist ladbar', typeof F === 'function', typeof F);
@@ -241,9 +273,13 @@ const STOERUNGEN = [
   ['„Warum?" fragt die unsichtbare Endung nicht mehr ab',
     q => q.replace(/\n\s*if \(uebungUnsichtbarerFall\(a\)[^\n]*/, '')],
   ['die مُبْتَدَأ-Frage sagt wieder nur „worüber wird etwas gesagt?"',
-    q => q.replace("'Tippe alle مُبْتَدَأ an — was ist das Subjekt?'", "'Tippe alle مُبْتَدَأ an — worüber wird etwas gesagt?'")],
+    q => q.replace("'Tippe alle مُبْتَدَأٌ (Subjekt) an.'", "'Tippe alle مُبْتَدَأٌ an — worüber wird etwas gesagt?'")],
   ['die Präpositions-Frage steht wieder nur auf Arabisch',
-    q => q.replace("'Tippe alle حُرُوف جَرّ an — die Präpositionen.'", "'Tippe alle حُرُوف جَرّ an.'")]
+    q => q.replace("'Tippe alle حُرُوفُ جَرٍّ (Präpositionen) an.'", "'Tippe alle حُرُوفُ جَرٍّ an.'")],
+  ['die deutsche Klammer steht wieder VOR dem Arabischen',
+    q => q.replace("'Tippe alle مَجْرُورٌ (Wörter im Genitiv) an.'", "'Tippe alle Wörter im Genitiv (مَجْرُورٌ) an.'")],
+  ['ein Übungsname steht wieder ohne Endung',
+    q => q.replace("name:'حَرْفُ جَرٍّ + مَجْرُورٌ — Präposition'", "name:'حَرْف جَرّ + مَجْرُور — Präposition'")]
 ];
 let alleRot = true;
 console.log('Störtest: jede Störung muss mindestens eine Prüfung rot machen\n');
