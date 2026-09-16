@@ -196,6 +196,19 @@ function einzelformen(wert){
 const PRONOMEN = ['هذا','هذه','ذلك','تلك','هو','هي','أنا','انا','أنت','انت','نحن','هم',
                   'هما','هن','أنتما','انتما','أنتم','انتم','أنتن','انتن'];
 
+/* ⭐ DIE HINWEISWÖRTER FÜR ZWEI (16.09.2026). Elias wollte sie als Karteikarten
+   („die brauche ich als neue karteikarten damit ich danach abgefragt werde");
+   ihre Beispielsätze fangen mit ihnen an: ذَانِكَ مُحَمَّدٌ وَحَامِدٌ.
+   ⛔ Ohne diese Liste las die Analyse das كَ der ENTFERNUNG als „dein" und
+   meldete „ist مُبْتَدَأ, das verlangt raf, geschrieben steht aber Kasra". Elias
+   dazu: „aber es gibt doch beides oder?" — ja: كَ „dein" (قَلَمُكَ) und كَ der
+   Ferne (ذَلِكَ, تِلْكَ).
+   ⚠️ NICHT in INDEKLINABEL: der Dual ändert sich (im Akkusativ und Genitiv
+   anders), und „unveränderlich" wäre eine falsche Auskunft im Erklärer. Seine
+   Musterlösung sagt zum Dual „lernen wir noch" — also wird hier nichts geprüft
+   und nichts behauptet, genau wie bei ـانِ und ـَيْنِ weiter unten. */
+const DUAL_HINWEIS = ['هذان','هاتان','ذانك','تانك'];
+
 const ohneVokale = s => (s || '').replace(/[ً-ْٰـ]/g, '');
 
 /* ---------- Skelettform fuer das Nachschlagen (C2, 18.08.2026) ------------
@@ -937,7 +950,17 @@ function analysiereSatz(satz){
     const dualOderPlural = /(انِ|َيْنِ|ُونَ|ِينَ)$/.test(wort.replace(/[.،؟!«»:؛]/g, ''));
     let rolle = null, erwartet = null;
 
-    if (istJarrMitPronomen(wort)){
+    if (istInListe(wort, DUAL_HINWEIS)){
+      /* Hinweiswort für zwei (DUAL_HINWEIS oben): am Satzanfang das مُبْتَدَأ,
+         aber ohne Kasusprüfung — und es beginnt einen neuen Satzteil wie هَذَا. */
+      rolle = !ersteRolleVergeben ? 'مُبْتَدَأ (Dual — noch nicht geprüft)' : 'Dual — noch nicht geprüft';
+      ersteRolleVergeben = true;
+      vorherJarr = false; vorherMudaf = false;
+      letzterKasus = null; letzteBestimmtheit = null;
+      out.push({ wort, rein, rolle, erwartet:null, gelesen:null, stimmt:null });
+      if (satzende){ ersteRolleVergeben = false; }
+      return;
+    } else if (istJarrMitPronomen(wort)){
       /* Vollstaendige Einheit: das Pronomen ist der Genitiv, es folgt nichts.
          Deshalb wird vorherJarr NICHT gesetzt - das naechste Wort haengt nicht
          an dieser Praeposition. */

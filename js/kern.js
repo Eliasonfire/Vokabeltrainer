@@ -714,6 +714,31 @@ if (typeof FACHBEGRIFF_VOKABELN !== 'undefined' && Array.isArray(FACHBEGRIFF_VOK
      in der zeitlichen Totzone und stuerzte ab. */
   const wegRoh = LS.get('vt_geloescht', {});
   const weg = (wegRoh && typeof wegRoh === 'object' && !Array.isArray(wegRoh)) ? wegRoh : {};
+
+  /* ⛔⛔ EINMALIGE REPARATUR (16.09.2026): أَنْتِ WAR FÄLSCHLICH AUSGEBLENDET.
+     Der Doppelt-Tausch (tauscheDublette, weiter unten) hielt am 08.09.2026 um
+     02:16:35 die Karte gram-pron-anti „du (weiblich)" für dieselbe wie die
+     Buchvokabel أَنْتَ „du (m.)" und blendete sie aus — gemessen an seinem
+     abgeglichenen Stand, zusammen mit sechs RICHTIGEN Tauschen derselben
+     Sekunde. Die Regel ist in dubGleich() behoben (mit Endung bei Partikeln);
+     diese Zeilen holen die eine Karte zurück.
+     ⚠️ HIER und nicht bei GELOESCHT weiter unten: die Zeile darunter hängt die
+     Fachbegriffe schon ein. Stünde die Reparatur später, käme أَنْتِ erst beim
+     ZWEITEN Start zurück.
+     ⚠️ Nur, wenn sie VOR der Behebung ausgeblendet wurde. Blendet Elias sie
+     danach selbst aus, ist das seine Entscheidung und bleibt stehen. Der neue
+     Zeitstempel trägt das Zurückholen über den Geräteabgleich aufs andere Gerät. */
+  const TAUSCH_REPARATUR = [{ id: 'gram-pron-anti', ausgeblendetVor: Date.parse('2026-09-16T21:00:00+02:00') }];
+  let repariert = false;
+  for (const r of TAUSCH_REPARATUR){
+    const e = weg[r.id];
+    if (e && e.an && Number(e.zeit) > 0 && Number(e.zeit) < r.ausgeblendetVor){
+      weg[r.id] = { an: false, zeit: Date.now() };
+      repariert = true;
+    }
+  }
+  if (repariert) LS.set('vt_geloescht', weg);
+
   VOCAB_DATA.push(...FACHBEGRIFF_VOKABELN.filter(w => !(weg[w.id] && weg[w.id].an)));
 }
 
@@ -1044,14 +1069,25 @@ function wasFehlt(w){
    waere zu grob: مِنْ und مَنْ sehen darin gleich aus.
    [[skelettvergleich_wirft_information_weg]] [[arabisch_vergleichen_nfc]] */
 const DUB_HARAKA_ENDE = /[\u064B-\u0652]$/;
-function dubForm(x){
-  return String(x == null ? '' : x).normalize('NFC')
+/* \u26D4\u26D4 DIE LETZTE \u1E24ARAKA Z\u00C4HLT BEI PARTIKELN UND PRONOMEN (16.09.2026).
+   Hier wurde sie IMMER weggeworfen \u2014 gedacht f\u00FCr Kasusendungen (\u0628\u064E\u064A\u0652\u062A\u064C/\u0628\u064E\u064A\u0652\u062A\u064F).
+   Bei einem \u0645\u064E\u0628\u0652\u0646\u0650\u064A\u0651-Wort ist sie aber Teil des Wortes: \u0623\u064E\u0646\u0652\u062A\u064E \u201Edu (m.)" und
+   \u0623\u064E\u0646\u0652\u062A\u0650 \u201Edu (w.)" unterscheiden sich NUR darin. Am 08.09.2026 um 02:16:35
+   hat der Tausch deshalb seine Karte \u0623\u064E\u0646\u0652\u062A\u0650 gegen die Buchvokabel \u201Edu (m.)"
+   getauscht und ausgeblendet \u2014 seitdem wurde \u0623\u064E\u0646\u0652\u062A\u0650 nie mehr abgefragt.
+   Aufgefallen ist es, weil Elias mit der Seite \u201EPersonalpronomen" seiner
+   Musterl\u00F6sung fragte: \u201Ehab ich von denen auch karteikarten die mich abfragen?"
+   (Der Bedeutungsvergleich hat es nicht verhindert: \u201Edu" steckt in beiden.)
+   Deshalb: ist eines der beiden W\u00F6rter eine Partikel (type 'particle' \u2014 so
+   f\u00FChren Buch und Fachbegriffe die Pronomen), wird MIT Endung verglichen. */
+function dubForm(x, endungBehalten){
+  const s = String(x == null ? '' : x).normalize('NFC')
     .replace(/\u0640/g, '')
     .replace(/[\u0622\u0623\u0625\u0671]/g, '\u0627')
-    .trim()
-    .replace(DUB_HARAKA_ENDE, '');
+    .trim();
+  return endungBehalten ? s : s.replace(DUB_HARAKA_ENDE, '');
 }
-function dubGleich(a, b){ const x = dubForm(a); return x.length > 0 && x === dubForm(b); }
+function dubGleich(a, b, endungBehalten){ const x = dubForm(a, endungBehalten); return x.length > 0 && x === dubForm(b, endungBehalten); }
 
 /* Findet die Buchvokabel, die dasselbe Wort UND dieselbe Bedeutung trägt.
    ⛔ Die Bedeutung zaehlt mit: ظَرْف (Fachbegriff) und ظَرْفٌ (Umschlag) haben
@@ -1062,7 +1098,7 @@ function dubletteImBuch(eigen){
   return VOCAB_DATA.find(w =>
     w !== eigen
     && w.chapter !== 'personal'
-    && dubGleich(w.ar, eigen.ar)
+    && dubGleich(w.ar, eigen.ar, w.type === 'particle' || eigen.type === 'particle')
     && meineDe.length > 0
     && String(w.de || '').trim().toLowerCase().split(/[\/;,]/).some(t => {
          const a = t.trim();

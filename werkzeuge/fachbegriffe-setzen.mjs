@@ -69,6 +69,19 @@ const vokNackt = new Set(V.map(v => nackt(v.ar)));
 const ids = new Set([...F.map(f => f.id), ...V.map(v => String(v.id))]);
 const typen = new Set([...F, ...V].map(x => x.type).filter(Boolean));
 const regelNach = new Map(G.map(r => [r.id, r]));
+/* ⭐ SEIT DEM 16.09.2026 DARF `regel` AUCH EINE KARTE AUS FOLGE 19 SEIN
+   (regelsammlung-data.js, FOLGE19_KARTEN). Anlass: Elias schickte die Seite
+   „Nah / Fern" seiner Musterlösung und schrieb: „die brauche ich als neue
+   karteikarten damit ich danach abgefragt werde". هَذَانِ, هَاتَانِ und ذَانِكَ
+   stehen nur auf der Karte f19-isara, in keiner Regel aus grammar-data.js. Die
+   Karten sind aus derselben Musterlösung abgeschrieben wie die Regeln — sie
+   belegen eine Schreibung genauso gut. Prüfung 4 gilt unverändert: jedes Wort
+   des Begriffs muss auf der Karte stehen. */
+let KARTEN = [];
+try { KARTEN = (new Function(kartenText + ';return (typeof FOLGE19_KARTEN !== "undefined") ? FOLGE19_KARTEN : [];'))() || []; }
+catch (e) { KARTEN = []; }
+const karteNach = new Map(KARTEN.map(k => [k.id, k]));
+const karteText = (k) => { const out = []; const lauf = x => { if (typeof x === 'string') out.push(x); else if (Array.isArray(x)) x.forEach(lauf); else if (x && typeof x === 'object') Object.values(x).forEach(lauf); }; lauf(k); return out.join(' '); };
 const belegText = [grammarText, kartenText, lies(ZIEL), lies('vocab-data.js')].join('\n');
 const WORT = new RegExp('[' + BUCHSTABE + '][\\u0610-\\u061A\\u064B-\\u065F\\u0670\\u0640' + BUCHSTABE + ']*', 'g');
 
@@ -136,12 +149,16 @@ for (const [i, a] of (auftrag.aufnehmen || []).entries()){
   if (!/^gram-[a-z0-9-]+$/.test(String(a.id || ''))) f.push('id muss wie gram-name aussehen');
   else if (ids.has(a.id)) f.push('id ' + a.id + ' ist vergeben');
   const r = regelNach.get(a.regel);
-  if (!r) f.push('Regel ' + a.regel + ' gibt es nicht');
+  const karte = r ? null : karteNach.get(a.regel);
+  if (!r && !karte) f.push('Regel ' + a.regel + ' gibt es nicht (weder in grammar-data.js noch als Folge-19-Karte)');
   else if (ar){
     /* Jedes Wort des Begriffs steht in der Regel — auch wenn sie ihn anders
        verbindet („حُروف شَمْسِيّة وقَمَرِيّة" nennt beide Begriffe in einem). */
-    const inRegel = new Set(nackt(r.name + ' ' + r.shortExplanation).split(/\s+/).map(x => x.replace(/^و(?=\S{3})/, '')));
-    if (!k.split(' ').every(x => inRegel.has(x))) f.push('Regel ' + a.regel + ' erwähnt den Begriff nicht');
+    const text = r ? (r.name + ' ' + r.shortExplanation) : karteText(karte);
+    /* Bei einer Karte an allem trennen, was kein arabischer Buchstabe ist —
+       dort steht „هَذَانِ – diese beiden, m." mit Strich und Komma. */
+    const inRegel = new Set(nackt(text).split(r ? /\s+/ : new RegExp('[^' + BUCHSTABE + ']+')).map(x => x.replace(/^و(?=\S{3})/, '')));
+    if (!k.split(' ').every(x => inRegel.has(x))) f.push((r ? 'Regel ' : 'Karte ') + a.regel + ' erwähnt den Begriff nicht');
   }
   if (!a.type) f.push('type fehlt — keine Vorgabe');
   else if (!typen.has(a.type)) f.push('type „' + a.type + '" kommt im Bestand nicht vor (' + [...typen].join(', ') + ')');
@@ -166,7 +183,7 @@ for (const [i, a] of (auftrag.aufnehmen || []).entries()){
   }
   if (f.length){ fehler.push(wo + ': ' + f.join(' · ')); continue; }
   ids.add(a.id);
-  neu.push({ id: a.id, ar, de: String(a.de).trim(), type: a.type, regel: a.regel, belegt: zaehleNackt(grammarText, ar), mnemo: String(a.mnemo).trim(), tausch });
+  neu.push({ id: a.id, ar, de: String(a.de).trim(), type: a.type, regel: a.regel, belegt: zaehleNackt(karte ? kartenText : grammarText, ar), mnemo: String(a.mnemo).trim(), tausch });
   entscheidungen[k] = { entscheidung: 'aufgenommen', id: a.id, form: ar, ...(tausch ? { buchTausch: String(tausch.id) } : {}), am: heute };
 }
 for (const [i, a] of (auftrag.ablehnen || []).entries()){

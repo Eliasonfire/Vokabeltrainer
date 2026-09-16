@@ -449,6 +449,31 @@
         "schams-qamar-merkhilfe-01"
       ],
       "am": "2026-09-11"
+    },
+    "هذان": {
+      "entscheidung": "aufgenommen",
+      "id": "gram-isara-hadhani",
+      "form": "هَذَانِ",
+      "am": "2026-09-16"
+    },
+    "هاتان": {
+      "entscheidung": "aufgenommen",
+      "id": "gram-isara-hatani",
+      "form": "هَاتَانِ",
+      "am": "2026-09-16"
+    },
+    "ذانك": {
+      "entscheidung": "aufgenommen",
+      "id": "gram-isara-dhanika",
+      "form": "ذَانِكَ",
+      "am": "2026-09-16"
+    },
+    "تانك": {
+      "entscheidung": "aufgenommen",
+      "id": "gram-isara-tanika",
+      "form": "تَانِكَ",
+      "buchTausch": "47225",
+      "am": "2026-09-16"
     }
   }
 }
