@@ -5688,9 +5688,14 @@ draußen.
 4. ⬜ **`vorrat.mjs` kann „bewusst ohne Satz" nicht vermerken** — كُبْرَى ist
    jetzt der **einzige** Posten, der das Werkzeug auf Exit 2 hält. Neu heute,
    in der To-Do unter „⬜ Offen".
-5. ⚠️ **5 Commits liegen nur auf diesem Rechner** (`pruefe-ausgeliefert.mjs`),
-   der älteste seit 0,8 Stunden. Sie gehören Elias' Sitzung; ein `git push`
-   von hier hätte fremde Commits mitgenommen.
+5. ⛔ **`git push` war in diesem Lauf nicht freigegeben.** Der Aufruf wurde
+   abgewiesen („requested permissions … but you haven't granted it yet"),
+   obwohl `Bash(git add|commit|push|pull|status|diff|log)` im Prompt steht
+   und `pruefe-freigaben.mjs` grün meldet. **6 Commits liegen damit nur auf
+   diesem Rechner** — die fünf von Elias' Sitzung und der dieses Laufs.
+   ⚠️ Nicht mit einem Umweg versucht: ein abgelehnter Befehl ist der Befund,
+   nicht der Anlass, ihn anders zu schreiben. Ein `git push` von Hand holt
+   sie ab; `pruefe-ausgeliefert.mjs` meldet sie bis dahin bei jedem Lauf.
 6. ⚠️ **2 Artefakt-Seiten ohne URL** (`farbe-wortmarke.html`,
    `stimmen-liste.html`) — vor dem nächsten Veröffentlichen eintragen.
    Unverändert offen.
