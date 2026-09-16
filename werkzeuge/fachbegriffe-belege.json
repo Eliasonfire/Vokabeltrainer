@@ -163,6 +163,63 @@
       "am": "2026-09-15",
       "nachgeschlagen_von": "werkzeuge/fachbegriffe-nachschlagen.mjs",
       "beanstandet_in": "sentAr von 45919"
+    },
+    "اِسْمٌ": {
+      "bedeutung": "(nachgeschlagen, Bedeutung nachtragen)",
+      "quellen": [
+        {
+          "quelle": "eigener Bestand",
+          "form": "اِسْمٌ",
+          "hinweis": "12× in seinen Dateien, 5 Schreibweisen"
+        },
+        {
+          "quelle": "arabdict",
+          "form": "اِسْمٌ"
+        },
+        {
+          "quelle": "en.wiktionary",
+          "form": "اِسْم",
+          "url": "https://en.wiktionary.org/wiki/%D8%A7%D8%B3%D9%85#Arabic"
+        }
+      ],
+      "am": "2026-09-16",
+      "nachgeschlagen_von": "werkzeuge/fachbegriffe-nachschlagen.mjs",
+      "beanstandet_in": "sentAr von mb1-42-2",
+      "⛔_zitat": "Diese Fundstelle ist ein ZITAT aus dem Madina-Buch (mb1-42-2). Der Beleg sagt, wie das WORT geschrieben wird — nicht, dass der SATZ zu aendern waere. Ein Zitat wird nicht korrigiert; die App soll zeigen, was im Buch steht. Ob die Schreibung dort abweicht, sagt nur die Buchseite."
+    },
+    "اِمْرَأَةٌ": {
+      "bedeutung": "(nachgeschlagen, Bedeutung nachtragen)",
+      "quellen": [
+        {
+          "quelle": "arabdict",
+          "form": "اِمْرَأَةٌ"
+        },
+        {
+          "quelle": "en.wiktionary",
+          "form": "اِمْرَأَة",
+          "url": "https://en.wiktionary.org/wiki/%D8%A7%D9%85%D8%B1%D8%A3%D8%A9#Arabic"
+        }
+      ],
+      "am": "2026-09-16",
+      "nachgeschlagen_von": "werkzeuge/fachbegriffe-nachschlagen.mjs",
+      "beanstandet_in": "sentAr von 45919"
+    },
+    "اِبْنَةٌ": {
+      "bedeutung": "(nachgeschlagen, Bedeutung nachtragen)",
+      "quellen": [
+        {
+          "quelle": "arabdict",
+          "form": "اِبْنَةٌ"
+        },
+        {
+          "quelle": "en.wiktionary",
+          "form": "اِبْنَة",
+          "url": "https://en.wiktionary.org/wiki/%D8%A7%D8%A8%D9%86%D8%A9#Arabic"
+        }
+      ],
+      "am": "2026-09-16",
+      "nachgeschlagen_von": "werkzeuge/fachbegriffe-nachschlagen.mjs",
+      "beanstandet_in": "sentAr von 46005"
     }
   }
 }

@@ -1166,6 +1166,12 @@ const ARTEFAKTE = [
      09.09. tot, und „keine neue anlegen" hatte die Seite eine Woche weg gelassen. */
   ['Was auf dich wartet',   'VmQqStC4ayzrvkz1GiJaEa', 'diese Seite — alle offenen Entscheidungen'],
   ['Die Fragenseite',       '5ChpdN9n7PAiTY4B5ZHud3', 'die offenen Feldangaben, ein Durchgang je Frage'],
+  /* ⭐ Am 16.09.2026 (Wartung Mi) vom Wächter gemeldet — derselbe Fall wie beim
+     Lagebericht am 21.08.: die Seite war seit dem 15.09. gebaut, hatte eine URL
+     in DATEI_ZU_URL und stand auf keiner Liste, die Elias sieht. Ausgerechnet
+     die, zu der er am selben Tag sagte: „mach sie ganz nach oben und hebe sie
+     hervor und schreib in to do von mir diese unbedingt zu machen." */
+  ['Die Regelkategorien',   'DHhYFwtTNJADVwE2tVUDz3', 'alle 103 Regeln nach Kategorien — gehört diese Regel in die App?'],
   ['Der Wartungskreislauf', '9ec136ba-019d-438b-98af-e57939eb4a99', 'wie das System läuft — vier Phasen, dreizehn Prüfungen'],
   /* ⭐ Am 21.08. vom eigenen Wächter gemeldet: „1 Seite hat eine URL, steht
      aber auf KEINER Liste, die Elias sieht." Genau der Fall, für den er
