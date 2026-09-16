@@ -940,7 +940,8 @@ posten.push({
   zahl: 19, einheit: 'Eselsbrücken', dazu: 'über alle 519 Texte gezählt', auswahl: true,
   aufwand: 'ja oder nein — die Karte schreibe ich',
   warum: 'Deine Eselsbrücken verweisen 19-mal auf die شدة, und die App erklärt sie nirgends. '
-    + 'تاء مَرْبُوطة und أَلِف مَقْصورة haben je eine Fachbegriff-Karte, die شدة nicht. '
+    /* Schreibung wie auf den Karten (gram-ta-marbuta, gram-alif-maqsura; مَقْصُورَة seit v520). */
+    + 'تَاء مَرْبُوطَة und أَلِف مَقْصُورَة haben je eine Fachbegriff-Karte, die شدة nicht. '
     + 'Eine neue Karte ist aber neuer Lernstoff — deshalb entscheidest du das.',
   /* ⛔ Hier stand „zu den 31 Fachbegriffen" fest — am 16.09.2026 waren es 61.
      Gezählt aus data/fachbegriffe.js; fällt das aus, steht keine Zahl da. */
