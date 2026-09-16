@@ -273,11 +273,16 @@ const KEINE_WURZEL_UEBERNEHMEN = new Set([
    Zweitkarten desselben Wortes.
 
    ⛔ Warum eine Liste und keine Regel: der Tausch in js/kern.js (tauscheDublette)
-   gilt nur für EIGENE Karten gegen Buchwörter — Elias' Regel vom 07.09.2026.
-   Zwischen zwei Büchern hat er genau diese zwei entschieden, nicht mehr.
-   Weitere Dubletten mit neuen Kapiteln werden ihm vorgelegt, nicht still
-   ausgeblendet. Gelesen auch von werkzeuge/vorrat.mjs, damit die Wartung für
-   diese zwei keine Eselsbrücken schreibt. [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+   galt nur für EIGENE Karten gegen Buchwörter — Elias' Regel vom 07.09.2026.
+   Zwischen zwei Büchern hatte er genau diese zwei entschieden, nicht mehr.
+   ⭐ Seit dem 16.09.2026 gibt es die Regel: „wenn zwei identisch sind und eines
+   davon aber fortschritt hat dann sollte man immer das behalten was fortschritt
+   hat" — blendeKapitelDublettenAus() in js/kern.js, beim Start nach dem Tausch.
+   Die Liste bleibt trotzdem: sie ist seine Antwort von vorher, und sie wirkt schon
+   beim Einhängen, auch wenn der Fortschritt einmal nicht gelesen werden kann.
+   Neue Paare entscheidet die Regel; nur wenn BEIDE Karten Fortschritt haben, fragt
+   pruefe-duplikate.js ihn. Gelesen auch von werkzeuge/vorrat.mjs, damit die Wartung
+   für diese zwei keine Eselsbrücken schreibt. [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
 const BUCHDUBLETTEN_AUSBLENDEN = new Set([
   '45984',  /* أَخٌ    Bayna Yadayk 1 K1 — hat er als madina1-l6-ach   */
   '45986'   /* أُخْتٌ  Bayna Yadayk 1 K1 — hat er als madina1-l6-ucht  */
@@ -796,6 +801,14 @@ document.addEventListener('DOMContentLoaded', async ()=>{
      es erfährt — und die nächste Frage wäre „wo ist mein Wort hin".
      [[ausfall_ist_unsichtbar_gebaut]] */
   if (typeof tauscheDubletten === 'function') tauscheDubletten();
+
+  /* ⛔⛔ UND ZWEI KAPITELKARTEN FÜR DASSELBE WORT (16.09.2026) — Elias' Grundregel:
+     „wenn zwei identisch sind und eines davon aber fortschritt hat dann sollte man
+     immer das behalten was fortschritt hat" / „also wenn er hier um zwei vokabeln
+     geht die beide in kapiteln vorkommen". Begründung bei der Funktion in js/kern.js.
+     ⚠️ NACH dem Tausch: der gibt einer Kapitelkarte vielleicht gerade erst den
+     Fortschritt der eigenen — und der entscheidet hier, welche bleibt. */
+  if (typeof blendeKapitelDublettenAus === 'function') blendeKapitelDublettenAus();
 
   renderBuchChips();
   if (typeof renderHome === 'function') renderHome();

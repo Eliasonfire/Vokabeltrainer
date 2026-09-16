@@ -329,11 +329,12 @@ function gruppenAus(text){
   /* ⛔ Regex OHNE Escapes: die Backslashes kommen durch den Kanal halbiert
      oder gar nicht an — hier stand erst /=== (d+) Befund/. */
   const m = new RegExp("=== (" + '\\d' + "+) Befund").exec(r.text);
-  /* ⭐ Seit 16.09.2026 zwei Arten von Befund mit verschiedener Antwort. Eigene
-     Vokabel gegen Buch: seine Regel vom 20.08. steht fest. Dasselbe Wort in
-     ZWEI Büchern: keine Regel, nur zwei einzelne Antworten (أَخٌ/أُخْتٌ) — das
-     fragt die Seite je Wort. Die zwei entschiedenen zählt pruefe-duplikate.js
-     nicht mehr als Befund. Nur Zeilen UNTER „Befund(e)" zählen hier; darüber
+  /* ⭐ Seit 16.09.2026 (abends) entscheidet seine GRUNDREGEL die meisten selbst:
+     „das ist eine grundregel: wenn zwei identisch sind und eines davon aber
+     fortschritt hat dann sollte man immer das behalten was fortschritt hat".
+     pruefe-duplikate.js zählt nur noch als Befund, was die Regel NICHT entscheidet:
+     zwei Kapitelkarten mit Fortschritt auf BEIDEN, oder eine Bedeutung, die die App
+     nicht als gleich erkennt. Nur Zeilen UNTER „Befund(e)" zählen hier; darüber
      stehen die entschiedenen mit derselben Form. */
   const befundTeil = r.text.slice(Math.max(0, r.text.indexOf('Befund(e) ===')));
   const befundZeilen = m ? befundTeil.split(String.fromCharCode(10))
@@ -344,13 +345,15 @@ function gruppenAus(text){
     titel: 'Ein Wort steht doppelt',
     zahl: Number(m[1]),
     einheit: Number(m[1]) === 1 ? 'Wort' : 'Wörter',
-    dazu: [eigene ? eigene + '× eigene Vokabel oder Fachbegriff gegen Buchvokabel' : '',
-           zweiBuecher ? zweiBuecher + '× dasselbe Wort in zwei Büchern' : ''].filter(Boolean).join(' · '),
-    aufwand: zweiBuecher ? 'je Wort ja oder nein' : 'schon entschieden — nur bestätigen, welche echt sind',
+    dazu: [eigene ? eigene + '× eigene Vokabel oder Fachbegriff gegen Buchvokabel, Bedeutung nicht sicher dieselbe' : '',
+           zweiBuecher ? zweiBuecher + '× dasselbe Wort in zwei Kapiteln, das deine Regel nicht entscheidet' : ''].filter(Boolean).join(' · '),
+    aufwand: 'je Wort ja oder nein',
     warum: 'Zwei Karteikarten für dasselbe Wort — du lernst es doppelt.',
-    wie: (eigene ? 'Deine Regel vom 20.08.: „wenn bei einem kapitel das gleiche wort wie bei eigenen vokabeln ist dann soll meine eigene vokabel weg“. ' : '')
-      + (zweiBuecher ? 'Steht ein Wort in zwei Büchern: sag ja, dann blende ich es im zweiten Buch aus — so wie am 16.09. أَخٌ und أُخْتٌ aus Bayna Yadayk. Dein Fortschritt hängt an der Karte, die bleibt. ' : '')
-      + '⛔ Aber nicht jeder Treffer ist ein Duplikat — die Bedeutung steht hinter jedem Eintrag. ظَرْف = Zeit-/Ortsangabe gegen ظَرْفٌ = Umschlag sind zwei verschiedene Wörter.',
+    wie: 'Deine Grundregel vom 16.09. entscheidet die meisten selbst: die Karte mit Fortschritt bleibt, und bei deinen eigenen Wörtern bleibt die Karte aus dem Kapitel und bekommt deinen Stand. '
+      + 'Hier stehen nur die, zu denen sie nichts sagt: '
+      + (zweiBuecher ? 'beide Karten haben schon Fortschritt — sag, welche bleiben soll. ' : '')
+      + (eigene ? 'die Bedeutung ist nicht sicher dieselbe — sag, ob es wirklich dasselbe Wort ist. ' : '')
+      + '⛔ Nicht jeder Treffer ist ein Duplikat: ظَرْف = Zeit-/Ortsangabe gegen ظَرْفٌ = Umschlag sind zwei verschiedene Wörter.',
     zeilen: befundZeilen.slice(0, 4).map(z => z.trim())
   });
 }
