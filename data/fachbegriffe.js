@@ -975,5 +975,67 @@ const FACHBEGRIFF_VOKABELN = [
     sentAr: "تَانِكَ مُدَرِّسَةٌ وَطَالِبَةٌ.",
     sentDe: "Jene beiden sind eine Lehrerin und eine Studentin.",
     mnemo: "Fern, zu zweit, weiblich — das Gegenstück zu ذَانِكَ. Wie تِلْكَ endet es auf das كَ der Entfernung: تَانِكَ heißt jene beiden, weiblich."
+  },
+  {
+    /* Eingetragen am 2026-09-16 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel f19-fragen. */
+    id: "gram-frage-madha",
+    ar: "مَاذَا",
+    de: "was?",
+    type: "particle",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "f19-fragen",
+    belegt: 2,
+    /* ⭐ Fragewörter aus seiner Musterlösung (16.09.2026): „hab ich die auch schon
+       als karteikarten die mich abfragen? das sind auch wichtige vokabeln".
+       مَتَى und أَيٌّ gibt es in Madina 1, K24 — die schaltet js/kern.js frei
+       (FREISCHALTEN_AUF_WUNSCH). Diese vier hatten keine aktive Karte.
+       ⛔ SÄTZE nur aus seinem Material: dieser aus der Regel istifham-madha-01
+       (Sharḥ Madīnah), die drei folgenden von der Karte f19-fragen. */
+    sentAr: "مَاذَا عَلَى الْمَكْتَبِ؟ الْقَلَمُ عَلَى الْمَكْتَبِ.",
+    sentDe: "Was ist auf dem Schreibtisch? Der Stift ist auf dem Schreibtisch.",
+    mnemo: "Was? — مَاذَا. Dein Buch fragt so: مَاذَا فِي الْحَقِيبَةِ؟ Neben مَا ist es die zweite Form für was, die deine Musterlösung nennt."
+  },
+  {
+    /* Eingetragen am 2026-09-16 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel f19-fragen. */
+    id: "gram-frage-kam",
+    ar: "كَمْ",
+    de: "wie viele?",
+    type: "particle",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "f19-fragen",
+    belegt: 2,
+    sentAr: "كَمْ طَالِبًا فِي الْفَصْلِ؟",
+    sentDe: "Wie viele Studenten sind im Klassenzimmer?",
+    mnemo: "Wie viele? — كَمْ. Auf deiner Karte fragt es: كَمْ طَالِبًا فِي الْفَصْلِ؟ Wie viele Studenten sind im Klassenzimmer?"
+  },
+  {
+    /* Eingetragen am 2026-09-16 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel f19-fragen. */
+    id: "gram-frage-min-ayna",
+    ar: "مِنْ أَيْنَ",
+    de: "woher?",
+    type: "particle",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "f19-fragen",
+    belegt: 2,
+    sentAr: "مِنْ أَيْنَ أَنْتَ؟",
+    sentDe: "Woher kommst du?",
+    mnemo: "Woher? — مِنْ (von, aus) und أَيْنَ (wo): zusammen „von wo“. Dein Buch fragt: مِنْ أَيْنَ أَنْتَ؟ Woher bist du?"
+  },
+  {
+    /* Eingetragen am 2026-09-16 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel f19-fragen. */
+    id: "gram-frage-ila-ayna",
+    ar: "إِلَى أَيْنَ",
+    de: "wohin?",
+    type: "particle",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "f19-fragen",
+    belegt: 3,
+    sentAr: "إِلَى أَيْنَ ذَهَبَ مُحَمَّدٌ؟",
+    sentDe: "Wohin ging Muḥammad?",
+    mnemo: "Wohin? — إِلَى (zu, nach) und أَيْنَ (wo): zusammen „nach wo“. Auf deiner Karte: إِلَى أَيْنَ ذَهَبَ مُحَمَّدٌ؟ Wohin ging Muḥammad?"
   }
 ];

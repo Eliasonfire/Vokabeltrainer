@@ -1419,6 +1419,27 @@ const EINZELN_SCHLUESSEL = 'vt_einzeln_frei';
 let EINZELN = LS.get(EINZELN_SCHLUESSEL, {});
 if (!EINZELN || typeof EINZELN !== 'object' || Array.isArray(EINZELN)) EINZELN = {};
 
+/* ⭐ AUF SEINEN WUNSCH FREIGESCHALTET (16.09.2026). Elias ging seine
+   Musterlösung (Grammatikabfrage Madina 1) durch und fragte bei jeder Wortliste:
+   „hab ich die auch schon als karteikarten die mich abfragen? das sind auch
+   wichtige vokabeln" — und zu den Hinweiswörtern: „die brauche ich als neue
+   karteikarten damit ich danach abgefragt werde".
+   Diese vier stehen als Buchvokabel in Madina 1, Kapitel 24, und waren bei ihm
+   NICHT freigeschaltet (gemessen an seinem abgeglichenen Stand, 18:47): هَؤُلَاءِ
+   50164 · أُولَئِكَ 50165 · مَتَى 50169 · أَيٌّ 50170. Ihre Schwestern هَذَا, ذَلِكَ,
+   هَلْ … hatte er schon selbst freigeschaltet.
+   ⛔ NUR WENN ER DAS WORT NIE ANGEFASST HAT (kein Eintrag). Sperrt er eines
+   später selbst, steht dort `an:false` — und das bleibt so. Ohne Meldung beim
+   Start: „ich möchte einfach beim starten der app nicht irgeneine
+   benachrichtigung bekommen" (07.09.2026); erfahren hat er es im Chat. */
+const FREISCHALTEN_AUF_WUNSCH = ['50164', '50165', '50169', '50170'];
+{
+  let neu = false;
+  for (const id of FREISCHALTEN_AUF_WUNSCH)
+    if (!EINZELN[id]){ EINZELN[id] = { an: true, zeit: Date.now() }; neu = true; }
+  if (neu) LS.set(EINZELN_SCHLUESSEL, EINZELN);
+}
+
 function istEinzelnFrei(w){
   if (!w) return false;
   const e = EINZELN[w.id !== undefined ? w.id : w];

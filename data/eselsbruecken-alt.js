@@ -2287,6 +2287,28 @@ const ESELSBRUECKEN_ALT = {
     '⭐ هَاتَانِ und تَانِكَ sind Zwillinge, nah und fern: nimm vom nahen das hā vorne weg und häng hinten كَ an — schon ist es fern.'
   ],
 
+  /* ⭐ Fragewörter aus seiner Musterlösung (16.09.2026). Arabisch nur aus seinem
+     Material: istifham-madha-01, die Karte f19-fragen, lehrbuch-saetze.js. */
+  'gram-frage-madha': [
+    'مَاذَا ist dasselbe wie مَا هَذَا — so erklärt es Sharḥ Madīnah. Es fragt nach Sachen, nicht nach Personen: für Personen nimmst du مَنْ.',
+    '⭐ Frag nach dem Tisch: مَاذَا عَلَى الْمَكْتَبِ؟ Die Antwort ist eine Sache, الْقَلَمُ. Wäre die Antwort ein Mensch, hieße die Frage مَنْ.'
+  ],
+
+  'gram-frage-kam': [
+    'كَمْ fragt nach einer Zahl: wie viele? Die Antwort ist eine Menge — so wie auf deiner Karte: كَمْ طَالِبًا فِي الْفَصْلِ؟',
+    '⭐ Sieh dir das Beispiel genau an: nach كَمْ steht طَالِبًا mit Fatḥatān, nicht طَالِبٌ.'
+  ],
+
+  'gram-frage-min-ayna': [
+    'مِنْ heißt von oder aus, أَيْنَ heißt wo. Zusammen fragst du, woher jemand kommt: مِنْ أَيْنَ أَنْتَ؟ Die Antwort in deinem Buch: أَنَا مِنَ الْيَابَانِ.',
+    '⭐ Das Gegenstück zu إِلَى أَيْنَ: مِنْ أَيْنَ fragt, wo etwas herkommt, إِلَى أَيْنَ, wo es hingeht.'
+  ],
+
+  'gram-frage-ila-ayna': [
+    'إِلَى heißt zu oder nach, أَيْنَ heißt wo. Zusammen fragst du nach dem Ziel: إِلَى أَيْنَ ذَهَبَ مُحَمَّدٌ؟ Wohin ging Muḥammad?',
+    '⭐ Das Gegenstück zu مِنْ أَيْنَ: mit مِنْ fragst du nach dem Start, mit إِلَى nach dem Ziel — أَيْنَ bleibt dasselbe.'
+  ],
+
   'gram-huruf-schamsiya': [
     'Zwei deiner Länderkarten stehen sich direkt gegenüber: الصِّينُ liest du aṣ-ṣīn — das l ist weg, dafür sitzt eine Schadda auf dem ص. الْهِنْدُ liest du al-hind, mit hörbarem l und einem Sukūn auf dem ل. ⭐ ص gehört zu den حُرُوف شَمْسِيَّة, ه nicht.',
     'سُورَةُ النَّاس sagt es in jedem Vers: geschrieben steht النَّاسِ, gesprochen an-nās. Das ن schluckt das l und trägt dafür eine Schadda — ein Sonnenbuchstabe, und die Schrift zeigt es selbst.'

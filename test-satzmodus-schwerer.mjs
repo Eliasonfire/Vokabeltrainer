@@ -50,6 +50,7 @@ const STOERTEST = process.argv.includes('--stoertest');
 
 const ORIGINAL = fs.readFileSync(path.join(WURZEL, 'js', 'uebung.js'), 'utf8');
 let FACH_QUELLE = fs.readFileSync(path.join(WURZEL, 'data', 'fachbegriffe.js'), 'utf8');
+let KERN_QUELLE = fs.readFileSync(path.join(WURZEL, 'js', 'kern.js'), 'utf8');
 const GRAMMATIK = fs.readFileSync(path.join(WURZEL, 'grammar-data.js'), 'utf8');
 const irab = require('./js/irab.js');
 
@@ -232,6 +233,25 @@ function laufe(quelle, still){
   pruefe('alle 15 Karten gefunden und mit Endung', karten.length > 0 && falsch.length === 0,
     falsch.map(([id]) => id + ' = ' + ((karten.find(x => x.id === id) || {}).ar || 'fehlt')).join(' · '));
 
+  /* ---------- 2f. Die Wortlisten seiner Musterlösung werden abgefragt ---------- */
+  /* Elias, 19:15–19:28, Seite für Seite: „die brauche ich als neue karteikarten
+     damit ich danach abgefragt werde" · „hab ich die auch schon als karteikarten
+     die mich abfragen? das sind auch wichtige vokabeln". */
+  log('\n2f. Karten und Freischaltungen aus seiner Musterlösung');
+  const MUSTER_KARTEN = { 'gram-isara-hadhani': 'هَذَانِ', 'gram-isara-hatani': 'هَاتَانِ', 'gram-isara-dhanika': 'ذَانِكَ',
+    'gram-isara-tanika': 'تَانِكَ', 'gram-frage-madha': 'مَاذَا', 'gram-frage-kam': 'كَمْ',
+    'gram-frage-min-ayna': 'مِنْ أَيْنَ', 'gram-frage-ila-ayna': 'إِلَى أَيْنَ' };
+  const ohneKarte = Object.entries(MUSTER_KARTEN).filter(([id, ar]) => {
+    const k = karten.find(x => x.id === id);
+    return !k || String(k.ar).normalize('NFC') !== ar.normalize('NFC') || !k.sentAr;
+  });
+  pruefe('die acht neuen Karten stehen da, mit Satz', karten.length > 0 && ohneKarte.length === 0, ohneKarte.map(([id]) => id).join(' · '));
+  const kern = KERN_QUELLE;
+  const freiListe = (kern.match(/const FREISCHALTEN_AUF_WUNSCH\s*=\s*\[([^\]]*)\]/) || [])[1] || '';
+  pruefe('هَؤُلَاءِ, أُولَئِكَ, مَتَى, أَيٌّ (Madina 1, K24) werden freigeschaltet',
+    ['50164', '50165', '50169', '50170'].every(id => freiListe.includes("'" + id + "'")), freiListe || 'Liste fehlt');
+  pruefe('… aber nur, wenn er das Wort nie angefasst hat', /if \(!EINZELN\[id\]\)/.test(kern), 'Bedingung fehlt');
+
   /* ---------- 3. „Warum?" bei unsichtbarer Endung ---------- */
   log('\n3. „Warum?" zeigt bei ى/ا die Karte zur unsichtbaren Endung');
   pruefe('uebungUnsichtbarerFall() ist ladbar', typeof F === 'function', typeof F);
@@ -319,6 +339,16 @@ for (const [name, stoere] of STOERUNGEN){
     else { alleRot = false; console.log('  ✘ die Karte مُضَافٌ ohne Endung → blieb grün'); }
   }
   FACH_QUELLE = echt;
+
+  const kernEcht = KERN_QUELLE;
+  KERN_QUELLE = kernEcht.replace("'50169', ", '');
+  if (KERN_QUELLE === kernEcht){ alleRot = false; console.log('  ✘ مَتَى aus der Freischaltliste — Störung griff nicht'); }
+  else {
+    const schlecht = laufe(ORIGINAL, true);
+    if (schlecht > 0) console.log('  ✔ مَتَى fehlt in der Freischaltliste → ' + schlecht + ' rot');
+    else { alleRot = false; console.log('  ✘ مَتَى fehlt in der Freischaltliste → blieb grün'); }
+  }
+  KERN_QUELLE = kernEcht;
 }
 console.log('\n' + (alleRot ? '✔ jede Störung wurde erkannt' : '✘ mindestens eine Störung blieb unbemerkt'));
 process.exit(alleRot ? 0 : 1);

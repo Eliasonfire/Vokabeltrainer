@@ -154,8 +154,9 @@ vm.runInContext(fach + '\nthis.F = (typeof FACHBEGRIFF_VOKABELN !== "undefined")
    40, nach den Woerterbuch-Belegen desselben Abends 47 — und die Zahl waechst
    ab jetzt mit neuen Folgen. Wer sie hier nachzieht, zieht sie im Vault mit. */
 /* 16.09.2026: 47 → 51 — die vier Hinweiswörter für zwei (هَذَانِ, هَاتَانِ, ذَانِكَ,
-   تَانِكَ) aus seiner Musterlösung, auf seinen Wunsch als Karteikarten. */
-pruefe('Oberflaeche: 51 Fachbegriffe', 51, ktxF.F ? ktxF.F.length : 'FACHBEGRIFF_VOKABELN fehlt');
+   تَانِكَ) aus seiner Musterlösung, auf seinen Wunsch als Karteikarten;
+   51 → 55 — die Fragewörter مَاذَا, كَمْ, مِنْ أَيْنَ, إِلَى أَيْنَ. */
+pruefe('Oberflaeche: 55 Fachbegriffe', 55, ktxF.F ? ktxF.F.length : 'FACHBEGRIFF_VOKABELN fehlt');
 
 /* Die neuen Ausnahmen in den Pruefern
    ⛔⛔ OHNE KOMMENTARE. Diese vier Zeilen behaupten „steht im Code" — und ein
