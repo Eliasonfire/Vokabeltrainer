@@ -55,8 +55,12 @@ for (const r of ['Vokabeltrainer', 'Automation', 'Quran Trainer', 'Parfum-Websit
    „Hörverstehen mit ähnlichen Wörtern". Er lag nur in ihrem flüchtigen
    Container — GitHub lehnte jeden Push mit 403 ab —, und am PC wurde dieselbe
    Aufgabe als `4d00489` neu gebaut. Der Vault nennt ihn, weil die Eingang-Notiz
-   der Cloud-Sitzung auf ihn verweist. */
-for (const h of ['97c56f1', '8e70b3c', '22364eb']) alleHashes.add(h);
+   der Cloud-Sitzung auf ihn verweist.
+   ⛔ Und seit dem 16.09.2026 `73a3f3e`: derselbe Fall wieder — die Web-Sitzung
+   „Rezitation reißt unterwegs ab" (Branch claude/rezitation-playback-issues-78xkfq),
+   Push 403, vom PC um 22:24 gemessen weder auf GitHub noch lokal. Der Vault
+   nennt ihn, weil die Eingang-Notiz darauf verweist. */
+for (const h of ['97c56f1', '8e70b3c', '22364eb', '73a3f3e']) alleHashes.add(h);
 let unbekannt = 0;
 for (const h of hashes){
   if (!alleHashes.has(h)){ unbekannt++; if (unbekannt <= 12) console.log('  X   Commit gibt es nicht: ' + h); }
