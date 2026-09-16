@@ -93,24 +93,54 @@ const FELD_REGELN = {
  * halte, gehört auf die Vorlage-Liste (werkzeuge/vorrat.mjs --offene-fragen),
  * nicht hierher. Der Unterschied ist der ganze Wert dieser Datei: was hier
  * steht, wird nie wieder gefragt.
+ *
+ * ⭐ AUSNAHME MIT SEINEM AUFTRAG (16.09.2026). Zur Fragenseite („41 Angaben an
+ * 31 Wörtern") schrieb Elias: „das mach selber mit den wörterbüchern." Die
+ * Einträge mit „auf Elias’ Auftrag nachgeschlagen" in allen vier Ebenen stammen
+ * daher — NICHT von ihm, sondern aus: 1. seinem arabicroots-Abzug (Rang 1:
+ * Wurzel/Plural/Geschlecht von حَالٌ, مُهَنْدِسٌ, اِسْمٌ, die Verbformen von
+ * خَرَجَ aus Bayna Yadayk 2), 2. en.wiktionary (سُكَّر und شَاي ausdrücklich
+ * „uncountable", صِفْر Plural أَصْفَار, سَيِّدَة Plural سَيِّدَات, مَكْسُور
+ * weiblich مَكْسُورَة, ثَلَاثَة „f" mit Polaritätsregel), 3. Reverso als zweite
+ * Quelle (أيض, هندس, أصفار = Pl. von صفر, مكسورة = gebeugt von مكسور). Die
+ * Wortart folgt seinem Unterricht, nicht dem Wörterbuch (Folge 08: Orts- und
+ * Zeitangaben sind اِسْم → أَمَامَ, الْيَوْمُ noun). Beleg je Wort: To-Do
+ * Vokabeltrainer, 16.09.2026 abends. Kein Plural bei غَرْب/شَرْق/عَرَبِيَّة/
+ * إِنْجِلِيزِيَّة: Himmelsrichtung bzw. Sprachname — keine der Quellen führt einen.
  */
 
 const FELD_AUSNAHMEN = {
+  '0f311405-7349-450c-885e-e3abefb6fbf3': { root: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — لِ (für / gehört)' },
+  '45781': { pl: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — سُكَّرٌ (Zucker)' },
   '45813': { pl: 'von Elias bestätigt am 15.9.2026 — الفِلِيبِّينُ (Philippinen)' },
   '45814': { pl: 'von Elias bestätigt am 15.9.2026 — اليَابَانُ (Japan)' },
   '45815': { pl: 'von Elias bestätigt am 15.9.2026 — الصِّينُ (China)' },
   '45816': { pl: 'von Elias bestätigt am 15.9.2026 — الهِنْدُ (Indien)' },
   '45833': { pl: 'von Elias bestätigt am 15.9.2026 — كَعْبَةٌ (Kaaba)' },
+  '45849': { pl: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — شَايٌ (Tee)' },
+  '45850': { pl: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — غَرْبٌ (Westen)' },
+  '45861': { pl: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — شَرْقٌ (Osten)' },
   '45868': { pl: 'von Elias bestätigt am 15.9.2026 — أَمْرِيكَا (Amerika)' },
   '45870': { pl: 'von Elias bestätigt am 15.9.2026 — أَلْمَانِيَا (Deutschland)' },
   '45871': { pl: 'von Elias bestätigt am 15.9.2026 — إِنْجِلْتَرَا (England)' },
   '45872': { pl: 'von Elias bestätigt am 15.9.2026 — العِرَاقُ (Irak)' },
   '45873': { pl: 'von Elias bestätigt am 15.9.2026 — سُويسْرَا (Schweiz)' },
+  '45878': { pl: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — عَرَبِيَّةٌ (Arabisch)' },
+  '45883': { pl: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — إِنْجِلِيزِيَّةٌ (Englisch)' },
   '45886': { pl: 'von Elias bestätigt am 15.9.2026 — القَاهِرَةُ (Kairo)' },
   '45894': { pl: 'von Elias bestätigt am 15.9.2026 — الكُوَيْتُ (Kuwait)' },
   '45898': { pl: 'von Elias bestätigt am 15.9.2026 — إِنْدُونِيسِيَا (Indonesien)' },
   '45907': { pl: 'von Elias bestätigt am 15.9.2026 — سُورِيَا (Syrien)' },
-  '45911': { pl: 'von Elias bestätigt am 15.9.2026 — مَالِيزِيَا (Malaysia)' }
+  '45911': { pl: 'von Elias bestätigt am 15.9.2026 — مَالِيزِيَا (Malaysia)' },
+  '48402': { pl: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — الْيَوْمُ (heute)' },
+  '69179bbf-faa9-4b2a-859c-9e5f3d76b98c': { root: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — يَا (Rufpartikel)' },
+  'd3cca272-90df-4963-a3dd-2653d009a77d': { pl: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — إِثْنَانِ (Zwei (2))', sg: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — إِثْنَانِ (Zwei (2))' },
+  'p_1787184718572': { root: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — لِمَن ((für) wem/wen)' },
+  'p_1787185309933': { root: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — لَكَ (Für dich (M))' },
+  'p_1787185328882': { root: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — لَكِ (Für dich (W))' },
+  'p_1787189076593': { pl: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — حَالُكْ (Dein Zustand)', sg: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — حَالُكْ (Dein Zustand)' },
+  'p_1787189287368': { gender: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — أَمَامَ (Vor / davor)', pl: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — أَمَامَ (Vor / davor)', sg: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — أَمَامَ (Vor / davor)' },
+  'p_1787189488747': { root: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — فِيْهِ (darin / in ihm)' }
 };
 
 /* ---------- Ebene 3: Werte, die Elias nachgetragen hat ----------
@@ -135,19 +165,37 @@ const FELD_AUSNAHMEN = {
  */
 
 const FELD_ERGAENZUNGEN = {
-  '0e23a52d-e2f5-4a57-9082-58eb9f362d88': { type: 'adverb' },
+  '0e23a52d-e2f5-4a57-9082-58eb9f362d88': { root: 'ء ي ض', type: 'adverb' },
+  '36e01b96-9367-4f09-acaf-31a82bdcf061': { gender: 'masculine', pl: 'مُهَنْدِسُونَ', root: 'ه ن د س', sg: 'مُهَنْدِسٌ', type: 'noun' },
   '45802': { pl: 'مِيَاه / أَمْوَاه / أَمْوَاء' },
   '45841': { pl: 'مَكَاوٍ' },
   '45851': { pl: 'قَهَوَات / قَهَاوٍ' },
+  '45908': { pl: 'مَدَارِسُ مُتَوَسِّطَةٌ' },
+  '48402': { type: 'noun' },
+  '50297': { gender: 'feminine' },
+  '50298': { gender: 'feminine' },
+  '50299': { gender: 'feminine' },
+  '50300': { gender: 'feminine' },
+  '50301': { gender: 'feminine' },
+  '50302': { gender: 'feminine' },
+  '50303': { gender: 'feminine' },
+  '50304': { gender: 'feminine' },
   '59e30a8a-e400-4380-8adf-89e811852a1d': { gender: 'masculine', pl: 'لُحُوم / لِحَام / لِحْمَان / لُحْمَان / أَلْحُم', root: 'ل ح م', sg: 'لَحْمٌ', type: 'noun' },
-  'a540cdfa-cbaf-4d63-8250-b0b664d3b2b9': { root: 'ص ف ر' },
-  'p_1787183484954': { root: 'ك س ر', type: 'adjective' },
+  '65699a81-0913-4e3c-9d5d-fa750d972779': { root: 'س م و' },
+  'a540cdfa-cbaf-4d63-8250-b0b664d3b2b9': { gender: 'masculine', pl: 'أَصْفَار', root: 'ص ف ر', sg: 'صِفْرٌ', type: 'noun' },
+  'd3cca272-90df-4963-a3dd-2653d009a77d': { gender: 'masculine', root: 'ث ن ي', type: 'noun' },
+  'p_1787183484954': { femSg: 'مَكْسُورَة', root: 'ك س ر', type: 'adjective' },
+  'p_1787184718572': { type: 'particle' },
   'p_1787185012359': { gender: 'masculine', pl: 'سَادَةٌ', root: 'س و د', sg: 'سَيِّدٌ', type: 'noun' },
-  'p_1787185031977': { type: 'noun' },
-  'p_1787188396011': { type: 'particle' },
+  'p_1787185031977': { gender: 'feminine', pl: 'سَيِّدَات', root: 'س و د', sg: 'سَيِّدَةٌ', type: 'noun' },
+  'p_1787185309933': { type: 'particle' },
+  'p_1787185328882': { type: 'particle' },
+  'p_1787188396011': { root: 'ب ع د', type: 'particle' },
   'p_1787189022107': { root: 'ك ي ف', type: 'particle' },
-  'p_1787189287368': { root: 'ء م م' },
-  'p_1787189845886': { root: 'خ ر ج', type: 'verb' },
+  'p_1787189076593': { gender: 'masculine', root: 'ح و ل', type: 'noun' },
+  'p_1787189287368': { root: 'ء م م', type: 'noun' },
+  'p_1787189488747': { type: 'particle' },
+  'p_1787189845886': { imperative: 'اُخْرُجْ', masdar: 'خُرُوجٌ', past: 'خَرَجَ', present: 'يَخْرُجُ', root: 'خ ر ج', type: 'verb' },
   'p_1787190874749': { root: 'ع ن د', type: 'particle' },
   'p_1787191371934': { root: 'ك س ل', type: 'adjective' }
 };
@@ -179,9 +227,14 @@ const FELD_ERGAENZUNGEN = {
  */
 
 const FELD_ZWEIFEL = {
+  '48402': { type: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — الْيَوْمُ (heute)' },
   'p_1787183484954': { type: 'von Elias bestritten am 15.9.2026 — مَكْسُورٌ (Kaputt)' },
+  'p_1787184718572': { type: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — لِمَن ((für) wem/wen)' },
+  'p_1787185309933': { type: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — لَكَ (Für dich (M))' },
+  'p_1787185328882': { type: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — لَكِ (Für dich (W))' },
   'p_1787188396011': { type: 'von Elias bestritten am 15.9.2026 — بَعْدَ ((von) nach / danach)' },
   'p_1787189022107': { type: 'von Elias bestritten am 15.9.2026 — كَيْفَ (Wie)' },
+  'p_1787189488747': { type: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — فِيْهِ (darin / in ihm)' },
   'p_1787189845886': { type: 'von Elias bestritten am 15.9.2026 — خَرَجَ (Herausgehen/ herauskommen)' },
   'p_1787190874749': { type: 'von Elias bestritten am 15.9.2026 — عِنْدَ (Bei)' },
   'p_1787191371934': { type: 'von Elias bestritten am 15.9.2026 — كَسْلَانُ (Faul)' }

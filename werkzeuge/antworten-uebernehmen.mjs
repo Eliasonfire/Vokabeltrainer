@@ -3,6 +3,8 @@
  *
  *   node werkzeuge/antworten-uebernehmen.mjs <datei-mit-seinem-text>
  *   node werkzeuge/antworten-uebernehmen.mjs <datei> --pruefen    nur zeigen
+ *   node werkzeuge/antworten-uebernehmen.mjs <datei> --auftrag    nicht er hat
+ *        geantwortet, sondern auf seinen Auftrag nachgeschlagen (Herkunftstext)
  *
  * ================== WOZU ===================================================
  *
@@ -234,11 +236,20 @@ const Z = blockLesen(alt, 'FELD_ZWEIFEL');
 if (A.auf < 0 || E.auf < 0 || Z.auf < 0){ console.error('⛔ Blöcke in ' + ZIEL + ' nicht gefunden.'); process.exit(1); }
 
 const heute = new Date().toLocaleDateString('de-DE');
+/* ⭐ --auftrag (16.09.2026): die Antworten stammen NICHT von Elias, sondern sind
+   auf seinen Auftrag nachgeschlagen — er schrieb zur Fragenseite „das mach
+   selber mit den wörterbüchern." Dann darf dort nicht „von Elias bestätigt"
+   stehen: diese Datei unterscheidet genau daran, was er selbst entschieden hat
+   (Ebene 2) und was nicht. Die Belege je Wort stehen in der To-Do. */
+const AUFTRAG = ARG.includes('--auftrag');
+const herkunft = (was) => AUFTRAG
+  ? 'auf Elias’ Auftrag nachgeschlagen am ' + heute
+  : 'von Elias ' + was + ' am ' + heute;
 let neuA = 0, neuE = 0, ersetztE = 0, neuZ = 0;
 for (const a of ausnahmen){
   A.eintraege[a.id] = A.eintraege[a.id] || {};
   if (!(a.feld in A.eintraege[a.id])) neuA++;
-  A.eintraege[a.id][a.feld] = 'von Elias bestätigt am ' + heute + ' — ' + a.wort;
+  A.eintraege[a.id][a.feld] = herkunft('bestätigt') + ' — ' + a.wort;
 }
 for (const w of werte){
   E.eintraege[w.id] = E.eintraege[w.id] || {};
@@ -248,7 +259,7 @@ for (const w of werte){
 for (const z of zweifel){
   Z.eintraege[z.id] = Z.eintraege[z.id] || {};
   if (!(z.feld in Z.eintraege[z.id])) neuZ++;
-  Z.eintraege[z.id][z.feld] = 'von Elias bestritten am ' + heute + ' — ' + z.wort;
+  Z.eintraege[z.id][z.feld] = herkunft('bestritten') + ' — ' + z.wort;
 }
 /* ⛔⛔ HIER STAND EINE LÖSCHUNG, UND SIE HAT DIE ANTWORT UNWIRKSAM GEMACHT.
 
