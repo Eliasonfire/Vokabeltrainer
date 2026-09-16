@@ -150,6 +150,27 @@ pruefe('veroeffentlichen.mjs kennt .access-geprueft.json noch',
 pruefe('… und verweigert ohne ihn den Dienst',
   /mitDaten[\s\S]{0,600}access-geprueft/.test(src) || /access-geprueft[\s\S]{0,600}process\.exit/.test(src), true);
 
+/* ---------- 5. Die Buchabzuege in sw.js (16.09.2026) ----------
+   Elias: „soll unterwegs auch verfügbar sein als oja" — seitdem stehen die
+   Buchdateien in ASSETS von sw.js, und die ist die Weissliste. Verlangt wird
+   hier die WIRKUNG: eine Auslieferung OHNE --mit-daten muss abbrechen, bevor
+   sie etwas baut. Gemessen durch einen echten Aufruf mit --pruefen (der
+   laedt nichts hoch; die Sperre steht vor dem Bau von .deploy/). */
+{
+  const swText = fs.readFileSync(path.join(REPO, 'sw.js'), 'utf8');
+  const imSw = [...swText.matchAll(/['"]\.?\/?(data\/vokabeln-(?!eigene\.js)[^'"/]*\.js)['"]/g)].map(m => m[1]);
+  console.log('');
+  if (!imSw.length){
+    console.log('  ok   sw.js laedt keinen Buchabzug vor — dann greift nur die Schranke oben.');
+  } else {
+    const { spawnSync } = await import('node:child_process');
+    const r = spawnSync(process.execPath, [QUELLE, '--pruefen'], { cwd: REPO, encoding: 'utf8' });
+    const text = (r.stdout || '') + (r.stderr || '');
+    pruefe('sw.js laedt ' + imSw.length + ' Buchabzuege vor — ohne --mit-daten bricht die Auslieferung ab',
+      r.status !== 0 && /Buchabzuege/.test(text), true);
+  }
+}
+
 /* ---------- ⛔ STOERTEST ---------- */
 console.log('\n=== Stoertest ===');
 {

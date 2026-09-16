@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vokabeltrainer-v514';
+const CACHE_NAME = 'vokabeltrainer-v515';
 
 /* ⚠️ In diese Liste gehoeren KEINE Kommentare zwischen die Eintraege.
    validate.js liest sie zeilenweise und hat am 18.08.2026 einen erklaerenden
@@ -6,10 +6,18 @@ const CACHE_NAME = 'vokabeltrainer-v514';
    Erklaerungen deshalb hier oben, nicht dazwischen.
 
    Zu './data/vokabeln-eigene.js' (C8, 18.08.2026): Elias' elf eigene Woerter
-   von arabicroots. Sie stehen hier und die grossen Buch-Abzuege nicht - die
-   laedt js/buecher.js erst beim Umschalten nach, diese elf dagegen stehen bei
-   JEDEM Start unter „Eigene Vokabeln". Ohne den Eintrag waeren offline
-   ausgerechnet die Woerter weg, die er selbst eingetragen hat. */
+   von arabicroots. Sie stehen hier, weil sie bei JEDEM Start unter „Eigene
+   Vokabeln" stehen. Ohne den Eintrag waeren offline ausgerechnet die Woerter
+   weg, die er selbst eingetragen hat.
+
+   ⭐ Und seit dem 16.09.2026 (v515) auch die acht Buchabzuege data/vokabeln-*.js.
+   Bis dahin lud js/buecher.js ein Buch erst beim Antippen, und nur was er
+   einmal mit Netz geoeffnet hatte, war unterwegs da. Auf seiner Seite gefragt
+   „Sollen die Buchvokabeln ohne Netz da sein?" (1,67 MB je neuer Fassung
+   zusaetzlich) — Elias: „soll unterwegs auch verfügbar sein als oja".
+   ⛔ Diese Liste ist zugleich die Weissliste der Auslieferung (unten). Die
+   Abzuege duerfen nur mit --mit-daten hoch; veroeffentlichen.mjs verweigert
+   deshalb ohne den Schalter, sobald hier ein Buchabzug steht. */
 /* ⛔⛔ DIESE LISTE IST AUCH DIE WEISSLISTE DER AUSLIEFERUNG.
    `werkzeuge/veroeffentlichen.mjs` liest sie mit `ausServiceWorker()`. Eine
    Datei, die nur in einem CSS-url() in index.html steht, kommt deshalb NICHT
@@ -66,6 +74,14 @@ const ASSETS = [
   './data/fachbegriffe.js',
   './data/feld-ausnahmen.js',
   './data/vokabeln-eigene.js',
+  './data/vokabeln-madina-1.js',
+  './data/vokabeln-madina-2.js',
+  './data/vokabeln-madina-3.js',
+  './data/vokabeln-bayna-yadayk-1.js',
+  './data/vokabeln-bayna-yadayk-2.js',
+  './data/vokabeln-bayna-yadayk-3.js',
+  './data/vokabeln-bayna-yadayk-4.js',
+  './data/vokabeln-quran.js',
 
   /* Die Schriften, seit 18.08.2026 lokal (C7). Sie MUESSEN hier stehen —
      genau ihr Fehlen war der Anlass: ohne Cache-Eintrag haengt die Schrift
@@ -176,12 +192,13 @@ self.addEventListener('message', (e)=>{
       /* ---------- Und die Buchdateien, die NICHT in ASSETS stehen ----------
 
          ⛔ Die Schleife darueber sieht nur den Vorrat, der beim Einbau angelegt
-         wird. Die Buchvokabeln stehen nicht darin: von den neun
-         `data/vokabeln-*.js` ist nur `vokabeln-eigene.js` in ASSETS, die
-         uebrigen acht kommen erst hierher, NACHDEM Elias das Buch einmal mit
-         Netz geoeffnet hat (der fetch-Handler unten legt jede 200er-Antwort
-         ab). „Vorrat vollstaendig" hiess also bisher nichts darueber, ob seine
-         Buecher unterwegs da sind — und genau danach fragt er.
+         wird. Bis v514 standen die Buchvokabeln nicht darin: von den neun
+         `data/vokabeln-*.js` war nur `vokabeln-eigene.js` in ASSETS, die
+         uebrigen acht kamen erst hierher, NACHDEM Elias das Buch einmal mit
+         Netz geoeffnet hatte (der fetch-Handler unten legt jede 200er-Antwort
+         ab). Seit v515 stehen alle neun in ASSETS (sein „ja", siehe oben);
+         diese Liste bleibt, weil sie zeigt, was WIRKLICH im Cache liegt —
+         auch eine zehnte Buchdatei, die noch in keiner Liste steht.
 
          ⭐ Gemeldet werden TATSACHEN (was liegt im Cache), nicht ein Urteil.
          Welche Buecher das sind, weiss die Seite: dort steht BUECHER mit den
