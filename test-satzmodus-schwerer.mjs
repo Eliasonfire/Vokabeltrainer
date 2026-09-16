@@ -1,5 +1,6 @@
 /* test-satzmodus-schwerer.mjs — bewacht drei Sätze von Elias vom 16.09.2026
- * zum Satz-Modus (alle mit Bildschirmfoto, zwischen 18:15 und 18:23).
+ * zum Satz-Modus (alle mit Bildschirmfoto; Nachrichten zwischen 18:16:31 und
+ * 18:36:36, gemessen an der Sitzungsdatei).
  *
  * 1. Zu „9. Bestimmt?":
  *      „diese übung können wir komplett raus nehmen aus dem satzmodus weil das
