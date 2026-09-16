@@ -62,9 +62,42 @@ vm.runInContext(fs.readFileSync(path.join(REPO, 'grammar-data.js'), 'utf8')
   + '\nglobalThis.R = GRAMMAR_RULES; globalThis.T = SENTENCE_TAGS; globalThis.TH = SATZ_THEMEN;', ktx);
 const REGELN = ktx.R, TAGS = ktx.T, THEMEN = ktx.TH;
 
+/* ---------- ⛔ NUR STELLEN, DIE ER AUCH SIEHT (16.09.2026) ----------
+
+   SENTENCE_TAGS hat 617 Markierungen, aber nur 400 davon liegen auf einem Satz,
+   den es wirklich gibt. Der Rest hängt an Madina-1-Vokabeln ohne Beispielsatz
+   (113) und an Fachbegriffskarten (35) — beides Stellen, die im Satzmodus nie
+   auftauchen.
+
+   ⚠️ Der Unterschied ist nicht klein, und er ändert die REIHENFOLGE. Über alle
+   617 gerechnet stünden Nominalsatz, Adjektiv und Iḍāfa oben; über die 400, die
+   er sieht, sind es Genitiv, Kasus, اَلْ und Schrift — also genau die vier, die
+   ich ihm genannt habe. Eine Zahl, die Unsichtbares mitzählt, hätte ihn hier an
+   die falschen vier Kategorien geschickt. [[werkzeug_misst_kleineren_bestand]]
+
+   ⚠️ Die Zahl auf jeder Regelkarte („· n Satzstellen") folgt derselben
+   Rechnung — sie soll nicht mehr versprechen, als er zu sehen bekommt. */
+const satzKtx = { window: {}, console: { log(){}, warn(){}, error(){} }, document: { addEventListener(){} } };
+vm.createContext(satzKtx);
+for (const datei of ['vocab-data.js', 'lehrbuch-saetze.js']) {
+  try { vm.runInContext(fs.readFileSync(path.join(REPO, datei), 'utf8'), satzKtx); }
+  catch (e) { console.log('  ⛔ ' + datei + ' nicht lesbar: ' + e.message); process.exit(1); }
+}
+vm.runInContext(
+  'globalThis.ECHT = new Set('
+  + '  VOCAB_DATA.filter(w => w.sentAr).map(w => String(w.id))'
+  + '    .concat(LEHRBUCH_SAETZE.map(w => String(w.id))));', satzKtx);
+const ECHTE_SAETZE = satzKtx.ECHT;
+if (!ECHTE_SAETZE || !ECHTE_SAETZE.size) {
+  console.log('  ⛔ Keine Sätze gefunden — VOCAB_DATA/LEHRBUCH_SAETZE leer?');
+  process.exit(1);
+}
+
 const marken = {};
-for (const liste of Object.values(TAGS))
+for (const [satzId, liste] of Object.entries(TAGS)) {
+  if (!ECHTE_SAETZE.has(satzId)) continue;
   for (const t of liste) marken[t.ruleId] = (marken[t.ruleId] || 0) + 1;
+}
 
 /* Ein Beispielsatz je Regel — die Stelle, an der er die Regel wirklich sieht. */
 const beispiel = {};
@@ -78,12 +111,59 @@ for (const r of REGELN) {
   const treffer = mitMuster.filter(t => t.muster.test(r.id));
   zuKategorie.set(r.id, treffer);
 }
-const gruppen = new Map(mitMuster.map(t => [t.id, { name: t.name, regeln: [] }]));
-gruppen.set('__ohne__', { name: 'Nicht zuordbar', regeln: [] });
+const roheGruppen = new Map(mitMuster.map(t => [t.id, { name: t.name, regeln: [] }]));
+roheGruppen.set('__ohne__', { name: 'Nicht zuordbar', regeln: [] });
 for (const r of REGELN) {
   const t = zuKategorie.get(r.id);
-  gruppen.get(t.length ? t[0].id : '__ohne__').regeln.push(r);
+  roheGruppen.get(t.length ? t[0].id : '__ohne__').regeln.push(r);
 }
+
+/* ---------- ⭐⭐ DIE WIRKSAMSTEN ZUERST (16.09.2026) ----------
+
+   Elias: „mach sie ganz nach oben und hebe sie hervor".
+
+   Gemeint waren die vier Kategorien, die ich ihm genannt hatte — Genitiv,
+   Kasus, اَلْ und Schrift. ⛔ Sie stehen hier trotzdem NICHT als Liste.
+   Eine feste Auswahl von vier Namen wäre in dem Moment falsch, in dem er drei
+   davon erledigt hat: die Seite führte ihn dann weiter zu Kategorien, in denen
+   nichts mehr offen ist, und die nächstwichtige stünde unten.
+   [[allgemeine_regel_statt_listeneintrag]]
+
+   Gerechnet wird stattdessen, was die Auswahl damals BEGRÜNDET hat: wie viele
+   Satzstellen an Regeln hängen, die er noch nie beurteilt hat. Nach diesem Maß
+   sortiert, stehen heute genau seine vier oben — und morgen die, die dann
+   oben stehen müssen. [[regel_gilt_nur_mit_begruendung]]
+
+   ⚠️ „Nie beurteilt" heißt: kein `satzmodusUrteil`. Das Feld trägt den
+   Zeitpunkt seines letzten Exports; 34 der 103 Regeln haben es.
+   ⚠️ Der Stand kommt aus grammar-data.js, nicht aus seinem Browser. Was er auf
+   der Seite schon angetippt, aber noch nicht geschickt hat, kann sie hier
+   nicht wissen. [[einzeln_frei_ist_nur_im_browser]] */
+const VORRANG_ANZAHL = 4;
+
+for (const g of roheGruppen.values()) {
+  g.offen = g.regeln.filter(r => !r.satzmodusUrteil);
+  g.offeneStellen = g.offen.reduce((s, r) => s + (marken[r.id] || 0), 0);
+}
+
+/* Sortiert wird eine KOPIE der Reihenfolge, die Zuordnung oben bleibt
+   unberührt — bei Regeln, die auf zwei Muster passen, entscheidet dort die
+   Reihenfolge in SATZ_THEMEN, welche Kategorie gewinnt.
+   [[zweiter_aufruf_ueberschreibt_still]] */
+const sortiert = [...roheGruppen.entries()]
+  .filter(([, g]) => g.regeln.length)
+  .sort((a, b) => b[1].offeneStellen - a[1].offeneStellen);
+
+/* Hervorgehoben wird nur, was auch wirklich offen ist. Ein Rahmen um eine
+   fertige Kategorie wäre eine Auszeichnung ohne Aufgabe. */
+const vorrangIds = new Set(sortiert.filter(([, g]) => g.offen.length)
+  .slice(0, VORRANG_ANZAHL).map(([id]) => id));
+const gruppen = new Map(sortiert);
+const vorrangListe = sortiert.filter(([id]) => vorrangIds.has(id));
+const vorrangRegeln = vorrangListe.reduce((s, [, g]) => s + g.offen.length, 0);
+const vorrangStellen = vorrangListe.reduce((s, [, g]) => s + g.offeneStellen, 0);
+const offenGesamt = sortiert.reduce((s, [, g]) => s + g.offen.length, 0);
+const stellenGesamt = sortiert.reduce((s, [, g]) => s + g.offeneStellen, 0);
 
 const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;')
   .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -136,9 +216,11 @@ for (const [id, g] of gruppen) {
     </div>`;
   }
 
+  const vorn = vorrangIds.has(id);
   bloecke += `
-  <section class="block" data-kat="${esc(id)}">
-    <h2>${esc(g.name)} <span class="zahl"><span data-fertig>0</span>/${g.regeln.length}</span></h2>
+  <section class="block${vorn ? ' vorrang' : ''}" data-kat="${esc(id)}">
+    <h2>${vorn ? '<span class="marke">zuerst</span> ' : ''}${esc(g.name)} <span class="zahl"><span data-fertig>0</span>/${g.regeln.length}</span></h2>
+    ${vorn ? `<p class="warum">${g.offen.length} noch nie beurteilt · sie hängen an ${g.offeneStellen} Satzstellen</p>` : ''}
     <div class="sammel">
       <button data-alle="ja">alle „gehört rein"</button>
       <button data-alle="spaeter">alle „später"</button>
@@ -170,6 +252,22 @@ h1{font-size:22px;margin:0 0 6px;letter-spacing:-.2px}
 .zaehler{font-size:13px;color:var(--leise);margin-top:7px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
 h2{font-size:17px;margin:26px 0 4px;display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
 .zahl{font-size:13px;color:var(--leise);font-variant-numeric:tabular-nums}
+/* ---------- Die vier, die zuerst drankommen (Elias, 16.09.2026) ----------
+   „mach sie ganz nach oben und hebe sie hervor". Der Rahmen sitzt links, nicht
+   rundherum: ein Kasten um vier von vierzehn Abschnitten trennt sie vom Rest
+   der Seite, ein Strich führt das Auge daran entlang. */
+.block.vorrang{border-left:3px solid var(--an);padding-left:14px;margin-left:-17px}
+.block.vorrang h2{margin-top:22px}
+.marke{background:var(--an);color:#04121f;font-size:11.5px;font-weight:700;
+  letter-spacing:.4px;text-transform:uppercase;border-radius:5px;padding:3px 7px;
+  align-self:center}
+.warum{color:var(--leise);font-size:13px;margin:0 0 10px;font-variant-numeric:tabular-nums}
+.auftrag{border:1px solid var(--an);background:rgba(74,222,128,.07);
+  border-radius:10px;padding:13px 15px;margin:0 0 22px}
+.auftrag b{color:var(--an)}
+.auftrag p{margin:0}
+.auftrag p + p{margin-top:7px}
+.auftrag .klein{color:var(--leise);font-size:13px}
 .sammel{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 12px}
 .sammel button{background:transparent;color:var(--leise);border:1px solid var(--rand);
   border-radius:7px;padding:5px 10px;font-size:12.5px;cursor:pointer}
@@ -226,6 +324,16 @@ textarea{width:100%;min-height:150px;background:#07090b;color:#cbd3dc;border:1px
 <p class="hinweis">Eine Frage je Regel: <b>gehört sie in die App?</b> Ein „gehört rein“ bringt
 sie in den Satzmodus <i>und</i> in den Regeln-Bereich — das sind seit dem 26.08. nicht mehr
 zwei getrennte Orte. Die Kategorien sind dieselben Reiter wie im Satzmodus.</p>
+
+<div class="auftrag">
+  <p><b>Die ${vorrangListe.length} oben zuerst</b> — ${vorrangListe.map(([, g]) => esc(g.name)).join(' · ')}</p>
+  <p>Das sind <b>${vorrangRegeln} von ${offenGesamt}</b> offenen Regeln und erledigt
+  <b>${stellenGesamt ? Math.round(100 * vorrangStellen / stellenGesamt) : 0} %</b> der Satzstellen,
+  an denen noch nie eine Entscheidung hing (${vorrangStellen} von ${stellenGesamt}).</p>
+  <p class="klein">Danach kannst du aufhören — der Rest sind kleine Kategorien, bei denen
+  eine Entscheidung ein oder zwei Stellen betrifft. Die Reihenfolge rechnet sich bei jedem
+  Neubau der Seite neu: was du erledigt hast, rutscht nach unten.</p>
+</div>
 
 ${bloecke}
 
