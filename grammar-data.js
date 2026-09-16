@@ -2792,6 +2792,9 @@ const SENTENCE_TAGS = {
   ],
   "gram-harf-ka": [
     { ruleId: "harf-jarr-01", matchText: "كَالْمُدَرِّسِ" }
+  ],
+  "gram-awlad": [
+    { ruleId: "harf-jarr-li-01", matchText: "لِلتَّاجِرِ" }
   ]
 };
 

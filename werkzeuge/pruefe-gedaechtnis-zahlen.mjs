@@ -157,8 +157,9 @@ vm.runInContext(fach + '\nthis.F = (typeof FACHBEGRIFF_VOKABELN !== "undefined")
    تَانِكَ) aus seiner Musterlösung, auf seinen Wunsch als Karteikarten;
    51 → 55 — die Fragewörter مَاذَا, كَمْ, مِنْ أَيْنَ, إِلَى أَيْنَ;
    55 → 59 — Weiblichkeit حَمْرَاءُ/كُبْرَى und die Präpositionen بِ/كَ
-   („ja beides als karteikarten machen"). */
-pruefe('Oberflaeche: 59 Fachbegriffe', 59, ktxF.F ? ktxF.F.length : 'FACHBEGRIFF_VOKABELN fehlt');
+   („ja beides als karteikarten machen");
+   59 → 60 — أَوْلَادٌ „Kinder" aus Bayna Yadayk 1A, rot mit der Übersetzung seines Lehrers. */
+pruefe('Oberflaeche: 60 Fachbegriffe', 60, ktxF.F ? ktxF.F.length : 'FACHBEGRIFF_VOKABELN fehlt');
 
 /* Die neuen Ausnahmen in den Pruefern
    ⛔⛔ OHNE KOMMENTARE. Diese vier Zeilen behaupten „steht im Code" — und ein
