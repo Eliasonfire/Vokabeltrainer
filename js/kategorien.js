@@ -537,7 +537,8 @@ function baueWortKarte(w){
      Nachschlagen da, und wer hier hersieht, will alles sehen. Auf der Lernkarte
      bleibt der Schalter, was er ist - dort waere die Form ein Ratehinweis. */
   const formen = [];
-  if (w.pl)    formen.push(['Plural',   formenAnzeige(w.pl)]);
+  /* Bei Zahlwörtern ist `pl` die Form beim weiblichen Nomen, kein Plural — plBeschriftung() in js/kern.js. */
+  if (w.pl)    formen.push([(typeof plBeschriftung === 'function' ? plBeschriftung(w) : 'Plural'), formenAnzeige(w.pl)]);
   if (w.femSg) formen.push(['Fem.',     formenAnzeige(w.femSg)]);
   if (w.femPl) formen.push(['Fem. Pl.', formenAnzeige(w.femPl)]);
   if (w.root)  formen.push(['Wurzel',   w.root]);
@@ -803,7 +804,7 @@ function baueWortFormular(w){
     ${feld('wkAr', 'Arabisch', w.ar, true)}
     ${feld('wkDe', 'Deutsch', w.de, false)}
     ${wortartFeld(w)}
-    ${feld('wkPl', 'Plural (optional)', w.pl, true)}
+    ${feld('wkPl', (typeof plBeschriftung === 'function' && plBeschriftung(w) !== 'Plural' ? 'Form ' + plBeschriftung(w) : 'Plural') + ' (optional)', w.pl, true)}
     ${feld('wkRoot', 'Wurzel (optional, z. B. \u0643 \u062a \u0628)', w.root, true)}
     ${feld('wkSentAr', 'Beispielsatz Arabisch (optional)', w.sentAr, true)}
     ${feld('wkSentDe', 'Beispielsatz Deutsch (optional)', w.sentDe, false)}

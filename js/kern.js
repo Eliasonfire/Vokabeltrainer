@@ -809,8 +809,29 @@ function sprechText(w){
    Plural gibt. Sieben Woerter haben zwei Pluralformen („بُيُوتٌ / أَبْيَاتٌ");
    die stehen bewusst zusammen auf EINER Karte. Zwei Karten daraus zu machen
    haette eine Reihenfolge behauptet, die im Abzug nicht steht. */
+/* ⭐ ZAHLWÖRTER HABEN KEINEN PLURAL IM `pl`-FELD (16.09.2026).
+   Bei وَاحِدٌ und ثَلَاثَةٌ … عَشَرَةٌ steht dort die Form des ANDEREN Geschlechts
+   (وَاحِدَةٌ, ثَلَاثٌ, … عَشْرٌ). Auf seiner Seite gefragt „„Plural" steht an einer
+   Zahl, wo keiner ist" — Elias: „das auch" (= selbst mit den Wörterbüchern
+   entscheiden, wie zuvor „das mach selber mit den wörterbüchern.").
+   Beleg en.wiktionary, ثَلَاثَة: „f (masculine ثَلَاث)" mit dem Hinweis, dass die
+   Zahlen drei bis neun „differ in gender from the modified noun": die
+   männliche Form steht beim weiblichen Nomen (ثَلَاثُ نِسَاءٍ), die weibliche beim
+   männlichen (ثَلَاثَةُ رِجَالٍ). Bei وَاحِدٌ ist وَاحِدَةٌ ebenfalls die Form beim
+   weiblichen Nomen. Deshalb heißt die Zeile bei allen neun „bei weiblichem
+   Nomen" — das stimmt für beide Fälle —, und es gibt keine Pluralkarte
+   „drei (Plural)". Erkannt an der BEDEUTUNG wie in validate.js (dort begründet:
+   der Formvergleich traf غُرْفَةٌ → غُرَفٌ falsch). Bewacht von test-zahlwort-form.mjs. */
+const ZAHLWORT_DE = /^(null|ein|eins|eine|zwei|drei|vier|fuenf|fünf|sechs|sieben|acht|neun|zehn|elf|zwoelf|zwölf)$/i;
+function istZahlwort(w){
+  return !!w && String(w.de || '').split('/').some(t => ZAHLWORT_DE.test(t.trim()));
+}
+function plBeschriftung(w){
+  return istZahlwort(w) ? 'bei weiblichem Nomen' : 'Plural';
+}
+
 function bauePluralKarte(w){
-  if (!w || !w.pl || istPluralKarte(w.id)) return null;
+  if (!w || !w.pl || istPluralKarte(w.id) || istZahlwort(w)) return null;
   return {
     id: w.id + PLURAL_MARKE,
     ar: w.pl,

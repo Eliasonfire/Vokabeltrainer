@@ -478,6 +478,11 @@ const PRUEFER = [
      und nicht wiederherstellbar. Ein Fehler hier ist kein
      Schoenheitsfehler, sondern ein Verlust. */
   ['test-dublette.mjs', []],
+  /* ⭐ Neu am 16.09.2026. Elias zu „„Plural" steht an einer Zahl, wo keiner
+     ist": „das auch" (selbst mit den Wörterbüchern entscheiden). Schneidet
+     plBeschriftung() und bauePluralKarte() aus js/kern.js und legt die
+     Beschriftung „bei weiblichem Nomen" per Störtest still. */
+  ['test-zahlwort-form.mjs', []],
   ['test-auswahl-einzelnfrei.mjs', []],
   ['test-tippen-beide-richtungen.mjs', []],
   /* ⭐ Neu am 11.09.2026 abends. Elias: „wenn wir die ersten zwei boxen nur auf

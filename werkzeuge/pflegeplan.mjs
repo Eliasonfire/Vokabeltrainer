@@ -60,6 +60,13 @@
 const W = 'vokabeltrainer-wartung';
 
 export const PFLEGEPLAN = [
+  /* 16.09.2026 (v517), innerhalb von js/kern.js, js/lernen.js und
+     js/kategorien.js und deshalb von Hand hier: bei Zahlwörtern heißt die
+     pl-Zeile „bei weiblichem Nomen", und es gibt keine Pluralkarte (Elias:
+     „das auch"; Beleg en.wiktionary). Kein neuer Pflegebedarf: erkannt wird an
+     der deutschen Bedeutung (null … zwölf), ein neues Zahlwort aus einem Buch
+     ist ohne Zutun dabei; test-zahlwort-form.mjs läuft in alle-pruefer.mjs,
+     validate.js meldet, wenn eine der drei Anzeigen die Beschriftung verliert. */
   {
     funktion: 'Vokabeln und Karteikarten',
     dateien: ['vocab-data.js', 'js/lernen.js', 'data/eselsbruecken.js', 'data/eselsbruecken-alt.js', 'data/beispielsaetze.js', 'data/feld-ausnahmen.js'],

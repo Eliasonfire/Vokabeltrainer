@@ -351,7 +351,8 @@ function renderCard(){
   if (SETTINGS.showPlural){
     /* formenAnzeige vereinheitlicht das Trennzeichen: der naechste
        arabicroots-Abzug bringt "|" mit, angezeigt wird immer " / ". */
-    if (w.pl) forms.push({label:'Plural', value:formenAnzeige(w.pl)});
+    /* Bei Zahlwörtern ist `pl` die Form beim weiblichen Nomen, kein Plural — plBeschriftung() in js/kern.js. */
+    if (w.pl) forms.push({label:(typeof plBeschriftung === 'function' ? plBeschriftung(w) : 'Plural'), value:formenAnzeige(w.pl)});
     if (w.femSg) forms.push({label:'Fem.', value:formenAnzeige(w.femSg)});
     if (w.femPl) forms.push({label:'Fem. Pl.', value:formenAnzeige(w.femPl)});
   }

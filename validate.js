@@ -191,11 +191,15 @@ if (!Array.isArray(VOCAB_DATA) || VOCAB_DATA.length === 0){
      `bauePluralKarte()` in js/kern.js:366 baut daraus eine eigene
      Lernkarte mit `de: w.de + " (Plural)"` — also "drei (Plural)".
 
-     ⛔ ABSICHTLICH warn() und ABSICHTLICH ohne Korrektur. Was dort statt
-     "Plural" stehen soll, ist eine Frage an Elias' Lehrer und nicht an
-     mich; eine erfundene Beschriftung waere schlimmer als die falsche,
-     weil sie niemand mehr nachprueft. [[sein_ist_nicht_wirken]]
-     [[erfundene_begruendung_schliesst_den_fall]]
+     ⛔ Bis zum 16.09.2026 ABSICHTLICH warn() und ohne Korrektur: was dort
+     statt "Plural" stehen soll, war seine Frage. [[sein_ist_nicht_wirken]]
+     ✅ Dann auf seiner Seite beantwortet — „das auch" (= selbst mit den
+     Woerterbuechern entscheiden). en.wiktionary, ثَلَاثَة: „f (masculine
+     ثَلَاث)", die Zahlen drei bis neun „differ in gender from the modified
+     noun". Seitdem heisst die Zeile „bei weiblichem Nomen" (plBeschriftung()
+     in js/kern.js), und bauePluralKarte() baut fuer Zahlwoerter keine Karte.
+     Diese Stelle prueft jetzt, dass beides noch WIRKT, statt die Frage zu
+     wiederholen. [[erfundene_begruendung_schliesst_den_fall]]
 
      ⭐ Erkannt an der BEDEUTUNG, nicht an der Form. Der Formvergleich
      ("nur die Taa marbuta trennt sie") hatte 9 Kandidaten: 8 echt, dazu
@@ -205,10 +209,21 @@ if (!Array.isArray(VOCAB_DATA) || VOCAB_DATA.length === 0){
   const ZAHLWORT = /^(null|ein|eins|eine|zwei|drei|vier|fuenf|fünf|sechs|sieben|acht|neun|zehn|elf|zwoelf|zwölf)$/i;
   const istZahlwort = de => String(de || '').split('/').some(t => ZAHLWORT.test(t.trim()));
   const zahlMitPl = VOCAB_DATA.filter(w => w && w.pl && istZahlwort(w.de));
-  if (zahlMitPl.length)
-    warn(`${zahlMitPl.length} Zahlwort(e) zeigen unter "Plural" die andere Genusform, keinen Plural — `
-      + `die Beschriftung braucht Elias' Entscheidung, nicht meine: `
-      + `${zahlMitPl.slice(0,3).map(w => `${w.ar} → ${w.pl} (id ${w.id})`).join(', ')}${zahlMitPl.length>3?' …':''}`);
+  {
+    const kernText = fs.readFileSync(path.join(DIR, 'js', 'kern.js'), 'utf8');
+    const anzeige = fs.readFileSync(path.join(DIR, 'js', 'lernen.js'), 'utf8')
+                  + fs.readFileSync(path.join(DIR, 'js', 'kategorien.js'), 'utf8');
+    const fehlt = [];
+    if (!/function plBeschriftung\(/.test(kernText)) fehlt.push('plBeschriftung() in js/kern.js');
+    if (!/istZahlwort\(w\)\) return null;/.test(kernText)) fehlt.push('bauePluralKarte() laesst Zahlwoerter aus');
+    /* Jede Anzeige einzeln — eine Summe verdeckt eine fehlende Stelle. */
+    if (!anzeige.includes("label:(typeof plBeschriftung === 'function' ? plBeschriftung(w)")) fehlt.push('Lernkarte (js/lernen.js)');
+    if (!anzeige.includes("formen.push([(typeof plBeschriftung === 'function' ? plBeschriftung(w)")) fehlt.push('Wortkarte (js/kategorien.js)');
+    if (!anzeige.includes("feld('wkPl', (typeof plBeschriftung === 'function'")) fehlt.push('Bearbeiten-Feld (js/kategorien.js)');
+    if (zahlMitPl.length && fehlt.length)
+      warn(`${zahlMitPl.length} Zahlwort(e) mit pl-Feld, aber die Beschriftung „bei weiblichem Nomen" wirkt nicht — `
+        + `es fehlt: ${fehlt.join(' · ')}. Sonst steht dort wieder "Plural" (Elias 16.09.2026: „das auch").`);
+  }
   note(`Zahlwoerter: ${VOCAB_DATA.filter(w => w && istZahlwort(w.de)).length} im Bestand, ${zahlMitPl.length} davon mit einem pl-Feld.`);
   note(`sg/pl: ${VOCAB_DATA.filter(w => w && w.sg && w.pl).length} Einträge mit beiden Formen, ${plOhneSg.length} nur Plural, ${sgOhnePl.length} nur Singular.`);
 
