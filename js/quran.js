@@ -413,6 +413,18 @@ function wdhVorrat(){
     .map(s => s.id);
 }
 
+/* ⛔⛔ HEUTE ERST AUSWENDIG ABGEHAKT — gilt für BEIDE Surenringe (16.09.2026).
+   Eine Sure, die er heute als auswendig abgehakt hat, verändert die Ringe von
+   HEUTE nicht: sie ist heute keine Wiederholung (wdhHeute) und bleibt heute der
+   Ring „Neu lernen" (wdhFavorit). Ab dem nächsten Lerntag gehört sie normal zur
+   Wiederholungsrunde. Der Zeitpunkt steht im Haken selbst (HIFZ_ZEIT[id].zeit,
+   0 bei alten Haken — die gelten nie als „heute").
+   Eine Regel, eine Stelle: beide Ringe fragen hier. [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+function heuteAuswendigAbgehakt(id){
+  const z = (typeof HIFZ_ZEIT === 'object' && HIFZ_ZEIT && HIFZ_ZEIT[id]) ? Number(HIFZ_ZEIT[id].zeit) : 0;
+  return z > 0 && typeof lerntagVon === 'function' && lerntagVon(z) === todayStr(0);
+}
+
 /* ⭐ Die Rotation, genau wie er sie beschrieben hat: dran ist die Sure, die am
    LÄNGSTEN nicht gelesen wurde. Nie gelesene zuerst. Damit kommt keine ein
    zweites Mal, bevor alle anderen einmal dran waren — ohne dass irgendwo eine
@@ -437,13 +449,9 @@ function wdhHeute(){
      so war die Runde gemeint: „eine sura lese von denen die ich bereits
      auswendig kann um sie wieder frisch zu halten". Deshalb zählt eine heute
      abgehakte Sure heute weder als erledigt noch als dran; ab morgen gehört sie
-     normal zur Runde. Der Zeitpunkt steht im Haken selbst (HIFZ_ZEIT[id].zeit,
-     0 bei alten Haken). test-surenringe.mjs spielt genau diesen Tag nach. */
-  const heuteGelernt = id => {
-    const z = (typeof HIFZ_ZEIT === 'object' && HIFZ_ZEIT && HIFZ_ZEIT[id]) ? Number(HIFZ_ZEIT[id].zeit) : 0;
-    return z > 0 && typeof lerntagVon === 'function' && lerntagVon(z) === heute;
-  };
-  const vorrat = alle.filter(id => !heuteGelernt(id));
+     normal zur Runde. Die Prüfung steht in heuteAuswendigAbgehakt() oben.
+     test-surenringe.mjs spielt genau diesen Tag nach. */
+  const vorrat = alle.filter(id => !heuteAuswendigAbgehakt(id));
   if (!vorrat.length) return null;
   /* Heute schon eine gelesen? Dann ist die Aufgabe erledigt. */
   const schonHeute = vorrat.find(id => WDH[id] === heute);
@@ -460,9 +468,20 @@ function wdhHeute(){
    außer al-Mulk. Elias: „ich habe nur mulk hinzugefügt und immer jeweils die
    sura die ich auswendig lernen will … ist nichts außer mulk als favourit
    hinzugefügt so kann der ring weg." */
+/* ⛔⛔ UND DER RING VERSCHWINDET NICHT, SOBALD DIE SURE SITZT (16.09.2026).
+   Nach der Reparatur von wdhHeute() schrieb Elias um 20:20: „sura qadr ist
+   jetzt als ring weg aber zalzala wieder da" — vorher schon: „beides wurde
+   gezeigt". al-Qadr war sein Favorit, er hat sie heute gelesen und um 18:47
+   als auswendig abgehakt; `!HIFZ[s.id]` warf sie im selben Augenblick aus
+   diesem Ring. Deshalb: eine HEUTE abgehakte Sure bleibt heute der Ring „Neu
+   lernen" (und zeigt, dass er erledigt ist). Sie geht VOR einem neuen Favoriten,
+   sonst verschwände der erledigte Ring wieder, sobald er die nächste Sure
+   markiert. Ab morgen ist sie hier raus. */
 function wdhFavorit(){
   if (typeof SURAH_DATA === 'undefined') return null;
-  const f = SURAH_DATA.find(s => istFavorit(s.id) && s.id !== 67 && !HIFZ[s.id]);
+  const favoriten = SURAH_DATA.filter(s => istFavorit(s.id) && s.id !== 67);
+  const heuteGelernt = favoriten.find(s => HIFZ[s.id] && heuteAuswendigAbgehakt(s.id));
+  const f = heuteGelernt || favoriten.find(s => !HIFZ[s.id]);
   return f ? f.id : null;
 }
 
