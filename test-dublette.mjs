@@ -49,6 +49,11 @@ function baueWelt(){
       { id: 'p_2', ar: 'ظَرْف', de: 'Zeit- oder Ortsangabe', chapter: 'personal' },
       { id: '46352', ar: 'ظَرْفٌ', de: 'Umschlag', chapter: 17, book: 'madina-2' },
       { id: 'p_3', ar: 'لَحْمٌ', de: 'Fleisch', chapter: 'personal' },
+      /* ⛔ Sein Fall vom 08.09.2026 (gefunden am 16.09.): أَنْتِ wurde gegen
+         „du (m.)" getauscht, weil die letzte Ḥaraka nicht zählte. */
+      { id: 'gram-pron-anti', ar: 'أَنْتِ', de: 'du (weiblich)', chapter: 'personal', type: 'particle' },
+      { id: 'gram-pron-anta', ar: 'أَنْتَ', de: 'du (männlich)', chapter: 'personal', type: 'particle' },
+      { id: '50156', ar: 'أَنْتَ', de: 'du (m.)', chapter: 24, book: 'madina-1', type: 'particle' },
     ],
     PROGRESS: { 'p_1': { box: 4, correct: 7, wrong: 1 } },
     NOTES:    { 'p_1': 'meine Eselsbrücke' },
@@ -87,6 +92,24 @@ console.log('=== Dublette erkennen ===\n');
       '⛔ ظَرْف (Zeit-/Ortsangabe) gilt NICHT als Dublette zu ظَرْفٌ (Umschlag)');
   const lahm = welt.VOCAB_DATA.find(w => w.id === 'p_3');
   sag(!api.dubletteImBuch(lahm), 'لَحْمٌ ohne Gegenstück bleibt unberührt');
+
+  /* ⛔⛔ Die letzte Ḥaraka zählt bei Partikeln (16.09.2026). */
+  const anti = welt.VOCAB_DATA.find(w => w.id === 'gram-pron-anti');
+  sag(!api.dubletteImBuch(anti), '⛔ أَنْتِ „du (weiblich)" gilt NICHT als Dublette zu أَنْتَ „du (m.)"');
+  const anta = welt.VOCAB_DATA.find(w => w.id === 'gram-pron-anta');
+  sag(api.dubletteImBuch(anta) && api.dubletteImBuch(anta).id === '50156',
+      'أَنْتَ „du (männlich)" findet weiterhin seine Buchvokabel');
+  sag(api.dubGleich('بَيْتٌ', 'بَيْتُ') === true, 'bei Nomen zählt die Kasusendung weiterhin nicht (بَيْتٌ = بَيْتُ)');
+}
+
+console.log('\n=== ⛔ Die Reparatur für أَنْتِ greift beim ERSTEN Start ===\n');
+{
+  /* Die Fachbegriffe werden in js/kern.js früh eingehängt. Stünde die
+     Reparatur dahinter, käme أَنْتِ erst beim zweiten Start zurück. */
+  const rep = KERN.indexOf("id: 'gram-pron-anti'");
+  const einhaengen = KERN.indexOf('VOCAB_DATA.push(...FACHBEGRIFF_VOKABELN');
+  sag(rep > 0 && einhaengen > 0 && rep < einhaengen, 'die Reparatur steht VOR dem Einhängen der Fachbegriffe');
+  sag(/ausgeblendetVor:\s*Date\.parse\('2026-09-16/.test(KERN), 'sie holt nur zurück, was VOR der Behebung ausgeblendet wurde');
 }
 
 console.log('\n=== Der Tausch selbst ===\n');

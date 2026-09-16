@@ -906,5 +906,74 @@ const FACHBEGRIFF_VOKABELN = [
     regel: "schams-qamar-01",
     belegt: 2,
     mnemo: "اَلشَّمْس, die Sonne, zeigt es selbst: das l des Artikels hörst du nicht, dafür steht eine Schadda auf dem ش — asch-schams. So geht es bei 14 von 28 Buchstaben, den حُرُوف شَمْسِيَّة."
+  },
+  {
+    /* Eingetragen am 2026-09-16 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel f19-isara. */
+    id: "gram-isara-hadhani",
+    ar: "هَذَانِ",
+    de: "diese beiden (m.)",
+    type: "particle",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "f19-isara",
+    belegt: 1,
+    /* ⭐ Die vier Hinweiswörter für ZWEI (16.09.2026). Elias schickte die Seite
+       „Nah / Fern" seiner Musterlösung: „die brauche ich als neue karteikarten
+       damit ich danach abgefragt werde". Sechs der zehn Wörter dort gibt es schon
+       als Buchvokabel (Madina 1, Kapitel 24; تَانِكَ in Madina 3) — die schaltet
+       er einzeln frei. Diese vier hatten gar keine Karte.
+       ⛔ SÄTZE: nur Wörter, die genau so in seinem Material stehen (حَامِدٌ 2×,
+       عَمَّارٌ 4×, مُحَمَّدٌ 25×; طَالِبَةٌ und مُدَرِّسَةٌ auf der Karte f19-tanith),
+       und ein Nominalsatz mit وَ — beides kennt er. Kein Dual als Aussage: den
+       „lernen wir noch". */
+    sentAr: "هَذَانِ حَامِدٌ وَعَمَّارٌ.",
+    sentDe: "Diese beiden sind Hamid und Ammar.",
+    mnemo: "Nah, zu zweit, männlich. Aus هَذَا (dieser) wird هَذَانِ (diese beiden) — hinten kommt ein -āni dazu. In deiner Musterlösung steht es gleich unter هَذَا und هَذِهِ."
+  },
+  {
+    /* Eingetragen am 2026-09-16 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel f19-isara. */
+    id: "gram-isara-hatani",
+    ar: "هَاتَانِ",
+    de: "diese beiden (f.)",
+    type: "particle",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "f19-isara",
+    belegt: 1,
+    /* ⚠️ Nicht „آمِنَةُ وَفَاطِمَةُ": ein weiblicher Name trägt kein Tanwīn, und
+       js/irab.js liest „Nomen ohne Tanwīn + Nomen" als Iḍāfa — das وَ davor
+       übersieht es noch (offener Punkt in der To-Do, 16.09.2026). طَالِبَةٌ und
+       مُدَرِّسَةٌ stehen so auf seiner Karte „Weiblichkeit". */
+    sentAr: "هَاتَانِ طَالِبَةٌ وَمُدَرِّسَةٌ.",
+    sentDe: "Diese beiden sind eine Studentin und eine Lehrerin.",
+    mnemo: "Nah, zu zweit, weiblich — das Gegenstück zu هَذَانِ. Dieselbe Endung -āni, aber vorne hā-tā: هَاتَانِ steht in deiner Musterlösung direkt unter هَذَانِ."
+  },
+  {
+    /* Eingetragen am 2026-09-16 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel f19-isara. */
+    id: "gram-isara-dhanika",
+    ar: "ذَانِكَ",
+    de: "jene beiden (m.)",
+    type: "particle",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "f19-isara",
+    belegt: 1,
+    sentAr: "ذَانِكَ مُحَمَّدٌ وَحَامِدٌ.",
+    sentDe: "Jene beiden sind Muhammad und Hamid.",
+    mnemo: "Fern, zu zweit, männlich. Es endet wie ذَلِكَ auf كَ — das كَ steht für die Entfernung. Davor das -āni für zwei: ذَانِكَ heißt jene beiden."
+  },
+  {
+    /* Eingetragen am 2026-09-16 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel f19-isara. */
+    id: "gram-isara-tanika",
+    ar: "تَانِكَ",
+    de: "jene beiden (f.)",
+    type: "particle",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "f19-isara",
+    belegt: 1,
+    sentAr: "تَانِكَ مُدَرِّسَةٌ وَطَالِبَةٌ.",
+    sentDe: "Jene beiden sind eine Lehrerin und eine Studentin.",
+    mnemo: "Fern, zu zweit, weiblich — das Gegenstück zu ذَانِكَ. Wie تِلْكَ endet es auf das كَ der Entfernung: تَانِكَ heißt jene beiden, weiblich."
   }
 ];

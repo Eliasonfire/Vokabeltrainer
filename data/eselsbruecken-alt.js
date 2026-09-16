@@ -2263,6 +2263,30 @@ const ESELSBRUECKEN_ALT = {
     'Du hast zwei إِعْرَاب-Karten, ohne es zu merken: حَرْفُ الْجَرِّ und اِسْمٌ مَجْرُورٌ. Die erste ist der Auslöser, die zweite das Ergebnis — und das Ergebnis liest man am Wortende ab. Genau das ist إِعْرَاب.'
   ],
 
+  /* ⭐ Die vier Hinweiswörter für zwei (16.09.2026, aus seiner Musterlösung).
+     Arabisch nur, was in seinem Material steht: هَذَا, هَذِهِ, ذَلِكَ, تِلْكَ, هُمَا,
+     كَ — und die vier Wörter selbst. Die Zerlegung („vorne das hā weg, hinten
+     das kāf dran") ist am Schriftbild der Paare abzulesen, nicht erfunden. */
+  'gram-isara-hadhani': [
+    'Zwei in der Nähe, männlich: هَذَانِ. Die Idee „zwei" kennst du schon von deiner Pronomen-Karte هُمَا (sie beide) — hier zeigt man mit dem Finger auf die beiden.',
+    '⭐ Stell dir هَذَا vor und verdopple es: aus „dieser" wird „diese beiden". Deine Musterlösung schreibt sie untereinander: هَذَا, هَذِهِ, هَذَانِ.'
+  ],
+
+  'gram-isara-hatani': [
+    'Das weibliche Paar in der Nähe: هَاتَانِ. Wie هَذِهِ zeigt es auf Nahes und Weibliches — nur eben auf zwei.',
+    '⭐ Merk dir das t: هَاتَانِ (nah) und تَانِكَ (fern) sind beide weiblich, beide für zwei, und in beiden steckt tā.'
+  ],
+
+  'gram-isara-dhanika': [
+    'Das كَ am Ende heißt: weiter weg — wie bei ذَلِكَ und تِلْكَ. ذَانِكَ ist das männliche Paar in der Ferne.',
+    '⭐ هَذَانِ und ذَانِكَ sind Zwillinge, nah und fern: nimm vom ersten das hā vorne weg und häng hinten das كَ der Ferne an.'
+  ],
+
+  'gram-isara-tanika': [
+    'Das weibliche Paar in der Ferne: تَانِكَ. Es endet wie تِلْكَ auf كَ, das Zeichen der Entfernung.',
+    '⭐ هَاتَانِ und تَانِكَ sind Zwillinge, nah und fern: nimm vom nahen das hā vorne weg und häng hinten كَ an — schon ist es fern.'
+  ],
+
   'gram-huruf-schamsiya': [
     'Zwei deiner Länderkarten stehen sich direkt gegenüber: الصِّينُ liest du aṣ-ṣīn — das l ist weg, dafür sitzt eine Schadda auf dem ص. الْهِنْدُ liest du al-hind, mit hörbarem l und einem Sukūn auf dem ل. ⭐ ص gehört zu den حُرُوف شَمْسِيَّة, ه nicht.',
     'سُورَةُ النَّاس sagt es in jedem Vers: geschrieben steht النَّاسِ, gesprochen an-nās. Das ن schluckt das l und trägt dafür eine Schadda — ein Sonnenbuchstabe, und die Schrift zeigt es selbst.'
