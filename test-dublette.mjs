@@ -203,6 +203,44 @@ console.log('\nDoppelt in zwei Büchern — أَخٌ/أُخْتٌ aus Bayna Yada
   }
 }
 
+/* ---------- Die Dubletten-Prüfung kennt seine Antwort (16.09.2026, Wartungslauf) ----------
+   pruefe-duplikate.js meldete أَخٌ/أُخْتٌ nach v512 weiter als Befund — die Seite
+   „Was auf dich wartet" hätte ihn ein zweites Mal gefragt. Und die Liste kann
+   veralten: eine Kennung ohne Zwilling blendet ein Wort aus, das er dann gar
+   nicht mehr hat. Das Werkzeug wird AUSGEFÜHRT, einmal echt und dreimal gestört
+   (Quelltext über stdin, damit nichts im Ordner liegen bleibt). */
+console.log('\nDubletten-Prüfung — entschieden ist kein Befund, eine verwaiste Ausblendung schon:');
+{
+  const { spawnSync } = await import('node:child_process');
+  const QUELLE = fs.readFileSync(path.join(HIER, 'pruefe-duplikate.js'), 'utf8');
+  const lauf = (quelle) => {
+    const r = spawnSync(process.execPath, ['-'], { cwd: HIER, input: quelle, encoding: 'utf8', maxBuffer: 20e6 });
+    const text = (r.stdout || '') + (r.stderr || '');
+    const ab = text.indexOf('Befund(e) ===');
+    return { code: r.status, text, befunde: ab < 0 ? '' : text.slice(ab) };
+  };
+  const echt = lauf(QUELLE);
+  sag(echt.text.includes('im zweiten ausgeblendet (kein Befund): 2'), 'echter Lauf: أَخٌ und أُخْتٌ stehen unter „ausgeblendet (kein Befund)"');
+  sag(!echt.befunde.includes('madina1-l6-ach') && !echt.befunde.includes('madina1-l6-ucht'), '… und nicht mehr unter den Befunden');
+  sag(!echt.text.includes('Ausblendung(en) veraltet'), '… keine veraltete Ausblendung');
+
+  const MARKE = '/* Wie die App: was ausgeblendet ist';
+  const ohneListe = QUELLE.replace('const BUCHDUBLETTEN_AUSBLENDEN = new Set', 'const GIBT_ES_NICHT = new Set');
+  const g1 = ohneListe !== QUELLE ? lauf(ohneListe) : { befunde: '', text: '' };
+  sag(ohneListe !== QUELLE && g1.befunde.includes('madina1-l6-ach') && g1.befunde.includes('madina1-l6-ucht'),
+      'Gegenprobe: liest sie die Liste nicht, sind beide wieder Befund');
+
+  const verwaist = QUELLE.replace(MARKE, "AUSGEBLENDET.add('gibt-es-nicht');\n" + MARKE);
+  const g2 = verwaist !== QUELLE ? lauf(verwaist) : { code: 0, text: '' };
+  sag(verwaist !== QUELLE && g2.code === 2 && g2.text.includes('id gibt-es-nicht') && g2.text.includes('verwaist'),
+      'Störtest: eine Kennung, die kein Buch mehr hat → „verwaist", Exit 2');
+
+  const ohneZwilling = QUELLE.replace(MARKE, "AUSGEBLENDET.add('45991');\n" + MARKE);
+  const g3 = ohneZwilling !== QUELLE ? lauf(ohneZwilling) : { code: 0, text: '' };
+  sag(ohneZwilling !== QUELLE && g3.code === 2 && g3.text.includes('id 45991') && g3.text.includes('fehlt es ihm ganz'),
+      'Störtest: جِنْسِيَّةٌ (45991) ausgeblendet, obwohl er es sonst nirgends hat → Befund, Exit 2');
+}
+
 console.log('');
 console.log(fehler ? '⛔ ' + fehler + ' Fehler' : '✅ alle Fälle richtig');
 process.exit(fehler ? 1 : 0);

@@ -92,6 +92,29 @@ export const PFLEGEPLAN = [
         + 'Bewacht von test-freischaltung-abfragemarke.mjs' },
   },
   {
+    /* 16.09.2026 (v512), innerhalb von js/buecher.js und deshalb von Hand hier.
+       Gefragt: „أَخٌ (Bruder) und أُخْتٌ (Schwester) stehen in beiden Büchern und
+       kommen deshalb doppelt. Soll ich die aus Bayna Yadayk ausblenden?" —
+       Elias: „ja". BUCHDUBLETTEN_AUSBLENDEN lässt die Kennungen beim Einhängen
+       weg. Der Pflegeplan fehlte zuerst; die Wartung desselben Abends fand die
+       Folge: pruefe-duplikate.js kannte die Liste nicht und meldete beide weiter.
+       ⚠️ KEINE Dateien hier: js/buecher.js steht schon bei den Lehrwerken, und
+       eine Datei darf nur bei einer Funktion stehen. */
+    funktion: 'Doppelte Wörter in zwei Büchern (BUCHDUBLETTEN_AUSBLENDEN)',
+    dateien: [],
+    bildschirme: [],
+    neuerInhalt: { routine: W, schritt: '1c.5', beleg: 'node pruefe-duplikate.js', werkzeug: 'pruefe-duplikate.js',
+      wie: 'jedes neu freigeschaltete Kapitel eines zweiten Buchs kann Wörter bringen, die er aus dem ersten schon hat; '
+        + 'sie erscheinen als Befund „Buchvokabel" und auf seiner Seite „Was auf dich wartet" als Frage je Wort' },
+    eingaben: { sitzung: 'Ob ein Wort im zweiten Buch ausgeblendet wird, entscheidet Elias je Wort — es gibt keine allgemeine Regel, '
+        + 'nur zwei einzelne Antworten. Erst nach seinem Ja trägt eine Sitzung die Kennung in BUCHDUBLETTEN_AUSBLENDEN ein; '
+        + 'die Routine nie.',
+      werkzeug: 'pruefe-duplikate.js' },
+    veralten: { routine: W, schritt: '1c.5', beleg: 'node pruefe-duplikate.js', werkzeug: 'pruefe-duplikate.js',
+      wie: 'eine Kennung, die kein Buch mehr hat oder deren Zwilling fehlt, blendet ein Wort aus, das er dann gar nicht mehr hat — '
+        + 'pruefe-duplikate.js meldet sie als „Ausblendung veraltet" (Exit 2), bewacht von test-dublette.mjs' },
+  },
+  {
     funktion: 'Fachbegriffe aus dem Unterricht',
     dateien: ['data/fachbegriffe.js'],
     bildschirme: [],

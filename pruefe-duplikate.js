@@ -135,6 +135,37 @@ const NUR_VOCAB  = VOCAB_DATA.filter(w =>
   !_bezugIds.has(String(w.id)) && !_sonderIds.has(String(w.id)));
 bezug.push(...NUR_VOCAB);
 
+/* ---------- Doppelt in zwei Büchern: seine Entscheidung (16.09.2026) ----------
+   Gefragt: „أَخٌ (Bruder) und أُخْتٌ (Schwester) stehen in beiden Büchern und
+   kommen deshalb doppelt. Soll ich die aus Bayna Yadayk ausblenden?" — Elias:
+   „ja". Die App lässt diese Kennungen beim Einhängen weg
+   (BUCHDUBLETTEN_AUSBLENDEN in js/buecher.js, v512).
+
+   ⛔ Bis zum Wartungslauf vom 16.09.2026 kannte dieses Werkzeug die Liste nicht
+   und meldete beide weiter als Befund — die Seite „Was auf dich wartet" hätte
+   ihn ein zweites Mal nach etwas gefragt, das er schon beantwortet hat. Gelesen
+   aus DERSELBEN Zeile wie vorrat.mjs, pruefe-funktionen.js und
+   pruefe-wortfelder.js. [[entscheidung_gilt_fuer_das_zweite_werkzeug]]
+
+   ⭐ Die Liste kann VERALTEN: verschwindet der Zwilling (neuer Abzug, andere
+   Kennung, ein Kapitel nicht mehr frei), blendet sie ein Wort aus, das er dann
+   GAR NICHT mehr hat — ohne Fehlermeldung, die Karte fehlt einfach. Das ist
+   ein eigener Befund, und zwar für eine Sitzung, nicht für ihn: die Kennung
+   gehört dann aus der Liste. [[ausfall_ist_unsichtbar_gebaut]] */
+const AUSGEBLENDET = (() => {
+  const q = fs.readFileSync(path.join(REPO, 'js', 'buecher.js'), 'utf8');
+  const t = /const BUCHDUBLETTEN_AUSBLENDEN = new Set\(\[([\s\S]*?)\]\);/.exec(q);
+  if (!t) {
+    console.log('  ⚠ BUCHDUBLETTEN_AUSBLENDEN in js/buecher.js nicht gefunden — ausgeblendete Buchwörter zählen als Befund.');
+    return new Set();
+  }
+  return new Set((t[1].replace(/\/\*[\s\S]*?\*\//g, '').match(/'([^']+)'/g) || []).map(x => x.slice(1, -1)));
+})();
+/* Wie die App: was ausgeblendet ist, gibt es in VOCAB_DATA nicht — also auch
+   nicht als Partner eines Befunds. */
+for (let i = bezug.length - 1; i >= 0; i--)
+  if (AUSGEBLENDET.has(String(bezug[i].id))) bezug.splice(i, 1);
+
 /* ---------- Vergleich ---------- */
 const HARAKA_ENDE = /[ًٌٍَُِْ]$/;
 function form(s) {
@@ -163,6 +194,38 @@ if (eichFehler.length) {
   process.exit(1);
 }
 
+/* Eine ausgeblendete Kennung ist nur dann entschieden, wenn es sie im Abzug
+   noch gibt UND er dasselbe Wort unter einer ANDEREN Kennung hat. */
+function ausblendenPruefen(ids, buch, bestand) {
+  const entschieden = [], veraltet = [];
+  for (const id of ids) {
+    const w = buch.find(x => String(x.id) === String(id));
+    if (!w) { veraltet.push({ id, grund: 'steht in keinem Buch des Abzugs mehr — die Kennung ist verwaist' }); continue; }
+    const zwilling = bestand.filter(x => String(x.id) !== String(id) && gleich(x.ar, w.ar));
+    if (zwilling.length) entschieden.push({ w, zwilling });
+    else veraltet.push({ id, w, grund: 'er hat das Wort sonst nirgends — ausgeblendet fehlt es ihm ganz' });
+  }
+  return { entschieden, veraltet };
+}
+/* ⛔ Eichung: alle drei Ausgänge müssen erreichbar sein, sonst meldet der
+   Abschnitt immer „entschieden". [[pruefwerkzeug_mit_eingebauter_antwort]] */
+{
+  const buch = [{ id: 'b1', ar: 'أَخٌ' }, { id: 'b2', ar: 'أُخْتٌ' }];
+  const faelle = [
+    ['Zwilling unter anderer Kennung', ausblendenPruefen(['b1'], buch, [{ id: 'm1', ar: 'أَخٌ' }]), 1, 0],
+    ['Kennung nicht mehr im Abzug',    ausblendenPruefen(['b9'], buch, [{ id: 'm1', ar: 'أَخٌ' }]), 0, 1],
+    ['nur ein ähnliches Wort da',      ausblendenPruefen(['b1'], buch, [{ id: 'm2', ar: 'أُخْتٌ' }]), 0, 1],
+    ['das Wort selbst ist kein Zwilling', ausblendenPruefen(['b2'], buch, [{ id: 'b2', ar: 'أُخْتٌ' }]), 0, 1]
+  ];
+  const schief = faelle.filter(([, r, e, v]) => r.entschieden.length !== e || r.veraltet.length !== v);
+  if (schief.length) {
+    console.error('⛔ EICHUNG „ausgeblendet" FEHLGESCHLAGEN:');
+    schief.forEach(([was, r, e, v]) => console.error('   ' + was + ': erwartet ' + e + ' entschieden / ' + v
+      + ' veraltet, bekam ' + r.entschieden.length + ' / ' + r.veraltet.length));
+    process.exit(1);
+  }
+}
+
 /* ---------- Messen ---------- */
 console.log('--- A13: Duplikate zu freigeschalteten Vokabeln ---');
 console.log('');
@@ -173,6 +236,23 @@ console.log('  Verglichen gegen ' + (bezug.length - NUR_VOCAB.length) + ' von ' 
   + (ALLE ? '  (--alle: ALLE, auch nicht freigeschaltete)' : ''));
 console.log('  Eichung: ' + EICHUNG.length + ' Faelle, alle wie erwartet.');
 console.log('');
+
+const ausblendung = ausblendenPruefen([...AUSGEBLENDET], BUCH, bezug.concat(EIGENE, FACH));
+if (ausblendung.entschieden.length) {
+  console.log('=== in zwei Büchern, im zweiten ausgeblendet (kein Befund): ' + ausblendung.entschieden.length + ' ===');
+  ausblendung.entschieden.forEach(({ w, zwilling }) => console.log('  ' + String(w.ar).padEnd(20) + ' '
+    + w.book + ' K' + w.chapter + ' id ' + w.id + ' „' + (w.de || '') + '" — er hat es als '
+    + zwilling.map(z => (z.id + ' „' + (z.de || '') + '"')).join(' / ')));
+  console.log('  (Elias, 16.09.2026: „ja" — BUCHDUBLETTEN_AUSBLENDEN in js/buecher.js)');
+  console.log('');
+}
+if (ausblendung.veraltet.length) {
+  console.log('=== ⛔ ' + ausblendung.veraltet.length + ' Ausblendung(en) veraltet — Arbeit für eine Sitzung, keine Frage an Elias ===');
+  ausblendung.veraltet.forEach(v => console.log('  id ' + v.id + (v.w ? ' ' + v.w.ar + ' „' + (v.w.de || '') + '"' : '')
+    + ': ' + v.grund));
+  console.log('  → die Kennung aus BUCHDUBLETTEN_AUSBLENDEN (js/buecher.js) nehmen oder den neuen Zwilling prüfen.');
+  console.log('');
+}
 
 const befunde = [];
 for (const [herkunft, liste] of [['eigene Vokabel', EIGENE], ['Fachbegriff', FACH]]) {
@@ -216,8 +296,9 @@ if (bewusst.length) {
 }
 
 if (!befunde.length) {
-  console.log('✅ Kein Wort steht doppelt.');
-  process.exit(0);
+  console.log(ausblendung.veraltet.length ? '⛔ Kein neues Wort steht doppelt — aber die Ausblendliste ist veraltet (oben).'
+                                          : '✅ Kein Wort steht doppelt.');
+  process.exit(ausblendung.veraltet.length ? 2 : 0);
 }
 /* ⭐⭐ WAS BRINGT JEDE SEITE MIT? (09.09.2026)
  *
@@ -273,6 +354,15 @@ console.log('⚠️ Ein Befund ist noch keine Aufforderung: ein Fachbegriff und 
 console.log('   Buchvokabel koennen bewusst nebeneinander stehen (Grammatikkarte');
 console.log('   gegen Wortschatzkarte). Welche Elias will, entscheidet er.');
 console.log('');
+/* ⛔ Zwei Bücher sind ein anderer Fall als „eigene gegen Buch": dort gilt seine
+   Regel vom 20.08. (die eigene geht), hier gibt es keine allgemeine Regel —
+   nur zwei einzelne Antworten. Die Liste wächst deshalb nur durch ihn. */
+if (befunde.some(b => b.herkunft === 'Buchvokabel')) {
+  console.log('⭐ In zwei Büchern: am 16.09.2026 hat Elias أَخٌ und أُخْتٌ im zweiten Buch');
+  console.log('   (Bayna Yadayk) ausblenden lassen. Das gilt nur für diese zwei — jedes');
+  console.log('   weitere Wort entscheidet er, erst dann kommt es in BUCHDUBLETTEN_AUSBLENDEN.');
+  console.log('');
+}
 /* ⭐ Die BEDEUTUNG steht seit dem 20.08.2026 hinter jedem Eintrag — ohne sie
    sieht ein Homograph aus wie ein Duplikat. Genau das war bei ظَرْف der Fall:
    der Fachbegriff heißt „Zeit- oder Ortsangabe“, die Buchvokabel „Umschlag“.

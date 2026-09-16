@@ -329,15 +329,29 @@ function gruppenAus(text){
   /* ⛔ Regex OHNE Escapes: die Backslashes kommen durch den Kanal halbiert
      oder gar nicht an — hier stand erst /=== (d+) Befund/. */
   const m = new RegExp("=== (" + '\\d' + "+) Befund").exec(r.text);
+  /* ⭐ Seit 16.09.2026 zwei Arten von Befund mit verschiedener Antwort. Eigene
+     Vokabel gegen Buch: seine Regel vom 20.08. steht fest. Dasselbe Wort in
+     ZWEI Büchern: keine Regel, nur zwei einzelne Antworten (أَخٌ/أُخْتٌ) — das
+     fragt die Seite je Wort. Die zwei entschiedenen zählt pruefe-duplikate.js
+     nicht mehr als Befund. Nur Zeilen UNTER „Befund(e)" zählen hier; darüber
+     stehen die entschiedenen mit derselben Form. */
+  const befundTeil = r.text.slice(Math.max(0, r.text.indexOf('Befund(e) ===')));
+  const befundZeilen = m ? befundTeil.split(String.fromCharCode(10))
+    .filter(z => z.startsWith('  ') && z.includes('(') && z.includes('id ')) : [];
+  const zweiBuecher = befundZeilen.filter(z => z.includes('(Buchvokabel,')).length;
+  const eigene = befundZeilen.length - zweiBuecher;
   if (m && Number(m[1]) > 0) posten.push({
     titel: 'Ein Wort steht doppelt',
     zahl: Number(m[1]),
     einheit: Number(m[1]) === 1 ? 'Wort' : 'Wörter',
-    dazu: 'eigene Vokabel oder Fachbegriff gegen Buchvokabel',
-    aufwand: 'schon entschieden — nur bestätigen, welche echt sind',
+    dazu: [eigene ? eigene + '× eigene Vokabel oder Fachbegriff gegen Buchvokabel' : '',
+           zweiBuecher ? zweiBuecher + '× dasselbe Wort in zwei Büchern' : ''].filter(Boolean).join(' · '),
+    aufwand: zweiBuecher ? 'je Wort ja oder nein' : 'schon entschieden — nur bestätigen, welche echt sind',
     warum: 'Zwei Karteikarten für dasselbe Wort — du lernst es doppelt.',
-    wie: 'Deine Regel vom 20.08.: „wenn bei einem kapitel das gleiche wort wie bei eigenen vokabeln ist dann soll meine eigene vokabel weg“. ⛔ Aber nicht jeder Treffer ist ein Duplikat — die Bedeutung steht hinter jedem Eintrag. ظَرْف = Zeit-/Ortsangabe gegen ظَرْفٌ = Umschlag sind zwei verschiedene Wörter.',
-    zeilen: r.text.split(String.fromCharCode(10)).filter(z => z.startsWith('  ') && z.includes('(') && z.includes('id ')).slice(0, 4).map(z => z.trim())
+    wie: (eigene ? 'Deine Regel vom 20.08.: „wenn bei einem kapitel das gleiche wort wie bei eigenen vokabeln ist dann soll meine eigene vokabel weg“. ' : '')
+      + (zweiBuecher ? 'Steht ein Wort in zwei Büchern: sag ja, dann blende ich es im zweiten Buch aus — so wie am 16.09. أَخٌ und أُخْتٌ aus Bayna Yadayk. Dein Fortschritt hängt an der Karte, die bleibt. ' : '')
+      + '⛔ Aber nicht jeder Treffer ist ein Duplikat — die Bedeutung steht hinter jedem Eintrag. ظَرْف = Zeit-/Ortsangabe gegen ظَرْفٌ = Umschlag sind zwei verschiedene Wörter.',
+    zeilen: befundZeilen.slice(0, 4).map(z => z.trim())
   });
 }
 
@@ -448,17 +462,43 @@ function gruppenAus(text){
       if (e.ohneE || e.ohneS) rohe.push({ slug, ...e });
     }
     const summe = rohe.reduce((s, r) => s + r.n, 0);
+    /* ⛔ Hier stand „vorbereitet ist nur Madina 1" fest. Am 16.09.2026 hat Elias
+       Bayna Yadayk 1 Kapitel 1–2 freigeschaltet, und die Wartung hat sie
+       vollständig vorbereitet — der Satz war am selben Abend falsch. Jetzt
+       gemessen: ein Kapitel zählt als vorbereitet, wenn keinem seiner Wörter
+       Eselsbrücke oder Satz fehlt. [[eingefrorenes_feld_ist_kein_zustand]] */
+    const fertigeKapitel = (liste) => {
+      const nach = new Map();
+      for (const w of liste || []){
+        const k = Number(w.chapter);
+        if (!nach.has(k)) nach.set(k, []);
+        nach.get(k).push(w);
+      }
+      return [...nach.entries()]
+        .filter(([, l]) => { const e = zaehle(l); return e.ohneE === 0 && e.ohneS === 0; })
+        .map(([k, l]) => ({ k, n: l.length })).sort((a, b) => a.k - b.k);
+    };
+    const teilweise = rohe.map(r => ({ slug: r.slug, fertig: fertigeKapitel(BUCH[r.slug]) }))
+      .filter(t => t.fertig.length)
+      .map(t => t.slug + " Kapitel " + t.fertig.map(f => f.k).join(", ")
+        + " (" + t.fertig.reduce((s, f) => s + f.n, 0) + " Wörter)");
     if (rohe.length) posten.push({
       titel: "Andere Bücher: anhakbar, aber leer",
       zahl: summe, einheit: "Wörter", dazu: rohe.length + " Bücher", auswahl: true,
       aufwand: "nichts tun ist in Ordnung — du sollst nur wissen, was passiert",
       warum: "Die Buchauswahl in den Einstellungen zeigt alle acht Bücher, aber vorbereitet"
-        + " ist nur Madina 1 (298 Wörter, 24 von 24 Kapiteln lückenlos). Hakst du eines der"
-        + " anderen an, kommen die Karten ohne Eselsbrücke und ohne Beispielsatz —"
+        + " ist Madina 1 (" + eich.n + " Wörter, lückenlos)"
+        + (teilweise.length ? " und von den anderen nur " + teilweise.join(" · ") : "")
+        + ". Hakst du mehr an, kommen die Karten ohne Eselsbrücke und ohne Beispielsatz —"
         + " und ohne Satz gibt es auch keine Markierung und keine Übungsaufgabe."
         + " Die Freischaltung bremst das nicht: seit v282 entscheidet deine Auswahl.",
       wie: "Wenn dich das stört, sag Bescheid — dann baue ich einen Hinweis in die"
-        + " Buchauswahl, etwa „Bayna Yadayk 1 · 231 Karten, noch keine Eselsbrücken“."
+        + " Buchauswahl, etwa „" + (() => {
+          /* Das Beispiel aus der Messung, nicht fest: hier stand Bayna Yadayk 1
+             „noch keine Eselsbrücken" — seit 16.09.2026 hat es welche. */
+          const r = rohe.slice().sort((a, b) => b.ohneE - a.ohneE)[0];
+          return r.slug + " · " + r.n + " Karten, " + r.ohneE + " ohne Eselsbrücke";
+        })() + "“."
         + " Ich habe ihn NICHT gebaut: das ist App-Code und eine Geschmacksfrage.",
       seite: "", seiteText: "",
       zeilen: rohe.sort((a, b) => b.n - a.n)
@@ -659,7 +699,10 @@ const ohneKommentare = txt => txt
     titel: "„(gr)" + '" auf den Karten — soll ich es ausschreiben?',
     zahl: gesamt, einheit: "Vokabel(n)", dazu: `${vorn} davon beginnen damit · ${buecher} Buchdatei(en)`, auswahl: true,
     aufwand: "ja oder nein — die Änderung ist eine Zeile",
-    warum: "Du hast heute Morgen gefragt, was „(gr)\" bedeutet. Es heißt „grammatischer"
+    /* ⛔ Hier stand „Du hast heute Morgen gefragt" — ein fester Text, der
+       jeden Tag danach falsch war (16.09.2026 bemerkt). Eine Zeitangabe ohne
+       Datum ist eingefroren. [[eingefrorenes_feld_ist_kein_zustand]] */
+    warum: "Du hattest gefragt, was „(gr)\" bedeutet. Es heißt „grammatischer"
       + " Fachbegriff\" und kommt aus dem arabicroots-Abzug, nicht von mir. In der App wird"
       + " es nirgends erklärt — wer die Abkürzung nicht kennt, sieht auf der Karte nur"
       + " „(gr) im Nominativ\" und muss raten. In Madina 1 sind es die Wörter aus"
@@ -891,25 +934,25 @@ posten.push({
   warum: 'Deine Eselsbrücken verweisen 19-mal auf die شدة, und die App erklärt sie nirgends. '
     + 'تاء مَرْبُوطة und أَلِف مَقْصورة haben je eine Fachbegriff-Karte, die شدة nicht. '
     + 'Eine neue Karte ist aber neuer Lernstoff — deshalb entscheidest du das.',
-  wie: 'Sag Bescheid, dann kommt sie zu den 31 Fachbegriffen dazu. Sagst du nein, '
+  /* ⛔ Hier stand „zu den 31 Fachbegriffen" fest — am 16.09.2026 waren es 61.
+     Gezählt aus data/fachbegriffe.js; fällt das aus, steht keine Zahl da. */
+  wie: 'Sag Bescheid, dann kommt sie zu ' + (() => {
+      try {
+        const k = { window: {} }; k.globalThis = k; vm.createContext(k);
+        vm.runInContext(fs.readFileSync(path.join(REPO, 'data', 'fachbegriffe.js'), 'utf8'), k);
+        const n = vm.runInContext('typeof FACHBEGRIFF_VOKABELN !== "undefined" ? FACHBEGRIFF_VOKABELN.length : 0', k);
+        return n ? 'den ' + n + ' Fachbegriffen' : 'deinen Fachbegriffen';
+      } catch { return 'deinen Fachbegriffen'; }
+    })() + ' dazu. Sagst du nein, '
     + 'bleibt es dabei — die 19 Stellen erklären sich aus dem Zusammenhang.',
   seite: '', seiteText: ''
 });
-posten.push({
-  titel: 'Deine Fachbegriffe: mit Endung oder ohne?',
-  zahl: 7, einheit: 'Karten', dazu: 'aus 30 Taschkīl-Befunden herausgelöst', auswahl: true,
-  aufwand: 'eine von zwei Antworten, den Rest mache ich',
-  warum: 'Sieben deiner Fachbegriff-Karten stehen OHNE Schlussendung — مُضَاف, مَجْرُور, '
-    + 'مَرْفُوع, نَعْت, إِضَافَة, ظَرْف, شَكْل. Dein Buch schreibt dieselben Wörter MIT '
-    + '(مَجْرُورٌ, نَعْتٌ, ظَرْفٌ …). Bisher standen die sieben als sieben einzelne '
-    + '„Haraka fehlt"-Zeilen in pruefe-taschkil und sahen nach sieben Problemen aus. '
-    + 'Es ist eines.',
-  wie: 'Zwei Möglichkeiten: (1) Pausalform lassen — so steht ein Stichwort im '
-    + 'Wörterbuch, und die Karte fragt ja nach dem Begriff, nicht nach einer Satzform. '
-    + '(2) Endung ergänzen wie im Buch. Sag eine Zahl, dann trage ich alle sieben '
-    + 'gleich ein — die Formen stehen belegt in deinem Abzug.',
-  seite: '', seiteText: ''
-});
+/* ✅ ENTSCHIEDEN, deshalb kein Posten mehr: „Deine Fachbegriffe: mit Endung
+   oder ohne?" (seit 09.09.2026 hier). Im Chat gefragt: „Sollen Fachbegriffe wie
+   حَرْف جَرّ mit Endung stehen, also حَرْفُ جَرٍّ wie auf deiner Regelkarte?" —
+   Elias, 16.09.2026, 18:53:56: „ja". Umgesetzt in v505 (Satzmodus) und v506
+   (Karten, wo sein Material die Endung belegt). Der Rest ist Arbeit für eine
+   Sitzung, keine Frage an ihn — er steht in der To-Do. */
 posten.push({
   titel: 'In den Pluraltexten steht eine Zahl — worauf bezieht sie sich?',
   zahl: 77, einheit: 'Pluralkarten mit eigenem Text', dazu: 'seit v453/v454', auswahl: true,
@@ -1114,7 +1157,9 @@ try {
    keine. ⚠️ Beim Anlegen eines neuen Artefakts hier ergaenzen; die URL bleibt
    ueber Aktualisierungen hinweg dieselbe. */
 const ARTEFAKTE = [
-  ['Was auf dich wartet',   '4c3a7c9e-c288-480c-bb1f-e2d7cd26d856', 'diese Seite — alle offenen Entscheidungen'],
+  /* Neu veröffentlicht am 16.09.2026 — die alte Adresse 4c3a7c9e… war seit dem
+     09.09. tot, und „keine neue anlegen" hatte die Seite eine Woche weg gelassen. */
+  ['Was auf dich wartet',   'VmQqStC4ayzrvkz1GiJaEa', 'diese Seite — alle offenen Entscheidungen'],
   ['Die Fragenseite',       '5ChpdN9n7PAiTY4B5ZHud3', 'die offenen Feldangaben, ein Durchgang je Frage'],
   ['Der Wartungskreislauf', '9ec136ba-019d-438b-98af-e57939eb4a99', 'wie das System läuft — vier Phasen, dreizehn Prüfungen'],
   /* ⭐ Am 21.08. vom eigenen Wächter gemeldet: „1 Seite hat eine URL, steht
@@ -1166,7 +1211,7 @@ const LAUFEND = [
    Datei ohne Zuordnung ist keine Kleinigkeit: sie ist die naechste doppelte
    Seite. [[entscheidung_gilt_fuer_das_zweite_werkzeug]] [[werkzeug_ohne_aufrufer]] */
 const DATEI_ZU_URL = {
-  'wartet-auf-elias.html':        '4c3a7c9e-c288-480c-bb1f-e2d7cd26d856',
+  'wartet-auf-elias.html':        'VmQqStC4ayzrvkz1GiJaEa',
   'wartungsfragen-artefakt.html': '5ChpdN9n7PAiTY4B5ZHud3',
   'regelkategorien.html':         'DHhYFwtTNJADVwE2tVUDz3',
   'wartungskreislauf.html':       '9ec136ba-019d-438b-98af-e57939eb4a99',
@@ -1272,6 +1317,29 @@ const esc = (s) => String(s == null ? '' : s)
    ATTRIBUT steht (dort waere ein <span> ein Fehler). Der Handgriff am Ende
    kennt den Unterschied.
    [[rtl_richtung_physisch]] [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+/* ⛔⛔ ALTE ADRESSEN SIND TOT — und ein toter Knopf schickt ihn ins Leere.
+   Die Artefakte wechselten von UUID auf Kurz-ID; am 15.09.2026 lebten neun
+   Seiten unter neuer Adresse weiter, sechs gab es nicht mehr. Am 16.09.2026
+   um 21:26 wieder nachgesehen (Artifact list, 27 Seiten): keine einzige
+   Kennung im UUID-Format ist darunter. Bis dahin baute diese Seite trotzdem
+   sechs Verweise darauf, zwei davon als Knopf („Die Freigabeseite →").
+   ⭐ Allgemeine Regel statt Liste: das alte FORMAT ist das Merkmal, nicht eine
+   Aufzählung der sechs — eine siebte alte Adresse fällt genauso auf.
+   Eine tote Seite wird genannt, aber nicht verlinkt.
+   [[allgemeine_regel_statt_listeneintrag]] [[alte_fassung_beim_nutzer]] */
+const ALTE_ADRESSE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+const istTot = (id) => ALTE_ADRESSE.test(String(id || '').split('/').pop());
+/* Eichung: beide Ausgänge, auch als ganze Adresse — sonst verlinkt die Seite
+   still wieder ins Leere oder versteckt eine lebende Seite. */
+if (!istTot('4c3a7c9e-c288-480c-bb1f-e2d7cd26d856') || !istTot('https://claude.ai/artifact/d9916aee-b679-4d91-bb0c-c3642f8889ac')
+    || istTot('VmQqStC4ayzrvkz1GiJaEa') || istTot('https://claude.ai/artifact/5ChpdN9n7PAiTY4B5ZHud3')) {
+  console.error('⛔ EICHUNG istTot FEHLGESCHLAGEN — alte und neue Adressen werden nicht unterschieden.');
+  process.exit(1);
+}
+const seitenZeile = ([n, id, was]) => istTot(id)
+  ? `<li><span class="tot">${esc(n)}</span> <span>${esc(was)} — ⚠️ nicht mehr abrufbar (alte Adresse); sag Bescheid, wenn du sie brauchst</span></li>`
+  : `<li><a href="https://claude.ai/artifact/${id}">${esc(n)}</a> <span>${esc(was)}</span></li>`;
+
 /* Fettschrift und Code aus den To-Do-Zeilen behalten — sie tragen Bedeutung. */
 const md = (s) => esc(s)
   .replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>')
@@ -1290,7 +1358,8 @@ const karten = posten.map((p, i) => `
   <p class="wie"><span class="marke">So geht es</span> ${esc(p.wie)}</p>
   ${p.beispiel ? `<p class="warum"><span class="marke">Beispiel</span> ${esc(p.beispiel)}</p>` : ''}
   ${p.zeilen && p.zeilen.length ? `<ul class="zeilen">${p.zeilen.map(z => `<li>${md(z)}</li>`).join('')}</ul>` : ''}
-  ${p.seite ? `<a class="knopf" href="${esc(p.seite)}" target="_blank" rel="noopener">${esc(p.seiteText || 'Öffnen')} →</a>` : ''}
+  ${p.seite && istTot(p.seite) ? `<p class="warum"><span class="marke">Seite</span> ⚠️ „${esc(p.seiteText || 'Die Seite')}" ist nicht mehr abrufbar (alte Adresse) — sag Bescheid, dann baue ich sie neu.</p>` : ''}
+  ${p.seite && !istTot(p.seite) ? `<a class="knopf" href="${esc(p.seite)}" target="_blank" rel="noopener">${esc(p.seiteText || 'Öffnen')} →</a>` : ''}
 </article>`).join('\n');
 
 const html = `<title>Was auf dich wartet</title>
@@ -1367,6 +1436,7 @@ h3{font-size:1rem;font-weight:600;margin:var(--sp5) 0 var(--sp2);
 .seiten a{color:var(--blau);text-decoration:none;font-weight:600;font-size:.95rem}
 .seiten a:hover{text-decoration:underline}
 .seiten span{color:var(--still);font-size:.85rem}
+.seiten .tot{color:var(--leise);font-weight:600;font-size:.95rem}
 </style>
 
 <div class="huelle">
@@ -1398,12 +1468,10 @@ ${ausTodo.length ? `<h3>Dazu aus der To-Do</h3>
 <ul class="todoliste">${ausTodo.map(z => `<li>${md(z)}</li>`).join('')}</ul>` : ''}
 
 <h3>Laufend gebraucht — deine Antworten liegen darin</h3>
-<ul class="seiten">${LAUFEND.map(([n, id, was]) =>
-  `<li><a href="https://claude.ai/artifact/${id}">${esc(n)}</a> <span>${esc(was)}</span></li>`).join('')}</ul>
+<ul class="seiten">${LAUFEND.map(seitenZeile).join('')}</ul>
 
 <h3>Alle Seiten für dich</h3>
-<ul class="seiten">${ARTEFAKTE.map(([n, id, was]) =>
-  `<li><a href="https://claude.ai/artifact/${id}">${esc(n)}</a> <span>${esc(was)}</span></li>`).join('')}</ul>
+<ul class="seiten">${ARTEFAKTE.map(seitenZeile).join('')}</ul>
 
 <p class="fuss">Erzeugt von <code>werkzeuge/wartet-auf-elias.mjs</code>. Die
 Zahlen kommen aus <code>vorrat.mjs</code>, <code>pruefe-taschkil.js</code>,
@@ -1488,11 +1556,15 @@ try {
    ⚠️ Was das WERKZEUG nicht kann: nachsehen. Es hat keinen Zugang zur
    Artefaktliste; das geht nur aus einer Sitzung. Deshalb steht hier keine
    Automatik, sondern das Datum der letzten Bestaetigung — eine Adresse ohne
-   Datum ist eine Behauptung. [[zahlen_ohne_beleg]] [[daten_ohne_zugang]] */
+   Datum ist eine Behauptung. [[zahlen_ohne_beleg]] [[daten_ohne_zugang]]
+
+   ✅ 16.09.2026, 21:29: neu veröffentlicht unter VmQqStC4ayzrvkz1GiJaEa, nachdem
+   die Artefaktliste (27 Seiten, 21:26) die alte Adresse wieder nicht kannte.
+   ⛔ „Keine neue anlegen" gilt nur, solange die alte existiert — die Regel hat
+   die Seite eine Woche ferngehalten. [[alte_fassung_beim_nutzer]] */
 const eigeneId = DATEI_ZU_URL['wartet-auf-elias.html'];
 console.log('  ⚠️ Veroeffentlichen kann die Routine nicht selbst — das braucht eine Sitzung.');
-console.log('     ⛔ Die hinterlegte Adresse war am 09.09.2026 (nach 16:05) NICHT abrufbar');
-console.log('        („artifact not found"). Erst nachsehen, welche Seite Elias wirklich');
-console.log('        offen hat, dann DIESE wiederverwenden — keine neue anlegen:');
+console.log('     Diese Adresse wiederverwenden (Artifact publish mit url), keine zweite Seite anlegen —');
+console.log('     es sei denn, Artifact list kennt sie nicht mehr (Stand 16.09.2026: lebt):');
 console.log('     https://claude.ai/artifact/' + eigeneId);
 process.exit(posten.length ? 2 : 0);
