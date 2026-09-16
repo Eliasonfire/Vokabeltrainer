@@ -2309,6 +2309,29 @@ const ESELSBRUECKEN_ALT = {
     '⭐ Das Gegenstück zu مِنْ أَيْنَ: mit مِنْ fragst du nach dem Start, mit إِلَى nach dem Ziel — أَيْنَ bleibt dasselbe.'
   ],
 
+  /* ⭐ Weiblichkeit und zwei Präpositionen aus seiner Musterlösung (16.09.2026,
+     „ja beides als karteikarten machen"). Der Vers 105:5 steht wörtlich wie in
+     quran-text.js (node werkzeuge/vers.mjs 105:5), samt dessen Übersetzung. */
+  'gram-fem-hamra': [
+    'Nicht jedes weibliche Wort endet auf ة: حَمْرَاءُ (rot, weiblich) endet auf Alif und Hamza. Deine Musterlösung nennt das als weiteres Zeichen.',
+    '⭐ Sieh auf das Ende: حَمْرَاءُ trägt ein einfaches Damma, kein Tanwīn.'
+  ],
+
+  'gram-fem-kubra': [
+    'Das ى am Ende von كُبْرَى macht das Wort weiblich — dasselbe ى, das du als أَلِف مَقْصورة kennst, hier als Zeichen für weiblich.',
+    '⭐ Drei Zeichen für weiblich nennt deine Musterlösung: ة wie in طَالِبَةٌ, Alif und Hamza wie in حَمْرَاءُ, und ى wie in كُبْرَى.'
+  ],
+
+  'gram-harf-bi': [
+    'Mit بِ beginnst du jede Sure: بِسْمِ اللَّهِ — im Namen Allahs. Das بِ klebt vorne am Wort und heißt hier „im“.',
+    '⭐ Nach بِ steht das Wort im Genitiv: بِخَيْرٍ mit zwei Kasras, weil خَيْر hier unbestimmt ist — so erklärt es dein Lehrer in Folge 17.'
+  ],
+
+  'gram-harf-ka': [
+    'كَ heißt wie und klebt vorne am Wort: كَالْمُدَرِّسِ — wie der Lehrer. Das Wort danach steht im Genitiv.',
+    '⭐ In al-Fīl, die du auswendig kannst: فَجَعَلَهُمْ كَعَصْفٍ مَّأْكُولِۭ — „und sie so wie abgefressene Halme machte“ (105:5). Das كَ vor عَصْفٍ heißt wie.'
+  ],
+
   'gram-huruf-schamsiya': [
     'Zwei deiner Länderkarten stehen sich direkt gegenüber: الصِّينُ liest du aṣ-ṣīn — das l ist weg, dafür sitzt eine Schadda auf dem ص. الْهِنْدُ liest du al-hind, mit hörbarem l und einem Sukūn auf dem ل. ⭐ ص gehört zu den حُرُوف شَمْسِيَّة, ه nicht.',
     'سُورَةُ النَّاس sagt es in jedem Vers: geschrieben steht النَّاسِ, gesprochen an-nās. Das ن schluckt das l und trägt dafür eine Schadda — ein Sonnenbuchstabe, und die Schrift zeigt es selbst.'

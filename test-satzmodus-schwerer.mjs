@@ -246,6 +246,17 @@ function laufe(quelle, still){
     return !k || String(k.ar).normalize('NFC') !== ar.normalize('NFC') || !k.sentAr;
   });
   pruefe('die acht neuen Karten stehen da, mit Satz', karten.length > 0 && ohneKarte.length === 0, ohneKarte.map(([id]) => id).join(' · '));
+  /* Elias, 19:47, auf „Soll ich für die Weiblichkeit Karten zu ـاء (wie حَمْرَاءُ)
+     und ى (wie كُبْرَى) anlegen?" und „… Präpositionen بِ und كَ …":
+     „ja beides als karteikarten machen". كُبْرَى hat bewusst KEINEN Satz
+     (Begründung an der Karte) — deshalb wird dort nur die Karte verlangt. */
+  const BEIDES = { 'gram-fem-hamra': ['حَمْرَاءُ', true], 'gram-fem-kubra': ['كُبْرَى', false],
+    'gram-harf-bi': ['بِ', true], 'gram-harf-ka': ['كَ', true] };
+  const beidesFehlt = Object.entries(BEIDES).filter(([id, [ar, mitSatz]]) => {
+    const k = karten.find(x => x.id === id);
+    return !k || String(k.ar).normalize('NFC') !== ar.normalize('NFC') || (mitSatz && !k.sentAr);
+  });
+  pruefe('ـاء, ى, بِ und كَ als Karten', karten.length > 0 && beidesFehlt.length === 0, beidesFehlt.map(([id]) => id).join(' · '));
   const kern = KERN_QUELLE;
   const freiListe = (kern.match(/const FREISCHALTEN_AUF_WUNSCH\s*=\s*\[([^\]]*)\]/) || [])[1] || '';
   pruefe('هَؤُلَاءِ, أُولَئِكَ, مَتَى, أَيٌّ (Madina 1, K24) werden freigeschaltet',
@@ -337,6 +348,15 @@ for (const [name, stoere] of STOERUNGEN){
     const schlecht = laufe(ORIGINAL, true);
     if (schlecht > 0) console.log('  ✔ die Karte مُضَافٌ steht wieder ohne Endung → ' + schlecht + ' rot');
     else { alleRot = false; console.log('  ✘ die Karte مُضَافٌ ohne Endung → blieb grün'); }
+  }
+  FACH_QUELLE = echt;
+
+  FACH_QUELLE = echt.replace('id: "gram-harf-ka",', 'id: "gram-harf-kx",');
+  if (FACH_QUELLE === echt){ alleRot = false; console.log('  ✘ die Karte كَ fehlt — Störung griff nicht'); }
+  else {
+    const schlecht = laufe(ORIGINAL, true);
+    if (schlecht > 0) console.log('  ✔ die Karte كَ fehlt → ' + schlecht + ' rot');
+    else { alleRot = false; console.log('  ✘ die Karte كَ fehlt → blieb grün'); }
   }
   FACH_QUELLE = echt;
 

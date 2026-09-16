@@ -64,7 +64,14 @@ const { G, F, V, E, grammarText, kartenText } = d;
 const heute = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Berlin' });
 
 const fehler = [];
-const bestandNackt = new Set(F.map(f => nackt(f.ar)));
+/* ⛔ EIN ANHÄNGSEL IST NICHT DASSELBE WORT WIE EINE VORSILBE (16.09.2026).
+   nackt() wirft das Tatwīl weg — damit galt die Präposition كَ „wie" als schon
+   vorhanden, weil die Besitzendung ـكَ „dein" eine Karte hat. Elias hatte
+   Minuten vorher selbst gefragt: „aber es gibt doch beides oder?" — ja. Wer mit
+   ـ geschrieben ist, hängt an einem Wort davor; das merkt sich dieser Vergleich
+   jetzt als eigenes Zeichen. */
+const anhangForm = s => { const t = String(s || '').normalize('NFC').trim(); return (t.startsWith('ـ') ? '~' : '') + nackt(t) + (t.endsWith('ـ') ? '~' : ''); };
+const bestandNackt = new Set(F.map(f => anhangForm(f.ar)));
 const vokNackt = new Set(V.map(v => nackt(v.ar)));
 const ids = new Set([...F.map(f => f.id), ...V.map(v => String(v.id))]);
 const typen = new Set([...F, ...V].map(x => x.type).filter(Boolean));
@@ -143,7 +150,7 @@ for (const [i, a] of (auftrag.aufnehmen || []).entries()){
     }
     const l = taschkilLuecken(ar);
     if (l.length) f.push('Taschkīl unvollständig (' + l.join('; ') + ') → unter „fragen"');
-    if (bestandNackt.has(k)) f.push('ist schon Fachbegriff');
+    if (bestandNackt.has(anhangForm(ar))) f.push('ist schon Fachbegriff');
     if (vokNackt.has(k)) f.push('steht schon in vocab-data.js');
   }
   if (!/^gram-[a-z0-9-]+$/.test(String(a.id || ''))) f.push('id muss wie gram-name aussehen');

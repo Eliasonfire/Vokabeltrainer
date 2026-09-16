@@ -2783,6 +2783,15 @@ const SENTENCE_TAGS = {
   ],
   "gram-frage-ila-ayna": [
     { ruleId: "istifham-ayna-01", matchText: "أَيْنَ" }
+  ],
+  "gram-fem-hamra": [
+    { ruleId: "mubtada-khabar-genus-01", matchText: "حَمْرَاءُ" }
+  ],
+  "gram-harf-bi": [
+    { ruleId: "harf-jarr-bi-01", matchText: "بِخَيْرٍ" }
+  ],
+  "gram-harf-ka": [
+    { ruleId: "harf-jarr-01", matchText: "كَالْمُدَرِّسِ" }
   ]
 };
 
