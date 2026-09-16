@@ -125,8 +125,17 @@ const PRUEFUNG = {
      das mit denselben zwei Buchstaben anfaengt und KEIN حَرْف جَرّ ist.
      Deshalb عن nur vor Leerzeichen, Wortende oder einem angehaengten
      Pronomen — genau wie es harf-jarr-fi-ala-01 fuer في/على macht.
-     [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
-  'harf-jarr-01':           w => /^(?:في|على|من|إلى|الى|ل|ب|عن(?:\s|$|ه|ها|هم|هن|هما|ك|كم|كن|ي|نا))/.test(blank(w)),
+     [[entscheidung_gilt_fuer_das_zweite_werkzeug]]
+
+     ⭐ كَ („wie") am 16.09.2026 ergaenzt — Elias: „ja beides als karteikarten
+     machen" (Karte gram-harf-ka, Satz الطَّالِبُ كَالْمُدَرِّسِ.). Seine
+     Musterloesung (Karte f19-jarr) fuehrt كَ unter den حُرُوفُ جَرٍّ.
+     ⛔ NUR vor dem Artikel ال: sehr viele Woerter fangen mit ك an (كِتَاب,
+     كُرْسِيّ, كَبِير, كَيْفَ, كَمْ, كَانَ). Beidseitig gemessen, bevor
+     gelockert wurde: 12 → 13 der 13 Markierungen (keine verloren), 15
+     Eichfaelle richtig, davon 12, die NICHT durchgehen duerfen; im ganzen
+     Bestand beginnt genau ein Wort mit كال — eben كَالْمُدَرِّسِ. */
+  'harf-jarr-01':           w => /^(?:في|على|من|إلى|الى|ل|ب|ك(?=ال)|عن(?:\s|$|ه|ها|هم|هن|هما|ك|كم|كن|ي|نا))/.test(blank(w)),
   'ismul-isara-hadha-01':   w => /^ه?ذا$/.test(blank(w)),
   'hadha-stummes-alif-01':  w => /^ه?ذا$/.test(blank(w)),
   'hadha-dies-nicht-das-01':w => /^ه?ذا$/.test(blank(w)),

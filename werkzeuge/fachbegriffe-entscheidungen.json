@@ -494,6 +494,32 @@
       "form": "إِلَى أَيْنَ",
       "am": "2026-09-16",
       "anlass": "Elias 16.09.2026 zu seiner Musterlösung: „hab ich die auch schon als karteikarten die mich abfragen? das sind auch wichtige vokabeln“. Als Wortpaar gibt es keine Buchkarte."
+    },
+    "حمراء": {
+      "entscheidung": "aufgenommen",
+      "id": "gram-fem-hamra",
+      "form": "حَمْرَاءُ",
+      "am": "2026-09-16"
+    },
+    "كبرى": {
+      "entscheidung": "aufgenommen",
+      "id": "gram-fem-kubra",
+      "form": "كُبْرَى",
+      "am": "2026-09-16"
+    },
+    "ب": {
+      "entscheidung": "aufgenommen",
+      "id": "gram-harf-bi",
+      "form": "بِ",
+      "buchTausch": "49841",
+      "am": "2026-09-16"
+    },
+    "ك": {
+      "entscheidung": "aufgenommen",
+      "id": "gram-harf-ka",
+      "form": "كَ",
+      "buchTausch": "49843",
+      "am": "2026-09-16"
     }
   }
 }

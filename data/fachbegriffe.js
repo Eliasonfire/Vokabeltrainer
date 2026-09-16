@@ -1037,5 +1037,76 @@ const FACHBEGRIFF_VOKABELN = [
     sentAr: "إِلَى أَيْنَ ذَهَبَ مُحَمَّدٌ؟",
     sentDe: "Wohin ging Muḥammad?",
     mnemo: "Wohin? — إِلَى (zu, nach) und أَيْنَ (wo): zusammen „nach wo“. Auf deiner Karte: إِلَى أَيْنَ ذَهَبَ مُحَمَّدٌ؟ Wohin ging Muḥammad?"
+  },
+  {
+    /* Eingetragen am 2026-09-16 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel f19-tanith. */
+    id: "gram-fem-hamra",
+    ar: "حَمْرَاءُ",
+    de: "rot (weiblich)",
+    type: "adjective",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "f19-tanith",
+    belegt: 1,
+    /* ⭐ Weiblichkeit und zwei Präpositionen aus seiner Musterlösung (16.09.2026).
+       Gefragt: „Soll ich für die Weiblichkeit Karten zu ـاء (wie حَمْرَاءُ) und
+       ى (wie كُبْرَى) anlegen?" und „Die Präpositionen بِ und كَ werden auch noch
+       nicht abgefragt. Soll ich dafür ebenfalls Karten anlegen?" — Elias:
+       „ja beides als karteikarten machen".
+       Bedeutungen: حَمْرَاءُ steht als weibliche Form von أَحْمَرُ „rot" im Buch
+       (Madina 1, K22); كُبْرَى: Schreibung arabdict, Bedeutung Reverso („große",
+       Grundform أكبر).
+       ⛔ SÄTZE: der für بِ steht wörtlich im Lektionstext Kapitel 12 (Regel
+       harf-jarr-bi-01, Folge 17). Die für حَمْرَاءُ und كَ sind VERFASST — nur
+       aus Wörtern seines Bestands und als Nominalsatz, den er kennt.
+       كُبْرَى bekommt KEINEN Satz: ohne Steigerungsform, die er noch nicht
+       hatte, wäre jeder Satz damit unnatürlich — lieber ehrlich ohne. */
+    sentAr: "السَّيَّارَةُ حَمْرَاءُ.",
+    sentDe: "Das Auto ist rot.",
+    /* Die Karte IST die weibliche Form — deshalb steht sie auch hier. */
+    femSg: "حَمْرَاءُ",
+    mnemo: "Rot, weiblich: حَمْرَاءُ. Hier zeigt nicht ة das Weibliche, sondern die Endung -ā’ (Alif und Hamza). So steht es in deiner Musterlösung unter „Weitere Zeichen“."
+  },
+  {
+    /* Eingetragen am 2026-09-16 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel f19-tanith. */
+    id: "gram-fem-kubra",
+    ar: "كُبْرَى",
+    de: "groß, die größte (weiblich)",
+    type: "adjective",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "f19-tanith",
+    belegt: 1,
+    /* Die Karte IST die weibliche Form — deshalb steht sie auch hier. */
+    femSg: "كُبْرَى",
+    mnemo: "Groß, die größte, weiblich: كُبْرَى. Das ى am Ende ist hier das Zeichen für weiblich, nicht ة. Deine Musterlösung nennt es als zweites weiteres Zeichen."
+  },
+  {
+    /* Eingetragen am 2026-09-16 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel f19-jarr. */
+    id: "gram-harf-bi",
+    ar: "بِ",
+    de: "mit, durch",
+    type: "particle",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "f19-jarr",
+    belegt: 2,
+    sentAr: "أَنَا بِخَيْرٍ وَالْحَمْدُ لِلَّهِ.",
+    sentDe: "Mir geht es gut, und Lob sei Allah.",
+    mnemo: "بِ klebt am nächsten Wort und heißt mit oder durch: أَنَا بِخَيْرٍ — wörtlich „ich bin mit Gutem“, also: mir geht es gut."
+  },
+  {
+    /* Eingetragen am 2026-09-16 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel f19-jarr. */
+    id: "gram-harf-ka",
+    ar: "كَ",
+    de: "wie",
+    type: "particle",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "f19-jarr",
+    belegt: 4,
+    sentAr: "الطَّالِبُ كَالْمُدَرِّسِ.",
+    sentDe: "Der Student ist wie der Lehrer.",
+    mnemo: "كَ klebt vorne am nächsten Wort und heißt wie. Nicht verwechseln mit dem كَ am Ende von ذَلِكَ — das steht für die Entfernung."
   }
 ];
