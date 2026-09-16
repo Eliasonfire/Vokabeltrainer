@@ -137,10 +137,13 @@ pruefe('r3: 116 Nomen', 116, v.filter(w => w.type === 'noun').length);
 pruefe('r3: 29 Adjektive', 29, v.filter(w => w.type === 'adjective').length);
 pruefe('r3: 15 Partikeln', 15, v.filter(w => w.type === 'particle').length);
 
-/* Uebungsarten und Hinweise (a2) */
+/* Uebungsarten und Hinweise (a2)
+   16.09.2026: 13 → 12 und 12 → 11 — „Bestimmt?" ist auf Elias' Wunsch aus dem
+   Satz-Modus entfernt („die übung im satzmodus brauche ich nicht weil die ist
+   viel zu leicht"). Die Übung hatte einen Hinweis. */
 const ueb = fs.readFileSync(REPO + '/js/uebung.js', 'utf8');
-pruefe('a2: 13 Uebungsarten', 13, (ueb.match(/^\s*id\s*:\s*'[^']+',\s*nr\s*:/gm) || []).length);
-pruefe('a2: 12 mit Hinweis', 12, (ueb.match(/^\s*hinweis\s*:/gm) || []).length);
+pruefe('a2: 12 Uebungsarten', 12, (ueb.match(/^\s*id\s*:\s*'[^']+',\s*nr\s*:/gm) || []).length);
+pruefe('a2: 11 mit Hinweis', 11, (ueb.match(/^\s*hinweis\s*:/gm) || []).length);
 
 /* Fachbegriffe (Oberflaechenpruefung) */
 const fach = fs.readFileSync(REPO + '/data/fachbegriffe.js', 'utf8');

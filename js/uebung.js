@@ -23,8 +23,9 @@
    Ablauf darunter, EINMAL.
 
    Drei Arten:
-     'tippen'   ein Wort im Satz antippen
-     'mehrfach' mehrere Woerter antippen, dann pruefen
+     'tippen'   ein Wort im Satz antippen, sofort ausgewertet — seit 16.09.2026
+                von keiner Uebung mehr benutzt: es verriet, dass es genau eines ist
+     'mehrfach' alle richtigen Woerter antippen, dann pruefen
      'wahl'     ein Wort ist hervorgehoben (oder verdeckt), Antwort auf Knoepfen
 
    ===================== Woher die Wahrheit kommt =====================
@@ -141,9 +142,6 @@ function uebungWortart(wort){
   if (t === 'particle' || t === 'grammar') return 'حَرْف';
   return 'اِسْم';
 }
-
-const uebungIstBestimmt = w => /^(ال|وال|فال|بال|كال|لل)/
-  .test(String(w||'').replace(/[ً-ْٰـ]/g,'').replace(/^[وف](?=ال)/,''));
 
 /* Wort ohne Zeichen und ohne Artikel — fuer die Frage „endet es auf ة?".
    Nicht `wortKern`: der wird zum VERGLEICHEN gebraucht und darf hier nicht
@@ -339,17 +337,30 @@ const HARAKA_WAHL = [
    selbst `ziele:[i]` zu schreiben. `test-eindeutige-ziele.mjs` prueft das.
    [[wirkung_an_der_quelle_stilllegen]]
 
-   `einzeln` ist die Frage bei genau einem Treffer, `viele(n)` die bei mehreren
-   — sie muss die Zahl nennen, sonst raet man, wie viele noch fehlen. */
-function uebungSammel(treffer, einzeln, viele){
+   ⛔⛔ SEIT DEM 16.09.2026 VERRÄT DIE FRAGE DIE ANZAHL NICHT MEHR.
+   Hier stand: „`viele(n)` … muss die Zahl nennen, sonst raet man, wie viele
+   noch fehlen" — und ein Treffer blieb ein Sofort-Antippen mit „Tippe DEN …".
+   Genau das machte die Aufgaben per Ausschluss lösbar. Elias an dem Abend,
+   zu „Tippe den مُضَاف an" auf عَمَّةُ الْوَلَدِ فِي الْبَيْتِ.:
+   „hier sollte es auch ein etwas längerer satz sein mit mehr mudaf bzw etwas
+   einfach schwieriger damit man so super leicht es einfach per ausschluss
+   prinzip machen kann" — und zu „Alle مَجْرُور" („es ist genau eines"):
+   „außerdem muss man das auch schwerer machen".
+   Wer weiß, dass es genau eines ist, streicht die anderen und ist fertig.
+
+   Deshalb ist jede Tipp-Aufgabe jetzt `mehrfach`: alle antippen, die man für
+   richtig hält, dann „Prüfen" — auch bei nur einem Treffer. Die Frage sagt
+   „alle", damit klar ist, dass es mehrere sein KÖNNEN (sein Wunsch vom
+   14.09.: „das es mehrere gibt und das man mehrere antippen soll"), aber
+   nie, wie viele. test-satzmodus-schwerer.mjs bewacht das. */
+function uebungSammel(treffer, frage){
   if (!treffer || !treffer.length) return null;
-  if (treffer.length === 1) return { frage: einzeln, ziele: treffer };
-  return { frage: viele(treffer.length), ziele: treffer, art: 'mehrfach' };
+  return { frage, ziele: treffer, art: 'mehrfach' };
 }
 
 const UEBUNGEN = [
   {
-    id:'mubtada-khabar', nr:1, name:'مُبْتَدَأ / خَبَر — Satzteile', art:'tippen',
+    id:'mubtada-khabar', nr:1, name:'مُبْتَدَأ / خَبَر — Satzteile', art:'mehrfach',
     /* ⭐ Dieser Modus ist aus Elias' eigener Rueckfrage vom 30.07. entstanden:
        "war es nicht so, dass mubtadi (nomen) und baat (adjektiv) zusammen
        sind?" Er hatte مُبْتَدَأ+خَبَر mit مَنْعُوت+نَعْت verwechselt. Der
@@ -366,27 +377,31 @@ const UEBUNGEN = [
         else if (t.rolle === 'خَبَر') kha.push(i);
       });
       return [
-        uebungSammel(mub, 'Tippe das مُبْتَدَأ an — worüber wird etwas gesagt?',
-          n => `Tippe alle ${n} مُبْتَدَأ an — worüber wird jeweils etwas gesagt?`),
-        uebungSammel(kha, 'Tippe das خَبَر an — was wird darüber ausgesagt?',
-          n => `Tippe alle ${n} خَبَر an — was wird jeweils ausgesagt?`)
+        /* ⛔ Die deutschen Wörter stehen IN der Frage (16.09.2026). Hier stand
+           „— worüber wird etwas gesagt?", und Elias an هَذَا قَلَمُكَ.: „hier
+           sollte bei mubtada stehen subjekt oder danach bei worüber wird etwas
+           gesagtr sollte stehen was ist das subjekt weil sonst verstehe ich
+           nicht und weiß nicht was von mir verlangt wrid". Subjekt und Aussage
+           sind die Wörter seiner Regelkarte (grammar-data.js: „مُبْتَدَأ وخَبَر
+           (Subjekt und Aussage)"). */
+        uebungSammel(mub, 'Tippe alle مُبْتَدَأ an — was ist das Subjekt?'),
+        uebungSammel(kha, 'Tippe alle خَبَر an — was ist die Aussage über das Subjekt?')
       ].filter(Boolean);
     }
   },
   {
-    id:'nat', nr:2, name:'نَعْت — Adjektiv zum Nomen', art:'tippen',
+    id:'nat', nr:2, name:'نَعْت — Adjektiv zum Nomen', art:'mehrfach',
     hinweis:'Das نَعْت stimmt mit seinem Wort in Fall, Zahl, Geschlecht UND Bestimmtheit überein.',
     baue(z){
       const treffer = [];
       z.forEach((t,i)=>{ if (t.rolle.includes('نَعْت')) treffer.push(i); });
       const a = uebungSammel(treffer,
-        'Tippe das نَعْت an — das Wort, das ein anderes beschreibt.',
-        n => `Tippe alle ${n} نَعْت an — die Wörter, die andere beschreiben.`);
+        'Tippe alle نَعْت an — Wörter, die ein anderes beschreiben.');
       return a ? [a] : [];
     }
   },
   {
-    id:'idafa', nr:3, name:'مُضَاف / مُضَاف إِلَيْهِ — Besitz', art:'tippen',
+    id:'idafa', nr:3, name:'مُضَاف / مُضَاف إِلَيْهِ — Besitz', art:'mehrfach',
     hinweis:'Der مُضَاف trägt weder Tanwīn noch Artikel; das مُضَاف إِلَيْهِ steht im Genitiv.',
     baue(z){
       /* ⛔ Vorher stand hier zweimal `findIndex` — das nahm nur das ERSTE
@@ -402,15 +417,13 @@ const UEBUNGEN = [
          Rueckmeldung, WELCHER Teil sass und welcher nicht. Neu ist nur, dass
          jede von beiden alle ihre Fundstellen kennt. */
       return [
-        uebungSammel(mudaf, 'Tippe den مُضَاف an — das Wort, das besessen wird.',
-          n => `Tippe alle ${n} مُضَاف an — die Wörter, die besessen werden.`),
-        uebungSammel(zu, 'Tippe das مُضَاف إِلَيْهِ an — den Besitzer.',
-          n => `Tippe alle ${n} مُضَاف إِلَيْهِ an — die Besitzer.`)
+        uebungSammel(mudaf, 'Tippe alle مُضَاف an — Wörter, die besessen werden.'),
+        uebungSammel(zu, 'Tippe alle مُضَاف إِلَيْهِ an — die Besitzer.')
       ].filter(Boolean);
     }
   },
   {
-    id:'jarr-paar', nr:4, name:'حَرْف جَرّ + مَجْرُور — Präposition', art:'tippen',
+    id:'jarr-paar', nr:4, name:'حَرْف جَرّ + مَجْرُور — Präposition', art:'mehrfach',
     hinweis:'Der حَرْف جَرّ setzt das Nomen dahinter in den Genitiv.',
     baue(z){
       /* ⛔ DER FALL, DEN ELIAS GEMELDET HAT. Vorher entstand je Partikel eine
@@ -436,10 +449,10 @@ const UEBUNGEN = [
       });
       if (!partikel.length || !nomen.length) return [];
       return [
-        uebungSammel(partikel, 'Tippe den حَرْف جَرّ an.',
-          n => `Tippe alle ${n} حُرُوف جَرّ an.`),
-        uebungSammel(nomen, 'Welches Wort steht dadurch im Genitiv (مَجْرُور)?',
-          n => `Welche ${n} Wörter stehen dadurch im Genitiv (مَجْرُور)?`)
+        /* Deutsch mit dazu, aus demselben Grund wie beim مُبْتَدَأ: die Frage
+           stand hier nur auf Arabisch. */
+        uebungSammel(partikel, 'Tippe alle حُرُوف جَرّ an — die Präpositionen.'),
+        uebungSammel(nomen, 'Tippe alle Wörter an, die dadurch im Genitiv (مَجْرُور) stehen.')
       ].filter(Boolean);
     }
   },
@@ -448,11 +461,12 @@ const UEBUNGEN = [
     hinweis:'Genitiv steht nach حَرْف جَرّ, nach ظَرْف, als مُضَاف إِلَيْهِ — und als نَعْت zu einem Wort im Genitiv.',
     baue(z){
       const ziele = z.map((t,i)=>t.erwartet==='jarr' ? i : -1).filter(i=>i>=0);
-      if (!ziele.length) return [];
-      const frage = ziele.length === 1
-        ? 'Tippe das Wort im Genitiv an — es ist genau eines.'
-        : `Tippe alle Wörter im Genitiv an — es sind ${ziele.length}.`;
-      return [{ frage, ziele }];
+      /* ⛔ Hier stand „— es ist genau eines." bzw. „— es sind N.". Elias am
+         16.09.2026 an genau dieser Aufgabe: „außerdem muss man das auch
+         schwerer machen". Die Anzahl verraten heißt: die übrigen Wörter
+         wegstreichen und fertig. Jetzt über uebungSammel wie die anderen. */
+      const a = uebungSammel(ziele, 'Tippe alle Wörter im Genitiv an.');
+      return a ? [a] : [];
     }
   },
   {
@@ -500,27 +514,15 @@ const UEBUNGEN = [
       }).filter(Boolean);
     }
   },
+  /* ⛔ „Bestimmt?" (bisher Nr. 9) ist ENTFERNT, 16.09.2026. Elias mit einem
+     Bildschirmfoto der Aufgabe: „diese übung können wir komplett raus nehmen
+     aus dem satzmodus weil das ist auch viel zu einfach" — und gleich danach:
+     „die regel soll natürlich in der app bleiben aber die übung im satzmodus
+     brauche ich nicht weil die ist viel zu leicht".
+     Die Regel al-tanwin-tilgung-01 bleibt also, nur die Übung ist weg. Nicht
+     wieder einbauen; test-satzmodus-schwerer.mjs bewacht beides. */
   {
-    id:'bestimmtheit', nr:9, name:'Bestimmt?', art:'wahl',
-    hinweis:'اَلْ macht bestimmt, Tanwīn (ـٌ ـٍ ـً) macht unbestimmt. Beides zusammen gibt es nicht.',
-    baue(z){
-      return z.map((t,i)=>{
-        if (!t.gelesen || uebungWortart(t.wort) !== 'اِسْم') return null;
-        const bestimmt = uebungIstBestimmt(t.rein);
-        /* Widerspruechliche Faelle nicht fragen: Artikel UND Tanwin zugleich
-           gibt es nicht, und ein Wort ohne beides (هَذَا) hat keine Antwort. */
-        if (bestimmt === t.gelesen.tanwin) return null;
-        return {
-          frage:'Ist das hervorgehobene Wort bestimmt oder unbestimmt?',
-          wortIdx:i, loesung:bestimmt ? 'bestimmt' : 'unbestimmt',
-          optionen:[{wert:'bestimmt',text:'bestimmt (اَلْ)'},{wert:'unbestimmt',text:'unbestimmt (Tanwīn)'}],
-          aufloesung:bestimmt ? 'Der Artikel اَلْ steht davor.' : `Die Endung ist ${t.gelesen.zeichen} — ein Tanwīn.`
-        };
-      }).filter(Boolean);
-    }
-  },
-  {
-    id:'regel', nr:10, name:'Welche Regel?', art:'wahl',
+    id:'regel', nr:9, name:'Welche Regel?', art:'wahl',
     /* Die Ablenker kommen aus DEMSELBEN Thema. Vier zufaellige Regelnamen aus
        73 waeren zu leicht: "Sonnen- und Mondbuchstaben" gegen "Iḍāfa" verraet
        sich schon am Wort. */
@@ -643,7 +645,7 @@ const UEBUNGEN = [
     }
   },
   {
-    id:'genus', nr:11, name:'مُذَكَّر / مُؤَنَّث — Geschlecht', art:'wahl',
+    id:'genus', nr:10, name:'مُذَكَّر / مُؤَنَّث — Geschlecht', art:'wahl',
     /* ⭐ Elias' Widerspruch vom 30.07., als ich den Reiter "Weiblich" aus dem
        Themenfilter genommen hatte: "nein das soll rein, es gibt ja auch
        Ausnahmen und Verkettungen von maennlichen und weiblichen Begriffen, das
@@ -730,7 +732,7 @@ const UEBUNGEN = [
     }
   },
   {
-    id:'isara', nr:12, name:'هَذَا / هَذِهِ — Hinweiswort', art:'wahl',
+    id:'isara', nr:11, name:'هَذَا / هَذِهِ — Hinweiswort', art:'wahl',
     hinweis:'Das Hinweiswort richtet sich nach dem Geschlecht des Wortes danach (isara-genus-kongruenz-01).',
     baue(z){
       /* Vier Schreibungen, zwei Paare. `istFem` sagt, welche der beiden im
@@ -760,7 +762,7 @@ const UEBUNGEN = [
     }
   },
   {
-    id:'fem-form', nr:13, name:'صَغِيرٌ / صَغِيرَةٌ — weibliche Form', art:'wahl',
+    id:'fem-form', nr:12, name:'صَغِيرٌ / صَغِيرَةٌ — weibliche Form', art:'wahl',
     hinweis:'Männliche oder weibliche Form? Die Antwort steht im Wort davor — oder im Hinweiswort.',
     baue(z){
       return z.map((t,i)=>{
@@ -977,9 +979,11 @@ function uebungenAufbauen(){
    ⛔ Der alte Streifen war 2061 px breit bei 13 Modi. Jeder neue Modus
    verlaengerte den Wischweg, ohne dass mehr zu sehen war — genau das, was
    Elias dreimal gemeldet hat. */
+/* ⚠️ Seit dem 16.09.2026 sind alle Tipp-Übungen `mehrfach` (die Frage verrät
+   die Anzahl nicht mehr, siehe uebungSammel). Die frühere Gruppe
+   „Antippen" für `tippen` bliebe leer und fällt deshalb weg. */
 const UEB_GRUPPEN = [
-  ['Antippen',         'tippen'],
-  ['Mehrere antippen', 'mehrfach'],
+  ['Antippen',         'mehrfach'],
   ['Auswählen',        'wahl']
 ];
 
@@ -1351,7 +1355,7 @@ function arabischHervor(text){
    Nach „Richtig." / „Nicht ganz." steht ein Knopf, der die passende Karte der
    Regelsammlung ÜBER der Aufgabe öffnet — die Aufgabe bleibt, wie sie ist.
 
-   ⭐ Zuordnung für alle dreizehn Modi, und zuerst die Folge-19-Karte, wo es
+   ⭐ Zuordnung für alle zwölf Modi, und zuerst die Folge-19-Karte, wo es
    eine gibt: „primär will ich eigentlich die regeln von folge 19".
      1  mubtada-khabar  mubtada-khabar-01 (keine Folge-19-Karte zum Nominalsatz)
      2  nat             f19-nat
@@ -1361,18 +1365,52 @@ function arabischHervor(text){
      6  kasus           nach der ROLLE des Wortes (siehe warumNachRolle), sonst f19-irab
      7  haraka          ebenso
      8  wortart         wortarten-01
-     9  bestimmtheit    al-tanwin-tilgung-01 (sagt genau, was der Hinweis des Modus sagt)
-     10 regel           die gefragte Regel selbst (regelId)
-     11 genus           f19-tanith
-     12 isara           f19-isara
-     13 fem-form        f19-tanith (das Adjektiv passt sich an — Merkmal auf der Karte)
-   Keiner der dreizehn bleibt ohne Karte. */
+     9  regel           die gefragte Regel selbst (regelId)
+     10 genus           f19-tanith
+     11 isara           f19-isara
+     12 fem-form        f19-tanith (das Adjektiv passt sich an — Merkmal auf der Karte)
+   Keiner der zwölf bleibt ohne Karte. („Bestimmt?" mit al-tanwin-tilgung-01
+   ist seit 16.09.2026 entfernt, siehe die Übungsliste.) */
 const UEBUNG_WARUM = {
   'mubtada-khabar': 'mubtada-khabar-01', 'nat': 'f19-nat', 'idafa': 'f19-idafa',
   'jarr-paar': 'f19-jarr', 'alle-majrur': 'f19-irab', 'kasus': 'f19-irab', 'haraka': 'f19-irab',
-  'wortart': 'wortarten-01', 'bestimmtheit': 'al-tanwin-tilgung-01', 'regel': null,
+  'wortart': 'wortarten-01', 'regel': null,
   'genus': 'f19-tanith', 'isara': 'f19-isara', 'fem-form': 'f19-tanith'
 };
+
+/* ⭐⭐ UNSICHTBARE ENDUNG → DIE KARTE, DIE GENAU DAS ERKLÄRT (16.09.2026)
+
+   Elias mit einem Bildschirmfoto von „Alle مَجْرُور", richtig beantwortet mit
+   الْمُسْتَشْفَى: „und das wort steht gar nicht im genitiv weil es kein kasra
+   hat. oder ist das irgendeine ausnahme oder so?"
+
+   Es IST die Ausnahme, und sein Lehrer erklärt sie in Folge 12 mit genau
+   diesem Wort (alif-maqsura-unveraenderlich-01). „Warum?" zeigte aber die
+   allgemeine Karte der Fälle — also genau die Kasra, die er vermisst hat.
+
+   Deshalb: Ist an einem Zielwort der Fall gefragt und seine Endung nach
+   endungUnsichtbar() (js/irab.js) nicht zu sehen, weil es auf ى oder ا endet,
+   öffnet „Warum?" diese Karte. Dieselbe Bedingung wie im I'rab-Erklärer
+   (js/saetze.js): erwartet UND nichts gelesen. Ohne `!gelesen` hielte die
+   Prüfung كِتَابًا für ein Wort „auf Alif".
+
+   ⚠️ Nur wo es um den FALL geht: bei „Welcher Fall?" jedes Wort, sonst nur
+   Wörter im Genitiv. إِلَى und عَلَى enden auch auf ى, sind aber Partikeln
+   ohne erwarteten Fall und fallen so von selbst heraus. */
+const UEBUNG_WARUM_UNSICHTBAR = 'alif-maqsura-unveraenderlich-01';
+function uebungUnsichtbarerFall(a){
+  if (!a || !a.modus || !a.zeilen || typeof endungUnsichtbar !== 'function') return false;
+  const id = a.modus.id;
+  if (!['kasus', 'alle-majrur', 'jarr-paar', 'idafa'].includes(id)) return false;
+  const stellen = Array.isArray(a.ziele) ? a.ziele : (a.wortIdx != null ? [a.wortIdx] : []);
+  return stellen.some(i => {
+    const t = a.zeilen[i];
+    if (!t || !t.erwartet || t.gelesen) return false;
+    if (id !== 'kasus' && t.erwartet !== 'jarr') return false;
+    const grund = String(endungUnsichtbar(t.wort) || '');
+    return grund.startsWith('اِسْم مَقْصُور') || grund.startsWith('endet auf Alif');
+  });
+}
 
 /* Bei „Welcher Fall?" und „Welche Endung?" entscheidet die Rolle des Wortes,
    WARUM es in diesem Fall steht — die allgemeine Karte der Fälle nur dann,
@@ -1394,6 +1432,7 @@ function uebungWarum(a){
   if (a.modus.id === 'regel') id = a.regelId || null;
   if ((a.modus.id === 'kasus' || a.modus.id === 'haraka') && a.zeilen && a.zeilen[a.wortIdx])
     id = warumNachRolle(a.zeilen[a.wortIdx].rolle) || id;
+  if (uebungUnsichtbarerFall(a) && regelArt(UEBUNG_WARUM_UNSICHTBAR)) id = UEBUNG_WARUM_UNSICHTBAR;
   if (!id || !regelArt(id)) return null;
   const t = (typeof regelText === 'function') ? regelText(id) : null;
   return { id, name: t ? t.name : id };
@@ -1435,6 +1474,12 @@ function uebersetzungFuer(stueck){
    ⭐ WARUM 13, und warum das keine willkuerliche Zahl ist: der gemischte Modus
    zieht reihum eine Aufgabe je Uebungsart. Nach 13 ist jede der 13 Uebungsarten
    genau einmal drangewesen — eine natuerliche Grenze, keine gesetzte.
+
+   ⚠️ SEIT DEM 16.09.2026 SIND ES ZWÖLF: „Bestimmt?" ist auf Elias' Wunsch
+   entfernt. Die Vorgabe bleibt trotzdem 13, denn die Zahl stammt von ihm
+   („nach 13 aufgaben"), und ob er sie aus der Zahl der Übungsarten hatte,
+   hat er nie gesagt. Wirksam ist ohnehin seine Einstellung: auf seinem
+   Bildschirmfoto vom 16.09.2026 steht „Tagesziel 0 von 7".
 
    ⭐ Der DRITTE Faelle nach demselben Muster: die Karteikarten haben
    'alles-faellig', der Hoermodus hat 'hoer-tagesziel' mit `vt_hoerTag`.

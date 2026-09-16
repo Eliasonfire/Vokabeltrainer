@@ -290,8 +290,16 @@ console.log('\n=== 7. Stufe 2 — „so gut wie möglich in die app integriert" 
   const regelArt = app.hol('regelArt');
   const ohne = modi.filter(id => !(id in karte));
   const tot = Object.entries(karte).filter(([, ziel]) => ziel && !regelArt(ziel)).map(([m, z]) => m + '→' + z);
+  /* 16.09.2026: 13 → 12. „Bestimmt?" ist auf Elias' Wunsch aus dem Satzmodus
+     entfernt („die übung im satzmodus brauche ich nicht weil die ist viel zu
+     leicht"); test-satzmodus-schwerer.mjs bewacht, dass sie draußen bleibt. */
   pruefe(`„Warum? → Regel": alle ${modi.length} Übungsmodi zugeordnet, jedes Ziel existiert`,
-    modi.length === 13 && !ohne.length && !tot.length, 'ohne: ' + ohne.join(',') + ' · tot: ' + tot.join(','));
+    modi.length === 12 && !ohne.length && !tot.length, 'Modi: ' + modi.length + ' · ohne: ' + ohne.join(',') + ' · tot: ' + tot.join(','));
+  /* Und die Karte für die unsichtbare Endung (الْمُسْتَشْفَى, 16.09.2026) —
+     ein Ziel außerhalb von UEBUNG_WARUM, deshalb eigens geprüft. */
+  const unsichtbar = (ueb.match(/const UEBUNG_WARUM_UNSICHTBAR\s*=\s*'([a-z0-9-]+)'/) || [])[1];
+  pruefe('„Warum?" bei unsichtbarer Endung zeigt auf eine Karte, die es gibt',
+    !!unsichtbar && !!regelArt(unsichtbar), unsichtbar || 'UEBUNG_WARUM_UNSICHTBAR fehlt');
   pruefe('„Welche Regel?" öffnet die gefragte Regel selbst (regelId)', /a\.modus\.id === 'regel'\) id = a\.regelId/.test(ueb));
   pruefe('der Knopf steht in der Rückmeldung und öffnet über data-regelkarte', /class="ueb-warum"[^`]*data-regelkarte=/.test(ueb));
   pruefe('Lesemodus-Aufklapper: „in der Sammlung öffnen"', /gp-sammlung[^`]*data-regelkarte=/.test(lies('js/saetze.js')));

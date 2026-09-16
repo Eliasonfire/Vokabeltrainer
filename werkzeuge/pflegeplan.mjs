@@ -139,6 +139,12 @@ export const PFLEGEPLAN = [
     eingaben: { nein: 'Der Suchbegriff wird nirgends gespeichert und nicht abgeglichen; es entsteht nichts, das jemand weiterverarbeiten muss.' },
     veralten: { nein: 'Die Treffer entstehen bei jedem Tastendruck und jedem Öffnen neu aus den aktuellen Daten.' },
   },
+  /* 16.09.2026 (v504), innerhalb von js/uebung.js und deshalb von Hand hier:
+     „Bestimmt?" entfernt, Tipp-Fragen ohne Anzahl und mit deutschem Wort,
+     „Warum?" bei unsichtbarer Endung → alif-maqsura-unveraenderlich-01.
+     Kein neuer Pflegebedarf: die Bedingung kommt aus endungUnsichtbar()
+     (js/irab.js), die Karte bewacht pruefe-regelsammlung.mjs, das Verhalten
+     test-satzmodus-schwerer.mjs. */
   {
     funktion: 'Satzmodus und Grammatik-Hervorhebung',
     dateien: ['js/saetze.js', 'js/uebung.js', 'grammar-data.js', 'lehrbuch-saetze.js'],

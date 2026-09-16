@@ -68,18 +68,24 @@ if (teil){
   sammel = c.__s;
 }
 
+/* ⛔ Seit dem 16.09.2026 verrät uebungSammel() die Anzahl NICHT mehr, und auch
+   ein einzelner Treffer ist Mehrfachauswahl. Elias: „etwas einfach schwieriger
+   damit man so super leicht es einfach per ausschluss prinzip machen kann".
+   Hier stand vorher „ein Treffer: Frage im Singular" und „mehrere Treffer:
+   Frage nennt die Zahl" — genau das, was die Aufgabe per Ausschluss lösbar
+   machte. Die Anzahl-Sperre selbst prüft test-satzmodus-schwerer.mjs. */
 if (sammel){
-  const leer = sammel([], 'einer', n => 'viele ' + n);
+  const leer = sammel([], 'Tippe alle X an.');
   pruefe('ohne Treffer entsteht keine Aufgabe', leer === null, JSON.stringify(leer));
 
-  const eins = sammel([3], 'Tippe das X an.', n => 'Tippe alle ' + n + ' X an.');
-  pruefe('ein Treffer: Frage im Singular', eins.frage === 'Tippe das X an.', eins.frage);
-  pruefe('ein Treffer: bleibt beim Sofort-Antippen', eins.art === undefined, eins.art);
+  const eins = sammel([3], 'Tippe alle X an.');
+  pruefe('ein Treffer: dieselbe Frage wie bei mehreren', eins.frage === 'Tippe alle X an.', eins.frage);
+  pruefe('ein Treffer: trotzdem Mehrfachauswahl mit „Prüfen"', eins.art === 'mehrfach', eins.art);
   pruefe('ein Treffer: genau dieses Ziel', eins.ziele.length === 1 && eins.ziele[0] === 3,
     JSON.stringify(eins.ziele));
 
-  const drei = sammel([1, 4, 7], 'Tippe das X an.', n => 'Tippe alle ' + n + ' X an.');
-  pruefe('mehrere Treffer: Frage nennt die Zahl', /\b3\b/.test(drei.frage), drei.frage);
+  const drei = sammel([1, 4, 7], 'Tippe alle X an.');
+  pruefe('mehrere Treffer: Frage nennt KEINE Zahl', !/\d/.test(drei.frage), drei.frage);
   pruefe('mehrere Treffer: wird zur Mehrfachauswahl', drei.art === 'mehrfach', drei.art);
   pruefe('mehrere Treffer: ALLE sind Ziel',
     drei.ziele.length === 3 && drei.ziele.join(',') === '1,4,7', JSON.stringify(drei.ziele));
