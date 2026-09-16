@@ -264,10 +264,30 @@ const KEINE_WURZEL_UEBERNEHMEN = new Set([
   '45888', /* لِمَاذَا */ '45891'  /* الْآنَ  */
 ]);
 
+/* ---------- Doppelt in zwei Büchern: die zweite Karte bleibt draußen (16.09.2026) ----
+
+   Gefragt: „أَخٌ (Bruder) und أُخْتٌ (Schwester) stehen in beiden Büchern und
+   kommen deshalb doppelt. Soll ich die aus Bayna Yadayk ausblenden?" — Elias: „ja".
+   Er hat beide seit Madina 1 Kapitel 6 als Karte (madina1-l6-ach,
+   madina1-l6-ucht, samt Fortschritt); die Bayna-Yadayk-Einträge wären leere
+   Zweitkarten desselben Wortes.
+
+   ⛔ Warum eine Liste und keine Regel: der Tausch in js/kern.js (tauscheDublette)
+   gilt nur für EIGENE Karten gegen Buchwörter — Elias' Regel vom 07.09.2026.
+   Zwischen zwei Büchern hat er genau diese zwei entschieden, nicht mehr.
+   Weitere Dubletten mit neuen Kapiteln werden ihm vorgelegt, nicht still
+   ausgeblendet. Gelesen auch von werkzeuge/vorrat.mjs, damit die Wartung für
+   diese zwei keine Eselsbrücken schreibt. [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+const BUCHDUBLETTEN_AUSBLENDEN = new Set([
+  '45984',  /* أَخٌ    Bayna Yadayk 1 K1 — hat er als madina1-l6-ach   */
+  '45986'   /* أُخْتٌ  Bayna Yadayk 1 K1 — hat er als madina1-l6-ucht  */
+]);
+
 function einhaengen(liste){
   const nachId = new Map(VOCAB_DATA.map(w=>[String(w.id), w]));
   let neu = 0, ergaenzt = 0, verworfen = 0;
   liste.forEach(roh=>{
+    if (BUCHDUBLETTEN_AUSBLENDEN.has(String(roh.id))) return;
     const da = nachId.get(String(roh.id));
     if (!da){ VOCAB_DATA.push(Object.assign({}, roh)); neu++; return; }
     /* Vorhandenes gewinnt: Beispielsatz, Quran-Beleg und Startbox aus

@@ -37,8 +37,12 @@ function schneide(text, name){
   }
   return null;
 }
-const code = schneide(quelle, 'tagesAuswahl');
-if (!code) { console.log('⛔ tagesAuswahl() steht nicht mehr in js/kern.js'); process.exit(1); }
+/* Seit dem 16.09.2026 gehören nieAbgefragt() und neueZuerst() dazu — tagesAuswahl()
+   ruft sie. Fehlt eine, meldet das der Test, statt mit ReferenceError zu enden. */
+const teile = ['nieAbgefragt', 'neueZuerst', 'tagesAuswahl'].map(n => [n, schneide(quelle, n)]);
+const fehlend = teile.filter(([, t]) => !t).map(([n]) => n);
+if (fehlend.length) { console.log('⛔ nicht mehr in js/kern.js: ' + fehlend.join(', ')); process.exit(1); }
+const code = teile.map(([, t]) => t).join('\n');
 
 /* Die Anteilskonstante ebenfalls aus der Quelle holen — eine eigene Zahl hier
    wäre eine zweite Wahrheit, die beim ersten Ändern auseinanderläuft. */
@@ -139,6 +143,59 @@ console.log('test-tagesdeckel.mjs — die Tagesration\n');
   const p = [{ id: 'ohne1' }, { id: 'ohne2' }, { id: 'ohne3' }];
   pruefe('ohne PROGRESS-Eintrag: kein Absturz, alle drei kommen durch',
     auswahl(p, 2).length === 2, auswahl(p, 2).length);
+}
+
+/* ---------- 7. ⭐⭐ Neue Vokabeln zuerst (16.09.2026) ----------
+   Seine Lage um 20:21:19 (KV-Stand): 170 ältere Box-1-Karten, die zwölf Karten
+   des Abends mit dem Tag von heute, dazu Wiederholungen. Gefragt, ob nie
+   abgefragte Karten früher kommen sollen — „ja", und als Regel: „generell wenn
+   neue vokabeln kommen vorallem bei neuem kapiteln oder büchern dann bekomen die
+   immer den vorzug weil das sind die mit denen ich arbeiten werde". */
+{
+  const lage = (spec) => {
+    c.PROGRESS = {};
+    const pool = [];
+    for (const [praefix, anzahl, p] of spec)
+      for (let k = 0; k < anzahl; k++){ c.PROGRESS[praefix + k] = Object.assign({}, p); pool.push({ id: praefix + k }); }
+    /* wie dueWords(): am längsten fällig zuerst (sort ist stabil) */
+    return pool.sort((a, b) => String(c.PROGRESS[a.id].nextReview).localeCompare(String(c.PROGRESS[b.id].nextReview)));
+  };
+  const zaehle = (liste, praefix) => liste.filter(w => w.id.startsWith(praefix)).length;
+  const seineLage = [
+    ['alt', 170, { box: 1, nextReview: '2026-09-01', correct: 0, wrong: 1 }],
+    ['wdh', 67,  { box: 3, nextReview: '2026-09-10', correct: 2, wrong: 0 }],
+    ['heute', 12, { box: 1, nextReview: '2026-09-16', correct: 0, wrong: 0 }]
+  ];
+  const g = auswahl(lage(seineLage), 10);
+  pruefe('seine Lage: alle 4 Box-1-Plätze gehen an neue Karten', zaehle(g, 'heute') === 4, zaehle(g, 'heute'));
+  pruefe('… und die 6 Wiederholungen bleiben', zaehle(g, 'wdh') === 6, zaehle(g, 'wdh'));
+
+  /* die jüngsten zuerst: das neue Kapitel vor alten, nie beantworteten Karten */
+  const g2 = auswahl(lage([
+    ['alt', 50, { box: 1, nextReview: '2026-09-01', correct: 1, wrong: 1 }],
+    ['august', 5, { box: 1, nextReview: '2026-08-29', correct: 0, wrong: 0 }],
+    ['heute', 3, { box: 1, nextReview: '2026-09-16', correct: 0, wrong: 0 }],
+    ['wdh', 20, { box: 4, nextReview: '2026-09-12', correct: 3, wrong: 0 }]
+  ]), 10);
+  pruefe('die jüngsten neuen zuerst: 3 von heute + 1 ältere neue', zaehle(g2, 'heute') === 3 && zaehle(g2, 'august') === 1,
+    zaehle(g2, 'heute') + ' / ' + zaehle(g2, 'august'));
+
+  /* ohne neue Karten: genau wie vorher, die am längsten fälligen */
+  const g3 = auswahl(lage([
+    ['alt', 50, { box: 1, nextReview: '2026-09-01', correct: 1, wrong: 1 }],
+    ['wdh', 20, { box: 4, nextReview: '2026-09-12', correct: 3, wrong: 0 }]
+  ]), 10);
+  pruefe('ohne neue Karten: 4 alte aus Box 1 wie bisher', zaehle(g3, 'alt') === 4, zaehle(g3, 'alt'));
+
+  /* ⛔ Gegenprobe mit der alten Zeile — sonst prüfte Fall 7 nichts. */
+  const alt = code.replace('const neu  = neueZuerst(pool.filter(w => box(w) <= 1));', 'const neu  = pool.filter(w => box(w) <= 1);');
+  const c2 = { PROGRESS: {}, Array, Math, Number, Object, String, console };
+  vm.createContext(c2);
+  vm.runInContext('const DECKEL_ANTEIL_BOX1 = ' + mAnteil[1] + ';\n' + alt + '\n;globalThis.__ = tagesAuswahl;', c2);
+  const pool = lage(seineLage);
+  c2.PROGRESS = c.PROGRESS;
+  const g4 = c2.__(pool, 10);
+  pruefe('STÖRTEST — mit der alten Zeile käme keine neue Karte dran', alt !== code && zaehle(g4, 'heute') === 0, zaehle(g4, 'heute'));
 }
 
 console.log('\n' + (schlecht ? '✘ ' + schlecht + ' von ' + (ok + schlecht) + ' Fällen falsch'

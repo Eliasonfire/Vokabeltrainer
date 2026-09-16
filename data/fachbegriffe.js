@@ -1145,5 +1145,38 @@ const FACHBEGRIFF_VOKABELN = [
     sentAr: "لِلتَّاجِرِ أَوْلَادٌ.",
     sentDe: "Der Händler hat Kinder.",
     mnemo: "أَوْلَادٌ – Kinder, so hat es dein Lehrer übersetzt. Es ist die Mehrzahl von وَلَدٌ (Junge), das du aus Madina 1 kennst: einer ist وَلَدٌ, viele sind أَوْلَادٌ."
+  },
+  {
+    /* ⭐ Das letzte rot beschriftete Wort der Seite 33 („Los gehts"), Elias 20:32:24:
+       „die vokabeln die ich dort aufgeschrieben habe mit rot die brauche ich auch
+       als karteikarten".
+       ⛔ TASCHKĪL — drei Schritte, weil die Quellen zuerst uneins waren:
+         · Bildergitter S. 33: „هيا بنا" OHNE Zeichen.
+         · arabdict: هَيَّا (mit Schadda) · Reverso: هَيَا بِنَا (ohne Schadda).
+         · Elias hörte nach: Folge 20 „AB1A Kapitel 1-2", 22:07–22:13 und
+           22:37–22:41 — 20:51:27 „hayya hat ein schadda", 20:53:01 „aber es hat
+           ein kasrah. also hayyi bina", 20:53:36 „ich habs von meinem lehrer so
+           gehöhrt", 20:53:59 „du kannst auch wörterbuch gucken". Im Buch steht
+           unter dem Schadda keine Kasra — sein Wort, 20:54:36: „kann man nicht
+           erkennen weil es da keins gibt" —, beide Wörterbücher schreiben Fatha,
+           und die Kasra gehört zu بِ in بِنَا.
+         · Dialog S. 32 (PDF-Seite 54, bei 300 dpi gelesen; der Scan hat 130 ppi):
+           „الأب : هَيّا بِنا إلى المَسْجِدِ ." und „سَعْدٌ وسَعيدٌ : هيّا بِنا ."
+       Der Satz unten ist dieser Buchsatz; إِلَى und الْمَسْجِدِ in der voll
+       vokalisierten Form aus seinem Bestand (im Buch teils ohne Zeichen).
+       ⚠️ js/irab.js kennt هيا seither als unveränderlich — sonst hätte der
+       Satzmodus هَيَّا als مُبْتَدَأ abgefragt. */
+    id: "gram-hayya-bina",
+    ar: "هَيَّا بِنَا",
+    de: "Los geht's",
+    deNeben: "Los, lass(t) uns gehen",
+    type: 'expression',
+    chapter: 'personal',
+    book: 'grammar',
+    belegt: 0,
+    quelleLehrer: 'Arabya Bayna Yadayk 1A, S. 32 (Dialog 3) und S. 33 (rot „Los gehts"); Folge 20, 22:10 „Los geht\'s"',
+    sentAr: "هَيَّا بِنَا إِلَى الْمَسْجِدِ.",
+    sentDe: "Los, lasst uns zur Moschee gehen.",
+    mnemo: "هَيَّا بِنَا – Los geht's! So ruft der Vater in deinem Buch, nachdem die Mutter den Adhan des Fajr gehört hat: هَيَّا بِنَا إِلَى الْمَسْجِدِ – los, zur Moschee."
   }
 ];

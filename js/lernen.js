@@ -119,6 +119,11 @@ function startLearningSession(){
   let words = (typeof tagesPool === 'function') ? tagesPool() : currentPool();
   if (words.length === 0){ toast(SETTINGS.wrongOnly ? 'Keine schwachen Wörter mit dieser Auswahl – stark!' : 'Nichts fällig – schau später wieder vorbei.'); showScreen('home'); return; }
   const size = SETTINGS.sessionSize;
+  /* ⭐ Ohne Tagesdeckel schneidet erst der Takt unten auf die Rundengröße — dann
+     müssen neue Vokabeln VORHER nach vorn, sonst gälte Elias' Regel („wenn neue
+     vokabeln kommen … dann bekomen die immer den vorzug") nur mit Deckel.
+     Mit Deckel hat tagesAuswahl() sie schon ausgewählt. neueZuerst() in js/kern.js. */
+  if (typeof tagesDeckel === 'function' && !tagesDeckel() && typeof neueZuerst === 'function') words = neueZuerst(words);
   /* Auch wenn die ganze Auswahl in eine Runde passt: der Takt sortiert die
      Fachbegriffe auf die Plaetze 6/12/18, statt sie irgendwo zu lassen. */
   words = fachbegriffTakt(words, size);

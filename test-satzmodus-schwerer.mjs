@@ -265,6 +265,16 @@ function laufe(quelle, still){
   pruefe('أَوْلَادٌ „Kinder" (Übersetzung seines Lehrers) als Karte, mit Satz',
     !!awlad && String(awlad.ar).normalize('NFC') === 'أَوْلَادٌ'.normalize('NFC') && awlad.de === 'Kinder' && !!awlad.sentAr,
     awlad ? awlad.ar + ' „' + awlad.de + '"' : 'fehlt');
+  /* هَيَّا بِنَا von derselben Seite — Elias hörte das Schadda im Video nach (20:51:27
+     „hayya hat ein schadda"). Und die Analyse darf هَيَّا NICHT als مُبْتَدَأ lesen,
+     sonst fragt der Satzmodus es als Subjekt ab. */
+  const hayya = karten.find(x => x.id === 'gram-hayya-bina');
+  pruefe('هَيَّا بِنَا „Los geht\'s" als Karte, mit Schadda und Buchsatz',
+    !!hayya && String(hayya.ar).normalize('NFC') === 'هَيَّا بِنَا'.normalize('NFC') && hayya.de === "Los geht's" && !!hayya.sentAr,
+    hayya ? hayya.ar + ' „' + hayya.de + '"' : 'fehlt');
+  const hayyaRollen = irab.analysiereSatz('هَيَّا بِنَا إِلَى الْمَسْجِدِ.');
+  pruefe('die Analyse liest هَيَّا als unveränderlich, nicht als مُبْتَدَأ',
+    hayyaRollen.length > 0 && hayyaRollen[0].rolle === 'unveränderlich', hayyaRollen.length ? hayyaRollen[0].rolle : 'keine Analyse');
   const kern = KERN_QUELLE;
   const freiListe = (kern.match(/const FREISCHALTEN_AUF_WUNSCH\s*=\s*\[([^\]]*)\]/) || [])[1] || '';
   pruefe('هَؤُلَاءِ, أُولَئِكَ, مَتَى, أَيٌّ (Madina 1, K24) werden freigeschaltet',

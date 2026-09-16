@@ -225,7 +225,13 @@ if (FENSTER){
       if (!angabe[slug]){ q.woerter = []; continue; }
       const grenze = angabe[slug] + VORAUS;
       const kapitel = (frei[slug] || []).map(Number).filter(k => k <= grenze);
-      q.woerter = (q.woerter || []).filter(w => kapitel.includes(Number(w.chapter)));
+      /* ⛔ Doppelt in zwei Büchern, auf seinen Wunsch ausgeblendet (16.09.2026) —
+         dieselbe Zeile wie js/buecher.js und werkzeuge/vorrat.mjs. */
+      const ausQ = fs.readFileSync(path.join(DIR, 'js', 'buecher.js'), 'utf8')
+        .match(/const BUCHDUBLETTEN_AUSBLENDEN = new Set\(\[([\s\S]*?)\]\);/);
+      const aus = new Set(((ausQ ? ausQ[1] : '').replace(/\/\*[\s\S]*?\*\//g, '').match(/'([^']+)'/g) || []).map(x => x.slice(1, -1)));
+      if (!ausQ) errors.push('--fenster: BUCHDUBLETTEN_AUSBLENDEN in js/buecher.js nicht gefunden');
+      q.woerter = (q.woerter || []).filter(w => kapitel.includes(Number(w.chapter)) && !aus.has(String(w.id)));
       n += q.woerter.length;
     }
     /* Jetzt sind die Buchquellen aufs Fenster geschnitten — erst hier sagt

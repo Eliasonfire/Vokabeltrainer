@@ -1267,6 +1267,17 @@ const _imFenster = [];
    `fehlendeAngabe`), und ein Zweitaufruf verdoppelte am 21.08. die Meldung
    „224 ungeprueft" auf „448". [[zweiter_aufruf_ueberschreibt_still]] */
 const _imAbzug = new Set();
+/* ⛔ Doppelt in zwei Büchern und auf seinen Wunsch ausgeblendet (16.09.2026) — die
+   App hängt diese Einträge gar nicht erst ein (js/buecher.js,
+   BUCHDUBLETTEN_AUSBLENDEN). Aus DERSELBEN Zeile gelesen, sonst schriebe die
+   Wartung Eselsbrücken für Karten, die er nie sieht. Fehlt die Zeile, wird das
+   GESAGT. [[entscheidung_gilt_fuer_das_zweite_werkzeug]] [[ausfall_ist_unsichtbar_gebaut]] */
+const _buchDublettenAus = (() => {
+  const q = fs.readFileSync(p('js/buecher.js'), 'utf8');
+  const m = q.match(/const BUCHDUBLETTEN_AUSBLENDEN = new Set\(\[([\s\S]*?)\]\);/);
+  if (!m) { console.log('  ⚠️ BUCHDUBLETTEN_AUSBLENDEN in js/buecher.js nicht gefunden — ausgeblendete Dubletten werden mitgezählt.'); return new Set(); }
+  return new Set((m[1].replace(/\/\*[\s\S]*?\*\//g, '').match(/'([^']+)'/g) || []).map(x => x.slice(1, -1)));
+})();
 BUECHER.forEach(b => {
   const kapitel = kapitelImFenster(b.slug);
   if (!kapitel || !kapitel.length) return;
@@ -1274,7 +1285,7 @@ BUECHER.forEach(b => {
   if (!fs.existsSync(datei)) return;
   vm.runInContext(fs.readFileSync(datei, 'utf8'), kiste, { filename: b.datei });
   const liste = (kiste.window.VOKABELN && kiste.window.VOKABELN[b.slug]) || [];
-  liste.filter(w => kapitel.includes(Number(w.chapter))).forEach(w => {
+  liste.filter(w => kapitel.includes(Number(w.chapter)) && !_buchDublettenAus.has(String(w.id))).forEach(w => {
     geprueft++;
     _imFenster.push(w);
     const id = String(w.id);
