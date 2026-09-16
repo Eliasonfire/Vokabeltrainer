@@ -4831,3 +4831,481 @@ Zweitbester Kandidat, falls er dafür keine Zeit hat: die **zwei Artefakt-Seiten
 ohne URL** eintragen (Punkt 3). Das kostet zwei Zeilen und verhindert, dass beim
 nächsten Veröffentlichen eine zweite Seite entsteht, auf der seine gespeicherten
 Antworten fehlen.
+
+## 2026-09-16 20:41 – Wöchentliche Wartung (Mi-Check)
+
+**Der Lauf des Abends, an dem Elias zwei neue Kapitel freigeschaltet hat.** Um
+20:20:56 hat er Bayna Yadayk 1 Kapitel 1 und 2 aufgemacht; zwanzig Minuten
+später begann dieser Lauf und fand **39 Wörter ohne alles**. Sie haben jetzt
+117 Eselsbrücken, 39 Beispielsätze und 96 Markierungen.
+
+### Schritt 0 – Arbeitsmarke, Repo, Prompt-Wächter
+
+`arbeit.mjs --beginne "Wartungslauf" --schritte 7` gesetzt, `git pull --ff-only`
+→ „Already up to date". `pruefe-volles-programm.mjs` **Exit 0**: Quelle, Kopie,
+Prompt und Messwerkzeuge deckungsgleich, 13 Punkte, alle 55 im Prompt
+aufgerufenen Werkzeuge freigegeben.
+
+### Schritt 0a – Vorige Läufe
+
+`pruefe-laeufe.mjs --tage 30` **Exit 0** — jeder geplante Termin der letzten 30
+Tage hat einen abgeschlossenen Lauf. Keine Lücke.
+
+### Schritt 0b – Samsung-Notes-Export: 51 Tage
+
+| Notiz | Export | Datenbank | Rückstand |
+|---|---|---|---|
+| Madina Buch 1 (Beschriftet) | 27.07. 03:10 | 01.09. 22:02 | 🔴 **51 Tage** seit dem Export |
+| Grammatik Heft Medina Buch 1 | 27.07. 03:22 | 27.07. 22:57 | ✅ aktuell |
+| Madina Buch 1 Vokabelheft | 27.07. 03:11 | 27.07. 03:21 | ✅ aktuell |
+
+`export-index.mjs --live` Exit 2, `--pruefen` **0 Beanstandungen** — genau die
+Unterscheidung, für die es den `--live`-Abgleich gibt. Der Zeitstempel der
+Notiz steht seit dem 01.09. still; es wächst nur der Abstand. Die To-Do-Zeile
+ist von 48 auf **51 Tage** nachgezogen, nicht verdoppelt.
+
+⚠️ Und weiterhin: `list_export_status` meldet für diese Notiz den **28.07.**,
+die lebende Datenbank den **01.09.** — wer dem Feld `stale` glaubt, hält einen
+Rückstand von 36 Tagen für einen Tag.
+
+### Schritt 1 – Neue Aufzeichnung: Folge 20
+
+`get_recordings` liefert **20** Einträge, einer mehr als am 13.09.:
+
+> **Folge 20 | AB1A Kapitel 1-2**, https://youtu.be/6op8M1y73S4,
+> eingestellt **16.09.2026 18:33 UTC** — rund zwei Stunden vor diesem Lauf.
+
+Zwischen Folge 19 (06.09.) und Folge 20 liegen **10 Tage**. ⚠️ Der Titel
+verlässt die MB1-Zählung („AB1A"); **nicht auf ein Kapitel raten**, der Lehrer
+nennt es im Video selbst — dieselbe Lage wie bei Folge 18. In
+`transcripts/backlog.md` nachgetragen (Kopf und Folgentabelle). Rohmaterial
+holt `arabicroots-backfill-retry`, nicht diese Routine.
+
+### Schritt 1b – Regelauswertung
+
+`rueckstand.mjs --knapp` **Exit 0**: kein Rückstand. Keine Fundstellen zu
+lesen, keine neue Regel. `kandidaten.mjs`/`abgleich.mjs` deshalb nicht
+aufgerufen.
+
+### Schritt 1c – Das volle Programm für die zwei neuen Kapitel
+
+#### 1c.1 Die zwei Stände
+
+⛔ **Der KV-Abruf scheitert beim ERSTEN Versuch und geht beim zweiten.** Der
+erste `vorrat.mjs --stand … --app auto` meldete
+„KV nicht erreichbar (`npx wrangler kv key get` schlug fehl)" und rechnete nur
+mit arabicroots weiter. Derselbe Aufruf, eine halbe Stunde später wiederholt,
+lief durch:
+
+```
+  eigene Woerter (vt_personalVocab): 14 -> data/eigene-woerter.json
+  auswendig (vt_hifz + vt_hifzVerse): 28 Sure(n), 5 einzelne Vers(e) -> data/auswendig.json
+  abgelehnte Vorschlaege (vt_vorschlagWeg): 45 an 23 Wort/Woertern -> data/abgelehnt.json
+  Leitner-Boxen (vt_progress): 4521 Woerter -> data/boxen.json  (davon 4400 in Box 1)
+  App-Auswahl (KV, Stand 16.9.2026, 20:20:33): madina-1 bis 12 | bayna-yadayk-1 bis 2
+```
+
+⭐ **Das ist der Befund, nicht der Fehlschlag.** Am 09.09. und am 13.09. stand
+im Log „KV nicht erreichbar" und die drei Dateien blieben alt — und beide Male
+wurde **nicht wiederholt**. Der Abruf ist also nicht kaputt, er ist wackelig.
+**Ein zweiter Versuch gehört ab jetzt dazu.**
+
+⚠️ **Nicht zugemacht** (gehört laut Prompt in den Bericht): madina-1 Kapitel 12
+und bayna-yadayk-1 Kapitel 1–2 stehen in `js/kern.js`, aber nicht in den
+gemessenen arabicroots-Quellen. **Behalten** — arabicroots kennt bayna-yadayk-1
+für ihn gar nicht, freigeschaltet hat er es in seiner eigenen App.
+
+⛔ **Kein automatisches Mitwachsen des Lernstands** — die Zeile
+„Lernstand automatisch mitgewachsen" kam nicht. `data/lernstand.json` trägt
+weiterhin seine eigene Angabe: madina-1 **12**, bayna-yadayk-1 **2**.
+
+⚠️ **Abweichung Angabe ↔ Messung, unverändert die Frage an ihn:**
+
+| Buch | seine Angabe | gemessen (`get_learning_progress`) |
+|---|---|---|
+| madina-1 | 12 | Kapitel **24**, 244 Wörter angefasst |
+| bayna-yadayk-1 | 2 | Kapitel **16**, 221 Wörter angefasst |
+
+#### 1c.3 Messung vorher
+
+```
+Vorrat: 71 von 298 freigeschalteten Woertern unvollstaendig —
+  117 Eselsbruecken, 40 Beispielsaetze, 0 Markierungen, 0 Kategorien,
+  13× root, 9× type, 9× gender, 8× pl, 1× femSg, 1× sg
+```
+
+Die 117 und die 40 sind **fast vollständig** die zwei neuen Kapitel: Bayna
+Yadayk 1 K1 (27 Wörter) und K2 (12 Wörter) hatten **keine einzige**
+Eselsbrücke und **keinen einzigen** Satz. Alle 39 tragen dagegen `type`,
+`root`, `gender`, `pl` und bei den Verben alle vier Stammformen — A1 bis A5
+waren aus dem Abzug vollständig.
+
+#### 1c.4 Geschrieben — A6 und A9
+
+**A6 · 117 Eselsbrücken für 39 Wörter**, eingespielt mit
+`eselsbruecken-setzen.mjs` (nie von Hand, nie über die Kommandozeile), alle
+39 neu in `data/eselsbruecken.js` und `data/eselsbruecken-alt.js` angelegt.
+Nach Elias' Rangfolge; **sieben** Koranstellen, alle mit
+`node werkzeuge/vers.mjs` belegt und alle aus seinem auswendigen Bereich:
+
+| Stelle | Wort |
+|---|---|
+| 94:2 وَوَضَعْنَا عَنْكَ وِزْرَكَ | وَضَعَ |
+| 96:1 اِقْرَأْ بِاسْمِ رَبِّكَ | قَرَأَ |
+| 96:4 الَّذِي عَلَّمَ بِالْقَلَمِ | عَلَامَةٌ · مُعَلِّمٌ |
+| 96:10 عَبْدًا إِذَا صَلَّى | صَلَّى |
+| 104:2 جَمَعَ مَالًا وَعَدَّدَهُ | عَدَدٌ |
+| 105:1 فَعَلَ رَبُّكَ | فَعَلَ |
+| 112:3 لَمْ يَلِدْ وَلَمْ يُولَدْ | وَالِدٌ · وَالِدَةٌ |
+
+⛔ **Was NICHT arabisch geschrieben wurde:** ʿĪd, al-Qurʾān, aṣ-Ṣiddīq,
+al-Muṣawwir, Wuḍūʾ, „samiʿa llāhu li-man ḥamidah", nusḫa, masʾala, mustaǧāb —
+alles Umschrift, weil die Vokalisierung in seinem Bestand nicht belegt ist
+(E.1, A12). Die Merkhaken tragen trotzdem, weil der Begriff gemeint ist, nicht
+das Schriftbild.
+
+**A9 · 39 Beispielsätze** in `data/beispielsaetze.js`, ausschließlich aus
+madina-1 K1–12 und den beiden neuen Kapiteln gebaut. Bauformen eng gehalten:
+Verbalsatz (Verb + فَاعِل + مَفْعُول بِهِ), Iḍāfa, Nominalsatz mit نَعْت. Kein
+Passiv, kein Nebensatz.
+
+**A10 · 96 Markierungen** über `markierung-setzen.mjs` (erst `--pruefen`, dann
+`--einbauen`), zwei bis drei je Satz, ohne Überschneidung. Verteilt auf
+`verb-madi-endungen-01`, `marfu-grundfall-01`, `harf-jarr-fi-ala-01`,
+`harf-jarr-min-ila-01`, `mudaf-ohne-al-01`, `mudaf-ilayh-01`,
+`nat-bestimmtheit-01`, `nat-vier-bedingungen-01`, `mubtada-khabar-01`,
+`mubtada-khabar-genus-01`, `ismul-isara-hadha-01`, `istifham-madha-01`.
+
+#### ⛔ Befund 1: `pruefe-saetze.js` hat zwei Lücken im Iʿrāb-Erklärer gefunden
+
+Der erste Durchlauf meldete **3 Sätze mit unpassender Endung**. Nachgesehen
+statt weggeworfen — die Sätze waren richtig, die **Zerlegung** war es nicht:
+
+| Satz | was der Erklärer las |
+|---|---|
+| `مَرَّ الْحِمَارُ فِي الشَّارِعِ.` | مَرَّ als Nomen → مُبْتَدَأ, الْحِمَارُ → مُضَاف إِلَيْه |
+| `وَالِدَةُ الْوَلَدِ فِي الْمَطْبَخِ.` | الْوَلَدِ als نَعْت statt als مُضَاف إِلَيْه |
+| `وَالِدُ الطَّالِبِ مُهَنْدِسٌ.` | dasselbe mit الطَّالِبِ |
+
+**مَرَّ** hat drei Buchstaben, eine Šadda und kein Tanwīn — ohne geladenes Buch
+fehlt jedes Verbmerkmal. **وَالِد / وَالِدَة** tragen das Muster فَاعِل und
+gelten dem Erklärer als Adjektiv; was folgt, wird zum نَعْت.
+
+⛔ **Das ist kein Schönheitsfehler:** der Satz wird im Satz-Modus zerlegt, und
+eine falsche Zerlegung wird dort zur falschen Lehre (Regel 2 im Kopf von
+`data/beispielsaetze.js`). Die drei Sätze stehen deshalb jetzt als
+`يَمُرُّ الْحِمَارُ فِي الشَّارِعِ.`, `الْوَالِدَةُ فِي الْمَطْبَخِ.` und
+`الْوَالِدُ مُهَنْدِسٌ.` — mit einem Kommentar im Quelltext, **warum**. Danach
+**440 Sätze kasusrein**. Beide Lücken stehen in der To-Do unter „⬜ Offen".
+
+#### ⛔ Befund 2: `pruefe-eselsbruecken.js` kennt den Buchbestand im Fenster nicht
+
+Nach dem ersten Einspielen: **10 Verstöße**. Einer war echt (eine Klammer
+glossierte أَيْنَ als „woher?", das heißt aber „wo?"), einer eine Formalie
+(fünf Wörter Koranzitat statt vier). **Acht** waren Meldungen dieser Form:
+
+> „نَظَّارَةٌ (Brille)" wird als bekanntes Wort vorgestellt — steht aber erst in
+> bayna-yadayk-1 Kapitel 2, **außerhalb seines Fensters**
+
+⛔ **Kapitel 2 IST im Fenster** — er hat es an dem Abend selbst freigeschaltet,
+und dasselbe Werkzeug nennt in Abschnitt 7 „Lernstand: bayna-yadayk-1 Kapitel
+2". Die Menge `bekannt` wird nur aus `vocab-data.js`, den Fachbegriffen und den
+eigenen Wörtern gebildet; Buchvokabeln fehlen darin. Die Meldung sagt sogar
+selbst, wo das Wort steht — sie nennt es trotzdem „außerhalb".
+
+Die sechs betroffenen Texte sind umformuliert (der Besitzanspruch steht jetzt
+nur noch an Wörtern aus `vocab-data.js`), der Prüfer ist grün. ⛔ **Die Lücke
+ist damit nicht behoben**, nur umgangen — sie steht in der To-Do unter
+„⬜ Offen" mit dem konkreten Fix.
+
+#### ⭐ Befund 3: Elias hat zehn Eselsbrücken abgelehnt, und niemand hatte es gesehen
+
+`data/abgelehnt.json` war beim Lauf am 13.09. **sieben Tage alt**, weil der
+KV-Abruf fehlschlug. Mit dem frischen Stand (45 Ablehnungen an 23 Wörtern
+statt 35) meldete `pruefe-eselsbruecken.js` sofort **10 Texte, die er
+weggeklickt hat und die trotzdem noch dastanden**:
+
+| Wort | abgelehnt |
+|---|---|
+| سُوقٌ (Markt) | **alle drei** |
+| ثَلَّاجَةٌ (Kühlschrank) | **alle drei** |
+| مِلْعَقَةٌ (Löffel) | die ersten zwei |
+| عُصْفُورٌ (Spatz) | die erste |
+| الْقَاهِرَةُ (Kairo) | die dritte |
+
+Alle zehn sind in diesem Lauf **ersetzt** — mit anderen Anknüpfungen, nicht mit
+Umformulierungen des Abgelehnten. Bei سُوق und ثَلَّاجَة musste die ganze
+Dreiergruppe neu gedacht werden (Genitivpartikel-Umgebung, Pluralmuster,
+Satzbau statt Klang und Etymologie; Kühlschrankinhalt, بَارِد/حَارّ und die
+Šadda statt „Schneemacherin" dreimal). Danach `pruefe-eselsbruecken.js`
+**Exit 0, 1483 Einzelprüfungen, 4 Hinweise**.
+
+⛔ **Die Lehre ist dieselbe wie oben:** der fehlgeschlagene KV-Abruf war kein
+Schönheitsfehler. Zehn seiner Entscheidungen lagen eine Woche lang unbeachtet
+da, und kein Prüfer konnte es melden, weil er die Ablehnungen nicht kannte.
+
+#### 1c.5 Prüfungen
+
+| Prüfung | Ergebnis |
+|---|---|
+| `pruefe-saetze.js` | ✅ **440** Sätze kasusrein |
+| `pruefe-funktionen.js` | ✅ **297 von 297** Infokarten nennen eine Funktion, 0 × „nur Wort" |
+| `pruefe-markierungen.js` | ✅ alle 5 harten Prüfungen auf 0 (**726** Markierungen, 402 markierte Sätze) |
+| `pruefe-eigene-vorrang.mjs` | ✅ alle 4 Werkzeuge sehen dieselbe Fassung, alle messen **297** |
+| `validate.js` | ✅ 37 Prüfungen, 0 Fehler, 3 Hinweise; **alle 14** Satzmodus-Kategorien besetzt |
+| `pruefe-erreichbarkeit.js` | ✅ **103 von 103** Regeln erreichbar |
+| `pruefe-duplikate.js` | ⚠️ **3** Befunde (siehe unten) |
+
+**`pruefe-duplikate.js`: zwei neue Befunde durch die Freischaltung — und Elias
+hat sie mitten im Lauf schon entschieden.** أَخٌ und أُخْتٌ kommen als
+Bayna-Yadayk-Buchvokabeln dazu und stehen schon gepflegt in `vocab-data.js`
+(mit Eselsbrücke, Satz und `femSg`). Dazu der alte Fall سَيِّدٌ.
+
+⭐⭐ **Parallel zu diesem Lauf lief eine Sitzung.** Um **21:00:11** hat sie
+`5ba5a56` (v512) committet, und darin steht genau diese Antwort: *Elias „ja"
+auf „أَخٌ und أُخْتٌ … Soll ich die aus Bayna Yadayk ausblenden?"* —
+`BUCHDUBLETTEN_AUSBLENDEN = {45984, 45986}` in `js/buecher.js`, `einhaengen()`
+überspringt sie.
+
+⛔ **`pruefe-duplikate.js` weiß davon nichts und meldet beide weiter.** Im
+selben Commit wurden `vorrat.mjs`, `pruefe-funktionen.js` und
+`pruefe-wortfelder.js` nachgezogen — dieser eine Prüfer nicht. Er misst den
+Repo-Abzug, nicht das, was die App einhängt. Damit stehen dort **3** Befunde,
+wo **einer** offen ist. Steht in der To-Do unter „⬜ Offen" als Punkt 0.
+
+⚠️ **Folge für diesen Lauf:** die Eselsbrücken, der Satz und die Markierungen,
+die ich für 45984 und 45986 geschrieben habe, liegen jetzt an zwei Karten, die
+die App **nicht mehr einhängt**. Sie sind nicht falsch, nur vorerst
+wirkungslos — das volle Programm hat also effektiv **37** der 39 Wörter
+erreicht. Nichts zurückgenommen: die Texte kosten nichts und tragen sofort,
+falls er die Ausblendung je zurücknimmt.
+
+#### 1c.3 Messung nachher
+
+```
+Vorrat: 32 von 297 freigeschalteten Woertern unvollstaendig —
+  0 Eselsbruecken, 1 Beispielsaetze, 0 Markierungen, 0 Kategorien,
+  13× root, 9× type, 9× gender, 8× pl, 1× femSg, 1× sg
+```
+
+**71 → 32.** Was übrig ist, sind **Feldangaben, die nur Elias beantworten
+kann** — und genau die stehen auf der Fragenseite. Der eine fehlende Satz
+gehört zu einer Fachbegriffskarte.
+
+#### 1c.7 / 1c.8 / 1c.8b / 1c.8c – die Seiten
+
+- `aussenbelege.mjs`: **2 Feldbelege, 3 Taschkīl-Belege** (اسْمُ, امْرَأَةٌ,
+  ابْنَةُ — je an Stelle 0).
+- `woerterbuch-belege.mjs`: **13 Belege, vorher 9** — 4 neu (45802 مَاءٌ,
+  45851 قَهْوَةٌ über Langenscheidt, dazu zwei eigene Wörter über Reverso).
+- `wartungsfragen-artefakt.mjs`: **6 Fragen, 41 Wörter** — `root` 13, `type` 9,
+  `gender` 9, `pl` 8, `femSg` 1, `sg` 1. → `artefakte/wartungsfragen.html`,
+  URL **5ChpdN9n7PAiTY4B5ZHud3**.
+- `wartet-auf-elias.mjs`: **Exit 2, 17 Entscheidungen**, davon 4 mit Stückarbeit
+  (139 Einzelstücke), 13 nur ansehen und wählen. → `artefakte/wartet-auf-elias.html`.
+- `freigabe-artefakt.mjs`: **79 Fundstellen aus 6 Folgen** (F6 15 · F14 15 ·
+  F15 15 · F16 15 · F17 15 · F19 4), Schlüssel `regelkandidaten-v1`.
+- `regelkategorien-seite.mjs`: 103 Regeln in 14 Kategorien, **0 ohne Kategorie**.
+- 1c.8c: `regelauswahl-seite.mjs`, `regelpruefung-seite.mjs`,
+  `verschmelzung-seite.mjs` gebaut; `git status --short` sagt, **welche** sich
+  geändert haben: **`regelauswahl.html` und `verschmelzung.html`**.
+  `artefakte/regelpruefung.html` bleibt für diesen Vergleich blind
+  (`artefakte/` steht in `.gitignore`) — unveränderter Vorschlag: Prüfsumme je
+  Seite in einer Zustandsdatei.
+
+⛔ **Artefakt-Wächter, drei Meldungen:**
+
+| Meldung | |
+|---|---|
+| **2 Seiten ohne hinterlegte URL** | `farbe-wortmarke.html`, `stimmen-liste.html` — vor dem Veröffentlichen in `DATEI_ZU_URL` eintragen, sonst entsteht eine zweite Seite |
+| **1 Seite mit URL, auf keiner Liste** | `regelkategorien.html` — eine Adresse, die man nicht findet |
+| **Warteseiten-URL** | war am 09.09. „artifact not found"; erst klären, welche Seite er offen hat |
+
+### Schritt 1d – Regelsammlung
+
+- `regeln-holen.mjs`: **keine** Regelsammlung im abgeglichenen Stand. Letzter
+  Abgleich **16.09.2026 20:21:19** — also frisch; er hat dort nichts eingetragen.
+  ⭐ Der KV war hier erreichbar, während derselbe Abruf in `vorrat.mjs` eine
+  halbe Stunde vorher scheiterte. Dasselbe Bild wie oben.
+- `regelsammlung-wache.mjs --aufnahmen .aufnahmen.json`: **Exit 0**, nichts
+  Neues. 20 Folgen gelesen, 8 Grammatik-Notizen, `asma-khamsa-vollstaendig-01`
+  wartet weiter (Transkripte reichen bis Folge 19, Folge 20 hat noch keins).
+  Beide mit `--merken` fortgeschrieben.
+- `regelkategorien-seite.mjs` neu gebaut, **keine** Regel unter „Nicht zuordbar".
+
+### Schritt 1e – Pflegeplan
+
+`pruefe-pflegeplan.mjs` **Exit 0**: 24 Funktionen über eine Routine gepflegt,
+1 in einer Sitzung, 25 ohne Pflegebedarf, **0 Lücken**. Alle 7 Störtests greifen.
+
+### Schritt 1f – Fachbegriffe
+
+`fachbegriffe-finden.mjs`: **0 unentschiedene Kandidaten** aus 103 Regeln.
+Nichts zu entscheiden, kein `fachbegriffe-setzen.mjs`.
+
+### Schritt 2 – Vokabelabzug und Paket
+
+`hole-vokabeln.mjs`: **4433 Einträge, 11 eigene**. Je Buch unverändert
+gegenüber dem 13.09.: bayna-yadayk-1 231 · -2 552 · -3 445 · -4 881 ·
+madina-1 298 · madina-2 445 · madina-3 1238 · quran 343.
+
+`baue-vokabelpaket.mjs`: **UNVERAENDERT** — dasselbe Paket wie beim letzten
+Lauf. **Kein `handlungsbedarf`**, Elias muss nichts neu einlesen.
+
+`get_unlocked_chapters`: madina-1 **1–11**, madina-2 **1–24**. ⚠️ arabicroots
+kennt weder madina-1 Kapitel 12 noch bayna-yadayk-1 — beides steht nur in
+seiner eigenen App und in `js/kern.js`.
+
+### Schritt 3 – `vocab-data.js`
+
+Nicht neu erzeugt (das würde die Sätze löschen). Geändert wurden dort nur
+**vier `mnemo`-Zeilen** — die abgelehnten Eselsbrücken aus Befund 3, über
+`eselsbruecken-setzen.mjs`.
+
+### Schritt 4 – Samsung Notes
+
+Siehe Schritt 0b. `export-index.mjs --pruefen` **0 Beanstandungen bei 3
+Einträgen**, `--live` **Exit 2**. Abgleich gegen die Handschrift übersprungen,
+weil der Export 51 Tage alt ist — und weil erst sein Ja ihn fällig macht.
+
+### Schritt 5 – Lernstand als Hinweis
+
+`get_weak_vocabulary` (Schwelle 0,35) → **24 Einträge**, `get_personal_vocabulary`
+→ **11 eigene Vokabeln, keine neue seit dem 18.07.** Beide Zahlen wie am 13.09.
+
+⭐ **Der jüngste Versuch ist neu und passt zum Abend:** 14.09.2026 14:39 an
+**جَدْوَلٌ** (Tabelle/Stundenplan), bayna-yadayk-1 Kapitel 7 — 56 Versuche,
+17 richtig. Er übt also seit Tagen in Bayna Yadayk, bevor er die ersten beiden
+Kapitel offiziell freigeschaltet hat. Das stützt seine Angabe von 20:20.
+
+⚠️ Die Zahlen und Grammatikbegriffe aus madina-1 Kapitel 24 bleiben unverändert
+sein Schwachpunkt: acht Zahlwörter und نَعْتٌ · مَنْصُوبٌ · نَحْنُ · هُمْ ·
+غَضْبَانُ, alle bei **0 richtig**. Unverändert auch 0 von 7 an seiner eigenen
+Vokabel أَلْمُهَنْدِسٌ. ⛔ Nicht geändert, es ist sein Eintrag.
+
+### Schritt 6 – Qualitätssicherung
+
+`node werkzeuge/alle-pruefer.mjs` → **109 Prüfer gelaufen, 9 rot.** Danach vier
+davon in diesem Lauf behoben, es bleiben **5**:
+
+| rot | was dahintersteckt |
+|---|---|
+| `pruefe-duplikate.js` (2) | 3 Befunde — wartet auf Elias (siehe 1c.5) |
+| `pruefe-taschkil.js` (1) | 34 Befunde in 30 Wörtern, **gebündelt 26 Fragen** — wartet auf Elias |
+| `pruefe-themen.mjs` (2) | 3 Punkte, „Kandidaten, kein Urteil" — wartet auf Elias |
+| `pruefe-gedaechtnis-zahlen.mjs` (1) | Vault nannte v512, `sw.js` steht auf v513 — **mit diesem Eintrag behoben** |
+| `test-woerterbuch-belege.mjs` (1) | **neu, siehe Befund 4** |
+
+**Behoben im Lauf:** `pruefe-eselsbruecken.js` (Befund 2 und 3),
+`pruefe-kreislaeufe.mjs` (`artefakte/regeln.json` war älter als
+`grammar-data.js` — `regeln-sammeln.mjs` nachgezogen),
+`pruefe-erreichbarkeit.js` und `pruefe-ausgeliefert.mjs` (beide durch das
+Veröffentlichen).
+
+#### ⛔ Befund 4: `test-woerterbuch-belege.mjs` kennt die Langenscheidt-Belege nicht
+
+Zwei der 13 Belege fallen durch, und zwar genau die **zwei neuen**:
+
+```
+45802 {"pl":"مياه","plUrl":"…langenscheidt.com/…","woher":"langenscheidt"}
+45851 {"pl":"قهوة","plUrl":"…langenscheidt.com/…","woher":"langenscheidt"}
+```
+
+Der Test verlangt von **jedem** Beleg `typeApp || gender` und ein Feld `url`.
+Ein Plural ist aber weder eine Wortart noch ein Geschlecht, und die Adresse
+heißt dort `plUrl`. Langenscheidt kam am **07.09.2026** als dritte Quelle dazu
+(`bb87859`) — der Test stammt von davor und kennt diese Sorte Beleg nicht.
+
+⛔ **Nicht am Test gedreht.** Er ist genau dafür da, schlechte Belege zu
+fangen; ihn weicher zu machen, um grün zu werden, wäre der falsche Handgriff.
+Zu entscheiden ist, ob `woerterbuch-belege.mjs` künftig auch `url` schreibt
+oder ob der Test einen `pl`-Beleg als eigene Sorte anerkennt. Steht in der
+To-Do unter „⬜ Offen".
+
+**Die übrigen Prüfungen und Eichungen, alle grün:** `pruefe-transkripte.js` ·
+`pruefe-sprecher.js` · `pruefe-quran.js` · `pruefe-wortfelder.js --fenster`
+(**184 von 297** mit Bedeutungsfeld, am 13.09.: 163 von 246) ·
+`pruefe-schreibpfade.mjs` · `pruefe-artefakt-inhalt.mjs` ·
+`pruefe-erreichbarkeit-eichung.mjs` · `eiche-fragenreihenfolge.mjs` ·
+`eiche-wortart-knopf.mjs` · `eiche-plural-beleg.mjs` 7/7 ·
+`eiche-taschkil-beleg.mjs` 7/7 · `eiche-harf-jarr.mjs` 17/17 ·
+`eiche-zahlplural.mjs` 17/17 · `eiche-datumsmuster.mjs` 16 Fälle ·
+`pruefe-datumsangaben.mjs` · `pruefe-volles-programm.mjs` (Abnahme).
+
+### Auslieferung (1c.6)
+
+1. `CACHE_NAME` in `sw.js`: **v512 → v513**.
+2. Sammellauf (siehe oben).
+3. `node werkzeuge/veroeffentlichen.mjs --mit-daten` → **105 Dateien, 8,58 MB**,
+   „Uploaded 4 files (97 already uploaded)". Access-Nachweis vom 09.09.2026,
+   7 Tage alt.
+4. **`.deploy/` gegengeprüft, Zahl für Zahl gegen das Repo:**
+
+   | | `.deploy/` | Repo |
+   |---|---|---|
+   | `CACHE_NAME` | `vokabeltrainer-v513` | v513 |
+   | Regeln | 103 | 103 |
+   | Markierungen | **726** | 726 |
+   | Beispielsätze | **193** | 193 |
+   | Buch-Eselsbrücken | **194** | 194 |
+
+   `pruefe-erreichbarkeit.js`: **„deckt sich mit dem Repo."**
+
+⭐ **Elias muss die App schließen und neu öffnen.**
+
+### Schritt 7 – Commit
+
+Explizite Pfade, alle in diesem Lauf selbst geändert: `data/beispielsaetze.js`,
+`data/eselsbruecken.js`, `data/eselsbruecken-alt.js`, `vocab-data.js`,
+`grammar-data.js`, `sw.js`, `data/lernstand.json`, `data/abgelehnt.json`,
+`data/auswendig.json`, `data/boxen.json`, `.vorrat-auftrag.json`,
+`regelauswahl.html`, `verschmelzung.html` und dieser Log-Eintrag.
+**Kein `git add -A`.** ⛔ `werkzeuge/gedaechtnis-wortlaut.mjs` lag beim Start
+verändert im Baum und stammt **nicht** aus diesem Lauf — nicht angefasst.
+`.gitignore` nicht angefasst; `data/vokabeln-*.js`, `vokabelpaket.json`,
+`data/eigene-woerter.json` und `transcripts/` bleiben draußen.
+
+### Was offen bleibt
+
+1. 🔴 **Samsung-Notes-Export, 51 Tage.** Nur Elias kann exportieren, und erst
+   sein Ja macht es fällig.
+2. 🔴 **17 Entscheidungen** auf `artefakte/wartet-auf-elias.html`, darunter die
+   **6 Fragen zu 41 Wörtern** und die **79 Regelkandidaten** aus 6 Folgen.
+3. ⬜ **Vier Werkzeuglücken** aus diesem Lauf: `pruefe-duplikate.js` kennt
+   `BUCHDUBLETTEN_AUSBLENDEN` nicht, `pruefe-eselsbruecken.js` Abschnitt 4
+   kennt den Buchbestand im Fenster nicht, `test-woerterbuch-belege.mjs` kennt
+   die Langenscheidt-Plurale nicht, und die zwei Iʿrāb-Lücken (مَرَّ,
+   وَالِد/وَالِدَة). Alle in der To-Do unter „⬜ Offen".
+5. ⚠️ **2 Artefakt-Seiten ohne URL** (`farbe-wortmarke.html`,
+   `stimmen-liste.html`) — vor dem nächsten Veröffentlichen eintragen.
+6. ⚠️ **`regelkategorien.html` steht auf keiner Liste**, die Elias sieht.
+7. ⚠️ **`regelauswahl.html` und `verschmelzung.html` warten auf
+   Veröffentlichung** — kann die Routine nicht selbst.
+8. ⚠️ **Folge 20 ohne Rohmaterial** — `arabicroots-backfill-retry` holt es.
+   Folge 19 bleibt mit der unentscheidbaren Stelle 11:26 ebenfalls offen.
+9. ⚠️ **`vorrat.mjs --lernstand` meldet madina-1 Kapitel 24 und
+   bayna-yadayk-1 Kapitel 16**, seine Angabe ist 12 bzw. 2. Frage an ihn,
+   kein Nachziehen.
+10. ⚠️ **`js/irab.js`: `NICHT_VERB` braucht هُنَّ und أَنْتُمْ** — unverändert
+    offen seit dem 06.09.
+11. ⚠️ **`werkzeuge/urteile-uebernehmen.mjs` hat keinen Aufrufer** — einbauen
+    oder in `VON_HAND` aufnehmen. Unverändert.
+
+### Vorschlag für den nächsten Schritt
+
+**Den KV-Abruf in `vorrat.mjs` einmal wiederholen lassen, bevor er aufgibt.**
+Das ist eine kleine Änderung mit einem heute gemessenen Preis: derselbe Aufruf
+scheiterte um 20:45 und lief um 21:15 durch. Am 09.09. und am 13.09. ist er
+ebenfalls gescheitert, und beide Läufe haben **nicht** wiederholt — die Folge
+war, dass `data/abgelehnt.json` eine Woche alt blieb und **zehn Eselsbrücken,
+die Elias weggeklickt hat, weiter in der App standen** (Befund 3). Kein Prüfer
+konnte das melden, weil ihm die Ablehnungen fehlten.
+
+Ein zweiter Versuch nach ein paar Sekunden hätte alle drei Läufe gerettet. Das
+ist billiger als jede der Lücken, die dadurch entstehen — und es betrifft
+genau die Datei, in der seine eigenen Entscheidungen stehen.
+
+Zweitbester Kandidat: **`pruefe-eselsbruecken.js` Abschnitt 4 den Buchbestand
+im Fenster beibringen** (Befund 2). Solange er ihn nicht kennt, wird jede
+Eselsbrücke, die zwei neu freigeschaltete Wörter miteinander verknüpft, als
+Fehler gemeldet — und genau solche Verknüpfungen sind die guten.

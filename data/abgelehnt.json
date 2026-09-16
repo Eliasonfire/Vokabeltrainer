@@ -1,6 +1,6 @@
 {
   "stempel": 1788919441301,
-  "geholt": "9.9.2026",
+  "geholt": "16.9.2026",
   "woerter": {
     "45760": [
       {
@@ -113,6 +113,23 @@
         "zeit": 1788222873135
       }
     ],
+    "45818": [
+      {
+        "nr": 0,
+        "text": "Klanghilfe: „sūq\" kennst du vielleicht schon aus Reiseberichten — der Suk. Merke es zusammen mit دُكَّانٌ (Geschäft): der große Markt und der kleine Laden.",
+        "zeit": 1789158303293
+      },
+      {
+        "nr": 1,
+        "text": "سُوق ist weiblich, obwohl es keine تاء مَرْبُوطة trägt — man sagt هَذِهِ السُّوقُ und hängt قَدِيمَةٌ daran. Genau die Sorte Wort, vor der dein Lehrer warnt: das Geschlecht steht nicht immer am Wort.",
+        "zeit": 1789158328318
+      },
+      {
+        "nr": 2,
+        "text": "Das Wort ist auch im Deutschen angekommen — der „Souk“ in Marrakesch oder Damaskus ist dasselbe سُوق. Und im Ḥadīth heißt es, die liebsten Orte bei Allah seien مَسَاجِدُهَا, die verhasstesten أَسْوَاقُهَا. (Muslim.)",
+        "zeit": 1789158351183
+      }
+    ],
     "45821": [
       {
         "nr": 0,
@@ -140,6 +157,35 @@
         "nr": 2,
         "text": "Warum auf der Karte zwei deutsche Wörter stehen: حَقِيبَة allein ist die Tasche. Der Rucksack heißt حَقِيبَةُ الظَّهْرِ, die Tasche des Rückens. Ein Wort deckt beides, weil erst der Zusatz die Art bestimmt.",
         "zeit": 1788222470209
+      }
+    ],
+    "45844": [
+      {
+        "nr": 0,
+        "text": "Im Ḥadīth wird empfohlen, nach dem Essen die Finger abzulecken: «فَلْيَلْعَقْ أَصَابِعَهُ». Genau diese Wurzel ل ع ق steckt im Löffel — das Gerät zum Lecken. (Buḫārī und Muslim.)",
+        "zeit": 1789158772453
+      },
+      {
+        "nr": 1,
+        "text": "Werkzeug-مِـ, und die Wurzel ل ع ق heißt lecken — der Löffel ist wörtlich „das Ding zum Lecken“. ⭐ Zusammen mit مِفْتَاحٌ (das Ding zum Öffnen) und مِكْوَاةٌ (das Ding zum Bügeln) hast du drei Werkzeuge nach demselben Bauplan. Das Muster ist die Vokabel, nicht das Einzelwort.",
+        "zeit": 1789158773503
+      }
+    ],
+    "45848": [
+      {
+        "nr": 0,
+        "text": "⭐ Maschinen-Muster فَعَّالَة wie سَيَّارَةٌ und دَرَّاجَةٌ. Die Wurzel ist ث ل ج = Schnee! Der Kühlschrank ist wörtlich „die Schneemacherin\". Bild und Wort passen zusammen.",
+        "zeit": 1789158657654
+      },
+      {
+        "nr": 1,
+        "text": "Die Wurzel ist das Beste an diesem Wort: ث ل ج heißt Schnee. Der Kühlschrank ist wörtlich „die Schneemacherin\". Wenn du das Bild einmal hast, brauchst du die Vokabel nicht mehr — du leitest sie her.",
+        "zeit": 1789158655485
+      },
+      {
+        "nr": 2,
+        "text": "Maschinenmuster فَعَّالَة, dritter im Bunde mit سَيَّارَةٌ und دَرَّاجَةٌ. ⚠️ Alle drei sind weiblich (تاء مَرْبُوطة), also brauchen ihre Adjektive auch ein ة: ثَلَّاجَةٌ جَدِيدَةٌ, nicht جَدِيدٌ. Die vier Bedingungen des نَعْت gelten hier ganz praktisch.",
+        "zeit": 1789158681351
       }
     ],
     "45853": [
@@ -183,6 +229,20 @@
         "nr": 2,
         "text": "Auch hier trennt die تاء مَرْبُوطة das Einzelne von der Menge: بَيْضٌ sind Eier als Sache, بَيْضَةٌ ist das eine Ei. Dieselbe Ordnung wie بَقَرٌ / بَقَرَةٌ und دَجَاجٌ / دَجَاجَةٌ. Drei Paare, eine Regel — wer sie einmal sieht, braucht die Plurale nicht einzeln.",
         "zeit": 1787534902324
+      }
+    ],
+    "45876": [
+      {
+        "nr": 0,
+        "text": "Wurzel ع ص ف — dieselbe wie in عَاصِفَة (Sturm). Der kleine Spatz und der Sturm teilen sich einen Stamm; nimm es als Merkhaken. Merke ihn mit طَائِرٌ (Vogel): der Spatz ist ein Vogel.",
+        "zeit": 1789158824662
+      }
+    ],
+    "45886": [
+      {
+        "nr": 2,
+        "text": "Muster فَاعِلَة, also die weibliche Form von فَاعِل — dasselbe wie نَافِذَةٌ (Fenster). Städtenamen sind im Arabischen oft weiblich. ⚠️ Und der Artikel gehört fest dazu: الْقَاهِرَة, nie قَاهِرَة allein.",
+        "zeit": 1789158487628
       }
     ],
     "45901": [

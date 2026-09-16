@@ -504,8 +504,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* سُوقٌ - Markt */
   '45818': [
-    'سُوق ist weiblich, obwohl es keine تاء مَرْبُوطة trägt — man sagt هَذِهِ السُّوقُ und hängt قَدِيمَةٌ daran. Genau die Sorte Wort, vor der dein Lehrer warnt: das Geschlecht steht nicht immer am Wort.',
-    'Das Wort ist auch im Deutschen angekommen — der „Souk“ in Marrakesch oder Damaskus ist dasselbe سُوق. Und im Ḥadīth heißt es, die liebsten Orte bei Allah seien مَسَاجِدُهَا, die verhasstesten أَسْوَاقُهَا. (Muslim.)'
+    'Der Plural ist أَسْوَاقٌ. Gebaut wie die Plurale, die du schon hast: بَابٌ → أَبْوَابٌ und قَلَمٌ → أَقْلَامٌ. Ein أَ vorn, ein langes ā in der Mitte — dasselbe Muster dreimal.',
+    'Setz das Wort in einen Satz, den du selbst bauen kannst: التَّاجِرُ فِي السُّوقِ — der Händler ist auf dem Markt. تَاجِرٌ steht in Kapitel 1, und die beiden gehören inhaltlich zusammen. Ein Satz hält zwei Vokabeln.'
   ],
 
   /* جَامِعَةٌ - Universität */
@@ -664,7 +664,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* مِلْعَقَةٌ - Löffel */
   '45844': [
-    'Werkzeug-مِـ, und die Wurzel ل ع ق heißt lecken — der Löffel ist wörtlich „das Ding zum Lecken“. ⭐ Zusammen mit مِفْتَاحٌ (das Ding zum Öffnen) und مِكْوَاةٌ (das Ding zum Bügeln) hast du drei Werkzeuge nach demselben Bauplan. Das Muster ist die Vokabel, nicht das Einzelwort.',
+    '⚠️ Das Wort ist weiblich, erkennbar an der تَاء مَرْبُوطَة. Sein Adjektiv braucht deshalb auch eine: مِلْعَقَةٌ صَغِيرَةٌ, nicht صَغِيرٌ. Genau die erste der vier Bedingungen des نَعْت, die dein Lehrer durchgeht.',
     'Das Wort sagt selbst, wozu es da ist: ل ع ق ist das Lecken, مِلْعَقَة das Gerät dafür. Kein Bild, keine Eselsbrücke im engeren Sinn — die Bedeutung steht im Wort.'
   ],
 
@@ -688,8 +688,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* ثَلَّاجَةٌ - Kühlschrank */
   '45848': [
-    'Die Wurzel ist das Beste an diesem Wort: ث ل ج heißt Schnee. Der Kühlschrank ist wörtlich „die Schneemacherin". Wenn du das Bild einmal hast, brauchst du die Vokabel nicht mehr — du leitest sie her.',
-    'Maschinenmuster فَعَّالَة, dritter im Bunde mit سَيَّارَةٌ und دَرَّاجَةٌ. ⚠️ Alle drei sind weiblich (تاء مَرْبُوطة), also brauchen ihre Adjektive auch ein ة: ثَلَّاجَةٌ جَدِيدَةٌ, nicht جَدِيدٌ. Die vier Bedingungen des نَعْت gelten hier ganz praktisch.'
+    'Der Gegensatz macht es greifbar: بَارِدٌ (kalt) und حَارٌّ (heiß) stehen in Kapitel 3. Die ثَلَّاجَة ist das Gerät, das بَارِد macht — und der Satz الْمَاءُ بَارِدٌ passt unmittelbar dazu.',
+    '⚠️ Die شَدَّة auf dem ل muss hörbar sein: ṯal-lā-ǧa, nicht ṯa-lā-ǧa. Dieselbe Doppelung übst du bei فَلَّاحٌ (Bauer) und حَمَّامٌ (Badezimmer) — beide hast du.'
   ],
 
   /* شَايٌ - Tee */
@@ -939,7 +939,7 @@ const ESELSBRUECKEN_ALT = {
   /* الْقَاهِرَةُ - Kairo */
   '45886': [
     '⭐ In Sūrat aḍ-Ḍuḥā, die du auswendig kannst, steht die Wurzel als Verb: فَلَا تَقْهَرْ (93:9) — „so unterjoche sie nicht", über die Waise. Dieselbe Wurzel ق ه ر trägt الْقَهَّار, einen der Namen Allahs, und den Namen der Stadt: الْقَاهِرَة, „die Bezwingerin".',
-    'Muster فَاعِلَة, also die weibliche Form von فَاعِل — dasselbe wie نَافِذَةٌ (Fenster). Städtenamen sind im Arabischen oft weiblich. ⚠️ Und der Artikel gehört fest dazu: الْقَاهِرَة, nie قَاهِرَة allein.'
+    '⚠️ Der Artikel gehört fest zum Namen. Genauso bei drei weiteren Ortsnamen, die du hast: الْكُوَيْتُ, الْعِرَاقُ, الْهِنْدُ. Man sagt nie قَاهِرَة allein — so wenig wie عِرَاق allein.'
   ],
 
   /* يَوْمٌ - Tag */
@@ -2339,8 +2339,210 @@ const ESELSBRUECKEN_ALT = {
     'Aus وَلَدٌ wird أَوْلَادٌ: vorne kommt أَ dazu und in der Mitte ein ا. Genauso wird aus بَابٌ (Tür) أَبْوَابٌ (Türen).'
   ],
 
+  /* هَيَّا بِنَا „Los geht's" — Bayna Yadayk 1A S. 32/33, Schadda von Elias im Video
+     nachgehört (Folge 20, 22:10). */
+  'gram-hayya-bina': [
+    'Das بِ kennst du schon als eigene Karte: بِ heißt mit. هَيَّا بِنَا heißt also wörtlich etwa „los, mit uns“ – gemeint ist: Los geht\'s, wir gehen zusammen.',
+    'Hör auf das Schadda: هَيَّا wird mit doppeltem y gesprochen, „hayyā“ – so sagt es dein Lehrer in Folge 20 bei 22:10. Die Kasra gehört zu بِ: „bi-nā“.'
+  ],
+
   'gram-huruf-schamsiya': [
     'Zwei deiner Länderkarten stehen sich direkt gegenüber: الصِّينُ liest du aṣ-ṣīn — das l ist weg, dafür sitzt eine Schadda auf dem ص. الْهِنْدُ liest du al-hind, mit hörbarem l und einem Sukūn auf dem ل. ⭐ ص gehört zu den حُرُوف شَمْسِيَّة, ه nicht.',
     'سُورَةُ النَّاس sagt es in jedem Vers: geschrieben steht النَّاسِ, gesprochen an-nās. Das ن schluckt das l und trägt dafür eine Schadda — ein Sonnenbuchstabe, und die Schrift zeigt es selbst.'
+  ],
+
+  '45972': [
+    'Der Befehl heißt اُنْظُرْ! („schau!") und trägt vorn dasselbe Verbindungs-Alif wie اِقْرَأْ! („lies!") und اِسْمَعْ! („hör!") aus demselben Kapitel. Drei Befehle, ein Bauplan: Alif voran, weil der Stamm sonst mit einem vokallosen Buchstaben anfinge.',
+    '⚠️ Verwechslungsgefahr mit نَظِيفٌ (sauber) aus Kapitel 3 — die ersten beiden Buchstaben sind gleich, der dritte entscheidet: ر am Ende heißt schauen, ف am Ende heißt sauber.'
+  ],
+
+  '45973': [
+    'Das Paar im selben Kapitel ist der ganze Trick: سَمِعَ passiert dir, اِسْتَمَعَ tust du. Auf Deutsch genau der Unterschied zwischen „hören" und „zuhören".',
+    'Der Verbalsubstantiv heißt اِسْتِمَاعٌ. Es ist dasselbe Muster wie bei den beiden Krankenhaus-Wörtern oben, nur ohne das مُـ davor: erst das Alif, dann س ت, dann die drei Wurzelbuchstaben س م ع.'
+  ],
+
+  '45974': [
+    'Der Verbalsubstantiv ist إِعَادَةٌ („Wiederholung") — er endet auf die تَاء مَرْبُوطَة, die du aus deinen Regeln kennst. Merke das Paar zusammen: أَعَادَ tut es, إِعَادَةٌ ist es.',
+    '⚠️ Die Gegenwartsform ist يُعِيدُ, nicht „يَعْوُدُ" — das و der Wurzel wird zum langen ī. Genau dasselbe passiert bei أَجَابَ → يُجِيبُ (antworten) aus demselben Kapitel. Zwei Verben, dieselbe Verwandlung.'
+  ],
+
+  '45975': [
+    'Der Verbalsubstantiv إِشَارَةٌ steckt wörtlich im Fachbegriff, den du schon im Kopf hast. Wenn du also اِسْمُ الْإِشَارَة sagst, hast du das Wort für „Zeichen, Hinweis" bereits ausgesprochen.',
+    '⚠️ Gegenwartsform يُشِيرُ — das و der Wurzel ش و ر wird zum langen ī, wie bei أَعَادَ → يُعِيدُ und أَجَابَ → يُجِيبُ aus demselben Kapitel. Drei Verben, dieselbe Regel: das و in der Mitte verschwindet in einem langen Vokal.'
+  ],
+
+  '45976': [
+    '⚠️ Ein Buchstabe trennt es von تَوَضَّأَ (Wudu machen) aus Kapitel 2: وَضَعَ hat ein ع am Ende, تَوَضَّأَ ein أ. Legen gegen Waschen — beide fangen mit و ض an, und genau das verwechselt man.',
+    'Der Befehl ist ضَعْ! („leg hin!") — kürzer als jeder andere Befehl in diesem Kapitel, weil das و am Anfang ganz wegfällt. Merke: bei Verben, die mit و beginnen, fällt es im Befehl weg.'
+  ],
+
+  '45977': [
+    'Das Ohr heißt أُذُنٌ (Kapitel 6), das Hören سَمِعَ. Beides gehört zusammen und kommt aus zwei verschiedenen Wurzeln — merke sie als Paar, dann fragt keines nach dem anderen.',
+    'Der Befehl اِسْمَعْ! („hör!") steht in demselben Kapitel wie اِقْرَأْ! („lies!") und اُنْظُرْ! („schau!"). Drei Befehle, die dein Lehrer im Unterricht dauernd braucht — lerne sie als Dreiergruppe.'
+  ],
+
+  '45978': [
+    'Der Verbalsubstantiv heißt تَرْتِيبٌ — Ordnung, Reihenfolge. Genauso gebaut sind zwei Fachbegriffe, die du schon hast: تَشْكِيل (die Vokalzeichen) und تَقْدِيمٌ (die Voranstellung). Drei Wörter, ein Bauplan — تَـ vorn, langes ī hinten.',
+    '⚠️ Sprich die شَدَّة hörbar: rat-taba, nicht ra-taba. Dieselbe Doppelung übst du schon bei قِطٌّ (Katze), حَمَّامٌ (Badezimmer) und سَيَّارَةٌ (Auto) — alle drei hast du.'
+  ],
+
+  '45979': [
+    'Die Wurzel ب د ل steckt auch in البَدَل, dem Ersatzwort, das dir dein Grammatikstoff schon gebracht hat: ein Wort tritt an die Stelle eines anderen. Austauschen heißt: das eine tritt an die Stelle des anderen.',
+    'Merke es am Kapitelbild: تَبَادَلَ steht dort zwischen رَتَّبَ (ordnen) und أَجَابَ (antworten) — alle drei sind Dinge, die man im Unterricht zu zweit tut. Tauschen, ordnen, antworten.'
+  ],
+
+  '45980': [
+    'Die Gegenrichtung heißt سَأَلَ (fragen) — auch das steht in Kapitel 1. سَأَلَ und أَجَابَ sind der ganze Unterricht: der Lehrer fragt, der Schüler antwortet.',
+    '⚠️ Gegenwartsform يُجِيبُ — das و der Wurzel wird zum langen ī, genau wie bei أَعَادَ → يُعِيدُ und أَشَارَ → يُشِيرُ. Drei Verben desselben Bautyps in einem Kapitel; wer einen kann, kann alle drei.'
+  ],
+
+  '45981': [
+    'Der Verbalsubstantiv heißt قِرَاءَةٌ — das ist das Wort für „Lesung, Rezitation". Wenn jemand von der Qirāʾa des Quran spricht, spricht er von deinem Verb.',
+    '⚠️ Am Ende steht ein أ, kein ع: قَرَأَ. Genauso gebaut ist سَأَلَ (fragen) aus demselben Kapitel — beide enden auf ein Hamza, und beide bekommen im Befehl das Verbindungs-Alif: اِقْرَأْ, اِسْأَلْ.'
+  ],
+
+  '45982': [
+    'Der Verbalsubstantiv ist مُرُورٌ — das Wort, das auf arabischen Verkehrsschildern steht: Durchgangsverkehr, das Vorbeiziehen. Wer vorbeigeht, macht مُرُورٌ.',
+    'Merke es über den Weg: der شَارِعٌ (Straße) aus Kapitel 5 ist der Ort, an dem man vorbeigeht. مَرَّ الرَّجُلُ فِي الشَّارِعِ — der Mann ging auf der Straße vorbei.'
+  ],
+
+  '45983': [
+    'Das Werkzeug dazu hast du längst: der قَلَمٌ (Stift) aus Kapitel 1. Kopieren heißt hier nicht Knopfdruck, sondern mit dem قَلَم abschreiben — so wie in الَّذِي عَلَّمَ بِالْقَلَمِ (96:4).',
+    '⚠️ Nicht mit نَظَرَ verwechseln: beide fangen mit ن an und haben drei Buchstaben, aber نَسَخَ hat س خ, نَظَرَ hat ظ ر. Kopieren gegen Anschauen.'
+  ],
+
+  '45984': [
+    'Der Plural ist إِخْوَةٌ („Brüder, Geschwister"). In der Anrede „yā iḫwa" steckt genau diese Form — das Wort, mit dem Muslime einander ansprechen.',
+    '⚠️ Das Gegenpaar ist أُخْتٌ (Schwester) aus demselben Kapitel. Der Unterschied ist nur der Vokal und das ت: aḫ für den Bruder, uḫt für die Schwester.'
+  ],
+
+  '45985': [
+    'Das Muster فَعِيلٌ kennst du aus einer ganzen Reihe deiner Wörter: قَصِيرٌ (kurz), طَوِيلٌ (lang), كَبِيرٌ (groß), مَرِيضٌ (krank). صَدِيقٌ reiht sich genau dort ein — langes ī vor dem letzten Buchstaben.',
+    'Auch die Ṣadaqa, die freiwillige Gabe, kommt aus dieser Wurzel: sie beweist, dass der Glaube echt ist. Freund, Wahrhaftigkeit und Ṣadaqa gehören zusammen.'
+  ],
+
+  '45986': [
+    'Der Plural heißt أَخَوَاتٌ und zeigt, was im Singular versteckt ist: die Wurzel hat ein و in der Mitte (أ خ و), das nur im Plural wieder auftaucht.',
+    '⚠️ Gegenpaar zu أَخٌ (Bruder) aus demselben Kapitel: derselbe Anfang, anderer Vokal. aḫ — uḫt.'
+  ],
+
+  '45987': [
+    'Auch die Abschnitte des Quran heißen sūra — dasselbe Schriftbild, aber eine andere Wurzel und eine andere Bedeutung. ⚠️ صُورَةٌ ist das Bild, nicht die Sure; verlass dich auf die Ḥarakāt, nicht auf das Aussehen.',
+    'Der Plural ist صُوَرٌ. Merke ihn über das Wort, das du schon hast: غُرْفَةٌ (Zimmer) → غُرَفٌ. Dasselbe Spiel — die تَاء مَرْبُوطَة fällt weg, dazwischen kommt ein a.'
+  ],
+
+  '45988': [
+    'Das Bittgebet, das erhört wird, heißt mustaǧāb — aus derselben Wurzel. Allah antwortet dem, der ruft; das ist die stärkste Form von جَوَابٌ.',
+    'Der Plural ist أَجْوِبَةٌ. Es ist dasselbe Muster wie bei أَعْدَادٌ (Zahlen) und أَرْقَامٌ (Nummern) aus demselben Kapitel — alle drei beginnen mit أَ.'
+  ],
+
+  '45989': [
+    'Der Gegenbegriff ist der Nominalsatz — und auch er fängt mit جُمْلَة an. Merke: alles, was in deiner Grammatik „Satz" heißt, beginnt mit diesem Wort.',
+    'Der Plural ist جُمَلٌ. Dasselbe Muster wie غُرْفَةٌ → غُرَفٌ (Zimmer) aus Kapitel 4: die تَاء مَرْبُوطَة fällt weg, dazwischen ein a.'
+  ],
+
+  '45990': [
+    'Aus derselben Wurzel kommt وَاحِدٌ (eins), das du in deinen Zahlwörtern schon hast. Eins und Einheit — dasselbe و ح د, einmal als Zahl, einmal als Abschnitt.',
+    'Merke die Reihenfolge deiner Bücher darüber: jede وَحْدَةٌ ist ein Kapitel, und du stehst gerade in der ersten und zweiten. Das Wort beschreibt genau das, worin du es findest.'
+  ],
+
+  '45991': [
+    'Die Wurzel ج ن س heißt „Art, Gattung". Eine جِنْسِيَّةٌ sagt also, zu welcher Gruppe jemand gehört — nicht, wo er gerade ist.',
+    'Die Frage dazu hast du schon als Fachbegriff: مِنْ أَيْنَ (woher?). Die Antwort darauf ist die جِنْسِيَّةٌ.'
+  ],
+
+  '45992': [
+    '⚠️ Du hast dir dasselbe Wort schon einmal selbst angelegt, als „أَلْمُهَنْدِسٌ — Ingenieur". Jetzt kommt es als Buchvokabel dazu, in der Schreibung des Buches: مُهَنْدِسٌ, ohne Artikel und ohne Tanwīn-Konflikt.',
+    'Der Plural ist مُهَنْدِسُونَ — der gesunde männliche Plural auf ـُونَ. Dasselbe passiert bei مُعَلِّمٌ → مُعَلِّمُونَ aus Kapitel 2: beide sind Berufe, beide bilden den Plural auf diese Weise.'
+  ],
+
+  '45993': [
+    'Die Wurzel د ر ب steckt im Wort für „einüben, trainieren". Ein تَدْرِيبٌ ist nicht der Stoff, sondern das Üben daran — genau das, was hinter jedem Kapitel im Buch steht.',
+    '⚠️ Nicht mit مُدَرِّسٌ (Lehrer) verwechseln: das kommt von د ر س (lernen, unterrichten), تَدْرِيبٌ von د ر ب (üben). Ein Buchstabe, zwei verschiedene Welten.'
+  ],
+
+  '45994': [
+    'Die Zahlwörter hast du schon: وَاحِدٌ, إِثْنَانِ, ثَلَاثَةٌ und die übrigen. Alle zusammen sind أَعْدَادٌ — der Plural von عَدَدٌ.',
+    '⚠️ Unterscheide عَدَدٌ (die Zahl als Menge) von رَقْمٌ (die Nummer als Ziffer) aus demselben Kapitel. Wie viele? — عَدَدٌ. Welche Nummer? — رَقْمٌ.'
+  ],
+
+  '45995': [
+    'Die Wurzel م ث ل heißt „gleichen, ähneln". Ein مِثَالٌ ist das, was der Sache gleicht — deshalb heißt „zum Beispiel" auf Arabisch maṯalan.',
+    'Der Plural ist أَمْثِلَةٌ, wie أَجْوِبَةٌ (Antworten) aus demselben Kapitel: أَ vorn, تَاء مَرْبُوطَة hinten. Zwei Plurale, ein Muster.'
+  ],
+
+  '45996': [
+    '⚠️ Nicht mit عَدَدٌ (Zahl, Anzahl) aus demselben Kapitel verwechseln. رَقْمٌ ist das geschriebene Zeichen, عَدَدٌ die Menge dahinter. Deine Hausnummer ist ein رَقْمٌ; wie viele Häuser in der Straße stehen, ist ein عَدَدٌ.',
+    'Der Plural ist أَرْقَامٌ. Dasselbe Muster wie أَعْدَادٌ (Zahlen) — beide Wörter aus diesem Kapitel bilden ihren Plural mit أَ vorn und langem ā.'
+  ],
+
+  '45997': [
+    'Aus derselben Wurzel kommt مُعَلِّمٌ (Lehrer) aus Kapitel 2 — der, der wissen lässt. Zeichen und Lehrer tun dasselbe: sie machen etwas erkennbar.',
+    'Der Plural ist عَلَامَاتٌ, der gesunde weibliche Plural auf ـَاتٌ. Genauso bildet نَظَّارَةٌ → نَظَّارَاتٌ (Brillen) aus Kapitel 2 seinen Plural.'
+  ],
+
+  '45998': [
+    'Das Bittgebet heißt masʾala, wenn man um etwas bittet — auch das kommt von س أ ل. Fragen und Bitten sind im Arabischen dieselbe Bewegung: man wendet sich an jemanden.',
+    '⚠️ In der Mitte steht ein Hamza: سَأَلَ. Genauso bei قَرَأَ (lesen) aus demselben Kapitel, nur dort am Ende. Beide bekommen im Befehl das Verbindungs-Alif: اِسْأَلْ, اِقْرَأْ.'
+  ],
+
+  '45999': [
+    '⚠️ Ein Buchstabe trennt es von وَضَعَ (hinlegen) aus Kapitel 1: تَوَضَّأَ endet auf أ, وَضَعَ auf ع. Waschen gegen Legen — beide tragen و ض am Anfang der Wurzel, und genau das verwechselt man.',
+    'Die Reihenfolge ist auch die Reihenfolge im Buch: erst تَوَضَّأَ, dann صَلَّى. Erst waschen, dann beten — die beiden Verben aus Kapitel 2 stehen in der Ordnung, in der man sie tut.'
+  ],
+
+  '46000': [
+    'Die شَدَّة auf dem ل ist hörbar: ṣal-lā. Dieselbe Doppelung übst du bei ثَلَّاجَةٌ (Kühlschrank) und فَلَّاحٌ (Bauer) aus Kapitel 6 — beide hast du schon.',
+    '⚠️ Das Wort endet auf أَلِف مَقْصورة, das ى, das wie langes ā gesprochen wird — ein Fachbegriff, den du schon kennst. Deshalb صَلَّى und nicht „صَلَّا".'
+  ],
+
+  '46001': [
+    'Du hast den Fachbegriff فِعْلٌ (Verb) schon — und er kommt aus derselben Wurzel ف ع ل. Ein Verb ist im Arabischen wörtlich „ein Tun". Wer فَعَلَ kennt, versteht, warum das Verb so heißt.',
+    '⭐ فَعَلَ ist zugleich das Musterwort der arabischen Grammatik: an ihm werden alle Verbformen vorgeführt (فَعَلَ, يَفْعَلُ, اِفْعَلْ). Deshalb ist es das eine Verb, das man nie wieder vergisst — es ist die Schablone selbst.'
+  ],
+
+  '46002': [
+    'Kapitel 2 besteht fast nur aus dieser einen أُسْرَةٌ: وَالِدٌ (Vater), وَالِدَةٌ (Mutter), جَدٌّ (Großvater), جَدَّةٌ (Großmutter), ابْنَةٌ (Tochter). Lerne das Wort als Überschrift über die anderen, dann trägt es sie mit.',
+    'Der Plural ist أُسَرٌ. Dasselbe Muster wie غُرْفَةٌ → غُرَفٌ (Zimmer) aus Kapitel 4: die تَاء مَرْبُوطَة fällt weg, dazwischen kommt ein a.'
+  ],
+
+  '46003': [
+    'Du hast schon أُمٌّ (Mutter) aus Kapitel 6. ⚠️ Es ist nicht dasselbe Wort: أُمٌّ ist die Anrede und das alltägliche Wort, وَالِدَةٌ die genauere Bezeichnung „die Gebärende". Beide stehen jetzt in deinem Bestand.',
+    'Das Gegenstück ist وَالِدٌ (Vater) aus demselben Kapitel — dasselbe Wort, nur ohne تَاء مَرْبُوطَة. Ein Zeichen Unterschied, ein Elternteil Unterschied.'
+  ],
+
+  '46004': [
+    'Der Plural ist أَجْدَادٌ („Vorfahren") — nicht nur die Großväter, sondern die Ahnen überhaupt. Gebaut wie أَرْقَامٌ (Nummern) und أَعْدَادٌ (Zahlen): أَ vorn, langes ā hinten.',
+    'Das Gegenstück ist جَدَّةٌ (Großmutter) aus demselben Kapitel — dasselbe Wort mit تَاء مَرْبُوطَة. Wie bei وَالِدٌ / وَالِدَةٌ trennt nur ein Zeichen die beiden.'
+  ],
+
+  '46005': [
+    '⚠️ Du hast auch بِنْتٌ (Tochter / Mädchen) aus Kapitel 5 — dieselbe Wurzel, anderes Wort. بِنْتٌ ist das alltägliche „Mädchen", ابْنَةٌ die Tochter in der Familienaufzählung. Beide sind richtig.',
+    'Der Plural ist بَنَاتٌ und gilt für beide Formen. Merke also drei Wörter mit einem Plural: ابْنٌ, ابْنَةٌ, بِنْتٌ — eine Wurzel ب ن ي, eine Familie.'
+  ],
+
+  '46006': [
+    'Das Muster مُفَعِّل hast du schon dreimal: مُدَرِّسٌ (Lehrer), مُمَرِّضَةٌ (Krankenschwester), مُؤَذِّنٌ (Gebetsrufer). Alle drei tragen die شَدَّة auf dem mittleren Buchstaben — مُعَلِّمٌ reiht sich genau ein.',
+    '⚠️ مُدَرِّسٌ und مُعَلِّمٌ heißen beide „Lehrer". Der Unterschied liegt in der Wurzel: د ر س ist das Unterrichten des Stoffs, ع ل م das Weitergeben von Wissen. Dein Buch benutzt beide.'
+  ],
+
+  '46007': [
+    'Die Wurzel ع ط ف heißt „biegen, zuwenden". Ein مِعْطَفٌ ist das, was man um sich schlägt. ⚠️ Beginne nicht mit مَـ, sondern mit مِـ — der Kasra macht aus dem Ort ein Gerät.',
+    'Der Plural ist مَعَاطِفُ und trägt kein Tanwīn — er gehört zu den Wörtern, die nur zwei Fälle kennen. Merke ihn zusammen mit مَعَاطِفُ als Ausnahme, nicht als Regel.'
+  ],
+
+  '46008': [
+    'Die شَدَّة auf dem د bleibt auch hier hörbar: ǧad-da. Vergleiche قِطٌّ (Katze) und حَمَّامٌ (Badezimmer) — die Doppelung wird nie verschluckt.',
+    'Der Plural ist جَدَّاتٌ, der gesunde weibliche Plural auf ـَاتٌ — wie وَالِدَاتٌ (Mütter) aus demselben Kapitel. Weibliche Verwandtschaftswörter bilden ihn fast immer so.'
+  ],
+
+  '46009': [
+    'Merke das Paar über die Tat: نَظَرَ ist das Schauen, نَظَّارَةٌ das, womit man schaut. Wer eines behält, hat das andere mit.',
+    'Der Plural ist نَظَّارَاتٌ — der gesunde weibliche Plural auf ـَاتٌ, wie عَلَامَاتٌ (Zeichen) aus Kapitel 1. Beide Wörter enden auf تَاء مَرْبُوطَة und bilden ihn deshalb so.'
+  ],
+
+  '46010': [
+    'Du hast schon أَبٌ (Vater) aus Kapitel 6. ⚠️ Es ist nicht dasselbe Wort: أَبٌ ist die Anrede und das alltägliche Wort, وَالِدٌ die genauere Bezeichnung. Beide stehen jetzt in deinem Bestand.',
+    'Aus derselben Wurzel kommt وَلَدٌ (Junge) aus Kapitel 1, das du schon lange hast. ⚠️ Nur die Ḥarakāt trennen sie: وَالِدٌ mit langem ā ist der Vater, وَلَدٌ ohne ist der Junge.'
   ],
 };

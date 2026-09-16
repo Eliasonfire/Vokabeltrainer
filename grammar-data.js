@@ -2798,6 +2798,180 @@ const SENTENCE_TAGS = {
   ],
   "gram-hayya-bina": [
     { ruleId: "harf-jarr-min-ila-01", matchText: "إِلَى الْمَسْجِدِ" }
+  ],
+  "45972": [
+    { ruleId: "verb-madi-endungen-01", matchText: "نَظَرَ" },
+    { ruleId: "marfu-grundfall-01", matchText: "الطَّالِبُ" },
+    { ruleId: "harf-jarr-min-ila-01", matchText: "إِلَى النَّجْمِ" }
+  ],
+  "45973": [
+    { ruleId: "verb-madi-endungen-01", matchText: "اِسْتَمَعَ" },
+    { ruleId: "marfu-grundfall-01", matchText: "الْوَلَدُ" },
+    { ruleId: "harf-jarr-min-ila-01", matchText: "إِلَى الْمُدَرِّسِ" }
+  ],
+  "45974": [
+    { ruleId: "verb-madi-endungen-01", matchText: "أَعَادَ" },
+    { ruleId: "marfu-grundfall-01", matchText: "الطَّالِبُ" }
+  ],
+  "45975": [
+    { ruleId: "verb-madi-endungen-01", matchText: "أَشَارَ" },
+    { ruleId: "harf-jarr-min-ila-01", matchText: "إِلَى الْبَابِ" }
+  ],
+  "45976": [
+    { ruleId: "verb-madi-endungen-01", matchText: "وَضَعَ" },
+    { ruleId: "marfu-grundfall-01", matchText: "التَّاجِرُ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "عَلَى الْمَكْتَبِ" }
+  ],
+  "45977": [
+    { ruleId: "verb-madi-endungen-01", matchText: "سَمِعَ" },
+    { ruleId: "marfu-grundfall-01", matchText: "الرَّجُلُ" }
+  ],
+  "45978": [
+    { ruleId: "verb-madi-endungen-01", matchText: "رَتَّبَ" },
+    { ruleId: "marfu-grundfall-01", matchText: "الطَّالِبُ" }
+  ],
+  "45979": [
+    { ruleId: "verb-madi-endungen-01", matchText: "تَبَادَلَ" },
+    { ruleId: "marfu-grundfall-01", matchText: "الطَّالِبُ" }
+  ],
+  "45980": [
+    { ruleId: "verb-madi-endungen-01", matchText: "أَجَابَ" },
+    { ruleId: "marfu-grundfall-01", matchText: "الطَّالِبُ" }
+  ],
+  "45981": [
+    { ruleId: "verb-madi-endungen-01", matchText: "قَرَأَ" },
+    { ruleId: "marfu-grundfall-01", matchText: "الْوَلَدُ" }
+  ],
+  "45982": [
+    { ruleId: "marfu-grundfall-01", matchText: "الْحِمَارُ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الشَّارِعِ" }
+  ],
+  "45983": [
+    { ruleId: "verb-madi-endungen-01", matchText: "نَسَخَ" },
+    { ruleId: "marfu-grundfall-01", matchText: "الطَّالِبُ" }
+  ],
+  "45984": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "أَخُ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "الطَّالِبِ" },
+    { ruleId: "marfu-grundfall-01", matchText: "طَبِيبٌ" }
+  ],
+  "45985": [
+    { ruleId: "nat-bestimmtheit-01", matchText: "الصَّدِيقُ الْجَدِيدُ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْمَدْرَسَةِ" }
+  ],
+  "45986": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "أُخْتُ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "الْوَلَدِ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْجَامِعَةِ" }
+  ],
+  "45987": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "صُورَةُ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "الْمَسْجِدِ" },
+    { ruleId: "mubtada-khabar-genus-01", matchText: "جَمِيلَةٌ" }
+  ],
+  "45988": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "جَوَابُ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "الطَّالِبِ" },
+    { ruleId: "marfu-grundfall-01", matchText: "سَهْلٌ" }
+  ],
+  "45989": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "جُمْلَةُ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "الْمُدَرِّسِ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْكِتَابِ" }
+  ],
+  "45990": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "وَحْدَةُ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "الْكِتَابِ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْفَصْلِ" }
+  ],
+  "45991": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "جِنْسِيَّةُ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "الطَّالِبِ" }
+  ],
+  "45992": [
+    { ruleId: "mubtada-khabar-01", matchText: "الْمُهَنْدِسُ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْمَكْتَبِ" }
+  ],
+  "45993": [
+    { ruleId: "nat-bestimmtheit-01", matchText: "التَّدْرِيبُ الْجَدِيدُ" },
+    { ruleId: "marfu-grundfall-01", matchText: "سَهْلٌ" }
+  ],
+  "45994": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "nat-vier-bedingungen-01", matchText: "عَدَدٌ كَبِيرٌ" }
+  ],
+  "45995": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "nat-vier-bedingungen-01", matchText: "مِثَالٌ سَهْلٌ" }
+  ],
+  "45996": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "رَقْمُ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "الْبَيْتِ" },
+    { ruleId: "marfu-grundfall-01", matchText: "جَدِيدٌ" }
+  ],
+  "45997": [
+    { ruleId: "mubtada-khabar-01", matchText: "الْعَلَامَةُ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "عَلَى الْوَرَقِ" }
+  ],
+  "45998": [
+    { ruleId: "verb-madi-endungen-01", matchText: "سَأَلَ" },
+    { ruleId: "marfu-grundfall-01", matchText: "الْمُدَرِّسُ" }
+  ],
+  "45999": [
+    { ruleId: "verb-madi-endungen-01", matchText: "تَوَضَّأَ" },
+    { ruleId: "marfu-grundfall-01", matchText: "الرَّجُلُ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْحَمَّامِ" }
+  ],
+  "46000": [
+    { ruleId: "verb-madi-endungen-01", matchText: "صَلَّى" },
+    { ruleId: "marfu-grundfall-01", matchText: "الْإِمَامُ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْمَسْجِدِ" }
+  ],
+  "46001": [
+    { ruleId: "istifham-madha-01", matchText: "مَاذَا" },
+    { ruleId: "verb-madi-endungen-01", matchText: "فَعَلَ" },
+    { ruleId: "marfu-grundfall-01", matchText: "الطَّالِبُ" }
+  ],
+  "46002": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "أُسْرَةُ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "الْمُدَرِّسِ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْبَيْتِ" }
+  ],
+  "46003": [
+    { ruleId: "mubtada-khabar-01", matchText: "الْوَالِدَةُ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْمَطْبَخِ" }
+  ],
+  "46004": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "جَدُّ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "الطَّالِبِ" },
+    { ruleId: "marfu-grundfall-01", matchText: "مَرِيضٌ" }
+  ],
+  "46005": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "ابْنَةُ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "التَّاجِرِ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْمَدْرَسَةِ" }
+  ],
+  "46006": [
+    { ruleId: "mubtada-khabar-01", matchText: "الْمُعَلِّمُ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْفَصْلِ" }
+  ],
+  "46007": [
+    { ruleId: "nat-bestimmtheit-01", matchText: "الْمِعْطَفُ الْجَدِيدُ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "عَلَى السَّرِيرِ" }
+  ],
+  "46008": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "جَدَّةُ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "الْبِنْتِ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْغُرْفَةِ" }
+  ],
+  "46009": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "نَظَّارَةُ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "الطَّبِيبِ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "عَلَى الْمَكْتَبِ" }
+  ],
+  "46010": [
+    { ruleId: "mubtada-khabar-01", matchText: "الْوَالِدُ" },
+    { ruleId: "marfu-grundfall-01", matchText: "مُهَنْدِسٌ" }
   ]
 };
 

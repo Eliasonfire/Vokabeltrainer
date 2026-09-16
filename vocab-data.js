@@ -1539,7 +1539,7 @@ const VOCAB_DATA = [
  {
   "id": "45818",
 
-  "mnemo": "Klanghilfe: „sūq\" kennst du vielleicht schon aus Reiseberichten — der Suk. Merke es zusammen mit دُكَّانٌ (Geschäft): der große Markt und der kleine Laden.",
+  "mnemo": "سُوقٌ steht im Buch fast immer hinter einer Genitivpartikel: فِي السُّوقِ, إِلَى السُّوقِ, مِنَ السُّوقِ. Merke das Wort gleich mit seiner Umgebung — es ist ein Ort, und ein Ort steht nach حَرْف جَرّ im Genitiv.",
   "ar": "سُوقٌ",
   "de": "Markt",
   "type": "noun",
@@ -2115,7 +2115,7 @@ const VOCAB_DATA = [
  {
   "id": "45844",
 
-  "mnemo": "Im Ḥadīth wird empfohlen, nach dem Essen die Finger abzulecken: «فَلْيَلْعَقْ أَصَابِعَهُ». Genau diese Wurzel ل ع ق steckt im Löffel — das Gerät zum Lecken. (Buḫārī und Muslim.)",
+  "mnemo": "In der Küche stehen vier Wörter beieinander, die du alle hast: مَطْبَخٌ (Küche), قِدْرٌ (Kochtopf), مِلْعَقَةٌ (Löffel) und سِكِّينٌ (Messer). Lerne sie als ein Gedeck, nicht als vier Einzelwörter — dann ruft eines das andere.",
   "ar": "مِلْعَقَةٌ",
   "de": "Löffel",
   "type": "noun",
@@ -2199,7 +2199,7 @@ const VOCAB_DATA = [
  {
   "id": "45848",
 
-  "mnemo": "⭐ Maschinen-Muster فَعَّالَة wie سَيَّارَةٌ und دَرَّاجَةٌ. Die Wurzel ist ث ل ج = Schnee! Der Kühlschrank ist wörtlich „die Schneemacherin\". Bild und Wort passen zusammen.",
+  "mnemo": "Was in der ثَلَّاجَة steht, hast du längst: لَبَنٌ (Milch), مَاءٌ (Wasser), تُفَّاحٌ (Apfel), فَاكِهَةٌ (Obst). Bau dir den Satz اللَّبَنُ فِي الثَّلَّاجَةِ — dann trägt dieses eine Wort vier andere mit.",
   "ar": "ثَلَّاجَةٌ",
   "de": "Kühlschrank",
   "type": "noun",
@@ -2810,7 +2810,7 @@ const VOCAB_DATA = [
  {
   "id": "45876",
 
-  "mnemo": "Wurzel ع ص ف — dieselbe wie in عَاصِفَة (Sturm). Der kleine Spatz und der Sturm teilen sich einen Stamm; nimm es als Merkhaken. Merke ihn mit طَائِرٌ (Vogel): der Spatz ist ein Vogel.",
+  "mnemo": "Ein Bild statt einer Herleitung: der عُصْفُور sitzt auf der نَافِذَةٌ (Fenster) aus Kapitel 6, die du schon hast. Kleiner Vogel, kleines Fenster — die beiden Wörter halten sich gegenseitig.",
   "ar": "عُصْفُورٌ",
   "de": "Spatz",
   "type": "noun",
