@@ -3806,6 +3806,18 @@ button:disabled{cursor:default;}
 @media (prefers-reduced-motion: reduce){
   #verseList .verse-item{transition:none;}
 }
+/* ---------- Der Haken am Ende der Sure (16.09.2026, js/quran.js) ----------
+   ⚠️ Steht IM #verseList, aber ohne `.verse-item` — genau wie die Basmala.
+   Sonst zaehlte ihn der Lesestand-Beobachter als Vers mit (`data-versnr` fehlt
+   ihm, `Number(undefined)` waere NaN in der Menge der sichtbaren Verse).
+   ⛔ Die Ansichtsfilter weiter unten (`#verseList.nur-ar .verse-de` usw.)
+   greifen nicht auf ihn zu — er soll in JEDER Ansicht dastehen. */
+.sura-gelesen-zeile{display:flex;justify-content:center;padding:var(--sp-4) var(--sp-3) var(--sp-6);}
+.sura-gelesen{display:inline-flex;align-items:center;gap:var(--sp-2);}
+.sura-gelesen svg{width:18px;height:18px;}
+/* Erledigt: kein zweiter Knopf, sondern eine Feststellung. Deshalb ohne Rahmen
+   und ohne Zeigefinger — er soll nicht zum zweiten Mal einladen. */
+.sura-gelesen.ist{opacity:.55;background:transparent;border-color:transparent;cursor:default;}
 .sura-nav .sn-label{display:block;font-size:var(--fs-xs);color:var(--text-faint);font-weight:700;}
 .sura-nav .sn-sure{display:block;font-size:var(--fs-sm);color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 /* Am Anfang und am Ende des Quran fehlt eine Seite. Ein leerer Platzhalter
