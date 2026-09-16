@@ -105,7 +105,15 @@ const FELD_REGELN = {
  * Quelle (أيض, هندس, أصفار = Pl. von صفر, مكسورة = gebeugt von مكسور). Die
  * Wortart folgt seinem Unterricht, nicht dem Wörterbuch (Folge 08: Orts- und
  * Zeitangaben sind اِسْم → أَمَامَ, الْيَوْمُ noun). Beleg je Wort: To-Do
- * Vokabeltrainer, 16.09.2026 abends. Kein Plural bei غَرْب/شَرْق/عَرَبِيَّة/
+ * Vokabeltrainer, 16.09.2026 abends.
+ * ⭐ عِنْدَ und بَعْدَ hatte er am 15.09. selbst als Partikel beantwortet; auf
+ * „Nach Folge 8 wären sie wie أَمَامَ Nomen. Soll ich sie angleichen?" kam am
+ * 16.09.2026 um 22:21:43 „ja" → noun, das ist SEINE Entscheidung („von Elias
+ * bestritten am 16.9."). Die Folgefragen (Geschlecht, Plural, Singular) sind am
+ * 17.09. auf seinen Auftrag nachgeschlagen: arabicroots führt beide ohne diese
+ * Angaben (madina-3 K19 48524, quran K7 49873, quran K6 49855), en.wiktionary
+ * als „Preposition" ohne Geschlecht und Plural (أَبْعَاد gehört zu بُعْد
+ * „Entfernung"), arabdict ohne Pluralform. Kein Plural bei غَرْب/شَرْق/عَرَبِيَّة/
  * إِنْجِلِيزِيَّة: Himmelsrichtung bzw. Sprachname — keine der Quellen führt einen.
  */
 
@@ -138,9 +146,11 @@ const FELD_AUSNAHMEN = {
   'p_1787184718572': { root: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — لِمَن ((für) wem/wen)' },
   'p_1787185309933': { root: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — لَكَ (Für dich (M))' },
   'p_1787185328882': { root: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — لَكِ (Für dich (W))' },
+  'p_1787188396011': { gender: 'auf Elias’ Auftrag nachgeschlagen am 17.9.2026 — بَعْدَ ((von) nach / danach)', pl: 'auf Elias’ Auftrag nachgeschlagen am 17.9.2026 — بَعْدَ ((von) nach / danach)', sg: 'auf Elias’ Auftrag nachgeschlagen am 17.9.2026 — بَعْدَ ((von) nach / danach)' },
   'p_1787189076593': { pl: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — حَالُكْ (Dein Zustand)', sg: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — حَالُكْ (Dein Zustand)' },
   'p_1787189287368': { gender: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — أَمَامَ (Vor / davor)', pl: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — أَمَامَ (Vor / davor)', sg: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — أَمَامَ (Vor / davor)' },
-  'p_1787189488747': { root: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — فِيْهِ (darin / in ihm)' }
+  'p_1787189488747': { root: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — فِيْهِ (darin / in ihm)' },
+  'p_1787190874749': { gender: 'auf Elias’ Auftrag nachgeschlagen am 17.9.2026 — عِنْدَ (Bei)', pl: 'auf Elias’ Auftrag nachgeschlagen am 17.9.2026 — عِنْدَ (Bei)', sg: 'auf Elias’ Auftrag nachgeschlagen am 17.9.2026 — عِنْدَ (Bei)' }
 };
 
 /* ---------- Ebene 3: Werte, die Elias nachgetragen hat ----------
@@ -190,13 +200,13 @@ const FELD_ERGAENZUNGEN = {
   'p_1787185031977': { gender: 'feminine', pl: 'سَيِّدَات', root: 'س و د', sg: 'سَيِّدَةٌ', type: 'noun' },
   'p_1787185309933': { type: 'particle' },
   'p_1787185328882': { type: 'particle' },
-  'p_1787188396011': { root: 'ب ع د', type: 'particle' },
+  'p_1787188396011': { root: 'ب ع د', type: 'noun' },
   'p_1787189022107': { root: 'ك ي ف', type: 'particle' },
   'p_1787189076593': { gender: 'masculine', root: 'ح و ل', type: 'noun' },
   'p_1787189287368': { root: 'ء م م', type: 'noun' },
   'p_1787189488747': { type: 'particle' },
   'p_1787189845886': { imperative: 'اُخْرُجْ', masdar: 'خُرُوجٌ', past: 'خَرَجَ', present: 'يَخْرُجُ', root: 'خ ر ج', type: 'verb' },
-  'p_1787190874749': { root: 'ع ن د', type: 'particle' },
+  'p_1787190874749': { root: 'ع ن د', type: 'noun' },
   'p_1787191371934': { root: 'ك س ل', type: 'adjective' }
 };
 
@@ -232,11 +242,11 @@ const FELD_ZWEIFEL = {
   'p_1787184718572': { type: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — لِمَن ((für) wem/wen)' },
   'p_1787185309933': { type: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — لَكَ (Für dich (M))' },
   'p_1787185328882': { type: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — لَكِ (Für dich (W))' },
-  'p_1787188396011': { type: 'von Elias bestritten am 15.9.2026 — بَعْدَ ((von) nach / danach)' },
+  'p_1787188396011': { type: 'von Elias bestritten am 16.9.2026 — بَعْدَ ((von) nach / danach)' },
   'p_1787189022107': { type: 'von Elias bestritten am 15.9.2026 — كَيْفَ (Wie)' },
   'p_1787189488747': { type: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — فِيْهِ (darin / in ihm)' },
   'p_1787189845886': { type: 'von Elias bestritten am 15.9.2026 — خَرَجَ (Herausgehen/ herauskommen)' },
-  'p_1787190874749': { type: 'von Elias bestritten am 15.9.2026 — عِنْدَ (Bei)' },
+  'p_1787190874749': { type: 'von Elias bestritten am 16.9.2026 — عِنْدَ (Bei)' },
   'p_1787191371934': { type: 'von Elias bestritten am 15.9.2026 — كَسْلَانُ (Faul)' }
 };
 
