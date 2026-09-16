@@ -2972,6 +2972,45 @@ const SENTENCE_TAGS = {
   "46010": [
     { ruleId: "mubtada-khabar-01", matchText: "الْوَالِدُ" },
     { ruleId: "marfu-grundfall-01", matchText: "مُهَنْدِسٌ" }
+  ],
+  "satz-lang-01": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "حَقِيبَةُ" },
+    { ruleId: "nat-vier-bedingungen-01", matchText: "الطَّالِبِ الْجَدِيدِ" },
+    { ruleId: "harf-jarr-idafa-01", matchText: "عَلَى مَكْتَبِ الْمُدَرِّسِ" }
+  ],
+  "satz-lang-02": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "مَفَاتِيحُ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "السَّيَّارَةِ" },
+    { ruleId: "harf-jarr-idafa-01", matchText: "عَلَى مَكْتَبِ الْمُدِيرِ" }
+  ],
+  "satz-lang-03": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "بِنْتُ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "الْمُدَرِّسِ" },
+    { ruleId: "nat-fem-01", matchText: "طَالِبَةٌ مُجْتَهِدَةٌ" }
+  ],
+  "satz-lang-04": [
+    { ruleId: "idafa-erkennen-01", matchText: "بَيْتُ الْمُدَرِّسِ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "الطَّالِبِ" },
+    { ruleId: "marfu-grundfall-01", matchText: "كَبِيرٌ" }
+  ],
+  "satz-lang-05": [
+    { ruleId: "istifham-ayna-01", matchText: "أَيْنَ" },
+    { ruleId: "harf-jarr-idafa-01", matchText: "عَلَى مَكْتَبِ الْمُدِيرِ" }
+  ],
+  "satz-lang-06": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "بِنْتُ" },
+    { ruleId: "nat-fem-01", matchText: "طَبِيبَةٌ مَشْهُورَةٌ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْمَدِينَةِ" }
+  ],
+  "satz-lang-07": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "كِتَابُ" },
+    { ruleId: "nat-bestimmtheit-01", matchText: "الطَّالِبِ الْجَدِيدِ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْحَقِيبَةِ" }
+  ],
+  "satz-lang-08": [
+    { ruleId: "mudaf-ilayh-01", matchText: "التَّاجِرِ" },
+    { ruleId: "harf-jarr-min-ila-01", matchText: "مِنَ الْمَسْجِدِ" },
+    { ruleId: "marfu-grundfall-01", matchText: "قَرِيبٌ" }
   ]
 };
 

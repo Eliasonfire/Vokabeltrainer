@@ -14,7 +14,22 @@ function alleSaetze(){
      ohne dass dafuer irgendwo Ersatz stuende. */
   const ausVokabeln = VOCAB_DATA.filter(w=>w.sentAr);
   const ausLehrbuch = (typeof LEHRBUCH_SAETZE!=='undefined') ? LEHRBUCH_SAETZE : [];
-  return ausVokabeln.concat(ausLehrbuch).filter(nichtVorausgeschrieben);
+  return ausVokabeln.concat(ausLehrbuch, laengereSaetze()).filter(nichtVorausgeschrieben);
+}
+
+/* ⭐ Längere Sätze, die zu keiner Vokabel gehören (16.09.2026). Elias: „hier
+   sollte es auch ein etwas längerer satz sein mit mehr mudaf bzw etwas einfach
+   schwieriger damit man so super leicht es einfach per ausschluss prinzip
+   machen kann" — gemeint: damit es NICHT per Ausschluss geht. Auf den
+   Vorschlag, sie aus seinen Wörtern zu schreiben: „mach das". Sie stehen in
+   data/beispielsaetze.js unter `satz-lang-…`, weil jedes Prüfwerkzeug diese
+   Datei schon liest [[dritte_satzquelle]]; dort steht auch, woher jede Form
+   belegt ist. */
+function laengereSaetze(){
+  if (typeof BEISPIELSAETZE === 'undefined') return [];
+  return Object.keys(BEISPIELSAETZE)
+    .filter(id => id.startsWith('satz-lang-') && BEISPIELSAETZE[id] && BEISPIELSAETZE[id].sentAr)
+    .map(id => ({ id, sentAr: BEISPIELSAETZE[id].sentAr, sentDe: BEISPIELSAETZE[id].sentDe || '', laengerSatz: true }));
 }
 
 /* ---------- Nur nach VORN filtern ----------
@@ -404,6 +419,8 @@ document.getElementById('themenBlatt').addEventListener('click', (e)=>{
    Auskunft - danach kann Elias im Buch nachschlagen. */
 function herkunft(w){
   if (w.seite) return `Madina Buch 1, S. ${w.seite}`;
+  /* Ohne diese Zeile stünde „Kap. undefined" über dem Satz: er hat kein Kapitel. */
+  if (w.laengerSatz) return 'Längerer Satz aus deinen Wörtern';
   return kapitelBeschriftung(w);
 }
 

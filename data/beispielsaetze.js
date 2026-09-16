@@ -1665,4 +1665,96 @@ const BEISPIELSAETZE = {
     sentAr: 'الْوَالِدُ مُهَنْدِسٌ.',
     sentDe: 'Der Vater ist Ingenieur.'
   },
+
+  /* ==================================================================
+   * LÄNGERE SÄTZE FÜR DEN SATZ-MODUS (16.09.2026) — Schlüssel satz-lang-NN
+   * ==================================================================
+   *
+   * Sie gehören zu KEINER Vokabel. js/saetze.js holt sie über das Präfix
+   * `satz-lang-` in alleSaetze(); js/buecher.js hängt sie an kein Wort.
+   *
+   * Elias am 16.09.2026 zu einer Tipp-Aufgabe: „hier sollte es auch ein etwas
+   * längerer satz sein mit mehr mudaf bzw etwas einfach schwieriger damit man
+   * so super leicht es einfach per ausschluss prinzip machen kann". Auf
+   * „Ich schreibe neue, längere Sätze, nur mit Wörtern, die du schon hast"
+   * (18:55:17): „mach das".
+   *
+   * ⛔ KEIN ZEICHEN SELBST VOKALISIERT. Jede Form steht GENAU SO (mit ihrer
+   * Endung) in einem Satz seines Lehrbuchs (mb1-…) oder in einem Wortfeld
+   * seines Bestands (W:id.feld). Sätze, die eine Sitzung oder die Wartung
+   * geschrieben hat, zählen NICHT als Beleg — sonst belegt sich ein Fehler
+   * selbst. Maßstab wie am 19.08.2026 [[zitat_ueber_die_stelle]]; bewacht von
+   * test-satzmodus-schwerer.mjs (Abschnitt „Längere Sätze").
+   *
+   * ⭐ Was sie schwerer macht, jeweils mit Absicht:
+   *   - zwei مُضَاف in einem Satz, eines davon nach حَرْف جَرّ — genau das
+   *     Beispiel seines Lehrers: عَلَى مَكْتَبِ الْمُدَرِّسِ (Folge 07, 12:57,
+   *     Regel harf-jarr-idafa-01);
+   *   - ein نَعْت im Genitiv hinter dem مُضَاف إِلَيْهِ (الطَّالِبِ الْجَدِيدِ): im
+   *     Genitiv, aber KEIN مُضَاف إِلَيْهِ — wer nur nach der Kasra tippt, liegt
+   *     falsch;
+   *   - Frage und Antwort als ein Eintrag (drei مُضَاف).
+   * ⛔ Nicht „… وَ …": der Satzteil nach وَ bekommt vom Iʿrāb-Erklärer keine
+   *   Rolle. Zwei Sätze mit Punkt statt dessen.
+   * ⛔ Verworfen: حَقِيبَةُ الطَّالِبِ الْجَمِيلَةُ عَلَى الْمَكْتَبِ. — richtig
+   *   (الْجَمِيلَةُ gehört zu حَقِيبَةُ), aber der Erklärer bezieht es auf
+   *   الطَّالِبِ und erwartet eine Kasra; die Übung würde Falsches lehren.
+   * Länge 4 bis 8 Wörter; der Maßstab in pruefe-saetze.js ist der längste
+   * Buchsatz (10). */
+
+  /* حَقِيبَةُ mb1-27-3 · الطَّالِبِ mb1-46-2 · الْجَدِيدِ mb1-51-1 · عَلَى mb1-27-2 ·
+     مَكْتَبِ mb1-27-2 · الْمُدَرِّسِ mb1-27-2 · فِي mb1-21-1 · الْفَصْلِ mb1-25-2 */
+  'satz-lang-01': {
+    sentAr: 'حَقِيبَةُ الطَّالِبِ الْجَدِيدِ عَلَى مَكْتَبِ الْمُدَرِّسِ فِي الْفَصْلِ.',
+    sentDe: 'Die Tasche des neuen Studenten ist auf dem Schreibtisch des Lehrers im Klassenzimmer.'
+  },
+
+  /* مَفَاتِيحُ W:45756.pl · السَّيَّارَةِ mb1-30-2 · عَلَى mb1-27-2 · مَكْتَبِ mb1-27-2 ·
+     الْمُدِيرِ mb1-25-2 · فِي mb1-21-1 · الْمَدْرَسَةِ mb1-42-3 */
+  'satz-lang-02': {
+    sentAr: 'مَفَاتِيحُ السَّيَّارَةِ عَلَى مَكْتَبِ الْمُدِيرِ فِي الْمَدْرَسَةِ.',
+    sentDe: 'Die Schlüssel des Autos sind auf dem Schreibtisch des Direktors in der Schule.'
+  },
+
+  /* بِنْتُ mb1-63-2 · الْمُدَرِّسِ mb1-27-2 · طَالِبَةٌ W:45763.femSg ·
+     مُجْتَهِدَةٌ W:45881.femSg · فِي mb1-21-1 · الْمَدْرَسَةِ mb1-42-3 */
+  'satz-lang-03': {
+    sentAr: 'بِنْتُ الْمُدَرِّسِ طَالِبَةٌ مُجْتَهِدَةٌ فِي الْمَدْرَسَةِ.',
+    sentDe: 'Die Tochter des Lehrers ist eine fleißige Schülerin in der Schule.'
+  },
+
+  /* بَيْتُ mb1-42-3 · الْمُدَرِّسِ mb1-27-2 · كَبِيرٌ W:45798.ar · الطَّالِبِ mb1-46-2 ·
+     صَغِيرٌ W:45797.ar */
+  'satz-lang-04': {
+    sentAr: 'بَيْتُ الْمُدَرِّسِ كَبِيرٌ. بَيْتُ الطَّالِبِ صَغِيرٌ.',
+    sentDe: 'Das Haus des Lehrers ist groß. Das Haus des Studenten ist klein.'
+  },
+
+  /* أَيْنَ mb1-21-1 · كِتَابُ mb1-27-1 · الْمُدَرِّسِ mb1-27-2 · عَلَى mb1-27-2 ·
+     مَكْتَبِ mb1-27-2 · الْمُدِيرِ mb1-25-2 */
+  'satz-lang-05': {
+    sentAr: 'أَيْنَ كِتَابُ الْمُدَرِّسِ؟ كِتَابُ الْمُدَرِّسِ عَلَى مَكْتَبِ الْمُدِيرِ.',
+    sentDe: 'Wo ist das Buch des Lehrers? Das Buch des Lehrers ist auf dem Schreibtisch des Direktors.'
+  },
+
+  /* بِنْتُ mb1-63-2 · الْمُدِيرِ mb1-25-2 · طَبِيبَةٌ W:45761.femSg ·
+     مَشْهُورَةٌ W:45882.femSg · فِي mb1-21-1 · الْمَدِينَةِ mb1-29-1 */
+  'satz-lang-06': {
+    sentAr: 'بِنْتُ الْمُدِيرِ طَبِيبَةٌ مَشْهُورَةٌ فِي الْمَدِينَةِ.',
+    sentDe: 'Die Tochter des Direktors ist eine berühmte Ärztin in der Stadt.'
+  },
+
+  /* كِتَابُ mb1-27-1 · الطَّالِبِ mb1-46-2 · الْجَدِيدِ mb1-51-1 · فِي mb1-21-1 ·
+     الْحَقِيبَةِ mb1-61-4 · عَلَى mb1-27-2 · الْمَكْتَبِ mb1-27-3 */
+  'satz-lang-07': {
+    sentAr: 'كِتَابُ الطَّالِبِ الْجَدِيدِ فِي الْحَقِيبَةِ عَلَى الْمَكْتَبِ.',
+    sentDe: 'Das Buch des neuen Studenten ist in der Tasche auf dem Schreibtisch.'
+  },
+
+  /* بَيْتُ mb1-42-3 · التَّاجِرِ mb1-42-2 · قَرِيبٌ W:45793.ar · مِنَ mb1-24-1 ·
+     الْمَسْجِدِ mb1-42-3 */
+  'satz-lang-08': {
+    sentAr: 'بَيْتُ التَّاجِرِ قَرِيبٌ مِنَ الْمَسْجِدِ.',
+    sentDe: 'Das Haus des Händlers ist nahe bei der Moschee.'
+  },
 };

@@ -168,6 +168,21 @@ export const PFLEGEPLAN = [
      Kein neuer Pflegebedarf: die Bedingung kommt aus endungUnsichtbar()
      (js/irab.js), die Karte bewacht pruefe-regelsammlung.mjs, das Verhalten
      test-satzmodus-schwerer.mjs. */
+  /* 16.09.2026 abends, innerhalb von js/saetze.js und data/beispielsaetze.js und
+     deshalb von Hand hier: acht längere Sätze `satz-lang-…` (laengereSaetze() in
+     alleSaetze()). Elias: „mach das" auf „Ich schreibe neue, längere Sätze, nur
+     mit Wörtern, die du schon hast".
+     Kein neuer Pflegebedarf, aus drei Gründen:
+     · neuer Inhalt — die Sätze bleiben gültig, wenn Kapitel dazukommen; weitere
+       entstehen nur auf seinen Wunsch (Material, kein Kreislauf);
+     · seine Eingaben — er trägt in ihnen nichts ein;
+     · veralten — ändert sich ein Wortfeld oder ein Lehrbuchsatz, auf dem eine
+       Form beruht, wird test-satzmodus-schwerer.mjs (2g) rot. Den ruft die
+       Wartung seit demselben Abend in Schritt 6 direkt auf (Freigabe in
+       routines.json); vorher lief er nur über alle-pruefer.mjs in 1b.6, also
+       nur, wenn neue Regeln ausgeliefert wurden.
+     Markierungen, Taschkīl und Iʿrāb prüfen dieselben Werkzeuge wie bei jedem
+     Beispielsatz, weil die Sätze in data/beispielsaetze.js stehen. */
   {
     funktion: 'Satzmodus und Grammatik-Hervorhebung',
     dateien: ['js/saetze.js', 'js/uebung.js', 'grammar-data.js', 'lehrbuch-saetze.js'],
