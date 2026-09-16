@@ -115,6 +115,14 @@ if (!fs.existsSync(tmp)){
 }
 const fragen = JSON.parse(fs.readFileSync(tmp, 'utf8')).fragen || [];
 fs.unlinkSync(tmp);
+/* ⛔ Seit dem 16.09.2026 (v516) schreibt vorrat.mjs die Datei auch bei NULL offenen
+   Fragen — dann zeigt die Seite „Nichts offen" und kann keinen Zusammenhang nennen.
+   Das meldete dieser Prüfer als Befund: rot, weil alles erledigt war. Derselbe Fall
+   wie „keine Fragendatei" oben. [[vorgabewert_sieht_aus_wie_befund]] */
+if (!fragen.length){
+  console.log('⚠️ Die Fragendatei ist leer — es ist nichts offen. Nichts zu pruefen.');
+  process.exit(0);
+}
 
 const reihe = fragen.map(f => f.feld);
 console.log('Reihenfolge auf der Seite: ' + reihe.join(' -> '));
