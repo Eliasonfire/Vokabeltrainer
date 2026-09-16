@@ -181,12 +181,56 @@ const AUSNAHMEN = [
     trifft: (wort) => /^(وَ|فَ|بِ|لِ|تَ)?ال[لّ]/.test(wort) && /لل/.test(wort.replace(/[ًٌٍَُِّْٰ]/g, ''))
   },
   {
+    /* ⛔⛔ HAMZAT AL-WASL MITTEN IM SATZ — stumm, richtig so (17.09.2026).
+       Elias hat die Taschkīl-Fragen am 16.09.2026 übergeben („ja" auf „Meintest
+       du die auch?"). Nachgesehen statt geraten, in dieser Reihenfolge:
+
+         sein Buch, S. 42 (PDF 55, 500 dpi):  اِسْمُ التاجرِ … وٱسْمُ الطبيب
+         sein Buch, S. 63 (PDF 84, 600 dpi):  ما ٱسْمُكِ ؟
+         sein Lehrer (hamzatul-wasl-01, Folge 02): „Bleibst du bei ihm stehen,
+           liest du es wie ein ganz normales Alif. Liest du weiter, überspringst du es."
+         ar.wikipedia „همزة الوصل": „تكتب ٱ أو أَلِفًا بلا همزة، وتثبت لفظًا في حال
+           الابتداء، أما في حال الوصل فإنها تسقط"
+
+       Das Buch setzt die Kasra also genau dort, wo man das Wort ANFÄNGT, und
+       die Wasla dort, wo man weiterliest. Von den zehn Befunden am 16.09. standen
+       sieben mitten im Satz (مَا اسْمُكِ، أَخٌ اسْمُهُ، هَذِهِ امْرَأَةٌ …) — dort
+       wäre eine Kasra falsch, nicht fehlend.
+       ⚠️ ENG: nur die Nomen, die ar.wikipedia als Hamzat-al-wasl-Nomen aufzählt
+       (اسم، است، ابن، ابنة، اثنان، اثنتان، امرؤ، امرأة، ايمن/ايم), erkannt am
+       Anfang des Schriftbilds. Ein Hamzat al-qaṭʿ, dem das Hamza-Zeichen fehlt
+       (انْسَان statt إِنْسَان), soll weiter auffallen — auch mitten im Satz. */
+    name: 'Hamzat al-wasl mitten im Satz (beim Weiterlesen stumm, richtig so)',
+    keineFrage: true,
+    trifft: (wort, i, eintrag, kontext) => i === 0 && wort[0] === 'ا'
+      && !!kontext && kontext.satzanfang === false && istWaslNomen(wort),
+    nurMelden: true
+  },
+  {
+    /* ⭐ Hamzat al-wasl HINTER dem Artikel, dessen Lam die Kasra trägt:
+       الِامْتِثَالُ, الِامْتِحَانِ. Nach اَلْ wird immer weitergelesen, das Alif
+       fällt weg, und die Kasra auf dem Lam trägt den Übergang (li-mtiḥān).
+       Genau so steht es im Koran 49:11 (`node werkzeuge/vers.mjs 49:11`):
+       بِئْسَ ٱلِٱسْمُ ٱلْفُسُوقُ — Kasra auf dem Lam, das zweite Alif ohne Kasra.
+       ⚠️ Nur wenn die Kasra WIRKLICH auf dem Lam steht; الاِمْتِحَانُ (Kasra
+       auf dem Alif) erreicht dieses Muster gar nicht, weil das Alif dort ein
+       Zeichen trägt. */
+    name: 'Hamzat al-wasl hinter dem Artikel mit Kasra (الِامْتِحَانُ, stumm, richtig so)',
+    keineFrage: true,
+    trifft: (wort, i) => wort[i] === 'ا'
+      && /^(?:[\u0648\u0641\u0628\u0643\u0644][\u064E\u0650]?)?\u0627\u0644\u0650$/.test(wort.slice(0, i)),
+    nurMelden: true
+  },
+  {
     /* Hamzat al-wasl in اِبْنٌ, اِسْمٌ, اِسْتَمَعَ: der Abzug laesst die Kasra
        teils weg. ⚠️ Elias hat am 29.07.2026 fuer اِبْنٌ ausdruecklich MIT Kasra
        entschieden, diese Ausnahme gilt deshalb NICHT generell - sie ist hier
        nur eingetragen, damit die Meldung als eigene Gruppe erscheint statt in
-       der Hauptliste unterzugehen. Siehe `nurMelden`. */
-    name: 'Hamzat al-wasl am Wortanfang ohne Kasra',
+       der Hauptliste unterzugehen. Siehe `nurMelden`.
+       ⭐ Seit dem 17.09.2026 heißt die Gruppe „am Satzanfang": mitten im Satz
+       ist die fehlende Kasra richtig (Ausnahme darüber). Was hier steht, BEGINNT
+       einen Satz oder steht allein — dort druckt sein Buch die Kasra (S. 42). */
+    name: 'Hamzat al-wasl am Satzanfang ohne Kasra',
     trifft: (wort, i) => i === 0 && wort[0] === 'ا' && wort[1] !== 'ل',
     nurMelden: true
   },
@@ -327,6 +371,37 @@ function woerterAus(text){
     .filter(w => KONSONANT.test(w));
 }
 
+/* Dieselben Woerter, dazu: BEGINNT das Wort einen Satz? (17.09.2026)
+   Wahr fuer das erste Wort eines Feldes und fuer jedes Wort hinter einem
+   Satzzeichen, an dem man stehenbleibt (. ؟ ! ? : ؛). Das Komma zaehlt nicht —
+   dort liest man weiter. Gebraucht fuer die Hamzat al-wasl: am Satzanfang
+   druckt sein Buch die Kasra, mitten im Satz nicht (siehe AUSNAHMEN).
+   ⚠️ Dieselbe Zerlegung und derselbe Filter wie woerterAus() — die Zaehlung
+   der geprueften Woerter darf sich dadurch nicht aendern. */
+function woerterMitSatzanfang(text){
+  const aus = [];
+  let anfang = true;
+  for (const teil of String(text || '').split(/([\s.،؟!«»:؛/]+)/)){
+    if (/^[\s.،؟!«»:؛/]+$/.test(teil)){
+      if (/[.؟!?:؛]/.test(teil)) anfang = true;
+      continue;
+    }
+    const wort = teil.replace(new RegExp(TATWEEL, 'g'), '').trim();
+    if (!KONSONANT.test(wort)) continue;
+    aus.push({ wort, satzanfang: anfang });
+    anfang = false;
+  }
+  return aus;
+}
+
+/* Die Nomen mit Hamzat al-wasl, wie ar.wikipedia „همزة الوصل" sie aufzaehlt:
+   اسم، است، ابن، ابنة، اثنان، اثنتان، امرؤ، امرأة، ايمن الله، ايم الله —
+   verglichen am Anfang des Schriftbilds, also auch mit Endung (اسْمُهُ, ابْنَتِي). */
+function istWaslNomen(wort){
+  const skelett = String(wort || '').normalize('NFC').replace(/[\u064B-\u0652\u0670]/g, '');
+  return /^(اسم|است|ابن|اثن|امرأ|امرؤ|ايم)/.test(skelett);
+}
+
 /* Fehlt an Stelle i eine Haraka? Gibt null zurueck, wenn alles in Ordnung ist,
    sonst einen Grund im Klartext. */
 function luecke(wort, i){
@@ -391,15 +466,16 @@ function pruefeEintrag(eintrag, quelle, ziel = befunde){
   FELDER.forEach(feld => {
     const wert = eintrag[feld];
     if (typeof wert !== 'string' || !wert.trim()) return;
-    woerterAus(wert).forEach(wort => {
+    woerterMitSatzanfang(wert).forEach(({ wort, satzanfang }) => {
       gezaehlt++;
       for (let i = 0; i < wort.length; i++){
         const grund = luecke(wort, i);
         if (!grund) continue;
         /* ⚠️ Dritter Parameter seit dem 20.08.2026: manche Ausnahmen haengen
            nicht am Wort, sondern am EINTRAG (siehe „Zitierform eines
-           Fachbegriffs"). Die aelteren vier ignorieren ihn. */
-        const ausnahme = AUSNAHMEN.find(a => a.trifft(wort, i, eintrag));
+           Fachbegriffs"). Die aelteren vier ignorieren ihn.
+           Vierter seit dem 17.09.2026: steht das Wort am Satzanfang? */
+        const ausnahme = AUSNAHMEN.find(a => a.trifft(wort, i, eintrag, { satzanfang, feld }));
         if (ausnahme && !ausnahme.nurMelden) continue;
         ziel.push({
           quelle, id: eintrag.id, feld, wort,
@@ -413,7 +489,38 @@ function pruefeEintrag(eintrag, quelle, ziel = befunde){
   return gezaehlt;
 }
 
-VOCAB_DATA.forEach(w => { woerterGeprueft += pruefeEintrag(w, 'vocab-data.js'); });
+/* ⭐ WAS DIE APP ZEIGT, NICHT NUR WAS IN DER DATEI STEHT (17.09.2026).
+   Seine eigenen Vokabeln kommen aus dem arabicroots-Abzug und aus seinem Gerät;
+   beide werden neu geschrieben, eine Korrektur dort wäre weg. Deshalb korrigiert
+   die App sie beim Start über SCHREIBWEISEN (data/eselsbruecken.js,
+   schreibweisenErsetzen() in js/buecher.js). Dieser Prüfer las nur die Datei und
+   hätte jede solche Korrektur weiter als Lücke gemeldet — für أَيْضاً stand
+   dafür eine eigene Ausnahme oben, die ein zweites Wort nicht mehr kennt.
+   ⛔ Die Funktion wird aus js/buecher.js GESCHNITTEN, nicht nachgebaut.
+   Angewandt auf die Quellen, die die App damit korrigiert: vocab-data.js,
+   vokabeln-eigene.js, eigene-woerter.json. [[pruefserver_ist_nicht_die_app]] */
+const wieInDerApp = (() => {
+  try {
+    const SCHREIBWEISEN = (new Function(fs.readFileSync(path.join(DIR, 'data', 'eselsbruecken.js'), 'utf8')
+      + '\n;return typeof SCHREIBWEISEN !== "undefined" ? SCHREIBWEISEN : {};'))();
+    const bj = fs.readFileSync(path.join(DIR, 'js', 'buecher.js'), 'utf8');
+    const auf = bj.indexOf('function schreibweisenErsetzen(');
+    const zu = auf < 0 ? -1 : bj.indexOf('\n}', auf);
+    if (auf < 0 || zu < 0) throw new Error('schreibweisenErsetzen() nicht in js/buecher.js');
+    const ersetze = new Function('VOCAB_DATA', 'SCHREIBWEISEN', bj.slice(auf, zu + 2) + '\nreturn schreibweisenErsetzen();');
+    return (w) => {
+      if (!w || !SCHREIBWEISEN[String(w.id)]) return w;
+      const kopie = Object.assign({}, w);
+      ersetze([kopie], SCHREIBWEISEN);
+      return kopie;
+    };
+  } catch (e) {
+    console.log('  ⚠️ SCHREIBWEISEN nicht anwendbar (' + e.message + ') — was die App korrigiert, zählt hier als Lücke.');
+    return (w) => w;
+  }
+})();
+
+VOCAB_DATA.forEach(w => { woerterGeprueft += pruefeEintrag(wieInDerApp(w), 'vocab-data.js'); });
 (LEHRBUCH_SAETZE || []).forEach(s => { woerterGeprueft += pruefeEintrag(s, 'lehrbuch-saetze.js'); });
 
 /* ⛔⛔ DIE DRITTE SATZQUELLE — data/beispielsaetze.js.
@@ -708,7 +815,7 @@ buchDateien.forEach(f => {
   if (eigene) eigeneAnzahl = liste.length;
   buchEintraege += eigene ? 0 : liste.length;
   liste.forEach(w => {
-    const n = pruefeEintrag(w, eigene ? 'data/' + f : f, eigene ? befunde : buchBefunde);
+    const n = pruefeEintrag(eigene ? wieInDerApp(w) : w, eigene ? 'data/' + f : f, eigene ? befunde : buchBefunde);
     if (eigene) woerterGeprueft += n; else buchWoerter += n;
   });
 });
@@ -731,7 +838,7 @@ let selbstAnzahl = 0;
 try {
   const d = JSON.parse(fs.readFileSync(path.join(DIR, 'data', 'eigene-woerter.json'), 'utf8'));
   const liste = Array.isArray(d.woerter) ? d.woerter : [];
-  liste.forEach(w => { woerterGeprueft += pruefeEintrag(w, 'data/eigene-woerter.json'); });
+  liste.forEach(w => { woerterGeprueft += pruefeEintrag(wieInDerApp(w), 'data/eigene-woerter.json'); });
   selbstAnzahl = liste.length;
 } catch (e) {
   /* ⛔ Nicht schweigen. Fehlt die Datei, sind 14 Woerter UNGEPRUEFT, und ein
@@ -873,11 +980,12 @@ function zeigeBuchBericht(){
               '\n   sind "Haraka fehlt" und die Hamzat-al-wasl-Gruppe.');
 }
 
+const waslEichung = eicheWaslGruppen();
 if (!befunde.length){
   console.log('\nKeine Luecke in den Repo-Dateien — dort ist alles vokalisiert.' +
     (buchBefunde.length ? ` (Die Buchdateien haben ${buchBefunde.length}.)` : ''));
   zeigeBuchBericht();
-  process.exit(0);
+  process.exit(waslEichung ? 1 : 0);
 }
 
 /* Nach Gruppe zusammenfassen, damit ein systematischer Fall nicht als
@@ -1063,6 +1171,45 @@ Object.entries(nachGruppe)
     console.log('\n⛔ ' + stoer + ' Stoertest(s) gescheitert — die Buendelung oben ist NICHT');
     console.log('   belastbar. Die Zahl „X Befunde, aber nur Y Fragen" nicht benutzen.');
   }
+}
+
+/* ⛔ Eichung Hamzat al-wasl im Satz (17.09.2026): die Ausnahmen „mitten im Satz"
+   und „hinter dem Artikel" machen Befunde zu „kein Mangel". Eine Ausnahme, die zu
+   viel schluckt, macht den Prüfer still — deshalb muss jede Grenze hier sichtbar
+   halten: Satzanfang bleibt Mangel, ein fehlendes Hamza (انْسَانٌ) bleibt Mangel,
+   eine Kasra auf dem Alif erreicht das Muster gar nicht.
+   Exit 1, wenn eine Grenze kippt — das ist dann ein Werkzeugfehler, kein Befund. */
+/* ⚠️ Als Funktion und VOR dem frühen Ausstieg aufgerufen (weiter oben): ohne
+   Befunde endet das Skript dort mit Exit 0 — eine Eichung dahinter liefe genau
+   dann nie, wenn die Ausnahmen alles geschluckt haben. */
+function eicheWaslGruppen(){
+  let waslEichung = 0;
+  console.log('\n=== Eichung (Hamzat al-wasl im Satz) ===');
+  const gruppenVon = (eintrag) => {
+    const aus = [];
+    pruefeEintrag(Object.assign({ id: 'eichung' }, eintrag), 'eichung', aus);
+    return aus.map(b => b.wort + ' → ' + b.gruppe);
+  };
+  const MITTEN = 'Hamzat al-wasl mitten im Satz (beim Weiterlesen stumm, richtig so)';
+  const ANFANG = 'Hamzat al-wasl am Satzanfang ohne Kasra';
+  const ARTIKEL = 'Hamzat al-wasl hinter dem Artikel mit Kasra (الِامْتِحَانُ, stumm, richtig so)';
+  const fall = (was, eintrag, wort, gruppe) => {
+    const g = gruppenVon(eintrag);
+    const soll = wort.normalize('NFC') + ' → ' + gruppe;
+    const ok = gruppe === null ? !g.some(x => x.startsWith(wort.normalize('NFC') + ' → ')) : g.includes(soll);
+    if (!ok){ waslEichung++; console.log('  ⛔  ' + was + ': ' + JSON.stringify(g)); }
+    else console.log('  ok   ' + was);
+  };
+  fall('Buch S. 63: مَا اسْمُكِ — mitten im Satz, kein Mangel', { sentAr: 'مَا اسْمُكِ؟ اِسْمِي آمِنَةُ.' }, 'اسْمُكِ', MITTEN);
+  fall('nach „؟" beginnt ein Satz: اسْمِي ohne Kasra ist Mangel', { sentAr: 'مَا اسْمُكِ؟ اسْمِي آمِنَةُ.' }, 'اسْمِي', ANFANG);
+  fall('das Komma ist kein Satzende', { sentAr: 'لِي أَخٌ اسْمُهُ حَامِدٌ، اسْمُهُ جَمِيلٌ.' }, 'اسْمُهُ', MITTEN);
+  fall('ein Wort allein (Kartenfeld) steht am Anfang', { ar: 'اسْمٌ' }, 'اسْمٌ', ANFANG);
+  fall('fehlendes Hamza-Zeichen mitten im Satz bleibt Mangel (انْسَانٌ ist kein Wasl-Nomen)', { sentAr: 'هُوَ انْسَانٌ.' }, 'انْسَانٌ', ANFANG);
+  fall('Koran 49:11: الِاسْمُ — Kasra auf dem Lam, kein Mangel', { sentAr: 'بِئْسَ الِاسْمُ.' }, 'الِاسْمُ', ARTIKEL);
+  fall('الاِمْتِحَانُ (Kasra auf dem Alif) — gar kein Befund', { sentAr: 'هَذَا الاِمْتِحَانُ.' }, 'الاِمْتِحَانُ', null);
+  fall('الْامْتِحَانُ (Sukun auf dem Lam, Alif ohne Zeichen) bleibt Mangel — dort fehlt der Übergangsvokal', { sentAr: 'هَذَا الْامْتِحَانُ.' }, 'الْامْتِحَانُ', 'Haraka fehlt');
+  if (waslEichung) console.log('\n⛔ ' + waslEichung + ' Eichfall/-fälle gekippt — die Gruppen zur Hamzat al-wasl sind NICHT belastbar.');
+  return waslEichung;
 }
 
 const woerter = new Set(befunde.map(b => b.wort));

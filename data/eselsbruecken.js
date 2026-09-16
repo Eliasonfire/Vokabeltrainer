@@ -573,4 +573,28 @@ const SCHREIBWEISEN = {
     sentArNach: 'أَيْضًا',
     grund: 'Elias 07.09.2026: „es aufs dad packen, sieht sogar sicherlich besser aus"',
   },
+
+  /* ⭐ 17.09.2026 — zwei Taschkīl-Fragen, die Elias am 16.09.2026 übergeben hat
+   * (auf „Auf deinem Foto war darunter auch „Taschkīl-Fragen" zu sehen. Meintest
+   * du die auch?": „ja"). Beide Wörter stehen in SEINEN Listen (arabicroots bzw.
+   * Gerät), deshalb hier und nicht in der Datei.
+   *
+   * الإِسْمُ „Nomen": das Hamza-Zeichen unter dem Alif gehört nicht zu اسم — es ist
+   * eines der Nomen mit Hamzat al-wasl (ar.wikipedia „همزة الوصل"). Hinter dem
+   * Artikel fällt das Alif weg, und der Lam trägt die Kasra: so im Koran 49:11
+   * (بِئْسَ ٱلِٱسْمُ) und so schreibt sein arabicroots-Abzug genau diesen Fall in
+   * الِامْتِثَالُ (50192) und الِامْتِحَانِ (50196). Satz hat die Karte keinen. */
+  '65699a81-0913-4e3c-9d5d-fa750d972779': {
+    ar: 'الِاسْمُ',
+    grund: 'Taschkīl-Frage, übergeben 16.09.2026 („ja"); Koran 49:11 ٱلِٱسْمُ, Abzug الِامْتِثَالُ/الِامْتِحَانِ',
+  },
+
+  /* لِمَن „(für) wem/wen": dem ن fehlte das Sukun. Sein Buch druckt لِمَنْ
+   * (lehrbuch-saetze.js mb1-43-1, S. 43, und mb1-51-1). Der Beispielsatz der
+   * Karte schreibt schon لِمَنِ الْكِتَابُ؟ — die Kasra dort ist der Hilfsvokal vor
+   * dem Artikel und bleibt. */
+  'p_1787184718572': {
+    ar: 'لِمَنْ',
+    grund: 'Taschkīl-Frage, übergeben 16.09.2026 („ja"); Buch S. 43 لِمَنْ',
+  },
 };

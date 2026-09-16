@@ -1132,13 +1132,13 @@ function dubForm(x, endungBehalten){
    nicht bei Verben (اِلْتَقَى ist Stamm VIII) — das entscheiden die Aufrufer über
    `artikelWeg`. [[allgemeine_regel_statt_listeneintrag]] */
 function dubOhneArtikel(x){
-  const s = String(x == null ? '' : x).normalize('NFC').replace(/ـ/g, '');
-  const m = /^[اأإٱ][َُِ]?ل(ْ?)([ء-ي])([ً-ْٰ]*)/.exec(s);
+  const s = String(x == null ? '' : x).normalize('NFC').replace(/\u0640/g, '');
+  const m = /^[\u0627\u0623\u0625\u0671][\u064E\u064F\u0650]?\u0644(\u0652?)([\u0621-\u064A])([\u064B-\u0652\u0670]*)/.exec(s);
   if (!m) return s;
-  const sonne = m[3].indexOf('ّ') >= 0;
+  const sonne = m[3].indexOf('\u0651') >= 0;
   if (!m[1] && !sonne) return s;
-  const rest = m[2] + m[3].replace('ّ', '') + s.slice(m[0].length);
-  return rest.replace(/[ً-ْٰ]/g, '').length >= 2 ? rest : s;
+  const rest = m[2] + m[3].replace('\u0651', '') + s.slice(m[0].length);
+  return rest.replace(/[\u064B-\u0652\u0670]/g, '').length >= 2 ? rest : s;
 }
 function dubGleich(a, b, endungBehalten, artikelWeg){
   const f = v => dubForm(artikelWeg ? dubOhneArtikel(v) : v, endungBehalten);

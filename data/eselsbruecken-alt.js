@@ -2077,13 +2077,13 @@ const ESELSBRUECKEN_ALT = {
     '⭐ Die Form heißt أَفْعَال: vorne kommt ein أَ dazu, und vor den letzten Buchstaben ein ا — بَابٌ → أَبْوَابٌ. ⚠️ 12 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel قَلَمٌ → أَقْلَامٌ und وَلَدٌ → أَوْلَادٌ. Wer eines davon sieht, kennt die anderen.'
   ],
   '45755#pl': [   /* أَفْعَال: قَلَمٌ → أَقْلَامٌ */
-    '⭐ Die Form heißt أَفْعَال: vorne kommt ein أَ dazu, und vor den letzten Buchstaben ein ا — قَلَمٌ → أَقْلَامٌ. ⚠️ 12 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel وَلَدٌ → أَوْلَادٌ und لَبَنٌ → أَلْبَان. Wer eines davon sieht, kennt die anderen.'
+    '⭐ Die Form heißt أَفْعَال: vorne kommt ein أَ dazu, und vor den letzten Buchstaben ein ا — قَلَمٌ → أَقْلَامٌ. ⚠️ 12 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel وَلَدٌ → أَوْلَادٌ und لَبَنٌ → أَلْبَانٌ. Wer eines davon sieht, kennt die anderen.'
   ],
   '45762#pl': [   /* أَفْعَال: وَلَدٌ → أَوْلَادٌ */
-    '⭐ Die Form heißt أَفْعَال: vorne kommt ein أَ dazu, und vor den letzten Buchstaben ein ا — وَلَدٌ → أَوْلَادٌ. ⚠️ 12 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel لَبَنٌ → أَلْبَان und وَرَقٌ → أَوْرَاقٌ. Wer eines davon sieht, kennt die anderen.'
+    '⭐ Die Form heißt أَفْعَال: vorne kommt ein أَ dazu, und vor den letzten Buchstaben ein ا — وَلَدٌ → أَوْلَادٌ. ⚠️ 12 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel لَبَنٌ → أَلْبَانٌ und وَرَقٌ → أَوْرَاقٌ. Wer eines davon sieht, kennt die anderen.'
   ],
-  '45782#pl': [   /* أَفْعَال: لَبَنٌ → أَلْبَان */
-    '⭐ Die Form heißt أَفْعَال: vorne kommt ein أَ dazu, und vor den letzten Buchstaben ein ا — لَبَنٌ → أَلْبَان. ⚠️ 12 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel وَرَقٌ → أَوْرَاقٌ und سُوقٌ → أَسْوَاقٌ. Wer eines davon sieht, kennt die anderen.'
+  '45782#pl': [   /* أَفْعَال: لَبَنٌ → أَلْبَانٌ */
+    '⭐ Die Form heißt أَفْعَال: vorne kommt ein أَ dazu, und vor den letzten Buchstaben ein ا — لَبَنٌ → أَلْبَانٌ. ⚠️ 12 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel وَرَقٌ → أَوْرَاقٌ und سُوقٌ → أَسْوَاقٌ. Wer eines davon sieht, kennt die anderen.'
   ],
   '45801#pl': [   /* أَفْعَال: وَرَقٌ → أَوْرَاقٌ */
     '⭐ Die Form heißt أَفْعَال: vorne kommt ein أَ dazu, und vor den letzten Buchstaben ein ا — وَرَقٌ → أَوْرَاقٌ. ⚠️ 12 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel سُوقٌ → أَسْوَاقٌ und عَمٌّ → أَعْمَامٌ. Wer eines davon sieht, kennt die anderen.'

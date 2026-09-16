@@ -1629,7 +1629,7 @@ const BEISPIELSAETZE = {
 
   /* ابْنَةٌ — Tochter · Iḍāfa als مُبْتَدَأ. */
   '46005': {
-    sentAr: 'ابْنَةُ التَّاجِرِ فِي الْمَدْرَسَةِ.',
+    sentAr: 'اِبْنَةُ التَّاجِرِ فِي الْمَدْرَسَةِ.',
     sentDe: 'Die Tochter des Händlers ist in der Schule.'
   },
 
