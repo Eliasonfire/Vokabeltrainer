@@ -239,7 +239,112 @@ function merkeWiederholung(sure){
   WDH[sure] = heute;
   LS.set('vt_suraGelesen', WDH);
   if (typeof renderQuranRinge === 'function') renderQuranRinge();
+  if (typeof zeichneGelesenKnopf === 'function') zeichneGelesenKnopf();
 }
+
+/* ---------- ⛔⛔ WANN GILT EINE SURE ALS GELESEN? (16.09.2026) ----------
+
+   Elias: „auf meinem tablet hab ich zalzala gelesen die heutige aufgabe und
+   dann bin ich raus gegangen und es wurde einfach nicht gezählt,
+   wahrscheinnlich weil ich nicht runter scrollen konnte weil der bildschirm
+   groß genug war für die ganze sura. das könnte sicherlich auch am handy so
+   sein. das müsste man lösen. wahrscheinlich indem man mindesten so 1-2 min in
+   der sure bleibt dann ist sicher das man auch wirklich liest und nicht
+   einfach für 5 sek rein geht, kurz guckt und wieder raus"
+
+   ⛔ SEINE VERMUTUNG WAR RICHTIG, DIE URSACHE LAG ABER NOCH EINE STUFE TIEFER.
+   Gezählt wurde bis heute in beobachteLesestand() mit DEMSELBEN Beobachter,
+   der den Lesestand führt — und der trägt `rootMargin: '-64px 0px -60% 0px'`.
+   Er meldet also nur, was im oberen Band des Fensters steht; die unteren 60 %
+   sind ausdrücklich abgeschnitten, weil „wo stehe ich gerade" die Stelle oben
+   meint und nicht das, was unten gerade noch mitläuft.
+
+   Für „habe ich das Ende gesehen?" ist genau dieser Beschnitt falsch: Passt
+   eine kurze Sure ganz auf den Schirm, steht ihr letzter Vers dauerhaft in den
+   abgeschnittenen 60 % — und es gibt nichts zu rollen, was ihn nach oben
+   brächte. Die Sure wurde damit NIE gezählt, und zwar umso sicherer, je größer
+   das Gerät ist. Az-Zalzala hat 8 Verse; auf seinem Tablet war das Ende nie
+   im Band. [[kennzeichen_mit_zwei_ursachen]]
+
+   ⚠️ Das trifft ausgerechnet die kurzen Suren — also genau den Vorrat, aus dem
+   die Wiederholungsrunde besteht.
+
+   Deshalb jetzt ZWEI Bedingungen, beide müssen erfüllt sein:
+     1. der letzte Vers war wirklich sichtbar — gemessen von einem eigenen
+        Beobachter OHNE den Beschnitt, der genau EIN Rechteck ausmisst
+     2. mindestens WDH_MINDESTZEIT in der Sure, seine Vorgabe („mindesten so
+        1-2 min"), gezählt am unteren Rand seiner Spanne
+
+   ⛔ Die Zeit läuft NUR, solange die Sure offen UND das Fenster sichtbar ist.
+   Eine Wanduhr wäre keine Schranke: wer die App weglegt und in zwei Minuten
+   zurückkommt, hätte die Sure „gelesen". [[ausfall_ist_unsichtbar_gebaut]] */
+const WDH_MINDESTZEIT = 60 * 1000;
+
+let LESE_SURE = null;          /* welche Sure ist gerade offen */
+let LESE_ENDE_GESEHEN = false; /* war ihr letzter Vers schon sichtbar? */
+let LESE_SEIT = 0;             /* läuft die Uhr? (Zeitpunkt, sonst 0) */
+let LESE_DAUER = 0;            /* bereits gesammelte Zeit in dieser Sure */
+let LESE_UHR = null;
+let LESE_ENDE_BEOBACHTER = null;
+
+function leseZeitJetzt(){
+  return LESE_DAUER + (LESE_SEIT ? Date.now() - LESE_SEIT : 0);
+}
+
+/* Die Uhr auf den Zeitpunkt stellen, an dem die Schwelle fällt. Ohne sie
+   zählte eine Sure, deren Ende von Anfang an sichtbar ist, überhaupt nie:
+   der Beobachter meldet einmal und danach nie wieder. */
+function leseUhrStellen(){
+  clearTimeout(LESE_UHR);
+  LESE_UHR = null;
+  if (!LESE_SURE || !LESE_ENDE_GESEHEN || !LESE_SEIT) return;
+  const fehlt = WDH_MINDESTZEIT - leseZeitJetzt();
+  if (fehlt <= 0){ pruefeWiederholung(); return; }
+  LESE_UHR = setTimeout(pruefeWiederholung, fehlt + 50);
+}
+
+function pruefeWiederholung(){
+  if (!LESE_SURE || !LESE_ENDE_GESEHEN) return;
+  if (leseZeitJetzt() < WDH_MINDESTZEIT){ leseUhrStellen(); return; }
+  clearTimeout(LESE_UHR);
+  LESE_UHR = null;
+  merkeWiederholung(LESE_SURE);
+}
+
+function leseZeitStart(){
+  if (LESE_SEIT || !LESE_SURE) return;
+  /* ⚠️ Nicht anlaufen, solange die App weggelegt ist. Sonst liefe die Uhr ab
+     dem Moment, in dem eine Sure im Hintergrund neu aufgebaut wird. */
+  if (document.visibilityState === 'hidden') return;
+  LESE_SEIT = Date.now();
+  leseUhrStellen();
+}
+
+function leseZeitHalt(){
+  if (LESE_SEIT) LESE_DAUER += Date.now() - LESE_SEIT;
+  LESE_SEIT = 0;
+  clearTimeout(LESE_UHR);
+  LESE_UHR = null;
+}
+
+/* Eine andere Sure (oder zurück in die Liste): die Uhr fängt von vorn an.
+   ⚠️ Auch beim Wechsel VON einer Sure ZU einer anderen — sonst trüge die neue
+   die Minuten der alten und wäre nach einem Blick gezählt. */
+function leseSureSetzen(id){
+  leseZeitHalt();
+  LESE_SURE = id ? Number(id) : null;
+  LESE_ENDE_GESEHEN = false;
+  LESE_DAUER = 0;
+  if (LESE_ENDE_BEOBACHTER){ LESE_ENDE_BEOBACHTER.disconnect(); LESE_ENDE_BEOBACHTER = null; }
+  if (LESE_SURE) leseZeitStart();
+}
+
+/* ⛔ Die Uhr hält an, wenn die App weggelegt wird — und läuft weiter, wenn sie
+   zurückkommt. Ohne diesen Haken wäre WDH_MINDESTZEIT eine Wanduhr und damit
+   keine Schranke. */
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') leseZeitStart(); else leseZeitHalt();
+});
 
 /* Welche auswendigen Suren stehen überhaupt in der Runde? */
 function wdhVorrat(){
@@ -279,6 +384,63 @@ function wdhFavorit(){
   return f ? f.id : null;
 }
 
+/* ---------- Der Haken am Ende der Sure (16.09.2026) ----------
+
+   Elias, nachdem az-Zalzala nicht gezählt worden war: „qadr und zalzala müssen
+   bei mir heute abgehackt werden".
+
+   ⭐ Die Reparatur oben (zweiter Beobachter + Mindestzeit) wirkt erst beim
+   NÄCHSTEN Lesen. Für einen Tag, an dem er die Sure schon gelesen hat, hilft
+   sie nicht — und ihn zweimal 60 Sekunden warten zu lassen für etwas, das die
+   App falsch gemacht hat, wäre die falsche Rechnung.
+
+   ⛔ Das ist aber nicht der einzige Grund, warum der Haken bleibt. Eine
+   Erkennung, die an Bildschirmgeometrie hängt, KANN wieder danebenliegen — ein
+   ungewöhnliches Seitenverhältnis, eine eingeblendete Tastatur, ein Gerät, das
+   es noch nicht gibt. Ohne einen Weg von Hand bleibt dann nur, es hinzunehmen.
+   Der Haken ist das Sicherheitsnetz unter einer Automatik, die man nicht
+   vollständig prüfen kann. [[ausfall_ist_unsichtbar_gebaut]]
+
+   ⚠️ Nur bei Suren, für die WDH überhaupt etwas bedeutet: auswendige (die
+   Wiederholungsrunde und al-Mulk) und die Favoritensure, die er gerade lernt.
+   Unter den übrigen 100+ Suren wäre der Knopf eine Zeile ohne Folgen. */
+function inWiederholungsrunde(sure){
+  const id = Number(sure);
+  if (typeof HIFZ === 'object' && HIFZ[id]) return true;
+  return (typeof wdhFavorit === 'function') && wdhFavorit() === id;
+}
+
+function gelesenKnopfHtml(sure){
+  if (!inWiederholungsrunde(sure)) return '';
+  const heute = (typeof WDH === 'object' && WDH[sure] === todayStr(0));
+  return `<div class="sura-gelesen-zeile">
+    <button class="btn btn-secondary sura-gelesen${heute ? ' ist' : ''}" type="button"
+            data-suragelesen="${sure}"${heute ? ' disabled' : ''}>
+      ${icon('check')}${heute ? 'Heute gelesen' : 'Heute gelesen — abhaken'}
+    </button>
+  </div>`;
+}
+
+/* Nur den Knopf neu zeichnen, nicht die ganze Sure: merkeWiederholung() ruft
+   das, und ein Neuaufbau der Versliste würde mitten im Lesen den Rollstand
+   verlieren. */
+function zeichneGelesenKnopf(){
+  const alt = document.querySelector('#verseList .sura-gelesen-zeile');
+  if (!alt) return;
+  const sure = Number(alt.querySelector('[data-suragelesen]')?.dataset.suragelesen || 0);
+  if (!sure) return;
+  alt.outerHTML = gelesenKnopfHtml(sure);
+}
+
+document.addEventListener('click', e => {
+  const k = e.target.closest('[data-suragelesen]');
+  if (!k) return;
+  const sure = Number(k.dataset.suragelesen);
+  if (!sure) return;
+  merkeWiederholung(sure);
+  if (typeof toast === 'function') toast('Als heute gelesen eingetragen');
+});
+
 /* ⭐ Der Lesestrich in der offenen Sure (15.09.2026).
    Elias wollte ihn subtil: „ich wills eher subtil haben … einmal in die breite
    durchzuehen", und zur Vorschau mit beiden Varianten: „so find ich gut" —
@@ -311,6 +473,10 @@ function leseStrichZeichnen(){
 function beobachteLesestand(id){
   if (LESE_BEOBACHTER) LESE_BEOBACHTER.disconnect();
   LESE_SICHTBAR = new Set();
+  /* ⛔ VOR dem Ausstieg bei leerer Liste. Stünde es weiter unten, behielte eine
+     Sure, deren Verse noch nicht da sind, die Uhr der VORIGEN — und die wäre
+     dann schon abgelaufen. */
+  leseSureSetzen(id);
   const verse = document.querySelectorAll('#verseList .verse-item');
   if (!verse.length) return;
   LESE_BEOBACHTER = new IntersectionObserver(eintraege => {
@@ -323,12 +489,31 @@ function beobachteLesestand(id){
        unterste: wer wieder einsteigt, will den Vers noch einmal sehen, mit dem
        er aufgehoert hat, und nicht den ersten, den er noch nicht kennt. */
     merkeLesestand(id, Math.min(...LESE_SICHTBAR));
-    /* ⭐ Und die Wiederholung: sichtbar der LETZTE Vers heisst, die Sure ist
-       durch. Dieselbe Quelle, ein Beobachter — ein zweiter würde dieselben
-       Rechtecke ein zweites Mal ausmessen. */
-    if (LESE_SICHTBAR.has(versZahl(id))) merkeWiederholung(id);
+    /* ⛔ HIER STAND DIE WIEDERHOLUNGSZÄHLUNG — und genau das war der Fehler:
+       `if (LESE_SICHTBAR.has(versZahl(id))) merkeWiederholung(id);`
+       Dieser Beobachter schneidet unten 60 % ab. Ein letzter Vers, der dort
+       steht, weil die Sure ganz auf den Schirm passt, kam nie in die Menge.
+       Die Zählung hängt jetzt an einem eigenen Beobachter weiter unten.
+       Begründung bei WDH_MINDESTZEIT. */
   }, { rootMargin: '-64px 0px -60% 0px' });
   verse.forEach(v => LESE_BEOBACHTER.observe(v));
+
+  /* ---------- Der zweite Beobachter: nur der letzte Vers, ohne Beschnitt ----
+     ⚠️ Der Einwand, der hier früher stand („ein zweiter würde dieselben
+     Rechtecke ein zweites Mal ausmessen"), galt für ALLE Verse — bei
+     al-Baqarah wären das 286. Dieser hier beobachtet genau EINEN Knoten, und
+     zwar den, auf den es ankommt. Der Preis ist damit weg, der Fehler auch. */
+  const letzterNr = versZahl(id);
+  const letzter = letzterNr
+    ? document.querySelector(`#verseList .verse-item[data-versnr="${letzterNr}"]`)
+    : null;
+  if (!letzter) return;
+  LESE_ENDE_BEOBACHTER = new IntersectionObserver(eintraege => {
+    if (!eintraege.some(e => e.isIntersecting)) return;
+    LESE_ENDE_GESEHEN = true;
+    pruefeWiederholung();
+  });
+  LESE_ENDE_BEOBACHTER.observe(letzter);
 }
 
 function renderWeiterlesen(){
@@ -490,6 +675,10 @@ function renderSurahList(filter){
      ⚠️ Nur beim Verlassen einer Sure: renderSurahList laeuft auch bei jedem
      Tastendruck in der Suche, und dort ist OFFENE_SURE schon null. */
   if (kamAusSure && typeof audioAus === 'function') audioAus();
+  /* ⛔ Und die Leseuhr. Sie gehoert genauso zur offenen Sure wie der Ton: wer
+     in die Liste zurueckgeht, liest diese Sure nicht mehr. Ohne das liefe sie
+     weiter und die naechste Sure waere nach einem Blick gezaehlt. */
+  if (kamAusSure) leseSureSetzen(null);
   /* Zurueck in der Liste ist der Kopf immer da - sonst stuende man ohne
      Zurueck-Pfeil vor 114 Zeilen. Siehe kopfZuruecksetzen weiter unten. */
   kopfZuruecksetzen();
@@ -1845,7 +2034,7 @@ function renderVerses(id){
            derselbe, und das Umschalten braucht keinen Neuaufbau. Gefuellt
            wird sie nachtraeglich von zeigeQuranEn(). -->
       <div class="verse-en" lang="en"></div>
-    </div>${trenner}`; }).join('');
+    </div>${trenner}`; }).join('') + gelesenKnopfHtml(id);
   aktualisiereHifzLeiste(id, surah);
   /* ⛔ OHNE await: der Leser steht sofort, das Englische kommt nach. Ein
      Netzabruf darf den Aufbau nie aufhalten — sonst haengt der ganze Leser an

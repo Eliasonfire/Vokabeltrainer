@@ -188,6 +188,20 @@ const PRUEFER = [
      Ladevorgaenge. Sein Stoertest baut die alte Ein-Element-Fassung nach und
      verlangt, dass sie den zweiten Ladevorgang zeigt. [[hintergrund_tab_drosselt_timer]] */
   ['werkzeuge/pruefe-zweipuffer.mjs', []],
+  /* ⭐⭐ Neu am 16.09.2026. Elias las az-Zalzala auf dem Tablet, und die
+     Tagesaufgabe blieb offen: gezaehlt wurde am Beobachter des Lesestands,
+     und der schneidet unten 60 % ab. Passt eine kurze Sure ganz auf den
+     Schirm, steht ihr letzter Vers dauerhaft im abgeschnittenen Bereich — und
+     es gibt nichts zu rollen, was ihn nach oben braechte. Je GROESSER das
+     Geraet, desto sicherer schlug es fehl, und gemeldet hat sich nie etwas.
+     Der Pruefer bewacht beides: den eigenen Beobachter ohne Beschnitt UND
+     Elias' Mindestzeit („mindesten so 1-2 min in der sure"). */
+  ['werkzeuge/pruefe-lesezaehlung.mjs', []],
+  /* ⛔ Und der Test daneben, weil der Prüfer nur nachsieht, ob die Teile da
+     sind — ob die Entscheidung stimmt, misst erst dieser. Im Browser-Pane ist
+     das nicht prüfbar: dort steht `document.hidden` auf true und jedes
+     getBoundingClientRect() liefert Nullen. [[leere_liste_ist_keine_messung]] */
+  ['test-lesezaehlung.mjs', []],
   ['werkzeuge/pruefe-schreibanlass.mjs', []],
   /* ⭐⭐ Neu am 09.09.2026, aus dem Konfetti-Fall heraus: der Fehler sass in
      einem leeren `catch {}` und war auf Elias' Geraet deshalb nicht

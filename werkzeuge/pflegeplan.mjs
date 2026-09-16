@@ -204,7 +204,21 @@ export const PFLEGEPLAN = [
     bildschirme: ['screen-quran', 'screen-quranfull'],
     neuerInhalt: { routine: W, schritt: '6', beleg: 'node pruefe-quran.js',
       wie: 'Quranbezüge neuer Vokabeln werden gegen den Qurantext gehalten' },
-    eingaben: { nein: 'Lesezeichen, Lesestand und Audio-Einstellungen sind Zustand seines Geräts; vt_hifz führt pruefe-kreislaeufe.mjs als ausgewertet über data/auswendig.json.' },
+    eingaben: { nein: 'Lesezeichen, Lesestand und Audio-Einstellungen sind Zustand seines Geräts; vt_hifz führt pruefe-kreislaeufe.mjs als ausgewertet über data/auswendig.json. vt_suraGelesen (welche Sure wann gelesen wurde, seit 15.09.2026) ebenso — die App wertet es selbst aus, für die Wiederholungsringe auf der Startseite.' },
+    /* ⭐⭐ WANN EINE SURE ALS GELESEN ZÄHLT (16.09.2026) — die Stelle, an der
+       diese Funktion schon einmal still ausgefallen ist.
+
+       Elias: „auf meinem tablet hab ich zalzala gelesen die heutige aufgabe
+       und dann bin ich raus gegangen und es wurde einfach nicht gezählt."
+       Gezählt wurde am Beobachter des Lesestands, und der schneidet unten
+       60 % ab — eine kurze Sure, die ganz auf den Schirm passt, wurde NIE
+       gezählt. Seitdem: eigener Beobachter ohne Beschnitt für den letzten
+       Vers PLUS seine Mindestzeit („mindesten so 1-2 min in der sure").
+
+       ⚠️ Beides hängt an Bildschirmgeometrie und lässt sich hier nicht
+       vollständig prüfen — deshalb steht darunter ein Haken von Hand
+       („Heute gelesen — abhaken") am Ende jeder Sure der Wiederholungsrunde.
+       Bewacht von werkzeuge/pruefe-lesezaehlung.mjs (mit Störtest). */
     /* ⭐ quran-verszeichen.js kam am 15.09.2026 für den Juz-Ring dazu: 6236
        Zahlen, die Zeichen je Vers ohne Taschkīl. Erzeugt von
        werkzeuge/verszeichen-bauen.mjs aus quran-text.js.
