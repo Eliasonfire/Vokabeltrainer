@@ -122,6 +122,17 @@ try { angabe = (JSON.parse(fs.readFileSync(path.join(DIR, 'data', 'lernstand.jso
 catch (e){ console.log('  ⚠️ data/lernstand.json nicht lesbar — ohne Fenster gemessen.'); }
 const VORAUS = 3;
 
+/* ⛔ Doppelt in zwei Büchern und auf seinen Wunsch ausgeblendet (16.09.2026): die
+   App hängt diese Einträge nicht ein (js/buecher.js, BUCHDUBLETTEN_AUSBLENDEN) —
+   dieselbe Zeile wie in werkzeuge/vorrat.mjs, sonst zählen die Werkzeuge
+   verschiedene Bestände (pruefe-eigene-vorrang.mjs). */
+const BUCHDUBLETTEN_AUS = (() => {
+  const q = fs.readFileSync(path.join(DIR, 'js', 'buecher.js'), 'utf8');
+  const m = q.match(/const BUCHDUBLETTEN_AUSBLENDEN = new Set\(\[([\s\S]*?)\]\);/);
+  if (!m) { console.log('  ⚠️ BUCHDUBLETTEN_AUSBLENDEN in js/buecher.js nicht gefunden.'); return new Set(); }
+  return new Set((m[1].replace(/\/\*[\s\S]*?\*\//g, '').match(/'([^']+)'/g) || []).map(x => x.slice(1, -1)));
+})();
+
 const woerter = [];
 if (OHNE_FENSTER){
   VOCAB.forEach(w => woerter.push({ ...w, quelle: 'vocab-data' }));
@@ -132,7 +143,7 @@ if (OHNE_FENSTER){
     const grenze = angabe[slug] + VORAUS;
     const kapitel = (frei[slug] || []).map(Number).filter(k => k <= grenze);
     const liste = (ctx.window.VOKABELN && ctx.window.VOKABELN[slug]) || [];
-    liste.filter(w => kapitel.includes(Number(w.chapter)))
+    liste.filter(w => kapitel.includes(Number(w.chapter)) && !BUCHDUBLETTEN_AUS.has(String(w.id)))
          .forEach(w => woerter.push({ ...w, quelle: slug }));
   }
 }

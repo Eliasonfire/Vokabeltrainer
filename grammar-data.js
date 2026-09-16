@@ -2795,6 +2795,9 @@ const SENTENCE_TAGS = {
   ],
   "gram-awlad": [
     { ruleId: "harf-jarr-li-01", matchText: "لِلتَّاجِرِ" }
+  ],
+  "gram-hayya-bina": [
+    { ruleId: "harf-jarr-min-ila-01", matchText: "إِلَى الْمَسْجِدِ" }
   ]
 };
 

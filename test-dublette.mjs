@@ -155,6 +155,54 @@ console.log('\n=== Störtest: kann das hier überhaupt scheitern? ===\n');
   sag(welt.VOCAB_DATA.some(w => w.id === 'p_3'), '… und die Karte bleibt stehen');
 }
 
+/* ---------- Doppelt in zwei Büchern (16.09.2026) ----------
+   Gefragt: „أَخٌ (Bruder) und أُخْتٌ (Schwester) stehen in beiden Büchern und kommen
+   deshalb doppelt. Soll ich die aus Bayna Yadayk ausblenden?" — Elias: „ja".
+   einhaengen() aus js/buecher.js wird AUSGEFÜHRT: die zwei Bayna-Yadayk-Einträge
+   dürfen nicht in VOCAB_DATA landen, ein drittes Wort desselben Buchs schon. */
+console.log('\nDoppelt in zwei Büchern — أَخٌ/أُخْتٌ aus Bayna Yadayk bleiben draußen:');
+{
+  const vmMod = await import('node:vm');
+  const BUECHER_JS = fs.readFileSync(path.join(HIER, 'js', 'buecher.js'), 'utf8');
+  const schneideBuecher = (name) => {
+    const auf = BUECHER_JS.indexOf('function ' + name + '(');
+    if (auf < 0) return null;
+    let i = BUECHER_JS.indexOf('{', auf), tiefe = 0;
+    for (; i < BUECHER_JS.length; i++){
+      if (BUECHER_JS[i] === '{') tiefe++;
+      else if (BUECHER_JS[i] === '}'){ tiefe--; if (!tiefe) return BUECHER_JS.slice(auf, i + 1); }
+    }
+    return null;
+  };
+  const menge = (BUECHER_JS.match(/const BUCHDUBLETTEN_AUSBLENDEN = new Set\(\[[\s\S]*?\]\);/) || [])[0];
+  const einh = schneideBuecher('einhaengen');
+  sag(!!menge && !!einh, 'BUCHDUBLETTEN_AUSBLENDEN und einhaengen() stehen in js/buecher.js');
+  if (menge && einh){
+    const lauf = (code) => {
+      const welt = { VOCAB_DATA: [], KEINE_WURZEL_UEBERNEHMEN: new Set(), Map, Set, String, Object,
+        istSchlechtereSchreibung: () => false, eselsbrueckenNachtragen: () => 0,
+        eselsbrueckenErsetzen: () => {}, schreibweisenErsetzen: () => {}, saetzeNachtragen: () => 0 };
+      vmMod.createContext(welt);
+      vmMod.runInContext(menge + '\n' + code + '\n;globalThis.__e = einhaengen;', welt);
+      welt.__e([
+        { id: '45984', ar: 'أَخٌ', de: 'Bruder', chapter: 1, book: 'bayna-yadayk-1' },
+        { id: '45986', ar: 'أُخْتٌ', de: 'Schwester', chapter: 1, book: 'bayna-yadayk-1' },
+        { id: '45991', ar: 'جِنْسِيَّةٌ', de: 'Nationalität', chapter: 1, book: 'bayna-yadayk-1' }
+      ]);
+      return welt.VOCAB_DATA.map(w => w.id);
+    };
+    const ids = lauf(einh);
+    sag(!ids.includes('45984') && !ids.includes('45986'), 'أَخٌ und أُخْتٌ aus Bayna Yadayk kommen nicht in VOCAB_DATA  (' + ids.join(', ') + ')');
+    sag(ids.includes('45991'), '… جِنْسِيَّةٌ aus demselben Buch schon');
+    /* ⛔ Gegenprobe: ohne die Zeile wären beide wieder da. */
+    const ohne = einh.replace("if (BUCHDUBLETTEN_AUSBLENDEN.has(String(roh.id))) return;", '');
+    const ids2 = ohne !== einh ? lauf(ohne) : [];
+    sag(ohne !== einh && ids2.includes('45984') && ids2.includes('45986'), 'Gegenprobe: ohne die Sperre stünden beide doppelt da');
+    const vorrat = fs.readFileSync(path.join(HIER, 'werkzeuge', 'vorrat.mjs'), 'utf8');
+    sag(vorrat.includes('BUCHDUBLETTEN_AUSBLENDEN'), 'werkzeuge/vorrat.mjs liest dieselbe Liste (keine Eselsbrücken für ausgeblendete Karten)');
+  }
+}
+
 console.log('');
 console.log(fehler ? '⛔ ' + fehler + ' Fehler' : '✅ alle Fälle richtig');
 process.exit(fehler ? 1 : 0);

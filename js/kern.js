@@ -2543,6 +2543,36 @@ function tagesDeckel(){
   return Number.isFinite(d) && d > 0 ? d : DECKEL_AUS;
 }
 
+/* ⭐⭐ NEUE VOKABELN ZUERST (16.09.2026)
+   ================================================================
+   Gemessen an seinem Stand um 20:21: die zwölf Karten dieses Abends standen
+   hinter 170 älteren Box-1-Karten — bei 4 Box-1-Plätzen je Runde etwa 43
+   Runden, bevor die erste kam. Gefragt: „Sollen Karten, die noch nie abgefragt
+   wurden, früher drankommen?" — Elias: „ja", und gleich danach als Regel:
+   „generell wenn neue vokabeln kommen vorallem bei neuem kapiteln oder büchern
+   dann bekomen die immer den vorzug weil das sind die mit denen ich arbeiten
+   werde".
+
+   „Neu" heißt: ein Fortschrittseintrag, der noch NIE beantwortet wurde (weder
+   richtig noch falsch). Unter ihnen zuerst die jüngsten: `nextReview` ist bei
+   einer nie beantworteten Karte der Tag, an dem sie zu ihm kam — ein neues
+   Kapitel geht so auch vor neuen Karten, die schon länger unbeantwortet liegen.
+   Gleicher Tag: die Mischung aus dueWords() bleibt (sort ist stabil).
+   ⛔ In der Tagesration NUR innerhalb der Box-1-Plätze. Die Wiederholungen aus
+   Box 2–5 behalten ihren Anteil — ohne sie verfielen Box 4 und 5 still (siehe
+   oben); „Vorzug" heißt vor den ALTEN Box-1-Karten, nicht vor dem Behalten. */
+function nieAbgefragt(w){
+  const p = w && PROGRESS[w.id];
+  return !!p && !(Number(p.correct) > 0) && !(Number(p.wrong) > 0);
+}
+function neueZuerst(liste){
+  const neu = [], rest = [];
+  for (const w of liste) (nieAbgefragt(w) ? neu : rest).push(w);
+  const tag = w => String((PROGRESS[w.id] && PROGRESS[w.id].nextReview) || '');
+  neu.sort((a, b) => tag(b).localeCompare(tag(a)));
+  return neu.concat(rest);
+}
+
 /**
  * Die Tagesration aus einem bereits sortierten Pool.
  * @param {Array} pool  Ergebnis von currentPool(), Reihenfolge zählt
@@ -2551,7 +2581,8 @@ function tagesDeckel(){
 function tagesAuswahl(pool, deckel){
   if (!Array.isArray(pool) || !deckel || pool.length <= deckel) return pool || [];
   const box = w => (PROGRESS[w.id] && PROGRESS[w.id].box) || 1;
-  const neu  = pool.filter(w => box(w) <= 1);
+  /* Neue Vokabeln vor den alten Box-1-Karten — neueZuerst() oben. */
+  const neu  = neueZuerst(pool.filter(w => box(w) <= 1));
   const wdh  = pool.filter(w => box(w) > 1);
 
   let platzNeu = Math.round(deckel * DECKEL_ANTEIL_BOX1);

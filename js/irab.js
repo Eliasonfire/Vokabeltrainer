@@ -156,6 +156,12 @@ const INDEKLINABEL = ['هذا','هذه','ذلك','تلك','هو','هي','أنا'
                          Endung nach ihrer Satzrolle. */
                       'الآن','الان','اليوم','غدا','جدا','أيضا','ايضا','معا','دائما','أبدا',
                       'لماذا','ماذا','كم','أي','اي',
+                      /* هَيَّا „los" (16.09.2026, Karte gram-hayya-bina, Satz aus Bayna
+                         Yadayk 1A S. 32: هَيَّا بِنَا إِلَى الْمَسْجِدِ). Ein festes Aufrufwort,
+                         das nie eine Kasusendung trägt. Ohne diesen Eintrag las die
+                         Analyse es als مُبْتَدَأ — der Satzmodus hätte „Tippe alle
+                         مُبْتَدَأٌ an" mit هَيَّا als Lösung gestellt. */
+                      'هيا',
                       /* لِمَنْ ist ein festes Fragewort (istifham-liman-01), kein
                          angeschriebenes لِ vor einem Nomen - sonst landet es in der
                          Unklar-Schublade. */
