@@ -213,7 +213,15 @@ export const PFLEGEPLAN = [
        Gezählt wurde am Beobachter des Lesestands, und der schneidet unten
        60 % ab — eine kurze Sure, die ganz auf den Schirm passt, wurde NIE
        gezählt. Seitdem: eigener Beobachter ohne Beschnitt für den letzten
-       Vers PLUS seine Mindestzeit („mindesten so 1-2 min in der sure").
+       Vers PLUS eine Mindestzeit. Die war zuerst eine feste Minute („mindesten
+       so 1-2 min in der sure") und hängt seit demselben Abend an der
+       Wortzahl der Sure — Elias: „nicht überall das selbe maß", und für
+       al-Mulk (eigener täglicher Ring) sicher nicht dieselbe Zeit wie für
+       al-Ikhlāṣ. Halbe Sekunde je Wort, mindestens 8 s; bei allen 13
+       gemessenen Suren höchstens ⅔ eines geübten Rezitators („kürze es
+       ungefähr um 1/3"). Nachgerechnet mit echtem Korantext in
+       test-lesezaehlung.mjs. Kein Pflegebedarf: die Wortzahl kommt aus dem
+       Korantext selbst, nicht aus einer Liste.
 
        ⚠️ Beides hängt an Bildschirmgeometrie und lässt sich hier nicht
        vollständig prüfen — deshalb steht darunter ein Haken von Hand
