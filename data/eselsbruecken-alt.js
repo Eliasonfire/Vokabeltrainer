@@ -2332,6 +2332,13 @@ const ESELSBRUECKEN_ALT = {
     '⭐ In al-Fīl, die du auswendig kannst: فَجَعَلَهُمْ كَعَصْفٍ مَّأْكُولِۭ — „und sie so wie abgefressene Halme machte“ (105:5). Das كَ vor عَصْفٍ heißt wie.'
   ],
 
+  /* أَوْلَادٌ „Kinder" — aus Bayna Yadayk 1A, S. 33, rot mit der Übersetzung seines
+     Lehrers (16.09.2026). Vers wörtlich aus quran-text.js (node werkzeuge/vers.mjs 112:3). */
+  'gram-awlad': [
+    '⭐ In al-Ikhlāṣ, die du auswendig kannst: لَمْ يَلِدْ وَلَمْ يُولَدْ — „Er hat nicht gezeugt und ist nicht gezeugt worden“ (112:3). Darin steckt dieselbe Wurzel و ل د wie in وَلَدٌ und seiner Mehrzahl أَوْلَادٌ.',
+    'Aus وَلَدٌ wird أَوْلَادٌ: vorne kommt أَ dazu und in der Mitte ein ا. Genauso wird aus بَابٌ (Tür) أَبْوَابٌ (Türen).'
+  ],
+
   'gram-huruf-schamsiya': [
     'Zwei deiner Länderkarten stehen sich direkt gegenüber: الصِّينُ liest du aṣ-ṣīn — das l ist weg, dafür sitzt eine Schadda auf dem ص. الْهِنْدُ liest du al-hind, mit hörbarem l und einem Sukūn auf dem ل. ⭐ ص gehört zu den حُرُوف شَمْسِيَّة, ه nicht.',
     'سُورَةُ النَّاس sagt es in jedem Vers: geschrieben steht النَّاسِ, gesprochen an-nās. Das ن schluckt das l und trägt dafür eine Schadda — ein Sonnenbuchstabe, und die Schrift zeigt es selbst.'

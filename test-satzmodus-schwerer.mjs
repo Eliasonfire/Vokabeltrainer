@@ -257,6 +257,14 @@ function laufe(quelle, still){
     return !k || String(k.ar).normalize('NFC') !== ar.normalize('NFC') || (mitSatz && !k.sentAr);
   });
   pruefe('ـاء, ى, بِ und كَ als Karten', karten.length > 0 && beidesFehlt.length === 0, beidesFehlt.map(([id]) => id).join(' · '));
+  /* Elias, 20:32:24: „die vokabeln die ich dort aufgeschrieben habe mit rot die
+     brauche ich auch als karteikarten" — und 20:34:11: „ich hab da auch scon die
+     übersetzung hingeschrieben die mein lehrer gesagt hat". Von der Seite fehlte
+     nur أَوْلَادٌ mit SEINER Bedeutung „Kinder" (die übrigen hat er aus den Büchern). */
+  const awlad = karten.find(x => x.id === 'gram-awlad');
+  pruefe('أَوْلَادٌ „Kinder" (Übersetzung seines Lehrers) als Karte, mit Satz',
+    !!awlad && String(awlad.ar).normalize('NFC') === 'أَوْلَادٌ'.normalize('NFC') && awlad.de === 'Kinder' && !!awlad.sentAr,
+    awlad ? awlad.ar + ' „' + awlad.de + '"' : 'fehlt');
   const kern = KERN_QUELLE;
   const freiListe = (kern.match(/const FREISCHALTEN_AUF_WUNSCH\s*=\s*\[([^\]]*)\]/) || [])[1] || '';
   pruefe('هَؤُلَاءِ, أُولَئِكَ, مَتَى, أَيٌّ (Madina 1, K24) werden freigeschaltet',
@@ -348,6 +356,15 @@ for (const [name, stoere] of STOERUNGEN){
     const schlecht = laufe(ORIGINAL, true);
     if (schlecht > 0) console.log('  ✔ die Karte مُضَافٌ steht wieder ohne Endung → ' + schlecht + ' rot');
     else { alleRot = false; console.log('  ✘ die Karte مُضَافٌ ohne Endung → blieb grün'); }
+  }
+  FACH_QUELLE = echt;
+
+  FACH_QUELLE = echt.replace('de: "Kinder",', 'de: "Junge",');
+  if (FACH_QUELLE === echt){ alleRot = false; console.log('  ✘ أَوْلَادٌ mit falscher Bedeutung — Störung griff nicht'); }
+  else {
+    const schlecht = laufe(ORIGINAL, true);
+    if (schlecht > 0) console.log('  ✔ أَوْلَادٌ heißt nicht mehr „Kinder" → ' + schlecht + ' rot');
+    else { alleRot = false; console.log('  ✘ أَوْلَادٌ mit falscher Bedeutung → blieb grün'); }
   }
   FACH_QUELLE = echt;
 

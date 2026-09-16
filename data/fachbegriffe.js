@@ -1108,5 +1108,42 @@ const FACHBEGRIFF_VOKABELN = [
     sentAr: "الطَّالِبُ كَالْمُدَرِّسِ.",
     sentDe: "Der Student ist wie der Lehrer.",
     mnemo: "كَ klebt vorne am nächsten Wort und heißt wie. Nicht verwechseln mit dem كَ am Ende von ذَلِكَ — das steht für die Entfernung."
+  },
+  {
+    /* ⭐ Aus „Arabya Bayna Yadayk 1A", Seite 33 (Einheit 2, Lektion 2), von Elias
+       rot mit der Übersetzung seines Lehrers beschriftet. Elias am 16.09.2026,
+       20:32:24: „die vokabeln die ich dort aufgeschrieben habe mit rot die brauche
+       ich auch als karteikarten" und 20:34:11: „ich hab da auch scon die
+       übersetzung hingeschrieben die mein lehrer gesagt hat".
+       Die übrigen rot beschrifteten Wörter der Seite hat er schon, jeweils mit
+       derselben Übersetzung: مِعْطَفٌ, نَظَّارَةٌ, صَلَّى, قَرَأَ, تَوَضَّأَ aus Bayna
+       Yadayk 1 Kapitel 1–2 (von ihm freigeschaltet um 20:20:56) und غُرْفَةٌ aus
+       Madina 1 Kapitel 4. أَوْلَادٌ stand nur als Mehrzahl auf seiner Karte وَلَدٌ
+       „Junge" (Madina 1 Kapitel 1, id 45762) — die Bedeutung „Kinder" fehlte.
+       ⛔ TASCHKĪL: das Buch druckt „أولاد" OHNE Zeichen (Seite 55 der PDF bei 300 dpi
+       gerendert und angesehen). أَوْلَادٌ steht so im arabicroots-Abzug (45762, pl)
+       und im Satz zu هَؤُلَاءِ (50164).
+       ⛔ NICHT in vocab-data.js — derselbe Weg wie bei مَعَ und عَنْ.
+       ⚠️ هَيَّا بِنَا von derselben Seite fehlt noch: das Buch druckt es ohne
+       Zeichen, arabdict schreibt هَيَّا (mit Schadda), Reverso هَيَا (ohne) — bei
+       Abweichung entscheidet ein Mensch; die Frage ist an Elias gestellt. */
+    id: "gram-awlad",
+    ar: "أَوْلَادٌ",
+    de: "Kinder",
+    deNeben: "Jungen (Mehrzahl von وَلَدٌ)",
+    type: 'noun',
+    root: "و ل د",
+    chapter: 'personal',
+    book: 'grammar',
+    /* belegt: 0 — die Zahl zählt Vorkommen in seinen REGELN; die Quelle ist hier
+       sein Buch und sein Lehrer (wie bei عَنْ). */
+    belegt: 0,
+    quelleLehrer: 'Arabya Bayna Yadayk 1A, S. 33 (Einheit 2, Lektion 2) — rot „Kinder", Übersetzung seines Lehrers',
+    /* لِلتَّاجِرِ steht wörtlich im Lektionstext (mb1-42-1), أَوْلَادٌ im Abzug. Dieselbe
+       Bauform wie لِي أَخٌ im Buch: Besitz mit لِ, das Nomen danach unbestimmt.
+       Bewusst NICHT هَؤُلَاءِ أَوْلَادٌ — das ist schon der Satz von هَؤُلَاءِ. */
+    sentAr: "لِلتَّاجِرِ أَوْلَادٌ.",
+    sentDe: "Der Händler hat Kinder.",
+    mnemo: "أَوْلَادٌ – Kinder, so hat es dein Lehrer übersetzt. Es ist die Mehrzahl von وَلَدٌ (Junge), das du aus Madina 1 kennst: einer ist وَلَدٌ, viele sind أَوْلَادٌ."
   }
 ];
