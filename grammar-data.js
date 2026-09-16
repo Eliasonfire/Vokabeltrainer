@@ -605,8 +605,8 @@ const GRAMMAR_RULES = [
   },
   {
     id: "alif-maqsura-01",
-    name: "أَلِف مَقْصورة (ى am Wortende)",
-    shortExplanation: "Ein ى am Wortende ohne Punkte ist kein Ya, sondern eine أَلِف مَقْصورة alif maqṣūra – ein „kleines Alif“, gesprochen wie ein langes ā. **Die Punkte entscheiden, nichts sonst:** zwei Punkte unter dem Zahn ⇒ echtes ي, gesprochen -ī oder -iyy; keine Punkte ⇒ ى, gesprochen wie langes ā. Deshalb heißt عَلى ʿalā „auf“, während عَلِيٌّ ʿaliyyun der Name Ali ist und wirklich auf ein Ya endet – ohne Taschkil sehen die beiden fast gleich aus. **Und das ist die Folge fürs Iʿrāb:** ein Wort, das auf ـى endet, zeigt seinen Fall nicht – es bleibt in jedem Fall gleich, siehe alif-maqsura-unveraenderlich-01. ⚠️ Weiter geht der Unterricht an dieser Stelle nicht. Der Lehrer sagt in Folge 05 nur zweierlei: bei 29:44 »أَلِف مَقْصورة ist ein Alif, ist ein kleines Alif«, und bei 29:58 »Muss man aufpassen … weil [es] keine Punkte hat«. Mehr steht dort nicht, und was hier fehlt, fehlt auch im Unterricht.",
+    name: "أَلِف مَقْصُورَة (ى am Wortende)",
+    shortExplanation: "Ein ى am Wortende ohne Punkte ist kein Ya, sondern eine أَلِف مَقْصُورَة alif maqṣūra – ein „kleines Alif“, gesprochen wie ein langes ā. **Die Punkte entscheiden, nichts sonst:** zwei Punkte unter dem Zahn ⇒ echtes ي, gesprochen -ī oder -iyy; keine Punkte ⇒ ى, gesprochen wie langes ā. Deshalb heißt عَلى ʿalā „auf“, während عَلِيٌّ ʿaliyyun der Name Ali ist und wirklich auf ein Ya endet – ohne Taschkil sehen die beiden fast gleich aus. **Und das ist die Folge fürs Iʿrāb:** ein Wort, das auf ـى endet, zeigt seinen Fall nicht – es bleibt in jedem Fall gleich, siehe alif-maqsura-unveraenderlich-01. ⚠️ Weiter geht der Unterricht an dieser Stelle nicht. Der Lehrer sagt in Folge 05 nur zweierlei: bei 29:44 »أَلِف مَقْصُورَة ist ein Alif, ist ein kleines Alif«, und bei 29:58 »Muss man aufpassen … weil [es] keine Punkte hat«. Mehr steht dort nicht, und was hier fehlt, fehlt auch im Unterricht.",
     color: "other",
     source: { folge: 5, video: "Folge 05", approxTimestamp: "29:38", chapter: 4 }
   },
@@ -896,7 +896,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "alif-maqsura-unveraenderlich-01",
-    name: "أَلِف مَقْصورة (unveränderliche Endung)",
+    name: "أَلِف مَقْصُورَة (unveränderliche Endung)",
     shortExplanation: "Der Normalfall ist مَرْفُوع (marfūʿ): اَلْبَيْتُ (al-baytu, das Haus). Wird ein Wort مَجْرُور (majrūr), bekommt es Kasra: فِي الْبَيْتِ (fī l-bayti, im Haus), مِنَ الْبَيْتِ (mina l-bayti, vom Haus), إِلَى الْبَيْتِ (ilā l-bayti, zum Haus). Endet ein Wort aber auf ein Alif (ـا) oder auf ein Alif maqṣūra (ـى, \"das hier ohne Punkte\"), dann sieht man den Fall an dem Wort nicht - es bleibt immer gleich. Der Lehrer führt dieselben drei Präpositionen an اَلْمُسْتَشْفى (al-mustashfā, das Krankenhaus) vor: فِي الْمُسْتَشْفى، مِنَ الْمُسْتَشْفى، إِلَى الْمُسْتَشْفى - \"keine Anzeichen, ändert sich nicht, bleibt immer gleich\". Genauso bei أَمْريكا (Amrīkā, Amerika): فِي أَمْريكا، مِنْ أَمْريكا، إِلى أَمْريكا, ebenso bei أَلْمانِيا (Almāniyā, Deutschland) und مُوسى (Mūsā, Musa): \"Ob du sagst, Musa ist marfūʿ - bleibt Musa.\" Der Lehrer nennt das selbst nur \"eine kleine Nebenregel\".",
     color: "nasab",
     source: { folge: 12, video: "Folge 12", approxTimestamp: "19:43", chapter: 8 },
@@ -2111,7 +2111,7 @@ const SENTENCE_TAGS = {
     { ruleId: "ismul-isara-dhalika-01", matchText: "ذَلِكَ" }
   ],
   "mb1-42-2": [
-    { ruleId: "idafa-erkennen-01", matchText: "اسْمُ التَّاجِرِ" }
+    { ruleId: "idafa-erkennen-01", matchText: "اِسْمُ التَّاجِرِ" }
   ],
   "mb1-42-3": [
     { ruleId: "zuruf-makan-01", matchText: "أَمَامَ" },
@@ -2138,7 +2138,7 @@ const SENTENCE_TAGS = {
     { ruleId: "nat-bestimmtheit-01", matchText: "اللُّغَةُ الْعَرَبِيَّةُ" }
   ],
   "mb1-63-1": [
-    { ruleId: "possessiv-ya-01", matchText: "اسْمِي" },
+    { ruleId: "possessiv-ya-01", matchText: "اِسْمِي" },
     { ruleId: "istifham-ma-01", matchText: "مَا" },
     { ruleId: "possessiv-endungen-01", matchText: "اسْمُكِ", bedeutung: 'ـكِ = dein (weiblich)' }
   ],
@@ -2947,7 +2947,7 @@ const SENTENCE_TAGS = {
     { ruleId: "marfu-grundfall-01", matchText: "مَرِيضٌ" }
   ],
   "46005": [
-    { ruleId: "mudaf-ohne-al-01", matchText: "ابْنَةُ" },
+    { ruleId: "mudaf-ohne-al-01", matchText: "اِبْنَةُ" },
     { ruleId: "mudaf-ilayh-01", matchText: "التَّاجِرِ" },
     { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْمَدْرَسَةِ" }
   ],

@@ -100,8 +100,14 @@ const LEHRBUCH_SAETZE = [
     sentAr: 'هَذَا الْبَيْتُ لِلتَّاجِرِ وَذَلِكَ الْبَيْتُ لِلطَّبِيبِ.',
     sentDe: 'Dieses Haus gehört dem Händler und jenes Haus gehört dem Arzt.' },
 
-  { id: 'mb1-42-2', seite: 42, kapitel: 8,
-    sentAr: 'اسْمُ التَّاجِرِ مَحْمُودٌ وَاسْمُ الطَّبِيبِ سَعِيدٌ.',
+  /* ⭐ 17.09.2026 nachgesehen (PDF-Seite 55, 500 dpi): das Buch druckt am
+     Satzanfang اِسْمُ MIT Kasra unter dem Alif, mitten im Satz وٱسْمُ mit Wasla.
+     Hier stand اسْمُ ohne Kasra — pruefe-taschkil.js meldete es, Elias hat die
+     Taschkīl-Fragen am 16.09. übergeben. محمود, الطبيب, سعيد sind im Druck ohne
+     Zeichen, deshalb jetzt auch `vokalisationErgaenzt`. */
+  { id: 'mb1-42-2', seite: 42, kapitel: 8, vokalisationErgaenzt: true,
+    gedruckt: 'اِسْمُ التاجرِ und وٱسْمُ vokalisiert; محمود, الطبيب, سعيد ohne Zeichen',
+    sentAr: 'اِسْمُ التَّاجِرِ مَحْمُودٌ وَاسْمُ الطَّبِيبِ سَعِيدٌ.',
     sentDe: 'Der Name des Händlers ist Mahmud und der Name des Arztes ist Said.' },
 
   { id: 'mb1-42-3', seite: 42, kapitel: 8,
@@ -128,8 +134,14 @@ const LEHRBUCH_SAETZE = [
     sentAr: 'اللُّغَةُ الْعَرَبِيَّةُ سَهْلَةٌ.',
     sentDe: 'Die arabische Sprache ist leicht.' },
 
-  { id: 'mb1-63-1', seite: 63, kapitel: 12,
-    sentAr: 'مَا اسْمُكِ؟ اسْمِي آمِنَةُ.',
+  /* ⭐ 17.09.2026 nachgesehen (PDF-Seite 84, 600 dpi): ما ٱسْمُكِ mit Wasla
+     (mitten im Satz, stumm — richtig ohne Kasra), aber اسمي آمنةُ nur mit der
+     Endung. اِسْمِي beginnt den zweiten Satz; dort setzt das Buch auf S. 42 die
+     Kasra (اِسْمُ التاجرِ). Die Kasra hier ist also die Schreibung des Buches am
+     Satzanfang, keine eigene — und die übrige Vokalisierung war schon ergänzt. */
+  { id: 'mb1-63-1', seite: 63, kapitel: 12, vokalisationErgaenzt: true,
+    gedruckt: 'ما ٱسْمُكِ mit Wasla, Sukun, Damma und Kasra; اسمي آمنةُ nur mit der Endung',
+    sentAr: 'مَا اسْمُكِ؟ اِسْمِي آمِنَةُ.',
     sentDe: 'Wie heißt du? Mein Name ist Amina.' },
 
   { id: 'mb1-63-2', seite: 63, kapitel: 12,

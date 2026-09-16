@@ -719,7 +719,7 @@ const VOCAB_DATA = [
   "chapter": 2,
   "gender": "masculine",
   "sg": null,
-  "pl": "أَلْبَان",
+  "pl": "أَلْبَانٌ",
   "femSg": null,
   "femPl": null,
   "root": "ل ب ن",

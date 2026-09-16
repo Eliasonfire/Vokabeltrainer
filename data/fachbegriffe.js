@@ -206,7 +206,7 @@ const FACHBEGRIFF_VOKABELN = [
   },
   {
     id: 'gram-alif-maqsura',
-    ar: 'أَلِف مَقْصورة',
+    ar: 'أَلِف مَقْصُورَة',
     de: 'das ى am Wortende (gesprochen wie langes ā)',
     type: 'noun',
     chapter: 'personal',
