@@ -296,8 +296,16 @@ const AUSNAHMEN = [
        تاء, مَرْبُوطة, مَقْصورة haben eine Luecke MITTEN im Wort, und das ist
        keine Nennform, sondern eine echte Luecke. Die bleiben in der
        Hauptliste. */
-    name: 'Zitierform eines Fachbegriffs (ohne Endung, richtig so)',
-    keineFrage: true,   /* kein Mangel - zaehlt nicht als Frage an Elias */
+    /* ⛔⛔ SEIT DEM 16.09.2026 NICHT MEHR „richtig so". Elias um 18:53:56 auf
+       „Sollen Fachbegriffe mit Endung stehen, also حَرْفُ جَرٍّ statt حَرْف جَرّ,
+       so wie auf deiner Regelkarte?": „ja". Die 15 Karten, deren Form MIT
+       Endung in seinem Material steht, tragen sie seitdem (data/fachbegriffe.js).
+       Was hier noch auftaucht, hat KEINEN Beleg für die Endung — keine Frage an
+       Elias (er hat entschieden), sondern eine offene Belegsuche für die Wartung.
+       ⚠️ Die Ausnahme bleibt deshalb bestehen, nur ihr Name sagt jetzt die
+       Wahrheit: vorher stand hier „(ohne Endung, richtig so)". */
+    name: 'Fachbegriff noch ohne Endung — Endung gewünscht (16.09.2026), Beleg fehlt',
+    keineFrage: true,   /* keine Frage an Elias — er hat entschieden, der Beleg fehlt */
     /* ⚠️ „letzter Buchstabe" heißt: danach kommen nur noch Zeichen, kein
        Buchstabe. Hier stand `i === wort.length - 1` — das traf nur, wenn der
        letzte Buchstabe GAR KEIN Zeichen trägt. Bei مَدّ (gram-madd, 11.09.2026)

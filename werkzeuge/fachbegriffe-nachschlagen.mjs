@@ -297,9 +297,15 @@ async function nachschlagen(wort, wikiMap){
     if (!g){ g = { form: q.form, quellen: [] }; gruppen.push(g); }
     /* ⛔ Dieselbe Quelle zweimal ist EINE Quelle. */
     if (!g.quellen.some(x => x.quelle === q.quelle)) g.quellen.push(q);
-    /* ⭐ Welche Schreibung führt die Gruppe an?
-       Die mit den meisten Ḥarakāt **im Wortinneren** — und bei Gleichstand die
-       KÜRZERE, also die ohne Tanwīn.
+    /* ⛔⛔ SEIT DEM 16.09.2026 GEWINNT BEI GLEICHSTAND DIE FORM MIT ENDUNG.
+       Elias um 18:53:56: „ja" auf „Sollen Fachbegriffe mit Endung stehen, also
+       حَرْفُ جَرٍّ statt حَرْف جَرّ, so wie auf deiner Regelkarte?". Der Absatz
+       darunter beschreibt die ALTE Regel und bleibt als Begründung stehen, warum
+       es einmal anders war.
+
+       ⭐ Welche Schreibung führt die Gruppe an?
+       Die mit den meisten Ḥarakāt **im Wortinneren** — und bei Gleichstand (bis
+       16.09.2026) die KÜRZERE, also die ohne Tanwīn.
 
        ⛔ Der erste Versuch zählte alle Ḥarakāt und wählte damit `تَشْكِيلٌ`
        statt `تَشْكِيل`: arabdict zitiert gern mit Tanwīn, der eigene Bestand
@@ -313,7 +319,7 @@ async function nachschlagen(wort, wikiMap){
     const innen = (w) => [...ohneSchluss(w)]
       .filter(c => HARAKAT.has(c.codePointAt(0))).length;
     if (innen(q.form) > innen(g.form)
-        || (innen(q.form) === innen(g.form) && q.form.length < g.form.length))
+        || (innen(q.form) === innen(g.form) && q.form.length > g.form.length))
       g.form = q.form;
   }
   const belegt = gruppen.filter(g => g.quellen.length >= 2)

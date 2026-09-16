@@ -51,6 +51,25 @@
    gemacht, also einen Satz, der sich selbst widerspricht.
    [[eingefrorenes_feld_ist_kein_zustand]]
 
+   ⭐⭐ SEIT DEM 16.09.2026 MIT ENDUNG. Gefragt: „Sollen Fachbegriffe mit Endung
+   stehen, also حَرْفُ جَرٍّ statt حَرْف جَرّ, so wie auf deiner Regelkarte?" —
+   Elias um 18:53:56: „ja". Anlass war seine eigene Frage an حَرْف جَرّ im
+   Satzmodus: „kann es sein das das falsch geschrieben ist".
+   Damit gilt die frühere Haltung „Zitierform ohne Endung, richtig so" nicht mehr.
+
+   ⛔ Nur wo die Form MIT Endung in seinem eigenen Material steht (gezählt über
+   vocab-data.js, grammar-data.js, regelsammlung-data.js, beispielsaetze.js,
+   eselsbruecken.js und die Buchabzüge — gleiche Schreibung, auch wenn das Wort
+   dort etwas anderes heißt, etwa ظَرْفٌ „Umschlag"):
+     مُضَافٌ · مَجْرُورٌ · مَرْفُوعٌ · نَعْتٌ · إِضَافَةٌ · ظَرْفٌ · شَكْلٌ ·
+     مُبْتَدَأٌ · خَبَرٌ · مَنْصُوبٌ · حَرْفٌ · فِعْلٌ · مَدٌّ · مُطَابَقَةٌ · تَقْدِيمٌ
+   NOCH OHNE Endung, weil kein Beleg gefunden (nicht selbst ergänzen):
+     اِسْمُ الْإِشَارَة · تَاء مَرْبُوطَة · أَلِف مَقْصورة · كَسْرَة · تَشْكِيل ·
+     هَمْزَة وَصْل · جُمْلَة فِعْلِيَّة · إِعْرَاب · حُرُوف شَمْسِيَّة
+   ⚠️ Der Doppelt-Abgleich (dubForm in js/kern.js) ignoriert die letzte Ḥaraka —
+   ein Tausch gegen eine Buchvokabel wird durch die Endung weder wahrscheinlicher
+   noch unwahrscheinlicher; er verlangt ohnehin dieselbe Bedeutung.
+
    ---------------------------------------------------------------------------
    TECHNISCH: `book: 'grammar'` (die Herkunft) und `chapter: 'personal'`.
    ⚠️ Das `chapter` war bis zum 20.08.2026 ebenfalls 'grammar'. Elias an
@@ -70,7 +89,7 @@
 const FACHBEGRIFF_VOKABELN = [
   {
     id: 'gram-mudaf',
-    ar: 'مُضَاف',
+    ar: 'مُضَافٌ',
     de: 'der Besitz — das erste Wort der Genitivverbindung',
     type: 'noun',
     chapter: 'personal',
@@ -81,7 +100,7 @@ const FACHBEGRIFF_VOKABELN = [
   },
   {
     id: 'gram-majrur',
-    ar: 'مَجْرُور',
+    ar: 'مَجْرُورٌ',
     de: 'Genitiv (Frage: wessen?)',
     type: 'noun',
     chapter: 'personal',
@@ -92,7 +111,7 @@ const FACHBEGRIFF_VOKABELN = [
   },
   {
     id: 'gram-marfu',
-    ar: 'مَرْفُوع',
+    ar: 'مَرْفُوعٌ',
     de: 'Nominativ — der Grundfall',
     type: 'noun',
     chapter: 'personal',
@@ -103,7 +122,7 @@ const FACHBEGRIFF_VOKABELN = [
   },
   {
     id: 'gram-nat',
-    ar: 'نَعْت',
+    ar: 'نَعْتٌ',
     de: 'Adjektiv — das beschreibende Wort',
     type: 'noun',
     chapter: 'personal',
@@ -114,7 +133,7 @@ const FACHBEGRIFF_VOKABELN = [
   },
   {
     id: 'gram-idafa',
-    ar: 'إِضَافَة',
+    ar: 'إِضَافَةٌ',
     de: 'Genitivverbindung — zwei Nomen werden ein Ausdruck',
     type: 'noun',
     chapter: 'personal',
@@ -129,7 +148,7 @@ const FACHBEGRIFF_VOKABELN = [
   },
   {
     id: 'gram-zarf',
-    ar: 'ظَرْف',
+    ar: 'ظَرْفٌ',
     de: 'Zeit- oder Ortsangabe',
     type: 'noun',
     chapter: 'personal',
@@ -147,7 +166,7 @@ const FACHBEGRIFF_VOKABELN = [
   },
   {
     id: 'gram-schakl',
-    ar: 'شَكْل',
+    ar: 'شَكْلٌ',
     de: 'Vokalzeichen (ein einzelnes)',
     type: 'noun',
     chapter: 'personal',
@@ -681,7 +700,7 @@ const FACHBEGRIFF_VOKABELN = [
   {
     /* Eingetragen am 2026-09-11 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel mubtada-khabar-01. */
     id: "gram-mubtada",
-    ar: "مُبْتَدَأ",
+    ar: "مُبْتَدَأٌ",
     de: "Subjekt des Nominalsatzes — das, worum es geht",
     type: "noun",
     chapter: 'personal',
@@ -693,7 +712,7 @@ const FACHBEGRIFF_VOKABELN = [
   {
     /* Eingetragen am 2026-09-11 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel mubtada-khabar-01. */
     id: "gram-khabar",
-    ar: "خَبَر",
+    ar: "خَبَرٌ",
     de: "Aussage des Nominalsatzes — das, was darüber gesagt wird",
     type: "noun",
     chapter: 'personal',
@@ -705,7 +724,7 @@ const FACHBEGRIFF_VOKABELN = [
   {
     /* Eingetragen am 2026-09-11 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel irab-drei-faelle-01. */
     id: "gram-mansub",
-    ar: "مَنْصُوب",
+    ar: "مَنْصُوبٌ",
     /* ⚠️ BUCHTAUSCH, ABSICHTLICH: dasselbe Wort mit derselben Bedeutung steht
        im Buch (madina-1, Kapitel 24, id 50471, „(gr) im Akkusativ").
        tauscheDubletten() in js/kern.js ersetzt diese Karte beim Start durch die
@@ -726,7 +745,7 @@ const FACHBEGRIFF_VOKABELN = [
   {
     /* Eingetragen am 2026-09-11 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel wortarten-01. */
     id: "gram-harf",
-    ar: "حَرْف",
+    ar: "حَرْفٌ",
     /* ⚠️ Zuerst „Partikel — eine der drei Wortarten (auch: Buchstabe)". Das
        „Buchstabe" traf die Bedeutung der Buchvokabel حَرْفٌ (madina-1 K20, id
        45954), und dubletteImBuch() hielt beide für DASSELBE Wort. Es sind zwei:
@@ -742,7 +761,7 @@ const FACHBEGRIFF_VOKABELN = [
   {
     /* Eingetragen am 2026-09-11 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel wortarten-01. */
     id: "gram-fil",
-    ar: "فِعْل",
+    ar: "فِعْلٌ",
     de: "Verb — eine der drei Wortarten",
     type: "noun",
     chapter: 'personal',
@@ -754,7 +773,7 @@ const FACHBEGRIFF_VOKABELN = [
   {
     /* Eingetragen am 2026-09-11 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel madd-tabii-01. */
     id: "gram-madd",
-    ar: "مَدّ",
+    ar: "مَدٌّ",
     de: "Dehnung — der lang gelesene Vokal",
     type: "noun",
     chapter: 'personal',
@@ -766,7 +785,7 @@ const FACHBEGRIFF_VOKABELN = [
   {
     /* Eingetragen am 2026-09-11 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel mutabaqa-genus-01. */
     id: "gram-mutabaqa",
-    ar: "مُطَابَقَة",
+    ar: "مُطَابَقَةٌ",
     /* ⚠️ Buchtausch bestätigt: مُطَابَقَةٌ „Übereinstimmung" steht in madina-3,
        Kapitel 11 (id 47239) — gleiche Bedeutung. Ist dieses Buchwort beim Start
        geladen, ersetzt tauscheDubletten() die Karte und schaltet es einzeln frei
@@ -855,7 +874,7 @@ const FACHBEGRIFF_VOKABELN = [
   {
     /* Eingetragen am 2026-09-11 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel wortstellung-fokus-01. */
     id: "gram-taqdim",
-    ar: "تَقْدِيم",
+    ar: "تَقْدِيمٌ",
     de: "Voranstellung — was am Satzanfang steht, wird betont",
     type: "noun",
     chapter: 'personal',

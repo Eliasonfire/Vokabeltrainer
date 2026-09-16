@@ -49,6 +49,7 @@ const require = createRequire(import.meta.url);
 const STOERTEST = process.argv.includes('--stoertest');
 
 const ORIGINAL = fs.readFileSync(path.join(WURZEL, 'js', 'uebung.js'), 'utf8');
+let FACH_QUELLE = fs.readFileSync(path.join(WURZEL, 'data', 'fachbegriffe.js'), 'utf8');
 const GRAMMATIK = fs.readFileSync(path.join(WURZEL, 'grammar-data.js'), 'utf8');
 const irab = require('./js/irab.js');
 
@@ -214,6 +215,23 @@ function laufe(quelle, still){
       if (new RegExp('(?<![\\u0600-\\u06FF])' + form + '(?![\\u0600-\\u06FF])').test(text)) nackt.push(form + ' in „' + text.slice(0, 50) + '"');
   pruefe('kein belegter Fachbegriff steht mehr ohne Endung', nackt.length === 0, nackt.slice(0, 4).join(' · '));
 
+  /* ---------- 2e. Auch die Karteikarten der Fachbegriffe ---------- */
+  /* Sein „ja" galt den Fachbegriffen, nicht nur dem Satzmodus. Die 15 Karten,
+     deren Form mit Endung in seinem Material belegt ist (data/fachbegriffe.js,
+     Kopfkommentar), müssen sie tragen. */
+  log('\n2e. Die 15 belegten Fachbegriff-Karten tragen ihre Endung');
+  const SOLL = { 'gram-mudaf': 'مُضَافٌ', 'gram-majrur': 'مَجْرُورٌ', 'gram-marfu': 'مَرْفُوعٌ', 'gram-nat': 'نَعْتٌ',
+    'gram-idafa': 'إِضَافَةٌ', 'gram-zarf': 'ظَرْفٌ', 'gram-schakl': 'شَكْلٌ', 'gram-mubtada': 'مُبْتَدَأٌ',
+    'gram-khabar': 'خَبَرٌ', 'gram-mansub': 'مَنْصُوبٌ', 'gram-harf': 'حَرْفٌ', 'gram-fil': 'فِعْلٌ',
+    'gram-madd': 'مَدٌّ', 'gram-mutabaqa': 'مُطَابَقَةٌ', 'gram-taqdim': 'تَقْدِيمٌ' };
+  const karten = FACH_QUELLE ? (new Function(FACH_QUELLE + ';return FACHBEGRIFF_VOKABELN;'))() : [];
+  const falsch = Object.entries(SOLL).filter(([id, form]) => {
+    const k = karten.find(x => x.id === id);
+    return !k || String(k.ar).normalize('NFC') !== form.normalize('NFC');
+  });
+  pruefe('alle 15 Karten gefunden und mit Endung', karten.length > 0 && falsch.length === 0,
+    falsch.map(([id]) => id + ' = ' + ((karten.find(x => x.id === id) || {}).ar || 'fehlt')).join(' · '));
+
   /* ---------- 3. „Warum?" bei unsichtbarer Endung ---------- */
   log('\n3. „Warum?" zeigt bei ى/ا die Karte zur unsichtbaren Endung');
   pruefe('uebungUnsichtbarerFall() ist ladbar', typeof F === 'function', typeof F);
@@ -289,6 +307,18 @@ for (const [name, stoere] of STOERUNGEN){
   const schlecht = laufe(gestoert, true);
   if (schlecht > 0) console.log('  ✔ ' + name + ' → ' + schlecht + ' rot');
   else { alleRot = false; console.log('  ✘ ' + name + ' → blieb grün'); }
+}
+/* Und eine Störung an den KARTEN, nicht am Satzmodus. */
+{
+  const echt = FACH_QUELLE;
+  FACH_QUELLE = echt.replace("ar: 'مُضَافٌ',", "ar: 'مُضَاف',");
+  if (FACH_QUELLE === echt){ alleRot = false; console.log('  ✘ die Karte مُضَافٌ ohne Endung — Störung griff nicht'); }
+  else {
+    const schlecht = laufe(ORIGINAL, true);
+    if (schlecht > 0) console.log('  ✔ die Karte مُضَافٌ steht wieder ohne Endung → ' + schlecht + ' rot');
+    else { alleRot = false; console.log('  ✘ die Karte مُضَافٌ ohne Endung → blieb grün'); }
+  }
+  FACH_QUELLE = echt;
 }
 console.log('\n' + (alleRot ? '✔ jede Störung wurde erkannt' : '✘ mindestens eine Störung blieb unbemerkt'));
 process.exit(alleRot ? 0 : 1);
