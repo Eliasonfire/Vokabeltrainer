@@ -272,18 +272,76 @@ function merkeWiederholung(sure){
    Deshalb jetzt ZWEI Bedingungen, beide müssen erfüllt sein:
      1. der letzte Vers war wirklich sichtbar — gemessen von einem eigenen
         Beobachter OHNE den Beschnitt, der genau EIN Rechteck ausmisst
-     2. mindestens WDH_MINDESTZEIT in der Sure, seine Vorgabe („mindesten so
-        1-2 min"), gezählt am unteren Rand seiner Spanne
+     2. lange genug in der Sure — WIE lange, hängt an ihrer Länge (gleich unten)
 
    ⛔ Die Zeit läuft NUR, solange die Sure offen UND das Fenster sichtbar ist.
    Eine Wanduhr wäre keine Schranke: wer die App weglegt und in zwei Minuten
    zurückkommt, hätte die Sure „gelesen". [[ausfall_ist_unsichtbar_gebaut]] */
-const WDH_MINDESTZEIT = 60 * 1000;
+
+/* ---------- ⛔⛔ WIE LANGE? NICHT ÜBERALL GLEICH (16.09.2026, abends) ---------
+
+   Zuerst stand hier eine feste Minute — seine Vorgabe „mindesten so 1-2 min",
+   am unteren Rand, gedacht an az-Zalzala. Noch am selben Abend Elias:
+   „zb auch am handy mit ikhlas könnte es auch passieren" · „und dafür brauche
+   ich wahrscheinlich keine ganze minute um es zu lesen" · „aber wir können
+   finde ich nicht überall das selbe maß anwenden weil wenn wir dann zb sagen
+   wir nehmen 30 sekunden dann ist sura al mulk aber sicher nicht nach 30
+   sekunden gelesen"
+
+   ⛔ Eine feste Zeit ist für Suren von 10 bis 333 Wörtern in BEIDE Richtungen
+   falsch: al-Kawthar musste man länger offen halten, als das Lesen dauert —
+   und al-Mulk, die einen eigenen TÄGLICHEN Ring hat, zählte nach einem
+   Bruchteil ihrer Lesezeit. [[allgemeine_regel_statt_listeneintrag]]
+
+   Jetzt: eine halbe Sekunde je Wort, nie unter 8 Sekunden.
+
+   Der Maßstab ist ein geübter Rezitator, und zwar gekürzt — Elias: „aber wenn
+   du das jetzt nach zeit machst wie geübte rezitatoren es machen dann kürze es
+   ungefähr um 1/3 weil die sprechen es recht schön und langsam aus und ich
+   nicht" · „manchmal lese ich auch recht schnell deswegen"
+
+   Gemessen an Mishari al-ʿAfāsī — Verszeiten von api.qurancdn.com, 16.09.2026,
+   erstes Wort ab 0 ms (ohne Basmala). Wörter gezählt mit quranWorte(), genau
+   wie der Leser selbst zählt:
+
+       Sure          Wörter   Rezitation   ⅔ davon   Schwelle
+       al-Kawthar       10      15,5 s      10,3 s     8 s    (52 %)
+       al-Ikhlāṣ        15      13,3 s       8,9 s     8 s    (60 %)
+       al-Qadr          30      35,8 s      23,9 s    15 s    (42 %)
+       az-Zalzala       36      49,9 s      33,3 s    18 s    (36 %)
+       al-Mulk         333     444,2 s     296,1 s   166,5 s  (37 %)
+
+   ⛔ Bei ALLEN 13 gemessenen Suren liegt die Schwelle unter „⅔ davon" — also
+   mindestens um das Drittel gekürzt, das er verlangt hat, bei den längeren um
+   mehr als die Hälfte. Das ist Absicht: „manchmal lese ich auch recht
+   schnell". Eine Schwelle GENAU bei ⅔ hätte al-Mulk (eigener täglicher Ring)
+   an einem Tag, an dem er schneller liest als sonst, nicht gezählt.
+
+   Die 8 s liegen über seinem „für 5 sek rein geht, kurz guckt und wieder raus"
+   und unter ⅔ der kürzesten gemessenen Rezitation (al-Ikhlāṣ, 8,9 s).
+
+   ⚠️ Wie schnell Elias selbst liest, ist NICHT gemessen — nur seine eigene
+   Schätzung („ungefähr um 1/3"). Fühlt es sich falsch an, ist es eine Zahl. */
+const WDH_SEK_JE_WORT = 0.5;
+const WDH_MINDESTZEIT = 8 * 1000;    /* Untergrenze, auch für die kürzeste Sure */
+const WDH_OHNE_TEXT = 60 * 1000;     /* nur falls die Wörter nicht zählbar sind */
+
+/* Wie lange muss DIESE Sure offen sein? Gezählt mit quranWorte() — derselben
+   Zählung, mit der der Leser die Wörter markiert. [[dieselbe_frage_zwei_antworten]] */
+function wdhSchwelle(sure){
+  const verse = (typeof VERSE_CACHE === 'object' && VERSE_CACHE[sure]) || null;
+  if (!verse || !verse.length || typeof quranWorte !== 'function') return WDH_OHNE_TEXT;
+  let woerter = 0;
+  for (const v of verse) woerter += quranWorte(v && v.text_uthmani).length;
+  if (!woerter) return WDH_OHNE_TEXT;
+  return Math.max(WDH_MINDESTZEIT, Math.round(woerter * WDH_SEK_JE_WORT * 1000));
+}
 
 let LESE_SURE = null;          /* welche Sure ist gerade offen */
 let LESE_ENDE_GESEHEN = false; /* war ihr letzter Vers schon sichtbar? */
 let LESE_SEIT = 0;             /* läuft die Uhr? (Zeitpunkt, sonst 0) */
 let LESE_DAUER = 0;            /* bereits gesammelte Zeit in dieser Sure */
+let LESE_SCHWELLE = WDH_OHNE_TEXT; /* wie lange DIESE Sure offen sein muss */
 let LESE_UHR = null;
 let LESE_ENDE_BEOBACHTER = null;
 
@@ -298,14 +356,14 @@ function leseUhrStellen(){
   clearTimeout(LESE_UHR);
   LESE_UHR = null;
   if (!LESE_SURE || !LESE_ENDE_GESEHEN || !LESE_SEIT) return;
-  const fehlt = WDH_MINDESTZEIT - leseZeitJetzt();
+  const fehlt = LESE_SCHWELLE - leseZeitJetzt();
   if (fehlt <= 0){ pruefeWiederholung(); return; }
   LESE_UHR = setTimeout(pruefeWiederholung, fehlt + 50);
 }
 
 function pruefeWiederholung(){
   if (!LESE_SURE || !LESE_ENDE_GESEHEN) return;
-  if (leseZeitJetzt() < WDH_MINDESTZEIT){ leseUhrStellen(); return; }
+  if (leseZeitJetzt() < LESE_SCHWELLE){ leseUhrStellen(); return; }
   clearTimeout(LESE_UHR);
   LESE_UHR = null;
   merkeWiederholung(LESE_SURE);
@@ -333,6 +391,7 @@ function leseZeitHalt(){
 function leseSureSetzen(id){
   leseZeitHalt();
   LESE_SURE = id ? Number(id) : null;
+  LESE_SCHWELLE = LESE_SURE ? wdhSchwelle(LESE_SURE) : WDH_OHNE_TEXT;
   LESE_ENDE_GESEHEN = false;
   LESE_DAUER = 0;
   if (LESE_ENDE_BEOBACHTER){ LESE_ENDE_BEOBACHTER.disconnect(); LESE_ENDE_BEOBACHTER = null; }
@@ -340,7 +399,7 @@ function leseSureSetzen(id){
 }
 
 /* ⛔ Die Uhr hält an, wenn die App weggelegt wird — und läuft weiter, wenn sie
-   zurückkommt. Ohne diesen Haken wäre WDH_MINDESTZEIT eine Wanduhr und damit
+   zurückkommt. Ohne diesen Haken wäre die Schwelle eine Wanduhr und damit
    keine Schranke. */
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') leseZeitStart(); else leseZeitHalt();
@@ -391,8 +450,8 @@ function wdhFavorit(){
 
    ⭐ Die Reparatur oben (zweiter Beobachter + Mindestzeit) wirkt erst beim
    NÄCHSTEN Lesen. Für einen Tag, an dem er die Sure schon gelesen hat, hilft
-   sie nicht — und ihn zweimal 60 Sekunden warten zu lassen für etwas, das die
-   App falsch gemacht hat, wäre die falsche Rechnung.
+   sie nicht — und ihn beide Suren noch einmal offen halten zu lassen für
+   etwas, das die App falsch gemacht hat, wäre die falsche Rechnung.
 
    ⛔ Das ist aber nicht der einzige Grund, warum der Haken bleibt. Eine
    Erkennung, die an Bildschirmgeometrie hängt, KANN wieder danebenliegen — ein
@@ -494,7 +553,7 @@ function beobachteLesestand(id){
        Dieser Beobachter schneidet unten 60 % ab. Ein letzter Vers, der dort
        steht, weil die Sure ganz auf den Schirm passt, kam nie in die Menge.
        Die Zählung hängt jetzt an einem eigenen Beobachter weiter unten.
-       Begründung bei WDH_MINDESTZEIT. */
+       Begründung beim Block „WANN GILT EINE SURE ALS GELESEN?". */
   }, { rootMargin: '-64px 0px -60% 0px' });
   verse.forEach(v => LESE_BEOBACHTER.observe(v));
 
