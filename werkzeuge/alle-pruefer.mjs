@@ -416,6 +416,8 @@ const PRUEFER = [
   ['test-langenscheidt.mjs', []],
   /* 17.09.2026: der KV-Abruf in vorrat.mjs bekommt einen zweiten Versuch. */
   ['test-kv-abruf.mjs', []],
+  /* 17.09.2026: Gedächtnis-Spiegel — vollständig, ohne Buchvokabeln, --pruefen wird rot. */
+  ['test-gedaechtnis-spiegel.mjs', []],
   ['test-laut.mjs', []],
   ['test-tagesdeckel.mjs', []],
   ['test-wiedereinstieg.mjs', []],

@@ -261,6 +261,19 @@ export const PFLEGEPLAN = [
       wie: 'die Seite trägt ihr Baudatum und wird bei jedem Lauf neu erzeugt; eine Regel, die aus SATZ_THEMEN fällt, landet sichtbar unter „Nicht zuordbar"' },
   },
   {
+    /* Neu am 17.09.2026. Elias am 16.09.2026, 19:11:57: „ja mein gedächtnis soll
+       immer auf dem aktuellsten stand sein mit allem". Keine App-Datei — ein
+       Werkzeug, das den Inhalt der App als Notizen in seinen Vault schreibt. */
+    funktion: 'Gedächtnis-Spiegel (Vault-Notizen)',
+    dateien: [],
+    bildschirme: [],
+    neuerInhalt: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/veroeffentlichen.mjs',
+      wie: 'veroeffentlichen.mjs ruft gedaechtnis-spiegel.mjs nach jedem Upload auf — jede ausgelieferte Regel, Karte, jeder Satz steht danach im Vault' },
+    eingaben: { nein: 'Elias trägt dort nichts ein: die Notizen sind erzeugt und tragen den Hinweis, dass Handänderungen überschrieben werden.' },
+    veralten: { routine: W, schritt: '1b.6', beleg: 'Gedächtnis-Spiegel NICHT nachgezogen',
+      wie: 'scheitert der Spiegel, meldet veroeffentlichen.mjs das laut und die Wartung schreibt es in den Bericht; test-gedaechtnis-spiegel.mjs (alle-pruefer) prüft Vollständigkeit und --pruefen' },
+  },
+  {
     funktion: 'Iʿrāb-Erklärer',
     dateien: ['js/irab.js'],
     bildschirme: [],
