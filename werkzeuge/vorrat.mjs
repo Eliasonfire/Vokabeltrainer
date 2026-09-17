@@ -68,6 +68,7 @@ import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { ersetzeDatei } from './schreibe-ersetzend.mjs';
+import { mitWiederholung } from './kv-abruf.mjs';
 
 /* fileURLToPath, nicht von Hand zerlegen: der Ordner heisst "1. Workspace"
    mit Leerzeichen, das steht in import.meta.url als %20. */
@@ -872,8 +873,13 @@ if (iStand >= 0){
         const befehl = win ? 'cmd' : 'npx';
         const args = ['wrangler@4.124.0', 'kv', 'key', 'get',
           '--namespace-id=' + NS, SCHLUESSEL, '--remote'];
-        text = execFileSync(befehl, win ? ['/c', 'npx', ...args] : args,
+        /* ⭐ Mit EINEM zweiten Versuch (17.09.2026) — der Abruf scheiterte am
+           09.09., 13.09. und 16.09. beim ersten Mal, und am 16.09. blieben
+           dadurch zehn weggeklickte Eselsbrücken in der App. werkzeuge/kv-abruf.mjs */
+        const r = mitWiederholung(befehl, win ? ['/c', 'npx', ...args] : args,
           { cwd: WURZEL, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 180000 });
+        text = r.text;
+        if (r.versuch > 1) console.log('  ⚠️ KV-Abruf klappte erst im ' + r.versuch + '. Versuch — gehoert in den Bericht.');
       } catch (e) {
         console.log('  ⚠️ KV nicht erreichbar (' + (e.message || '').split('\n')[0] + ')'
           + ' — es zaehlt nur arabicroots. Das gehoert in den Bericht.');
