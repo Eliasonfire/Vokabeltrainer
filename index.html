@@ -3815,9 +3815,16 @@ button:disabled{cursor:default;}
 .sura-gelesen-zeile{display:flex;justify-content:center;padding:var(--sp-4) var(--sp-3) var(--sp-6);}
 .sura-gelesen{display:inline-flex;align-items:center;gap:var(--sp-2);}
 .sura-gelesen svg{width:18px;height:18px;}
-/* Erledigt: kein zweiter Knopf, sondern eine Feststellung. Deshalb ohne Rahmen
-   und ohne Zeigefinger — er soll nicht zum zweiten Mal einladen. */
-.sura-gelesen.ist{opacity:.55;background:transparent;border-color:transparent;cursor:default;}
+/* Erledigt: zurueckgenommen ruhiger als der Aufruf zum Abhaken — aber ein
+   Knopf und kein Text.
+   ⛔⛔ HIER STAND BIS ZUM 17.09.2026 „kein zweiter Knopf, sondern eine
+   Feststellung. Deshalb ohne Rahmen und ohne Zeigefinger — er soll nicht zum
+   zweiten Mal einladen." Genau das war der Fehler: Elias wollte ihn ein
+   zweites Mal antippen — „damit es nicht mehr als gelesen gilt und auch der
+   ring dann wieder nicht voll ist". Ein Rahmen bleibt deshalb stehen, der
+   Zeigefinger auch; nur gedaempft, damit „schon erledigt" weiter zu sehen
+   ist. */
+.sura-gelesen.ist{opacity:.7;background:transparent;cursor:pointer;}
 .sura-nav .sn-label{display:block;font-size:var(--fs-xs);color:var(--text-faint);font-weight:700;}
 .sura-nav .sn-sure{display:block;font-size:var(--fs-sm);color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 /* Am Anfang und am Ende des Quran fehlt eine Seite. Ein leerer Platzhalter

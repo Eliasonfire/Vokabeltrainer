@@ -843,6 +843,12 @@ const SICHERUNGS_SCHLUESSEL = [
   'vt_wurzelTag',     /* Tageszaehler Wurzelmodus (15.09.2026) */
   'vt_suraGelesen',   /* welche Sure wann gelesen wurde — speist die
                          Wiederholungsrunde und zwei der Quran-Ringe */
+  'vt_suraGelesenZeit', /* wann der Haken je Sure zuletzt angefasst wurde
+                         (17.09.2026). ⛔ Ohne ihn waere eine eingespielte
+                         Sicherung schlimmer als keine: der Abgleich entscheidet
+                         damit, ob eine Ruecknahme oder ein Abhaken gilt —
+                         fehlt die Karte, faellt er auf „juengeres Datum"
+                         zurueck und holt jeden zurueckgenommenen Haken wieder */
   'vt_zielverlauf',   /* der stille Zielverlauf, 120 Tage. ⛔ Gerade WEIL ihn
                          niemand in der App sieht, faellt sein Fehlen beim
                          Einspielen nicht auf — und die Messung, um die Elias

@@ -231,13 +231,76 @@ function merkeLesestand(sure, vers){
    aussagekräftig. [[daten_ohne_zugang]] */
 let WDH = LS.get('vt_suraGelesen', {});      /* { Sure: 'JJJJ-MM-TT' } */
 
+/* ---------- ⛔⛔ WANN WURDE EINE SURE ZULETZT ANGEFASST? (17.09.2026) --------
+
+   Seit heute kann Elias das Abhaken auch ZURÜCKNEHMEN (vergissWiederholung()
+   unten). Damit gibt es zum ersten Mal einen Handgriff, der einen Eintrag
+   WEGNIMMT — und genau der überlebte den Geräteabgleich nicht: der führt
+   `vt_suraGelesen` je Sure nach dem JÜNGEREN Datum zusammen, und ein
+   weggenommener Eintrag hat gar kein Datum mehr. Der Abgleich hätte das
+   heutige Datum zurückgebracht und den Ring wieder gefüllt — ohne Meldung,
+   wenige Sekunden später.
+
+   ⚠️ Das trifft auch mit EINEM Gerät: verglichen wird gegen den Stand, der
+   längst hochgeladen ist.
+
+   Deshalb je Sure der Zeitpunkt des letzten Handgriffs — abhaken wie
+   zurücknehmen. Der Abgleich entscheidet damit nach dem SPÄTEREN Handgriff
+   statt nach dem jüngeren Datum: eine Rücknahme gewinnt gegen ein älteres
+   Abhaken, ein späteres Abhaken gegen eine ältere Rücknahme.
+   [[ausfall_ist_unsichtbar_gebaut]] [[werkzeug_ohne_aufrufer]] */
+let WDH_ZEIT = LS.get('vt_suraGelesenZeit', {});   /* { Sure: Zeitpunkt in ms } */
+
+/* Welches Datum stand VOR dem heutigen Haken da? Nur für diese Sitzung: eine
+   Rücknahme soll die letzte ECHTE Lesung nicht mitlöschen. Ist sie nicht mehr
+   bekannt (App zwischendurch geschlossen), fällt der Eintrag ganz weg — die
+   Sure gilt dann als nie gelesen und ist in der Runde als Erste dran. Das ist
+   sie ohne die heutige Lesung ohnehin. */
+const WDH_VORHER = {};
+
 const WDH_AUSGENOMMEN = new Set([1, 67]);    /* Fātiḥa und al-Mulk */
 
 function merkeWiederholung(sure){
   const heute = todayStr(0);
   if (WDH[sure] === heute) return;           /* schon heute gezählt */
+  WDH_VORHER[sure] = WDH[sure] || '';
   WDH[sure] = heute;
+  WDH_ZEIT[sure] = Date.now();
   LS.set('vt_suraGelesen', WDH);
+  LS.set('vt_suraGelesenZeit', WDH_ZEIT);
+  if (typeof renderQuranRinge === 'function') renderQuranRinge();
+  if (typeof zeichneGelesenKnopf === 'function') zeichneGelesenKnopf();
+}
+
+/* ---------- ⭐ Doch nicht gelesen: den Haken zurücknehmen (17.09.2026) -------
+
+   Elias: „ich will das bei den suren die ich ringe habe und mir angezeigt wird
+   das ich sie gelesen habe, dass ich in die sure nach unten gehen kann und das
+   heute gelesen antippen kann damit es nicht mehr als gelesen gilt und auch
+   der ring dann wieder nicht voll ist"
+
+   Bis heute war der Haken eine Einbahnstraße. Wer in eine Sure hineinsah und
+   dabei lange genug blieb — nachschlagen, einen Vers vergleichen, die
+   Rezitation hören —, hatte sie „gelesen", und der volle Ring behauptete den
+   Rest des Tages etwas Falsches. Genau dieselbe Überlegung wie beim Haken
+   selbst, nur andersherum: die Automatik kann danebenliegen, und dann muss es
+   einen Weg von Hand geben. [[ausfall_ist_unsichtbar_gebaut]]
+
+   ⚠️ Nur HEUTE. Ein älterer Eintrag bleibt stehen — ihn anzufassen hieße, die
+   Wiederholungsrunde rückwirkend zu verschieben. */
+function vergissWiederholung(sure){
+  if (WDH[sure] !== todayStr(0)) return;     /* heute gar nicht eingetragen */
+  const vorher = WDH_VORHER[sure];
+  if (vorher) WDH[sure] = vorher; else delete WDH[sure];
+  delete WDH_VORHER[sure];
+  WDH_ZEIT[sure] = Date.now();
+  LS.set('vt_suraGelesen', WDH);
+  LS.set('vt_suraGelesenZeit', WDH_ZEIT);
+  /* ⛔ Ohne diese Sperre trüge die Automatik den Haken sofort wieder ein: er
+     steht am ENDE der Sure, die Zeit ist dort längst voll, und der nächste
+     Ruck am Bildschirm meldet das Ende erneut. Sie gilt für DIESE Lesung — wer
+     die Sure verlässt und neu öffnet, wird wieder normal gezählt. */
+  if (typeof leseZuruecknahme === 'function') leseZuruecknahme(sure);
   if (typeof renderQuranRinge === 'function') renderQuranRinge();
   if (typeof zeichneGelesenKnopf === 'function') zeichneGelesenKnopf();
 }
@@ -344,6 +407,16 @@ let LESE_DAUER = 0;            /* bereits gesammelte Zeit in dieser Sure */
 let LESE_SCHWELLE = WDH_OHNE_TEXT; /* wie lange DIESE Sure offen sein muss */
 let LESE_UHR = null;
 let LESE_ENDE_BEOBACHTER = null;
+let LESE_ZURUECK = false;      /* in dieser Lesung von Hand zurückgenommen */
+
+/* Elias hat den Haken für diese Sure gerade zurückgenommen (17.09.2026). Dann
+   zählt sie in DIESER Lesung nicht noch einmal von selbst — sonst stünde der
+   volle Ring beim nächsten Ruck am Bildschirm wieder da, und die Rücknahme
+   wäre ein Knopf ohne Wirkung. Beim nächsten Öffnen der Sure fängt alles von
+   vorn an (leseSureSetzen). */
+function leseZuruecknahme(sure){
+  if (LESE_SURE && Number(sure) === LESE_SURE) LESE_ZURUECK = true;
+}
 
 function leseZeitJetzt(){
   return LESE_DAUER + (LESE_SEIT ? Date.now() - LESE_SEIT : 0);
@@ -362,7 +435,7 @@ function leseUhrStellen(){
 }
 
 function pruefeWiederholung(){
-  if (!LESE_SURE || !LESE_ENDE_GESEHEN) return;
+  if (!LESE_SURE || !LESE_ENDE_GESEHEN || LESE_ZURUECK) return;
   if (leseZeitJetzt() < LESE_SCHWELLE){ leseUhrStellen(); return; }
   clearTimeout(LESE_UHR);
   LESE_UHR = null;
@@ -394,6 +467,7 @@ function leseSureSetzen(id){
   LESE_SCHWELLE = LESE_SURE ? wdhSchwelle(LESE_SURE) : WDH_OHNE_TEXT;
   LESE_ENDE_GESEHEN = false;
   LESE_DAUER = 0;
+  LESE_ZURUECK = false;        /* eine Rücknahme galt nur für die Lesung davor */
   if (LESE_ENDE_BEOBACHTER){ LESE_ENDE_BEOBACHTER.disconnect(); LESE_ENDE_BEOBACHTER = null; }
   if (LESE_SURE) leseZeitStart();
 }
@@ -538,13 +612,20 @@ function inWiederholungsrunde(sure){
   return (typeof wdhFavoriten === 'function') && wdhFavoriten().includes(id);
 }
 
+/* ⛔⛔ DER KNOPF GEHT SEIT DEM 17.09.2026 IN BEIDE RICHTUNGEN. Bis dahin stand
+   er nach dem Abhaken als `disabled` da — eine Feststellung, kein Knopf mehr.
+   Elias: „dass ich in die sure nach unten gehen kann und das heute gelesen
+   antippen kann damit es nicht mehr als gelesen gilt und auch der ring dann
+   wieder nicht voll ist". Er sagt beides: was gilt (der Haken ist gesetzt) und
+   was ein Tippen tut (es zurücknehmen). `aria-pressed` trägt denselben Stand
+   für die Vorlesefunktion. */
 function gelesenKnopfHtml(sure){
   if (!inWiederholungsrunde(sure)) return '';
   const heute = (typeof WDH === 'object' && WDH[sure] === todayStr(0));
   return `<div class="sura-gelesen-zeile">
     <button class="btn btn-secondary sura-gelesen${heute ? ' ist' : ''}" type="button"
-            data-suragelesen="${sure}"${heute ? ' disabled' : ''}>
-      ${icon('check')}${heute ? 'Heute gelesen' : 'Heute gelesen — abhaken'}
+            data-suragelesen="${sure}" aria-pressed="${heute ? 'true' : 'false'}">
+      ${icon('check')}${heute ? 'Heute gelesen — zurücknehmen' : 'Heute gelesen — abhaken'}
     </button>
   </div>`;
 }
@@ -565,6 +646,12 @@ document.addEventListener('click', e => {
   if (!k) return;
   const sure = Number(k.dataset.suragelesen);
   if (!sure) return;
+  /* Steht der Haken schon für heute, nimmt dasselbe Tippen ihn zurück. */
+  if (typeof WDH === 'object' && WDH[sure] === todayStr(0)){
+    vergissWiederholung(sure);
+    if (typeof toast === 'function') toast('Zurückgenommen — gilt heute nicht mehr als gelesen');
+    return;
+  }
   merkeWiederholung(sure);
   if (typeof toast === 'function') toast('Als heute gelesen eingetragen');
 });

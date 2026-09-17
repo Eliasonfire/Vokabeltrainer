@@ -19,7 +19,11 @@ import { fileURLToPath } from 'url';
 const WURZEL = path.dirname(fileURLToPath(import.meta.url));
 
 /* ---------- Umgebung nachbauen ---------- */
-function baueUmgebung(){
+/* ⚠️ `wandeln` ist fuer Gegenproben da: js/sync.js wird EINMAL je Kontext
+   ausgefuehrt, ein zweiter Lauf im selben Kontext bricht mit „SYNC_SCHLUESSEL
+   has already been declared" ab. Wer eine geaenderte Fassung messen will,
+   braucht also einen eigenen Kontext — und bekommt ihn hier. */
+function baueUmgebung(wandeln){
   const speicher = {};
   const ctx = {
     localStorage: {
@@ -35,7 +39,8 @@ function baueUmgebung(){
   };
   ctx.window = ctx;
   vm.createContext(ctx);
-  vm.runInContext(fs.readFileSync(path.join(WURZEL, 'js/sync.js'), 'utf8'), ctx);
+  const roh = fs.readFileSync(path.join(WURZEL, 'js/sync.js'), 'utf8');
+  vm.runInContext(wandeln ? wandeln(roh) : roh, ctx);
   return { ctx, speicher };
 }
 
@@ -442,6 +447,88 @@ console.log('=== Die Regelsammlung (vt_regeln, 11.09.2026) ===');
   const eigen = speicher['vt_regeln'];
   fuehreZusammen({ stempel: {}, daten: { vt_regeln: '{kaputt' } });
   pruefe('kaputtes JSON drüben lässt die Regelsammlung stehen', speicher['vt_regeln'] === eigen);
+}
+
+console.log('');
+console.log('=== Gelesene Suren: eine Ruecknahme ueberlebt den Abgleich (17.09.2026) ===');
+/* ⛔⛔ DER FALL, DER DIE FUNKTION SONST STILL AUSGEHEBELT HAETTE.
+   Elias am 17.09.2026: „dass ich in die sure nach unten gehen kann und das
+   heute gelesen antippen kann damit es nicht mehr als gelesen gilt und auch
+   der ring dann wieder nicht voll ist". Eine Ruecknahme ist ein FEHLENDER
+   Eintrag — und ein fehlender Eintrag verliert jeden Datumsvergleich. Der
+   Abgleich haette den Haken vom Server zurueckgeholt, wenige Sekunden spaeter,
+   ohne Meldung. Auch mit nur EINEM Geraet.
+   Deshalb entscheidet seither `vt_suraGelesenZeit` je Sure: der SPAETERE
+   Handgriff gewinnt. [[ausfall_ist_unsichtbar_gebaut]] */
+{
+  const HEUTE = '2026-09-17';
+
+  /* 1. Er nimmt den Haken zurueck; der Server hat ihn noch. */
+  const { ctx, speicher } = baueUmgebung();
+  const fuehreZusammen = vm.runInContext('fuehreZusammen', ctx);
+  speicher['vt_suraGelesen']     = JSON.stringify({ 99: HEUTE });      /* 97 zurueckgenommen */
+  speicher['vt_suraGelesenZeit'] = JSON.stringify({ 97: 5000, 99: 1000 });
+  fuehreZusammen({ stempel: {}, daten: {
+    vt_suraGelesen:     JSON.stringify({ 97: HEUTE, 99: HEUTE }),
+    vt_suraGelesenZeit: JSON.stringify({ 97: 1000, 99: 1000 })
+  }});
+  let g = JSON.parse(speicher['vt_suraGelesen']);
+  pruefe('die Ruecknahme bleibt — der Server holt den Haken NICHT zurueck',
+    g['97'] === undefined, speicher['vt_suraGelesen']);
+  pruefe('die Lesung des anderen Geraets bleibt unangetastet', g['99'] === HEUTE, speicher['vt_suraGelesen']);
+  pruefe('die Zeitkarte fuehrt beide Suren mit dem spaeteren Zeitpunkt',
+    JSON.parse(speicher['vt_suraGelesenZeit'])['97'] === 5000, speicher['vt_suraGelesenZeit']);
+
+  /* 2. Andersherum: drueben wurde SPAETER abgehakt. Dann gilt der Haken. */
+  const { ctx: c2, speicher: s2 } = baueUmgebung();
+  const fz2 = vm.runInContext('fuehreZusammen', c2);
+  s2['vt_suraGelesen']     = JSON.stringify({});
+  s2['vt_suraGelesenZeit'] = JSON.stringify({ 97: 1000 });
+  fz2({ stempel: {}, daten: {
+    vt_suraGelesen:     JSON.stringify({ 97: HEUTE }),
+    vt_suraGelesenZeit: JSON.stringify({ 97: 9000 })
+  }});
+  pruefe('das spaetere Abhaken drueben gewinnt gegen die aeltere Ruecknahme',
+    JSON.parse(s2['vt_suraGelesen'])['97'] === HEUTE, s2['vt_suraGelesen']);
+
+  /* 3. ⚠️ Ein Geraet mit altem Stand hat noch KEINE Zeitkarte. Dann muss der
+        Datumsvergleich von frueher weitergelten — sonst verloere es Lesungen. */
+  const { ctx: c3, speicher: s3 } = baueUmgebung();
+  const fz3 = vm.runInContext('fuehreZusammen', c3);
+  s3['vt_suraGelesen'] = JSON.stringify({ 97: '2026-09-12', 99: HEUTE });
+  fz3({ stempel: {}, daten: { vt_suraGelesen: JSON.stringify({ 97: HEUTE, 102: HEUTE }) } });
+  const g3 = JSON.parse(s3['vt_suraGelesen']);
+  pruefe('ohne Zeitkarte gilt weiter „je Sure das juengere Datum"',
+    g3['97'] === HEUTE && g3['99'] === HEUTE && g3['102'] === HEUTE, s3['vt_suraGelesen']);
+
+  /* 4. ⛔ Gegenprobe: mit der alten Regel waere der Haken zurueckgekommen —
+        sonst pruefte Fall 1 nichts. [[stoertest_muss_wirkung_nachweisen]] */
+  const quelleSync = fs.readFileSync(path.join(WURZEL, 'js/sync.js'), 'utf8');
+  const neueZeile = "const zd = JSON.parse(fernDaten['vt_suraGelesenZeit'] || '{}') || {};";
+  pruefe('Gegenprobe moeglich: die Zeile steht so in js/sync.js', quelleSync.includes(neueZeile));
+  const alt = baueUmgebung(roh => roh.replace(neueZeile, 'const zd = {};')
+    .replace("const zh = JSON.parse(localStorage.getItem('vt_suraGelesenZeit') || '{}') || {};", 'const zh = {};'));
+  const fzAlt = vm.runInContext('fuehreZusammen', alt.ctx);
+  alt.speicher['vt_suraGelesen']     = JSON.stringify({ 99: HEUTE });
+  alt.speicher['vt_suraGelesenZeit'] = JSON.stringify({ 97: 5000, 99: 1000 });
+  fzAlt({ stempel: {}, daten: {
+    vt_suraGelesen:     JSON.stringify({ 97: HEUTE, 99: HEUTE }),
+    vt_suraGelesenZeit: JSON.stringify({ 97: 1000, 99: 1000 })
+  }});
+  pruefe('Gegenprobe: ohne die Zeitkarte holt der Abgleich den Haken zurueck',
+    JSON.parse(alt.speicher['vt_suraGelesen'])['97'] === HEUTE, alt.speicher['vt_suraGelesen']);
+
+  /* 5. Kaputtes JSON drueben zerstoert den eigenen Stand nicht. */
+  const eigen = speicher['vt_suraGelesen'];
+  fuehreZusammen({ stempel: {}, daten: { vt_suraGelesen: '{kaputt' } });
+  pruefe('kaputtes JSON drueben laesst die gelesenen Suren stehen', speicher['vt_suraGelesen'] === eigen);
+
+  /* 6. Und der Schluessel muss ueberhaupt mitfahren. */
+  const liste = vm.runInContext('SYNC_SCHLUESSEL', ctx);
+  pruefe('vt_suraGelesenZeit steht im Abgleich', liste.includes('vt_suraGelesenZeit'));
+  pruefe('… und zwar NACH vt_suraGelesen (sonst ist die eigene Karte schon gemischt)',
+    liste.indexOf('vt_suraGelesenZeit') > liste.indexOf('vt_suraGelesen'),
+    liste.indexOf('vt_suraGelesen') + ' / ' + liste.indexOf('vt_suraGelesenZeit'));
 }
 
 console.log('');

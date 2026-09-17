@@ -322,6 +322,24 @@ export const PFLEGEPLAN = [
        vollständig prüfen — deshalb steht darunter ein Haken von Hand
        („Heute gelesen — abhaken") am Ende jeder Sure der Wiederholungsrunde.
        Bewacht von werkzeuge/pruefe-lesezaehlung.mjs (mit Störtest). */
+    /* ⭐⭐ 17.09.2026 (v527): DERSELBE HAKEN GEHT JETZT IN BEIDE RICHTUNGEN.
+       Elias: „dass ich in die sure nach unten gehen kann und das heute gelesen
+       antippen kann damit es nicht mehr als gelesen gilt und auch der ring
+       dann wieder nicht voll ist". Ein zweites Tippen nimmt ihn zurück, der
+       Ring ist wieder offen, und die Automatik trägt ihn in derselben Lesung
+       nicht erneut ein.
+
+       ⛔ EIN NEUER SCHLÜSSEL, und er hat Pflegebedarf an drei Stellen:
+       `vt_suraGelesenZeit` (js/quran.js) merkt je Sure den Zeitpunkt des
+       letzten Handgriffs. Ohne ihn hätte der Geräteabgleich jede Rücknahme
+       zurückgeholt — er entschied je Sure nach dem jüngeren DATUM, und eine
+       Rücknahme ist ein fehlender Eintrag ohne Datum. Eingetragen ist er
+       deshalb in js/sync.js (eigener Zweig: der spätere Handgriff gewinnt),
+       in der Sicherung (js/einstellungen.js) und in pruefe-kreislaeufe.mjs.
+       Gemessen von test-sync.mjs (drei Fälle samt Gegenprobe),
+       test-lesezaehlung.mjs (die Automatik zählt nach der Rücknahme nicht
+       nach) und test-surenringe.mjs (der Ring wird wieder leer).
+       ⚠️ Der Schlüssel wächst nie über 114 Einträge — einer je Sure. */
     /* ⭐ quran-verszeichen.js kam am 15.09.2026 für den Juz-Ring dazu: 6236
        Zahlen, die Zeichen je Vers ohne Taschkīl. Erzeugt von
        werkzeuge/verszeichen-bauen.mjs aus quran-text.js.
