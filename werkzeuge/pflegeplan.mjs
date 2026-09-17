@@ -293,6 +293,13 @@ export const PFLEGEPLAN = [
        heute nicht als Wiederholung (sie hatte az-Zalzala vom Ring verdrängt).
        Liest nur HIFZ_ZEIT, das es schon gab; neu ist lerntagVon() in js/kern.js.
        Kein neuer Pflegebedarf — test-surenringe.mjs spielt den Tag nach. */
+    /* 17.09.2026 (v526): JEDER Favorit außer al-Mulk ist ein eigener Ring
+       „Neu lernen", auch wenn er als auswendig abgehakt ist — weg erst mit dem
+       Stern (Elias: „erst wenn ich sie von den favouriten löse dann kann sie
+       tatsächlich weg"). Favoriten stehen dafür nicht in der Wiederholungsrunde.
+       Liest nur QURAN_FAV und HIFZ, die es schon gab; kein neuer Schlüssel.
+       Kein neuer Pflegebedarf — test-surenringe.mjs spielt seinen Stand vom
+       17.09. nach, mit zwei Gegenproben. */
     /* ⭐⭐ WANN EINE SURE ALS GELESEN ZÄHLT (16.09.2026) — die Stelle, an der
        diese Funktion schon einmal still ausgefallen ist.
 
