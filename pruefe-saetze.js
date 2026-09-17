@@ -490,6 +490,38 @@ let lexikonSchwer = 0;
   eiche(EICH_SATZ.map(([satz, , warum]) => [satz, true, warum]),
         satz => EICH_SATZ.find(e => e[0] === satz)[1](analysiereSatz(satz)),
         'Satzrollen: walid und Name + wa + Name');
+
+  /* ⭐ نَعْت des مُضَاف hinter dem مُضَاف إِلَيْه (17.09.2026, js/irab.js
+     mudafFuerNat). Beleg nat-wen-beschreibt-01: „Man muss immer gucken, wer
+     beschreibt wen" — die Endung entscheidet. Zwei Gegenproben halten die
+     Regel eng: im Genitiv bleibt es نَعْت des مُضَاف إِلَيْه, und ein
+     männliches Adjektiv im Nominativ hinter einem weiblichen مُضَاف bleibt ein
+     gemeldeter Fehler. Arabisch aus Codepoints. [[zeichenklasse_nie_sichtbar_kopieren]] */
+  {
+    const z = (...c) => String.fromCharCode(...c);
+    const HAQIBATU = z(0x062D,0x064E,0x0642,0x0650,0x064A,0x0628,0x064E,0x0629,0x064F);
+    const ATTALIBI = z(0x0627,0x0644,0x0637,0x064E,0x0651,0x0627,0x0644,0x0650,0x0628,0x0650);
+    const JAMILATU = z(0x0627,0x0644,0x0652,0x062C,0x064E,0x0645,0x0650,0x064A,0x0644,0x064E,0x0629,0x064F);
+    const JAMILATI = z(0x0627,0x0644,0x0652,0x062C,0x064E,0x0645,0x0650,0x064A,0x0644,0x064E,0x0629,0x0650);
+    const JADIDU   = z(0x0627,0x0644,0x0652,0x062C,0x064E,0x062F,0x0650,0x064A,0x062F,0x064F);
+    const ALA_MAKTABI = z(0x0639,0x064E,0x0644,0x064E,0x0649, 0x20, 0x0627,0x0644,0x0652,0x0645,0x064E,0x0643,0x0652,0x062A,0x064E,0x0628,0x0650);
+    const HUWA_IBNU_MUDIRI = z(0x0647,0x064F,0x0648,0x064E, 0x20, 0x0627,0x0650,0x0628,0x0652,0x0646,0x064F, 0x20,
+                               0x0627,0x0644,0x0652,0x0645,0x064F,0x062F,0x0650,0x064A,0x0631,0x0650);
+    const s = (...w) => w.join(' ') + '.';
+    const EICH_NAT = [
+      [s(HAQIBATU, ATTALIBI, JAMILATU, ALA_MAKTABI), r => r[2].rolle === 'نَعْت (zum مُضَاف davor)' && r[2].stimmt === true,
+        'haqibatu t-talibi l-jamilatu — Nominativ + ة wie der مُضَاف: die schöne Tasche des Studenten'],
+      [s(HUWA_IBNU_MUDIRI, JADIDU), r => r[3].erwartet === 'raf' && r[3].stimmt === true,
+        'das Beispiel des Lehrers (Folge 14): ibnu l-mudiri l-jadidu — beschreibt den Sohn'],
+      [s(HAQIBATU, ATTALIBI, JAMILATI, ALA_MAKTABI), r => r[2].erwartet === 'jarr' && !/zum/.test(r[2].rolle),
+        'Gegenprobe: im Genitiv bleibt es نَعْت des مُضَاف إِلَيْه'],
+      [s(HAQIBATU, ATTALIBI, JADIDU, ALA_MAKTABI), r => r[2].stimmt === false,
+        'Gegenprobe: männlich im Nominativ hinter weiblichem مُضَاف — weiter ein Fehler']
+    ];
+    eiche(EICH_NAT.map(([satz, , warum]) => [satz, true, warum]),
+          satz => EICH_NAT.find(e => e[0] === satz)[1](analysiereSatz(satz)),
+          'نَعْت des مُضَاف hinter dem مُضَاف إِلَيْه');
+  }
   setzeLexikon(wortschatz);
 
   /* ⭐ rolleAnzeige (17.09.2026): die Rollen im Iʿrāb-Erklärer mit belegter

@@ -939,6 +939,35 @@ function LEXIKON_hat(w){
 
    ⛔ Auch keine Liste der Ortsnamen: die wäre nie vollständig — die Farben,
    غَضْبَانُ, die Elative und alle Eigennamen fallen darunter. */
+/* ⭐ نَعْت DES مُضَاف, hinter dem مُضَاف إِلَيْه (17.09.2026).
+
+   حَقِيبَةُ الطَّالِبِ الْجَمِيلَةُ — „die schöne Tasche des Studenten". Bisher galt
+   jedes Adjektiv hinter dem مُضَاف إِلَيْه als dessen نَعْت, verlangte Genitiv
+   und meldete die richtige Ḍamma als „passt nicht".
+
+   Beleg: nat-wen-beschreibt-01 (Folge 14, 21:15; Schlüssel 3, L1, S. 15). Der
+   Lehrer: هُوَ اِبْنُ الْمُدِيرِ الْجَدِيدِ „Sohn des neuen Direktors", weil
+   الْجَدِيدِ wie الْمُدِيرِ مَجْرُور ist — mit الْجَدِيدُ (مَرْفُوع) „beschreibt es
+   den Sohn". „Man muss immer gucken, wer beschreibt wen." Die ENDUNG entscheidet.
+
+   ⛔ Deshalb eng: nur wenn das Wort sichtbar im Kasus des مُضَاف steht, NICHT im
+   Genitiv, und im Geschlecht (ة oder nicht) zum مُضَاف passt. Steht es in einem
+   dritten Kasus oder passt das Geschlecht nicht, bleibt es نَعْت des مُضَاف
+   إِلَيْه — und ein Fehler wird weiter gemeldet (Eichung in pruefe-saetze.js). */
+function mudafFuerNat(out, wort, gelesen){
+  if (!gelesen || !gelesen.kasus || gelesen.kasus === 'jarr' || !out.length) return null;
+  const ilayh = out[out.length - 1];
+  if (!ilayh || ilayh.rolle !== 'مُضَاف إِلَيْه') return null;
+  let k = out.length - 2;
+  while (k >= 0 && /^unveränderlich \(im /.test(out[k].rolle)) k--;
+  const mudaf = out[k];
+  if (!mudaf || !mudaf.erwartet || !/\(مُضَاف\)$/.test(String(mudaf.rolle))) return null;
+  if (gelesen.kasus !== mudaf.erwartet) return null;
+  const endetTa = w => kernWort(w).charCodeAt(kernWort(w).length - 1) === 0x0629;
+  if (endetTa(wort) !== endetTa(mudaf.wort)) return null;
+  return mudaf;
+}
+
 function schliesstIdafaAus(naechstes){
   if (!naechstes) return false;
   const w = String(naechstes).replace(/[.،؟!«»:؛]/g, '').trim();
@@ -1208,6 +1237,8 @@ function analysiereSatz(satz){
          Bestimmtheit nicht ueberein, ist es kein نَعْت, sondern ein خَبَر. */
       rolle = 'نَعْت (Adjektiv zum Wort davor)';
       erwartet = letzterKasus;
+      const zumMudaf = mudafFuerNat(out, wort, gelesen);
+      if (zumMudaf){ rolle = 'نَعْت (zum مُضَاف davor)'; erwartet = zumMudaf.erwartet; }
     } else if (letzterKasus && letzteBestimmtheit && istBestimmt(wort)
                && !(imVerbalsatz && gelesen && gelesen.kasus
                     && gelesen.kasus !== letzterKasus)){
@@ -1228,6 +1259,8 @@ function analysiereSatz(satz){
          خَبَر und damit als Kasusfehler im Lehrbuchsatz. */
       rolle = 'نَعْت (richtet sich nach dem Wort davor)';
       erwartet = letzterKasus;
+      const zumMudaf = mudafFuerNat(out, wort, gelesen);
+      if (zumMudaf){ rolle = 'نَعْت (zum مُضَاف davor)'; erwartet = zumMudaf.erwartet; }
     } else if (/^و[َ]?/.test(wort) && ersteRolleVergeben && !LEXIKON_hat(wort)){
       /* Nur wenn das Wort als Ganzes NICHT im Wortschatz steht. Sonst gilt
          وَسِخٌ (schmutzig) als وَ + سِخ, und ein richtiger خَبَر faellt aus der
