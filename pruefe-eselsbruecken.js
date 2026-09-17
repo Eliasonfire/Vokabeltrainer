@@ -145,6 +145,27 @@ const BUCH_WOERTER = [];
   });
 })();
 
+/* ⛔ SEIN LERNSTAND — einmal geladen, fuer Abschnitt 4 UND 6 (17.09.2026).
+   `angabe` ist, was Elias selbst gesagt hat; `gemessen` misst nur, womit
+   abgefragt wurde. Abschnitt 6 las die Datei bisher allein, Abschnitt 4 kannte
+   seinen Stand gar nicht: jedes Wort aus Madina 1 Kapitel 10–12 und Bayna
+   Yadayk 1 Kapitel 1–2 galt dort als „ausserhalb seines Fensters". Die Wartung
+   vom 16.09.2026 hat deshalb sechs richtige Eselsbruecken umgeschrieben (ihr
+   Beispiel: نَظَّارَةٌ, Bayna Yadayk 1 Kapitel 2 — freigeschaltet).
+   [[handliste_neben_echter_quelle]] */
+let LERNSTAND = { angabe: {}, nichtInArbeit: {} };
+{
+  const sd = path.join(WURZEL, 'data/lernstand.json');
+  if (fs.existsSync(sd)){
+    try {
+      const d = JSON.parse(fs.readFileSync(sd, 'utf8'));
+      LERNSTAND = { angabe: d.angabe || {}, nichtInArbeit: d.nichtInArbeit || {} };
+    } catch (e){ console.log('  hinw data/lernstand.json nicht lesbar: ' + e.message); }
+  } else {
+    console.log('  hinw data/lernstand.json fehlt — Abschnitt 4 kennt dann nur vocab-data.js, Abschnitt 6 fordert nichts ein.');
+  }
+}
+
 let fehler = 0, geprueft = 0;
 const hinweise = [];
 const melde = (was) => { fehler++; console.log('  FEHL ' + was); };
@@ -389,7 +410,7 @@ console.log('=== 4. „das hast du auch" — steht das Wort wirklich im Lernbest
      ueber die Mehrzahl von أَنْفٌ, das er hat. Ohne diese Zeile meldet die
      Pruefung genau die Stellen, an denen Muster erklaert werden. */
   const bekannt = new Set();
-  VOCAB_DATA.forEach(w => {
+  const merkeFormen = w => {
     [w.ar, w.pl, w.sg, w.femSg, w.femPl].forEach(feld => {
       if (!feld) return;
       String(feld).split('/').forEach(teil => {
@@ -397,12 +418,34 @@ console.log('=== 4. „das hast du auch" — steht das Wort wirklich im Lernbest
         if (t) bekannt.add(t);
       });
     });
-  });
+  };
+  VOCAB_DATA.forEach(merkeFormen);
   /* Fachbegriffe aus dem Unterricht zaehlen mit - sie sind seit v157 Vokabeln. */
   try {
     ladeAusSkript('data/fachbegriffe.js', 'FACHBEGRIFF_VOKABELN')
       .forEach(w => bekannt.add(flach(w.ar)));
   } catch (e){ /* Datei fehlt: dann eben ohne */ }
+  /* ⛔ Die Buchwoerter BIS zu seinem Kapitel zaehlen mit, und seine selbst
+     angelegten Woerter auch — beides hat er (17.09.2026). Ein Buch, das er nur
+     freigeschaltet hat, in dem er aber nicht lernt (`nichtInArbeit`), zaehlt
+     nicht; Kapitel UEBER seinem Stand auch nicht — eine Bruecke auf ein Wort
+     aus Kapitel 15 traegt bei Kapitel 12 heute nicht (Befund 21.08. unten). */
+  let ausBuechern = 0, eigene = 0;
+  for (const w of BUCH_WOERTER){
+    const bis = LERNSTAND.angabe[w.book];
+    if (bis === undefined || LERNSTAND.nichtInArbeit[w.book] || !(Number(w.chapter) <= Number(bis))) continue;
+    merkeFormen(w);
+    ausBuechern++;
+  }
+  try {
+    const d = JSON.parse(fs.readFileSync(path.join(WURZEL, 'data/eigene-woerter.json'), 'utf8'));
+    (Array.isArray(d.woerter) ? d.woerter : []).forEach(w => { merkeFormen(w); eigene++; });
+  } catch (e){
+    console.log('  hinw data/eigene-woerter.json nicht lesbar — seine eigenen Woerter fehlen unter „bekannt".');
+  }
+  console.log('  bekannt: vocab-data.js, Fachbegriffe, ' + ausBuechern + ' Buchwoerter bis zu seinem Kapitel ('
+    + (Object.entries(LERNSTAND.angabe).map(([b, k]) => b + ' bis ' + k).join(', ') || 'kein Lernstand') + '), '
+    + eigene + ' eigene Woerter.');
 
   /* ⭐ WO STEHT DAS WORT SONST? Am 21.08.2026 gemessen: von fuenf Meldungen
      "steht nicht im Lernbestand" waren nur ZWEI erfundene Woerter.
@@ -593,14 +636,8 @@ console.log('=== 6. Dauerauftrag: neu freigeschaltete Kapitel ===');
        Abschnitt 7 macht es seit heute richtig; dieser hier ist aelter und
        wurde nicht mitgezogen. */
     const LERNFENSTER = 3;
-    let ANGABE = {};
-    {
-      const sd = path.join(WURZEL, 'data/lernstand.json');
-      if (fs.existsSync(sd)){
-        try { ANGABE = JSON.parse(fs.readFileSync(sd, 'utf8')).angabe || {}; }
-        catch (e){ console.log('  hinw data/lernstand.json nicht lesbar: ' + e.message); }
-      }
-    }
+    /* Oben einmal geladen und mit Abschnitt 4 geteilt (17.09.2026). */
+    const ANGABE = LERNSTAND.angabe;
     const buecher = Object.keys(frei).filter(b => {
       if (ANGABE[b] === undefined){
         console.log('  ⬜ ' + b + ': freigeschaltet, aber ohne Lernstand-Angabe — nicht eingefordert.');
