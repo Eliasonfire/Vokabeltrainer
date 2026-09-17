@@ -557,13 +557,7 @@ const NICHT_VERB = ['صفر', 'عمي', 'جر', 'ل', 'فوق',
      zuerst: solange بَعْدَ als فِعْل gilt, wird der ZURUF-Zweig gar nicht
      erreicht. Ich hatte es zuerst nur in ZURUF eingetragen und die Pruefung
      meldete unveraendert weiter — dieselbe Reihenfolge-Falle wie bei كُلُّ. */
-  'بعد', 'قبل',
-  /* ⛔ 17.09.2026: جَدٌّ „Großvater" — die Karte aus Bayna Yadayk 1, um die
-     Elias am 16.09. gebeten hat (*„opa und oma brauche ich auch"*). Ihr Satz
-     «جَدُّ الطَّالِبِ مَرِيضٌ.» (46004) wurde mit madina-2 zum Verbalsatz: جَدُّ
-     traf das Verb جَدَّ, الطَّالِبِ wurde فَاعِل und مَرِيضٌ مَفْعُول بِهِ. Weder
-     Tanwīn noch Artikel fangen es ab — der مُضَاف trägt beides nicht. */
-  'جد'];
+  'بعد', 'قبل'];
 /* Adjektive, die in den Beispielsaetzen vorkommen und deren Wortart nicht
    verlaesslich aus dem Lexikon kommt: كسلان und مجرور fehlen im kleinen
    Bestand ganz, حار steht im grossen ZWEIMAL (adjective und verb حَارَ) und

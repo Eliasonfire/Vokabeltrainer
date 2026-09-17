@@ -298,57 +298,100 @@ for (const q of quellen){
    Deshalb laeuft hier zum Schluss beides gegeneinander. Das kleine Lexikon ist
    vocab-data.js allein — der unguenstigste Fall, also die richtige Untergrenze
    ([[milder-bezugspunkt-verdeckt-mangel]]). */
-console.log('\n=== LEXIKON-VERGLEICH: sieht die App dasselbe wie diese Pruefung? ===');
+/* ⛔⛔ 17.09.2026: NUR BUCHAUSWAHLEN, IN DENEN DER SATZ BEI IHM ERSCHEINT.
+
+   Bis heute verglich dieser Abschnitt „vocab-data.js + EIN Buch" gegen
+   „vocab-data.js allein" und zeigte je Stand sechs Saetze, dann „… und 11
+   weitere". Zwei Fehler steckten darin, beide am selben Abend gemessen:
+     1. Ein Satz zu einer Buchvokabel erscheint in der App NUR, wenn sein Buch
+        geladen ist (js/buecher.js, saetzeNachtragen). Sechzehn Verbsaetze aus
+        Bayna Yadayk 1 standen deshalb seit Wochen als „anders" da — verglichen
+        mit einem Stand OHNE ihr Buch, den es fuer sie gar nicht gibt. Darunter,
+        im abgeschnittenen Rest, der eine echte Fehler: الْعَمَلِ als Verb in
+        SEINEM Stand (madina-1 + bayna-yadayk-1). Weil die Liste als „bekannt"
+        galt, las niemand nach.
+     2. Den Stand „eigenes Buch + ein weiteres" prueften wir nie. Meine
+        Korrektur fuer جَدُّ (46004) beruhte am selben Abend genau auf dem
+        Scheinstand „vocab-data + madina-2" und war unnoetig: in JEDEM Stand
+        mit bayna-yadayk-1 las der Erklaerer es richtig.
+   Jetzt: je Satz seine Heimat — ein Buch, oder „immer" (vocab-data.js, seine
+   eigenen Woerter, Fachbegriffe, Lehrbuch, laengere Saetze). Verglichen wird
+   die Heimat gegen „Heimat + je ein weiteres Buch", jede Abweichung ganz.
+   ⛔ SCHWER und damit rot: ein Wort wechselt zwischen فِعْل und Nicht-Verb, oder
+   ein Kasusbefund kommt oder geht — dann lehrt die App je nach Buchhaken
+   etwas anderes, und eines davon ist falsch.
+   Leicht (nur angezeigt): eine Rolle wird mit mehr Wissen genauer, z. B.
+   „Anschluss mit وَ" → خَبَر.
+   ⚠️ Das Lexikon enthaelt die Fachbegriffe: js/kern.js schiebt sie in der App
+   in VOCAB_DATA, der alte Vergleich kannte sie nicht.
+   [[app_auswahl_entscheidet]] · [[fehler_trifft_mehr_als_gemeldet]] */
+console.log(String.fromCharCode(10) + '=== LEXIKON-VERGLEICH: sieht Elias in jeder Buchauswahl dieselbe Zerlegung? ===');
+let lexikonSchwer = 0;
 {
-  const alleSaetze = [].concat(...quellen.map(q => q.saetze));
-  const zerlege = (lexikon) => {
-    setzeLexikon(lexikon);
-    return alleSaetze.map(s => analysiereSatz(s.ar).map(t => t.wort + '\u0000' + t.rolle).join('\u0001'));
-  };
-  const grund = zerlege(VOCAB_DATA);   // der kleinste Stand: vocab-data.js allein
-
-  /* Jeder Stand, den Elias mit einem Buchhaken herstellen kann. Ein einzelner
-     Vergleich gegen den vollen Abzug reicht NICHT: bei فَوْقَ war der Fehler
-     im vollen Abzug unsichtbar, weil madina-3 dort die Grundform beisteuert. */
-  const staende = [['nur vocab-data.js', []]];
-  for (const b of Object.keys(fenster.VOKABELN || {})) staende.push(['+ ' + b, [b]]);
-  staende.push(['+ ALLE Buecher (voller Abzug)', Object.keys(fenster.VOKABELN || {})]);
-
-  const habenId = new Set(VOCAB_DATA.map(w => String(w.id)));
-  const schlimm = [];
-  for (const [name, buecher] of staende){
+  const BUECHER = Object.keys(fenster.VOKABELN || {});
+  const buchVon = new Map();
+  for (const b of BUECHER) for (const w of fenster.VOKABELN[b])
+    if (!buchVon.has(String(w.id))) buchVon.set(String(w.id), b);
+  const immerIds = new Set(VOCAB_DATA.map(w => String(w.id)));
+  for (const w of FACHBEGRIFF_VOKABELN) if (w) immerIds.add(String(w.id));
+  /* quellen[0] vocab-data.js und quellen[1] Lehrbuch sind immer da; in
+     quellen[2] (data/beispielsaetze.js) haengt es an der Id. */
+  const alleSaetze = [];
+  quellen.forEach((q, qi) => q.saetze.forEach(s => {
+    const id = String(s.id);
+    const heimat = (qi < 2 || immerIds.has(id) || id.startsWith('satz-lang-')) ? null : (buchVon.get(id) || 'verwaist');
+    alleSaetze.push(Object.assign({}, s, { heimat }));
+  }));
+  const lexikonFuer = buecher => {
     const lex = VOCAB_DATA.slice();
-    const gesehen = new Set(habenId);
-    for (const b of buecher) for (const w of (fenster.VOKABELN || {})[b] || [])
-      if (!gesehen.has(String(w.id))){ gesehen.add(String(w.id)); lex.push(w); }
-    const r = zerlege(lex);
-    const anders = [];
-    alleSaetze.forEach((s, i) => { if (r[i] !== grund[i]) anders.push({ s, a: r[i], b: grund[i] }); });
-    const marke = anders.length ? '  ⚠' : '  ok';
-    console.log(`${marke} ${name.padEnd(30)} ${String(lex.length).padStart(5)} Eintraege, ${String(lex.filter(v => v.type === 'verb').length).padStart(4)} Verben → ${anders.length} Saetze anders`);
-    if (anders.length) schlimm.push({ name, anders });
-  }
-
-  if (!schlimm.length){
-    console.log(`  ok  Alle ${alleSaetze.length} Saetze werden in JEDEM Buchstand gleich zerlegt.`);
-  } else {
-    console.log('\n  ⚠ Die Zerlegung haengt davon ab, welche Buecher ausgewaehlt sind.');
-    console.log('    Was hier steht, sieht Elias anders als diese Pruefung. Feste Listen in');
-    console.log('    js/irab.js (VERBEN, NICHT_VERB, ADJEKTIVE, FUENF_NOMEN) machen sie unabhaengig.');
-    for (const s of schlimm){
-      console.log('    ══ ' + s.name);
-      for (const x of s.anders.slice(0, 6)){
-        console.log('    ── ' + x.s.id + '  ' + x.s.ar);
-        const A = x.a.split('\u0001'), B = x.b.split('\u0001');
-        A.forEach((w, i) => {
-          if (w === B[i]) return;
-          const [wort, r1] = w.split('\u0000'), r2 = (B[i] || '').split('\u0000')[1];
-          console.log('        ' + wort.padEnd(14) + 'mit Buch: ' + String(r1).padEnd(30) + '| ohne: ' + r2);
-        });
-      }
-      if (s.anders.length > 6) console.log('        … und ' + (s.anders.length - 6) + ' weitere.');
+    const ids = new Set(lex.map(w => String(w.id)));
+    const dazu = w => { if (w && !ids.has(String(w.id))){ ids.add(String(w.id)); lex.push(w); } };
+    FACHBEGRIFF_VOKABELN.forEach(dazu);
+    for (const b of buecher) (fenster.VOKABELN[b] || []).forEach(dazu);
+    return lex;
+  };
+  /* فِعْل als Zeichenfolge aus Codepoints — nie sichtbar kopiert, siehe js/irab.js */
+  const VERB = String.fromCharCode(0x0641, 0x0650, 0x0639, 0x0652, 0x0644);
+  const befunde = [];
+  let vergleiche = 0;
+  for (const heimat of [null].concat(BUECHER)){
+    const gruppe = alleSaetze.filter(s => s.heimat === heimat);
+    if (!gruppe.length) continue;
+    const eigen = heimat ? [heimat] : [];
+    setzeLexikon(lexikonFuer(eigen));
+    const grund = gruppe.map(s => analysiereSatz(s.ar));
+    for (const weiteres of BUECHER){
+      if (weiteres === heimat) continue;
+      setzeLexikon(lexikonFuer(eigen.concat(weiteres)));
+      gruppe.forEach((s, i) => {
+        vergleiche++;
+        const r = analysiereSatz(s.ar);
+        const d = grund[i].map((t, k) => [t, r[k]]).filter(([a, b]) => b && a.rolle !== b.rolle);
+        if (!d.length) return;
+        const schwer = d.some(([a, b]) => (a.rolle === VERB) !== (b.rolle === VERB)
+                                        || (a.stimmt === false) !== (b.stimmt === false));
+        befunde.push({ s, weiteres, d, schwer });
+      });
     }
   }
+  lexikonSchwer = befunde.filter(b => b.schwer).length;
+  const verwaist = alleSaetze.filter(s => s.heimat === 'verwaist');
+  console.log(`  ${alleSaetze.length} Saetze (${alleSaetze.filter(s => !s.heimat).length} immer sichtbar, `
+    + `${alleSaetze.length - alleSaetze.filter(s => !s.heimat).length - verwaist.length} an ihr Buch gebunden), `
+    + `${vergleiche} Vergleiche → ${befunde.length} Abweichung(en), davon ${lexikonSchwer} schwer.`);
+  for (const b of befunde){
+    console.log(`  ${b.schwer ? '⛔' : '· '} ${b.s.id}  [${b.s.heimat || 'immer'} + ${b.weiteres}]  ${b.s.ar}`);
+    for (const [a, c] of b.d)
+      console.log('        ' + a.wort.padEnd(14) + 'ohne: ' + String(a.rolle).padEnd(30) + (a.stimmt === false ? '✘ ' : '  ')
+        + '| mit ' + b.weiteres + ': ' + c.rolle + (c.stimmt === false ? ' ✘' : ''));
+  }
+  if (verwaist.length)
+    console.log('  ⚠ ' + verwaist.length + ' Satz/Saetze zu einer Id, die in keinem Buch steht — sie erscheinen nie: '
+      + verwaist.map(s => s.id).join(', '));
+  if (!befunde.length)
+    console.log('  ok  Jeder Satz wird in jeder Buchauswahl, in der er erscheint, gleich zerlegt.');
+  else if (!lexikonSchwer)
+    console.log('  ok  Keine schwere Abweichung — die obigen werden mit mehr Buechern nur genauer.');
   /* Das Lexikon so zuruecklassen, wie der Rest der Datei es erwartet. */
   setzeLexikon(wortschatz);
 }
@@ -430,8 +473,7 @@ console.log('\n=== LEXIKON-VERGLEICH: sieht die App dasselbe wie diese Pruefung?
     ['\u0639\u064E\u0645\u0650\u0644\u064E', '\u0639\u064E\u0645\u0650\u0644\u064E', true, 'Gegenprobe: amila selbst bleibt ein Verb — das Mini-Lexikon wirkt'],
     ['\u0648\u064E\u0627\u0644\u0652\u062D\u064E\u0645\u0652\u062F\u064F', '\u062D\u064E\u0645\u0650\u062F\u064E', false, 'wa-l-hamdu (mb1-63-3, mit madina-3 als Verb gelesen)'],
     ['\u0627\u0650\u0644\u0652\u062A\u064E\u0641\u064E\u062A\u064E', '\u0627\u0650\u0644\u0652\u062A\u064E\u0641\u064E\u062A\u064E', true, 'Form VIII mit al- vorn: Kasra auf dem Alif, kein Artikel'],
-    ['\u0627\u0644\u0652\u062A\u064E\u0641\u064E\u062A\u064E', '\u0627\u0650\u0644\u0652\u062A\u064E\u0641\u064E\u062A\u064E', true, 'dasselbe mitten im Satz ohne Kasra: Sonnenbuchstabe ta ohne Schadda, kein Artikel'],
-    ['\u062C\u064E\u062F\u064F\u0651', '\u062C\u064E\u062F\u064E\u0651', false, 'jaddu (46004, Grossvater) — NICHT_VERB, mit madina-2 als Verb gelesen']
+    ['\u0627\u0644\u0652\u062A\u064E\u0641\u064E\u062A\u064E', '\u0627\u0650\u0644\u0652\u062A\u064E\u0641\u064E\u062A\u064E', true, 'dasselbe mitten im Satz ohne Kasra: Sonnenbuchstabe ta ohne Schadda, kein Artikel']
   ];
   eiche(EICH_ARTIKEL.map(([w, , soll, warum]) => [w, soll, warum]),
         w => { const e = EICH_ARTIKEL.find(x => x[0] === w); return mitLexikon([{ ar: e[1], type: 'verb' }], () => giltAlsVerb(e[0])); },
@@ -460,14 +502,22 @@ console.log('\n=== LEXIKON-VERGLEICH: sieht die App dasselbe wie diese Pruefung?
    Gesamtbildes. [[erfolgsmeldung_ohne_wirkung]]
 
    ⚠️ ZWEI DINGE ZAEHLEN BEWUSST NICHT MIT:
-     - die Lexikon-Unterschiede: dass die Zerlegung von der Buchauswahl
-       abhaengt, ist eine Eigenschaft der App, kein Fehler.
-       [[app_auswahl_entscheidet]]
+     - die LEICHTEN Lexikon-Unterschiede: eine Rolle wird mit mehr Buechern
+       genauer („Anschluss mit وَ" → خَبَر). Die SCHWEREN zaehlen seit dem
+       17.09.2026 mit — ein Wort wechselt zwischen Verb und Nicht-Verb, oder
+       ein Kasusbefund kommt oder geht: dann lehrt die App je nach Buchhaken
+       etwas anderes. [[app_auswahl_entscheidet]]
      - die unsichtbaren Endungen: die Ausgabe nennt sie ausdruecklich
        "KEIN Mangel" (Yāʾ des Sprechers und Verwandtes). */
-console.log(String.fromCharCode(10) + (gesamtFehler || gesamtUnklar
-  ? `⛔ ${gesamtFehler} Satz/Saetze mit unpassender Endung, ${gesamtUnklar} mit fehlender `
-    + `Kasusendung (von ${gesamtGeprueft} geprueften). Nicht pushen, bevor das geklaert ist.`
-  : `✅ Alle ${gesamtGeprueft} geprueften Saetze sind kasusrein `
-    + '(unsichtbare Endungen und Lexikon-Unterschiede zaehlen bewusst nicht mit).'));
-if (gesamtFehler || gesamtUnklar) process.exitCode = 1;
+const schluss = [];
+if (gesamtFehler || gesamtUnklar)
+  schluss.push(`⛔ ${gesamtFehler} Satz/Saetze mit unpassender Endung, ${gesamtUnklar} mit fehlender `
+    + `Kasusendung (von ${gesamtGeprueft} geprueften). Nicht pushen, bevor das geklaert ist.`);
+if (lexikonSchwer)
+  schluss.push(`⛔ ${lexikonSchwer} schwere Lexikon-Abweichung(en): je nach Buchauswahl eine andere `
+    + 'Zerlegung (Abschnitt LEXIKON-VERGLEICH). Nicht pushen, bevor das geklaert ist.');
+if (!schluss.length)
+  schluss.push(`✅ Alle ${gesamtGeprueft} geprueften Saetze sind kasusrein und in jeder Buchauswahl gleich zerlegt `
+    + '(unsichtbare Endungen und leichte Lexikon-Unterschiede zaehlen bewusst nicht mit).');
+console.log(String.fromCharCode(10) + schluss.join(String.fromCharCode(10)));
+if (gesamtFehler || gesamtUnklar || lexikonSchwer) process.exitCode = 1;
