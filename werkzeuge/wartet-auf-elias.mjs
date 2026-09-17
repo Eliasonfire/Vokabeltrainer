@@ -991,6 +991,84 @@ posten.push({
   seiteText: 'Der Bericht'
 });
 
+/* ⛔⛔ SECHS FRAGEN, DIE NUR IM CHAT STANDEN (17.09.2026)
+
+   Alle sechs habe ich Elias am 16./17.09. im Chat gestellt — und keine stand
+   hier. Nach dem Komprimieren sieht er den Chat nicht mehr; eine Frage, die
+   nur dort steht, ist für ihn weg, und für mich sieht sie aus wie „gefragt,
+   wartet". Gefunden erst, als ich meine eigenen Antworten Satz für Satz gegen
+   diese Seite gelegt habe (Nachfrage-Runden 6 und 7 am 17.09.).
+   [[nachfrage_deckt_luecke_auf]]
+
+   ⚠️ Die Zahlen darin sind der Stand, an dem gefragt wurde, und so beschriftet.
+   Ist eine davon entschieden, den Posten löschen und die Entscheidung im
+   Quelltext vermerken — wie beim Posten „Deine Fachbegriffe" oben. */
+posten.push({
+  titel: 'Rezitation reißt unterwegs ab: Reparatur holen oder neu bauen?',
+  zahl: 1, einheit: 'Datei', dazu: 'liegt nur im Web-Chat', auswahl: true,
+  aufwand: 'eine Datei herunterladen — oder „bau neu" sagen',
+  warum: 'Die fertige Reparatur liegt nur im Web-Chat, nicht auf deinem PC und nicht auf GitHub. '
+    + 'Ohne sie baue ich es nach der Beschreibung neu — das dauert länger. (Gefragt am 17.09., 01:24.)',
+  wie: 'Lade im Web-Chat die Datei v514-rezitation-netzabriss.patch herunter und sag mir, wo sie liegt. '
+    + 'Oder sag „bau neu".',
+  seite: '', seiteText: ''
+});
+posten.push({
+  titel: 'Doppelte Karten: gewinnt die höhere Box?',
+  zahl: 1, einheit: 'Entscheidung', dazu: 'seit 17.09. so gebaut', auswahl: true,
+  aufwand: 'ja oder nein',
+  warum: 'Deine Grundregel: von zwei doppelten Karten bleibt die mit Fortschritt. Haben BEIDE schon '
+    + 'Fortschritt, hast du nichts dazu gesagt — das habe ich selbst entschieden: die höhere Box gewinnt. '
+    + '(Genannt am 17.09., 01:24.)',
+  wie: 'Sag ja, dann bleibt es so. Sonst sag mir, welche der beiden Karten bleiben soll.',
+  seite: '', seiteText: ''
+});
+posten.push({
+  titel: '„Tippe alle مُضَافٌ an": die schwereren Aufgaben zuerst?',
+  zahl: 8, einheit: 'Aufgaben mit mehr als einem Treffer', dazu: 'von 33, Stand 16.09.', auswahl: true,
+  aufwand: 'ja oder nein',
+  warum: 'Die Übungen kommen zufällig gemischt. Von den 33 Aufgaben „Tippe alle مُضَافٌ an" haben 8 mehr '
+    + 'als einen Treffer (vorher 4 von 25). Wer nur nach der Kasra tippt, liegt bei ihnen falsch. '
+    + '(Gefragt am 16.09., 21:50.)',
+  wie: 'Sag ja, dann kommen diese Aufgaben zuerst. Sag nein, dann bleibt alles zufällig gemischt.',
+  seite: '', seiteText: ''
+});
+posten.push({
+  titel: 'Dein Lernstand: Madina 1 bis Kapitel 12, Bayna Yadayk 1 bis Kapitel 2 — stimmt das noch?',
+  zahl: 2, einheit: 'Bücher', dazu: 'deine Angabe gegen arabicroots', auswahl: true,
+  aufwand: 'ja — oder die neuen Kapitel nennen',
+  warum: 'Nach diesem Stand richtet sich, welche Buchwörter Sätze und Eselsbrücken bekommen und welche '
+    + 'Kategorien auf der Regelseite oben stehen. In deiner App sind genau diese Kapitel gewählt '
+    + '(Stand 16.09., 21:58). arabicroots meldet aber Übungen bis Madina 1 Kapitel 24 und '
+    + 'Bayna Yadayk 1 Kapitel 16 (gemessen 16.09.). Es gilt deine Angabe — deshalb fragt die '
+    + 'Wartung bei jedem Lauf nach.',
+  wie: 'Sag ja, dann bleibt es bei 12 und 2. Bist du weiter, nenn mir die Kapitel.',
+  seite: '', seiteText: ''
+});
+posten.push({
+  titel: 'Satzmodus: jedes Mal dieselben Sätze zuerst — so lassen?',
+  zahl: 3, einheit: 'Möglichkeiten', dazu: 'gefragt 16.09.', auswahl: true,
+  aufwand: 'eine von drei Antworten',
+  warum: 'Die Sätze stehen nach Aktualität, die mit den neuesten Regeln zuerst — so wolltest du es am 06.09. '
+    + 'Das heißt aber auch: jedes Mal dieselbe Reihenfolge, jedes Mal ab demselben ersten Satz. Was weiter '
+    + 'hinten liegt, siehst du nur, wenn du dich durchblätterst. (Gefragt am 16.09., 04:46.)',
+  wie: 'Drei Möglichkeiten: (1) mischen innerhalb gleicher Aktualität — das Neueste bleibt vorn, aber nicht '
+    + 'immer derselbe Satz zuerst (meine Empfehlung). (2) ganz mischen — echter Zufall, die Sortierung nach '
+    + 'Aktualität fällt weg. (3) weitermachen, wo du warst — wie ein Lesezeichen.',
+  seite: '', seiteText: ''
+});
+posten.push({
+  titel: 'فَتًى und 12 weitere: beim Auflösen zeigen, woher das „n" kommt?',
+  zahl: 13, einheit: 'Wörter auf ـًى', dazu: 'gegen 218 mit langem a, gezählt 16.09.', auswahl: true,
+  aufwand: 'ja oder nein',
+  warum: 'Bei فَتًى sind die zwei Striche über dem ت das „n", das ى danach ist nur der Träger — gesprochen '
+    + 'fatan. In deinem Bestand gibt es 13 solche Wörter, aber 218, bei denen ى wirklich ein langes a ist. '
+    + 'Deshalb stutzt man bei den 13. (Gefragt am 16.09., 04:30.)',
+  wie: 'Sag ja, dann zeigt die Karte bei diesen 13 Wörtern beim Auflösen kurz, dass die zwei Striche das „n" '
+    + 'sind und ى nur der Träger. Sag nein, dann bleibt es wie jetzt.',
+  seite: '', seiteText: ''
+});
+
 /* ⛔⛔ REGELKANDIDATEN — der Posten, der bis zum 20.08.2026 fehlte.
 
    Elias' Auftrag nennt die Routinen ausdruecklich „vor allem bezogen auf die
