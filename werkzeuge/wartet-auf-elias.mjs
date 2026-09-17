@@ -1285,8 +1285,13 @@ const ARTEFAKTE = [
      gebaut wurde — eine Adresse, die man nicht findet, ist so gut wie keine. */
   ['Lagebericht', '3eb1fcc3-e2ca-4c89-947c-9e382068e9e3', '48 Stunden Arbeit, der Stand des Goal-Prompts, mit Nachtrag vom 21.08.'],
   ['Vierzehn Schriften',    '57KC3EW5mc9AvkUCt6pnF4', 'die Wortmarke طالب zur Auswahl'],
+  /* 17.09.2026: diese zwei lagen seit dem 21.08. als Datei ohne Zuordnung da
+     (Wächter unten: „2 Artefakt-Seiten ohne hinterlegte URL"). Beide SIND
+     veröffentlicht — über den <title> in `Artifact list` zugeordnet. */
+  ['طالب in deinen Farben', '4yfD1FeCGm2dna7ioELBuG', 'die Wortmarke in den Akzentfarben — zur Frage „welche Farbe?"'],
   ['Das Farbgerüst',        'Ai2qerHN3q9xxeLoeD3f3o', 'acht Akzentfarben an dreizehn Flächen'],
-  ['Eine Stimme fürs Arabische', '3gTMBWufBfG52T8KDRqL3m', 'vier Wege, mit den gemessenen Kosten']
+  ['Eine Stimme fürs Arabische', '3gTMBWufBfG52T8KDRqL3m', 'vier Wege, mit den gemessenen Kosten'],
+  ['Die beste Stimme fürs Arabische', 'ESSZpD31nn4gaVCPnWafcp', 'die Stimmen zum Anhören, Stand 21.08.']
 ];
 
 /* ⭐ Zwei Seiten, die NICHT zu den Entscheidungen gehören, sondern laufend
@@ -1336,6 +1341,9 @@ const DATEI_ZU_URL = {
   'schriften-talib-artefakt.html':'57KC3EW5mc9AvkUCt6pnF4',
   'farben-artefakt.html':         'Ai2qerHN3q9xxeLoeD3f3o',
   'stimme-artefakt.html':         '3gTMBWufBfG52T8KDRqL3m',
+  /* 17.09.2026 über den <title> zugeordnet (Artifact list): beide seit 21.08. veröffentlicht. */
+  'farbe-wortmarke.html':         '4yfD1FeCGm2dna7ioELBuG',
+  'stimmen-liste.html':           'ESSZpD31nn4gaVCPnWafcp',
   'regelpruefung.html':           '4iMdxRvKkFHj699cfyHbra',
   'freigabe.html':                'd9916aee-b679-4d91-bb0c-c3642f8889ac',
   /* Der 48-Stunden-Bericht vom 20.08. Er lag bis zum 21.08. NUR im
