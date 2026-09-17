@@ -1065,16 +1065,15 @@ posten.push({
   /* ⛔ 17.09.2026, 05:5x nachgemessen (KV, nur gelesen): um 03:48:48 wurde Bayna
      Yadayk 1 in der App ABGEWÄHLT — nur ein Tippen auf den Buchknopf entfernt ein
      Buch (schalteBuch, js/buecher.js). Hier stand vorher „genau diese Kapitel
-     gewählt (Stand 16.09., 21:58)" — das galt nur bis 03:48. */
+     gewählt (Stand 16.09., 21:58)" — das galt nur bis 03:48.
+     ✅ ERLEDIGT 17.09.2026 ~12:30: Elias „das das abgewählt war war keine
+     absicht", Buch wieder angetippt. KV-Abgleich 12:31:44: bayna-yadayk-1 [1,2]
+     gewählt, لَحْمٌ (46039) Box 4 (4/1) zurück. Die Frage ist deshalb raus. */
   warum: 'Nach diesem Stand richtet sich, welche Buchwörter Sätze und Eselsbrücken bekommen und welche '
-    + 'Kategorien auf der Regelseite oben stehen. ⚠️ In deiner App ist seit heute Nacht 03:48 nur noch '
-    + 'Madina 1 (Kapitel 1–12) gewählt — Bayna Yadayk 1 ist abgewählt. Solange das so ist, lernst du '
-    + 'die 39 Wörter aus Kapitel 1–2 nicht, und dein alter Stand von لَحْمٌ (Box 4) und كَسْلَانُ '
-    + 'kann nicht auf deren Kapitelkarten übergehen — die liegen in Bayna Yadayk 1. '
-    + 'arabicroots meldet außerdem Übungen bis Madina 1 Kapitel 24 und Bayna Yadayk 1 Kapitel 16 '
-    + '(gemessen 16.09.). Es gilt deine Angabe.',
-  wie: 'War das Abwählen Absicht? Wenn nicht: auf der Startseite Bayna Yadayk 1 wieder antippen. '
-    + 'Und sag mir, ob es bei Madina 1 Kapitel 12 und Bayna Yadayk 1 Kapitel 2 bleibt.',
+    + 'Kategorien auf der Regelseite oben stehen. In deiner App sind genau diese Kapitel gewählt '
+    + '(Stand 17.09., 12:31). arabicroots meldet außerdem Übungen bis Madina 1 Kapitel 24 und '
+    + 'Bayna Yadayk 1 Kapitel 16 (gemessen 16.09.). Es gilt deine Angabe.',
+  wie: 'Sag mir, ob es bei Madina 1 Kapitel 12 und Bayna Yadayk 1 Kapitel 2 bleibt.',
   seite: '', seiteText: ''
 });
 posten.push({
