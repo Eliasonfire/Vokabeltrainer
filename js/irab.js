@@ -1338,6 +1338,49 @@ function analysiereSatz(satz){
   return out;
 }
 
+/* ⭐ Die Rolle ZUM ANZEIGEN — mit Endung, wo sein Material sie belegt
+   (17.09.2026). Elias am 16.09.2026, 18:53:56, auf „Sollen Fachbegriffe mit
+   Endung stehen, also حَرْفُ جَرٍّ statt حَرْف جَرّ, so wie auf deiner
+   Regelkarte?": „ja" — für die ganze App. Satzmodus (v505) und Karten (v506)
+   haben es schon, der Iʿrāb-Erklärer zeigte die Rollen noch ohne.
+
+   ⛔ NUR ANZEIGE. `t.rolle` bleibt, wie es ist: js/uebung.js vergleicht es
+   wörtlich (=== 'خَبَر', === 'حَرْف جَرّ', startsWith('مُضَاف إِلَيْه')).
+   Wer die Rolle selbst umschreibt, legt still drei Übungen lahm.
+
+   Belegt = so geschrieben in seiner Musterlösung (regelsammlung-data.js) oder
+   in grammar-data.js, gezählt am 17.09.2026 (scratchpad rollen-belege.cjs):
+     خَبَرٌ · مُبْتَدَأٌ · نَعْتٌ · مُضَافٌ · مُضَافٌ إِلَيْهِ · حَرْفُ جَرٍّ ·
+     فَاعِلٌ · مَفْعُولٌ بِهِ
+   Ohne Beleg bleiben (dort nur ohne Endung oder gar nicht): ظَرْف, فِعْل,
+   مُنَادَى, حَرْف نِدَاء, جَارّ وَمَجْرُور, مَبْنِيّ, مَفْعُول مُطْلَق.
+   Längere Wendungen zuerst, und ein Wort nur, wo KEIN Vokalzeichen folgt —
+   sonst würde aus مُضَافٌ beim nächsten Schritt مُضَافٌٌ. */
+const ROLLE_MIT_ENDUNG = [
+  ['مُضَاف إِلَيْه', 'مُضَافٌ إِلَيْهِ'],
+  ['حَرْف جَرّ', 'حَرْفُ جَرٍّ'],
+  ['مَفْعُول بِهِ', 'مَفْعُولٌ بِهِ'],
+  ['مُبْتَدَأ', 'مُبْتَدَأٌ'],
+  ['خَبَر', 'خَبَرٌ'],
+  ['نَعْت', 'نَعْتٌ'],
+  ['فَاعِل', 'فَاعِلٌ'],
+  ['مُضَاف', 'مُضَافٌ']
+];
+function rolleAnzeige(rolle){
+  let s = String(rolle == null ? '' : rolle);
+  const istZeichen = c => { const n = c ? c.charCodeAt(0) : 0; return (n >= 0x064B && n <= 0x0652) || n === 0x0670; };
+  for (const [ohne, mit] of ROLLE_MIT_ENDUNG){
+    let aus = '', i = 0, k;
+    while ((k = s.indexOf(ohne, i)) >= 0){
+      const danach = s[k + ohne.length];
+      aus += s.slice(i, k) + (istZeichen(danach) ? ohne : mit);
+      i = k + ohne.length;
+    }
+    s = aus + s.slice(i);
+  }
+  return s;
+}
+
 /* Kurzfassung fuer die Anzeige: nur die Woerter, deren Rolle eine Endung
    verlangt, mit arabischem und deutschem Namen des Kasus. */
 function irabZeilen(satz){
@@ -1356,5 +1399,5 @@ if (typeof module !== 'undefined' && module.exports){
      pruefe-saetze.js sie EICHEN kann — an der echten, geladenen Funktion
      statt an einer nachgebauten Kopie. [[handliste_neben_echter_quelle]] */
   module.exports = { analysiereSatz, irabZeilen, endung, setzeLexikon, wortart, KASUS,
-                     endungUnsichtbar, istJarrLamVoll, giltAlsVerb };
+                     endungUnsichtbar, istJarrLamVoll, giltAlsVerb, rolleAnzeige };
 }

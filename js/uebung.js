@@ -492,7 +492,7 @@ const UEBUNGEN = [
       return z.map((t,i)=>t.erwartet ? {
         frage:'In welchem Fall steht das hervorgehobene Wort?',
         wortIdx:i, optionen:KASUS_WAHL, loesung:t.erwartet,
-        aufloesung:`${t.rolle} → ${KASUS[t.erwartet].ar} (${KASUS[t.erwartet].de})`
+        aufloesung:`${typeof rolleAnzeige === 'function' ? rolleAnzeige(t.rolle) : t.rolle} → ${KASUS[t.erwartet].ar} (${KASUS[t.erwartet].de})`
       } : null).filter(Boolean);
     }
   },
@@ -511,7 +511,7 @@ const UEBUNGEN = [
         return {
           frage:'Welche Endung gehört an das hervorgehobene Wort?',
           wortIdx:i, ohneEndung:true, optionen:HARAKA_WAHL, loesung:t.gelesen.zeichen,
-          aufloesung:`${t.rolle} → ${KASUS[t.erwartet].ar}, also ${t.gelesen.zeichen}: ${t.rein}`
+          aufloesung:`${typeof rolleAnzeige === 'function' ? rolleAnzeige(t.rolle) : t.rolle} → ${KASUS[t.erwartet].ar}, also ${t.gelesen.zeichen}: ${t.rein}`
         };
       }).filter(Boolean);
     }

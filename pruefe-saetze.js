@@ -24,7 +24,7 @@
 const fs = require('fs');
 const path = require('path');
 const { analysiereSatz, setzeLexikon, endungUnsichtbar,
-        istJarrLamVoll, giltAlsVerb } = require('./js/irab.js');
+        istJarrLamVoll, giltAlsVerb, rolleAnzeige } = require('./js/irab.js');
 
 const P = __dirname + path.sep;
 const { VOCAB_DATA } =
@@ -491,6 +491,32 @@ let lexikonSchwer = 0;
         satz => EICH_SATZ.find(e => e[0] === satz)[1](analysiereSatz(satz)),
         'Satzrollen: walid und Name + wa + Name');
   setzeLexikon(wortschatz);
+
+  /* ⭐ rolleAnzeige (17.09.2026): die Rollen im Iʿrāb-Erklärer mit belegter
+     Endung. NUR Anzeige — geprüft über ALLE Rollen aus vocab-data.js und dem
+     Lehrbuch: (1) das Skelett bleibt gleich, es kommen nur Vokalzeichen dazu;
+     (2) nie zweimal dasselbe Zeichen hintereinander (مُضَافٌٌ — so sähe es aus,
+     wenn die Wortgrenze fehlt); (3) zweimal angewandt = einmal angewandt;
+     (4) überhaupt etwas geändert (sonst prüft 1–3 nichts). */
+  {
+    const HAR = c => { const n = c.charCodeAt(0); return (n >= 0x064B && n <= 0x0652) || n === 0x0670; };
+    const skel = s => [...s].filter(c => !HAR(c)).join('');
+    const rollen = new Set();
+    VOCAB_DATA.filter(w => w.sentAr).map(w => w.sentAr).concat(buchSaetze)
+      .forEach(s => analysiereSatz(s).forEach(t => rollen.add(t.rolle)));
+    let kaputt = 0, geaendert = 0;
+    for (const r of rollen){
+      const a = rolleAnzeige(r);
+      if (a !== r) geaendert++;
+      const doppelt = [...a].some((c, i) => i > 0 && HAR(c) && c === a[i - 1]);
+      if (skel(a) !== skel(r) || doppelt || rolleAnzeige(a) !== a){
+        kaputt++;
+        console.log('  ⛔ rolleAnzeige: ' + r + ' → ' + a);
+      }
+    }
+    console.log('\n=== Eichung rolleAnzeige: ' + rollen.size + ' Rollen, ' + geaendert + ' mit Endung, ' + kaputt + ' kaputt ===');
+    if (kaputt || !geaendert) schief++;
+  }
   if (schief) process.exitCode = 1;
 }
 
