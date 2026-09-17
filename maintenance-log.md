@@ -5762,11 +5762,11 @@ Wartungsprompt Schritt 8 hat dazu eine Regel bekommen: einen Punkt aus dem
 letzten Bericht erst nach Blick auf solche Sitzungseinträge, `git log` und
 einer eigenen Messung als offen weitertragen.
 
-## 2026-09-17 13:05 – Sitzung: erledigte Befunde
+## 2026-09-17 13:03 – Sitzung: erledigte Befunde
 
 Kein Wartungslauf, sondern ein Eintrag der Sitzung. Er schließt die Liste
 „Weiter offen" von 04:24 und nennt, was sich am Mittag geändert hat. Jede Zeile
-ist am 17.09.2026 zwischen 12:30 und 13:05 **nachgemessen**.
+ist am 17.09.2026 zwischen 12:30 und 13:03 **nachgemessen**.
 
 | Punkt | Stand | Beleg |
 |---|---|---|
