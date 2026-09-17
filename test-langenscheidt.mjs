@@ -14,7 +14,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { pluraleAus, nackt, fuerDieAbfrage } from './werkzeuge/langenscheidt.mjs';
+import { pluraleAus, nackt, fuerDieAbfrage, schlageNach } from './werkzeuge/langenscheidt.mjs';
 
 const WURZEL = path.dirname(fileURLToPath(import.meta.url));
 const VORLAGEN = path.join(WURZEL, 'test-vorlagen', 'langenscheidt');
@@ -145,6 +145,28 @@ console.log('test-langenscheidt.mjs — Plurale aus echten Langenscheidt-Seiten\
   pruefe('leeres HTML liefert leer, ohne zu werfen', pluraleAus('', 'قلم').plurale.length === 0, '—');
   pruefe('HTML ohne Plural-Marke liefert leer',
     pluraleAus('<div class="search-term"><h3>قلم</h3></div>', 'قلم').plurale.length === 0, '—');
+}
+
+/* ---------- 9. ⛔ قهوة: ein unleserlicher Plural und ein zweiter nach „u." (17.09.2026) ---------- */
+{
+  /* Echte Seite, abgerufen am 17.09.2026: „pl قهوة [qahaˈwaːt], u. قهاو".
+     Vorher lieferte das Werkzeug daraus „eindeutig: قهوة" — und genau das
+     stand als Plural-Beleg für قَهْوَةٌ (45851) in data/woerterbuch-belege.json.
+     [[pruefwerkzeug_mit_eingebauter_antwort]] */
+  const r = pluraleAus(seite('قهوة'), 'قهوة');
+  pruefe('قهوة findet den zweiten Plural nach „u." (قهاو)',
+    r.plurale.includes('قهاو'), JSON.stringify(r.plurale));
+  pruefe('قهوة verwirft den „Plural" قهوة — er ist das Wort selbst',
+    r.verworfen.some(v => v.plural === 'قهوة' && v.grund.startsWith('Plural gleich dem Wort')) && r.zweifel === true,
+    JSON.stringify(r.verworfen));
+  const s = await schlageNach('قهوة', async () => ({ status: 200, text: async () => seite('قهوة') }));
+  pruefe('قهوة ist KEIN eindeutiger Beleg mehr (vorher: „Plural قهوة")',
+    !s.eindeutig && s.plural === null, JSON.stringify({ eindeutig: s.eindeutig, plural: s.plural, grund: s.grund }));
+  /* Gegenprobe: der eindeutige Fall bleibt eindeutig — sonst sagte die neue
+     Regel einfach immer nein. */
+  const q = await schlageNach('قلم', async () => ({ status: 200, text: async () => seite('قلم') }));
+  pruefe('Gegenprobe — قلم bleibt eindeutig أقلام',
+    q.eindeutig && q.plural === 'أقلام', JSON.stringify({ eindeutig: q.eindeutig, plural: q.plural }));
 }
 
 console.log('\n' + (schlecht ? '✘ ' + schlecht + ' von ' + (ok + schlecht) + ' Fällen falsch'

@@ -129,16 +129,53 @@ if (!fs.existsSync(p)) {
   const b = j.belege || {};
   const ids = Object.keys(b);
   ok(ids.length > 0, ids.length + ' Belege liegen ab');
-  ok(ids.every(id => b[id].typeApp || b[id].gender),
-    'jeder Beleg trägt eine App-Wortart oder ein Geschlecht');
+  /* ⛔ 17.09.2026: Plural-Belege sind eine EIGENE Sorte. Seit dem 07.09.2026
+     beantwortet Langenscheidt das Feld `pl` (Elias: „ja mach das mit
+     langenscheidt für die plurale") und schreibt `pl` + `plUrl` — ein Plural
+     ist weder Wortart noch Geschlecht. Dieser Test hinkte hinterher und war
+     seitdem rot, und ein dauerrotes Prüfwerkzeug meldet nichts mehr.
+     Damit das kein Aufweichen ist, prüft er Plurale jetzt auch INHALTLICH
+     (unten): der erste Lauf danach fing sofort einen falschen Beleg. */
+  ok(ids.every(id => b[id].typeApp || b[id].gender || b[id].pl),
+    'jeder Beleg trägt eine App-Wortart, ein Geschlecht oder einen Plural');
   const ERLAUBT = ['noun', 'verb', 'adjective', 'particle', 'adverb', 'expression'];
   ok(ids.every(id => !b[id].typeApp || ERLAUBT.includes(b[id].typeApp)),
     'jede App-Wortart ist eine, die js/kern.js kennt');
   ok(ids.every(id => !b[id].gender || ['masculine', 'feminine'].includes(b[id].gender)),
     'jedes Geschlecht ist „masculine" oder „feminine" — ein dritter Wert gälte '
     + 'in Übung 11 stillschweigend als männlich');
-  ok(ids.every(id => b[id].woher && b[id].url),
+  ok(ids.every(id => b[id].woher && (b[id].url || b[id].plUrl)),
     'jeder Beleg nennt seine Quelle und eine Adresse zum Nachsehen');
+  /* ⛔ Ein „Plural", der das Wort selbst ist, ist kein Beleg (17.09.2026).
+     Für قَهْوَةٌ (45851) stand hier „pl: قهوة" — Langenscheidt schreibt im
+     arabischen Feld قهوة, in der Umschrift daneben aber [qahaˈwaːt], und nennt
+     nach „u." einen zweiten Plural. werkzeuge/langenscheidt.mjs verwirft das
+     seitdem selbst; dieser Fall hält fest, dass kein solcher Beleg mehr
+     abliegt. Das Wort kommt aus denselben Quellen wie in der App. */
+  const woerter = new Map();
+  const merke = w => { if (w && w.id != null && w.ar) woerter.set(String(w.id), w.ar); };
+  try {
+    (new Function(fs.readFileSync(path.join(HIER, 'vocab-data.js'), 'utf8') + ';return VOCAB_DATA;'))().forEach(merke);
+    const fenster = {};
+    for (const n of fs.readdirSync(path.join(HIER, 'data')).filter(n => /^vokabeln-.*\.js$/.test(n)))
+      new Function('window', fs.readFileSync(path.join(HIER, 'data', n), 'utf8'))(fenster);
+    Object.values(fenster.VOKABELN || {}).flat().forEach(merke);
+    const eig = JSON.parse(fs.readFileSync(path.join(HIER, 'data', 'eigene-woerter.json'), 'utf8'));
+    (eig.woerter || []).forEach(merke);
+  } catch (e) { console.log('  ⓘ Wortquellen nicht vollständig lesbar: ' + e.message); }
+  const plIstDasWort = (pl, ar) => !!pl && !!ar
+    && nackt(String(pl)) === nackt(String(ar).replace(/^اَ?لْ?|^أَلْ?/, ''));
+  const plGleich = ids.filter(id => b[id].pl && plIstDasWort(b[id].pl, woerter.get(id)));
+  const plOhneWort = ids.filter(id => b[id].pl && !woerter.has(id));
+  ok(plGleich.length === 0, plGleich.length
+    ? '⛔ Plural-Beleg ist das Wort selbst: ' + plGleich.map(id => id + ' ' + woerter.get(id) + ' → ' + b[id].pl).join(', ')
+    : 'kein Plural-Beleg ist das Wort selbst');
+  ok(plOhneWort.length === 0, plOhneWort.length
+    ? '⛔ Plural-Beleg zu einer Id, die in keiner Wortquelle steht: ' + plOhneWort.join(', ')
+    : 'jeder Plural-Beleg gehört zu einem Wort, das es gibt');
+  /* Störtest dieser Regel — sonst könnte sie still immer „nein" sagen. */
+  ok(plIstDasWort('قهوة', 'قَهْوَةٌ') && !plIstDasWort('مياه', 'مَاءٌ'),
+    'Störtest — قهوة gegen قَهْوَةٌ gilt als gleich, مياه gegen مَاءٌ nicht');
   /* ⛔ Die vier Wörter, die beim ersten Lauf falsch belegt waren, dürfen
      NICHT wieder auftauchen — sie sind der eigentliche Zweck dieses Tests. */
   const VERBOTEN = { 'بَعْدَ': 'Homograph بَعِدَ', 'عِنْدَ': 'Homograph عنَدَ',

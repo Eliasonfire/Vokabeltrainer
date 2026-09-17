@@ -106,27 +106,41 @@ const LEMMA = /<h3[^>]*>([\s\S]*?)<\/h3>|<span class="lemma-pieces">([^<]*)<\/sp
    abbr-Verschachtelung und sind nicht wegzulassen. */
 const PLURAL = /<abbr title="جمع \| Plural">[^<]*<\/abbr>\s*<\/span>\s*<\/span>\s*<span class="flex">\s*([^<]*?)\s*<\/span>/g;
 
+/* ⛔ 17.09.2026: WEITERE PLURALE NACH „u.". Bei قهوة steht
+     pl قهوة [qahaˈwaːt], u. قهاو [qaˈhaːwin/iː]
+   PLURAL oben fängt nur den ersten Wert — der zweite Plural fiel still weg,
+   und aus zwei Pluralen wurde ein „eindeutiger". Gesucht wird nur innerhalb
+   derselben Angabe <…>, also bis zum schließenden &gt;. */
+const UND = /<abbr title="و \| und">[^<]*<\/abbr>\s*<\/span>\s*<\/span>\s*<span class="flex">\s*([^<]*?)\s*<\/span>/g;
+
 /**
  * Wertet eine bereits geholte Seite aus. Getrennt vom Abruf, damit der Test
  * gegen echtes, festgehaltenes HTML laufen kann statt gegen das Netz.
  *
  * @param {string} html   die Seite
  * @param {string} wort   wonach gesucht wurde
- * @returns {{plurale: string[], verworfen: {grund: string, plural: string}[]}}
+ * @returns {{plurale: string[], verworfen: {grund: string, plural: string}[], zweifel: boolean}}
  */
 export function pluraleAus(html, wort) {
   const plurale = [], verworfen = [];
+  let zweifel = false;
   const ziel = nackt(wort);
 
   for (const b of String(html || '').matchAll(BLOCK)) {
     const inhalt = b[1];
-    const gefunden = [...inhalt.matchAll(PLURAL)].map(m => m[1].trim()).filter(Boolean);
-    if (!gefunden.length) continue;
+    const gefunden = [];
+    for (const m of inhalt.matchAll(PLURAL)) {
+      gefunden.push(m[1].trim());
+      const rest = inhalt.slice(m.index + m[0].length);
+      const ende = rest.indexOf('&gt;');
+      for (const u of (ende < 0 ? rest : rest.slice(0, ende)).matchAll(UND)) gefunden.push(u[1].trim());
+    }
+    if (!gefunden.filter(Boolean).length) continue;
 
     const m = inhalt.match(LEMMA);
     const lemma = ((m && (m[1] || m[2])) || '').trim();
 
-    for (const pl of gefunden) {
+    for (const pl of gefunden.filter(Boolean)) {
       if (!lemma) { verworfen.push({ grund: 'kein Lemma im Block', plural: pl }); continue; }
       /* ⛔ Wortgruppen gar nicht erst annehmen — der Plural gehört dann zur
          Gruppe, nicht zum Wort. Am 07.09. an 20 Seiten NULL Mal aufgetreten;
@@ -134,10 +148,21 @@ export function pluraleAus(html, wort) {
          nicht mit einem Fund aus dem Bestand. */
       if (/\s/.test(lemma)) { verworfen.push({ grund: 'Wortgruppe „' + lemma + '"', plural: pl }); continue; }
       if (nackt(lemma) !== ziel) { verworfen.push({ grund: 'anderes Wort „' + lemma + '"', plural: pl }); continue; }
+      /* ⛔ 17.09.2026: EIN „PLURAL", DER DAS WORT SELBST IST, IST KEIN BELEG.
+         Bei قهوة steht im arabischen Feld „قهوة", die Umschrift daneben sagt
+         [qahaˈwaːt] — dem Feld fehlt das ات. So stand „Plural: قهوة" in
+         data/woerterbuch-belege.json, bereit für seine Fragenseite. Und weil
+         ein Plural dieses Eintrags unleserlich ist, sind auch die übrigen kein
+         eindeutiger Beleg mehr (`zweifel`). */
+      if (nackt(pl) === ziel) {
+        verworfen.push({ grund: 'Plural gleich dem Wort — unleserlich, kein Beleg', plural: pl });
+        zweifel = true;
+        continue;
+      }
       if (!plurale.includes(pl)) plurale.push(pl);
     }
   }
-  return { plurale, verworfen };
+  return { plurale, verworfen, zweifel };
 }
 
 /**
@@ -150,10 +175,14 @@ export async function schlageNach(wort, holen = fetch) {
   const url = BASIS + encodeURIComponent(fuerDieAbfrage(wort));
   const r = await holen(url, { headers: { 'user-agent': UA } });
   const html = await r.text();
-  const { plurale, verworfen } = pluraleAus(html, wort);
+  const { plurale, verworfen, zweifel } = pluraleAus(html, wort);
 
   let plural = null, eindeutig = false, grund;
-  if (plurale.length === 1) { plural = plurale[0]; eindeutig = true; grund = 'genau ein Plural'; }
+  if (zweifel) {
+    grund = 'ein Plural der Quelle ist gleich dem Wort (unleserlich) — die übrigen ('
+          + (plurale.join(' · ') || 'keine') + ') sind dann kein eindeutiger Beleg';
+  }
+  else if (plurale.length === 1) { plural = plurale[0]; eindeutig = true; grund = 'genau ein Plural'; }
   else if (plurale.length === 0) {
     /* ⛔ NICHT „hat keinen Plural" — siehe Grenze 1 im Kopf. */
     grund = 'die Quelle nennt keinen — das heißt NICHT, dass es keinen gibt';
