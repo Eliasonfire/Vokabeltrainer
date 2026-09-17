@@ -953,7 +953,7 @@ function renderIrab(){
       : '<span class="irab-kasus">keine Endung</span>';
     return `<div class="irab-zeile">
       <span class="irab-wort" lang="ar" dir="rtl">${escapeHtml(t.rein)}</span>
-      <span class="irab-rolle">${escapeHtml(t.rolle)}<br>${kasus}</span>
+      <span class="irab-rolle">${escapeHtml(typeof rolleAnzeige === 'function' ? rolleAnzeige(t.rolle) : t.rolle)}<br>${kasus}</span>
     </div>`;
   }).join('');
   kasten.classList.remove('hidden');
