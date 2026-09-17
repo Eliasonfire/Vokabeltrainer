@@ -201,7 +201,10 @@ const notizen = {};
 }
 
 /* ---------- Schreiben oder prüfen ---------- */
-const ohneStand = s => s.replace(/Stand: [^·\n]*·/, 'Stand: ·');
+/* ⚠️ Die GANZE Stand-Zeile zählt nicht — auch die App-Fassung darin. Erster Entwurf
+   verglich nur das Datum; weil jede Auslieferung die Fassung hochzählt, schrieb
+   dann jede Auslieferung alle sieben Notizen neu (gemessen 17.09., v525). */
+const ohneStand = s => s.replace(/> Stand: [^\n]*\n/, '');
 const stand = new Date().toLocaleString('de-DE', { timeZone: 'Europe/Berlin' });
 const dateien = [];
 for (const [name, text] of Object.entries(notizen)){
