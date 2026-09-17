@@ -59,7 +59,9 @@ function alleNotizen(ordner){
   const raus = [];
   for (const e of fs.readdirSync(ordner, { withFileTypes: true })){
     const p = path.join(ordner, e.name);
-    if (e.isDirectory()) raus.push(...alleNotizen(p));
+    /* ⛔ Der Spiegel ist erzeugt (gedaechtnis-spiegel.mjs, 17.09.2026) — er ist
+       kein Gedächtniseintrag und darf nicht als „zuletzt geschrieben" gelten. */
+    if (e.isDirectory()){ if (e.name !== 'Vokabeltrainer-Spiegel') raus.push(...alleNotizen(p)); }
     else if (e.name.endsWith('.md')) raus.push(p);
   }
   return raus;

@@ -292,3 +292,15 @@ try {
 }
 console.log('');
 console.log('✅ Veroeffentlicht.');
+
+/* ⭐ Gedächtnis-Spiegel (17.09.2026): was eben ausgeliefert wurde, steht danach
+   auch lesbar in seinem Obsidian-Gedächtnis. Elias am 16.09.2026: „ja mein
+   gedächtnis soll immer auf dem aktuellsten stand sein mit allem". Hier und
+   nicht als eigener Routinenschritt, damit es keine zweite Stelle gibt, die
+   man vergisst. ⚠️ Scheitert der Spiegel, ist die Auslieferung trotzdem
+   geschehen — deshalb nur eine laute Warnung, kein Fehlercode. */
+try {
+  execSync('node "' + path.join(WURZEL, 'werkzeuge', 'gedaechtnis-spiegel.mjs') + '"', { cwd: WURZEL, stdio: 'inherit' });
+} catch (e) {
+  console.error('⚠️ Gedächtnis-Spiegel NICHT nachgezogen — von Hand: node werkzeuge/gedaechtnis-spiegel.mjs');
+}
