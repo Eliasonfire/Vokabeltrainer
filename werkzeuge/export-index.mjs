@@ -10,6 +10,11 @@
  *   node werkzeuge/export-index.mjs --schreiben <uuid> --geaendert <unix-sekunden> [--titel "..."]
  *       Traegt eine Notiz ein. pageCount wird SELBST gemessen, nie uebergeben.
  *
+ *   node werkzeuge/export-index.mjs --sicherung [--gesehen]
+ *       ⭐ Seit 17.09.2026 der Weg OHNE Export von Hand: vergleicht die
+ *       automatische Samsung-Sicherung mit dem zuletzt ausgewerteten Stand und
+ *       nennt neue/veraenderte Seiten. Exit 2 = etwas zum Lesen. Siehe unten.
+ *
  * WARUM ES DAS GIBT (29.07.2026)
  * -----------------------------
  * Den Index schreibt kein Code, sondern ein manueller Cowork/Computer-Use-
@@ -279,6 +284,164 @@ function live(){
   return veraltet || unbekannt ? 2 : 0;
 }
 
+/* ---------- --sicherung: neue Seiten OHNE Export von Hand (17.09.2026) ----------
+
+   ⭐ Elias am 20.08.2026: „jedes mal wenn die routinen anfangen soll auch immer
+   davor eine aktuelle version meines medina buch 1 (beschriftet) aus samsung
+   notes geholt werden und das soll dann auch verarbeitet werden weil da stehen
+   teilweise neue vokabeln die ebenfalls mit aufgenommen werden sollen und oder
+   die regeln die ich mir notiert habe."
+
+   ⛔ Bis zum 17.09.2026 wartete die Wartung dafür auf einen Export VON HAND
+   (Schritt 0b/4) und meldete 51 Tage lang „Export veraltet, Abgleich
+   übersprungen" — dabei liegt seit dem 11.09. jede Notiz automatisch als PDF
+   unter SamsungNotes-Sicherung (alle 3 Std. nachgeführt). Gemessen am
+   17.09.: Madina Buch 1 (Beschriftet) 146 statt 142 Seiten, Grammatik Heft 15
+   statt 14, Vokabelheft 18 statt 17 — niemand hatte die neuen Seiten gesehen.
+
+   Was hier gemessen wird: je Seite ein grobes Graubild (GX×GY Zellen). Die
+   Sicherung erzeugt dieselbe Seite bei jedem Lauf gleich, also ist eine
+   unveränderte Seite Zelle für Zelle gleich; eine neue Zeile Handschrift
+   ändert mindestens eine Zelle deutlich. Ausgerichtet wird per dynamischer
+   Programmierung, denn neue Seiten werden oft MITTEN eingeschoben (am 17.09.
+   S. 74, 75, 89 und 146).
+
+   ⚠️ Nicht mit dem Export von damals vergleichen: der rendert Linienpapier und
+   Farben anders, dort sieht JEDE Notizseite verändert aus (gemessen 17.09.:
+   22 von 22 Notizseiten „anders", alle inhaltsgleich). Verglichen wird nur
+   Sicherung gegen Sicherung.
+
+     node werkzeuge/export-index.mjs --sicherung             messen, nichts schreiben
+     node werkzeuge/export-index.mjs --sicherung --gesehen   heutigen Stand als ausgewertet festhalten
+
+   Exit 0 = nichts Neues · 2 = neue/veränderte Seiten oder neue Notiz (Liste
+   steht in der Ausgabe) · 1 = Fehler oder noch kein Stand. ⛔ `--gesehen` erst,
+   NACHDEM die gemeldeten Seiten gelesen und ausgewertet sind — sonst sind sie
+   für immer „gesehen", ohne dass jemand sie gesehen hat. */
+const SICHERUNG = process.env.SAMSUNG_NOTES_SICHERUNG_DIR
+  || 'G:\\1. Workspace\\SamsungNotes-Sicherung\\Samsung Notes Archiv\\Arabisch\\Grammatik';
+const SICHERUNG_STAND = process.env.SAMSUNG_NOTES_SICHERUNG_STAND
+  || path.join(ORDNER, 'sicherung-stand.json');
+const POPPLER = process.env.POPPLER_BIN
+  || 'C:\\Users\\abdur\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oschwartz10612.Poppler_Microsoft.Winget.Source_8wekyb3d8bbwe\\poppler-25.07.0\\Library\\bin';
+const GX = 16, GY = 20, DPI = 16;
+
+function poppler(name){
+  const voll = path.join(POPPLER, name + '.exe');
+  return fs.existsSync(voll) ? voll : name;
+}
+
+function seitenBilder(pdf){
+  const tmp = fs.mkdtempSync(path.join(process.env.TEMP || process.env.TMPDIR || '.', 'sicherung-'));
+  try {
+    execFileSync(poppler('pdftoppm'), ['-gray', '-r', String(DPI), pdf, path.join(tmp, 's')], { stdio: 'pipe' });
+    return fs.readdirSync(tmp).filter(f => f.endsWith('.pgm')).sort().map(f => {
+      const b = fs.readFileSync(path.join(tmp, f));
+      const t = b.toString('latin1', 0, 40).split(/\s+/);
+      const w = +t[1], h = +t[2], px = b.subarray(b.length - w * h);
+      const summe = new Array(GX * GY).fill(0), n = new Array(GX * GY).fill(0);
+      for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+        const k = Math.min(GY - 1, Math.floor(y * GY / h)) * GX + Math.min(GX - 1, Math.floor(x * GX / w));
+        summe[k] += px[y * w + x]; n[k]++;
+      }
+      return Buffer.from(summe.map((s, i) => Math.round(s / n[i]))).toString('base64');
+    });
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+}
+
+/* Leer = jede Zelle höchstens 6 Graustufen vom Seitenmittel entfernt. Linienpapier
+   bleibt darunter (gemessen 17.09.: Grammatik Heft S. 14/15, Vokabelheft S. 16–18,
+   Madina S. 146 — alle leer); schon eine Zeile Handschrift liegt weit darüber. */
+function istLeer(sig){
+  /* ⚠️ Letzte Zeile und Spalte zählen nicht: die Seite ist 791,35 pt hoch, der
+     angeschnittene Randpixel ist heller. Gemessen an Madina S. 146 (ganz schwarz):
+     genau diese 35 Randzellen lagen über der Schwelle, keine einzige innen. */
+  const z = [...Buffer.from(sig, 'base64')].filter((_, i) => i % GX !== GX - 1 && i < GX * (GY - 1));
+  const m = z.reduce((a, v) => a + v, 0) / z.length;
+  return z.every(v => Math.abs(v - m) <= 6);
+}
+function abstand(a, b){
+  const x = Buffer.from(a, 'base64'), y = Buffer.from(b, 'base64');
+  let max = 0; for (let i = 0; i < x.length; i++) max = Math.max(max, Math.abs(x[i] - y[i]));
+  return max;
+}
+
+function sicherung(){
+  if (!fs.existsSync(SICHERUNG)){ console.error('⛔ Sicherungsordner fehlt: ' + SICHERUNG); return 1; }
+  const pdfs = fs.readdirSync(SICHERUNG).filter(f => f.toLowerCase().endsWith('.pdf')).sort();
+  if (!pdfs.length){ console.error('⛔ Keine PDF im Sicherungsordner — die Sicherung läuft nicht?'); return 1; }
+  let alt = null;
+  if (fs.existsSync(SICHERUNG_STAND)){
+    try { alt = JSON.parse(fs.readFileSync(SICHERUNG_STAND, 'utf8')); }
+    catch (e){ console.error('⛔ ' + SICHERUNG_STAND + ' ist kein gültiges JSON: ' + e.message); return 1; }
+  }
+  const neu = { _hinweis: 'Geschrieben von export-index.mjs --sicherung --gesehen. Seitenraster (' + GX + '×' + GY + ', ' + DPI + ' dpi, grau) der zuletzt AUSGEWERTETEN Fassung jeder Notiz. Nie von Hand ändern.', gesehen: new Date().toISOString(), notizen: {} };
+  let befunde = 0;
+  for (const datei of pdfs){
+    const titel = datei.replace(/\.pdf$/i, '');
+    let seiten;
+    try { seiten = seitenBilder(path.join(SICHERUNG, datei)); }
+    catch (e){ console.error('⛔ ' + titel + ': rendern gescheitert — ' + e.message.split('\n')[0]); return 1; }
+    neu.notizen[titel] = seiten;
+    if (!alt) continue;
+    const vorher = alt.notizen && alt.notizen[titel];
+    if (!vorher){
+      const voll = seiten.filter(s => !istLeer(s)).length;
+      console.log('🆕 ' + titel + ': neue Notiz, ' + seiten.length + ' Seiten (' + voll + ' mit Inhalt)');
+      if (voll) befunde++;
+      continue;
+    }
+    /* Ausrichtung: gleiche Seite kostet 0, veränderte 1, eingeschobene/fehlende 1,5. */
+    const I = seiten.length, J = vorher.length, EIN = 1.5;
+    const K = Array.from({ length: I + 1 }, () => new Float64Array(J + 1).fill(Infinity));
+    const W = Array.from({ length: I + 1 }, () => new Array(J + 1).fill(''));
+    K[0][0] = 0;
+    for (let i = 0; i <= I; i++) for (let j = 0; j <= J; j++){
+      if (i && j){ const c = K[i - 1][j - 1] + (abstand(seiten[i - 1], vorher[j - 1]) > 3 ? 1 : 0); if (c < K[i][j]){ K[i][j] = c; W[i][j] = 'm'; } }
+      if (i && K[i - 1][j] + EIN < K[i][j]){ K[i][j] = K[i - 1][j] + EIN; W[i][j] = 'e'; }
+      if (j && K[i][j - 1] + EIN < K[i][j]){ K[i][j] = K[i][j - 1] + EIN; W[i][j] = 'a'; }
+    }
+    const neuS = [], leerS = [], anders = [], weg = [];
+    for (let i = I, j = J; i || j;){
+      const w = W[i][j];
+      if (w === 'm'){ if (abstand(seiten[i - 1], vorher[j - 1]) > 3) anders.push(i); i--; j--; }
+      else if (w === 'e'){ (istLeer(seiten[i - 1]) ? leerS : neuS).push(i); i--; }
+      else { weg.push(j); j--; }
+    }
+    const s = l => l.reverse().map(n => 'S. ' + n).join(', ');
+    if (!neuS.length && !anders.length && !leerS.length && !weg.length){ console.log('✅ ' + titel + ': unverändert (' + I + ' Seiten)'); continue; }
+    if (neuS.length || anders.length) befunde++;
+    console.log('⛔ ' + titel + ': ' + J + ' → ' + I + ' Seiten'
+      + (neuS.length ? ' · NEU mit Inhalt: ' + s(neuS) : '')
+      + (anders.length ? ' · VERÄNDERT: ' + s(anders) : '')
+      + (leerS.length ? ' · neu, aber leer: ' + s(leerS) : '')
+      + (weg.length ? ' · entfernt (alte Zählung): ' + s(weg) : ''));
+  }
+  if (!alt){
+    if (!args.includes('--gesehen')){
+      console.log('⛔ Noch kein ausgewerteter Stand (' + SICHERUNG_STAND + ').');
+      console.log('   Erst die Notizen auswerten, dann `--sicherung --gesehen`.');
+      return 1;
+    }
+  }
+  if (args.includes('--gesehen')){
+    fs.writeFileSync(SICHERUNG_STAND + '.neu', JSON.stringify(neu));
+    fs.renameSync(SICHERUNG_STAND + '.neu', SICHERUNG_STAND);
+    console.log('✍️  Stand als ausgewertet festgehalten: ' + pdfs.length + ' Notizen → ' + SICHERUNG_STAND);
+    return 0;
+  }
+  if (befunde){
+    console.log('\n' + befunde + ' Notiz(en) mit neuen oder veränderten Seiten. Seiten rendern und LESEN:');
+    console.log('   pdftoppm -png -r 80 -f <S> -l <S> "' + SICHERUNG + '\\<Titel>.pdf" <ziel>');
+    console.log('   (für eine Ḥaraka 600 dpi). Danach `--sicherung --gesehen`.');
+    return 2;
+  }
+  return 0;
+}
+
+if (args.includes('--sicherung')) process.exit(sicherung());
 if (args.includes('--pruefen')) process.exit(pruefen());
 if (args.includes('--live')) process.exit(live());
 if (args.includes('--schreiben')) { schreiben(); process.exit(0); }
