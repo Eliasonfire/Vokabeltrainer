@@ -414,6 +414,8 @@ const PRUEFER = [
   ['test-p8.mjs', []],
   ['test-woerterbuch-belege.mjs', []],
   ['test-langenscheidt.mjs', []],
+  /* 17.09.2026: der KV-Abruf in vorrat.mjs bekommt einen zweiten Versuch. */
+  ['test-kv-abruf.mjs', []],
   ['test-laut.mjs', []],
   ['test-tagesdeckel.mjs', []],
   ['test-wiedereinstieg.mjs', []],
