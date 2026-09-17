@@ -5761,3 +5761,25 @@ ist am 17.09.2026 zwischen 04:20 und 04:24 **nachgemessen**, nicht abgeschrieben
 Wartungsprompt Schritt 8 hat dazu eine Regel bekommen: einen Punkt aus dem
 letzten Bericht erst nach Blick auf solche Sitzungseinträge, `git log` und
 einer eigenen Messung als offen weitertragen.
+
+## 2026-09-17 13:05 – Sitzung: erledigte Befunde
+
+Kein Wartungslauf, sondern ein Eintrag der Sitzung. Er schließt die Liste
+„Weiter offen" von 04:24 und nennt, was sich am Mittag geändert hat. Jede Zeile
+ist am 17.09.2026 zwischen 12:30 und 13:05 **nachgemessen**.
+
+| Punkt | Stand | Beleg |
+|---|---|---|
+| `vorrat.mjs` „bewusst ohne Satz" (كُبْرَى) | ✅ erledigt | `node werkzeuge/vorrat.mjs --knapp` Exit 0: „alle 297 freigeschalteten Woerter … vollstaendig" |
+| `vorrat.mjs` KV-Abruf ohne zweiten Versuch | ✅ erledigt | `536d8c2` |
+| `git push` der Wartung abgewiesen | ✅ **behoben** | Elias am 17.09. auf die Frage, ob das Hochladen von der Rückfrage-Liste soll: „ja". `Bash(git push:*)`/`PowerShell(git push:*)` stehen nicht mehr unter `ask` in `~/.claude/settings.json`; Prompt Schritt 7 pusht wieder. 12:48:13 `ba10bff..8fc2c27` aus der Sitzung gepusht, ohne Rückfrage. ⚠️ Die Rückfrage hatte eine Sitzung am 16.09. selbst eingestellt, nicht Elias |
+| Reverso-Beleg مَكْسُورٌ weggefallen | ✅ nichts zu tun | Reverso nennt zwei Wortarten, der Filter greift richtig; Karte trägt `type: adjective`, `vorrat.mjs` vollständig |
+| 2 Artefakt-Seiten ohne URL | ✅ erledigt | `a94365f` (`farbe-wortmarke.html` → 4yfD1FeCGm2dna7ioELBuG, `stimmen-liste.html` → ESSZpD31nn4gaVCPnWafcp) |
+| Regelauswertung Folge 20 · Stelle 11:26 in Folge 19 | ✅ erledigt | Folge 20 neu transkribiert (0 Schleifen) und ausgewertet, keine neue Regel; `node werkzeuge/rueckstand.mjs --knapp` Exit 0 „kein Rueckstand"; `transcripts/backlog.md` Folge 19 „✅ Abgeschlossen" |
+| Lernstand 24/16 gegen Angabe 12/2 | 🔴 weiter seine Frage | Warte-Seite Version 10. Bayna Yadayk 1 ist wieder gewählt (KV 12:31:44: `bayna-yadayk-1 [1,2]`), das Abwählen um 03:48 war keine Absicht |
+
+**Neu am Mittag (Sitzung):**
+- **v526 `ad34d72`** — jeder Quran-Favorit außer al-Mulk ist ein eigener Ring „Neu lernen", auch wenn er als auswendig abgehakt ist; Favoriten stehen nicht in der Wiederholungsrunde. `node test-surenringe.mjs` 39 ✔. Ausgeliefert, `.deploy/sw.js` 12:38:53.
+- **To-Do: 44 offene Kästen → 15.** 29 mit Beleg abgehakt; 11 ältere Fragen an Elias stehen jetzt als Posten „Ältere Fragen" auf der Warte-Seite (Version 10, `265027c`). ⚠️ `todo-uebersicht.mjs` zählt nur „⬜ Offen"/„🔴" — für „was ist offen" die Kästen der ganzen Datei zählen.
+
+**Weiter offen (nachgemessen 13:03):** `node werkzeuge/alle-pruefer.mjs` 112 gelaufen, **2 rot** — `pruefe-taschkil.js` (بلا/مزدوجة) und `pruefe-themen.mjs` (3 Punkte), beide warten auf Elias. Bedingt: nach dem nächsten Lauf prüfen, ob `data/boxen.json` das Feld `angefangen` trägt.
