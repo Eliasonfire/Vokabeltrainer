@@ -279,6 +279,94 @@ console.log('\nWiederholen: eine heute gelernte Sure zählt heute nicht mit:');
       WDH: { 97: heute, 99: gestern } }).__heute();
     pruefe('Gegenprobe: mit al-Qadr in der Runde hieße der Ring „Wiederholen Al-Qadr, erledigt"',
       !!g2 && g2.sure === 97 && g2.erledigt === true, JSON.stringify(g2));
+
+    /* ---------- 8. Den Haken zurücknehmen (17.09.2026) ----------
+       Elias: „ich will das bei den suren die ich ringe habe und mir angezeigt
+       wird das ich sie gelesen habe, dass ich in die sure nach unten gehen kann
+       und das heute gelesen antippen kann damit es nicht mehr als gelesen gilt
+       und auch der ring dann wieder nicht voll ist"
+       ⛔ Gemessen wird der RING, nicht der Speicher: sein Satz endet mit „und
+       auch der ring dann wieder nicht voll ist". Deshalb läuft hier
+       quranRingDaten() aus js/start.js mit, nicht nur die Funktion in
+       js/quran.js. [[wirkung_an_der_quelle_stilllegen]] */
+    console.log('\nZurücknehmen: der Ring wird wieder leer:');
+
+    const SUREN = [{ id: 1, name: 'Al-Fatihah' }, { id: 67, name: 'Al-Mulk' }, { id: 96, name: 'Al-Alaq' },
+                   { id: 97, name: 'Al-Qadr' }, { id: 99, name: 'Az-Zalzalah' }, { id: 102, name: 'At-Takathur' }];
+    const baueHaken = (quranText) => {
+      const stuecke = [konstante(kern, 'TAG_BEGINN_STUNDE'), ...teileAus(kern, ['todayStr', 'lerntagVon']),
+        konstante(quranText, 'WDH_AUSGENOMMEN'),
+        ...teileAus(quranText, ['heuteAuswendigAbgehakt', 'wdhVorrat', 'wdhHeute', 'istFavorit', 'wdhFavoriten',
+          'inWiederholungsrunde', 'merkeWiederholung', 'vergissWiederholung', 'gelesenKnopfHtml']),
+        schneide(ohneKommentare, 'quranRingDaten')];
+      if (stuecke.some(s => !s)) return null;
+      return stuecke.join('\n') + '\n;globalThis.__api = { merke: merkeWiederholung, vergiss: vergissWiederholung,'
+        + ' ringe: quranRingDaten, knopf: gelesenKnopfHtml, tag: todayStr };';
+    };
+    const laufHaken = (code, stand) => {
+      const gespeichert = {};
+      const c = { SURAH_DATA: SUREN, QURAN_FAV: { 67: true, 97: true }, HIFZ: { 67: true, 97: true, 99: true },
+        HIFZ_ZEIT: {}, WDH_ZEIT: {}, WDH_VORHER: {}, Date, icon: () => '<svg></svg>',
+        LS: { get: () => ({}), set: (k, v) => { gespeichert[k] = JSON.parse(JSON.stringify(v)); } },
+        ...stand };
+      vm.createContext(c);
+      vm.runInContext(code, c);
+      c.__gespeichert = gespeichert;
+      return c;
+    };
+    const ringVoll = (c, id) => {
+      const r = c.__api.ringe().find(x => x.sure === id && /Neu lernen/.test(x.txt));
+      return r ? r.voll : null;
+    };
+
+    const codeHaken = baueHaken(quran);
+    pruefe('merkeWiederholung(), vergissWiederholung(), inWiederholungsrunde(), gelesenKnopfHtml() und quranRingDaten() sind zu finden', !!codeHaken);
+    if (codeHaken){
+      const c = laufHaken(codeHaken, { WDH: {} });
+      pruefe('vorher: der Ring „Neu lernen Al-Qadr" ist nicht voll', ringVoll(c, 97) === false, ringVoll(c, 97));
+      pruefe('der Knopf lädt zum Abhaken ein', /abhaken/.test(c.__api.knopf(97)), c.__api.knopf(97).replace(/\s+/g, ' '));
+
+      c.__api.merke(97);
+      pruefe('abgehakt: der Ring ist voll', ringVoll(c, 97) === true, ringVoll(c, 97));
+      pruefe('abgehakt: gespeichert ist das heutige Datum', c.__gespeichert.vt_suraGelesen[97] === c.__api.tag(0),
+        JSON.stringify(c.__gespeichert.vt_suraGelesen));
+      pruefe('abgehakt: der Zeitpunkt steht in vt_suraGelesenZeit', Number(c.__gespeichert.vt_suraGelesenZeit[97]) > 0,
+        JSON.stringify(c.__gespeichert.vt_suraGelesenZeit));
+      const knopfAn = c.__api.knopf(97);
+      pruefe('der Knopf sagt jetzt „zurücknehmen"', /zurücknehmen/.test(knopfAn), knopfAn.replace(/\s+/g, ' '));
+      pruefe('⛔ und ist NICHT mehr gesperrt (disabled)', !/disabled/.test(knopfAn), knopfAn.replace(/\s+/g, ' '));
+      const zeitVorher = Number(c.__gespeichert.vt_suraGelesenZeit[97]);
+
+      c.__api.vergiss(97);
+      pruefe('zurückgenommen: der Ring ist wieder nicht voll', ringVoll(c, 97) === false, ringVoll(c, 97));
+      pruefe('zurückgenommen: der heutige Eintrag ist weg', c.__gespeichert.vt_suraGelesen[97] === undefined,
+        JSON.stringify(c.__gespeichert.vt_suraGelesen));
+      pruefe('zurückgenommen: der Zeitpunkt ist mitgewandert (sonst holt ihn der Abgleich zurück)',
+        Number(c.__gespeichert.vt_suraGelesenZeit[97]) >= zeitVorher, JSON.stringify(c.__gespeichert.vt_suraGelesenZeit));
+      pruefe('und der Knopf lädt wieder zum Abhaken ein', /abhaken/.test(c.__api.knopf(97)));
+
+      /* ⚠️ Die letzte ECHTE Lesung darf die Rücknahme nicht mitnehmen. */
+      const c2 = laufHaken(codeHaken, { WDH: { 97: '2026-09-12' } });
+      c2.__api.merke(97); c2.__api.vergiss(97);
+      pruefe('die Lesung von vorher bleibt stehen (12.09. wieder da)',
+        c2.__gespeichert.vt_suraGelesen[97] === '2026-09-12', JSON.stringify(c2.__gespeichert.vt_suraGelesen));
+
+      /* ⛔ Nur HEUTE. Ein älterer Haken ist Vergangenheit. */
+      const c3 = laufHaken(codeHaken, { WDH: { 97: '2026-09-12' } });
+      c3.__api.vergiss(97);
+      pruefe('ein älterer Haken lässt sich nicht zurücknehmen',
+        c3.__gespeichert.vt_suraGelesen === undefined, JSON.stringify(c3.__gespeichert));
+
+      /* ⛔ Gegenprobe: ohne das Wegnehmen bliebe der Ring voll — dann prüfte
+         der Fall oben nichts. [[stoertest_muss_wirkung_nachweisen]] */
+      const wegNeu = 'if (vorher) WDH[sure] = vorher; else delete WDH[sure];';
+      pruefe('Gegenprobe möglich: die Zeile steht so im Quelltext', quran.includes(wegNeu));
+      const ohneWegnehmen = baueHaken(quran.replace(wegNeu, 'if (vorher) WDH[sure] = vorher;'));
+      const g3 = ohneWegnehmen && laufHaken(ohneWegnehmen, { WDH: {} });
+      if (g3){ g3.__api.merke(97); g3.__api.vergiss(97); }
+      pruefe('Gegenprobe: ohne das Wegnehmen bliebe der Ring voll', !!g3 && ringVoll(g3, 97) === true,
+        g3 && ringVoll(g3, 97));
+    }
   }
 }
 

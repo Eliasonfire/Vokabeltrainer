@@ -83,6 +83,18 @@ const SYNC_SCHLUESSEL = [
      juengere Stempel die Lesung des anderen Geraets — und die Runde boete
      eine Sure erneut an, die er laengst durchhatte. */
   'vt_suraGelesen',
+  /* ⛔⛔ Wann der Haken einer Sure zuletzt ANGEFASST wurde (17.09.2026,
+     js/quran.js) — `{ Sure: Zeitpunkt in ms }`. Er steht hier NICHT als
+     Beiwerk: seit dem 17.09. kann Elias das Abhaken zuruecknehmen, und eine
+     Ruecknahme ist ein FEHLENDER Eintrag. Die Regel eine Zeile darueber („je
+     Sure das juengere Datum") kennt aber nur Daten — sie haette den Haken beim
+     naechsten Abgleich zurueckgebracht, weil der Server ihn noch hatte.
+     ⚠️ Und zwar auch mit nur EINEM Geraet.
+     Deshalb entscheidet der Zweig unten je Sure nach dem SPAETEREN Handgriff
+     und faellt nur ohne Zeitstempel (Stand von vor dem 17.09.) auf das Datum
+     zurueck. MUSS nach 'vt_suraGelesen' stehen: der Zweig dort liest die
+     eigene Karte noch ungemischt. [[ausfall_ist_unsichtbar_gebaut]] */
+  'vt_suraGelesenZeit',
   /* ⭐ Der stille Zielverlauf (15.09.2026, js/start.js) — je Tag, je Bereich
      `[stand, ziel]`, 120 Tage lang. Er wird in der App bewusst NICHT gezeigt;
      Elias: „du sollst messen wie oft ich täglich meinen soll pro tag erfülle
@@ -760,13 +772,55 @@ function fuehreZusammen(fern){
        durchhatte.
        ⚠️ Datumsvergleich als Zeichenkette: 'JJJJ-MM-TT' sortiert genau so,
        wie es soll, und kennt keine Zeitzone. */
+    /* ⛔⛔ SEIT DEM 17.09.2026 ENTSCHEIDET DER SPAETERE HANDGRIFF, NICHT DAS
+       JUENGERE DATUM. Elias kann das Abhaken zuruecknehmen: „damit es nicht
+       mehr als gelesen gilt und auch der ring dann wieder nicht voll ist".
+       Eine Ruecknahme ist ein FEHLENDER Eintrag — und ein fehlender Eintrag
+       verliert jeden Datumsvergleich. Der Abgleich haette das heutige Datum
+       vom Server zurueckgeholt und den Ring wieder gefuellt, ohne Meldung.
+       Deshalb `vt_suraGelesenZeit` je Sure (js/quran.js): wer zuletzt
+       angefasst hat, gewinnt — in BEIDE Richtungen.
+       ⚠️ Ohne Zeitstempel bleibt es beim alten Datumsvergleich. Ein Geraet mit
+       einem Stand von vor dem 17.09. verliert dadurch nichts. */
     if (k === 'vt_suraGelesen'){
+      try {
+        const a = JSON.parse(hierRoh) || {}, b = JSON.parse(dortRoh) || {};
+        const zh = JSON.parse(localStorage.getItem('vt_suraGelesenZeit') || '{}') || {};
+        const zd = JSON.parse(fernDaten['vt_suraGelesenZeit'] || '{}') || {};
+        const raus = Object.assign({}, a);
+        /* ⚠️ ALLE Suren, nicht nur die der Gegenseite: eine Ruecknahme steht
+           dort gar nicht mehr, und genau sie soll hierher wirken. */
+        const suren = new Set([].concat(Object.keys(a), Object.keys(b), Object.keys(zh), Object.keys(zd)));
+        suren.forEach(sure => {
+          const th = Number(zh[sure] || 0), td = Number(zd[sure] || 0);
+          if (th || td){
+            if (td > th){                      /* drueben zuletzt angefasst */
+              if (b[sure] == null) delete raus[sure]; else raus[sure] = b[sure];
+            } else if (th > td){               /* hier zuletzt angefasst: bleibt */
+              if (a[sure] == null) delete raus[sure];
+            } else {                           /* gleicher Zeitpunkt: wie frueher */
+              if (String(b[sure] || '') > String(raus[sure] || '')) raus[sure] = b[sure];
+            }
+            return;
+          }
+          if (String(b[sure] || '') > String(raus[sure] || '')) raus[sure] = b[sure];
+        });
+        const neu = JSON.stringify(raus);
+        if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
+      } catch (e){ /* kaputtes JSON auf einer Seite: lokal behalten */ }
+      return;
+    }
+
+    /* Die Zeitkarte dazu: je Sure der SPAETERE Zeitpunkt. Sie steht in
+       SYNC_SCHLUESSEL nach `vt_suraGelesen`, damit der Zweig darueber noch den
+       eigenen Stand sieht — dieselbe Reihenfolge-Falle wie bei der
+       Stempelkarte der Einstellungen. */
+    if (k === 'vt_suraGelesenZeit'){
       try {
         const a = JSON.parse(hierRoh) || {}, b = JSON.parse(dortRoh) || {};
         const raus = Object.assign({}, a);
         Object.keys(b).forEach(sure => {
-          const hier = String(raus[sure] || ''), dort = String(b[sure] || '');
-          if (dort > hier) raus[sure] = b[sure];
+          if (Number(b[sure] || 0) > Number(raus[sure] || 0)) raus[sure] = b[sure];
         });
         const neu = JSON.stringify(raus);
         if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }

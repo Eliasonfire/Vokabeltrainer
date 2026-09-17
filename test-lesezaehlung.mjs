@@ -91,6 +91,8 @@ vm.runInContext(koran + '\n' + woerter + '\n' + block + `
   setzen: leseSureSetzen, start: leseZeitStart, halt: leseZeitHalt,
   jetzt: leseZeitJetzt, pruefe: pruefeWiederholung,
   ende: (an) => { LESE_ENDE_GESEHEN = an; },
+  /* so, wie vergissWiederholung() es ruft, wenn Elias den Haken zurücknimmt */
+  zurueck: (s) => leseZuruecknahme(s),
   stand: () => ({ sure: LESE_SURE, ende: LESE_ENDE_GESEHEN, laeuft: LESE_SEIT > 0 }),
   schwelle: (s) => wdhSchwelle(s),
   untergrenze: WDH_MINDESTZEIT,
@@ -229,8 +231,35 @@ warte(sek(S.zalzala) + 1); A.pruefe();
 pruefe('   nach eigener Schwelle gezählt, und zwar die richtige', GEZAEHLT, [99]);
 console.log('');
 
-/* ---------- 7. Ohne offene Sure passiert nichts --------------------------- */
-console.log('7. Keine Sure offen');
+/* ---------- 7. Zurückgenommen: die Automatik trägt nicht sofort nach ------- */
+/* ⭐ Elias am 17.09.2026: „dass ich in die sure nach unten gehen kann und das
+   heute gelesen antippen kann damit es nicht mehr als gelesen gilt und auch
+   der ring dann wieder nicht voll ist".
+   ⛔ Der gefährliche Fall ist genau dieser: Er tippt den Haken weg, während er
+   noch UNTEN in der Sure steht. Das Ende ist sichtbar, die Zeit ist längst
+   voll — ohne Sperre trüge der nächste Ruck am Bildschirm den Haken sofort
+   wieder ein, und die Rücknahme wäre ein Knopf ohne Wirkung.
+   [[wirkung_an_der_quelle_stilllegen]] */
+console.log('7. Haken zurückgenommen, während die Sure noch offen ist');
+neu();
+oeffne(99);
+A.ende(true);
+warte(sek(S.zalzala) + 1); A.pruefe();
+pruefe('   erst ganz normal gezählt', GEZAEHLT, [99]);
+GEZAEHLT = [];
+A.zurueck(99);                       /* er tippt „Heute gelesen — zurücknehmen" */
+A.ende(true); A.pruefe();            /* und rollt weiter: Ende wieder gemeldet */
+pruefe('   danach zählt dieselbe Lesung NICHT noch einmal', GEZAEHLT, []);
+warte(600); A.pruefe();
+pruefe('   auch zehn Minuten später nicht', GEZAEHLT, []);
+A.zurueck(97);                       /* eine ANDERE Sure geht die Sperre nichts an */
+oeffne(99); A.ende(true);            /* raus und wieder rein */
+warte(sek(S.zalzala) + 1); A.pruefe();
+pruefe('   beim erneuten Öffnen zählt sie wieder normal', GEZAEHLT, [99]);
+console.log('');
+
+/* ---------- 8. Ohne offene Sure passiert nichts --------------------------- */
+console.log('8. Keine Sure offen');
 neu();
 A.ende(true);
 warte(600); A.pruefe();
