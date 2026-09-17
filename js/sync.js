@@ -553,6 +553,18 @@ function fuehreRegelnZusammen(hier, dort){
   return raus;
 }
 
+/* Die drei Bereiche des stillen Zielverlaufs, die aus `vt_suraGelesen`
+   ABGELEITET sind — die Namen vergibt renderTagesringe() in js/start.js.
+   Warum sie eine eigene Regel brauchen, steht im Zweig für `vt_zielverlauf`. */
+const ZIELVERLAUF_ABGELEITET = new Set(['mulk', 'wiederholen', 'neulernen']);
+/* ⚠️ `todayStr()` steht in js/kern.js. Fehlt es (Prüfstand ohne kern.js), gilt
+   wieder das Maximum für alle Bereiche — dann ist die Regel wirkungslos, aber
+   nichts geht kaputt. test-sync.mjs stellt es deshalb bereit UND prüft, dass
+   js/kern.js es wirklich hat. */
+function zielverlaufHeute(){
+  return (typeof todayStr === 'function') ? todayStr(0) : null;
+}
+
 function fuehreZusammen(fern){
   const meine = syncStempel();
   const fremde = (fern && fern.stempel) || {};
@@ -852,6 +864,23 @@ function fuehreZusammen(fern){
           Object.keys(dort).forEach(teil => {
             const d = dort[teil], h = zusammen[teil];
             if (!Array.isArray(d)) return;
+            /* ⛔⛔ DIE SURENRINGE VON HEUTE WERDEN NICHT GEMISCHT, SONDERN NEU
+               BERECHNET (17.09.2026). Sie sind ABGELEITET: ob ein Ring voll
+               ist, steht in `vt_suraGelesen` — und das wird je Sure sauber
+               zusammengeführt. Das Maximum hier wäre also kein Gewinn, sondern
+               ein Gedächtnis für einen Stand, den es nicht mehr gibt.
+
+               Gemessen am 17.09.2026: nimmt Elias den Haken zurück, schreibt
+               die App `wiederholen [0,1]`, das Maximum holt die [1,1] vom
+               Server zurück, die App schreibt wieder [0,1] — bei JEDEM
+               Abgleich. Und weil der Abgleich „etwas geändert" meldet, lief
+               danach `ladeStandNeu()`, und das warf ihn aus der offenen Sure
+               („ich habs gedrückt und wurde dann aus der sure rausgeschmissen").
+               ⚠️ Nur HEUTE und nur diese drei: für `karten`, `saetze` und
+               `hoeren` bleibt das Maximum richtig — das sind Zähler, die auf
+               beiden Geräten getrennt wachsen. Vergangene Tage ändert niemand
+               mehr. [[zwei_regeln_selber_selektor]] */
+            if (tag === zielverlaufHeute() && ZIELVERLAUF_ABGELEITET.has(teil) && Array.isArray(h)) return;
             if (!Array.isArray(h) || (Number(d[0]) || 0) > (Number(h[0]) || 0)) zusammen[teil] = d;
           });
           raus[tag] = zusammen;
