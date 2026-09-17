@@ -5729,3 +5729,35 @@ Zweitbester Kandidat: **`vorrat.mjs` eine Satz-Ausnahme beibringen**
 (Befund 4). Er ist jetzt der einzige Grund, warum das Werkzeug überhaupt noch
 auf Exit 2 steht — ein Rückstand von genau einem Posten, der keiner ist. Genau
 daran stirbt ein Messwerkzeug: beim vierten Mal wird es überlesen.
+
+## 2026-09-17 04:24 – Sitzung: erledigte Befunde
+
+Kein Wartungslauf, sondern ein Eintrag der Sitzung (Nachtschicht), damit der
+nächste Lauf Erledigtes nicht als „unverändert offen" weiterträgt. Jede Zeile
+ist am 17.09.2026 zwischen 04:20 und 04:24 **nachgemessen**, nicht abgeschrieben.
+
+| Befund aus den Läufen 06.09.–16.09. | Stand | Beleg |
+|---|---|---|
+| `js/irab.js`: `NICHT_VERB` braucht هُنَّ und أَنْتُمْ (offen „seit 06.09.") | ✅ erledigt | `giltAlsVerb(هُنَّ)` = false, `giltAlsVerb(أَنْتُمْ)` = false, Gegenprobe `ذَهَبَ` = true (Pronomenprüfung in `giltAlsVerb`) |
+| Zwei Iʿrāb-Lücken (مَرَّ, وَالِد/وَالِدَة) | ✅ erledigt | v521 `d08f201`, v522 `fd50080`; `node pruefe-saetze.js` Exit 0 |
+| `pruefe-eselsbruecken.js` Abschnitt 4 kennt den Buchbestand im Fenster nicht | ✅ erledigt | `ef1bc23`; `node pruefe-eselsbruecken.js` Exit 0 |
+| `test-woerterbuch-belege.mjs` kennt die Langenscheidt-Plurale nicht | ✅ erledigt | `f7c682a`; Exit 0 |
+| 🔴 Samsung-Notes-Export veraltet (51 Tage) | ✅ **kein Export mehr nötig** | `08b740d`: `node werkzeuge/export-index.mjs --sicherung` liest die automatische Sicherung; neue Seiten Madina Buch 1 S. 74/75/89 gelesen, alles schon Regel oder Kandidat. Prompt Schritt 0b/4 umgestellt |
+| Vier Seiten warten auf Veröffentlichung | ✅ außer `regelauswahl.html` | 17.09. 01:20 veröffentlicht; `regelauswahl.html` neu bauen wartet auf Elias (alte Adresse tot, seine Antworten) |
+| Warte-Seite (13 Entscheidungen) | ✅ neu veröffentlicht | `a2e6e33`: 17 Entscheidungen, sechs Fragen aus dem Chat ergänzt |
+| Regelkategorien-Seite: welche vier zuerst | ✅ korrigiert | `f98910d`: zählt jetzt die Sätze, die er sieht (602 Stellen) → Genitiv · إِضَافَة · Kasus · Adjektiv; Version 5 veröffentlicht |
+| `urteile-uebernehmen.mjs` ohne Aufrufer | ✅ grün | `node ../Automation/pruefe-freigaben.mjs` Exit 0 („10 ohne ausführenden Aufrufer, davon 10 bekannt von Hand") |
+| Sprecherspur Folge 17–20 fehlt | ✅ erledigt | `transcripts/sprecher/folge-17…20.rttm` (Routine, fertig 04:13); `node pruefe-sprecher.js` Exit 0. ⚠️ F19 99,9 % ein Sprecher — Fundstellen lesen, nicht dem Lehreranteil glauben |
+
+**Weiter offen (nachgemessen):**
+- `vorrat.mjs` „bewusst ohne Satz" (كُبْرَى) — To-Do Punkt 3.
+- `vorrat.mjs` KV-Abruf ohne zweiten Versuch — To-Do Punkt 2.
+- `git push` der Wartung abgewiesen, `pruefe-freigaben.mjs` grün — To-Do Punkt 10.
+- Reverso-Beleg مَكْسُورٌ weggefallen — To-Do Punkt 10.
+- 2 Artefakt-Seiten ohne URL (`farbe-wortmarke.html`, `stimmen-liste.html`) — To-Do Punkt 10.
+- Regelauswertung Folge 20 und Stelle 11:26 in Folge 19 — To-Do Punkt 8/8b.
+- Lernstand 24/16 gegen Angabe 12/2 — jetzt als Frage auf seiner Warte-Seite; nicht mehr in jedem Bericht neu fragen.
+
+Wartungsprompt Schritt 8 hat dazu eine Regel bekommen: einen Punkt aus dem
+letzten Bericht erst nach Blick auf solche Sitzungseinträge, `git log` und
+einer eigenen Messung als offen weitertragen.
