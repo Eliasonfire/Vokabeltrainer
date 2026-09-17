@@ -190,6 +190,37 @@ for (const k of Object.keys(SENTENCE_TAGS)) {
 console.log(`\n=== Regelbedingung: ${geprueft} von ${Object.values(SENTENCE_TAGS).flat().length} Markierungen pruefbar, ${verdacht} verletzen sie ===`);
 for (const [id, v] of Object.entries(proRegel)) if (v.schlecht) console.log(`  ${id}: ${v.schlecht}/${v.n}`);
 
+// --- Pruefung 1a: Eichfaelle fuer harf-jarr-01 (17.09.2026) ----------------
+//
+// Die Bedingung laesst كَ nur VOR dem Artikel zu (Kommentar oben, 16.09.2026):
+// sehr viele Woerter fangen mit ك an. Bis heute hielt diese Grenze nur der
+// Kommentar — lockerte jemand ك(?=ال) zu ك, waeren alle 13 bestehenden
+// Markierungen weiter gruen, und kein Pruefer haette es bemerkt. Dasselbe fuer
+// عن: ohne Wortgrenze ginge عِنْدَ durch. Deshalb Eichfaelle in BEIDE
+// Richtungen, und sie zaehlen hart.
+// Die Woerter ohne Vokalzeichen, weil blank() sie ohnehin entfernt; einer mit
+// vollem Taschkil aus Codepoints, damit auch dieser Weg geprueft ist.
+// [[zeichenklasse_nie_sichtbar_kopieren]] [[pruefwerkzeug_mit_eingebauter_antwort]]
+const EICH_JARR = (() => {
+  const z = (...c) => String.fromCharCode(...c);
+  const kalMudarris = z(0x0643, 0x064E, 0x0627, 0x0644, 0x0652, 0x0645, 0x064F, 0x062F, 0x064E,
+                        0x0631, 0x0651, 0x0650, 0x0633, 0x0650);                 // كَالْمُدَرِّسِ
+  return [
+    [kalMudarris, true], ['كالمدرس', true], ['في', true], ['عن المسجد', true],
+    ['بخير', true], ['للكتاب', true], ['على', true], ['إلى', true],
+    ['كتاب', false], ['كرسي', false], ['كبير', false], ['كيف', false],
+    ['كم', false], ['كان', false], ['عند', false], ['كلب', false],
+  ];
+})();
+let eichJarr = 0;
+for (const [w, soll] of EICH_JARR) {
+  if (PRUEFUNG['harf-jarr-01'](w) !== soll) {
+    eichJarr++;
+    console.log(`  ⛔ Eichfall harf-jarr-01: >>${w}<< sollte ${soll ? 'durchgehen' : 'NICHT durchgehen'}`);
+  }
+}
+console.log(`=== Eichung harf-jarr-01: ${EICH_JARR.length - eichJarr} von ${EICH_JARR.length} Faellen richtig (${EICH_JARR.filter(([, s]) => !s).length} davon muessen abgelehnt werden) ===`);
+
 // --- Pruefung 1b: Regeln ueber FEHLENDES Tanwin an bestimmten Woertern? ---
 //
 // Neu am 18.08.2026, aus dem Fall الْحِصَانُ heraus verallgemeinert. Diese
@@ -438,6 +469,7 @@ console.log(`\n=== Trennschaerfe: ${stumpf.length} von ${Object.keys(PRUEFUNG).f
 const HART = [
   ['Satzquellen', OHNE_SATZ.length, 'markierte Saetze ohne Satztext'],
   ['Regelbedingung', verdacht, 'Markierungen verletzen die Bedingung ihrer Regel'],
+  ['Eichung harf-jarr-01', eichJarr, 'Eichfaelle der Genitivpartikel-Bedingung kippen'],
   ['Tanwin', bestimmt, 'Markierungen an einem bestimmten Wort'],
   ['Wortgrenzen', schief, 'Markierungen sitzen mitten in einem Wort'],
   ['Unsichtbar', unsichtbar, 'eingetragene Markierungen werden nicht angezeigt']
