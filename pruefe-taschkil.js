@@ -650,7 +650,43 @@ const REGEL_AUSNAHMEN = [
     /* "اَلْ" / "الْ" - der Artikel wird als Baustein genannt. Sein Sukun sitzt
        auf dem letzten Zeichen, das der Koerper-Test nicht ansieht. */
     trifft: w => w.replace(HARAKA_IRGENDEINE, '') === 'ال' },
+  { name: 'Endungszitat',
+    /* „Adjektive auf ـانُ", „die auf ـان (Alif + Nun) enden" — zitiert wird eine
+       ENDUNG, erkennbar am Tatweel davor. Ihr Koerper ist nur ein
+       Dehnungsbuchstabe (Alif, Waw, Ya, Alif maqsura), und der traegt nie ein
+       Vokalzeichen. Gemessen am 17.09.2026: genau die zwei Meldungen „انُ · ان"
+       in adjektive-an-ohne-tanwin-01, beide keine Luecke.
+       ⚠️ Nur mit Tatweel UND reinem Dehnungskoerper: „ان" ohne Tatweel und ein
+       ganzes Wort hinter einem Tatweel bleiben Befund (eicheRegelAusnahmen). */
+    trifft: (w, wert) => {
+      const koerper = [...w.replace(new RegExp(HARAKA_IRGENDEINE.source, 'g'), '')].slice(0, -1);
+      return koerper.length > 0 && String(wert || '').includes(TATWEEL + w)
+        && koerper.every(c => [0x0627, 0x0648, 0x064A, 0x0649].includes(c.charCodeAt(0)));
+    } },
 ];
+
+/* Eichung der Regel-Ausnahme „Endungszitat" — beide Richtungen. Arabisch aus
+   Codepoints, nicht kopiert. [[zeichenklasse_nie_sichtbar_kopieren]] */
+function eicheRegelAusnahmen(){
+  const z = (...c) => String.fromCharCode(...c);
+  const AN = z(0x0627, 0x0646), AN_U = z(0x0627, 0x0646, 0x064F);       // ان · انُ
+  const KITAB = z(0x0643, 0x062A, 0x0627, 0x0628);                        // كتاب
+  const endung = REGEL_AUSNAHMEN.find(a => a.name === 'Endungszitat');
+  const faelle = [
+    ['„auf ـانُ" ist Endungszitat', AN_U, 'Adjektive auf ' + TATWEEL + AN_U + ' ohne Tanwin', true],
+    ['„auf ـان (Alif + Nun)" ist Endungszitat', AN, 'die auf ' + TATWEEL + AN + ' (Alif + Nun) enden', true],
+    ['„ان" OHNE Tatweel bleibt Befund', AN, 'das Wort ' + AN + ' steht allein', false],
+    ['ganzes Wort hinter Tatweel bleibt Befund', KITAB, 'ein ' + TATWEEL + KITAB + ' ohne Zeichen', false],
+  ];
+  let kaputt = 0;
+  console.log('\n=== Eichung (Endungszitat in Regeltexten) ===');
+  for (const [was, w, wert, soll] of faelle){
+    const ist = !!(endung && endung.trifft(w, wert));
+    if (ist !== soll){ kaputt++; console.log('  ⛔  ' + was + ' — ergab ' + ist); }
+    else console.log('  ok   ' + was);
+  }
+  return kaputt;
+}
 
 const regelBefunde = [];
 let regelWoerter = 0, regelAusgenommen = 0;
@@ -667,7 +703,7 @@ let regelWoerter = 0, regelAusgenommen = 0;
       const wort = rohwort.replace(/^[\s(«"'‹„]+|[\s),.;:!?«»"'›“]+$/g, '');
       if (!wort) return;
       regelWoerter++;
-      const a = REGEL_AUSNAHMEN.find(x => x.trifft(wort));
+      const a = REGEL_AUSNAHMEN.find(x => x.trifft(wort, wert));
       if (a) { regelAusgenommen++; return; }
       /* Der Koerper ist alles ausser dem letzten Zeichen: die Kasusendung
          allein macht ein Wort nicht vokalisiert. */
@@ -980,7 +1016,7 @@ function zeigeBuchBericht(){
               '\n   sind "Haraka fehlt" und die Hamzat-al-wasl-Gruppe.');
 }
 
-const waslEichung = eicheWaslGruppen();
+const waslEichung = eicheWaslGruppen() + eicheRegelAusnahmen();
 if (!befunde.length){
   console.log('\nKeine Luecke in den Repo-Dateien — dort ist alles vokalisiert.' +
     (buchBefunde.length ? ` (Die Buchdateien haben ${buchBefunde.length}.)` : ''));
