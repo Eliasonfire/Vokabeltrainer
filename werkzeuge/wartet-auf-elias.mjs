@@ -304,6 +304,31 @@ function gruppenAus(text){
     })(),
     zeilen: alleGruppen.map(g => (g.keinMangel ? '✓ kein Mangel: ' : '') + g.zahl + "× " + g.name + (g.woerter.length ? "  —  " + g.woerter.slice(0, 5).join(" · ") + (g.woerter.length > 5 ? " …" : "") : ""))
   });
+
+  /* ⭐ Unvokalisierte Wörter in REGELTEXTEN (17.09.2026). pruefe-taschkil.js
+     meldet sie in einem eigenen Abschnitt und endet damit auf Exit 1 — auf
+     dieser Seite standen sie nie. Am 17.09. waren es بلا (in „مُؤَنَّث بلا تَاء")
+     und مزدوجة (in „أَعْضَاء مزدوجة"): Bestand, Bücher, Madina-Schlüssel 2/3
+     und Folge 9 (42:53, 48:32) belegen keine Schreibung — der Lehrer sagt dort
+     nur Deutsch („Doppelte Körperteile … sind weiblich"). arabdict schlägt
+     بِلا vor, Reverso vokalisiert keines von beiden: EIN Wörterbuch ist kein
+     Beleg. Also eine Frage, keine Reparatur. Gemessen aus der Ausgabe, nicht
+     abgeschrieben — ist eine Zeile belegt, fällt sie von selbst weg. */
+  const rt = /=== Regeln mit unvokalisierten Woertern: (\d+) ===\r?\n((?:  [^\n]*\r?\n)+)/.exec(r.text);
+  if (rt && Number(rt[1]) > 0){
+    const zeilenR = rt[2].split(/\r?\n/).map(z => z.trim()).filter(z => /^[a-z0-9-]+: /.test(z));
+    posten.push({
+      titel: 'Regeltitel mit einem arabischen Wort, das niemand belegt',
+      zahl: zeilenR.length, einheit: 'Regeln', dazu: 'ohne Vokalzeichen, ohne Quelle', auswahl: true,
+      aufwand: 'je Regel: rausnehmen — oder sagen, wie es im Unterricht geschrieben wurde',
+      warum: 'Diese Wörter stehen ohne Vokalzeichen im Titel deiner Regelkarte. Dein Lehrer hat die Regel nur '
+        + 'auf Deutsch erklärt, und weder deine Bücher noch die Madina-Schlüssel noch dein Bestand kennen das Wort. '
+        + 'Selbst vokalisieren darf ich es nicht, ein einziges Wörterbuch reicht als Beleg nicht.',
+      wie: 'Sag „raus", dann steht dort nur der deutsche Titel. Kennst du die Schreibung aus deinem Heft, nenn sie mir.',
+      zeilen: zeilenR,
+      seite: '', seiteText: ''
+    });
+  }
 }
 
 /* C) Funktionsanzeige */
