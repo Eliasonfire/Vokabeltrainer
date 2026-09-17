@@ -783,6 +783,24 @@ function ladeQuranStandNeu(){
      Rueckfall. Hier war er harmlos, weil der erste greift; als ALLEINIGER
      Zweig waere die Surenliste nach einem Abgleich nie neu gezeichnet worden.
      [[werkzeug_ohne_aufrufer]] */
+  /* ⛔⛔ ABER NICHT, WÄHREND EINE SURE OFFEN IST (17.09.2026).
+     Elias: „ich habs gedrückt und wurde dann aus der sure rausgeschmissen, das
+     soll auch ncith so sein"
+
+     `renderSurahList()` blendet die Versliste AUS und die Surenliste EIN — das
+     ist sein Zweck. Wer gerade liest, steht damit mitten im Lesen wieder in der
+     Liste. Gerufen wird es hier vom Abgleich (`gleicheAb` → `ladeStandNeu`),
+     und der läuft, sobald irgendetwas zusammengeführt wurde: auch während er
+     liest, auch vom anderen Gerät ausgelöst. Der Fehler ist also älter als das
+     Zurücknehmen des Hakens — der hat ihn nur jedes Mal ausgelöst.
+
+     Die Liste wird beim Zurückgehen ohnehin neu gebaut (Historie-Eintrag je
+     Ebene, siehe unten), der Haken ist also nicht verloren.
+     ⚠️ Die Haken IN der offenen Sure bleiben so lange stehen, wie sie beim
+     Öffnen waren — ein Neubau der Versliste würde seinen Rollstand verlieren,
+     und das mitten im Lesen wäre der schlechtere Tausch.
+     [[ausfall_ist_unsichtbar_gebaut]] */
+  if (OFFENE_SURE !== null) return;
   if (typeof renderSurahList === 'function') renderSurahList();
 }
 function istFavorit(id){ return !!QURAN_FAV[id]; }

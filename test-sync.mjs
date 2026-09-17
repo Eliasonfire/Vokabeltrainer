@@ -32,6 +32,10 @@ function baueUmgebung(wandeln){
       removeItem: k => { delete speicher[k]; }
     },
     document: { addEventListener(){}, visibilityState: 'visible' },
+    /* ⚠️ Steht in der App in js/kern.js (Tagesbeginn 8 Uhr). Hier fest, damit
+       die Faelle unten ein bekanntes „heute" haben; dass es die Funktion in
+       js/kern.js wirklich gibt, wird eigens geprueft. */
+    todayStr: () => '2026-09-17',
     fetch: async () => { throw new Error('Netz im Pruefstand nicht erlaubt'); },
     setTimeout: () => 0,
     clearTimeout: () => {},
@@ -529,6 +533,67 @@ console.log('=== Gelesene Suren: eine Ruecknahme ueberlebt den Abgleich (17.09.2
   pruefe('… und zwar NACH vt_suraGelesen (sonst ist die eigene Karte schon gemischt)',
     liste.indexOf('vt_suraGelesenZeit') > liste.indexOf('vt_suraGelesen'),
     liste.indexOf('vt_suraGelesen') + ' / ' + liste.indexOf('vt_suraGelesenZeit'));
+}
+
+console.log('');
+console.log('=== Zielverlauf: die Surenringe von HEUTE werden nicht gemischt (17.09.2026) ===');
+/* ⛔⛔ DER FEHLER, DEN ELIAS GEMELDET HAT: *„ich habs gedrückt und wurde dann
+   aus der sure rausgeschmissen, das soll auch ncith so sein"*. Die Rücknahme
+   schreibt `wiederholen [0,1]`, das Maximum holte die [1,1] vom Server zurück,
+   der Abgleich meldete „etwas geändert" → `ladeStandNeu()` → und das zeichnet
+   die Surenliste neu, also raus aus der offenen Sure. Bei JEDEM Abgleich aufs
+   Neue, weil die App sofort wieder [0,1] schrieb. */
+{
+  const HEUTE = '2026-09-17', GESTERN = '2026-09-16';
+
+  const { ctx, speicher } = baueUmgebung();
+  const fuehreZusammen = vm.runInContext('fuehreZusammen', ctx);
+  speicher['vt_zielverlauf'] = JSON.stringify({
+    [HEUTE]:   { wiederholen: [0, 1], neulernen: [0, 2], mulk: [0, 1], karten: [3, 10] },
+    [GESTERN]: { wiederholen: [0, 1], karten: [2, 10] }
+  });
+  fuehreZusammen({ stempel: {}, daten: { vt_zielverlauf: JSON.stringify({
+    [HEUTE]:   { wiederholen: [1, 1], neulernen: [2, 2], mulk: [1, 1], karten: [9, 10] },
+    [GESTERN]: { wiederholen: [1, 1], karten: [7, 10] }
+  }) } });
+  const z = JSON.parse(speicher['vt_zielverlauf']);
+  pruefe('die zurueckgenommene Wiederholung bleibt bei 0 (kein Maximum)',
+    z[HEUTE].wiederholen[0] === 0, JSON.stringify(z[HEUTE]));
+  pruefe('dasselbe fuer „Neu lernen" und den taeglichen Ring',
+    z[HEUTE].neulernen[0] === 0 && z[HEUTE].mulk[0] === 0, JSON.stringify(z[HEUTE]));
+  pruefe('⭐ die Karten von heute nehmen weiter das Maximum (echter Zaehler)',
+    z[HEUTE].karten[0] === 9, JSON.stringify(z[HEUTE]));
+  pruefe('und gestern bleibt alles beim Maximum — das aendert niemand mehr',
+    z[GESTERN].wiederholen[0] === 1 && z[GESTERN].karten[0] === 7, JSON.stringify(z[GESTERN]));
+
+  /* Ein Geraet, das heute noch gar nichts gezeichnet hat, bekommt den Wert. */
+  const { ctx: c2, speicher: s2 } = baueUmgebung();
+  const fz2 = vm.runInContext('fuehreZusammen', c2);
+  s2['vt_zielverlauf'] = JSON.stringify({ [HEUTE]: { karten: [1, 10] } });
+  fz2({ stempel: {}, daten: { vt_zielverlauf: JSON.stringify({ [HEUTE]: { wiederholen: [1, 1] } }) } });
+  pruefe('fehlt der Ring hier ganz, kommt er von drueben (nichts zu ueberschreiben)',
+    JSON.parse(s2['vt_zielverlauf'])[HEUTE].wiederholen[0] === 1, s2['vt_zielverlauf']);
+
+  /* ⛔ Gegenprobe: mit dem alten Maximum kaeme die volle Runde zurueck — und
+     damit das Hin und Her, das ihn aus der Sure warf. */
+  const quelleSync = fs.readFileSync(path.join(WURZEL, 'js/sync.js'), 'utf8');
+  const zeile = "if (tag === zielverlaufHeute() && ZIELVERLAUF_ABGELEITET.has(teil) && Array.isArray(h)) return;";
+  pruefe('Gegenprobe moeglich: die Zeile steht so in js/sync.js', quelleSync.includes(zeile));
+  const alt = baueUmgebung(roh => roh.replace(zeile, ''));
+  const fzAlt = vm.runInContext('fuehreZusammen', alt.ctx);
+  alt.speicher['vt_zielverlauf'] = JSON.stringify({ [HEUTE]: { wiederholen: [0, 1] } });
+  fzAlt({ stempel: {}, daten: { vt_zielverlauf: JSON.stringify({ [HEUTE]: { wiederholen: [1, 1] } }) } });
+  pruefe('Gegenprobe: ohne die Regel holt das Maximum die volle Runde zurueck',
+    JSON.parse(alt.speicher['vt_zielverlauf'])[HEUTE].wiederholen[0] === 1, alt.speicher['vt_zielverlauf']);
+
+  /* ⚠️ Und die Namen muessen die sein, die js/start.js wirklich vergibt —
+     sonst greift die Regel an keinem einzigen Ring. */
+  const start = fs.readFileSync(path.join(WURZEL, 'js/start.js'), 'utf8');
+  const namen = vm.runInContext('ZIELVERLAUF_ABGELEITET', ctx);
+  const fehlende = [...namen].filter(n => !new RegExp("'" + n + "'").test(start));
+  pruefe('alle drei Ringnamen kommen in js/start.js vor', fehlende.length === 0, fehlende.join(', '));
+  pruefe('todayStr() gibt es wirklich in js/kern.js',
+    /function todayStr\s*\(/.test(fs.readFileSync(path.join(WURZEL, 'js/kern.js'), 'utf8')));
 }
 
 console.log('');

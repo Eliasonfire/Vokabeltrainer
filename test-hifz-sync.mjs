@@ -180,6 +180,43 @@ sag(/function ladeQuranStandNeu/.test(qu) && /HIFZ = h\.schlank/.test(qu),
 sag(/renderSurahList/.test(qu.split('function ladeQuranStandNeu')[1] || ''),
     '… und zeichnet die Surenliste neu');
 
+/* ---------- ⛔⛔ Aber NICHT mitten im Lesen (17.09.2026) ----------
+   Elias: „ich habs gedrückt und wurde dann aus der sure rausgeschmissen, das
+   soll auch ncith so sein". `renderSurahList()` blendet die Versliste aus —
+   gerufen vom Abgleich, sobald er etwas zusammengefuehrt hat, also auch
+   waehrend er liest. Hier wird die Funktion AUSGEFUEHRT, nicht gelesen: ob
+   gezeichnet wird, ist eine Bedingung, und die sieht man dem Text nicht an. */
+console.log('');
+console.log('--- Der Abgleich waehrend einer offenen Sure ---');
+{
+  const vm = await import('node:vm');
+  const stueck = (qu.match(/function ladeQuranStandNeu\(\)\{[\s\S]*?\n\}/) || [])[0];
+  sag(!!stueck, 'ladeQuranStandNeu() laesst sich ausschneiden');
+  const lauf = (code) => {
+    const c = { HIFZ:{}, HIFZ_ZEIT:{}, HIFZ_VERSE:{}, HIFZ_VERSE_ZEIT:{}, QURAN_FAV:{}, QURAN_FAV_ZEIT:{},
+                OFFENE_SURE: null, gezeichnet: 0, console,
+                hakenLaden: () => ({ schlank: {}, reich: {} }) };
+    c.renderSurahList = () => { c.gezeichnet++; };
+    vm.createContext(c);
+    vm.runInContext(code + '\n;globalThis.__lade = ladeQuranStandNeu;', c);
+    return c;
+  };
+  if (stueck){
+    const c = lauf(stueck);
+    c.OFFENE_SURE = null;  c.__lade();
+    sag(c.gezeichnet === 1, 'in der Surenliste wird neu gezeichnet (wie bisher)');
+    c.OFFENE_SURE = 108;   c.__lade();
+    sag(c.gezeichnet === 1, '⛔ in einer offenen Sure NICHT — sonst fliegt er beim Lesen raus');
+    sag(Object.keys(c.HIFZ).length === 0 && c.gezeichnet === 1,
+        '… die Haken werden trotzdem neu eingelesen (nur das Zeichnen entfaellt)');
+
+    /* Gegenprobe: ohne den Riegel zeichnet es auch mitten im Lesen. */
+    const ohne = lauf(stueck.replace('if (OFFENE_SURE !== null) return;', ''));
+    ohne.OFFENE_SURE = 108; ohne.__lade();
+    sag(ohne.gezeichnet === 1, 'Gegenprobe: ohne den Riegel wuerde er aus der Sure geworfen');
+  }
+}
+
 console.log('');
 console.log(fehler ? '⛔ '+fehler+' Fehler' : '✅ alle Faelle richtig');
 process.exit(fehler?1:0);
