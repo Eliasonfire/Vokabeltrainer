@@ -406,10 +406,19 @@ document.addEventListener('visibilitychange', () => {
 });
 
 /* Welche auswendigen Suren stehen überhaupt in der Runde? */
+/* ⛔⛔ EIN FAVORIT IST NICHT IN DER RUNDE (17.09.2026). Seit dem 17.09. bleibt
+   ein Favorit sein eigener Ring, auch wenn er schon als auswendig abgehakt ist
+   (siehe wdhFavoriten() unten). Stünde er zugleich hier, zählte sein tägliches
+   Lesen auch als Wiederholung: `schonHeute` in wdhHeute() fände ihn, der Ring
+   hieße „Wiederholen Al-Qadr, erledigt", und die Sure, die eigentlich dran war,
+   verschwände — genau Elias' Fehler vom 16.09. („zalzala als ring ist
+   verschwunden"), nur jeden Tag. Eine Sure, die er gerade lernt, muss er nicht
+   „frisch halten". Nimmt er sie aus den Favoriten, kommt sie von selbst in die
+   Runde. */
 function wdhVorrat(){
   if (typeof SURAH_DATA === 'undefined') return [];
   return SURAH_DATA
-    .filter(s => HIFZ[s.id] && !WDH_AUSGENOMMEN.has(s.id))
+    .filter(s => HIFZ[s.id] && !WDH_AUSGENOMMEN.has(s.id) && !istFavorit(s.id))
     .map(s => s.id);
 }
 
@@ -419,7 +428,9 @@ function wdhVorrat(){
    Ring „Neu lernen" (wdhFavorit). Ab dem nächsten Lerntag gehört sie normal zur
    Wiederholungsrunde. Der Zeitpunkt steht im Haken selbst (HIFZ_ZEIT[id].zeit,
    0 bei alten Haken — die gelten nie als „heute").
-   Eine Regel, eine Stelle: beide Ringe fragen hier. [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+   Eine Regel, eine Stelle: beide Ringe fragen hier. [[entscheidung_gilt_fuer_das_zweite_werkzeug]]
+   ⚠️ Seit 17.09.2026 fragt nur noch wdhHeute() hier. Ein Favorit bleibt sein
+   Ring ohnehin, solange der Stern steht — ob heute abgehakt oder nicht. */
 function heuteAuswendigAbgehakt(id){
   const z = (typeof HIFZ_ZEIT === 'object' && HIFZ_ZEIT && HIFZ_ZEIT[id]) ? Number(HIFZ_ZEIT[id].zeit) : 0;
   return z > 0 && typeof lerntagVon === 'function' && lerntagVon(z) === todayStr(0);
@@ -477,12 +488,28 @@ function wdhHeute(){
    lernen" (und zeigt, dass er erledigt ist). Sie geht VOR einem neuen Favoriten,
    sonst verschwände der erledigte Ring wieder, sobald er die nächste Sure
    markiert. Ab morgen ist sie hier raus. */
-function wdhFavorit(){
-  if (typeof SURAH_DATA === 'undefined') return null;
-  const favoriten = SURAH_DATA.filter(s => istFavorit(s.id) && s.id !== 67);
-  const heuteGelernt = favoriten.find(s => HIFZ[s.id] && heuteAuswendigAbgehakt(s.id));
-  const f = heuteGelernt || favoriten.find(s => !HIFZ[s.id]);
-  return f ? f.id : null;
+/* ⛔⛔⛔ ÜBERHOLT AM 17.09.2026 — „ab morgen ist sie hier raus" war MEINE Regel,
+   nicht seine. Am 17.09. um 12:33 fehlte al-Qadr als Ring, und Elias schrieb:
+   „ich sagte ja ich möchte auch das die sura die ich als favourite genommen
+   habe, dass diese mir auch immer als ring vorgeschlagen werden soll, weil ich
+   diese gerade auswendig lerne lernst wenn ich sie als gelernt markiert habe.
+   erst wenn ich sie von den favouriten löse dann kann sie tatsächlich weg."
+
+   Er HATTE es gesagt, am 14.09.: „einen ring für immer die sura die ich als
+   favorieten hinzufüge … jede sura kannst du einen eigenen ring geben. ist
+   nichts außer mulk als favourit hinzugefügt so kann der ring weg". Das
+   `!HIFZ[s.id]` darin stammte von mir — und warf die Sure genau dann aus dem
+   Ring, wenn er sie zum ersten Mal abhakt, also mitten im Lernen.
+
+   Die Regel ist jetzt nur noch seine: JEDER Favorit außer al-Mulk ist ein
+   eigener Ring. Ob er auswendig abgehakt ist, spielt keine Rolle. Weg ist der
+   Ring erst, wenn der Stern weg ist. Deshalb eine LISTE, nicht eine Sure.
+   ⚠️ al-Mulk hat den eigenen Ring „Täglich" — ein zweiter wäre doppelt. */
+function wdhFavoriten(){
+  if (typeof SURAH_DATA === 'undefined') return [];
+  return SURAH_DATA
+    .filter(s => istFavorit(s.id) && s.id !== 67)
+    .map(s => s.id);
 }
 
 /* ---------- Der Haken am Ende der Sure (16.09.2026) ----------
@@ -508,7 +535,7 @@ function wdhFavorit(){
 function inWiederholungsrunde(sure){
   const id = Number(sure);
   if (typeof HIFZ === 'object' && HIFZ[id]) return true;
-  return (typeof wdhFavorit === 'function') && wdhFavorit() === id;
+  return (typeof wdhFavoriten === 'function') && wdhFavoriten().includes(id);
 }
 
 function gelesenKnopfHtml(sure){

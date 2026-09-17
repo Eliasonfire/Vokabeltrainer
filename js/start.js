@@ -300,11 +300,17 @@ function renderTagesringe(){
      nichts. Hier, weil alle Zahlen ohnehin gerade beisammen sind. */
   merkeZielstand('karten', kStand, kZiel);
   merkeZielstand(modus === 'hoeren' ? 'hoeren' : 'saetze', zStand, zZiel);
+  /* ⚠️ „Neu lernen" kann seit 17.09.2026 MEHRERE Ringe haben (ein Ring je
+     Favorit). Einzeln gemerkt, überschriebe der zweite den ersten — deshalb
+     zusammengezählt: wie viele davon voll, von wie vielen. */
+  const neu = [0, 0];
   quran.forEach(r => {
     const teil = r.txt.indexOf('Täglich') === 0 ? 'mulk'
                : r.txt.indexOf('Wiederholen') === 0 ? 'wiederholen' : 'neulernen';
-    merkeZielstand(teil, r.voll ? 1 : 0, 1);
+    if (teil === 'neulernen'){ neu[0] += r.voll ? 1 : 0; neu[1]++; }
+    else merkeZielstand(teil, r.voll ? 1 : 0, 1);
   });
+  if (neu[1]) merkeZielstand('neulernen', neu[0], neu[1]);
 
   /* ⭐ Die Unterzeile sagt jetzt, WO er steht — nicht mehr „dein Tag".
 
@@ -379,9 +385,12 @@ function quranRingDaten(){
   const wdh = wdhHeute();
   if (wdh) ringe.push({ txt: 'Wiederholen<br>' + name(wdh.sure), voll: wdh.erledigt, sure: wdh.sure });
 
-  /* Die Sure, die gerade gelernt wird. */
-  const fav = (typeof wdhFavorit === 'function') ? wdhFavorit() : null;
-  if (fav) ringe.push({ txt: 'Neu lernen<br>' + name(fav), voll: gelesen(fav), sure: fav });
+  /* Die Suren, die gerade gelernt werden — JEDER Favorit ein eigener Ring,
+     auch wenn er schon als auswendig abgehakt ist. Elias am 14.09.: „jede
+     sura kannst du einen eigenen ring geben", am 17.09.: „erst wenn ich sie
+     von den favouriten löse dann kann sie tatsächlich weg". */
+  const favoriten = (typeof wdhFavoriten === 'function') ? wdhFavoriten() : [];
+  favoriten.forEach(fav => ringe.push({ txt: 'Neu lernen<br>' + name(fav), voll: gelesen(fav), sure: fav }));
 
   /* ⛔⛔ JEDER Quran-Ring trägt seine Sure — `sure` oben, nicht nur `nav`.
 
