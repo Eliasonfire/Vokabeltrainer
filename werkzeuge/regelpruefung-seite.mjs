@@ -641,7 +641,20 @@ der App zu sehen, weil ihr ein Beispielsatz fehlt.</p>
 </script>
 `;
 
-fs.writeFileSync(S + 'regelpruefung.html', arabischInSeite(html), 'utf8');
+/* ⛔ 17.09.2026: SELBST sagen, ob sich die Seite geändert hat. Wartungsschritt
+   1c.8c liest dafür `git status --short` — aber `artefakte/` steht in
+   .gitignore, eine Änderung an DIESER Seite sah der Schritt nie (Befund 6 der
+   Wartungsläufe 09.09. und 13.09.). Verglichen wird ohne die Stand-Zeile, sonst
+   wäre sie jeden Tag „geändert". [[werkzeug_misst_kleineren_bestand]] */
+const ZIELDATEI = S + 'regelpruefung.html';
+const neuHtml = arabischInSeite(html);
+const ohneStand = t => String(t).replace(/Stand [^·<]*·/, 'Stand ·');
+const vorherHtml = fs.existsSync(ZIELDATEI) ? fs.readFileSync(ZIELDATEI, 'utf8') : null;
+fs.writeFileSync(ZIELDATEI, neuHtml, 'utf8');
 console.log('geschrieben:', Math.round(html.length / 1024), 'KB');
+console.log(vorherHtml === null ? 'NEU — die Datei gab es vorher nicht.'
+  : ohneStand(vorherHtml) === ohneStand(neuHtml)
+    ? 'unverändert gegenüber dem letzten BAU (nur das Datum). ⚠️ Ob der letzte Bau veröffentlicht ist, sieht dieses Werkzeug nicht — am 17.09.2026 war die Seite im Netz vom 06.09. und 42 KB kleiner.'
+    : '⚠️ GEÄNDERT gegenüber dem letzten Bau — unter https://claude.ai/artifact/4iMdxRvKkFHj699cfyHbra neu veröffentlichen (gehört in den Bericht).');
 console.log('Regeln:', regeln.length, '| Kapitel:', kapNummern.join(', '));
 console.log('mit Beispielsatz:', regeln.filter(r => r.satz).length);
