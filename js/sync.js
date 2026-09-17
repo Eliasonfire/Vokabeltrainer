@@ -100,7 +100,11 @@ const SYNC_SCHLUESSEL = [
      Elias: „du sollst messen wie oft ich täglich meinen soll pro tag erfülle
      und wie viel davon ausgefüllt ist täglich aber nicht mir sagen in app
      sondern nur messen."
-     ⚠️ Ebenfalls eigener Zweig: je Tag und Bereich der HOEHERE Stand. Ein
+     ⚠️ Ebenfalls eigener Zweig: je Tag und Bereich der HOEHERE Stand — ⛔ mit
+     EINER Ausnahme seit dem 17.09.2026: die drei Surenringe von HEUTE (`mulk`,
+     `wiederholen`, `neulernen`) sind aus `vt_suraGelesen` abgeleitet und
+     werden neu berechnet statt gemischt; sonst holte das Maximum eine
+     zurueckgenommene Lesung zurueck. Begruendung am Zweig selbst. Ein
      Blockstempel loeschte ganze Tage des anderen Geraets — bei einer Messung,
      die gerade davon lebt, vollstaendig zu sein, waere das der schlimmste
      Fall. [[daten_ohne_zugang]] */
@@ -841,7 +845,8 @@ function fuehreZusammen(fern){
     }
 
     /* ⭐ Der stille Zielverlauf (15.09.2026): je Tag UND je Bereich der
-       hoehere Stand, das Ziel vom selben Eintrag.
+       hoehere Stand, das Ziel vom selben Eintrag — ⛔ ausser den drei
+       Surenringen von HEUTE, siehe die Begruendung unten im Zweig.
        ⛔ Zwei Ebenen, nicht eine: `{ "2026-09-15": { karten:[9,10], … } }`.
        Ein Blockstempel loeschte ganze Tage des anderen Geraets, ein Merge nur
        auf Tagesebene die Bereiche, die dort nicht vorkamen.
