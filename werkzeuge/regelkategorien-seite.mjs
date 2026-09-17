@@ -76,27 +76,93 @@ const REGELN = ktx.R, TAGS = ktx.T, THEMEN = ktx.TH;
    die falschen vier Kategorien geschickt. [[werkzeug_misst_kleineren_bestand]]
 
    ⚠️ Die Zahl auf jeder Regelkarte („· n Satzstellen") folgt derselben
-   Rechnung — sie soll nicht mehr versprechen, als er zu sehen bekommt. */
+   Rechnung — sie soll nicht mehr versprechen, als er zu sehen bekommt.
+
+   ⛔⛔ 17.09.2026: DIE VORAUSSETZUNG OBEN GALT NICHT MEHR. Seit dem 16.09.
+   trägt jede Markierung einen Satztext (data/beispielsaetze.js, Fachbegriffe,
+   eigene Wörter), und der Satzmodus zeigt mehr als vocab-data.js und das
+   Lehrbuch — js/saetze.js alleSaetze() + nichtVorausgeschrieben() und
+   js/kern.js istBekannt():
+     · die längeren Sätze `satz-lang-…` (immer)
+     · die Sätze der Fachbegriffe und eigenen Wörter (chapter 'personal',
+       immer bekannt)
+     · die Sätze aus data/beispielsaetze.js zu den Buchwörtern der Kapitel,
+       die er lernt (saetzeNachtragen in js/buecher.js)
+   Gezählt wurden nur 400 von 749 Markierungen. An seinem Gerätestand vom
+   16.09. 21:58 gemessen (scratchpad rangfolge-sichtbar.cjs): sichtbar sind
+   355 Sätze mit 645 Markierungen, und oben standen Genitiv · Kasus · Schrift
+   · Adjektiv, wo es Genitiv · إِضَافَة · Kasus · Adjektiv sein muss —
+   إِضَافَة stand auf Platz 7 und hat nach Genitiv die meisten offenen Stellen,
+   die er wirklich sieht. [[aufgabenzahl_haengt_am_filter]]
+
+   Der Kapitelstand kommt aus data/lernstand.json (`angabe` = seine eigene
+   Angabe, `nichtInArbeit` bleibt draußen), nicht aus seinem Browser. Seine
+   einzeln freigeschalteten Wörter kennt das Werkzeug nicht
+   [[einzeln_frei_ist_nur_im_browser]] — gemessen ändern sie die obersten fünf
+   nicht (mit ihnen 645 Stellen, ohne 602). */
 const satzKtx = { window: {}, console: { log(){}, warn(){}, error(){} }, document: { addEventListener(){} } };
 vm.createContext(satzKtx);
-for (const datei of ['vocab-data.js', 'lehrbuch-saetze.js']) {
+for (const datei of ['vocab-data.js', 'lehrbuch-saetze.js', 'data/beispielsaetze.js', 'data/fachbegriffe.js']) {
   try { vm.runInContext(fs.readFileSync(path.join(REPO, datei), 'utf8'), satzKtx); }
   catch (e) { console.log('  ⛔ ' + datei + ' nicht lesbar: ' + e.message); process.exit(1); }
 }
-vm.runInContext(
-  'globalThis.ECHT = new Set('
-  + '  VOCAB_DATA.filter(w => w.sentAr).map(w => String(w.id))'
-  + '    .concat(LEHRBUCH_SAETZE.map(w => String(w.id))));', satzKtx);
-const ECHTE_SAETZE = satzKtx.ECHT;
-if (!ECHTE_SAETZE || !ECHTE_SAETZE.size) {
+vm.runInContext('globalThis.S = { VD: VOCAB_DATA, LB: LEHRBUCH_SAETZE, BS: BEISPIELSAETZE, FB: FACHBEGRIFF_VOKABELN };', satzKtx);
+const S = satzKtx.S;
+const EIGENE = JSON.parse(fs.readFileSync(path.join(REPO, 'data/eigene-woerter.json'), 'utf8')).woerter || [];
+const LERNSTAND = JSON.parse(fs.readFileSync(path.join(REPO, 'data/lernstand.json'), 'utf8'));
+const ANGABE = LERNSTAND.angabe || {}, NICHT_IN_ARBEIT = LERNSTAND.nichtInArbeit || {};
+/* Der Buchabzug darf nicht ins Repo (arabicroots AGB 3.7/9) und liegt nur hier
+   auf der Platte. ⛔ Fehlt er für ein Buch, das er lernt, bricht das Werkzeug
+   ab: still weitergezählt käme die alte, zu kleine Rangfolge heraus. */
+const buchFenster = {};
+for (const n of fs.readdirSync(path.join(REPO, 'data')).filter(n => /^vokabeln-.*\.js$/.test(n)))
+  new Function('window', fs.readFileSync(path.join(REPO, 'data', n), 'utf8'))(buchFenster);
+const BUCH = buchFenster.VOKABELN || {};
+
+const lernIds = new Set(S.VD.map(w => String(w.id)));
+const ECHTE_SAETZE = new Set();
+S.VD.filter(w => w.sentAr).forEach(w => ECHTE_SAETZE.add(String(w.id)));
+S.LB.forEach(s => ECHTE_SAETZE.add(String(s.id)));
+Object.keys(S.BS).filter(id => id.startsWith('satz-lang-') && S.BS[id] && S.BS[id].sentAr)
+  .forEach(id => ECHTE_SAETZE.add(id));
+S.FB.concat(EIGENE).filter(w => w && w.sentAr).forEach(w => ECHTE_SAETZE.add(String(w.id)));
+let buchSaetze = 0;
+for (const [slug, bis] of Object.entries(ANGABE)) {
+  if (NICHT_IN_ARBEIT[slug]) continue;
+  if (!BUCH[slug]) {
+    console.log('  ⛔ data/vokabeln-' + slug + '.js fehlt — ohne den Buchabzug fehlen seine Buchsätze in der Rangfolge.');
+    process.exit(1);
+  }
+  for (const w of BUCH[slug]) {
+    const id = String(w.id);
+    if (lernIds.has(id) || ECHTE_SAETZE.has(id) || !(Number(w.chapter) <= Number(bis))) continue;
+    if (S.BS[id] && S.BS[id].sentAr) { ECHTE_SAETZE.add(id); buchSaetze++; }
+  }
+}
+if (!ECHTE_SAETZE.size) {
   console.log('  ⛔ Keine Sätze gefunden — VOCAB_DATA/LEHRBUCH_SAETZE leer?');
   process.exit(1);
 }
 
+/* ⛔ Nicht gezählt werden darf nur ein Buchwort außerhalb seines Fensters.
+   Jede andere Markierung, die hier herausfiele, gehört zu einer Satzquelle,
+   die dieses Werkzeug nicht kennt — genau so ist die Rangfolge vom 16.09.
+   still falsch geworden (neue Quellen, alte Zählung). Dann lieber abbrechen. */
+const buchIds = new Set(Object.values(BUCH).flat().map(w => String(w.id)));
 const marken = {};
+const fremd = [];
 for (const [satzId, liste] of Object.entries(TAGS)) {
-  if (!ECHTE_SAETZE.has(satzId)) continue;
+  if (!liste || !liste.length) continue;
+  if (!ECHTE_SAETZE.has(satzId)) {
+    if (!buchIds.has(satzId) || lernIds.has(satzId)) fremd.push(satzId);
+    continue;
+  }
   for (const t of liste) marken[t.ruleId] = (marken[t.ruleId] || 0) + 1;
+}
+if (fremd.length) {
+  console.log('  ⛔ ' + fremd.length + ' markierte Sätze aus keiner bekannten Quelle (z. B. ' + fremd.slice(0, 5).join(', ')
+    + ') — erst klären, ob er sie sieht, sonst stimmt die Rangfolge nicht.');
+  process.exit(1);
 }
 
 /* Ein Beispielsatz je Regel — die Stelle, an der er die Regel wirklich sieht. */
@@ -505,6 +571,10 @@ fs.writeFileSync(ZIEL + '.neu', arabischInSeite(html), 'utf8');
 fs.renameSync(ZIEL + '.neu', ZIEL);
 
 console.log('Seite gebaut: ' + path.relative(REPO, ZIEL));
+console.log('  gezählt über ' + ECHTE_SAETZE.size + ' Sätze, die er sieht (davon ' + buchSaetze + ' Buchsätze bis '
+  + (Object.entries(ANGABE).filter(([b]) => !NICHT_IN_ARBEIT[b]).map(([b, k]) => b + ' K' + k).join(', ') || '—') + ') · '
+  + Object.values(marken).reduce((a, n) => a + n, 0) + ' Satzstellen');
+console.log('  zuerst: ' + vorrangListe.map(([, g]) => g.name + ' (' + g.offeneStellen + ')').join(' · '));
 console.log('  ' + gesamt + ' Regeln in ' + [...gruppen.values()].filter(g => g.regeln.length).length + ' Kategorien');
 for (const [, g] of gruppen) if (g.regeln.length)
   console.log('    ' + String(g.regeln.length).padStart(3) + '  ' + g.name);
