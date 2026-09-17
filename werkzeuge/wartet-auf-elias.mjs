@@ -1099,6 +1099,37 @@ posten.push({
     + 'sind und ى nur der Träger. Sag nein, dann bleibt es wie jetzt.',
   seite: '', seiteText: ''
 });
+/* ⛔⛔ ÄLTERE FRAGEN, DIE NUR IN DER TO-DO STANDEN (17.09.2026).
+   Elias fragte: „deine to do ist doch noch nciht fertig oder" — und hatte
+   recht. Diese Seite sagte „Alles andere ist erledigt", während die To-Do 44
+   offene Kästen führte. Einzeln geprüft (`scratchpad/offene-kaesten.mjs`,
+   gegen Code, KV und Projektnotiz): 29 waren längst erledigt oder überholt und
+   sind abgehakt; diese 11 warten wirklich auf ihn. Jede Zeile nennt das Datum,
+   an dem die Frage entstand. Kein Werkzeug zählt sie — sie stehen hier fest,
+   bis er antwortet; beantwortete Nummern von Hand streichen. */
+posten.push({
+  titel: 'Ältere Fragen, die nur in der To-Do standen — gelten sie noch?',
+  zahl: 11, einheit: 'Fragen', dazu: 'aus August und September, geprüft 17.09.', auswahl: true,
+  aufwand: 'je Frage eine kurze Antwort — oder „streichen"',
+  warum: 'Diese Seite sagte bisher, alles andere sei erledigt. Das stimmte nicht: in der To-Do standen noch '
+    + '44 offene Punkte. Ich habe jeden geprüft. 29 waren längst gebaut oder überholt, die habe ich abgehakt. '
+    + 'Diese 11 brauchen wirklich dich. Was du streichst, baue ich nicht.',
+  wie: 'Sag die Nummer und deine Antwort, zum Beispiel „2: raus". Oder „alle streichen".',
+  zeilen: [
+    '1 · Koran: Die Ansicht „Kästchen" hat keinen Rahmen mehr. Umbenennen, zum Beispiel in „Einzeln"? (08.09.)',
+    '2 · Einstellung „Sitzungsgröße": Sie ändert nichts, solange „Karten pro Tag" nicht größer ist — bei dir stehen beide auf 10. Raus oder bleiben? (08.09.)',
+    '3 · Bild zur Eselsbrücke: Dein Ja ist da. Offen ist, womit (Emoji oder kleine Zeichnung) und für welche Wörter. (07.09.)',
+    '4 · Satzmodus: Hinweise erst nach deinem Versuch zeigen. Dein Ja ist da. Offen ist, ob bei allen Übungen oder nur dort, wo der Hinweis die Antwort schon verrät. (07.09.)',
+    '5 · Karteikarten: vor dem Umdrehen erst aus vier Bedeutungen tippen? Die Box bestimmt weiter deine Einschätzung danach. (07.09.)',
+    '6 · Dein ADHS-Befund: Steht dort „unaufmerksam", „hyperaktiv-impulsiv" oder beides? Davon hängt ab, ob sich ein Versuch mit Hintergrundrauschen beim Lernen lohnt. (08.09.)',
+    '7 · Deine Projektnotiz zum Vokabeltrainer: neue Einträge unten anhängen oder oben einfügen? Bisher ist es gemischt. (26.08.)',
+    '8 · Vier Regeln zusammenlegen? Deine Notizen vom 26.08. zu: مُضَافٌ (bestimmt ohne اَلْ) · مُضَافٌ erkennen · إِضَافَة – Verkettung · بِـ. Sagen sie dasselbe?',
+    '9 · Regel „مُبْتَدَأ وخَبَر (Subjekt und Aussage)": Deine Notiz sagt, sie kommt erst nach Kapitel 9 dran. Später zeigen oder lassen? (26.08.)',
+    '10 · To-Do: Madina-Schlüssel und Bayna Yadayk stehen je zweimal drin, einmal erledigt, einmal offen. Darf ich die alten Stellen löschen? (19.08.)',
+    '11 · Koran, Listenmodus: Das Verszeichen ۝ ist zugleich der Knopf zum Abhaken. So lassen?'
+  ],
+  seite: '', seiteText: ''
+});
 
 /* ⛔⛔ REGELKANDIDATEN — der Posten, der bis zum 20.08.2026 fehlte.
 
