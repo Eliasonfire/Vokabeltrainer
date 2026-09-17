@@ -675,6 +675,9 @@ const hatSaetze = laden('data/beispielsaetze.js', false);
    waehrend `vorrat.mjs` „alle 154 vollstaendig" meldete.
    [[daten_ohne_zugang]]: eingetragen ist nicht erreichbar. */
 laden('grammar-data.js');
+/* Die Karten der Regelsammlung — ein Fachbegriff kann an einer davon hängen
+   (siehe fachbegriffErreichbar). */
+laden('regelsammlung-data.js', false);
 laden('wortfelder-data.js', false);
 /* ⛔⛔ WEG 3 UND 4 — Elias am 20.08.2026: „ich habe viele neue wörter
    freigeschaltet und neue eigene vokabeln hinzugefügt. sie müssen das volle
@@ -1480,8 +1483,40 @@ function typFestwert(w){
    es richtig ist. [[kandidatenliste_ist_keine_fehlerliste]] */
 const REGEL_HAT_MARKIERUNG = new Set(
   Object.values(hol('SENTENCE_TAGS') || {}).flat().map(m => m && m.ruleId).filter(Boolean));
+
+/* ⛔⛔ UND WENN DIE REGEL EINE KARTE DER REGELSAMMLUNG IST (17.09.2026).
+   `gram-fem-kubra` (كُبْرَى) hängt an `f19-tanith` — einer Karte aus
+   regelsammlung-data.js (FOLGE19_KARTEN), nicht aus grammar-data.js. Solche
+   Karten tragen nie eine Markierung in SENTENCE_TAGS, also meldete dieses
+   Werkzeug كُبْرَى in JEDEM Lauf als „Beispielsatz fehlt" — obwohl
+   data/fachbegriffe.js begründet, warum es bewusst keinen Satz bekommt
+   („ohne Steigerungsform, die er noch nicht hatte, wäre jeder Satz damit
+   unnatürlich"), und obwohl die Karte das Wort selbst zeigt: „ى wie كُبْرَى".
+
+   Erreichbar heißt hier deshalb: die Karte gibt es, und sie nennt GENAU dieses
+   Wort (Schreibung zeichengleich, NFC). Eine Karte, die nur das Thema hat,
+   reicht nicht — dann bleibt der Satz ein echter Befund.
+   ⛔ Keine Ausnahmeliste und kein Feld „ohne Satz": die Begründung steht an
+   der Karte, und ein neues Wort an einer neuen Karte fällt von selbst darunter.
+   [[allgemeine_regel_statt_listeneintrag]] */
+const SAMMLUNG = new Map((hol('FOLGE19_KARTEN') || []).map(k => [k.id, k]));
+const UEBER_SAMMLUNG = [];
+function kartenText(k){
+  const teile = [k.titel, k.ar, k.kern];
+  (k.gruppen || []).forEach(g => teile.push(g.name, ...(g.merkmale || [])));
+  (k.beispiele || []).forEach(b => teile.push(b.ar, b.de));
+  return teile.filter(Boolean).join(' \n ').normalize('NFC');
+}
 function fachbegriffErreichbar(w){
   return !!(w.regel && REGEL_HAT_MARKIERUNG.has(w.regel));
+}
+/* ⚠️ Getrennt und NUR für Wörter ohne eigenen Satz gefragt: hat ein Begriff
+   einen Satz, wird weiter geprüft, ob der markiert ist. Der erste Entwurf fragte
+   die Karte vor dem Satz — und hätte bei zwölf Begriffen mit eigenem Satz
+   (هَذَانِ, حَمْرَاءُ, بِ …) die Markierungsprüfung still übersprungen. */
+function ueberSammlungErreichbar(w){
+  const karte = w.regel && SAMMLUNG.get(w.regel);
+  return !!(karte && w.ar && kartenText(karte).includes(String(w.ar).normalize('NFC')));
 }
 
 [['eigene', EIGENE], ['fachbegriffe', FACH], ['selbst', SELBST], ['vocab-data', NUR_VOCAB]].forEach(([slug, liste]) => {
@@ -1506,9 +1541,11 @@ function fachbegriffErreichbar(w){
        obwohl sechs einen haben. [[kandidatenliste_ist_keine_fehlerliste]] */
     const s = hatSatz(id) || !!(w.sentAr && String(w.sentAr).trim());
     const m = s ? (satzErreichbar(id) || istMetasprache(satzText(id))) : true;
-    if (n < 3 || !s || !m || ff.length)
+    const sammlung = !s && slug === 'fachbegriffe' && ueberSammlungErreichbar(w);
+    if (sammlung) UEBER_SAMMLUNG.push(w.ar + ' (Karte ' + w.regel + ' nennt das Wort)');
+    if (n < 3 || (!s && !sammlung) || !m || ff.length)
       offen.push({ slug, kapitel: 0, id, ar: w.ar, de: w.de,
-                   hat: n, fehltEB: Math.max(0, 3 - n), fehltSatz: !s,
+                   hat: n, fehltEB: Math.max(0, 3 - n), fehltSatz: !s && !sammlung,
                    fehltMarkierung: s && !m, fehltKategorie: false, fehltFelder: ff,
                    root: w.root, pl: w.pl, type: w.type });
   });
@@ -1670,6 +1707,8 @@ console.log('    fehlende Eselsbruecken: ' + fehlendeEB);
 console.log('    fehlende Beispielsaetze:' + fehlendeSatz
   + (fehlendeSatz ? '   ' + offen.filter(w => w.fehltSatz)
       .map(w => w.ar + ' (' + w.de + ')').join(' · ') : ''));
+if (UEBER_SAMMLUNG.length)
+  console.log('      ohne eigenen Satz, erreichbar ueber die Regelsammlung: ' + UEBER_SAMMLUNG.join(' · '));
 console.log('    fehlende Markierungen:  ' + fehlendeMark + (fehlendeMark ? '   ⛔ diese Saetze stehen in KEINEM Thema' : ''));
 if (metaQuelle && metaQuelle.startsWith('⛔'))
   console.log('      ⚠️ Aufzaehlungserkennung: ' + metaQuelle);
