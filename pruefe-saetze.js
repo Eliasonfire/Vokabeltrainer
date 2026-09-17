@@ -413,6 +413,41 @@ console.log('\n=== LEXIKON-VERGLEICH: sieht die App dasselbe wie diese Pruefung?
      [[app_auswahl_entscheidet]] */
   setzeLexikon(null);
   eiche(EICH_VERB, giltAlsVerb,    'VERBEN + traegtTanwin (ohne Lexikon)');
+  /* ⛔⛔ DIE REGELN VOM 17.09.2026 — jede mit einem Fall, an dem sie scheitern kann.
+
+     Artikel: MIT einem Mini-Lexikon, in dem das Verb steht. Ohne Lexikon waere
+     al-amali auch ohne die Regel kein Verb, und der Test maesse nichts — die
+     Falle vom 21.08. oben, nur andersherum. Deshalb die Gegenprobe amila: sie
+     zeigt, dass das Mini-Lexikon ueberhaupt wirkt.
+     Saetze: geprueft wird nur ASCII (erwartet/stimmt), keine arabischen
+     Rollennamen — ein Vergleich mit kopiertem Arabisch kann an der Reihenfolge
+     der Zeichen scheitern, ohne dass es jemand sieht.
+     [[pruefwerkzeug_mit_eingebauter_antwort]] */
+  const mitLexikon = (eintraege, fn) => { setzeLexikon(eintraege); try { return fn(); } finally { setzeLexikon(null); } };
+  const EICH_ARTIKEL = [
+    /* [Wort, Verb im Mini-Lexikon, soll giltAlsVerb, warum] */
+    ['\u0627\u0644\u0652\u0639\u064E\u0645\u064E\u0644\u0650.', '\u0639\u064E\u0645\u0650\u0644\u064E', false, 'al-amali (50466, in SEINEM Stand als Verb gelesen) — Artikel, also nie ein Verb'],
+    ['\u0639\u064E\u0645\u0650\u0644\u064E', '\u0639\u064E\u0645\u0650\u0644\u064E', true, 'Gegenprobe: amila selbst bleibt ein Verb — das Mini-Lexikon wirkt'],
+    ['\u0648\u064E\u0627\u0644\u0652\u062D\u064E\u0645\u0652\u062F\u064F', '\u062D\u064E\u0645\u0650\u062F\u064E', false, 'wa-l-hamdu (mb1-63-3, mit madina-3 als Verb gelesen)'],
+    ['\u0627\u0650\u0644\u0652\u062A\u064E\u0641\u064E\u062A\u064E', '\u0627\u0650\u0644\u0652\u062A\u064E\u0641\u064E\u062A\u064E', true, 'Form VIII mit al- vorn: Kasra auf dem Alif, kein Artikel'],
+    ['\u0627\u0644\u0652\u062A\u064E\u0641\u064E\u062A\u064E', '\u0627\u0650\u0644\u0652\u062A\u064E\u0641\u064E\u062A\u064E', true, 'dasselbe mitten im Satz ohne Kasra: Sonnenbuchstabe ta ohne Schadda, kein Artikel'],
+    ['\u062C\u064E\u062F\u064F\u0651', '\u062C\u064E\u062F\u064E\u0651', false, 'jaddu (46004, Grossvater) — NICHT_VERB, mit madina-2 als Verb gelesen']
+  ];
+  eiche(EICH_ARTIKEL.map(([w, , soll, warum]) => [w, soll, warum]),
+        w => { const e = EICH_ARTIKEL.find(x => x[0] === w); return mitLexikon([{ ar: e[1], type: 'verb' }], () => giltAlsVerb(e[0])); },
+        'Artikel ist kein Verb (mit Mini-Lexikon)');
+  const EICH_SATZ = [
+    /* [Satz, Pruefung an analysiereSatz(), warum] */
+    ['\u0648\u064E\u0627\u0644\u0650\u062F\u064F \u0627\u0644\u0637\u064E\u0651\u0627\u0644\u0650\u0628\u0650 \u0645\u064F\u0647\u064E\u0646\u0652\u062F\u0650\u0633\u064C.', r => r[1].erwartet === 'jarr' && r[1].stimmt === true,
+      'walidu — das wa ist Wurzelbuchstabe, nicht wa + Artikel: at-talibi ist mudaf ilayh'],
+    ['\u0622\u0645\u0650\u0646\u064E\u0629\u064F \u0648\u064E\u0641\u064E\u0627\u0637\u0650\u0645\u064E\u0629\u064F \u0641\u0650\u064A \u0627\u0644\u0652\u0628\u064E\u064A\u0652\u062A\u0650.', r => r[1].erwartet !== 'jarr' && r[1].stimmt !== false,
+      'Name + wa + Name — keine Idafa, wa-fatimatu ist ein neues Glied'],
+    ['\u0643\u0650\u062A\u064E\u0627\u0628\u064F \u0627\u0644\u0637\u064E\u0651\u0627\u0644\u0650\u0628\u064F.', r => r[1].stimmt === false,
+      'Gegenprobe: der falsche Nominativ im mudaf ilayh wird WEITER gemeldet (die wa-Regel ist bewusst eng)']
+  ];
+  eiche(EICH_SATZ.map(([satz, , warum]) => [satz, true, warum]),
+        satz => EICH_SATZ.find(e => e[0] === satz)[1](analysiereSatz(satz)),
+        'Satzrollen: walid und Name + wa + Name');
   setzeLexikon(wortschatz);
   if (schief) process.exitCode = 1;
 }

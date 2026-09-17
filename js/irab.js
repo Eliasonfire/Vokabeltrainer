@@ -303,7 +303,57 @@ function endung(wort){
   return null;
 }
 
-const istBestimmt = w => /^(ال|وال|فال|بال|كال|لل)/.test(ohneVokale(w).replace(/^[وف](?=ال)/, ''));
+/* ⛔⛔ OB DAS ال WIRKLICH DER ARTIKEL IST, STEHT IN DEN ZEICHEN (17.09.2026).
+
+   Bis heute sah istBestimmt() nur die Buchstaben: وَالِدُ war „وَ + الـ + د" und
+   galt als bestimmt. Folge in «وَالِدُ الطَّالِبِ مُهَنْدِسٌ.»: ein bestimmtes Wort
+   kann kein مُضَاف sein, also wurde الطَّالِبِ zum نَعْت mit erwartetem
+   Nominativ — ein Kasusfehler in einem richtigen Satz. Deshalb stehen die
+   Sätze zu وَالِدٌ und وَالِدَةٌ in data/beispielsaetze.js bis heute ohne Iḍāfa.
+   (Dort steht als Grund „das Muster فَاعِل hält es für ein Adjektiv" — gemessen
+   war es der Artikel.)
+
+   Gemessen am 17.09.2026 an allen Sätzen der App und allen Wortformen des
+   vollen Abzugs, wie der Artikel geschrieben ist:
+     - sein Alif trägt NIE ein Zeichen. Jedes ال mit Kasra auf dem Alif ist
+       eine Verbform: اِلْبَسْ, اِلْزَمْ, اِلْتَفَتَ.
+     - sein Lam trägt Sukun oder nichts; vor einem Sonnenbuchstaben trägt der
+       Buchstabe danach Schadda (الطَّالِبُ). Einen Vokal auf dem Lam hat er nur
+       in الِامْتِحَانُ — Kasra, weil ein Hamzat al-waṣl folgt.
+     - وَالِدٌ, وَالٍ, بَالٌ, بَالَ, بَالِغٌ, كَالَ tragen einen Vokal auf dem Lam:
+       dort ist و/ب/ك ein Wurzelbuchstabe und kein angehängtes Wort.
+   ⚠️ Widerlegt wird nur, was die Zeichen WIDERLEGEN. Ein unvokalisiertes
+   „والد" bleibt, wie es war — ohne Zeichen ist es nicht zu entscheiden.
+   ⚠️ Die Buchstaben stehen als Zahlen, nicht als Zeichenklasse: eine sichtbar
+   kopierte Klasse hatte am 18.08. andere Codepoints, als sie zeigte.
+   [[skelettvergleich_wirft_information_weg]] */
+const SONNENBUCHSTABEN = [0x062A, 0x062B, 0x062F, 0x0630, 0x0631, 0x0632, 0x0633,
+  0x0634, 0x0635, 0x0636, 0x0637, 0x0638, 0x0644, 0x0646];   // ت ث د ذ ر ز س ش ص ض ط ظ ل ن
+function artikelWiderlegt(w){
+  /* Buchstaben mit ihren Zeichen: [{ n: Codepoint, z: [Zeichen] }] */
+  const t = [];
+  for (const ch of String(w || '')){
+    const n = ch.charCodeAt(0);
+    if ((n >= 0x064B && n <= 0x0652) || n === 0x0670){ if (t.length) t[t.length - 1].z.push(n); }
+    else if (n !== 0x0640 && '.،؟!«»:؛'.indexOf(ch) < 0) t.push({ n, z: [] });
+  }
+  const istAlif = x => !!x && (x.n === 0x0627 || x.n === 0x0671);          // ا ٱ
+  /* و ف ب ك davor: وَالْكِتَابُ, بِالْقَلَمِ — oder eben وَالِدٌ, بَالٌ */
+  const i = (t.length >= 3 && [0x0648, 0x0641, 0x0628, 0x0643].includes(t[0].n)
+             && istAlif(t[1]) && t[2].n === 0x0644) ? 1 : 0;
+  if (!istAlif(t[i]) || !t[i + 1] || t[i + 1].n !== 0x0644) return false;   // kein ا + ل
+  const alif = t[i].z, lam = t[i + 1].z, danach = t[i + 2];
+  if (alif.includes(0x0650)) return true;                    // Kasra auf dem Alif: اِلْبَسْ
+  if (lam.includes(0x0651)) return false;                    // Schadda auf dem Lam: الَّذِي
+  if (lam.some(n => n !== 0x0652))                           // ein Vokal auf dem Lam: وَالِدٌ
+    return !(lam.includes(0x0650) && istAlif(danach));       //   … außer الِامْتِحَانُ
+  /* Sukun auf dem Lam, danach ein Sonnenbuchstabe OHNE Schadda: الْتَفَتَ
+     mitten im Satz. Vor einem Sonnenbuchstaben verdoppelt der Artikel immer. */
+  return lam.includes(0x0652) && !!danach && SONNENBUCHSTABEN.includes(danach.n)
+         && !danach.z.includes(0x0651);
+}
+const istBestimmt = w => /^(ال|وال|فال|بال|كال|لل)/.test(ohneVokale(w).replace(/^[وف](?=ال)/, ''))
+                      && !artikelWiderlegt(w);
 
 /* Wortkern ohne Vokalzeichen, Satzzeichen und angeschriebenes وَ / فَ.
    Das و/ف darf NUR abgeschnitten werden, wenn danach noch ein brauchbares
@@ -341,7 +391,9 @@ const istIndeklinabel = w => INDEKLINABEL.includes(ohneFragepartikel(w))
    fangen genauso an, und ob das ل zum Wort gehoert oder eine Praeposition ist,
    entscheidet sich nicht am Schriftbild. Lieber keine Aussage als eine
    falsche. */
-const hatAngeschriebenesJarr = w => /^(لل|بال|كال)/.test(kernWort(w));
+/* ⚠️ Mit artikelWiderlegt(): بَالٌ (Sinn), بَالِغٌ (erwachsen) und كَالَ (messen)
+   fangen genauso an und haben keine Präposition (17.09.2026). */
+const hatAngeschriebenesJarr = w => /^(لل|بال|كال)/.test(kernWort(w)) && !artikelWiderlegt(w);
 
 /* مِنْ (von) und مَنْ (wer) sehen ohne Vokalzeichen gleich aus - der Lehrer
    macht daraus eine eigene Regel (min-man-unterscheiden-01). Hier steht das
@@ -505,7 +557,13 @@ const NICHT_VERB = ['صفر', 'عمي', 'جر', 'ل', 'فوق',
      zuerst: solange بَعْدَ als فِعْل gilt, wird der ZURUF-Zweig gar nicht
      erreicht. Ich hatte es zuerst nur in ZURUF eingetragen und die Pruefung
      meldete unveraendert weiter — dieselbe Reihenfolge-Falle wie bei كُلُّ. */
-  'بعد', 'قبل'];
+  'بعد', 'قبل',
+  /* ⛔ 17.09.2026: جَدٌّ „Großvater" — die Karte aus Bayna Yadayk 1, um die
+     Elias am 16.09. gebeten hat (*„opa und oma brauche ich auch"*). Ihr Satz
+     «جَدُّ الطَّالِبِ مَرِيضٌ.» (46004) wurde mit madina-2 zum Verbalsatz: جَدُّ
+     traf das Verb جَدَّ, الطَّالِبِ wurde فَاعِل und مَرِيضٌ مَفْعُول بِهِ. Weder
+     Tanwīn noch Artikel fangen es ab — der مُضَاف trägt beides nicht. */
+  'جد'];
 /* Adjektive, die in den Beispielsaetzen vorkommen und deren Wortart nicht
    verlaesslich aus dem Lexikon kommt: كسلان und مجرور fehlen im kleinen
    Bestand ganz, حار steht im grossen ZWEIMAL (adjective und verb حَارَ) und
@@ -758,6 +816,18 @@ const giltAlsVerb = w => {
      diese Funktion erst zur Laufzeit aufgerufen wird.
      [[allgemeine_regel_statt_listeneintrag]] · [[nomen_wird_zum_verb_gelesen]] */
   if (istInListe(w, PERSONALPRONOMEN)) return false;
+  /* ⛔⛔ EIN WORT MIT ARTIKEL IST NIE EIN VERB (17.09.2026).
+
+     In SEINEM Stand (madina-1 + bayna-yadayk-1) stand in
+     «دَأَبَ الطَّالِبُ عَلَى الْعَمَلِ.» das letzte Wort als فِعْل da: wortart()
+     schneidet zum Nachschlagen den Artikel ab, und عمل traf das Verb عَمِلَ.
+     Mit madina-2 kippte الْعِلْمُ (عَلِمَ), mit madina-3 الْمَالَ (مَالَ), und
+     mit madina-3 oder bayna-yadayk-3 im Lehrbuchsatz mb1-63-3 وَالْحَمْدُ (حَمِدَ).
+     Dieselbe Art Regel wie Tanwīn und Pronomen: eine allgemeine statt des
+     nächsten Listeneintrags. Verbformen mit ال vorn (اِلْتَفَتَ, اِلْبَسْ)
+     scheitert sie nicht — die widerlegt artikelWiderlegt() am Kasra des Alifs.
+     [[allgemeine_regel_statt_listeneintrag]] · [[nomen_wird_zum_verb_gelesen]] */
+  if (istBestimmt(w)) return false;
   const genau = wortartGenau(w);
   if (genau && genau !== 'verb') return false;
   if (istInListe(w, NICHT_VERB)) return false;
@@ -880,7 +950,20 @@ function schliesstIdafaAus(naechstes){
   const w = String(naechstes).replace(/[.،؟!«»:؛]/g, '').trim();
   /* Tanwin Dammatan (ٌ) oder Fathatan (ً) am Wortende = raf oder nasb.
      Beides kann kein مُضَاف إِلَيْه sein. Tanwin Kasratan (ٍ) darf stehen. */
-  return /[ًٌ]ا?$/.test(w);
+  if (/[ًٌ]ا?$/.test(w)) return true;
+  /* ⛔ „NAME + وَ + NAME" (17.09.2026). In آمِنَةُ وَفَاطِمَةُ trägt keiner der
+     beiden Namen Tanwīn — also galt آمِنَةُ als مُضَاف und وَفَاطِمَةُ als
+     مُضَاف إِلَيْه mit erwartetem Genitiv. Deshalb steht auf der Karte هَاتَانِ
+     heute «طَالِبَةٌ وَمُدَرِّسَةٌ» statt der beiden Namen (data/fachbegriffe.js).
+     Ein مُضَاف إِلَيْه endet nie auf blankem Ḍamma: im Genitiv steht Kasra, beim
+     Wort ohne Tanwīn Fatḥa. Steht also ein وَ vorn und Ḍamma hinten, ist das وَ
+     das Bindewort und das Wort ein neues Glied, kein Genitiv.
+     ⚠️ Bewusst NUR mit وَ vorn. Ohne diese Bedingung meldete die Prüfung den
+     Schreibfehler كِتَابُ الطَّالِبُ nicht mehr — der Satz würde still zu
+     „مُبْتَدَأ + خَبَر", und der falsche Nominativ sähe richtig aus.
+     [[pruefwerkzeug_mit_eingebauter_antwort]] */
+  const e = endung(w);
+  return !!(e && e.kasus === 'raf' && !e.tanwin && ohneVokale(w).charCodeAt(0) === 0x0648);   // و
 }
 
 function wortart(w){

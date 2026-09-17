@@ -1485,7 +1485,11 @@ const BEISPIELSAETZE = {
      dreibuchstabige مَرَّ mit Šadda ohne geladenes Buch als Nomen und macht
      daraus einen مُبْتَدَأ — dann stünde am Satz eine falsche Zerlegung.
      يَمُرُّ trägt das يَـ und ist eindeutig ein Verb. Befund vom 16.09.2026
-     steht im maintenance-log. */
+     steht im maintenance-log.
+     ⭐ 17.09.2026 nachgemessen: MIT bayna-yadayk-1 — dem Buch dieser Karte —
+     liest der Erklärer مَرَّ richtig als فِعْل, nur ohne das Buch nicht. Ohne
+     das Buch erscheint die Karte aber gar nicht. Die Gegenwartsform war also
+     nicht nötig, schadet aber nicht; einen Eintrag in VERBEN braucht kein Satz. */
   '45982': {
     sentAr: 'يَمُرُّ الْحِمَارُ فِي الشَّارِعِ.',
     sentDe: 'Der Esel geht auf der Straße vorbei.'
@@ -1615,7 +1619,12 @@ const BEISPIELSAETZE = {
      ⚠️ Keine Iḍāfa: وَالِدَة hat das Muster فَاعِلَة, und der Iʿrāb-Erklärer
      liest es deshalb als Adjektiv — ein folgendes Wort würde zum نَعْت
      erklärt statt zum مُضَاف إِلَيْه. Befund vom 16.09.2026 im
-     maintenance-log; bis er behoben ist, bleibt der Satz ohne Iḍāfa. */
+     maintenance-log; bis er behoben ist, bleibt der Satz ohne Iḍāfa.
+     ✅ 17.09.2026 nachgemessen: schuld war nicht das Muster, sondern die
+     Artikelerkennung — وَالِدَةُ galt als „وَ + الـ", also als bestimmt, und
+     ein bestimmtes Wort kann kein مُضَاف sein. Behoben in js/irab.js
+     (artikelWiderlegt, geeicht in pruefe-saetze.js). Der Satz bleibt, wie er
+     ist; eine Iḍāfa mit وَالِد/وَالِدَة zerlegt der Erklärer jetzt richtig. */
   '46003': {
     sentAr: 'الْوَالِدَةُ فِي الْمَطْبَخِ.',
     sentDe: 'Die Mutter ist in der Küche.'
@@ -1660,7 +1669,9 @@ const BEISPIELSAETZE = {
   /* وَالِدٌ — Vater · Nominalsatz, خَبَر im Nominativ.
      ⚠️ Wie bei وَالِدَة oben: das Muster فَاعِل lässt den Iʿrāb-Erklärer
      وَالِد für ein Adjektiv halten, ein folgendes Wort würde zum نَعْت.
-     Deshalb hier ohne Iḍāfa. */
+     Deshalb hier ohne Iḍāfa.
+     ✅ 17.09.2026: behoben — die Ursache war die Artikelerkennung, nicht das
+     Muster (siehe den Kommentar bei 46003 oben). */
   '46010': {
     sentAr: 'الْوَالِدُ مُهَنْدِسٌ.',
     sentDe: 'Der Vater ist Ingenieur.'

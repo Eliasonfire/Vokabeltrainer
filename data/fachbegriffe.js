@@ -942,7 +942,8 @@ const FACHBEGRIFF_VOKABELN = [
     belegt: 1,
     /* ⚠️ Nicht „آمِنَةُ وَفَاطِمَةُ": ein weiblicher Name trägt kein Tanwīn, und
        js/irab.js liest „Nomen ohne Tanwīn + Nomen" als Iḍāfa — das وَ davor
-       übersieht es noch (offener Punkt in der To-Do, 16.09.2026). طَالِبَةٌ und
+       übersah es bis zum 17.09.2026 (seitdem erkennt schliesstIdafaAus() „وَ vorn,
+       Ḍamma hinten" als neues Glied, geeicht in pruefe-saetze.js; der Satz bleibt). طَالِبَةٌ und
        مُدَرِّسَةٌ stehen so auf seiner Karte „Weiblichkeit". */
     sentAr: "هَاتَانِ طَالِبَةٌ وَمُدَرِّسَةٌ.",
     sentDe: "Diese beiden sind eine Studentin und eine Lehrerin.",
