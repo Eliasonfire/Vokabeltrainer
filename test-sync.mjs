@@ -549,11 +549,11 @@ console.log('=== Zielverlauf: die Surenringe von HEUTE werden nicht gemischt (17
   const { ctx, speicher } = baueUmgebung();
   const fuehreZusammen = vm.runInContext('fuehreZusammen', ctx);
   speicher['vt_zielverlauf'] = JSON.stringify({
-    [HEUTE]:   { wiederholen: [0, 1], neulernen: [0, 2], mulk: [0, 1], karten: [3, 10] },
+    [HEUTE]:   { wiederholen: [0, 1], neulernen: [0, 2], mulk: [0, 1], zufall: [0, 1], karten: [3, 10] },
     [GESTERN]: { wiederholen: [0, 1], karten: [2, 10] }
   });
   fuehreZusammen({ stempel: {}, daten: { vt_zielverlauf: JSON.stringify({
-    [HEUTE]:   { wiederholen: [1, 1], neulernen: [2, 2], mulk: [1, 1], karten: [9, 10] },
+    [HEUTE]:   { wiederholen: [1, 1], neulernen: [2, 2], mulk: [1, 1], zufall: [1, 1], karten: [9, 10] },
     [GESTERN]: { wiederholen: [1, 1], karten: [7, 10] }
   }) } });
   const z = JSON.parse(speicher['vt_zielverlauf']);
@@ -561,6 +561,9 @@ console.log('=== Zielverlauf: die Surenringe von HEUTE werden nicht gemischt (17
     z[HEUTE].wiederholen[0] === 0, JSON.stringify(z[HEUTE]));
   pruefe('dasselbe fuer „Neu lernen" und den taeglichen Ring',
     z[HEUTE].neulernen[0] === 0 && z[HEUTE].mulk[0] === 0, JSON.stringify(z[HEUTE]));
+  /* ⭐ Seit 18.09.2026: die zufaellige Sure des Tages ist genauso abgeleitet. */
+  pruefe('dasselbe fuer den Ring „Zufaellig" (seit 18.09.)',
+    z[HEUTE].zufall[0] === 0, JSON.stringify(z[HEUTE]));
   pruefe('⭐ die Karten von heute nehmen weiter das Maximum (echter Zaehler)',
     z[HEUTE].karten[0] === 9, JSON.stringify(z[HEUTE]));
   pruefe('und gestern bleibt alles beim Maximum — das aendert niemand mehr',
@@ -591,7 +594,17 @@ console.log('=== Zielverlauf: die Surenringe von HEUTE werden nicht gemischt (17
   const start = fs.readFileSync(path.join(WURZEL, 'js/start.js'), 'utf8');
   const namen = vm.runInContext('ZIELVERLAUF_ABGELEITET', ctx);
   const fehlende = [...namen].filter(n => !new RegExp("'" + n + "'").test(start));
-  pruefe('alle drei Ringnamen kommen in js/start.js vor', fehlende.length === 0, fehlende.join(', '));
+  pruefe('alle Ringnamen der Regel kommen in js/start.js vor', fehlende.length === 0, fehlende.join(', '));
+  /* ⛔ Und in die ANDERE Richtung (18.09.2026): jeder Surenring, den
+     quranRingDaten() vergibt, muss in der Regel stehen. Kam ein neuer Ring
+     dazu („Zufaellig") und fehlte hier, kehrte fuer genau diesen Ring beim
+     Zuruecknehmen das Hin und Her zurueck, das ihn aus der Sure warf. */
+  const ringTeil = start.slice(start.indexOf('function quranRingDaten('), start.indexOf('function renderQuranRinge('));
+  const vergeben = [...new Set((ringTeil.match(/teil:\s*'[a-z]+'/g) || []).map(t => t.match(/'([a-z]+)'/)[1]))];
+  const ohneRegel = vergeben.filter(n => !namen.has(n));
+  pruefe('jeder Surenring aus quranRingDaten() (Feld teil) steht in der Regel',
+    vergeben.length >= 4 && ohneRegel.length === 0,
+    'vergeben: ' + vergeben.join(', ') + ' · ohne Regel: ' + (ohneRegel.join(', ') || '—'));
   pruefe('todayStr() gibt es wirklich in js/kern.js',
     /function todayStr\s*\(/.test(fs.readFileSync(path.join(WURZEL, 'js/kern.js'), 'utf8')));
 }

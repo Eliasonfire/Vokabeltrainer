@@ -586,6 +586,100 @@ function wdhFavoriten(){
     .map(s => s.id);
 }
 
+/* ---------- ⭐⭐ EINE ZUFÄLLIGE SURE, DIE ER NOCH NICHT AUSWENDIG KANN (18.09.2026) ----
+
+   Elias hat den Auftrag unterwegs in seine Google-Aufgaben geschrieben:
+     „Random sura die ich nicht auswendig kann als Ring machen Claude"
+   und dazu im Chat: „als tagesziel so zu sagen, einfach auf dem startbildschirm"
+
+   Also jeden Tag EINE Sure als Ring im „Heute"-Kasten. Voll ist er, wenn genau
+   diese Sure heute gelesen ist — dieselbe Zählung wie bei allen Surenringen (WDH:
+   der Beobachter am Surenende, und der Haken von Hand, den inWiederholungsrunde()
+   unten auch hier anbietet).
+
+   Die Auswahl ist SEINE Regel: „die ich nicht auswendig kann" = kein Haken
+   „auswendig" (HIFZ). Von MIR dazugenommen — sonst hätte eine Sure zwei Ringe:
+   kein Favorit (der ist schon „Neu lernen") und nicht al-Fātiḥa/al-Mulk, die er
+   ohnehin täglich liest (seine Worte vom 15.09.: „außer fatiha und mulk").
+
+   ⛔⛔ ZUFÄLLIG, ABER DEN GANZEN TAG DIESELBE — UND AUF JEDEM GERÄT DIESELBE.
+   Math.random() gäbe bei jedem Neuzeichnen eine andere Sure und auf Handy und
+   Tablet zwei verschiedene. Deshalb zieht jede Sure aus dem Datum ein festes Los
+   (zufallsLos), dran ist die mit dem kleinsten. Kein Speicher, kein Abgleich:
+   beide Geräte rechnen dasselbe aus.
+   Warum nicht „Datum → Platz in der Liste": hakt er im Lauf des Tages eine
+   ANDERE Sure als auswendig ab, rückt die Liste zusammen, derselbe Platz zeigt
+   auf eine andere Sure — und der Ring wechselte mitten am Tag. Genau das war
+   sein Fehler vom 16.09. („zalzala als ring ist verschwunden"). Mit dem Los
+   bleibt die Sure, solange SIE in der Auswahl steht.
+
+   ⛔ Hakt er GERADE DIESE heute als auswendig ab oder macht sie zum Favoriten,
+   kommt es darauf an, ob er sie heute schon gelesen hat:
+   - schon gelesen → sie bleibt heute der Ring (voll). Sonst stünde nach dem
+     Lesen plötzlich eine neue, ungelesene Sure da — die Art Umspringen, die
+     er am 16.09. gemeldet hat.
+   - noch nicht gelesen → sofort eine andere. Dann war die Wahl falsch: er
+     kann sie ja (seine Regel), oder sie hat jetzt ihren Ring „Neu lernen".
+   Ausgelöst hat das der erste echte Tag: am 18.09. zog der Ring bei ihm
+   aḍ-Ḍuḥā (93) — und am 17.08. hatte er gesagt, er kenne die Suren „bis sura
+   duha" auswendig; abgehakt war 93 in der App trotzdem nicht.
+   ⚠️ Die eine Lücke, bewusst offen: nimmt er heute einen Haken oder Stern
+   WEG, kommt diese Sure sofort in die Auswahl und ist mit etwa 1 zu 98 die neue.
+   Das zu schließen hieße, den Stand vom Tagesbeginn zu speichern und
+   abzugleichen — für einen seltenen Handgriff zu viel neue Mechanik.
+
+   ⚠️ Auch lange Suren können kommen — er hat keine Grenze genannt. Gemessen an
+   seinem Stand vom 17.09. (98 Suren in der Auswahl, Wörter mit quranWorte()):
+   die mittlere hat 379 Wörter (al-Mulk 333), 25 haben über 1000, al-Baqara
+   6116. Eine Grenze wäre seine Entscheidung, nicht meine.
+   Bewacht von test-surenringe.mjs (Abschnitt 9, mit Gegenproben). */
+function zufallsLos(tag, id){
+  const text = tag + '|' + id;
+  let h = 0x811c9dc5;                                  /* FNV-1a … */
+  for (let i = 0; i < text.length; i++){ h ^= text.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  /* … und durchmischt (murmur3 fmix32). ⛔ Ohne diese drei Zeilen gemessen, über
+     400 Tage bei seinen 98 Suren: nur 82 verschiedene, al-Humaza (104) 33-mal,
+     in den ersten 14 Tagen al-Anfāl (8) viermal. Mit ihnen: 97 verschiedene,
+     keine öfter als 10-mal — so viel, wie echter Zufall auch ergibt (96,4
+     erwartet). */
+  h ^= h >>> 16; h = Math.imul(h, 0x85ebca6b);
+  h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35);
+  h ^= h >>> 16;
+  return h >>> 0;
+}
+
+/* Ist dieser Favorit heute erst gesetzt worden? Gegenstück zu
+   heuteAuswendigAbgehakt(), gelesen aus QURAN_FAV_ZEIT. */
+function heuteFavoritGesetzt(id){
+  const z = (typeof QURAN_FAV_ZEIT === 'object' && QURAN_FAV_ZEIT && QURAN_FAV_ZEIT[id]) ? Number(QURAN_FAV_ZEIT[id].zeit) : 0;
+  return z > 0 && typeof lerntagVon === 'function' && lerntagVon(z) === todayStr(0);
+}
+
+function zufallsVorrat(){
+  if (typeof SURAH_DATA === 'undefined') return [];
+  const heute = todayStr(0);
+  /* heute gesetzt UND heute schon gelesen → zählt heute noch mit (siehe oben) */
+  const bleibtHeute = id => typeof WDH === 'object' && WDH[id] === heute;
+  return SURAH_DATA
+    .filter(s => !WDH_AUSGENOMMEN.has(s.id)
+              && !(HIFZ[s.id] && !(heuteAuswendigAbgehakt(s.id) && bleibtHeute(s.id)))
+              && !(istFavorit(s.id) && !(heuteFavoritGesetzt(s.id) && bleibtHeute(s.id))))
+    .map(s => s.id);
+}
+
+/* Die Sure des Tages. `tag` nur für den Prüfer — die App ruft ohne. */
+function zufallsSureHeute(tag){
+  const vorrat = zufallsVorrat();
+  if (!vorrat.length) return null;
+  const t = tag || todayStr(0);
+  let dran = null, kleinstes = Infinity;
+  for (const id of vorrat){
+    const los = zufallsLos(t, id);
+    if (los < kleinstes){ kleinstes = los; dran = id; }
+  }
+  return dran;
+}
+
 /* ---------- Der Haken am Ende der Sure (16.09.2026) ----------
 
    Elias, nachdem az-Zalzala nicht gezählt worden war: „qadr und zalzala müssen
@@ -605,11 +699,15 @@ function wdhFavoriten(){
 
    ⚠️ Nur bei Suren, für die WDH überhaupt etwas bedeutet: auswendige (die
    Wiederholungsrunde und al-Mulk) und die Favoritensure, die er gerade lernt.
-   Unter den übrigen 100+ Suren wäre der Knopf eine Zeile ohne Folgen. */
+   Unter den übrigen 100+ Suren wäre der Knopf eine Zeile ohne Folgen.
+   ⭐ Seit 18.09.2026 auch die zufällige Sure des Tages — sie hat einen Ring, und
+   für jede Sure mit Ring gilt sein Wunsch vom 17.09.: „bei den suren die ich
+   ringe habe … das heute gelesen antippen kann". */
 function inWiederholungsrunde(sure){
   const id = Number(sure);
   if (typeof HIFZ === 'object' && HIFZ[id]) return true;
-  return (typeof wdhFavoriten === 'function') && wdhFavoriten().includes(id);
+  if ((typeof wdhFavoriten === 'function') && wdhFavoriten().includes(id)) return true;
+  return (typeof zufallsSureHeute === 'function') && zufallsSureHeute() === id;
 }
 
 /* ⛔⛔ DER KNOPF GEHT SEIT DEM 17.09.2026 IN BEIDE RICHTUNGEN. Bis dahin stand
