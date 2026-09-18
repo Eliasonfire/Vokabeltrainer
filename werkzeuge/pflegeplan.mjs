@@ -340,6 +340,19 @@ export const PFLEGEPLAN = [
        test-lesezaehlung.mjs (die Automatik zählt nach der Rücknahme nicht
        nach) und test-surenringe.mjs (der Ring wird wieder leer).
        ⚠️ Der Schlüssel wächst nie über 114 Einträge — einer je Sure. */
+    /* ⭐ 18.09.2026 (v529): EINE ZUFÄLLIGE SURE DES TAGES, Ring „Zufällig".
+       Elias, unterwegs in seine Google-Aufgaben: „Random sura die ich nicht
+       auswendig kann als Ring machen Claude", im Chat: „als tagesziel so zu
+       sagen, einfach auf dem startbildschirm". Gezogen aus allem ohne Haken
+       „auswendig", ohne Favoriten, ohne al-Fātiḥa und al-Mulk; das Los hängt am
+       Datum — den ganzen Tag und auf jedem Gerät dieselbe Sure.
+       Kein neuer Schlüssel, kein neuer Inhalt: die Auswahl rechnet aus vt_hifz
+       und vt_quranFav, gelesen wird über vt_suraGelesen wie bei allen Ringen.
+       ⛔ Pflege an EINER Stelle: der neue Bereich `zufall` des stillen
+       Zielverlaufs steht in ZIELVERLAUF_ABGELEITET (js/sync.js); test-sync.mjs
+       prüft seit heute, dass JEDER Surenring dort steht (Störtest: ohne ihn
+       2 rot). Veralten kann nichts — hakt er Suren ab, rechnet die Auswahl am
+       nächsten Lerntag von selbst. Bewacht von test-surenringe.mjs, Abschnitt 9. */
     /* ⭐ quran-verszeichen.js kam am 15.09.2026 für den Juz-Ring dazu: 6236
        Zahlen, die Zeichen je Vers ohne Taschkīl. Erzeugt von
        werkzeuge/verszeichen-bauen.mjs aus quran-text.js.

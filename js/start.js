@@ -265,8 +265,9 @@ function renderTagesringe(){
   }
 
   /* ⭐ Die Quran-Ringe stehen seit dem 15.09.2026 hier mit drin — al-Mulk
-     täglich, dazu die Wiederholung und die Favoriten-Sure. Elias: „ich finde
-     die sollten einfach bei heute stehen." */
+     täglich, dazu die Wiederholung und die Favoriten-Sure, seit 18.09. auch
+     eine zufällige Sure. Elias: „ich finde die sollten einfach bei heute
+     stehen." */
   const quran = (typeof quranRingDaten === 'function') ? quranRingDaten() : [];
 
   /* ⚠️ Fehlt ALLES, bleibt der Kasten weg. Ein Kasten „Heute" mit leeren
@@ -303,12 +304,15 @@ function renderTagesringe(){
   /* ⚠️ „Neu lernen" kann seit 17.09.2026 MEHRERE Ringe haben (ein Ring je
      Favorit). Einzeln gemerkt, überschriebe der zweite den ersten — deshalb
      zusammengezählt: wie viele davon voll, von wie vielen. */
+  /* ⛔ Der Bereich steht seit 18.09.2026 IM Ring (`teil`), statt aus dem
+     angezeigten Text geraten zu werden. Die alte Weiche kannte drei Anfänge und
+     warf alles andere zu „Neu lernen" — der Ring „Zufällig" wäre dort still
+     mitgezählt worden, und die Messung, um die Elias gebeten hat, stimmte
+     nicht mehr. Ein Anzeigetext ist kein Schlüssel. */
   const neu = [0, 0];
   quran.forEach(r => {
-    const teil = r.txt.indexOf('Täglich') === 0 ? 'mulk'
-               : r.txt.indexOf('Wiederholen') === 0 ? 'wiederholen' : 'neulernen';
-    if (teil === 'neulernen'){ neu[0] += r.voll ? 1 : 0; neu[1]++; }
-    else merkeZielstand(teil, r.voll ? 1 : 0, 1);
+    if (r.teil === 'neulernen'){ neu[0] += r.voll ? 1 : 0; neu[1]++; }
+    else if (r.teil) merkeZielstand(r.teil, r.voll ? 1 : 0, 1);
   });
   if (neu[1]) merkeZielstand('neulernen', neu[0], neu[1]);
 
@@ -379,18 +383,26 @@ function quranRingDaten(){
   /* ⭐ Al-Mulk TÄGLICH — eigener Ring, nicht in der Rotation. Elias' Vorgabe:
      „mach noch eine extra für mulk (die soll täglich sein)". Er liest sie
      ohnehin jeden Tag; der Ring hält fest, ob es heute schon war. */
-  if (HIFZ[67]) ringe.push({ txt: 'Täglich<br>Al-Mulk', voll: gelesen(67), sure: 67 });
+  if (HIFZ[67]) ringe.push({ txt: 'Täglich<br>Al-Mulk', voll: gelesen(67), sure: 67, teil: 'mulk' });
 
   /* Die Rotation über alles andere, was auswendig sitzt. */
   const wdh = wdhHeute();
-  if (wdh) ringe.push({ txt: 'Wiederholen<br>' + name(wdh.sure), voll: wdh.erledigt, sure: wdh.sure });
+  if (wdh) ringe.push({ txt: 'Wiederholen<br>' + name(wdh.sure), voll: wdh.erledigt, sure: wdh.sure, teil: 'wiederholen' });
 
   /* Die Suren, die gerade gelernt werden — JEDER Favorit ein eigener Ring,
      auch wenn er schon als auswendig abgehakt ist. Elias am 14.09.: „jede
      sura kannst du einen eigenen ring geben", am 17.09.: „erst wenn ich sie
      von den favouriten löse dann kann sie tatsächlich weg". */
   const favoriten = (typeof wdhFavoriten === 'function') ? wdhFavoriten() : [];
-  favoriten.forEach(fav => ringe.push({ txt: 'Neu lernen<br>' + name(fav), voll: gelesen(fav), sure: fav }));
+  favoriten.forEach(fav => ringe.push({ txt: 'Neu lernen<br>' + name(fav), voll: gelesen(fav), sure: fav, teil: 'neulernen' }));
+
+  /* ⭐ Eine zufällige Sure, die er noch nicht auswendig kann — jeden Tag eine
+     andere (18.09.2026). Elias: „Random sura die ich nicht auswendig kann als
+     Ring machen Claude" und „als tagesziel so zu sagen, einfach auf dem
+     startbildschirm". Welche und warum den ganzen Tag dieselbe: bei
+     zufallsSureHeute() in js/quran.js. */
+  const zufall = (typeof zufallsSureHeute === 'function') ? zufallsSureHeute() : null;
+  if (zufall) ringe.push({ txt: 'Zufällig<br>' + name(zufall), voll: gelesen(zufall), sure: zufall, teil: 'zufall' });
 
   /* ⛔⛔ JEDER Quran-Ring trägt seine Sure — `sure` oben, nicht nur `nav`.
 
@@ -607,7 +619,8 @@ function zielverlaufBericht(tage){
   let v;
   try { v = LS.get('vt_zielverlauf', {}) || {}; } catch (e){ v = {}; }
   const namen = { karten:'Karteikarten', saetze:'Sätze', hoeren:'Hören',
-                  mulk:'al-Mulk', wiederholen:'Wiederholen', neulernen:'Neu lernen' };
+                  mulk:'al-Mulk', wiederholen:'Wiederholen', neulernen:'Neu lernen',
+                  zufall:'Zufällig' };
   const tageListe = Object.keys(v).sort().slice(-tage);
   if (!tageListe.length){ console.log('Noch nichts aufgezeichnet.'); return []; }
 

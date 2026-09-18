@@ -101,8 +101,8 @@ const SYNC_SCHLUESSEL = [
      und wie viel davon ausgefüllt ist täglich aber nicht mir sagen in app
      sondern nur messen."
      ⚠️ Ebenfalls eigener Zweig: je Tag und Bereich der HOEHERE Stand — ⛔ mit
-     EINER Ausnahme seit dem 17.09.2026: die drei Surenringe von HEUTE (`mulk`,
-     `wiederholen`, `neulernen`) sind aus `vt_suraGelesen` abgeleitet und
+     EINER Ausnahme seit dem 17.09.2026: die Surenringe von HEUTE (`mulk`,
+     `wiederholen`, `neulernen`, seit 18.09. `zufall`) sind aus `vt_suraGelesen` abgeleitet und
      werden neu berechnet statt gemischt; sonst holte das Maximum eine
      zurueckgenommene Lesung zurueck. Begruendung am Zweig selbst. Ein
      Blockstempel loeschte ganze Tage des anderen Geraets — bei einer Messung,
@@ -557,10 +557,14 @@ function fuehreRegelnZusammen(hier, dort){
   return raus;
 }
 
-/* Die drei Bereiche des stillen Zielverlaufs, die aus `vt_suraGelesen`
-   ABGELEITET sind — die Namen vergibt renderTagesringe() in js/start.js.
-   Warum sie eine eigene Regel brauchen, steht im Zweig für `vt_zielverlauf`. */
-const ZIELVERLAUF_ABGELEITET = new Set(['mulk', 'wiederholen', 'neulernen']);
+/* Die Bereiche des stillen Zielverlaufs, die aus `vt_suraGelesen` ABGELEITET
+   sind — die Namen vergibt quranRingDaten() in js/start.js (Feld `teil`).
+   Warum sie eine eigene Regel brauchen, steht im Zweig für `vt_zielverlauf`.
+   ⛔ Kommt ein Surenring dazu, gehört sein Name HIERHER — sonst kehrt beim
+   Zurücknehmen genau für diesen Ring das Hin und Her vom 17.09. zurück.
+   test-sync.mjs prüft, dass jeder `teil:` aus quranRingDaten() hier steht.
+   Seit 18.09.2026: `zufall` (die zufällige Sure des Tages). */
+const ZIELVERLAUF_ABGELEITET = new Set(['mulk', 'wiederholen', 'neulernen', 'zufall']);
 /* ⚠️ `todayStr()` steht in js/kern.js. Fehlt es (Prüfstand ohne kern.js), gilt
    wieder das Maximum für alle Bereiche — dann ist die Regel wirkungslos, aber
    nichts geht kaputt. test-sync.mjs stellt es deshalb bereit UND prüft, dass
@@ -881,7 +885,7 @@ function fuehreZusammen(fern){
                Abgleich. Und weil der Abgleich „etwas geändert" meldet, lief
                danach `ladeStandNeu()`, und das warf ihn aus der offenen Sure
                („ich habs gedrückt und wurde dann aus der sure rausgeschmissen").
-               ⚠️ Nur HEUTE und nur diese drei: für `karten`, `saetze` und
+               ⚠️ Nur HEUTE und nur die Surenringe: für `karten`, `saetze` und
                `hoeren` bleibt das Maximum richtig — das sind Zähler, die auf
                beiden Geräten getrennt wachsen. Vergangene Tage ändert niemand
                mehr. [[zwei_regeln_selber_selektor]] */
