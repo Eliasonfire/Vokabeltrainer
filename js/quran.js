@@ -119,6 +119,16 @@ let HIFZ = _hifz0.schlank, HIFZ_ZEIT = _hifz0.reich;
    sie von einem Haken, vom Geräteabgleich oder vom Rückgängigmachen kommt.
    An den Aufrufern hätte man eine Stelle vergessen. [[wirkung_an_der_quelle_stilllegen]] */
 function saveHifz(){ HIFZ_ZEIT = hakenSpeichern('vt_hifz', HIFZ, HIFZ_ZEIT); juzStandNeu(); }
+
+/* ⛔⛔ DIE ACHT (93, 94, 95, 96, 98, 100, 101, 104) NICHT ALS AUSWENDIG EINTRAGEN
+   (18.09.2026). In der App sind sie nicht abgehakt, obwohl er am 17.08. sagte,
+   er kenne die Suren „bis sura duha" auswendig. Ich hatte sie per Code abhaken
+   wollen (so, als hätte er es selbst getan) — Elias: „nein mach das nicht".
+   Ein Haken „auswendig" ist SEINE Aussage über sich; die App setzt keinen davon
+   selbst. „Wiederholen" nimmt, was er abgehakt hat — so wollte er es auch:
+   „und bei wiederholen sollen suren sein ich bereits gelernt habe also wnen ich
+   neue lerne dann sollen die auch dazu kommen da".
+   [[antwort_auf_meine_frage_ist_keine_freigabe]] */
 const _hifzV0 = hakenLaden('vt_hifzVerse');
 let HIFZ_VERSE = _hifzV0.schlank, HIFZ_VERSE_ZEIT = _hifzV0.reich;
 function saveHifzVerse(){ HIFZ_VERSE_ZEIT = hakenSpeichern('vt_hifzVerse', HIFZ_VERSE, HIFZ_VERSE_ZEIT); juzStandNeu(); }
@@ -270,6 +280,7 @@ function merkeWiederholung(sure){
   LS.set('vt_suraGelesenZeit', WDH_ZEIT);
   if (typeof renderQuranRinge === 'function') renderQuranRinge();
   if (typeof zeichneGelesenKnopf === 'function') zeichneGelesenKnopf();
+  if (typeof zeichneSeitenKnopf === 'function') zeichneSeitenKnopf();
 }
 
 /* ---------- ⭐ Doch nicht gelesen: den Haken zurücknehmen (17.09.2026) -------
@@ -303,6 +314,7 @@ function vergissWiederholung(sure){
   if (typeof leseZuruecknahme === 'function') leseZuruecknahme(sure);
   if (typeof renderQuranRinge === 'function') renderQuranRinge();
   if (typeof zeichneGelesenKnopf === 'function') zeichneGelesenKnopf();
+  if (typeof zeichneSeitenKnopf === 'function') zeichneSeitenKnopf();
 }
 
 /* ---------- ⛔⛔ WANN GILT EINE SURE ALS GELESEN? (16.09.2026) ----------
@@ -415,7 +427,53 @@ let LESE_ZURUECK = false;      /* in dieser Lesung von Hand zurückgenommen */
    wäre ein Knopf ohne Wirkung. Beim nächsten Öffnen der Sure fängt alles von
    vorn an (leseSureSetzen). */
 function leseZuruecknahme(sure){
+  /* ⭐ Die Seite des Tages hat ihre eigene Sperre (18.09.2026). */
+  if (typeof sure === 'string' && sure.indexOf('seite:') === 0){
+    if (SEITE_HIER && seitenSchluessel(SEITE_HIER.seite) === sure) SEITE_ZURUECK = true;
+    return;
+  }
   if (LESE_SURE && Number(sure) === LESE_SURE) LESE_ZURUECK = true;
+}
+
+/* ---------- ⭐ Die Seite des Tages gelesen? (18.09.2026) ----------
+   Dieselbe Regel wie am Surenende (WANN GILT EINE SURE ALS GELESEN, oben):
+   ihr letzter Vers war zu sehen UND die Sure war lange genug offen — dieselbe
+   Uhr (leseZeitJetzt), aber die Schwelle aus der Wortzahl der SEITE. Der Ring
+   springt an den Seitenanfang; die Uhr läuft also ab dort. */
+let SEITE_HIER = null;           /* { seite, sure, von, bisSure, bis }, wenn sie in der offenen Sure ENDET */
+let SEITE_ENDE_GESEHEN = false;
+let SEITE_SCHWELLE = WDH_OHNE_TEXT;
+let SEITE_ZURUECK = false;       /* in dieser Lesung von Hand zurückgenommen */
+let SEITE_UHR = null;
+let SEITE_BEOBACHTER = null;
+
+/* ⚠️ Gezählt wird in der Sure, in der die Seite ENDET — also auch nur deren
+   Teil der Seite: die Uhr fängt beim Öffnen jeder Sure neu an (leseSureSetzen).
+   Bei Seite 106 (4:176 bis 5:2) sind das 5:1–2. */
+function seiteSchwelle(b){
+  const verse = (typeof VERSE_CACHE === 'object' && VERSE_CACHE[b.bisSure]) || null;
+  if (!verse || !verse.length || typeof quranWorte !== 'function') return WDH_OHNE_TEXT;
+  let woerter = 0;
+  for (let v = (b.bisSure === b.sure ? b.von : 1); v <= b.bis; v++) woerter += quranWorte(verse[v - 1] && verse[v - 1].text_uthmani).length;
+  if (!woerter) return WDH_OHNE_TEXT;
+  return Math.max(WDH_MINDESTZEIT, Math.round(woerter * WDH_SEK_JE_WORT * 1000));
+}
+
+function seiteUhrStellen(){
+  clearTimeout(SEITE_UHR);
+  SEITE_UHR = null;
+  if (!SEITE_HIER || !SEITE_ENDE_GESEHEN || !LESE_SEIT || SEITE_ZURUECK) return;
+  const fehlt = SEITE_SCHWELLE - leseZeitJetzt();
+  if (fehlt <= 0){ pruefeSeite(); return; }
+  SEITE_UHR = setTimeout(pruefeSeite, fehlt + 50);
+}
+
+function pruefeSeite(){
+  if (!SEITE_HIER || !SEITE_ENDE_GESEHEN || SEITE_ZURUECK) return;
+  if (leseZeitJetzt() < SEITE_SCHWELLE){ seiteUhrStellen(); return; }
+  clearTimeout(SEITE_UHR);
+  SEITE_UHR = null;
+  merkeWiederholung(seitenSchluessel(SEITE_HIER.seite));
 }
 
 function leseZeitJetzt(){
@@ -449,6 +507,7 @@ function leseZeitStart(){
   if (document.visibilityState === 'hidden') return;
   LESE_SEIT = Date.now();
   leseUhrStellen();
+  seiteUhrStellen();
 }
 
 function leseZeitHalt(){
@@ -456,6 +515,8 @@ function leseZeitHalt(){
   LESE_SEIT = 0;
   clearTimeout(LESE_UHR);
   LESE_UHR = null;
+  clearTimeout(SEITE_UHR);
+  SEITE_UHR = null;
 }
 
 /* Eine andere Sure (oder zurück in die Liste): die Uhr fängt von vorn an.
@@ -469,6 +530,14 @@ function leseSureSetzen(id){
   LESE_DAUER = 0;
   LESE_ZURUECK = false;        /* eine Rücknahme galt nur für die Lesung davor */
   if (LESE_ENDE_BEOBACHTER){ LESE_ENDE_BEOBACHTER.disconnect(); LESE_ENDE_BEOBACHTER = null; }
+  /* ⭐ Die Seite des Tages, wenn sie in dieser Sure ENDET (18.09.2026) — bei
+     einer Seite über die Surengrenze ist das die zweite Sure. */
+  SEITE_ENDE_GESEHEN = false;
+  SEITE_ZURUECK = false;
+  if (SEITE_BEOBACHTER){ SEITE_BEOBACHTER.disconnect(); SEITE_BEOBACHTER = null; }
+  const tagesSeite = (LESE_SURE && typeof zufallsSeiteHeute === 'function') ? zufallsSeiteHeute() : null;
+  SEITE_HIER = (tagesSeite && tagesSeite.bisSure === LESE_SURE) ? tagesSeite : null;
+  SEITE_SCHWELLE = SEITE_HIER ? seiteSchwelle(SEITE_HIER) : WDH_OHNE_TEXT;
   if (LESE_SURE) leseZeitStart();
 }
 
@@ -586,52 +655,64 @@ function wdhFavoriten(){
     .map(s => s.id);
 }
 
-/* ---------- ⭐⭐ EINE ZUFÄLLIGE SURE, DIE ER NOCH NICHT AUSWENDIG KANN (18.09.2026) ----
+/* ---------- ⭐⭐ ZUFÄLLIG: JEDEN TAG EINE SEITE, DIE ER NOCH NICHT AUSWENDIG KANN ----
 
-   Elias hat den Auftrag unterwegs in seine Google-Aufgaben geschrieben:
-     „Random sura die ich nicht auswendig kann als Ring machen Claude"
-   und dazu im Chat: „als tagesziel so zu sagen, einfach auf dem startbildschirm"
+   Zwei Aufträge am 18.09.2026, beide von Elias:
+   1. unterwegs in seine Google-Aufgaben:
+        „Random sura die ich nicht auswendig kann als Ring machen Claude"
+      im Chat: „als tagesziel so zu sagen, einfach auf dem startbildschirm"
+      → v529: jeden Tag eine ganze Sure.
+   2. auf v529 und meine zwei Fragen (lange Suren? 93–104 nicht abgehakt?):
+      „mach mit ausnahme von denen, gib mir immer nur eine ganze seite zum
+      lesen und du sollst die seite auch vor geben also einfach irgendeine
+      seite aus dem koran. wenn ich auf link drücke soll es mich direkt
+      dahinbringen" → v530: jeden Tag eine Muṣḥaf-SEITE. Der Ring nennt sie und
+      springt beim Antippen an ihren ersten Vers.
+   ⚠️ Die erste Fassung (ganze Sure) hatte ihm al-Baqara mit 6116 Wörtern
+   zumuten können; eine Seite hat 36 bis 161 (Median 129).
 
-   Also jeden Tag EINE Sure als Ring im „Heute"-Kasten. Voll ist er, wenn genau
-   diese Sure heute gelesen ist — dieselbe Zählung wie bei allen Surenringen (WDH:
-   der Beobachter am Surenende, und der Haken von Hand, den inWiederholungsrunde()
-   unten auch hier anbietet).
+   Gelesen ist die Seite, wenn ihr letzter Vers zu sehen war und die Sure lange
+   genug offen ist — dieselbe Regel wie am Surenende, nur mit der Wortzahl der
+   SEITE (seiteSchwelle, weiter unten). Dazu der Haken von Hand am Seitenende.
+   Gespeichert in WDH unter „seite:N" — im selben Speicher wie die Suren, damit
+   Abgleich, Zurücknehmen und Sicherung ohne neuen Schlüssel mitgehen: sync.js
+   führt vt_suraGelesen je Eintrag zusammen, gleich welcher Name.
 
-   Die Auswahl ist SEINE Regel: „die ich nicht auswendig kann" = kein Haken
-   „auswendig" (HIFZ). Von MIR dazugenommen — sonst hätte eine Sure zwei Ringe:
-   kein Favorit (der ist schon „Neu lernen") und nicht al-Fātiḥa/al-Mulk, die er
-   ohnehin täglich liest (seine Worte vom 15.09.: „außer fatiha und mulk").
+   Welche Seiten: keine mit einer Sure, die er auswendig kann (HIFZ — nur seine
+   eigenen Haken, siehe ⛔ bei saveHifz), keine mit den acht, die er
+   ausgenommen hat (ZUFALL_AUSGENOMMEN, gleich unten), keine mit einem
+   Favoriten (hat „Neu lernen"), keine mit al-Fātiḥa/al-Mulk (liest er
+   täglich — seine Worte vom 15.09.: „außer fatiha und mulk"). „Kein Haken"
+   und die acht sind seine Regeln; Favoriten und al-Fātiḥa/al-Mulk habe ICH
+   dazugenommen, damit nichts zwei Ringe hat. Streng: steht EINE solche Sure
+   auf der Seite, fällt die ganze Seite weg.
+
+   ⭐ AUCH SEITEN ÜBER EINE SURENGRENZE (Fassung 530, 18.09. abends). Meine
+   erste Fassung nahm der Technik wegen nur Seiten ganz in EINER Sure — der
+   Leser zeigt Suren. Das ließ 550 von 604 übrig. Elias: „ich will halt
+   einfach eine ganze seite lesen darum geht es, diese suren sind kleiner als
+   eine seite", und auf die 550: „warum so wenig? ich kenne doch nur ein paar
+   und diese suren sind auch nciht viele". Jetzt springt der Ring an den
+   Seitenanfang in der ersten Sure; an deren Ende steht „Seite N geht weiter"
+   (seitenWeiterHtml), und der Haken „Seite N heute gelesen" steht am
+   Seitenende in der Sure, in der die Seite aufhört — dort wird auch gezählt.
+   Gemessen am 18.09. mit seinem Stand (KV, zuletzt geschrieben 17.09.
+   22:48:55): 591 Seiten zur Wahl, 41 davon über eine Surengrenze.
 
    ⛔⛔ ZUFÄLLIG, ABER DEN GANZEN TAG DIESELBE — UND AUF JEDEM GERÄT DIESELBE.
-   Math.random() gäbe bei jedem Neuzeichnen eine andere Sure und auf Handy und
-   Tablet zwei verschiedene. Deshalb zieht jede Sure aus dem Datum ein festes Los
-   (zufallsLos), dran ist die mit dem kleinsten. Kein Speicher, kein Abgleich:
-   beide Geräte rechnen dasselbe aus.
-   Warum nicht „Datum → Platz in der Liste": hakt er im Lauf des Tages eine
-   ANDERE Sure als auswendig ab, rückt die Liste zusammen, derselbe Platz zeigt
-   auf eine andere Sure — und der Ring wechselte mitten am Tag. Genau das war
-   sein Fehler vom 16.09. („zalzala als ring ist verschwunden"). Mit dem Los
-   bleibt die Sure, solange SIE in der Auswahl steht.
+   Jede Seite zieht aus dem Datum ein festes Los (zufallsLos), dran ist die mit
+   dem kleinsten. Kein Speicher, kein Abgleich: beide Geräte rechnen dasselbe
+   aus. Nicht „Datum → Platz in der Liste": hakt er eine ANDERE Sure ab, rückte
+   die Liste zusammen, und der Ring spränge mitten am Tag um — sein Fehler vom
+   16.09. („zalzala als ring ist verschwunden").
 
-   ⛔ Hakt er GERADE DIESE heute als auswendig ab oder macht sie zum Favoriten,
-   kommt es darauf an, ob er sie heute schon gelesen hat:
-   - schon gelesen → sie bleibt heute der Ring (voll). Sonst stünde nach dem
-     Lesen plötzlich eine neue, ungelesene Sure da — die Art Umspringen, die
-     er am 16.09. gemeldet hat.
-   - noch nicht gelesen → sofort eine andere. Dann war die Wahl falsch: er
-     kann sie ja (seine Regel), oder sie hat jetzt ihren Ring „Neu lernen".
-   Ausgelöst hat das der erste echte Tag: am 18.09. zog der Ring bei ihm
-   aḍ-Ḍuḥā (93) — und am 17.08. hatte er gesagt, er kenne die Suren „bis sura
-   duha" auswendig; abgehakt war 93 in der App trotzdem nicht.
-   ⚠️ Die eine Lücke, bewusst offen: nimmt er heute einen Haken oder Stern
-   WEG, kommt diese Sure sofort in die Auswahl und ist mit etwa 1 zu 98 die neue.
-   Das zu schließen hieße, den Stand vom Tagesbeginn zu speichern und
-   abzugleichen — für einen seltenen Handgriff zu viel neue Mechanik.
-
-   ⚠️ Auch lange Suren können kommen — er hat keine Grenze genannt. Gemessen an
-   seinem Stand vom 17.09. (98 Suren in der Auswahl, Wörter mit quranWorte()):
-   die mittlere hat 379 Wörter (al-Mulk 333), 25 haben über 1000, al-Baqara
-   6116. Eine Grenze wäre seine Entscheidung, nicht meine.
+   ⛔ Hakt er heute die Sure DIESER Seite als auswendig ab oder macht sie zum
+   Favoriten: Seite schon gelesen → sie bleibt heute (Ring voll); noch nicht
+   gelesen → sofort eine andere, denn dann passt die Wahl nicht mehr.
+   ⚠️ Bewusst offen: nimmt er heute einen Haken oder Stern WEG, kommen deren
+   Seiten sofort in die Auswahl, und mit kleiner Wahrscheinlichkeit ist eine
+   davon die neue. Das zu schließen hieße, den Stand vom Tagesbeginn zu
+   speichern und abzugleichen — für einen seltenen Handgriff zu viel Mechanik.
    Bewacht von test-surenringe.mjs (Abschnitt 9, mit Gegenproben). */
 function zufallsLos(tag, id){
   const text = tag + '|' + id;
@@ -641,7 +722,9 @@ function zufallsLos(tag, id){
      400 Tage bei seinen 98 Suren: nur 82 verschiedene, al-Humaza (104) 33-mal,
      in den ersten 14 Tagen al-Anfāl (8) viermal. Mit ihnen: 97 verschiedene,
      keine öfter als 10-mal — so viel, wie echter Zufall auch ergibt (96,4
-     erwartet). */
+     erwartet). Bei den SEITEN (seit v530, 591 zur Wahl) ist der Unterschied
+     kleiner: mit 293 verschiedene in 400 Tagen, höchstens 4-mal; ohne 271,
+     höchstens 5-mal; echter Zufall ergäbe 291. */
   h ^= h >>> 16; h = Math.imul(h, 0x85ebca6b);
   h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35);
   h ^= h >>> 16;
@@ -655,29 +738,81 @@ function heuteFavoritGesetzt(id){
   return z > 0 && typeof lerntagVon === 'function' && lerntagVon(z) === todayStr(0);
 }
 
-function zufallsVorrat(){
-  if (typeof SURAH_DATA === 'undefined') return [];
-  const heute = todayStr(0);
-  /* heute gesetzt UND heute schon gelesen → zählt heute noch mit (siehe oben) */
-  const bleibtHeute = id => typeof WDH === 'object' && WDH[id] === heute;
-  return SURAH_DATA
-    .filter(s => !WDH_AUSGENOMMEN.has(s.id)
-              && !(HIFZ[s.id] && !(heuteAuswendigAbgehakt(s.id) && bleibtHeute(s.id)))
-              && !(istFavorit(s.id) && !(heuteFavoritGesetzt(s.id) && bleibtHeute(s.id))))
-    .map(s => s.id);
+function seitenSchluessel(p){ return 'seite:' + p; }
+
+/* Wo liegt Seite p? { seite, sure, von, bisSure, bis }: von Sure `sure` Vers
+   `von` bis Sure `bisSure` Vers `bis` — bei den meisten Seiten dieselbe Sure.
+   null nur, wenn die Seitendaten fehlen. QURAN_SEITEN[n] = [sure, ayah], wo
+   Seite n+1 anfängt; das Ende ist der Vers vor dem Anfang der nächsten. */
+function seitenBereich(p){
+  if (typeof QURAN_SEITEN === 'undefined' || !Array.isArray(QURAN_SEITEN)) return null;
+  const a = QURAN_SEITEN[p - 1];
+  if (!a) return null;
+  const sure = a[0], von = a[1], n = QURAN_SEITEN[p];
+  let bisSure, bis;
+  if (!n){ bisSure = 114; bis = versZahl(114); }                  /* Seite 604 endet mit an-Nās */
+  else if (n[1] > 1){ bisSure = n[0]; bis = n[1] - 1; }
+  else { bisSure = n[0] - 1; bis = versZahl(n[0] - 1); }
+  if (!bis) return null;
+  return { seite: p, sure, von, bisSure, bis };
 }
 
-/* Die Sure des Tages. `tag` nur für den Prüfer — die App ruft ohne. */
-function zufallsSureHeute(tag){
-  const vorrat = zufallsVorrat();
-  if (!vorrat.length) return null;
-  const t = tag || todayStr(0);
-  let dran = null, kleinstes = Infinity;
-  for (const id of vorrat){
-    const los = zufallsLos(t, id);
-    if (los < kleinstes){ kleinstes = los; dran = id; }
+/* ⛔ DIE ACHT, DIE ER AUSGENOMMEN HAT — gilt nur für diesen Ring (18.09.2026).
+   Ich hatte gefragt, weil 93, 94, 95, 96, 98, 100, 101 und 104 in der App
+   nicht als auswendig abgehakt sind, obwohl er sie am 17.08. dazuzählte
+   („bis sura duha"). Elias, auf genau diese Zahlen: „mach mit ausnahme von
+   denen". Abhaken lassen wollte er sie NICHT („nein mach das nicht", ⛔ bei
+   saveHifz) — deshalb eine Liste hier, kein Haken. „Wiederholen" nimmt
+   weiter nur, was er selbst abhakt.
+   Ohne sie kämen, seit Seiten über eine Surengrenze zählen, Seite 596
+   (92:15–94:8, fast nur aḍ-Ḍuḥā und aš-Šarḥ) und Seite 597 (at-Tīn und
+   al-ʿAlaq, sonst nichts) in die Auswahl: 593 statt 591, gemessen am 18.09. */
+const ZUFALL_AUSGENOMMEN = new Set([93, 94, 95, 96, 98, 100, 101, 104]);
+
+/* Darf diese Sure heute Seiten liefern? `mitHeute`: heute Abgehaktes und heute
+   gesetzte Sterne zählen noch nicht — nur für die Frage, ob die Seite, die
+   ohne sie dran wäre, schon gelesen ist (zufallsSeiteHeute). */
+function zufallsSureErlaubt(id, mitHeute){
+  if (WDH_AUSGENOMMEN.has(id) || ZUFALL_AUSGENOMMEN.has(id)) return false;
+  if (HIFZ[id] && !(mitHeute && heuteAuswendigAbgehakt(id))) return false;
+  if (istFavorit(id) && !(mitHeute && heuteFavoritGesetzt(id))) return false;
+  return true;
+}
+
+/* Eine Seite zählt nur, wenn JEDE Sure darauf erlaubt ist — auch die, in die
+   sie hinüberläuft. */
+function zufallsSeiteErlaubt(b, mitHeute){
+  for (let s = b.sure; s <= b.bisSure; s++){
+    if (!zufallsSureErlaubt(s, mitHeute)) return false;
   }
-  return dran;
+  return true;
+}
+
+function zufallsSeitenVorrat(mitHeute){
+  const raus = [];
+  const anzahl = (typeof QURAN_SEITEN !== 'undefined' && Array.isArray(QURAN_SEITEN)) ? QURAN_SEITEN.length : 0;
+  for (let p = 1; p <= anzahl; p++){
+    const b = seitenBereich(p);
+    if (b && zufallsSeiteErlaubt(b, mitHeute)) raus.push(b);
+  }
+  return raus;
+}
+
+/* Die Seite des Tages, { seite, sure, von, bisSure, bis } oder null. `tag`
+   nur für den Prüfer — die App ruft ohne. */
+function zufallsSeiteHeute(tag){
+  const t = tag || todayStr(0);
+  const ziehe = mitHeute => {
+    let dran = null, kleinstes = Infinity;
+    for (const b of zufallsSeitenVorrat(mitHeute)){
+      const los = zufallsLos(t, b.seite);
+      if (los < kleinstes){ kleinstes = los; dran = b; }
+    }
+    return dran;
+  };
+  const breit = ziehe(true);
+  if (breit && typeof WDH === 'object' && WDH[seitenSchluessel(breit.seite)] === todayStr(0)) return breit;
+  return ziehe(false);
 }
 
 /* ---------- Der Haken am Ende der Sure (16.09.2026) ----------
@@ -700,14 +835,13 @@ function zufallsSureHeute(tag){
    ⚠️ Nur bei Suren, für die WDH überhaupt etwas bedeutet: auswendige (die
    Wiederholungsrunde und al-Mulk) und die Favoritensure, die er gerade lernt.
    Unter den übrigen 100+ Suren wäre der Knopf eine Zeile ohne Folgen.
-   ⭐ Seit 18.09.2026 auch die zufällige Sure des Tages — sie hat einen Ring, und
-   für jede Sure mit Ring gilt sein Wunsch vom 17.09.: „bei den suren die ich
-   ringe habe … das heute gelesen antippen kann". */
+   ⭐ Die zufällige SEITE des Tages hat ihren eigenen Haken am Seitenende
+   (seiteGelesenKnopfHtml) — für sie gilt sein Wunsch vom 17.09. genauso: „bei
+   den suren die ich ringe habe … das heute gelesen antippen kann". */
 function inWiederholungsrunde(sure){
   const id = Number(sure);
   if (typeof HIFZ === 'object' && HIFZ[id]) return true;
-  if ((typeof wdhFavoriten === 'function') && wdhFavoriten().includes(id)) return true;
-  return (typeof zufallsSureHeute === 'function') && zufallsSureHeute() === id;
+  return (typeof wdhFavoriten === 'function') && wdhFavoriten().includes(id);
 }
 
 /* ⛔⛔ DER KNOPF GEHT SEIT DEM 17.09.2026 IN BEIDE RICHTUNGEN. Bis dahin stand
@@ -738,6 +872,65 @@ function zeichneGelesenKnopf(){
   if (!sure) return;
   alt.outerHTML = gelesenKnopfHtml(sure);
 }
+
+/* ⭐ Der Haken für die zufällige Seite des Tages (18.09.2026) — am Ende DER
+   SEITE, nicht der Sure: dort ist die Aufgabe zu Ende. Gleiche Form wie der
+   Surenknopf, eigene Hülle (.seite-gelesen-zeile), damit zeichneGelesenKnopf()
+   nicht den falschen Knopf neu zeichnet. */
+function seiteGelesenKnopfHtml(p){
+  const heute = (typeof WDH === 'object' && WDH[seitenSchluessel(p)] === todayStr(0));
+  return `<div class="seite-gelesen-zeile">
+    <button class="btn btn-secondary sura-gelesen${heute ? ' ist' : ''}" type="button"
+            data-seitegelesen="${p}" aria-pressed="${heute ? 'true' : 'false'}">
+      ${icon('check')}${heute ? 'Seite ' + p + ' heute gelesen — zurücknehmen' : 'Seite ' + p + ' heute gelesen — abhaken'}
+    </button>
+  </div>`;
+}
+
+function zeichneSeitenKnopf(){
+  const alt = document.querySelector('#verseList .seite-gelesen-zeile');
+  if (!alt) return;
+  const p = Number(alt.querySelector('[data-seitegelesen]')?.dataset.seitegelesen || 0);
+  if (p) alt.outerHTML = seiteGelesenKnopfHtml(p);
+}
+
+/* ⭐ Geht die Seite des Tages über das Ende dieser Sure hinaus, steht nach dem
+   letzten Vers, wo sie weitergeht — und ein Tippen öffnet die nächste Sure
+   von vorn. Ohne ihn endete die Aufgabe scheinbar am Surenende, und der Haken
+   „Seite N heute gelesen" stünde in einer Sure, die er nie aufmacht.
+   Eigene Hülle (.seite-weiter-zeile), damit zeichneSeitenKnopf() ihn nicht
+   für den Haken hält. */
+function seitenWeiterHtml(p, naechste){
+  const s = (typeof SURAH_DATA !== 'undefined') ? SURAH_DATA.find(x => x.id === naechste) : null;
+  if (!s) return '';
+  return `<div class="seite-weiter-zeile">
+    <button class="btn btn-secondary sura-gelesen" type="button" data-seiteweiter="${naechste}">
+      Seite ${p} geht weiter in ${naechste}. ${escapeHtml(s.name)}${icon('left')}
+    </button>
+  </div>`;
+}
+
+document.addEventListener('click', e => {
+  const k = e.target.closest('[data-seiteweiter]');
+  if (!k) return;
+  const naechste = Number(k.dataset.seiteweiter);
+  if (naechste && typeof openSurah === 'function') openSurah(naechste);
+});
+
+document.addEventListener('click', e => {
+  const k = e.target.closest('[data-seitegelesen]');
+  if (!k) return;
+  const p = Number(k.dataset.seitegelesen);
+  if (!p) return;
+  const schluessel = seitenSchluessel(p);
+  if (typeof WDH === 'object' && WDH[schluessel] === todayStr(0)){
+    vergissWiederholung(schluessel);
+    if (typeof toast === 'function') toast('Zurückgenommen — Seite ' + p + ' gilt heute nicht mehr als gelesen');
+    return;
+  }
+  merkeWiederholung(schluessel);
+  if (typeof toast === 'function') toast('Seite ' + p + ' als heute gelesen eingetragen');
+});
 
 document.addEventListener('click', e => {
   const k = e.target.closest('[data-suragelesen]');
@@ -792,6 +985,19 @@ function beobachteLesestand(id){
   leseSureSetzen(id);
   const verse = document.querySelectorAll('#verseList .verse-item');
   if (!verse.length) return;
+  /* ⭐ Das Ende der Seite des Tages, wenn sie hier liegt (18.09.2026) — eigener
+     Beobachter auf genau EINEN Vers, wie beim Surenende weiter unten. */
+  if (SEITE_HIER){
+    const seitenEnde = document.querySelector(`#verseList .verse-item[data-versnr="${SEITE_HIER.bis}"]`);
+    if (seitenEnde){
+      SEITE_BEOBACHTER = new IntersectionObserver(eintraege => {
+        if (!eintraege.some(e => e.isIntersecting)) return;
+        SEITE_ENDE_GESEHEN = true;
+        pruefeSeite();
+      });
+      SEITE_BEOBACHTER.observe(seitenEnde);
+    }
+  }
   LESE_BEOBACHTER = new IntersectionObserver(eintraege => {
     for (const e of eintraege){
       const nr = Number(e.target.dataset.versnr);
@@ -2182,8 +2388,11 @@ async function openSurah(id, opt){
      anfang der sura, das will ich auch nicht."
      Zurueckgesprungen wird auf die AYAH aus dem Lesestand, nicht auf einen
      Pixelwert - der waere nach dem Neuaufbau bedeutungslos. */
-  const zurueckZu = (opt.ausHistorie && LESESTAND && LESESTAND.sure === id)
-    ? LESESTAND.vers : null;
+  /* ⭐ `opt.vers` (18.09.2026): der Ring „Zufällig" springt an den Anfang
+     SEINER Seite. Elias: „wenn ich auf link drücke soll es mich direkt
+     dahinbringen". Derselbe Weg wie die Rückkehr an die Lesestelle. */
+  const zurueckZu = Number(opt.vers) > 0 ? Number(opt.vers)
+    : ((opt.ausHistorie && LESESTAND && LESESTAND.sure === id) ? LESESTAND.vers : null);
   if (!zurueckZu) anDenAnfang();
 
   if (VERSE_CACHE[id]){
@@ -2326,8 +2535,17 @@ function basmalaHtml(id){
 function renderVerses(id){
   const verses = VERSE_CACHE[id];
   const surah = SURAH_DATA.find(s=>s.id===id);
+  /* ⭐ Die Seite des Tages (18.09.2026): ENDET sie in dieser Sure, steht ihr
+     Haken nach ihrem LETZTEN Vers; läuft sie über das Ende dieser Sure
+     hinaus, steht dort „Seite N geht weiter". Einmal vor der Schleife
+     ausgerechnet — zufallsSeiteHeute() geht über alle 604 Seiten. */
+  const tagesSeite = (typeof zufallsSeiteHeute === 'function') ? zufallsSeiteHeute() : null;
+  const tagesSeiteHier = (tagesSeite && tagesSeite.bisSure === id) ? tagesSeite : null;
+  const seiteGehtWeiter = (tagesSeite && tagesSeite.sure <= id && id < tagesSeite.bisSure)
+    ? seitenWeiterHtml(tagesSeite.seite, id + 1) : '';
   document.getElementById('verseList').innerHTML = basmalaHtml(id) + verses.map((v, i) => {
     const nr = i + 1;
+    const seitenKnopf = (tagesSeiteHier && nr === tagesSeiteHier.bis) ? seiteGelesenKnopfHtml(tagesSeiteHier.seite) : '';
     const kann = HIFZ[id] || kannVers(id, nr);
     /* Verdeckt wird nur, was auch als auswendig markiert ist - alles andere
        zu verdecken waere kein Selbsttest, sondern nur laestig. */
@@ -2365,7 +2583,7 @@ function renderVerses(id){
            derselbe, und das Umschalten braucht keinen Neuaufbau. Gefuellt
            wird sie nachtraeglich von zeigeQuranEn(). -->
       <div class="verse-en" lang="en"></div>
-    </div>${trenner}`; }).join('') + gelesenKnopfHtml(id);
+    </div>${seitenKnopf}${trenner}`; }).join('') + gelesenKnopfHtml(id) + seiteGehtWeiter;
   aktualisiereHifzLeiste(id, surah);
   /* ⛔ OHNE await: der Leser steht sofort, das Englische kommt nach. Ein
      Netzabruf darf den Aufbau nie aufhalten — sonst haengt der ganze Leser an

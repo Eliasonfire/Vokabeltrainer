@@ -941,6 +941,16 @@ main{
    und `flex-wrap` als Netz darunter, falls einmal fünf zusammenkommen
    (Karteikarten, Modus, Mulk, Wiederholen, Neu lernen). */
 .tagesringe.viele .tr-reihe{gap:var(--sp-3);}
+/* ⭐ Ab fünf Ringen zwei feste Reihen, oben die größere Hälfte (18.09.2026,
+   Elias: „so 3 oben drei unten … wenns theoretisch mehr werden oben anfangen
+   dort mehr zu machen"). Ab 700 px eine Reihe: „am tablet sollten sie aber
+   eig alle nebeneinander passen". Die Reihen erben den Abstand der Hülle. */
+.tr-reihe.zweizeilig{flex-direction:column;align-items:center;}
+.tr-zeile{display:flex;gap:inherit;justify-content:center;flex-wrap:wrap;}
+@media (min-width:700px){
+  .tr-reihe.zweizeilig{flex-direction:row;align-items:flex-start;}
+  .tr-reihe.zweizeilig .tr-zeile{display:contents;}
+}
 .tagesringe.viele .tr-feld svg{width:62px;height:62px;}
 .tagesringe.viele .tr-name{font-size:var(--fs-xs);}
 .tr-feld{
@@ -3812,7 +3822,7 @@ button:disabled{cursor:default;}
    ihm, `Number(undefined)` waere NaN in der Menge der sichtbaren Verse).
    ⛔ Die Ansichtsfilter weiter unten (`#verseList.nur-ar .verse-de` usw.)
    greifen nicht auf ihn zu — er soll in JEDER Ansicht dastehen. */
-.sura-gelesen-zeile{display:flex;justify-content:center;padding:var(--sp-4) var(--sp-3) var(--sp-6);}
+.sura-gelesen-zeile,.seite-gelesen-zeile,.seite-weiter-zeile{display:flex;justify-content:center;padding:var(--sp-4) var(--sp-3) var(--sp-6);}
 .sura-gelesen{display:inline-flex;align-items:center;gap:var(--sp-2);}
 .sura-gelesen svg{width:18px;height:18px;}
 /* Erledigt: zurueckgenommen ruhiger als der Aufruf zum Abhaken — aber ein

@@ -353,6 +353,23 @@ export const PFLEGEPLAN = [
        prüft seit heute, dass JEDER Surenring dort steht (Störtest: ohne ihn
        2 rot). Veralten kann nichts — hakt er Suren ab, rechnet die Auswahl am
        nächsten Lerntag von selbst. Bewacht von test-surenringe.mjs, Abschnitt 9. */
+    /* ⭐ 18.09.2026 abends (v530): STATT EINER SURE EINE SEITE. Elias: „gib mir
+       immer nur eine ganze seite zum lesen und du sollst die seite auch vor
+       geben also einfach irgendeine seite aus dem koran. wenn ich auf link
+       drücke soll es mich direkt dahinbringen". Auch Seiten über eine
+       Surengrenze („warum so wenig?" auf 550); ohne die acht, die er mit „mach
+       mit ausnahme von denen" ausgenommen hat (ZUFALL_AUSGENOMMEN in
+       js/quran.js — eine Liste, KEIN Haken: „nein mach das nicht").
+       Kein neuer Schlüssel: gelesen steht in vt_suraGelesen unter „seite:N",
+       Zurücknehmen in vt_suraGelesenZeit — Abgleich, Sicherung und Rücknahme
+       gehen dadurch ohne Änderung mit. ⚠️ Beide wachsen damit über 114
+       Einträge hinaus, aber nie über 604 + 114 — eine Zeile je Seite und je
+       Sure, jeweils nur das letzte Datum. Veralten kann nichts: die Seiten-
+       grenzen stehen in quran-seiten.js, und hakt er eine Sure ab, rechnet
+       die Auswahl ab dem nächsten Lerntag ohne sie. Bewacht von
+       test-surenringe.mjs (Abschnitt 9: 591 Seiten, fünf Gegenproben) und
+       test-lesezaehlung.mjs (Abschnitt 9: gezählt in der Sure, in der die
+       Seite endet; Gegenprobe mit der alten Regel: 4 rot). */
     /* ⭐ quran-verszeichen.js kam am 15.09.2026 für den Juz-Ring dazu: 6236
        Zahlen, die Zeichen je Vers ohne Taschkīl. Erzeugt von
        werkzeuge/verszeichen-bauen.mjs aus quran-text.js.

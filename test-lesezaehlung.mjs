@@ -82,6 +82,9 @@ const ctx = {
   IntersectionObserver: class { constructor(fn){ this.fn = fn; } observe(){} disconnect(){} },
   merkeWiederholung: (sure) => { GEZAEHLT.push(sure); },
   VERSE_CACHE: {},
+  /* leseSureSetzen() fragt seit 18.09.2026 nach der Seite des Tages; die
+     setzt der Test in Abschnitt 9 von Hand (seiteDesTages). */
+  todayStr: () => '2026-09-18',
 };
 vm.createContext(ctx);
 /* ⚠️ Alles in EINEM Lauf: die `const` aus quran-text.js und der Wortzählung
@@ -99,6 +102,14 @@ vm.runInContext(koran + '\n' + woerter + '\n' + block + `
   ohneText: WDH_OHNE_TEXT,
   /* so, wie openSurah() den Zwischenspeicher füllt, bevor die Sure gezeichnet wird */
   laden: (s) => { VERSE_CACHE[s] = QURAN_TEXT[s].map(v => ({ text_uthmani: v[0] })); },
+  /* die Seite des Tages (18.09.2026) */
+  seiteDesTages: (b) => { zufallsSeiteHeute = () => b; },
+  seite: () => SEITE_HIER,
+  seiteSchwelle: () => SEITE_SCHWELLE,
+  seitenEnde: (an) => { SEITE_ENDE_GESEHEN = an; },
+  pruefeSeite: () => pruefeSeite(),
+  worte: (s, v) => quranWorte(QURAN_TEXT[s][v - 1][0]).length,
+  sekJeWort: WDH_SEK_JE_WORT,
 };`, ctx);
 
 const A = ctx.__api;
@@ -264,6 +275,41 @@ neu();
 A.ende(true);
 warte(600); A.pruefe();
 pruefe('   nichts wird gezählt', GEZAEHLT, []);
+console.log('');
+
+/* ---------- 9. Die Seite des Tages (18.09.2026) ----------------------------
+   Elias: „ich will halt einfach eine ganze seite lesen darum geht es". Seite
+   106 fängt in an-Nisāʾ an (4:176) und endet in al-Māʾida (5:2). Gezählt wird
+   in der Sure, in der sie ENDET, mit der Wortzahl IHRES Teils dort — die Uhr
+   fängt beim Öffnen jeder Sure neu an. */
+console.log('9. Die Seite des Tages');
+const teil = (s, von, bis) => { let n = 0; for (let v = von; v <= bis; v++) n += A.worte(s, v); return n; };
+const schwelleAus = (w) => Math.max(A.untergrenze, Math.round(w * A.sekJeWort * 1000));
+
+neu();
+A.seiteDesTages({ seite: 3, sure: 2, von: 6, bisSure: 2, bis: 16 });
+oeffne(2);
+const soll3 = schwelleAus(teil(2, 6, 16));
+pruefe('   Seite 3 (2:6–16): die Schwelle kommt aus Vers 6 bis 16 (' + sek(soll3) + ' s), nicht ab Vers 1',
+  A.seiteSchwelle(), soll3);
+
+neu();
+A.seiteDesTages({ seite: 106, sure: 4, von: 176, bisSure: 5, bis: 2 });
+oeffne(4);
+pruefe('   Seite 106 in an-Nisāʾ, wo sie ANFÄNGT: dort wird sie nicht gezählt', A.seite(), null);
+oeffne(5);
+pruefe('   in al-Māʾida, wo sie endet, ist sie die Seite hier', A.seite() && A.seite().seite, 106);
+const soll106 = schwelleAus(teil(5, 1, 2));
+pruefe('   die Schwelle kommt aus 5:1–2 (' + sek(soll106) + ' s)', A.seiteSchwelle(), soll106);
+A.seitenEnde(true);
+warte(sek(soll106) - 1); A.pruefeSeite();
+pruefe('   Seitenende gesehen, aber zu kurz offen: noch nicht gezählt', GEZAEHLT, []);
+warte(2); A.pruefeSeite();
+pruefe('   lange genug: gezählt als „seite:106"', GEZAEHLT, ['seite:106']);
+A.zurueck('seite:106');
+GEZAEHLT = [];
+warte(600); A.pruefeSeite();
+pruefe('   von Hand zurückgenommen: in dieser Lesung nicht wieder gezählt', GEZAEHLT, []);
 console.log('');
 
 if (STOERTEST){

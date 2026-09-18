@@ -107,6 +107,19 @@ if (ringe){
   pruefe('data-surering und data-nav stehen in einem ENTWEDER-ODER', ternaer);
 
   pruefe('der Knopf hat ein aria-label', /aria-label="/.test(surenRing));
+
+  /* ⭐ Zwei Reihen ab fünf Ringen, oben die größere Hälfte; am Tablet eine
+     (18.09.2026). Elias: „so 3 oben drei unten … am tablet sollten sie aber
+     eig alle nebeneinander passen". Gemessen in der Vorschau: bei 375 px
+     4 in einer Reihe, 5 → 3+2, 6 → 3+3, 7 → 4+3; bei 768 und 1280 px alle
+     sechs in einer Reihe. */
+  pruefe('ab fünf Ringen zwei Reihen, oben die größere Hälfte',
+    /alleRinge\.length\s*>=\s*5/.test(ringe) && /Math\.ceil\(\s*alleRinge\.length\s*\/\s*2\s*\)/.test(ringe)
+    && /tr-reihe zweizeilig/.test(ringe));
+  const seite = fs.readFileSync(path.join(WURZEL, 'index.html'), 'utf8');
+  pruefe('am Tablet (ab 700 px) wieder eine Reihe',
+    /@media \(min-width:700px\)\{\s*\.tr-reihe\.zweizeilig\{[^}]*\}\s*\.tr-reihe\.zweizeilig \.tr-zeile\{display:contents;\}/.test(seite));
+  pruefe('sein Satz dazu steht in js/start.js', quelle.includes('so 3 oben drei unten machen'));
 }
 
 /* ---------- 3. Der Handler fuehrt wirklich in die Sure ---------- */
@@ -115,7 +128,11 @@ console.log('\nDer Handler:');
 const handler = ohneKommentare.slice(ohneKommentare.indexOf("closest('[data-surering]')") - 400);
 pruefe('es gibt einen Handler auf [data-surering]', ohneKommentare.includes("closest('[data-surering]')"));
 pruefe('er zeigt zuerst den Quran-Bildschirm', /showScreen\(['"]quranfull['"]\)/.test(handler));
-pruefe('er ruft openSurah() mit der Nummer', /openSurah\(\s*id\s*\)/.test(handler));
+pruefe('er ruft openSurah() mit der Nummer', /openSurah\(\s*id\b/.test(handler));
+/* ⭐ Seit 18.09.2026 gibt der Ring „Zufällig" den ersten Vers SEINER Seite mit —
+   Elias: „wenn ich auf link drücke soll es mich direkt dahinbringen". */
+pruefe('er gibt den Vers aus data-vers mit (Seite des Tages)',
+  /knopf\.dataset\.vers/.test(handler) && /openSurah\(\s*id\s*,\s*vers\s*\?\s*\{\s*vers\s*\}/.test(handler));
 pruefe('er wartet auf openSurah (await)', /await\s+openSurah/.test(handler));
 
 /* ⚠️ openSurah() liegt in js/quran.js und wird ueber window erreicht. Fehlt
@@ -123,6 +140,7 @@ pruefe('er wartet auf openSurah (await)', /await\s+openSurah/.test(handler));
    faengt den Absturz ab, und niemand merkt etwas. */
 const quran = fs.readFileSync(path.join(WURZEL, 'js', 'quran.js'), 'utf8');
 pruefe('openSurah() gibt es in js/quran.js', /function openSurah\s*\(/.test(quran));
+pruefe('openSurah() springt zu opt.vers', /Number\(opt\.vers\)\s*>\s*0\s*\?\s*Number\(opt\.vers\)/.test(quran));
 
 /* ---------- 4. Elias' Satz steht als Begruendung im Quelltext ---------- */
 /* ⭐ Zuerst einen SATZ VON ELIAS bewachen, nicht nur Technik. Ohne ihn liest
@@ -294,16 +312,19 @@ console.log('\nWiederholen: eine heute gelernte Sure zählt heute nicht mit:');
     const SUREN = [{ id: 1, name: 'Al-Fatihah' }, { id: 67, name: 'Al-Mulk' }, { id: 96, name: 'Al-Alaq' },
                    { id: 97, name: 'Al-Qadr' }, { id: 99, name: 'Az-Zalzalah' }, { id: 102, name: 'At-Takathur' }];
     const baueHaken = (quranText) => {
-      const stuecke = [konstante(kern, 'TAG_BEGINN_STUNDE'), ...teileAus(kern, ['todayStr', 'lerntagVon']),
+      const stuecke = [konstante(kern, 'TAG_BEGINN_STUNDE'), ...teileAus(kern, ['todayStr', 'lerntagVon', 'escapeHtml']),
         konstante(quranText, 'WDH_AUSGENOMMEN'),
         ...teileAus(quranText, ['heuteAuswendigAbgehakt', 'wdhVorrat', 'wdhHeute', 'istFavorit', 'wdhFavoriten',
           'inWiederholungsrunde', 'merkeWiederholung', 'vergissWiederholung', 'gelesenKnopfHtml',
-          'zufallsLos', 'heuteFavoritGesetzt', 'zufallsVorrat', 'zufallsSureHeute']),
+          'zufallsLos', 'heuteFavoritGesetzt', 'versZahl', 'seitenSchluessel', 'seitenBereich', 'zufallsSureErlaubt',
+          'zufallsSeiteErlaubt', 'zufallsSeitenVorrat', 'zufallsSeiteHeute', 'seiteGelesenKnopfHtml', 'seitenWeiterHtml']),
+        konstante(quranText, 'ZUFALL_AUSGENOMMEN'),
         schneide(ohneKommentare, 'quranRingDaten')];
       if (stuecke.some(s => !s)) return null;
       return stuecke.join('\n') + '\n;globalThis.__api = { merke: merkeWiederholung, vergiss: vergissWiederholung,'
         + ' ringe: quranRingDaten, knopf: gelesenKnopfHtml, tag: todayStr,'
-        + ' zufall: zufallsSureHeute, vorrat: () => JSON.stringify(zufallsVorrat()) };';
+        + ' zufall: zufallsSeiteHeute, vorrat: () => JSON.stringify(zufallsSeitenVorrat(false).map(b => b.seite)),'
+        + ' bereich: seitenBereich, seitenknopf: seiteGelesenKnopfHtml, weiter: seitenWeiterHtml };';
     };
     const laufHaken = (code, stand) => {
       const gespeichert = {};
@@ -369,138 +390,179 @@ console.log('\nWiederholen: eine heute gelernte Sure zählt heute nicht mit:');
       pruefe('Gegenprobe: ohne das Wegnehmen bliebe der Ring voll', !!g3 && ringVoll(g3, 97) === true,
         g3 && ringVoll(g3, 97));
 
-      /* ---------- 9. Die zufällige Sure des Tages (18.09.2026) ----------
+      /* ---------- 9. Zufällig: jeden Tag eine SEITE (18.09.2026) ----------
          Elias, unterwegs in seine Google-Aufgaben: „Random sura die ich nicht
-         auswendig kann als Ring machen Claude", und im Chat: „als tagesziel so
-         zu sagen, einfach auf dem startbildschirm".
-         Gespielt wird mit SEINEM Stand (KV, zuletzt geschrieben 17.09. 22:48:55):
-         auswendig 1, 67, 97, 99, 102, 103, 105–114, Favoriten 67 und 97 — und
-         mit allen 114 Suren aus surah-data.js. Das ergibt 98 Suren zur Auswahl. */
-      console.log('\nZufällig: jeden Tag eine Sure, die er nicht auswendig kann:');
+         auswendig kann als Ring machen Claude", im Chat: „als tagesziel so zu
+         sagen, einfach auf dem startbildschirm". Danach, auf v529 und meine
+         Frage nach 93, 94, 95, 96, 98, 100, 101 und 104: „mach mit ausnahme von
+         denen, gib mir immer nur eine ganze seite zum lesen und du sollst die
+         seite auch vor geben also einfach irgendeine seite aus dem koran. wenn
+         ich auf link drücke soll es mich direkt dahinbringen". Auf meinen
+         Vorschlag, die acht per Code abzuhaken: „nein mach das nicht". Auf 550
+         Seiten: „warum so wenig? ich kenne doch nur ein paar und diese suren
+         sind auch nciht viele".
+         Gespielt mit SEINEM Stand (KV, zuletzt geschrieben 17.09. 22:48:55):
+         auswendig 1, 67, 97, 99, 102, 103, 105–114, Favoriten 67 und 97 — mit
+         allen 114 Suren und den 604 Seitengrenzen. */
+      console.log('\nZufällig: jeden Tag eine Seite, die er nicht auswendig kann:');
       const sd = {};
       vm.createContext(sd);
       vm.runInContext(fs.readFileSync(path.join(WURZEL, 'surah-data.js'), 'utf8') + '\n;globalThis.__S = SURAH_DATA;', sd);
-      const ALLE = sd.__S.map(s => ({ id: s.id, name: s.name }));
-      const SEIN_HIFZ = {};
-      [1, 67, 97, 99, 102, 103, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114].forEach(id => { SEIN_HIFZ[id] = true; });
-      const SEINE_FAV = { 67: true, 97: true };
-      const zStand = extra => Object.assign({ SURAH_DATA: ALLE, HIFZ: { ...SEIN_HIFZ }, HIFZ_ZEIT: {},
-        QURAN_FAV: { ...SEINE_FAV }, QURAN_FAV_ZEIT: {}, WDH: {} }, extra || {});
-      const ringZ = c => c.__api.ringe().find(r => r.teil === 'zufall');
+      vm.runInContext(fs.readFileSync(path.join(WURZEL, 'quran-seiten.js'), 'utf8') + '\n;globalThis.__P = QURAN_SEITEN;', sd);
+      const ALLE = sd.__S.map(s => ({ id: s.id, name: s.name, verses: s.verses }));
+      const SEITEN = sd.__P;
+      const SEIN = [1, 67, 97, 99, 102, 103, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114];
+      const ACHT = [93, 94, 95, 96, 98, 100, 101, 104];
+      const NICHT = [...SEIN, ...ACHT, 97];
+      const hifzVon = (ids, zeit) => { const h = {}, z = {}; ids.forEach(id => { h[id] = true; z[id] = { an: true, zeit }; }); return { h, z }; };
+      const zStand = extra => { const sein = hifzVon(SEIN, vorEinerWoche);
+        return Object.assign({ SURAH_DATA: ALLE, QURAN_SEITEN: SEITEN, VERSE_CACHE: {}, HIFZ: sein.h, HIFZ_ZEIT: sein.z,
+          QURAN_FAV: { 67: true, 97: true }, QURAN_FAV_ZEIT: {}, WDH: {} }, extra || {}); };
+      const surenDer = b => { const s = []; for (let x = b.sure; x <= b.bisSure; x++) s.push(x); return s; };
 
       const z0 = laufHaken(codeHaken, zStand());
       const heuteZ = z0.__api.tag(0);
-      const dran = z0.__api.zufall();
       const vorratZ = JSON.parse(z0.__api.vorrat());
-      pruefe('die Auswahl sind seine 98 Suren', vorratZ.length === 98, vorratZ.length);
-      pruefe('es gibt eine Sure des Tages, und sie steht in der Auswahl', vorratZ.includes(dran), dran);
-      pruefe('sie ist NICHT als auswendig abgehakt', !SEIN_HIFZ[dran], dran);
-      pruefe('sie ist kein Favorit (die haben schon „Neu lernen")', !SEINE_FAV[dran], dran);
+      const quer = vorratZ.filter(p => { const b = z0.__api.bereich(p); return b.bisSure !== b.sure; });
+      console.log('     (' + vorratZ.length + ' Seiten zur Wahl, ' + quer.length + ' davon über eine Surengrenze)');
+      pruefe('die Auswahl: 591 Seiten — 604 ohne al-Fātiḥa, al-Mulk, seine Haken und die acht', vorratZ.length === 591, vorratZ.length);
+      pruefe('41 davon gehen über eine Surengrenze (bis Fassung 529: keine)', quer.length === 41, quer.length);
+      pruefe('Seite 1 = al-Fātiḥa 1–7, Seite 2 = al-Baqara 1–5 (Seitengrenzen richtig gelesen)',
+        JSON.stringify(z0.__api.bereich(1)) === '{"seite":1,"sure":1,"von":1,"bisSure":1,"bis":7}'
+        && JSON.stringify(z0.__api.bereich(2)) === '{"seite":2,"sure":2,"von":1,"bisSure":2,"bis":5}',
+        JSON.stringify(z0.__api.bereich(1)) + ' ' + JSON.stringify(z0.__api.bereich(2)));
+      pruefe('Seite 106 = 4:176 bis 5:2 — und sie ist jetzt in der Auswahl',
+        JSON.stringify(z0.__api.bereich(106)) === '{"seite":106,"sure":4,"von":176,"bisSure":5,"bis":2}' && vorratZ.includes(106),
+        JSON.stringify(z0.__api.bereich(106)));
+      pruefe('Seite 604 = 112:1 bis 114:6 (die letzte Seite endet mit an-Nās)',
+        JSON.stringify(z0.__api.bereich(604)) === '{"seite":604,"sure":112,"von":1,"bisSure":114,"bis":6}',
+        JSON.stringify(z0.__api.bereich(604)));
+      pruefe('„mach mit ausnahme von denen": Seite 596 (92:15–94:8) und 597 (95–96) sind NICHT dabei',
+        !vorratZ.includes(596) && !vorratZ.includes(597));
+      pruefe('keine Seite mit al-Fātiḥa, al-Mulk (562–564) oder seinen Haken (598–604)',
+        [1, 562, 563, 564, 598, 599, 600, 601, 602, 603, 604].every(p => !vorratZ.includes(p)));
+      pruefe('⛔ keine Seite der Auswahl hat IRGENDEINE Sure, die er kann oder ausgenommen hat',
+        vorratZ.every(p => surenDer(z0.__api.bereich(p)).every(s => !NICHT.includes(s))));
+      pruefe('⛔ kein Code hakt die acht für ihn ab („nein mach das nicht")',
+        !quran.includes('achtAlsGelerntEintragen') && !quran.includes('ACHT_GELERNT'));
 
+      /* „und bei wiederholen sollen suren sein ich bereits gelernt habe also
+         wnen ich neue lerne dann sollen die auch dazu kommen da" — was ER
+         abhakt, kommt in die Runde; die acht nicht, solange er sie nicht selbst
+         abhakt. */
+      const runde0 = JSON.parse(vm.runInContext('JSON.stringify(wdhVorrat())', laufHaken(codeHaken, zStand())));
+      pruefe('„Wiederholen": seine Haken (ohne al-Fātiḥa, al-Mulk, Favoriten) — die acht nicht',
+        runde0.includes(99) && runde0.includes(114) && !runde0.includes(97) && ACHT.every(id => !runde0.includes(id)),
+        JSON.stringify(runde0));
+      const w1 = laufHaken(codeHaken, zStand());
+      w1.HIFZ[92] = true; w1.HIFZ_ZEIT[92] = { an: true, zeit: vorEinerWoche };
+      pruefe('hakt er eine neue ab (hier 92), kommt sie dazu',
+        JSON.parse(vm.runInContext('JSON.stringify(wdhVorrat())', w1)).includes(92));
+
+      const dran = z0.__api.zufall();
+      pruefe('es gibt eine Seite des Tages, und sie steht in der Auswahl', !!dran && vorratZ.includes(dran.seite), JSON.stringify(dran));
+
+      const ringZ = c => c.__api.ringe().find(r => r.teil === 'zufall');
       const r0 = ringZ(z0);
-      pruefe('der Ring steht da: „Zufällig", ihr Name, ihre Nummer',
-        !!r0 && r0.sure === dran && r0.txt === 'Zufällig<br>' + ALLE.find(s => s.id === dran).name, JSON.stringify(r0));
-      pruefe('er steht als LETZTER Ring, hinter „Neu lernen"',
-        z0.__api.ringe().map(r => r.teil).join(',') === 'mulk,wiederholen,neulernen,zufall',
-        z0.__api.ringe().map(r => r.teil).join(','));
-      pruefe('ungelesen ist er leer', !!r0 && r0.voll === false, r0 && r0.voll);
-      pruefe('in ihr steht der Knopf „Heute gelesen"', /data-suragelesen/.test(z0.__api.knopf(dran)));
-      const andere = vorratZ.find(id => id !== dran);
-      pruefe('… in einer anderen, nicht auswendigen Sure nicht', z0.__api.knopf(andere) === '', andere);
+      pruefe('der Ring: „Zufällig" + Seitenzahl, dazu Sure und erster Vers der Seite (dorthin springt er)',
+        !!r0 && r0.txt === 'Zufällig<br>Seite ' + dran.seite && r0.sure === dran.sure && r0.vers === dran.von, JSON.stringify(r0));
+      pruefe('ungelesen ist er leer', !!r0 && r0.voll === false);
+      const kz = z0.__api.seitenknopf(dran.seite);
+      pruefe('der Haken am Seitenende nennt die Seite', /data-seitegelesen="/.test(kz) && kz.includes('Seite ' + dran.seite + ' heute gelesen — abhaken'), kz.replace(/\s+/g, ' '));
+      z0.__api.merke('seite:' + dran.seite);
+      pruefe('gelesen: der Ring ist voll', ringZ(z0).voll === true);
+      pruefe('… und der Haken sagt „zurücknehmen"', z0.__api.seitenknopf(dran.seite).includes('zurücknehmen'));
+      z0.__api.vergiss('seite:' + dran.seite);
+      pruefe('zurückgenommen: wieder leer', ringZ(z0).voll === false);
 
-      z0.__api.merke(dran);
-      pruefe('gelesen: der Ring ist voll', ringZ(z0).voll === true, ringZ(z0).voll);
-      z0.__api.vergiss(dran);
-      pruefe('zurückgenommen: wieder leer', ringZ(z0).voll === false, ringZ(z0).voll);
+      /* Über die Surengrenze: am Ende der ersten Sure steht, wo es weitergeht. */
+      const kw = z0.__api.weiter(106, 5);
+      pruefe('am Ende von an-Nisāʾ: „Seite 106 geht weiter in 5. …", und der Knopf trägt Sure 5',
+        /data-seiteweiter="5"/.test(kw) && kw.includes('Seite 106 geht weiter in 5.'), kw.replace(/\s+/g, ' '));
 
-      /* ⛔⛔ Den ganzen Tag dieselbe — auch wenn er an ANDEREN Suren etwas ändert.
-         Sein Fehler vom 16.09.: „zalzala als ring ist verschwunden". */
       pruefe('den ganzen Tag dieselbe (zehnmal gefragt)',
-        Array.from({ length: 10 }, () => z0.__api.zufall()).every(x => x === dran));
-      const z1 = laufHaken(codeHaken, zStand({ HIFZ: { ...SEIN_HIFZ, [andere]: true },
-        HIFZ_ZEIT: { [andere]: { an: true, zeit: Date.now() } } }));
-      pruefe('hakt er eine ANDERE Sure als auswendig ab: der Ring bleibt', z1.__api.zufall() === dran, z1.__api.zufall());
-      const z1b = laufHaken(codeHaken, zStand({ HIFZ: { ...SEIN_HIFZ, [andere]: true },
-        HIFZ_ZEIT: { [andere]: { an: true, zeit: vorEinerWoche } } }));
-      pruefe('… auch wenn sie schon länger abgehakt ist (sie fehlt dann nur in der Auswahl)',
-        z1b.__api.zufall() === dran, z1b.__api.zufall());
-      const z2 = laufHaken(codeHaken, zStand({ QURAN_FAV: { ...SEINE_FAV, [andere]: true },
-        QURAN_FAV_ZEIT: { [andere]: { an: true, zeit: Date.now() } } }));
-      pruefe('setzt er bei einer ANDEREN einen Stern: der Ring bleibt', z2.__api.zufall() === dran, z2.__api.zufall());
+        Array.from({ length: 10 }, () => z0.__api.zufall().seite).every(x => x === dran.seite));
+      const andere = ALLE.find(s => !surenDer(dran).includes(s.id) && !NICHT.includes(s.id)).id;
+      const z1 = laufHaken(codeHaken, zStand());
+      z1.HIFZ[andere] = true; z1.HIFZ_ZEIT[andere] = { an: true, zeit: Date.now() };
+      pruefe('hakt er eine ANDERE Sure ab: die Seite bleibt', z1.__api.zufall().seite === dran.seite, z1.__api.zufall().seite);
+      const z2 = laufHaken(codeHaken, zStand());
+      z2.HIFZ[dran.sure] = true; z2.HIFZ_ZEIT[dran.sure] = { an: true, zeit: Date.now() }; z2.WDH['seite:' + dran.seite] = heuteZ;
+      pruefe('ihre Sure abgehakt, Seite SCHON gelesen: sie bleibt heute, voll', z2.__api.zufall().seite === dran.seite && ringZ(z2).voll === true);
+      const z3 = laufHaken(codeHaken, zStand());
+      z3.HIFZ[dran.sure] = true; z3.HIFZ_ZEIT[dran.sure] = { an: true, zeit: Date.now() };
+      const neuZ3 = z3.__api.zufall();
+      pruefe('ihre Sure abgehakt, Seite NICHT gelesen: sofort eine andere Seite ohne diese Sure',
+        neuZ3.seite !== dran.seite && !surenDer(neuZ3).includes(dran.sure), JSON.stringify(neuZ3));
+      const z4 = laufHaken(codeHaken, zStand());
+      z4.QURAN_FAV[dran.sure] = true; z4.QURAN_FAV_ZEIT[dran.sure] = { an: true, zeit: Date.now() };
+      pruefe('ihre Sure ungelesen zum Favoriten gemacht: sofort eine andere', z4.__api.zufall().seite !== dran.seite);
+      const z5 = laufHaken(codeHaken, zStand());
+      z5.HIFZ[5] = true; z5.HIFZ_ZEIT[5] = { an: true, zeit: vorEinerWoche };
+      const ohneMaida = JSON.parse(z5.__api.vorrat());
+      pruefe('⛔ streng: al-Māʾida abgehakt → auch Seite 106 fällt weg, obwohl sie in an-Nisāʾ ANFÄNGT',
+        !ohneMaida.includes(106) && ohneMaida.every(p => !surenDer(z5.__api.bereich(p)).includes(5)), ohneMaida.length);
 
-      /* ⛔ GERADE DIESE heute abgehakt oder zum Favoriten gemacht — es kommt
-         darauf an, ob er sie heute schon gelesen hat. Gelesen: sie bleibt heute
-         der Ring (sonst stünde nach dem Lesen eine neue, ungelesene da).
-         Ungelesen: sofort eine andere — die Wahl war falsch (18.09.: der Ring
-         zog aḍ-Ḍuḥā, die er am 17.08. zu den auswendigen gezählt hatte). */
-      const z3 = laufHaken(codeHaken, zStand({ HIFZ: { ...SEIN_HIFZ, [dran]: true },
-        HIFZ_ZEIT: { [dran]: { an: true, zeit: Date.now() } }, WDH: { [dran]: heuteZ } }));
-      pruefe('gerade DIESE gelesen und dann als auswendig abgehakt: sie bleibt heute, der Ring ist voll',
-        z3.__api.zufall() === dran && ringZ(z3).voll === true, z3.__api.zufall() + ' / ' + (ringZ(z3) || {}).voll);
-      const z3b = laufHaken(codeHaken, zStand({ HIFZ: { ...SEIN_HIFZ, [dran]: true },
-        HIFZ_ZEIT: { [dran]: { an: true, zeit: Date.now() } } }));
-      pruefe('gerade DIESE UNGELESEN als auswendig abgehakt: sofort eine andere, nicht auswendige',
-        z3b.__api.zufall() !== dran && !SEIN_HIFZ[z3b.__api.zufall()], z3b.__api.zufall());
-      const z4 = laufHaken(codeHaken, zStand({ QURAN_FAV: { ...SEINE_FAV, [dran]: true },
-        QURAN_FAV_ZEIT: { [dran]: { an: true, zeit: Date.now() } }, WDH: { [dran]: heuteZ } }));
-      pruefe('gerade DIESE gelesen und dann zum Favoriten gemacht: sie bleibt heute der Ring', z4.__api.zufall() === dran, z4.__api.zufall());
-      const z4b = laufHaken(codeHaken, zStand({ QURAN_FAV: { ...SEINE_FAV, [dran]: true },
-        QURAN_FAV_ZEIT: { [dran]: { an: true, zeit: Date.now() } } }));
-      pruefe('gerade DIESE ungelesen zum Favoriten gemacht: sofort eine andere (sie hat jetzt „Neu lernen")',
-        z4b.__api.zufall() !== dran, z4b.__api.zufall());
-      const z5 = laufHaken(codeHaken, zStand({ HIFZ: { ...SEIN_HIFZ, [dran]: true },
-        HIFZ_ZEIT: { [dran]: { an: true, zeit: vorEinerWoche } } }));
-      pruefe('ab dem nächsten Lerntag ist eine abgehakte raus', z5.__api.zufall() !== dran && !SEIN_HIFZ[z5.__api.zufall()],
-        z5.__api.zufall());
-
-      /* ⭐ Zufall über 400 Tage, mit seiner Auswahl. Gemessen am 18.09.: 97
-         verschiedene, keine öfter als 10-mal (echter Zufall: 96,4 erwartet). */
       const tagText = n => new Date(Date.UTC(2026, 8, 18) + n * 864e5).toISOString().slice(0, 10);
       const verteilung = c => {
         const z = new Map();
-        for (let n = 0; n < 400; n++){ const id = c.__api.zufall(tagText(n)); z.set(id, (z.get(id) || 0) + 1); }
-        return { verschieden: z.size, max: Math.max(...z.values()), ids: [...z.keys()] };
+        for (let n = 0; n < 400; n++){ const b = c.__api.zufall(tagText(n)); z.set(b.seite, (z.get(b.seite) || 0) + 1); }
+        return { verschieden: z.size, max: Math.max(...z.values()), seiten: [...z.keys()] };
       };
+      /* Was echter Zufall über 400 Tage ergäbe: n · (1 − (1 − 1/n)^400). */
+      const erwartet = Math.round(vorratZ.length * (1 - Math.pow(1 - 1 / vorratZ.length, 400)));
       const v0 = verteilung(z0);
-      pruefe('über 400 Tage kommen mindestens 90 der 98 Suren dran', v0.verschieden >= 90, v0.verschieden);
-      pruefe('… und keine öfter als 15-mal (im Schnitt 4)', v0.max <= 15, v0.max);
-      pruefe('an keinem der 400 Tage eine auswendige Sure, ein Favorit, al-Fātiḥa oder al-Mulk',
-        v0.ids.every(id => !SEIN_HIFZ[id] && !SEINE_FAV[id] && id !== 1 && id !== 67),
-        v0.ids.filter(id => SEIN_HIFZ[id] || SEINE_FAV[id]).join(','));
+      console.log('     (400 Tage: ' + v0.verschieden + ' verschiedene Seiten, höchstens ' + v0.max + '-mal; echter Zufall: ' + erwartet + ')');
+      pruefe('über 400 Tage mindestens 250 verschiedene Seiten (echter Zufall: ' + erwartet + ')', v0.verschieden >= 250, v0.verschieden);
+      pruefe('… keine öfter als 6-mal', v0.max <= 6, v0.max);
+      pruefe('an keinem der 400 Tage eine Seite mit einer Sure, die er kann oder ausgenommen hat',
+        v0.seiten.every(p => surenDer(z0.__api.bereich(p)).every(s => !NICHT.includes(s))));
 
-      /* ⛔ Gegenproben — jede muss seinen Fehler zurückbringen, sonst prüfte der
-         Fall oben nichts. Erst nachsehen, dass die ersetzte Zeile wirklich im
-         Quelltext steht. [[stoertest_muss_wirkung_nachweisen]] */
-      const ausschlussNeu = '&& !(HIFZ[s.id] && !(heuteAuswendigAbgehakt(s.id) && bleibtHeute(s.id)))';
-      pruefe('Gegenprobe möglich: die Auswendig-Zeile steht so im Quelltext', quran.includes(ausschlussNeu));
-      const ohneAusschluss = baueHaken(quran.replace(ausschlussNeu, ''));
-      const gz1 = ohneAusschluss && verteilung(laufHaken(ohneAusschluss, zStand()));
-      pruefe('Gegenprobe: ohne den Ausschluss käme auch eine auswendige Sure dran',
-        !!gz1 && gz1.ids.some(id => SEIN_HIFZ[id]), gz1 && gz1.ids.filter(id => SEIN_HIFZ[id]).join(','));
-
-      const ohneSchutz = baueHaken(quran.replace(ausschlussNeu, '&& !HIFZ[s.id]'));
-      const gz2 = ohneSchutz && laufHaken(ohneSchutz, zStand({ HIFZ: { ...SEIN_HIFZ, [dran]: true },
-        HIFZ_ZEIT: { [dran]: { an: true, zeit: Date.now() } }, WDH: { [dran]: heuteZ } }));
-      pruefe('Gegenprobe: ohne „gelesen und heute abgehakt bleibt" spränge der Ring nach dem Lesen um',
-        !!gz2 && gz2.__api.zufall() !== dran, gz2 && gz2.__api.zufall());
-
-      const ohneGelesen = baueHaken(quran.replace(ausschlussNeu, '&& !(HIFZ[s.id] && !heuteAuswendigAbgehakt(s.id))'));
-      const gz2b = ohneGelesen && laufHaken(ohneGelesen, zStand({ HIFZ: { ...SEIN_HIFZ, [dran]: true },
-        HIFZ_ZEIT: { [dran]: { an: true, zeit: Date.now() } } }));
-      pruefe('Gegenprobe: ohne „nur wenn schon gelesen" bliebe eine ungelesene, abgehakte Sure stehen',
-        !!gz2b && gz2b.__api.zufall() === dran, gz2b && gz2b.__api.zufall());
-
+      /* ⛔ Gegenproben — jede muss den Fehler zurückbringen. Erst nachsehen, dass
+         die ersetzte Zeile wirklich so im Quelltext steht. [[stoertest_muss_wirkung_nachweisen]] */
+      const gegen = (was, alt, neu, probe, zeige) => {
+        pruefe('Gegenprobe möglich: ' + was, quran.includes(alt));
+        const code2 = quran.includes(alt) ? baueHaken(quran.replace(alt, neu)) : null;
+        const r = code2 ? probe(code2) : undefined;
+        pruefe('Gegenprobe: ' + was + ' → der Fehler ist wieder da', r === true, zeige ? zeige(code2) : r);
+      };
+      gegen('ohne die acht („mach mit ausnahme von denen")',
+        'if (WDH_AUSGENOMMEN.has(id) || ZUFALL_AUSGENOMMEN.has(id)) return false;', 'if (WDH_AUSGENOMMEN.has(id)) return false;',
+        code2 => { const v = JSON.parse(laufHaken(code2, zStand()).__api.vorrat()); return v.length === 593 && v.includes(597); });
+      gegen('nur die ERSTE Sure der Seite geprüft', 'for (let s = b.sure; s <= b.bisSure; s++){', 'for (let s = b.sure; s <= b.sure; s++){',
+        code2 => JSON.parse(laufHaken(code2, zStand()).__api.vorrat()).includes(596));
+      gegen('wieder „nur Seiten in EINER Sure"', 'if (!bis) return null;', 'if (bisSure !== sure || !bis) return null;',
+        code2 => { const v = JSON.parse(laufHaken(code2, zStand()).__api.vorrat()); return v.length === 550 && !v.includes(106); });
+      gegen('ohne den Auswendig-Ausschluss', "if (HIFZ[id] && !(mitHeute && heuteAuswendigAbgehakt(id))) return false;", '',
+        code2 => { const c = laufHaken(code2, zStand()); c.HIFZ[2] = true; c.HIFZ_ZEIT[2] = { an: true, zeit: vorEinerWoche };
+                   return JSON.parse(c.__api.vorrat()).some(p => c.__api.bereich(p).sure === 2); });
+      gegen('ohne „schon gelesen bleibt"', "if (breit && typeof WDH === 'object' && WDH[seitenSchluessel(breit.seite)] === todayStr(0)) return breit;", '',
+        code2 => { const c = laufHaken(code2, zStand()); c.HIFZ[dran.sure] = true; c.HIFZ_ZEIT[dran.sure] = { an: true, zeit: Date.now() };
+                   c.WDH['seite:' + dran.seite] = heuteZ; return c.__api.zufall().seite !== dran.seite; });
       const mischNeu = '  h ^= h >>> 16; h = Math.imul(h, 0x85ebca6b);\n  h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35);\n  h ^= h >>> 16;\n';
-      pruefe('Gegenprobe möglich: die Durchmischung steht so im Quelltext', quran.includes(mischNeu));
-      const ohneMischung = baueHaken(quran.replace(mischNeu, ''));
-      const gz3 = ohneMischung && verteilung(laufHaken(ohneMischung, zStand()));
-      pruefe('Gegenprobe: ohne Durchmischung fiele die Verteilung durch (gemessen 82 verschiedene, eine 33-mal)',
-        !!gz3 && (gz3.verschieden < 90 || gz3.max > 15), gz3 && (gz3.verschieden + ' verschiedene, höchstens ' + gz3.max + '-mal'));
+      /* ⚠️ Bei SEITEN macht die Durchmischung weniger aus als bei Suren (dort: 82
+         statt 97 von 98, al-Humaza 33-mal). Gemessen am 18.09. bei 591 Seiten:
+         mit 293 verschiedene, höchstens 4-mal — ohne 271, höchstens 5-mal;
+         echter Zufall ergäbe 291. Beides bestünde die Grenzen oben. Geprüft
+         wird deshalb nur, was wirklich stimmt: mit Durchmischung liegt sie
+         näher am echten Zufall. */
+      pruefe('Durchmischung steht so im Quelltext', quran.includes(mischNeu));
+      const ohneMisch = quran.includes(mischNeu) ? baueHaken(quran.replace(mischNeu, '')) : null;
+      const vOhne = ohneMisch ? verteilung(laufHaken(ohneMisch, zStand())) : null;
+      if (vOhne) console.log('     (ohne Durchmischung: ' + vOhne.verschieden + ' verschiedene, höchstens ' + vOhne.max + '-mal)');
+      pruefe('mit Durchmischung näher an echtem Zufall (' + erwartet + ') als ohne',
+        !!vOhne && Math.abs(v0.verschieden - erwartet) < Math.abs(vOhne.verschieden - erwartet),
+        vOhne && ('mit ' + v0.verschieden + ', ohne ' + vOhne.verschieden));
 
-      /* ⭐ Sein Satz steht als Begründung im Quelltext. */
-      pruefe('sein Auftrag steht wörtlich in js/quran.js',
+      /* ⭐ Seine Sätze stehen als Begründung im Quelltext. */
+      pruefe('seine Aufträge stehen wörtlich in js/quran.js',
         quran.includes('Random sura die ich nicht auswendig kann als Ring machen Claude')
-        && quran.includes('als tagesziel so zu sagen, einfach auf dem startbildschirm'));
+        && quran.includes('gib mir immer nur eine ganze seite zum')
+        && quran.includes('mach mit ausnahme von denen')
+        && quran.includes('nein mach das nicht')
+        && quran.includes('einfach eine ganze seite lesen darum geht es')
+        && quran.includes('warum so wenig? ich kenne doch nur ein paar')
+        && quran.includes('und bei wiederholen'));
     }
   }
 }
