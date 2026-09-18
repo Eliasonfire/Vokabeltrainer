@@ -512,7 +512,7 @@ console.log('\nWiederholen: eine heute gelernte Sure zählt heute nicht mit:');
       /* Was echter Zufall über 400 Tage ergäbe: n · (1 − (1 − 1/n)^400). */
       const erwartet = Math.round(vorratZ.length * (1 - Math.pow(1 - 1 / vorratZ.length, 400)));
       const v0 = verteilung(z0);
-      console.log('     (400 Tage: ' + v0.verschieden + ' verschiedene Seiten, höchstens ' + v0.max + '-mal; echter Zufall: ' + erwartet + ')');
+      console.log('     (400 Tage, er liest NIE: ' + v0.verschieden + ' verschiedene Seiten, höchstens ' + v0.max + '-mal; echter Zufall: ' + erwartet + ')');
       pruefe('über 400 Tage mindestens 250 verschiedene Seiten (echter Zufall: ' + erwartet + ')', v0.verschieden >= 250, v0.verschieden);
       pruefe('… keine öfter als 6-mal', v0.max <= 6, v0.max);
       pruefe('an keinem der 400 Tage eine Seite mit einer Sure, die er kann oder ausgenommen hat',
@@ -536,7 +536,7 @@ console.log('\nWiederholen: eine heute gelernte Sure zählt heute nicht mit:');
       gegen('ohne den Auswendig-Ausschluss', "if (HIFZ[id] && !(mitHeute && heuteAuswendigAbgehakt(id))) return false;", '',
         code2 => { const c = laufHaken(code2, zStand()); c.HIFZ[2] = true; c.HIFZ_ZEIT[2] = { an: true, zeit: vorEinerWoche };
                    return JSON.parse(c.__api.vorrat()).some(p => c.__api.bereich(p).sure === 2); });
-      gegen('ohne „schon gelesen bleibt"', "if (breit && typeof WDH === 'object' && WDH[seitenSchluessel(breit.seite)] === todayStr(0)) return breit;", '',
+      gegen('ohne „schon gelesen bleibt"', 'if (breit && zuletzt(breit) === t) return breit;', '',
         code2 => { const c = laufHaken(code2, zStand()); c.HIFZ[dran.sure] = true; c.HIFZ_ZEIT[dran.sure] = { an: true, zeit: Date.now() };
                    c.WDH['seite:' + dran.seite] = heuteZ; return c.__api.zufall().seite !== dran.seite; });
       const mischNeu = '  h ^= h >>> 16; h = Math.imul(h, 0x85ebca6b);\n  h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35);\n  h ^= h >>> 16;\n';
@@ -554,7 +554,49 @@ console.log('\nWiederholen: eine heute gelernte Sure zählt heute nicht mit:');
         !!vOhne && Math.abs(v0.verschieden - erwartet) < Math.abs(vOhne.verschieden - erwartet),
         vOhne && ('mit ' + v0.verschieden + ', ohne ' + vOhne.verschieden));
 
+      /* ⭐ Fassung 531: ERST WIEDERHOLEN, WENN ALLE DRAN WAREN. Meine Frage:
+         „Soll die tägliche Seite sich erst wiederholen, wenn alle 591 einmal dran
+         waren?" — Elias, 18.09.2026 21:07: „ja klingt gut". Nachgespielt: er
+         liest an jedem Tag die Seite des Tages (ab `ab`), und gleich danach wird
+         noch einmal gefragt — die Seite muss dieselbe bleiben. */
+      const lesenJedenTag = (c, tage, ab = 0) => {
+        const folge = []; let stabil = true;
+        for (let n = 0; n < tage; n++){
+          const t = tagText(n), b = c.__api.zufall(t);
+          folge.push(b ? b.seite : null);
+          if (!b || n < ab) continue;
+          c.WDH['seite:' + b.seite] = t;
+          if (c.__api.zufall(t).seite !== b.seite) stabil = false;
+        }
+        return { folge, stabil };
+      };
+      const N = vorratZ.length;
+      const l1 = lesenJedenTag(laufHaken(codeHaken, zStand()), N + 3);
+      const runde1 = l1.folge.slice(0, N);
+      console.log('     (er liest jeden Tag: in ' + N + ' Tagen ' + new Set(runde1).size + ' verschiedene Seiten)');
+      pruefe('„ja klingt gut": liest er jeden Tag, kommt ' + N + ' Tage lang jeden Tag eine andere Seite — jede genau einmal',
+        new Set(runde1).size === N && runde1.every(p => vorratZ.includes(p)), new Set(runde1).size);
+      pruefe('… danach zuerst die am längsten nicht gelesene: Tag ' + (N + 1) + ', ' + (N + 2) + ', ' + (N + 3) + ' = Tag 1, 2, 3',
+        l1.folge[N] === l1.folge[0] && l1.folge[N + 1] === l1.folge[1] && l1.folge[N + 2] === l1.folge[2], l1.folge.slice(N).join(' '));
+      pruefe('… und nach dem Lesen bleibt es an jedem Tag dieselbe Seite — auch in der zweiten Runde', l1.stabil);
+      /* Liest er am ersten Tag NICHT, geht die Seite nicht verloren: sie kommt in
+         dieser Runde noch einmal (meine Lesart von „dran gewesen" = gelesen). */
+      const l2 = lesenJedenTag(laufHaken(codeHaken, zStand()), N + 1, 1);
+      const ungelesen = l2.folge[0], spaeter = l2.folge.slice(1);
+      pruefe('am ersten Tag nicht gelesen: diese Seite kommt in der Runde noch einmal, und die Runde hat trotzdem alle ' + N,
+        spaeter.includes(ungelesen) && new Set(spaeter).size === N, spaeter.indexOf(ungelesen) + 1);
+      gegen('ohne „erst die nie gelesenen"', 'let auswahl = vorrat.filter(b => { const d = zuletzt(b); return !d || d === t; });', 'let auswahl = vorrat;',
+        code2 => { const l = lesenJedenTag(laufHaken(code2, zStand()), 400); return new Set(l.folge).size < 400; },
+        code2 => code2 && ('mit der alten Regel: ' + new Set(lesenJedenTag(laufHaken(code2, zStand()), 400).folge).size + ' verschiedene in 400 Tagen'));
+      gegen('eine heute gelesene zählt heute schon als gelesen', 'return !d || d === t; });', 'return !d; });',
+        code2 => !lesenJedenTag(laufHaken(code2, zStand()), 3).stabil);
+      gegen('nach der ersten Runde wieder reiner Zufall', 'auswahl = vorrat.filter(b => zuletzt(b) === aeltester);', 'auswahl = vorrat;',
+        code2 => { const l = lesenJedenTag(laufHaken(code2, zStand()), N + 3);
+                   return !(l.folge[N] === l.folge[0] && l.folge[N + 1] === l.folge[1] && l.folge[N + 2] === l.folge[2]); });
+
       /* ⭐ Seine Sätze stehen als Begründung im Quelltext. */
+      pruefe('„ja klingt gut" steht mit meiner Frage in js/quran.js',
+        quran.includes('„ja klingt gut"') && quran.includes('Soll die tägliche Seite sich erst wiederholen, wenn'));
       pruefe('seine Aufträge stehen wörtlich in js/quran.js',
         quran.includes('Random sura die ich nicht auswendig kann als Ring machen Claude')
         && quran.includes('gib mir immer nur eine ganze seite zum')
