@@ -701,10 +701,12 @@ function wdhFavoriten(){
 
    ⛔⛔ ZUFÄLLIG, ABER DEN GANZEN TAG DIESELBE — UND AUF JEDEM GERÄT DIESELBE.
    Jede Seite zieht aus dem Datum ein festes Los (zufallsLos), dran ist die mit
-   dem kleinsten. Kein Speicher, kein Abgleich: beide Geräte rechnen dasselbe
-   aus. Nicht „Datum → Platz in der Liste": hakt er eine ANDERE Sure ab, rückte
-   die Liste zusammen, und der Ring spränge mitten am Tag um — sein Fehler vom
-   16.09. („zalzala als ring ist verschwunden").
+   dem kleinsten. Kein eigener Speicher: beide Geräte rechnen dasselbe aus —
+   aus dem Datum und, seit Fassung 531, aus den abgeglichenen Lesungen (erst
+   die nie gelesenen, siehe zufallsSeiteHeute). Nicht „Datum → Platz in der
+   Liste": hakt er eine ANDERE Sure ab, rückte die Liste zusammen, und der Ring
+   spränge mitten am Tag um — sein Fehler vom 16.09. („zalzala als ring ist
+   verschwunden").
 
    ⛔ Hakt er heute die Sure DIESER Seite als auswendig ab oder macht sie zum
    Favoriten: Seite schon gelesen → sie bleibt heute (Ring voll); noch nicht
@@ -724,7 +726,9 @@ function zufallsLos(tag, id){
      keine öfter als 10-mal — so viel, wie echter Zufall auch ergibt (96,4
      erwartet). Bei den SEITEN (seit v530, 591 zur Wahl) ist der Unterschied
      kleiner: mit 293 verschiedene in 400 Tagen, höchstens 4-mal; ohne 271,
-     höchstens 5-mal; echter Zufall ergäbe 291. */
+     höchstens 5-mal; echter Zufall ergäbe 291. ⚠️ Diese Zahlen gelten, wenn
+     er NIE liest. Liest er jeden Tag seine Seite, sind es seit Fassung 531
+     400 verschiedene — siehe zufallsSeiteHeute. */
   h ^= h >>> 16; h = Math.imul(h, 0x85ebca6b);
   h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35);
   h ^= h >>> 16;
@@ -799,19 +803,48 @@ function zufallsSeitenVorrat(mitHeute){
 }
 
 /* Die Seite des Tages, { seite, sure, von, bisSure, bis } oder null. `tag`
-   nur für den Prüfer — die App ruft ohne. */
+   nur für den Prüfer — die App ruft ohne.
+
+   ⭐ ERST WIEDERHOLEN, WENN ALLE DRAN WAREN (Fassung 531, 18.09.2026 abends).
+   Meine Frage an ihn: „Soll die tägliche Seite sich erst wiederholen, wenn
+   alle 591 einmal dran waren? Jetzt ist es reiner Zufall. In 400 Tagen kämen
+   nur 293 verschiedene Seiten dran, manche bis zu viermal."
+   Elias, 21:07: „ja klingt gut".
+   Deshalb zieht das Los nur unter den Seiten, die er noch NIE gelesen
+   hat; erst wenn keine mehr übrig ist, ist die dran, die er am längsten nicht
+   gelesen hat. Liest er jeden Tag, kommt 591 Tage lang jeden Tag eine andere
+   Seite, danach dieselbe Folge noch einmal.
+   ⚠️ „Dran gewesen" heißt hier GELESEN, nicht bloß gezogen — das ist MEINE
+   Lesart, ihm so gesagt: eine Seite, die er an einem Tag nicht liest, bleibt
+   im Vorrat und kann später wiederkommen, statt für diese Runde verloren zu
+   sein. Gezählt wird mit dem, was schon da ist: WDH „seite:N" hält den Tag
+   der letzten Lesung, wird abgeglichen und gesichert — kein neuer Schlüssel.
+   ⛔ Eine HEUTE gelesene Seite zählt heute noch als ungelesen — sonst spränge
+   der Ring direkt nach dem Lesen auf die nächste Seite.
+   ⛔ Die „seite:N"-Einträge sind damit das Gedächtnis der Runde: nie
+   aufräumen oder kürzen, sonst kommen gelesene Seiten zu früh wieder. */
 function zufallsSeiteHeute(tag){
   const t = tag || todayStr(0);
+  const zuletzt = b => (typeof WDH === 'object' && WDH && WDH[seitenSchluessel(b.seite)]) || '';
   const ziehe = mitHeute => {
+    const vorrat = zufallsSeitenVorrat(mitHeute);
+    /* erste Runde: nie gelesen, oder erst heute */
+    let auswahl = vorrat.filter(b => { const d = zuletzt(b); return !d || d === t; });
+    if (!auswahl.length){
+      /* alle schon gelesen: die am längsten nicht gelesene */
+      let aeltester = null;
+      for (const b of vorrat){ const d = zuletzt(b); if (aeltester === null || d < aeltester) aeltester = d; }
+      auswahl = vorrat.filter(b => zuletzt(b) === aeltester);
+    }
     let dran = null, kleinstes = Infinity;
-    for (const b of zufallsSeitenVorrat(mitHeute)){
+    for (const b of auswahl){
       const los = zufallsLos(t, b.seite);
       if (los < kleinstes){ kleinstes = los; dran = b; }
     }
     return dran;
   };
   const breit = ziehe(true);
-  if (breit && typeof WDH === 'object' && WDH[seitenSchluessel(breit.seite)] === todayStr(0)) return breit;
+  if (breit && zuletzt(breit) === t) return breit;
   return ziehe(false);
 }
 

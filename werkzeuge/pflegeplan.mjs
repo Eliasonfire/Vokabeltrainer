@@ -370,6 +370,16 @@ export const PFLEGEPLAN = [
        test-surenringe.mjs (Abschnitt 9: 591 Seiten, fünf Gegenproben) und
        test-lesezaehlung.mjs (Abschnitt 9: gezählt in der Sure, in der die
        Seite endet; Gegenprobe mit der alten Regel: 4 rot). */
+    /* ⭐ 18.09.2026 abends (v531): DIE TAGESSEITE WIEDERHOLT SICH ERST, WENN
+       ALLE GELESEN SIND. Meine Frage: „Soll die tägliche Seite sich erst
+       wiederholen, wenn alle 591 einmal dran waren?" — Elias: „ja klingt gut".
+       Kein neuer Schlüssel: die Runde steht in den „seite:N"-Einträgen von
+       vt_suraGelesen (Tag der letzten Lesung). ⛔ Diese Einträge sind damit
+       das Gedächtnis der Runde — kein Werkzeug und keine Routine darf sie
+       aufräumen oder kürzen, sonst kommen gelesene Seiten zu früh wieder.
+       Veralten kann nichts: sind alle gelesen, kommt von selbst die am
+       längsten nicht gelesene. Bewacht von test-surenringe.mjs (Abschnitt 9:
+       591 Tage lesen → jede Seite genau einmal; drei Gegenproben). */
     /* ⭐ quran-verszeichen.js kam am 15.09.2026 für den Juz-Ring dazu: 6236
        Zahlen, die Zeichen je Vers ohne Taschkīl. Erzeugt von
        werkzeuge/verszeichen-bauen.mjs aus quran-text.js.
