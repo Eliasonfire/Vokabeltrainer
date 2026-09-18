@@ -285,6 +285,7 @@ function renderTagesringe(){
   const surenRing = r =>
     '<button class="tr-feld' + (r.voll ? ' voll' : '') + '" type="button"'
     + (r.sure ? ' data-surering="' + r.sure + '"' : ' data-nav="' + r.nav + '"')
+    + (r.vers ? ' data-vers="' + r.vers + '"' : '')
     + ' aria-label="' + r.txt.replace('<br>', ': ') + (r.voll ? ', heute gelesen' : '') + '">'
     + '<svg viewBox="0 0 40 40" aria-hidden="true">'
     +   '<circle class="tr-spur" cx="20" cy="20" r="15.9155"></circle>'
@@ -333,17 +334,34 @@ function renderTagesringe(){
   const vollZahl = (kZiel !== null && kVoll ? 1 : 0) + (zZiel !== null && zVoll ? 1 : 0)
                  + quran.filter(r => r.voll).length;
 
+  /* ⭐ ZWEI REIHEN, OBEN DIE GRÖSSERE HÄLFTE (18.09.2026). Elias, als sechs
+     Ringe umbrachen: „du kannst auch die ringe da sie jetzt auf zwei zeilen
+     gehen so 3 oben drei unten machen und dann wenns theoretisch mehr werden
+     oben anfangen dort mehr zu machen aber jetzt wo es 3 zu 3 sein kann
+     sieht so gut aus. am tablet sollten sie aber eig alle nebeneinander passen
+     sollten". Vorher brach `flex-wrap` um, wo der Platz endete — oben vier,
+     unten zwei. Ab fünf Ringen also zwei feste Reihen (5 → 3+2, 6 → 3+3,
+     7 → 4+3); bis vier passt eine Reihe auch am Handy. Ab 700 px (Tablet)
+     löst das CSS die beiden Reihen wieder zu einer auf (.tr-zeile
+     display:contents). */
+  const alleRinge = [];
+  if (kZiel !== null) alleRinge.push(ringKnopf('Karteikarten', kStand, kZiel, 'learn-entry'));
+  if (zZiel !== null) alleRinge.push(ringKnopf(zName, zStand, zZiel, zNav));
+  quran.forEach(r => alleRinge.push(surenRing(r)));
+  const oben = Math.ceil(alleRinge.length / 2);
+  const reihen = alleRinge.length >= 5
+    ? '<div class="tr-reihe zweizeilig">'
+      + '<div class="tr-zeile">' + alleRinge.slice(0, oben).join('') + '</div>'
+      + '<div class="tr-zeile">' + alleRinge.slice(oben).join('') + '</div></div>'
+    : '<div class="tr-reihe">' + alleRinge.join('') + '</div>';
+
   kasten.hidden = false;
   kasten.className = 'tagesringe' + (anzahl >= 4 ? ' viele' : '');
   kasten.innerHTML =
     '<div class="tr-kopf"><span class="tr-titel">Heute</span>'
     + '<span class="tr-sub">' + (alles ? 'alles geschafft' : vollZahl + ' von ' + anzahl)
     + '</span></div>'
-    + '<div class="tr-reihe">'
-    +   (kZiel !== null ? ringKnopf('Karteikarten', kStand, kZiel, 'learn-entry') : '')
-    +   (zZiel !== null ? ringKnopf(zName, zStand, zZiel, zNav) : '')
-    +   quran.map(surenRing).join('')
-    + '</div>';
+    + reihen;
 }
 
 /* ⛔ Der alte Name bleibt als Weiterleitung stehen: renderHeuteExtra() wird
@@ -396,13 +414,15 @@ function quranRingDaten(){
   const favoriten = (typeof wdhFavoriten === 'function') ? wdhFavoriten() : [];
   favoriten.forEach(fav => ringe.push({ txt: 'Neu lernen<br>' + name(fav), voll: gelesen(fav), sure: fav, teil: 'neulernen' }));
 
-  /* ⭐ Eine zufällige Sure, die er noch nicht auswendig kann — jeden Tag eine
-     andere (18.09.2026). Elias: „Random sura die ich nicht auswendig kann als
-     Ring machen Claude" und „als tagesziel so zu sagen, einfach auf dem
-     startbildschirm". Welche und warum den ganzen Tag dieselbe: bei
-     zufallsSureHeute() in js/quran.js. */
-  const zufall = (typeof zufallsSureHeute === 'function') ? zufallsSureHeute() : null;
-  if (zufall) ringe.push({ txt: 'Zufällig<br>' + name(zufall), voll: gelesen(zufall), sure: zufall, teil: 'zufall' });
+  /* ⭐ Jeden Tag eine zufällige SEITE, die er noch nicht auswendig kann
+     (18.09.2026). Elias: „Random sura die ich nicht auswendig kann als Ring
+     machen Claude", dann: „gib mir immer nur eine ganze seite zum lesen und du
+     sollst die seite auch vor geben … wenn ich auf link drücke soll es mich
+     direkt dahinbringen". `vers` = erster Vers der Seite — dorthin springt der
+     Ring. Welche und warum den ganzen Tag dieselbe: zufallsSeiteHeute() in
+     js/quran.js. */
+  const seite = (typeof zufallsSeiteHeute === 'function') ? zufallsSeiteHeute() : null;
+  if (seite) ringe.push({ txt: 'Zufällig<br>Seite ' + seite.seite, voll: gelesen(seitenSchluessel(seite.seite)), sure: seite.sure, vers: seite.von, teil: 'zufall' });
 
   /* ⛔⛔ JEDER Quran-Ring trägt seine Sure — `sure` oben, nicht nur `nav`.
 
@@ -446,7 +466,10 @@ document.addEventListener('click', async (e)=>{
      (js/lernen.js). openSurah() allein zeigt nichts an, solange der
      Quran-Bildschirm nicht sichtbar ist. */
   if (typeof showScreen === 'function') showScreen('quranfull');
-  if (typeof openSurah === 'function') await openSurah(id);
+  /* ⭐ Der Ring „Zufällig" trägt dazu den ersten Vers seiner Seite (18.09.2026) —
+     „wenn ich auf link drücke soll es mich direkt dahinbringen". */
+  const vers = Number(knopf.dataset.vers) || 0;
+  if (typeof openSurah === 'function') await openSurah(id, vers ? { vers } : undefined);
 });
 
 /* ---------- ⭐⭐ Die Tagesringe IN den Modi (15.09.2026) ----------
