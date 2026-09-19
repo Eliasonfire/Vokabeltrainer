@@ -2651,8 +2651,13 @@ function aktualisiereHifzLeiste(id, surah){
   const knopf = document.getElementById('btnHifzVerdecken');
   knopf.classList.toggle('active', HIFZ_VERDECKT);
   knopf.disabled = kann === 0;
+  /* ⚠️ Kurze Beschriftung seit dem 20.09.2026: Elias wollte die drei Knöpfe
+     der Leiste NEBENEINANDER („ich will das die drei nebeneinander stehen
+     damit sie nicht so viel platz in der höhe einnehmen"), und „Auswendige
+     verdecken" passte dort nicht mehr. Beide Wörter sind seine eigenen —
+     am 04.08.2026: „wieder aufdecken", „auswendig verbergen". */
   document.getElementById('hifzVerdeckenText').textContent =
-    HIFZ_VERDECKT ? 'Wieder aufdecken' : 'Auswendige verdecken';
+    HIFZ_VERDECKT ? 'Aufdecken' : 'Verdecken';
 }
 
 /* ---------- Sprungliste der Ayat (Elias' Punkt 8 vom 04.08.2026) ----------
