@@ -318,6 +318,21 @@ export const PFLEGEPLAN = [
     eingaben: { nein: 'Der Erklärer rechnet aus vorhandenen Sätzen und Regeln; er nimmt keine Eingaben von Elias entgegen.' },
     veralten: { nein: 'Er speichert nichts — jede Erklärung entsteht beim Antippen neu.' },
   },
+  /* 19.09.2026 (v535), innerhalb von js/quran-audio.js und deshalb von Hand
+     hier: die Rezitation hält jetzt durch, wenn der Bildschirm aus ist. Elias:
+     „wenn ich einen rezitator spielen lasse, dass er immer wieder aufhört und
+     nicht durch spricht … Vorallem wenn ich meinen Bildschirm aus mache".
+     Vier Dinge: ein Verswechsel schaltet die stille Schleife nicht mehr ab, ein
+     kaputt vorgeladenes Element wird erkannt, eine Wache holt nach 6 s
+     Stillstand denselben Vers an derselben Stelle nach, und die Neuversuche
+     reichen jetzt zehn Minuten weit (dazu `online`). Kein neuer Pflegebedarf:
+     kein neuer Inhalt, kein neuer Speicherschlüssel, nichts, was veraltet —
+     alles hängt am Ton von quran.com, der schon geprüft wird.
+     Bewacht von werkzeuge/pruefe-zweipuffer.mjs (Verswechsel, kaputter Vorrat,
+     Stillstands-Wache, je mit Störtest) und test-quran-vorladen.mjs.
+     ⚠️ Offen und ehrlich: bei AUSGESCHALTETEM Bildschirm ist nichts davon
+     gemessen — hier läuft kein Ton, und der Pane darf keinen machen. Das zeigt
+     erst sein Handy; der Punkt steht in der To-Do. */
   {
     funktion: 'Quran-Leser und Quranbezug der Vokabeln',
     dateien: ['js/quran.js', 'js/quran-audio.js', 'surah-data.js', 'quran-seiten.js', 'quran-verszeichen.js', 'quran-frequency-data.js', 'quran-text.js'],
