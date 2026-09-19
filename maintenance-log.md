@@ -5841,3 +5841,11 @@ Elias, 03:10:57, mit Bild (هَذَا الْكِتَابُ خَفِيفٌ, zur W
 - `test-welche-regel.mjs` neu (in `alle-pruefer.mjs`), fünf Gegenproben rot. Pflegeplan-Eintrag v532. `sw.js` v532. Commit `21b7f79`, gepusht, ausgeliefert 03:29, `pruefe-ausgeliefert` + `pruefe-erreichbarkeit` Exit 0.
 - Offen bei Elias (03:16:54, „sollten diese zwei als antowrt nicht eigentlich auch richtig sein?" zu أَمَامَ/خَلْفَ in „Tippe alle مُضَافٌ an"): die App folgt seinem Lehrer (Karte `zarf-als-mudaf-01`, Folge 8, 25:49 „ist selbst keins"). Nichts gebaut, bis er antwortet.
 - Nebenbefund, nicht angefasst: `js/statistik.js` schreibt fest „94 abfragbaren" Regeln — veraltet.
+
+## 19.09.2026, 03:52 — v533: Orts- und Zeitangaben zählen als مُضَاف; offen: Karteikarten-Kreis 9/10
+
+Elias zu أَمَامَ/خَلْفَ in „Tippe alle مُضَافٌ an" (mb1-42-3), 03:46:10: *„die beiden sind wie mudaf, wenn das der fall ist dann ist das ja auch grundsätzlich richtig"* · 03:47:24: *„lass die zwei dann gelten und auch andere ähnliche ortangaben oder zeitangeben"* · 03:48:30: *„aber nur wenn zeitangeben auch wirklich wie mudaf sind"* — belegt beim Lehrer, Folge 14, 17:02–17:14 (عِنْدَ, Ort und Zeit).
+
+- `js/uebung.js`: `uebungZarfMitGenitiv()`; Iḍāfa-Übung zählt jede Orts-/Zeitangabe (`ZURUF`) vor einem Genitiv als مُضَاف, das Wort dahinter als مُضَاف إِلَيْه (11 Stellen); „Warum?" → `zarf-als-mudaf-01`, auch bei „Welcher Fall?".
+- `test-zarf-als-mudaf.mjs` neu (fünf Gegenproben rot); `test-satzmodus-schwerer.mjs` lädt die Hilfsfunktion mit. Pflegeplan v533, `sw.js` v533. Commit `9f3c2bb`, gepusht, ausgeliefert 03:52.
+- Offen: Elias 03:48:30 *„ich habe alle karteikarten gemacht, dennoch ist der kreis nicht komplett zu, das ein fehler"* — KV: Ziel 10, gezählt 9 (Lerntag 18.09.), genau 9 Karten 03:18:59–03:27:57. Warum die Runde nach 9 endete: ungeklärt, Kandidaten in der To-Do.
