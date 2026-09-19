@@ -5889,3 +5889,8 @@ Auftrag von unterwegs (Claude-App am Handy, über den Drive-Eingang um 23:23 ang
 **Grün:** validate 36 Prüfungen · pruefe-markierung 51 · pruefe-pflegeplan · pruefe-kreislaeufe · pruefe-ausgeliefert. Ausgeliefert über Cloudflare Pages, gepusht.
 
 ⚠️ Der Commit davor (`fbbe8ea`, 20.09. 00:00) trug nur die Sitzungseinträge v534 und v535 in diese Datei ein — kein Code, keine Auslieferung.
+
+
+## 20.09.2026, 01:43 — v537: die drei Knoepfe im Koran-Leser nebeneinander (`1c92e75`)
+
+Elias mit Bild: „ich will das die drei nebeneinander stehen damit sie nicht so viel platz in der höhe einnehmen. markieren soll ganz rechts sein, ayah suche ganz links". `.hifz-bar` ist jetzt eine Spalte (Versstand oben, Knopfreihe unten), `.hifz-knoepfe` steht auf `nowrap` mit `space-between`; `hifzVerdeckenText` heisst „Verdecken"/„Aufdecken" statt „Auswendige verdecken"/„Wieder aufdecken" (js/quran.js). Gemessen bei 375 px: Leiste 79 statt ueber 150 px, Ayah 18–95, Verdecken 116–228, Markieren 248–357, Versstand einzeilig. validate 36 gruen, pruefe-markierung 51 gruen, pruefe-ausgeliefert Exit 0. sw.js v537.
