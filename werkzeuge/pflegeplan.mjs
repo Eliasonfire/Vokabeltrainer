@@ -223,6 +223,15 @@ export const PFLEGEPLAN = [
        macht test-welche-regel.mjs rot, bis er in der Liste steht. Der läuft
        über alle-pruefer.mjs (Wartung 1b.6) — also genau dann, wenn neue Regeln
        ausgeliefert werden, und nur dann kann sich sein Ergebnis ändern. */
+  /* 19.09.2026 (v533), innerhalb von js/uebung.js und deshalb von Hand hier:
+     uebungZarfMitGenitiv() — in „Tippe alle مُضَافٌ an" zählt jede Orts- und
+     Zeitangabe mit einem Genitiv dahinter als مُضَاف, das Wort dahinter als
+     مُضَاف إِلَيْه; „Warum?" zeigt dann zarf-als-mudaf-01, auch bei „Welcher
+     Fall?". Elias: „lass die zwei dann gelten und auch andere ähnliche
+     ortangaben oder zeitangeben". Kein neuer Schlüssel, kein neuer
+     Pflegebedarf: welche Wörter Orts-/Zeitangaben sind, steht in EINER Liste
+     (ZURUF in js/irab.js) — ein neues Wort dort gilt hier von selbst.
+     Bewacht von test-zarf-als-mudaf.mjs über alle-pruefer.mjs. */
   {
     funktion: 'Satzmodus und Grammatik-Hervorhebung',
     dateien: ['js/saetze.js', 'js/uebung.js', 'grammar-data.js', 'lehrbuch-saetze.js'],
