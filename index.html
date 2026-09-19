@@ -3233,6 +3233,128 @@ main{
 .note-editor .ne-aktionen{display:flex;gap:var(--sp-2);justify-content:flex-end;}
 
 /* =====================================================================
+   ⭐⭐ FEHLERSTELLEN IM KORANTEXT (20.09.2026) — js/quran-markierung.js
+   =====================================================================
+   ⛔ Die Markierung wird ÜBER den Text gezeichnet (CSS Custom Highlight
+   API), nicht hineingeschnitten: arabische Buchstaben verbinden sich nur
+   innerhalb EINES Elements. Erlaubt sind in `::highlight()` nur Farbe,
+   Hintergrund, Textdekoration und Schatten — deshalb Fläche plus
+   Wellenlinie und kein Rahmen.
+
+   ⭐ Die Wellenlinie ist nicht Zierde: eine Markierung darf nicht allein
+   an der Farbe hängen. Vier Farben auseinanderzuhalten ist schwer genug;
+   DASS dort etwas markiert ist, muss auch ohne Farbunterscheidung
+   ankommen. */
+:root{
+  --tj-rot:#ff4d6a;
+  --tj-orange:#ffa726;
+  --tj-blau:#4fc3f7;
+  --tj-lila:#b388ff;
+}
+/* ⛔ KEINE Hintergrundfläche. Ein Hintergrund füllt in `::highlight()` die
+   ganze ZEILENBOX, nicht den Buchstaben — bei der großen Koranschrift stand
+   am 20.09.2026 ein 250 Pixel hoher Balken über einem 120 Pixel hohen Wort.
+   Gefärbt wird der Buchstabe selbst; das ist ohnehin, was beschrieben war:
+   „Im Korantext bekommt genau dieser Buchstabe eine Farbe." */
+::highlight(tajweed-rot){    color:var(--tj-rot);    text-decoration:underline wavy var(--tj-rot);    text-decoration-thickness:.06em; }
+::highlight(tajweed-orange){ color:var(--tj-orange); text-decoration:underline wavy var(--tj-orange); text-decoration-thickness:.06em; }
+::highlight(tajweed-blau){   color:var(--tj-blau);   text-decoration:underline wavy var(--tj-blau);   text-decoration-thickness:.06em; }
+::highlight(tajweed-lila){   color:var(--tj-lila);   text-decoration:underline wavy var(--tj-lila);   text-decoration-thickness:.06em; }
+
+/* Der Rückfall für Browser ohne diese Schnittstelle: das GANZE Wort wird
+   unterstrichen. Ungenauer als ein Buchstabe, aber sichtbar — sonst
+   markierte Elias und nichts stünde da. */
+#verseList .verse-ar .qw.tj-wort{ text-decoration:underline wavy; text-decoration-thickness:.07em; }
+#verseList .verse-ar .qw.tj-wort.tj-rot{    text-decoration-color:var(--tj-rot);    background:rgba(255,77,106,.16); }
+#verseList .verse-ar .qw.tj-wort.tj-orange{ text-decoration-color:var(--tj-orange); background:rgba(255,167,38,.16); }
+#verseList .verse-ar .qw.tj-wort.tj-blau{   text-decoration-color:var(--tj-blau);   background:rgba(79,195,247,.16); }
+#verseList .verse-ar .qw.tj-wort.tj-lila{   text-decoration-color:var(--tj-lila);   background:rgba(179,136,255,.16); }
+
+/* Im Markier-Modus ist jedes Wort anfassbar. Der Zeiger sagt das, und die
+   Textauswahl bleibt aus — sonst zöge ein Tipp auf dem Handy eine
+   Auswahlmarkierung auf, statt die Karte zu öffnen. */
+#verseList.markier-modus .verse-ar .qw{ cursor:pointer; }
+#verseList.markier-modus .verse-ar{ user-select:none; -webkit-user-select:none; }
+
+/* Die Karte sitzt UNTEN, nicht in der Mitte: das Wort steht groß darin und
+   der Daumen muss einen einzelnen Buchstaben treffen. Dieselbe Geometrie
+   wie die Rezitationsleiste — dort ist der Daumen ohnehin. */
+.tajweed-karte{
+  position:fixed;left:0;right:0;bottom:0;z-index:700;
+  max-width:560px;margin:0 auto;
+  background:var(--surface-3);border:1px solid var(--border-strong);
+  border-radius:var(--r-4) var(--r-4) 0 0;
+  padding:var(--sp-4);padding-bottom:calc(var(--sp-4) + env(safe-area-inset-bottom));
+  box-shadow:var(--sh-3);
+  display:flex;flex-direction:column;gap:var(--sp-3);
+  animation:popIn var(--dur-3) var(--ease-spring);
+}
+.tj-titel{font-size:var(--fs-sm);color:var(--text-dim);}
+/* Die Bühne trägt die Flächen; deshalb `relative`. Ihre Höhe kommt vom
+   Wort — ein fester Wert schnitte lange Wörter ab. */
+.tj-buehne{position:relative;padding:var(--sp-3) 0;text-align:center;}
+.tj-wort{
+  font-family:var(--font-ar);direction:rtl;
+  /* ⚠️ Die Größe setzt js/quran-markierung.js beim Öffnen: das Wort soll die
+     Karte ausfüllen, damit ein einzelner Buchstabe breit genug für einen
+     Finger wird. Der Wert hier gilt nur, falls das Skript einmal nicht
+     durchläuft. */
+  /* ⚠️ Zeilenhöhe knapp halten: die Trefferflächen sind so hoch wie die
+     Bühne, und die Bühne ist so hoch wie die Zeile. Bei 1.9 stand über
+     einem 120 Pixel hohen Wort ein 250 Pixel hoher leerer Streifen. */
+  font-size:calc(var(--fs-2xl) * 1.6);line-height:1.45;color:#fff;
+  white-space:nowrap;
+  /* ⛔ Kein `letter-spacing`: es zerreißt die Verbindung genauso wie ein
+     Schnitt in den Text, nur sichtbar anders. */
+}
+.tj-buehne[data-farbe="rot"]    .tj-wort::highlight(tajweed-wahl){ color:var(--tj-rot);    text-decoration:underline wavy var(--tj-rot); }
+.tj-buehne[data-farbe="orange"] .tj-wort::highlight(tajweed-wahl){ color:var(--tj-orange); text-decoration:underline wavy var(--tj-orange); }
+.tj-buehne[data-farbe="blau"]   .tj-wort::highlight(tajweed-wahl){ color:var(--tj-blau);   text-decoration:underline wavy var(--tj-blau); }
+.tj-buehne[data-farbe="lila"]   .tj-wort::highlight(tajweed-wahl){ color:var(--tj-lila);   text-decoration:underline wavy var(--tj-lila); }
+/* Der Rahmen der gewählten Fläche trägt dieselbe Farbe — er ist die
+   Rückversicherung für Browser ohne `::highlight()`. */
+.tj-buehne[data-farbe="rot"]    .tj-flaechen{color:var(--tj-rot);}
+.tj-buehne[data-farbe="orange"] .tj-flaechen{color:var(--tj-orange);}
+.tj-buehne[data-farbe="blau"]   .tj-flaechen{color:var(--tj-blau);}
+.tj-buehne[data-farbe="lila"]   .tj-flaechen{color:var(--tj-lila);}
+.tj-flaechen{position:absolute;inset:0;}
+/* Durchsichtig: sichtbar ist die Markierung selbst, nicht ihr Knopf. Der
+   Rahmen im Zustand „an" ist die Rückversicherung für den Fall, dass die
+   Highlight-Schnittstelle fehlt — sonst sähe er nicht, was gewählt ist. */
+.tj-flaeche{
+  position:absolute;padding:0;margin:0;
+  background:transparent;border:1px solid transparent;border-radius:var(--r-1);
+  cursor:pointer;
+}
+/* ⚠️ Nur ein Strich unten, kein Rahmen ringsum: die Fläche ist so hoch wie
+   die ganze Zeile, ein geschlossener Rahmen stünde als hoher Kasten um
+   einen kleinen Buchstaben. */
+.tj-flaeche.an{border-color:transparent;border-bottom:3px solid currentColor;}
+.tj-hinweis{font-size:var(--fs-xs);color:var(--text-faint);text-align:center;}
+.tj-farben{display:flex;gap:var(--sp-2);flex-wrap:wrap;justify-content:center;}
+.tj-farbe{
+  display:flex;align-items:center;gap:var(--sp-2);
+  padding:var(--sp-2) var(--sp-3);
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-5);
+  color:var(--text-dim);font:inherit;font-size:var(--fs-sm);cursor:pointer;
+}
+/* Der Punkt VOR dem Namen zeigt die Farbe, der Name sagt sie. Beides, weil
+   ein Punkt allein kein Wort ist, das er nennen kann. */
+.tj-farbe::before{content:'';width:14px;height:14px;border-radius:50%;background:currentColor;}
+.tj-farbe.tj-rot{color:var(--tj-rot);}
+.tj-farbe.tj-orange{color:var(--tj-orange);}
+.tj-farbe.tj-blau{color:var(--tj-blau);}
+.tj-farbe.tj-lila{color:var(--tj-lila);}
+.tj-farbe.an{border-color:currentColor;background:var(--surface-1);}
+#tjNotiz{
+  width:100%;resize:vertical;
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-2);
+  padding:var(--sp-3);color:var(--text);font:inherit;font-size:var(--fs-md);line-height:1.55;
+}
+#tjNotiz:focus{outline:none;border-color:var(--red-dim);}
+.tj-aktionen{display:flex;gap:var(--sp-2);justify-content:flex-end;}
+
+/* =====================================================================
    QURAN-LISTE / READER
    ===================================================================== */
 .quran-intro{color:var(--text-dim);font-size:var(--fs-md);line-height:1.6;margin-bottom:var(--sp-4);}
@@ -3475,6 +3597,9 @@ button:disabled{cursor:default;}
   #screen-quranfull .screen-header,
   #screen-quranfull .quran-sticky{transition:none;}
 }
+/* Der Kasten mit den Knöpfen rechts. Er darf umbrechen; die Zeile selbst
+   nicht, damit der Versstand links stehen bleibt. */
+.hifz-knoepfe{display:flex;align-items:center;justify-content:flex-end;gap:var(--sp-2);flex-wrap:wrap;}
 .hifz-bar{
   display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);
   margin:0 calc(var(--gutter) * -1) var(--sp-3);
@@ -6121,12 +6246,26 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
                scrollen und kann die die ayaht antippen die ich brauche", und
                abends noch einmal: "so ein zeichen welches man drücken kann und
                dann öffnet sich so eine kleine liste mit den ayaht". -->
+          <!-- ⚠️ Eigener Kasten um die Knöpfe (20.09.2026). Mit dem dritten
+               Knopf passte die Reihe auf einem 375 Pixel breiten Schirm nicht
+               mehr: „Markieren" stand halb außerhalb. Hier darf sie umbrechen,
+               und zwar rechtsbündig — der Versstand bleibt links stehen. -->
+          <div class="hifz-knoepfe">
           <button class="btn btn-secondary btn-klein" id="btnAyahListe" aria-haspopup="dialog">
             <svg class="ic"><use href="#ic-luecke"/></svg><span id="ayahListeText">Ayah</span>
           </button>
           <button class="btn btn-secondary btn-klein" id="btnHifzVerdecken">
             <svg class="ic"><use href="#ic-auge"/></svg><span id="hifzVerdeckenText">Auswendige verdecken</span>
           </button>
+          <!-- ⭐ Fehlerstellen markieren (20.09.2026). Elias: „Ich will auch im
+               Koran den Text markieren irgendwie können für Fehler zB wo ich
+               tajweed etwas falsch mache."  Ein MODUS, kein Dauerzustand:
+               sonst öffnete jedes Antippen eines Wortes eine Karte und das
+               Aufdecken verdeckter Verse käme nie mehr zum Zug. -->
+          <button class="btn btn-secondary btn-klein" id="btnTajweedModus">
+            <svg class="ic"><use href="#ic-note"/></svg><span id="tajweedModusText">Markieren</span>
+          </button>
+          </div>
         </div>
       </div>
       <div class="word-list hidden" id="verseList"></div>
@@ -7031,6 +7170,31 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
   <div class="qfp-list" id="qfpList"></div>
 </div>
 
+<!-- ⭐ Die Markierkarte (20.09.2026, js/quran-markierung.js). Sie sitzt UNTEN
+     am Bildschirm, nicht in der Mitte: das angetippte Wort steht groß darin,
+     und der Daumen muss einen einzelnen Buchstaben treffen können.
+     ⛔ Das Wort steht als EIN Textknoten da — die antippbaren Flächen werden
+     darüber gelegt, nicht hineingeschnitten. Wer das Wort in Spans zerlegt,
+     zerreißt die arabische Verbindung. -->
+<div class="qfp-backdrop hidden" id="tajweedBackdrop"></div>
+<div class="tajweed-karte hidden" id="tajweedKarte" role="dialog" aria-label="Buchstaben markieren">
+  <div class="qfp-header">
+    <div class="tj-titel" id="tjTitel"></div>
+    <button class="icon-btn" id="btnCloseTajweed" aria-label="Schließen"><svg class="ic"><use href="#ic-close"/></svg></button>
+  </div>
+  <div class="tj-buehne" id="tjBuehne">
+    <div class="tj-wort" id="tjWort" lang="ar" dir="rtl"></div>
+    <div class="tj-flaechen" id="tjFlaechen"></div>
+  </div>
+  <div class="tj-hinweis">Tippe die Buchstaben an, bei denen es hakt.</div>
+  <div class="tj-farben" id="tjFarben"></div>
+  <textarea id="tjNotiz" rows="2" placeholder="Deine Notiz — was ist hier los?"></textarea>
+  <div class="tj-aktionen">
+    <button class="btn btn-secondary btn-klein hidden" id="btnTajweedWeg">Markierung weg</button>
+    <button class="btn btn-primary btn-klein" id="btnTajweedFertig">Fertig</button>
+  </div>
+</div>
+
 <div class="qfp-backdrop hidden" id="noteBackdrop"></div>
 <div class="note-editor hidden" id="noteEditor">
   <div class="qfp-header">
@@ -7142,6 +7306,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 <script src="js/uebung.js"></script>
 <script src="js/quran.js"></script>
 <script src="js/quran-audio.js"></script>
+<script src="js/quran-markierung.js"></script>
 <script src="js/hoeren.js"></script>
 <script src="js/wurzel.js"></script>
 <script src="js/statistik.js"></script>
