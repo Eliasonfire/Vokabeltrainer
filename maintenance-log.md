@@ -5831,3 +5831,13 @@ Meine Frage am Ende des Kurzberichts (20:01): „Soll die tägliche Seite sich e
 - ⛔ **Für jede Wartung:** die `seite:N`-Einträge in `vt_suraGelesen` sind jetzt das Gedächtnis der Runde — **nie aufräumen oder kürzen** (Pflegeplan-Eintrag v531).
 - **Gemessen:** heute bei ihm unverändert Seite **478** (noch keine Seite gelesen, KV 18:38:49). Liest er jeden Tag: **591 Tage, 591 verschiedene Seiten**, danach dieselbe Folge (Tag 592–594 = Tag 1–3). Liest er nie: wie bisher 293 in 400 Tagen.
 - **Prüfer:** `test-surenringe.mjs` **112 ✔** (neu: 591 Tage lesen, zweite Runde, Stabilität nach dem Lesen, nicht gelesen → kommt wieder; drei Gegenproben: ohne „erst die nie gelesenen", „heute gelesen zählt heute schon", „nach der Runde wieder reiner Zufall" — jede rot) · `test-lesezaehlung.mjs` 37 · `test-sync.mjs` 75 · `test-hifz-sync.mjs` ✔ · `validate.js`, `pruefe-pflegeplan.mjs`, `pruefe-kreislaeufe.mjs`, `pruefe-lesezaehlung.mjs` Exit 0 · `alle-pruefer` vor dem Ausliefern 112 / 4 rot (`taschkil`, `themen` — seine; `ausgeliefert`, `erreichbarkeit` — nur „noch nicht ausgeliefert", danach beide Exit 0). Vorschau: Cache v531, Ring „Zufällig · Seite 478", keine Konsolenfehler. Ausgeliefert 21:17, `.deploy/sw.js` v531.
+
+## 19.09.2026, 03:29 — v532: „Welche Regel?" ohne Antworten, die keine Regeln sind
+
+Elias, 03:10:57, mit Bild (هَذَا الْكِتَابُ خَفِيفٌ, zur Wahl vier Einträge aus dem Thema „Schrift"): *„generell alle antowrtoptionen sind eigentlich keine regeln. was haben die hier zu suchen. mache das weg und alle die dem ähnlich oder gleich sind"*.
+
+- `js/uebung.js`: `uebungKeineRegel()` + `UEBUNG_KEINE_REGEL`, benutzt beim Bauen der Frage und in `uebungAblenker()`. Raus: das Thema „Schrift" (Muster aus `SATZ_THEMEN`) und die drei Einträge, deren Name schon sagt, dass sie keine Regel sind (`harf-jarr-name-01`, `schams-qamar-merkhilfe-01`, `istifham-uebersicht-01`). Die Regeln bleiben in der App.
+- Gemessen vorher: 294 Aufgaben (Repo-Sätze), 27 mit Schrift-Antwort; `lafz-al-jalala-01` nie richtig, aber rund 21× je Aufbau als falsche Antwort. Nachher: 257 (Repo) bzw. 318 in der App (277 Sätze), 0 mit so einer Antwort.
+- `test-welche-regel.mjs` neu (in `alle-pruefer.mjs`), fünf Gegenproben rot. Pflegeplan-Eintrag v532. `sw.js` v532. Commit `21b7f79`, gepusht, ausgeliefert 03:29, `pruefe-ausgeliefert` + `pruefe-erreichbarkeit` Exit 0.
+- Offen bei Elias (03:16:54, „sollten diese zwei als antowrt nicht eigentlich auch richtig sein?" zu أَمَامَ/خَلْفَ in „Tippe alle مُضَافٌ an"): die App folgt seinem Lehrer (Karte `zarf-als-mudaf-01`, Folge 8, 25:49 „ist selbst keins"). Nichts gebaut, bis er antwortet.
+- Nebenbefund, nicht angefasst: `js/statistik.js` schreibt fest „94 abfragbaren" Regeln — veraltet.
