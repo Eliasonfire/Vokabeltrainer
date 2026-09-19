@@ -547,9 +547,12 @@ const UEBUNGEN = [
        sich schon am Wort. */
     hinweis:'Die falschen Antworten stammen aus demselben Thema — es reicht nicht, den Namen zu erkennen.',
     baue(z, satz){
+      /* ⛔ uebungKeineRegel(): was keine Regel ist, wird hier weder gefragt
+         noch als falsche Antwort angeboten (Elias, 19.09.2026 — der Satz
+         steht bei der Funktion). Die Markierung selbst bleibt im Satz-Modus. */
       const tags = ((typeof SENTENCE_TAGS!=='undefined' && SENTENCE_TAGS[satz.id]) || [])
         .map(t=>({ t, rule: GRAMMAR_RULES.find(r=>r.id===t.ruleId) }))
-        .filter(x=>x.rule && !regelAusgeblendet(x.rule) && x.t.matchText);
+        .filter(x=>x.rule && !regelAusgeblendet(x.rule) && !uebungKeineRegel(x.rule) && x.t.matchText);
       const out = [];
       /* Vorlauf: welche Stelle im Satz traegt WIE VIELE Markierungen? Muss vor
          der Schleife stehen, weil jede Aufgabe die Antwort auf ihre eigene
@@ -818,6 +821,42 @@ const UEBUNGEN = [
   }
 ];
 
+/* ⛔⛔ WAS KEINE REGEL IST, GEHOERT NICHT IN „WELCHE REGEL?" (19.09.2026)
+
+   Elias, 03:10:57, mit einem Bildschirmfoto von „9. Welche Regel?" an
+   هَذَا الْكِتَابُ خَفِيفٌ. Hervorgehoben war الْكِتَابُ, zur Wahl standen
+   اَللّٰه (helle und dunkle Aussprache) · شَكْل (Vokalzeichen) ·
+   اِلْتِقَاءُ السَّاكِنَيْن (zwei Vokallose treffen sich) · هَمْزَةُ الوَصْل:
+   „helle und dunkle aussprache von allah ist hier komplett irrelevant. das hat hier nichts zu suchen. und schekel in diesem zusammenhang verstehe ich auch nicht. generell alle antowrtoptionen sind eigentlich keine regeln. was haben die hier zu suchen. mache das weg und alle die dem ähnlich oder gleich sind"
+
+   Gemessen (Nachbau der Uebung ausserhalb der App, 221 Saetze, 294
+   Aufgaben): alle vier stammen aus dem Thema „Schrift". Weil die Ablenker
+   aus DEMSELBEN Thema kommen (uebungAblenker), sah jede der 27 Aufgaben mit
+   einer Schrift-Antwort genau so aus. Das Allah-Wort war NIE die richtige
+   Antwort und stand trotzdem rund 21-mal je Aufbau als falsche da.
+
+   Hier faellt weg, als Frage UND als falsche Antwort:
+   ① das ganze Thema „Schrift" — wie man Zeichen liest und schreibt. Ueber
+     das Muster in SATZ_THEMEN, damit eine neue Schrift-Regel von selbst
+     mitfaellt. Das ist „gleich".
+   ② Eintraege, die schon im NAMEN sagen, dass sie keine Regel sind: eine
+     Namenserklaerung, eine Merkhilfe, ein Ueberblick. An einem Wort
+     „sichtbar" ist davon nichts. Das ist MEINE Lesart von „ähnlich";
+     test-welche-regel.mjs wird rot, wenn ein neuer Eintrag so heisst und
+     hier fehlt.
+   ⚠️ Bewusst DRIN (meine Lesart, ihm so gesagt): Aussprache-Regeln, die an
+   einem bestimmten Wort haengen — Sonnen-/Mondbuchstaben bei اَلْ (ein
+   Pruefungsthema seines Lehrers), مِنَ vor اَلْ, لِلْ, لَكَ, فِيهِ.
+   ⚠️ Die Regeln selbst bleiben in der App (Regelsammlung, Markierungen im
+   Satz-Modus) — wie bei „Bestimmt?" am 16.09.: nur die Uebung laesst sie weg. */
+const UEBUNG_KEINE_REGEL = ['harf-jarr-name-01', 'schams-qamar-merkhilfe-01', 'istifham-uebersicht-01'];
+function uebungKeineRegel(r){
+  if (!r) return true;
+  if (UEBUNG_KEINE_REGEL.includes(r.id)) return true;
+  const schrift = (typeof SATZ_THEMEN !== 'undefined') ? SATZ_THEMEN.find(t => t.id === 'schrift') : null;
+  return !!(schrift && schrift.muster && schrift.muster.test(r.id));
+}
+
 /* Ablenker fuer Modus 10: Regeln aus demselben Thema. Faellt das Thema aus
    (eine Regel, die in keinem Muster steht), wird auf die Farbgruppe
    ausgewichen - die buendelt inhaltlich Verwandtes. */
@@ -835,7 +874,7 @@ const uebungNamensstamm = r => String(r.name || '').split('(')[0].trim();
 function uebungAblenker(rule, anzahl, verboten, bevorzugt){
   const aus = verboten || new Set();
   const stamm = uebungNamensstamm(rule);
-  const brauchbar = r => r.id !== rule.id && !regelAusgeblendet(r) && !aus.has(r.id);
+  const brauchbar = r => r.id !== rule.id && !regelAusgeblendet(r) && !uebungKeineRegel(r) && !aus.has(r.id);
   /* ⛔ `find` — die ERSTE passende Kategorie gewinnt, und drei Regeln passen
      auf zwei Muster: verb-enthaelt-pronomen-01 (wortarten + verben),
      zarf-als-mudaf-01 (idafa + zarf), adjektive-an-ohne-tanwin-01 (nat + al).
