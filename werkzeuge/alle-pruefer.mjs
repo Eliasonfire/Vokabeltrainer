@@ -445,6 +445,14 @@ const PRUEFER = [
      ausschluss prinzip machen kann") und bei الْمُسْتَشْفَى die Karte zur
      unsichtbaren Endung statt der Kasra, die er vermisst hat. */
   ['test-satzmodus-schwerer.mjs', []],
+  /* ⛔ Neu am 19.09.2026. Elias mit Bildschirmfoto von „Welche Regel?", wo
+     vier Einträge aus dem Thema „Schrift" zur Wahl standen: „generell alle
+     antowrtoptionen sind eigentlich keine regeln. was haben die hier zu
+     suchen. mache das weg und alle die dem ähnlich oder gleich sind".
+     Wird rot, sobald so eine Antwort wieder auftaucht — auch über einen
+     neuen Eintrag, der „Überblick", „Merkhilfe" oder „so heißen" im Namen
+     trägt. */
+  ['test-welche-regel.mjs', []],
   /* ⛔ Neu am 15.09.2026. Die drei Quran-Ringe auf dem Startbildschirm nannten
      eine Sure und fuehrten auf die Liste aller 114. Elias mit Bild: „ich will
      das die jeweiligen koran suren mich direkt zu den jeweiligen suren

@@ -210,6 +210,19 @@ export const PFLEGEPLAN = [
        nur, wenn neue Regeln ausgeliefert wurden.
      Markierungen, Taschkīl und Iʿrāb prüfen dieselben Werkzeuge wie bei jedem
      Beispielsatz, weil die Sätze in data/beispielsaetze.js stehen. */
+  /* 19.09.2026 (v532), innerhalb von js/uebung.js und deshalb von Hand hier:
+     uebungKeineRegel() — „Welche Regel?" fragt nichts aus dem Thema „Schrift"
+     mehr und nichts, was schon im Namen sagt, dass es keine Regel ist
+     (UEBUNG_KEINE_REGEL: Namenserklärung, Merkhilfe, Überblick), auch nicht
+     als falsche Antwort. Elias: „generell alle antowrtoptionen sind eigentlich
+     keine regeln. … mache das weg und alle die dem ähnlich oder gleich sind".
+     Kein neuer Schlüssel, und kein neuer Pflegebedarf, weil beide Wege neue
+     Regeln von selbst erfassen:
+     · eine neue Schrift-Regel fällt über das Muster in SATZ_THEMEN mit weg;
+     · ein neuer Eintrag mit „Überblick", „Merkhilfe" oder „so heißen" im Namen
+       macht test-welche-regel.mjs rot, bis er in der Liste steht. Der läuft
+       über alle-pruefer.mjs (Wartung 1b.6) — also genau dann, wenn neue Regeln
+       ausgeliefert werden, und nur dann kann sich sein Ergebnis ändern. */
   {
     funktion: 'Satzmodus und Grammatik-Hervorhebung',
     dateien: ['js/saetze.js', 'js/uebung.js', 'grammar-data.js', 'lehrbuch-saetze.js'],
