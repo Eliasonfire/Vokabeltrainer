@@ -152,6 +152,13 @@ const PRUEFER = [
      aus js/hoeren.js heraus und faehrt sie; ein Nachbau haette den Fehler nie
      enthalten. [[testvorlage_selbst_nachgebaut]] */
   ['werkzeuge/pruefe-hoerziel.mjs', []],
+  /* ⭐ Die angefangene Runde (19.09.2026). Elias hatte 9 von 10 Karten
+     bewertet, oben stand schon „10/10" (das war die Kartennummer), und das
+     Schließen der App warf die offene zehnte lautlos weg. Der Prüfer schneidet
+     `rundenLeiste()` und die Sicherung aus dem echten Quelltext, spielt Runde
+     und Neustart nach und dreht beides per Störtest zurück.
+     [[stoertest_muss_wirkung_nachweisen]] */
+  ['werkzeuge/pruefe-offene-runde.mjs', []],
   /* ⭐ Neu am 11.09.2026. Elias: „beim Hörverstehen sollen 5 Auswahl
      Möglichkeiten sein und es soll schwerer gemacht werden" — mit Woertern,
      die sich aehnlich anhoeren oder aehnlich schreiben. Der Pruefer schneidet

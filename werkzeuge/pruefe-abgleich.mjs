@@ -69,6 +69,13 @@ const AUSGENOMMEN = new Map([
      [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
   ['vt_einstGruppen', 'welche Einstellungsgruppe zugeklappt ist — eine Anzeigevorliebe des Geräts, an dem man gerade sitzt. Über den Abgleich getragen hieße: ein Griff am Handy baut die Ansicht am Tablet um, ohne dass dort jemand etwas getan hat'],
   ['vt_gehLog',       'Diagnose des Geh-Modus — misst auf DIESEM Gerät, ob die Sprachausgabe bei gesperrtem Bildschirm anspringt; genau diese Gerätebindung ist der Zweck'],
+  /* ⭐ Die angefangene Runde (19.09.2026). Der Grund ist hier nicht „nur
+     Gerätezustand", sondern schärfer: das ENDE einer Runde ist ein fehlender
+     Eintrag, und ein fehlender Eintrag verliert jeden „jüngerer Stempel
+     gewinnt"-Vergleich — die beendete Runde käme vom anderen Gerät zurück und
+     schöbe Elias Karten unter, die er schon gemacht hat.
+     [[ausfall_ist_unsichtbar_gebaut]] */
+  ['vt_offeneRunde',  'die angefangene Kartenrunde dieses Geräts — Kennungen, Zeiger, Lerntag. Sie gehört dem Gerät, auf dem sie läuft; über den Abgleich getragen käme eine beendete Runde zurück, weil ihr Ende ein FEHLENDER Eintrag ist. Fortgesetzt wird sie von offeneRundeFortsetzen() in js/lernen.js, geprüft von werkzeuge/pruefe-offene-runde.mjs'],
   ['vt_geraetId',     'trennt die Zeitzweige der Geräte. Abgeglichen wäre sie auf beiden gleich und könnte nichts mehr trennen'],
   /* ⭐ Zwei Diagnoseschlüssel vom 09.09.2026. Beide sind absichtlich
      gerätegebunden — und beim zweiten wäre der Abgleich sogar widersinnig:

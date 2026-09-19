@@ -127,6 +127,15 @@ const OHNE_LISTE = new Map([
                    + '(js/hoeren.js:634)'],
   ['vt_quranEn',     'Zwischenspeicher der englischen Uebersetzung, hoechstens zwoelf Suren '
                    + 'und jederzeit nachladbar (js/quran.js:484)'],
+  /* ⭐ 19.09.2026: gehoert bewusst NICHT in die Sicherung. Sie wird auf einem
+     ANDEREN Geraet oder Tage spaeter eingespielt — eine Runde von gestern
+     waere dort entweder abgelaufen (sie traegt ihren Lerntag) oder sie schoebe
+     eine fremde Kartenfolge dazwischen. Der Lernstand selbst steckt in
+     vt_progress und vt_uebungstage und ist laengst gesichert; verloren geht
+     hier also nichts. */
+  ['vt_offeneRunde', 'die angefangene Kartenrunde dieses Geraets (19.09.2026) — Geraetezustand,'
+                   + 'kein Lernstand: die Bewertungen stehen in vt_progress. Sie traegt ihren '
+                   + 'Lerntag und wird am naechsten Tag von selbst verworfen (js/lernen.js)'],
 ]);
 
 const ohneListe = [...geschrieben.keys()]

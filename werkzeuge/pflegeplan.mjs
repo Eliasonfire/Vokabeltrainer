@@ -67,6 +67,20 @@ export const PFLEGEPLAN = [
      der deutschen Bedeutung (null … zwölf), ein neues Zahlwort aus einem Buch
      ist ohne Zutun dabei; test-zahlwort-form.mjs läuft in alle-pruefer.mjs,
      validate.js meldet, wenn eine der drei Anzeigen die Beschriftung verliert. */
+  /* 19.09.2026, innerhalb von js/lernen.js, js/start.js und js/navigation.js und
+     deshalb von Hand hier: eine angefangene Runde übersteht jetzt das Schließen
+     der App (neuer Speicherschlüssel `vt_offeneRunde`), und die Zahl oben zählt
+     die FERTIGEN Karten statt der Kartennummer (Elias am 19.09.2026, 22:10:02:
+     „Fertige Karten zählen"). Kein neuer Pflegebedarf, und zwar geprüft:
+     · neuer Inhalt — nein, es entsteht nichts, was gepflegt werden müsste;
+     · Eingaben von Elias — nein, der Schlüssel ist Gerätezustand und wird
+       absichtlich nicht abgeglichen; ausgewertet wird er von der App selbst
+       (`offeneRundeFortsetzen()`, `offeneRundeStand()`), eingetragen mit Grund
+       in pruefe-kreislaeufe.mjs;
+     · veralten — ja, eine Runde von gestern; genau dafür trägt sie den Lerntag
+       und wird am nächsten Tag verworfen, ohne dass jemand aufräumen muss.
+     Bewacht von werkzeuge/pruefe-offene-runde.mjs (in alle-pruefer.mjs), samt
+     Störtest in beide Richtungen. */
   {
     funktion: 'Vokabeln und Karteikarten',
     dateien: ['vocab-data.js', 'js/lernen.js', 'data/eselsbruecken.js', 'data/eselsbruecken-alt.js', 'data/beispielsaetze.js', 'data/feld-ausnahmen.js'],

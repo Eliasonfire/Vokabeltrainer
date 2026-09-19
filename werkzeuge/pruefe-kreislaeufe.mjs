@@ -57,6 +57,7 @@ const SPEICHER_AUSNAHMEN = {
   'vt_satzTag':       'Tageszaehler des Satzmodus (07.09.2026) — wie vt_hoerTag ein reiner App-Zustand',
   'vt_lautStand':     'welche Karte wann zuletzt „laut sagen“ trug — die Auswahl trifft die App beim Rundenaufbau',
   'vt_lautRunde':     'die laufende Rundennummer dazu; sie hat ausserhalb der App keine Bedeutung',
+  'vt_offeneRunde':   'die angefangene Kartenrunde (19.09.2026) — Kennungen, Zeiger und Lerntag, damit das Schliessen der App die offene Karte nicht mehr verschluckt. Sie wird sehr wohl ausgewertet, nur nicht von einem Werkzeug: offeneRundeFortsetzen() baut sie beim Tippen auf „Jetzt lernen" wieder auf und offeneRundeStand() speist den Hinweis auf der Startseite (beide js/lernen.js). ⛔ Absichtlich NICHT im Abgleich: eine Runde gehoert dem Geraet, auf dem sie laeuft, und ihr Ende ist ein FEHLENDER Eintrag — der verliert jeden „juengerer Stempel gewinnt"-Vergleich und kaeme zurueck. Geprueft von werkzeuge/pruefe-offene-runde.mjs',
   'vt_lesestand':     'wo er im Leser stehengeblieben ist',
   'vt_quranFav':      'seine Lesezeichen im Quran',
   'vt_customCats':    'eigene Kategorien, reine Ansichtssache',

@@ -21,7 +21,16 @@ function renderHome(){
   const zurueck = (typeof istWiedereinstieg === 'function') && istWiedereinstieg();
   const groesse = `Sitzungsgröße: ${SETTINGS.sessionSize===9999?'alle':SETTINGS.sessionSize} Karten pro Runde${SETTINGS.wrongOnly?' · Nur falsche Wörter':''}`;
   animateNumber(document.getElementById('dueCount'), pool.length);
-  document.getElementById('dueSub').textContent = pool.length
+  /* ⭐ „Deine Runde ist noch offen" (19.09.2026). Seit die App eine angefangene
+     Runde sichert (`offeneRundeStand()` in js/lernen.js), darf sie das auch
+     sagen: Elias sieht sonst nur einen Kreis, der nicht zugeht, und weiß nicht,
+     dass EIN Tipp auf „Jetzt lernen" ihn schließt. Genau diese Lücke war sein
+     Befund vom 19.09.2026, 03:48:30. Der Hinweis steht vor der Sitzungsgröße,
+     weil er handlungsleitend ist und die Größe nur Einordnung. */
+  const offeneRunde = (typeof offeneRundeStand === 'function') ? offeneRundeStand() : null;
+  document.getElementById('dueSub').textContent = offeneRunde
+    ? `Deine Runde ist noch offen: ${offeneRunde.fehlt === 1 ? '1 Karte fehlt' : offeneRunde.fehlt + ' Karten fehlen'} · ${groesse}`
+    : pool.length
     ? (zurueck ? `Willkommen zurück – wir fangen klein an · ${groesse}`
        : wartet > 0 ? `Heute dran · ${wartet} warten noch · ${groesse}`
        : groesse)
@@ -546,13 +555,30 @@ function modusBalkenZeichnen(id, stand, ziel){
    Aussehen. Deshalb steht sie hier einmal statt zweimal abgeschrieben — sonst
    laufen die beiden beim nächsten Anfassen auseinander, und zwar lautlos.
 
-   ⚠️ Balken und Zahl zeigen absichtlich VERSCHIEDENE Werte:
-     · der Balken den ERLEDIGTEN Anteil (`erledigt / ziel`),
-     · die Zahl die LAUFENDE Nummer (`erledigt + 1`).
-   Beim Betrachten von Karte 1 sind null Karten geschafft — der Balken steht
-   also am Anfang, die Zahl sagt trotzdem „1/10". Das ist kein Widerspruch,
-   sondern der Grund, warum es zwei Angaben gibt. So stand es im Lernmodus seit
-   jeher; der Hörmodus übernimmt es hiermit unverändert.
+   ⛔⛔ DIE ZAHL ZÄHLT DIE FERTIGEN KARTEN (19.09.2026), nicht mehr die
+   laufende Kartennummer. Balken und Zahl messen damit dasselbe:
+     · der Balken den erledigten Anteil (`erledigt / ziel`),
+     · die Zahl die erledigten Karten selbst (`erledigt`).
+
+   ⭐ Warum das geändert wurde. Bis heute stand dort `erledigt + 1`, also die
+   Nummer der Karte, die man gerade ansieht. Auf der letzten Karte einer Runde
+   stand deshalb schon „10/10", BEVOR sie bewertet war. In der Nacht zum
+   19.09.2026 hat Elias genau das gesehen, die Runde für fertig gehalten, die
+   App geschlossen — und auf der Startseite stand der Kreis bei 9. Sein Satz um
+   03:48:30: „ich habe alle karteikarten gemacht, dennoch ist der kreis nicht
+   komplett zu, das ein fehler". Beide Anzeigen hatten recht; sie maßen
+   Verschiedenes. Jetzt zeigen sie dieselbe Zahl wie der Kreis.
+
+   ⭐ Seine Entscheidung am 19.09.2026 um 22:10:02, aus drei Möglichkeiten
+   (fertige Karten zählen · so lassen · „Karte 1 von 10" ausschreiben):
+   „Fertige Karten zählen" — am Anfang steht 0/10, die 10/10 kommt erst, wenn
+   die letzte Karte gemacht ist.
+
+   ⛔ Seine frühere Beschreibung vom 15.09.2026 („einfach nur balken mit 1/10
+   und dann geht es hoch normal wie bei krateikarten") ist damit überholt. Sie
+   beschrieb den Lernmodus von damals und beantwortete die Frage, ob der
+   Hörmodus dieselbe Leiste bekommt. Diese Antwort gilt weiter: EINE Rechnung
+   für beide, deshalb steht sie hier einmal statt zweimal abgeschrieben.
 
    ⚠️ Die Zahl wird bei `ziel` gedeckelt. Der Lernmodus braucht das nicht (eine
    Runde ist endlich), der Hörmodus schon: dort gehen die Fragen nie aus, und
@@ -571,7 +597,7 @@ function rundenLeiste(balkenId, zahlId, erledigt, ziel){
     (ziel ? ringBogen(Math.min(erledigt / ziel, 1)) : ringBogen(0)) + '%';
   const zahl = zahlId && document.getElementById(zahlId);
   if (zahl) zahl.textContent = ziel
-    ? Math.min(erledigt + 1, ziel) + '/' + ziel
+    ? Math.min(erledigt, ziel) + '/' + ziel
     : '';
 }
 

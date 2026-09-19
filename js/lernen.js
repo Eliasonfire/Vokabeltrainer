@@ -4,6 +4,94 @@
 /* ===================== LEARN / FLASHCARDS ===================== */
 let SESSION = { words:[], idx:0, dirs:[], fertig:true };
 
+/* ---------- Eine angefangene Runde übersteht das Schließen der App ----------
+   (19.09.2026)
+
+   ⛔⛔ `SESSION` lag bis heute NUR im Arbeitsspeicher. Wer die App schloss, war
+   seine angefangene Runde los — ohne Meldung und ohne Spur. In der Nacht zum
+   19.09.2026 ist genau das passiert: Elias hatte 9 von 10 Karten bewertet und
+   stand auf der zehnten, und ich hatte ihm nach einer Auslieferung gesagt „App
+   schließen und neu öffnen". Danach war die zehnte Karte weg, der Kreis blieb
+   bei 9, und für ihn sah es aus wie ein Zählfehler:
+   „ich habe alle karteikarten gemacht, dennoch ist der kreis nicht komplett
+   zu, das ein fehler" (03:48:30).
+
+   ⭐ Gesichert wird nicht das ganze Wort, sondern seine KENNUNG. Ein Wort kann
+   sich zwischen zwei Starts ändern (Bedeutung, Kapitel, Eselsbrücke) — die
+   fortgesetzte Runde soll die heutige Fassung zeigen, nicht die von vorhin.
+
+   ⭐ Und gesichert wird beim BEWERTEN, mit dem Stand DANACH — nicht erst, wenn
+   `weiter()` 210 ms später `idx` hochzählt. Stirbt die Seite in diesem Fenster
+   (Anruf, Speicher knapp, App geschlossen), käme die eben beantwortete Karte
+   sonst noch einmal und würde ein zweites Mal gezählt.
+
+   ⛔ Der Schlüssel wird NICHT abgeglichen (`SYNC_SCHLUESSEL` in js/sync.js).
+   Eine Runde gehört dem Gerät, auf dem sie läuft: Handy und Tablet würden sich
+   sonst gegenseitig Karten unterschieben. Und das Ende einer Runde ist ein
+   FEHLENDER Eintrag — der verliert jeden „jüngerer Stempel gewinnt"-Vergleich
+   und käme Sekunden später zurück. [[ausfall_ist_unsichtbar_gebaut]]
+
+   ⛔ Sie gilt nur für den laufenden Lerntag (`todayStr(0)`, Beginn 8 Uhr). Am
+   nächsten Tag ist die Tagesration neu gerechnet; unbewertete Karten bleiben
+   ohnehin fällig und kommen von selbst wieder. */
+const OFFENE_RUNDE = 'vt_offeneRunde';
+
+function rundeSichern(erledigt){
+  const idx = (typeof erledigt === 'number') ? erledigt : SESSION.idx;
+  if (!SESSION.words.length || SESSION.fertig || idx >= SESSION.words.length){ rundeVergessen(); return; }
+  LS.set(OFFENE_RUNDE, {
+    tag: todayStr(0),
+    ids: SESSION.words.map(w => String(w && w.id)),
+    idx,
+    /* Über die WÖRTER, nicht über die Zahlen: beim Fortsetzen kann eine Karte
+       fehlen, dann verschieben sich alle Indizes. Dieselbe Umrechnung wie in
+       `passeRundeAnAuswahlAn()` weiter unten. */
+    lautIds: [...(SESSION.laut || [])].map(i => String(SESSION.words[i] && SESSION.words[i].id)),
+    zeit: Date.now()
+  });
+}
+
+function rundeVergessen(){
+  /* `LS` kennt kein Löschen. `null` ist hier dasselbe und geht denselben Weg —
+     mit Fehlermeldung bei vollem Speicher. */
+  LS.set(OFFENE_RUNDE, null);
+}
+
+/* Was ist noch offen? Liest nur, verändert nichts — damit fragt die Startseite,
+   ob sie den Hinweis unter dem Lern-Knopf zeigt. */
+function offeneRundeStand(){
+  const g = LS.get(OFFENE_RUNDE, null);
+  if (!g || !Array.isArray(g.ids) || typeof g.idx !== 'number') return null;
+  if (g.tag !== todayStr(0)) return null;
+  const fehlt = g.ids.length - g.idx;
+  return fehlt > 0 ? { fehlt, gesamt: g.ids.length } : null;
+}
+
+/* Baut die gesicherte Runde wieder auf. `true` heißt: der Lernbildschirm steht
+   schon, es geht bei der Karte weiter, die noch offen war. */
+function offeneRundeFortsetzen(){
+  const g = LS.get(OFFENE_RUNDE, null);
+  if (!g || !Array.isArray(g.ids) || typeof g.idx !== 'number') return false;
+  if (g.tag !== todayStr(0)){ rundeVergessen(); return false; }
+  const lautIds = Array.isArray(g.lautIds) ? g.lautIds.map(String) : [];
+  const words = [];
+  let weg = 0;
+  g.ids.forEach((id, i) => {
+    const w = VOCAB_DATA.find(v => String(v.id) === String(id));
+    if (w) words.push(w);
+    else if (i < g.idx) weg++;           /* fällt vor dem Zeiger weg: Zeiger mit */
+  });
+  const idx = Math.max(0, g.idx - weg);
+  if (!words.length || idx >= words.length){ rundeVergessen(); return false; }
+  const laut = new Set();
+  words.forEach((w, i) => { if (lautIds.includes(String(w.id))) laut.add(i); });
+  /* `dirs` bleibt leer: die Abfragerichtung wird je Karte neu entschieden und
+     hängt am Lernstand — der kann sich seit gestern geändert haben. */
+  SESSION = { words, idx, dirs: [], fertig: false, laut };
+  showScreen('learn');
+  return true;
+}
+
 /* ---------- Jede sechste Karte ein Fachbegriff (17.08.2026) ----------
 
    Elias: „und da ist es auch wichtig, dass auch vorallem begriffe genutzt
@@ -128,6 +216,9 @@ function startLearningSession(){
      Fachbegriffe auf die Plaetze 6/12/18, statt sie irgendwo zu lassen. */
   words = fachbegriffTakt(words, size);
   SESSION = { words, idx:0, dirs:[], fertig:false, laut: waehleLautKarten(words) };
+  /* Schon vor der ersten Antwort sichern: wer die App auf Karte 1 schließt,
+     soll dieselbe Runde wiederfinden und nicht eine neu gewürfelte. */
+  rundeSichern(0);
   showScreen('learn');
 }
 
@@ -150,6 +241,7 @@ function passeRundeAnAuswahlAn(){
   const entfernt = bisher.length - bleibt.length;
   if (!bleibt.length){
     SESSION = { words:[], idx:0, dirs:[], fertig:true };
+    rundeVergessen();
     showScreen('home', { ersetzen:true });
     toast('Diese Auswahl enthält keine fälligen Wörter mehr — Runde beendet.');
     return true;
@@ -167,6 +259,9 @@ function passeRundeAnAuswahlAn(){
   const neueLaut = new Set();
   bleibt.forEach((w, i) => { if (lautWoerter.has(w)) neueLaut.add(i); });
   SESSION = { words: bleibt, idx: neuerIdx, dirs: [], fertig: false, laut: neueLaut };
+  /* Die gesicherte Runde zieht mit: sonst käme beim nächsten Start wieder die
+     Fassung MIT den abgewählten Kapiteln. */
+  rundeSichern();
   renderCard();
   toast(`${entfernt} Wort${entfernt===1?'':'e'} aus abgewählten Kapiteln entfernt.`);
   return true;
@@ -1191,6 +1286,10 @@ document.getElementById('btnSpeakWord').addEventListener('click', (e)=>{
 /* Das X beendet die Runde bewusst - danach startet "Lernen" wieder eine neue. */
 document.getElementById('btnExitLearn').addEventListener('click', ()=>{
   SESSION.fertig = true;
+  /* Das X ist eine Entscheidung, kein Unfall — die Runde soll danach auch
+     nicht wiederkommen. (Das Schließen der APP ist etwas anderes: dort wird
+     fortgesetzt, siehe `offeneRundeFortsetzen()`.) */
+  rundeVergessen();
   /* Auch beim vorzeitigen Abbrechen pruefen - wer die letzte schwache Vokabel
      richtig hatte und dann abbricht, soll den Modus nicht angeschaltet
      zuruecklassen. */
@@ -1479,6 +1578,12 @@ function answer(stufe){
      auseinanderlaufen koennen. [[dieselbe_frage_zwei_antworten]] */
   touchStreak();
   if (typeof tagZaehlen === 'function') tagZaehlen();
+  /* ⭐ Und im selben Zug die angefangene Runde sichern, mit dem Stand NACH
+     dieser Karte (19.09.2026). Sie steht bewusst direkt bei `tagZaehlen()`:
+     beide halten denselben Augenblick fest — „diese Karte ist erledigt" —, und
+     was hier auseinanderläuft, ist genau der Fehler, der Elias in der Nacht
+     zum 19.09. eine Karte gekostet hat. */
+  rundeSichern(SESSION.idx + 1);
   /* ⭐ Die Trefferquote je Tag (07.09.2026). Elias: „trefferquote sollte doch
      auch die karteikarten zählen weil der fortschritt da ist ja wirklich sehr
      wichtig." Die Karte schreibt in eigene Felder (`kGestellt`/`kRichtig`) —
@@ -1534,8 +1639,15 @@ function answer(stufe){
       SESSION.idx++;
       renderCard();
     } else {
-      document.getElementById('learnProgressFill').style.width = '100%';
+      /* ⛔ Balken UND Zahl, seit dem 19.09.2026. Hier stand nur die Breite auf
+         100 %; die Zahl daneben blieb bei „9/10" stehen, seit sie die fertigen
+         Karten zählt (`rundenLeiste()` in js/start.js). Der letzte Handgriff
+         einer Runde ist genau der, den Elias sehen will. */
+      rundenLeiste('learnProgressFill', 'learnCount', SESSION.words.length, SESSION.words.length);
       SESSION.fertig = true;
+      /* Die Runde ist zu Ende — der gesicherte Stand darf sie nicht wieder
+         auferstehen lassen. */
+      rundeVergessen();
       /* Erst pruefen, ob der "nur falsche"-Modus jetzt leer ist: dessen
          Meldung ist die wichtigere und soll nicht vom "Runde geschafft"
          ueberschrieben werden. */
