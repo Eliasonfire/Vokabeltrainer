@@ -2626,6 +2626,12 @@ function renderVerses(id){
   renderSuraNav(id);
   beobachteLesestand(id);
   passeBasmalaAn();
+  /* ⛔ Die markierten Fehlerstellen NACH jedem Neuaufbau neu zeichnen. Sie
+     hängen an Textknoten (CSS Custom Highlight API, js/quran-markierung.js);
+     nach einem Neuaufbau sind das andere Knoten, und die alten Bereiche
+     zeigen ins Leere — ohne Fehler, nur ohne Markierung.
+     [[ausfall_ist_unsichtbar_gebaut]] */
+  if (typeof tajweedZeichnen === 'function') tajweedZeichnen();
   /* Modus und Groessen gelten auch fuer frisch gebaute Verse. Die Klassen sitzen
      zwar am Container und ueberleben den Neuaufbau - die Knopfzustaende im
      Ansicht-Menue aber nicht, wenn es zwischendurch geoeffnet wurde. */

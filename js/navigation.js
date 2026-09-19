@@ -206,7 +206,11 @@ const OVERLAYS = [
   { id: 'wortKarte',        zu: 'schliesseWortKarte'    },
   /* Die Regelkarte (11.09.2026, js/regeln.js) — dieselbe Ebene in der
      Historie, sonst liesse die Zurück-Taste sie über dem Bildschirm stehen. */
-  { id: 'regelKarte',       zu: 'schliesseRegelKarte'   }
+  { id: 'regelKarte',       zu: 'schliesseRegelKarte'   },
+  /* Die Markierkarte im Koran-Leser (20.09.2026, js/quran-markierung.js) —
+     dieselbe Ebene, sonst bliebe sie bei der Zurück-Taste über dem Leser
+     stehen. */
+  { id: 'tajweedKarte',     zu: 'tajweedKarteSchliessen' }
 ];
 
 /* Welches Overlay liegt gerade oben? Gelesen wird der DOM, nicht eine

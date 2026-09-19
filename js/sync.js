@@ -47,6 +47,14 @@ const SYNC_SCHLUESSEL = [
   'vt_quoteTage',
   'vt_personalVocab', 'vt_customCats', 'vt_hifz', 'vt_hifzVerse',
   'vt_quranFav', 'vt_lesestand',
+  /* Die markierten Fehlerstellen im Korantext (20.09.2026). Sie MUESSEN
+     abgeglichen werden: Elias liest auf Handy UND Tablet, und was er am
+     einen Geraet anstreicht, soll am anderen stehen — „ich möchte das alles
+     was sowohl auf meinem handy, als auch auf meinem tablat 1:1 identisch
+     ist" (06.09.2026). Der Eintrag traegt seinen eigenen Zeitstempel, damit
+     auch das WEGNEHMEN ankommt; der Merge-Zweig dafuer steht weiter unten
+     bei vt_bekannt. */
+  'vt_tajweed',
   /* Der Tageszaehler des Hoermodus (17.08.2026). Er gehoert dazu, weil Elias
      auf Tablet UND Handy uebt: ohne Abgleich haette er zwei getrennte
      Tagesziele und muesste jedes doppelt machen. ⚠️ Wie alles ausser
@@ -654,8 +662,16 @@ function fuehreZusammen(fern){
        eine andere, ueberlebte nur die vom juengeren Geraet. Genau der Fehler,
        der hier fuer vt_bekannt und weiter unten fuer vt_notes schon behoben war.
        [[allgemeine_regel_statt_listeneintrag]] */
+    /* ⭐ `vt_tajweed` (20.09.2026) laeuft ueber denselben Zweig. Der Eintrag
+       ist dort {an, stellen, zeichen, farbe, notiz, zeit} — gebraucht wird
+       genau dasselbe: je Wort gewinnt der spaetere Zeitstempel, und weil
+       dieser Zweig ausser `zeit` NICHTS aus dem Eintrag liest, kommen Farbe
+       und Notiz unangetastet mit. Deshalb steht der Schluessel hier und
+       nicht in `zeitform` darunter: dort wuerde der Eintrag auf {an, zeit}
+       zusammengestrichen und beides ginge verloren.
+       [[allgemeine_regel_statt_listeneintrag]] */
     if (k === 'vt_bekannt' || k === 'vt_einzeln_frei' || k === 'vt_vorschlagNr' || k === 'vt_wortAenderungen' || k === 'vt_geloescht'
-        || k === 'vt_hifz' || k === 'vt_hifzVerse' || k === 'vt_quranFav'){
+        || k === 'vt_hifz' || k === 'vt_hifzVerse' || k === 'vt_quranFav' || k === 'vt_tajweed'){
       try {
         /* ⚠️ Das andere Geraet kann noch die ALTE Fassung fahren und die alte
            Form schicken ({id: true}). Beide Seiten werden deshalb erst auf

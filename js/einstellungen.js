@@ -796,6 +796,8 @@ const SICHERUNGS_SCHLUESSEL = [
   'vt_progress', 'vt_notes', 'vt_settings', 'vt_streak',
   'vt_uebungstage', /* Uebungskalender (21.08.2026) — nicht wiederherstellbar */
   'vt_personalVocab', 'vt_customCats', 'vt_hifz', 'vt_hifzVerse',
+  'vt_tajweed',   /* markierte Fehlerstellen im Korantext (20.09.2026) — seine
+                     eigene Arbeit am Text, nicht wiederherstellbar */
   'vt_hoerTag',   /* Tageszaehler Hoermodus, 17.08.2026 */
   'vt_bekannt',   /* „Kenne ich schon" — seine Auswahl, nicht wiederherstellbar */
   'vt_vorschlagNr', /* welcher Eselsbrücken-Vorschlag gilt (18.08.2026) — dito */

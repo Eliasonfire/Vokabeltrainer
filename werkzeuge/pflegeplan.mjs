@@ -81,6 +81,29 @@ export const PFLEGEPLAN = [
        und wird am nächsten Tag verworfen, ohne dass jemand aufräumen muss.
      Bewacht von werkzeuge/pruefe-offene-runde.mjs (in alle-pruefer.mjs), samt
      Störtest in beide Richtungen. */
+  /* 20.09.2026 (v536), neue Datei js/quran-markierung.js und neuer
+     Speicherschlüssel `vt_tajweed`: Elias kann im Korantext einzelne
+     Buchstaben markieren, an denen sein Tajweed schiefgeht — mit Farbe und
+     eigener Notiz („Ich will auch im Koran den Text markieren irgendwie
+     können für Fehler zB wo ich tajweed etwas falsch mache", 19.09.2026).
+     Der Pflegebedarf, geprüft:
+     · neuer Inhalt — nein. Es entsteht kein Material, das jemand pflegen
+       müsste; markiert wird auf dem bestehenden Korantext, und der ändert
+       sich nicht.
+     · Eingaben von Elias — JA, und zwar zwei: die markierten Stellen und
+       seine Notizen dazu. Ausgewertet werden sie heute nur von der App
+       selbst (`tajweedZeichnen()`), und das ist Absicht: er wollte „erst
+       einmal nur markieren" (19.09.2026, 23:54:21), keine Übersichtsseite.
+       ⚠️ Damit sammelt sich etwas an, das niemand liest — genau das Muster
+       von `vt_zielverlauf`. Es steht deshalb als offener Punkt in der To-Do
+       („Übersicht der markierten Stellen"), nicht als stille Lücke.
+       [[werkzeug_ohne_aufrufer]]
+     · veralten — ja, aber von selbst harmlos: sitzt eine Stelle, nimmt er
+       die Markierung weg; der Eintrag bleibt als `an:false` mit Zeitstempel
+       stehen, damit der Geräteabgleich sie nicht zurückholt. Nichts muss
+       aufgeräumt werden.
+     Bewacht von werkzeuge/pruefe-markierung.mjs (in alle-pruefer.mjs), 51
+     Proben mit drei Störtests. */
   {
     funktion: 'Vokabeln und Karteikarten',
     dateien: ['vocab-data.js', 'js/lernen.js', 'data/eselsbruecken.js', 'data/eselsbruecken-alt.js', 'data/beispielsaetze.js', 'data/feld-ausnahmen.js'],
@@ -335,7 +358,7 @@ export const PFLEGEPLAN = [
      erst sein Handy; der Punkt steht in der To-Do. */
   {
     funktion: 'Quran-Leser und Quranbezug der Vokabeln',
-    dateien: ['js/quran.js', 'js/quran-audio.js', 'surah-data.js', 'quran-seiten.js', 'quran-verszeichen.js', 'quran-frequency-data.js', 'quran-text.js'],
+    dateien: ['js/quran.js', 'js/quran-audio.js', 'js/quran-markierung.js', 'surah-data.js', 'quran-seiten.js', 'quran-verszeichen.js', 'quran-frequency-data.js', 'quran-text.js'],
     bildschirme: ['screen-quran', 'screen-quranfull'],
     neuerInhalt: { routine: W, schritt: '6', beleg: 'node pruefe-quran.js',
       wie: 'Quranbezüge neuer Vokabeln werden gegen den Qurantext gehalten' },

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vokabeltrainer-v535';
+const CACHE_NAME = 'vokabeltrainer-v536';
 
 /* ⚠️ In diese Liste gehoeren KEINE Kommentare zwischen die Eintraege.
    validate.js liest sie zeilenweise und hat am 18.08.2026 einen erklaerenden
@@ -58,6 +58,7 @@ const ASSETS = [
   './js/uebung.js',
   './js/quran.js',
   './js/quran-audio.js',
+  './js/quran-markierung.js',
   './js/hoeren.js',
   './js/wurzel.js',
   './js/statistik.js',
