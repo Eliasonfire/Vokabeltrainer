@@ -5872,3 +5872,20 @@ Auftrag von unterwegs (Claude-App am Handy, über den Drive-Eingang um 23:23 ang
 - **Eine Rechnung statt drei:** `audioFolgeVers()` beantwortet „welcher Vers kommt als nächstes" für Vorladen und Weiterschalten.
 - `werkzeuge/pruefe-zweipuffer.mjs` um drei Abschnitte erweitert (Verswechsel, kaputter Vorrat, Stillstands-Wache), jeder mit Störtest; das Audio-Doppel feuert jetzt wie der Browser ein `pause` bei `src`/`load()`. `test-quran-vorladen.mjs` fährt jetzt die **echte** `audioFolgeVers()` statt einer nachgeschriebenen Kopie. Pflegeplan v535, `sw.js` v535. Commit `bac8b02`, gepusht und ausgeliefert.
 - ⚠️ **Bei ausgeschaltetem Bildschirm ist nichts davon gemessen** — hier läuft kein Ton, und der Pane darf keinen machen. Offene Frage: ob der 2-Sekunden-Takt der Wache in einer verborgenen Seite überhaupt ankommt (Browser drosseln Zeitgeber; die stille Schleife mildert das). Das zeigt erst sein Handy.
+
+
+## 20.09.2026, 00:29 — v536: im Korantext einzelne Buchstaben markieren (`3bbcdf4`)
+
+**Auftrag:** Elias am 19.09.2026 vom Handy — *„Ich will auch im Koran den Text markieren irgendwie können für Fehler zB wo ich tajweed etwas falsch mache. Dafür will ich das."* Entscheidungen um 23:54:21: einzelne Buchstaben · Farbe und eigene Notiz · vorerst keine Übersichtsseite.
+
+**Neu:** `js/quran-markierung.js` (Modus-Knopf in der Ḥifẓ-Leiste, Karte am unteren Rand mit dem Wort in groß, antippbaren Buchstaben, vier Farben, Notizfeld), `werkzeuge/pruefe-markierung.mjs` (51 Proben, drei Störtests). Geändert: `index.html` (Karte, Stile, Knopfkasten `.hifz-knoepfe`), `js/quran.js` (`tajweedZeichnen()` am Ende von renderVerses), `js/sync.js` (`vt_tajweed` im Merge-Zweig von `vt_bekannt`), `js/einstellungen.js` (Sicherung), `js/navigation.js` (Zurück-Taste), `sw.js` v536, `werkzeuge/alle-pruefer.mjs`, `werkzeuge/pflegeplan.mjs`.
+
+**Technik:** CSS Custom Highlight API — `Range` über die Zeichen, `CSS.highlights.set()`, `::highlight()`. ⛔ Kein Element je Buchstabe: Browser formen Arabisch nicht über Elementgrenzen hinweg. ⛔ Kein `background-color` im Highlight (füllt die ganze Zeilenbox: 250 px Balken über einem 120 px hohen Wort) — gefärbt wird der Buchstabe. Rückfall ohne die Schnittstelle: das ganze Wort wird gefärbt (Klasse `tj-wort`).
+
+**Zwei Messfehler, im Pane gefunden:** (1) Die Karte wurde gemessen, während `popIn` sie noch skalierte — eine Fläche war 1 px breit statt 49; jetzt zweiter Aufbau nach `animationend` plus Zeitschloss. (2) Ein arabischer Buchstabe ist 19–23 px breit, ein Finger ~40 — die Flächen reichen bis zur Mitte zum Nachbarn, mindestens 34 px, Überhang 24 px.
+
+**Speicher:** `vt_tajweed = { "sure:vers:wort": { an, stellen, zeichen, farbe, notiz, zeit } }`; Wegnehmen als `an:false` mit Stempel.
+
+**Grün:** validate 36 Prüfungen · pruefe-markierung 51 · pruefe-pflegeplan · pruefe-kreislaeufe · pruefe-ausgeliefert. Ausgeliefert über Cloudflare Pages, gepusht.
+
+⚠️ Der Commit davor (`fbbe8ea`, 20.09. 00:00) trug nur die Sitzungseinträge v534 und v535 in diese Datei ein — kein Code, keine Auslieferung.
