@@ -197,7 +197,7 @@ function audioAdresse(rezId, sure, vers){
    schneidet sie mit `\nconst QAUDIO = \{[^\n]*\n` heraus, um audioSpiele
    isoliert laufen zu lassen. Ein Umbruch liefert dort ein halbes Objekt und
    einen SyntaxError — genau so ist der Pruefer am 15.09.2026 rot geworden. */
-const QAUDIO = { el:null, paar:null, sure:null, vers:0, laeuft:false, hinweis:'', versuche:0, versuchFuer:null };
+const QAUDIO = { el:null, paar:null, sure:null, vers:0, laeuft:false, hinweis:'', versuche:0, versuchFuer:null, wechsel:false, warte:null };
 
 /** Wie viele Verse hat die Sure? Erst der aufgebaute Leser, dann die Surenliste
  *  — der Leser ist die Wahrheit, weil er den Text wirklich vor sich hat. */
@@ -255,15 +255,36 @@ function audioBaue(){
   el.addEventListener('durationchange', () => { if (el === QAUDIO.el) quranMedienPosition(); });
   el.addEventListener('play',  () => {
     if (el !== QAUDIO.el) return;
+    /* Der Wechsel ist vorbei, sobald wieder Ton kommt — und die Stillstands-
+       Wache fängt hier an zu zählen (19.09.2026). */
+    QAUDIO.wechsel = false;
     QAUDIO.laeuft = true; QAUDIO.hinweis = ''; zeigeSpieler(); wortModusVorbereiten();
     quranStilleAn(); quranMedienInfo();
+    audioWacheAn();
   });
   el.addEventListener('pause', () => {
     /* ⛔ Auch hier: das vorladende Element pausiert beim Laden gelegentlich von
        selbst. Ohne diese Abfrage sähe die App das als „angehalten" und würde
        die stille Schleife mitten in der Rezitation abschalten. */
     if (el !== QAUDIO.el) return;
-    QAUDIO.laeuft = false; zeigeSpieler(); quranMedienInfo();
+    /* ⛔⛔ EIN VERSWECHSEL IST KEINE PAUSE (19.09.2026).
+
+       Elias am 19.09.2026: „wenn ich einen rezitator spielen lasse, dass er
+       immer wieder aufhört und nicht durch spricht" — und nachgereicht:
+       „Vorallem wenn ich meinen Bildschirm aus mache".
+
+       `el.src = …` und `el.load()` feuern ein `pause` auf DEMSELBEN Element,
+       das gerade das spielende ist. Ohne diese Abfrage schaltete der Handgriff
+       unten `quranStilleAus()` — und damit ging die stille Schleife genau in
+       der Lücke aus, die sie überbrücken soll. Bei ausgeschaltetem Bildschirm
+       verliert die Seite damit ihre Mediensitzung, und danach kommt nichts
+       mehr. Für Elias sieht das aus wie „hört mittendrin auf".
+
+       ⛔ Die Marke räumt jeder ECHTE Handgriff selbst, bevor er anhält
+       (`audioUmschalten`, `audioAus`) — ein Druck auf Pause wird nie
+       verschluckt. [[handlung_macht_ihre_bedingung_ungueltig]] */
+    if (QAUDIO.wechsel) return;
+    QAUDIO.laeuft = false; audioWacheAus(); zeigeSpieler(); quranMedienInfo();
     /* ⛔⛔ DIE STILLE MUSS MIT. Elias am 08.09.2026: „ich will ein video gucken
        und sorge dafür das der ton vom quran gemuted ist damit es sich nicht
        mit meinem video überschneidet."
@@ -288,6 +309,9 @@ function audioBaue(){
        Beenden eine Fehlermeldung da, die keinen Fehler beschreibt. */
     if (QAUDIO.sure === null) return;
     if (el !== QAUDIO.el) return;      /* das vorladende Element meldet still */
+    /* Ein Fehler beendet jeden Wechsel — sonst bliebe die Marke stehen und das
+       nächste echte Anhalten würde verschluckt (19.09.2026). */
+    QAUDIO.wechsel = false;
     QAUDIO.laeuft = false;
     QAUDIO.hinweis = 'Aufnahme nicht erreichbar — Internet?';
     zeigeSpieler();
@@ -321,7 +345,118 @@ function audioVorladen(sure, vers){
      trotzdem in das spielende Element neu geladen werden musste. */
   const b = audioAnderes();
   if (b.src !== url){ b.src = url; try { b.load(); } catch (e){ /* laedt spaetestens beim play() */ } }
+  /* ⛔⛔ DIE ADRESSE STIMMT, DIE DATEI IST KAPUTT (19.09.2026).
+     Das Vorladen laeuft ueber das Netz und scheitert unterwegs staendig. Dann
+     stand hier die richtige Adresse und dahinter ein Element im Fehlerzustand
+     — verglichen wurde nur `src`. Jedes `play()` darauf wurde sofort
+     abgewiesen, und weil an der Adresse nichts zu aendern war, hat es auch nie
+     jemand neu geladen: die Rezitation blieb an derselben Stelle stehen.
+     `load()` raeumt den Fehlerzustand. [[vorgabewert_sieht_aus_wie_befund]] */
+  else if (b.error){ try { b.load(); } catch (e){ /* naechster Versuch holt es */ } }
 }
+
+/** Welcher Vers kommt WIRKLICH als naechstes — mit dem Bereich gerechnet?
+ *  ⛔ Diese Frage stand bis zum 19.09.2026 an drei Stellen im Code und ist am
+ *  15.09.2026 schon einmal auseinandergelaufen (der Vorrat lud den Vers, der
+ *  OHNE Schleife gekommen waere, und der Ruecksprung begann mit einem
+ *  Netzabruf — „am Ende der sura"). Jetzt steht sie einmal hier.
+ *  Gibt 0 zurueck, wenn danach Schluss ist. [[dieselbe_frage_zwei_antworten]] */
+function audioFolgeVers(sure, vers){
+  if (!sure) return 0;
+  if (schleifeGilt() && vers >= QSCHLEIFE.bis) return QSCHLEIFE.von;
+  if (vers >= audioVersZahl(sure)) return 0;
+  return vers + 1;
+}
+
+/* ============================================================================
+   DIE STILLSTANDS-WACHE                                (19.09.2026)
+   ============================================================================
+
+   Elias am 19.09.2026: „wenn ich einen rezitator spielen lasse, dass er immer
+   wieder aufhört und nicht durch spricht und das das gefixt werden muss" —
+   nachgereicht: „Vorallem wenn ich meinen Bildschirm aus mache".
+
+   ⭐⭐ Der Ausfall, den KEIN Ereignis meldet: läuft der Puffer mitten im Vers
+   leer, kommt kein `ended`, kein `error`, kein `pause`. Die App hält sich für
+   laufend, der Knopf zeigt weiter Pause — und es kommt nichts mehr. Es gibt
+   also keine Stelle, an der eine Erholung hängen könnte; sie muss selbst
+   nachsehen. [[ausfall_ist_unsichtbar_gebaut]]
+
+   Alle 2 s wird `currentTime` verglichen:
+     · steht er 2 s  → „Puffert …" (ein Puffern sah bisher aus wie ein Absturz),
+     · steht er 6 s  → derselbe Vers wird neu geholt und an DERSELBEN Stelle
+                       fortgesetzt, nicht von vorn.
+
+   ⚠️ BEI AUSGESCHALTETEM BILDSCHIRM UNGEPRÜFT. Browser drosseln Zeitgeber in
+   verborgenen Seiten; die stille Schleife hält die Seite als „spielt Ton" wach,
+   was die Drosselung mildert. Ob der 2-Sekunden-Takt dort wirklich ankommt,
+   zeigt erst sein Handy — hier ist kein Ton zu hören und der Pane darf keinen
+   machen. [[hintergrund_tab_droselt_timer]] */
+let QAUDIO_WACHE = null;
+let QAUDIO_STAND = { zeit: -1, seit: 0 };
+const QAUDIO_WACHE_TAKT = 2000;
+const QAUDIO_STILLSTAND = 6000;
+
+function audioWacheAn(){
+  if (QAUDIO_WACHE === null) QAUDIO_WACHE = setInterval(audioWacheTick, QAUDIO_WACHE_TAKT);
+}
+function audioWacheAus(){
+  if (QAUDIO_WACHE !== null){ clearInterval(QAUDIO_WACHE); QAUDIO_WACHE = null; }
+  QAUDIO_STAND = { zeit: -1, seit: 0 };
+}
+function audioWacheTick(){
+  const el = QAUDIO.el;
+  /* Angehalten, weggeblättert oder mitten im Verswechsel: nichts zu wachen. */
+  if (!el || QAUDIO.sure === null || !QAUDIO.laeuft || el.paused || QAUDIO.wechsel){
+    QAUDIO_STAND = { zeit: -1, seit: 0 };
+    return;
+  }
+  const t = Number(el.currentTime) || 0;
+  /* 0,05 s Toleranz: `currentTime` ist eine Fließkommazahl und steht auch im
+     Normalbetrieb nie exakt still. */
+  if (QAUDIO_STAND.zeit >= 0 && Math.abs(t - QAUDIO_STAND.zeit) < 0.05){
+    QAUDIO_STAND.seit += QAUDIO_WACHE_TAKT;
+    if (QAUDIO_STAND.seit >= QAUDIO_STILLSTAND){ audioNachladen(t); return; }
+    if (!QAUDIO.hinweis){ QAUDIO.hinweis = 'Puffert …'; zeigeSpieler(); }
+    return;
+  }
+  QAUDIO_STAND = { zeit: t, seit: 0 };
+  if (QAUDIO.hinweis === 'Puffert …'){ QAUDIO.hinweis = ''; zeigeSpieler(); }
+}
+
+/** Denselben Vers neu holen und an DERSELBEN Stelle weiterspielen.
+ *  ⛔ Nicht von vorn: wer bei Sekunde 40 eines langen Verses steht, hörte sonst
+ *  alles noch einmal — und beim nächsten Stillstand wieder. */
+function audioNachladen(pos){
+  const el = QAUDIO.el;
+  if (!el || QAUDIO.sure === null) return;
+  QAUDIO_STAND = { zeit: -1, seit: 0 };
+  QAUDIO.hinweis = 'Ton stockt — wird neu geholt …';
+  zeigeSpieler();
+  /* `load()` feuert ein `pause`; das ist kein Anhalten (siehe `pause`-Handler). */
+  QAUDIO.wechsel = true;
+  const weiter = () => {
+    try { el.currentTime = pos; } catch (e){ /* geht erst mit den Metadaten */ }
+    const p = el.play();
+    if (p && p.then) p.then(() => { QAUDIO.wechsel = false; },
+                            () => { QAUDIO.wechsel = false; });
+    else QAUDIO.wechsel = false;
+  };
+  /* `once`: sonst hinge nach jedem Nachladen ein Zuhörer mehr am Element. */
+  el.addEventListener('loadedmetadata', weiter, { once: true });
+  try { el.load(); } catch (e){ QAUDIO.wechsel = false; }
+}
+
+/* ⛔⛔ MEHR GEDULD ALS DAS FUNKLOCH (19.09.2026).
+   Drei Versuche im Abstand 350/700/1050 ms sind zusammen 2,1 Sekunden —
+   kürzer als jeder Tunnel, durch den er fährt; alle drei fielen in dieselbe
+   Störung. Jetzt: fünf schnelle Versuche (0,4 · 0,8 · 1,6 · 3,2 · 6,4 s, also
+   12,4 s), danach alle 15 Sekunden weiter, bis zehn Minuten um sind.
+   ⭐ Und kommt das Netz vorher zurück, läuft es sofort wieder an (`online`,
+   ganz unten). Zum Handy greifen ist beim Radfahren oder im Gebet keine
+   Bedienung, sondern ein Abbruch. */
+const QAUDIO_SCHNELL = 5;
+const QAUDIO_LANGE = 40;
 
 async function audioSpiele(sure, vers){
   /* ⛔ Der Geh-Modus zuerst aus. Beide beschriften dieselbe Mediensitzung, und
@@ -359,7 +494,14 @@ async function audioSpiele(sure, vers){
   audioElement();
   const b = audioAnderes();
   let el;
-  if (b.src === url){
+  /* ⛔ Ab hier wechselt der Vers: die `pause`-Ereignisse, die `src` und
+     `load()` gleich auslösen, sind KEIN Anhalten (19.09.2026, siehe den
+     `pause`-Handler in audioBaue). */
+  QAUDIO.wechsel = true;
+  /* ⛔ `!b.error`: ein vorgeladenes Element kann die richtige Adresse tragen
+     und trotzdem kaputt sein (Netzabriss beim Vorladen). Dann darf es nicht
+     das spielende werden — `play()` würde sofort abgewiesen. */
+  if (b.src === url && !b.error){
     const alt = QAUDIO.el;
     QAUDIO.el = b;
     el = b;
@@ -368,6 +510,9 @@ async function audioSpiele(sure, vers){
   } else {
     el = QAUDIO.el;
     if (el.src !== url) el.src = url;
+    /* Dieselbe Adresse, aber im Fehlerzustand: nur `load()` räumt ihn. Ohne das
+       blieb die Rezitation an einer kaputt geladenen Datei für immer stehen. */
+    else if (el.error){ try { el.load(); } catch (e){ /* naechster Versuch holt es */ } }
     else { try { el.currentTime = 0; } catch (e){ /* Quelle noch nicht bereit: startet ohnehin bei 0 */ } }
   }
   markiereLaufendenVers(sure, vers);
@@ -401,6 +546,8 @@ async function audioSpiele(sure, vers){
          NotAllowedError  der Browser will eine Geste — ein Neuversuch hilft
                           NIE, er muss tippen
          alles andere     Netz oder Datei — ein Neuversuch hilft meistens */
+    /* Ab hier ist kein Wechsel mehr im Gang — es kommt ja kein Ton. */
+    QAUDIO.wechsel = false;
     if (err && err.name === 'NotAllowedError'){
       QAUDIO.laeuft = false;
       QAUDIO.hinweis = 'Tippe auf ▶, der Browser braucht einen Druck';
@@ -412,15 +559,24 @@ async function audioSpiele(sure, vers){
     const kennung = sure + ':' + vers;
     QAUDIO.versuche = (QAUDIO.versuchFuer === kennung ? (QAUDIO.versuche || 0) : 0) + 1;
     QAUDIO.versuchFuer = kennung;
-    if (QAUDIO.versuche <= 3){
-      QAUDIO.hinweis = 'Ton stockt — Versuch ' + QAUDIO.versuche + ' von 3 …';
+    const n = QAUDIO.versuche;
+    const schnell = n <= QAUDIO_SCHNELL;
+    if (n <= QAUDIO_SCHNELL + QAUDIO_LANGE){
+      /* ⭐ Die Meldung sagt, in welchem Zustand er steckt — das ist beim
+         nächsten Mal die halbe Suche. */
+      QAUDIO.hinweis = (navigator && navigator.onLine === false)
+        ? 'Kein Netz — es geht von selbst weiter, sobald es wieder da ist'
+        : (schnell ? 'Ton stockt — Versuch ' + n + ' von ' + QAUDIO_SCHNELL + ' …'
+                   : 'Ton stockt — wird weiter versucht …');
       zeigeSpieler();
-      setTimeout(function(){
+      if (QAUDIO.warte){ clearTimeout(QAUDIO.warte); QAUDIO.warte = null; }
+      QAUDIO.warte = setTimeout(function(){
+        QAUDIO.warte = null;
         /* Nur weitermachen, wenn genau dieser Vers noch gewaehlt ist. */
         if (QAUDIO.sure === sure && QAUDIO.vers === vers && QAUDIO.versuchFuer === kennung){
           audioSpiele(sure, vers);
         }
-      }, 350 * QAUDIO.versuche);
+      }, schnell ? 400 * Math.pow(2, n - 1) : 15000);
       return;
     }
     QAUDIO.laeuft = false;
@@ -429,13 +585,13 @@ async function audioSpiele(sure, vers){
        allein sagte weder ihm noch mir, wo man suchen soll. */
     QAUDIO.hinweis = (navigator && navigator.onLine === false)
       ? 'Kein Netz — die Rezitation kommt von quran.com'
-      : 'Ton kam nach 3 Versuchen nicht (' + ((err && err.name) || 'unbekannt') + ')';
+      : 'Ton kam auch nach zehn Minuten nicht (' + ((err && err.name) || 'unbekannt') + ')';
     zeigeSpieler();
     return;
   }
   /* Gelungen: den Zaehler zuruecksetzen, sonst zaehlt der naechste Aussetzer
      auf einem alten Stand weiter. */
-  QAUDIO.versuche = 0; QAUDIO.versuchFuer = null;
+  QAUDIO.versuche = 0; QAUDIO.versuchFuer = null; QAUDIO.wechsel = false;
   /* ⛔⛔ HIER STAND `audioVorladen(sure, vers + 1)` — und genau das war Elias'
      „manchmal hat es gestockt" (15.09.2026).
 
@@ -446,8 +602,11 @@ async function audioSpiele(sure, vers){
      Es traf jeden Rundlauf an derselben Stelle.
 
      ⭐ Vorgeladen wird jetzt, was WIRKLICH als naechstes kommt — die Schleife
-     eingerechnet. [[zwischenstand_wird_nicht_mitgebaut]] */
-  audioVorladen(sure, (schleifeGilt() && vers >= QSCHLEIFE.bis) ? QSCHLEIFE.von : vers + 1);
+     eingerechnet. [[zwischenstand_wird_nicht_mitgebaut]]
+     ⭐ Seit dem 19.09.2026 rechnet das `audioFolgeVers()` — dieselbe Funktion,
+     die auch `audioNaechster()` fragt. Zwei Rechnungen derselben Frage waren
+     genau der Fehler vom 15.09. */
+  audioVorladen(sure, audioFolgeVers(sure, vers));
 }
 
 /* ============================================================================
@@ -511,18 +670,16 @@ function audioNaechster(){
   if (QAUDIO.sure === null) return;
   /* ⛔ Der Bereich wird VOR dem Surenende geprüft: bei „von 20 bis 30" in
      einer Sure mit 30 Versen fielen beide Bedingungen sonst zusammen, und
-     die Rezitation endete, statt zu wiederholen. */
-  if (schleifeGilt() && QAUDIO.vers >= QSCHLEIFE.bis){
-    audioSpiele(QAUDIO.sure, QSCHLEIFE.von);
-    return;
-  }
-  if (QAUDIO.vers >= audioVersZahl(QAUDIO.sure)){
+     die Rezitation endete, statt zu wiederholen. Das rechnet seit dem
+     19.09.2026 `audioFolgeVers()` — dieselbe Rechnung wie beim Vorladen. */
+  const folge = audioFolgeVers(QAUDIO.sure, QAUDIO.vers);
+  if (!folge){
     /* Sure zu Ende. Bewusst KEIN automatischer Sprung in die naechste Sure:
        er hoert eine bestimmte Sure, nicht den Quran am Stueck. */
     audioAus();
     return;
   }
-  audioSpiele(QAUDIO.sure, QAUDIO.vers + 1);
+  audioSpiele(QAUDIO.sure, folge);
 }
 function audioVoriger(){
   if (QAUDIO.sure === null) return;
@@ -531,6 +688,12 @@ function audioVoriger(){
 
 function audioAus(){
   QAUDIO.sure = null; QAUDIO.vers = 0; QAUDIO.laeuft = false; QAUDIO.hinweis = '';
+  /* Beenden heißt beenden: keine Wache mehr, kein wartender Neuversuch, und
+     die Wechsel-Marke räumen, damit das `pause` unten nicht verschluckt wird. */
+  QAUDIO.wechsel = false;
+  QAUDIO.versuche = 0; QAUDIO.versuchFuer = null;
+  if (QAUDIO.warte){ clearTimeout(QAUDIO.warte); QAUDIO.warte = null; }
+  audioWacheAus();
   /* ⛔ BEIDE Elemente leeren, nicht nur das spielende. Im anderen liegt der
      vorgeladene naechste Vers; bliebe er dort, hielte er die Datei im
      Speicher und beim naechsten Start spraenge der Leser auf einen Vers, den
@@ -562,12 +725,34 @@ function audioUmschalten(){
     return;
   }
   const el = audioElement();
+  /* ⛔ Sein Druck auf Pause räumt die Wechsel-Marke — er wird nie verschluckt,
+     auch wenn gerade ein Verswechsel läuft (19.09.2026). */
+  QAUDIO.wechsel = false;
+  if (QAUDIO.warte){ clearTimeout(QAUDIO.warte); QAUDIO.warte = null; }
   if (QAUDIO.laeuft) el.pause();
   /* ⛔ Ein abgelehntes play() ist der haeufigste Grund, warum „nichts
      passiert": der Browser verweigert Ton ohne Geste, oder die Datei fehlt.
      Von aussen sieht beides gleich aus — ein Knopf, der nichts tut. */
   else el.play().catch(e => stillerFehler('Quran-Ton: play() abgelehnt', e));
 }
+
+/* ⭐ Kommt das Netz zurück, läuft die Rezitation von selbst wieder an
+   (19.09.2026). Unterwegs ist das Funkloch der Normalfall, und zum Handy
+   greifen ist beim Radfahren oder im Gebet keine Bedienung, sondern ein
+   Abbruch.
+
+   ⛔ NUR, wenn gerade ein Neuversuch hängt (`versuchFuer`). Ohne diese Abfrage
+   würde jedes Funkloch eine bewusst angehaltene Rezitation wieder starten —
+   im Gespräch, im Unterricht, in der Nacht. [[antwort_auf_meine_frage_ist_keine_freigabe]] */
+window.addEventListener('online', () => {
+  if (QAUDIO.sure === null || QAUDIO.laeuft || !QAUDIO.versuchFuer) return;
+  if (QAUDIO.warte){ clearTimeout(QAUDIO.warte); QAUDIO.warte = null; }
+  const sure = QAUDIO.sure, vers = QAUDIO.vers;
+  QAUDIO.versuche = 0; QAUDIO.versuchFuer = null;
+  QAUDIO.hinweis = 'Netz ist wieder da …';
+  zeigeSpieler();
+  audioSpiele(sure, vers);
+});
 
 /* ============================================================================
    DIE MEDIENBENACHRICHTIGUNG                           (08.09.2026)

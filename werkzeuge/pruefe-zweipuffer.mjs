@@ -36,9 +36,13 @@ const TEILE = [
   schneide('audioBaue'), schneide('audioElement'), schneide('audioAnderes'),
   schneide('audioVorladen'), schneide('audioSpiele', true), schneide('audioAus'),
   schneide('audioNaechster'), schneide('audioAdresse'), schneide('audioVersZahl'),
-  schneide('schleifeGilt')
+  schneide('schleifeGilt'), schneide('audioFolgeVers')
 ].join('\n');
 const KONST = src.match(/\nconst QAUDIO = \{[^\n]*\n/)[0] + src.match(/\nconst QSCHLEIFE = \{[^\n]*\n/)[0]
+            /* Die Geduld beim Neuversuch (19.09.2026) — echte Werte, nicht
+               nachgeschrieben: sonst prüfte der Test seine eigene Zahl. */
+            + src.match(/\nconst QAUDIO_SCHNELL = \d+;\n/)[0]
+            + src.match(/\nconst QAUDIO_LANGE = \d+;\n/)[0]
             + "\nconst QURAN_AUDIO_BASIS = 'https://verses.quran.com/';\n";
 
 let fehler = 0;
@@ -52,38 +56,54 @@ const pruefe = (was, erwartet, ist) => {
 /* ---------- Das Audio-Doppel ----------
    Zaehlt LADEVORGAENGE (jede Zuweisung an `src` mit neuem Wert) und
    PLAY-Aufrufe je Element. Genau diese zwei Zahlen sind die Sache. */
-function baueUmgebung(){
+function baueUmgebung(teile = TEILE){
   const geladen = [];         /* [element-nr, datei] je neuem src */
   const gespielt = [];        /* [element-nr, datei] je play()      */
+  const stilleAus = [];       /* jedes Abschalten der stillen Schleife */
   let nr = 0;
   class Audio {
-    constructor(){ this.nr = ++nr; this._src = ''; this.paused = true; this.currentTime = 0; this.preload = ''; this._h = {}; }
+    /* `error` gehoert dazu: ein vorgeladenes Element kann die richtige Adresse
+       tragen und trotzdem kaputt sein — genau der Fall vom 19.09.2026. `load()`
+       raeumt ihn, wie im Browser. */
+    constructor(){ this.nr = ++nr; this._src = ''; this.paused = true; this.currentTime = 0; this.preload = ''; this.error = null; this._h = {}; }
     get src(){ return this._src; }
-    set src(v){ if (v !== this._src){ this._src = v; geladen.push([this.nr, v.slice(-10)]); } }
+    /* ⛔ Wie im Browser: eine neue Quelle HAELT DAS ELEMENT AN und feuert
+       `pause`. Genau daran starb die stille Schleife bis zum 19.09.2026 — ein
+       Doppel ohne dieses Ereignis haette den Fehler nie zeigen koennen.
+       [[pruefung_fragt_einen_stellvertreter_ab]] */
+    set src(v){ if (v !== this._src){ this._src = v; geladen.push([this.nr, v.slice(-10)]);
+      if (!this.paused){ this.paused = true; this.dispatchEvent({ type: 'pause' }); } } }
     addEventListener(n, f){ (this._h[n] = this._h[n] || []).push(f); }
     dispatchEvent(ev){ (this._h[ev.type] || []).forEach(f => f(ev)); return true; }
     play(){ this.paused = false; gespielt.push([this.nr, this._src.slice(-10)]); this.dispatchEvent({ type: 'play' }); return Promise.resolve(); }
     pause(){ if (!this.paused){ this.paused = true; this.dispatchEvent({ type: 'pause' }); } }
-    load(){ }
+    load(){ this.error = null; if (!this.paused){ this.paused = true; this.dispatchEvent({ type: 'pause' }); } }
     removeAttribute(a){ if (a === 'src') this._src = ''; }
   }
   const ctx = {
     Audio, console,
+    /* Die Stillstands-Wache haengt an Zeitgebern und ist hier nicht die Sache —
+       sie hat ihren eigenen Abschnitt weiter unten. */
+    audioWacheAn(){}, audioWacheAus(){},
+    setTimeout, clearTimeout,
     /* alles, was audioSpiele ausserhalb der Sache beruehrt, als leere Huelle */
     rezitatorVon: id => ({ id, pfad: 'Alafasy/mp3/' }),
     quranRezitator: () => 7,
     VERSE_CACHE: { 67: new Array(30).fill(0) },
     OFFENE_SURE: 67,
     GEH: { an: false },
-    markiereLaufendenVers(){}, wortModusVorbereiten(){}, quranStilleAn(){}, quranStilleAus(){},
+    markiereLaufendenVers(){}, wortModusVorbereiten(){}, quranStilleAn(){},
+    /* ⛔ Mitzaehlen statt leer schlucken: ob die stille Schleife beim
+       VERSWECHSEL ausgeht, ist seit dem 19.09.2026 genau die Frage. */
+    quranStilleAus(){ stilleAus.push(1); },
     quranMedienKnoepfe(){}, quranMedienInfo(){}, quranMedienPosition(){}, zeigeSpieler(){},
     wortUhrStop(){}, markeWeg(){}, cancelAnimationFrame(){},
     QW_LETZTES: -1, QW_UHR: null,
     document: { visibilityState: 'visible' }
   };
   vm.createContext(ctx);
-  vm.runInContext(KONST + TEILE + '\nthis.API = { audioSpiele, audioNaechster, audioAus, QAUDIO, QSCHLEIFE };', ctx);
-  return { api: ctx.API, geladen, gespielt };
+  vm.runInContext(KONST + teile + '\nthis.API = { audioSpiele, audioNaechster, audioAus, QAUDIO, QSCHLEIFE };', ctx);
+  return { api: ctx.API, geladen, gespielt, stilleAus };
 }
 
 /* Versende ausloesen wie der Browser: `ended` am AKTIVEN Element. */
@@ -171,6 +191,7 @@ console.log('\nStoertest — ein einziges Element wie vor v425:');
       markiereLaufendenVers(){}, wortModusVorbereiten(){}, quranStilleAn(){}, quranStilleAus(){},
       quranMedienKnoepfe(){}, quranMedienInfo(){}, quranMedienPosition(){}, zeigeSpieler(){},
       wortUhrStop(){}, markeWeg(){}, cancelAnimationFrame(){}, QW_LETZTES: -1, QW_UHR: null,
+      audioWacheAn(){}, audioWacheAus(){}, setTimeout, clearTimeout,
       document: { visibilityState: 'visible' } };
     vm.createContext(ctx);
     vm.runInContext(KONST + gestoert + '\nthis.API = { audioSpiele, QAUDIO };', ctx);
@@ -181,6 +202,119 @@ console.log('\nStoertest — ein einziges Element wie vor v425:');
     const elemente = new Set(gespielt.map(([n]) => n)).size;
     pruefe('mit EINEM Element wird Vers 2 vor dem Start neu geladen', true, ladeVers2 >= 2 || elemente === 1);
     pruefe('… und alles spielt aus demselben Element (Eichung)',     1, elemente);
+  }
+}
+
+/* ==================== Der Verswechsel ist keine Pause ====================
+   (19.09.2026) Elias: „wenn ich einen rezitator spielen lasse, dass er immer
+   wieder aufhört und nicht durch spricht … Vorallem wenn ich meinen Bildschirm
+   aus mache". `src` und `load()` feuern ein `pause`; der Handler schaltete
+   daraufhin die stille Schleife ab — genau in der Luecke, die sie ueberbruecken
+   soll. Ohne sie verliert die verborgene Seite ihre Mediensitzung. */
+console.log('\nVerswechsel bei ausgeschaltetem Bildschirm:');
+{
+  const u = baueUmgebung();
+  await u.api.audioSpiele(67, 1);
+  await versEnde(u);                       /* Vers 2 aus dem anderen Element */
+  const vorher = u.stilleAus.length;
+  await u.api.audioSpiele(67, 9);          /* Sprung: dasselbe Element, neues src */
+  pruefe('die stille Schleife bleibt beim Wechsel an', vorher, u.stilleAus.length);
+  /* Und die Gegenprobe: ein ECHTES Anhalten wird nicht verschluckt. */
+  u.api.QAUDIO.el.pause();
+  pruefe('ein echtes Anhalten schaltet sie sehr wohl ab', vorher + 1, u.stilleAus.length);
+}
+
+/* ---------- Stoertest: ohne die Marke stirbt die Schleife wieder ---------- */
+{
+  const ohneMarke = TEILE.replace(/\n\s*if \(QAUDIO\.wechsel\) return;\n/, '\n');
+  if (ohneMarke === TEILE){
+    console.log('  X  Die Marke liess sich nicht herausschneiden — Stoertest wirkungslos.');
+    fehler++;
+  } else {
+    const u = baueUmgebung(ohneMarke);
+    await u.api.audioSpiele(67, 1);
+    await versEnde(u);
+    const vorher = u.stilleAus.length;
+    await u.api.audioSpiele(67, 9);
+    pruefe('ohne die Marke geht sie mitten im Wechsel aus', true, u.stilleAus.length > vorher);
+  }
+}
+
+/* ============== Ein kaputt vorgeladener Vers (19.09.2026) ================
+   Das Vorladen laeuft ueber das Netz und scheitert unterwegs staendig. Dann
+   trug das andere Element die richtige Adresse und eine kaputte Datei —
+   verglichen wurde nur `src`, und jedes play() darauf wurde abgewiesen. */
+console.log('\nDas vorgeladene Element ist kaputt:');
+{
+  const u = baueUmgebung();
+  await u.api.audioSpiele(67, 1);
+  const b = u.api.QAUDIO.paar.find(e => e !== u.api.QAUDIO.el);
+  b.error = { code: 4 };                   /* Netzabriss beim Vorladen */
+  await versEnde(u);
+  pruefe('es wird NICHT das spielende Element', false, u.api.QAUDIO.el === b);
+  pruefe('und Vers 2 laeuft trotzdem',        2, u.api.QAUDIO.vers);
+}
+
+/* ---------- Stoertest: ohne die Fehlerabfrage uebernimmt er es ---------- */
+{
+  const ohnePruefung = TEILE.replace('if (b.src === url && !b.error){', 'if (b.src === url){');
+  if (ohnePruefung === TEILE){
+    console.log('  X  Die Fehlerabfrage liess sich nicht herausschneiden — Stoertest wirkungslos.');
+    fehler++;
+  } else {
+    const u = baueUmgebung(ohnePruefung);
+    await u.api.audioSpiele(67, 1);
+    const b = u.api.QAUDIO.paar.find(e => e !== u.api.QAUDIO.el);
+    b.error = { code: 4 };
+    await versEnde(u);
+    pruefe('ohne sie wird das kaputte Element gestartet', true, u.api.QAUDIO.el === b);
+  }
+}
+
+/* ============== Die Stillstands-Wache (19.09.2026) =======================
+   Laeuft der Puffer mitten im Vers leer, kommt KEIN `ended`, KEIN `error`,
+   KEIN `pause`. Die App haelt sich fuer laufend — und es kommt nichts mehr.
+   Die Wache ist die einzige Stelle, an der das auffallen kann. */
+console.log('\nDer Ton steht still, und nichts meldet es:');
+function wacheLauf(quelle, schritte){
+  const geholt = [];
+  const el = { currentTime: 0, paused: false };
+  const ctx = {
+    QAUDIO: { el, sure: 67, vers: 1, laeuft: true, hinweis: '', wechsel: false },
+    QAUDIO_STAND: { zeit: -1, seit: 0 },
+    QAUDIO_WACHE_TAKT: 2000, QAUDIO_STILLSTAND: 6000,
+    zeigeSpieler(){},
+    audioNachladen(pos){ geholt.push(pos); }
+  };
+  vm.createContext(ctx);
+  vm.runInContext(quelle + '\nthis.TICK = audioWacheTick;', ctx);
+  for (const s of schritte){ el.currentTime = s; ctx.TICK(); }
+  return { geholt, hinweis: ctx.QAUDIO.hinweis };
+}
+const TICK = schneide('audioWacheTick');
+{
+  const laeuft = wacheLauf(TICK, [1, 2, 3, 4, 5, 6]);
+  pruefe('laeuft der Ton, passiert gar nichts', { geholt: [], hinweis: '' },
+    { geholt: laeuft.geholt, hinweis: laeuft.hinweis });
+  /* Erster Aufruf setzt den Stand, ab dem zweiten steht er: 2 s, 4 s … */
+  const kurz = wacheLauf(TICK, [3, 3, 3]);
+  pruefe('nach 2 Sekunden Stillstand: „Puffert …"', 'Puffert …', kurz.hinweis);
+  pruefe('… aber noch nichts neu geholt',           [], kurz.geholt);
+  const lang = wacheLauf(TICK, [3, 3, 3, 3]);
+  pruefe('nach 6 Sekunden wird derselbe Vers neu geholt', [3], lang.geholt);
+  const wieder = wacheLauf(TICK, [3, 3, 4, 5]);
+  pruefe('kommt er von selbst wieder, bleibt es dabei', [], wieder.geholt);
+  pruefe('und der Hinweis verschwindet',                 '', wieder.hinweis);
+}
+/* ---------- Stoertest: ohne das Nachholen bleibt es stehen ---------- */
+{
+  const ohne = TICK.replace(/\n\s*if \(QAUDIO_STAND\.seit >= QAUDIO_STILLSTAND\)\{[^\n]*\n/, '\n');
+  if (ohne === TICK){
+    console.log('  X  Das Nachholen liess sich nicht herausschneiden — Stoertest wirkungslos.');
+    fehler++;
+  } else {
+    const l = wacheLauf(ohne, [3, 3, 3, 3, 3, 3]);
+    pruefe('ohne sie steht der Ton bis in alle Ewigkeit', [], l.geholt);
   }
 }
 
