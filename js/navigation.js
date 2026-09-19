@@ -322,6 +322,12 @@ document.addEventListener('click', (e)=>{
       /* Laufende Runde fortsetzen statt neu zu starten - sonst geht der
          Fortschritt der aktuellen Runde verloren, sobald man kurz woanders war. */
       if (SESSION.words.length && !SESSION.fertig) showScreen('learn');
+      /* ⭐ Und seit dem 19.09.2026 auch eine Runde, die im Arbeitsspeicher
+         nicht mehr steht, weil die App dazwischen geschlossen wurde. Die
+         Begründung steht bei `offeneRundeFortsetzen()` in js/lernen.js; dort
+         wird auch entschieden, ob die gesicherte Runde noch zum heutigen
+         Lerntag gehört. Gibt sie `false` zurück, beginnt ganz normal eine neue. */
+      else if (typeof offeneRundeFortsetzen === 'function' && offeneRundeFortsetzen()){ /* fortgesetzt */ }
       else startLearningSession();
       return;
     }
