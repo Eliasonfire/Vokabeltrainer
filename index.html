@@ -3597,11 +3597,20 @@ button:disabled{cursor:default;}
   #screen-quranfull .screen-header,
   #screen-quranfull .quran-sticky{transition:none;}
 }
-/* Der Kasten mit den Knöpfen rechts. Er darf umbrechen; die Zeile selbst
-   nicht, damit der Versstand links stehen bleibt. */
-.hifz-knoepfe{display:flex;align-items:center;justify-content:flex-end;gap:var(--sp-2);flex-wrap:wrap;}
+/* ⭐ Die drei Knöpfe stehen NEBENEINANDER, nicht untereinander. Elias am
+   20.09.2026 mit Bild: „ich will das die drei nebeneinander stehen damit sie
+   nicht so viel platz in der höhe einnehmen. markieren soll ganz rechts
+   sein, ayah suche ganz links". Vorher brachen sie um und nahmen drei
+   Knopfhöhen ein — Lesefläche, die im Koran fehlt.
+   ⛔ Kein Umbruch mehr (`nowrap`): genau das war der Zustand, den er
+   beanstandet hat. Die Beschriftung des mittleren Knopfes wurde dafür auf
+   ein Wort gekürzt (js/quran.js). */
+.hifz-knoepfe{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-2);flex-wrap:nowrap;}
+/* Der Versstand steht in einer eigenen, schmalen Zeile DARÜBER. Neben den
+   Knöpfen nähme er die Breite weg, die sie zum Nebeneinanderstehen
+   brauchen — und zweizeilig war er dort ohnehin. */
 .hifz-bar{
-  display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);
+  display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:var(--sp-2);
   margin:0 calc(var(--gutter) * -1) var(--sp-3);
   padding:var(--sp-2) var(--gutter) var(--sp-3);
   background:linear-gradient(to bottom, var(--bg) 72%, transparent);
@@ -6255,7 +6264,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
             <svg class="ic"><use href="#ic-luecke"/></svg><span id="ayahListeText">Ayah</span>
           </button>
           <button class="btn btn-secondary btn-klein" id="btnHifzVerdecken">
-            <svg class="ic"><use href="#ic-auge"/></svg><span id="hifzVerdeckenText">Auswendige verdecken</span>
+            <svg class="ic"><use href="#ic-auge"/></svg><span id="hifzVerdeckenText">Verdecken</span>
           </button>
           <!-- ⭐ Fehlerstellen markieren (20.09.2026). Elias: „Ich will auch im
                Koran den Text markieren irgendwie können für Fehler zB wo ich
