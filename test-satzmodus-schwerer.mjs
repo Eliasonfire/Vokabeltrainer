@@ -123,7 +123,10 @@ function laufe(quelle, still){
   const c = { console, endungUnsichtbar: irab.endungUnsichtbar };
   vm.createContext(c);
   try {
-    vm.runInContext(sammel + '\n' + konst + '\n' + (fall || '') + '\n' + liste +
+    /* uebungZarfMitGenitiv: seit 19.09.2026 ruft die Iḍāfa-Übung sie auf — ohne
+       sie stürbe deren baue() hier still im catch unten, und die Übung fiele
+       aus diesem Test heraus, ohne dass etwas rot wird. */
+    vm.runInContext(sammel + '\n' + (schneideFunktion(quelle, 'uebungZarfMitGenitiv') || '') + '\n' + konst + '\n' + (fall || '') + '\n' + liste +
       '\n;globalThis.__U = UEBUNGEN; globalThis.__F = (typeof uebungUnsichtbarerFall === "function") ? uebungUnsichtbarerFall : null;' +
       '\nglobalThis.__K = (typeof UEBUNG_WARUM_UNSICHTBAR === "string") ? UEBUNG_WARUM_UNSICHTBAR : null;', c);
   } catch (e) {

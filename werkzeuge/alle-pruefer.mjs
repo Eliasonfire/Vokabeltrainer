@@ -453,6 +453,12 @@ const PRUEFER = [
      neuen Eintrag, der „Überblick", „Merkhilfe" oder „so heißen" im Namen
      trägt. */
   ['test-welche-regel.mjs', []],
+  /* ⛔ Neu am 19.09.2026. Elias: „die beiden sind wie mudaf, wenn das der fall
+     ist dann ist das ja auch grundsätzlich richtig" und „lass die zwei dann
+     gelten und auch andere ähnliche ortangaben oder zeitangeben" — Orts- und
+     Zeitangaben vor einem Genitiv zählen in „Tippe alle مُضَافٌ an" mit, und
+     „Warum?" zeigt seine Karte „Ortsangabe als مُضَافٌ". */
+  ['test-zarf-als-mudaf.mjs', []],
   /* ⛔ Neu am 15.09.2026. Die drei Quran-Ringe auf dem Startbildschirm nannten
      eine Sure und fuehrten auf die Liste aller 114. Elias mit Bild: „ich will
      das die jeweiligen koran suren mich direkt zu den jeweiligen suren

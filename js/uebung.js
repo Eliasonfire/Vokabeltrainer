@@ -368,6 +368,17 @@ function uebungSammel(treffer, frage){
   return { frage, ziele: treffer, art: 'mehrfach' };
 }
 
+/* Eine Orts- oder Zeitangabe (ظَرْف) mit einem Wort im Genitiv dahinter:
+   أَمَامَ الْمَسْجِدِ, عِنْدَ الْبَابِ. Die Analyse (js/irab.js, Zweig istZarf,
+   Liste ZURUF) nennt das erste „ظَرْف (Ortsangabe)" und das zweite
+   „nach حَرْف جَرّ / ظَرْف". Mit angehängtem Pronomen (عِنْدِي) steht dahinter
+   kein Genitiv — dann gilt es nicht. Wofür: siehe Übung `idafa`. */
+function uebungZarfMitGenitiv(z, i){
+  const t = z && z[i], n = z && z[i + 1];
+  return !!(t && n && String(t.rolle || '').startsWith('ظَرْف')
+    && String(n.rolle || '').startsWith('nach حَرْف جَرّ / ظَرْف'));
+}
+
 const UEBUNGEN = [
   {
     id:'mubtada-khabar', nr:1, name:'مُبْتَدَأٌ / خَبَرٌ — Satzteile', art:'mehrfach',
@@ -424,19 +435,47 @@ const UEBUNGEN = [
       /* ⛔ Vorher stand hier zweimal `findIndex` — das nahm nur das ERSTE
          Vorkommen. In „اسْمُ التَّاجِرِ مَحْمُودٌ وَاسْمُ الطَّبِيبِ سَعِيدٌ."
          stehen zwei Iḍāfa-Paare, und das zweite galt als falsch. */
+      /* ⭐⭐ ORTS- UND ZEITANGABEN ZÄHLEN MIT (19.09.2026).
+         Elias an „بَيْتُ التَّاجِرِ أَمَامَ الْمَسْجِدِ وَبَيْتُ الطَّبِيبِ خَلْفَ الْمَدْرَسَةِ.",
+         wo أَمَامَ und خَلْفَ als falsch galten, 03:16:54: „sollten diese zwei
+         als antowrt nicht eigentlich auch richtig sein?" — 03:46:10: „die beiden sind wie mudaf, wenn das der fall ist dann ist das ja auch grundsätzlich richtig"
+         — 03:47:24: „lass die zwei dann gelten und auch andere ähnliche ortangaben oder zeitangeben"
+         — 03:48:30: „aber nur wenn zeitangeben auch wirklich wie mudaf sind".
+         Belegt beim Lehrer: Folge 14, 17:02–17:14 (عِنْدَ): „Und Aynel kann
+         sowohl Ortsangabe sein, als auch Zeitangabe. Aynel ist ein Darf. Und
+         wir haben gerade Darf, Macht, Modarf. Ileyhi. Oder es klappt wie ein
+         Modarf." (Whisper-Mitschrift; gemeint: ظَرْف macht مُضَاف إِلَيْه),
+         mit Zeit-Beispielen „Aynel Fajr", „zu Duhr".
+         ⚠️ Vorher zählte die Übung sie mit Absicht NICHT — Folge 8, 25:49:
+         „Die Ortsangabe ist ein Nomen. Funktioniert aber wie ein Modav. Aber
+         ist selbst keins." (Karte zarf-als-mudaf-01). Elias hat das gehört
+         und entschieden: weil sie wie ein مُضَاف funktioniert, ist sie richtig.
+         Gilt für jede Orts- und Zeitangabe der Liste ZURUF (js/irab.js), und
+         das Wort dahinter zählt dann als مُضَاف إِلَيْه. Die Analyse selbst
+         nennt sie weiter „ظَرْف" — das ist der Name seines Lehrers. */
       const mudaf = [], zu = [];
+      let mitZarf = false;
       z.forEach((t,i)=>{
-        if (t.rolle.includes('(مُضَاف)')) mudaf.push(i);
-        if (t.rolle.startsWith('مُضَاف إِلَيْه')) zu.push(i);
+        if (t.rolle.includes('(مُضَاف)') && !mudaf.includes(i)) mudaf.push(i);
+        if (t.rolle.startsWith('مُضَاف إِلَيْه') && !zu.includes(i)) zu.push(i);
+        if (uebungZarfMitGenitiv(z, i)){
+          if (!mudaf.includes(i)) mudaf.push(i);
+          if (!zu.includes(i + 1)) zu.push(i + 1);
+          mitZarf = true;
+        }
       });
+      mudaf.sort((a,b)=>a-b); zu.sort((a,b)=>a-b);
       if (!mudaf.length || !zu.length) return [];
       /* ⭐ Zwei Aufgaben statt einer mit zwei Antippen bleibt: so sagt die
          Rueckmeldung, WELCHER Teil sass und welcher nicht. Neu ist nur, dass
          jede von beiden alle ihre Fundstellen kennt. */
+      /* Steht eine Orts- oder Zeitangabe darin, erklärt „Warum?" mit SEINER
+         Karte „Ortsangabe als مُضَافٌ" — die allgemeine Iḍāfa-Karte (f19-idafa)
+         nennt Ortsangaben gar nicht (19.09.2026 nachgesehen). */
       return [
         uebungSammel(mudaf, 'Tippe alle مُضَافٌ (das Besessene) an.'),
         uebungSammel(zu, 'Tippe alle مُضَافٌ إِلَيْهِ (der Besitzer) an.')
-      ].filter(Boolean);
+      ].filter(Boolean).map(a => mitZarf ? { ...a, warum: 'zarf-als-mudaf-01' } : a);
     }
   },
   {
@@ -1488,8 +1527,17 @@ function uebungWarum(a){
   if (!a || !a.modus || typeof regelArt !== 'function') return null;
   let id = UEBUNG_WARUM[a.modus.id];
   if (a.modus.id === 'regel') id = a.regelId || null;
-  if ((a.modus.id === 'kasus' || a.modus.id === 'haraka') && a.zeilen && a.zeilen[a.wortIdx])
+  /* Eine Aufgabe kann ihre Karte selbst mitbringen (seit 19.09.2026: die
+     Iḍāfa-Aufgaben mit einer Orts- oder Zeitangabe). */
+  if (a.warum) id = a.warum;
+  if ((a.modus.id === 'kasus' || a.modus.id === 'haraka') && a.zeilen && a.zeilen[a.wortIdx]){
     id = warumNachRolle(a.zeilen[a.wortIdx].rolle) || id;
+    /* Das Wort nach أَمَامَ steht im Genitiv, weil es zur Ortsangabe gehört,
+       nicht wegen einer Genitivpartikel. warumNachRolle() sieht nur
+       „nach حَرْف جَرّ / ظَرْف" und zeigte deshalb die Karte der
+       Genitivpartikel (19.09.2026, aus dem Code gelesen). */
+    if (uebungZarfMitGenitiv(a.zeilen, a.wortIdx - 1) && regelArt('zarf-als-mudaf-01')) id = 'zarf-als-mudaf-01';
+  }
   if (uebungUnsichtbarerFall(a) && regelArt(UEBUNG_WARUM_UNSICHTBAR)) id = UEBUNG_WARUM_UNSICHTBAR;
   if (!id || !regelArt(id)) return null;
   const t = (typeof regelText === 'function') ? regelText(id) : null;
