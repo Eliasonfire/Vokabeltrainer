@@ -117,9 +117,9 @@ export const PFLEGEPLAN = [
        DIESELBE Quelle wie beim Wort-für-Wort-Mitlesen (segmenteHolen) und
        liest nur die letzten zwei Zahlen je Zeile. Fällt sie aus, bleibt die
        Leiste beim einzelnen Vers (kein Ausfall, nur der alte Zustand).
-     · ⚠️ Ungeprüft bleibt, was nur sein Handy zeigt: ob Android den Balken so
-       zeichnet und den Punkt ziehen lässt. Bewacht von
-       werkzeuge/pruefe-sura-leiste.mjs (in alle-pruefer.mjs). */
+     · ✅ Am 20.09.2026 von Elias auf seinem Handy bestätigt: „jap zeigt ganze
+       sure an" (04:16) und, zum Ziehen des Punktes, „geht" (04:17). Bewacht
+       von werkzeuge/pruefe-sura-leiste.mjs (in alle-pruefer.mjs). */
   /* 20.09.2026 (v536), neue Datei js/quran-markierung.js und neuer
      Speicherschlüssel `vt_tajweed`: Elias kann im Korantext einzelne
      Buchstaben markieren, an denen sein Tajweed schiefgeht — mit Farbe und
