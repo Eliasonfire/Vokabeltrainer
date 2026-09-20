@@ -2790,4 +2790,51 @@ const ESELSBRUECKEN_ALT = {
   '50503': [
     '⭐ Merk die drei Schulstufen zusammen, dann hast du eine kleine Leiter statt drei Einzelwörter: اِبْتِدَائِيٌّ (Grund-) · مَدْرَسَةٌ مُتَوَسِّطَةٌ (Mittelschule, Kapitel 12) · ثَانَوِيَّةٌ (weiterführende Schule, Kapitel 9). Die letzten beiden stehen schon in deinem Bestand.',
   ],
+
+  /* ---------- Bayna Yadayk 1, Kapitel 3 (20.09.2026) ----------
+     Elias: „mach nur für kapitel 1-3". Gemessen: Kapitel 1 und 2 waren
+     vollstaendig, Kapitel 3 hatte fuer alle 11 Woerter gar nichts. */
+  '46011': [
+    '⚠️ Falle: dieselben drei Buchstaben trägt سِكِّينٌ (Messer) aus Kapitel 8, das du schon hast — mit dem Wohnen hat das Messer nichts zu tun, nur die Vokale trennen sie. Dafür gehört إِسْكَانٌ (Unterbringung) wirklich dazu: dort gibt man jemandem einen Ort, hier wohnt er darin.',
+  ],
+
+  '46012': [
+    'Merk es an der Form: أَرَادَ beginnt mit أَ wie أَحَبَّ (lieben) aus Madina 1, Kapitel 11. Beide sprechen von etwas, das in dir vorgeht — das eine vom Wollen, das andere vom Mögen.',
+  ],
+
+  '46013': [
+    'Der Plural verrät den Bau: مَسَاكِنُ trägt das Ort-مَـ und steht ohne Tanwin, genau wie مَسَاجِدُ (Moscheen) und مَكَاتِبُ (Büros), die du beide hast. Wenn du diesen Plural einmal erkennst, erkennst du ihn überall.',
+  ],
+
+  '46014': [
+    'Die Wurzel ح ي ي hörst du im ersten Vers von سُورَةُ الْمُلْك: خَلَقَ ٱلْمَوْتَ وَٱلْحَيَوٰةَ (67:2) — „Tod und Leben". ⚠️ Gleiche Wurzel, andere Bedeutung: der حَيّ ist der belebte Teil einer Stadt. Die Schadda auf dem يّ gehört zum Wort.',
+  ],
+
+  '46015': [
+    'Die Schadda kommt von zwei gleichen Buchstaben am Ende, wie bei قِطٌّ (Katze) und حَارٌّ (heiß), die du hast. ⚠️ Im Plural شُقَقٌ stehen die beiden ق getrennt da — dasselbe Wort sieht dann ganz anders aus.',
+  ],
+
+  '46016': [
+    'Stell es zu den Dingen in deinem Zimmer: an der نَافِذَةٌ (Fenster) hängt die سِتَارَة. Zwei Wörter, ein Bild — und du weißt sofort, wofür der Vorhang da ist.',
+  ],
+
+  '46017': [
+    'Du sprichst die Wurzel in einer Sure, die du auswendig kannst: وَٱسْجُدْ وَٱقْتَرِب (96:19) — „wirf dich nieder und komm näher". Die سَجَّادَة ist die Unterlage genau dafür. Und صَلَّى (beten) aus Kapitel 2 dieses Buchs gehört daneben.',
+  ],
+
+  '46018': [
+    'Der Plural أَفْرَانٌ ist gebaut wie أَقْلَامٌ (Stifte) und أَبْوَابٌ (Türen), die du hast: أَـ vorn, ـَا in der Mitte. Klanghilfe, nur der Klang: „furn" klingt wie das italienische „forno" — auch das heißt Ofen.',
+  ],
+
+  '46019': [
+    'Im Haus mit mehreren شَقَّةٌ aus diesem Kapitel liegt jede Wohnung auf ihrem eigenen دَوْر. Der Plural أَدْوَارٌ ist gebaut wie أَبْوَابٌ (Türen) und أَقْلَامٌ (Stifte) aus Kapitel 1, die du beide hast: أَـ vorn, ـَا vor dem letzten Buchstaben.',
+  ],
+
+  '46020': [
+    'Die Wurzel steht am Anfang einer Sure, die du auswendig kannst: أَرَءَيْتَ ٱلَّذِي (107:1) — „hast du den gesehen, der …". Dazu passt نَظَرَ (anschauen) aus Kapitel 1 dieses Buchs: wer in die مِرْآة schaut, sieht sich selbst.',
+  ],
+
+  '48611': [
+    'Dasselbe Muster trägt نَظَّارَةٌ (Brille) aus Kapitel 2 dieses Buchs: ein Ding für eine Aufgabe. Und der Platz dafür ist das حَمَّامٌ (Badezimmer), das du schon hast — der سَخَّان macht dort das warme Wasser.',
+  ],
 };
