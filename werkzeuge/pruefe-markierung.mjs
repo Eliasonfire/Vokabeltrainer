@@ -277,9 +277,24 @@ const ECHT_GEMESSEN = [
      mittige Kästen gebaut. */
   pruefe('die Karte fährt NICHT mit popIn auf', false, /\.tajweed-karte\{[^}]*animation:popIn/.test(htmlNackt));
   pruefe('… sondern mit kartenAuf', true, /\.tajweed-karte\{[^}]*animation:kartenAuf/.test(htmlNackt) && /@keyframes kartenAuf/.test(htmlNackt));
-  /* Elias 20.09.2026: „rechtsbündig". */
-  pruefe('die drei Knöpfe stehen rechtsbündig in EINER Reihe', true,
-    /\.hifz-knoepfe\{[^}]*justify-content:flex-end[^}]*flex-wrap:nowrap/.test(htmlNackt));
+  /* Elias 20.09.2026, nach v538: „kannst du wieder wie davor machen das
+     markeieren rechts und ayah links ist" — das hebt sein „rechtsbündig"
+     aus v538 auf. */
+  pruefe('die drei Knöpfe: Ayah links, Markieren rechts, EINE Reihe', true,
+    /\.hifz-knoepfe\{[^}]*justify-content:space-between[^}]*flex-wrap:nowrap/.test(htmlNackt));
+  pruefe('… und nicht mehr rechtsbündig', false,
+    /\.hifz-knoepfe\{[^}]*justify-content:flex-end/.test(htmlNackt));
+
+  /* Elias 20.09.2026: „wenn ich weiter scrolle im koran dann will ich das
+     sich das automatisch schließt". In dieser App rollt `main`, nicht das
+     Fenster — ein scroll-Horcher am Fenster feuert nie (so war es in v538).
+     Deshalb: am Dokument in der Fangphase, das trifft jedes rollende Element. */
+  pruefe('in dieser App rollt main, nicht das Fenster', true,
+    /\nmain\{[^}]*overflow-y:auto/.test(htmlNackt));
+  pruefe('der Zettel horcht NICHT auf das Rollen des Fensters', false,
+    /window\.addEventListener\('scroll'/.test(markNackt));
+  pruefe('… sondern in der Fangphase am Dokument', true,
+    /document\.addEventListener\('scroll',[^\n]*tajweedZettelSchliessen\(\)[^\n]*capture:\s*true/.test(markNackt));
 
   pruefe('vt_tajweed wird abgeglichen', true, /'vt_tajweed',/.test(sync));
   const zweig = sync.match(/if \(k === 'vt_bekannt'[\s\S]*?\)\{/);
@@ -315,6 +330,14 @@ const ECHT_GEMESSEN = [
   pruefe('c) die Störfassung unterscheidet sich vom Original', true, ohneKombi !== TEILE.cluster);
   const c = baueUmgebung(Object.assign({}, TEILE, { cluster: ohneKombi }));
   pruefe('c) ohne Zusammenfassung hat Allāh 7 statt 4 Stellen', 7, c.api.tajweedCluster(W_ALLAH).length);
+
+  /* d) die v538-Fassung des Zettels: Horcher am Fenster statt am Dokument. */
+  const amFenster = markNackt.replace(/document\.addEventListener\('scroll',([^\n]*)\{ capture:true, passive:true \}\)/,
+    "window.addEventListener('scroll',$1{ passive:true })");
+  pruefe('d) die Störfassung unterscheidet sich vom Original', true, amFenster !== markNackt);
+  pruefe('d) der Fenster-Horcher von v538 fällt auf', true,
+    /window\.addEventListener\('scroll'/.test(amFenster)
+    && !/document\.addEventListener\('scroll',[^\n]*capture:\s*true/.test(amFenster));
 }
 
 console.log(fehler === 0
