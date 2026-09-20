@@ -153,13 +153,25 @@ const BUCH_WOERTER = [];
    vom 16.09.2026 hat deshalb sechs richtige Eselsbruecken umgeschrieben (ihr
    Beispiel: نَظَّارَةٌ, Bayna Yadayk 1 Kapitel 2 — freigeschaltet).
    [[handliste_neben_echter_quelle]] */
-let LERNSTAND = { angabe: {}, nichtInArbeit: {} };
+/* ⛔⛔ `gemessen` kommt am 20.09.2026 dazu — und zwar NUR als Hinweis.
+   Der Anlass: seine Diagnosekarte meldete „nur EIN Vorschlag: 22 Woerter",
+   waehrend dieser Pruefer gleichzeitig „✅ alle 163 Woerter aus
+   freigeschalteten Kapiteln haben Alternativen" sagte. Beide hatten recht —
+   `angabe` steht seit dem 20.08.2026 auf Madina 1 Kapitel 12, gemessen wurde
+   am 20.09. Kapitel 24. Der Pruefer war gruen gegen einen Stand von vor einem
+   Monat. [[einstellung_wirkt_nicht_weil_zurueckgelesen]]
+
+   ⚠️ Der Hinweis WEITET DAS FENSTER NICHT AUS. Was eingefordert wird, haengt
+   weiter an seiner eigenen Angabe — „es macht keinen sinn alle 4000 woerter
+   einen vorschlag zu machen" (19.08.2026). Gemeldet wird nur, dass die Angabe
+   aelter ist als das, womit er uebt. */
+let LERNSTAND = { angabe: {}, nichtInArbeit: {}, gemessen: {} };
 {
   const sd = path.join(WURZEL, 'data/lernstand.json');
   if (fs.existsSync(sd)){
     try {
       const d = JSON.parse(fs.readFileSync(sd, 'utf8'));
-      LERNSTAND = { angabe: d.angabe || {}, nichtInArbeit: d.nichtInArbeit || {} };
+      LERNSTAND = { angabe: d.angabe || {}, nichtInArbeit: d.nichtInArbeit || {}, gemessen: d.gemessen || {} };
     } catch (e){ console.log('  hinw data/lernstand.json nicht lesbar: ' + e.message); }
   } else {
     console.log('  hinw data/lernstand.json fehlt — Abschnitt 4 kennt dann nur vocab-data.js, Abschnitt 6 fordert nichts ein.');
@@ -669,6 +681,18 @@ console.log('=== 6. Dauerauftrag: neu freigeschaltete Kapitel ===');
         console.log(`  ⬜ ${slug}: ${fehlen.length} von ${bekannteKapitel.length} Woertern aus freigeschalteten Kapiteln ohne Alternative — ${JSON.stringify(je)}`);
       } else {
         console.log(`  ✅ ${slug}: alle ${bekannteKapitel.length} Woerter aus freigeschalteten Kapiteln haben Alternativen.`);
+        /* ⛔ Das gruene Haekchen gilt nur fuer das Fenster aus SEINER Angabe.
+           Uebt er laengst weiter, sagt es nichts ueber die Kapitel dazwischen —
+           genau das war am 20.09.2026 der Fall. Deshalb hier die Gegenprobe. */
+        const g = (LERNSTAND.gemessen || {})[slug];
+        const hoechst = g && Number(g.hoechstesKapitel);
+        const grenze = Number(ANGABE[slug]) + LERNFENSTER;
+        if (hoechst && hoechst > grenze){
+          const darueber = liste.filter(w => Number(w.chapter) > grenze && Number(w.chapter) <= hoechst);
+          const ohne = darueber.filter(w => !ALT[w.id]);
+          console.log(`     hinw seine Angabe ist Kapitel ${ANGABE[slug]} (geprueft bis ${grenze}), gemessen hat er schon Kapitel ${hoechst} geuebt.`);
+          console.log(`     hinw dazwischen liegen ${darueber.length} Woerter, davon ${ohne.length} ohne zweite Eselsbruecke — nicht eingefordert, aber gezaehlt.`);
+        }
         /* ⛔ Der Nenner sagt, was er NICHT angesehen hat. Dieser Abschnitt
            fragt nach neu freigeschalteten KAPITELWOERTERN; die eigenen
            Vokabeln, die Fachbegriffe, die selbst angelegten und die elf, die

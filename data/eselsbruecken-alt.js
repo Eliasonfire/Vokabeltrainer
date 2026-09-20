@@ -2545,4 +2545,249 @@ const ESELSBRUECKEN_ALT = {
     'Du hast schon أَبٌ (Vater) aus Kapitel 6. ⚠️ Es ist nicht dasselbe Wort: أَبٌ ist die Anrede und das alltägliche Wort, وَالِدٌ die genauere Bezeichnung. Beide stehen jetzt in deinem Bestand.',
     'Aus derselben Wurzel kommt وَلَدٌ (Junge) aus Kapitel 1, das du schon lange hast. ⚠️ Nur die Ḥarakāt trennen sie: وَالِدٌ mit langem ā ist der Vater, وَلَدٌ ohne ist der Junge.'
   ],
+
+  /* ---------- Madina 1, Kapitel 24: die zweite Eselsbruecke (20.09.2026) ----------
+     Seine Diagnosekarte meldete „nur EIN Vorschlag (naechster Stern-Fall):
+     22 Woerter". Gemessen waren es 60 im ganzen Kapitel — die 22 sind die,
+     die er freigeschaltet hat. Hier bekommen alle 60 einen zweiten Weg,
+     damit kein Wort aufgebraucht ist, wenn er einen davon wegwirft. */
+  '50160': [
+    'Du hast es auswendig, ohne es zu wissen: in سُورَةُ الْمُلْك fragen sie „مَتَىٰ هَٰذَا ٱلْوَعْدُ" (67:25) — „wann kommt dieses Versprechen?". Im Koranschriftbild steht ein winziges senkrechtes Alif über dem هَٰـ, auf deiner Karte ein normales هَذَا. Dasselbe Wort.',
+  ],
+
+  '50161': [
+    'Schau deine zwei Sätze nebeneinander an: هَذَا كِتَابٌ جَدِيدٌ und هَذِهِ مَدْرَسَةٌ جَدِيدَةٌ. Im zweiten trägt JEDES Wort das weibliche ـة am Ende — auch das Hinweiswort davor ändert sich mit. Wenn du das ة siehst, weißt du, welches der beiden dran ist.',
+  ],
+
+  '50162': [
+    '⭐ Ein einziger Buchstabe trennt nah von fern: das لـ. هَذَا und هَذِهِ (nah) haben keins, ذَلِكَ und تِلْكَ (fern) haben eins mitten drin. Merk dir das لـ als den langen Weg in die Ferne — dann musst du nicht vier Wörter einzeln lernen, sondern nur auf einen Buchstaben achten.',
+  ],
+
+  '50163': [
+    'Das ت am Anfang ist dein Hinweis: derselbe Buchstabe, der bei مَدْرَسَةٌ und غُرْفَةٌ hinten steht und „weiblich" bedeutet, steht bei تِلْكَ ganz vorn. Von den vier Hinweiswörtern ist es das einzige mit ت — deshalb ist es auch das einzige, das du an einem Buchstaben erkennst.',
+  ],
+
+  '50164': [
+    'Klanghilfe, nur der Klang: „haaulaai" ist von allen vieren das längste Wort — viele Leute, viele Silben. Und dein eigener Satz zeigt, wofür es steht: هَؤُلَاءِ أَوْلَادٌ, „das sind Jungen". Es zeigt nie auf eine Sache, immer auf mehrere.',
+  ],
+
+  '50165': [
+    '⭐ Es steht in einer Sure, die du auswendig kannst: أُوْلَٰٓئِكَ هُمْ خَيْرُ ٱلْبَرِيَّةِ (98:7) — „das sind die besten Geschöpfe". Genau diese Arbeit macht das Wort auch auf deiner Karte: es zeigt auf eine Gruppe, die nicht hier steht, sondern dort drüben.',
+  ],
+
+  '50166': [
+    '⭐ Der erste Vers von سُورَةُ الْمُلْك beginnt damit: ٱلَّذِي خَلَقَ ٱلْمَوْتَ (67:2) — „Der den Tod erschaffen hat". Hier siehst du die Einzahl, in der Fātiḥah die Mehrzahl ٱلَّذِينَ. Ein Wort, das immer einen ganzen Satz anhängt, statt nur ein Wort zu nennen.',
+  ],
+
+  '50167': [
+    'Es steht in deiner auswendigen Sure: هَلْ تَرَىٰ مِن فُطُورٍ (67:3) — „siehst du irgendwelche Risse?". Eine Frage, auf die nur ja oder nein passt. Und weil du den Vers schon kannst, hast du auch die Stellung: هَلْ steht ganz vorn, der Rest folgt unverändert.',
+  ],
+
+  '50168': [
+    'Auch das steht in الْمُلْك: أَلَا يَعْلَمُ مَنْ خَلَقَ (67:14) — „sollte Der, Der erschaffen hat, nicht Bescheid wissen?". Sprich den Vers laut mit, dann hörst du das kurze offene „a" von مَنْ. Genau dieser Laut trennt es von مِنْ (von, aus), das du schon hast.',
+  ],
+
+  '50169': [
+    'Sag dir den Vers vor, den du kannst: مَتَىٰ هَٰذَا ٱلْوَعْدُ (67:25) — „wann kommt dieses Versprechen?". Da stehen gleich zwei Wörter aus diesem Kapitel nebeneinander, مَتَىٰ und هَٰذَا. Ein Vers, zwei Vokabeln.',
+  ],
+
+  '50170': [
+    '⭐ In سُورَةُ الْمُلْك steht der Sinn schon drin: لِيَبْلُوَكُمْ أَيُّكُمْ أَحْسَنُ (67:2) — „damit Er prüfe, WER VON EUCH das Beste tut". Nicht „was", sondern „welcher von mehreren" — und genau das ist der Unterschied zu مَا (was), das du schon hast.',
+  ],
+
+  '50171': [
+    'Du kennst den Satz auswendig: فَإِنَّ مَعَ ٱلْعُسْرِ يُسْرًا (94:5) — „mit der Erschwernis ist Erleichterung". Das مَعَ heißt dort genau das, was es auf deiner Karte heißt: zusammen mit. Ein Wort, das du nie wieder nachschlagen musst, wenn du den Vers sprichst.',
+  ],
+
+  '50172': [
+    'Die Szene dazu kennst du: zwei Leute treffen sich zum ersten Mal, jeder sagt seinen Namen, jeder erfährt etwas über den anderen. Für genau diese Runde gibt es im Arabischen ein eigenes Wort — تَعَارُفٌ. Deutsch braucht dafür drei Wörter: „gegenseitiges Kennenlernen".',
+  ],
+
+  '50173': [
+    'Der Unterschied zu einem Wort, das du schon hast: ein سُؤَالٌ (Frage, Kapitel 19) geht in eine Richtung, ein حِوَارٌ geht hin und her. Frage, Antwort, Rückfrage — erst dann ist es ein حِوَار.',
+  ],
+
+  '50174': [
+    'Bau dir die Szene aus zwei Wörtern dieses Kapitels: du sitzt in der عِمَادَةٌ (Dekanat), und der مُرْشِدٌ sagt dir, welches Fach du nehmen sollst. Er ist der, der den Weg weist — im Deutschen am ehesten der Wegweiser in Person.',
+  ],
+
+  '50175': [
+    'Klanghilfe, nur der Klang: „ʿimaada" — und dieselbe Wurzel steckt in „ʿamuud", der Säule. Das Dekanat ist die tragende Stelle einer Fakultät: dort werden die اِسْتِمَارَاتٌ (Formulare) aus diesem Kapitel abgegeben.',
+  ],
+
+  '50176': [
+    '⭐ Zwei Wörter dieses Kapitels beginnen mit derselben Silbe: اِسْتِمَارَةٌ und اِسْتَذْكَرَ. Diese Silbe اِسْتَـ heißt so viel wie „sich etwas holen" — beim Formular holst du dir eine Auskunft, beim Lernen holst du dir das Gedächtnis zurück. Merk die beiden zusammen.',
+  ],
+
+  '50177': [
+    '⭐ Die Wurzel س ك ن siehst du auf jeder deiner Karten: das Sukūn, das kleine Ruhezeichen über einem Buchstaben ohne Vokal, kommt von denselben drei Buchstaben. Ruhe — und إِسْكَانٌ ist, jemandem einen Ort zu geben, an dem er zur Ruhe kommt: Wohnen.',
+  ],
+
+  '50178': [
+    'Muster فَعِيلٌ, und du hast davon schon viele: سَرِيعٌ (schnell), نَظِيفٌ (sauber), مَرِيضٌ (krank). Immer eine Eigenschaft, immer derselbe lange ـِيـ-Ton in der Mitte. جَزِيلٌ reiht sich da ein und heißt: reichlich, in großer Menge.',
+  ],
+
+  '50179': [
+    'Zwei Wörter dieses Kapitels sagen fast dasselbe und werden trotzdem verschieden benutzt: شُعْبَةٌ ist die Abteilung INNERHALB einer Einrichtung, فَرْعٌ die Filiale AUSSERHALB. Lern sie als Paar, dann verwechselst du sie nicht mehr.',
+  ],
+
+  '50180': [
+    'Nimm es persönlich, dann sitzt es: dein مُسْتَوًى ist die Stufe, auf der du gerade lernst — Madina 1, Kapitel 24. Jede Stufe hat ihren Stoff, und das Wort dafür brauchst du in jeder Schule und an jeder Universität.',
+  ],
+
+  '50181': [
+    '⭐ Der Anker, den du jeden Tag benutzt: von Deutschland aus liegt die قِبْلَةٌ (Gebetsrichtung, Kapitel 14) ungefähr im Südosten — also im جَنُوب-Osten. Wenn du dich zum Gebet hinstellst, zeigst du grob in die Richtung, die dieses Wort benennt.',
+  ],
+
+  '50182': [
+    'Merk es als Gegensatzpaar mit تَأْخِيرٌ (Verspätung) aus demselben Kapitel: das eine ist zu früh, das andere zu spät. Dein Satz gibt das Beispiel: الْفَطُورُ مُبَكِّرٌ — das Frühstück ist früh. Zwei Wörter, eine Zeitachse.',
+  ],
+
+  '50183': [
+    '⭐⭐ Dasselbe Schriftbild steht in deiner auswendigen Sure: هَلْ تَرَىٰ مِن فُطُورٍ (67:3) — dort heißt فُطُور aber „Risse, Spalten". ⚠️ Nicht verwechseln: beide kommen von ف ط ر, „aufbrechen". Der Himmel bricht auf, das Fasten bricht ab — und was das Fasten bricht, ist das فَطُور.',
+  ],
+
+  '50184': [
+    'Das ـة macht hier aus der Sache den EINEN Fall, genau wie bei لُقْمَةٌ (der einzelne Bissen) aus demselben Kapitel. Eine سَابِقَةٌ ist der eine Vorfall, der vorher schon einmal so entschieden wurde — deutsch: der Präzedenzfall.',
+  ],
+
+  '50185': [
+    '⭐ Du kennst die Sache aus dem Gebet: ohne Ṭahāra, die rituelle Reinheit, kein Gebet. طَاهِرٌ ist das dazugehörige Eigenschaftswort — rein. Dein Satz sagt es über den Ort: الْمَسْجِدُ طَاهِرٌ, die Moschee ist rein.',
+  ],
+
+  '50186': [
+    'Der Vergleich mit einem Wort, das du hast: وَاحِدٌ heißt schlicht „eins" — einer von vielen. فَذٌّ heißt: einer, und zwar so, dass es keinen zweiten gibt. Das kurze, harte Wort passt zur Bedeutung: es ist selbst so knapp, wie es klingt.',
+  ],
+
+  '50187': [
+    'Bild aus deinem eigenen Satz: der طَبِيبٌ (Arzt, Kapitel 1) legt die Hand seitlich an den Kranken — auf die خَاصِرَة. Die Wurzel خ ص ر meint schmal sein, und die Taille ist die schmalste Stelle des Körpers.',
+  ],
+
+  '50188': [
+    '⭐ Die Wurzel ا خ ر steckt in einem Wort, das du aus dem Glauben kennst: die Āchira, das Letzte, das Jenseits. Was zuletzt kommt, kommt spät — und تَأْخِيرٌ ist genau das: etwas spät machen, Verspätung.',
+  ],
+
+  '50189': [
+    'Die Szene aus diesem Kapitel: in der اِسْتِمَارَةٌ (Formular) gibt es eine Zeile für deine هِوَايَةٌ. Die Wurzel meint eine Neigung — das, wozu es dich zieht, wenn du frei hast. Genau das schreibst du dort hinein.',
+  ],
+
+  '50190': [
+    'Zwei Wörter desselben Kapitels teilen sich die Idee: شُعْبَةٌ ist die Abteilung drinnen, فَرْعٌ der Zweig nach draußen. Am Baum ist der فَرْع der Ast, bei einer Firma die Niederlassung in einer anderen Stadt — dieselbe Vorstellung.',
+  ],
+
+  '50191': [
+    'Merk es an einer Szene aus diesem Kapitel: die erste لُقْمَةٌ des فَطُورٌ (Frühstück). Ein Bissen, nicht eine Mahlzeit — das ـة am Ende macht aus dem Essen das einzelne Stück, genau wie bei بَيْضَةٌ (Ei) das einzelne Ei.',
+  ],
+
+  '50192': [
+    'Die Wurzel م ث ل ist die von „mithl": gleich, ebenso. Wer eine Anweisung befolgt, macht es GENAU SO, wie es gesagt wurde — er bildet sie nach. Daher اِمْتِثَالٌ: Befolgung. Ein Wort, das du eher liest als sprichst.',
+  ],
+
+  '50193': [
+    'Die Geschichte dahinter kennst du: statt des Sohnes wurde ein Tier angenommen — daran erinnert das Fest, und die أُضْحِيَةٌ ist genau dieses Tier. Nicht irgendein Schaf, sondern das eine, das an diesem Tag geschlachtet wird.',
+  ],
+
+  '50194': [
+    'Stell es zu den Gefäßen, die du schon hast: كُوبٌ (Trinkglas) und فِنْجَانٌ (Teetasse, Kapitel 22). Die قَارُورَةٌ ist das kleine Fläschchen mit Hals — im Labor der Kolben, im Alltag das Parfümfläschchen.',
+  ],
+
+  '50195': [
+    '⚠️⚠️ Dieselbe Schreibung steht in einer Sure, die du auswendig kannst: وَأَمَّا ٱلسَّآئِلَ فَلَا تَنْهَرْ (93:10). Dort ist aber der BITTENDE gemeint, nicht die Flüssigkeit — zwei verschiedene Wurzeln, س أ ل und س ي ل. Merk dir gerade das: gleich aussehen heißt nicht gleich sein.',
+  ],
+
+  '50196': [
+    '⭐ Die Wurzel ذ ك ر sprichst du in einer Sure, die du auswendig kannst: وَرَفَعْنَا لَكَ ذِكْرَكَ (94:4) — „und Wir haben dir dein Ansehen erhöht". Dieselben drei Buchstaben tragen das Erinnern, das Gedenken — und اِسْتَذْكَرَ heißt: sich etwas ins Gedächtnis zurückholen.',
+  ],
+
+  '50197': [
+    'Du hörst die Wurzel in „afḍal" — besser, vorzüglicher. Dein eigener Satz sagt, worum es geht: فَضَلَ الْعِلْمُ الْمَالَ, das Wissen übertrifft das Vermögen. Ein Satz, den du dir als ganzen merken kannst; die Vokabel kommt dann von allein mit.',
+  ],
+
+  '50201': [
+    'Der Vergleich mit dem, was du schon hast: وَ hängt zwei Gleiche aneinander, لَكِنَّ stellt das Zweite GEGEN das Erste. Dein Satz zeigt es: الْبَيْتُ صَغِيرٌ لَكِنَّهُ جَمِيلٌ — klein, und trotzdem schön. Deutsch „aber", und wie im Deutschen kommt danach die Überraschung.',
+  ],
+
+  '50285': [
+    '⚠️ Es steht nie allein, sondern immer VOR einem zweiten Wort, und das zieht es in den Genitiv: بَعْضُ الطُّلَّابِ, „einige der Studenten". Damit ist es eine إِضَافَةٌ — die Verbindung, die du in diesem Kapitel gerade lernst. Zwei neue Wörter, ein Beispiel.',
+  ],
+
+  '50287': [
+    'Bild statt Regel: jemand tritt auf wie ein Lehrer, ist aber keiner — كَأَنَّهُ مُدَرِّسٌ. Dein eigener Satz. Du benutzt es immer dann, wenn etwas nur SO AUSSIEHT wie das Genannte. Deutsch: „als ob".',
+  ],
+
+  '50289': [
+    '⭐ Der Unterschied zum Deutschen ist die eigentliche Lernarbeit: im Deutschen wird aus „groß" das Wort „größer", im Arabischen bleibt كَبِيرٌ unverändert und bekommt ein eigenes Wort dahinter — كَبِيرٌ جِدًّا. Die Verstärkung steckt nie im Wort selbst.',
+  ],
+
+  '50290': [
+    'Dein Satz ist eine ganze Alltagsszene: شُكْرًا يَا مُدَرِّسُ — „danke, Lehrer!". Die Rufpartikel يَا davor hast du schon. Merk dir das Paar als Wendung, dann hast du den ersten arabischen Satz, den du an einem echten Menschen ausprobieren kannst.',
+  ],
+
+  '50312': [
+    '⭐ Die Wurzel س ل م hörst du in einer Sure, die du auswendig kannst: سَلَٰمٌ هِيَ (97:5) — „Frieden ist sie", über die Nacht der Bestimmung. Derselbe Stamm steckt im Wort مُسْلِمٌ. Wer den Vers spricht, spricht die Wurzel schon mit.',
+  ],
+
+  '50338': [
+    'Schau auf die Mehrzahl: مَتَاجِرُ — genauso gebaut wie مَسَاجِدُ (Moscheen) und مَكَاتِبُ (Büros), die du beide hast. ⚠️ Alle drei enden ohne Tanwin. Wenn du diesen Plural einmal erkennst, erkennst du ihn bei jedem Ort-Wort wieder.',
+  ],
+
+  '50357': [
+    'Du sprichst die Wurzel in jedem Gebet: غَيْرِ ٱلْمَغْضُوبِ عَلَيْهِمْ (1:7) — „nicht derer, die Zorn erregt haben". Dieselben drei Buchstaben غ ض ب stehen in غَضْبَانُ. Die Fātiḥah ist damit dein Merkhaken für ein Wort, das du sonst nirgends triffst.',
+  ],
+
+  '50358': [
+    'Merk es als Gegenpaar zu غَضْبَانُ aus demselben Kapitel: der eine behält den Kopf oben, der andere verliert ihn. عَاقِلٌ ist, wer ruhig bleibt und denkt. Zwei Wörter, eine Karte — Gegensätze bleiben besser hängen als Einzelstücke.',
+  ],
+
+  '50387': [
+    'Das stärkste Merkmal ist kein Buchstabe, sondern eine Säule des Islam: wer den Haddsch vollzogen hat, wird حَاجٌّ genannt. Das Wort begegnet dir im Alltag als Anrede — und du kennst die Sache längst, bevor du die Vokabel gelernt hast.',
+  ],
+
+  '50466': [
+    'Zwei Verben dieses Kapitels beschreiben genau das, was du gerade tust: اِسْتَذْكَرَ heißt auswendig lernen, دَأَبَ heißt dranbleiben, ohne nachzulassen. Lern sie als Paar — das eine ist die Arbeit, das andere die Haltung dabei.',
+  ],
+
+  '50467': [
+    'Nimm deinen eigenen Satz: الْبَيْتُ صَغِيرٌ لَكِنَّهُ جَمِيلٌ. Das Wort, mit dem du anfängst — الْبَيْتُ — ist der مُبْتَدَأ. Der Name sagt es wörtlich: das Angefangene. Du musst dafür keine Regel lernen, nur schauen, was vorn steht.',
+  ],
+
+  '50468': [
+    '⭐ Das Muster مَفْعُولٌ kennst du schon von مَشْهُورٌ (berühmt): einer, über den geredet WIRD — er tut nichts, es wird an ihm getan. Genau das heißt مَفْعُولٌ بِهِ: das Wort, an dem die Handlung geschieht. Ein Muster, zwei Wörter.',
+  ],
+
+  '50469': [
+    '⚠️ Der Witz an diesem Wort: es ist gleichzeitig eine Vokabel und der Name seines eigenen Musters. Die Buchstaben ف ع ل sind das Baugerüst, mit dem die Grammatik ALLE Formen beschreibt — فَاعِلٌ der Handelnde, مَفْعُولٌ der Behandelte. Wenn du das einmal siehst, liest du jedes Muster wie eine Schablone.',
+  ],
+
+  '50470': [
+    'Der Blick auf die Endung spart dir die Regel: in الْمُبْتَدَأُ مَرْفُوعٌ trägt das Wort vorne die Damma, das kleine Häkchen oben. مَرْفُوعٌ heißt wörtlich „gehoben" — und die Damma ist das oberste der drei Zeichen. Gehoben oben, das passt zusammen.',
+  ],
+
+  '50471': [
+    '⭐ Du hast zwei Beispiele dafür in diesem Kapitel, ohne es zu merken: شُكْرًا und جِدًّا. Das ـًا am Ende ist genau die Endung, die مَنْصُوبٌ meint. Wenn du die beiden Wörter sagst, sagst du den Fall schon mit.',
+  ],
+
+  '50472': [
+    'Die einfache Regel dazu kennst du aus deinem Bestand: nach einem حَرْفُ الْجَرِّ steht das Nomen مَجْرُورٌ. Deine Präpositionen sind مِنْ, إِلَى, فِي, عَلَى — und jetzt auch مَعَ aus diesem Kapitel. Was danach kommt, ist immer مَجْرُور.',
+  ],
+
+  '50473': [
+    '⚠️ Das Erkennungszeichen ist etwas, das FEHLT: in بَيْتُ الْمُدَرِّسِ hat بَيْتُ sein Tanwin verloren. Genau daran siehst du den مُضَاف — das erste Wort der Verbindung steht nie mit Tanwin da. Ein fehlendes Zeichen als Merkmal, das musst du einmal bewusst sehen.',
+  ],
+
+  '50474': [
+    'Dein eigenes Beispiel sagt alles: مِفْتَاحُ الْبَابِ — „der Schlüssel der Tür". Im Deutschen brauchst du dafür ein Wörtchen („der", „von"), im Arabischen stehen die zwei Wörter einfach nebeneinander. Diese Bauform heißt إِضَافَةٌ, und du benutzt sie ab jetzt in fast jedem Satz.',
+  ],
+
+  '50480': [
+    'Reih es bei den Ländern ein, die auf ـَا enden und ohne ال stehen: أَمْرِيكَا und سُوِيسْرَا hast du schon. Alle drei bleiben unverändert, egal wo im Satz sie stehen — bei Ländernamen musst du dir also nie eine Endung merken.',
+  ],
+
+  '50498': [
+    'Schau auf das Ende, nicht auf den Anfang: ـِيٌّ mit Schadda, genau wie bei كُرْسِيٌّ (Stuhl) und غَنِيٌّ (reich), die du beide hast. Zwei ي übereinandergelegt — dieses Doppel-ي macht aus dem Land die Person, die von dort kommt.',
+  ],
+
+  '50503': [
+    '⭐ Merk die drei Schulstufen zusammen, dann hast du eine kleine Leiter statt drei Einzelwörter: اِبْتِدَائِيٌّ (Grund-) · مَدْرَسَةٌ مُتَوَسِّطَةٌ (Mittelschule, Kapitel 12) · ثَانَوِيَّةٌ (weiterführende Schule, Kapitel 9). Die letzten beiden stehen schon in deinem Bestand.',
+  ],
 };
