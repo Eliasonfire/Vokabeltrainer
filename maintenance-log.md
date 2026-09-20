@@ -5894,3 +5894,8 @@ Auftrag von unterwegs (Claude-App am Handy, über den Drive-Eingang um 23:23 ang
 ## 20.09.2026, 01:43 — v537: die drei Knoepfe im Koran-Leser nebeneinander (`1c92e75`)
 
 Elias mit Bild: „ich will das die drei nebeneinander stehen damit sie nicht so viel platz in der höhe einnehmen. markieren soll ganz rechts sein, ayah suche ganz links". `.hifz-bar` ist jetzt eine Spalte (Versstand oben, Knopfreihe unten), `.hifz-knoepfe` steht auf `nowrap` mit `space-between`; `hifzVerdeckenText` heisst „Verdecken"/„Aufdecken" statt „Auswendige verdecken"/„Wieder aufdecken" (js/quran.js). Gemessen bei 375 px: Leiste 79 statt ueber 150 px, Ayah 18–95, Verdecken 116–228, Markieren 248–357, Versstand einzeilig. validate 36 gruen, pruefe-markierung 51 gruen, pruefe-ausgeliefert Exit 0. sw.js v537.
+
+
+## 20.09.2026, 02:04 — v538: je Buchstabe eigene Farbe und Notiz, Zettel, gerade Linie (`32cee0e`)
+
+Elias' fünf Punkte nach dem Ausprobieren von v536 (Wortlaut in der To-Do). Speicher `vt_tajweed` jetzt je Buchstabe (`sure:vers:wort:position`), Wort-Form wird in tajweedLaden() aufgelöst (alter Eintrag bleibt `an:false`). Neu: Zettel `#tajweedZettel` (fixed, unter dem Wort, ohne Backdrop), Highlights der Karte unter eigenem Namen `tajweed-karte-*`, Bewegung `kartenAuf` statt `popIn`, `underline solid`, `.hifz-knoepfe` flex-end, `tajweedNachAbgleich()` aus ladeQuranStandNeu(). Prüfer umgeschrieben (Auflösung, zwei Farben je Wort, solid, kein popIn, Nachladen). validate 36 gruen, pruefe-markierung gruen, pruefe-ausgeliefert Exit 0. sw.js v538.
