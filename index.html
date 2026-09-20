@@ -3746,7 +3746,7 @@ button:disabled{cursor:default;}
    [[layout_min_width_falle]] */
 .quran-spieler{ container-type:inline-size; }
 @container (max-width: 288px){
-  .qs-text, .qs-sprung{ flex-basis:100%; order:1; }
+  .qs-text{ flex-basis:100%; order:1; }
 }
 .qs-schleife{
   display:flex; align-items:center; gap:var(--sp-2);
@@ -3791,28 +3791,14 @@ button:disabled{cursor:default;}
    als einziger Farbe. Alles andere daneben bleibt ruhig. */
 .qs-knopf.qs-play{color:var(--red-bright);}
 .qs-knopf.qs-play.an{background:var(--red-wash);}
-/* Der Stand sieht aus wie Text und ist ein Knopf — deshalb erbt er alles vom
-   Text und setzt nur die Knopf-Eigenschaften zurück. Ein sichtbarer Rahmen
-   wäre in einer Leiste mit vier Knöpfen daneben zu viel. */
+/* Der Stand ist seit dem 20.09.2026 NUR ANZEIGE (vorher ein Knopf, der das
+   Feld „Vers springen" öffnete — Elias: „das soll nicht so sein"). Deshalb
+   kein Zeiger und kein Aufleuchten mehr: was nichts tut, soll auch nicht so
+   aussehen. Der Innenabstand bleibt, damit die Leiste ihre Maße behält. */
 #qsStandKnopf{
   border:0; background:transparent; color:inherit; font:inherit;
-  text-align:start; cursor:pointer; padding:4px 6px;
+  text-align:start; padding:4px 6px;
   border-radius:var(--r-1);
-}
-#qsStandKnopf:hover{ background:var(--surface-3); }
-.qs-sprung{
-  /* ⛔ Untergrenze aus dem Inhalt: Beschriftung „Vers" 27 px + Feld 42 px +
-     6 px Lücke = 75 px. Mit `min-width:0` wurde die Zeile auf 46 px gequetscht
-     und das Eingabefeld angeschnitten — gemessen bei 320 px. */
-  display:flex; align-items:center; gap:6px; flex:1; min-width:5rem;
-  padding-inline-start:var(--sp-2);
-  font-size:var(--fs-sm); color:var(--text-dim);
-}
-.qs-sprung input{
-  width:3.4em; min-height:40px; padding:6px 8px;
-  border:1px solid var(--red-bright); border-radius:var(--r-1);
-  background:var(--surface); color:var(--text);
-  font:inherit; text-align:center; font-variant-numeric:tabular-nums;
 }
 .qs-text{
   display:flex;flex-direction:column;justify-content:center;
@@ -5220,7 +5206,6 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
      von ihm lagen. Steht der Text links, verteilt sich das Gewicht — gemessen
      bleiben rund 13 px Abweichung statt 97. */
   .qs-reihe .qs-text{flex:0 1 auto;order:-1;}
-  .qs-reihe .qs-sprung{flex:0 1 auto;order:-1;}
   /* ⛔⛔ NICHT `max-width` an main zurückgeben (07.09.2026). Elias vom Tablet:
      „bei meinem tablat gibt es recht viel platz rechts und links bei der app
      das einfach schwarz sind balken so, und wenn ich runter scrollen möchte
@@ -6366,17 +6351,14 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
           <!-- ⛔ SEIT 20.09.2026 KEIN KNOPF MEHR, nur Anzeige. Elias, 02:4x: „wenn
                ich in die mitte davon tippe also wo der name des rezitators
                steht dann komme ich zu dem feld wo ich eine zahl eintippen
-               kann … das soll nicht so sein". Das Feld darunter (Vers
-               springen) hat damit keinen Auslöser mehr — ob es ganz weg soll
-               oder woanders hin, wartet auf sein Wort (To-Do). -->
+               kann … das soll nicht so sein". Das Feld „Vers springen", das
+               hier darunter stand, ist seit v545 ganz weg — auf meine Frage,
+               ob es woanders hin soll: „so wie es jetzt ist, ist es gut
+               eigentlich" (Elias, 20.09.2026). -->
           <div class="qs-text" id="qsStandKnopf">
             <span class="qs-stand" id="qsStand"></span>
             <span class="qs-name" id="qsName"></span>
           </div>
-          <label class="qs-sprung hidden" id="qsSprungFeld">
-            <span>Vers</span>
-            <input type="text" id="qsSprung" inputmode="numeric" pattern="[0-9]*" maxlength="3" aria-label="Versnummer">
-          </label>
           <button class="qs-knopf" id="btnQsSchleife" aria-label="Verse wiederholen" aria-expanded="false"><svg class="ic"><use href="#ic-repeat"/></svg></button>
           <!-- ⛔ Das ✕ ist NIE gesperrt und schaltet den Rezitator GANZ aus —
                Ton, Leiste und den Schalter in den Koran-Einstellungen. Elias

@@ -254,7 +254,7 @@ function audioAdresse(rezId, sure, vers){
    ⛔ tonLog() darf nie werfen: es steht mitten in der Wiedergabe.
    ⚠️ BAUSTELLE: kommt wieder heraus, sobald die Ursache gefunden ist. */
 const QTON_SCHLUESSEL = 'vt_tonprotokoll';
-const QTON_MAX = 200;
+const QTON_MAX = 400;   /* 20.09.2026: 200 → 400, seit bei verborgener Seite alle 2 s eine Zeile kommt (eine Minute = 30 Zeilen) */
 let QTON = null;
 
 function tonLog(text){
@@ -303,7 +303,13 @@ function tonProtokollText(){
 }
 function tonProtokollZahl(){
   try { return (QTON !== null ? QTON : JSON.parse(localStorage.getItem(QTON_SCHLUESSEL) || '[]')).length || 0; }
-  catch (e){ return 0; }
+  catch (e){
+    /* Grund: die Zahl steuert nur, ob die Diagnosekarte die eine Zeile
+       „Ton-Protokoll: N Zeilen" zeigt. Unlesbarer Speicher = keine Zeile —
+       aber gemeldet, damit „0" nicht wie „nichts mitgeschrieben" aussieht. */
+    if (typeof stillerFehler === 'function') stillerFehler('Ton-Protokoll zählen', e);
+    return 0;
+  }
 }
 
 /* Was mit der SEITE passiert, während etwas läuft. `freeze`/`resume` meldet
@@ -347,12 +353,24 @@ function audioVersZahl(sure){
      Vers 2  spielt   — lag schon im Vorlader
      Vers 3  STILL    — braucht einen NEUEN Ladevorgang
 
-   Und genau den schiebt der Browser bei ausgeschaltetem Bildschirm auf: eine
-   verborgene Seite darf laufende Wiedergabe fortsetzen, aber neue
-   Medienressourcen werden zurueckgestellt. Deshalb endete es immer nach dem
-   zweiten Vers, auf beiden Geraeten gleich. [[hintergrund_tab_droselt_timer]]
+   ⛔⛔ DIE ERKLAERUNG, DIE HIER STAND, WAR FALSCH (berichtigt 20.09.2026).
+   Hier stand als Tatsache: „genau den [neuen Ladevorgang] schiebt der Browser
+   bei ausgeschaltetem Bildschirm auf … neue Medienressourcen werden
+   zurueckgestellt". Das war MEINE Vermutung vom 09.09., nie gemessen. Sein
+   Ton-Protokoll vom 20.09.2026 (Android, Bildschirm aus) zeigt das Gegenteil:
+   ein NEUER Ladevorgang ist im Hintergrund nach 33 ms spielbereit, Zeitgeber
+   laufen, `play()` wird angenommen. Die wirkliche Ursache steht im
+   `pause`-Handler unten: am Dateiende kommt erst `pause`, dann `ended`; das
+   `pause` schaltete die stille Schleife ab, die Mediensitzung wurde fuer einen
+   Augenblick leer, und ab etwa 15 s nach dem Ausschalten hielt das System
+   danach alles an. „Genau zwei" und „ca 3 verse" hingen an der ZEIT seit dem
+   Ausschalten, nicht an der Zahl der Ladevorgaenge. Von Elias bestaetigt am
+   20.09.2026: „aber jetzt funktioniert es bei ausgeschaltetem display".
+   [[hintergrund_tab_droselt_timer]]
 
-   ⭐ Die Loesung ist, nie ein frisch geladenes Element starten zu muessen:
+   ⭐ Die zwei Elemente bleiben trotzdem richtig — nur aus einem anderen Grund:
+   der naechste Vers beginnt ohne Ladepause, auch bei schwachem Netz. Die
+   Bauweise ist, nie ein frisch geladenes Element starten zu muessen:
    zwei Elemente wechseln sich ab. Waehrend A den laufenden Vers spielt, hat B
    den naechsten schon vollstaendig geladen. Am Versende wird B gestartet —
    kein neuer Ladevorgang, nur ein `play()` auf eine fertige Datei — und A
@@ -537,11 +555,11 @@ function audioFolgeVers(sure, vers){
      · steht er 6 s  → derselbe Vers wird neu geholt und an DERSELBEN Stelle
                        fortgesetzt, nicht von vorn.
 
-   ⚠️ BEI AUSGESCHALTETEM BILDSCHIRM UNGEPRÜFT. Browser drosseln Zeitgeber in
-   verborgenen Seiten; die stille Schleife hält die Seite als „spielt Ton" wach,
-   was die Drosselung mildert. Ob der 2-Sekunden-Takt dort wirklich ankommt,
-   zeigt erst sein Handy — hier ist kein Ton zu hören und der Pane darf keinen
-   machen. [[hintergrund_tab_droselt_timer]] */
+   ✅ BEI AUSGESCHALTETEM BILDSCHIRM GEMESSEN (20.09.2026, sein Handy): der
+   Takt kommt an. Zwei Protokollzeilen im Abstand von fünf Takten lagen bei
+   verborgener Seite 11,56 s auseinander (03:04:18.244 → 03:04:29.804), also
+   rund 2,3 s je Takt statt 2,0 — leicht gedehnt, nicht angehalten. Hier stand
+   bis dahin „ungeprüft". [[hintergrund_tab_droselt_timer]] */
 let QAUDIO_WACHE = null;
 let QAUDIO_STAND = { zeit: -1, seit: 0 };
 const QAUDIO_WACHE_TAKT = 2000;
@@ -564,9 +582,25 @@ function audioWacheTick(){
      daneben: pruefe-zweipuffer.mjs schneidet diese Funktion ALLEIN in ein vm —
      eine `let` davor käme dort nicht mit (so am 20.09.2026 rot geworden). */
   audioWacheTick.takt = (audioWacheTick.takt || 0) + 1;
-  if (audioWacheTick.takt % 5 === 0 && typeof tonLog === 'function' && el){
+  /* ⛔ BEI VERBORGENER SEITE JEDEN TAKT (2 s), nicht jeden fünften (20.09.2026).
+     Seine dritte Diagnose enthielt einen Lauf, bei dem der Bildschirm 5 s aus
+     war — Elias sagt, es wurde wieder still; das Protokoll sagt `playing` und
+     kein `pause`. Mit einer Zeile alle 10 s war nicht zu entscheiden, ob die
+     Stelle `t` danach noch weiterlief (Ton da) oder stand (Element „spielt",
+     aber nichts kommt heraus). Deshalb steht jetzt auch die stille Schleife
+     in der Zeile, ob das Element stumm ist und was die Mediensitzung meldet. */
+  const verborgen = (typeof document !== 'undefined' && !!document.hidden);
+  if ((verborgen || audioWacheTick.takt % 5 === 0) && typeof tonLog === 'function' && el){
+    let dazu = '';
+    try {
+      const s = (typeof QAUDIO_STILLE !== 'undefined') ? QAUDIO_STILLE : null;
+      dazu += s ? ' · stille ' + (s.paused ? 'PAUSIERT' : 'läuft') + ' t' + (Number(s.currentTime) || 0).toFixed(1) : ' · stille keine';
+      if (el.muted || el.volume === 0) dazu += ' · STUMM';
+      if (typeof navigator !== 'undefined' && navigator.mediaSession) dazu += ' · sitzung ' + (navigator.mediaSession.playbackState || '?');
+    } catch (e){ /* nie werfen */ }
     tonLog('TAKT vers ' + QAUDIO.vers + ' t' + (Number(el.currentTime) || 0).toFixed(1)
-      + ' rs' + el.readyState + (el.paused ? ' PAUSIERT' : '') + (QAUDIO.wechsel ? ' wechsel' : ''));
+      + ' rs' + el.readyState + (el.paused ? ' PAUSIERT' : '') + (QAUDIO.wechsel ? ' wechsel' : '')
+      + (QAUDIO.laeuft ? '' : ' laeuft=nein') + dazu);
   }
   /* Angehalten, weggeblättert oder mitten im Verswechsel: nichts zu wachen. */
   if (!el || QAUDIO.sure === null || !QAUDIO.laeuft || el.paused || QAUDIO.wechsel){
@@ -840,13 +874,27 @@ function schleifeSetzen(an){
   const sch = document.getElementById('qsSchleife');
   if (sch) sch.classList.toggle('hidden', !QSCHLEIFE.an);
   if (QSCHLEIFE.an){
-    /* ⭐ Beim Öffnen die Felder mit dem füllen, wo er gerade ist — „diesen
-       Vers wiederholen" ist der häufigste Fall und dann ein einziger Druck. */
+    /* ⛔⛔ VORBELEGT IST DIE GANZE SURE: von 1 bis zum letzten Vers.
+       Elias am 20.09.2026, 03:43, mit Bild („Wiederholen von 1 bis 1" rot
+       umrandet): „ich möchte statt standartmässig 1 von 1 steht sondern 1 von
+       letze ayah, also die letzte ayah soll als zahl dort stehen weil oft
+       möchte ich die sure mehrmals hintereinander komplett durchhören".
+       Vorher stand hier der laufende Vers in beiden Feldern — mit MEINER
+       Begründung („diesen Vers wiederholen ist der häufigste Fall"). Sein
+       häufigster Fall ist die ganze Sure.
+       ⚠️ Nur wenn die Felder LEER sind: wer schon einen Bereich eingetragen
+       hat und die Zeile zu- und wieder aufmacht, behält ihn. Geleert werden
+       sie beim Surenwechsel (audioSureWechsel).
+       ⚠️ Kennt die App die Verszahl nicht (0), bleibt es beim laufenden Vers —
+       „1 bis 0" wäre ein Bereich, der nichts tut. */
     const vonF = document.getElementById('qsVon');
     const bisF = document.getElementById('qsBis');
     const hier = QAUDIO.vers || (typeof sichtbarerVers === 'function' && sichtbarerVers()) || 1;
-    if (vonF && !vonF.value) vonF.value = String(hier);
-    if (bisF && !bisF.value) bisF.value = String(hier);
+    const sureHier = QAUDIO.sure !== null ? QAUDIO.sure
+      : (typeof OFFENE_SURE !== 'undefined' ? OFFENE_SURE : null);
+    const letzter = (sureHier !== null && typeof audioVersZahl === 'function') ? (audioVersZahl(sureHier) || 0) : 0;
+    if (vonF && !vonF.value) vonF.value = String(letzter ? 1 : hier);
+    if (bisF && !bisF.value) bisF.value = String(letzter || hier);
     schleifeLesen();
   }
   schleifeAnzeigen();
@@ -1359,16 +1407,6 @@ function wortModusVorbereiten(){
 /* ---------- Die Leiste ---------- */
 
 function zeigeSpieler(){
-  /* ⚠️ Wechselt der Vers, während das Sprungfeld offen steht, sähe man den
-     neuen Stand nicht. Das Feld schließt sich deshalb bei jeder Auffrischung
-     der Leiste — außer es hat gerade den Fokus, dann tippt jemand darin. */
-  const spFeld = document.getElementById('qsSprungFeld');
-  const spEing = document.getElementById('qsSprung');
-  if (spFeld && !spFeld.classList.contains('hidden') && document.activeElement !== spEing){
-    spFeld.classList.add('hidden');
-    const spKnopf = document.getElementById('qsStandKnopf');
-    if (spKnopf) spKnopf.classList.remove('hidden');
-  }
   const leiste = document.getElementById('quranSpieler');
   if (!leiste) return;
   const sichtbar = quranRezitationAn() && OFFENE_SURE !== null;
@@ -1518,58 +1556,14 @@ function audioSureWechsel(neueSure){
      kann". Die Sure hat bis zu 286 Verse; über die Sprungleiste dorthin zu
      scrollen dauert länger als drei Ziffern.
 
-     ⛔ Das Feld ERSETZT den Stand, statt daneben zu stehen: die Leiste hat
-     vier Knöpfe und eine Textspalte, für ein sechstes Element ist auf einem
-     Handy kein Platz. */
-  function sprungZeigen(an){
-    const knopf = document.getElementById('qsStandKnopf');
-    const feld  = document.getElementById('qsSprungFeld');
-    const eing  = document.getElementById('qsSprung');
-    if (!knopf || !feld || !eing) return;
-    knopf.classList.toggle('hidden', an);
-    feld.classList.toggle('hidden', !an);
-    if (an){
-      eing.value = '';
-      eing.placeholder = String(QAUDIO.vers || 1);
-      /* ⚠️ `focus()` erst nach dem Einblenden — ein Element mit `hidden`
-         nimmt keinen Fokus, und die Tastatur käme nicht. */
-      eing.focus();
-    }
-  }
-  function sprungAusfuehren(){
-    const eing = document.getElementById('qsSprung');
-    if (!eing) return;
-    const max = audioVersZahl(QAUDIO.sure !== null ? QAUDIO.sure : OFFENE_SURE) || 0;
-    const nr = Math.round(Number(eing.value) || 0);
-    sprungZeigen(false);
-    if (!nr || !max) return;
-    /* Außerhalb der Sure wird begrenzt statt abgewiesen — wer 999 tippt,
-       meint das Ende. */
-    audioSpiele(QAUDIO.sure !== null ? QAUDIO.sure : OFFENE_SURE,
-                Math.min(Math.max(1, nr), max));
-  }
-  /* ⛔ HIER STAND der Tipp auf die Mitte der Leiste (`qsStandKnopf` →
-     sprungZeigen(true)). Elias am 20.09.2026: „wenn ich in die mitte davon
-     tippe also wo der name des rezitators steht dann komme ich zu dem feld wo
-     ich eine zahl eintippen kann … das soll nicht so sein". Die Mitte ist
-     jetzt nur Anzeige. sprungZeigen()/sprungAusfuehren() bleiben stehen, haben
-     aber keinen Auslöser mehr — ob das Springen per Zahl ganz weg soll oder
-     einen anderen Platz bekommt, entscheidet er (To-Do, 🔴). Sein Wunsch vom
-     08.09.2026 („am besten wenn ich das auch selbst eintippen kann") ist
-     damit nicht gelöscht, nur vom Tipp auf den Namen gelöst. */
-  const eSprung = document.getElementById('qsSprung');
-  if (eSprung){
-    eSprung.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter'){ e.preventDefault(); sprungAusfuehren(); }
-      if (e.key === 'Escape'){ sprungZeigen(false); }
-    });
-    /* ⛔ Auch beim Verlassen ausführen: auf dem Handy tippt man die Zahl und
-       dann irgendwohin — eine Eingabetaste drückt dort kaum jemand. */
-    eSprung.addEventListener('blur', () => {
-      if (!document.getElementById('qsSprungFeld').classList.contains('hidden'))
-        sprungAusfuehren();
-    });
-  }
+     ⛔ SEIT v545 (20.09.2026) GANZ WEG. Erst nahm er den Auslöser weg („wenn
+     ich in die mitte davon tippe also wo der name des rezitators steht dann
+     komme ich zu dem feld wo ich eine zahl eintippen kann … das soll nicht so
+     sein"), dann auf meine Frage, ob das Feld woanders hin soll: „so wie es
+     jetzt ist, ist es gut eigentlich". sprungZeigen(), sprungAusfuehren(),
+     das Feld `qsSprungFeld` und sein CSS sind entfernt. Wer es wieder braucht:
+     Commit vor v545, und es braucht einen EIGENEN Knopf — nie wieder den Tipp
+     auf den Namen. */
 
   /* ---------- Wiederholbereich ---------- */
   /* Der EINE Schalter (20.09.2026): Zeile auf = Schleife an. Siehe

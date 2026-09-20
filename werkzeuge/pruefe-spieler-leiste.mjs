@@ -96,6 +96,14 @@ console.log('2. Die Mitte der Leiste ist kein Knopf mehr:');
     /kStand\.addEventListener\('click'|getElementById\('qsStandKnopf'\)\.addEventListener/.test(audioNackt));
   pruefe('der Stand und der Name stehen weiter darin', true,
     /id="qsStandKnopf"[\s\S]{0,200}id="qsStand"[\s\S]{0,120}id="qsName"/.test(htmlNackt));
+  /* v545: „so wie es jetzt ist, ist es gut eigentlich" — das Feld „Vers
+     springen" ist ganz weg, nicht nur ohne Auslöser. Gesucht wird im
+     kommentarfreien Text: die Begründung darf den Namen weiter nennen. */
+  pruefe('das Feld „Vers springen" steht nicht mehr im Markup', false, /id="qsSprung/.test(htmlNackt));
+  pruefe('… und kein Code greift mehr danach', false, /qsSprung|sprungZeigen|sprungAusfuehren/.test(audioNackt));
+  pruefe('… und kein CSS gestaltet es mehr', false, /\.qs-sprung/.test(htmlNackt));
+  pruefe('die Mitte sieht nicht mehr antippbar aus (kein Zeiger, kein Aufleuchten)', false,
+    /#qsStandKnopf\{[^}]*cursor:pointer/.test(htmlNackt) || /#qsStandKnopf:hover/.test(htmlNackt));
 }
 
 /* ================= 3. Zeile offen = Schleife an ========================== */
@@ -123,14 +131,14 @@ function elementDoppel(){
     setAttribute(n, v){ attr[n] = v; }, getAttribute(n){ return attr[n]; },
   };
 }
-function schleifenUmgebung(teile, vers){
+function schleifenUmgebung(teile, vers, zahl = 30){
   const els = { qsSchleife: elementDoppel(), qsVon: elementDoppel(), qsBis: elementDoppel(), btnQsSchleife: elementDoppel() };
   els.qsSchleife.classList.add('hidden');
   const ctx = {
     document: { getElementById: (id) => els[id] || null },
     QAUDIO: { sure: 67, vers: vers },
     OFFENE_SURE: 67,
-    audioVersZahl: () => 30,
+    audioVersZahl: () => zahl,
   };
   vm.createContext(ctx);
   vm.runInContext(mKonstSchleife[0] + teile.lesen + teile.anzeigen + teile.setzen
@@ -144,13 +152,22 @@ console.log('3. Wiederholen: Zeile offen = Schleife an:');
   u.api.schleifeSetzen(true);
   pruefe('ein Druck schaltet die Schleife AN', true, u.api.QSCHLEIFE.an);
   pruefe('… öffnet die Zeile', false, u.els.qsSchleife.classList.contains('hidden'));
-  pruefe('… füllt „von" und „bis" mit dem laufenden Vers', ['7', '7'], [u.els.qsVon.value, u.els.qsBis.value]);
-  pruefe('… und der Bereich gilt sofort', [7, 7, 67], [u.api.QSCHLEIFE.von, u.api.QSCHLEIFE.bis, u.api.QSCHLEIFE.sure]);
+  /* ⛔ SEIN SATZ (20.09.2026, 03:43, mit Bild): „ich möchte statt
+     standartmässig 1 von 1 steht sondern 1 von letze ayah … weil oft möchte
+     ich die sure mehrmals hintereinander komplett durchhören". Vorher stand
+     hier der laufende Vers (7/7) — das war meine Annahme. */
+  pruefe('… füllt „von 1 bis letzte Ayah" — die ganze Sure, auch wenn gerade Vers 7 läuft', ['1', '30'], [u.els.qsVon.value, u.els.qsBis.value]);
+  pruefe('… und der Bereich gilt sofort', [1, 30, 67], [u.api.QSCHLEIFE.von, u.api.QSCHLEIFE.bis, u.api.QSCHLEIFE.sure]);
   pruefe('… das Zeichen in der Leiste leuchtet', true, u.els.btnQsSchleife.classList.contains('an'));
   u.api.schleifeSetzen(false);
   pruefe('der nächste Druck schaltet AUS', false, u.api.QSCHLEIFE.an);
   pruefe('… und schließt die Zeile', true, u.els.qsSchleife.classList.contains('hidden'));
   pruefe('… das Zeichen leuchtet nicht mehr', false, u.els.btnQsSchleife.classList.contains('an'));
+
+  /* Kennt die App die Verszahl nicht, bleibt es beim laufenden Vers. */
+  const w = schleifenUmgebung(SCHLEIFE_TEILE, 7, 0);
+  w.api.schleifeSetzen(true);
+  pruefe('ohne bekannte Verszahl nie „1 bis 0", sondern der laufende Vers', ['7', '7'], [w.els.qsVon.value, w.els.qsBis.value]);
 
   /* Sein Bild: er hatte 1 bis 5 eingetragen. Schon Eingetragenes bleibt. */
   const v = schleifenUmgebung(SCHLEIFE_TEILE, 7);
@@ -175,8 +192,15 @@ console.log('4. Koran-Einstellungen: im Listenmodus keine Zeile „Übersetzung"
   const quranNackt = ohneKommentare(lies('../js/quran.js'));
   /* Elias 20.09.2026, 03:19, mit Bild (beide Hinweise rot umrandet): „die zwei
      texte können weg". */
-  pruefe('der Hinweis „Im Listenmodus läuft nur …" ist weg', false, /id="qaHinweisListe"|Im Listenmodus läuft nur/.test(htmlNackt));
-  pruefe('der Hinweis „Diese Ansicht gilt nur auf diesem Gerät …" ist weg', false, /id="qaHinweisGeraet"|Diese Ansicht gilt nur/.test(htmlNackt));
+  /* ⛔ AUCH DIE CSS-KOMMENTARE MÜSSEN HERAUS (20.09.2026). `htmlNackt` nimmt nur
+     die HTML-Kommentare weg; in einem CSS-Kommentar vom 08.09. steht aber
+     wörtlich „Im Listenmodus läuft nur der arabische Text durch" — über einer
+     ganz anderen Regel. Diese Probe war deshalb schon bei v544 ROT, und ich
+     habe es nicht gesehen, weil alle-pruefer.mjs mit Exit 0 nur meldet, dass
+     alle GELAUFEN sind. Seither: die Liste der Roten lesen, nicht den Code. */
+  const htmlOhneCss = htmlNackt.replace(/\/\*[\s\S]*?\*\//g, ' ');
+  pruefe('der Hinweis „Im Listenmodus läuft nur …" ist weg', false, /id="qaHinweisListe"|Im Listenmodus läuft nur/.test(htmlOhneCss));
+  pruefe('der Hinweis „Diese Ansicht gilt nur auf diesem Gerät …" ist weg', false, /id="qaHinweisGeraet"|Diese Ansicht gilt nur/.test(htmlOhneCss));
   pruefe('… und niemand greift mehr nach dem entfernten Element', false, /getElementById\('qaHinweis(Liste|Geraet)'\)/.test(quranNackt));
   pruefe('die Zeile hat eine Kennung im Markup', true, /id="qaZeileUeb"/.test(htmlNackt));
   pruefe('… und verschwindet, wenn die Darstellung „Liste" ist', true,
@@ -196,6 +220,14 @@ console.log('Störtests (jede zurückgedrehte Fassung muss auffallen):');
   c.api.schleifeSetzen(true);
   pruefe('c) Zeile offen, Schleife aus — das fällt auf', [false, false],
     [c.els.qsSchleife.classList.contains('hidden'), c.api.QSCHLEIFE.an]);
+
+  /* d) die alte Vorbelegung: der laufende Vers statt der ganzen Sure. */
+  const alteVorgabe = SCHLEIFE_TEILE.setzen.replace(/String\(letzter \? 1 : hier\)/, 'String(hier)')
+    .replace(/String\(letzter \|\| hier\)/, 'String(hier)');
+  pruefe('d) die Störfassung unterscheidet sich vom Original', true, alteVorgabe !== SCHLEIFE_TEILE.setzen);
+  const d = schleifenUmgebung(Object.assign({}, SCHLEIFE_TEILE, { setzen: alteVorgabe }), 7);
+  d.api.schleifeSetzen(true);
+  pruefe('d) „von 7 bis 7" statt „von 1 bis 30" — das fällt auf', ['7', '7'], [d.els.qsVon.value, d.els.qsBis.value]);
 
   const ohneSpeichern = mSetzen[0].replace(/\n\s*saveSettings\(\);/, '');
   pruefe('a) die Störfassung unterscheidet sich vom Original', true, ohneSpeichern !== mSetzen[0]);

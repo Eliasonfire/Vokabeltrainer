@@ -97,7 +97,15 @@ export const PFLEGEPLAN = [
        heraus (tonLog-Aufrufe, der Block oben in quran-audio.js,
        diagnoseAnhang, die eine Zeile auf der Karte, pruefe-tonprotokoll.mjs).
        Es wird weder abgeglichen noch gesichert — bewusst, es beschreibt ein
-       Gerät. Bewacht von werkzeuge/pruefe-tonprotokoll.mjs. */
+       Gerät. Bewacht von werkzeuge/pruefe-tonprotokoll.mjs.
+     · ⭐ STAND 20.09.2026 (v545): Ursache gefunden (v543), von Elias bestätigt
+       („aber jetzt funktioniert es bei ausgeschaltetem display"). Es bleibt
+       trotzdem noch drin, MEINE Entscheidung: kurz davor hatte er auf „wurde
+       es wieder still?" mit „ja" geantwortet, und das Protokoll zeigte dazu
+       nur einen 5-Sekunden-Lauf — ein gelegentlicher Ausfall ist nicht
+       ausgeschlossen. Bei verborgener Seite schreibt es seither alle 2 s.
+       ⛔ HERAUS FRÜHESTENS AM 24.09.2026, wenn er bis dahin keinen Ausfall
+       gemeldet hat — der Punkt steht mit diesem Datum in der To-Do. */
   /* 20.09.2026 (v536), neue Datei js/quran-markierung.js und neuer
      Speicherschlüssel `vt_tajweed`: Elias kann im Korantext einzelne
      Buchstaben markieren, an denen sein Tajweed schiefgeht — mit Farbe und
