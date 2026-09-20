@@ -1845,7 +1845,10 @@ function wendeQuranAnsichtAn(){
      Im Listenmodus laeuft nur Arabisch durch, also faellt die Deutsch-Zeile
      dort ebenfalls weg - und der Hinweis daneben sagt, warum. */
   const nurListe = a.darstellung === 'liste';
-  document.getElementById('qaHinweisListe').classList.toggle('hidden', !nurListe);
+  /* ⛔ Hier wurde der Hinweis „Im Listenmodus läuft nur der arabische Text
+     durch …" ein- und ausgeblendet. Der Satz ist weg (Elias, 20.09.2026: „die
+     zwei texte können weg") — und mit ihm das Element; ein getElementById
+     darauf würfe hier und risse die ganze Ansicht mit. */
   document.getElementById('qaZeileAr').classList.toggle('hidden', a.modus === 'de' && !nurListe);
   document.getElementById('qaZeileDe').classList.toggle('hidden', a.modus === 'ar' || nurListe);
   document.getElementById('qaZeileModus').classList.toggle('hidden', nurListe);
