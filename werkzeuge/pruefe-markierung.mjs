@@ -252,8 +252,13 @@ const ECHT_GEMESSEN = [
   pruefe('es gibt einen sichtbaren Rückfall ohne die Schnittstelle', true,
     /classList\.add\('tj-wort'/.test(markNackt) && /\.qw\.tj-wort\{/.test(htmlNackt));
   /* Elias 20.09.2026: „ich will das das unterstrichene gerade ist". */
-  pruefe('die Linie ist GERADE, keine Welle (Elias 20.09.)', true,
-    /::highlight\(tajweed-rot\)[^}]*underline solid/.test(htmlNackt) && !/::highlight\([^)]*\)[^}]*wavy/.test(htmlNackt));
+  /* Elias 20.09.2026, 02:2x: „lass die unterstreichungen ganz weg am besten"
+     — die Kasra unter dem Dhāl riss die Linie auf. Das hebt sein „gerade"
+     aus v538 auf: die Markierung ist jetzt NUR die Farbe. */
+  pruefe('KEINE Linie in den Farbregeln (Elias: „ganz weg")', false,
+    /::highlight\(tajweed-[a-z-]+\)[^}]*text-decoration/.test(htmlNackt));
+  pruefe('… die Farbe bleibt', true,
+    ['rot', 'orange', 'blau', 'lila'].every(f => new RegExp('::highlight\\(tajweed-' + f + '\\)[^}]*color:var\\(--tj-' + f + '\\)').test(htmlNackt)));
   pruefe('Karte und Lesetext haben getrennte Highlight-Namen', true,
     /tajweedHighlightsSetzen\('tajweed-karte-'/.test(markNackt) && /tajweedHighlightsSetzen\('tajweed-'/.test(markNackt));
 }
