@@ -1,6 +1,6 @@
 /* pruefe-spieler-leiste.mjs — die Leiste des Rezitators im Koran-Leser.
  *
- * Bewacht zwei Sätze von Elias vom 20.09.2026:
+ * Bewacht drei Sätze von Elias vom 20.09.2026:
  *
  *  1. Mit Bild, das ✕ rot umrandet: „wenn ich das drücke will ich das
  *     rezitator komplett aus ist, auch in den einstellungen des korans".
@@ -12,11 +12,16 @@
  *     dann komme ich zu dem feld wo ich eine zahl eintippen kann … das soll
  *     nicht so sein". Die Mitte ist nur noch Anzeige.
  *
+ *  3. Mit Bild der Meldung „Rezitator aus — wieder an in den
+ *     Koran-Einstellungen": „ich will diese benachrichtung nicht bekommen".
+ *     Die Meldung stand nur wegen meiner eigenen Begründung da; das ✕
+ *     schaltet jetzt still aus.
+ *
  * ⛔ quranRezitationSetzen() wird aus js/quran-audio.js HERAUSGESCHNITTEN und
  *    gefahren, nicht nachgebaut. [[testvorlage_selbst_nachgebaut]]
  * ⛔ Verbote werden im KOMMENTARFREIEN Text gesucht — die Kommentare zitieren
  *    genau das, was verboten ist. [[funktion_als_referenz_sieht_tot_aus]]
- * ⭐ Zwei Störtests am Ende.
+ * ⭐ Fünf Störtests am Ende (a–e).
  */
 import fs from 'node:fs';
 import vm from 'node:vm';
@@ -84,6 +89,11 @@ console.log('1. Das ✕ schaltet den Rezitator ganz aus:');
   const knopf = htmlNackt.match(/<button[^>]*id="btnQsAus"[^>]*>/);
   pruefe('das ✕ steht im Markup', true, !!knopf);
   pruefe('… ohne `disabled`', false, !!knopf && /\sdisabled/.test(knopf[0]));
+  /* Elias 20.09.2026 mit Bild der Meldung: „ich will diese benachrichtung
+     nicht bekommen". Sie war meine Zutat, nicht sein Wunsch. */
+  const ausBlock = audioNackt.match(/an\('btnQsAus',[\s\S]*?\n  \}\);/);
+  pruefe('der Block hinter dem ✕ ist auffindbar', true, !!ausBlock);
+  pruefe('… und zeigt KEINE Meldung mehr', false, !!ausBlock && /toast\s*\(/.test(ausBlock[0]));
 }
 
 /* ====================== 2. Die Mitte ist nur Anzeige ====================== */
@@ -237,6 +247,12 @@ console.log('Störtests (jede zurückgedrehte Fassung muss auffallen):');
   pruefe('b) die Störfassung unterscheidet sich vom Original', true, nurTon !== audioNackt);
   pruefe('b) die alte Verdrahtung (nur audioAus) fällt auf', true,
     /an\('btnQsAus',\s*audioAus\)/.test(nurTon) && !/an\('btnQsAus',[\s\S]{0,80}quranRezitationSetzen\('aus'\)/.test(nurTon));
+
+  const mitMeldung = audioNackt.replace(/(an\('btnQsAus',[\s\S]*?quranRezitationSetzen\('aus'\);)/,
+    "$1\n    toast('Rezitator aus');");
+  pruefe('e) die Störfassung unterscheidet sich vom Original', true, mitMeldung !== audioNackt);
+  const eBlock = mitMeldung.match(/an\('btnQsAus',[\s\S]*?\n  \}\);/);
+  pruefe('e) eine wieder eingebaute Meldung fällt auf', true, !!eBlock && /toast\s*\(/.test(eBlock[0]));
 }
 
 console.log(fehler === 0
