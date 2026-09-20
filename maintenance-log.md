@@ -6193,3 +6193,11 @@ Der eigentliche Befund war die Zeile darunter: „nur EIN Vorschlag (nächster S
 Dazu der Grund für den blinden Fleck: pruefe-eselsbruecken.js rechnet mit angabe aus data/lernstand.json (Kapitel 12, Stand 20.08.), während gemessen Kapitel 24 zeigt. Der Prüfer hält beides jetzt gegeneinander und meldet die Lücke als Hinweis — für Bayna Yadayk 1 sind es 141 Wörter ohne zweite Eselsbrücke. Pflegeplan-Eintrag unter „veralten" ergänzt.
 
 validate 36 grün, 119 Prüfer / 5 rot / kein NEU rot, pruefe-ausgeliefert Exit 0, pruefe-pflegeplan grün.
+
+## 20.09.2026, 15:20 — v552: Bayna Yadayk 1 Kapitel 3 bekommt beide Eselsbrücken (`71e6408`)
+
+Elias: „mach nur für kapitel 1-3". Gemessen vor dem Bauen: Kapitel 1 (27 Wörter) und 2 (12) sind vollständig versorgt, Kapitel 3 hatte gar nichts — 11 Wörter ohne jede Eselsbrücke. Alle 11 haben jetzt erste und zweite (data/eselsbruecken.js 194 → 205, data/eselsbruecken-alt.js 503 → 514). Drei Verse belegt und im auswendigen Bereich: 67:2, 96:19, 107:1.
+
+Vier Fehler unterwegs, alle vom Werkzeug gefangen: das Einfügeskript traf zuerst SCHREIBWEISEN statt BUCH_ESELSBRUECKEN (mit git checkout zurückgenommen), ein Kommentar mit Kommentar-Ende-Zeichen zerlegte das Skript, ein fehlendes Komma am letzten Objekteintrag, und pruefe-eselsbruecken.js fing einen Verweis auf ein Wort außerhalb seines Lernfensters.
+
+Offen: die 11 Wörter haben keinen Beispielsatz. validate 36 grün, 119 Prüfer / 5 rot / kein NEU rot, pruefe-ausgeliefert Exit 0.
