@@ -6201,3 +6201,11 @@ Elias: „mach nur für kapitel 1-3". Gemessen vor dem Bauen: Kapitel 1 (27 Wör
 Vier Fehler unterwegs, alle vom Werkzeug gefangen: das Einfügeskript traf zuerst SCHREIBWEISEN statt BUCH_ESELSBRUECKEN (mit git checkout zurückgenommen), ein Kommentar mit Kommentar-Ende-Zeichen zerlegte das Skript, ein fehlendes Komma am letzten Objekteintrag, und pruefe-eselsbruecken.js fing einen Verweis auf ein Wort außerhalb seines Lernfensters.
 
 Offen: die 11 Wörter haben keinen Beispielsatz. validate 36 grün, 119 Prüfer / 5 rot / kein NEU rot, pruefe-ausgeliefert Exit 0.
+
+## 20.09.2026, 15:40 — v553: Beispielsätze für Bayna Yadayk 1 Kapitel 3 (`ef622a7`)
+
+Elias: „ja mach die beispielsätze". Die 11 Wörter des Kapitels hatten keinen. Kein arabisches Wort getippt: das neue Wort kommt per Skript aus der Buchdatei, jede andere Form aus einer vorher im Bestand nachgemessenen Liste; programmgesteuert werden nur Tanwin zu Kasusendung und Artikel davor (Sonnenbuchstaben mit Schadda). Satzmuster wie im Buch. data/beispielsaetze.js 201 → 212.
+
+Meine Frage davor war auf einer falschen Annahme gebaut („darf ich nicht selbst bauen") — seine Freigabe steht seit dem 19.08.2026 im Kopf derselben Datei. Die Regel „nie selbst vokalisieren" gilt der Schreibung, nicht dem Satzbau aus belegten Formen.
+
+pruefe-saetze.js 460 Sätze kasusrein (exit 0), validate 36 grün, pruefe-ausgeliefert exit 0. pruefe-kreislaeufe.mjs war NEU rot (artefakte/regeln.json veraltet) und ist nach regeln-sammeln.mjs wieder grün.
