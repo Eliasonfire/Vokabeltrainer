@@ -75,7 +75,7 @@ function baueUmgebung(teile = TEILE){
       if (!this.paused){ this.paused = true; this.dispatchEvent({ type: 'pause' }); } } }
     addEventListener(n, f){ (this._h[n] = this._h[n] || []).push(f); }
     dispatchEvent(ev){ (this._h[ev.type] || []).forEach(f => f(ev)); return true; }
-    play(){ this.paused = false; gespielt.push([this.nr, this._src.slice(-10)]); this.dispatchEvent({ type: 'play' }); return Promise.resolve(); }
+    play(){ this.paused = false; this.ended = false; gespielt.push([this.nr, this._src.slice(-10)]); this.dispatchEvent({ type: 'play' }); return Promise.resolve(); }
     pause(){ if (!this.paused){ this.paused = true; this.dispatchEvent({ type: 'pause' }); } }
     load(){ this.error = null; if (!this.paused){ this.paused = true; this.dispatchEvent({ type: 'pause' }); } }
     removeAttribute(a){ if (a === 'src') this._src = ''; }
@@ -106,9 +106,18 @@ function baueUmgebung(teile = TEILE){
   return { api: ctx.API, geladen, gespielt, stilleAus };
 }
 
-/* Versende ausloesen wie der Browser: `ended` am AKTIVEN Element. */
+/* Versende ausloesen wie der Browser — und der feuert ERST `pause`, DANN
+   `ended`. ⛔⛔ Bis zum 20.09.2026 kam hier nur `ended`. Elias' Handy hat es
+   gezeigt (Ton-Protokoll, 03:04:19): „A* pause rs4 t10.7" und 29 ms später
+   „A* ended". Die App hielt dieses `pause` für ein Anhalten und schaltete die
+   stille Schleife ab — genau in der Lücke, die sie überbrücken soll. Dieses
+   Doppel konnte das nie zeigen, weil es das Ereignis nicht kannte.
+   [[pruefung_fragt_einen_stellvertreter_ab]] */
 async function versEnde(u){
-  u.api.QAUDIO.el.dispatchEvent({ type: 'ended' });
+  const el = u.api.QAUDIO.el;
+  el.paused = true; el.ended = true;
+  el.dispatchEvent({ type: 'pause' });
+  el.dispatchEvent({ type: 'ended' });
   await new Promise(r => setTimeout(r, 0));
 }
 
@@ -222,6 +231,35 @@ console.log('\nVerswechsel bei ausgeschaltetem Bildschirm:');
   /* Und die Gegenprobe: ein ECHTES Anhalten wird nicht verschluckt. */
   u.api.QAUDIO.el.pause();
   pruefe('ein echtes Anhalten schaltet sie sehr wohl ab', vorher + 1, u.stilleAus.length);
+}
+
+/* ---------- Das natuerliche Versende (20.09.2026, auf seinem Handy gemessen) ----------
+   Elias: „es liefen so ca 3 verse bis es jetzt aufgehört hat bei geschlossenem
+   display zu spielen" — „dann steht da nichts". Sein Ton-Protokoll: am Versende
+   kommt `pause` VOR `ended`, die App schaltete darauf die stille Schleife ab,
+   und fuer einen Augenblick spielte in der Seite nichts mehr. */
+console.log('\nDas natuerliche Versende ist keine Pause:');
+{
+  const u = baueUmgebung();
+  await u.api.audioSpiele(67, 1);
+  const vorher = u.stilleAus.length;
+  await versEnde(u);                       /* `pause`, dann `ended` — wie der Browser */
+  pruefe('die stille Schleife bleibt ueber das Versende hinweg an', vorher, u.stilleAus.length);
+  pruefe('… und Vers 2 laeuft', '067002.mp3', u.gespielt[u.gespielt.length - 1][1]);
+  u.api.QAUDIO.el.pause();
+  pruefe('ein echtes Anhalten danach wird nicht verschluckt', vorher + 1, u.stilleAus.length);
+
+  const ohneEnde = TEILE.replace(/\n\s*if \(el\.ended\) return;\n/, '\n');
+  if (ohneEnde === TEILE){
+    console.log('  X  „if (el.ended) return;" liess sich nicht herausschneiden — Stoertest wirkungslos.');
+    fehler++;
+  } else {
+    const s = baueUmgebung(ohneEnde);
+    await s.api.audioSpiele(67, 1);
+    const davor = s.stilleAus.length;
+    await versEnde(s);
+    pruefe('Stoertest: ohne die Abfrage geht sie am Versende aus', true, s.stilleAus.length > davor);
+  }
 }
 
 /* ---------- Stoertest: ohne die Marke stirbt die Schleife wieder ---------- */
