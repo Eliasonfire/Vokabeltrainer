@@ -1603,11 +1603,16 @@ function audioSureWechsel(neueSure){
   an('btnQsVor',     audioNaechster);
   an('btnQsZurueck', audioVoriger);
   /* Elias 20.09.2026: „wenn ich das drücke will ich das rezitator komplett
-     aus ist, auch in den einstellungen des korans". Der Hinweis sagt, wo es
-     wieder angeht — die Leiste, an der man es sonst sähe, ist ja dann weg. */
+     aus ist, auch in den einstellungen des korans".
+
+     ⛔ ÜBERHOLT am 20.09.2026: Hier stand eine Meldung „Rezitator aus — wieder
+     an in den Koran-Einstellungen". Sie stand nur wegen MEINER Begründung da
+     („die Leiste, an der man es sonst sähe, ist ja dann weg") — er hatte sie
+     nie verlangt. Sein Satz mit Bild: „ich will diese benachrichtung nicht
+     bekommen". Das ✕ schaltet jetzt still aus.
+     [[wirkung_an_der_quelle_stilllegen]] */
   an('btnQsAus', () => {
     quranRezitationSetzen('aus');
-    toast('Rezitator aus — wieder an in den Koran-Einstellungen');
   });
 
   const wahl = document.getElementById('quranRezitatorWahl');
