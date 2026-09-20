@@ -137,6 +137,30 @@ function rezitatorTitel(id){
    ausdruecklich so verlangt: „wenn dan aber in den quran einstellungen
    aktivieren bzw laufen lassen". */
 function quranRezitationAn(){ return SETTINGS.quranRezitation === 'an'; }
+/** Die Rezitation an- oder ausschalten — EIN Weg für den Schalter in den
+ *  Koran-Einstellungen UND für das ✕ in der Leiste.
+ *
+ *  Elias am 20.09.2026, 02:38, mit Bild (das ✕ rot umrandet): „wenn ich das
+ *  drücke will ich das rezitator komplett aus ist, auch in den einstellungen
+ *  des korans". Vorher beendete das ✕ nur den laufenden Ton (`audioAus`), die
+ *  Leiste blieb stehen und der Schalter stand weiter auf „An" — und solange
+ *  nichts lief, war das ✕ sogar gesperrt.
+ *
+ *  ⛔ Beide Stellen rufen DIESE Funktion. Zwei Wege zum selben Zustand laufen
+ *  auseinander: der eine vergisst das Speichern, der andere die Anzeige in
+ *  den Einstellungen. [[dieselbe_frage_zwei_antworten]] */
+function quranRezitationSetzen(wert){
+  SETTINGS.quranRezitation = (wert === 'an') ? 'an' : 'aus';
+  saveSettings();
+  /* Aus heißt aus: Ton beenden, Mediensitzung räumen. audioAus() ruft am Ende
+     zeigeSpieler() — die Leiste verschwindet, weil quranRezitationAn() jetzt
+     falsch ist. */
+  if (!quranRezitationAn()) audioAus();
+  /* Zieht den Schalter in den Koran-Einstellungen nach (und die abhängigen
+     Zeilen Rezitator/Mitlesen) und ruft zeigeSpieler(). */
+  if (typeof wendeQuranAnsichtAn === 'function') wendeQuranAnsichtAn();
+  else zeigeSpieler();
+}
 /* Mitlesen ist AN, sobald die Rezitation an ist: es ist der eigentliche Zweck
    der Sache und kostet ohne laufenden Ton nichts.
 
@@ -656,14 +680,39 @@ function schleifeLesen(){
   if (bisF) bisF.value = String(bis);
 }
 
-function schleifeAnzeigen(){
-  const knopf = document.getElementById('btnQsSchleifeAn');
-  const reihe = document.getElementById('btnQsSchleife');
-  if (knopf){
-    knopf.textContent = QSCHLEIFE.an ? 'An' : 'Aus';
-    knopf.classList.toggle('an', QSCHLEIFE.an);
+/* ⛔⛔ ZEILE OFFEN = SCHLEIFE AN. Es gibt keinen zweiten Schalter mehr.
+   Elias am 20.09.2026, 02:41, mit Bild (Zeile offen, „von 1 bis 5", daneben
+   der Knopf „Aus"): „wenn ich das aktiviert habe soll automatisch ein loop
+   sein also ich will nicht noch extra einschalten das ein loop kommt. wenn
+   ich die funktion nutze dann brauche ich nur einen loop, es kommt nicht vor
+   das ich es dann nur einmal spielen lassen möchte".
+   Der Knopf „An/Aus" in der Zeile ist weg; das Wiederholen-Zeichen in der
+   Leiste ist der EINE Schalter: ein Druck öffnet die Zeile UND schaltet ein,
+   der nächste schließt sie UND schaltet aus. Ein Zustand, eine Stelle —
+   sonst steht irgendwann die Zeile offen und nichts wiederholt sich (genau
+   sein Bild). [[dieselbe_frage_zwei_antworten]] */
+function schleifeSetzen(an){
+  QSCHLEIFE.an = !!an;
+  const sch = document.getElementById('qsSchleife');
+  if (sch) sch.classList.toggle('hidden', !QSCHLEIFE.an);
+  if (QSCHLEIFE.an){
+    /* ⭐ Beim Öffnen die Felder mit dem füllen, wo er gerade ist — „diesen
+       Vers wiederholen" ist der häufigste Fall und dann ein einziger Druck. */
+    const vonF = document.getElementById('qsVon');
+    const bisF = document.getElementById('qsBis');
+    const hier = QAUDIO.vers || (typeof sichtbarerVers === 'function' && sichtbarerVers()) || 1;
+    if (vonF && !vonF.value) vonF.value = String(hier);
+    if (bisF && !bisF.value) bisF.value = String(hier);
+    schleifeLesen();
   }
-  if (reihe) reihe.classList.toggle('an', QSCHLEIFE.an);
+  schleifeAnzeigen();
+}
+function schleifeAnzeigen(){
+  const reihe = document.getElementById('btnQsSchleife');
+  if (!reihe) return;
+  reihe.classList.toggle('an', QSCHLEIFE.an);
+  reihe.setAttribute('aria-expanded', QSCHLEIFE.an ? 'true' : 'false');
+  reihe.setAttribute('aria-label', QSCHLEIFE.an ? 'Wiederholen ausschalten' : 'Verse wiederholen');
 }
 
 function audioNaechster(){
@@ -1161,13 +1210,9 @@ function zeigeSpieler(){
   /* ⛔ Die Polsterung des Bildschirms haengt an derselben Bedingung. Ohne sie
      stuende die Leiste ueber dem letzten Vers — und der letzte Vers einer Sure
      ist genau der, den man beim Auswendiglernen am oeftesten braucht. */
-  /* Die Schleifenzeile gehört zur Leiste — sie verschwindet mit ihr. */
-  if (!sichtbar){
-    const sch = document.getElementById('qsSchleife');
-    if (sch) sch.classList.add('hidden');
-    const kn = document.getElementById('btnQsSchleife');
-    if (kn) kn.setAttribute('aria-expanded', 'false');
-  }
+  /* Die Schleifenzeile gehört zur Leiste — sie verschwindet mit ihr, und
+     seit dem 20.09.2026 heißt „Zeile zu" auch „Schleife aus" (schleifeSetzen). */
+  if (!sichtbar) schleifeSetzen(false);
   const screenQ = document.getElementById('screen-quranfull');
   if (screenQ) screenQ.classList.toggle('mit-spieler', sichtbar);
   if (!sichtbar) return;
@@ -1198,7 +1243,10 @@ function zeigeSpieler(){
      beim Start eine Knopfbreite nach rechts — und der Finger, der ihn gerade
      getroffen hat, läge dann auf „vorheriger Vers". Begründung steht auch am
      Markup in index.html, weil man dort zuerst hinsieht. */
-  ['btnQsZurueck', 'btnQsVor', 'btnQsAus'].forEach(id => {
+  /* ⛔ Das ✕ steht NICHT in dieser Liste: es schaltet seit dem 20.09.2026 den
+     Rezitator ganz aus (quranRezitationSetzen) und muss auch gehen, wenn
+     gerade nichts läuft — auf Elias' Bild war genau das der Fall. */
+  ['btnQsZurueck', 'btnQsVor'].forEach(id => {
     const b = document.getElementById(id);
     if (b) b.disabled = !laeuftHier;
   });
@@ -1221,7 +1269,8 @@ function audioSureWechsel(neueSure){
     ['qsVon', 'qsBis'].forEach(id => {
       const f = document.getElementById(id); if (f) f.value = '';
     });
-    schleifeAnzeigen();
+    /* Schließt auch die Zeile: offen hieße „an" (20.09.2026). */
+    schleifeSetzen(false);
   }
   if (QAUDIO.sure !== null && QAUDIO.sure !== neueSure) audioAus();
   else zeigeSpieler();
@@ -1237,7 +1286,13 @@ function audioSureWechsel(neueSure){
   an('btnQsPlay',    audioUmschalten);
   an('btnQsVor',     audioNaechster);
   an('btnQsZurueck', audioVoriger);
-  an('btnQsAus',     audioAus);
+  /* Elias 20.09.2026: „wenn ich das drücke will ich das rezitator komplett
+     aus ist, auch in den einstellungen des korans". Der Hinweis sagt, wo es
+     wieder angeht — die Leiste, an der man es sonst sähe, ist ja dann weg. */
+  an('btnQsAus', () => {
+    quranRezitationSetzen('aus');
+    toast('Rezitator aus — wieder an in den Koran-Einstellungen');
+  });
 
   const wahl = document.getElementById('quranRezitatorWahl');
   if (wahl){
@@ -1258,10 +1313,8 @@ function audioSureWechsel(neueSure){
   if (zeileRez) zeileRez.addEventListener('click', (e) => {
     const k = e.target.closest('[data-quranrezitation]');
     if (!k) return;
-    SETTINGS.quranRezitation = k.dataset.quranrezitation;
-    saveSettings();
-    if (!quranRezitationAn()) audioAus();
-    wendeQuranAnsichtAn();
+    /* Derselbe Weg wie das ✕ in der Leiste (20.09.2026). */
+    quranRezitationSetzen(k.dataset.quranrezitation);
   });
   const zeileMit = document.getElementById('quranMitleseVers');
   if (zeileMit) zeileMit.addEventListener('click', (e) => {
@@ -1329,8 +1382,15 @@ function audioSureWechsel(neueSure){
     audioSpiele(QAUDIO.sure !== null ? QAUDIO.sure : OFFENE_SURE,
                 Math.min(Math.max(1, nr), max));
   }
-  const kStand = document.getElementById('qsStandKnopf');
-  if (kStand) kStand.addEventListener('click', () => sprungZeigen(true));
+  /* ⛔ HIER STAND der Tipp auf die Mitte der Leiste (`qsStandKnopf` →
+     sprungZeigen(true)). Elias am 20.09.2026: „wenn ich in die mitte davon
+     tippe also wo der name des rezitators steht dann komme ich zu dem feld wo
+     ich eine zahl eintippen kann … das soll nicht so sein". Die Mitte ist
+     jetzt nur Anzeige. sprungZeigen()/sprungAusfuehren() bleiben stehen, haben
+     aber keinen Auslöser mehr — ob das Springen per Zahl ganz weg soll oder
+     einen anderen Platz bekommt, entscheidet er (To-Do, 🔴). Sein Wunsch vom
+     08.09.2026 („am besten wenn ich das auch selbst eintippen kann") ist
+     damit nicht gelöscht, nur vom Tipp auf den Namen gelöst. */
   const eSprung = document.getElementById('qsSprung');
   if (eSprung){
     eSprung.addEventListener('keydown', (e) => {
@@ -1346,28 +1406,10 @@ function audioSureWechsel(neueSure){
   }
 
   /* ---------- Wiederholbereich ---------- */
+  /* Der EINE Schalter (20.09.2026): Zeile auf = Schleife an. Siehe
+     schleifeSetzen(). Den Knopf „An/Aus" in der Zeile gibt es nicht mehr. */
   const knAuf = document.getElementById('btnQsSchleife');
-  if (knAuf) knAuf.addEventListener('click', () => {
-    const sch = document.getElementById('qsSchleife');
-    if (!sch) return;
-    const zu = sch.classList.toggle('hidden');
-    knAuf.setAttribute('aria-expanded', zu ? 'false' : 'true');
-    /* ⭐ Beim Aufklappen die Felder mit dem füllen, wo er gerade ist —
-       „diesen Vers wiederholen" ist der häufigste Fall und dann ein Druck. */
-    if (!zu){
-      const vonF = document.getElementById('qsVon');
-      const bisF = document.getElementById('qsBis');
-      const hier = QAUDIO.vers || (typeof sichtbarerVers === 'function' && sichtbarerVers()) || 1;
-      if (vonF && !vonF.value) vonF.value = String(hier);
-      if (bisF && !bisF.value) bisF.value = String(hier);
-    }
-  });
-  const knAn = document.getElementById('btnQsSchleifeAn');
-  if (knAn) knAn.addEventListener('click', () => {
-    QSCHLEIFE.an = !QSCHLEIFE.an;
-    if (QSCHLEIFE.an) schleifeLesen();
-    schleifeAnzeigen();
-  });
+  if (knAuf) knAuf.addEventListener('click', () => schleifeSetzen(!QSCHLEIFE.an));
   /* ⚠️ Auf `change` und nicht auf `input`: bei jedem getippten Zeichen zu
      begrenzen hieße, dass aus einer angefangenen „20" erst „2" und dann
      etwas Unerwartetes wird, während der Finger noch tippt. */

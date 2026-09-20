@@ -1849,6 +1849,15 @@ function wendeQuranAnsichtAn(){
   document.getElementById('qaZeileAr').classList.toggle('hidden', a.modus === 'de' && !nurListe);
   document.getElementById('qaZeileDe').classList.toggle('hidden', a.modus === 'ar' || nurListe);
   document.getElementById('qaZeileModus').classList.toggle('hidden', nurListe);
+  /* ⛔ Auch die Zeile „Übersetzung" fällt im Listenmodus weg. Elias am
+     20.09.2026, 02:43, mit Bild (die Zeile rot umrandet, Darstellung „Liste"):
+     „außerdem will ich beim listenmodus gar nciht die option sehen von
+     übersetzung weil sie sowieso nciht da ist in liste." Dieselbe Regel wie
+     bei den Zeilen darüber: was gerade nicht angezeigt wird, lässt sich auch
+     nicht einstellen. Die Wahl selbst bleibt gespeichert und gilt wieder,
+     sobald er auf „Kästchen" wechselt. */
+  const zeileUeb = document.getElementById('qaZeileUeb');
+  if (zeileUeb) zeileUeb.classList.toggle('hidden', nurListe);
   document.querySelectorAll('[data-qurangroesse]').forEach(b=>{
     const [feld, richtung] = b.dataset.qurangroesse.split(':');
     const wert = feld === 'ar' ? a.ar : a.de;

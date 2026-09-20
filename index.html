@@ -3772,20 +3772,11 @@ button:disabled{cursor:default;}
   font:inherit; text-align:center;
   font-variant-numeric:tabular-nums;
 }
-.qs-sch-an{
-  margin-inline-start:auto; flex-shrink:0;
-  padding:5px 12px;
-  border:1px solid var(--border); border-radius:var(--r-full);
-  background:transparent; color:var(--text-dim);
-  font:inherit; font-size:var(--fs-sm); cursor:pointer;
-  transition:background var(--dur-2) ease, color var(--dur-2) ease;
-}
-.qs-sch-an.an{
-  background:var(--red-wash); color:var(--red-bright);
-  border-color:var(--red-bright);
-}
-/* Der Knopf in der Reihe zeigt mit, dass eine Schleife läuft — sonst müsste
-   man die Zeile aufklappen, um es zu sehen. */
+/* ⛔ Hier standen die Regeln für den Knopf „An/Aus" in der Wiederholen-Zeile
+   (.qs-sch-an). Den gibt es seit dem 20.09.2026 nicht mehr — Elias: „wenn
+   ich das aktiviert habe soll automatisch ein loop sein also ich will nicht
+   noch extra einschalten". Zeile offen = Schleife an; das Wiederholen-
+   Zeichen in der Leiste ist der eine Schalter und leuchtet, solange sie läuft. */
 #btnQsSchleife.an{ color:var(--red-bright); }
 .qs-knopf{
   display:inline-flex;align-items:center;justify-content:center;
@@ -6364,16 +6355,28 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
           <!-- ⭐ Der Stand ist ein KNOPF: ein Druck macht daraus ein Feld,
                in das man die Versnummer tippt. Elias am 08.09.2026: „am
                besten wenn ich das auch selbst eintippen kann". -->
-          <button class="qs-text" id="qsStandKnopf" aria-label="Zu einem Vers springen">
+          <!-- ⛔ SEIT 20.09.2026 KEIN KNOPF MEHR, nur Anzeige. Elias, 02:4x: „wenn
+               ich in die mitte davon tippe also wo der name des rezitators
+               steht dann komme ich zu dem feld wo ich eine zahl eintippen
+               kann … das soll nicht so sein". Das Feld darunter (Vers
+               springen) hat damit keinen Auslöser mehr — ob es ganz weg soll
+               oder woanders hin, wartet auf sein Wort (To-Do). -->
+          <div class="qs-text" id="qsStandKnopf">
             <span class="qs-stand" id="qsStand"></span>
             <span class="qs-name" id="qsName"></span>
-          </button>
+          </div>
           <label class="qs-sprung hidden" id="qsSprungFeld">
             <span>Vers</span>
             <input type="text" id="qsSprung" inputmode="numeric" pattern="[0-9]*" maxlength="3" aria-label="Versnummer">
           </label>
           <button class="qs-knopf" id="btnQsSchleife" aria-label="Verse wiederholen" aria-expanded="false"><svg class="ic"><use href="#ic-repeat"/></svg></button>
-          <button class="qs-knopf" id="btnQsAus" aria-label="Rezitation beenden" disabled><svg class="ic"><use href="#ic-close"/></svg></button>
+          <!-- ⛔ Das ✕ ist NIE gesperrt und schaltet den Rezitator GANZ aus —
+               Ton, Leiste und den Schalter in den Koran-Einstellungen. Elias
+               am 20.09.2026 mit Bild: „wenn ich das drücke will ich das
+               rezitator komplett aus ist, auch in den einstellungen des
+               korans". Vorher beendete es nur den laufenden Ton und war
+               gesperrt, solange nichts lief. (quranRezitationSetzen) -->
+          <button class="qs-knopf" id="btnQsAus" aria-label="Rezitator ausschalten"><svg class="ic"><use href="#ic-close"/></svg></button>
         </div>
         <div class="qs-schleife hidden" id="qsSchleife">
           <span class="qs-sch-titel">Wiederholen</span>
@@ -6383,7 +6386,9 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
           <label class="qs-sch-feld">bis
             <input type="text" id="qsBis" inputmode="numeric" pattern="[0-9]*" maxlength="3" aria-label="Letzter Vers">
           </label>
-          <button class="qs-sch-an" id="btnQsSchleifeAn">Aus</button>
+          <!-- ⛔ Kein Knopf „An/Aus" mehr (20.09.2026): ist diese Zeile offen,
+               läuft die Schleife. Begründung bei schleifeSetzen() in
+               js/quran-audio.js. -->
         </div>
       </div>
     </section>
