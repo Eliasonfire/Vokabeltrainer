@@ -412,6 +412,28 @@ function audioBaue(){
        (`audioUmschalten`, `audioAus`) — ein Druck auf Pause wird nie
        verschluckt. [[handlung_macht_ihre_bedingung_ungueltig]] */
     if (QAUDIO.wechsel) return;
+    /* ⛔⛔ AUCH DAS NATÜRLICHE VERSENDE IST KEINE PAUSE (20.09.2026, GEMESSEN).
+
+       Am Ende einer Datei feuert der Browser ERST `pause`, DANN `ended`. Das
+       stand in keinem meiner Prüfer — es steht in Elias' Ton-Protokoll von
+       03:04:19: „A* pause rs4 t10.7", 29 ms später „A* ended", und dazwischen
+       „STILLE pause". Die Wechsel-Marke von v535 fängt nur das `pause` ab,
+       das `src`/`load()` auslösen; dieses hier kommt davor.
+
+       Die Folge bei ausgeschaltetem Bildschirm: für einen Augenblick spielt
+       in der ganzen Seite NICHTS mehr — der Vers ist zu Ende, die stille
+       Schleife von hier abgeschaltet. Damit gibt der Browser die
+       Mediensitzung frei, und der nächste Vers muss sie aus dem Hintergrund
+       neu anfordern. Kurz nach dem Ausschalten geht das noch durch; im
+       Protokoll 16 s danach nicht mehr: 45 ms nach dem Neustart hält das
+       System die stille Schleife an, 200 ms später den neuen Vers — ohne
+       jede Meldung („dann steht da nichts"). Deshalb waren es am 09.09.
+       „genau 2 ayaht" und am 20.09. „ca 3 verse": es hängt an der ZEIT seit
+       dem Ausschalten, nicht an der Zahl der Verse.
+
+       `el.ended` ist an dieser Stelle schon wahr. Das letzte Versende einer
+       Sure räumt audioAus() selbst auf (über `ended` → audioNaechster). */
+    if (el.ended) return;
     QAUDIO.laeuft = false; audioWacheAus(); zeigeSpieler(); quranMedienInfo();
     /* ⛔⛔ DIE STILLE MUSS MIT. Elias am 08.09.2026: „ich will ein video gucken
        und sorge dafür das der ton vom quran gemuted ist damit es sich nicht
@@ -970,9 +992,20 @@ let QAUDIO_STILLE = null;
 function quranStilleAn(){
   try {
     if (!QAUDIO_STILLE){
-      QAUDIO_STILLE = new Audio('stille.wav');
+      /* ⚠️ `stille-lang.wav` (12 s) statt `stille.wav` (GENAU 5,00 s) — eine
+         VORSICHT, kein Messwert (20.09.2026). Chrome behandelt kurze Töne als
+         „flüchtig" und zählt sie nicht als Wiedergabe, die eine Mediensitzung
+         trägt; die Grenze liegt bei fünf Sekunden, und ob genau fünf noch
+         darunter fällt, weiß ich nicht sicher. Zwölf Sekunden lassen die Frage
+         gar nicht erst entstehen. Der Geh-Modus (js/hoeren.js) benutzt weiter
+         die kurze Datei — dort ist kein Fehler gemeldet. Das Ton-Protokoll
+         schreibt die Dauer mit, die der Browser sieht. */
+      QAUDIO_STILLE = new Audio('stille-lang.wav');
       QAUDIO_STILLE.loop = true;
       QAUDIO_STILLE.volume = 1;
+      QAUDIO_STILLE.addEventListener('loadedmetadata', () => {
+        if (typeof tonLog === 'function') tonLog('STILLE geladen, Dauer ' + (Number(QAUDIO_STILLE.duration) || 0).toFixed(2) + ' s');
+      });
       /* Ton-Protokoll (20.09.2026): die stille Schleife soll die Lücke zwischen
          zwei Versen überbrücken. Hält das System SIE an, ist das die Antwort. */
       ['play', 'pause', 'error', 'stalled'].forEach(n =>
