@@ -282,11 +282,24 @@ const ECHT_GEMESSEN = [
      mittige Kästen gebaut. */
   pruefe('die Karte fährt NICHT mit popIn auf', false, /\.tajweed-karte\{[^}]*animation:popIn/.test(htmlNackt));
   pruefe('… sondern mit kartenAuf', true, /\.tajweed-karte\{[^}]*animation:kartenAuf/.test(htmlNackt) && /@keyframes kartenAuf/.test(htmlNackt));
-  /* Elias 20.09.2026, nach v538: „kannst du wieder wie davor machen das
-     markeieren rechts und ayah links ist" — das hebt sein „rechtsbündig"
-     aus v538 auf. */
-  pruefe('die drei Knöpfe: Ayah links, Markieren rechts, EINE Reihe', true,
-    /\.hifz-knoepfe\{[^}]*justify-content:space-between[^}]*flex-wrap:nowrap/.test(htmlNackt));
+  /* Elias 20.09.2026 mit Bild: „markieren soll ganz nach links, ayah soll
+     mittig stehen und stelle sicher das es die mitte ist also die mitte des
+     buchstabens auch die mitte des bildschirms ist und verbergen soll ganz
+     rechts stehen". Das hebt seine ältere Ansage auf („kannst du wieder wie
+     davor machen das markeieren rechts und ayah links ist"), und die hatte
+     ihrerseits sein „rechtsbündig" aus v538 abgelöst. */
+  const reihe = htmlNackt.match(/<div class="hifz-knoepfe">[\s\S]*?<\/div>/);
+  pruefe('die Knopfreihe steht im Markup', true, !!reihe);
+  pruefe('die Reihenfolge: Markieren, Ayah, Verdecken',
+    ['btnTajweedModus', 'btnAyahListe', 'btnHifzVerdecken'],
+    reihe ? (reihe[0].match(/id="(?:btnTajweedModus|btnAyahListe|btnHifzVerdecken)"/g) || [])
+      .map(s => s.slice(4, -1)) : []);
+  pruefe('… in EINER Reihe mit drei festen Spalten', true,
+    /\.hifz-knoepfe\{[^}]*grid-template-columns:1fr auto 1fr/.test(htmlNackt));
+  pruefe('… der mittlere Knopf sitzt mittig, die Außenspalten sind gleich breit', true,
+    /\.hifz-knoepfe > :nth-child\(2\)\{justify-self:center/.test(htmlNackt));
+  pruefe('… nicht mehr space-between (dort hinge die Mitte an den Nachbarn)', false,
+    /\.hifz-knoepfe\{[^}]*justify-content:space-between/.test(htmlNackt));
   pruefe('… und nicht mehr rechtsbündig', false,
     /\.hifz-knoepfe\{[^}]*justify-content:flex-end/.test(htmlNackt));
 
@@ -343,6 +356,16 @@ const ECHT_GEMESSEN = [
   pruefe('d) der Fenster-Horcher von v538 fällt auf', true,
     /window\.addEventListener\('scroll'/.test(amFenster)
     && !/document\.addEventListener\('scroll',[^\n]*capture:\s*true/.test(amFenster));
+
+  /* e) die alte Knopfreihe: space-between statt drei Spalten. Dort hängt die
+     Lage von „Ayah" an den Breiten der Nachbarn — genau das, was Elias
+     ausgeschlossen haben wollte. */
+  const alteReihe = htmlNackt.replace(/\.hifz-knoepfe\{[^}]*\}/,
+    '.hifz-knoepfe{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-2);flex-wrap:nowrap;}');
+  pruefe('e) die Störfassung unterscheidet sich vom Original', true, alteReihe !== htmlNackt);
+  pruefe('e) die alte Reihe ohne mittige Spalte fällt auf', true,
+    /\.hifz-knoepfe\{[^}]*justify-content:space-between/.test(alteReihe)
+    && !/\.hifz-knoepfe\{[^}]*grid-template-columns:1fr auto 1fr/.test(alteReihe));
 }
 
 console.log(fehler === 0

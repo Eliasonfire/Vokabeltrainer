@@ -3652,15 +3652,27 @@ button:disabled{cursor:default;}
    nicht so viel platz in der höhe einnehmen. markieren soll ganz rechts
    sein, ayah suche ganz links". Vorher brachen sie um und nahmen drei
    Knopfhöhen ein — Lesefläche, die im Koran fehlt.
-   ⛔ Kein Umbruch mehr (`nowrap`): genau das war der Zustand, den er
-   beanstandet hat. Die Beschriftung des mittleren Knopfes wurde dafür auf
-   ein Wort gekürzt (js/quran.js). */
-/* Ayah ganz links, Markieren ganz rechts (`space-between`). Elias am
-   20.09.2026 nach v538: „die drei oberen dinger ayah markieren und verdecken
-   kannst du wieder wie davor machen das markeieren rechts und ayah links
-   ist". Sein Satz davor („rechtsbündig da stehen", v538) ist damit
-   ZURÜCKGENOMMEN — die neuere Ansage gilt. */
-.hifz-knoepfe{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-2);flex-wrap:nowrap;}
+   ⛔ Kein Umbruch: drei feste Spalten (vorher `flex-wrap:nowrap`) — das
+   Umbrechen war genau der Zustand, den er beanstandet hat. Die Beschriftung
+   des Verdecken-Knopfes wurde dafür auf ein Wort gekürzt (js/quran.js). */
+/* ⛔ ÜBERHOLT am 20.09.2026: „Ayah ganz links, Markieren ganz rechts"
+   (sein Satz nach v538: „kannst du wieder wie davor machen das markeieren
+   rechts und ayah links ist"; davor „rechtsbündig da stehen"). Es gilt seine
+   neuere Ansage vom Morgen: „markieren soll ganz nach links, ayah soll mittig
+   stehen und stelle sicher das es die mitte ist also die mitte des buchstabens
+   auch die mitte des bildschirms ist und verbergen soll ganz rechts stehen".
+
+   ⭐ Deshalb GRID statt `space-between`. Bei `space-between` hängt die Lage des
+   mittleren Knopfes von den Breiten der beiden äußeren ab, und die sind
+   verschieden — „Markieren" wird im Modus sogar zu „Markieren aus". „Ayah"
+   säße dann neben der Mitte, und zwar mal mehr, mal weniger. `1fr auto 1fr`
+   macht die zwei Außenspalten immer gleich breit; damit liegt die Mitte der
+   mittleren Spalte auf der Mitte des Kastens — und weil .hifz-bar links und
+   rechts denselben Innenabstand hat, auf der Mitte des Schirms. */
+.hifz-knoepfe{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:var(--sp-2);}
+.hifz-knoepfe > :first-child{justify-self:start;}
+.hifz-knoepfe > :nth-child(2){justify-self:center;}
+.hifz-knoepfe > :last-child{justify-self:end;}
 /* Der Versstand steht in einer eigenen, schmalen Zeile DARÜBER. Neben den
    Knöpfen nähme er die Breite weg, die sie zum Nebeneinanderstehen
    brauchen — und zweizeilig war er dort ohnehin. */
@@ -6299,19 +6311,24 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
                mehr: „Markieren" stand halb außerhalb. Hier darf sie umbrechen,
                und zwar rechtsbündig — der Versstand bleibt links stehen. -->
           <div class="hifz-knoepfe">
+          <!-- ⭐ Fehlerstellen markieren (20.09.2026). Elias: „Ich will auch im
+               Koran den Text markieren irgendwie können für Fehler zB wo ich
+               tajweed etwas falsch mache."  Ein MODUS, kein Dauerzustand:
+               sonst öffnete jedes Antippen eines Wortes eine Karte und das
+               Aufdecken verdeckter Verse käme nie mehr zum Zug.
+               ⛔ Die REIHENFOLGE im Markup ist seine Ansage vom 20.09.2026,
+               06:4x: „markieren soll ganz nach links, ayah soll mittig stehen
+               … und verbergen soll ganz rechts stehen". Sie steht hier und
+               nicht als `order` im CSS, damit auch die Tastatur-Reihenfolge
+               stimmt. -->
+          <button class="btn btn-secondary btn-klein" id="btnTajweedModus">
+            <svg class="ic"><use href="#ic-note"/></svg><span id="tajweedModusText">Markieren</span>
+          </button>
           <button class="btn btn-secondary btn-klein" id="btnAyahListe" aria-haspopup="dialog">
             <svg class="ic"><use href="#ic-luecke"/></svg><span id="ayahListeText">Ayah</span>
           </button>
           <button class="btn btn-secondary btn-klein" id="btnHifzVerdecken">
             <svg class="ic"><use href="#ic-auge"/></svg><span id="hifzVerdeckenText">Verdecken</span>
-          </button>
-          <!-- ⭐ Fehlerstellen markieren (20.09.2026). Elias: „Ich will auch im
-               Koran den Text markieren irgendwie können für Fehler zB wo ich
-               tajweed etwas falsch mache."  Ein MODUS, kein Dauerzustand:
-               sonst öffnete jedes Antippen eines Wortes eine Karte und das
-               Aufdecken verdeckter Verse käme nie mehr zum Zug. -->
-          <button class="btn btn-secondary btn-klein" id="btnTajweedModus">
-            <svg class="ic"><use href="#ic-note"/></svg><span id="tajweedModusText">Markieren</span>
           </button>
           </div>
         </div>
