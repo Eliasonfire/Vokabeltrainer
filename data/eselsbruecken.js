@@ -528,7 +528,22 @@ const BUCH_ESELSBRUECKEN = {
 
   "46009": "Eine نَظَّارَةٌ ist das Gerät zum Schauen — von نَظَرَ (anschauen) aus Kapitel 1. Das Muster فَعَّالَة mit شَدَّة ist im Arabischen das Muster für Geräte, und du hast es schon dreimal: سَيَّارَةٌ (Auto), ثَلَّاجَةٌ (Kühlschrank), دَرَّاجَةٌ (Fahrrad).",
 
-  "46010": "Sure al-Iḫlāṣ sagt von Allah: لَمْ يَلِدْ وَلَمْ يُولَدْ — „Er hat nicht gezeugt und ist nicht gezeugt worden\" (112:3). Genau diese Wurzel و ل د steckt in وَالِدٌ: der, der gezeugt hat — der Vater."
+  "46010": "Sure al-Iḫlāṣ sagt von Allah: لَمْ يَلِدْ وَلَمْ يُولَدْ — „Er hat nicht gezeugt und ist nicht gezeugt worden\" (112:3). Genau diese Wurzel و ل د steckt in وَالِدٌ: der, der gezeugt hat — der Vater.",
+
+  /* ---------- Bayna Yadayk 1, Kapitel 3 (20.09.2026) ----------
+     Elias: „mach nur für kapitel 1-3". Gemessen: Kapitel 1 und 2 waren
+     vollstaendig, Kapitel 3 hatte fuer alle 11 Woerter gar nichts. */
+  "46011": "⭐ Die Wurzel س ك ن steht auf jeder deiner Karten: das Sukūn, das kleine Ruhezeichen über einem Buchstaben ohne Vokal. Wohnen heißt im Arabischen zur Ruhe kommen — und genau dieses Wort ist auch der Name des Zeichens.",
+  "46012": "Merk das Paar immer zusammen: أَرَادَ (er wollte) und يُرِيدُ (er will). ⚠️ Die Gegenwartsform beginnt mit يُـ, nicht mit يَـ — wer nur die Vergangenheit lernt, erkennt die Gegenwart im Text nicht wieder.",
+  "46013": "Das Wort zum Verb aus demselben Kapitel: سَكَنَ heißt wohnen, سَكَنٌ ist der Ort dafür. Beide von derselben Wurzel س ك ن — Ruhe. Dein Zuhause ist der Ort, an dem du zur Ruhe kommst.",
+  "46014": "⭐ Bau dir die Leiter aus Wörtern, die du schon hast: مَدِينَةٌ (Stadt) · حَيٌّ (Viertel) · شَارِعٌ (Straße) · بَيْتٌ (Haus). Von groß nach klein — der حَيّ ist der Teil der Stadt, in dem deine Straße liegt.",
+  "46015": "Die Wurzel ش ق ق meint teilen, abtrennen. Eine شَقَّة ist das abgeteilte Stück eines Hauses: im بَيْتٌ wohnen mehrere Familien, jede in ihrer eigenen Wohnung.",
+  "46016": "Die Wurzel س ت ر meint verdecken — dieselbe, die im Wort „Sitr\" steckt, dem Bedecken. Ein Vorhang ist genau das: das Stück Stoff, das den Blick verdeckt.",
+  "46017": "⭐ Die Wurzel س ج د kennst du von مَسْجِدٌ (Moschee), dem Ort des Niederwerfens. Die سَجَّادَة ist das, worauf du dich niederwirfst — der Gebetsteppich. Ein Wort, das du jeden Tag benutzt, ohne es gelernt zu haben.",
+  "46018": "Stell es in die Küche, die du schon hast: im مَطْبَخٌ steht der فُرْن, daneben die ثَلَّاجَةٌ (Kühlschrank) und der قِدْرٌ (Kochtopf). Drei deiner Wörter, ein Raum — und der فُرْن ist der, der backt.",
+  "46019": "Die Wurzel د و ر meint drehen. Die Treppe dreht sich von einem دَوْر zum nächsten — deshalb heißt das Stockwerk so. Dasselbe Wort steht auch für eine Runde und für die Rolle, die jemand spielt.",
+  "46020": "⭐ Das Werkzeug-مِـ, das du schon von vielen Dingen kennst: مِفْتَاحٌ (Schlüssel) · مِكْوَاةٌ (Bügeleisen) · مِلْعَقَةٌ (Löffel) · مِرْوَحَةٌ (Ventilator). Die مِرْآة ist das Werkzeug zum Sehen, Wurzel ر أ ي.",
+  "48611": "⭐ Das Gegenstück zu einem Wort, das du hast: die ثَلَّاجَةٌ macht kalt, der سَخَّان macht heiß. Beide tragen die Schadda in der Mitte — das Muster für ein Gerät, das immerzu dieselbe Arbeit tut.",
 };
 
 /* ---------- Korrigierte Schreibweisen ----------
