@@ -5977,10 +5977,10 @@ freigegeben, alle 11 absoluten Pfade im Lesebereich.
 **Schritt 0a** — `pruefe-laeufe.mjs --tage 30` Exit 0: **jeder geplante Termin
 der letzten 30 Tage hat einen abgeschlossenen Lauf.** 336 Läufe protokolliert,
 0 abgebrochen, 0 gar nicht gelaufen. (6 quittierte Altlücken, 13 Termine mit
-ausgeschaltetem Rechner — beides kein Befund.) ⚠️ Eine Zeile daraus gehört
-gelesen: `Routinen-Status.md` hinkt bei `vokabeltrainer-wartung` **4 Tage**
-hinterher (Notiz 16.09., Log 20.09.) — die Notiz bekommt ihren Abschnitt erst,
-wenn eine Routine fertig wird.
+ausgeschaltetem Rechner — beides kein Befund.) Die Gegenprobe zeigt
+`Routinen-Status.md` bei `vokabeltrainer-wartung` 4 Tage hinterher (Notiz
+16.09., Log 20.09.) — **kein Befund**: die Notiz bekommt ihren Abschnitt erst,
+wenn eine Routine fertig wird, also am Ende genau dieses Laufs.
 
 **Schritt 0b / Schritt 4 (Samsung Notes)** — `export-index.mjs --sicherung`
 Exit 0: **nichts Neues.** Alle acht Notizen unverändert (Arabya Bayna Yadayk 1A
@@ -6178,7 +6178,6 @@ entsteht eine zweite Seite und seine gespeicherten Antworten bleiben zurück:
 | `artefakte/regelkategorien.html` | DHhYFwtTNJADVwE2tVUDz3 | neu gebaut, Reihenfolge unverändert |
 
 ⬜ **Offen, aus diesem Lauf:**
-- `Routinen-Status.md` hinkt 4 Tage hinterher (16.09. gegen 20.09.).
 - `werkzeuge/gedaechtnis-wortlaut.mjs` liegt seit dem 16.09. ungeprüft geändert
   im Arbeitsverzeichnis — nicht von diesem Lauf, nicht committet.
 - Zwei Auftragsdateien dieses Laufs bleiben unversioniert liegen
