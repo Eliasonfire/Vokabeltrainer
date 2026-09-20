@@ -399,6 +399,14 @@ function audioBaue(){
      der Balken bliebe leer. */
   el.addEventListener('loadedmetadata', () => { if (el === QAUDIO.el) quranMedienPosition(); });
   el.addEventListener('durationchange', () => { if (el === QAUDIO.el) quranMedienPosition(); });
+  /* Die ganze Sure in der Leiste des Handys (20.09.2026): AUCH das vorladende
+     Element kennt die genaue Länge seines Verses. Welcher Vers es ist, steht im
+     Dateinamen (SSSVVV.mp3) — so braucht es keine zweite Buchführung. */
+  el.addEventListener('loadedmetadata', () => {
+    const m = String(el.currentSrc || el.src || '').match(/(\d{3})(\d{3})\.mp3/);
+    if (m && QAUDIO.sure !== null && Number(m[1]) === QAUDIO.sure && typeof suraDauerMerken === 'function')
+      suraDauerMerken(QAUDIO.sure, Number(m[2]), Number(el.duration));
+  });
   el.addEventListener('play',  () => {
     if (el !== QAUDIO.el) return;
     /* Der Wechsel ist vorbei, sobald wieder Ton kommt — und die Stillstands-
@@ -1130,11 +1138,111 @@ function quranMedienPosition(){
   /* ⚠️ Beim Wechsel der Datei steht `currentTime` einen Augenblick noch auf
      dem alten Wert, der größer als die neue Dauer sein kann. */
   const stelle = Math.min(Math.max(0, Number(el.currentTime) || 0), dauer);
+  /* Die ganze Sure, wenn alle Längen bekannt sind — sonst wie bisher der Vers. */
+  suraDauerMerken(QAUDIO.sure, QAUDIO.vers, dauer);
+  const ganz = suraLeiste();
   try {
-    navigator.mediaSession.setPositionState({
-      duration: dauer, playbackRate: rate, position: stelle
-    });
+    navigator.mediaSession.setPositionState(ganz
+      ? { duration: ganz.gesamt, playbackRate: rate, position: Math.min(ganz.davor + stelle, ganz.gesamt) }
+      : { duration: dauer, playbackRate: rate, position: stelle });
   } catch (e){ /* setPositionState fehlt oder mag die Werte nicht; nur der Fortschrittsbalken fehlt dann */ }
+}
+
+/* ============================================================================
+   DIE GANZE SURE IN DER LEISTE DES HANDYS                     (20.09.2026)
+   ============================================================================
+
+   Elias um 04:03, dazu ein Bild des Sperrbildschirms („Al-Mulk · Vers 24", darunter
+   der Balken EINES Verses): „sag mal könnte man auch wenn der koran läuft
+   statt das beim audio player meines handys von ayah zu ayah geht sondern das
+   die ganze sura angezeigt wird. weil dann könnte ich auch mehr zum ende
+   springen in der sure weil so habn ich aktuell keine möglichketi das in
+   diesr audio bar auf meinem handy zu machen".
+
+   Jeder Vers ist eine eigene Datei; das bleibt so (Wiederholen, Antippen,
+   Mitlesen hängen daran). Dem Handy wird nur etwas anderes GEMELDET: als
+   Dauer die Summe aller Verse, als Stelle „alles davor + Stelle im Vers".
+   Zieht er den Punkt, kommt `seekto` mit einer Zeit in dieser Summe; daraus
+   wird der Vers gerechnet, in dem sie liegt.
+
+   WOHER DIE LÄNGEN KOMMEN — zwei Quellen, die genauere gewinnt:
+     1. GEMESSEN: jede Datei, die eines der beiden Elemente geladen hat
+        (`duration`). Genau, aber erst da, wenn der Vers einmal geladen war.
+     2. GESCHÄTZT: das Ende der letzten Wort-Zeitmarke des Verses
+        (api.quran.com, dieselben Marken wie beim Wort-für-Wort-Mitlesen).
+        Etwas zu kurz — die Stille am Versende fehlt. Deshalb korrigiert sich
+        die Stelle an jedem Versanfang von selbst.
+   ⛔ Fehlt auch nur EINE Länge, gilt weiter der einzelne Vers. Eine Summe mit
+   Lücke ergäbe einen Balken, der falsch steht, ohne falsch auszusehen. Das
+   trifft die Rezitatoren ohne Zeitmarken (die drei von everyayah) — bis jeder
+   Vers der Sure einmal geladen war. */
+const QDAUER = {};      /* 'rez:sure' -> { versnr: Sekunden } — gemessen */
+
+function suraDauerMerken(sure, vers, sekunden){
+  if (sure === null || !vers || !(sekunden > 0) || !isFinite(sekunden)) return;
+  const k = segSchluessel(quranRezitator(), sure);
+  (QDAUER[k] = QDAUER[k] || {})[vers] = sekunden;
+}
+
+/** Die Längen aller Verse der laufenden Sure, [0] unbenutzt — oder null,
+ *  sobald eine fehlt. Holt die Zeitmarken, wenn sie noch nie geholt wurden. */
+function suraLaengen(){
+  if (QAUDIO.sure === null) return null;
+  const n = audioVersZahl(QAUDIO.sure) || 0;
+  if (!n) return null;
+  const rez = quranRezitator();
+  const k = segSchluessel(rez, QAUDIO.sure);
+  if (!QSEG[k]){
+    /* EIN Abruf je Rezitator und Sure; ist er da, stellt sich die Leiste um. */
+    segmenteHolen(rez, QAUDIO.sure).then(() => quranMedienPosition(), () => {});
+  }
+  const marken = (QSEG[k] && typeof QSEG[k] === 'object') ? QSEG[k] : null;
+  const gemessen = QDAUER[k] || {};
+  const laengen = [0];
+  for (let v = 1; v <= n; v++){
+    let d = gemessen[v];
+    if (!(d > 0) && marken && marken[v] && marken[v].length) d = Number(marken[v][marken[v].length - 1][1]) / 1000;
+    if (!(d > 0) || !isFinite(d)) return null;
+    laengen[v] = d;
+  }
+  return laengen;
+}
+
+/** Gesamtlänge der Sure und die Summe aller Verse VOR dem laufenden. */
+function suraLeiste(){
+  const l = suraLaengen();
+  if (!l) return null;
+  let gesamt = 0, davor = 0;
+  for (let v = 1; v < l.length; v++){ if (v < QAUDIO.vers) davor += l[v]; gesamt += l[v]; }
+  return gesamt > 0 ? { gesamt, davor } : null;
+}
+
+/** Er hat den Punkt in der Leiste des Handys gezogen. `ziel` in Sekunden.
+ *  ⭐ In einen ANDEREN Vers wird an dessen ANFANG gesprungen, nicht mitten
+ *  hinein: eine Rezitation, die mitten im Wort einsetzt, ist kein Gewinn, und
+ *  die geschätzten Längen tragen keine Sekundengenauigkeit. Im LAUFENDEN Vers
+ *  wird genau gespult. */
+function quranMedienSprung(ziel){
+  const el = QAUDIO.el;
+  if (!el || QAUDIO.sure === null || !isFinite(ziel)) return;
+  const l = suraLaengen();
+  if (!l){
+    try { el.currentTime = Math.min(Math.max(0, ziel), Number(el.duration) || 0); } catch (e){ /* Metadaten fehlen noch */ }
+    quranMedienPosition();
+    return;
+  }
+  let davor = 0, vers = l.length - 1;
+  for (let v = 1; v < l.length; v++){
+    if (ziel < davor + l[v]){ vers = v; break; }
+    davor += l[v];
+  }
+  if (typeof tonLog === 'function') tonLog('SPERRBILDSCHIRM gespult auf ' + ziel.toFixed(1) + ' s → Vers ' + vers);
+  if (vers === QAUDIO.vers){
+    try { el.currentTime = Math.min(Math.max(0, ziel - davor), Number(el.duration) || 0); } catch (e){ /* Metadaten fehlen noch */ }
+    quranMedienPosition();
+    return;
+  }
+  audioSpiele(QAUDIO.sure, vers);
 }
 
 /** Die Knoepfe auf dem Sperrbildschirm. Einmal belegt, solange rezitiert wird.
@@ -1148,9 +1256,13 @@ function quranMedienKnoepfe(an){
     try { navigator.mediaSession.setActionHandler(name, fn); } catch (e){ /* diese Taste kennt der Browser nicht */ }
   };
   if (!an){
-    ['play', 'pause', 'stop', 'nexttrack', 'previoustrack'].forEach(n => setze(n, null));
+    ['play', 'pause', 'stop', 'nexttrack', 'previoustrack', 'seekto'].forEach(n => setze(n, null));
     return;
   }
+  /* ⭐ `seekto` (20.09.2026): ohne diesen Handler lässt sich der Punkt in der
+     Leiste des Handys gar nicht ziehen — „so habn ich aktuell keine möglichketi
+     das in diesr audio bar auf meinem handy zu machen". */
+  setze('seekto',        (d) => quranMedienSprung(Number(d && d.seekTime)));
   /* Ton-Protokoll: ein `pause`, das vom SPERRBILDSCHIRM oder vom System kommt
      (Kopfhörer ab, anderer Ton), sieht sonst aus wie eines von ihm. */
   setze('play',          () => { tonLog('SPERRBILDSCHIRM play'); const el = audioElement(); el.play().catch(e => stillerFehler('Quran-Ton: play() vom Sperrbildschirm abgelehnt', e)); });
