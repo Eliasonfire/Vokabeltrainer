@@ -6184,3 +6184,12 @@ entsteht eine zweite Seite und seine gespeicherten Antworten bleiben zurück:
   (`.kapitel-stand.json`, `.markierung-auftrag.json`); sie stehen nicht in
   `.gitignore` und tauchen im nächsten `git status` auf.
 
+## 20.09.2026, 14:56 — v551: 60 zweite Eselsbrücken für Madina 1 Kapitel 24 (`2a1ad6a`)
+
+Elias: „kümmere dich um die eselsbrücken". Der Nebenbefund der Diagnosekarte ist gemessen: von seinen 45 abgelehnten Texten steht keiner mehr im Bestand — nicht an der Nummer, nicht unter einer anderen, nicht bei einem anderen Wort, auch nicht nach Angleichen von Anführungszeichen, NFC und Leerraum (gegen 1166 heutige Texte). Ursache sind die Commits fdc1f33 (v324, 25 ersetzt) und ba10bff (v513, 10 ersetzt), also erledigte Arbeit. Die Kartenzeile sagt das jetzt so statt „zeigen ins Leere".
+
+Der eigentliche Befund war die Zeile darunter: „nur EIN Vorschlag (nächster Stern-Fall): 22 Wörter". Gemessen sind es 60 im ganzen Kapitel 24 von Madina 1; alle 60 haben jetzt eine zweite Eselsbrücke (443 → 503 Einträge in data/eselsbruecken-alt.js), gebaut nach seiner Rangfolge vom 17.08.2026. Zehn Verse mit werkzeuge/vers.mjs belegt, alle im auswendigen Bereich (1:7, 67:2, 67:3, 67:14, 67:25, 93:10, 94:4, 94:5, 97:5, 98:7). Eine von mir selbst gebildete arabische Form hat pruefe-eselsbruecken.js gefangen; berichtigt.
+
+Dazu der Grund für den blinden Fleck: pruefe-eselsbruecken.js rechnet mit angabe aus data/lernstand.json (Kapitel 12, Stand 20.08.), während gemessen Kapitel 24 zeigt. Der Prüfer hält beides jetzt gegeneinander und meldet die Lücke als Hinweis — für Bayna Yadayk 1 sind es 141 Wörter ohne zweite Eselsbrücke. Pflegeplan-Eintrag unter „veralten" ergänzt.
+
+validate 36 grün, 119 Prüfer / 5 rot / kein NEU rot, pruefe-ausgeliefert Exit 0, pruefe-pflegeplan grün.

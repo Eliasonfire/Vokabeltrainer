@@ -155,8 +155,19 @@ export const PFLEGEPLAN = [
       { routine: W, schritt: '1c.8', beleg: 'node werkzeuge/antworten-uebernehmen.mjs', werkzeug: 'werkzeuge/antworten-uebernehmen.mjs',
         wie: 'seine Antworten auf fehlende Wortangaben landen in data/feld-ausnahmen.js' },
     ],
-    veralten: { routine: W, schritt: '1c.7', beleg: 'wartungsfragen-artefakt.mjs', werkzeug: 'werkzeuge/wartungsfragen-artefakt.mjs',
-      wie: 'fehlende Angaben (Geschlecht, Plural …) werden zur Fragenseite, statt still zu fehlen' },
+    veralten: [
+      { routine: W, schritt: '1c.7', beleg: 'wartungsfragen-artefakt.mjs', werkzeug: 'werkzeuge/wartungsfragen-artefakt.mjs',
+        wie: 'fehlende Angaben (Geschlecht, Plural …) werden zur Fragenseite, statt still zu fehlen' },
+      /* ⛔ Neu am 20.09.2026, und zwar wegen eines stillen Ausfalls: der Prüfer
+         meldete „alle 163 Wörter aus freigeschalteten Kapiteln haben
+         Alternativen", während seine Diagnosekarte gleichzeitig „nur EIN
+         Vorschlag: 22 Wörter" zeigte. Beide hatten recht — die Angabe in
+         data/lernstand.json stand seit dem 20.08.2026 auf Kapitel 12, geübt
+         wurde Kapitel 24. Was veraltet, ist also nicht der Inhalt, sondern
+         die Zahl, gegen die geprüft wird. */
+      { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs', werkzeug: 'pruefe-eselsbruecken.js',
+        wie: 'seine Lernstand-Angabe veraltet — der Prüfer hält sie gegen das gemessene Kapitel und zählt die Wörter dazwischen ohne zweite Eselsbrücke' },
+    ],
   },
   {
     funktion: 'Lehrwerke (die acht Bücher und seine arabicroots-Wörter)',
