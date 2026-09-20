@@ -722,7 +722,14 @@ document.addEventListener('DOMContentLoaded', ()=>{
     if (e.target.closest('#tajweedZettel') || e.target.closest('#verseList .qw')) return;
     tajweedZettelSchliessen();
   });
-  window.addEventListener('scroll', ()=>{ if (TJ_ZETTEL) tajweedZettelSchliessen(); }, { passive:true });
+  /* ⛔ NICHT window.addEventListener('scroll'): in dieser App rollt nie das
+     Fenster, sondern `main` (index.html: `main{overflow-y:auto}`, html/body
+     stehen auf overflow:hidden). v538 hing genau dort, und der Zettel blieb
+     beim Rollen stehen. Elias, 20.09.2026: „wenn ich weiter scrolle im koran
+     dann will ich das sich das automatisch schließt". Ein scroll-Ereignis
+     steigt nicht auf, aber es lässt sich in der Fangphase am Dokument
+     abgreifen — dann ist egal, welches Element gerade rollt. */
+  document.addEventListener('scroll', ()=>{ if (TJ_ZETTEL) tajweedZettelSchliessen(); }, { capture:true, passive:true });
 
   /* Ein Tipp auf einen Buchstaben macht ihn zum AKTIVEN — und markiert ihn,
      falls er es noch nicht ist. Wegnehmen geht über den Knopf, nicht über

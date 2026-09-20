@@ -3647,9 +3647,12 @@ button:disabled{cursor:default;}
    ⛔ Kein Umbruch mehr (`nowrap`): genau das war der Zustand, den er
    beanstandet hat. Die Beschriftung des mittleren Knopfes wurde dafür auf
    ein Wort gekürzt (js/quran.js). */
-/* Rechtsbündig — Elias 20.09.2026, 01:39: „ich will das die drei dinger
-   also ayah aufdecken und markieren rechtsbündig da stehen". */
-.hifz-knoepfe{display:flex;align-items:center;justify-content:flex-end;gap:var(--sp-2);flex-wrap:nowrap;}
+/* Ayah ganz links, Markieren ganz rechts (`space-between`). Elias am
+   20.09.2026 nach v538: „die drei oberen dinger ayah markieren und verdecken
+   kannst du wieder wie davor machen das markeieren rechts und ayah links
+   ist". Sein Satz davor („rechtsbündig da stehen", v538) ist damit
+   ZURÜCKGENOMMEN — die neuere Ansage gilt. */
+.hifz-knoepfe{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-2);flex-wrap:nowrap;}
 /* Der Versstand steht in einer eigenen, schmalen Zeile DARÜBER. Neben den
    Knöpfen nähme er die Breite weg, die sie zum Nebeneinanderstehen
    brauchen — und zweizeilig war er dort ohnehin. */
