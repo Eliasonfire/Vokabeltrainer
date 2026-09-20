@@ -1139,6 +1139,11 @@ function ladeQuranStandNeu(){
      [[ausfall_ist_unsichtbar_gebaut]] */
   if (OFFENE_SURE !== null) return;
   if (typeof renderSurahList === 'function') renderSurahList();
+  /* Die markierten Fehlerstellen (js/quran-markierung.js, v538) — derselbe
+     Grund wie die Haken oben: der Abgleich schreibt in den Speicher, die
+     Variable weiss davon nichts, und der Leser zeigte bis zum naechsten
+     Start den alten Stand. */
+  if (typeof tajweedNachAbgleich === 'function') tajweedNachAbgleich();
 }
 function istFavorit(id){ return !!QURAN_FAV[id]; }
 

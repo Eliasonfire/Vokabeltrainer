@@ -3256,15 +3256,26 @@ main{
    am 20.09.2026 ein 250 Pixel hoher Balken über einem 120 Pixel hohen Wort.
    Gefärbt wird der Buchstabe selbst; das ist ohnehin, was beschrieben war:
    „Im Korantext bekommt genau dieser Buchstabe eine Farbe." */
-::highlight(tajweed-rot){    color:var(--tj-rot);    text-decoration:underline wavy var(--tj-rot);    text-decoration-thickness:.06em; }
-::highlight(tajweed-orange){ color:var(--tj-orange); text-decoration:underline wavy var(--tj-orange); text-decoration-thickness:.06em; }
-::highlight(tajweed-blau){   color:var(--tj-blau);   text-decoration:underline wavy var(--tj-blau);   text-decoration-thickness:.06em; }
-::highlight(tajweed-lila){   color:var(--tj-lila);   text-decoration:underline wavy var(--tj-lila);   text-decoration-thickness:.06em; }
+/* ⭐ GERADE Linie, keine Welle. Elias 20.09.2026: „ich will das das
+   unterstrichene gerade ist also die linie weil aktuell sind es eine
+   längere schräge und zwei kleinere" — die Welle zerfiel in der
+   Koranschrift in Stücke. Die Linie bleibt trotzdem: eine Markierung darf
+   nicht allein an der Farbe hängen.
+   Dieselben Regeln ein zweites Mal mit „tajweed-karte-": das ist das große
+   Wort in der Karte, dessen Markierungen getrennt vom Lesetext gesetzt
+   werden (js/quran-markierung.js, tajweedHighlightsSetzen). */
+::highlight(tajweed-rot),    ::highlight(tajweed-karte-rot){    color:var(--tj-rot);    text-decoration:underline solid var(--tj-rot);    text-decoration-thickness:.08em; }
+::highlight(tajweed-orange), ::highlight(tajweed-karte-orange){ color:var(--tj-orange); text-decoration:underline solid var(--tj-orange); text-decoration-thickness:.08em; }
+::highlight(tajweed-blau),   ::highlight(tajweed-karte-blau){   color:var(--tj-blau);   text-decoration:underline solid var(--tj-blau);   text-decoration-thickness:.08em; }
+::highlight(tajweed-lila),   ::highlight(tajweed-karte-lila){   color:var(--tj-lila);   text-decoration:underline solid var(--tj-lila);   text-decoration-thickness:.08em; }
 
 /* Der Rückfall für Browser ohne diese Schnittstelle: das GANZE Wort wird
    unterstrichen. Ungenauer als ein Buchstabe, aber sichtbar — sonst
    markierte Elias und nichts stünde da. */
-#verseList .verse-ar .qw.tj-wort{ text-decoration:underline wavy; text-decoration-thickness:.07em; }
+#verseList .verse-ar .qw.tj-wort{ text-decoration:underline solid; text-decoration-thickness:.08em; }
+/* Ein markiertes Wort ist antippbar — auch ohne Markier-Modus zeigt es
+   seinen Zettel. */
+#verseList .verse-ar .qw.tj-hat{ cursor:pointer; }
 #verseList .verse-ar .qw.tj-wort.tj-rot{    text-decoration-color:var(--tj-rot);    background:rgba(255,77,106,.16); }
 #verseList .verse-ar .qw.tj-wort.tj-orange{ text-decoration-color:var(--tj-orange); background:rgba(255,167,38,.16); }
 #verseList .verse-ar .qw.tj-wort.tj-blau{   text-decoration-color:var(--tj-blau);   background:rgba(79,195,247,.16); }
@@ -3287,8 +3298,18 @@ main{
   padding:var(--sp-4);padding-bottom:calc(var(--sp-4) + env(safe-area-inset-bottom));
   box-shadow:var(--sh-3);
   display:flex;flex-direction:column;gap:var(--sp-3);
-  animation:popIn var(--dur-3) var(--ease-spring);
+  /* ⛔ NICHT `popIn`: das ist für Kästen gebaut, die mit translate(-50%,-50%)
+     in der Mitte hängen. Diese Karte sitzt mit left/right/bottom am Rand —
+     mit popIn fuhr sie „von mittig links" ins Bild (Elias 20.09.2026: „das
+     sieht sehr komisch aus … direkt einfach mittig auftaucht ohne das es
+     davor versetzt ist"). Hier nur ein kurzes Aufblenden von unten. */
+  animation:kartenAuf var(--dur-2) ease-out;
 }
+@keyframes kartenAuf{
+  from{opacity:0;transform:translateY(14px);}
+  to{opacity:1;transform:none;}
+}
+@media (prefers-reduced-motion: reduce){ .tajweed-karte{animation:none;} }
 .tj-titel{font-size:var(--fs-sm);color:var(--text-dim);}
 /* Die Bühne trägt die Flächen; deshalb `relative`. Ihre Höhe kommt vom
    Wort — ein fester Wert schnitte lange Wörter ab. */
@@ -3307,16 +3328,16 @@ main{
   /* ⛔ Kein `letter-spacing`: es zerreißt die Verbindung genauso wie ein
      Schnitt in den Text, nur sichtbar anders. */
 }
-.tj-buehne[data-farbe="rot"]    .tj-wort::highlight(tajweed-wahl){ color:var(--tj-rot);    text-decoration:underline wavy var(--tj-rot); }
-.tj-buehne[data-farbe="orange"] .tj-wort::highlight(tajweed-wahl){ color:var(--tj-orange); text-decoration:underline wavy var(--tj-orange); }
-.tj-buehne[data-farbe="blau"]   .tj-wort::highlight(tajweed-wahl){ color:var(--tj-blau);   text-decoration:underline wavy var(--tj-blau); }
-.tj-buehne[data-farbe="lila"]   .tj-wort::highlight(tajweed-wahl){ color:var(--tj-lila);   text-decoration:underline wavy var(--tj-lila); }
-/* Der Rahmen der gewählten Fläche trägt dieselbe Farbe — er ist die
-   Rückversicherung für Browser ohne `::highlight()`. */
-.tj-buehne[data-farbe="rot"]    .tj-flaechen{color:var(--tj-rot);}
-.tj-buehne[data-farbe="orange"] .tj-flaechen{color:var(--tj-orange);}
-.tj-buehne[data-farbe="blau"]   .tj-flaechen{color:var(--tj-blau);}
-.tj-buehne[data-farbe="lila"]   .tj-flaechen{color:var(--tj-lila);}
+/* Jede Fläche trägt die Farbe IHRES Buchstabens (seit v538 hat jeder
+   Buchstabe seine eigene). Der Strich darunter ist die Rückversicherung
+   für Browser ohne `::highlight()`; der AKTIVE Buchstabe — an ihm hängen
+   Farbreihe und Notizfeld — bekommt den dickeren Strich. */
+.tj-flaeche.tj-rot{color:var(--tj-rot);}
+.tj-flaeche.tj-orange{color:var(--tj-orange);}
+.tj-flaeche.tj-blau{color:var(--tj-blau);}
+.tj-flaeche.tj-lila{color:var(--tj-lila);}
+.tj-flaeche.aktiv{border-bottom:5px solid currentColor;background:rgba(255,255,255,.06);}
+.tj-hinweis-buchstabe{font-family:var(--font-ar);font-size:1.5em;color:var(--text);}
 .tj-flaechen{position:absolute;inset:0;}
 /* Durchsichtig: sichtbar ist die Markierung selbst, nicht ihr Knopf. Der
    Rahmen im Zustand „an" ist die Rückversicherung für den Fall, dass die
@@ -3353,6 +3374,27 @@ main{
 }
 #tjNotiz:focus{outline:none;border-color:var(--red-dim);}
 .tj-aktionen{display:flex;gap:var(--sp-2);justify-content:flex-end;}
+/* ⭐ Der Zettel (v538): die Notizen eines markierten Wortes, klein, unter
+   dem Wort — der Koran bleibt dabei stehen. Elias 20.09.2026: „es sollte
+   so ein kleines feld auftauchen wo ich aber noch den rest des korans sehe
+   wo ich dann in klein meine notiz sehen kann am besten so unter dem
+   wort". Kein Backdrop, keine Historie: er ist eine Auskunft, kein Dialog. */
+.tajweed-zettel{
+  position:fixed;z-index:600;max-width:min(320px,calc(100vw - 16px));
+  background:var(--surface-3);border:1px solid var(--border-strong);border-radius:var(--r-2);
+  padding:var(--sp-2) var(--sp-3);box-shadow:var(--sh-3);
+  display:flex;flex-direction:column;gap:var(--sp-2);
+  font-size:var(--fs-sm);color:var(--text);line-height:1.45;
+}
+.tz-zeile{display:flex;align-items:baseline;gap:var(--sp-3);}
+.tz-buchstabe{font-family:var(--font-ar);font-size:1.6em;line-height:1.2;flex:0 0 auto;min-width:1.4em;text-align:center;}
+.tz-buchstabe.tj-rot{color:var(--tj-rot);}
+.tz-buchstabe.tj-orange{color:var(--tj-orange);}
+.tz-buchstabe.tj-blau{color:var(--tj-blau);}
+.tz-buchstabe.tj-lila{color:var(--tj-lila);}
+.tz-notiz{flex:1 1 auto;white-space:pre-wrap;}
+.tz-notiz.leer{color:var(--text-faint);font-style:italic;}
+.tz-bearbeiten{align-self:flex-end;}
 
 /* =====================================================================
    QURAN-LISTE / READER
@@ -3605,7 +3647,9 @@ button:disabled{cursor:default;}
    ⛔ Kein Umbruch mehr (`nowrap`): genau das war der Zustand, den er
    beanstandet hat. Die Beschriftung des mittleren Knopfes wurde dafür auf
    ein Wort gekürzt (js/quran.js). */
-.hifz-knoepfe{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-2);flex-wrap:nowrap;}
+/* Rechtsbündig — Elias 20.09.2026, 01:39: „ich will das die drei dinger
+   also ayah aufdecken und markieren rechtsbündig da stehen". */
+.hifz-knoepfe{display:flex;align-items:center;justify-content:flex-end;gap:var(--sp-2);flex-wrap:nowrap;}
 /* Der Versstand steht in einer eigenen, schmalen Zeile DARÜBER. Neben den
    Knöpfen nähme er die Breite weg, die sie zum Nebeneinanderstehen
    brauchen — und zweizeilig war er dort ohnehin. */
@@ -7185,6 +7229,9 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
      ⛔ Das Wort steht als EIN Textknoten da — die antippbaren Flächen werden
      darüber gelegt, nicht hineingeschnitten. Wer das Wort in Spans zerlegt,
      zerreißt die arabische Verbindung. -->
+<!-- Der Zettel: Notizen eines markierten Wortes, klein, unter dem Wort.
+     Gefüllt und gesetzt von js/quran-markierung.js. -->
+<div class="tajweed-zettel hidden" id="tajweedZettel" role="note"></div>
 <div class="qfp-backdrop hidden" id="tajweedBackdrop"></div>
 <div class="tajweed-karte hidden" id="tajweedKarte" role="dialog" aria-label="Buchstaben markieren">
   <div class="qfp-header">
@@ -7195,11 +7242,11 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
     <div class="tj-wort" id="tjWort" lang="ar" dir="rtl"></div>
     <div class="tj-flaechen" id="tjFlaechen"></div>
   </div>
-  <div class="tj-hinweis">Tippe die Buchstaben an, bei denen es hakt.</div>
+  <div class="tj-hinweis" id="tjHinweis">Tippe die Buchstaben an, bei denen es hakt.</div>
   <div class="tj-farben" id="tjFarben"></div>
   <textarea id="tjNotiz" rows="2" placeholder="Deine Notiz — was ist hier los?"></textarea>
   <div class="tj-aktionen">
-    <button class="btn btn-secondary btn-klein hidden" id="btnTajweedWeg">Markierung weg</button>
+    <button class="btn btn-secondary btn-klein hidden" id="btnTajweedWeg">Buchstabe weg</button>
     <button class="btn btn-primary btn-klein" id="btnTajweedFertig">Fertig</button>
   </div>
 </div>
