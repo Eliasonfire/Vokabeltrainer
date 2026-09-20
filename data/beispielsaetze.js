@@ -1768,4 +1768,20 @@ const BEISPIELSAETZE = {
     sentAr: 'بَيْتُ التَّاجِرِ قَرِيبٌ مِنَ الْمَسْجِدِ.',
     sentDe: 'Das Haus des Händlers ist nahe bei der Moschee.'
   },
+
+  /* ---------- Bayna Yadayk 1, Kapitel 3 (20.09.2026) ----------
+     Elias: „ja mach die beispielsätze". Die elf Wörter des Kapitels hatten
+     keinen. Jedes fremde Wort im Satz ist eine im Bestand nachgemessene
+     Form; am neuen Wort setzt nur der Artikel und die Kasusendung an. */
+  '46011': { sentAr: 'سَكَنَ الطَّالِبُ فِي الْبَيْتِ.', sentDe: 'Der Student wohnte im Haus.' },
+  '46012': { sentAr: 'أَرَادَ الْوَلَدُ الْكِتَابَ.', sentDe: 'Der Junge wollte das Buch.' },
+  '46013': { sentAr: 'السَّكَنُ قَرِيبٌ مِنَ الْمَسْجِدِ.', sentDe: 'Die Unterkunft ist nah bei der Moschee.' },
+  '46014': { sentAr: 'الْمَسْجِدُ فِي الْحَيِّ.', sentDe: 'Die Moschee ist im Viertel.' },
+  '46015': { sentAr: 'الشَّقَّةُ صَغِيرَةٌ.', sentDe: 'Die Wohnung ist klein.' },
+  '46016': { sentAr: 'السِّتَارَةُ فِي الْغُرْفَةِ.', sentDe: 'Der Vorhang ist im Zimmer.' },
+  '46017': { sentAr: 'السَّجَّادَةُ فِي الْمَسْجِدِ.', sentDe: 'Der Teppich ist in der Moschee.' },
+  '46018': { sentAr: 'الْفُرْنُ فِي الْمَطْبَخِ.', sentDe: 'Der Ofen ist in der Küche.' },
+  '46019': { sentAr: 'هَذَا الدَّوْرُ جَدِيدٌ.', sentDe: 'Dieses Stockwerk ist neu.' },
+  '46020': { sentAr: 'نَظَرَ الْوَلَدُ إِلَى الْمِرْآةِ.', sentDe: 'Der Junge schaute in den Spiegel.' },
+  '48611': { sentAr: 'السَّخَّانُ فِي الْحَمَّامِ.', sentDe: 'Der Boiler ist im Badezimmer.' },
 };
