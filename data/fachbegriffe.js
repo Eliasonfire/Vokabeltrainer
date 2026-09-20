@@ -1061,7 +1061,9 @@ const FACHBEGRIFF_VOKABELN = [
        harf-jarr-bi-01, Folge 17). Die für حَمْرَاءُ und كَ sind VERFASST — nur
        aus Wörtern seines Bestands und als Nominalsatz, den er kennt.
        كُبْرَى bekommt KEINEN Satz: ohne Steigerungsform, die er noch nicht
-       hatte, wäre jeder Satz damit unnatürlich — lieber ehrlich ohne. */
+       hatte, wäre jeder Satz damit unnatürlich — lieber ehrlich ohne.
+       ⛔ ÜBERHOLT am 20.09.2026: Elias wollte einen („mach mir einen satz").
+       Er steht jetzt bei der Karte selbst, mit der Begründung dort. */
     sentAr: "السَّيَّارَةُ حَمْرَاءُ.",
     sentDe: "Das Auto ist rot.",
     /* Die Karte IST die weibliche Form — deshalb steht sie auch hier. */
@@ -1078,6 +1080,20 @@ const FACHBEGRIFF_VOKABELN = [
     book: 'grammar',
     regel: "f19-tanith",
     belegt: 1,
+    /* ⭐ SATZ AUF SEINEN WUNSCH (20.09.2026). Elias zur Karte ohne Satz: „woher
+       kommt das und warum gibt es hier keinen beispielsatz" — und nach meiner
+       Erklärung: „mach mir einen satz".
+       VERFASST, aber keine Schreibung ist getippt: das Werkzeug hat die Wörter
+       aus dem Bestand KOPIERT — „die Schwester" mit Artikel und „Ärztin" aus
+       vocab-data.js, das Kartenwort aus dieser Karte, der Artikel davor ist
+       derselbe wie bei „die Schwester". Das Kartenwort endet auf ى und ändert
+       seine Endung nie, deshalb entsteht mit dem Artikel keine neue Ḥaraka.
+       „Die große Schwester" ist im Arabischen wie im Deutschen die übliche
+       Wendung für die ältere Schwester — so klingt der Satz natürlich, obwohl
+       er die Steigerung noch nicht hatte. Ein Koranvers kam nicht in Frage:
+       das Wort steht in keiner Sure, die er auswendig kann. */
+    sentAr: "الْأُخْتُ الْكُبْرَى طَبِيبَةٌ.",
+    sentDe: "Die große Schwester ist Ärztin.",
     /* Die Karte IST die weibliche Form — deshalb steht sie auch hier. */
     femSg: "كُبْرَى",
     mnemo: "Groß, die größte, weiblich: كُبْرَى. Das ى am Ende ist hier das Zeichen für weiblich, nicht ة. Deine Musterlösung nennt es als zweites weiteres Zeichen."
