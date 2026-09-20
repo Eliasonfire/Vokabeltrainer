@@ -194,13 +194,16 @@ vm.runInContext('wendeQuranAnsichtAn()', ctx);
 ok('Listenmodus setzt die Klasse .liste', verseListe.classList.contains('liste'));
 ok('Deutsch-Zeile im Ansicht-Kasten verschwindet',
    hole('qaZeileDe').classList.contains('hidden'));
-ok('Hinweis zur Uebersetzung wird sichtbar',
-   !hole('qaHinweisListe').classList.contains('hidden'));
+/* Der Hinweistext ist seit dem 20.09.2026 weg (Elias: „die zwei texte koennen weg").
+   Geprueft wird stattdessen seine Regel vom selben Tag: im Listenmodus gibt es
+   keine Zeile „Uebersetzung". */
+ok('die Zeile „Uebersetzung" verschwindet im Listenmodus',
+   hole('qaZeileUeb').classList.contains('hidden'));
 const htmlVorher = verseListe.innerHTML;
 ctx.SETTINGS.quranDarstellung = 'kaesten';
 vm.runInContext('wendeQuranAnsichtAn()', ctx);
 ok('Kaesten-Ansicht nimmt die Klasse wieder weg', !verseListe.classList.contains('liste'));
-ok('Hinweis verschwindet wieder', hole('qaHinweisListe').classList.contains('hidden'));
+ok('die Zeile „Uebersetzung" kommt in der Kaesten-Ansicht wieder', !hole('qaZeileUeb').classList.contains('hidden'));
 ok('das Umschalten baut die Verse NICHT neu (gleiches Markup)',
    verseListe.innerHTML === htmlVorher);
 

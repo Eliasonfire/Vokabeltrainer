@@ -173,6 +173,11 @@ console.log('3. Wiederholen: Zeile offen = Schleife an:');
 console.log('4. Koran-Einstellungen: im Listenmodus keine Zeile „Übersetzung":');
 {
   const quranNackt = ohneKommentare(lies('../js/quran.js'));
+  /* Elias 20.09.2026, 03:19, mit Bild (beide Hinweise rot umrandet): „die zwei
+     texte können weg". */
+  pruefe('der Hinweis „Im Listenmodus läuft nur …" ist weg', false, /id="qaHinweisListe"|Im Listenmodus läuft nur/.test(htmlNackt));
+  pruefe('der Hinweis „Diese Ansicht gilt nur auf diesem Gerät …" ist weg', false, /id="qaHinweisGeraet"|Diese Ansicht gilt nur/.test(htmlNackt));
+  pruefe('… und niemand greift mehr nach dem entfernten Element', false, /getElementById\('qaHinweis(Liste|Geraet)'\)/.test(quranNackt));
   pruefe('die Zeile hat eine Kennung im Markup', true, /id="qaZeileUeb"/.test(htmlNackt));
   pruefe('… und verschwindet, wenn die Darstellung „Liste" ist', true,
     /const nurListe = a\.darstellung === 'liste';[\s\S]{0,900}zeileUeb\.classList\.toggle\('hidden', nurListe\)/.test(quranNackt));
