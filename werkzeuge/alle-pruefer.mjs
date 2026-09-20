@@ -161,6 +161,7 @@ const PRUEFER = [
   ['werkzeuge/pruefe-offene-runde.mjs', []],
   ['werkzeuge/pruefe-markierung.mjs', []],
   ['werkzeuge/pruefe-spieler-leiste.mjs', []],
+  ['werkzeuge/pruefe-sura-leiste.mjs', []],
   ['werkzeuge/pruefe-tonprotokoll.mjs', []],
   /* ⭐ Neu am 11.09.2026. Elias: „beim Hörverstehen sollen 5 Auswahl
      Möglichkeiten sein und es soll schwerer gemacht werden" — mit Woertern,

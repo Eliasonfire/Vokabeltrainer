@@ -106,6 +106,20 @@ export const PFLEGEPLAN = [
        ausgeschlossen. Bei verborgener Seite schreibt es seither alle 2 s.
        ⛔ HERAUS FRÜHESTENS AM 24.09.2026, wenn er bis dahin keinen Ausfall
        gemeldet hat — der Punkt steht mit diesem Datum in der To-Do. */
+  /* 20.09.2026 (v547), neue Funktion INNERHALB von js/quran-audio.js: die
+     Leiste des Handys (Sperrbildschirm) zeigt die ganze Sure statt des
+     einzelnen Verses, und der Punkt lässt sich ziehen (`seekto`). Elias:
+     „sag mal könnte man auch … das die ganze sura angezeigt wird. weil dann
+     könnte ich auch mehr zum ende springen in der sure". Der Pflegebedarf:
+     · Eingaben von Elias — nein. · Neuer Speicherschlüssel — nein, die
+       gemessenen Verslängen (QDAUER) leben nur im Arbeitsspeicher.
+     · Was veralten kann: das Format der Zeitmarken von api.quran.com — es ist
+       DIESELBE Quelle wie beim Wort-für-Wort-Mitlesen (segmenteHolen) und
+       liest nur die letzten zwei Zahlen je Zeile. Fällt sie aus, bleibt die
+       Leiste beim einzelnen Vers (kein Ausfall, nur der alte Zustand).
+     · ⚠️ Ungeprüft bleibt, was nur sein Handy zeigt: ob Android den Balken so
+       zeichnet und den Punkt ziehen lässt. Bewacht von
+       werkzeuge/pruefe-sura-leiste.mjs (in alle-pruefer.mjs). */
   /* 20.09.2026 (v536), neue Datei js/quran-markierung.js und neuer
      Speicherschlüssel `vt_tajweed`: Elias kann im Korantext einzelne
      Buchstaben markieren, an denen sein Tajweed schiefgeht — mit Farbe und
