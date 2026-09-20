@@ -669,6 +669,41 @@ const rot = ergebnisse.filter(e => e.code !== 0);
 console.log('');
 console.log('  ' + ergebnisse.length + ' Prüfer gelaufen, ' + rot.length + ' rot.');
 
+/* ---------- ⛔⛔ NEU ROT — DIE ZEILE, DIE MAN NICHT ÜBERLESEN KANN (20.09.2026) ----------
+
+   ANLASS, zum ZWEITEN Mal (09.09. und 20.09.2026): ich habe „alle-pruefer
+   Exit 0" als „alle Prüfer grün" berichtet. Der Exitcode meldete aber nur,
+   dass alle GELAUFEN sind — und in der Nacht auf den 20.09. waren fünf Prüfer
+   aus meiner eigenen Arbeit über drei Auslieferungen rot (vt_tonprotokoll
+   ohne Grund in zwei Listen, zwei `catch { return 0 }`, vier Klassen ohne
+   Fundstelle, eine Probe auf einen Text, den Elias entfernen ließ).
+
+   Die Roten zerfallen in drei Sorten, und nur die dritte ist ein Alarm:
+     1. WARTET AUF ELIAS — steht auf seiner Seite, dauerhaft rot, in Ordnung.
+     2. HÄNGT AM STAND — rot, solange die Arbeitskopie noch nicht ausgeliefert
+        bzw. das Gedächtnis noch nicht nachgezogen ist. Vor einer Auslieferung
+        ist das der Normalfall; NACH ihr müssen sie grün sein (einzeln
+        nachmessen: pruefe-ausgeliefert.mjs).
+     3. NEU ROT — alles andere. Dafür gibt es jetzt Exitcode 2.
+   ⚠️ Die zwei Listen sind kurz und stehen hier, nicht in einer Datei daneben:
+   wer eine ergänzt, soll die Begründung darüber lesen müssen. */
+const WARTET_AUF_ELIAS = ['pruefe-taschkil.js', 'pruefe-duplikate.js', 'werkzeuge/pruefe-themen.mjs'];
+const HAENGT_AM_STAND  = ['werkzeuge/pruefe-ausgeliefert.mjs', 'pruefe-erreichbarkeit.js', 'werkzeuge/pruefe-gedaechtnis-zahlen.mjs'];
+const gelaufenRot = rot.filter(e => e.code !== null && e.code !== -1);
+const neuRot = gelaufenRot.filter(e => !WARTET_AUF_ELIAS.includes(e.rel) && !HAENGT_AM_STAND.includes(e.rel));
+const amStand = gelaufenRot.filter(e => HAENGT_AM_STAND.includes(e.rel));
+if (neuRot.length){
+  console.log('');
+  console.log('  ⛔⛔ NEU ROT: ' + neuRot.length + ' — nicht auf der Warteliste, nicht vom Auslieferstand abhängig:');
+  neuRot.forEach(e => console.log('     ' + e.rel + '   ' + e.letzte.slice(0, 80)));
+  console.log('     ⛔ NICHT AUSLIEFERN und NICHT „alle grün" berichten, bevor jeder davon angesehen ist.');
+} else {
+  console.log('  ✅ Kein Prüfer ist NEU rot.');
+}
+if (amStand.length)
+  console.log('  ⓘ Rot, solange nicht ausgeliefert / Gedächtnis nicht nachgezogen: '
+    + amStand.map(e => e.rel.replace(/^werkzeuge\//, '')).join(', ') + ' — danach einzeln nachmessen.');
+
 /* ---------- ⛔ EINE URSACHE, VIELE SYMPTOME (09.09.2026) ----------
 
    ⛔ ANLASS, und zwar gemessen: `ohneKommentareUndTexte()` in
@@ -746,8 +781,10 @@ if (rot.length){
   console.log('     nennen sie selbst — hier steht keine nachgepflegte mehr.');
 }
 
-/* ⛔ Der eigene Exitcode meldet nur, ob ALLE gelaufen sind — nicht, ob alle
-   grün sind. Sonst stünde dieses Werkzeug wegen der zwei wartenden Prüfer
+/* ⛔ Der eigene Exitcode: 1 = nicht alle GELAUFEN · 2 = ein Prüfer ist NEU ROT
+   (seit 20.09.2026, siehe oben) · 0 = alle gelaufen und keiner neu rot.
+   ⚠️ 0 heißt weiterhin NICHT „alle grün": die wartenden Prüfer und die, die am
+   Auslieferstand hängen, dürfen rot sein — sonst stünde dieses Werkzeug
    dauerhaft rot und würde nach dem dritten Lauf überlesen. */
 const nichtGelaufen = ergebnisse.filter(e => e.code === null || e.code === -1);
 if (nichtGelaufen.length){
@@ -755,4 +792,4 @@ if (nichtGelaufen.length){
   console.log('  ⛔ ' + nichtGelaufen.length + ' Prüfer konnten gar nicht laufen:');
   nichtGelaufen.forEach(e => console.log('     ' + e.rel + '  ' + e.letzte.slice(0, 60)));
 }
-process.exit(nichtGelaufen.length ? 1 : 0);
+process.exit(nichtGelaufen.length ? 1 : neuRot.length ? 2 : 0);
