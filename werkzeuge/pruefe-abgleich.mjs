@@ -87,6 +87,11 @@ const AUSGENOMMEN = new Map([
      [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
   ['vt_feierLog',     'Feier-Protokoll — welche Feier auf WELCHEM Bildschirm lief. Eine Messung an diesem Gerät; die Feiern eines anderen Geräts hier zu sehen wäre eine falsche Fährte'],
   ['vt_syncPuts',     'Tageszähler der KV-Schreibvorgänge dieses Geräts. Abgeglichen würde er sich gegenseitig überschreiben — und jedes Übertragen wäre selbst ein Schreibvorgang, also genau das, was er begrenzen soll'],
+  /* ⛔ 20.09.2026, NACHGETRAGEN: seit v542 (03:00) im Quelltext, hier erst mit
+     v545 eingetragen — dieser Prüfer war drei Auslieferungen lang rot, und ich
+     habe es nicht gesehen, weil alle-pruefer.mjs mit Exit 0 nur meldet, dass
+     alle GELAUFEN sind. */
+  ['vt_tonprotokoll', 'Ton-Protokoll des Rezitators (js/quran-audio.js) — was DIESES Gerät bei ausgeschaltetem Bildschirm mit der Wiedergabe macht. Das Protokoll eines anderen Geräts hier zu sehen wäre eine falsche Fährte; zu mir kommt es über „An Claude schicken", nicht über den Abgleich. Baustelle, kommt wieder heraus'],
 ]);
 
 /* ⛔ Alle drei Zitierweisen UND Ziffern (09.09.2026). Bis dahin fand diese
@@ -313,13 +318,13 @@ sag(/ohneGeraetEinstellungen\(/.test(nutzlast),
 sag(/if \(hierRoh == null\)\{[\s\S]{0,600}ohneGeraetEinstellungen\(/.test(SYNC),
     'auch der allererste Abgleich eines neuen Geräts erbt sie nicht');
 
-/* ⛔ Und die Ausnahme muss SICHTBAR sein. Überall sonst gilt „einfach alles";
-   eine stille Sonderregel sieht für Elias aus wie ein kaputter Abgleich.
-   [[ausfall_ist_unsichtbar_gebaut]] */
-const HTML = fs.readFileSync(path.join(REPO, 'index.html'), 'utf8');
-const tafel = HTML.slice(HTML.indexOf('id="quranAnsicht"'));
-sag(/gilt nur auf[\s\S]{0,40}diesem Gerät/.test(tafel.slice(0, tafel.indexOf('quran-source'))),
-    'die Ansichtstafel sagt dem Leser, dass sie nur für dieses Gerät gilt');
+/* ⛔ HIER STAND eine Probe, die verlangte, dass die Ansichtstafel den Satz
+   „Diese Ansicht gilt nur auf diesem Gerät …" zeigt. Die Begründung dafür
+   („eine stille Sonderregel sieht für Elias aus wie ein kaputter Abgleich")
+   war MEINE. Elias am 20.09.2026, 03:19, mit Bild, beide Hinweise rot
+   umrandet: „die zwei texte können weg". Sein Satz gilt, die Probe ist weg —
+   dass der Text NICHT mehr dasteht, bewacht pruefe-spieler-leiste.mjs.
+   Die vier Proben darüber (die Regel selbst) bleiben unverändert. */
 
 /* ---------- Störtest ---------- */
 console.log('');
@@ -333,8 +338,7 @@ sag(!alleJs.includes('function rendergibtesnicht('),
    der Rückgabewert benennte die falsche Ursache. Dreimal passiert. */
 sag(!/GERAETGIBTESNICHT\.test\(/.test(zusammenfuehren),
     'Störtest: eine erfundene Ausnahme gilt als nicht angewandt');
-sag(!/gilt nur auf diesem Fahrrad/.test(HTML),
-    'Störtest: ein erfundener Hinweistext gilt als nicht vorhanden');
+/* Der Störtest zum Hinweistext ist mit der Probe gegangen (20.09.2026). */
 
 console.log('');
 if (fehler) { console.log('⛔ ' + fehler + ' Befund(e).'); process.exit(1); }

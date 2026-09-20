@@ -133,6 +133,9 @@ const OHNE_LISTE = new Map([
      eine fremde Kartenfolge dazwischen. Der Lernstand selbst steckt in
      vt_progress und vt_uebungstage und ist laengst gesichert; verloren geht
      hier also nichts. */
+  ['vt_tonprotokoll', 'Ton-Protokoll des Rezitators (20.09.2026, js/quran-audio.js) — Diagnose dieses '
+                   + 'einen Geraets, hoechstens 400 Zeilen, kein Lernstand. Eingespielt auf einem anderen '
+                   + 'Geraet waere es eine falsche Faehrte. Baustelle, kommt wieder heraus'],
   ['vt_offeneRunde', 'die angefangene Kartenrunde dieses Geraets (19.09.2026) — Geraetezustand,'
                    + 'kein Lernstand: die Bewertungen stehen in vt_progress. Sie traegt ihren '
                    + 'Lerntag und wird am naechsten Tag von selbst verworfen (js/lernen.js)'],

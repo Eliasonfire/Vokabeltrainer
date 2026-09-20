@@ -316,7 +316,14 @@ function tajweedZeichnen(){
       /* Fürs Antippen: das Wort weiß, dass es markiert ist (Zettel). */
       span.classList.add('tj-hat');
       if (!tajweedKannHighlight()){
-        span.classList.add('tj-wort', 'tj-' + stellen[0].farbe);
+        /* ⚠️ Die vier Klassennamen stehen AUSGESCHRIEBEN da, nicht als
+           `'tj-' + farbe`: klassen-ohne-fundstelle.mjs erkennt zusammengesetzte
+           Namen erst ab vier Zeichen Präfix und hielt die vier CSS-Regeln des
+           Rückfalls deshalb für verwaist (20.09.2026). Nebenbei bekommt so nur
+           eine BEKANNTE Farbe eine Klasse. */
+        const rueckfall = { rot:'tj-rot', orange:'tj-orange', blau:'tj-blau', lila:'tj-lila' }[stellen[0].farbe];
+        span.classList.add('tj-wort');
+        if (rueckfall) span.classList.add(rueckfall);
         return;
       }
       const cluster = tajweedCluster(knoten.nodeValue);
@@ -519,7 +526,13 @@ function tajweedWortGroesse(){
       const r = document.createRange();
       r.selectNodeContents(wortEl);
       return r.getBoundingClientRect().width;
-    } catch (e){ return 0; }
+    } catch (e){
+      /* Grund: 0 heißt hier „nicht messbar", und die Schleife darunter lässt
+         die Schrift dann bei ihrer Startgröße — das Wort steht trotzdem da.
+         Gemeldet wird es, damit ein Ausfall nicht wie ein Messwert aussieht. */
+      if (typeof stillerFehler === 'function') stillerFehler('Zettel-Wortbreite', e);
+      return 0;
+    }
   };
   let px = TJ_GROESSE_MAX;
   wortEl.style.fontSize = px + 'px';

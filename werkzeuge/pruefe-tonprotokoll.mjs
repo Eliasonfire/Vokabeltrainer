@@ -79,9 +79,9 @@ console.log('1. Das Protokoll schreibt mit und überlebt das Ende der Seite:');
   pruefe('eine verborgene Seite wird vermerkt (H)', true, / H bei Bildschirm aus/.test(h.api.tonProtokollText()));
 
   const viel = umgebung(TEILE);
-  for (let i = 1; i <= 250; i++) viel.api.tonLog('Zeile ' + i);
+  for (let i = 1; i <= 450; i++) viel.api.tonLog('Zeile ' + i);
   const ring = JSON.parse(viel.lager.vt_tonprotokoll);
-  pruefe('höchstens 200 Zeilen, die NEUESTEN bleiben', [200, 'Zeile 250'], [ring.length, ring[ring.length - 1][2]]);
+  pruefe('höchstens 400 Zeilen, die NEUESTEN bleiben', [400, 'Zeile 450'], [ring.length, ring[ring.length - 1][2]]);
 
   const voll = umgebung(TEILE, { speicherVoll: true });
   let geworfen = false;
@@ -107,7 +107,31 @@ console.log('2. Die Stellen, an denen die Antwort stehen kann:');
   pruefe('ein abgelehntes play() steht mit dem Fehlernamen da', true, /tonLog\('play\(\) ABGELEHNT '[\s\S]{0,80}err\.name/.test(audioNackt));
   pruefe('verborgen/sichtbar wird vermerkt', true, /addEventListener\('visibilitychange'[\s\S]{0,120}tonLog/.test(audioNackt));
   pruefe('einfrieren/auftauen wird vermerkt', true, /addEventListener\('freeze'/.test(audioNackt) && /addEventListener\('resume'/.test(audioNackt));
-  pruefe('der Takt alle 10 s zeigt, ob Zeitgeber laufen', true, /audioWacheTick\.takt % 5 === 0[\s\S]{0,120}tonLog\('TAKT /.test(audioNackt));
+  pruefe('der Takt zeigt, ob Zeitgeber laufen — bei verborgener Seite JEDER (2 s), sonst jeder fünfte', true,
+    /\(verborgen \|\| audioWacheTick\.takt % 5 === 0\)[\s\S]{0,900}tonLog\('TAKT /.test(audioNackt));
+  pruefe('… und die Taktzeile nennt die stille Schleife, „stumm" und die Mediensitzung', true,
+    /' · stille '/.test(audioNackt) && /' · STUMM'/.test(audioNackt) && /' · sitzung '/.test(audioNackt));
+  /* Der Takt GEFAHREN, nicht nur gelesen (20.09.2026): verborgen schreibt jeder
+     Takt eine Zeile, sichtbar nur jeder fünfte. */
+  const tick = schneide('audioWacheTick');
+  const fahre = (hidden, mal) => {
+    const zeilen = [];
+    const ctx = {
+      document: { hidden }, navigator: { mediaSession: { playbackState: 'playing' } },
+      QAUDIO: { el: { currentTime: 4.2, readyState: 4, paused: false, muted: false, volume: 1 }, vers: 3, sure: 67, laeuft: true, wechsel: false, hinweis: '' },
+      QAUDIO_STILLE: { paused: false, currentTime: 7.77 },
+      QAUDIO_STAND: { zeit: -1, seit: 0 }, QAUDIO_WACHE_TAKT: 2000, QAUDIO_STILLSTAND: 6000,
+      audioNachladen: () => {}, zeigeSpieler: () => {},
+      tonLog: (t) => zeilen.push(t), Number, Math,
+    };
+    vm.createContext(ctx);
+    vm.runInContext(tick + '\nfor (let i = 0; i < ' + mal + '; i++){ QAUDIO.el.currentTime += 2; audioWacheTick(); }', ctx);
+    return zeilen;
+  };
+  const verb = fahre(true, 5), sicht = fahre(false, 5);
+  pruefe('gefahren: verborgen 5 Takte → 5 Zeilen, sichtbar 5 Takte → 1 Zeile', [5, 1], [verb.length, sicht.length]);
+  pruefe('… die Zeile zeigt die Stelle, die stille Schleife und die Mediensitzung', true,
+    /^TAKT vers 3 t6\.2 rs4 · stille läuft t7\.8 · sitzung playing$/.test(verb[0] || ''));
   pruefe('die stille Schleife meldet ihr `pause`', true, /QAUDIO_STILLE\.addEventListener\(n,[\s\S]{0,80}tonLog\('STILLE '/.test(audioNackt));
   pruefe('SEIN Druck ist von einem System-`pause` unterscheidbar', true, /tonLog\('KNOPF Play\/Pause/.test(audioNackt) && /tonLog\('SPERRBILDSCHIRM pause'\)/.test(audioNackt));
 }
