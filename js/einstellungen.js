@@ -1352,6 +1352,15 @@ function diagnoseText(){
      die Werte, die man in jedem Fall braucht. Ist er leer, ist das eine
      echte Aussage: seit dem Start ist kein Fehler geschluckt worden.
      [[ausfall_ist_unsichtbar_gebaut]] */
+  /* ---------- Ton-Protokoll (20.09.2026) ----------
+     ⛔ Nur EINE Zeile, und nur wenn es etwas gibt: die Karte muss auf ein
+     Bildschirmfoto passen. Das Protokoll selbst (bis 200 Zeilen) hängt
+     diagnoseAnhang() an den Text, der GESCHICKT oder KOPIERT wird. */
+  try {
+    const tonZeilen = (typeof tonProtokollZahl === 'function') ? tonProtokollZahl() : 0;
+    if (tonZeilen) zeilen.push('Ton-Protokoll: ' + tonZeilen + ' Zeilen — hängt beim Schicken und Kopieren an');
+  } catch (e){ stillerFehler('Diagnose: Ton-Protokoll zählen', e); }
+
   zeilen.push('');
   zeilen.push('Geschluckte Fehler seit dem Start:');
   let still = [];
@@ -1413,8 +1422,22 @@ document.getElementById('btnDiagnose')?.addEventListener('click', ()=>{
    verstecktes Textfeld und `execCommand` — veraltet, aber es ist der einzige
    Weg, der auch dann noch greift. Ohne ihn stünde am Ende ein Knopf, der
    nichts tut und nichts sagt. [[ausfall_ist_unsichtbar_gebaut]] */
+/** Was NICHT auf die sichtbare Karte passt, aber mit zu Claude soll: das
+ *  Ton-Protokoll des Rezitators (js/quran-audio.js, 20.09.2026). Die Karte ist
+ *  für ein Bildschirmfoto gebaut — das Protokoll hat bis zu 200 Zeilen.
+ *  ⛔ Wirft nie: hängt an „Schicken", „Kopieren" und „Teilen". */
+function diagnoseAnhang(){
+  try {
+    if (typeof tonProtokollText !== 'function' || typeof tonProtokollZahl !== 'function') return '';
+    return tonProtokollZahl() ? '\n\n' + tonProtokollText() : '';
+  } catch (e){
+    if (typeof stillerFehler === 'function') stillerFehler('diagnoseAnhang', e);
+    return '';
+  }
+}
+
 async function diagnoseInZwischenablage(){
-  const text = document.getElementById('diagnoseText')?.textContent || diagnoseText();
+  const text = (document.getElementById('diagnoseText')?.textContent || diagnoseText()) + diagnoseAnhang();
   try {
     if (navigator.clipboard && window.isSecureContext){
       await navigator.clipboard.writeText(text);
@@ -1466,7 +1489,7 @@ document.getElementById('btnDiagnoseKopieren')?.addEventListener('click', async 
    [[ausfall_ist_unsichtbar_gebaut]] */
 document.getElementById('btnDiagnoseSenden')?.addEventListener('click', async (e)=>{
   const knopf = e.currentTarget;
-  const text = document.getElementById('diagnoseText')?.textContent || diagnoseText();
+  const text = (document.getElementById('diagnoseText')?.textContent || diagnoseText()) + diagnoseAnhang();
   const zurueck = () => setTimeout(()=>{ knopf.textContent = 'An Claude schicken';
                                          knopf.disabled = false; }, 3200);
   knopf.disabled = true;
@@ -1502,7 +1525,7 @@ document.getElementById('btnDiagnoseSenden')?.addEventListener('click', async (e
   if (!knopf || typeof navigator.share !== 'function') return;
   knopf.classList.remove('hidden');
   knopf.addEventListener('click', async ()=>{
-    const text = document.getElementById('diagnoseText')?.textContent || diagnoseText();
+    const text = (document.getElementById('diagnoseText')?.textContent || diagnoseText()) + diagnoseAnhang();
     try {
       await navigator.share({ title: 'Vokabeltrainer — Diagnose', text });
     } catch (e){

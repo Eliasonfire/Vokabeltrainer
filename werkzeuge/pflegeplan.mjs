@@ -81,6 +81,23 @@ export const PFLEGEPLAN = [
        und wird am nächsten Tag verworfen, ohne dass jemand aufräumen muss.
      Bewacht von werkzeuge/pruefe-offene-runde.mjs (in alle-pruefer.mjs), samt
      Störtest in beide Richtungen. */
+  /* 20.09.2026 (v542), das TON-PROTOKOLL in js/quran-audio.js und neuer
+     Speicherschlüssel `vt_tonprotokoll` — eine BAUSTELLE mit Ablauf.
+     Anlass: Elias nach v535: „es liefen so ca 3 verse bis es jetzt aufgehört
+     hat bei geschlossenem display zu spielen" — „dann steht da nichts, er
+     hört einfach auf zu spielen und das wars". Hier läuft kein Ton; die
+     Ursache zeigt nur sein Handy. Das Protokoll schreibt jedes Ereignis der
+     beiden Abspielelemente mit und hängt an „An Claude schicken" in der
+     Diagnose (js/einstellungen.js, diagnoseAnhang). Der Pflegebedarf:
+     · Eingaben von Elias — nein, es schreibt von selbst.
+     · Wer liest es? ICH, mit werkzeuge/diagnose-holen.mjs, nachdem er
+       „An Claude schicken" gedrückt hat. Ohne diesen Schritt ist es ein
+       Werkzeug ohne Aufrufer. [[werkzeug_ohne_aufrufer]]
+     · ⛔ ABLAUF: ist die Ursache gefunden und behoben, kommt es wieder
+       heraus (tonLog-Aufrufe, der Block oben in quran-audio.js,
+       diagnoseAnhang, die eine Zeile auf der Karte, pruefe-tonprotokoll.mjs).
+       Es wird weder abgeglichen noch gesichert — bewusst, es beschreibt ein
+       Gerät. Bewacht von werkzeuge/pruefe-tonprotokoll.mjs. */
   /* 20.09.2026 (v536), neue Datei js/quran-markierung.js und neuer
      Speicherschlüssel `vt_tajweed`: Elias kann im Korantext einzelne
      Buchstaben markieren, an denen sein Tajweed schiefgeht — mit Farbe und
