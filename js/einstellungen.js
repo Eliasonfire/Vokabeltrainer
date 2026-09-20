@@ -1324,10 +1324,25 @@ function diagnoseText(){
       /* ⭐ Verwaiste Marken sichtbar machen (09.09.2026): eine Ablehnung von
          damals zeigt auf eine Nummer, an der heute ein anderer Text steht.
          Ohne diese Zeile sieht das Verschwinden einer Marke wie ein Fehler
-         aus. [[eingefrorenes_feld_ist_kein_zustand]] */
+         aus. [[eingefrorenes_feld_ist_kein_zustand]]
+
+         ⛔ ÜBERHOLT am 20.09.2026: Hier stand „⚠️ N von M Marken zeigen ins
+         Leere — der Text an der Stelle hat sich geändert". Das war MEINE
+         Formulierung, und sie liest sich wie ein Schaden. Nachgemessen (Elias:
+         „kümmere dich um die eselsbrücken"): von seinen 45 Ablehnungen steht
+         KEIN einziger Text mehr irgendwo im Bestand — nicht an der Nummer,
+         nicht unter einer anderen, nicht bei einem anderen Wort, auch nicht
+         nach dem Angleichen von Anführungszeichen und Leerraum. Die Commits
+         sagen, warum: fdc1f33 („25 abgelehnte Eselsbruecken ersetzt", v324)
+         und ba10bff („zehn abgelehnte … ersetzt", v513). Eine verwaiste Marke
+         ist hier also die QUITTUNG für erledigte Arbeit.
+
+         ⚠️ Die Zeile behauptet trotzdem nicht mehr, als sie weiß: verwaist
+         heißt „der abgelehnte Text steht für dieses Wort nicht mehr in der
+         Liste". Warum er verschwand, weiß die App nicht. */
       const vm = (typeof vorschlaegeVerwaisteMarken === 'function') ? vorschlaegeVerwaisteMarken() : null;
       if (vm && vm.verwaist)
-        zeilen.push('  ⚠️ ' + vm.verwaist + ' von ' + vm.gesamt + ' Marken zeigen ins Leere — der Text an der Stelle hat sich geändert');
+        zeilen.push('  ℹ️ ' + vm.verwaist + ' von ' + vm.gesamt + ' abgelehnten Texten stehen für ihr Wort nicht mehr in der Liste — sie wurden ersetzt');
       /* ⭐ Die Vorwarnung: Wörter mit nur EINEM Vorschlag sind der nächste
          Stern-Fall. Heute sind es null in seinem Bestand — steht hier je eine
          Zahl, ist eine zweite Eselsbrücke fällig, BEVOR er sie braucht. */
