@@ -3256,18 +3256,26 @@ main{
    am 20.09.2026 ein 250 Pixel hoher Balken über einem 120 Pixel hohen Wort.
    Gefärbt wird der Buchstabe selbst; das ist ohnehin, was beschrieben war:
    „Im Korantext bekommt genau dieser Buchstabe eine Farbe." */
-/* ⭐ GERADE Linie, keine Welle. Elias 20.09.2026: „ich will das das
-   unterstrichene gerade ist also die linie weil aktuell sind es eine
-   längere schräge und zwei kleinere" — die Welle zerfiel in der
-   Koranschrift in Stücke. Die Linie bleibt trotzdem: eine Markierung darf
-   nicht allein an der Farbe hängen.
-   Dieselben Regeln ein zweites Mal mit „tajweed-karte-": das ist das große
-   Wort in der Karte, dessen Markierungen getrennt vom Lesetext gesetzt
-   werden (js/quran-markierung.js, tajweedHighlightsSetzen). */
-::highlight(tajweed-rot),    ::highlight(tajweed-karte-rot){    color:var(--tj-rot);    text-decoration:underline solid var(--tj-rot);    text-decoration-thickness:.08em; }
-::highlight(tajweed-orange), ::highlight(tajweed-karte-orange){ color:var(--tj-orange); text-decoration:underline solid var(--tj-orange); text-decoration-thickness:.08em; }
-::highlight(tajweed-blau),   ::highlight(tajweed-karte-blau){   color:var(--tj-blau);   text-decoration:underline solid var(--tj-blau);   text-decoration-thickness:.08em; }
-::highlight(tajweed-lila),   ::highlight(tajweed-karte-lila){   color:var(--tj-lila);   text-decoration:underline solid var(--tj-lila);   text-decoration-thickness:.08em; }
+/* ⛔⛔ KEINE LINIE — nur die Farbe. Elias am 20.09.2026, 02:2x, mit Bild aus
+   al-Mulk: „das dhal hat keine gerade linie die sie unterstreicht, das
+   stört" → „ouh es ist wegen dem kasra" → „lass die unterstreichungen ganz
+   weg am besten". Das gilt.
+   Was dahinter steckte: die Kasra unter dem Dhāl kreuzte die Linie, und der
+   Browser lässt die Linie dort von selbst aus (`text-decoration-skip-ink`);
+   bei einem schmalen Buchstaben blieb nichts übrig, beim Yāʾ traf es den
+   Bogen. Es gäbe eine Lage unter allem (`text-underline-position:under` +
+   `skip-ink:none`, im Pane bei 80 px verglichen) — er will aber gar keine
+   Linie, und sein Satz gilt vor meiner Begründung von v536 („eine Markierung
+   darf nicht allein an der Farbe hängen"). Die Welle davor (v536) und die
+   gerade Linie (v538: „ich will das das unterstrichene gerade ist") sind
+   damit beide Geschichte.
+   Dieselben Regeln ein zweites Mal mit „tajweed-karte-": das große Wort in
+   der Karte (js/quran-markierung.js, tajweedHighlightsSetzen); dort zeigen
+   die Flächen unter den Buchstaben ohnehin, was gewählt ist. */
+::highlight(tajweed-rot),    ::highlight(tajweed-karte-rot){    color:var(--tj-rot); }
+::highlight(tajweed-orange), ::highlight(tajweed-karte-orange){ color:var(--tj-orange); }
+::highlight(tajweed-blau),   ::highlight(tajweed-karte-blau){   color:var(--tj-blau); }
+::highlight(tajweed-lila),   ::highlight(tajweed-karte-lila){   color:var(--tj-lila); }
 
 /* Der Rückfall für Browser ohne diese Schnittstelle: das GANZE Wort wird
    unterstrichen. Ungenauer als ein Buchstabe, aber sichtbar — sonst
