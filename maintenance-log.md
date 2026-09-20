@@ -5957,3 +5957,231 @@ Elias mit Bild (Handyuhr 06:15, die Meldung über dem Korantext von al-Mulk): �
 ## 20.09.2026, 14:17 — v549: Markieren links, Ayah genau mittig, Verdecken rechts (`8e12c32`)
 
 Elias mit Bild (Handyuhr 14:06): „markieren soll ganz nach links, ayah soll mittig stehen und stelle sicher das es die mitte ist also die mitte des buchstabens auch die mitte des bildschirms ist und verbergen soll ganz rechts stehen". Reihenfolge im Markup getauscht (btnTajweedModus, btnAyahListe, btnHifzVerdecken), damit auch die Tastatur-Reihenfolge stimmt. .hifz-knoepfe ist jetzt ein Gitter (1fr auto 1fr) statt flex mit space-between: dort hing die Lage des mittleren Knopfes an den Breiten der beiden äußeren, und „Markieren" wird im Modus zu „Markieren aus". Im Pane gemessen (ohne Ton, ohne Sure): Abweichung der Knopfmitte 0,0 px bei 360, 375 und 412 px, auch mit „Markieren aus", kein Überlauf. Das Wort „Ayah" allein steht 10,2 px rechts der Mitte (Zeichen links im Knopf) — als Frage an Elias, nicht eigenmächtig geändert. pruefe-markierung.mjs: fünf neue Proben, Störtest e. validate 36 grün, 119 Prüfer / 5 rot / kein NEU rot, pruefe-ausgeliefert Exit 0.
+
+## 2026-09-20 14:27 – Wöchentliche Wartung (So-Check)
+
+⚠️ **Dieser Lauf ist neben einer laufenden Sitzung gestartet.** Um 14:14 lagen
+`index.html`, `sw.js` und `werkzeuge/pruefe-markierung.mjs` unfertig im
+Arbeitsverzeichnis (v549 im Bau); um 14:23 waren sie committet (`8e12c32`,
+`8d8bd79`) und ausgeliefert. Erst danach habe ich veröffentlicht — vorher wäre
+halbfertiger Code von Elias' Sitzung auf Cloudflare gelandet. Committet habe
+ich ausschließlich meine eigenen Dateien; `werkzeuge/gedaechtnis-wortlaut.mjs`
+liegt seit dem 16.09. fremd geändert da und bleibt unangetastet.
+
+**Schritt 0** — `git pull --ff-only`: schon aktuell. Arbeitsmarke gesetzt
+(`arbeit.mjs --beginne "Wartungslauf" --schritte 7`).
+`pruefe-volles-programm.mjs` Exit 0: Quelle, Kopie, Prompt-Kurzliste (13
+Punkte) und Messwerkzeuge deckungsgleich, alle 56 aufgerufenen Werkzeuge
+freigegeben, alle 11 absoluten Pfade im Lesebereich.
+
+**Schritt 0a** — `pruefe-laeufe.mjs --tage 30` Exit 0: **jeder geplante Termin
+der letzten 30 Tage hat einen abgeschlossenen Lauf.** 336 Läufe protokolliert,
+0 abgebrochen, 0 gar nicht gelaufen. (6 quittierte Altlücken, 13 Termine mit
+ausgeschaltetem Rechner — beides kein Befund.) ⚠️ Eine Zeile daraus gehört
+gelesen: `Routinen-Status.md` hinkt bei `vokabeltrainer-wartung` **4 Tage**
+hinterher (Notiz 16.09., Log 20.09.) — die Notiz bekommt ihren Abschnitt erst,
+wenn eine Routine fertig wird.
+
+**Schritt 0b / Schritt 4 (Samsung Notes)** — `export-index.mjs --sicherung`
+Exit 0: **nichts Neues.** Alle acht Notizen unverändert (Arabya Bayna Yadayk 1A
+283 S. · Grammatik Heft 15 · Madina Buch 1 (Beschriftet) 146 · Vokabelheft 18 ·
+Musterlösung 15 · Pronomen & Endungen 5 · Pronomen & Konjunktionen 7 ·
+Zwischenprüfung 4). Kein Rendern, kein `--gesehen`, kein Export von Hand nötig.
+
+**Schritt 1 (Buchführung Aufnahmen)** — `get_recordings` liefert **21 Einträge,
+einer mehr als am 17.09.**:
+
+> 🆕 **Folge 21 „AB1A Kapitel 3"**, eingestellt 20.09.2026 09:29 UTC,
+> https://youtu.be/_CbVejkRc5c — 4 Tage nach Folge 20.
+
+In `transcripts/backlog.md` eingetragen (Tabellenzeile + eigener Block, Kopf
+auf „21 Einträge" nachgezogen). Das Kapitel steht im Titel, es ist also nicht
+geraten; der Unterricht bleibt in **Arabiyya Bayna Yadayk 1A**. ⛔ Rohmaterial
+(Untertitel, Ton, Whisper, Sprecherspur) fehlt — das holt
+`arabicroots-backfill-retry`, nicht dieser Lauf. `transcripts/` ist per
+`.gitignore` ausgeschlossen, daraus entsteht kein Commit.
+
+**Schritt 1b (Regelauswertung)** — `rueckstand.mjs --knapp` Exit 0:
+**kein Rückstand.** Kein Rohmaterial ohne Regeln, also keine Fundstellensuche,
+keine neue Regel, kein Eintrag unter „Wartet auf Elias".
+
+**Schritt 1c (das volle Programm)**
+
+- `vorrat.mjs --stand … --app auto` Exit 0, KV **erreichbar** (Stand 20.9.,
+  14:05:34): App-Auswahl `madina-1 bis 12 | bayna-yadayk-1 bis 2`. Die vier
+  Zustandsdateien sind geschrieben: `eigene-woerter.json` **14** ·
+  `auswendig.json` **28 Suren + 5 einzelne Verse** · `abgelehnt.json` **45 an
+  23 Wörtern** · `boxen.json` **4523 Wörter, davon 4400 in Box 1**.
+  `FREIGESCHALTET` war schon aktuell. **Keine Zeile „Lernstand automatisch
+  mitgewachsen"** — die Angabe ist unberührt.
+- Gegenprobe `get_learning_progress` → `vorrat.mjs --lernstand`:
+  **unverändert** (madina-1 24 · madina-2 31 · madina-3 34 · bayna-yadayk-1 16 ·
+  -2 16 · -3 16). Die Abweichung zu seiner Angabe (12 bzw. 2) steht seit dem
+  17.09. als Posten auf seiner Warte-Seite und wird hier nicht neu gefragt.
+- `vorrat.mjs` Exit 2 → **1 von 297 Wörtern unvollständig**, und zwar genau der
+  Satz, den die Sitzung um 04:03 geschrieben hat: `gram-fem-kubra` كُبْرَى
+  („Die große Schwester ist Ärztin.") stand in **keinem Satzmodus-Thema**, weil
+  ihm die Markierung fehlte. ⭐ Das ist der Fall aus 1b.4, Stufe 1 — ein
+  vorhandener Satz mit freiem Platz (0 von 3 belegt), keine Stunde Arbeit.
+- **Behoben:** `markierung-setzen.mjs` hat `nat-bestimmtheit-01` auf
+  الْأُخْتُ الْكُبْرَى gesetzt. Beide Wörter tragen اَلْ, bilden also eine
+  Wortgruppe; das unbestimmte طَبِيبَةٌ dahinter ist die Aussage — genau der
+  Gegensatz, den der Lehrer an الْمَسْجِدُ الْكَبِيرُ gegen الْمَسْجِدُ كَبِيرٌ
+  zeigt (Folge 13, 3:11). Markierungen **749 → 750**, Regeln 103, ausgeblendet
+  10. Die Regel liegt im Thema „Adjektiv".
+  ⛔ Nicht gemacht: `mubtada-khabar-genus-01` mit demselben Satz entsperren. Sie
+  passt inhaltlich (الْأُخْتُ weiblich → طَبِيبَةٌ weiblich), ihr Ausblend-Grund
+  nennt aber ausdrücklich **einen Beispielsatz aus dem Buch** — dieser hier ist
+  verfasst. Das entscheidet eine Sitzung, nicht die Wartung.
+- Nachgemessen: `vorrat.mjs --knapp` Exit 0 — **alle 297 freigeschalteten
+  Wörter sind nach allen 13 Punkten vollständig.**
+- Prüfer aus 1c.5: `pruefe-saetze.js` Exit 0 (449 Sätze, 3413 Lexikon-
+  Vergleiche, 2 leichte Abweichungen an 50192, **0 schwere**) ·
+  `pruefe-funktionen.js` Exit 0 (297 von 297 Infokarten nennen eine Funktion,
+  „nur Wort" 0) · `pruefe-duplikate.js` Exit 0 (Eichung 4/4; 2 Buchdubletten
+  ausgeblendet, 1 bewusst nebeneinander, 2 entscheidet die App nach seiner
+  Grundregel — alles kein Befund) · `pruefe-eigene-vorrang.mjs` Exit 0 (alle
+  vier Werkzeuge sehen dieselbe Fassung, alle messen **297**) · `validate.js`
+  36 Prüfungen, 2 bekannte Hinweise (لَبَنٌ ohne sg, مِكْوَاةٌ ohne pl).
+- Satzmodus-Kategorien: `ok  alle 14 besetzt, 2–14 erreichbare Regeln je
+  Kategorie`; 101 von 103 Regeln einsortiert, 2 absichtlich ohne.
+- **1c.7 (Fragenseite)** — `aussenbelege.mjs`: **0 offene Felder**, also nichts
+  zu belegen. `woerterbuch-belege.mjs`: 11 Belege, vorher 11 (unverändert); 9
+  zusammengesetzte Formen werden bewusst nicht gefragt.
+  `wartungsfragen-artefakt.mjs`: **„Nichts offen — alle Angaben da."** ⭐ Das
+  ist die beste Meldung, die dieses System hervorbringen kann, und sie steht
+  seit dem 16.09. Die Seite muss trotzdem neu veröffentlicht werden, sonst
+  zeigt sein Artefakt weiter alte Fragen.
+- **1c.8 (Warte-Seite)** — `wartet-auf-elias.mjs` Exit 2:
+  **19 Entscheidungen, davon 1 mit Stückarbeit (92 Einzelstücke), 18 nur
+  ansehen und wählen.** Gemessen 14:20:44. Der Artefakt-Wächter meldet nichts —
+  keine Seite ohne URL, keine Zuordnung ins Leere, keine Seite ohne Liste.
+- **1c.8b** — `freigabe-artefakt.mjs`: **92 Fundstellen aus 7 Folgen**
+  (F6 15 · F14 15 · F15 15 · F16 15 · F17 15 · F19 4 · F20 13),
+  Speicherschlüssel `regelkandidaten-v1`.
+- **1c.8c** — drei Seiten neu gebaut, und **drei haben sich geändert**:
+  `regelauswahl.html` (103 Regeln, 14 Kategorien, 0 ohne Kategorie, 36 mit nur
+  1–2 Sätzen) und `verschmelzung.html` (8 Gruppen, 21 Regeln) laut
+  `git status --short`; `artefakte/regelpruefung.html` sagt es selbst
+  („⚠️ GEÄNDERT gegenüber dem letzten Bau", 182 KB) — `git status` kann das
+  nicht melden, weil `artefakte/` in `.gitignore` steht.
+
+**Schritt 1d (Regelsammlung)** — `regeln-holen.mjs` Exit 0: im abgeglichenen
+Stand (20.9., 14:06:33) liegt **keine Regelsammlung**. ⚠️ Das heißt nicht
+„nichts eingetragen", sondern nur, dass der Schlüssel `vt_regeln` im
+hochgeladenen Stand fehlt. Folgerichtig meldet `--merken` Exit 1 („Nichts zu
+merken: `.regeln-stand.neu.json` fehlt") — kein Fehler, sondern die Folge der
+leeren Ausgabe. `regelsammlung-wache.mjs --aufnahmen .aufnahmen.json` Exit 0:
+21 Folgen gelesen, `asma-khamsa-vollstaendig-01` wartet weiter (kein Treffer ab
+Folge 20), Folge 19 hat ihre Karten, 8 Notizen im Ordner Arabisch\Grammatik —
+**nichts Neues**; `--merken` durchgelaufen.
+`regelkategorien-seite.mjs` Exit 0: 103 Regeln in 14 Kategorien, **0 „Nicht
+zuordbar"**, gezählt über 324 Sätze, die er sieht (603 Satzstellen). Die vier
+„zuerst"-Kategorien sind **unverändert**: Genitiv (89) · إِضَافَة (68) ·
+Kasus (58) · Adjektiv (44).
+
+**Schritt 1e** — `pruefe-pflegeplan.mjs` Exit 0: 28 Antworten über eine
+Routine, 2 in einer Sitzung, 26 ohne Pflegebedarf, **0 Lücken**; alle sieben
+Störtests greifen.
+
+**Schritt 1f** — `fachbegriffe-finden.mjs` Exit 0: **0 unentschiedene
+Kandidaten** aus 103 Regeln (erwartbar, es kam keine neue Regel dazu).
+`fachbegriffe-nachschlagen.mjs --zeigen`: Eichung zweiseitig in Ordnung
+(تشكيل belegt, مربوطة und das erfundene Wort nicht), 0 offene Wörter.
+
+**Schritt 2 (Vokabelabzug)** — `hole-vokabeln.mjs`: 4433 Einträge, 11 eigene
+Vokabeln. Je Buch: bayna-yadayk-1 231 · -2 552 · -3 445 · -4 881 · madina-1
+298 · madina-2 445 · madina-3 1238 · quran 343. `baue-vokabelpaket.mjs`:
+**UNVERAENDERT** — dasselbe Paket wie beim letzten Lauf, also **kein**
+Handlungsbedarf und keine Bitte, etwas neu einzulesen. Damit ist auch die
+Buchtabelle gegenüber dem 17.09. unverändert.
+`get_unlocked_chapters`: madina-1 Kapitel 1–11, madina-2 1–24 (35 Einträge) —
+⚠️ arabicroots kennt madina-1 weiter nur bis 11, `js/kern.js` steht auf 12,
+weil Elias es gesagt hat. Ein einmal freigeschaltetes Kapitel wird nicht
+zugemacht; `--auch-schliessen` bleibt ungenutzt.
+
+**Schritt 3** — `vocab-data.js` nicht angefasst. Die Anreicherungsschicht
+(Beispielsätze, Quranbelege) bleibt, wie sie ist.
+
+**Schritt 5 (Lernstand als Hinweis)** — `get_personal_vocabulary`: **11
+Einträge, unverändert** (jüngste Änderung 18.07.2026), alle mit
+`word_type: "other"`. `get_weak_vocabulary` (Schwelle 0,34): 22 Wörter.
+Zwei Muster, beide als **Beobachtung**, nicht als Auftrag:
+1. **Die neun Zahlwörter aus madina-1 Kapitel 24 stehen alle bei 0 %**
+   (وَاحِدٌ, أَرْبَعَةٌ, خَمْسَةٌ, سِتَّةٌ, سَبْعَةٌ, ثَمَانِيَةٌ, تِسْعَةٌ,
+   عَشَرَةٌ — 3 bis 4 Versuche, kein einziger richtig). Genau die Karten, deren
+   Feld `pl` nicht den Plural, sondern die andere Genusform trägt (v517,
+   `eiche-zahlplural.mjs`). Der Zusammenhang ist plausibel, aber **nicht
+   gemessen** — was dort statt „Plural" stehen soll, entscheidet sein Lehrer.
+2. **Die „(gr)"-Karten** (نَعْتٌ, مَنْصُوبٌ) stehen ebenfalls bei 0 %. Das ist
+   dieselbe Karte, zu der auf seiner Warte-Seite die Frage steht, ob „(gr)"
+   ausgeschrieben werden soll (23 Karten).
+   Seine eigenen Wörter أَلْمُهَنْدِسٌ (0 von 7) und لَحْمٌ (0 von 5) sind seit
+   Juli nicht mehr drangekommen.
+
+**Schritt 6 (Qualitätssicherung)** — Sammellauf `alle-pruefer.mjs`, zweimal.
+
+Beim **ersten** Lauf: 119 Prüfer, 5 rot, davon **1 NEU ROT** —
+`pruefe-kreislaeufe.mjs`: „`artefakte/regeln.json` ist ÄLTER als
+`grammar-data.js`". Das war meine eigene Markierung eine Stunde vorher; mit
+`node werkzeuge/regeln-sammeln.mjs` neu erzeugt, danach Exit 0. ⭐ Der
+Exitcode 2 von `alle-pruefer.mjs` (seit `4c2dda2`) hat hier zum zweiten Mal
+echt gegriffen — ohne ihn wäre das als „Exit 0 = alles grün" durchgegangen.
+
+Nach dem Veröffentlichen: **119 Prüfer, 3 rot, kein NEU ROT** (Exit 0):
+- `pruefe-taschkil.js` Exit 1 — **29 Befunde in 25 Wörtern, gebündelt 24
+  Fragen.** Wartet auf Elias, steht auf seiner Seite. ⛔ Nicht selbst
+  vokalisiert.
+- `pruefe-themen.mjs` Exit 2 — **3 Punkte für Elias**, Kandidaten, kein Urteil.
+  Ebenfalls auf seiner Seite.
+- `pruefe-gedaechtnis-zahlen.mjs` Exit 1 — „höchste Fassung im Gedächtnis:
+  Vault 549, gemessen 550". Mit Schritt 8 dieses Laufs erledigt.
+
+Alles andere grün, darunter die Eichungen: `eiche-harf-jarr` 17/17 ·
+`eiche-zahlplural` 17/17 · `eiche-taschkil-beleg` 7/7 (3 müssen durchfallen) ·
+`eiche-plural-beleg` 7/7 · `eiche-datumsmuster` 16/16 ·
+`pruefe-erreichbarkeit-eichung` 3/3 · `eiche-wortart-knopf` ok ·
+`eiche-fragenreihenfolge` („die Fragendatei ist leer — es ist nichts offen").
+`pruefe-markierungen.js`: alle 6 harten Prüfungen auf 0, 318 von 750
+Markierungen gegen ihre Regelbedingung prüfbar, 0 Verstöße.
+`pruefe-schreibpfade.mjs`, `pruefe-artefakt-inhalt.mjs`,
+`pruefe-datumsangaben.mjs`, `pruefe-freigaben.mjs`, `pruefe-volles-programm.mjs`
+alle Exit 0.
+
+**Ausgeliefert** — `CACHE_NAME` v549 → **v550**, dann
+`veroeffentlichen.mjs --mit-daten`: 107 Dateien, 8,86 MB, 2 neue Dateien
+hochgeladen, Deployment durch. Gegenprobe in `.deploy/`: `sw.js` **v550**,
+Regeln **92 id-Zeilen**, Markierungen **750** — beides deckungsgleich mit dem
+Repo. `pruefe-ausgeliefert.mjs` Exit 0 (107 Dateien deckungsgleich),
+`pruefe-erreichbarkeit.js` danach Exit 0 („Jede Regel ist erreichbar, und der
+ausgelieferte Stand ist aktuell"). Gedächtnis-Spiegel automatisch nachgezogen:
+**1 Notiz neu geschrieben, 6 unverändert.**
+⚠️ Access-Nachweis für `--mit-daten` ist **11 Tage alt** (09.09.) — noch gültig,
+aber er altert.
+
+### Was in den Bericht gehört
+
+⭐ **App schließen und neu öffnen.**
+
+🔴 **Vier Seiten sind gebaut und warten auf eine Sitzung** — veröffentlichen
+kann diese Routine nicht, und jede gehört unter **ihre** Adresse, sonst
+entsteht eine zweite Seite und seine gespeicherten Antworten bleiben zurück:
+
+| Datei | Adresse | was sich geändert hat |
+|---|---|---|
+| `artefakte/wartungsfragen.html` | 5ChpdN9n7PAiTY4B5ZHud3 | „Nichts offen" — sein Artefakt zeigt noch alte Fragen |
+| `artefakte/wartet-auf-elias.html` | VmQqStC4ayzrvkz1GiJaEa | 19 Entscheidungen, Stand 14:20 |
+| `regelauswahl.html` | da4af296-67c5-4055-a2e7-35defc375007 | geändert laut `git status` |
+| `verschmelzung.html` | LMHMc79nzyNS3BZpm76kqW | geändert laut `git status` |
+| `artefakte/regelpruefung.html` | 4iMdxRvKkFHj699cfyHbra | sagt selbst „GEÄNDERT gegenüber dem letzten Bau" |
+| `artefakte/freigabe.html` | d9916aee-b679-4d91-bb0c-c3642f8889ac | 92 Fundstellen |
+| `artefakte/regelkategorien.html` | DHhYFwtTNJADVwE2tVUDz3 | neu gebaut, Reihenfolge unverändert |
+
+⬜ **Offen, aus diesem Lauf:**
+- `Routinen-Status.md` hinkt 4 Tage hinterher (16.09. gegen 20.09.).
+- `werkzeuge/gedaechtnis-wortlaut.mjs` liegt seit dem 16.09. ungeprüft geändert
+  im Arbeitsverzeichnis — nicht von diesem Lauf, nicht committet.
+- Zwei Auftragsdateien dieses Laufs bleiben unversioniert liegen
+  (`.kapitel-stand.json`, `.markierung-auftrag.json`); sie stehen nicht in
+  `.gitignore` und tauchen im nächsten `git status` auf.
+

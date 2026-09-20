@@ -3011,6 +3011,9 @@ const SENTENCE_TAGS = {
     { ruleId: "mudaf-ilayh-01", matchText: "التَّاجِرِ" },
     { ruleId: "harf-jarr-min-ila-01", matchText: "مِنَ الْمَسْجِدِ" },
     { ruleId: "marfu-grundfall-01", matchText: "قَرِيبٌ" }
+  ],
+  "gram-fem-kubra": [
+    { ruleId: "nat-bestimmtheit-01", matchText: "الْأُخْتُ الْكُبْرَى" }
   ]
 };
 
