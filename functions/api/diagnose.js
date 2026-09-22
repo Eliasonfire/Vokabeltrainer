@@ -65,9 +65,43 @@ export async function onRequest(context){
   if (!kennung) return antwort({ fehler: 'keine Kennung im Access-Token' }, 401);
   if (!env.STAND) return antwort({ fehler: 'KV-Speicher nicht gebunden' }, 500);
 
-  const schluessel = 'diagnose:' + kennung;
+  /* ⛔⛔ EIN SCHLÜSSEL JE GERÄT, NICHT JE MAILADRESSE (22.09.2026)
+
+     Hier stand `'diagnose:' + kennung`, also allein die Mailadresse. Damit
+     schreiben alle Geräte in DENSELBEN Eintrag, und `put()` überschreibt.
+
+     Gemessen am 22.09.2026, und es war mein Baufehler, nicht seiner: Elias
+     schickte erst vom Tablet (Serverzeit 20:23:10Z), dann vom Handy
+     (20:37:37Z). Als ich nachsah, war der Tablet-Bericht weg — obwohl er beide
+     geschickt hatte. Zwei Geräte, ein Schlüssel, der letzte gewinnt. Genau das
+     Muster, gegen das der Geräteabgleich der App sonst überall gebaut ist.
+     [[ausfall_ist_unsichtbar_gebaut]] · [[zwei_sitzungen_eine_todo]]
+
+     Die Gerätekennung schickt die App im Kopf `X-Geraet`. Fehlt sie (ältere
+     Fassung, die noch im Cache läuft), bleibt es beim alten Schlüssel — sonst
+     verlöre ein Gerät seine Diagnose genau dann, wenn sie gebraucht wird.
+     ⚠️ Begrenzt und gesäubert: die Kennung geht in einen Speicherschlüssel,
+     und alles außer Buchstaben, Ziffern und Bindestrich fliegt raus. */
+  const geraetRoh = request.headers.get('X-Geraet') || '';
+  const geraet = geraetRoh.replace(/[^A-Za-z0-9-]/g, '').slice(0, 24);
+  const schluessel = 'diagnose:' + kennung + (geraet ? ':' + geraet : '');
 
   if (request.method === 'GET'){
+    /* ⭐ Ohne Gerätekennung zeigt GET, was da ist — sonst müsste man raten,
+       wie die Geräte heißen. `list` gibt die Schlüssel, nicht die Inhalte;
+       geholt wird nur, was wirklich gebraucht wird. */
+    if (!geraet && request.url.includes('alle=1')){
+      const liste = await env.STAND.list({ prefix: 'diagnose:' + kennung });
+      const teile = [];
+      for (const k of liste.keys){
+        const w = await env.STAND.get(k.name);
+        if (w) teile.push('# ===== ' + k.name + ' =====\n' + w);
+      }
+      return new Response(teile.join('\n\n') || '', {
+        status: 200,
+        headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' }
+      });
+    }
     const wert = await env.STAND.get(schluessel);
     return new Response(wert || '', {
       status: 200,
@@ -84,7 +118,7 @@ export async function onRequest(context){
        und die laesst sich nicht aus Versehen falsch stellen. Ausserdem sieht
        Claude sofort, ob die Diagnose von eben ist oder von vorgestern. */
     const kopf = '# Diagnose vom ' + new Date().toISOString() + '\n'
-               + '# ' + kennung + '\n\n';
+               + '# ' + kennung + (geraet ? ' · Gerät ' + geraet : ' · Gerät unbekannt') + '\n\n';
     await env.STAND.put(schluessel, kopf + text);
     return antwort({ ok: true, gespeichert: text.length });
   }

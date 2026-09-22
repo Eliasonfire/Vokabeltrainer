@@ -1488,9 +1488,27 @@ document.getElementById('btnDiagnoseSenden')?.addEventListener('click', async (e
   knopf.disabled = true;
   knopf.textContent = 'Wird geschickt …';
   try {
+    /* ⛔⛔ DIE GERÄTEKENNUNG MUSS MIT — sonst löscht das zweite Gerät das erste.
+       Bis zum 22.09.2026 lag die Diagnose unter `diagnose:<mailadresse>`, und
+       `put()` überschreibt: Elias schickte erst vom Tablet (Serverzeit
+       20:23:10Z), dann vom Handy (20:37:37Z), und der Tablet-Bericht war weg.
+       Mein Baufehler, nicht seiner.
+       ⭐ `zeitGeraet()` gibt es schon (js/zeitmessung.js) und sie wird bewusst
+       NICHT abgeglichen (js/sync.js Zeile 125) — genau deshalb ist sie je
+       Gerät eindeutig und hier die richtige Kennung. Eine zweite zu würfeln
+       wäre eine zweite Wahrheit über dasselbe Gerät.
+       ⚠️ Fehlt die Funktion (alte Fassung im Cache), geht der Kopf leer raus
+       und der Server fällt auf den alten Schlüssel zurück — lieber eine
+       Diagnose ohne Gerätenamen als gar keine. */
+    const kopfzeilen = { 'content-type': 'text/plain; charset=utf-8' };
+    if (typeof zeitGeraet === 'function'){
+      try { kopfzeilen['X-Geraet'] = zeitGeraet(); } catch(e){
+        console.warn('[diagnose] Gerätekennung nicht lesbar:', e && e.message);
+      }
+    }
     const antwort = await fetch('/api/diagnose', {
       method: 'PUT',
-      headers: { 'content-type': 'text/plain; charset=utf-8' },
+      headers: kopfzeilen,
       body: text
     });
     if (antwort.ok){
