@@ -379,6 +379,30 @@ function uebungZarfMitGenitiv(z, i){
     && String(n.rolle || '').startsWith('nach حَرْف جَرّ / ظَرْف'));
 }
 
+/* ⭐⭐ `hinweisVerraet` — PFLICHTFELD bei jeder Übung mit `hinweis` (22.09.2026).
+
+   Elias: „Satzmodus-Hinweise: nur die verräterischen erst nach dem Versuch
+   zeigen." Er hatte am 07.09.2026 schon Ja gesagt, dass Hinweise erst nach dem
+   Versuch kommen sollen; offen war nur, ob bei ALLEN oder nur dort, wo der
+   Hinweis die Antwort schon verrät. Die Antwort ist: **nur dort**.
+
+   true  = der Hinweis nennt die Lösung oder eine Antwortoption. Er bleibt
+           verborgen, bis beantwortet ist, und erscheint mit richtig/falsch.
+           Klarster Fall ist Übung 10: der Hinweis zählt يَدٌ, عَيْنٌ, أُذُنٌ,
+           رِجْلٌ und بِنْتٌ auf — das sind die Wörter, nach denen gefragt wird.
+   false = der Hinweis ordnet nur ein und nimmt nichts vorweg. Er steht sofort
+           da, so wie bisher.
+
+   ⛔ KEIN VORGABEWERT, und das ist der ganze Zweck. Wer eine neue Übung mit
+   Hinweis anlegt und das Feld vergisst, wird von `werkzeuge/pruefe-hinweise.mjs`
+   rot gemeldet — statt still auf „verrät nichts" zu rutschen, was der bequeme
+   und falsche Fall wäre. Elias ausdrücklich: „je Übung ein Pflichtfeld
+   hinweisVerraet, kein Vorgabewert." [[vorgabewert_sieht_aus_wie_befund]]
+
+   ⚠️ Übung 6 (kasus) hat gar keinen Hinweis und deshalb auch kein Feld.
+   Übung 7 (haraka) trägt `aufgabe` statt `hinweis`: ihr Text IST die
+   Aufgabenstellung („Das Wort steht ohne sein Endzeichen"), kein Hinweis —
+   er bleibt immer sichtbar. */
 const UEBUNGEN = [
   {
     id:'mubtada-khabar', nr:1, name:'مُبْتَدَأٌ / خَبَرٌ — Satzteile', art:'mehrfach',
@@ -391,6 +415,7 @@ const UEBUNGEN = [
        Schluessel 1 L9 S. 30). Deshalb steht die Unterscheidung als Hinweis an
        der Aufgabe, nicht erst in der Aufloesung. */
     hinweis:'مُبْتَدَأٌ + خَبَرٌ bilden einen ganzen Satz („der Lehrer ist neu"). Ein Adjektiv, das nur beschreibt („eine große Moschee"), ist نَعْتٌ.',
+    hinweisVerraet:true,
     baue(z){
       const mub = [], kha = [];
       z.forEach((t,i)=>{
@@ -417,6 +442,7 @@ const UEBUNGEN = [
   {
     id:'nat', nr:2, name:'نَعْتٌ — Adjektiv zum Nomen', art:'mehrfach',
     hinweis:'Das نَعْتٌ stimmt mit seinem Wort in Fall, Zahl, Geschlecht UND Bestimmtheit überein.',
+    hinweisVerraet:true,
     baue(z){
       const treffer = [];
       z.forEach((t,i)=>{ if (t.rolle.includes('نَعْت')) treffer.push(i); });
@@ -431,6 +457,7 @@ const UEBUNGEN = [
        Wort, das er bezeichnet, trägt im Satz keines. Ohne den Zusatz sähe der
        Hinweis aus, als widerspräche er sich. */
     hinweis:'Der مُضَافٌ trägt im Satz weder Tanwīn noch Artikel; das مُضَافٌ إِلَيْهِ steht im Genitiv.',
+    hinweisVerraet:true,
     baue(z){
       /* ⛔ Vorher stand hier zweimal `findIndex` — das nahm nur das ERSTE
          Vorkommen. In „اسْمُ التَّاجِرِ مَحْمُودٌ وَاسْمُ الطَّبِيبِ سَعِيدٌ."
@@ -489,6 +516,7 @@ const UEBUNGEN = [
   {
     id:'jarr-paar', nr:4, name:'حَرْفُ جَرٍّ + مَجْرُورٌ — Präposition', art:'mehrfach',
     hinweis:'Der حَرْفُ جَرٍّ setzt das Nomen dahinter in den Genitiv.',
+    hinweisVerraet:true,
     baue(z){
       /* ⛔ DER FALL, DEN ELIAS GEMELDET HAT. Vorher entstand je Partikel eine
          eigene Aufgabe mit genau einer gueltigen Stelle. In
@@ -523,6 +551,7 @@ const UEBUNGEN = [
   {
     id:'alle-majrur', nr:5, name:'Alle مَجْرُورٌ — Genitiv', art:'mehrfach',
     hinweis:'Genitiv steht nach einem حَرْفُ جَرٍّ, nach einem ظَرْفٌ, als مُضَافٌ إِلَيْهِ — und als نَعْتٌ zu einem Wort im Genitiv.',
+    hinweisVerraet:true,
     baue(z){
       const ziele = z.map((t,i)=>t.erwartet==='jarr' ? i : -1).filter(i=>i>=0);
       /* ⛔ Hier stand „— es ist genau eines." bzw. „— es sind N.". Elias am
@@ -550,7 +579,13 @@ const UEBUNGEN = [
        der Lehrer im Unterricht laufend. Deshalb wird das Wort ohne sein
        Endzeichen gezeigt und die sechs echten Zeichen stehen zur Wahl -
        inklusive der Unterscheidung mit und ohne Tanwin. */
-    hinweis:'Das Wort steht ohne sein Endzeichen. Welches gehört dahin? Achte auch darauf, ob ein Tanwīn dazugehört.',
+    /* ⛔ `aufgabe`, nicht `hinweis` (22.09.2026). Dieser Text SAGT die Aufgabe:
+       ohne ihn sieht Elias ein Wort mit fehlendem Endzeichen und weiß nicht,
+       was von ihm verlangt wird. Ihn erst nach dem Versuch zu zeigen hieße,
+       die Übung ohne Fragestellung zu stellen. Elias: „7 haraka: Text ist die
+       Aufgabenstellung, nicht ein Hinweis -> Feld in aufgabe umbenennen,
+       bleibt immer sichtbar." Deshalb trägt Übung 7 kein `hinweisVerraet`. */
+    aufgabe:'Das Wort steht ohne sein Endzeichen. Welches gehört dahin? Achte auch darauf, ob ein Tanwīn dazugehört.',
     baue(z){
       return z.map((t,i)=>{
         if (!t.erwartet || !t.gelesen || t.stimmt === false) return null;
@@ -566,6 +601,7 @@ const UEBUNGEN = [
   {
     id:'wortart', nr:8, name:'اِسْمٌ / فِعْلٌ / حَرْفٌ — Wortart', art:'wahl',
     hinweis:'Im Arabischen zählen auch Adjektive, Adverbien und Ortsangaben als اِسْمٌ — تَحْتَ und هُنَا also auch.',
+    hinweisVerraet:false,
     baue(z){
       return z.map((t,i)=>{
         const a = uebungWortart(t.wort);
@@ -593,6 +629,7 @@ const UEBUNGEN = [
        73 waeren zu leicht: "Sonnen- und Mondbuchstaben" gegen "Iḍāfa" verraet
        sich schon am Wort. */
     hinweis:'Die falschen Antworten stammen aus demselben Thema — es reicht nicht, den Namen zu erkennen.',
+    hinweisVerraet:false,
     baue(z, satz){
       /* ⛔ uebungKeineRegel(): was keine Regel ist, wird hier weder gefragt
          noch als falsche Antwort angeboten (Elias, 19.09.2026 — der Satz
@@ -720,7 +757,12 @@ const UEBUNGEN = [
        Ausnahmen und Verkettungen von maennlichen und weiblichen Begriffen, das
        ist schon wichtig." Beides gilt gleichzeitig und ist kein Widerspruch:
        durchBLAETTERN wollte er das Thema nicht, GEPRUEFT werden schon. */
+    /* ⛔ Der klarste Fall von `hinweisVerraet:true`: die fünf Wörter im
+       Hinweis SIND die Wörter, nach denen gefragt wird. Wer den Hinweis vor
+       dem Versuch liest, muss nichts mehr wissen. Genau diesen Fall fängt die
+       zweite Zusicherung von `werkzeuge/pruefe-hinweise.mjs` mechanisch. */
     hinweis:'Meist zeigt ة das Weibliche an — aber nicht immer. Länder, يَدٌ, عَيْنٌ, أُذُنٌ, رِجْلٌ und بِنْتٌ sind weiblich ohne ة.',
+    hinweisVerraet:true,
     baue(z){
       return z.map((t,i)=>{
         const v = uebungVokabel(t.wort);
@@ -803,6 +845,7 @@ const UEBUNGEN = [
   {
     id:'isara', nr:11, name:'هَذَا / هَذِهِ — Hinweiswort', art:'wahl',
     hinweis:'Das Hinweiswort richtet sich nach dem Geschlecht des Wortes danach (isara-genus-kongruenz-01).',
+    hinweisVerraet:false,
     baue(z){
       /* Vier Schreibungen, zwei Paare. `istFem` sagt, welche der beiden im
          Satz steht - daran haengt die Loesung, und nicht an einer Ableitung
@@ -833,6 +876,7 @@ const UEBUNGEN = [
   {
     id:'fem-form', nr:12, name:'صَغِيرٌ / صَغِيرَةٌ — weibliche Form', art:'wahl',
     hinweis:'Männliche oder weibliche Form? Die Antwort steht im Wort davor — oder im Hinweiswort.',
+    hinweisVerraet:false,
     baue(z){
       return z.map((t,i)=>{
         const v = uebungVokabel(t.wort);
@@ -1380,9 +1424,26 @@ function renderUebung(){
   document.getElementById('uebDe').textContent = a.satz.sentDe || '';
   document.getElementById('uebHerkunft').textContent = herkunft(a.satz);
 
+  /* ⭐⭐ Verräterische Hinweise erst NACH dem Versuch (22.09.2026).
+     Elias: „nur die verräterischen erst nach dem Versuch zeigen."
+
+     Drei Fälle, und alle drei laufen durch dieselbe Zeile:
+     · `aufgabe` (nur Übung 7) — die Fragestellung, immer sichtbar.
+     · `hinweis` mit `hinweisVerraet:false` — ordnet ein, immer sichtbar.
+     · `hinweis` mit `hinweisVerraet:true` — nennt die Lösung, erscheint erst
+       zusammen mit richtig/falsch.
+
+     ⚠️ Der Text wird auch im verborgenen Zustand GESETZT, nicht erst später
+     eingefügt: `renderUebung()` läuft nach dem Beantworten noch einmal, und
+     ein Feld, das nur die eine Hälfte der Fälle füllt, wäre nach dem Wechsel
+     zur nächsten Aufgabe leer. Verborgen wird allein über die Klasse.
+     ⛔ `hidden` versteckt, `visibility` nicht — sonst bliebe der Platz leer
+     stehen und verriete, dass da noch etwas kommt. */
   const hinweis = document.getElementById('uebHinweis');
-  hinweis.innerHTML = arabischHervor(m.hinweis || '');
-  hinweis.classList.toggle('hidden', !m.hinweis);
+  const hinweisText = m.aufgabe || m.hinweis || '';
+  const nochVerbergen = !!(m.hinweis && m.hinweisVerraet && !UEB.beantwortet);
+  hinweis.innerHTML = arabischHervor(hinweisText);
+  hinweis.classList.toggle('hidden', !hinweisText || nochVerbergen);
 
   const wahl = document.getElementById('uebWahl');
   if (a.optionen){
