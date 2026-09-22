@@ -89,6 +89,19 @@
 const FACHBEGRIFF_VOKABELN = [
   {
     id: 'gram-mudaf',
+    /* ⭐⭐ 22.09.2026 — DIESER FACHBEGRIFF STEHT SCHON IM BUCH.
+       Elias mit dem Bild der Suche, auf der مُضَافٌ zweimal stand: „es gibt
+       zwei mudaf, ich möchte eigentlich nur eins haben. lass das in kapitel 24,
+       mache es aber exakt so wie das meine eigene. also gleiche kiste, gleiche
+       beschreibung und nennung und alles … nimm die höhere box."
+       50473 ist die Buchvokabel (madina-1, Kapitel 24, „(gr) Besitzobjekt
+       (Mudaf)"). Mit diesem Feld hängt js/kern.js den Fachbegriff nicht mehr
+       ein, sondern schreibt seine Beschreibung auf die Buchkarte, schaltet sie
+       einzeln frei und zieht den Fortschritt nach.
+       ⚠️ WER DIESE DATEI MIT fachbegriffe-setzen.mjs NEU ERZEUGT, muss das Feld
+       im Auftrag mitgeben — sonst ist es weg und das Wort steht wieder doppelt.
+       werkzeuge/pruefe-buchtausch.mjs wird dann rot. */
+    buchTausch: '50473',
     ar: 'مُضَافٌ',
     de: 'der Besitz — das erste Wort der Genitivverbindung',
     type: 'noun',
