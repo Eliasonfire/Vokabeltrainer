@@ -347,8 +347,17 @@ export const PFLEGEPLAN = [
     ],
     eingaben: { sitzung: 'Seine Satzmodus-Urteile aus dem Regelprüfungs-Artefakt schickt er im Chat; eine Sitzung trägt sie ein (seit 11.09.2026 mit Zeitpunkt, gegen die Schalter der App).',
       werkzeug: 'werkzeuge/urteile-uebernehmen.mjs' },
-    veralten: { routine: W, schritt: '1c.8c', beleg: 'node werkzeuge/regelpruefung-seite.mjs', werkzeug: 'werkzeuge/regelpruefung-seite.mjs',
-      wie: 'die Regelprüfungs-Seite wird mit jeder neuen Regel neu gebaut' },
+    veralten: [
+      { routine: W, schritt: '1c.8c', beleg: 'node werkzeuge/regelpruefung-seite.mjs', werkzeug: 'werkzeuge/regelpruefung-seite.mjs',
+        wie: 'die Regelprüfungs-Seite wird mit jeder neuen Regel neu gebaut' },
+      /* ⭐ 22.09.2026 (v562): `hinweisVerraet` je Übung. Elias: „Bau das bitte
+         so, dass die Routinen es aktuell halten." Das Feld ist ein Urteil über
+         einen TEXT und veraltet still: wer einen Hinweis um ein Beispielwort
+         ergänzt, macht aus einer Einordnung eine Lösung, und nichts meldet
+         sich. Ebenso still ist eine neue Übung ohne das Pflichtfeld. */
+      { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/pruefe-hinweise.mjs', werkzeug: 'werkzeuge/pruefe-hinweise.mjs',
+        wie: 'verräterische Hinweise im Satzmodus bleiben verborgen, bis Elias geantwortet hat — geprüft am echten Aufgabenbestand, nicht an einer Handliste' },
+    ],
   },
   {
     funktion: 'Regelsammlung',

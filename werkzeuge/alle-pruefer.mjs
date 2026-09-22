@@ -383,6 +383,15 @@ const PRUEFER = [
      Kategorie — ohne Fehler und ohne Warnung. Elias am 26.08.2026: "darum
      kuemmert sich aktuell niemand aber stetig geht es hier voran." */
   ['werkzeuge/pruefe-themen.mjs', []],
+  /* ⭐ Verräterische Satzmodus-Hinweise. Elias am 22.09.2026: „nur die
+     verräterischen erst nach dem Versuch zeigen. Bau das bitte so, dass die
+     Routinen es aktuell halten." `hinweisVerraet` ist ein Urteil über einen
+     TEXT — ändert jemand den Hinweis, wird aus einer Einordnung still eine
+     Lösung. Der Prüfer baut dafür den echten Aufgabenbestand (6099 Aufgaben
+     aus 435 Sätzen) und vergleicht ihn mit dem Hinweistext.
+     Zwei Störtests: `--stoertest` (Übung 10 auf false) und `--stoertest-feld`
+     (Übung 1 ohne Pflichtfeld); beide müssen rot werden. */
+  ['werkzeuge/pruefe-hinweise.mjs', []],
   /* ⛔ Verhindert den siebzehnten Fall: in der Nacht auf den 21.08.2026 kamen
      SECHZEHN Eintraege hier dazu — acht Pruefstaende, sieben Eichungen, ein
      Pruefer. Alle waren gebaut, gepusht und nie gestartet worden, und keiner
