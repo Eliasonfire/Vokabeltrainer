@@ -165,10 +165,25 @@ if (fremd.length) {
   process.exit(1);
 }
 
-/* Ein Beispielsatz je Regel — die Stelle, an der er die Regel wirklich sieht. */
+/* Ein Beispielsatz je Regel — die Stelle, an der er die Regel wirklich sieht.
+   ⛔⛔ BIS ZUM 22.09.2026 STAND HIER NUR DAS EINE WORT, ohne Überschrift.
+   Elias als Kommentar auf der Seite, an genau diesem Kasten:
+     „was ist das? ein beispiel oder was?"
+   Ein schwarzer Kasten mit einem einzelnen arabischen Wort darin beantwortet
+   keine Frage, er stellt eine. Jetzt steht der GANZE Satz darin, das markierte
+   Wort hervorgehoben, und darüber das Wort „Beispielstelle".
+   ⛔ Nicht vokalisieren und nicht kürzen: der Satz kommt genau so aus der
+   Datenquelle, aus der ihn auch die App nimmt. [[nur_woerter_die_er_erklaeren_kann]] */
+const SATZ_AR = new Map();
+for (const w of S.VD) if (w && w.sentAr) SATZ_AR.set(String(w.id), w.sentAr);
+for (const s of S.LB) if (s && s.sentAr) SATZ_AR.set(String(s.id), s.sentAr);
+for (const [id, s] of Object.entries(S.BS)) if (s && s.sentAr) SATZ_AR.set(String(id), s.sentAr);
+for (const w of S.FB.concat(EIGENE)) if (w && w.sentAr) SATZ_AR.set(String(w.id), w.sentAr);
+
 const beispiel = {};
 for (const [satzId, liste] of Object.entries(TAGS))
-  for (const t of liste) if (!beispiel[t.ruleId]) beispiel[t.ruleId] = t.matchText;
+  for (const t of liste) if (!beispiel[t.ruleId])
+    beispiel[t.ruleId] = { wort: t.matchText, satz: SATZ_AR.get(String(satzId)) || null };
 
 /* ---------- zuordnen ---------- */
 const mitMuster = THEMEN.filter(t => t.muster);
@@ -261,8 +276,22 @@ for (const [id, g] of gruppen) {
     const stand = r.ausgeblendet
       ? '<span class="lage aus">zurzeit AUS der App</span>'
       : '<span class="lage an">in der App · ' + n + ' Satzstelle' + (n === 1 ? '' : 'n') + '</span>';
-    const bsp = beispiel[r.id]
-      ? '<div class="bsp"><span class="ar">' + esc(beispiel[r.id]) + '</span></div>' : '';
+    /* Das markierte Wort im Satz hervorheben — als exakter Teilstring, damit
+       kein Zeichen verändert wird. Steht es nicht darin (andere Schreibung),
+       bleibt der Satz unverändert; dann wird das Wort daneben genannt. */
+    const b = beispiel[r.id];
+    let bsp = '';
+    if (b) {
+      const satz = b.satz || b.wort;
+      const drin = b.satz && b.wort && b.satz.includes(b.wort);
+      const inhalt = drin
+        ? esc(satz).split(esc(b.wort)).join('<b>' + esc(b.wort) + '</b>')
+        : esc(satz);
+      bsp = '<div class="bsp"><span class="bsplabel">Beispielstelle'
+        + (b.satz && !drin ? ' — markiert ist ' + esc(b.wort) : '')
+        + (b.satz ? '' : ' (nur das Wort, kein Satz hinterlegt)')
+        + '</span><span class="ar">' + inhalt + '</span></div>';
+    }
 
     karten += `
     <div class="regel" data-id="${esc(r.id)}">
@@ -356,7 +385,10 @@ details{margin-top:7px}
 summary{cursor:pointer;color:var(--leise);font-size:12.5px}
 .mehr{color:#b6bfca;font-size:13.5px;margin-top:6px}
 .bsp{margin-top:9px;padding:7px 10px;background:#000;border:1px solid var(--rand);border-radius:7px}
-.bsp .ar{font-size:18px}
+.bsp .ar{font-size:18px;display:block}
+.bsp .ar b{color:var(--gruen,#2fd27a);font-weight:700}
+.bsplabel{display:block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+          color:var(--still,#6b6b75);margin-bottom:5px}
 .wahl{display:flex;gap:7px;margin-top:11px;flex-wrap:wrap}
 .wahl button{flex:1 1 0;min-width:88px;background:#13161b;color:var(--text);
   border:1px solid var(--rand);border-radius:7px;padding:8px 6px;font-size:13px;cursor:pointer}
