@@ -3014,6 +3014,53 @@ const SENTENCE_TAGS = {
   ],
   "gram-fem-kubra": [
     { ruleId: "nat-bestimmtheit-01", matchText: "الْأُخْتُ الْكُبْرَى" }
+  ],
+  "46011": [
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "سَكَنَ" },
+    { ruleId: "schams-qamar-01", matchText: "الطَّالِبُ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْبَيْتِ" }
+  ],
+  "46012": [
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "أَرَادَ" },
+    { ruleId: "hamzatul-wasl-01", matchText: "الْوَلَدُ" },
+    { ruleId: "irab-drei-faelle-01", matchText: "الْكِتَابَ" }
+  ],
+  "46013": [
+    { ruleId: "mubtada-khabar-01", matchText: "السَّكَنُ قَرِيبٌ" },
+    { ruleId: "mina-al-01", matchText: "مِنَ الْمَسْجِدِ" }
+  ],
+  "46014": [
+    { ruleId: "hamzatul-wasl-01", matchText: "الْمَسْجِدُ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْحَيِّ" }
+  ],
+  "46015": [
+    { ruleId: "mubtada-khabar-01", matchText: "الشَّقَّةُ صَغِيرَةٌ" }
+  ],
+  "46016": [
+    { ruleId: "schams-qamar-01", matchText: "السِّتَارَةُ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْغُرْفَةِ" }
+  ],
+  "46017": [
+    { ruleId: "schams-qamar-01", matchText: "السَّجَّادَةُ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْمَسْجِدِ" }
+  ],
+  "46018": [
+    { ruleId: "hamzatul-wasl-01", matchText: "الْفُرْنُ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْمَطْبَخِ" }
+  ],
+  "46019": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "schams-qamar-01", matchText: "الدَّوْرُ" },
+    { ruleId: "marfu-grundfall-01", matchText: "جَدِيدٌ" }
+  ],
+  "46020": [
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "نَظَرَ" },
+    { ruleId: "hamzatul-wasl-01", matchText: "الْوَلَدُ" },
+    { ruleId: "harf-jarr-min-ila-01", matchText: "إِلَى الْمِرْآةِ" }
+  ],
+  "48611": [
+    { ruleId: "schams-qamar-01", matchText: "السَّخَّانُ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْحَمَّامِ" }
   ]
 };
 
