@@ -340,6 +340,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "irab-drei-faelle-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
@@ -358,6 +359,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "marfu-grundfall-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
@@ -376,6 +378,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "harf-jarr-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "حَرْفُ الجَرِّ (Genitivpartikel)",
     shortExplanation: "حَرْف (ḥarf) heißt Buchstabe oder Partikel, und اَلْجَرّ (al-jarr) kommt von مَجْرُور (Genitiv). Ein حَرْفُ الجَرِّ (Plural: حُروفُ الجَرِّ) ist also eine Genitivpartikel – meistens sind das Präpositionen. Eine solche Partikel verändert den Fall des Nomens, das direkt danach kommt, von مَرْفُوع zu مَجْرُور: aus اَلْبَيْتُ (al-baytu) wird فِي الْبَيْتِ (fī l-bayti) \"im Haus\". Merksatz des Lehrers: Der ḥarf al-jarr macht sein Nomen (اِسْم, ism) zu majrūr.",
     color: "nasab",
@@ -420,6 +423,7 @@ const GRAMMAR_RULES = [
      sondern eine Grenze des Werkzeugs. [[stichworttreffer_ist_kein_inhaltstreffer]] */
   {
     id: "harf-jarr-name-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     nichtAufKarteikarten: true,
     name: "Warum die Genitivpartikeln so heißen",
     shortExplanation: "Der Name sagt bereits, was sie tun. حَرْفُ جَرٍّ heißt wörtlich „Buchstabe des Ziehens“ — und was gezogen wird, ist der Fall des Wortes dahinter: es wird مَجْرُور. Dein Lehrer stellt die Frage in Folge 6 selbst und beantwortet sie sofort: „Die heißen die Al-Jarr. Warum? Weil die Majrur machen.“ Und gleich danach nennt er sie „die Buchstaben des Genitivs“. ⭐ Damit hängen drei Begriffe an einer einzigen Wurzel ج ر ر zusammen: جَرّ ist das Ziehen, حَرْفُ جَرٍّ das Wort, das zieht, und مَجْرُور das Wort, das gezogen wurde — die Form مَفْعُول, also das, dem etwas angetan wird. Wer den Namen versteht, muss die Wirkung nicht mehr getrennt lernen. ⭐ Er sagt auch genau, WEN sie ziehen: „Aber sie machen was, مَجْرُور? Den اِسْم danach“ — also das Nomen unmittelbar dahinter, nicht irgendein Wort im Satz. ⚠️ Und er rät ausdrücklich, den arabischen Begriff zu lernen statt „Präposition“: „am besten merkt ihr euch die Begriffe auf Arabisch … حَرْف جَرّ hätte eigentlich komplett reichen sollen“ — das deutsche Wort sei „nur eine Annäherung, damit man das Konzept ein bisschen versteht“. Welche Partikeln dazugehören und was jede bedeutet, steht in den anderen Regeln; hier geht es allein um den Namen.",
@@ -433,6 +437,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "harf-jarr-fi-ala-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "فِي und عَلَى (die ersten zwei Genitivpartikeln)",
     shortExplanation: "Die ersten zwei حُرُوف جَرّ sind فِي (fī) „in\" und عَلَى (ʿalā) „auf\" — und ein حَرْفُ جَرٍّ **setzt das Wort dahinter in den Genitiv**: aus اَلْبَيْتُ wird فِي الْبَيْتِ, aus der Ḍamma wird eine Kasra. اَلْمَسْجِدُ → فِي الْمَسْجِدِ (fī l-masjidi) „in der Moschee\", اَلْمَكْتَبُ → عَلَى الْمَكْتَبِ (ʿalā l-maktabi) „auf dem Schreibtisch\", اَلسَّريرُ → عَلَى السَّريرِ (ʿalā s-sarīri) „auf dem Bett\". Beim Übersetzen besteht der Lehrer auf Genauigkeit: عَلَى heißt „auf\", nicht „über\" – „über\" wäre etwas anderes. Zweites Beispiel, komplett durchanalysiert, aus dem Koran (Sure al-Baqara, Vers 61): لَن نَّصْبِرَ عَلَىٰ طَعَامٍ وَٰحِدٍ (lan naṣbira ʿalā ṭaʿāmin wāḥidin) – „wir werden eine einzige Speise nicht ertragen\"; عَلَى ist der حَرْفُ جَرٍّ, طَعَامٍ das اِسْم مَجْرُور danach. Weitere Präpositionen kommen später; مِنْ (min) und إِلى (ilā) kündigt er am Ende der Stunde für das nächste Mal an.",
     color: "nasab",
@@ -548,6 +553,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "tanwin-eigennamen-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "تَنْوين bei Eigennamen (männlich / weiblich)",
     shortExplanation: "Männliche arabische Eigennamen tragen Tanwin, also die doppelte Endung: مُحَمَّدٌ (Muḥammadun), خالِدٌ (Khālidun), حامِدٌ (Ḥāmidun), ياسِرٌ (Yāsirun), عَمّارٌ (ʿAmmārun), سَعيدٌ (Saʿīdun), عَبّاسٌ (ʿAbbāsun). Weibliche arabische Eigennamen haben kein Tanwin, sondern nur eine einfache Endung – egal ob der Name auf ة endet wie فاطِمةُ (Fāṭimatu), آمِنةُ (Āminatu), عائِشةُ (ʿĀʾischatu) oder nicht wie زَيْنَبُ (Zaynabu), مَرْيَمُ (Maryamu). Der Lehrer nennt das ausdrücklich \"keine große Regel\", aber man soll es sich merken.",
     color: "fem",
@@ -556,6 +562,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "tanwin-nach-harf-jarr-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "تَنْوين nach حَرْفُ جَرٍّ (unbestimmtes Wort)",
     shortExplanation: "Ist das Wort nach einem حَرْفُ جَرٍّ (harf jarr, Präposition) unbestimmt, hat es Tanwin – nach einer Präposition also zwei Kasra statt einer: فِي رَيْبٍ fī raibin (in Zweifel). Der Lehrer zeigt das an einem Vers aus Sure al-Baqara (Vers 23): رَيْب raib heißt „Zweifel“, das Wort ist unbestimmt, deshalb Tanwin – und weil فِي davorsteht, ist es Kasra. Er benennt dabei beide Rollen: فِي ist der حَرْفُ جَرٍّ, رَيْبٍ ist das اِسْم مَجْرُور (ism majrūr), das abhängige Wort danach. So kann man beim Auswendiglernen die richtige Endung selbst herleiten.",
     color: "nasab",
@@ -564,6 +571,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "harf-jarr-min-ila-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "مِنْ und إِلى (zwei neue حُروف جَرّ)",
     shortExplanation: "مِنْ min heißt „von“ oder „aus“, إِلى ilā heißt „zu“ oder „nach“ – und beide sind حُروف جَرّ, das folgende Nomen wird also مَجْرور und endet auf Kasra: مِنَ الْبَيْتِ mina l-baiti (vom Haus), إِلَى الْمَسْجِدِ ilā l-masjidi (zur Moschee). **Jedes neue Glied der حُروف جَرّ wirkt dabei genau wie فِي und عَلى** – die Liste wächst, die Regel bleibt dieselbe, egal welche Präposition davorsteht. Der Lehrer führt die beiden genau so ein (Folge 05, 22:54): »Jetzt lernen wir zwei weitere حُروف جَرّ.«",
     color: "nasab",
@@ -572,6 +580,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "mina-al-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "مِنَ الْـ (Sukun trifft Sukun)",
     shortExplanation: "مِنْ endet auf Sukun, und der Artikel اَلْ hat wieder ein Sukun auf dem Lam. Zwei Sukun hintereinander mögen die Araber nicht („das sind faule Säcke“, sie hassen es zu stoppen), deshalb bekommt مِنْ vor dem Artikel ein Fatha und wird zu مِنَ: مِنَ الْبَيْتِ mina l-baiti (vom Haus). Mit dem Fatha kann man „springen“ und flüssig in einem Zug weitersprechen, statt abgehackt zu lesen. Steht kein اَلْ dahinter, bleibt es bei مِنْ.",
     color: "other",
@@ -605,6 +614,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "alif-maqsura-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "أَلِف مَقْصُورَة (ى am Wortende)",
     shortExplanation: "Ein ى am Wortende ohne Punkte ist kein Ya, sondern eine أَلِف مَقْصُورَة alif maqṣūra – ein „kleines Alif“, gesprochen wie ein langes ā. **Die Punkte entscheiden, nichts sonst:** zwei Punkte unter dem Zahn ⇒ echtes ي, gesprochen -ī oder -iyy; keine Punkte ⇒ ى, gesprochen wie langes ā. Deshalb heißt عَلى ʿalā „auf“, während عَلِيٌّ ʿaliyyun der Name Ali ist und wirklich auf ein Ya endet – ohne Taschkil sehen die beiden fast gleich aus. **Und das ist die Folge fürs Iʿrāb:** ein Wort, das auf ـى endet, zeigt seinen Fall nicht – es bleibt in jedem Fall gleich, siehe alif-maqsura-unveraenderlich-01. ⚠️ Weiter geht der Unterricht an dieser Stelle nicht. Der Lehrer sagt in Folge 05 nur zweierlei: bei 29:44 »أَلِف مَقْصُورَة ist ein Alif, ist ein kleines Alif«, und bei 29:58 »Muss man aufpassen … weil [es] keine Punkte hat«. Mehr steht dort nicht, und was hier fehlt, fehlt auch im Unterricht.",
     color: "other",
@@ -629,6 +639,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "idafa-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "إِضَافَة (Genitivverbindung)",
     shortExplanation: "Mit der إِضَافَة verbindest du zwei Nomen (اِسْم + اِسْم) zu einem Ausdruck: das **erste** Wort heißt مُضَافٌ (der Besitz), das **zweite** مُضَافٌ إِلَيْهِ (der Besitzer). كِتابُ اللهِ kitābu llāhi – das Buch Allahs, بَيْتُ اللهِ baytu llāhi – das Haus Allahs (die Kaaba), بَابُ الْمَسْجِدِ bābu l-masjidi – die Tür der Moschee, سَيّارَةُ حامِدٍ sayyāratu ḥāmidin – das Auto von Hamid. Damit ist die إِضَافَة zugleich der **zweite Weg, ein Wort مَجْرور zu machen** – der erste ist der حَرْفُ جَرٍّ. Der Lehrer stellt sie genau so vor (Folge 07, 1:09): »wir kriegen den مَجْرور durch حَرْف جَرّ … oder wir kriegen ihn durch die إِضَافَة, durch مُضاف und مُضاف إِلَيْهِ«, und bei 2:00: »es gibt noch eine Regel – diese können auch das Wort مَجْرور machen, das heißt mit كَسْرة am Ende«. Der Grundfall bleibt مَرْفوع; erst wenn etwas hinzukommt, ändert sich die Endung. Damit kann man zusammengesetzte Begriffe bilden – der Lehrer zählt auf Deutsch auf: Wörterbuch, Feuertreppe, Trinkbecher, Schreibtisch. Das ging vorher nicht. Die Verbindung funktioniert nur zwischen zwei Nomen, اِسْم und اِسْم.",
     color: "idafa",
@@ -637,6 +648,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "mudaf-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "مُضَافٌ (der Besitz – erstes Wort)",
     shortExplanation: "Der مُضَافٌ, also das erste Wort der Verbindung, darf kein اَلْ tragen und kein Tanwin. Seinen Fall bekommt er ganz normal aus dem Satz – er kann jeden Fall annehmen: كِتابُ اللهِ kitābu llāhi (Grundfall, Damma), aber عَلى مَكْتَبِ الْمُدَرِّسِ ʿalā maktabi l-mudarrisi – auf dem Schreibtisch des Lehrers (nach حَرْفُ جَرٍّ mit Kasra).",
     color: "idafa",
@@ -645,6 +657,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "mudaf-ilayh-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "مُضَافٌ إِلَيْهِ (der Besitzer – zweites Wort)",
     shortExplanation: "Der مُضَافٌ إِلَيْهِ, also das zweite Wort, ist **immer** مَجْرُور – daran lässt sich nichts ändern, egal was um die إِضَافَة herum steht; er endet auf Kasra. Das ist zugleich das Erkennungszeichen: **findest du zwei Nomen hintereinander und das zweite trägt Kasra, ist es eine إِضَافَة**: كِتابُ الْمُدَرِّسِ kitābu l-mudarrisi – das Buch des Lehrers. Er darf dabei bestimmt oder unbestimmt sein: كِتابُ مُدَرِّسٍ kitābu mudarrisin – das Buch eines Lehrers. **Und „immer“ heißt wirklich immer:** während das erste Wort seinen Fall aus dem Satz bekommt und mitwandert – عَلى مَكْتَبِ الْمُدَرِّسِ ʿalā maktabi l-mudarrisi, auf dem Schreibtisch des Lehrers, wo مَكْتَبِ nach dem حَرْفُ جَرٍّ selbst Kasra trägt – bleibt das zweite unberührt. Der Lehrer sagt es in Folge 07 zweimal: bei 07:39 »ist immer مَجْرُور, egal was du machst, kannst du nicht ändern«, und bei 08:57 ordnet er sie ein: »diese Regel [der حَرْف جَرّ] und diese Regel mit مُضاف إِلَيْهِ, das sind wenn nicht die beiden wichtigsten Regeln, die man benötigt«.",
     color: "idafa",
@@ -653,6 +666,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "ya-nida-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "يَا (Rufpartikel)",
     shortExplanation: "يَا ist die Rufpartikel („o …“). Steht sie vor einem Namen, **fällt dessen Tanwin weg und es bleibt eine Damma**. Beide Beispiele stehen so im Buch auf Seite 65: أَيْنَ أَبُوكَ يَا خَالِدُ؟ „Wo ist dein Vater, Khalid?“ und أَلَكَ أَخٌ يَا حَامِدُ؟ „Hast du einen Bruder, Hamid?“ – an beiden siehst du die Damma am Namensende, ohne Tanwin. Dieselbe Form im Kapiteltext von Kapitel 5: أَهَذا كِتابُ مُحَمَّدٍ يَا ياسِرُ؟ „Ist dies Muhammads Buch, o Yasir?“ Der Vergleich macht es sichtbar: im Wörterverzeichnis stehen die Namen mit Tanwin – der Lehrer zählt sie in Folge 07 (9:57) auf: مُحَمَّدٌ, حامِدٌ, عَبّاسٌ – nach يَا verlieren sie es. Und es gilt nicht nur für Namen: auch يَا وَلَدُ „o Junge“ trägt Damma statt Tanwin.",
     color: "nasab",
@@ -660,6 +674,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "mudaf-ohne-al-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "مُضَافٌ (bestimmt ohne اَلْ)",
     shortExplanation: "Obwohl der مُضَافٌ kein اَلْ tragen darf, ist er trotzdem bestimmt – denn er gehört ja jemandem, und etwas kann nicht jemandem gehören und gleichzeitig unbestimmt sein. بَيْتُ حامِدٍ baytu ḥāmidin heißt deshalb „das Haus Hamids“, nicht „ein Haus Hamids“. Die Bestimmtheit entsteht hier also nicht durch اَلْ, sondern durch den Besitzer.",
     color: "idafa",
@@ -668,6 +683,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "harf-jarr-idafa-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "حَرْفُ جَرٍّ + إِضَافَة (Verkettung)",
     shortExplanation: "Trifft ein حَرْفُ جَرٍّ auf eine إِضَافَة, bekommen **beide** Wörter eine Kasra — denn der حَرْفُ جَرٍّ macht den مُضَاف مَجْرُور, und der مُضَافٌ إِلَيْهِ ist ohnehin مَجْرُور. Der Lehrer nennt das eine „Verkettung\". عَلى مَكْتَبِ الْمُدَرِّسِ ʿalā maktabi l-mudarrisi – auf dem Schreibtisch des Lehrers (مَكْتَب kann jeden Fall annehmen, durch عَلى muss es مَجْرُور werden); فِي كِتابِ اللهِ fī kitābi llāhi – im Buch Allahs (genau diesen Fall zerlegt der Lehrer: فِي ist ein حَرْفُ جَرٍّ und macht كِتاب مَجْرُور, und كِتاب ist zugleich مُضَافٌ und macht اللّٰه مَجْرُور); مِنْ بَيْتِ الْمُدَرِّسِ min bayti l-mudarrisi – vom Haus des Lehrers.",
     color: "nasab",
@@ -701,6 +717,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "idafa-erkennen-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "مُضَافٌ erkennen (Nomen ohne Tanwin + Nomen)",
     shortExplanation: "So erkennt man eine Genitivverbindung im Text: Wenn ein Nomen nur eine einfache Endung trägt – also z.B. nur ein Damma statt Tanwin-Damma – und direkt danach noch ein Nomen kommt, dann muss das erste Wort ein مُضَافٌ sein; anders geht es gar nicht. Beispiel: اِبْنُ عَمّارٍ طالِبٌ (ibnu ʿAmmārin ṭālibun) – der Sohn Ammars ist ein Student. اِبْنُ hat nur ein Damma; beide Wörter مَرْفُوع zu machen wäre falsch. Genauso سَيّارَةُ الْمُدَرِّسِ (sayyāratu l-mudarrisi) – das Auto des Lehrers: سَيّارَةُ trägt nur ein Damma, danach folgt ein Nomen. Dabei ist der مُضَافٌ der Besitz (das Auto) und der مُضَافٌ إِلَيْهِ der Besitzer (der Lehrer) – umgekehrt ergäbe es keinen Sinn.",
     color: "idafa",
@@ -709,6 +726,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "zarf-als-mudaf-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "Ortsangabe als مُضَافٌ (z.B. تَحْتَ)",
     shortExplanation: "Auch eine Zeit- oder Ortsangabe wie تَحْتَ (taḥta) kann am Anfang einer solchen Verbindung stehen. Der Lehrer besteht hier auf der genauen Formulierung: Die Ortsangabe ist ein Nomen (اِسْم) – تَحْتَ gehört zu den Adverbien und ist deshalb ein اِسْم – und sie funktioniert wie ein مُضَافٌ, ist aber selbst keiner. Das folgende Wort steht im Genitiv: تَحْتَ السَّيّارَةِ (taḥta s-sayyārati) – unter dem Auto. Der Lehrer betont dazu: eine kleine Änderung in der Formulierung kann schon die ganze Erklärung verändern.",
     color: "idafa",
@@ -735,6 +753,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "idafa-kein-adjektiv-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "إِضَافَة – kein Adjektiv als Zweitglied",
     shortExplanation: "اَلرَّجُلُ مَرِيضٌ ar-rajulu marīdun »der Mann ist krank« ist ein normaler Satz und enthält keine Iḍāfa. Man kann daraus keine Genitivverbindung machen: مَرِيضٍ marīdin würde »der Mann des Kranken« bzw. »der Krankheitsmann« bedeuten – und das geht nicht.",
     color: "idafa",
@@ -742,6 +761,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "idafa-verkettung-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "إِضَافَة – Verkettung (mehrgliedrige Genitivverbindung)",
     shortExplanation: "Eine Iḍāfa kann verkettet (»verschachtelt«) werden: هَذَا اِبْنُ إِمَامِ الْمَسْجِدِ hādhā ibnu imāmi l-masjidi – »dies ist der Sohn des Imams der Moschee«. Das mittlere Wort ist gleichzeitig مُضَافٌ إِلَيْهِ (deshalb Kasra) und مُضَافٌ für das nächste Wort – und bekommt deshalb kein Tanwīn. Genauso im Beispiel هَذَا مَسْجِدُ رَسُولِ اللهِ hādhā masjidu rasūli llāhi: رَسُولِ müsste eigentlich رَسُولٍ heißen, weil kein اَلْ dransteht – es bleibt aber ohne Tanwīn, weil es Mudāf für اللهِ ist.",
     color: "idafa",
@@ -750,6 +770,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "idafa-zweitglied-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     /* Von Elias am 19.08.2026 beim Regeldurchgang gestrichen.
        Seine Worte: "sollen nicht geloescht werden, nur aus der app raus
        genommen werden weil ich sie bereits kenne oder unnoetig sind."
@@ -796,6 +817,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "harf-jarr-li-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "لِ (fünfter حَرْفُ جَرٍّ, Besitz)",
     shortExplanation: "لِ ist der fünfte Harf al-Jarr nach فِي، عَلَى، إِلَى، مِنْ – nur ein einziger Buchstabe, ein Lām mit Kasra. Es bedeutet »für« oder »gehört« und ist eine Besitzanzeige: هَذَا لِخَالِدٍ hādhā li-Khālidin – »dies gehört Khalid«. Fürs Erste steht لِ nur für Besitz; weitere Bedeutungen kommen später dazu. Wie bei den anderen Huruf al-Jarr wird das Wort danach مَجْرُور majrūr (Kasra bzw. Kasratān): لِ ist حَرْفُ جَرٍّ, خَالِدٍ ist اِسْم مَجْرُور.",
     color: "nasab",
@@ -872,6 +894,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "li-al-lil-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "لِ + اَلْ = لِلـ",
     shortExplanation: "لِ ist ein حَرْفُ جَرٍّ (ḥarf jarr, Präposition). Vor einem unbestimmten Wort heißt es لِطَبيبٍ (li-ṭabībin, „gehört einem Arzt\"). Kommt لِ aber vor ein bestimmtes Wort, treffen لِ und اَلْ aufeinander und das أَلِف fällt weg – übrig bleiben zwei لَام hintereinander: لِلطَّبيبِ. Bei einem Sonnenbuchstaben springt man beim Sprechen über das لَام (liṭ-ṭabībi), bei einem Mondbuchstaben spricht man es mit: لِلْقَلَمِ (lil-qalami), لِلْبَيْتِ (lil-baiti).",
     color: "other",
@@ -880,6 +903,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "lil-vs-li-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "لِلْ vs. لِ (bestimmt/unbestimmt)",
     shortExplanation: "Beim لِ (\"gehört\") muss man bestimmt und unbestimmt hörbar unterscheiden: لِلْمُدَرِّسِ (li-l-mudarrisi, vom Lehrer als \"mit zwei L\" beschrieben) heißt \"dem Lehrer\" - bestimmt. لِمُدَرِّسٍ (li-mudarrisin, Kasra mit Tanwīn) heißt \"einem Lehrer\" - unbestimmt. Der Lehrer schärft ein, diese beiden Formen nicht zu verwechseln.",
     color: "idafa",
@@ -888,6 +912,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "li-eigenname-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "لِ + Eigenname (kein لِلْ)",
     shortExplanation: "Bei Eigennamen sagt man kein لِلْ, sondern nur لِ + Name mit Kasra und Tanwīn. Beim Satz über den Stuhl wird oft لِلْعَمّار (li-l-ʿAmmār) gelesen, der Lehrer korrigiert sofort zu لِعَمّارٍ (li-ʿAmmārin) und begründet: \"Weil Ammar ist ein Name - und deswegen sagt man auch kein لِلْ.\" Genauso لِمُحَمَّدٍ (li-Muḥammadin) \"gehört Muhammad\" und لِخالِدٍ (li-Khālidin) \"gehört Khalid\". Der Satz übersetzt: \"Wem gehört der Stuhl? - Dieser Stuhl gehört Ammar.\" (Sonderfall zu لِلْ / لِ, siehe Beleg 12:47.)",
     color: "idafa",
@@ -896,6 +921,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "alif-maqsura-unveraenderlich-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "أَلِف مَقْصُورَة (unveränderliche Endung)",
     shortExplanation: "Der Normalfall ist مَرْفُوع (marfūʿ): اَلْبَيْتُ (al-baytu, das Haus). Wird ein Wort مَجْرُور (majrūr), bekommt es Kasra: فِي الْبَيْتِ (fī l-bayti, im Haus), مِنَ الْبَيْتِ (mina l-bayti, vom Haus), إِلَى الْبَيْتِ (ilā l-bayti, zum Haus). Endet ein Wort aber auf ein Alif (ـا) oder auf ein Alif maqṣūra (ـى, \"das hier ohne Punkte\"), dann sieht man den Fall an dem Wort nicht - es bleibt immer gleich. Der Lehrer führt dieselben drei Präpositionen an اَلْمُسْتَشْفى (al-mustashfā, das Krankenhaus) vor: فِي الْمُسْتَشْفى، مِنَ الْمُسْتَشْفى، إِلَى الْمُسْتَشْفى - \"keine Anzeichen, ändert sich nicht, bleibt immer gleich\". Genauso bei أَمْريكا (Amrīkā, Amerika): فِي أَمْريكا، مِنْ أَمْريكا، إِلى أَمْريكا, ebenso bei أَلْمانِيا (Almāniyā, Deutschland) und مُوسى (Mūsā, Musa): \"Ob du sagst, Musa ist marfūʿ - bleibt Musa.\" Der Lehrer nennt das selbst nur \"eine kleine Nebenregel\".",
     color: "nasab",
@@ -912,6 +938,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "nat-bestimmtheit-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "نَعْتٌ und Bestimmtheit (Wortgruppe oder Satz)",
     shortExplanation: "Ob zwei Wörter eine Wortgruppe oder einen ganzen Satz ergeben, hängt an der Bestimmtheit: مَسْجِدٌ كَبِيرٌ (masjidun kabirun) heißt nur „eine große Moschee\" – hier steckt kein „ist\" drin –, und الْمَسْجِدُ الْكَبِيرُ (al-masjidu l-kabiru) heißt „die große Moschee\". Passen die beiden Wörter in der Bestimmtheit nicht zusammen, ist das zweite Wort kein Adjektiv, sondern die Aussage: الْمَسْجِدُ كَبِيرٌ heißt „Die Moschee ist groß\". Genauso كِتَابٌ جَدِيدٌ „ein neues Buch\" gegenüber الْكِتَابُ جَدِيدٌ „Das Buch ist neu\". Ändert man dagegen die Endung des zweiten Wortes, entsteht aus denselben zwei Wörtern eine dritte Möglichkeit: مَسْجِدُ الْكَبِيرِ (masjidu l-kabiri) ist eine مُضَاف-Verbindung und heißt „die Moschee des Großen\" – der Lehrer sagt dazu, dass das inhaltlich wenig Sinn ergibt und hier nur grammatisch getestet wird.",
     color: "mubtada",
@@ -920,6 +947,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "nat-vier-bedingungen-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "نَعْتٌ (Adjektiv): die vier Bedingungen",
     shortExplanation: "Ein Wort, das direkt hinter einem Nomen steht, ist dessen Adjektiv (نَعْتٌ), wenn es in vier Dingen mit ihm uebereinstimmt: Geschlecht, Bestimmtheit, Fall und Zahl. Das beschriebene Wort heisst مَنْعُوت. Beispiel: مَسْجِدٌ كَبِيرٌ (masjidun kabirun) „eine grosse Moschee\" – beide maennlich, beide unbestimmt, beide مَرْفُوع, beide Singular. Stimmt auch nur eine Bedingung nicht, ist das Wort kein Adjektiv.",
     color: "mubtada",
@@ -928,6 +956,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "nat-fem-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "نَعْتٌ bei weiblichen Nomen (بِنْتٌ صَغِيرَةٌ)",
     shortExplanation: "Ist das beschriebene Nomen weiblich, muss auch das Adjektiv weiblich sein, also die تَاء مَرْبُوطَة bekommen. بِنْتٌ صَغِيرٌ geht nicht, richtig ist بِنْتٌ صَغِيرَةٌ (bintun saghiratun) „ein kleines Maedchen\". Genauso لُغَةٌ جَمِيلَةٌ (lughatun jamilatun) „eine schoene Sprache\".",
     color: "fem",
@@ -936,6 +965,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "nat-eigenname-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "Name + نَعْتٌ (Eigennamen sind bestimmt)",
     shortExplanation: "Eigennamen gelten als bestimmt, obwohl sie ein Tanwin tragen. Deshalb ist ein unbestimmtes Wort direkt hinter einem Namen kein Adjektiv, sondern die Aussage ueber ihn: عَبَّاسٌ تَاجِرٌ ('Abbasun tajirun) heisst „Abbas ist ein Haendler\", nicht „ein Haendler Abbas\". Das Adjektiv bezieht sich dann auf das Wort davor: عَبَّاسٌ تَاجِرٌ غَنِيٌّ ('Abbasun tajirun ghaniyyun) „Abbas ist ein reicher Haendler\".",
     color: "mubtada",
@@ -974,6 +1004,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "adjektive-an-ohne-tanwin-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "كَسْلَانُ – Adjektive auf ـانُ ohne Tanwin",
     shortExplanation: "Adjektive, die auf ـان (Alif + Nun) enden, koennen kein Tanwin bekommen – sie haben immer nur eine Endung. Beispiel: طَالِبٌ كَسْلَانُ (talibun kaslanu) „ein fauler Student\"; كَسْلَانُ steht ohne Tanwin, ist aber trotzdem unbestimmt. Der Lehrer nennt weitere Adjektive dieser Art (faul, hungrig, durstig, wuetend, voll) und sagt ausdruecklich, die Begruendung dafuer komme erst spaeter im Buch (etwa Kapitel 20/21).",
     color: "nasab",
@@ -1078,6 +1109,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "hurufu-jarr-bedeutungen-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "Was die حُرُوفُ الْجَرِّ bedeuten",
     shortExplanation: "Deine Regeln sagen, was die حُرُوفُ الْجَرِّ mit dem Kasus machen — sie ziehen das folgende Wort in den Genitiv. Sie sagen nicht, was die Präpositionen bedeuten. Sharḥ Madīnah stellt es als Liste: مِنْ: تُفِيدُ الْبِدَايَةَ (bezeichnet den Anfang) · إِلَى: تُفِيدُ النِّهَايَةَ (das Ende) · فِي: تُفِيدُ الظَّرْفِيَّةَ (das Enthaltensein) · عَلَى: تُفِيدُ الاسْتِعْلاَءَ (das Daraufsein) · اللاَّمُ: تُفِيدُ الْمِلْكَ (den Besitz). Fürs Koranlesen ist das der nützlichere Teil: den Kasus siehst du am Wortende ohnehin, die Bedeutung nicht.",
     color: "nasab",
@@ -1111,6 +1143,7 @@ const GRAMMAR_RULES = [
   },
   {
     id: "ismun-mawsul-alladhi-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "الَّذِي (welcher, der)",
     shortExplanation: "Das Relativpronomen — bei dir bisher in keiner einzigen Regel. Sharḥ Madīnah stellt es in Lektion 9 direkt neben das نَعْتٌ, weil beide dasselbe leisten: sie bestimmen ein Nomen näher. الَّذِي: اِسْمٌ مَوْصُولٌ لِلْمُفْرَدِ الْمُذَكَّرِ الْعَاقِلِ، وَغَيْرِ الْعَاقِلِ — ein Verbindungswort für das männliche Einzelne, ob vernunftbegabt oder nicht. Für Personen: الطَّالِبُ الَّذِي خَرَجَ مِنَ الْهِنْدِ · الْمُدَرِّسُ الَّذِي جَلَسَ عَلَى الْكُرْسِيِّ جَدِيدٌ. Für Sachen: الْكِتَابُ الَّذِي عَلَى الْمَكْتَبِ لِلْمُدَرِّسِ · الْبَيْتُ الْكَبِيرُ الَّذِي فِي الشَّارِعِ لِلْوَزِيرِ. Bayna Yadayk Band 2 führt es in Einheit 7 ebenfalls neben der الصِّفَة — zwei Lehrwerke stellen denselben Zusammenhang her.",
     color: "other",
@@ -1176,6 +1209,7 @@ const GRAMMAR_RULES = [
 
   {
     "id": "nat-wen-beschreibt-01",
+    satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     "name": "نَعْتٌ: die Endung zeigt, WEN es beschreibt",
     "shortExplanation": "Stehen zwei Nomen hintereinander, entscheidet die Endung des نَعْتٌ, welches der beiden es beschreibt — es muss in allen vier Punkten mit ihm übereinstimmen. Der Lehrer führt das an einem Satz vor: هُوَ اِبْنُ الْمُدِيرِ الْجَدِيدِ heißt „er ist der Sohn des neuen Direktors\", weil الْجَدِيدِ wie الْمُدِيرِ مَجْرُور ist. Schreibt man dagegen الْجَدِيدُ (مَرْفُوع), beschreibt es den Sohn, und der Satz heißt „der Sohn des Direktors ist neu\". Seine Worte dazu: „Das sehen wir, was man ändert, kann man jemand anderen beschreiben. Deswegen muss man immer aufpassen.\" Und: „Man muss immer gucken, wer beschreibt wen.\"",
     "color": "mubtada",
