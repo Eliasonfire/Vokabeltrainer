@@ -782,9 +782,24 @@ console.log('    ' + (rueckwaerts.length ? '❌' : '✅') + ' rueckwaerts:      
 for (const r of rueckwaerts){
   console.log('\n❌ Z' + r.jetzt.b.zeile + '  ' + r.jetzt.b.kopf.slice(3, 72));
   console.log('     sagt ' + r.jetzt.zeit + ', der Block davor (Z' + r.vor.b.zeile + ') sagt ' + r.vor.zeit + '.');
+  /* ⛔⛔ DIESER TEXT WIDERSPRACH BIS ZUM 23.09.2026 SEINEM EIGENEN CODE.
+
+     Er hing an `AUFSTEIGEND`, also an der Richtung der TAGESWECHSEL — und
+     sagte deshalb „absteigen", seit die Notiz neueste-oben geschrieben wird.
+     Verglichen wird innerhalb eines Tages aber IMMER aufsteigend; das steht
+     80 Zeilen weiter oben ausdruecklich so und ist seit dem 22.09. richtig.
+
+     ⚠️ Was ein falscher Erklaertext anrichtet, ist in der Nacht auf den
+     23.09.2026 gemessen worden: ich habe vier Bloecke absteigend einsortiert,
+     WEIL dieser Satz es verlangte, und der Pruefer meldete sie folgerichtig
+     als Fehler. Erst das Durchzaehlen aller 220 Bloecke (20 Tageswechsel
+     neu→alt, aber 8 von 10 Tagen intern aufsteigend) hat es aufgeloest.
+     Der Code hatte die ganze Zeit recht, nur seine Erklaerung nicht.
+     [[regel_gilt_nur_mit_begruendung]] · [[zwei_stellen_eine_entscheidung]] */
   console.log('     Die Notiz waechst ' + (AUFSTEIGEND ? 'durch ANHAENGEN' : 'durch VORANSTELLEN')
-    + ' — die Uhrzeit muss innerhalb eines Tages also');
-  console.log('     ' + (AUFSTEIGEND ? 'aufsteigen' : 'absteigen') + '. Eine Abweichung ist nachgetragen oder geschaetzt. ⛔ Nicht raten:');
+    + ' — das gilt fuer die TAGE. Innerhalb EINES Tages');
+  console.log('     muss die Uhrzeit immer AUFSTEIGEN: ein Tag wird vorwaerts erzaehlt, auch wenn');
+  console.log('     die Tage rueckwaerts stehen. Eine Abweichung ist nachgetragen oder geschaetzt. ⛔ Nicht raten:');
   console.log('     git log --format=\'%h %cd %s\' --date=format:\'%H:%M\'');
 }
 
