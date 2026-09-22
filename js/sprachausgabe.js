@@ -36,7 +36,12 @@ function loadVoices(){
   if (sel){
     sel.innerHTML = ARABIC_VOICES.length
       ? ARABIC_VOICES.map(v=>`<option value="${v.voiceURI}">${v.name} (${v.lang})</option>`).join('')
-      : `<option value="">Keine arabische Stimme gefunden - System-Standard wird genutzt</option>`;
+      /* ⛔ „System-Standard wird genutzt" stand hier bis zum 22.09.2026 und war
+         irreführend: genutzt wird dann irgendeine der Stimmen des Geräts, und
+         die liest arabischen Text deutsch vor. Seit v570 spricht die App in
+         diesem Fall gar nicht mehr, sondern nennt den Weg — die Auswahl sagt
+         jetzt dasselbe. Elias' Diagnose: „keine arabische unter 92 Stimmen". */
+      : `<option value="">Keine arabische Stimme auf diesem Gerät — Ton bleibt aus</option>`;
     /* Nur setzen, wenn es die Stimme auf DIESEM Geraet ueberhaupt gibt.
        Sonst stuende im Feld ein leerer Wert, und ein spaeteres Antippen der
        Auswahl schriebe ihn in die abgeglichenen Einstellungen zurueck. */
@@ -53,20 +58,50 @@ if ('speechSynthesis' in window){
 /* Die Fehlercodes der Web Speech API in Saetze uebersetzen, die sagen, was zu
    TUN ist. `interrupted` und `canceled` kommen von unserem eigenen cancel()
    weiter unten und sind KEIN Fehler - dafuer gibt es bewusst keine Meldung. */
+/* ⭐ DER WEG ZUM INSTALLIEREN, und zwar der, der auf SEINEM Gerät gilt.
+
+   Elias liest die Meldung auf dem Handy oder dem Tablet — beides Android
+   (gemessen 22.09.2026: Pixelverhältnis 3 bzw. 1,75, beide „installierte App
+   (standalone)"). Ein allgemeines „in den Geräte-Einstellungen nachrüsten"
+   lässt ihn suchen; der Pfad steht deshalb ausgeschrieben.
+
+   ⛔ Kein Link und kein Knopf, der irgendwo hinführt: eine Seite kann die
+   Sprachausgabe-Einstellungen des Geräts nicht öffnen, und ein Knopf, der
+   nichts tut, ist schlimmer als ein Satz, der den Weg nennt.
+   ⚠️ Die Erkennung ist bewusst grob und nennt im Zweifel BEIDE Wege — ein
+   falsch geratener Pfad schickt ihn in ein Menü, das es nicht gibt.
+   [[kann_ist_nicht_ist]] */
+function stimmeFehltText(){
+  const ua = String((navigator && navigator.userAgent) || '');
+  const android = /Android/i.test(ua);
+  const apple = /iPhone|iPad|iPod/i.test(ua);
+  if (android)
+    return 'Dieses Gerät hat keine arabische Stimme — deshalb kein Ton. '
+         + 'Einstellungen → Allgemeine Verwaltung → Text-zur-Sprache → '
+         + 'Sprachdaten installieren → Arabisch. Danach die App einmal schließen und neu öffnen.';
+  if (apple)
+    return 'Dieses Gerät hat keine arabische Stimme — deshalb kein Ton. '
+         + 'Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen → Arabisch laden. '
+         + 'Danach die App einmal schließen und neu öffnen.';
+  return 'Dieses Gerät hat keine arabische Stimme — deshalb kein Ton. '
+       + 'In den Sprachausgabe-Einstellungen des Geräts („Text-zur-Sprache") Arabisch nachinstallieren, '
+       + 'dann die App einmal schließen und neu öffnen.';
+}
+
 function tonFehlertext(code, stimmenZahl){
   switch (code){
     case 'interrupted':
     case 'canceled':              return null;
     case 'not-allowed':           return 'Der Browser hat den Ton blockiert — Seite antippen und noch einmal probieren.';
     case 'language-unavailable':
-    case 'voice-unavailable':     return 'Dieses Gerät hat keine arabische Stimme installiert.';
+    case 'voice-unavailable':     return stimmeFehltText();
     case 'audio-busy':            return 'Der Ton ist gerade belegt — einen Moment warten.';
     case 'synthesis-unavailable':
     case 'synthesis-failed':      return 'Die Sprachausgabe des Geräts hat abgelehnt.';
     default:
       return stimmenZahl
         ? 'Sprachausgabe fehlgeschlagen (' + (code || 'ohne Angabe') + ')'
-        : 'Dieses Gerät hat keine arabische Stimme installiert.';
+        : stimmeFehltText();
   }
 }
 
@@ -77,6 +112,32 @@ function speakArabic(text){
   }
   const jetzt = arabischeStimmen();
   if (jetzt.length) ARABIC_VOICES = jetzt;
+
+  /* ⭐⭐ KEINE ARABISCHE STIMME: SOFORT SAGEN, NICHT ERST NACH 1,4 SEKUNDEN.
+
+     Elias' Diagnose vom 22.09.2026, auf BEIDEN Geräten gleich:
+     „Arabische Stimmen: keine arabische unter 92 Stimmen". Es ist also kein
+     Fehler der App — auf keinem seiner Geräte ist eine arabische Stimme
+     installiert. Trotzdem nahm die App die Äußerung entgegen, der Browser
+     griff sich irgendeine der 92 Stimmen, und heraus kam arabischer Text,
+     deutsch vorgelesen. Erst 1,4 Sekunden später kam die Meldung.
+
+     Sein Auftrag: die App soll es am Lautsprecherknopf sagen und den Weg zum
+     Installieren nennen, statt stumm mit einer nicht-arabischen Stimme zu
+     sprechen.
+
+     ⛔ Der Sprechversuch entfällt hier bewusst. Ein Wort in deutscher
+     Aussprache ist beim Vokabellernen schlimmer als gar kein Ton: er würde
+     sich die falsche Lautung einprägen. [[vokabeln_sind_der_teuerste_teil]]
+
+     ⚠️ Geprüft wird die FRISCH gelesene Liste, nicht die gemerkte: Android
+     liefert die Stimmen verzögert nach, und eine alte leere Liste würde die
+     Ansage auch dann zeigen, wenn inzwischen eine Stimme da ist.
+     [[eingefrorenes_feld_ist_kein_zustand]] */
+  if (!ARABIC_VOICES.length){
+    toast(stimmeFehltText());
+    return;
+  }
 
   speechSynthesis.cancel();
   /* ⚠️ Android laesst `speechSynthesis` gelegentlich PAUSIERT zurueck - etwa
@@ -120,7 +181,7 @@ function speakArabic(text){
     if ((text || '').trim().length < 2) return;
     toast(ARABIC_VOICES.length
       ? 'Kein Ton — die Stimme hat nichts gesprochen. Einstellungen → andere Stimme wählen.'
-      : 'Dieses Gerät hat keine arabische Stimme installiert — in den Geräte-Einstellungen unter „Sprachausgabe / Text-in-Sprache“ nachrüsten.');
+      : stimmeFehltText());
   };
   speechSynthesis.speak(u);
 
@@ -133,6 +194,6 @@ function speakArabic(text){
     if (gemeldet || speechSynthesis.speaking || speechSynthesis.pending) return;
     toast(ARABIC_VOICES.length
       ? 'Kein Ton — die arabische Stimme antwortet nicht. Einstellungen → andere Stimme wählen.'
-      : 'Dieses Gerät hat keine arabische Stimme installiert.');
+      : stimmeFehltText());
   }, 1400);
 }
