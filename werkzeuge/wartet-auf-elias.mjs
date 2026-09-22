@@ -1028,7 +1028,10 @@ posten.push({
    data/lernstand.json Madina 1 = 12 (bestätigt), Bayna Yadayk 1 = 3. Die höheren
    Zahlen von arabicroots (24 / 16) sind ausdrücklich KEIN Lernstand — nicht erneut
    fragen, solange er keinen neuen nennt. */
-posten.push({
+/* ✅ BEANTWORTET 22.09.2026: „immer unterschiedliche sätze", dann auf „ganz
+   mischen?": „ja" → js/saetze.js mischt (v557). Der Posten bleibt nur als
+   Quelltext stehen und wird nicht mehr gestellt. */
+if (false) posten.push({
   titel: 'Satzmodus: jedes Mal dieselben Sätze zuerst — so lassen?',
   zahl: 3, einheit: 'Möglichkeiten', dazu: 'gefragt 16.09.', auswahl: true,
   aufwand: 'eine von drei Antworten',
