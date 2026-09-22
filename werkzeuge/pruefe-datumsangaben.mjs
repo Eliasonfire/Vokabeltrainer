@@ -474,9 +474,22 @@ for (const [, xs] of jeTag){
     if (xs[i].imArchiv || xs[i - 1].imArchiv) continue;
     /* Kurzstaende stehen absichtlich neueste-zuerst — siehe oben. */
     if (xs[i].kurzstand || xs[i - 1].kurzstand) continue;
-    /* Gegen die GEMESSENE Wuchsrichtung, nicht gegen eine angenommene. */
-    const roh2 = minuten(xs[i].zeit) - minuten(xs[i - 1].zeit);
-    const d = AUFSTEIGEND ? roh2 : -roh2;
+    /* ⛔⛔ INNERHALB EINES TAGES WIRD IMMER AUFSTEIGEND VERGLICHEN (22.09.2026).
+       Hier stand bis heute „gegen die GEMESSENE Wuchsrichtung" — und das war
+       falsch, weil `jeTag` ausschliesslich Bloecke DESSELBEN Tages vergleicht.
+       Die Wuchsrichtung sagt aber etwas ueber die TAGESWECHSEL aus, nicht
+       darueber, wie ein einzelner Tag erzaehlt wird.
+       Solange die Notiz unten wuchs, fiel das nicht auf: beide Richtungen
+       waren aufsteigend. Als Elias am 22.09.2026 „oben, räume demtentsprechend
+       um" sagte und die Tage sich umdrehten, meldete dieser Pruefer **16
+       rueckwaerts laufende Bloecke** — alle gesund. Keine geschaetzte Uhrzeit
+       war darunter.
+       ⭐ Die Form ist dieselbe wie bei den `###`-Unterabschnitten 80 Zeilen
+       weiter unten, und dort steht sie seit dem 08.09.2026 richtig: die
+       Abschnitte eines Tages stehen in der Reihenfolge der ERZAEHLUNG. Ein Tag
+       wird vorwaerts erzaehlt, auch wenn die Tage rueckwaerts stehen.
+       [[entscheidung_gilt_fuer_das_zweite_werkzeug]] [[kandidatenliste_ist_keine_fehlerliste]] */
+    const d = minuten(xs[i].zeit) - minuten(xs[i - 1].zeit);
     if (d < 0 && d > -12 * 60) rueckwaerts.push({ vor: xs[i - 1], jetzt: xs[i] });
   }
 }
@@ -527,10 +540,37 @@ const unterBloecke = [];
 let unterArchiv = 0;
 const unterBelegt = [];
 {
-  let tiefe = 0, imArchiv = false, blockStart = 0;
+  let tiefe = 0, imArchiv = false, blockStart = 0, imZaun = false;
   zeilen.forEach((z, i) => {
-    const auf = (z.match(/<details/g) || []).length;
-    const zu  = (z.match(/<\/details>/g) || []).length;
+    /* ⛔⛔ ERST DIE CODE-SPANNEN RAUS (22.09.2026, und es war ein stiller
+       Ausfall von genau der Sorte, vor der dieser Pruefer warnt).
+       Gezaehlt wurde bisher jedes `<details` — auch das in BACKTICKS, also in
+       Saetzen, die ueber `<details>` REDEN. In `Vokabeltrainer-Arabisch.md`
+       stehen vier solche Erwaehnungen in einem Abschnitt, der erklaert, wie
+       der Archiv-Ausnahme funktioniert. Die Zaehlung stand danach dauerhaft
+       auf +4, und ALLES danach galt als „im Archiv" und war von der
+       ###-Pruefung ausgenommen.
+       Gemessen am 22.09.2026, nachdem die Notiz umgeraeumt wurde und die vier
+       Erwaehnungen dadurch weiter nach oben rutschten: die Zahl der geprueften
+       Unterabschnitte sprang von **14 auf 44**. Dreissig Abschnitte waren
+       jahrelang unsichtbar, und der Pruefer meldete gruen.
+       ⚠️ Aufgefallen ist es nur, weil sich die Reihenfolge der Datei aenderte —
+       nicht durch eine Pruefung. [[ausfall_ist_unsichtbar_gebaut]] */
+    const ohneCode = z.split('`').filter((_, k) => k % 2 === 0).join(' ');
+    const auf = (ohneCode.match(/<details/g) || []).length;
+    const zu  = (ohneCode.match(/<\/details>/g) || []).length;
+    /* ⛔⛔ UND ZEILEN IN EINEM CODE-BLOCK SIND KEINE UEBERSCHRIFTEN (22.09.2026).
+       Dieselbe Sorte Fehler wie die Backticks eine Zeile darueber, nur groesser:
+       der Abschnitt vom 11.09.2026, der erklaert, wie zwei geschaetzte Uhrzeiten
+       gefunden wurden, ZITIERT die beiden Ueberschriften in einem ```-Block —
+       samt ihrer falschen Zeiten. Der Pruefer las das Zitat als echte
+       Ueberschriften und meldete genau den Fehler noch einmal, den der Text
+       daneben als behoben beschreibt.
+       ⚠️ Ein Pruefer, der seine eigene Fehlerdokumentation als Fehler meldet,
+       macht das Aufschreiben teuer — und aufgeschrieben wird dann nicht mehr.
+       [[stichworttreffer_ist_kein_inhaltstreffer]] */
+    if (/^\s*(```|~~~)/.test(z)) { imZaun = !imZaun; return; }
+    if (imZaun) { tiefe = Math.max(0, tiefe + auf - zu); return; }
     imArchiv = tiefe > 0;
     if (z.startsWith('## ')) blockStart = i;
     else if (z.startsWith('### ') && !imArchiv){
@@ -549,11 +589,81 @@ const unterBelegt = [];
     tiefe = Math.max(0, tiefe + auf - zu);
   });
 }
+/* ⛔⛔ HIER WIRD ABSICHTLICH NICHT NACH DER WUCHSRICHTUNG GEMESSEN — anders
+   als bei den `## `-Bloecken 30 Zeilen weiter oben. Am 22.09.2026 habe ich
+   genau das „korrigiert" und es wieder zurueckgenommen, weil die Messung
+   dagegen sprach: mit Richtung waren es **27** Befunde statt 8.
+
+   Der Grund steht schon im Kommentar der belegten Ausnahme: die BLOECKE stehen
+   neueste-oben, die Unterabschnitte INNERHALB eines Blocks stehen in der
+   Reihenfolge der ERZAEHLUNG — ein Abend wird vorwaerts erzaehlt, auch wenn
+   die Abende rueckwaerts stehen. Beides ist richtig, und es ist kein
+   Widerspruch. Wer hier die Richtung einzieht, dreht 27 gesunde Abschnitte
+   rot. [[kandidatenliste_ist_keine_fehlerliste]] */
+/* ⛔⛔ DIE RICHTUNG WIRD JE BLOCK GEMESSEN (22.09.2026) — nicht global und
+   nicht fest angenommen. Beide anderen Wege wurden an diesem Tag probiert und
+   von der Messung widerlegt:
+
+     fest aufsteigend  →  8 Befunde, davon 8 Fehlalarme
+     globale Richtung  → 27 Befunde, davon 27 Fehlalarme
+
+   Der Grund ist, dass die Notiz BEIDE Formen enthaelt, und beide mit gutem
+   Grund: die meisten Tage sind vorwaerts erzaehlt, der 09.09.2026 dagegen ist
+   durchgehend neueste-oben geschrieben (seine `## `-Koepfe laufen 15:26 →
+   15:14 → 15:08). In so einem Block sind absteigende Unterabschnitte richtig.
+
+   ⭐ Was WIRKLICH verdaechtig ist, bleibt es: ein Schritt, der gegen die
+   Richtung seines EIGENEN Blocks laeuft. Genau so sieht eine nachgetragene
+   oder geschaetzte Uhrzeit aus — ein Ausreisser in einer sonst gleichmaessigen
+   Reihe. Ein Block mit nur zwei Abschnitten hat keine Mehrheit und wird
+   aufsteigend gelesen, wie bisher.
+   [[kandidatenliste_ist_keine_fehlerliste]] [[vorgabewert_sieht_aus_wie_befund]] */
+const blockRichtung = new Map();
+{
+  const schritte = new Map();
+  for (let i = 1; i < unterBloecke.length; i++){
+    const a = unterBloecke[i - 1], b = unterBloecke[i];
+    if (a.block !== b.block) continue;
+    if (!schritte.has(a.block)) schritte.set(a.block, { auf: 0, ab: 0 });
+    const s = schritte.get(a.block);
+    if (minuten(b.zeit) - minuten(a.zeit) >= 0) s.auf++; else s.ab++;
+  }
+  for (const [block, s] of schritte)
+    blockRichtung.set(block, (s.auf + s.ab) >= 2 && s.ab > s.auf ? 'ab' : 'auf');
+}
+/* ⛔ STOERTEST FUER DIE NEUE RICHTUNGSMESSUNG. Ohne ihn beweist „4 Befunde"
+   nur, dass die Schleife gelaufen ist — und eine Richtungserkennung, die alles
+   fuer richtig haelt, sieht genauso aus wie eine, die funktioniert.
+   Gemessen werden beide Ausgaenge: eine saubere absteigende Reihe darf NICHT
+   melden, ein Ausreisser darin MUSS melden. */
+const richtungStoertest = (() => {
+  const richtung = (zeiten) => {
+    let auf = 0, ab = 0;
+    for (let i = 1; i < zeiten.length; i++)
+      (minuten(zeiten[i]) - minuten(zeiten[i - 1]) >= 0) ? auf++ : ab++;
+    return (auf + ab) >= 2 && ab > auf ? 'ab' : 'auf';
+  };
+  const meldet = (zeiten) => {
+    const r = richtung(zeiten);
+    let n = 0;
+    for (let i = 1; i < zeiten.length; i++){
+      const d = minuten(zeiten[i]) - minuten(zeiten[i - 1]);
+      if ((r === 'ab' ? -d : d) < 0) n++;
+    }
+    return n;
+  };
+  return meldet(['15:26', '15:14', '15:08', '14:42']) === 0   /* sauber absteigend */
+      && meldet(['13:31', '13:45', '13:59', '14:10']) === 0   /* sauber aufsteigend */
+      && meldet(['15:26', '15:14', '16:40', '14:42']) === 1   /* ein Ausreisser nach oben */
+      && meldet(['13:31', '13:45', '12:10', '14:10']) === 1;  /* ein Ausreisser nach unten */
+})();
+
 const unterRueckwaerts = [];
 for (let i = 1; i < unterBloecke.length; i++){
   const a = unterBloecke[i - 1], b = unterBloecke[i];
   if (a.block !== b.block) continue;
-  if (minuten(b.zeit) - minuten(a.zeit) >= 0) continue;
+  const rohU = minuten(b.zeit) - minuten(a.zeit);
+  if ((blockRichtung.get(a.block) === 'ab' ? -rohU : rohU) >= 0) continue;
   /* ⚠️ Ausgenommen wird EINZELN und mit Namen — eine stille Ausnahme waere
      dasselbe wie ein abgeschalteter Pruefer. */
   if (b.belegt){ unterBelegt.push(b); continue; }
@@ -625,7 +735,12 @@ if (unterArchiv) console.log('    ⓘ mit „Davor:" gekennzeichnet (archiviert)
 for (const b of unterBelegt)
   console.log('    ⓘ Z' + b.zeile + ' ausgenommen: „geprueft, nicht geschaetzt" MIT Beleg — '
     + b.kopf.slice(4, 58));
-console.log('    ' + (unterRueckwaerts.length ? '❌' : '✅') + ' rueckwaerts:      ' + unterRueckwaerts.length);
+console.log('    ' + (unterRueckwaerts.length ? '❌' : '✅') + ' rueckwaerts:      ' + unterRueckwaerts.length
+  + '   (Richtung je Block gemessen: ' + [...blockRichtung.values()].filter(v => v === 'ab').length
+  + ' Block/Bloecke sind neueste-oben geschrieben)');
+console.log('    ' + (richtungStoertest ? '✅' : '⛔') + ' Stoertest Richtung: '
+  + (richtungStoertest ? 'saubere Reihen schweigen, ein Ausreisser meldet'
+     : 'DIE RICHTUNGSMESSUNG MISST NICHTS — jede Reihe gilt als richtig'));
 console.log('    ' + (zukunft.length ? '❌' : '✅') + ' in der Zukunft:   ' + zukunft.length
   + '   (heutige Abschnitte gegen die Uhr, jetzt ' + JETZT_HHMM + ')');
 if (!stoerOk || !eichOk) console.log('    ⛔ STOERTEST: die Zukunftspruefung misst nichts —'
@@ -811,7 +926,7 @@ for (const r of todoRot.slice(0, 8))
   console.log('     ❌ Z' + String(r.zeile).padStart(5) + '  ' + r.zeit + '  ' + r.grund);
 if (todoRot.length > 8) console.log('     … und ' + (todoRot.length - 8) + ' weitere');
 
-const alleSauber = !weicht && !zeitRot.length && !rueckwaerts.length && !unterRueckwaerts.length && !zukunft.length && !todoRot.length;
+const alleSauber = richtungStoertest && !weicht && !zeitRot.length && !rueckwaerts.length && !unterRueckwaerts.length && !zukunft.length && !todoRot.length;
 if (alleSauber) console.log('\n✅ Alle vier Pruefungen sauber: Datum, Uhrzeit, Reihenfolge, To-Do-Zeilen.');
 else if (!weicht) console.log('\n✅ Kein Datum widerspricht seinen Commits'
   + (rueckwaerts.length || zeitRot.length ? ' — aber siehe unten.' : '.'));
@@ -834,4 +949,4 @@ if (zukunft.length){
   console.log('   Die kann niemand geschrieben haben — sie sind geschaetzt. Die Uhr');
   console.log('   und die Commit-Zeit sind die Quellen, nicht die Erinnerung.');
 }
-process.exit(weicht || zeitRot.length || rueckwaerts.length || unterRueckwaerts.length || zukunft.length || todoRot.length ? 1 : 0);
+process.exit(!richtungStoertest || weicht || zeitRot.length || rueckwaerts.length || unterRueckwaerts.length || zukunft.length || todoRot.length ? 1 : 0);

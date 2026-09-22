@@ -386,6 +386,40 @@ export const PFLEGEPLAN = [
       wie: 'die Seite trägt ihr Baudatum und wird bei jedem Lauf neu erzeugt; eine Regel, die aus SATZ_THEMEN fällt, landet sichtbar unter „Nicht zuordbar"' },
   },
   {
+    /* Neu am 22.09.2026. Elias: „wir hatten ausgemacht das du das machen sollst
+       bzw bewerten sollst und ich hatte dir noch gesagt das du auch meine
+       unterlagen regelmässig gucken sollst und auch das in deine analyse mit
+       einbeziehen sollst und auch die schlüssel bücher die wir haben usw."
+       ⛔ Die Seite legte ihm bis dahin ALLE 95 Fundstellen vor. Jetzt bewerte
+       ich jede einzeln gegen die Quellen; zu ihm kommen nur noch die, die ohne
+       ihn nicht zu entscheiden sind. Gemessen: 95 → 7. */
+    funktion: 'Regelkandidaten bewerten und freigeben (Artefakt)',
+    /* ⚠️ KEINE App-Dateien: die Seite ist ein Artefakt für ihn, kein Teil der
+       App — wie bei der Regelkategorien-Seite darüber. */
+    dateien: [],
+    bildschirme: [],
+    neuerInhalt: [
+      { routine: W, schritt: '1c.8b', beleg: 'node werkzeuge/kandidaten-bewerten.mjs', werkzeug: 'werkzeuge/kandidaten-bewerten.mjs',
+        wie: 'jede neue Fundstelle aus kandidaten.mjs bekommt beim nächsten Lauf ihre Belege gesucht (Schlüssel 1 über die Vault-Notiz, Band 2+3, die vorhandenen Regeln) und wartet dann sichtbar auf MEIN Urteil' },
+      { routine: W, schritt: '1c.8b', beleg: 'node werkzeuge/freigabe-artefakt.mjs', werkzeug: 'werkzeuge/freigabe-artefakt.mjs',
+        wie: 'aus der Bewertung wird die Seite gebaut — nur regel, abweichung und unbelegt landen als Entscheidung darauf' },
+    ],
+    eingaben: { routine: W, schritt: '1c.8b', beleg: 'artefakte/freigabe.html',
+      wie: 'seine Antworten kommen als Textblock aus der Seite (Kennung plus JA/NEIN/SPAETER bzw. SCHLUESSEL/LEHRER) und werden von Hand in grammar-data.js eingetragen — jede neue Regel braucht sein Ja' },
+    veralten: [
+      { routine: W, schritt: '1c.8b', beleg: 'node werkzeuge/kandidaten-bewerten.mjs', werkzeug: 'werkzeuge/kandidaten-bewerten.mjs',
+        wie: 'Exitcode 1, sobald ein Kandidat ohne Urteil, ohne Begründung, ohne Fundstelle oder (bei einer Frage an ihn) ohne Frage dasteht — mein Rückstand wird dadurch sichtbar statt zu seiner Arbeit zu werden' },
+      /* ⛔ Der teuerste Fehlerfall dieses Werkzeugs ist kein Absturz, sondern
+         eine LEERE Quelle: fehlt die Schlüssel-Textebene oder die Vault-Notiz,
+         wären alle Treffer null und jeder Kandidat sähe „nicht belegt" aus.
+         Genau so landet einer fälschlich bei Elias. Deshalb prüft der Lauf
+         beide Quellen und wird rot, wenn eine fehlt.
+         [[leere_liste_ist_keine_messung]] */
+      { routine: W, schritt: '1c.8b', beleg: 'node werkzeuge/kandidaten-bewerten.mjs --stoertest', werkzeug: 'werkzeuge/kandidaten-bewerten.mjs',
+        wie: 'der Störtest ignoriert die Urteile und muss rot werden — er belegt, dass der Lauf überhaupt messen kann' },
+    ],
+  },
+  {
     /* Neu am 17.09.2026. Elias am 16.09.2026, 19:11:57: „ja mein gedächtnis soll
        immer auf dem aktuellsten stand sein mit allem". Keine App-Datei — ein
        Werkzeug, das den Inhalt der App als Notizen in seinen Vault schreibt. */
@@ -395,8 +429,18 @@ export const PFLEGEPLAN = [
     neuerInhalt: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/veroeffentlichen.mjs',
       wie: 'veroeffentlichen.mjs ruft gedaechtnis-spiegel.mjs nach jedem Upload auf — jede ausgelieferte Regel, Karte, jeder Satz steht danach im Vault' },
     eingaben: { nein: 'Elias trägt dort nichts ein: die Notizen sind erzeugt und tragen den Hinweis, dass Handänderungen überschrieben werden.' },
-    veralten: { routine: W, schritt: '1b.6', beleg: 'Gedächtnis-Spiegel NICHT nachgezogen',
-      wie: 'scheitert der Spiegel, meldet veroeffentlichen.mjs das laut und die Wartung schreibt es in den Bericht; test-gedaechtnis-spiegel.mjs (alle-pruefer) prüft Vollständigkeit und --pruefen' },
+    veralten: [
+      { routine: W, schritt: '1b.6', beleg: 'Gedächtnis-Spiegel NICHT nachgezogen',
+        wie: 'scheitert der Spiegel, meldet veroeffentlichen.mjs das laut und die Wartung schreibt es in den Bericht; test-gedaechtnis-spiegel.mjs (alle-pruefer) prüft Vollständigkeit und --pruefen' },
+      /* ⛔ Neu am 22.09.2026. Elias auf die Frage, wohin neue Einträge gehören:
+         „oben, räume demtentsprechend um". Was veraltet, ist hier nicht der
+         Inhalt, sondern die REIHENFOLGE: wird einmal unten angehängt, hat die
+         Notiz wieder einen absteigenden Kopf und einen aufsteigenden Rumpf —
+         genau der Zustand, den das Umräumen an diesem Tag behoben hat (16
+         Brüche in Vokabeltrainer-Arabisch.md). */
+      { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/notiz-umraeumen.mjs', werkzeug: 'werkzeuge/notiz-umraeumen.mjs',
+        wie: 'im Sammellauf: Exit 1, sobald in einer Projektnotiz ein älterer Abschnitt vor einem neueren steht — mit --schreiben räumt dasselbe Werkzeug um, nach fünf Gegenproben' },
+    ],
   },
   {
     funktion: 'Iʿrāb-Erklärer',
