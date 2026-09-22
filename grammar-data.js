@@ -1268,7 +1268,16 @@ const GRAMMAR_RULES = [
     "id": "li-vs-inda-01",
     satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     "name": "لِ oder عِنْدَ? Untrennbar gegen trennbar",
-    "shortExplanation": "Beide heißen auf Deutsch „ich habe\", aber sie sind nicht austauschbar — der Lehrer nennt das ausdrücklich „eine wichtige Regel\". **لِ steht für Dinge, die untrennbar zu einem gehören**: Verwandtschaftsbande (Geschwister, Eltern, Kinder) und Körperteile. **عِنْدَ steht für Dinge, die man von sich trennen kann.** Seine Gegenüberstellung: wir sagen عِنْدِي كِتَابٌ „bei mir ist ein Buch\" und wir sagen لِي أَخٌ „mir gehört ein Bruder\" — aber wir sagen NICHT عِنْدِي أَخٌ. Wörtlich unterscheidet er auch die Bedeutung: عِنْدَ heißt „bei mir ist\", لِ heißt „mir gehört\".",
+    /* ⭐ Elias am 22.09.2026 als Kommentar auf der Kategorien-Seite: „ich bin
+       damit aber nicht ganz zufrieden weil li gehört dazu aber in inda hat
+       soweit ich weiß nichts mit genitiv zu tun."
+       Er hat in der Sache recht, und der Punkt fehlte hier ganz — deshalb der
+       letzte Absatz. ⛔ Er stand seit dem 22.09. NUR in einer Kommentarantwort
+       („Geändert in der Regel: im ausführlich-Teil steht jetzt …"), und die war
+       eine Behauptung: die Regel hatte gar kein solches Feld und keinen solchen
+       Satz. Nachgemessen am selben Abend und nachgetragen.
+       [[zahlen_ohne_beleg]] [[erfolgsmeldung_ohne_wirkung]] */
+    "shortExplanation": "Beide heißen auf Deutsch „ich habe\", aber sie sind nicht austauschbar — der Lehrer nennt das ausdrücklich „eine wichtige Regel\". **لِ steht für Dinge, die untrennbar zu einem gehören**: Verwandtschaftsbande (Geschwister, Eltern, Kinder) und Körperteile. **عِنْدَ steht für Dinge, die man von sich trennen kann.** Seine Gegenüberstellung: wir sagen عِنْدِي كِتَابٌ „bei mir ist ein Buch\" und wir sagen لِي أَخٌ „mir gehört ein Bruder\" — aber wir sagen NICHT عِنْدِي أَخٌ. Wörtlich unterscheidet er auch die Bedeutung: عِنْدَ heißt „bei mir ist\", لِ heißt „mir gehört\".\n\n⚠️ **Nur لِ ist eine Genitivpartikel.** عِنْدَ ist keine: es ist ein ظَرْف, also selbst ein Nomen, und wirkt wie ein مُضَافٌ — genau das sagen die Regeln „ظَرْف (Zeit-/Ortsangabe)\", „Das ظَرْف ist selbst مَنْصُوب\" und „عِنْدَ ist ein ظَرْف — für Ort UND für Zeit\". Das Wort danach steht trotzdem im Genitiv, nur auf dem anderen Weg: nach لِ als اِسْم مَجْرُور, nach عِنْدَ als مُضَافٌ إِلَيْهِ. Auch عِنْدِي ist so gebaut. Beide enden beim Genitiv, über zwei verschiedene Wege.",
     "color": "idafa",
     "kapitel": 10,
     "source": {
