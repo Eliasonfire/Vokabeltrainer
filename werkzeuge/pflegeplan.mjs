@@ -191,8 +191,17 @@ export const PFLEGEPLAN = [
     bildschirme: [],
     neuerInhalt: { routine: W, schritt: '2', beleg: 'node werkzeuge/hole-vokabeln.mjs', werkzeug: 'werkzeuge/hole-vokabeln.mjs',
       wie: 'frischt die Lehrwerke und seine eigenen Wörter aus arabicroots auf' },
-    eingaben: { routine: W, schritt: '1c.1', beleg: '--app auto', werkzeug: 'werkzeuge/vorrat.mjs',
-      wie: 'welche Kapitel er freigeschaltet hat, kommt aus seinem abgeglichenen Stand' },
+    eingaben: [
+      { routine: W, schritt: '1c.1', beleg: '--app auto', werkzeug: 'werkzeuge/vorrat.mjs',
+        wie: 'welche Kapitel er freigeschaltet hat, kommt aus seinem abgeglichenen Stand' },
+      /* 22.09.2026: nicht erst Mi/So. Elias: „wenn ich bis zu drei neue kapitel
+         anhacke das dann sobald du es weißt und es länger als 1h auch so bleibt …
+         das du dann das volle programm machst". Die Aufgabe „Vokabeltrainer neue
+         Kapitel (stuendlich)" fragt ohne KI (neue-kapitel.mjs --tor) und startet
+         die Routine nur mit Auftrag. Bewacht von test-neue-kapitel.mjs. */
+      { routine: 'vokabeltrainer-neue-kapitel', schritt: '0', beleg: 'node werkzeuge/neue-kapitel.mjs --auftrag', werkzeug: 'werkzeuge/neue-kapitel.mjs',
+        wie: 'neu angehakte Kapitel (höchstens drei je Buch, länger als eine Stunde) bekommen stündlich das volle Programm' },
+    ],
     veralten: { routine: W, schritt: '2', beleg: 'node werkzeuge/baue-vokabelpaket.mjs', werkzeug: 'werkzeuge/baue-vokabelpaket.mjs',
       wie: 'das Vokabelpaket wird nach dem Abzug neu gebaut; das ABFRAGEDATUM der '
         + 'Freischaltung pflegt vorrat.mjs selbst in werkzeuge/freischaltung-abfrage.json '
