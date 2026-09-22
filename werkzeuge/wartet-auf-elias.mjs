@@ -1053,27 +1053,33 @@ if (false) posten.push({
    gegen Code, KV und Projektnotiz): 29 waren längst erledigt oder überholt und
    sind abgehakt; diese 11 warten wirklich auf ihn. Jede Zeile nennt das Datum,
    an dem die Frage entstand. Kein Werkzeug zählt sie — sie stehen hier fest,
-   bis er antwortet; beantwortete Nummern von Hand streichen. */
+   bis er antwortet; beantwortete Nummern von Hand streichen.
+
+   ⭐ STAND 22.09.2026: von 11 sind 7 beantwortet, 4 stehen noch. Was er gesagt
+   hat, steht hier im Wortlaut — eine gestrichene Nummer ohne Begründung
+   wandert nach zwei Wochen als „hatten wir das schon?" zurück auf die Seite.
+     2 Sitzungsgröße        „ja" (raus) → ersatzlos entfernt, v561 (`92e5eb5`)
+     4 Satzmodus-Hinweise   sein Bauauftrag im Wortlaut → v562 (`6d2bc1b`)
+     5 Raten vorm Umdrehen  „ja lass mal machen" → gebaut
+     6 ADHS-Befund          „beides glaube"
+     7 Projektnotiz         „oben, räume demtentsprechend um" → 16 Brüche behoben
+    10 To-Do-Dubletten      „ja" → die offene Fassung gelöscht, die zwei
+                            abgehakten Archivfassungen behalten (sie tragen
+                            Belege, die sonst nirgends stehen)
+    11 Koran-Verszeichen    „so lassen" → nichts gebaut */
 posten.push({
   titel: 'Ältere Fragen, die nur in der To-Do standen — gelten sie noch?',
-  zahl: 11, einheit: 'Fragen', dazu: 'aus August und September, geprüft 17.09.', auswahl: true,
+  zahl: 4, einheit: 'Fragen', dazu: 'von 11 aus dem 17.09. sind 7 beantwortet', auswahl: true,
   aufwand: 'je Frage eine kurze Antwort — oder „streichen"',
-  warum: 'Diese Seite sagte bisher, alles andere sei erledigt. Das stimmte nicht: in der To-Do standen noch '
-    + '44 offene Punkte. Ich habe jeden geprüft. 29 waren längst gebaut oder überholt, die habe ich abgehakt. '
-    + 'Diese 11 brauchen wirklich dich. Was du streichst, baue ich nicht.',
+  warum: 'Am 17.09. standen hier 11 Fragen aus der To-Do. Sieben hast du inzwischen beantwortet, und alles, '
+    + 'was daraus zu bauen war, ist gebaut und ausgeliefert (v561, v562). Diese vier stehen noch. '
+    + 'Was du streichst, baue ich nicht.',
   wie: 'Sag die Nummer und deine Antwort, zum Beispiel „2: raus". Oder „alle streichen".',
   zeilen: [
     '1 · Koran: Die Ansicht „Kästchen" hat keinen Rahmen mehr. Umbenennen, zum Beispiel in „Einzeln"? (08.09.)',
-    '2 · Einstellung „Sitzungsgröße": Sie ändert nichts, solange „Karten pro Tag" nicht größer ist — bei dir stehen beide auf 10. Raus oder bleiben? (08.09.)',
-    '3 · Bild zur Eselsbrücke: Dein Ja ist da. Offen ist, womit (Emoji oder kleine Zeichnung) und für welche Wörter. (07.09.)',
-    '4 · Satzmodus: Hinweise erst nach deinem Versuch zeigen. Dein Ja ist da. Offen ist, ob bei allen Übungen oder nur dort, wo der Hinweis die Antwort schon verrät. (07.09.)',
-    '5 · Karteikarten: vor dem Umdrehen erst aus vier Bedeutungen tippen? Die Box bestimmt weiter deine Einschätzung danach. (07.09.)',
-    '6 · Dein ADHS-Befund: Steht dort „unaufmerksam", „hyperaktiv-impulsiv" oder beides? Davon hängt ab, ob sich ein Versuch mit Hintergrundrauschen beim Lernen lohnt. (08.09.)',
-    '7 · Deine Projektnotiz zum Vokabeltrainer: neue Einträge unten anhängen oder oben einfügen? Bisher ist es gemischt. (26.08.)',
-    '8 · Vier Regeln zusammenlegen? Deine Notizen vom 26.08. zu: مُضَافٌ (bestimmt ohne اَلْ) · مُضَافٌ erkennen · إِضَافَة – Verkettung · بِـ. Sagen sie dasselbe?',
-    '9 · Regel „مُبْتَدَأ وخَبَر (Subjekt und Aussage)": Deine Notiz sagt, sie kommt erst nach Kapitel 9 dran. Später zeigen oder lassen? (26.08.)',
-    '10 · To-Do: Madina-Schlüssel und Bayna Yadayk stehen je zweimal drin, einmal erledigt, einmal offen. Darf ich die alten Stellen löschen? (19.08.)',
-    '11 · Koran, Listenmodus: Das Verszeichen ۝ ist zugleich der Knopf zum Abhaken. So lassen?'
+    '2 · Bild zur Eselsbrücke: Dein Ja ist da. Offen ist, womit (Emoji oder kleine Zeichnung) und für welche Wörter. (07.09.)',
+    '3 · Vier Regeln zusammenlegen? Deine Notizen vom 26.08. zu: mudaf ohne al- · mudaf erkennen · idafa-Verkettung · der Buchstabe bi. Sagen sie dasselbe?',
+    '4 · Die Regel „Subjekt und Aussage" (mubtada und khabar): Deine Notiz sagt, sie kommt erst nach Kapitel 9 dran. Später zeigen oder lassen? (26.08.)'
   ],
   seite: '', seiteText: ''
 });
@@ -1114,63 +1120,71 @@ try {
     const e = JSON.parse(fs.readFileSync(ent, 'utf8'));
     beantwortet = (e.entscheidungen || []).length;
   }
-  /* ⭐ Wie viele liegen in einem Fenster, aus dem SCHON eine Regel stammt?
-     (09.09.2026) Das sortiert die Arbeit vor: solche Fundstellen sind mit
-     hoher Wahrscheinlichkeit das, was schon dasteht.
-     ⚠️ Es ist eine RANGFOLGE, kein Filter — der Lehrer kann in dreissig
-     Sekunden zwei verschiedene Dinge sagen. Deshalb steht die Zahl im Text und
-     nicht als Abzug in `rest`. [[kandidatenliste_ist_keine_fehlerliste]] */
-  let schonErfasst = 0;
-  try {
-    const { GRAMMAR_RULES: GR } = (new Function(
-      fs.readFileSync(path.join(REPO, "grammar-data.js"), 'utf8') + ';return {GRAMMAR_RULES};'))();
-    const sek = (s) => {
-      const roh = String(s == null ? '' : s).trim();
-      if (!roh) return null;
-      const t = roh.split(':').map(Number);
-      return (t.some(isNaN) || !t.length) ? null : t.reduce((a, b) => a * 60 + b, 0);
-    };
-    const jeFolge = new Map();
-    for (const r of GR){
-      if (r.ergaenzung || !r.source) continue;
-      const s = sek(r.source.approxTimestamp);
-      if (s === null) continue;
-      const f = Number(r.source.folge);
-      if (!jeFolge.has(f)) jeFolge.set(f, []);
-      jeFolge.get(f).push(s);
-    }
-    for (const d of dateien){
-      const o = JSON.parse(fs.readFileSync(path.join(kand, d), 'utf8'));
-      const regeln = jeFolge.get(Number(o.folge)) || [];
-      for (const k of (o.kandidaten || []))
-        if (regeln.some(s => s >= Number(k.von) - 30 && s <= Number(k.bis) + 30)) schonErfasst++;
-    }
-  /* ⛔ NICHT schweigen. Die erste Fassung stand hier mit „ohne diese Zahl ist
-     der Posten weiterhin richtig" — und verschluckte damit einen
-     ReferenceError (`WURZEL` statt `REPO`). Der Satz fehlte auf der Seite, der
-     Lauf meldete Erfolg, und aufgefallen ist es nur, weil ich die erzeugte
-     Datei danach durchsucht habe. Genau die Sorte catch, die ich heute Nacht
-     an fuenf Stellen der App aufgemacht habe.
-     [[ausfall_ist_unsichtbar_gebaut]] [[erfolgsmeldung_ohne_wirkung]] */
-  } catch (e){
-    console.log('  ⚠️ Vorsortierung der Regelkandidaten nicht moeglich: ' + e.message);
-    console.log('     Der Posten steht trotzdem, nur ohne die Zeile „X der Y liegen …".');
-  }
+  /* ⛔⛔ SEIT DEM 22.09.2026 ZAEHLT DIESER POSTEN ETWAS ANDERES.
+     Bis dahin stand hier die Zahl der FUNDSTELLEN — zuletzt 95 — und damit
+     genau das, was Elias am 22.09. abgeraeumt hat:
+       „wir hatten ausgemacht das du das machen sollst bzw bewerten sollst"
+     Jetzt bewerte ich jede Fundstelle gegen die Schluessel, den Unterricht und
+     seine Unterlagen (`werkzeuge/kandidaten-bewerten.mjs`), und hier steht nur
+     noch, was ohne ihn nicht zu entscheiden ist. Gemessen: 95 -> 7.
 
-  const rest = Math.max(0, offen - beantwortet);
-  if (rest) posten.push({
-    titel: 'Regelkandidaten aus dem Unterricht',
-    zahl: rest, einheit: 'Fundstellen', dazu: folgen.join(' · '),
-    aufwand: 'durchsehen und je Fundstelle ja/nein/später — das Zusammenfassen mache ich',
-    warum: 'Aus ihnen werden neue Grammatikregeln. Ohne dein Ja trage ich keine ein — eine Regel ohne Quelle waere geraten, und geraten wird hier nicht.'
-      + (schonErfasst ? ' ⭐ ' + schonErfasst + ' der ' + rest + ' liegen in einem Zeitfenster, aus dem'
-        + ' bereits eine Regel stammt — mit denen faengst du am besten an, sie sind vermutlich'
-        + ' schnell abgehakt. Es ist eine Rangfolge, kein Filter: in dreissig Sekunden kann'
-        + ' der Lehrer zwei verschiedene Dinge sagen.' : ''),
-    wie: 'Auf der Freigabeseite antippen, unten den Text kopieren, in den Chat schicken.',
-    seite: 'https://claude.ai/artifact/d9916aee-b679-4d91-bb0c-c3642f8889ac',
-    seiteText: 'Die Freigabeseite'
-  });
+     ⚠️ Die alte Vorsortierung („X der Y liegen in einem Zeitfenster, aus dem
+     schon eine Regel stammt") ist damit hinfaellig: sie war eine Rangfolge
+     fuer IHN. Wer bewertet, braucht keine Rangfolge mehr, sondern ein Urteil.
+
+     ⛔ Faellt bewertung.json aus, wird die alte Zahl NICHT ersatzweise
+     gemeldet. Eine 95 auf seiner Warteseite waere die Rueckkehr in den alten
+     Zustand, und niemand saehe der Seite an, dass sie eine Notloesung zeigt.
+     Stattdessen sagt der Posten, dass die Bewertung fehlt.
+     [[leere_liste_ist_keine_messung]] */
+  let bewertung = null;
+  try {
+    const bp = path.join(kand, 'bewertung.json');
+    if (fs.existsSync(bp)) bewertung = JSON.parse(fs.readFileSync(bp, 'utf8'));
+  } catch (e) {
+    console.log('  ⚠️ bewertung.json nicht lesbar: ' + e.message);
+  }
+  /* ⛔ Die Vorsortierung „X der Y liegen in einem Zeitfenster, aus dem schon
+     eine Regel stammt" stand hier bis zum 22.09.2026 und ist WEGGEFALLEN, nicht
+     kaputtgegangen. Sie war eine Rangfolge für IHN, damit er die 95 in einer
+     sinnvollen Reihenfolge abarbeitet. Seit ich bewerte, gibt es keine 95 mehr,
+     die er abarbeitet — und eine Rangfolge über sieben Stück ist keine Hilfe,
+     sondern Text. Der Vorgänger steht in `git show 8f24c60:werkzeuge/wartet-auf-elias.mjs`. */
+
+  if (!bewertung) {
+    posten.push({
+      titel: 'Regelkandidaten: die Bewertung fehlt',
+      zahl: Math.max(0, offen - beantwortet), einheit: 'Fundstellen', dazu: folgen.join(' · '),
+      aufwand: 'nichts — das ist meine Arbeit, nicht deine',
+      warum: 'Aus den Fundstellen werden neue Grammatikregeln, und ich sollte sie vorher gegen die '
+        + 'Schlüsselbücher prüfen. Diese Prüfung fehlt gerade (transcripts/kandidaten/bewertung.json ist '
+        + 'nicht da). Ich lege dir die rohen Fundstellen NICHT vor — genau das wolltest du nicht.',
+      wie: 'Nichts tun. Ich hole die Bewertung nach.',
+      seite: '', seiteText: ''
+    });
+  } else {
+    const fuerIhn = (bewertung.kandidaten || []).filter(k =>
+      k.urteil === 'regel' || k.urteil === 'abweichung' || k.urteil === 'unbelegt');
+    const zahl = (art) => fuerIhn.filter(k => k.urteil === art).length;
+    if (fuerIhn.length) posten.push({
+      titel: 'Regelkandidaten: die sieben, die ich nicht allein entscheiden kann',
+      zahl: fuerIhn.length, einheit: 'Entscheidungen',
+      dazu: 'aus ' + bewertung.gesamt + ' Fundstellen · ' + bewertung.vonMir + ' habe ich selbst entschieden',
+      auswahl: true,
+      aufwand: 'je Frage ein Ja oder Nein — die Belege stehen dabei',
+      warum: 'Ich habe alle ' + bewertung.gesamt + ' Fundstellen gegen die Schlüsselbücher, den Unterricht und '
+        + 'deine Unterlagen geprüft. ' + bewertung.vonMir + ' konnte ich selbst entscheiden — dort steht der '
+        + 'Inhalt schon als Regel, oder es ist gar keine drin. Übrig sind diese: '
+        + zahl('regel') + ' neue Regeln, die ich vorschlage — eintragen darf sie nur dein Ja; '
+        + zahl('abweichung') + ' Stelle(n), wo Schlüssel und Lehrer sich widersprechen; '
+        + zahl('unbelegt') + ', die der Lehrer sagt und kein Schlüssel bestätigt.'
+        + (bewertung.rueckstand ? ' ⚠️ ' + bewertung.rueckstand + ' habe ich noch nicht durch — mein Rückstand, nicht deiner.' : ''),
+      wie: 'Auf der Freigabeseite antippen, unten den Text kopieren, in den Chat schicken.',
+      zeilen: fuerIhn.map((k, i) => (i + 1) + ' · ' + (k.frage || k.grund || '').slice(0, 200)),
+      seite: 'https://claude.ai/artifact/2GJFK49B8LvWJaBu337qU4',
+      seiteText: 'Die Freigabeseite'
+    });
+  }
 } catch (e) {
   console.log('  ⚠️ Regelkandidaten nicht lesbar: ' + e.message);
 }
@@ -1262,7 +1276,7 @@ try {
 const ARTEFAKTE = [
   /* Neu veröffentlicht am 16.09.2026 — die alte Adresse 4c3a7c9e… war seit dem
      09.09. tot, und „keine neue anlegen" hatte die Seite eine Woche weg gelassen. */
-  ['Was auf dich wartet',   'VmQqStC4ayzrvkz1GiJaEa', 'diese Seite — alle offenen Entscheidungen'],
+  ['Was auf dich wartet',   'Hukk2F5jbFqnLsnW5H9QfN', 'diese Seite — alle offenen Entscheidungen'],
   ['Die Fragenseite',       '5ChpdN9n7PAiTY4B5ZHud3', 'die offenen Feldangaben, ein Durchgang je Frage'],
   /* ⭐ Am 16.09.2026 (Wartung Mi) vom Wächter gemeldet — derselbe Fall wie beim
      Lagebericht am 21.08.: die Seite war seit dem 15.09. gebaut, hatte eine URL
@@ -1299,8 +1313,14 @@ const LAUFEND = [
    'welche der 95 Regeln im Satzmodus bleiben — Schlüssel satzmodus-auswahl-v1'],
   ['Regelprüfung Madina 1', '4iMdxRvKkFHj699cfyHbra',
    'deine Beurteilung der Regeln — Schlüssel regelpruefung-v1, deine Antworten liegen darin'],
-  ['Regelkandidaten freigeben', 'd9916aee-b679-4d91-bb0c-c3642f8889ac',
-   'neue Regeln vor dem Eintragen — Schlüssel regelkandidaten-v1'],
+  /* ⚠️ 22.09.2026 zum DRITTEN Mal neu veröffentlicht. Vorgänger:
+     `d9916aee-b679-4d91-bb0c-c3642f8889ac` (tot seit der UUID-Umstellung am
+     15.09.) und `DMKVDttK5HMMAEY62HDafF` (die alte Bauform mit allen 95
+     Fundstellen, von Elias am 22.09. selbst gelöscht). Und der Schlüssel heißt
+     seither `regelkandidaten-v2`: die Knöpfe fragen etwas anderes, alte
+     v1-Antworten würden stumm falsch zugeordnet. */
+  ['Regelkandidaten freigeben', '2GJFK49B8LvWJaBu337qU4',
+   'die sieben, die ich nicht allein entscheiden kann — Schlüssel regelkandidaten-v2'],
   /* ⛔ Diese drei tragen einen eigenen Speicher — also deine Antworten — und
      standen bis zum 20.08.2026 auf KEINER Liste. Eine Adresse, die man nicht
      findet, ist so gut wie keine; und wer eine davon ohne ihre URL neu
@@ -1325,7 +1345,7 @@ const LAUFEND = [
    Datei ohne Zuordnung ist keine Kleinigkeit: sie ist die naechste doppelte
    Seite. [[entscheidung_gilt_fuer_das_zweite_werkzeug]] [[werkzeug_ohne_aufrufer]] */
 const DATEI_ZU_URL = {
-  'wartet-auf-elias.html':        'VmQqStC4ayzrvkz1GiJaEa',
+  'wartet-auf-elias.html':        'Hukk2F5jbFqnLsnW5H9QfN',
   'wartungsfragen-artefakt.html': '5ChpdN9n7PAiTY4B5ZHud3',
   'regelkategorien.html':         'DHhYFwtTNJADVwE2tVUDz3',
   'wartungskreislauf.html':       '9ec136ba-019d-438b-98af-e57939eb4a99',
@@ -1336,7 +1356,10 @@ const DATEI_ZU_URL = {
   'farbe-wortmarke.html':         '4yfD1FeCGm2dna7ioELBuG',
   'stimmen-liste.html':           'ESSZpD31nn4gaVCPnWafcp',
   'regelpruefung.html':           '4iMdxRvKkFHj699cfyHbra',
-  'freigabe.html':                'DMKVDttK5HMMAEY62HDafF',   /* neu veröffentlicht 22.09.2026 — die alte d9916aee… war tot */
+  /* ⚠️ Dritte Adresse für dieselbe Seite. d9916aee… starb an der
+     UUID-Umstellung (15.09.), DMKVDttK5HMMAEY62HDafF hat Elias am 22.09. selbst
+     gelöscht — es war die Fassung mit allen 95 Fundstellen, die er nicht wollte. */
+  'freigabe.html':                '2GJFK49B8LvWJaBu337qU4',   /* neu veröffentlicht am Abend des 22.09.2026 */
   /* Der 48-Stunden-Bericht vom 20.08. Er lag bis zum 21.08. NUR im
      Scratchpad — also ausserhalb jeder Sicherung und ohne Eintrag hier.
      Waere er einmal unter einer neuen URL erschienen, haette Elias zwei
@@ -1449,7 +1472,7 @@ const istTot = (id) => ALTE_ADRESSE.test(String(id || '').split('/').pop());
 /* Eichung: beide Ausgänge, auch als ganze Adresse — sonst verlinkt die Seite
    still wieder ins Leere oder versteckt eine lebende Seite. */
 if (!istTot('4c3a7c9e-c288-480c-bb1f-e2d7cd26d856') || !istTot('https://claude.ai/artifact/d9916aee-b679-4d91-bb0c-c3642f8889ac')
-    || istTot('VmQqStC4ayzrvkz1GiJaEa') || istTot('https://claude.ai/artifact/5ChpdN9n7PAiTY4B5ZHud3')) {
+    || istTot('Hukk2F5jbFqnLsnW5H9QfN') || istTot('https://claude.ai/artifact/5ChpdN9n7PAiTY4B5ZHud3')) {
   console.error('⛔ EICHUNG istTot FEHLGESCHLAGEN — alte und neue Adressen werden nicht unterschieden.');
   process.exit(1);
 }
@@ -1675,10 +1698,20 @@ try {
    Automatik, sondern das Datum der letzten Bestaetigung — eine Adresse ohne
    Datum ist eine Behauptung. [[zahlen_ohne_beleg]] [[daten_ohne_zugang]]
 
-   ✅ 16.09.2026, 21:29: neu veröffentlicht unter VmQqStC4ayzrvkz1GiJaEa, nachdem
+   ✅ 16.09.2026, 21:29: neu veröffentlicht unter `VmQqStC4ayzrvkz1GiJaEa`, nachdem
    die Artefaktliste (27 Seiten, 21:26) die alte Adresse wieder nicht kannte.
    ⛔ „Keine neue anlegen" gilt nur, solange die alte existiert — die Regel hat
-   die Seite eine Woche ferngehalten. [[alte_fassung_beim_nutzer]] */
+   die Seite eine Woche ferngehalten. [[alte_fassung_beim_nutzer]]
+
+   ✅ 22.09.2026: und schon wieder. `VmQqStC4ayzrvkz1GiJaEa` antwortete beim
+   Lesen mit „artifact not found — it may have been deleted"; neu veröffentlicht
+   unter `Hukk2F5jbFqnLsnW5H9QfN`. Das ist die DRITTE Adresse für dieselbe Seite
+   in sieben Tagen.
+   ⭐ Die Lehre daraus ist nicht „öfter nachsehen", sondern: **vor dem
+   Veröffentlichen lesen.** Ein `Artifact read` auf die eingetragene Adresse
+   kostet einen Zug und sagt sofort, ob sie noch lebt. Wer stattdessen blind
+   „mit url" veröffentlicht, bekommt einen Fehlschlag — und legt beim nächsten
+   Versuch genau die zweite Seite an, vor der hier gewarnt wird. */
 const eigeneId = DATEI_ZU_URL['wartet-auf-elias.html'];
 console.log('  ⚠️ Veroeffentlichen kann die Routine nicht selbst — das braucht eine Sitzung.');
 console.log('     Diese Adresse wiederverwenden (Artifact publish mit url), keine zweite Seite anlegen —');

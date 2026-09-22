@@ -1,25 +1,46 @@
-/* freigabe-artefakt.mjs -- Baustein D der Regelkette, als Artefakt.
+/* freigabe-artefakt.mjs -- die Seite, auf der Elias die Regelkandidaten freigibt.
  *
- * Elias am 19.08.2026, nachdem er 55 von 95 Regeln im Regelpruefungs-Artefakt
- * beurteilt hatte: "die entscheidung zu treffen muss so leicht sein wie das
- * artefakt das ich heute bearbeitet habe, am besten so in der art machen wir
- * es oder auch genauso."
+ * ⭐⭐ UMGEBAUT AM 22.09.2026. Bis dahin legte diese Seite ihm ALLE 95
+ * Fundstellen zum Durchklicken vor. Sein Satz dazu:
  *
- * Deshalb dieselbe Bauform wie werkzeuge/regelpruefung-seite.mjs: eine
- * eigenstaendige Seite, Entscheidungen im localStorage, unten ein Kasten zum
- * Kopieren. Sie wird als Artefakt veroeffentlicht und laesst sich am Handy
- * durchgehen.
+ *   „du hast mir ein regelkandidaten freigeben artefakt gemacht. wir hatten das
+ *   thema glaube ich schonmal. wir hatten ausgemacht das du das machen sollst
+ *   bzw bewerten sollst und ich hatte dir noch gesagt das du auch meine
+ *   unterlagen regelmässig gucken sollst und auch das in deine analyse mit
+ *   einbeziehen sollst und auch die schlüssel bücher die wir haben usw."
  *
- * Aufruf:  node werkzeuge/freigabe-artefakt.mjs
+ * Er hatte recht: die Abmachung steht seit dem 29.07.2026 im Gedächtnis
+ * (`04 - Wissen/Lehrwerk-Begleitmaterial.md`, „⭐ Rang der Schlüssel"). Aus
+ * seinem „sollte es unterschiede geben … du sollst das einfach markieren" hatte
+ * ich „alles markieren" gemacht. Die alte Seite hat er noch in derselben Stunde
+ * gelöscht.
+ *
+ * ⭐ Seither kommt der Inhalt aus `transcripts/kandidaten/bewertung.json`, und
+ * darin steht **mein Urteil zu jedem einzelnen Kandidaten**, gefällt gegen die
+ * Schlüssel, den Unterricht und seine Unterlagen. Auf die Seite kommen nur noch
+ * die drei Sorten, die ohne ihn nicht zu entscheiden sind:
+ *
+ *   `regel`      mein Vorschlag mit Beleg — er gibt jede Regel selbst frei
+ *   `abweichung` Schlüssel und Lehrer widersprechen sich
+ *   `unbelegt`   sieht wie eine Regel aus, keine gedruckte Quelle stützt sie
+ *
+ * Gemessen beim Umbau: **95 Fundstellen → 7 Entscheidungen.**
+ *
+ * ⛔ Die Seite wird NICHT mehr aus den Rohdaten gebaut. Fehlt die
+ * `bewertung.json`, bricht dieses Werkzeug ab statt auf die alte Bauform
+ * zurückzufallen — sonst stünden nach einem stillen Fehler wieder 95
+ * Fundstellen darin, und niemand sähe es der Seite an.
+ *
+ * Aufruf:
+ *   node werkzeuge/kandidaten-bewerten.mjs      (zuerst, schreibt bewertung.json)
+ *   node werkzeuge/freigabe-artefakt.mjs
  * Ergebnis: artefakte/freigabe.html
  *
  * ======================= ⛔⛔ DIESE SEITE NICHT TEILEN =====================
  *
- * Sie enthaelt WOERTLICHEN TRANSKRIPTTEXT aus den Aufzeichnungen — am
- * 21.08.2026 nachgemessen: 13 von 15 Kandidaten der Folge 14 stehen mit ihrem
- * Originalwortlaut darin. Genau dieses Material liegt unter transcripts/ und
- * ist per .gitignore gesperrt (arabicroots AGB 3.7 und 9, unerlaubte
- * Weitergabe von Kursmaterial).
+ * Sie enthaelt WOERTLICHEN TRANSKRIPTTEXT aus den Aufzeichnungen. Genau dieses
+ * Material liegt unter transcripts/ und ist per .gitignore gesperrt
+ * (arabicroots AGB 3.7 und 9, unerlaubte Weitergabe von Kursmaterial).
  *
  * ⭐ Als Artefakt ist die Seite standardmaessig PRIVAT — nur Elias sieht sie.
  * Das ist in Ordnung. Was NICHT in Ordnung waere: sie ueber das Teilen-Menue
@@ -28,25 +49,20 @@
  * SICHTBAR im Kopf der erzeugten Seite — ein Vorbehalt, der nur im Quelltext
  * steht, erreicht den Leser nicht. [[regel_gilt_nur_mit_begruendung]]
  *
- * Dasselbe gilt fuer transcripts/kandidaten/freigabe.html, die aeltere
- * Fassung derselben Seite.
+ * ⚠️ Durch den Umbau steht der Wortlaut nur noch bei 7 statt bei 95
+ * Fundstellen in der Seite. Das ist weniger, aber nicht nichts — der Vorbehalt
+ * gilt unverändert.
  *
  * ============================ ⛔ EIGENER SPEICHERSCHLUESSEL ================
  *
- * SPEICHER = 'regelkandidaten-v1'.
+ * SPEICHER = 'regelkandidaten-v2'.
  *
- * NICHT 'regelpruefung-v1' (das Regel-Artefakt, dort liegen Elias' 55
- * Urteile) und NICHT 'satzmodus-auswahl-v1'. Zwei Seiten auf demselben
- * Schluessel loeschen einander die Antworten, und ich kann seinen
- * localStorage weder lesen noch sichern — der Schaden waere unumkehrbar und
- * unbemerkt.
- *
- * ============================ Warum die Vorauswahl mitkommt ===============
- *
- * `kandidaten.mjs` liefert eine VORAUSWAHL, keine Regelliste. Gemessen findet
- * sie rund zwei Drittel der bekannten Regeln wieder, wenn man ein Drittel des
- * Unterrichts liest. Diese Zahl steht auf der Seite, weil eine Liste ohne
- * ihren Preis eine Trefferquote vortaeuscht, die es nicht gibt.
+ * ⚠️ v2, nicht v1: die Seite fragt jetzt etwas anderes, und die alten Antworten
+ * aus v1 wuerden auf die neuen Knoepfe gemappt, ohne dass es jemand merkt.
+ * NICHT 'regelpruefung-v1' (dort liegen Elias' 55 Urteile ueber die Regeln) und
+ * NICHT 'satzmodus-auswahl-v1'. Zwei Seiten auf demselben Schluessel loeschen
+ * einander die Antworten, und ich kann seinen localStorage weder lesen noch
+ * sichern — der Schaden waere unumkehrbar und unbemerkt.
  */
 import fs from 'node:fs';
 import { arabischInSeite, BIDI_CSS } from './arabisch-hervorheben.mjs';
@@ -54,100 +70,107 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const KAND = path.join(REPO, 'transcripts', 'kandidaten');
-const AUS  = path.join(REPO, 'artefakte');
+const BEWERTUNG = path.join(REPO, 'transcripts', 'kandidaten', 'bewertung.json');
+const AUS = path.join(REPO, 'artefakte');
 
-if (!fs.existsSync(KAND)) {
-  console.log('Keine Kandidaten da. Erst: node werkzeuge/kandidaten.mjs --offen');
-  process.exit(0);
+if (!fs.existsSync(BEWERTUNG)) {
+  console.error('⛔ ' + path.relative(REPO, BEWERTUNG) + ' fehlt.');
+  console.error('   Erst bewerten:  node werkzeuge/kandidaten-bewerten.mjs');
+  console.error('   ⚠️ Ohne sie wuerde die Seite wieder alle Fundstellen zeigen — das ist genau');
+  console.error('      der Zustand, den Elias am 22.09.2026 abgeraeumt hat. Deshalb Abbruch.');
+  process.exit(1);
 }
 fs.mkdirSync(AUS, { recursive: true });
+
+const B = JSON.parse(fs.readFileSync(BEWERTUNG, 'utf8'));
+
+/* ⛔ Ein Rückstand von mir darf die Seite nicht erreichen. Unbewertete
+   Kandidaten tauchen weder als Entscheidung noch in der Nachlese auf; die Zahl
+   steht aber SICHTBAR im Kopf, damit Elias sieht, dass ich noch arbeite. */
+const RUECKSTAND = B.rueckstand || 0;
 
 const esc = s => String(s == null ? '' : s)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   .replace(/"/g, '&quot;');
 
-/* Die vorhandenen Regeln, um "aehnlicheRegeln" mit Namen statt Kennung zu
-   zeigen. Eine nackte id sagt Elias nichts. */
-const G = new Function(fs.readFileSync(path.join(REPO, 'grammar-data.js'), 'utf8')
-  + ';return {GRAMMAR_RULES};')().GRAMMAR_RULES;
-const NAME = Object.fromEntries(G.map(r => [r.id, r.name]));
-
-const dateien = fs.readdirSync(KAND).filter(f => /^folge-\d+\.json$/.test(f))
-  .sort((a, b) => parseInt(a.match(/\d+/)[0]) - parseInt(b.match(/\d+/)[0]));
-if (!dateien.length) { console.log('Keine folge-XX.json in ' + KAND); process.exit(0); }
-
-/* Text kuerzen, aber an einer Wortgrenze — mitten im Wort abgeschnittene
-   Zitate lesen sich wie Uebertragungsfehler. */
-function kuerze(t, n) {
-  const s = String(t || '').replace(/\s+/g, ' ').trim();
-  if (s.length <= n) return [s, ''];
-  let i = s.lastIndexOf(' ', n);
-  if (i < n * 0.6) i = n;
-  return [s.slice(0, i), s.slice(i).trim()];
-}
-
-/* ⛔ Das Datum stand bis zum 20.08.2026 FEST als "Stand 19.08.2026" in der
-   Seite. Sie behauptete also bei jedem Lauf denselben Tag - genau der Fall,
-   in dem eine erzeugte Seite so alt aussieht wie eine handgeschriebene und
-   niemand merkt, wann sie zuletzt gemessen hat.
-   [[eingefrorenes_feld_ist_kein_zustand]] */
 const STAND_HEUTE = new Date().toLocaleDateString('de-DE',
   { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-let bloecke = '', gesamt = 0;
-const folgen = [];
+/* Die drei Sorten, die an Elias gehen — je mit ihren eigenen Knöpfen.
+   ⛔ Die Knopfbeschriftung ist nicht Kosmetik: bei einer Abweichung ist
+   „verwerfen" sinnlos, er muss zwischen ZWEI Fassungen wählen. Eine Seite mit
+   immer denselben drei Knöpfen hätte ihn zwingen müssen, sich die eigentliche
+   Frage selbst zu übersetzen. */
+const SORTEN = {
+  regel: {
+    titel: 'Neue Regel — dein Ja fehlt',
+    farbe: 'gruen',
+    vorspann: 'Schlüssel und Unterricht sagen dasselbe. Ich habe den Beleg gesucht und schlage die Regel vor. Aufnehmen darf sie nur dein Ja.',
+    knoepfe: [['ja', 'Ja, aufnehmen'], ['nein', 'Nein'], ['spaeter', 'später']],
+  },
+  abweichung: {
+    titel: 'Schlüssel gegen Lehrer',
+    farbe: 'gelb',
+    vorspann: 'Hier widersprechen sich die Quellen. Deine Regel vom 29.07.2026 ist „im Zweifel die Schlüsselbücher" — aber entscheiden sollst du.',
+    knoepfe: [['schluessel', 'Schlüssel gilt'], ['lehrer', 'Lehrer gilt'], ['spaeter', 'später']],
+  },
+  unbelegt: {
+    titel: 'Nur im Unterricht, nirgends gedruckt',
+    farbe: 'rot',
+    vorspann: 'Der Lehrer sagt es, aber kein Schlüssel, den wir haben, bestätigt es. Es könnte auch ein Hörfehler der Abschrift sein.',
+    knoepfe: [['ja', 'Trotzdem aufnehmen'], ['nein', 'Nein'], ['spaeter', 'später']],
+  },
+};
 
-for (const datei of dateien) {
-  const d = JSON.parse(fs.readFileSync(path.join(KAND, datei), 'utf8'));
-  const liste = d.kandidaten || [];
+const fuerElias = (B.kandidaten || []).filter(k => SORTEN[k.urteil]);
+const vonMir = (B.kandidaten || []).filter(k => k.urteil === 'schon-regel' || k.urteil === 'weg');
+
+/* ====================== Die Entscheidungen ============================== */
+
+let bloecke = '';
+for (const sorte of ['regel', 'abweichung', 'unbelegt']) {
+  const liste = fuerElias.filter(k => k.urteil === sorte);
   if (!liste.length) continue;
-  gesamt += liste.length;
-  folgen.push({ folge: d.folge, n: liste.length, anteil: d.anteilGelesen });
+  const S = SORTEN[sorte];
+  bloecke += `<h2 id="s-${sorte}"><span class="knr ${S.farbe}">${esc(S.titel)}</span>`
+    + `<span class="kzahl">${liste.length}</span></h2>`
+    + `<p class="vorspann">${esc(S.vorspann)}</p>`;
 
-  bloecke += `<h2 id="f${d.folge}"><span class="knr">Folge ${d.folge}</span>`
-    + `<span class="ktitel">${liste.length} Fundstellen</span>`
-    + `<span class="kzahl">${d.anteilGelesen != null
-        ? Math.round(d.anteilGelesen * 100) + ' % des Unterrichts' : ''}</span></h2>`;
-
-  liste.forEach((k, i) => {
-    const id = 'f' + d.folge + '-' + k.zeitmarke.replace(/:/g, '');
-    const [kern, rest] = kuerze(k.text, 340);
-    const begriffe = Object.entries(k.begriffe || {})
-      .sort((a, b) => b[1] - a[1])
-      .map(([w, n]) => `<span class="chip">${esc(w)}${n > 1 ? ' ×' + n : ''}</span>`).join('');
-    const nah = (k.aehnlicheRegeln || []).slice(0, 3)
-      .map(r => {
-        const rid = typeof r === 'string' ? r : (r.id || r.regel || '');
-        return `<li><b>${esc(NAME[rid] || rid)}</b> <code>${esc(rid)}</code></li>`;
-      }).join('');
-
-    bloecke += `<article class="stelle" data-id="${esc(id)}" data-folge="${d.folge}">
+  for (const k of liste) {
+    const knoepfe = S.knoepfe.map(([w, t]) =>
+      `<button type="button" data-w="${w}">${esc(t)}</button>`).join('');
+    bloecke += `<article class="stelle ${S.farbe}" data-id="${esc(k.id)}" data-sorte="${sorte}">
   <div class="skopf">
-    <span class="snr">${i + 1}</span>
-    <span class="zeit">${esc(k.zeitmarke)}</span>
-    ${k.lehreranteil != null
-      ? `<span class="marke ${k.lehreranteil >= 0.6 ? 'lehrer' : 'gemischt'}">Lehrer ${Math.round(k.lehreranteil * 100)} %</span>` : ''}
+    <span class="zeit">Folge ${k.folge} · ${esc(k.zeitmarke)}</span>
+    ${k.belege && k.belege.kapitel ? `<span class="marke">Kapitel ${k.belege.kapitel}</span>` : ''}
   </div>
-  ${begriffe ? `<div class="chips">${begriffe}</div>` : ''}
-  <p class="wortlaut">${esc(kern)}${rest ? '…' : ''}</p>
-  ${rest ? `<details><summary>ganzer Abschnitt</summary><p class="wortlaut rest">${esc(rest)}</p></details>` : ''}
-  ${nah ? `<details class="nah"><summary>Was es schon gibt (${(k.aehnlicheRegeln || []).length})</summary><ul>${nah}</ul></details>` : ''}
-  <div class="wahl" role="group" aria-label="Entscheidung">
-    <button type="button" data-w="regel">Regel daraus</button>
-    <button type="button" data-w="weg">verwerfen</button>
-    <button type="button" data-w="spaeter">später</button>
-  </div>
+  <p class="frage">${esc(k.frage || '')}</p>
+  <p class="grund">${esc(k.grund || '')}</p>
+  ${k.quelle ? `<p class="quelle"><b>Fundstelle:</b> ${esc(k.quelle)}</p>` : ''}
+  <details><summary>Was der Lehrer an der Stelle sagt</summary>
+    <p class="wortlaut">${esc(k.text || '')}</p></details>
+  <div class="wahl" role="group" aria-label="Entscheidung">${knoepfe}</div>
   <textarea class="notiz" rows="1" placeholder="Notiz (freiwillig)"></textarea>
 </article>`;
-  });
+  }
 }
+
+/* ====================== Die Nachlese ====================================
+   ⛔ Sie ist nicht Beiwerk. Ohne sie müsste Elias mir glauben, dass die
+   anderen 88 zu Recht wegfallen — und „vertrau mir" ist bei 88 Stück keine
+   Grundlage. Zugeklappt, damit sie die sieben Entscheidungen nicht zudeckt. */
+const nachleseZeilen = vonMir.map(k =>
+  `<li><span class="nid">F${k.folge} ${esc(k.zeitmarke)}</span>`
+  + `<span class="nurteil ${k.urteil === 'weg' ? 'aus' : 'da'}">`
+  + (k.urteil === 'weg' ? 'keine Regel' : 'steht schon') + '</span>'
+  + `<span class="ngrund">${esc(k.grund || '')}`
+  + (k.quelle ? ` <code>${esc(k.quelle)}</code>` : '') + '</span></li>').join('');
+
+/* ====================== Die Seite ======================================= */
 
 const html = `<title>Regelkandidaten freigeben</title>
 <style>
 ${BIDI_CSS}
-/* Gleiche Bauform wie das Regelpruefungs-Artefakt: OLED-Schwarz, ein Thema,
-   alles explizit gemalt. Elias hat ausdruecklich "genauso" gesagt. */
 :root{
   --bg:#000; --flaeche:#111114; --hoch:#17171c; --rand:#26262c; --rand2:#1c1c21;
   --text:#f4f4f6; --leise:#9a9aa4; --still:#6b6b75;
@@ -165,14 +188,22 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);
          text-transform:uppercase;color:var(--still);margin:0 0 var(--sp2)}
 h1{font-size:clamp(1.9rem,7vw,2.5rem);line-height:1.1;letter-spacing:-.025em;
    margin:0 0 var(--sp3);text-wrap:balance}
-.vorspann{color:var(--leise);margin:0 0 var(--sp3);max-width:60ch}
+.vorspann{color:var(--leise);margin:0 0 var(--sp3);max-width:62ch}
 .vorspann strong{color:var(--text)}
-code{font-family:var(--mono);font-size:.86em;color:var(--leise)}
+code{font-family:var(--mono);font-size:.84em;color:var(--still)}
 
-.warnkasten{background:#1a1206;border:1px solid #4a3410;border-left:3px solid var(--gelb);
-            border-radius:12px;padding:var(--sp3);margin:0 0 var(--sp4);
-            color:#e8d5ac;font-size:.92rem}
-.warnkasten b{color:var(--gelb)}
+.privat{font-size:.88rem;color:var(--leise);background:var(--hoch);
+        border:1px solid var(--rand);border-left:3px solid var(--gelb);
+        border-radius:0 10px 10px 0;padding:10px 14px;margin:0 0 18px}
+.privat b{color:var(--text)}
+
+.bilanz{background:var(--flaeche);border:1px solid var(--rand);border-radius:14px;
+        padding:var(--sp3);margin:0 0 var(--sp4)}
+.bilanz table{width:100%;border-collapse:collapse;font-size:.92rem}
+.bilanz td{padding:4px 0;color:var(--leise)}
+.bilanz td:first-child{font-family:var(--mono);font-variant-numeric:tabular-nums;
+                       color:var(--text);width:3.5em;text-align:right;padding-right:12px}
+.bilanz .stark td{color:var(--text);font-weight:600}
 
 .fortschritt{position:sticky;top:0;z-index:10;background:var(--bg);
              padding:var(--sp2) 0;margin-bottom:var(--sp3);
@@ -188,48 +219,43 @@ code{font-family:var(--mono);font-size:.86em;color:var(--leise)}
 .fzeile button:focus-visible{outline:2px solid var(--text);outline-offset:2px}
 
 h2{display:flex;align-items:baseline;gap:var(--sp2);flex-wrap:wrap;
-   font-size:1.05rem;font-weight:600;margin:var(--sp5) 0 var(--sp3);
+   font-size:1.05rem;font-weight:600;margin:var(--sp5) 0 var(--sp2);
    padding-bottom:var(--sp1);border-bottom:1px solid var(--rand)}
-.knr{font-family:var(--mono);font-size:.78rem;letter-spacing:.06em;
-     text-transform:uppercase;color:var(--blau)}
-.ktitel{font-weight:600}
-.kzahl{margin-left:auto;font-family:var(--mono);font-size:.75rem;color:var(--still);
+.knr{font-size:.95rem;font-weight:600}
+.knr.gruen{color:var(--gruen)} .knr.gelb{color:var(--gelb)} .knr.rot{color:var(--rot)}
+.kzahl{margin-left:auto;font-family:var(--mono);font-size:.8rem;color:var(--still);
        font-variant-numeric:tabular-nums}
 
 .stelle{background:var(--flaeche);border:1px solid var(--rand);border-radius:14px;
         padding:var(--sp3);margin-bottom:var(--sp2);border-left:3px solid var(--rand)}
-.stelle[data-w="regel"]{border-left-color:var(--gruen)}
-.stelle[data-w="weg"]{border-left-color:var(--rot);opacity:.62}
-.stelle[data-w="spaeter"]{border-left-color:var(--gelb)}
+.stelle.gruen{border-left-color:rgba(47,210,122,.45)}
+.stelle.gelb{border-left-color:rgba(255,196,77,.45)}
+.stelle.rot{border-left-color:rgba(255,51,85,.45)}
+.stelle[data-w]{opacity:.7}
+.stelle[data-w] .frage{color:var(--leise)}
 .skopf{display:flex;align-items:baseline;gap:var(--sp2);flex-wrap:wrap;margin-bottom:var(--sp2)}
-.snr{font-family:var(--mono);font-size:.74rem;color:var(--still);min-width:2ch;
-     font-variant-numeric:tabular-nums}
-.zeit{font-family:var(--mono);font-size:.9rem;color:var(--blau);font-weight:600}
+.zeit{font-family:var(--mono);font-size:.82rem;color:var(--blau);font-weight:600}
 .marke{font-family:var(--mono);font-size:.68rem;font-weight:600;letter-spacing:.05em;
        padding:2px 7px;border-radius:5px;border:1px solid var(--rand);
-       background:var(--hoch);white-space:nowrap;margin-left:auto}
-.marke.lehrer{color:var(--gruen);border-color:rgba(47,210,122,.35)}
-.marke.gemischt{color:var(--gelb);border-color:rgba(255,196,77,.32)}
-
-.chips{display:flex;flex-wrap:wrap;gap:var(--sp1);margin-bottom:var(--sp2)}
-.chip{font-family:var(--mono);font-size:.7rem;color:var(--leise);
-      background:var(--hoch);border:1px solid var(--rand2);border-radius:99px;padding:2px 8px}
-
-.wortlaut{margin:0;color:var(--text);font-size:.95rem}
-.wortlaut.rest{color:var(--leise);margin-top:var(--sp2)}
+       background:var(--hoch);white-space:nowrap;margin-left:auto;color:var(--leise)}
+.frage{margin:0 0 var(--sp2);font-size:1.05rem;font-weight:600;line-height:1.35;text-wrap:balance}
+.grund{margin:0 0 var(--sp2);color:var(--leise);font-size:.92rem}
+.quelle{margin:0;font-size:.85rem;color:var(--still)}
+.quelle b{color:var(--leise)}
 details{margin-top:var(--sp2)}
 summary{cursor:pointer;font-size:.82rem;color:var(--blau);font-weight:600}
 summary:focus-visible{outline:2px solid var(--text);outline-offset:2px}
-.nah ul{margin:var(--sp2) 0 0;padding-left:1.1rem;font-size:.85rem;color:var(--leise)}
-.nah b{color:var(--text);font-weight:600}
+.wortlaut{margin:var(--sp2) 0 0;color:var(--leise);font-size:.9rem}
 
 .wahl{display:flex;gap:var(--sp1);margin-top:var(--sp3);flex-wrap:wrap}
 .wahl button{font:inherit;font-size:.85rem;font-weight:600;flex:1 1 auto;min-width:0;
              color:var(--leise);background:var(--hoch);border:1px solid var(--rand);
              border-radius:99px;padding:8px 12px;cursor:pointer}
 .wahl button:focus-visible{outline:2px solid var(--text);outline-offset:2px}
-.wahl button[aria-pressed="true"][data-w="regel"]{background:#0b1a12;color:var(--gruen);border-color:rgba(47,210,122,.5)}
-.wahl button[aria-pressed="true"][data-w="weg"]{background:#1a0b0f;color:var(--rot);border-color:rgba(255,51,85,.5)}
+.wahl button[aria-pressed="true"][data-w="ja"],
+.wahl button[aria-pressed="true"][data-w="schluessel"]{background:#0b1a12;color:var(--gruen);border-color:rgba(47,210,122,.5)}
+.wahl button[aria-pressed="true"][data-w="nein"]{background:#1a0b0f;color:var(--rot);border-color:rgba(255,51,85,.5)}
+.wahl button[aria-pressed="true"][data-w="lehrer"]{background:#0a1520;color:var(--blau);border-color:rgba(90,169,255,.5)}
 .wahl button[aria-pressed="true"][data-w="spaeter"]{background:#1a1206;color:var(--gelb);border-color:rgba(255,196,77,.5)}
 .notiz{display:none;width:100%;margin-top:var(--sp2);font:inherit;font-size:.85rem;
        color:var(--text);background:var(--bg);border:1px solid var(--rand);
@@ -237,20 +263,29 @@ summary:focus-visible{outline:2px solid var(--text);outline-offset:2px}
 .stelle[data-w] .notiz{display:block}
 .notiz:focus-visible{outline:2px solid var(--text);outline-offset:2px}
 
+.nachlese{margin-top:var(--sp5);border-top:1px solid var(--rand);padding-top:var(--sp4)}
+.nachlese > summary{font-size:.95rem}
+.nachlese ul{list-style:none;margin:var(--sp3) 0 0;padding:0}
+.nachlese li{display:grid;grid-template-columns:auto auto 1fr;gap:var(--sp2);
+             align-items:baseline;padding:8px 0;border-bottom:1px solid var(--rand2);
+             font-size:.85rem}
+.nid{font-family:var(--mono);font-size:.76rem;color:var(--blau);white-space:nowrap}
+.nurteil{font-family:var(--mono);font-size:.68rem;font-weight:600;padding:1px 6px;
+         border-radius:4px;white-space:nowrap;border:1px solid var(--rand)}
+.nurteil.aus{color:var(--still)}
+.nurteil.da{color:var(--gruen);border-color:rgba(47,210,122,.3)}
+.ngrund{color:var(--leise)}
+@media (max-width:560px){.nachlese li{grid-template-columns:1fr;gap:2px}}
+
 .ausgabe{margin-top:var(--sp5);border-top:1px solid var(--rand);padding-top:var(--sp4)}
-.ausgabe textarea{width:100%;min-height:180px;font-family:var(--mono);font-size:.8rem;
+.ausgabe textarea{width:100%;min-height:150px;font-family:var(--mono);font-size:.8rem;
                   color:var(--leise);background:var(--flaeche);border:1px solid var(--rand);
                   border-radius:10px;padding:var(--sp3)}
-.leermeldung{color:var(--still);font-size:.9rem;display:none}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
-.privat{font-size:.88rem;color:var(--leise,#9a9aa4);background:var(--hoch,#17171c);
-        border:1px solid var(--rand,#26262c);border-left:3px solid var(--gelb,#ffc44d);
-        border-radius:0 10px 10px 0;padding:10px 14px;margin:0 0 18px}
-.privat b{color:var(--text,#f4f4f6)}
 </style>
 
 <div class="huelle">
-<p class="eyebrow">Stand ${STAND_HEUTE} · ${gesamt} Fundstellen · Folge ${folgen.map(f => f.folge).join(', ')}</p>
+<p class="eyebrow">Stand ${STAND_HEUTE} · ${fuerElias.length} von ${B.gesamt} Fundstellen</p>
 <h1>Regelkandidaten freigeben</h1>
 
 <p class="privat"><b>🔒 Diese Seite bitte nicht teilen.</b> Sie zeigt den
@@ -259,31 +294,33 @@ im Repo gesperrt ist (arabicroots AGB 3.7 und 9). Als Artefakt ist sie
 privat, und das soll sie bleiben; über das Teilen-Menü wäre es eine
 Weitergabe.</p>
 
-<p class="vorspann"><strong>Du entscheidest, was eine Regel ist</strong> — die
-Maschine sucht nur die Stellen. Je Fundstelle steht hier, was der Lehrer sagt,
-wo im Video es liegt, welche Fachbegriffe vorkommen und was es an ähnlichen
-Regeln schon gibt.</p>
+<p class="vorspann"><strong>Ich habe die ${B.gesamt} Fundstellen durchgesehen</strong>
+und jede gegen die Schlüsselbücher, den Unterricht und deine Unterlagen
+geprüft. Übrig sind <strong>${fuerElias.length}</strong>, die ich nicht allein
+entscheiden kann. Was ich mit den anderen gemacht habe, steht unten zum
+Nachlesen — mit Begründung und Regelnamen, nicht als „vertrau mir".</p>
 
-<div class="warnkasten">
-<b>⚠️ Das ist eine Vorauswahl, keine Regelliste.</b> Gemessen findet sie rund
-<b>zwei Drittel</b> der bereits bekannten Regeln wieder — dafür muss man etwa
-<b>ein Drittel</b> des Unterrichts lesen. Es fehlt also etwas, und manches
-hier ist keine Regel. Beides ist normal.
-<br><br>
-<b>Deine Antworten bleiben auf dieser Seite.</b> Sie werden im Browser
-gespeichert — aber sie erreichen mich <b>erst, wenn du den Text unten kopierst
-und schickst.</b>
-</div>
+<div class="bilanz"><table>
+<tr class="stark"><td>${fuerElias.length}</td><td>warten auf dich</td></tr>
+<tr><td>${vonMir.filter(k => k.urteil === 'schon-regel').length}</td><td>Inhalt steht schon als Regel</td></tr>
+<tr><td>${vonMir.filter(k => k.urteil === 'weg').length}</td><td>keine Regel darin (Vokabeln, Organisation, kaputte Abschrift)</td></tr>
+${RUECKSTAND ? `<tr><td>${RUECKSTAND}</td><td>habe ich noch nicht durch — mein Rückstand, nicht deiner</td></tr>` : ''}
+</table></div>
 
 <div class="fortschritt">
   <div class="balken"><i id="balken"></i></div>
   <div class="fzeile">
-    <span><b id="zahl">0</b> von <b>${gesamt}</b> entschieden</span>
+    <span><b id="zahl">0</b> von <b>${fuerElias.length}</b> entschieden</span>
     <button type="button" id="kopieren" disabled>Ergebnis kopieren</button>
   </div>
 </div>
 
-${bloecke}
+${bloecke || '<p class="vorspann">✓ Nichts offen. Aus den ausgewerteten Folgen wartet keine Fundstelle mehr auf dich.</p>'}
+
+<details class="nachlese">
+  <summary>Was ich mit den anderen ${vonMir.length} gemacht habe</summary>
+  <ul>${nachleseZeilen}</ul>
+</details>
 
 <div class="ausgabe">
   <h2><span class="knr">Zum Schicken</span></h2>
@@ -294,28 +331,23 @@ ${bloecke}
 </div>
 
 <script>
-/* ⛔ EIGENER SCHLUESSEL. Nicht regelpruefung-v1 (dort liegen die 55 Urteile
-   ueber die Regeln) und nicht satzmodus-auswahl-v1. Zwei Seiten auf einem
-   Schluessel loeschen einander die Antworten — und niemand merkt es. */
-var SPEICHER = 'regelkandidaten-v1';
+/* ⛔ EIGENER SCHLUESSEL, und v2: die Seite fragt seit dem 22.09.2026 etwas
+   anderes als vorher. Alte v1-Antworten wuerden auf neue Knoepfe gemappt,
+   ohne dass es jemand merkt. Nicht regelpruefung-v1, nicht satzmodus-auswahl-v1. */
+var SPEICHER = 'regelkandidaten-v2';
 var stand;
 try { stand = JSON.parse(localStorage.getItem(SPEICHER) || '{}'); } catch(e){ stand = {}; }
 if (!stand || typeof stand !== 'object') stand = {};
 
 var stellen = Array.prototype.slice.call(document.querySelectorAll('.stelle'));
-var WORT = { regel:'REGEL DARAUS', weg:'VERWERFEN', spaeter:'SPAETER' };
+var GESAMT = ${fuerElias.length};
+var WORT = { ja:'JA', nein:'NEIN', spaeter:'SPAETER',
+             schluessel:'SCHLUESSEL GILT', lehrer:'LEHRER GILT' };
 
 /* ⛔ Der Ladeversuch oben steht in einem try — das Speichern schluckte
    seinen Fehler bis zum 21.08.2026 aber stumm. Ist der Speicher gesperrt,
    verschwinden Elias' Entscheidungen lautlos, und beim naechsten Oeffnen
-   faengt er von vorn an.
-
-   ⭐ Bitter an dieser Datei: die Loesung steht in ihrer SCHWESTERDATEI
-   werkzeuge/freigabe-seite.mjs, seit einem echten Vorfall ("Storage is
-   disabled inside data: URLs ... beim naechsten Neuladen waere die Arbeit
-   von einer Stunde weg gewesen"). Gleicher Name, gleiche Aufgabe, gleicher
-   Autor — und nie hinuebergewandert.
-   [[entscheidung_gilt_fuer_das_zweite_werkzeug]] [[ausfall_ist_unsichtbar_gebaut]] */
+   faengt er von vorn an. [[ausfall_ist_unsichtbar_gebaut]] */
 var SPEICHER_GEHT = false;
 try {
   localStorage.setItem(SPEICHER + '-probe', '1');
@@ -356,27 +388,24 @@ function zeichne(el){
 function standZeigen(){
   var n = stellen.filter(function(el){ return stand[el.dataset.id] && stand[el.dataset.id].w; }).length;
   document.getElementById('zahl').textContent = n;
-  document.getElementById('balken').style.width = (n / ${gesamt} * 100) + '%';
+  document.getElementById('balken').style.width = (GESAMT ? n / GESAMT * 100 : 0) + '%';
   document.getElementById('kopieren').disabled = n === 0;
   bauText();
 }
 
 function bauText(){
-  var gruppen = { regel:[], weg:[], spaeter:[] };
+  var zeilen = [], n = 0;
   stellen.forEach(function(el){
     var e = stand[el.dataset.id];
     if (!e || !e.w) return;
-    var zeit = el.querySelector('.zeit').textContent;
-    var folge = el.dataset.folge;
-    gruppen[e.w].push('  F' + folge + ' ' + zeit + (e.n ? '  — ' + e.n : ''));
+    n++;
+    var frage = (el.querySelector('.frage') || {}).textContent || '';
+    zeilen.push('  ' + el.dataset.id + '  ' + (WORT[e.w] || e.w)
+      + (e.n ? '  — ' + e.n : '') + '\\n    (' + frage.replace(/\\s+/g, ' ').slice(0, 120) + ')');
   });
-  var n = gruppen.regel.length + gruppen.weg.length + gruppen.spaeter.length;
-  var t = 'Regelkandidaten — ' + n + ' von ${gesamt} entschieden\\n';
-  ['regel','weg','spaeter'].forEach(function(k){
-    if (!gruppen[k].length) return;
-    t += '\\n' + WORT[k] + ' (' + gruppen[k].length + '):\\n' + gruppen[k].join('\\n') + '\\n';
-  });
-  document.getElementById('text').value = n ? t : '';
+  document.getElementById('text').value = n
+    ? 'Regelkandidaten — ' + n + ' von ' + GESAMT + ' entschieden\\n\\n' + zeilen.join('\\n') + '\\n'
+    : '';
 }
 
 document.addEventListener('click', function(ev){
@@ -420,33 +449,14 @@ standZeigen();
 warneSpeicher();
 </script>`;
 
-/* ⛔ Auch hier der Leerfall: sind alle Kandidaten abgearbeitet, waere `gesamt`
-   null — die Seite zeigte "0 von 0 entschieden" und der Fortschrittsbalken
-   rechnete n/0. Vor allem aber bliebe die ALTE Fassung als Artefakt stehen
-   und zeigte Fundstellen, die er laengst entschieden hat.
-   [[flaeche_nur_im_gefuellten_zustand]] */
-if (!gesamt) {
-  const leer = ['<title>Regelkandidaten freigeben</title>',
-    '<style>:root{color-scheme:dark}body{margin:0;background:#000;color:#f4f4f6;'
-    + 'font:17px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:38px 16px}'
-    + '.h{max-width:640px;margin:0 auto}h1{font-size:2rem;margin:0 0 16px}p{color:#9a9aa4}'
-    + 'b{color:#f4f4f6}</style>',
-    '<div class="h">', '<h1>✓ Nichts offen</h1>',
-    '<p><b>Alle Fundstellen sind entschieden.</b> Aus den ausgewerteten Folgen'
-    + ' wartet keine mehr auf dein Ja oder Nein.</p>',
-    '<p>Sobald eine neue Folge ausgewertet ist, stehen die Kandidaten wieder hier.</p>',
-    '<p style="color:#6b6b75;font-size:.85rem">Stand ' + STAND_HEUTE + '</p>', '</div>'
-  ].join(String.fromCharCode(10));
-  fs.writeFileSync(path.join(AUS, 'freigabe.html'), leer, 'utf8');
-  console.log('Nichts offen — Seite zeigt jetzt "✓ Nichts offen" statt alter Fundstellen.');
-  console.log('  ⚠️ Trotzdem veroeffentlichen, sonst zeigt das Artefakt die alten:');
-  console.log('     https://claude.ai/code/artifact/d9916aee-b679-4d91-bb0c-c3642f8889ac');
-  process.exit(0);
-}
-
 const ziel = path.join(AUS, 'freigabe.html');
 fs.writeFileSync(ziel, arabischInSeite(html), 'utf8');
-console.log('geschrieben: ' + ziel);
-console.log('Fundstellen: ' + gesamt + ' aus ' + folgen.length + ' Folge(n) — '
-  + folgen.map(f => 'F' + f.folge + ': ' + f.n).join(' · '));
-console.log('Speicherschluessel: regelkandidaten-v1  (NICHT regelpruefung-v1)');
+console.log('geschrieben: ' + path.relative(REPO, ziel));
+console.log('Fuer Elias: ' + fuerElias.length + ' von ' + B.gesamt
+  + '  (' + ['regel', 'abweichung', 'unbelegt']
+      .map(s => s + ' ' + fuerElias.filter(k => k.urteil === s).length).join(', ') + ')');
+console.log('Von mir entschieden: ' + vonMir.length
+  + '  (schon-regel ' + vonMir.filter(k => k.urteil === 'schon-regel').length
+  + ', weg ' + vonMir.filter(k => k.urteil === 'weg').length + ')');
+if (RUECKSTAND) console.log('⚠️ MEIN Rueckstand: ' + RUECKSTAND + ' — steht sichtbar im Kopf der Seite.');
+console.log('Speicherschluessel: regelkandidaten-v2  (NICHT v1, NICHT regelpruefung-v1)');

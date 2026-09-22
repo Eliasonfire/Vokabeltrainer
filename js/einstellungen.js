@@ -1036,6 +1036,37 @@ function diagnoseText(){
     const soll = (typeof SETTINGS === 'object' && SETTINGS && SETTINGS.akzentFarbe) || '#ff1744';
     return w + (w.toLowerCase() === soll.toLowerCase() ? ' (wie eingestellt)' : ' — eingestellt ist ' + soll);
   });
+  /* ⭐ WELCHE ARABISCHE STIMME DIESES GERÄT HAT (22.09.2026).
+     Elias' Frage stand seit Tagen offen: „welche arabische stimme haben handy
+     und tablet". Sie war mit dem, was da war, NICHT zu beantworten — und das
+     ist der eigentliche Befund:
+       · Die App liest die Stimmen nur ÖRTLICH (`speechSynthesis.getVoices()`
+         in `arabischeStimmen()`), jedes Gerät hat andere.
+       · Im Geräteabgleich steht nur `SETTINGS.voiceURI`, also die GEWÄHLTE
+         Stimme — nicht die vorhandenen. Gemessen am 22.09.2026 im Cloudflare-KV
+         (`stand:abdurahman.tunk@gmail.com`): **`voiceURI: null`**. Er hat also
+         nie eine ausgesucht, und selbst diese eine Angabe sagte nichts.
+     Die Liste gehört deshalb dorthin, wo er sie mit einem Knopfdruck schicken
+     kann. [[daten_ohne_zugang]] [[werkzeug_ohne_aufrufer]]
+     ⚠️ Android füllt `getVoices()` verzögert; die Karte wird aber erst auf
+     Knopfdruck gebaut, also lange nach dem Laden. Ist die Liste trotzdem leer,
+     steht genau das da — statt „keine Stimme", was etwas anderes hieße. */
+  sicher('Arabische Stimmen', () => {
+    if (!('speechSynthesis' in window)) return 'dieses Gerät kann gar nicht sprechen';
+    const stimmen = (typeof arabischeStimmen === 'function') ? arabischeStimmen() : [];
+    if (!stimmen.length) {
+      const alle = (speechSynthesis.getVoices() || []).length;
+      return alle
+        ? 'keine arabische unter ' + alle + ' Stimmen'
+        : '⚠️ die Liste ist noch leer (Android füllt sie verzögert) — Karte gleich nochmal öffnen';
+    }
+    const gewaehlt = SETTINGS && SETTINGS.voiceURI
+      ? stimmen.find(v => v.voiceURI === SETTINGS.voiceURI) : null;
+    const benutzt = gewaehlt || stimmen[0];
+    return stimmen.length + ': ' + stimmen.map(v => v.name + ' (' + v.lang + ')').join(' · ')
+      + ' — benutzt wird ' + benutzt.name
+      + (gewaehlt ? ' (von dir gewählt)' : ' (nichts gewählt, also die erste)');
+  });
   /* ⛔⛔ DIE VERSION MUSS OBEN STEHEN (09.09.2026). „Service Worker aktiv"
      sagte nur, DASS einer läuft — nicht WELCHE Fassung er ausliefert. Genau
      das war zweimal hintereinander die offene Frage („die lücke beim tablet

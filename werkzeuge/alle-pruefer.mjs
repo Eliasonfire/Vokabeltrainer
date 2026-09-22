@@ -391,6 +391,15 @@ const PRUEFER = [
      Zwei Störtests: `--stoertest` (Übung 10 auf false) und `--stoertest-feld`
      (Übung 1 ohne Pflichtfeld); beide müssen rot werden. */
   ['werkzeuge/pruefe-hinweise.mjs', []],
+  /* ⭐ Mit --pruefen, weil der blanke Lauf bewertung.json SCHREIBT und ein
+     Sammellauf nichts verändern darf. Rot wird er, sobald eine Fundstelle ohne
+     mein Urteil dasteht — das ist MEIN Rückstand, und er gehört genau hierhin
+     sichtbar gemacht, nicht auf Elias' Warteseite. */
+  ['werkzeuge/kandidaten-bewerten.mjs', ['--pruefen']],
+  /* Ohne --schreiben misst es nur. Rot, sobald in einer Projektnotiz ein
+     aelterer Abschnitt vor einem neueren steht — Elias am 22.09.2026:
+     „oben, räume demtentsprechend um". */
+  ['werkzeuge/notiz-umraeumen.mjs', ['--pruefen']],
   /* ⛔ Verhindert den siebzehnten Fall: in der Nacht auf den 21.08.2026 kamen
      SECHZEHN Eintraege hier dazu — acht Pruefstaende, sieben Eichungen, ein
      Pruefer. Alle waren gebaut, gepusht und nie gestartet worden, und keiner

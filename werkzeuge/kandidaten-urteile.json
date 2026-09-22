@@ -1,0 +1,467 @@
+{
+  "_": "MEINE Bewertung der 95 Regelkandidaten. Gelesen und entschieden am 22.09.2026 von Claude Opus 5, gegen: Schluessel 1 (Vault 04 - Wissen/Schluessel-Regeln.md, 23 Lektionen), Schluessel Band 2+3 (Textebene), die 103 vorhandenen Regeln in grammar-data.js und Elias' Unterlagen. Anlass: Elias am 22.09.2026 — 'wir hatten ausgemacht das du das machen sollst bzw bewerten sollst'.",
+  "_urteilsarten": {
+    "schon-regel": "Der Inhalt steht bereits als Regel. quelle nennt sie. Geht NICHT an Elias.",
+    "weg": "Keine Regel darin: Vokabelarbeit, Organisation, Motivation, Uebungsabfrage oder unbrauchbarer Whisper-Text. Geht NICHT an Elias.",
+    "regel": "Mein VORSCHLAG fuer eine neue Regel, mit Beleg. Geht an Elias — er gibt jede Regel selbst frei (Lehrwerk-Begleitmaterial, 29.07.2026).",
+    "abweichung": "Schluessel und Unterricht widersprechen sich. Geht an Elias — 'du sollst das einfach markieren'.",
+    "unbelegt": "Sieht wie eine Regel aus, aber keine gedruckte Quelle in unserem Bestand bestaetigt sie. Geht an Elias."
+  },
+  "urteile": {
+    "f6-1945": {
+      "urteil": "schon-regel",
+      "grund": "Die drei Faelle und der Grundfall: 'Ein Wort ist immer Marfua, solange nichts davorsteht, was es veraendern koennte.' Genau das steht schon zweimal im Bestand.",
+      "quelle": "irab-drei-faelle-01 · marfu-grundfall-01"
+    },
+    "f6-3515": {
+      "urteil": "weg",
+      "grund": "Kursbeschreibung: was man auf Level 1 und Level 2 lernt (Hamza, dunkle Buchstaben, Sonnen- und Mondbuchstaben, Tajwid). Eine Aufzaehlung von Lernzielen, keine Sprachregel."
+    },
+    "f6-1215": {
+      "urteil": "schon-regel",
+      "grund": "Warum die Genitivpartikeln so heissen: 'Weil die Majrur machen. Deswegen heissen sie ja so.' Und der Zusatz, dass 'Praeposition' nur eine Annaeherung ist. Beides steht wortgleich im Bestand.",
+      "quelle": "harf-jarr-name-01 · harf-jarr-01"
+    },
+    "f6-2215": {
+      "urteil": "schon-regel",
+      "grund": "fi + al-bait wird fil-baiti, unbestimmt fi baitin; Harf jarr plus Ism majrur. Der Tanwin-Fall danach ist eine eigene vorhandene Regel.",
+      "quelle": "harf-jarr-fi-ala-01 · tanwin-nach-harf-jarr-01"
+    },
+    "f6-1545": {
+      "urteil": "schon-regel",
+      "grund": "Abfrage der Kapitel-3-Regeln: bestimmt mit al- und ohne Tanwin, 14 Sonnen- und 14 Mondbuchstaben. Reine Wiederholung.",
+      "quelle": "al-tanwin-tilgung-01 · nakira-marifa-01 · schams-qamar-01"
+    },
+    "f6-1815": {
+      "urteil": "schon-regel",
+      "grund": "Dieselbe Kasus-Abfrage wie f6-1945, nur aus Schuelersicht: Nominativ mit Damma, Genitiv mit Kasra, Akkusativ mit Fatha.",
+      "quelle": "irab-drei-faelle-01 · marfu-grundfall-01"
+    },
+    "f6-2945": {
+      "urteil": "weg",
+      "grund": "Ermahnung zu Zeitplanung und Familie ('Freitagabend, Samstagabend, nicht erreichbar'). Kein Sprachinhalt."
+    },
+    "f6-815": {
+      "urteil": "weg",
+      "grund": "Uebungsabfrage mit Einzelsaetzen, und der Whisper-Text bricht ab der Haelfte zusammen ('Wassermrounded', 'W совind dulu Anruf'). Aus dieser Stelle laesst sich nichts belegen."
+    },
+    "f6-1415": {
+      "urteil": "schon-regel",
+      "grund": "hadha fuer Nahes, dhalika fuer Fernes, beide fuer maennliche Begriffe. Steht dreifach im Bestand, das kaf der Entfernung eigens.",
+      "quelle": "ismul-isara-hadha-01 · ismul-isara-dhalika-01 · kaf-der-entfernung-01"
+    },
+    "f6-3745": {
+      "urteil": "weg",
+      "grund": "Ermutigung: Arabischlernen als Ibada, Lerngruppen bilden. Kein Sprachinhalt."
+    },
+    "f6-1045": {
+      "urteil": "schon-regel",
+      "grund": "Schuelerfrage, ob min, ila, fi, ala alle Genitivpartikeln sind — Antwort ja, und es gibt noch mehr. Die vier stehen einzeln im Bestand, ihre Bedeutungen gesammelt.",
+      "quelle": "harf-jarr-fi-ala-01 · harf-jarr-min-ila-01 · hurufu-jarr-bedeutungen-01"
+    },
+    "f6-3145": {
+      "urteil": "weg",
+      "grund": "Fortsetzung der Ermahnung aus f6-2945, an einem eigenen Beispiel (Einladung absagen). Kein Sprachinhalt."
+    },
+    "f6-345": {
+      "urteil": "weg",
+      "grund": "Vokabelarbeit an einem Eigennamen: wie man Bosnien schreibt, und dass es mit al- steht. Eine Einzelauskunft zu einem Wort, keine Regel — und keine Quelle in unserem Bestand behandelt Laendernamen mit Artikel."
+    },
+    "f6-2645": {
+      "urteil": "weg",
+      "grund": "Ueber Kursabbrecher und Disziplin ('wir waren fast 20, jetzt sind wir neun'). Kein Sprachinhalt."
+    },
+    "f6-4015": {
+      "urteil": "weg",
+      "grund": "Schlusswort der Folge: Vokabel-App nutzen, Texte wiederholen, Hausaufgaben. Kein Sprachinhalt."
+    },
+
+    "f14-1915": {
+      "urteil": "schon-regel",
+      "grund": "Die Stelle IST die Fundstelle der vorhandenen Regel (Folge 14, 19:15). Der zweite Teil — man wird zu manil vor al- — steht ebenfalls schon.",
+      "quelle": "ismun-mawsul-alladhi-01 (aus genau dieser Stelle) · iltiqa-sakinain-01 · mina-al-01"
+    },
+    "f14-1315": {
+      "urteil": "schon-regel",
+      "grund": "Ein Schueler zaehlt die vier Bedingungen des Nat auf: Geschlecht, Bestimmtheit, Fall, Zahl. Wortgleich mit der vorhandenen Regel.",
+      "quelle": "nat-vier-bedingungen-01"
+    },
+    "f14-2115": {
+      "urteil": "schon-regel",
+      "grund": "Die Stelle IST die Fundstelle der vorhandenen Regel (Folge 14, 21:15): die Endung zeigt, wen das Adjektiv beschreibt.",
+      "quelle": "nat-wen-beschreibt-01 (aus genau dieser Stelle)"
+    },
+    "f14-1445": {
+      "urteil": "schon-regel",
+      "grund": "talibun mujtahidun heisst 'ein fleissiger Schueler', nicht 'der Schueler ist fleissig' — das 'ist' fehlt, weil beide Woerter unbestimmt sind. Das ist die vorhandene Bestimmtheitsregel.",
+      "quelle": "nat-bestimmtheit-01 · satz-vs-wortgruppe-01"
+    },
+    "f14-715": {
+      "urteil": "schon-regel",
+      "grund": "'Der Junge ist faul' gegen 'der faule Junge' — derselbe Unterschied wie f14-1445, an einem anderen Beispiel.",
+      "quelle": "nat-bestimmtheit-01"
+    },
+    "f14-345": {
+      "urteil": "abweichung",
+      "grund": "Der Lehrer sagt, ein Hinweiswort und ein unbestimmtes Nomen passen nicht zusammen: 'Wenn du aber auf eine Sache zeigst, wie kann es dann unbestimmt sein? … Jenes, ein Auto. Weisst du?' Der Schluessel stellt in Lektion 1 genau diese Verbindung an den Anfang: hadha baitun, 'Dies ist ein Haus', und der Beispieldialog fragt sogar a-hadha baitun. Im Zusammenhang der Stunde hat der Lehrer recht — dort ging es um tilka sayyaratun al-jamilatu, wo die Bestimmtheit zwischen Nomen und Adjektiv bricht. Seine allgemeine Begruendung reicht aber weiter, als der Schluessel sie traegt.",
+      "quelle": "Unterricht Folge 14 @ 3:45 gegen Schluessel 1, Lektion 1 (PDF-S. 6-7), 'Merke' 2 und 3",
+      "frage": "Der Lehrer: auf etwas zeigen und unbestimmt lassen geht nicht. Das Buch: hadha baitun — 'Dies ist ein Haus'. Welche Fassung soll in die App?"
+    },
+    "f14-2315": {
+      "urteil": "schon-regel",
+      "grund": "Die Stelle IST die Fundstelle der vorhandenen Regel (Folge 14, 23:15): das kaf steht fuer die Entfernung — huna/hunaka, dhalika, tilka.",
+      "quelle": "kaf-der-entfernung-01 (aus genau dieser Stelle)"
+    },
+    "f14-1715": {
+      "urteil": "schon-regel",
+      "grund": "Die Stelle IST die Fundstelle der vorhandenen Regel (Folge 14, 17:15): inda ist ein Zarf fuer Ort UND Zeit.",
+      "quelle": "inda-ort-und-zeit-01 (aus genau dieser Stelle)"
+    },
+    "f14-1145": {
+      "urteil": "weg",
+      "grund": "Ermutigung, beim Sprechen Fehler zu machen ('wer keine Fehler macht, wird nicht lernen') und einfache Saetze zu bauen. Kein Sprachinhalt."
+    },
+    "f14-915": {
+      "urteil": "weg",
+      "grund": "Schueler bilden Uebungssaetze mit Nat; der Whisper-Text zerfaellt in Silben ('Muhammadu. Ghad. Bah. Nu.'). Nichts daraus ist belegfaehig."
+    },
+    "f14-3615": {
+      "urteil": "schon-regel",
+      "grund": "'Er ist der Sohn des neuen Lehrers' gegen 'der neue Sohn des Lehrers' — die Endung entscheidet, wen das Adjektiv beschreibt.",
+      "quelle": "nat-wen-beschreibt-01"
+    },
+    "f14-515": {
+      "urteil": "schon-regel",
+      "grund": "Zwei bekannte Punkte: das Adjektiv braucht dieselbe Bestimmtheit, und nach einem Harf jarr steht auch das Adjektiv im Genitiv — 'ilal masjidil kabiri', nicht 'kabiru'.",
+      "quelle": "nat-vier-bedingungen-01 · nat-wen-beschreibt-01 · harf-jarr-01"
+    },
+    "f14-3745": {
+      "urteil": "schon-regel",
+      "grund": "Hausaufgabenansage, und dazwischen der Beleg, dass die Kasra an jadidi den Lehrer beschreibt. Der Whisper-Text wiederholt danach 24 mal denselben Satz.",
+      "quelle": "nat-wen-beschreibt-01"
+    },
+    "f14-215": {
+      "urteil": "schon-regel",
+      "grund": "al-mudarrisu al-ghadbanu ist 'der wuetende Lehrer' (eine Wortgruppe), nicht 'ein wuetender Lehrer ist in der Klasse'. Wieder die Bestimmtheitsregel.",
+      "quelle": "nat-bestimmtheit-01"
+    },
+    "f14-3945": {
+      "urteil": "weg",
+      "grund": "Uebungssaetze mit alladhi; der Whisper-Text bricht in eine Endlosschleife ('Alzii al-al-al-mektari' zwoelfmal). Nicht belegfaehig."
+    },
+
+    "f15-1145": {
+      "urteil": "schon-regel",
+      "grund": "Die Stelle IST die Fundstelle der vorhandenen Regel (Folge 15, 11:45): die Besitzendungen, ism als Name oder Nomen, und dass das Tanwin wegfaellt.",
+      "quelle": "possessiv-endungen-01 (aus genau dieser Stelle) · possessiv-ist-idafa-01"
+    },
+    "f15-245": {
+      "urteil": "schon-regel",
+      "grund": "'Wir haben Man und Sukun und dann kommt noch ein Sukun … deswegen kommt Manil.' Zwei Vokallose treffen aufeinander — steht im Bestand.",
+      "quelle": "iltiqa-sakinain-01 · mina-al-01"
+    },
+    "f15-2915": {
+      "urteil": "schon-regel",
+      "grund": "Maennliche Namen auf Ta marbuta tragen kein Tanwin (Hamzatu, Usamatu, Muawiyatu). Der Schluessel bestaetigt es in Lektion 10, Punkt 6.",
+      "quelle": "tanwin-maennername-ta-01"
+    },
+    "f15-1615": {
+      "urteil": "schon-regel",
+      "grund": "Die Stelle IST die Fundstelle der vorhandenen Regel (Folge 15, 16:15). Der Lehrer stellt alle drei Faelle nebeneinander; jeder hat seine eigene Regel.",
+      "quelle": "tanwin-maennername-ta-01 (aus genau dieser Stelle) · tanwin-eigennamen-01 · eigennamen-fem-ohne-tanwin-01"
+    },
+    "f15-2145": {
+      "urteil": "schon-regel",
+      "grund": "laka aus li plus kaf, dazu die Reihe ismi/ismuka/ismuhu und mai/maaka/maahu. Die Besitzendungen und die Sonderform von li stehen beide im Bestand.",
+      "quelle": "possessiv-endungen-01 · li-mit-suffix-01"
+    },
+    "f15-645": {
+      "urteil": "schon-regel",
+      "grund": "Bestimmtheit zwischen Nomen und Adjektiv, an einer Reihe von Uebungssaetzen. ⚠️ Der Whisper-Text ist hier ohne Satzzeichen und teils ohne Woerter ('und alle von allem ist das schaaf messer') — der Inhalt ist nur erkennbar, weil die Regel schon bekannt ist.",
+      "quelle": "nat-bestimmtheit-01 · nat-vier-bedingungen-01"
+    },
+    "f15-3145": {
+      "urteil": "schon-regel",
+      "grund": "li fuer Untrennbares (Verwandtschaft, Koerperteile), inda fuer Trennbares. Dieselbe Erklaerung wie an der Fundstelle der Regel, 28 Minuten frueher in derselben Folge.",
+      "quelle": "li-vs-inda-01"
+    },
+    "f15-4915": {
+      "urteil": "schon-regel",
+      "grund": "Die Stelle IST die Fundstelle der vorhandenen Regel (Folge 15, 49:15): 'naqulu indi kitabun wa naqulu li akhun wa la naqulu indi akhun'.",
+      "quelle": "li-vs-inda-01 (aus genau dieser Stelle)"
+    },
+    "f15-5315": {
+      "urteil": "weg",
+      "grund": "Schlusswort: warum man die Endungen lernt (Koranverstaendnis), welche Aufgaben Hausaufgabe sind, was naechstes Mal drankommt. Kein Sprachinhalt."
+    },
+    "f15-2645": {
+      "urteil": "regel",
+      "grund": "Der Unterschied zwischen maa und inda, den der Lehrer an zwei Saetzen zeigt: 'ana maal mudir' heisst, man ist irgendwo zusammengekommen; 'ana indal mudir' heisst, man hat sich zu ihm auf den Weg gemacht und ist dort. Der Schluessel sagt dasselbe, nur mit dem Lehrer statt mit ihm selbst: bei inda ist der Lehrer zum Buero des Direktors gegangen, bei maa ist der Ort 'nicht festgelegt, er kann irgendwo mit dem Direktor zusammengekommen sein'. Zwei unabhaengige Quellen, gleiche Aussage. Im Bestand fehlt sie: li-vs-inda-01 stellt li gegen inda, maa kommt darin nicht vor.",
+      "quelle": "Schluessel 1, Lektion 10 (PDF-S. 35-37), Punkt 7 · Unterricht Folge 15 @ 26:45",
+      "frage": "Neue Regel: maa gegen inda — 'mit jemandem irgendwo' gegen 'zu ihm hin und dort'. Schluessel und Lehrer sagen dasselbe. Aufnehmen?"
+    },
+    "f15-2415": {
+      "urteil": "schon-regel",
+      "grund": "Die vier Besitzendungen ya, kaf, hu, ha an kitabun durchdekliniert, mit dem Zusatz, dass es keine eigenstaendigen Woerter sind. Der Schluessel formuliert den Zusatz fast wortgleich (Lektion 10, Punkt 1).",
+      "quelle": "possessiv-endungen-01"
+    },
+    "f15-1445": {
+      "urteil": "weg",
+      "grund": "Vokabelarbeit am Wort zamil: welche Stufe von Freundschaft es bezeichnet, und dass Arabisch dafuer mehrere Woerter hat. Wortkunde, keine Regel."
+    },
+    "f15-5045": {
+      "urteil": "schon-regel",
+      "grund": "Wiederholung der Namensregel auf eine Schuelerfrage hin ('passiert das immer nur, wenn wir eine Zugehoerigkeit machen?'), samt der Antwort: nein, sie gilt allgemein, unabhaengig von den Suffixen.",
+      "quelle": "tanwin-maennername-ta-01 · eigennamen-fem-ohne-tanwin-01"
+    },
+    "f15-3515": {
+      "urteil": "unbelegt",
+      "grund": "Die Verneinung mit ma: 'ma indi sayyara' — 'ich habe kein Auto'. Der Lehrer nennt sie in dieser Folge zweimal und in Folge 16 noch zweimal ('la, ma abi tajirun'), fasst sie aber nie als Regel zusammen, und der Whisper-Text ist an der Stelle zerrissen ('wie man in der verleint in der wird mit ma verleint'). Gesucht in Schluessel 1 (alle 23 Lektionen) sowie Band 2 und 3: kein Treffer zu dieser Verneinung. Damit traegt nur eine unsichere Abschrift die Regel.",
+      "quelle": "Unterricht Folge 15 @ 35:15, 49:15 · Folge 16 @ 6:45, 8:15 — keine gedruckte Quelle",
+      "frage": "Verneinung mit ma ('ma indi sayyara' = ich habe kein Auto): kommt viermal im Unterricht vor, steht aber in keinem Schluessel, den wir haben. Regel daraus machen oder warten, bis es gedruckt belegt ist?"
+    },
+    "f15-945": {
+      "urteil": "regel",
+      "grund": "Der Lehrer trennt bi von fi an einem Beispiel, das man nicht erraten kann: 'fil jamia' heisst oertlich an der Uni sein — 'ich koennte dort Hausmeister sein' —, 'bil jamia' heisst, dort eingeschrieben zu sein. Der Schluessel belegt die Grundbedeutung: bi ist die Praeposition 'an, in', die mit dem Folgewort zusammengeschrieben wird, Beispiel bil-jamiati, 'an der Universitaet'. Die vorhandene Regel harf-jarr-bi-01 behandelt nur bi khayrin und den Tanwin danach; die Unterscheidung zu fi fehlt.",
+      "quelle": "Schluessel 1, Lektion 10 (PDF-S. 35-37), Punkt 8 · Unterricht Folge 15 @ 9:45",
+      "frage": "Neue Regel: bil-jamia (eingeschrieben) gegen fil-jamia (gerade dort). Der Schluessel belegt bi = 'an der Universitaet'. Aufnehmen?"
+    },
+
+    "f16-1745": {
+      "urteil": "schon-regel",
+      "grund": "abuka und akhuka bekommen ein waw dazwischen, ausser bei 'mein': abi, akhi. Der Schluessel hat beides samt Ausnahme in Lektion 10, Punkt 2.",
+      "quelle": "asma-khamsa-01 · asma-khamsa-vollstaendig-01"
+    },
+    "f16-2645": {
+      "urteil": "schon-regel",
+      "grund": "Die Stelle IST die Fundstelle der vorhandenen Regel (Folge 16, 26:45): nach einer Kasra wird hu zu hi, 'fihi ist einfacher als fihu'.",
+      "quelle": "hu-nach-kasra-01 (aus genau dieser Stelle)"
+    },
+    "f16-1615": {
+      "urteil": "schon-regel",
+      "grund": "Die Stelle IST die Fundstelle der vorhandenen Regel (Folge 16, 16:15): fuenf Ausnahmewoerter, zwei davon jetzt, drei im zweiten Buch.",
+      "quelle": "asma-khamsa-01 (aus genau dieser Stelle)"
+    },
+    "f16-3315": {
+      "urteil": "schon-regel",
+      "grund": "Die Stelle IST die Fundstelle der vorhandenen Regel (Folge 16, 33:15): kitabuka ist Mudaf plus Mudaf ilayhi in einem einzigen Wort.",
+      "quelle": "possessiv-ist-idafa-01 (aus genau dieser Stelle)"
+    },
+    "f16-3145": {
+      "urteil": "schon-regel",
+      "grund": "nafidhatu ghurfati als Mudaf erkennen — 'wir haben nur ein u und kein Alif und Lam' —, dazu tahta als Ortsangabe. Beide Merkmale stehen im Bestand.",
+      "quelle": "idafa-erkennen-01 · mudaf-ohne-al-01 · zarf-als-mudaf-01"
+    },
+    "f16-3815": {
+      "urteil": "weg",
+      "grund": "Der Lehrer korrigiert eine deutsche Uebersetzung: 'ich habe einen Bruder, sein Name ist Usama' statt 'der Usama heisst', weil im arabischen Satz kein alladhi steht. Das ist eine Uebersetzungshilfe, keine arabische Regel; die arabische Seite steht bereits als ismun-mawsul-alladhi-01."
+    },
+    "f16-2045": {
+      "urteil": "weg",
+      "grund": "Landeskunde zu den Ortsnamen im Uebungstext (Riad, Taif, al-Madina al-Munawwara) und eine Uebersetzungsrunde. Der Whisper-Text wiederholt 'Abuha wazirun' 25 mal."
+    },
+    "f16-2815": {
+      "urteil": "schon-regel",
+      "grund": "Drei bekannte Punkte in einem Abschnitt: amama als Ortsangabe, die wie ein Mudaf wirkt; fihi; und 'ein kleiner Garten', nicht 'der Garten ist klein'.",
+      "quelle": "zarf-als-mudaf-01 · hu-nach-kasra-01 · nat-bestimmtheit-01"
+    },
+    "f16-1215": {
+      "urteil": "weg",
+      "grund": "Uebersetzungsrunde, dazu die Vokabelauskunft 'maa heisst mit' und die Antwort auf eine Schuelerfrage, dass dhahaba Vergangenheit ist. Keine neue Regel."
+    },
+    "f16-445": {
+      "urteil": "schon-regel",
+      "grund": "Der Lehrer korrigiert 'ayna abuka' gegen 'man abuka' — wo gegen wer. Beide Fragewoerter stehen einzeln im Bestand, dazu die Uebersicht.",
+      "quelle": "istifham-ayna-01 · istifham-men-01 · istifham-uebersicht-01"
+    },
+    "f16-645": {
+      "urteil": "schon-regel",
+      "grund": "Die Zahl eins richtet sich im Geschlecht nach dem Gezaehlten: wahidun beim Bruder, wahidatun bei der Schwester — 'das ist wie bei ein und eine'. Das ist die vorhandene Femininbildung an einem Zahlwort. ⚠️ Die Verneinung mit ma, die an derselben Stelle faellt, ist eigens als f15-3515 vermerkt.",
+      "quelle": "fem-bildung-01 · mutabaqa-genus-01"
+    },
+    "f16-3945": {
+      "urteil": "schon-regel",
+      "grund": "'in jenem grossen Zimmer' statt 'in einem grossen Zimmer' — tilka macht das Nomen bestimmt, das Adjektiv zieht mit.",
+      "quelle": "ismul-isara-tilka-01 · nat-bestimmtheit-01"
+    },
+    "f16-045": {
+      "urteil": "weg",
+      "grund": "Ein Schueler fasst Kapitel 10 zusammen: Besitzanzeigen, das neue bi, der Unterschied maa/inda. Eine Wiederholung dessen, was an seinen eigenen Fundstellen schon bewertet ist."
+    },
+    "f16-3545": {
+      "urteil": "weg",
+      "grund": "Vokabel (Kueche), Uebersetzungsrunde und ein Gespraech mit einem Mitschueler ueber Gambia. Kein Sprachinhalt."
+    },
+    "f16-815": {
+      "urteil": "weg",
+      "grund": "Abfrage der Textfragen, dazu die organisatorische Auskunft, ob die Antworten sich auf den Text beziehen muessen. Die Verneinung mit ma faellt auch hier und ist als f15-3515 vermerkt."
+    },
+
+    "f17-2515": {
+      "urteil": "schon-regel",
+      "grund": "Saetze ins Weibliche setzen: kharaja wird kharajat, dhahaba wird dhahabat. Die Endungen der Vergangenheit stehen als eigene Regel, der Schluessel hat dhahabat in Lektion 12.",
+      "quelle": "verb-madi-endungen-01 · verb-enthaelt-pronomen-01"
+    },
+    "f17-445": {
+      "urteil": "schon-regel",
+      "grund": "Weibliche arabische Namen ohne Tanwin, dazu zwei Nat-Paare aus dem Text (al-madina al-munawwara, al-madrasa ath-thanawiyya) mit allen vier Bedingungen durchgeprueft. ⚠️ Der Hinweis, dass es unhoeflich ist, nach der Mutter zu fragen, ist Landeskunde und keine Regel.",
+      "quelle": "eigennamen-fem-ohne-tanwin-01 · nat-vier-bedingungen-01"
+    },
+    "f17-4345": {
+      "urteil": "weg",
+      "grund": "Der Whisper-Text ist hier vollstaendig zerfallen — Einzelsilben in Auslassungspunkten ('...striptis... ...liegt... ...gerhurt...'). Aus dieser Stelle laesst sich nichts belegen."
+    },
+    "f17-2845": {
+      "urteil": "weg",
+      "grund": "Verwandtschaftsvokabeln: khal und khala, amm und amma, al-fata und al-fatat. Wortkunde, keine Regel."
+    },
+    "f17-715": {
+      "urteil": "weg",
+      "grund": "Vokabelarbeit an zamil/zamila und die Besitzendungen an ismuha/ismuhu — beide schon an ihren eigenen Fundstellen bewertet. Der Whisper-Text wiederholt 'Und das ist eine Klinik' 36 mal."
+    },
+    "f17-2645": {
+      "urteil": "regel",
+      "grund": "Ein eigener Fall des Sukun-Zusammenstosses, den die vorhandene Regel nicht abdeckt: trifft ein Verb, das auf Sukun endet, auf das folgende al-, wird das Sukun zur Kasra — 'jalasati t-talibatu' statt 'jalasat t-talibatu'. Der Schluessel hat genau diesen Fall in Lektion 12, mit eigenem Beispiel: 'In dhahabat hat der letzte Buchstabe ta ein Sukun. Wenn auf so ein Verb al- folgt, wird das Sukun in Kasra umgewandelt, z. B. dhahabati l-bintu.' Die vorhandene Regel iltiqa-sakinain-01 stammt aus Kapitel 4 und zeigt den Fall am Nomen (minal, manil), nicht am Verb.",
+      "quelle": "Schluessel 1, Lektion 12 (PDF-S. 41-43) · Unterricht Folge 17 @ 26:45",
+      "frage": "Neue Regel: Verb auf Sukun plus al- gibt eine Kasra — 'dhahabati l-bintu'. Der Schluessel hat sie woertlich. Aufnehmen?"
+    },
+    "f17-2315": {
+      "urteil": "schon-regel",
+      "grund": "Weibliche Berufsformen: mudarrisa, tabiba, taliba, sayyida — dazu anti als weibliche Anrede. Die Bildung steht als eigene Regel.",
+      "quelle": "fem-bildung-01 · huwa-hiya-weitere-01"
+    },
+    "f17-1445": {
+      "urteil": "schon-regel",
+      "grund": "Der Lehrer prueft, ob der Name nach ya sich veraendert: 'siehst du irgendwo Harf jarr, dass das Zaynab veraendert? Nein.' Die Rufpartikel steht im Bestand.",
+      "quelle": "ya-nida-01"
+    },
+    "f17-4515": {
+      "urteil": "weg",
+      "grund": "Hausaufgaben, Ausblick auf den Plural und die Gebetszeit. Der Whisper-Text ist ausserdem in Einzelsilben zerfallen."
+    },
+    "f17-1845": {
+      "urteil": "schon-regel",
+      "grund": "'a-hiya laki ya Fatima' gegen 'a-huwa laka' — Pronomen und Besitzendung richten sich nach dem Geschlecht der Angesprochenen. Beide Reihen stehen im Bestand.",
+      "quelle": "huwa-hiya-01 · possessiv-endungen-01 · li-mit-suffix-01"
+    },
+    "f17-1045": {
+      "urteil": "schon-regel",
+      "grund": "Die Stelle IST die Fundstelle der vorhandenen Regel (Folge 17, 10:45): die Schuelerfrage 'warum bi khayrin und nicht bi khayri' und die Antwort 'weil das Wort khayr unbestimmt ist'.",
+      "quelle": "harf-jarr-bi-01 (aus genau dieser Stelle) · tanwin-nach-harf-jarr-01"
+    },
+    "f17-3945": {
+      "urteil": "schon-regel",
+      "grund": "Eine Zeitangabe wirkt wie ein Mudaf, das Folgewort steht im Genitiv. Der Schluessel liefert qabla und baada in Lektion 15 nach, die Regel im Bestand fasst Zeit und Ort zusammen.",
+      "quelle": "zarf-01 · zarf-als-mudaf-01"
+    },
+
+    "f19-945": {
+      "urteil": "schon-regel",
+      "grund": "Musterloesung der Grammatikabfrage: Harf jarr plus Ism majrur, und dass Ta marbuta zwar das Zeichen fuer weiblich ist, aber nicht jedes Wort damit weiblich ist. Beides steht im Bestand.",
+      "quelle": "harf-jarr-01 · ta-marbuta-fem-01 · ta-marbuta-grenzen-01"
+    },
+    "f19-315": {
+      "urteil": "schon-regel",
+      "grund": "Musterloesung: der Mudaf ilayhi ist immer majrur und darf bestimmt oder unbestimmt sein; danach die vier Merkmale des Nat. Alles vorhanden.",
+      "quelle": "mudaf-ilayh-01 · idafa-zweitglied-01 · nat-vier-bedingungen-01"
+    },
+    "f19-1345": {
+      "urteil": "schon-regel",
+      "grund": "Musterloesung: 28 Buchstaben, 14 Sonnen- und 14 Mondbuchstaben, die Schadda als Erkennungszeichen, und dass das Wort erst bestimmt sein muss.",
+      "quelle": "schams-qamar-01 · schams-qamar-merkhilfe-01 · al-tanwin-tilgung-01"
+    },
+    "f19-445": {
+      "urteil": "schon-regel",
+      "grund": "Musterloesung, Fortsetzung: die vier Bedingungen an 'hadha talibun jadidun' durchgeprueft — gleicher Fall, beide unbestimmt, beide marfu, beide maennlich.",
+      "quelle": "nat-vier-bedingungen-01"
+    },
+    "f19-115": {
+      "urteil": "schon-regel",
+      "grund": "Musterloesung: die Idafa verbindet zwei Nomen, der Mudaf bekommt keinen Artikel. Beides vorhanden.",
+      "quelle": "idafa-01 · mudaf-01 · mudaf-ohne-al-01"
+    },
+    "f19-815": {
+      "urteil": "schon-regel",
+      "grund": "Musterloesung: Hinweiswoerter nah und fern, danach die Liste der Genitivpartikeln min, ila, ala, fi, bi, li. Jede einzeln im Bestand, dazu die Bedeutungsuebersicht.",
+      "quelle": "harf-jarr-fi-ala-01 · harf-jarr-min-ila-01 · harf-jarr-li-01 · harf-jarr-bi-01 · hurufu-jarr-bedeutungen-01"
+    },
+    "f19-1515": {
+      "urteil": "schon-regel",
+      "grund": "Musterloesung: der Artikel macht bestimmt und das Tanwin faellt weg; danach die vollstaendige Pronomenreihe bis nahnu. Beides vorhanden.",
+      "quelle": "al-tanwin-tilgung-01 · huwa-hiya-01 · huwa-hiya-weitere-01 · verb-madi-endungen-01"
+    },
+    "f19-645": {
+      "urteil": "schon-regel",
+      "grund": "Musterloesung: Manut ist das beschriebene Wort, Nat das Adjektiv; die vier Hinweiswoerter nach Naehe, Ferne und Geschlecht geordnet.",
+      "quelle": "nat-vier-bedingungen-01 · ismul-isara-hadha-01 · ismul-isara-hadhihi-01 · ismul-isara-dhalika-01 · ismul-isara-tilka-01"
+    },
+    "f19-1845": {
+      "urteil": "schon-regel",
+      "grund": "Schlusswort mit einem letzten Punkt: 'ar-rajulu dhahaba' und 'dhahaba r-rajulu' gehen beide, aber das eine ist ein Nominalsatz und das andere nicht. Genau diese Unterscheidung steht im Bestand.",
+      "quelle": "jumla-ismiya-filiya-01 · wortstellung-fokus-01"
+    },
+
+    "f20-2145": {
+      "urteil": "weg",
+      "grund": "Vokabeln aus dem ersten Kapitel des neuen Buchs: tawaddaa (Wudu machen), yaqrau, musalla, mitaf, nazzara, hayya bina. Wortkunde, keine Regel."
+    },
+    "f20-1045": {
+      "urteil": "weg",
+      "grund": "Einordnung des neuen Buchs: warum es leichter faellt, was ein mulakhkhas ist, welche Aufgaben uebersprungen werden. Kein Sprachinhalt."
+    },
+    "f20-345": {
+      "urteil": "schon-regel",
+      "grund": "Der Dialog wird zerlegt: haluka ist hal plus kaf, bi khayrin ist bi plus khayr im Genitiv mit Tanwin. Beide Bausteine stehen im Bestand, der zweite mit genau diesem Beispiel.",
+      "quelle": "possessiv-endungen-01 · harf-jarr-bi-01 · tanwin-nach-harf-jarr-01"
+    },
+    "f20-2515": {
+      "urteil": "weg",
+      "grund": "Aufbau des Buchs und die Aufgabentypen der Zwischenpruefung, dazu ein Hinweis zur Begruessung als Sunna. Kein Sprachinhalt."
+    },
+    "f20-2645": {
+      "urteil": "weg",
+      "grund": "Fortsetzung der Aufgabenbeschreibung: Wort aussortieren, Saetze verbinden, Luecken fuellen. Kein Sprachinhalt."
+    },
+    "f20-1415": {
+      "urteil": "weg",
+      "grund": "Vokabeln der Familienseite: walid und walida, usra, sura, und dass shajara auch Stammbaum heissen kann. Wortkunde."
+    },
+    "f20-2315": {
+      "urteil": "weg",
+      "grund": "Vokabelwiederholung des Kapitels am Stueck, dazu eine Frage zur Antwort auf maa s-salama. Wortkunde."
+    },
+    "f20-145": {
+      "urteil": "weg",
+      "grund": "Der erste Dialog wird vorgestellt und die Begruessung zerlegt (as-salamu bestimmt, alaykum aus ala und kum). Eine Zerlegung als Verstaendnishilfe, nicht als Regel eingefuehrt; die Pluralendung kum ist erst Lektion 14 des Schluessels und dort ausdruecklich weiterfuehrend."
+    },
+    "f20-545": {
+      "urteil": "unbelegt",
+      "grund": "Die Zugehoerigkeitsform: 'Turkiyya ist der Tuerke. Und Turkiya ist die Tuerkei.' Dasselbe an Pakistan/Pakistani und (in f20-915) an Misr/Misri. Das ist eine echte Bildungsregel und kommt hier zum ersten Mal vor. Gesucht in Schluessel 1 (alle 23 Lektionen), Band 2 und Band 3 nach 'Nisba' und 'Zugehoerigkeit': null Treffer. Der Lehrer benennt sie auch nicht, er zeigt sie nur an Beispielen. Damit fehlt jede gedruckte Stuetze.",
+      "quelle": "Unterricht Folge 20 @ 5:45 und 9:15 — keine gedruckte Quelle in unserem Bestand",
+      "frage": "Zugehoerigkeitsform (Turkiya = die Tuerkei, Turki = der Tuerke): kommt in Folge 20 zweimal vor, steht in keinem unserer drei Schluessel. Regel daraus machen, oder warten?"
+    },
+    "f20-2015": {
+      "urteil": "regel",
+      "grund": "Die Steigerungsform: 'Akbar kommt von Kabirun … und Akbar ist mit Tafdil.' Der Schluessel zu Band 2 hat dafuer eine eigene Lektion — PDF-Seite 14 kuendigt sie an ('Komperativ und Superlativ von Adjektiven'), Seite 15 nennt die Regel, dass nach der Superlativform ein Nomen im Genitiv steht, Seite 18 uebt sie. ⚠️ Das ist Stoff aus Buch 2, also vor Elias' Stand. Als Regel taugt es, aber sie gehoert gekennzeichnet.",
+      "quelle": "Schluessel Band 2, PDF-S. 14, 15 und 18 · Unterricht Folge 20 @ 20:15",
+      "frage": "Neue Regel: akbar als Steigerungsform von kabir. Belegt im Schluessel zu Buch 2 (S. 14-15) — also weiter, als du im Unterricht bist. Jetzt aufnehmen und als weiterfuehrend kennzeichnen, oder spaeter?"
+    },
+    "f20-915": {
+      "urteil": "weg",
+      "grund": "Dieselbe Zugehoerigkeitsform wie f20-545, nur an weiteren Laendern (Misr, Almaniya, Suriya) und mit stark zerfallenem Whisper-Text. Die Regelfrage steht bei f20-545."
+    },
+    "f20-1545": {
+      "urteil": "weg",
+      "grund": "Prophetenbiografie zum Stammbaum im Lehrbuch (Abdullah, Amina, Jathrib). Dazu die Wortkunde, dass Amina und Amina zwei verschiedene Namen sind. Kein Sprachinhalt."
+    },
+    "f20-1715": {
+      "urteil": "weg",
+      "grund": "Fortsetzung der Biografie: Halima, Abdul Muttalib, al-Abbas, Hamza, das Jahr der Trauer. Kein Sprachinhalt."
+    },
+
+    "f21-515": {
+      "urteil": "weg",
+      "grund": "Aufloesung der Zwischenpruefung: welches Wort nicht in die Spalte passt, und zwei Genusfehler ('meine Mutter ist Aerztin'). Der Whisper-Text ist ohne Satzzeichen und teils raetselhaft ('tonnere sura passt nicht rein'). Nichts daraus ist belegfaehig."
+    }
+  }
+}
