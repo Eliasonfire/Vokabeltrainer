@@ -42,12 +42,26 @@
  * Exit 0 = alles wie zugesichert · 1 = die Zusicherung hält nicht
  */
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 
 const REPO = path.dirname(fileURLToPath(import.meta.url));
 const MARKE = path.join(REPO, 'werkzeuge', 'freischaltung-abfrage.json');
+
+/* ⛔ EINE KOPIE von js/kern.js mit ALTEM Abfragedatum (seit 22.09.2026).
+   Der Test setzte voraus, dass das Datum in der echten Datei älter als acht
+   Tage ist. Seit die Routine „neue Kapitel" dort das heutige einträgt, stimmte
+   das nicht mehr: drei Zusicherungen wurden rot, ohne dass etwas kaputt war,
+   und die Routine durfte deshalb nicht ausliefern. vorrat.mjs liest die Kopie
+   über VORRAT_KERN_DATEI; die echte Datei bleibt unberührt. */
+const ALTES_DATUM = '19.8.2026';
+const TEMP = fs.mkdtempSync(path.join(os.tmpdir(), 'abfragemarke-'));
+const KERN_KOPIE = path.join(TEMP, 'kern.js');
+const kernText = fs.readFileSync(path.join(REPO, 'js', 'kern.js'), 'utf8')
+  .replace(/abgefragt am [0-9.]+/g, 'abgefragt am ' + ALTES_DATUM);
+fs.writeFileSync(KERN_KOPIE, kernText, 'utf8');
 
 let fehler = 0;
 const pruefe = (was, ist, soll) => {
@@ -59,7 +73,8 @@ const pruefe = (was, ist, soll) => {
 function knapp(){
   try {
     return execFileSync(process.execPath, ['werkzeuge/vorrat.mjs', '--knapp'],
-      { encoding: 'utf8', cwd: REPO, maxBuffer: 20e6 });
+      { encoding: 'utf8', cwd: REPO, maxBuffer: 20e6,
+        env: { ...process.env, VORRAT_KERN_DATEI: KERN_KOPIE } });
   } catch (e){ return String(e.stdout || '') + String(e.stderr || ''); }
 }
 
@@ -71,6 +86,10 @@ const vorher = gabEsSchon ? fs.readFileSync(MARKE, 'utf8') : null;
 
 try {
   console.log('--- Eine Abfrage ohne Aenderung ist trotzdem eine Abfrage ---');
+  console.log('');
+  /* Ohne diese Probe prüfte der Test still wieder das echte Datum. */
+  pruefe('die Kopie von js/kern.js traegt das alte Datum',
+    kernText.includes('abgefragt am ' + ALTES_DATUM), true);
   console.log('');
 
   /* ---- 1. Ohne Marke: die Warnung MUSS da sein ---- */
@@ -114,6 +133,7 @@ try {
      unbrauchbar. [[leere_datei_besteht_jeden_test]] */
   if (vorher === null){ if (fs.existsSync(MARKE)) fs.unlinkSync(MARKE); }
   else fs.writeFileSync(MARKE, vorher, 'utf8');
+  fs.rmSync(TEMP, { recursive: true, force: true });
   console.log('');
   console.log('  (Vorzustand wiederhergestellt: '
     + (vorher === null ? 'keine Marke' : 'Marke wie vorher') + ')');

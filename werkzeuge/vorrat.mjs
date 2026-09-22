@@ -151,7 +151,11 @@ function tageSeit(deutschesDatum){
 }
 
 /* ---------- FREIGESCHALTET lesen und schreiben ---------- */
-const KERN = p('js/kern.js');
+/* ⚠️ VORRAT_KERN_DATEI nur für Tests (seit 22.09.2026): test-freischaltung-
+   abfragemarke.mjs braucht ein ALTES Abfragedatum. Das echte js/kern.js trägt
+   nach jeder Abfrage das heutige — dann konnte die Alterswarnung, die der Test
+   verlangt, gar nicht kommen, und er wurde rot, ohne dass etwas kaputt war. */
+const KERN = process.env.VORRAT_KERN_DATEI || p('js/kern.js');
 
 function freischaltungLesen(){
   const q = fs.readFileSync(KERN, 'utf8');
