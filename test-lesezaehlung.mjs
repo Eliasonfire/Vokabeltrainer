@@ -69,6 +69,7 @@ const [block, woerter] = stuecke;
 /* Attrappen. Nur, was der Block wirklich anfasst. */
 let GEZAEHLT = [];
 let JETZT = 1000000;
+let HEUTE = '2026-09-18';      /* der Lerntag, den todayStr() meldet (Abschnitt 5b dreht ihn weiter) */
 const horcher = {};
 const ctx = {
   console,
@@ -84,7 +85,7 @@ const ctx = {
   VERSE_CACHE: {},
   /* leseSureSetzen() fragt seit 18.09.2026 nach der Seite des Tages; die
      setzt der Test in Abschnitt 9 von Hand (seiteDesTages). */
-  todayStr: () => '2026-09-18',
+  todayStr: () => HEUTE,
 };
 vm.createContext(ctx);
 /* ⚠️ Alles in EINEM Lauf: die `const` aus quran-text.js und der Wortzählung
@@ -119,7 +120,7 @@ const pruefe = (name, ist, soll) => {
   if (gleich){ ok++; console.log('  ✔ ' + name); }
   else { schlecht++; console.log('  ⛔ ' + name + '\n       erwartet: ' + JSON.stringify(soll) + '\n       bekommen: ' + JSON.stringify(ist)); }
 };
-const neu = () => { GEZAEHLT = []; JETZT = 1000000; A.setzen(null); };
+const neu = () => { GEZAEHLT = []; JETZT = 1000000; HEUTE = '2026-09-18'; A.setzen(null); };
 const warte = (sek) => { JETZT += sek * 1000; };
 const oeffne = (s) => { A.laden(s); A.setzen(s); };
 const sek = (ms) => ms / 1000;
@@ -225,6 +226,38 @@ warte(sek(S.zalzala) - 10 - 1); A.pruefe();
 pruefe('   eine Sekunde vor der Schwelle noch nicht', GEZAEHLT, []);
 warte(2); A.pruefe();
 pruefe('   danach gezählt', GEZAEHLT, [99]);
+console.log('');
+
+/* ---------- 5b. ⛔⛔ Ein neuer Lerntag zählt nicht mit der Lesung von gestern (22.09.2026) ----
+   Elias: „übrigens ist bei mir der ring für mulk bereits voll obwohl ich nur um
+   4 uhr morgens das gelesen habe". Um 4 Uhr gelesen (zählt für den Vortag), in
+   der Sure geblieben, nach 8 Uhr zurückgekommen: die alte Lesezeit samt „Ende
+   gesehen" zählte die Sure sofort für den neuen Tag. */
+console.log('5b. Um 4 Uhr gelesen, in der Sure geblieben, nach 8 Uhr zurück');
+neu();
+oeffne(67);
+A.ende(true);
+warte(sek(A.schwelle(67)) + 1); A.pruefe();
+pruefe('   in der Nacht gelesen: gezählt (für den Vortag)', GEZAEHLT, [67]);
+ctx.document.visibilityState = 'hidden'; horcher.visibilitychange();
+warte(5 * 3600);
+HEUTE = '2026-09-19';                /* 8 Uhr ist vorbei: neuer Lerntag */
+ctx.document.visibilityState = 'visible'; horcher.visibilitychange();
+A.pruefe();
+pruefe('   ⛔ zurück nach 8 Uhr: NICHT noch einmal gezählt', GEZAEHLT, [67]);
+pruefe('   die Uhr fängt für den neuen Tag bei 0 an', Math.round(A.jetzt() / 1000), 0);
+pruefe('   und das Ende muss neu erreicht werden', A.stand().ende, false);
+A.ende(true);
+warte(sek(A.schwelle(67)) + 1); A.pruefe();
+pruefe('   wirklich neu gelesen: zählt für den neuen Tag', GEZAEHLT, [67, 67]);
+/* Dasselbe, wenn die App die ganze Zeit offen bleibt und 8 Uhr drüberläuft. */
+neu();
+oeffne(67);
+A.ende(true);
+warte(sek(A.schwelle(67)) - 30);
+HEUTE = '2026-09-19';
+warte(60); A.pruefe();
+pruefe('   ⛔ 8 Uhr läuft mitten in die Lesung: nichts mit der Zeit von gestern', GEZAEHLT, []);
 console.log('');
 
 /* ---------- 6. Wechsel zwischen zwei Suren --------------------------------*/
