@@ -311,6 +311,22 @@ export const PFLEGEPLAN = [
       wie: 'prüft, dass die Funktion da ist, dass passtZurAuswahl sie aufruft und dass sie nichtAufKarteikarten liest statt ausgeblendet; zweiseitig geeicht (ein echter Fall wird gefunden, ein Fachbegriff mit stehender Regel nicht). Störtest belegt: Aufruf entfernt = Exit 1, falsches Feld = Exit 1' },
   },
   {
+    /* ⭐ 22.09.2026 — BEISPIELSÄTZE FÜR DIE FACHBEGRIFFE.
+       Elias mit dem Bild einer Karte, auf der nur eine Eselsbrücke stand:
+       „kein beispielsatz, sorge dafür das alle ien beispielsatz haben"
+       Die Freigabe zum Verfassen steht seit dem 19.08.2026 im Kopf von
+       data/beispielsaetze.js: „die sollst du auch eigentlich bauen aber da muss
+       drauf geachtet werden, dass es natürlich dann auch die richtige grammatik
+       hat." Deshalb ist die Lücke kein Wartepunkt auf IHN, sondern auf Material. */
+    funktion: 'Beispielsätze der Fachbegriffe',
+    dateien: [],
+    bildschirme: [],
+    neuerInhalt: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs', werkzeug: 'werkzeuge/pruefe-beispielsaetze.mjs',
+      wie: 'zählt jede Karte ohne Beispielsatz und schlägt mit --kandidaten vorhandene Sätze vor, in denen das Wort ALS WORT steht; Exit 2 bei Lücken, Exit 1 nur bei einem Werkzeugfehler' },
+    eingaben: { nein: 'Er trägt hier nichts ein — er hat die Lücke gemeldet, und gebaut wird sie aus seinem eigenen Wortbestand.' },
+    veralten: { nein: 'Ein einmal verfasster Satz bleibt richtig. Kommt eine neue Karte dazu, meldet derselbe Prüfer sie als Lücke — die Zahl veraltet also nicht still.' },
+  },
+  {
     funktion: 'Kategorien und Wortliste',
     dateien: ['js/kategorien.js', 'wortfelder-data.js'],
     bildschirme: ['screen-categories', 'screen-wordlist'],

@@ -400,6 +400,10 @@ const PRUEFER = [
      Karteikarten aus gestrichenen Regeln hintereinander bekam: „kümmere dich
      erstmal darum das das auch nicht wieder passiert." */
   ['werkzeuge/pruefe-fachbegriff-regel.mjs', []],
+  /* 22.09.2026 — Elias: „kein beispielsatz, sorge dafür das alle ien
+     beispielsatz haben". Exit 2 = Lücken, die auf Material warten (kein
+     Werkzeugfehler); Exit 1 nur, wenn die Zahl selbst nicht belastbar wäre. */
+  ['werkzeuge/pruefe-beispielsaetze.mjs', []],
   /* ⭐ Mit --pruefen, weil der blanke Lauf bewertung.json SCHREIBT und ein
      Sammellauf nichts verändern darf. Rot wird er, sobald eine Fundstelle ohne
      mein Urteil dasteht — das ist MEIN Rückstand, und er gehört genau hierhin

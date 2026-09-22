@@ -1861,4 +1861,45 @@ const BEISPIELSAETZE = {
   '46019': { sentAr: 'هَذَا الدَّوْرُ جَدِيدٌ.', sentDe: 'Dieses Stockwerk ist neu.' },
   '46020': { sentAr: 'نَظَرَ الْوَلَدُ إِلَى الْمِرْآةِ.', sentDe: 'Der Junge schaute in den Spiegel.' },
   '48611': { sentAr: 'السَّخَّانُ فِي الْحَمَّامِ.', sentDe: 'Der Boiler ist im Badezimmer.' },
+
+  /* ========================================================================
+     BEISPIELSÄTZE FÜR DIE FACHBEGRIFFE (22.09.2026)
+     ========================================================================
+     Elias mit dem Bild einer Fachbegriff-Karte, auf der nur eine Eselsbrücke
+     stand: „kein beispielsatz, sorge dafür das alle ien beispielsatz haben"
+
+     Gemessen an dem Abend: von 232 Karten, die die App lädt, hatten **25**
+     keinen — alle 25 Fachbegriffe, keine einzige der 171 Buchvokabeln.
+
+     ⭐ ZUGEORDNET, NICHT VERFASST. Die fünf Sätze unten standen schon in dieser
+     Datei; sie gehörten nur einer Buchvokabel und nicht dem Fachbegriff, der
+     genau von ihnen handelt. Ein Satz wie „الْمُبْتَدَأُ مَرْفُوعٌ." erklärt
+     beide Begriffe zugleich — er darf deshalb zweimal stehen.
+     ⛔ Kein Wort daran ist geändert, keine Ḥaraka gesetzt. Die Herkunft steht
+     je Zeile dabei, damit nachprüfbar bleibt, dass hier nichts erfunden wurde.
+
+     ⚠️ Was NICHT eingetragen wurde, obwohl die Wortsuche es vorschlug:
+     · حَرْفٌ → „حَرْفُ الْكَلِمَةِ جَدِيدٌ." — dort heißt حَرْف **Buchstabe**,
+       die Karte meint aber die Wortart **Partikel**. Gleiches Wort, andere
+       Bedeutung.
+     · فِعْلٌ → „مَاذَا فَعَلَ الطَّالِبُ؟" — dort steht das **Verb** فَعَلَ,
+       nicht das **Nomen** فِعْلٌ.
+     Beide wären Treffer auf die Schreibung und nicht auf den Begriff gewesen.
+     [[stichworttreffer_ist_kein_inhaltstreffer]]
+
+     ⬜ Die übrigen 20 warten auf verfasste Sätze. Die Auflagen dafür stehen im
+     Kopf dieser Datei (nur Wörter, die er hat · vollständig vokalisiert · nur
+     Bauformen, die er kennt) und gelten unverändert. `node
+     werkzeuge/pruefe-beispielsaetze.mjs` zählt sie. */
+  'gram-majrur':  { sentAr: 'الْاِسْمُ بَعْدَ فِي مَجْرُورٌ.', sentDe: 'Das Nomen nach „fī" steht im Genitiv.' },        /* = 50472 */
+  'gram-marfu':   { sentAr: 'الْمُبْتَدَأُ مَرْفُوعٌ.',        sentDe: 'Das Mubtadaʾ steht im Nominativ.' },             /* = 50470 */
+  /* ⚠️ Die beiden deutschen Sätze tragen typografische Anführungszeichen ‚…‘
+     (U+201A / U+2018) — genau wie im Original bei 50428 und 50467. Beim ersten
+     Eintragen war das schließende ‘ zu einem geraden ' geworden, und das
+     beendet den String mitten im Satz: „SyntaxError: Unexpected identifier
+     'ist'". Die ganze Datei hätte nicht mehr geladen, und mit ihr kein einziger
+     Beispielsatz. `node --check` hat es sofort gefunden. */
+  'gram-nat':     { sentAr: 'الْجَدِيدُ نَعْتٌ لِلْكِتَابِ.',  sentDe: '‚Neu‘ ist ein Attribut zum Buch.' },              /* = 50428 */
+  'gram-mubtada': { sentAr: 'الْبَيْتُ مُبْتَدَأٌ.',           sentDe: '‚Das Haus‘ ist ein Mubtadaʾ.' },                  /* = 50467 */
+  'gram-mansub':  { sentAr: 'هَذَا الْاِسْمُ مَنْصُوبٌ.',      sentDe: 'Dieses Nomen steht im Akkusativ.' },             /* = 50471 */
 };
