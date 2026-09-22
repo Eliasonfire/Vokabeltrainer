@@ -802,6 +802,17 @@ document.addEventListener('DOMContentLoaded', async ()=>{
      [[ausfall_ist_unsichtbar_gebaut]] */
   if (typeof tauscheDubletten === 'function') tauscheDubletten();
 
+  /* ⭐ UND EIN FACHBEGRIFF, DER SCHON EINE BUCHVOKABEL IST (22.09.2026).
+     Elias: „es gibt zwei mudaf, ich möchte eigentlich nur eins haben. lass das
+     in kapitel 24, mache es aber exakt so wie das meine eigene … nimm die
+     höhere box." Die Begründung und das Feld `buchTausch` stehen bei
+     fachbegriffeMitBuchkarte() in js/kern.js.
+     ⚠️ GENAU HIER, aus demselben Grund wie der Tausch darüber: die Buchvokabel
+     steht in data/vokabeln-madina-1.js und ist vorher nicht geladen. Ein
+     Ladetest hat das belegt — der erste Entwurf lief in js/kern.js und fand
+     nichts. */
+  if (typeof fachbegriffeMitBuchkarte === 'function') fachbegriffeMitBuchkarte();
+
   /* ⛔⛔ UND ZWEI KAPITELKARTEN FÜR DASSELBE WORT (16.09.2026) — Elias' Grundregel:
      „wenn zwei identisch sind und eines davon aber fortschritt hat dann sollte man
      immer das behalten was fortschritt hat" / „also wenn er hier um zwei vokabeln

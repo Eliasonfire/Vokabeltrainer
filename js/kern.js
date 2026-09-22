@@ -741,6 +741,55 @@ if (typeof FACHBEGRIFF_VOKABELN !== 'undefined' && Array.isArray(FACHBEGRIFF_VOK
   }
   if (repariert) LS.set('vt_geloescht', weg);
 
+  /* ⭐⭐ EIN FACHBEGRIFF, DER SCHON ALS BUCHVOKABEL EXISTIERT (22.09.2026)
+
+     Elias mit dem Bild der Suche, auf der مُضَافٌ zweimal stand — einmal als
+     „Eigene Vokabel", einmal als „Kap. 24":
+
+       „es gibt zwei mudaf, ich möchte eigentlich nur eins haben. lass das in
+        kapitel 24, mache es aber exakt so wie das meine eigene. also gleiche
+        kiste, gleiche beschreibung und nennung und alles. es soll identisch
+        sein und alles von eigene vokabel soll dorthin übernommen werden."
+       „nimm die höhere box, sollte kapitel 24 höhere box haben"
+       „danach kannst du eigene löschen sobald alles durch ist"
+
+     ⭐ Das ist wortgleich seine GRUNDREGEL vom 16.09.2026, die weiter unten bei
+     dubletteImBuch() steht: „sollte es jedoch um ein meine eigenen wörter
+     handeln dann soll man das was im kapitel ist bevorzugen und auf den
+     gleichen stand bringen mit den daten wie zb welche box sie drin sit."
+
+     ⛔ WARUM HIER UND NICHT IN tauscheDublette():
+     Der Tausch greift nur, wenn dubBedeutungGleich() die beiden für dasselbe
+     hält — bei „der Besitz — das erste Wort der Genitivverbindung" gegen
+     „(gr) Besitzobjekt (Mudaf)" tut es das nicht, und zu Recht: die Texte sind
+     verschieden. Und ein Tausch läuft EINMAL; die Beschreibung käme aus
+     vocab-data.js beim nächsten Start unverändert zurück, weil die Datei ein
+     Abzug ist. Hier dagegen wird bei JEDEM Start neu gesetzt.
+     [[einstellung_wirkt_nicht_weil_zurueckgelesen]]
+
+     Was passiert: Der Fachbegriff wird NICHT eingehängt. Stattdessen bekommt
+     die Buchvokabel seine Beschreibung und seine Eselsbrücke, wird einzeln
+     freigeschaltet — und der Fortschritt wandert einmalig hinüber, nach der
+     Grundregel „die höhere Box gewinnt".
+
+     ⚠️ `buchTausch` kannte bisher nur werkzeuge/fachbegriffe-setzen.mjs, und
+     zwar als WARNUNG („die App ersetzt ihn beim Start durch …"). Gelesen hat es
+     in der App keine einzige Zeile. [[werkzeug_ohne_aufrufer]] */
+  /* ⛔⛔ DIE ZUORDNUNG `buchTausch` WIRD HIER NICHT AUSGEFÜHRT — und der Grund
+     ist gemessen, nicht vermutet.
+
+     Mein erster Entwurf stand genau an dieser Stelle: Fachbegriff mit
+     `buchTausch` nicht einhängen, stattdessen die Buchvokabel überschreiben.
+     Der Ladetest in werkzeuge/pruefe-buchtausch.mjs hat ihn widerlegt — die
+     Buchvokabel 50473 steht gar nicht in vocab-data.js, sondern in
+     data/vokabeln-madina-1.js, und die lädt js/buecher.js erst später. Die
+     Suche fand nichts, der Fachbegriff wurde ganz normal eingehängt, und alles
+     blieb doppelt. Ohne den Ladetest hätte das wie eine Lösung ausgesehen.
+
+     Ausgeführt wird es deshalb in js/buecher.js, direkt nach
+     tauscheDubletten() — dort steht seit dem 07.09.2026 schon die passende
+     Begründung: „HIER und nicht früher: der Tausch braucht den vollständigen
+     Bestand." [[werkzeug_ohne_aufrufer]] · [[leere_liste_ist_keine_messung]] */
   VOCAB_DATA.push(...FACHBEGRIFF_VOKABELN.filter(w => !(weg[w.id] && weg[w.id].an)));
 }
 
@@ -1973,6 +2022,78 @@ function initProgress(){
 }
 let PROGRESS = initProgress();
 function saveProgress(){ LS.set('vt_progress', PROGRESS); }
+
+/* ⭐⭐ EIN FACHBEGRIFF, DER SCHON ALS BUCHVOKABEL EXISTIERT (22.09.2026)
+
+   Elias mit dem Bild seiner Suche, auf der مُضَافٌ zweimal stand — einmal als
+   „Eigene Vokabel", einmal als „Kap. 24":
+
+     „es gibt zwei mudaf, ich möchte eigentlich nur eins haben. lass das in
+      kapitel 24, mache es aber exakt so wie das meine eigene. also gleiche
+      kiste, gleiche beschreibung und nennung und alles. es soll identisch sein
+      und alles von eigene vokabel soll dorthin übernommen werden."
+     „nimm die höhere box, sollte kapitel 24 höhere box haben"
+     „danach kannst du eigene löschen sobald alles durch ist"
+
+   ⭐ Das ist wortgleich seine GRUNDREGEL vom 16.09.2026 (siehe dubletteImBuch
+   weiter oben): „sollte es jedoch um ein meine eigenen wörter handeln dann soll
+   man das was im kapitel ist bevorzugen und auf den gleichen stand bringen mit
+   den daten wie zb welche box sie drin sit."
+
+   ⚠️ Warum nicht über tauscheDublette(): der greift nur, wenn
+   dubBedeutungGleich() die beiden für dasselbe hält. „der Besitz — das erste
+   Wort der Genitivverbindung" gegen „(gr) Besitzobjekt (Mudaf)" ist es nicht,
+   und das ist richtig so — die Texte SIND verschieden. `buchTausch` ist die
+   ausdrückliche Zuordnung für genau diesen Fall.
+
+   ⛔ AUFGERUFEN WIRD DAS IN js/buecher.js, nach dem Einhängen der Bücher. Vorher
+   gibt es die Buchvokabel nicht: sie steht in data/vokabeln-madina-1.js, nicht
+   in vocab-data.js. */
+function fachbegriffeMitBuchkarte(){
+  if (typeof FACHBEGRIFF_VOKABELN === 'undefined' || !Array.isArray(FACHBEGRIFF_VOKABELN)) return [];
+  const mitZuordnung = FACHBEGRIFF_VOKABELN.filter(f => f && f.buchTausch);
+  if (!mitZuordnung.length) return [];
+
+  const nachId = new Map(VOCAB_DATA.map(w => [String(w.id), w]));
+  const erledigt = [];
+  for (const f of mitZuordnung){
+    const ziel = nachId.get(String(f.buchTausch));
+    if (!ziel) continue;                    // Buch nicht geladen — beim nächsten Mal
+    const eigen = nachId.get(String(f.id));
+
+    /* „gleiche beschreibung und nennung und alles" — seine Worte. Die
+       Buchfassung wird ÜBERSCHRIEBEN, nicht ergänzt: er hat ausdrücklich seine
+       Beschreibung verlangt, nicht beide nebeneinander. */
+    if (f.de)    ziel.de = f.de;
+    if (f.mnemo && !ziel.mnemo) ziel.mnemo = f.mnemo;
+    if (f.regel && !ziel.regel) ziel.regel = f.regel;
+    /* ⚠️ `book` bleibt, wie es ist. Daran hängen der Fachbegriff-Takt im
+       Lernmodus, der Hörmodus und die Zählung in pruefe-oberflaeche.js; ein
+       Wort, das plötzlich `book:'grammar'` trüge, tauchte an drei Stellen auf,
+       an denen es vorher nicht war. */
+
+    /* Erreichbar machen, auch wenn Kapitel 24 nicht freigeschaltet ist — sonst
+       verschwände das Wort ganz, statt einmal statt zweimal dazustehen. */
+    if (typeof setzeEinzelnFrei === 'function') setzeEinzelnFrei(String(ziel.id), true);
+    /* Die höhere Box gewinnt. uebertrageFortschritt() entscheidet das selbst —
+       es überträgt nur, wenn die Quelle wirklich weiter ist. */
+    if (eigen || (typeof PROGRESS !== 'undefined' && PROGRESS[String(f.id)])){
+      try { uebertrageFortschritt(String(f.id), String(ziel.id), true); }
+      catch(e){
+        /* Ein einzelner Stand darf den Start nicht verhindern: das Wort ist
+           auch ohne übertragene Box da, nur in Box 1. Stumm bleibt es
+           trotzdem nicht — sonst wäre genau das ein stiller Fehler.
+           [[ausfall_ist_unsichtbar_gebaut]] */
+        console.warn('[fachbegriff] Fortschritt ' + f.id + ' → ' + ziel.id + ' nicht übertragen:', e && e.message);
+      }
+    }
+    /* Und erst jetzt die doppelte Karte aus dem Bestand nehmen. */
+    const i = VOCAB_DATA.findIndex(w => String(w.id) === String(f.id));
+    if (i >= 0) VOCAB_DATA.splice(i, 1);
+    erledigt.push({ von: String(f.id), nach: String(ziel.id), wort: ziel.ar });
+  }
+  return erledigt;
+}
 
 /* ---------- Lernstand fuer NACHTRAEGLICH entstandene Karten (21.08.2026) ----
 

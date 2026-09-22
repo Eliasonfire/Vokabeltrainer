@@ -327,6 +327,23 @@ export const PFLEGEPLAN = [
     veralten: { nein: 'Ein einmal verfasster Satz bleibt richtig. Kommt eine neue Karte dazu, meldet derselbe Prüfer sie als Lücke — die Zahl veraltet also nicht still.' },
   },
   {
+    /* ⭐ 22.09.2026 — EIN FACHBEGRIFF, DER SCHON IM BUCH STEHT.
+       Elias: „es gibt zwei mudaf, ich möchte eigentlich nur eins haben. lass
+       das in kapitel 24 … nimm die höhere box." Gelöst über das Feld
+       `buchTausch` (fachbegriffeMitBuchkarte in js/kern.js, aufgerufen aus
+       js/buecher.js) — innerhalb bestehender Dateien, deshalb von Hand hier. */
+    funktion: 'Fachbegriffe mit Buchkarte zusammenführen',
+    dateien: [],
+    bildschirme: [],
+    neuerInhalt: { nein: 'Es entsteht nichts. Eine doppelte Karte fällt weg, und die bleibende bekommt die Beschreibung, die Elias wollte.' },
+    eingaben: { nein: 'Die Zuordnung steht in data/fachbegriffe.js und ist eine Entscheidung je Wort — er trägt sie nicht selbst ein, er nennt sie.' },
+    /* ⛔ Zweierlei kann still ausfallen: die Zuordnung zeigt ins Leere (dann ist
+       das Wort GAR nicht mehr da, nicht nur nicht doppelt), und das Feld
+       überlebt ein Neuerzeugen von data/fachbegriffe.js nicht. */
+    veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs', werkzeug: 'werkzeuge/pruefe-buchtausch.mjs',
+      wie: 'prüft die Zuordnung, den Aufruf und den Fortschritt — und führt js/kern.js wirklich aus, um danach zu messen, was in VOCAB_DATA steht. Exit 2 nennt weitere Kandidaten, über die Elias noch nicht entschieden hat' },
+  },
+  {
     funktion: 'Kategorien und Wortliste',
     dateien: ['js/kategorien.js', 'wortfelder-data.js'],
     bildschirme: ['screen-categories', 'screen-wordlist'],

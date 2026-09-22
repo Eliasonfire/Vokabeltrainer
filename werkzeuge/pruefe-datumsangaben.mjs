@@ -700,7 +700,21 @@ const zuSpaet = (hhmm) => minuten(hhmm) > JETZT_MIN + TOLERANZ_MIN;
 const datumDerZeile = (i) => ((zeilen[i] || '').match(/(\d{2}\.\d{2}\.\d{4})/) || [])[1] || null;
 const zukunft = [];
 for (const b of unterBloecke){
-  if (datumDerZeile(b.block) !== HEUTE_DE) continue;
+  /* ⭐ DAS EIGENE DATUM DER ZEILE SCHLÄGT DAS DES BLOCKS (23.09.2026).
+
+     Ein Unterabschnitt darf über einen anderen Tag berichten als der Block, in
+     dem er steht — „### Sein Auftrag im Wortlaut (22.09.2026, gegen 22:50)"
+     innerhalb eines Blocks von heute ist völlig richtig. Der Prüfer nahm
+     bisher immer das Blockdatum, hielt die Zeile deshalb für „heute 22:50"
+     und meldete sie um 00:20 als Zukunft.
+
+     Gemessen in der Nacht auf den 23.09.2026: genau ein solcher Fehlalarm, und
+     er stand als einziger Eintrag unter „NEU ROT" — also an der Stelle, die
+     sagt „NICHT AUSLIEFERN". Ein Prüfer, der aus einem richtigen Satz einen
+     Alarm macht, kostet mehr als er nützt. [[kandidatenliste_ist_keine_fehlerliste]] */
+  const eigenes = datumDerZeile(b.zeile - 1);
+  const massgeblich = eigenes || datumDerZeile(b.block);
+  if (massgeblich !== HEUTE_DE) continue;
   if (zuSpaet(b.zeit)) zukunft.push(b);
 }
 /* Die `## `-Bloecke selbst tragen oft ebenfalls eine Uhrzeit ("NACHTPLAN

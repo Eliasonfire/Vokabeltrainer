@@ -404,6 +404,10 @@ const PRUEFER = [
      beispielsatz haben". Exit 2 = Lücken, die auf Material warten (kein
      Werkzeugfehler); Exit 1 nur, wenn die Zahl selbst nicht belastbar wäre. */
   ['werkzeuge/pruefe-beispielsaetze.mjs', []],
+  /* 22.09.2026 — Elias: „es gibt zwei mudaf, ich möchte eigentlich nur eins
+     haben." Exit 2 = weitere Kandidaten, die auf seine Entscheidung warten;
+     Exit 1 = die Zuordnung selbst ist kaputt. Enthält einen echten Ladetest. */
+  ['werkzeuge/pruefe-buchtausch.mjs', []],
   /* ⭐ Mit --pruefen, weil der blanke Lauf bewertung.json SCHREIBT und ein
      Sammellauf nichts verändern darf. Rot wird er, sobald eine Fundstelle ohne
      mein Urteil dasteht — das ist MEIN Rückstand, und er gehört genau hierhin
@@ -721,7 +725,18 @@ console.log('  ' + ergebnisse.length + ' Prüfer gelaufen, ' + rot.length + ' ro
      3. NEU ROT — alles andere. Dafür gibt es jetzt Exitcode 2.
    ⚠️ Die zwei Listen sind kurz und stehen hier, nicht in einer Datei daneben:
    wer eine ergänzt, soll die Begründung darüber lesen müssen. */
-const WARTET_AUF_ELIAS = ['pruefe-taschkil.js', 'pruefe-duplikate.js', 'werkzeuge/pruefe-themen.mjs'];
+/* ⭐ 22./23.09.2026 — zwei neue auf der Warteliste, und beide gehören dorthin,
+   weil ihr rotes Ergebnis eine LISTE FÜR ELIAS ist und kein Defekt:
+   · pruefe-beispielsaetze.mjs  — 20 Karten warten auf einen verfassten Satz
+     (Elias: „kein beispielsatz, sorge dafür das alle ien beispielsatz haben").
+   · pruefe-buchtausch.mjs      — 30 Fachbegriffe tragen dieselbe Schreibung wie
+     eine Buchvokabel; entschieden hat er bisher nur über مُضَافٌ.
+   ⛔ Beide melden Exit **2**, nicht 1 — Exit 1 bleibt dem Fall vorbehalten,
+   dass die Sache selbst kaputt ist. Stünden sie hier nicht, wäre der
+   Sammellauf ab heute bei JEDEM Lauf rot, und eine Meldung, die immer kommt,
+   liest bald niemand mehr. Genau diese Begründung steht oben. */
+const WARTET_AUF_ELIAS = ['pruefe-taschkil.js', 'pruefe-duplikate.js', 'werkzeuge/pruefe-themen.mjs',
+                          'werkzeuge/pruefe-beispielsaetze.mjs', 'werkzeuge/pruefe-buchtausch.mjs'];
 const HAENGT_AM_STAND  = ['werkzeuge/pruefe-ausgeliefert.mjs', 'pruefe-erreichbarkeit.js', 'werkzeuge/pruefe-gedaechtnis-zahlen.mjs'];
 const gelaufenRot = rot.filter(e => e.code !== null && e.code !== -1);
 const neuRot = gelaufenRot.filter(e => !WARTET_AUF_ELIAS.includes(e.rel) && !HAENGT_AM_STAND.includes(e.rel));
