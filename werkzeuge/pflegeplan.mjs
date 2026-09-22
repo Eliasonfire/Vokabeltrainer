@@ -141,6 +141,13 @@ export const PFLEGEPLAN = [
        die Markierung weg; der Eintrag bleibt als `an:false` mit Zeitstempel
        stehen, damit der Geräteabgleich sie nicht zurückholt. Nichts muss
        aufgeräumt werden.
+     ⭐ ÜBERHOLT AM 22.09.2026 durch zwei Sätze von Elias: die Übersicht
+       „brauchen wir nicht", und „nach einem monat kann sie automatisch
+       verschwinden aber du solltest trotzdem aufzeichnen welche ich markiert
+       habe". Seitdem: ausgeblendet nach 30 Tagen, archiviert von
+       werkzeuge/tajweed-markierungen.mjs in der Wartung (Schritt 1c.1b) —
+       siehe `eingaben` beim Quran-Leser unten. Der Punkt „kein Werkzeug liest
+       es" ist damit geschlossen.
      Bewacht von werkzeuge/pruefe-markierung.mjs (in alle-pruefer.mjs), 51
      Proben mit drei Störtests. */
   {
@@ -412,7 +419,15 @@ export const PFLEGEPLAN = [
     bildschirme: ['screen-quran', 'screen-quranfull'],
     neuerInhalt: { routine: W, schritt: '6', beleg: 'node pruefe-quran.js',
       wie: 'Quranbezüge neuer Vokabeln werden gegen den Qurantext gehalten' },
-    eingaben: { nein: 'Lesezeichen, Lesestand und Audio-Einstellungen sind Zustand seines Geräts; vt_hifz führt pruefe-kreislaeufe.mjs als ausgewertet über data/auswendig.json. vt_suraGelesen (welche Sure wann gelesen wurde, seit 15.09.2026) ebenso — die App wertet es selbst aus, für die Wiederholungsringe auf der Startseite.' },
+    /* 22.09.2026: vt_tajweed ist jetzt eine Eingabe, die verarbeitet wird —
+       Elias: „nach einem monat kann sie automatisch verschwinden aber du
+       solltest trotzdem aufzeichnen welche ich markiert habe". Die App blendet
+       nach 30 Tagen aus (TJ_SICHTBAR_MS), das Archiv behält. Der Rest bleibt,
+       wie er war: Lesezeichen, Lesestand und Audio-Einstellungen sind Zustand
+       seines Geräts; vt_hifz führt pruefe-kreislaeufe.mjs als ausgewertet über
+       data/auswendig.json; vt_suraGelesen wertet die App selbst aus (Ringe). */
+    eingaben: { routine: W, schritt: '1c.1b', beleg: 'node werkzeuge/tajweed-markierungen.mjs', werkzeug: 'werkzeuge/tajweed-markierungen.mjs',
+      wie: 'seine Tajweed-Markierungen (vt_tajweed) wandern aus dem Abgleich in data/tajweed-archiv.json, das nur wächst — auch ausgeblendete bleiben dort' },
     /* 16.09.2026 abends (v505): eine heute als auswendig abgehakte Sure zählt
        heute nicht als Wiederholung (sie hatte az-Zalzala vom Ring verdrängt).
        Liest nur HIFZ_ZEIT, das es schon gab; neu ist lerntagVon() in js/kern.js.

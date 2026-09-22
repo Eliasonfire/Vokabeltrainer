@@ -723,7 +723,12 @@ const ohneKommentare = txt => txt
     if (g) buecher++;
     if (txt.includes('"id": "50470"')) geeicht = true;
   }
-  if (gesamt && geeicht) posten.push({
+  /* ✅ ENTSCHIEDEN 22.09.2026: NEIN. Auf „Das „(gr)“ auf 23 Karten
+     ausschreiben?" antwortete Elias „nein" (zusammen mit der شدة-Frage). Das
+     „(gr)" bleibt, wie es ist; die Zählung oben bleibt stehen, der Posten
+     erscheint nicht mehr. Nicht erneut vorschlagen. */
+  const GR_ENTSCHIEDEN = true;
+  if (!GR_ENTSCHIEDEN && gesamt && geeicht) posten.push({
     titel: "„(gr)" + '" auf den Karten — soll ich es ausschreiben?',
     zahl: gesamt, einheit: "Vokabel(n)", dazu: `${vorn} davon beginnen damit · ${buecher} Buchdatei(en)`, auswahl: true,
     aufwand: "ja oder nein — die Änderung ist eine Zeile",
@@ -939,48 +944,19 @@ const ohneKommentare = txt => txt
   }
 }
 
-posten.push({
-  titel: 'Wortmarke: welche Farbe?',
-  zahl: 1, einheit: 'Entscheidung', dazu: 'Schrift steht bereits', auswahl: true,
-  aufwand: 'eine Farbe nennen, den Rest baue ich',
-  warum: 'Die Schrift hast du gewählt (Scheherazade New) und dazu gesagt: „die farbe muss noch schöner sein". Sobald sie feststeht, wird die Marke zu einem SVG-Pfad — dann bleibt die App unabhängig von Google.',
-  wie: 'Eine der fünf Akzentfarben aus deinen Einstellungen nennen, oder eine eigene.',
-  seite: 'https://claude.ai/artifact/57KC3EW5mc9AvkUCt6pnF4',
-  seiteText: 'Die Schriftentwürfe'
-});
-posten.push({
-  titel: 'Akzentfarbe: welche wird es?',
-  zahl: 5, einheit: 'Farben', dazu: 'seit v282 in den Einstellungen', auswahl: true,
-  aufwand: 'in der App antippen — kein Artefakt nötig',
-  warum: 'Torch Red erreicht 4,47 Kontrast am ungünstigsten Ort, knapp unter der Schwelle 4,5. Cyan käme auf 9,54, Azure auf 4,71.',
-  wie: 'Einstellungen öffnen, Farbe antippen, sie wirkt sofort. „BISHER" markiert die alte.',
-  seite: '',
-  seiteText: ''
-});
+/* ✅ ENTSCHIEDEN 22.09.2026: „lass so" — die Posten „Wortmarke: welche Farbe?"
+   und „Akzentfarbe: welche wird es?" sind raus. Elias auf „Die Farbe der
+   Wortmarke, und welche Akzentfarbe es wird": „lass so". Beide bleiben, wie sie
+   heute in der App stehen. Nicht erneut fragen.
+   ⚠️ Offen, aber MEINE Idee, nicht seine: die Marke als SVG-Pfad (dann ohne
+   Google-Schrift). Nur auf seine Nachfrage — steht in der To-Do. */
 /* ⭐ Zwei Posten vom 09.09.2026. Beide sind gemessen, beide sind deine
    Entscheidung — und beide entstanden aus derselben Nacht, in der die
    Pluralkarten ihre Texte bekommen haben. */
-posten.push({
-  titel: 'شدة steht in 19 Eselsbrücken und hat keine Karte',
-  zahl: 19, einheit: 'Eselsbrücken', dazu: 'über alle 519 Texte gezählt', auswahl: true,
-  aufwand: 'ja oder nein — die Karte schreibe ich',
-  warum: 'Deine Eselsbrücken verweisen 19-mal auf die شدة, und die App erklärt sie nirgends. '
-    /* Schreibung wie auf den Karten (gram-ta-marbuta, gram-alif-maqsura; مَقْصُورَة seit v520). */
-    + 'تَاء مَرْبُوطَة und أَلِف مَقْصُورَة haben je eine Fachbegriff-Karte, die شدة nicht. '
-    + 'Eine neue Karte ist aber neuer Lernstoff — deshalb entscheidest du das.',
-  /* ⛔ Hier stand „zu den 31 Fachbegriffen" fest — am 16.09.2026 waren es 61.
-     Gezählt aus data/fachbegriffe.js; fällt das aus, steht keine Zahl da. */
-  wie: 'Sag Bescheid, dann kommt sie zu ' + (() => {
-      try {
-        const k = { window: {} }; k.globalThis = k; vm.createContext(k);
-        vm.runInContext(fs.readFileSync(path.join(REPO, 'data', 'fachbegriffe.js'), 'utf8'), k);
-        const n = vm.runInContext('typeof FACHBEGRIFF_VOKABELN !== "undefined" ? FACHBEGRIFF_VOKABELN.length : 0', k);
-        return n ? 'den ' + n + ' Fachbegriffen' : 'deinen Fachbegriffen';
-      } catch { return 'deinen Fachbegriffen'; }
-    })() + ' dazu. Sagst du nein, '
-    + 'bleibt es dabei — die 19 Stellen erklären sich aus dem Zusammenhang.',
-  seite: '', seiteText: ''
-});
+/* ✅ ENTSCHIEDEN 22.09.2026: NEIN — der Posten „شدة steht in 19 Eselsbrücken
+   und hat keine Karte" ist raus. Elias auf „Soll ich eine schreiben?" (zusammen
+   mit der „(gr)"-Frage): „nein". Keine Karte; die Stellen erklären sich aus dem
+   Zusammenhang. Nicht erneut vorschlagen. */
 /* ✅ ENTSCHIEDEN, deshalb kein Posten mehr: „Deine Fachbegriffe: mit Endung
    oder ohne?" (seit 09.09.2026 hier). Im Chat gefragt: „Sollen Fachbegriffe wie
    حَرْف جَرّ mit Endung stehen, also حَرْفُ جَرٍّ wie auf deiner Regelkarte?" —
@@ -1028,26 +1004,14 @@ posten.push({
    ⚠️ Die Zahlen darin sind der Stand, an dem gefragt wurde, und so beschriftet.
    Ist eine davon entschieden, den Posten löschen und die Entscheidung im
    Quelltext vermerken — wie beim Posten „Deine Fachbegriffe" oben. */
-posten.push({
-  titel: 'Rezitation reißt unterwegs ab: Reparatur holen oder neu bauen?',
-  zahl: 1, einheit: 'Datei', dazu: 'liegt nur im Web-Chat', auswahl: true,
-  aufwand: 'eine Datei herunterladen — oder „bau neu" sagen',
-  warum: 'Die fertige Reparatur liegt nur im Web-Chat, nicht auf deinem PC und nicht auf GitHub. '
-    + 'Ohne sie baue ich es nach der Beschreibung neu — das dauert länger. (Gefragt am 17.09., 01:24.)',
-  wie: 'Lade im Web-Chat die Datei v514-rezitation-netzabriss.patch herunter und sag mir, wo sie liegt. '
-    + 'Oder sag „bau neu".',
-  seite: '', seiteText: ''
-});
-posten.push({
-  titel: 'Doppelte Karten: gewinnt die höhere Box?',
-  zahl: 1, einheit: 'Entscheidung', dazu: 'seit 17.09. so gebaut', auswahl: true,
-  aufwand: 'ja oder nein',
-  warum: 'Deine Grundregel: von zwei doppelten Karten bleibt die mit Fortschritt. Haben BEIDE schon '
-    + 'Fortschritt, hast du nichts dazu gesagt — das habe ich selbst entschieden: die höhere Box gewinnt. '
-    + '(Genannt am 17.09., 01:24.)',
-  wie: 'Sag ja, dann bleibt es so. Sonst sag mir, welche der beiden Karten bleiben soll.',
-  seite: '', seiteText: ''
-});
+/* ✅ ERLEDIGT 22.09.2026: der Posten „Rezitation reißt unterwegs ab: Reparatur holen
+   oder neu bauen?" ist raus. Neu gebaut in v535, die Ursache bei ausgeschaltetem
+   Bildschirm in v543 behoben — Elias am 20.09.2026: „aber jetzt funktioniert es bei
+   ausgeschaltetem display". Der Patch aus dem Web-Chat wird nicht mehr gebraucht. */
+/* ✅ ENTSCHIEDEN 22.09.2026: JA — der Posten „Doppelte Karten: gewinnt die
+   höhere Box?" ist raus. Elias auf „Seit dem 17.09. gewinnt die mit der höheren
+   Box. Passt das?": „ja". Damit ist die höhere Box SEINE Regel, nicht mehr meine
+   Deutung. */
 posten.push({
   titel: '„Tippe alle مُضَافٌ an": die schwereren Aufgaben zuerst?',
   zahl: 8, einheit: 'Aufgaben mit mehr als einem Treffer', dazu: 'von 33, Stand 16.09.', auswahl: true,
@@ -1058,24 +1022,11 @@ posten.push({
   wie: 'Sag ja, dann kommen diese Aufgaben zuerst. Sag nein, dann bleibt alles zufällig gemischt.',
   seite: '', seiteText: ''
 });
-posten.push({
-  titel: 'Dein Lernstand: Madina 1 bis Kapitel 12, Bayna Yadayk 1 bis Kapitel 2 — stimmt das noch?',
-  zahl: 2, einheit: 'Bücher', dazu: 'deine Angabe gegen App und arabicroots', auswahl: true,
-  aufwand: 'ja — oder die neuen Kapitel nennen',
-  /* ⛔ 17.09.2026, 05:5x nachgemessen (KV, nur gelesen): um 03:48:48 wurde Bayna
-     Yadayk 1 in der App ABGEWÄHLT — nur ein Tippen auf den Buchknopf entfernt ein
-     Buch (schalteBuch, js/buecher.js). Hier stand vorher „genau diese Kapitel
-     gewählt (Stand 16.09., 21:58)" — das galt nur bis 03:48.
-     ✅ ERLEDIGT 17.09.2026 ~12:30: Elias „das das abgewählt war war keine
-     absicht", Buch wieder angetippt. KV-Abgleich 12:31:44: bayna-yadayk-1 [1,2]
-     gewählt, لَحْمٌ (46039) Box 4 (4/1) zurück. Die Frage ist deshalb raus. */
-  warum: 'Nach diesem Stand richtet sich, welche Buchwörter Sätze und Eselsbrücken bekommen und welche '
-    + 'Kategorien auf der Regelseite oben stehen. In deiner App sind genau diese Kapitel gewählt '
-    + '(Stand 17.09., 12:31). arabicroots meldet außerdem Übungen bis Madina 1 Kapitel 24 und '
-    + 'Bayna Yadayk 1 Kapitel 16 (gemessen 16.09.). Es gilt deine Angabe.',
-  wie: 'Sag mir, ob es bei Madina 1 Kapitel 12 und Bayna Yadayk 1 Kapitel 2 bleibt.',
-  seite: '', seiteText: ''
-});
+/* ✅ BEANTWORTET 22.09.2026: der Posten „Dein Lernstand … stimmt das noch?" ist raus.
+   Elias: „so stimmt es, bayna habe ich jetzt sogar kapitel 3 angefangen" → in
+   data/lernstand.json Madina 1 = 12 (bestätigt), Bayna Yadayk 1 = 3. Die höheren
+   Zahlen von arabicroots (24 / 16) sind ausdrücklich KEIN Lernstand — nicht erneut
+   fragen, solange er keinen neuen nennt. */
 posten.push({
   titel: 'Satzmodus: jedes Mal dieselben Sätze zuerst — so lassen?',
   zahl: 3, einheit: 'Möglichkeiten', dazu: 'gefragt 16.09.', auswahl: true,

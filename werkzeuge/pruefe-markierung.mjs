@@ -78,6 +78,7 @@ const schneide = (name) => {
   return m ? m[0] : null;
 };
 const TEILE = {
+  sichtbar:  schneide('tajweedSichtbar'),
   normal:    schneide('tajweedEintragNormal'),
   laden:     schneide('tajweedLaden'),
   cluster:   schneide('tajweedCluster'),
@@ -90,9 +91,12 @@ const mKonst  = mark.match(/const TJ_SCHLUESSEL[\s\S]*?const TJ_FARBE_VORGABE = 
 const mKombi  = mark.match(/const TJ_KOMBI = \/\[[^\n]*\/;/);
 const mMin    = mark.match(/const TJ_FLAECHE_MIN = (\d+);/);
 const mFertig = mark.match(/\nfunction tajweedFertig\(\)\{[\s\S]*?\n\}\n/);
+/* 22.09.2026: nach einem Monat ausgeblendet, nie gelöscht (Elias). */
+const mSicht  = mark.match(/const TJ_SICHTBAR_MS = [^\n]*;/);
 const fehlt = Object.entries(TEILE).filter(([, v]) => !v).map(([k]) => k)
   .concat(!mKonst ? ['Konstanten'] : [], !mKombi ? ['TJ_KOMBI'] : [],
-          !mMin ? ['TJ_FLAECHE_MIN'] : [], !mFertig ? ['tajweedFertig'] : []);
+          !mMin ? ['TJ_FLAECHE_MIN'] : [], !mFertig ? ['tajweedFertig'] : [],
+          !mSicht ? ['TJ_SICHTBAR_MS'] : []);
 if (fehlt.length){
   console.log('X  Quelltext nicht gefunden: ' + fehlt.join(', '));
   process.exit(1);
@@ -110,9 +114,9 @@ function baueUmgebung(teile = TEILE, speicher = {}){
   vm.createContext(ctx);
   vm.runInContext(
     mKonst[0] + '\n' + mKombi[0] + '\nconst TJ_CLUSTER_CACHE = new Map();\n'
-    + mMin[0] + '\nlet TAJWEED = {};\n'
+    + mMin[0] + '\n' + mSicht[0] + '\nlet TAJWEED = {};\n'
     + Object.values(teile).join('\n')
-    + '\nthis.API = { tajweedLaden, tajweedCluster, tajweedClusterAn, tajweedStellen, tajweedJeWort, tajweedKanten,'
+    + '\nthis.API = { tajweedLaden, tajweedCluster, tajweedClusterAn, tajweedStellen, tajweedJeWort, tajweedKanten, tajweedSichtbar,'
     + ' setzeTajweed: (v)=>{ TAJWEED = v; } };', ctx);
   return { api: ctx.API, abgelegt };
 }
@@ -302,6 +306,11 @@ const ECHT_GEMESSEN = [
     /\.hifz-knoepfe\{[^}]*justify-content:space-between/.test(htmlNackt));
   pruefe('… und nicht mehr rechtsbündig', false,
     /\.hifz-knoepfe\{[^}]*justify-content:flex-end/.test(htmlNackt));
+  /* Elias 22.09.2026 auf „Soll das Zeichen weg?" (damit das WORT „Ayah"
+     mittig steht, nicht nur der Knopf): „ja". */
+  const ayahKnopf = htmlNackt.match(/<button[^>]*id="btnAyahListe"[^>]*>[\s\S]*?<\/button>/);
+  pruefe('der Knopf „Ayah" trägt kein Zeichen mehr', [true, false],
+    [!!ayahKnopf, !!ayahKnopf && /<svg/.test(ayahKnopf[0])]);
 
   /* Elias 20.09.2026: „wenn ich weiter scrolle im koran dann will ich das
      sich das automatisch schließt". In dieser App rollt `main`, nicht das
@@ -366,6 +375,51 @@ const ECHT_GEMESSEN = [
   pruefe('e) die alte Reihe ohne mittige Spalte fällt auf', true,
     /\.hifz-knoepfe\{[^}]*justify-content:space-between/.test(alteReihe)
     && !/\.hifz-knoepfe\{[^}]*grid-template-columns:1fr auto 1fr/.test(alteReihe));
+}
+
+/* ======= 9. Nach einem Monat ausgeblendet, aber nie vergessen (22.09.2026) =======
+   Elias: „nach einem monat kann sie automatisch verschwinden aber du solltest
+   trotzdem aufzeichnen welche ich markiert habe damit falls ich mal nachfrage
+   du weißt". Bewacht werden BEIDE Hälften: das Ausblenden UND das Behalten. */
+{
+  console.log('Nach 30 Tagen ausgeblendet, im Speicher behalten:');
+  const TAG = 24 * 60 * 60 * 1000;
+  const jetzt = Date.now();
+  const speicher = { vt_tajweed: {
+    '112:1:3:2': { an: true, zeichen: 'x', farbe: 'blau', notiz: 'alt', zeit: jetzt - 31 * TAG, seit: jetzt - 31 * TAG },
+    '112:1:3:5': { an: true, zeichen: 'y', farbe: 'rot',  notiz: 'frisch', zeit: jetzt - 29 * TAG, seit: jetzt - 29 * TAG },
+    '112:1:4:0': { an: true, zeichen: 'z', farbe: 'lila', notiz: 'ohne seit', zeit: 1000 }
+  } };
+  const u = baueUmgebung(TEILE, speicher);
+  const geladen = u.api.tajweedLaden();
+  u.api.setzeTajweed(geladen);
+  pruefe('die 31 Tage alte Markierung steht noch im Speicher', ['alt', true],
+    [geladen['112:1:3:2'].notiz, geladen['112:1:3:2'].an]);
+  pruefe('… wird aber nicht mehr gezeichnet', [5],
+    u.api.tajweedStellen(112, 1, 3).map(s => s.pos));
+  pruefe('… auch nicht beim Zeichnen der ganzen Sure', false,
+    (u.api.tajweedJeWort().get('112:1:3') || []).some(s => s.pos === 2));
+  pruefe('eine Markierung ohne `seit` beginnt ihren Monat beim Laden', true,
+    Math.abs(geladen['112:1:4:0'].seit - jetzt) < 60000);
+  pruefe('… und wird dafür zurückgeschrieben, ohne ihren Stempel zu ändern', [true, 1000],
+    [!!(u.abgelegt.vt_tajweed && u.abgelegt.vt_tajweed['112:1:4:0'].seit), u.abgelegt.vt_tajweed && u.abgelegt.vt_tajweed['112:1:4:0'].zeit]);
+  pruefe('… und bleibt sichtbar', [0], u.api.tajweedStellen(112, 1, 4).map(s => s.pos));
+
+  pruefe('„Buchstabe weg" behält die Notiz', true, /neu\.notiz = alt\.notiz/.test(mFertig[0]));
+  pruefe('neu markiert nach Ablauf: die alte wandert nach `frueher`', true,
+    /frueher\.push\(/.test(mFertig[0]) && /!altSichtbar/.test(mFertig[0]));
+  pruefe('eine Änderung von Farbe/Notiz verschiebt `seit` nicht', true,
+    /neu\.seit = altSichtbar \? \(Number\(alt\.seit\)/.test(mFertig[0]));
+  pruefe('das Archiv-Werkzeug gibt es', true,
+    fs.existsSync(fileURLToPath(new URL('./tajweed-markierungen.mjs', import.meta.url))));
+
+  /* f) Störtest: die Fassung ohne Monatsgrenze muss auffallen. */
+  const immer = TEILE.sichtbar.replace(/ && \(\(jetzt[\s\S]*?< TJ_SICHTBAR_MS/, '');
+  pruefe('f) die Störfassung unterscheidet sich vom Original', true, immer !== TEILE.sichtbar);
+  const f = baueUmgebung(Object.assign({}, TEILE, { sichtbar: immer }), speicher);
+  f.api.setzeTajweed(f.api.tajweedLaden());
+  pruefe('f) ohne Monatsgrenze bleibt die alte Markierung sichtbar', [2, 5],
+    f.api.tajweedStellen(112, 1, 3).map(s => s.pos));
 }
 
 console.log(fehler === 0
