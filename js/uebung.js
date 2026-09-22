@@ -909,6 +909,44 @@ const UEBUNGEN = [
         };
       }).filter(Boolean);
     }
+  },
+  /* ⭐⭐ ÜBERSETZEN — Elias' Auftrag vom 22.09.2026, 21:15, im Wortlaut:
+
+     „es sollte auch im satzmodus eine übung geben, wo mir ein satz gegeben wird
+      und den soll ich dann ins deutsche übersetzten. wenn ich falsch mache muss
+      erkannt werden was falsch ist und warum und mir das dann zeigen"
+     „und die richtige deutsche überstzung und halt warum"
+
+     Die Prüfung selbst steht in js/uebersetzen.js — eigene Datei, damit sie im
+     Pflegeplan auftaucht und in den Offline-Vorrat kommt. Hier steht nur, dass
+     es die Übung gibt.
+
+     ⛔⛔ `deVerbergen` IST DER GRUND, WARUM DIESE ÜBUNG SONST WERTLOS WÄRE.
+     renderUebung() setzt die deutsche Übersetzung in JEDER Satzübung unter den
+     arabischen Satz (`uebDe`). Bei allen zwölf anderen ist das eine Hilfe; hier
+     stünde die Lösung über dem Eingabefeld. Das Feld ist neu und heißt nicht
+     „verbergen", sondern sagt, WAS verborgen wird — ein Name wie `verbergen`
+     wäre beim nächsten Lesen nicht mehr zuzuordnen.
+
+     ⚠️ Kein `hinweisVerraet:true`: der Hinweis nennt die beiden Dinge, auf die
+     zu achten ist, aber keine Lösung. Das Feld ist trotzdem Pflicht und steht
+     deshalb ausdrücklich da (pruefe-hinweise.mjs). */
+  {
+    id:'uebersetzen', nr:13, name:'Übersetzen — Arabisch ins Deutsche', art:'schreiben',
+    hinweis:'Achte auf die Bestimmtheit (اَلْ oder Tanwīn) und darauf, wer in der إِضَافَة der Besitzer ist.',
+    hinweisVerraet:false,
+    deVerbergen:true,
+    baue(z, satz){
+      if (!satz || !String(satz.sentDe || '').trim()) return [];
+      /* ⚠️ Ein Satz aus einem einzigen Wort ist keine Übersetzungsaufgabe —
+         dort gäbe es nichts zu entscheiden, und jede der sieben Prüfungen
+         liefe ins Leere. */
+      if (!Array.isArray(z) || z.length < 2) return [];
+      return [{
+        frage:'Übersetze diesen Satz ins Deutsche.',
+        art:'schreiben'
+      }];
+    }
   }
 ];
 
@@ -1133,7 +1171,11 @@ function uebungenAufbauen(){
    „Antippen" für `tippen` bliebe leer und fällt deshalb weg. */
 const UEB_GRUPPEN = [
   ['Antippen',         'mehrfach'],
-  ['Auswählen',        'wahl']
+  ['Auswählen',        'wahl'],
+  /* ⭐ Dritte Gruppe seit dem 22.09.2026 — die Übersetzungsübung. Die
+     Überschrift sagt, WAS man tun muss, bevor man den Namen liest; „Schreiben"
+     ist bei dieser Übung die eigentliche Information. */
+  ['Schreiben',        'schreiben']
 ];
 
 function renderUebungsLeiste(){
@@ -1421,8 +1463,36 @@ function renderUebung(){
     modusBalkenZeichnen('uebBalken', UEB.idx + 1, UEB.liste.length);
   document.getElementById('uebFrage').innerHTML = arabischHervor(a.frage);
   document.getElementById('uebSatz').innerHTML = uebungSatzHtml(a);
-  document.getElementById('uebDe').textContent = a.satz.sentDe || '';
+  /* ⛔⛔ DIE DEUTSCHE ÜBERSETZUNG IST BEI EINER ÜBUNG DIE LÖSUNG (22.09.2026).
+
+     Diese Zeile setzt sie in JEDER Satzübung unter den arabischen Satz. Bei
+     zwölf Übungen ist das eine Hilfe — bei der dreizehnten („Übersetzen") stünde
+     die Antwort direkt über dem Eingabefeld, und die ganze Übung wäre wertlos.
+     Gefunden, bevor eine Zeile davon gebaut war; wäre sie es nicht, hätte Elias
+     eine Übung bekommen, die sich selbst verrät.
+
+     ⚠️ Der Text wird trotzdem GESETZT und nur die Klasse geschaltet — dieselbe
+     Überlegung wie beim verräterischen Hinweis ein Stück weiter unten:
+     renderUebung() läuft nach dem Beantworten noch einmal, und ein Feld, das
+     nur die eine Hälfte der Fälle füllt, wäre nach dem Wechsel leer. */
+  const deFeld = document.getElementById('uebDe');
+  deFeld.textContent = a.satz.sentDe || '';
+  deFeld.classList.toggle('hidden', !!(m.deVerbergen && !UEB.beantwortet));
   document.getElementById('uebHerkunft').textContent = herkunft(a.satz);
+
+  /* Das Eingabefeld der Übersetzungsübung. Es steht nur dort, wo geschrieben
+     wird, und wird nach dem Beantworten gesperrt statt versteckt: er soll
+     sehen, was er geschrieben hat, während die Rückmeldung daneben steht. */
+  const eingabe = document.getElementById('uebEingabe');
+  if (eingabe){
+    const schreibt = uebungArtVon(a) === 'schreiben';
+    eingabe.classList.toggle('hidden', !schreibt);
+    eingabe.disabled = !!UEB.beantwortet;
+    if (schreibt && !UEB.beantwortet && UEB.eingabeLeeren){
+      eingabe.value = '';
+      UEB.eingabeLeeren = false;
+    }
+  }
 
   /* ⭐⭐ Verräterische Hinweise erst NACH dem Versuch (22.09.2026).
      Elias: „nur die verräterischen erst nach dem Versuch zeigen."
@@ -1461,8 +1531,11 @@ function renderUebung(){
 
   /* "Prüfen" gibt es nur bei Mehrfachauswahl - sonst zaehlt der erste Tipp,
      und ein zweiter Knopf waere ein Umweg. */
+  /* Seit dem 22.09.2026 auch bei „Übersetzen": dort ist „Prüfen" der einzige
+     Weg zur Antwort — ein Textfeld hat keinen Klick, der von selbst auswertet. */
+  const brauchtPruefen = ['mehrfach', 'schreiben'].includes(uebungArtVon(a));
   document.getElementById('btnUebPruefen').classList.toggle('hidden',
-    uebungArtVon(a) !== 'mehrfach' || UEB.beantwortet);
+    !brauchtPruefen || UEB.beantwortet);
   const weiterKnopf = document.getElementById('btnUebWeiter');
   weiterKnopf.classList.toggle('hidden', !UEB.beantwortet);
   /* ⭐ Q8: der Zaehler laeuft im Knopf mit. `q8Sperre` ist gegen
@@ -1541,7 +1614,18 @@ const UEBUNG_WARUM = {
   'mubtada-khabar': 'mubtada-khabar-01', 'nat': 'f19-nat', 'idafa': 'f19-idafa',
   'jarr-paar': 'f19-jarr', 'alle-majrur': 'f19-irab', 'kasus': 'f19-irab', 'haraka': 'f19-irab',
   'wortart': 'wortarten-01', 'regel': null,
-  'genus': 'f19-tanith', 'isara': 'f19-isara', 'fem-form': 'f19-tanith'
+  'genus': 'f19-tanith', 'isara': 'f19-isara', 'fem-form': 'f19-tanith',
+  /* ⛔ `null` IST HIER DIE RICHTIGE ANTWORT, kein vergessener Eintrag.
+     Die Übersetzungsübung hat keine feste Regel: welche gilt, sagt erst der
+     BEFUND der Prüfung — sie hängt ihn als `a.warum` an die Aufgabe, und
+     uebungWarum() liest ihn von dort. Eine Vorgaberegel würde bei jedem
+     anderen Fehler die falsche Karte öffnen, und das wäre schlimmer als gar
+     keine. Erkennt die Prüfung nichts, bleibt der Knopf weg — so wie bei
+     „Welche Regel?" (die zweite Übung mit null) auch.
+     ⚠️ Der Eintrag steht trotzdem da: pruefe-regelsammlung.mjs verlangt, dass
+     JEDE Übung genannt ist. Genau deshalb fiel er beim Bauen auf.
+     [[vorgabewert_sieht_aus_wie_befund]] */
+  'uebersetzen': null
 };
 
 /* ⭐⭐ UNSICHTBARE ENDUNG → DIE KARTE, DIE GENAU DAS ERKLÄRT (16.09.2026)
@@ -1887,6 +1971,12 @@ function uebungWortTipp(i){
   if (!a || UEB.beantwortet) return;
   const m = uebungModusVon(a);
   if (!m) return;
+  /* ⛔ Bei der Übersetzungsübung verrät ein Tipp aufs Wort die Vokabel — und
+     damit die halbe Lösung. Dieselbe Grenze wie bei den Antwortknöpfen, und
+     aus demselben Grund: Elias hat sie selbst gezogen („wenn ich auf die
+     arabischen wörter BEI DER LÖSUNG ODER ERKLÄRUNG klicke"). Nach dem
+     Beantworten ist Nachschlagen erlaubt — das erledigt der Handler am Satz. */
+  if (uebungArtVon(a) === 'schreiben') return;
   if (uebungArtVon(a) === 'mehrfach'){
     if (UEB.gewaehlt.has(i)) UEB.gewaehlt.delete(i); else UEB.gewaehlt.add(i);
     renderUebung();
@@ -1900,9 +1990,53 @@ function uebungWortTipp(i){
 function uebungMehrfachPruefen(){
   const a = uebungAktuell();
   if (!a || UEB.beantwortet) return;
+  /* „Prüfen" bedient seit dem 22.09.2026 zwei Arten. Die Weiche steht HIER und
+     nicht im Knopf: der Knopf hat einen Handler, und zwei Handler auf einem
+     Knopf sind zwei Wahrheiten darüber, was er tut. */
+  if (uebungArtVon(a) === 'schreiben'){ uebungSchreibenPruefen(); return; }
   const soll = new Set(a.ziele);
   const richtig = soll.size === UEB.gewaehlt.size && [...soll].every(i=>UEB.gewaehlt.has(i));
   uebungAuswerten(richtig);
+}
+
+/* ⭐⭐ Die Übersetzungsübung — Elias' Auftrag vom 22.09.2026, 21:15:
+   „wenn ich falsch mache muss erkannt werden was falsch ist und warum und mir
+   das dann zeigen" · „und die richtige deutsche überstzung und halt warum"
+
+   Die Prüfung selbst steht in js/uebersetzen.js. Hier wird nur eingesammelt,
+   was sie liefert, und an die Stellen gehängt, die renderUebung() ohnehin
+   zeichnet: `aufloesung` trägt den Text, `warum` die Regelkarte.
+
+   ⛔ Fehlt die Datei (Ladefehler, alter Offline-Vorrat), wird NICHT stumm
+   ausgewertet. Eine Übung, die jede Antwort als falsch zählt, weil ihre
+   Prüfung fehlt, ist schlimmer als eine, die sich abmeldet.
+   [[ausfall_ist_unsichtbar_gebaut]] */
+function uebungSchreibenPruefen(){
+  const a = uebungAktuell();
+  if (!a || UEB.beantwortet) return;
+  const feld = document.getElementById('uebEingabe');
+  const text = feld ? String(feld.value || '') : '';
+
+  if (typeof uebersetzungPruefen !== 'function'){
+    if (typeof toast === 'function') toast('Die Übersetzungsprüfung ist nicht geladen — App einmal schließen und neu öffnen.');
+    return;
+  }
+  const erg = uebersetzungPruefen(a.satz, a.zeilen, text);
+  /* Ein leeres Feld ist keine falsche Antwort, sondern gar keine. Sie zu werten
+     hieße, ihm einen Fehler in die Statistik zu schreiben, den er nie gemacht
+     hat. */
+  if (erg.leer){
+    if (typeof toast === 'function') toast(erg.text);
+    return;
+  }
+  a.aufloesung = (typeof uebersetzungRueckmeldung === 'function')
+    ? uebersetzungRueckmeldung(erg) : '';
+  /* „Warum? → Regel" greift `a.warum` ab (uebungWarum). Kein Befund mit
+     nennbarer Regel: dann bleibt der Knopf weg, statt irgendeine Karte zu
+     zeigen. */
+  a.warum = (typeof uebersetzungRegel === 'function') ? uebersetzungRegel(erg) : null;
+  UEB.eingabeLeeren = false;
+  uebungAuswerten(!!erg.richtig);
 }
 
 function uebungWahl(wert){
@@ -1925,6 +2059,12 @@ function uebungWeiter(){
   UEB.idx++;
   UEB.gewaehlt = new Set();
   UEB.beantwortet = false;
+  /* ⛔ Das Eingabefeld der Übersetzungsübung leeren — aber über eine Marke und
+     nicht hier direkt: renderUebung() entscheidet ohnehin, ob es überhaupt
+     sichtbar ist, und zwei Stellen, die dasselbe Feld setzen, laufen früher
+     oder später auseinander. Ohne das Leeren stünde die Übersetzung des
+     vorigen Satzes in der nächsten Aufgabe. */
+  UEB.eingabeLeeren = true;
   renderUebung();
 }
 

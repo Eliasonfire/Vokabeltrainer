@@ -2656,6 +2656,26 @@ function weakWords(){
    genau der Bedeutung, die der alte 'personal'-Eintrag in selectedChapters
    hatte: solange nirgends eingeengt wurde, sind sie dabei; sobald irgendwo
    Kapitel gewaehlt sind, nur noch wenn ihr Schalter an ist. */
+/* Hängt dieser Fachbegriff an einer Regel, die Elias von den Karteikarten
+   gestrichen hat? Die Begründung steht unten in passtZurAuswahl().
+
+   ⛔ Gelesen wird `nichtAufKarteikarten`, NICHT `ausgeblendet`. Das sind zwei
+   verschiedene Entscheidungen, und Elias hat sie am 19.08.2026 ausdrücklich
+   getrennt: „genau die regeln die ich eben bearbeitet habe galten nur den
+   karteikarten … seperat mache ich das mit dem satzmodus bzw uebungsmodus."
+   Wer hier das falsche Feld liest, nimmt ihm Wörter aus dem Satzmodus, die er
+   dort behalten wollte. [[zwei_stellen_eine_entscheidung]]
+
+   ⚠️ Nur Fachbegriffe (`book:'grammar'`). Eine gewöhnliche Buchvokabel trägt
+   kein `regel`-Feld, aber die Einschränkung steht trotzdem da: sie sagt dem
+   nächsten Leser, worauf sich das hier bezieht. */
+function fachbegriffFolgtRegel(w){
+  if (!w || w.book !== 'grammar' || !w.regel) return false;
+  if (typeof GRAMMAR_RULES === 'undefined' || !Array.isArray(GRAMMAR_RULES)) return false;
+  const r = GRAMMAR_RULES.find(x => x && x.id === w.regel);
+  return !!(r && r.nichtAufKarteikarten);
+}
+
 function passtZurAuswahl(w){
   /* ⚠️ Seit dem 17.08.2026 steht die WISSENSGRENZE vor der Auswahl. Elias:
      "die wurzeln, hörmodus und so die sollen je nach meinem wissensstand (also
@@ -2677,6 +2697,32 @@ function passtZurAuswahl(w){
      Vokabeln, Fachbegriffe) - stuende die Pruefung dahinter, waere sie fuer
      genau die Woerter wirkungslos, ohne dass es je auffiele. */
   if (typeof kennErSchon === 'function' && kennErSchon(w)) return false;
+  /* ⛔⛔ EIN FACHBEGRIFF FOLGT SEINER REGEL (22.09.2026).
+
+     Elias an drei Karteikarten hintereinander — Verbalsatz, Sonnenbuchstaben,
+     Hamzat al-waṣl —: „woher kommt diese vokabel, ich weiß nicht ob es sich
+     lohnt die zu lernen. woher ist sie?" und zur dritten knapp „das auch".
+
+     Alle drei hingen an einer Regel, die er am 19.08.2026 SELBST von den
+     Karteikarten gestrichen hatte. Zu den Sonnenbuchstaben wörtlich: „diese
+     sachen koennen auch noch im satzmodus gerne bleiben auch das mit sonne und
+     mond ABER NICHT BEI DEN KARTEIKARTEN als erklaerung." Die Regel verschwand
+     daraufhin; der Fachbegriff dazu blieb — und der ist selbst eine Karteikarte.
+     Seine Entscheidung wurde also durch die Hintertür wieder aufgehoben.
+
+     ⭐ Gemessen am selben Abend: 13 der 61 Fachbegriffe hängen an einer solchen
+     Regel. Deshalb steht hier eine ABLEITUNG und keine Liste mit dreizehn
+     Kennungen: er hat drei Einzelfälle genannt, die Ursache ist bei allen
+     dieselbe, und ein vierzehnter Fall fiele sonst wieder durch.
+     [[allgemeine_regel_statt_listeneintrag]] · [[wirkung_an_der_quelle_stilllegen]]
+
+     ⚠️ Das Wort bleibt vollständig in der App: Satzmodus, Suche, Hörmodus,
+     Regelsammlung. Es fällt allein aus der Kartei. Genau diese Unterscheidung
+     hat er bei den Regeln selbst gezogen, und `vt_geloescht` hätte sie nicht
+     getroffen — der Schalter nimmt ein Wort GANZ heraus.
+     ⚠️ Und es ist umkehrbar: schaltet er den Satzmodus-Schalter der Regel
+     wieder an, ist auch der Fachbegriff wieder dabei. */
+  if (typeof fachbegriffFolgtRegel === 'function' && fachbegriffFolgtRegel(w)) return false;
   /* ⛔⛔ HIER STAND EIN BEDINGUNGSLOSES `return true` FUER EINZELN
      FREIGESCHALTETE WOERTER — und das war zu viel. (07.09.2026)
 

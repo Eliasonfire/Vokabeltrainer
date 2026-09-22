@@ -391,6 +391,15 @@ const PRUEFER = [
      Zwei Störtests: `--stoertest` (Übung 10 auf false) und `--stoertest-feld`
      (Übung 1 ohne Pflichtfeld); beide müssen rot werden. */
   ['werkzeuge/pruefe-hinweise.mjs', []],
+  /* 22.09.2026 — die Übersetzungsübung (Elias: „wenn ich falsch mache muss
+     erkannt werden was falsch ist und warum"). Misst beide Seiten: dass
+     richtige Übersetzungen durchgehen und dass verfälschte ihren Befund
+     auslösen, und dass die genannten Regeln in grammar-data.js existieren. */
+  ['werkzeuge/pruefe-uebersetzen.mjs', []],
+  /* 22.09.2026 — ein Fachbegriff folgt seiner Regel. Elias, nachdem er drei
+     Karteikarten aus gestrichenen Regeln hintereinander bekam: „kümmere dich
+     erstmal darum das das auch nicht wieder passiert." */
+  ['werkzeuge/pruefe-fachbegriff-regel.mjs', []],
   /* ⭐ Mit --pruefen, weil der blanke Lauf bewertung.json SCHREIBT und ein
      Sammellauf nichts verändern darf. Rot wird er, sobald eine Fundstelle ohne
      mein Urteil dasteht — das ist MEIN Rückstand, und er gehört genau hierhin
