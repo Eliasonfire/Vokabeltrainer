@@ -206,7 +206,13 @@ function startLearningSession(){
      dran. Die Begründung steht bei `tagesAuswahl()` in js/kern.js. */
   let words = (typeof tagesPool === 'function') ? tagesPool() : currentPool();
   if (words.length === 0){ toast(SETTINGS.wrongOnly ? 'Keine schwachen Wörter mit dieser Auswahl – stark!' : 'Nichts fällig – schau später wieder vorbei.'); showScreen('home'); return; }
-  const size = SETTINGS.sessionSize;
+  /* ⭐ Die Runde IST die Tagesration — seit dem 22.09.2026 gibt es keine
+     zweite Zahl mehr daneben. Die Einstellung „Sitzungsgröße" ist an diesem
+     Tag entfernt worden, weil sie nie zum Zug kam: `tagesPool()` hatte schon
+     auf 10 geschnitten, bevor die 20 überhaupt gefragt wurde. Steht der Deckel
+     auf „Aus", ist die Runde bewusst alles Fällige — genau das bedeutet „Aus".
+     Die Begründung steht bei den SETTINGS-Vorgaben in js/kern.js. */
+  const size = words.length;
   /* ⭐ Ohne Tagesdeckel schneidet erst der Takt unten auf die Rundengröße — dann
      müssen neue Vokabeln VORHER nach vorn, sonst gälte Elias' Regel („wenn neue
      vokabeln kommen … dann bekomen die immer den vorzug") nur mit Deckel.

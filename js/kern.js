@@ -2037,8 +2037,16 @@ let SETTINGS = Object.assign(
      16 Tage von Box 5 ergeben **10,7** Karten je Tag im Gleichgewicht. Bei
      20 dauert eine Runde nach Elias' eigener Schätzung „durchschnittlich 15
      min" — „fünf Minuten fängt man an, fünfzehn schiebt man auf".
-     ⚠️ Das ist eine Einstellung, keine Festlegung: `sessionSize` bleibt
-     unberührt, und mit 0 ist der Deckel aus. */
+     ⚠️ Mit 0 ist der Deckel aus; dann ist die Runde alles, was fällig ist.
+
+     ⛔ `sessionSize` ist am 22.09.2026 ERSATZLOS weggefallen (Elias: „ja" auf
+     „Sie ändert nichts, solange ‚Karten pro Tag' nicht größer ist — bei dir
+     stehen beide auf 10. Raus oder bleiben?"). Zwei Zahlen für dieselbe Frage
+     waren eine zu viel: der Deckel schnitt zuerst, die Rundengröße kam nie zum
+     Zug. Jetzt entscheidet allein der Deckel, wie lang ein Tag wird.
+     ⚠️ In alten `vt_settings` liegt der Schlüssel noch — er wird nicht mehr
+     gelesen und bewusst nicht gelöscht: fremde Daten anzufassen kostet mehr,
+     als ein totes Feld wiegt. [[werkzeug_ohne_aufrufer]] */
   /* ⭐ hoerZiel: das Tagesziel im Hörmodus, seit dem 08.09.2026 einstellbar.
      Elias: „ich will auch einstellen, was mein tagesziel beim hörmodus ist in
      den einstellungen und ich will erstmal nur 5 wörter machen als tagesziel."
@@ -2054,7 +2062,7 @@ let SETTINGS = Object.assign(
      hat keinen Vorrat, der leer werden könnte — ohne Zahl gäbe es wieder kein
      sichtbares Ende, und genau das hatte Elias am 17.08.2026 beanstandet
      („aktuell sieht es aus als gäbe es da kein ende"). */
-  { showPlural:false, pluralKarten:false, showVerbFormen:false, showQuran:false, sessionSize:20, tagesDeckel:10, hoerZiel:5, voiceURI:null, direction:'ar-de', selectedChapters:[], wrongOnly:false, grammarHighlight:true },
+  { showPlural:false, pluralKarten:false, showVerbFormen:false, showQuran:false, tagesDeckel:10, hoerZiel:5, voiceURI:null, direction:'ar-de', selectedChapters:[], wrongOnly:false, grammarHighlight:true },
   LS.get('vt_settings', {})
 );
 /* ---------- Zeitstempel JE EINSTELLUNG (17.08.2026) ----------

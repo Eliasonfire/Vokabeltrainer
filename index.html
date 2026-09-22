@@ -2770,7 +2770,10 @@ main{
 .ueb-rueck.schlecht{background:var(--red-wash);color:var(--red-bright);}
 .ueb-hinweis{color:var(--text-faint);font-size:var(--fs-xs);line-height:1.5;}
 
-/* Sitzungsgröße: Auswahl und eigenes Zahlenfeld nebeneinander in einer Zeile. */
+/* Auswahl und eigenes Zahlenfeld nebeneinander in einer Zeile. Der Name stammt
+   von der „Sitzungsgröße", für die das Muster am 06.09.2026 gebaut wurde; die
+   Einstellung ist am 22.09.2026 weggefallen, die drei Tagesziele (Sätze, Hören,
+   Wurzeln) benutzen es weiter. ⛔ Deshalb NICHT mit entfernt. */
 .sitzung-wahl{display:flex;align-items:center;gap:var(--sp-2);flex-wrap:wrap;justify-content:flex-end;}
 .sitzung-eigen{width:5.5em;text-align:center;font-variant-numeric:tabular-nums;}
 
@@ -6797,9 +6800,11 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
            „Wörter hören" unter „Hören" — und ein Satzziel gab es gar nicht,
            die 13 stand fest im Quelltext.
 
-           ⚠️ Die Sitzungsgröße bleibt in „Wie du lernst". Sie ist kein
-           Tagesziel, sondern die RUNDE — dieselbe Unterscheidung wie zwischen
-           Ring und Balken: der Ring zeigt den Tag, der Balken die Runde. -->
+           ⛔ Bis zum 22.09.2026 blieb die „Sitzungsgröße" bewusst in „Wie du
+           lernst" — sie war die RUNDE, kein Tagesziel. Sie ist an diesem Tag
+           entfernt worden, weil der Tagesdeckel ihr die Wirkung genommen
+           hatte. Seither fallen Tag und Runde zusammen, und die Zahl steht
+           genau einmal: hier, unter „Karten pro Tag". -->
       <button class="einst-gruppe" id="grp-ziele" type="button"
               aria-expanded="true" aria-controls="grpInhalt-ziele"><span class="ic">▸</span><span class="einst-gruppe-name">Tagesziele</span><span class="einst-gruppe-zahl">4</span></button>
       <div class="einst-inhalt" id="grpInhalt-ziele">
@@ -6901,7 +6906,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
       </div>
 
       <button class="einst-gruppe" id="grp-lernen" type="button"
-              aria-expanded="true" aria-controls="grpInhalt-lernen"><span class="ic">▸</span><span class="einst-gruppe-name">Wie du lernst</span><span class="einst-gruppe-zahl">4</span></button>
+              aria-expanded="true" aria-controls="grpInhalt-lernen"><span class="ic">▸</span><span class="einst-gruppe-name">Wie du lernst</span><span class="einst-gruppe-zahl">3</span></button>
       <div class="einst-inhalt" id="grpInhalt-lernen">
 
       <div class="setting-row">
@@ -6925,42 +6930,17 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
            Argument: „wenn die runden durchschnittlich 15 min dauern und ich
            dann weiß das sie wirklich ewig dauern dann ist doch auch nicht gut
            oder."
-           ⚠️ Steht direkt UNTER der Sitzungsgröße, weil beide zusammen
-           entscheiden, wie lang ein Tag wird: der Deckel sagt, wie viel
-           überhaupt angeboten wird, die Sitzungsgröße, wie es sich auf Runden
-           verteilt. Getrennte Orte hätten die zwei Zahlen entkoppelt. -->
+           ⛔ Stand bis zum 22.09.2026 direkt unter der „Sitzungsgröße". Die
+           ist an diesem Tag entfernt worden: sie kam nie zum Zug, weil der
+           Deckel VORHER schneidet und bei Elias beide auf 10 standen. Sein
+           „ja" auf „Raus oder bleiben?". Seither entscheidet der Deckel
+           allein, wie lang ein Tag wird — und die Runde IST die Tagesration.
+           Die ausführliche Begründung steht in js/einstellungen.js. -->
       <!-- ⭐ „Karten pro Tag" ist am 15.09.2026 in die neue Gruppe „Tagesziele"
            umgezogen — mit den drei anderen Zielen zusammen. Elias: „ich glaube
            es wäre gut bei den karteikarten, hören sätze und wurzeln, dass man
            dort keine zahl hat, jedoch in den einstellungen einstellen kann wie
-           viel das tagesziel ist" und auf die Rückfrage: „ja, eigener Bereich."
-           ⚠️ Die Sitzungsgröße bleibt hier: sie ist die RUNDE, kein Tagesziel. -->
-      <div class="setting-row">
-        <div>
-          <div class="setting-title">Sitzungsgröße</div>
-          <div class="setting-sub">Wie viele Karten pro Lernrunde</div>
-        </div>
-        <!-- ⭐ 15 und die eigene Zahl seit dem 06.09.2026. Elias: „letztens
-             wollte ich aber 15 lernen und das ging nicht, keine option. diese
-             option speziell soll eingefügt werden und auch indiduell selbst
-             zahlen eingeben."
-             ⚠️ Das Feld steht NEBEN der Auswahl, nicht darunter: die
-             .setting-row ist eine Zeile, ein Block darunter würde die
-             Beschriftung von ihrem Bedienelement trennen. -->
-        <div class="sitzung-wahl">
-          <select id="sessionSizeSelect" class="select-input">
-            <option value="10">10</option>
-            <option value="15">15</option>
-            <option value="20" selected>20</option>
-            <option value="40">40</option>
-            <option value="9999">Alle</option>
-            <option value="eigen">Eigene Zahl …</option>
-          </select>
-          <input id="sessionSizeEigen" class="select-input sitzung-eigen" type="number"
-                 inputmode="numeric" min="1" max="999" step="1" hidden
-                 aria-label="Eigene Sitzungsgröße in Karten">
-        </div>
-      </div>
+           viel das tagesziel ist" und auf die Rückfrage: „ja, eigener Bereich." -->
       <div class="setting-row">
         <div>
           <div class="setting-title">Ab Box 4 eintippen</div>
