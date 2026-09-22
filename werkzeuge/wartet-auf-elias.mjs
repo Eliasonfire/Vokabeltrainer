@@ -606,7 +606,10 @@ const ohneKommentare = txt => txt
         if (!/function\s*$/.test(um)) aufrufer++;
       }
     }
-    if (!aufrufer) posten.push({
+    /* ✅ ENTSCHIEDEN 22.09.2026: kein Knopf. Auf „Mein Vorschlag: keinen Knopf
+       bauen und die Frage streichen" sagte Elias „ja mach so". */
+    const PAKET_ENTSCHIEDEN = true;
+    if (!aufrufer && !PAKET_ENTSCHIEDEN) posten.push({
       titel: "Vokabelpaket löschen: fertig, aber kein Knopf",
       zahl: 1, einheit: "Entscheidung", dazu: "js/vokabelpaket.js:64", auswahl: true,
       aufwand: "ja oder nein sagen — den Knopf baue ich in zehn Minuten",
@@ -669,7 +672,11 @@ const ohneKommentare = txt => txt
       .test(ohneKommentare(fs.readFileSync(quelle, "utf8")));
     if (!heil) console.log("  ⚠ Kommentar-Entferner hat zu viel entfernt — Posten "
       + "\"Quran-Fundstellen\" wird nicht gestellt.");
-    if (!aufrufer && heil) posten.push({
+    /* ✅ ENTSCHIEDEN 22.09.2026: „ganz weg". Die Liste der Koranstellen kommt
+       mit dem Aufräumen am 24.09. heraus (zusammen mit dem Ton-Protokoll —
+       eine Auslieferung statt zwei). Bis dahin fragt dieser Posten nicht mehr. */
+    const FUNDSTELLEN_ENTSCHIEDEN = true;
+    if (!aufrufer && heil && !FUNDSTELLEN_ENTSCHIEDEN) posten.push({
       titel: "Quran-Fundstellen: der Weg dorthin ist weg",
       zahl: 1, einheit: "Entscheidung", dazu: "js/lernen.js — openQuranFreqPopover", auswahl: true,
       aufwand: "sagen, wohin er soll — oder ob er ganz raus kann",
@@ -1012,16 +1019,10 @@ posten.push({
    höhere Box?" ist raus. Elias auf „Seit dem 17.09. gewinnt die mit der höheren
    Box. Passt das?": „ja". Damit ist die höhere Box SEINE Regel, nicht mehr meine
    Deutung. */
-posten.push({
-  titel: '„Tippe alle مُضَافٌ an": die schwereren Aufgaben zuerst?',
-  zahl: 8, einheit: 'Aufgaben mit mehr als einem Treffer', dazu: 'von 33, Stand 16.09.', auswahl: true,
-  aufwand: 'ja oder nein',
-  warum: 'Die Übungen kommen zufällig gemischt. Von den 33 Aufgaben „Tippe alle مُضَافٌ an" haben 8 mehr '
-    + 'als einen Treffer (vorher 4 von 25). Wer nur nach der Kasra tippt, liegt bei ihnen falsch. '
-    + '(Gefragt am 16.09., 21:50.)',
-  wie: 'Sag ja, dann kommen diese Aufgaben zuerst. Sag nein, dann bleibt alles zufällig gemischt.',
-  seite: '', seiteText: ''
-});
+/* ✅ BEANTWORTET 22.09.2026: der Posten „Tippe alle Mudaf an: die schwereren
+   Aufgaben zuerst?" ist raus. Elias: „lieber die schwereren, generell alle sollen
+   so sein bei mudaf und ilayhi" → Modus idafa stellt nur noch Aufgaben mit mehr
+   als einem Treffer (js/uebung.js), dazu satz-lang-09 … 18 (v555). */
 /* ✅ BEANTWORTET 22.09.2026: der Posten „Dein Lernstand … stimmt das noch?" ist raus.
    Elias: „so stimmt es, bayna habe ich jetzt sogar kapitel 3 angefangen" → in
    data/lernstand.json Madina 1 = 12 (bestätigt), Bayna Yadayk 1 = 3. Die höheren
@@ -1039,17 +1040,9 @@ posten.push({
     + 'Aktualität fällt weg. (3) weitermachen, wo du warst — wie ein Lesezeichen.',
   seite: '', seiteText: ''
 });
-posten.push({
-  titel: 'فَتًى und 12 weitere: beim Auflösen zeigen, woher das „n" kommt?',
-  zahl: 13, einheit: 'Wörter auf ـًى', dazu: 'gegen 218 mit langem a, gezählt 16.09.', auswahl: true,
-  aufwand: 'ja oder nein',
-  warum: 'Bei فَتًى sind die zwei Striche über dem ت das „n", das ى danach ist nur der Träger — gesprochen '
-    + 'fatan. In deinem Bestand gibt es 13 solche Wörter, aber 218, bei denen ى wirklich ein langes a ist. '
-    + 'Deshalb stutzt man bei den 13. (Gefragt am 16.09., 04:30.)',
-  wie: 'Sag ja, dann zeigt die Karte bei diesen 13 Wörtern beim Auflösen kurz, dass die zwei Striche das „n" '
-    + 'sind und ى nur der Träger. Sag nein, dann bleibt es wie jetzt.',
-  seite: '', seiteText: ''
-});
+/* ✅ ENTSCHIEDEN 22.09.2026: NEIN — der Posten „fatan und 12 weitere: beim
+   Auflösen zeigen, woher das n kommt?" ist raus. Elias: „nein". Kein Hinweis auf
+   den Karten; nicht erneut vorschlagen. */
 /* ⛔⛔ ÄLTERE FRAGEN, DIE NUR IN DER TO-DO STANDEN (17.09.2026).
    Elias fragte: „deine to do ist doch noch nciht fertig oder" — und hatte
    recht. Diese Seite sagte „Alles andere ist erledigt", während die To-Do 44
@@ -1227,7 +1220,14 @@ try {
     isolate += (t.match(ISOLAT) || []).length;
     proNotiz.push(name + ': ' + p + ' von ' + w);
   }
-  if (paare > 0 && isolate === 0) posten.push({
+  /* ✅ ENTSCHIEDEN 22.09.2026: nichts nachträglich reparieren. Elias fragte
+     zuerst „wie rückwärts, das kann gar nicht sein. prüfe nochmals nach" —
+     nachgemessen (Zeile 821 von Vokabeltrainer-Arabisch.md, im Pane: die
+     bestimmte Form steht links vom Pfeil, gelesen „an-najmu → najmun"). Auf
+     „nichts nachträglich reparieren, ich schreibe ab jetzt so, dass es nicht
+     mehr kippt": „einverstanden". Die Zählung bleibt, der Posten fragt nicht mehr. */
+  const RUECKWAERTS_ENTSCHIEDEN = true;
+  if (paare > 0 && isolate === 0 && !RUECKWAERTS_ENTSCHIEDEN) posten.push({
     titel: 'Arabisch steht in deinen Notizen rückwärts',
     zahl: alle, einheit: 'Stellen', auswahl: true,
     dazu: paare + ' davon mit einem Richtungszeichen (→ ← / · =) · ' + proNotiz.join(' · '),

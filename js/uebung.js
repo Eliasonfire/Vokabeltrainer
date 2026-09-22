@@ -472,9 +472,17 @@ const UEBUNGEN = [
       /* Steht eine Orts- oder Zeitangabe darin, erklärt „Warum?" mit SEINER
          Karte „Ortsangabe als مُضَافٌ" — die allgemeine Iḍāfa-Karte (f19-idafa)
          nennt Ortsangaben gar nicht (19.09.2026 nachgesehen). */
+      /* ⭐ NUR NOCH SCHWERE AUFGABEN (22.09.2026). Elias auf die Frage, ob
+         die Aufgaben mit mehreren Treffern zuerst kommen sollen: „lieber die
+         schwereren, generell alle sollen so sein bei mudaf und ilayhi". Das
+         setzt um, was er am 15.09. schon gewählt hatte („die einfachen
+         aussortieren · mehr Sätze aufnehmen — so machen wir es"). Ein Satz
+         mit einer einzigen Iḍāfa stellt hier deshalb keine Aufgabe mehr; die
+         anderen Modi bekommen ihn weiter. Nachschub: satz-lang-09 … 18 in
+         data/beispielsaetze.js. test-satzmodus-schwerer.mjs bewacht beides. */
       return [
-        uebungSammel(mudaf, 'Tippe alle مُضَافٌ (das Besessene) an.'),
-        uebungSammel(zu, 'Tippe alle مُضَافٌ إِلَيْهِ (der Besitzer) an.')
+        mudaf.length > 1 ? uebungSammel(mudaf, 'Tippe alle مُضَافٌ (das Besessene) an.') : null,
+        zu.length > 1 ? uebungSammel(zu, 'Tippe alle مُضَافٌ إِلَيْهِ (der Besitzer) an.') : null
       ].filter(Boolean).map(a => mitZarf ? { ...a, warum: 'zarf-als-mudaf-01' } : a);
     }
   },

@@ -1769,6 +1769,83 @@ const BEISPIELSAETZE = {
     sentDe: 'Das Haus des Händlers ist nahe bei der Moschee.'
   },
 
+  /* ---------- Nur noch schwere Iḍāfa-Aufgaben (22.09.2026) ----------
+   * Elias zu „Tippe alle Mudaf an": „lieber die schwereren, generell alle sollen
+   * so sein bei mudaf und ilayhi". Seitdem stellt der Modus `idafa` nur noch
+   * Aufgaben mit MEHR ALS EINEM Treffer (js/uebung.js). Von 46 blieben 10 —
+   * deshalb diese zehn Sätze, jeder mit mindestens zwei مُضَاف und zwei
+   * مُضَاف إِلَيْه. Gleiches Verfahren wie satz-lang-01 … 08: jede Form steht so
+   * in seinem Buch (Madina 1 bis Kapitel 12) oder einem Wortfeld seines Bestands;
+   * geprüft mit derselben Analyse wie in der App (kein Widerspruch).
+   * Ortsangaben (vor, hinter, unter) zählen als مُضَاف — seine Entscheidung
+   * vom 19.09.2026 (Karte zarf-als-mudaf-01). */
+
+  /* كِتَابُ mb1-27-1 · الطَّالِبِ mb1-46-2 · تَحْتَ mb1-27-3 · مَكْتَبِ mb1-27-2 ·
+     الْمُدَرِّسِ mb1-27-2 */
+  'satz-lang-09': {
+    sentAr: 'كِتَابُ الطَّالِبِ تَحْتَ مَكْتَبِ الْمُدَرِّسِ.',
+    sentDe: 'Das Buch des Studenten ist unter dem Schreibtisch des Lehrers.'
+  },
+
+  /* بَيْتُ mb1-42-3 · الْمُدِيرِ mb1-25-2 · أَمَامَ mb1-42-3 · الْمَسْجِدِ mb1-42-3 */
+  'satz-lang-10': {
+    sentAr: 'بَيْتُ الْمُدِيرِ أَمَامَ الْمَسْجِدِ.',
+    sentDe: 'Das Haus des Direktors ist vor der Moschee.'
+  },
+
+  /* حَقِيبَةُ mb1-27-3 · الْمُدَرِّسِ mb1-27-2 · تَحْتَ mb1-27-3 · الْمَكْتَبِ mb1-27-3 */
+  'satz-lang-11': {
+    sentAr: 'حَقِيبَةُ الْمُدَرِّسِ تَحْتَ الْمَكْتَبِ.',
+    sentDe: 'Die Tasche des Lehrers ist unter dem Schreibtisch.'
+  },
+
+  /* مَفَاتِيحُ W:45756.pl · الْبَيْتِ mb1-61-3 · عَلَى mb1-27-2 · مَكْتَبِ mb1-27-2 ·
+     الطَّبِيبِ mb1-42-2 */
+  'satz-lang-12': {
+    sentAr: 'مَفَاتِيحُ الْبَيْتِ عَلَى مَكْتَبِ الطَّبِيبِ.',
+    sentDe: 'Die Schlüssel des Hauses sind auf dem Schreibtisch des Arztes.'
+  },
+
+  /* دَفْتَرُ mb1-27-2 · الطَّالِبِ mb1-46-2 · الْجَدِيدِ mb1-51-1 · عَلَى mb1-27-2 ·
+     مَكْتَبِ mb1-27-2 · الْمُدِيرِ mb1-25-2 */
+  'satz-lang-13': {
+    sentAr: 'دَفْتَرُ الطَّالِبِ الْجَدِيدِ عَلَى مَكْتَبِ الْمُدِيرِ.',
+    sentDe: 'Das Heft des neuen Studenten ist auf dem Schreibtisch des Direktors.'
+  },
+
+  /* مَسْجِدُ mb1-29-1 · الْمَدِينَةِ mb1-29-1 · أَمَامَ mb1-42-3 · الْمَدْرَسَةِ mb1-42-3 */
+  'satz-lang-14': {
+    sentAr: 'مَسْجِدُ الْمَدِينَةِ أَمَامَ الْمَدْرَسَةِ.',
+    sentDe: 'Die Moschee der Stadt ist vor der Schule.'
+  },
+
+  /* كِتَابُ mb1-27-1 · الْمُدِيرِ mb1-25-2 · تَحْتَ mb1-27-3 · مَكْتَبِ mb1-27-2 ·
+     الْمُدَرِّسِ mb1-27-2 · فِي mb1-21-1 · الْفَصْلِ mb1-25-2 */
+  'satz-lang-15': {
+    sentAr: 'كِتَابُ الْمُدِيرِ تَحْتَ مَكْتَبِ الْمُدَرِّسِ فِي الْفَصْلِ.',
+    sentDe: 'Das Buch des Direktors ist unter dem Schreibtisch des Lehrers im Klassenzimmer.'
+  },
+
+  /* بَيْتُ mb1-42-3 · الْمُدَرِّسِ mb1-27-2 · أَمَامَ mb1-42-3 · الْمَسْجِدِ mb1-42-3 ·
+     وَبَيْتُ mb1-42-3 · الْمُدِيرِ mb1-25-2 · خَلْفَ mb1-42-3 · الْمَدْرَسَةِ mb1-42-3 */
+  'satz-lang-16': {
+    sentAr: 'بَيْتُ الْمُدَرِّسِ أَمَامَ الْمَسْجِدِ وَبَيْتُ الْمُدِيرِ خَلْفَ الْمَدْرَسَةِ.',
+    sentDe: 'Das Haus des Lehrers ist vor der Moschee, und das Haus des Direktors ist hinter der Schule.'
+  },
+
+  /* حَقِيبَةُ mb1-27-3 · التَّاجِرِ mb1-42-2 · أَمَامَ mb1-42-3 · الْبَيْتِ mb1-61-3 */
+  'satz-lang-17': {
+    sentAr: 'حَقِيبَةُ التَّاجِرِ أَمَامَ الْبَيْتِ.',
+    sentDe: 'Die Tasche des Händlers ist vor dem Haus.'
+  },
+
+  /* كِتَابُ mb1-27-1 · الطَّبِيبِ mb1-42-2 · عَلَى mb1-27-2 · مَكْتَبِ mb1-27-2 ·
+     التَّاجِرِ mb1-42-2 */
+  'satz-lang-18': {
+    sentAr: 'كِتَابُ الطَّبِيبِ عَلَى مَكْتَبِ التَّاجِرِ.',
+    sentDe: 'Das Buch des Arztes ist auf dem Schreibtisch des Händlers.'
+  },
+
   /* ---------- Bayna Yadayk 1, Kapitel 3 (20.09.2026) ----------
      Elias: „ja mach die beispielsätze". Die elf Wörter des Kapitels hatten
      keinen. Jedes fremde Wort im Satz ist eine im Bestand nachgemessene
