@@ -2691,6 +2691,17 @@ main{
 .ueb-wort.richtig{background:var(--green-wash);border-color:var(--green-dim);color:var(--green);}
 .ueb-wort.falsch{background:var(--red-wash);border-color:var(--red-dim);color:var(--red-bright);}
 .ueb-de{color:var(--text-dim);font-size:var(--fs-sm);line-height:1.5;text-align:center;}
+/* ⭐ Das Eingabefeld der Übersetzungsübung (22.09.2026).
+   ⚠️ `font-size:16px` ist kein Gestaltungswert, sondern eine Notwendigkeit:
+   Safari auf dem iPhone zoomt die ganze Seite hinein, sobald ein Feld kleiner
+   als 16px beschriftet wird, und kommt danach nicht von selbst zurück.
+   ⚠️ `resize:vertical` statt `none` — er soll lange Sätze sehen können. */
+.ueb-eingabe{width:100%;min-height:4.2em;padding:.7em .9em;border-radius:var(--radius-sm,10px);
+  border:1px solid var(--border,#333);background:var(--bg-elevated,#1b1b1b);
+  color:var(--text,#eee);font-family:inherit;font-size:16px;line-height:1.5;
+  resize:vertical;}
+.ueb-eingabe:focus{outline:none;border-color:var(--accent,#ff4d6d);}
+.ueb-eingabe:disabled{opacity:.75;}
 .ueb-wahl{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:var(--sp-2);}
 .ueb-option{
   background:var(--surface-2);border:1px solid var(--border);color:var(--text);
@@ -5950,6 +5961,15 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         <div class="ueb-frage" id="uebFrage"></div>
         <div class="ueb-satz" id="uebSatz" lang="ar" dir="rtl"></div>
         <div class="ueb-de" id="uebDe"></div>
+        <!-- ⭐⭐ Das Eingabefeld der Übersetzungsübung (22.09.2026). Elias:
+             „es sollte auch im satzmodus eine übung geben, wo mir ein satz
+             gegeben wird und den soll ich dann ins deutsche übersetzten."
+             ⛔ Es steht UNTER uebDe, und genau deshalb verbirgt renderUebung()
+             uebDe bei dieser Übung, bis beantwortet ist — sonst stünde die
+             Lösung direkt über dem Feld. -->
+        <textarea class="ueb-eingabe hidden" id="uebEingabe" rows="2"
+                  lang="de" dir="ltr" autocomplete="off" autocorrect="off"
+                  spellcheck="false" placeholder="Deine Übersetzung …"></textarea>
         <div class="ueb-wahl hidden" id="uebWahl"></div>
         <div class="ueb-rueck hidden" id="uebRueckmeldung"></div>
         <div class="ueb-hinweis" id="uebHinweis"></div>
@@ -7349,6 +7369,10 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 <script src="js/kategorien.js"></script>
 <script src="js/regeln.js"></script>
 <script src="js/saetze.js"></script>
+<!-- ⛔ VOR js/uebung.js: der Übungseintrag „Übersetzen" ruft uebersetzungPruefen()
+     auf. Die Reihenfolge ist hier zwar unkritisch (der Aufruf passiert erst beim
+     Prüfen, nicht beim Laden), aber sie sagt dem nächsten Leser, wer wovon abhängt. -->
+<script src="js/uebersetzen.js"></script>
 <script src="js/uebung.js"></script>
 <script src="js/quran.js"></script>
 <script src="js/quran-audio.js"></script>

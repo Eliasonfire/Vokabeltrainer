@@ -294,7 +294,16 @@ console.log('\n=== 7. Stufe 2 — „so gut wie möglich in die app integriert" 
      entfernt („die übung im satzmodus brauche ich nicht weil die ist viel zu
      leicht"); test-satzmodus-schwerer.mjs bewacht, dass sie draußen bleibt. */
   pruefe(`„Warum? → Regel": alle ${modi.length} Übungsmodi zugeordnet, jedes Ziel existiert`,
-    modi.length === 12 && !ohne.length && !tot.length, 'Modi: ' + modi.length + ' · ohne: ' + ohne.join(',') + ' · tot: ' + tot.join(','));
+    modi.length === 13 && !ohne.length && !tot.length, 'Modi: ' + modi.length + ' · ohne: ' + ohne.join(',') + ' · tot: ' + tot.join(','));
+  /* ⚠️ 22.09.2026: 12 → 13, die Übersetzungsübung ist dazugekommen (`uebersetzen`,
+     UEBUNG_WARUM-Eintrag `null`, weil sie ihre Regel je Aufgabe selbst mitbringt).
+
+     ⭐ Die feste Zahl ist Absicht und kein Versehen: ohne sie würde eine Übung,
+     die jemand STILL entfernt, hier nicht auffallen — `ohne` und `tot` wären
+     dann ja beide leer. Sie ist der Grund, warum dieser Prüfer beim Bau der
+     dreizehnten Übung rot wurde und die fehlende Zuordnung gefunden hat.
+     Wer eine Übung hinzufügt oder wegnimmt, zieht sie hier nach und schreibt
+     eine Zeile dazu, wie diese hier. */
   /* Und die Karte für die unsichtbare Endung (الْمُسْتَشْفَى, 16.09.2026) —
      ein Ziel außerhalb von UEBUNG_WARUM, deshalb eigens geprüft. */
   const unsichtbar = (ueb.match(/const UEBUNG_WARUM_UNSICHTBAR\s*=\s*'([a-z0-9-]+)'/) || [])[1];

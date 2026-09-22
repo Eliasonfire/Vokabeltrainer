@@ -151,7 +151,15 @@ function laufe(quelle, still){
 
   /* ---------- 2. Die Anzahl wird nicht verraten ---------- */
   log('\n2. Keine Tipp-Aufgabe verrät, wie viele Wörter richtig sind');
-  const tippModi = U.filter(m => m.art !== 'wahl');
+  /* ⛔ 'schreiben' ist keine Tipp-Übung (22.09.2026). Bis dahin genügte „alles
+     ausser 'wahl'", weil es nur zwei Arten gab. Mit der Übersetzungsübung gibt
+     es eine dritte: dort wird getippt wie auf einer Tastatur, nicht auf ein
+     Wort im Satz — sie hat keine `ziele`, keine Anzahl zu verraten und keine
+     Gruppe „Antippen". Dieser Abschnitt prüft ausdrücklich das ANTIPPEN, und
+     eine Übung ohne Antippen gehört nicht hinein.
+     ⚠️ Der Test war deshalb zu Recht rot: eine neue Art soll auffallen. Was
+     hier steht, ist die Antwort darauf — kein Stummschalten. */
+  const tippModi = U.filter(m => m.art !== 'wahl' && m.art !== 'schreiben');
   pruefe('es gibt Tipp-Übungen (sonst prüft dieser Abschnitt nichts)', tippModi.length >= 5,
     tippModi.map(m => m.id).join(', '));
   const aufgaben = [];

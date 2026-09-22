@@ -81,35 +81,49 @@ function backlogSagt(){
   const p = path.join(WURZEL, 'transcripts/backlog.md');
   if (!fs.existsSync(p)) return null;
   const zeilen = fs.readFileSync(p, 'utf8').split(/\r?\n/);
-  const offen = new Set(), erledigtOhneRegeln = new Set();
+  const offen = new Set(), erledigtOhneRegeln = new Set(), ausserWertung = new Set();
   for (const z of zeilen){
     const m = /^\|\s*(\d+)\s*\|/.exec(z);
     if (!m) continue;
     const n = Number(m[1]);
-    /* ⚠️ Zuerst der Sonderfall, dann der Normalfall: Folge 06 ist ausgewertet
+    /* ⛔⛔ ZUERST die Folgen, die gar nicht gewertet werden duerfen. Elias am
+       22.09.2026 zu Folge 21, woertlich: "folge 21 hat keinen ton vom lehrer,
+       folge 21 ist ungültig und soll nciht verarbeitet bzw analysiert oder
+       überhaupt gewertet werden." Und dazu: "schreib in to do damit niemand
+       auch danach es je versucht zumindest solange es keine neue folge davon
+       gibt aber ich schätze er wird davon keine neue folge machen".
+       Eine solche Folge ist KEINE offene Aufgabe und auch nichts Ausgewertetes.
+       Sie steht ausser Wertung — Rohmaterial liegt da, es ist nur wertlos.
+       ⚠️ Der Unterschied zu "0 Regeln, gewollt" ist wichtig: dort HAT jemand
+       hingesehen, hier soll ausdruecklich niemand mehr hinsehen. */
+    if (/ausser wertung/i.test(z)) ausserWertung.add(n);
+    /* ⚠️ Dann der Sonderfall, dann der Normalfall: Folge 06 ist ausgewertet
        und hat ABSICHTLICH keine Regeln hervorgebracht (reine Wiederholung von
        04/05). Ohne diese Zeile meldet das Skript sie fuer immer als offen —
        und eine Meldung, die immer kommt, liest bald niemand mehr. */
-    if (/ausgewertet/i.test(z) && /keine neuen/i.test(z)) erledigtOhneRegeln.add(n);
+    else if (/ausgewertet/i.test(z) && /keine neuen/i.test(z)) erledigtOhneRegeln.add(n);
     else if (/Regelauswertung offen|roh vorhanden/i.test(z)) offen.add(n);
   }
-  return { offen, erledigtOhneRegeln };
+  return { offen, erledigtOhneRegeln, ausserWertung };
 }
 
 const roh    = folgenMitRohmaterial();
 const regeln = folgenMitRegeln();
 const bl     = backlogSagt();
 const ohneRegeln = bl ? bl.erledigtOhneRegeln : new Set();
+const ausser     = bl ? bl.ausserWertung      : new Set();
 
 const alle = [...roh.keys()].sort((a, b) => a - b);
 /* Ausgewertet ist eine Folge, wenn sie Regeln geliefert hat ODER im Backlog
-   ausdruecklich als "ausgewertet, keine neuen Regeln" steht. */
-const offen = alle.filter(n => !regeln.has(n) && !ohneRegeln.has(n));
+   ausdruecklich als "ausgewertet, keine neuen Regeln" steht.
+   Offen ist sie nur, wenn sie ueberdies nicht ausser Wertung steht. */
+const offen = alle.filter(n => !regeln.has(n) && !ohneRegeln.has(n) && !ausser.has(n));
 
 if (knapp){
+  const zusatz = ausser.size ? ` (${ausser.size} ausser Wertung: ${[...ausser].join(', ')})` : '';
   console.log(offen.length === 0
-    ? 'Regelauswertung: kein Rueckstand.'
-    : `Regelauswertung: ${offen.length} Folge(n) offen — ${offen.join(', ')}.`);
+    ? 'Regelauswertung: kein Rueckstand.' + zusatz
+    : `Regelauswertung: ${offen.length} Folge(n) offen — ${offen.join(', ')}.` + zusatz);
   process.exit(offen.length ? 2 : 0);
 }
 
@@ -118,14 +132,27 @@ console.log('Folge  Rohmaterial                      Regeln  Stand');
 for (const n of alle){
   const q = [...roh.get(n)].join(' + ');
   const anz = regeln.get(n);
-  const stand = anz ? 'ausgewertet' : (ohneRegeln.has(n) ? 'ausgewertet (0 Regeln, gewollt)' : 'OFFEN');
+  const stand = ausser.has(n) ? '⛔ AUSSER WERTUNG — nicht auswerten'
+              : anz           ? 'ausgewertet'
+              : ohneRegeln.has(n) ? 'ausgewertet (0 Regeln, gewollt)'
+              : 'OFFEN';
   console.log('  ' + String(n).padStart(2) + '   ' + q.padEnd(32)
             + String(anz || 0).padStart(4) + '    ' + stand);
 }
 
 console.log('\nFolgen mit Rohmaterial: ' + alle.length
           + ' | ausgewertet: ' + alle.filter(n => regeln.has(n)).length
-          + ' | offen: ' + offen.length);
+          + ' | offen: ' + offen.length
+          + ' | ausser Wertung: ' + alle.filter(n => ausser.has(n)).length);
+
+/* ⛔ Der Grund steht hier und nicht nur im Backlog, weil dieses Skript der Ort
+   ist, an dem jemand nach der naechsten Aufgabe sucht. */
+if (ausser.size){
+  console.log('\n⛔ Ausser Wertung, NICHT auswerten: Folge ' + [...ausser].join(', ')
+            + '\n   Folge 21 hat keinen Ton vom Lehrer (Elias, 22.09.2026).'
+            + '\n   Rohmaterial liegt da und bleibt liegen. Wer sie doch auswertet,'
+            + '\n   baut Regeln auf einer Aufnahme ohne Lehrerstimme.');
+}
 
 /* Der Backlog ist von Hand gepflegt. Weicht er ab, ist das selbst ein Befund —
    dann glaubt jemand einem Stand, den die Daten nicht hergeben. */

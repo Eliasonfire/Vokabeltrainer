@@ -263,6 +263,54 @@ export const PFLEGEPLAN = [
       wie: 'Fachbegriffe bekommen wie Vokabeln Eselsbrücken und Beispielsatz' },
   },
   {
+    /* ⭐⭐ 22.09.2026 (v566) — DIE ÜBERSETZUNGSÜBUNG IM SATZMODUS.
+
+       Elias am 22.09.2026, 21:15: „es sollte auch im satzmodus eine übung
+       geben, wo mir ein satz gegeben wird und den soll ich dann ins deutsche
+       übersetzten. wenn ich falsch mache muss erkannt werden was falsch ist und
+       warum und mir das dann zeigen" · „und die richtige deutsche überstzung
+       und halt warum"
+
+       Eigene Datei, und das ist kein Zufall: eine neue Funktion INNERHALB von
+       js/uebung.js findet pruefe-pflegeplan.mjs nicht (siehe Kopf dieser
+       Datei). Der Übungseintrag selbst steht dort trotzdem — er ist ein
+       Listeneintrag unter zwölf gleichartigen und braucht keinen eigenen Plan. */
+    funktion: 'Übersetzungsübung (Arabisch ins Deutsche)',
+    dateien: ['js/uebersetzen.js'],
+    bildschirme: [],
+    neuerInhalt: { nein: 'Sie erzeugt nichts. Gestellt werden die vorhandenen Beispielsätze, geprüft wird gegen deren sentDe — kommt ein Satz dazu, ist er ohne Zutun dabei; fehlt ihm sentDe, stellt die Übung ihn gar nicht erst (baue() gibt dann eine leere Liste zurück).' },
+    eingaben: { nein: 'Er tippt eine Übersetzung ein, und die wird sofort ausgewertet und verworfen. Gespeichert wird allein richtig/falsch — über merkeUebung() und merkeQuote(), dieselben Zähler wie bei den anderen zwölf Übungen. Es bleibt also nichts liegen, das jemand weiterverarbeiten müsste.' },
+    /* ⛔ DAS HIER IST DER EINZIGE ECHTE PFLEGEPUNKT — und er ist still.
+       js/uebersetzen.js nennt sechs Regelkennungen im Klartext. Wird eine davon
+       in grammar-data.js umbenannt oder entfernt, zeigt die Rückmeldung weiter
+       auf sie, „Warum? → Regel" öffnet nichts, und nichts wird rot: die Übung
+       liefe weiter und begründete mit einer Karte, die es nicht mehr gibt. */
+    veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs', werkzeug: 'werkzeuge/pruefe-uebersetzen.mjs',
+      wie: 'Teil D des Prüfers liest die Regelkennungen aus dem kommentarfreien Quelltext und schlägt jede in grammar-data.js nach; fehlt eine, wird er rot (Störtest belegt: eine verfälschte Kennung ergibt Exit 1)' },
+  },
+  {
+    /* ⭐⭐ 22.09.2026 (v566) — EIN FACHBEGRIFF FOLGT SEINER REGEL.
+
+       Elias, nachdem ihm vier Karteikarten hintereinander begegnet waren, deren
+       Regel er am 19.08.2026 selbst gestrichen hatte: „woher kommt diese
+       vokabel, ich weiß nicht ob es sich lohnt die zu lernen" — und dann:
+       „mach diese drei weg und kümmere dich erstmal darum das das auch nicht
+       wieder passiert."
+
+       Die Behebung ist eine Ableitung in js/kern.js (fachbegriffFolgtRegel,
+       benutzt in passtZurAuswahl) — INNERHALB einer bestehenden Datei, also von
+       Hand hier eingetragen. Gemessen am 22.09.2026: 13 der 61 Fachbegriffe. */
+    funktion: 'Fachbegriffe an gestrichenen Regeln',
+    dateien: [],
+    bildschirme: [],
+    neuerInhalt: { nein: 'Es entsteht nichts Neues — es fällt etwas weg, und zwar abgeleitet statt aufgelistet.' },
+    eingaben: { nein: 'Seine Entscheidung steckt schon in der Regel (nichtAufKarteikarten, gesetzt beim Regeldurchgang). Genau deshalb ist hier nichts zusätzlich einzutragen: eine zweite Liste wäre eine zweite Wahrheit.' },
+    /* ⛔ Der Pflegepunkt ist nicht das Ergebnis, sondern die WIRKSAMKEIT: eine
+       Ableitung kann still verschwinden, und dann steht alles wieder da. */
+    veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs', werkzeug: 'werkzeuge/pruefe-fachbegriff-regel.mjs',
+      wie: 'prüft, dass die Funktion da ist, dass passtZurAuswahl sie aufruft und dass sie nichtAufKarteikarten liest statt ausgeblendet; zweiseitig geeicht (ein echter Fall wird gefunden, ein Fachbegriff mit stehender Regel nicht). Störtest belegt: Aufruf entfernt = Exit 1, falsches Feld = Exit 1' },
+  },
+  {
     funktion: 'Kategorien und Wortliste',
     dateien: ['js/kategorien.js', 'wortfelder-data.js'],
     bildschirme: ['screen-categories', 'screen-wordlist'],
