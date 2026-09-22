@@ -420,6 +420,7 @@ let LESE_SCHWELLE = WDH_OHNE_TEXT; /* wie lange DIESE Sure offen sein muss */
 let LESE_UHR = null;
 let LESE_ENDE_BEOBACHTER = null;
 let LESE_ZURUECK = false;      /* in dieser Lesung von Hand zurückgenommen */
+let LESE_TAG = null;           /* der Lerntag, auf den sich Uhr und „Ende gesehen" beziehen */
 
 /* Elias hat den Haken für diese Sure gerade zurückgenommen (17.09.2026). Dann
    zählt sie in DIESER Lesung nicht noch einmal von selbst — sonst stünde der
@@ -469,6 +470,7 @@ function seiteUhrStellen(){
 }
 
 function pruefeSeite(){
+  leseTagPruefen();
   if (!SEITE_HIER || !SEITE_ENDE_GESEHEN || SEITE_ZURUECK) return;
   if (leseZeitJetzt() < SEITE_SCHWELLE){ seiteUhrStellen(); return; }
   clearTimeout(SEITE_UHR);
@@ -478,6 +480,37 @@ function pruefeSeite(){
 
 function leseZeitJetzt(){
   return LESE_DAUER + (LESE_SEIT ? Date.now() - LESE_SEIT : 0);
+}
+
+/* ⛔⛔ EIN NEUER LERNTAG FÄNGT VON VORN AN (22.09.2026).
+   Elias: „übrigens ist bei mir der ring für mulk bereits voll obwohl ich nur um
+   4 uhr morgens das gelesen habe, sollte eigentlich gar nicht abgehakt sein für
+   mich jetzt". Um 4 Uhr zählte al-Mulk richtig für den VORTAG (der Tag endet um
+   8 Uhr). Er blieb aber in der Sure — und die gesammelte Lesezeit samt „Ende
+   gesehen" lag weiter im Speicher. Kam die App nach 8 Uhr zurück, stellte
+   leseZeitStart() die Uhr, die Schwelle war längst erreicht, und die Sure zählte
+   sofort für den NEUEN Tag, ohne dass er eine Zeile las. Im Abgleich zu sehen:
+   Lerntag 21.09. „mulk [1,1]" (richtig), und am 22.09. stand al-Mulk als
+   gelesen, bis der Haken um 17:55:30 zurückgenommen wurde.
+   Deshalb gehören Uhr und „Ende gesehen" zu EINEM Lerntag. Wechselt er, fängt
+   die Lesung von vorn an: Zeit 0, das Ende muss neu erreicht werden (der
+   Beobachter meldet erst wieder, wenn der letzte Vers neu ins Bild kommt), und
+   die Seite des Tages gilt erst nach dem Neuöffnen der Sure — sie ist ab 8 Uhr
+   eine andere. [[ausfall_ist_unsichtbar_gebaut]] */
+function leseTagPruefen(){
+  const tag = (typeof todayStr === 'function') ? todayStr(0) : null;
+  if (LESE_TAG && tag && tag !== LESE_TAG){
+    LESE_DAUER = 0;
+    if (LESE_SEIT) LESE_SEIT = Date.now();
+    LESE_ENDE_GESEHEN = false;
+    LESE_ZURUECK = false;
+    SEITE_ENDE_GESEHEN = false;
+    SEITE_ZURUECK = false;
+    SEITE_HIER = null;
+    clearTimeout(LESE_UHR); LESE_UHR = null;
+    clearTimeout(SEITE_UHR); SEITE_UHR = null;
+  }
+  LESE_TAG = tag;
 }
 
 /* Die Uhr auf den Zeitpunkt stellen, an dem die Schwelle fällt. Ohne sie
@@ -493,6 +526,7 @@ function leseUhrStellen(){
 }
 
 function pruefeWiederholung(){
+  leseTagPruefen();
   if (!LESE_SURE || !LESE_ENDE_GESEHEN || LESE_ZURUECK) return;
   if (leseZeitJetzt() < LESE_SCHWELLE){ leseUhrStellen(); return; }
   clearTimeout(LESE_UHR);
@@ -505,6 +539,7 @@ function leseZeitStart(){
   /* ⚠️ Nicht anlaufen, solange die App weggelegt ist. Sonst liefe die Uhr ab
      dem Moment, in dem eine Sure im Hintergrund neu aufgebaut wird. */
   if (document.visibilityState === 'hidden') return;
+  leseTagPruefen();
   LESE_SEIT = Date.now();
   leseUhrStellen();
   seiteUhrStellen();
@@ -529,6 +564,7 @@ function leseSureSetzen(id){
   LESE_ENDE_GESEHEN = false;
   LESE_DAUER = 0;
   LESE_ZURUECK = false;        /* eine Rücknahme galt nur für die Lesung davor */
+  LESE_TAG = (typeof todayStr === 'function') ? todayStr(0) : null;
   if (LESE_ENDE_BEOBACHTER){ LESE_ENDE_BEOBACHTER.disconnect(); LESE_ENDE_BEOBACHTER = null; }
   /* ⭐ Die Seite des Tages, wenn sie in dieser Sure ENDET (18.09.2026) — bei
      einer Seite über die Surengrenze ist das die zweite Sure. */
