@@ -1209,8 +1209,32 @@ function diagnoseText(){
     const h = Math.round(tb.getBoundingClientRect().height);
     const gesetzt = document.documentElement.style.getPropertyValue('--topbar-h').trim() || '(nicht gesetzt)';
     const pad = Math.round(parseFloat(getComputedStyle(main).paddingTop) || 0);
+    /* ⛔⛔ OHNE DIESE ZEILE ZEIGT DIE DIAGNOSE AUF DIE FALSCHE URSACHE.
+
+       Seine Handy-Diagnose vom 22.09.2026 meldete „Polsterung 0 → Lücke -79 px"
+       und sah damit aus wie ein Layoutfehler. Nachgemessen am Quelltext: auf
+       schmalen Bildschirmen steht `.topbar` IM FLUSS (`flex-shrink:0`, kein
+       `position:fixed`), und `main{padding-top:0}` ist dort genau richtig —
+       gesetzt am 20.08.2026, weil ein `position:sticky`-Header sonst an der
+       Padding-Box klebt und darunter ein Streifen offen bleibt. Erst die
+       Medienabfragen ab 700 px nehmen die Kopfzeile aus dem Fluss, und erst
+       dort MUSS `main` ihre Höhe auspolstern.
+
+       Die Zeile rechnete also eine Differenz aus, die nur in einem der beiden
+       Fälle etwas bedeutet. Sein Tablet zeigte „Lücke 0", sein Handy „-79" —
+       und beide Geräte waren in Ordnung. Ein Befund, der auf die falsche
+       Ursache zeigt, kostet mehr Zeit als gar keiner.
+       [[kennzeichen_mit_zwei_ursachen]] · [[vorgabewert_sieht_aus_wie_befund]]
+
+       ⚠️ Gemessen wird die WIRKLICHE Position, nicht die Fensterbreite: eine
+       Medienabfrage nachzubauen hieße, sie an zwei Stellen zu pflegen. */
+    const pos = getComputedStyle(tb).position;
+    const imFluss = pos === 'static' || pos === 'relative';
+    if (imFluss)
+      return 'hoch ' + h + ' · gemessen ' + gesetzt + ' · Polsterung ' + pad
+        + ' → im Fluss (' + pos + '), Polsterung wird nicht gebraucht — in Ordnung';
     return 'hoch ' + h + ' · gemessen ' + gesetzt + ' · Polsterung ' + pad
-      + ' → Lücke ' + (pad - h) + ' px';
+      + ' → ' + pos + ', Lücke ' + (pad - h) + ' px';
   });
   sicher('Quran-Kopf', () => {
     const tb = document.querySelector('header.topbar');
@@ -1236,8 +1260,38 @@ function diagnoseText(){
     const teile = [];
     teile.push(s.seiten.toFixed(2).replace('.', ',') + ' von '
       + s.einJuz.toFixed(2).replace('.', ',') + ' Seiten = ' + Math.round(s.anteil * 100) + ' %');
-    teile.push(el.hidden ? 'VERBORGEN' : 'sichtbar');
-    teile.push('Breite ' + Math.round(el.getBoundingClientRect().width) + ' px');
+    /* ⛔⛔ `el.hidden` IST KEINE SICHTBARKEITSMESSUNG, sondern ein Attribut.
+
+       Seine Handy-Diagnose vom 22.09.2026 meldete „sichtbar · Breite 0 px" —
+       ein Widerspruch, der wie ein Fehler aussieht und dreimal nachgemessen
+       werden musste. Beides stimmte: das Attribut war weg, und das Element
+       hatte trotzdem keine Breite.
+
+       Der Grund ist banal und steht jetzt in der Zeile: der Ring liegt auf dem
+       STARTBILDSCHIRM, und die Diagnose wird in den EINSTELLUNGEN gelesen. Ein
+       Element auf einem nicht aktiven Bildschirm hat Breite 0, weil sein
+       Vorfahr `display:none` ist — das ist kein Defekt, sondern der Normalfall.
+
+       Gemessen wird deshalb der Grund mit, nicht nur die Zahl:
+       `offsetParent === null` heißt „hängt an einem verborgenen Vorfahren".
+       ⚠️ Sichtbarkeit nur über getComputedStyle und getBoundingClientRect,
+       nie über ein Attribut oder eine Klasse. [[ausfall_ist_unsichtbar_gebaut]] */
+    const r = el.getBoundingClientRect();
+    const st = getComputedStyle(el);
+    const breite = Math.round(r.width);
+    teile.push(el.hidden ? 'Attribut hidden: JA' : 'Attribut hidden: nein');
+    if (breite > 0){
+      teile.push('Breite ' + breite + ' px — steht im Layout');
+    } else if (el.hidden){
+      teile.push('Breite 0 — weil hidden gesetzt ist');
+    } else if (el.offsetParent === null && st.position !== 'fixed'){
+      teile.push('Breite 0 — sein Bildschirm ist gerade nicht offen (kein Defekt; '
+               + 'die Diagnose wird in den Einstellungen gelesen, der Ring steht auf Start)');
+    } else if (st.display === 'none'){
+      teile.push('⛔ Breite 0 — display:none am Element selbst');
+    } else {
+      teile.push('⛔ Breite 0, obwohl sichtbar und im Layout — das ist ein echter Befund');
+    }
     return teile.join(' · ');
   });
   /* Woraus sich das rechnet — sonst steht oben eine Zahl ohne Herkunft. */
