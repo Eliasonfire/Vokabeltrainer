@@ -435,10 +435,37 @@ if (args.includes('--eichen')) {
       console.log(`Laut backlog.md ausgewertet ohne neue Regeln, deshalb `
         + `uebergangen: ${uebersprungen.map(nn).join(', ')}`);
     }
+    /* Nachzuegler: eine Kandidatendatei, die ohne Sprecherspur entstanden ist,
+     * obwohl es inzwischen eine gibt.
+     *
+     * GEMESSEN am 20.09.2026: Folge 17 und 19 trugen sprecherspur:false, ihre
+     * .rttm lagen seit dem 17.09. daneben. Beide haben je EINE erfasste Regel,
+     * deshalb hat die Schleife oben sie uebersprungen - und die Bewertung blieb
+     * dauerhaft die ungewichtete. Der Unterschied ist nicht klein: Folge 17
+     * ging von 15 auf 12 Stellen, Folge 19 von 4 auf 9.
+     *
+     * Aufgefallen ist es nur, weil freigabe-seite.mjs die Folgen namentlich
+     * meldet. Ohne diese Meldung waere es unsichtbar geblieben: eine
+     * Kandidatenliste sieht mit und ohne Gewichtung gleich plausibel aus. */
+    const nachzuegler = [];
+    for (let nr = 1; nr <= 99; nr++) {
+      if (folgen.includes(nr)) continue;
+      const kd = path.join(ZIEL, `folge-${nn(nr)}.json`);
+      if (!fs.existsSync(kd)) continue;
+      if (JSON.parse(fs.readFileSync(kd, 'utf8')).sprecherspur) continue;
+      if (!ladeSprecher(nr)) continue;
+      nachzuegler.push(nr);
+    }
+    if (nachzuegler.length) {
+      console.log(`Ohne Sprecherspur berechnet, Spur liegt inzwischen vor - `
+        + `wird nachgezogen: ${nachzuegler.map(nn).join(', ')}`);
+      folgen.push(...nachzuegler);
+    }
     console.log('');
   }
   if (!folgen.length) process.exit(0);
 
+  const abgleichVerloren = [];
   fs.mkdirSync(ZIEL, { recursive: true });
   for (const nr of folgen) {
     const gelernt = lerneGewichte(regeln, nr);
@@ -451,6 +478,14 @@ if (args.includes('--eichen')) {
     const oben = ohneUeberlappung(alle.filter(f => f.punkte > 0)).slice(0, AUSGABE);
     const dauer = Math.max(...alle.map(f => f.bis));
     const datei = path.join(ZIEL, `folge-${nn(nr)}.json`);
+    /* Die Datei wird KOMPLETT neu geschrieben - der Abgleich aus Baustein C
+     * (Feld aehnlicheRegeln je Kandidat, abgeglichenGegen oben) geht dabei
+     * verloren. GEMESSEN am 20.09.2026: nach dem Neulauf fuer 17 und 19 meldete
+     * freigabe-seite.mjs prompt "ohne Abgleich: Folge 17, 19". Wer hier neu
+     * rechnet, muss abgleich.mjs hinterherschicken - darum die Meldung unten. */
+    const hatteAbgleich = fs.existsSync(datei)
+      && JSON.parse(fs.readFileSync(datei, 'utf8')).abgeglichenGegen != null;
+    if (hatteAbgleich) abgleichVerloren.push(nr);
     fs.writeFileSync(datei, JSON.stringify({
       folge: nr,
       erzeugtVon: 'werkzeuge/kandidaten.mjs',
@@ -478,5 +513,12 @@ if (args.includes('--eichen')) {
         + `  ${l}  ${b}`);
     }
     console.log(`   -> ${path.relative(REPO, datei)}`);
+  }
+
+  if (abgleichVerloren.length) {
+    console.log(`\n⚠️  Neu gerechnet und dabei den Abgleich verloren: Folge `
+      + `${abgleichVerloren.map(nn).join(', ')}. Jetzt noetig, sonst steht auf`
+      + ` der Freigabeseite\n    keine Aehnlichkeitsspalte mehr:`);
+    console.log(`    node werkzeuge/abgleich.mjs ${abgleichVerloren.join(' ')}`);
   }
 }

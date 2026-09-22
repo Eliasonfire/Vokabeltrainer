@@ -58,7 +58,6 @@ function umgebung(opt = {}){
     audioVersZahl: () => 3,
     segmenteHolen: () => { abrufe++; ctx.QSEG['7:67'] = 'laedt'; return Promise.resolve(); },
     audioSpiele: (s, v) => gespielt.push([s, v]),
-    tonLog: () => {},
     isFinite, Number, Math, Object, Promise,
   };
   vm.createContext(ctx);

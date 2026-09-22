@@ -222,109 +222,36 @@ function audioAdresse(rezId, sure, vers){
    isoliert laufen zu lassen. Ein Umbruch liefert dort ein halbes Objekt und
    einen SyntaxError — genau so ist der Pruefer am 15.09.2026 rot geworden. */
 /* ============================================================================
-   DAS TON-PROTOKOLL                                    (20.09.2026, v542)
+   HIER STAND DAS TON-PROTOKOLL          (20.09.2026 gebaut, 22.09.2026 raus)
    ============================================================================
 
-   Elias am 20.09.2026, nach v535: „ich hab eben rezitator an gemacht und es
-   liefen so ca 3 verse bis es jetzt aufgehört hat bei geschlossenem display zu
-   spielen" — „wenn ich aber den bildschirm anlasse dann gibts keine probleme"
-   — und auf meine Frage, was danach im Spieler steht: „dann steht da nichts,
-   er hört einfach auf zu spielen und das wars".
+   Es war von Anfang an als Baustelle angelegt: „⚠️ BAUSTELLE: kommt wieder
+   heraus, sobald die Ursache gefunden ist." Gebaut wurde es für Elias' Befund
+   vom 20.09.2026: „ich hab eben rezitator an gemacht und es liefen so ca 3
+   verse bis es jetzt aufgehört hat bei geschlossenem display zu spielen" —
+   „wenn ich aber den bildschirm anlasse dann gibts keine probleme".
 
-   ⛔⛔ Das ist ein Fehler, den ich NIE erlebe: hier läuft kein Ton, und der
-   Pane darf keinen machen. Zweimal ist dafür schon aus Überlegung gebaut
-   worden (09.09. zwei Elemente, 19.09. Wechsel-Marke und Wache), und beide Male
-   hat erst sein Handy gezeigt, dass es nicht reicht. Deshalb schreibt die App
-   jetzt MIT, was wirklich passiert — jedes Ereignis beider Elemente mit
-   Ladezustand, jede Entscheidung beim Verswechsel, ob die Seite verborgen
-   oder eingefroren war, und ein Takt alle zehn Sekunden, an dessen Lücken man
-   sieht, ob Zeitgeber bei ausgeschaltetem Bildschirm überhaupt laufen.
-   [[fehler_den_der_entwickler_nie_erlebt]] [[diagnose_statt_raten]]
+   Es schrieb bei verborgener Seite alle 2 s eine Zeile in einen eigenen
+   Speicherschlüssel (bis zu 400) und hing sie an „An Claude schicken" an.
+   ⚠️ Der Schlüsselname steht hier bewusst NICHT ausgeschrieben:
+   `pruefe-kreislaeufe.mjs` sucht im Quelltext nach `vt_…` und hielte ihn für
+   einen lebenden Schlüssel ohne Abgleich — ein Befund über einen Grabstein.
+   Er steht in `git show 6d2bc1b:js/quran-audio.js`. Seit dem 20.09. hat
+   Elias keinen weiteren Ausfall gemeldet; am 22.09.2026 auf seine Anweisung
+   („wenn nicht dann sollst du") entfernt.
 
-   ⭐ Der Weg zu mir ist der, den es schon gibt: Einstellungen → Diagnose →
-   „An Claude schicken" hängt das Protokoll an (js/einstellungen.js,
-   diagnoseAnhang), gelesen wird es mit werkzeuge/diagnose-holen.mjs. Auf der
-   sichtbaren Karte steht nur EINE Zeile — sie muss auf ein Bildschirmfoto
-   passen.
+   ⛔ ES IST NICHT DIE URSACHE GEFUNDEN WORDEN. Meldet er den Ausfall wieder,
+   ist das Protokoll der erste Schritt — vollständig in
+   `git show 6d2bc1b:js/quran-audio.js` (Zeilen 224–327) plus
+   `werkzeuge/pruefe-tonprotokoll.mjs` aus demselben Stand. Wieder einbauen ist
+   billiger als neu erfinden.
 
-   ⛔ Das Protokoll liegt im Gerätespeicher (`vt_tonprotokoll`), nicht nur im
-   Arbeitsspeicher: wird die Seite bei ausgeschaltetem Bildschirm beendet, ist
-   genau die letzte Zeile vor dem Ende die Antwort. Es wird NICHT abgeglichen
-   und NICHT gesichert — es beschreibt dieses eine Gerät.
-   ⛔ tonLog() darf nie werfen: es steht mitten in der Wiedergabe.
-   ⚠️ BAUSTELLE: kommt wieder heraus, sobald die Ursache gefunden ist. */
-const QTON_SCHLUESSEL = 'vt_tonprotokoll';
-const QTON_MAX = 400;   /* 20.09.2026: 200 → 400, seit bei verborgener Seite alle 2 s eine Zeile kommt (eine Minute = 30 Zeilen) */
-let QTON = null;
-
-function tonLog(text){
-  try {
-    if (QTON === null){
-      try { QTON = JSON.parse(localStorage.getItem(QTON_SCHLUESSEL) || '[]'); } catch (e){ QTON = []; }
-      if (!Array.isArray(QTON)) QTON = [];
-      /* Steht schon etwas da, war die Seite zwischendurch weg — das ist selbst
-         ein Befund (beendet? neu geladen?) und bekommt eine eigene Zeile. */
-      if (QTON.length) QTON.push([Date.now(), 0, '——— App neu gestartet ———']);
-    }
-    QTON.push([Date.now(), (typeof document !== 'undefined' && document.hidden) ? 1 : 0, String(text)]);
-    if (QTON.length > QTON_MAX) QTON.splice(0, QTON.length - QTON_MAX);
-    localStorage.setItem(QTON_SCHLUESSEL, JSON.stringify(QTON));
-  } catch (e){
-    try { if (typeof stillerFehler === 'function') stillerFehler('Ton-Protokoll', e); } catch (_){ /* nie werfen */ }
-  }
-}
-
-/** Eine Zeile je Ereignis eines Abspielelements: welches (A/B), ob es das
- *  spielende ist (*), Ladezustand (rs 0–4), Netzzustand (ns 0–3), Stelle, Datei. */
-function tonLogElement(name, el){
-  try {
-    const i = QAUDIO.paar ? QAUDIO.paar.indexOf(el) : -1;
-    const wer = (i === 0 ? 'A' : i === 1 ? 'B' : '?') + (el === QAUDIO.el ? '*' : ' ');
-    const datei = String(el.currentSrc || el.src || '').split('/').pop() || '(leer)';
-    tonLog(wer + ' ' + name + ' rs' + el.readyState + ' ns' + el.networkState
-      + ' t' + (Number(el.currentTime) || 0).toFixed(1)
-      + (el.error ? ' FEHLER' + el.error.code : '') + ' ' + datei);
-  } catch (e){ /* nie werfen */ }
-}
-
-/** Das Protokoll als Text — für „An Claude schicken" und „Kopieren". */
-function tonProtokollText(){
-  let zeilen = [];
-  try { zeilen = QTON !== null ? QTON : JSON.parse(localStorage.getItem(QTON_SCHLUESSEL) || '[]'); } catch (e){ zeilen = []; }
-  if (!Array.isArray(zeilen)) zeilen = [];
-  const zwei = (n, l) => String(n).padStart(l || 2, '0');
-  const kopf = 'Ton-Protokoll: ' + zeilen.length + ' Zeilen, neueste unten. '
-    + 'H = Seite verborgen (Bildschirm aus), * = das spielende Element, rs = Ladezustand 0–4.';
-  return [kopf].concat(zeilen.map(z => {
-    const d = new Date(z[0]);
-    return zwei(d.getHours()) + ':' + zwei(d.getMinutes()) + ':' + zwei(d.getSeconds()) + '.' + zwei(d.getMilliseconds(), 3)
-      + (z[1] ? ' H ' : '   ') + z[2];
-  })).join('\n');
-}
-function tonProtokollZahl(){
-  try { return (QTON !== null ? QTON : JSON.parse(localStorage.getItem(QTON_SCHLUESSEL) || '[]')).length || 0; }
-  catch (e){
-    /* Grund: die Zahl steuert nur, ob die Diagnosekarte die eine Zeile
-       „Ton-Protokoll: N Zeilen" zeigt. Unlesbarer Speicher = keine Zeile —
-       aber gemeldet, damit „0" nicht wie „nichts mitgeschrieben" aussieht. */
-    if (typeof stillerFehler === 'function') stillerFehler('Ton-Protokoll zählen', e);
-    return 0;
-  }
-}
-
-/* Was mit der SEITE passiert, während etwas läuft. `freeze`/`resume` meldet
-   der Browser, wenn er eine verborgene Seite einfriert — dann läuft kein
-   Skript mehr, und kein `ended` kommt an. */
-if (typeof document !== 'undefined' && document.addEventListener){
-  const seite = (text) => () => { if (QAUDIO.sure !== null) tonLog('SEITE ' + text); };
-  document.addEventListener('visibilitychange', () => { if (QAUDIO.sure !== null) tonLog('SEITE ' + (document.hidden ? 'verborgen' : 'sichtbar')); });
-  document.addEventListener('freeze', seite('EINGEFROREN'));
-  document.addEventListener('resume', seite('aufgetaut'));
-  window.addEventListener('pagehide', seite('pagehide'));
-  window.addEventListener('pageshow', seite('pageshow'));
-  window.addEventListener('offline', seite('Netz weg'));
-  window.addEventListener('online',  seite('Netz da'));
-}
+   ⚠️ Was GEBLIEBEN ist, weil es kein Protokoll ist, sondern Wirkung: die zwei
+   abwechselnden Abspielelemente (09.09.), die Wechsel-Marke und die Wache mit
+   6-Sekunden-Stillstand (19.09.) und die stumme `stille.wav`, die den
+   Sperrbildschirm wachhält. Die haben den Ton verbessert; das Protokoll hat
+   nur zugesehen. [[wirkung_an_der_quelle_stilllegen]]
+   ============================================================================ */
 
 const QAUDIO = { el:null, paar:null, sure:null, vers:0, laeuft:false, hinweis:'', versuche:0, versuchFuer:null, wechsel:false, warte:null };
 
@@ -382,11 +309,6 @@ function audioVersZahl(sure){
 function audioBaue(){
   const el = new Audio();
   el.preload = 'auto';
-  /* Ton-Protokoll (20.09.2026): jedes Ereignis BEIDER Elemente. `typeof`, weil
-     die Prüfer diese Funktion allein in ein vm schneiden. */
-  ['loadstart', 'canplaythrough', 'play', 'playing', 'waiting', 'stalled', 'suspend',
-   'pause', 'ended', 'error', 'abort', 'emptied'].forEach(n =>
-    el.addEventListener(n, () => { if (typeof tonLogElement === 'function') tonLogElement(n, el); }));
   /* ⛔ Nur das AKTIVE Element schaltet weiter. Ohne diese Abfrage meldete auch
      das Element, das gerade nur vorlaedt, ein `ended` — und die Rezitation
      spraenge zwei Verse auf einmal. */
@@ -582,34 +504,13 @@ function audioWacheAus(){
 }
 function audioWacheTick(){
   const el = QAUDIO.el;
-  /* Ton-Protokoll: jeder fünfte Takt (10 s) schreibt eine Zeile. An den LÜCKEN
-     zwischen diesen Zeilen sieht man, ob Zeitgeber bei ausgeschaltetem
-     Bildschirm überhaupt noch laufen — die Frage, die seit dem 19.09.2026 als
-     „ungeprüft" über dieser Wache steht.
-     ⚠️ Der Zähler hängt an der Funktion selbst, nicht an einer Variablen
+  /* ⚠️ Der Zähler hängt an der Funktion selbst, nicht an einer Variablen
      daneben: pruefe-zweipuffer.mjs schneidet diese Funktion ALLEIN in ein vm —
-     eine `let` davor käme dort nicht mit (so am 20.09.2026 rot geworden). */
+     eine `let` davor käme dort nicht mit (so am 20.09.2026 rot geworden).
+     Er taktete das Ton-Protokoll; das ist am 22.09.2026 entfernt. Er bleibt
+     stehen, weil der Prüfer ihn kennt und weil die nächste Messung an dieser
+     Wache ihn wieder braucht — eine Zeile, die niemandem wehtut. */
   audioWacheTick.takt = (audioWacheTick.takt || 0) + 1;
-  /* ⛔ BEI VERBORGENER SEITE JEDEN TAKT (2 s), nicht jeden fünften (20.09.2026).
-     Seine dritte Diagnose enthielt einen Lauf, bei dem der Bildschirm 5 s aus
-     war — Elias sagt, es wurde wieder still; das Protokoll sagt `playing` und
-     kein `pause`. Mit einer Zeile alle 10 s war nicht zu entscheiden, ob die
-     Stelle `t` danach noch weiterlief (Ton da) oder stand (Element „spielt",
-     aber nichts kommt heraus). Deshalb steht jetzt auch die stille Schleife
-     in der Zeile, ob das Element stumm ist und was die Mediensitzung meldet. */
-  const verborgen = (typeof document !== 'undefined' && !!document.hidden);
-  if ((verborgen || audioWacheTick.takt % 5 === 0) && typeof tonLog === 'function' && el){
-    let dazu = '';
-    try {
-      const s = (typeof QAUDIO_STILLE !== 'undefined') ? QAUDIO_STILLE : null;
-      dazu += s ? ' · stille ' + (s.paused ? 'PAUSIERT' : 'läuft') + ' t' + (Number(s.currentTime) || 0).toFixed(1) : ' · stille keine';
-      if (el.muted || el.volume === 0) dazu += ' · STUMM';
-      if (typeof navigator !== 'undefined' && navigator.mediaSession) dazu += ' · sitzung ' + (navigator.mediaSession.playbackState || '?');
-    } catch (e){ /* nie werfen */ }
-    tonLog('TAKT vers ' + QAUDIO.vers + ' t' + (Number(el.currentTime) || 0).toFixed(1)
-      + ' rs' + el.readyState + (el.paused ? ' PAUSIERT' : '') + (QAUDIO.wechsel ? ' wechsel' : '')
-      + (QAUDIO.laeuft ? '' : ' laeuft=nein') + dazu);
-  }
   /* Angehalten, weggeblättert oder mitten im Verswechsel: nichts zu wachen. */
   if (!el || QAUDIO.sure === null || !QAUDIO.laeuft || el.paused || QAUDIO.wechsel){
     QAUDIO_STAND = { zeit: -1, seit: 0 };
@@ -635,7 +536,6 @@ function audioNachladen(pos){
   const el = QAUDIO.el;
   if (!el || QAUDIO.sure === null) return;
   QAUDIO_STAND = { zeit: -1, seit: 0 };
-  if (typeof tonLog === 'function') tonLog('WACHE: 6 s Stillstand bei t' + (Number(pos) || 0).toFixed(1) + ' — Vers wird neu geholt');
   QAUDIO.hinweis = 'Ton stockt — wird neu geholt …';
   zeigeSpieler();
   /* `load()` feuert ein `pause`; das ist kein Anhalten (siehe `pause`-Handler). */
@@ -706,9 +606,6 @@ async function audioSpiele(sure, vers){
   /* ⛔ `!b.error`: ein vorgeladenes Element kann die richtige Adresse tragen
      und trotzdem kaputt sein (Netzabriss beim Vorladen). Dann darf es nicht
      das spielende werden — `play()` würde sofort abgewiesen. */
-  if (typeof tonLog === 'function') tonLog('SPIELE ' + sure + ':' + vers + ' — '
-    + (b.src === url && !b.error ? 'aus dem Vorrat, rs' + b.readyState + ' ns' + b.networkState
-                                 : 'NEUER LADEVORGANG' + (b.error ? ' (Vorrat kaputt)' : b.src ? ' (Vorrat hat anderes)' : ' (Vorrat leer)')));
   if (b.src === url && !b.error){
     const alt = QAUDIO.el;
     QAUDIO.el = b;
@@ -734,9 +631,7 @@ async function audioSpiele(sure, vers){
   zeigeSpieler();
   try {
     await el.play();
-    if (typeof tonLog === 'function') tonLog('play() angenommen ' + sure + ':' + vers);
   } catch (err){
-    if (typeof tonLog === 'function') tonLog('play() ABGELEHNT ' + sure + ':' + vers + ' — ' + ((err && err.name) || 'unbekannt'));
     /* ⚠️ Ein Wechsel des `src` bricht das laufende `play()` ab — der Browser
        meldet das als AbortError. Das ist kein Fehler, sondern genau das, was
        beim Weiterblaettern passieren SOLL. */
@@ -922,7 +817,6 @@ function audioNaechster(){
      die Rezitation endete, statt zu wiederholen. Das rechnet seit dem
      19.09.2026 `audioFolgeVers()` — dieselbe Rechnung wie beim Vorladen. */
   const folge = audioFolgeVers(QAUDIO.sure, QAUDIO.vers);
-  if (typeof tonLog === 'function') tonLog('NAECHSTER nach ' + QAUDIO.vers + ' → ' + (folge || 'Ende'));
   if (!folge){
     /* Sure zu Ende. Bewusst KEIN automatischer Sprung in die naechste Sure:
        er hoert eine bestimmte Sure, nicht den Quran am Stueck. */
@@ -937,7 +831,6 @@ function audioVoriger(){
 }
 
 function audioAus(){
-  if (typeof tonLog === 'function' && QAUDIO.sure !== null) tonLog('AUS (audioAus) bei Vers ' + QAUDIO.vers);
   QAUDIO.sure = null; QAUDIO.vers = 0; QAUDIO.laeuft = false; QAUDIO.hinweis = '';
   /* Beenden heißt beenden: keine Wache mehr, kein wartender Neuversuch, und
      die Wechsel-Marke räumen, damit das `pause` unten nicht verschluckt wird. */
@@ -963,9 +856,6 @@ function audioAus(){
 /** Der eine Knopf: startet, haelt an, laeuft weiter. */
 function audioUmschalten(){
   if (OFFENE_SURE === null) return;
-  /* Ton-Protokoll: SEIN Druck — damit ein `pause` vom System davon zu
-     unterscheiden ist. */
-  if (typeof tonLog === 'function') tonLog('KNOPF Play/Pause (von ihm)');
   if (QAUDIO.sure !== OFFENE_SURE){
     /* Anfangen, wo er gerade liest — nicht stur bei Vers 1. Wer bei Ayah 14
        steht und auf Abspielen drueckt, will dort weiterhoeren.
@@ -1059,13 +949,6 @@ function quranStilleAn(){
       QAUDIO_STILLE = new Audio('stille-lang.wav');
       QAUDIO_STILLE.loop = true;
       QAUDIO_STILLE.volume = 1;
-      QAUDIO_STILLE.addEventListener('loadedmetadata', () => {
-        if (typeof tonLog === 'function') tonLog('STILLE geladen, Dauer ' + (Number(QAUDIO_STILLE.duration) || 0).toFixed(2) + ' s');
-      });
-      /* Ton-Protokoll (20.09.2026): die stille Schleife soll die Lücke zwischen
-         zwei Versen überbrücken. Hält das System SIE an, ist das die Antwort. */
-      ['play', 'pause', 'error', 'stalled'].forEach(n =>
-        QAUDIO_STILLE.addEventListener(n, () => { if (typeof tonLog === 'function') tonLog('STILLE ' + n); }));
     }
     if (QAUDIO_STILLE.paused){
       const p = QAUDIO_STILLE.play();
@@ -1236,7 +1119,6 @@ function quranMedienSprung(ziel){
     if (ziel < davor + l[v]){ vers = v; break; }
     davor += l[v];
   }
-  if (typeof tonLog === 'function') tonLog('SPERRBILDSCHIRM gespult auf ' + ziel.toFixed(1) + ' s → Vers ' + vers);
   if (vers === QAUDIO.vers){
     try { el.currentTime = Math.min(Math.max(0, ziel - davor), Number(el.duration) || 0); } catch (e){ /* Metadaten fehlen noch */ }
     quranMedienPosition();
@@ -1263,10 +1145,8 @@ function quranMedienKnoepfe(an){
      Leiste des Handys gar nicht ziehen — „so habn ich aktuell keine möglichketi
      das in diesr audio bar auf meinem handy zu machen". */
   setze('seekto',        (d) => quranMedienSprung(Number(d && d.seekTime)));
-  /* Ton-Protokoll: ein `pause`, das vom SPERRBILDSCHIRM oder vom System kommt
-     (Kopfhörer ab, anderer Ton), sieht sonst aus wie eines von ihm. */
-  setze('play',          () => { tonLog('SPERRBILDSCHIRM play'); const el = audioElement(); el.play().catch(e => stillerFehler('Quran-Ton: play() vom Sperrbildschirm abgelehnt', e)); });
-  setze('pause',         () => { tonLog('SPERRBILDSCHIRM pause'); const el = audioElement(); el.pause(); });
+  setze('play',          () => { const el = audioElement(); el.play().catch(e => stillerFehler('Quran-Ton: play() vom Sperrbildschirm abgelehnt', e)); });
+  setze('pause',         () => { const el = audioElement(); el.pause(); });
   setze('stop',          () => audioAus());
   setze('nexttrack',     () => audioNaechster());
   setze('previoustrack', () => audioVoriger());

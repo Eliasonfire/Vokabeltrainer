@@ -201,7 +201,11 @@ function showScreen(name, opt){
    showScreen(). */
 const OVERLAYS = [
   { id: 'noteEditor',       zu: 'schliesseNotizEditor'  },
-  { id: 'quranFreqPopover', zu: 'closeQuranFreqPopover' },
+  /* ⛔ Hier stand der Koran-Häufigkeits-Aufsteller. Er ist am 22.09.2026 mit
+     seinem Auslöser weggefallen — die Begründung steht in js/lernen.js. Ein
+     Eintrag auf ein Element, das es nicht mehr gibt, ist still wirkungslos:
+     `overlayZu()` fände `null` und täte nichts, die Zurück-Taste hätte einen
+     Eintrag ins Leere. */
   { id: 'ayahPopover',      zu: 'schliesseAyahListe'    },
   { id: 'wortKarte',        zu: 'schliesseWortKarte'    },
   /* Die Regelkarte (11.09.2026, js/regeln.js) — dieselbe Ebene in der
