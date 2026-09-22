@@ -8,7 +8,6 @@ function renderSettings(){
   document.getElementById('togglePluralKarten').classList.toggle('on', !!SETTINGS.pluralKarten);
   document.getElementById('toggleVerbFormen').classList.toggle('on', !!SETTINGS.showVerbFormen);
   document.getElementById('toggleQuran').classList.toggle('on', !!SETTINGS.showQuran);
-  zeigeSitzungsgroesse();
   if (typeof zeigeTagesDeckel === 'function') zeigeTagesDeckel();
   if (typeof zeigeHoerZiel === 'function') zeigeHoerZiel();
   document.getElementById('directionSelect').value = SETTINGS.direction || 'ar-de';
@@ -519,56 +518,28 @@ document.getElementById('toggleQuran').addEventListener('click', ()=>{
   renderSettings();
   if (typeof renderHome === 'function') renderHome();
 });
-/* ⭐ SITZUNGSGRÖSSE — feste Stufen UND eine eigene Zahl (06.09.2026).
+/* ⛔ HIER STAND DIE SITZUNGSGRÖSSE — entfernt am 22.09.2026.
 
-   Elias: „ich will auch bei den karteikarten bei den einstellungen, dass ich
-   selbst entscheiden kann wie viel genau ich trainiere, aktuell gibts die
-   option 10 oder 20 zu lernen, letztens wollte ich aber 15 lernen und das ging
-   nicht, keine option. diese option speziell soll eingefügt werden und auch
-   indiduell selbst zahlen eingeben."
+   Sie kam am 06.09.2026 auf Elias' Wunsch („letztens wollte ich aber 15 lernen
+   und das ging nicht, keine option") und hatte feste Stufen plus ein eigenes
+   Zahlenfeld. Am 08.09.2026 kam der Tagesdeckel dazu — und nahm ihr die
+   Wirkung: er schneidet VORHER, und bei Elias standen beide auf 10. Auf die
+   Frage „Sie ändert nichts, solange ‚Karten pro Tag' nicht größer ist — bei
+   dir stehen beide auf 10. Raus oder bleiben?" kam am 22.09.2026 sein **„ja"**.
 
-   ⚠️ Beides, nicht nur das Zahlenfeld: die festen Stufen sind mit einem Tipp
-   erledigt, und 15 hat er ausdrücklich verlangt. Das Feld ist für alles
-   andere da.
-
-   ⛔ Die Auswahl allein reicht nicht zum Anzeigen. `select.value = "15"`
-   greift nur, wenn es die Option gibt — steht in den Einstellungen eine 17,
-   bliebe die Auswahl sonst LEER und sähe aus, als wäre nichts eingestellt.
-   Deshalb entscheidet zeigeSitzungsgroesse(), ob eine feste Stufe passt oder
-   „Eigene Zahl" mit gefülltem Feld gezeigt wird. */
-const SITZUNG_STUFEN = ['10','15','20','40','9999'];
-
-function zeigeSitzungsgroesse(){
-  const wahl = document.getElementById('sessionSizeSelect');
-  const feld = document.getElementById('sessionSizeEigen');
-  if (!wahl || !feld) return;
-  const wert = String(SETTINGS.sessionSize);
-  const fest = SITZUNG_STUFEN.indexOf(wert) >= 0;
-  wahl.value = fest ? wert : 'eigen';
-  feld.hidden = fest;
-  if (!fest) feld.value = wert;
-}
-
-/* Grenzen bewusst weit: 1 Karte ist eine sinnvolle Runde (eine schwere Vokabel
-   noch einmal), und mehr als 999 deckt „Alle" ab. Ein leeres oder unsinniges
-   Feld ändert NICHTS — sonst stünde nach einem halb getippten „1" plötzlich
-   eine Einer-Runde in den Einstellungen. */
-function setzeSitzungsgroesse(zahl){
-  const n = Math.round(Number(zahl));
-  if (!Number.isFinite(n) || n < 1 || n > 999) return false;
-  SETTINGS.sessionSize = n;
-  saveSettings();
-  if (typeof renderHome === 'function') renderHome();
-  return true;
-}
+   ⚠️ Kein Ersatz, keine versteckte Zahl: die Runde ist jetzt die Tagesration.
+   Wer sie ändern will, ändert „Karten pro Tag" — eine Stelle statt zwei.
+   [[allgemeine_regel_statt_listeneintrag]] */
 
 /* ⭐ Der Tagesdeckel — wie viele fällige Karten heute überhaupt angeboten
    werden. Die Rechnung dahinter steht bei `tagesAuswahl()` in js/kern.js.
-   ⚠️ Einfacher gebaut als die Sitzungsgröße: dort brauchte Elias eine eigene
-   Zahl („letztens wollte ich aber 15 lernen"), hier sind die Stufen von 5 bis
-   30 breit genug, und „Aus" ist die wichtigste Option — sie muss ohne Umweg
-   erreichbar sein. Kommt eine eigene Zahl später dazu, ist das Muster von
-   `zeigeSitzungsgroesse()` das Vorbild. */
+   ⭐ Seit dem 22.09.2026 ist das die EINZIGE Zahl für die Länge eines Tages:
+   die „Sitzungsgröße" daneben ist weggefallen, die Runde ist die Tagesration.
+   ⚠️ Bewusst nur Stufen, kein eigenes Zahlenfeld — die Stufen von 5 bis 30
+   sind breit genug, und „Aus" ist die wichtigste Option; sie muss ohne Umweg
+   erreichbar sein. Verlangt Elias eine eigene Zahl, ist `ZIEL_FELDER` weiter
+   unten das Vorbild (Auswahl plus Feld in einer Zeile, Klasse .sitzung-wahl —
+   der Klassenname stammt noch von der alten Sitzungsgröße). */
 function zeigeTagesDeckel(){
   const wahl = document.getElementById('tagesDeckelSelect');
   if (!wahl) return;
@@ -737,30 +708,9 @@ if (hoerZielFeld){
   hoerZielFeld.addEventListener('blur', ()=>{ zeigeHoerZiel(); });
 }
 
-document.getElementById('sessionSizeSelect').addEventListener('change', (e)=>{
-  const feld = document.getElementById('sessionSizeEigen');
-  if (e.target.value === 'eigen'){
-    feld.hidden = false;
-    if (!feld.value) feld.value = String(SETTINGS.sessionSize);
-    feld.focus();
-    feld.select();
-    return;                       /* erst die Zahl, dann wird gespeichert */
-  }
-  feld.hidden = true;
-  SETTINGS.sessionSize = Number(e.target.value);
-  saveSettings();
-  if (typeof renderHome === 'function') renderHome();
-});
-
-document.getElementById('sessionSizeEigen').addEventListener('input', (e)=>{
-  setzeSitzungsgroesse(e.target.value);
-});
-/* Beim Verlassen zurueck auf den gespeicherten Stand, falls die Eingabe
-   unbrauchbar war — sonst behauptet das Feld eine Zahl, die nicht gilt. */
-document.getElementById('sessionSizeEigen').addEventListener('blur', ()=>{
-  zeigeSitzungsgroesse();
-  if (typeof zeigeTagesDeckel === 'function') zeigeTagesDeckel();
-});
+/* ⛔ Hier hingen die drei Horcher der Sitzungsgröße (Auswahl, Zahlenfeld,
+   Verlassen). Sie sind am 22.09.2026 mit der Einstellung selbst entfernt
+   worden; die Begründung steht oben, wo die Funktionen standen. */
 document.getElementById('directionSelect').addEventListener('change', (e)=>{
   SETTINGS.direction = e.target.value;
   saveSettings();

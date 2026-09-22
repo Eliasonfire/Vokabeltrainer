@@ -328,8 +328,9 @@ const KAL_WOCHEN = 18;
    Sitzungsgroesse (20 je Runde): eine Runde war Stufe 2, drei Runden die
    hoechste.
 
-   ⚠️ Seit dem 06.09.2026 kann er die Rundengroesse frei eintragen, der Satz
-   „eine Runde ist Stufe 2" stimmt also nicht mehr zwangslaeufig. Die Zahlen
+   ⚠️ Die Einstellung gibt es seit dem 22.09.2026 nicht mehr — die Runde ist
+   jetzt die Tagesration („Karten pro Tag", Vorgabe 10). Der Satz „eine Runde
+   ist Stufe 2" stimmt also nicht mehr zwangslaeufig. Die Zahlen
    bleiben trotzdem FEST und wandern NICHT mit der Einstellung mit: der
    Kalender zeigt vergangene Tage, und ein vergangener Tag darf seine Farbe
    nicht aendern, weil heute eine Einstellung anders steht. Es ist eine
