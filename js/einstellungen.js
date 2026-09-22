@@ -1317,14 +1317,8 @@ function diagnoseText(){
      die Werte, die man in jedem Fall braucht. Ist er leer, ist das eine
      echte Aussage: seit dem Start ist kein Fehler geschluckt worden.
      [[ausfall_ist_unsichtbar_gebaut]] */
-  /* ---------- Ton-Protokoll (20.09.2026) ----------
-     ⛔ Nur EINE Zeile, und nur wenn es etwas gibt: die Karte muss auf ein
-     Bildschirmfoto passen. Das Protokoll selbst (bis 200 Zeilen) hängt
-     diagnoseAnhang() an den Text, der GESCHICKT oder KOPIERT wird. */
-  try {
-    const tonZeilen = (typeof tonProtokollZahl === 'function') ? tonProtokollZahl() : 0;
-    if (tonZeilen) zeilen.push('Ton-Protokoll: ' + tonZeilen + ' Zeilen — hängt beim Schicken und Kopieren an');
-  } catch (e){ stillerFehler('Diagnose: Ton-Protokoll zählen', e); }
+  /* ⛔ Hier stand die Zeile „Ton-Protokoll: N Zeilen". Das Protokoll ist am
+     22.09.2026 entfernt worden (js/quran-audio.js), die Zeile mit ihm. */
 
   zeilen.push('');
   zeilen.push('Geschluckte Fehler seit dem Start:');
@@ -1387,14 +1381,17 @@ document.getElementById('btnDiagnose')?.addEventListener('click', ()=>{
    verstecktes Textfeld und `execCommand` — veraltet, aber es ist der einzige
    Weg, der auch dann noch greift. Ohne ihn stünde am Ende ein Knopf, der
    nichts tut und nichts sagt. [[ausfall_ist_unsichtbar_gebaut]] */
-/** Was NICHT auf die sichtbare Karte passt, aber mit zu Claude soll: das
- *  Ton-Protokoll des Rezitators (js/quran-audio.js, 20.09.2026). Die Karte ist
- *  für ein Bildschirmfoto gebaut — das Protokoll hat bis zu 200 Zeilen.
- *  ⛔ Wirft nie: hängt an „Schicken", „Kopieren" und „Teilen". */
+/** Was NICHT auf die sichtbare Karte passt, aber mit zu Claude soll.
+ *
+ *  ⛔ Zurzeit ist das NICHTS. Bis zum 22.09.2026 hing hier das Ton-Protokoll
+ *  des Rezitators; es ist mit seiner Baustelle weggefallen. Die Funktion
+ *  bleibt stehen, weil sie an drei Stellen hängt („Schicken", „Kopieren",
+ *  „Teilen") und der nächste Anhang genau hier hineingehört — sie zu
+ *  entfernen hieße, dieselben drei Stellen zweimal anzufassen.
+ *  ⛔ Wirft nie. */
 function diagnoseAnhang(){
   try {
-    if (typeof tonProtokollText !== 'function' || typeof tonProtokollZahl !== 'function') return '';
-    return tonProtokollZahl() ? '\n\n' + tonProtokollText() : '';
+    return '';
   } catch (e){
     if (typeof stillerFehler === 'function') stillerFehler('diagnoseAnhang', e);
     return '';

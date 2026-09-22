@@ -91,7 +91,6 @@ const AUSGENOMMEN = new Map([
      v545 eingetragen — dieser Prüfer war drei Auslieferungen lang rot, und ich
      habe es nicht gesehen, weil alle-pruefer.mjs mit Exit 0 nur meldet, dass
      alle GELAUFEN sind. */
-  ['vt_tonprotokoll', 'Ton-Protokoll des Rezitators (js/quran-audio.js) — was DIESES Gerät bei ausgeschaltetem Bildschirm mit der Wiedergabe macht. Das Protokoll eines anderen Geräts hier zu sehen wäre eine falsche Fährte; zu mir kommt es über „An Claude schicken", nicht über den Abgleich. Baustelle, kommt wieder heraus'],
 ]);
 
 /* ⛔ Alle drei Zitierweisen UND Ziffern (09.09.2026). Bis dahin fand diese

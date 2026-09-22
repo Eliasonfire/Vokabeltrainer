@@ -81,22 +81,31 @@ export const PFLEGEPLAN = [
        und wird am nächsten Tag verworfen, ohne dass jemand aufräumen muss.
      Bewacht von werkzeuge/pruefe-offene-runde.mjs (in alle-pruefer.mjs), samt
      Störtest in beide Richtungen. */
-  /* 20.09.2026 (v542) — das TON-PROTOKOLL mit seinem eigenen Speicherschlüssel
-     (Name bewusst nicht ausgeschrieben, siehe js/quran-audio.js).
-     ✅ AM 22.09.2026 WIEDER AUSGEBAUT, wie beim Bau
-     angekündigt: „⛔ ABLAUF: ist die Ursache gefunden und behoben, kommt es
-     wieder heraus." Die Ursache war am 20.09. gefunden (v543) und von Elias
-     bestätigt („aber jetzt funktioniert es bei ausgeschaltetem display"); bis
-     zum 22.09. kam kein neuer Ausfall. Elias zum Aufräumposten: „wenn nicht
-     dann sollst du".
-     Entfernt: der Block in js/quran-audio.js, alle tonLog-Aufrufe, die Zeile
-     auf der Diagnosekarte, der Anhang in diagnoseAnhang(),
-     werkzeuge/pruefe-tonprotokoll.mjs samt Eintrag in alle-pruefer.mjs und die
-     zwei Ausnahmen in pruefe-abgleich/pruefe-sicherung.
-     ⛔ Kein Pflegebedarf mehr — und deshalb steht hier kein Eintrag, sondern
-     dieser Absatz: ein Pflegeplan für eine Funktion, die es nicht gibt, ist
-     genau die Art Zeile, die drei Monate später jemanden suchen lässt.
-     Kommt der Ausfall wieder: `git show 6d2bc1b:js/quran-audio.js`. */
+  /* 20.09.2026 (v542), das TON-PROTOKOLL in js/quran-audio.js und neuer
+     Speicherschlüssel `vt_tonprotokoll` — eine BAUSTELLE mit Ablauf.
+     Anlass: Elias nach v535: „es liefen so ca 3 verse bis es jetzt aufgehört
+     hat bei geschlossenem display zu spielen" — „dann steht da nichts, er
+     hört einfach auf zu spielen und das wars". Hier läuft kein Ton; die
+     Ursache zeigt nur sein Handy. Das Protokoll schreibt jedes Ereignis der
+     beiden Abspielelemente mit und hängt an „An Claude schicken" in der
+     Diagnose (js/einstellungen.js, diagnoseAnhang). Der Pflegebedarf:
+     · Eingaben von Elias — nein, es schreibt von selbst.
+     · Wer liest es? ICH, mit werkzeuge/diagnose-holen.mjs, nachdem er
+       „An Claude schicken" gedrückt hat. Ohne diesen Schritt ist es ein
+       Werkzeug ohne Aufrufer. [[werkzeug_ohne_aufrufer]]
+     · ⛔ ABLAUF: ist die Ursache gefunden und behoben, kommt es wieder
+       heraus (tonLog-Aufrufe, der Block oben in quran-audio.js,
+       diagnoseAnhang, die eine Zeile auf der Karte, pruefe-tonprotokoll.mjs).
+       Es wird weder abgeglichen noch gesichert — bewusst, es beschreibt ein
+       Gerät. Bewacht von werkzeuge/pruefe-tonprotokoll.mjs.
+     · ⭐ STAND 20.09.2026 (v545): Ursache gefunden (v543), von Elias bestätigt
+       („aber jetzt funktioniert es bei ausgeschaltetem display"). Es bleibt
+       trotzdem noch drin, MEINE Entscheidung: kurz davor hatte er auf „wurde
+       es wieder still?" mit „ja" geantwortet, und das Protokoll zeigte dazu
+       nur einen 5-Sekunden-Lauf — ein gelegentlicher Ausfall ist nicht
+       ausgeschlossen. Bei verborgener Seite schreibt es seither alle 2 s.
+       ⛔ HERAUS FRÜHESTENS AM 24.09.2026, wenn er bis dahin keinen Ausfall
+       gemeldet hat — der Punkt steht mit diesem Datum in der To-Do. */
   /* 20.09.2026 (v547), neue Funktion INNERHALB von js/quran-audio.js: die
      Leiste des Handys (Sperrbildschirm) zeigt die ganze Sure statt des
      einzelnen Verses, und der Punkt lässt sich ziehen (`seekto`). Elias:

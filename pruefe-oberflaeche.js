@@ -295,16 +295,21 @@ if (typeof window === 'undefined' || typeof localStorage === 'undefined'){
        auf der Lernkarte ist an dem Tag entfallen (Elias: „das kann man aus den
        karteikarten komplett raus nehmen"), die Funktion mit ihm.
 
-       Der Aufklapper bleibt geprueft, obwohl ihn in der App gerade nichts mehr
-       oeffnet: solange er im Quelltext steht, soll er auch funktionieren. Ein
-       ungeprueftes Stueck Code, das spaeter wieder angeschlossen wird, ist
-       schlimmer als eines, das man gleich entfernt. */
+       ⛔ Und am 22.09.2026 ist auch der AUFKLAPPER weg. Bis dahin stand hier
+       „solange er im Quelltext steht, soll er auch funktionieren" — der Satz
+       war richtig und hat trotzdem etwas falsch gemacht: er hielt ein Stueck
+       Code am Leben, dessen einziger Aufrufer diese Pruefung selbst war. Ein
+       Aufrufer, den nur der Pruefer stellt, ist kein Aufrufer.
+       [[werkzeug_ohne_aufrufer]]
+
+       Geprueft wird jetzt, was uebrig ist und wirklich zaehlt: dass die
+       Zuordnung Wurzel → Koranhaeufigkeit ueberhaupt greift. Eine Zahl, die
+       niemand mehr anzeigt, waere sonst still auf 0 gefallen. */
     buchVokabeln().forEach(w=>{
       const wurzel = w.root && w.root.replace(/\s+/g,'');
-      const f = wurzel && QURAN_FREQ[wurzel];
-      if (f){ mit++; openQuranFreqPopover(w, f); }
+      if (wurzel && QURAN_FREQ[wurzel]) mit++;
     });
-    closeQuranFreqPopover();
+    if (!mit) throw new Error('keine einzige Vokabel mit Quran-Bezug — QURAN_FREQ greift nicht mehr');
     return `${mit} von ${buchVokabeln().length} mit Quran-Bezug`;
   });
 

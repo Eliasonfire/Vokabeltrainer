@@ -196,6 +196,23 @@ const DATEIEN = [];
 })(VAULT);
 if (fs.existsSync(AUTO)) for (const f of fs.readdirSync(AUTO)) if (f.endsWith('.md')) DATEIEN.push(AUTO + f);
 
+/* ⛔ ERGAENZT 16.09.2026, und es war eine echte Luecke. Seit dem Anbieterwechsel
+   (15.09.) liegt ein Teil des Gedaechtnisses ABSICHTLICH ausserhalb des Vaults:
+   lernpunkte.md und UMSTIEG.md sind anbieterfrei auf der Platte, damit sie beim
+   Wechsel mitkommen, und AGENTS.md/CLAUDE.md sind die Hausordnung fuer BEIDE
+   Anbieter. Der Pruefer kannte keine davon - ein Satz von Elias, der genau dort
+   nachgetragen wurde, kam trotzdem als "FEHLT GANZ" zurueck (gemessen an
+   "wo soll ich chatgpt installieren?"). Eine Fehlmeldung an dieser Stelle ist
+   teuer: sie laesst mich etwas ein zweites Mal schreiben, das schon dasteht.
+   [[werkzeug_misst_kleineren_bestand]] */
+const AUSSERHALB = [
+  'G:/1. Workspace/lernpunkte.md',
+  'G:/1. Workspace/UMSTIEG.md',
+  'G:/1. Workspace/CLAUDE.md',   // AGENTS.md daneben ist derselbe Inhalt (Symlink)
+  'G:/1. Workspace/.agents/BESTAND.md',
+];
+for (const p of AUSSERHALB) if (fs.existsSync(p)) DATEIEN.push(p);
+
 /* ⚠️ Ohne diese Normalisierung faellt JEDES Zitat durch, das im Vault ueber
    zwei Zeilen umbricht oder als Blockzitat mit "> " steht. */
 const norm = s => String(s).toLowerCase()

@@ -479,7 +479,7 @@ document.addEventListener('click', async (e)=>{
   if (!knopf) return;
   const id = Number(knopf.dataset.surering);
   if (!id) return;
-  /* Erst der Bildschirm, dann die Sure — genau wie in oeffneVersImLeser()
+  /* Erst der Bildschirm, dann die Sure — so machte es auch oeffneVersImLeser()
      (js/lernen.js). openSurah() allein zeigt nichts an, solange der
      Quran-Bildschirm nicht sichtbar ist. */
   if (typeof showScreen === 'function') showScreen('quranfull');

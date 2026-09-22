@@ -2969,32 +2969,18 @@ main{
    der Lernkarte, das als einziges diese Klasse trug. Die Begründung steht an
    seiner Stelle im Markup der Bühne.
 
-   ⚠️ Der Aufklapper darunter bleibt: seine Klassen `.qfp-header` und
-   `.qfp-backdrop` trägt auch der Notiz-Editor. Wer sie mit entfernt, nimmt
-   dem Editor still seine Kopfzeile. [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
-.quran-freq-popover{
-  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
-  z-index:700;width:min(340px,88vw);max-height:70vh;
-  background:var(--surface-3);border:1px solid var(--border-strong);border-radius:var(--r-4);
-  padding:var(--sp-4);box-shadow:var(--sh-3);
-  display:flex;flex-direction:column;gap:var(--sp-3);
-  animation:popIn var(--dur-3) var(--ease-spring);
-}
+   ⛔ AM 22.09.2026 IST AUCH DER AUFKLAPPER WEG — und mit ihm die Regeln für
+   `.quran-freq-popover`, `.qfp-list`, `.qfp-item`, `.qfp-ref`, `.qfp-pfeil`,
+   `.qfp-wortzahl` und `.qfp-note`. Gefunden hat das nicht ich, sondern
+   `werkzeuge/klassen-ohne-fundstelle.mjs`: nach dem Entfernen des Markups
+   meldete er **sechs** Klassen mehr ohne Fundstelle.
+
+   ⚠️ GEBLIEBEN sind `.qfp-header`, `.qfp-title` und `.qfp-backdrop` — die
+   tragen fünf weitere Aufsteller (Ayah, Tajweed, Notiz-Editor, Wortkarte,
+   Regelkarte). Wer sie mit entfernt, nimmt dem Notiz-Editor still seine
+   Kopfzeile. [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
 .qfp-header{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);}
 .qfp-title{font-weight:700;font-size:var(--fs-lg);}
-.qfp-list{overflow-y:auto;display:flex;flex-direction:column;gap:var(--sp-2);}
-.qfp-item{
-  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-2);
-  padding:var(--sp-3);font-size:var(--fs-md);cursor:pointer;
-  transition:border-color var(--dur-2) ease, background var(--dur-2) ease;
-}
-.qfp-item .qfp-ref{font-weight:800;color:var(--red-bright);font-variant-numeric:tabular-nums;}
-/* Jede Fundstelle fuehrt in den Quran-Leser. Ohne das war die Liste eine
-   Sackgasse: man sah, dass das Wort in 2:125 vorkommt, musste den Vers aber
-   selbst heraussuchen. */
-.qfp-item:hover{border-color:var(--red-dim);background:var(--surface-3);}
-.qfp-item:active{transform:scale(.99);}
-.qfp-pfeil{float:left;color:var(--text-faint);}
 /* Der angesteuerte Vers wird kurz hervorgehoben, sonst sucht man ihn in einer
    langen Sure trotz Sprung wieder von Hand.
    Seit dem 04.08.2026 ein grün pulsierender Rahmen statt eines roten
@@ -3010,10 +2996,6 @@ main{
   100%{border-color:var(--border);box-shadow:0 0 0 0 rgba(46,230,166,0);}
 }
 .verse-item.angesteuert{animation:versPuls 1.9s var(--ease-out);}
-/* Die Wurzelzahl steht in der Ueberschrift, die Wortzahl klein darunter -
-   sie ist die genauere, aber nicht immer verfuegbare Angabe. */
-.qfp-wortzahl{font-size:var(--fs-sm);font-weight:400;color:var(--text-dim);margin-top:2px;}
-.qfp-note{font-size:var(--fs-xs);color:var(--text-faint);text-align:center;}
 .qfp-backdrop{
   position:fixed;inset:0;background:rgba(0,0,0,.66);z-index:650;
   backdrop-filter:blur(3px);
@@ -4859,8 +4841,8 @@ button:disabled{cursor:default;}
    Größe für etwas, das mit dem Finger getroffen werden soll. Der Rollweg je
    Daumenpixel ändert sich dadurch kaum (26 → 28), die Trefferfläche aber um
    das Viereinhalbfache. */
-main::-webkit-scrollbar,.qfp-list::-webkit-scrollbar{width:8px;}
-main::-webkit-scrollbar-thumb,.qfp-list::-webkit-scrollbar-thumb{
+main::-webkit-scrollbar{width:8px;}
+main::-webkit-scrollbar-thumb{
   background:var(--surface-4);border-radius:var(--r-full);min-height:44px;
 }
 
@@ -7220,14 +7202,16 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
   </div>
   <div class="ap-grid" id="ayahGrid"></div>
 </div>
-<div class="qfp-backdrop hidden" id="qfpBackdrop"></div>
-<div class="quran-freq-popover hidden" id="quranFreqPopover">
-  <div class="qfp-header">
-    <div class="qfp-title" id="qfpTitle">Im Quran</div>
-    <button class="icon-btn" id="btnCloseQuranFreq" aria-label="Schließen"><svg class="ic"><use href="#ic-close"/></svg></button>
-  </div>
-  <div class="qfp-list" id="qfpList"></div>
-</div>
+<!-- ⛔ HIER STAND DER KORAN-HÄUFIGKEITS-AUFSTELLER — entfernt am 22.09.2026.
+     Sein Auslöser war das Abzeichen „wie oft im Quran" auf der Karteikarte,
+     und das hat Elias am 20.09.2026 wegnehmen lassen: „und wie oft es im quran
+     ist das kann man aus den karteikarten komplett raus nehmen, so bekommen
+     wir wieder etwas mehr platz." Seither hatte der Aufsteller keinen
+     Aufrufer mehr in der App — nur noch pruefe-oberflaeche.js hielt ihn am
+     Leben. Auf sein „wenn nicht dann sollst du" (22.09.) ist er weg.
+     ⚠️ Die Klassen `.qfp-backdrop`, `.qfp-header` und `.qfp-title` BLEIBEN:
+     sie tragen fünf weitere Aufsteller (Ayah, Tajweed, Notiz, Wortkarte,
+     Regelkarte). Wer sie mitnimmt, nimmt die auch mit. -->
 
 <!-- ⭐ Die Markierkarte (20.09.2026, js/quran-markierung.js). Sie sitzt UNTEN
      am Bildschirm, nicht in der Mitte: das angetippte Wort steht groß darin,

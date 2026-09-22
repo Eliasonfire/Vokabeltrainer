@@ -842,11 +842,14 @@ document.getElementById('btnTippUeberspringen').addEventListener('click', (e)=>{
    frueher bei jedem einzelnen Vers ausgeschrieben in der Datei; seit die
    Tabelle alle acht Lehrwerke abdeckt (1038 statt 92 Wurzeln) waere das die
    dreifache Dateigroesse fuer dieselbe Information. Er kommt jetzt aus
-   surah-data.js. */
-function surenName(nr){
-  const s = (typeof SURAH_DATA!=='undefined') && SURAH_DATA.find(x=>x.id===nr);
-  return s ? (s.name || `Sure ${nr}`) : `Sure ${nr}`;
-}
+   surah-data.js.
+
+   ⛔ `surenName()` ist am 22.09.2026 mit dem Aufklapper weggefallen — er war
+   ihr einziger Aufrufer. Gefunden von `werkzeuge/funktionen-ohne-aufrufer.mjs`
+   gleich beim nächsten Sammellauf, nicht von mir.
+   ⚠️ Wer den Namen einer Sure braucht: `SURAH_DATA` in surah-data.js, und im
+   Quran-Leser gibt es die Anzeige schon (js/quran.js). Eine zweite Fassung
+   hier wäre eine zweite Wahrheit. */
 
 /* ⛔ `renderQuranFreqBadge` ist am 21.08.2026 entfallen. Elias mit Bild, in dem
    er das Abzeichen rot umrandet hat: „und wie oft es im quran ist das kann man
@@ -858,73 +861,21 @@ function surenName(nr){
    Buehne zu haengen, damit die Marken links oben nicht darunter laufen. Der
    Summand ist in .front-marken ebenfalls entfernt.
 
-   ⚠️ `openQuranFreqPopover` hat damit KEINEN Aufrufer mehr in der App — es war
-   der Klick auf dieses Abzeichen. Der Aufklapper bleibt vorerst stehen: er
-   fuehrt zu den Fundstellen im Quran-Leser, und das ist etwas, das Elias nicht
-   wegzuwerfen verlangt hat, sondern nur von der Karte. Ob er auf die Infokarte
-   wandert oder ganz verschwindet, steht in der To-Do unter „Wartet auf Elias".
-   Bis dahin haelt ihn `pruefe-oberflaeche.js` weiter unter Pruefung — sonst
-   verfiele er unbemerkt. [[werkzeug_ohne_aufrufer]] */
-function openQuranFreqPopover(w, freq){
-  const [anzahl, verse] = freq;
-  const shown = verse.slice(0, 10);
-  /* Zwei verschiedene Zahlen, und der Unterschied ist lehrreich: die Wurzel
-     ب ي ت steht 73-mal im Quran, das Wort بَيْت selbst deutlich seltener - der
-     Rest sind Haeuser, Verse und andere Ableitungen derselben Wurzel. Die
-     Wortzahl gibt es nur, wo das Schriftbild im Korpus eindeutig ist; bei
-     كتب (Buch und schrieb) steht bewusst nichts. */
-  const wortZahl = (typeof QURAN_WORT !== 'undefined') && QURAN_WORT[w.sg || w.ar];
-  const zusatz = wortZahl ? `<div class="qfp-wortzahl">Das Wort selbst: ${wortZahl}×</div>` : '';
-  document.getElementById('qfpTitle').innerHTML = `${icon('crescent')} <span lang="ar" dir="rtl">${escapeHtml(w.ar)}</span> im Quran (${anzahl}×)${zusatz}`;
-  document.getElementById('qfpList').innerHTML = shown.map(([sura, ayah])=>`
-    <div class="qfp-item" data-vers="${sura}:${ayah}" role="button" tabindex="0">
-      <span class="qfp-pfeil">${icon('right')}</span>
-      <span class="qfp-ref">${sura}:${ayah}</span> — ${escapeHtml(surenName(sura))}
-    </div>
-  `).join('') + (anzahl > shown.length ? `<div class="qfp-note">Erste ${shown.length} von ${anzahl} Fundstellen</div>` : '');
-  document.getElementById('qfpBackdrop').classList.remove('hidden');
-  document.getElementById('quranFreqPopover').classList.remove('hidden');
-  overlayAuf('quranFreqPopover');
-}
-function closeQuranFreqPopover(){
-  if (overlayZuUeberHistorie('quranFreqPopover')) return;
-  document.getElementById('qfpBackdrop').classList.add('hidden');
-  document.getElementById('quranFreqPopover').classList.add('hidden');
-}
-/* Von der Fundstelle direkt in den Quran-Leser. Vorher war die Liste eine
-   Sackgasse: man sah, dass das Wort in 2:125 vorkommt, musste den Vers aber
-   selbst heraussuchen - genau das verlangt Goal-Prompt C.3 anders. */
-document.getElementById('qfpList').addEventListener('click', (e)=>{
-  const zeile = e.target.closest('[data-vers]');
-  if (zeile) oeffneVersImLeser(zeile.dataset.vers);
-});
-document.getElementById('qfpList').addEventListener('keydown', (e)=>{
-  if (e.key !== 'Enter' && e.key !== ' ') return;
-  const zeile = e.target.closest('[data-vers]');
-  if (zeile){ e.preventDefault(); oeffneVersImLeser(zeile.dataset.vers); }
-});
+   ⛔ AM 22.09.2026 IST DER AUFKLAPPER MIT WEGGEFALLEN. `openQuranFreqPopover`
+   hatte seit dem 20.09. keinen Aufrufer mehr in der App — der Klick auf dieses
+   Abzeichen war der einzige. Zwei Tage lang stand er nur noch da, weil
+   `pruefe-oberflaeche.js` ihn aufrief; ein Aufrufer, den nur die Pruefung
+   stellt, ist kein Aufrufer. Elias am 22.09. auf die Liste der offenen
+   Aufraeumposten: „wenn nicht dann sollst du".
+   Mit entfernt: `closeQuranFreqPopover()`, `oeffneVersImLeser()`, die beiden
+   Horcher auf `qfpList`, der Eintrag in js/navigation.js und der Abschnitt in
+   pruefe-oberflaeche.js. Geblieben sind die CSS-Klassen — sie tragen fuenf
+   andere Aufsteller. [[werkzeug_ohne_aufrufer]]
 
-async function oeffneVersImLeser(schluessel){
-  const [sura, ayah] = schluessel.split(':').map(Number);
-  closeQuranFreqPopover();
-  showScreen('quranfull');
-  await openSurah(sura);
-  /* Der Leser baut die Verse erst nach dem Laden des Korantexts auf; vorher
-     gibt es das Element noch nicht. */
-  const finden = () => document.querySelector(`#verseList .verse-item[data-versnr="${ayah}"]`);
-  for (let versuch = 0; versuch < 40 && !finden(); versuch++) await new Promise(r=>setTimeout(r, 50));
-  const el = finden();
-  if (!el){ toast(`${sura}:${ayah} liess sich nicht anspringen.`); return; }
-  /* Fahrt und Leuchteffekt stehen seit dem 04.08.2026 in js/quran.js
-     (`hebeVersHervor`) - die Ayah-Sprungleiste dort braucht genau dasselbe, und
-     zwei Kopien waeren zwei Fassungen, sobald eine angefasst wird. Die
-     Begruendungen, warum nicht weich gescrollt wird und warum #main statt des
-     Fensters rollt, stehen dort bei der Funktion. */
-  hebeVersHervor(el);
-}
-
-document.getElementById('qfpBackdrop').addEventListener('click', closeQuranFreqPopover);
-document.getElementById('btnCloseQuranFreq').addEventListener('click', closeQuranFreqPopover);
+   ⚠️ Wer die Fundstellen im Quran-Leser wiederhaben will, holt sich den Block
+   aus `git show 6d2bc1b:js/lernen.js` (Zeilen 868–928). Der Weg dorthin gibt
+   es weiter: `openSurah()` plus `hebeVersHervor()` in js/quran.js, genau wie
+   ihn js/start.js:482 benutzt. */
 
 /* ---------- Eigene Eselsbruecke pro Vokabel (arabicroots-Paritaet D) ---------- */
 function renderNotiz(w){
