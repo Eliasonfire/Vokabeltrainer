@@ -147,14 +147,35 @@ let TJ_ZETTEL = null;
    Laden und Speichern
    --------------------------------------------------------------------- */
 
+/* ⭐ NACH EINEM MONAT AUSGEBLENDET, NIE GELÖSCHT (22.09.2026).
+   Elias auf die Frage, ob eine Markierung verschwinden soll, sobald die
+   Stelle sitzt: „nach einem monat kann sie automatisch verschwinden aber du
+   solltest trotzdem aufzeichnen welche ich markiert habe damit falls ich mal
+   nachfrage du weißt".
+   Also: `seit` ist der Zeitpunkt, an dem der Buchstabe markiert wurde (eine
+   Änderung von Farbe oder Notiz verschiebt ihn NICHT). Nach TJ_SICHTBAR_MS
+   wird der Eintrag nicht mehr gezeichnet, bleibt aber mit `an:true`, Farbe
+   und Notiz im Speicher — und damit im Geräteabgleich, wo ich ihn lesen kann
+   (`node werkzeuge/tajweed-markierungen.mjs`). Markiert er denselben
+   Buchstaben später neu, wandert die alte Markierung nach `frueher`.
+   Auch „Buchstabe weg" behält Zeichen, Farbe und Notiz — nur `an` wird false. */
+const TJ_SICHTBAR_MS = 30 * 24 * 60 * 60 * 1000;
+
+function tajweedSichtbar(e, jetzt){
+  return !!(e && e.an) && ((jetzt || Date.now()) - (Number(e.seit) || 0)) < TJ_SICHTBAR_MS;
+}
+
 function tajweedEintragNormal(v){
-  return {
+  const e = {
     an: !!v.an,
     zeichen: String(v.zeichen || ''),
     farbe: TJ_FARBEN.some(f => f.id === v.farbe) ? v.farbe : TJ_FARBE_VORGABE,
     notiz: String(v.notiz || ''),
-    zeit: Number(v.zeit) || 0
+    zeit: Number(v.zeit) || 0,
+    seit: Number(v.seit) || 0
   };
+  if (Array.isArray(v.frueher) && v.frueher.length) e.frueher = v.frueher.slice();
+  return e;
 }
 
 /* Liest den Speicher und bringt jeden Eintrag auf die Form je Buchstabe.
@@ -168,11 +189,16 @@ function tajweedLaden(){
   const roh = LS.get(TJ_SCHLUESSEL, {}) || {};
   const raus = {};
   let aufgeloest = false;
+  const jetzt = Date.now();
   for (const [id, v] of Object.entries(roh)){
     if (!v || typeof v !== 'object') continue;
     const teile = id.split(':');
     if (teile.length === 4){
       raus[id] = tajweedEintragNormal(v);
+      /* Einträge von vor dem 22.09.2026 kennen `seit` nicht: ihr Monat
+         beginnt beim ersten Laden dieser Fassung. `zeit` bleibt, sonst
+         gälte das Nachtragen im Abgleich als Änderung. */
+      if (raus[id].an && !raus[id].seit){ raus[id].seit = jetzt; aufgeloest = true; }
       continue;
     }
     if (teile.length !== 3) continue;
@@ -182,7 +208,7 @@ function tajweedLaden(){
       v.stellen.map(Number).filter(n => Number.isInteger(n) && n >= 0).forEach((pos, k) => {
         const neuId = id + ':' + pos;
         if (!raus[neuId] || raus[neuId].zeit < alt.zeit)
-          raus[neuId] = { an: alt.an, zeichen: zeichen[k] || '', farbe: alt.farbe, notiz: alt.notiz, zeit: alt.zeit };
+          raus[neuId] = { an: alt.an, zeichen: zeichen[k] || '', farbe: alt.farbe, notiz: alt.notiz, zeit: alt.zeit, seit: jetzt };
       });
       aufgeloest = true;
     }
@@ -209,8 +235,9 @@ function tajweedNachAbgleich(){
 function tajweedStellen(sure, vers, wort){
   const vorne = `${sure}:${vers}:${wort}:`;
   const raus = [];
+  const jetzt = Date.now();
   for (const [id, e] of Object.entries(TAJWEED)){
-    if (!id.startsWith(vorne) || !e.an) continue;
+    if (!id.startsWith(vorne) || !tajweedSichtbar(e, jetzt)) continue;
     raus.push({ pos: Number(id.slice(vorne.length)), farbe: e.farbe, notiz: e.notiz, zeichen: e.zeichen });
   }
   return raus.sort((a, b) => a.pos - b.pos);
@@ -221,8 +248,9 @@ function tajweedStellen(sure, vers, wort){
    Einträge: bei al-Baqara sind das 6000 Wörter. */
 function tajweedJeWort(){
   const karte = new Map();
+  const jetzt = Date.now();
   for (const [id, e] of Object.entries(TAJWEED)){
-    if (!e.an) continue;
+    if (!tajweedSichtbar(e, jetzt)) continue;
     const teile = id.split(':');
     if (teile.length !== 4) continue;
     const wortId = teile.slice(0, 3).join(':');
@@ -673,10 +701,26 @@ function tajweedFertig(){
     const notiz = an ? (jetzt.notiz || '').trim() : '';
     const farbe = an ? jetzt.farbe : ((vorher.get(pos) || {}).farbe || TJ_FARBE_VORGABE);
     const alt = TAJWEED[id];
-    const gleich = alt && !!alt.an === an && alt.farbe === farbe && alt.notiz === notiz;
+    /* Eine abgelaufene Markierung zählt hier wie keine: sie stand nicht in
+       der Karte, und ein neues Markieren desselben Buchstabens ist eine neue
+       Markierung mit neuem Monat. */
+    const altSichtbar = tajweedSichtbar(alt);
+    const gleich = alt && altSichtbar === an && alt.farbe === farbe && alt.notiz === notiz;
     if (gleich) continue;
     const c = tajweedClusterAn(cluster, pos);
-    TAJWEED[id] = { an, zeichen: c ? c.text : '', farbe, notiz, zeit: Date.now() };
+    const neu = { an, zeichen: c ? c.text : (alt ? alt.zeichen : ''), farbe, notiz, zeit: Date.now() };
+    if (an){
+      neu.seit = altSichtbar ? (Number(alt.seit) || neu.zeit) : neu.zeit;
+    } else if (alt){
+      /* „Buchstabe weg": das Wegnehmen behält, WAS markiert war — er will,
+         dass ich es später noch weiß. */
+      neu.notiz = alt.notiz || ''; neu.farbe = alt.farbe; neu.seit = Number(alt.seit) || 0;
+    }
+    const frueher = (alt && Array.isArray(alt.frueher)) ? alt.frueher.slice() : [];
+    if (an && alt && alt.an && !altSichtbar)
+      frueher.push({ seit: Number(alt.seit) || 0, farbe: alt.farbe, notiz: alt.notiz || '' });
+    if (frueher.length) neu.frueher = frueher;
+    TAJWEED[id] = neu;
     geaendert = true;
   }
   if (geaendert) tajweedSpeichern();

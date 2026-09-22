@@ -814,7 +814,7 @@ const GRAMMAR_RULES = [
   {
     id: "fem-ohne-ta-marbuta-01",
     satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
-    name: "مُؤَنَّث بلا تَاء (weiblich ohne Tāʾ marbūṭa)",
+    name: "مُؤَنَّث بِلَا تَاء (weiblich ohne Tāʾ marbūṭa)",   /* بِلَا belegt: en.wiktionary „بلا" (ar-head prep); arabdict hat dieselbe Kasra, ohne Fatha auf dem Lām — Elias 22.09.2026: „guck wörterbuch nach" */
     shortExplanation: "Es gibt drei Gruppen weiblicher Wörter: solche mit Tāʾ marbūṭa, solche die von der Bedeutung her weiblich sind (Tochter, Mutter, Tante) und solche, die einfach weiblich sind – ohne erkennbaren Grund, z.B. اَلنَّار an-nār »das Feuer«. Auch قِدْرٌ qidrun »Kochtopf« ist weiblich, obwohl kein Tāʾ marbūṭa dransteht. Die dritte Gruppe muss man auswendig lernen.",
     color: "fem",
     source: { folge: 9, video: "Folge 09", approxTimestamp: "42:53", chapter: 6 },
@@ -832,7 +832,7 @@ const GRAMMAR_RULES = [
   {
     id: "koerperteile-genus-01",
     satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
-    name: "أَعْضَاء مزدوجة (doppelte Körperteile sind weiblich)",
+    name: "أَعْضَاء مُزْدَوِجَة (doppelte Körperteile sind weiblich)",   /* مُزْدَوِجَة belegt: en.wiktionary „مزدوج" (feminine), arabdict nur m. مُزْدَوِج — Elias 22.09.2026: „guck wörterbuch nach" */
     shortExplanation: "Körperteile, die es doppelt gibt, sind im Arabischen weiblich: يَدٌ yadun »Hand«, رِجْلٌ rijlun »Bein«, أُذُنٌ udhunun »Ohr«, عَيْنٌ ʿaynun »Auge«. Körperteile, die es nur einmal gibt, sind männlich – أَنْفٌ anfun »Nase« und فَمٌ famun »Mund«. Der Lehrer nennt das eine »Ausnahmeregel«, die man sich bei Körperteilen gut merken kann.",
     color: "fem",
     source: { folge: 9, video: "Folge 09", approxTimestamp: "48:32", chapter: 6 },

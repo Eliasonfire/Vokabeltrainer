@@ -1206,6 +1206,9 @@ function hatFortschritt(id){
      Kapitelkarte den Stand der eigenen, wo der weiter ist. Hier ein neuer Stempel,
      sonst holte der Abgleich den kleineren Stand vom anderen Gerät zurück.
      Zusammengezählt wird nie: eine Summe behauptete Übung, die so nie stattfand.
+     ⭐ „Die höhere Box gewinnt" war am 17.09.2026 MEINE Deutung seiner
+     Grundregel; seit dem 22.09.2026 ist es SEINE: auf „gewinnt die mit der
+     höheren Box. Passt das?" antwortete Elias „ja".
    - sonst nichts. */
 function uebertrageFortschritt(von, nach, beideVergleichen){
   const quelle = PROGRESS[String(von)];
