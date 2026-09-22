@@ -343,6 +343,23 @@ export const PFLEGEPLAN = [
     veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs', werkzeug: 'werkzeuge/pruefe-buchtausch.mjs',
       wie: 'prüft die Zuordnung, den Aufruf und den Fortschritt — und führt js/kern.js wirklich aus, um danach zu messen, was in VOCAB_DATA steht. Exit 2 nennt weitere Kandidaten, über die Elias noch nicht entschieden hat' },
   },
+  /* 22.09.2026 (v569), innerhalb von functions/api/diagnose.js,
+     js/einstellungen.js und werkzeuge/diagnose-holen.mjs und deshalb von Hand
+     hier: die Diagnose liegt jetzt unter `diagnose:<mail>:<gerät>` statt unter
+     `diagnose:<mail>`. Vorher überschrieb das zweite Gerät das erste — gemessen
+     am 22.09.2026: Elias' Tablet-Bericht (Serverzeit 20:23:10Z) war weg,
+     nachdem das Handy (20:37:37Z) geschickt hatte. Mein Baufehler, nicht seiner.
+     Kein neuer Pflegebedarf, und zwar geprüft:
+     · neuer Inhalt — nein, es entsteht ein Schlüssel je Gerät statt einer, und
+       diagnose-holen.mjs listet ohnehin schon mit Präfix, zeigt also alle;
+     · seine Eingaben — die Diagnose IST seine Eingabe, und sie wird von Hand
+       gelesen, wenn er sagt „ich hab dir Diagnose geschickt". Kein Kreislauf,
+       der von selbst laufen müsste;
+     · veralten — ja, ein alter Bericht; er trägt die Serverzeit im Kopf, und
+       die steht bei jedem Abruf mit da. Ein Aufräumen braucht es nicht: KV
+       hält je Gerät genau einen Eintrag, nicht einen je Absendung.
+     ⚠️ Und diagnose-holen.mjs läuft wieder: wrangler 4.120.1 → 4.124.0. Die
+     alte Fassung meldete „Ist wrangler angemeldet?", obwohl sie es war. */
   {
     funktion: 'Kategorien und Wortliste',
     dateien: ['js/kategorien.js', 'wortfelder-data.js'],

@@ -37,7 +37,15 @@ if (!treffer){
 const namespace = treffer[1];
 
 const args = process.argv.slice(2);
-const wrangler = ['--yes', 'wrangler@4.120.1'];
+/* ⛔ 22.09.2026: 4.120.1 → 4.124.0. Mit der alten Fassung endete jeder Abruf
+   auf „Konnte den Speicher nicht lesen. Ist wrangler angemeldet?", obwohl
+   wrangler per OAuth angemeldet WAR — gemessen an demselben Abend, an dem
+   derselbe Befehl mit 4.124.0 aus PowerShell heraus sofort lief.
+   ⚠️ Die Meldung des Werkzeugs war dadurch irreführend: sie nannte die
+   Anmeldung als Ursache, und die war in Ordnung. Ein Befund, der auf die
+   falsche Ursache zeigt, kostet mehr Zeit als gar keiner.
+   [[kennzeichen_mit_zwei_ursachen]] */
+const wrangler = ['--yes', 'wrangler@4.124.0'];
 
 /* ⛔ `npx` heisst unter Windows `npx.cmd`, und ein direkt aufgerufenes .cmd
    wirft seit Node 20 EINVAL — `cmd /c npx` geht durch die Shell und
