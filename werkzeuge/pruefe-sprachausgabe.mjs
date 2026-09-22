@@ -34,10 +34,18 @@ const schneide = (name) => {
   if (!m) { console.log('⛔ ' + name + '() nicht auffindbar — hat js/sprachausgabe.js einen neuen Aufbau?'); process.exit(1); }
   return m[0];
 };
+/* ⛔ tonFehlertext() nie allein ausschneiden. Seit v570 (`3568a2a`, Nacht auf
+   den 23.09.2026) ruft sie für „voice-unavailable" stimmeFehltText() auf — und
+   dieser Prüfer starb daran mit „stimmeFehltText is not defined", über zwei
+   Auslieferungen (v570, v571), ohne dass es auffiel: der Sammellauf zeigt als
+   letzte Zeile nur „Node.js v24.18.0". Gemessen an den drei Commits danach:
+   die Funktion steht in js/sprachausgabe.js, im Prüfer stand sie nie.
+   Wer tonFehlertext() eine neue Hilfsfunktion gibt, trägt sie HIER ein. */
+const fehlertexte = () => schneide('stimmeFehltText') + '\n' + schneide('tonFehlertext');
 
 /* ---------- 1. Die Fehlertexte ---------- */
 console.log('=== Sagt sie beim Fehler, was zu TUN ist? ===\n');
-const tonFehlertext = new Function(schneide('tonFehlertext') + '\nreturn tonFehlertext;')();
+const tonFehlertext = new Function(fehlertexte() + '\nreturn tonFehlertext;')();
 
 /* ⛔ Der wichtigste Fall zuerst, und er ist ein SCHWEIGEN: `cancel()` ruft die
    App selbst, bei jedem neuen Wort. Gaebe es dafuer eine Meldung, staende bei
@@ -101,7 +109,7 @@ function buehne({ stimmen = 1, dauerMs = 0, sprichtNachher = false, stumm = fals
 
   const quelle = 'let ARABIC_VOICES = [];\n'
     + schneide('arabischeStimmen') + '\n'
-    + schneide('tonFehlertext') + '\n'
+    + fehlertexte() + '\n'
     + schneide('speakArabic') + '\n'
     + 'return { speakArabic };';
   const f = new Function('window', 'speechSynthesis', 'SpeechSynthesisUtterance', 'SETTINGS',
@@ -196,7 +204,7 @@ console.log('\n=== Stoertest: haengt die Probe am echten Code? ===\n');
       getVoices: () => [{ lang:'ar-SA', voiceURI:'v0', name:'S' }],
       speak(u){ if(u.onstart) u.onstart(); jetzt += 8; if(u.onend) u.onend(); } };
     const f = new Function('window','speechSynthesis','SpeechSynthesisUtterance','SETTINGS','toast','setTimeout','clearTimeout','Date',
-      'let ARABIC_VOICES = [];\n' + schneide('arabischeStimmen') + '\n' + schneide('tonFehlertext') + '\n' + verbogen
+      'let ARABIC_VOICES = [];\n' + schneide('arabischeStimmen') + '\n' + fehlertexte() + '\n' + verbogen
       + '\nreturn speakArabic;')(
       { speechSynthesis: ss }, ss, U, { voiceURI: null }, (t)=>meldungen.push(t), ()=>0, ()=>{}, { now: () => jetzt });
     f('كِتَابٌ');

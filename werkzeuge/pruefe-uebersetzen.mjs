@@ -96,10 +96,13 @@ vm.createContext(ctx);
 
 const geladen = [];
 const gescheitert = [];
-/* Die Reihenfolge ist die des index.html: Daten zuerst, dann die Module. */
+/* Die Reihenfolge ist die des index.html: Daten zuerst, dann die Module.
+   ⚠️ Bis 23.09.2026 stand hier „die des index.html" über einer anderen
+   Reihenfolge, und lehrbuch-saetze.js fehlte ganz — mit ihr fehlten 42 Sätze,
+   die die Übung zeigt. Nachgemessen an index.html Z7319–7376. */
 const DATEIEN = [
-  'vocab-data.js', 'grammar-data.js', 'data/fachbegriffe.js',
-  'data/beispielsaetze.js', 'js/saetze.js', 'js/irab.js',
+  'vocab-data.js', 'data/beispielsaetze.js', 'data/fachbegriffe.js',
+  'grammar-data.js', 'lehrbuch-saetze.js', 'js/irab.js', 'js/saetze.js',
   'js/uebersetzen.js', 'js/uebung.js'
 ];
 for (const f of DATEIEN){
@@ -123,6 +126,11 @@ const analysiereSatz = hole('analysiereSatz');
 const setzeLexikon   = hole('setzeLexikon');
 const VOCAB_DATA     = hole('VOCAB_DATA');
 const BEISPIELSAETZE = hole('BEISPIELSAETZE');
+const alleSaetze     = hole('alleSaetze');
+const uebsBedeutung       = hole('uebsBedeutung');
+const uebsBedeutungsWorte = hole('uebsBedeutungsWorte');
+const uebsStamm           = hole('uebsStamm');
+const uebungBezugswort    = hole('uebungBezugswort');
 
 const befunde = [];
 const melde = z => befunde.push(z);
@@ -133,6 +141,8 @@ if (typeof hole('wortKern') !== 'function')
   melde('js/saetze.js: wortKern() ist nicht erreichbar. Ohne sie findet uebsBedeutung() keine Vokabel, und „Wort ausgelassen" fällt lautlos aus — die Zahlen unten wären dann falsch, nicht die Übung.');
 if (!analysiereSatz)      melde('js/irab.js: analysiereSatz() ist nicht erreichbar.');
 if (!BEISPIELSAETZE)      melde('data/beispielsaetze.js: BEISPIELSAETZE ist nicht erreichbar.');
+if (typeof alleSaetze !== 'function')
+  melde('js/saetze.js: alleSaetze() ist nicht erreichbar. Ohne sie prüft der Prüfer nicht die Sätze, die die Übung wirklich zeigt.');
 if (befunde.length){
   console.log('✖ Der Prüfer kann nicht messen:');
   befunde.forEach(z => console.log('  · ' + z));
@@ -143,9 +153,33 @@ if (typeof setzeLexikon === 'function' && Array.isArray(VOCAB_DATA)) setzeLexiko
 
 /* ---------- Die Sätze ---------- */
 
-const saetze = Object.entries(BEISPIELSAETZE)
-  .map(([id, s]) => ({ id, sentAr: s.sentAr, sentDe: s.sentDe }))
-  .filter(s => s.sentAr && String(s.sentDe || '').trim());
+/* ⛔⛔ DIE SÄTZE, DIE DIE ÜBUNG WIRKLICH ZEIGT — nicht die, die gerade greifbar sind.
+
+   Bis 23.09.2026 las dieser Prüfer nur data/beispielsaetze.js: 227 Sätze. Die
+   Übung zeigt aber alles aus alleSaetze() (js/saetze.js) — die Beispielsätze
+   der Karten aus vocab-data.js, die Lehrbuchsätze und die längeren Sätze — und
+   dazu die Sätze der Buchvokabeln. Zusammen 434. Der Satz, an dem Elias'
+   Kommentarfaden hing (هَذَا حَجَرٌ قَدِيمٌ وَثَقِيلٌ, Karte 45780), war nicht
+   dabei. Gemessen wurde also die knappe Hälfte, und die grüne Zeile unten
+   sprach für das Ganze. [[liste_zeigt_nur_eine_oberflaeche]]
+
+   Jetzt: alleSaetze() aus der App selbst, plus die Buchvokabel-Sätze, die in
+   der App erst js/buecher.js an VOCAB_DATA hängt. Doppelte Sätze zählen einmal. */
+const saetze = [];
+const schonText = new Set();
+const schonId   = new Set();
+function nimm(id, sentAr, sentDe){
+  if (!sentAr || !String(sentDe || '').trim()) return;
+  const text = sentAr + '|' + sentDe;
+  if (schonText.has(text)) return;
+  schonText.add(text);
+  let eigen = String(id);
+  while (schonId.has(eigen)) eigen += '′';   // gleiche Kennung, anderer Satz
+  schonId.add(eigen);
+  saetze.push({ id: eigen, sentAr, sentDe });
+}
+for (const s of alleSaetze()) nimm(s.id, s.sentAr, s.sentDe);
+for (const [id, s] of Object.entries(BEISPIELSAETZE)) if (s) nimm(id, s.sentAr, s.sentDe);
 
 const zeilenVon = new Map();
 for (const s of saetze){
@@ -157,18 +191,36 @@ for (const s of saetze){
 
 /* ⚠️ Vier Abwandlungen, die jeder Mensch schreiben würde und die alle richtig
    sind. Wer hier durchfällt, prüft Rechtschreibung statt Grammatik. */
+/* ⛔ Die ersten vier ändern nur die SCHREIBWEISE. Die letzten zwei ändern das
+   DEUTSCH — und genau dort lagen am 23.09.2026 zwei Fehler, die die ersten vier
+   nie finden konnten:
+   · „Das ist …" statt „Dies ist …": 82 von 83 fielen als „Wort fehlt: dies"
+     durch. Es ist die natürlichste Übersetzung von هَذَا.
+   · „vom Händler" statt „des Händlers": 27 von 46 fielen durch, obwohl
+     js/uebersetzen.js genau diese Fassung im Kopf als richtig nennt.
+   Beide greifen nur, wo das Muster die Stelle hat; sonst `null` = entfällt. */
 const HARMLOS = [
   ['unverändert',        de => de],
   ['klein geschrieben',  de => de.toLowerCase()],
   ['ohne Satzzeichen',   de => de.replace(/[.,!?;:]/g, '')],
-  ['zusätzliche Leerzeichen', de => '  ' + de.replace(/ /g, '  ') + ' ']
+  ['zusätzliche Leerzeichen', de => '  ' + de.replace(/ /g, '  ') + ' '],
+  ['„Das ist" statt „Dies ist"', de => {
+    const n = de.replace(/^Dies (ist|sind)\b/, 'Das $1');
+    return n !== de ? n : null;
+  }],
+  ['„vom X" statt „des Xs"', de => {
+    const n = de.replace(/\bdes ([A-ZÄÖÜ][a-zäöüß]+?)(es|s)\b/g, 'vom $1');
+    return n !== de ? n : null;
+  }]
 ];
 
 let aGeprueft = 0;
 const aFehler = [];
 for (const s of saetze){
   for (const [wie, mach] of HARMLOS){
-    const erg = uebersetzungPruefen(s, zeilenVon.get(s.id), mach(s.sentDe));
+    const text = mach(s.sentDe);
+    if (text == null) continue;
+    const erg = uebersetzungPruefen(s, zeilenVon.get(s.id), text);
     aGeprueft++;
     if (!erg.richtig){
       aFehler.push({ id: s.id, wie, de: s.sentDe,
@@ -215,8 +267,100 @@ const STOERUNGEN = [
       const t = s.sentDe.replace(/\bMein\b/, 'Dein').replace(/\bmein(e|en|em|er|es)?\b/, (m)=>'dein'+(m.slice(4)||''));
       return t !== s.sentDe ? t : null;
     }
+  },
+  {
+    art: 'genus',
+    /* Das Hinweiswort vor einem Nomen in die falsche Form bringen: „Dieses
+       Haus" → „Dieser Haus". ⛔ Bis 23.09.2026 fehlte dieser Fall hier — und
+       die Prüfung dahinter schlug nie an: 0 von 47, „Dieses Händler ist reich"
+       galt als richtig. Ein Störtest, der eine Fehlerart auslässt, bescheinigt
+       ihr nichts. [[leere_liste_ist_keine_messung]] */
+    mach(s){
+      const TAUSCH = { Dieser:'Dieses', Dieses:'Dieser', Diese:'Dieser', dieser:'dieses', dieses:'dieser', diese:'dieser' };
+      const m = s.sentDe.match(/\b(Dieser|Dieses|Diese|dieser|dieses|diese)\s+(?=[A-ZÄÖÜ])/);
+      return m ? s.sentDe.replace(m[0], TAUSCH[m[1]] + ' ') : null;
+    }
+  },
+  {
+    art: 'nah-fern', erwartet: 'ausgelassen',
+    /* „dieses" durch „jenes" ersetzen — nah gegen fern, هَذَا gegen ذَلِكَ.
+       Das ist KEIN Genusfehler und darf nicht als solcher benannt werden; es
+       fehlt aber das richtige Wort. Bewacht die Ausnahme vom 23.09.2026, die
+       „Das ist" für „Dies ist" gelten lässt: sie darf „jenes" nicht mit
+       durchwinken. */
+    mach(s){
+      const TAUSCH = { Dieser:'Jener', Dieses:'Jenes', Diese:'Jene', Dies:'Jenes',
+                       dieser:'jener', dieses:'jenes', diese:'jene', dies:'jenes' };
+      const m = s.sentDe.match(/\b(Dieser|Dieses|Diese|Dies|dieser|dieses|diese|dies)\b/);
+      return m ? s.sentDe.replace(m[0], TAUSCH[m[1]]) : null;
+    }
+  },
+  /* ⭐ Die letzten zwei Fehlerarten, seit 23.09.2026 — vorher prüfte der Störtest
+     vier von sieben, und die fünfte (Genus) war genau deshalb unbemerkt tot.
+     Beide greifen nur, wo die Analyse ihren Beleg findet und die Wörter eine
+     Vokabel haben; gemessen am selben Abend: 38 von 38 und 11 von 12. */
+  {
+    art: 'idafa',
+    /* Die beiden Wörter der إِضَافَة im Muster vertauschen: „das Buch des
+       Lehrers" → „das Lehrers des Buch". Das Deutsch wird schief — gezählt
+       wird nur, dass die Reihenfolge erkannt wird. */
+    mach(s, zeilen){
+      for (let i = 0; i < zeilen.length - 1; i++){
+        const a = zeilen[i], b = zeilen[i + 1];
+        if (!/\(مُضَاف\)/.test(String(a.rolle || ''))) continue;
+        if (!String(b.rolle || '').startsWith('مُضَاف إِلَيْه')) continue;
+        const w = s.sentDe.split(/\s+/);
+        const pA = musterPos(w, a.rein || a.wort), pB = musterPos(w, b.rein || b.wort);
+        if (pA < 0 || pB < 0 || pA === pB) continue;
+        const xa = nackt(w[pA]), xb = nackt(w[pB]);
+        w[pA] = w[pA].replace(xa, xb); w[pB] = w[pB].replace(xb, xa);
+        return w.join(' ');
+      }
+      return null;
+    }
+  },
+  {
+    art: 'adjektivbezug',
+    /* Das Adjektiv aus seiner Stelle nehmen und vor ein ANDERES Nomen des
+       Satzes setzen — dann beschreibt es im Deutschen das falsche Wort. */
+    mach(s, zeilen){
+      if (typeof uebungBezugswort !== 'function') return null;
+      for (let i = 0; i < zeilen.length; i++){
+        const z = zeilen[i];
+        if (!/نَعْت/.test(String(z.rolle || ''))) continue;
+        const bezug = uebungBezugswort(zeilen, i, null);
+        if (!bezug) continue;
+        const w = s.sentDe.split(/\s+/);
+        const pAdj = musterPos(w, z.rein || z.wort), pBez = musterPos(w, bezug);
+        if (pAdj < 0 || pBez < 0) continue;
+        let pX = -1;
+        for (const x of zeilen){
+          const wx = x.rein || x.wort;
+          if (!wx || wx === bezug || wx === (z.rein || z.wort)) continue;
+          if (/نَعْت|حَرْف|ضَمِير/.test(String(x.rolle || ''))) continue;
+          const p = musterPos(w, wx);
+          if (p >= 0 && p !== pAdj && p !== pBez){ pX = p; break; }
+        }
+        if (pX < 0) continue;
+        const adj = nackt(w[pAdj]);
+        const ohne = w.filter((_, j) => j !== pAdj);
+        ohne.splice(pX > pAdj ? pX - 1 : pX, 0, adj);
+        return ohne.join(' ');
+      }
+      return null;
+    }
   }
 ];
+
+/* Wo steht die Bedeutung dieses arabischen Wortes im Muster? Über dieselben
+   Helfer wie die Übung selbst — ein eigener Nachbau prüfte den Nachbau. */
+function nackt(w){ return w.replace(/[.,;:!?()„“"]/g, ''); }
+function musterPos(worte, arabisch){
+  const bed = uebsBedeutungsWorte(uebsBedeutung(arabisch));
+  if (!bed.length) return -1;
+  for (let i = 0; i < worte.length; i++) if (bed.includes(uebsStamm(worte[i]))) return i;
+  return -1;
+}
 
 const bGeprueft = {};
 const bVerfehlt = {};
@@ -225,7 +369,7 @@ for (const st of STOERUNGEN){ bGeprueft[st.art] = 0; bVerfehlt[st.art] = []; }
 for (const s of saetze){
   const zeilen = zeilenVon.get(s.id);
   for (const st of STOERUNGEN){
-    const text = st.mach(s);
+    const text = st.mach(s, zeilen || []);
     if (text == null || !text.trim()) continue;
     /* Die Verfälschung muss den Satz WIRKLICH verändert haben. */
     if (text.trim() === s.sentDe.trim()) continue;
@@ -233,7 +377,7 @@ for (const s of saetze){
     bGeprueft[st.art]++;
     if (erg.richtig){
       bVerfehlt[st.art].push({ id: s.id, de: s.sentDe, statt: text, wie: 'als RICHTIG gezählt' });
-    } else if (!erg.befunde.some(b => b.art === st.art)){
+    } else if (!erg.befunde.some(b => b.art === (st.erwartet || st.art))){
       bVerfehlt[st.art].push({ id: s.id, de: s.sentDe, statt: text,
         wie: 'erkannt als ' + (erg.befunde.map(b=>b.art).join('+') || 'ratlos') });
     }
@@ -301,7 +445,7 @@ console.log('Module geladen:              ' + geladen.length + ' von ' + DATEIEN
 if (gescheitert.length) gescheitert.forEach(z => console.log('   ⚠️ ' + z));
 
 console.log('\nA) Richtige Übersetzungen gehen durch');
-console.log('   geprüft: ' + aGeprueft + ' (4 Schreibweisen je Satz) · durchgefallen: ' + aFehler.length);
+console.log('   geprüft: ' + aGeprueft + ' (' + HARMLOS.length + ' Fassungen, die letzten zwei nur wo sie passen) · durchgefallen: ' + aFehler.length);
 if (aFehler.length && (laut || aFehler.length <= 12))
   aFehler.slice(0, laut ? 999 : 12).forEach(f =>
     console.log('   ✖ ' + f.id + ' [' + f.wie + '] ' + f.grund + '  — „' + f.de + '"'));

@@ -94,10 +94,37 @@ function uebsWorte(s){
 
 /* ⭐ Der Stamm — hier entscheidet sich, wie großzügig das Richtigzählen ist.
    „neu", „neuer", „neue", „neues" sind dieselbe Vokabel; „Haus" und „Hauses"
-   auch. Abgeschnitten wird nur, wenn mindestens vier Zeichen stehen bleiben —
-   sonst würde aus „die" ein „di" und aus „ein" ein „ei", und zwei verschiedene
-   Wörter fielen zusammen. Eine Normalisierung, die zu viel zusammenwirft,
-   meldet „richtig" für etwas Falsches, und das fällt niemandem auf.
+   auch; „Händler" und „Händlers" ebenso. Eine Normalisierung, die zu viel
+   zusammenwirft, meldet „richtig" für etwas Falsches, und das fällt niemandem
+   auf — eine, die zu wenig zusammenwirft, meldet ein Wort als fehlend, das
+   dasteht.
+
+   ⛔⛔ DIE ERSTE FASSUNG HIELT DAS VERSPRECHEN DER ERSTEN ZEILE NICHT
+   (gemessen 23.09.2026, an allen 434 Sätzen, die die Übung zeigen kann).
+   Sie schnitt nur EINMAL ab und nur, wenn danach noch VIER Zeichen standen.
+   Damit blieben „neue" und „neuer" zwei Wörter (neu hat nur drei), und aus
+   „Händlers" wurde „händler", aus „Händler" aber „händl". Folge: „die Tochter
+   vom Lehrer" statt „des Lehrers" fiel 27 von 46 Mal als „Wort fehlt" durch —
+   genau die Fassung, die der Kopf dieser Datei ausdrücklich richtig nennt. Und
+   wer „dieser alte Stein" schrieb, bekam neben dem echten Fehler ein erfundenes
+   „es fehlt ‚alter'".
+
+   Jetzt zwei Stufen, und es wird wiederholt, bis nichts mehr passt:
+   · Endungen mit Vokal (-e, -en, -em, -er, -es) dürfen bis auf DREI Zeichen
+     abschneiden: alt·e, neu·er, gut·es.
+   · Das nackte -n und -s braucht weiter VIER: sonst würde aus „Haus" ein
+     „hau", während „Hauses" bei „haus" landet.
+   „die" und „ein" bleiben, wie sie sind — zwei Zeichen wären zu wenig.
+
+   Gegenprobe an allen 633 deutschen Wörtern der Muster und Bedeutungen:
+   20 Gruppen fallen neu zusammen, 0 fallen auseinander. 19 der 20 sind
+   Beugungen desselben Wortes (klein/kleine/kleiner, Mädchen/Mädchens …).
+   ⚠️ Die zwanzigste ist eine bekannte Lücke: „Japan" und „Japaner" gelten
+   jetzt als dasselbe Wort, wie „Ägypten" und „Ägypter" schon vorher. Jede
+   Regel, die „kleiner" auf „klein" bringt, bringt „Japaner" auf „Japan" —
+   ohne Wörterbuch ist das nicht zu trennen. Wer „aus Japan" statt „Japaner"
+   schreibt, wird hier also nicht als „Wort fehlt" erkannt. Für eine
+   Verwechslung mit der Nisba-Endung (ـِيٌّ) wäre eine eigene Prüfung nötig.
 
    ⚠️ Kein Stemmer von der Stange und keine Umlautzerlegung: „Häuser" bleibt
    von „Haus" verschieden. Das ist eine bewusste Lücke — sie führt höchstens zu
@@ -106,8 +133,16 @@ function uebsWorte(s){
 const UEBS_ENDUNGEN = ['en', 'em', 'er', 'es', 'e', 'n', 's'];
 function uebsStamm(w){
   let x = uebsNorm(w).replace(/ß/g, 'ss');
-  for (const e of UEBS_ENDUNGEN){
-    if (x.length - e.length >= 4 && x.endsWith(e)) return x.slice(0, -e.length);
+  for (let weiter = true; weiter; ){
+    weiter = false;
+    for (const e of UEBS_ENDUNGEN){
+      const bleibt = (e === 'n' || e === 's') ? 4 : 3;
+      if (x.length - e.length >= bleibt && x.endsWith(e)){
+        x = x.slice(0, -e.length);
+        weiter = true;
+        break;
+      }
+    }
   }
   return x;
 }
@@ -131,6 +166,42 @@ const UEBS_KOPULA   = new Set(['ist','sind','bin','bist','seid','war','waren']);
 const UEBS_BESTIMMT = new Set(['der','die','das','den','dem','des','im','am','vom','zum','zur','beim']);
 const UEBS_UNBESTIMMT = new Set(['ein','eine','einen','einem','eines','einer']);
 const UEBS_HINWEIS  = new Set(['dies','dieser','diese','dieses','diesen','diesem','jener','jene','jenes','das']);
+
+/* ⭐ „Das ist" und „Dies ist" sind dieselbe Übersetzung von هَذَا.
+
+   ⛔ Gemessen 23.09.2026 an 434 Sätzen: 82 von 83 Musterübersetzungen, die
+   mit „Dies ist" beginnen, fielen mit „Das ist" als „Wort fehlt: dies" durch.
+   „das" steht bei den Füllwörtern, „dies" nicht — und „Das ist ein Stein" ist
+   die natürlichste deutsche Fassung, die er gleich beim ersten Satz schreibt.
+
+   Für die VOLLSTÄNDIGKEIT gilt ein hinweisendes „das" deshalb als jedes
+   Hinweiswort: „Das ist" passt zu هَذَا wie zu ذَلِكَ. Welche Form es sein
+   muss, entscheidet allein die Genusprüfung weiter unten.
+   ⚠️ Nicht jedes „das" zählt: in „Das Haus ist groß" für هَذَا الْبَيْتُ كَبِيرٌ
+   ist es der Artikel, und dort FEHLT das Hinweiswort wirklich. Als Hinweiswort
+   gilt „das" nur vor einer Form von „sein" („Das ist …") oder vor „hier",
+   „da", „dort" — und HINTER einer Form von „sein" nur, wenn danach kein Nomen
+   kommt („Ist das ein Buch?", „Was ist das?").
+   ⛔ Die erste Fassung ließ jedes „das" hinter „ist" gelten. Der Prüfer fand
+   es noch am selben Abend: „Jenes ist das Auto des Direktors" galt als
+   richtig für „Dies ist das Auto …", weil „ist das" wie „Ist das …?" aussah.
+   ⚠️ Und „jenes" ersetzt „dieses" NICHT: das ist nah gegen fern (ذَلِكَ gegen
+   هَذَا), und dort fehlt das richtige Wort weiterhin. */
+const UEBS_HINWEIS_STAMM = new Set([...UEBS_HINWEIS].filter(w => w !== 'das').map(uebsStamm));
+function uebsDasZeigt(worte, i){
+  if (worte[i] !== 'das') return false;
+  const vor = worte[i - 1], nach = worte[i + 1];
+  if (UEBS_KOPULA.has(nach) || nach === 'hier' || nach === 'da' || nach === 'dort') return true;
+  if (!UEBS_KOPULA.has(vor)) return false;
+  return nach === undefined || UEBS_FUELLWORTE.has(nach);   // Artikel, „nicht", „in" … — aber kein Nomen
+}
+
+/* Steht dieser Stamm in seiner Eingabe? Das ist die eine Frage, die die
+   Vollständigkeit stellt — an drei Stellen, und deshalb nur hier beantwortet. */
+function uebsEingabeHat(k, stamm){
+  if (k.eingabeStamm.includes(stamm)) return true;
+  return UEBS_HINWEIS_STAMM.has(stamm) && k.eingabeDasZeigt;
+}
 const UEBS_BESITZ   = {
   mein: ['mein','meine','meinen','meinem','meiner','meines'],
   dein: ['dein','deine','deinen','deinem','deiner','deines'],
@@ -271,7 +342,7 @@ function uebsPruefeAuslassung(k){
     const bed = uebsBedeutungsWorte(de);
     if (!bed.length) continue;
     if (!uebsStehtDrin(bed, k.musterStamm)) continue;   // das Muster benutzt es nicht
-    if (uebsStehtDrin(bed, k.eingabeStamm)) continue;   // er hat es
+    if (bed.some(b => uebsEingabeHat(k, b))) continue;  // er hat es
     fehlen.push({ wort, de });
   }
   if (fehlen.length){
@@ -303,7 +374,7 @@ function uebsPruefeAuslassung(k){
     const st = uebsStamm(w);
     if (gesehen.has(st)) continue;
     gesehen.add(st);
-    if (!k.eingabeStamm.includes(st)) fehlendeWorte.push(w);
+    if (!uebsEingabeHat(k, st)) fehlendeWorte.push(w);
   }
   if (!fehlendeWorte.length) return null;
   const liste = fehlendeWorte.map(w => `„${w}"`).join(' · ');
@@ -439,19 +510,52 @@ function uebsPruefeBesitzer(k){
    ist der Punkt. هَذَا الْبَيْتُ heißt „dieses Haus", nicht „dieser Haus": im
    Deutschen richtet sich die Form nach dem deutschen Wort. Wer hier vom
    Arabischen aus prüft, meldet einen Fehler, wo keiner ist. Das Muster ist die
-   einzige Quelle, die beide Sprachen kennt. */
+   einzige Quelle, die beide Sprachen kennt.
+
+   ⛔⛔ DIE ERSTE FASSUNG HAT NIE ANGESCHLAGEN (gemessen 23.09.2026).
+   Sie verglich die STÄMME der beiden Formen — und „dieser", „diese", „dieses"
+   haben alle denselben Stamm „dies". Genau die Formen, um die es geht, galten
+   damit als gleich: 0 von 47 vertauschten Formen wurden erkannt, „Dieses
+   Händler ist reich" zählte als richtig. Der Prüfer hat es nicht gemerkt, weil
+   sein Störtest nur vier der sieben Fehlerarten verfälschte.
+   [[leere_liste_ist_keine_messung]]
+
+   Jetzt werden die FORMEN verglichen, Stück für Stück in der Reihenfolge des
+   Satzes, und nur dort, wo die Frage wirklich das Genus ist:
+   · nur geschriebene Genusformen gegeneinander: dieser/diese/dieses und
+     jener/jene/jenes. „dies" und ein hinweisendes „das" („Das ist …") sind
+     neutral und passen zu allem — „Dies ist" wie „Das ist" wie „Dieses ist".
+   · „dieses" gegen „jenes" ist nah gegen fern, „diesem" gegen „dieser" ist der
+     deutsche Fall — beides ist nicht die Regel, die hier genannt wird.
+   · stehen im Muster und in seiner Eingabe verschieden viele Hinweiswörter,
+     wird nichts behauptet: dann fehlt eines, und das meldet die
+     Vollständigkeit. Nur bei gleicher Zahl ist klar, welches zu welchem gehört. */
 const UEBS_ISARA = /^(?:و?)(?:هذا|هذه|ذلك|تلك|هؤلاء|أولئك|اولئك)$/;
+const UEBS_GENUS_FORMEN = new Set(['dieser', 'diese', 'dieses', 'jener', 'jene', 'jenes']);
+function uebsHinweisFolge(worte){
+  const raus = [];
+  worte.forEach((w, i) => {
+    if (w === 'das'){ if (uebsDasZeigt(worte, i)) raus.push(w); return; }
+    if (UEBS_HINWEIS.has(w)) raus.push(w);
+  });
+  return raus;
+}
 function uebsPruefeGenus(k){
   const hin = k.zeilen.find(z => UEBS_ISARA.test(
     String(z.rein || z.wort || '').normalize('NFC').replace(/[ً-ْٰ]/g, '')));
   if (!hin) return null;
-  const mForm = k.musterWorte.find(w => UEBS_HINWEIS.has(w) && w !== 'das');
-  const eForm = k.eingabeWorte.find(w => UEBS_HINWEIS.has(w) && w !== 'das');
-  if (!mForm || !eForm || mForm === eForm) return null;
-  if (uebsStamm(mForm) === uebsStamm(eForm)) return null;
-  return uebsBefund('genus',
-    `Das Hinweiswort passt nicht: es heißt „${mForm}", nicht „${eForm}". Im Arabischen richtet es sich nach dem Geschlecht des Wortes, auf das gezeigt wird — هَذَا bei männlichen, هَذِهِ bei weiblichen —, und im Deutschen nach dem deutschen Wort.`,
-    'isara-genus-kongruenz-01');
+  const m = uebsHinweisFolge(k.musterWorte);
+  const e = uebsHinweisFolge(k.eingabeWorte);
+  if (!m.length || m.length !== e.length) return null;
+  for (let i = 0; i < m.length; i++){
+    if (m[i] === e[i]) continue;
+    if (!UEBS_GENUS_FORMEN.has(m[i]) || !UEBS_GENUS_FORMEN.has(e[i])) continue;
+    if (m[i].slice(0, 3) !== e[i].slice(0, 3)) continue;   // dies- gegen jen-: nah gegen fern
+    return uebsBefund('genus',
+      `Das Hinweiswort passt nicht: es heißt „${m[i]}", nicht „${e[i]}". Im Arabischen richtet es sich nach dem Geschlecht des Wortes, auf das gezeigt wird — هَذَا bei männlichen, هَذِهِ bei weiblichen —, und im Deutschen nach dem deutschen Wort.`,
+      'isara-genus-kongruenz-01');
+  }
+  return null;
 }
 
 /* 7 — ADJEKTIV AM FALSCHEN WORT (nat-wen-beschreibt-01).
@@ -495,13 +599,19 @@ function uebsPruefeAdjektivBezug(k){
     if (!naeher) continue;
 
     /* Gegenprobe am Muster: dort muss das Adjektiv bei SEINEM Wort stehen,
-       sonst übersetzt das Muster selbst frei und der Befund wäre falsch. */
+       sonst übersetzt das Muster selbst frei und der Befund wäre falsch.
+       ⛔ „Bei seinem Wort" heißt: NÄHER als am anderen, nicht gleich nah. Bis
+       23.09.2026 stand hier `<`, und ein Gleichstand ging als Beleg durch:
+       „Dies ist eine kleine Klinik nahe dem Haus" — „nahe" steht dort zwei
+       Wörter von „Klinik" und zwei von „Haus". Wer nur „dem" wegließ, bekam
+       „das Adjektiv beschreibt das falsche Wort" — eine erfundene Regel. Sichtbar
+       wurde es erst, als der Stamm „nahe" und „nah" zusammenbrachte. */
     const mAdj   = uebsErstePos(k.musterStamm, bedAdj);
     const mBezug = uebsErstePos(k.musterStamm, bedBezug);
     if (mAdj < 0 || mBezug < 0) continue;
     const bedN = uebsBedeutungsWorte(uebsBedeutung(naeher));
     const mN   = uebsErstePos(k.musterStamm, bedN);
-    if (mN >= 0 && Math.abs(mN - mAdj) < Math.abs(mBezug - mAdj)) continue;
+    if (mN >= 0 && Math.abs(mN - mAdj) <= Math.abs(mBezug - mAdj)) continue;
 
     return uebsBefund('adjektivbezug',
       `Das Adjektiv beschreibt das falsche Wort: ${z.rein || z.wort} gehört zu ${bezug}, nicht zu ${naeher}. Im Arabischen zeigt die Endung, wen ein نَعْتٌ beschreibt — es stimmt mit seinem Wort in Fall, Zahl, Geschlecht und Bestimmtheit überein.`,
@@ -556,9 +666,10 @@ function uebersetzungPruefen(satz, zeilen, eingabe){
   k.eingabeStamm  = k.eingabeWorte.map(uebsStamm);
   k.musterInhalt  = uebsInhalt(k.musterWorte);
   k.eingabeInhalt = uebsInhalt(k.eingabeWorte);
+  k.eingabeDasZeigt = k.eingabeWorte.some((w, i) => uebsDasZeigt(k.eingabeWorte, i));
 
   const fehlend = uebsInhalt(k.musterWorte).map(uebsStamm)
-    .filter(s => !k.eingabeStamm.includes(s));
+    .filter(s => !uebsEingabeHat(k, s));
 
   const befunde = [];
   for (const p of UEBS_PRUEFUNGEN){
