@@ -427,6 +427,9 @@ const PRUEFER = [
   ['test-langenscheidt.mjs', []],
   /* 17.09.2026: der KV-Abruf in vorrat.mjs bekommt einen zweiten Versuch. */
   ['test-kv-abruf.mjs', []],
+  /* 22.09.2026: neu angehakte Kapitel — höchstens drei, länger als eine Stunde,
+     dann das volle Programm (werkzeuge/neue-kapitel.mjs), mit Störtest. */
+  ['test-neue-kapitel.mjs', []],
   /* 17.09.2026: Gedächtnis-Spiegel — vollständig, ohne Buchvokabeln, --pruefen wird rot. */
   ['test-gedaechtnis-spiegel.mjs', []],
   ['test-laut.mjs', []],

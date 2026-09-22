@@ -26,6 +26,17 @@ ersetzt.** Ein Punkt, der nicht geht, wird gemeldet — nicht weggelassen.
 Fenster** — nicht nur für das, was neu dazukam. Und zusätzlich, sobald er es
 ausdrücklich sagt.
 
+⭐ **Und seit dem 22.09.2026 für jedes neu angehakte Kapitel, ohne auf Mittwoch
+oder Sonntag zu warten** — höchstens drei je Buch, und erst, wenn es länger als
+eine Stunde angehakt ist. Elias: *„hatten wir nicht gesagt das wnen ich bis zu
+drei neue kapitel anhacke das dann sobald du es weißt und es länger als 1h auch so
+bleibt (also nicht nur testweiße oder zum gucken mal freigeschcaltet und wieder weg
+gemacht) das du dann das volle programm machst und damit einhergehend
+beispielsätze und so weiter?"* Das macht die stündliche Routine
+`vokabeltrainer-neue-kapitel`; ob sie startet, entscheidet ohne KI
+`werkzeuge/neue-kapitel.mjs --tor`, und der Arbeitsauftrag kommt aus
+`vorrat.mjs --nur-kapitel <buch>:<kapitel>` — dieselbe Liste wie hier.
+
 ⚠️ **Das Fenster ist kleiner als das Freigeschaltete, und der Unterschied ist
 groß.** Am 20.08.2026 abends: **214 gemessen von 438 freigeschalteten** Wörtern (nachmittags waren es 203 von 427). Die
 fehlenden 224 sind madina-2, für das Elias keinen Lernstand angegeben hat —

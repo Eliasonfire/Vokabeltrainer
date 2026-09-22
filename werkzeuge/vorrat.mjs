@@ -69,6 +69,7 @@ import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { ersetzeDatei } from './schreibe-ersetzend.mjs';
 import { mitWiederholung } from './kv-abruf.mjs';
+import { appKapitelHalten } from './neue-kapitel.mjs';
 
 /* fileURLToPath, nicht von Hand zerlegen: der Ordner heisst "1. Workspace"
    mit Leerzeichen, das steht in import.meta.url als %20. */
@@ -85,6 +86,31 @@ const iFenst = ARG.indexOf('--fenster');
 /* Drei Kapitel voraus — Elias' eigene Zahl: „1-3 kapitel sind realistisch." */
 const FENSTER = iFenst >= 0 ? Math.max(1, Number(ARG[iFenst + 1]) || 3) : 3;
 const LERNDATEI = 'data/lernstand.json';
+
+/* ⭐ NUR DIESE KAPITEL (22.09.2026) — für die Routine vokabeltrainer-neue-kapitel.
+   Elias: „wenn ich bis zu drei neue kapitel anhacke das dann sobald du es weißt
+   und es länger als 1h auch so bleibt … das du dann das volle programm machst".
+   Der Arbeitsauftrag umfasst dann genau die gemeldeten Kapitel, unabhängig vom
+   Fenster — auch in einem Buch, für das es noch keine Angabe gibt. Die übrigen
+   Wege (eigene Wörter, Fachbegriffe) bleiben in diesem Aufruf draußen: sie sind
+   Sache der Wartung am Mittwoch und Sonntag.
+     node werkzeuge/vorrat.mjs --nur-kapitel madina-1:13,14 --nur-kapitel bayna-yadayk-1:4 --auftrag <datei>
+   (mehrere Bücher mit mehreren Schaltern — ein Semikolon trennte in der Shell
+   den Befehl). */
+const NUR_KAPITEL = (() => {
+  const m = {};
+  ARG.forEach((a, i) => {
+    if (a !== '--nur-kapitel') return;
+    const [slug, liste] = String(ARG[i + 1] || '').split(':');
+    const ks = String(liste || '').split(',').map(Number).filter(n => Number.isInteger(n) && n > 0);
+    if (!slug || !ks.length){
+      console.error('  --nur-kapitel erwartet <buch>:<kapitel,kapitel>, z. B. madina-1:13');
+      process.exit(1);
+    }
+    m[slug] = [...new Set([...(m[slug] || []), ...ks])].sort((x, y) => x - y);
+  });
+  return Object.keys(m).length ? m : null;
+})();
 
 /* ---------- Dateien in einer Kiste laden ---------- */
 const kiste = { window: {} };
@@ -894,6 +920,19 @@ if (iStand >= 0){
     else {
     const a = auswahlAusKvStand(text);
     vonApp = a.frei;
+    /* ⏳ DIESELBE STUNDE WIE DIE STÜNDLICHE PRÜFUNG (22.09.2026). Elias: „es
+       länger als 1h auch so bleibt (also nicht nur testweiße oder zum gucken mal
+       freigeschcaltet und wieder weg gemacht)". Ohne diese Zeilen bekäme ein
+       Kapitel, das er zehn Minuten vor diesem Lauf zum Anschauen anhakt, hier das
+       volle Programm und einen höheren Lernstand. Gehalten wird nur, was NEU aus
+       der App kommt; die Regel steht einmal, in werkzeuge/neue-kapitel.mjs. */
+    {
+      const lh = lernstandLesen();
+      const h = appKapitelHalten(vonApp, { alt: frei, vonRoots, angabe: (lh && lh.angabe) || {},
+                                          stempel: a.stempel, jetzt: Date.now() });
+      vonApp = h.behalten;
+      h.gehalten.forEach(z => console.log('  ⏳ ' + z));
+    }
     /* Aus DEMSELBEN Abruf: seine selbst angelegten Woerter (siehe oben). */
     const eig = eigeneWoerterSchreiben(text);
     if (eig && eig.anzahl)
@@ -1120,6 +1159,15 @@ const bewusstDraussen = [];
    sagt das ausdruecklich — lieber zu viel melden als stillschweigend zu wenig.
    [[erfundene_begruendung_schliesst_den_fall]] */
 function kapitelImFenster(slug){
+  /* `--nur-kapitel`: genau die gemeldeten Kapitel, auch ohne Angabe und auch,
+     wenn sie in js/kern.js noch fehlen — in der App entscheidet seine eigene
+     Auswahl, und von dort kommen sie. */
+  if (NUR_KAPITEL){
+    const ks = NUR_KAPITEL[slug];
+    if (!ks) return null;
+    fensterInfo.push(`${slug}: NUR Kapitel ${ks.join(', ')} (neu angehakt, Auftrag der stuendlichen Pruefung)`);
+    return ks;
+  }
   const frei_ = frei[slug];
   if (!frei_ || !frei_.length) return null;
   const gesagt  = lern && lern.angabe && lern.angabe[slug];
@@ -1519,7 +1567,8 @@ function ueberSammlungErreichbar(w){
   return !!(karte && w.ar && kartenText(karte).includes(String(w.ar).normalize('NFC')));
 }
 
-[['eigene', EIGENE], ['fachbegriffe', FACH], ['selbst', SELBST], ['vocab-data', NUR_VOCAB]].forEach(([slug, liste]) => {
+/* Mit `--nur-kapitel` nicht: dort zählen nur die gemeldeten Kapitel (siehe oben). */
+(NUR_KAPITEL ? [] : [['eigene', EIGENE], ['fachbegriffe', FACH], ['selbst', SELBST], ['vocab-data', NUR_VOCAB]]).forEach(([slug, liste]) => {
   liste.forEach(w => {
     geprueft++;
     _imFenster.push(w);
