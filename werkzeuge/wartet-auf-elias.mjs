@@ -1336,7 +1336,7 @@ const DATEI_ZU_URL = {
   'farbe-wortmarke.html':         '4yfD1FeCGm2dna7ioELBuG',
   'stimmen-liste.html':           'ESSZpD31nn4gaVCPnWafcp',
   'regelpruefung.html':           '4iMdxRvKkFHj699cfyHbra',
-  'freigabe.html':                'd9916aee-b679-4d91-bb0c-c3642f8889ac',
+  'freigabe.html':                'DMKVDttK5HMMAEY62HDafF',   /* neu veröffentlicht 22.09.2026 — die alte d9916aee… war tot */
   /* Der 48-Stunden-Bericht vom 20.08. Er lag bis zum 21.08. NUR im
      Scratchpad — also ausserhalb jeder Sicherung und ohne Eintrag hier.
      Waere er einmal unter einer neuen URL erschienen, haette Elias zwei
