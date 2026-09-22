@@ -135,7 +135,13 @@ function laufe(quelle, still){
       const istZarf = String(t.rolle || '').startsWith('ظَرْف');
       if (c.__Z(z, i)){
         stellen++; hatPaar = true;
-        if (!a || !a.ziele.includes(i) || !b || !b.ziele.includes(i + 1)) verfehlt.push(s.id + ' ' + t.wort);
+        /* Seit dem 22.09.2026 stellt ein Satz mit nur EINEM Treffer keine
+           Iḍāfa-Aufgabe mehr (Elias: „lieber die schwereren, generell alle
+           sollen so sein bei mudaf und ilayhi"). Geprüft wird deshalb: WENN
+           der Satz Aufgaben stellt, zählt die Ortsangabe darin mit — und ein
+           Satz ohne Aufgabe hat wirklich nur einen Treffer. */
+        const einer = z.filter((_, j) => String(z[j].rolle || '').includes('(مُضَاف)') || c.__Z(z, j)).length < 2;
+        if (liste.length ? (!a || !a.ziele.includes(i) || !b || !b.ziele.includes(i + 1)) : !einer) verfehlt.push(s.id + ' ' + t.wort);
       } else if (istZarf && /(ي|ك|ه|ها|نا|كم|هم)$/.test(nackt(t.wort))){
         mitPronomen++;
         if (a && a.ziele && a.ziele.includes(i)) pronomenGezaehlt.push(s.id + ' ' + t.wort);

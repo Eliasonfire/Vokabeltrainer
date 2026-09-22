@@ -348,6 +348,24 @@ function laufe(quelle, still){
   pruefe('mindestens drei haben zwei مُضَاف — die Frage ist nicht mehr per Ausschluss lösbar', zweiMudaf >= 3, zweiMudaf);
   pruefe('mindestens einer hat ein Wort im Genitiv, das KEIN مُضَاف إِلَيْهِ ist (نَعْت)', genitivOhneIdafa >= 1, genitivOhneIdafa);
 
+  /* 22.09.2026 — Elias: „lieber die schwereren, generell alle sollen so sein bei
+     mudaf und ilayhi". Der Modus idafa stellt nur noch Aufgaben mit MEHR ALS
+     EINEM Treffer, und die längeren Sätze liefern den Nachschub. */
+  let idafaAufgaben = 0, idafaEinzeln = 0;
+  for (const { ar, zeilen } of ANALYSEN){
+    let auf = [];
+    try { auf = modusIdafa ? (modusIdafa.baue(zeilen, { sentAr: ar }) || []) : []; } catch (e) { auf = []; }
+    for (const a of auf){ idafaAufgaben++; if (!Array.isArray(a.ziele) || a.ziele.length < 2) idafaEinzeln++; }
+  }
+  pruefe('Mudaf und Mudaf ilayhi: keine Aufgabe mit nur einem Treffer', idafaAufgaben > 0 && idafaEinzeln === 0,
+    idafaEinzeln + ' von ' + idafaAufgaben);
+  const zweiUndZwei = lang.filter(([id, s]) => {
+    let auf = [];
+    try { auf = modusIdafa ? (modusIdafa.baue(irab.analysiereSatz(s.sentAr), { sentAr: s.sentAr, id }) || []) : []; } catch (e) { auf = []; }
+    return auf.length === 2;
+  }).length;
+  pruefe('mindestens zehn längere Sätze tragen BEIDE Aufgaben (je zwei Treffer)', zweiUndZwei >= 10, zweiUndZwei);
+
   const fnAlle = schneideFunktion(SAETZE_QUELLE, 'alleSaetze');
   const fnLang = schneideFunktion(SAETZE_QUELLE, 'laengereSaetze');
   const fnVorn = schneideFunktion(SAETZE_QUELLE, 'nichtVorausgeschrieben');
@@ -502,6 +520,15 @@ for (const [name, stoere] of STOERUNGEN){
       else { alleRot = false; console.log('  ✘ ' + name + ' → blieb grün'); }
     }
     BEISPIEL_QUELLE = bspEcht; SAETZE_QUELLE = saetzeEcht;
+  }
+
+  /* 22.09.2026: der Modus idafa stellt wieder Aufgaben mit einem Treffer. */
+  const leicht = ORIGINAL.replace('mudaf.length > 1 ?', 'mudaf.length > 0 ?').replace('zu.length > 1 ?', 'zu.length > 0 ?');
+  if (leicht === ORIGINAL){ alleRot = false; console.log('  ✘ Iḍāfa wieder mit einem Treffer — Störung griff nicht'); }
+  else {
+    const schlecht = laufe(leicht, true);
+    if (schlecht > 0) console.log('  ✔ Iḍāfa wieder mit einem Treffer → ' + schlecht + ' rot');
+    else { alleRot = false; console.log('  ✘ Iḍāfa wieder mit einem Treffer → blieb grün'); }
   }
 }
 console.log('\n' + (alleRot ? '✔ jede Störung wurde erkannt' : '✘ mindestens eine Störung blieb unbemerkt'));

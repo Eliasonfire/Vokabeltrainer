@@ -102,8 +102,8 @@ function satzListe(themaId){
       const tags = (typeof SENTENCE_TAGS !== 'undefined') && SENTENCE_TAGS[w.id];
       return tags && tags.some(t => ids.has(t.ruleId));
     })
-    .map((w, i) => ({ w, i, f: satzAktualitaet(w, ids) }))
-    .sort((a, b) => b.f - a.f || a.i - b.i)
+    .map(w => ({ w, z: satzZufall(w) }))
+    .sort((a, b) => a.z - b.z)
     .map(x => x.w);
 }
 
@@ -128,47 +128,27 @@ function themaRegelIds(themaId){
   return new Set(GRAMMAR_RULES.filter(r=>t.muster.test(r.id) && !regelAusgeblendet(r)).map(r=>r.id));
 }
 
-/* ⭐⭐ Wie neu ist ein Satz? Die hoechste Folgennummer unter den Regeln, die an
-   ihm markiert sind — und zwar nur unter denen, die zum GEWAEHLTEN Thema
-   gehoeren. Ein Satz, an dem eine Regel aus Folge 18 haengt, ist neuer als
-   einer, dessen Regeln alle aus Folge 03 stammen.
+/* ⭐ GANZ GEMISCHT (22.09.2026) — ⛔ ÜBERHOLT ist die Sortierung nach Aktualität.
+   Elias am 06.09.2026 wollte die Sätze eines Themas „nach aktualität", das
+   Neueste zuerst. Am 22.09.2026, auf die Frage, ob jedes Mal dieselben Sätze
+   zuerst kommen sollen: „immer unterschiedliche sätze" — und nachdem gemessen
+   war, dass je Thema meist nur 1 bis 3 Sätze in der neuesten Gruppe stehen
+   (vorn also fast immer dieselben), auf „Soll ich ganz mischen, auch wenn das
+   Neueste dann nicht mehr zuerst kommt?": „ja".
 
-   ⚠️ Hoechstwert, nicht Median — anders als bei themaAktualitaet() weiter
-   unten, und mit Absicht: dort geht es um die Gesamtlage einer Kategorie (ein
-   einzelner Ausreisser darf sie nicht nach oben ziehen), hier um die Frage
-   „zeigt dieser Satz etwas Neues?". Sobald er das tut, gehoert er nach oben,
-   auch wenn er daneben lauter alte Regeln traegt. */
-function satzAktualitaet(w, ids){
-  const tags = (typeof SENTENCE_TAGS !== 'undefined') && SENTENCE_TAGS[w.id];
-  if (!tags || !tags.length || typeof GRAMMAR_RULES === 'undefined') return -1;
-  let hoechste = -1;
-  for (const t of tags){
-    if (ids && !ids.has(t.ruleId)) continue;
-    const r = GRAMMAR_RULES.find(x => x.id === t.ruleId);
-    if (!r || regelAusgeblendet(r)) continue;
-    const f = (r.source && r.source.folge)
-           || (r.source2 && r.source2.folge)
-           || (r.kapitel ? 0 : null);      /* Buchregel ohne Folge: aelter als jede Folge */
-    if (f != null && f > hoechste) hoechste = f;
-  }
-  return hoechste;
+   Der Zufallswert gilt je Satz für die ganze SITZUNG (bis die App neu startet):
+   wer den Satzmodus verlässt und zurückkommt, findet seinen Platz wieder, statt
+   dass alles unter ihm neu gewürfelt wird. Beim nächsten Start ist die
+   Reihenfolge eine andere. Die THEMEN bleiben nach Aktualität sortiert
+   (themenNachAktualitaet, sein Wunsch vom 26.08.) — gemischt werden nur die
+   Sätze darin. */
+const SATZ_ZUFALL = new Map();
+function satzZufall(w){
+  const k = (w && (w.id != null ? w.id : w.sentAr)) || '';
+  if (!SATZ_ZUFALL.has(k)) SATZ_ZUFALL.set(k, Math.random());
+  return SATZ_ZUFALL.get(k);
 }
 
-/* ⭐ Elias am 06.09.2026: „sortiere die aktuellen regeln bei dem satzmodus nach
-   aktualität" — und auf die Rueckfrage, was genau: „Die Sätze innerhalb eines
-   Themas". Dazu, unmittelbar danach: „das muss aber auch immer wieder
-   aktuallisiert werden weil mit der zeit werden die aktuellen von heute auch
-   alt werden."
-
-   ⛔ Deshalb wird hier SORTIERT und nichts umgeschrieben. Die Reihenfolge
-   entsteht bei jedem Aufruf neu aus den Folgennummern; kommt eine neue Folge
-   dazu, steht ihr Stoff am naechsten Tag von selbst oben. Eine einmal
-   umsortierte Datei waere schon nach der naechsten Unterrichtsfolge falsch —
-   und niemand haette es gemerkt. [[eingefrorenes_feld_ist_kein_zustand]]
-
-   ⚠️ Die Reihenfolge von alleSaetze() bleibt der Zweitschluessel: gleich neue
-   Saetze behalten damit ihre bisherige, stabile Ordnung und springen nicht bei
-   jedem Aufruf. */
 function saetzeZumThema(themaId){
   const alle = alleSaetze();
   const ids = themaRegelIds(themaId);
@@ -177,8 +157,8 @@ function saetzeZumThema(themaId){
     return tags && tags.some(t=>ids.has(t.ruleId));
   });
   return gefiltert
-    .map((w, i) => ({ w, i, f: satzAktualitaet(w, ids) }))
-    .sort((a, b) => b.f - a.f || a.i - b.i)
+    .map(w => ({ w, z: satzZufall(w) }))
+    .sort((a, b) => a.z - b.z)
     .map(x => x.w);
 }
 
