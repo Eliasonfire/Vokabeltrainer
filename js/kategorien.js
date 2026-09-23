@@ -108,13 +108,42 @@ function renderChapterCats(){
      vokabeln sein." Die fünfzehn Begriffe tragen jetzt selbst chapter
      'personal' und stehen damit in derselben Liste wie seine eigenen
      Wörter — es gibt keine zweite Kachel mehr. */
+  /* ⛔⛔ JEDES BUCH, DAS ER LERNT, MIT ALLEN SEINEN KAPITELN (23.09.2026).
+
+     Elias mit einem Bild dieser Liste (Madina 1, Kapitel 16 bis 24): „die
+     vokabeln gehen nur bis medina 24, ich bin aber bayna yadayk." Und gleich
+     danach: „am besten sobald ich neues buch freischalte soll neues buch kommen
+     und alle kapteln gezeigt werden da".
+
+     Hier stand `kapitelDesBuchs()` OHNE Buch — also nur das ERSTE gewählte
+     (aktivesBuch(), js/buecher.js sagt selbst: „nur noch für Beschriftungen").
+     Und die Zeilen zählten `w.chapter === ch` über ALLE gewählten Bücher.
+     Gemessen mit seinem Stand (Madina 1 + Bayna Yadayk 1): 25 Zeilen, alle 17
+     Kapitel von Bayna Yadayk fehlten, und 17 Madina-Zeilen zeigten eine falsche
+     Zahl — „Kap. 1 — 53" statt 28, weil Bayna Yadayk Kapitel 1 mitgezählt war.
+     Madina 2 anzutippen änderte an der Liste nichts.
+
+     ⭐ Jetzt je Buch aus aktiveBuecher() eine Überschrift und darunter
+     kapitelDesBuchs(buch) — ALLE Kapitel dieses Buchs, nicht nur die gewählten
+     (dieselbe Entscheidung wie bei kapitelDesBuchs vom 30.07.: „es sollten alle
+     kapitel zur verfuegung stehen"). Schaltet er ein Buch dazu, zieht
+     nachAuswahlwechsel() diese Liste nach: das Buch steht ohne Neuladen da.
+     ⚠️ Die Kapitelnamen (CHAPTER_NAMES) kommen aus dem Madina-Schlüssel 1 und
+     gelten nur für Madina 1. Für die anderen Bücher bleibt die Nummer — einen
+     Namen zu erfinden verbietet E.1.
+     ⚠️ Der Schlüssel heißt jetzt `chapter:<buch>:<kapitel>`; openWordList()
+     versteht beide Formen. */
   const eigeneOben = ['personal'];
-  const chapters = [...eigeneOben, ...kapitelDesBuchs()];
+  const chapters = [...eigeneOben, ...aktiveBuecher().flatMap(buch =>
+    [{ kopf: buch }, ...kapitelDesBuchs(buch).map(ch => ({ buch, ch }))])];
   /* Kapitel 12 wäre sonst „Kap. 12" ohne Hinweis darauf, wie weit es sitzt.
      Der Balken steht zwischen Titel und Unterzeile — siehe kapitelFortschritt(). */
-  const html = chapters.map(ch=>{
-    const words = buchVokabeln().filter(w=>w.chapter===ch);
-    const name = CHAPTER_NAMES[ch] || `Kapitel ${ch}`;
+  const html = chapters.map(eintrag=>{
+    if (eintrag.kopf) return `<div class="kap-buch">${escapeHtml(buchTitel(eintrag.kopf))}</div>`;
+    const buch = (typeof eintrag === 'object') ? eintrag.buch : null;
+    const ch = (typeof eintrag === 'object') ? eintrag.ch : eintrag;
+    const words = buchVokabeln().filter(w=>w.chapter===ch && (!buch || w.book===buch));
+    const name = (!buch || buch === 'madina-1') ? CHAPTER_NAMES[ch] : null;
     const eigen = eigeneOben.includes(ch);
     /* Die Unterzeile sagt, was man dort TUN kann. Ohne sie ist „Eigene
        Vokabeln" nur eine Liste, und dass das Eingabefeld dahinter liegt, steht
@@ -128,9 +157,9 @@ function renderChapterCats(){
          Begriffe selbst stehen ja eine Zeile weiter in der Liste. */
       : '';
     const label = eigen
-      ? `<span class="eigen-stern">★</span><span>${name}</span>`
-      : `<span>Kap. ${ch} — ${name}</span>`;
-    return `<div class="list-row${eigen ? ' list-row-eigen' : ''}" data-openlist="chapter:${ch}">
+      ? `<span class="eigen-stern">★</span><span>${name || ch}</span>`
+      : `<span>Kap. ${ch}${name ? ' — ' + name : ''}</span>`;
+    return `<div class="list-row${eigen ? ' list-row-eigen' : ''}" data-openlist="chapter:${buch ? buch + ':' : ''}${ch}">
       <div class="list-row-haupt">
         <div class="list-row-title">${label}</div>
         ${kapitelFortschritt(ch, words)}
@@ -207,16 +236,23 @@ document.getElementById('main').addEventListener('click', (e)=>{
 function openWordList(key){
   let words, title;
   if (key.startsWith('chapter:')){
-    const ch = key.split(':')[1];
+    /* ⭐ Seit dem 23.09.2026 `chapter:<buch>:<kapitel>` — vorher nur
+       `chapter:<kapitel>`, und die Liste mischte die Bücher: „Kapitel 1" zeigte
+       28 Wörter aus Madina 1 und 25 aus Bayna Yadayk 1 unter dem Madina-Namen
+       (gemessen mit seinem Stand). `chapter:personal` bleibt, wie es ist; ein
+       Schlüssel ohne Buch gilt für das erste gewählte, nie mehr für alle. */
+    const teile = key.split(':');
+    const ch = teile[teile.length - 1];
     const chNum = (ch==='personal') ? ch : Number(ch);
-    words = buchVokabeln().filter(w=>w.chapter===chNum);
-    /* CHAPTER_NAMES benennt nur die neun Kapitel aus Madina 1, zu denen eine
-       belegte Grammatikregel vorliegt. Fuer alle uebrigen bleibt die Nummer -
-       einen Namen zu erfinden verbietet E.1. */
-    const kapName = CHAPTER_NAMES[chNum];
+    const buch = (ch==='personal') ? null : (teile.length > 2 ? teile[1] : aktivesBuch());
+    words = buchVokabeln().filter(w=>w.chapter===chNum && (!buch || w.book===buch));
+    /* CHAPTER_NAMES kommt aus dem Madina-Schlüssel 1 und gilt nur für Madina 1.
+       Für alle übrigen Bücher bleibt die Nummer - einen Namen zu erfinden
+       verbietet E.1. */
+    const kapName = (!buch || buch === 'madina-1') ? CHAPTER_NAMES[chNum] : null;
     title = (ch==='personal')
       ? (kapName || ch)
-      : (kapName ? `Kapitel ${ch} — ${kapName}` : `Kapitel ${ch}`);
+      : buchTitel(buch) + ' · ' + (kapName ? `Kapitel ${ch} — ${kapName}` : `Kapitel ${ch}`);
   } else if (key.startsWith('feld:')){
     /* Nicht an ':' zerlegen und das zweite Stueck nehmen - Feldnamen duerfen
        ein '&' und theoretisch auch weitere Zeichen enthalten ("Familie &
