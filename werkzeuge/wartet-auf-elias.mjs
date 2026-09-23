@@ -1040,6 +1040,25 @@ posten.push({
   wie: '(1) so lassen — rollen, der Hinweis ist da. (2) Bild kleiner. (3) Bild an eine andere Stelle, etwa neben die Eselsbrücke.',
   seite: '', seiteText: ''
 });
+posten.push({
+  /* ⭐ 23.09.2026: werkzeuge/pruefe-themen.mjs meldet seit Tagen „3 Punkt(e)
+     für Elias" (Exit 2), und sie standen auf KEINER Seite — maintenance-log.md
+     behauptete am 17.09. und 20.09. das Gegenteil (Befund eines Helfers,
+     To-Do-Block 02:50, C3). Stand der Zahlen: Lauf vom 23.09., 04:5x.
+     Raus, sobald er geantwortet hat. */
+  titel: 'Satzmodus-Themen: drei Fragen zur Einteilung',
+  zahl: 3, einheit: 'Fragen', dazu: 'aus pruefe-themen.mjs', auswahl: true,
+  aufwand: 'je Frage „so lassen" oder was du willst',
+  warum: 'Die Themen oben im Satzmodus (Genitiv, Verben, Weiblich …) filtern, welche Regeln du übst. '
+    + 'Drei Stellen sehen ungewollt aus — ob sie es sind, hängt an deinem Unterricht, nicht an der Zahl.',
+  wie: 'Sag die Nummer und deine Antwort, zum Beispiel „2: zusammenlegen mit Wortarten" oder „alle so lassen".',
+  zeilen: [
+    '1 · Drei Regeln stehen in zwei Themen zugleich: „Verb enthält das Pronomen" (Wortarten und Verben), „Ortsangabe als Mudaf" (Idafa und Ortsangaben), „Adjektive auf -ān ohne Tanwin" (Adjektiv und al-). So lassen?',
+    '2 · „Verben" hat nur 2 Regeln (28 Übungsstellen). Mit einem anderen Thema zusammenlegen oder lassen?',
+    '3 · „Genitiv" hat 14 Regeln (128 Übungsstellen) und filtert damit wenig. In zwei Themen teilen oder lassen?'
+  ],
+  seite: '', seiteText: ''
+});
 
 /* ⛔⛔ SECHS FRAGEN, DIE NUR IM CHAT STANDEN (17.09.2026)
 
@@ -1111,20 +1130,28 @@ if (false) posten.push({
     11 Koran-Verszeichen    „so lassen" → nichts gebaut */
 posten.push({
   titel: 'Ältere Fragen, die nur in der To-Do standen — gelten sie noch?',
-  zahl: 3, einheit: 'Fragen', dazu: 'von 11 aus dem 17.09. sind 8 beantwortet', auswahl: true,
+  zahl: 6, einheit: 'Fragen', dazu: 'von 11 aus dem 17.09. sind 8 beantwortet · 3 neu gefunden am 23.09.', auswahl: true,
   aufwand: 'je Frage eine kurze Antwort — oder „streichen"',
   /* 23.09.2026: die frühere Frage 2 (Bild zur Eselsbrücke) ist beantwortet —
      „Eselsbrücken-Bild: C · Mischung · die 72 + die 14 Beziehungswörter · nur
      Rückseite" — und in v573 gebaut. Die Nummern bleiben, damit eine Antwort
      wie „3: raus" dieselbe Frage meint wie auf der älteren Seite. */
   warum: 'Am 17.09. standen hier 11 Fragen aus der To-Do. Acht hast du inzwischen beantwortet, und alles, '
-    + 'was daraus zu bauen war, ist gebaut und ausgeliefert (v561, v562, v573). Diese drei stehen noch. '
+    + 'was daraus zu bauen war, ist gebaut und ausgeliefert (v561, v562, v573). Diese drei stehen noch, dazu drei, '
+    + 'die am 23.09. in alten Abschnitten der To-Do auftauchten (12–14). '
     + 'Was du streichst, baue ich nicht.',
   wie: 'Sag die Nummer und deine Antwort, zum Beispiel „3: raus". Oder „alle streichen".',
   zeilen: [
     '1 · Koran: Die Ansicht „Kästchen" hat keinen Rahmen mehr. Umbenennen, zum Beispiel in „Einzeln"? (08.09.)',
     '3 · Vier Regeln zusammenlegen? Deine Notizen vom 26.08. zu: mudaf ohne al- · mudaf erkennen · idafa-Verkettung · der Buchstabe bi. Sagen sie dasselbe?',
-    '4 · Die Regel „Subjekt und Aussage" (mubtada und khabar): Deine Notiz sagt, sie kommt erst nach Kapitel 9 dran. Später zeigen oder lassen? (26.08.)'
+    '4 · Die Regel „Subjekt und Aussage" (mubtada und khabar): Deine Notiz sagt, sie kommt erst nach Kapitel 9 dran. Später zeigen oder lassen? (26.08.)',
+    /* ⭐ 23.09.2026 nachgetragen: drei Fragen, die ein Helfer beim Durchsehen
+       der alten ⬜-Abschnitte fand und die auf KEINER Seite standen (To-Do,
+       Block 02:50, D). Nummern ab 12, damit „3: raus" weiter dieselbe Frage
+       meint wie auf der älteren Seite. */
+    '12 · Die Regel zu den Verbendungen in der Vergangenheit: seit dem 11.09. liegt eine neue Fassung als Entwurf bereit, in der App gilt noch die alte. Du hattest am 26.08. geschrieben, daraus müsse „wirklich eine gute regel" werden. Den Entwurf übernehmen?',
+    '13 · Regeltexte, die du in der App selbst umgeschrieben hast (Regelsammlung): Sollen deine Fassungen die ursprünglichen Texte ersetzen, damit sie überall gelten — auch in den Übungen?',
+    '14 · „Löschen" in der Regelsammlung nimmt eine Regel nicht aus dem Satzmodus. Soll Löschen sie auch dort herausnehmen?'
   ],
   seite: '', seiteText: ''
 });

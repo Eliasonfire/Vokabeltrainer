@@ -349,7 +349,14 @@ const AUSNAHMEN = [
        ⚠️ Die Ausnahme bleibt deshalb bestehen, nur ihr Name sagt jetzt die
        Wahrheit: vorher stand hier „(ohne Endung, richtig so)". */
     name: 'Fachbegriff noch ohne Endung — Endung gewünscht (16.09.2026), Beleg fehlt',
-    keineFrage: true,   /* keine Frage an Elias — er hat entschieden, der Beleg fehlt */
+    /* ⛔⛔ SEIT DEM 23.09.2026 KEIN „[kein Mangel]" MEHR. Hier stand
+       `keineFrage: true` („keine Frage an Elias — er hat entschieden, der Beleg
+       fehlt"), und genau das Etikett machte die Belegsuche unmöglich:
+       werkzeuge/fachbegriffe-nachschlagen.mjs liest nur Gruppen OHNE
+       „[kein Mangel]" (dort Z. ~397) und meldete deshalb „0 offene Wörter" —
+       die „offene Belegsuche für die Wartung" hatte keinen Weg in die Wartung.
+       Und die Warteseite zählte die Gruppe ebenfalls nicht mit. Gefunden über
+       den Befund eines Helfers (Block 02:50, C2). [[werkzeug_ohne_aufrufer]] */
     /* ⚠️ „letzter Buchstabe" heißt: danach kommen nur noch Zeichen, kein
        Buchstabe. Hier stand `i === wort.length - 1` — das traf nur, wenn der
        letzte Buchstabe GAR KEIN Zeichen trägt. Bei مَدّ (gram-madd, 11.09.2026)
@@ -1253,9 +1260,17 @@ const woerter = new Set(befunde.map(b => b.wort));
    entscheiden? Gebuendelt wird je Abschnitt, denn zwei Abschnitte stellen
    verschiedene Fragen — „Haraka fehlt" und „Endung fehlt" gehen nicht zusammen,
    auch wenn dasselbe Wort darin steht. */
-const fragen = Object.values(nachGruppe).reduce((a, l) => a + buendel(l).length, 0);
+/* ⛔ Seit dem 23.09.2026 zählen „[kein Mangel]"-Gruppen weder als Frage noch
+   für den Rückgabewert. Vorher endete der Prüfer mit 1, auch wenn NUR solche
+   Gruppen übrig waren — gegen seinen eigenen Kopf („1 = mindestens eine Lücke
+   IM REPO"), und die „N Frage(n)" zählten Fälle mit, die „richtig so" sind.
+   (Befund eines Helfers, Block 02:50, C2.) */
+const fragen = Object.entries(nachGruppe).filter(([g]) => !KEINE_FRAGE.has(g))
+  .reduce((a, [, l]) => a + buendel(l).length, 0);
+const ohneMangel = Object.entries(nachGruppe).filter(([g]) => KEINE_FRAGE.has(g))
+  .reduce((a, [, l]) => a + l.length, 0);
 console.log(`\n${befunde.length} Befunde in ${woerter.size} verschiedenen Woertern`
-  + ` — gebuendelt sind es ${fragen} Frage(n).`);
+  + ` — gebuendelt sind es ${fragen} Frage(n)` + (ohneMangel ? `; ${ohneMangel} Befunde davon sind kein Mangel.` : '.'));
 /* ⚠️ Der Skelettvergleich kennt keine Bedeutung: أَلِف, أَلْفٌ und أَلَّفَ
    haben dasselbe Skelett und sind drei verschiedene Woerter. Die Zeile ist ein
    Hinweis zum Nachsehen, kein Urteil. [[skelettvergleich_wirft_information_weg]] */
@@ -1266,4 +1281,4 @@ console.log('⚠️  Nicht selbst vokalisieren: Beleg aus dem Madina-Schluessel 
 console.log('   dem Lehrbuch holen, sonst Elias vorlegen (E.1 gilt auch fuer Harakat).');
 
 zeigeBuchBericht();
-process.exit(1);
+process.exit(befunde.length > ohneMangel || waslEichung ? 1 : 0);
