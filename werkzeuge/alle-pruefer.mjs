@@ -428,6 +428,12 @@ const PRUEFER = [
      sehen. Prüft Mengen (72 + 14), Lage, Bausteine, den Bauplan-Vergleich
      aller 91 Paare und die Beispielsätze; sieben Störtests bei jedem Lauf. */
   ['werkzeuge/pruefe-eselsbilder.mjs', []],
+  /* 23.09.2026 — die Kapitelliste je Buch (openWordList). Elias: „sobald ich
+     neues buch freischalte soll neues buch kommen und alle kapteln gezeigt
+     werden da". Nachgetragen am 24.09. von der Befund-Routine: der Prüfer lag
+     unversioniert herum und pruefe-sammellauf.mjs war seinetwegen rot.
+     Vier Störtests bei jedem Lauf. */
+  ['werkzeuge/pruefe-vokabeln-seite.mjs', []],
   /* ⭐ Mit --pruefen, weil der blanke Lauf bewertung.json SCHREIBT und ein
      Sammellauf nichts verändern darf. Rot wird er, sobald eine Fundstelle ohne
      mein Urteil dasteht — das ist MEIN Rückstand, und er gehört genau hierhin
