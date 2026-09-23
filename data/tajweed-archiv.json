@@ -11,7 +11,7 @@
       "notiz": "",
       "markiert": "spätestens 2026-09-20",
       "weggenommen": "2026-09-20",
-      "zuletztGesehen": "2026-09-22"
+      "zuletztGesehen": "2026-09-23"
     },
     "67:1:2:0@ohne": {
       "sure": 67,
@@ -23,7 +23,7 @@
       "notiz": "",
       "markiert": "spätestens 2026-09-20",
       "weggenommen": "2026-09-20",
-      "zuletztGesehen": "2026-09-22"
+      "zuletztGesehen": "2026-09-23"
     },
     "67:1:2:1@ohne": {
       "sure": 67,
@@ -35,7 +35,7 @@
       "notiz": "",
       "markiert": "spätestens 2026-09-20",
       "weggenommen": "2026-09-20",
-      "zuletztGesehen": "2026-09-22"
+      "zuletztGesehen": "2026-09-23"
     },
     "67:1:7:2@ohne": {
       "sure": 67,
@@ -47,9 +47,9 @@
       "notiz": "",
       "markiert": "spätestens 2026-09-20",
       "weggenommen": "2026-09-20",
-      "zuletztGesehen": "2026-09-22"
+      "zuletztGesehen": "2026-09-23"
     },
-    "99:7:4:5@ohne": {
+    "99:7:4:5@1790108396660": {
       "sure": 99,
       "vers": 7,
       "wort": 4,
@@ -57,11 +57,11 @@
       "zeichen": "ةٍ",
       "farbe": "rot",
       "notiz": "N aussprechen",
-      "markiert": "spätestens 2026-09-20",
+      "markiert": "2026-09-22",
       "weggenommen": "",
-      "zuletztGesehen": "2026-09-22"
+      "zuletztGesehen": "2026-09-23"
     },
-    "102:2:2:0@ohne": {
+    "102:2:2:0@1790108396660": {
       "sure": 102,
       "vers": 2,
       "wort": 2,
@@ -69,11 +69,11 @@
       "zeichen": "زُ",
       "farbe": "rot",
       "notiz": "Zay sagen",
-      "markiert": "spätestens 2026-09-20",
+      "markiert": "2026-09-22",
       "weggenommen": "",
-      "zuletztGesehen": "2026-09-22"
+      "zuletztGesehen": "2026-09-23"
     },
-    "102:4:1:2@ohne": {
+    "102:4:1:2@1790108396660": {
       "sure": 102,
       "vers": 4,
       "wort": 1,
@@ -81,10 +81,10 @@
       "zeichen": "مَّ",
       "farbe": "rot",
       "notiz": "Kurzes A und schadda halten",
-      "markiert": "spätestens 2026-09-20",
+      "markiert": "2026-09-22",
       "weggenommen": "",
-      "zuletztGesehen": "2026-09-22"
+      "zuletztGesehen": "2026-09-23"
     }
   },
-  "geholtAm": "2026-09-22T14:36:07.911Z"
+  "geholtAm": "2026-09-23T20:03:13.116Z"
 }
