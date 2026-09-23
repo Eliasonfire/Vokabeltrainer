@@ -194,7 +194,8 @@ function hoerbareVokabeln(){
      `bekannteVokabeln()` (js/kern.js) ist genau die gesuchte Menge und waechst
      von selbst mit: freigeschaltete Kapitel des jeweiligen Buchs + eigene
      Wörter + der handverlesene Lernbestand aus vocab-data.js. */
-  let pool = bekannteVokabeln().filter(w => w.ar && w.de && String(w.de).trim().length > 1);
+  const brauchbar = w => w.ar && w.de && String(w.de).trim().length > 1;
+  let pool = bekannteVokabeln().filter(brauchbar);
   /* Die Kapitelauswahl von der Startseite gilt auch hier - sonst uebt man das
      halbe Buch, obwohl oben "Kapitel 3" eingestellt ist. Nur wenn dabei zu
      wenig uebrig bleibt, um alle Antworten zu bilden, wird sie ignoriert;
@@ -211,6 +212,35 @@ function hoerbareVokabeln(){
       return !sel.length || sel.indexOf(w.chapter) >= 0;
     });
     if (eng.length >= HOER_ANTWORTEN) pool = eng;
+  }
+  /* ⭐⭐ JEDE VOKABEL, DIE DIE KARTEI ABFRAGT, IST AUCH HIER (23.09.2026).
+
+     Elias auf meine Frage „Soll er sie mitnehmen?" (die einzeln
+     freigeschalteten Wörter): „ja, alle vokabeln die abgefragt werden soll er
+     haben".
+
+     Die Kapitelauswahl darüber warf alles weg, was nicht 'personal', nicht
+     'grammar' und nicht im gewählten Kapitel steht — also auch jedes EINZELN
+     FREIGESCHALTETE Wort aus einem späteren Kapitel. Die Kartei nimmt genau
+     diese Wörter seit dem 07.09.2026 „wie eigene" mit (passtZurAuswahl() →
+     wieEigene in js/kern.js). Gemessen mit seinem Stand vom 23.09., 20:36:
+     die Kartei fragt 318 Wörter ab, hier standen 285 — 34 Kartei-Wörter
+     fehlten, darunter Akkusativ, Genitiv und Nominativ aus Kapitel 24.
+
+     ⛔ Eine VEREINIGUNG, keine Ersetzung: was vorher hier war, bleibt. Er hat
+     gesagt, was dazukommen soll, nicht was wegfallen soll. Deshalb fragt die
+     Zeile dieselbe Funktion wie die Kartei, statt ihre Bedingungen hier
+     nachzubauen — eine Kopie liefe beim nächsten Umbau der Kartei still
+     auseinander. [[zwei_stellen_eine_entscheidung]]
+     ⚠️ Über VOCAB_DATA, nicht bekannteVokabeln(): die Kartei zieht aus
+     VOCAB_DATA (dueWords, weakWords), und ein einzeln freigeschaltetes Wort
+     aus einem nicht gewählten Buch steht nicht in bekannteVokabeln().
+     Ein Wort ohne deutsche Bedeutung bleibt draußen (meine Begründung, nicht
+     seine: ohne Bedeutung gibt es keine Antwort zum Antippen). */
+  if (typeof passtZurAuswahl === 'function'){
+    const da = new Set(pool.map(w => String(w.id)));
+    for (const w of VOCAB_DATA)
+      if (!da.has(String(w.id)) && brauchbar(w) && passtZurAuswahl(w)) pool.push(w);
   }
   return pool;
 }

@@ -382,6 +382,24 @@ export const PFLEGEPLAN = [
         + 'weder genannt noch freigegeben bekommt; jede Erkennung vorher an 9 Gegenproben geeicht. Störtest: Routine-Freigabe drin = Exit 1' },
   },
   {
+    /* ⭐ 23.09.2026 — DER HÖRMODUS HAT JEDES WORT, DAS DIE KARTEI ABFRAGT.
+       Elias auf meine Frage „Soll er sie mitnehmen?": „ja, alle vokabeln die
+       abgefragt werden soll er haben". Eine Zeile in hoerbareVokabeln()
+       (js/hoeren.js) — INNERHALB einer bestehenden Datei, also von Hand hier
+       eingetragen. Gemessen mit seinem Stand (20:36): 34 Kartei-Wörter fehlten
+       im Hörmodus, danach 0; Hörvorrat 285 → 319, keines ging verloren. */
+    funktion: 'Hörmodus fragt alles, was die Kartei fragt',
+    dateien: [],
+    bildschirme: [],
+    neuerInhalt: { nein: 'Kein eigener Inhalt: der Hörvorrat folgt passtZurAuswahl() — schaltet er ein Wort frei oder wählt ein Kapitel, steht es ohne Zutun in beiden.' },
+    eingaben: { nein: 'Er trägt hier nichts ein; die Auswahl trifft er wie bisher auf der Startseite und bei den Karteikarten.' },
+    veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs', werkzeug: 'werkzeuge/pruefe-hoer-auswahl.mjs',
+      wie: 'lässt hoerbareVokabeln() und passtZurAuswahl() aus dem echten Quelltext in einer kleinen Welt mit und ohne Kapitel-Einengung laufen: '
+        + 'jedes Kartei-Wort mit Bedeutung muss im Hörvorrat stehen, nichts, was vorher darin stand, darf fehlen. Die Welt wird geeicht '
+        + '(ohne die Zeile zeigt sie den Fehler vom 23.09.). Störtests: Vereinigung entfernt, bekannteVokabeln() statt VOCAB_DATA, '
+        + 'Ersetzung statt Vereinigung = je Exit 1' },
+  },
+  {
     /* ⭐ 22.09.2026 — BEISPIELSÄTZE FÜR DIE FACHBEGRIFFE.
        Elias mit dem Bild einer Karte, auf der nur eine Eselsbrücke stand:
        „kein beispielsatz, sorge dafür das alle ien beispielsatz haben"
