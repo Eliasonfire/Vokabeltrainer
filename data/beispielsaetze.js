@@ -1862,6 +1862,33 @@ const BEISPIELSAETZE = {
   '46020': { sentAr: 'نَظَرَ الْوَلَدُ إِلَى الْمِرْآةِ.', sentDe: 'Der Junge schaute in den Spiegel.' },
   '48611': { sentAr: 'السَّخَّانُ فِي الْحَمَّامِ.', sentDe: 'Der Boiler ist im Badezimmer.' },
 
+  /* ---------- Bayna Yadayk 1, Kapitel 4 (23.09.2026) ----------
+     Er hat das Kapitel am 23.09. um 20:17 angehakt; die Routine
+     „neue Kapitel" hat den Auftrag um 21:35 erteilt. Alle 13 Wörter hatten
+     keinen Satz.
+
+     ⛔ HERKUNFT: kein Zeichen ist hier von Hand vokalisiert. Jedes fremde Wort
+     im Satz steht so im Bestand (madina-1 Kapitel 1–12 oder bayna-yadayk-1
+     Kapitel 1–3), die weiblichen Adjektivformen als `femSg` im Abzug. Daran
+     setzen nur die zwei Umformungen an, die diese Datei überall benutzt:
+     unbestimmt → bestimmt und das erste Wort einer Iḍāfa.
+     Die sieben Verben stehen in ihrer Perfektform aus dem Abzug (`past`). */
+  '46021': { sentAr: 'نَامَ الطِّفْلُ فِي الْغُرْفَةِ.', sentDe: 'Das Kind schlief im Zimmer.' },
+  '46022': { sentAr: 'اِسْتَيْقَظَ الطَّالِبُ الْمُجْتَهِدُ.', sentDe: 'Der fleißige Student wachte auf.' },
+  '46023': { sentAr: 'ذَهَبَ الْمُدَرِّسُ إِلَى الْمَدْرَسَةِ.', sentDe: 'Der Lehrer ging zur Schule.' },
+  '46024': { sentAr: 'كَنَسَ الْوَلَدُ الْغُرْفَةَ.', sentDe: 'Der Junge fegte das Zimmer.' },
+  '46025': { sentAr: 'غَسَلَ الرَّجُلُ السَّيَّارَةَ.', sentDe: 'Der Mann wusch das Auto.' },
+  '46026': { sentAr: 'كَوَى الْمُعَلِّمُ الْمِعْطَفَ.', sentDe: 'Der Lehrer bügelte den Mantel.' },
+  '46027': { sentAr: 'شَاهَدَ الْوَلَدُ التِّلْفَازَ.', sentDe: 'Der Junge schaute den Fernseher an.' },
+  /* ⭐ Bewusst eine Iḍāfa: سَاعَةُ trägt kein Tanwīn, weil ein zweites Nomen
+     folgt — dieselbe Regel mudaf-ohne-al-01 wie bei زَوْجَةُ التَّاجِرِ. */
+  '46028': { sentAr: 'سَاعَةُ الْمُدَرِّسِ صَغِيرَةٌ.', sentDe: 'Die Uhr des Lehrers ist klein.' },
+  '46029': { sentAr: 'قَرَأَ الطَّالِبُ الصَّحِيفَةَ.', sentDe: 'Der Student las die Zeitung.' },
+  '46030': { sentAr: 'الْحَافِلَةُ فِي الشَّارِعِ.', sentDe: 'Der Bus ist auf der Straße.' },
+  '46031': { sentAr: 'ذَهَبَ الطَّالِبُ إِلَى الْمَدِينَةِ فِي الْعُطْلَةِ.', sentDe: 'Der Student fuhr in den Ferien in die Stadt.' },
+  '46032': { sentAr: 'التِّلْفَازُ فِي الْغُرْفَةِ.', sentDe: 'Der Fernseher ist im Zimmer.' },
+  '46033': { sentAr: 'الطَّبَقُ فِي الْمَطْبَخِ.', sentDe: 'Der Teller ist in der Küche.' },
+
   /* ========================================================================
      BEISPIELSÄTZE FÜR DIE FACHBEGRIFFE (22.09.2026)
      ========================================================================
