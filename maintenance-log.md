@@ -6280,3 +6280,138 @@ Danach `veroeffentlichen.mjs --mit-daten`: 109 Dateien, 9.05 MB, 8 neu hochgelad
 **Schritt 6/7** – Zehn Dateien mit explizitem Pfad committet (`51fa128`) und gepusht; `index.html`, `js/kategorien.js` und `werkzeuge/pruefe-vokabeln-seite.mjs` blieben unangetastet. Auftrag mit `--erledigt --notiz "v585 ausgeliefert: …"` abgeschlossen, Arbeitsmarke weg.
 
 **Offen für Elias:** (1) `werkzeuge/pruefe-vokabeln-seite.mjs` in `alle-pruefer.mjs` eintragen (oder mit Begründung in `NUR_IM_BROWSER`) und die drei Dateien der Nachmittagssitzung committen — sie sind seit v585 **live**, aber nicht im Repo. (2) Der veraltete `artefakte/regeln.json` nach jeder Daten- oder Regeländerung: drei Läufe, dreimal derselbe Handgriff — `regeln-sammeln.mjs` gehört an das Ende der Routine. (3) Der Access-Nachweis in `.access-geprueft.json` ist 14 Tage alt.
+
+## 2026-09-23 22:10 – Wöchentliche Wartung (Mi-Check) (`2c37be3`)
+
+Der reguläre Mittwochs-Lauf, sechzehn Minuten nach dem Lauf „neue Kapitel". **Nichts ausgeliefert und nichts auszuliefern** — `pruefe-ausgeliefert.mjs` und `pruefe-erreichbarkeit.js` melden beide, dass `.deploy/` sich mit der Arbeitskopie deckt (v585, 103 Regeln, 811 Markierungen). Kein Lerninhalt hat sich in diesem Lauf geändert.
+
+**Schritt 0** – Arbeitsmarke gesetzt (`arbeit.mjs --beginne`), `git pull --ff-only` schon aktuell, `pruefe-volles-programm.mjs` **Exit 0**: Quelle, Kopie `/volles-programm` und Wartungs-Prompt deckungsgleich, 13 Punkte, alle 59 im Prompt aufgerufenen Werkzeuge freigegeben.
+
+**Schritt 0a** – `pruefe-laeufe.mjs --tage 30` **Exit 0**: jeder geplante Termin der letzten 30 Tage hat einen abgeschlossenen Lauf, keine Lücke. ⚠️ Ein Nebenbefund daraus gehört trotzdem in den Bericht: unter „Freigaben (Prompt gegen allowedTools)" steht `⛔ Freigaben-LUECKE am 2026-09-23 — ohne Freigabe: node · node "G:\1 · node pruefer.mjs · python`. Für **diese** Routine ist das nicht der Fall — `pruefe-freigaben.mjs` lief im Sammellauf auf Exit 0 („Die Routine darf, was der Prompt ihr sagt", mit beidseitigem Störtest). Die Lücke betrifft also eine andere Prompt-Datei; die Bruchstücke sehen nach zitierten Beispielen aus den Anweisungsdateien aus (`node pruefer.mjs | tail` und `python -c` stehen dort wörtlich als Warnbeispiele). ⛔ Diese Routine ändert weder `routines.json` noch einen Prompt — das gehört in eine Sitzung.
+
+**Schritt 0b / Schritt 4 (Samsung Notes)** – `export-index.mjs --sicherung` **Exit 0**: acht Notizen, **alle unverändert** (Arabya Bayna Yadayk 1A 283 S. · Grammatik Heft Medina Buch 1 15 S. · Madina Buch 1 (Beschriftet) 146 S. · Madina Buch 1 Vokabelheft 18 S. · Musterlösung Grammatikabfrage 15 S. · Pronomen & Endungen 5 S. · Pronomen & Konjunktionen 7 S. · Zwischenprüfung 4 S.). Keine neue und keine veränderte Seite mit Inhalt, also nichts zu rendern und **kein** `--gesehen`. Der alte Weg über `list_export_status` bleibt außen vor; er gilt nur bei Exit 1.
+
+**Schritt 1** – `get_recordings`: **22 Einträge**, einer mehr als am 20.09. **Neu: Folge 22 „AB1A Kapitel 3/4"** (https://youtu.be/A3ds-klmXy0, angelegt 23.09.2026 18:40, also zwei Stunden bevor Elias Kapitel 4 in der App angehakt hat). In `transcripts/backlog.md` nachgetragen, Kopfzeile auf 22 Einträge gesetzt. ⛔ **Kein Transkript geholt und keine Regel daraus bestätigt** — Rohmaterial holt `arabicroots-backfill-retry`, eine Folge je Lauf. `transcripts/` ist per `.gitignore` ausgeschlossen, daraus entsteht kein Commit.
+
+**Schritt 1b (Regelrückstand)** – `rueckstand.mjs --knapp` **Exit 0**: „kein Rueckstand. (1 ausser Wertung: 21)". Folge 22 zählt noch nicht als Rückstand, weil für sie kein Rohmaterial liegt — Rückstand heißt „Rohmaterial ohne Regeln". Kein Punkt in der To-Do, keine Statuszeile dafür. `kandidaten.mjs`/`abgleich.mjs`/`uebernehmen.mjs` entfallen damit; 0 Fundstellen ausgewertet, 0 Regeln eingetragen, 0 Regeln `ausgeblendet`.
+
+**Schritt 1c (Vorrat)** – Das Kernstück, und es ist grün:
+
+`vorrat.mjs --stand .stand-freigeschaltet.json --app auto` (16 freigeschaltete Kapitel aus arabicroots: aby-1 1–4, madina-1 1–12). Wörtlich in den Bericht gehören:
+
+- `App-Auswahl (KV, Stand 23.9.2026, 20:17:00): madina-1 bis 12 | bayna-yadayk-1 bis 4` — der KV war **im ersten Versuch** erreichbar.
+- `⚠️ Nicht zugemacht: madina-2: Kapitel 1–24 stehen in js/kern.js, aber nicht in den gemessenen Quellen — BEHALTEN`. Das ist unverändert seine Entscheidung; `--auch-schliessen` wurde **nicht** benutzt.
+- `uebersprungen (keine Vokabeldatei): aby-1` — die arabicroots-Kennung heißt `aby-1-chapter-N`, die Vokabeldatei `bayna-yadayk-1`. Gezählt hat deshalb die KV-App-Auswahl.
+- ⭐ **Keine Zeile „Lernstand automatisch mitgewachsen".** Seine `angabe` in `data/lernstand.json` ist unangetastet (madina-1 Kapitel 12, bayna-yadayk-1 Kapitel 4) — der Zuwachs auf 4 war der Lauf von 21:54, nicht dieser.
+
+Die drei Dateien, ohne die die Prüfer gegen einen alten Stand messen, sind alle geschrieben: `data/eigene-woerter.json` **14** selbst angelegte Wörter · `data/auswendig.json` **28 Suren + 5 einzelne Verse** · `data/abgelehnt.json` **45 abgelehnte Vorschläge an 23 Wörtern** · dazu `data/boxen.json` **4523 Wörter** (davon 4399 in Box 1). Nirgends „keine im Geraeteabgleich".
+
+Gegenprobe `get_learning_progress` (559.533 Zeichen, als Datei durchgereicht, nicht gelesen) → `vorrat.mjs --lernstand`: **unverändert** gegenüber vorher. Gemessen: madina-1 bis Kapitel 24 (244 Wörter), madina-2 bis 31 (250), bayna-yadayk-1 bis 16 (221), bayna-yadayk-2 bis 16 (275), bayna-yadayk-3 bis 16 (12), madina-3 bis 34 (32).
+
+⚠️ **Die zwei Abweichungen zwischen `angabe` und `gemessen` stehen weiter da** und sind die Frage an Elias, keine Zahl zum Wegsortieren: bayna-yadayk-1 Angabe **4**, gemessen **16**; madina-1 Angabe **12**, gemessen **24**. Beides ist nach seiner eigenen Erklärung vom 22.09. in Ordnung („so stimmt es") — die Messung zählt, womit er abgefragt wurde, und sein Trainer fragt alles ab, was er angehakt hat.
+
+`tajweed-markierungen.mjs` (1c.1b): Geräteabgleich erreichbar, **7 Buchstaben-Einträge, 0 neu im Archiv**. Vier davon hat er selbst wieder entfernt (67:1), drei sind sichtbar und tragen seine Notizen („N aussprechen", „Zay sagen", „Kurzes A und schadda halten"). `data/tajweed-archiv.json` mitcommittet.
+
+`neue-kapitel.mjs` (1c.1c): kein „⚠️ aufgegeben". Beide Aufträge sind erledigt — Kapitel 3 am 22.09. (nicht ausgeliefert), Kapitel 4 heute 21:54 (v585 ausgeliefert). Auch keine „⏳"-Zeile: Kapitel 4 war um 20:17 angehakt und um 22:04 längst über der Stundenschwelle.
+
+⭐⭐ **`vorrat.mjs` Exit 0 — und das ist die Meldung des Laufs:**
+
+```
+Vorrat: alle 321 freigeschalteten Woerter sind nach allen 13 Punkten
+des vollen Programms vollstaendig. (Freischaltstand 23.9.2026)
+```
+
+Je Punkt mit Nenner statt „erledigt": **321 von 321** geprüft, **0** unvollständig, fehlende Eselsbrücken **0**, fehlende Beispielsätze **0**, fehlende Markierungen **0**, ohne Wortart-Kategorie **0**, Felder (A1–A5) alle vollständig. **Es gibt keine „NICHT gemessen"-Zeile** — kein Teil des freigeschalteten Bestands bleibt ungeprüft. Ein einziger Befund darunter: `⛔ 1 NICHT: أَمَامَ (Vor / davor): Wurzel ء م م` — die Wurzel geht nicht auf; die übrigen 235 im Fenster gehen auf (30 erst ohne die schwachen Radikale, 2 benannte Sonderfälle). ⚠️ Das ist ein bekannter Sonderfall der Zuruf-Nomen und **keine** neue Lücke: A2 zählt أَمَامَ trotzdem als vollständig, weil es die Wurzel trägt.
+
+**1c.7 (Fragenseite)** – `aussenbelege.mjs`: **0 offene Felder**, also 0 abgefragt, 0 bestätigt, 0 verworfen. `woerterbuch-belege.mjs`: 11 Belege, **unverändert 11**; sieben Wörter scheiterten an der Strenge (Reverso nennt für أَمَامَ fünf Wortarten, für صِفْرٌ fünf, für أَلْمُهَنْدِسٌ zwei — das ist kein Beleg), neun zusammengesetzte Formen wurden gar nicht erst gefragt. `wartungsfragen-artefakt.mjs`: **„Nichts offen — alle Angaben da."** ⭐ Das ist die beste Meldung überhaupt und soll nicht untergehen: es wartet **keine einzige** Feldangabe auf Elias. ⚠️ Sein Artefakt unter `5ChpdN9n7PAiTY4B5ZHud3` zeigt trotzdem noch die alten Fragen, solange niemand die Seite neu veröffentlicht.
+
+**1c.8 (Warteseite)** – `wartet-auf-elias.mjs` **Exit 2**, gebaut 22:04:31, **10 Entscheidungen, davon 9 nur ansehen und wählen**, 1 mit Stückarbeit (2 Einzelstücke). Die Posten: andere Bücher anhakbar aber leer (4135) · Pluraltexte mit Zahl (77) · arabische Stimme installieren (0, im Browser gemessen) · Arabisch auf Handy und Tablet testen (2) · Geh-Modus (1) · welche Fachbegriffe als Karte (18) · Bild zur Eselsbrücke (3) · Satzmodus-Themen (3) · ältere To-Do-Fragen (6; von 11 aus dem 17.09. sind **8 beantwortet**, 3 neu gefunden) · Regelkandidaten (7). ⭐ **Die Taschkīl-Frage ist weg** — am 20.09. waren es dort noch 24 gebündelte Fragen, heute meldet `pruefe-taschkil.js` **Exit 0**. Der Artefakt-Wächter meldet **keine** der drei Richtungen (keine Seite ohne URL, keine Zuordnung ins Leere, keine Seite auf keiner Liste).
+
+**1c.8b (Regelkandidaten)** – `kandidaten-bewerten.mjs` **Exit 0**: 95 Fundstellen aus 8 Folgen, **88 habe ich selbst entschieden** (54 schon-regel, 34 weg), **7 gehen an Elias** (4 regel, 1 abweichung, 2 unbelegt), **mein Rückstand: 0**. Quellen erreichbar und nicht leer: Schlüssel Band 2+3 (142 von 273 Seiten), Vault 3 Notizen, seine Unterlagen 0 Einträge. `freigabe-artefakt.mjs` neu gebaut, Speicherschlüssel `regelkandidaten-v2`.
+
+**1c.8c (die drei übrigen Seiten)** – alle drei gebaut, und `git status --short` sagt, welche sich geändert hat:
+
+| Datei | geändert? | warum |
+|---|---|---|
+| `regelauswahl.html` | **ja** | Markierungszahl je Regel nachgezogen (v585 hat 36 ergänzt); 103 Regeln, 14 Kategorien, 0 ohne Kategorie |
+| `verschmelzung.html` | **ja** | 8 Gruppen, 21 Regeln; die Gruppenzahlen 47→58, 16→19, 21→22, 38→40, 12→23 |
+| `artefakte/regelpruefung.html` | **ja**, sagt es selbst | 182 KB, „GEÄNDERT gegenüber dem letzten Bau" — `git status` sieht sie nie, `artefakte/` ist gesperrt |
+
+**Schritt 1d (Regelsammlung)** – `regeln-holen.mjs`: letzter Geräteabgleich **23.9.2026, 20:36:04**, **keine Regelsammlung im abgeglichenen Stand**. ⚠️ Das heißt nicht „nichts eingetragen", nur: in dem abgeglichenen Stand liegt keine. `--merken` meldete folgerichtig „nichts zu merken" (es wird nur gemerkt, was gezeigt wurde). `regelsammlung-wache.mjs --aufnahmen .aufnahmen.json` **Exit 0**: die Wiedervorlage `asma-khamsa-vollstaendig-01` wartet seit dem 11.09. und findet auch ab Folge 20 keinen Treffer · Folge 19 hat ihre Karten · 8 Notizen im Ordner Arabisch\Grammatik · 22 Folgen gelesen. `--merken` durchgelaufen.
+
+`regelkategorien-seite.mjs` Exit 0: 103 Regeln in 14 Kategorien, **0 „Nicht zuordbar"**, gezählt über **358** Sätze, die er sieht (20.09.: 324), davon 77 Buchsätze bis madina-1 K12 / bayna-yadayk-1 K4, **664** Satzstellen (20.09.: 603).
+
+⚠️ **Die vier „zuerst"-Kategorien haben gewechselt, und das gehört gemeldet** — Elias arbeitet genau diese vier zuerst ab:
+
+| | 20.09.2026 | heute |
+|---|---|---|
+| 1 | Genitiv (89) | **Nominalsatz (50)** |
+| 2 | إِضَافَة (68) | **اَلْ (40)** |
+| 3 | Kasus (58) | **Schrift (38)** |
+| 4 | Adjektiv (44) | **Fragen (20)** |
+
+**Die Ursache ist gemessen, nicht vermutet:** „zuerst" sortiert nach Satzstellen an Regeln, die er **noch nie beurteilt** hat (`satzmodusUrteil`). In `grammar-data.js` tragen jetzt **68 von 103** Regeln dieses Feld, am 20.09. waren es 34 — dazwischen liegen `511e3a5` (v560, „Elias' Urteile von der Seite Regeln nach Kategorien, 42× gehört rein") und `7de39d5` (v565). Die vier alten Kategorien sind also **abgearbeitet**, nicht verschwunden. Kein Befund, aber eine Zahl, die er kennen muss.
+
+**Schritt 1e (Pflegeplan)** – `pruefe-pflegeplan.mjs` **Exit 0**: **44 Antworten über eine Routine · 5 in einer Sitzung · 36 ohne Pflegebedarf · 0 Lücken.** Alle sieben Störtests greifen, darunter „eine Lücke, die nicht in der To-Do steht" und „die Freigabe für regeln-holen.mjs fehlt in allowedTools".
+
+**Schritt 1f (Fachbegriffe)** – `fachbegriffe-finden.mjs`: **0 unentschiedene Kandidaten aus 103 Regeln**, nichts zu entscheiden. `fachbegriffe-nachschlagen.mjs --zeigen`: **0 offene Wörter**, die zweiseitige Eichung greift (تشكيل belegt; مربوطة und das erfundene زقزقنبوط dürfen nicht belegt werden — beide gingen leer aus). ⛔ Nach der Sperre vom 23.09. hätte dieser Schritt ohnehin nur fragen dürfen; es gab nichts zu fragen. `pruefe-fachbegriff-auftrag.mjs` bestätigt die Sperre: „Nur Bestelltes wird eine Karte, die Tür in der App filtert, und die Routine kann nichts mehr eintragen", 10 von 10 Gegenproben richtig, 4 Begriffe ausdrücklich abbestellt.
+
+**Schritt 2 (Vokabelabzug)** – `hole-vokabeln.mjs`: **4433 Einträge, 11 eigene Vokabeln**, Zahlen je Buch **unverändert** gegenüber dem letzten Lauf: bayna-yadayk-1 231 · -2 552 · -3 445 · -4 881 · madina-1 298 · -2 445 · -3 1238 · quran 343. `baue-vokabelpaket.mjs`: **UNVERAENDERT** — dasselbe Paket wie beim letzten Lauf (8 Bücher, 4433 Vokabeln, 1382 KB). ⛔ Deshalb **kein** `handlungsbedarf` und keine Aufforderung an Elias, etwas neu einzulesen. `get_unlocked_chapters` ins Log: 16 Kapitel (aby-1 1–4, madina-1 1–12).
+
+**Schritt 3** – `vocab-data.js` nicht angefasst. Die Anreicherungsschicht (Beispielsätze, Quranbelege) bleibt, wie sie ist.
+
+**Schritt 5 (Lernstand als Hinweis)** – `get_personal_vocabulary`: **11 Einträge, unverändert** (jüngste Änderung 18.07.2026), alle `word_type: "other"`. `get_weak_vocabulary` (Schwelle 0,34): **22 Wörter**, dieselbe Zahl wie am 20.09. Drei Beobachtungen, alle **ohne** Auftrag:
+
+1. **Die neun Zahlwörter aus madina-1 Kapitel 24 stehen weiter bei 0 %** (وَاحِدٌ, أَرْبَعَةٌ, خَمْسَةٌ, سِتَّةٌ, سَبْعَةٌ, ثَمَانِيَةٌ, تِسْعَةٌ, عَشَرَةٌ — 3 bis 4 Versuche, kein einziger richtig). Es sind genau die Karten, deren Feld `pl` nicht den Plural trägt, sondern die andere Genusform (`eiche-zahlplural.mjs`, 17 von 17 richtig). Der Zusammenhang ist plausibel und **nach wie vor nicht gemessen**; was dort statt „Plural" stehen soll, entscheidet sein Lehrer.
+2. **Die „(gr)"-Karten** نَعْتٌ und مَنْصُوبٌ stehen ebenfalls bei 0 %. Dieselben Karten, zu denen auf seiner Warte-Seite die Frage nach der Ausschreibung steht.
+3. Seine eigenen Wörter أَلْمُهَنْدِسٌ (0 von 7) und لَحْمٌ (0 von 5) sind seit **Juli** nicht mehr drangekommen; إِثْنَانِ steht bei 3 von 18. Aus den Büchern sind أَهْمَلَ (8/44), مُهْمِلٌ (8/30) und جَدْوَلٌ (17/56) die hartnäckigsten — جَدْوَلٌ zuletzt am 14.09., die beiden anderen seit dem 23.08. nicht mehr.
+
+**Schritt 6 (Qualitätssicherung)** – `pruefe-volles-programm.mjs` ein zweites Mal als Abnahme **Exit 0**. `pruefe-erreichbarkeit.js` **Exit 0**: alle **103 von 103** markierten Regeln sind in einem Satz erreichbar, den er sieht, und `.deploy/` deckt sich mit dem Repo (103 Regeln, 811 Markierungen, 42 Lehrbuchsätze, Cache `vokabeltrainer-v585`); alle vier Störtests greifen. `validate.js` **Exit 0**: 36 Prüfungen, **2 Hinweise** (لَبَنٌ mit Plural ohne `sg`, مِكْوَاةٌ mit `sg` ohne Plural — beide im Abzug gegengeprüft). Die Zeile, auf die es hier ankommt, ist grün: `ok Satzmodus-Kategorien: alle 14 besetzt, 2–14 erreichbare Regeln je Kategorie` — **keine Kategorie läuft ins Leere**, und keine Regel-Id fällt durch alle Muster.
+
+Dann `alle-pruefer.mjs`: **130 Prüfer, 5 rot, davon 2 NEU ROT.**
+
+Die drei bekannten Wartefälle, alle Exit 2 und alle auf seiner Seite — **kein** Fehler:
+- `pruefe-themen.mjs` — 3 Punkte für Elias, Kandidaten ohne Urteil.
+- `pruefe-beispielsaetze.mjs` — **1 Karte ohne Beispielsatz** (am 20.09. war das noch keine eigene Zeile). ⛔ Kein Satz wird erfunden; sie wartet auf belegtes Material.
+- `pruefe-buchtausch.mjs` — **19 weitere Fachbegriffe** tragen dieselbe Schreibung wie eine Buchvokabel. ⭐ Am 23.09. früh waren es **30**; der Prompt nennt diese Zahl noch. Die Liste ist also um elf kürzer geworden, ohne dass jemand eingegriffen hätte — sie folgt dem Bestand.
+
+⭐ **Vier Prüfer, die im Prompt als Dauerwartefälle stehen, sind heute grün:** `pruefe-duplikate.js` („Keine Doppelung, die er entscheiden muss"), `pruefe-eselsbruecken.js` (1674 Einzelprüfungen sauber, 4 alte Hinweise), `pruefe-taschkil.js` Exit 0 und `taschkil-belegen.mjs` **0 Wörter** ohne vollständige Vokalisierung. Der Prompt beschreibt sie noch als „dauerhaft rot" — das stimmt seit v585 nicht mehr.
+
+Die zwei **NEU ROT**, beide angesehen:
+
+1. ⛔ `pruefe-gedaechtnis-luecken.mjs` Exit 2 — **1 von 27 Commits seit Mitternacht ohne Spur im Gedächtnis:** `221e788` („maintenance-log: Lauf der Routine ‚neue Kapitel' vom 23.09.2026"), der Log-Commit des 21:54-Laufs. Die vier Störtests greifen (erfundener Hash wird nicht gefunden, echter schon, ≥100k Zeichen gelesen, `git log` hat geliefert). **Mit Schritt 8 dieses Laufs behoben** — die Vault-Notiz nennt jetzt sowohl `221e788` als auch die beiden Commits von heute Abend. Die Ursache ist strukturell und gehört in eine Sitzung: der Log-Commit entsteht **nach** dem Vault-Eintrag, sein Hash kann dort also nie stehen, solange niemand nachträgt.
+2. ⛔ `pruefe-sammellauf.mjs` Exit 1 — `werkzeuge/pruefe-vokabeln-seite.mjs` liegt im Ordner und steht nicht in `alle-pruefer.mjs`. ⛔ **Nachgemessen, nicht übernommen:** die Datei ist unverändert unversioniert (`git status` zeigt sie weiter als `??`), zusammen mit `index.html` und `js/kategorien.js`. **Das ist nicht aus diesem Lauf** und war schon beim Start da; es steht seit dem 21:54-Lauf als Punkt 1 in der To-Do (Zeile 14694) und in `Routinen-Status.md`. Deshalb **kein** zweiter Eintrag. Die Regel „NEU ROT → nicht ausliefern" greift hier ins Leere: es war nichts auszuliefern.
+
+Die Eichungen alle grün: `eiche-harf-jarr` 17/17 · `eiche-zahlplural` 17/17 · `eiche-taschkil-beleg` 7/7 (3 müssen durchfallen) · `eiche-plural-beleg` 7/7 · `eiche-datumsmuster` 16/16 (9 Uhrzeit, 7 Spanne) · `pruefe-erreichbarkeit-eichung` 3/3 · `eiche-wortart-knopf` ok · `eiche-fragenreihenfolge` („die Fragendatei ist leer — es ist nichts offen"). Weiter grün: `pruefe-markierungen.js` alle 6 harten Prüfungen auf 0 · `pruefe-saetze.js` **488** Sätze kasusrein und in jeder Buchauswahl gleich zerlegt · `pruefe-funktionen.js` und `pruefe-eigene-vorrang.mjs` („alle vier Werkzeuge messen 321") · `pruefe-quran.js` jeder Bezug führt an eine echte Stelle · `pruefe-wortfelder.js --fenster` **199 von 321** mit Bedeutungsfeld · `pruefe-hinweise.mjs` (453 Sätze aus 8 Dateien, 6736 Aufgaben) · `pruefe-uebersetzen.mjs` · `pruefe-eselsbilder.mjs` · `pruefe-fachbegriff-regel.mjs` · `pruefe-hoer-auswahl.mjs` · `pruefe-schreibpfade.mjs` · `pruefe-artefakt-inhalt.mjs` · `pruefe-datumsangaben.mjs` · `pruefe-kreislaeufe.mjs` (diesmal **grün**, weil dieser Lauf weder `grammar-data.js` noch `data/beispielsaetze.js` angefasst hat) · `notiz-umraeumen.mjs` („Schon in Ordnung — neueste zuerst") · `test-satzmodus-schwerer.mjs` · `test-freischaltung-abfragemarke.mjs` (am 22.09. noch rot, heute grün).
+
+⚠️ `pruefe-oberflaeche.js` läuft nur im Browser und war nicht dabei; sein letzter Lauf ist vom **09.09.** (v460, 44 Prüfungen, 0 Fehler) und damit **14 Tage** alt. Das meldet der Sammellauf selbst.
+
+**Schritt 7** – Vier Dateien mit explizitem Pfad committet (`2c37be3`) und gepusht (`221e788..2c37be3`): `data/lernstand.json`, `data/tajweed-archiv.json`, `regelauswahl.html`, `verschmelzung.html`. ⛔ `index.html`, `js/kategorien.js` und `werkzeuge/pruefe-vokabeln-seite.mjs` blieben unangetastet — fremde Arbeit. Ebenso die sechs Auftragsdateien des 21:54-Laufs (`.auftrag-byd1-k4.md`, `.eselsbruecken-byd1-k4.json`, `.kapitel-stand.json`, `.markierung-auftrag.json`, `.markierung-byd1-k4.json`), die weiter unversioniert herumliegen.
+
+### Offene Punkte des letzten Berichts — einzeln nachgemessen, nicht übernommen
+
+| Punkt | Messung heute | Stand |
+|---|---|---|
+| `pruefe-vokabeln-seite.mjs` nicht im Sammellauf, drei Dateien live aber nicht im Repo | `pruefe-sammellauf.mjs` Exit 1, `git status` zeigt alle drei weiter | **offen** (23.09. 22:05) |
+| `artefakte/regeln.json` veraltet nach jeder Daten-/Regeländerung | `pruefe-kreislaeufe.mjs` **Exit 0** — dieser Lauf hat keine Daten geändert, der Handgriff war nicht nötig | **offen als Vorschlag**, heute ohne Anlass |
+| Access-Nachweis `.access-geprueft.json` | `geprueft: 2026-09-09` → **14 Tage** alt | **offen**, blockiert nichts (`--mit-daten` lief zuletzt am 23.09. durch) |
+| NFC-Falle in `markierung-setzen.mjs` (22.09.) | `ladeSaetze()` legt den Satz weiter als `ar: nfc(s.sentAr)` ab (Zeilen 89/99/128), das Werkzeug ist seit `1cce209` unverändert | **offen** |
+| Zwei verlorene Kommentare in `js/kern.js` (22.09.) | Zeile 116 `'bayna-yadayk-1': [1,2,3,4]` trägt weiter keinen Kommentar; madina-2 ebenso | **offen** |
+
+### Was in den Bericht gehört
+
+⭐ **Nichts veröffentlicht, also auch kein „App schließen und neu öffnen".** Der ausgelieferte Stand v585 vom 21:54-Lauf ist der aktuelle.
+
+🔴 **Sieben Seiten sind gebaut und warten auf eine Sitzung** — veröffentlichen kann diese Routine nicht, und jede gehört unter **ihre** Adresse, sonst entsteht eine zweite Seite und seine gespeicherten Antworten bleiben zurück:
+
+| Datei | Adresse | Stand |
+|---|---|---|
+| `artefakte/wartet-auf-elias.html` | Hukk2F5jbFqnLsnW5H9QfN | 10 Entscheidungen, Stand 22:04 |
+| `artefakte/wartungsfragen.html` | 5ChpdN9n7PAiTY4B5ZHud3 | „Nichts offen" — sein Artefakt zeigt noch alte Fragen |
+| `artefakte/freigabe.html` | 2GJFK49B8LvWJaBu337qU4 | 7 von 95 Kandidaten, Schlüssel `regelkandidaten-v2` |
+| `regelauswahl.html` | da4af296-67c5-4055-a2e7-35defc375007 | geändert laut `git status` |
+| `verschmelzung.html` | LMHMc79nzyNS3BZpm76kqW | geändert laut `git status` |
+| `artefakte/regelpruefung.html` | 4iMdxRvKkFHj699cfyHbra | sagt selbst „GEÄNDERT gegenüber dem letzten Bau" |
+| `artefakte/regelkategorien.html` | DHhYFwtTNJADVwE2tVUDz3 | neu gebaut, vier neue „zuerst"-Kategorien |
+
+⬜ **Neu aus diesem Lauf:** (1) Die Freigaben-Lücke vom 23.09., die `pruefe-laeufe.mjs` meldet, betrifft eine andere Prompt-Datei — welche, muss eine Sitzung nachsehen. (2) `pruefe-gedaechtnis-luecken.mjs` wird nach jedem Log-Commit rot, weil dessen Hash erst nach dem Vault-Eintrag entsteht; das ist ein Ablauf, kein Versäumnis, und gehört einmal sauber gelöst. (3) Der Prompt nennt `pruefe-duplikate`, `pruefe-eselsbruecken` und `pruefe-taschkil` als „dauerhaft rot" — seit v585 sind alle drei grün, die Stelle ist überholt.
