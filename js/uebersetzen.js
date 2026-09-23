@@ -568,8 +568,27 @@ function uebsPruefeGenus(k){
   const m = uebsHinweisFolge(k.musterWorte);
   const e = uebsHinweisFolge(k.eingabeWorte);
   if (!m.length || m.length !== e.length) return null;
+  /* ⛔ Das NEUTRALE „dies" im Muster (23.09.2026, Befund 7 der Gegenprüfung):
+     „Diese ist ein Student." für „Dies ist ein Student." galt als richtig —
+     „dies" hat keine Genusform, also übersprang die Prüfung die Stelle. Das
+     Geschlecht steht dann im ARABISCHEN Hinweiswort: هذا/ذلك männlich,
+     هذه/تلك weiblich. Nur wenn der Satz genau EIN Hinweiswort hat, sonst
+     wüsste man nicht, welches zu welcher Stelle gehört. */
+  const nackt = z => String(z.rein || z.wort || '').normalize('NFC').replace(/[ً-ْٰ]/g, '');
+  const einziges = k.zeilen.filter(z => UEBS_ISARA.test(nackt(z))).length === 1;
+  const arWeiblich = /^(?:و?)(?:هذه|تلك)$/.test(nackt(hin));
+  const arMaennlich = /^(?:و?)(?:هذا|ذلك)$/.test(nackt(hin));
   for (let i = 0; i < m.length; i++){
     if (m[i] === e[i]) continue;
+    if (m[i] === 'dies' && einziges && (arWeiblich || arMaennlich)){
+      const eWeiblich = e[i] === 'diese' || e[i] === 'jene';
+      const eMaennlich = e[i] === 'dieser' || e[i] === 'jener';
+      if ((arWeiblich && eMaennlich) || (arMaennlich && eWeiblich)){
+        return uebsBefund('genus',
+          `Das Hinweiswort passt nicht: im Arabischen steht ${hin.rein || hin.wort}, also ${arWeiblich ? 'weiblich („diese")' : 'männlich („dieser" oder einfach „dies")'} — du hast „${e[i]}" geschrieben. Es richtet sich nach dem Geschlecht des Wortes, auf das gezeigt wird — هَذَا bei männlichen, هَذِهِ bei weiblichen.`,
+          'isara-genus-kongruenz-01');
+      }
+    }
     /* ⛔ NAH GEGEN FERN an derselben Stelle (23.09.2026). Bis dahin übersprang
        diese Schleife dies- gegen jen- und verließ sich auf die Vollständigkeit —
        die aber nur fragt, OB das Wort irgendwo steht. Zwei Fälle gingen so als
@@ -666,6 +685,27 @@ function uebsPruefeAdjektivBezug(k){
   return null;
 }
 
+/* 8 — EINZAHL GEGEN MEHRZAHL (23.09.2026, Befund 5 der Gegenprüfung eines
+   Helfers). „Das sind alte und schwere Steine." für „Dies ist ein alter und
+   schwerer Stein." galt als richtig: jedes Wort war da, nur in der Mehrzahl.
+   Ohne Regelnamen, wie „Wort ausgelassen" — es ist eine Übersetzungs-, keine
+   Grammatikfrage der Regelsammlung. Gezählt wird nur die Form von „sein",
+   und nur wenn Muster und Eingabe EINDEUTIG verschieden sind (das Muster nur
+   „ist"/„war", die Eingabe nur „sind"/„waren", oder umgekehrt) — ein Satz mit
+   beidem bleibt unbeurteilt, statt geraten zu werden. */
+const UEBS_KOPULA_EZ = new Set(['ist', 'war']);
+const UEBS_KOPULA_MZ = new Set(['sind', 'waren']);
+function uebsPruefeZahl(k){
+  const zaehle = (worte, menge) => worte.filter(w => menge.has(w)).length;
+  const mEZ = zaehle(k.musterWorte, UEBS_KOPULA_EZ), mMZ = zaehle(k.musterWorte, UEBS_KOPULA_MZ);
+  const eEZ = zaehle(k.eingabeWorte, UEBS_KOPULA_EZ), eMZ = zaehle(k.eingabeWorte, UEBS_KOPULA_MZ);
+  if (mEZ && !mMZ && eMZ && !eEZ)
+    return uebsBefund('zahl', 'Die Zahl stimmt nicht: der arabische Satz spricht von EINEM — im Deutschen also „ist" und die Einzahl, nicht „sind".', null);
+  if (mMZ && !mEZ && eEZ && !eMZ)
+    return uebsBefund('zahl', 'Die Zahl stimmt nicht: der arabische Satz spricht von MEHREREN — im Deutschen also „sind" und die Mehrzahl, nicht „ist".', null);
+  return null;
+}
+
 /* ---------- Die Prüfung ---------- */
 
 /* Die Reihenfolge ist die Rangfolge: was weiter oben steht, erklärt mehr.
@@ -678,6 +718,7 @@ const UEBS_PRUEFUNGEN = [
   uebsPruefeBesitzer,
   uebsPruefeGenus,
   uebsPruefeAussage,
+  uebsPruefeZahl,
   uebsPruefeBestimmtheit
 ];
 

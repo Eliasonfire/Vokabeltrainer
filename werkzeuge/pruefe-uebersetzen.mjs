@@ -409,6 +409,32 @@ const STOERUNGEN = [
     }
   },
   {
+    /* Befund 7 der Gegenprüfung (23.09.2026): „Diese ist ein Student." für
+       „Dies ist ein Student." galt als richtig — das neutrale „dies" hat keine
+       Genusform. Verfälscht wird zum GEGENTEILIGEN Geschlecht des arabischen
+       Hinweisworts; nur bei genau einem Hinweiswort im Satz. */
+    art: 'genus bei neutralem „dies"', erwartet: 'genus',
+    mach(s, zeilen){
+      if (!/^Dies ist /.test(s.sentDe)) return null;
+      const nackt = z => String(z.rein || z.wort || '').normalize('NFC').replace(/[ً-ْٰ]/g, '');
+      const hin = zeilen.filter(z => /^(?:و?)(?:هذا|هذه|ذلك|تلك)$/.test(nackt(z)));
+      if (hin.length !== 1) return null;
+      const weiblich = /^(?:و?)(?:هذه|تلك)$/.test(nackt(hin[0]));
+      return s.sentDe.replace(/^Dies ist /, (weiblich ? 'Dieser' : 'Diese') + ' ist ');
+    }
+  },
+  {
+    /* Befund 5 der Gegenprüfung (23.09.2026): Mehrzahl statt Einzahl galt als
+       richtig. Verfälscht wird nur die Form von „sein" — die deutsche
+       Pluralbildung ist zu unregelmäßig, um sie hier zu erzeugen, und genau
+       die Kopula ist das, woran die Prüfung es erkennt. */
+    art: 'mehrzahl statt einzahl', erwartet: 'zahl',
+    mach(s){
+      if (!/\bist\b/.test(s.sentDe) || /\b(sind|waren)\b/.test(s.sentDe)) return null;
+      return s.sentDe.replace(/\bist\b/, 'sind');
+    }
+  },
+  {
     art: 'bestimmt mit „Das ist"', erwartet: 'bestimmtheit',
     mach(s){
       const m = s.sentDe.match(/^Dies ist (ein|eine) ([a-zäöüß]+?)(er|es|e) und ([a-zäöüß]+?)(er|es|e) ([A-ZÄÖÜ][a-zäöüß]+)\.$/);
