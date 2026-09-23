@@ -175,6 +175,18 @@ const FACHBEGRIFF_AUFTRAG = {
   'gram-hayya-bina': '16.09.2026 — „die vokabeln die ich dort aufgeschrieben habe mit rot die brauche ich auch als karteikarten“',
 };
 
+/* ⛔ AUSDRÜCKLICH ABBESTELLT — diese fragt auch die Warteseite nicht mehr.
+   Die übrigen ruhenden stehen dort zur Wahl („die hand voll weitere“); diese
+   vier hat er selbst beim Namen abgelehnt. Eine Kennung darf nie zugleich in
+   FACHBEGRIFF_AUFTRAG stehen — sagt er später doch ja, fliegt sie HIER raus,
+   mit seinem neuen Satz dort. werkzeuge/pruefe-fachbegriff-auftrag.mjs prüft das. */
+const FACHBEGRIFF_ABBESTELLT = {
+  'gram-mutabaqa':        '23.09.2026 — „das ist keine vokabel die ich lernen möchte“',
+  'gram-jumla-filiya':    '22.09.2026 — „mach diese drei weg und kümmere dich erstmal darum das das auch nicht wieder passiert“',
+  'gram-huruf-schamsiya': '22.09.2026 — „mach diese drei weg und kümmere dich erstmal darum das das auch nicht wieder passiert“',
+  'gram-hamzat-wasl':     '22.09.2026 — „mach diese drei weg und kümmere dich erstmal darum das das auch nicht wieder passiert“',
+};
+
 const FACHBEGRIFF_VOKABELN = [
   {
     id: 'gram-mudaf',

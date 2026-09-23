@@ -1036,18 +1036,25 @@ posten.push({
    deshalb die deutsche Bedeutung, Arabisches herausgefiltert. */
 {
   const kiste = vm.createContext({ window: {}, __r: {} });
-  let ruhend = [];
+  let ruhend = [], abbestellt = [];
   try {
     vm.runInContext(fs.readFileSync(path.join(REPO, 'data', 'fachbegriffe.js'), 'utf8')
-      + ';__r.v = FACHBEGRIFF_VOKABELN; __r.a = (typeof FACHBEGRIFF_AUFTRAG !== "undefined") ? FACHBEGRIFF_AUFTRAG : null;', kiste);
-    const a = kiste.__r.a;
-    if (a) ruhend = kiste.__r.v.filter(w => !Object.prototype.hasOwnProperty.call(a, String(w.id)));
+      + ';__r.v = FACHBEGRIFF_VOKABELN; __r.a = (typeof FACHBEGRIFF_AUFTRAG !== "undefined") ? FACHBEGRIFF_AUFTRAG : null;'
+      + '__r.weg = (typeof FACHBEGRIFF_ABBESTELLT !== "undefined") ? FACHBEGRIFF_ABBESTELLT : {};', kiste);
+    const a = kiste.__r.a, weg = kiste.__r.weg || {};
+    const hat = (o, id) => Object.prototype.hasOwnProperty.call(o, String(id));
+    /* ⛔ Was er beim Namen abgelehnt hat (FACHBEGRIFF_ABBESTELLT), wird nicht
+       noch einmal angeboten — „Übereinstimmung" zur Wahl zu stellen, eine
+       Stunde nachdem er sie abbestellt hat, wäre dieselbe Frage zweimal. */
+    if (a){ ruhend = kiste.__r.v.filter(w => !hat(a, w.id) && !hat(weg, w.id)); abbestellt = kiste.__r.v.filter(w => hat(weg, w.id)); }
   } catch (e) { console.log('  ⚠ Fachbegriffe nicht lesbar: ' + String(e.message).slice(0, 80)); }
   const NAMEN = { 'gram-ta-marbuta': 'die weibliche Endung (Tāʾ marbūṭa)', 'gram-alif-maqsura': 'das Alif am Wortende (Alif maqṣūra)' };
   const deutsch = (w) => NAMEN[w.id] || String(w.de || '').replace(/\p{Script=Arabic}+/gu, '').replace(/\s{2,}/g, ' ').trim();
   if (ruhend.length) posten.push({
     titel: 'Fachbegriffe: welche „Hand voll" außer Akkusativ, Genitiv und Nominativ?',
-    zahl: ruhend.length, einheit: 'ruhen', dazu: 'seit v582', auswahl: true,
+    zahl: ruhend.length, einheit: 'ruhen',
+    dazu: 'seit v582' + (abbestellt.length ? ' · nicht mehr gefragt, weil du sie abgelehnt hast: ' + abbestellt.map(deutsch).map(t => t.split(' — ')[0]).join(', ') : ''),
+    auswahl: true,
     aufwand: 'die Namen nennen, die du als Karte willst — oder „keine"',
     warum: 'Du hast gesagt: Akkusativ, Genitiv und Nominativ „und vielleicht noch eine hand voll weitere", aber nicht solche wie „Übereinstimmung". '
       + 'Seit v582 wird ein Fachbegriff nur noch eine Karte, wenn du ihn bestellt hast. Diese hier ruhen: in keiner Kartei, keinem Hörmodus, keiner Suche.',

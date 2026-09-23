@@ -67,8 +67,8 @@ function ladeNamen(datei, namen){
     .map(n => `try{__raus[${JSON.stringify(n)}]=${n}}catch(e){}`).join(';'), ctx);
   return ctx.__raus;
 }
-const { FACHBEGRIFF_VOKABELN, FACHBEGRIFF_AUFTRAG } =
-  ladeNamen('data/fachbegriffe.js', ['FACHBEGRIFF_VOKABELN', 'FACHBEGRIFF_AUFTRAG']);
+const { FACHBEGRIFF_VOKABELN, FACHBEGRIFF_AUFTRAG, FACHBEGRIFF_ABBESTELLT } =
+  ladeNamen('data/fachbegriffe.js', ['FACHBEGRIFF_VOKABELN', 'FACHBEGRIFF_AUFTRAG', 'FACHBEGRIFF_ABBESTELLT']);
 
 if (!Array.isArray(FACHBEGRIFF_VOKABELN) || !FACHBEGRIFF_VOKABELN.length){
   console.log('✖ data/fachbegriffe.js liefert keine Einträge — nichts zu prüfen.');
@@ -79,19 +79,28 @@ if (!Array.isArray(FACHBEGRIFF_VOKABELN) || !FACHBEGRIFF_VOKABELN.length){
 
 const DATUM = /\b\d{2}\.\d{2}\.\d{4}\b/;
 const ZITAT = /„[^“"]{3,}[“"]/;
-function zeilenFehler(auftrag, ids){
+function zeilenFehler(auftrag, ids, name = 'FACHBEGRIFF_AUFTRAG'){
   const f = [];
   if (!auftrag || typeof auftrag !== 'object' || Array.isArray(auftrag)){
-    f.push('FACHBEGRIFF_AUFTRAG fehlt in data/fachbegriffe.js — ohne die Liste gilt in der App NICHTS als bestellt, alle Fachbegriff-Karten wären weg.');
+    f.push(name === 'FACHBEGRIFF_AUFTRAG'
+      ? 'FACHBEGRIFF_AUFTRAG fehlt in data/fachbegriffe.js — ohne die Liste gilt in der App NICHTS als bestellt, alle Fachbegriff-Karten wären weg.'
+      : name + ' fehlt in data/fachbegriffe.js — dann böte die Warteseite ihm Begriffe an, die er schon abgelehnt hat.');
     return f;
   }
   for (const [id, wert] of Object.entries(auftrag)){
-    if (!ids.has(id)) f.push('FACHBEGRIFF_AUFTRAG nennt ' + id + ', aber diesen Eintrag gibt es nicht (verwaist oder vertippt).');
+    if (!ids.has(id)) f.push(name + ' nennt ' + id + ', aber diesen Eintrag gibt es nicht (verwaist oder vertippt).');
     const w = String(wert || '');
-    if (!DATUM.test(w)) f.push('FACHBEGRIFF_AUFTRAG[' + id + ']: kein Datum (TT.MM.JJJJ) — wann hat er es gesagt?');
-    if (!ZITAT.test(w)) f.push('FACHBEGRIFF_AUFTRAG[' + id + ']: kein Satz von ihm in „…" — eine Zeile ohne sein Wort ist genau das, was er abbestellt hat.');
+    if (!DATUM.test(w)) f.push(name + '[' + id + ']: kein Datum (TT.MM.JJJJ) — wann hat er es gesagt?');
+    if (!ZITAT.test(w)) f.push(name + '[' + id + ']: kein Satz von ihm in „…" — ohne sein Wort ist die Zeile eine Vermutung.');
   }
   return f;
+}
+/* Bestellt UND abbestellt zugleich geht nicht: dann entschiede die Reihenfolge
+   im Code, und keiner merkt es. */
+function konfliktFehler(auftrag, abbestellt){
+  if (!auftrag || !abbestellt) return [];
+  return Object.keys(abbestellt).filter(id => Object.prototype.hasOwnProperty.call(auftrag, id))
+    .map(id => id + ' steht in FACHBEGRIFF_AUFTRAG UND in FACHBEGRIFF_ABBESTELLT — sagt er doch ja, muss die Zeile unter ABBESTELLT raus.');
 }
 
 /* Die EINE Tür: die Zeile, die Fachbegriffe in VOCAB_DATA hängt, muss filtern. */
@@ -150,6 +159,7 @@ const eichung = [];
   if (!zeilenFehler({ a: 'weil es in seinen Regeln steht' }, ids).length) eichung.push('Zeilenprüfung übersieht eine Zeile ohne Datum und Satz.');
   if (!zeilenFehler({ b: '23.09.2026 — „x y z"' }, ids).length) eichung.push('Zeilenprüfung übersieht eine verwaiste Kennung.');
   if (!zeilenFehler(undefined, ids).length) eichung.push('Zeilenprüfung übersieht eine fehlende Liste.');
+  if (!konfliktFehler({ a: 'x' }, { a: 'y' }).length) eichung.push('Konfliktprüfung übersieht eine Kennung, die bestellt UND abbestellt ist.');
 
   const gut = 'function fachbegriffBestellt(w){}\nVOCAB_DATA.push(...FACHBEGRIFF_VOKABELN.filter(w => fachbegriffBestellt(w) && x));\n'
     + 'function fachbegriffeMitBuchkarte(){\n  FACHBEGRIFF_VOKABELN.filter(f => fachbegriffBestellt(f));\n}\nfunction holeFortschrittNach(){\n  FACHBEGRIFF_VOKABELN.filter(fachbegriffBestellt);\n}\n';
@@ -170,6 +180,8 @@ for (const e of eichung) meldung('Eichung: ' + e);
 
 const ids = new Set(FACHBEGRIFF_VOKABELN.map(w => String(w.id)));
 zeilenFehler(FACHBEGRIFF_AUFTRAG, ids).forEach(meldung);
+zeilenFehler(FACHBEGRIFF_ABBESTELLT, ids, 'FACHBEGRIFF_ABBESTELLT').forEach(meldung);
+konfliktFehler(FACHBEGRIFF_AUFTRAG, FACHBEGRIFF_ABBESTELLT).forEach(meldung);
 
 /* ---------- 2. Die Tür in der App ---------- */
 
@@ -214,7 +226,8 @@ console.log('Einträge in data/fachbegriffe.js:  ' + FACHBEGRIFF_VOKABELN.length
 console.log('davon bestellt (eine Karte):       ' + bestellt.length);
 console.log('ruhend (in keinem Modus):          ' + ruhend.length + (zeigeAlle ? '' : '   (--liste zeigt sie)'));
 if (zeigeAlle) for (const w of ruhend) console.log('  ' + String(w.id).padEnd(24) + String(w.de || '').slice(0, 60));
-console.log('Eichung der Erkennungen:           ' + (eichung.length ? eichung.length + ' Fehler' : '9 von 9 Gegenproben richtig'));
+console.log('davon ausdrücklich abbestellt:     ' + (FACHBEGRIFF_ABBESTELLT ? Object.keys(FACHBEGRIFF_ABBESTELLT).length : 0) + '   (die Warteseite fragt sie nicht mehr)');
+console.log('Eichung der Erkennungen:           ' + (eichung.length ? eichung.length + ' Fehler' : '10 von 10 Gegenproben richtig'));
 
 if (befunde.length){
   console.log('\n✖ ' + befunde.length + ' Befund(e):');
