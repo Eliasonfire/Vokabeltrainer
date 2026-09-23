@@ -1032,12 +1032,19 @@ posten.push({
      45828 Beispielsatz 617–732, 45829 657–789 — beide ganz außerhalb, rollen
      +147 bzw. +204 px; 45751 teilweise (+119 px). Seine Vorgabe war „nur
      Rückseite … bei der Eselsbrücke" — über die Größe hat er nicht entschieden. */
-  titel: 'Bild zur Eselsbrücke: der Beispielsatz rutscht aus dem Blick',
-  zahl: 1, einheit: 'Frage', dazu: 'seit v573', auswahl: true,
-  aufwand: 'eine von drei Antworten',
-  warum: 'Auf deinem Handy schiebt das Bild den Beispielsatz nach unten. Bei zwei von drei gemessenen Karten liegt er ganz '
-    + 'außerhalb, du musst rollen. Unten steht der Hinweis, dass es weitergeht.',
-  wie: '(1) so lassen — rollen, der Hinweis ist da. (2) Bild kleiner. (3) Bild an eine andere Stelle, etwa neben die Eselsbrücke.',
+  /* ⭐ 23.09.2026, 05:1x: dazu die zwei Fragen aus dem To-Do-Block 02:50 (E),
+     die nur im Chat und in der To-Do standen — auf keiner Seite. Die dritte
+     von dort (Menünamen auf dem Pixel) ist durch „Arabisch testen" überholt. */
+  titel: 'Bild zur Eselsbrücke: drei Fragen',
+  zahl: 3, einheit: 'Fragen', dazu: 'seit v573', auswahl: true,
+  aufwand: 'je Frage ein Wort',
+  warum: 'Seit v573 steht bei 86 Wörtern ein Bild auf der Rückseite, so wie du es gewählt hast. Drei Dinge daran hast du noch nicht entschieden.',
+  wie: 'Sag die Nummer und deine Antwort, zum Beispiel „1: kleiner" oder „2: raus".',
+  zeilen: [
+    '1 · Auf deinem Handy schiebt das Bild den Beispielsatz nach unten — bei zwei von drei gemessenen Karten liegt er ganz außerhalb, du musst rollen (der Hinweis, dass es weitergeht, ist da). So lassen, Bild kleiner, oder das Bild an eine andere Stelle?',
+    '2 · Vier Emoji zeigen eher ein Nachbarwort als das Wort selbst: 🔒 für „geschlossen", 📚 für „Bibliothek", 🍲 für „Kochtopf", 🛣️ für „Straße". Rausnehmen oder lassen?',
+    '3 · Sollen neue Wörter aus neuen Kapiteln nach derselben Regel ein Bild bekommen — oder bleibt es bei den 86?'
+  ],
   seite: '', seiteText: ''
 });
 posten.push({
