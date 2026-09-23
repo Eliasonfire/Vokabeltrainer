@@ -211,6 +211,16 @@ const HARMLOS = [
   ['„vom X" statt „des Xs"', de => {
     const n = de.replace(/\bdes ([A-ZÄÖÜ][a-zäöüß]+?)(es|s)\b/g, 'vom $1');
     return n !== de ? n : null;
+  }],
+  /* ⛔ 23.09.2026 nachgetragen, nach der Gegenprüfung eines Helfers: v572 zählte
+     „Dies ist ein schwerer und alter Stein." für „… alter und schwerer Stein."
+     als falsch (adjektivbezug) — neu 10 von 16 solcher Sätze, vorher 1. Zwei
+     beigeordnete Adjektive dürfen im Deutschen die Plätze tauschen; keine der
+     Fassungen oben hatte das je versucht. */
+  ['zwei Adjektive vertauscht', de => {
+    const n = de.replace(/\b(ein|eine|einen|einem|einer|eines|der|die|das|den|dem|des)\s+([a-zäöüß]+)\s+und\s+([a-zäöüß]+)\s+(?=[A-ZÄÖÜ])/,
+      (_, art, a, b) => art + ' ' + b + ' und ' + a + ' ');
+    return n !== de ? n : null;
   }]
 ];
 
@@ -348,6 +358,64 @@ const STOERUNGEN = [
         return ohne.join(' ');
       }
       return null;
+    }
+  },
+  /* ⛔ Die zwei Störfälle, die v572 durchließ — gefunden am 23.09.2026 von einer
+     Gegenprüfung mit 2.590 Angriffen, nicht von diesem Prüfer. Beide hängen an
+     „Das ist", der Fassung, die v572 erst möglich gemacht hat. */
+  {
+    /* „Das ist ein armer Mann." für „Dieser Mann ist arm." — aus dem Satz wird
+       eine Wortgruppe: هَذَا رَجُلٌ فَقِيرٌ statt هَذَا الرَّجُلُ فَقِيرٌ. Die Regel
+       dazu (hadha-al-kein-satz-01) ist ausgeblendet; erkannt wird der Fall über
+       die Bestimmtheit (Kopf von js/uebersetzen.js). Gemessen vorher: 21 von
+       21 als richtig gezählt. */
+    art: 'wortgruppe statt satz', erwartet: 'bestimmtheit',
+    mach(s){
+      const m = s.sentDe.match(/^(Dieser|Diese|Dieses) ([A-ZÄÖÜ][a-zäöüß]+) ist ([a-zäöüß]+)\.$/);
+      if (!m || /(e|er|el|en)$/.test(m[3])) return null;   // nur regelmäßige Endungen, keine geratene Beugung
+      const [art, endung] = m[1] === 'Dieser' ? ['ein', 'er'] : m[1] === 'Diese' ? ['eine', 'e'] : ['ein', 'es'];
+      return 'Das ist ' + art + ' ' + m[3] + endung + ' ' + m[2] + '.';
+    }
+  },
+  {
+    /* „Das ist der alte und schwere Stein." für „Dies ist ein alter und
+       schwerer Stein." — mit „Dies ist der …" erkannt, mit „Das ist der …"
+       nicht: das hinweisende „das" zählte als Artikel und fehlte als
+       Inhaltswort. */
+    /* Nah gegen fern, wenn der Satz ZWEI Hinweiswörter hat (Befund 4 der
+       Gegenprüfung vom 23.09.2026): „Das ist Zucker und dies ist Milch." für
+       „Dies ist Zucker und jenes ist Milch." galt als richtig — das „das" vorn
+       deckte jedes Hinweiswort im ganzen Satz, und „dies" stand ja da. */
+    art: 'nah-fern bei zwei Hinweiswörtern', erwartet: 'ausgelassen',
+    mach(s){
+      if (!/^Dies (ist|sind)\b/.test(s.sentDe)) return null;
+      const TAUSCH = { jener:'dieser', jenes:'dieses', jene:'diese', Jener:'Dieser', Jenes:'Dieses', Jene:'Diese' };
+      const vorn = s.sentDe.replace(/^Dies (ist|sind)\b/, 'Das $1');
+      const n = vorn.replace(/\b(jener|jenes|jene|Jener|Jenes|Jene)\b/, w => TAUSCH[w]);
+      return n !== vorn ? n : null;
+    }
+  },
+  {
+    /* Und die Gegenrichtung ohne „das": „Wer ist dieser? Jener ist ein Imam."
+       für „Wer ist jener? Jener ist ein Imam." galt als richtig, weil „jener"
+       an ANDERER Stelle noch vorkam — die Genusprüfung übersprang dies- gegen
+       jen- ausdrücklich, und die Vollständigkeit fand das Wort. */
+    art: 'nah statt fern', erwartet: 'ausgelassen',
+    mach(s){
+      const TAUSCH = { jener:'dieser', jenes:'dieses', jene:'diese', Jener:'Dieser', Jenes:'Dieses', Jene:'Diese' };
+      const treffer = s.sentDe.match(/\b(jener|jenes|jene|Jener|Jenes|Jene)\b/g) || [];
+      if (treffer.length < 2) return null;   // bei einem einzigen fehlt es ganz — das prüft „nah-fern" oben
+      return s.sentDe.replace(/\b(jener|jenes|jene|Jener|Jenes|Jene)\b/, w => TAUSCH[w]);
+    }
+  },
+  {
+    art: 'bestimmt mit „Das ist"', erwartet: 'bestimmtheit',
+    mach(s){
+      const m = s.sentDe.match(/^Dies ist (ein|eine) ([a-zäöüß]+?)(er|es|e) und ([a-zäöüß]+?)(er|es|e) ([A-ZÄÖÜ][a-zäöüß]+)\.$/);
+      if (!m || m[3] !== m[5]) return null;
+      const artikel = m[1] === 'eine' ? 'die' : m[3] === 'es' ? 'das' : m[3] === 'er' ? 'der' : null;
+      if (!artikel) return null;
+      return 'Das ist ' + artikel + ' ' + m[2] + 'e und ' + m[4] + 'e ' + m[6] + '.';
     }
   }
 ];
