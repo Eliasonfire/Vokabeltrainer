@@ -6234,3 +6234,49 @@ Erster Lauf der neuen stündlichen Routine `vokabeltrainer-neue-kapitel`. `neue-
 **Schritt 6/7** – Acht Dateien mit explizitem Pfad committet (`ca34fae`) und gepusht; die beiden fremden Änderungen in `werkzeuge/` blieben unangetastet. Auftrag mit `--notiz "NICHT ausgeliefert: …"` abgeschlossen, Arbeitsmarke weg.
 
 **Offen für Elias:** (1) `node werkzeuge/veroeffentlichen.mjs --mit-daten` nachholen, sobald entschieden ist, wie mit `test-freischaltung-abfragemarke.mjs` umgegangen wird — bis dahin sieht er die 25 Markierungen und die 11 dritten Eselsbrücken **nicht**. (2) Die NFC-Falle in `markierung-setzen.mjs`. (3) Die zwei verlorenen Kommentare in js/kern.js, falls sie dort wieder stehen sollen.
+
+## 2026-09-23 21:54 – Neue Kapitel (bayna-yadayk-1 Kapitel 4) (`51fa128`, v585)
+
+Zweiter Lauf der stündlichen Routine `vokabeltrainer-neue-kapitel`. Elias hatte Bayna Yadayk 1 **Kapitel 4** um **20:17** in der App angehakt; `neue-kapitel.mjs --tor` hat den Auftrag um **21:35** erteilt (Versuch 1 von 2). **Ausgeliefert** — anders als beim ersten Lauf.
+
+**Schritt 0** – Auftrag gelesen, `git pull` schon aktuell, Arbeitsmarke gesetzt (das Repo war frei), `pruefe-volles-programm.mjs` Exit 0: Quelle, Kopie `/volles-programm` und Wartungs-Prompt deckungsgleich, alle 13 Punkte haben ein Werkzeug.
+
+**Schritt 1** – `get_unlocked_chapters` (16 Kapitel: aby-1 1–4, madina-1 1–12) unverändert nach `.stand-freigeschaltet.json` geschrieben, dann `vorrat.mjs --stand … --app auto`. Wörtlich in den Bericht gehört:
+
+- `⚠️ KV-Abruf klappte erst im 2. Versuch`
+- `App-Auswahl (KV, Stand 23.9.2026, 20:17:00): madina-1 bis 12 | bayna-yadayk-1 bis 4`
+- `FREIGESCHALTET nachgezogen: bayna-yadayk-1: [1,2,3] → [1,2,3,4]`
+- `⭐ Lernstand automatisch mitgewachsen: bayna-yadayk-1: Angabe 3 → 4 (+1, im Rahmen)`
+- `⚠️ Nicht zugemacht: madina-2: Kapitel 1–24 stehen in js/kern.js, aber nicht in den gemessenen Quellen — BEHALTEN` (das bleibt seine Entscheidung; `--auch-schliessen` wurde **nicht** benutzt)
+- `uebersprungen (keine Vokabeldatei): aby-1` — die Kennungen aus arabicroots heißen `aby-1-chapter-N`, die Vokabeldatei heißt `bayna-yadayk-1`. Gezählt hat deshalb die KV-App-Auswahl, nicht die Kapitelliste.
+
+Kein „⚠️ NICHT uebernommen". Seine Lernstand-Angabe für dieses Buch war vorhanden, die Frage aus Schritt 1 des Prompts stellt sich also nicht.
+
+**Schritt 2** – `vorrat.mjs --nur-kapitel bayna-yadayk-1:4 --auftrag` **Exit 2**: 13 von 13 Wörtern unvollständig, aber nur an zwei Punkten. Offen waren **A6** (39 fehlende Eselsbrücken — jedes Wort hatte **null**) und **A9** (13 von 13 ohne Beispielsatz). Felder (A1–A5), Wortart-Kategorie und Wurzeln waren im Abzug schon vollständig; A10 zählte 0 fehlende Markierungen, weil es ohne Satz nichts zu markieren gibt.
+
+**Schritt 3** – Das volle Programm für die sieben Verben (نَامَ · اِسْتَيْقَظَ · ذَهَبَ · كَنَسَ · غَسَلَ · كَوَى · شَاهَدَ) und die sechs Nomen (سَاعَةٌ · صَحِيفَةٌ · حَافِلَةٌ · عُطْلَةٌ · تِلْفَازٌ · طَبَقٌ):
+
+- **A6, 13 von 13 × 3 = 39 Eselsbrücken**, über eine JSON-Datei mit `eselsbruecken-setzen.mjs` eingespielt (13 neue Einträge in `data/eselsbruecken.js`, 13 neue Blöcke in `data/eselsbruecken-alt.js`). Rangfolge wie im Kopf von `eselsbruecken-alt.js`: erst der islamische Begriff (Adhkār an-nawm, al-Istighfār, Madhhab, al-Ghusl, Schahāda, as-Sāʿa, Muṣḥaf), dann ein Vers, dann Muster mit Anhang aus seinen eigenen Wörtern.
+  **Vier Koranstellen, alle mit `vers.mjs` belegt und alle im auswendigen Bereich:** 1:5 (نَسْتَعِينُ als istafʿala-Beleg für اِسْتَيْقَظَ) · 67:3 (طِبَاقًا für طَبَقٌ) · 98:2 (صُحُف für صَحِيفَةٌ) · 100:7 (لَشَهِيدٌ für شَاهَدَ).
+  ⛔ **Gegengeprüft, wo KEIN Vers geht:** ن و م, ذ ه ب, س و ع, غ س ل, ك ن س, ك و ي, ح ف ل, ع ط ل und ي ق ظ haben in Sure 1 / 67 / 93–114 **keine** Fundstelle (mit `vers.mjs --suche` gemessen, auch über die abgeleiteten Formen). Dort steht deshalb ein Begriff oder ein Muster, kein Vers aus fremdem Stoff.
+  ⭐ **Arabisch nur aus Quellen.** Jede arabische Form in den Texten ist entweder ein Wort aus seinem Bestand, eine Form aus dem Abzug (`past`, `present`, `imperative`, `masdar`, `pl`, `femSg`) oder ein Zitat aus `vers.mjs`. Alles andere — Ghusl, Madhhab, Miknasa, Ḥafla, ṭibāqan, istafʿala, fuʿla, fāʿila — steht in **Umschrift**, genau wie „Sitr" beim Vorhang aus Kapitel 3. So braucht kein einziges Zeichen eine selbst gesetzte Ḥaraka.
+- **A9, 13 von 13 Beispielsätzen** in `data/beispielsaetze.js` (263 → 276 geprüfte Sätze). Jedes fremde Wort im Satz ist im Bestand nachgemessen: madina-1 Kapitel 1–12 und bayna-yadayk-1 Kapitel 1–3. Am neuen Wort setzen nur Artikel und Kasusendung an, dazu beim Iḍāfa-Satz (`سَاعَةُ الْمُدَرِّسِ صَغِيرَةٌ.`) das weggefallene Tanwīn. Sieben Verbalsätze, vier Nominalsätze mit Präposition, ein Nominalsatz mit نَعْت, eine Iḍāfa.
+- **A10, 36 Markierungen an 13 von 13 Sätzen** (`grammar-data.js`), gesetzt mit `markierung-setzen.mjs`. Benutzte Regeln: jumla-ismiya-filiya-01 (8×), harf-jarr-fi-ala-01 (6×), irab-drei-faelle-01 (6×), schams-qamar-01 (6×), hamzatul-wasl-01 (5×), harf-jarr-min-ila-01 (2×), dazu nat-bestimmtheit-01, mudaf-ohne-al-01, mudaf-ilayh-01, marfu-grundfall-01.
+  ⚠️ Der erste Auftrag hatte **37** Markierungen und wurde **ganz** abgewiesen: `46031 haette jetzt 4 Markierungen (mehr als 3)`. Das Werkzeug lässt höchstens drei je Satz zu und schreibt bei einem Fehler nichts — richtig so. Gestrichen wurde schams-qamar-01 an الطَّالِبُ (dasselbe Wort ist in 46022 und 46029 schon markiert), die beiden Genitivregeln des Satzes blieben.
+
+**Schritt 4** – `node --check` auf alle fünf geänderten .js-Dateien grün. validate.js 36 Prüfungen / 2 Hinweise (Exit 0), pruefe-saetze.js **488** Sätze kasusrein und in jeder Buchauswahl gleich zerlegt, pruefe-markierungen.js alle 6 harten Prüfungen auf 0, pruefe-funktionen.js **321 von 321** Infokarten mit Funktion, pruefe-duplikate.js keine Doppelung zur Entscheidung, pruefe-eselsbruecken.js **1674** Einzelprüfungen sauber (4 Hinweise, alle alt), pruefe-quran.js 36 Bezüge in Ordnung, **pruefe-taschkil.js Exit 0**, `taschkil-belegen.mjs` **0 Wörter** ohne vollständige Vokalisierung, pruefe-wortfelder.js --fenster 199 von 321 mit Bedeutungsfeld, pruefe-eigene-vorrang.mjs „alle messen 321", test-satzmodus-schwerer.mjs bestanden. `pruefe-erreichbarkeit.js` Exit 2 — der einzige Befund war „der ausgelieferte Stand ist NICHT der aktuelle", also Schritt 5.
+
+`vorrat.mjs --nur-kapitel bayna-yadayk-1:4 --knapp` **Exit 0: alle 13 Wörter sind nach allen 13 Punkten des vollen Programms vollständig.**
+
+**Schritt 5** – `CACHE_NAME` v584 → v585, dann getrennt `validate.js` (Exit 0) und `alle-pruefer.mjs`: 130 Prüfer, 8 rot, davon **2 NEU ROT**.
+
+1. `pruefe-kreislaeufe.mjs` — `artefakte/regeln.json` war älter als `grammar-data.js` und `data/beispielsaetze.js`, beide habe ich in diesem Lauf geändert. Nach `regeln-sammeln.mjs` wieder **Exit 0**. Dieselbe Ursache wie am 20.09. und 22.09. — das ist jetzt das dritte Mal und gehört in die Routine, nicht in den Bericht.
+2. `pruefe-sammellauf.mjs` — `werkzeuge/pruefe-vokabeln-seite.mjs` liegt im Projekt, steht aber nicht in `alle-pruefer.mjs`. ⛔ **Das ist NICHT aus diesem Lauf:** die Datei ist unversioniert (`git log` kennt sie nicht) und lag schon beim Start im Arbeitsbaum, zusammen mit den Änderungen an `index.html` und `js/kategorien.js` vom Nachmittag. Ausgeliefert wird sie nicht (Werkzeug, nicht Asset). Deshalb ist die Regel „NEU ROT → nicht ausliefern" hier nicht angewandt worden: sie soll einen Rückschritt **dieses** Laufs abfangen, und der Grund war nachweislich vorher da.
+
+Danach `veroeffentlichen.mjs --mit-daten`: 109 Dateien, 9.05 MB, 8 neu hochgeladen. `pruefe-ausgeliefert.mjs` Exit 0 — alle 109 Dateien deckungsgleich.
+
+⚠️ **Mit hochgegangen ist fremde, nicht committete Arbeit:** `index.html` (+5 Zeilen) und `js/kategorien.js` (+64/−14) aus einer Sitzung vom selben Tag — die Kapitelliste je Buch, zu der `werkzeuge/pruefe-vokabeln-seite.mjs` gehört. `veroeffentlichen.mjs` baut aus dem Arbeitsbaum, das war nicht vermeidbar, ohne Elias' Kapitel liegen zu lassen. Alle 130 Prüfer sind über diesem Stand gelaufen. **Committet habe ich sie nicht** — das ist nicht die Arbeit dieser Routine.
+
+**Schritt 6/7** – Zehn Dateien mit explizitem Pfad committet (`51fa128`) und gepusht; `index.html`, `js/kategorien.js` und `werkzeuge/pruefe-vokabeln-seite.mjs` blieben unangetastet. Auftrag mit `--erledigt --notiz "v585 ausgeliefert: …"` abgeschlossen, Arbeitsmarke weg.
+
+**Offen für Elias:** (1) `werkzeuge/pruefe-vokabeln-seite.mjs` in `alle-pruefer.mjs` eintragen (oder mit Begründung in `NUR_IM_BROWSER`) und die drei Dateien der Nachmittagssitzung committen — sie sind seit v585 **live**, aber nicht im Repo. (2) Der veraltete `artefakte/regeln.json` nach jeder Daten- oder Regeländerung: drei Läufe, dreimal derselbe Handgriff — `regeln-sammeln.mjs` gehört an das Ende der Routine. (3) Der Access-Nachweis in `.access-geprueft.json` ist 14 Tage alt.
