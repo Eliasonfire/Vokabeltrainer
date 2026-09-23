@@ -1077,7 +1077,9 @@ posten.push({
   wie: 'Sag die Nummer und deine Antwort, zum Beispiel „2: raus". Oder „alle streichen".',
   zeilen: [
     '1 · Koran: Die Ansicht „Kästchen" hat keinen Rahmen mehr. Umbenennen, zum Beispiel in „Einzeln"? (08.09.)',
-    '2 · Bild zur Eselsbrücke: Dein Ja ist da. Offen ist, womit (Emoji oder kleine Zeichnung) und für welche Wörter. (07.09.)',
+    '2 · Bild zur Eselsbrücke: Dein Ja ist da. Offen ist, womit (Emoji oder kleine Zeichnung) und für welche Wörter. (07.09.) '
+      + 'Seit 23.09. liegen drei Musterkarten, die Zählung (72 von 171 Wörtern haben ein passendes Emoji) und die drei Fragen zum Antippen bereit: '
+      + 'https://claude.ai/artifact/VNGKm6KCxcKAZxMwCKZdfE',
     '3 · Vier Regeln zusammenlegen? Deine Notizen vom 26.08. zu: mudaf ohne al- · mudaf erkennen · idafa-Verkettung · der Buchstabe bi. Sagen sie dasselbe?',
     '4 · Die Regel „Subjekt und Aussage" (mubtada und khabar): Deine Notiz sagt, sie kommt erst nach Kapitel 9 dran. Später zeigen oder lassen? (26.08.)'
   ],
