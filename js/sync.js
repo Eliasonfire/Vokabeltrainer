@@ -487,7 +487,10 @@ function fuehreFortschrittZusammen(hier, dort){
    ⚠️ Kennt eine Seite ein Feld gar nicht, wird der fremde Wert uebernommen -
    sonst kaeme eine neu hinzugekommene Einstellung nie auf das andere Geraet.
    Bei Gleichstand bleibt das Lokale stehen: lieber nichts anfassen. */
-function fuehreEinstellungenZusammen(hier, dort, stempelHier, stempelDort){
+/* `fremdGewinnt` = dieses Gerät hat noch nie abgeglichen (nieAbgeglichen()):
+   dann gilt jedes fremde Feld, auch eines ohne Stempel — die Vorgaben eines
+   frischen Geräts sind keine Entscheidung von Elias. */
+function fuehreEinstellungenZusammen(hier, dort, stempelHier, stempelDort, fremdGewinnt){
   const raus = Object.assign({}, hier || {});
   Object.keys(dort || {}).forEach(f => {
     /* ⛔ Die Quran-Ansicht gehört dem Gerät: der fremde Wert wird nicht einmal
@@ -496,7 +499,7 @@ function fuehreEinstellungenZusammen(hier, dort, stempelHier, stempelDort){
     if (GERAET_EIGENE_EINSTELLUNG.test(f)) return;
     const a = (stempelHier && stempelHier[f]) || 0;
     const b = (stempelDort && stempelDort[f]) || 0;
-    if (b > a) raus[f] = dort[f];
+    if (fremdGewinnt || b > a) raus[f] = dort[f];
     else if (!(f in raus)) raus[f] = dort[f];
   });
   return raus;
@@ -581,8 +584,40 @@ function zielverlaufHeute(){
   return (typeof todayStr === 'function') ? todayStr(0) : null;
 }
 
+/* ⛔⛔ EIN GERÄT, DAS NOCH NIE ABGEGLICHEN HAT, ÜBERNIMMT ZUERST (23.09.2026).
+
+   Gemessen im abgeschotteten Nachbau mit seinem Stand (KV 02:55): ein frisch
+   eingerichtetes Gerät — neues Handy, gelöschte Websitedaten, ein anderer
+   Browser — schreibt beim Start Vorgaben in seinen Speicher, und jede davon
+   bekommt einen Zeitstempel von JETZT. Beim ersten Abgleich schlug dieser
+   Stempel seine echten Einstellungen: abgelegt wurden „buecher" {"madina-1":
+   [1…12], "bayna-yadayk-1":[1,2,3]} → {"madina-1":[]}, hoerZiel 10 → 5,
+   direction "box" → "ar-de". Seine Buchauswahl wäre auf BEIDEN Geräten leer
+   gewesen. Und scheitert der erste Abruf (kein Netz beim Start), legte das
+   Weglegen der App einen Stand mit 6 statt 32 Schlüsseln ab — und
+   functions/api/stand.js ERSETZT den ganzen Eintrag (kein Zusammenführen).
+
+   ⭐ Die Regel: solange dieses Gerät noch nie erfolgreich abgeglichen hat
+   (`erfolg` in vt_syncStatus fehlt), zählen seine eigenen Stempel nicht — was
+   der Server hat, gewinnt. Und es legt nichts ab, bevor es einmal geholt hat
+   (siehe visibilitychange unten). Für seine eingerichteten Geräte ändert sich
+   nichts: dort steht `erfolg` längst. Geprüft von test-sync.mjs, mit Störtest.
+   (Befund aus einem Helferbericht vom 23.09., 02:55; Regel und Bau von mir.)
+   [[ausfall_ist_unsichtbar_gebaut]] */
+function nieAbgeglichen(){
+  try { return !((JSON.parse(localStorage.getItem(STATUS_SCHLUESSEL) || 'null') || {}).erfolg); }
+  catch (e){
+    /* Kaputter Status zählt wie in merkeStatus als 0 Erfolge: dann übernimmt
+       das Gerät lieber den Serverstand, als ihn mit Vorgaben zu überschreiben.
+       Gemeldet wird es trotzdem — die Diagnosekarte zeigt es. */
+    if (typeof stillerFehler === 'function') stillerFehler('Abgleich: Status unlesbar', e);
+    return true;
+  }
+}
+
 function fuehreZusammen(fern){
-  const meine = syncStempel();
+  const zuerstFremd = nieAbgeglichen();
+  const meine = zuerstFremd ? {} : syncStempel();
   const fremde = (fern && fern.stempel) || {};
   const fernDaten = (fern && fern.daten) || {};
   let etwasGeaendert = false;
@@ -609,8 +644,8 @@ function fuehreZusammen(fern){
       try {
         const zusammen = fuehreEinstellungenZusammen(
           JSON.parse(hierRoh), JSON.parse(dortRoh),
-          (typeof settingsFeldStempel === 'function') ? settingsFeldStempel() : {},
-          JSON.parse(fernDaten['vt_settingsFeld'] || '{}'));
+          (!zuerstFremd && typeof settingsFeldStempel === 'function') ? settingsFeldStempel() : {},
+          JSON.parse(fernDaten['vt_settingsFeld'] || '{}'), zuerstFremd);
         const neu = JSON.stringify(zusammen);
         if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
       } catch (e){ /* kaputtes JSON auf einer Seite: lokal behalten */ }
@@ -628,7 +663,9 @@ function fuehreZusammen(fern){
              ein fremder, jüngerer Stempel würde den eigenen überschreiben und
              wäre bei einer späteren Lockerung der Regel sofort schädlich. */
           if (GERAET_EIGENE_EINSTELLUNG.test(f)) return;
-          if ((b[f]||0) > (raus[f]||0)) raus[f] = b[f];
+          /* Beim allerersten Abgleich wurde oben der fremde WERT übernommen —
+             dann gehört auch der fremde Stempel dazu, nicht der von „jetzt". */
+          if (zuerstFremd || (b[f]||0) > (raus[f]||0)) raus[f] = b[f];
         });
         const neu = JSON.stringify(raus);
         if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
@@ -1759,6 +1796,12 @@ document.addEventListener('visibilitychange', ()=>{
     /* ⭐ Nur wenn hier wirklich etwas Ungesichertes liegt. Vorher schickte
        JEDES Wegtippen — im Netzprotokoll standen PUT-Anfragen im Dutzend. */
     if (!SYNC_OFFEN) return;
+    /* ⛔⛔ Und nie, bevor dieses Gerät einmal geholt hat (23.09.2026). Hier wird
+       OHNE vorheriges Holen abgelegt, und der Server ersetzt den ganzen
+       Eintrag. Ein frisches Gerät, dessen erster Abruf scheiterte, legte im
+       Nachbau 6 statt 32 Schlüssel ab. Begründung bei nieAbgeglichen(). Der
+       nächste Start holt zuerst, führt zusammen und legt erst danach ab. */
+    if (nieAbgeglichen()) return;
     /* Kein await moeglich - der Browser haelt die Seite nicht auf. sendBeacon
        waere zuverlaessiger, kann aber keine PUT-Anfrage. Der Versuch reicht:
        schlaegt er fehl, holt der naechste Start es nach. */

@@ -23,8 +23,12 @@ const WURZEL = path.dirname(fileURLToPath(import.meta.url));
    ausgefuehrt, ein zweiter Lauf im selben Kontext bricht mit „SYNC_SCHLUESSEL
    has already been declared" ab. Wer eine geaenderte Fassung messen will,
    braucht also einen eigenen Kontext — und bekommt ihn hier. */
+/* ⭐ Seit dem 23.09.2026 steht ein gelungener Abgleich schon im Speicher: die
+   Fälle unten beschreiben seine eingerichteten Geräte, und dort steht `erfolg`
+   in vt_syncStatus längst. Ein FRISCHES Gerät (nieAbgeglichen() in js/sync.js)
+   bekommt eigene Fälle ganz unten und löscht die Zeile dafür. */
 function baueUmgebung(wandeln){
-  const speicher = {};
+  const speicher = { vt_syncStatus: JSON.stringify({ ok: true, text: 'Prüfstand', zeit: 1, erfolg: 1 }) };
   const ctx = {
     localStorage: {
       getItem: k => (k in speicher ? speicher[k] : null),
@@ -607,6 +611,100 @@ console.log('=== Zielverlauf: die Surenringe von HEUTE werden nicht gemischt (17
     'vergeben: ' + vergeben.join(', ') + ' · ohne Regel: ' + (ohneRegel.join(', ') || '—'));
   pruefe('todayStr() gibt es wirklich in js/kern.js',
     /function todayStr\s*\(/.test(fs.readFileSync(path.join(WURZEL, 'js/kern.js'), 'utf8')));
+}
+
+/* ---------- ⛔⛔ Das frische Gerät (23.09.2026) ----------
+   Gemessen im Nachbau mit seinem Stand: ein frisch eingerichtetes Gerät legte
+   beim ersten Abgleich SEINE Buchauswahl als leer ab ({"madina-1":[]}),
+   hoerZiel 10 → 5, direction "box" → "ar-de" — weil seine Vorgaben beim Start
+   Stempel von JETZT bekommen. Und beim Weglegen ohne gelungenen Abruf legte es
+   6 statt 32 Schlüssel ab (der Server ersetzt den ganzen Eintrag).
+   Begründung bei nieAbgeglichen() in js/sync.js. */
+console.log('');
+console.log('=== Das frische Gerät: erst übernehmen, dann ablegen (23.09.2026) ===');
+function frischesGeraet(wandeln){
+  const u = baueUmgebung(wandeln);
+  delete u.speicher['vt_syncStatus'];
+  return u;
+}
+{
+  const { ctx, speicher } = frischesGeraet();
+  const fuehreZusammen = vm.runInContext('fuehreZusammen', ctx);
+  const STEMPEL = vm.runInContext('STEMPEL_SCHLUESSEL', ctx);
+  /* Beim Start geschrieben, also mit Stempel von JETZT — der Server ist älter. */
+  speicher['vt_lesestand'] = '{"sure":1}';
+  speicher[STEMPEL] = JSON.stringify({ vt_lesestand: 9000 });
+  fuehreZusammen({ stempel: { vt_lesestand: 1000 }, daten: { vt_lesestand: '{"sure":67}' } });
+  pruefe('frisches Gerät: sein älterer Serverstand schlägt die Startvorgabe', speicher['vt_lesestand'] === '{"sure":67}', speicher['vt_lesestand']);
+}
+{
+  const { ctx } = frischesGeraet();
+  const zusammen = vm.runInContext('fuehreEinstellungenZusammen', ctx)(
+    { buecher: { 'madina-1': [] }, hoerZiel: 5, direction: 'ar-de' },
+    { buecher: { 'madina-1': [1, 2, 3], 'bayna-yadayk-1': [1, 2, 3] }, hoerZiel: 10, direction: 'box' },
+    { buecher: 9000, hoerZiel: 9000, direction: 9000 }, { buecher: 1000, hoerZiel: 1000 }, true);
+  pruefe('frisches Gerät: seine Buchauswahl, sein Hörziel und seine Lernrichtung kommen an (auch ohne fremden Stempel)',
+    JSON.stringify(zusammen.buecher) === JSON.stringify({ 'madina-1': [1, 2, 3], 'bayna-yadayk-1': [1, 2, 3] })
+      && zusammen.hoerZiel === 10 && zusammen.direction === 'box', JSON.stringify(zusammen));
+  const eingerichtet = vm.runInContext('fuehreEinstellungenZusammen', ctx)(
+    { hoerZiel: 5 }, { hoerZiel: 10 }, { hoerZiel: 9000 }, { hoerZiel: 1000 });
+  pruefe('eingerichtetes Gerät: wie bisher gewinnt der jüngere Stempel', eingerichtet.hoerZiel === 5, JSON.stringify(eingerichtet));
+}
+{
+  /* Die ganze Kette mit vt_settings und vt_settingsFeld, wie beim echten Abruf. */
+  const { ctx, speicher } = frischesGeraet();
+  speicher['vt_settings'] = JSON.stringify({ buecher: { 'madina-1': [] }, hoerZiel: 5 });
+  speicher['vt_settingsFeld'] = JSON.stringify({ buecher: 9000, hoerZiel: 9000 });
+  vm.runInContext('fuehreZusammen', ctx)({ stempel: {}, daten: {
+    vt_settings: JSON.stringify({ buecher: { 'madina-1': [1, 2] }, hoerZiel: 10 }),
+    vt_settingsFeld: JSON.stringify({ buecher: 1000, hoerZiel: 1000 }) } });
+  const s = JSON.parse(speicher['vt_settings']);
+  const f = JSON.parse(speicher['vt_settingsFeld']);
+  pruefe('frisches Gerät, ganze Kette: die Einstellungen vom Server stehen danach im Speicher',
+    JSON.stringify(s.buecher) === JSON.stringify({ 'madina-1': [1, 2] }) && s.hoerZiel === 10, speicher['vt_settings']);
+  pruefe('… und mit ihren Stempeln vom Server, nicht mit denen von „jetzt"', f.buecher === 1000 && f.hoerZiel === 1000, speicher['vt_settingsFeld']);
+}
+
+/* Beim Weglegen der App: nie ablegen, bevor einmal geholt wurde. */
+function weglegen(fuerFrisch, wandeln){
+  const hoerer = {}; const ablagen = [];
+  const speicher = fuerFrisch ? {} : { vt_syncStatus: JSON.stringify({ ok: true, erfolg: 1 }) };
+  speicher['vt_progress'] = '{"1":{"box":1}}';
+  const ctx = {
+    localStorage: { getItem: k => (k in speicher ? speicher[k] : null), setItem: (k, v) => { speicher[k] = String(v); }, removeItem: k => { delete speicher[k]; } },
+    document: { addEventListener(typ, fn){ (hoerer[typ] = hoerer[typ] || []).push(fn); }, visibilityState: 'visible' },
+    todayStr: () => '2026-09-23',
+    fetch: async (url, opt) => { ablagen.push((opt && opt.method) || 'GET'); return { ok: true, redirected: false, json: async () => ({}) }; },
+    setTimeout: () => 0, clearTimeout: () => {}, console, stillerFehler(){}
+  };
+  ctx.window = ctx;
+  vm.createContext(ctx);
+  const roh = fs.readFileSync(path.join(WURZEL, 'js/sync.js'), 'utf8');
+  vm.runInContext(wandeln ? wandeln(roh) : roh, ctx);
+  vm.runInContext('SYNC_OFFEN = true;', ctx);
+  ctx.document.visibilityState = 'hidden';
+  (hoerer['visibilitychange'] || []).forEach(fn => fn());
+  return ablagen.filter(m => m === 'PUT').length;
+}
+pruefe('frisches Gerät: beim Weglegen wird NICHTS abgelegt', weglegen(true) === 0);
+pruefe('eingerichtetes Gerät: beim Weglegen wird wie bisher abgelegt (die Probe misst also etwas)', weglegen(false) === 1);
+
+/* ⛔ Störtests: hängen die Proben am echten Code? */
+{
+  const WEG = 'if (nieAbgeglichen()) return;';
+  const roh = fs.readFileSync(path.join(WURZEL, 'js/sync.js'), 'utf8');
+  pruefe('die Sperre beim Weglegen steht genau einmal da', roh.split(WEG).length - 1 === 1);
+  pruefe('Störtest: ohne die Sperre legt das frische Gerät beim Weglegen ab — die Probe oben fiele',
+    weglegen(true, r => r.replace(WEG, '')) === 1);
+  const ERST = 'const zuerstFremd = nieAbgeglichen();';
+  pruefe('die Regel „zuerst fremd" steht genau einmal da', roh.split(ERST).length - 1 === 1);
+  const { ctx, speicher } = frischesGeraet(r => r.replace(ERST, 'const zuerstFremd = false;'));
+  const STEMPEL = vm.runInContext('STEMPEL_SCHLUESSEL', ctx);
+  speicher['vt_lesestand'] = '{"sure":1}';
+  speicher[STEMPEL] = JSON.stringify({ vt_lesestand: 9000 });
+  vm.runInContext('fuehreZusammen', ctx)({ stempel: { vt_lesestand: 1000 }, daten: { vt_lesestand: '{"sure":67}' } });
+  pruefe('Störtest: ohne die Regel behält das frische Gerät seine Startvorgabe — die Probe oben fiele',
+    speicher['vt_lesestand'] === '{"sure":1}', speicher['vt_lesestand']);
 }
 
 console.log('');
