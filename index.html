@@ -3069,6 +3069,29 @@ main{
   color:var(--text);
 }
 .note-box.braucht-hilfe:hover{border-color:var(--red);}
+/* ⭐ Das Bild zur Eselsbrücke (v573, 23.09.2026) — Elias: „Eselsbrücken-Bild:
+   C · Mischung · die 72 + die 14 Beziehungswörter · nur Rückseite". Daten in
+   data/eselsbilder.js; die Zeichnungen tragen dort nur KLASSEN, die Farben
+   stehen hier. Rot ist immer das, worauf es beim Wort ankommt. */
+.eselsbild{display:flex;justify-content:center;align-items:center;
+  margin-bottom:var(--sp-3);padding:var(--sp-2) var(--sp-3);
+  background:var(--surface-2);border-radius:var(--r-2);}
+.eselsbild .eb-emoji{font-size:3.2rem;line-height:1.15;}
+.eselsbild svg{display:block;width:100%;max-width:230px;max-height:130px;height:auto;overflow:visible;}
+.eselsbild .eb-g{fill:none;stroke:var(--border-strong);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.eselsbild .eb-d{fill:var(--surface-4);stroke:var(--text);stroke-width:2.2;stroke-linejoin:round;}
+.eselsbild .eb-dl{fill:none;stroke:var(--text);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.eselsbild .eb-m{fill:var(--surface-3);stroke:var(--text-dim);stroke-width:2;stroke-linejoin:round;}
+.eselsbild .eb-ml{fill:none;stroke:var(--text-dim);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.eselsbild .eb-r{fill:var(--surface-3);stroke:var(--red);stroke-width:2.4;stroke-linejoin:round;}
+.eselsbild .eb-rl{fill:none;stroke:var(--red);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
+.eselsbild .eb-rf{fill:var(--red);stroke:none;}
+.eselsbild .eb-strich{stroke-dasharray:5 4;}
+.eselsbild .eb-t{fill:var(--text-dim);font-size:10.5px;}
+.eselsbild .eb-ar{fill:var(--text-dim);font-family:'Scheherazade New','Amiri',serif;font-size:17px;}
+/* ⚠️ .eb-tr steht NACH .eb-t und .eb-ar: es färbt beide rot, und bei gleicher
+   Spezifität gewinnt die spätere Regel. */
+.eselsbild .eb-tr{fill:var(--red);}
 .ne-vorschlag{
   margin-bottom:var(--sp-3);padding:var(--sp-3);
   background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-2);
@@ -5738,6 +5761,15 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
               <div class="gender-chip hidden" id="cardGender"></div>
               <div class="word-forms" id="cardForms"></div>
               <div class="verb-forms hidden" id="cardVerbForms"></div>
+              <!-- ⭐ Das Bild zur Eselsbrücke (v573, 23.09.2026). Elias:
+                   „Eselsbrücken-Bild: C · Mischung · die 72 + die 14
+                   Beziehungswörter · nur Rückseite".
+                   ⛔ NUR hier auf der Rückseite: 🏠 neben dem arabischen Wort
+                   verriete schon „Haus". Es steht VOR dem Ruf, weil der Ruf zum
+                   Kasten darunter gehört („Lies die Eselsbrücke nochmal").
+                   Gefüllt von renderEselsbild() in js/lernen.js, Daten in
+                   data/eselsbilder.js, bewacht von werkzeuge/pruefe-eselsbilder.mjs. -->
+              <div class="eselsbild hidden" id="cardEselsbild"></div>
               <!-- ⭐ r6 (08.09.2026): der Ruf steht ÜBER dem Kasten, nicht
                    darin. Im Kasten setzt `.ist-vorschlag` bereits ein
                    `::before` mit „Vorschlag: " auf denselben Text — zwei
@@ -7323,6 +7355,8 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
      einhaengt - und das passiert schon beim Start. -->
 <script src="data/eselsbruecken.js"></script>
 <script src="data/eselsbruecken-alt.js"></script>
+<!-- Das Bild zur Eselsbrücke (v573): 72 Emoji + 14 Zeichnungen, nur Daten. -->
+<script src="data/eselsbilder.js"></script>
 <script src="data/beispielsaetze.js"></script>
 <!-- Die zehn Fachbegriffe seines Lehrers als eigene Vokabeln (17.08.2026).
      Muss VOR grammar-data.js nicht stehen - die Datei verweist nur ueber

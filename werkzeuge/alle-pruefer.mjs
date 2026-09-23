@@ -408,6 +408,11 @@ const PRUEFER = [
      haben." Exit 2 = weitere Kandidaten, die auf seine Entscheidung warten;
      Exit 1 = die Zuordnung selbst ist kaputt. Enthält einen echten Ladetest. */
   ['werkzeuge/pruefe-buchtausch.mjs', []],
+  /* 23.09.2026 — das Bild an der Eselsbrücke (data/eselsbilder.js). Elias:
+     „nur Rückseite", und keine zwei Zeichnungen, die sich „viellll zu ähnlich"
+     sehen. Prüft Mengen (72 + 14), Lage, Bausteine, den Bauplan-Vergleich
+     aller 91 Paare und die Beispielsätze; sieben Störtests bei jedem Lauf. */
+  ['werkzeuge/pruefe-eselsbilder.mjs', []],
   /* ⭐ Mit --pruefen, weil der blanke Lauf bewertung.json SCHREIBT und ein
      Sammellauf nichts verändern darf. Rot wird er, sobald eine Fundstelle ohne
      mein Urteil dasteht — das ist MEIN Rückstand, und er gehört genau hierhin

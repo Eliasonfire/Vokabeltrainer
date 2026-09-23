@@ -41,6 +41,13 @@ const definiert = new Set([...css.matchAll(/\.(-?[A-Za-z_][\w-]*)/g)].map(m => m
 let such = html.replace(/<style[^>]*>[\s\S]*?<\/style>/g, '\n');
 for (const f of fs.readdirSync(path.join(REPO, 'js')).filter(x => x.endsWith('.js')))
   such += '\n' + fs.readFileSync(path.join(REPO, 'js', f), 'utf8');
+/* ⭐ Seit v573 (23.09.2026) steht auch in einer DATENDATEI Markup: die
+   Zeichnungen zur Eselsbrücke tragen ihre Farbklassen (eb-g, eb-d, eb-r …)
+   in data/eselsbilder.js, und renderEselsbild() setzt sie ein. Ohne diese
+   Zeile meldete der Sammellauf „12 Klassen MEHR ohne Fundstelle" — alle
+   zwölf waren benutzt. Nur diese eine Datei, nicht data/ ganz: die
+   Vokabelabzüge dort sind groß und tragen kein Markup. */
+such += '\n' + fs.readFileSync(path.join(REPO, 'data', 'eselsbilder.js'), 'utf8');
 
 /* ⭐ Eichung: eine Klasse, von der unabhaengig feststeht, dass sie benutzt
    wird, MUSS gefunden werden. `topbar` steht in validate.js als gepruefte

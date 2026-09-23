@@ -498,6 +498,7 @@ function renderCard(){
   } else qBox.classList.add('hidden');
 
   renderNotiz(w);
+  renderEselsbild(w);
 
   /* ⭐ Balken und Zahl kommen seit dem 15.09.2026 aus EINER Funktion
      (`rundenLeiste()` in js/start.js) — der Hörmodus hat dieselbe Leiste
@@ -876,6 +877,42 @@ document.getElementById('btnTippUeberspringen').addEventListener('click', (e)=>{
    aus `git show 6d2bc1b:js/lernen.js` (Zeilen 868–928). Der Weg dorthin gibt
    es weiter: `openSurah()` plus `hebeVersHervor()` in js/quran.js, genau wie
    ihn js/start.js:482 benutzt. */
+
+/* ---------- Das Bild zur Eselsbruecke (v573, 23.09.2026) ----------
+
+   Elias, 23.09.2026, 02:08: „Eselsbrücken-Bild: C · Mischung · die 72 + die 14
+   Beziehungswörter · nur Rückseite". Ein Emoji, wo es das Wort selbst zeigt,
+   sonst eine kleine Zeichnung — beides in data/eselsbilder.js.
+
+   ⛔ NUR auf der Rueckseite: #cardEselsbild steht in `.flashcard-back`, und
+   diese Funktion ist die einzige, die hineinschreibt. Gerufen wird sie in
+   renderCard() NACH dem Zuruecksetzen auf die Vorderseite — derselbe Schutz,
+   der auch die deutsche Antwort nicht aufblitzen laesst.
+   Arabisch steht in den Zeichnungen nie von Hand, nur als {{ar:<kennung>}};
+   eingesetzt wird es hier aus den Kartendaten, maskiert.
+   Bewacht von werkzeuge/pruefe-eselsbilder.mjs. */
+function renderEselsbild(w){
+  const kasten = document.getElementById('cardEselsbild');
+  if (!kasten) return;
+  const id = String(w && w.id);
+  const emoji = (typeof ESELSBILD_EMOJI !== 'undefined') ? ESELSBILD_EMOJI[id] : null;
+  const bild = (typeof ESELSBILD_ZEICHNUNG !== 'undefined') ? ESELSBILD_ZEICHNUNG[id] : null;
+  if (emoji){
+    kasten.innerHTML = '<span class="eb-emoji" role="img" aria-label="Bild zur Eselsbrücke">'
+      + escapeHtml(emoji) + '</span>';
+  } else if (bild){
+    const arabisch = k => {
+      const v = VOCAB_DATA.find(x => String(x.id) === k);
+      return v ? escapeHtml(v.ar) : '';
+    };
+    kasten.innerHTML = '<svg viewBox="' + escapeHtml(bild.viewBox) + '" role="img" aria-label="'
+      + escapeHtml(bild.text) + '">'
+      + bild.inhalt.replace(/\{\{ar:([^}]+)\}\}/g, (m, k) => arabisch(k)) + '</svg>';
+  } else {
+    kasten.innerHTML = '';
+  }
+  kasten.classList.toggle('hidden', !(emoji || bild));
+}
 
 /* ---------- Eigene Eselsbruecke pro Vokabel (arabicroots-Paritaet D) ---------- */
 function renderNotiz(w){
