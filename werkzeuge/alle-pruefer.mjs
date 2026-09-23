@@ -159,6 +159,9 @@ const PRUEFER = [
      und Neustart nach und dreht beides per Störtest zurück.
      [[stoertest_muss_wirkung_nachweisen]] */
   ['werkzeuge/pruefe-offene-runde.mjs', []],
+  /* 23.09.2026: eine Buchkarte, die eine eigene Karte ersetzt, erbt deren
+     Eselsbrücken — „Fleisch" und „faul" standen sonst ohne eine da. */
+  ['werkzeuge/pruefe-vorgaenger-vorschlaege.mjs', []],
   ['werkzeuge/pruefe-markierung.mjs', []],
   ['werkzeuge/pruefe-spieler-leiste.mjs', []],
   ['werkzeuge/pruefe-sura-leiste.mjs', []],

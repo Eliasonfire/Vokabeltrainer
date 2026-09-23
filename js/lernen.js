@@ -1098,6 +1098,28 @@ function vorschlagsListe(w){
     });
   }
 
+  /* ---------- Die Buchkarte erbt von der Karte, die sie ersetzt hat (23.09.2026) ----------
+     Warum: siehe vorgaengerVon() in js/kern.js — „Fleisch" und „faul" standen
+     nach dem Tausch ohne eine einzige Eselsbrücke da. Dieselbe Sperre wie bei
+     den Pluralkarten unten: was er an der alten Karte verworfen hat, kommt
+     nicht wieder. Ohne Vorbemerkung, denn es ist DASSELBE Wort. */
+  if (w && typeof vorgaengerVon === 'function'){
+    for (const v of vorgaengerVon(w.id)){
+      const texte = [];
+      const m0 = String(v.mnemo || '').trim();
+      if (m0) texte.push(m0);
+      const altV = (typeof ESELSBRUECKEN_ALT !== 'undefined') && ESELSBRUECKEN_ALT[String(v.id)];
+      if (Array.isArray(altV)) altV.forEach(t => {
+        const s = String(t || '').trim();
+        if (s && texte.indexOf(s) < 0) texte.push(s);
+      });
+      texte.forEach((t, i) => {
+        if (typeof istVorschlagVerworfen === 'function' && istVorschlagVerworfen(v.id, i, t)) return;
+        if (liste.indexOf(t) < 0) liste.push(t);
+      });
+    }
+  }
+
   /* ---------- Pluralkarten erben vom Singular (09.09.2026) ----------
 
      ⛔⛔ GEMESSEN, nicht vermutet: Die App kennt 521 Woerter. 192 davon hatten

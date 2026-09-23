@@ -437,6 +437,12 @@ function savePersonalVocab(){ LS.set('vt_personalVocab', PERSONAL_VOCAB); }
    ⚠️ Die Liste direkt aus dem Speicher, nicht ueber istGeloescht(): GELOESCHT
    ist ein `let` und wird erst weiter unten angelegt — derselbe Grund wie bei
    den Fachbegriffen. */
+/* ⭐ Die Eselsbrücke einer hier entfernten Karte bleibt greifbar (23.09.2026):
+   ihr Nachfolger aus dem Buch erbt sie (vorgaengerVon() weiter unten,
+   vorschlagsListe() in js/lernen.js). Sonst stand „Fleisch" nach dem Tausch
+   ohne eine einzige Eselsbrücke da. MUSS vor dem Block stehen — ein `const`
+   ist vor seiner Zeile nicht einmal für `typeof` erreichbar. */
+const ABGELOESTE_MNEMO = new Map();
 {
   const wegRoh = LS.get('vt_geloescht', {});
   const weg = (wegRoh && typeof wegRoh === 'object' && !Array.isArray(wegRoh)) ? wegRoh : {};
@@ -462,7 +468,10 @@ function savePersonalVocab(){ LS.set('vt_personalVocab', PERSONAL_VOCAB); }
      Geprüft von werkzeuge/pruefe-offene-runde.mjs. [[ausfall_ist_unsichtbar_gebaut]] */
   for (let i = VOCAB_DATA.length - 1; i >= 0; i--){
     const w = VOCAB_DATA[i];
-    if (w && w.chapter === 'personal' && weg[w.id] && weg[w.id].an) VOCAB_DATA.splice(i, 1);
+    if (w && w.chapter === 'personal' && weg[w.id] && weg[w.id].an){
+      if (w.mnemo && typeof ABGELOESTE_MNEMO !== 'undefined') ABGELOESTE_MNEMO.set(String(w.id), w.mnemo);
+      VOCAB_DATA.splice(i, 1);
+    }
   }
   VOCAB_DATA.push(...PERSONAL_VOCAB.filter(w => !(w && weg[w.id] && weg[w.id].an)));
 }
@@ -1316,6 +1325,40 @@ function merkeUebertragen(von, nach, alt){
    Elias hatte „von 10 eingestellt" und bekam 8. Ältere Tausche mit Stand findet
    es über `uebertragen` in vt_progress (merkeUebertragen() oben). */
 const GETAUSCHT = new Map();
+
+/* ⭐⭐ WER WURDE GEGEN DIESE KARTE GETAUSCHT? (23.09.2026)
+   Gemessen im Nachbau mit seinem Stand (KV 02:55): vorschlaegeKnapp() meldet
+   لَحْمٌ „Fleisch" (46039) und كَسْلَانُ „faul" (46054) mit NULL Vorschlägen —
+   seine Diagnose vom 22.09. sagte „nur EIN Vorschlag". Beide sind Buchkarten,
+   die eine eigene Karte ersetzt haben; deren Eselsbrücken (mnemo und
+   data/eselsbruecken-alt.js, dort z. B. unter 59e30a8a-…) hängen an der ALTEN
+   Kennung, und mitgenommen wurden beim Tausch nur SEINE Notizen (NOTES).
+   Die Beziehung steht an zwei Stellen: GETAUSCHT (Tausch in diesem Lauf) und
+   `uebertragen` im Fortschritt des Vorgängers (Tausch in einem früheren Lauf —
+   seit v574 steht die alte Karte beim Start gar nicht mehr in VOCAB_DATA).
+   Rückgabe: [{ id, mnemo }] — mnemo aus VOCAB_DATA oder ABGELOESTE_MNEMO. */
+function vorgaengerVon(id){
+  const k = String(id);
+  const raus = [];
+  const gesehen = new Set();
+  const nimm = von => {
+    von = String(von);
+    if (von === k || gesehen.has(von)) return;
+    gesehen.add(von);
+    const alt = (typeof VOCAB_DATA !== 'undefined' && Array.isArray(VOCAB_DATA))
+      ? VOCAB_DATA.find(x => x && String(x.id) === von) : null;
+    raus.push({ id: von, mnemo: (alt && alt.mnemo)
+      || (typeof ABGELOESTE_MNEMO !== 'undefined' ? ABGELOESTE_MNEMO.get(von) : '') || '' });
+  };
+  for (const [von, nach] of GETAUSCHT) if (String(nach) === k) nimm(von);
+  if (typeof PROGRESS !== 'undefined' && PROGRESS){
+    for (const von in PROGRESS){
+      const p = PROGRESS[von];
+      if (p && p.uebertragen != null && String(p.uebertragen) === k) nimm(von);
+    }
+  }
+  return raus;
+}
 
 /* Der Tausch selbst. Gibt zurueck, was geschehen ist — der Aufrufer soll es
    melden koennen; ein stiller Tausch waere genau die Sorte Aenderung, die
