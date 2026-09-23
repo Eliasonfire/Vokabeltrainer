@@ -168,6 +168,22 @@ export const PFLEGEPLAN = [
     ],
   },
   {
+    /* ⭐ 23.09.2026 (v573) — das Bild zur Eselsbrücke. Elias: „Eselsbrücken-Bild:
+       C · Mischung · die 72 + die 14 Beziehungswörter · nur Rückseite". */
+    funktion: 'Bild zur Eselsbrücke (Emoji und Zeichnungen auf der Rückseite)',
+    dateien: ['data/eselsbilder.js'],
+    bildschirme: [],
+    neuerInhalt: { sitzung: 'Seine Entscheidung gilt für genau diese 86 Wörter (72 Emoji, 14 Zeichnungen). Ob neue Wörter aus neuen '
+        + 'Kapiteln nach derselben Regel ein Bild bekommen, ist eine offene Frage an ihn (To-Do, 23.09.2026) — bis er sie beantwortet, '
+        + 'kommt jedes neue Bild aus einer Sitzung, nie aus der Routine.',
+      werkzeug: 'werkzeuge/pruefe-eselsbilder.mjs' },
+    eingaben: { nein: 'Er trägt nichts ein: das Bild wird nur angezeigt. Es gibt kein Eingabefeld und keinen Speicherschlüssel — '
+        + 'seine eigene Eselsbrücke bleibt im Kasten darunter, wie bisher.' },
+    veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs', werkzeug: 'werkzeuge/pruefe-eselsbilder.mjs',
+      wie: 'verschwindet eine Kennung aus vocab-data.js, zeigt ein Platzhalter {{ar:…}} ins Leere oder ändert sich einer der 14 Beispielsätze, '
+        + 'die eine Zeichnung zeigt, wird der Prüfer rot' },
+  },
+  {
     funktion: 'Lehrwerke (die acht Bücher und seine arabicroots-Wörter)',
     /* 16.09.2026 (v515): die acht Buchabzüge stehen jetzt in ASSETS von sw.js —
        Elias: „soll unterwegs auch verfügbar sein als oja". Damit zählt der
