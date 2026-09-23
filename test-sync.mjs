@@ -665,6 +665,25 @@ function frischesGeraet(wandeln){
   pruefe('… und mit ihren Stempeln vom Server, nicht mit denen von „jetzt"', f.buecher === 1000 && f.hoerZiel === 1000, speicher['vt_settingsFeld']);
 }
 
+{
+  /* Die 107 nie beantworteten Karten: Gleichstand (0/0, ohne ts) — das frische
+     Gerät überlässt ihn dem Server, ein eingerichtetes behält wie bisher sein
+     Lokales. */
+  const { ctx } = frischesGeraet();
+  const fuehre = vm.runInContext('fuehreFortschrittZusammen', ctx);
+  const hier = { k: { box: 1, nextReview: '2026-09-22', correct: 0, wrong: 0 } };
+  const dort = { k: { box: 1, nextReview: '2026-08-11', correct: 0, wrong: 0 } };
+  pruefe('frisches Gerät: bei Gleichstand bleibt die Fälligkeit vom Server (11.08.)',
+    fuehre(hier, dort, true).k.nextReview === '2026-08-11');
+  pruefe('eingerichtetes Gerät: bei Gleichstand bleibt wie bisher das Lokale',
+    fuehre(hier, dort).k.nextReview === '2026-09-22');
+  pruefe('mehr Antworten gewinnen weiterhin, auch beim frischen Gerät',
+    fuehre({ k: { correct: 3, wrong: 1 } }, { k: { correct: 0, wrong: 0 } }, true).k.correct === 3);
+  const roh = fs.readFileSync(path.join(WURZEL, 'js/sync.js'), 'utf8');
+  pruefe('der Abruf reicht zuerstFremd an den Fortschritt weiter',
+    roh.includes('fuehreFortschrittZusammen(JSON.parse(hierRoh), JSON.parse(dortRoh), zuerstFremd)'));
+}
+
 /* Beim Weglegen der App: nie ablegen, bevor einmal geholt wurde. */
 function weglegen(fuerFrisch, wandeln){
   const hoerer = {}; const ablagen = [];
