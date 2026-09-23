@@ -1050,6 +1050,32 @@ posten.push({
   } catch (e) { console.log('  ⚠ Fachbegriffe nicht lesbar: ' + String(e.message).slice(0, 80)); }
   const NAMEN = { 'gram-ta-marbuta': 'die weibliche Endung (Tāʾ marbūṭa)', 'gram-alif-maqsura': 'das Alif am Wortende (Alif maqṣūra)' };
   const deutsch = (w) => NAMEN[w.id] || String(w.de || '').replace(/\p{Script=Arabic}+/gu, '').replace(/\s{2,}/g, ' ').trim();
+  /* ⭐ 23.09.2026, 20:58 — MANCHE GIBT ES SCHON ALS BUCHKARTE. Gemessen: 3 der 18
+     ruhenden Begriffe stehen mit derselben Schreibung als „(gr)"-Karte in einem
+     Buch — Adjektiv (50428) und Genitivverbindung (50474), beide Madina 1
+     Kapitel 24 und bei ihm einzeln freigeschaltet, dazu Subjekt des
+     Nominalsatzes (50467). Hier stand pauschal „ruhen: in keiner Kartei, keinem
+     Hörmodus" — für ihn falsch: Adjektiv und Genitivverbindung lernt er längst
+     als Kapitel-24-Karte, seit v584 auch im Hörmodus. Wählte er sie hier, stünde
+     dasselbe Wort zweimal da. Seine Regel dafür (22.09.2026, mudaf): „es gibt
+     zwei mudaf, ich möchte eigentlich nur eins haben. lass das in kapitel 24".
+     ⚠️ Gleiche Schreibung allein reicht nicht (خَبَر ist auch „Nachricht", ظَرْف
+     auch „Umschlag") — erst „(gr)" in der Bedeutung der Buchkarte macht sie zum
+     selben Fachbegriff. */
+  const nackt = s => String(s || '').normalize('NFC').replace(/[ً-ٰٟـ]/g, '')
+    .replace(/[أإآٱ]/g, 'ا').replace(/^ال/, '').replace(/ة$/, 'ه').trim();
+  const buchGr = new Map();
+  try {
+    const k = vm.createContext({ window: {} });
+    for (const f of fs.readdirSync(path.join(REPO, 'data')).filter(f => /^vokabeln-.*\.js$/.test(f)))
+      try { vm.runInContext(fs.readFileSync(path.join(REPO, 'data', f), 'utf8'), k); } catch {}
+    for (const liste of Object.values(k.window.VOKABELN || {}))
+      for (const x of (Array.isArray(liste) ? liste : []))
+        if (x && x.ar && /\(gr\)/.test(String(x.de || '')) && !buchGr.has(nackt(x.ar))) buchGr.set(nackt(x.ar), x);
+  } catch {}
+  const buchName = slug => String(slug).replace(/^madina/, 'Madina').replace(/^bayna-yadayk/, 'Bayna Yadayk').replace(/-(\d+)$/, ' $1');
+  const zwilling = w => buchGr.get(nackt(w.ar));
+  const mitKarte = ruhend.filter(zwilling).length;
   if (ruhend.length) posten.push({
     titel: 'Fachbegriffe: welche „Hand voll" außer Akkusativ, Genitiv und Nominativ?',
     zahl: ruhend.length, einheit: 'ruhen',
@@ -1057,9 +1083,11 @@ posten.push({
     auswahl: true,
     aufwand: 'die Namen nennen, die du als Karte willst — oder „keine"',
     warum: 'Du hast gesagt: Akkusativ, Genitiv und Nominativ „und vielleicht noch eine hand voll weitere", aber nicht solche wie „Übereinstimmung". '
-      + 'Seit v582 wird ein Fachbegriff nur noch eine Karte, wenn du ihn bestellt hast. Diese hier ruhen: in keiner Kartei, keinem Hörmodus, keiner Suche.',
-    wie: 'Nenn die, die du willst. Jeder bekommt eine Zeile mit deinem Satz, dann ist er in Kartei und Hörmodus. Die übrigen bleiben weg.',
-    zeilen: ruhend.map(deutsch),
+      + 'Seit v582 wird ein Fachbegriff nur noch eine Karte, wenn du ihn bestellt hast. Diese hier ruhen als Fachbegriff: in keiner Kartei, keinem Hörmodus, keiner Suche.'
+      + (mitKarte ? ' ' + mitKarte + ' davon gibt es aber schon als Karte in einem Buch (steht dabei) — die kommt mit ihrem Kapitel oder einzeln freigeschaltet, unabhängig von dieser Liste.' : ''),
+    wie: 'Nenn die, die du willst. Jeder bekommt eine Zeile mit deinem Satz, dann ist er in Kartei und Hörmodus. Die übrigen bleiben weg.'
+      + (mitKarte ? ' Wo „schon als Karte" steht, bekommst du keine zweite: dann schalte ich die Buchkarte frei, wie bei Akkusativ, Genitiv und Nominativ.' : ''),
+    zeilen: ruhend.map(w => { const x = zwilling(w); return deutsch(w) + (x ? ' · schon als Karte: ' + buchName(x.book) + ', Kapitel ' + x.chapter : ''); }),
     seite: '', seiteText: ''
   });
 }
