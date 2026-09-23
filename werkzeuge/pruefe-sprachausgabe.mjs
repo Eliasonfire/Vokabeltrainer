@@ -72,6 +72,19 @@ pruefe('jeder bekannte Code liefert entweder null oder einen Satz',
    'audio-busy', 'synthesis-unavailable', 'synthesis-failed']
     .every(c => { const t = tonFehlertext(c, 2); return t === null || (typeof t === 'string' && t.length > 20); }), true);
 
+/* ⭐ Seine zwei Geräte, Elias am 23.09.2026: „ich habe ein pixel 10 pro xl und
+   samsung galaxy tablet S9 ultra". Chrome verrät das Modell nicht, also muss
+   der Android-Satz auf BEIDEN stimmen: der Weg über die Suche, und kein Menü,
+   das es nur bei einem Hersteller gibt. Bis v572 stand dort nur der
+   Samsung-Weg — geprüft wurde er nie, weil `navigator` hier Node ist und der
+   Android-Zweig nie lief. Darum wird der userAgent hier hineingereicht. */
+const androidSatz = new Function('navigator', fehlertexte() + '\nreturn stimmeFehltText();')(
+  { userAgent: 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36' });
+const androidTraegt = t => /suchen/.test(t) && !/Allgemeine Verwaltung/.test(t);
+pruefe('Android-Satz: über die Suche, ohne Samsung-eigenes Menü', androidTraegt(androidSatz), true);
+pruefe('Störtest: der alte Samsung-Satz (bis v572) fiele durch',
+  androidTraegt('Einstellungen → Allgemeine Verwaltung → Text-zur-Sprache → Sprachdaten installieren → Arabisch'), false);
+
 /* ---------- 2. Die drei Arten von Schweigen ---------- */
 console.log('\n=== Merkt sie die drei Arten von Schweigen? ===\n');
 

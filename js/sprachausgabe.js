@@ -75,10 +75,23 @@ function stimmeFehltText(){
   const ua = String((navigator && navigator.userAgent) || '');
   const android = /Android/i.test(ua);
   const apple = /iPhone|iPad|iPod/i.test(ua);
+  /* ⛔ Seit v573 KEIN Herstellerpfad mehr. Bis v572 stand hier für jedes
+     Android-Gerät der Samsung-Weg („Allgemeine Verwaltung"). Elias am
+     23.09.2026: „ich habe ein pixel 10 pro xl und samsung galaxy tablet S9
+     ultra" — auf dem Pixel gibt es dieses Menü nicht. Genau der Fall aus dem
+     Kommentar oben.
+     Unterscheiden lässt sich das hier nicht: Chrome nennt im userAgent statt
+     des Modells nur „K" (User-Agent-Reduktion). Das ist bekannt, auf seinen
+     Geräten aber NICHT gemessen — die Diagnose führt den userAgent nicht. Die
+     Suche in den Einstellungen gibt es auf beiden Geräten.
+     ⚠️ Auch die Wörter hier (Zahnrad, „Sprachdaten installieren") sind nicht
+     auf seinen Geräten nachgesehen. Nennt er andere, hier eintragen.
+     Bewacht von werkzeuge/pruefe-sprachausgabe.mjs. */
   if (android)
     return 'Dieses Gerät hat keine arabische Stimme — deshalb kein Ton. '
-         + 'Einstellungen → Allgemeine Verwaltung → Text-zur-Sprache → '
-         + 'Sprachdaten installieren → Arabisch. Danach die App einmal schließen und neu öffnen.';
+         + 'Einstellungen öffnen und oben nach „Sprachausgabe" suchen. Dort beim '
+         + 'Sprachmodul (Google oder Samsung) aufs Zahnrad tippen → Sprachdaten installieren → '
+         + 'Arabisch. Danach die App einmal schließen und neu öffnen.';
   if (apple)
     return 'Dieses Gerät hat keine arabische Stimme — deshalb kein Ton. '
          + 'Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen → Arabisch laden. '
