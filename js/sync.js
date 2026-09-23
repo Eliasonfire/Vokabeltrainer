@@ -464,7 +464,12 @@ function wortzahl(){
 
 /* ---------- Zusammenfuehren ---------- */
 
-function fuehreFortschrittZusammen(hier, dort){
+/* `fremdBeiGleichstand` (23.09.2026): ein Gerät, das noch nie abgeglichen hat
+   (nieAbgeglichen()), überlässt dem Server jeden GLEICHSTAND. Gemessen im
+   Nachbau mit seinem Stand: sonst bekamen 107 nie beantwortete Karten die
+   Fälligkeit vom Tag des ersten Abgleichs statt 11.08. — der frische Eintrag
+   (0 richtig, 0 falsch) gewann den Gleichstand, weil bisher das Lokale blieb. */
+function fuehreFortschrittZusammen(hier, dort, fremdBeiGleichstand){
   const raus = {};
   const alle = new Set([...Object.keys(hier || {}), ...Object.keys(dort || {})]);
   alle.forEach(id => {
@@ -472,11 +477,15 @@ function fuehreFortschrittZusammen(hier, dort){
     const b = dort && dort[id];
     if (!a) { raus[id] = b; return; }
     if (!b) { raus[id] = a; return; }
-    if (a.ts || b.ts){ raus[id] = (a.ts || 0) >= (b.ts || 0) ? a : b; return; }
+    if (a.ts || b.ts){
+      const ta = a.ts || 0, tb = b.ts || 0;
+      raus[id] = ta > tb ? a : (ta < tb ? b : (fremdBeiGleichstand ? b : a));
+      return;
+    }
     /* Kein Stempel auf beiden Seiten: Ersatzregel ueber die Antwortzahl. */
     const za = (a.correct||0) + (a.wrong||0);
     const zb = (b.correct||0) + (b.wrong||0);
-    raus[id] = za >= zb ? a : b;
+    raus[id] = za > zb ? a : (za < zb ? b : (fremdBeiGleichstand ? b : a));
   });
   return raus;
 }
@@ -1139,7 +1148,7 @@ function fuehreZusammen(fern){
 
     if (k === 'vt_progress'){
       try {
-        const zusammen = fuehreFortschrittZusammen(JSON.parse(hierRoh), JSON.parse(dortRoh));
+        const zusammen = fuehreFortschrittZusammen(JSON.parse(hierRoh), JSON.parse(dortRoh), zuerstFremd);
         const neu = JSON.stringify(zusammen);
         if (neu !== hierRoh){ localStorage.setItem(k, neu); etwasGeaendert = true; }
       } catch (e){ /* kaputtes JSON auf einer Seite: lokal behalten */ }
