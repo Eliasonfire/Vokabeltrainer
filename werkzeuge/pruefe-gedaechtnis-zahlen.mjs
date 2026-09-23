@@ -144,9 +144,12 @@ pruefe('r3: 15 Partikeln', 15, v.filter(w => w.type === 'particle').length);
 /* Uebungsarten und Hinweise (a2)
    16.09.2026: 13 → 12 und 12 → 11 — „Bestimmt?" ist auf Elias' Wunsch aus dem
    Satz-Modus entfernt („die übung im satzmodus brauche ich nicht weil die ist
-   viel zu leicht"). Die Übung hatte einen Hinweis. */
+   viel zu leicht"). Die Übung hatte einen Hinweis.
+   22.09.2026 (v566, `7829460`): 12 → 13 — „Übersetzen — Arabisch ins Deutsche"
+   (id 'uebersetzen', nr 13) kam dazu, ohne Hinweis; die 11 bleiben. Nachgezogen
+   erst am 23.09., 20:59 — der Prüfer stand bis dahin rot. */
 const ueb = fs.readFileSync(REPO + '/js/uebung.js', 'utf8');
-pruefe('a2: 12 Uebungsarten', 12, (ueb.match(/^\s*id\s*:\s*'[^']+',\s*nr\s*:/gm) || []).length);
+pruefe('a2: 13 Uebungsarten', 13, (ueb.match(/^\s*id\s*:\s*'[^']+',\s*nr\s*:/gm) || []).length);
 pruefe('a2: 11 mit Hinweis', 11, (ueb.match(/^\s*hinweis\s*:/gm) || []).length);
 
 /* Fachbegriffe (Oberflaechenpruefung) */
