@@ -37,6 +37,9 @@ const schneide = (name) => {
 };
 const quelle = [
   KERN.match(/const DUB_HARAKA_ENDE = [^\n]*/)[0],
+  /* Seit v574 (23.09.2026) merkt sich tauscheDublette() jeden Tausch dieses
+     Starts — offeneRundeFortsetzen() setzt eine Runde damit fort. */
+  KERN.match(/const GETAUSCHT = new Map\(\);/)[0],
   schneide('dubForm'), schneide('dubOhneArtikel'), schneide('dubGleich'), schneide('dubBedeutungGleich'),
   schneide('dubletteImBuch'), schneide('hatFortschritt'), schneide('uebertrageFortschritt'),
   schneide('merkeUebertragen'), schneide('tauscheDublette'), schneide('holeFortschrittNach'),

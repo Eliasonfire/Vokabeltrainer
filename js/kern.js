@@ -440,6 +440,30 @@ function savePersonalVocab(){ LS.set('vt_personalVocab', PERSONAL_VOCAB); }
 {
   const wegRoh = LS.get('vt_geloescht', {});
   const weg = (wegRoh && typeof wegRoh === 'object' && !Array.isArray(wegRoh)) ? wegRoh : {};
+  /* ⛔⛔ UND DIE EIGENEN AUS vocab-data.js — die VIERTE Quelle (23.09.2026)
+
+     Elias, 02:53, mit dem Bild seiner Runde: „warum ist hier von 8? ich hatte
+     von 10 eingestellt".
+
+     laḥm „Fleisch" (59e30a8a) und muhandis „Ingenieur" (36e01b96) stehen in
+     vocab-data.js mit chapter 'personal' — und seit dem 16./17.09.2026 in
+     vt_geloescht, weil sie gegen die Karten aus dem Buch getauscht sind.
+     Gefiltert wurde bis heute nur in den drei anderen Quellen (hier darunter,
+     bei den Fachbegriffen und in js/buecher.js für vokabeln-eigene.js). Also
+     standen beide bei JEDEM Start wieder da, bis tauscheDubletten() sie nach
+     dem Laden der Bücher erneut tauschte — gemessen an seinem Gerätestand: die
+     Stempel in vt_geloescht und vt_einzeln_frei erneuerten sich bei jedem Start
+     (22.09. 17:53:56, 23.09. 02:53:51).
+     In diesem Fenster gebaut, trug eine Runde „Fleisch" (nie beantwortet, fällig
+     am selben Tag, also ganz vorn), und beim nächsten Öffnen fehlte die Karte:
+     auf seinem Handy 10 → 8, im Nachbau mit seinem Stand 10 → 9.
+     ⚠️ LERNBESTAND_IDS entsteht VORHER (oben, beim Laden) und behält die 171 —
+     die Frischeprobe in CLAUDE.md vergleicht sie mit der Dateilänge.
+     Geprüft von werkzeuge/pruefe-offene-runde.mjs. [[ausfall_ist_unsichtbar_gebaut]] */
+  for (let i = VOCAB_DATA.length - 1; i >= 0; i--){
+    const w = VOCAB_DATA[i];
+    if (w && w.chapter === 'personal' && weg[w.id] && weg[w.id].an) VOCAB_DATA.splice(i, 1);
+  }
   VOCAB_DATA.push(...PERSONAL_VOCAB.filter(w => !(w && weg[w.id] && weg[w.id].an)));
 }
 
@@ -1286,6 +1310,13 @@ function merkeUebertragen(von, nach, alt){
   saveProgress();
 }
 
+/* ⭐ Was bei DIESEM Start getauscht wurde: eigene Karte → Karte aus dem Buch
+   (23.09.2026). Nur im Arbeitsspeicher. offeneRundeFortsetzen() in js/lernen.js
+   setzt eine Runde damit fort, statt die getauschte Karte still wegzulassen —
+   Elias hatte „von 10 eingestellt" und bekam 8. Ältere Tausche mit Stand findet
+   es über `uebertragen` in vt_progress (merkeUebertragen() oben). */
+const GETAUSCHT = new Map();
+
 /* Der Tausch selbst. Gibt zurueck, was geschehen ist — der Aufrufer soll es
    melden koennen; ein stiller Tausch waere genau die Sorte Aenderung, die
    niemand nachvollziehen kann. */
@@ -1326,6 +1357,7 @@ function tauscheDublette(eigen){
   /* 3. Und erst jetzt die eigene weg — mit Vermerk, siehe merkeUebertragen(). */
   const weg = loeschePersonalVocab(eigen.id);
   merkeUebertragen(von, nach, altStand);
+  GETAUSCHT.set(von, nach);
   return { von, nach, wort: buch.ar, mitgenommen: mit, geloescht: !!weg };
 }
 
@@ -2090,6 +2122,7 @@ function fachbegriffeMitBuchkarte(){
     /* Und erst jetzt die doppelte Karte aus dem Bestand nehmen. */
     const i = VOCAB_DATA.findIndex(w => String(w.id) === String(f.id));
     if (i >= 0) VOCAB_DATA.splice(i, 1);
+    GETAUSCHT.set(String(f.id), String(ziel.id));   /* für eine fortgesetzte Runde, siehe oben */
     erledigt.push({ von: String(f.id), nach: String(ziel.id), wort: ziel.ar });
   }
   return erledigt;

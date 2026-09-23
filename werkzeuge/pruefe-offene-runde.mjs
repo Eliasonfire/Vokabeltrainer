@@ -30,6 +30,8 @@ const lernen = lies('../js/lernen.js');
 const start  = lies('../js/start.js');
 const navi   = lies('../js/navigation.js');
 const sync   = lies('../js/sync.js');
+const kern   = lies('../js/kern.js');
+const buecher = lies('../js/buecher.js');
 
 let fehler = 0;
 const pruefe = (was, erwartet, ist) => {
@@ -90,9 +92,10 @@ if (alteZahl === mLeiste[0]){
 /* ============ 2. Die Runde übersteht das Schließen der App ================ */
 const HEUTE = '2026-09-19';
 
-function umgebung(store, woerter, tag = HEUTE){
+function umgebung(store, woerter, tag = HEUTE, extra = {}){
   const bildschirme = [];
   const ctx = {
+    ...extra,
     SESSION: { words: [], idx: 0, dirs: [], fertig: true, laut: new Set() },
     VOCAB_DATA: woerter,
     /* So arbeitet LS in js/kern.js: es hält nichts im Speicher, jeder Zugriff
@@ -160,6 +163,121 @@ e.ctx.SESSION = { words: woerter.slice(), idx: 9, dirs: [], fertig: false, laut:
 pruefe('nach dem Neustart ist die Runde weg', false,
   umgebung(storeAlt, woerter).ctx.RUF.offeneRundeFortsetzen());
 
+/* ===== 4. Getauscht, gelöscht, geschrumpft: die Runde bleibt so groß (23.09.2026) =====
+   Elias, 02:53: „warum ist hier von 8? ich hatte von 10 eingestellt" — und dann:
+   „behebe vorallem den fehler das dort keine 8 sondern von 10 steht bei
+   karteikarten". Auf seinem Gerät waren Karten der Runde beim nächsten Start
+   getauscht (eigene Karte → Karte aus dem Buch) und fielen still weg. */
+console.log('\nEine Karte der Runde wurde inzwischen getauscht:');
+const mitEigener = Array.from({ length: 10 }, (_, i) => ({ id: i === 3 ? 'eigen' : 200 + i }));
+const nachTausch = mitEigener.filter(w => w.id !== 'eigen').concat([{ id: 'buch' }]);
+const storeT = {};
+const t0 = umgebung(storeT, mitEigener);
+t0.ctx.SESSION = { words: mitEigener.slice(), idx: 0, dirs: [], fertig: false, laut: new Set([3]) };
+t0.ctx.RUF.rundeSichern(0);
+const t1 = umgebung({ ...storeT }, nachTausch, HEUTE, { PROGRESS: { eigen: { box: 1, uebertragen: 'buch' } } });
+pruefe('sie kommt zurück', true, t1.ctx.RUF.offeneRundeFortsetzen());
+pruefe('mit 10 Karten, an Stelle 4 die aus dem Buch', { karten: 10, stelle4: 'buch' },
+  { karten: t1.ctx.SESSION.words.length, stelle4: t1.ctx.SESSION.words[3] && t1.ctx.SESSION.words[3].id });
+pruefe('„laut sagen" wandert mit', [3], [...t1.ctx.SESSION.laut]);
+const t2 = umgebung({ ...storeT }, nachTausch, HEUTE, { GETAUSCHT: new Map([['eigen', 'buch']]) });
+t2.ctx.RUF.offeneRundeFortsetzen();
+pruefe('auch über den Tausch dieses Starts', 10, t2.ctx.SESSION.words.length);
+const t3 = umgebung({ ...storeT }, nachTausch.concat([]), HEUTE,
+  { PROGRESS: { eigen: { uebertragen: 203 } } });           /* die Buchkarte steht schon drin */
+t3.ctx.RUF.offeneRundeFortsetzen();
+pruefe('steht die Buchkarte schon drin, nicht doppelt', 9, new Set(t3.ctx.SESSION.words.map(w => String(w.id))).size);
+/* Störtest: ohne Vermerk kein Ersatz — so war es bis v573. */
+const t4 = umgebung({ ...storeT }, nachTausch);
+t4.ctx.RUF.offeneRundeFortsetzen();
+pruefe('Störtest: ohne Vermerk fiele sie weg (9)', 9, t4.ctx.SESSION.words.length);
+
+console.log('\nFehlt trotzdem eine Karte, wird aus dem Fälligen aufgefüllt:');
+const faellig = Array.from({ length: 14 }, (_, i) => ({ id: 300 + i }));
+const acht = faellig.slice(0, 8);
+/* Eine Sicherung von vor v574: 8 Kennungen, keine Größe — so liegt seine
+   geschrumpfte Runde gerade auf dem Handy. */
+const alt8 = JSON.stringify({ tag: HEUTE, ids: acht.map(w => String(w.id)), idx: 0, lautIds: [], zeit: 1 });
+const voll = { tagesDeckel: () => 10, currentPool: () => faellig.slice() };
+const f1 = umgebung({ vt_offeneRunde: alt8 }, faellig, HEUTE, voll);
+f1.ctx.RUF.offeneRundeFortsetzen();
+pruefe('seine alte 8er-Runde kommt mit 10 zurück', { karten: 10, idx: 0 },
+  { karten: f1.ctx.SESSION.words.length, idx: f1.ctx.SESSION.idx });
+pruefe('die 8 stehen vorn, unverändert', acht.map(w => w.id), f1.ctx.SESSION.words.slice(0, 8).map(w => w.id));
+pruefe('keine Karte doppelt', 10, new Set(f1.ctx.SESSION.words.map(w => w.id)).size);
+const ziel8 = JSON.stringify({ tag: HEUTE, ids: acht.map(w => String(w.id)), idx: 0, lautIds: [], ziel: 8, zeit: 1 });
+const f2 = umgebung({ vt_offeneRunde: ziel8 }, faellig, HEUTE, voll);
+f2.ctx.RUF.offeneRundeFortsetzen();
+pruefe('eine bewusst kleinere Runde bleibt klein (Kapitel abgewählt)', 8, f2.ctx.SESSION.words.length);
+const f3 = umgebung({ vt_offeneRunde: alt8 }, faellig, HEUTE,
+  { tagesDeckel: () => 10, currentPool: () => faellig.slice(0, 9) });
+f3.ctx.RUF.offeneRundeFortsetzen();
+pruefe('reicht das Fällige nicht, wird nichts erfunden (9)', 9, f3.ctx.SESSION.words.length);
+/* Störtest: ohne das Auffüllen bliebe es bei 8. */
+const f4 = umgebung({ vt_offeneRunde: alt8 }, faellig);
+f4.ctx.RUF.offeneRundeFortsetzen();
+pruefe('Störtest: ohne Auffüllen blieben es 8', 8, f4.ctx.SESSION.words.length);
+
+/* ===== 5. „Jetzt lernen" wartet, bis der Bestand beim Start steht ===== */
+const mBeginnen = lernen.match(/\nconst START_WARTEN_MS = \d+;[\s\S]*?\nasync function lernenBeginnen\(\)\{[\s\S]*?\n\}\n/);
+console.log('\n„Jetzt lernen" direkt nach dem Öffnen:');
+if (!mBeginnen){ pruefe('lernenBeginnen() gefunden', true, false); }
+else {
+  const beginnen = (quelle, bereit, frist) => {
+    const log = [];
+    const ctx = {
+      SESSION: { words: [], idx: 0, dirs: [], fertig: true }, setTimeout,
+      showScreen: n => log.push('zeige ' + n),
+      offeneRundeFortsetzen: () => { log.push('fortsetzen?'); return false; },
+      startLearningSession: () => log.push('neue Runde'),
+    };
+    if (bereit) ctx.STARTBESTAND_BEREIT = bereit;
+    vm.createContext(ctx);
+    vm.runInContext((frist ? quelle.replace(/START_WARTEN_MS = \d+/, 'START_WARTEN_MS = ' + frist) : quelle)
+      + '\nthis.los = lernenBeginnen;', ctx);
+    return { los: ctx.los, log };
+  };
+  const kurz = () => new Promise(f => setTimeout(f, 30));
+  let freigeben;
+  const w1 = beginnen(mBeginnen[0], new Promise(f => { freigeben = f; }));
+  const l1 = w1.los(), l2 = w1.los();                  /* zweimal getippt */
+  await kurz();
+  pruefe('vor dem fertigen Bestand entsteht keine Runde', [], w1.log);
+  freigeben(); await l1; await l2;
+  pruefe('danach genau eine, auch bei zweimal Tippen', ['fortsetzen?', 'neue Runde'], w1.log);
+  const w2 = beginnen(mBeginnen[0], new Promise(() => {}), 20);    /* der Start hängt */
+  await w2.los();
+  pruefe('hängt der Start, geht es nach der Frist weiter', ['fortsetzen?', 'neue Runde'], w2.log);
+  /* Störtest: ohne das Warten — so war es bis v573. */
+  const ohne = mBeginnen[0].replace(/await Promise\.race\([\s\S]*?\]\);/, ';');
+  if (ohne === mBeginnen[0]) pruefe('Störtest ließ sich bauen', true, false);
+  const w3 = beginnen(ohne, new Promise(() => {}));
+  w3.los(); await kurz();
+  pruefe('Störtest: ohne Warten entstünde sie sofort', ['fortsetzen?', 'neue Runde'], w3.log);
+}
+
+/* ===== 6. Gelöschte eigene Wörter aus vocab-data.js kommen beim Start nicht wieder ===== */
+const mFilter = kern.match(/\n\{\n  const wegRoh = LS\.get\('vt_geloescht', \{\}\);[\s\S]*?VOCAB_DATA\.push\(\.\.\.PERSONAL_VOCAB\.filter\([^\n]*\n\}\n/);
+console.log('\nBeim Start, vor dem Laden der Bücher:');
+if (!mFilter){ pruefe('der Ladeblock in js/kern.js gefunden', true, false); }
+else {
+  const laden = (quelle) => {
+    const ctx = {
+      VOCAB_DATA: [{ id: 'fleisch', chapter: 'personal' }, { id: 'bleibt', chapter: 'personal' },
+                   { id: 'buch', chapter: 7 }, { id: 'zurueck', chapter: 'personal' }],
+      PERSONAL_VOCAB: [{ id: 'p_1', chapter: 'personal' }],
+      LS: { get: (k, f) => k === 'vt_geloescht'
+        ? { fleisch: { an: true }, buch: { an: true }, zurueck: { an: false } } : f }
+    };
+    vm.createContext(ctx);
+    vm.runInContext(quelle, ctx);
+    return ctx.VOCAB_DATA.map(w => w.id);
+  };
+  pruefe('gelöschte eigene fehlen, alles andere bleibt', ['bleibt', 'buch', 'zurueck', 'p_1'], laden(mFilter[0]));
+  const ohne = mFilter[0].replace(/  for \(let i = VOCAB_DATA\.length - 1;[\s\S]*?\n  \}\n/, '');
+  pruefe('Störtest: ohne den Filter stünde „Fleisch" wieder da', true, laden(ohne).includes('fleisch'));
+}
+
 /* ================== 3. Ist sie überhaupt verdrahtet? ===================== */
 /* ⭐ Die zwei Prüfungen oben fahren Funktionen. Ob die App sie auch AUFRUFT,
    sieht man ihnen nicht an — das ist die Fehlerart, die stillschweigend
@@ -171,8 +289,16 @@ pruefe('das Rundenende vergisst sie wieder', true,
   /SESSION\.fertig = true;[\s\S]{0,400}?rundeVergessen\(\);/.test(lernen));
 pruefe('das X beendet sie endgültig', true,
   /btnExitLearn[\s\S]{0,600}?rundeVergessen\(\);/.test(lernen));
-pruefe('„Jetzt lernen" setzt eine gesicherte Runde fort', true,
-  /learn-entry[\s\S]{0,1200}?offeneRundeFortsetzen\(\)/.test(navi));
+pruefe('„Jetzt lernen" ruft lernenBeginnen()', true,
+  /learn-entry[\s\S]{0,800}?lernenBeginnen\(\);/.test(navi));
+pruefe('lernenBeginnen() setzt fort oder beginnt neu', true,
+  !!mBeginnen && /if \(offeneRundeFortsetzen\(\)\) return;\s*startLearningSession\(\);/.test(mBeginnen[0]));
+pruefe('js/buecher.js meldet den Bestand fertig, als Letztes', true,
+  /const STARTBESTAND_BEREIT = new Promise/.test(buecher) && /\n  startbestandFertig\(\);\n\}\);/.test(buecher));
+pruefe('der Tausch merkt sich die Karte aus dem Buch', true,
+  /GETAUSCHT\.set\(von, nach\);/.test(kern) && /GETAUSCHT\.set\(String\(f\.id\), String\(ziel\.id\)\)/.test(kern));
+pruefe('die Sicherung merkt sich die Größe', true,
+  /ziel: Number\(SESSION\.ziel\) \|\| SESSION\.words\.length/.test(lernen));
 pruefe('die Startseite zeigt den Hinweis', true, /offeneRundeStand\(\)/.test(start));
 /* ⛔ Der Schlüssel gehört dem Gerät. Stünde er im Abgleich, käme die beendete
    Runde vom anderen Gerät zurück — ein fehlender Eintrag verliert jeden
