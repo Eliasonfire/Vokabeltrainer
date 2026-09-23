@@ -998,6 +998,48 @@ posten.push({
   seite: 'https://claude.ai/artifact/3gTMBWufBfG52T8KDRqL3m',
   seiteText: 'Der Bericht'
 });
+posten.push({
+  /* ⭐ v575, 23.09.2026 (Nachtschicht). Auf Handy und Tablet IST Arabisch
+     installiert, Chrome meldet es der App aber nicht (Begründung bei
+     ARABISCH_OHNE_LISTE in js/sprachausgabe.js). Ob es arabisch klingt, kann
+     nur er hören. Raus, sobald beide Geräte in der Diagnose „Ja" oder „Nein"
+     zeigen (node werkzeuge/diagnose-holen.mjs). */
+  titel: 'Arabisch testen — auf Handy und Tablet je einmal',
+  zahl: 2, einheit: 'Geräte', dazu: 'seit v575', auswahl: false,
+  aufwand: 'je Gerät eine Minute',
+  warum: 'Auf beiden Geräten hast du Arabisch installiert, aber Chrome meldet es der App nicht — deshalb blieb der Hörmodus stumm. '
+    + 'Ob die Sprachausgabe trotzdem arabisch spricht, kann die App nicht selbst hören.',
+  wie: 'App schließen und neu öffnen. Dann Einstellungen → Hören → „Arabisch testen". Klingt der Satz arabisch: „Ja" — ab dann '
+    + 'spricht die App auf diesem Gerät. Klingt er deutsch oder kommt nichts: „Nein". Danach die Diagnose schicken, dann sehe ich deine Antwort.',
+  seite: '', seiteText: ''
+});
+posten.push({
+  /* ⭐ Nebenbefund beim Bau von v575: gehSprich() in js/hoeren.js spricht
+     ohne gemeldete Stimme einfach los — seine v570-Regel nennt nur den
+     Lautsprecherknopf, der Geh-Modus läuft ohne Blick auf den Bildschirm.
+     Deshalb eine Frage, kein Bau. */
+  titel: 'Geh-Modus: Arabisch erst nach deinem Test?',
+  zahl: 1, einheit: 'Frage', dazu: 'seit v575', auswahl: true,
+  aufwand: 'ein Wort: „ja" oder „nein"',
+  warum: 'Der Geh-Modus liest Arabisch auch dann vor, wenn das Gerät keine arabische Stimme meldet — auch nachdem du im Test „Nein" gesagt hast. '
+    + 'Dann käme arabischer Text mit deutscher Aussprache.',
+  wie: '„ja": der Geh-Modus spricht Arabisch erst nach deinem Ja im Test, sonst sagt er beim Start, was fehlt. „nein": so lassen.',
+  seite: '', seiteText: ''
+});
+posten.push({
+  /* ⭐ Gemessen am 23.09.2026, 02:55, vom Helfer „Karte in der echten App"
+     (Chrome, 448×906 wie sein Pixel, sichtbarer Teil der Rückseite 151–611 px):
+     45828 Beispielsatz 617–732, 45829 657–789 — beide ganz außerhalb, rollen
+     +147 bzw. +204 px; 45751 teilweise (+119 px). Seine Vorgabe war „nur
+     Rückseite … bei der Eselsbrücke" — über die Größe hat er nicht entschieden. */
+  titel: 'Bild zur Eselsbrücke: der Beispielsatz rutscht aus dem Blick',
+  zahl: 1, einheit: 'Frage', dazu: 'seit v573', auswahl: true,
+  aufwand: 'eine von drei Antworten',
+  warum: 'Auf deinem Handy schiebt das Bild den Beispielsatz nach unten. Bei zwei von drei gemessenen Karten liegt er ganz '
+    + 'außerhalb, du musst rollen. Unten steht der Hinweis, dass es weitergeht.',
+  wie: '(1) so lassen — rollen, der Hinweis ist da. (2) Bild kleiner. (3) Bild an eine andere Stelle, etwa neben die Eselsbrücke.',
+  seite: '', seiteText: ''
+});
 
 /* ⛔⛔ SECHS FRAGEN, DIE NUR IM CHAT STANDEN (17.09.2026)
 
