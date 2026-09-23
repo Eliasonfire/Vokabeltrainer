@@ -410,6 +410,11 @@ const PRUEFER = [
      Weißliste ohne sein Wort dasteht oder die Wartungsroutine wieder
      fachbegriffe-setzen.mjs aufrufen darf. */
   ['werkzeuge/pruefe-fachbegriff-auftrag.mjs', []],
+  /* 23.09.2026 — der Hörmodus hat jedes Wort, das die Kartei abfragt. Elias:
+     „ja, alle vokabeln die abgefragt werden soll er haben". Rot, sobald ein
+     Kartei-Wort mit Bedeutung im Hörvorrat fehlt oder ein Wort, das vorher
+     darin stand, verschwindet; drei Störtests bei jedem Lauf. */
+  ['werkzeuge/pruefe-hoer-auswahl.mjs', []],
   /* 22.09.2026 — Elias: „kein beispielsatz, sorge dafür das alle ien
      beispielsatz haben". Exit 2 = Lücken, die auf Material warten (kein
      Werkzeugfehler); Exit 1 nur, wenn die Zahl selbst nicht belastbar wäre. */
