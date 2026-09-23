@@ -60,6 +60,24 @@
 const W = 'vokabeltrainer-wartung';
 
 export const PFLEGEPLAN = [
+  /* 23.09.2026 (v575), innerhalb von js/sprachausgabe.js, js/einstellungen.js
+     und index.html und deshalb von Hand hier: der Knopf „Arabisch testen"
+     (Einstellungen → Hören) und der neue Speicherschlüssel
+     `vt_arabischOhneListe`. Auf seinen beiden Geräten ist Arabisch
+     installiert, Chrome meldet es der App aber nicht; mit seinem Ja spricht
+     die App ohne Stimme aus der Liste. Der Pflegebedarf, geprüft:
+     · neuer Inhalt — nein. Der Probesatz ist der erste Beispielsatz aus den
+       vorhandenen Daten.
+     · Eingaben von Elias — ja, seine Antwort (Ja/Nein). Ausgewertet wird sie
+       von der App selbst (speakArabic) und in der Diagnosekarte; sie ist
+       Gerätezustand, absichtlich nicht abgeglichen und nicht gesichert
+       (Gründe in pruefe-abgleich.mjs und pruefe-sicherung.mjs).
+     · veralten — ja: deinstalliert er Arabisch, bleibt sein Ja stehen. Dann
+       meldet die App „Kein Ton" mit dem Weg zum Test, und ein „Nein" nimmt es
+       zurück. Kein Routineschritt, denn kein Werkzeug sieht die
+       Sprachausgabe seines Geräts.
+     Bewacht von werkzeuge/pruefe-sprachausgabe.mjs (in alle-pruefer.mjs), mit
+     Störtest in beide Richtungen. */
   /* 16.09.2026 (v517), innerhalb von js/kern.js, js/lernen.js und
      js/kategorien.js und deshalb von Hand hier: bei Zahlwörtern heißt die
      pl-Zeile „bei weiblichem Nomen", und es gibt keine Pluralkarte (Elias:
@@ -733,6 +751,6 @@ export const PFLEGEPLAN = [
     bildschirme: [],
     neuerInhalt: { nein: 'App-Logik ohne eigenen Inhalt: Speicher, Darstellung, Navigation, Start und Sprachausgabe.' },
     eingaben: { nein: 'Nimmt selbst keine Eingaben entgegen, die jemand weiterverarbeiten müsste.' },
-    veralten: { nein: 'Erzeugt nichts, das gespeichert wird und alt werden kann.' },
+    veralten: { nein: 'Erzeugt nichts, das gespeichert wird und alt werden kann — bis auf seine Antwort bei „Arabisch testen" (vt_arabischOhneListe, v575): die kann nach einer Deinstallation stehen bleiben, dann meldet die App „Kein Ton" mit dem Weg zum Test, und sein Nein nimmt sie zurück. Kein Werkzeug sieht die Sprachausgabe seines Geräts, also auch kein Routineschritt.' },
   },
 ];

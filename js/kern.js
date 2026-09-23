@@ -3202,7 +3202,19 @@ function toast(msg){
   const el = document.getElementById('toast');
   el.textContent = msg; el.classList.add('show');
   clearTimeout(toast._t);
-  toast._t = setTimeout(()=>el.classList.remove('show'), 2200);
+  /* ⭐ Die Zeit wächst mit der Länge (v575, 23.09.2026). Bis dahin stand jede
+     Meldung 2,2 Sekunden — auch der Weg zur arabischen Stimme mit rund 300
+     Zeichen, in dem seit v575 der entscheidende Satz („Arabisch testen") erst
+     an zweiter Stelle steht. Kurze Meldungen (bis ~50 Zeichen) bleiben bei
+     2,2 Sekunden; länger als 12 Sekunden steht keine. Die Meldung fängt keine
+     Berührung ab (pointer-events:none), längeres Stehen blockiert also nichts.
+     (Meine Begründung, keine Vorgabe von Elias.) */
+  const dauer = Math.min(12000, Math.max(2200, String(msg || '').length * 45));
+  /* Eine lange Meldung bricht in mehrere Zeilen um — in der Pillenform wurde
+     daraus ein Oval, an dessen Rand die Zeilen hingen (im Nachbau v575
+     gesehen, 448 px breit). Lange Meldungen bekommen deshalb einen Kasten. */
+  el.classList.toggle('lang', String(msg || '').length > 60);
+  toast._t = setTimeout(()=>el.classList.remove('show'), dauer);
 }
 
 

@@ -4742,6 +4742,12 @@ button:disabled{cursor:default;}
   box-shadow:var(--sh-3);
 }
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0) scale(1);}
+/* Lange Meldung (über 60 Zeichen, gesetzt in toast()): Kasten statt Pille. */
+.toast.lang{border-radius:var(--r-3);text-align:left;font-weight:600;line-height:1.45;
+  /* ⚠️ Ohne feste Breite schrumpft sie auf die HALBE Fensterbreite: mit
+     left:50% bleibt ihr beim Umbrechen nur der Platz bis zum rechten Rand
+     (im Nachbau 224 von 448 px — zehn Zeilen statt fünf). */
+  width:82%;}
 
 /* =====================================================================
    FORMULARE
@@ -4838,6 +4844,10 @@ button:disabled{cursor:default;}
 }
 .select-input:focus{border-color:var(--red-dim);outline:none;}
 .select-full{width:100%;margin-bottom:var(--sp-4);padding:var(--sp-3);}
+/* „Arabisch testen" (v575) unter der Stimmenauswahl. Die Frage darunter
+   bricht auf schmalen Geräten um, statt die Seite quer zu schieben. */
+.stimme-test{display:flex;flex-direction:column;align-items:flex-start;gap:var(--sp-2);margin-bottom:var(--sp-4);}
+.stimme-test-frage{display:flex;align-items:center;flex-wrap:wrap;gap:var(--sp-2);}
 .settings-note{font-size:var(--fs-sm);color:var(--text-faint);line-height:1.6;margin-top:var(--sp-6);}
 /* Die Diagnoseausgabe. Feste Breite pro Zeichen, damit Uhrzeiten und Zahlen
    untereinander stehen; waagerecht rollbar, weil eine lange Zeile sonst die
@@ -7018,6 +7028,21 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         </div>
       </div>
       <select id="voiceSelect" class="select-input select-full"></select>
+      <!-- ⭐ „Arabisch testen" (v575, 23.09.2026). Auf seinen beiden Geräten
+           ist Arabisch installiert, aber Chrome meldet es der App nicht —
+           Begründung bei ARABISCH_OHNE_LISTE in js/sprachausgabe.js. Der Test
+           spricht einen Satz ohne Stimme; die Frage erscheint nur, wenn keine
+           Stimme gemeldet ist, denn nur dann entscheidet seine Antwort etwas.
+           Verdrahtet in js/einstellungen.js (zeigeArabischTest). -->
+      <div class="stimme-test">
+        <button class="btn btn-secondary" id="btnArabischTesten" type="button">Arabisch testen</button>
+        <div class="setting-sub" id="arabischTestStand"></div>
+        <div class="stimme-test-frage hidden" id="arabischTestFrage">
+          <span class="setting-sub">Klang das arabisch?</span>
+          <button class="btn btn-secondary" id="btnArabischJa" type="button">Ja</button>
+          <button class="btn btn-secondary" id="btnArabischNein" type="button">Nein</button>
+        </div>
+      </div>
 
       </div>
 

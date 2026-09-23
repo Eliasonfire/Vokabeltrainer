@@ -136,6 +136,13 @@ const OHNE_LISTE = new Map([
   ['vt_offeneRunde', 'die angefangene Kartenrunde dieses Geraets (19.09.2026) — Geraetezustand,'
                    + 'kein Lernstand: die Bewertungen stehen in vt_progress. Sie traegt ihren '
                    + 'Lerntag und wird am naechsten Tag von selbst verworfen (js/lernen.js)'],
+  /* ⭐ 23.09.2026 (v575): gehoert bewusst NICHT in die Sicherung. Eine Datei
+     wird auf einem ANDEREN Geraet eingespielt — dort hiesse ein mitgebrachtes
+     Ja „dieses Geraet spricht arabisch", ohne dass dort je jemand hingehoert
+     hat. Genau davor schuetzt der Test (Begruendung in js/sprachausgabe.js). */
+  ['vt_arabischOhneListe', 'seine Antwort auf „Arabisch testen" (23.09.2026) — gilt nur fuer die '
+                   + 'Sprachausgabe DIESES Geraets; eingespielt auf einem anderen Geraet liesse sie '
+                   + 'die App ungeprueft ohne Stimmenliste sprechen. Ein neuer Test kostet einen Knopfdruck'],
 ]);
 
 const ohneListe = [...geschrieben.keys()]

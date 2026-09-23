@@ -87,6 +87,8 @@ const AUSGENOMMEN = new Map([
      [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
   ['vt_feierLog',     'Feier-Protokoll — welche Feier auf WELCHEM Bildschirm lief. Eine Messung an diesem Gerät; die Feiern eines anderen Geräts hier zu sehen wäre eine falsche Fährte'],
   ['vt_syncPuts',     'Tageszähler der KV-Schreibvorgänge dieses Geräts. Abgeglichen würde er sich gegenseitig überschreiben — und jedes Übertragen wäre selbst ein Schreibvorgang, also genau das, was er begrenzen soll'],
+  /* ⭐ 23.09.2026 (v575), eingetragen im selben Zug wie gebaut. */
+  ['vt_arabischOhneListe', 'seine Antwort auf „Arabisch testen": ob die Sprachausgabe DIESES Geräts ohne gemeldete Stimme arabisch klingt. Abgeglichen hieße ein Ja am Handy, dass das Tablet ungeprüft spricht — auf dem einen kann Arabisch klingen und auf dem anderen nicht. Begründung in js/sprachausgabe.js'],
   /* ⛔ 20.09.2026, NACHGETRAGEN: seit v542 (03:00) im Quelltext, hier erst mit
      v545 eingetragen — dieser Prüfer war drei Auslieferungen lang rot, und ich
      habe es nicht gesehen, weil alle-pruefer.mjs mit Exit 0 nur meldet, dass
