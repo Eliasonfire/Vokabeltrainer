@@ -146,7 +146,9 @@ console.log('\nKein Briefing beim Start:');
 
 function toastWelt(){
   const gezeigt = [];
-  const el = { textContent: '', classList: { add: (c) => gezeigt.push(c), remove: () => {} } };
+  /* `toggle` seit v575: toast() gibt langen Meldungen die Klasse „lang". Gezählt
+     wird weiter nur `add('show')` — ob eine Meldung ERSCHEINT, nicht wie sie aussieht. */
+  const el = { textContent: '', classList: { add: (c) => gezeigt.push(c), remove: () => {}, toggle: () => {} } };
   const hoerer = [];
   const welt = {
     document: {

@@ -24,7 +24,53 @@ function renderSettings(){
   zeichneKenneSchonListe();
   zeichneEinzelnFreiListe();
   loadVoices();
+  zeigeArabischTest();
 }
+
+/* ---------- „Arabisch testen" (v575, 23.09.2026) ----------
+
+   Warum es den Knopf gibt, steht bei ARABISCH_OHNE_LISTE in
+   js/sprachausgabe.js: auf seinen beiden Geräten ist Arabisch installiert,
+   Chrome meldet es der App nur nicht. Elias: „ich habe hier die stimme
+   ausgewählt aber beim hörmodus bekomme ich immer noch die fehlermeldung".
+
+   ⭐ Die Frage „Klang das arabisch?" erscheint NUR, wenn ohne gemeldete Stimme
+   gesprochen wurde — nur dann entscheidet seine Antwort etwas. Mit einer
+   gemeldeten Stimme spricht die App ohnehin wie immer. */
+function zeigeArabischTest(){
+  const stand = document.getElementById('arabischTestStand');
+  if (!stand) return;
+  const n = (typeof arabischeStimmen === 'function') ? arabischeStimmen().length : 0;
+  const antwort = LS.get(ARABISCH_OHNE_LISTE, null);
+  if (n) stand.textContent = `Dieses Gerät meldet ${n} arabische ${n === 1 ? 'Stimme' : 'Stimmen'} — der Test spricht mit der gewählten.`;
+  else if (antwort && antwort.ja === true) stand.textContent = 'Bestätigt: Die App spricht auf diesem Gerät arabisch, obwohl der Browser keine Stimme meldet. Klingt es doch falsch, noch einmal testen und „Nein" tippen.';
+  else stand.textContent = 'Der Browser meldet keine arabische Stimme. Ist Arabisch trotzdem installiert, spricht der Test einen Satz — danach fragt die App, ob er arabisch klang.';
+}
+
+document.getElementById('btnArabischTesten').addEventListener('click', ()=>{
+  /* Eine noch stehende Meldung (etwa der Weg hierher, bis zu 12 s) läge sonst
+     über der Frage „Klang das arabisch?" — im Nachbau so gesehen. */
+  const alt = document.getElementById('toast');
+  if (alt) alt.classList.remove('show');
+  const weg = arabischProbeSprechen();
+  document.getElementById('arabischTestFrage').classList.toggle('hidden', weg !== 'ohne');
+  zeigeArabischTest();
+});
+document.getElementById('btnArabischJa').addEventListener('click', ()=>{
+  arabischOhneListeMerken(true);
+  document.getElementById('arabischTestFrage').classList.add('hidden');
+  loadVoices();
+  zeigeArabischTest();
+  toast('Gespeichert: Auf diesem Gerät spricht die App jetzt arabisch.');
+});
+document.getElementById('btnArabischNein').addEventListener('click', ()=>{
+  arabischOhneListeMerken(false);
+  document.getElementById('arabischTestFrage').classList.add('hidden');
+  if ('speechSynthesis' in window) speechSynthesis.cancel();
+  loadVoices();
+  zeigeArabischTest();
+  toast(stimmeFehltText(true));
+});
 
 /* ---------- Der Rückweg aus „Kenne ich schon" (17.08.2026) ----------
 
@@ -1051,14 +1097,21 @@ function diagnoseText(){
      ⚠️ Android füllt `getVoices()` verzögert; die Karte wird aber erst auf
      Knopfdruck gebaut, also lange nach dem Laden. Ist die Liste trotzdem leer,
      steht genau das da — statt „keine Stimme", was etwas anderes hieße. */
+  /* ⭐ Seit v575 steht dabei, was er beim Knopf „Arabisch testen" geantwortet
+     hat — ohne das wäre „keine arabische unter 92 Stimmen" nicht mehr die
+     ganze Wahrheit: mit seinem Ja spricht die App trotzdem. */
   sicher('Arabische Stimmen', () => {
     if (!('speechSynthesis' in window)) return 'dieses Gerät kann gar nicht sprechen';
     const stimmen = (typeof arabischeStimmen === 'function') ? arabischeStimmen() : [];
     if (!stimmen.length) {
       const alle = (speechSynthesis.getVoices() || []).length;
-      return alle
+      const probe = LS.get(ARABISCH_OHNE_LISTE, null);
+      const test = !probe ? ' · „Arabisch testen": noch nie'
+        : ' · „Arabisch testen": ' + (probe.ja === true ? 'Ja (spricht ohne Liste)' : 'Nein')
+          + (probe.am ? ' am ' + new Date(probe.am).toLocaleString('de-DE') : '');
+      return (alle
         ? 'keine arabische unter ' + alle + ' Stimmen'
-        : '⚠️ die Liste ist noch leer (Android füllt sie verzögert) — Karte gleich nochmal öffnen';
+        : '⚠️ die Liste ist noch leer (Android füllt sie verzögert) — Karte gleich nochmal öffnen') + test;
     }
     const gewaehlt = SETTINGS && SETTINGS.voiceURI
       ? stimmen.find(v => v.voiceURI === SETTINGS.voiceURI) : null;
