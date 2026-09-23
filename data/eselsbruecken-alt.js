@@ -2848,4 +2848,69 @@ const ESELSBRUECKEN_ALT = {
     'Dasselbe Muster trägt نَظَّارَةٌ (Brille) aus Kapitel 2 dieses Buchs: ein Ding für eine Aufgabe. Und der Platz dafür ist das حَمَّامٌ (Badezimmer), das du schon hast — der سَخَّان macht dort das warme Wasser.',
     '⚠️ Der Plural ist die Überraschung: سَخَّانَاتٌ mit ـَاتٌ, obwohl سَخَّانٌ männlich ist und kein ة trägt. Geräte gehen im Arabischen fast immer diesen Weg — ثَلَّاجَاتٌ (Kühlschränke), نَظَّارَاتٌ (Brillen) und سَجَّادَاتٌ (Teppiche, dieses Kapitel) hast du alle.'
   ],
+
+  '46021': [
+    'Das Gegenstück steht im selben Kapitel: نَامَ (schlafen) gegen اِسْتَيْقَظَ (aufwachen). Lerne die beiden nie einzeln — im Buch stehen sie als Paar, und im Tagesablauf auch.',
+    'Hohle Wurzel: das و in ن و م wird im Wort zu einem langen ا — نَامَ, يَنَامُ. Dasselbe siehst du an drei Verben, die du schon hast: أَرَادَ (ر و د) · أَعَادَ (ع و د) · أَشَارَ (ش و ر). ⚠️ Der Befehl ist ganz kurz: نَمْ.'
+  ],
+
+  '46022': [
+    'Denselben Bau sprichst du in der Fātiḥa: إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ — „und zu Dir allein flehen wir um Hilfe“ (1:5). نَسْتَعِينُ ist istafʿala, gebaut wie يَسْتَيْقِظُ.',
+    'Das Kapitel gibt dir Tagesanfang und Tagesende zusammen: اِسْتَيْقَظَ (aufwachen) gegen نَامَ (schlafen). ⚠️ Das ي der Wurzel ي ق ظ bleibt hier sichtbar — bei نَامَ verschwindet das و der Wurzel.'
+  ],
+
+  '46023': [
+    'Zwei Wörter, dieselben drei Buchstaben: ذَهَبَ (er ging) und dhahab (Gold). Nur die Vokale trennen sie — ein Grund mehr, das Taschkīl von Anfang an mitzulernen.',
+    'Merk die Reihe: ذَهَبَ (er ging) · يَذْهَبُ (er geht) · اِذْهَبْ (geh!). ⚠️ Die Gegenwart hat hier ein a in der Mitte (يَذْهَبُ), غَسَلَ aus demselben Kapitel dagegen ein i (يَغْسِلُ). Das gehört zu jedem Verb einzeln gelernt.'
+  ],
+
+  '46024': [
+    '⭐ Das Werkzeug-مِـ, das du von مِفْتَاحٌ, مِكْوَاةٌ, مِلْعَقَةٌ und مِرْوَحَةٌ kennst, macht aus einem Tun ein Gerät. Aus der Wurzel ك ن س wird so die Miknasa — der Besen. Vier deiner Wörter belegen das Muster.',
+    'Das Kapitel ist eine Liste der Hausarbeit: كَنَسَ (fegen) · غَسَلَ (waschen) · كَوَى (bügeln). Drei Verben, ein Nachmittag — lerne sie als Reihe, dann fehlt dir hinterher keines.'
+  ],
+
+  '46025': [
+    'Halte die zwei auseinander: تَوَضَّأَ aus Kapitel 2 ist das Wuḍūʾ-Machen als Ganzes, غَسَلَ ist das Waschen selbst — Hände, Kleider, Auto. Zwei Wörter für zwei verschiedene Handlungen.',
+    'Merk die Reihe: غَسَلَ (er wusch) · يَغْسِلُ (er wäscht) · اِغْسِلْ (wasch!). Das masdar steht im Buch als غَسْلٌ — dieselbe Wurzel wie al-Ghusl, nur anders vokalisiert.'
+  ],
+
+  '46026': [
+    'Endet auf ى wie صَلَّى (beten) aus Kapitel 2. ⚠️ In der Gegenwart wird daraus ein langes i: يَكْوِي, genau wie يُصَلِّي. Und der Befehl verliert den Vokal ganz: اِكْوِ.',
+    'Bau dir die Reihenfolge aus eigenen Wörtern: erst غَسَلَ (waschen), dann كَوَى (bügeln) — und was du bügelst, ist der مِعْطَفٌ (Mantel) aus Kapitel 2.'
+  ],
+
+  '46027': [
+    'In al-ʿĀdiyāt, die du auswendig kannst, steht die Wurzel: وَإِنَّهُۥ عَلَىٰ ذَٰلِكَ لَشَهِيدٌ — „und er ist darüber wahrlich Zeuge“ (100:7). Ein Schahīd hat gesehen — شَاهَدَ ist das Sehen selbst.',
+    '⚠️ Nicht mit نَظَرَ aus Kapitel 1 verwechseln: نَظَرَ ist der kurze Blick, شَاهَدَ das längere Zusehen — deshalb steht es beim تِلْفَازٌ. Die Gegenwart beginnt mit يُـ: يُشَاهِدُ.'
+  ],
+
+  '46028': [
+    'Ein Wort, zwei Dinge: das Gerät (Uhr) und die Zeitspanne (Stunde) — dieselbe Doppelrolle wie im deutschen „Uhr“. Der Plural steht im Buch als سَاعَاتٌ, mit ـَات wie حَافِلَاتٌ aus demselben Kapitel.',
+    'Häng sie an einen Ort, den du hast: die سَاعَةٌ hängt in der غُرْفَةٌ über dem مَكْتَبٌ. ⚠️ Das Wort ist weiblich — es heißt سَاعَةٌ صَغِيرَةٌ und nicht صَغِيرٌ.'
+  ],
+
+  '46029': [
+    'Die Wurzel steht in al-Bayyina, die du auswendig kannst: „ein Gesandter von Allah, der gereinigte Blätter verliest“ (98:2). Dort sind es die صُحُف — derselbe Plural, den dein Buch als صُحُفٌ nennt.',
+    'Das Muster mit langem ī in der Mitte kennst du schon: حَقِيبَةٌ (Tasche) · مَدِينَةٌ (Stadt) · نَظِيفَةٌ (sauber). صَحِيفَةٌ ist derselbe Bau. ⚠️ Der Plural bricht ihn: صُحُفٌ, nicht صَحِيفَاتٌ.'
+  ],
+
+  '46030': [
+    'Das Muster fāʿila mit langem ā nach dem ersten Buchstaben: نَافِذَةٌ (Fenster) · فَاكِهَةٌ (Obst) · جَامِعَةٌ (Universität). حَافِلَةٌ ist derselbe Bau, und der Plural läuft regelmäßig: حَافِلَاتٌ.',
+    'Setz sie auf die Straße, die du hast: die حَافِلَةٌ fährt im شَارِعٌ, die سَيَّارَةٌ (Auto) und die دَرَّاجَةٌ (Fahrrad) daneben. Drei Fahrzeuge aus deinem Bestand, eines davon neu.'
+  ],
+
+  '46031': [
+    'Häng sie an ihr Gegenteil: يَوْمٌ (Tag) gegen عُطْلَةٌ — der gewöhnliche Tag gegen den freien. ⚠️ Der Plural bricht: عُطَلٌ, nicht عُطْلَاتٌ.',
+    'Muster fuʿla: kurzes u, dann Sukūn. Dieselbe Gestalt haben drei Wörter, die du schon hast: غُرْفَةٌ (Zimmer) · جُمْلَةٌ (Satz) · أُسْرَةٌ (Familie). Wer die aussprechen kann, kann عُطْلَةٌ.'
+  ],
+
+  '46032': [
+    'Nur der Klang, aber hier trägt er: tilfāz – Telefon – Television. Das ت steht an der Stelle des deutschen T, das ف an der des V. ⚠️ Anders als bei مِرْآةٌ steckt dahinter kein arabisches Wortmuster.',
+    'Lerne es mit seinem Verb aus demselben Kapitel: شَاهَدَ التِّلْفَازَ — er schaute den Fernseher an. Der Plural läuft regelmäßig mit ـَات: تِلْفَازَاتٌ, wie حَافِلَاتٌ und سَاعَاتٌ.'
+  ],
+
+  '46033': [
+    'In al-Mulk, die du auswendig kannst, steht die Wurzel: „Der sieben Himmel in Schichten übereinander erschaffen hat“ (67:3) — dort ṭibāqan, Schicht über Schicht. Dein طَبَقٌ ist so eine Schicht, nur aus Porzellan.',
+    'Setz ihn in deine Küche: im مَطْبَخٌ steht der فُرْنٌ, daneben liegen der طَبَقٌ und die مِلْعَقَةٌ (Löffel). ⚠️ Der Plural bricht: أَطْبَاقٌ, Muster afʿāl — wie أَفْرَانٌ zu فُرْنٌ aus Kapitel 3.'
+  ],
 };

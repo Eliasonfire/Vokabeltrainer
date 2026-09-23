@@ -544,6 +544,32 @@ const BUCH_ESELSBRUECKEN = {
   "46019": "Die Wurzel د و ر meint drehen. Die Treppe dreht sich von einem دَوْر zum nächsten — deshalb heißt das Stockwerk so. Dasselbe Wort steht auch für eine Runde und für die Rolle, die jemand spielt.",
   "46020": "⭐ Das Werkzeug-مِـ, das du schon von vielen Dingen kennst: مِفْتَاحٌ (Schlüssel) · مِكْوَاةٌ (Bügeleisen) · مِلْعَقَةٌ (Löffel) · مِرْوَحَةٌ (Ventilator). Die مِرْآة ist das Werkzeug zum Sehen, Wurzel ر أ ي.",
   "48611": "⭐ Das Gegenstück zu einem Wort, das du hast: die ثَلَّاجَةٌ macht kalt, der سَخَّان macht heiß. Beide tragen die Schadda in der Mitte — das Muster für ein Gerät, das immerzu dieselbe Arbeit tut.",
+
+  "46021": "⭐ Die Adhkār an-nawm — die Bittgebete vor dem Schlafen — tragen dieses Wort im Namen: an-nawm ist der Schlaf, نَامَ das Verb dazu. Das masdar steht im Buch als نَوْمٌ, Wurzel ن و م.",
+
+  "46022": "⭐ Der Bau istafʿala steckt in einem Wort, das du täglich hörst: al-Istighfār, das Bitten um Vergebung. اِسْتَيْقَظَ ist derselbe Bau aus der Wurzel ي ق ظ — sich selbst wach machen. Das masdar heißt اِسْتِيقَاظٌ.",
+
+  "46023": "⭐ Der Madhhab — die Rechtsschule, von der du bei Fiqh-Fragen hörst — ist wörtlich „der Weg, den man geht“: Ort-مَـ auf der Wurzel ذ ه ب. Wer Madhhab kennt, kennt ذَهَبَ schon.",
+
+  "46024": "Ein Bild aus deinem Bestand: in der غُرْفَةٌ liegt die سَجَّادَةٌ (Teppich) — und كَنَسَ ist, was du dort tust: fegen. ⚠️ Die Gegenwart nimmt ein u: يَكْنُسُ, deshalb lautet der Befehl اُكْنُسْ.",
+
+  "46025": "⭐ Al-Ghusl — die große Waschung — ist genau diese Wurzel غ س ل. Und jeder Schritt im Wuḍūʾ heißt „waschen“: غَسَلَ. Ein Wort, das du längst benutzt, ohne es als Vokabel zu kennen.",
+
+  "46026": "⭐ Das Gerät hast du schon: مِكْوَاةٌ, das Bügeleisen aus madina-1. كَوَى ist das Verb dazu — Wurzel ك و ي. Werkzeug und Tätigkeit aus einem Stamm.",
+
+  "46027": "⭐ Die Schahāda — das Glaubensbekenntnis — kommt von dieser Wurzel ش ه د: bezeugen heißt, mit eigenen Augen gesehen haben. شَاهَدَ ist genau das: hinsehen, zusehen.",
+
+  "46028": "⭐ As-Sāʿa — „die Stunde“ — ist im Islam der Name für den Tag der Auferstehung: die Stunde, die kommt. Dasselbe Wort steht bei dir für die Uhr an der Wand und für die Stunde auf ihr. Wurzel س و ع.",
+
+  "46029": "⭐ Der Muṣḥaf — das Buch, in dem der Quran steht — kommt von derselben Wurzel ص ح ف: Blatt, Geschriebenes. Eine صَحِيفَةٌ ist das Blatt, das jeden Morgen neu kommt: die Zeitung.",
+
+  "46030": "Die Wurzel ح ف ل meint sich versammeln, voll werden — eine Ḥafla ist eine Feier, eine Versammlung. Die حَافِلَةٌ ist das, was sich füllt: der Bus voller Leute.",
+
+  "46031": "Die Wurzel ع ط ل meint außer Betrieb sein, stillstehen. Eine عُطْلَةٌ ist der Tag, an dem die مَدْرَسَةٌ stillsteht — Ferien. Dasselbe Bild wie im deutschen „Betriebsferien“.",
+
+  "46032": "⛔ Kein arabisches Muster: تِلْفَازٌ ist „Television“ arabisiert. Die Buchstaben ت ل ف ز geben nichts her, was du woanders wiederfindest — merk es über den Klang „tilfāz“ und über sein Verb aus demselben Kapitel: شَاهَدَ.",
+
+  "46033": "⭐ Die Wurzel ط ب ق meint übereinanderliegen, Schicht. Ein طَبَقٌ ist die flache Schicht, auf der das Essen liegt — der Teller. Ein Stapel Teller ist genau das Bild der Wurzel."
 };
 
 /* ---------- Korrigierte Schreibweisen ----------

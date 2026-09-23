@@ -3104,6 +3104,68 @@ const SENTENCE_TAGS = {
   "48611": [
     { ruleId: "schams-qamar-01", matchText: "السَّخَّانُ" },
     { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْحَمَّامِ" }
+  ],
+  "46021": [
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "نَامَ" },
+    { ruleId: "schams-qamar-01", matchText: "الطِّفْلُ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْغُرْفَةِ" }
+  ],
+  "46022": [
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "اِسْتَيْقَظَ" },
+    { ruleId: "schams-qamar-01", matchText: "الطَّالِبُ" },
+    { ruleId: "nat-bestimmtheit-01", matchText: "الْمُجْتَهِدُ" }
+  ],
+  "46023": [
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "ذَهَبَ" },
+    { ruleId: "hamzatul-wasl-01", matchText: "الْمُدَرِّسُ" },
+    { ruleId: "harf-jarr-min-ila-01", matchText: "إِلَى الْمَدْرَسَةِ" }
+  ],
+  "46024": [
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "كَنَسَ" },
+    { ruleId: "hamzatul-wasl-01", matchText: "الْوَلَدُ" },
+    { ruleId: "irab-drei-faelle-01", matchText: "الْغُرْفَةَ" }
+  ],
+  "46025": [
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "غَسَلَ" },
+    { ruleId: "schams-qamar-01", matchText: "الرَّجُلُ" },
+    { ruleId: "irab-drei-faelle-01", matchText: "السَّيَّارَةَ" }
+  ],
+  "46026": [
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "كَوَى" },
+    { ruleId: "hamzatul-wasl-01", matchText: "الْمُعَلِّمُ" },
+    { ruleId: "irab-drei-faelle-01", matchText: "الْمِعْطَفَ" }
+  ],
+  "46027": [
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "شَاهَدَ" },
+    { ruleId: "hamzatul-wasl-01", matchText: "الْوَلَدُ" },
+    { ruleId: "irab-drei-faelle-01", matchText: "التِّلْفَازَ" }
+  ],
+  "46028": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "سَاعَةُ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "الْمُدَرِّسِ" },
+    { ruleId: "marfu-grundfall-01", matchText: "صَغِيرَةٌ" }
+  ],
+  "46029": [
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "قَرَأَ" },
+    { ruleId: "schams-qamar-01", matchText: "الطَّالِبُ" },
+    { ruleId: "irab-drei-faelle-01", matchText: "الصَّحِيفَةَ" }
+  ],
+  "46030": [
+    { ruleId: "hamzatul-wasl-01", matchText: "الْحَافِلَةُ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الشَّارِعِ" }
+  ],
+  "46031": [
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "ذَهَبَ" },
+    { ruleId: "harf-jarr-min-ila-01", matchText: "إِلَى الْمَدِينَةِ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْعُطْلَةِ" }
+  ],
+  "46032": [
+    { ruleId: "schams-qamar-01", matchText: "التِّلْفَازُ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْغُرْفَةِ" }
+  ],
+  "46033": [
+    { ruleId: "schams-qamar-01", matchText: "الطَّبَقُ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْمَطْبَخِ" }
   ]
 };
 
