@@ -355,7 +355,14 @@ for (const w of bezug) {
    gleicher Bedeutung (سَيِّدٌ „Herr" gegen madina-2 K18 „Herr") bleibt Befund —
    welche Karte Elias behaelt, entscheidet er. [[kandidatenliste_ist_keine_fehlerliste]] */
 const BEWUSST_NEBENEINANDER = [
-  { a: 'gram-zarf', b: 46352, grund: 'ظَرْف = Zeit-/Ortsangabe (Fachbegriff) gegen ظَرْفٌ = Umschlag (madina-2 K17) — anderes Wort, gleiches Schriftbild' }
+  { a: 'gram-zarf', b: 46352, grund: 'ظَرْف = Zeit-/Ortsangabe (Fachbegriff) gegen ظَرْفٌ = Umschlag (madina-2 K17) — anderes Wort, gleiches Schriftbild' },
+  /* 23.09.2026: der einzige Befund seit Tagen, und er ist keine Dublette —
+     Nomen gegen Verb derselben Wurzel, mit anderer Endung und anderer
+     Bedeutung (die Schreibweisen hier aus der Ausgabe dieses Prüfers
+     übernommen, nicht selbst vokalisiert). Die Warteseite hatte ihn unter
+     „Ein Wort steht doppelt" mit „beide Karten haben Fortschritt" geführt —
+     beides stimmte nicht. Gefunden von einem Helfer (Block 02:50, C1). */
+  { a: 46013, b: 46011, grund: 'سَكَنٌ = Wohnort/Unterkunft (Nomen) gegen سَكَنَ = wohnen (Verb, bayna-yadayk-1 K3) — zwei Wörter derselben Wurzel' }
 ];
 const bewusst = [];
 for (let i = befunde.length - 1; i >= 0; i--) {
