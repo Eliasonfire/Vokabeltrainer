@@ -278,10 +278,16 @@ export const PFLEGEPLAN = [
        Schritt 1f; die Kandidaten kommen aus den Regeln, weil das Zählen im
        Transkript an bekannten Antworten scheiterte. */
     neuerInhalt: [
+      /* ⛔⛔ 23.09.2026: „Direkt eintragen" ist AUFGEHOBEN. Hier stand ein zweiter
+         Punkt: Routine 1f trägt mit fachbegriffe-setzen.mjs selbst ein. Genau
+         daraus kamen die 16 Begriffe vom 11.09., von denen Elias einen im
+         Hörmodus sah: „irgendjemand fügt sich dauerhaft hinzu und das will ich
+         nicht … sorge dafür das es nicht wieder so dazu kommt." Die Routine
+         findet jetzt nur noch und FRAGT; eingetragen wird in einer Sitzung, nach
+         seinem Ja (eingaben unten). */
       { routine: W, schritt: '1f', beleg: 'node werkzeuge/fachbegriffe-finden.mjs', werkzeug: 'werkzeuge/fachbegriffe-finden.mjs',
-        wie: 'Begriffe, die eine neue Regel benennen oder in mehreren wiederkehren, werden entschieden' },
-      { routine: W, schritt: '1f', beleg: 'node werkzeuge/fachbegriffe-setzen.mjs', werkzeug: 'werkzeuge/fachbegriffe-setzen.mjs',
-        wie: 'belegte, voll vokalisierte Begriffe direkt eintragen — Elias: „Direkt eintragen"' },
+        wie: 'Begriffe, die eine neue Regel benennen oder in mehreren wiederkehren, werden gefunden und ihm als FRAGE vorgelegt '
+          + '(„Soll … eine Karteikarte werden?" unter 🔴 Wartet auf Elias) — eingetragen wird nichts' },
       /* ⭐ Seit 15.09.2026: der Schritt schlägt jetzt SELBST nach, statt zu
          fragen. Elias am 11.09.: „guck es doch nach bei den wörterbüchern die
          ich dir gegeben habe" — bis dahin stand jeder unbelegte Begriff unter
@@ -289,10 +295,15 @@ export const PFLEGEPLAN = [
       { routine: W, schritt: '1f', beleg: 'node werkzeuge/fachbegriffe-nachschlagen.mjs', werkzeug: 'werkzeuge/fachbegriffe-nachschlagen.mjs',
         wie: 'unbelegte Schreibungen bei arabdict und en.wiktionary holen (ohne Browser) '
           + 'und nur bei ZWEI übereinstimmenden Quellen in fachbegriffe-belege.json ablegen; '
-          + 'eingetragen wird davon nichts — das bleibt fachbegriffe-setzen.mjs. '
+          + 'eingetragen wird davon nichts — das tut nur eine Sitzung nach seinem Ja. '
           + 'Zweiseitig geeicht mit --eichen (zwei Fälle MÜSSEN leer ausgehen)' },
     ],
-    eingaben: { nein: 'Er blendet Fachbegriffe höchstens aus (vt_geloescht); das wertet die App selbst aus und gleicht es zwischen den Geräten ab.' },
+    /* Bis 23.09.2026: { nein: 'Er blendet Fachbegriffe höchstens aus (vt_geloescht) …' }.
+       Seitdem entscheidet ER, was eine Karte wird — das ist eine Eingabe. */
+    eingaben: { sitzung: 'Sagt Elias zu einem Begriff ja (Warteseite oder Chat), trägt eine Sitzung ihn mit fachbegriffe-setzen.mjs ein '
+        + 'UND ergänzt FACHBEGRIFF_AUFTRAG in data/fachbegriffe.js mit Datum und seinem Satz — ohne diese Zeile ruht der Eintrag. '
+        + 'Die Routine nie. Ausblenden kann er weiter selbst (vt_geloescht).',
+      werkzeug: 'werkzeuge/fachbegriffe-setzen.mjs' },
     veralten: { routine: W, schritt: '1c.4', beleg: 'FACHBEGRIFF_VOKABELN',
       wie: 'Fachbegriffe bekommen wie Vokabeln Eselsbrücken und Beispielsatz' },
   },
@@ -335,6 +346,10 @@ export const PFLEGEPLAN = [
        benutzt in passtZurAuswahl) — INNERHALB einer bestehenden Datei, also von
        Hand hier eingetragen. Gemessen am 22.09.2026: 13 der 61 Fachbegriffe. */
     funktion: 'Fachbegriffe an gestrichenen Regeln',
+    /* ⚠️ 23.09.2026: seit der Weißliste FACHBEGRIFF_AUFTRAG wirkt diese Ableitung
+       nur noch auf BESTELLTE Begriffe (sichtbar: gram-marfu, dessen
+       Kapitel-24-Zwilling schon in der Kartei steht). Der eigentliche Schutz
+       ist der Eintrag „Fachbegriff-Karten nur auf sein Wort" direkt darunter. */
     dateien: [],
     bildschirme: [],
     neuerInhalt: { nein: 'Es entsteht nichts Neues — es fällt etwas weg, und zwar abgeleitet statt aufgelistet.' },
@@ -343,6 +358,28 @@ export const PFLEGEPLAN = [
        Ableitung kann still verschwinden, und dann steht alles wieder da. */
     veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs', werkzeug: 'werkzeuge/pruefe-fachbegriff-regel.mjs',
       wie: 'prüft, dass die Funktion da ist, dass passtZurAuswahl sie aufruft und dass sie nichtAufKarteikarten liest statt ausgeblendet; zweiseitig geeicht (ein echter Fall wird gefunden, ein Fachbegriff mit stehender Regel nicht). Störtest belegt: Aufruf entfernt = Exit 1, falsches Feld = Exit 1' },
+  },
+  {
+    /* ⛔⛔ 23.09.2026 — FACHBEGRIFF-KARTEN NUR AUF SEIN WORT.
+       Elias, 15:08, zur Karte „Übereinstimmung" im Hörmodus: „ich hattte
+       spezifisch darum gebeten akkusativ, genitiv und nominativ und vielleicht
+       noch eine hand voll weitere zu haben aber nicht solceh dinge. irgendjemand
+       fügt sich dauerhaft hinzu und das will ich nicht. … sorge dafür das es
+       nicht wieder so dazu kommt."
+       Die Weißliste FACHBEGRIFF_AUFTRAG steht in data/fachbegriffe.js, der Filter
+       an der einen Tür in js/kern.js (fachbegriffBestellt) — beides INNERHALB
+       bestehender Dateien, also von Hand hier eingetragen. 39 bestellt, 22 ruhen. */
+    funktion: 'Fachbegriff-Karten nur auf sein Wort',
+    dateien: [],
+    bildschirme: [],
+    neuerInhalt: { nein: 'Die Liste wächst nie von selbst: eine Zeile braucht sein Wort (Datum und Satz). Dafür sorgt der Eintrag „Fachbegriffe aus dem Unterricht" (eingaben: nur eine Sitzung nach seinem Ja).' },
+    eingaben: { sitzung: 'Die 22 ruhenden Fachbegriffe stehen als Frage auf seiner Warteseite („die hand voll weitere"). Wählt er welche, '
+        + 'ergänzt eine Sitzung je Begriff eine Zeile in FACHBEGRIFF_AUFTRAG mit Datum und seinem Satz, dann ausliefern.',
+      werkzeug: 'werkzeuge/wartet-auf-elias.mjs' },
+    veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs', werkzeug: 'werkzeuge/pruefe-fachbegriff-auftrag.mjs',
+      wie: 'prüft jede Zeile (Datum, sein Satz, echte Kennung), dass js/kern.js an der Tür nach VOCAB_DATA und an den zwei Nebentüren '
+        + '(Buchtausch, Fortschritt) filtert, die Funktion zweiseitig am echten Text, und dass die Wartungsroutine fachbegriffe-setzen.mjs '
+        + 'weder genannt noch freigegeben bekommt; jede Erkennung vorher an 9 Gegenproben geeicht. Störtest: Routine-Freigabe drin = Exit 1' },
   },
   {
     /* ⭐ 22.09.2026 — BEISPIELSÄTZE FÜR DIE FACHBEGRIFFE.

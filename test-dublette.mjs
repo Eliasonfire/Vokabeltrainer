@@ -74,6 +74,10 @@ function baueWelt(code = quelle){
     FACHBEGRIFF_VOKABELN: [],
     PERSONAL_VOCAB: [],
     ERREICHBAR: new Set(),
+    /* Seit dem 23.09.2026 filtert holeFortschrittNach() die Fachbegriffe mit
+       fachbegriffBestellt() (js/kern.js). Diese Welt hat keine Fachbegriffe;
+       ob die Weißliste wirkt, prüft werkzeuge/pruefe-fachbegriff-auftrag.mjs. */
+    fachbegriffBestellt: () => true,
   };
   welt.LS = { set: (k) => welt.gespeichert.push(k) };
   welt.saveProgress  = () => welt.gespeichert.push('vt_progress');

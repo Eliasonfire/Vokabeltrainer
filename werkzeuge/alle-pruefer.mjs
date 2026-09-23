@@ -403,6 +403,13 @@ const PRUEFER = [
      Karteikarten aus gestrichenen Regeln hintereinander bekam: „kümmere dich
      erstmal darum das das auch nicht wieder passiert." */
   ['werkzeuge/pruefe-fachbegriff-regel.mjs', []],
+  /* 23.09.2026 — eine Fachbegriff-Karte nur auf sein Wort. Elias, nachdem er
+     „Übereinstimmung" im Hörmodus sah: „irgendjemand fügt sich dauerhaft hinzu
+     und das will ich nicht … sorge dafür das es nicht wieder so dazu kommt."
+     Rot, sobald die Tür in js/kern.js ungefiltert ist, eine Zeile der
+     Weißliste ohne sein Wort dasteht oder die Wartungsroutine wieder
+     fachbegriffe-setzen.mjs aufrufen darf. */
+  ['werkzeuge/pruefe-fachbegriff-auftrag.mjs', []],
   /* 22.09.2026 — Elias: „kein beispielsatz, sorge dafür das alle ien
      beispielsatz haben". Exit 2 = Lücken, die auf Material warten (kein
      Werkzeugfehler); Exit 1 nur, wenn die Zahl selbst nicht belastbar wäre. */

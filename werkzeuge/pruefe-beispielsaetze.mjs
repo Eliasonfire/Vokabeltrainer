@@ -131,8 +131,18 @@ for (const [datei, name] of QUELLEN){
   const geladen = lade(datei);
   if (!geladen){ fehler.push(datei + ' fehlt'); continue; }
   if (geladen.__fehler){ fehler.push(datei + ': ' + geladen.__fehler); continue; }
-  const liste = geladen[name];
+  let liste = geladen[name];
   if (!Array.isArray(liste)){ fehler.push(datei + ': ' + name + ' ist keine Liste — die Zahlen unten wären nicht belastbar'); continue; }
+  /* ⛔ Seit dem 23.09.2026 zählen nur BESTELLTE Fachbegriffe als Karte
+     (FACHBEGRIFF_AUFTRAG). Elias: „ich hattte spezifisch darum gebeten
+     akkusativ, genitiv und nominativ und vielleicht noch eine hand voll
+     weitere zu haben aber nicht solceh dinge." Für einen ruhenden Begriff einen
+     Satz zu verfassen, hieße Arbeit an einem Wort, das er abbestellt hat. */
+  if (geladen.FACHBEGRIFF_AUFTRAG && typeof geladen.FACHBEGRIFF_AUFTRAG === 'object'){
+    const vorher = liste.length;
+    liste = liste.filter(w => w && Object.prototype.hasOwnProperty.call(geladen.FACHBEGRIFF_AUFTRAG, String(w.id)));
+    if (vorher !== liste.length) console.log('  ℹ ' + datei + ': ' + (vorher - liste.length) + ' ruhende Fachbegriffe nicht gezählt (keine Karte).');
+  }
   const ohne = liste.filter(w => w && !hatSatz(w));
   const nachtrag = liste.filter(w => w && !String(w.sentAr || '').trim() && hatSatz(w)).length;
   gesamt += liste.length;

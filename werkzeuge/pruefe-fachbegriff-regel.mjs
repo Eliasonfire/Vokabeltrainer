@@ -50,6 +50,21 @@
         UND schweigt bei einem Fachbegriff, dessen Regel steht. Ein Prüfer, der
         nur „findet", findet auch dort etwas, wo nichts ist.
 
+   ---------------------------------------------------------------------------
+   ⛔⛔ 23.09.2026 — DIE ABLEITUNG WAR NICHT SEIN GRUND
+   ---------------------------------------------------------------------------
+   Einen Tag später sah Elias مُطَابَقَة im Hörmodus: „das ist keine vokabel die
+   ich lernen möchte … ich hattte spezifisch darum gebeten akkusativ, genitiv
+   und nominativ und vielleicht noch eine hand voll weitere zu haben aber nicht
+   solceh dinge. irgendjemand fügt sich dauerhaft hinzu und das will ich nicht."
+   Diese Ableitung hatte genau die drei aus der Kartei genommen, die er WILL,
+   und مُطَابَقَة durchgelassen. Sein Grund war „nicht in Auftrag gegeben", nicht
+   „Regel gestrichen" — beides fiel bei den drei Beispielen nur zufällig zusammen.
+   Seitdem entscheidet die Weißliste FACHBEGRIFF_AUFTRAG (data/fachbegriffe.js),
+   bewacht von pruefe-fachbegriff-auftrag.mjs. Ein ruhender Begriff ist gar nicht
+   in der App; diese Ableitung wirkt nur noch auf BESTELLTE — die listet der
+   Prüfer unten getrennt auf, damit keiner davon still aus der Kartei fällt.
+
    Aufruf:  node werkzeuge/pruefe-fachbegriff-regel.mjs
             node werkzeuge/pruefe-fachbegriff-regel.mjs --liste    (alle zeigen)
    Exit 0 = in Ordnung, 1 = ein Befund.
@@ -83,7 +98,8 @@ function ladeNamen(datei, namen){
   return ctx.__raus;
 }
 
-const { FACHBEGRIFF_VOKABELN } = ladeNamen('data/fachbegriffe.js', ['FACHBEGRIFF_VOKABELN']);
+const { FACHBEGRIFF_VOKABELN, FACHBEGRIFF_AUFTRAG } = ladeNamen('data/fachbegriffe.js', ['FACHBEGRIFF_VOKABELN', 'FACHBEGRIFF_AUFTRAG']);
+const bestellt = (w) => !!(FACHBEGRIFF_AUFTRAG && Object.prototype.hasOwnProperty.call(FACHBEGRIFF_AUFTRAG, String(w.id)));
 const { GRAMMAR_RULES }        = ladeNamen('grammar-data.js',      ['GRAMMAR_RULES']);
 
 if (!Array.isArray(FACHBEGRIFF_VOKABELN) || !FACHBEGRIFF_VOKABELN.length){
@@ -177,11 +193,21 @@ console.log('davon mit Regelbezug:                ' + FACHBEGRIFF_VOKABELN.filte
 console.log('an einer gestrichenen Regel:         ' + betroffen.length + '  (nicht auf Karteikarten)');
 console.log('auf f19-Karten verweisend:           ' + (ohneRegel.length - echteFehlverweise.length));
 
-if (betroffen.length && (zeigeAlle || betroffen.length <= 20)){
-  console.log('\nDiese fallen aus der Kartei — sie bleiben in Satzmodus, Suche und Hörmodus:');
-  for (const w of betroffen){
+/* ⛔ Seit dem 23.09.2026 getrennt: nur ein BESTELLTER Begriff ist überhaupt in
+   der App. Ein ruhender „bleibt" nirgends — die alte Zeile „sie bleiben in
+   Satzmodus, Suche und Hörmodus" stimmte für ihn nicht mehr. */
+const betroffenBestellt = betroffen.filter(bestellt);
+const betroffenRuhend   = betroffen.filter(w => !bestellt(w));
+console.log('davon bestellt (FACHBEGRIFF_AUFTRAG): ' + betroffenBestellt.length + ' · ruhend, also gar nicht in der App: ' + betroffenRuhend.length);
+if (betroffenBestellt.length){
+  console.log('\nBestellt, aber aus der Kartei — Hörmodus, Suche und Satzmodus behalten sie:');
+  for (const w of betroffenBestellt){
     console.log('  ' + w.id.padEnd(24) + (w.de || '').slice(0, 46).padEnd(48) + '← ' + w.regel);
   }
+}
+if (betroffenRuhend.length && zeigeAlle){
+  console.log('\nRuhend (nicht bestellt) — in keinem Modus:');
+  for (const w of betroffenRuhend) console.log('  ' + w.id.padEnd(24) + (w.de || '').slice(0, 46));
 }
 
 if (befunde.length){
