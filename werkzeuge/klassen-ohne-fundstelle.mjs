@@ -135,8 +135,18 @@ console.log('   zusammengesetzt werden (`\'kal-s\' + n`) und steht dann nirgends
    (pool-words, pool-zahl — ihr Markup war weg, die Regeln standen noch), der
    Pruefer wurde rot; die verwaisten Regeln sind entfernt, dazu .weak-de. Die
    sieben uebrigen: brand-ar, du-de, ic-fill, pressable, sn-zurueck, ueb-modi,
-   ueb-modus. */
-const STAND = 7, STAND_TAG = '11.09.2026';
+   ueb-modus.
+
+   ⭐ 23.09.2026 (v578): 1. Sechs davon entfernt, nachdem ein Helfer je den
+   Commit belegt hatte, seit dem sie tot sind, und eine Suche über js/,
+   index.html, Werkzeuge und Daten keine Fundstelle mehr ergab (pressable steht
+   nur noch in vorschau-bewegung.html, das eigene Regeln hat). Elias' Satz zu
+   .ueb-modus.leer („Ein Modus ohne Fragen wird nicht versteckt …") steht
+   weiter bei der Regel, die ihn heute trägt.
+   ⛔ Der eine übrige ist KEIN toter: `sn-zurueck` baut js/quran.js zur
+   Laufzeit als `sn-${richtung}` — ein Präfix unter 4 Zeichen, das diese
+   Suche nicht sieht (siehe oben). Nicht löschen. */
+const STAND = 1, STAND_TAG = '23.09.2026';
 if (ohne.length > STAND){
   console.log('\n⛔ ' + (ohne.length - STAND) + ' Klasse(n) MEHR ohne Fundstelle als am ' + STAND_TAG + ' (' + STAND + ').');
   console.log('   Entweder ist eine Regel verwaist — dann weg — oder sie wird zur Laufzeit');
