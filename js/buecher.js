@@ -615,6 +615,15 @@ document.addEventListener('click', (e)=>{
    geladen war es aber nicht: die App zeigte dann ausser den eigenen Vokabeln
    nichts an und sah kaputt aus. `still` unterdrueckt die Meldungen - beim
    normalen Start soll nichts aufblitzen. */
+/* ⭐⭐ STARTBESTAND_BEREIT (23.09.2026): erfüllt, sobald der Handler unten durch ist
+   — Bücher, eigene Vokabeln, Tausch, Fachbegriffe mit Buchkarte, Kapiteldubletten.
+   Erst dann baut „Jetzt lernen" eine Runde oder setzt eine fort
+   (lernenBeginnen() in js/lernen.js). Vorher war der Bestand halb, und eine Runde
+   aus dieser Zeit verlor beim nächsten Öffnen Karten. Elias, 02:53: „warum ist
+   hier von 8? ich hatte von 10 eingestellt". */
+let startbestandFertig = () => {};
+const STARTBESTAND_BEREIT = new Promise(fertig => { startbestandFertig = fertig; });
+
 document.addEventListener('DOMContentLoaded', async ()=>{
   /* Erst das im Geraet abgelegte Vokabelpaket einhaengen, dann das Buch
      aufbauen. Ohne dieses Warten liefe setzeBuch() gegen ein noch leeres
@@ -834,4 +843,6 @@ document.addEventListener('DOMContentLoaded', async ()=>{
     renderBuchChips();
     renderChapterFilterChips();
   }
+  /* Der Bestand steht — ab jetzt darf eine Runde entstehen (STARTBESTAND_BEREIT oben). */
+  startbestandFertig();
 });

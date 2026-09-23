@@ -47,6 +47,9 @@ function rundeSichern(erledigt){
        fehlen, dann verschieben sich alle Indizes. Dieselbe Umrechnung wie in
        `passeRundeAnAuswahlAn()` weiter unten. */
     lautIds: [...(SESSION.laut || [])].map(i => String(SESSION.words[i] && SESSION.words[i].id)),
+    /* Die Größe beim Bau — damit das Fortsetzen weiß, bis wohin es auffüllt
+       (offeneRundeFortsetzen(), seit 23.09.2026). */
+    ziel: Number(SESSION.ziel) || SESSION.words.length,
     zeit: Date.now()
   });
 }
@@ -67,6 +70,16 @@ function offeneRundeStand(){
   return fehlt > 0 ? { fehlt, gesamt: g.ids.length } : null;
 }
 
+/* ⭐ Welche Karte hat eine getauschte ersetzt? (23.09.2026) Zuerst der Tausch
+   DIESES Starts (GETAUSCHT in js/kern.js), dann der Vermerk `uebertragen`, den
+   merkeUebertragen() bei einem Tausch mit Stand in vt_progress hinterlässt. */
+function nachfolgerNachTausch(id){
+  const k = String(id);
+  if (typeof GETAUSCHT !== 'undefined' && GETAUSCHT && GETAUSCHT.has(k)) return String(GETAUSCHT.get(k));
+  const p = (typeof PROGRESS !== 'undefined' && PROGRESS) ? PROGRESS[k] : null;
+  return (p && p.uebertragen) ? String(p.uebertragen) : null;
+}
+
 /* Baut die gesicherte Runde wieder auf. `true` heißt: der Lernbildschirm steht
    schon, es geht bei der Karte weiter, die noch offen war. */
 function offeneRundeFortsetzen(){
@@ -74,22 +87,83 @@ function offeneRundeFortsetzen(){
   if (!g || !Array.isArray(g.ids) || typeof g.idx !== 'number') return false;
   if (g.tag !== todayStr(0)){ rundeVergessen(); return false; }
   const lautIds = Array.isArray(g.lautIds) ? g.lautIds.map(String) : [];
+  const alleIds = g.ids.map(String);
   const words = [];
   let weg = 0;
   g.ids.forEach((id, i) => {
-    const w = VOCAB_DATA.find(v => String(v.id) === String(id));
+    let w = VOCAB_DATA.find(v => String(v.id) === String(id));
+    /* ⭐ Seit dem 23.09.2026: eine inzwischen GETAUSCHTE Karte geht mit ihrer
+       Karte aus dem Buch weiter, statt still wegzufallen. Elias: „warum ist
+       hier von 8? ich hatte von 10 eingestellt". Nur, wenn die Buchkarte nicht
+       ohnehin in der Runde steht; „laut sagen" wandert mit. Eine wirklich
+       gelöschte Karte fällt weiter weg — dafür gibt es keinen Ersatz. */
+    if (!w){
+      const nach = nachfolgerNachTausch(id);
+      const ersatz = (nach && !alleIds.includes(nach)) ? VOCAB_DATA.find(v => String(v.id) === nach) : null;
+      if (ersatz && !words.includes(ersatz)){
+        w = ersatz;
+        if (lautIds.includes(String(id))) lautIds.push(String(ersatz.id));
+      }
+    }
     if (w) words.push(w);
     else if (i < g.idx) weg++;           /* fällt vor dem Zeiger weg: Zeiger mit */
   });
   const idx = Math.max(0, g.idx - weg);
   if (!words.length || idx >= words.length){ rundeVergessen(); return false; }
+  /* ⭐ Fehlt dann noch eine Karte (wirklich gelöscht, oder eine Runde, die schon
+     vor v574 geschrumpft war): aus dem heute Fälligen auffüllen, bis die Runde
+     so groß ist wie beim Bau. Elias, 23.09.2026: „behebe vorallem den fehler das
+     dort keine 8 sondern von 10 steht bei karteikarten".
+     Eine Sicherung von vor v574 kennt ihre Größe nicht — dann gilt „Karten pro
+     Tag" (tagesDeckel). Gibt das Fällige nicht genug her, bleibt sie kleiner:
+     erfunden wird keine Karte. */
+  const ziel = Number(g.ziel) > 0 ? Number(g.ziel)
+    : Math.max(g.ids.length, (typeof tagesDeckel === 'function') ? (Number(tagesDeckel()) || 0) : 0);
+  if (words.length < ziel && typeof currentPool === 'function'){
+    const drin = new Set(words.map(w => String(w.id)));
+    for (const w of currentPool()){
+      if (words.length >= ziel) break;
+      if (!drin.has(String(w.id))){ words.push(w); drin.add(String(w.id)); }
+    }
+  }
   const laut = new Set();
   words.forEach((w, i) => { if (lautIds.includes(String(w.id))) laut.add(i); });
   /* `dirs` bleibt leer: die Abfragerichtung wird je Karte neu entschieden und
      hängt am Lernstand — der kann sich seit gestern geändert haben. */
-  SESSION = { words, idx, dirs: [], fertig: false, laut };
+  SESSION = { words, idx, dirs: [], fertig: false, laut, ziel };
   showScreen('learn');
   return true;
+}
+
+/* ⭐⭐ „JETZT LERNEN" WARTET, BIS DER BESTAND STEHT (23.09.2026)
+   Elias, 02:53, mit dem Bild seiner Runde: „warum ist hier von 8? ich hatte von
+   10 eingestellt".
+   Die Bücher, vokabeln-eigene.js und die Tausche kommen erst NACH dem ersten
+   Bild (DOMContentLoaded in js/buecher.js). Wer schneller tippte, bekam eine
+   Runde aus dem halben Bestand — mit Karten, die Augenblicke später getauscht
+   waren —, und ein Fortsetzen in dieser Zeit fand die Buchkarten noch nicht und
+   ließ sie weg. Nachgestellt mit seinem Gerätestand: tippen nach 0 ms ergibt 10
+   Karten mit „Fleisch", nach dem Neustart 0/9; bei sechsfach gedrosseltem
+   Prozessor bis 120 ms nach dem Start.
+   ⚠️ Höchstens START_WARTEN_MS: hängt der Start, geht es danach mit dem weiter,
+   was da ist — wie vorher, nur nicht mehr sofort.
+   ⚠️ Ein zweites Tippen während des Wartens tut nichts. Sonst entstünden zwei
+   Runden, und „laut sagen" wanderte doppelt weiter.
+   Geprüft von werkzeuge/pruefe-offene-runde.mjs. */
+const START_WARTEN_MS = 6000;
+let LERNEN_WARTET = false;
+async function lernenBeginnen(){
+  /* Eine laufende Runde im Arbeitsspeicher: sofort weiter, gebaut wird nichts. */
+  if (SESSION.words.length && !SESSION.fertig){ showScreen('learn'); return; }
+  if (LERNEN_WARTET) return;
+  LERNEN_WARTET = true;
+  try {
+    if (typeof STARTBESTAND_BEREIT !== 'undefined')
+      await Promise.race([STARTBESTAND_BEREIT, new Promise(f => setTimeout(f, START_WARTEN_MS))]);
+  } finally { LERNEN_WARTET = false; }
+  if (SESSION.words.length && !SESSION.fertig){ showScreen('learn'); return; }
+  if (offeneRundeFortsetzen()) return;
+  startLearningSession();
 }
 
 /* ---------- Jede sechste Karte ein Fachbegriff (17.08.2026) ----------
@@ -221,7 +295,7 @@ function startLearningSession(){
   /* Auch wenn die ganze Auswahl in eine Runde passt: der Takt sortiert die
      Fachbegriffe auf die Plaetze 6/12/18, statt sie irgendwo zu lassen. */
   words = fachbegriffTakt(words, size);
-  SESSION = { words, idx:0, dirs:[], fertig:false, laut: waehleLautKarten(words) };
+  SESSION = { words, idx:0, dirs:[], fertig:false, laut: waehleLautKarten(words), ziel: words.length };
   /* Schon vor der ersten Antwort sichern: wer die App auf Karte 1 schließt,
      soll dieselbe Runde wiederfinden und nicht eine neu gewürfelte. */
   rundeSichern(0);
@@ -264,7 +338,9 @@ function passeRundeAnAuswahlAn(){
   const lautWoerter = new Set([...(SESSION.laut || [])].map(i => bisher[i]));
   const neueLaut = new Set();
   bleibt.forEach((w, i) => { if (lautWoerter.has(w)) neueLaut.add(i); });
-  SESSION = { words: bleibt, idx: neuerIdx, dirs: [], fertig: false, laut: neueLaut };
+  /* `ziel` schrumpft mit: hier hat ER Kapitel abgewählt, das Fortsetzen soll
+     die Runde nicht mit anderen Karten wieder auffüllen. */
+  SESSION = { words: bleibt, idx: neuerIdx, dirs: [], fertig: false, laut: neueLaut, ziel: bleibt.length };
   /* Die gesicherte Runde zieht mit: sonst käme beim nächsten Start wieder die
      Fassung MIT den abgewählten Kapiteln. */
   rundeSichern();
