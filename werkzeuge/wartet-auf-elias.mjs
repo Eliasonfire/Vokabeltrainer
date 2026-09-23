@@ -1026,6 +1026,36 @@ posten.push({
   wie: '„ja": der Geh-Modus spricht Arabisch erst nach deinem Ja im Test, sonst sagt er beim Start, was fehlt. „nein": so lassen.',
   seite: '', seiteText: ''
 });
+/* ⛔⛔ 23.09.2026 — DIE „HAND VOLL WEITERE" FACHBEGRIFFE. Elias um 15:08: „ich
+   hattte spezifisch darum gebeten akkusativ, genitiv und nominativ und
+   vielleicht noch eine hand voll weitere zu haben aber nicht solceh dinge."
+   Welche die Hand voll sind, weiß nur er — deshalb ruhen alle anderen, bis er
+   wählt. Die Liste wird GEMESSEN (FACHBEGRIFF_AUFTRAG gegen die Datei), nicht
+   aufgeschrieben: wählt er welche, verschwinden sie hier von selbst.
+   ⛔ Keine arabischen Wörter in den Zeilen (seine Regel für Listen an ihn) —
+   deshalb die deutsche Bedeutung, Arabisches herausgefiltert. */
+{
+  const kiste = vm.createContext({ window: {}, __r: {} });
+  let ruhend = [];
+  try {
+    vm.runInContext(fs.readFileSync(path.join(REPO, 'data', 'fachbegriffe.js'), 'utf8')
+      + ';__r.v = FACHBEGRIFF_VOKABELN; __r.a = (typeof FACHBEGRIFF_AUFTRAG !== "undefined") ? FACHBEGRIFF_AUFTRAG : null;', kiste);
+    const a = kiste.__r.a;
+    if (a) ruhend = kiste.__r.v.filter(w => !Object.prototype.hasOwnProperty.call(a, String(w.id)));
+  } catch (e) { console.log('  ⚠ Fachbegriffe nicht lesbar: ' + String(e.message).slice(0, 80)); }
+  const NAMEN = { 'gram-ta-marbuta': 'die weibliche Endung (Tāʾ marbūṭa)', 'gram-alif-maqsura': 'das Alif am Wortende (Alif maqṣūra)' };
+  const deutsch = (w) => NAMEN[w.id] || String(w.de || '').replace(/\p{Script=Arabic}+/gu, '').replace(/\s{2,}/g, ' ').trim();
+  if (ruhend.length) posten.push({
+    titel: 'Fachbegriffe: welche „Hand voll" außer Akkusativ, Genitiv und Nominativ?',
+    zahl: ruhend.length, einheit: 'ruhen', dazu: 'seit v582', auswahl: true,
+    aufwand: 'die Namen nennen, die du als Karte willst — oder „keine"',
+    warum: 'Du hast gesagt: Akkusativ, Genitiv und Nominativ „und vielleicht noch eine hand voll weitere", aber nicht solche wie „Übereinstimmung". '
+      + 'Seit v582 wird ein Fachbegriff nur noch eine Karte, wenn du ihn bestellt hast. Diese hier ruhen: in keiner Kartei, keinem Hörmodus, keiner Suche.',
+    wie: 'Nenn die, die du willst. Jeder bekommt eine Zeile mit deinem Satz, dann ist er in Kartei und Hörmodus. Die übrigen bleiben weg.',
+    zeilen: ruhend.map(deutsch),
+    seite: '', seiteText: ''
+  });
+}
 posten.push({
   /* ⭐ Gemessen am 23.09.2026, 02:55, vom Helfer „Karte in der echten App"
      (Chrome, 448×906 wie sein Pixel, sichtbarer Teil der Rückseite 151–611 px):

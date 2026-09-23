@@ -585,16 +585,25 @@ try {
    dem Unterricht bzw. von mir — also aus derselben Ecke wie die verfassten
    Saetze, nicht aus einem gegengelesenen Abzug. */
 let fachAnzahl = 0;
+/* ⛔ Seit dem 23.09.2026 nur die BESTELLTEN (FACHBEGRIFF_AUFTRAG). Elias:
+   „ich hattte spezifisch darum gebeten akkusativ, genitiv und nominativ und
+   vielleicht noch eine hand voll weitere zu haben aber nicht solceh dinge."
+   Ein ruhender Begriff ist keine Karte mehr — eine Taschkīl-Frage dazu wäre
+   eine Frage zu einem Wort, das er gerade abbestellt hat. Bestellt er ihn
+   wieder, wird er hier von selbst wieder geprüft. */
+let fachRuhend = 0;
 try {
   const fb = path.join(DIR, 'data', 'fachbegriffe.js');
   if (fs.existsSync(fb)){
-    const { FACHBEGRIFF_VOKABELN } =
-      (new Function(fs.readFileSync(fb, 'utf8') + ';return {FACHBEGRIFF_VOKABELN};'))();
+    const { FACHBEGRIFF_VOKABELN, FACHBEGRIFF_AUFTRAG } =
+      (new Function(fs.readFileSync(fb, 'utf8') + ';return {FACHBEGRIFF_VOKABELN, FACHBEGRIFF_AUFTRAG: (typeof FACHBEGRIFF_AUFTRAG !== "undefined") ? FACHBEGRIFF_AUFTRAG : null};'))();
     for (const w of (FACHBEGRIFF_VOKABELN || [])){
       if (!w) continue;
+      if (FACHBEGRIFF_AUFTRAG && !Object.prototype.hasOwnProperty.call(FACHBEGRIFF_AUFTRAG, String(w.id))){ fachRuhend++; continue; }
       woerterGeprueft += pruefeEintrag(w, 'data/fachbegriffe.js');
       fachAnzahl++;
     }
+    if (fachRuhend) console.log('  ℹ ' + fachRuhend + ' ruhende Fachbegriffe nicht geprüft (nicht bestellt, keine Karte — FACHBEGRIFF_AUFTRAG).');
   } else {
     console.log('  ⚠️ data/fachbegriffe.js fehlt — 15 Fachbegriffe sind UNGEPRUEFT.');
   }

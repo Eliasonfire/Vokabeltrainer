@@ -178,8 +178,15 @@ const nackt = x => {
 };
 const zugeordnet = new Set(mitTausch.map(f => String(f.id)));
 const doppelt = [];
+/* ⛔ Seit dem 23.09.2026: ein RUHENDER Fachbegriff (nicht in FACHBEGRIFF_AUFTRAG)
+   ist keine Karte und kann deshalb nicht doppelt neben einer Buchkarte stehen.
+   Elias: „ich hattte spezifisch darum gebeten akkusativ, genitiv und nominativ
+   … aber nicht solceh dinge." Gezählt wird nur, was er wirklich sieht. */
+const AUFTRAG = ladeListe('data/fachbegriffe.js', 'FACHBEGRIFF_AUFTRAG');
+let ruhendUebersprungen = 0;
 for (const f of F){
   if (zugeordnet.has(String(f.id))) continue;
+  if (AUFTRAG && typeof AUFTRAG === 'object' && !Object.prototype.hasOwnProperty.call(AUFTRAG, String(f.id))){ ruhendUebersprungen++; continue; }
   const k = nackt(f.ar);
   /* Dieselbe Schreibung UND eine Bedeutung, die sich überschneidet — sonst
      zählten أَنْتَ und أَنْتِ als Dublette, und die sind es nicht. */

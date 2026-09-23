@@ -86,6 +86,95 @@
    `passtZurAuswahl()` (js/kern.js) sind sie deshalb bedingungslos dabei.
    --------------------------------------------------------------------------- */
 
+/* ---------------------------------------------------------------------------
+   ⛔⛔ EINE KARTE NUR AUF SEIN WORT (23.09.2026)
+
+   Elias um 15:08, nachdem er im Hörmodus die Karte „Übereinstimmung — die
+   Aussage passt sich im Geschlecht an“ gesehen hatte:
+     „das ist keine vokabel die ich lernen möchte. wir hatten dieses thema
+      schonmal das ich diese fachbegriffe nicht haben will. ich hattte
+      spezifisch darum gebeten akkusativ, genitiv und nominativ und vielleicht
+      noch eine hand voll weitere zu haben aber nicht solceh dinge. irgendjemand
+      fügt sich dauerhaft hinzu und das will ich nicht. prüfe bitte woher das
+      kommt und warum und sorge dafür das es nicht wieder so dazu kommt.“
+
+   Der „irgendjemand“ war werkzeuge/fachbegriffe-setzen.mjs in der
+   Wartungsroutine (Schritt 1f, seit dem 11.09.2026). Es trug an diesem Tag 16
+   Fachbegriffe ein, die er nie einzeln bestellt hatte — darunter مُطَابَقَةٌ
+   und die vier, nach denen er am 22.09. gefragt hatte („woher kommt diese
+   vokabel, ich weiß nicht ob es sich lohnt die zu lernen“).
+
+   ⭐ DESHALB EINE WEISSLISTE, KEINE SPERRLISTE. Ein Eintrag weiter unten wird
+   nur dann eine Karte (Kartei, Hörmodus, Suche, Satzmodus), wenn seine id
+   HIER steht — mit Datum und seinem Satz. Alles andere RUHT: es bleibt in der
+   Datei, damit ein Wort, das er später doch haben will, mit einer einzigen
+   Zeile zurückkommt, und damit die Wortsuche der Übungen (uebersetzungFuer,
+   uebsBedeutung) seine Bedeutung weiter kennt. Ein neuer Eintrag — egal von
+   wem — ruht damit von selbst. Genau das fehlte: bisher war ein Eintrag in
+   der Datei zugleich eine Karte.
+
+   ⛔ Nie eine Zeile ergänzen, „weil der Begriff in seinen Regeln steht“ oder
+   „weil der Lehrer ihn benutzt“ — das ist genau der Weg, den er abbestellt
+   hat. Eine Zeile braucht SEIN Wort zu genau diesem Wort oder dieser Gruppe.
+   Die ruhenden Fachbegriffe stehen als Frage auf seiner Warteseite („die hand
+   voll weitere“) — er wählt, nicht ich.
+
+   Bewacht von werkzeuge/pruefe-fachbegriff-auftrag.mjs.
+   --------------------------------------------------------------------------- */
+const FACHBEGRIFF_AUFTRAG = {
+  /* Die drei Fälle — sein Wort von oben. Genitiv und Akkusativ laufen bei ihm
+     seit dem 08. und 11.09.2026 als seine Kapitel-24-Karten (Buchtausch,
+     vt_geloescht); die Zeile schadet dort nicht und hält die Absicht fest. */
+  'gram-majrur': '23.09.2026 — „ich hattte spezifisch darum gebeten akkusativ, genitiv und nominativ“',
+  'gram-mansub': '23.09.2026 — „ich hattte spezifisch darum gebeten akkusativ, genitiv und nominativ“',
+  'gram-marfu':  '23.09.2026 — „ich hattte spezifisch darum gebeten akkusativ, genitiv und nominativ“',
+  /* Läuft als Kapitel-24-Karte (buchTausch '50473') — ohne diese Zeile fiele
+     die Zuordnung weg und die Buchkarte verlöre Beschreibung und Box. */
+  'gram-mudaf':  '22.09.2026 — „es gibt zwei mudaf, ich möchte eigentlich nur eins haben. lass das in kapitel 24“',
+
+  'gram-suffix-i':  '19.08.2026 — „die sufixe die ich da gelernt haben soll die sollten auch als karteikarte sein“',
+  'gram-suffix-ka': '19.08.2026 — „die sufixe die ich da gelernt haben soll die sollten auch als karteikarte sein“',
+  'gram-suffix-ki': '19.08.2026 — „die sufixe die ich da gelernt haben soll die sollten auch als karteikarte sein“',
+  'gram-suffix-hu': '19.08.2026 — „die sufixe die ich da gelernt haben soll die sollten auch als karteikarte sein“',
+  'gram-suffix-ha': '19.08.2026 — „die sufixe die ich da gelernt haben soll die sollten auch als karteikarte sein“',
+
+  'gram-pron-huwa':    '24.08.2026 — „ich brauche alle konjuktionen aus dem video die da genannt werden als karteikarten“',
+  'gram-pron-huma-m':  '24.08.2026 — „ich brauche alle konjuktionen aus dem video die da genannt werden als karteikarten“',
+  'gram-pron-hum':     '24.08.2026 — „ich brauche alle konjuktionen aus dem video die da genannt werden als karteikarten“',
+  'gram-pron-hiya':    '24.08.2026 — „ich brauche alle konjuktionen aus dem video die da genannt werden als karteikarten“',
+  'gram-pron-hunna':   '24.08.2026 — „ich brauche alle konjuktionen aus dem video die da genannt werden als karteikarten“',
+  'gram-pron-anta':    '24.08.2026 — „ich brauche alle konjuktionen aus dem video die da genannt werden als karteikarten“',
+  'gram-pron-antuma':  '24.08.2026 — „ich brauche alle konjuktionen aus dem video die da genannt werden als karteikarten“',
+  'gram-pron-antum':   '24.08.2026 — „ich brauche alle konjuktionen aus dem video die da genannt werden als karteikarten“',
+  'gram-pron-anti':    '24.08.2026 — „ich brauche alle konjuktionen aus dem video die da genannt werden als karteikarten“',
+  'gram-pron-antunna': '24.08.2026 — „ich brauche alle konjuktionen aus dem video die da genannt werden als karteikarten“',
+  'gram-pron-ana':     '24.08.2026 — „ich brauche alle konjuktionen aus dem video die da genannt werden als karteikarten“',
+  'gram-pron-nahnu':   '24.08.2026 — „ich brauche alle konjuktionen aus dem video die da genannt werden als karteikarten“',
+
+  'gram-zarf-maa':       '26.08.2026 — „ja mach“ (auf die Frage nach Karten für مَعَ und خَيْرٌ)',
+  'gram-khayr':          '26.08.2026 — „ja mach“ (auf die Frage nach Karten für مَعَ und خَيْرٌ)',
+  'gram-mawsul-alladhi': '05.09.2026 — „das bräuchte ich aber natürlich als karteikarte“',
+  'gram-harf-an':        '06.09.2026 — „عَنْ soll rein, mach das volle Programm“',
+
+  'gram-isara-hadhani': '16.09.2026 — „die brauche ich als neue karteikarten damit ich danach abgefragt werde“',
+  'gram-isara-hatani':  '16.09.2026 — „die brauche ich als neue karteikarten damit ich danach abgefragt werde“',
+  'gram-isara-dhanika': '16.09.2026 — „die brauche ich als neue karteikarten damit ich danach abgefragt werde“',
+  'gram-isara-tanika':  '16.09.2026 — „die brauche ich als neue karteikarten damit ich danach abgefragt werde“',
+
+  'gram-frage-madha':    '16.09.2026 — „hab ich die auch schon als karteikarten die mich abfragen? das sind auch wichtige vokabeln“',
+  'gram-frage-kam':      '16.09.2026 — „hab ich die auch schon als karteikarten die mich abfragen? das sind auch wichtige vokabeln“',
+  'gram-frage-min-ayna': '16.09.2026 — „hab ich die auch schon als karteikarten die mich abfragen? das sind auch wichtige vokabeln“',
+  'gram-frage-ila-ayna': '16.09.2026 — „hab ich die auch schon als karteikarten die mich abfragen? das sind auch wichtige vokabeln“',
+
+  'gram-fem-hamra': '16.09.2026 — „ja beides als karteikarten machen“',
+  'gram-fem-kubra': '16.09.2026 — „ja beides als karteikarten machen“',
+  'gram-harf-bi':   '16.09.2026 — „ja beides als karteikarten machen“',
+  'gram-harf-ka':   '16.09.2026 — „ja beides als karteikarten machen“',
+
+  'gram-awlad':      '16.09.2026 — „die vokabeln die ich dort aufgeschrieben habe mit rot die brauche ich auch als karteikarten“',
+  'gram-hayya-bina': '16.09.2026 — „die vokabeln die ich dort aufgeschrieben habe mit rot die brauche ich auch als karteikarten“',
+};
+
 const FACHBEGRIFF_VOKABELN = [
   {
     id: 'gram-mudaf',

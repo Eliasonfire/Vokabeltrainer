@@ -823,7 +823,28 @@ if (typeof FACHBEGRIFF_VOKABELN !== 'undefined' && Array.isArray(FACHBEGRIFF_VOK
      tauscheDubletten() — dort steht seit dem 07.09.2026 schon die passende
      Begründung: „HIER und nicht früher: der Tausch braucht den vollständigen
      Bestand." [[werkzeug_ohne_aufrufer]] · [[leere_liste_ist_keine_messung]] */
-  VOCAB_DATA.push(...FACHBEGRIFF_VOKABELN.filter(w => !(weg[w.id] && weg[w.id].an)));
+  /* ⛔⛔ UND NUR, WAS ER BESTELLT HAT (23.09.2026) — fachbegriffBestellt() direkt
+     darunter. Diese Zeile ist die EINZIGE Tür aus der Datei in die App: was
+     hier nicht durchgeht, ist in keiner Kartei, keinem Hörmodus, keiner Suche
+     und keinem Satzmodus. Genau deshalb steht der Filter hier und nicht in den
+     einzelnen Modi — am 22.09. (v566) stand er nur in passtZurAuswahl(), und
+     derselbe Begriff kam einen Tag später im Hörmodus wieder. */
+  VOCAB_DATA.push(...FACHBEGRIFF_VOKABELN.filter(w => fachbegriffBestellt(w) && !(weg[w.id] && weg[w.id].an)));
+}
+
+/* ⛔⛔ HAT ELIAS DIESE KARTE BESTELLT? (23.09.2026)
+   Elias um 15:08, zur Karte „Übereinstimmung“ im Hörmodus: „ich hattte
+   spezifisch darum gebeten akkusativ, genitiv und nominativ und vielleicht noch
+   eine hand voll weitere zu haben aber nicht solceh dinge. irgendjemand fügt
+   sich dauerhaft hinzu und das will ich nicht.“
+   Die Weißliste FACHBEGRIFF_AUFTRAG steht mit Begründung in data/fachbegriffe.js.
+   ⚠️ Fehlt sie, gilt NICHTS als bestellt — lieber eine Karte zu wenig als eine,
+   die er abbestellt hat. Beide stehen in derselben Datei; auseinanderlaufen
+   können sie nur, wenn jemand die Liste löscht, und dann wird
+   werkzeuge/pruefe-fachbegriff-auftrag.mjs rot. */
+function fachbegriffBestellt(w){
+  if (!w || typeof FACHBEGRIFF_AUFTRAG === 'undefined' || !FACHBEGRIFF_AUFTRAG) return false;
+  return Object.prototype.hasOwnProperty.call(FACHBEGRIFF_AUFTRAG, String(w.id));
 }
 
 /* ---------- Pluralformen als eigene Karteikarten (18.08.2026) -------------
@@ -1421,7 +1442,9 @@ function tauscheDublette(eigen){
 function holeFortschrittNach(){
   const quellen = [].concat(
     (typeof window !== 'undefined' && window && Array.isArray(window.EIGENE_VOKABELN)) ? window.EIGENE_VOKABELN : [],
-    (typeof FACHBEGRIFF_VOKABELN !== 'undefined' && Array.isArray(FACHBEGRIFF_VOKABELN)) ? FACHBEGRIFF_VOKABELN : [],
+    /* ⛔ Nur bestellte Fachbegriffe (23.09.2026) — ein ruhender ist keine
+       seiner Karten und vererbt deshalb auch keinen Fortschritt. */
+    (typeof FACHBEGRIFF_VOKABELN !== 'undefined' && Array.isArray(FACHBEGRIFF_VOKABELN)) ? FACHBEGRIFF_VOKABELN.filter(fachbegriffBestellt) : [],
     (typeof PERSONAL_VOCAB !== 'undefined' && Array.isArray(PERSONAL_VOCAB)) ? PERSONAL_VOCAB : []);
   const nachgeholt = [];
   const gesehen = new Set();
@@ -2126,7 +2149,9 @@ function saveProgress(){ LS.set('vt_progress', PROGRESS); }
    in vocab-data.js. */
 function fachbegriffeMitBuchkarte(){
   if (typeof FACHBEGRIFF_VOKABELN === 'undefined' || !Array.isArray(FACHBEGRIFF_VOKABELN)) return [];
-  const mitZuordnung = FACHBEGRIFF_VOKABELN.filter(f => f && f.buchTausch);
+  /* ⛔ Nur bestellte (23.09.2026): ein ruhender Fachbegriff darf auch keine
+     Buchkarte umschreiben oder freischalten. */
+  const mitZuordnung = FACHBEGRIFF_VOKABELN.filter(f => f && f.buchTausch && fachbegriffBestellt(f));
   if (!mitZuordnung.length) return [];
 
   const nachId = new Map(VOCAB_DATA.map(w => [String(w.id), w]));
@@ -2913,12 +2938,24 @@ function passtZurAuswahl(w){
      dieselbe, und ein vierzehnter Fall fiele sonst wieder durch.
      [[allgemeine_regel_statt_listeneintrag]] · [[wirkung_an_der_quelle_stilllegen]]
 
-     ⚠️ Das Wort bleibt vollständig in der App: Satzmodus, Suche, Hörmodus,
-     Regelsammlung. Es fällt allein aus der Kartei. Genau diese Unterscheidung
-     hat er bei den Regeln selbst gezogen, und `vt_geloescht` hätte sie nicht
-     getroffen — der Schalter nimmt ein Wort GANZ heraus.
-     ⚠️ Und es ist umkehrbar: schaltet er den Satzmodus-Schalter der Regel
-     wieder an, ist auch der Fachbegriff wieder dabei. */
+     ⛔⛔ ÜBERHOLT AM 23.09.2026, 15:08 — und zwar gegen diese Ableitung:
+     „Das Wort bleibt vollständig in der App: Satzmodus, Suche, Hörmodus" stand
+     hier. Einen Tag später sah er مُطَابَقَة im Hörmodus: „das ist keine vokabel
+     die ich lernen möchte … ich hattte spezifisch darum gebeten akkusativ,
+     genitiv und nominativ und vielleicht noch eine hand voll weitere zu haben
+     aber nicht solceh dinge." Die Ableitung hatte ausgerechnet diese drei
+     erwischt und مُطَابَقَة durchgelassen — sie hing an einem Merkmal (Regel
+     von den Karteikarten gestrichen), das mit seinem Grund („habe ich nicht in
+     Auftrag gegeben") nur zufällig bei den drei Beispielen zusammenfiel.
+     Seitdem entscheidet VOR allem anderen fachbegriffBestellt(): ein nicht
+     bestellter Fachbegriff kommt gar nicht erst in VOCAB_DATA.
+     ⚠️ Die Ableitung bleibt trotzdem stehen: sie trifft jetzt nur noch
+     bestellte Begriffe, und dort genau einen sichtbar — gram-marfu, dessen
+     Kapitel-24-Zwilling 50470 „(gr) im Nominativ" schon in der Kartei steht.
+     Ohne sie stünde Nominativ dort zweimal. Wer sie entfernt, muss vorher
+     gram-marfu einer Buchkarte zuordnen (`buchTausch`, seine Grundregel vom
+     16.09.2026) — sonst steht es doppelt. werkzeuge/pruefe-fachbegriff-auftrag.mjs
+     meldet jeden bestellten Begriff, den sie aus der Kartei nimmt. */
   if (typeof fachbegriffFolgtRegel === 'function' && fachbegriffFolgtRegel(w)) return false;
   /* ⛔⛔ HIER STAND EIN BEDINGUNGSLOSES `return true` FUER EINZELN
      FREIGESCHALTETE WOERTER — und das war zu viel. (07.09.2026)
