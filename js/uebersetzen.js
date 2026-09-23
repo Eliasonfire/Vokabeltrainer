@@ -425,15 +425,36 @@ function uebsPruefeAussage(k){
    und Eingabe gleich viele Inhaltswörter haben — sonst ist die Abweichung
    Folge eines anderen Fehlers, und ein zweiter Regelname obendrauf verwirrt
    mehr, als er erklärt. [[kandidatenliste_ist_keine_fehlerliste]] */
+/* ⛔⛔ Zwei Wörter, die v572 falsch zählte (23.09.2026, Gegenprüfung eines
+   Helfers mit 2.590 Angriffen):
+   · Das HINWEISENDE „das" („Das ist …", uebsDasZeigt) ist kein Artikel, sondern
+     steht für „dies". Es zählte als bestimmter Artikel UND fehlte unter den
+     Inhaltswörtern — also fiel die Prüfung schon am Längenvergleich aus.
+     „Das ist der alte und schwere Stein." für „Dies ist ein alter und
+     schwerer Stein." galt so als richtig; mit „Dies ist der …" nicht.
+   · Ein Hinweiswort VOR einem Nomen („Dieser Mann") macht das Nomen bestimmt —
+     wie اَلْ in هَذَا الرَّجُلُ. Ohne das sah die Prüfung in „Dieser Mann ist
+     arm." gar nichts Bestimmtes, und „Das ist ein armer Mann." (eine
+     Wortgruppe statt eines Satzes) galt als richtig: 21 von 21. Genau diesen
+     Fall verspricht der Kopf dieser Datei über die Bestimmtheit zu erkennen.
+   Bewacht von zwei Störfällen in werkzeuge/pruefe-uebersetzen.mjs. */
+function uebsHinweisDas(worte){
+  return worte.filter((w, i) => uebsDasZeigt(worte, i)).length;
+}
+function uebsHinweisVorNomen(worte){
+  return worte.filter((w, i) => w !== 'das' && UEBS_HINWEIS.has(w)
+    && worte[i + 1] !== undefined && !UEBS_KOPULA.has(worte[i + 1]) && !UEBS_FUELLWORTE.has(worte[i + 1])).length;
+}
 function uebsPruefeBestimmtheit(k){
   const hatAl  = k.zeilen.some(z => uebsHatAl(z.rein || z.wort));
   const hatTan = k.zeilen.some(z => /[ًٌٍ]/.test(String(z.wort || '')));
   if (!hatAl && !hatTan) return null;
-  if (k.musterInhalt.length !== k.eingabeInhalt.length) return null;
+  const mH = uebsHinweisDas(k.musterWorte), eH = uebsHinweisDas(k.eingabeWorte);
+  if (k.musterInhalt.length + mH !== k.eingabeInhalt.length + eH) return null;
 
   const zaehle = (worte, menge) => worte.filter(w => menge.has(w)).length;
-  const mB = zaehle(k.musterWorte,  UEBS_BESTIMMT);
-  const eB = zaehle(k.eingabeWorte, UEBS_BESTIMMT);
+  const mB = zaehle(k.musterWorte,  UEBS_BESTIMMT) - mH + uebsHinweisVorNomen(k.musterWorte);
+  const eB = zaehle(k.eingabeWorte, UEBS_BESTIMMT) - eH + uebsHinweisVorNomen(k.eingabeWorte);
   const mU = zaehle(k.musterWorte,  UEBS_UNBESTIMMT);
   const eU = zaehle(k.eingabeWorte, UEBS_UNBESTIMMT);
   if (mB === eB && mU === eU) return null;
@@ -549,8 +570,25 @@ function uebsPruefeGenus(k){
   if (!m.length || m.length !== e.length) return null;
   for (let i = 0; i < m.length; i++){
     if (m[i] === e[i]) continue;
+    /* ⛔ NAH GEGEN FERN an derselben Stelle (23.09.2026). Bis dahin übersprang
+       diese Schleife dies- gegen jen- und verließ sich auf die Vollständigkeit —
+       die aber nur fragt, OB das Wort irgendwo steht. Zwei Fälle gingen so als
+       richtig durch (Gegenprüfung eines Helfers):
+       · „Das ist Zucker und dies ist Milch." für „Dies ist Zucker und jenes ist
+         Milch." — das „das" vorn deckte seit v572 jedes Hinweiswort im Satz;
+       · „Wer ist dieser? Jener ist ein Imam." für „Wer ist jener? …" — „jener"
+         stand ja noch an anderer Stelle.
+       Verglichen wird deshalb Stelle für Stelle; ein hinweisendes „das" passt
+       zu beiden. Gemeldet als fehlendes Wort, wie die Vollständigkeit es für
+       nah gegen fern immer getan hat — und ausdrücklich NICHT als Genus. */
+    if (m[i] !== 'das' && e[i] !== 'das' && /^(dies|jen)/.test(m[i]) && /^(dies|jen)/.test(e[i])
+        && m[i].slice(0, 3) !== e[i].slice(0, 3)){
+      return uebsBefund('ausgelassen',
+        `An dieser Stelle fehlt „${m[i]}" — du hast „${e[i]}" geschrieben. „dies-" zeigt auf etwas Nahes (هَذَا), „jen-" auf etwas Fernes (ذَلِكَ).`,
+        null);
+    }
     if (!UEBS_GENUS_FORMEN.has(m[i]) || !UEBS_GENUS_FORMEN.has(e[i])) continue;
-    if (m[i].slice(0, 3) !== e[i].slice(0, 3)) continue;   // dies- gegen jen-: nah gegen fern
+    if (m[i].slice(0, 3) !== e[i].slice(0, 3)) continue;   // dies- gegen jen-: oben schon entschieden
     return uebsBefund('genus',
       `Das Hinweiswort passt nicht: es heißt „${m[i]}", nicht „${e[i]}". Im Arabischen richtet es sich nach dem Geschlecht des Wortes, auf das gezeigt wird — هَذَا bei männlichen, هَذِهِ bei weiblichen —, und im Deutschen nach dem deutschen Wort.`,
       'isara-genus-kongruenz-01');
@@ -590,6 +628,14 @@ function uebsPruefeAdjektivBezug(k){
     for (const andere of k.zeilen){
       const w = andere.rein || andere.wort;
       if (!w || w === bezug || w === (z.rein || z.wort)) continue;
+      /* ⛔ Nur ein NOMEN kann das falsche Bezugswort sein (23.09.2026). v572
+         ließ jede Zeile gelten, auch das zweite Adjektiv: „Dies ist ein
+         schwerer und alter Stein." für „… alter und schwerer Stein." galt als
+         falsch, weil „alter" näher an „schwerer" stand als „Stein" — neu 10 von
+         16 solcher Sätze, vorher 1 (Gegenprüfung eines Helfers). Beigeordnete
+         Adjektive dürfen im Deutschen tauschen. Dieselbe Grenze zieht der
+         Störtest in werkzeuge/pruefe-uebersetzen.mjs. */
+      if (/نَعْت|حَرْف|ضَمِير/.test(String(andere.rolle || ''))) continue;
       const bedX = uebsBedeutungsWorte(uebsBedeutung(w));
       if (!bedX.length) continue;
       const pX = uebsErstePos(k.eingabeStamm, bedX);
