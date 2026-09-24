@@ -46,6 +46,12 @@ import path from 'node:path';
 import url from 'node:url';
 import vm from 'node:vm';
 
+/* Bei --json nur das JSON am Ende ausgeben — alle anderen Zeilen schweigen,
+   sonst kann wartet-auf-elias.mjs die Ausgabe nicht lesen. */
+const NUR_JSON = process.argv.includes('--json');
+const schreibe = console.log;
+if (NUR_JSON) console.log = () => {};
+
 const HIER   = path.dirname(url.fileURLToPath(import.meta.url));
 const WURZEL = path.resolve(HIER, '..');
 const befunde = [];
@@ -343,6 +349,24 @@ let zumEntscheiden = doppelt;
 }
 
 /* ---------- Ausgabe ---------- */
+
+/* --json (seit 24.09.2026): dieselben Fälle für wartet-auf-elias.mjs, damit
+   sie auf seiner Seite stehen statt nur hier — sonst warten sie auf eine
+   Entscheidung, die niemand von ihm erbittet. Exitcode wie unten. */
+if (NUR_JSON){
+  const faelle = zumEntscheiden.map(z => {
+    const [links, rechts] = z.split(' ↔ ');
+    const fid = links.split(' ')[0];
+    const f = F.find(x => String(x.id) === fid);
+    const bid = String(rechts).split(',')[0].trim();
+    const b = buchWort.get(bid);
+    return { fachbegriff: fid, de: f ? f.de : null,
+      buchId: bid, buchDe: b ? b.de : null, buch: b ? (b.book || null) : null, kapitel: b ? (b.chapter ?? null) : null,
+      weitere: String(rechts).split(',').slice(1).map(s => s.trim()).filter(Boolean) };
+  });
+  schreibe(JSON.stringify({ befunde, faelle }, null, 1));
+  process.exit(befunde.length ? 1 : (faelle.length ? 2 : 0));
+}
 
 console.log('--- Fachbegriffe, die schon im Buch stehen ---\n');
 console.log('Fachbegriffe:                ' + F.length);
