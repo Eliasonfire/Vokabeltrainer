@@ -415,6 +415,10 @@ const PRUEFER = [
      Kartei-Wort mit Bedeutung im Hörvorrat fehlt oder ein Wort, das vorher
      darin stand, verschwindet; drei Störtests bei jedem Lauf. */
   ['werkzeuge/pruefe-hoer-auswahl.mjs', []],
+  /* 24.09.2026 — der Lautsprecher im Hörmodus spielt nach der Antwort dasselbe
+     Wort. Elias: „… den selben ton wieder abspielt und nicht zum nächsten geht."
+     Rot, sobald der Lautsprecher-Zweig wieder hinter dem Weiter-Zweig steht. */
+  ['werkzeuge/pruefe-hoer-ton.mjs', []],
   /* 22.09.2026 — Elias: „kein beispielsatz, sorge dafür das alle ien
      beispielsatz haben". Exit 2 = Lücken, die auf Material warten (kein
      Werkzeugfehler); Exit 1 nur, wenn die Zahl selbst nicht belastbar wäre. */
