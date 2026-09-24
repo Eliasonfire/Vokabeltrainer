@@ -216,10 +216,12 @@ const ctx = vm.createContext({
     throw new Error('NOTIZEN fehlt im Kontext — die Notiz-Zusicherungen waeren wirkungslos');
 
   /* Funktionsdeklarationen landen am globalen Objekt und ueberschatten daher
-     keine lexikalische Attrappe. Alle zehn sind gemessen, nicht geraten. */
+     keine lexikalische Attrappe. Alle neun sind gemessen, nicht geraten.
+     (pruefeNurFalscheModus ist seit v591 weg — „Nur falsche Wörter üben" ist
+     aus der App, Elias am 24.09.2026.) */
   const AUS_KERN = ['gewaehlterVorschlag', 'setzeGewaehltenVorschlag', 'istVorschlagVerworfen',
                     'schalteVorschlagWeg', 'arabischHervorheben', 'kapitelBeschriftung',
-                    'getNotiz', 'currentPool', 'pruefeNurFalscheModus', 'formenAnzeige'];
+                    'getNotiz', 'currentPool', 'formenAnzeige'];
   for (const name of AUS_KERN){
     vm.runInContext(funktionAus(name), ctx, { filename: 'js/kern.js' });
     if (vm.runInContext('typeof ' + name, ctx) !== 'function')

@@ -367,10 +367,5 @@ document.addEventListener('click', (e)=>{
     if (typeof passeRundeAnAuswahlAn === 'function') passeRundeAnAuswahlAn();
     return;
   }
-  if (e.target.closest('#btnWrongOnly')){
-    SETTINGS.wrongOnly = !SETTINGS.wrongOnly;
-    saveSettings();
-    renderHome();
-  }
 });
 

@@ -233,7 +233,7 @@ function hoerbareVokabeln(){
      nachzubauen — eine Kopie liefe beim nächsten Umbau der Kartei still
      auseinander. [[zwei_stellen_eine_entscheidung]]
      ⚠️ Über VOCAB_DATA, nicht bekannteVokabeln(): die Kartei zieht aus
-     VOCAB_DATA (dueWords, weakWords), und ein einzeln freigeschaltetes Wort
+     VOCAB_DATA (dueWords), und ein einzeln freigeschaltetes Wort
      aus einem nicht gewählten Buch steht nicht in bekannteVokabeln().
      Ein Wort ohne deutsche Bedeutung bleibt draußen (meine Begründung, nicht
      seine: ohne Bedeutung gibt es keine Antwort zum Antippen). */

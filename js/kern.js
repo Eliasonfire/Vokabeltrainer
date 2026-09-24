@@ -2387,7 +2387,7 @@ let SETTINGS = Object.assign(
      hat keinen Vorrat, der leer werden könnte — ohne Zahl gäbe es wieder kein
      sichtbares Ende, und genau das hatte Elias am 17.08.2026 beanstandet
      („aktuell sieht es aus als gäbe es da kein ende"). */
-  { showPlural:false, pluralKarten:false, showVerbFormen:false, showQuran:false, tagesDeckel:10, hoerZiel:5, voiceURI:null, direction:'ar-de', selectedChapters:[], wrongOnly:false, grammarHighlight:true },
+  { showPlural:false, pluralKarten:false, showVerbFormen:false, showQuran:false, tagesDeckel:10, hoerZiel:5, voiceURI:null, direction:'ar-de', selectedChapters:[], grammarHighlight:true },
   LS.get('vt_settings', {})
 );
 /* ---------- Zeitstempel JE EINSTELLUNG (17.08.2026) ----------
@@ -2950,12 +2950,6 @@ function wortfelder(){
   if (rest.length) map[OHNE_WORTFELD] = rest;
   return map;
 }
-function isWeak(w){ return !!(PROGRESS[w.id] && PROGRESS[w.id].box<=2); }
-function weakWords(){
-  /* currentPool() filtert danach ohnehin aufs aktive Buch; die Sortierung
-     bleibt hier bei der Boxnummer, weil "schwach" genau das meint. */
-  return shuffle(VOCAB_DATA.filter(isWeak)).sort((a,b)=> PROGRESS[a.id].box - PROGRESS[b.id].box);
-}
 /* Gehoert diese Vokabel zur aktuellen Auswahl aus Buch und Kapiteln?
 
    Steht bewusst als EIGENE Funktion und nicht mehr nur in currentPool():
@@ -3014,7 +3008,7 @@ function passtZurAuswahl(w){
      als Wissensgrenze gedacht, haben sie aber faktisch ersetzt.
 
      Diese eine Zeile wirkt auf ALLES, was ueber currentPool() laeuft: faellige
-     Karten, "nur falsche Woerter" und - ueber passeRundeAnAuswahlAn() - auch
+     Karten und - ueber passeRundeAnAuswahlAn() - auch
      eine schon laufende Runde. */
   if (typeof istBekannt === 'function' && !istBekannt(w)) return false;
   /* ⛔ „Kenne ich schon" steht GANZ VORNE, vor jedem anderen Ja. Weiter unten
@@ -3114,9 +3108,11 @@ function passtZurAuswahl(w){
   return true;
 }
 
+/* „Nur falsche Wörter üben" (weakWords, pruefeNurFalscheModus, der Knopf auf
+   der Startseite) ist seit v591 raus. Elias am 24.09.2026: „nur falsche wörter
+   üben kann weg aus der app, hat keinen nutzen". */
 function currentPool(){
-  const pool = SETTINGS.wrongOnly ? weakWords() : dueWords();
-  return pool.filter(passtZurAuswahl);
+  return dueWords().filter(passtZurAuswahl);
 }
 
 /* ⭐⭐ DER TAGESDECKEL — „heute 10, der Rest wartet" statt „312 fällig"
@@ -3146,8 +3142,8 @@ function currentPool(){
    dann niedrige Box). Der Deckel schneidet also oben ab, nicht irgendwo.
 
    ⛔ Und er verstellt die WAHRHEIT nicht: `currentPool()` bleibt ungedeckelt.
-   Wer wissen will, wie viel wirklich offen ist — die Statistik, der
-   „nur falsche Wörter"-Schalter —, fragt weiter dort. */
+   Wer wissen will, wie viel wirklich offen ist — die Statistik —, fragt
+   weiter dort. */
 const DECKEL_AUS = 0;
 /* 4 von 10 für Box 1: das baut den Stau von 80 in 20 Tagen ab und lässt
    trotzdem 6 Plätze für die Wiederholungen, an denen das Behalten hängt. */
@@ -3259,22 +3255,6 @@ function istWiedereinstieg(){
   return t !== null && t >= PAUSE_AB_TAGEN;
 }
 
-/* "Nur falsche Wörter" wieder abschalten, sobald keine mehr da sind
-   (arabicroots-Paritaet D). Der Schalter war bisher dauerhaft: hat man die
-   letzte schwache Vokabel geschafft, blieb er an, "Lernen" meldete jedes Mal
-   "Keine schwachen Woerter" und sprang zurueck - bis man von selbst merkt,
-   dass oben noch ein Knopf leuchtet.
-   Bewusst NICHT beim blossen Umschalten pruefen, sonst spraenge der Schalter
-   sofort wieder zurueck und wirkte kaputt. Nur nach einer Antwort und am Ende
-   einer Runde, also genau dann, wenn man die Liste wirklich leergeraeumt hat. */
-function pruefeNurFalscheModus(){
-  if (!SETTINGS.wrongOnly) return false;
-  if (currentPool().length) return false;
-  SETTINGS.wrongOnly = false;
-  saveSettings();
-  toast('Keine schwachen Wörter mehr – zurück zum normalen Modus.');
-  return true;
-}
 function escapeHtml(str){
   return String(str).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }

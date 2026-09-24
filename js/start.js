@@ -22,11 +22,10 @@ function renderHome(){
   /* ⛔ Bis zum 22.09.2026 stand hier „Sitzungsgröße: 20 Karten pro Runde". Die
      Einstellung ist an diesem Tag ersatzlos weggefallen (Begründung bei den
      SETTINGS-Vorgaben in js/kern.js), und mit ihr die Zahl. Geblieben ist die
-     Einordnung, die wirklich etwas sagt: was heute dran ist, was noch wartet,
-     und ob gerade nur falsche Wörter laufen.
+     Einordnung, die wirklich etwas sagt: was heute dran ist und was noch
+     wartet.
      ⚠️ Zusammengesetzt wird gefiltert. Wer die Teile mit „ · " verkettet,
      bekommt bei einem leeren Teil einen Trenner, der ins Leere zeigt. */
-  const nurFalsche = SETTINGS.wrongOnly ? 'Nur falsche Wörter' : '';
   const zeile = (...teile) => teile.filter(Boolean).join(' · ');
   animateNumber(document.getElementById('dueCount'), pool.length);
   /* ⭐ „Deine Runde ist noch offen" (19.09.2026). Seit die App eine angefangene
@@ -37,12 +36,12 @@ function renderHome(){
      handlungsleitend ist und alles andere in der Zeile nur Einordnung. */
   const offeneRunde = (typeof offeneRundeStand === 'function') ? offeneRundeStand() : null;
   document.getElementById('dueSub').textContent = offeneRunde
-    ? zeile(`Deine Runde ist noch offen: ${offeneRunde.fehlt === 1 ? '1 Karte fehlt' : offeneRunde.fehlt + ' Karten fehlen'}`, nurFalsche)
+    ? zeile(`Deine Runde ist noch offen: ${offeneRunde.fehlt === 1 ? '1 Karte fehlt' : offeneRunde.fehlt + ' Karten fehlen'}`)
     : pool.length
-    ? (zurueck ? zeile('Willkommen zurück – wir fangen klein an', nurFalsche)
-       : wartet > 0 ? zeile('Heute dran', `${wartet} warten noch`, nurFalsche)
-       : zeile('Heute dran', nurFalsche))
-    : (SETTINGS.wrongOnly ? 'Keine schwachen Wörter mit dieser Auswahl.' : 'Alles erledigt für heute – super gemacht.');
+    ? (zurueck ? zeile('Willkommen zurück – wir fangen klein an')
+       : wartet > 0 ? zeile('Heute dran', `${wartet} warten noch`)
+       : zeile('Heute dran'))
+    : 'Alles erledigt für heute – super gemacht.';
   document.getElementById('streakCount').textContent = getStreak().count;
 
   /* ⚠️ `bekannteVokabeln()` statt `buchVokabeln()` seit dem 17.08.2026: die
@@ -85,7 +84,6 @@ function renderHome(){
 
   renderBuchChips();
   renderChapterFilterChips();
-  document.getElementById('btnWrongOnly').classList.toggle('active', !!SETTINGS.wrongOnly);
 
   /* ⛔⛔ DIE STATISTIK GEHOERT SEIT DEM 21.08.2026 ZU DIESEM BILDSCHIRM — und
      muss deshalb HIER mitlaufen, nicht nur beim Bildschirmwechsel.

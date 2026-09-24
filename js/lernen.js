@@ -279,7 +279,7 @@ function startLearningSession(){
      praktisch immer aus Box 1 — die Wiederholungen aus Box 4 und 5 kämen nie
      dran. Die Begründung steht bei `tagesAuswahl()` in js/kern.js. */
   let words = (typeof tagesPool === 'function') ? tagesPool() : currentPool();
-  if (words.length === 0){ toast(SETTINGS.wrongOnly ? 'Keine schwachen Wörter mit dieser Auswahl – stark!' : 'Nichts fällig – schau später wieder vorbei.'); showScreen('home'); return; }
+  if (words.length === 0){ toast('Nichts fällig – schau später wieder vorbei.'); showScreen('home'); return; }
   /* ⭐ Die Runde IST die Tagesration — seit dem 22.09.2026 gibt es keine
      zweite Zahl mehr daneben. Die Einstellung „Sitzungsgröße" ist an diesem
      Tag entfernt worden, weil sie nie zum Zug kam: `tagesPool()` hatte schon
@@ -1382,10 +1382,6 @@ document.getElementById('btnExitLearn').addEventListener('click', ()=>{
      nicht wiederkommen. (Das Schließen der APP ist etwas anderes: dort wird
      fortgesetzt, siehe `offeneRundeFortsetzen()`.) */
   rundeVergessen();
-  /* Auch beim vorzeitigen Abbrechen pruefen - wer die letzte schwache Vokabel
-     richtig hatte und dann abbricht, soll den Modus nicht angeschaltet
-     zuruecklassen. */
-  pruefeNurFalscheModus();
   showScreen('home', { ersetzen: true });
 });
 
@@ -1740,10 +1736,6 @@ function answer(stufe){
       /* Die Runde ist zu Ende — der gesicherte Stand darf sie nicht wieder
          auferstehen lassen. */
       rundeVergessen();
-      /* Erst pruefen, ob der "nur falsche"-Modus jetzt leer ist: dessen
-         Meldung ist die wichtigere und soll nicht vom "Runde geschafft"
-         ueberschrieben werden. */
-      const anderes = pruefeNurFalscheModus();
       /* ⭐ Zwei verschiedene Anlaesse, und der Unterschied ist Absicht (Elias am
          30.07.): RUNDE FERTIG sind die 20 Karten einer Sitzung, ALLES FAELLIG
          ist das Tagesziel. Bei 148 faelligen Karten sind das sieben Runden -
@@ -1765,7 +1757,7 @@ function answer(stufe){
         if (!restVorrat) feiere('alles-faellig', { zahl: SESSION.words.length });
         /* ⭐ Und danach: war das der dritte von drei? */
         if (typeof tagKomplettPruefen === 'function') tagKomplettPruefen();
-      } else if (!anderes) toast('Runde geschafft!');
+      } else toast('Runde geschafft!');
       /* Beendete Runde ersetzt den Lern-Eintrag in der Historie, statt einen
          neuen anzulegen - sonst landet die Zurueck-Taste auf einer Runde,
          die es nicht mehr gibt. */
