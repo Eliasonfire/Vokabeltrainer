@@ -325,13 +325,23 @@ function live(){
    notizen. das mache ich täglich." Eigener Stand, damit die Grammatik-Hefte
    und die Listen sich nicht gegenseitig als „gesehen" markieren. Ausgewertet
    wird in werkzeuge/abendlisten.mjs (Zählung je Wort). */
-const ABENDLISTEN = process.argv.includes('--abendlisten');
-const SICHERUNG = process.env.SAMSUNG_NOTES_SICHERUNG_DIR
-  || (ABENDLISTEN
-    ? 'G:\\1. Workspace\\SamsungNotes-Sicherung\\Samsung Notes Archiv\\Arabisch\\Vokabeln falsch'
-    : 'G:\\1. Workspace\\SamsungNotes-Sicherung\\Samsung Notes Archiv\\Arabisch\\Grammatik');
-const SICHERUNG_STAND = process.env.SAMSUNG_NOTES_SICHERUNG_STAND
-  || path.join(ORDNER, ABENDLISTEN ? 'sicherung-stand-abendlisten.json' : 'sicherung-stand.json');
+/* ⭐ `--ordner <Name>` (seit 24.09.2026): ein Unterordner von „Arabisch" mit
+   eigenem Stand. Ohne Angabe bleibt es bei Grammatik (wie bisher);
+   `--abendlisten` ist dasselbe wie `--ordner "Vokabeln falsch"`.
+   ⛔ Für den Vokabeltrainer zählen NUR diese zwei. Elias, 24.09.2026:
+   „quranordner hat nichts mit vokabeltrainer zu tun. das brauchst du dir
+   grundsätzlich nicht angucken. nur im ordner arabisch die unterordner
+   Grammatik und Vokabeln falsch ist für uns und dem vokabeltrainer relevant
+   sonst nichts bisher". Quran und Buchstaben also NICHT abfragen. */
+const ARABISCH = 'G:\\1. Workspace\\SamsungNotes-Sicherung\\Samsung Notes Archiv\\Arabisch';
+const ORDNER_ARG = (() => { const i = process.argv.indexOf('--ordner'); return i >= 0 ? process.argv[i + 1] : null; })();
+const ABENDLISTEN = process.argv.includes('--abendlisten') || ORDNER_ARG === 'Vokabeln falsch';
+const UNTERORDNER = ORDNER_ARG || (ABENDLISTEN ? 'Vokabeln falsch' : 'Grammatik');
+const STAND_NAME = UNTERORDNER === 'Grammatik' ? 'sicherung-stand.json'
+  : ABENDLISTEN ? 'sicherung-stand-abendlisten.json'
+  : 'sicherung-stand-' + UNTERORDNER.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '.json';
+const SICHERUNG = process.env.SAMSUNG_NOTES_SICHERUNG_DIR || path.join(ARABISCH, UNTERORDNER);
+const SICHERUNG_STAND = process.env.SAMSUNG_NOTES_SICHERUNG_STAND || path.join(ORDNER, STAND_NAME);
 const POPPLER = process.env.POPPLER_BIN
   || 'C:\\Users\\abdur\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oschwartz10612.Poppler_Microsoft.Winget.Source_8wekyb3d8bbwe\\poppler-25.07.0\\Library\\bin';
 const GX = 16, GY = 20, DPI = 16;
