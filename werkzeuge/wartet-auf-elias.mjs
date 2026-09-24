@@ -1369,6 +1369,38 @@ try {
   console.log('  ⚠️ Bücher und Kapitel nicht prüfbar: ' + e.message);
 }
 
+/* ---------- Doppelt: Fachbegriff UND Buchkarte (seit 24.09.2026) ----------
+   pruefe-buchtausch.mjs meldete die Fälle seit dem 22.09. nur in seiner eigenen
+   Ausgabe — dort fragt niemand ihn. Entschieden hat er bisher genau einen Fall,
+   den Mudaf (22.09.): „lass das in kapitel 24, mache es aber exakt so wie das
+   meine eigene … nimm die höhere box." Danach die Genitivverbindung (v588), weil
+   die Warteseite es so zugesagt hatte. Für diese hier ist NICHTS entschieden. */
+try {
+  const r = messen('werkzeuge/pruefe-buchtausch.mjs', ['--json']);
+  const j = JSON.parse(r.text.slice(r.text.indexOf('{')));
+  const fa = j.faelle || [];
+  const doppelBuch = {};
+  fa.forEach(f => { doppelBuch[f.buchId] = (doppelBuch[f.buchId] || 0) + 1; });
+  if (fa.length) posten.push({
+    titel: 'Doppelt: Fachbegriff und Buchkarte mit derselben Schreibung — zusammenlegen wie beim Mudaf?',
+    zahl: fa.length, einheit: 'Paare',
+    dazu: 'aus pruefe-buchtausch.mjs · entschieden hast du bisher nur den Mudaf',
+    auswahl: true,
+    aufwand: 'eine Antwort: „alle", „keine" oder die Nummern',
+    warum: 'Diese Wörter gibt es zweimal: als Fachbegriff (du hast sie bestellt) und als Karte aus einem Buchkapitel. '
+      + 'Ist die Buchkarte bei dir frei, lernst du dasselbe Wort doppelt — beim Nominativ ist das gemessen: er steht '
+      + 'seit v584 zweimal im Hörmodus (nie als zwei Antworten auf derselben Karte). Nicht jedes Paar ist dasselbe Wort: '
+      + 'wo die Bedeutungen auseinandergehen, steht es dabei.',
+    wie: 'Sag „alle", „keine" oder die Nummern, die zusammen sollen. Zusammen heißt wie beim Mudaf: eine Karte (die aus dem Buch), die höhere Box, die Beschreibung des Fachbegriffs.',
+    zeilen: fa.map((f, i) => (i + 1) + ' · ' + f.de + ' — Buchkarte: „' + f.buchDe + '"'
+      + (doppelBuch[f.buchId] > 1 ? ' ⚠️ zwei Fachbegriffe zeigen auf dieselbe Buchkarte, höchstens einer ist das Doppel' : '')
+      + (f.fachbegriff === 'gram-marfu' ? ' ⚠️ steht im Hörmodus zweimal (gemessen)' : '')),
+    seite: '', seiteText: ''
+  });
+} catch (e) {
+  console.log('  ⚠️ Buchtausch-Fälle nicht lesbar: ' + e.message);
+}
+
 /* ---------- Arabisch, das in SEINEN Notizen rueckwaerts steht (09.09.2026) --
  *
  * ⛔⛔ Die Bidi-Drehung dieses Tages steckt nicht nur in der App und in den
