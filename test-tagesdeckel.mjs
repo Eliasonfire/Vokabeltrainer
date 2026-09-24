@@ -98,8 +98,9 @@ console.log('test-tagesdeckel.mjs — die Tagesration\n');
   const ausBox1 = boxen.filter(b => b <= 1).length;
   const ausWdh  = boxen.filter(b => b > 1).length;
   pruefe('80 Box-1-Wörter belegen NICHT alle Plätze', ausBox1 < 10, ausBox1);
-  pruefe('genau 4 aus Box 1 (Anteil ' + mAnteil[1] + ')', ausBox1 === 4, ausBox1);
-  pruefe('genau 6 Wiederholungen aus Box 2–5', ausWdh === 6, ausWdh);
+  /* Seit 25.09.2026 fünf zu fünf — Elias: „das klingt gut. mach das". */
+  pruefe('genau 5 aus Box 1 (Anteil ' + mAnteil[1] + ')', ausBox1 === 5, ausBox1);
+  pruefe('genau 5 Wiederholungen aus Box 2–5', ausWdh === 5, ausWdh);
   /* ⛔ Ohne die Quote wäre das Ergebnis 10× Box 1 — der Störfall, der zeigt,
      dass die Schranke überhaupt wirkt. Gegenprobe: nur nach Reihenfolge
      abschneiden. */
@@ -167,8 +168,11 @@ console.log('test-tagesdeckel.mjs — die Tagesration\n');
     ['heute', 12, { box: 1, nextReview: '2026-09-16', correct: 0, wrong: 0 }]
   ];
   const g = auswahl(lage(seineLage), 10);
-  pruefe('seine Lage: alle 4 Box-1-Plätze gehen an neue Karten', zaehle(g, 'heute') === 4, zaehle(g, 'heute'));
-  pruefe('… und die 6 Wiederholungen bleiben', zaehle(g, 'wdh') === 6, zaehle(g, 'wdh'));
+  /* Seit 25.09.2026: von den 5 Box-1-Plätzen geht einer an das am längsten
+     falsche Wort, die übrigen 4 an neue Karten (vorher: alle 4 an neue). */
+  pruefe('seine Lage: 4 Box-1-Plätze gehen an neue Karten', zaehle(g, 'heute') === 4, zaehle(g, 'heute'));
+  pruefe('… einer an das am längsten falsche Wort', zaehle(g, 'alt') === 1, zaehle(g, 'alt'));
+  pruefe('… und die 5 Wiederholungen bleiben', zaehle(g, 'wdh') === 5, zaehle(g, 'wdh'));
 
   /* die jüngsten zuerst: das neue Kapitel vor alten, nie beantworteten Karten */
   const g2 = auswahl(lage([
@@ -185,7 +189,7 @@ console.log('test-tagesdeckel.mjs — die Tagesration\n');
     ['alt', 50, { box: 1, nextReview: '2026-09-01', correct: 1, wrong: 1 }],
     ['wdh', 20, { box: 4, nextReview: '2026-09-12', correct: 3, wrong: 0 }]
   ]), 10);
-  pruefe('ohne neue Karten: 4 alte aus Box 1 wie bisher', zaehle(g3, 'alt') === 4, zaehle(g3, 'alt'));
+  pruefe('ohne neue Karten: 5 alte aus Box 1', zaehle(g3, 'alt') === 5, zaehle(g3, 'alt'));
 
   /* ⛔ Gegenprobe mit der alten Zeile — sonst prüfte Fall 7 nichts. */
   const alt = code.replace('const neu  = neueZuerst(pool.filter(w => box(w) <= 1));', 'const neu  = pool.filter(w => box(w) <= 1);');

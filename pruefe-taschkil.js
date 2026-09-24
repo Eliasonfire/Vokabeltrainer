@@ -139,6 +139,16 @@ const AUSNAHMEN = [
     trifft: (wort, i) => i === 0 && wort[0] === 'ا' && wort[1] === 'ل'
   },
   {
+    /* ⭐ Dasselbe Alif HINTER einer einbuchstabigen Präposition oder Konjunktion
+       (25.09.2026): بِالْحَافِلَةِ, كَالْ…, فَالْ… — Hamzat al-wasl, beim Lesen
+       stumm, trägt kein Zeichen. Gefunden an seinem Buchsatz „Nein, ich fahre
+       mit dem Bus" (Bayna Yadayk 1, S. 82); vorher galt nur das Alif am
+       Wortanfang als Artikel. */
+    name: 'Alif des Artikels hinter بِ/وَ/فَ/كَ ohne Zeichen',
+    trifft: (wort, i) => i === 2 && /[بوفك]/.test(wort[0]) && /[َِ]/.test(wort[1])
+      && wort[2] === 'ا' && wort[3] === 'ل'
+  },
+  {
     /* ⭐ Das لام des Artikels vor einem SONNENBUCHSTABEN traegt richtigerweise
        kein Zeichen - es wird nicht gesprochen, der folgende Buchstabe bekommt
        stattdessen eine Schadda: الشَّمْس, السَّمَاء, الطَّبِيب.

@@ -143,9 +143,16 @@ function offeneRundeFortsetzen(){
   const ziel = rundenZiel(g);
   if (words.length < ziel && typeof currentPool === 'function'){
     const drin = new Set(words.map(w => String(w.id)));
-    for (const w of currentPool()){
+    /* ⭐ Seit 25.09.2026 nach DERSELBEN Regel wie beim Bau (tagesAuswahl:
+       5 zu 5, ein Platz fürs am längsten falsche Wort, neue zuerst). Elias
+       zu „Angefangene Runde auffüllen: nach genau dieser Regel": „das klingt
+       gut. mach das". Vorher kamen die fehlenden Karten nur nach „am
+       längsten fällig". */
+    const rest = currentPool().filter(w => !drin.has(String(w.id)));
+    const nach = (typeof tagesAuswahl === 'function') ? tagesAuswahl(rest, ziel - words.length) : rest;
+    for (const w of nach){
       if (words.length >= ziel) break;
-      if (!drin.has(String(w.id))){ words.push(w); drin.add(String(w.id)); }
+      words.push(w); drin.add(String(w.id));
     }
   }
   const laut = new Set();
