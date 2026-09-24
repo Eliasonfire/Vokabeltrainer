@@ -57,6 +57,20 @@ const box5ProTag = box[5] / 17;
 const wartet = aeltesteWdh ? Math.round((new Date(tag) - new Date(aeltesteWdh)) / 864e5) : 0;
 console.log(`Tagesziel ${ziel} (${ziel - wdhPlaetze} Box 1 · ${wdhPlaetze} Wiederholungen)`);
 console.log(`Karten: Box 1 ${box[1]} (nie beantwortet ${neu}) · Box 2 ${box[2]} · Box 3 ${box[3]} · Box 4 ${box[4]} · Box 5 ${box[5]}`);
+/* ⏰ Seine Erinnerung (25.09.2026, als er das Tagesziel auf 15 stellte): „sobald
+   alle neuen wörter einmal durch sind soll ich erinnert werden, dass ich wieder
+   auf 10 runter stelle". Neue Karten kommen zuerst auf die Box-1-Plätze, einer
+   davon gehört dem ältesten falschen Wort (tagesAuswahl in js/kern.js) — also
+   (Box-1-Plätze − 1) neue am Tag. Die Wartung (1b.10) schiebt danach das Datum
+   seiner Google-Aufgabe; das Tagesziel selbst stellt nur ER um. */
+const neuProTag = Math.max(1, ziel - wdhPlaetze - 1);
+const lerntage = Math.ceil(neu / neuProTag);
+const bis = new Date(heute); bis.setDate(bis.getDate() + lerntage);
+console.log(neu > 0
+  ? `Neue Wörter: ${neu} nie beantwortet, ${neuProTag} am Tag → noch etwa ${lerntage} Lerntage (≈ ${bis.toLocaleDateString('de-DE')})`
+  : 'Neue Wörter: alle mindestens einmal beantwortet');
+if (ziel > 10 && neu === 0)
+  console.log(`⏰ Alle neuen Wörter waren einmal dran, das Tagesziel steht noch auf ${ziel} — Erinnerung fällig: wieder auf 10 (sein Wunsch vom 25.09.2026).`);
 console.log(`Heute fällig: Box 1 ${faellig[1]} · Box 2–5 ${faellig[2] + faellig[3] + faellig[4] + faellig[5]} (Box 5: ${faellig[5]})`);
 console.log(`Box 5 kostet dauerhaft ≈ ${box5ProTag.toFixed(1)} Wiederholungen am Tag · älteste fällige Wiederholung wartet ${wartet} Tag(e)`);
 const knapp = box5ProTag >= wdhPlaetze || wartet > 14;
