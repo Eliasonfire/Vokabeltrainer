@@ -66,8 +66,31 @@ function offeneRundeStand(){
   const g = LS.get(OFFENE_RUNDE, null);
   if (!g || !Array.isArray(g.ids) || typeof g.idx !== 'number') return null;
   if (g.tag !== todayStr(0)) return null;
-  const fehlt = g.ids.length - g.idx;
-  return fehlt > 0 ? { fehlt, gesamt: g.ids.length } : null;
+  /* Dieselbe Größe wie beim Fortsetzen (aufgefüllt bis zum Tagesziel) — sonst
+     stünde hier „6 Karten fehlen", und die Runde zeigte danach 0/10. */
+  let gesamt = g.ids.length;
+  const ziel = rundenZiel(g);
+  if (gesamt < ziel && typeof currentPool === 'function'){
+    const drin = new Set(g.ids.map(String));
+    gesamt = Math.min(ziel, gesamt + currentPool().filter(w => !drin.has(String(w.id))).length);
+  }
+  const fehlt = gesamt - g.idx;
+  return fehlt > 0 ? { fehlt, gesamt } : null;
+}
+
+/* ⛔⛔ Bis wohin eine fortgesetzte Runde aufgefüllt wird: SEIT 24.09.2026
+   mindestens bis zum Tagesziel. Elias, mit Bild der Runde: „hier wird mir 0/6
+   angezeigt obwohl mein tagesziel 10 sind. diesen fehler hatten wir schonmal.
+   das muss dringend und schnell behoben werden". Eine Runde, die zu klein
+   GEBAUT wurde (beim Bau weniger fällig, andere Auswahl, halber Bestand), blieb
+   bis dahin so klein wie beim Bau — „eine bewusst kleinere Runde bleibt klein"
+   war MEINE Annahme vom 23.09., nicht seine. Aufgefüllt wird weiter nur aus
+   currentPool(), also nur Fälliges aus seiner JETZIGEN Auswahl: ist wirklich
+   weniger fällig, bleibt die Runde kleiner. Deckel „Aus" (0): die Größe beim Bau. */
+function rundenZiel(g){
+  const deckel = (typeof tagesDeckel === 'function') ? (Number(tagesDeckel()) || 0) : 0;
+  const beimBau = Number(g && g.ziel) > 0 ? Number(g.ziel) : ((g && g.ids) ? g.ids.length : 0);
+  return Math.max(beimBau, deckel);
 }
 
 /* ⭐ Welche Karte hat eine getauschte ersetzt? (23.09.2026) Zuerst der Tausch
@@ -117,8 +140,7 @@ function offeneRundeFortsetzen(){
      Eine Sicherung von vor v574 kennt ihre Größe nicht — dann gilt „Karten pro
      Tag" (tagesDeckel). Gibt das Fällige nicht genug her, bleibt sie kleiner:
      erfunden wird keine Karte. */
-  const ziel = Number(g.ziel) > 0 ? Number(g.ziel)
-    : Math.max(g.ids.length, (typeof tagesDeckel === 'function') ? (Number(tagesDeckel()) || 0) : 0);
+  const ziel = rundenZiel(g);
   if (words.length < ziel && typeof currentPool === 'function'){
     const drin = new Set(words.map(w => String(w.id)));
     for (const w of currentPool()){

@@ -208,7 +208,14 @@ pruefe('keine Karte doppelt', 10, new Set(f1.ctx.SESSION.words.map(w => w.id)).s
 const ziel8 = JSON.stringify({ tag: HEUTE, ids: acht.map(w => String(w.id)), idx: 0, lautIds: [], ziel: 8, zeit: 1 });
 const f2 = umgebung({ vt_offeneRunde: ziel8 }, faellig, HEUTE, voll);
 f2.ctx.RUF.offeneRundeFortsetzen();
-pruefe('eine bewusst kleinere Runde bleibt klein (Kapitel abgewählt)', 8, f2.ctx.SESSION.words.length);
+/* ⛔ Bis 24.09.2026 stand hier „eine bewusst kleinere Runde bleibt klein" (8) —
+   meine Annahme. Elias: „hier wird mir 0/6 angezeigt obwohl mein tagesziel 10
+   sind". Jetzt: bis zum Tagesziel, soweit fällig. */
+pruefe('eine zu klein gebaute Runde wird bis zum Tagesziel aufgefüllt (sein 0/6)', 10, f2.ctx.SESSION.words.length);
+const f2b = umgebung({ vt_offeneRunde: ziel8 }, faellig, HEUTE,
+  { tagesDeckel: () => 10, currentPool: () => acht.slice() });
+f2b.ctx.RUF.offeneRundeFortsetzen();
+pruefe('ist wirklich nur so viel fällig (Kapitel abgewählt), bleibt sie klein', 8, f2b.ctx.SESSION.words.length);
 const f3 = umgebung({ vt_offeneRunde: alt8 }, faellig, HEUTE,
   { tagesDeckel: () => 10, currentPool: () => faellig.slice(0, 9) });
 f3.ctx.RUF.offeneRundeFortsetzen();
