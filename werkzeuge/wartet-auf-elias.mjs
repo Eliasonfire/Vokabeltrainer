@@ -1315,8 +1315,14 @@ try {
     const fuerIhn = (bewertung.kandidaten || []).filter(k =>
       k.urteil === 'regel' || k.urteil === 'abweichung' || k.urteil === 'unbelegt');
     const zahl = (art) => fuerIhn.filter(k => k.urteil === art).length;
+    /* ⚠️ Bis zum 24.09.2026 stand im Titel fest „die sieben". Mit Folge 22 kam
+       eine achte Entscheidung dazu, und der Titel hätte weiter „sieben" gesagt,
+       während darunter acht Zeilen stehen. Die Zahl kommt deshalb aus der Liste. */
+    const ZAHLWORT = ['keine', 'eine', 'zwei', 'drei', 'vier', 'fünf', 'sechs', 'sieben',
+      'acht', 'neun', 'zehn', 'elf', 'zwölf'];
     if (fuerIhn.length) posten.push({
-      titel: 'Regelkandidaten: die sieben, die ich nicht allein entscheiden kann',
+      titel: 'Regelkandidaten: die ' + (ZAHLWORT[fuerIhn.length] || fuerIhn.length)
+        + ', die ich nicht allein entscheiden kann',
       zahl: fuerIhn.length, einheit: 'Entscheidungen',
       dazu: 'aus ' + bewertung.gesamt + ' Fundstellen · ' + bewertung.vonMir + ' habe ich selbst entschieden',
       auswahl: true,
@@ -1469,7 +1475,7 @@ const LAUFEND = [
      seither `regelkandidaten-v2`: die Knöpfe fragen etwas anderes, alte
      v1-Antworten würden stumm falsch zugeordnet. */
   ['Regelkandidaten freigeben', '2GJFK49B8LvWJaBu337qU4',
-   'die sieben, die ich nicht allein entscheiden kann — Schlüssel regelkandidaten-v2'],
+   'die, die ich nicht allein entscheiden kann — Schlüssel regelkandidaten-v2'],
   /* ⛔ Diese drei tragen einen eigenen Speicher — also deine Antworten — und
      standen bis zum 20.08.2026 auf KEINER Liste. Eine Adresse, die man nicht
      findet, ist so gut wie keine; und wer eine davon ohne ihre URL neu

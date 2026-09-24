@@ -157,8 +157,9 @@ for (const sorte of ['regel', 'abweichung', 'unbelegt']) {
 
 /* ====================== Die Nachlese ====================================
    ⛔ Sie ist nicht Beiwerk. Ohne sie müsste Elias mir glauben, dass die
-   anderen 88 zu Recht wegfallen — und „vertrau mir" ist bei 88 Stück keine
-   Grundlage. Zugeklappt, damit sie die sieben Entscheidungen nicht zudeckt. */
+   anderen zu Recht wegfallen — und „vertrau mir" ist bei rund hundert Stück
+   keine Grundlage (22.09.: 88, 24.09. nach Folge 22: 102). Zugeklappt, damit
+   sie die Entscheidungen nicht zudeckt. */
 const nachleseZeilen = vonMir.map(k =>
   `<li><span class="nid">F${k.folge} ${esc(k.zeitmarke)}</span>`
   + `<span class="nurteil ${k.urteil === 'weg' ? 'aus' : 'da'}">`
