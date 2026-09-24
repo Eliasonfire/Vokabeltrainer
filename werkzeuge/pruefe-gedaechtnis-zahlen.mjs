@@ -129,7 +129,9 @@ pruefe('K2: SITZT_MEILEN', '[25, 50, 75, 100, 150, 200, 300]',
 const kern = fs.readFileSync(REPO + '/js/kern.js', 'utf8');
 pruefe('K3: INTERVALS', '{1:0, 2:1, 3:3, 4:7, 5:16}',
   (kern.match(/const INTERVALS = (\{[^}]+\})/) || [])[1]);
-pruefe('K3: DECKEL_ANTEIL_BOX1', '0.4',
+/* 25.09.2026: 0.4 → 0.5 — fünf zu fünf plus ein Box-1-Platz fürs am längsten
+   falsche Wort (Elias: „das klingt gut. mach das"). */
+pruefe('K3: DECKEL_ANTEIL_BOX1', '0.5',
   (kern.match(/const DECKEL_ANTEIL_BOX1 = ([\d.]+)/) || [])[1]);
 
 /* r3: die Wortartenverteilung */
@@ -149,8 +151,11 @@ pruefe('r3: 15 Partikeln', 15, v.filter(w => w.type === 'particle').length);
    (id 'uebersetzen', nr 13) kam dazu, ohne Hinweis; die 11 bleiben. Nachgezogen
    erst am 23.09., 20:59 — der Prüfer stand bis dahin rot. */
 const ueb = fs.readFileSync(REPO + '/js/uebung.js', 'utf8');
-pruefe('a2: 13 Uebungsarten', 13, (ueb.match(/^\s*id\s*:\s*'[^']+',\s*nr\s*:/gm) || []).length);
-pruefe('a2: 11 mit Hinweis', 11, (ueb.match(/^\s*hinweis\s*:/gm) || []).length);
+/* 24.09.2026 (v593, `be78b67`): 13 → 15 — Fragewort (14) und Pronomen (15), beide
+   mit Hinweis, also 11 → 13. Elias: „insgesamt 15 sätze bei gemischt damit ich
+   alle mache". */
+pruefe('a2: 15 Uebungsarten', 15, (ueb.match(/^\s*id\s*:\s*'[^']+',\s*nr\s*:/gm) || []).length);
+pruefe('a2: 13 mit Hinweis', 13, (ueb.match(/^\s*hinweis\s*:/gm) || []).length);
 
 /* Fachbegriffe (Oberflaechenpruefung) */
 const fach = fs.readFileSync(REPO + '/data/fachbegriffe.js', 'utf8');

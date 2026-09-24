@@ -397,8 +397,13 @@ document.getElementById('themenBlatt').addEventListener('click', (e)=>{
 
 /* Woher stammt der Satz? Bei Lehrbuchsaetzen ist die Seite die eigentliche
    Auskunft - danach kann Elias im Buch nachschlagen. */
+/* ⛔ Bis 25.09.2026 stand über JEDEM Satz mit `seite` „Madina Buch 1" — auch
+   über den Sätzen aus dem Madina-Schlüssel 3 (sk3-…: „Madina Buch 1, S. 58"
+   war falsch) und über denen aus seinem Bayna-Yadayk-Buch. Das Werk steht im
+   Satz (`werk`); ohne Angabe bleibt es Madina Buch 1, wie bei allen älteren. */
+const HERKUNFT_WERK = { 'madina-schluessel-3': 'Madina-Schlüssel 3', 'bayna-yadayk-1': 'Bayna Yadayk 1' };
 function herkunft(w){
-  if (w.seite) return `Madina Buch 1, S. ${w.seite}`;
+  if (w.seite) return `${HERKUNFT_WERK[w.werk] || 'Madina Buch 1'}, S. ${w.seite}`;
   /* Ohne diese Zeile stünde „Kap. undefined" über dem Satz: er hat kein Kapitel. */
   if (w.laengerSatz) return 'Längerer Satz aus deinen Wörtern';
   return kapitelBeschriftung(w);

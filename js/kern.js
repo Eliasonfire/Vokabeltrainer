@@ -3145,9 +3145,16 @@ function currentPool(){
    Wer wissen will, wie viel wirklich offen ist — die Statistik —, fragt
    weiter dort. */
 const DECKEL_AUS = 0;
-/* 4 von 10 für Box 1: das baut den Stau von 80 in 20 Tagen ab und lässt
-   trotzdem 6 Plätze für die Wiederholungen, an denen das Behalten hängt. */
-const DECKEL_ANTEIL_BOX1 = 0.4;
+/* ⭐⭐ SEIT 25.09.2026 FÜNF ZU FÜNF (vorher 4 von 10 für Box 1, seit 07.09.).
+   Elias zum Plan „5 an Box 1, 5 an Box 2 bis 5; ein Box-1-Platz immer für das
+   Wort, das du am längsten falsch hattest; die anderen zuerst neue, dann
+   weitere falsche; angefangene Runde nach derselben Regel auffüllen": „das
+   klingt gut. mach das".
+   Gemessen vorher (24.09., sein Stand): morgen 211 fällig, davon Box 1: 159
+   (61 nie beantwortet) — die 4 Box-1-Plätze gingen komplett an neue Karten,
+   rund 100 falsch beantwortete kamen wochenlang nicht dran. Die Wiederholungen
+   behalten 5 feste Plätze (Box 5 allein braucht bei ihm ≈ 3,7 am Tag). */
+const DECKEL_ANTEIL_BOX1 = 0.5;
 
 function tagesDeckel(){
   const d = SETTINGS && SETTINGS.tagesDeckel;
@@ -3202,7 +3209,13 @@ function tagesAuswahl(pool, deckel){
   if (neu.length < platzNeu) { platzWdh += platzNeu - neu.length; platzNeu = neu.length; }
   if (wdh.length < platzWdh) { platzNeu += platzWdh - wdh.length; platzWdh = wdh.length; }
 
-  const gewaehlt = neu.slice(0, platzNeu).concat(wdh.slice(0, platzWdh));
+  /* ⭐ Ein Box-1-Platz gehört dem Wort, das er am längsten falsch hatte (seit
+     25.09.2026, siehe DECKEL_ANTEIL_BOX1): die erste schon beantwortete
+     Box-1-Karte in Pool-Reihenfolge — die wartet am längsten. Neue Karten
+     behalten die übrigen Plätze zuerst (neueZuerst), danach weitere falsche. */
+  const altFalsch = neu.find(w => !nieAbgefragt(w));
+  const box1Wahl = (altFalsch && platzNeu > 0) ? [altFalsch].concat(neu.filter(w => w !== altFalsch)) : neu;
+  const gewaehlt = box1Wahl.slice(0, platzNeu).concat(wdh.slice(0, platzWdh));
   /* ⛔ Die Reihenfolge des Pools wiederherstellen. Ohne das kämen erst alle
      Box-1-Karten und dann alle Wiederholungen — und der Fachbegriff-Takt in
      `fachbegriffTakt()` würde auf eine sortierte statt gemischte Liste

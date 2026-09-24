@@ -396,5 +396,31 @@ const LEHRBUCH_SAETZE = [
   { id: 'sk3-208-1', werk: 'madina-schluessel-3', vokalisationErgaenzt: true, seite: 208, kapitel: 24,
     gedruckt: 'vollstaendig vokalisiert (هَؤُلاءِ ohne Fatha auf dem Lam)',
     sentAr: 'هَؤُلَاءِ هُنَّ الْمُسْلِمَاتُ.',
-    sentDe: 'Diese sind die Muslima (muslimischen Frauen).' }
+    sentDe: 'Diese sind die Muslima (muslimischen Frauen).' },
+  /* ⭐ Bayna Yadayk 1 (sein Buch, Samsung-Archiv „Arabya Bayna Yadayk 1A"),
+   * 25.09.2026. Elias: „auch möchte ich, dass die sätze im satzmodus ein
+   * bisschen anteil an den neusten vokabeln haben … eine gute balance soll da
+   * sein" — und die Fragewort-Übung braucht Fragesätze. Buchseite 82 = PDF-S. 104
+   * (Lektion 28, Kapitel 4 — sein neuestes), Buchseite 2 = PDF-S. 24 (Lektion 1).
+   * Wortlaut vom 600-dpi-Bild (scratchpad/by600, Sitzung 08c1f540). Der Druck
+   * ist fast voll vokalisiert; ERGÄNZT nur, was die Schrift erzwingt (Fatha vor
+   * Alif und ى, Sukun am Artikel-Lam, فِي, وَ, إِلَى) und بَعْدَ, das auf derselben
+   * Seite voll gedruckt steht → vokalisationErgaenzt. Das Deutsch ist MEINE
+   * Übersetzung, im Buch steht keins. ⚠️ Vier weitere Sätze derselben Seite
+ * („Ich wache beim Fajr auf", „Schläfst du nach dem Gebet?", „Was machst du
+ * nach dem Gebet?", „Nein, ich fahre mit dem Bus") wieder herausgenommen: der
+ * Satzzerleger liest أَسْتَيْقِظُ/أَذْهَبُ ohne Bayna-Yadayk-Wortschatz als Nomen
+ * (pruefe-saetze.js) und erkennt بَعْدَ/عِنْدَ + Genitiv dort nicht als Iḍāfa
+ * (test-zarf-als-mudaf.mjs). Erst den Zerleger festigen, dann wieder aufnehmen
+ * (To-Do). Nicht genommen: Sätze, deren Endung im
+   * Druck nicht sicher zu lesen war (sie wäre eigene Ḥaraka). */
+  { id: 'by1-82-1', werk: 'bayna-yadayk-1', seite: 82, kapitel: 4, vokalisationErgaenzt: true,
+    gedruckt: 'مَتى ohne Fatha auf dem Ta, sonst vokalisiert',
+    sentAr: 'مَتَى تَسْتَيْقِظُ؟', sentDe: 'Wann wachst du auf?' },
+  { id: 'by1-82-5', werk: 'bayna-yadayk-1', seite: 82, kapitel: 4, vokalisationErgaenzt: true,
+    gedruckt: 'ومَتى und إلى ohne Zeichen am Anfang/Ende, الـمَدْرَسَةِ ohne Sukun am Lam',
+    sentAr: 'وَمَتَى تَذْهَبُ إِلَى الْمَدْرَسَةِ؟', sentDe: 'Und wann gehst du zur Schule?' },
+  { id: 'by1-2-1', werk: 'bayna-yadayk-1', seite: 2, kapitel: 1, vokalisationErgaenzt: true,
+    gedruckt: 'حالُكَ ohne Fatha auf dem Ha, sonst vokalisiert',
+    sentAr: 'وَكَيْفَ حَالُكَ أَنْتَ؟', sentDe: 'Und wie geht es dir?' }
 ];
