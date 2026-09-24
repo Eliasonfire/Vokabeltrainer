@@ -173,18 +173,40 @@ const FACHBEGRIFF_AUFTRAG = {
 
   'gram-awlad':      '16.09.2026 — „die vokabeln die ich dort aufgeschrieben habe mit rot die brauche ich auch als karteikarten“',
   'gram-hayya-bina': '16.09.2026 — „die vokabeln die ich dort aufgeschrieben habe mit rot die brauche ich auch als karteikarten“',
+
+  /* ⭐ SEINE „HAND VOLL“, erste Antwort (24.09.2026, 05:00). Auf die Liste der 22
+     ruhenden vom Vorabend („Sag mir einfach die, die du wiederhaben willst“)
+     zitierte er „Genitivverbindung (Iḍāfa)“ und „Zeit- oder Ortsangabe (Ẓarf)“:
+     „die sollen wieder da sein und bleiben“, zur Iḍāfa noch einmal „das auch“,
+     und auf meine Rückmeldung dazu „als karteikarten“.
+     ⚠️ مُضَافٌ-Fall NICHT stillschweigend übertragen: die Kapitel-24-Karte 50474
+     „(gr) Genitivverbindung“ ist bei ihm einzeln freigeschaltet und bleibt. Ob
+     die beiden zu EINER Karte werden (`buchTausch`, wie bei gram-mudaf), hat er
+     nicht gesagt — das steht als Frage auf der Warteseite (Buchtausch-Posten). */
+  'gram-idafa': '24.09.2026 — „die sollen wieder da sein und bleiben“ · „als karteikarten“',
+  'gram-zarf':  '24.09.2026 — „die sollen wieder da sein und bleiben“ · „als karteikarten“',
 };
 
 /* ⛔ AUSDRÜCKLICH ABBESTELLT — diese fragt auch die Warteseite nicht mehr.
    Die übrigen ruhenden stehen dort zur Wahl („die hand voll weitere“); diese
-   vier hat er selbst beim Namen abgelehnt. Eine Kennung darf nie zugleich in
+   hat er selbst beim Namen abgelehnt. Eine Kennung darf nie zugleich in
    FACHBEGRIFF_AUFTRAG stehen — sagt er später doch ja, fliegt sie HIER raus,
-   mit seinem neuen Satz dort. werkzeuge/pruefe-fachbegriff-auftrag.mjs prüft das. */
+   mit seinem neuen Satz dort. werkzeuge/pruefe-fachbegriff-auftrag.mjs prüft das.
+   24.09.2026, 05:00: auf die Liste der ruhenden vom Vorabend zitierte er die
+   neun „Bis heute nur im Hörmodus“ (Verbalsatz, Sonnenbuchstaben, Hamzat
+   al-waṣl, Voranstellung, Hinweiswort, Partikel, Verb, Dehnung, Iʿrāb):
+   „sollen aus hörmodus raus“. Drei davon standen schon hier. */
 const FACHBEGRIFF_ABBESTELLT = {
   'gram-mutabaqa':        '23.09.2026 — „das ist keine vokabel die ich lernen möchte“',
-  'gram-jumla-filiya':    '22.09.2026 — „mach diese drei weg und kümmere dich erstmal darum das das auch nicht wieder passiert“',
-  'gram-huruf-schamsiya': '22.09.2026 — „mach diese drei weg und kümmere dich erstmal darum das das auch nicht wieder passiert“',
-  'gram-hamzat-wasl':     '22.09.2026 — „mach diese drei weg und kümmere dich erstmal darum das das auch nicht wieder passiert“',
+  'gram-jumla-filiya':    '22.09.2026 — „mach diese drei weg und kümmere dich erstmal darum das das auch nicht wieder passiert“ · 24.09.2026 — „sollen aus hörmodus raus“',
+  'gram-huruf-schamsiya': '22.09.2026 — „mach diese drei weg und kümmere dich erstmal darum das das auch nicht wieder passiert“ · 24.09.2026 — „sollen aus hörmodus raus“',
+  'gram-hamzat-wasl':     '22.09.2026 — „mach diese drei weg und kümmere dich erstmal darum das das auch nicht wieder passiert“ · 24.09.2026 — „sollen aus hörmodus raus“',
+  'gram-taqdim':          '24.09.2026 — „sollen aus hörmodus raus“',
+  'gram-ismul-isara':     '24.09.2026 — „sollen aus hörmodus raus“',
+  'gram-harf':            '24.09.2026 — „sollen aus hörmodus raus“',
+  'gram-fil':             '24.09.2026 — „sollen aus hörmodus raus“',
+  'gram-madd':            '24.09.2026 — „sollen aus hörmodus raus“',
+  'gram-irab':            '24.09.2026 — „sollen aus hörmodus raus“',
 };
 
 const FACHBEGRIFF_VOKABELN = [
