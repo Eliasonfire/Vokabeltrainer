@@ -406,20 +406,30 @@ const LEHRBUCH_SAETZE = [
    * ist fast voll vokalisiert; ERGÄNZT nur, was die Schrift erzwingt (Fatha vor
    * Alif und ى, Sukun am Artikel-Lam, فِي, وَ, إِلَى) und بَعْدَ, das auf derselben
    * Seite voll gedruckt steht → vokalisationErgaenzt. Das Deutsch ist MEINE
-   * Übersetzung, im Buch steht keins. ⚠️ Vier weitere Sätze derselben Seite
- * („Ich wache beim Fajr auf", „Schläfst du nach dem Gebet?", „Was machst du
- * nach dem Gebet?", „Nein, ich fahre mit dem Bus") wieder herausgenommen: der
- * Satzzerleger liest أَسْتَيْقِظُ/أَذْهَبُ ohne Bayna-Yadayk-Wortschatz als Nomen
- * (pruefe-saetze.js) und erkennt بَعْدَ/عِنْدَ + Genitiv dort nicht als Iḍāfa
- * (test-zarf-als-mudaf.mjs). Erst den Zerleger festigen, dann wieder aufnehmen
- * (To-Do). Nicht genommen: Sätze, deren Endung im
+   * Übersetzung, im Buch steht keins. Vier Sätze (by1-82-2, -3,
+   * -4, -6) waren am 25.09. kurz wieder draußen: der Satzzerleger las die
+   * Präsensformen (ich/du wache auf, schläfst, machst, fahre) nicht als Verb.
+   * Seit istMudariForm() in js/irab.js stehen sie wieder da. Nicht genommen:
+   * Sätze, deren Endung im
    * Druck nicht sicher zu lesen war (sie wäre eigene Ḥaraka). */
   { id: 'by1-82-1', werk: 'bayna-yadayk-1', seite: 82, kapitel: 4, vokalisationErgaenzt: true,
     gedruckt: 'مَتى ohne Fatha auf dem Ta, sonst vokalisiert',
     sentAr: 'مَتَى تَسْتَيْقِظُ؟', sentDe: 'Wann wachst du auf?' },
+  { id: 'by1-82-2', werk: 'bayna-yadayk-1', seite: 82, kapitel: 4, vokalisationErgaenzt: true,
+    gedruckt: 'الفَجْرِ ohne Sukun am Lam, sonst vokalisiert',
+    sentAr: 'أَسْتَيْقِظُ عِنْدَ الْفَجْرِ.', sentDe: 'Ich wache beim Fajr auf.' },
+  { id: 'by1-82-3', werk: 'bayna-yadayk-1', seite: 82, kapitel: 4, vokalisationErgaenzt: true,
+    gedruckt: 'تَنامُ und الصَّلاةِ ohne Fatha vor dem Alif',
+    sentAr: 'هَلْ تَنَامُ بَعْدَ الصَّلَاةِ؟', sentDe: 'Schläfst du nach dem Gebet?' },
+  { id: 'by1-82-4', werk: 'bayna-yadayk-1', seite: 82, kapitel: 4, vokalisationErgaenzt: true,
+    gedruckt: 'ماذا ohne Zeichen, بَعدَ ohne Sukun, الصَّلاةِ ohne Fatha vor dem Alif',
+    sentAr: 'مَاذَا تَفْعَلُ بَعْدَ الصَّلَاةِ؟', sentDe: 'Was machst du nach dem Gebet?' },
   { id: 'by1-82-5', werk: 'bayna-yadayk-1', seite: 82, kapitel: 4, vokalisationErgaenzt: true,
     gedruckt: 'ومَتى und إلى ohne Zeichen am Anfang/Ende, الـمَدْرَسَةِ ohne Sukun am Lam',
     sentAr: 'وَمَتَى تَذْهَبُ إِلَى الْمَدْرَسَةِ؟', sentDe: 'Und wann gehst du zur Schule?' },
+  { id: 'by1-82-6', werk: 'bayna-yadayk-1', seite: 82, kapitel: 4, vokalisationErgaenzt: true,
+    gedruckt: 'لا ohne Zeichen, بِالحافِلَةِ ohne Sukun am Lam und ohne Fatha vor dem Alif',
+    sentAr: 'لَا، أَذْهَبُ بِالْحَافِلَةِ.', sentDe: 'Nein, ich fahre mit dem Bus.' },
   { id: 'by1-2-1', werk: 'bayna-yadayk-1', seite: 2, kapitel: 1, vokalisationErgaenzt: true,
     gedruckt: 'حالُكَ ohne Fatha auf dem Ha, sonst vokalisiert',
     sentAr: 'وَكَيْفَ حَالُكَ أَنْتَ؟', sentDe: 'Und wie geht es dir?' }

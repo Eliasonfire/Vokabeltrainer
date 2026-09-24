@@ -106,7 +106,7 @@ schreibt. Spaltenzahl und Reihenfolge deshalb nicht ändern, Inhalt gern.
 | A1 | **Wortart** `type` — nie `other`/`vocab` | `vorrat.mjs`, `pruefe-wortfelder.js` | Kategorieansicht, Funktionsanzeige, **6** Übungsarten |
 | A2 | **Wurzel** `root` (nicht bei Partikeln, nicht bei Fachbegriffen) | `vorrat.mjs`, `validate.js` | Wurzelansicht, Wortfamilie |
 | A3 | Bei Nomen: `gender`, `sg`, `pl` | `vorrat.mjs` | `gender`: **Übung 11** · `pl`: eigene Pluralkarte · `sg`: Anzeige und Sprachausgabe |
-| A4 | Bei Adjektiven: `femSg` (und `femPl`) | `vorrat.mjs` | **Übung 13** erzeugt null Aufgaben — und **8** weitere zerlegen den Satz anders |
+| A4 | Bei Adjektiven: `femSg` (und `femPl`) | `vorrat.mjs` | die Übung **„weibliche Form"** (صَغِيرٌ / صَغِيرَةٌ) erzeugt null Aufgaben — und **8** weitere zerlegen den Satz anders |
 | A5 | Bei Verben: `past`, `present`, `imperative`, `masdar` | `vorrat.mjs` | ⭐ **das Iʿrāb-Lexikon** — sie steuern, wie JEDER Satz zerlegt wird |
 | A6 | **Drei Eselsbrücken** nach seiner Rangfolge | `vorrat.mjs`, `pruefe-eselsbruecken.js` | er hat nur den Abzugstext |
 | A7 | **Wortart-Kategorie** (folgt aus A1) · Bedeutungsfeld ist ein Zusatz | `vorrat.mjs` (Wortart), `pruefe-wortfelder.js` (Bedeutungsfeld) | Wort fehlt in der Kategorieansicht — **nicht** in der Statistik, die zählt über `bekannteVokabeln()` |
@@ -786,7 +786,7 @@ fehlt. **Nach dem Eintragen prüfen, ob sie greifen:**
 | **Satz** | **10 bis 12** Übungsarten | `js/uebung.js:529` baut jede der 13 je Satz; بَيْتٌ 10, مَسْجِدٌ 12, قَلَمٌ 12 |
 | **`type`** | Kategorie, Funktionsanzeige, Übung 8 — **6** Übungsarten insgesamt | ⚠️ **nicht** die Statistik |
 | **`gender`** | **eine** Übungsart (11) | ⚠️ **nicht** zwei — Übung 12 liest die Musterliste |
-| **`femSg`** | Übung 13, und **8** weitere zerlegen den Satz anders | `setzeLexikon()` trägt es ins Iʿrāb-Lexikon |
+| **`femSg`** | die Übung „weibliche Form", und **8** weitere zerlegen den Satz anders | `setzeLexikon()` trägt es ins Iʿrāb-Lexikon |
 
 ⛔ **Diese vier Zeilen standen hier bis zum 20.08.2026 falsch** — und zwar,
 obwohl die Korrektur zweihundert Zeilen weiter oben schon eingetragen war. Eine

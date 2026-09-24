@@ -788,6 +788,51 @@ function istMadiForm(w){
   }
   return false;
 }
+/* ⛔⛔ EINE PRÄSENSFORM IST AUCH EIN VERB (25.09.2026, Bayna Yadayk 1, Kap. 4).
+
+   Gemessen mit seiner Auswahl: in «مَتَى تَسْتَيْقِظُ؟» und «وَمَتَى تَذْهَبُ إِلَى
+   الْمَدْرَسَةِ؟» (by1-82-1, by1-82-5) stand das Verb als مُبْتَدَأ da, in
+   «هَلْ تَنَامُ بَعْدَ الصَّلَاةِ؟» sogar als مُبْتَدَأ (مُضَاف). Der Wortschatz führt
+   nur die Form mit ي (يَذْهَبُ) — die Form für „du", „ich", „wir" traf nichts.
+
+   ⭐ Dieselbe Art Regel wie istMadiForm: die Vorsilbe (أ ت ي ن) wird gegen
+   ي getauscht, und nur wenn DAS die Präsensform eines bekannten Verbs ist,
+   gilt das Wort. ⛔ Verglichen wird MIT Vokalzeichen, nicht am Skelett: der
+   Elativ أَكْبَرُ „größer" hat dasselbe Gerüst wie „ich werde alt" — die
+   Vokale trennen, was das Gerüst zusammenwirft.
+   [[skelettvergleich_wirft_information_weg]] · [[allgemeine_regel_statt_listeneintrag]]
+
+   Die Endung des Modus (ـُ, ـَ, ـْ) zählt nicht mit; die Endungen der Personen
+   (ـُونَ, ـِينَ, ـَانِ, ـُوا, ـْنَ, ـِي, ـَا) werden probeweise abgeschnitten. */
+const MUDARI_VORSILBE = /^[أتين]/;   // أ ت ي ن
+const MUDARI_ENDUNGEN = ['ون', 'ين', 'ان', 'وا', 'ن', 'ي', 'ا'];
+const ohneEndvokal = s => String(s).replace(/[ً-ْ]+$/, '');
+function mudariStamm(form){
+  const f = ohneEndvokal(String(form || '').normalize('NFC').replace(/[.،؟!«»:؛]/g, '').trim());
+  return MUDARI_VORSILBE.test(f) ? f.slice(1) : null;
+}
+/* Ohne geladenes Buch kennt die Zerlegung nur diese — sonst hinge sie an
+   seiner Buchauswahl, und Lehrbuchsätze erscheinen in JEDER Auswahl (siehe
+   VERBEN oben). Jede Form ist an einem Satz nachgeschlagen: يَذْهَبُ by1-82-5
+   und -6, يَسْتَيْقِظُ by1-82-1 und -2, يَنَامُ by1-82-3, يَفْعَلُ by1-82-4
+   (Präsensformen aus dem Wortschatz von Bayna Yadayk 1, Kap. 2 und 4). */
+const VERBEN_MUDARI = ['يَذْهَبُ', 'يَسْتَيْقِظُ', 'يَنَامُ', 'يَفْعَلُ'];
+const VERBEN_MUDARI_STAEMME = new Set(VERBEN_MUDARI.map(mudariStamm).filter(Boolean));
+function istMudariForm(w){
+  const rein = String(w || '').normalize('NFC').replace(/[.،؟!«»:؛]/g, '').trim();
+  const bekannt = s => VERBEN_MUDARI_STAEMME.has(s) || !!(LEXIKON_MUDARI && LEXIKON_MUDARI.has(s));
+  for (const form of [rein, rein.replace(/^[وف][َ]?/, '')]){
+    const kern = ohneEndvokal(form);
+    if (!MUDARI_VORSILBE.test(kern) || ohneVokale(kern).length < 3) continue;
+    if (bekannt(kern.slice(1))) return true;
+    for (const e of MUDARI_ENDUNGEN){
+      if (!kern.endsWith(e)) continue;
+      const stamm = ohneEndvokal(kern.slice(0, -e.length));
+      if (ohneVokale(stamm).length >= 3 && bekannt(stamm.slice(1))) return true;
+    }
+  }
+  return false;
+}
 const giltAlsVerb = w => {
   if (traegtTanwin(w)) return false;
   /* ⛔⛔ EIN PERSONALPRONOMEN IST NIE EIN VERB (06.09.2026).
@@ -825,7 +870,7 @@ const giltAlsVerb = w => {
   const genau = wortartGenau(w);
   if (genau && genau !== 'verb') return false;
   if (istInListe(w, NICHT_VERB)) return false;
-  return wortart(w) === 'verb' || istInListe(w, VERBEN) || istMadiForm(w);
+  return wortart(w) === 'verb' || istInListe(w, VERBEN) || istMadiForm(w) || istMudariForm(w);
 };
 
 /* Warum bei manchen Woertern KEINE Kasusendung zu lesen ist — und das kein
@@ -878,8 +923,9 @@ function ohneFragepartikel(w){
    Unterscheidungen - sie meldet dann "unklar" statt zu raten. */
 let LEXIKON = null;         // genau vokalisierte Form -> Wortart
 let LEXIKON_ROH = null;     // Form ohne Vokalzeichen -> Wortart oder "mehrdeutig"
+let LEXIKON_MUDARI = null;  // Präsensformen der Verben ohne Vorsilbe und Endvokal (istMudariForm)
 function setzeLexikon(eintraege){
-  LEXIKON = new Map(); LEXIKON_ROH = new Map();
+  LEXIKON = new Map(); LEXIKON_ROH = new Map(); LEXIKON_MUDARI = new Set();
   const putz = x => String(x).replace(/[.،؟!«»:؛]/g, '').trim();
   const merke = (form, typ, istGrundform) => {
     if (!form) return;
@@ -907,6 +953,10 @@ function setzeLexikon(eintraege){
        Eintrag im Lexikon und passt auf kein Wort im Satz. */
     [v.sg, v.pl, v.femSg, v.femPl, v.past, v.present, v.imperative, v.masdar]
       .forEach(f => einzelformen(f).forEach(einzel => merke(einzel, v.type, false)));
+    if (v.type === 'verb') einzelformen(v.present).forEach(f => {
+      const stamm = mudariStamm(f);
+      if (stamm) LEXIKON_MUDARI.add(stamm);
+    });
   }
 }
 /* Steht das Wort als Ganzes im Wortschatz? Dann faengt es nicht mit einer
@@ -1164,7 +1214,11 @@ function analysiereSatz(satz){
          الْبَيْتُ als نَعْت zu لِلتَّاجِرِ und damit als Kasusfehler. */
       letzterKasus = null; letzteBestimmtheit = null;
     } else if (istZarf(wort)){
-      rolle = 'ظَرْف (Ortsangabe)';
+      /* ⛔ 25.09.2026: hieß hier „(Ortsangabe)" — auch bei بَعْدَ الصَّلَاةِ „nach
+         dem Gebet" und عِنْدَ الْفَجْرِ „bei Tagesanbruch", die eine ZEIT nennen.
+         Jetzt wie der Name seiner Karte zarf-01 (grammar-data.js). Jeder Leser
+         prüft nur `startsWith('ظَرْف')`. */
+      rolle = 'ظَرْف (Zeit-/Ortsangabe)';
       /* ⛔ Nur ein ظَرْف OHNE Besitzendung zieht das naechste Wort in den
          Genitiv. عِنْدِي hat seine Ergaenzung schon; in «عِنْدِي قَلَمٌ» steht
          قَلَمٌ mit Tanwin-Damma, also im Nominativ. Am 19.08.2026 in der

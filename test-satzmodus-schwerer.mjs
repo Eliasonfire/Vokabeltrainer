@@ -145,6 +145,21 @@ function laufe(quelle, still){
   const nummern = U.map(m => m.nr);
   pruefe('die Nummern laufen ohne Lücke von 1 bis ' + U.length,
     nummern.every((n, i) => n === i + 1), nummern.join(','));
+  /* ⛔ 25.09.2026 — IN DER ANZEIGE, nicht nur im Quelltext. Die Liste zeigt die
+     Übungen nach Gruppen (UEB_GRUPPEN: Antippen, Auswählen, Schreiben). Seit
+     v593 standen Fragewort (14) und Pronomen (15) unter „Auswählen", also VOR
+     Übersetzen (13) unter „Schreiben": im Array lief alles 1 bis 15, auf dem
+     Bildschirm stand 12, 14, 15, 13 — und die Prüfung darüber war grün.
+     Elias mit Bildschirmfoto: „ich mag nicht das die 13 in der liste so alleine
+     ganz unten ist. ich möchte das die liste liniar von 1 bis 15 geht ohne das
+     daraus salat gemacht wird eins hier eins dort." Nachgebaut wie in
+     renderUebungsLeiste(): erst die Gruppen in ihrer Reihenfolge, dann der Rest. */
+  const gruppen = (quelle.match(/const UEB_GRUPPEN = \[[\s\S]*?\n\];/) || [''])[0];
+  const arten = [...gruppen.matchAll(/\[\s*'[^']*',\s*'([^']+)'\s*\]/g)].map(m => m[1]);
+  const angezeigt = arten.flatMap(a => U.filter(m => m.art === a))
+    .concat(U.filter(m => !arten.includes(m.art))).map(m => m.nr);
+  pruefe('auf dem Bildschirm (nach Gruppen) laufen die Nummern von 1 bis ' + U.length,
+    arten.length > 0 && angezeigt.every((n, i) => n === i + 1), arten.length ? angezeigt.join(',') : 'UEB_GRUPPEN nicht gefunden');
   const zuordnung = ohneKommentare(quelle).match(/const UEBUNG_WARUM\s*=\s*\{[\s\S]*?\};/);
   pruefe('„Warum?" kennt keine Übung bestimmtheit mehr',
     !!zuordnung && !zuordnung[0].includes("'bestimmtheit'"), zuordnung ? 'steht noch drin' : 'UEBUNG_WARUM fehlt');
@@ -447,6 +462,8 @@ const STOERUNGEN = [
   ['die Frage verrät wieder die Anzahl',
     q => q.replace("return { frage, ziele: treffer, art: 'mehrfach' };",
       "if (treffer.length === 1) return { frage: frage + ' — es ist genau eines.', ziele: treffer, art: 'tippen' };\n  return { frage: frage + ' — es sind ' + treffer.length + '.', ziele: treffer, art: 'mehrfach' };")],
+  ['die Liste springt wieder (Schreiben vor Auswählen: 1–5, 15, 6–14)',
+    q => q.replace("  ['Auswählen',        'wahl'],\n", '').replace("  ['Schreiben',        'schreiben']", "  ['Schreiben',        'schreiben'],\n  ['Auswählen',        'wahl']")],
   ['„Bestimmt?" ist wieder da',
     q => q.replace("const UEBUNGEN = [", "const UEBUNGEN = [\n  { id:'bestimmtheit', nr:0, name:'Bestimmt?', art:'wahl', baue(){ return []; } },")],
   ['die Partikel-Sperre fehlt (إِلَى bekäme die Karte)',

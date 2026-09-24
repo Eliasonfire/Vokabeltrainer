@@ -1066,44 +1066,6 @@ const UEBUNGEN = [
       }).filter(Boolean);
     }
   },
-  /* ⭐⭐ ÜBERSETZEN — Elias' Auftrag vom 22.09.2026, 21:15, im Wortlaut:
-
-     „es sollte auch im satzmodus eine übung geben, wo mir ein satz gegeben wird
-      und den soll ich dann ins deutsche übersetzten. wenn ich falsch mache muss
-      erkannt werden was falsch ist und warum und mir das dann zeigen"
-     „und die richtige deutsche überstzung und halt warum"
-
-     Die Prüfung selbst steht in js/uebersetzen.js — eigene Datei, damit sie im
-     Pflegeplan auftaucht und in den Offline-Vorrat kommt. Hier steht nur, dass
-     es die Übung gibt.
-
-     ⛔⛔ `deVerbergen` IST DER GRUND, WARUM DIESE ÜBUNG SONST WERTLOS WÄRE.
-     renderUebung() setzt die deutsche Übersetzung in JEDER Satzübung unter den
-     arabischen Satz (`uebDe`). Bei allen zwölf anderen ist das eine Hilfe; hier
-     stünde die Lösung über dem Eingabefeld. Das Feld ist neu und heißt nicht
-     „verbergen", sondern sagt, WAS verborgen wird — ein Name wie `verbergen`
-     wäre beim nächsten Lesen nicht mehr zuzuordnen.
-
-     ⚠️ Kein `hinweisVerraet:true`: der Hinweis nennt die beiden Dinge, auf die
-     zu achten ist, aber keine Lösung. Das Feld ist trotzdem Pflicht und steht
-     deshalb ausdrücklich da (pruefe-hinweise.mjs). */
-  {
-    id:'uebersetzen', nr:13, name:'Übersetzen — Arabisch ins Deutsche', art:'schreiben',
-    hinweis:'Achte auf die Bestimmtheit (اَلْ oder Tanwīn) und darauf, wer in der إِضَافَة der Besitzer ist.',
-    hinweisVerraet:false,
-    deVerbergen:true,
-    baue(z, satz){
-      if (!satz || !String(satz.sentDe || '').trim()) return [];
-      /* ⚠️ Ein Satz aus einem einzigen Wort ist keine Übersetzungsaufgabe —
-         dort gäbe es nichts zu entscheiden, und jede der sieben Prüfungen
-         liefe ins Leere. */
-      if (!Array.isArray(z) || z.length < 2) return [];
-      return [{
-        frage:'Übersetze diesen Satz ins Deutsche.',
-        art:'schreiben'
-      }];
-    }
-  },
   /* ⭐⭐ FRAGEWORT EINSETZEN — Elias am 24.09.2026, 22:49, mit Bild der Karte
      „wann": „wie wäre es mit einem satzmodus übung wo ich die passenden
      fragewörter in den satz einfügen muss und zur auswahl halt alle die ich
@@ -1119,7 +1081,7 @@ const UEBUNGEN = [
        wird أَيْنَ nicht gefragt, weil es allein „wo" hieße.
      - مَا ist auch die Verneinung. Gefragt wird nur in einem Fragesatz. */
   {
-    id:'fragewort', nr:14, name:'مَنْ / مَا / أَيْنَ … — Fragewort einsetzen', art:'wahl',
+    id:'fragewort', nr:13, name:'مَنْ / مَا / أَيْنَ … — Fragewort einsetzen', art:'wahl',
     hinweis:'Welches Fragewort gehört hierhin? Die deutsche Zeile sagt, wonach gefragt wird.',
     hinweisVerraet:false,
     baue(z, satz){
@@ -1162,7 +1124,7 @@ const UEBUNGEN = [
      أَنْتَ/أَنْتِ …). Dann wird nur gefragt, wenn das Wort danach Geschlecht
      oder Zahl zeigt — sonst wäre die Lösung geraten. */
   {
-    id:'pronomen', nr:15, name:'هُوَ / هِيَ / أَنْتَ … — Pronomen einsetzen', art:'wahl',
+    id:'pronomen', nr:14, name:'هُوَ / هِيَ / أَنْتَ … — Pronomen einsetzen', art:'wahl',
     hinweis:'Welches Pronomen gehört hierhin? Person, Geschlecht und Zahl zeigen das Wort danach und die deutsche Zeile.',
     hinweisVerraet:false,
     baue(z){
@@ -1187,6 +1149,44 @@ const UEBUNGEN = [
         });
       });
       return out;
+    }
+  },
+  /* ⭐⭐ ÜBERSETZEN — Elias' Auftrag vom 22.09.2026, 21:15, im Wortlaut:
+
+     „es sollte auch im satzmodus eine übung geben, wo mir ein satz gegeben wird
+      und den soll ich dann ins deutsche übersetzten. wenn ich falsch mache muss
+      erkannt werden was falsch ist und warum und mir das dann zeigen"
+     „und die richtige deutsche überstzung und halt warum"
+
+     Die Prüfung selbst steht in js/uebersetzen.js — eigene Datei, damit sie im
+     Pflegeplan auftaucht und in den Offline-Vorrat kommt. Hier steht nur, dass
+     es die Übung gibt.
+
+     ⛔⛔ `deVerbergen` IST DER GRUND, WARUM DIESE ÜBUNG SONST WERTLOS WÄRE.
+     renderUebung() setzt die deutsche Übersetzung in JEDER Satzübung unter den
+     arabischen Satz (`uebDe`). Bei allen anderen ist das eine Hilfe; hier
+     stünde die Lösung über dem Eingabefeld. Das Feld ist neu und heißt nicht
+     „verbergen", sondern sagt, WAS verborgen wird — ein Name wie `verbergen`
+     wäre beim nächsten Lesen nicht mehr zuzuordnen.
+
+     ⚠️ Kein `hinweisVerraet:true`: der Hinweis nennt die beiden Dinge, auf die
+     zu achten ist, aber keine Lösung. Das Feld ist trotzdem Pflicht und steht
+     deshalb ausdrücklich da (pruefe-hinweise.mjs). */
+  {
+    id:'uebersetzen', nr:15, name:'Übersetzen — Arabisch ins Deutsche', art:'schreiben',
+    hinweis:'Achte auf die Bestimmtheit (اَلْ oder Tanwīn) und darauf, wer in der إِضَافَة der Besitzer ist.',
+    hinweisVerraet:false,
+    deVerbergen:true,
+    baue(z, satz){
+      if (!satz || !String(satz.sentDe || '').trim()) return [];
+      /* ⚠️ Ein Satz aus einem einzigen Wort ist keine Übersetzungsaufgabe —
+         dort gäbe es nichts zu entscheiden, und jede der sieben Prüfungen
+         liefe ins Leere. */
+      if (!Array.isArray(z) || z.length < 2) return [];
+      return [{
+        frage:'Übersetze diesen Satz ins Deutsche.',
+        art:'schreiben'
+      }];
     }
   }
 ];
