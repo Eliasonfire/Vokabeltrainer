@@ -4,6 +4,7 @@
  * Aufruf:  node werkzeuge/pruefe-ausgeliefert.mjs
  * Exitcode 0 = alles, was ausgeliefert ist, entspricht der Arbeitskopie
  *          1 = eine ausgelieferte Datei weicht ab (noch nicht veroeffentlicht)
+ *              ODER .deploy/ ist gebaut, aber nicht als hochgeladen belegt
  *          3 = falsch aufgerufen / .deploy fehlt
  *
  * WOZU
@@ -43,6 +44,26 @@ if (!fs.existsSync(DEPLOY)){
   process.exit(3);
 }
 
+/* ⛔⛔ ZUERST: IST .deploy/ UEBERHAUPT OBEN? (24.09.2026)
+   Alles weiter unten vergleicht .deploy/ mit der Arbeitskopie. Aber
+   veroeffentlichen.mjs BAUT .deploy/, bevor es hochlaedt — scheitert der
+   Upload, liegt der neue Stand trotzdem hier, und der Vergleich prueft die
+   Arbeitskopie gegen sich selbst. Am 24.09.2026 um 22:03 so geschehen: npm
+   antwortete E404 auf wrangler 4.139.0, der Upload scheiterte, und dieser
+   Pruefer meldete direkt danach Exit 0. [[deploy_meldet_erfolg_ohne_produktion]]
+   Den Beleg schreibt veroeffentlichen.mjs nur nach einem Upload ohne Fehler,
+   und jeder neue Bau loescht ihn mit dem Ordner. Fehlt er, ist unbekannt, was
+   Elias hat. Bewacht von test-upload-beleg.mjs. */
+const BELEG_NAME = '.hochgeladen.json';
+const BELEG = path.join(DEPLOY, BELEG_NAME);
+if (!fs.existsSync(BELEG)){
+  console.log('⛔ .deploy/ ist gebaut, aber NICHT als hochgeladen belegt — der letzte Upload');
+  console.log('   ist gescheitert oder wurde abgebrochen. Was Elias hat, ist unbekannt.');
+  console.log('   Nochmal ausliefern: node werkzeuge/veroeffentlichen.mjs --mit-daten');
+  process.exit(1);
+}
+const beleg = JSON.parse(fs.readFileSync(BELEG, 'utf8'));
+
 /* ⛔ HIER STAND EINE AUSNAHME MIT EINER VERMUTUNG ALS BEGRUENDUNG: Bilder und
    Schriften wurden uebersprungen, weil sie sich "praktisch nie aendern und
    den Lauf nur langsam machen wuerden". Gemessen am 21.08.2026:
@@ -65,6 +86,7 @@ const dateien = [];
   const voll = path.join(DEPLOY, rel);
   for (const e of fs.readdirSync(voll, { withFileTypes: true })){
     const r = rel ? path.join(rel, e.name) : e.name;
+    if (r === BELEG_NAME) continue;   /* der Beleg selbst ist keine App-Datei */
     if (e.isDirectory()) geh(r);
     else dateien.push(r.replace(/\\/g, '/'));
   }
@@ -220,5 +242,7 @@ if (fehlend){
   console.log('⚠️  ' + fehlend + ' Datei(en) liegen oben, aber nicht mehr hier — beim');
   console.log('   naechsten Veroeffentlichen verschwinden sie. Kein Fehler.');
 }
+console.log('  ok   hochgeladen ' + new Date(beleg.hochgeladen).toLocaleString('de-DE')
+  + ' (' + beleg.wrangler + ')');
 console.log('✅ Alles Ausgelieferte entspricht der Arbeitskopie (Zeilenenden ignoriert).');
 process.exit(0);

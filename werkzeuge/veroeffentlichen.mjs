@@ -43,6 +43,26 @@ const WURZEL  = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const ZIEL    = path.join(WURZEL, '.deploy');
 const PROJEKT = 'vokabeltrainer';
 
+/* ⛔⛔ WRANGLER MIT FESTER VERSION (seit 24.09.2026).
+   Bis dahin stand unten `npx.cmd wrangler` ohne Version — npx fragt dann bei
+   JEDEM Lauf nach der neuesten. Am 24.09.2026 um 22:03 war das 4.139.0,
+   Minuten alt, und npm antwortete auf ihr Paket mit E404: „⛔ Der Upload ist
+   fehlgeschlagen". Derselbe Befehl ging zwei Minuten spaeter durch.
+   Gemessen in den Wrangler-Protokollen (%APPDATA%\xdg.config\.wrangler\logs):
+   295 Uploads dieses Projekts mit 16 verschiedenen Versionen — gewechselt hat
+   sie niemand mit Absicht. 4.138.0 trug die Uploads am 24.09. um 12:56, 21:53
+   und 21:58. Der Korantrainer nagelt seit August fest (4.120.1), die
+   KV-Werkzeuge hier auch (4.124.0) — nur dieser Aufruf nicht.
+   [[entscheidung_gilt_fuer_das_zweite_werkzeug]]
+   ⚠️ Eine neuere Fassung nur mit Absicht: erst
+   `npx.cmd --yes wrangler@<neu> pages deployment list --project-name=vokabeltrainer`,
+   dann hier aendern. */
+const WRANGLER = 'wrangler@4.138.0';
+
+/* Der Beleg, dass .deploy/ OBEN angekommen ist — siehe „Hochladen" unten.
+   Liegt IN .deploy/, damit jeder neue Bau ihn mit dem Ordner loescht. */
+const BELEG = path.join(ZIEL, '.hochgeladen.json');
+
 const nurPruefen = process.argv.includes('--pruefen');
 const mitDaten   = process.argv.includes('--mit-daten');
 
@@ -305,6 +325,8 @@ try {
 if (nurPruefen){ console.log('--pruefen: nichts gebaut, nichts hochgeladen.'); process.exit(0); }
 
 /* ---------- Ordner bauen ---------- */
+/* ⚠️ Das loescht auch den Upload-Beleg: ab hier ist .deploy/ NICHT mehr belegt
+   oben, bis der Upload unten gelingt. */
 fs.rmSync(ZIEL, { recursive: true, force: true });
 dabei.forEach(d => {
   const von  = path.join(WURZEL, d.rel.replace(/\//g, path.sep));
@@ -318,13 +340,26 @@ console.log('Ordner .deploy gebaut: ' + dabei.length + ' Dateien, ' + mb(gesamt)
 console.log('');
 console.log('Lade zu Cloudflare hoch …');
 try {
-  execSync(`npx.cmd wrangler pages deploy "${ZIEL}" --project-name=${PROJEKT} --commit-dirty=true`,
+  execSync(`npx.cmd --yes ${WRANGLER} pages deploy "${ZIEL}" --project-name=${PROJEKT} --commit-dirty=true`,
            { cwd: WURZEL, stdio: 'inherit' });
 } catch (e) {
   console.error('');
   console.error('⛔ Der Upload ist fehlgeschlagen. Die Seite ist NICHT aktualisiert.');
   process.exit(1);
 }
+/* ⛔⛔ DER UPLOAD-BELEG (24.09.2026). .deploy/ wird oben GEBAUT, bevor
+   hochgeladen wird — nach einem gescheiterten Upload liegt der neue Stand
+   also trotzdem hier. pruefe-ausgeliefert.mjs verglich genau diesen Ordner mit
+   der Arbeitskopie und meldete am 24.09. um 22:03, direkt nach dem Fehlschlag,
+   Exit 0: „Alles Ausgelieferte entspricht der Arbeitskopie".
+   [[deploy_meldet_erfolg_ohne_produktion]]
+   Seitdem gilt: .deploy/ ist nur dann „oben", wenn dieser Beleg darin liegt.
+   Geschrieben wird er NUR hier, nach einem Upload ohne Fehler; der naechste
+   Bau loescht ihn mit dem ganzen Ordner. Ein abgebrochener Lauf hinterlaesst
+   also keinen. Bewacht von test-upload-beleg.mjs. */
+fs.writeFileSync(BELEG, JSON.stringify({
+  hochgeladen: new Date().toISOString(), wrangler: WRANGLER, dateien: dabei.length,
+}, null, 2) + '\n');
 console.log('');
 console.log('✅ Veroeffentlicht.');
 
