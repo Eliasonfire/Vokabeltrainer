@@ -102,6 +102,14 @@ const dep = lade(P + '.deploy' + path.sep);
 if (!dep) {
   console.log('  kein .deploy/ vorhanden — es wurde noch nie veroeffentlicht.');
 } else {
+  /* ⛔ .deploy/ wird VOR dem Upload gebaut. Nach einem gescheiterten Upload
+     (24.09.2026, 22:03) stand hier trotzdem „deckt sich mit dem Repo".
+     Oben ist es nur mit dem Beleg — Begruendung in werkzeuge/pruefe-ausgeliefert.mjs. */
+  if (!fs.existsSync(P + '.deploy' + path.sep + '.hochgeladen.json')) {
+    befunde++;
+    console.log('  ⛔ .deploy/ ist NICHT als hochgeladen belegt (Upload gescheitert oder abgebrochen)');
+    console.log('     — ob der Stand darunter bei Elias ist, ist unbekannt.');
+  }
   const b = auswerten(dep);
   console.log('  ' + b.regeln + ' Regeln, ' + b.markiert + ' erreichbar, ' + b.marken
     + ' Markierungen, ' + b.saetze + ' Lehrbuchsaetze, Cache ' + b.cache);

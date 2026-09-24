@@ -105,6 +105,10 @@ const PRUEFER = [
      Lehre stand bisher nur in CLAUDE.md und im Gedaechtnis — gemessen hat
      sie niemand. [[deploy_meldet_erfolg_ohne_produktion]] */
   ['werkzeuge/pruefe-ausgeliefert.mjs', []],
+  /* 24.09.2026: …und der Waechter dieses Waechters. Nach einem gescheiterten
+     Upload (22:03) meldete pruefe-ausgeliefert Exit 0; seither braucht es den
+     Upload-Beleg. Spielt Auslieferungen mit einem falschen npx durch, ohne Netz. */
+  ['test-upload-beleg.mjs', []],
   /* ⛔ Neu am 06.09.2026, zu Elias' Ziel „komplett identische daten […] einfach
      alles". Ein neuer localStorage-Schluessel entsteht beilaeufig, und niemand
      denkt an SYNC_SCHLUESSEL — der Ausfall ist dann unsichtbar, weil auf jedem
