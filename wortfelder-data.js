@@ -117,6 +117,7 @@ const WORTFELDER = [
      Er ist die Liste „Noch ohne Wortfeld" durchgegangen und hat Feld für Feld
      gesagt, wo die Wörter hingehören. Die vier Felder hier sind seine. */
   { name: 'Sprache & Wörter', woerter: [
+    /* 25.09.2026 — BY1 Kap. 4, sein neuestes („Der Alltag"): */ 'Zeitung', 
     'Sprache', 'Sprachen', 'Arabisch', 'Englisch', 'Deutsch', 'Französisch',
     'Türkisch', 'Urdu', 'Persisch', 'Wort', 'Wörter', 'Name', 'Namen',
     'Buchstabe', 'Buchstaben', 'Satz', 'Silbe', 'Übersetzung', 'Bedeutung',
@@ -201,6 +202,7 @@ const WORTFELDER = [
     'Klassenzimmer', 'Hörsaal', 'Fakultät', 'Übung', 'Beispiel', 'Labor', 'Stundenplan', 'Pause', 'Note', 'Zeugnis' ] },
 
   { name: 'Haus & Wohnen', woerter: [
+    /* 25.09.2026 — BY1 Kap. 4, sein neuestes („Der Alltag"): */ 'fegen', 'staubsaugen', 'waschen', 'bügeln', 
     'Haus', 'Häuser', 'Wohnung', 'Zimmer', 'Küche', 'Bad', 'Tür', 'Fenster',
     'Wand', 'Dach', 'Boden', 'Treppe', 'Schlüssel', 'Bett', 'Stuhl', 'Sessel',
     'Tisch', 'Schreibtisch', 'Schrank', 'Teppich', 'Lampe', 'Spiegel', 'Uhr',
@@ -219,6 +221,7 @@ const WORTFELDER = [
     'Hunger', 'Durst', 'Frühstück', 'Mittagessen', 'Abendessen', 'Mahlzeit' ] },
 
   { name: 'Zeit & Tag', woerter: [
+    /* 25.09.2026 — BY1 Kap. 4, sein neuestes („Der Alltag"): */ 'schlafen', 'aufwachen', 'Ferien', 'Feiertag', 'Urlaub', 
     'Zeit', 'Tag', 'Tage', 'Nacht', 'Morgen', 'Mittag', 'Abend', 'Woche',
     'Monat', 'Jahr', 'Jahre', 'Stunde', 'Minute', 'Sekunde', 'heute', 'gestern',
     'morgen', 'jetzt', 'früh', 'spät', 'Montag', 'Dienstag', 'Mittwoch',
@@ -262,6 +265,7 @@ const WORTFELDER = [
     'Minister', 'Gebetsrufer', 'Muezzin', 'Bauarbeiter', 'Wächter' ] },
 
   { name: 'Verkehr & Reisen', woerter: [
+    /* 25.09.2026 — BY1 Kap. 4, sein neuestes („Der Alltag"): */ 'gehen', 
     'Auto', 'Wagen', 'Bus', 'Zug', 'Bahn', 'Flugzeug', 'Schiff', 'Boot',
     'Fahrrad', 'Reise', 'reisen', 'Flughafen', 'Bahnhof', 'Hafen', 'Ticket',
     'Fahrkarte', 'Koffer', 'Gepäck', 'Straße', 'Brücke', 'Hotel', 'Passagier',
