@@ -173,6 +173,16 @@ console.log('test-tagesdeckel.mjs — die Tagesration\n');
   pruefe('seine Lage: 4 Box-1-Plätze gehen an neue Karten', zaehle(g, 'heute') === 4, zaehle(g, 'heute'));
   pruefe('… einer an das am längsten falsche Wort', zaehle(g, 'alt') === 1, zaehle(g, 'alt'));
   pruefe('… und die 5 Wiederholungen bleiben', zaehle(g, 'wdh') === 5, zaehle(g, 'wdh'));
+  /* Seit 25.09.2026, 01:1x: ein fester Platz je 10 Karten — bei 15 und bei 20
+     zwei. Elias auf „1 oder 2 bei 20?": „2"; auf „2 bei 15": „ja". */
+  const g15 = auswahl(lage(seineLage), 15);
+  pruefe('bei 15: 2 am längsten falsche · 6 neue · 7 Wiederholungen',
+    zaehle(g15, 'alt') === 2 && zaehle(g15, 'heute') === 6 && zaehle(g15, 'wdh') === 7,
+    zaehle(g15, 'alt') + ' / ' + zaehle(g15, 'heute') + ' / ' + zaehle(g15, 'wdh'));
+  const g20 = auswahl(lage(seineLage), 20);
+  pruefe('bei 20: 2 am längsten falsche · 8 neue · 10 Wiederholungen',
+    zaehle(g20, 'alt') === 2 && zaehle(g20, 'heute') === 8 && zaehle(g20, 'wdh') === 10,
+    zaehle(g20, 'alt') + ' / ' + zaehle(g20, 'heute') + ' / ' + zaehle(g20, 'wdh'));
 
   /* die jüngsten zuerst: das neue Kapitel vor alten, nie beantworteten Karten */
   const g2 = auswahl(lage([

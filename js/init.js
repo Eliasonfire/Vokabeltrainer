@@ -75,7 +75,42 @@ if ('serviceWorker' in navigator){
   });
 }
 
+/* ⭐ NACH DEM AKTUALISIEREN DORT WEITER, WO ER WAR (25.09.2026). Elias: „wenn
+   ich übrigens nach unten ziehe um die seite zu aktualisieren dann möchte ich
+   nicht zum startbildschirm zurück geworfen werden sondern möchte da wieder
+   landen wo ich auch davor war".
+   Ein Neuladen behält den Historieneintrag samt `history.state` — darin legt
+   showScreen() den Bildschirm ab. ⚠️ NUR beim Neuladen: wer die App schließt
+   und neu öffnet, beginnt weiter auf der Startseite.
+   ⚠️ Erst wenn der Bestand steht (STARTBESTAND_BEREIT, wie lernenBeginnen() in
+   js/lernen.js) — sonst baute sich der Bildschirm mit halbem Bestand auf. Bis
+   dahin steht die Startseite. Eine laufende Lernrunde nimmt lernenBeginnen()
+   wieder auf; tippt er vorher selbst etwas an, gewinnt das. */
+const VOR_DEM_NEULADEN = (() => {
+  try {
+    const n = performance.getEntriesByType('navigation')[0];
+    const st = history.state || {};
+    return (n && n.type === 'reload' && st.screen && st.screen !== 'home') ? String(st.screen) : null;
+  } catch (e){
+    /* Kein Messwert, sondern die bisherige Voreinstellung: ist nicht erkennbar,
+       ob neu geladen wurde, beginnt die App wie immer auf der Startseite. */
+    return null;
+  }
+})();
 /* Startzustand als Wurzel der Historie festschreiben. */
 history.replaceState({ screen:'home', tiefe:0 }, '');
 showScreen('home', { ersetzen: true });
+if (VOR_DEM_NEULADEN){
+  (async () => {
+    try {
+      if (typeof STARTBESTAND_BEREIT !== 'undefined')
+        await Promise.race([STARTBESTAND_BEREIT,
+          new Promise(f => setTimeout(f, typeof START_WARTEN_MS === 'number' ? START_WARTEN_MS : 3000))]);
+    } catch (e){ /* dann eben jetzt */ }
+    const aktiv = document.querySelector('.screen.active');
+    if (aktiv && aktiv.id !== 'screen-home') return;
+    if (VOR_DEM_NEULADEN === 'learn'){ if (typeof lernenBeginnen === 'function') lernenBeginnen(); return; }
+    showScreen(VOR_DEM_NEULADEN);
+  })();
+}
 

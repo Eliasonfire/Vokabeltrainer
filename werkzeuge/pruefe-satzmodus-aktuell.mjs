@@ -27,12 +27,18 @@
  *      Vorschlag, nicht seiner — deshalb nur Anzeige, keine Grenze.
  *   D  Welche Wörter der neuesten Kapitel stehen in KEINEM Satz des
  *      Satzmodus? Die Liste ist Arbeit für die Wartung (Mi/So), kein Fehler.
+ *   E  Jede Antwort ungefähr gleich oft, in JEDER Auswahl-Übung (Elias,
+ *      25.09.2026: „es sollen bewusst ungefähr gleichviele von jeder antwort
+ *      geben damit jede antwort gleich oft ungefähr drankommt" · „das sollte
+ *      auch bei den anderen aufgaben so sein mit reihum"): in den ersten k
+ *      Aufgaben — k = Zahl der verschiedenen Lösungen — steht jede Lösung genau
+ *      einmal (uebungMischen in js/uebung.js). Verstoß = Exit 1.
  *
  * ⚠️ Was er „einzeln frei" geschaltet hat, steht nur in seinem Browser — hier
  * zählt nur die Kapitelauswahl. [[einzeln_frei_ist_nur_im_browser]]
  *
  * Aufruf:  node werkzeuge/pruefe-satzmodus-aktuell.mjs            Bericht
- *          node werkzeuge/pruefe-satzmodus-aktuell.mjs --stoertest drei Störungen
+ *          node werkzeuge/pruefe-satzmodus-aktuell.mjs --stoertest vier Störungen
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -128,6 +134,19 @@ function messen(app){
     ergebnis.uebungen[id] = { nr: U && U.nr, aufgaben, formen: glieder.length,
       ohneSatz: [...gefragt].filter(([, n]) => !n).map(([f]) => ({ form: f, de: (glieder.find(g => g.form === f) || {}).de })) };
   }
+  // E: in JEDER Auswahl-Übung (art 'wahl') jede Antwort ungefähr gleich oft —
+  // die ersten k Aufgaben haben k verschiedene Lösungen (uebungMischen).
+  const mischen = hole('uebungMischen');
+  ergebnis.gleichOft = [];
+  for (const U of UEB.filter(u => u.art === 'wahl')){
+    const liste = [];
+    for (const { s, z } of zerlegt){ if (!z) continue; try { liste.push(...(U.baue(z, s) || [])); } catch (e){ /* B meldet baue()-Fehler */ } }
+    const loesungen = new Set(liste.map(x => String(x.loesung)));
+    const erste = mischen ? mischen(U, liste).slice(0, loesungen.size).map(x => String(x.loesung)) : [];
+    ergebnis.gleichOft.push(`${U.nr}: ${loesungen.size}`);
+    if (loesungen.size > 1 && new Set(erste).size !== loesungen.size)
+      ergebnis.verstoesse.push(`${U.id}: nicht jede Antwort gleich oft — in den ersten ${loesungen.size} Aufgaben nur ${new Set(erste).size} verschiedene Lösungen`);
+  }
   // C + D: neueste Kapitel = höchstes Kapitel je Buch seiner Auswahl
   const neueste = Object.entries(auswahl).filter(([, k]) => k.length).map(([b, k]) => [b, Math.max(...k)]);
   const VD = hole('VOCAB_DATA');
@@ -160,6 +179,10 @@ function bericht(e){
 
 const app = ladeApp();
 if (app.fehlt.length){ console.log('⛔ Ladefehler:\n  ' + app.fehlt.join('\n  ')); process.exit(1); }
+/* shuffle() steht in js/kern.js, das der Lader nicht lädt — uebungMischen() (Teil E) braucht es.
+   Dieselbe Rückgabe wie dort: eine gemischte KOPIE. */
+if (typeof app.hole('shuffle') !== 'function')
+  vm.runInContext('function shuffle(arr){ const a = arr.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }', app.ctx);
 
 if (STOER){
   let rot = 0;
@@ -183,7 +206,12 @@ if (STOER){
   e = messen(app);
   ok('Balance 0 % wird erkannt', e.anteil === 0);
   Object.assign(app.auswahl, JSON.parse(alt));
-  console.log(rot ? `\n⛔ ${rot} Störtest(s) schlagen NICHT an` : '\n✅ alle 3 Störtests schlagen an');
+  // 4. uebungMischen wieder nur gemischt → Teil E muss rot werden (Übung 11: 98 von 152 Aufgaben haben هَذَا).
+  vm.runInContext('globalThis.__echtMischen = uebungMischen; uebungMischen = function(m, l){ return shuffle(l.slice()); };', app.ctx);
+  e = messen(app);
+  ok('nur gemischt statt reihum → Verstoß', e.verstoesse.some(v => v.startsWith('isara: nicht jede Antwort')));
+  vm.runInContext('uebungMischen = globalThis.__echtMischen;', app.ctx);
+  console.log(rot ? `\n⛔ ${rot} Störtest(s) schlagen NICHT an` : '\n✅ alle 4 Störtests schlagen an');
   process.exit(rot ? 1 : 0);
 }
 

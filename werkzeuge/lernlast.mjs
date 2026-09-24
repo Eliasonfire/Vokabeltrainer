@@ -46,11 +46,12 @@ const drin = id => { const x = buchVon.get(String(id)); if (!x) return true; con
 
 const heute = new Date(); const tag = `${heute.getFullYear()}-${String(heute.getMonth() + 1).padStart(2, '0')}-${String(heute.getDate()).padStart(2, '0')}`;
 const box = [0, 0, 0, 0, 0, 0], faellig = [0, 0, 0, 0, 0, 0]; let neu = 0, aeltesteWdh = null;
+const wdhFaellig = [];   // [nextReview, box] der fälligen Wiederholungen (Box 2–5)
 for (const [id, x] of Object.entries(PROG)){
   if (!drin(id)) continue;
   const b = x.box || 1; box[b]++;
   if (!(Number(x.correct) > 0) && !(Number(x.wrong) > 0)) neu++;
-  if (String(x.nextReview) <= tag){ faellig[b]++; if (b > 1 && (!aeltesteWdh || String(x.nextReview) < aeltesteWdh)) aeltesteWdh = String(x.nextReview); }
+  if (String(x.nextReview) <= tag){ faellig[b]++; if (b > 1) wdhFaellig.push([String(x.nextReview), b]); if (b > 1 && (!aeltesteWdh || String(x.nextReview) < aeltesteWdh)) aeltesteWdh = String(x.nextReview); }
 }
 const wdhPlaetze = ziel - Math.round(ziel * 0.5);
 const box5ProTag = box[5] / 17;
@@ -59,11 +60,11 @@ console.log(`Tagesziel ${ziel} (${ziel - wdhPlaetze} Box 1 · ${wdhPlaetze} Wied
 console.log(`Karten: Box 1 ${box[1]} (nie beantwortet ${neu}) · Box 2 ${box[2]} · Box 3 ${box[3]} · Box 4 ${box[4]} · Box 5 ${box[5]}`);
 /* ⏰ Seine Erinnerung (25.09.2026, als er das Tagesziel auf 15 stellte): „sobald
    alle neuen wörter einmal durch sind soll ich erinnert werden, dass ich wieder
-   auf 10 runter stelle". Neue Karten kommen zuerst auf die Box-1-Plätze, einer
-   davon gehört dem ältesten falschen Wort (tagesAuswahl in js/kern.js) — also
-   (Box-1-Plätze − 1) neue am Tag. Die Wartung (1b.10) schiebt danach das Datum
+   auf 10 runter stelle". Neue Karten kommen zuerst auf die Box-1-Plätze; je 10
+   Karten gehört einer davon dem ältesten falschen Wort (bei 15 und 20: zwei —
+   tagesAuswahl in js/kern.js). Die Wartung (1b.10) schiebt danach das Datum
    seiner Google-Aufgabe; das Tagesziel selbst stellt nur ER um. */
-const neuProTag = Math.max(1, ziel - wdhPlaetze - 1);
+const neuProTag = Math.max(1, ziel - wdhPlaetze - Math.max(1, Math.round(ziel / 10)));
 const lerntage = Math.ceil(neu / neuProTag);
 const bis = new Date(heute); bis.setDate(bis.getDate() + lerntage);
 console.log(neu > 0
@@ -72,6 +73,13 @@ console.log(neu > 0
 if (ziel > 10 && neu === 0)
   console.log(`⏰ Alle neuen Wörter waren einmal dran, das Tagesziel steht noch auf ${ziel} — Erinnerung fällig: wieder auf 10 (sein Wunsch vom 25.09.2026).`);
 console.log(`Heute fällig: Box 1 ${faellig[1]} · Box 2–5 ${faellig[2] + faellig[3] + faellig[4] + faellig[5]} (Box 5: ${faellig[5]})`);
+/* Elias, 25.09.2026: „ich frage mich halt ob dann theoretisch die übrigen plätze
+   zb nur oder fast ausschließlich von vokabeln aus box 5 kommen könnten?" —
+   also messen, aus welchen Boxen die Wiederholungsplätze HEUTE kommen: am
+   längsten fällig zuerst, bei Gleichstand die niedrigere Box (tagesAuswahl). */
+const heuteWdh = wdhFaellig.sort((a, b) => a[0].localeCompare(b[0]) || a[1] - b[1]).slice(0, wdhPlaetze);
+const jeBox = [2, 3, 4, 5].map(b => `Box ${b}: ${heuteWdh.filter(x => x[1] === b).length}`).join(' · ');
+console.log(`Die ${wdhPlaetze} Wiederholungsplätze heute: ${jeBox}`);
 console.log(`Box 5 kostet dauerhaft ≈ ${box5ProTag.toFixed(1)} Wiederholungen am Tag · älteste fällige Wiederholung wartet ${wartet} Tag(e)`);
 const knapp = box5ProTag >= wdhPlaetze || wartet > 14;
 console.log(knapp
