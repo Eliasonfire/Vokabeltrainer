@@ -462,6 +462,72 @@
     "f21-515": {
       "urteil": "weg",
       "grund": "Aufloesung der Zwischenpruefung: welches Wort nicht in die Spalte passt, und zwei Genusfehler ('meine Mutter ist Aerztin'). Der Whisper-Text ist ohne Satzzeichen und teils raetselhaft ('tonnere sura passt nicht rein'). Nichts daraus ist belegfaehig."
+    },
+
+    "f22-2445": {
+      "urteil": "regel",
+      "grund": "Die Zukunft mit sa-: 'Dieses Scene ist das Scene der Zukunft. Wenn das Scene der Zukunft auf ein Gegenwartsverb betrifft, sagt es eben die nahe Zukunft aus' (Whisper hoert 'Scene' fuer den Buchstaben Sin). Beispiel aus dem Dialog von Kapitel 4: sa-aknusu ghurfata l-julus, 'ich werde das Wohnzimmer saugen'; bei 'madha sa-tafalina, ya Fatima?' zerlegt der Lehrer selbst: 'Das heisst, Tafayna ist die Gegenwartsform' (gemeint: tafalina). Der Schluessel sagt dasselbe in Band 2, Lektion 11, Punkt 2: 'Um nun den mudari eindeutig als Futurform zu verwenden, wird die Partikel sa- als Vorsilbe vorangestellt' — sie heisst harf al-istiqbal, die Futurpartikel. Zwei unabhaengige Quellen, gleiche Aussage. Im Bestand fehlt sie: verb-madi-endungen-01 sagt nur, dass 'die Zukunft aus der Gegenwart gebildet' wird, nicht wie. ⚠️ Ein Unterschied, markiert nach deiner Regel vom 29.07.: der Schluessel setzt hinzu 'Beachte, dass sa- nicht in Fragen verwendet wird' (Beispiel: 'Wann wirst du nach Indien gehen?' ohne sa-). Dein Buch und der Lehrer benutzen sa- aber gerade in einer Frage ('madha sa-tafalina?'). Der Vorschlag enthaelt deshalb nur den Kern, in dem beide Quellen einig sind. ⚠️ Und: das Gegenwartsverb selbst kommt erst spaeter dran ('nur das, was ihr erstmal gehoert habt … wenn wir Gegenwartsverben lernen') — die Regel ist ein Vorgriff, steht aber schon in deinem Kapitel-4-Text.",
+      "quelle": "Schluessel Band 2, Lektion 11 (PDF-S. 54, gedruckte S. 50), Punkt 2 — Seite gerendert und gelesen · Unterricht Folge 22 @ 24:45 (Dialog 2 auch @ 22:15)",
+      "frage": "Neue Regel: sa- vor einem Gegenwartsverb = Zukunft (sa-aknusu = ich werde fegen). Lehrer und Schluessel Band 2 sind sich einig. Aufnehmen, ohne den Schluessel-Zusatz 'nicht in Fragen'?"
+    },
+    "f22-2215": {
+      "urteil": "weg",
+      "grund": "Wortliste zum Dialog (dhahaba/yadhhabu gehen, istayqaza aufwachen, sayyara Auto, hafila Bus, madrasa Schule), dann der Rat, diese Hausaufgabe unbedingt zu machen, und der Anfang von Dialog 2 ('hadha yawmu l-utla …'). 'al-utla hat mehrere Bedeutungen' ist Wortkunde. Die Zukunftsform aus diesem Dialog erklaert der Lehrer erst bei 24:45 — die Regelfrage steht bei f22-2445."
+    },
+    "f22-3045": {
+      "urteil": "weg",
+      "grund": "Die Fragen zu Dialog 2 (Wer wird den Koran lesen, das Schlafzimmer saugen, das Geschirr waschen, die Kleidung buegeln?) und neue Woerter: kam = wie viel, afrad = Personen, minhum = wer von ihnen. Danach nur die Planung der Hausaufgaben. Keine Regel; die Zukunft mit sa- steht bei f22-2445."
+    },
+    "f22-2815": {
+      "urteil": "weg",
+      "grund": "Der Uebungsteil: tadrib = Uebung, ajib = antworte, an al-asila = auf die Fragen, bi-ikhtisar = kurz. Die erste Frage ('Wer wacht zu Fajr auf?') wird am Text beantwortet. Aufgabenstellung und Vokabeln, keine Regel."
+    },
+    "f22-2045": {
+      "urteil": "weg",
+      "grund": "Der Whisper-Text ist am Anfang zerfallen ('Otser Verb stali … Bootstereckueltere'). Verstaendlich sind nur die Leseuebung 'la adhhabu bil-hafilati' und die Vokabelpaare nama/yanamu (schlafen), istayqaza/yastayqizu (aufwachen), dhahaba/yadhhabu (gehen) — 'hier werden immer ein paar Vokabeln vorgeschlagen'. Die Verneinung der Gegenwart mit la steht im Dialog, wird hier aber nicht erklaert (gedruckt steht sie im Schluessel Band 2, Lektion 11, Punkt 3). Nichts belegfaehig."
+    },
+    "f22-1915": {
+      "urteil": "weg",
+      "grund": "Leseuebung am Dialog ('hal tanamu bada s-salah? la, la anamu bada s-salah'), der Rest ist zerfallener Whisper-Text ('Mach das Lam Hel, salah', danach dieselbe unverstaendliche Zeile wie in f22-2045). Eine Regel ist nicht zu erkennen und nichts belegfaehig."
+    },
+    "f22-1745": {
+      "urteil": "weg",
+      "grund": "Leseuebung mit einem Wortwechsel darueber, ob ein Schueler gelesen oder nur nachgesprochen hat ('was ich gehoert habe, kann ich mir so gut merken'). Kein Sprachinhalt."
+    },
+    "f22-1515": {
+      "urteil": "schon-regel",
+      "grund": "Der Dialog Tariq/Tahir wird uebersetzt (Schlaefst du nach dem Gebet? madha = was, Ich lese den Koran, um sieben Uhr). Die einzige Grammatikangabe: 'bis-sayyara … bi Harf al-jarr. Gehst du mit dem Auto?' Dass bi ein harf jarr ist und 'mit' bedeutet, steht im Bestand.",
+      "quelle": "harf-jarr-bi-01"
+    },
+    "f22-1315": {
+      "urteil": "weg",
+      "grund": "Der Dialog Tariq/Tahir aus Kapitel 4 wird vorgelesen, dazu Wortbedeutungen: mata = wann, tastayqizu = wachst du auf, istayqaza als Vergangenheit und yastayqizu als Gegenwart (der Lehrer zeigt es in der App). Vokabeln, keine Regel."
+    },
+    "f22-1115": {
+      "urteil": "weg",
+      "grund": "Der letzte Satz aus Kapitel 3 ('die Couch ist im Wohnzimmer'), dann der Aufruf, Saetze laut vor sich hin zu sprechen und sich gegenseitig abzufragen, und der Beginn von Kapitel 4 'al-hayat al-yawmiyya' (der Alltag). Keine Regel."
+    },
+    "f22-945": {
+      "urteil": "weg",
+      "grund": "Fragen zum Lesetext von Kapitel 3 werden reihum beantwortet: wie viele Zimmer die Wohnung hat (fuenf), wo der Ofen steht (in der Kueche), wo der Spiegel (im Bad), wo die Couch. Uebung, keine Regel."
+    },
+    "f22-715": {
+      "urteil": "schon-regel",
+      "grund": "Fortsetzung von f22-545, mit der Begruendung: auf 'Wohnt Ahmad in einer Wohnung?' antwortet man 'in einer Wohnung' (fi shaqqatin), nicht 'in der Wohnung' — 'Was ist denn die Wohnung? … Vom Kontext her macht es keinen Sinn.' Der Lehrer nimmt dabei dich als Beispiel ('ich frage dich, ey, Elias, wohnst du in einer Wohnung?'). Genau diese Einsicht steht im Bestand: das Unbestimmte umfasst alle Wohnungen, das Bestimmte weist auf eine bestimmte; nach fi steht das unbestimmte Wort mit Kasratan.",
+      "quelle": "nakira-marifa-01 · tanwin-nach-harf-jarr-01"
+    },
+    "f22-545": {
+      "urteil": "schon-regel",
+      "grund": "Wortfragen zum Lesetext (furn = Ofen, im Bad ist ein Spiegel), dann die Saetze ueber Ahmads Wohnung. Kern: eine Antwort lautet 'fi sh-shaqqati', der Lehrer: 'Genau, ohne El' — die Wohnung ist hier unbestimmt. Das ist die Unterscheidung unbestimmt/bestimmt, die im Bestand steht; die Begruendung folgt bei f22-715.",
+      "quelle": "nakira-marifa-01 · tanwin-nach-harf-jarr-01"
+    },
+    "f22-415": {
+      "urteil": "weg",
+      "grund": "Uebersetzung des Lesetexts von Kapitel 3 (Ahmad wohnt in einer schoenen Wohnung, im Flughafenviertel, im dritten Stock, fuenf Zimmer, im Schlafzimmer ein Bett). Die Korrektur 'Viertel' zu 'Flughafenviertel' ist Uebersetzung, keine Regel."
+    },
+    "f22-245": {
+      "urteil": "weg",
+      "grund": "Vorlesen einzelner Woerter aus dem Lesetext (julus, ghurfatu l-julus, arika) und die Aufforderung, den ganzen Text zu uebersetzen. Kein Sprachinhalt."
     }
   }
 }
