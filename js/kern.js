@@ -81,7 +81,11 @@ function kapitelBeschriftung(w){
      man im Quelltext nicht, und was man nicht sieht, prueft man auch nicht. */
   if (w.istPlural && w.sgAr) return `Plural von ${w.sgAr}`;
   if (w.chapter === 'personal') return 'Eigene Vokabel';
-  return `Kap. ${w.chapter}`;
+  /* ⭐ Mit dem Buch, in Kurzform („BY1 · Kap. 1"). Elias am 24.09.2026: „hier
+     steht kapitel 1 aber von was? von welchem buch? … sollte das auch immer
+     dabei stehen aber halt in kurzform". buchKurz() steht in js/buecher.js. */
+  const buch = (w.book && typeof buchKurz === 'function') ? buchKurz(w.book) : '';
+  return buch ? `${buch} · Kap. ${w.chapter}` : `Kap. ${w.chapter}`;
 }
 
 /* ---------- Welche Kapitel kennt Elias? ----------

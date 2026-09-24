@@ -42,6 +42,10 @@
  *   B3  ein Buch, das er lernt oder das frei ist, fehlt in data/buecher.js,
  *       hat keine Buchdatei, oder die Buchdatei hat für ein freies Kapitel
  *       keine Wörter / weniger Kapitel, als data/buecher.js angibt
+ *   B4  ein Buch aus data/buecher.js hat keine Kurzform in BUCH_KURZ
+ *       (js/buecher.js) — der Kapitel-Chip der Lernkarte zeigt dann den
+ *       langen Titel (Elias 24.09.2026: „… sollte das auch immer dabei stehen
+ *       aber halt in kurzform")
  *
  * Frage an Elias (Exit 2, Warteseite) — seine Entscheidung, nichts eintragen:
  *   F1  bei arabicroots frei, in seiner Auswahl nicht, obwohl er für dieses
@@ -55,7 +59,7 @@
  * Aufruf:
  *   node werkzeuge/pruefe-buecher-aktuell.mjs [--roots <datei>] [--app <datei>]
  *   node werkzeuge/pruefe-buecher-aktuell.mjs --json      nur die Ergebnisse als JSON (für wartet-auf-elias.mjs)
- *   node werkzeuge/pruefe-buecher-aktuell.mjs --stoertest vier eingebaute Störungen, jede muss ihre Meldung auslösen
+ *   node werkzeuge/pruefe-buecher-aktuell.mjs --stoertest fünf eingebaute Störungen, jede muss ihre Meldung auslösen
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -109,6 +113,13 @@ function freigeschaltetLesen(){
   return vm.runInNewContext('(' + m[1] + ')');
 }
 
+function kurzLesen(){
+  const q = fs.readFileSync(p('js/buecher.js'), 'utf8');
+  const m = q.match(/const BUCH_KURZ\s*=\s*(\{[\s\S]*?\n\});/);
+  if (!m) throw new Error('BUCH_KURZ in js/buecher.js nicht gefunden');
+  return vm.runInNewContext('(' + m[1] + ')');
+}
+
 function buecherLesen(){
   const k = vm.createContext({});
   vm.runInContext(fs.readFileSync(p('data/buecher.js'), 'utf8'), k);
@@ -132,8 +143,13 @@ function buchdateiLesen(eintrag){
 /* ---------------------------- die Prüfung ------------------------------ */
 /* Rein: bekommt alles als Daten, liest nichts selbst — damit der Störtest
    dieselbe Funktion mit gestörten Daten aufrufen kann. */
-function pruefe({ roots, app, frei, buecher, dateien }){
+function pruefe({ roots, app, frei, buecher, dateien, kurz }){
   const befunde = [], fragen = [], hinweise = [];
+  /* B4: jedes Buch braucht eine Kurzform für den Kapitel-Chip */
+  if (kurz) buecher.forEach(e => {
+    if (!kurz[e.slug]) befunde.push({ art: 'B4', buch: e.slug,
+      text: e.slug + ': keine Kurzform in BUCH_KURZ (js/buecher.js) — der Kapitel-Chip auf der Lernkarte zeigt dann den langen Titel und schneidet die Kapitelzahl ab.' });
+  });
   const slugs = new Set(buecher.map(b => b.slug));
   const eintrag = (s) => buecher.find(b => b.slug === s);
   const bereich = (l) => {
@@ -233,6 +249,9 @@ function stoertest(eingabe){
       Object.keys(e.dateien[b].kapitel).map(Number).filter(c => c >= letztes)
         .forEach(c => { delete e.dateien[b].kapitel[c]; });
     }, (r) => r.befunde.some(x => x.art === 'B3' && /reicht nur bis/.test(x.text))],
+    ['S5 neues Buch ohne Kurzform', (e) => {
+      delete e.kurz[e.buecher[0].slug];
+    }, (r) => r.befunde.some(x => x.art === 'B4')],
   ];
   let rot = 0;
   for (const [name, stoeren, erkannt] of faelle){
@@ -260,7 +279,7 @@ if (roots.fehlt){
   console.log('⛔ Keine arabicroots-Datei (' + roots.fehlt + ') — get_unlocked_chapters speichern und mit --roots mitgeben.');
   process.exit(1);
 }
-const eingabe = { roots, app: app.fehlt ? null : app, frei, buecher, dateien };
+const eingabe = { roots, app: app.fehlt ? null : app, frei, buecher, dateien, kurz: kurzLesen() };
 
 if (STOERTEST){
   /* Ohne .stand-app.json (vorrat.mjs lief noch nicht mit --app) nimmt der
