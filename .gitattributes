@@ -1,0 +1,13 @@
+# Zeilenenden: Git legt jede Textdatei mit LF ab, egal was core.autocrlf sagt.
+#
+# Anlass (24.09.2026): core.autocrlf=true steht in der Git-Systemkonfiguration
+# dieses Rechners, und jedes Auschecken oder Stash legte verfolgte Dateien mit
+# CRLF ab — 16 lagen so da, im Repo standen alle mit LF. js/kern.js machte so
+# zwei Prüfer rot, ohne Fehler im Code; im Nachbau kippten 13 von 135
+# Prüferläufen allein daran. Die Prüfer lesen seitdem CRLF-fest (e44f5ae);
+# diese Zeile schließt die Quelle.
+#
+# Binärdateien (Bilder, Schriften, wav) erkennt Git weiter selbst (text=auto).
+# Werkzeuge, die Dateien zurückschreiben, messen das Zeilenende der Zieldatei
+# und übernehmen es (rand.mjs, vorrat.mjs, markierung-setzen.mjs …).
+* text=auto eol=lf

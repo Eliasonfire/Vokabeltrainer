@@ -18,9 +18,11 @@
  * Groesse nicht veraendert, traegt er in beiden Fassungen einen 1-px-Rand - im
  * Ist-Zustand ist er durchsichtig.
  *
- * ⚠️ index.html hat CRLF-Zeilenenden. Hier wird zeilenweise gearbeitet und das
- * gefundene Zeilenende beim Schreiben uebernommen; ein Skript, das die Datei
- * auf LF umstellt, erzeugt sonst einen Diff ueber 4000 Zeilen. */
+ * ⚠️ index.html lag bis zum 24.09.2026 mit CRLF im Arbeitsbaum (im Repo LF);
+ * seit .gitattributes (eol=lf) legt Git sie mit LF ab. Hier wird zeilenweise
+ * gearbeitet und das gefundene Zeilenende beim Schreiben uebernommen - so
+ * bleibt die Datei, wie sie ist. Die Umstellung auf LF ergab gemessen keinen
+ * Git-Diff (gleicher Blob). */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
