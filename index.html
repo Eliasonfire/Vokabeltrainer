@@ -1156,8 +1156,6 @@ main{
 .chip-toggle:hover{border-color:var(--border-strong);color:var(--text);}
 .chip-toggle:active{transform:scale(.94);}
 .chip-toggle.active{background:var(--accent-grad);color:#fff;border-color:transparent;box-shadow:var(--sh-glow);}
-.btn-wrongonly{width:100%;text-align:center;color:var(--red-soft);border-color:var(--rand-wrongonly);}
-.btn-wrongonly.active{background:var(--red-wash);color:#fff;border-color:var(--red);}
 
 /* =====================================================================
    LERNEN / KARTE
@@ -5509,9 +5507,8 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         <div class="chip-select" id="bookFilterChips"></div>
         <div class="filter-label">Kapitel</div>
         <div class="chip-select" id="chapterFilterChips"></div>
-        <button class="btn btn-secondary btn-wrongonly" id="btnWrongOnly">
-          <svg class="ic"><use href="#ic-warning"/></svg>Nur falsche Wörter üben
-        </button>
+        <!-- Hier stand bis v590 „Nur falsche Wörter üben". Elias am 24.09.2026:
+             „nur falsche wörter üben kann weg aus der app, hat keinen nutzen". -->
       </div>
 
       <!-- ⭐⭐ WAS IN DER LEISTE STEHT, BRAUCHT HIER KEINE KACHEL (21.08.2026)
