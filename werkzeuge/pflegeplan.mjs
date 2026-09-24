@@ -341,6 +341,10 @@ export const PFLEGEPLAN = [
        routinen für mittwoch und sonntag bieten sich dafür gut an." Die Übungen
        stehen in js/uebung.js (keine eigene Datei) — deshalb von Hand hier. */
     funktion: 'Satzmodus aktuell: Hinweiswort, Fragewort, Pronomen einsetzen; neue Vokabeln im Satzmodus',
+    /* Dazu gehören seit 24.09.2026 auch seine Abendlisten (data/abendlisten.json,
+       werkzeuge/abendlisten.mjs, Wartungsschritt 1b.9): Elias „ja klingt gut"
+       zum Mitlesen und gründlichen Prüfen wiederkehrender Wörter. Die Datei
+       lädt die App nicht — sie ist Stoff für die Wartung. */
     /* Keine eigene Datei: die Übungen stehen in js/uebung.js, und die hat schon
        ihren Eintrag („Satzmodus und Grammatik-Hervorhebung") — zweimal dieselbe
        Datei lässt pruefe-pflegeplan nicht zu. */

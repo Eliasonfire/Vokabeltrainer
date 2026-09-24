@@ -318,10 +318,20 @@ function live(){
    steht in der Ausgabe) · 1 = Fehler oder noch kein Stand. ⛔ `--gesehen` erst,
    NACHDEM die gemeldeten Seiten gelesen und ausgewertet sind — sonst sind sie
    für immer „gesehen", ohne dass jemand sie gesehen hat. */
+/* ⭐ `--abendlisten` (seit 24.09.2026): derselbe Abgleich für den Ordner
+   „Arabisch\Vokabeln falsch" — seine Abendlisten. Elias: „wenn ich karteikarten
+   am abend mir angucke dann schreibe ich mir die nochmals seperat heraus die ich
+   wirklich nciht konnte bzw noch übung brauchen und genau das sind diese
+   notizen. das mache ich täglich." Eigener Stand, damit die Grammatik-Hefte
+   und die Listen sich nicht gegenseitig als „gesehen" markieren. Ausgewertet
+   wird in werkzeuge/abendlisten.mjs (Zählung je Wort). */
+const ABENDLISTEN = process.argv.includes('--abendlisten');
 const SICHERUNG = process.env.SAMSUNG_NOTES_SICHERUNG_DIR
-  || 'G:\\1. Workspace\\SamsungNotes-Sicherung\\Samsung Notes Archiv\\Arabisch\\Grammatik';
+  || (ABENDLISTEN
+    ? 'G:\\1. Workspace\\SamsungNotes-Sicherung\\Samsung Notes Archiv\\Arabisch\\Vokabeln falsch'
+    : 'G:\\1. Workspace\\SamsungNotes-Sicherung\\Samsung Notes Archiv\\Arabisch\\Grammatik');
 const SICHERUNG_STAND = process.env.SAMSUNG_NOTES_SICHERUNG_STAND
-  || path.join(ORDNER, 'sicherung-stand.json');
+  || path.join(ORDNER, ABENDLISTEN ? 'sicherung-stand-abendlisten.json' : 'sicherung-stand.json');
 const POPPLER = process.env.POPPLER_BIN
   || 'C:\\Users\\abdur\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oschwartz10612.Poppler_Microsoft.Winget.Source_8wekyb3d8bbwe\\poppler-25.07.0\\Library\\bin';
 const GX = 16, GY = 20, DPI = 16;

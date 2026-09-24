@@ -1,0 +1,42 @@
+{
+  "_zweck": "Seine Abendlisten aus Samsung Notes (Arabisch\\Vokabeln falsch). Elias, 24.09.2026: „wenn ich karteikarten am abend mir angucke dann schreibe ich mir die nochmals seperat heraus die ich wirklich nciht konnte bzw noch übung brauchen und genau das sind diese notizen. das mache ich täglich.“ Nur Datum, sein deutsches Wort (wie er es schrieb) und die Kennung der App-Karte — keine arabicroots-Daten. Ausgewertet von werkzeuge/abendlisten.mjs; neue Listen meldet export-index.mjs --sicherung --abendlisten (Wartung Mi/So).",
+  "zuordnung": "sicher = Deutsch und Arabisch der Liste passen genau zu EINER Karte mit Lernstand · unsicher = mehrere Karten oder nur über das Deutsch · keine = keine Karte in der App",
+  "listen": [
+    { "datum": "2026-09-11", "notiz": "ohne-titel", "woerter": [
+      { "wort": "Kühlschrank", "id": "45848", "zuordnung": "sicher" },
+      { "wort": "Löffel", "id": "45844", "zuordnung": "sicher" },
+      { "wort": "Spatz", "id": "45876", "zuordnung": "sicher" } ] },
+    { "datum": "2026-09-14", "notiz": "ohne-titel (45481f)", "woerter": [
+      { "wort": "Wir", "id": "50155", "zuordnung": "sicher" },
+      { "wort": "Zehn", "id": "50304", "zuordnung": "sicher" },
+      { "wort": "Sieben", "id": "50301", "zuordnung": "sicher" },
+      { "wort": "Weiterführende Schule", "id": "45895", "zuordnung": "sicher" } ] },
+    { "datum": "2026-09-14", "notiz": "ohne-titel (b676cf)", "woerter": [
+      { "wort": "krank", "id": "45807", "zuordnung": "sicher" },
+      { "wort": "Fenster", "id": "45860", "zuordnung": "sicher" },
+      { "wort": "Geschäft", "id": "45804", "zuordnung": "unsicher" },
+      { "wort": "Vogel", "id": "45877", "zuordnung": "unsicher" } ] },
+    { "datum": "2026-09-15", "notiz": "ohne-titel (6594c1)", "woerter": [
+      { "wort": "„ihr“ Besitzendung", "id": null, "zuordnung": "keine" },
+      { "wort": "Ente", "id": "45863", "zuordnung": "sicher" },
+      { "wort": "Schweiz", "id": "45873", "zuordnung": "sicher" },
+      { "wort": "Englisch", "id": "45883", "zuordnung": "sicher" } ] },
+    { "datum": "2026-09-16", "notiz": "ohne-titel (f5d54a)", "woerter": [
+      { "wort": "Ventilator", "id": "45893", "zuordnung": "sicher" },
+      { "wort": "Eins", "id": "50296", "zuordnung": "sicher" },
+      { "wort": "Fern", "id": "45794", "zuordnung": "unsicher" } ] },
+    { "datum": "2026-09-17", "notiz": "ohne-titel (182083)", "woerter": [
+      { "wort": "Mit / zusammen mit", "id": "50171", "zuordnung": "sicher" },
+      { "wort": "Rot", "id": "45958", "zuordnung": "unsicher" },
+      { "wort": "diese Beiden (f.)", "id": null, "zuordnung": "keine" },
+      { "wort": "Jene Beiden (f.)", "id": "47225", "zuordnung": "sicher" } ] },
+    { "datum": "2026-09-19", "notiz": "ohne-titel (3018cb)", "woerter": [
+      { "wort": "Wie", "id": "49829", "zuordnung": "unsicher" },
+      { "wort": "jene Beiden (m)", "id": null, "zuordnung": "keine" },
+      { "wort": "Los gehts", "id": null, "zuordnung": "keine" },
+      { "wort": "wie viele", "id": "49830", "zuordnung": "unsicher" } ] },
+    { "datum": "2026-09-21", "notiz": "ohne-titel (54810a)", "woerter": [
+      { "wort": "Kinder", "id": null, "zuordnung": "unsicher" },
+      { "wort": "Was? (meist vor Verben)", "id": null, "zuordnung": "unsicher" } ] }
+  ]
+}
