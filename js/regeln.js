@@ -560,10 +560,12 @@ function renderRegeln(){
     </button>
     <div class="regeln-aufgeklappt${REGELN_AUF[schluessel] ? '' : ' hidden'}">${inhalt || `<div class="pane-hinweis">${leer}</div>`}</div>`;
 
+  /* ⛔ Die Überschrift „Folge 19 — Grammatikabfrage" und die Zeile mit dem
+     Lehrerzitat darunter sind WEG (24.09.2026). Elias, mit Bild der Seite, die
+     beiden Zeilen rot umrandet: „das kannst du weg machen. das brauch ich
+     nicht". Die neun Karten bleiben, wo sie waren. */
   box.innerHTML = `
     <section class="regeln-abschnitt">
-      <h3 class="regeln-kopf">Folge 19 — Grammatikabfrage</h3>
-      <div class="pane-hinweis">Dein Lehrer: „wenn ihr das hier könnt, reicht das vollkommen aus"</div>
       ${karten || '<div class="pane-hinweis">Alle neun Karten liegen im Papierkorb.</div>'}
     </section>
     <section class="regeln-abschnitt">

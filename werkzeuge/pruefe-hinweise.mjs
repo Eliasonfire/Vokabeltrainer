@@ -137,6 +137,9 @@ function laden(rel, pflicht = true){
 laden('vocab-data.js');
 laden('grammar-data.js');
 laden('lehrbuch-saetze.js');
+/* Seit 24.09.2026 lesen Übung 11, 14 und 15 ihre Wörter aus seinen Regelkarten
+   (FOLGE19_KARTEN) — ohne diese Datei baut Übung 11 null Aufgaben. */
+laden('regelsammlung-data.js');
 laden('data/beispielsaetze.js', false);
 laden('data/fachbegriffe.js', false);
 /* ⛔⛔ js/saetze.js MUSS mit. `baue()` von Uebung 10 ruft `wortKern()`, und die

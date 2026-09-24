@@ -403,6 +403,14 @@ const PRUEFER = [
      richtige Übersetzungen durchgehen und dass verfälschte ihren Befund
      auslösen, und dass die genannten Regeln in grammar-data.js existieren. */
   ['werkzeuge/pruefe-uebersetzen.mjs', []],
+  /* 24.09.2026 — Elias: „jemand soll auch prüfen ob es immer aktuell sind die
+     sätze und ob neue vokabeln sowohl innerhalb der übung bzw fragestellung als
+     auch der beispielsätze und auswahlmöglichkeiten gibt". Exit 2 = Lücken für
+     die Wartung (Kartenform ohne Satz, neueste Wörter ohne Satz, Balance 0 %);
+     Exit 1 = eine Aufgabe der Übungen 11/14/15 ohne ihre Lösung in der Auswahl.
+     Drei Störtests als eigene Zeile. */
+  ['werkzeuge/pruefe-satzmodus-aktuell.mjs', []],
+  ['werkzeuge/pruefe-satzmodus-aktuell.mjs', ['--stoertest']],
   /* 22.09.2026 — ein Fachbegriff folgt seiner Regel. Elias, nachdem er drei
      Karteikarten aus gestrichenen Regeln hintereinander bekam: „kümmere dich
      erstmal darum das das auch nicht wieder passiert." */
@@ -785,8 +793,16 @@ console.log('  ' + ergebnisse.length + ' Prüfer gelaufen, ' + rot.length + ' ro
 const WARTET_AUF_ELIAS = ['pruefe-taschkil.js', 'pruefe-duplikate.js', 'werkzeuge/pruefe-themen.mjs',
                           'werkzeuge/pruefe-beispielsaetze.mjs', 'werkzeuge/pruefe-buchtausch.mjs'];
 const HAENGT_AM_STAND  = ['werkzeuge/pruefe-ausgeliefert.mjs', 'pruefe-erreichbarkeit.js', 'werkzeuge/pruefe-gedaechtnis-zahlen.mjs'];
+/* ⭐ 24.09.2026 — Werkzeuge, deren Exit 2 ARBEIT FÜR DIE WARTUNG ist (Lücken, die
+   auf belegtes Material warten), NICHT ein Defekt: nur ihr Exit 2 ist bekannt.
+   Ihr Exit 1 bleibt NEU ROT — dort ist die Sache selbst kaputt.
+   · pruefe-satzmodus-aktuell.mjs — Kartenformen ohne Satz, neueste Wörter ohne
+     Satz, Balance 0 % (Elias: „du sollst automatisch das machen und die app
+     immer aktuell halten"; Schritt 1b.8 der Wartung schließt die Lücken). */
+const LUECKE_FUER_WARTUNG = ['werkzeuge/pruefe-satzmodus-aktuell.mjs'];
 const gelaufenRot = rot.filter(e => e.code !== null && e.code !== -1);
-const neuRot = gelaufenRot.filter(e => !WARTET_AUF_ELIAS.includes(e.rel) && !HAENGT_AM_STAND.includes(e.rel));
+const neuRot = gelaufenRot.filter(e => !WARTET_AUF_ELIAS.includes(e.rel) && !HAENGT_AM_STAND.includes(e.rel)
+  && !(LUECKE_FUER_WARTUNG.includes(e.rel) && e.code === 2));
 const amStand = gelaufenRot.filter(e => HAENGT_AM_STAND.includes(e.rel));
 if (neuRot.length){
   console.log('');

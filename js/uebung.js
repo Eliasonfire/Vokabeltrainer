@@ -403,6 +403,140 @@ function uebungZarfMitGenitiv(z, i){
    Übung 7 (haraka) trägt `aufgabe` statt `hinweis`: ihr Text IST die
    Aufgabenstellung („Das Wort steht ohne sein Endzeichen"), kein Hinweis —
    er bleibt immer sichtbar. */
+/* ⭐⭐ EIN WORT AUS SEINER GRUPPE EINSETZEN (24.09.2026) — Übung 11
+   (Hinweiswort), 14 (Fragewort) und 15 (Pronomen) bauen hierauf.
+
+   Elias zu Übung 11: „die 11te übung bei satzmodus hat bisher nur hadha und
+   hadhihi aber eigentlich könnte man das mit all diesen hinweiswörtern
+   erweitern sodass ich nicht nur zwei übe. natürlich müssen die sätze
+   dementsprechend angepasst werden." Um 22:49 zu den Fragewörtern und um
+   22:55 zu den Pronomen, beide Male: „zur auswahl halt alle die ich habe und
+   natürlich soll auch das immer aktuell bleiben also wenn ich neue lerne dann
+   die auch impimentieren sobald sie da sind".
+
+   ⭐ Deshalb steht hier KEINE Liste, die jemand nachpflegen müsste. Die Gruppe
+   wird bei jedem Aufbau gelesen, aus zwei Quellen:
+   1. seiner Regelkarte (FOLGE19_KARTEN in regelsammlung-data.js — die
+      Musterlösung seines Lehrers), vokalisiert, wie er sie gelernt hat;
+   2. seinen Karteikarten, die er schon abgefragt wird (istBekannt), wenn ihre
+      Bedeutung zur Gruppe passt. Ein neues Fragewort aus einem neuen Kapitel
+      steht damit ab dem Tag zur Wahl, an dem es bei ihm freigeschaltet ist.
+   Bewacht von werkzeuge/pruefe-satzmodus-aktuell.mjs. */
+const UEB_ZEICHEN = /[ً-ْٰـ]/g;
+let UEB_WORTGRUPPEN = {};   // je Aufbau neu (uebungenAufbauen); ⛔ UEB_GRUPPEN ist der Wähler weiter unten
+function uebSkelett(s){
+  return String(s || '').replace(UEB_ZEICHEN, '').replace(/[.،؟?!«»:؛"„“”]/g, '')
+    .replace(/[أإآٱ]/g, 'ا').trim();
+}
+/* Die Vokalzeichen je Grundbuchstabe. Ohne sie sehen أَنْتَ („du", m.) und
+   أَنْتِ („du", f.) gleich aus — und مَنْ („wer?") wie مِنْ („von"). */
+function uebZeichenJeBuchstabe(s){
+  const out = [];
+  for (const ch of String(s || '').normalize('NFC')){
+    if (/[ً-ْٰ]/.test(ch)){ if (out.length) out[out.length - 1].z += ch; }
+    else if (ch === 'ـ' || /[.،؟?!«»:؛\s"„“”]/.test(ch)) continue;
+    else out.push({ b: ch, z: '' });
+  }
+  return out;
+}
+/* Passen die Zeichen des Wortes im Satz zur Form auf der Karte? Verglichen
+   wird nur, wo BEIDE ein Zeichen tragen — der Satz ist oft sparsamer
+   vokalisiert als die Karte (هذانِ gegen هَذَانِ). Schadda und Dolch-Alif
+   entscheiden nichts; am letzten Buchstaben zählt ein Sukūn nicht, denn vor
+   einem Artikel wird er zum Hilfsvokal (هُمْ → هُمُ الْ…).
+   Rückgabe: Zahl der bestätigten Stellen, oder -1 bei Widerspruch. */
+function uebVertraeglich(wort, form){
+  const a = uebZeichenJeBuchstabe(wort), b = uebZeichenJeBuchstabe(form);
+  if (a.length !== b.length) return -1;
+  let bestaetigt = 0;
+  for (let i = 0; i < a.length; i++){
+    let va = a[i].z.replace(/[ّٰ]/g, ''), vb = b[i].z.replace(/[ّٰ]/g, '');
+    if (i === a.length - 1 && (va === 'ْ' || vb === 'ْ')) continue;
+    if (!va || !vb) continue;
+    if (va !== vb) return -1;
+    bestaetigt++;
+  }
+  return bestaetigt;
+}
+/* Was vor dem zweiten Grundbuchstaben steht: das وَ in وَهُوَ, das فَ in
+   فَهِيَ, die Frage-Hamza in أَهَذَا — so, wie es im Satz steht. */
+function uebVorsatz(wort){
+  const s = String(wort || '');
+  let n = 0;
+  for (let i = 0; i < s.length; i++){
+    if (!/[ً-ْٰـ]/.test(s[i])){ n++; if (n === 2) return s.slice(0, i); }
+  }
+  return '';
+}
+/* Welches Glied der Gruppe steht hier? `null`, wenn keins — oder wenn es
+   nicht eindeutig ist (ein Wort ohne entscheidendes Vokalzeichen wird nicht
+   gefragt, sonst wäre die Lösung geraten). */
+function uebTreffer(wort, glieder){
+  const sk = uebSkelett(wort);
+  const versuche = [{ vorsatz: '', rest: wort, sk }];
+  if (sk.length > 2 && /^[وفا]/.test(sk)){
+    const v = uebVorsatz(wort);
+    versuche.push({ vorsatz: v, rest: String(wort || '').slice(v.length), sk: sk.slice(1) });
+  }
+  for (const v of versuche){
+    const kand = glieder.filter(g => g.skelett === v.sk);
+    if (!kand.length) continue;
+    const passt = kand.filter(g => uebVertraeglich(v.rest, g.form) >= 1);
+    return passt.length === 1 ? { glied: passt[0], vorsatz: v.vorsatz } : null;
+  }
+  return null;
+}
+/* Die Glieder seiner Regelkarte: „هَذَا – dieser, m. Singular" → Form + Deutsch. */
+function uebKartenGlieder(kartenId){
+  const karten = (typeof FOLGE19_KARTEN !== 'undefined' && Array.isArray(FOLGE19_KARTEN)) ? FOLGE19_KARTEN : [];
+  const k = karten.find(x => x && x.id === kartenId);
+  const out = [];
+  if (!k || !Array.isArray(k.gruppen)) return out;
+  for (const g of k.gruppen) for (const m of (g.merkmale || [])){
+    const teile = String(m).split(' – ');
+    if (teile.length < 2) continue;
+    let form = teile[0].trim(), de = teile.slice(1).join(' – ').trim();
+    if (/\s/.test(form)){
+      /* Ein ganzer Beispielsatz — so steht هَلْ auf der Fragewort-Karte. Dann
+         zählt sein erstes Wort, wenn es kurz ist; أَأَنْتَ (die Frage-Hamza am
+         Pronomen) ist kein eigenes Wort und fällt so heraus. Zwei Wörter wie
+         مِنْ أَيْنَ ohne Fragezeichen am Ende ebenso. */
+      if (!/[؟?]$/.test(form)) continue;
+      const erstes = form.split(/\s+/)[0];
+      if (uebSkelett(erstes).length > 2) continue;
+      form = erstes; de = g.name;
+    }
+    out.push({ form, skelett: uebSkelett(form), de, gruppe: g.name });
+  }
+  return out;
+}
+function uebGruppe(kartenId, passtKarte){
+  if (UEB_WORTGRUPPEN[kartenId]) return UEB_WORTGRUPPEN[kartenId];
+  const glieder = uebKartenGlieder(kartenId);
+  const bekannt = (typeof istBekannt === 'function') ? istBekannt : null;
+  if (typeof VOCAB_DATA !== 'undefined' && Array.isArray(VOCAB_DATA)) for (const w of VOCAB_DATA){
+    if (!w || !w.ar || (bekannt && !bekannt(w)) || !passtKarte(w)) continue;
+    const form = String(w.ar).split('/')[0].trim();
+    const sk = uebSkelett(form);
+    if (!form || /\s|ـ/.test(form) || sk.length < 2) continue;
+    if (glieder.some(g => g.skelett === sk && uebVertraeglich(form, g.form) >= 0)) continue;
+    glieder.push({ form, skelett: sk, de: String(w.de || ''), gruppe: 'Karte' });
+  }
+  return (UEB_WORTGRUPPEN[kartenId] = glieder);
+}
+/* Steht hier eindeutig die Einzahl? Nur dann dürfen Dual und Plural als
+   Ablenker stehen — bei هَذِهِ كُتُبٌ (Sachplural) wäre هَؤُلَاءِ sonst eine Falle. */
+function uebKlarEinzahl(t){
+  if (!t || typeof uebungVokabel !== 'function') return false;
+  const v = uebungVokabel(t.wort);
+  if (!v) return false;
+  const formen = uebungKandidaten(t.wort);
+  const hat = f => !!f && formen.includes(uebungOhneEndung(f));
+  return (hat(v.ar) || hat(v.sg) || hat(v.femSg)) && !(hat(v.pl) || hat(v.femPl));
+}
+const uebBedeutung = de => String(de || '').toLowerCase().replace(/[?„"“”]/g, '').trim();
+const UEB_FRAGE_DE = /^(wer|was|wo|woher|wohin|wie|wie viele?|wann|warum|welche[rsnm]?)\s*\??$/i;
+
 const UEBUNGEN = [
   {
     id:'mubtada-khabar', nr:1, name:'مُبْتَدَأٌ / خَبَرٌ — Satzteile', art:'mehrfach',
@@ -843,31 +977,53 @@ const UEBUNGEN = [
     }
   },
   {
-    id:'isara', nr:11, name:'هَذَا / هَذِهِ — Hinweiswort', art:'wahl',
-    hinweis:'Das Hinweiswort richtet sich nach dem Geschlecht des Wortes danach (isara-genus-kongruenz-01).',
+    id:'isara', nr:11, name:'هَذَا / ذَلِكَ — alle Hinweiswörter', art:'wahl',
+    hinweis:'Das Hinweiswort richtet sich nach Geschlecht und Zahl des Wortes danach (isara-genus-kongruenz-01). Ob nah oder fern, zeigt die deutsche Zeile.',
     hinweisVerraet:false,
-    baue(z){
-      /* Vier Schreibungen, zwei Paare. `istFem` sagt, welche der beiden im
-         Satz steht - daran haengt die Loesung, und nicht an einer Ableitung
-         aus dem Schriftbild. */
-      const HINWEISWOERTER = [
-        { blank:'هذا', m:'هَذَا', f:'هَذِهِ', istFem:false },
-        { blank:'هذه', m:'هَذَا', f:'هَذِهِ', istFem:true  },
-        { blank:'ذلك', m:'ذَلِكَ', f:'تِلْكَ', istFem:false },
-        { blank:'تلك', m:'ذَلِكَ', f:'تِلْكَ', istFem:true  }
-      ];
+    /* ⭐⭐ SEIT 24.09.2026 ALLE HINWEISWÖRTER SEINER KARTE, nicht nur zwei.
+       Elias: „die 11te übung bei satzmodus hat bisher nur hadha und hadhihi
+       aber eigentlich könnte man das mit all diesen hinweiswörtern erweitern
+       sodass ich nicht nur zwei übe." Gemessen vorher: 141 Aufgaben, und JEDE
+       bot genau zwei Wörter zur Wahl (هَذَا/هَذِهِ oder ذَلِكَ/تِلْكَ).
+
+       Die zehn Formen kommen aus seiner Karte „Ism al-išāra" (FOLGE19_KARTEN,
+       f19-isara: Nah und Fern, je Singular m./f., Dual m./f., Plural) — dazu
+       jede Karteikarte, die er abgefragt wird und die „dies…"/„jen…" heißt.
+
+       ⛔ Zur Wahl steht nur, was man AM SATZ entscheiden kann:
+       - nah oder fern verrät der arabische Satz nicht (هَذَا بَيْتٌ und
+         ذَلِكَ بَيْتٌ sind beide richtig). Die andere Entfernung steht deshalb
+         nur zur Wahl, wenn die deutsche Zeile sie nennt (dies…/hier bzw.
+         jen…/dort) — die deutsche Zeile steht in jeder Übung darunter.
+       - Dual und Plural stehen als Ablenker nur, wenn das Wort danach
+         eindeutig Einzahl ist, oder wenn die Lösung selbst Dual/Plural ist.
+         Sonst wäre هَذِهِ vor einem Sachplural (كُتُبٌ) eine Falle. */
+    baue(z, satz){
+      const glieder = uebGruppe('f19-isara', w => /^(dies|jen)/i.test(String(w.de || '').trim()));
+      if (glieder.length < 2) return [];
+      const zahl = g => /beide/i.test(g.de) ? 'dual' : (/plural|\bpl\b/i.test(g.de) ? 'plural' : 'sg');
+      const fern = g => g.gruppe === 'Fern' || (g.gruppe === 'Karte' && /^jen/i.test(g.de));
+      const de = String((satz && satz.sentDe) || '');
+      const deFern = /\b(jen(e|er|es|en|em)?|dort)\b/i.test(de);
+      const deNah = /\b(dies(e|er|es|en|em)?|hier)\b/i.test(de);
       const out = [];
       z.forEach((t,i)=>{
-        const blank = String(t.rein).replace(/[ً-ْٰـ]/g,'').replace(/^أ/,'');
-        const p = HINWEISWOERTER.find(x=>x.blank === blank);
         /* Ohne ein Wort danach gibt es nichts, woran man es erkennen koennte. */
-        if (!p || !z[i+1]) return;
+        if (!z[i+1]) return;
+        const tr = uebTreffer(t.rein, glieder);
+        if (!tr) return;
+        const L = tr.glied, lFern = fern(L);
+        const deSagt = lFern ? (deFern && !deNah) : (deNah && !deFern);
+        const einzahl = uebKlarEinzahl(z[i+1]);
+        const wahl = glieder.filter(g => g === L
+          || ((fern(g) === lFern || deSagt) && (zahl(L) !== 'sg' || zahl(g) === 'sg' || einzahl)));
+        if (wahl.length < 2) return;
         out.push({
           frage:'Welches Hinweiswort gehört hierhin?',
           wortIdx:i, verdeckt:true,
-          loesung: p.istFem ? p.f : p.m,
-          optionen:[{wert:p.m,text:p.m},{wert:p.f,text:p.f}],
-          aufloesung:`Es geht um ${z[i+1].rein}.`
+          loesung: L.form,
+          optionen: wahl.map(g => ({ wert:g.form, text: tr.vorsatz + g.form })),
+          aufloesung:`Es geht um ${z[i+1].rein}: ${L.form} heißt „${L.de}" (${lFern ? 'fern' : 'nah'}).`
         });
       });
       return out;
@@ -946,6 +1102,91 @@ const UEBUNGEN = [
         frage:'Übersetze diesen Satz ins Deutsche.',
         art:'schreiben'
       }];
+    }
+  },
+  /* ⭐⭐ FRAGEWORT EINSETZEN — Elias am 24.09.2026, 22:49, mit Bild der Karte
+     „wann": „wie wäre es mit einem satzmodus übung wo ich die passenden
+     fragewörter in den satz einfügen muss und zur auswahl halt alle die ich
+     habe und natürlich soll auch das immer aktuell bleiben also wenn ich neue
+     lerne dann die auch impimentieren sobald sie da sind".
+     Die Auswahl: seine Karte „Fragewörter" (f19-fragen) plus jede Karteikarte,
+     die er abgefragt wird und die ein Fragewort ist — gelesen bei jedem
+     Aufbau (uebGruppe oben), deshalb kommen neue von selbst dazu.
+     ⛔ Drei Fallen, alle drei hier abgefangen:
+     - „was?" heißt مَا UND مَاذَا — zwei richtige Antworten wären keine
+       Aufgabe. Steht eins als Lösung, fehlt das andere in der Auswahl.
+     - مِنْ أَيْنَ („woher") und إِلَى أَيْنَ („wohin") sind zwei Wörter; dort
+       wird أَيْنَ nicht gefragt, weil es allein „wo" hieße.
+     - مَا ist auch die Verneinung. Gefragt wird nur in einem Fragesatz. */
+  {
+    id:'fragewort', nr:14, name:'مَنْ / مَا / أَيْنَ … — Fragewort einsetzen', art:'wahl',
+    hinweis:'Welches Fragewort gehört hierhin? Die deutsche Zeile sagt, wonach gefragt wird.',
+    hinweisVerraet:false,
+    baue(z, satz){
+      const frage = /[؟?]\s*$/.test(String((satz && satz.sentAr) || ''))
+        || /\?\s*$/.test(String((satz && satz.sentDe) || ''));
+      if (!frage) return [];
+      const glieder = uebGruppe('f19-fragen', w => {
+        const de = String(w.de || '').trim();
+        return /\?\s*$/.test(de)
+          || (w.type === 'particle' && de.split(/[\/;,]/).some(x => UEB_FRAGE_DE.test(x.trim())));
+      });
+      const out = [];
+      z.forEach((t,i)=>{
+        const tr = uebTreffer(t.rein, glieder);
+        if (!tr) return;
+        const L = tr.glied;
+        const davor = i > 0 ? uebSkelett(z[i-1].rein) : '';
+        if (L.skelett === 'اين' && ['من', 'الى', 'الي'].includes(davor)) return;
+        const bed = uebBedeutung(L.de);
+        const wahl = glieder.filter(g => g === L || uebBedeutung(g.de) !== bed);
+        if (wahl.length < 2) return;
+        out.push({
+          frage:'Welches Fragewort gehört hierhin?',
+          wortIdx:i, verdeckt:true,
+          loesung: L.form,
+          optionen: wahl.map(g => ({ wert:g.form, text: tr.vorsatz + g.form })),
+          aufloesung:`${L.form} heißt „${L.de}".`
+        });
+      });
+      return out;
+    }
+  },
+  /* ⭐⭐ PRONOMEN EINSETZEN — Elias am 24.09.2026, 22:55, mit Bild seiner Karte
+     „الضمائر · Pronomen": „ein satzmodus übung die auch gut wäre, wäre wenn ich
+     die jeweilis passenden pronomen in den satz einfügen muss und zur auswahl
+     halt alle die ich habe und natürlich soll auch das immer aktuell bleiben".
+     Die Auswahl: die zwölf Pronomen seiner Karte (f19-pronomen) plus jede
+     Karteikarte vom Typ Pronomen, die er abgefragt wird.
+     ⛔ „sie", „du" und „ihr" sind im Deutschen mehrdeutig (هِيَ/هُمْ/هُنَّ,
+     أَنْتَ/أَنْتِ …). Dann wird nur gefragt, wenn das Wort danach Geschlecht
+     oder Zahl zeigt — sonst wäre die Lösung geraten. */
+  {
+    id:'pronomen', nr:15, name:'هُوَ / هِيَ / أَنْتَ … — Pronomen einsetzen', art:'wahl',
+    hinweis:'Welches Pronomen gehört hierhin? Person, Geschlecht und Zahl zeigen das Wort danach und die deutsche Zeile.',
+    hinweisVerraet:false,
+    baue(z){
+      const glieder = uebGruppe('f19-pronomen', w => w.type === 'pronoun'
+        && /^(ich|du|er|sie|es|wir|ihr)\b/i.test(String(w.de || '').trim()));
+      if (glieder.length < 2) return [];
+      const out = [];
+      z.forEach((t,i)=>{
+        const tr = uebTreffer(t.rein, glieder);
+        if (!tr) return;
+        const L = tr.glied;
+        if (/^(sie|du|ihr)\b/i.test(L.de)){
+          const n = z[i+1];
+          if (!n || typeof uebungIstWeiblichImSatz !== 'function' || uebungIstWeiblichImSatz(n.wort) === null) return;
+        }
+        out.push({
+          frage:'Welches Pronomen gehört hierhin?',
+          wortIdx:i, verdeckt:true,
+          loesung: L.form,
+          optionen: glieder.map(g => ({ wert:g.form, text: tr.vorsatz + g.form })),
+          aufloesung:`${L.form} heißt „${L.de}".`
+        });
+      });
+      return out;
     }
   }
 ];
@@ -1137,6 +1378,9 @@ function uebungenAufbauen(){
   if (UEB_CACHE.thema === SATZ_THEMA && UEB_CACHE.liste === abdruck && UEB_CACHE.nachModus)
     return UEB_CACHE.nachModus;
   if (typeof setzeLexikon === 'function') setzeLexikon(VOCAB_DATA);
+  /* Die Wortgruppen der Übungen 11, 14, 15 je Aufbau neu lesen: eine Karte,
+     die heute freigeschaltet wurde, gehört ab jetzt zur Auswahl. */
+  UEB_WORTGRUPPEN = {};
   const nachModus = {};
   UEBUNGEN.forEach(m=>nachModus[m.id] = []);
   SENT.list.forEach(satz=>{
@@ -1615,6 +1859,7 @@ const UEBUNG_WARUM = {
   'jarr-paar': 'f19-jarr', 'alle-majrur': 'f19-irab', 'kasus': 'f19-irab', 'haraka': 'f19-irab',
   'wortart': 'wortarten-01', 'regel': null,
   'genus': 'f19-tanith', 'isara': 'f19-isara', 'fem-form': 'f19-tanith',
+  'fragewort': 'f19-fragen', 'pronomen': 'f19-pronomen',
   /* ⛔ `null` IST HIER DIE RICHTIGE ANTWORT, kein vergessener Eintrag.
      Die Übersetzungsübung hat keine feste Regel: welche gilt, sagt erst der
      BEFUND der Prüfung — sie hängt ihn als `a.warum` an die Aufgabe, und
@@ -1730,9 +1975,15 @@ function uebersetzungFuer(stueck){
    könnte auch so eine animation kommen wie bei karteikarten die dann zeigt
    das man sein tagesziel erreicht hat"
 
-   ⭐ WARUM 13, und warum das keine willkuerliche Zahl ist: der gemischte Modus
-   zieht reihum eine Aufgabe je Uebungsart. Nach 13 ist jede der 13 Uebungsarten
+   ⭐ WARUM 15, und warum das keine willkuerliche Zahl ist: der gemischte Modus
+   zieht reihum eine Aufgabe je Uebungsart. Nach 15 ist jede der 15 Uebungsarten
    genau einmal drangewesen — eine natuerliche Grenze, keine gesetzte.
+   ⭐ SEIT 24.09.2026 FÜNFZEHN (vorher 13): Fragewort (14) und Pronomen (15)
+   kamen dazu. Elias: „wenn ich richtig mitgezählt habe dann hätten wir mit
+   den zwei neuen vorschlägen von mir insgesamt 15 sätze bei gemischt damit
+   ich alle mache. aktuallisere das auch dann in den einstellungen als
+   tagesziel als auswahl". test-satz-tagesziel.mjs vergleicht die Vorgabe mit
+   der Zahl der Übungen — kommt eine dazu, wird er rot.
 
    ⚠️ SEIT DEM 16.09.2026 SIND ES ZWÖLF: „Bestimmt?" ist auf Elias' Wunsch
    entfernt. Die Vorgabe bleibt trotzdem 13, denn die Zahl stammt von ihm
@@ -1761,7 +2012,7 @@ function uebersetzungFuer(stueck){
    zwischenspeichern. Sie kann sich aendern, waehrend der Modus offen ist."
    Eine `const` haette den alten Wert bis zum Neuladen festgehalten.
    [[einstellung_wirkt_nicht_weil_zurueckgelesen]] */
-const SATZ_ZIEL_VORGABE = 13;
+const SATZ_ZIEL_VORGABE = 15;
 function satzTagesziel(){
   const n = (typeof SETTINGS === 'object' && SETTINGS) ? Number(SETTINGS.satzZiel) : NaN;
   return (Number.isFinite(n) && n >= 1) ? n : SATZ_ZIEL_VORGABE;

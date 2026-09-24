@@ -334,6 +334,25 @@ export const PFLEGEPLAN = [
       wie: 'Teil D des Prüfers liest die Regelkennungen aus dem kommentarfreien Quelltext und schlägt jede in grammar-data.js nach; fehlt eine, wird er rot (Störtest belegt: eine verfälschte Kennung ergibt Exit 1)' },
   },
   {
+    /* ⭐⭐ 24.09.2026 — DER SATZMODUS HÄLT MIT SEINEN VOKABELN SCHRITT.
+       Übung 11 mit allen Hinweiswörtern, neu 14 (Fragewort) und 15 (Pronomen),
+       dazu der Prüfer, der Lücken und die Balance misst. Elias: „du sollst
+       automatisch das machen und die app immer aktuell halten. ich denke die
+       routinen für mittwoch und sonntag bieten sich dafür gut an." Die Übungen
+       stehen in js/uebung.js (keine eigene Datei) — deshalb von Hand hier. */
+    funktion: 'Satzmodus aktuell: Hinweiswort, Fragewort, Pronomen einsetzen; neue Vokabeln im Satzmodus',
+    /* Keine eigene Datei: die Übungen stehen in js/uebung.js, und die hat schon
+       ihren Eintrag („Satzmodus und Grammatik-Hervorhebung") — zweimal dieselbe
+       Datei lässt pruefe-pflegeplan nicht zu. */
+    dateien: [],
+    bildschirme: [],
+    neuerInhalt: { routine: W, schritt: '1b.8', beleg: 'node werkzeuge/pruefe-satzmodus-aktuell.mjs', werkzeug: 'werkzeuge/pruefe-satzmodus-aktuell.mjs',
+      wie: 'Neue Karten gehören von selbst zur Auswahl (uebGruppe liest Regelkarte und istBekannt bei jedem Aufbau). Fehlt einer Kartenform oder einem Wort der neuesten Kapitel ein Satz, meldet der Prüfer Exit 2 — die Wartung holt einen belegten Satz (Lehrbuchseite, Madina-Schlüssel) oder legt die Lücke auf die Warteseite; neue Regeln prüft sie auf eine eigene Übung (nur als Vorschlag an ihn)' },
+    eingaben: { nein: 'Er wählt nur aus; gespeichert wird richtig/falsch über dieselben Zähler wie bei den übrigen Übungen.' },
+    veralten: { routine: W, schritt: '1b.8', beleg: 'node werkzeuge/alle-pruefer.mjs', werkzeug: 'werkzeuge/pruefe-satzmodus-aktuell.mjs',
+      wie: 'Teil B wird rot, wenn eine Aufgabe ihre Lösung nicht zur Wahl stellt; Teil C meldet 0 % neueste Wörter; drei Störtests laufen in jedem Sammellauf (--stoertest)' },
+  },
+  {
     /* ⭐⭐ 22.09.2026 (v566) — EIN FACHBEGRIFF FOLGT SEINER REGEL.
 
        Elias, nachdem ihm vier Karteikarten hintereinander begegnet waren, deren
