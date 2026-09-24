@@ -19,7 +19,11 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
-const KERN = fs.readFileSync(path.join(HIER, 'js', 'kern.js'), 'utf8');
+/* ⛔ CRLF → LF beim Lesen: Git legt die Dateien beim Auschecken mit CRLF ab
+   (core.autocrlf=true, im Repo LF), und die Störtests unten suchen Text mit `\n`.
+   Am 24.09.2026 stand js/kern.js so da, und „Kapitelregel blendet auch aus …"
+   fand seinen Suchtext nicht mehr. [[zeilenende_r_bricht_muster]] */
+const KERN = fs.readFileSync(path.join(HIER, 'js', 'kern.js'), 'utf8').replace(/\r\n/g, '\n');
 
 let fehler = 0;
 const sag = (ok, t) => { if (!ok) fehler++; console.log('  ' + (ok ? '✔' : '✘') + ' ' + t); };
@@ -378,7 +382,7 @@ console.log('\n=== Störtests zur Grundregel: jede Sicherung muss fehlen dürfen
 
 console.log('\n=== Aufgerufen wird die Kapitelregel beim Start — NACH dem Tausch ===\n');
 {
-  const BJ = fs.readFileSync(path.join(HIER, 'js', 'buecher.js'), 'utf8');
+  const BJ = fs.readFileSync(path.join(HIER, 'js', 'buecher.js'), 'utf8').replace(/\r\n/g, '\n');
   const t = BJ.indexOf("if (typeof tauscheDubletten === 'function') tauscheDubletten();");
   const k = BJ.indexOf("if (typeof blendeKapitelDublettenAus === 'function') blendeKapitelDublettenAus();");
   sag(t > 0 && k > t, 'js/buecher.js ruft blendeKapitelDublettenAus() hinter tauscheDubletten() auf');
@@ -405,7 +409,7 @@ console.log('\n=== Störtest: kann das hier überhaupt scheitern? ===\n');
 console.log('\nDoppelt in zwei Büchern — أَخٌ/أُخْتٌ aus Bayna Yadayk bleiben draußen:');
 {
   const vmMod = await import('node:vm');
-  const BUECHER_JS = fs.readFileSync(path.join(HIER, 'js', 'buecher.js'), 'utf8');
+  const BUECHER_JS = fs.readFileSync(path.join(HIER, 'js', 'buecher.js'), 'utf8').replace(/\r\n/g, '\n');
   const schneideBuecher = (name) => {
     const auf = BUECHER_JS.indexOf('function ' + name + '(');
     if (auf < 0) return null;

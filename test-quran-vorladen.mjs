@@ -28,7 +28,11 @@ import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)));
-const quelle = fs.readFileSync(path.join(REPO, 'js', 'quran-audio.js'), 'utf8');
+/* ⛔ CRLF → LF beim Lesen: Git legt die Datei beim Auschecken mit CRLF ab
+   (core.autocrlf=true, im Repo LF), die Muster unten suchen `\n\}\n`. Im
+   CRLF-Nachbau vom 24.09.2026 wurde dieser Test rot, ohne Fehler im Code.
+   [[zeilenende_r_bricht_muster]] */
+const quelle = fs.readFileSync(path.join(REPO, 'js', 'quran-audio.js'), 'utf8').replace(/\r\n/g, '\n');
 
 /* ⛔ Ohne Kommentare suchen, wo es um CODE geht. Der erste Lauf meldete die
    alte Fassung als „noch vorhanden" — und der Treffer stand in dem Kommentar,

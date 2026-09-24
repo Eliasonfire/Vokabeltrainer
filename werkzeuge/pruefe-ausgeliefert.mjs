@@ -77,8 +77,12 @@ const beleg = JSON.parse(fs.readFileSync(BELEG, 'utf8'));
    ⚠️ Textdateien werden weiter ZEILENWEISE verglichen (mit normalisierten
    Zeilenenden), Binaerdateien per Hash. Beides zusammenzuwerfen waere falsch:
    ein CRLF-Unterschied in einer js-Datei ist harmlos, ein Byte-Unterschied in
-   einer woff2 ist es nicht. */
-const TEXT = /\.(js|mjs|cjs|html|json|css|md|webmanifest)$/;
+   einer woff2 ist es nicht.
+   ⛔ svg gehört zu den Texten (24.09.2026): Git behandelt icon.svg als Text und
+   legt es beim Auschecken mit CRLF ab (core.autocrlf=true). Im CRLF-Nachbau
+   meldete der Hash-Vergleich beide Icons als „NICHT ausgeliefert", obwohl nur
+   die Zeilenenden anders waren. [[zeilenende_r_bricht_muster]] */
+const TEXT = /\.(js|mjs|cjs|html|json|css|md|webmanifest|svg)$/;
 const hashVon = p => crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
 
 const dateien = [];
