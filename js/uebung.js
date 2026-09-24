@@ -299,6 +299,21 @@ function uebungBezugswort(z, i, weiblich){
    حُرُوفُ جَرٍّ 1× · اِسْمٌ 17× · فِعْلٌ 3× · حَرْفٌ 5×.
    ⛔ Ohne Beleg und deshalb NOCH OHNE Endung: مُذَكَّر (0×, arabdict nur
    مُذكَّر) — nicht selbst ergänzen. */
+/* ⛔ AKKUSATIV ERST, WENN ER IHN GELERNT HAT (25.09.2026). Elias zu Übung 7:
+   „natürlich akkusativ geht aktuell nicht weil ich es einfach noch nicht weiß
+   aber sobald ich es weiß soll es natürlich auch hinzukommen". Schon früher:
+   „die Regeln zum Akkusativ kenne ich auch nicht, unser Lehrer hatte es nur
+   erwähnt" (grammar-data.js bei SATZ_THEMEN). Gemessen am 25.09.: in seiner
+   Auswahl fragte keine Aufgabe nach dem Akkusativ — die Sperre hält das so,
+   wenn Sätze mit Objekt dazukommen.
+   ⭐ Von selbst frei: kommt der Akkusativ im Unterricht dran, bekommt seine
+   Regel die Id `akkusativ-01` (Wartung, Schritt 1b.5) — dann fragen Übung 6 und
+   7 ihn mit ab. Die Auswahl (مَنْصُوبٌ, Fatḥa, Fatḥatān) bleibt stehen. */
+const UEB_AKKUSATIV_REGEL = 'akkusativ-01';
+const uebAkkusativBekannt = () => typeof regelArt === 'function' && !!regelArt(UEB_AKKUSATIV_REGEL);
+/* Der Grund einer Endung — die Rolle ohne Klammerzusatz („نَعْت (zum …)" →
+   „نَعْت"). uebungMischen() zieht damit innerhalb einer Antwort reihum. */
+const uebGrund = t => String((t && t.rolle) || '').replace(/\s*\(.*$/, '').trim() || null;
 const KASUS_WAHL = [
   { wert:'raf',  text:'مَرْفُوعٌ · Nominativ' },
   { wert:'jarr', text:'مَجْرُورٌ · Genitiv' },
@@ -699,9 +714,9 @@ const UEBUNGEN = [
   {
     id:'kasus', nr:6, name:'Welcher Fall?', art:'wahl',
     baue(z){
-      return z.map((t,i)=>t.erwartet ? {
+      return z.map((t,i)=>(t.erwartet && (t.erwartet !== 'nasb' || uebAkkusativBekannt())) ? {
         frage:'In welchem Fall steht das hervorgehobene Wort?',
-        wortIdx:i, optionen:KASUS_WAHL, loesung:t.erwartet,
+        wortIdx:i, optionen:KASUS_WAHL, loesung:t.erwartet, grund:uebGrund(t),
         aufloesung:`${typeof rolleAnzeige === 'function' ? rolleAnzeige(t.rolle) : t.rolle} → ${KASUS[t.erwartet].ar} (${KASUS[t.erwartet].de})`
       } : null).filter(Boolean);
     }
@@ -723,10 +738,11 @@ const UEBUNGEN = [
     baue(z){
       return z.map((t,i)=>{
         if (!t.erwartet || !t.gelesen || t.stimmt === false) return null;
+        if (t.erwartet === 'nasb' && !uebAkkusativBekannt()) return null;
         if (!HARAKA_WAHL.some(h=>h.wert === t.gelesen.zeichen)) return null;
         return {
           frage:'Welche Endung gehört an das hervorgehobene Wort?',
-          wortIdx:i, ohneEndung:true, optionen:HARAKA_WAHL, loesung:t.gelesen.zeichen,
+          wortIdx:i, ohneEndung:true, optionen:HARAKA_WAHL, loesung:t.gelesen.zeichen, grund:uebGrund(t),
           aufloesung:`${typeof rolleAnzeige === 'function' ? rolleAnzeige(t.rolle) : t.rolle} → ${KASUS[t.erwartet].ar}, also ${t.gelesen.zeichen}: ${t.rein}`
         };
       }).filter(Boolean);
@@ -1512,6 +1528,64 @@ function starteGemischtFallsFrei(){
   uebungStarten(UEB_GEMISCHT);
 }
 
+/* ⭐ JEDE ANTWORT UNGEFÄHR GLEICH OFT (25.09.2026). Elias mit Bild von Übung 11
+   (Lösung هَذَا): „hier sind denke ich viele sätze auf hadha ausgelegt aber es
+   sollen bewusst ungefähr gleichviele von jeder antwort geben damit jede
+   antwort gleich oft ungefähr drankommt". Gemessen in seiner Auswahl: von 152
+   Aufgaben hatten 98 die Lösung هَذَا und 34 هَذِهِ — in den ersten 15 kamen im
+   Mittel fast zehnmal هَذَا, die übrigen sieben Formen zusammen kaum zweimal.
+   Deshalb REIHUM nach Lösung statt einfach gemischt: je Lösung ein Korb,
+   gezogen wird abwechselnd aus jedem — dieselbe Idee wie
+   uebungGemischteListe() für die Modi. Die ersten Aufgaben enthalten so jede
+   Antwort einmal, bevor eine zum zweiten Mal kommt. Kleine Körbe laufen
+   früher aus; dann wird der Rest reihum weitergezogen.
+
+   ⭐ FÜR ALLE AUSWAHL-ÜBUNGEN (art 'wahl', 6–14), nicht nur 11, 13, 14. Elias:
+   „das sollte auch bei den anderen aufgaben so sein mit reihum die anderen bei
+   denen es sinn macht und ich glaube das sollten alle sein bin mir aber nciht
+   sicher" — und zu Übung 7: „hier möchte ich auch, dass alle
+   antwortmöglichkeiten ungefähr gleich oft dran kommen". Nicht bei „Antippen"
+   (1–5: dort gibt es keine einzelne Antwort) und nicht bei „Übersetzen" (15).
+   Gemessen am 25.09. in seiner Auswahl: Übung 7 hatte 288 von 605 Aufgaben mit
+   Ḍammatān, Übung 8 597 von 717 mit „Nomen", Übung 10 389 von 540 „männlich".
+
+   ⭐ ZWEITE STUFE: DER GRUND. Trägt eine Aufgabe `grund` (Übung 6 und 7: die
+   Rolle des Wortes), wird INNERHALB einer Antwort noch einmal reihum nach dem
+   Grund gezogen. Elias zu Übung 7: „auch sollen die sätze so konzipiert sein
+   das es zb im genitiv steht und deswegen ein kasra zb bekommt … generell auch
+   beispielsweise könnte das ein adjektiv sein und deswegen die selbe endung
+   bekommen wie das wort davor und ich muss das ganze halt herausfinden … in den
+   meisten fällen ist es halt im nominativ und meist mit dumma tanween aber ich
+   mcöhte mein kopf etwas bemühen". Kasra kommt dann abwechselnd nach einer
+   Präposition, als مُضَاف إِلَيْه und als نَعْت — nicht immer aus demselben Grund. */
+function uebungReihum(liste, schluessel, zweiter){
+  const koerbe = new Map();
+  for (const a of liste){
+    const k = schluessel(a);
+    if (!koerbe.has(k)) koerbe.set(k, []);
+    koerbe.get(k).push(a);
+  }
+  let runde = shuffle([...koerbe.values()])
+    .map(k => (zweiter && k.some(a => zweiter(a) != null)) ? uebungReihum(k, zweiter, null) : shuffle(k));
+  const raus = [];
+  while (runde.length){
+    /* Die Naht: die erste Antwort einer Runde soll nicht die letzte der
+       vorigen sein — sonst käme dieselbe zweimal hintereinander. */
+    const zuletzt = raus.length ? schluessel(raus[raus.length - 1]) : null;
+    if (zuletzt !== null && runde.length > 1 && schluessel(runde[0][0]) === zuletzt) runde.push(runde.shift());
+    for (const k of runde) raus.push(k.shift());
+    runde = shuffle(runde.filter(k => k.length));
+  }
+  return raus;
+}
+function uebungMischen(m, liste){
+  /* Entschieden an den AUFGABEN, nicht an m.art (test-eindeutige-ziele.mjs):
+     reihum nur, wo eine Aufgabe genau EINE Lösung hat — „Antippen" trägt
+     `ziele`, „Übersetzen" freien Text, beide keine `loesung`. */
+  if (!liste.some(a => a && a.loesung != null)) return shuffle(liste.slice());
+  return uebungReihum(liste, a => String(a.loesung), a => (a.grund == null ? null : String(a.grund)));
+}
+
 function uebungStarten(modusId){
   const alle = uebungenAufbauen();
   /* Gemischt ordnet reihum an und ist deshalb schon fertig gemischt —
@@ -1525,7 +1599,7 @@ function uebungStarten(modusId){
     return;
   }
   if (LUECKE.aktiv) beendeLuecke();
-  UEB = { modus:modusId, liste: gemischt ? liste : shuffle(liste.slice()), idx:0, gewaehlt:new Set(),
+  UEB = { modus:modusId, liste: gemischt ? liste : uebungMischen(UEBUNGEN.find(x=>x.id===modusId), liste), idx:0, gewaehlt:new Set(),
           beantwortet:false, richtig:0, gestellt:0 };
   document.getElementById('gramPopover').classList.remove('show');
   uebungAnsicht(true);
@@ -1597,7 +1671,7 @@ function uebungGemischteListe(nachModus){
      begannen alle drei Probelaeufe im Browser mit exakt „1,2,3,…,13" — die
      Umsortierung griff erst ab Runde zwei, und die ersten dreizehn Fragen
      sahen bei jedem Start gleich aus. Genau die sieht Elias zuerst. */
-  let koerbe = shuffle(UEBUNGEN.map(m => shuffle((nachModus[m.id] || []).slice()))
+  let koerbe = shuffle(UEBUNGEN.map(m => uebungMischen(m, nachModus[m.id] || []))
                                .filter(k => k.length));
   const raus = [];
   let i = 0;

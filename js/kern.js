@@ -3209,12 +3209,17 @@ function tagesAuswahl(pool, deckel){
   if (neu.length < platzNeu) { platzWdh += platzNeu - neu.length; platzNeu = neu.length; }
   if (wdh.length < platzWdh) { platzNeu += platzWdh - wdh.length; platzWdh = wdh.length; }
 
-  /* ⭐ Ein Box-1-Platz gehört dem Wort, das er am längsten falsch hatte (seit
-     25.09.2026, siehe DECKEL_ANTEIL_BOX1): die erste schon beantwortete
-     Box-1-Karte in Pool-Reihenfolge — die wartet am längsten. Neue Karten
-     behalten die übrigen Plätze zuerst (neueZuerst), danach weitere falsche. */
-  const altFalsch = neu.find(w => !nieAbgefragt(w));
-  const box1Wahl = (altFalsch && platzNeu > 0) ? [altFalsch].concat(neu.filter(w => w !== altFalsch)) : neu;
+  /* ⭐ Box-1-Plätze für die Wörter, die er am längsten falsch hatte (seit
+     25.09.2026, siehe DECKEL_ANTEIL_BOX1): die ersten schon beantworteten
+     Box-1-Karten in Pool-Reihenfolge — die warten am längsten. Neue Karten
+     behalten die übrigen Plätze zuerst (neueZuerst), danach weitere falsche.
+     ⭐ WIE VIELE (25.09.2026, 01:1x): einer je 10 Karten, gerundet wie die
+     Aufteilung — bei 10 einer, bei 15 und 20 zwei. Elias fragte „wollen wir 1
+     oder 2 wörter machen bei 15?"; auf „1 oder 2 bei 20?": „2", auf meine
+     Empfehlung „2 bei 15": „ja". */
+  const platzFalsch = Math.min(platzNeu, Math.max(1, Math.round(deckel / 10)));
+  const altFalsch = neu.filter(w => !nieAbgefragt(w)).slice(0, platzFalsch);
+  const box1Wahl = altFalsch.length ? altFalsch.concat(neu.filter(w => !altFalsch.includes(w))) : neu;
   const gewaehlt = box1Wahl.slice(0, platzNeu).concat(wdh.slice(0, platzWdh));
   /* ⛔ Die Reihenfolge des Pools wiederherstellen. Ohne das kämen erst alle
      Box-1-Karten und dann alle Wiederholungen — und der Fachbegriff-Takt in
