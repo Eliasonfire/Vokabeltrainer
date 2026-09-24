@@ -791,8 +791,14 @@ export const PFLEGEPLAN = [
     bildschirme: [],
     neuerInhalt: { nein: 'Abgeleitet aus seiner Buchauswahl (aktiveBuecher) und den geladenen Kapiteln: ein neu gewähltes Buch steht ohne Zutun mit allen Kapiteln da.' },
     eingaben: { nein: 'Er wählt Bücher und Kapitel wie bisher; die Liste zeigt nur.' },
-    veralten: { nein: 'Nichts Gespeichertes; dass jedes gewählte Buch mit allen Kapiteln und je Buch richtig gezählt erscheint, misst pruefe-vokabeln-seite.mjs im Sammellauf (4 Störtests). '
-      + 'Ob Bücher und Kapitel mit seinem Stand übereinstimmen, prüft (geplant, To-Do Punkt 0b) ein eigener Schritt im vollen Programm und in der Wartung.' },
+    /* Seit 24.09.2026 eingelöst: sein „irgendwer soll auch gucken ob das meine
+       kapitel hier auch aktuell sind und auch bücher". Die Seite selbst misst
+       pruefe-vokabeln-seite.mjs (Sammellauf, 4 Störtests); ob Bücher und Kapitel
+       mit seinem Stand übereinstimmen, misst pruefe-buecher-aktuell.mjs direkt
+       nach vorrat.mjs --stand — dabei fiel „aby-1" (Bayna Yadayk 1) auf, das
+       arabicroots so nennt und vorrat.mjs bis dahin still verwarf. */
+    veralten: { routine: W, schritt: '1c.1', beleg: 'node werkzeuge/pruefe-buecher-aktuell.mjs', werkzeug: 'werkzeuge/pruefe-buecher-aktuell.mjs',
+      wie: 'arabicroots, seine Auswahl, FREIGESCHALTET und die Buchdateien gegeneinander — Befund in den Bericht, eine Frage an ihn nur, wo seine Auswahl entscheidet (Warteseite)' },
   },
   {
     funktion: 'Wurzelmodus',

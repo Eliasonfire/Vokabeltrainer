@@ -425,6 +425,13 @@ const PRUEFER = [
      Herkünfte, sieben Felder) oder ein Zurücksetzen vom anderen Gerät
      zurückkommt; drei Störtests bei jedem Lauf. */
   ['werkzeuge/pruefe-bearbeiten.mjs', []],
+  /* 24.09.2026 — Elias: „irgendwer soll auch gucken ob das meine kapitel hier
+     auch aktuell sind und auch bücher". Exit 1 = Befund (unbekannte arabicroots-
+     Kennung, FREIGESCHALTET nicht nachgezogen, Buchdatei zu alt), Exit 2 = Frage
+     an ihn (bei arabicroots frei, in seiner Auswahl nicht). Der Störtest läuft
+     als eigene Zeile: vier Störungen, jede muss ihre Meldung auslösen. */
+  ['werkzeuge/pruefe-buecher-aktuell.mjs', []],
+  ['werkzeuge/pruefe-buecher-aktuell.mjs', ['--stoertest']],
   /* 22.09.2026 — Elias: „kein beispielsatz, sorge dafür das alle ien
      beispielsatz haben". Exit 2 = Lücken, die auf Material warten (kein
      Werkzeugfehler); Exit 1 nur, wenn die Zahl selbst nicht belastbar wäre. */
