@@ -212,7 +212,9 @@ function zeichneEinzelnFreiListe(){
    genauso aus wie „die Korrekturen sind nicht lesbar", und auf der
    Diagnosekarte steht die Zahl als Messwert. [[vorgabewert_sieht_aus_wie_befund]] */
 function aenderungsZahl(){
-  try { return Object.keys(WORT_AENDERUNGEN || {}).length; }
+  /* Ohne die Vermerke „zurückgesetzt" (seit 24.09.2026, verwirfWortAenderung()
+     in js/kern.js) — die tragen kein Feld und sind keine Korrektur. */
+  try { return Object.keys(WORT_AENDERUNGEN || {}).filter(hatWortAenderung).length; }
   catch (e) { stillerFehler('einstellungen.aenderungsZahl', e); return 0; }
 }
 

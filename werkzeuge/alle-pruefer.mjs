@@ -419,6 +419,12 @@ const PRUEFER = [
      Wort. Elias: „… den selben ton wieder abspielt und nicht zum nächsten geht."
      Rot, sobald der Lautsprecher-Zweig wieder hinter dem Weiter-Zweig steht. */
   ['werkzeuge/pruefe-hoer-ton.mjs', []],
+  /* 24.09.2026 — was er im Formular ändert, bleibt. Elias: „meine bearbeitungen
+     werden scheinbar nicht gespeichert oder so … das sollst du fixen". Rot,
+     sobald eine Änderung Neustart oder Geräteabgleich nicht übersteht (fünf
+     Herkünfte, sieben Felder) oder ein Zurücksetzen vom anderen Gerät
+     zurückkommt; drei Störtests bei jedem Lauf. */
+  ['werkzeuge/pruefe-bearbeiten.mjs', []],
   /* 22.09.2026 — Elias: „kein beispielsatz, sorge dafür das alle ien
      beispielsatz haben". Exit 2 = Lücken, die auf Material warten (kein
      Werkzeugfehler); Exit 1 nur, wenn die Zahl selbst nicht belastbar wäre. */
