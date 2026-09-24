@@ -1344,6 +1344,31 @@ try {
   console.log('  ⚠️ Regelkandidaten nicht lesbar: ' + e.message);
 }
 
+/* ---------- Bücher und Kapitel (seit 24.09.2026) ----------
+   Elias, 23.09.2026: „irgendwer soll auch gucken ob das meine kapitel hier auch
+   aktuell sind und auch bücher". Ein Posten wird nur die FRAGE an ihn (F1: bei
+   arabicroots frei, in seiner Auswahl nicht). Befunde (Exit 1) sind meine
+   Arbeit und gehören in den Bericht der Wartung, nicht auf seine Seite. */
+try {
+  const r = messen('werkzeuge/pruefe-buecher-aktuell.mjs', ['--json']);
+  const j = JSON.parse(r.text);
+  const fr = j.fragen || [];
+  if (fr.length) posten.push({
+    titel: 'Bücher und Kapitel: bei arabicroots frei, in deiner Auswahl nicht',
+    zahl: fr.reduce((s, f) => s + (f.kapitel || []).length, 0), einheit: 'Kapitel',
+    dazu: fr.map(f => f.buch).join(' · ') + ' · aus pruefe-buecher-aktuell.mjs',
+    auswahl: true,
+    aufwand: 'je Buch einmal anhaken — oder „nein"',
+    warum: 'Für ein Buch, in dem du Kapitel angehakt hast, zählt nur deine Auswahl. Was arabicroots darüber hinaus '
+      + 'freischaltet, kommt in der App dann nicht an. Ich trage nichts ein — was du lernst, entscheidest du.',
+    wie: 'In der App in den Einstellungen bei der Buchauswahl das Kapitel anhaken. Willst du es nicht, sag „nein" — dann nehme ich die Frage heraus.',
+    zeilen: fr.map(f => f.text),
+    seite: '', seiteText: ''
+  });
+} catch (e) {
+  console.log('  ⚠️ Bücher und Kapitel nicht prüfbar: ' + e.message);
+}
+
 /* ---------- Arabisch, das in SEINEN Notizen rueckwaerts steht (09.09.2026) --
  *
  * ⛔⛔ Die Bidi-Drehung dieses Tages steckt nicht nur in der App und in den

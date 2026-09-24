@@ -70,6 +70,7 @@ import { execFileSync } from 'node:child_process';
 import { ersetzeDatei } from './schreibe-ersetzend.mjs';
 import { mitWiederholung } from './kv-abruf.mjs';
 import { appKapitelHalten } from './neue-kapitel.mjs';
+import { kapitelAusRoots } from './arabicroots-buecher.mjs';
 
 /* fileURLToPath, nicht von Hand zerlegen: der Ordner heisst "1. Workspace"
    mit Leerzeichen, das steht in import.meta.url als %20. */
@@ -504,15 +505,11 @@ function freischaltungAusJson(text){
   try { roh = JSON.parse(text); }
   catch (e) { console.error('  Datei ist kein JSON: ' + e.message); process.exit(1); }
   const liste = Array.isArray(roh) ? roh : (roh.chapters || roh.data || []);
-  const frei = {};
-  liste.forEach(e => {
-    const id = String(e.chapter_id || e.chapterId || e || '');
-    const m = id.match(/^(.*)-chapter-(\d+)$/);
-    if (!m) return;
-    (frei[m[1]] = frei[m[1]] || []).push(Number(m[2]));
-  });
-  Object.keys(frei).forEach(b => frei[b] = [...new Set(frei[b])].sort((a, b) => a - b));
-  return frei;
+  /* ⛔ Seit 24.09.2026 über arabicroots-buecher.mjs: get_unlocked_chapters
+     nennt Bayna Yadayk 1 „aby-1", die App „bayna-yadayk-1". Vorher fiel „aby-1"
+     unten bei `ueber` still heraus — eine Freischaltung NUR bei arabicroots kam
+     für dieses Buch nie an. Die Zuordnung steht dort, an einer Stelle. */
+  return kapitelAusRoots(liste).frei;
 }
 
 function freischaltungSchreiben(neu, heute){
@@ -924,6 +921,14 @@ if (iStand >= 0){
     else {
     const a = auswahlAusKvStand(text);
     vonApp = a.frei;
+    /* Aus DEMSELBEN Abruf, für pruefe-buecher-aktuell.mjs (seit 24.09.2026):
+       seine Buchauswahl, wie sie im Geräteabgleich steht. Ohne sie kann die
+       Prüfung nicht sagen, ob ein Kapitel in FREIGESCHALTET noch eine Quelle
+       hat — und sie soll nicht selbst noch einmal den KV abrufen. */
+    try {
+      fs.writeFileSync(p('.stand-app.json'), JSON.stringify({ abgefragt: new Date().toISOString(),
+        stempel: a.stempel, buecher: a.frei }, null, 1) + '\n', 'utf8');
+    } catch (e) { console.log('  ⚠️ .stand-app.json nicht geschrieben: ' + e.message); }
     /* ⏳ DIESELBE STUNDE WIE DIE STÜNDLICHE PRÜFUNG (22.09.2026). Elias: „es
        länger als 1h auch so bleibt (also nicht nur testweiße oder zum gucken mal
        freigeschcaltet und wieder weg gemacht)". Ohne diese Zeilen bekäme ein
@@ -987,6 +992,10 @@ if (iStand >= 0){
   const bekannt = new Set(BUECHER.map(b => b.slug));
   const ueber = Object.keys(neu).filter(b => !bekannt.has(b));
   ueber.forEach(b => delete neu[b]);
+  /* ⚠️ Bis 24.09.2026 geschah das STILL — so fiel „aby-1" (Bayna Yadayk 1)
+     wochenlang heraus, ohne dass eine Zeile im Bericht stand. */
+  if (ueber.length) console.log('  ⚠️ Nicht nachgezogen, weil die App dieses Buch nicht kennt: '
+    + ueber.join(', ') + ' — Befund, siehe node werkzeuge/pruefe-buecher-aktuell.mjs');
 
   const alt = frei;
 

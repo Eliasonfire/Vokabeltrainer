@@ -817,7 +817,7 @@ ihn sieht er den alten Stand und hält die Arbeit für nicht gemacht.
 
 # Die vollständige Prüfkette
 
-Alle zwölf auf einmal, wenn mehr als ein Wort dazukam:
+Alle auf einmal, wenn mehr als ein Wort dazukam:
 
 ```
 node validate.js
@@ -831,9 +831,19 @@ node pruefe-quran.js
 node pruefe-funktionen.js
 node pruefe-duplikate.js
 node werkzeuge/vorrat.mjs
+node werkzeuge/pruefe-buecher-aktuell.mjs
 node werkzeuge/pruefe-eigene-vorrang.mjs
 node werkzeuge/export-index.mjs --pruefen
 ```
+
+⭐ **`pruefe-buecher-aktuell.mjs`** (seit 24.09.2026) ist Elias' *„irgendwer soll
+auch gucken ob das meine kapitel hier auch aktuell sind und auch bücher"*: sie
+legt arabicroots (`--roots <datei>` aus `get_unlocked_chapters`, sonst
+`.stand-freigeschaltet.json`), seine Buchauswahl (`.stand-app.json`, geschrieben
+von `vorrat.mjs --stand … --app auto`), `FREIGESCHALTET` und die Buchdateien
+gegeneinander. **Exit 2 = Frage an ihn** (Warteseite, nichts eintragen),
+**Exit 1 = Befund** — so fiel „aby-1" auf, unter dem arabicroots Bayna Yadayk 1
+meldet und das `vorrat.mjs` bis dahin still verwarf.
 
 ⛔ **Zwei davon prüfen etwas anderes, als man beim Überfliegen annimmt:**
 
