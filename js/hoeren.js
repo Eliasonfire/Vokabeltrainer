@@ -759,14 +759,24 @@ document.getElementById('hoerOptionen').addEventListener('click', (e)=>{
    `pointer-events:none` (siehe index.html). */
 document.getElementById('hoerKarte').addEventListener('click', (e)=>{
   if (e._hatBeantwortet) return;                        /* genau dieser Klick war die Antwort */
+  /* ⭐⭐ DER LAUTSPRECHER SPIELT IMMER DASSELBE WORT — auch nach der Antwort
+     (24.09.2026). Elias: „wenn ich beim hörmodus bereits eine lösung gegeben
+     habe und wieder auf das ton zeichen tippe möchte ich, dass es mir den
+     selben ton wieder abspielt und nicht zum nächsten geht."
+     Bis dahin stand diese Zeile HINTER dem Weiter-Zweig darunter: nach der
+     Antwort war der Lautsprecher ein Teil der Karte wie jeder andere Fleck und
+     schaltete weiter. Deshalb steht sie jetzt davor — und gilt auch während
+     der Q8-Sperre nach einer falschen Antwort: die Sperre hält das Weiterblättern
+     auf, nicht das Hinhören. Überall sonst auf der Karte geht es weiter wie
+     bisher. Bewacht von werkzeuge/pruefe-hoer-ton.mjs. */
+  if (e.target.closest('#btnHoerPlay')){ hoerAbspielen(); return; }
   if (HOER.beantwortet){
     /* ⛔ Q8: waehrend der Sperre passiert nichts — auch keine Fehlermeldung.
        Ein Ton oder ein Ruckeln waere Strafe; gewollt ist nur, dass der Blick
        zwei Sekunden auf der Loesung bleibt. */
     if (HOER.sperreBis && Date.now() < HOER.sperreBis) return;
-    naechsteHoerfrage(); return; /* egal wo auf der Karte, auch nach dem Tagesziel */
+    naechsteHoerfrage(); return; /* egal wo auf der Karte, auch nach dem Tagesziel — nur nicht auf dem Lautsprecher (oben) */
   }
-  if (e.target.closest('#btnHoerPlay')) hoerAbspielen();
 });
 
 /* ---------- „Kenne ich schon" (hier seit 18.08.2026) ----------

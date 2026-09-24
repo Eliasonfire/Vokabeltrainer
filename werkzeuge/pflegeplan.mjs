@@ -774,7 +774,23 @@ export const PFLEGEPLAN = [
     bildschirme: ['screen-hoeren'],
     neuerInhalt: { nein: 'Der Vorrat sind seine gelernten Wörter; ein neu gelerntes Wort ist ohne Zutun dabei, die Ablenker sucht die App selbst.' },
     eingaben: { nein: 'Er wählt nur Antworten; der Tageszähler vt_hoerTag ist reiner App-Zustand.' },
-    veralten: { nein: 'Nichts Gespeichertes; ob fünf Antworten und die Ähnlichkeit wirken, misst pruefe-hoerablenker.mjs im Sammellauf.' },
+    veralten: { nein: 'Nichts Gespeichertes; ob fünf Antworten und die Ähnlichkeit wirken, misst pruefe-hoerablenker.mjs im Sammellauf; '
+      + 'dass der Lautsprecher nach der Antwort dasselbe Wort spielt (Elias, 24.09.2026), pruefe-hoer-ton.mjs.' },
+  },
+  {
+    /* ⭐ 23./24.09.2026 — DIE KAPITELLISTE ZEIGT JEDES BUCH, DAS ER LERNT.
+       Elias: „die vokabeln gehen nur bis medina 24, ich bin aber bayna yadayk"
+       und „am besten sobald ich neues buch freischalte soll neues buch kommen und
+       alle kapteln gezeigt werden da". renderChapterCats() und openWordList() in
+       js/kategorien.js — INNERHALB bestehender Dateien, also von Hand hier.
+       Seit v585 live (mitgenommen von der Routine „neue Kapitel"), committet 00:32. */
+    funktion: 'Kapitelliste je Buch',
+    dateien: [],
+    bildschirme: [],
+    neuerInhalt: { nein: 'Abgeleitet aus seiner Buchauswahl (aktiveBuecher) und den geladenen Kapiteln: ein neu gewähltes Buch steht ohne Zutun mit allen Kapiteln da.' },
+    eingaben: { nein: 'Er wählt Bücher und Kapitel wie bisher; die Liste zeigt nur.' },
+    veralten: { nein: 'Nichts Gespeichertes; dass jedes gewählte Buch mit allen Kapiteln und je Buch richtig gezählt erscheint, misst pruefe-vokabeln-seite.mjs im Sammellauf (4 Störtests). '
+      + 'Ob Bücher und Kapitel mit seinem Stand übereinstimmen, prüft (geplant, To-Do Punkt 0b) ein eigener Schritt im vollen Programm und in der Wartung.' },
   },
   {
     funktion: 'Wurzelmodus',
