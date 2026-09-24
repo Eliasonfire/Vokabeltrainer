@@ -34,7 +34,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { execSync } from 'child_process';
+import { execSync, execFileSync } from 'child_process';
 
 /* ⚠️ fileURLToPath, NICHT die URL von Hand zerlegen: der Ordner heisst
    "1. Workspace" mit Leerzeichen, und das steht in import.meta.url als %20.
@@ -266,6 +266,41 @@ if (mitDaten){
   else console.log('   (' + tage + ' Tage alt)');
   console.log('');
 }
+
+/* ⚠️ NICHT COMMITTETE APP-DATEIEN (seit 24.09.2026) — eine WARNUNG, keine Sperre.
+   Befund vom 23.09.2026: die Routine „neue Kapitel" lieferte um 21:54 v585 aus
+   und nahm dabei meinen uncommitteten, noch UNGEPRÜFTEN Umbau der Kapitelliste
+   mit — dieses Skript baut aus dem Arbeitsordner, nicht aus dem letzten Commit.
+   Diesmal war der Umbau fertig. Ein halber ginge genauso hinaus, ohne Meldung.
+   Warum keine Sperre: wer ausliefert, hat seine EIGENEN Änderungen meist auch
+   noch nicht committet (die Routinen committen danach) — eine Sperre hielte
+   jede Auslieferung an. Ob daraus eine wird, ist Elias' Entscheidung (Warteseite).
+   Unterscheiden hilft die Arbeitsmarke: eine offene Marke einer anderen Arbeit
+   mit genau diesen Dateien ist das Zeichen, dass hier etwas Halbes mitgeht. */
+try {
+  const liste = dabei.map(d => d.rel);
+  const offen = execFileSync('git', ['status', '--porcelain', '--', ...liste],
+    { cwd: WURZEL, encoding: 'utf8' }).split('\n').filter(Boolean);
+  if (offen.length){
+    console.log('⚠️  ' + offen.length + ' ausgelieferte Datei(en) sind NICHT committet — sie gehen so hinaus, wie sie gerade im Ordner liegen:');
+    offen.slice(0, 25).forEach(z => console.log('     ' + z));
+    if (offen.length > 25) console.log('     … und ' + (offen.length - 25) + ' weitere');
+    const marke = path.join(WURZEL, '.arbeit.json');
+    if (fs.existsSync(marke)){
+      try {
+        const m = JSON.parse(fs.readFileSync(marke, 'utf8'));
+        const dateien = (m.dateien || []).map(String);
+        const treffer = offen.map(z => z.slice(3).trim()).filter(d => dateien.some(x => d.endsWith(x) || x.endsWith(d)));
+        console.log('   ⛔ Offene Arbeitsmarke: „' + (m.was || '?') + '"' + (m.begonnen ? ' (seit ' + m.begonnen + ')' : '')
+          + (treffer.length ? ' — betrifft davon: ' + treffer.join(', ') : ''));
+        console.log('      Ist das nicht deine Arbeit, geht hier etwas Halbes mit hinaus.');
+      } catch (e) { console.log('   ⚠️ .arbeit.json nicht lesbar: ' + e.message); }
+    } else {
+      console.log('   (keine offene Arbeitsmarke — ist es deine eigene Änderung, ist das in Ordnung)');
+    }
+    console.log('');
+  }
+} catch (e) { console.log('⚠️  git status für die Ausliefer-Liste nicht lesbar: ' + String(e.message).split('\n')[0]); }
 
 if (nurPruefen){ console.log('--pruefen: nichts gebaut, nichts hochgeladen.'); process.exit(0); }
 
