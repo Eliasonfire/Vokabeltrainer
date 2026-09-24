@@ -156,6 +156,10 @@ function tageSeit(deutschesDatum){
    abfragemarke.mjs braucht ein ALTES Abfragedatum. Das echte js/kern.js trägt
    nach jeder Abfrage das heutige — dann konnte die Alterswarnung, die der Test
    verlangt, gar nicht kommen, und er wurde rot, ohne dass etwas kaputt war. */
+/* ⛔ NUR js/kern.js wird umgelenkt. `--stand` schreibt trotzdem
+   data/lernstand.json (die Angabe je Buch) — am 24.09.2026 im Test passiert
+   (Bayna Yadayk 4 → 5 aus einem erfundenen Testkapitel), sofort zurückgesetzt.
+   Wer testet: danach `git status` lesen. */
 const KERN = process.env.VORRAT_KERN_DATEI || p('js/kern.js');
 
 function freischaltungLesen(){
