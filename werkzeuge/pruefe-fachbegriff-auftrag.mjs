@@ -125,6 +125,28 @@ function tuerFehler(kernText){
   return f;
 }
 
+/* ⛔ „ALS KARTEIKARTE" HEISST: SIE KOMMT AUCH IN DIE KARTEI (24.09.2026).
+   Elias zu Genitivverbindung und Zeit- oder Ortsangabe: „die sollen wieder da
+   sein und bleiben" · „als karteikarten". Die Weißliste allein reicht dafür
+   nicht: passtZurAuswahl() nimmt über fachbegriffFolgtRegel() jeden
+   Fachbegriff aus der Kartei, dessen Regel er von den Karteikarten gestrichen
+   hat (`nichtAufKarteikarten`). Dann stünde die Karte im Hörmodus, aber nie
+   in der Kartei — genau das Gegenteil seines Satzes, ohne jede Meldung.
+   Allgemein, nicht als Liste: jede Zeile, deren Satz „karteikarte" sagt. */
+function karteiFehler(auftrag, fach, regeln){
+  const f = [];
+  if (!auftrag || !Array.isArray(fach) || !Array.isArray(regeln)) return f;
+  const gestrichen = new Set(regeln.filter(r => r && r.nichtAufKarteikarten).map(r => r.id));
+  for (const w of fach){
+    const id = String(w && w.id);
+    if (!Object.prototype.hasOwnProperty.call(auftrag, id) || !/karteikarte/i.test(String(auftrag[id]))) continue;
+    if (w.book === 'grammar' && w.regel && gestrichen.has(w.regel))
+      f.push(id + ' ist als Karteikarte bestellt (' + String(auftrag[id]).slice(0, 70) + '), aber seine Regel ' + w.regel
+        + ' ist von den Karteikarten gestrichen — fachbegriffFolgtRegel() nimmt ihn aus der Kartei.');
+  }
+  return f;
+}
+
 /* Die Routine: darf fachbegriffe-setzen.mjs weder genannt bekommen noch freigegeben haben. */
 const SETZEN = /fachbegriffe-setzen\.mjs/;
 function freigabeFehler(prompt, routinen){
@@ -173,6 +195,12 @@ const eichung = [];
     eichung.push('Freigabeprüfung übersieht das Werkzeug im Prompt.');
   if (!freigabeFehler('', { a: { allowedTools: ['Bash(node werkzeuge/fachbegriffe-setzen.mjs:*)'] } }).length)
     eichung.push('Freigabeprüfung übersieht die Freigabe in routines.json.');
+
+  const kAuftrag = { a: '24.09.2026 — „als karteikarten"' };
+  const kFach = [{ id: 'a', book: 'grammar', regel: 'r1' }];
+  if (karteiFehler(kAuftrag, kFach, [{ id: 'r1' }]).length) eichung.push('Karteiprüfung meldet eine Karte, deren Regel nicht gestrichen ist.');
+  if (!karteiFehler(kAuftrag, kFach, [{ id: 'r1', nichtAufKarteikarten: true }]).length)
+    eichung.push('Karteiprüfung übersieht eine „als Karteikarte" bestellte Karte, die fachbegriffFolgtRegel() aus der Kartei nimmt.');
 }
 for (const e of eichung) meldung('Eichung: ' + e);
 
@@ -209,6 +237,15 @@ if (iF >= 0){
   }
 }
 
+/* ---------- 3b. „Als Karteikarte" bestellt → erreicht die Kartei ---------- */
+
+{
+  const { GRAMMAR_RULES } = ladeNamen('grammar-data.js', ['GRAMMAR_RULES']);
+  if (!Array.isArray(GRAMMAR_RULES) || !GRAMMAR_RULES.length)
+    meldung('grammar-data.js liefert keine GRAMMAR_RULES — ob „als Karteikarte" Bestelltes die Kartei erreicht, lässt sich nicht prüfen.');
+  else karteiFehler(FACHBEGRIFF_AUFTRAG, FACHBEGRIFF_VOKABELN, GRAMMAR_RULES).forEach(meldung);
+}
+
 /* ---------- 4. Die Routine ---------- */
 
 const lies = (p) => { try { return fs.readFileSync(p, 'utf8'); } catch (e) { return null; } };
@@ -227,7 +264,7 @@ console.log('davon bestellt (eine Karte):       ' + bestellt.length);
 console.log('ruhend (in keinem Modus):          ' + ruhend.length + (zeigeAlle ? '' : '   (--liste zeigt sie)'));
 if (zeigeAlle) for (const w of ruhend) console.log('  ' + String(w.id).padEnd(24) + String(w.de || '').slice(0, 60));
 console.log('davon ausdrücklich abbestellt:     ' + (FACHBEGRIFF_ABBESTELLT ? Object.keys(FACHBEGRIFF_ABBESTELLT).length : 0) + '   (die Warteseite fragt sie nicht mehr)');
-console.log('Eichung der Erkennungen:           ' + (eichung.length ? eichung.length + ' Fehler' : '10 von 10 Gegenproben richtig'));
+console.log('Eichung der Erkennungen:           ' + (eichung.length ? eichung.length + ' Fehler' : '12 von 12 Gegenproben richtig'));
 
 if (befunde.length){
   console.log('\n✖ ' + befunde.length + ' Befund(e):');

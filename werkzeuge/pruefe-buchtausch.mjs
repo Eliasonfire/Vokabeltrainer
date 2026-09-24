@@ -306,6 +306,38 @@ let zumEntscheiden = doppelt;
           befunde.push(`Ladetest: ${f.buchTausch} heißt „${ziel.de}" statt „${f.de}". Elias wollte „gleiche beschreibung und nennung und alles".`);
       }
       console.log('Ladetest: js/kern.js lädt, VOCAB_DATA hat ' + V2.length + ' Einträge.');
+
+      /* ⛔⛔ ZWEI STARTS, DAZWISCHEN EINE FALSCHE ANTWORT (24.09.2026).
+         fachbegriffeMitBuchkarte() läuft bei JEDEM Start. Bis heute blieb der
+         Stand des Fachbegriffs danach stehen — und „die höhere Box gewinnt"
+         holte beim nächsten Start die alte Box zurück, nachdem Elias die
+         Buchkarte falsch beantwortet hatte. Seine Antwort wäre verloren, ohne
+         dass es je eine Meldung gäbe. Gemessen an seinem Stand (KV 04:47):
+         gram-mudaf trägt noch Box 3 neben 50473.
+         Der Störtest dazu: diese Prüfung gegen js/kern.js ohne die Zeile
+         merkeUebertragen(…) in fachbegriffeMitBuchkarte() → Exit 1. */
+      try {
+        const r = vm.runInContext(`(function(){
+          const f = FACHBEGRIFF_VOKABELN.find(x => x && x.buchTausch && fachbegriffBestellt(x));
+          if (!f) return null;
+          const von = String(f.id), nach = String(f.buchTausch);
+          PROGRESS[von]  = { box: 3, correct: 2, wrong: 0, nextReview: '', ts: 1 };
+          PROGRESS[nach] = { box: 1, correct: 0, wrong: 0, nextReview: '', ts: 1 };
+          fachbegriffeMitBuchkarte();
+          const start1 = PROGRESS[nach] ? PROGRESS[nach].box : null;
+          PROGRESS[nach] = Object.assign({}, PROGRESS[nach], { box: 1, wrong: (Number(PROGRESS[nach].wrong) || 0) + 1, ts: 2 });
+          fachbegriffeMitBuchkarte();
+          return { von, nach, start1, start2: PROGRESS[nach] ? PROGRESS[nach].box : null };
+        })()`, c);
+        if (r === null) befunde.push('Zwei-Starts-Test: kein bestellter Fachbegriff mit `buchTausch` — der Test kann nichts belegen.');
+        else {
+          if (Number(r.start1) !== 3)
+            befunde.push(`Zwei-Starts-Test: nach dem ersten Start steht ${r.nach} in Box ${r.start1} statt 3 — die höhere Box des Fachbegriffs ${r.von} kam nicht an.`);
+          if (Number(r.start2) !== 1)
+            befunde.push(`Zwei-Starts-Test: ${r.nach} wurde falsch beantwortet (Box 1), der nächste Start setzte Box ${r.start2} — der alte Stand von ${r.von} überschreibt seine Antwort bei jedem Start.`);
+          console.log('Zwei-Starts-Test: ' + r.von + ' → ' + r.nach + ' · nach Start 1 Box ' + r.start1 + ' · falsch beantwortet → Box 1 · nach Start 2 Box ' + r.start2);
+        }
+      } catch(e){ befunde.push('Zwei-Starts-Test ließ sich nicht ausführen: ' + String(e.message).slice(0, 140)); }
     }
   }
 }

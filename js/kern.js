@@ -2178,7 +2178,20 @@ function fachbegriffeMitBuchkarte(){
     /* Die höhere Box gewinnt. uebertrageFortschritt() entscheidet das selbst —
        es überträgt nur, wenn die Quelle wirklich weiter ist. */
     if (eigen || (typeof PROGRESS !== 'undefined' && PROGRESS[String(f.id)])){
-      try { uebertrageFortschritt(String(f.id), String(ziel.id), true); }
+      try {
+        const alt = PROGRESS[String(f.id)] ? Object.assign({}, PROGRESS[String(f.id)]) : null;
+        uebertrageFortschritt(String(f.id), String(ziel.id), true);
+        /* ⛔⛔ UND DANACH DEN ALTEN STAND LEEREN, mit Vermerk (24.09.2026) — wie
+           tauscheDublette() es seit dem 16.09. tut. Bis heute fehlte das hier:
+           der Stand des Fachbegriffs blieb stehen, und diese Funktion läuft bei
+           JEDEM Start. Beantwortete er die Buchkarte falsch (Box 3 → 1), holte
+           der nächste Start die alte Box 3 zurück — „die höhere Box gewinnt"
+           gegen seine eigene Antwort. Gemessen an seinem Stand (KV 04:47):
+           gram-mudaf trägt noch Box 3 (2 richtig, 2 falsch) neben 50473 Box 3.
+           Geprüft vom Ladetest in werkzeuge/pruefe-buchtausch.mjs (zwei Starts
+           mit einer falschen Antwort dazwischen). */
+        merkeUebertragen(String(f.id), String(ziel.id), alt);
+      }
       catch(e){
         /* Ein einzelner Stand darf den Start nicht verhindern: das Wort ist
            auch ohne übertragene Box da, nur in Box 1. Stumm bleibt es
