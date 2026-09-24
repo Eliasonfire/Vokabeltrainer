@@ -179,10 +179,8 @@ const FACHBEGRIFF_AUFTRAG = {
      zitierte er „Genitivverbindung (Iḍāfa)“ und „Zeit- oder Ortsangabe (Ẓarf)“:
      „die sollen wieder da sein und bleiben“, zur Iḍāfa noch einmal „das auch“,
      und auf meine Rückmeldung dazu „als karteikarten“.
-     ⚠️ مُضَافٌ-Fall NICHT stillschweigend übertragen: die Kapitel-24-Karte 50474
-     „(gr) Genitivverbindung“ ist bei ihm einzeln freigeschaltet und bleibt. Ob
-     die beiden zu EINER Karte werden (`buchTausch`, wie bei gram-mudaf), hat er
-     nicht gesagt — das steht als Frage auf der Warteseite (Buchtausch-Posten). */
+     Die Genitivverbindung läuft als EINE Karte über die Kapitel-24-Karte 50474
+     (`buchTausch` am Eintrag, Begründung dort). */
   'gram-idafa': '24.09.2026 — „die sollen wieder da sein und bleiben“ · „als karteikarten“',
   'gram-zarf':  '24.09.2026 — „die sollen wieder da sein und bleiben“ · „als karteikarten“',
 };
@@ -269,6 +267,20 @@ const FACHBEGRIFF_VOKABELN = [
   },
   {
     id: 'gram-idafa',
+    /* ⭐⭐ 24.09.2026 — EINE KARTE, NICHT ZWEI. Elias hat die Genitivverbindung
+       zurückbestellt („die sollen wieder da sein und bleiben" · „als
+       karteikarten"). Sie steht aber schon als Buchkarte in Madina 1, Kapitel
+       24 (50474 „(gr) Genitivverbindung"), bei ihm einzeln freigeschaltet. Die
+       Warteseite (Version 8), auf der er wählen sollte, hat für genau diesen
+       Fall zugesagt: „Wo „schon als Karte" steht, bekommst du keine zweite:
+       dann schalte ich die Buchkarte frei". Und seine Regel für denselben Fall
+       bei مُضَافٌ (22.09.2026): „es gibt zwei mudaf, ich möchte eigentlich nur
+       eins haben. lass das in kapitel 24 … nimm die höhere box."
+       v587 hatte beide Karten nebeneinander (gemessen: Box 3 hier, Box 1 dort)
+       — mit diesem Feld bleibt die Kapitel-24-Karte, bekommt diese
+       Beschreibung und die höhere Box. werkzeuge/pruefe-buchtausch.mjs prüft
+       es beim Laden. */
+    buchTausch: '50474',
     ar: 'إِضَافَةٌ',
     de: 'Genitivverbindung — zwei Nomen werden ein Ausdruck',
     type: 'noun',
