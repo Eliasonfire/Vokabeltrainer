@@ -527,6 +527,22 @@ const BUCH_TITEL = {
 };
 function buchTitel(slug){ return BUCH_TITEL[slug] || slug; }
 
+/* Kurzform fuer enge Stellen, vor allem den Kapitel-Chip auf der Lernkarte.
+   Elias am 24.09.2026 (Bildschirmfoto, „Kap. 1" rot umrandet): „hier steht
+   kapitel 1 aber von was? von welchem buch? da ich jetzt an zwei büchern
+   arbeite und in zukunft noch mehr sollte das auch immer dabei stehen aber
+   halt in kurzform".
+   ⛔ Jedes Buch aus data/buecher.js braucht hier einen Eintrag - sonst stuende
+   der lange Titel im Chip und schoebe die Kapitelzahl in die Auslassungspunkte.
+   Bewacht von werkzeuge/pruefe-buecher-aktuell.mjs (B4). */
+const BUCH_KURZ = {
+  'madina-1': 'M1', 'madina-2': 'M2', 'madina-3': 'M3',
+  'bayna-yadayk-1': 'BY1', 'bayna-yadayk-2': 'BY2',
+  'bayna-yadayk-3': 'BY3', 'bayna-yadayk-4': 'BY4',
+  'quran': 'Quran'
+};
+function buchKurz(slug){ return BUCH_KURZ[slug] || buchTitel(slug); }
+
 /* Alle Vokabeln der gewaehlten Buecher plus die eigenen. Ueberall dort zu
    benutzen, wo frueher direkt ueber VOCAB_DATA gelaufen wurde - sonst zaehlen
    Kategorien und Statistik Woerter mit, die gerade gar nicht gelernt werden.
