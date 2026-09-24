@@ -1083,7 +1083,12 @@ posten.push({
     auswahl: true,
     aufwand: 'die Namen nennen, die du als Karte willst — oder „keine"',
     warum: 'Du hast gesagt: Akkusativ, Genitiv und Nominativ „und vielleicht noch eine hand voll weitere", aber nicht solche wie „Übereinstimmung". '
-      + 'Seit v582 wird ein Fachbegriff nur noch eine Karte, wenn du ihn bestellt hast. Diese hier ruhen als Fachbegriff: in keiner Kartei, keinem Hörmodus, keiner Suche.'
+      + 'Seit v582 wird ein Fachbegriff nur noch eine Karte, wenn du ihn bestellt hast. Diese hier ruhen als Fachbegriff: in keiner Kartei, keinem Hörmodus, keiner Suche. '
+      /* ⭐ 24.09.2026 — seine erste Antwort, umgesetzt in v587/v588. Steht hier,
+         damit er sieht, dass sie angekommen ist, und nicht dieselben Namen
+         noch einmal sucht. */
+      + 'Deine Antwort vom 24.09. ist umgesetzt: Genitivverbindung und Zeit- oder Ortsangabe sind wieder Karteikarten (die Genitivverbindung als die eine Karte aus Kapitel 24, mit deiner Box 3), '
+      + 'und die neun aus dem Hörmodus sind abbestellt. Offen sind nur noch diese.'
       + (mitKarte ? ' ' + mitKarte + ' davon gibt es aber schon als Karte in einem Buch (steht dabei) — die kommt mit ihrem Kapitel oder einzeln freigeschaltet, unabhängig von dieser Liste.' : ''),
     wie: 'Nenn die, die du willst. Jeder bekommt eine Zeile mit deinem Satz, dann ist er in Kartei und Hörmodus. Die übrigen bleiben weg.'
       + (mitKarte ? ' Wo „schon als Karte" steht, bekommst du keine zweite: dann schalte ich die Buchkarte frei, wie bei Akkusativ, Genitiv und Nominativ.' : ''),
