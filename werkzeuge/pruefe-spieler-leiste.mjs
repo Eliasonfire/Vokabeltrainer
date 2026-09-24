@@ -27,7 +27,11 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 
-const lies = (rel) => fs.readFileSync(fileURLToPath(new URL(rel, import.meta.url)), 'utf8');
+/* ⛔ CRLF → LF beim Lesen: Git legt die Dateien beim Auschecken mit CRLF ab
+   (core.autocrlf=true, im Repo LF), die Muster unten suchen `\n\}\n`. Im
+   CRLF-Nachbau vom 24.09.2026 wurde dieser Prüfer rot, ohne Fehler im Code.
+   [[zeilenende_r_bricht_muster]] */
+const lies = (rel) => fs.readFileSync(fileURLToPath(new URL(rel, import.meta.url)), 'utf8').replace(/\r\n/g, '\n');
 const audio = lies('../js/quran-audio.js');
 const html  = lies('../index.html');
 const ohneKommentare = (s) => s.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:])\/\/[^\n]*/g, '$1');

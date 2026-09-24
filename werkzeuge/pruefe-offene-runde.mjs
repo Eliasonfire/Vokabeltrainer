@@ -24,8 +24,12 @@ import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 
 /* ⛔ fileURLToPath, nicht .pathname: der Pfad enthält ein Leerzeichen und steht
-   in einer URL als %20 — fs findet 'G:\1.%20Workspace' nie. */
-const lies = (rel) => fs.readFileSync(fileURLToPath(new URL(rel, import.meta.url)), 'utf8');
+   in einer URL als %20 — fs findet 'G:\1.%20Workspace' nie.
+   ⛔ Und CRLF → LF beim Lesen: Git legt die Dateien beim Auschecken mit CRLF ab
+   (core.autocrlf=true, im Repo LF), die Muster unten suchen `\n`. Am 24.09.2026
+   stand js/kern.js so da, und dieser Prüfer wurde rot, ohne dass im Code etwas
+   falsch war. [[zeilenende_r_bricht_muster]] */
+const lies = (rel) => fs.readFileSync(fileURLToPath(new URL(rel, import.meta.url)), 'utf8').replace(/\r\n/g, '\n');
 const lernen = lies('../js/lernen.js');
 const start  = lies('../js/start.js');
 const navi   = lies('../js/navigation.js');

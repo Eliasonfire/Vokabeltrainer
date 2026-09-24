@@ -23,7 +23,11 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const WURZEL = path.dirname(fileURLToPath(import.meta.url));
-const quelle = fs.readFileSync(path.join(WURZEL, 'js', 'start.js'), 'utf8');
+/* ⛔ CRLF → LF bei jedem Lesen unten: Git legt die Dateien beim Auschecken mit
+   CRLF ab (core.autocrlf=true, im Repo LF), und die Störtests suchen Text mit
+   `\n`. Im CRLF-Nachbau vom 24.09.2026 fand „Durchmischung steht so im
+   Quelltext" nichts mehr, ohne Fehler im Code. [[zeilenende_r_bricht_muster]] */
+const quelle = fs.readFileSync(path.join(WURZEL, 'js', 'start.js'), 'utf8').replace(/\r\n/g, '\n');
 
 let ok = 0, schlecht = 0;
 const pruefe = (was, bedingung, gemessen) => {
@@ -116,7 +120,7 @@ if (ringe){
   pruefe('ab fünf Ringen zwei Reihen, oben die größere Hälfte',
     /alleRinge\.length\s*>=\s*5/.test(ringe) && /Math\.ceil\(\s*alleRinge\.length\s*\/\s*2\s*\)/.test(ringe)
     && /tr-reihe zweizeilig/.test(ringe));
-  const seite = fs.readFileSync(path.join(WURZEL, 'index.html'), 'utf8');
+  const seite = fs.readFileSync(path.join(WURZEL, 'index.html'), 'utf8').replace(/\r\n/g, '\n');
   pruefe('am Tablet (ab 700 px) wieder eine Reihe',
     /@media \(min-width:700px\)\{\s*\.tr-reihe\.zweizeilig\{[^}]*\}\s*\.tr-reihe\.zweizeilig \.tr-zeile\{display:contents;\}/.test(seite));
   pruefe('sein Satz dazu steht in js/start.js', quelle.includes('so 3 oben drei unten machen'));
@@ -138,7 +142,7 @@ pruefe('er wartet auf openSurah (await)', /await\s+openSurah/.test(handler));
 /* ⚠️ openSurah() liegt in js/quran.js und wird ueber window erreicht. Fehlt
    die Funktion dort, laeuft der Handler still ins Leere — der typeof-Riegel
    faengt den Absturz ab, und niemand merkt etwas. */
-const quran = fs.readFileSync(path.join(WURZEL, 'js', 'quran.js'), 'utf8');
+const quran = fs.readFileSync(path.join(WURZEL, 'js', 'quran.js'), 'utf8').replace(/\r\n/g, '\n');
 pruefe('openSurah() gibt es in js/quran.js', /function openSurah\s*\(/.test(quran));
 pruefe('openSurah() springt zu opt.vers', /Number\(opt\.vers\)\s*>\s*0\s*\?\s*Number\(opt\.vers\)/.test(quran));
 
@@ -150,7 +154,7 @@ console.log('\nDie Begruendung:');
 pruefe('sein Auftrag steht wortwoertlich in js/start.js',
        quelle.includes('direkt zu den jeweiligen suren'));
 pruefe('seine Favoriten-Regel vom 17.09. steht wortwoertlich in js/quran.js',
-       fs.readFileSync(path.join(WURZEL, 'js', 'quran.js'), 'utf8').includes('erst wenn ich sie von den favouriten löse dann kann sie tatsächlich weg'));
+       fs.readFileSync(path.join(WURZEL, 'js', 'quran.js'), 'utf8').replace(/\r\n/g, '\n').includes('erst wenn ich sie von den favouriten löse dann kann sie tatsächlich weg'));
 
 /* ---------- 5. Eine heute gelernte Sure verdrängt die Wiederholung nicht ----------
    ⭐ ELIAS' TAG, NACHGESPIELT (16.09.2026). Gelesen: al-Qadr (als „Neu lernen")
@@ -165,7 +169,7 @@ pruefe('seine Favoriten-Regel vom 17.09. steht wortwoertlich in js/quran.js',
 console.log('\nWiederholen: eine heute gelernte Sure zählt heute nicht mit:');
 {
   const vm = await import('node:vm');
-  const kern = fs.readFileSync(path.join(WURZEL, 'js', 'kern.js'), 'utf8');
+  const kern = fs.readFileSync(path.join(WURZEL, 'js', 'kern.js'), 'utf8').replace(/\r\n/g, '\n');
   const teileAus = (text, namen) => namen.map(n => schneide(text, n));
   const konstante = (text, name) => (text.match(new RegExp('const ' + name + '\\s*=[^;]+;')) || [''])[0];
   const baue = quranText => {

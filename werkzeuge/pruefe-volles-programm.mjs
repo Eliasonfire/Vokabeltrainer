@@ -63,7 +63,12 @@ if (!fs.existsSync(QUELLE)){
   console.error('⛔ Die Quelle fehlt: ' + QUELLE);
   process.exit(2);
 }
-const quelle = fs.readFileSync(QUELLE, 'utf8');
+/* ⛔ CRLF → LF beim Lesen, hier und bei der Kopie unten: Git legt die Quelle beim
+   Auschecken mit CRLF ab (core.autocrlf=true, im Repo LF), die Kopie liegt
+   ausserhalb und bleibt LF. Im CRLF-Nachbau vom 24.09.2026 meldete der Vergleich
+   „Kopie weicht ab" bei gleichem Inhalt. --angleichen schreibt die Kopie damit
+   immer mit LF. [[zeilenende_r_bricht_muster]] */
+const quelle = fs.readFileSync(QUELLE, 'utf8').replace(/\r\n/g, '\n');
 
 /* ---------- 1. Die Kopie für /volles-programm ---------- */
 if (ANGLEICHEN){
@@ -79,7 +84,7 @@ if (ANGLEICHEN){
 if (!fs.existsSync(KOPIE)){
   sag(false, 'Die Kopie fehlt: ' + KOPIE + '   (--angleichen schreibt sie)');
 } else {
-  const kopie = fs.readFileSync(KOPIE, 'utf8');
+  const kopie = fs.readFileSync(KOPIE, 'utf8').replace(/\r\n/g, '\n');
   if (kopie === quelle) sag(true, 'Kopie /volles-programm ist deckungsgleich mit der Quelle.');
   else {
     /* Wo genau? Die erste abweichende Zeile nennen — „ungleich" allein zwingt
@@ -409,8 +414,11 @@ for (const [, id, titel, wer] of tabelle){
       for (const k of [path.join(WURZEL, w), path.join(WURZEL, 'werkzeuge', w)]){
         try {
           /* Kommentare weg — eine Erwaehnung im Kommentar ist keine Messung.
-             [[stichworttreffer_im_kommentar]] */
-          const code = fs.readFileSync(k, 'utf8')
+             [[stichworttreffer_im_kommentar]]
+             ⛔ Vorher CRLF → LF: an einer Zeile mit `\r` am Ende greift
+             /\/\/.*$/ nicht, der Kommentar bliebe stehen und zählte still als
+             Messung (CRLF-Nachbau 24.09.2026). [[zeilenende_r_bricht_muster]] */
+          const code = fs.readFileSync(k, 'utf8').replace(/\r\n/g, '\n')
             .replace(/\/\*[\s\S]*?\*\//g, ' ')
             .split('\n').map(z => z.replace(/\/\/.*$/, '')).join('\n');
           if (code.includes(kenn)) return true;

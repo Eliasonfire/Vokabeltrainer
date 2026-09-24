@@ -13,7 +13,11 @@ import { fileURLToPath } from 'node:url';
    steht in einer URL als %20 — fs findet 'G:\1.%20Workspace' nie.
    [[adresse_nie_normalisieren]] */
 const QUELLE = fileURLToPath(new URL('../js/hoeren.js', import.meta.url));
-const src = fs.readFileSync(QUELLE, 'utf8');
+/* ⛔ CRLF → LF beim Lesen: Git legt die Datei beim Auschecken mit CRLF ab
+   (core.autocrlf=true, im Repo LF), das Muster unten sucht `\n\}\n`. Im
+   CRLF-Nachbau vom 24.09.2026 wurde dieser Prüfer rot, ohne Fehler im Code.
+   [[zeilenende_r_bricht_muster]] */
+const src = fs.readFileSync(QUELLE, 'utf8').replace(/\r\n/g, '\n');
 
 /* Die Funktion samt Kommentaren bis zur schliessenden Klammer am Zeilenanfang. */
 const m = src.match(/\nfunction hoerZielPruefen\(\)\{[\s\S]*?\n\}\n/);

@@ -30,8 +30,12 @@ import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 
 /* ⛔ fileURLToPath, nicht .pathname: der Pfad enthält ein Leerzeichen und
-   steht in einer URL als %20 — fs findet 'G:\1.%20Workspace' nie. */
-const lies = (rel) => fs.readFileSync(fileURLToPath(new URL(rel, import.meta.url)), 'utf8');
+   steht in einer URL als %20 — fs findet 'G:\1.%20Workspace' nie.
+   ⛔ Und CRLF → LF beim Lesen: Git legt die Dateien beim Auschecken mit CRLF ab
+   (core.autocrlf=true, im Repo LF), die Muster unten suchen `\n\}\n`. Im
+   CRLF-Nachbau vom 24.09.2026 wurde dieser Prüfer rot, ohne Fehler im Code.
+   [[zeilenende_r_bricht_muster]] */
+const lies = (rel) => fs.readFileSync(fileURLToPath(new URL(rel, import.meta.url)), 'utf8').replace(/\r\n/g, '\n');
 const mark  = lies('../js/quran-markierung.js');
 const quran = lies('../js/quran.js');
 const sync  = lies('../js/sync.js');

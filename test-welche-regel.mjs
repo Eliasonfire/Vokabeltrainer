@@ -34,8 +34,12 @@ const require = createRequire(import.meta.url);
 const STOERTEST = process.argv.includes('--stoertest');
 const LAEUFE = 30;
 
-const UEBUNG = fs.readFileSync(path.join(WURZEL, 'js', 'uebung.js'), 'utf8');
-const KERN = fs.readFileSync(path.join(WURZEL, 'js', 'kern.js'), 'utf8');
+/* ⛔ CRLF → LF beim Lesen: Git legt die Dateien beim Auschecken mit CRLF ab
+   (core.autocrlf=true, im Repo LF), und schneideListe() sucht das Ende an `;\n`.
+   Im CRLF-Nachbau vom 24.09.2026 fehlten so die Bausteine der Übung.
+   [[zeilenende_r_bricht_muster]] */
+const UEBUNG = fs.readFileSync(path.join(WURZEL, 'js', 'uebung.js'), 'utf8').replace(/\r\n/g, '\n');
+const KERN = fs.readFileSync(path.join(WURZEL, 'js', 'kern.js'), 'utf8').replace(/\r\n/g, '\n');
 const irab = require('./js/irab.js');
 const lade = (datei, name) =>
   (new Function(fs.readFileSync(path.join(WURZEL, datei), 'utf8') + ';return ' + name + ';'))();

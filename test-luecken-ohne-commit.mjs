@@ -86,7 +86,12 @@ console.log('--- Ein Tag ohne Commit ist kein Befund ---');
 console.log('');
 
 /* ---- 1. Die heutige Fassung ---- */
-const jetzt = fs.readFileSync(path.join(REPO, DATEI), 'utf8');
+/* ⛔ CRLF → LF beim Lesen: `git show HEAD` liefert LF, die Arbeitskopie kann
+   nach dem Auschecken CRLF tragen (core.autocrlf=true). Ohne das hielt der
+   Vergleich unten die Arbeitskopie im CRLF-Nachbau vom 24.09.2026 für eine
+   andere Fassung, fuhr die Gegenprobe gegen die neue — und wurde rot.
+   [[zeilenende_r_bricht_muster]] */
+const jetzt = fs.readFileSync(path.join(REPO, DATEI), 'utf8').replace(/\r\n/g, '\n');
 const a = lauf(jetzt);
 console.log('Arbeitskopie bei leerem git log:');
 pruefe('endet mit Exit 0', a.code, 0);
