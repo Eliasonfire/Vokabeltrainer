@@ -833,6 +833,7 @@ node pruefe-duplikate.js
 node werkzeuge/vorrat.mjs
 node werkzeuge/pruefe-buecher-aktuell.mjs
 node werkzeuge/pruefe-eigene-vorrang.mjs
+node werkzeuge/pruefe-satzmodus-aktuell.mjs
 node werkzeuge/export-index.mjs --pruefen
 ```
 

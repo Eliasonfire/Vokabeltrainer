@@ -83,7 +83,10 @@ const NFC = s => String(s || '').normalize('NFC');
 const OHNE = s => NFC(s).replace(/[ً-ْٰـ]/g, '');
 const gleich = s => OHNE(s).replace(/[آأإٱ]/g, 'ا');
 
-const KEIN_SUFFIX = ['هناك', 'ذلك', 'تلك', 'كذلك', 'أولئك', 'ذاك'];
+/* ⭐ ذَانِكَ und تَانِكَ (seit 24.09.2026, Madina-Schlüssel 3 S. 58): dasselbe كَ
+   der Entfernung wie in ذَلِكَ — kein „dein". Ohne diesen Eintrag verlangte der
+   Prüfer die falsche Glosse „ـكَ = dein (männlich)". [[kennzeichen_mit_zwei_ursachen]] */
+const KEIN_SUFFIX = ['ذانك', 'تانك','هناك', 'ذلك', 'تلك', 'كذلك', 'أولئك', 'ذاك'];
 const SUFFIXE = [
   ['كما', 'ـكُمَا = euer beider (Zweizahl)'],
   ['كن',  'ـكُنَّ = euer (Mehrzahl, weiblich)'],

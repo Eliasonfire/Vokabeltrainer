@@ -691,8 +691,8 @@ if (hoerZielWahl) hoerZielWahl.addEventListener('change', (e)=>{
    hineinzuzwingen wäre die teurere Vereinfachung.
    [[allgemeine_regel_statt_listeneintrag]] */
 const ZIEL_FELDER = [
-  { id:'satz',   stufen:['5','10','13','20','30'],  schluessel:'satzZiel',
-    lies:()=> (typeof satzTagesziel === 'function') ? satzTagesziel() : 13,
+  { id:'satz',   stufen:['5','10','13','15','20','30'],  schluessel:'satzZiel',
+    lies:()=> (typeof satzTagesziel === 'function') ? satzTagesziel() : 15,
     /* Die Standzeile im Satzmodus trägt die Zahl im Text („Tagesziel 2 von
        13") — ohne Nachziehen behauptet sie die alte, bis der Modus neu
        geöffnet wird. Dieselbe Falle wie beim Hörziel.

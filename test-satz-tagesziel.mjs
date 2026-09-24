@@ -43,15 +43,19 @@ console.log('test-satz-tagesziel.mjs — das Tagesziel im Satzmodus\n');
      Namen scheitert, prueft nicht mehr, was er soll. [[ausfall_ist_unsichtbar_gebaut]] */
   const m = uebung.match(/const SATZ_ZIEL_VORGABE\s*=\s*(\d+)/);
   pruefe('SATZ_ZIEL_VORGABE steht in js/uebung.js', !!m, String(m));
-  pruefe('und ist 13 — eine Aufgabe je Übungsart', m && Number(m[1]) === 13, m && m[1]);
+  /* ⭐ Seit 24.09.2026 gegen die ZAHL DER ÜBUNGEN, nicht gegen eine feste 13:
+     mit Fragewort und Pronomen sind es 15 (Elias: „insgesamt 15 sätze bei
+     gemischt damit ich alle mache"). Kommt eine Übung dazu, wird das hier rot. */
+  const anzahlUebungen = (uebung.match(/\bnr:\s*\d+\s*,/g) || []).length;
+  pruefe(`und ist ${anzahlUebungen} — eine Aufgabe je Übungsart`, m && Number(m[1]) === anzahlUebungen, m && m[1]);
   pruefe('satzTagesziel() liest Elias’ eigene Zahl aus den Einstellungen',
     /function satzTagesziel\(\)[\s\S]{0,220}SETTINGS\.satzZiel/.test(uebung),
     'Funktion oder SETTINGS.satzZiel fehlt');
   /* ⛔ Die 13 hängt an der Zahl der Übungsarten. Wächst UEBUNGEN, muss die
      Begründung neu bewertet werden — dieser Fall meldet das. */
   const modi = (uebung.match(/\bbaue\s*[:(]/g) || []).length;
-  pruefe('die Begründung „13 Übungsarten" steht als Kommentar dabei',
-    /jede der 13 Uebungsarten|13 Uebungsarten/.test(uebung), 'Kommentar fehlt');
+  pruefe(`die Begründung „${anzahlUebungen} Übungsarten" steht als Kommentar dabei`,
+    new RegExp(`jede der ${anzahlUebungen} Uebungsarten`).test(uebung), 'Kommentar fehlt');
   pruefe('Hinweis: ' + modi + ' baue()-Stellen in uebung.js gezählt', true, modi);
 }
 

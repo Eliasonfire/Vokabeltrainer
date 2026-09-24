@@ -294,7 +294,10 @@ console.log('\n=== 7. Stufe 2 — „so gut wie möglich in die app integriert" 
      entfernt („die übung im satzmodus brauche ich nicht weil die ist viel zu
      leicht"); test-satzmodus-schwerer.mjs bewacht, dass sie draußen bleibt. */
   pruefe(`„Warum? → Regel": alle ${modi.length} Übungsmodi zugeordnet, jedes Ziel existiert`,
-    modi.length === 13 && !ohne.length && !tot.length, 'Modi: ' + modi.length + ' · ohne: ' + ohne.join(',') + ' · tot: ' + tot.join(','));
+    modi.length === 15 && !ohne.length && !tot.length, 'Modi: ' + modi.length + ' · ohne: ' + ohne.join(',') + ' · tot: ' + tot.join(','));
+  /* ⚠️ 24.09.2026: 13 → 15, Fragewort (`fragewort` → f19-fragen) und Pronomen
+     (`pronomen` → f19-pronomen) sind dazugekommen — Elias: „insgesamt 15 sätze
+     bei gemischt damit ich alle mache". */
   /* ⚠️ 22.09.2026: 12 → 13, die Übersetzungsübung ist dazugekommen (`uebersetzen`,
      UEBUNG_WARUM-Eintrag `null`, weil sie ihre Regel je Aufgabe selbst mitbringt).
 

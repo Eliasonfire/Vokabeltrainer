@@ -354,5 +354,47 @@ const LEHRBUCH_SAETZE = [
   { id: 'mb1-48-1', seite: 48, kapitel: 9,
     gedruckt: 'vollstaendig vokalisiert',
     sentAr: 'عَمَّارٌ طَالِبٌ مُجْتَهِدٌ، وَمَحْمُودٌ طَالِبٌ كَسْلَانُ.',
-    sentDe: 'Ammar ist ein fleißiger Student, und Mahmud ist ein fauler Student.' }
+    sentDe: 'Ammar ist ein fleißiger Student, und Mahmud ist ein fauler Student.' },
+  /* ⭐ Madina-Schlüssel 3, Seite 58 — die Hinweiswörter im Dual (24.09.2026).
+   * Elias zu Übung 11: „die 11te übung bei satzmodus hat bisher nur hadha und
+   * hadhihi aber eigentlich könnte man das mit all diesen hinweiswörtern
+   * erweitern sodass ich nicht nur zwei übe. natürlich müssen die sätze
+   * dementsprechend angepasst werden." Bis dahin stand kein Satz mit einem
+   * Dual-Hinweiswort im Bestand (gemessen: 0 von 231 Sätzen).
+   * Der Schlüssel erklärt dort: Dual und Plural von هذا kennt Buch 1, jetzt
+   * kommen die von ذلك dazu (ذانِكَ, „dhānika").
+   * Wortlaut vom gerenderten Bild (600 dpi, werkzeuge/schluessel_zeile.py,
+   * transcripts/schluessel-stellen/band3-s058-0*.png), NICHT aus der Textebene —
+   * so sparsam vokalisiert wie gedruckt, nichts ergänzt. Das Deutsch der
+   * beiden letzten steht im Schlüssel; beim ersten fehlt es dort, es ist meine
+   * Übersetzung. ⚠️ Die Vokalzeichen sind ERGÄNZT (vokalisationErgaenzt), nur aus
+ * Belegen: die Hinweiswörter aus seiner Karte (f19-isara, Musterlösung Nr. 3),
+ * die Stämme aus seinen Karten (مَسْجِدٌ, مَدْرَسَةٌ, مُدَرِّسٌ, طَالِبٌ, طَبِيبَةٌ,
+ * مُمَرِّضَةٌ), dazu was die Schrift erzwingt (Fatha vor Alif, وَ, Sukun am
+ * Artikel-Lam vor م). Gedruckt stand weniger — `gedruckt` sagt, was. Ein
+ * Skript hat geprüft, dass kein gedrucktes Zeichen verändert wurde.
+ * Die Nomen kennt er alle: مسجد, مدرسة, مدرس, طالب, طبيبة
+   * (Madina 1, Kap. 1), ممرضة (Kap. 7) — hier im Dual. */
+  { id: 'sk3-58-1', werk: 'madina-schluessel-3', vokalisationErgaenzt: true, seite: 58, kapitel: 1,
+    gedruckt: 'nur einzelne Zeichen: die Endungen, مَسْجدانِ und مَدْرَستانِ teilweise',
+    sentAr: 'هَذَانِ مَسْجِدَانِ، وَهَاتَانِ مَدْرَسَتَانِ.',
+    sentDe: 'Diese beiden sind Moscheen, und diese beiden sind Schulen.' },
+  { id: 'sk3-58-2', werk: 'madina-schluessel-3', vokalisationErgaenzt: true, seite: 58, kapitel: 7,
+    gedruckt: 'هاتانِ nur mit der Endung, der Rest vokalisiert',
+    sentAr: 'هَاتَانِ طَبِيبَتَانِ، وَتَانِكَ مُمَرِّضَتَانِ.',
+    sentDe: 'Diese beiden sind Ärztinnen und jene beiden sind Krankenschwestern.' },
+  { id: 'sk3-58-3', werk: 'madina-schluessel-3', vokalisationErgaenzt: true, seite: 58, kapitel: 1,
+    gedruckt: 'هذانِ, وذانِكَ und طالبانِ nur mit der Endung, مُدَرِّسانِ vokalisiert',
+    sentAr: 'هَذَانِ مُدَرِّسَانِ، وَذَانِكَ طَالِبَانِ.',
+    sentDe: 'Diese beiden sind Lehrer und jene beiden sind Studenten.' },
+
+  /* Madina-Schlüssel 3, Seite 208 — هَؤُلَاءِ („diese", Plural) im Satz, mit dem
+   * Pronomen هُنَّ dazwischen (so erklärt der Schlüssel dort das Trennpronomen).
+   * Aus zwei Zeilenbildern derselben Zeile (band3-s208-03: هَؤُلاءِ, band3-s208-01:
+   * هُنَّ المُسْلِماتُ.). Deutsch aus dem Schlüssel.
+   * ⚠️ مُسْلِم ist bei ihm eine Karte aus Kapitel 24 — deshalb kapitel: 24. */
+  { id: 'sk3-208-1', werk: 'madina-schluessel-3', vokalisationErgaenzt: true, seite: 208, kapitel: 24,
+    gedruckt: 'vollstaendig vokalisiert (هَؤُلاءِ ohne Fatha auf dem Lam)',
+    sentAr: 'هَؤُلَاءِ هُنَّ الْمُسْلِمَاتُ.',
+    sentDe: 'Diese sind die Muslima (muslimischen Frauen).' }
 ];

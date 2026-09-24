@@ -3166,6 +3166,22 @@ const SENTENCE_TAGS = {
   "46033": [
     { ruleId: "schams-qamar-01", matchText: "الطَّبَقُ" },
     { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْمَطْبَخِ" }
+  ],
+  /* Madina-Schlüssel 3, S. 58 und 208 (24.09.2026) — Übung 11 mit allen Hinweiswörtern. */
+  "sk3-58-1": [
+    { ruleId: "isara-genus-kongruenz-01", matchText: "هَذَانِ مَسْجِدَانِ" },
+    { ruleId: "isara-genus-kongruenz-01", matchText: "وَهَاتَانِ مَدْرَسَتَانِ" }
+  ],
+  "sk3-58-2": [
+    { ruleId: "isara-genus-kongruenz-01", matchText: "هَاتَانِ طَبِيبَتَانِ" },
+    { ruleId: "kaf-der-entfernung-01", matchText: "تَانِكَ" }
+  ],
+  "sk3-58-3": [
+    { ruleId: "isara-genus-kongruenz-01", matchText: "هَذَانِ مُدَرِّسَانِ" },
+    { ruleId: "kaf-der-entfernung-01", matchText: "ذَانِكَ" }
+  ],
+  "sk3-208-1": [
+    { ruleId: "huwa-hiya-weitere-01", matchText: "هُنَّ", bedeutung: "هُنَّ = sie (Mehrzahl, weiblich)" }
   ]
 };
 
