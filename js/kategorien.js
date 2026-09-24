@@ -704,7 +704,14 @@ function baueWortKarte(w){
      schon beide erlaubte: der Knopf erschien nie, obwohl die Funktion dahinter
      fertig war. Aufgefallen nur, weil ich es im Browser durchgeklickt habe. */
   const eigen = w.chapter === 'personal';
-  const geaendert = (typeof WORT_AENDERUNGEN !== 'undefined') && !!WORT_AENDERUNGEN[w.id];
+  /* ⛔ „Auf Original zurück" (24.09.2026): seit speichereWortAenderung() JEDE
+     Änderung nach vt_wortAenderungen schreibt, gibt es ein Original auch bei
+     seiner arabicroots-Eigenliste und bei den Fachbegriffen — beide stehen in
+     einer Datei. Hier stand `!eigen && geaendert`: dort wäre jede Änderung eine
+     Einbahnstraße gewesen. Nur ein in der App angelegtes Wort (`p_…`) hat kein
+     Original außer sich selbst — dort ändert das Formular den Eintrag direkt. */
+  const geaendert = (typeof hatWortAenderung === 'function') && hatWortAenderung(w.id);
+  const nurImGeraet = (typeof PERSONAL_VOCAB !== 'undefined') && PERSONAL_VOCAB.some(x => String(x && x.id) === String(w.id));
 
   /* ⭐ Pluralkarten sind ABGELEITET (18.08.2026). Sie werden bei jedem Start aus
      dem `pl`-Feld der Grundvokabel neu gebaut; eine Aenderung hier waere beim
@@ -755,7 +762,7 @@ function baueWortKarte(w){
     ${wkFreiKnopf}
     <button class="btn btn-secondary btn-klein" data-wkbearbeiten>${icon('note')}Bearbeiten</button>
     ${eigen ? `<button class="btn btn-secondary btn-klein wk-loeschen" data-wkloeschen>${icon('trash')}Löschen</button>` : ''}
-    ${(!eigen && geaendert) ? `<button class="btn btn-secondary btn-klein" data-wkzuruecksetzen>Auf Original zurück</button>` : ''}
+    ${(geaendert && !nurImGeraet) ? `<button class="btn btn-secondary btn-klein" data-wkzuruecksetzen>Auf Original zurück</button>` : ''}
   </div>`);
 
   /* ⭐⭐ WAS FEHLT DIESER KARTE NOCH? — Elias am 20.08.2026: „einfach alles um

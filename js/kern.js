@@ -847,6 +847,20 @@ function fachbegriffBestellt(w){
   return Object.prototype.hasOwnProperty.call(FACHBEGRIFF_AUFTRAG, String(w.id));
 }
 
+/* Seit wann gilt die Bestellung? Jeder Eintrag in FACHBEGRIFF_AUFTRAG trägt den
+   Tag seiner Worte („22.09.2026 — „…"“; werkzeuge/pruefe-fachbegriff-auftrag.mjs
+   verlangt ihn). Gebraucht von fachbegriffeMitBuchkarte(): was er an der
+   Buchkarte VOR diesem Tag geändert hat, ersetzt die Bestellung, was danach
+   kam, bleibt. Es zählt das erste Datum der Zeile. Ohne lesbaren Tag: null. */
+function fachbegriffBestelltAm(id){
+  if (typeof FACHBEGRIFF_AUFTRAG === 'undefined' || !FACHBEGRIFF_AUFTRAG) return null;
+  if (!Object.prototype.hasOwnProperty.call(FACHBEGRIFF_AUFTRAG, String(id))) return null;
+  const m = /(\d{1,2})\.(\d{1,2})\.(\d{4})/.exec(String(FACHBEGRIFF_AUFTRAG[String(id)] || ''));
+  if (!m) return null;
+  const t = new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1])).getTime();
+  return Number.isFinite(t) ? t : null;
+}
+
 /* ---------- Pluralformen als eigene Karteikarten (18.08.2026) -------------
 
    Elias am 18.08. um 04:xx: „ich finde eigentlich, dass die plural formen
@@ -1684,7 +1698,7 @@ function wendeWortAenderungenAn(){
     const w = VOCAB_DATA.find(x => x.id === id);
     if (!w) return;
     const a = WORT_AENDERUNGEN[id];
-    if (!a || typeof a !== 'object') return;
+    if (!a || typeof a !== 'object' || a.verworfen) return;   /* zurückgesetzt, siehe verwirfWortAenderung() */
     AENDERBAR.forEach(f => {
       if (typeof a[f] !== 'string') return;
       /* Nur beim ERSTEN Mal sichern — ein zweiter Lauf würde sonst den bereits
@@ -1708,15 +1722,53 @@ function speichereWortAenderung(id, felder){
      der beiden Fehler. */
   if (sauber.type !== undefined && !WORTARTEN.includes(sauber.type)) delete sauber.type;
 
-  if (w.chapter === 'personal'){
-    /* Seine eigene Vokabel: direkt am Original aendern, kein Zweitspeicher. */
-    const eigen = PERSONAL_VOCAB.find(x => x.id === id);
-    if (eigen) AENDERBAR.forEach(f => { if (sauber[f] !== undefined) eigen[f] = sauber[f]; });
+  /* ⛔⛔ JEDE ÄNDERUNG GEHT NACH vt_wortAenderungen — AUCH BEI DEN EIGENEN (24.09.2026)
+
+     Elias um 04:46, mit dem Bild von صِفْرٌ „Null (0)": „ich wollte die klammer
+     und zahl 0 entfernen und habs bearbeitet, hab dann neu geladen die app und
+     es ist wieder da. meine bearbeitungen werden scheinbar nicht gespeichert
+     oder so. das ist auch nicht zum ersten mal so. das sollst du fixen"
+
+     Hier stand: `if (w.chapter === 'personal')` → NUR in PERSONAL_VOCAB, und nur,
+     wenn das Wort dort steht. `chapter:'personal'` haben aber DREI Herkünfte,
+     und nur eine davon steht in PERSONAL_VOCAB (in der App angelegt, `p_…`).
+     Seine arabicroots-Eigenliste in vocab-data.js (dort steht „Null") und alle
+     Fachbegriffe (seit dem 20.08.2026 ebenfalls 'personal') liefen in einen
+     Zweig, der NICHTS schrieb: die Karte zeigte den neuen Text, der Toast sagte
+     „Gespeichert", und der nächste Start brachte den alten zurück.
+     [[erfolgsmeldung_ohne_wirkung]] [[kennzeichen_mit_zwei_ursachen]]
+
+     Und selbst für die `p_…`-Wörter reichte die Liste allein nicht, zwei Wege:
+     - data/feld-ausnahmen.js legt beim Start nachgeschlagene Werte auf LEERE
+       oder von ihm BESTRITTENE Felder (bei zehn seiner Wörter die Wortart) —
+       danach wendet diese Datei seine eigenen Änderungen an. Die lagen für
+       `p_…` aber nicht in vt_wortAenderungen, also gewann die Nachtragung.
+     - Der Geräteabgleich vereinigt vt_personalVocab je Eintrag, und bei
+       gleicher Id bleibt die Fassung des EIGENEN Geräts (js/sync.js). Eine
+       Änderung am Handy kam am Tablet nie an.
+     vt_wortAenderungen hat beides nicht: angewandt NACH den Nachtragungen
+     (hier und in js/buecher.js), abgeglichen je Wort, der jüngere Stand gewinnt.
+
+     Gemessen im Nachbau mit seinem Gerätestand (KV 24.09., 04:47): je Herkunft
+     ein Wort, alle sieben Felder geändert, neu geladen — vorher 15 von 35
+     Feldern verloren (Null 7/7, Zeit- oder Ortsangabe 7/7, das `p_`-Wort die
+     Wortart). Geprüft von werkzeuge/pruefe-bearbeiten.mjs.
+
+     ⚠️ Die Herkunft wird GEMESSEN (steht die Id in PERSONAL_VOCAB?), nicht aus
+     `chapter` geraten — dieselbe Lehre wie in loeschePersonalVocab(). Das
+     `p_`-Wort bekommt die Änderung zusätzlich an sich selbst: vt_personalVocab
+     bleibt so die Fassung, die er sieht, auch für alles, was die Liste direkt
+     liest (Dubletten, Abgleich). */
+  const eigen = PERSONAL_VOCAB.find(x => String(x && x.id) === String(id));
+  if (eigen){
+    AENDERBAR.forEach(f => { if (sauber[f] !== undefined) eigen[f] = sauber[f]; });
     savePersonalVocab();
-  } else {
-    WORT_AENDERUNGEN[id] = Object.assign({}, WORT_AENDERUNGEN[id], sauber, { zeit: Date.now() });
-    LS.set(AENDERUNGS_SCHLUESSEL, WORT_AENDERUNGEN);
   }
+  /* Ein Vermerk „zurückgesetzt" (siehe verwirfWortAenderung) wird nicht
+     fortgeschrieben: die neue Änderung beginnt neu. */
+  const bisher = (WORT_AENDERUNGEN[id] && !WORT_AENDERUNGEN[id].verworfen) ? WORT_AENDERUNGEN[id] : {};
+  WORT_AENDERUNGEN[id] = Object.assign({}, bisher, sauber, { zeit: Date.now() });
+  LS.set(AENDERUNGS_SCHLUESSEL, WORT_AENDERUNGEN);
   /* Auch hier den Vorher-Wert sichern, bevor überschrieben wird — sonst kennt
      der Export nur die Originale der Änderungen, die beim Laden schon dastanden. */
   AENDERBAR.forEach(f => {
@@ -1728,12 +1780,28 @@ function speichereWortAenderung(id, felder){
   return true;
 }
 
-/* Zurueck auf den Abzug - nur bei Buchvokabeln sinnvoll. Ohne diesen Weg waere
-   jede Korrektur eine Einbahnstrasse, derselbe Fehler wie beim
-   „Kenne ich schon"-Knopf ohne seine Liste in den Einstellungen. */
+/* Hat er dieses Wort selbst geändert? Ein Vermerk „zurückgesetzt" zählt nicht:
+   er trägt kein einziges Feld. */
+function hatWortAenderung(id){
+  const a = WORT_AENDERUNGEN[id];
+  return !!(a && typeof a === 'object' && !a.verworfen && AENDERBAR.some(f => typeof a[f] === 'string'));
+}
+
+/* Zurueck auf das Original - bei allem, dessen Original in einer Datei steht
+   (Buch, arabicroots-Eigenliste, Fachbegriff). Ohne diesen Weg waere jede
+   Korrektur eine Einbahnstrasse, derselbe Fehler wie beim „Kenne ich
+   schon"-Knopf ohne seine Liste in den Einstellungen.
+
+   ⛔⛔ ALS VERMERK MIT ZEIT, NICHT ALS LÖSCHEN (24.09.2026). Hier stand
+   `delete WORT_AENDERUNGEN[id]`. Der Abgleich führt vt_wortAenderungen je Wort
+   zusammen, und ein Eintrag, den nur das ANDERE Gerät noch hat, kommt dabei
+   zurück — das Zurücksetzen am Handy hätte das Tablet beim nächsten Abgleich
+   rückgängig gemacht. Eine Rücknahme ist ein fehlender Eintrag und verliert
+   jeden „der neuere gewinnt"-Vergleich; mit Zeitpunkt gewinnt sie ihn.
+   Dieselbe Bauform wie vt_bekannt und vt_geloescht. [[ausfall_ist_unsichtbar_gebaut]] */
 function verwirfWortAenderung(id){
-  if (!WORT_AENDERUNGEN[id]) return false;
-  delete WORT_AENDERUNGEN[id];
+  if (!hatWortAenderung(id)) return false;
+  WORT_AENDERUNGEN[id] = { verworfen: true, zeit: Date.now() };
   LS.set(AENDERUNGS_SCHLUESSEL, WORT_AENDERUNGEN);
   return true;
 }
@@ -2164,7 +2232,25 @@ function fachbegriffeMitBuchkarte(){
     /* „gleiche beschreibung und nennung und alles" — seine Worte. Die
        Buchfassung wird ÜBERSCHRIEBEN, nicht ergänzt: er hat ausdrücklich seine
        Beschreibung verlangt, nicht beide nebeneinander. */
-    if (f.de)    ziel.de = f.de;
+    /* ⛔⛔ AUSSER ER HAT DIE BUCHKARTE DANACH SELBST GEÄNDERT (24.09.2026).
+       Diese Funktion läuft bei JEDEM Start und NACH wendeWortAenderungenAn() in
+       js/buecher.js. Ohne diese Bedingung überschrieb sie auch eine Änderung,
+       die er an der Buchkarte gemacht hat — „meine bearbeitungen werden
+       scheinbar nicht gespeichert" (Elias, 24.09.2026, 04:46), nur auf einem
+       dritten Weg.
+       ⚠️ Warum mit Datum und nicht einfach „seine Änderung gewinnt": an 50473
+       und 50474 liegen seine Änderungen vom 21.08.2026 („(gr) Besitzobjekt",
+       „(gr) Genitivverbindung"). Am 22.09. hat er für genau diesen Fall
+       ausdrücklich die Beschreibung des Fachbegriffs verlangt — sein späteres
+       Wort schlägt sein früheres. Was er NACH der Bestellung ändert, ist wieder
+       sein späteres Wort und bleibt stehen. Der Tag der Bestellung steht vorn
+       in FACHBEGRIFF_AUFTRAG (data/fachbegriffe.js); fehlt er, gewinnt seine
+       Änderung — sein getippter Text ist der sicherere Irrtum. */
+    const seine = (typeof WORT_AENDERUNGEN !== 'undefined') ? WORT_AENDERUNGEN[String(ziel.id)] : null;
+    const bestelltAm = fachbegriffBestelltAm(f.id);
+    const selbstDanach = !!(seine && !seine.verworfen && typeof seine.de === 'string'
+      && (bestelltAm === null || Number(seine.zeit) >= bestelltAm));
+    if (f.de && !selbstDanach) ziel.de = f.de;
     if (f.mnemo && !ziel.mnemo) ziel.mnemo = f.mnemo;
     if (f.regel && !ziel.regel) ziel.regel = f.regel;
     /* ⚠️ `book` bleibt, wie es ist. Daran hängen der Fachbegriff-Takt im

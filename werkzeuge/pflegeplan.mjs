@@ -456,7 +456,9 @@ export const PFLEGEPLAN = [
     neuerInhalt: { routine: W, schritt: '6', beleg: 'node pruefe-wortfelder.js',
       wie: 'meldet Wörter, deren Bedeutung in kein Wortfeld fällt' },
     eingaben: { nein: 'Eigene Kategorien sind Ansichtssache auf seinem Gerät (vt_customCats) — niemand muss sie weiterverarbeiten.' },
-    veralten: { nein: 'Die Listen entstehen beim Öffnen aus den aktuellen Vokabeln; es wird nichts gespeichert, das alt werden kann.' },
+    veralten: { nein: 'Die Listen entstehen beim Öffnen aus den aktuellen Vokabeln; es wird nichts gespeichert, das alt werden kann. '
+      + 'Dass seine Änderungen im Formular der Wortkarte (vt_wortAenderungen) Neustart und Geräteabgleich überstehen — Elias, 24.09.2026: '
+      + '„meine bearbeitungen werden scheinbar nicht gespeichert" —, misst pruefe-bearbeiten.mjs im Sammellauf.' },
   },
   {
     /* 11.09.2026, 22:39 — Elias: „im startbildschirm kann es nach beidem suchen
