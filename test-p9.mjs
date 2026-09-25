@@ -297,6 +297,48 @@ const ohneNeu = vm.runInContext(`ersterTagAnordnen([{id:'a1'},{id:'a3'}]).rollen
 ok('ohne neues Wort am Beitrittstag: keine Rollen', JSON.stringify(ohneNeu) === '[null,null]', JSON.stringify(ohneNeu));
 vm.runInContext('PROGRESS.t1 = { box:1, nextReview:"", correct:0, wrong:0 }', ctx);
 
+/* ---------- 5e. answer() auf Infokarte und Übung (v605; Test nachgereicht 25.09.2026) ----------
+   Bis heute nur im Pane durchgeklickt („Ein echter Node-Test dafür fehlt noch").
+   Die Infokarte („Weiter") und die Übung („zählt nicht") dürfen am Fortschritt
+   NICHTS ändern — nur weiterschalten und die Runde sichern. Gerufen wird die
+   echte answer() aus js/lernen.js; nur Zeichnen, Sichern und die Uhr sind
+   Attrappen. Der Störtest nimmt die Rollen weg (rundenRolle → null): dann
+   läuft die Übung durch die volle Wertung und muss rot werden. */
+console.log('\n— answer() auf Infokarte und Übung (v605) —');
+const rollenLauf = stoer => vm.runInContext(`(() => {
+  const alt = { SESSION, renderCard, rundeSichern, rundenRolle, setTimeout };
+  let gezeichnet = 0; const gesichert = []; let fehlerText = null;
+  renderCard = () => { gezeichnet++; };
+  rundeSichern = i => { gesichert.push(i); };
+  setTimeout = () => 0;
+  ${stoer ? 'rundenRolle = () => null;' : ''}
+  PROGRESS.n1 = { box:1, gruppe:'2026-08-10', gruppeArt:'neu', nextReview:'2026-08-10', correct:0, wrong:0 };
+  const vorher = JSON.stringify(PROGRESS.n1);
+  SESSION = { words: [{id:'n1'},{id:'a1'},{id:'n1'},{id:'a2'},{id:'a3'},{id:'n1'}], idx: 0,
+              dirs: ['ar-de','ar-de','ar-de','ar-de','ar-de','ar-de'], fertig: false, serie: 0,
+              rollen: ['info',null,'uebung',null,null,null] };
+  try { answer('weiter'); } catch (e) { fehlerText = 'Infokarte: ' + e.message; }
+  const nachInfo = { idx: SESSION.idx, p: JSON.stringify(PROGRESS.n1) };
+  answer._busy = false; SESSION.idx = 2;
+  try { answer('gut'); } catch (e) { fehlerText = (fehlerText ? fehlerText + ' · ' : '') + 'Übung: ' + e.message; }
+  const nachUebung = { idx: SESSION.idx, p: JSON.stringify(PROGRESS.n1) };
+  answer._busy = false;
+  SESSION = alt.SESSION; renderCard = alt.renderCard; rundeSichern = alt.rundeSichern;
+  rundenRolle = alt.rundenRolle; setTimeout = alt.setTimeout;
+  delete PROGRESS.n1;
+  return { vorher, nachInfo, nachUebung, gezeichnet, gesichert, fehlerText };
+})()`, ctx);
+const rl = rollenLauf(false);
+ok('Infokarte „Weiter": nächste Karte, Fortschritt unverändert',
+   rl.nachInfo.idx === 1 && rl.nachInfo.p === rl.vorher && !rl.fehlerText, JSON.stringify(rl));
+ok('Übung „gut": nächste Karte, Box, Zähler und Termin unverändert (zählt nicht)',
+   rl.nachUebung.idx === 3 && rl.nachUebung.p === rl.vorher && !rl.fehlerText, JSON.stringify(rl));
+ok('beide Male gezeichnet und die Runde mit der nächsten Stelle gesichert',
+   rl.gezeichnet === 2 && JSON.stringify(rl.gesichert) === '[1,3]', JSON.stringify(rl));
+const rlStoer = rollenLauf(true);
+ok('STÖRTEST — ohne Rollen wird die Übung gewertet (oder wirft): die Prüfung oben schlägt an',
+   !(rlStoer.nachUebung.idx === 3 && rlStoer.nachUebung.p === rlStoer.vorher && !rlStoer.fehlerText), JSON.stringify(rlStoer));
+
 /* ---------- 5c. Die Wischgeste (25.09.2026) ----------
    Elias: „ich möchte auch, dass bei den karteikarten das nach links wischen
    bedetuet das es schwierig ist also bleibt auf der selben box. und rechts
