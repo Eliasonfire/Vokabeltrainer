@@ -2346,6 +2346,25 @@ const ESELSBRUECKEN_ALT = {
     'Hör auf das Schadda: هَيَّا wird mit doppeltem y gesprochen, „hayyā“ – so sagt es dein Lehrer in Folge 20 bei 22:10. Die Kasra gehört zu بِ: „bi-nā“.'
   ],
 
+  /* تَحِيَّةٌ „Begrüßen" — Bayna Yadayk 1A, Titelseite der Einheit 1 (PDF 23), rot
+     von Elias (25.09.2026). Erster Dialog S. 2 (PDF 24) gelesen: er beginnt mit
+     «السَّلامُ عَلَيْكُم». Vers wörtlich aus quran-text.js (node werkzeuge/vers.mjs 67:2).
+     „Ursprünglich der Wunsch nach Leben": so erklären die alten Wörterbücher
+     التحية (أصلها الدعاء بالحياة). */
+  'gram-tahiyya': [
+    '⭐ Ganz vorne in deinem Buch: التَّحِيَّةُ ist das erste Wort im Titel der ersten Einheit von Bayna Yadayk, über den zwei Händen, die sich begrüßen – darunter hast du „Begrüßen“ geschrieben. Die erste تَحِيَّةٌ, die du dort lernst, ist السَّلَامُ عَلَيْكُمْ.',
+    'Die Wurzel ح ي ي heißt leben – dieselbe wie in al-Mulk, die du auswendig kannst: خَلَقَ ٱلْمَوْتَ وَٱلْحَيَوٰةَ (67:2), den Tod und das Leben. Eine تَحِيَّةٌ war ursprünglich der Wunsch, dass der andere lange lebt.'
+  ],
+
+  /* الْحَيَاةُ الْيَوْمِيَّةُ „Der Alltag" — Bayna Yadayk 1A, Titelseite der Einheit 4
+     (PDF 103), rot von Elias (25.09.2026). Vers wörtlich aus quran-text.js (67:2).
+     عَرَبِيَّةٌ 45878, إِنْجِلِيزِيَّةٌ 45883, ثَانَوِيَّةٌ 45895, يَوْمٌ 45887 — alle in
+     vocab-data.js, also seine Karten. */
+  'gram-hayat-yawmiyya': [
+    '⭐ In al-Mulk, die du auswendig kannst: خَلَقَ ٱلْمَوْتَ وَٱلْحَيَوٰةَ – der den Tod und das Leben erschaffen hat (67:2). ٱلْحَيَوٰةَ ist dasselbe Wort wie الْحَيَاةُ, im Quran nur anders geschrieben.',
+    'Aus يَوْمٌ (Tag) wird mit der Endung „-iyya“ das Eigenschaftswort الْيَوْمِيَّةُ, also täglich. Dieselbe Endung kennst du aus deinen Wörtern عَرَبِيَّةٌ (Arabisch), إِنْجِلِيزِيَّةٌ (Englisch) und ثَانَوِيَّةٌ (weiterführende Schule).'
+  ],
+
   'gram-huruf-schamsiya': [
     'Zwei deiner Länderkarten stehen sich direkt gegenüber: الصِّينُ liest du aṣ-ṣīn — das l ist weg, dafür sitzt eine Schadda auf dem ص. الْهِنْدُ liest du al-hind, mit hörbarem l und einem Sukūn auf dem ل. ⭐ ص gehört zu den حُرُوف شَمْسِيَّة, ه nicht.',
     'سُورَةُ النَّاس sagt es in jedem Vers: geschrieben steht النَّاسِ, gesprochen an-nās. Das ن schluckt das l und trägt dafür eine Schadda — ein Sonnenbuchstabe, und die Schrift zeigt es selbst.'

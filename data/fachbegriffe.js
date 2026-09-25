@@ -174,6 +174,14 @@ const FACHBEGRIFF_AUFTRAG = {
   'gram-awlad':      '16.09.2026 — „die vokabeln die ich dort aufgeschrieben habe mit rot die brauche ich auch als karteikarten“',
   'gram-hayya-bina': '16.09.2026 — „die vokabeln die ich dort aufgeschrieben habe mit rot die brauche ich auch als karteikarten“',
 
+  /* Zwei weitere rot beschriftete Wörter aus Bayna Yadayk 1A. Meine Frage vom
+     25.09.2026: „Fünf Wörter aus deinem Buch als Karteikarten? „Los gehts",
+     „Begrüßen", „Der Alltag", „Vokabeln", „Zusammenfassung"". Seine Antwort
+     steht rechts. „Los gehts" ist gram-hayya-bina — seit dem 16.09. seine Karte
+     (Box 1, einmal beantwortet), deshalb keine zweite. */
+  'gram-tahiyya':        '25.09.2026 — „ja mach außer zusammenfassung und vokabeln“',
+  'gram-hayat-yawmiyya': '25.09.2026 — „ja mach außer zusammenfassung und vokabeln“',
+
   /* ⭐ SEINE „HAND VOLL“, erste Antwort (24.09.2026, 05:00). Auf die Liste der 22
      ruhenden vom Vorabend („Sag mir einfach die, die du wiederhaben willst“)
      zitierte er „Genitivverbindung (Iḍāfa)“ und „Zeit- oder Ortsangabe (Ẓarf)“:
@@ -1343,5 +1351,65 @@ const FACHBEGRIFF_VOKABELN = [
     sentAr: "هَيَّا بِنَا إِلَى الْمَسْجِدِ.",
     sentDe: "Los, lasst uns zur Moschee gehen.",
     mnemo: "هَيَّا بِنَا – Los geht's! So ruft der Vater in deinem Buch, nachdem die Mutter den Adhan des Fajr gehört hat: هَيَّا بِنَا إِلَى الْمَسْجِدِ – los, zur Moschee."
+  },
+  {
+    /* ⭐ „Begrüßen" — Elias hat es rot unter das erste Wort des Titels der
+       ersten Einheit geschrieben: Arabya Bayna Yadayk 1A, Titelseite der
+       Einheit 1 (PDF-Seite 23), gedruckt voll vokalisiert „التَّحِيَّةُ".
+       Auftrag 25.09.2026 (siehe FACHBEGRIFF_AUFTRAG).
+       ⛔ TASCHKĪL aus drei Quellen, alle gleich: der Druck (bei 300 dpi gelesen),
+       der arabicroots-Abzug (Madina 3, Kapitel 6, id 47121 „Gruß") und arabdict
+       (مص. حَيَّا). Die Grundform steht hier ohne Artikel, wie تَعَارُفٌ.
+       ⛔ NICHT als Buchvokabel: Madina 3 ist bei ihm nicht gewählt, und aus
+       einem nicht gewählten Buch lässt sich kein Wort einzeln freischalten.
+       ⚠️ Kein `buchTausch` auf 47121 — solange Madina 3 nicht geladen ist,
+       zeigte er ins Leere und die Karte wäre ganz weg. Wählt er Madina 3 bis
+       Kapitel 6, meldet pruefe-duplikate.js die Dublette; dann tauschen.
+       SATZ: in seinen Büchern steht das Wort nur als Titel und Kopfzeile, in
+       keiner Wortliste seiner Kapitel — deshalb nach seiner Notfall-Regel
+       (24.09.2026) aus seinen Wörtern gebildet, genau nach dem Muster seiner
+       Karte عَيْنٌ: «هَذِهِ عَيْنٌ جَمِيلَةٌ.» (هَذِهِ mb1-34-1, جَمِيلَةٌ W:45805.femSg). */
+    id: "gram-tahiyya",
+    ar: "تَحِيَّةٌ",
+    de: "Begrüßen",
+    deNeben: "Gruß, Begrüßung",
+    type: 'noun',
+    root: "ح ي ي",
+    chapter: 'personal',
+    book: 'grammar',
+    belegt: 0,
+    quelleLehrer: 'Arabya Bayna Yadayk 1A, Titelseite der Einheit 1 (PDF-Seite 23) — rot „Begrüßen" unter التَّحِيَّةُ',
+    sentAr: "هَذِهِ تَحِيَّةٌ جَمِيلَةٌ.",
+    sentDe: "Das ist eine schöne Begrüßung.",
+    mnemo: "تَحِيَّةٌ – Begrüßen. Du sagst das Wort in jedem Gebet: der Taschahhud beginnt mit „at-taḥiyyātu lillāh“ – at-taḥiyyāt ist die Mehrzahl von تَحِيَّةٌ, und gemeint ist: alle Grüße gehören Allah."
+  },
+  {
+    /* ⭐ „Der Alltag" — Elias hat es rot unter den Titel der vierten Einheit
+       geschrieben: Arabya Bayna Yadayk 1A, Titelseite der Einheit 4 (PDF-Seite
+       103, vor S. 82), gedruckt „الحَيَاةُ اليَوْمِيَّةُ". Auftrag 25.09.2026.
+       ⛔ TASCHKĪL: alles wie gedruckt (bei 400 dpi gelesen). Zwei Zeichen stehen
+       nicht im Druck: die Fatha auf dem ي von حَيَاة (steht vor dem Alif, im
+       Buch weggelassen) — belegt im arabicroots-Abzug (Bayna Yadayk 2, id 46554
+       حَيَاةٌ) —, und das Sukūn des Artikels vor ح und ي (Mondbuchstaben),
+       geschrieben wie in seinen Wörtern الْيَوْمُ und الْعَرَبِيَّةُ.
+       type 'noun' wie die anderen zweiwortigen Nomen hier (جُمْلَة فِعْلِيَّة).
+       ⛔ NICHT als Buchvokabel: حَيَاةٌ steht in Bayna Yadayk 2, يَوْمِيٌّ in
+       Bayna Yadayk 3 — beide bei ihm nicht gewählt.
+       SATZ: wie bei gram-tahiyya nach seiner Notfall-Regel, genau nach dem
+       Muster seiner Karte اللُّغَةُ: «اللُّغَةُ الْعَرَبِيَّةُ جَمِيلَةٌ.» Der
+       Zerleger liest ihn richtig: مُبْتَدَأ · نَعْت · خَبَر. */
+    id: "gram-hayat-yawmiyya",
+    ar: "الْحَيَاةُ الْيَوْمِيَّةُ",
+    de: "Der Alltag",
+    deNeben: "das tägliche Leben",
+    type: 'noun',
+    root: "ح ي ي",
+    chapter: 'personal',
+    book: 'grammar',
+    belegt: 0,
+    quelleLehrer: 'Arabya Bayna Yadayk 1A, Titelseite der Einheit 4 (PDF-Seite 103) — rot „Der Alltag"',
+    sentAr: "الْحَيَاةُ الْيَوْمِيَّةُ جَمِيلَةٌ.",
+    sentDe: "Der Alltag ist schön.",
+    mnemo: "الْحَيَاةُ الْيَوْمِيَّةُ – Der Alltag. So heißt die vierte Einheit in deinem Buch, und genau das zeigen ihre Bilder: der Wecker, die Tasse Kaffee, das Gebet – und im ersten Dialog Aufstehen zum Fajr, Quran lesen und mit dem Bus zur Schule."
   }
 ];
