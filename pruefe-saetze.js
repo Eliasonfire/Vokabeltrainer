@@ -537,6 +537,42 @@ let lexikonSchwer = 0;
           satz => EICH_NAT.find(e => e[0] === satz)[1](analysiereSatz(satz)),
           'نَعْت des مُضَاف hinter dem مُضَاف إِلَيْه');
   }
+  /* ⛔⛔ وَ ALS WURZELBUCHSTABE MITTEN IM SATZ und يَا VOR EINEM مُضَاف
+     (25.09.2026, js/irab.js waGehoertZumWort und der مُنَادَى-Zweig). OHNE
+     Lexikon geprüft: die Regel liest die Schrift, nicht den Wortschatz — sonst
+     hinge die Zerlegung an seiner Buchauswahl. Zwei Gegenproben halten die
+     Regeln eng. Störtest: mit der irab.js von vor dieser Änderung sind die
+     Fälle 1, 4 und 5 falsch (gemessen 25.09.2026, scratchpad eich-c-probe.mjs).
+     Arabisch aus Codepoints. [[zeichenklasse_nie_sichtbar_kopieren]] */
+  {
+    const z = (...c) => String.fromCharCode(...c);
+    const HADHA      = z(0x0647,0x064E,0x0630,0x064E,0x0627);
+    const WALIDUHU   = z(0x0648,0x064E,0x0627,0x0644,0x0650,0x062F,0x064F,0x0647,0x064F);
+    const MUDARRISUN = z(0x0645,0x064F,0x062F,0x064E,0x0631,0x0651,0x0650,0x0633,0x064C);
+    const WASMUHU    = z(0x0648,0x064E,0x0627,0x0633,0x0652,0x0645,0x064F,0x0647,0x064F);
+    const KHALIDUN   = z(0x062E,0x064E,0x0627,0x0644,0x0650,0x062F,0x064C);
+    const KHALIDU    = z(0x062E,0x064E,0x0627,0x0644,0x0650,0x062F,0x064F);
+    const YA         = z(0x064A,0x064E,0x0627);
+    const WALIDI     = z(0x0648,0x064E,0x0627,0x0644,0x0650,0x062F,0x0650,0x064A);
+    const ABDA       = z(0x0639,0x064E,0x0628,0x0652,0x062F,0x064E);
+    const ALLAHI     = z(0x0627,0x0644,0x0644,0x0651,0x064E,0x0647,0x0650);
+    const s = (...w) => w.join(' ') + '.';
+    const EICH_WAW = [
+      [s(HADHA, WALIDUHU), r => r[1].erwartet === 'raf' && r[1].stimmt === true,
+        'hadha waliduhu (BY1 Buchseite 38) — das waw gehoert zum Wort: خَبَر im Nominativ, kein Anschluss'],
+      [s(HADHA, MUDARRISUN, WASMUHU, KHALIDUN), r => r[2].erwartet === null,
+        'Gegenprobe: wa-smuhu (Sukun nach dem Alif) bleibt Anschluss mit waw, ohne Kasusaussage'],
+      [s(YA, KHALIDU), r => r[1].erwartet === 'raf' && r[1].stimmt === true,
+        'Gegenprobe: ya khalidu — ya-nida-01 gilt weiter (Damma ohne Tanwin)'],
+      [s(YA, WALIDI), r => r[1].erwartet === null,
+        'ya walidi (BY1 Buchseite 32) — mit Besitzendung keine Kasusaussage, ya-nida-01 belegt nur den Namen'],
+      [s(YA, ABDA, ALLAHI), r => r[1].erwartet === null && r[1].stimmt !== false,
+        'ya abda llahi — der angerufene مُضَاف steht nicht auf Damma: kein gemeldeter Fehler mehr']
+    ];
+    eiche(EICH_WAW.map(([satz, , warum]) => [satz, true, warum]),
+          satz => EICH_WAW.find(e => e[0] === satz)[1](analysiereSatz(satz)),
+          'waw als Wurzelbuchstabe, ya vor مُضَاف (ohne Lexikon)');
+  }
   setzeLexikon(wortschatz);
 
   /* ⭐ rolleAnzeige (17.09.2026): die Rollen im Iʿrāb-Erklärer mit belegter
