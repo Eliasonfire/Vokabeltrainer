@@ -863,9 +863,12 @@ function mudariStamm(form){
    pruefe-saetze.js: ohne dieses Buch galten sie als خَبَر bzw. مُبْتَدَأ.
    25.09.2026 (v610) dazu, für die Sätze von Buchseite 84, 85, 108 (by1-84-4
    bis by1-108-1): يَكْنُسُ, يَغْسِلُ, يَكْوِي, يَقْرَأُ — alle vier in seinem
-   Wortschatz (bayna-yadayk-1, Kap. 4: كَنَسَ, غَسَلَ, كَوَى, قَرَأَ). */
+   Wortschatz (bayna-yadayk-1, Kap. 4: كَنَسَ, غَسَلَ, كَوَى, قَرَأَ).
+   25.09.2026 (v619) dazu: يَتَوَضَّأُ by1-102-1 (Buchseite 102, dort als
+   وَيَتَوَضَّأُ) — mit seinem Buch schon فِعْل, ohne galt es als „Anschluss mit
+   وَ" (LEXIKON-VERGLEICH in pruefe-saetze.js). */
 const VERBEN_MUDARI = ['يَذْهَبُ', 'يَسْتَيْقِظُ', 'يَنَامُ', 'يَفْعَلُ', 'يُصَلِّي', 'يَسْكُنُ',
-                       'يَكْنُسُ', 'يَغْسِلُ', 'يَكْوِي', 'يَقْرَأُ'];
+                       'يَكْنُسُ', 'يَغْسِلُ', 'يَكْوِي', 'يَقْرَأُ', 'يَتَوَضَّأُ'];
 const VERBEN_MUDARI_STAEMME = new Set(VERBEN_MUDARI.map(mudariStamm).filter(Boolean));
 function istMudariForm(w){
   const rein = String(w || '').normalize('NFC').replace(/[.،؟!«»:؛]/g, '').trim();

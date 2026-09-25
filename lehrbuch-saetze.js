@@ -579,6 +579,17 @@ const LEHRBUCH_SAETZE = [
   { id: 'by1-108-1', werk: 'bayna-yadayk-1', seite: 108, kapitel: 4, vokalisationErgaenzt: true,
     gedruckt: 'القُرْآنَ ohne Sukun am Artikel-Lam; aus dem Lesetext des Selbsttests (Einheiten 3 und 4)',
     sentAr: 'هُوَ يَقْرَأُ الْقُرْآنَ.', sentDe: 'Er liest den Koran.' },
+  /* ⭐ v619 (25.09.2026) — ein SCHWERER Satz mit إِلَى für Übung 5 („Alle
+   * Genitive"): drei Genitive aus zwei Gründen (الْفَجْرِ nach dem ظَرْف عِنْدَ,
+   * الْبَيْتِ und الْمَسْجِدِ nach حَرْف جَرّ). Elias zu den offenen Lücken:
+   * „dann mach die noch fertig". Aus dem Lesetext (Übung 6) auf S. 102,
+   * Lektion 35; Wortlaut vom 230-dpi-Ausschnitt. ERGÄNZT nur, was die Schrift
+   * erzwingt (Fatha vor Alif, Sukun am Artikel-Lam, وَ, فِي, إِلَى) →
+   * vokalisationErgaenzt. Das Deutsch ist MEINE Übersetzung. */
+  { id: 'by1-102-1', werk: 'bayna-yadayk-1', seite: 102, kapitel: 4, vokalisationErgaenzt: true,
+    gedruckt: 'طاهِرٌ ohne Fatha vor dem Alif, الفَجْرِ und البَيْتِ und المَسْجِدِ ohne Sukun am Artikel-Lam, ويَتَوَضَّأُ und ويَذْهَبُ ohne Fatha am Waw, في und إلى ohne Zeichen',
+    sentAr: 'يَسْتَيْقِظُ طَاهِرٌ عِنْدَ الْفَجْرِ، وَيَتَوَضَّأُ فِي الْبَيْتِ، وَيَذْهَبُ إِلَى الْمَسْجِدِ.',
+    sentDe: 'Tahir wacht beim Fajr auf, macht zu Hause die Gebetswaschung und geht zur Moschee.' },
   /* ⭐ Madina 1, Lektionen 10–12 (25.09.2026, v611) — für die Endungen-Übung.
    * Elias: „wie wäre es auch mit einem satz übung wo ich die richtigen endungen
    * hinzufügen muss wie zb ki für frau oder ha und hu usw.. also halt alle die
