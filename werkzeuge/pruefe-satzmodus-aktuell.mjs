@@ -45,14 +45,16 @@
  *   G  Die Tanwīn-Namen heißen auf „-tayn" (Elias, 25.09.2026: „bei den
  *      antworten mit tanweed sollte so dummatayn, kasratayn, fathatayn stehen
  *      und nicht tan"). Verstoß = Exit 1.
- *   I  Kein zweites خَبَر direkt hinter einem خَبَر (Elias, 25.09.2026, zu
- *      „Namen nach Familienwörtern (هَذَا أَخِي عِيسَى) … oder sollen solche
- *      Sätze vorerst draußen bleiben?": „vorerst draußen"). Der Zerleger liest
- *      den Namen dort als zweites خَبَر — daran erkennt ihn dieser Teil, egal
- *      welche Routine den Satz aufnimmt. Dieselbe Doppelung stand bis v622 in
- *      22 Sätzen „هَذَا الـX صِفَةٌ" (Nomen mit Artikel nach dem Hinweiswort);
- *      kommt sie zurück, meldet dieser Teil auch das. Nach Komma oder
- *      Doppelpunkt ist es eine Aufzählung, kein Verstoß. Verstoß = Exit 1.
+ *   I  Kein zweites خَبَر direkt hinter einem خَبَر. Bis v624 las der Zerleger
+ *      den Namen hinter einem Familienwort (هَذَا وَالِدُهُ عَدْنَانُ) als zweites
+ *      خَبَر; seitdem heißt er „gehört zum Wort davor (der Name dazu)", und die
+ *      belegten Sätze aus seinem Buch stehen im Satzvorrat (Elias, 25.09.2026:
+ *      zuerst „vorerst draußen", dann „aber eigentlich ist das sogar auch okay
+ *      weil wir bearbeiten das ja gerade"). Dieselbe Doppelung stand bis v622 in
+ *      22 Sätzen „هَذَا الـX صِفَةٌ" (Nomen mit Artikel nach dem Hinweiswort).
+ *      Kommt eine von beiden zurück — ein Rückfall des Zerlegers —, meldet
+ *      dieser Teil jeden betroffenen Satz. Nach Komma oder Doppelpunkt ist es
+ *      eine Aufzählung, kein Verstoß. Verstoß = Exit 1.
  *
  * ⚠️ Was er „einzeln frei" geschaltet hat, steht nur in seinem Browser — hier
  * zählt die Kapitelauswahl UND die Wörter, die die App SELBST für ihn
@@ -376,14 +378,14 @@ function messen(app){
   const nummern = UEB.map(u => u.nr).sort((a, b) => a - b);
   if (nummern.some((n, i) => n !== i + 1)) ergebnis.verstoesse.push(`Nummern nicht linear 1–${UEB.length}: ${nummern.join(',')}`);
   if (!fs.existsSync(path.join(WURZEL, 'SATZMODUS-PFLICHTPROGRAMM.md'))) ergebnis.verstoesse.push('SATZMODUS-PFLICHTPROGRAMM.md fehlt');
-  // I: kein zweites خَبَر direkt hinter einem خَبَر — Name nach Familienwort
-  //    („vorerst draußen", Elias 25.09.2026) oder ein Rückfall des Zerlegers.
+  // I: kein zweites خَبَر direkt hinter einem خَبَر — ein Rückfall des Zerlegers
+  //    (Name hinter Familienwort bis v624, „هَذَا الـX" bis v622).
   for (const { s, z } of zerlegt){
     if (!z) continue;
     for (let i = 1; i < z.length; i++){
       if (String(z[i-1].rolle || '').startsWith('خَبَر') && String(z[i].rolle || '').startsWith('خَبَر')
           && !/[،,:؛]$/.test(String(z[i-1].wort || '')))
-        ergebnis.verstoesse.push(`zweites خَبَر hinter ${z[i-1].wort} (${s.id || s.sentAr}) — Name nach Familienwort? Elias 25.09.2026: „vorerst draußen"`);
+        ergebnis.verstoesse.push(`zweites خَبَر hinter ${z[i-1].wort} (${s.id || s.sentAr}) — Rückfall des Zerlegers? Ein Name hinter „Vater"/„Bruder" (v624) oder ein Nomen mit اَلْ hinter هَذَا (v622) ist keine zweite Aussage`);
     }
   }
   ergebnis.neueste = neueste; ergebnis.neuWoerter = neu.length;
@@ -541,13 +543,17 @@ if (STOER){
     const f2 = messen(app).genitiv.fehlen.join(' ');
     ok(`إِلَى steht in schweren Sätzen und fehlt nicht (${f2 || '—'})`, !/إِلَى/.test(f2));
   }
-  // 19. Ein Satz mit Namen nach Familienwort im Satzvorrat → Teil I meldet ihn.
-  //     Elias 25.09.2026: „vorerst draußen".
+  // 19. Seit v624 gehört ein Name nach Familienwort in den Satzvorrat (Elias
+  //     25.09.2026: „aber eigentlich ist das sogar auch okay weil wir bearbeiten
+  //     das ja gerade") — «هَذَا أَخِي عِيسَى.» darf Teil I NICHT melden, und der
+  //     Name trägt die Rolle „gehört zum Wort davor".
   vm.runInContext('globalThis.__echtAlle = alleSaetze; alleSaetze = () => globalThis.__echtAlle().concat([{ id: "stoer-name", sentAr: "هَذَا أَخِي عِيسَى." }]);', app.ctx);
   e = messen(app);
   vm.runInContext('alleSaetze = globalThis.__echtAlle;', app.ctx);
-  ok('Name nach Familienwort im Satzvorrat → Teil I meldet ihn', e.verstoesse.some(v => v.includes('stoer-name')));
-  ok('ohne ihn meldet Teil I nichts', !messen(app).verstoesse.some(v => v.startsWith('zweites خَبَر')));
+  { const z = app.hole('analysiereSatz')('هَذَا أَخِي عِيسَى.');
+    ok(`Name nach Familienwort: kein zweites خَبَر, Rolle „${z[2] && z[2].rolle}"`,
+      !e.verstoesse.some(v => v.includes('stoer-name')) && z[2] && String(z[2].rolle).startsWith('gehört zum Wort davor') && z[2].erwartet === 'raf'); }
+  ok('mit den Namen-Sätzen seines Buchs meldet Teil I nichts', !messen(app).verstoesse.some(v => v.startsWith('zweites خَبَر')));
   // 20. Der Zerleger liest „هَذَا الـX صِفَةٌ" wieder mit zweitem خَبَر → Teil I meldet es.
   {
     const an = app.hole('analysiereSatz');
@@ -556,6 +562,15 @@ if (STOER){
     vm.runInContext('analysiereSatz = globalThis.__echtAn;', app.ctx);
     const n = e.verstoesse.filter(v => v.startsWith('zweites خَبَر')).length;
     ok(`Zerleger wie vor v622 (هَذَا الـX als خَبَر) → Teil I meldet ${n} Sätze`, n >= 20 && typeof an === 'function');
+  }
+  // 21. Der Zerleger liest den Namen hinter „Vater"/„Sohn" wieder als خَبَر (wie
+  //     vor v624) → Teil I meldet jeden der sieben Buchsätze (by1-30/38/48).
+  {
+    vm.runInContext('globalThis.__echtAn = analysiereSatz; analysiereSatz = s => globalThis.__echtAn(s).map(t => String(t.rolle).startsWith("gehört zum Wort davor") ? { ...t, rolle: String(t.rolle).replace("gehört zum Wort davor (der Name dazu)", "خَبَر") } : t);', app.ctx);
+    e = messen(app);
+    vm.runInContext('analysiereSatz = globalThis.__echtAn;', app.ctx);
+    const n = e.verstoesse.filter(v => v.startsWith('zweites خَبَر') && /by1-(30|38|48)-/.test(v)).length;
+    ok(`Zerleger wie vor v624 (Name als zweites خَبَر) → Teil I meldet ${n} Buchsätze`, n >= 7);
   }
   console.log(rot ? `\n⛔ ${rot} von ${anzahl} Störtest(s) schlagen NICHT an` : `\n✅ alle ${anzahl} Störtests schlagen an`);
   process.exit(rot ? 1 : 0);

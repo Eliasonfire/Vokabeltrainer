@@ -136,8 +136,22 @@ const UEBUNG_ZARF_ALS_ISM = ['تحت','هنا','هناك','الآن','امام',
 function uebungWortart(wort){
   const blank = String(wort||'').replace(/[ً-ْٰـ]/g,'').replace(/[.،؟!«»:؛]/g,'').replace(/^[وف]/,'');
   if (UEBUNG_ZARF_ALS_ISM.includes(blank)) return 'اِسْم';
+  /* ⛔ PERSONALPRONOMEN FRAGT DIESE ÜBUNG NICHT AB (25.09.2026). Die Karte هُوَ
+     (gram-pron-huwa) trägt type 'particle' — als Lösung stand deshalb „حَرْف",
+     gemessen in 44 von 1.250 Aufgaben seines Satzvorrats. Übung 1 nennt
+     dasselbe هُوَ aber مُبْتَدَأ, und ein حَرْف kann nie مُبْتَدَأ sein. Sein
+     Unterricht (wortarten-01) nennt die Hinweiswörter ausdrücklich Nomen, zu
+     den Personalpronomen sagt er nichts — also keine Aussage statt einer
+     falschen. */
+  if (typeof PERSONALPRONOMEN !== 'undefined' && istInListe(wort, PERSONALPRONOMEN)) return null;
   const t = (typeof wortart === 'function') ? wortart(wort) : null;
   if (!t) return null;
+  /* ⛔ DIE HINWEISWÖRTER SIND اِسْم (25.09.2026). Genau sie nennt wortarten-01
+     ausdrücklich („… und die Hinweiswörter – اِسْمُ الإِشارَةِ … – als Nomen"),
+     ihre Karten (50160–50163, Madina 1 Kap. 24) tragen aber type 'particle'.
+     Im eigenen Tab gesehen: „هَذَا → حَرْف". Nur die Lösung wird berichtigt —
+     gefragt wird wie bisher nur, wo das Lexikon das Wort kennt. */
+  if (typeof HINWEISWOERTER !== 'undefined' && istInListe(wort, HINWEISWOERTER)) return 'اِسْم';
   if (t === 'verb') return 'فِعْل';
   if (t === 'particle' || t === 'grammar') return 'حَرْف';
   return 'اِسْم';

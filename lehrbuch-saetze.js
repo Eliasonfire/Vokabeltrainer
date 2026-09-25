@@ -450,8 +450,10 @@ const LEHRBUCH_SAETZE = [
    * ي, Damma vor dem و, Sukun am Artikel-Lam, فِي, وَ → vokalisationErgaenzt.
    * ⛔ Nicht genommen, weil der Satzzerleger sie FALSCH zerlegt (eigener Punkt
    * in der To-Do): Verbsätze mit Objekt oder Futur سَـ (S. 84, 108), Sätze mit
-   * Namen hinter einem Verwandtschaftswort (هَذَا أَخِي عِيسَى, S. 28/30/48)
-   * und وَالِدِي/وَالِدُهُ hinter einem Wort (gilt als „Anschluss mit وَ").
+   * Namen hinter einem Verwandtschaftswort (هَذَا أَخِي عِيسَى, S. 28/30/48 —
+   * seit v624 zerlegt der Zerleger sie richtig, die belegten stehen im Block
+   * „Namen hinter Vater, Onkel, Sohn" ganz unten) und وَالِدِي/وَالِدُهُ hinter
+   * einem Wort (gilt als „Anschluss mit وَ").
    * Das Deutsch ist MEINE Übersetzung, im Buch steht keins. */
   { id: 'by1-2-2', werk: 'bayna-yadayk-1', seite: 2, kapitel: 1, vokalisationErgaenzt: true,
     gedruckt: 'حالُكِ ohne Fatha auf dem Ha, sonst vokalisiert',
@@ -703,5 +705,47 @@ const LEHRBUCH_SAETZE = [
     sentAr: 'مَنْ هَذَا؟', sentDe: 'Wer ist das?' },
   { id: 'mf19-13-6', werk: 'musterloesung-f19', seite: 13,
     gedruckt: 'vollständig vokalisiert (Musterlösung Nr. 9)',
-    sentAr: 'أَيْنَ الْكِتَابُ؟', sentDe: 'Wo ist das Buch?' }
+    sentAr: 'أَيْنَ الْكِتَابُ؟', sentDe: 'Wo ist das Buch?' },
+  /* ⭐ Bayna Yadayk 1, Namen hinter „Vater", „Onkel", „Sohn" (25.09.2026, v624)
+   * — möglich erst durch den neuen Zweig in js/irab.js: der Name hinter einem
+   * Wort mit Besitzendung (وَالِدُهُ عَدْنَانُ) galt bis dahin als zweites خَبَر.
+   * Elias am 25.09.2026 zuerst „vorerst draußen", dann zu meinem „Sätze mit
+   * Namen nach „Bruder" oder „Vater": Die bleiben draußen": „aber eigentlich
+   * ist das sogar auch okay weil wir bearbeiten das ja gerade".
+   * Jedes Zeichen am Scan geprüft (Seitenbild ≈ 130 dpi, vergrößert). ERGÄNZT
+   * wie oben nur, was die Schrift erzwingt (Fatha vor Alif, Kasra vor ي, وَ) —
+   * dazu drei Zeichen, die dasselbe Wort in DIESEM Buch anderswo gedruckt
+   * trägt: die Fatha auf dem Hamza von أَحْمَدُ (S. 84, «يَا أَحْمَدُ», by1-84-7)
+   * und von أَخِي (S. 6, by1-6-1) und die Fatha auf dem ersten ه von هَذِهِ
+   * (S. 6, 28, 43). Kein Endzeichen ist ergänzt.
+   * Auf S. 30 steht «عَبْدُاللهِ» ohne Leerzeichen, eine Zeile davor «عَبْدُ الله»
+   * mit — hier mit Leerzeichen: sonst liest der Zerleger EIN Wort mit Kasra am
+   * Ende und meldet einen falschen Genitiv.
+   * NICHT genommen (Pausalform, das Endzeichen fehlt — es zu setzen wäre eigene
+   * Ḥaraka): S. 28 «هَذا والِدي عَدْنان وهُوَ مُهَنْدِس» und «هَذا أخِي عيسى وهُوَ
+   * طالِب»; S. 30 عَبْدُ الله (erste Nennung), آمِنَة, عَبْدُ الـمُطَّلِب, العَبّاس,
+   * حَمْزَة, أبو طالِب, صَفِيَّة, القاسِم, إبْراهيم, فاطِمَة, أُمّ كُلْثوم. «هَذا
+   * والِدي عَدْنانُ» (S. 38, Übung 4) steckt ganz in by1-38-1.
+   * Das Deutsch ist MEINE Übersetzung, im Buch steht keins. */
+  { id: 'by1-30-1', werk: 'bayna-yadayk-1', seite: 30, kapitel: 2, vokalisationErgaenzt: true,
+    gedruckt: 'وهَذا ohne Zeichen auf dem وَ und ohne Fatha vor dem Alif; عَبْدُاللهِ ohne Leerzeichen',
+    sentAr: 'وَهَذَا ابْنُهُ عَبْدُ اللهِ.', sentDe: 'Und das ist sein Sohn Abdullah.' },
+  { id: 'by1-30-2', werk: 'bayna-yadayk-1', seite: 30, kapitel: 2, vokalisationErgaenzt: true,
+    gedruckt: 'وهذِهِ ohne Zeichen auf dem وَ und ohne Fatha auf dem ersten ه (gedruckt auf S. 6, 28, 43); اِبْنَتُهُ mit Kasra auf dem Alif',
+    sentAr: 'وَهَذِهِ اِبْنَتُهُ رُقَيَّةُ.', sentDe: 'Und das ist seine Tochter Ruqayya.' },
+  { id: 'by1-30-3', werk: 'bayna-yadayk-1', seite: 30, kapitel: 2, vokalisationErgaenzt: true,
+    gedruckt: 'وهذِهِ ohne Zeichen auf dem وَ und ohne Fatha auf dem ersten ه (gedruckt auf S. 6, 28, 43); اِبْنَتُهُ mit Kasra auf dem Alif',
+    sentAr: 'وَهَذِهِ اِبْنَتُهُ زَيْنَبُ.', sentDe: 'Und das ist seine Tochter Zainab.' },
+  { id: 'by1-38-1', werk: 'bayna-yadayk-1', seite: 38, kapitel: 2, vokalisationErgaenzt: true,
+    gedruckt: 'Übung 3, Beispiel (ط ٢): هَذا, والِدي und عَدْنانُ ohne Fatha vor dem Alif, والِدي ohne Kasra vor dem ي',
+    sentAr: 'هَذَا وَالِدِي عَدْنَانُ، هُوَ مُهَنْدِسٌ.', sentDe: 'Das ist mein Vater Adnan, er ist Ingenieur.' },
+  { id: 'by1-38-2', werk: 'bayna-yadayk-1', seite: 38, kapitel: 2, vokalisationErgaenzt: true,
+    gedruckt: 'Übung 4, Beispiel (ط ٢): هَذا, والِدُهُ und عَدْنانُ ohne Fatha vor dem Alif',
+    sentAr: 'هَذَا وَالِدُهُ عَدْنَانُ.', sentDe: 'Das ist sein Vater Adnan.' },
+  { id: 'by1-48-2', werk: 'bayna-yadayk-1', seite: 48, kapitel: 2, vokalisationErgaenzt: true,
+    gedruckt: 'Bildunterschrift in zwei Zeilen, ohne Schlusspunkt; هَذا ohne Fatha vor dem Alif; أحْمَدُ ohne Fatha auf dem Hamza (gedruckt auf S. 84: يا أَحْمَدُ)',
+    sentAr: 'هَذَا عَمُّهُ أَحْمَدُ، هُوَ مُهَنْدِسٌ.', sentDe: 'Das ist sein Onkel Ahmad, er ist Ingenieur.' },
+  { id: 'by1-48-3', werk: 'bayna-yadayk-1', seite: 48, kapitel: 2, vokalisationErgaenzt: true,
+    gedruckt: 'Bildunterschrift; هَذا ohne Fatha vor dem Alif; أخِي: Fatha auf dem Hamza nicht sicher zu lesen (gedruckt auf S. 6: أَخي)',
+    sentAr: 'هَذَا أَخِي عَمَّارٌ، هُوَ مُعَلِّمٌ.', sentDe: 'Das ist mein Bruder Ammar, er ist Lehrer.' }
 ];

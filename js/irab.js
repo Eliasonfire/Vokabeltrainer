@@ -1250,6 +1250,21 @@ function analysiereSatz(satz){
     const dualOderPlural = /(انِ|َيْنِ|ُونَ|ِينَ)$/.test(wort.replace(/[.،؟!«»:؛]/g, ''));
     let rolle = null, erwartet = null;
     let angerufen = false;   // steht das Wort direkt hinter يَا? (مُضَاف-Fall unten)
+    /* ⛔ AN DER STELLE DES NAMENS KEIN VERB AUS EINEM FREMDEN BUCH (25.09.2026).
+       Der LEXIKON-VERGLEICH in pruefe-saetze.js fand es an den neuen Buchsätzen:
+       mit Bayna Yadayk 3 galt أَحْمَدُ in «هَذَا عَمُّهُ أَحْمَدُ، …» als Verb
+       („ich lobe", حَمِدَ), mit Madina 2 عَبْدُ in «وَهَذَا ابْنُهُ عَبْدُ اللهِ.»
+       (عَبَدَ „dienen") — und das Wort danach wurde zum فَاعِل. Direkt hinter
+       „sein Onkel", „sein Sohn" (خَبَر mit Besitzendung, Nominalsatz, kein
+       Komma) kann ein Wort mit blankem Ḍamma nur dann ein Verb sein, wenn es
+       ein Präsens der 3. Person ist (يَـ/تَـ …, „er/sie tut"): eine
+       Vergangenheitsform endet nie auf Ḍamma, und „ich …" (أَـ) oder „wir …"
+       (نَـ) passt nicht zu „das ist sein Onkel". Wie !nachNida: die Stellung
+       entscheidet, nicht das Wörterbuch. */
+    const kannNurNameSein = () => !imVerbalsatz && i > 0 && !nachKomma && out.length
+      && out[out.length - 1].rolle === 'خَبَر' && hatSuffix(woerter[i-1])
+      && !!gelesen && gelesen.kasus === 'raf' && !gelesen.tanwin
+      && !/^[يت]/.test(ohneVokale(rein).replace(/^[وف](?=[يت])/, ''));
 
     if (istInListe(wort, DUAL_HINWEIS)){
       /* Hinweiswort für zwei (DUAL_HINWEIS oben): am Satzanfang das مُبْتَدَأ,
@@ -1291,7 +1306,7 @@ function analysiereSatz(satz){
       vorherJarr = true; vorherMudaf = false;
       out.push({ wort, rein, rolle, erwartet:null, gelesen, stimmt:null });
       return;
-    } else if (!nachNida && giltAlsVerb(wort)){
+    } else if (!nachNida && !kannNurNameSein() && giltAlsVerb(wort)){
       /* ⛔ !nachNida (25.09.2026): direkt nach يَا steht der Angerufene, nie ein
          Verb. Gefunden vom LEXIKON-VERGLEICH an «وَمَاذَا سَتَفْعَلُ يَا أَحْمَدُ؟»
          (by1-84-7): mit bayna-yadayk-3 galt أَحْمَدُ als فِعْل — dort steht حَمَدَ
@@ -1345,6 +1360,22 @@ function analysiereSatz(satz){
         rolle = 'مُبْتَدَأ (unveränderlich)';
         ersteRolleVergeben = true;
         khabarDa = shibhVorher; shibhVorher = false;
+      } else if (khabarDa && !imVerbalsatz && istInListe(wort, PERSONALPRONOMEN)
+                 && (nachKomma || /^[وف]/.test(ohneVokale(rein)))){
+        /* ⭐ NEUER SATZTEIL (3): PERSONALPRONOMEN NACH KOMMA ODER وَ (25.09.2026).
+           «هَذَا عَمُّهُ أَحْمَدُ، هُوَ مُهَنْدِسٌ.» (Bayna Yadayk 1, S. 48): der
+           erste Satzteil ist fertig (هَذَا + عَمُّهُ), und هُوَ fängt den zweiten an
+           — „er ist Ingenieur". Vorher hieß es nur „unveränderlich", und Übung 1
+           („Tippe alle مُبْتَدَأٌ an") hätte هُوَ als falsch gewertet. Wie die zwei
+           Zweige „neuer Satzteil" unten: nur wenn der Satzteil sein خَبَر schon
+           hat, nie im Verbalsatz, und nur hinter Komma oder mit وَ/فَ davor —
+           «الْمُدَرِّسُ هُوَ …» ohne Komma bleibt, wie es war. Nur Personalpronomen:
+           ein Hinweiswort (… وَذَلِكَ الْبَيْتُ …) ist ein anderer Fall.
+           Vorher/nachher über alle 553 Sätze: genau einer ändert sich, und
+           richtig — «السَّبُّورَةُ أَمَامَ الطَّالِبِ وَهِيَ خَلْفَ الْمُدَرِّسِ.»:
+           وَهِيَ „und sie" ist das مُبْتَدَأ des zweiten Satzteils. */
+        rolle = 'مُبْتَدَأ (unveränderlich)';
+        khabarDa = false; shibhVorher = false;
       } else {
         rolle = 'unveränderlich';
       }
@@ -1602,15 +1633,41 @@ function analysiereSatz(satz){
          هَذَا / هَذِهِ ein Nomen mit اَلْ, ist das noch kein vollständiger Satz,
          sondern nur die Wortgruppe »dieses Haus« … Es muss ein Prädikat folgen".
          Seine Zusatzregel badal-01 (Sharḥ Madīnah L8 S. 12) nennt die Rolle
-         بَدَل — den Begriff hat sein Lehrer noch nicht gebracht, und auf die
-         Frage nach بَدَل bei Namen sagte Elias am 25.09. „vorerst draußen".
-         Deshalb hier OHNE Fachbegriff, nur was die Regel seines Lehrers sagt.
+         بَدَل — den Begriff hat sein Lehrer noch nicht gebracht. Deshalb hier
+         OHNE Fachbegriff, nur was die Regel seines Lehrers sagt.
          Kasus wie das Hinweiswort am Satzanfang: Nominativ.
          ⚠️ Nur mit Artikel — der Name hinter einem Familienwort (هَذَا أَخِي
-         عِيسَى, Befund (d)) bleibt draußen, bewacht in
-         werkzeuge/pruefe-satzmodus-aktuell.mjs. Nicht im Verbalsatz, nicht
-         hinter einem Komma, nie gegen eine sichtbare Kasra oder Fatha. */
+         عِيسَى) hat seinen eigenen Zweig direkt darunter. Nicht im Verbalsatz,
+         nicht hinter einem Komma, nie gegen eine sichtbare Kasra oder Fatha. */
       rolle = 'gehört zum Hinweiswort davor (Wortgruppe, die Aussage folgt)';
+      erwartet = 'raf';
+    } else if (!imVerbalsatz && i > 0 && !nachKomma
+               && out.length && out[out.length - 1].rolle === 'خَبَر' && hatSuffix(woerter[i-1])
+               && !hatSuffix(wort) && !istBestimmt(wort) && !dualOderPlural
+               && !istInListe(wort, ADJEKTIVE) && wortart(wort) !== 'adjective'
+               && !(gelesen && gelesen.kasus && gelesen.kasus !== 'raf')){
+      /* ⭐ DER NAME HINTER „MEIN VATER", „SEIN ONKEL" (25.09.2026). In
+         «هَذَا وَالِدُهُ عَدْنَانُ.» (Bayna Yadayk 1, S. 38) stand der Name als
+         zweites خَبَر — „das ist sein Vater, ist Adnan". Er ist aber keine
+         zweite Aussage: er nennt, WER der Vater ist, und steht deshalb im
+         selben Fall wie das Wort davor (hier das خَبَر, also Nominativ).
+         Elias hatte am 25.09. zuerst „vorerst draußen" gesagt, dann zu meinem
+         „Sätze mit Namen nach „Bruder" oder „Vater": Die bleiben draußen":
+         „aber eigentlich ist das sogar auch okay weil wir bearbeiten das ja
+         gerade". Die Fachrolle (بَدَل, badal-01) hat sein Lehrer noch nicht
+         gebracht — also wie beim Hinweiswort oben OHNE Fachbegriff.
+         Eng gefasst — vorher/nachher über alle 553 Sätze der App gemessen: der
+         Zweig traf keinen einzigen, erst die neuen Buchsätze. Nur direkt
+         hinter einem خَبَر mit Besitzendung (وَالِدُهُ, أَخِي, عَمُّهُ,
+         ابْنُهُ), nur ein Wort ohne Artikel und ohne Besitzendung, kein
+         Adjektiv, nicht im Verbalsatz, nicht hinter einem Komma, und nie gegen
+         eine sichtbare Kasra oder Fatha. Ist der Name selbst ein مُضَاف
+         (عَبْدُ اللهِ), hängt die Erkennung unten „(مُضَاف)" an wie bei jedem Nomen.
+         ⚠️ Ein Name MIT Artikel (عَمُّهُ الْعَبَّاسُ) fällt NICHT hierunter — er
+         liefe in „neuer Satzteil (2)" und würde مُبْتَدَأ; solche Sätze sind
+         nicht im Satzvorrat. Bewacht von werkzeuge/pruefe-satzmodus-aktuell.mjs
+         (Teil I: nie zwei خَبَر hintereinander). */
+      rolle = 'gehört zum Wort davor (der Name dazu)';
       erwartet = 'raf';
     } else if (imVerbalsatz){
       /* Im Verbalsatz gibt es kein خَبَر. Steht nach فِعْل und فَاعِل noch ein
