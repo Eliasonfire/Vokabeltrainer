@@ -3185,6 +3185,12 @@ const SENTENCE_TAGS = {
   ],
   "sk3-208-1": [
     { ruleId: "huwa-hiya-weitere-01", matchText: "هُنَّ", bedeutung: "هُنَّ = sie (Mehrzahl, weiblich)" }
+  ],
+  "gram-tahiyya": [
+    { ruleId: "ismul-isara-hadhihi-01", matchText: "هَذِهِ" }
+  ],
+  "gram-hayat-yawmiyya": [
+    { ruleId: "mubtada-khabar-genus-01", matchText: "جَمِيلَةٌ" }
   ]
 };
 
