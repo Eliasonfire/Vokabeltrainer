@@ -137,7 +137,8 @@ console.log('test-satz-tagesziel.mjs — das Tagesziel im Satzmodus\n');
      verstellbar, also steht hier `satzTagesziel()` statt der alten
      Konstanten — dieselbe Bedingung, anderer Name. */
   pruefe('die Feier hängt am Übergang (satzVorher < ZIEL && jetzt >= ZIEL)',
-    /satzVorher\s*<\s*satzTagesziel\(\)\s*&&\s*satzT\.gesamt\s*>=\s*satzTagesziel\(\)/.test(stelle),
+    /* v606: seit dem Satzmodus in zwei Teilen ist das Ziel eines Tages genau ein Teil (satzTageszielHeute()). */
+    /satzVorher\s*<\s*satzTagesziel(Heute)?\(\)\s*&&\s*satzT\.gesamt\s*>=\s*satzTagesziel(Heute)?\(\)/.test(stelle),
     'Bedingung nicht gefunden');
   pruefe('gezählt wird in uebungAuswerten() — der einen Stelle für alle 13 Modi',
     /satzT\.gesamt\+\+/.test(stelle), 'Zählung nicht gefunden');

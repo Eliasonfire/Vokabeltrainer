@@ -576,6 +576,35 @@ function merkeUebung(modusId, richtig){
   LS.set('vt_uebungStand', UEBUNG_STAND);
 }
 
+/* ⭐ v606 (25.09.2026): Zeit je Satzübung — für zwei gleich lange Teile.
+   Elias: „ich möchte das beide teile ungefähr gleich zeitaufwändig sind
+   deswegen guck welche modis man in welches teil packt". Bis heute wurde das
+   nicht gemessen (vt_zeit kennt nur Karteikarten/Satzmodus/Hörmodus im
+   Ganzen). Gezählt je Tag in vt_quoteTage: `zn_<Übung>` = Aufgaben,
+   `zs_<Übung>` = Sekunden — der Abgleich führt jedes Feld einzeln zusammen
+   (js/sync.js). Nur 1 bis 180 Sekunden: länger heißt weggelegt. */
+function merkeUebZeit(modusId, sek){
+  if (!modusId || !(sek >= 1 && sek <= 180)) return;
+  const t = todayStr(0);
+  const e = QUOTE_TAGE[t] || { gestellt: 0, richtig: 0 };
+  e['zn_' + modusId] = (e['zn_' + modusId] || 0) + 1;
+  e['zs_' + modusId] = (e['zs_' + modusId] || 0) + Math.round(sek);
+  QUOTE_TAGE[t] = e;
+  try { LS.set('vt_quoteTage', QUOTE_TAGE); } catch (err) { /* privates Fenster */ }
+}
+/** Mittlere Sekunden je Aufgabe einer Übung in den letzten 28 Tagen — erst ab
+    `mindestens` Antworten (Vorgabe 10), sonst null. */
+function uebZeitGemessen(modusId, mindestens){
+  const von = todayStr(-28);
+  let n = 0, s = 0;
+  for (const [t, e] of Object.entries(QUOTE_TAGE || {})){
+    if (t < von || !e) continue;
+    n += Number(e['zn_' + modusId]) || 0;
+    s += Number(e['zs_' + modusId]) || 0;
+  }
+  return n >= (mindestens || 10) ? s / n : null;
+}
+
 /* ---------- ⭐⭐ TREFFERQUOTE JE TAG (07.09.2026) --------------------------
 
    Elias hat sich am 07.09.2026 entschieden, den Rauschversuch zu machen: „du

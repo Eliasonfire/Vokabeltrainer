@@ -136,7 +136,12 @@ if (sammel){
   /* ⚠️ `uebungArtVon()` selbst liest `m.art` — das ist ihr Zweck und zählt
      nicht mit. Ohne diesen Ausschnitt wäre der Test dauerhaft rot, und zwar
      zu Recht misstrauisch, aber am falschen Ort. */
-  const ohneArtVon = ohneKommentare.replace(schneide(ohneKommentare, 'uebungArtVon') || '', ' ');
+  /* ⚠️ v606 (25.09.2026): `satzTeile()` liest `m.art` für die GESCHÄTZTE Zeit
+     einer Übung (Satzmodus in zwei gleich langen Teilen) — sie entscheidet
+     nicht, wie eine Aufgabe beantwortet wird. Deshalb namentlich ausgenommen,
+     genau wie uebungArtVon(); jedes andere Vorkommen bleibt ein Befund. */
+  const ohneArtVon = ohneKommentare.replace(schneide(ohneKommentare, 'uebungArtVon') || '', ' ')
+    .replace(schneide(ohneKommentare, 'satzTeile') || '', ' ');
   const mArt = [...ohneArtVon.matchAll(/\bm\.art\b/g)];
   pruefe('m.art entscheidet nur noch in der Modusliste (genau 1×)',
     mArt.length === 1, mArt.length + '×');
