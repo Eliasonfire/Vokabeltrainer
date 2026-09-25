@@ -10,6 +10,7 @@ function renderSettings(){
   document.getElementById('toggleQuran').classList.toggle('on', !!SETTINGS.showQuran);
   if (typeof zeigeTagesDeckel === 'function') zeigeTagesDeckel();
   if (typeof zeigeHoerZiel === 'function') zeigeHoerZiel();
+  if (typeof zeigeSatzZielAutomatisch === 'function') zeigeSatzZielAutomatisch();
   document.getElementById('directionSelect').value = SETTINGS.direction || 'ar-de';
   zeigeRichtungHinweis();
   document.getElementById('toggleTippen').classList.toggle('on', !!SETTINGS.tippenAbBox4);
@@ -690,15 +691,12 @@ if (hoerZielWahl) hoerZielWahl.addEventListener('change', (e)=>{
    sich gleich verhalten, gehören zusammen; ein drittes, das es nicht tut,
    hineinzuzwingen wäre die teurere Vereinfachung.
    [[allgemeine_regel_statt_listeneintrag]] */
+/* ⛔ v618 (25.09.2026): das Satzziel steht hier nicht mehr — es stellt sich
+   selbst ein (ein Teil je Satz-Tag, jede Übung darin einmal). Elias: „ich
+   stelle mir das so vor das die app automatisch meinen ring bzw mein
+   tagesziel einstellt". Die Zeile in den Einstellungen zeigt nur noch, was
+   gilt (zeigeSatzZielAutomatisch() unten) — kein Schalter, der nichts tut. */
 const ZIEL_FELDER = [
-  { id:'satz',   stufen:['5','10','13','15','16','20','30'],  schluessel:'satzZiel',
-    lies:()=> (typeof satzTagesziel === 'function') ? satzTagesziel() : 16,
-    /* Die Standzeile im Satzmodus trägt die Zahl im Text („Tagesziel 2 von
-       13") — ohne Nachziehen behauptet sie die alte, bis der Modus neu
-       geöffnet wird. Dieselbe Falle wie beim Hörziel.
-       [[einstellung_wirkt_nicht_weil_zurueckgelesen]] */
-    nachziehen:()=>{ if (typeof renderUebung === 'function'
-                         && document.getElementById('uebSatz')) renderUebung(); } },
   { id:'wurzel', stufen:['4','8','12','16','24'],   schluessel:'wurzelZiel',
     lies:()=> (typeof wurzelTagesziel === 'function') ? wurzelTagesziel() : 8,
     nachziehen:()=>{ if (typeof wzRingZeichnen === 'function') wzRingZeichnen(); } }
@@ -747,6 +745,18 @@ ZIEL_FELDER.forEach(z => {
   feld.addEventListener('blur', ()=>{ zeigeZielFeld(z); });
   zeigeZielFeld(z);
 });
+
+/* v618: was beim Satzziel gilt — die Zahlen live aus satzTeile(), weil sich
+   die Teile mit seinen gemessenen Zeiten verschieben können. */
+function zeigeSatzZielAutomatisch(){
+  const el = document.getElementById('satzZielAnzeige');
+  if (!el || typeof satzTeile !== 'function') return;
+  const t = satzTeile();
+  /* zwei Zeilen — .satz-ziel-anzeige in index.html hält den Umbruch (pre) */
+  el.textContent = `Teil 1: ${t[1].length}
+Teil 2: ${t[2].length}`;
+}
+zeigeSatzZielAutomatisch();
 
 const hoerZielFeld = document.getElementById('hoerZielEigen');
 if (hoerZielFeld){

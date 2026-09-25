@@ -405,7 +405,9 @@ function tagesZieleStand(){
   const heuteGeuebt = (Number(tage[heute]) || 0) > 0;
   const restVorrat = (typeof tagesPool === 'function') ? tagesPool().length : null;
   const h = (typeof hoerTag === 'function' && typeof hoerTagesziel === 'function') ? hoerTag() : null;
-  const s = (typeof satzTag === 'function' && typeof satzTagesziel === 'function') ? satzTag() : null;
+  /* v618: das Satzziel ist keine Einstellung mehr (satzTagesziel() entfernt) —
+     es ist der Teil des Tages, satzTageszielHeute() in js/uebung.js. */
+  const s = (typeof satzTag === 'function' && typeof satzTageszielHeute === 'function') ? satzTag() : null;
   /* ⛔⛔ ANGEGLICHEN am 15.09.2026 — vorher stand hier `restVorrat === 0`, und
      das wurde mit einem Tagesdeckel praktisch nie wahr.
 
@@ -431,7 +433,7 @@ function tagesZieleStand(){
   return {
     karten: restVorrat === null ? null : kartenZiel,
     hoeren: h === null ? null : (h.gesamt >= hoerTagesziel()),
-    saetze: s === null ? null : (s.gesamt >= (typeof satzTageszielHeute === 'function' ? satzTageszielHeute() : satzTagesziel()))
+    saetze: s === null ? null : (s.gesamt >= satzTageszielHeute())
   };
 }
 

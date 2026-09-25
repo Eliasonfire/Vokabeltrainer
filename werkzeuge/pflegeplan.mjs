@@ -213,7 +213,15 @@ export const PFLEGEPLAN = [
      veralten — die Zeitschätzung (UEB_ZEIT_SCHAETZUNG) ist eine Annahme und
      wird von der Messung abgelöst, sobald je Übung 10 Antworten da sind.
      Bewacht von test-tagesdeckel.mjs, test-p9.mjs, pruefe-offene-runde.mjs
-     und pruefe-satz-teile.mjs (alle in alle-pruefer.mjs). */
+     und pruefe-satz-teile.mjs (alle in alle-pruefer.mjs).
+     v618 (25.09.2026, ebenfalls in js/uebung.js): die Teile laufen von
+     selbst — SETTINGS.satzTeil ist jetzt { teil, erledigt } (Anfangsteil und
+     der Tag, an dem er geschafft wurde), das Satzziel ist keine Einstellung
+     mehr (SETTINGS.satzZiel wird nicht mehr gelesen). Pflegebedarf, geprüft:
+     neuer Inhalt — nein, eine neue Übung verschiebt nur die Teilgröße ·
+     Eingaben — nur die App liest den Zustand, nichts zu verarbeiten ·
+     veralten — nein. Bewacht von pruefe-satz-teile.mjs (Fälle a–f mit
+     Störtests). */
   /* 25.09.2026 (v603), innerhalb von js/kern.js und js/lernen.js und deshalb
      von Hand hier: Box 6 (30 T) und Box 7 (60 T), Box 1 mindestens ein Drittel,
      Wiederholungen nach Verspätung ÷ Abstand, freie Plätze an noch nicht fällige

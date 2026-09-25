@@ -30,7 +30,7 @@ const pruefe = (was, bedingung, gemessen) => {
 
 console.log('test-satz-tagesziel.mjs — das Tagesziel im Satzmodus\n');
 
-/* ---------- 1. Die Zahl steht in der Quelle und ist begründet ---------- */
+/* ---------- 1. Die Zahl stellt sich selbst ein (seit v618) ---------- */
 {
   /* ⛔ Bis zum 15.09.2026 hiess die Zahl `SATZ_TAGESZIEL` und war fest. Seit
      Elias das Ziel in den Einstellungen verstellen kann („jedoch in den
@@ -41,22 +41,18 @@ console.log('test-satz-tagesziel.mjs — das Tagesziel im Satzmodus\n');
      er hat in dieser Zeit AUFGEHOERT, die Feier-Bedingung weiter unten zu
      bewachen: sie sucht denselben alten Namen. Ein Test, der am falschen
      Namen scheitert, prueft nicht mehr, was er soll. [[ausfall_ist_unsichtbar_gebaut]] */
-  const m = uebung.match(/const SATZ_ZIEL_VORGABE\s*=\s*(\d+)/);
-  pruefe('SATZ_ZIEL_VORGABE steht in js/uebung.js', !!m, String(m));
-  /* ⭐ Seit 24.09.2026 gegen die ZAHL DER ÜBUNGEN, nicht gegen eine feste 13:
-     mit Fragewort und Pronomen sind es 15 (Elias: „insgesamt 15 sätze bei
-     gemischt damit ich alle mache"). Kommt eine Übung dazu, wird das hier rot. */
-  const anzahlUebungen = (uebung.match(/\bnr:\s*\d+\s*,/g) || []).length;
-  pruefe(`und ist ${anzahlUebungen} — eine Aufgabe je Übungsart`, m && Number(m[1]) === anzahlUebungen, m && m[1]);
-  pruefe('satzTagesziel() liest Elias’ eigene Zahl aus den Einstellungen',
-    /function satzTagesziel\(\)[\s\S]{0,220}SETTINGS\.satzZiel/.test(uebung),
-    'Funktion oder SETTINGS.satzZiel fehlt');
-  /* ⛔ Die 13 hängt an der Zahl der Übungsarten. Wächst UEBUNGEN, muss die
-     Begründung neu bewertet werden — dieser Fall meldet das. */
-  const modi = (uebung.match(/\bbaue\s*[:(]/g) || []).length;
-  pruefe(`die Begründung „${anzahlUebungen} Übungsarten" steht als Kommentar dabei`,
-    new RegExp(`jede der ${anzahlUebungen} Uebungsarten`).test(uebung), 'Kommentar fehlt');
-  pruefe('Hinweis: ' + modi + ' baue()-Stellen in uebung.js gezählt', true, modi);
+  /* ⛔⛔ SEIT v618 (25.09.2026) GIBT ES BEIDES NICHT MEHR — weder die
+     Vorgabe noch die Einstellung. Elias: „ich stelle mir das so vor das die
+     app automatisch meinen ring bzw mein tagesziel einstellt". Das Ziel
+     eines Tages ist EIN Teil, jede Übung darin einmal; die Fälle dazu (a–f,
+     mit Störtests) prüft werkzeuge/pruefe-satz-teile.mjs an den echten
+     Funktionen. Hier bleibt nur die Klammer, dass nichts Altes zurückkommt. */
+  const code = nurCode(uebung);
+  const alt = code.match(/SATZ_ZIEL_VORGABE|SETTINGS\.satzZiel|function satzTagesziel\(/);
+  pruefe('keine feste Vorgabe und keine Einstellung mehr (SATZ_ZIEL_VORGABE, SETTINGS.satzZiel, satzTagesziel())',
+    !alt, alt && alt[0]);
+  pruefe('satzTageszielHeute() ist das Ziel des Anfangsteils (satzTeilStand().ziel)',
+    /function satzTageszielHeute\(\)\s*\{\s*return satzTeilStand\(\)\.ziel;\s*\}/.test(code), 'Funktion anders gebaut');
 }
 
 /* ---------- 2. Der Anlass ist eingetragen und hat die richtige Stärke ------ */

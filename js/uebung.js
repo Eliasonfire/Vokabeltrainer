@@ -1836,8 +1836,9 @@ function renderUebungsLeiste(){
      drei Antwortarten, sondern der Verzicht auf die Wahl. Elias' Anlass:
      „wenn man nicht weiß welchen man jetzt unbedingt üben sollte." Wer das
      sucht, sucht es vor der Liste, nicht dahinter. */
-  /* v606: Gemischt zeigt den heutigen Teil (satzTeile(), satzTeilHeute()). */
-  const teilHeute = satzTeilHeute(false), imTeil = new Set(satzTeile()[teilHeute]);
+  /* v606: Gemischt zeigt den heutigen Teil (satzTeile()) — seit v618 den,
+     der gerade dran ist (nach „geschafft" der andere, satzTeilStand()). */
+  const teilHeute = satzTeilStand().jetzt, imTeil = new Set(satzTeile()[teilHeute]);
   const gesamt = UEBUNGEN.filter(m => imTeil.has(m.id)).reduce((s,m)=>s + uebungAnzahl(alle[m.id]), 0);
   html = '<div class="gruppe">Ohne Auswahl</div>'
        + `<button class="zeile${UEB.modus===UEB_GEMISCHT?' aktiv':''}${gesamt?'':' leer'}" type="button"`
@@ -2021,7 +2022,9 @@ function uebungStarten(modusId){
   }
   if (LUECKE.aktiv) beendeLuecke();
   UEB = { modus:modusId, liste: gemischt ? liste : uebungMischen(UEBUNGEN.find(x=>x.id===modusId), liste), idx:0, gewaehlt:new Set(),
-          beantwortet:false, richtig:0, gestellt:0 };
+          beantwortet:false, richtig:0, gestellt:0,
+          /* v618: für welchen Teil „Gemischt" gebaut ist (uebungWeiter() baut um). */
+          teil: gemischt ? satzTeilStand().jetzt : null };
   document.getElementById('gramPopover').classList.remove('show');
   uebungAnsicht(true);
   renderUebungsLeiste();
@@ -2191,13 +2194,18 @@ function renderUebung(){
      „7 / 4750", also eine Zahl, die nie kleiner wird. Dieselbe Ueberlegung wie
      im Hoermodus, wo die Standzeile aus demselben Grund erweitert wurde. */
   const st = (typeof satzTag === 'function') ? satzTag() : null;
-  const zielText = !st ? ''
-    : st.gesamt >= satzTageszielHeute()
-      /* ⚠️ Geschuetzte Leerzeichen (U+00A0) in den Zahlenpaaren: die Zeile
-         darf an den Trennpunkten umbrechen, aber nie zwischen einer Zahl und
-         ihrem Bezugswort. Sichtbar ist der Unterschied nicht, im Umbruch schon. */
-      ? ` · Tagesziel geschafft (${st.gesamt})`
-      : ` · Tagesziel ${st.gesamt} von ${satzTageszielHeute()}`;
+  /* ⭐ v618: die Zeile nennt den Teil. Vor „geschafft" das Tagesziel des
+     Anfangsteils, danach den Teil, mit dem es von selbst weitergeht.
+     ⚠️ Kurz gehalten: bei 375 px rutscht der Ring ab etwa 240 px Text in
+     eine eigene Zeile (gemessen 25.09.2026 im eigenen Tab). */
+  const ts = (st && typeof satzTeilStand === 'function') ? satzTeilStand() : null;
+  const zielText = !ts ? ''
+    /* ⚠️ Geschuetzte Leerzeichen (U+00A0) in den Zahlenpaaren: die Zeile
+       darf an den Trennpunkten umbrechen, aber nie zwischen einer Zahl und
+       ihrem Bezugswort. Sichtbar ist der Unterschied nicht, im Umbruch schon. */
+    : !ts.geschafft
+      ? ` · Teil ${ts.anfang}: ${ts.gesamt} von ${ts.ziel}`
+      : ` · ${ts.fertig >= 2 ? 'beide Teile' : 'Teil ' + ts.anfang} geschafft · Teil ${ts.jetzt}: ${ts.stand} von ${ts.groesse}`;
   document.getElementById('uebStand').textContent =
     `${UEB.idx+1} / ${UEB.liste.length} · ${UEB.richtig} richtig${zielText}`;
   /* ⭐ Ring und Balken (15.09.2026): der Ring zeigt den TAG, der Balken die
@@ -2583,12 +2591,15 @@ function uebersetzungFuer(stueck){
    (js/hoeren.js, Zeile 60): „Die Zahl NICHT in einer Konstanten
    zwischenspeichern. Sie kann sich aendern, waehrend der Modus offen ist."
    Eine `const` haette den alten Wert bis zum Neuladen festgehalten.
-   [[einstellung_wirkt_nicht_weil_zurueckgelesen]] */
-const SATZ_ZIEL_VORGABE = 16;
-function satzTagesziel(){
-  const n = (typeof SETTINGS === 'object' && SETTINGS) ? Number(SETTINGS.satzZiel) : NaN;
-  return (Number.isFinite(n) && n >= 1) ? n : SATZ_ZIEL_VORGABE;
-}
+   [[einstellung_wirkt_nicht_weil_zurueckgelesen]]
+
+   ⛔⛔ SEIT v618 (25.09.2026) KEINE EINSTELLUNG MEHR. Die Zahl stellt sich
+   selbst ein: ein Satz-Tag ist EIN Teil, jede Übung darin einmal
+   (satzTageszielHeute() weiter unten). Elias: „ich stelle mir das so vor das
+   die app automatisch meinen ring bzw mein tagesziel einstellt". Entfernt
+   sind SATZ_ZIEL_VORGABE und satzTagesziel(); SETTINGS.satzZiel bleibt in
+   seinen Einstellungen liegen und wird nicht mehr gelesen. Alles darüber ist
+   Geschichte — die 16 sind heute beide Teile zusammen. */
 
 function satzTag(){
   const heute = todayStr(0);
@@ -2621,7 +2632,8 @@ function satzTagSpeichern(t){ try { LS.set('vt_satzTag', t); } catch (e) { /* pr
      Tageswechsel aus heuteExtraModus() in js/start.js.
    · „Gemischt" zieht nur die Übungen des heutigen Teils reihum; das
      Tagesziel ist genau ein Teil (satzTageszielHeute()): seine Einstellung
-     anteilig. Die Einstellung selbst bleibt unverändert (satzTagesziel()). */
+     anteilig. Die Einstellung selbst bleibt unverändert (satzTagesziel()).
+   ⛔ Wechsel und Tagesziel sind seit v618 anders — der Block nach satzTeile(). */
 const UEB_ZEIT_SCHAETZUNG = { mehrfach: 20, wahl: 12, schreiben: 60 };
 function satzTeile(){
   const zeit = {}, quelle = {};
@@ -2640,26 +2652,89 @@ function satzTeile(){
   teil[1].sort((a, b) => nr(a) - nr(b)); teil[2].sort((a, b) => nr(a) - nr(b));
   return { 1: teil[1], 2: teil[2], zeit, quelle, summe };
 }
-function satzTeilHeute(speichern){
+/* ⭐⭐ v618 — DIE TEILE LAUFEN VON SELBST (25.09.2026)
+   Elias, wörtlich: „ich stelle mir das so vor das die app automatisch meinen
+   ring bzw mein tagesziel einstellt (einfach so das ich innerhalb von 3 tagen
+   halt beide teile mache (zwischendurch halt hören)) und das ich den einen
+   teil dann halt am tag mache und wenn ich weiter machen will kommt halt
+   automatisch der zweite teil. und am anderen tag halt andersherum, dann
+   kommt der zweite teil und dann später der erste sollte ich weiter machen
+   ganz automatisch. sollte ich mal an einem tag den satzmodus nicht machen
+   dann wartet so lange der teil den ich hätte machen müssen bis ich ihn
+   machen." Auf die Zusammenfassung (der Ring stellt sich selbst ein, danach
+   kommt von selbst der andere Teil, der nächste Satz-Tag geht andersherum,
+   ein Teil, der gar nicht oder nur halb geschafft ist, bleibt dran, der
+   Wechsel Satz/Hören bleibt): „ja so will ich das".
+   · Tagesziel = die Übungen des ANFANGSTEILS, jede einmal (satzTeile()).
+   · SETTINGS.satzTeil = { teil: Anfangsteil, erledigt: Tag, an dem er
+     geschafft wurde, oder null } — wird mit abgeglichen. Ein Tag NACH
+     „erledigt" beginnt mit dem anderen Teil; ohne „erledigt" wartet der
+     Teil, beliebig viele Tage.
+   · Geschafft = der Tageszähler (satzTag()) erreicht das Ziel. Halb
+     geschafft zählt nicht — der Zähler beginnt jeden Tag bei 0.
+   · Danach zieht „Gemischt" den anderen Teil (satzTeilAuswahl(), und
+     uebungWeiter() baut eine laufende Liste um).
+   ⛔ Meine Entscheidung, nicht seine: nach BEIDEN Teilen geht es reihum
+     weiter (Anfangsteil, anderer, …) — gesagt hat er nur, dass nach dem
+     einen der zweite kommt. */
+function satzTeilZustand(){
   const heute = todayStr(0);
   const st = (typeof SETTINGS === 'object' && SETTINGS && SETTINGS.satzTeil) || null;
-  if (st && st.tag === heute && (st.teil === 1 || st.teil === 2)) return st.teil;
-  const teil = (st && st.teil === 1) ? 2 : 1;
-  if (speichern && typeof SETTINGS === 'object' && SETTINGS){
-    SETTINGS.satzTeil = { teil, tag: heute };
-    if (typeof saveSettings === 'function') saveSettings();
+  let teil = 1, erledigt = null;
+  if (st && (st.teil === 1 || st.teil === 2)){
+    teil = st.teil;
+    if ('erledigt' in st) erledigt = (typeof st.erledigt === 'string' && st.erledigt) ? st.erledigt : null;
+    else if (st.tag && st.tag !== heute){
+      /* Altes Format (v606–v617): { teil, tag } = der Teil des letzten Tages
+         mit Sätzen. Ob er geschafft war, sagt der Tageszähler, wenn er noch
+         von genau diesem Tag ist — sonst gilt die alte Regel: der nächste
+         Satz-Tag nimmt den anderen Teil. */
+      let roh = null;
+      try { roh = LS.get('vt_satzTag', null); } catch (e) { roh = null; }
+      const geschafft = !(roh && roh.tag === st.tag) || Number(roh.gesamt) >= satzTeile()[teil].length;
+      erledigt = geschafft ? st.tag : null;
+    }
   }
-  return teil;
+  if (erledigt && erledigt < heute){ teil = teil === 1 ? 2 : 1; erledigt = null; }
+  return { teil, erledigt, heute };
 }
-/** Das Satz-Tagesziel für HEUTE: genau ein Teil — seine Einstellung anteilig. */
-function satzTageszielHeute(){
+/** Der Tag in Teilen: `anfang` = der Teil, mit dem der Tag beginnt (Ring,
+ *  „Satz 1/2"), `ziel` = seine Übungszahl, `geschafft`, `jetzt` = der Teil,
+ *  den „Gemischt" gerade zieht, `stand` von `groesse` = wie weit darin,
+ *  `fertig` = wie viele Teile heute schon geschafft sind. */
+function satzTeilStand(){
+  const z = satzTeilZustand();
   const teile = satzTeile();
-  const n = teile[satzTeilHeute(false)].length;
-  return Math.max(1, Math.round(satzTagesziel() * n / Math.max(1, UEBUNGEN.length)));
+  const n = { 1: Math.max(1, teile[1].length), 2: Math.max(1, teile[2].length) };
+  const a = z.teil, gesamt = satzTag().gesamt;
+  const geschafft = gesamt >= n[a] || (!!z.erledigt && z.erledigt >= z.heute);
+  let jetzt = a, stand = gesamt, fertig = 0;
+  if (geschafft){
+    jetzt = a === 1 ? 2 : 1; stand = Math.max(0, gesamt - n[a]); fertig = 1;
+    while (stand >= n[jetzt]){ stand -= n[jetzt]; jetzt = jetzt === 1 ? 2 : 1; fertig++; }
+  }
+  return { anfang: a, ziel: n[a], geschafft, jetzt, stand, groesse: n[jetzt], fertig, gesamt, erledigt: z.erledigt };
 }
-/** Nur die Übungen des heutigen Teils — für „Gemischt". */
+/** Der Anfangsteil des Tages. Mit `speichern` (nach jeder Satzantwort) wird
+ *  der Stand abgelegt — und sobald das Ziel erreicht ist, der Tag als
+ *  „erledigt". Gespeichert wird nur, was sich geändert hat. */
+function satzTeilHeute(speichern){
+  const s = satzTeilStand();
+  if (speichern && typeof SETTINGS === 'object' && SETTINGS){
+    const erledigt = s.geschafft ? (s.erledigt || todayStr(0)) : null;
+    const alt = SETTINGS.satzTeil || null;
+    if (!alt || alt.teil !== s.anfang || alt.erledigt !== erledigt || 'tag' in alt){
+      SETTINGS.satzTeil = { teil: s.anfang, erledigt };
+      if (typeof saveSettings === 'function') saveSettings();
+    }
+  }
+  return s.anfang;
+}
+/** Das Satz-Tagesziel für HEUTE: die Übungen des Anfangsteils, jede einmal. */
+function satzTageszielHeute(){ return satzTeilStand().ziel; }
+/** Nur die Übungen des Teils, der gerade dran ist — für „Gemischt". */
 function satzTeilAuswahl(alle){
-  const nur = new Set(satzTeile()[satzTeilHeute(false)]);
+  const nur = new Set(satzTeile()[satzTeilStand().jetzt]);
   const raus = {};
   for (const [id, l] of Object.entries(alle || {})) if (nur.has(id)) raus[id] = l;
   return raus;
@@ -2789,10 +2864,10 @@ function uebungAuswerten(richtig){
     const art = (aM && aM.modus && aM.modus.id) ? aM.modus.id
               : (UEB && UEB.modus !== UEB_GEMISCHT ? UEB.modus : null);
     if (art) merkeUebung(art, richtig);
-    /* v606: die Zeit dieser Aufgabe (einmal je Aufgabe) und der Teil des Tages. */
+    /* v606: die Zeit dieser Aufgabe (einmal je Aufgabe). Der Teil des Tages
+       wird seit v618 erst NACH dem Tageszähler unten gemerkt. */
     if (art && UEB.startZeit && typeof merkeUebZeit === 'function') merkeUebZeit(art, (Date.now() - UEB.startZeit) / 1000);
     UEB.startZeit = 0;
-    if (typeof satzTeilHeute === 'function') satzTeilHeute(true);
   }
   /* ⭐ Und die Trefferquote je TAG (07.09.2026) — die Grundlage für den
      Rauschversuch und für jede spätere Frage „hat das etwas gebracht".
@@ -2808,6 +2883,10 @@ function uebungAuswerten(richtig){
   satzT.gesamt++;
   if (richtig) satzT.richtig++;
   satzTagSpeichern(satzT);
+  /* v618: der Teil des Tages — NACH dem Zähler, damit „geschafft" diese
+     Antwort schon mitzählt; VOR der Feier, damit der Tag als erledigt
+     gespeichert ist, auch wenn die Feier wirft. */
+  if (typeof satzTeilHeute === 'function') satzTeilHeute(true);
   /* ⛔ HIER FEHLT KEIN touchStreak() — das ist Absicht und Elias' Entscheidung
      vom 14.09.2026. Die Serie haengt allein an den Karteikarten
      (js/lernen.js, in answer()); ein Tag mit nur Saetzen zaehlt fuer sie
@@ -2945,6 +3024,17 @@ function uebungWahl(wert){
 }
 
 function uebungWeiter(){
+  /* ⭐ v618: „Gemischt" geht von selbst in den anderen Teil, sobald der Teil
+     geschafft ist — Elias: „wenn ich weiter machen will kommt halt
+     automatisch der zweite teil". Die Liste wurde beim Start für EINEN Teil
+     gebaut; ab hier kommt der Rest aus dem Teil, der jetzt dran ist. */
+  if (UEB.modus === UEB_GEMISCHT && UEB.teil && typeof satzTeilStand === 'function'){
+    const jetzt = satzTeilStand().jetzt;
+    if (jetzt !== UEB.teil){
+      const neu = uebungGemischteListe(satzTeilAuswahl(uebungenAufbauen()));
+      if (neu.length){ UEB.liste = UEB.liste.slice(0, UEB.idx + 1).concat(neu); UEB.teil = jetzt; }
+    }
+  }
   if (UEB.idx + 1 >= UEB.liste.length){
     const stand = `Durch! ${UEB.richtig} von ${UEB.gestellt} richtig.`;
     UEB.modus = null;

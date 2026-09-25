@@ -284,10 +284,12 @@ function renderTagesringe(){
       zStand = hoerTag().gesamt; zZiel = hoerTagesziel();
     }
   } else {
-    /* v606: Satz Teil 1 / Teil 2 im festen Wechsel (satzTeilHeute() in js/uebung.js). */
+    /* v606: Satz Teil 1 / Teil 2 (satzTeilHeute() in js/uebung.js). Seit v618
+       der Teil, mit dem der Tag beginnt, und sein Ziel stellt sich selbst ein
+       (jede seiner Übungen einmal); nach „geschafft" bleibt der Ring voll. */
     zName = (typeof satzTeilHeute === 'function') ? 'Satz ' + satzTeilHeute(false) : 'Sätze'; zNav = 'sentences';
-    if (typeof satzTag === 'function' && typeof satzTagesziel === 'function'){
-      zStand = satzTag().gesamt; zZiel = (typeof satzTageszielHeute === 'function') ? satzTageszielHeute() : satzTagesziel();
+    if (typeof satzTag === 'function' && typeof satzTageszielHeute === 'function'){
+      zStand = satzTag().gesamt; zZiel = satzTageszielHeute();
     }
   }
 
