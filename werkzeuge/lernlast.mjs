@@ -148,6 +148,27 @@ const regulaer = b => {
 console.log(`Vorgezogen: ${vorgezogeneKarten} Karten markiert · vorgezogene Antworten ${quote(BOXEN.reduce((a, b) => a + (s['f' + b + 'g'] || 0), 0), BOXEN.reduce((a, b) => a + (s['f' + b + 'r'] || 0), 0))}`);
 console.log(`  später in Box 4/5 — früher vorgezogene: Box 4 ${quote(s.v4g || 0, s.v4r || 0)} · Box 5 ${quote(s.v5g || 0, s.v5r || 0)} | übrige: Box 4 ${regulaer(4)} · Box 5 ${regulaer(5)}`);
 
+/* v606: Zeit je Satzübung (vt_quoteTage zn_/zs_, merkeUebZeit()). Ab 10
+   Antworten in 28 Tagen nimmt die App die Messung statt der Schätzung für die
+   zwei gleich langen Teile (satzTeile() in js/uebung.js) — hier steht, wie
+   weit das ist, damit die Wartung es ihm sagen kann. */
+{
+  const von = (() => { const d = new Date(tag + 'T12:00:00'); d.setDate(d.getDate() - 28); return d.toISOString().slice(0, 10); })();
+  const je = {};
+  for (const [t, e] of Object.entries(QT)){
+    if (t < von || !e) continue;
+    for (const [k, n] of Object.entries(e)){
+      const m = /^z([ns])_(.+)$/.exec(k);
+      if (!m) continue;
+      je[m[2]] = je[m[2]] || { n: 0, s: 0 };
+      je[m[2]][m[1]] += Number(n) || 0;
+    }
+  }
+  const ids = Object.keys(je).sort();
+  console.log(ids.length
+    ? `Satzübungen, Zeit je Aufgabe (28 Tage): ${ids.map(id => `${id} ${je[id].n ? Math.round(je[id].s / je[id].n) : '–'} s (${je[id].n})`).join(' · ')} — gemessen zählt ab 10 Antworten`
+    : 'Satzübungen: noch keine Zeit gemessen — die zwei Teile beruhen auf der Schätzung');
+}
 console.log(`Box ${OBEN} kostet dauerhaft ≈ ${obenProTag.toFixed(1)} Wiederholungen am Tag · älteste fällige Wiederholung wartet ${wartet} Tag(e)`);
 const knapp = obenProTag >= wdhPlaetze || wartet > 14;
 console.log(knapp

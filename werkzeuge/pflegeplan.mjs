@@ -201,6 +201,19 @@ export const PFLEGEPLAN = [
       wie: 'verschwindet eine Kennung aus vocab-data.js, zeigt ein Platzhalter {{ar:…}} ins Leere oder ändert sich einer der 14 Beispielsätze, '
         + 'die eine Zeichnung zeigt, wird der Prüfer rot' },
   },
+  /* 25.09.2026 (v604–v606), innerhalb von js/kern.js, js/lernen.js und
+     js/uebung.js und deshalb von Hand hier: Lerngruppe (v604), erster Tag
+     eines neuen Wortes (v605), Satzmodus in zwei Teilen (v606). Pflegebedarf,
+     geprüft: · neuer Inhalt — nein; eine neue Satzübung kommt von selbst in
+     den kürzeren Teil (satzTeile()) · Eingaben von Elias — seine Antworten
+     tragen die Gruppe (Fortschritt je Wort: gruppe/gruppeArt/zurueck), den
+     Teil des Tages (SETTINGS.satzTeil) und die Zeit je Satzübung
+     (vt_quoteTage zn_/zs_); gelesen von der App selbst und in Schritt 1b.10
+     von `node werkzeuge/lernlast.mjs` (Lerngruppe, Schlange, Zeiten) ·
+     veralten — die Zeitschätzung (UEB_ZEIT_SCHAETZUNG) ist eine Annahme und
+     wird von der Messung abgelöst, sobald je Übung 10 Antworten da sind.
+     Bewacht von test-tagesdeckel.mjs, test-p9.mjs, pruefe-offene-runde.mjs
+     und pruefe-satz-teile.mjs (alle in alle-pruefer.mjs). */
   /* 25.09.2026 (v603), innerhalb von js/kern.js und js/lernen.js und deshalb
      von Hand hier: Box 6 (30 T) und Box 7 (60 T), Box 1 mindestens ein Drittel,
      Wiederholungen nach Verspätung ÷ Abstand, freie Plätze an noch nicht fällige
