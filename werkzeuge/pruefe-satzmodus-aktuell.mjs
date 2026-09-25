@@ -192,6 +192,13 @@ function messen(app){
       let a = []; try { a = U.baue(z, s) || []; } catch (e){ ergebnis.verstoesse.push(`${id}: baue() wirft — ${e.message}`); }
       for (const x of a){
         liste.push(x);
+        if (id === 'jarr-paar'){
+          /* Elias, 25.09.2026: „auch hier die sätze schwerer machen wie beim
+             genitiv davor und mit mehr präpositionen im satz". */
+          const p = z.filter(t => t.rolle === 'حَرْف جَرّ').length;
+          const n = z.filter((t, i) => t.rolle === 'حَرْف جَرّ' && z[i + 1] && z[i + 1].erwartet === 'jarr').length;
+          if (p < 2 || n < 2) ergebnis.verstoesse.push(`jarr-paar: zu leicht (weniger als zwei Präpositionen mit Genitiv) — ${s.id || s.sentAr}`);
+        }
         if (id === 'alle-majrur'){
           const g = gruende ? gruende(z) : [];
           if (g.length < 2 || new Set(g.map(y => y.grund)).size < 2)
@@ -303,6 +310,12 @@ if (STOER){
   e = messen(app);
   ok('Übung 5 wieder leicht → Verstoß', e.verstoesse.some(v => v.startsWith('alle-majrur: zu leicht')));
   U5.baue = echt5;
+  // 6b. Übung 4 wieder mit jedem Satz, der EINE Präposition hat → Teil F muss rot werden.
+  const U4 = app.hole('UEBUNGEN').find(u => u.id === 'jarr-paar'), echt4 = U4.baue;
+  U4.baue = function(z){ const i = z.findIndex(t => t.rolle === 'حَرْف جَرّ'); return i >= 0 ? [{ frage: 'x', ziele: [i], art: 'mehrfach', reihum: ['x'] }] : []; };
+  e = messen(app);
+  ok('Übung 4 wieder leicht → Verstoß', e.verstoesse.some(v => v.startsWith('jarr-paar: zu leicht')));
+  U4.baue = echt4;
   // 7. Ein Tanwīn-Name wieder auf „-tan" → Teil G muss rot werden.
   const hw = app.hole('HARAKA_WAHL'), altText = hw[1].text;
   hw[1].text = 'ـٌ  Ḍammatān';
@@ -314,7 +327,7 @@ if (STOER){
   e = messen(app);
   ok('je Antwort NICHT gleich viele → Verstoß', e.verstoesse.some(v => v.startsWith('kasus: nicht je Antwort gleich viele')));
   vm.runInContext('uebungGleichViele = globalThis.__echtGleich;', app.ctx);
-  console.log(rot ? `\n⛔ ${rot} Störtest(s) schlagen NICHT an` : '\n✅ alle 8 Störtests schlagen an');
+  console.log(rot ? `\n⛔ ${rot} Störtest(s) schlagen NICHT an` : '\n✅ alle 9 Störtests schlagen an');
   process.exit(rot ? 1 : 0);
 }
 

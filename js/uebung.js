@@ -744,6 +744,14 @@ const UEBUNGEN = [
         if (n && n.erwartet === 'jarr') nomen.push(i+1);   /* nur mit Nomen dahinter */
       });
       if (!partikel.length || !nomen.length) return [];
+      /* ⭐⭐ NUR NOCH SCHWERE AUFGABEN (25.09.2026, 02:05) — wie Übung 5:
+         mindestens ZWEI حُرُوفُ جَرٍّ mit je einem Nomen im Genitiv dahinter.
+         Elias: „auch hier die sätze schwerer machen wie beim genitiv davor und
+         mit mehr präpositionen im satz". Gemessen in seiner Auswahl: 7 von
+         120 Sätzen erfüllen das; weitere kommen aus seinen Büchern
+         (pruefe-satzmodus-aktuell, Teil F, zeigt die Zahl). Sätze mit nur einer
+         Präposition bekommen weiter Übung 6 und 7. */
+      if (partikel.length < 2 || nomen.length < 2) return [];
       /* ⭐ Reihum nach Präposition (25.09.2026, Elias: „lasse auch bei den
          genitiv präpositionen immer durchrutieren sodass ich jede mal sehe") —
          die Präpositionen des Satzes tragen die Aufgabe in ihren Korb
@@ -1216,6 +1224,11 @@ const UEBUNGEN = [
      oder Zahl zeigt — sonst wäre die Lösung geraten. */
   {
     id:'pronomen', nr:14, name:'هُوَ / هِيَ / أَنْتَ … — Pronomen einsetzen', art:'wahl',
+    /* ⭐ Die Knöpfe laufen von RECHTS nach links (25.09.2026). Elias mit Bild:
+       „kannst du mit huwa beginnen ganz rechts oben und dann der reihe nach so
+       wie du es hier auch hast weiter machen aber halt einfach andersherum …
+       ich will halt huwa, hiya, huma usw". Reihenfolge bleibt, nur gespiegelt. */
+    optionenRtl: true,
     hinweis:'Welches Pronomen gehört hierhin? Person, Geschlecht und Zahl zeigen das Wort danach und die deutsche Zeile.',
     deKlar: /^(ich|du|er|sie|es|wir|ihr)[.,;:!?]*$/i,
     hinweisVerraet:false,
@@ -2015,6 +2028,8 @@ function renderUebung(){
       return `<button class="${k}" data-uebwahl="${escapeHtml(String(o.wert))}" lang="ar">${uebungOptionHtml(o.text)}</button>`;
     }).join('');
     wahl.classList.remove('hidden');
+    /* Übung 14: von rechts oben nach links (m.optionenRtl). */
+    if (m.optionenRtl) wahl.setAttribute('dir', 'rtl'); else wahl.removeAttribute('dir');
   } else wahl.classList.add('hidden');
   /* Traegt das CSS, das die arabischen Woerter erst nach dem Beantworten
      antippbar aussehen laesst — dieselbe Grenze wie im Klick-Handler. */

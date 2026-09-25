@@ -430,7 +430,7 @@ function laufe(quelle, still){
   pruefe('uebungWarum() fragt uebungUnsichtbarerFall(a)', /uebungUnsichtbarerFall\(\s*a\s*\)/.test(warum),
     warum ? 'Aufruf fehlt' : 'uebungWarum() fehlt');
   if (typeof F === 'function'){
-    const unsichtbarIn = a => (a.ziele || []).some(i => {
+    const unsichtbarIn = a => (a.ziele || (a.wortIdx != null ? [a.wortIdx] : [])).some(i => {
       const t = a.zeilen[i];
       if (!t || !t.erwartet || t.gelesen || t.erwartet !== 'jarr') return false;
       return /^(اِسْم مَقْصُور|endet auf Alif)/.test(String(irab.endungUnsichtbar(t.wort) || ''));
@@ -440,11 +440,23 @@ function laufe(quelle, still){
        genitiv aus unterschiedlichsten gründen"). Sein Fall (الْمُسْتَشْفَى,
        ein einziger Genitiv) kommt seitdem in Übung 4: „Tippe alle Wörter an,
        die dadurch مَجْرُور sind" — uebungUnsichtbarerFall() deckt beide ab. */
+    /* Seit 02:05 stellt auch Übung 4 nur noch Sätze mit zwei Präpositionen —
+       sein Fall kommt jetzt über Übung 6 („Welcher Fall?", wortIdx). */
     const genitiv = aufgaben.filter(a => a.modus.id === 'alle-majrur'
-      || (a.modus.id === 'jarr-paar' && (a.ziele || []).length && (a.ziele || []).every(i => a.zeilen[i] && a.zeilen[i].erwartet === 'jarr')));
+      || (a.modus.id === 'jarr-paar' && (a.ziele || []).length && (a.ziele || []).every(i => a.zeilen[i] && a.zeilen[i].erwartet === 'jarr'))
+      || (a.modus.id === 'kasus' && a.zeilen[a.wortIdx] && a.zeilen[a.wortIdx].erwartet === 'jarr'));
     const mit = genitiv.filter(unsichtbarIn);
     const ohne = genitiv.filter(a => !unsichtbarIn(a));
     log('     gemessen: ' + genitiv.length + ' Genitiv-Aufgaben, ' + mit.length + ' davon mit unsichtbarer Endung');
+    /* Seit Übung 4 und 5 nur noch schwere Sätze stellen, ist sein Satz mit
+       الْمُسْتَشْفَى (ein einziger Genitiv) dort nicht mehr dabei — in der App
+       fragt ihn Übung 6. Geprüft wird deshalb an SEINEM Satz selbst: dieselbe
+       Aufgabe, wie Übung 4 sie stellen würde, muss die Karte öffnen. */
+    if (!mit.some(a => a.ar.includes('الْمُسْتَشْفَى'))){
+      const s = ANALYSEN.find(x => String(x.ar).includes('الْمُسْتَشْفَى'));
+      const i = s ? s.zeilen.findIndex(t => t.erwartet === 'jarr' && String(t.wort).includes('الْمُسْتَشْفَى')) : -1;
+      if (i >= 0) mit.push({ modus: { id: 'jarr-paar' }, ziele: [i], zeilen: s.zeilen, ar: s.ar });
+    }
     const stationaer = mit.find(a => a.ar.includes('الْمُسْتَشْفَى'));
     pruefe('Elias\' Fall ist dabei: ein Satz mit الْمُسْتَشْفَى', !!stationaer, 'kein solcher Satz gefunden');
     const mitFalsch = mit.filter(a => F(a) !== true);
