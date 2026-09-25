@@ -75,8 +75,13 @@ function offeneRundeStand(){
     /* v603: dieselbe Menge, aus der offeneRundeFortsetzen() auffüllt — das
        Fällige und, solange das Tagesziel offen ist, vorziehbare Karten. */
     const vorrat = (typeof vorziehVorrat === 'function' && typeof zielHeuteOffen === 'function' && zielHeuteOffen())
-      ? vorziehVorrat(drin) : [];
-    gesamt = Math.min(ziel, gesamt + currentPool().filter(w => !drin.has(String(w.id))).length + vorrat.length);
+      ? vorziehVorrat(drin) : undefined;
+    /* v604: mit Lerngruppe kommt nicht jede fällige Box-1-Karte in Frage —
+       also genau die Rechnung, mit der offeneRundeFortsetzen() auffüllt. */
+    const gruppe = (typeof lerngruppe === 'function') ? lerngruppe().filter(w => !drin.has(String(w.id))) : undefined;
+    const rest = currentPool().filter(w => !drin.has(String(w.id)));
+    const dazu = (typeof tagesAuswahl === 'function') ? tagesAuswahl(rest, ziel - gesamt, vorrat, gruppe).length : rest.length;
+    gesamt = Math.min(ziel, gesamt + dazu);
   }
   const fehlt = gesamt - g.idx;
   return fehlt > 0 ? { fehlt, gesamt } : null;
@@ -156,7 +161,9 @@ function offeneRundeFortsetzen(){
     /* v603: freie Plätze auch hier in seiner Reihenfolge (vorziehVorrat()). */
     const vorrat = (typeof vorziehVorrat === 'function' && typeof zielHeuteOffen === 'function' && zielHeuteOffen())
       ? vorziehVorrat(drin) : undefined;
-    const nach = (typeof tagesAuswahl === 'function') ? tagesAuswahl(rest, ziel - words.length, vorrat) : rest;
+    const gruppe = (typeof lerngruppe === 'function') ? lerngruppe().filter(w => !drin.has(String(w.id))) : undefined;
+    const nach = (typeof tagesAuswahl === 'function') ? tagesAuswahl(rest, ziel - words.length, vorrat, gruppe) : rest;
+    if (typeof lerngruppeAufnehmen === 'function') lerngruppeAufnehmen(nach);
     for (const w of nach){
       if (words.length >= ziel) break;
       words.push(w); drin.add(String(w.id));
@@ -318,6 +325,9 @@ function startLearningSession(){
      Tagesziel offen ist, freie Plätze mit noch nicht fälligen Karten. */
   let words = (typeof tagesRunde === 'function') ? tagesRunde()
             : (typeof tagesPool === 'function') ? tagesPool() : currentPool();
+  /* v604: wer heute neu in die Lerngruppe rückt, wird JETZT aufgenommen —
+     beim Bau der Runde, nie bei der Anzeige (lerngruppeAufnehmen()). */
+  if (typeof lerngruppeAufnehmen === 'function') lerngruppeAufnehmen(words);
   if (words.length === 0){ toast('Nichts fällig – schau später wieder vorbei.'); showScreen('home'); return; }
   /* ⭐ Die Runde IST die Tagesration — seit dem 22.09.2026 gibt es keine
      zweite Zahl mehr daneben. Die Einstellung „Sitzungsgröße" ist an diesem
@@ -1604,10 +1614,23 @@ function stufeErgebnis(stufe, p, heute){
   const box = (p && p.box) || 1;
   const t = heute || todayStr(0);
   const frueh = !!(p && p.nextReview && String(p.nextReview) > t);
+  const mitglied = !!(p && p.gruppe && box <= 1);
+  /* v604: ein Mitglied der Lerngruppe, das als andere Hälfte vorgezogen
+     einspringt, übt nur — Box und Termin bleiben. Elias: „dann kann einfach ein
+     wort aus dem zweiten teil der lerngruppe für den heutigen tag einspringen
+     und dann morgen auch wo es normalerweise dran wäre". */
+  if (frueh && mitglied)
+    return { box, tage: Math.max(0, tageZwischen(t, p.nextReview)), frueh, bleibt: true, gruppe: 'bleibt' };
   if (frueh && s.richtig && box >= 4)
-    return { box, tage: Math.max(0, tageZwischen(t, p.nextReview)), frueh, bleibt: true };
+    return { box, tage: Math.max(0, tageZwischen(t, p.nextReview)), frueh, bleibt: true, gruppe: null };
   const nach = s.box(box);
-  return { box: nach, tage: INTERVALS[nach], frueh, bleibt: false };
+  /* v604: ein fälliges Mitglied verlässt die Gruppe mit „gut" (Box 2) oder
+     „leicht" (Box 3); mit „nochmal"/„schwer" bleibt es und kommt in
+     GRUPPE_ABSTAND Tagen wieder — jeden 2. Tag, wie vereinbart. */
+  if (mitglied)
+    return nach > 1 ? { box: nach, tage: INTERVALS[nach], frueh, bleibt: false, gruppe: 'raus' }
+                    : { box: 1, tage: GRUPPE_ABSTAND, frueh, bleibt: false, gruppe: 'bleibt' };
+  return { box: nach, tage: INTERVALS[nach], frueh, bleibt: false, gruppe: null };
 }
 
 /* Was unter den Knoepfen steht: in welche Box die Vokabel wandert und wann sie
@@ -1715,13 +1738,20 @@ function answer(stufe){
   }
   if (s.richtig) p.correct = (p.correct||0)+1;
   else           p.wrong   = (p.wrong||0)+1;
-  /* Vorgezogen und richtig in Box 4–7: der Termin bleibt (stufeErgebnis). */
-  if (!erg.bleibt) p.nextReview = todayStr(INTERVALS[p.box]);
+  /* Vorgezogen und richtig in Box 4–7 (v603) oder als andere Hälfte der
+     Lerngruppe (v604): der Termin bleibt. Sonst sagt stufeErgebnis() die Tage —
+     für ein Mitglied, das bleibt, GRUPPE_ABSTAND statt INTERVALS[1]. */
+  if (!erg.bleibt) p.nextReview = todayStr(erg.tage);
+  /* v604: raus aus der Lerngruppe mit „gut"/„leicht"; ein Wort, das aus Box 2
+     oder höher nach Box 1 fällt, bekommt Vorrang für den nächsten freien
+     Gruppenplatz (sein „ganz vorne in die schlage"). */
+  if (erg.gruppe === 'raus'){ delete p.gruppe; delete p.gruppeArt; }
+  if (boxVorher >= 2 && p.box <= 1 && !p.gruppe) p.zurueck = heute;
   /* ⭐ Vorgezogene Karten MARKIEREN (v603, Plan-Punkt d, 25.09.2026): ob das
      Vorziehen hilft, zeigt keine Rechnung. Die Wartung misst, ob markierte
      Karten später in Box 4/5 so gut halten wie die anderen (Felder v4g/v4r …
      in vt_quoteTage, siehe merkeQuote()). */
-  if (erg.frueh){
+  if (erg.frueh && boxVorher >= 2){
     p.vorgezogen = (Number(p.vorgezogen) || 0) + 1;
     p.vorgezogenAm = heute;
   }
