@@ -981,6 +981,26 @@ function LEXIKON_hat(w){
   const genau = String(w).replace(/[.،؟!«»:؛]/g, '').trim();
   return LEXIKON.has(genau) || (LEXIKON_ROH && LEXIKON_ROH.has(skelett(genau)));
 }
+/* ⛔⛔ وَالِدِي IST NICHT وَ + الِدِي (25.09.2026). Mitten im Satz galt jedes
+   Wort mit و vorn als „Anschluss mit وَ", wenn es nicht als Ganzes im
+   Wortschatz stand — und وَالِدِي, وَالِدُهُ, وَالِدَتُهُ stehen dort nie so, nur
+   وَالِدٌ/وَالِدَةٌ. Gefunden an den Sätzen aus Bayna Yadayk 1 (Buchseiten 28,
+   30, 32, 38: هَذَا وَالِدِي عَدْنَانُ, هَذَا وَالِدُهُ عَبْدُ اللهِ, يَا وَالِدِي), die
+   deshalb nicht in die App kamen. Ohne Buch galt sogar وَاجِبٌ als Anschluss
+   (Satz 50192).
+   ⭐ Entschieden wird an der SCHRIFT, nicht am Wortschatz — sonst hinge es an
+   seiner Buchauswahl: nach وَ + ا kann das Wort nur zweierlei sein, und beides
+   schließt ein Vokal auf dem nächsten Buchstaben aus. Das Lām des Artikels
+   trägt nie einen Vokal (وَالْبَيْتِ, وَالشَّمْسُ), und nach einem Hamzat-waṣl
+   trägt der nächste Buchstabe Sukūn (وَاسْمُهُ, وَابْنُهُ). Trägt er also Fatha,
+   Damma oder Kasra (وَالِدٌ, وَاحِدٌ, وَاجِبٌ, وَاسِعٌ), gehört das و zum Wort.
+   Ein Wort mit Hamza (وَأَنَا) schreibt أ, nicht ا — es fällt gar nicht darunter.
+   ⚠️ Schadda oder Sukūn dahinter: bleibt beim Alten. Zeichen als \u-Folgen.
+   [[allgemeine_regel_statt_listeneintrag]] · [[app_auswahl_entscheidet]] */
+function waGehoertZumWort(w){
+  const rein = String(w || '').normalize('NFC').replace(/[.،؟!«»:؛]/g, '').trim();
+  return /^وَ?ا[ب-غف-ي][َُِ](?![ّْ])/.test(rein);
+}
 
 /* ---------- Ein مُضَاف إِلَيْه steht im Genitiv — sonst war es keines (20.08.2026) ----------
 
@@ -1126,6 +1146,7 @@ function analysiereSatz(satz){
        nichts behauptet. */
     const dualOderPlural = /(انِ|َيْنِ|ُونَ|ِينَ)$/.test(wort.replace(/[.،؟!«»:؛]/g, ''));
     let rolle = null, erwartet = null;
+    let angerufen = false;   // steht das Wort direkt hinter يَا? (مُضَاف-Fall unten)
 
     if (istInListe(wort, DUAL_HINWEIS)){
       /* Hinweiswort für zwei (DUAL_HINWEIS oben): am Satzanfang das مُبْتَدَأ,
@@ -1330,7 +1351,7 @@ function analysiereSatz(satz){
       erwartet = letzterKasus;
       const zumMudaf = mudafFuerNat(out, wort, gelesen);
       if (zumMudaf){ rolle = 'نَعْت (zum مُضَاف davor)'; erwartet = zumMudaf.erwartet; }
-    } else if (/^و[َ]?/.test(wort) && ersteRolleVergeben && !LEXIKON_hat(wort)){
+    } else if (/^و[َ]?/.test(wort) && ersteRolleVergeben && !LEXIKON_hat(wort) && !waGehoertZumWort(wort)){
       /* Nur wenn das Wort als Ganzes NICHT im Wortschatz steht. Sonst gilt
          وَسِخٌ (schmutzig) als وَ + سِخ, und ein richtiger خَبَر faellt aus der
          Pruefung heraus. */
@@ -1357,7 +1378,17 @@ function analysiereSatz(satz){
       /* Der Angerufene steht auf Damma und ohne Tanwin — genau der Fall, den
          Elias' Regel ya-nida-01 am Namen ياسِرُ zeigt. */
       rolle = 'مُنَادَى';
-      erwartet = 'raf';
+      /* ⛔⛔ MIT ANGEHÄNGTEM PRONOMEN KEINE KASUSAUSSAGE (25.09.2026). يَا وَالِدِي
+         (Bayna Yadayk 1, Buchseite 32) bekam hier „raf" — der Angerufene mit
+         Besitzendung ist aber ein مُضَاف und steht nicht auf Damma. Seine Regel
+         ya-nida-01 belegt nur den Namen und das einzelne Nomen (يَا خَالِدُ,
+         يَا وَلَدُ); für den Rest steht in seinem Stoff nichts. Also keine
+         Kasusaussage statt einer falschen — Übung 6 fragt sonst „raf" ab.
+         Sichtbar wurde es mit waGehoertZumWort(): vorher galt وَالِدِي als
+         „Anschluss mit وَ". Dasselbe für den مُضَاف davor (يَا عَبْدَ اللَّهِ),
+         unten bei der مُضَاف-Erkennung. */
+      erwartet = hatSuffix(wort) ? null : 'raf';
+      angerufen = true;
       nachNida = false;
     } else if (!ersteRolleVergeben && gelesen && gelesen.kasus === 'nasb' && gelesen.tanwin){
       /* ⛔ EIN مُبْتَدَأ IST IMMER مَرْفُوع (20.08.2026). Steht das erste Wort mit
@@ -1418,6 +1449,8 @@ function analysiereSatz(satz){
          verworfen (harf-jarr-idafa-01). */
       rolle += ' (مُضَاف)';
       vorherMudaf = true;
+      /* Der angerufene مُضَاف (يَا عَبْدَ اللَّهِ) — siehe مُنَادَى oben. */
+      if (angerufen) erwartet = null;
     }
 
     if (erwartet){ letzterKasus = erwartet; letzteBestimmtheit = istBestimmt(wort); }
