@@ -573,6 +573,72 @@ let lexikonSchwer = 0;
           satz => EICH_WAW.find(e => e[0] === satz)[1](analysiereSatz(satz)),
           'waw als Wurzelbuchstabe, ya vor مُضَاف (ohne Lexikon)');
   }
+  /* ⛔⛔ FUTUR سَـ, OBJEKT MIT FATHA NACH DEM VERB, NAME VOR ARTIKEL+FATHA,
+     يَا NACH DEM VERB (25.09.2026, Zerleger-Befunde (a) und (b) aus den Sätzen
+     von Bayna Yadayk 1, Kap. 4). OHNE Lexikon — gebraucht wird nur يَفْعَلُ aus
+     VERBEN_MUDARI. Störtest: mit der irab.js von vor diesem Tag sind die Fälle
+     1, 3 und 6 falsch; Fall 7 war mit (a), aber ohne !nachNida falsch
+     (طَارِقُ als فَاعِل). Gemessen 25.09.2026, scratchpad eich-ab-probe.mjs. */
+  {
+    const z = (...c) => String.fromCharCode(...c);
+    const SATAFALU = z(0x0633,0x064E,0x062A,0x064E,0x0641,0x0652,0x0639,0x064E,0x0644,0x064F);
+    const SAYYIDU  = z(0x0633,0x064E,0x064A,0x0651,0x0650,0x062F,0x064F);
+    const YAFALU   = z(0x064A,0x064E,0x0641,0x0652,0x0639,0x064E,0x0644,0x064F);
+    const ALWAJIBA = z(0x0627,0x0644,0x0652,0x0648,0x064E,0x0627,0x062C,0x0650,0x0628,0x064E);
+    const ALWALADU = z(0x0627,0x0644,0x0652,0x0648,0x064E,0x0644,0x064E,0x062F,0x064F);
+    const AHMADU   = z(0x0623,0x064E,0x062D,0x0652,0x0645,0x064E,0x062F,0x064F);
+    const MADHA    = z(0x0645,0x064E,0x0627,0x0630,0x064E,0x0627);
+    const YA       = z(0x064A,0x064E,0x0627);
+    const TARIQU   = z(0x0637,0x064E,0x0627,0x0631,0x0650,0x0642,0x064F);
+    const KHALIDU  = z(0x062E,0x064E,0x0627,0x0644,0x0650,0x062F,0x064F);
+    const s = (...w) => w.join(' ') + '.';
+    const EICH_VERBSATZ = [
+      ['satafalu (Futur)', () => giltAlsVerb(SATAFALU) === true,
+        'sa- vor dem Praesens (BY1 Buchseite 84) — ein Verb, kein مُبْتَدَأ'],
+      ['sayyidu', () => giltAlsVerb(SAYYIDU) === false,
+        'Gegenprobe: sayyidu faengt mit sa + ya an und bleibt ein Nomen'],
+      ['yafalu l-wajiba', () => { const r = analysiereSatz(s(YAFALU, ALWAJIBA)); return r[1].erwartet === 'nasb' && r[1].stimmt === true; },
+        'Fatha direkt nach dem Verb: das Objekt, kein فَاعِل (yaghsilu l-malabisa, BY1)'],
+      ['yafalu l-waladu l-wajiba', () => { const r = analysiereSatz(s(YAFALU, ALWALADU, ALWAJIBA)); return r[1].erwartet === 'raf' && r[1].stimmt === true && r[2].erwartet === 'nasb' && r[2].stimmt === true; },
+        'Gegenprobe: mit Damma bleibt das erste Nomen der فَاعِل'],
+      ['yafalu l-wajiba l-waladu', () => { const r = analysiereSatz(s(YAFALU, ALWAJIBA, ALWALADU)); return r[2].erwartet === 'raf' && r[2].stimmt === true; },
+        'Objekt vor dem Taeter: das Nomen im Nominativ danach ist der فَاعِل, kein Fehler'],
+      ['yafalu ahmadu l-wajiba', () => { const r = analysiereSatz(s(YAFALU, AHMADU, ALWAJIBA)); return r[1].erwartet === 'raf' && r[1].stimmt === true && r[2].erwartet === 'nasb' && r[2].stimmt === true; },
+        'Name ohne Tanwin vor Artikel + Fatha ist kein مُضَاف (yusalli ahmadu l-fajra, BY1)'],
+      ['madha satafalu ya tariqu', () => { const r = analysiereSatz(MADHA + ' ' + SATAFALU + ' ' + YA + ' ' + TARIQU + '؟'); const v = analysiereSatz(s(YA, KHALIDU)); return r[3].rolle === v[1].rolle && r[3].stimmt === true; },
+        'nach Verb + ya: der Angerufene ist مُنَادَى wie in ya khalidu, nicht فَاعِل']
+    ];
+    eiche(EICH_VERBSATZ.map(([n, , warum]) => [n, true, warum]),
+          n => EICH_VERBSATZ.find(e => e[0] === n)[1](),
+          'Futur, Objekt nach dem Verb, ya nach dem Verb (ohne Lexikon)');
+  }
+  /* ⛔ أَيّ NACH PRÄPOSITION, NACH كَمْ, لَدَى (25.09.2026, Zerleger-Befund (e),
+     Sätze von Bayna Yadayk 1, Buchseite 58). OHNE Lexikon. Störtest: mit der
+     irab.js von vor dieser Änderung sind alle drei falsch (أَيِّ „unveränderlich",
+     طَالِبًا مَفْعُول مُطْلَق mit nasb, لَدَيْنَا مُبْتَدَأ). Gemessen 25.09.2026,
+     scratchpad eich-e-probe.mjs. Fall 2 ist der Satz seiner Karte gram-frage-kam. */
+  {
+    const z = (...c) => String.fromCharCode(...c);
+    const FI        = z(0x0641,0x0650,0x064A);
+    const AYYI      = z(0x0623,0x064E,0x064A,0x0650,0x0651);
+    const DAWRIN    = z(0x062F,0x064E,0x0648,0x0652,0x0631,0x064D);
+    const KAM       = z(0x0643,0x064E,0x0645,0x0652);
+    const TALIBAN   = z(0x0637,0x064E,0x0627,0x0644,0x0650,0x0628,0x064B,0x0627);
+    const ALFASLI   = z(0x0627,0x0644,0x0652,0x0641,0x064E,0x0635,0x0652,0x0644,0x0650);
+    const LADAYNA   = z(0x0644,0x064E,0x062F,0x064E,0x064A,0x0652,0x0646,0x064E,0x0627);
+    const SHAQQATUN = z(0x0634,0x064E,0x0642,0x0651,0x064E,0x0629,0x064C);
+    const EICH_E = [
+      ['fi ayyi dawrin', () => { const r = analysiereSatz(FI + ' ' + AYYI + ' ' + DAWRIN + '؟'); return r[1].erwartet === 'jarr' && r[1].stimmt === true && r[2].erwartet === 'jarr' && r[2].stimmt === true; },
+        'ayy nach fi steht im Genitiv und ist مُضَاف, nicht unveraenderlich'],
+      ['kam taliban fi l-fasli', () => { const r = analysiereSatz(KAM + ' ' + TALIBAN + ' ' + FI + ' ' + ALFASLI + '؟'); return r[1].erwartet === null && r[1].stimmt === null; },
+        'nach kam keine Rolle und kein Kasus (tamyiz steht in keiner seiner Regeln), nicht مَفْعُول مُطْلَق'],
+      ['ladayna shaqqatun', () => { const r = analysiereSatz(LADAYNA + ' ' + SHAQQATUN + '.'); return r[0].erwartet === null && r[1].erwartet === 'raf' && r[1].stimmt === true; },
+        'ladayna ist ein ظَرْف wie indana, kein مُبْتَدَأ']
+    ];
+    eiche(EICH_E.map(([n, , warum]) => [n, true, warum]),
+          n => EICH_E.find(e => e[0] === n)[1](),
+          'ayy nach Praeposition, nach kam, ladaa (ohne Lexikon)');
+  }
   setzeLexikon(wortschatz);
 
   /* ⭐ rolleAnzeige (17.09.2026): die Rollen im Iʿrāb-Erklärer mit belegter
