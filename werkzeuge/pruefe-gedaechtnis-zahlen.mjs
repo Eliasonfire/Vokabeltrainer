@@ -177,8 +177,10 @@ vm.runInContext(fach + '\nthis.F = (typeof FACHBEGRIFF_VOKABELN !== "undefined")
    55 → 59 — Weiblichkeit حَمْرَاءُ/كُبْرَى und die Präpositionen بِ/كَ
    („ja beides als karteikarten machen");
    59 → 60 — أَوْلَادٌ „Kinder" aus Bayna Yadayk 1A, rot mit der Übersetzung seines Lehrers;
-   60 → 61 — هَيَّا بِنَا „Los geht's" von derselben Seite (Schadda von Elias nachgehört). */
-pruefe('Oberflaeche: 61 Fachbegriffe', 61, ktxF.F ? ktxF.F.length : 'FACHBEGRIFF_VOKABELN fehlt');
+   60 → 61 — هَيَّا بِنَا „Los geht's" von derselben Seite (Schadda von Elias nachgehört);
+   25.09.2026 (v621): 61 → 63 — تَحِيَّةٌ „Begrüßen" und الْحَيَاةُ الْيَوْمِيَّةُ „Der Alltag",
+   rot in Bayna Yadayk 1A („ja mach außer zusammenfassung und vokabeln"). */
+pruefe('Oberflaeche: 63 Fachbegriffe', 63, ktxF.F ? ktxF.F.length : 'FACHBEGRIFF_VOKABELN fehlt');
 
 /* Die neuen Ausnahmen in den Pruefern
    ⛔⛔ OHNE KOMMENTARE. Diese vier Zeilen behaupten „steht im Code" — und ein
