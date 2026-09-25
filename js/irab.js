@@ -815,8 +815,12 @@ function mudariStamm(form){
    seiner Buchauswahl, und Lehrbuchsätze erscheinen in JEDER Auswahl (siehe
    VERBEN oben). Jede Form ist an einem Satz nachgeschlagen: يَذْهَبُ by1-82-5
    und -6, يَسْتَيْقِظُ by1-82-1 und -2, يَنَامُ by1-82-3, يَفْعَلُ by1-82-4
-   (Präsensformen aus dem Wortschatz von Bayna Yadayk 1, Kap. 2 und 4). */
-const VERBEN_MUDARI = ['يَذْهَبُ', 'يَسْتَيْقِظُ', 'يَنَامُ', 'يَفْعَلُ'];
+   (Präsensformen aus dem Wortschatz von Bayna Yadayk 1, Kap. 2 und 4).
+   25.09.2026 (v607) dazu: يُصَلِّي by1-48-1 (Buchseite 48) und يَسْكُنُ by1-56-1
+   (Buchseite 56, dort als تَسْكُنُ und أَسْكُنُ) — beide in seinem Wortschatz
+   (bayna-yadayk-1: صَلَّى, سَكَنَ). Gefunden vom LEXIKON-VERGLEICH in
+   pruefe-saetze.js: ohne dieses Buch galten sie als خَبَر bzw. مُبْتَدَأ. */
+const VERBEN_MUDARI = ['يَذْهَبُ', 'يَسْتَيْقِظُ', 'يَنَامُ', 'يَفْعَلُ', 'يُصَلِّي', 'يَسْكُنُ'];
 const VERBEN_MUDARI_STAEMME = new Set(VERBEN_MUDARI.map(mudariStamm).filter(Boolean));
 function istMudariForm(w){
   const rein = String(w || '').normalize('NFC').replace(/[.،؟!«»:؛]/g, '').trim();
@@ -951,8 +955,19 @@ function setzeLexikon(eintraege){
     merke(v.ar, v.type, true);
     /* Doppelformen einzeln merken - sonst steht "بُيُوتٌ / أَبْيَاتٌ" als EIN
        Eintrag im Lexikon und passt auf kein Wort im Satz. */
-    [v.sg, v.pl, v.femSg, v.femPl, v.past, v.present, v.imperative, v.masdar]
+    [v.sg, v.pl, v.femSg, v.femPl, v.past, v.present, v.imperative]
       .forEach(f => einzelformen(f).forEach(einzel => merke(einzel, v.type, false)));
+    /* ⛔⛔ DIE GRUNDFORM (masdar) EINES VERBS IST EIN NOMEN (25.09.2026).
+       Sie stand hier mit der Wortart ihres Eintrags, also als „verb". Gefunden
+       vom LEXIKON-VERGLEICH in pruefe-saetze.js am Lehrbuchsatz by1-85-1
+       «كَمْ أَفْرَادُ الْأُسْرَةِ؟» (Bayna Yadayk 1, Buchseite 85): mit madina-3
+       galt أَفْرَادُ als فِعْل und الْأُسْرَةِ als فَاعِل — madina-3 führt das Verb
+       أَفْرَدَ mit der Grundform إِفْرَاد, ohne Vokale dasselbe Gerüst.
+       Derselbe Fehler steht schon als Listeneintrag in NICHT_VERB (شيخ,
+       19.08.2026: „masdar des Verbs alt werden"). Die allgemeine Regel statt
+       des nächsten Eintrags: ein masdar ist ein Nomen, nie ein Verb.
+       [[allgemeine_regel_statt_listeneintrag]] · [[skelettvergleich_wirft_information_weg]] */
+    einzelformen(v.masdar).forEach(einzel => merke(einzel, v.type === 'verb' ? 'noun' : v.type, false));
     if (v.type === 'verb') einzelformen(v.present).forEach(f => {
       const stamm = mudariStamm(f);
       if (stamm) LEXIKON_MUDARI.add(stamm);

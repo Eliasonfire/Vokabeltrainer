@@ -478,6 +478,21 @@ let lexikonSchwer = 0;
   eiche(EICH_ARTIKEL.map(([w, , soll, warum]) => [w, soll, warum]),
         w => { const e = EICH_ARTIKEL.find(x => x[0] === w); return mitLexikon([{ ar: e[1], type: 'verb' }], () => giltAlsVerb(e[0])); },
         'Artikel ist kein Verb (mit Mini-Lexikon)');
+  /* ⛔⛔ DER masdar IST EIN NOMEN (25.09.2026, js/irab.js setzeLexikon).
+     Mit madina-3 galt أَفْرَادُ im Lehrbuchsatz by1-85-1 als Verb: madina-3
+     führt أَفْرَدَ mit der Grundform إِفْرَاد, und die stand mit der Wortart
+     ihres Eintrags im Lexikon. Wieder mit Mini-Lexikon und Gegenprobe (das
+     Verb selbst bleibt eines), sonst misst der Fall nichts. Störtest: mit der
+     alten irab.js ist der erste Fall `true` (gemessen 25.09.2026). */
+  const EICH_MASDAR = [
+    /* [Wort, soll giltAlsVerb, warum] — Mini-Lexikon: afrada, masdar ifrad */
+    ['أَفْرَادُ', false, 'afradu (by1-85-1, mit madina-3 als Verb gelesen) — Plural von fard, nicht der masdar ifrad'],
+    ['أَفْرَدَ', true, 'Gegenprobe: afrada selbst bleibt ein Verb — das Mini-Lexikon wirkt']
+  ];
+  const MINI_MASDAR = [{ ar: 'أَفْرَدَ', type: 'verb',
+                         masdar: 'إِفْرَاد' }];
+  eiche(EICH_MASDAR, w => mitLexikon(MINI_MASDAR, () => giltAlsVerb(w)),
+        'masdar ist kein Verb (mit Mini-Lexikon)');
   const EICH_SATZ = [
     /* [Satz, Pruefung an analysiereSatz(), warum] */
     ['\u0648\u064E\u0627\u0644\u0650\u062F\u064F \u0627\u0644\u0637\u064E\u0651\u0627\u0644\u0650\u0628\u0650 \u0645\u064F\u0647\u064E\u0646\u0652\u062F\u0650\u0633\u064C.', r => r[1].erwartet === 'jarr' && r[1].stimmt === true,

@@ -432,5 +432,85 @@ const LEHRBUCH_SAETZE = [
     sentAr: 'لَا، أَذْهَبُ بِالْحَافِلَةِ.', sentDe: 'Nein, ich fahre mit dem Bus.' },
   { id: 'by1-2-1', werk: 'bayna-yadayk-1', seite: 2, kapitel: 1, vokalisationErgaenzt: true,
     gedruckt: 'حالُكَ ohne Fatha auf dem Ha, sonst vokalisiert',
-    sentAr: 'وَكَيْفَ حَالُكَ أَنْتَ؟', sentDe: 'Und wie geht es dir?' }
+    sentAr: 'وَكَيْفَ حَالُكَ أَنْتَ؟', sentDe: 'Und wie geht es dir?' },
+  /* ⭐ Bayna Yadayk 1, zweite Lese (25.09.2026, nach dem Komprimieren). Für
+   * die Lücken, die pruefe-satzmodus-aktuell Teil H meldete (Pflichtprogramm:
+   * jede Übung mindestens 15 Aufgaben): Übung 4 hatte 14, Übung 13 hatte 14,
+   * Übung 14 hatte 7. Elias: „das es immer aktuell bleibt und passende wörter
+   * hinzufügt" (SATZMODUS-PFLICHTPROGRAMM.md, Pflicht 5) und die Notfallregel:
+   * erst die Bücher, erfunden wird nichts.
+   * ⚠️ Die Seitenbilder im Buch-PDF haben nur ≈ 970 × 1333 Pixel (≈ 130 dpi,
+   * gemessen mit pymupdf; das in Samsung Notes eingebettete Original ist
+   * dasselbe). Ein Rendern mit 400 oder 600 dpi vergrößert nur. Genommen ist
+   * deshalb nur, wo das Endzeichen SICHTBAR über oder unter dem Buchstaben
+   * steht. Nicht genommen: die Dialoge auf S. 4 und die Übung auf S. 22 (dort
+   * Pausalform: „مِصْرِيَّة", „طالِب" ohne Endung — sie zu setzen wäre eigene
+   * Ḥaraka), „الْمَطَارِ" auf S. 56 (Fatha auf dem Mim nicht sicher zu lesen).
+   * ERGÄNZT ist nur, was die Schrift erzwingt: Fatha vor Alif, Kasra vor dem
+   * ي, Damma vor dem و, Sukun am Artikel-Lam, فِي, وَ → vokalisationErgaenzt.
+   * ⛔ Nicht genommen, weil der Satzzerleger sie FALSCH zerlegt (eigener Punkt
+   * in der To-Do): Verbsätze mit Objekt oder Futur سَـ (S. 84, 108), Sätze mit
+   * Namen hinter einem Verwandtschaftswort (هَذَا أَخِي عِيسَى, S. 28/30/48)
+   * und وَالِدِي/وَالِدُهُ hinter einem Wort (gilt als „Anschluss mit وَ").
+   * Das Deutsch ist MEINE Übersetzung, im Buch steht keins. */
+  { id: 'by1-2-2', werk: 'bayna-yadayk-1', seite: 2, kapitel: 1, vokalisationErgaenzt: true,
+    gedruckt: 'حالُكِ ohne Fatha auf dem Ha, sonst vokalisiert',
+    sentAr: 'وَكَيْفَ حَالُكِ أَنْتِ؟', sentDe: 'Und wie geht es dir?' },
+  { id: 'by1-4-1', werk: 'bayna-yadayk-1', seite: 4, kapitel: 1, vokalisationErgaenzt: true,
+    gedruckt: 'أَنا und تُرْكِيا ohne Fatha vor dem Alif',
+    sentAr: 'أَنَا مِنْ تُرْكِيَا.', sentDe: 'Ich bin aus der Türkei.' },
+  { id: 'by1-4-2', werk: 'bayna-yadayk-1', seite: 4, kapitel: 1, vokalisationErgaenzt: true,
+    gedruckt: 'أَنا und سورِيا ohne Fatha vor dem Alif, ohne Damma vor dem Waw',
+    sentAr: 'أَنَا مِنْ سُورِيَا.', sentDe: 'Ich bin aus Syrien.' },
+  { id: 'by1-6-1', werk: 'bayna-yadayk-1', seite: 6, kapitel: 1, vokalisationErgaenzt: true,
+    gedruckt: 'هَذا ohne Fatha vor dem Alif, أَخي ohne Kasra vor dem ي',
+    sentAr: 'هَذَا أَخِي. هُوَ مُدَرِّسٌ.', sentDe: 'Das ist mein Bruder. Er ist Lehrer.' },
+  { id: 'by1-6-2', werk: 'bayna-yadayk-1', seite: 6, kapitel: 1, vokalisationErgaenzt: true,
+    gedruckt: 'هَذا ohne Fatha vor dem Alif, صَديقي ohne Kasra vor dem ي',
+    sentAr: 'هَذَا صَدِيقِي. هُوَ مُهَنْدِسٌ.', sentDe: 'Das ist mein Freund. Er ist Ingenieur.' },
+  { id: 'by1-6-3', werk: 'bayna-yadayk-1', seite: 6, kapitel: 1, vokalisationErgaenzt: true,
+    gedruckt: 'أُخْتي und طَبيبَةٌ ohne Kasra vor dem ي',
+    sentAr: 'هَذِهِ أُخْتِي. هِيَ طَبِيبَةٌ.', sentDe: 'Das ist meine Schwester. Sie ist Ärztin.' },
+  { id: 'by1-6-4', werk: 'bayna-yadayk-1', seite: 6, kapitel: 1, vokalisationErgaenzt: true,
+    gedruckt: 'صَديقَتي ohne Kasra vor dem ي, طالِبَةٌ ohne Fatha vor dem Alif',
+    sentAr: 'هَذِهِ صَدِيقَتِي. هِيَ طَالِبَةٌ.', sentDe: 'Das ist meine Freundin. Sie ist Schülerin.' },
+  { id: 'by1-28-1', werk: 'bayna-yadayk-1', seite: 28, kapitel: 2, vokalisationErgaenzt: true,
+    gedruckt: 'صورَةُ ohne Damma vor dem Waw, أُسْرَتي ohne Kasra vor dem ي',
+    sentAr: 'هَذِهِ صُورَةُ أُسْرَتِي.', sentDe: 'Das ist ein Bild meiner Familie.' },
+  { id: 'by1-28-2', werk: 'bayna-yadayk-1', seite: 28, kapitel: 2, vokalisationErgaenzt: true,
+    gedruckt: 'وهَذا ohne Zeichen auf dem وَ und ohne Fatha vor dem Alif, جَدَّتي ohne Kasra vor dem ي',
+    sentAr: 'وَهَذَا جَدِّي. وَهَذِهِ جَدَّتِي.', sentDe: 'Und das ist mein Großvater. Und das ist meine Großmutter.' },
+  { id: 'by1-36-1', werk: 'bayna-yadayk-1', seite: 36, kapitel: 2, vokalisationErgaenzt: true,
+    gedruckt: 'المِعْطَفُ ohne Sukun am Artikel-Lam, هَذا ohne Fatha vor dem Alif',
+    sentAr: 'أَيْنَ الْمِعْطَفُ؟ هَذَا هُوَ الْمِعْطَفُ.', sentDe: 'Wo ist der Mantel? Das hier ist der Mantel.' },
+  { id: 'by1-36-2', werk: 'bayna-yadayk-1', seite: 36, kapitel: 2, vokalisationErgaenzt: true,
+    gedruckt: 'الغُرْفَةُ ohne Sukun am Artikel-Lam',
+    sentAr: 'أَيْنَ الْغُرْفَةُ؟ هَذِهِ هِيَ الْغُرْفَةُ.', sentDe: 'Wo ist das Zimmer? Das hier ist das Zimmer.' },
+  { id: 'by1-43-1', werk: 'bayna-yadayk-1', seite: 43, kapitel: 2, vokalisationErgaenzt: true,
+    gedruckt: 'صورَةُ ohne Damma vor dem Waw, أَخي ohne Kasra vor dem ي',
+    sentAr: 'هَذِهِ صُورَةُ أَخِي. هُوَ مُهَنْدِسٌ.', sentDe: 'Das ist ein Bild meines Bruders. Er ist Ingenieur.' },
+  { id: 'by1-45-1', werk: 'bayna-yadayk-1', seite: 45, kapitel: 2, vokalisationErgaenzt: true,
+    gedruckt: 'والِدُكَ ohne Fatha vor dem Alif',
+    sentAr: 'مَنْ وَالِدُكَ؟', sentDe: 'Wer ist dein Vater?' },
+  { id: 'by1-45-2', werk: 'bayna-yadayk-1', seite: 45, kapitel: 2, vokalisationErgaenzt: true,
+    gedruckt: 'صَديقُكَ ohne Kasra vor dem ي',
+    sentAr: 'مَنْ صَدِيقُكَ؟', sentDe: 'Wer ist dein Freund?' },
+  { id: 'by1-48-1', werk: 'bayna-yadayk-1', seite: 48, kapitel: 2, vokalisationErgaenzt: true,
+    gedruckt: 'يُصَلّي ohne Kasra vor dem ي',
+    sentAr: 'هُوَ يُصَلِّي.', sentDe: 'Er betet.' },
+  { id: 'by1-56-1', werk: 'bayna-yadayk-1', seite: 56, kapitel: 3, vokalisationErgaenzt: true,
+    gedruckt: 'في zweimal ohne Kasra; Frage (Hassan) und Antwort (Ahmad) stehen untereinander',
+    sentAr: 'هَلْ تَسْكُنُ فِي بَيْتٍ؟ نَعَمْ، أَسْكُنُ فِي بَيْتٍ.', sentDe: 'Wohnst du in einem Haus? Ja, ich wohne in einem Haus.' },
+  { id: 'by1-56-2', werk: 'bayna-yadayk-1', seite: 56, kapitel: 3, vokalisationErgaenzt: true,
+    gedruckt: 'ما ohne Fatha vor dem Alif',
+    sentAr: 'مَا رَقْمُ شَقَّتِكَ؟', sentDe: 'Was ist die Nummer deiner Wohnung?' },
+  { id: 'by1-84-1', werk: 'bayna-yadayk-1', seite: 84, kapitel: 4, vokalisationErgaenzt: true,
+    gedruckt: 'هَذا ohne Fatha vor dem Alif, العُطْلَةِ ohne Sukun am Artikel-Lam',
+    sentAr: 'هَذَا يَوْمُ الْعُطْلَةِ.', sentDe: 'Das ist der freie Tag.' },
+  { id: 'by1-84-2', werk: 'bayna-yadayk-1', seite: 84, kapitel: 4, vokalisationErgaenzt: true,
+    gedruckt: 'هَذا ohne Fatha vor dem Alif, العَمَلِ ohne Sukun am Artikel-Lam',
+    sentAr: 'هَذَا يَوْمُ الْعَمَلِ.', sentDe: 'Das ist der Arbeitstag.' },
+  { id: 'by1-85-1', werk: 'bayna-yadayk-1', seite: 85, kapitel: 4, vokalisationErgaenzt: true,
+    gedruckt: 'أَفْرادُ ohne Fatha vor dem Alif, الأُسْرَةِ ohne Sukun am Artikel-Lam',
+    sentAr: 'كَمْ أَفْرَادُ الْأُسْرَةِ؟', sentDe: 'Wie viele Mitglieder hat die Familie?' }
 ];
