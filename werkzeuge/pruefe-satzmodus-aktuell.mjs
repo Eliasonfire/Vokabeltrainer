@@ -217,6 +217,25 @@ function messen(app){
     gleichViele(U, liste, korb);
     ergebnis.genitiv[id] = { aufgaben: liste.length, koerbe: [...koerbe] };
   }
+  /* Übung 2 (Elias, 25.09.2026: „hier müssen die sätze auch wesentlich länger
+     werden und mit mehreren adjektiven. auch möchte ich im selben modus das du
+     nach dem manut fragst"): jede Aufgabe aus einem Satz mit mindestens zwei
+     Adjektiven, mindestens eines davon نَعْت; beide Fragen kommen vor. */
+  {
+    const U2 = UEB.find(u => u.id === 'nat'), wortart = hole('wortart');
+    let fragen = new Set(), n2 = 0;
+    for (const { s, z } of zerlegt){
+      if (!z || !U2) continue;
+      let a = []; try { a = U2.baue(z, s) || []; } catch (e){ ergebnis.verstoesse.push(`nat: baue() wirft — ${e.message}`); }
+      if (!a.length) continue;
+      n2 += a.length; a.forEach(x => fragen.add((x.reihum || [])[0]));
+      const nat = z.filter(t => String(t.rolle).includes('نَعْت')).length;
+      const adj = nat + z.filter(t => String(t.rolle) === 'خَبَر' && wortart && wortart(t.wort) === 'adjective').length;
+      if (!nat || adj < 2) ergebnis.verstoesse.push(`nat: zu leicht (weniger als zwei Adjektive) — ${s.id || s.sentAr}`);
+    }
+    if (n2 && !(fragen.has('nat') && fragen.has('manut'))) ergebnis.verstoesse.push('nat: fragt nicht nach نَعْت UND مَنْعُوت');
+    ergebnis.genitiv.nat = n2;
+  }
   const karteJarr = (hole('FOLGE19_KARTEN') || []).find(k => k.id === 'f19-jarr');
   const acht = karteJarr ? karteJarr.gruppen[0].merkmale.map(m => String(m).split('–')[0].trim()) : [];
   const inFuenf = new Set(ergebnis.genitiv['alle-majrur'] ? ergebnis.genitiv['alle-majrur'].koerbe : []);
@@ -316,6 +335,12 @@ if (STOER){
   e = messen(app);
   ok('Übung 4 wieder leicht → Verstoß', e.verstoesse.some(v => v.startsWith('jarr-paar: zu leicht')));
   U4.baue = echt4;
+  // 6c. Übung 2 wieder mit jedem Satz, der EIN نَعْت hat → muss rot werden.
+  const U2 = app.hole('UEBUNGEN').find(u => u.id === 'nat'), echt2 = U2.baue;
+  U2.baue = function(z){ const i = z.findIndex(t => String(t.rolle).includes('نَعْت')); return i >= 0 ? [{ frage: 'x', ziele: [i], art: 'mehrfach', reihum: ['nat'] }] : []; };
+  e = messen(app);
+  ok('Übung 2 wieder leicht → Verstoß', e.verstoesse.some(v => v.startsWith('nat: zu leicht') || v.startsWith('nat: fragt nicht')));
+  U2.baue = echt2;
   // 7. Ein Tanwīn-Name wieder auf „-tan" → Teil G muss rot werden.
   const hw = app.hole('HARAKA_WAHL'), altText = hw[1].text;
   hw[1].text = 'ـٌ  Ḍammatān';
@@ -327,7 +352,7 @@ if (STOER){
   e = messen(app);
   ok('je Antwort NICHT gleich viele → Verstoß', e.verstoesse.some(v => v.startsWith('kasus: nicht je Antwort gleich viele')));
   vm.runInContext('uebungGleichViele = globalThis.__echtGleich;', app.ctx);
-  console.log(rot ? `\n⛔ ${rot} Störtest(s) schlagen NICHT an` : '\n✅ alle 9 Störtests schlagen an');
+  console.log(rot ? `\n⛔ ${rot} Störtest(s) schlagen NICHT an` : '\n✅ alle 10 Störtests schlagen an');
   process.exit(rot ? 1 : 0);
 }
 
