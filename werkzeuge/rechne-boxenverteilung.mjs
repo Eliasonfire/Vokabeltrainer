@@ -25,13 +25,14 @@ const lies = (name, muster) => {
   return m[1];
 };
 const INTERVALS = eval('(' + lies('INTERVALS', /const INTERVALS = (\{[^}]+\})/) + ')');
-const ANTEIL    = Number(lies('DECKEL_ANTEIL_BOX1', /const DECKEL_ANTEIL_BOX1 = ([\d.]+)/));
+/* v603: der Anteil steht jetzt als Bruch („1 / 3") in js/kern.js. */
+const ANTEIL    = Number(eval(lies('DECKEL_ANTEIL_BOX1', /const DECKEL_ANTEIL_BOX1 = ([\d.]+(?:\s*\/\s*[\d.]+)?)/)));
 console.log('Aus js/kern.js gelesen: INTERVALS = ' + JSON.stringify(INTERVALS)
           + ', DECKEL_ANTEIL_BOX1 = ' + ANTEIL);
 
 /* Die Stufen, wie in js/lernen.js: nochmal = eine Box runter, gut = eine hoch. */
 const runter = b => Math.max(1, b - 1);
-const hoch   = b => Math.min(5, b + 1);
+const hoch   = b => Math.min(Math.max(...Object.keys(INTERVALS).map(Number)), b + 1);
 
 /* Die Auffuellregel aus tagesAuswahl() — woertlich dieselbe Rechnung. */
 function auswahl(faelligNeu, faelligWdh, deckel, anteil){

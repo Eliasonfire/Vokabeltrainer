@@ -43,7 +43,8 @@ function kapitelFortschritt(ch, words){
     ? words.filter(istBekannt) : [];
   if (!zaehlbar.length) return '';          /* kein Wort dabei → kein Balken */
 
-  /* Füllstand aus den Leitner-Boxen. Box 1 ist der Anfang, Box 5 das Ende;
+  /* Füllstand aus den Leitner-Boxen. Box 1 ist der Anfang, die höchste Box das
+     Ende (seit v603 Box 7, vorher Box 5 — `stufen` liest INTERVALS);
      ein nie abgefragtes Wort steht auf 0, nicht auf Box 1 — sonst wäre ein
      unangetastetes Kapitel schon zu einem Viertel gefüllt. */
   const stufen = (typeof INTERVALS === 'object') ? Object.keys(INTERVALS).length : 5;
@@ -360,7 +361,9 @@ function zeichneBoxAuswahl(){
      Nummer - mit "in 7 Tagen" sagt der Knopf, was er bewirkt. */
   const tage = t => t === 0 ? 'sofort' : t === 1 ? 'morgen' : `in ${t} Tagen`;
   document.getElementById('boxZiele').innerHTML =
-    [1,2,3,4,5].map(b =>
+    /* v603: alle Boxen aus INTERVALS, also bis Box 7 (Plan-Punkt g: er schiebt
+       seine sicheren Wörter selbst nach Box 6 und 7). */
+    Object.keys(INTERVALS).map(Number).map(b =>
       `<button class="kat-ziel" data-boxziel="${b}">Box ${b}<span class="box-ziel-tage"> · ${tage(INTERVALS[b])}</span></button>`
     ).join('');
 }
@@ -753,7 +756,7 @@ function baueWortKarte(w){
   const wkTage = t => t === 0 ? 'sofort' : t === 1 ? 'morgen' : `in ${t} Tagen`;
   t.push(`<div class="wk-abschnitt wk-boxwahl">
     <div class="wk-marke"><span>In welcher Box?</span></div>
-    <div class="wk-boxziele">${[1,2,3,4,5].map(b =>
+    <div class="wk-boxziele">${Object.keys(INTERVALS).map(Number).map(b =>
       `<button class="kat-ziel${b === box ? ' ist-drin' : ''}" data-wkbox="${b}"${b === box ? ' aria-current="true"' : ''}>Box ${b}<span class="box-ziel-tage"> · ${wkTage(INTERVALS[b])}</span></button>`
     ).join('')}</div>
   </div>`);

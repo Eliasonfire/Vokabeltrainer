@@ -201,6 +201,24 @@ export const PFLEGEPLAN = [
       wie: 'verschwindet eine Kennung aus vocab-data.js, zeigt ein Platzhalter {{ar:…}} ins Leere oder ändert sich einer der 14 Beispielsätze, '
         + 'die eine Zeichnung zeigt, wird der Prüfer rot' },
   },
+  /* 25.09.2026 (v603), innerhalb von js/kern.js und js/lernen.js und deshalb
+     von Hand hier: Box 6 (30 T) und Box 7 (60 T), Box 1 mindestens ein Drittel,
+     Wiederholungen nach Verspätung ÷ Abstand, freie Plätze an noch nicht fällige
+     Karten (Box 2/3 → Box 1 → Box 4–7), Wischen links = „schwer". Elias: „lass
+     uns box 6 einführen und box 7 auch" und „wie wäre es die freien plätze den
+     vokabeln aus box 2 udn 3 zu geben?". Pflegebedarf, und zwar geprüft:
+     · neuer Inhalt — nein, die Boxen füllen sich durch seine Antworten und sein
+       Verschieben;
+     · Eingaben von Elias — ja: seine Antworten zählen je Box mit
+       (vt_quoteTage, Felder b/f/v<Box>g/r aus merkeQuote()). Die Routine liest
+       sie in Schritt 1b.10 (`node werkzeuge/lernlast.mjs`): Trefferquote in
+       Box 6/7 (in der Rechnung angenommen 0,9), ob vorgezogene Karten später
+       halten, Länge der Box-1-Schlange — alles mit Zahl an ihn, geändert wird
+       nichts ohne sein Wort;
+     · veralten — die Abstände 30/60 Tage sind eine Annahme; liegt die
+       gemessene Quote deutlich unter 0,8, legt die Routine sie ihm als Frage
+       vor (Schritt 1b.10). Bewacht von test-tagesdeckel.mjs und test-p9.mjs
+       (beide in alle-pruefer.mjs). */
   {
     funktion: 'Lehrwerke (die acht Bücher und seine arabicroots-Wörter)',
     /* 16.09.2026 (v515): die acht Buchabzüge stehen jetzt in ASSETS von sw.js —

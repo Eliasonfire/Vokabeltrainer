@@ -228,13 +228,13 @@ const FEIER_ANLAESSE = {
   },
 
   /* Der wichtigste Moment je Wort - und bisher voellig unsichtbar. Wer eine
-     Vokabel in Box 5 bringt, hat sie gelernt. Einmalig je Wort: faellt sie
+     Vokabel in Box 5 (seit v603: oder hoeher) bringt, hat sie gelernt. Einmalig je Wort: faellt sie
      spaeter zurueck und steigt wieder auf, ist das keine Premiere mehr. */
   'box-5': {
     einmalig: d => `box5-${d.id}`,
     effekt: d => {
       feierKonfetti(38);
-      feierBanner('Sitzt!', `${d.wort} ist in Box 5.`, 'mittel');
+      feierBanner('Sitzt!', `${d.wort} ist in Box ${d.box || 5}.`, 'mittel');
     }
   },
 
@@ -272,7 +272,7 @@ const FEIER_ANLAESSE = {
     einmalig: d => `sitzt-${d.zahl}`,
     effekt: d => {
       feierKonfetti(d.zahl >= 100 ? 120 : 70);
-      feierBanner(`${d.zahl} Wörter sitzen`, 'Alle in Box 5.', 'gross');
+      feierBanner(`${d.zahl} Wörter sitzen`, 'Alle ab Box 5.', 'gross');
     }
   },
   /* Die Boxaenderung passiert heute unsichtbar. Ein Chip, der aufsteigt und

@@ -1072,10 +1072,16 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
 .tile-title{font-weight:700;font-size:var(--fs-md);}
 .tile-sub{font-size:var(--fs-xs);color:var(--text-dim);}
 
-.box-overview{display:flex;gap:var(--sp-2);margin-top:var(--sp-6);}
+/* ⭐ v603 (25.09.2026): SIEBEN Kacheln statt fünf (Box 6 und 7). Gemessen im
+   Pane bei 375 px mit den alten Werten: Reihe 339 px breit, Inhalt 356 px —
+   Box 7 ragte 18 px über den Rand, weil jede Kachel so breit wurde wie ihr
+   längster Text („60 Tage" 40 px). Deshalb: gleich breite Kacheln
+   (`flex:1 1 0` + `min-width:0`), Abstand 4 statt 8 px, kein Innenabstand
+   links/rechts, Beschriftung etwas enger (unten bei .l und .iv). */
+.box-overview{display:flex;gap:var(--sp-1);margin-top:var(--sp-6);}
 .box-pip{
-  flex:1;background:var(--surface-2);border:1px solid var(--border);
-  border-radius:var(--r-2);padding:var(--sp-3) var(--sp-1);text-align:center;cursor:pointer;
+  flex:1 1 0;min-width:0;background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--r-2);padding:var(--sp-3) 0;text-align:center;cursor:pointer;
   transition:transform var(--dur-1) var(--ease-out), border-color var(--dur-2) ease, background var(--dur-2) ease;
 }
 .box-pip:hover{background:var(--surface-3);}
@@ -1089,13 +1095,13 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
    0,7rem 35 px, das breiteste Intervall („16 Tage") bei 0,64rem 37 px — beide
    in einer Kachel mit **51 px** Textbreite. Es bricht also nichts um, und die
    Kacheln bleiben 61 px breit. */
-.box-pip .l{font-size:.7rem;color:var(--text-faint);text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-top:2px;}
+.box-pip .l{font-size:.7rem;color:var(--text-faint);text-transform:uppercase;letter-spacing:.02em;font-weight:700;margin-top:2px;white-space:nowrap;}
 /* Das Wiederhol-Intervall (18.08.2026). Kleiner und blasser als die
    Box-Nummer: es ist die Erklärung zur Zahl, nicht die Zahl selbst.
    `white-space:nowrap`, damit „16 Tage" auf fünf Kacheln nebeneinander nicht
    umbricht — bei 375 px Breite ist jede Kachel nur rund 66 px breit. */
-.box-pip .iv{font-size:.64rem;color:var(--text-faint);opacity:.75;font-weight:600;margin-top:1px;white-space:nowrap;}
-/* Box 1 = eben falsch gehabt, Box 5 = sitzt. Dieselben zwei Farben wie das
+.box-pip .iv{font-size:.6rem;color:var(--text-faint);opacity:.75;font-weight:600;margin-top:1px;white-space:nowrap;}
+/* Box 1 = eben falsch gehabt, Box 7 = ganz oben (bis v602 Box 5). Dieselben zwei Farben wie das
    Antwort-Feedback auf der Lernkarte.
    ⚠️ Diese Kacheln auf der STARTSEITE hatte ich beim ersten Bau übersehen — nur
    die Balken in der Statistik waren gefärbt. Elias sieht die Startseite als
@@ -4610,7 +4616,7 @@ button:disabled{cursor:default;}
   width:0;transition:width var(--dur-4) var(--ease-out);
 }
 .box-bar-row .bn{width:34px;text-align:right;font-size:var(--fs-sm);font-weight:700;font-variant-numeric:tabular-nums;}
-/* Box 1 = eben erst falsch gehabt, Box 5 = sitzt. Dieselben zwei Farben wie das
+/* Box 1 = eben erst falsch gehabt, Box 7 = ganz oben (bis v602 Box 5). Dieselben zwei Farben wie das
    Antwort-Feedback auf der Lernkarte, damit man die Bedeutung ohne Legende
    mitliest (Elias' Wunsch vom 29.07.2026). */
 .box-bar-row.box-schlecht .box-bar-track{border-color:var(--red);box-shadow:0 0 0 1px var(--red-wash);}

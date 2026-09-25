@@ -435,15 +435,18 @@ if (typeof window === 'undefined' || typeof localStorage === 'undefined'){
          Seitdem ist die Reihe gleichmaessig -1 / 0 / +1 / +2, siehe STUFEN in
          js/lernen.js. ⚠️ Wer diesen Lauf "gruen macht", indem er die App
          anpasst, nimmt ihm genau das zurueck, worum er gebeten hat. */
+      /* v603 (25.09.2026): sieben Boxen, „leicht" weiter +2 und bei 7 gekappt —
+         Elias: „ja aber der knopf ,,leicht" soll nicht alles direkt in box 7
+         packen sondern nur 2 boxen höher". */
       const soll = {
-        nochmal: [1,1,2,3,4],   // max(1, b-1)
-        schwer:  [1,2,3,4,5],   // b
-        gut:     [2,3,4,5,5],   // min(5, b+1)
-        leicht:  [3,4,5,5,5]    // min(5, b+2)
+        nochmal: [1,1,2,3,4,5,6],   // max(1, b-1)
+        schwer:  [1,2,3,4,5,6,7],   // b
+        gut:     [2,3,4,5,6,7,7],   // min(7, b+1)
+        leicht:  [3,4,5,6,7,7,7]    // min(7, b+2)
       };
       const falsch = [];
       Object.keys(soll).forEach(stufe=>{
-        [1,2,3,4,5].forEach((start, i)=>{
+        [1,2,3,4,5,6,7].forEach((start, i)=>{
           PROGRESS[w.id] = { box:start, nextReview:todayStr(0), correct:0, wrong:0 };
           SESSION = { words:[w], idx:0, dirs:[], fertig:false };
           answer._busy = false;
@@ -458,7 +461,7 @@ if (typeof window === 'undefined' || typeof localStorage === 'undefined'){
       if (PROGRESS[w.id].box !== 3) falsch.push('Wisch nach rechts landet nicht auf Box 3');
       PROGRESS[w.id] = gesichert;
       if (falsch.length) throw new Error(falsch.join('; '));
-      return '4 Stufen x 5 Boxen + Wischgeste';
+      return '4 Stufen x 7 Boxen + Wischgeste';
     });
   }
 

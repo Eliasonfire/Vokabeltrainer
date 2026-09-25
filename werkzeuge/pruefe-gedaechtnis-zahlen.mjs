@@ -127,12 +127,15 @@ pruefe('K2: SITZT_MEILEN', '[25, 50, 75, 100, 150, 200, 300]',
   (feier.match(/const SITZT_MEILEN = (\[[^\]]+\])/) || [])[1]);
 
 const kern = fs.readFileSync(REPO + '/js/kern.js', 'utf8');
-pruefe('K3: INTERVALS', '{1:0, 2:1, 3:3, 4:7, 5:16}',
+/* v603 (25.09.2026): Box 6 = 30 T, Box 7 = 60 T (Elias: „lass uns box 6
+   einführen und box 7 auch"). */
+pruefe('K3: INTERVALS', '{1:0, 2:1, 3:3, 4:7, 5:16, 6:30, 7:60}',
   (kern.match(/const INTERVALS = (\{[^}]+\})/) || [])[1]);
 /* 25.09.2026: 0.4 → 0.5 — fünf zu fünf plus ein Box-1-Platz fürs am längsten
-   falsche Wort (Elias: „das klingt gut. mach das"). */
-pruefe('K3: DECKEL_ANTEIL_BOX1', '0.5',
-  (kern.match(/const DECKEL_ANTEIL_BOX1 = ([\d.]+)/) || [])[1]);
+   falsche Wort (Elias: „das klingt gut. mach das"). v603: 0.5 → 1 / 3, ein
+   Drittel als Untergrenze. */
+pruefe('K3: DECKEL_ANTEIL_BOX1', '1 / 3',
+  (kern.match(/const DECKEL_ANTEIL_BOX1 = ([\d.]+(?:\s*\/\s*[\d.]+)?)/) || [])[1]);
 
 /* r3: die Wortartenverteilung */
 const ktx = {}; vm.createContext(ktx);
