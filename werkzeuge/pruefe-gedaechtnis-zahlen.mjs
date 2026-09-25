@@ -157,8 +157,11 @@ const ueb = fs.readFileSync(REPO + '/js/uebung.js', 'utf8');
 /* 24.09.2026 (v593, `be78b67`): 13 → 15 — Fragewort (14) und Pronomen (15), beide
    mit Hinweis, also 11 → 13. Elias: „insgesamt 15 sätze bei gemischt damit ich
    alle mache". */
-pruefe('a2: 15 Uebungsarten', 15, (ueb.match(/^\s*id\s*:\s*'[^']+',\s*nr\s*:/gm) || []).length);
-pruefe('a2: 13 mit Hinweis', 13, (ueb.match(/^\s*hinweis\s*:/gm) || []).length);
+/* 25.09.2026 (v612, `48366a4`): 15 → 16 — „Endung einsetzen" (id 'endungen',
+   nr 15, mit Hinweis, also 13 → 14); Übersetzen ist seitdem 16. Elias: „wo ich
+   die richtigen endungen hinzufügen muss wie zb ki für frau oder ha und hu usw.". */
+pruefe('a2: 16 Uebungsarten', 16, (ueb.match(/^\s*id\s*:\s*'[^']+',\s*nr\s*:/gm) || []).length);
+pruefe('a2: 14 mit Hinweis', 14, (ueb.match(/^\s*hinweis\s*:/gm) || []).length);
 
 /* Fachbegriffe (Oberflaechenpruefung) */
 const fach = fs.readFileSync(REPO + '/data/fachbegriffe.js', 'utf8');
