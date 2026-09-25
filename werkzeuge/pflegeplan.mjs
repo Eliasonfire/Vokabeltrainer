@@ -371,7 +371,12 @@ export const PFLEGEPLAN = [
        automatisch das machen und die app immer aktuell halten. ich denke die
        routinen für mittwoch und sonntag bieten sich dafür gut an." Die Übungen
        stehen in js/uebung.js (keine eigene Datei) — deshalb von Hand hier. */
-    funktion: 'Satzmodus aktuell: Hinweiswort, Fragewort, Pronomen einsetzen; neue Vokabeln im Satzmodus',
+    /* 25.09.2026 (v612): dazu Übung 15 „Endung einsetzen" (Elias: „wo ich die
+       richtigen endungen hinzufügen muss wie zb ki für frau oder ha und hu
+       usw.. also halt alle die bisher zur auswahl stehen"). Ihre Auswahl sind
+       seine Endungs-Karteikarten (uebEndungGlieder, bei jedem Aufbau gelesen);
+       Teil A des Prüfers meldet eine Endung ohne Satz. Übersetzen ist seitdem 16. */
+    funktion: 'Satzmodus aktuell: Hinweiswort, Fragewort, Pronomen, Endung einsetzen; neue Vokabeln im Satzmodus',
     /* Dazu gehören seit 24.09.2026 auch seine Abendlisten (data/abendlisten.json,
        werkzeuge/abendlisten.mjs, Wartungsschritt 1b.9): Elias „ja klingt gut"
        zum Mitlesen und gründlichen Prüfen wiederkehrender Wörter. Die Datei
@@ -382,7 +387,7 @@ export const PFLEGEPLAN = [
     dateien: [],
     bildschirme: [],
     neuerInhalt: { routine: W, schritt: '1b.8', beleg: 'node werkzeuge/pruefe-satzmodus-aktuell.mjs', werkzeug: 'werkzeuge/pruefe-satzmodus-aktuell.mjs',
-      wie: 'Neue Karten gehören von selbst zur Auswahl (uebGruppe liest Regelkarte und istBekannt bei jedem Aufbau). Fehlt einer Kartenform oder einem Wort der neuesten Kapitel ein Satz, meldet der Prüfer Exit 2 — die Wartung holt einen belegten Satz (Lehrbuchseite, Madina-Schlüssel) oder legt die Lücke auf die Warteseite; neue Regeln prüft sie auf eine eigene Übung (nur als Vorschlag an ihn)' },
+      wie: 'Neue Karten gehören von selbst zur Auswahl (uebGruppe liest Regelkarte und istBekannt bei jedem Aufbau, uebEndungGlieder seine Endungs-Karteikarten). Fehlt einer Kartenform oder einem Wort der neuesten Kapitel ein Satz, meldet der Prüfer Exit 2 — die Wartung holt einen belegten Satz (Lehrbuchseite, Madina-Schlüssel) oder legt die Lücke auf die Warteseite; neue Regeln prüft sie auf eine eigene Übung (nur als Vorschlag an ihn)' },
     eingaben: { nein: 'Er wählt nur aus; gespeichert wird richtig/falsch über dieselben Zähler wie bei den übrigen Übungen.' },
     veralten: { routine: W, schritt: '1b.8', beleg: 'node werkzeuge/alle-pruefer.mjs', werkzeug: 'werkzeuge/pruefe-satzmodus-aktuell.mjs',
       wie: 'Teil B wird rot, wenn eine Aufgabe ihre Lösung nicht zur Wahl stellt; Teil C meldet 0 % neueste Wörter; drei Störtests laufen in jedem Sammellauf (--stoertest)' },

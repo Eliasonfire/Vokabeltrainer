@@ -603,6 +603,135 @@ function uebKlarEinzahl(t){
 const uebBedeutung = de => String(de || '').toLowerCase().replace(/[?„"“”]/g, '').trim();
 const UEB_FRAGE_DE = /^(wer|was|wo|woher|wohin|wie|wie viele?|wann|warum|welche[rsnm]?)\s*\??$/i;
 
+/* ⭐⭐ DIE ENDUNG EINSETZEN (Übung 15, 25.09.2026) — Elias, wörtlich: „wie wäre
+   es auch mit einem satz übung wo ich die richtigen endungen hinzufügen muss
+   wie zb ki für frau oder ha und hu usw.. also halt alle die bisher zur
+   auswahl stehen".
+
+   ⭐ „alle die bisher zur auswahl stehen" = seine Endungs-Karteikarten
+   (data/fachbegriffe.js: gram-suffix-i/-ka/-ki/-hu/-ha, „die Besitzendung …").
+   Gelesen bei JEDEM Aufbau aus VOCAB_DATA, gefiltert mit istBekannt — dieselbe
+   Tür wie in uebGruppe(). Blendet er eine Karte aus oder kommt eine neue dazu
+   (ـكُمْ, ـنَا …), ändert sich die Auswahl von selbst; die Erkennung unten
+   kennt keine eigene Liste der Endungen.
+
+   ⛔ KEINE SELBST GESETZTE ḤARAKA. Gezeigt wird das Wort aus dem Buch, von dem
+   nur etwas WEGGENOMMEN ist: die Endung und der letzte Vokal davor (sonst
+   verrät die Kasra von كِتَابِي das ـِي). Zur Wahl stehen die Formen seiner
+   Karten, wie sie dort stehen. Kein Wort wird mit einer anderen Endung neu
+   zusammengesetzt. */
+const UEB_ENDUNG_NICHT = ['هناك', 'هنالك', 'ذلك', 'تلك', 'اولئك', 'كذلك', 'لذلك', 'ايها', 'ايتها', 'الذي', 'التي'];
+/* Präpositionen und Ortsangaben, an denen dieselben Endungen hängen: لِي, لَكِ,
+   فِيهَا, مَعَهُ, عِنْدَكَ. Verglichen wird das Gerippe dessen, was vor der Endung
+   steht (عَلَيْكَ → علي). */
+const UEB_ENDUNG_PRAEP = ['ل', 'ب', 'في', 'علي', 'الي', 'من', 'عن', 'مع', 'عند', 'لدي',
+  'امام', 'خلف', 'فوق', 'تحت', 'بين', 'بعد', 'قبل'];
+/* Was vorn am Wort hängen kann: Frage-Hamza (أَلَكِ), وَ/فَ (وَلِي), بِ/لِ (بِقَلَمِي). */
+const UEB_ENDUNG_VORSATZ = [/^/, /^أَ/, /^[وف]َ/, /^[بل]ِ/, /^[وف]َ[بل]ِ/, /^أَ[وف]َ/];
+/* Vor einer Endung wird ة zu ت (غُرْفَة → غُرْفَتِي). */
+const uebEndungSkelett = s => uebSkelett(s).replace(/ة$/, 'ت');
+
+function uebEndungGlieder(){
+  if (UEB_WORTGRUPPEN.endungen) return UEB_WORTGRUPPEN.endungen;
+  const bekannt = (typeof istBekannt === 'function') ? istBekannt : null;
+  const out = [];
+  if (typeof VOCAB_DATA !== 'undefined' && Array.isArray(VOCAB_DATA)) for (const w of VOCAB_DATA){
+    if (!w || (bekannt && !bekannt(w))) continue;
+    const form = String(w.ar || '').normalize('NFC').trim();
+    if (!/^ـ[ً-ْ]?[ء-ي]/.test(form)) continue;
+    if (!/Besitzendung/i.test(String(w.de || '')) && !/^possessiv-/.test(String(w.regel || ''))) continue;
+    if (out.some(g => g.form === form)) continue;
+    const de = String(w.de || '').trim();
+    out.push({ form, zeichen: form.slice(1), de,
+      /* „dein" steht auf ZWEI Karten (ـكَ, ـكِ) — dann entscheidet der Zusatz
+         der Karte („zu einem Mann" / „zu einer Frau"), siehe baue(). */
+      bed: (de.match(/[„"“]([^“”"]+)[“”"]/) || [])[1] || '',
+      zusatz: de.includes(' — ') ? de.split(' — ').slice(1).join(' — ').trim() : '',
+      regel: w.regel || null,
+      /* Reihenfolge wie in possessiv-endungen-01: ich, du, er/sie. */
+      person: /ك/.test(form) ? 2 : /ه/.test(form) ? 3 : 1 });
+  }
+  out.sort((a, b) => a.person - b.person);
+  return (UEB_WORTGRUPPEN.endungen = out);
+}
+
+/* Ist das, was vor der Endung steht, ein Nomen? ⛔ Nur, was in seinen Büchern
+   steht — ein unbekannter Stamm wird nicht gefragt (E.1: lieber keine Frage als
+   eine falsche). Dazu zählen auch spätere Kapitel seiner Bücher: زَوْجٌ kommt
+   in Madina 1 erst in Kapitel 13, زَوْجُهَا steht schon auf Seite 55. Gelernt
+   haben muss er das Wort dafür nicht — gefragt wird ja die Endung. */
+function uebEndungNomen(){
+  if (UEB_WORTGRUPPEN.endungenNomen) return UEB_WORTGRUPPEN.endungenNomen;
+  const tab = new Map(), quellen = [];
+  if (typeof VOCAB_DATA !== 'undefined' && Array.isArray(VOCAB_DATA)) quellen.push(VOCAB_DATA);
+  const buecher = (typeof SETTINGS === 'object' && SETTINGS && SETTINGS.buecher) || {};
+  const vok = (typeof window !== 'undefined' && window && window.VOKABELN) || {};
+  for (const b of Object.keys(buecher)) if (Array.isArray(vok[b]) && (buecher[b] || []).length) quellen.push(vok[b]);
+  for (const liste of quellen) for (const w of liste){
+    if (!w || ['verb', 'particle', 'pronoun'].includes(w.type)) continue;
+    for (const f of [w.ar, w.sg, w.femSg, w.pl]) for (const einzel of String(f || '').split(/\s*[|/]\s*/)){
+      if (!einzel || /\s|ـ/.test(einzel.trim())) continue;
+      const form = uebungOhneEndung(einzel.normalize('NFC'));
+      const sk = uebEndungSkelett(form);
+      if (sk.length < 2) continue;
+      if (!tab.has(sk)) tab.set(sk, []);
+      tab.get(sk).push(form);
+    }
+  }
+  return (UEB_WORTGRUPPEN.endungenNomen = tab);
+}
+function uebEndungNomenPasst(form){
+  return (uebEndungNomen().get(uebEndungSkelett(form)) || []).some(f => uebVertraeglich(form, f) >= 0);
+}
+function uebEndungIstNomen(roh){
+  const versuche = [roh,
+    roh.replace(/(ُو|َا|ِي)$/, ''),   // die fünf Nomen: أَبُوكِ → أَب
+    roh.replace(/َ?ت$/, '')];         // die weibliche Form eines bekannten Wortes: صَدِيقَتِي → صَدِيق
+  return versuche.some((k, i) => k && (i === 0 || k !== roh) && uebEndungNomenPasst(k));
+}
+/* Die Endung abschneiden; zurück kommt der Stamm (noch mit seinem letzten Vokal)
+   oder null. ⚠️ NFC stellt ein Schadda HINTER den Vokal: عَمِّي ist … ِ ّ ي. Beginnt
+   die Endung mit einem Vokal (ـِي), darf dazwischen ein Schadda stehen — das
+   gehört zum Stamm (عَمّ). */
+function uebEndungAb(kern, zeichen){
+  if (kern.endsWith(zeichen)) return kern.slice(0, -zeichen.length);
+  if (/^[ً-ْ]/.test(zeichen)){
+    const mit = zeichen[0] + 'ّ' + zeichen.slice(1);
+    if (kern.endsWith(mit)) return kern.slice(0, -mit.length) + 'ّ';
+  }
+  return null;
+}
+/* Trägt dieses Wort eine seiner Endungen? → { glied, vorsatz, stamm, praep } oder null.
+   ⛔ Nicht gefragt: ein Verb (Objekt-Endung, nicht seine Karte), ـهِ (عَلَيْهِ —
+   steht so auf keiner Karte), ein Wort mit Artikel, ذَلِكَ/تِلْكَ/هُنَاكَ (das ك
+   der Entfernung), الَّذِي, und ein Wort, das SELBST so im Wortschatz steht
+   (سَمَكَ ist „Fisch", kein سَمـ + ـكَ). */
+function uebEndungStelle(t, glieder){
+  if (!t || /فِعْل/.test(String(t.rolle || ''))) return null;
+  const rein = String(t.rein != null ? t.rein : (t.wort || '')).normalize('NFC')
+    .replace(/[.،؟?!«»:؛"„“”]/g, '').trim();
+  if (!rein || /\s/.test(rein)) return null;
+  const nach = glieder.slice().sort((a, b) => b.zeichen.length - a.zeichen.length);
+  for (const muster of UEB_ENDUNG_VORSATZ){
+    const m = muster.exec(rein);
+    if (!m) continue;
+    const vorsatz = m[0], kern = rein.slice(vorsatz.length);
+    if (UEB_ENDUNG_NICHT.includes(uebSkelett(kern))) return null;
+    if (/^[اٱ]َ?ل/.test(kern)) continue;
+    for (const g of nach){
+      const stamm = uebEndungAb(kern, g.zeichen);
+      if (stamm == null) continue;
+      const roh = uebungOhneEndung(stamm);
+      const sk = uebEndungSkelett(roh);
+      if (!sk) continue;
+      if (UEB_ENDUNG_PRAEP.includes(sk)) return { glied: g, vorsatz, stamm: roh, praep: true };
+      if (sk.length < 2 || uebEndungNomenPasst(uebungOhneEndung(kern))) continue;
+      if (uebEndungIstNomen(roh)) return { glied: g, vorsatz, stamm: roh, praep: false };
+    }
+  }
+  return null;
+}
+
 const UEBUNGEN = [
   {
     id:'mubtada-khabar', nr:1, name:'مُبْتَدَأٌ / خَبَرٌ — Satzteile', art:'mehrfach',
@@ -1285,6 +1414,61 @@ const UEBUNGEN = [
       return out;
     }
   },
+  /* ⭐⭐ ENDUNG EINSETZEN — Elias am 25.09.2026 (Wortlaut bei uebEndungGlieder
+     oben): „wo ich die richtigen endungen hinzufügen muss wie zb ki für frau
+     oder ha und hu usw.. also halt alle die bisher zur auswahl stehen".
+     Das Wort steht ohne Endung da (قَلَمـ), zur Wahl stehen seine Endungen.
+     ⛔ Drei Fallen, alle drei hier abgefangen:
+     - „dein" sagt nicht, ob ein Mann oder eine Frau gemeint ist (ـكَ/ـكِ) —
+       dann steht der Zusatz seiner Karte in der Frage („zu einer Frau").
+     - Steht dasselbe Wort mit derselben Endung zweimal im Satz (مَعَهُ …
+       مَعَهُ), verriete das zweite die Lösung: es steht dann auch ohne Endung
+       da, und aus dem Paar wird EINE Aufgabe.
+     - An Präpositionen hängen dieselben Endungen (لِي, فِيهَا, مَعَهُ) — sie
+       werden mitgefragt; die deutsche Zeile sagt dort „mir", „darin", „mit ihm". */
+  {
+    id:'endungen', nr:15, name:'ـكِ / ـهَا / ـهُ … — Endung einsetzen', art:'wahl',
+    /* Wie Übung 14: die Knöpfe von rechts nach links, in der Reihenfolge seiner
+       Karte (ـِي, ـكَ, ـكِ, ـهُ, ـهَا) — seine Worte dort: „huwa, hiya, huma usw". */
+    optionenRtl: true,
+    hinweis:'Wer ist gemeint — ich, du, er oder sie? Das zeigt die deutsche Zeile.',
+    deKlar: /^((mein|dein|sein|ihr|unser|eur|euer)(e|en|em|er|es)?|ich|du|er|sie|mir|dir|ihm|ihn|mich|dich|darin)[.,;:!?]*$/i,
+    hinweisVerraet:false,
+    baue(z){
+      const glieder = uebEndungGlieder();
+      if (glieder.length < 2) return [];
+      const stellen = z.map(t => uebEndungStelle(t, glieder));
+      const schluessel = st => uebEndungSkelett(st.stamm) + '|' + st.glied.form;
+      const erledigt = new Set(), out = [];
+      stellen.forEach((st, i) => {
+        if (!st || erledigt.has(i)) return;
+        const L = st.glied;
+        const zwillinge = stellen.map((x, j) => (j !== i && x && schluessel(x) === schluessel(st)) ? j : -1).filter(j => j >= 0);
+        zwillinge.forEach(j => erledigt.add(j));
+        let zusatz = '';
+        if (glieder.filter(g => g.bed && g.bed === L.bed).length > 1){
+          /* Ohne Angabe, wer angesprochen ist, wäre die Lösung geraten. */
+          if (!/^zu\s/i.test(L.zusatz)) return;
+          zusatz = ` Gesprochen wird ${L.zusatz}.`;
+        }
+        /* Das Satzzeichen dahinter bleibt stehen (أَيْنَ أَبُوـ؟) — das „?" sagt
+           mit, was für ein Satz das ist. Gemessen im eigenen Tab: ohne es fehlte
+           das Fragezeichen, bis er geantwortet hatte. */
+        const ohneSuffix = {};
+        [i, ...zwillinge].forEach(j => { ohneSuffix[j] = stellen[j].vorsatz + stellen[j].stamm + 'ـ'
+          + ((String(z[j].wort || '').match(/[.،؟?!:؛]+$/) || [''])[0]); });
+        out.push({
+          frage:'Welche Endung gehört an das hervorgehobene Wort?' + zusatz,
+          wortIdx:i, ohneSuffix,
+          loesung: L.form,
+          optionen: glieder.map(g => ({ wert:g.form, text:g.form })),
+          aufloesung:`So heißt es: ${z[i].rein}. ${L.form} ist ${L.de}.`,
+          warum: L.regel || undefined
+        });
+      });
+      return out;
+    }
+  },
   /* ⭐⭐ ÜBERSETZEN — Elias' Auftrag vom 22.09.2026, 21:15, im Wortlaut:
 
      „es sollte auch im satzmodus eine übung geben, wo mir ein satz gegeben wird
@@ -1307,7 +1491,10 @@ const UEBUNGEN = [
      zu achten ist, aber keine Lösung. Das Feld ist trotzdem Pflicht und steht
      deshalb ausdrücklich da (pruefe-hinweise.mjs). */
   {
-    id:'uebersetzen', nr:15, name:'Übersetzen — Arabisch ins Deutsche', art:'schreiben',
+    /* Seit v612 Nummer 16 (vorher 15): die Endungen-Übung ist eine Auswahl-Übung
+       und steht in der Liste vor „Schreiben" — Elias: „ich möchte das die liste
+       liniar von 1 bis 15 geht ohne das daraus salat gemacht wird". */
+    id:'uebersetzen', nr:16, name:'Übersetzen — Arabisch ins Deutsche', art:'schreiben',
     hinweis:'Achte auf die Bestimmtheit (اَلْ oder Tanwīn) und darauf, wer in der إِضَافَة der Besitzer ist.',
     hinweisVerraet:false,
     deVerbergen:true,
@@ -1911,6 +2098,10 @@ function uebungSatzHtml(a){
     let text = t.wort;
     if (a.verdeckt && a.wortIdx === i && !UEB.beantwortet) text = '____';
     else if (a.ohneEndung && a.wortIdx === i && !UEB.beantwortet) text = uebungOhneEndung(t.wort);
+    /* Übung 15: das Wort ohne seine Endung (قَلَمـ) — und ein gleiches Wort
+       daneben ebenso, sonst verriete es die Lösung. Der Text kommt fertig aus
+       baue(): dort ist nur weggenommen, nichts gesetzt. */
+    else if (a.ohneSuffix && a.ohneSuffix[i] != null && !UEB.beantwortet) text = a.ohneSuffix[i];
     return `<span class="${klassen}" data-uebidx="${i}">${escapeHtml(text)}</span>`;
   }).join(' ');
 }
@@ -2012,7 +2203,7 @@ function renderUebung(){
   /* ⭐ Verschwommen, bis er antippt — jede neue Aufgabe wieder (Elias,
      25.09.2026; Wortlaut und Begründung bei SENT_DE_OFFEN in js/saetze.js). */
   if (UEB_DE_OFFEN !== a) UEB_DE_OFFEN = null;
-  /* Das Wortfenster von Übung 15 gehört zu genau einer Aufgabe — und nach dem
+  /* Das Wortfenster von „Übersetzen" (Übung 16) gehört zu genau einer Aufgabe — und nach dem
      Prüfen ist es überflüssig (die Rückmeldung steht da). */
   if (typeof uebWortFensterZu === 'function' && UEB_WORT_FENSTER && (UEB_WORT_FENSTER.a !== a || UEB.beantwortet)) uebWortFensterZu();
   if (typeof deVerschwommenSetzen === 'function') deVerschwommenSetzen(deFeld, UEB_DE_OFFEN === a);
@@ -2156,6 +2347,9 @@ const UEBUNG_WARUM = {
   'wortart': 'wortarten-01', 'regel': null,
   'genus': 'f19-tanith', 'isara': 'f19-isara', 'fem-form': 'f19-tanith',
   'fragewort': 'f19-fragen', 'pronomen': 'f19-pronomen',
+  /* Übung 15: die Karte der Endungen; eine Aufgabe mit ـِي bringt ihre eigene
+     mit (a.warum = possessiv-ya-01, die Regel ihrer Karte). */
+  'endungen': 'possessiv-endungen-01',
   /* ⛔ `null` IST HIER DIE RICHTIGE ANTWORT, kein vergessener Eintrag.
      Die Übersetzungsübung hat keine feste Regel: welche gilt, sagt erst der
      BEFUND der Prüfung — sie hängt ihn als `a.warum` an die Aufgabe, und
@@ -2254,7 +2448,7 @@ function uebersetzungFuer(stueck){
   const gefunden = [];
   /* ⭐ Zweite Quelle: seine Regelkarten mit Hinweis-, Frage- und Fürwörtern
      (dieselben Gruppen wie Übung 11, 13 und 14). هَذَا und ذَلِكَ hat er von
-     dort, nicht als Karteikarte — gemessen am 25.09.2026 in Übung 15:
+     dort, nicht als Karteikarte — gemessen am 25.09.2026 in „Übersetzen":
      „أَذَلِكَ — dazu habe ich keine Vokabel". */
   let karten = [];
   if (typeof uebKartenGlieder === 'function'){
@@ -2265,7 +2459,7 @@ function uebersetzungFuer(stueck){
   }
   /* ⛔ MIT DEN VOKALEN (25.09.2026). Nur über das Gerippe verglichen, hieß
      مَنْ („wer?") „von / aus" — das ist مِنْ. Gemessen beim Bau des Wortfensters
-     für Übung 15; eine falsche Übersetzung ist schlimmer als keine. Verglichen
+     für „Übersetzen"; eine falsche Übersetzung ist schlimmer als keine. Verglichen
      wird der Kern von hinten (Artikel und وَ stehen vorn), OHNE den letzten
      Buchstaben (dort wechselt die Kasusendung), und nur, wo beide ein Zeichen
      tragen und der Buchstabe derselbe ist. */
@@ -2309,9 +2503,12 @@ function uebersetzungFuer(stueck){
    könnte auch so eine animation kommen wie bei karteikarten die dann zeigt
    das man sein tagesziel erreicht hat"
 
-   ⭐ WARUM 15, und warum das keine willkuerliche Zahl ist: der gemischte Modus
-   zieht reihum eine Aufgabe je Uebungsart. Nach 15 ist jede der 15 Uebungsarten
+   ⭐ WARUM 16, und warum das keine willkuerliche Zahl ist: der gemischte Modus
+   zieht reihum eine Aufgabe je Uebungsart. Nach 16 ist jede der 16 Uebungsarten
    genau einmal drangewesen — eine natuerliche Grenze, keine gesetzte.
+   ⭐ SEIT 25.09.2026 SECHZEHN: die Endungen-Übung (15) kam dazu, Übersetzen
+   ist jetzt 16 — nach seiner Regel von unten: die Zahl, nach der er „alle
+   mache", wächst mit der Zahl der Übungen, und die Einstellung bietet sie an.
    ⭐ SEIT 24.09.2026 FÜNFZEHN (vorher 13): Fragewort (14) und Pronomen (15)
    kamen dazu. Elias: „wenn ich richtig mitgezählt habe dann hätten wir mit
    den zwei neuen vorschlägen von mir insgesamt 15 sätze bei gemischt damit
@@ -2346,7 +2543,7 @@ function uebersetzungFuer(stueck){
    zwischenspeichern. Sie kann sich aendern, waehrend der Modus offen ist."
    Eine `const` haette den alten Wert bis zum Neuladen festgehalten.
    [[einstellung_wirkt_nicht_weil_zurueckgelesen]] */
-const SATZ_ZIEL_VORGABE = 15;
+const SATZ_ZIEL_VORGABE = 16;
 function satzTagesziel(){
   const n = (typeof SETTINGS === 'object' && SETTINGS) ? Number(SETTINGS.satzZiel) : NaN;
   return (Number.isFinite(n) && n >= 1) ? n : SATZ_ZIEL_VORGABE;
@@ -2627,7 +2824,7 @@ function uebungWortTipp(i){
   const m = uebungModusVon(a);
   if (!m) return;
   /* ⭐⭐ BEIM ÜBERSETZEN ZEIGT EIN TIPP AUFS WORT SEINE BEDEUTUNG (25.09.2026).
-     Elias, mit Bild von Übung 15: „beim überstetzten möchte ich, dass wenn ich
+     Elias, mit Bild von Übung 15 (Übersetzen, seit v612 Nr. 16): „beim überstetzten möchte ich, dass wenn ich
      auf das arabische wort tippe das ein kleines fenster mit der richtigen
      übersetzung steht weil manchmal weiß ich halt nicht was das wort bedeutet
      und dann kann ich es natürlich nciht übersetzten. diese übersetzung soll
@@ -2751,7 +2948,7 @@ document.getElementById('uebSatz').addEventListener('mousedown', (e)=>{
   if (a && uebungArtVon(a) === 'schreiben' && e.target.closest('[data-uebidx]')) e.preventDefault();
 });
 
-/* ---------- Das kleine Fenster mit der Wortbedeutung (Übung 15) ----------
+/* ---------- Das kleine Fenster mit der Wortbedeutung („Übersetzen") ----------
    Steht direkt unter dem angetippten Wort, nicht unten als Meldung: dort
    läge es hinter der Handytastatur. Zu geht es beim zweiten Tipp aufs selbe
    Wort, bei einem Tipp daneben und mit jeder neuen Aufgabe (renderUebung). */

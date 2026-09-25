@@ -550,6 +550,12 @@ const PRUEFER = [
      ausschluss prinzip machen kann") und bei الْمُسْتَشْفَى die Karte zur
      unsichtbaren Endung statt der Kasra, die er vermisst hat. */
   ['test-satzmodus-schwerer.mjs', []],
+  /* 25.09.2026 (v612) — Übung 15 „Endung einsetzen". Elias: „wo ich die
+     richtigen endungen hinzufügen muss wie zb ki für frau oder ha und hu usw..
+     also halt alle die bisher zur auswahl stehen". Auswahl live aus seinen
+     Karten, Fallen (ذَلِكَ, هُنَاكَ, Verben), kein Verrat im gezeigten Wort,
+     Mann/Frau bei „dein" — acht Störtests am echten Quelltext. */
+  ['test-endungen.mjs', []],
   /* ⛔ Neu am 19.09.2026. Elias mit Bildschirmfoto von „Welche Regel?", wo
      vier Einträge aus dem Thema „Schrift" zur Wahl standen: „generell alle
      antowrtoptionen sind eigentlich keine regeln. was haben die hier zu
