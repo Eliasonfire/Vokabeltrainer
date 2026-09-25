@@ -2229,6 +2229,9 @@ const SENTENCE_TAGS = {
   "by2-231-2": [
     { ruleId: "zuruf-makan-weitere-01", matchText: "فَوْقَ" }
   ],
+  "mf19-13-1": [
+    { ruleId: "idafa-erkennen-01", matchText: "أَيُّ كِتَابٍ" }
+  ],
   "mb1-65-1": [
     { ruleId: "asma-khamsa-01", matchText: "أَبُوكَ", bedeutung: 'ـكَ = dein (männlich)' },
     { ruleId: "ya-nida-01", matchText: "يَا خَالِدُ" }

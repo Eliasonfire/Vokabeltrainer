@@ -401,7 +401,11 @@ document.getElementById('themenBlatt').addEventListener('click', (e)=>{
    über den Sätzen aus dem Madina-Schlüssel 3 (sk3-…: „Madina Buch 1, S. 58"
    war falsch) und über denen aus seinem Bayna-Yadayk-Buch. Das Werk steht im
    Satz (`werk`); ohne Angabe bleibt es Madina Buch 1, wie bei allen älteren. */
-const HERKUNFT_WERK = { 'madina-schluessel-3': 'Madina-Schlüssel 3', 'bayna-yadayk-1': 'Bayna Yadayk 1' };
+/* ⛔ 25.09.2026: 'bayna-yadayk-2' fehlte — seine zwei Sätze by2-231-1/-2
+   standen als „Madina Buch 1, S. 231" da. Dazu die Musterlösung seines Lehrers
+   (Folge 19, regelsammlung-data.js), aus der mf19-13-1 stammt. */
+const HERKUNFT_WERK = { 'madina-schluessel-3': 'Madina-Schlüssel 3', 'bayna-yadayk-1': 'Bayna Yadayk 1',
+  'bayna-yadayk-2': 'Bayna Yadayk 2', 'musterloesung-f19': 'Musterlösung (Folge 19)' };
 function herkunft(w){
   if (w.seite) return `${HERKUNFT_WERK[w.werk] || 'Madina Buch 1'}, S. ${w.seite}`;
   /* Ohne diese Zeile stünde „Kap. undefined" über dem Satz: er hat kein Kapitel. */

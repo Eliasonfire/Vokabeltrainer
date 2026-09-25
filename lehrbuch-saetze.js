@@ -633,5 +633,17 @@ const LEHRBUCH_SAETZE = [
     sentAr: 'مَا اسْمُهُ؟ اِسْمُهُ سَعْدٌ.', sentDe: 'Wie heißt er? Sein Name ist Saad.' },
   { id: 'mb1-64-2', seite: 64, kapitel: 12, vokalisationErgaenzt: true,
     gedruckt: 'ألَكِ أختٌ — die Hamza-Vokale ohne Zeichen',
-    sentAr: 'أَلَكِ أُخْتٌ؟', sentDe: 'Hast du eine Schwester?' }
+    sentAr: 'أَلَكِ أُخْتٌ؟', sentDe: 'Hast du eine Schwester?' },
+
+  /* ⭐ „welcher?" (أَيّ) für Übung 13 (25.09.2026). In seinen Büchern bis
+     Madina 1 K12 / Bayna Yadayk 1 K4 steht أَيّ nur auf BY1 S. 58 («فِي أَيِّ
+     دَوْر الشَّقَّةُ؟»), und dort trägt دَوْر keine gedruckte Endung — eine
+     Ḥaraka dazuzusetzen wäre unbelegt. Dieser Satz steht in der MUSTERLÖSUNG
+     seines Lehrers (Folge 19, Nr. 9, S. 12–13, „Fragewörter"; regelsammlung-
+     data.js und werkzeuge/regelsammlung-abschrift.json, Seite 13) — voll
+     vokalisiert, Wort für Wort übernommen, nichts ergänzt; die deutsche Zeile
+     ist die der Musterlösung. */
+  { id: 'mf19-13-1', werk: 'musterloesung-f19', seite: 13,
+    gedruckt: 'vollständig vokalisiert (Musterlösung Nr. 9)',
+    sentAr: 'أَيُّ كِتَابٍ قَرَأْتَ؟', sentDe: 'Welches Buch hast du gelesen?' }
 ];
