@@ -1938,8 +1938,12 @@ if (!EINZELN || typeof EINZELN !== 'object' || Array.isArray(EINZELN)) EINZELN =
    ⛔ NUR WENN ER DAS WORT NIE ANGEFASST HAT (kein Eintrag). Sperrt er eines
    später selbst, steht dort `an:false` — und das bleibt so. Ohne Meldung beim
    Start: „ich möchte einfach beim starten der app nicht irgeneine
-   benachrichtigung bekommen" (07.09.2026); erfahren hat er es im Chat. */
-const FREISCHALTEN_AUF_WUNSCH = ['50164', '50165', '50169', '50170'];
+   benachrichtigung bekommen" (07.09.2026); erfahren hat er es im Chat.
+   25.09.2026: تَعَارُفٌ 50172 „Kennenlernen" dazu — er hat es in Bayna Yadayk 1A
+   rot unter den Titel der ersten Einheit geschrieben (neben „Begrüßen",
+   gram-tahiyya). Meine Frage: „Die Karte gibt es schon … Soll ich sie
+   freischalten?" — er: „ja". In seinem abgeglichenen Stand ohne Eintrag. */
+const FREISCHALTEN_AUF_WUNSCH = ['50164', '50165', '50169', '50170', '50172'];
 {
   let neu = false;
   for (const id of FREISCHALTEN_AUF_WUNSCH)
