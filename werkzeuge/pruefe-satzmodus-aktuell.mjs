@@ -257,11 +257,29 @@ function messen(app){
   const neu = VD.filter(w => neueste.some(([b, k]) => w.book === b && Number(w.chapter) === k));
   const neuKern = new Map();
   for (const w of neu) for (const f of [w.ar, w.sg, w.pl, w.femSg].filter(Boolean)) for (const t of String(f).split('/')) neuKern.set(kern(t), w);
+  /* ⛔ VERBEN ZÄHLEN AUCH IM PRÄSENS UND FUTUR (25.09.2026). Verglichen wurde nur
+     mit ar/sg/pl/femSg — bei einem Verb ist ar die Vergangenheit (كَنَسَ). Nach
+     v610 (16 Sätze aus Kapitel 4 mit سَأَكْنُسُ, يَغْسِلُ, سَيَكْوِي …) stieg der
+     Anteil deshalb nicht, er FIEL (7,4 → 7,3 %). Jetzt auch der Präsensstamm
+     (present ohne Vorsilbe); am Satzwort werden سَـ und die Vorsilbe أ ت ي ن
+     abgeschnitten, und eine Personenendung (ون ين ان وا) probeweise. */
+  const neuPraesens = new Map();
+  for (const w of neu) if (w.type === 'verb') for (const t of String(w.present || '').split('/').filter(Boolean)){
+    const k = kern(t);
+    if (/^[اتين]/.test(k) && k.length > 3) neuPraesens.set(k.slice(1), w);
+  }
+  const praesensTreffer = k => {
+    const ohneS = k.replace(/^س(?=[اتين])/, '');
+    if (!/^[اتين]/.test(ohneS)) return null;
+    const stamm = ohneS.slice(1);
+    for (const x of [stamm, stamm.replace(/(ون|ين|ان|وا)$/, '')]) if (x.length > 1 && neuPraesens.has(x)) return neuPraesens.get(x);
+    return null;
+  };
   let mitNeu = 0; const getroffen = new Set();
   for (const { s } of zerlegt){
     const worte = String(s.sentAr).split(/\s+/).map(kern);
-    const t = worte.filter(k => k.length > 1 && neuKern.has(k));
-    if (t.length){ mitNeu++; t.forEach(k => getroffen.add(String(neuKern.get(k).id))); }
+    const t = worte.map(k => (k.length > 1 && neuKern.get(k)) || praesensTreffer(k)).filter(Boolean);
+    if (t.length){ mitNeu++; t.forEach(w => getroffen.add(String(w.id))); }
   }
   // H: das PFLICHTPROGRAMM für JEDE Übung (SATZMODUS-PFLICHTPROGRAMM.md) — auch
   // für eine neue, ohne Liste. Elias, 25.09.2026: „prüfer sollten das dann
@@ -327,7 +345,10 @@ if (typeof app.hole('shuffle') !== 'function')
 
 if (STOER){
   let rot = 0;
-  const ok = (name, bedingung) => { console.log(`${bedingung ? '✔' : '✘'} Störtest: ${name}`); if (!bedingung) rot++; };
+  /* Die Zahl der Störtests wird GEZÄHLT — bis 25.09.2026 stand „alle 11" fest
+     in der Schlusszeile und stimmte nach dem zwölften nicht mehr. */
+  let anzahl = 0;
+  const ok = (name, bedingung) => { anzahl++; console.log(`${bedingung ? '✔' : '✘'} Störtest: ${name}`); if (!bedingung) rot++; };
   // 1. Eine erfundene Form auf seiner Karte, zu der es keinen Satz gibt → Teil A muss sie nennen.
   const karten = app.hole('FOLGE19_KARTEN');
   const isara = karten.find(k => k.id === 'f19-isara');
@@ -347,6 +368,17 @@ if (STOER){
   e = messen(app);
   ok('Balance 0 % wird erkannt', e.anteil === 0);
   Object.assign(app.auswahl, JSON.parse(alt));
+  // 3b. Ohne die Präsensformen der neuesten Verben muss der Anteil SINKEN — sonst
+  //     zählt der Präsens-Zweig (25.09.2026) gar nicht mit.
+  {
+    const vorher = messen(app).mitNeu;
+    const verben = app.hole('VOCAB_DATA').filter(w => w.type === 'verb' && w.present);
+    const gemerkt = verben.map(w => w.present);
+    verben.forEach(w => { w.present = ''; });
+    const ohne = messen(app).mitNeu;
+    verben.forEach((w, i) => { w.present = gemerkt[i]; });
+    ok(`Präsens der neuesten Verben zählt (${vorher} Sätze, ohne Präsens ${ohne})`, ohne < vorher);
+  }
   // 4. uebungMischen wieder nur gemischt → Teil E muss rot werden (Übung 11: 98 von 152 Aufgaben haben هَذَا).
   vm.runInContext('globalThis.__echtMischen = uebungMischen; uebungMischen = function(m, l){ return shuffle(l.slice()); };', app.ctx);
   e = messen(app);
@@ -392,7 +424,7 @@ if (STOER){
   e = messen(app);
   ok('neue Übung ohne Aufgabe → Pflichtprogramm meldet sie', (e.pflichtLuecken || []).some(v => v.includes('stoer-neu')));
   UEBL.pop();
-  console.log(rot ? `\n⛔ ${rot} Störtest(s) schlagen NICHT an` : '\n✅ alle 11 Störtests schlagen an');
+  console.log(rot ? `\n⛔ ${rot} von ${anzahl} Störtest(s) schlagen NICHT an` : `\n✅ alle ${anzahl} Störtests schlagen an`);
   process.exit(rot ? 1 : 0);
 }
 
