@@ -591,6 +591,9 @@ let lexikonSchwer = 0;
     const YA       = z(0x064A,0x064E,0x0627);
     const TARIQU   = z(0x0637,0x064E,0x0627,0x0631,0x0650,0x0642,0x064F);
     const KHALIDU  = z(0x062E,0x064E,0x0627,0x0644,0x0650,0x062F,0x064F);
+    const MINI_HAMADA = [{ ar: z(0x062D,0x064E,0x0645,0x064E,0x062F,0x064E), type: 'verb',
+                           present: z(0x064A,0x064E,0x062D,0x0652,0x0645,0x064E,0x062F,0x064F),
+                           imperative: z(0x0627,0x0650,0x062D,0x0652,0x0645,0x064E,0x062F,0x0652) }];
     const s = (...w) => w.join(' ') + '.';
     const EICH_VERBSATZ = [
       ['satafalu (Futur)', () => giltAlsVerb(SATAFALU) === true,
@@ -606,11 +609,19 @@ let lexikonSchwer = 0;
       ['yafalu ahmadu l-wajiba', () => { const r = analysiereSatz(s(YAFALU, AHMADU, ALWAJIBA)); return r[1].erwartet === 'raf' && r[1].stimmt === true && r[2].erwartet === 'nasb' && r[2].stimmt === true; },
         'Name ohne Tanwin vor Artikel + Fatha ist kein مُضَاف (yusalli ahmadu l-fajra, BY1)'],
       ['madha satafalu ya tariqu', () => { const r = analysiereSatz(MADHA + ' ' + SATAFALU + ' ' + YA + ' ' + TARIQU + '؟'); const v = analysiereSatz(s(YA, KHALIDU)); return r[3].rolle === v[1].rolle && r[3].stimmt === true; },
-        'nach Verb + ya: der Angerufene ist مُنَادَى wie in ya khalidu, nicht فَاعِل']
+        'nach Verb + ya: der Angerufene ist مُنَادَى wie in ya khalidu, nicht فَاعِل'],
+      /* Nach يَا nie ein Verb (25.09.2026, by1-84-7: mit bayna-yadayk-3 galt
+         أَحْمَدُ als فِعْل). Mini-Lexikon mit حَمَدَ; die Gegenprobe zeigt, dass es
+         wirkt — für sich allein IST أَحْمَدُ dann ein Verb („ich lobe"). Störtest:
+         mit der irab.js vor dieser Regel ist Fall 9 falsch. */
+      ['ahmadu allein (Mini-Lexikon)', () => mitLexikon(MINI_HAMADA, () => giltAlsVerb(AHMADU)) === true,
+        'Gegenprobe: mit hamada im Lexikon ist ahmadu fuer sich ein Verb'],
+      ['ya ahmadu (Mini-Lexikon)', () => mitLexikon(MINI_HAMADA, () => { const r = analysiereSatz(s(YA, AHMADU)); return r[1].erwartet === 'raf' && r[1].stimmt === true; }),
+        'nach ya der Angerufene, auch wenn das Wort sonst ein Verb sein kann']
     ];
     eiche(EICH_VERBSATZ.map(([n, , warum]) => [n, true, warum]),
           n => EICH_VERBSATZ.find(e => e[0] === n)[1](),
-          'Futur, Objekt nach dem Verb, ya nach dem Verb (ohne Lexikon)');
+          'Futur, Objekt nach dem Verb, ya nach dem Verb (ohne Lexikon, Fall 8-9 mit Mini-Lexikon)');
   }
   /* ⛔ أَيّ NACH PRÄPOSITION, NACH كَمْ, لَدَى (25.09.2026, Zerleger-Befund (e),
      Sätze von Bayna Yadayk 1, Buchseite 58). OHNE Lexikon. Störtest: mit der

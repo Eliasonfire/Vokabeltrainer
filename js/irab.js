@@ -826,8 +826,12 @@ function mudariStamm(form){
    25.09.2026 (v607) dazu: يُصَلِّي by1-48-1 (Buchseite 48) und يَسْكُنُ by1-56-1
    (Buchseite 56, dort als تَسْكُنُ und أَسْكُنُ) — beide in seinem Wortschatz
    (bayna-yadayk-1: صَلَّى, سَكَنَ). Gefunden vom LEXIKON-VERGLEICH in
-   pruefe-saetze.js: ohne dieses Buch galten sie als خَبَر bzw. مُبْتَدَأ. */
-const VERBEN_MUDARI = ['يَذْهَبُ', 'يَسْتَيْقِظُ', 'يَنَامُ', 'يَفْعَلُ', 'يُصَلِّي', 'يَسْكُنُ'];
+   pruefe-saetze.js: ohne dieses Buch galten sie als خَبَر bzw. مُبْتَدَأ.
+   25.09.2026 (v610) dazu, für die Sätze von Buchseite 84, 85, 108 (by1-84-4
+   bis by1-108-1): يَكْنُسُ, يَغْسِلُ, يَكْوِي, يَقْرَأُ — alle vier in seinem
+   Wortschatz (bayna-yadayk-1, Kap. 4: كَنَسَ, غَسَلَ, كَوَى, قَرَأَ). */
+const VERBEN_MUDARI = ['يَذْهَبُ', 'يَسْتَيْقِظُ', 'يَنَامُ', 'يَفْعَلُ', 'يُصَلِّي', 'يَسْكُنُ',
+                       'يَكْنُسُ', 'يَغْسِلُ', 'يَكْوِي', 'يَقْرَأُ'];
 const VERBEN_MUDARI_STAEMME = new Set(VERBEN_MUDARI.map(mudariStamm).filter(Boolean));
 function istMudariForm(w){
   const rein = String(w || '').normalize('NFC').replace(/[.،؟!«»:؛]/g, '').trim();
@@ -1215,7 +1219,12 @@ function analysiereSatz(satz){
       vorherJarr = true; vorherMudaf = false;
       out.push({ wort, rein, rolle, erwartet:null, gelesen, stimmt:null });
       return;
-    } else if (giltAlsVerb(wort)){
+    } else if (!nachNida && giltAlsVerb(wort)){
+      /* ⛔ !nachNida (25.09.2026): direkt nach يَا steht der Angerufene, nie ein
+         Verb. Gefunden vom LEXIKON-VERGLEICH an «وَمَاذَا سَتَفْعَلُ يَا أَحْمَدُ؟»
+         (by1-84-7): mit bayna-yadayk-3 galt أَحْمَدُ als فِعْل — dort steht حَمَدَ
+         „loben" (Imperativ اِحْمَدْ, Präsens يَحْمَدُ), und أَحْمَدُ IST auch „ich
+         lobe". Welches von beiden, entscheidet nur die Stellung. */
       /* Verben sind مَبْنِيّ - ihre Endung ist keine Kasusendung und wird
          hier nicht bewertet. Nach einem Verb faengt der Satz strukturell neu
          an, das folgende Wort ist فَاعِل und steht im Nominativ. */
