@@ -429,7 +429,7 @@ function tagesZieleStand(){
   return {
     karten: restVorrat === null ? null : kartenZiel,
     hoeren: h === null ? null : (h.gesamt >= hoerTagesziel()),
-    saetze: s === null ? null : (s.gesamt >= satzTagesziel())
+    saetze: s === null ? null : (s.gesamt >= (typeof satzTageszielHeute === 'function' ? satzTageszielHeute() : satzTagesziel()))
   };
 }
 

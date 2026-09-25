@@ -529,6 +529,8 @@ const PRUEFER = [
   ['test-trefferflaechen.mjs', []],
   ['test-schreibweisen.mjs', []],
   ['test-p9.mjs', []],
+  /* v606: Satzmodus in zwei gleich langen Teilen, fester Wechsel. */
+  ['werkzeuge/pruefe-satz-teile.mjs', []],
   /* ⛔ Neu am 14.09.2026. Die Serie war bis dahin durch NICHTS abgesichert —
      test-p8 und test-p9 stubben `touchStreak` nur weg (`touchStreak:()=>{}`),
      pruefen sie also nicht. Bewacht wird hier zuerst Elias' Entscheidung, die

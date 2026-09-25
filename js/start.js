@@ -284,9 +284,10 @@ function renderTagesringe(){
       zStand = hoerTag().gesamt; zZiel = hoerTagesziel();
     }
   } else {
-    zName = 'Sätze'; zNav = 'sentences';
+    /* v606: Satz Teil 1 / Teil 2 im festen Wechsel (satzTeilHeute() in js/uebung.js). */
+    zName = (typeof satzTeilHeute === 'function') ? 'Satz ' + satzTeilHeute(false) : 'Sätze'; zNav = 'sentences';
     if (typeof satzTag === 'function' && typeof satzTagesziel === 'function'){
-      zStand = satzTag().gesamt; zZiel = satzTagesziel();
+      zStand = satzTag().gesamt; zZiel = (typeof satzTageszielHeute === 'function') ? satzTageszielHeute() : satzTagesziel();
     }
   }
 

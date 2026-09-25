@@ -1608,11 +1608,13 @@ function renderUebungsLeiste(){
      drei Antwortarten, sondern der Verzicht auf die Wahl. Elias' Anlass:
      „wenn man nicht weiß welchen man jetzt unbedingt üben sollte." Wer das
      sucht, sucht es vor der Liste, nicht dahinter. */
-  const gesamt = UEBUNGEN.reduce((s,m)=>s + uebungAnzahl(alle[m.id]), 0);
+  /* v606: Gemischt zeigt den heutigen Teil (satzTeile(), satzTeilHeute()). */
+  const teilHeute = satzTeilHeute(false), imTeil = new Set(satzTeile()[teilHeute]);
+  const gesamt = UEBUNGEN.filter(m => imTeil.has(m.id)).reduce((s,m)=>s + uebungAnzahl(alle[m.id]), 0);
   html = '<div class="gruppe">Ohne Auswahl</div>'
        + `<button class="zeile${UEB.modus===UEB_GEMISCHT?' aktiv':''}${gesamt?'':' leer'}" type="button"`
        + ` data-uebmodus="${UEB_GEMISCHT}"${gesamt?'':' title="In dieser Auswahl gibt es keine Frage."'}>`
-       + '<span class="links"><span class="ar">Gemischt — alle Modi reihum</span></span>'
+       + '<span class="links"><span class="ar">Gemischt — Teil ' + teilHeute + ' (' + imTeil.size + ' Modi reihum)</span></span>'
        + `<span class="n">${gesamt}</span></button>`
        + html;
   blatt.innerHTML = html;
@@ -1782,7 +1784,8 @@ function uebungStarten(modusId){
      ein zweites shuffle() unten wuerde genau die Abwechslung zerstoeren,
      fuer die Elias den Modus haben wollte. */
   const gemischt = modusId === UEB_GEMISCHT;
-  const liste = gemischt ? uebungGemischteListe(alle) : (alle[modusId] || []);
+  /* v606: „Gemischt" = die Übungen des heutigen Teils reihum (satzTeilAuswahl). */
+  const liste = gemischt ? uebungGemischteListe(satzTeilAuswahl(alle)) : (alle[modusId] || []);
   if (!liste.length){
     const m = UEBUNGEN.find(x=>x.id===modusId);
     toast(`${gemischt ? 'Gemischt' : (m ? m.name : 'Dieser Modus')}: in dieser Auswahl keine Frage. Anderes Thema wählen.`);
@@ -1933,6 +1936,8 @@ function uebungOptionHtml(text){
 }
 
 function renderUebung(){
+  /* v606: Startzeit je Aufgabe — einmal je Aufgabe, nicht bei jedem Neuzeichnen. */
+  if (typeof UEB === 'object' && UEB && UEB.zeitIdx !== UEB.idx){ UEB.zeitIdx = UEB.idx; UEB.startZeit = Date.now(); }
   const a = uebungAktuell();
   const m = uebungModusVon(a);
   if (!a || !m){ uebungBeenden(); return; }
@@ -1955,18 +1960,18 @@ function renderUebung(){
      im Hoermodus, wo die Standzeile aus demselben Grund erweitert wurde. */
   const st = (typeof satzTag === 'function') ? satzTag() : null;
   const zielText = !st ? ''
-    : st.gesamt >= satzTagesziel()
+    : st.gesamt >= satzTageszielHeute()
       /* ⚠️ Geschuetzte Leerzeichen (U+00A0) in den Zahlenpaaren: die Zeile
          darf an den Trennpunkten umbrechen, aber nie zwischen einer Zahl und
          ihrem Bezugswort. Sichtbar ist der Unterschied nicht, im Umbruch schon. */
       ? ` · Tagesziel geschafft (${st.gesamt})`
-      : ` · Tagesziel ${st.gesamt} von ${satzTagesziel()}`;
+      : ` · Tagesziel ${st.gesamt} von ${satzTageszielHeute()}`;
   document.getElementById('uebStand').textContent =
     `${UEB.idx+1} / ${UEB.liste.length} · ${UEB.richtig} richtig${zielText}`;
   /* ⭐ Ring und Balken (15.09.2026): der Ring zeigt den TAG, der Balken die
      RUNDE. Beides stand vorher nur als Text in der Zeile darüber. */
   if (typeof modusRingZeichnen === 'function')
-    modusRingZeichnen('satzRing', st.gesamt, satzTagesziel());
+    modusRingZeichnen('satzRing', st.gesamt, satzTageszielHeute());
   if (typeof modusBalkenZeichnen === 'function')
     modusBalkenZeichnen('uebBalken', UEB.idx + 1, UEB.liste.length);
   document.getElementById('uebFrage').innerHTML = arabischHervor(a.frage);
@@ -2356,6 +2361,72 @@ function satzTag(){
 }
 function satzTagSpeichern(t){ try { LS.set('vt_satzTag', t); } catch (e) { /* privates Fenster */ } }
 
+/* ⭐⭐ v606 — DER SATZMODUS IN ZWEI TEILEN (25.09.2026)
+   Elias, wörtlich: „übrigens wir haben mitlerweile vorallem mit den neuen satz
+   aufgaben so viele modis das ich finde, dass ich die in zwei teilen sollte.
+   also tag 1 satz teil 1, tag 2 hören, tag 3 satz teil 2 und dann wieder
+   hören. es muss aber klappen, dass es nicht random ist weil sonst gehen
+   einige modis unter und andere sind viel mehr. und dann auch dementsprechend
+   das tagesziel darauf auslegen wie viel es ist um genau die hälte zu machen
+   … und ich möchte das beide teile ungefähr gleich zeitaufwändig sind
+   deswegen guck welche modis man in welches teil packt".
+   · Aufteilung (satzTeile()): jede Übung nach ihrer Zeit je Aufgabe —
+     GEMESSEN (uebZeitGemessen() in js/kern.js, ab 10 Antworten in 28 Tagen),
+     sonst GESCHÄTZT nach ihrer Art (UEB_ZEIT_SCHAETZUNG — ⚠️ Annahme, keine
+     Messung: Schreiben dauert länger als Antippen). Verteilt wird die längste
+     zuerst, immer in den Teil mit weniger Zeit; so landet auch eine NEUE
+     Übung von selbst im kürzeren Teil, und sobald Messungen da sind, gleicht
+     sich die Aufteilung selbst aus.
+   · Wechsel (satzTeilHeute()): fest, nicht zufällig — ein Satz-Tag nimmt
+     immer den ANDEREN Teil als der letzte Tag, an dem er Sätze geübt hat
+     (SETTINGS.satzTeil, wird mit abgeglichen). Der Takt Satz/Hören bleibt der
+     Tageswechsel aus heuteExtraModus() in js/start.js.
+   · „Gemischt" zieht nur die Übungen des heutigen Teils reihum; das
+     Tagesziel ist genau ein Teil (satzTageszielHeute()): seine Einstellung
+     anteilig. Die Einstellung selbst bleibt unverändert (satzTagesziel()). */
+const UEB_ZEIT_SCHAETZUNG = { mehrfach: 20, wahl: 12, schreiben: 60 };
+function satzTeile(){
+  const zeit = {}, quelle = {};
+  for (const m of UEBUNGEN){
+    const g = (typeof uebZeitGemessen === 'function') ? uebZeitGemessen(m.id) : null;
+    zeit[m.id] = g !== null ? g : (UEB_ZEIT_SCHAETZUNG[m.art] || 15);
+    quelle[m.id] = g !== null ? 'gemessen' : 'geschaetzt';
+  }
+  const nr = id => (UEBUNGEN.find(m => m.id === id) || {}).nr || 0;
+  const reihe = UEBUNGEN.slice().sort((a, b) => (zeit[b.id] - zeit[a.id]) || (a.nr - b.nr));
+  const teil = { 1: [], 2: [] }, summe = { 1: 0, 2: 0 };
+  for (const m of reihe){
+    const t = summe[1] < summe[2] ? 1 : summe[2] < summe[1] ? 2 : (teil[1].length <= teil[2].length ? 1 : 2);
+    teil[t].push(m.id); summe[t] += zeit[m.id];
+  }
+  teil[1].sort((a, b) => nr(a) - nr(b)); teil[2].sort((a, b) => nr(a) - nr(b));
+  return { 1: teil[1], 2: teil[2], zeit, quelle, summe };
+}
+function satzTeilHeute(speichern){
+  const heute = todayStr(0);
+  const st = (typeof SETTINGS === 'object' && SETTINGS && SETTINGS.satzTeil) || null;
+  if (st && st.tag === heute && (st.teil === 1 || st.teil === 2)) return st.teil;
+  const teil = (st && st.teil === 1) ? 2 : 1;
+  if (speichern && typeof SETTINGS === 'object' && SETTINGS){
+    SETTINGS.satzTeil = { teil, tag: heute };
+    if (typeof saveSettings === 'function') saveSettings();
+  }
+  return teil;
+}
+/** Das Satz-Tagesziel für HEUTE: genau ein Teil — seine Einstellung anteilig. */
+function satzTageszielHeute(){
+  const teile = satzTeile();
+  const n = teile[satzTeilHeute(false)].length;
+  return Math.max(1, Math.round(satzTagesziel() * n / Math.max(1, UEBUNGEN.length)));
+}
+/** Nur die Übungen des heutigen Teils — für „Gemischt". */
+function satzTeilAuswahl(alle){
+  const nur = new Set(satzTeile()[satzTeilHeute(false)]);
+  const raus = {};
+  for (const [id, l] of Object.entries(alle || {})) if (nur.has(id)) raus[id] = l;
+  return raus;
+}
+
 /* ⭐⭐ DIE REGEL EINER AUFGABE, DIE KEINE regelId TRAEGT (15.09.2026)
 
    Elias: „ich habe ja zumindest einmal bei gemischt 13/13 durchgägngen gemacht
@@ -2480,6 +2551,10 @@ function uebungAuswerten(richtig){
     const art = (aM && aM.modus && aM.modus.id) ? aM.modus.id
               : (UEB && UEB.modus !== UEB_GEMISCHT ? UEB.modus : null);
     if (art) merkeUebung(art, richtig);
+    /* v606: die Zeit dieser Aufgabe (einmal je Aufgabe) und der Teil des Tages. */
+    if (art && UEB.startZeit && typeof merkeUebZeit === 'function') merkeUebZeit(art, (Date.now() - UEB.startZeit) / 1000);
+    UEB.startZeit = 0;
+    if (typeof satzTeilHeute === 'function') satzTeilHeute(true);
   }
   /* ⭐ Und die Trefferquote je TAG (07.09.2026) — die Grundlage für den
      Rauschversuch und für jede spätere Frage „hat das etwas gebracht".
@@ -2512,7 +2587,7 @@ function uebungAuswerten(richtig){
      der Anlass `einmalig` je Tag ist, faengt das zwar ab, aber eine Bedingung,
      die sich auf eine zweite Sperre verlaesst, ist eine Falle fuer den
      naechsten, der die Sperre anfasst. */
-  if (satzVorher < satzTagesziel() && satzT.gesamt >= satzTagesziel()
+  if (satzVorher < satzTageszielHeute() && satzT.gesamt >= satzTageszielHeute()
       && typeof feiere === 'function'){
     feiere('satz-tagesziel', { zahl: satzT.gesamt, richtig: satzT.richtig });
   }
