@@ -3290,19 +3290,107 @@ function zielHeuteOffen(){
   return (Number(tage[todayStr(0)]) || 0) < deckel;
 }
 
+/* ⭐⭐ DIE LERNGRUPPE (v604, 25.09.2026) — Box 1 = Schlange + Lerngruppe
+   ================================================================
+   Elias, wörtlich: „ich will auf jeden fall B machen, das finde ich eine sehr
+   gute idee." Gruppengröße = 2 × Box-1-Plätze (10 Karten → 6 Wörter, 15 → 10,
+   20 → 14; sein „klingt gut."), jeden Tag kommt die Hälfte, also jedes Wort
+   jeden 2. Tag. Die Plätze: 2/3 neue Wörter (aktuelle Kapitel, neueste
+   zuerst), 1/3 frühere (das am längsten falsche zuerst) — sein „bedeutet bei
+   10 wörtern pro tag wären das 4 neue vokabeln von den aktuellen kapiteln und
+   2 aus den früheren sehe ich das richtig?". Ein Wort, das aus Box 2 oder
+   höher zurückfällt, nimmt den nächsten freien Platz, egal welcher Art: „ein
+   wort was in box 1 zurück fällt muss ganz vorne in die schlage weil das kann
+   man eher zurück holen sag ich". Ist eine Schlange leer, füllt die andere
+   auf. Box-2/3-Wörter kommen nie in die Gruppe.
+   Gespeichert je Wort im Fortschritt (wird mit abgeglichen): `gruppe` =
+   Beitrittstag, `gruppeArt` = 'neu'|'frueher', `zurueck` = Tag des Rückfalls.
+   Ein Mitglied bleibt, bis er es mit „gut" (→ Box 2) oder „leicht" (→ Box 3)
+   beantwortet; „nochmal"/„schwer" = in GRUPPE_ABSTAND Tagen wieder
+   (stufeErgebnis() in js/lernen.js). Aufgenommen wird erst beim BAU einer
+   Runde (lerngruppeAufnehmen()), nie bei der Anzeige. */
+const GRUPPE_ABSTAND = 2;
+function istGruppenwort(w){
+  const p = w && PROGRESS[w.id];
+  return !!(p && p.gruppe && (p.box || 1) <= 1);
+}
+/** Alle Mitglieder der Lerngruppe in seiner Auswahl. */
+function lerngruppe(){
+  return VOCAB_DATA.filter(w => istGruppenwort(w) && passtZurAuswahl(w));
+}
+/** Nimmt die Box-1-Wörter einer frisch gebauten Runde in die Gruppe auf. */
+function lerngruppeAufnehmen(worte){
+  if (!tagesDeckel()) return 0;
+  const heute = todayStr(0);
+  let n = 0;
+  for (const w of worte || []){
+    const p = w && PROGRESS[w.id];
+    if (!p || (p.box || 1) > 1 || p.gruppe) continue;
+    p.gruppe = heute;
+    p.gruppeArt = nieAbgefragt(w) ? 'neu' : 'frueher';
+    delete p.zurueck;
+    p.ts = Date.now();
+    n++;
+  }
+  if (n) saveProgress();
+  return n;
+}
+/* Der Box-1-Teil einer Runde mit Lerngruppe: fällige Mitglieder (die am
+   längsten fälligen zuerst) und — nur wenn `beitritt` erlaubt ist, also beim
+   Bau einer Runde fürs Tagesziel — neue Mitglieder bis zur Gruppengröße.
+   Neu aufgenommen werden nur so viele, wie heute Box-1-Plätze frei sind: so
+   füllt sich eine leere Gruppe über zwei Tage, und die Hälften wechseln sich
+   von selbst ab. `extra` = fällige Mitglieder über die Plätze hinaus (nach
+   einem ausgelassenen Tag), `andere` = die andere Hälfte (noch nicht fällig). */
+function lerngruppeHeute(pool, neu, gruppe, platz1, beitritt){
+  const G = 2 * platz1;
+  const p = w => PROGRESS[w.id] || {};
+  const nachTermin = (a, b) => String(p(a).nextReview || '').localeCompare(String(p(b).nextReview || ''));
+  const mitglieder = gruppe.filter(istGruppenwort);
+  const imPool = new Set(pool);
+  const faellig = pool.filter(istGruppenwort).sort(nachTermin);
+  const andere = mitglieder.filter(w => !imPool.has(w)).sort(nachTermin);
+  let neuDazu = [];
+  if (beitritt){
+    const kand = neu.filter(w => !istGruppenwort(w));
+    const zurueckW = kand.filter(w => p(w).zurueck).sort((a, b) => String(p(a).zurueck).localeCompare(String(p(b).zurueck)));
+    const neuW = kand.filter(w => !p(w).zurueck && nieAbgefragt(w));
+    const frW = kand.filter(w => !p(w).zurueck && !nieAbgefragt(w));
+    const neuPl = Math.round(G * 2 / 3);
+    const alsNeu = mitglieder.filter(w => p(w).gruppeArt === 'neu').length;
+    let neuFrei = Math.max(0, neuPl - alsNeu);
+    let frFrei = Math.max(0, (G - neuPl) - (mitglieder.length - alsNeu));
+    const reihe = [];
+    for (const w of zurueckW){
+      if (frFrei > 0){ frFrei--; reihe.push(w); } else if (neuFrei > 0){ neuFrei--; reihe.push(w); }
+    }
+    const nN = Math.min(neuFrei, neuW.length), nF = Math.min(frFrei, frW.length);
+    reihe.push(...neuW.slice(0, nN), ...frW.slice(0, nF));
+    reihe.push(...neuW.slice(nN).concat(frW.slice(nF)).slice(0, (neuFrei - nN) + (frFrei - nF)));
+    const heuteFrei = Math.max(0, platz1 - faellig.length);
+    neuDazu = reihe.slice(0, Math.min(heuteFrei, Math.max(0, G - mitglieder.length)));
+  }
+  return { heute: faellig.slice(0, platz1).concat(neuDazu), extra: faellig.slice(platz1), andere };
+}
+
 /**
  * Die Tagesration aus einem bereits sortierten Pool.
  * @param {Array} pool     Ergebnis von currentPool() (nur Fälliges), Reihenfolge zählt
  * @param {number} deckel  0 = kein Deckel, dann kommt der Pool unverändert zurück
  * @param {Array} [vorrat] noch nicht fällige Karten (vorziehVorrat()) für freie
  *   Plätze. Ohne ihn bleibt es beim Fälligen — so zählen die Feier „alles
- *   fällig" und die Tagesziele weiter nur, was wirklich dran ist.
+ *   fällig" und die Tagesziele weiter nur, was wirklich dran ist. Mit ihm (=
+ *   eine Runde fürs Tagesziel) nimmt die Lerngruppe auch neue Mitglieder auf.
+ * @param {Array} [gruppe] die Mitglieder der Lerngruppe (lerngruppe()). Ohne
+ *   sie gilt der Box-1-Teil von v603 (je 10 Karten ein Platz fürs am längsten
+ *   falsche Wort, sonst neue zuerst).
  */
-function tagesAuswahl(pool, deckel, vorrat){
+function tagesAuswahl(pool, deckel, vorrat, gruppe){
   if (!Array.isArray(pool)) return [];
   if (!deckel) return pool;
   const box = w => (PROGRESS[w.id] && PROGRESS[w.id].box) || 1;
   const heute = todayStr(0);
+  const mitVorrat = Array.isArray(vorrat);
   /* Neue Vokabeln vor den alten Box-1-Karten — neueZuerst() oben. */
   const neu = neueZuerst(pool.filter(w => box(w) <= 1));
   /* Wiederholungen: die gemessen an ihrem Abstand spätesten zuerst
@@ -3312,53 +3400,68 @@ function tagesAuswahl(pool, deckel, vorrat){
     .map((w, i) => ({ w, i, v: verspaetung(w, heute), b: box(w) }))
     .sort((a, b) => (b.v - a.v) || (a.b - b.b) || (a.i - b.i))
     .map(x => x.w);
+  const platz1 = Math.min(deckel, Math.round(deckel * DECKEL_ANTEIL_BOX1));
 
-  let platzNeu = Math.min(deckel, Math.round(deckel * DECKEL_ANTEIL_BOX1));
-  let platzWdh = deckel - platzNeu;
+  /* Wer heute aus Box 1 kommt (`box1`) und wer auf freie Plätze einspringen
+     darf (`box1Extra`, `fruehGruppe`). */
+  let box1, box1Extra, fruehGruppe = [];
+  if (Array.isArray(gruppe)){
+    const g = lerngruppeHeute(pool, neu, gruppe, platz1, mitVorrat);
+    box1 = g.heute; box1Extra = g.extra; fruehGruppe = mitVorrat ? g.andere : [];
+  } else {
+    /* ⭐ Ohne Lerngruppe (v603): Box-1-Plätze für die Wörter, die er am
+       längsten falsch hatte (seit 25.09.2026): die ersten schon beantworteten
+       Box-1-Karten in Pool-Reihenfolge — die warten am längsten. Neue Karten
+       behalten die übrigen Plätze zuerst (neueZuerst), danach weitere falsche.
+       ⭐ WIE VIELE (25.09.2026, 01:1x): einer je 10 Karten, gerundet wie die
+       Aufteilung — bei 10 einer, bei 15 und 20 zwei. Elias fragte „wollen wir 1
+       oder 2 wörter machen bei 15?"; auf „1 oder 2 bei 20?": „2", auf meine
+       Empfehlung „2 bei 15": „ja". */
+    const platzFalsch = Math.max(1, Math.round(deckel / 10));
+    const altFalsch = neu.filter(w => !nieAbgefragt(w)).slice(0, platzFalsch);
+    const reihe = altFalsch.concat(neu.filter(w => !altFalsch.includes(w)));
+    box1 = reihe.slice(0, platz1); box1Extra = reihe.slice(platz1);
+  }
+
   /* Hat Box 1 zu wenig, bekommen die Wiederholungen den Rest. */
-  if (neu.length < platzNeu) { platzWdh += platzNeu - neu.length; platzNeu = neu.length; }
+  const platzNeu = Math.min(platz1, box1.length);
+  let platzWdh = deckel - platzNeu;
   /* Freie Plätze (weniger Wiederholungen fällig als Plätze) in SEINER
-     Reihenfolge, siehe vorziehVorrat(): Box 2/3 → mehr Box 1 → Box 4–7.
-     Ohne `vorrat` gehen sie wie vor v603 an Box 1. */
+     Reihenfolge: Box 2/3 vorgezogen → mehr Box 1 (mit Lerngruppe: weitere
+     fällige Mitglieder, dann die andere Hälfte) → Box 4–7 vorgezogen. Ohne
+     `vorrat` gehen sie wie vor v603 an Box 1. */
   let frei = Math.max(0, platzWdh - wdh.length);
   platzWdh = Math.min(platzWdh, wdh.length);
   const imPool = new Set(pool);
-  const vorr = Array.isArray(vorrat) ? vorrat.filter(w => !imPool.has(w)) : [];
+  const vorr = mitVorrat ? vorrat.filter(w => !imPool.has(w)) : [];
   const frueh23 = vorr.filter(w => box(w) <= 3), frueh47 = vorr.filter(w => box(w) > 3);
   const n23 = Math.min(frei, frueh23.length); frei -= n23;
-  const mehrNeu = Math.min(frei, neu.length - platzNeu); platzNeu += mehrNeu; frei -= mehrNeu;
+  const nExtra = Math.min(frei, box1Extra.length); frei -= nExtra;
+  const nAndere = Math.min(frei, fruehGruppe.length); frei -= nAndere;
   const n47 = Math.min(frei, frueh47.length);
 
-  /* ⭐ Box-1-Plätze für die Wörter, die er am längsten falsch hatte (seit
-     25.09.2026, siehe DECKEL_ANTEIL_BOX1): die ersten schon beantworteten
-     Box-1-Karten in Pool-Reihenfolge — die warten am längsten. Neue Karten
-     behalten die übrigen Plätze zuerst (neueZuerst), danach weitere falsche.
-     ⭐ WIE VIELE (25.09.2026, 01:1x): einer je 10 Karten, gerundet wie die
-     Aufteilung — bei 10 einer, bei 15 und 20 zwei. Elias fragte „wollen wir 1
-     oder 2 wörter machen bei 15?"; auf „1 oder 2 bei 20?": „2", auf meine
-     Empfehlung „2 bei 15": „ja". */
-  const platzFalsch = Math.min(platzNeu, Math.max(1, Math.round(deckel / 10)));
-  const altFalsch = neu.filter(w => !nieAbgefragt(w)).slice(0, platzFalsch);
-  const box1Wahl = altFalsch.length ? altFalsch.concat(neu.filter(w => !altFalsch.includes(w))) : neu;
-  const gewaehlt = new Set(box1Wahl.slice(0, platzNeu).concat(wdh.slice(0, platzWdh)));
+  const gewaehlt = new Set(box1.slice(0, platzNeu).concat(box1Extra.slice(0, nExtra), wdh.slice(0, platzWdh)));
   /* ⛔ Die Reihenfolge des Pools wiederherstellen. Ohne das kämen erst alle
      Box-1-Karten und dann alle Wiederholungen — und der Fachbegriff-Takt in
      `fachbegriffTakt()` würde auf eine sortierte statt gemischte Liste
      treffen. Die vorgezogenen Karten kommen dahinter: sie sind die Zugabe. */
-  return pool.filter(w => gewaehlt.has(w)).concat(frueh23.slice(0, n23), frueh47.slice(0, n47));
+  return pool.filter(w => gewaehlt.has(w))
+    .concat(frueh23.slice(0, n23), fruehGruppe.slice(0, nAndere), frueh47.slice(0, n47));
 }
 
-/** Was heute fällig drankommt — gedeckelt, OHNE vorgezogene Karten. Für die
-    Feier „alles fällig" und die Tagesziele: die zählen nur Fälliges. */
+/** Was heute fällig drankommt — gedeckelt, OHNE vorgezogene Karten und ohne
+    neue Gruppenmitglieder. Für die Feier „alles fällig" und die Tagesziele:
+    die zählen nur Fälliges. */
 function tagesPool(){
-  return tagesAuswahl(currentPool(), tagesDeckel());
+  return tagesAuswahl(currentPool(), tagesDeckel(), undefined, lerngruppe());
 }
 
 /** Die Runde, wie „Jetzt lernen" sie baut und die Startseite sie zeigt (v603):
     das Fällige nach tagesAuswahl() und — solange das Tagesziel offen ist —
-    freie Plätze mit noch nicht fälligen Karten (vorziehVorrat()). */
+    freie Plätze mit noch nicht fälligen Karten (vorziehVorrat()) und neue
+    Mitglieder der Lerngruppe (v604). */
 function tagesRunde(){
-  return tagesAuswahl(currentPool(), tagesDeckel(), zielHeuteOffen() ? vorziehVorrat() : undefined);
+  return tagesAuswahl(currentPool(), tagesDeckel(), zielHeuteOffen() ? vorziehVorrat() : undefined, lerngruppe());
 }
 
 /* ⭐ WIEDEREINSTIEG NACH EINER PAUSE (B2, 07.09.2026)

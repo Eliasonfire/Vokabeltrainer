@@ -97,6 +97,7 @@ const ctx = vm.createContext({
   /* Die Werte, die der Pruefstand wirklich braucht - alles andere ist Attrappe. */
   INTERVALS: KERN_INTERVALS, HOECHSTE_BOX: Math.max(...Object.keys(KERN_INTERVALS).map(Number)),
   tageZwischen: KERN_TAGEZWISCHEN,
+  GRUPPE_ABSTAND: Number((KERN.match(/const GRUPPE_ABSTAND = (\d+)/) || [])[1]),
   PROGRESS:{ t1:{ box:1, nextReview:'', correct:0, wrong:0 } },
   SESSION:{ words:[WORT], idx:0, dirs:['ar-de'], fertig:false, serie:0 },
   VOCAB_DATA:[WORT], PERSONAL_VOCAB:[], SETTINGS:{},
@@ -249,6 +250,22 @@ ok('Box 5 vorgezogen: nochmal → Box 4 (7 Tage), schwer bleibt (16 Tage)',
 vm.runInContext('PROGRESS.t1 = { box:2, nextReview:"2026-08-11", correct:1, wrong:0 }; stufenVorschau()', ctx);
 const fr2 = lies();
 ok('Box 2 vorgezogen: gut → Box 3 wie immer', fr2[2].box === 3 && fr2[2].text === '3 Tage', JSON.stringify(fr2));
+vm.runInContext('PROGRESS.t1 = { box:1, nextReview:"", correct:0, wrong:0 }', ctx);
+
+/* ---------- 5b2. v604: die Lerngruppe ----------
+   Ein fälliges Mitglied: nochmal/schwer → bleibt in Box 1, in 2 Tagen wieder;
+   gut → Box 2 (morgen), leicht → Box 3. Ein Mitglied, das als andere Hälfte
+   vorgezogen einspringt: nichts ändert sich (Termin bleibt). */
+console.log('\n— Lerngruppe (v604) —');
+vm.runInContext('PROGRESS.t1 = { box:1, gruppe:"2026-08-08", gruppeArt:"neu", nextReview:"2026-08-10", correct:0, wrong:1 }; stufenVorschau()', ctx);
+const gr = lies();
+ok('Mitglied fällig: nochmal/schwer → Box 1 · 2 Tage, gut → Box 2 · morgen, leicht → Box 3',
+   gr[0].box === 1 && gr[0].text === '2 Tage' && gr[1].box === 1 && gr[1].text === '2 Tage'
+   && gr[2].box === 2 && gr[2].text === 'morgen' && gr[3].box === 3, JSON.stringify(gr));
+vm.runInContext('PROGRESS.t1.nextReview = "2026-08-11"; stufenVorschau()', ctx);
+const grFrueh = lies();
+ok('Mitglied vorgezogen (andere Hälfte): alle vier Knöpfe Box 1 · morgen',
+   grFrueh.every(x => x.box === 1 && x.text === 'morgen'), JSON.stringify(grFrueh));
 vm.runInContext('PROGRESS.t1 = { box:1, nextReview:"", correct:0, wrong:0 }', ctx);
 
 /* ---------- 5c. Die Wischgeste (25.09.2026) ----------

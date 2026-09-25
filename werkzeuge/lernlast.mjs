@@ -72,12 +72,19 @@ const tageZwischen = (a, b) => Math.round((new Date(b + 'T00:00:00') - new Date(
 const box = {}, faellig = {}, spaetMax = {};
 BOXEN.forEach(b => { box[b] = 0; faellig[b] = 0; spaetMax[b] = 0; });
 let neu = 0, vorgezogeneKarten = 0;
+/* v604: die Lerngruppe (Mitglieder = Box 1 mit `gruppe`) */
+const gruppe = { alle: 0, neu: 0, frueher: 0, faellig: 0, neuInSchlange: 0 };
 const wdhFaellig = [];   // { v, b } der fälligen Wiederholungen
 for (const [id, x] of Object.entries(PROG)){
   if (!x || !drin(id)) continue;
   const b = Number(x.box) || 1; if (!(b in box)) box[b] = 0;
   box[b]++;
   if (b === 1 && !(Number(x.correct) > 0) && !(Number(x.wrong) > 0)) neu++;
+  if (b === 1 && x.gruppe){
+    gruppe.alle++;
+    if (x.gruppeArt === 'neu') gruppe.neu++; else gruppe.frueher++;
+    if (String(x.nextReview) <= tag) gruppe.faellig++;
+  } else if (b === 1 && !(Number(x.correct) > 0) && !(Number(x.wrong) > 0)) gruppe.neuInSchlange++;
   if (Number(x.vorgezogen) > 0) vorgezogeneKarten++;
   if (String(x.nextReview) <= tag){
     faellig[b] = (faellig[b] || 0) + 1;
@@ -93,9 +100,12 @@ const obenProTag = box[OBEN] / ((INTERVALS[OBEN] || 0) + 1);
 const wartet = Math.max(0, ...BOXEN.filter(b => b > 1).map(b => spaetMax[b]));
 const zeile = (von, f) => BOXEN.filter(b => b >= von).map(b => `Box ${b} ${f(b)}`).join(' · ');
 
-console.log(`Tagesziel ${ziel} (mindestens ${platz1} Box 1 · ${wdhPlaetze} Wiederholungen; freie Plätze: Box 2/3 → Box 1 → Box 4–${OBEN})`);
+console.log(`Tagesziel ${ziel} (mindestens ${platz1} Box 1 aus der Lerngruppe · ${wdhPlaetze} Wiederholungen; freie Plätze: Box 2/3 → andere Hälfte der Gruppe → Box 4–${OBEN})`);
 console.log(`Karten: ${zeile(1, b => box[b])}`);
-console.log(`Schlange Box 1: ${box[1]} (nie beantwortet ${neu} · falsch ${box[1] - neu})`);
+/* v604: Box 1 = Lerngruppe + Schlange. Gruppe = 2 × Box-1-Plätze. */
+const schlange = box[1] - gruppe.alle;
+console.log(`Lerngruppe: ${gruppe.alle} von ${2 * platz1} (neu ${gruppe.neu} · früher ${gruppe.frueher}; heute fällig ${gruppe.faellig})`);
+console.log(`Schlange Box 1: ${schlange} (nie beantwortet ${gruppe.neuInSchlange} · falsch ${schlange - gruppe.neuInSchlange})`);
 console.log(`Heute fällig: Box 1 ${faellig[1]} · Box 2–${OBEN} ${BOXEN.filter(b => b > 1).reduce((s, b) => s + faellig[b], 0)} (${zeile(2, b => faellig[b])})`);
 console.log(`Am spätesten je Box (Tage): ${zeile(2, b => spaetMax[b])}`);
 
@@ -108,9 +118,11 @@ console.log(`Die ${wdhPlaetze} Wiederholungsplätze heute: ${zeile(2, b => heute
    Tagesziel wieder auf 10 stellen", fällig 02.10.2026. Das Datum hat ER am
    25.09.2026 gewählt („ja" auf „02.10. legen?"); ⛔ die Wartung verschiebt es
    NICHT mehr, sie meldet nur. Das Tagesziel stellt nur er um. */
-const neuProTag = Math.max(1, platz1 - Math.max(1, Math.round(ziel / 10)));
+/* v604: neue Wörter kommen nur noch über freie Plätze der Lerngruppe (2/3 der
+   Gruppe sind Neu-Plätze) — wie viele am Tag, hängt davon ab, wie schnell er
+   Gruppenwörter mit „gut" hinausbringt. Deshalb keine Tagesrate mehr hier. */
 console.log(neu > 0
-  ? `Neue Wörter: ${neu} nie beantwortet, mindestens ${neuProTag} am Tag`
+  ? `Neue Wörter: ${neu} nie beantwortet (davon in der Lerngruppe ${neu - gruppe.neuInSchlange})`
   : 'Neue Wörter: alle mindestens einmal beantwortet');
 if (ziel > 10)
   console.log(`⏰ Tagesziel steht auf ${ziel} — seine Erinnerung „wieder auf 10" ist fällig am 02.10.2026 (nur melden, nicht verschieben).`);

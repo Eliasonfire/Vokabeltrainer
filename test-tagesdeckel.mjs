@@ -47,7 +47,7 @@ function schneide(text, name){
 /* tagesAuswahl() ruft nieAbgefragt(), neueZuerst() (seit 16.09.2026) und
    verspaetung()/tageZwischen() (seit v603). Fehlt eine, meldet das der Test,
    statt mit ReferenceError zu enden. */
-const teile = ['nieAbgefragt', 'neueZuerst', 'tageZwischen', 'verspaetung', 'tagesAuswahl']
+const teile = ['nieAbgefragt', 'neueZuerst', 'tageZwischen', 'verspaetung', 'istGruppenwort', 'lerngruppeHeute', 'tagesAuswahl']
   .map(n => [n, schneide(quelle, n)]);
 const fehlend = teile.filter(([, t]) => !t).map(([n]) => n);
 if (fehlend.length) { console.log('⛔ nicht mehr in js/kern.js: ' + fehlend.join(', ')); process.exit(1); }
@@ -298,6 +298,79 @@ pruefe('DECKEL_ANTEIL_BOX1 ist ein Drittel (' + mAnteil[1] + ')', Math.abs(ANTEI
   const c4 = kontext(ohne23, mAnteil[1]); c4.PROGRESS = c.PROGRESS;
   const g5 = c4.__(box1.concat(wdh), 10, vorrat).map(w => w.id);
   pruefe('STÖRTEST — ohne die Box-2/3-Stufe käme keine vorgezogene Box-2/3-Karte', ohne23 !== code && !g5.includes('f2a'), JSON.stringify(g5));
+}
+
+/* ---------- 10. ⭐⭐ v604: die Lerngruppe ----------
+   Deckel 10 → 3 Box-1-Plätze, Gruppe 6 Wörter (4 neu + 2 früher), jeden Tag
+   die Hälfte. Elias: „ich will auf jeden fall B machen" · „bei 10 wörtern pro
+   tag wären das 4 neue vokabeln von den aktuellen kapiteln und 2 aus den
+   früheren" · „ein wort was in box 1 zurück fällt muss ganz vorne in die
+   schlage" · „dann kann einfach ein wort aus dem zweiten teil der lerngruppe
+   für den heutigen tag einspringen". */
+{
+  const setze = (id, p) => { c.PROGRESS[id] = Object.assign({ box: 1, nextReview: HEUTE, correct: 0, wrong: 0 }, p); return { id }; };
+  const ids = liste => liste.map(w => w.id);
+  const hat = (liste, pre) => ids(liste).filter(x => x.startsWith(pre)).length;
+  const lage = () => {
+    c.PROGRESS = {};
+    const fr = Array.from({ length: 5 }, (_, k) => setze('f' + k, { wrong: 1, nextReview: '2026-09-1' + k }));
+    const nw = Array.from({ length: 5 }, (_, k) => setze('n' + k, { nextReview: '2026-09-2' + k }));
+    const wd = Array.from({ length: 20 }, (_, k) => setze('w' + k, { box: 4, correct: 2 }));
+    return { fr, nw, wd };
+  };
+  /* a) leere Gruppe, Runde fürs Tagesziel: die 3 neuesten neuen treten bei */
+  let L = lage();
+  const a = c.__(L.fr.concat(L.nw, L.wd), 10, [], []);
+  pruefe('leere Gruppe: 3 neue treten bei (die neuesten), keine früheren, 7 Wiederholungen',
+    ['n4', 'n3', 'n2'].every(x => ids(a).includes(x)) && hat(a, 'f') === 0 && hat(a, 'w') === 7, JSON.stringify(ids(a)));
+  /* b) nur zählen (kein Vorrat): niemand tritt bei */
+  const b = c.__(L.fr.concat(L.nw, L.wd), 10, undefined, []);
+  pruefe('nur zählen: kein Beitritt, die Plätze gehen an Wiederholungen', hat(b, 'n') + hat(b, 'f') === 0 && b.length === 10, JSON.stringify(ids(b)));
+  /* c) volle Gruppe: 3 fällig, 3 nicht → genau die 3 fälligen, kein Beitritt */
+  L = lage();
+  const mDue = [0, 1, 2].map(k => setze('m' + k, { gruppe: '2026-09-21', gruppeArt: k < 2 ? 'neu' : 'frueher', wrong: 1, nextReview: '2026-09-23' }));
+  const mSpaet = [3, 4, 5].map(k => setze('m' + k, { gruppe: '2026-09-22', gruppeArt: k < 5 ? 'neu' : 'frueher', wrong: 1, nextReview: '2026-09-26' }));
+  const cc = c.__(mDue.concat(L.fr, L.nw, L.wd), 10, [], mDue.concat(mSpaet));
+  pruefe('volle Gruppe: die 3 fälligen Mitglieder, kein neues Wort, 7 Wiederholungen',
+    ['m0', 'm1', 'm2'].every(x => ids(cc).includes(x)) && hat(cc, 'n') + hat(cc, 'f') === 0 && hat(cc, 'w') === 7, JSON.stringify(ids(cc)));
+  /* d) ein Platz frei: das zurückgefallene Wort kommt vor den neuen */
+  L = lage();
+  const fuenf = [0, 1, 2, 3, 4].map(k => setze('m' + k, { gruppe: '2026-09-22', gruppeArt: k < 4 ? 'neu' : 'frueher', wrong: 1, nextReview: '2026-09-26' }));
+  const z = setze('z0', { correct: 3, wrong: 1, zurueck: '2026-09-24', nextReview: '2026-09-24' });
+  const d = c.__([z].concat(L.nw, L.fr, L.wd), 10, [], fuenf);
+  pruefe('zurückgefallenes Wort nimmt den freien Platz, sonst niemand', ids(d).includes('z0') && hat(d, 'n') + hat(d, 'f') === 0, JSON.stringify(ids(d)));
+  /* e) wenige Wiederholungen: Box 2/3 vorgezogen, dann die andere Hälfte */
+  L = lage();
+  const m3 = [0, 1, 2].map(k => setze('m' + k, { gruppe: '2026-09-21', gruppeArt: 'neu', wrong: 1, nextReview: '2026-09-23' }));
+  const m3s = [3, 4, 5].map(k => setze('m' + k, { gruppe: '2026-09-22', gruppeArt: 'neu', wrong: 1, nextReview: '2026-09-26' }));
+  const e2 = setze('e2', { box: 2, correct: 1, nextReview: '2026-09-26' });
+  const e = c.__(m3.concat(L.wd.slice(0, 2)), 10, [e2], m3.concat(m3s));
+  pruefe('freie Plätze: Box 2 vorgezogen, dann die andere Hälfte der Gruppe → 9 Karten',
+    e.length === 9 && ids(e).includes('e2') && ['m3', 'm4', 'm5'].every(x => ids(e).includes(x)), JSON.stringify(ids(e)));
+  pruefe('… und die Vorgezogenen stehen hinter dem Fälligen',
+    ids(e).indexOf('e2') > ids(e).indexOf('w1') && ids(e).indexOf('m3') > ids(e).indexOf('e2'), JSON.stringify(ids(e)));
+  /* f) ein Tag ausgelassen: alle 6 fällig → 3 auf die Box-1-Plätze, die anderen erst auf freie Plätze */
+  L = lage();
+  const alle6 = [0, 1, 2, 3, 4, 5].map(k => setze('m' + k, { gruppe: '2026-09-20', gruppeArt: 'neu', wrong: 1, nextReview: '2026-09-2' + k }));
+  const f1 = c.__(alle6.concat(L.wd), 10, [], alle6);
+  pruefe('ausgelassener Tag, genug Wiederholungen: nur die 3 am längsten fälligen Mitglieder',
+    hat(f1, 'm') === 3 && ['m0', 'm1', 'm2'].every(x => ids(f1).includes(x)), JSON.stringify(ids(f1)));
+  const f2 = c.__(alle6.concat(L.wd.slice(0, 2)), 10, [], alle6);
+  pruefe('… mit nur 2 Wiederholungen: alle 6 Mitglieder + 2 = 8', f2.length === 8 && hat(f2, 'm') === 6, JSON.stringify(ids(f2)));
+  /* ⛔ STÖRTESTS */
+  const ohneVorrang = code.replace('for (const w of zurueckW){', 'for (const w of []){');
+  const c5 = kontext(ohneVorrang, mAnteil[1]); c5.PROGRESS = c.PROGRESS;
+  L = lage();
+  const fuenf2 = [0, 1, 2, 3, 4].map(k => setze('m' + k, { gruppe: '2026-09-22', gruppeArt: k < 4 ? 'neu' : 'frueher', wrong: 1, nextReview: '2026-09-26' }));
+  const z2 = setze('z0', { correct: 3, wrong: 1, zurueck: '2026-09-24', nextReview: '2026-09-24' });
+  c5.PROGRESS = c.PROGRESS;
+  const d2 = c5.__([z2].concat(L.nw, L.fr, L.wd), 10, [], fuenf2);
+  pruefe('STÖRTEST — ohne den Vorrang käme das zurückgefallene Wort nicht', ohneVorrang !== code && !ids(d2).includes('z0'), JSON.stringify(ids(d2)));
+  const immerBeitritt = code.replace('  if (beitritt){', '  if (true){');
+  const c6 = kontext(immerBeitritt, mAnteil[1]);
+  L = lage(); c6.PROGRESS = c.PROGRESS;
+  const b2 = c6.__(L.fr.concat(L.nw, L.wd), 10, undefined, []);
+  pruefe('STÖRTEST — ohne die Sperre träten auch beim bloßen Zählen Wörter bei', immerBeitritt !== code && hat(b2, 'n') > 0, JSON.stringify(ids(b2)));
 }
 
 console.log('\n' + (schlecht ? '✘ ' + schlecht + ' von ' + (ok + schlecht) + ' Fällen falsch'
