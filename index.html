@@ -4123,6 +4123,9 @@ button:disabled{cursor:default;}
    Darüberfahren — er soll auch „genau drauf gucken" können, ohne zu lesen. */
 .de-tippbar{cursor:pointer;transition:filter var(--dur-2) ease;-webkit-tap-highlight-color:transparent;}
 .de-verschwommen{filter:blur(var(--de-unschaerfe));user-select:none;-webkit-user-select:none;}
+/* Teilweise: das gesuchte Wort bleibt lesbar (Übung 11, 13, 14 — m.deKlar). */
+.de-teilweise.de-verschwommen{filter:none;}
+.de-teilweise.de-verschwommen .de-wort{filter:blur(var(--de-unschaerfe));}
 /* Ein eingeschalteter Rundknopf traegt dieselbe Farbe wie ein aktiver Reiter. */
 .round-btn.an{background:var(--red-wash);border-color:var(--red-dim);color:var(--red-bright);}
 /* Auswendige Verse haben BEWUSST keinen grünen Rahmen mehr (10.08.2026).
