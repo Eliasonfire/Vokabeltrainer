@@ -88,7 +88,10 @@ function ladeApp(){
   const DATEIEN = ['vocab-data.js', 'data/beispielsaetze.js', 'data/fachbegriffe.js', 'grammar-data.js',
     'lehrbuch-saetze.js', 'regelsammlung-data.js',
     ...fs.readdirSync(path.join(WURZEL, 'data')).filter(f => /^vokabeln-.*\.js$/.test(f)).map(f => 'data/' + f),
-    'js/irab.js', 'js/saetze.js', 'js/uebersetzen.js', 'js/uebung.js'];
+    /* v606 (Teil H): js/regeln.js dazu — Übung 9 („Welche Regel?") ruft
+       regelAusgeblendet(), ohne die Datei warf baue() still und die Übung sah
+       im Prüfer leer aus (im Pane gemessen: 281 Aufgaben). */
+    'js/irab.js', 'js/saetze.js', 'js/uebersetzen.js', 'js/regeln.js', 'js/uebung.js'];
   const fehlt = [];
   for (const f of DATEIEN){
     try { vm.runInContext(fs.readFileSync(path.join(WURZEL, f), 'utf8'), ctx, { filename: f }); }
@@ -260,6 +263,35 @@ function messen(app){
     const t = worte.filter(k => k.length > 1 && neuKern.has(k));
     if (t.length){ mitNeu++; t.forEach(k => getroffen.add(String(neuKern.get(k).id))); }
   }
+  // H: das PFLICHTPROGRAMM für JEDE Übung (SATZMODUS-PFLICHTPROGRAMM.md) — auch
+  // für eine neue, ohne Liste. Elias, 25.09.2026: „prüfer sollten das dann
+  // nachprüfen" und „ja richtig" auf: jede Übung reihum, jede Antwort gleich
+  // oft, genug Sätze — auch jede neue Übung, ohne dass sie jemand einträgt.
+  ergebnis.pflicht = []; ergebnis.pflichtLuecken = [];
+  const satzTeileF = hole('satzTeile');
+  let teile = null; try { teile = satzTeileF ? satzTeileF() : null; } catch (e){ teile = null; }
+  for (const U of UEB){
+    const liste = [];
+    for (const { s, z } of zerlegt){ if (!z) continue; try { liste.push(...(U.baue(z, s) || [])); } catch (e){ /* B/F melden baue()-Fehler */ } }
+    const imTeil = teile ? [1, 2].filter(t => (teile[t] || []).includes(U.id)) : [];
+    if (teile && imTeil.length !== 1) ergebnis.verstoesse.push(`${U.id}: steht in ${imTeil.length} Teilen statt in genau einem (satzTeile)`);
+    if (!liste.length){ ergebnis.pflichtLuecken.push(`${U.nr} ${U.id}: keine Aufgabe in seiner Auswahl`); continue; }
+    /* reihum nach der Frage (Antippen-Übungen mit einem `reihum`-Schlüssel je
+       Aufgabe, z. B. مُبْتَدَأ/خَبَر): in den ersten k Aufgaben jede der k Fragen.
+       Mehrere Schlüssel je Aufgabe (Präpositionen) prüft Teil F. */
+    const einzel = liste.filter(x => Array.isArray(x.reihum) && x.reihum.length === 1);
+    if (einzel.length === liste.length && mischen){
+      const k = new Set(liste.map(x => String(x.reihum[0]))).size;
+      const erste = mischen(U, liste).slice(0, k).map(x => String(x.reihum[0]));
+      if (k > 1 && new Set(erste).size !== k)
+        ergebnis.verstoesse.push(`${U.id}: nicht reihum — in den ersten ${k} Aufgaben nur ${new Set(erste).size} verschiedene Fragen`);
+    }
+    if (liste.length < MIN_JE) ergebnis.pflichtLuecken.push(`${U.nr} ${U.id}: nur ${liste.length} Aufgaben (Pflicht: mindestens ${MIN_JE})`);
+    ergebnis.pflicht.push(`${U.nr} ${U.id}: ${liste.length} Aufgaben` + (imTeil.length === 1 ? ` · Teil ${imTeil[0]}` : ''));
+  }
+  const nummern = UEB.map(u => u.nr).sort((a, b) => a - b);
+  if (nummern.some((n, i) => n !== i + 1)) ergebnis.verstoesse.push(`Nummern nicht linear 1–${UEB.length}: ${nummern.join(',')}`);
+  if (!fs.existsSync(path.join(WURZEL, 'SATZMODUS-PFLICHTPROGRAMM.md'))) ergebnis.verstoesse.push('SATZMODUS-PFLICHTPROGRAMM.md fehlt');
   ergebnis.neueste = neueste; ergebnis.neuWoerter = neu.length;
   ergebnis.anteil = pool.length ? Math.round(1000 * mitNeu / pool.length) / 10 : 0;
   ergebnis.mitNeu = mitNeu;
@@ -279,6 +311,8 @@ function bericht(e){
     z.push(`Präpositionen seiner Karte ohne schweren Satz in Übung 5: ${e.genitiv.fehlen.length ? e.genitiv.fehlen.join(' ') : '—'}`);
   }
   if (e.jeAntwort && e.jeAntwort.length) z.push(`Je Antwort gleich viele (Übung: Deckel · seltene Antworten brauchen Sätze):\n   ${e.jeAntwort.join('\n   ')}`);
+  if (e.pflicht && e.pflicht.length) z.push(`Pflichtprogramm je Übung (Teil H):\n   ${e.pflicht.join('\n   ')}`
+    + (e.pflichtLuecken.length ? `\n   Lücken: ${e.pflichtLuecken.join(' · ')}` : ''));
   z.push(`Balance: ${e.anteil} % der Sätze (${e.mitNeu} von ${e.pool}) enthalten ein Wort aus den neuesten Kapiteln — Richtwert (MEIN Vorschlag): etwa 20 %`);
   z.push(`Neueste Kapitel: ${e.neuWoerter} Wörter, davon ${e.ohneSatzNeu.length} in keinem Satz` + (e.ohneSatzNeu.length ? ':\n   ' + e.ohneSatzNeu.slice(0, 40).join('\n   ') : ''));
   return z.join('\n');
@@ -352,13 +386,20 @@ if (STOER){
   e = messen(app);
   ok('je Antwort NICHT gleich viele → Verstoß', e.verstoesse.some(v => v.startsWith('kasus: nicht je Antwort gleich viele')));
   vm.runInContext('uebungGleichViele = globalThis.__echtGleich;', app.ctx);
-  console.log(rot ? `\n⛔ ${rot} Störtest(s) schlagen NICHT an` : '\n✅ alle 10 Störtests schlagen an');
+  // 9. Eine NEUE Übung ohne Aufgabe → Teil H (Pflichtprogramm) muss sie melden, ohne Liste.
+  const UEBL = app.hole('UEBUNGEN');
+  UEBL.push({ id: 'stoer-neu', nr: UEBL.length + 1, name: 'Störtest', art: 'wahl', baue: () => [] });
+  e = messen(app);
+  ok('neue Übung ohne Aufgabe → Pflichtprogramm meldet sie', (e.pflichtLuecken || []).some(v => v.includes('stoer-neu')));
+  UEBL.pop();
+  console.log(rot ? `\n⛔ ${rot} Störtest(s) schlagen NICHT an` : '\n✅ alle 11 Störtests schlagen an');
   process.exit(rot ? 1 : 0);
 }
 
 const e = messen(app);
 console.log(bericht(e));
 if (e.verstoesse.length){ console.log('\n⛔ ' + e.verstoesse.length + ' Verstöße:\n  ' + e.verstoesse.slice(0, 20).join('\n  ')); process.exit(1); }
-const luecken = Object.values(e.uebungen).reduce((n, u) => n + u.ohneSatz.length, 0) + (e.anteil === 0 ? 1 : 0);
+const luecken = Object.values(e.uebungen).reduce((n, u) => n + u.ohneSatz.length, 0) + (e.anteil === 0 ? 1 : 0)
+  + (e.pflichtLuecken ? e.pflichtLuecken.length : 0);
 console.log(luecken ? `\n⚠️ ${luecken} Lücke(n) — Arbeit für die Wartung (Mi/So), kein Werkzeugfehler` : '\n✅ alles aktuell');
 process.exit(luecken ? 2 : 0);
