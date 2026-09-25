@@ -1066,6 +1066,9 @@ const UEBUNGEN = [
   {
     id:'isara', nr:11, name:'هَذَا / ذَلِكَ — alle Hinweiswörter', art:'wahl',
     hinweis:'Das Hinweiswort richtet sich nach Geschlecht und Zahl des Wortes danach (isara-genus-kongruenz-01). Ob nah oder fern, zeigt die deutsche Zeile.',
+    /* Diese Wörter der deutschen Zeile bleiben lesbar (renderUebung) — dieselben,
+       an denen deNah/deFern unten nah und fern ablesen. */
+    deKlar: /^(dies(e|er|es|en|em)?|jen(e|er|es|en|em)?|hier|dort)[.,;:!?]*$/i,
     hinweisVerraet:false,
     /* ⭐⭐ SEIT 24.09.2026 ALLE HINWEISWÖRTER SEINER KARTE, nicht nur zwei.
        Elias: „die 11te übung bei satzmodus hat bisher nur hadha und hadhihi
@@ -1170,6 +1173,7 @@ const UEBUNGEN = [
   {
     id:'fragewort', nr:13, name:'مَنْ / مَا / أَيْنَ … — Fragewort einsetzen', art:'wahl',
     hinweis:'Welches Fragewort gehört hierhin? Die deutsche Zeile sagt, wonach gefragt wird.',
+    deKlar: /^(wer|wen|wem|wessen|was|wo|woher|wohin|wie|viele|wann|warum|weshalb|wieso|welche[rsnm]?|ob)[.,;:!?]*$/i,
     hinweisVerraet:false,
     baue(z, satz){
       const frage = /[؟?]\s*$/.test(String((satz && satz.sentAr) || ''))
@@ -1213,6 +1217,7 @@ const UEBUNGEN = [
   {
     id:'pronomen', nr:14, name:'هُوَ / هِيَ / أَنْتَ … — Pronomen einsetzen', art:'wahl',
     hinweis:'Welches Pronomen gehört hierhin? Person, Geschlecht und Zahl zeigen das Wort danach und die deutsche Zeile.',
+    deKlar: /^(ich|du|er|sie|es|wir|ihr)[.,;:!?]*$/i,
     hinweisVerraet:false,
     baue(z){
       const glieder = uebGruppe('f19-pronomen', w => w.type === 'pronoun'
@@ -1937,7 +1942,25 @@ function renderUebung(){
      renderUebung() läuft nach dem Beantworten noch einmal, und ein Feld, das
      nur die eine Hälfte der Fälle füllt, wäre nach dem Wechsel leer. */
   const deFeld = document.getElementById('uebDe');
-  deFeld.textContent = a.satz.sentDe || '';
+  /* ⭐ Wo die deutsche Zeile die Antwort mitträgt (11: nah/fern, 13: das
+     Fragewort, 14: das Fürwort — m.deKlar), bleibt DIESES Wort lesbar, der Rest
+     verschwimmt. Elias an Übung 11 („Wer ist in diesem Haus?"): „in solch einem
+     fall soll natürlich das gesuchte wort also in dem fall ,,diesem" nicht
+     verschwommen sein aber der rest kann schon". */
+  /* ⭐ Und grundsätzlich überall, wo ein Wort verdeckt ist und er es anhand der
+     Übersetzung einsetzen muss (Elias: „das gilt aber auch grundsätzlich für
+     die anderen übungen wenn da zb ein bestimmtes wort gesucht wird und ich
+     muss es anhand der übersetzung einsetzen"): dann bleibt das deutsche Wort
+     lesbar, das die Bedeutung des verdeckten Wortes trägt (uebDeKlarAusWort). */
+  const klar = m.deKlar || (a.verdeckt ? uebDeKlarAusWort(a) : null);
+  if (klar){
+    deFeld.innerHTML = String(a.satz.sentDe || '').split(/(\s+)/).map(t => (!t || /^\s+$/.test(t)) ? escapeHtml(t)
+      : `<span class="${klar.test(t) ? 'de-klar' : 'de-wort'}">${escapeHtml(t)}</span>`).join('');
+    deFeld.classList.add('de-teilweise');
+  } else {
+    deFeld.textContent = a.satz.sentDe || '';
+    deFeld.classList.remove('de-teilweise');
+  }
   deFeld.classList.toggle('hidden', !!(m.deVerbergen && !UEB.beantwortet));
   /* ⭐ Verschwommen, bis er antippt — jede neue Aufgabe wieder (Elias,
      25.09.2026; Wortlaut und Begründung bei SENT_DE_OFFEN in js/saetze.js). */
@@ -2208,7 +2231,7 @@ function uebersetzungFuer(stueck){
   };
   const bedeutung = (k, wort) => {
     const passt = f => !!f && wortKern(f) === k && !widerspricht(wort, f, k.length);
-    const v = quelle.find(x => x && x.de && (passt(x.ar) || passt(x.sg) || passt(x.pl)));
+    const v = quelle.find(x => x && x.de && (passt(x.ar) || passt(x.sg) || passt(x.pl) || passt(x.femSg)));
     if (v) return v.de;
     const g = karten.find(x => x && x.de && passt(x.form));
     return g ? g.de : null;
@@ -2678,6 +2701,20 @@ function zeigeUebersetzung(stueck){
      sieht aus wie ein kaputter Knopf — und Elias haette keinen Anhalt, ob das
      Wort fehlt oder die Funktion. [[ausfall_ist_unsichtbar_gebaut]] */
   if (typeof toast === 'function') toast(t || `${stueck} — dazu habe ich keine Vokabel.`);
+}
+/* Welche deutschen Wörter zum verdeckten Wort gehören: seine Bedeutung aus den
+   Vokabeln und Regelkarten (uebersetzungFuer), verglichen über den Wortanfang
+   — „Student" trifft „Studentin", „dieser" trifft „diesem". */
+function uebDeKlarAusWort(a){
+  const t = a && a.zeilen && a.zeilen[a.wortIdx];
+  const txt = t ? uebersetzungFuer(t.rein || t.wort) : null;
+  if (!txt) return null;
+  const klein = s => String(s).toLowerCase().replace(/[^a-zäöüß]/g, '');
+  const woerter = (txt.split(' — ').slice(1).join(' ').toLowerCase().match(/[a-zäöüß]{2,}/g) || [])
+    .filter(x => !['m', 'f', 'pl', 'sg', 'singular', 'plural', 'frage', 'vorn'].includes(x));
+  if (!woerter.length) return null;
+  const gleich = (p, q) => { let n = 0; while (n < p.length && n < q.length && p[n] === q[n]) n++; return n; };
+  return { test: w => { const k = klein(w); return k.length > 1 && woerter.some(x => k === x || gleich(k, x) >= 4); } };
 }
 /* Die Übersetzung unter dem Satz: Tipp zeigt, zweiter Tipp verwischt wieder. */
 document.getElementById('uebDe').addEventListener('click', ()=>{
