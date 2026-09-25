@@ -642,15 +642,44 @@ const UEBUNGEN = [
     }
   },
   {
-    id:'nat', nr:2, name:'نَعْتٌ — Adjektiv zum Nomen', art:'mehrfach',
-    hinweis:'Das نَعْتٌ stimmt mit seinem Wort in Fall, Zahl, Geschlecht UND Bestimmtheit überein.',
+    id:'nat', nr:2, name:'نَعْتٌ / مَنْعُوتٌ — Adjektiv und sein Nomen', art:'mehrfach',
+    hinweis:'Das نَعْتٌ stimmt mit seinem مَنْعُوتٌ (dem Nomen, das es beschreibt) in Fall, Zahl, Geschlecht UND Bestimmtheit überein. Ist die Bestimmtheit anders, ist das Adjektiv kein نَعْتٌ, sondern die Aussage (خَبَرٌ).',
     hinweisVerraet:true,
     baue(z){
-      const treffer = [];
-      z.forEach((t,i)=>{ if (t.rolle.includes('نَعْت')) treffer.push(i); });
-      const a = uebungSammel(treffer,
-        'Tippe alle نَعْتٌ (Adjektiv zum Nomen) an.');
-      return a ? [a] : [];
+      /* ⭐⭐ SCHWERER UND MIT DEM مَنْعُوت (25.09.2026). Elias mit Bild von
+         „هَذَا كِتَابٌ جَدِيدٌ.": „hier müssen die sätze auch wesentlich länger
+         werden und mit mehreren adjektiven. auch möchte ich im selben modus das
+         du nach dem manut fragst. also den zweiten modus umbenennen irgendwie
+         und beides fragen und wie gesagt schwerer mit mehreren drinne im satz"
+         — und: „du kannst auch so sätze nehmen wo es nur einen unterschied gibt
+         also zb nicht gleiche bestimmheit damit es zur verwirrung sorgt".
+         Also nur Sätze mit mindestens ZWEI Adjektiven, mindestens eines davon
+         نَعْت; das andere darf ein Adjektiv als خَبَر sein (andere
+         Bestimmtheit) — genau seine Verwechslung. Gemessen in seiner Auswahl:
+         43 Sätze, 14 davon mit dieser Verwechslung. Zwei Fragen, reihum.
+         Das مَنْعُوت: rückwärts über weitere نَعْت zum Nomen; beim نَعْت zum
+         مُضَاف das Wort mit „(مُضَاف)". Ist es ein Hinweiswort (هَذَا
+         التَّاجِرُ), fällt der Satz weg — dort ist „مَنْعُوت" keine saubere
+         Antwort. Längere Sätze kommen aus seinen Büchern (To-Do). */
+      const nat = [], mant = [];
+      let adjektive = 0, unsauber = false;
+      z.forEach((t,i)=>{
+        const r = String(t.rolle || '');
+        if (r.includes('نَعْت')){
+          nat.push(i); adjektive++;
+          let j = i - 1;
+          if (r.includes('zum مُضَاف')){ while (j >= 0 && !String(z[j].rolle || '').includes('(مُضَاف)')) j--; }
+          else { while (j >= 0 && String(z[j].rolle || '').includes('نَعْت')) j--; }
+          if (j < 0 || (typeof istIndeklinabel === 'function' && istIndeklinabel(z[j].wort))) unsauber = true;
+          else if (!mant.includes(j)) mant.push(j);
+        } else if (r === 'خَبَر' && typeof wortart === 'function' && wortart(t.wort) === 'adjective') adjektive++;
+      });
+      if (unsauber || !nat.length || adjektive < 2) return [];
+      mant.sort((a,b)=>a-b);
+      return [
+        uebungSammel(nat, 'Tippe alle نَعْتٌ (Adjektiv zum Nomen) an.'),
+        uebungSammel(mant, 'Tippe alle مَنْعُوتٌ (das beschriebene Nomen) an.')
+      ].map((a,k) => a && { ...a, reihum: [k ? 'manut' : 'nat'] }).filter(Boolean);
     }
   },
   {
