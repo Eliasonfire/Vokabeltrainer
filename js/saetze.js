@@ -633,6 +633,26 @@ function buildSentenceHtml(w, opts){
   return html;
 }
 
+/* ⭐⭐ DIE DEUTSCHE ÜBERSETZUNG IST VERSCHWOMMEN (25.09.2026). Elias: „ich
+   möchte auch, dass du beim satzmodus die deutsche übersetzung blurst sodass
+   ich nicht erkennen kann was dort steht. du sollst es sehr verschwommen
+   machen damit selbst wenn ich genau drauf gucke ich es nicht erkennen kann
+   was dort steht. wenn ich drauf drücke soll sich die übersetzung zeigen und
+   wenn ich wieder drauf drücke dann soll sie wieder verschwommen sein. der
+   ganze satz soll verschwommen sein".
+   Gilt hier im Lesemodus und in den Übungen (uebDe, js/uebung.js). Gemerkt
+   wird nur, WELCHER Satz aufgedeckt ist: jeder neue Satz kommt verschwommen —
+   sonst wäre ein Aufdecken der Freifahrtschein für alle folgenden (dieselbe
+   Überlegung wie beim arabischen Verdecken darunter). Stärke: --de-unschaerfe
+   in index.html. */
+let SENT_DE_OFFEN = null;
+function deVerschwommenSetzen(el, offen){
+  if (!el) return;
+  el.classList.add('de-tippbar');
+  el.classList.toggle('de-verschwommen', !offen);
+  el.setAttribute('aria-label', offen ? 'Übersetzung — antippen zum Verwischen' : 'Übersetzung verschwommen — antippen zum Zeigen');
+}
+
 function renderSentence(){
   if (SENT.list.length===0){
     document.getElementById('sentAr').textContent='Keine Sätze in dieser Auswahl.';
@@ -643,6 +663,8 @@ function renderSentence(){
   document.getElementById('sentChapter').textContent = herkunft(w);
   document.getElementById('sentAr').innerHTML = buildSentenceHtml(w);
   document.getElementById('sentDe').textContent = w.sentDe || '';
+  if (SENT_DE_OFFEN !== w) SENT_DE_OFFEN = null;
+  deVerschwommenSetzen(document.getElementById('sentDe'), SENT_DE_OFFEN === w);
   /* Jeder neue Satz kommt wieder verdeckt — sonst waere das Aufdecken des
      vorigen ein Freifahrtschein fuer alle folgenden. */
   verdeckungAnwenden();
@@ -688,9 +710,11 @@ document.getElementById('btnSentNext').addEventListener('click', ()=>{
    ⭐ Bewusst dieselbe Bauart wie im Quran-Leser: verschwommen, und ein Tipp auf
    den Satz deckt genau ihn auf. Wer die Geste dort kennt, kennt sie hier.
 
-   ⚠️ Die deutsche Uebersetzung bleibt STEHEN. Sie ist die Aufgabe: er hoert das
-   Arabische, liest die Bedeutung und prueft, ob er es zusammenbekommt. Beides
-   zu verdecken waere kein Selbsttest, sondern nur Raten. */
+   ⚠️ Hier stand: „Die deutsche Uebersetzung bleibt STEHEN. Sie ist die
+   Aufgabe …" — das war MEINE Begründung. Seit dem 25.09.2026 ist sie auf
+   Elias' Wort verschwommen und wird mit einem eigenen Tipp aufgedeckt (siehe
+   SENT_DE_OFFEN bei renderSentence). Beides verdeckt heißt jetzt: hören,
+   selbst übersetzen, dann die Übersetzung antippen und vergleichen. */
 function verdeckungAnwenden(){
   const satz = document.getElementById('sentAr');
   const knopf = document.getElementById('btnSentVerdeckt');
@@ -732,6 +756,15 @@ document.getElementById('sentAr').addEventListener('click', (e)=>{
      und zwei Bedeutungen an einem Tipp schlagen sich. */
   if (e.target.closest('.gram-underline')) return;
   document.getElementById('sentAr').classList.toggle('verdeckt');
+});
+
+/* Antippen der Übersetzung: zeigen, noch einmal: wieder verwischen (siehe
+   SENT_DE_OFFEN oben). */
+document.getElementById('sentDe').addEventListener('click', ()=>{
+  const w = SENT.list[SENT.idx];
+  if (!w) return;
+  SENT_DE_OFFEN = (SENT_DE_OFFEN === w) ? null : w;
+  deVerschwommenSetzen(document.getElementById('sentDe'), SENT_DE_OFFEN === w);
 });
 
 document.getElementById('btnSentSpeak').addEventListener('click', ()=>{

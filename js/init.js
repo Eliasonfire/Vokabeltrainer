@@ -97,20 +97,36 @@ const VOR_DEM_NEULADEN = (() => {
     return null;
   }
 })();
+/* ⭐ UND OHNE DIE STARTSEITE ZU ZEIGEN (25.09.2026). Elias nach v597: „wenn
+   ich runterziehe um seite zu aktualiseren dann komme ich ganz kurz wieder an
+   die start seite und dann direkt wieder in den satzmodus wo ich auch davor
+   war. ich möchte aber gar nciht die startseite sehen. geht das?"
+   Die Startseite wird trotzdem aufgebaut (Wurzel der Historie, Kopfzeile) —
+   nur UNSICHTBAR (Klasse `neuladen-wartet` am <html>, Regel in index.html),
+   bis der alte Bildschirm steht. Bis dahin sieht er den leeren Hintergrund.
+   ⛔ Die Klasse fällt auf JEDEM Weg wieder weg — auch wenn etwas wirft oder
+   hängt (Zeitgrenze): eine App, die unsichtbar bleibt, wäre schlimmer als ein
+   kurzer Blick auf die Startseite. */
+const NEULADEN_KLASSE = 'neuladen-wartet';
+if (VOR_DEM_NEULADEN) document.documentElement.classList.add(NEULADEN_KLASSE);
+const neuladenAufdecken = () => document.documentElement.classList.remove(NEULADEN_KLASSE);
 /* Startzustand als Wurzel der Historie festschreiben. */
 history.replaceState({ screen:'home', tiefe:0 }, '');
 showScreen('home', { ersetzen: true });
 if (VOR_DEM_NEULADEN){
+  const warteMs = typeof START_WARTEN_MS === 'number' ? START_WARTEN_MS : 3000;
+  setTimeout(neuladenAufdecken, warteMs + 2000);
   (async () => {
     try {
       if (typeof STARTBESTAND_BEREIT !== 'undefined')
-        await Promise.race([STARTBESTAND_BEREIT,
-          new Promise(f => setTimeout(f, typeof START_WARTEN_MS === 'number' ? START_WARTEN_MS : 3000))]);
+        await Promise.race([STARTBESTAND_BEREIT, new Promise(f => setTimeout(f, warteMs))]);
     } catch (e){ /* dann eben jetzt */ }
-    const aktiv = document.querySelector('.screen.active');
-    if (aktiv && aktiv.id !== 'screen-home') return;
-    if (VOR_DEM_NEULADEN === 'learn'){ if (typeof lernenBeginnen === 'function') lernenBeginnen(); return; }
-    showScreen(VOR_DEM_NEULADEN);
+    try {
+      const aktiv = document.querySelector('.screen.active');
+      if (aktiv && aktiv.id !== 'screen-home') return;
+      if (VOR_DEM_NEULADEN === 'learn'){ if (typeof lernenBeginnen === 'function') await lernenBeginnen(); return; }
+      showScreen(VOR_DEM_NEULADEN);
+    } finally { neuladenAufdecken(); }
   })();
 }
 
