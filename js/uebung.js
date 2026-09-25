@@ -511,13 +511,20 @@ function uebZeichenJeBuchstabe(s){
    entscheiden nichts; am letzten Buchstaben zählt ein Sukūn nicht, denn vor
    einem Artikel wird er zum Hilfsvokal (هُمْ → هُمُ الْ…).
    Rückgabe: Zahl der bestätigten Stellen, oder -1 bei Widerspruch. */
-function uebVertraeglich(wort, form){
+/* ⭐ kasusFrei (25.09.2026): trägt die Form auf seiner Karte am Ende Tanwīn,
+   ist sie ein deklinierbares Nomen in der Nennform (أَيٌّ „welcher?"), und ihr
+   letzter Vokal ist die Kasusendung — die richtet sich nach dem Satz: أَيُّ
+   كِتَابٍ, فِي أَيِّ دَوْرٍ. Ohne diese Ausnahme traf die Karte nie ein Wort im
+   Satz, und „welcher?" blieb in Übung 13 für immer „ohne Satz". Nur uebTreffer
+   (Übungen 11, 13, 14) fragt so; die Endungen-Übung vergleicht streng weiter. */
+function uebVertraeglich(wort, form, kasusFrei){
   const a = uebZeichenJeBuchstabe(wort), b = uebZeichenJeBuchstabe(form);
   if (a.length !== b.length) return -1;
   let bestaetigt = 0;
   for (let i = 0; i < a.length; i++){
     let va = a[i].z.replace(/[ّٰ]/g, ''), vb = b[i].z.replace(/[ّٰ]/g, '');
     if (i === a.length - 1 && (va === 'ْ' || vb === 'ْ')) continue;
+    if (kasusFrei && i === a.length - 1 && /[ًٌٍ]/.test(vb)) continue;
     if (!va || !vb) continue;
     if (va !== vb) return -1;
     bestaetigt++;
@@ -547,7 +554,7 @@ function uebTreffer(wort, glieder){
   for (const v of versuche){
     const kand = glieder.filter(g => g.skelett === v.sk);
     if (!kand.length) continue;
-    const passt = kand.filter(g => uebVertraeglich(v.rest, g.form) >= 1);
+    const passt = kand.filter(g => uebVertraeglich(v.rest, g.form, true) >= 1);
     return passt.length === 1 ? { glied: passt[0], vorsatz: v.vorsatz } : null;
   }
   return null;

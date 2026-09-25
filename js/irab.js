@@ -513,7 +513,11 @@ const VERBEN = ['خرج', 'ذهب', 'قال', 'أحب',
      Eintrag in NICHT_VERB: sie tragen Tanwin, und traegtTanwin() faengt sie
      schon ab. Eine allgemeine Regel, die den Listeneintrag ueberfluessig
      macht. [[allgemeine_regel_statt_listeneintrag]] */
-  'دأب', 'استذكر', 'فضل'];
+  'دأب', 'استذكر', 'فضل',
+  /* ⛔ قرأ am 25.09.2026 dazu: «أَيُّ كِتَابٍ قَرَأْتَ؟» (Musterlösung Folge 19,
+     S. 13, mf19-13-1). Der LEXIKON-VERGLEICH in pruefe-saetze.js: nur mit
+     bayna-yadayk-1 galt قَرَأْتَ als فِعْل, ohne Buch als مُبْتَدَأ. */
+  'قرأ'];
 /* Und die Gegenrichtung: der Vokabelabzug haelt diese vier fuer Verben, weil
    ihr Konsonantengeruest mit einem Verb zusammenfaellt. Im Satz sind sie
    keines — صِفْرٌ ist die Null, عَمِّي mein Onkel, جَرٍّ der Genitiv, لِ eine
