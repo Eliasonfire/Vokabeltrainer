@@ -337,7 +337,9 @@ const FEIER_ANLAESSE = {
     effekt: d => {
       feierKonfetti(90);
       feierBanner('Satzmodus: Tagesziel geschafft',
-        `${d.zahl} Aufgaben, ${d.richtig} richtig — jede Übungsart einmal.`, 'mittel');
+        /* v613: seit v606 ist ein Satz-Tag EIN Teil — „jede Übungsart einmal"
+           stimmte nur für beide Teile zusammen. */
+        `${d.zahl} Aufgaben, ${d.richtig} richtig — Teil ${typeof satzTeilHeute === 'function' ? satzTeilHeute(false) : 1} geschafft.`, 'mittel');
     }
   },
 

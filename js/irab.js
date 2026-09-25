@@ -106,7 +106,14 @@ const JARR_LAM_VOLL = [
 const ohneFragehamza = s => s.replace(/^\u0623[\u064B-\u0652]?/, '');
 const istJarrLamVoll = w => JARR_LAM_VOLL.includes(
   ohneFragehamza(String(w).normalize('NFC').replace(/[.،؟!«»:؛]/g, ''))
-    .replace(/^[وف]/, '').trim());
+    /* ⛔⛔ DIE FATHA DES وَ GEHT MIT (25.09.2026). Hier stand `/^[وف]/` — das
+       schnitt nur den Buchstaben ab, die Fatha blieb vorn stehen, und aus وَلِي
+       wurde „َلِي", das in der Liste nie vorkommt. Folge im Bestandssatz
+       mb1-61-2 (Madina 1, S. 61) «… أُسَامَةُ، وَلِي أُخْتٌ …»: وَلِي galt als
+       Nomen, und zwar als مُضَاف إِلَيْه von أُسَامَةُ mit erwartetem Genitiv.
+       Verglichen wird die VOLLE Schreibung, وَلِيٌّ (mit Schadda) bleibt also
+       ein Nomen. Die Fatha steht als \u-Folge. */
+    .replace(/^[وف]\u064E?/, '').trim());
 const istJarrMitPronomen = w => istInListe(w, JARR_MIT_PRONOMEN) || istJarrLamVoll(w);
 /* Ortsangaben. Der Lehrer nennt sie ظَرْف und sagt ausdruecklich, sie
    funktionierten "wie ein مُضَاف" - das folgende Wort steht im Genitiv. */
@@ -401,6 +408,21 @@ const istIndeklinabel = w => INDEKLINABEL.includes(ohneFragepartikel(w))
 const hatAngeschriebenesJarr = w => /^(لل|بال|كال)/.test(kernWort(w)) && !artikelWiderlegt(w);
 /* أَيّ „welcher" ohne Vokale — siehe den Zweig istIndeklinabel in analysiereSatz. */
 const istAyy = w => ['أي', 'اي'].includes(ohneVokale(String(w || '')).replace(/[.،؟!«»:؛]/g, ''));
+/* ⛔ أَ + PERSONALPRONOMEN (25.09.2026). «أَهِيَ زَمِيلَتُكِ؟» (Madina 1, S. 63):
+   أَهِيَ ist أَ + هِيَ, das مُبْتَدَأ — die Liste kannte es nicht, und das
+   Nomen danach wurde zum مُبْتَدَأ. ohneFragepartikel() allein reicht nicht:
+   es wirft die Vokale weg, und dann wäre أَهَمُّ („wichtiger") ein أَ + هُمْ.
+   Deshalb nur mit der Fatha auf dem Hamza und ohne Schadda oder Tanwīn im
+   Rest. Zeichen als \u-Folgen. */
+const istFragePronomen = w => {
+  const rein = String(w || '').normalize('NFC').replace(/[.،؟!«»:؛]/g, '');
+  if (!/^\u0623\u064E./.test(rein)) return false;
+  const rest = rein.slice(2);
+  return !/[\u064B-\u064D\u0651]/.test(rest) && PRONOMEN.includes(ohneVokale(rest));
+};
+/* Relativwörter: was direkt danach kommt, gehört zum Relativsatz (siehe
+   nachRelativ in analysiereSatz). */
+const RELATIV = ['الذي', 'التي', 'الذين'];
 
 /* مِنْ (von) und مَنْ (wer) sehen ohne Vokalzeichen gleich aus - der Lehrer
    macht daraus eine eigene Regel (min-man-unterscheiden-01). Hier steht das
@@ -734,7 +756,15 @@ function erschlosseneWortart(wort){
   if (/(ُونَ|ِينَ)$/.test(rein)) return 'Nomen';        /* ـُونَ ـِينَ */
   return 'Wort';
 }
-const ADJEKTIVE = ['حار', 'كسلان', 'مجرور', 'واسع', 'واسعة', 'الواسع', 'الواسعة'];
+const ADJEKTIVE = ['حار', 'كسلان', 'مجرور', 'واسع', 'واسعة', 'الواسع', 'الواسعة',
+  /* ⛔ وَاحِدٌ „ein einziger" HINTER DEM NOMEN (25.09.2026). Im Bestandssatz
+     mb1-61-2 «لِي أَخٌ وَاحِدٌ …» galt وَاحِدٌ als zweites خَبَر: sein Wortschatz
+     führt es als Nomen „eins". Hinter dem Gezählten ist die Eins aber ein نَعْت —
+     sie stimmt in allen vier Dingen mit ihm überein (nat-vier-bedingungen-01:
+     Kasus, Bestimmtheit, Geschlecht, Zahl), gedruckt als أَخٌ وَاحِدٌ /
+     أُخْتٌ وَاحِدَةٌ. Am Satzanfang (وَاحِدٌ مِنْهُمْ) greift das nicht: der
+     نَعْت-Zweig verlangt ein Wort davor. */
+  'واحد', 'واحدة', 'الواحد', 'الواحدة'];
 /* ⛔⛔ DIE VOLL VOKALISIERTE FORM SCHLAEGT ALLES (20.08.2026). شُكْرًا steht als
    `expression` im Wortschatz — trotzdem galt es als Verb, sobald madina-2
    geladen war: ueber das Skelett شكر traf es شَكَرَ (danken). Dieselbe Klasse
@@ -1168,10 +1198,44 @@ function analysiereSatz(satz){
   let imVerbalsatz = false;
   let letzterKasus = null;        // Kasus des zuletzt bewerteten Nomens
   let letzteBestimmtheit = null;  // und ob es bestimmt war - fuers نَعْت
+  /* ⭐⭐ WANN EIN SATZTEIL FERTIG IST (25.09.2026, Bestandssatz mb1-61-2).
+     «لِي أَخٌ وَاحِدٌ اسْمُهُ أُسَامَةُ، وَلِي أُخْتٌ وَاحِدَةٌ اسْمُهَا سُعَادُ.»
+     (Madina 1, S. 61) galt ab dem zweiten Wort als EIN Satz: وَاحِدٌ, اسْمُهُ,
+     أُسَامَةُ, أُخْتٌ … alle خَبَر. Ein Nominalsatz hat aber ein مُبْتَدَأ und
+     sein خَبَر; ist beides da, fängt mit dem nächsten Nomen im Nominativ ein
+     neuer Satzteil an (اسْمُهُ أُسَامَةُ — wie der Satz für sich allein).
+     · khabarDa: der laufende Satzteil hat sein خَبَر — ein Nomen als خَبَر,
+       ein جَارّ وَمَجْرُور / ظَرْف hinter dem مُبْتَدَأ, oder einer DAVOR (لِي أَخٌ:
+       لِي ist das vorangestellte خَبَر).
+     · shibhVorher: ein solcher stand VOR dem مُبْتَدَأ.
+     · nachRelativ: nach الَّذِي/الَّتِي gehört der nächste جَارّ وَمَجْرُور zum
+       Relativsatz (الْفَتَاةُ الَّتِي مَعَكِ), nicht zum Hauptsatz.
+     ⚠️ Nur Zustand — gelesen wird er in den zwei Zweigen „neuer Satzteil"
+     weiter unten. Eichung und Störtest: pruefe-saetze.js (EICH_TEIL). */
+  let khabarDa = false, shibhVorher = false, nachRelativ = false;
+  const shibhFertig = () => {
+    if (nachRelativ){ nachRelativ = false; return; }
+    if (ersteRolleVergeben) khabarDa = true; else shibhVorher = true;
+  };
+  /* ⛔ SATZENDE AUCH IN DEN ZWEIGEN MIT FRÜHEM return (25.09.2026). Das
+     Zurücksetzen steht am Ende der Schleife — ein Satz, der auf ظَرْف oder
+     Verb endet (… الَّتِي مَعَكِ؟ / … ذَهَبَ؟), kam dort nie an: im Bestandssatz
+     mb1-63-4 galt أَهِيَ im zweiten Satz deshalb nicht als مُبْتَدَأ, und nach
+     einem Verb am Satzende blieb der nächste Satz ein Verbalsatz. */
+  const neuerSatz = () => {
+    ersteRolleVergeben = false; letzterKasus = null; letzteBestimmtheit = null;
+    vorherJarr = false; vorherMudaf = false; nachVerb = false; nachNida = false;
+    taeterOffen = false; imVerbalsatz = false;
+    khabarDa = false; shibhVorher = false; nachRelativ = false;
+  };
 
   woerter.forEach((wort, i)=>{
     const rein = wort.replace(/[.،؟!«»:؛]/g, '');
     const satzende = /[.؟!]$/.test(wort);
+    /* Ein نَعْت steht unmittelbar hinter seinem Wort; ein Komma oder
+       Doppelpunkt dazwischen trennt (25.09.2026) — «صِفْرٌ، وَاحِدٌ، اِثْنَانِ.»
+       zählt auf, وَاحِدٌ beschreibt dort nicht صِفْرٌ. */
+    const nachKomma = i > 0 && /[،؛:]$/.test(woerter[i-1]);
     const gelesen = endung(wort);
     /* Dual und gesunder Plural haben eigene Endungen (ـانِ, ـَيْنِ, ـُونَ,
        ـِينَ) und kommen in Madina 1 noch nicht vor. Darueber wird hier
@@ -1188,7 +1252,7 @@ function analysiereSatz(satz){
       vorherJarr = false; vorherMudaf = false;
       letzterKasus = null; letzteBestimmtheit = null;
       out.push({ wort, rein, rolle, erwartet:null, gelesen:null, stimmt:null });
-      if (satzende){ ersteRolleVergeben = false; }
+      if (satzende){ ersteRolleVergeben = false; khabarDa = false; shibhVorher = false; nachRelativ = false; }
       return;
     } else if (istJarrMitPronomen(wort)){
       /* Vollstaendige Einheit: das Pronomen ist der Genitiv, es folgt nichts.
@@ -1196,8 +1260,9 @@ function analysiereSatz(satz){
          an dieser Praeposition. */
       rolle = 'جَارّ وَمَجْرُور (مَبْنِيّ)';
       vorherJarr = false; vorherMudaf = false;
+      shibhFertig();
       out.push({ wort, rein, rolle, erwartet:null, gelesen, stimmt:null });
-      if (satzende){ ersteRolleVergeben = false; letzterKasus = null; }
+      if (satzende){ ersteRolleVergeben = false; letzterKasus = null; khabarDa = false; shibhVorher = false; nachRelativ = false; }
       return;
     } else if (istHarfJarr(wort)){
       /* ⛔ EIN ZITIERTES WORT (20.08.2026). Steht schon eine jarr-Erwartung
@@ -1231,7 +1296,9 @@ function analysiereSatz(satz){
       rolle = 'فِعْل';
       vorherJarr = false; vorherMudaf = false; ersteRolleVergeben = false;
       nachVerb = true; imVerbalsatz = true; taeterOffen = false;
+      khabarDa = false; shibhVorher = false; nachRelativ = false;
       out.push({ wort, rein, rolle, erwartet:null, gelesen, stimmt:null });
+      if (satzende) neuerSatz();
       return;
     } else if (istHarfNida(wort)){
       rolle = 'حَرْف نِدَاء';
@@ -1266,13 +1333,15 @@ function analysiereSatz(satz){
          Nur dort: am Satzanfang (أَيُّ كِتَابٍ هَذَا؟) bleibt es beim Alten. */
       /* Steht ein Pronomen am Anfang, ist es das Subjekt - dann wird das
          folgende Nomen zur Aussage darueber und nicht selbst zum Subjekt. */
-      const istPronomen = istInListe(wort, PRONOMEN);
+      const istPronomen = istInListe(wort, PRONOMEN) || istFragePronomen(wort);
       if (istPronomen && !ersteRolleVergeben){
         rolle = 'مُبْتَدَأ (unveränderlich)';
         ersteRolleVergeben = true;
+        khabarDa = shibhVorher; shibhVorher = false;
       } else {
         rolle = 'unveränderlich';
       }
+      if (istInListe(wort, RELATIV)) nachRelativ = true;
       /* ⛔ أَيُّ IST IMMER مُضَاف (20.08.2026). In أَيُّ كِتَابٍ هَذَا؟ galt كِتَابٍ
          als مُبْتَدَأ und damit sein Kasra als Fehler. Das Fragewort أَيّ steht
          aber nie allein: es bildet mit dem folgenden Nomen eine Iḍāfa, und
@@ -1302,7 +1371,9 @@ function analysiereSatz(satz){
          قَلَمٌ mit Tanwin-Damma, also im Nominativ. Am 19.08.2026 in der
          laufenden App gemessen. */
       vorherJarr = !zarfMitPronomen(wort); vorherMudaf = false;
+      if (!vorherJarr) shibhFertig();   // عِنْدَهُ: schon vollständig
       out.push({ wort, rein, rolle, erwartet:null, gelesen, stimmt:null });
+      if (satzende) neuerSatz();
       return;
     } else if (vorherJarr && (istHarfJarr(wort) || istZarf(wort))){
       /* ⛔ EIN حَرْف JARR KANN NICHT SELBST IM GENITIV STEHEN (20.08.2026).
@@ -1323,6 +1394,7 @@ function analysiereSatz(satz){
       rolle = 'nach حَرْف جَرّ / ظَرْف';
       erwartet = 'jarr';
       vorherJarr = false;
+      shibhFertig();
     } else if (vorherMudaf && istIndeklinabel(wort)){
       /* اسْمُ هَذَا الْوَلَدِ - zwischen مُضَاف und مُضَاف إِلَيْه kann ein
          Demonstrativpronomen stehen. Es traegt selbst keine Endung, die
@@ -1337,6 +1409,7 @@ function analysiereSatz(satz){
     } else if (hatAngeschriebenesJarr(wort)){
       rolle = 'nach angeschriebenem حَرْف جَرّ';
       erwartet = 'jarr';
+      shibhFertig();
     } else if (/^لِ/.test(wort) && !LEXIKON_hat(wort)){
       /* Ein Lam mit Kasra am Wortanfang ist meistens die Praeposition
          (لِخَالِدٍ), manchmal aber der erste Wurzelbuchstabe (لِسَانٌ).
@@ -1361,7 +1434,7 @@ function analysiereSatz(satz){
          nicht sein: dazu fehlt ein مُبْتَدَأ. */
       rolle = 'نَعْت (zum مَفْعُول مُطْلَق)';
       erwartet = letzterKasus;
-    } else if ((istInListe(wort, ADJEKTIVE) || wortart(wort) === 'adjective') && letzterKasus
+    } else if ((istInListe(wort, ADJEKTIVE) || wortart(wort) === 'adjective') && letzterKasus && !nachKomma
                && istBestimmt(wort) === letzteBestimmtheit){
       /* نَعْت: ein Adjektiv direkt hinter seinem مَنْعُوت stimmt in Kasus,
          Zahl, Geschlecht UND Bestimmtheit mit ihm ueberein - so unterscheidet
@@ -1371,7 +1444,7 @@ function analysiereSatz(satz){
       erwartet = letzterKasus;
       const zumMudaf = mudafFuerNat(out, wort, gelesen);
       if (zumMudaf){ rolle = 'نَعْت (zum مُضَاف davor)'; erwartet = zumMudaf.erwartet; }
-    } else if (letzterKasus && letzteBestimmtheit && istBestimmt(wort)
+    } else if (letzterKasus && letzteBestimmtheit && istBestimmt(wort) && !nachKomma
                && !(imVerbalsatz && gelesen && gelesen.kasus
                     && gelesen.kasus !== letzterKasus)){
       /* ⛔ 21.08.2026: die zweite Bedingung ist neu. Ohne sie galt الْمَالَ in
@@ -1479,6 +1552,37 @@ function analysiereSatz(satz){
       rolle = 'مُبْتَدَأ';
       erwartet = 'raf';
       ersteRolleVergeben = true;
+      khabarDa = shibhVorher; shibhVorher = false;
+    } else if (!imVerbalsatz && i > 0 && gelesen && gelesen.kasus === 'raf' && gelesen.tanwin && !dualOderPlural
+               && (istJarrMitPronomen(woerter[i-1]) || zarfMitPronomen(woerter[i-1]))
+               && !(i > 1 && istInListe(woerter[i-2], RELATIV))){
+      /* ⭐ NEUER SATZTEIL (1): لَهُ أَخٌ MITTEN IM SATZ (25.09.2026). Am Satzanfang
+         ist in «لِي أَخٌ» das Nomen das مُبْتَدَأ — dasselbe gilt mitten im Satz:
+         in «… وَلِي أُخْتٌ …» (mb1-61-2), «زَمِيلِي لَهُ أَخٌ» und «حَمْزَةُ،
+         عِنْدَهُ سَيَّارَةٌ» (Madina 1, S. 58 und 56) steht nach dem جَارّ وَمَجْرُور
+         ein unbestimmtes Nomen im Nominativ: das مُبْتَدَأ eines eigenen
+         Satzteils, das جَارّ وَمَجْرُور davor ist sein خَبَر. Vorher galt es als
+         zweites خَبَر des ersten مُبْتَدَأ.
+         ⚠️ Eng: nur mit sichtbarem Tanwīn Ḍamma, nur direkt nach dem جَارّ
+         وَمَجْرُور oder ظَرْف mit Pronomen, nicht im Verbalsatz und nicht im
+         Relativsatz (الَّتِي مَعَكِ طَالِبَةٌ bleibt خَبَر). */
+      rolle = 'مُبْتَدَأ';
+      erwartet = 'raf';
+      khabarDa = true; shibhVorher = false;
+    } else if (!imVerbalsatz && khabarDa && i > 0 && !istIndeklinabel(woerter[i-1])
+               && (istBestimmt(wort) || hatSuffix(wort)) && !dualOderPlural
+               && !(gelesen && gelesen.kasus && gelesen.kasus !== 'raf')){
+      /* ⭐ NEUER SATZTEIL (2): اسْمُهُ أُسَامَةُ HINTER EINEM FERTIGEN SATZ
+         (25.09.2026). Hat der Satzteil sein مُبْتَدَأ UND sein خَبَر, ist ein
+         bestimmtes Nomen im Nominativ (Artikel oder Besitzendung), das kein
+         نَعْت sein kann, das مُبْتَدَأ des nächsten: in mb1-61-2 «لِي أَخٌ وَاحِدٌ
+         اسْمُهُ أُسَامَةُ» — „ich habe einen Bruder, sein Name ist Usāma".
+         ⚠️ Nicht direkt nach einem unveränderlichen Wort (وَذَلِكَ الْبَيْتُ …
+         bleibt beim Alten), nicht im Verbalsatz, und nie gegen eine sichtbare
+         Endung: Kasra oder Fatha schließen das مُبْتَدَأ aus. */
+      rolle = 'مُبْتَدَأ';
+      erwartet = 'raf';
+      khabarDa = false; shibhVorher = false;
     } else if (imVerbalsatz){
       /* Im Verbalsatz gibt es kein خَبَر. Steht nach فِعْل und فَاعِل noch ein
          Nomen, ist es das Objekt — مَفْعُول بِهِ, und das ist مَنْصُوب.
@@ -1496,6 +1600,7 @@ function analysiereSatz(satz){
     } else {
       rolle = 'خَبَر';
       erwartet = 'raf';
+      khabarDa = true;
     }
 
     /* مُضَاف erkennen: ein bestimmtes oder endungsloses Nomen ohne Tanwin,
@@ -1504,6 +1609,10 @@ function analysiereSatz(satz){
     const naechstes = woerter[i+1];
     if (!String(rolle).includes('unveränderlich') && !hatSuffix(wort)
         && !satzende && naechstes && !istHarfJarr(naechstes)
+        /* ⛔ Ein Komma trennt: مُضَاف und مُضَاف إِلَيْه stehen unmittelbar
+           hintereinander (25.09.2026). In «… أُسَامَةُ، وَلِي …» (mb1-61-2) und
+           «حَمْزَةُ، عِنْدَهُ سَيَّارَةٌ» galt der Name ohne Tanwīn als مُضَاف. */
+        && !/[،؛:]$/.test(wort)
         /* اسْمُ هَذَا الْوَلَدِ: zwischen مُضَاف und مُضَاف إِلَيْه darf ein
            Demonstrativpronomen stehen - dann folgt das Nomen erst danach. */
         && (!istIndeklinabel(naechstes)
@@ -1536,6 +1645,7 @@ function analysiereSatz(satz){
       letzterKasus = null; letzteBestimmtheit = null;
       vorherJarr = false; vorherMudaf = false; nachVerb = false; nachNida = false;
       taeterOffen = false;
+      khabarDa = false; shibhVorher = false; nachRelativ = false;
       /* ⛔ Muss mit zurueckgesetzt werden, sonst gilt der naechste Satz
          weiterhin als Verbalsatz und sein Praedikat wird zum مَفْعُول بِهِ. */
       imVerbalsatz = false;
