@@ -47,7 +47,16 @@
  *      und nicht tan"). Verstoß = Exit 1.
  *
  * ⚠️ Was er „einzeln frei" geschaltet hat, steht nur in seinem Browser — hier
- * zählt nur die Kapitelauswahl. [[einzeln_frei_ist_nur_im_browser]]
+ * zählt die Kapitelauswahl UND die Wörter, die die App SELBST für ihn
+ * freischaltet (FREISCHALTEN_AUF_WUNSCH in js/kern.js, seit 16.09.2026 auf
+ * seinen Wunsch: هَؤُلَاءِ أُولَئِكَ مَتَى أَيٌّ). Ohne sie meldete dieser
+ * Prüfer bis 25.09.2026 „Übung 11: jene, Plural ohne Satz" — und ich fragte
+ * Elias, ob ich „jene" freischalten soll. Es war seit dem 17.09. frei, und
+ * Übung 11 fragte es längst (gemessen mit seinem abgeglichenen Stand: 187
+ * Aufgaben, keine Form ohne Satz). Die übrigen einzeln freigeschalteten
+ * Wörter sieht dieser Prüfer weiterhin nicht: eine Lücke hier kann in seiner
+ * App schon geschlossen sein — vor jeder Frage an ihn seinen Stand lesen.
+ * [[einzeln_frei_ist_nur_im_browser]] [[leere_liste_ist_keine_messung]]
  *
  * Aufruf:  node werkzeuge/pruefe-satzmodus-aktuell.mjs            Bericht
  *          node werkzeuge/pruefe-satzmodus-aktuell.mjs --stoertest acht Störungen
@@ -71,6 +80,15 @@ function stummesElement(){
 /* Die App laden, wie der Browser es tut — plus die Buchkarten seiner Auswahl
    mit ihren Sätzen aus data/beispielsaetze.js (so kommen sie auch in der App
    in den Satzmodus). */
+/* Die Wörter, die js/kern.js beim Start für ihn freischaltet (solange er sie
+   nie selbst angefasst hat). null = die Liste ist nicht mehr lesbar — dann
+   Ladefehler statt still ohne sie weiterzumessen. */
+function aufWunschAus(kernText){
+  const m = String(kernText).match(/const FREISCHALTEN_AUF_WUNSCH\s*=\s*\[([^\]]*)\]/);
+  if (!m) return null;
+  return new Set((m[1].match(/'[^']+'|"[^"]+"/g) || []).map(s => s.slice(1, -1)));
+}
+
 function ladeApp(){
   const DOM = { getElementById: stummesElement, querySelector: stummesElement, querySelectorAll: () => [],
     createElement: stummesElement, addEventListener(){}, body: stummesElement(), documentElement: stummesElement() };
@@ -101,9 +119,11 @@ function ladeApp(){
   const hole = n => { try { return vm.runInContext(`typeof ${n} !== 'undefined' ? ${n} : undefined`, ctx); } catch (e){ return undefined; } };
   const VD = hole('VOCAB_DATA'), BS = hole('BEISPIELSAETZE') || {};
   const bekannt = new Set(VD.map(w => String(w.id)));
+  const aufWunsch = aufWunschAus(fs.readFileSync(path.join(WURZEL, 'js', 'kern.js'), 'utf8'));
+  if (!aufWunsch) fehlt.push('js/kern.js: FREISCHALTEN_AUF_WUNSCH nicht lesbar — ohne die Liste meldet Übung 11 „jene" als Lücke, obwohl seine App es fragt');
   for (const [buch, liste] of Object.entries(ctx.window.VOKABELN || {})){
     const kap = auswahl[buch] || [];
-    for (const w of liste) if (kap.includes(Number(w.chapter)) && !bekannt.has(String(w.id))){
+    for (const w of liste) if ((kap.includes(Number(w.chapter)) || (aufWunsch && aufWunsch.has(String(w.id)))) && !bekannt.has(String(w.id))){
       const s = BS[w.id] || {};
       VD.push({ ...w, sentAr: w.sentAr || s.sentAr, sentDe: w.sentDe || s.sentDe });
       bekannt.add(String(w.id));
@@ -118,7 +138,7 @@ function ladeApp(){
   { const FV = hole('FACHBEGRIFF_VOKABELN') || [], FA = hole('FACHBEGRIFF_AUFTRAG') || {};
     for (const w of FV) if (Object.prototype.hasOwnProperty.call(FA, String(w.id)) && !bekannt.has(String(w.id))){ VD.push(w); bekannt.add(String(w.id)); } }
   ctx.istBekannt = w => !!w && (w.chapter === 'personal' || bekannt.has(String(w.id)));
-  return { ctx, hole, auswahl, fehlt };
+  return { ctx, hole, auswahl, fehlt, bekannt, aufWunsch: aufWunsch || new Set() };
 }
 
 const nackt = s => String(s || '').replace(/[\u064B-\u0652\u0670\u0640]/g, '').replace(/[أإآٱ]/g, 'ا')
@@ -252,7 +272,7 @@ function messen(app){
     if (koerbe.size > 1 && new Set(erste).size !== koerbe.size)
       ergebnis.verstoesse.push(`${id}: Präpositionen nicht reihum — in den ersten ${koerbe.size} Aufgaben nur ${new Set(erste).size} verschiedene`);
     gleichViele(U, liste, korb);
-    ergebnis.genitiv[id] = { aufgaben: liste.length, koerbe: [...koerbe] };
+    ergebnis.genitiv[id] = { aufgaben: liste.length, koerbe: [...koerbe], schluessel: [...zaehl.keys()] };
   }
   /* Übung 2 (Elias, 25.09.2026: „hier müssen die sätze auch wesentlich länger
      werden und mit mehreren adjektiven. auch möchte ich im selben modus das du
@@ -275,7 +295,12 @@ function messen(app){
   }
   const karteJarr = (hole('FOLGE19_KARTEN') || []).find(k => k.id === 'f19-jarr');
   const acht = karteJarr ? karteJarr.gruppen[0].merkmale.map(m => String(m).split('–')[0].trim()) : [];
-  const inFuenf = new Set(ergebnis.genitiv['alle-majrur'] ? ergebnis.genitiv['alle-majrur'].koerbe : []);
+  /* ⛔ Vorkommen, nicht Korb (25.09.2026): ein Korb ist das SELTENSTE Stichwort
+     einer Aufgabe. Kam mit satz-lang-19 (إِلَى + بِ) ein Satz dazu, wurde by1-102-1
+     zum Korb عِنْدَ — und إِلَى stand hier als „ohne schweren Satz", obwohl es in
+     zwei Aufgaben vorkommt. Gefragt ist, ob er die Präposition in einem schweren
+     Satz SIEHT. Störtest 18. */
+  const inFuenf = new Set(ergebnis.genitiv['alle-majrur'] ? ergebnis.genitiv['alle-majrur'].schluessel : []);
   const kernVon = hole('uebPraepKern');
   ergebnis.genitiv.fehlen = acht.filter(p => {
     const k = p.length <= 2 ? kernVon(p).charAt(0) + 'ـ' : kernVon(p);
@@ -473,6 +498,31 @@ if (STOER){
   e = messen(app);
   ok('neue Endungs-Karte ohne Satz → Teil A meldet sie', (e.uebungen.endungen && e.uebungen.endungen.ohneSatz || []).some(x => /Störtest/.test(x.de)));
   VDL.pop();
+  // 11. Die Wörter, die die App selbst für ihn freischaltet, zählen mit (25.09.2026):
+  //     ohne sie meldet Übung 11 wieder „jene, Plural" — genau die falsche Lücke von damals.
+  {
+    const weg = VDL.filter(w => app.aufWunsch.has(String(w.id)));
+    for (const w of weg){ VDL.splice(VDL.indexOf(w), 1); app.bekannt.delete(String(w.id)); }
+    e = messen(app);
+    ok(`ohne die ${weg.length} auf seinen Wunsch freigeschalteten Wörter fehlt „jene" wieder`, weg.length > 0 && e.uebungen.isara.ohneSatz.some(x => /jene/.test(String(x.de))));
+    for (const w of weg){ VDL.push(w); app.bekannt.add(String(w.id)); }
+  }
+  // 12. Ist die Liste in js/kern.js nicht mehr lesbar → Ladefehler statt still ohne sie.
+  ok('FREISCHALTEN_AUF_WUNSCH unlesbar → erkannt', aufWunschAus('const ANDERS = [1];') === null
+    && aufWunschAus("const FREISCHALTEN_AUF_WUNSCH = ['1', '2'];").size === 2);
+  // 18. „ohne schweren Satz" zählt das VORKOMMEN: fällt jede Aufgabe mit عَنْ weg,
+  //     muss عَنْ gemeldet werden — und إِلَى, das nur in Aufgaben mit einem
+  //     selteneren Stichwort steht, darf NICHT gemeldet werden.
+  {
+    const U5b = app.hole('UEBUNGEN').find(u => u.id === 'alle-majrur'), echt5b = U5b.baue;
+    U5b.baue = function(z, s){ return (echt5b.call(this, z, s) || []).filter(a => !(a.reihum || []).includes('عن')); };
+    e = messen(app);
+    U5b.baue = echt5b;
+    const f = e.genitiv.fehlen.join(' ');
+    ok(`ohne Aufgabe mit عَنْ meldet Übung 5 es als fehlend (${f || '—'})`, /عَنْ/.test(f));
+    const f2 = messen(app).genitiv.fehlen.join(' ');
+    ok(`إِلَى steht in schweren Sätzen und fehlt nicht (${f2 || '—'})`, !/إِلَى/.test(f2));
+  }
   console.log(rot ? `\n⛔ ${rot} von ${anzahl} Störtest(s) schlagen NICHT an` : `\n✅ alle ${anzahl} Störtests schlagen an`);
   process.exit(rot ? 1 : 0);
 }

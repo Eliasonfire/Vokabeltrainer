@@ -1846,6 +1846,44 @@ const BEISPIELSAETZE = {
     sentDe: 'Das Buch des Arztes ist auf dem Schreibtisch des Händlers.'
   },
 
+  /* ---------- Übung 5 „alle Genitive": بِ, عَنْ, كَ (25.09.2026) ----------
+   * Die Übung verlangt zwei Genitive aus zwei Gründen (Präposition, Iḍāfa,
+   * نَعْت …). Für بِ, عَنْ und كَ gab es keinen solchen Satz. Elias: „dann mach
+   * die noch fertig". Durchgesehen, ohne Treffer: Bayna Yadayk 1 Einheit 1–4
+   * (Buchseiten 1–108), Madina 1 Lektion 1–12, Musterlösung, Grammatik-Heft.
+   * Deshalb seine Notfall-Regel vom 24.09.2026: „du kannst auch sätze erfinden
+   * hauptsache sie bestehen aus meinen vokabeln und sind halt logisch und mit
+   * den richtigen grammatikregeln aber das eher als notfall wenn es in allen
+   * büchern wirklich nichts gibt".
+   * Verfahren wie oben: jede Form steht so in seinem Buch oder einer seiner
+   * Karten. Neu seit heute (test-satzmodus-schwerer.mjs 2g): auch seine
+   * BESTELLTEN Fachbegriff-Karten sind Wortfelder (عَنْ = gram-harf-an), und
+   * eine Präposition, die er als Karte hat (بِ, كَ), darf vor einer belegten
+   * Form stehen — كَالْمَدْرَسَةِ = كَ + الْمَدْرَسَةِ. Keine Ḥaraka ist neu.
+   * ⚠️ عَنْ steht hier vor مَكْتَبِ (ohne Artikel), also mit Sukūn wie auf
+   * seiner Karte — vor الْ hieße es عَنِ, und diese Form steht in keinem Buch. */
+
+  /* تَذْهَبُ by1-82-5 · بِنْتُ mb1-63-2 · الْمُدَرِّسِ mb1-27-2 · إِلَى mb1-25-2 ·
+     الْمَدْرَسَةِ mb1-42-3 · بِالْحَافِلَةِ by1-82-6 */
+  'satz-lang-19': {
+    sentAr: 'تَذْهَبُ بِنْتُ الْمُدَرِّسِ إِلَى الْمَدْرَسَةِ بِالْحَافِلَةِ.',
+    sentDe: 'Die Tochter des Lehrers fährt mit dem Bus zur Schule.'
+  },
+
+  /* حَقِيبَةُ mb1-27-3 · الطَّالِبِ mb1-46-2 · بَعِيدَةٌ W:45794.femSg ·
+     عَنْ W:gram-harf-an.ar · مَكْتَبِ mb1-27-2 · الْمُدَرِّسِ mb1-27-2 */
+  'satz-lang-20': {
+    sentAr: 'حَقِيبَةُ الطَّالِبِ بَعِيدَةٌ عَنْ مَكْتَبِ الْمُدَرِّسِ.',
+    sentDe: 'Die Tasche des Studenten ist weit weg vom Schreibtisch des Lehrers.'
+  },
+
+  /* بَيْتُ mb1-42-3 · الْمُدِيرِ mb1-25-2 · كَبِيرٌ W:45798.ar ·
+     كَالْمَدْرَسَةِ = كَ W:gram-harf-ka.ar + الْمَدْرَسَةِ mb1-42-3 */
+  'satz-lang-21': {
+    sentAr: 'بَيْتُ الْمُدِيرِ كَبِيرٌ كَالْمَدْرَسَةِ.',
+    sentDe: 'Das Haus des Direktors ist groß wie die Schule.'
+  },
+
   /* ---------- Bayna Yadayk 1, Kapitel 3 (20.09.2026) ----------
      Elias: „ja mach die beispielsätze". Die elf Wörter des Kapitels hatten
      keinen. Jedes fremde Wort im Satz ist eine im Bestand nachgemessene
