@@ -120,7 +120,12 @@ const istJarrMitPronomen = w => istInListe(w, JARR_MIT_PRONOMEN) || istJarrLamVo
    weil بَعْدَ in الْاِسْمُ بَعْدَ فِي مَجْرُورٌ als فِعْل gelesen wurde
    (بعد ist auch eine Verbwurzel). قبل gleich mit, damit das Paar nicht
    auseinanderfällt — sonst faellt es beim naechsten Satz einzeln auf. */
-const ZURUF = ['تحت', 'أمام', 'امام', 'خلف', 'فوق', 'عند', 'بين', 'وراء', 'مع', 'بعد', 'قبل'];
+const ZURUF = ['تحت', 'أمام', 'امام', 'خلف', 'فوق', 'عند', 'بين', 'وراء', 'مع', 'بعد', 'قبل',
+  /* ⛔ لَدَى „bei" (25.09.2026, Zerleger-Befund (e)): لَدَيْنَا galt als مُبْتَدَأ.
+     Es steht für dasselbe wie عِنْدَ — in seinem Wortschatz nur im Quran-Teil
+     als „bei / nahe". Beide Schreibungen: mit Pronomen wird aus ى ein ي
+     (لَدَيْنَا, لَدَيْكَ), und ZARF_PRONOMEN schneidet nur das Pronomen ab. */
+  'لدى', 'لدي'];
 /* Rufpartikel. Sie war bis zum 18.08.2026 unbekannt, und ein unbekanntes Wort
    bekommt in dieser Zerlegung die naechste freie Nomen-Rolle — in
    «أَيْنَ أَبُوكَ يَا خَالِدُ؟» wurde يَا damit zum خَبَر ueber den Vater.
@@ -394,6 +399,8 @@ const istIndeklinabel = w => INDEKLINABEL.includes(ohneFragepartikel(w))
 /* ⚠️ Mit artikelWiderlegt(): بَالٌ (Sinn), بَالِغٌ (erwachsen) und كَالَ (messen)
    fangen genauso an und haben keine Präposition (17.09.2026). */
 const hatAngeschriebenesJarr = w => /^(لل|بال|كال)/.test(kernWort(w)) && !artikelWiderlegt(w);
+/* أَيّ „welcher" ohne Vokale — siehe den Zweig istIndeklinabel in analysiereSatz. */
+const istAyy = w => ['أي', 'اي'].includes(ohneVokale(String(w || '')).replace(/[.،؟!«»:؛]/g, ''));
 
 /* مِنْ (von) und مَنْ (wer) sehen ohne Vokalzeichen gleich aus - der Lehrer
    macht daraus eine eigene Regel (min-man-unterscheiden-01). Hier steht das
@@ -825,7 +832,16 @@ const VERBEN_MUDARI_STAEMME = new Set(VERBEN_MUDARI.map(mudariStamm).filter(Bool
 function istMudariForm(w){
   const rein = String(w || '').normalize('NFC').replace(/[.،؟!«»:؛]/g, '').trim();
   const bekannt = s => VERBEN_MUDARI_STAEMME.has(s) || !!(LEXIKON_MUDARI && LEXIKON_MUDARI.has(s));
-  for (const form of [rein, rein.replace(/^[وف][َ]?/, '')]){
+  const ohneWa = rein.replace(/^[وف][َ]?/, '');
+  const formen = [rein, ohneWa];
+  /* ⛔ DAS FUTUR سَـ (25.09.2026, Zerleger-Befund (a)). سَأَكْنُسُ, سَتَفْعَلُ,
+     سَيَقْرَأُ (Bayna Yadayk 1, Buchseiten 84 und 108) galten als Nomen und
+     damit als مُبْتَدَأ: die Vorsilbe stand VOR dem أ ت ي ن. Das سَـ mit Fatha
+     wird probeweise abgeschnitten — gezählt wird die Form nur, wenn der Rest
+     die Präsensform eines bekannten Verbs ist, genau wie ohne سَـ. Ein Nomen
+     wie سَيِّدُ fällt schon an der Länge des Stamms durch. */
+  if (/^سَ[أتين]/.test(ohneWa)) formen.push(ohneWa.slice(2));
+  for (const form of formen){
     const kern = ohneEndvokal(form);
     if (!MUDARI_VORSILBE.test(kern) || ohneVokale(kern).length < 3) continue;
     if (bekannt(kern.slice(1))) return true;
@@ -1071,6 +1087,15 @@ function schliesstIdafaAus(naechstes){
      „مُبْتَدَأ + خَبَر", und der falsche Nominativ sähe richtig aus.
      [[pruefwerkzeug_mit_eingebauter_antwort]] */
   const e = endung(w);
+  /* ⛔ MIT ARTIKEL UND FATHA NIE مُضَاف إِلَيْه (25.09.2026). In
+     «يُصَلِّي أَحْمَدُ الْفَجْرَ فِي الْبَيْتِ.» (Bayna Yadayk 1, Kap. 4) galt der
+     Name أَحْمَدُ als مُضَاف — Ḍamma ohne Tanwīn, wie bei jedem مَمْنُوع مِنَ
+     الصَّرْف — und الْفَجْرَ als مُضَاف إِلَيْه mit falscher Fatha. Mit Artikel
+     steht der Genitiv aber IMMER auf Kasra, auch bei diesen Wörtern; Fatha
+     schließt ihn aus. ⚠️ Bewusst nur Fatha: mit Ḍamma (كِتَابُ الطَّالِبُ) soll
+     der Schreibfehler weiter als solcher gemeldet werden (Gegenprobe in
+     pruefe-saetze.js, EICH_SATZ). */
+  if (e && e.kasus === 'nasb' && !e.tanwin && istBestimmt(w)) return true;
   return !!(e && e.kasus === 'raf' && !e.tanwin && ohneVokale(w).charCodeAt(0) === 0x0648);   // و
 }
 
@@ -1126,6 +1151,9 @@ function analysiereSatz(satz){
      شُكْرًا يَا مُدَرِّسُ, und der مُنَادَى wurde zum نَعْت erklaert. */
   let mafulIndex = -2;
   let nachVerb = false;   /* steht das naechste Wort hinter einem Verb? */
+  /* Das Objekt kam VOR einem genannten Täter (Befund (b) unten): ein Nomen im
+     Nominativ danach ist dann der فَاعِل, kein zweites Objekt. */
+  let taeterOffen = false;
   /* ⛔ Am 19.08.2026 ergaenzt. Bis dahin kannte die Zerlegung im Verbalsatz nur
      فِعْل und فَاعِل — jedes weitere Nomen fiel in den Schlusszweig und wurde
      zu خَبَر mit erwartetem raf. Bei أَحَبَّ الْوَلَدُ أُمَّهُ meldete die
@@ -1193,7 +1221,7 @@ function analysiereSatz(satz){
          an, das folgende Wort ist فَاعِل und steht im Nominativ. */
       rolle = 'فِعْل';
       vorherJarr = false; vorherMudaf = false; ersteRolleVergeben = false;
-      nachVerb = true; imVerbalsatz = true;
+      nachVerb = true; imVerbalsatz = true; taeterOffen = false;
       out.push({ wort, rein, rolle, erwartet:null, gelesen, stimmt:null });
       return;
     } else if (istHarfNida(wort)){
@@ -1221,7 +1249,12 @@ function analysiereSatz(satz){
       letzterKasus = null; letzteBestimmtheit = null;
       out.push({ wort, rein, rolle, erwartet:null, gelesen, stimmt:null });
       return;
-    } else if (istIndeklinabel(wort)){
+    } else if (istIndeklinabel(wort) && !(vorherJarr && istAyy(wort))){
+      /* ⛔ أَيّ NACH EINER PRÄPOSITION (25.09.2026, Zerleger-Befund (e)): in
+         فِي أَيِّ … steht es sichtbar im Genitiv und ist مُضَاف — es ist KEIN
+         unveränderliches Wort, seine Endung wechselt (أَيُّ, أَيَّ, أَيِّ). Dort
+         läuft es jetzt durch den Zweig „nach حَرْف جَرّ" und die مُضَاف-Erkennung.
+         Nur dort: am Satzanfang (أَيُّ كِتَابٍ هَذَا؟) bleibt es beim Alten. */
       /* Steht ein Pronomen am Anfang, ist es das Subjekt - dann wird das
          folgende Nomen zur Aussage darueber und nicht selbst zum Subjekt. */
       const istPronomen = istInListe(wort, PRONOMEN);
@@ -1366,7 +1399,24 @@ function analysiereSatz(satz){
       /* Kein vorzeitiges Ende: das Wort kann trotzdem ein مُضَاف sein
          (وَبَيْتُ الطَّبِيبِ), und dann haengt die Endung des naechsten
          Wortes daran. */
-    } else if (nachVerb){
+    } else if (nachVerb && !nachNida && gelesen && gelesen.kasus === 'nasb' && !dualOderPlural){
+      /* ⛔⛔ DER فَاعِل IST IMMER مَرْفُوع — MIT SICHTBARER FATHA IST ES DAS OBJEKT
+         (25.09.2026, Zerleger-Befund (b)). يَغْسِلُ الْمَلَابِسَ, يُصَلِّي الْفَجْرَ,
+         يَقْرَأُ صَحِيفَةً (Bayna Yadayk 1, Buchseiten 84 und 108): das erste Nomen
+         nach dem Verb galt immer als فَاعِل und seine richtige Fatha als
+         Kasusfehler. Der Täter steckt hier im Verb (er wäscht), das Nomen ist
+         das Objekt. Dieselbe Umkehrung wie beim مُبْتَدَأ weiter unten: die
+         Endung, die dasteht, SCHLIESST die Rolle aus. Folgt doch noch ein
+         Nomen im Nominativ (Objekt vor dem Täter), ist DAS der فَاعِل —
+         siehe taeterOffen im Zweig imVerbalsatz. */
+      rolle = 'مَفْعُول بِهِ';
+      erwartet = 'nasb';
+      nachVerb = false; taeterOffen = true;
+      ersteRolleVergeben = true;
+    } else if (nachVerb && !nachNida){
+      /* ⛔ !nachNida (25.09.2026): in «مَاذَا سَتَفْعَلُ يَا طَارِقُ؟» wurde der
+         Angerufene zum فَاعِل — dieser Zweig stand vor dem مُنَادَى-Zweig. Der
+         Täter bleibt offen und kann nach dem Angerufenen noch kommen. */
       /* Das Subjekt eines Verbalsatzes. Belegt in Schluessel 2, Lektion 5,
          S. 24: «Das Subjekt eines Verbalsatzes wird fā'il genannt ... Der
          fā'il ist marfū'.» */
@@ -1390,6 +1440,14 @@ function analysiereSatz(satz){
       erwartet = hatSuffix(wort) ? null : 'raf';
       angerufen = true;
       nachNida = false;
+    } else if (i > 0 && kernWort(woerter[i-1]) === 'كم' && gelesen && gelesen.kasus === 'nasb' && gelesen.tanwin){
+      /* ⛔ NACH كَمْ (25.09.2026, Zerleger-Befund (e)): كَمْ غُرْفَةً wurde zum
+         مَفْعُول مُطْلَق „(Verb mitgedacht)" — falsch. Richtig heißt die Rolle
+         تَمْيِيز, und die steht in keiner seiner Regeln (grammar-data.js,
+         regelsammlung-data.js: 0 Treffer). Also keine falsche Rolle und keine
+         Kasusaussage, wie beim Dual: „noch nicht geprüft". */
+      rolle = 'nach كَمْ — noch nicht geprüft';
+      ersteRolleVergeben = true;
     } else if (!ersteRolleVergeben && gelesen && gelesen.kasus === 'nasb' && gelesen.tanwin){
       /* ⛔ EIN مُبْتَدَأ IST IMMER مَرْفُوع (20.08.2026). Steht das erste Wort mit
          Tanwīn Fatḥa da, kann es keines sein — es ist ein مَفْعُول مُطْلَق zu
@@ -1420,6 +1478,12 @@ function analysiereSatz(satz){
          nicht steht. Lieber die eine belegte Rolle richtig als drei geraten. */
       rolle = 'مَفْعُول بِهِ';
       erwartet = 'nasb';
+      /* Objekt vor dem Täter (Befund (b) oben): das Nomen im Nominativ ist der
+         فَاعِل, sonst meldete die Prüfung einen richtigen Satz als Fehler. */
+      if (taeterOffen && gelesen && gelesen.kasus === 'raf' && !dualOderPlural){
+        rolle = 'فَاعِل'; erwartet = 'raf';
+      }
+      taeterOffen = false;
     } else {
       rolle = 'خَبَر';
       erwartet = 'raf';
@@ -1462,6 +1526,7 @@ function analysiereSatz(satz){
       ersteRolleVergeben = false;
       letzterKasus = null; letzteBestimmtheit = null;
       vorherJarr = false; vorherMudaf = false; nachVerb = false; nachNida = false;
+      taeterOffen = false;
       /* ⛔ Muss mit zurueckgesetzt werden, sonst gilt der naechste Satz
          weiterhin als Verbalsatz und sein Praedikat wird zum مَفْعُول بِهِ. */
       imVerbalsatz = false;
