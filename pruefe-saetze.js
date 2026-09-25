@@ -650,6 +650,71 @@ let lexikonSchwer = 0;
           n => EICH_E.find(e => e[0] === n)[1](),
           'ayy nach Praeposition, nach kam, ladaa (ohne Lexikon)');
   }
+  /* ⛔⛔ NEUER SATZTEIL, وَاحِدٌ ALS نَعْت, KOMMA TRENNT, وَلِي, أَ + PRONOMEN,
+     SATZENDE NACH VERB (25.09.2026, js/irab.js — Bestandssatz mb1-61-2, Madina 1,
+     S. 61, und die Kandidaten von S. 56 und 63). OHNE Lexikon. Störtest: mit der
+     irab.js von vor dieser Änderung sind die Fälle 1, 2, 3 und 7 falsch
+     (gemessen 25.09.2026, scratchpad stoertest-teil.mjs). Die Gegenproben 4–6
+     halten die Regeln eng. Arabisch aus Codepoints. */
+  {
+    const z = (...c) => String.fromCharCode(...c);
+    const LI         = z(0x0644,0x0650,0x064A);
+    const AKHUN      = z(0x0623,0x064E,0x062E,0x064C);
+    const WAHIDUN    = z(0x0648,0x064E,0x0627,0x062D,0x0650,0x062F,0x064C);
+    const ISMUHU     = z(0x0627,0x0633,0x0652,0x0645,0x064F,0x0647,0x064F);
+    const USAMATU_K  = z(0x0623,0x064F,0x0633,0x064E,0x0627,0x0645,0x064E,0x0629,0x064F,0x060C);
+    const WALI       = z(0x0648,0x064E,0x0644,0x0650,0x064A);
+    const UKHTUN     = z(0x0623,0x064F,0x062E,0x0652,0x062A,0x064C);
+    const WAHIDATUN  = z(0x0648,0x064E,0x0627,0x062D,0x0650,0x062F,0x064E,0x0629,0x064C);
+    const ISMUHA     = z(0x0627,0x0633,0x0652,0x0645,0x064F,0x0647,0x064E,0x0627);
+    const SUADU      = z(0x0633,0x064F,0x0639,0x064E,0x0627,0x062F,0x064F);
+    const HAMZATU_K  = z(0x062D,0x064E,0x0645,0x0652,0x0632,0x064E,0x0629,0x064F,0x060C);
+    const INDAHU     = z(0x0639,0x0650,0x0646,0x0652,0x062F,0x064E,0x0647,0x064F);
+    const SAYYARATUN = z(0x0633,0x064E,0x064A,0x064E,0x0651,0x0627,0x0631,0x064E,0x0629,0x064C);
+    const AHIYA      = z(0x0623,0x064E,0x0647,0x0650,0x064A,0x064E);
+    const ZAMILATUKI = z(0x0632,0x064E,0x0645,0x0650,0x064A,0x0644,0x064E,0x062A,0x064F,0x0643,0x0650);
+    const ALFATATU   = z(0x0627,0x0644,0x0652,0x0641,0x064E,0x062A,0x064E,0x0627,0x0629,0x064F);
+    const ALLATI     = z(0x0627,0x0644,0x064E,0x0651,0x062A,0x0650,0x064A);
+    const MAAKI      = z(0x0645,0x064E,0x0639,0x064E,0x0643,0x0650);
+    const TALIBATUN  = z(0x0637,0x064E,0x0627,0x0644,0x0650,0x0628,0x064E,0x0629,0x064C);
+    const KITABU     = z(0x0643,0x0650,0x062A,0x064E,0x0627,0x0628,0x064F);
+    const ATTALIBI   = z(0x0627,0x0644,0x0637,0x064E,0x0651,0x0627,0x0644,0x0650,0x0628,0x0650);
+    const JADIDUN    = z(0x062C,0x064E,0x062F,0x0650,0x064A,0x062F,0x064C);
+    const SIFRUN_K   = z(0x0635,0x0650,0x0641,0x0652,0x0631,0x064C,0x060C);
+    const MADHA      = z(0x0645,0x064E,0x0627,0x0630,0x064E,0x0627);
+    const TAFALU     = z(0x062A,0x064E,0x0641,0x0652,0x0639,0x064E,0x0644,0x064F);
+    const ANA        = z(0x0623,0x064E,0x0646,0x064E,0x0627);
+    const TALIBUN    = z(0x0637,0x064E,0x0627,0x0644,0x0650,0x0628,0x064C);
+    const s = (...w) => w.join(' ') + '.';
+    const rollen = r => r.map(t => t.rolle);
+    const EICH_TEIL = [
+      ['mb1-61-2', () => { const r = rollen(analysiereSatz(s(LI, AKHUN, WAHIDUN, ISMUHU, USAMATU_K, WALI, UKHTUN, WAHIDATUN, ISMUHA, SUADU)));
+          return /^نَعْت/.test(r[2]) && r[3] === 'مُبْتَدَأ' && r[4] === 'خَبَر' && /^جَارّ وَمَجْرُور/.test(r[5])
+              && r[6] === 'مُبْتَدَأ' && /^نَعْت/.test(r[7]) && r[8] === 'مُبْتَدَأ' && r[9] === 'خَبَر'; },
+        'li akhun wahidun smuhu usamatu, wa-li ukhtun wahidatun smuha suadu (mb1-61-2): wahid ist نَعْت, ismuhu beginnt einen neuen Satzteil, Usama ist kein مُضَاف, wa-li ist جَارّ وَمَجْرُور'],
+      ['hamzatu, indahu sayyaratun', () => { const r = rollen(analysiereSatz(s(HAMZATU_K, INDAHU, SAYYARATUN)));
+          return r[0] === 'مُبْتَدَأ' && r[2] === 'مُبْتَدَأ'; },
+        'Name vor Komma ist kein مُضَاف; nach inda-hu ist das Nomen im Nominativ das مُبْتَدَأ (Madina 1, S. 56)'],
+      ['a-hiya zamilatuki', () => { const r = rollen(analysiereSatz(AHIYA + ' ' + ZAMILATUKI + '؟'));
+          return r[0] === 'مُبْتَدَأ (unveränderlich)' && r[1] === 'خَبَر'; },
+        'a + hiya ist das مُبْتَدَأ, das Nomen danach das خَبَر (Madina 1, S. 63)'],
+      ['al-fatatu llati maaki talibatun', () => { const r = rollen(analysiereSatz(s(ALFATATU, ALLATI, MAAKI, TALIBATUN)));
+          return r[3] === 'خَبَر'; },
+        'Gegenprobe: nach dem Relativsatz (allati maaki) bleibt das Nomen das خَبَر'],
+      ['kitabu t-talibi jadidun', () => { const r = rollen(analysiereSatz(s(KITABU, ATTALIBI, JADIDUN)));
+          return /\(مُضَاف\)$/.test(r[0]) && r[2] === 'خَبَر'; },
+        'Gegenprobe: ohne Komma bleibt die إضافة, das Adjektiv danach das خَبَر'],
+      ['sifrun, wahidun', () => { const r = rollen(analysiereSatz(s(SIFRUN_K, WAHIDUN)));
+          return !/^نَعْت/.test(r[1]); },
+        'Gegenprobe: nach einem Komma ist wahid kein نَعْت (Aufzaehlung)'],
+      ['madha tafalu? ana talibun', () => { const r = rollen(analysiereSatz(MADHA + ' ' + TAFALU + '؟ ' + s(ANA, TALIBUN)));
+          return r[1] === 'فِعْل' && r[2] === 'مُبْتَدَأ (unveränderlich)' && r[3] === 'خَبَر'; },
+        'nach einem Verb am Satzende beginnt ein neuer Satz: talibun ist خَبَر, nicht فَاعِل']
+    ];
+    eiche(EICH_TEIL.map(([n, , warum]) => [n, true, warum]),
+          n => EICH_TEIL.find(e => e[0] === n)[1](),
+          'neuer Satzteil, wahid als نَعْت, Komma trennt, wa-li, a + Pronomen, Satzende nach Verb (ohne Lexikon)');
+  }
   setzeLexikon(wortschatz);
 
   /* ⭐ rolleAnzeige (17.09.2026): die Rollen im Iʿrāb-Erklärer mit belegter
