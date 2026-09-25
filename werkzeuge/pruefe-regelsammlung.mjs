@@ -294,7 +294,11 @@ console.log('\n=== 7. Stufe 2 — „so gut wie möglich in die app integriert" 
      entfernt („die übung im satzmodus brauche ich nicht weil die ist viel zu
      leicht"); test-satzmodus-schwerer.mjs bewacht, dass sie draußen bleibt. */
   pruefe(`„Warum? → Regel": alle ${modi.length} Übungsmodi zugeordnet, jedes Ziel existiert`,
-    modi.length === 15 && !ohne.length && !tot.length, 'Modi: ' + modi.length + ' · ohne: ' + ohne.join(',') + ' · tot: ' + tot.join(','));
+    modi.length === 16 && !ohne.length && !tot.length, 'Modi: ' + modi.length + ' · ohne: ' + ohne.join(',') + ' · tot: ' + tot.join(','));
+  /* ⚠️ 25.09.2026 (v612): 15 → 16, die Endungen-Übung ist dazugekommen
+     (`endungen` → possessiv-endungen-01; Aufgaben mit ـِي bringen ihre Karte
+     possessiv-ya-01 selbst mit). Elias: „wo ich die richtigen endungen
+     hinzufügen muss wie zb ki für frau oder ha und hu usw.". */
   /* ⚠️ 24.09.2026: 13 → 15, Fragewort (`fragewort` → f19-fragen) und Pronomen
      (`pronomen` → f19-pronomen) sind dazugekommen — Elias: „insgesamt 15 sätze
      bei gemischt damit ich alle mache". */

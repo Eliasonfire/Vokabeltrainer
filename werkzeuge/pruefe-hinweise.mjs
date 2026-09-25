@@ -236,6 +236,14 @@ if (stoertestFeld){
 
 /* ---------- Sätze sammeln ---------- */
 const VOCAB = hol('VOCAB_DATA') || [];
+/* ⛔ Die BESTELLTEN Fachbegriffe gehören dazu (v612, 25.09.2026) — in der App
+   hängt js/kern.js sie in VOCAB_DATA ein; hier kam das nie an (171 Einträge,
+   nur vocab-data.js). Übung 15 (Endungen) baute deshalb 0 Aufgaben: ihre
+   Auswahl SIND diese Karten. Gegenprobe unten („jede Übung baut Aufgaben")
+   hat es gefunden. */
+{ const FV = hol('FACHBEGRIFF_VOKABELN') || [], FA = hol('FACHBEGRIFF_AUFTRAG') || {};
+  const da = new Set(VOCAB.map(w => String(w.id)));
+  for (const w of FV) if (Object.prototype.hasOwnProperty.call(FA, String(w.id)) && !da.has(String(w.id))) VOCAB.push(w); }
 const LEHR = hol('LEHRBUCH_SAETZE') || [];
 const BEISP = hol('BEISPIELSAETZE') || {};
 const FACH = hol('FACHBEGRIFFE') || [];

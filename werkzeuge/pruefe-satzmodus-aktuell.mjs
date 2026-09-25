@@ -14,9 +14,10 @@
  * pruefe-uebersetzen.mjs) und an SEINER Kapitelauswahl (.stand-app.json):
  *
  *   A  Jede Form seiner Regelkarten — Hinweiswörter (Übung 11), Fragewörter
- *      (14), Pronomen (15) — steht in der Auswahl ihrer Übung und wird
- *      mindestens einmal gefragt. Eine Form ohne Satz ist ein Befund (Exit 2):
- *      dafür fehlt ein belegter Satz.
+ *      (13), Pronomen (14) — und jede seiner Endungs-Karteikarten (15, seit
+ *      v612) steht in der Auswahl ihrer Übung und wird mindestens einmal
+ *      gefragt. Eine Form ohne Satz ist ein Befund (Exit 2): dafür fehlt ein
+ *      belegter Satz.
  *   B  Jede Aufgabe dieser drei Übungen hat ihre Lösung in der Auswahl, keine
  *      Auswahl nennt ein Wort zweimal, und bei den Fragewörtern steht neben der
  *      Lösung kein zweites Wort derselben Bedeutung („was?" = مَا und مَاذَا).
@@ -108,6 +109,14 @@ function ladeApp(){
       bekannt.add(String(w.id));
     }
   }
+  /* ⛔ Die BESTELLTEN Fachbegriffe gehören dazu (v612, 25.09.2026) — in der App
+     hängt js/kern.js sie in VOCAB_DATA ein (FACHBEGRIFF_AUFTRAG), und ihre
+     Sätze stehen damit im Satzmodus. Dieser Lader lädt kern.js nicht: bis v611
+     maß er 366 Sätze, die App hat 402, und die Endungen-Übung (15) sah hier gar
+     keine Endung — ihre Auswahl SIND diese Karten. Gegengemessen: mit ihnen
+     dieselben Verstöße, nur größere Zahlen. */
+  { const FV = hole('FACHBEGRIFF_VOKABELN') || [], FA = hole('FACHBEGRIFF_AUFTRAG') || {};
+    for (const w of FV) if (Object.prototype.hasOwnProperty.call(FA, String(w.id)) && !bekannt.has(String(w.id))){ VD.push(w); bekannt.add(String(w.id)); } }
   ctx.istBekannt = w => !!w && (w.chapter === 'personal' || bekannt.has(String(w.id)));
   return { ctx, hole, auswahl, fehlt };
 }
@@ -127,9 +136,12 @@ function messen(app){
   const pool = hole('alleSaetze')();
   const zerlegt = pool.map(s => { try { return { s, z: analysiere(s.sentAr) }; } catch (e){ return { s, z: null }; } });
   const ergebnis = { pool: pool.length, uebungen: {}, verstoesse: [] };
-  for (const [id, karte] of [['isara', 'f19-isara'], ['fragewort', 'f19-fragen'], ['pronomen', 'f19-pronomen']]){
+  /* Übung 15 (Endungen, v612) hat keine Regelkarte: ihre Formen sind seine
+     Endungs-Karteikarten, gelesen von uebEndungGlieder() — derselben Funktion
+     wie in der App. */
+  for (const [id, karte] of [['isara', 'f19-isara'], ['fragewort', 'f19-fragen'], ['pronomen', 'f19-pronomen'], ['endungen', null]]){
     const U = UEB.find(u => u.id === id);
-    const glieder = hole('uebKartenGlieder')(karte);
+    const glieder = karte ? hole('uebKartenGlieder')(karte) : ((hole('uebEndungGlieder') || (() => []))());
     const gefragt = new Map(glieder.map(g => [g.form, 0]));
     let aufgaben = 0;
     for (const { s, z } of zerlegt){
@@ -424,6 +436,13 @@ if (STOER){
   e = messen(app);
   ok('neue Übung ohne Aufgabe → Pflichtprogramm meldet sie', (e.pflichtLuecken || []).some(v => v.includes('stoer-neu')));
   UEBL.pop();
+  // 10. Eine NEUE Endungs-Karte ohne Satz (v612) → Teil A muss sie nennen: die
+  //     Auswahl von Übung 15 kommt live aus seinen Karten, nicht aus einer Liste.
+  const VDL = app.hole('VOCAB_DATA');
+  VDL.push({ id: 'stoer-suffix', ar: 'ـكُمَا', de: 'die Besitzendung „euer beider“ — Störtest', type: 'particle', chapter: 'personal', regel: 'possessiv-endungen-01' });
+  e = messen(app);
+  ok('neue Endungs-Karte ohne Satz → Teil A meldet sie', (e.uebungen.endungen && e.uebungen.endungen.ohneSatz || []).some(x => /Störtest/.test(x.de)));
+  VDL.pop();
   console.log(rot ? `\n⛔ ${rot} von ${anzahl} Störtest(s) schlagen NICHT an` : `\n✅ alle ${anzahl} Störtests schlagen an`);
   process.exit(rot ? 1 : 0);
 }
