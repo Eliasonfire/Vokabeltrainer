@@ -1606,9 +1606,15 @@ const DATEI_ZU_URL = {
 let ausTodo = [];
 try {
   const t = fs.readFileSync(TODO, 'utf8');
-  const auf = t.indexOf('### 🔴 Wartet auf Elias');
+  /* ⛔ Die ÜBERSCHRIFT suchen, nicht den Text (25.09.2026). Seit 00:25 steht
+     „### 🔴 Wartet auf Elias" auch MITTEN in einer Zeile der To-Do (als Hinweis
+     in Anführungszeichen). indexOf fand diese Stelle zuerst, und die Seite
+     zeigte Punkte aus einem ganz anderen Abschnitt — die neue Frage fehlte,
+     eine erledigte stand da. */
+  const kopf = /^### 🔴 Wartet auf Elias[^\n]*$/m.exec(t);
+  const auf = kopf ? kopf.index : -1;
   if (auf >= 0){
-    const rest = t.slice(auf + 24);
+    const rest = t.slice(auf + kopf[0].length);
     const zu = rest.search(/\n#{1,3} /);
     ausTodo = (zu < 0 ? rest : rest.slice(0, zu))
       .split(/\r?\n/)
