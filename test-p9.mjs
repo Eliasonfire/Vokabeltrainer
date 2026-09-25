@@ -268,6 +268,35 @@ ok('Mitglied vorgezogen (andere Hälfte): alle vier Knöpfe Box 1 · morgen',
    grFrueh.every(x => x.box === 1 && x.text === 'morgen'), JSON.stringify(grFrueh));
 vm.runInContext('PROGRESS.t1 = { box:1, nextReview:"", correct:0, wrong:0 }', ctx);
 
+/* ---------- 5d. v605: der erste Tag eines neuen Wortes ----------
+   Elias: „ich würde die neue karte ganz am anfang, in mitte und ganz am ende
+   packen weil so kann man sich die dinger besser merken." Ein neues Wort zählt
+   als EINE Karte. */
+console.log('\n— Erster Tag eines neuen Wortes (v605) —');
+const anord = vm.runInContext(`(() => {
+  PROGRESS.n1 = { box:1, gruppe:'2026-08-10', gruppeArt:'neu', nextReview:'2026-08-10', correct:0, wrong:0 };
+  PROGRESS.a1 = { box:3, nextReview:'2026-08-10', correct:2, wrong:0 };
+  PROGRESS.a2 = { box:4, nextReview:'2026-08-10', correct:3, wrong:0 };
+  PROGRESS.a3 = { box:1, gruppe:'2026-08-08', gruppeArt:'neu', nextReview:'2026-08-10', correct:0, wrong:1 };
+  const r = ersterTagAnordnen([{id:'a1'},{id:'n1'},{id:'a2'},{id:'a3'}]);
+  return { ids: r.worte.map(w => w.id), rollen: r.rollen };
+})()`, ctx);
+ok('neues Wort: vorn Infokarte, in der Mitte Übung, am Ende die Abfrage — die anderen bleiben einfach',
+   JSON.stringify(anord.ids) === JSON.stringify(['n1','a1','n1','a2','a3','n1'])
+   && JSON.stringify(anord.rollen) === JSON.stringify(['info',null,'uebung',null,null,null]), JSON.stringify(anord));
+const zaehlung = vm.runInContext(`(() => {
+  const alt = SESSION;
+  SESSION = { words: [{id:'n1'},{id:'a1'},{id:'n1'},{id:'a2'},{id:'a3'},{id:'n1'}], idx: 3, dirs: [], fertig: false,
+              rollen: ['info',null,'uebung',null,null,null] };
+  const z = [rundeGezaehlt(3), rundeGezaehlt()];
+  SESSION = alt;
+  return z;
+})()`, ctx);
+ok('der Zähler zählt das neue Wort einmal: nach 3 Einträgen 1 von 4', JSON.stringify(zaehlung) === '[1,4]', JSON.stringify(zaehlung));
+const ohneNeu = vm.runInContext(`ersterTagAnordnen([{id:'a1'},{id:'a3'}]).rollen`, ctx);
+ok('ohne neues Wort am Beitrittstag: keine Rollen', JSON.stringify(ohneNeu) === '[null,null]', JSON.stringify(ohneNeu));
+vm.runInContext('PROGRESS.t1 = { box:1, nextReview:"", correct:0, wrong:0 }', ctx);
+
 /* ---------- 5c. Die Wischgeste (25.09.2026) ----------
    Elias: „ich möchte auch, dass bei den karteikarten das nach links wischen
    bedetuet das es schwierig ist also bleibt auf der selben box. und rechts

@@ -4,6 +4,45 @@
 /* ===================== LEARN / FLASHCARDS ===================== */
 let SESSION = { words:[], idx:0, dirs:[], fertig:true };
 
+/* ⭐ v605 (25.09.2026): Rollen in der Runde. `SESSION.rollen[i]` = 'info'
+   (Infokarte eines neuen Wortes, nur „Weiter"), 'uebung' (Abfrage in der
+   Mitte, zählt nicht) oder leer (eine Karte, die zählt). Ein neues Wort zählt
+   als EINE Karte — sein Wunsch; der Zähler oben und das Auffüllen zählen nur
+   die Karten ohne Rolle. Die Anordnung macht ersterTagAnordnen(). */
+function rundenRolle(i){ return (SESSION.rollen && SESSION.rollen[i]) || null; }
+function rundeGezaehlt(bis){
+  const n = typeof bis === 'number' ? bis : SESSION.words.length;
+  let z = 0;
+  for (let i = 0; i < n; i++) if (!rundenRolle(i)) z++;
+  return z;
+}
+/* ⭐⭐ v605 — DER ERSTE TAG EINES NEUEN WORTES (Teil A des Box-1-Plans)
+   Elias, 25.09.2026: „also das neue wort in der lerngruppe wird mir an dem tag
+   dann insgesamt 3x gezeigt. erstens ganz am anfang als info kartei
+   sozusagen, danach wieder nach ein paar karten und ganz zum schluss wieder
+   richtig? ich würde die neue karte ganz am anfang, in mitte und ganz am ende
+   packen weil so kann man sich die dinger besser merken."
+   Also: Infokarten ganz vorn (umgedreht, nur „Weiter"), die Übung in der
+   Mitte (zählt nicht), die entscheidende Abfrage ganz am Ende — die
+   entscheidet (nochmal/schwer → bleibt in der Lerngruppe, gut → Box 2,
+   leicht → Box 3). Nur für ein NEUES Wort (nie beantwortet) an seinem
+   Beitrittstag (`gruppe` = heute, lerngruppeAufnehmen() in js/kern.js). */
+function ersterTagAnordnen(worte){
+  const heute = todayStr(0);
+  const neuHeute = worte.filter(w => {
+    const p = PROGRESS[w.id];
+    return p && p.gruppe === heute && p.gruppeArt === 'neu' && !(Number(p.correct) > 0) && !(Number(p.wrong) > 0);
+  });
+  if (!neuHeute.length) return { worte, rollen: worte.map(() => null) };
+  const rest = worte.filter(w => !neuHeute.includes(w));
+  const mitte = Math.floor(rest.length / 2);
+  return {
+    worte: neuHeute.concat(rest.slice(0, mitte), neuHeute, rest.slice(mitte), neuHeute),
+    rollen: neuHeute.map(() => 'info').concat(rest.slice(0, mitte).map(() => null),
+      neuHeute.map(() => 'uebung'), rest.slice(mitte).map(() => null), neuHeute.map(() => null))
+  };
+}
+
 /* ---------- Eine angefangene Runde übersteht das Schließen der App ----------
    (19.09.2026)
 
@@ -49,7 +88,9 @@ function rundeSichern(erledigt){
     lautIds: [...(SESSION.laut || [])].map(i => String(SESSION.words[i] && SESSION.words[i].id)),
     /* Die Größe beim Bau — damit das Fortsetzen weiß, bis wohin es auffüllt
        (offeneRundeFortsetzen(), seit 23.09.2026). */
-    ziel: Number(SESSION.ziel) || SESSION.words.length,
+    ziel: Number(SESSION.ziel) || rundeGezaehlt(),
+    /* v605: Rollen je Eintrag (Infokarte/Übung eines neuen Wortes). */
+    rollen: SESSION.words.map((_, i) => rundenRolle(i)),
     zeit: Date.now()
   });
 }
@@ -68,7 +109,10 @@ function offeneRundeStand(){
   if (g.tag !== todayStr(0)) return null;
   /* Dieselbe Größe wie beim Fortsetzen (aufgefüllt bis zum Tagesziel) — sonst
      stünde hier „6 Karten fehlen", und die Runde zeigte danach 0/10. */
-  let gesamt = g.ids.length;
+  /* v605: nur Karten, die zählen (ohne Infokarte und Übung eines neuen Wortes). */
+  const rollenG = Array.isArray(g.rollen) ? g.rollen : [];
+  let gesamt = g.ids.filter((_, i) => !rollenG[i]).length;
+  const erledigt = g.ids.slice(0, g.idx).filter((_, i) => !rollenG[i]).length;
   const ziel = rundenZiel(g);
   if (gesamt < ziel && typeof currentPool === 'function'){
     const drin = new Set(g.ids.map(String));
@@ -83,7 +127,7 @@ function offeneRundeStand(){
     const dazu = (typeof tagesAuswahl === 'function') ? tagesAuswahl(rest, ziel - gesamt, vorrat, gruppe).length : rest.length;
     gesamt = Math.min(ziel, gesamt + dazu);
   }
-  const fehlt = gesamt - g.idx;
+  const fehlt = gesamt - erledigt;
   return fehlt > 0 ? { fehlt, gesamt } : null;
 }
 
@@ -121,6 +165,7 @@ function offeneRundeFortsetzen(){
   const lautIds = Array.isArray(g.lautIds) ? g.lautIds.map(String) : [];
   const alleIds = g.ids.map(String);
   const words = [];
+  const rollen = [];          /* v605: parallel zu words */
   let weg = 0;
   g.ids.forEach((id, i) => {
     let w = VOCAB_DATA.find(v => String(v.id) === String(id));
@@ -137,7 +182,7 @@ function offeneRundeFortsetzen(){
         if (lautIds.includes(String(id))) lautIds.push(String(ersatz.id));
       }
     }
-    if (w) words.push(w);
+    if (w){ words.push(w); rollen.push(Array.isArray(g.rollen) ? (g.rollen[i] || null) : null); }
     else if (i < g.idx) weg++;           /* fällt vor dem Zeiger weg: Zeiger mit */
   });
   const idx = Math.max(0, g.idx - weg);
@@ -150,7 +195,8 @@ function offeneRundeFortsetzen(){
      Tag" (tagesDeckel). Gibt das Fällige nicht genug her, bleibt sie kleiner:
      erfunden wird keine Karte. */
   const ziel = rundenZiel(g);
-  if (words.length < ziel && typeof currentPool === 'function'){
+  const gezaehlt = () => rollen.filter(r => !r).length;
+  if (gezaehlt() < ziel && typeof currentPool === 'function'){
     const drin = new Set(words.map(w => String(w.id)));
     /* ⭐ Seit 25.09.2026 nach DERSELBEN Regel wie beim Bau (tagesAuswahl:
        5 zu 5, ein Platz fürs am längsten falsche Wort, neue zuerst). Elias
@@ -162,18 +208,18 @@ function offeneRundeFortsetzen(){
     const vorrat = (typeof vorziehVorrat === 'function' && typeof zielHeuteOffen === 'function' && zielHeuteOffen())
       ? vorziehVorrat(drin) : undefined;
     const gruppe = (typeof lerngruppe === 'function') ? lerngruppe().filter(w => !drin.has(String(w.id))) : undefined;
-    const nach = (typeof tagesAuswahl === 'function') ? tagesAuswahl(rest, ziel - words.length, vorrat, gruppe) : rest;
+    const nach = (typeof tagesAuswahl === 'function') ? tagesAuswahl(rest, ziel - gezaehlt(), vorrat, gruppe) : rest;
     if (typeof lerngruppeAufnehmen === 'function') lerngruppeAufnehmen(nach);
     for (const w of nach){
-      if (words.length >= ziel) break;
-      words.push(w); drin.add(String(w.id));
+      if (gezaehlt() >= ziel) break;
+      words.push(w); rollen.push(null); drin.add(String(w.id));
     }
   }
   const laut = new Set();
   words.forEach((w, i) => { if (lautIds.includes(String(w.id))) laut.add(i); });
   /* `dirs` bleibt leer: die Abfragerichtung wird je Karte neu entschieden und
      hängt am Lernstand — der kann sich seit gestern geändert haben. */
-  SESSION = { words, idx, dirs: [], fertig: false, laut, ziel };
+  SESSION = { words, idx, dirs: [], fertig: false, laut, ziel, rollen };
   showScreen('learn');
   return true;
 }
@@ -344,7 +390,12 @@ function startLearningSession(){
   /* Auch wenn die ganze Auswahl in eine Runde passt: der Takt sortiert die
      Fachbegriffe auf die Plaetze 6/12/18, statt sie irgendwo zu lassen. */
   words = fachbegriffTakt(words, size);
-  SESSION = { words, idx:0, dirs:[], fertig:false, laut: waehleLautKarten(words), ziel: words.length };
+  /* v605: neue Wörter am ersten Tag dreimal (ersterTagAnordnen() oben);
+     `ziel` bleibt die Zahl der Karten, die zählen. */
+  const ziel = words.length;
+  const anordnung = ersterTagAnordnen(words);
+  words = anordnung.worte;
+  SESSION = { words, idx:0, dirs:[], fertig:false, laut: waehleLautKarten(words), ziel, rollen: anordnung.rollen };
   /* Schon vor der ersten Antwort sichern: wer die App auf Karte 1 schließt,
      soll dieselbe Runde wiederfinden und nicht eine neu gewürfelte. */
   rundeSichern(0);
@@ -364,7 +415,8 @@ function passeRundeAnAuswahlAn(){
   if (!SESSION.words.length || SESSION.fertig) return false;
   const bisher = SESSION.words;
   const aktuellesWort = bisher[SESSION.idx];
-  const bleibt = bisher.filter(passtZurAuswahl);
+  const behalten = bisher.map(w => passtZurAuswahl(w));
+  const bleibt = bisher.filter((_, i) => behalten[i]);
   if (bleibt.length === bisher.length) return false;      // nichts zu tun
 
   const entfernt = bisher.length - bleibt.length;
@@ -377,8 +429,10 @@ function passeRundeAnAuswahlAn(){
   }
   /* Der Zeiger muss mitwandern: stand er auf Karte 12 und fallen davor drei
      Karten weg, ist dieselbe Karte jetzt Nummer 9. Sonst springt die Runde. */
-  let neuerIdx = bleibt.indexOf(aktuellesWort);
-  if (neuerIdx < 0) neuerIdx = Math.min(SESSION.idx, bleibt.length - 1);
+  /* v605: über die Stellen zählen, nicht über indexOf — ein neues Wort steht
+     am ersten Tag dreimal in der Runde. */
+  let neuerIdx = behalten.slice(0, SESSION.idx).filter(Boolean).length;
+  if (neuerIdx >= bleibt.length) neuerIdx = bleibt.length - 1;
   /* ⛔ Die Laut-Markierung hängt am INDEX, und der verschiebt sich hier genau
      so wie `idx`. Ohne diese Umrechnung trüge nach dem Abwählen eines Kapitels
      die falsche Karte das Zeichen — und niemand merkte es, weil beide
@@ -389,7 +443,9 @@ function passeRundeAnAuswahlAn(){
   bleibt.forEach((w, i) => { if (lautWoerter.has(w)) neueLaut.add(i); });
   /* `ziel` schrumpft mit: hier hat ER Kapitel abgewählt, das Fortsetzen soll
      die Runde nicht mit anderen Karten wieder auffüllen. */
-  SESSION = { words: bleibt, idx: neuerIdx, dirs: [], fertig: false, laut: neueLaut, ziel: bleibt.length };
+  const neueRollen = (SESSION.rollen || []).filter((_, i) => behalten[i]);
+  SESSION = { words: bleibt, idx: neuerIdx, dirs: [], fertig: false, laut: neueLaut, rollen: neueRollen,
+    ziel: bleibt.filter((_, i) => !neueRollen[i]).length };
   /* Die gesicherte Runde zieht mit: sonst käme beim nächsten Start wieder die
      Fassung MIT den abgewählten Kapiteln. */
   rundeSichern();
@@ -638,7 +694,19 @@ function renderCard(){
 
      ⚠️ `rundenLeiste` ist hier immer da: js/start.js steht in index.html VOR
      js/lernen.js, und beide sind klassische Skripte ohne `defer`. */
-  rundenLeiste('learnProgressFill', 'learnCount', SESSION.idx, SESSION.words.length);
+  rundenLeiste('learnProgressFill', 'learnCount', rundeGezaehlt(SESSION.idx), rundeGezaehlt());
+  /* ⭐ v605: die Infokarte eines neuen Wortes ist gleich umgedreht und hat nur
+     „Weiter"; die Übung in der Mitte trägt ein Schild (ersterTagAnordnen()). */
+  const rolle = rundenRolle(SESSION.idx);
+  document.getElementById('answerButtons').classList.toggle('hidden', rolle === 'info');
+  const weiterKasten = document.getElementById('infoWeiter');
+  if (weiterKasten) weiterKasten.classList.toggle('hidden', rolle !== 'info');
+  const rollenSchild = document.getElementById('learnRolle');
+  if (rollenSchild){
+    rollenSchild.textContent = rolle === 'info' ? 'Neues Wort' : rolle === 'uebung' ? 'Übung' : '';
+    rollenSchild.classList.toggle('hidden', !rolle);
+  }
+  if (rolle === 'info') card.classList.add('flipped');
 
   stufenVorschau();
   renderTippfeld(w);
@@ -1662,6 +1730,14 @@ function stufenVorschau(){
      (js/kategorien.js) behaelt die lange Form, ihre Knoepfe sind breit genug. */
   const text = (tage) => tage === 0 ? 'heute' : tage === 1 ? 'morgen' : `${tage} Tage`;
   const ziel = { nochmal:'Nochmal', schwer:'Schwer', gut:'Gut', leicht:'Leicht' };
+  /* v605: die Übung in der Mitte ändert nichts — dann sagen die Knöpfe das. */
+  if (rundenRolle(SESSION.idx) === 'uebung'){
+    Object.keys(STUFEN).forEach(k => {
+      const el = document.getElementById('stufe' + ziel[k]);
+      if (el) el.innerHTML = '<b>Übung</b><i>zählt nicht</i>';
+    });
+    return;
+  }
   Object.keys(STUFEN).forEach(k=>{
     const el = document.getElementById('stufe' + ziel[k]);
     if (!el) return;
@@ -1693,6 +1769,18 @@ function answer(stufe){
   /* Die Wischgeste und aeltere Aufrufe geben weiter true/false herein. */
   if (stufe === true) stufe = 'gut';
   if (stufe === false) stufe = 'nochmal';
+  /* ⭐ v605: Infokarte („Weiter") und Übung in der Mitte ändern NICHTS — kein
+     Fortschritt, keine Quote, kein Tageszähler. Die entscheidende Abfrage steht
+     ganz am Ende der Runde, deshalb ist so ein Eintrag nie der letzte. */
+  const rolle = rundenRolle(SESSION.idx);
+  if (rolle || stufe === 'weiter'){
+    if (rolle && SESSION.idx < SESSION.words.length - 1){
+      rundeSichern(SESSION.idx + 1);
+      SESSION.idx++;
+      renderCard();
+    }
+    return;
+  }
   const s = STUFEN[stufe] || STUFEN.nochmal;
 
   const w = SESSION.words[SESSION.idx];
@@ -1856,7 +1944,7 @@ function answer(stufe){
          100 %; die Zahl daneben blieb bei „9/10" stehen, seit sie die fertigen
          Karten zählt (`rundenLeiste()` in js/start.js). Der letzte Handgriff
          einer Runde ist genau der, den Elias sehen will. */
-      rundenLeiste('learnProgressFill', 'learnCount', SESSION.words.length, SESSION.words.length);
+      rundenLeiste('learnProgressFill', 'learnCount', rundeGezaehlt(), rundeGezaehlt());
       SESSION.fertig = true;
       /* Die Runde ist zu Ende — der gesicherte Stand darf sie nicht wieder
          auferstehen lassen. */
@@ -1878,8 +1966,8 @@ function answer(stufe){
       const restVorrat = (typeof tagesPool === 'function') ? tagesPool().length
                        : (typeof currentPool === 'function') ? currentPool().length : 0;
       if (typeof feiere === 'function'){
-        feiere('runde-fertig', { karten: SESSION.words.length });
-        if (!restVorrat) feiere('alles-faellig', { zahl: SESSION.words.length });
+        feiere('runde-fertig', { karten: rundeGezaehlt() });
+        if (!restVorrat) feiere('alles-faellig', { zahl: rundeGezaehlt() });
         /* ⭐ Und danach: war das der dritte von drei? */
         if (typeof tagKomplettPruefen === 'function') tagKomplettPruefen();
       } else toast('Runde geschafft!');
@@ -1902,4 +1990,9 @@ document.getElementById('answerButtons').addEventListener('click', (e)=>{
   const b = e.target.closest('[data-stufe]');
   if (b) answer(b.dataset.stufe);
 });
+/* v605: „Weiter" auf der Infokarte eines neuen Wortes. */
+(function(){
+  const k = document.getElementById('btnInfoWeiter');
+  if (k) k.addEventListener('click', () => answer('weiter'));
+})();
 

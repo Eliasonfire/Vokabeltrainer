@@ -47,6 +47,10 @@ const pruefe = (was, erwartet, ist) => {
 
 /* ------------------- Die Stücke aus dem echten Quelltext ------------------ */
 const mRunde  = lernen.match(/\nconst OFFENE_RUNDE = 'vt_offeneRunde';[\s\S]*?\nfunction offeneRundeFortsetzen\(\)\{[\s\S]*?\n\}\n/);
+/* v605 (25.09.2026): rundeSichern() und offeneRundeStand() zählen nur Karten
+   ohne Rolle (Infokarte/Übung eines neuen Wortes) — die zwei Helfer stehen oben
+   in js/lernen.js, außerhalb des Stücks darüber. */
+const mRollen = lernen.match(/\nfunction rundenRolle\([\s\S]*?\nfunction rundeGezaehlt\([\s\S]*?\n\}\n/);
 const mBogen  = start.match(/\nfunction ringBogen\([\s\S]*?\n\}\n/);
 const mLeiste = start.match(/\nfunction rundenLeiste\([\s\S]*?\n\}\n/);
 const mVorschuss = start.match(/RING_VORSCHUSS\s*=\s*([0-9.]+)/);
@@ -112,7 +116,7 @@ function umgebung(store, woerter, tag = HEUTE, extra = {}){
     showScreen: (n) => bildschirme.push(n)
   };
   vm.createContext(ctx);
-  vm.runInContext(mRunde[0]
+  vm.runInContext((mRollen ? mRollen[0] : '') + mRunde[0]
     + '\nthis.RUF = { rundeSichern, rundeVergessen, offeneRundeStand, offeneRundeFortsetzen };', ctx);
   return { ctx, bildschirme };
 }
@@ -309,7 +313,8 @@ pruefe('js/buecher.js meldet den Bestand fertig, als Letztes', true,
 pruefe('der Tausch merkt sich die Karte aus dem Buch', true,
   /GETAUSCHT\.set\(von, nach\);/.test(kern) && /GETAUSCHT\.set\(String\(f\.id\), String\(ziel\.id\)\)/.test(kern));
 pruefe('die Sicherung merkt sich die Größe', true,
-  /ziel: Number\(SESSION\.ziel\) \|\| SESSION\.words\.length/.test(lernen));
+  /* v605: die Größe zählt nur Karten ohne Rolle (rundeGezaehlt()). */
+  /ziel: Number\(SESSION\.ziel\) \|\| (SESSION\.words\.length|rundeGezaehlt\(\))/.test(lernen));
 pruefe('die Startseite zeigt den Hinweis', true, /offeneRundeStand\(\)/.test(start));
 /* ⛔ Der Schlüssel gehört dem Gerät. Stünde er im Abgleich, käme die beendete
    Runde vom anderen Gerät zurück — ein fehlender Eintrag verliert jeden
