@@ -1590,6 +1590,28 @@ function analysiereSatz(satz){
       rolle = 'مُبْتَدَأ';
       erwartet = 'raf';
       khabarDa = false; shibhVorher = false;
+    } else if (!imVerbalsatz && i > 0 && !nachKomma
+               && istInListe(woerter[i-1], HINWEISWOERTER)
+               && /^ال/.test(ohneVokale(rein)) && !artikelWiderlegt(wort)
+               && !dualOderPlural
+               && !(gelesen && gelesen.kasus && gelesen.kasus !== 'raf')){
+      /* ⭐ HINWEISWORT + NOMEN MIT اَلْ IST NOCH KEIN SATZ (25.09.2026). In
+         «هَذَا الرَّجُلُ فَقِيرٌ.» stand الرَّجُلُ als zweites خَبَر — und Übung 1
+         („Tippe alle خَبَرٌ an") verlangte es in 22 Kartensätzen als Aussage.
+         Sein Lehrer (Folge 09, 24:42, Regel hadha-al-kein-satz-01): „Steht nach
+         هَذَا / هَذِهِ ein Nomen mit اَلْ, ist das noch kein vollständiger Satz,
+         sondern nur die Wortgruppe »dieses Haus« … Es muss ein Prädikat folgen".
+         Seine Zusatzregel badal-01 (Sharḥ Madīnah L8 S. 12) nennt die Rolle
+         بَدَل — den Begriff hat sein Lehrer noch nicht gebracht, und auf die
+         Frage nach بَدَل bei Namen sagte Elias am 25.09. „vorerst draußen".
+         Deshalb hier OHNE Fachbegriff, nur was die Regel seines Lehrers sagt.
+         Kasus wie das Hinweiswort am Satzanfang: Nominativ.
+         ⚠️ Nur mit Artikel — der Name hinter einem Familienwort (هَذَا أَخِي
+         عِيسَى, Befund (d)) bleibt draußen, bewacht in
+         werkzeuge/pruefe-satzmodus-aktuell.mjs. Nicht im Verbalsatz, nicht
+         hinter einem Komma, nie gegen eine sichtbare Kasra oder Fatha. */
+      rolle = 'gehört zum Hinweiswort davor (Wortgruppe, die Aussage folgt)';
+      erwartet = 'raf';
     } else if (imVerbalsatz){
       /* Im Verbalsatz gibt es kein خَبَر. Steht nach فِعْل und فَاعِل noch ein
          Nomen, ist es das Objekt — مَفْعُول بِهِ, und das ist مَنْصُوب.
