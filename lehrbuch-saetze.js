@@ -512,5 +512,71 @@ const LEHRBUCH_SAETZE = [
     sentAr: 'هَذَا يَوْمُ الْعَمَلِ.', sentDe: 'Das ist der Arbeitstag.' },
   { id: 'by1-85-1', werk: 'bayna-yadayk-1', seite: 85, kapitel: 4, vokalisationErgaenzt: true,
     gedruckt: 'أَفْرادُ ohne Fatha vor dem Alif, الأُسْرَةِ ohne Sukun am Artikel-Lam',
-    sentAr: 'كَمْ أَفْرَادُ الْأُسْرَةِ؟', sentDe: 'Wie viele Mitglieder hat die Familie?' }
+    sentAr: 'كَمْ أَفْرَادُ الْأُسْرَةِ؟', sentDe: 'Wie viele Mitglieder hat die Familie?' },
+  /* ⭐ Bayna Yadayk 1, dritte Lese (25.09.2026, v610) — möglich erst durch
+   * v608/v609: der Satzzerleger liest jetzt das Futur سَـ als Verb und ein
+   * Nomen mit Fatha direkt nach dem Verb als Objekt. Vorher galt سَأَكْنُسُ als
+   * مُبْتَدَأ und الْمَلَابِسَ als فَاعِل mit „falscher" Fatha. Kapitel 4 ist sein
+   * neuestes (Balance im Satzmodus: 7,4 % der Sätze mit einem Wort daraus).
+   * Jede Endung am Scan geprüft (≈ 130 dpi, vergrößert). ERGÄNZT nur, was die
+   * Schrift erzwingt (Fatha vor Alif, Kasra vor ي, Damma vor و, Sukun am
+   * Artikel-Lam, فِي, وَ). NICHT genommen: لَدَيْنَا شَقَّةٌ جَمِيلَة (S. 58,
+   * Pausalform) · فِي أَيِّ دَوْر الشَّقَّةُ؟ (S. 58: دَوْر ohne gedruckte Endung —
+   * „welcher?" bleibt deshalb ohne Satz) · أنا سَأَغْسِلُ …/وأنا سَأَقْرَأُ … (S. 84:
+   * keine Fatha auf dem Hamza gedruckt, die wäre meine) · يا لَطِيفَة (Pausal) ·
+   * مَتَى هَذَا الْحِوَارُ؟ (S. 85: الْحِوَارُ würde zweites خَبَر statt بَدَل — Frage
+   * an ihn, To-Do) · der Lesetext S. 108 bis auf einen Satz (Pausal: المَسْجِد,
+   * صَلاة الفَجْر) und die FALSCHEN Aussagen des Selbsttests (4, 5, 7).
+   * Das Deutsch ist MEINE Übersetzung, im Buch steht keins. */
+  { id: 'by1-58-1', werk: 'bayna-yadayk-1', seite: 58, kapitel: 3, vokalisationErgaenzt: true,
+    gedruckt: 'في zweimal ohne Kasra, sonst vokalisiert',
+    sentAr: 'كَمْ غُرْفَةً فِي الشَّقَّةِ؟ فِي الشَّقَّةِ خَمْسُ غُرَفٍ.', sentDe: 'Wie viele Zimmer sind in der Wohnung? In der Wohnung sind fünf Zimmer.' },
+  { id: 'by1-58-2', werk: 'bayna-yadayk-1', seite: 58, kapitel: 3, vokalisationErgaenzt: true,
+    gedruckt: 'في ohne Kasra, الخامِسِ ohne Sukun am Artikel-Lam und ohne Fatha vor dem Alif',
+    sentAr: 'الشَّقَّةُ فِي الدَّوْرِ الْخَامِسِ.', sentDe: 'Die Wohnung ist im fünften Stock.' },
+  { id: 'by1-84-3', werk: 'bayna-yadayk-1', seite: 84, kapitel: 4, vokalisationErgaenzt: true,
+    gedruckt: 'ماذا, يا und طارِقُ ohne Fatha vor dem Alif',
+    sentAr: 'مَاذَا سَتَفْعَلُ يَا طَارِقُ؟', sentDe: 'Was wirst du machen, Tariq?' },
+  { id: 'by1-84-4', werk: 'bayna-yadayk-1', seite: 84, kapitel: 4, vokalisationErgaenzt: true,
+    gedruckt: 'الجُلوسِ ohne Sukun am Artikel-Lam und ohne Damma vor dem Waw',
+    sentAr: 'سَأَكْنُسُ غُرْفَةَ الْجُلُوسِ.', sentDe: 'Ich werde das Wohnzimmer fegen.' },
+  { id: 'by1-84-5', werk: 'bayna-yadayk-1', seite: 84, kapitel: 4, vokalisationErgaenzt: true,
+    gedruckt: 'وماذا ohne Zeichen auf dem وَ und ohne Fatha vor dem Alif, يا ohne Fatha vor dem Alif',
+    sentAr: 'وَمَاذَا سَتَفْعَلِينَ يَا فَاطِمَةُ؟', sentDe: 'Und was wirst du machen, Fatima?' },
+  { id: 'by1-84-6', werk: 'bayna-yadayk-1', seite: 84, kapitel: 4, vokalisationErgaenzt: false,
+    gedruckt: 'vollständig vokalisiert',
+    sentAr: 'سَأَكْنُسُ غُرْفَةَ النَّوْمِ.', sentDe: 'Ich werde das Schlafzimmer fegen.' },
+  { id: 'by1-84-7', werk: 'bayna-yadayk-1', seite: 84, kapitel: 4, vokalisationErgaenzt: true,
+    gedruckt: 'وماذا ohne Zeichen auf dem وَ und ohne Fatha vor dem Alif, يا ohne Fatha vor dem Alif',
+    sentAr: 'وَمَاذَا سَتَفْعَلُ يَا أَحْمَدُ؟', sentDe: 'Und was wirst du machen, Ahmad?' },
+  { id: 'by1-84-8', werk: 'bayna-yadayk-1', seite: 84, kapitel: 4, vokalisationErgaenzt: true,
+    gedruckt: 'المَلابِسَ ohne Sukun am Artikel-Lam und ohne Fatha vor dem Alif',
+    sentAr: 'سَأَغْسِلُ الْمَلَابِسَ.', sentDe: 'Ich werde die Kleidung waschen.' },
+  { id: 'by1-84-9', werk: 'bayna-yadayk-1', seite: 84, kapitel: 4, vokalisationErgaenzt: true,
+    gedruckt: 'سَأَكْوي ohne sichtbare Kasra vor dem ي, المَلابِسَ ohne Sukun am Artikel-Lam und ohne Fatha vor dem Alif',
+    sentAr: 'سَأَكْوِي الْمَلَابِسَ.', sentDe: 'Ich werde die Kleidung bügeln.' },
+  { id: 'by1-85-2', werk: 'bayna-yadayk-1', seite: 85, kapitel: 4, vokalisationErgaenzt: true,
+    gedruckt: 'المَلابِسَ ohne Sukun am Artikel-Lam und ohne Fatha vor dem Alif',
+    sentAr: 'مَنْ يَغْسِلُ الْمَلَابِسَ؟', sentDe: 'Wer wäscht die Kleidung?' },
+  { id: 'by1-85-3', werk: 'bayna-yadayk-1', seite: 85, kapitel: 4, vokalisationErgaenzt: true,
+    gedruckt: 'الجُلوسِ ohne Sukun am Artikel-Lam und ohne Damma vor dem Waw',
+    sentAr: 'مَنْ سَيَكْنُسُ غُرْفَةَ الْجُلُوسِ؟', sentDe: 'Wer wird das Wohnzimmer fegen?' },
+  { id: 'by1-85-4', werk: 'bayna-yadayk-1', seite: 85, kapitel: 4, vokalisationErgaenzt: true,
+    gedruckt: 'القُرْآنَ ohne Sukun am Artikel-Lam',
+    sentAr: 'مَنْ سَيَقْرَأُ الْقُرْآنَ؟', sentDe: 'Wer wird den Koran lesen?' },
+  { id: 'by1-85-5', werk: 'bayna-yadayk-1', seite: 85, kapitel: 4, vokalisationErgaenzt: false,
+    gedruckt: 'vollständig vokalisiert',
+    sentAr: 'مَنْ سَيَكْنُسُ غُرْفَةَ النَّوْمِ؟', sentDe: 'Wer wird das Schlafzimmer fegen?' },
+  { id: 'by1-85-6', werk: 'bayna-yadayk-1', seite: 85, kapitel: 4, vokalisationErgaenzt: true,
+    gedruckt: 'الأَطْباقَ ohne Sukun am Artikel-Lam und ohne Fatha vor dem Alif',
+    sentAr: 'مَنْ سَيَغْسِلُ الْأَطْبَاقَ؟', sentDe: 'Wer wird das Geschirr spülen?' },
+  { id: 'by1-85-7', werk: 'bayna-yadayk-1', seite: 85, kapitel: 4, vokalisationErgaenzt: true,
+    gedruckt: 'سَيَكْوي ohne sichtbare Kasra vor dem ي, المَلابِسَ ohne Sukun am Artikel-Lam und ohne Fatha vor dem Alif',
+    sentAr: 'مَنْ سَيَكْوِي الْمَلَابِسَ؟', sentDe: 'Wer wird die Kleidung bügeln?' },
+  { id: 'by1-85-8', werk: 'bayna-yadayk-1', seite: 85, kapitel: 4, vokalisationErgaenzt: false,
+    gedruckt: 'vollständig vokalisiert',
+    sentAr: 'مَنْ هُمْ؟', sentDe: 'Wer sind sie?' },
+  { id: 'by1-108-1', werk: 'bayna-yadayk-1', seite: 108, kapitel: 4, vokalisationErgaenzt: true,
+    gedruckt: 'القُرْآنَ ohne Sukun am Artikel-Lam; aus dem Lesetext des Selbsttests (Einheiten 3 und 4)',
+    sentAr: 'هُوَ يَقْرَأُ الْقُرْآنَ.', sentDe: 'Er liest den Koran.' }
 ];
