@@ -578,5 +578,60 @@ const LEHRBUCH_SAETZE = [
     sentAr: 'مَنْ هُمْ؟', sentDe: 'Wer sind sie?' },
   { id: 'by1-108-1', werk: 'bayna-yadayk-1', seite: 108, kapitel: 4, vokalisationErgaenzt: true,
     gedruckt: 'القُرْآنَ ohne Sukun am Artikel-Lam; aus dem Lesetext des Selbsttests (Einheiten 3 und 4)',
-    sentAr: 'هُوَ يَقْرَأُ الْقُرْآنَ.', sentDe: 'Er liest den Koran.' }
+    sentAr: 'هُوَ يَقْرَأُ الْقُرْآنَ.', sentDe: 'Er liest den Koran.' },
+  /* ⭐ Madina 1, Lektionen 10–12 (25.09.2026, v611) — für die Endungen-Übung.
+   * Elias: „wie wäre es auch mit einem satz übung wo ich die richtigen endungen
+   * hinzufügen muss wie zb ki für frau oder ha und hu usw.. also halt alle die
+   * bisher zur auswahl stehen". Gezählt in seiner Auswahl (356 Sätze, Madina 1
+   * K1–12 + Bayna Yadayk 1 K1–4): ـِي ≈ 15, ـكَ 6, ـكِ 3, ـهُ 2, ـهَا 1 —
+   * ausgerechnet die drei, die er nennt, fast leer. Bayna Yadayk 1 hat in
+   * Einheit 1–4 (Buchseiten 1–108, ganz durchgesehen) KEINEN Satz mit ـهَا.
+   * Buchseite = PDF-Seite − 21 (sein beschriftetes Exemplar, 146 Seiten).
+   * Madina 1 druckt in den Lektionen fast nur die Endungen. ERGÄNZT ist, was die
+   * Schrift erzwingt (Fatha vor Alif, Kasra vor ي, Damma vor و, Sukun am
+   * Artikel-Lam), sonst NUR aus Belegen: Wörter seiner Karten (هَذَا, هَذِهِ,
+   * غُرْفَة, نَافِذَة, كَبِير, مِرْوَحَة, جَمِيل, مُهَنْدِس, بِنْت, أَيْنَ, أَب,
+   * أُخْت) und Formen, die das Buch in derselben Zeile oder der nächsten voll
+   * druckt (خَرَجَ, اسْمُهُ, اسْمُهَا). `gedruckt` sagt je Satz, was dasteht.
+   * Eine fehlende Endung heißt: nicht genommen. NICHT genommen: S. 55
+   * لُغَتُه اليابانيّةُ (يَابَانِيّ und صَعْب auf keiner Karte) · S. 56 حَمْزَةُ،
+   * عِنْدَه سيارةٌ (Zerleger: حَمْزَةُ = مُضَاف) · S. 58 زَمِيلِي له أَخٌ وأُخْتٌ
+   * (Zerleger: أَخٌ = خَبَر statt مُبْتَدَأ مُؤَخَّر) und أُخْتِي لَهَا طِفْلٌ صغير
+   * (صغير ohne Endung) · S. 59 آمنة معها زوجها, زينب في الرياض …, هذا الطالب
+   * أبوه وزير … (ohne Endungen) · S. 62 مَن في السيارة؟ فيها أبي … und S. 64
+   * Übung (1): die Vokale dort sind seine rote Handschrift, gedruckt fast
+   * nichts · S. 57 Übung (2): die Endung ist die Lücke · S. 63 اسمُها فاطمة
+   * (فاطمة ohne Endung — nur die Frage davor genommen) und أهي زَمِيلَتُكِ؟
+   * (Zerleger: زَمِيلَتُكِ = مُبْتَدَأ statt خَبَر). Das Deutsch ist MEINE
+   * Übersetzung, im Buch steht keins. */
+  { id: 'mb1-55-1', seite: 55, kapitel: 10, vokalisationErgaenzt: true,
+    gedruckt: 'زَوْجُها voll bis auf die Fatha vor dem Alif, مهندسٌ nur mit der Endung',
+    sentAr: 'زَوْجُهَا مُهَنْدِسٌ.', sentDe: 'Ihr Mann ist Ingenieur.' },
+  { id: 'mb1-58-2', seite: 58, kapitel: 10, vokalisationErgaenzt: true,
+    gedruckt: 'هذا ohne Zeichen, قَلَمُهُ voll vokalisiert (Musterzeile wie mb1-58-1)',
+    sentAr: 'هَذَا قَلَمُهُ.', sentDe: 'Das ist sein Stift.' },
+  { id: 'mb1-58-3', seite: 58, kapitel: 10, vokalisationErgaenzt: true,
+    gedruckt: 'هذا ohne Zeichen, قَلَمُهَا voll vokalisiert (Musterzeile wie mb1-58-1)',
+    sentAr: 'هَذَا قَلَمُهَا.', sentDe: 'Das ist ihr Stift.' },
+  { id: 'mb1-59-1', seite: 59, kapitel: 10, vokalisationErgaenzt: true,
+    gedruckt: 'voll vokalisiert bis auf die Fatha am Ende des zweiten خَرَج (das erste steht voll da); عمّي wie in mb1-63-2',
+    sentAr: 'مَنْ خَرَجَ مَعَهُ؟ خَرَجَ مَعَهُ عَمِّي.', sentDe: 'Wer ist mit ihm hinausgegangen? Mein Onkel ist mit ihm hinausgegangen.' },
+  { id: 'mb1-61-5', seite: 61, kapitel: 11, vokalisationErgaenzt: true,
+    gedruckt: 'nur die Endungen نافذةٌ كبيرةٌ ومِرْوَحَةٌ جَميلةٌ; هذه غرفتي und فيها ohne Zeichen',
+    sentAr: 'هَذِهِ غُرْفَتِي. فِيهَا نَافِذَةٌ كَبِيرَةٌ وَمِرْوَحَةٌ جَمِيلَةٌ.', sentDe: 'Das ist mein Zimmer. Darin sind ein großes Fenster und ein schöner Ventilator.' },
+  { id: 'mb1-63-5', seite: 63, kapitel: 12, vokalisationErgaenzt: true,
+    gedruckt: 'ما ٱسمها mit Wasla, ohne Damma; die Damma steht in der Antwortzeile darunter (اسمُها)',
+    sentAr: 'مَا اسْمُهَا؟', sentDe: 'Wie heißt sie?' },
+  { id: 'mb1-63-6', seite: 63, kapitel: 12, vokalisationErgaenzt: true,
+    gedruckt: 'كَيْفَ حالُكِ يابنتُ — ohne Zeichen auf ب von بنت; يا und بنت im Druck ohne Leerzeichen',
+    sentAr: 'كَيْفَ حَالُكِ يَا بِنْتُ؟', sentDe: 'Wie geht es dir, Mädchen?' },
+  { id: 'mb1-63-7', seite: 63, kapitel: 12, vokalisationErgaenzt: true,
+    gedruckt: 'nur die Kasra auf dem ك von أبوكِ',
+    sentAr: 'أَيْنَ أَبُوكِ؟', sentDe: 'Wo ist dein Vater?' },
+  { id: 'mb1-64-1', seite: 64, kapitel: 12, vokalisationErgaenzt: true,
+    gedruckt: 'ما ٱسمُه und ٱسمُهُ سَعْدٌ mit Wasla; die Damma auf dem ه steht nur in der Antwort',
+    sentAr: 'مَا اسْمُهُ؟ اِسْمُهُ سَعْدٌ.', sentDe: 'Wie heißt er? Sein Name ist Saad.' },
+  { id: 'mb1-64-2', seite: 64, kapitel: 12, vokalisationErgaenzt: true,
+    gedruckt: 'ألَكِ أختٌ — die Hamza-Vokale ohne Zeichen',
+    sentAr: 'أَلَكِ أُخْتٌ؟', sentDe: 'Hast du eine Schwester?' }
 ];
