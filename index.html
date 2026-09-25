@@ -1543,6 +1543,9 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
    nebeneinander passen, also kleiner und ohne Symbol-Ballast; unter jeder
    Stufe steht, in welche Box die Vokabel wandert und wann sie wiederkommt. */
 .answer-buttons{display:flex;gap:var(--sp-2);padding:var(--sp-2) var(--gutter) 0;}
+/* v605: „Weiter" auf der Infokarte — so hoch wie die vier Wertungsknöpfe, volle Breite. */
+.btn-info-weiter{flex:1;}
+.learn-rolle{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;color:var(--green);}
 
 /* „Kenne ich schon" — leise gestaltet, damit es nicht wie eine weitere
    Bewertung aussieht. Steht seit dem 18.08.2026 unter der Hoerkarte, nicht
@@ -5705,6 +5708,8 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         </button>
         <div class="progress-track"><div class="progress-fill" id="learnProgressFill"></div></div>
         <span class="learn-count" id="learnCount">0/0</span>
+        <!-- v605: Schild „Neues Wort" / „Übung" am ersten Tag eines neuen Wortes -->
+        <span class="learn-rolle hidden" id="learnRolle"></span>
         <!-- ⛔ Hier stand am 15.09.2026 für drei Stunden ein Tagesring neben
              dem Balken. Elias mit Bild, beide rot umrandet: „hier sind ring
              und balken, ring soll raus."
@@ -5845,6 +5850,10 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
           <svg class="ic"><use href="#ic-check"/></svg><span>Gut</span><em id="stufeGut"></em></button>
         <button class="btn btn-stufe btn-leicht" id="btnLeicht" data-stufe="leicht">
           <span>Leicht</span><em id="stufeLeicht"></em></button>
+      </div>
+      <!-- ⭐ v605: die Infokarte eines neuen Wortes hat nur „Weiter" (js/lernen.js, renderCard). -->
+      <div class="answer-buttons hidden" id="infoWeiter">
+        <button class="btn btn-stufe btn-right btn-info-weiter" id="btnInfoWeiter"><span>Weiter</span><em>zum nächsten Wort</em></button>
       </div>
 
       <!-- ⛔ Hier stand bis zum 18.08.2026 der „Kenne ich schon"-Knopf. Er ist
