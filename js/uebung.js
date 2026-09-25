@@ -607,6 +607,33 @@ function uebKlarEinzahl(t){
   const hat = f => !!f && formen.includes(uebungOhneEndung(f));
   return (hat(v.ar) || hat(v.sg) || hat(v.femSg)) && !(hat(v.pl) || hat(v.femPl));
 }
+/* ⭐ DAS VERB DANACH ZEIGT DIE PERSON (Übung 14, 25.09.2026). „du", „sie" und
+   „ihr" fragte die Übung nur, wenn das Wort danach ein Nomen mit Geschlecht
+   war — bei einem Verb sagte uebungIstWeiblichImSatz „weiß nicht". Dabei zeigt
+   gerade die Vergangenheit Person, Geschlecht und Zahl eindeutig, und genau so
+   stehen die Pronomen auf seinen Karten: أَنْتَ ذَهَبْتَ, أَنْتِ ذَهَبْتِ,
+   أَنْتُمْ ذَهَبْتُمْ … (data/fachbegriffe.js, gram-pron-*: „Vergangenheit auf
+   ـْتَ" usw.; verb-madi-endungen-01, Folge 18). Gemessen vorher: 7 der 12
+   Pronomen seiner Karte „ohne Satz", obwohl die Beispielsätze dieser Karten sie
+   enthalten. Die längste passende Endung gewinnt (ذَهَبْتُمَا endet auch auf
+   ـَا wie ذَهَبَا). Nur Vergangenheit: تَذْهَبُ kann أَنْتَ oder هِيَ sein. */
+const UEB_MADI_PRONOMEN = [
+  ['هُوَ', 'َ'], ['هِيَ', 'َتْ'], ['هُمَا', 'َا'], ['هُمَا', 'َتَا'], ['هُمْ', 'ُوا'], ['هُنَّ', 'ْنَ'],
+  ['أَنْتَ', 'ْتَ'], ['أَنْتِ', 'ْتِ'], ['أَنْتُمَا', 'ْتُمَا'], ['أَنْتُمْ', 'ْتُمْ'], ['أَنْتُنَّ', 'ْتُنَّ'],
+  ['أَنَا', 'ْتُ'], ['نَحْنُ', 'ْنَا']
+].map(([p, e]) => [p.normalize('NFC'), e.normalize('NFC')]);
+function uebMadiPronomen(wort){
+  if (typeof istMadiForm !== 'function') return null;
+  const w = String(wort || '').normalize('NFC').replace(/[.،؟?!«»:؛]+$/, '');
+  if (!istMadiForm(w)) return null;
+  let best = null, gleichLang = false;
+  for (const [p, e] of UEB_MADI_PRONOMEN){
+    if (!w.endsWith(e)) continue;
+    if (!best || e.length > best.e.length){ best = { p, e }; gleichLang = false; }
+    else if (e.length === best.e.length && p !== best.p) gleichLang = true;
+  }
+  return best && !gleichLang ? best : null;
+}
 const uebBedeutung = de => String(de || '').toLowerCase().replace(/[?„"“”]/g, '').trim();
 const UEB_FRAGE_DE = /^(wer|was|wo|woher|wohin|wie|wie viele?|wann|warum|welche[rsnm]?)\s*\??$/i;
 
@@ -1406,16 +1433,23 @@ const UEBUNGEN = [
         const tr = uebTreffer(t.rein, glieder);
         if (!tr) return;
         const L = tr.glied;
+        let verb = null;
         if (/^(sie|du|ihr)\b/i.test(L.de)){
           const n = z[i+1];
-          if (!n || typeof uebungIstWeiblichImSatz !== 'function' || uebungIstWeiblichImSatz(n.wort) === null) return;
+          if (!n) return;
+          const nomen = typeof uebungIstWeiblichImSatz === 'function' && uebungIstWeiblichImSatz(n.wort) !== null;
+          /* Sonst das Verb danach (uebMadiPronomen, oben): seine Endung muss
+             genau zu DIESEM Pronomen gehören. */
+          const m = nomen ? null : uebMadiPronomen(n.wort);
+          if (!nomen && !(m && m.p === String(L.form).normalize('NFC'))) return;
+          if (m) verb = { wort: n.rein, endung: 'ـ' + m.e };
         }
         out.push({
           frage:'Welches Pronomen gehört hierhin?',
           wortIdx:i, verdeckt:true,
           loesung: L.form,
           optionen: glieder.map(g => ({ wert:g.form, text: tr.vorsatz + g.form })),
-          aufloesung:`${L.form} heißt „${L.de}".`
+          aufloesung:`${L.form} heißt „${L.de}".` + (verb ? ` Das Verb ${verb.wort} endet auf ${verb.endung}.` : '')
         });
       });
       return out;

@@ -124,6 +124,28 @@ function ladeApp(){
 const nackt = s => String(s || '').replace(/[\u064B-\u0652\u0670\u0640]/g, '').replace(/[أإآٱ]/g, 'ا')
   .replace(/[.،؟?!«»:؛"„“”()]/g, '').trim();
 const kern = s => nackt(s).replace(/^(و|ف|ب|ل)?(ال)?/, '');
+/* ⛔ DIE KARTENFORM WIRD NICHT BESCHNITTEN (25.09.2026). kern() schneidet ein
+   و ف ب ل am Wortanfang ab — richtig am Satzwort (وَالْكِتَابُ), falsch an der
+   Karte: aus فَتَاةٌ wurde „تاة", und „junge Frau" (45910) stand als „in keinem
+   Satz", obwohl mb1-63-4 الْفَتَاةُ enthält. Zweiwortkarten (مَدْرَسَةٌ
+   مُتَوَسِّطَةٌ, 45908) konnten nie treffen, weil jedes Satzwort einzeln
+   verglichen wurde. Jetzt: Karte nur ohne Artikel; Satzwort mit UND ohne
+   Vorsilbe; dazu das Wortpaar. Störtest 3c. */
+const karteKern = s => String(s || '').trim().split(/\s+/).map(w => nackt(w).replace(/^ال/, '')).join(' ');
+const satzKerne = w => [...new Set([nackt(w).replace(/^ال/, ''), kern(w)])];
+function satzTreffer(worte, neuKern, praesensTreffer){
+  const t = [];
+  worte.forEach((w, i) => {
+    let hit = null;
+    for (const k of satzKerne(w)){
+      hit = (k.length > 1 && neuKern.get(k)) || (praesensTreffer ? praesensTreffer(k) : null);
+      if (!hit && i + 1 < worte.length) hit = neuKern.get(k + ' ' + nackt(worte[i + 1]).replace(/^ال/, '')) || null;
+      if (hit) break;
+    }
+    if (hit) t.push(hit);
+  });
+  return t;
+}
 
 function messen(app){
   const { hole, auswahl } = app;
@@ -268,7 +290,7 @@ function messen(app){
   const VD = hole('VOCAB_DATA');
   const neu = VD.filter(w => neueste.some(([b, k]) => w.book === b && Number(w.chapter) === k));
   const neuKern = new Map();
-  for (const w of neu) for (const f of [w.ar, w.sg, w.pl, w.femSg].filter(Boolean)) for (const t of String(f).split('/')) neuKern.set(kern(t), w);
+  for (const w of neu) for (const f of [w.ar, w.sg, w.pl, w.femSg].filter(Boolean)) for (const t of String(f).split('/')) neuKern.set(karteKern(t), w);
   /* ⛔ VERBEN ZÄHLEN AUCH IM PRÄSENS UND FUTUR (25.09.2026). Verglichen wurde nur
      mit ar/sg/pl/femSg — bei einem Verb ist ar die Vergangenheit (كَنَسَ). Nach
      v610 (16 Sätze aus Kapitel 4 mit سَأَكْنُسُ, يَغْسِلُ, سَيَكْوِي …) stieg der
@@ -289,8 +311,7 @@ function messen(app){
   };
   let mitNeu = 0; const getroffen = new Set();
   for (const { s } of zerlegt){
-    const worte = String(s.sentAr).split(/\s+/).map(kern);
-    const t = worte.map(k => (k.length > 1 && neuKern.get(k)) || praesensTreffer(k)).filter(Boolean);
+    const t = satzTreffer(String(s.sentAr).split(/\s+/), neuKern, praesensTreffer);
     if (t.length){ mitNeu++; t.forEach(w => getroffen.add(String(w.id))); }
   }
   // H: das PFLICHTPROGRAMM für JEDE Übung (SATZMODUS-PFLICHTPROGRAMM.md) — auch
@@ -390,6 +411,15 @@ if (STOER){
     const ohne = messen(app).mitNeu;
     verben.forEach((w, i) => { w.present = gemerkt[i]; });
     ok(`Präsens der neuesten Verben zählt (${vorher} Sätze, ohne Präsens ${ohne})`, ohne < vorher);
+  }
+  // 3c. Kartenwort mit ف am Anfang (فَتَاةٌ) und Zweiwortkarte (مَدْرَسَةٌ مُتَوَسِّطَةٌ)
+  //     werden im Satz gefunden — mit dem alten Schnitt an der Karte (kern) nicht.
+  {
+    const m = new Map([[karteKern('فَتَاةٌ'), { id: 'a' }], [karteKern('مَدْرَسَةٌ مُتَوَسِّطَةٌ'), { id: 'b' }]]);
+    const t = satzTreffer('وَمَنْ هَذِهِ الْفَتَاةُ؟ هُوَ فِي الْمَدْرَسَةِ الْمُتَوَسِّطَةِ.'.split(/\s+/), m, null).map(x => x.id);
+    ok('Kartenwort mit ف am Anfang und Zweiwortkarte werden gefunden', t.includes('a') && t.includes('b'));
+    const alt = new Map([[kern('فَتَاةٌ'), { id: 'a' }]]);
+    ok('Gegenprobe: mit dem alten Schnitt an der Karte fände er فَتَاةٌ nicht', !satzTreffer(['الْفَتَاةُ'], alt, null).length);
   }
   // 4. uebungMischen wieder nur gemischt → Teil E muss rot werden (Übung 11: 98 von 152 Aufgaben haben هَذَا).
   vm.runInContext('globalThis.__echtMischen = uebungMischen; uebungMischen = function(m, l){ return shuffle(l.slice()); };', app.ctx);
