@@ -2779,6 +2779,9 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
    Einstellung ist am 22.09.2026 weggefallen, die drei Tagesziele (Sätze, Hören,
    Wurzeln) benutzen es weiter. ⛔ Deshalb NICHT mit entfernt. */
 .sitzung-wahl{display:flex;align-items:center;gap:var(--sp-2);flex-wrap:wrap;justify-content:flex-end;}
+/* v618: das Satzziel ist eine Anzeige, zwei Zeilen „Teil 1: 7" / „Teil 2: 9" —
+   ohne pre brach sie bei 375 px Wort für Wort um (gemessen im eigenen Tab). */
+.satz-ziel-anzeige{white-space:pre;text-align:right;}
 .sitzung-eigen{width:5.5em;text-align:center;font-variant-numeric:tabular-nums;}
 
 /* Der Fuß mit Beenden / Prüfen / Weiter steht FEST, aus demselben Grund wie
@@ -6893,26 +6896,19 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
            Elias: „insgesamt 15 sätze bei gemischt damit ich alle mache.
            aktuallisere das auch dann in den einstellungen als tagesziel als
            auswahl". Die 13 bleibt als schlichte Zahl stehen, damit ein schon
-           gespeichertes Ziel nicht als „Eigene Zahl" auftaucht. -->
+           gespeichertes Ziel nicht als „Eigene Zahl" auftaucht.
+           ⛔ SEIT v618 (25.09.2026) KEINE AUSWAHL MEHR. Elias: „ich stelle mir
+           das so vor das die app automatisch meinen ring bzw mein tagesziel
+           einstellt". Die Zeile zeigt nur, was gilt; die Zahlen setzt
+           zeigeSatzZielAutomatisch() in js/einstellungen.js. -->
       <div class="setting-row">
         <div>
           <div class="setting-title">Satzaufgaben pro Tag</div>
-          <div class="setting-sub">Für Teil 1 und Teil 2 zusammen – ein Satz-Tag nimmt einen Teil, also die Hälfte. Bei 16 ist jede Übungsart einmal dran</div>
+          <div class="setting-sub">Automatisch: ein Satz-Tag ist ein Teil, jede Übung darin einmal. Danach kommt von selbst der andere Teil, am nächsten Satz-Tag andersherum. Was nicht geschafft ist, bleibt dran.</div>
         </div>
         <div class="sitzung-wahl">
-          <select id="satzZielSelect" class="select-input">
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="13">13</option>
-            <option value="15">15</option>
-            <option value="16" selected>16 – jede Übungsart einmal</option>
-            <option value="20">20</option>
-            <option value="30">30</option>
-            <option value="eigen">Eigene Zahl …</option>
-          </select>
-          <input id="satzZielEigen" class="select-input sitzung-eigen" type="number"
-                 inputmode="numeric" min="1" max="999" step="1" hidden
-                 aria-label="Eigenes Tagesziel im Satzmodus, in Aufgaben">
+          <span id="satzZielAnzeige" class="setting-title satz-ziel-anzeige">Teil 1
+Teil 2</span>
         </div>
       </div>
 
