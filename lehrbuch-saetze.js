@@ -603,16 +603,30 @@ const LEHRBUCH_SAETZE = [
    * nichts · S. 57 Übung (2): die Endung ist die Lücke · S. 63 اسمُها فاطمة
    * (فاطمة ohne Endung — nur die Frage davor genommen) und أهي زَمِيلَتُكِ؟
    * (Zerleger: زَمِيلَتُكِ = مُبْتَدَأ statt خَبَر). Das Deutsch ist MEINE
-   * Übersetzung, im Buch steht keins. */
+   * Übersetzung, im Buch steht keins.
+   * ⭐ Nachtrag v615 (25.09.2026): Die drei mit „Zerleger:“ zerlegt die App seit
+   * v613 richtig — sie stehen jetzt unten (mb1-56-1, mb1-58-4, mb1-63-8), bei
+   * 600 dpi am Buch nachgesehen, ergänzt nach denselben Regeln. */
   { id: 'mb1-55-1', seite: 55, kapitel: 10, vokalisationErgaenzt: true,
     gedruckt: 'زَوْجُها voll bis auf die Fatha vor dem Alif, مهندسٌ nur mit der Endung',
     sentAr: 'زَوْجُهَا مُهَنْدِسٌ.', sentDe: 'Ihr Mann ist Ingenieur.' },
+  /* حمزة trägt hier nur die Fatha auf dem ز und die Endung. VOLL gedruckt steht
+     der Name zwei Seiten vorher im selben Dialog (S. 54, PDF 73: اسمه حَمْزَةُ) —
+     daher Fatha und Sukun. ـهُ an عِنْدَ: seine Karte ـهُ; سَيَّارَة: seine Karte (K5). */
+  { id: 'mb1-56-1', seite: 56, kapitel: 10, vokalisationErgaenzt: true,
+    gedruckt: 'حمزَةُ ohne Zeichen auf ح und م (voll auf S. 54), عِنْدَه ohne Zeichen auf dem ه, سيارةٌ nur mit der Endung',
+    sentAr: 'حَمْزَةُ، عِنْدَهُ سَيَّارَةٌ.', sentDe: 'Hamza hat ein Auto.' },
   { id: 'mb1-58-2', seite: 58, kapitel: 10, vokalisationErgaenzt: true,
     gedruckt: 'هذا ohne Zeichen, قَلَمُهُ voll vokalisiert (Musterzeile wie mb1-58-1)',
     sentAr: 'هَذَا قَلَمُهُ.', sentDe: 'Das ist sein Stift.' },
   { id: 'mb1-58-3', seite: 58, kapitel: 10, vokalisationErgaenzt: true,
     gedruckt: 'هذا ohne Zeichen, قَلَمُهَا voll vokalisiert (Musterzeile wie mb1-58-1)',
     sentAr: 'هَذَا قَلَمُهَا.', sentDe: 'Das ist ihr Stift.' },
+  /* لَهُ mit Fatha: li-mit-suffix-01 („لَهُ (ihm)“, am Buch belegt mit أَلَكَ auf
+     S. 65); وَ und das Sukun in أُخْت: seine Karten. */
+  { id: 'mb1-58-4', seite: 58, kapitel: 10, vokalisationErgaenzt: true,
+    gedruckt: 'زَمِيْلِي und أَخٌ vollständig, وأُختٌ ohne Zeichen auf و und خ, له ohne Zeichen',
+    sentAr: 'زَمِيلِي لَهُ أَخٌ وَأُخْتٌ.', sentDe: 'Mein Mitschüler hat einen Bruder und eine Schwester.' },
   { id: 'mb1-59-1', seite: 59, kapitel: 10, vokalisationErgaenzt: true,
     gedruckt: 'voll vokalisiert bis auf die Fatha am Ende des zweiten خَرَج (das erste steht voll da); عمّي wie in mb1-63-2',
     sentAr: 'مَنْ خَرَجَ مَعَهُ؟ خَرَجَ مَعَهُ عَمِّي.', sentDe: 'Wer ist mit ihm hinausgegangen? Mein Onkel ist mit ihm hinausgegangen.' },
@@ -628,6 +642,12 @@ const LEHRBUCH_SAETZE = [
   { id: 'mb1-63-7', seite: 63, kapitel: 12, vokalisationErgaenzt: true,
     gedruckt: 'nur die Kasra auf dem ك von أبوكِ',
     sentAr: 'أَيْنَ أَبُوكِ؟', sentDe: 'Wo ist dein Vater?' },
+  /* أهي ohne Zeichen wie in mb1-63-4 (أَ und هِيَ: seine Karten). Das ز trägt
+     die Fatha auf seiner Karte زَمِيلٌ (weiblich زَمِيلَةٌ) und im Buch auf S. 54
+     (هو زَمِيْلي). */
+  { id: 'mb1-63-8', seite: 63, kapitel: 12, vokalisationErgaenzt: true,
+    gedruckt: 'زمِيْلَتُكِ ohne Zeichen auf dem ز, أهي ohne Zeichen',
+    sentAr: 'أَهِيَ زَمِيلَتُكِ؟', sentDe: 'Ist sie deine Mitschülerin?' },
   { id: 'mb1-64-1', seite: 64, kapitel: 12, vokalisationErgaenzt: true,
     gedruckt: 'ما ٱسمُه und ٱسمُهُ سَعْدٌ mit Wasla; die Damma auf dem ه steht nur in der Antwort',
     sentAr: 'مَا اسْمُهُ؟ اِسْمُهُ سَعْدٌ.', sentDe: 'Wie heißt er? Sein Name ist Saad.' },
