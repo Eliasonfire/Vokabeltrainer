@@ -75,6 +75,17 @@ const document_ = {
 
 /* ---------- Aussenwelt, die lernen.js voraussetzt ---------- */
 const WORT = { id:'t1', ar:'كِتَابٌ', de:'Buch', chapter:'test', type:'noun' };
+/* v603: INTERVALS und tageZwischen() aus dem ECHTEN js/kern.js, nicht getippt —
+   seit Box 6 und 7 hängt die Knopfvorschau an stufeErgebnis(), und die rechnet
+   mit beiden. [[testvorlage_selbst_nachgebaut]] */
+const KERN = fs.readFileSync('js/kern.js', 'utf8');
+const KERN_INTERVALS = eval('(' + (KERN.match(/const INTERVALS = (\{[^}]+\})/) || [])[1] + ')');
+const KERN_TAGEZWISCHEN = (() => {
+  const a = KERN.indexOf('function tageZwischen(');
+  let i = KERN.indexOf('{', a), t = 0;
+  for (; i < KERN.length; i++){ if (KERN[i] === '{') t++; else if (KERN[i] === '}' && !--t) break; }
+  return vm.runInNewContext('(' + KERN.slice(a, i + 1) + ')', { Date, Math, String, isNaN });
+})();
 const ctx = vm.createContext({
   document: document_,
   window:{ addEventListener:()=>{}, matchMedia:()=>({matches:false, addEventListener:()=>{}}) },
@@ -84,7 +95,8 @@ const ctx = vm.createContext({
   IntersectionObserver: class { observe(){} disconnect(){} unobserve(){} },
   LS:{ _d:{}, get(k,f){ return k in this._d ? this._d[k] : f; }, set(k,v){ this._d[k]=v; } },
   /* Die Werte, die der Pruefstand wirklich braucht - alles andere ist Attrappe. */
-  INTERVALS:{1:0, 2:1, 3:3, 4:7, 5:16},
+  INTERVALS: KERN_INTERVALS, HOECHSTE_BOX: Math.max(...Object.keys(KERN_INTERVALS).map(Number)),
+  tageZwischen: KERN_TAGEZWISCHEN,
   PROGRESS:{ t1:{ box:1, nextReview:'', correct:0, wrong:0 } },
   SESSION:{ words:[WORT], idx:0, dirs:['ar-de'], fertig:false, serie:0 },
   VOCAB_DATA:[WORT], PERSONAL_VOCAB:[], SETTINGS:{},
@@ -123,8 +135,11 @@ console.log('\n— Lauefer prueft sich selbst —');
 const src = vm.runInContext('stufenVorschau', ctx).toString();
 ok('stufenVorschau ist die neue Fassung', src.includes('Kurzform statt'),
    '(Stueck, das die alte Fassung nicht enthalten kann)');
-ok('beide Zeilen aus EINER Rechnung', /const nachher = STUFEN\[k\]\.box\(box\)/.test(src)
-   && src.includes('INTERVALS[nachher]'));
+/* v603: Box und Tage kommen aus stufeErgebnis() — derselben Rechnung wie in
+   answer(). */
+ok('beide Zeilen aus EINER Rechnung', src.includes('stufeErgebnis(k,')
+   && src.includes('${e.box}') && src.includes('text(e.tage)'));
+ok('answer() nimmt dieselbe Rechnung', vm.runInContext('answer', ctx).toString().includes('stufeErgebnis(stufe, p'));
 
 /* ---------- Werkzeuge ---------- */
 const KNOEPFE = ['Nochmal','Schwer','Gut','Leicht'];
@@ -165,14 +180,20 @@ console.log('\n— Die Zahl kommt aus STUFEN, nicht aus einer festen Liste —')
 
    ⭐ Warum der Fehler ueberhaupt vier Tage ueberleben konnte: dieser
    Pruefstand hat keinen Aufrufer und lief nie. */
+/* v603 (25.09.2026): sieben Boxen; gut +1 und leicht +2, beide bei 7 gekappt.
+   Elias: „ja aber der knopf ,,leicht" soll nicht alles direkt in box 7 packen
+   sondern nur 2 boxen höher, das ist ein kleiner aber feiner unterschied". */
 const erwartet = {
   1: [1,1,2,3],
   2: [1,2,3,4],
   3: [2,3,4,5],
-  4: [3,4,5,5],
-  5: [4,5,5,5],
+  4: [3,4,5,6],
+  5: [4,5,6,7],
+  6: [5,6,7,7],
+  7: [6,7,7,7],
 };
-for (const b of [1,2,3,4,5]){
+const ALLE_BOXEN = [1,2,3,4,5,6,7];
+for (const b of ALLE_BOXEN){
   const g = ausBox(b).map(x=>x.box);
   ok(`aus Box ${b} → ${erwartet[b].join('/')}`,
      JSON.stringify(g) === JSON.stringify(erwartet[b]), `gemessen ${g.join('/')}`);
@@ -181,14 +202,14 @@ for (const b of [1,2,3,4,5]){
 /* ---------- 2. Kein Knopf bleibt leer ---------- */
 console.log('\n— Alle vier Knoepfe, nicht nur der positive —');
 const vier = ausBox(2);
-ok('alle vier tragen eine Box', vier.every(x=>x.box >= 1 && x.box <= 5));
+ok('alle vier tragen eine Box', vier.every(x=>x.box >= 1 && x.box <= 7));
 ok('alle vier tragen ein Intervall', vier.every(x=>x.text && x.text.length));
 
 /* ---------- 3. Intervall und Box koennen nicht auseinanderlaufen ---------- */
 console.log('\n— Das Intervall gehoert zur angezeigten Box —');
-const worte = {1:'heute', 2:'morgen', 3:'3 Tage', 4:'7 Tage', 5:'16 Tage'};
+const worte = {1:'heute', 2:'morgen', 3:'3 Tage', 4:'7 Tage', 5:'16 Tage', 6:'30 Tage', 7:'60 Tage'};
 let stimmig = true, abweichung = '';
-for (const b of [1,2,3,4,5]) for (const x of ausBox(b))
+for (const b of ALLE_BOXEN) for (const x of ausBox(b))
   if (x.text !== worte[x.box]){ stimmig = false; abweichung = `Box ${x.box} zeigte "${x.text}"`; }
 ok('jedes Intervall passt zu seiner Box', stimmig, abweichung);
 
@@ -196,10 +217,10 @@ ok('jedes Intervall passt zu seiner Box', stimmig, abweichung);
    Gemessen am 10.08.2026 im Browser bei 375 px: der Innenraum der Zeile ist
    60 px. "in 16 Tagen" braucht 64 px und wird abgeschnitten, "16 Tage" 44 px. */
 console.log('\n— Kurzform, weil "in 16 Tagen" bei 375 px abgeschnitten wird —');
-const langformDa = [1,2,3,4,5].some(b => ausBox(b).some(x => /^in \d+ Tagen$/.test(x.text)));
+const langformDa = ALLE_BOXEN.some(b => ausBox(b).some(x => /^in \d+ Tagen$/.test(x.text)));
 ok('keine Langform "in N Tagen" mehr', !langformDa);
-ok('laengster Text ist "16 Tage"',
-   Math.max(...[1,2,3,4,5].flatMap(b=>ausBox(b).map(x=>x.text.length))) === '16 Tage'.length);
+ok('laengster Text so lang wie "60 Tage"',
+   Math.max(...ALLE_BOXEN.flatMap(b=>ausBox(b).map(x=>x.text.length))) === '60 Tage'.length);
 
 /* ---------- 5. Ohne Fortschrittseintrag: Box 1 statt alter Zahlen ---------- */
 console.log('\n— Fehlt der Fortschritt, gilt Box 1 (wie im Rest der App) —');
@@ -210,6 +231,33 @@ ok('nicht die Zahlen der vorigen Karte stehengeblieben',
    JSON.stringify(ohne.map(x=>x.box)) === JSON.stringify(erwartet[1]),
    `gemessen ${ohne.map(x=>x.box).join('/')}`);
 vm.runInContext('PROGRESS.t1 = { box:1, nextReview:"", correct:0, wrong:0 }', ctx);
+
+/* ---------- 5b. v603: vorgezogene Karten ----------
+   Eine noch nicht fällige Karte springt auf einen freien Platz ein. Box 4–7:
+   richtig → Box UND Termin bleiben (mein Vorschlag, ihm gesagt 25.09.2026,
+   auf sein „wenn das der fall sein sollte dann einfach box 4-7"). Box 2/3:
+   wie immer (sein „so kann man die auch weiter hoch bringen"). */
+console.log('\n— Vorgezogene Karten (v603) —');
+vm.runInContext('PROGRESS.t1 = { box:5, nextReview:"2026-08-15", correct:3, wrong:0 }; stufenVorschau()', ctx);
+const fr5 = lies();
+ok('Box 5 vorgezogen: gut/leicht bleiben in Box 5, noch 5 Tage',
+   fr5[2].box === 5 && fr5[3].box === 5 && fr5[2].text === '5 Tage' && fr5[3].text === '5 Tage',
+   JSON.stringify(fr5));
+ok('Box 5 vorgezogen: nochmal → Box 4 (7 Tage), schwer bleibt (16 Tage)',
+   fr5[0].box === 4 && fr5[0].text === '7 Tage' && fr5[1].box === 5 && fr5[1].text === '16 Tage',
+   JSON.stringify(fr5));
+vm.runInContext('PROGRESS.t1 = { box:2, nextReview:"2026-08-11", correct:1, wrong:0 }; stufenVorschau()', ctx);
+const fr2 = lies();
+ok('Box 2 vorgezogen: gut → Box 3 wie immer', fr2[2].box === 3 && fr2[2].text === '3 Tage', JSON.stringify(fr2));
+vm.runInContext('PROGRESS.t1 = { box:1, nextReview:"", correct:0, wrong:0 }', ctx);
+
+/* ---------- 5c. Die Wischgeste (25.09.2026) ----------
+   Elias: „ich möchte auch, dass bei den karteikarten das nach links wischen
+   bedetuet das es schwierig ist also bleibt auf der selben box. und rechts
+   wischen bedeutet gut also geht eine box hoch." */
+console.log('\n— Wischen: links = schwer, rechts = gut —');
+ok('setupSwipe gibt links „schwer" und rechts „gut" an answer()',
+   quelle.includes("answer(goingRight ? 'gut' : 'schwer')") && !/answer\(goingRight\)/.test(quelle));
 
 /* ---------- 6. Ohne Karte wird gar nichts angefasst ---------- */
 console.log('\n— Ohne Karte passiert nichts —');

@@ -2,8 +2,20 @@
    Teil der App-Logik; wird in index.html in fester Reihenfolge geladen und
    teilt sich mit den uebrigen js/-Dateien den globalen Namensraum. */
 /* ===================== Vokabeltrainer - App-Logik ===================== */
-/* Leitner-System: 5 Boxen. Box-Intervalle in Tagen bis zur naechsten Faelligkeit. */
-const INTERVALS = {1:0, 2:1, 3:3, 4:7, 5:16};
+/* Leitner-System: 7 Boxen. Box-Intervalle in Tagen bis zur naechsten Faelligkeit.
+   ⭐ Box 6 (30 Tage) und Box 7 (60 Tage) seit v603, 25.09.2026. Elias: „lass uns
+   box 6 einführen und box 7 auch. weil einige begriffe würde ich auch in box 7
+   packen da bin ich mir sicher das ich sie auch in 60 tagen wieder richtig sagen
+   werde." Grund aus der Rechnung davor: Box 5 war die Endstation und wuchs —
+   200 sichere Wörter kosten dort 12,5 Plätze am Tag, in einer 30-Tage-Box 6,7,
+   in einer 60-Tage-Box 3,3 (Vault „Vokabeltrainer-Arabisch", 25.09.2026).
+   ⚠️ Die Trefferquote in Box 6 und 7 ist ANGENOMMEN (0,9 wie Box 5), nicht
+   gemessen — die Wartung misst sie (Felder b6g/b6r/b7g/b7r in vt_quoteTage,
+   siehe merkeQuote()). */
+const INTERVALS = {1:0, 2:1, 3:3, 4:7, 5:16, 6:30, 7:60};
+/* Die hoechste Box — aus INTERVALS abgeleitet, nicht getippt. Wer eine Box
+   dazubaut, aendert nur die Zeile oben. */
+const HOECHSTE_BOX = Math.max(...Object.keys(INTERVALS).map(Number));
 /* Kapitelnamen: wo eine kuratierte Grammatikregel fuer das Kapitel existiert, ist der
    Name deren Thema (Kap. 2 = ذَلِكَ, belegt durch grammar-data.js `ismul-isara-dhalika-01`,
    Quelle Folge 02). Wo keine Regel vorliegt, beschreibt der Name den tatsaechlichen
@@ -676,7 +688,7 @@ function q8Sperre(knopf, bis, text){
   if (bis > Date.now()) knopf._q8 = setInterval(tick, 200);
 }
 
-function merkeQuote(richtig, art, wortId){
+function merkeQuote(richtig, art, wortId, info){
   /* ⭐ Q3: dieselbe Zaehlung je Wort, wenn der Aufrufer eines nennen kann.
      ⛔ Der Satzmodus nennt keines und soll auch keines nennen: eine Aufgabe
      dort haengt an einem SATZ, nicht an einer Vokabel. Eine erfundene
@@ -692,6 +704,22 @@ function merkeQuote(richtig, art, wortId){
   if (art === 'karte'){
     e.kGestellt = (e.kGestellt || 0) + 1;
     if (richtig) e.kRichtig = (e.kRichtig || 0) + 1;
+    /* ⭐ v603 (25.09.2026): dieselbe Antwort noch einmal JE BOX gezählt (Box
+       VOR der Antwort). Die Trefferquote in Box 6 und 7 ist bisher nur
+       angenommen (0,9) — versprochen war, sie zu messen. `b<Box>g/r` = alle
+       Antworten aus dieser Box · `f<Box>g/r` = vorgezogene (noch nicht
+       fällige) Karten · `v<Box>g/r` = Karten, die schon einmal vorgezogen
+       waren, bei einer regulären Antwort — daran misst die Wartung, ob das
+       Vorziehen beim Behalten hilft (Plan-Punkt d). Kurze Feldnamen, weil der
+       Abgleich jedes Feld einzeln zusammenführt (js/sync.js, vt_quoteTage).
+       Gelesen von werkzeuge/lernlast.mjs. */
+    const b = info ? Number(info.box) : 0;
+    if (b >= 1){
+      const zaehle = k => { e[k + 'g'] = (e[k + 'g'] || 0) + 1; if (richtig) e[k + 'r'] = (e[k + 'r'] || 0) + 1; };
+      zaehle('b' + b);
+      if (info.frueh) zaehle('f' + b);
+      else if (info.markiert) zaehle('v' + b);
+    }
   } else {
     e.gestellt++;
     if (richtig) e.richtig++;
@@ -3153,8 +3181,19 @@ const DECKEL_AUS = 0;
    Gemessen vorher (24.09., sein Stand): morgen 211 fällig, davon Box 1: 159
    (61 nie beantwortet) — die 4 Box-1-Plätze gingen komplett an neue Karten,
    rund 100 falsch beantwortete kamen wochenlang nicht dran. Die Wiederholungen
-   behalten 5 feste Plätze (Box 5 allein braucht bei ihm ≈ 3,7 am Tag). */
-const DECKEL_ANTEIL_BOX1 = 0.5;
+   behalten 5 feste Plätze (Box 5 allein braucht bei ihm ≈ 3,7 am Tag).
+
+   ⭐⭐ SEIT v603 (25.09.2026) EIN DRITTEL — als UNTERGRENZE. Elias zum Plan
+   „Box 1 fest ein Drittel, je 10 Karten ein Platz fürs am längsten falsche
+   Wort, sonst neue zuerst; Wiederholungen nach Verspätung, keine festen Plätze
+   je Box": „lass uns box 6 einführen und box 7 auch … und ja vorerst bleibe
+   ich bei 15 karten". Mehr als ein Drittel bekommt Box 1 nur, wenn an dem Tag
+   weniger Wiederholungen fällig sind als Plätze da sind — und auch dann erst
+   NACH den noch nicht fälligen Box-2/3-Karten (seine Idee, siehe
+   vorziehVorrat()). Gerechnet (Leitner-Modell mit seinen gemessenen Quoten,
+   scratchpad/box-sim13.mjs): Box 1 GENAU ein Drittel und freie Plätze leer
+   ließe nach 4 Monaten 187 neue Wörter liegen, mit Weitergabe an Box 1 35. */
+const DECKEL_ANTEIL_BOX1 = 1 / 3;
 
 function tagesDeckel(){
   const d = SETTINGS && SETTINGS.tagesDeckel;
@@ -3191,23 +3230,104 @@ function neueZuerst(liste){
   return neu.concat(rest);
 }
 
+/* ⭐⭐ WIE SPÄT IST EINE WIEDERHOLUNG — gemessen an IHREM Abstand (v603)
+   ================================================================
+   Elias hat am 25.09.2026 den Plan freigegeben: „Wiederholungen nach
+   Verspätung, KEINE festen Plätze je Box" (seine Antwort: „lass uns box 6
+   einführen und box 7 auch …"). Zwei Tage zu spät ist für ein Box-2-Wort
+   (Abstand 1 Tag) das Doppelte seines Abstands, für ein Box-7-Wort (60 Tage)
+   fast nichts. Nach dem reinen Datum (dueWords()) stünden die großen Boxen
+   vorn, bloß weil sie viele sind. Gerechnet vorher: feste Plätze je Box
+   bringen nichts (scratchpad/box-sim7.mjs, box-sim9.mjs).
+   0 = heute fällig · 1 = einen ganzen Abstand zu spät. */
+function tageZwischen(von, bis){
+  const a = new Date(String(von || '') + 'T00:00:00');
+  const b = new Date(String(bis || '') + 'T00:00:00');
+  if (isNaN(a) || isNaN(b)) return 0;
+  return Math.round((b - a) / 86400000);
+}
+function verspaetung(w, heute){
+  const p = PROGRESS[w.id];
+  if (!p) return 0;
+  return Math.max(0, tageZwischen(p.nextReview, heute)) / (INTERVALS[p.box] || 1);
+}
+
+/* ⭐⭐ FREIE PLÄTZE — noch nicht fällige Karten, die einspringen (v603)
+   ================================================================
+   Elias, wörtlich: „wie wäre es die freien plätze den vokabeln aus box 2 udn 3
+   zu geben? weil ich finde man sollte diese mehr fördern weil die gerade an
+   diesem anfangstadium sind … sollte der fall eintreten das wirklich keine
+   wörter mehr in box 2 und 3 sind dann kann man sie natürlich mit box 1 wörter
+   auffülllen", und zur letzten Stufe: „wenn das der fall sein sollte dann
+   einfach box 4-7".
+   Frei ist ein Platz, wenn an dem Tag weniger Wiederholungen fällig sind als
+   Plätze da sind. Reihenfolge in tagesAuswahl(): (1) Box 2/3, (2) mehr Box 1
+   (ab v604: die andere Hälfte der Lerngruppe), (3) Box 4–7 — je die am
+   ehesten fälligen zuerst. Was eine vorgezogene Karte bei der Antwort
+   bewirkt, steht bei stufeErgebnis() in js/lernen.js.
+   ⛔ Nur Karten in SEINER Auswahl (passtZurAuswahl) — dieselbe Grenze wie
+   beim Fälligen. `ohne` = Ids, die schon in der Runde stehen. */
+function vorziehVorrat(ohne){
+  const heute = todayStr(0);
+  const weg = ohne instanceof Set ? ohne : new Set((ohne || []).map(String));
+  return VOCAB_DATA.filter(w => {
+    const p = PROGRESS[w.id];
+    return !!p && (p.box || 1) > 1 && String(p.nextReview || '') > heute
+      && !weg.has(String(w.id)) && passtZurAuswahl(w);
+  }).sort((a, b) => String(PROGRESS[a.id].nextReview).localeCompare(String(PROGRESS[b.id].nextReview))
+    || (PROGRESS[a.id].box - PROGRESS[b.id].box));
+}
+
+/* Ist das Tagesziel heute noch offen? Nur dann springen noch nicht fällige
+   Karten ein. ⚠️ MEINE Grenze (v603), nicht seine Vorgabe: nach dem Ziel ist
+   eine weitere Runde freiwillig und besteht wie bisher nur aus Fälligem —
+   sonst gäbe es nie mehr „Alles erledigt", und jede Zusatzrunde zöge Karten
+   vor, die erst in Wochen dran wären. Deckel „Aus": nichts vorziehen. */
+function zielHeuteOffen(){
+  const deckel = tagesDeckel();
+  if (!deckel) return false;
+  const tage = (typeof getUebungstage === 'function') ? (getUebungstage() || {}) : {};
+  return (Number(tage[todayStr(0)]) || 0) < deckel;
+}
+
 /**
  * Die Tagesration aus einem bereits sortierten Pool.
- * @param {Array} pool  Ergebnis von currentPool(), Reihenfolge zählt
+ * @param {Array} pool     Ergebnis von currentPool() (nur Fälliges), Reihenfolge zählt
  * @param {number} deckel  0 = kein Deckel, dann kommt der Pool unverändert zurück
+ * @param {Array} [vorrat] noch nicht fällige Karten (vorziehVorrat()) für freie
+ *   Plätze. Ohne ihn bleibt es beim Fälligen — so zählen die Feier „alles
+ *   fällig" und die Tagesziele weiter nur, was wirklich dran ist.
  */
-function tagesAuswahl(pool, deckel){
-  if (!Array.isArray(pool) || !deckel || pool.length <= deckel) return pool || [];
+function tagesAuswahl(pool, deckel, vorrat){
+  if (!Array.isArray(pool)) return [];
+  if (!deckel) return pool;
   const box = w => (PROGRESS[w.id] && PROGRESS[w.id].box) || 1;
+  const heute = todayStr(0);
   /* Neue Vokabeln vor den alten Box-1-Karten — neueZuerst() oben. */
-  const neu  = neueZuerst(pool.filter(w => box(w) <= 1));
-  const wdh  = pool.filter(w => box(w) > 1);
+  const neu = neueZuerst(pool.filter(w => box(w) <= 1));
+  /* Wiederholungen: die gemessen an ihrem Abstand spätesten zuerst
+     (verspaetung() oben), bei Gleichstand die niedrigere Box, sonst die
+     Mischung aus dueWords(). */
+  const wdh = pool.filter(w => box(w) > 1)
+    .map((w, i) => ({ w, i, v: verspaetung(w, heute), b: box(w) }))
+    .sort((a, b) => (b.v - a.v) || (a.b - b.b) || (a.i - b.i))
+    .map(x => x.w);
 
-  let platzNeu = Math.round(deckel * DECKEL_ANTEIL_BOX1);
+  let platzNeu = Math.min(deckel, Math.round(deckel * DECKEL_ANTEIL_BOX1));
   let platzWdh = deckel - platzNeu;
-  /* Auffüllen, wenn eine Seite nicht genug hergibt. */
+  /* Hat Box 1 zu wenig, bekommen die Wiederholungen den Rest. */
   if (neu.length < platzNeu) { platzWdh += platzNeu - neu.length; platzNeu = neu.length; }
-  if (wdh.length < platzWdh) { platzNeu += platzWdh - wdh.length; platzWdh = wdh.length; }
+  /* Freie Plätze (weniger Wiederholungen fällig als Plätze) in SEINER
+     Reihenfolge, siehe vorziehVorrat(): Box 2/3 → mehr Box 1 → Box 4–7.
+     Ohne `vorrat` gehen sie wie vor v603 an Box 1. */
+  let frei = Math.max(0, platzWdh - wdh.length);
+  platzWdh = Math.min(platzWdh, wdh.length);
+  const imPool = new Set(pool);
+  const vorr = Array.isArray(vorrat) ? vorrat.filter(w => !imPool.has(w)) : [];
+  const frueh23 = vorr.filter(w => box(w) <= 3), frueh47 = vorr.filter(w => box(w) > 3);
+  const n23 = Math.min(frei, frueh23.length); frei -= n23;
+  const mehrNeu = Math.min(frei, neu.length - platzNeu); platzNeu += mehrNeu; frei -= mehrNeu;
+  const n47 = Math.min(frei, frueh47.length);
 
   /* ⭐ Box-1-Plätze für die Wörter, die er am längsten falsch hatte (seit
      25.09.2026, siehe DECKEL_ANTEIL_BOX1): die ersten schon beantworteten
@@ -3220,17 +3340,25 @@ function tagesAuswahl(pool, deckel){
   const platzFalsch = Math.min(platzNeu, Math.max(1, Math.round(deckel / 10)));
   const altFalsch = neu.filter(w => !nieAbgefragt(w)).slice(0, platzFalsch);
   const box1Wahl = altFalsch.length ? altFalsch.concat(neu.filter(w => !altFalsch.includes(w))) : neu;
-  const gewaehlt = box1Wahl.slice(0, platzNeu).concat(wdh.slice(0, platzWdh));
+  const gewaehlt = new Set(box1Wahl.slice(0, platzNeu).concat(wdh.slice(0, platzWdh)));
   /* ⛔ Die Reihenfolge des Pools wiederherstellen. Ohne das kämen erst alle
      Box-1-Karten und dann alle Wiederholungen — und der Fachbegriff-Takt in
      `fachbegriffTakt()` würde auf eine sortierte statt gemischte Liste
-     treffen. */
-  return pool.filter(w => gewaehlt.includes(w));
+     treffen. Die vorgezogenen Karten kommen dahinter: sie sind die Zugabe. */
+  return pool.filter(w => gewaehlt.has(w)).concat(frueh23.slice(0, n23), frueh47.slice(0, n47));
 }
 
-/** Was heute drankommt — gedeckelt. Für Anzeige und Runde. */
+/** Was heute fällig drankommt — gedeckelt, OHNE vorgezogene Karten. Für die
+    Feier „alles fällig" und die Tagesziele: die zählen nur Fälliges. */
 function tagesPool(){
   return tagesAuswahl(currentPool(), tagesDeckel());
+}
+
+/** Die Runde, wie „Jetzt lernen" sie baut und die Startseite sie zeigt (v603):
+    das Fällige nach tagesAuswahl() und — solange das Tagesziel offen ist —
+    freie Plätze mit noch nicht fälligen Karten (vorziehVorrat()). */
+function tagesRunde(){
+  return tagesAuswahl(currentPool(), tagesDeckel(), zielHeuteOffen() ? vorziehVorrat() : undefined);
 }
 
 /* ⭐ WIEDEREINSTIEG NACH EINER PAUSE (B2, 07.09.2026)

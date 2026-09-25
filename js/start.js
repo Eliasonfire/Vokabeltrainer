@@ -12,8 +12,13 @@ function renderHome(){
      verschwiegen — eine Zahl zu verstecken wäre eine andere Sache als sie
      einzuordnen. */
   const alle = currentPool();
-  const pool = (typeof tagesPool === 'function') ? tagesAuswahl(alle, tagesDeckel()) : alle;
-  const wartet = alle.length - pool.length;
+  /* v603: dieselbe Runde, die „Jetzt lernen" baut (tagesRunde() in js/kern.js)
+     — mit noch nicht fälligen Karten auf freien Plätzen. „warten noch" zählt
+     deshalb nur das Fällige, das nicht in der Runde steht. */
+  const pool = (typeof tagesRunde === 'function') ? tagesRunde()
+             : (typeof tagesPool === 'function') ? tagesAuswahl(alle, tagesDeckel()) : alle;
+  const inRunde = new Set(pool);
+  const wartet = alle.filter(w => !inRunde.has(w)).length;
   /* ⭐ Beim Wiedereinstieg nach einer Pause fällt die Wartezahl weg (B2). Der
      Grund steht bei `istWiedereinstieg()` in js/kern.js: nach zwei Wochen ist
      der Berg genau das, was zum Aufhören führt. Für einen Tag reicht
@@ -49,11 +54,17 @@ function renderHome(){
      140, die Elias nie hatte. Auf der Startseite stand damit ein Lernstand
      ueber einem Bestand, den er gar nicht lernt. Dieselbe Umstellung wie in
      js/statistik.js und in passtZurAuswahl(). */
-  const boxCounts = [1,2,3,4,5].map(b => bekannteVokabeln().filter(w=>PROGRESS[w.id] && PROGRESS[w.id].box===b).length);
+  /* v603: alle Boxen aus INTERVALS — seit 25.09.2026 sieben, nicht getippt. */
+  const bekanntFuerBoxen = bekannteVokabeln();
+  const boxCounts = Object.keys(INTERVALS).map(Number).map(b => bekanntFuerBoxen.filter(w=>PROGRESS[w.id] && PROGRESS[w.id].box===b).length);
   /* Box 1 rot, Box 5 gruen - Elias' Wunsch vom 29.07.2026. Dieselbe Tabelle wie
      in js/statistik.js; 2-4 bleiben neutral, weil eine fuenfstufige Farbskala
      behaupten wuerde, Box 3 sei "halb gut". */
-  const BOX_TON = { 1:'schlecht', 5:'gut' };
+  /* v603: die LETZTE Box ist grün — seit 25.09.2026 Box 7. Seine Vorgabe vom
+     29.07. („Box 1 rot, Box 5 grün") meinte erste und letzte Box; auf „Grün
+     wird dann Box 7 statt Box 5" antwortete er „ja aber der knopf ,,leicht" …"
+     (25.09.2026, 04:0x) — das Ja galt der Farbe. */
+  const BOX_TON = { 1:'schlecht', [HOECHSTE_BOX]:'gut' };
   /* ⭐ Das Intervall steht seit dem 18.08.2026 an der Kachel. Elias: „am besten
      schreibst du auch dazu bei den boxen in welchem intervall das abgefragt
      wird weil das ist aktuell nicht sichtbar und nicht transparent."

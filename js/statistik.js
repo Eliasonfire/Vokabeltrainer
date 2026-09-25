@@ -45,8 +45,10 @@ function renderStats(){
      Karte kennt, liest die Bedeutung hier ohne Legende mit.
      Box 2 bis 4 bleiben neutral: eine fünfstufige Farbskala würde behaupten,
      dass Box 3 schon „halb gut" ist, und das sagt das Leitner-System nicht. */
-  const BOX_TON = { 1:'schlecht', 5:'gut' };
-  const boxCounts = [1,2,3,4,5].map(b => bekannteVokabeln().filter(w=>PROGRESS[w.id] && PROGRESS[w.id].box===b).length);
+  /* v603: Box 7 grün, alle Boxen aus INTERVALS — Begründung in js/start.js. */
+  const BOX_TON = { 1:'schlecht', [HOECHSTE_BOX]:'gut' };
+  const bekanntFuerBoxen = bekannteVokabeln();
+  const boxCounts = Object.keys(INTERVALS).map(Number).map(b => bekanntFuerBoxen.filter(w=>PROGRESS[w.id] && PROGRESS[w.id].box===b).length);
   /* ⛔⛔ `#boxBars` GIBT ES SEIT DEM 21.08.2026 NICHT MEHR — und deshalb steht
      hier eine Abfrage statt eines direkten Zugriffs.
 

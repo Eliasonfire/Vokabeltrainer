@@ -72,7 +72,11 @@ function offeneRundeStand(){
   const ziel = rundenZiel(g);
   if (gesamt < ziel && typeof currentPool === 'function'){
     const drin = new Set(g.ids.map(String));
-    gesamt = Math.min(ziel, gesamt + currentPool().filter(w => !drin.has(String(w.id))).length);
+    /* v603: dieselbe Menge, aus der offeneRundeFortsetzen() auffüllt — das
+       Fällige und, solange das Tagesziel offen ist, vorziehbare Karten. */
+    const vorrat = (typeof vorziehVorrat === 'function' && typeof zielHeuteOffen === 'function' && zielHeuteOffen())
+      ? vorziehVorrat(drin) : [];
+    gesamt = Math.min(ziel, gesamt + currentPool().filter(w => !drin.has(String(w.id))).length + vorrat.length);
   }
   const fehlt = gesamt - g.idx;
   return fehlt > 0 ? { fehlt, gesamt } : null;
@@ -149,7 +153,10 @@ function offeneRundeFortsetzen(){
        gut. mach das". Vorher kamen die fehlenden Karten nur nach „am
        längsten fällig". */
     const rest = currentPool().filter(w => !drin.has(String(w.id)));
-    const nach = (typeof tagesAuswahl === 'function') ? tagesAuswahl(rest, ziel - words.length) : rest;
+    /* v603: freie Plätze auch hier in seiner Reihenfolge (vorziehVorrat()). */
+    const vorrat = (typeof vorziehVorrat === 'function' && typeof zielHeuteOffen === 'function' && zielHeuteOffen())
+      ? vorziehVorrat(drin) : undefined;
+    const nach = (typeof tagesAuswahl === 'function') ? tagesAuswahl(rest, ziel - words.length, vorrat) : rest;
     for (const w of nach){
       if (words.length >= ziel) break;
       words.push(w); drin.add(String(w.id));
@@ -307,7 +314,10 @@ function startLearningSession(){
      Ohne den Deckel bestünde sie bei 80 täglich fälligen Box-1-Wörtern
      praktisch immer aus Box 1 — die Wiederholungen aus Box 4 und 5 kämen nie
      dran. Die Begründung steht bei `tagesAuswahl()` in js/kern.js. */
-  let words = (typeof tagesPool === 'function') ? tagesPool() : currentPool();
+  /* v603: tagesRunde() = das Fällige nach tagesAuswahl() und, solange das
+     Tagesziel offen ist, freie Plätze mit noch nicht fälligen Karten. */
+  let words = (typeof tagesRunde === 'function') ? tagesRunde()
+            : (typeof tagesPool === 'function') ? tagesPool() : currentPool();
   if (words.length === 0){ toast('Nichts fällig – schau später wieder vorbei.'); showScreen('home'); return; }
   /* ⭐ Die Runde IST die Tagesration — seit dem 22.09.2026 gibt es keine
      zweite Zahl mehr daneben. Die Einstellung „Sitzungsgröße" ist an diesem
@@ -1510,7 +1520,12 @@ document.getElementById('btnExitLearn').addEventListener('click', ()=>{
       const goingRight = dx>0;
       card.style.transition = 'transform .22s ease';
       card.style.transform = `translateX(${goingRight?600:-600}px) rotate(${goingRight?25:-25}deg)`;
-      setTimeout(()=>{ answer(goingRight); }, 180);
+      /* ⭐ Seit 25.09.2026 (v603) links = „schwer" (bleibt in der Box), rechts =
+         „gut" (eine Box hoch). Elias, wörtlich: „ich möchte auch, dass bei den
+         karteikarten das nach links wischen bedetuet das es schwierig ist also
+         bleibt auf der selben box. und rechts wischen bedeutet gut also geht
+         eine box hoch." Vorher war links „nochmal" (eine Box runter). */
+      setTimeout(()=>{ answer(goingRight ? 'gut' : 'schwer'); }, 180);
     } else {
       card.style.transform = '';
     }
@@ -1553,17 +1568,47 @@ document.getElementById('btnExitLearn').addEventListener('click', ()=>{
    Abstand. Ein muehsames Wort aus Box 5 kommt also erst in 16 Tagen wieder,
    nicht in 7 wie vorher. Wer es frueher wiedersehen will, nimmt "nochmal".
 
-   Nur "gut" verhaelt sich wie vorher; die Wischgeste bleibt deshalb bei
-   nochmal/gut. Fuer die Statistik zaehlen "nochmal" und "schwer" weiterhin als
+   Die Wischgeste war bis zum 25.09.2026 nochmal/gut; seitdem ist links
+   „schwer" und rechts „gut" (sein Wunsch, siehe setupSwipe()). Fuer die
+   Statistik zaehlen "nochmal" und "schwer" weiterhin als
    Fehlversuch, "gut" und "leicht" als Treffer - daran wurde bewusst NICHTS
    geaendert, sonst waere die Trefferquote nicht mehr mit den frueheren Werten
    vergleichbar. */
 const STUFEN = {
   nochmal: { box: (b) => Math.max(1, b - 1),     richtig: false, feedback: 'answer-wrong' },
   schwer:  { box: (b) => b,                      richtig: false, feedback: 'answer-wrong' },
-  gut:     { box: (b) => Math.min(5, b + 1),     richtig: true,  feedback: 'answer-right' },
-  leicht:  { box: (b) => Math.min(5, b + 2),     richtig: true,  feedback: 'answer-right' }
+  gut:     { box: (b) => Math.min(HOECHSTE_BOX, b + 1), richtig: true,  feedback: 'answer-right' },
+  /* v603: weiter GENAU zwei Boxen, nur bei der hoechsten Box (7) gekappt.
+     Elias, 25.09.2026: „ja aber der knopf ,,leicht" soll nicht alles direkt in
+     box 7 packen sondern nur 2 boxen höher, das ist ein kleiner aber feiner
+     unterschied". */
+  leicht:  { box: (b) => Math.min(HOECHSTE_BOX, b + 2), richtig: true,  feedback: 'answer-right' }
 };
+
+/* ⭐⭐ WAS EINE ANTWORT BEWIRKT — für answer() UND die Knopfvorschau aus EINER
+   Rechnung (v603, 25.09.2026). Neu ist die VORGEZOGENE Karte: eine noch nicht
+   fällige Karte, die an einem Tag mit freien Plätzen einspringt
+   (vorziehVorrat() in js/kern.js).
+   · Box 2/3 vorgezogen: alles wie immer, richtig steigt auf. Elias: „so kann
+     man die auch weiter hoch bringen und ich meine trotzdessen das ihre zeit
+     noch nicht gekommen ist".
+   · Box 4–7 vorgezogen und richtig: Box UND Termin bleiben — sonst verkürzte
+     das Vorziehen genau die langen Abstände, für die Box 6 und 7 da sind.
+     MEIN Vorschlag, ihm so gesagt (25.09.2026, 05:2x), auf seine Vorgabe
+     „wenn das der fall sein sollte dann einfach box 4-7".
+   · falsch („nochmal"/„schwer"): wie immer.
+   Ergebnis { box, tage, frueh, bleibt } — tage = in wie vielen Tagen sie
+   wiederkommt. Fehlt der Fortschritt, gilt Box 1 (wie in der ganzen App). */
+function stufeErgebnis(stufe, p, heute){
+  const s = STUFEN[stufe] || STUFEN.nochmal;
+  const box = (p && p.box) || 1;
+  const t = heute || todayStr(0);
+  const frueh = !!(p && p.nextReview && String(p.nextReview) > t);
+  if (frueh && s.richtig && box >= 4)
+    return { box, tage: Math.max(0, tageZwischen(t, p.nextReview)), frueh, bleibt: true };
+  const nach = s.box(box);
+  return { box: nach, tage: INTERVALS[nach], frueh, bleibt: false };
+}
 
 /* Was unter den Knoepfen steht: in welche Box die Vokabel wandert und wann sie
    dann wiederkommt. Ohne das waere die Wahl zwischen "gut" und "leicht" reine
@@ -1597,8 +1642,11 @@ function stufenVorschau(){
   Object.keys(STUFEN).forEach(k=>{
     const el = document.getElementById('stufe' + ziel[k]);
     if (!el) return;
-    const nachher = STUFEN[k].box(box);
-    el.innerHTML = `<b>Box ${nachher}</b><i>${text(INTERVALS[nachher])}</i>`;
+    /* v603: Box UND Tage aus stufeErgebnis() — derselben Rechnung wie in
+       answer(). Bei einer vorgezogenen Box-4–7-Karte bleiben beide stehen:
+       dann steht hier ihre Box und die Tage bis zu ihrem alten Termin. */
+    const e = stufeErgebnis(k, PROGRESS[w.id] || { box });
+    el.innerHTML = `<b>Box ${e.box}</b><i>${text(e.tage)}</i>`;
   });
 }
 
@@ -1627,7 +1675,12 @@ function answer(stufe){
   const w = SESSION.words[SESSION.idx];
   const p = PROGRESS[w.id];
   const boxVorher = p.box;
-  p.box = s.box(p.box);
+  const heute = todayStr(0);
+  /* ⭐ v603: EINE Rechnung für Box und Termin — stufeErgebnis() oben, dieselbe
+     wie auf den Knöpfen. */
+  const erg = stufeErgebnis(stufe, p, heute);
+  const markiertVorher = !!p.vorgezogen;
+  p.box = erg.box;
 
   /* ⭐ r6 (08.09.2026): faellt ein Wort aus Box 3 oder hoeher zurueck, wird das
      am Fortschritt vermerkt. Beim naechsten Mal faellt die Eselsbruecke dann
@@ -1662,7 +1715,16 @@ function answer(stufe){
   }
   if (s.richtig) p.correct = (p.correct||0)+1;
   else           p.wrong   = (p.wrong||0)+1;
-  p.nextReview = todayStr(INTERVALS[p.box]);
+  /* Vorgezogen und richtig in Box 4–7: der Termin bleibt (stufeErgebnis). */
+  if (!erg.bleibt) p.nextReview = todayStr(INTERVALS[p.box]);
+  /* ⭐ Vorgezogene Karten MARKIEREN (v603, Plan-Punkt d, 25.09.2026): ob das
+     Vorziehen hilft, zeigt keine Rechnung. Die Wartung misst, ob markierte
+     Karten später in Box 4/5 so gut halten wie die anderen (Felder v4g/v4r …
+     in vt_quoteTage, siehe merkeQuote()). */
+  if (erg.frueh){
+    p.vorgezogen = (Number(p.vorgezogen) || 0) + 1;
+    p.vorgezogenAm = heute;
+  }
   /* Zeitstempel fuer den Geraeteabgleich (js/sync.js). Er ist der einzige
      verlaessliche Weg zu entscheiden, welche von zwei Fassungen desselben
      Wortes die juengere ist - ohne ihn wuerde ein Geraet mit altem Stand die
@@ -1713,7 +1775,8 @@ function answer(stufe){
   /* ⭐ Q3 (08.09.2026): dieselbe Antwort zaehlt jetzt auch JE WORT — dritter
      Parameter. Kein zweiter Aufruf und keine zweite Definition von „richtig",
      aus demselben Grund wie oben. [[dieselbe_frage_zwei_antworten]] */
-  if (typeof merkeQuote === 'function') merkeQuote(s.richtig, 'karte', w.id);
+  if (typeof merkeQuote === 'function')
+    merkeQuote(s.richtig, 'karte', w.id, { box: boxVorher, frueh: erg.frueh, markiert: markiertVorher });
 
   /* ---------- Meilensteine (js/feier.js) ----------
      Erst gespeichert, DANN gefeiert. Ein Effekt darf den Endzustand nie tragen:
@@ -1727,7 +1790,10 @@ function answer(stufe){
     SESSION.serie = s.richtig ? (SESSION.serie || 0) + 1 : 0;
     if (p.box !== boxVorher)
       feiere(p.box > boxVorher ? 'box-auf' : 'box-ab', { von: boxVorher, nach: p.box });
-    if (p.box === 5 && boxVorher !== 5) feiere('box-5', { id: w.id, wort: w.ar });
+    /* v603: „sitzt" heißt ab Box 5. Seit es Box 6 und 7 gibt, kann „leicht"
+       aus Box 4 direkt in Box 6 springen — die Premiere darf das nicht
+       verpassen. */
+    if (p.box >= 5 && boxVorher < 5) feiere('box-5', { id: w.id, wort: w.ar, box: p.box });
     /* ⭐ K2: der teuerste Erfolg der App — ein Wort, das entglitten war, ist
        wieder oben. Er steht NACH 'box-5', damit die Premiere in Box 5 nicht
        von der Rueckkehr ueberdeckt wird, wenn beides zusammenfaellt. */
@@ -1735,8 +1801,8 @@ function answer(stufe){
     /* ⭐ K2: der Gesamtstand. Nur zaehlen, wenn gerade eine Karte in Box 5
        angekommen ist — sonst liefe die Schleife ueber alle 331 Eintraege bei
        JEDER Antwort, und zwar fuer nichts. */
-    if (p.box === 5 && boxVorher !== 5 && typeof SITZT_MEILEN !== 'undefined'){
-      const sitzen = Object.values(PROGRESS).filter(e => e && e.box === 5).length;
+    if (p.box >= 5 && boxVorher < 5 && typeof SITZT_MEILEN !== 'undefined'){
+      const sitzen = Object.values(PROGRESS).filter(e => e && e.box >= 5).length;
       if (SITZT_MEILEN.includes(sitzen)) feiere('sitzt-meilenstein', { zahl: sitzen });
     }
     /* Alle fuenf, nicht nur beim fuenften: eine Serie von zehn soll zweimal
