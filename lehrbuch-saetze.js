@@ -665,5 +665,32 @@ const LEHRBUCH_SAETZE = [
      ist die der Musterlösung. */
   { id: 'mf19-13-1', werk: 'musterloesung-f19', seite: 13,
     gedruckt: 'vollständig vokalisiert (Musterlösung Nr. 9)',
-    sentAr: 'أَيُّ كِتَابٍ قَرَأْتَ؟', sentDe: 'Welches Buch hast du gelesen?' }
+    sentAr: 'أَيُّ كِتَابٍ قَرَأْتَ؟', sentDe: 'Welches Buch hast du gelesen?' },
+
+  /* ⭐ v617 (25.09.2026): die übrigen Beispielsätze derselben Seiten, für die
+     Fragewörter, die in Übung 13 dünn waren (هَلْ 1, لِمَاذَا 1, مَتَى 2 Sätze in
+     seiner Auswahl). Wie mf19-13-1: Wort für Wort aus der Musterlösung
+     (regelsammlung-data.js, Karte f19-fragen; Abschrift S. 12–13), nichts
+     ergänzt, die deutsche Zeile ist die der Musterlösung. NICHT genommen, weil
+     schon da: كَمْ طَالِبًا فِي الْفَصْلِ؟ (gram-frage-kam), إِلَى أَيْنَ ذَهَبَ
+     مُحَمَّدٌ؟ (gram-frage-ila-ayna), مَا هَذَا؟ (45777), كَيْفَ حَالُكَ؟ (by1-2-1),
+     مِنْ أَيْنَ أَنْتَ؟ (gram-frage-min-ayna). */
+  { id: 'mf19-12-1', werk: 'musterloesung-f19', seite: 12,
+    gedruckt: 'vollständig vokalisiert (Musterlösung Nr. 9, Ja/Nein-Frage)',
+    sentAr: 'هَلْ أَنْتَ طَالِبٌ؟', sentDe: 'Bist du Student?' },
+  { id: 'mf19-13-2', werk: 'musterloesung-f19', seite: 13,
+    gedruckt: 'vollständig vokalisiert (Musterlösung Nr. 9)',
+    sentAr: 'هَلْ أَنْتَ مُدَرِّسٌ؟', sentDe: 'Bist du Lehrer?' },
+  { id: 'mf19-13-3', werk: 'musterloesung-f19', seite: 13,
+    gedruckt: 'vollständig vokalisiert (Musterlösung Nr. 9)',
+    sentAr: 'مَتَى ذَهَبْتَ؟', sentDe: 'Wann bist du gegangen?' },
+  { id: 'mf19-13-4', werk: 'musterloesung-f19', seite: 13,
+    gedruckt: 'vollständig vokalisiert (Musterlösung Nr. 9)',
+    sentAr: 'لِمَاذَا ذَهَبْتَ؟', sentDe: 'Warum bist du gegangen?' },
+  { id: 'mf19-13-5', werk: 'musterloesung-f19', seite: 13,
+    gedruckt: 'vollständig vokalisiert (Musterlösung Nr. 9)',
+    sentAr: 'مَنْ هَذَا؟', sentDe: 'Wer ist das?' },
+  { id: 'mf19-13-6', werk: 'musterloesung-f19', seite: 13,
+    gedruckt: 'vollständig vokalisiert (Musterlösung Nr. 9)',
+    sentAr: 'أَيْنَ الْكِتَابُ؟', sentDe: 'Wo ist das Buch?' }
 ];
