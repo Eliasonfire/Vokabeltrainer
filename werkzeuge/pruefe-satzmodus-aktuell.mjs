@@ -33,12 +33,23 @@
  *      auch bei den anderen aufgaben so sein mit reihum"): in den ersten k
  *      Aufgaben — k = Zahl der verschiedenen Lösungen — steht jede Lösung genau
  *      einmal (uebungMischen in js/uebung.js). Verstoß = Exit 1.
+ *   F  Genitiv (Elias, 25.09.2026: „es sollen mehrere sein im genitiv aus
+ *      unterschiedlichsten gründen. lasse auch bei den genitiv präpositionen
+ *      immer durchrutieren sodass ich jede mal sehe"): jede Aufgabe von
+ *      Übung 5 hat mindestens zwei Wörter im Genitiv aus mindestens zwei
+ *      Gründen, und in Übung 4 und 5 kommt in den ersten k Aufgaben jede der
+ *      k Präpositionen/ظُرُوف einmal. Verstoß = Exit 1. Welche seiner acht
+ *      Präpositionen (Karte f19-jarr) in Übung 5 noch fehlen, steht im
+ *      Bericht — Arbeit für neue Sätze aus seinen Büchern.
+ *   G  Die Tanwīn-Namen heißen auf „-tayn" (Elias, 25.09.2026: „bei den
+ *      antworten mit tanweed sollte so dummatayn, kasratayn, fathatayn stehen
+ *      und nicht tan"). Verstoß = Exit 1.
  *
  * ⚠️ Was er „einzeln frei" geschaltet hat, steht nur in seinem Browser — hier
  * zählt nur die Kapitelauswahl. [[einzeln_frei_ist_nur_im_browser]]
  *
  * Aufruf:  node werkzeuge/pruefe-satzmodus-aktuell.mjs            Bericht
- *          node werkzeuge/pruefe-satzmodus-aktuell.mjs --stoertest vier Störungen
+ *          node werkzeuge/pruefe-satzmodus-aktuell.mjs --stoertest acht Störungen
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -106,6 +117,10 @@ function messen(app){
   const { hole, auswahl } = app;
   const UEB = hole('UEBUNGEN') || [], analysiere = hole('analysiereSatz');
   vm.runInContext('UEB_WORTGRUPPEN = {}', app.ctx);
+  /* ⛔ Wie uebungenAufbauen(): erst das Lexikon aus seinem Wortschatz. Ohne das
+     (bis 25.09.2026) galten Verben seiner neuesten Kapitel nicht als Verb — in
+     „نَظَرَ الطَّالِبُ إِلَى النَّجْمِ." wurde الطَّالِبُ zum مُضَاف إِلَيْه. */
+  vm.runInContext('if (typeof setzeLexikon === "function") setzeLexikon(VOCAB_DATA)', app.ctx);
   const pool = hole('alleSaetze')();
   const zerlegt = pool.map(s => { try { return { s, z: analysiere(s.sentAr) }; } catch (e){ return { s, z: null }; } });
   const ergebnis = { pool: pool.length, uebungen: {}, verstoesse: [] };
@@ -138,6 +153,23 @@ function messen(app){
   // die ersten k Aufgaben haben k verschiedene Lösungen (uebungMischen).
   const mischen = hole('uebungMischen');
   ergebnis.gleichOft = [];
+  /* ⭐ Und je Antwort gleich viele (Elias, 25.09.2026: „wenn es ingesamt 30
+     sätze zu dieser übung gibt dann sollte jede antwort 10 sätze haben"): in der
+     gemischten Runde hat jede Antwort min(Vorrat, Deckel) Aufgaben, Deckel =
+     die seltenste, aber mindestens UEB_JE_ANTWORT_MIN. */
+  const MIN_JE = hole('UEB_JE_ANTWORT_MIN') || 10;
+  ergebnis.jeAntwort = [];
+  const gleichViele = (U, liste, schluessel) => {
+    if (!mischen || !liste.length) return;
+    const voll = new Map(), runde = new Map();
+    for (const x of liste){ const k = schluessel(x); voll.set(k, (voll.get(k) || 0) + 1); }
+    for (const x of mischen(U, liste)){ const k = schluessel(x); runde.set(k, (runde.get(k) || 0) + 1); }
+    const deckel = Math.max(Math.min(...voll.values()), MIN_JE);
+    for (const [k, v] of voll) if ((runde.get(k) || 0) !== Math.min(v, deckel))
+      ergebnis.verstoesse.push(`${U.id}: nicht je Antwort gleich viele — „${k}" ${runde.get(k) || 0} statt ${Math.min(v, deckel)}`);
+    const unter = [...voll].filter(([, v]) => v < MIN_JE).map(([k, v]) => `${k} ${v}`);
+    ergebnis.jeAntwort.push(`${U.nr}: je ${deckel}` + (unter.length ? ` · unter ${MIN_JE}: ${unter.join(', ')}` : ''));
+  };
   for (const U of UEB.filter(u => u.art === 'wahl')){
     const liste = [];
     for (const { s, z } of zerlegt){ if (!z) continue; try { liste.push(...(U.baue(z, s) || [])); } catch (e){ /* B meldet baue()-Fehler */ } }
@@ -146,7 +178,50 @@ function messen(app){
     ergebnis.gleichOft.push(`${U.nr}: ${loesungen.size}`);
     if (loesungen.size > 1 && new Set(erste).size !== loesungen.size)
       ergebnis.verstoesse.push(`${U.id}: nicht jede Antwort gleich oft — in den ersten ${loesungen.size} Aufgaben nur ${new Set(erste).size} verschiedene Lösungen`);
+    gleichViele(U, liste, x => String(x.loesung));
   }
+  // F: Genitiv — Übung 5 nur schwer, Übung 4 und 5 reihum nach Präposition.
+  const gruende = hole('uebGenitivGruende');
+  ergebnis.genitiv = {};
+  for (const id of ['jarr-paar', 'alle-majrur']){
+    const U = UEB.find(u => u.id === id);
+    if (!U){ ergebnis.verstoesse.push(`${id}: Übung fehlt`); continue; }
+    const liste = [];
+    for (const { s, z } of zerlegt){
+      if (!z) continue;
+      let a = []; try { a = U.baue(z, s) || []; } catch (e){ ergebnis.verstoesse.push(`${id}: baue() wirft — ${e.message}`); }
+      for (const x of a){
+        liste.push(x);
+        if (id === 'alle-majrur'){
+          const g = gruende ? gruende(z) : [];
+          if (g.length < 2 || new Set(g.map(y => y.grund)).size < 2)
+            ergebnis.verstoesse.push(`alle-majrur: zu leicht (weniger als zwei Genitive aus zwei Gründen) — ${s.id || s.sentAr}`);
+          if (!x.aufloesung) ergebnis.verstoesse.push(`alle-majrur: keine Begründung nach der Antwort — ${s.id || s.sentAr}`);
+        }
+      }
+    }
+    const zaehl = new Map();
+    for (const x of liste) for (const k of (x.reihum || [])) zaehl.set(k, (zaehl.get(k) || 0) + 1);
+    const korb = x => (x.reihum || []).slice().sort((p, q) => (zaehl.get(p) - zaehl.get(q)) || (p < q ? -1 : p > q ? 1 : 0))[0] || '—';
+    const koerbe = new Set(liste.map(korb));
+    const erste = mischen ? mischen(U, liste).slice(0, koerbe.size).map(korb) : [];
+    if (koerbe.size > 1 && new Set(erste).size !== koerbe.size)
+      ergebnis.verstoesse.push(`${id}: Präpositionen nicht reihum — in den ersten ${koerbe.size} Aufgaben nur ${new Set(erste).size} verschiedene`);
+    gleichViele(U, liste, korb);
+    ergebnis.genitiv[id] = { aufgaben: liste.length, koerbe: [...koerbe] };
+  }
+  const karteJarr = (hole('FOLGE19_KARTEN') || []).find(k => k.id === 'f19-jarr');
+  const acht = karteJarr ? karteJarr.gruppen[0].merkmale.map(m => String(m).split('–')[0].trim()) : [];
+  const inFuenf = new Set(ergebnis.genitiv['alle-majrur'] ? ergebnis.genitiv['alle-majrur'].koerbe : []);
+  const kernVon = hole('uebPraepKern');
+  ergebnis.genitiv.fehlen = acht.filter(p => {
+    const k = p.length <= 2 ? kernVon(p).charAt(0) + 'ـ' : kernVon(p);
+    return !inFuenf.has(k) && !(k === 'إلى' && inFuenf.has('الى'));
+  });
+  // G: Tanwīn-Namen auf „-tayn"
+  for (const h of (hole('HARAKA_WAHL') || []))
+    if (/tan$/.test(h.wert) && !/tayn$/.test(String(h.text)))
+      ergebnis.verstoesse.push(`Tanwīn-Name nicht auf „-tayn": ${h.text}`);
   // C + D: neueste Kapitel = höchstes Kapitel je Buch seiner Auswahl
   const neueste = Object.entries(auswahl).filter(([, k]) => k.length).map(([b, k]) => [b, Math.max(...k)]);
   const VD = hole('VOCAB_DATA');
@@ -172,6 +247,12 @@ function bericht(e){
   for (const [id, u] of Object.entries(e.uebungen)){
     z.push(`Übung ${u.nr} ${id}: ${u.aufgaben} Aufgaben · ${u.formen} Formen auf seiner Karte · ohne Satz: ${u.ohneSatz.length ? u.ohneSatz.map(x => `„${x.de}"`).join(', ') : '—'}`);
   }
+  if (e.genitiv){
+    for (const id of ['jarr-paar', 'alle-majrur']) if (e.genitiv[id])
+      z.push(`Genitiv ${id}: ${e.genitiv[id].aufgaben} Aufgaben · reihum über ${e.genitiv[id].koerbe.length}: ${e.genitiv[id].koerbe.join(' ')}`);
+    z.push(`Präpositionen seiner Karte ohne schweren Satz in Übung 5: ${e.genitiv.fehlen.length ? e.genitiv.fehlen.join(' ') : '—'}`);
+  }
+  if (e.jeAntwort && e.jeAntwort.length) z.push(`Je Antwort gleich viele (Übung: Deckel · seltene Antworten brauchen Sätze):\n   ${e.jeAntwort.join('\n   ')}`);
   z.push(`Balance: ${e.anteil} % der Sätze (${e.mitNeu} von ${e.pool}) enthalten ein Wort aus den neuesten Kapiteln — Richtwert (MEIN Vorschlag): etwa 20 %`);
   z.push(`Neueste Kapitel: ${e.neuWoerter} Wörter, davon ${e.ohneSatzNeu.length} in keinem Satz` + (e.ohneSatzNeu.length ? ':\n   ' + e.ohneSatzNeu.slice(0, 40).join('\n   ') : ''));
   return z.join('\n');
@@ -211,7 +292,29 @@ if (STOER){
   e = messen(app);
   ok('nur gemischt statt reihum → Verstoß', e.verstoesse.some(v => v.startsWith('isara: nicht jede Antwort')));
   vm.runInContext('uebungMischen = globalThis.__echtMischen;', app.ctx);
-  console.log(rot ? `\n⛔ ${rot} Störtest(s) schlagen NICHT an` : '\n✅ alle 4 Störtests schlagen an');
+  // 5. Übung 4/5 wieder nur gemischt → Teil F muss rot werden.
+  vm.runInContext('globalThis.__echtMischen = uebungMischen; uebungMischen = function(m, l){ return l.some(a => a && Array.isArray(a.reihum)) ? shuffle(l.slice()) : globalThis.__echtMischen(m, l); };', app.ctx);
+  e = messen(app);
+  ok('Präpositionen nur gemischt statt reihum → Verstoß', e.verstoesse.some(v => / Präpositionen nicht reihum/.test(v)));
+  vm.runInContext('uebungMischen = globalThis.__echtMischen;', app.ctx);
+  // 6. Übung 5 wieder mit jedem Satz, der EIN Genitiv-Wort hat → Teil F muss rot werden.
+  const U5 = app.hole('UEBUNGEN').find(u => u.id === 'alle-majrur'), echt5 = U5.baue;
+  U5.baue = function(z){ const ziele = z.map((t, i) => t.erwartet === 'jarr' ? i : -1).filter(i => i >= 0); return ziele.length ? [{ frage: 'x', ziele, art: 'mehrfach', aufloesung: 'x' }] : []; };
+  e = messen(app);
+  ok('Übung 5 wieder leicht → Verstoß', e.verstoesse.some(v => v.startsWith('alle-majrur: zu leicht')));
+  U5.baue = echt5;
+  // 7. Ein Tanwīn-Name wieder auf „-tan" → Teil G muss rot werden.
+  const hw = app.hole('HARAKA_WAHL'), altText = hw[1].text;
+  hw[1].text = 'ـٌ  Ḍammatān';
+  e = messen(app);
+  ok('Tanwīn-Name „-tan" → Verstoß', e.verstoesse.some(v => v.startsWith('Tanwīn-Name')));
+  hw[1].text = altText;
+  // 8. Wieder ungedeckelt (Nominativ 557 gegen Genitiv 240) → „je Antwort gleich viele" muss rot werden.
+  vm.runInContext('globalThis.__echtGleich = uebungGleichViele; uebungGleichViele = function(l){ return shuffle(l.slice()); };', app.ctx);
+  e = messen(app);
+  ok('je Antwort NICHT gleich viele → Verstoß', e.verstoesse.some(v => v.startsWith('kasus: nicht je Antwort gleich viele')));
+  vm.runInContext('uebungGleichViele = globalThis.__echtGleich;', app.ctx);
+  console.log(rot ? `\n⛔ ${rot} Störtest(s) schlagen NICHT an` : '\n✅ alle 8 Störtests schlagen an');
   process.exit(rot ? 1 : 0);
 }
 

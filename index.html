@@ -441,6 +441,11 @@
   /* Wie stark Verdecktes verschwimmt. In em, damit es mit der Schrift
      waechst — 7px waren beim Korantext zu wenig zum Lesenverhindern. */
   --verdeck-unschaerfe:0.42em;
+  /* Die deutsche Übersetzung im Satzmodus (25.09.2026): stärker als beim
+     Arabischen — lateinische Schrift ist bei gleicher Unschärfe an der
+     Wortform noch zu erraten. Elias: „sehr verschwommen … damit selbst wenn
+     ich genau drauf gucke ich es nicht erkennen kann". */
+  --de-unschaerfe:0.62em;
 }
 
 /* =====================================================================
@@ -841,6 +846,10 @@ main{
 #screen-learn{padding-top:var(--sp-1);}
 .screen{display:none;}
 .screen.active{display:block;animation:screenIn var(--dur-3) var(--ease-out);}
+/* ⭐ Nach dem Neuladen auf einem anderen Bildschirm bleibt die Startseite
+   unsichtbar, bis der alte Bildschirm wieder steht (js/init.js, 25.09.2026).
+   Elias: „ich möchte aber gar nciht die startseite sehen". */
+html.neuladen-wartet #screen-home{visibility:hidden;}
 
 .screen-header{
   display:flex;align-items:center;gap:var(--sp-3);
@@ -2874,6 +2883,15 @@ main{
    umgedreht." Die Markierungen sind jetzt auch auf der Karte anklickbar; das
    Umdrehen bleibt fuer den ganzen Rest der Karte zustaendig (js/lernen.js
    nimmt `.gram-underline` vom Umdreh-Klick aus). */
+/* Das kleine Fenster mit der Wortbedeutung in Übung 15 (js/uebung.js,
+   uebWortFensterZeigen) — dieselbe Machart wie das Grammatik-Fenster. */
+.ueb-wort-fenster{
+  position:fixed;z-index:600;
+  background:var(--surface-3);border:1px solid var(--border-strong);
+  border-radius:var(--r-2);padding:var(--sp-2) var(--sp-3);max-width:min(290px, calc(100vw - 16px));
+  box-shadow:var(--sh-3);font-size:var(--fs-md);color:var(--text);line-height:1.5;
+}
+.ueb-wort-fenster.hidden{display:none;}
 .gram-popover{
   position:fixed;z-index:600;
   background:var(--surface-3);border:1px solid var(--border-strong);
@@ -4100,6 +4118,11 @@ button:disabled{cursor:default;}
    zu wenig, um zu schummeln. */
 .verse-ar.verdeckt:hover,
 .arabic-sentence.verdeckt:hover{filter:blur(calc(var(--verdeck-unschaerfe) * .82));}
+/* Die deutsche Übersetzung im Satzmodus (js/saetze.js, deVerschwommenSetzen):
+   verschwommen bis zum Antippen. ⛔ Anders als oben KEIN Aufklaren beim
+   Darüberfahren — er soll auch „genau drauf gucken" können, ohne zu lesen. */
+.de-tippbar{cursor:pointer;transition:filter var(--dur-2) ease;-webkit-tap-highlight-color:transparent;}
+.de-verschwommen{filter:blur(var(--de-unschaerfe));user-select:none;-webkit-user-select:none;}
 /* Ein eingeschalteter Rundknopf traegt dieselbe Farbe wie ein aktiver Reiter. */
 .round-btn.an{background:var(--red-wash);border-color:var(--red-dim);color:var(--red-bright);}
 /* Auswendige Verse haben BEWUSST keinen grünen Rahmen mehr (10.08.2026).

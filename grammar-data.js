@@ -819,7 +819,7 @@ const GRAMMAR_RULES = [
     id: "harf-jarr-li-01",
     satzmodusUrteil: "2026-09-22T19:44:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "لِ (fünfter حَرْفُ جَرٍّ, Besitz)",
-    shortExplanation: "لِ ist der fünfte Harf al-Jarr nach فِي، عَلَى، إِلَى، مِنْ – nur ein einziger Buchstabe, ein Lām mit Kasra. Es bedeutet »für« oder »gehört« und ist eine Besitzanzeige: هَذَا لِخَالِدٍ hādhā li-Khālidin – »dies gehört Khalid«. Fürs Erste steht لِ nur für Besitz; weitere Bedeutungen kommen später dazu. Wie bei den anderen Huruf al-Jarr wird das Wort danach مَجْرُور majrūr (Kasra bzw. Kasratān): لِ ist حَرْفُ جَرٍّ, خَالِدٍ ist اِسْم مَجْرُور.",
+    shortExplanation: "لِ ist der fünfte Harf al-Jarr nach فِي، عَلَى، إِلَى، مِنْ – nur ein einziger Buchstabe, ein Lām mit Kasra. Es bedeutet »für« oder »gehört« und ist eine Besitzanzeige: هَذَا لِخَالِدٍ hādhā li-Khālidin – »dies gehört Khalid«. Fürs Erste steht لِ nur für Besitz; weitere Bedeutungen kommen später dazu. Wie bei den anderen Huruf al-Jarr wird das Wort danach مَجْرُور majrūr (Kasra bzw. Kasratayn): لِ ist حَرْفُ جَرٍّ, خَالِدٍ ist اِسْم مَجْرُور.",
     color: "nasab",
     source: { folge: 9, video: "Folge 09", approxTimestamp: "35:14", chapter: 6 },
     source2: { schluessel: 1, lektion: 6, seite: 23 }
@@ -1415,7 +1415,7 @@ const GRAMMAR_RULES = [
     id: "harf-jarr-bi-01",
     satzmodusUrteil: "2026-09-11T04:08:22+02:00",   /* Export aus der Regelprüfung — die jüngere Entscheidung gilt (js/regeln.js) */
     name: "بِـ (der sechste حَرْفُ جَرٍّ)",
-    shortExplanation: "بِـ ist der sechste حَرْفُ جَرٍّ nach فِي، عَلَى، إِلَى، مِنْ، لِ. Wie لِ ist er ein einzelner Buchstabe mit Kasra, der am folgenden Wort klebt und nie allein steht. Er bedeutet „mit“, „durch“, „bei“. Der Lektionstext von Kapitel 12 antwortet auf كَيْفَ حَالُكِ mit أَنَا بِخَيْرٍ وَالْحَمْدُ لِلَّهِ – woertlich „ich bin mit Gutem“. Wie nach jedem حَرْفُ جَرٍّ wird das Wort danach مَجْرُور; und weil خَيْر hier unbestimmt ist, steht ein Kasratan, kein einfaches Kasra. Genau danach fragte ein Mitschueler in Folge 17 (10:47): „Aber warum ist bi khayrin? Warum nicht bi khayri?“ – die Antwort des Lehrers: „Weil das Wort khayr unbestimmt ist.“ Das ist dieselbe Regel wie tanwin-nach-harf-jarr-01, nur an einem neuen Buchstaben.",
+    shortExplanation: "بِـ ist der sechste حَرْفُ جَرٍّ nach فِي، عَلَى، إِلَى، مِنْ، لِ. Wie لِ ist er ein einzelner Buchstabe mit Kasra, der am folgenden Wort klebt und nie allein steht. Er bedeutet „mit“, „durch“, „bei“. Der Lektionstext von Kapitel 12 antwortet auf كَيْفَ حَالُكِ mit أَنَا بِخَيْرٍ وَالْحَمْدُ لِلَّهِ – woertlich „ich bin mit Gutem“. Wie nach jedem حَرْفُ جَرٍّ wird das Wort danach مَجْرُور; und weil خَيْر hier unbestimmt ist, steht ein Kasratayn, kein einfaches Kasra. Genau danach fragte ein Mitschueler in Folge 17 (10:47): „Aber warum ist bi khayrin? Warum nicht bi khayri?“ – die Antwort des Lehrers: „Weil das Wort khayr unbestimmt ist.“ Das ist dieselbe Regel wie tanwin-nach-harf-jarr-01, nur an einem neuen Buchstaben.",
     color: "nasab",
     source: { folge: 17, video: "Folge 17", approxTimestamp: "02:06", chapter: 12 }
   },

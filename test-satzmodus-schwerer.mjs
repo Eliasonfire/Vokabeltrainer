@@ -126,7 +126,16 @@ function laufe(quelle, still){
     /* uebungZarfMitGenitiv: seit 19.09.2026 ruft die Iḍāfa-Übung sie auf — ohne
        sie stürbe deren baue() hier still im catch unten, und die Übung fiele
        aus diesem Test heraus, ohne dass etwas rot wird. */
-    vm.runInContext(sammel + '\n' + (schneideFunktion(quelle, 'uebungZarfMitGenitiv') || '') + '\n' + konst + '\n' + (fall || '') + '\n' + liste +
+    /* Seit 25.09.2026 brauchen Übung 4 und 5 die Genitiv-Gründe
+       (uebGenitivGruende, uebPraepKern mit ihren Konstanten) — ohne sie stürben
+       beide baue() hier still im catch, genau wie oben beschrieben. */
+    const genitivHilfen = [
+      (quelle.match(/const UEB_ZEICHEN = [^\n]+/) || [''])[0],
+      (quelle.match(/const UEB_PRAEP_KERNE = [^\n]+/) || [''])[0],
+      schneideFunktion(quelle, 'uebPraepKern') || '',
+      schneideFunktion(quelle, 'uebGenitivGruende') || ''
+    ].join('\n');
+    vm.runInContext(sammel + '\n' + (schneideFunktion(quelle, 'uebungZarfMitGenitiv') || '') + '\n' + genitivHilfen + '\n' + konst + '\n' + (fall || '') + '\n' + liste +
       '\n;globalThis.__U = UEBUNGEN; globalThis.__F = (typeof uebungUnsichtbarerFall === "function") ? uebungUnsichtbarerFall : null;' +
       '\nglobalThis.__K = (typeof UEBUNG_WARUM_UNSICHTBAR === "string") ? UEBUNG_WARUM_UNSICHTBAR : null;', c);
   } catch (e) {
@@ -426,7 +435,13 @@ function laufe(quelle, still){
       if (!t || !t.erwartet || t.gelesen || t.erwartet !== 'jarr') return false;
       return /^(اِسْم مَقْصُور|endet auf Alif)/.test(String(irab.endungUnsichtbar(t.wort) || ''));
     });
-    const genitiv = aufgaben.filter(a => a.modus.id === 'alle-majrur');
+    /* ⚠️ Seit dem 25.09.2026 stellt Übung 5 nur noch schwere Sätze (mindestens
+       zwei Genitive aus zwei Gründen, Elias: „es sollen mehrere sein im
+       genitiv aus unterschiedlichsten gründen"). Sein Fall (الْمُسْتَشْفَى,
+       ein einziger Genitiv) kommt seitdem in Übung 4: „Tippe alle Wörter an,
+       die dadurch مَجْرُور sind" — uebungUnsichtbarerFall() deckt beide ab. */
+    const genitiv = aufgaben.filter(a => a.modus.id === 'alle-majrur'
+      || (a.modus.id === 'jarr-paar' && (a.ziele || []).length && (a.ziele || []).every(i => a.zeilen[i] && a.zeilen[i].erwartet === 'jarr')));
     const mit = genitiv.filter(unsichtbarIn);
     const ohne = genitiv.filter(a => !unsichtbarIn(a));
     log('     gemessen: ' + genitiv.length + ' Genitiv-Aufgaben, ' + mit.length + ' davon mit unsichtbarer Endung');

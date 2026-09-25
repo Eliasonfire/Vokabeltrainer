@@ -322,14 +322,21 @@ const KASUS_WAHL = [
 /* Die sechs Endzeichen, die in den Daten wirklich vorkommen (an vocab-data.js
    ausgezaehlt). Bewusst MIT Tanwin-Unterscheidung: genau daran korrigiert der
    Lehrer am haeufigsten - أَمامَ الطّالِبِ, nicht ṭālibu. */
+/* ⭐ Die Tanwīn-Namen auf „-tayn" (25.09.2026). Elias: „bei den antworten mit
+   tanweed sollte so dummatayn, kasratayn, fathatayn stehen und nicht tan".
+   Geändert ist nur der ANGEZEIGTE Text; `wert` bleibt der Name aus endung()
+   in js/irab.js — daran hängen Lösung und Vergleich. */
 const HARAKA_WAHL = [
   { wert:'Damma',    text:'ـُ  Ḍamma' },
-  { wert:'Dammatan', text:'ـٌ  Ḍammatān' },
+  { wert:'Dammatan', text:'ـٌ  Ḍammatayn' },
   { wert:'Kasra',    text:'ـِ  Kasra' },
-  { wert:'Kasratan', text:'ـٍ  Kasratān' },
+  { wert:'Kasratan', text:'ـٍ  Kasratayn' },
   { wert:'Fatha',    text:'ـَ  Fatḥa' },
-  { wert:'Fathatan', text:'ـً  Fatḥatān' }
+  { wert:'Fathatan', text:'ـً  Fatḥatayn' }
 ];
+/* Der angezeigte Name eines Endzeichens („Kasratan" → „Kasratayn") — für die
+   Auflösung von Übung 7, die sonst den inneren Namen zeigte. */
+const uebZeichenName = z => { const h = HARAKA_WAHL.find(x => x.wert === z); return h ? h.text.replace(/^\S+\s+/, '') : z; };
 
 /* ---------- Die Tabelle ----------
    `baue(zeilen, satz)` gibt eine Liste von Aufgaben zurueck, jede:
@@ -392,6 +399,50 @@ function uebungZarfMitGenitiv(z, i){
   const t = z && z[i], n = z && z[i + 1];
   return !!(t && n && String(t.rolle || '').startsWith('ظَرْف')
     && String(n.rolle || '').startsWith('nach حَرْف جَرّ / ظَرْف'));
+}
+
+/* ⭐⭐ WARUM STEHT DAS WORT IM GENITIV? — für Übung 4 und 5 (25.09.2026).
+   Elias mit Bild von Übung 5 (الْكِتَابُ عِنْدَ الْمُدَرِّسِ., ein einziges
+   Wort im Genitiv): „ich hatte dir bereits gesagt das bei genitiv das zu
+   leicht ist. es sollen mehrere sein im genitiv aus unterschiedlichsten
+   gründen. lasse auch bei den genitiv präpositionen immer durchrutieren sodass
+   ich jede mal sehe und auch die gründe warum es im gentiv ist. du musst das
+   etwas schwerer machen". (Zuerst gesagt am 16.09.: „außerdem muss man das
+   auch schwerer machen" — damals nahm ich nur die Anzahl aus der Frage.)
+   Die vier Gründe sind die aus dem Hinweis von Übung 5: nach حَرْفُ جَرٍّ,
+   nach ظَرْفٌ, als مُضَافٌ إِلَيْهِ, als نَعْتٌ zu einem Wort im Genitiv.
+   `ausloeser` = die Präposition bzw. der ظَرْف davor (daran läuft das Reihum
+   in uebungMischen), `text` = die Begründung, die nach der Antwort dasteht. */
+const UEB_PRAEP_KERNE = ['في', 'من', 'على', 'إلى', 'الى', 'عن'];
+function uebPraepKern(wort){
+  const k = String(wort || '').replace(UEB_ZEICHEN, '').replace(/[.،؟?!«»:؛"„“”]/g, '').trim();
+  const ohne = k.slice(1);
+  const bekannt = x => UEB_PRAEP_KERNE.includes(x) || (typeof ZURUF !== 'undefined' && ZURUF.includes(x));
+  return (/^[وف]/.test(k) && !bekannt(k) && bekannt(ohne)) ? ohne : k;
+}
+function uebGenitivGruende(z){
+  const raus = [];
+  z.forEach((t, i) => {
+    if (!t || t.erwartet !== 'jarr') return;
+    const r = String(t.rolle || ''), v = z[i - 1];
+    if (r.startsWith('nach حَرْف جَرّ / ظَرْف') && v){
+      const zarf = String(v.rolle || '').startsWith('ظَرْف');
+      raus.push({ i, grund: zarf ? 'zarf' : 'praep', ausloeser: uebPraepKern(v.wort),
+        text: `${t.rein} — nach ${zarf ? 'ظَرْفٌ' : 'حَرْفُ جَرٍّ'} ${v.rein}` });
+    } else if (r.startsWith('nach angeschriebenem')){
+      const p = (String(t.rein || t.wort).replace(/^[وف]َ?/, '').match(/^[بلك][َِ]?/) || [''])[0];
+      raus.push({ i, grund: 'praep', ausloeser: p.charAt(0) + 'ـ', text: `${t.rein} — nach حَرْفُ جَرٍّ ${p}ـ` });
+    } else if (r.startsWith('مُضَاف إِلَيْه')){
+      let j = i - 1;
+      while (j >= 0 && !String(z[j].rolle || '').includes('(مُضَاف)')) j--;
+      raus.push({ i, grund: 'idafa', ausloeser: null, text: `${t.rein} — مُضَافٌ إِلَيْهِ${j >= 0 ? ' zu ' + z[j].rein : ''}` });
+    } else if (r.startsWith('نَعْت')){
+      let j = i - 1;
+      while (j >= 0 && z[j].erwartet !== 'jarr') j--;
+      raus.push({ i, grund: 'nat', ausloeser: null, text: `${t.rein} — نَعْتٌ${j >= 0 ? ' zu ' + z[j].rein : ''}` });
+    } else raus.push({ i, grund: 'sonst', ausloeser: null, text: `${t.rein} — ${r}` });
+  });
+  return raus;
 }
 
 /* ⭐⭐ `hinweisVerraet` — PFLICHTFELD bei jeder Übung mit `hinweis` (22.09.2026).
@@ -585,7 +636,9 @@ const UEBUNGEN = [
            um 18:53:56 „ja" zu den Endungen (Belege bei KASUS_WAHL oben). */
         uebungSammel(mub, 'Tippe alle مُبْتَدَأٌ (Subjekt) an.'),
         uebungSammel(kha, 'Tippe alle خَبَرٌ (Aussage über das Subjekt) an.')
-      ].filter(Boolean);
+        /* Reihum nach der Art der Frage (25.09.2026, „bei all diesen aufgaben
+           bei denen es geht" — uebungSchluessel). */
+      ].map((a, k) => a && { ...a, reihum: [k ? 'khabar' : 'mubtada'] }).filter(Boolean);
     }
   },
   {
@@ -659,7 +712,9 @@ const UEBUNGEN = [
       return [
         mudaf.length > 1 ? uebungSammel(mudaf, 'Tippe alle مُضَافٌ (das Besessene) an.') : null,
         zu.length > 1 ? uebungSammel(zu, 'Tippe alle مُضَافٌ إِلَيْهِ (der Besitzer) an.') : null
-      ].filter(Boolean).map(a => mitZarf ? { ...a, warum: 'zarf-als-mudaf-01' } : a);
+        /* Reihum nach der Art der Frage (25.09.2026) — uebungSchluessel. */
+      ].map((a, k) => a && { ...a, reihum: [k ? 'mudaf-ilayhi' : 'mudaf'] })
+       .filter(Boolean).map(a => mitZarf ? { ...a, warum: 'zarf-als-mudaf-01' } : a);
     }
   },
   {
@@ -689,12 +744,17 @@ const UEBUNGEN = [
         if (n && n.erwartet === 'jarr') nomen.push(i+1);   /* nur mit Nomen dahinter */
       });
       if (!partikel.length || !nomen.length) return [];
+      /* ⭐ Reihum nach Präposition (25.09.2026, Elias: „lasse auch bei den
+         genitiv präpositionen immer durchrutieren sodass ich jede mal sehe") —
+         die Präpositionen des Satzes tragen die Aufgabe in ihren Korb
+         (uebungMischen), innerhalb davon wechseln die beiden Fragen ab. */
+      const reihum = [...new Set(partikel.map(i => uebPraepKern(z[i].wort)))];
       return [
         /* Deutsch mit dazu, aus demselben Grund wie beim مُبْتَدَأ: die Frage
            stand hier nur auf Arabisch. */
         uebungSammel(partikel, 'Tippe alle حُرُوفُ جَرٍّ (Präpositionen) an.'),
         uebungSammel(nomen, 'Tippe alle Wörter an, die dadurch مَجْرُورٌ (im Genitiv) sind.')
-      ].filter(Boolean);
+      ].map((a, k) => a && { ...a, reihum, grundArt: k ? 'nomen' : 'partikel' }).filter(Boolean);
     }
   },
   {
@@ -702,13 +762,24 @@ const UEBUNGEN = [
     hinweis:'Genitiv steht nach einem حَرْفُ جَرٍّ, nach einem ظَرْفٌ, als مُضَافٌ إِلَيْهِ — und als نَعْتٌ zu einem Wort im Genitiv.',
     hinweisVerraet:true,
     baue(z){
-      const ziele = z.map((t,i)=>t.erwartet==='jarr' ? i : -1).filter(i=>i>=0);
       /* ⛔ Hier stand „— es ist genau eines." bzw. „— es sind N.". Elias am
          16.09.2026 an genau dieser Aufgabe: „außerdem muss man das auch
          schwerer machen". Die Anzahl verraten heißt: die übrigen Wörter
          wegstreichen und fertig. Jetzt über uebungSammel wie die anderen. */
-      const a = uebungSammel(ziele, 'Tippe alle مَجْرُورٌ (Wörter im Genitiv) an.');
-      return a ? [a] : [];
+      /* ⭐⭐ NUR NOCH SCHWERE AUFGABEN (25.09.2026) — Wortlaut bei
+         uebGenitivGruende(): mindestens ZWEI Wörter im Genitiv aus mindestens
+         ZWEI verschiedenen Gründen. Ein Satz mit einem einzigen Genitiv stellt
+         hier keine Aufgabe mehr; Übung 4, 6 und 7 bekommen ihn weiter. Nach der
+         Antwort steht an jedem Wort sein Grund („… die gründe warum es im
+         gentiv ist"). Reihum nach Präposition: uebungMischen. Bewacht von
+         werkzeuge/pruefe-satzmodus-aktuell.mjs (Teil F). */
+      const gen = uebGenitivGruende(z);
+      const arten = new Set(gen.map(g => g.grund));
+      if (gen.length < 2 || arten.size < 2) return [];
+      const a = uebungSammel(gen.map(g => g.i), 'Tippe alle مَجْرُورٌ (Wörter im Genitiv) an.');
+      return a ? [{ ...a, reihum: [...new Set(gen.map(g => g.ausloeser).filter(Boolean))],
+                    grundArt: [...arten].sort().join('+'),
+                    aufloesung: gen.map(g => g.text).join(' · ') }] : [];
     }
   },
   {
@@ -743,7 +814,7 @@ const UEBUNGEN = [
         return {
           frage:'Welche Endung gehört an das hervorgehobene Wort?',
           wortIdx:i, ohneEndung:true, optionen:HARAKA_WAHL, loesung:t.gelesen.zeichen, grund:uebGrund(t),
-          aufloesung:`${typeof rolleAnzeige === 'function' ? rolleAnzeige(t.rolle) : t.rolle} → ${KASUS[t.erwartet].ar}, also ${t.gelesen.zeichen}: ${t.rein}`
+          aufloesung:`${typeof rolleAnzeige === 'function' ? rolleAnzeige(t.rolle) : t.rolle} → ${KASUS[t.erwartet].ar}, also ${uebZeichenName(t.gelesen.zeichen)}: ${t.rein}`
         };
       }).filter(Boolean);
     }
@@ -1295,6 +1366,9 @@ function uebungAblenker(rule, anzahl, verboten, bevorzugt){
    Ein Zustand, ein Aufbau, eine Auswertung - fuer alle dreizehn. */
 let UEB = { modus:null, liste:[], idx:0, gewaehlt:new Set(), beantwortet:false,
             richtig:0, gestellt:0 };
+/* Die Aufgabe, deren deutsche Übersetzung gerade aufgedeckt ist (sonst
+   verschwommen — renderUebung, Begründung bei SENT_DE_OFFEN in js/saetze.js). */
+let UEB_DE_OFFEN = null;
 
 /* Aufgaben werden je Thema EINMAL gebaut und gemerkt. Ohne das liefe
    analysiereSatz() bei jedem Reiterwechsel 186 mal je Modus - also 2418 mal,
@@ -1443,7 +1517,9 @@ function renderUebungsLeiste(){
   if (!blatt) return;
   const alle = uebungenAufbauen();
   const zeile = m => {
-    const n = alle[m.id].length;
+    /* Die Zahl einer Runde, nicht des ganzen Vorrats — seit „je Antwort gleich
+       viele" (uebungAnzahl) ist das nicht mehr dasselbe. */
+    const n = uebungAnzahl(alle[m.id]);
     /* Die Zahl steht dran, auch wenn sie 0 ist. Elias' Auflage: ein Modus
        ohne Fragen sagt das ehrlich, statt ins Leere zu laufen. */
     return `<button class="zeile${UEB.modus===m.id?' aktiv':''}${n?'':' leer'}" type="button" data-uebmodus="${m.id}"`
@@ -1485,7 +1561,7 @@ function renderUebungsLeiste(){
      drei Antwortarten, sondern der Verzicht auf die Wahl. Elias' Anlass:
      „wenn man nicht weiß welchen man jetzt unbedingt üben sollte." Wer das
      sucht, sucht es vor der Liste, nicht dahinter. */
-  const gesamt = UEBUNGEN.reduce((s,m)=>s + alle[m.id].length, 0);
+  const gesamt = UEBUNGEN.reduce((s,m)=>s + uebungAnzahl(alle[m.id]), 0);
   html = '<div class="gruppe">Ohne Auswahl</div>'
        + `<button class="zeile${UEB.modus===UEB_GEMISCHT?' aktiv':''}${gesamt?'':' leer'}" type="button"`
        + ` data-uebmodus="${UEB_GEMISCHT}"${gesamt?'':' title="In dieser Auswahl gibt es keine Frage."'}>`
@@ -1499,7 +1575,7 @@ function renderUebungsLeiste(){
   const zahl = document.getElementById('uebZahl');
   if (wert) wert.textContent = jetzt ? jetzt.name
                              : (UEB.modus===UEB_GEMISCHT ? 'Gemischt' : 'Modus wählen');
-  if (zahl) zahl.textContent = jetzt ? `${alle[jetzt.id].length} Fragen`
+  if (zahl) zahl.textContent = jetzt ? `${uebungAnzahl(alle[jetzt.id])} Fragen`
                              : (UEB.modus===UEB_GEMISCHT ? `${gesamt} Fragen`
                                                          : `${UEBUNGEN.length} Modi`);
 
@@ -1578,12 +1654,79 @@ function uebungReihum(liste, schluessel, zweiter){
   }
   return raus;
 }
+/* Wonach reihum gezogen wird — oder null, wenn es nichts gibt.
+   ⭐ Übung 1, 3, 4 und 5 tragen `reihum` (25.09.2026, Elias: „lasse auch bei
+   den genitiv präpositionen immer durchrutieren sodass ich jede mal sehe und
+   auch die gründe warum es im gentiv ist" — und für alle, „bei denen es
+   geht"): bei 4/5 die Präpositionen bzw. ظُرُوف des Satzes, bei 1/3 die Art
+   der Frage. Eine Aufgabe mit mehreren kommt in den Korb ihres SELTENSTEN —
+   so hat jede Präposition, die überhaupt vorkommt, einen eigenen Korb.
+   Sonst: die Lösung — entschieden an den AUFGABEN, nicht an m.art
+   (test-eindeutige-ziele.mjs); „Antippen" ohne `reihum` und „Übersetzen"
+   haben keine einzelne Lösung. */
+function uebungSchluessel(liste){
+  if (liste.some(a => a && Array.isArray(a.reihum))){
+    const n = new Map();
+    for (const a of liste) for (const k of (a.reihum || [])) n.set(k, (n.get(k) || 0) + 1);
+    return a => {
+      const ks = (a.reihum || []).slice().sort((x, y) => (n.get(x) - n.get(y)) || (x < y ? -1 : x > y ? 1 : 0));
+      return ks.length ? ks[0] : '—';
+    };
+  }
+  if (liste.some(a => a && a.loesung != null)) return a => String(a.loesung);
+  return null;
+}
+/* ⭐⭐ JE ANTWORT UNGEFÄHR GLEICH VIELE SÄTZE (25.09.2026). Elias, mit Bild von
+   Übung 6: „es ist auch wichtig das bei all diesen aufgaben bei denen es geht
+   das sie pro antwort ungefähr alle gleich viele sätze haben. also in diesem
+   fall wenn es ingesamt 30 sätze zu dieser übung gibt dann sollte jede antwort
+   10 sätze haben bei der jene antwort richtig ist. das soll verhindern das zb
+   nominativ 100 sätze hat bei der es als richtige antwort geht aber die
+   anderen beiden haben nur jeweilis 10 sätze und so wird natürlich nominativ
+   öfter dran kommen."
+   Reihum allein reichte dafür nicht: sind die kleinen Körbe leer, bleibt am
+   Ende nur der große übrig (gemessen: Übung 6 Nominativ 557, Genitiv 240).
+   Also bekommt jede Antwort höchstens so viele Aufgaben wie die seltenste —
+   aber mindestens UEB_JE_ANTWORT_MIN, sonst schrumpfte eine Übung mit einer
+   sehr seltenen Antwort (Übung 7: nur 4 Sätze mit Kasratayn) auf eine
+   Handvoll. Ich hatte 10 vorgeschlagen; Elias darauf: „mach mindestens 15". Welche
+   Aufgaben einer großen Antwort drankommen, wird je Runde neu gewürfelt — so
+   kommt über mehrere Runden jeder Satz dran. Die seltenen Antworten brauchen
+   mehr Sätze aus seinen Büchern; das zeigt pruefe-satzmodus-aktuell. */
+const UEB_JE_ANTWORT_MIN = 15;
+function uebungDeckelJeAntwort(liste, schluessel){
+  const n = new Map();
+  for (const a of liste){ const k = schluessel(a); n.set(k, (n.get(k) || 0) + 1); }
+  return n.size ? Math.max(Math.min(...n.values()), UEB_JE_ANTWORT_MIN) : 0;
+}
+function uebungGleichViele(liste, schluessel){
+  const deckel = uebungDeckelJeAntwort(liste, schluessel), zaehl = new Map();
+  return shuffle(liste.slice()).filter(a => {
+    const k = schluessel(a), z = zaehl.get(k) || 0;
+    if (z >= deckel) return false;
+    zaehl.set(k, z + 1);
+    return true;
+  });
+}
+/* So viele Aufgaben kommen in einer Runde wirklich dran — für den Wähler, damit
+   dort dieselbe Zahl steht wie später in der Aufgabe („1 / N"). */
+function uebungAnzahl(liste){
+  liste = liste || [];
+  const s = uebungSchluessel(liste);
+  if (!s) return liste.length;
+  const deckel = uebungDeckelJeAntwort(liste, s), n = new Map();
+  for (const a of liste){ const k = s(a); n.set(k, (n.get(k) || 0) + 1); }
+  let summe = 0;
+  for (const v of n.values()) summe += Math.min(v, deckel);
+  return summe;
+}
 function uebungMischen(m, liste){
-  /* Entschieden an den AUFGABEN, nicht an m.art (test-eindeutige-ziele.mjs):
-     reihum nur, wo eine Aufgabe genau EINE Lösung hat — „Antippen" trägt
-     `ziele`, „Übersetzen" freien Text, beide keine `loesung`. */
-  if (!liste.some(a => a && a.loesung != null)) return shuffle(liste.slice());
-  return uebungReihum(liste, a => String(a.loesung), a => (a.grund == null ? null : String(a.grund)));
+  const s = uebungSchluessel(liste);
+  if (!s) return shuffle(liste.slice());
+  const zweiter = liste.some(a => a && Array.isArray(a.reihum))
+    ? (a => (a.grundArt == null ? null : String(a.grundArt)))
+    : (a => (a.grund == null ? null : String(a.grund)));
+  return uebungReihum(uebungGleichViele(liste, s), s, zweiter);
 }
 
 function uebungStarten(modusId){
@@ -1796,6 +1939,13 @@ function renderUebung(){
   const deFeld = document.getElementById('uebDe');
   deFeld.textContent = a.satz.sentDe || '';
   deFeld.classList.toggle('hidden', !!(m.deVerbergen && !UEB.beantwortet));
+  /* ⭐ Verschwommen, bis er antippt — jede neue Aufgabe wieder (Elias,
+     25.09.2026; Wortlaut und Begründung bei SENT_DE_OFFEN in js/saetze.js). */
+  if (UEB_DE_OFFEN !== a) UEB_DE_OFFEN = null;
+  /* Das Wortfenster von Übung 15 gehört zu genau einer Aufgabe — und nach dem
+     Prüfen ist es überflüssig (die Rückmeldung steht da). */
+  if (typeof uebWortFensterZu === 'function' && UEB_WORT_FENSTER && (UEB_WORT_FENSTER.a !== a || UEB.beantwortet)) uebWortFensterZu();
+  if (typeof deVerschwommenSetzen === 'function') deVerschwommenSetzen(deFeld, UEB_DE_OFFEN === a);
   document.getElementById('uebHerkunft').textContent = herkunft(a.satz);
 
   /* Das Eingabefeld der Übersetzungsübung. Es steht nur dort, wo geschrieben
@@ -2030,13 +2180,51 @@ function uebersetzungFuer(stueck){
 
   const woerter = String(stueck || '').trim().split(/[\s ]+/).filter(Boolean);
   const gefunden = [];
+  /* ⭐ Zweite Quelle: seine Regelkarten mit Hinweis-, Frage- und Fürwörtern
+     (dieselben Gruppen wie Übung 11, 13 und 14). هَذَا und ذَلِكَ hat er von
+     dort, nicht als Karteikarte — gemessen am 25.09.2026 in Übung 15:
+     „أَذَلِكَ — dazu habe ich keine Vokabel". */
+  let karten = [];
+  if (typeof uebKartenGlieder === 'function'){
+    for (const id of ['f19-isara', 'f19-fragen', 'f19-pronomen']){
+      try { karten = karten.concat(uebKartenGlieder(id) || []); }
+      catch (e){ /* eine fehlende Karte nimmt nur diese Quelle weg, nicht das Nachschlagen */ }
+    }
+  }
+  /* ⛔ MIT DEN VOKALEN (25.09.2026). Nur über das Gerippe verglichen, hieß
+     مَنْ („wer?") „von / aus" — das ist مِنْ. Gemessen beim Bau des Wortfensters
+     für Übung 15; eine falsche Übersetzung ist schlimmer als keine. Verglichen
+     wird der Kern von hinten (Artikel und وَ stehen vorn), OHNE den letzten
+     Buchstaben (dort wechselt die Kasusendung), und nur, wo beide ein Zeichen
+     tragen und der Buchstabe derselbe ist. */
+  const widerspricht = (wort, form, n) => {
+    const a = uebZeichenJeBuchstabe(wort).slice(-n), b = uebZeichenJeBuchstabe(form).slice(-n);
+    for (let i = 0; i < Math.min(a.length, b.length) - 1; i++){
+      if (a[i].b !== b[i].b) continue;
+      const va = a[i].z.replace(/[ّٰ]/g, ''), vb = b[i].z.replace(/[ّٰ]/g, '');
+      if (va && vb && va !== vb) return true;
+    }
+    return false;
+  };
+  const bedeutung = (k, wort) => {
+    const passt = f => !!f && wortKern(f) === k && !widerspricht(wort, f, k.length);
+    const v = quelle.find(x => x && x.de && (passt(x.ar) || passt(x.sg) || passt(x.pl)));
+    if (v) return v.de;
+    const g = karten.find(x => x && x.de && passt(x.form));
+    return g ? g.de : null;
+  };
   for (const w of woerter){
     const k = wortKern(w);
     if (k.length < 2) continue;
-    const t = quelle.find(v => v && (wortKern(v.ar || '') === k
-                                  || wortKern(v.sg || '') === k
-                                  || wortKern(v.pl || '') === k));
-    if (t && t.de) gefunden.push(`${w} — ${t.de}`);
+    const de = bedeutung(k, w);
+    if (de){ gefunden.push(`${w} — ${de}`); continue; }
+    /* Die Frage-Partikel أَ hängt vorn am Wort (أَذَلِكَ, أَهَذَا). Dann ohne
+       sie nachschlagen und es dazusagen. */
+    const ohneFrage = String(w).replace(/^أَ?/, '');
+    if (ohneFrage !== String(w) && wortKern(ohneFrage).length >= 2){
+      const de2 = bedeutung(wortKern(ohneFrage), ohneFrage);
+      if (de2) gefunden.push(`${w} — ${de2} (vorn أَ: Frage)`);
+    }
   }
   return gefunden.length ? gefunden.join(' · ') : null;
 }
@@ -2296,12 +2484,17 @@ function uebungWortTipp(i){
   if (!a || UEB.beantwortet) return;
   const m = uebungModusVon(a);
   if (!m) return;
-  /* ⛔ Bei der Übersetzungsübung verrät ein Tipp aufs Wort die Vokabel — und
-     damit die halbe Lösung. Dieselbe Grenze wie bei den Antwortknöpfen, und
-     aus demselben Grund: Elias hat sie selbst gezogen („wenn ich auf die
-     arabischen wörter BEI DER LÖSUNG ODER ERKLÄRUNG klicke"). Nach dem
-     Beantworten ist Nachschlagen erlaubt — das erledigt der Handler am Satz. */
-  if (uebungArtVon(a) === 'schreiben') return;
+  /* ⭐⭐ BEIM ÜBERSETZEN ZEIGT EIN TIPP AUFS WORT SEINE BEDEUTUNG (25.09.2026).
+     Elias, mit Bild von Übung 15: „beim überstetzten möchte ich, dass wenn ich
+     auf das arabische wort tippe das ein kleines fenster mit der richtigen
+     übersetzung steht weil manchmal weiß ich halt nicht was das wort bedeutet
+     und dann kann ich es natürlich nciht übersetzten. diese übersetzung soll
+     nur auftauchen wenn ich das wort anklicke".
+     ⛔ Hier stand bis dahin ein `return` mit MEINER Begründung („ein Tipp aufs
+     Wort verrät die Vokabel — die halbe Lösung"). Sein Wort schlägt sie. Das
+     Fenster: uebWortFensterZeigen() unten; zweiter Tipp aufs selbe Wort macht
+     es zu, die Tastatur bleibt offen (mousedown am Satz). */
+  if (uebungArtVon(a) === 'schreiben'){ uebWortFensterZeigen(i); return; }
   if (uebungArtVon(a) === 'mehrfach'){
     if (UEB.gewaehlt.has(i)) UEB.gewaehlt.delete(i); else UEB.gewaehlt.add(i);
     renderUebung();
@@ -2409,6 +2602,54 @@ document.getElementById('uebSatz').addEventListener('click', (e)=>{
   const span = e.target.closest('[data-uebidx]');
   if (span) uebungWortTipp(Number(span.dataset.uebidx));
 });
+/* Beim Übersetzen bleibt das Eingabefeld im Fokus, wenn er ein Wort antippt —
+   sonst klappte die Tastatur bei jedem Nachschlagen zu. */
+document.getElementById('uebSatz').addEventListener('mousedown', (e)=>{
+  const a = uebungAktuell();
+  if (a && uebungArtVon(a) === 'schreiben' && e.target.closest('[data-uebidx]')) e.preventDefault();
+});
+
+/* ---------- Das kleine Fenster mit der Wortbedeutung (Übung 15) ----------
+   Steht direkt unter dem angetippten Wort, nicht unten als Meldung: dort
+   läge es hinter der Handytastatur. Zu geht es beim zweiten Tipp aufs selbe
+   Wort, bei einem Tipp daneben und mit jeder neuen Aufgabe (renderUebung). */
+let UEB_WORT_FENSTER = null;   // { a, i } — offen für dieses Wort dieser Aufgabe
+function uebWortFensterZu(){
+  UEB_WORT_FENSTER = null;
+  const el = document.getElementById('uebWortFenster');
+  if (el) el.classList.add('hidden');
+}
+function uebWortFensterZeigen(i){
+  const a = uebungAktuell();
+  if (!a) return;
+  if (UEB_WORT_FENSTER && UEB_WORT_FENSTER.a === a && UEB_WORT_FENSTER.i === i){ uebWortFensterZu(); return; }
+  const span = document.querySelector(`#uebSatz [data-uebidx="${i}"]`);
+  if (!span) return;
+  let el = document.getElementById('uebWortFenster');
+  if (!el){
+    el = document.createElement('div');
+    el.id = 'uebWortFenster';
+    el.className = 'ueb-wort-fenster hidden';
+    el.setAttribute('role', 'status');
+    document.body.appendChild(el);
+  }
+  const stueck = span.textContent;
+  const t = uebersetzungFuer(stueck);
+  /* Auch das Nicht-Finden wird gesagt (wie zeigeUebersetzung). */
+  el.innerHTML = arabischHervor(t || `${stueck} — dazu habe ich keine Vokabel.`);
+  el.classList.remove('hidden');
+  const r = span.getBoundingClientRect();
+  const b = el.getBoundingClientRect();
+  const links = Math.min(Math.max(8, r.left + r.width / 2 - b.width / 2), window.innerWidth - b.width - 8);
+  el.style.left = `${Math.round(links)}px`;
+  el.style.top = `${Math.round(r.bottom + 8)}px`;
+  UEB_WORT_FENSTER = { a, i };
+}
+document.addEventListener('click', (e)=>{
+  if (!UEB_WORT_FENSTER) return;
+  if (e.target.closest('#uebWortFenster') || e.target.closest('#uebSatz [data-uebidx]')) return;
+  uebWortFensterZu();
+});
 document.getElementById('uebWahl').addEventListener('click', (e)=>{
   /* ⛔ ZUERST das arabische Wort — aber NUR, wenn schon beantwortet ist.
      Vorher gehoert der Knopf der Antwortwahl; ein Tipp aufs Wort waere sonst
@@ -2438,6 +2679,13 @@ function zeigeUebersetzung(stueck){
      Wort fehlt oder die Funktion. [[ausfall_ist_unsichtbar_gebaut]] */
   if (typeof toast === 'function') toast(t || `${stueck} — dazu habe ich keine Vokabel.`);
 }
+/* Die Übersetzung unter dem Satz: Tipp zeigt, zweiter Tipp verwischt wieder. */
+document.getElementById('uebDe').addEventListener('click', ()=>{
+  const a = uebungAktuell();
+  if (!a) return;
+  UEB_DE_OFFEN = (UEB_DE_OFFEN === a) ? null : a;
+  if (typeof deVerschwommenSetzen === 'function') deVerschwommenSetzen(document.getElementById('uebDe'), UEB_DE_OFFEN === a);
+});
 document.getElementById('btnUebPruefen').addEventListener('click', uebungMehrfachPruefen);
 document.getElementById('btnUebWeiter').addEventListener('click', uebungWeiter);
 document.getElementById('btnUebBeenden').addEventListener('click', uebungBeenden);
