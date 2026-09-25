@@ -357,9 +357,35 @@ function laufe(quelle, still){
     ['ar', 'sg', 'femSg', 'femPl'].forEach(f => { if (w[f]) merke(w[f]); });
     if (w.pl) String(w.pl).split(/\s*\/\s*/).forEach(merke);
   }
+  /* ⭐ 25.09.2026 — Übung 5 („alle Genitive") hatte für عَنْ und كَ keinen
+     schweren Satz. Alle seine Bücher sind durchgesehen (Bayna Yadayk 1 Einheit
+     1–4, Madina 1 Lektion 1–12, Musterlösung, Grammatik-Heft): keiner. Seine
+     Notfall-Regel (24.09.2026): „du kannst auch sätze erfinden hauptsache sie
+     bestehen aus meinen vokabeln und sind halt logisch und mit den richtigen
+     grammatikregeln aber das eher als notfall wenn es in allen büchern wirklich
+     nichts gibt". Zwei Belegquellen kommen dazu, beide aus SEINEM Bestand:
+     (1) die Wortfelder der Fachbegriff-Karten, die er bestellt hat — عَنْ ist
+         seine Karte gram-harf-an, كَ seine Karte gram-harf-ka;
+     (2) eine einbuchstabige Präposition, die er als Karte hat (بِ, كَ, لِ), vor
+         einer belegten Form: كَالْمَدْرَسَةِ = كَ (Karte) + الْمَدْرَسَةِ (mb1-42-3).
+     Keine Ḥaraka entsteht dabei neu: beide Teile stehen so da. */
+  const fach = (() => {
+    try { return (new Function(FACH_QUELLE + ';return { V: FACHBEGRIFF_VOKABELN, A: FACHBEGRIFF_AUFTRAG, X: FACHBEGRIFF_ABBESTELLT };'))(); }
+    catch (e) { return { V: [], A: {}, X: {} }; }
+  })();
+  const hat = (o, k) => !!o && Object.prototype.hasOwnProperty.call(o, k);
+  const bestellt = (fach.V || []).filter(w => hat(fach.A, String(w.id)) && !hat(fach.X, String(w.id)));
+  for (const w of bestellt){
+    ['ar', 'sg', 'femSg', 'femPl'].forEach(f => { if (w[f]) merke(w[f]); });
+    if (w.pl) String(w.pl).split(/\s*\/\s*/).forEach(merke);
+  }
+  const VORSILBEN = bestellt.concat(VOCAB_DATA).filter(w => w.type === 'particle')
+    .map(w => nurForm(w.ar)).filter(a => Array.from(a).length === 2 && 'بكل'.includes(Array.from(a)[0]));
+  const belegt = t => BELEG.has(t) || VORSILBEN.some(v => t.length > v.length && t.startsWith(v) && BELEG.has(t.slice(v.length)));
+  pruefe('seine Präpositionskarten بِ und كَ werden als Vorsilbe erkannt', VORSILBEN.includes('بِ') && VORSILBEN.includes('كَ'), VORSILBEN.join(' '));
   const unbelegt = [];
   for (const [id, s] of lang)
-    for (const t of String(s.sentAr).split(/\s+/)) if (!BELEG.has(nurForm(t))) unbelegt.push(id + ': ' + nurForm(t));
+    for (const t of String(s.sentAr).split(/\s+/)) if (!belegt(nurForm(t))) unbelegt.push(id + ': ' + nurForm(t));
   pruefe('jede Form steht so in seinem Buch oder einem Wortfeld', lang.length > 0 && unbelegt.length === 0, unbelegt.join(' · '));
   const laenge = lang.filter(([, s]) => { const n = String(s.sentAr).trim().split(/\s+/).length; return n < 4 || n > 10; });
   pruefe('4 bis 10 Wörter (10 = der längste Satz seines Buchs)', laenge.length === 0, laenge.map(([id]) => id).join(' · '));
@@ -546,6 +572,17 @@ for (const [name, stoere] of STOERUNGEN){
   }
   FACH_QUELLE = echt;
 
+  /* 25.09.2026: عَنْ ist nur belegt, weil er die Karte bestellt hat — ist sie
+     nicht mehr bestellt, muss 2g den Satz mit عَنْ als unbelegt melden. */
+  FACH_QUELLE = echt.replace("'gram-harf-an':", "'gram-harf-ax':");
+  if (FACH_QUELLE === echt){ alleRot = false; console.log('  ✘ die Karte عَنْ nicht bestellt — Störung griff nicht'); }
+  else {
+    const schlecht = laufe(ORIGINAL, true);
+    if (schlecht > 0) console.log('  ✔ die Karte عَنْ nicht bestellt → ' + schlecht + ' rot');
+    else { alleRot = false; console.log('  ✘ die Karte عَنْ nicht bestellt → blieb grün'); }
+  }
+  FACH_QUELLE = echt;
+
   const kernEcht = KERN_QUELLE;
   KERN_QUELLE = kernEcht.replace("'50169', ", '');
   if (KERN_QUELLE === kernEcht){ alleRot = false; console.log('  ✘ مَتَى aus der Freischaltliste — Störung griff nicht'); }
@@ -562,7 +599,10 @@ for (const [name, stoere] of STOERUNGEN){
   const STOERUNGEN_2G = [
     ['eine Ḥaraka selbst gesetzt (حَقِيبَةَ statt حَقِيبَةُ)', () => { BEISPIEL_QUELLE = bspEcht.replace("'حَقِيبَةُ الطَّالِبِ الْجَدِيدِ عَلَى", "'حَقِيبَةَ الطَّالِبِ الْجَدِيدِ عَلَى"); return BEISPIEL_QUELLE !== bspEcht; }],
     ['der Satz-Modus holt die längeren Sätze nicht mehr', () => { SAETZE_QUELLE = saetzeEcht.replace('ausLehrbuch, laengereSaetze()', 'ausLehrbuch'); return SAETZE_QUELLE !== saetzeEcht; }],
-    ['über dem Satz stünde wieder „Kap. …"', () => { SAETZE_QUELLE = saetzeEcht.replace("if (w.laengerSatz) return 'Längerer Satz aus deinen Wörtern';", ''); return SAETZE_QUELLE !== saetzeEcht; }]
+    ['über dem Satz stünde wieder „Kap. …"', () => { SAETZE_QUELLE = saetzeEcht.replace("if (w.laengerSatz) return 'Längerer Satz aus deinen Wörtern';", ''); return SAETZE_QUELLE !== saetzeEcht; }],
+    /* 25.09.2026: die Vorsilbe ersetzt keinen Beleg — كَ vor einer Form, die in
+       keinem seiner Sätze und keiner Karte steht (غُرْفَةِ ohne Artikel). */
+    ['كَ vor einer unbelegten Form (كَغُرْفَةِ)', () => { BEISPIEL_QUELLE = bspEcht.replace("كَبِيرٌ كَالْمَدْرَسَةِ.'", "كَبِيرٌ كَغُرْفَةِ.'"); return BEISPIEL_QUELLE !== bspEcht; }]
   ];
   for (const [name, stoere] of STOERUNGEN_2G){
     if (!stoere()){ alleRot = false; console.log('  ✘ ' + name + ' — Störung griff nicht'); }
