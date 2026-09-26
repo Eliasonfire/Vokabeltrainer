@@ -402,10 +402,31 @@ function tajweedModusSetzen(an){
   if (liste) liste.classList.toggle('markier-modus', TJ_MODUS);
   const knopf = document.getElementById('btnTajweedModus');
   if (knopf) knopf.classList.toggle('an', TJ_MODUS);
+  tajweedKnopfStilZeigen();
   const text = document.getElementById('tajweedModusText');
   if (text) text.textContent = TJ_MODUS ? 'Markieren aus' : 'Markieren';
   if (TJ_MODUS && typeof toast === 'function') toast('Tippe ein Wort an');
   if (!TJ_MODUS) tajweedKarteSchliessen();
+}
+
+/* ⭐ WIE DER KNOPF AUSSIEHT, SOLANGE MARKIEREN AN IST (26.09.2026, v625).
+   Elias vom Handy: „Wenn Markieren aktiv ist, soll der Button auffälliger
+   sein (vergesse sonst, dass es an ist, und lese weiter)." — mit „Option in
+   den Einstellungen: zurück zum bisherigen Aussehen".
+   Vorgabe ist „auffällig"; „schlicht" ist das Aussehen bis v624. Das neue
+   Aussehen hängt allein an der Klasse `tj-knopf-auffaellig` (CSS in
+   index.html) — wer zurückschaltet, nimmt nur sie weg.
+   ⚠️ Der Name beginnt mit `quran`: damit gilt er je Gerät, wie alles auf der
+   Koran-Tafel (js/sync.js, GERAET_EIGENE_EINSTELLUNG). */
+function tajweedKnopfAuffaellig(){
+  return !(typeof SETTINGS === 'object' && SETTINGS && SETTINGS.quranMarkierKnopf === 'schlicht');
+}
+function tajweedKnopfStilZeigen(){
+  const auff = tajweedKnopfAuffaellig();
+  const knopf = document.getElementById('btnTajweedModus');
+  if (knopf) knopf.classList.toggle('tj-knopf-auffaellig', auff);
+  document.querySelectorAll('[data-quranmarkierknopf]').forEach(b =>
+    b.classList.toggle('active', (b.dataset.quranmarkierknopf === 'auffaellig') === auff));
 }
 
 /* ---------------------------------------------------------------------
@@ -737,6 +758,15 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
   const modusKnopf = document.getElementById('btnTajweedModus');
   if (modusKnopf) modusKnopf.addEventListener('click', ()=> tajweedModusSetzen(!TJ_MODUS));
+  tajweedKnopfStilZeigen();
+  const stilZeile = document.getElementById('quranMarkierKnopf');
+  if (stilZeile) stilZeile.addEventListener('click', (e)=>{
+    const k = e.target.closest('[data-quranmarkierknopf]');
+    if (!k) return;
+    SETTINGS.quranMarkierKnopf = k.dataset.quranmarkierknopf;
+    if (typeof saveSettings === 'function') saveSettings();
+    tajweedKnopfStilZeigen();
+  });
 
   /* ⛔ In der EINFANGENDEN Phase und mit stopPropagation: js/quran.js hört
      auf demselben Kasten und deckt beim Antippen verdeckte Verse auf. Ohne

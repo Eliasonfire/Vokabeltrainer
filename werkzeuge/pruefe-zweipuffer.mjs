@@ -299,7 +299,9 @@ console.log('\nDas vorgeladene Element ist kaputt:');
 
 /* ---------- Stoertest: ohne die Fehlerabfrage uebernimmt er es ---------- */
 {
-  const ohnePruefung = TEILE.replace('if (b.src === url && !b.error){', 'if (b.src === url){');
+  /* Seit v625 (26.09.2026) steht die Abfrage in einer Variablen — der
+     Messwert `vorgeladen` entscheidet auch, ob die Anlaufzeit gemessen wird. */
+  const ohnePruefung = TEILE.replace('const vorgeladen = (b.src === url && !b.error);', 'const vorgeladen = (b.src === url);');
   if (ohnePruefung === TEILE){
     console.log('  X  Die Fehlerabfrage liess sich nicht herausschneiden — Stoertest wirkungslos.');
     fehler++;
