@@ -95,10 +95,17 @@
    zurueck: `quranRezitator()` gibt `QURAN_REZITATOREN[0].id`, wenn die
    gespeicherte id nicht mehr in der Liste steht. Nachgesehen, nicht
    angenommen. [[vorgabewert_greift_nicht_bei_null]] */
+/* ⭐ `pause` (26.09.2026, v625): wie lange dieser Rezitator zwischen zwei
+   Ayat schweigt, wenn er AM STÜCK liest — GEMESSEN an seiner ganzen Sure
+   al-Mulk (download.quranicaudio.com/quran/…/067.mp3, ffmpeg silencedetect
+   −30 dB, Pausen ≥ 0,2 s, Median): al-ʿAfāsī 0,42 s · ʿAbd al-Bāsiṭ 4,07 s ·
+   ash-Shāṭirī 0,64 s. Die Einzeldateien sollen klingen wie diese Aufnahme —
+   siehe „DIE PAUSE ZWISCHEN ZWEI AYAT". Ohne `pause` bleibt alles wie bis
+   v624. */
 const QURAN_REZITATOREN = [
-  { id:  7, name: 'Mishārī al-ʿAfāsī',        pfad: 'Alafasy/mp3/' },
-  { id:  1, name: 'ʿAbd al-Bāsiṭ',   stil: 'Mujawwad', pfad: 'AbdulBaset/Mujawwad/mp3/' },
-  { id:  4, name: 'Abū Bakr ash-Shāṭirī',     pfad: 'Shatri/mp3/' }
+  { id:  7, name: 'Mishārī al-ʿAfāsī',        pfad: 'Alafasy/mp3/', pause: 0.42 },
+  { id:  1, name: 'ʿAbd al-Bāsiṭ',   stil: 'Mujawwad', pfad: 'AbdulBaset/Mujawwad/mp3/', pause: 4.07 },
+  { id:  4, name: 'Abū Bakr ash-Shāṭirī',     pfad: 'Shatri/mp3/', pause: 0.64 }
 ];
 
 /* ⛔ AUFGEHOBEN, nicht geloescht — die neun am 09.09.2026 abgewaehlten. Die
@@ -253,7 +260,7 @@ function audioAdresse(rezId, sure, vers){
    nur zugesehen. [[wirkung_an_der_quelle_stilllegen]]
    ============================================================================ */
 
-const QAUDIO = { el:null, paar:null, sure:null, vers:0, laeuft:false, hinweis:'', versuche:0, versuchFuer:null, wechsel:false, warte:null };
+const QAUDIO = { el:null, paar:null, sure:null, vers:0, laeuft:false, hinweis:'', versuche:0, versuchFuer:null, wechsel:false, warte:null, auslauf:null, uebergang:null, uebergangFuer:null };
 
 /** Wie viele Verse hat die Sure? Erst der aufgebaute Leser, dann die Surenliste
  *  — der Leser ist die Wahrheit, weil er den Text wirklich vor sich hat. */
@@ -316,7 +323,13 @@ function audioBaue(){
   /* ⛔ `timeupdate` und nicht die Wortuhr: das Ereignis feuert rund viermal
      je Sekunde — für eine Fortschrittsanzeige genug. Die Wortuhr läuft im
      Bildtakt und gäbe sechzigmal je Sekunde dieselbe Auskunft. */
-  el.addEventListener('timeupdate', () => { if (el === QAUDIO.el) quranMedienPosition(); });
+  el.addEventListener('timeupdate', () => {
+    if (el !== QAUDIO.el) return;
+    quranMedienPosition();
+    /* Der Übergang zum nächsten Vers wird hier geplant (26.09.2026, v625) —
+       siehe „DIE PAUSE ZWISCHEN ZWEI AYAT" weiter unten. */
+    if (typeof audioUebergangPlanen === 'function') audioUebergangPlanen(el);
+  });
   /* Die Dauer steht erst mit den Metadaten fest — vorher wäre sie NaN und
      der Balken bliebe leer. */
   el.addEventListener('loadedmetadata', () => { if (el === QAUDIO.el) quranMedienPosition(); });
@@ -451,6 +464,24 @@ function audioVorladen(sure, vers){
      jemand neu geladen: die Rezitation blieb an derselben Stelle stehen.
      `load()` raeumt den Fehlerzustand. [[vorgabewert_sieht_aus_wie_befund]] */
   else if (b.error){ try { b.load(); } catch (e){ /* naechster Versuch holt es */ } }
+  /* ⭐ Die Stille dieser Datei messen und das Element SCHON JETZT an die
+     erste Silbe stellen (26.09.2026, v625). Jetzt, solange es still liegt —
+     nicht erst beim Wechsel: ein Sprung kostet Zeit (sein Ton-Protokoll vom
+     20.09.2026: `play` bei Ladezustand 1, dann `waiting`, `playing` erst
+     139 ms später), und die soll nicht in der Pause zwischen zwei Ayat
+     liegen. Siehe „DIE PAUSE ZWISCHEN ZWEI AYAT". */
+  if (typeof audioStilleHolen === 'function'){
+    /* Die laufende Datei gehört dazu: ihr Nachhall bestimmt, wie viel Stille
+       vor der nächsten stehen bleiben darf. */
+    const jetzt = (QAUDIO.sure === sure && QAUDIO.vers) ? audioAdresse(quranRezitator(), sure, QAUDIO.vers) : null;
+    Promise.all([audioStilleHolen(url), audioStilleHolen(jetzt)]).then(([st, vorige]) => {
+      if (!st || b.src !== url || !b.paused || b === QAUDIO.el) return;
+      const start = audioStartPos(st, vorige, audioLatenz(), audioPauseZiel());
+      if (Math.abs((Number(b.currentTime) || 0) - start) > 0.05){
+        try { b.currentTime = start; } catch (e){ /* vor den Metadaten: gilt als Startpunkt */ }
+      }
+    });
+  }
 }
 
 /** Welcher Vers kommt WIRKLICH als naechstes — mit dem Bereich gerechnet?
@@ -464,6 +495,232 @@ function audioFolgeVers(sure, vers){
   if (schleifeGilt() && vers >= QSCHLEIFE.bis) return QSCHLEIFE.von;
   if (vers >= audioVersZahl(sure)) return 0;
   return vers + 1;
+}
+
+/* ============================================================================
+   DIE PAUSE ZWISCHEN ZWEI AYAT                         (26.09.2026, v625)
+   ============================================================================
+
+   Elias am 26.09.2026, vom Handy (Eingang unterwegs): „Rezitator: Pause
+   zwischen Ayat zu lang. Wirkt abgehackt, als würde nach jeder Ayah
+   abgeschnitten und neu angesetzt, statt in einem Stück gelesen. Ziel:
+   flüssige Übergänge."
+
+   ⭐⭐ GEMESSEN, nicht vermutet (26.09.2026, ffmpeg `silencedetect` an den
+   Dateien von verses.quran.com, Sure 1, 67, 97 und 112):
+
+     Mishārī al-ʿAfāsī, al-Mulk 1–10, EINZELNE Vers-Dateien, −30 dB:
+       nach der letzten Silbe noch 0,33 bis 0,98 s Nachhall (Mitte ~0,65 s),
+       vor der ersten Silbe ~0,1 s
+     Mishārī al-ʿAfāsī, dieselbe Sure AM STÜCK (quranicaudio 067.mp3), −30 dB:
+       Pause zwischen zwei Stimmen im Median 0,42 s (20 Pausen ≥ 0,2 s)
+     ʿAbd al-Bāsiṭ (Mujawwad), −40 dB: vor der ersten Silbe Median 1,69 s
+       (bis 3,29 s), nach der letzten 0,62 s — zusammen um 2,7 s Stille
+     ash-Shāṭirī, −40 dB: vorn 0,05 s, hinten meist 0,00 s
+
+   Und dieselben Rezitatoren AM STÜCK (ganze Sure al-Mulk, −30 dB, Median der
+   Pausen): al-ʿAfāsī 0,42 s · ʿAbd al-Bāsiṭ 4,07 s · ash-Shāṭirī 0,64 s.
+
+   Beim Einzelabspielen liegen zwischen zwei Stimmen: der ganze Nachhall,
+   dann der Wechsel (sein Ton-Protokoll vom 20.09.2026: vom `pause` des alten
+   Verses bis `playing` des neuen 159 ms), dann der Anlauf der nächsten
+   Datei. Bei al-ʿAfāsī (im Browser nachgemessen: 67:1 hinten 1,03 s, 67:2
+   vorn 0,12 s) also rund 1,3 s statt 0,42 s — dreimal so lang wie in seiner
+   eigenen Aufnahme, und am Dateiende bricht der Nachhall hart ab. Das ist
+   das „abgeschnitten und neu angesetzt". Bei ʿAbd al-Bāsiṭ (Mujawwad) sind
+   die vier Sekunden dagegen SEIN Stil — auch am Stück schweigt er so lange —,
+   und bei ash-Shāṭirī passt es fast schon.
+
+   ⭐ Deshalb ist das Ziel je Rezitator seine eigene Pause am Stück
+   (`pause` in QURAN_REZITATOREN), keine feste Zahl. Zwei Hälften, beide aus
+   der DATEI SELBST gemessen:
+     · der nächste Vers beginnt näher an seiner ersten Silbe — so viel Stille
+       davor, wie zur Ziel-Pause fehlt, mindestens 50 ms;
+     · reicht das nicht, wird er gestartet, sobald die Stimme des laufenden
+       Verses die Ziel-Pause zurückliegt — nicht erst am Dateiende. Der alte
+       Vers wird dabei NICHT angehalten: sein Nachhall klingt unter dem
+       Anfang des nächsten aus, wie in der Aufnahme am Stück.
+   Ist die Pause schon höchstens so lang wie am Stück, ändert sich nichts.
+
+   ⛔ Von der Stimme wird NICHTS abgeschnitten. Gestartet wird frühestens an
+   der letzten Silbe, und das alte Element spielt bis zu seinem eigenen Ende.
+   Überlappen kann nur Nachhall unter −30 dB.
+
+   ⚠️ Wo die Messung fehlt (kein Netz, alter Browser, kaputte Datei), bleibt
+   alles wie bis v624: Wechsel am Dateiende, Beginn bei 0. Die Messung ist
+   eine Zugabe, keine Voraussetzung. [[ausfall_ist_unsichtbar_gebaut]]
+   ============================================================================ */
+
+/* So viel vor der ersten Silbe beginnt der nächste Vers mindestens — der
+   Anlaut soll nicht angeschnitten werden. */
+const QAUDIO_VORLAUF = 0.05;
+/* Ab hier zählt es als Stimme. −40 dB hätte den Nachhall mitgezählt; bei
+   −30 dB lag die Pause der Aufnahme am Stück genau dort, wo man sie hört. */
+const QAUDIO_SPRACHE_DB = -30;
+/* Adresse → { p: Promise, wert: { vorn, hinten, dauer } | null }. Begrenzt,
+   damit eine lange Sure den Speicher nicht füllt. */
+const QSTILLE = new Map();
+const QSTILLE_MAX = 40;
+/* Wie lange ein vorgeladenes Element vom `play()` bis zum Ton braucht —
+   GEMESSEN auf dem Gerät, bei jedem Wechsel (die letzten fünf). */
+const QLATENZ = [];
+
+/** Wo fängt in einer Datei die Stimme an, wo hört sie auf? `kanaele` sind die
+ *  Abtastwerte je Kanal (Float32Array), `rate` die Abtastrate. Gemessen in
+ *  20-ms-Fenstern über die Leistung aller Kanäle; ein Fenster zählt als
+ *  Stimme ab QAUDIO_SPRACHE_DB. Gibt null, wenn gar keine Stimme darin ist. */
+function audioStilleAus(kanaele, rate){
+  if (!kanaele || !kanaele.length || !rate) return null;
+  const n = kanaele[0].length;
+  if (!n) return null;
+  const fenster = Math.max(1, Math.round(rate * 0.02));
+  const schwelle = Math.pow(10, QAUDIO_SPRACHE_DB / 20);
+  const grenze = schwelle * schwelle;
+  let erstes = -1, letztes = -1;
+  for (let a = 0; a < n; a += fenster){
+    const b = Math.min(n, a + fenster);
+    let summe = 0;
+    for (const k of kanaele){ for (let i = a; i < b; i++) summe += k[i] * k[i]; }
+    if (summe / ((b - a) * kanaele.length) >= grenze){
+      if (erstes < 0) erstes = a;
+      letztes = b;
+    }
+  }
+  if (erstes < 0) return null;
+  return { vorn: erstes / rate, hinten: (n - letztes) / rate, dauer: n / rate };
+}
+
+/** Die Stille einer Vers-Datei messen — einmal je Adresse, das Ergebnis wird
+ *  gemerkt. Liefert ein Promise auf { vorn, hinten, dauer } oder null.
+ *  ⚠️ Die Datei kommt dabei aus dem Browser-Cache, den das Abspielelement
+ *  gerade füllt (`Cache-Control: max-age=25600000`); sw.js lässt diese
+ *  Adressen seit v625 deshalb durch, statt sie mit `cache: 'reload'` neu zu
+ *  holen. Dekodiert wird mit 8000 Hz: für „wo ist Stimme" reicht das, und
+ *  der Speicher bleibt klein. */
+function audioStilleHolen(url){
+  if (!url) return Promise.resolve(null);
+  const da = QSTILLE.get(url);
+  if (da) return da.p;
+  const OAC = (typeof OfflineAudioContext === 'function') ? OfflineAudioContext
+    : ((typeof webkitOfflineAudioContext === 'function') ? webkitOfflineAudioContext : null);
+  if (!OAC || typeof fetch !== 'function') return Promise.resolve(null);
+  const eintrag = { p: null, wert: undefined };
+  const abbruch = (typeof AbortController === 'function') ? new AbortController() : null;
+  const uhr = abbruch ? setTimeout(() => abbruch.abort(), 15000) : null;
+  eintrag.p = fetch(url, abbruch ? { signal: abbruch.signal } : undefined)
+    .then(r => (r && r.ok) ? r.arrayBuffer() : null)
+    .then(buf => {
+      if (!buf) return null;
+      let ctx;
+      try { ctx = new OAC(1, 1, 8000); } catch (e){ ctx = new OAC(1, 1, 44100); }
+      /* Beide Schreibweisen: ältere Safari kennen nur die mit Rückruf. */
+      return new Promise((ja, nein) => {
+        const r = ctx.decodeAudioData(buf, ja, nein);
+        if (r && r.then) r.then(ja, nein);
+      });
+    })
+    .then(daten => {
+      if (!daten) return null;
+      const kanaele = [];
+      for (let c = 0; c < daten.numberOfChannels; c++) kanaele.push(daten.getChannelData(c));
+      return audioStilleAus(kanaele, daten.sampleRate);
+    })
+    .then(wert => { eintrag.wert = wert; return wert; },
+          () => { QSTILLE.delete(url); return null; })   /* beim nächsten Mal neu versuchen */
+    .finally(() => { if (uhr) clearTimeout(uhr); });
+  QSTILLE.set(url, eintrag);
+  if (QSTILLE.size > QSTILLE_MAX) QSTILLE.delete(QSTILLE.keys().next().value);
+  return eintrag.p;
+}
+/** Das Ergebnis, falls es schon da ist — sonst null. Ohne Warten. */
+function audioStilleBekannt(url){
+  const e = QSTILLE.get(url);
+  return (e && e.wert) || null;
+}
+/** Die Pause des gewählten Rezitators am Stück (Sekunden) — oder null, wenn
+ *  sie nicht gemessen ist; dann wird nichts gekürzt. */
+function audioPauseZiel(){
+  const r = rezitatorVon(quranRezitator());
+  return (r && typeof r.pause === 'number') ? r.pause : null;
+}
+/** Wie viel Stille vom Anfang der nächsten Datei stehen bleibt: so viel, wie
+ *  nach dem Nachhall der laufenden (`vorige.hinten`) und dem Anlauf (`latenz`)
+ *  zur Ziel-Pause noch fehlt — mindestens QAUDIO_VORLAUF, höchstens alles. */
+function audioVornBehalten(st, vorige, latenz, pause){
+  return Math.min(st.vorn, Math.max(QAUDIO_VORLAUF, pause - vorige.hinten - (latenz || 0)));
+}
+/** Wo der nächste Vers beginnen soll. Ohne Messung beider Dateien oder ohne
+ *  Ziel-Pause bei 0 — wie bis v624. */
+function audioStartPos(st, vorige, latenz, pause){
+  if (!st || !vorige || typeof pause !== 'number') return 0;
+  return Math.max(0, st.vorn - audioVornBehalten(st, vorige, latenz, pause));
+}
+function audioLatenzMerken(sek){
+  if (!(sek >= 0) || sek > 2) return;
+  QLATENZ.push(sek);
+  if (QLATENZ.length > 5) QLATENZ.shift();
+}
+/** Der Median der letzten Anlaufzeiten, höchstens 0,3 s. Ohne Messung 0 —
+ *  dann wird die Pause eher etwas länger als zu kurz. */
+function audioLatenz(){
+  if (!QLATENZ.length) return 0;
+  const s = [...QLATENZ].sort((a, b) => a - b);
+  return Math.min(0.3, s[Math.floor(s.length / 2)]);
+}
+/** Zu welcher Sekunde der LAUFENDEN Datei soll der nächste Vers gestartet
+ *  werden? `st` misst die laufende Datei, `folge` die nächste. Gibt null,
+ *  wenn sich nichts vorziehen lässt — dann wechselt `ended` wie bisher. */
+function audioUebergangZeit(st, folge, latenz, pause){
+  if (!st || !folge || typeof pause !== 'number') return null;
+  const letzteSilbe = st.dauer - st.hinten;
+  /* Was vom Anfang der nächsten Datei noch still ist, geht von der Pause ab —
+     dieselbe Rechnung wie audioStartPos, damit beide zusammenpassen. */
+  const restVorn = audioVornBehalten(folge, st, latenz, pause);
+  const t = letzteSilbe + pause - (latenz || 0) - restVorn;
+  /* Nur, wenn danach noch Datei übrig ist — sonst ist ihr Ende ohnehin früher
+     da. ⛔ Und nie vor der letzten Silbe, egal was die Anlaufzeit sagt. */
+  if (t >= st.dauer - 0.05) return null;
+  return Math.max(t, letzteSilbe);
+}
+/** Läuft bei jedem `timeupdate` des spielenden Elements (etwa viermal je
+ *  Sekunde). Liegt der Übergang weniger als 1,2 s entfernt, wird er auf die
+ *  Millisekunde gestellt. ⚠️ Kommt der Zeitgeber zu spät (bei verborgener
+ *  Seite dehnt der Browser ihn — gemessen am 20.09.2026: 2,3 s statt 2,0), hat
+ *  `ended` den Wechsel schon gemacht, und er findet ein anderes Element vor. */
+function audioUebergangPlanen(el){
+  if (el !== QAUDIO.el || !QAUDIO.laeuft || el.paused || QAUDIO.wechsel || QAUDIO.sure === null) return;
+  const kennung = QAUDIO.sure + ':' + QAUDIO.vers;
+  if (QAUDIO.uebergangFuer === kennung) return;
+  const folge = audioFolgeVers(QAUDIO.sure, QAUDIO.vers);
+  /* Sure zu Ende: der letzte Vers klingt natürlich aus. */
+  if (!folge) return;
+  const rez = quranRezitator();
+  const url = audioAdresse(rez, QAUDIO.sure, QAUDIO.vers);
+  const folgeUrl = audioAdresse(rez, QAUDIO.sure, folge);
+  /* ⛔ Nur, wenn der nächste Vers FERTIG im anderen Element liegt. Sonst
+     müsste das laufende Element neu laden — und das schnitte den Nachhall ab,
+     statt ihn ausklingen zu lassen. */
+  const b = audioAnderes();
+  if (b.src !== folgeUrl || b.error) return;
+  const t = audioUebergangZeit(audioStilleBekannt(url), audioStilleBekannt(folgeUrl), audioLatenz(), audioPauseZiel());
+  if (t === null) return;
+  const rest = (t - (Number(el.currentTime) || 0)) / (el.playbackRate || 1);
+  if (rest > 1.2) return;
+  QAUDIO.uebergangFuer = kennung;
+  if (QAUDIO.uebergang) clearTimeout(QAUDIO.uebergang);
+  QAUDIO.uebergang = setTimeout(() => {
+    QAUDIO.uebergang = null;
+    if (QAUDIO.el !== el || el.paused || !QAUDIO.laeuft || QAUDIO.wechsel) return;
+    if (QAUDIO.sure + ':' + QAUDIO.vers !== kennung) return;
+    const f = audioFolgeVers(QAUDIO.sure, QAUDIO.vers);
+    if (f) audioSpiele(QAUDIO.sure, f, { frueh: true });
+  }, Math.max(0, rest * 1000));
+}
+/** Einen geplanten Übergang verwerfen — bei jedem Handgriff, der den Vers
+ *  wechselt oder anhält. */
+function audioUebergangWeg(){
+  if (QAUDIO.uebergang){ clearTimeout(QAUDIO.uebergang); QAUDIO.uebergang = null; }
+  QAUDIO.uebergangFuer = null;
 }
 
 /* ============================================================================
@@ -563,7 +820,12 @@ function audioNachladen(pos){
 const QAUDIO_SCHNELL = 5;
 const QAUDIO_LANGE = 40;
 
-async function audioSpiele(sure, vers){
+async function audioSpiele(sure, vers, opt){
+  /* `frueh`: der Aufruf kommt aus audioUebergangPlanen — der laufende Vers
+     klingt noch aus und wird nicht angehalten (26.09.2026, v625). Jeder
+     andere Aufruf (Weiterblättern, Start, `ended`) hält ihn an wie bisher. */
+  const frueh = !!(opt && opt.frueh);
+  if (typeof audioUebergangWeg === 'function') audioUebergangWeg();
   /* ⛔ Der Geh-Modus zuerst aus. Beide beschriften dieselbe Mediensitzung, und
      beide spielen Ton — nebeneinander waeren es zwei Stimmen und ein
      Pause-Knopf, der den falschen Modus trifft. Die Gegenrichtung steht in
@@ -606,12 +868,27 @@ async function audioSpiele(sure, vers){
   /* ⛔ `!b.error`: ein vorgeladenes Element kann die richtige Adresse tragen
      und trotzdem kaputt sein (Netzabriss beim Vorladen). Dann darf es nicht
      das spielende werden — `play()` würde sofort abgewiesen. */
-  if (b.src === url && !b.error){
+  const vorgeladen = (b.src === url && !b.error);
+  if (vorgeladen){
     const alt = QAUDIO.el;
     QAUDIO.el = b;
     el = b;
-    try { el.currentTime = 0; } catch (e){ /* Quelle noch nicht bereit: startet ohnehin bei 0 */ }
-    if (alt && alt !== b){ try { alt.pause(); } catch (e){ /* schon angehalten */ } }
+    /* ⭐ An die erste Silbe, nicht stur auf 0 (26.09.2026, v625) — und nur,
+       wenn das Element nicht schon dort steht: audioVorladen hat es meist
+       vorher hingestellt, und ein Sprung auf dieselbe Stelle kostet Anlaufzeit.
+       Bis v624 stand hier immer `currentTime = 0`. */
+    const start = (typeof audioStilleBekannt === 'function')
+      ? audioStartPos(audioStilleBekannt(url), audioStilleBekannt(alt && alt.src), audioLatenz(), audioPauseZiel())
+      : 0;
+    if (Math.abs((Number(el.currentTime) || 0) - start) > 0.05){
+      try { el.currentTime = start; } catch (e){ /* Quelle noch nicht bereit: startet ohnehin vorn */ }
+    }
+    if (alt && alt !== b){
+      /* ⭐ Beim vorgezogenen Übergang klingt der alte Vers aus — er spielt nur
+         noch Nachhall. Angehalten wird er erst durch sein eigenes Ende. */
+      if (frueh && !alt.paused) QAUDIO.auslauf = alt;
+      else { try { alt.pause(); } catch (e){ /* schon angehalten */ } }
+    }
   } else {
     el = QAUDIO.el;
     if (el.src !== url) el.src = url;
@@ -629,6 +906,13 @@ async function audioSpiele(sure, vers){
   quranMedienKnoepfe(true);
   quranMedienInfo();
   zeigeSpieler();
+  /* Die Anlaufzeit messen — nur beim vorgeladenen Element, denn nur dort
+     plant audioUebergangZeit mit ihr. Ein Neuladen übers Netz dauerte länger
+     und verzerrte den Wert. */
+  if (vorgeladen && typeof performance !== 'undefined' && typeof audioLatenzMerken === 'function'){
+    const t0 = performance.now();
+    el.addEventListener('playing', () => audioLatenzMerken((performance.now() - t0) / 1000), { once: true });
+  }
   try {
     await el.play();
   } catch (err){
@@ -711,7 +995,35 @@ async function audioSpiele(sure, vers){
      ⭐ Seit dem 19.09.2026 rechnet das `audioFolgeVers()` — dieselbe Funktion,
      die auch `audioNaechster()` fragt. Zwei Rechnungen derselben Frage waren
      genau der Fehler vom 15.09. */
-  audioVorladen(sure, audioFolgeVers(sure, vers));
+  /* ⚠️ Genau EINE Stelle mit dieser Rechnung — test-quran-vorladen.mjs sucht
+     sie und hat einen Störtest, der sie ersetzt. Zwei Stellen hießen zwei
+     Rechnungen, und die liefen am 15.09.2026 schon einmal auseinander. */
+  const vorladen = () => audioVorladen(sure, audioFolgeVers(sure, vers));
+  const auslauf = QAUDIO.auslauf;
+  if (auslauf && auslauf !== el && !auslauf.paused && !auslauf.ended){
+    /* ⛔ ERST AUSKLINGEN LASSEN, DANN NEU LADEN (26.09.2026, v625). Das
+       andere Element ist genau das, das noch ausklingt — ein neues `src`
+       schnitte den Nachhall mitten ab, und das wäre wieder das „abgeschnitten"
+       aus seiner Meldung. Der nächste Vers hat Zeit: dieser hier läuft ja
+       erst an. */
+    let erledigt = false;
+    const danach = () => {
+      if (erledigt) return;
+      erledigt = true;
+      if (QAUDIO.auslauf === auslauf) QAUDIO.auslauf = null;
+      if (QAUDIO.sure === sure && QAUDIO.vers === vers) vorladen();
+    };
+    auslauf.addEventListener('ended', danach, { once: true });
+    /* Sicherheitsnetz, falls `ended` nie kommt (Element vom System angehalten). */
+    const rest = Math.max(0, (Number(auslauf.duration) || 0) - (Number(auslauf.currentTime) || 0));
+    setTimeout(danach, rest * 1000 + 300);
+  } else {
+    QAUDIO.auslauf = null;
+    vorladen();
+  }
+  /* Auch die EIGENE Datei messen: ihr Ende bestimmt den nächsten Übergang.
+     Meist ist sie schon gemessen (sie war vorgeladen) — dann kostet das nichts. */
+  if (typeof audioStilleHolen === 'function') audioStilleHolen(url);
 }
 
 /* ============================================================================
@@ -837,6 +1149,8 @@ function audioAus(){
   QAUDIO.wechsel = false;
   QAUDIO.versuche = 0; QAUDIO.versuchFuer = null;
   if (QAUDIO.warte){ clearTimeout(QAUDIO.warte); QAUDIO.warte = null; }
+  if (typeof audioUebergangWeg === 'function') audioUebergangWeg();
+  QAUDIO.auslauf = null;
   audioWacheAus();
   /* ⛔ BEIDE Elemente leeren, nicht nur das spielende. Im anderen liegt der
      vorgeladene naechste Vers; bliebe er dort, hielte er die Datei im
@@ -873,6 +1187,11 @@ function audioUmschalten(){
      auch wenn gerade ein Verswechsel läuft (19.09.2026). */
   QAUDIO.wechsel = false;
   if (QAUDIO.warte){ clearTimeout(QAUDIO.warte); QAUDIO.warte = null; }
+  /* Ein Druck auf Pause hält auch den Nachhall des vorigen Verses an, der
+     beim vorgezogenen Übergang noch ausklingt (26.09.2026, v625) — Pause
+     heißt still. */
+  if (typeof audioUebergangWeg === 'function') audioUebergangWeg();
+  if (QAUDIO.auslauf){ try { QAUDIO.auslauf.pause(); } catch (e){ /* schon still */ } QAUDIO.auslauf = null; }
   if (QAUDIO.laeuft) el.pause();
   /* ⛔ Ein abgelehntes play() ist der haeufigste Grund, warum „nichts
      passiert": der Browser verweigert Ton ohne Geste, oder die Datei fehlt.

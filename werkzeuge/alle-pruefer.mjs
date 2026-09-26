@@ -601,6 +601,9 @@ const PRUEFER = [
      Der Ton selbst ist nicht pruefbar (der Pane darf keinen machen), also
      prueft dieser Test die Entscheidung. */
   ['test-quran-vorladen.mjs', []],
+  /* Die Pause zwischen zwei Ayat (v625, 26.09.2026): Stille messen, den
+     nächsten Vers vorziehen, den alten ausklingen lassen — mit Störtests. */
+  ['test-quran-uebergang.mjs', []],
 
   /* ⛔ Neu am 06.09.2026. Der Hifz-Stand ist das Einzige in dieser App, das
      Elias sich WIRKLICH erarbeitet hat — auswendig gelernte Suren. Er lief

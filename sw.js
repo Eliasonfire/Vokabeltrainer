@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vokabeltrainer-v624';
+const CACHE_NAME = 'vokabeltrainer-v625';
 
 /* ⚠️ In diese Liste gehoeren KEINE Kommentare zwischen die Eintraege.
    validate.js liest sie zeilenweise und hat am 18.08.2026 einen erklaerenden
@@ -265,6 +265,19 @@ self.addEventListener('fetch', (e)=>{
      danach als "aktuell" wieder hochladen. Der Abgleich haette dann die Arbeit
      zerstoert, die er schuetzen soll. */
   if (new URL(e.request.url).pathname.startsWith('/api/')) return;
+  /* ⛔ Die Rezitation (26.09.2026, v625) geht am Service Worker VORBEI.
+     Bis v624 lief jede Vers-Datei durch den Zweig unten, und der holt mit
+     `cache: 'reload'` — also IMMER übers Netz, auch den Vers, der in der
+     Schleife gerade zum zehnten Mal kommt. Der Browser-Cache hätte ihn: die
+     Dateien kommen mit `Cache-Control: max-age=25600000` (gemessen an
+     verses.quran.com, 26.09.2026).
+     ⚠️ Und seit v625 misst js/quran-audio.js die Stille am Anfang und Ende
+     jeder Datei (audioStilleHolen) mit einem eigenen `fetch`. Der lief hier
+     durch, bekäme `type 'cors'` und Status 200 — und landete unten per
+     `cache.put` im App-Cache: jede je gehörte Ayah, 150 bis 280 KB das Stück,
+     ohne Grenze. Ohne diese Zeile wächst der Speicher mit jeder Sure. */
+  const wirt = new URL(e.request.url).hostname;
+  if (wirt === 'verses.quran.com' || wirt === 'mirrors.quranicaudio.com') return;
   e.respondWith(
     fetch(new Request(e.request, { cache: 'reload' })).then(resp=>{
       if (istAnmeldeAntwort(resp)){

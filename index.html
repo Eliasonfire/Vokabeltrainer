@@ -3318,6 +3318,30 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
    Auswahlmarkierung auf, statt die Karte zu öffnen. */
 #verseList.markier-modus .verse-ar .qw{ cursor:pointer; }
 #verseList.markier-modus .verse-ar{ user-select:none; -webkit-user-select:none; }
+/* ⭐ „Markieren aus" DEUTLICH (26.09.2026, v625). Elias vom Handy: „Wenn
+   Markieren aktiv ist, soll der Button auffälliger sein (vergesse sonst, dass
+   es an ist, und lese weiter)." — dazu: „Option in den Einstellungen: zurück
+   zum bisherigen Aussehen" und „Aktuelles Design vorher sichern (z. B. als
+   eigene CSS-Klasse), damit man sauber zurückschalten kann".
+   ⛔ Deshalb steht das NEUE Aussehen allein in dieser Klasse. Das bisherige ist
+   unverändert `btn btn-secondary btn-klein` — der Knopf sieht an und aus
+   gleich aus, nur die Schrift wechselt. Die Einstellung „Wie bisher" nimmt
+   `tj-knopf-auffaellig` weg, sonst nichts (js/quran-markierung.js).
+   Rot, weil Rot hier die Farbe der Fehlerstelle ist (die Vorgabe beim
+   Markieren); ⛔ kein Grün — Grün heißt in dieser App „kannst du auswendig".
+   Das Pulsieren ist leise und hört auf, wenn das Gerät weniger Bewegung
+   wünscht. */
+#btnTajweedModus.tj-knopf-auffaellig.an{
+  background:var(--red); border-color:var(--red); color:#fff; font-weight:700;
+  box-shadow:0 0 0 3px rgba(255,23,68,.28);
+  animation:tj-knopf-puls 2.4s ease-in-out infinite;
+}
+#btnTajweedModus.tj-knopf-auffaellig.an .ic{ color:#fff; }
+@keyframes tj-knopf-puls{
+  0%, 100%{ box-shadow:0 0 0 2px rgba(255,23,68,.22); }
+  50%{ box-shadow:0 0 0 7px rgba(255,23,68,.10); }
+}
+@media (prefers-reduced-motion: reduce){ #btnTajweedModus.tj-knopf-auffaellig.an{ animation:none; } }
 
 /* Die Karte sitzt UNTEN, nicht in der Mitte: das Wort steht groß darin und
    der Daumen muss einen einzelnen Buchstaben treffen. Dieselbe Geometrie
@@ -6298,6 +6322,16 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
             <button class="qa-stufe" data-qurangroesse="de:-1" aria-label="Deutsch kleiner">−</button>
             <span class="qa-wert" id="qaWertDe">100 %</span>
             <button class="qa-stufe" data-qurangroesse="de:1" aria-label="Deutsch größer">+</button>
+          </div>
+        </div>
+        <!-- ⭐ Wie der Knopf „Markieren aus" aussieht, solange Markieren an ist
+             (26.09.2026, v625). Elias: „Option in den Einstellungen: zurück zum
+             bisherigen Aussehen." „Wie bisher" = das Aussehen bis v624. -->
+        <div class="qa-zeile" id="qaZeileMarkierKnopf">
+          <span class="qa-titel">Markieren-Knopf</span>
+          <div class="qa-modi" id="quranMarkierKnopf">
+            <button class="qa-modus" data-quranmarkierknopf="auffaellig" aria-label="Markieren-Knopf: auffällig">Auffällig</button>
+            <button class="qa-modus" data-quranmarkierknopf="schlicht" aria-label="Markieren-Knopf: wie bisher">Wie bisher</button>
           </div>
         </div>
         <!-- ⛔ Der Satz gehört zur Sache, nicht zur Zier (10.09.2026). Überall
