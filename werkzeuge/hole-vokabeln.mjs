@@ -1,5 +1,6 @@
 /* hole-vokabeln.mjs -- zieht die komplette arabicroots-Datenbank und schreibt
- * je Buch eine Datendatei nach data/.
+ * je Buch eine Datendatei nach data/. Weniger wird es dabei nie: was
+ * arabicroots nicht mehr liefert, bleibt (27.09.2026, "Weniger wird es nie").
  *
  * Aufruf (aus dem Repo-Wurzelverzeichnis):
  *   node werkzeuge/hole-vokabeln.mjs
@@ -66,19 +67,83 @@ for (const v of alle) (nachBuch[v.book_slug] ||= []).push(schlank(v));
 const DATA = path.join(REPO, 'data');
 fs.mkdirSync(DATA, { recursive: true });
 
+/* ---------- Weniger wird es nie (27.09.2026) ------------------------------
+
+   Elias, auf die Frage, was nach dem Ende seines arabicroots-Zugangs mit den
+   Vokabeln passiert: „am besten ist doch wenn es nicht weniger wird sondern
+   nur mehr oder? also weniger soll nicht werden aber kann mehr werden"
+
+   Bis dahin schrieb das Skript blind, was arabicroots gerade lieferte. Im
+   Probelauf (Attrappe statt arabicroots, 27.09.2026) hiess das: eine LEERE
+   Antwort ohne Fehlermeldung leerte data/buecher.js und die Eigenliste, eine
+   KUERZERE verkleinerte die Buchdatei - beides mit Exit 0, und danach zog
+   baue-vokabelpaket.mjs das kleinere Paket bis in den Downloads-Ordner nach.
+   Die Dateien stehen wegen der AGB nicht im Git; zurueckholen liesse sich
+   nichts.
+
+   Deshalb wird jetzt ZUSAMMENGEFUEHRT statt ersetzt:
+   - Was arabicroots liefert, gewinnt - Korrekturen kommen weiter an.
+   - Was vorher da war und jetzt fehlt, BLEIBT (aus der bisherigen Datei).
+     Massgeblich ist die ID im GANZEN Abzug: wandert ein Wort in ein anderes
+     Buch, steht es danach nur dort, nicht doppelt.
+   - Ein Buch, das arabicroots gar nicht mehr nennt, bleibt mit seiner Datei.
+   Was bleibt, meldet der Lauf als „BEHALTEN" - ein Befund fuer Elias, kein
+   Fehler. Laesst sich eine bisherige Datei nicht lesen, bricht der Lauf ab,
+   BEVOR etwas geschrieben ist: ueberschreiben, was man nicht lesen kann,
+   hiesse es verlieren. Bewacht von test-vokabelabzug.mjs. */
+function liesListe(datei){
+  const roh = fs.readFileSync(datei, 'utf8');
+  const treffer = roh.match(/=\s*(\[[\s\S]*\])\s*;?\s*$/);
+  if (!treffer) throw new Error(`${path.basename(datei)}: keine Liste gefunden - nichts geschrieben.`);
+  return JSON.parse(treffer[1]);
+}
+
+/* Der bisherige Stand: die Buecher aus dem bisherigen Verzeichnis, jedes mit
+   seiner Datei. Was in data/ liegt, aber nicht im Verzeichnis steht, zaehlt
+   nicht - ein alter Rest soll nicht als Buch zurueckkommen. */
+const bisher = {};
+const verzeichnisDatei = path.join(DATA, 'buecher.js');
+if (fs.existsSync(verzeichnisDatei)) {
+  for (const b of liesListe(verzeichnisDatei)) {
+    const datei = path.join(REPO, b.datei);
+    if (fs.existsSync(datei)) bisher[b.slug] = liesListe(datei);
+  }
+}
+const eigenDatei = path.join(DATA, 'vokabeln-eigene.js');
+const eigenBisher = fs.existsSync(eigenDatei) ? liesListe(eigenDatei) : [];
+
+const neueIds = new Set(alle.map(v => String(v.id)));
+const reihenfolge = [...Object.keys(nachBuch), ...Object.keys(bisher).filter(s => !nachBuch[s])];
+const zusammen = {}, behalten = {};
+for (const buch of reihenfolge) {
+  const liste = (nachBuch[buch] || []).slice();
+  const bleibt = (bisher[buch] || []).filter(v => !neueIds.has(String(v.id)));
+  if (bleibt.length) {
+    liste.push(...bleibt);
+    /* stabil nach Kapitel: arabicroots' Reihenfolge bleibt, was nur noch aus
+       der bisherigen Datei kommt, steht am Ende seines Kapitels */
+    liste.sort((a, b) => (Number(a.chapter) || 0) - (Number(b.chapter) || 0));
+    behalten[buch] = bleibt.length;
+  }
+  zusammen[buch] = liste;
+}
+
 const uebersicht = [];
-for (const [buch, liste] of Object.entries(nachBuch)) {
+for (const buch of reihenfolge) {
+  const liste = zusammen[buch];
   const datei = path.join(DATA, `vokabeln-${buch}.js`);
   const kapitel = [...new Set(liste.map(v => v.chapter))].sort((a,b)=>a-b);
   const kopf =
 `/* Automatisch erzeugt von werkzeuge/hole-vokabeln.mjs - nicht von Hand aendern.
    Quelle: arabicroots-Datenbank, Buch "${buch}".
-   ${liste.length} Vokabeln, Kapitel ${kapitel[0]}-${kapitel[kapitel.length-1]}. */
+   ${liste.length} Vokabeln, Kapitel ${kapitel[0]}-${kapitel[kapitel.length-1]}.${behalten[buch] ? `
+   ${behalten[buch]} davon fuehrt arabicroots nicht mehr - sie bleiben aus einem frueheren Abzug
+   (Elias, 27.09.2026: „weniger soll nicht werden aber kann mehr werden").` : ''} */
 (window.VOKABELN = window.VOKABELN || {})[${JSON.stringify(buch)}] =
 `;
   fs.writeFileSync(datei, kopf + JSON.stringify(liste, null, 1) + ';\n', 'utf8');
   const kb = Math.round(fs.statSync(datei).size / 1024);
-  uebersicht.push({ buch, vokabeln: liste.length, kapitel: kapitel.length, kb });
+  uebersicht.push({ buch, vokabeln: liste.length, kapitel: kapitel.length, kb, behalten: behalten[buch] || 0 });
 }
 
 /* ---------- Eigene Vokabeln aus arabicroots (C8, 18.08.2026) --------------
@@ -149,9 +214,15 @@ if (Array.isArray(eigene)) {
                                         aus arabicroots kommt und was er im
                                         Trainer selbst angelegt hat. */
   }));
-  fs.writeFileSync(path.join(DATA, 'vokabeln-eigene.js'),
+  /* Weniger wird es nie (27.09.2026) - wie oben bei den Buechern: was
+     arabicroots nicht mehr liefert, bleibt aus der bisherigen Datei. */
+  const eigenIds = new Set(eigenSchlank.map(v => v.id));
+  const eigenBleibt = eigenBisher.filter(v => !eigenIds.has(String(v.id)));
+  if (eigenBleibt.length) { eigenSchlank.push(...eigenBleibt); behalten.eigene = eigenBleibt.length; }
+  fs.writeFileSync(eigenDatei,
 `/* Automatisch erzeugt von werkzeuge/hole-vokabeln.mjs - nicht von Hand aendern.
-   Quelle: arabicroots-Tabelle "personal_vocabulary", ${eigenSchlank.length} Eintraege.
+   Quelle: arabicroots-Tabelle "personal_vocabulary", ${eigenSchlank.length} Eintraege.${eigenBleibt.length ? `
+   ${eigenBleibt.length} davon fuehrt arabicroots nicht mehr - sie bleiben aus einem frueheren Abzug.` : ''}
    Bewusst NICHT unter window.VOKABELN: das sind keine Buchvokabeln und sollen
    in der Buchauswahl nicht als achtes Buch erscheinen. */
 window.EIGENE_VOKABELN = ${JSON.stringify(eigenSchlank, null, 1)};
@@ -172,3 +243,16 @@ const BUECHER = ${JSON.stringify(uebersicht.map(u => ({
 
 console.table(uebersicht);
 console.log('Geschrieben nach', DATA);
+
+/* Sichtbar melden, was nur noch aus dem bisherigen Stand kommt - sonst saehe
+   ein Lauf nach dem Ende des Zugangs aus wie jeder andere. */
+if (!alle.length) {
+  console.log('\n⚠️ arabicroots hat 0 Vokabeln geliefert - vermutlich kein Zugang mehr.');
+  console.log('   Die bisherigen Buecher bleiben vollstaendig, nichts ist verloren.');
+}
+const behaltenZeilen = Object.entries(behalten);
+if (behaltenZeilen.length) {
+  console.log('\n⚠️ BEHALTEN - fuehrt arabicroots nicht mehr, bleibt aus dem bisherigen Stand:');
+  for (const [wo, n] of behaltenZeilen) console.log(`   ${wo.padEnd(16)} ${n}`);
+  console.log('   Ein Befund fuer Elias (Wartung Schritt 2), kein Fehler.');
+}

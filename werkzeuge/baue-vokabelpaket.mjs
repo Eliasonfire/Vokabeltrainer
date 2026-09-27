@@ -78,6 +78,29 @@ for (const b of verzeichnis){
   console.log(`  ${b.slug.padEnd(16)} ${String(liste.length).padStart(5)} Vokabeln`);
 }
 
+/* ---------- Weniger wird es nie (27.09.2026) ----------
+   Elias: „weniger soll nicht werden aber kann mehr werden". hole-vokabeln.mjs
+   fuehrt deshalb zusammen statt zu ersetzen; das hier ist die zweite Sperre,
+   falls die Buchdateien auf anderem Weg schrumpfen (von Hand, aus einer alten
+   Sicherung). Verglichen wird mit dem Stand des letzten Pakets: fehlt ein Buch
+   oder hat eins weniger Vokabeln, wird NICHTS geschrieben - weder
+   vokabelpaket.json noch die Kopie im Downloads-Ordner, die sonst das letzte
+   vollstaendige Paket ueberschriebe. Bewacht von test-vokabelabzug.mjs. */
+const vorher = fs.existsSync(STAND)
+  ? JSON.parse(fs.readFileSync(STAND, 'utf8'))
+  : null;
+if (vorher && vorher.buecher){
+  const weniger = Object.entries(vorher.buecher)
+    .filter(([slug, n]) => (buecher[slug] ? buecher[slug].length : 0) < n)
+    .map(([slug, n]) => `  ${slug.padEnd(16)} ${n} -> ${buecher[slug] ? buecher[slug].length : 0}`);
+  if (weniger.length){
+    console.error('\nWENIGER als im letzten Paket - nichts geschrieben:');
+    console.error(weniger.join('\n'));
+    console.error('Elias, 27.09.2026: „weniger soll nicht werden aber kann mehr werden". Die Buchdateien in data/ pruefen.');
+    process.exit(1);
+  }
+}
+
 const paket = {
   art: 'vokabelpaket',
   fassung: 1,
@@ -104,9 +127,6 @@ const abdruck = createHash('sha256')
   .update(JSON.stringify({ verzeichnis, buecher }))
   .digest('hex');
 
-const vorher = fs.existsSync(STAND)
-  ? JSON.parse(fs.readFileSync(STAND, 'utf8'))
-  : null;
 const geaendert = !vorher || vorher.abdruck !== abdruck;
 
 if (!geaendert){
