@@ -2113,6 +2113,7 @@ function uebungGemischteListe(nachModus){
                                .filter(k => k.length));
   const raus = [];
   let i = 0;
+  let imDurchgang = new Set();   // Sätze, die in diesem Durchgang schon dran waren (uebungZiehen)
   while (koerbe.length){
     /* ⭐ Nach jedem vollen Durchgang wird die Reihenfolge der Modi NEU
        gemischt. Ohne das laeuft die Liste stur 1,2,3,…,13,1,2,3,… — im
@@ -2121,6 +2122,7 @@ function uebungGemischteListe(nachModus){
        unterschiedliche": ab der zweiten Runde weiss man, was kommt. */
     if (i >= koerbe.length){
       i = 0;
+      imDurchgang = new Set();
       const zuletzt = raus.length ? raus[raus.length-1].modus : null;
       koerbe = shuffle(koerbe);
       /* Der erste des neuen Durchgangs darf nicht der letzte des alten sein —
@@ -2129,10 +2131,28 @@ function uebungGemischteListe(nachModus){
       if (zuletzt && koerbe.length > 1 && koerbe[0][koerbe[0].length-1].modus === zuletzt)
         koerbe.push(koerbe.shift());
     }
-    raus.push(koerbe[i].pop());
+    raus.push(uebungZiehen(koerbe[i], imDurchgang));
     if (!koerbe[i].length) koerbe.splice(i, 1); else i++;
   }
   return raus;
+}
+
+/* ⭐ KEIN SATZ ZWEIMAL IN EINEM DURCHGANG (27.09.2026)
+   Elias, mit Bild: „… nun diese nächste übung wo ich genau das selbe mache und
+   sogar mit dem selben satz … gut durchmischt damit ich immer was anderes
+   habe". Ein Durchgang ist eine Aufgabe je Übung des Teils, also genau ein
+   Satz-Tag. Darin nimmt der Korb von hinten (dort zog pop()) die erste
+   Aufgabe, deren Satz im Durchgang noch nicht dran war. Gibt es keine, bleibt
+   es beim letzten Element — lieber ein Satz doppelt als eine Übung weniger.
+   Bewacht von werkzeuge/pruefe-satz-teile.mjs (Abschnitt 7). */
+function uebungZiehen(korb, benutzt){
+  for (let j = korb.length - 1; j >= 0; j--){
+    const s = korb[j] && korb[j].satz && korb[j].satz.sentAr;
+    if (s && benutzt.has(s)) continue;
+    if (s) benutzt.add(s);
+    return korb.splice(j, 1)[0];
+  }
+  return korb.pop();
 }
 
 /* Der Satz mit antippbaren Woertern. Ein Wort kann verdeckt sein (dann ist es
@@ -2650,6 +2670,30 @@ function satzTagSpeichern(t){ try { LS.set('vt_satzTag', t); } catch (e) { /* pr
    ⛔ Wechsel und Tagesziel sind seit v618 anders — der Block nach satzTeile(). */
 const UEB_ZEIT_SCHAETZUNG = { mehrfach: 20, wahl: 12, schreiben: 60 };
 function satzTeile(){
+  /* ⭐ VERWANDTE ÜBUNGEN NIE IM SELBEN TEIL (27.09.2026)
+     Elias, mit Bild (Teil 1, erst Übung 12, dann Übung 10, beide am Satz
+     «هَذَا مُسْتَشْفًى نَظِيفٌ وَجَدِيدٌ.»): „die übung davor musste ich entscheiden
+     zwischen sauber in männlich oder weiblich und die richtige form dann
+     einfügen in den satz. nun diese nächste übung wo ich genau das selbe mache
+     und sogar mit dem selben satz und in beiden fällen war es auch noch
+     männlich. also ist das hier zufall oder??? am besten wenn beide übungen
+     nicht am sleben tag statt finden. generell sollte ein tag nicht mit einer
+     übung überfüllt sein sondern gut durchmischt damit ich immer was anderes
+     habe"
+     Gemessen (sein KV-Stand, 27.09.2026): keine Übung hat 10 gemessene
+     Antworten, also entscheidet die Schätzung, und das Verteilen reihum legte
+     die geraden Wahl-Übungen 6, 8, 10, 12, 14 in Teil 1 — 10 und 12 standen
+     damit IMMER am selben Tag. Kein Zufall, eine Nebenwirkung der Nummern.
+     Deshalb Paare, die dieselbe Entscheidung abfragen; sie kommen in
+     verschiedene Teile, also nie an denselben Satz-Tag. Sein Paar ist das
+     erste. Die anderen drei sind MEINE Auswahl nach seiner allgemeinen Regel
+     (Fall und Endung · zweimal Genitiv nach Präposition · Hinweiswort und
+     Pronomen einsetzen) — bisher auch getrennt, aber nur durch die Nummern.
+     ⚠️ Hier drinnen und nicht als Konstante daneben: mehrere Prüfer schneiden
+     satzTeile() allein aus dem Quelltext, eine Konstante draußen fehlte ihnen.
+     Bewacht von werkzeuge/pruefe-satz-teile.mjs (Abschnitt 6). */
+  const VERWANDT = [['genus', 'fem-form'], ['kasus', 'haraka'], ['jarr-paar', 'alle-majrur'], ['isara', 'pronomen']];
+  const partner = id => VERWANDT.filter(p => p.includes(id)).flat().filter(x => x !== id);
   const zeit = {}, quelle = {};
   for (const m of UEBUNGEN){
     const g = (typeof uebZeitGemessen === 'function') ? uebZeitGemessen(m.id) : null;
@@ -2661,7 +2705,9 @@ function satzTeile(){
   const teil = { 1: [], 2: [] }, summe = { 1: 0, 2: 0 };
   for (const m of reihe){
     const t = summe[1] < summe[2] ? 1 : summe[2] < summe[1] ? 2 : (teil[1].length <= teil[2].length ? 1 : 2);
-    teil[t].push(m.id); summe[t] += zeit[m.id];
+    const anders = t === 1 ? 2 : 1, pa = partner(m.id);
+    const wo = pa.some(x => teil[t].includes(x)) && !pa.some(x => teil[anders].includes(x)) ? anders : t;
+    teil[wo].push(m.id); summe[wo] += zeit[m.id];
   }
   teil[1].sort((a, b) => nr(a) - nr(b)); teil[2].sort((a, b) => nr(a) - nr(b));
   return { 1: teil[1], 2: teil[2], zeit, quelle, summe };
