@@ -582,7 +582,9 @@ function merkeUebung(modusId, richtig){
    nicht gemessen (vt_zeit kennt nur Karteikarten/Satzmodus/Hörmodus im
    Ganzen). Gezählt je Tag in vt_quoteTage: `zn_<Übung>` = Aufgaben,
    `zs_<Übung>` = Sekunden — der Abgleich führt jedes Feld einzeln zusammen
-   (js/sync.js). Nur 1 bis 180 Sekunden: länger heißt weggelegt. */
+   (js/sync.js). Nur 1 bis 180 Sekunden: länger heißt weggelegt.
+   Seit v628 (27.09.2026) kommt `sek` aus der Aufgabenuhr in js/zeitmessung.js:
+   Pausen über 1 Minute und verborgene Zeit zählen nicht mehr mit. */
 function merkeUebZeit(modusId, sek){
   if (!modusId || !(sek >= 1 && sek <= 180)) return;
   const t = todayStr(0);

@@ -2206,7 +2206,7 @@ function uebungOptionHtml(text){
 
 function renderUebung(){
   /* v606: Startzeit je Aufgabe — einmal je Aufgabe, nicht bei jedem Neuzeichnen. */
-  if (typeof UEB === 'object' && UEB && UEB.zeitIdx !== UEB.idx){ UEB.zeitIdx = UEB.idx; UEB.startZeit = Date.now(); }
+  if (typeof UEB === 'object' && UEB && UEB.zeitIdx !== UEB.idx){ UEB.zeitIdx = UEB.idx; UEB.startZeit = Date.now(); if (typeof aufgabeUhrStart === 'function') aufgabeUhrStart(); }
   const a = uebungAktuell();
   const m = uebungModusVon(a);
   if (!a || !m){ uebungBeenden(); return; }
@@ -2926,7 +2926,7 @@ function uebungAuswerten(richtig){
     if (art) merkeUebung(art, richtig);
     /* v606: die Zeit dieser Aufgabe (einmal je Aufgabe). Der Teil des Tages
        wird seit v618 erst NACH dem Tageszähler unten gemerkt. */
-    if (art && UEB.startZeit && typeof merkeUebZeit === 'function') merkeUebZeit(art, (Date.now() - UEB.startZeit) / 1000);
+    if (art && UEB.startZeit && typeof merkeUebZeit === 'function') merkeUebZeit(art, typeof aufgabeUhrSekunden === 'function' ? aufgabeUhrSekunden() : (Date.now() - UEB.startZeit) / 1000);
     UEB.startZeit = 0;
   }
   /* ⭐ Und die Trefferquote je TAG (07.09.2026) — die Grundlage für den
