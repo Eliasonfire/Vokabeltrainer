@@ -135,7 +135,39 @@ function zeitBildschirm(name){
   ZEIT_LAUF.letzteRegung = Date.now();
 }
 
-function zeitRegung(){ ZEIT_LAUF.letzteRegung = Date.now(); }
+function zeitRegung(){ aufgabeUhrFortschreiben(); ZEIT_LAUF.letzteRegung = Date.now(); }
+
+/* ⭐ AUFGABENUHR (27.09.2026, v628) — die Zeit je Satzaufgabe wie die Lernzeit.
+   Elias: „wenn länger als so 3 minuten nichts passiert dann können wir davon
+   ausgehen, dass ich entweder mit dir schreibe wegen der app in dem moment
+   oder mein handy zu seite lege. ich will nicht das die app 1h aufzählt
+   obwohl ich nichts gemacht habe" — auf meinen Vorschlag, auch die Zeit je
+   Aufgabe so zu messen: „ja mach das aber teilweise denke ich schon manchmal
+   so eine oder zwei minuten nach, dann wird einfach eine minute gezählt und
+   passst dann eigentlich auch so oder".
+   Bis v627 nahm merkeUebZeit() die Wanduhr vom Zeigen bis zur Antwort: die
+   Geschlechts-Aufgabe vom 26.09. ging mit 172 s ein, weil er mir schrieb.
+   Jetzt zählt zwischen zwei Berührungen höchstens ZEIT_RUHE_MS (1 Minute),
+   verborgene Zeit (andere App, Bildschirm aus) gar nicht — zwei Minuten
+   Nachdenken zählen als eine. Bewacht von test-aufgabenuhr.mjs. */
+const AUFGABE_UHR = { ms: 0, marke: 0, laeuft: false };
+function aufgabeUhrStart(){ AUFGABE_UHR.ms = 0; AUFGABE_UHR.marke = Date.now(); AUFGABE_UHR.laeuft = true; }
+function aufgabeUhrFortschreiben(){
+  if (!AUFGABE_UHR.laeuft) return;
+  const jetzt = Date.now();
+  if (document.visibilityState !== 'hidden') AUFGABE_UHR.ms += Math.min(Math.max(0, jetzt - AUFGABE_UHR.marke), ZEIT_RUHE_MS);
+  AUFGABE_UHR.marke = jetzt;
+}
+function aufgabeUhrSekunden(){ aufgabeUhrFortschreiben(); AUFGABE_UHR.laeuft = false; return AUFGABE_UHR.ms / 1000; }
+/* Beim Verbergen das Stück bis jetzt gutschreiben, beim Zurückkommen nur die
+   Marke setzen — die Zeit dazwischen war keine Übung. */
+function aufgabeUhrSichtbarkeit(){
+  if (!AUFGABE_UHR.laeuft) return;
+  const jetzt = Date.now();
+  if (document.visibilityState === 'hidden') AUFGABE_UHR.ms += Math.min(Math.max(0, jetzt - AUFGABE_UHR.marke), ZEIT_RUHE_MS);
+  AUFGABE_UHR.marke = jetzt;
+}
+document.addEventListener('visibilitychange', aufgabeUhrSichtbarkeit);
 
 document.addEventListener('pointerdown', zeitRegung, { passive: true });
 document.addEventListener('keydown',     zeitRegung, { passive: true });
