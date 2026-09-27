@@ -6415,3 +6415,524 @@ Die Eichungen alle grün: `eiche-harf-jarr` 17/17 · `eiche-zahlplural` 17/17 ·
 | `artefakte/regelkategorien.html` | DHhYFwtTNJADVwE2tVUDz3 | neu gebaut, vier neue „zuerst"-Kategorien |
 
 ⬜ **Neu aus diesem Lauf:** (1) Die Freigaben-Lücke vom 23.09., die `pruefe-laeufe.mjs` meldet, betrifft eine andere Prompt-Datei — welche, muss eine Sitzung nachsehen. (2) `pruefe-gedaechtnis-luecken.mjs` wird nach jedem Log-Commit rot, weil dessen Hash erst nach dem Vault-Eintrag entsteht; das ist ein Ablauf, kein Versäumnis, und gehört einmal sauber gelöst. (3) Der Prompt nennt `pruefe-duplikate`, `pruefe-eselsbruecken` und `pruefe-taschkil` als „dauerhaft rot" — seit v585 sind alle drei grün, die Stelle ist überholt.
+
+## 2026-09-27 14:50 – Wöchentliche Wartung (So-Check) — **v629 ausgeliefert**
+
+Der reguläre Sonntagslauf. **Etwas ausgeliefert**, und zwar aus einem einzigen
+Befund: Elias hat am 25.09. **alle drei** Eselsbrücken zu نَسَخَ (kopieren,
+id 45983) mit „Taugt nicht" abgelehnt. Die Karte stand danach mit drei
+abgelehnten Texten in der App — `pruefe-eselsbruecken.js` war deswegen **NEU
+ROT**. Drei neue geschrieben, geprüft, ausgeliefert als **v629**.
+
+⭐ **Erster Satz an Elias: App schließen und neu öffnen.**
+
+**Schritt 0** – Arbeitsmarke gesetzt (`arbeit.mjs --beginne "Wartungslauf"`),
+`git pull --ff-only` „ok (up-to-date)", `pruefe-volles-programm.mjs` **Exit 0**:
+Quelle, Kopie `/volles-programm` und Wartungs-Prompt deckungsgleich, 13 Punkte,
+jeder mit Messwerkzeug, und „die Wartung startet jede Prüfung, die es im Projekt
+gibt".
+
+**Schritt 0a** – `pruefe-laeufe.mjs --tage 30` **Exit 2**, und das ist ein Befund
+für Elias, aber **nicht** über diese Routine:
+
+> ⚠️ 26.09.2026 03:00 `eingang-einsortieren` — **„Failed to authenticate: OAuth
+> session expired and could not be refreshed"**
+> (`eingang-einsortieren_2026-09-26_030001.out.log`)
+
+Das ist die **einzige** Lücke der letzten 30 Tage. Sie trifft die Eingangs-Routine,
+nicht die Wartung; der Lauf am 27.09. 03:00 lief wieder. ⛔ Eine abgelaufene
+Anmeldung kann keine Routine reparieren — das gehört in eine Sitzung oder an
+Elias. Die zwei älteren Lücken (31.08. `mcp-health-check`, 02.09.
+`vokabeltrainer-wartung`) sind seit dem 11.09. quittiert und lösen keinen Befund
+mehr aus. 13 Termine fielen in Zeiten, in denen der Rechner aus war — kein Befund.
+
+**Schritt 0b (Samsung Notes abholen)** – `samsung-notes-sicherung.mjs`:
+**„Abgeholt: 0 Notiz(en) in 1 Runde(n), 83 s"**, Archiv 0 neu / 0 geändert /
+**1098 unverändert**, 0 Fehler, Datenbank 65,3 MB. Kein „⚠️ Abholen
+fehlgeschlagen", kein Sperrkonflikt mit der Windows-Aufgabe.
+
+`export-index.mjs --sicherung` **Exit 2** — **eine** veränderte Seite:
+
+> ⛔ Arabya Bayna Yadayk 1A: 283 → 283 Seiten · **VERÄNDERT: S. 105**
+
+Gerendert (110 dpi) und **gelesen**: Buchseite 83, اَلْوَحْدَةُ ٤ /
+اَلدَّرْسُ ٢٨ „اَلْحَيَاةُ الْيَوْمِيَّة" (der Alltag). Neu darauf sind **seine
+roten Hausaufgaben-Antworten** zu den Fragen 1–3 (يَسْتَيْقِظُ طَاهِرٌ عِنْدَ
+الفَجْرِ · يُصَلِّي الفَجْرَ فِي المَسْجِدِ · لَا، لَا يَنَامُ طَاهِرٌ بَعْدَ
+الصَّلَاةِ), dazu drei deutsche Randglossen („Aufwachen", „Schlafen", „Schule")
+und die Marke „HA". **Keine Regel auf der Seite** — es ist ein Übungsblatt.
+Alle sieben Wörter der Seite gegen den Bestand geprüft, **alle sieben sind
+schon da** (يَسْتَيْقِظُ · يَنَامُ · حَافِلَةٌ in
+`data/vokabeln-bayna-yadayk-1.js`, سَيَّارَةٌ · مَدْرَسَةٌ in `vocab-data.js`,
+طَاهِرٌ · الفَجْرِ in `lehrbuch-saetze.js`). Danach `--sicherung --gesehen`,
+9 Notizen festgehalten. Die anderen acht Notizen unverändert.
+
+⭐ Der alte Weg (`list_export_status`, `--live`) blieb außen vor — er gilt nur
+bei Exit 1. **Die Zeile „🔴 Export veraltet" entfällt** weiterhin.
+
+**Schritt 1 (neue Folgen)** – `get_recordings`: **23 Einträge**, einer mehr als
+am 23.09. **Neu: Folge 23 „AB1A Kapitel 4"** (https://youtu.be/HmFp-hv91ro,
+angelegt **27.09.2026 09:50**, also fünf Stunden vor diesem Lauf). In
+`transcripts/backlog.md` nachgetragen, Kopfzeile auf 23 Einträge. ⭐ Sie passt
+zum Handschrift-Fund desselben Tages: Folge 23 behandelt Kapitel 4, und genau
+dessen Übungsseite hat er bearbeitet. ⛔ **Kein Transkript geholt** — Rohmaterial
+holt `arabicroots-backfill-retry`, eine Folge je Lauf. `transcripts/` ist
+gitignoriert, daraus entsteht kein Commit.
+
+**Schritt 1b (Regelrückstand)** – `rueckstand.mjs --knapp` **Exit 2**:
+„Regelauswertung: 1 Folge(n) offen — 22. (1 ausser Wertung: 21)".
+
+⭐ **Der Rückstand ist nicht Leserückstand, sondern Warten auf sein Ja.**
+`kandidaten.mjs --offen`: Folge 22 hat **15 Fundstellen aus 63 Fenstern (68 %)**,
+Folge 21 eine (bleibt außer Wertung). `abgleich.mjs 21 22`: **0 Stellen mit
+deutlicher Ähnlichkeit** zu einer vorhandenen Regel (höchster Wert 0,312 gegen
+`verb-madi-endungen-01`). Alle 15 Stellen **gelesen** und mit den Urteilen vom
+24.09. abgeglichen — sie decken sich:
+
+| | Zahl | |
+|---|---|---|
+| `weg` | 11 | Lese- und Übersetzungsübung, Vokabellisten, Hausaufgabenplanung, zerfallener Whisper-Text |
+| `schon-regel` | 3 | 15:15 „bi Ḥarf al-ǧarr" → `harf-jarr-bi-01` · 5:45 und 7:15 „ohne El / in einer Wohnung" → `nakira-marifa-01`, `tanwin-nach-harf-jarr-01` |
+| **`regel` (für Elias)** | **1** | **`f22-2445`** |
+
+Die eine offene: **„سـ vor einem Gegenwartsverb = Zukunft"** (سَأَكْنُسُ „ich
+werde fegen"). Zwei unabhängige Quellen — Lehrer @ 24:45 („Wenn das Sīn der
+Zukunft auf ein Gegenwartsverb betrifft, sagt es eben die nahe Zukunft aus";
+Whisper hört „Scene" für den Buchstaben) **und** Schlüssel Band 2, Lektion 11,
+Punkt 2. ⚠️ Markierte Abweichung: der Schlüssel sagt „سـ nicht in Fragen", Buch
+und Lehrer benutzen es gerade in einer Frage (مَاذَا سَتَفْعَلِينَ؟) — der
+Vorschlag trägt nur den Kern, in dem beide einig sind.
+
+**0 Regeln eingetragen, 0 `ausgeblendet`** — nach der Arbeitsteilung vom
+22.09.2026 („ich bewerte, er gibt frei") geht ein `regel`-Urteil auf die
+Freigabeseite, nicht in `grammar-data.js`. Punkt unter `## 🔴 Wartet auf Elias`
+gesetzt (einmal, nicht doppelt).
+
+**1b.8 (Satzmodus)** – `pruefe-satzmodus-aktuell.mjs` **Exit 0**, „alles
+aktuell": **430 Sätze** in seiner Auswahl, **keine** Form seiner Regelkarte ohne
+Satz (Übung 11, 13, 14, 15 je „ohne Satz: —"), **22 Wörter** aus den neuesten
+Kapiteln, davon **0 in keinem Satz**. Balance **10,5 %** (45 von 430) gegen den
+Richtwert 20 % — ⚠️ dieser Richtwert ist **mein** Vorschlag vom 24.09., nicht
+seiner, und Exit 0 heißt: keine Lücke, die zu füllen wäre. Keine neue oder
+geänderte Regel in diesem Lauf, also auch nichts zur Satzmodus-Integration zu
+prüfen.
+
+**1b.9 (Abendlisten)** – `export-index.mjs --sicherung --abendlisten` **Exit 2**:
+**eine neue Notiz** (`ohne-titel (491288)`, 12 Seiten, angelegt 24.09.2026 23:20,
+geändert 25.09.2026 00:01). Alle 12 Seiten gerendert und gelesen (dunkle Notiz,
+rote Handschrift; Seite 4 und 10 zusätzlich bei 300/400 dpi, weil Ḥaraka und
+Šadda bei 100 dpi nicht zu beurteilen waren). **Fünf Wörter**, Arabisch vorne,
+Deutsch auf der Folgeseite — alle fünf **eindeutig** einer Karte zugeordnet:
+
+| | sein Deutsch | Karte | Buch |
+|---|---|---|---|
+| ١ | Wann? | مَتَى **50169** | madina-1 |
+| ٢ | Zeichen / Hinweis | عَلَامَةٌ **45997** | bayna-yadayk-1 |
+| ٣ | Jene (Pl.) | أُولَئِكَ **50165** | madina-1 |
+| ٤ | Diese (Pl.) | هَؤُلَاءِ **50164** | madina-1 |
+| ٥ | Welcher / welche / welches? | أَيٌّ **50170** | madina-1 |
+
+In `data/abendlisten.json` eingetragen, alle fünf `zuordnung: "sicher"`.
+`abendlisten.mjs`: **9 Listen · 33 Einträge · 33 verschiedene Wörter · ohne
+sichere Karte 12** — und **„Kein Wort steht auf mehr als einer Liste."** Damit
+ist kein Wort für die gründliche Eselsbrücken-Prüfung fällig. Nachgesehen habe
+ich trotzdem: **alle fünf Karten haben einen Beispielsatz** in
+`data/beispielsaetze.js`. Danach `--gesehen`.
+
+⭐⭐ **Ein Zusammenhang, der in keiner einzelnen Messung steht** (und der Grund,
+warum die Abendlisten etwas taugen): **vier der fünf Wörter sind genau die, die
+im Satzmodus am wenigsten geübt werden.** Aus der Deckelzeile desselben Laufs —
+Übung 11 hat für أُولَئِكَ nur **1** Aufgabe und für هَؤُلَاءِ **2**, Übung 13
+für أَيٌّ **2** und für مَتَى **4**, bei einem Deckel von 15. Dieselben Wörter
+stehen in der Schwachliste von arabicroots (نَحْنُ, هُمْ). Das ist kein Befund
+im Sinne eines Prüfers — `pruefe-satzmodus-aktuell.mjs` steht auf Exit 0, weil
+jede Form *mindestens einen* Satz hat. Es ist ein **Vorschlag**: mehr belegte
+Sätze mit den Fernzeigern und Fragewörtern würden genau die Karten stützen, die
+er sich abends herausschreibt. ⛔ Nicht in diesem Lauf gebaut — Sätze brauchen
+Belegstellen, das ist Sitzungsarbeit.
+
+**1b.10 (Lernlast)** – `lernlast.mjs` **Exit 2**, und das ist eine Frage an ihn:
+
+```
+⚠️ 15 am Tag reichen nicht mehr: eine Wiederholung wartet seit 23 Tagen
+```
+
+Die drei Pflichtzahlen:
+1. **Schlange Box 1: 226** (78 nie beantwortet · 148 falsch).
+2. **Trefferquote je Box seit v603:** Box 1 0/5 = 0 % · Box 2 6/8 = 75 % · Box 3
+   2/2 = 100 % · **Box 4–7 noch keine einzige Antwort**. ⚠️ Das Werkzeug druckt
+   trotzdem die Zeile „Box 6/7 deutlich unter 0,8 → Abstände vorlegen" — das ist
+   hier **kein** Befund: ohne Antworten gibt es keine Quote. Der Prompt setzt die
+   Schwelle selbst auf frühestens 23.10.2026 und mindestens 20 Antworten je Box.
+3. **Vorgezogen: 0 Karten markiert**, keine vorgezogenen Antworten — über den
+   Nutzen des Vorziehens lässt sich noch nichts sagen.
+
+Die Ursache des Verzugs ist gemessen, nicht vermutet: die **10**
+Wiederholungsplätze gehen heute an Box 2 (4) und Box 3 (6), **Box 4 (11 fällig)
+und Box 5 (34 fällig) kommen gar nicht dran**. Boxen: 231 · 7 · 24 · 17 · 61 ·
+4 · 9. ⛔ **Das Tagesziel steht auf 15 und wurde nicht angefasst** — das ist
+seine Einstellung. Frage „Tagesziel erhöhen?" unter `## 🔴 Wartet auf Elias`.
+⏰ Seine eigene Erinnerung „wieder auf 10" steht auf **02.10.2026**; die Wartung
+verschiebt sie nicht.
+
+**Schritt 1c (Vorrat)** – Das Kernstück, und es ist grün.
+
+`vorrat.mjs --stand .stand-freigeschaltet.json --app auto` (16 freigeschaltete
+Kapitel: aby-1 1–4, madina-1 1–12). Wörtlich in den Bericht:
+
+- `App-Auswahl (KV, Stand 27.9.2026, 05:01:09): madina-1 bis 12 |
+  bayna-yadayk-1 bis 4` — der KV war im **ersten** Versuch erreichbar.
+- `⚠️ Nicht zugemacht: madina-2: Kapitel 1–24 stehen in js/kern.js, aber nicht
+  in den gemessenen Quellen — BEHALTEN`. Unverändert seine Entscheidung;
+  `--auch-schliessen` **nicht** benutzt.
+- ⭐ **Keine Zeile „Lernstand automatisch mitgewachsen".** Seine `angabe` ist
+  unangetastet (madina-1 12, bayna-yadayk-1 4).
+
+Die vier Dateien, ohne die die Prüfer gegen einen alten Stand messen, sind alle
+geschrieben — nirgends „keine im Geraeteabgleich":
+`data/eigene-woerter.json` **14** · `data/auswendig.json` **31 Suren + 14
+einzelne Verse** · `data/abgelehnt.json` **48 an 24 Wörtern** (am 23.09.: 45 an
+23 — die drei neuen sind der Befund dieses Laufs) · `data/boxen.json` **4525
+Wörter**, davon 4401 in Box 1.
+
+`pruefe-buecher-aktuell.mjs --roots` **Exit 0**: „aktuell — 3 Bücher geprüft,
+keine Abweichung, die etwas bewirkt". Der eine Hinweis H1 (madina-2 1–24 steht
+in FREIGESCHALTET, nennt aber keine Quelle) „wirkt nur, wenn du das Buch ohne
+Kapitel anhakst".
+
+`tajweed-markierungen.mjs` (1c.1b): Geräteabgleich erreichbar, **10
+Buchstaben-Einträge, 3 NEU im Archiv** (am 23.09.: 7 Einträge, 0 neu). Die drei
+neuen sind vom **26.09.**: 95:1 Wort 2 (و, rot — von ihm selbst wieder entfernt),
+95:5 Wort 2 (هُ, „Kein min") und 95:5 Wort 3 (لَ, „Kein alif"), beide sichtbar.
+`data/tajweed-archiv.json` mitcommittet. ⛔ Nichts drumherum gebaut — er wollte
+keine Übersichtsseite.
+
+`neue-kapitel.mjs` (1c.1c): **kein „⚠️ aufgegeben"**, keine „⏳"-Zeile. Beide
+Aufträge erledigt (Kapitel 3 am 22.09., Kapitel 4 am 23.09. als v585), nichts
+Neues beobachtet.
+
+⭐⭐ **`vorrat.mjs` Exit 0 — und das ist die Meldung des Laufs:**
+
+```
+Vorrat: alle 323 freigeschalteten Woerter sind nach allen 13 Punkten
+des vollen Programms vollstaendig. (Freischaltstand 27.9.2026)
+```
+
+Je Punkt mit Nenner: **323 von 323** geprüft (am 23.09.: 321), **0**
+unvollständig, fehlende Eselsbrücken **0**, fehlende Beispielsätze **0**,
+fehlende Markierungen **0**, ohne Wortart-Kategorie **0**, Felder A1–A5 alle
+vollständig. **Keine „NICHT gemessen"-Zeile** — kein Teil des freigeschalteten
+Bestands bleibt ungeprüft. Der eine Befund darunter ist der bekannte Sonderfall:
+`⛔ 1 NICHT: أَمَامَ (Vor / davor): Wurzel ء م م` — die Wurzel geht nicht auf,
+die übrigen 237 im Fenster schon. A2 zählt أَمَامَ trotzdem als vollständig.
+
+Gegenprobe `get_learning_progress` (**559.108 Zeichen**, als Datei
+durchgereicht, **nicht gelesen**) → `vorrat.mjs --lernstand`: **unverändert**.
+Gemessen: madina-1 bis 24 (244 Wörter) · madina-2 bis 31 (250) · bayna-yadayk-1
+bis 16 (221) · bayna-yadayk-2 bis 16 (275) · bayna-yadayk-3 bis 16 (12) ·
+madina-3 bis 34 (32).
+
+⚠️ **Die zwei Abweichungen zwischen `angabe` und `gemessen` stehen weiter da**
+und sind die Frage an ihn, keine Zahl zum Wegsortieren: bayna-yadayk-1 Angabe
+**4**, gemessen **16**; madina-1 Angabe **12**, gemessen **24**. Nach seiner
+Erklärung vom 22.09. ist beides in Ordnung („so stimmt es") — die Messung zählt,
+womit er abgefragt wurde.
+
+**1c.7 (Fragenseite)** – `aussenbelege.mjs`: **0 offene Felder**, also 0
+abgefragt. `woerterbuch-belege.mjs`: **11 Belege, unverändert 11**; acht
+zusammengesetzte Formen werden gar nicht erst gefragt (اِسْمٌ مَجْرُورٌ, مُضَافْ
+إِلَيهِ, حَرْفُ الْجَرِّ, لِمَن, لَكَ, لَكِ, حَالُكْ, فِيْهِ).
+`wartungsfragen-artefakt.mjs`: **„Nichts offen — alle Angaben da."** ⭐ Die beste
+Meldung überhaupt: **keine einzige Feldangabe** wartet auf Elias. ⚠️ Sein
+Artefakt `5ChpdN9n7PAiTY4B5ZHud3` zeigt trotzdem die alten Fragen, solange
+niemand die Seite neu veröffentlicht.
+
+**1c.8 (Warteseite)** – `wartet-auf-elias.mjs` **Exit 2**, gebaut 14:32:50,
+**11 Entscheidungen, davon 10 nur ansehen und wählen**, 1 mit Stückarbeit (2
+Einzelstücke). Gegenüber dem 23.09. **ein Posten mehr**: „Doppelt: Fachbegriff
+und Buchkarte" (21) ist dazugekommen, „Fachbegriffe: welche Hand voll" ist von
+18 auf **10** gefallen (er hat zehn abgelehnt). Die Posten: andere Bücher
+anhakbar aber leer (4135) · Pluraltexte mit Zahl (77) · arabische Stimme (0) ·
+Arabisch auf Handy und Tablet (2) · Geh-Modus (1) · Fachbegriffe als Karte (10) ·
+Bild zur Eselsbrücke (3) · Satzmodus-Themen (3) · ältere To-Do-Fragen (6) ·
+Regelkandidaten (8) · Buchtausch (21). **Der Artefakt-Wächter meldet keine der
+drei Richtungen** — keine Seite ohne URL, keine Zuordnung ins Leere, keine Seite
+auf keiner Liste.
+
+⚠️ **Die Tagesziel-Frage aus 1b.10 steht NICHT auf dieser Seite** —
+`wartet-auf-elias.mjs` liest `lernlast.mjs` nicht. Sie ist deshalb als eigener
+Punkt in die To-Do gegangen. Das ist eine Lücke im Zustellweg und ein Vorschlag
+für eine Sitzung: den Posten mit aufnehmen.
+
+**1c.8b (Regelkandidaten)** – `kandidaten-bewerten.mjs` **Exit 0**: **110
+Fundstellen aus 9 Folgen**, davon **102 von mir entschieden** (57 schon-regel,
+45 weg), **8 für Elias** (5 regel, 1 abweichung, 2 unbelegt), **mein Rückstand:
+0**. Quellen erreichbar und nicht leer: Schlüssel Band 2+3 (142 von 273 Seiten),
+Vault 3 Notizen, seine Unterlagen 0 Einträge. `freigabe-artefakt.mjs` neu
+gebaut, Speicherschlüssel `regelkandidaten-v2`.
+
+**1c.8c (die drei übrigen Seiten)** – alle drei gebaut, `git status --short`
+sagt, welche sich geändert hat:
+
+| Datei | geändert? | Stand |
+|---|---|---|
+| `regelauswahl.html` | **ja** | 103 Regeln, 14 Kategorien, 0 ohne Kategorie, 35 mit 1–2 Sätzen, 41 KB |
+| `verschmelzung.html` | **ja** | 8 Gruppen, 21 Regeln, 43 KB |
+| `artefakte/regelpruefung.html` | **ja**, sagt es selbst | 183 KB, „GEÄNDERT gegenüber dem letzten Bau"; `git status` sieht sie nie, `artefakte/` ist gesperrt |
+
+**Schritt 1d (Regelsammlung)** – `regeln-holen.mjs`: letzter Geräteabgleich
+**27.9.2026, 05:01:21**, **keine Regelsammlung im abgeglichenen Stand**. ⚠️ Das
+heißt nicht „nichts eingetragen" — der Zeitpunkt steht darüber. `--merken`
+folgerichtig Exit 1 („nichts zu merken", es wird nur gemerkt, was gezeigt wurde);
+dasselbe Bild wie am 23.09.
+
+`regelsammlung-wache.mjs --aufnahmen .aufnahmen.json` **Exit 2** — und das ist
+der zweite inhaltliche Fund des Laufs:
+
+1. Wiedervorlage `asma-khamsa-vollstaendig-01` wartet seit dem 11.09. und findet
+   auch in Folge 22 keinen Treffer (23 Folgen gelesen). Kein Punkt für ihn.
+2. Folge 19 hat ihre Karten (`FOLGE19_KARTEN`).
+3. ⚠️ „Arabya Bayna Yadayk 1A" — Stempel neu (26.09. 17:26). **Erledigt in
+   Schritt 0b**, es ist die gelesene Seite 105.
+4. 🆕 **„PDF Konjugieren & pronomen"** (4 Seiten, Stempel 16.09.2026 20:35) —
+   eine Notiz im Ordner `Arabisch\Grammatik`, die **noch nie jemand auf Regeln
+   angesehen hat**. In diesem Lauf gelesen (110 dpi):
+   - **S. 1–2:** seine Konjugationstabellen zum اَلْمَاضِي (ذَهَبَ, خَرَجَ,
+     كَتَبَ), die 14 Pronomen, dazu دَرَسَ · رَجَعَ · ضَرَبَ · فَعَلَ. ⭐ Das
+     deckt sich mit `verb-madi-endungen-01` (Folge 18) — **kein neuer Lehrsatz**.
+   - ⛔ **S. 3 ist eine echte Lücke: der PLURAL (اَلْجَمْع).** Er gliedert
+     gesunder Plural (جَمْع سَالِم) gegen gebrochenen (جَمْع تَكْسِير), und den
+     gesunden noch einmal in مُذَكَّر سَالِم mit ـونَ (مسلم → مسلمون, مدرس →
+     مدرسون) und مُؤَنَّث سَالِم mit ـات. **Gemessen: in `grammar-data.js` gibt
+     es dazu keine einzige Regel** (kein Treffer auf سالم · تكسير · jam- ·
+     plural-); in `regelsammlung-data.js` kommt „Plural" nur als Spaltenkopf vor.
+   - ⛔ **Nicht in diesem Lauf gebaut, und das mit Grund:** die Notiz trägt
+     **keine** Folgenangabe, und bei 110 dpi ist keine Ḥaraka zu beurteilen
+     (Erfahrung vom 18.08.: 3 von 6 Wörtern falsch). Als Punkt unter
+     `## ⬜ Offen — 27.09.2026` in die To-Do, mit dem Weg: S. 3 bei **600 dpi**
+     neu rendern, Formen belegen, über `uebernehmen.mjs` eintragen, dazu
+     Beispielsatz + `SENTENCE_TAGS` + Thema.
+
+   `--merken` danach durchgelaufen (0 Wiedervorlage-Treffer, 0
+   Zusammenfassungs-Folgen ohne Karten, 9 Grammatik-Notizen).
+
+`regelkategorien-seite.mjs` **Exit 0**: 103 Regeln in 14 Kategorien, **0 „Nicht
+zuordbar"**, gezählt über **439** Sätze, die er sieht (23.09.: 358), davon 77
+Buchsätze, **674** Satzstellen (23.09.: 664). ⭐ **Die vier „zuerst"-Kategorien
+sind unverändert** gegenüber dem 23.09.: Nominalsatz (50) · اَلْ (40) · Schrift
+(38) · Fragen (20) — er hat sie noch nicht abgearbeitet.
+
+**Schritt 1e (Pflegeplan)** – `pruefe-pflegeplan.mjs` **Exit 0**: **47 Antworten
+über eine Routine · 5 in einer Sitzung · 39 ohne Pflegebedarf · 0 Lücken.** Alle
+sieben Störtests greifen.
+
+**Schritt 1f (Fachbegriffe)** – `fachbegriffe-finden.mjs`: **0 unentschiedene
+Kandidaten aus 103 Regeln**. `fachbegriffe-nachschlagen.mjs --zeigen`: **0
+offene Wörter**, die zweiseitige Eichung greift (تشكيل belegt; مربوطة und das
+erfundene زقزقنبوط gehen leer aus). ⛔ Nach der Sperre vom 23.09. hätte dieser
+Schritt ohnehin nur fragen dürfen — es gab nichts zu fragen.
+
+**Schritt 2 (Vokabelabzug)** – `hole-vokabeln.mjs`: **4433 Einträge, 11 eigene
+Vokabeln**, je Buch **unverändert**: bayna-yadayk-1 231 · -2 552 · -3 445 · -4
+881 · madina-1 298 · -2 445 · -3 1238 · quran 343. ⭐ **Die Spalte `behalten`
+steht überall auf 0** — der Schutz vom 27.09. früh (`a9f987e`, „zusammenführen
+statt ersetzen") hatte in diesem Lauf nichts zu halten; **kein `⚠️ BEHALTEN`**
+und kein „arabicroots hat 0 Vokabeln geliefert". `baue-vokabelpaket.mjs`:
+**UNVERAENDERT** — dasselbe Paket wie beim letzten Lauf (8 Bücher, 4433
+Vokabeln, 1382 KB). ⛔ Deshalb **kein** `handlungsbedarf` daraus und keine
+Aufforderung an Elias, etwas neu einzulesen. `get_unlocked_chapters` ins Log:
+**16 Kapitel** (aby-1 1–4, madina-1 1–12), unverändert.
+
+**Schritt 3** – `vocab-data.js` nicht angefasst. Die Anreicherungsschicht bleibt.
+
+**Schritt 4 (Samsung Notes)** – siehe Schritt 0b; der Abgleich lief über die
+Sicherung, der alte Weg war nicht nötig.
+
+**Schritt 5 (Lernstand als Hinweis)** – `get_personal_vocabulary`: **11
+Einträge, unverändert** (jüngste Änderung 18.07.2026), alle
+`word_type: "other"`. `get_weak_vocabulary` (Schwelle 0,34): **22 Wörter**,
+dieselbe Zahl wie am 23.09. Drei Beobachtungen, alle **ohne** Auftrag:
+
+1. **Die Zahlwörter aus madina-1 Kapitel 24 stehen weiter bei 0 %** (وَاحِدٌ,
+   أَرْبَعَةٌ, خَمْسَةٌ, سِتَّةٌ, سَبْعَةٌ, ثَمَانِيَةٌ, تِسْعَةٌ, عَشَرَةٌ —
+   3 bis 4 Versuche, kein einziger richtig). Es sind genau die Karten, deren
+   Feld `pl` nicht den Plural trägt, sondern die andere Genusform
+   (`eiche-zahlplural.mjs` 17/17). Der Zusammenhang ist plausibel und **nach wie
+   vor nicht gemessen**; was dort statt „Plural" stehen soll, entscheidet sein
+   Lehrer.
+2. **Die „(gr)"-Karten** نَعْتٌ und مَنْصُوبٌ stehen ebenfalls bei 0 % —
+   dieselben, zu denen auf seiner Warteseite die Ausschreibungsfrage steht.
+3. ⭐ **Neu in der Liste gegenüber dem 23.09.: غَضْبَانُ (0/2), نَحْنُ (0/1),
+   هُمْ (0/1), نَالَ (8/25), وَقَعَ (10/30).** نَحْنُ und هُمْ sind Pronomen —
+   und in Übung 14 hat هُمْ genau **1** Satz und نَحْنُ **1**. Derselbe
+   Zusammenhang wie bei den Abendlisten oben. Die hartnäckigsten aus den Büchern
+   bleiben أَهْمَلَ (8/44), مُهْمِلٌ (8/30) und جَدْوَلٌ (17/56); seine eigenen
+   أَلْمُهَنْدِسٌ (0/7) und لَحْمٌ (0/5) sind seit **Juli** nicht drangekommen.
+
+**Schritt 6 (Qualitätssicherung)** – `pruefe-volles-programm.mjs` ein zweites
+Mal als Abnahme **Exit 0**. `pruefe-erreichbarkeit.js` **Exit 0**: alle **103 von
+103** markierten Regeln sind in einem Satz erreichbar, den er sieht; alle vier
+Störtests greifen. `validate.js` **Exit 0**: 36 Prüfungen, **2 Hinweise** (لَبَنٌ
+mit Plural ohne `sg`, مِكْوَاةٌ mit `sg` ohne Plural — beide im Abzug
+gegengeprüft, unverändert seit dem 23.09.). Die Zeile, auf die es hier ankommt,
+ist grün: `ok Satzmodus-Kategorien: alle 14 besetzt, 2–14 erreichbare Regeln je
+Kategorie` — **keine Kategorie läuft ins Leere**, keine Regel-Id fällt durch
+alle Muster.
+
+### ⛔ Der Befund des Laufs: `pruefe-eselsbruecken.js` NEU ROT
+
+Erster Sammellauf: **144 Prüfer, 4 rot, davon 1 NEU ROT.**
+
+```
+FEHL نَسَخَ (buch):   Vorschlag 0 hat Elias ABGELEHNT, steht aber noch da
+FEHL نَسَخَ (alt[0]): Vorschlag 1 hat Elias ABGELEHNT, steht aber noch da
+FEHL نَسَخَ (alt[1]): Vorschlag 2 hat Elias ABGELEHNT, steht aber noch da
+```
+
+**Gemessen, nicht vermutet:** Die Zeitstempel in `data/abgelehnt.json` liegen bei
+`1790358121816`–`1790358133989`, also am **25.09.2026** innerhalb von 12
+Sekunden — er hat sich die Karte einmal vorgenommen und **alle drei** Texte
+weggeklickt. `data/abgelehnt.json` wuchs dadurch von 45 auf **48** Ablehnungen
+an 24 Wörtern. Die Karte: **نَسَخَ (kopieren), id 45983, Bayna Yadayk 1
+Kapitel 1**, Wurzel ن س خ, يَنْسَخُ / اِنْسَخْ / نَسْخٌ.
+
+⛔ **Das ist kein Werkzeugfehler, sondern genau der Fall, für den Abschnitt 8
+gebaut wurde**: seine Ablehnung wirkt in der App sofort, aber die Datei behält
+den Text — und `vorrat.mjs` zählt die Karte weiter als „vollständig", weil drei
+Texte dastehen. Ohne diesen Prüfer hätte die Karte dauerhaft drei abgelehnte
+Eselsbrücken getragen und niemandem wäre es aufgefallen.
+
+**Drei neue geschrieben**, nach seiner Rangfolge vom 17.08.2026, über
+`werkzeuge/eselsbruecken-setzen.mjs` mit einer **Datendatei** (nie über die
+Kommandozeile):
+
+| Rang | Text |
+|---|---|
+| 1 (mnemo) | **Nasḫ, die Schrift.** Die Schrift, in der die meisten Qurʾān-Ausgaben gedruckt sind, ist nach den Abschreibern benannt, die den Text von Hand vervielfältigt haben; das Verbalsubstantiv نَسْخٌ steht auf der Karte selbst. Im Leser sieht er das Ergebnis von نَسَخَ. |
+| 3 (alt[0]) | **Drei eigene Wörter am selben Bau:** قَرَأَ, سَمِعَ, سَأَلَ — alle vier dreibuchstabig, alle vier mit Verbindungs-Alif und Sukūn im Befehl (نَسَخَ → اِنْسَخْ). |
+| 3 (alt[1]) | **Kapitel 1 ist das Kapitel der Arbeitsanweisungen:** نَظَرَ, اِسْتَمَعَ, أَعَادَ, قَرَأَ stehen im Buch als Befehl über den Übungen; نَسَخَ heißt dort „schreib es ab". |
+
+⛔⛔ **Der erste Entwurf war falsch, und der Prüfer hat es gefangen** — das
+gehört in den Bericht, nicht weggelassen. Ich hatte die **Imperative** als
+bekannte Wörter vorgestellt („اِقْرَأْ (lies), اِسْمَعْ (hör), اِسْأَلْ (frag),
+alle aus demselben Kapitel"). Abschnitt 4 prüft jede Behauptung „das hast du"
+gegen die **Stichwortformen** seines Bestands, und die lauten قَرَأَ, سَمِعَ,
+سَأَلَ:
+
+```
+FEHL „اِقْرَأْ (lies)" — steht in KEINER Quelle, erfunden
+FEHL „اِسْمَعْ (hör)"  — steht erst in madina-3 Kapitel 18, ausserhalb seines Fensters
+FEHL „اِسْأَلْ (frag)" — steht in KEINER Quelle, erfunden
+```
+
+Der Prüfer hat recht: اِسْمَعْ **ist** als eigenständige Karte erst in madina-3,
+und die anderen beiden gibt es als Karte überhaupt nicht — sie stehen nur im
+Feld `imperative` von قَرَأَ und سَأَلَ. Umgeschrieben, sodass die Behauptung
+„das hast du" an den **Stichwortformen** hängt und die Imperative als abgeleitete
+Formen erscheinen. Die Anker sind gemessen, nicht geraten: 26 Verben im Fenster
+ausgezählt, قَرَأَ · سَمِعَ · سَأَلَ liegen alle in bayna-yadayk-1 Kapitel 1,
+also **demselben** Kapitel wie نَسَخَ. Danach `pruefe-eselsbruecken.js`
+**Exit 0**, `node --check` auf beide Dateien grün.
+
+**Zweiter Sammellauf: 144 Prüfer, 4 rot, 0 NEU ROT.** Die drei bekannten
+Wartefälle, alle Exit 2 und alle auf seiner Seite — **kein** Fehler:
+- `pruefe-themen.mjs` — 3 Punkte für Elias, Kandidaten ohne Urteil.
+- `pruefe-beispielsaetze.mjs` — **2 Karten ohne Beispielsatz** (23.09.: 1).
+  ⛔ Kein Satz wird erfunden; sie warten auf belegtes Material.
+- `pruefe-buchtausch.mjs` — **21 weitere Fachbegriffe** tragen dieselbe
+  Schreibung wie eine Buchvokabel (23.09.: 19, davor 30). Entschieden hat er
+  bisher nur den Mudaf.
+
+Der vierte rote war `pruefe-ausgeliefert.mjs` (Exit 1) — und der war **richtig**:
+die beiden Eselsbrücken-Dateien sind ausgelieferte Dateien. Nach dem
+Veröffentlichen steht er auf **Exit 0** („Alles Ausgelieferte entspricht der
+Arbeitskopie").
+
+⭐ **Vier Prüfer, die der Prompt als Dauerwartefälle führt, sind auch heute
+grün:** `pruefe-duplikate.js`, `pruefe-taschkil.js`, `taschkil-belegen.mjs` und
+— nach der Reparatur — `pruefe-eselsbruecken.js`. Die Stelle im Prompt ist
+weiterhin überholt.
+
+Die Eichungen alle grün: `eiche-harf-jarr` 17/17 · `eiche-zahlplural` 17/17 ·
+`eiche-taschkil-beleg` 7/7 (3 müssen durchfallen) · `eiche-plural-beleg` 7/7 ·
+`eiche-datumsmuster` 16/16 · `pruefe-erreichbarkeit-eichung` 3/3 ·
+`eiche-wortart-knopf` ok · `eiche-fragenreihenfolge` („die Fragendatei ist leer").
+Weiter grün: `pruefe-markierungen.js` · `pruefe-saetze.js` · `pruefe-funktionen.js` ·
+`pruefe-eigene-vorrang.mjs` · `pruefe-quran.js` · `pruefe-wortfelder.js --fenster` ·
+`pruefe-hinweise.mjs` · `pruefe-uebersetzen.mjs` · `pruefe-eselsbilder.mjs` ·
+`pruefe-fachbegriff-regel.mjs` · `pruefe-hoer-auswahl.mjs` ·
+`pruefe-fachbegriff-auftrag.mjs` · `pruefe-schreibpfade.mjs` ·
+`pruefe-artefakt-inhalt.mjs` · `pruefe-datumsangaben.mjs` · `pruefe-kreislaeufe.mjs` ·
+`pruefe-sammellauf.mjs` · `pruefe-vokabeln-seite.mjs` · `test-satzmodus-schwerer.mjs` ·
+`test-freischaltung-abfragemarke.mjs` · `notiz-umraeumen.mjs` („Schon in Ordnung
+— neueste zuerst", 281 Blöcke, 0 Brüche).
+
+⚠️ `pruefe-oberflaeche.js` läuft nur im Browser und war nicht dabei; sein letzter
+Lauf ist vom **09.09.** (v460) und damit **18 Tage** alt. Das meldet der
+Sammellauf selbst.
+
+**Auslieferung (1b.6)** – `CACHE_NAME` v628 → **v629**, dann
+`veroeffentlichen.mjs --mit-daten`: `.deploy` mit **109 Dateien / 9,24 MB**
+gebaut, 3 Dateien hochgeladen (102 schon vorhanden), „Deployment complete"
+14:45:27. Gegenprobe in `.deploy/`: **Cache `vokabeltrainer-v629`, 103 Regeln,
+103 erreichbar, 821 Markierungen, 118 Lehrbuchsätze**, und der neue Text steht
+in `.deploy/data/eselsbruecken.js` Zeile 481. Gedächtnis-Spiegel: **0 neu
+geschrieben, 7 unverändert** — kein „⚠️ NICHT nachgezogen".
+
+⚠️ Zwei Hinweise aus der Auslieferung, beide bekannt: der Access-Nachweis ist
+vom **09.09.** und damit 18 Tage alt, und die drei geänderten Dateien gingen
+**vor** dem Commit hinaus (Reihenfolge des Prompts: erst ausliefern, dann
+committen).
+
+**Schritt 7** – Elf Dateien mit explizitem Pfad committet und gepusht.
+⛔ **Die sieben unversionierten Dateien im Ordner blieben unangetastet**
+(`.auftrag-byd1-k4.md`, `.eselsbruecken-byd1-k4.json`, `.kapitel-stand.json`,
+`.markierung-auftrag.json`, `.markierung-byd1-k4.json`, `.stand-app.json`,
+`.stand-freigeschaltet.json`) — fremde bzw. Zustandsdateien, kein `git add -A`.
+
+### Offene Punkte des letzten Berichts — einzeln nachgemessen, nicht übernommen
+
+| Punkt (23.09.) | Messung heute | Stand |
+|---|---|---|
+| `pruefe-vokabeln-seite.mjs` nicht im Sammellauf, drei Dateien live aber nicht im Repo | `pruefe-sammellauf.mjs` **Exit 0** („Jeder Prüfer im Projekt ist eingetragen"), `pruefe-vokabeln-seite.mjs` läuft mit und ist grün, `git status` zeigt die drei Dateien nicht mehr | ✅ **erledigt** |
+| `artefakte/regeln.json` veraltet nach jeder Daten-/Regeländerung | `pruefe-kreislaeufe.mjs` **Exit 0** („Jeder Kreislauf ist geschlossen") — und dieser Lauf **hat** ausgeliefert, die Prüfung war also nicht folgenlos | ✅ **erledigt** |
+| Access-Nachweis `.access-geprueft.json` | `geprueft: 2026-09-09` → **18 Tage** alt | **offen**, blockiert nichts (`--mit-daten` lief heute durch) |
+| NFC-Falle in `markierung-setzen.mjs` | Zeile 89 und 136 tragen weiter `ar: nfc(s.sentAr)` | **offen** (gemessen 27.09. 14:4x) |
+| Zwei verlorene Kommentare in `js/kern.js` | Zeile 132 `'bayna-yadayk-1': [1,2,3,4]` und Zeile 134 madina-2 tragen weiter keinen Kommentar | **offen** (gemessen 27.09. 14:4x) |
+| Freigaben-Lücke vom 23.09. (andere Prompt-Datei) | `pruefe-laeufe.mjs` meldet sie heute **nicht** mehr | ✅ **erledigt** |
+| `pruefe-gedaechtnis-luecken.mjs` nach jedem Log-Commit rot | im Sammellauf heute **grün** | ✅ **erledigt** |
+
+### Was in den Bericht gehört
+
+⭐⭐ **App schließen und neu öffnen** — v629 ist ausgeliefert.
+
+🔴 **Sieben Seiten sind gebaut und warten auf eine Sitzung** — veröffentlichen
+kann diese Routine nicht, und jede gehört unter **ihre** Adresse:
+
+| Datei | Adresse | Stand |
+|---|---|---|
+| `artefakte/wartet-auf-elias.html` | Hukk2F5jbFqnLsnW5H9QfN | 11 Entscheidungen, Stand 14:32 |
+| `artefakte/wartungsfragen.html` | 5ChpdN9n7PAiTY4B5ZHud3 | „Nichts offen" — sein Artefakt zeigt noch alte Fragen |
+| `artefakte/freigabe.html` | 2GJFK49B8LvWJaBu337qU4 | 8 von 110 Kandidaten, Schlüssel `regelkandidaten-v2` |
+| `regelauswahl.html` | da4af296-67c5-4055-a2e7-35defc375007 | geändert laut `git status` |
+| `verschmelzung.html` | LMHMc79nzyNS3BZpm76kqW | geändert laut `git status` |
+| `artefakte/regelpruefung.html` | 4iMdxRvKkFHj699cfyHbra | sagt selbst „GEÄNDERT gegenüber dem letzten Bau" |
+| `artefakte/regelkategorien.html` | DHhYFwtTNJADVwE2tVUDz3 | neu gebaut, „zuerst" unverändert |
+
+⬜ **Neu aus diesem Lauf:**
+1. **Der Plural fehlt in `grammar-data.js`** — gefunden auf S. 3 seiner Notiz
+   „PDF Konjugieren & pronomen". Weg steht in der To-Do unter `## ⬜ Offen —
+   27.09.2026`.
+2. **`wartet-auf-elias.mjs` kennt `lernlast.mjs` nicht** — die Frage „Tagesziel
+   erhöhen?" hat keinen Weg auf seine eine Seite und musste in die To-Do. Als
+   Posten aufnehmen.
+3. **`pruefe-eselsbruecken.js` ist der einzige Wächter für seine Ablehnungen**,
+   und er meldet erst beim nächsten Wartungslauf — zwischen Ablehnung (25.09.)
+   und Ersatz (27.09.) lagen zwei Tage, in denen die Karte drei weggeklickte
+   Texte trug. Vorschlag: in `alle-pruefer.mjs` ist er drin, aber der Sammellauf
+   läuft nur Mi/So; ein kleiner Zwischenlauf (wie „neue Kapitel" stündlich)
+   wäre möglich.
+4. **Vier von fünf Wörtern seiner Abendliste sind die mit den wenigsten
+   Satzmodus-Aufgaben** (أُولَئِكَ 1, هَؤُلَاءِ 2, أَيٌّ 2, مَتَى 4 bei Deckel
+   15) — dasselbe Bild bei نَحْنُ und هُمْ aus der Schwachliste. Belegte Sätze
+   für die Fernzeiger und Fragewörter wären der zielgenaueste nächste Schritt.
