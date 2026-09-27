@@ -247,7 +247,11 @@ export const PFLEGEPLAN = [
        Prüfer sie als App-Dateien. Kein neuer Pflegebedarf: hole-vokabeln.mjs
        (Schritt 2) frischt sie wie bisher auf, und ausgeliefert werden sie nur
        mit --mit-daten — veroeffentlichen.mjs verweigert sonst, bewacht von
-       pruefe-auslieferliste.mjs (Abschnitt 5). */
+       pruefe-auslieferliste.mjs (Abschnitt 5).
+       27.09.2026: weniger wird es nie — Elias: „weniger soll nicht werden aber
+       kann mehr werden". hole-vokabeln.mjs führt zusammen statt zu ersetzen
+       (was fehlt, bleibt, gemeldet als „BEHALTEN"), baue-vokabelpaket.mjs
+       schreibt kein kleineres Paket. Bewacht von test-vokabelabzug.mjs. */
     dateien: ['js/buecher.js', 'js/vokabelpaket.js', 'data/buecher.js', 'data/vokabeln-eigene.js',
       'data/vokabeln-madina-1.js', 'data/vokabeln-madina-2.js', 'data/vokabeln-madina-3.js',
       'data/vokabeln-bayna-yadayk-1.js', 'data/vokabeln-bayna-yadayk-2.js', 'data/vokabeln-bayna-yadayk-3.js',

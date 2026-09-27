@@ -509,6 +509,7 @@ const PRUEFER = [
      alles sieht richtig aus, es passiert nur nichts. (24.08.2026) */
   ['werkzeuge/pruefe-kreislaeufe.mjs', []],
   ['test-buecher.mjs', []],
+['test-vokabelabzug.mjs', []],
   ['test-p1.mjs', []],
   ['test-p6.mjs', []],
   ['test-p8.mjs', []],
