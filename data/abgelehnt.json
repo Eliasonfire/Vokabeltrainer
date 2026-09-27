@@ -1,6 +1,6 @@
 {
-  "stempel": 1788919441301,
-  "geholt": "23.9.2026",
+  "stempel": 1790358133989,
+  "geholt": "27.9.2026",
   "woerter": {
     "45760": [
       {
@@ -264,6 +264,23 @@
         "nr": 0,
         "text": "Form فَعِيلَةٌ, genau wie حَقِيبَةٌ (Tasche), die du schon hast: beide mit ـِيـ vor dem ـة. ⚠️ Und genau deshalb verwechselbar — حَدِيقَةٌ hat ein د, حَقِيبَةٌ ein ق. Plural حَدَائِقُ.",
         "zeit": 1787282211967
+      }
+    ],
+    "45983": [
+      {
+        "nr": 0,
+        "text": "نَسَخَ heißt abschreiben, kopieren — und der Schreiber, der einen Text von Hand vervielfältigt, heißt danach nāsiḫ. Wer eine نُسْخَة (nusḫa, „Kopie\") in der Hand hält, hält das Ergebnis von نَسَخَ.",
+        "zeit": 1790358133989
+      },
+      {
+        "nr": 1,
+        "text": "Das Werkzeug dazu hast du längst: der قَلَمٌ (Stift) aus Kapitel 1. Kopieren heißt hier nicht Knopfdruck, sondern mit dem قَلَم abschreiben — so wie in الَّذِي عَلَّمَ بِالْقَلَمِ (96:4).",
+        "zeit": 1790358121816
+      },
+      {
+        "nr": 2,
+        "text": "⚠️ Nicht mit نَظَرَ verwechseln: beide fangen mit ن an und haben drei Buchstaben, aber نَسَخَ hat س خ, نَظَرَ hat ظ ر. Kopieren gegen Anschauen.",
+        "zeit": 1790358132811
       }
     ],
     "50357": [

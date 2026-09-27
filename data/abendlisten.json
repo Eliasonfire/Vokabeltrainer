@@ -37,6 +37,12 @@
       { "wort": "wie viele", "id": "49830", "zuordnung": "unsicher" } ] },
     { "datum": "2026-09-21", "notiz": "ohne-titel (54810a)", "woerter": [
       { "wort": "Kinder", "id": null, "zuordnung": "unsicher" },
-      { "wort": "Was? (meist vor Verben)", "id": null, "zuordnung": "unsicher" } ] }
+      { "wort": "Was? (meist vor Verben)", "id": null, "zuordnung": "unsicher" } ] },
+    { "datum": "2026-09-24", "notiz": "ohne-titel (491288)", "woerter": [
+      { "wort": "Wann?", "id": "50169", "zuordnung": "sicher" },
+      { "wort": "Zeichen / Hinweis", "id": "45997", "zuordnung": "sicher" },
+      { "wort": "Jene (Pl.)", "id": "50165", "zuordnung": "sicher" },
+      { "wort": "Diese (Pl.)", "id": "50164", "zuordnung": "sicher" },
+      { "wort": "Welcher / welche / welches?", "id": "50170", "zuordnung": "sicher" } ] }
   ]
 }

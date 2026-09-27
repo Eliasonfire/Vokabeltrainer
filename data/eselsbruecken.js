@@ -478,7 +478,7 @@ const BUCH_ESELSBRUECKEN = {
 
   "45982": "مَرَّ hat nur zwei sichtbare Buchstaben und eine شَدَّة, weil der zweite und dritte Wurzelbuchstabe derselbe sind (م ر ر). Genau so ist حَارٌّ (heiß) aus Kapitel 3 gebaut — zwei gleiche Buchstaben verschmelzen zu einem mit شَدَّة.",
 
-  "45983": "نَسَخَ heißt abschreiben, kopieren — und der Schreiber, der einen Text von Hand vervielfältigt, heißt danach nāsiḫ. Wer eine نُسْخَة (nusḫa, „Kopie\") in der Hand hält, hält das Ergebnis von نَسَخَ.",
+  "45983": "Die Schrift, in der die meisten Qurʾān-Ausgaben gedruckt sind, heißt Nasḫ — benannt nach den Abschreibern, die den Text jahrhundertelang von Hand vervielfältigt haben. Das Verbalsubstantiv dazu steht auf dieser Karte: نَسْخٌ. Wenn du im Leser eine Ayah ansiehst, siehst du das Ergebnis von نَسَخَ.",
 
   "45984": "أَخٌ (Bruder) gehört zu den Wörtern, die sich verlängern, sobald etwas folgt: alleinstehend nur أَخٌ, in der Verbindung wird daraus aḫū. Genau dasselbe tut أَبٌ (Vater) aus Kapitel 6, das du schon hast — zwei Wörter, eine Besonderheit.",
 

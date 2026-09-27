@@ -2426,8 +2426,8 @@ const ESELSBRUECKEN_ALT = {
   ],
 
   '45983': [
-    'Das Werkzeug dazu hast du längst: der قَلَمٌ (Stift) aus Kapitel 1. Kopieren heißt hier nicht Knopfdruck, sondern mit dem قَلَم abschreiben — so wie in الَّذِي عَلَّمَ بِالْقَلَمِ (96:4).',
-    '⚠️ Nicht mit نَظَرَ verwechseln: beide fangen mit ن an und haben drei Buchstaben, aber نَسَخَ hat س خ, نَظَرَ hat ظ ر. Kopieren gegen Anschauen.'
+    'Drei Verben aus demselben Kapitel sind genau so gebaut: قَرَأَ (lesen), سَمِعَ (hören), سَأَلَ (fragen). Alle vier haben drei Buchstaben, alle vier setzen im Befehl vorne ein Verbindungs-Alif und hinten ein Sukūn — aus نَسَخَ wird اِنْسَخْ.',
+    'Kapitel 1 von Bayna Yadayk ist das Kapitel der Arbeitsanweisungen: نَظَرَ (schauen), اِسْتَمَعَ (zuhören), أَعَادَ (wiederholen), قَرَأَ (lesen) — im Buch stehen sie als Befehl über den Übungen. نَسَخَ gehört in dieselbe Reihe und heißt dort: schreib es ab, denk dir nichts aus.'
   ],
 
   '45984': [
