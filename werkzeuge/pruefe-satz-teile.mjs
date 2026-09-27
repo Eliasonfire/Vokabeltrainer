@@ -29,7 +29,10 @@
  *      (f) halb geschafft zählt nicht,
  *   4. gemessene Zeiten schlagen die Schätzung,
  *   5. „Gemischt", der Ring, die Startseite, die Feier und die Einstellungen
- *      nehmen den Teil — und niemand liest mehr SETTINGS.satzZiel.
+ *      nehmen den Teil — und niemand liest mehr SETTINGS.satzZiel,
+ *   6. verwandte Übungen stehen in verschiedenen Teilen (27.09.2026, sein Paar
+ *      10/12 und drei weitere), mit Störtest,
+ *   7. ein Durchgang von „Gemischt" nimmt keinen Satz doppelt, mit Störtest.
  * Exit 0 = alles richtig · 1 = Befund.
  */
 import fs from 'node:fs';
@@ -227,6 +230,45 @@ pruefe('die Einstellung ist eine Anzeige, kein Schalter', !/id="satzZielSelect"|
 const ohneAusgleich = code.replace('const t = summe[1] < summe[2] ? 1 : summe[2] < summe[1] ? 2 : (teil[1].length <= teil[2].length ? 1 : 2);', 'const t = 1;');
 const s1 = kontext(ohneAusgleich, UEBUNGEN).lauf('satzTeile()');
 pruefe('STÖRTEST — ohne Ausgleich wären die Teile ungleich', ohneAusgleich !== code && Math.abs(s1.summe[1] - s1.summe[2]) > Math.max(...Object.values(s1.zeit)), JSON.stringify(s1.summe));
+
+/* 6: verwandte Übungen nie im selben Teil (27.09.2026). Elias: „am besten wenn
+   beide übungen nicht am sleben tag statt finden. generell sollte ein tag
+   nicht mit einer übung überfüllt sein sondern gut durchmischt" — vorher
+   lagen Übung 10 und 12 durch die Schätzung immer zusammen in Teil 1. */
+const PAARE = [['genus', 'fem-form'], ['kasus', 'haraka'], ['jarr-paar', 'alle-majrur'], ['isara', 'pronomen']];
+const getrennt = tt => PAARE.every(([a, b]) => (tt[1].includes(a) && tt[2].includes(b)) || (tt[2].includes(a) && tt[1].includes(b)));
+pruefe('verwandte Übungen in verschiedenen Teilen — mit der Schätzung', getrennt(t), JSON.stringify({ 1: t[1], 2: t[2] }));
+const gm = kontext(code, UEBUNGEN);
+gm.QUOTE_TAGE = { '2026-09-20': { zn_genus: 12, zs_genus: 480, 'zn_fem-form': 12, 'zs_fem-form': 480 } };
+const tg = gm.lauf('satzTeile()');
+pruefe('… und wenn die zwei gemessen gleich lang sind (je 40 s)', getrennt(tg)
+  && Math.abs(tg.summe[1] - tg.summe[2]) <= Math.max(...Object.values(tg.zeit)), JSON.stringify({ 1: tg[1], 2: tg[2], summe: tg.summe }));
+const ohnePaare = code.replace('const wo = pa.some(x => teil[t].includes(x)) && !pa.some(x => teil[anders].includes(x)) ? anders : t;', 'const wo = t;');
+pruefe('STÖRTEST — ohne die Paare stünden 10 und 12 wieder zusammen', ohnePaare !== code && !getrennt(kontext(ohnePaare, UEBUNGEN).lauf('satzTeile()')), '');
+
+/* 7: kein Satz zweimal in einem Durchgang von „Gemischt" (27.09.2026) —
+   „… und sogar mit dem selben satz". Die echten uebungGemischteListe() und
+   uebungZiehen(), Mischen abgeschaltet, damit die Reihenfolge feststeht. */
+const zieh = [schneide(ueb, 'uebungGemischteListe'), schneide(ueb, 'uebungZiehen')];
+if (zieh.some(x => !x)){ pruefe('uebungGemischteListe/uebungZiehen im Quelltext', false, 'nicht gefunden'); }
+else {
+  const gemischt = (quelle, koerbe) => {
+    const A = { id: 'a' }, B = { id: 'b' };
+    const k = { UEBUNGEN: [A, B], shuffle: x => x, uebungMischen: (m, l) => l.slice(), Set };
+    vm.createContext(k);
+    vm.runInContext(quelle, k);
+    const nach = { a: koerbe.a.map(s => ({ modus: A, satz: { sentAr: s } })), b: koerbe.b.map(s => ({ modus: B, satz: { sentAr: s } })) };
+    return vm.runInContext('uebungGemischteListe', k)(nach).map(x => x.satz.sentAr);
+  };
+  const echt = zieh.join('\n');
+  const r1 = gemischt(echt, { a: ['s1', 's2'], b: ['s3', 's2'] });
+  pruefe('ein Durchgang nimmt keinen Satz doppelt, wenn es einen anderen gibt', r1.length === 4 && r1[0] !== r1[1] && r1[2] !== r1[3], r1.join(' '));
+  const r2 = gemischt(echt, { a: ['s1'], b: ['s1'] });
+  pruefe('gibt es keinen anderen, fehlt trotzdem keine Übung', r2.length === 2, r2.join(' '));
+  const ohneZiehen = echt.replace('raus.push(uebungZiehen(koerbe[i], imDurchgang));', 'raus.push(koerbe[i].pop());');
+  const r3 = gemischt(ohneZiehen, { a: ['s1', 's2'], b: ['s3', 's2'] });
+  pruefe('STÖRTEST — ohne uebungZiehen käme derselbe Satz zweimal', ohneZiehen !== echt && r3[0] === r3[1], r3.join(' '));
+}
 
 console.log('\n' + (fehler ? `X  ${fehler} Befund(e)` : '✅ Satzmodus in zwei Teilen: alles richtig'));
 process.exit(fehler ? 1 : 0);
