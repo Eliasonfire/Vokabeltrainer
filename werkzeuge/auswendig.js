@@ -27,6 +27,24 @@
  * pruefe-eselsbruecken.js arbeitet mit `require`, anker.mjs mit `import`.
  * Aus einer .mjs waere es fuer die erste unerreichbar gewesen — und dann
  * haette es wieder zwei Fassungen gegeben.
+ *
+ * ⭐ SEIT DEM 30.09.2026 GEHOEREN SEINE DUAS DAZU (data/duas.json, v633).
+ * Er am 29.09.2026 (22:52:45): „die duas kannst du für vorschläge nutzen um
+ * bessere zu machen. also so wie du ja auch meine auswendig gelernten suren
+ * nutzt um bessere eselsbrücken zu machen so kannst du das auch so benutzen
+ * damit du weißt was ich auf arabisch auch noch so kann" — und (22:54) „alle
+ * dua fotos kann ich 100%".
+ *
+ * ⛔⛔ Eine Koranstelle, die er NUR aus einer Dua kennt, ist KEIN ganzer Vers.
+ * Seine Dua „Auch für Ehegatten" ist der Schluss von 28:24 — den Anfang des
+ * Verses (فَسَقَىٰ لَهُمَا …) kennt er nicht. Deshalb zaehlt die Stelle zwar
+ * wie ein einzeln abgehakter Vers (sonst meldet Abschnitt 1 von
+ * pruefe-eselsbruecken.js „Sure 28 liegt ausserhalb", obwohl er die Worte
+ * jeden Tag spricht), steht aber ZUSAETZLICH in `ausDuas`: dort darf nur der
+ * Wortlaut der Dua zitiert werden (Abschnitt 9), und anker.mjs durchsucht
+ * statt des ganzen Verses nur den Duatext.
+ * Kennt er die Stelle ohnehin aus seinem Hifz (20:25 steht in Sure 20, die er
+ * abgehakt hat), bleibt sie draussen — dann gilt der ganze Vers.
  */
 const fs = require('fs');
 const path = require('path');
@@ -53,13 +71,21 @@ function tageSeit(deutschesDatum){
  *
  * Rueckgabe:
  *   suren      Set<number>   ganz abgehakte Suren
- *   verse      Set<string>   einzeln abgehakte Verse, "Sure:Vers"
+ *   verse      Set<string>   einzeln abgehakte Verse, "Sure:Vers" —
+ *                            dazu die Koranstellen seiner Duas
+ *   ausDuas    Set<string>   die Stellen darunter, die er NUR aus einer Dua
+ *                            kennt (nur deren Wortlaut ist zitierbar)
+ *   duas       Array         die Eintraege aus data/duas.json
  *   quelle     'datei' | 'rueckfall'
  *   stand      Datum als Text
  *   alterTage  Zahl oder null
  *   meldungen  string[]      gehoeren IN DIE AUSGABE des Aufrufers
  */
 function auswendigLesen(wurzel){
+  return mitDuas(hifzLesen(wurzel), wurzel);
+}
+
+function hifzLesen(wurzel){
   const datei = path.join(wurzel, 'data', 'auswendig.json');
   const meldungen = [];
   if (fs.existsSync(datei)){
@@ -139,11 +165,93 @@ function kannStelle(bereich, sure, vers){
   return bereich.verse.has(s + ':' + Number(vers));
 }
 
+/* ---------- Seine Duas (data/duas.json) ----------
+
+   ⛔ Zitierbar ist NUR `texte` — der Wortlaut aus einer Quelle (Hadith-Ausgabe,
+   Ḥiṣn al-Muslim, quran-text.js), per Skript geschnitten. `weitereQuellen`
+   stehen nur zum Nachsehen da, und eine Dua mit `alsAnker: false` hat fuer
+   SEINE Fassung keinen belegten Wortlaut. */
+function duasLesen(wurzel){
+  const datei = path.join(wurzel, 'data', 'duas.json');
+  const meldungen = [];
+  /* ⚠️ Fehlt die Datei, wird das GESAGT — eine stillschweigend kleinere
+     Pruefung sieht aus wie eine bestandene. [[werkzeug_misst_kleineren_bestand]] */
+  if (!fs.existsSync(datei)){
+    meldungen.push('data/duas.json fehlt — seine Duas zaehlen nirgends als Anker.');
+    return { duas: [], meldungen, quelle: 'fehlt', stand: null };
+  }
+  try {
+    const d = JSON.parse(fs.readFileSync(datei, 'utf8'));
+    const duas = Array.isArray(d.duas) ? d.duas : [];
+    if (!duas.length)
+      meldungen.push('data/duas.json enthaelt keine Dua — das ist kein Stand, sondern eine leere Datei.');
+    return { duas, meldungen, quelle: 'datei', stand: d.stand || 'unbekannt' };
+  } catch (e){
+    meldungen.push('data/duas.json nicht lesbar (' + e.message + ') — seine Duas zaehlen nicht.');
+    return { duas: [], meldungen, quelle: 'kaputt', stand: null };
+  }
+}
+
+/* Vereinheitlichung fuer den Wortlautvergleich — bewusst SCHMAL: NFC, das
+   Leerzeichen, das quran-text.js an 2375 Stellen zwischen Tanwīn-Fatḥa und Alif
+   traegt (عِلْمً ا waere sonst zwei Woerter), Satzzeichen, Pausenzeichen des
+   Korantextes (U+06D6–U+06DC stehen auf dem Wort, gehoeren aber nicht zu ihm)
+   und Leerraum. Jede Ḥaraka bleibt: „woertlich" heisst mit allen Zeichen. */
+const TANWIN_LUECKE = new RegExp('ً ا', 'g');
+function duaNorm(s){
+  return String(s || '').normalize('NFC')
+    .replace(TANWIN_LUECKE, 'ًا')
+    .replace(/[ۖ-ۜ]/g, '')
+    .replace(/[،,.;:!?«»„“”"()]/g, ' ')
+    .replace(/\s+/g, ' ').trim();
+}
+
+/* In welcher Dua steht dieser Lauf WOERTLICH? Ganze Woerter: „رَحْ لَكَ" ist
+   kein Treffer in „نَشْرَحْ لَكَ". Mit `stelle` ("28:24") nur die Duas, die
+   genau diese Koranstelle tragen. Rueckgabe: die Dua oder null. */
+function duaFundstelle(duas, lauf, stelle){
+  const gesucht = ' ' + duaNorm(lauf) + ' ';
+  if (gesucht.trim() === '') return null;
+  for (const d of duas || []){
+    if (!d || !d.alsAnker) continue;
+    if (stelle && !(d.koranstellen || []).includes(stelle)) continue;
+    for (const t of d.texte || [])
+      if ((' ' + duaNorm(t.arabisch) + ' ').includes(gesucht)) return d;
+  }
+  return null;
+}
+
+/* Die Koranstellen seiner Duas in den Bereich einfuegen — siehe Kopf. */
+function mitDuas(bereich, wurzel){
+  const gelesen = duasLesen(wurzel);
+  bereich.meldungen.push(...gelesen.meldungen);
+  bereich.duas = gelesen.duas;
+  bereich.duasStand = gelesen.stand;
+  bereich.ausDuas = new Set();
+  for (const d of gelesen.duas){
+    if (!d || !d.alsAnker) continue;
+    for (const k of d.koranstellen || []){
+      const m = String(k).match(/^(\d{1,3}):(\d{1,3})$/);
+      if (!m){ bereich.meldungen.push('data/duas.json, Dua ' + d.nr + ': Koranstelle „' + k + '" ist keine Sure:Vers-Angabe.'); continue; }
+      if (kannStelle(bereich, Number(m[1]), Number(m[2]))) continue;   /* kennt er aus seinem Hifz */
+      bereich.verse.add(Number(m[1]) + ':' + Number(m[2]));
+      bereich.ausDuas.add(Number(m[1]) + ':' + Number(m[2]));
+    }
+  }
+  return bereich;
+}
+
 /* Wie viele Stellen kennt er? Fuer die Ausgabe — eine Zahl ohne ihren Umfang
    ist keine Auskunft. */
 function umfang(bereich){
+  const nurDua = bereich.ausDuas ? [...bereich.ausDuas] : [];
+  const anker = (bereich.duas || []).filter(d => d && d.alsAnker).length;
   return bereich.suren.size + ' Sure(n)'
-    + (bereich.verse.size ? ' und ' + bereich.verse.size + ' einzelne Vers(e)' : '');
+    + (bereich.verse.size ? ' und ' + bereich.verse.size + ' einzelne Vers(e)' : '')
+    + (nurDua.length ? ', davon ' + nurDua.length + ' nur aus seinen Duas (' + nurDua.join(', ') + ')' : '')
+    + (bereich.duas ? ' · ' + anker + ' von ' + bereich.duas.length + ' Duas als Anker'
+                      + (bereich.duasStand ? ' (data/duas.json, Stand ' + bereich.duasStand + ')' : '') : '');
 }
 
-module.exports = { auswendigLesen, kannStelle, umfang, RUECKFALL_SUREN, RUECKFALL_STAND };
+module.exports = { auswendigLesen, kannStelle, umfang, duasLesen, duaNorm, duaFundstelle,
+                   RUECKFALL_SUREN, RUECKFALL_STAND };

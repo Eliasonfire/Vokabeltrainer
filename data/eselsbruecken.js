@@ -569,7 +569,21 @@ const BUCH_ESELSBRUECKEN = {
 
   "46032": "⛔ Kein arabisches Muster: تِلْفَازٌ ist „Television“ arabisiert. Die Buchstaben ت ل ف ز geben nichts her, was du woanders wiederfindest — merk es über den Klang „tilfāz“ und über sein Verb aus demselben Kapitel: شَاهَدَ.",
 
-  "46033": "⭐ Die Wurzel ط ب ق meint übereinanderliegen, Schicht. Ein طَبَقٌ ist die flache Schicht, auf der das Essen liegt — der Teller. Ein Stapel Teller ist genau das Bild der Wurzel."
+  "46033": "⭐ Die Wurzel ط ب ق meint übereinanderliegen, Schicht. Ein طَبَقٌ ist die flache Schicht, auf der das Essen liegt — der Teller. Ein Stapel Teller ist genau das Bild der Wurzel.",
+
+  "46102": "Aus deiner Dua mit den Segenswünschen auf Muḥammad und Ibrāhīm, die zweite Hälfte: اللَّهُمَّ بَارِكْ عَلَى مُحَمَّدٍ — „O Allah, segne Muḥammad“. بَارِكْ ist die Befehlsform dieses Verbs, und gleich danach sagst du كَمَا بَارَكْتَ — „wie Du gesegnet hast“.",
+
+  "46173": "Aus deiner Dua um Erleichterung: رَبِّ ٱشْرَحْ لِي صَدْرِي (20:25) — „Mein Herr, weite mir meine Brust“. Dieselbe Weite kennst du aus aš-Šarḥ: أَلَمْ نَشْرَحْ لَكَ صَدْرَكَ (94:1).",
+
+  "46320": "Aus deiner Dua beim Verlassen des Hauses, „… wa lā quwwata illā billāh“: وَلاَ قُوَّةَ إِلاَّ بِاللَّهِ — „und keine Kraft außer durch Allah“. Das quwwata darin ist genau dieses Wort.",
+
+  "46537": "Aus deiner Dua für das Herz: ثَبِّتْ قَلْبِي عَلَى دِينِكَ — „festige mein Herz auf Deiner Religion“. قَلْبِي ist dieses Wort mit ـِي („mein“); kurz davor sagst du den Plural الْقُلُوبِ, „die Herzen“.",
+
+  "46547": "Aus deiner Dua um Erleichterung, direkt nach „weite mir meine Brust“: وَيَسِّرْ لِيٓ أَمْرِي (20:26) — „und mache mir meine Angelegenheit leicht“. أَمْرِي ist dieses Wort mit ـِي („mein“).",
+
+  "46619": "Aus deiner Dua um Wissen, Sure Ṭā-Hā: „Mein Herr,“ زِدْنِي عِلْمًا (20:114) — „mehre mich an Wissen“. Das Wort steht dort mit Tanwīn-Fatḥa.",
+
+  "48010": "Aus deiner Dua nach dem Salām, die du dir mit „wichtig!!!“ notiert hast: أَعِنِّي عَلَى ذِكْرِكَ — „hilf mir, Deiner zu gedenken“. ذِكْرِكَ ist dieses Wort mit ـِكَ („Dein“)."
 };
 
 /* ---------- Korrigierte Schreibweisen ----------
