@@ -771,14 +771,16 @@ let regelWoerter = 0, regelAusgenommen = 0;
  * (E.1). Gesetzt wurden Endungen nur, wo die Form mit Endung in seinem Material
  * oder bei arabdict steht (Elias 16.09.2026: Fachbegriffe mit Endung).
  */
-const NAME_OFFEN = new Map([
-  /* Nur EINE Quelle schreibt sie vollständig: en.wiktionary. arabdict kennt
-     اسمية gar nicht und liefert bei قمرية ein anderes Wort (قُمْرِيَّة,
-     „Turteltaube"), ar.wiktionary hat keinen Eintrag (29.09.2026). Nach
-     شَمْسِيَّة gebildet wäre selbst vokalisiert. Frage an Elias seit 11.09.2026. */
-  [String.fromCharCode(0x627, 0x633, 0x645, 0x64A, 0x629), 'nur en.wiktionary schreibt es vollständig — Frage an Elias'],
-  [String.fromCharCode(0x642, 0x645, 0x631, 0x64A, 0x629), 'nur en.wiktionary schreibt es vollständig — Frage an Elias'],
-]);
+/* Wörter im Namen, deren Schreibung keine zwei Quellen belegen: sie stehen als
+   „offen (Frage an Elias)" statt als Befund. Eintrag: [Skelett ohne و davor, Grund].
+   Zurzeit LEER.
+   ⭐ 29.09.2026 — اسمية und قمرية standen hier: nur en.wiktionary schrieb sie
+   vollständig (arabdict: kein Eintrag bzw. قُمْرِيَّة „Turteltaube", ar.wiktionary:
+   nichts), offen seit 11.09.2026. Auf „Soll ich sie trotzdem so übernehmen, wie
+   Wiktionary sie schreibt?" Elias um 06:09:33: „ja" → v631. Das Alif von اسْمِيَّة
+   bleibt in der Wortgruppe ohne Kasra: Hamzat al-wasl mitten im Satz (sein
+   Madina-Buch S. 42, [[taschkil-immer-vollstaendig]]). */
+const NAME_OFFEN = new Map([]);
 /* Alle Klassen aus Codepoints gebaut, nicht kopiert. [[zeichenklasse_nie_sichtbar_kopieren]] */
 const zc = (...c) => String.fromCharCode(...c);
 const TRENNER_NAME = new RegExp('([\\s.' + zc(0x60C, 0x61F) + '!' + zc(0xAB, 0xBB) + ':' + zc(0x61B)

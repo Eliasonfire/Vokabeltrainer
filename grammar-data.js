@@ -238,7 +238,7 @@ const GRAMMAR_RULES = [
        erklaerung." Deshalb NICHT `ausgeblendet` — das naehme die Regel auch aus
        dem Satz- und Uebungsmodus (js/saetze.js Zeile 32, js/uebung.js Zeile 329). */
     nichtAufKarteikarten: true,
-    name: "حُرُوف شَمْسِيَّة وَقَمَرِيّة (Sonnen- & Mondbuchstaben)",
+    name: "حُرُوف شَمْسِيَّة وَقَمَرِيَّة (Sonnen- & Mondbuchstaben)",
     shortExplanation: "Von den 28 arabischen Buchstaben (die Hamza nicht mitgezählt) sind 14 Sonnenbuchstaben und 14 Mondbuchstaben – genau Hälfte/Hälfte. Die Regel gilt nur bei bestimmten Wörtern, also nur wenn اَلْ davorsteht. Beim Mondbuchstaben liest man das لْ ganz normal mit: بَيْتٌ (baytun, ein Haus) wird zu اَلْبَيْتُ (al-baytu, das Haus). Beim Sonnenbuchstaben steht ein Schadda auf dem ersten Buchstaben und das Lam wird übersprungen: نَجْمٌ (nadschmun) wird zu اَلنَّجْمُ (an-nadschmu) – nicht „al-nadschmu\". Genauso macht es der Lehrer an اَلرَّجُلُ (ar-radschulu) vor: „nicht al-radschulu, sondern ar-radschulu\", dazu اَلطَّالِبُ (aṭ-ṭālibu, der Student) und اَلدِّيكُ (ad-dīku). Er betont: Man muss die Buchstaben nicht auswendig lernen, sondern nur schauen, ob nach dem اَلْ ein Schadda steht. Und er weist darauf hin, dass das im Koran genauso steht – man kann die Regel direkt beim Koranlesen anwenden.",
     color: "other",
     source: { folge: 3, video: "Folge 03", approxTimestamp: "21:42", chapter: 3 },
@@ -315,7 +315,7 @@ const GRAMMAR_RULES = [
        das mit dem satzmodus bzw uebungsmodus." Deshalb NICHT
        `ausgeblendet` - das naehme sie auch aus Satz- und Uebungsmodus. */
     nichtAufKarteikarten: true,
-    name: "جُمْلَة اسْمِيّة / جُمْلَة فِعْلِيَّة (Nominalsatz und Verbalsatz)",
+    name: "جُمْلَة اسْمِيَّة / جُمْلَة فِعْلِيَّة (Nominalsatz und Verbalsatz)",
     shortExplanation: "Im Arabischen gibt es zwei Satzarten: Die جُمْلة اسْمِيّة (jumla ismiyya), der Nominalsatz, beginnt mit einem Nomen. Die جُمْلة فِعْلِيّة (jumla fiʿliyya), der Verbalsatz, beginnt mit einem Verb. Im Madina Buch 1 wird ausschließlich mit Nominalsätzen gearbeitet; Verben kommen erst später dran. Die beiden Satzarten unterscheiden sich auch in der grammatischen Analyse.",
     color: "mubtada",
     source: { folge: 4, video: "Folge 04", approxTimestamp: "12:55", chapter: 4 },
