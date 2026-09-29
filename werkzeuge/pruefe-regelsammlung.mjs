@@ -212,7 +212,23 @@ console.log('\n=== 3. Die neun Karten aus Folge 19 ===');
      wäre genau das, was die Karten nicht dürfen. */
   const entwuerfe = app.hol('REGEL_ENTWUERFE');
   sammle(entwuerfe);
-  const unbelegt = [...new Set(texte.flatMap(woerter))].filter(w => !bestand.has(w));
+  /* ⭐ Seit v632 zählt auch ein VOLLSTÄNDIGERES Vorkommen als Beleg. v632 hat in
+     den Erklärtexten von grammar-data.js fehlende Zeichen ergänzt (اَلْقَمَر →
+     اَلْقَمَرُ, حامِدٍ → حَامِدٍ …) — damit verschwanden die genau gleichen
+     Schreibungen, die fünf Kartenwörter bis dahin belegten, und die Prüfung wurde
+     rot, obwohl keine Karte etwas Neues trug. Was sie sichern soll, gilt weiter:
+     kein Kartenwort hat ein Zeichen, das in keinem belegten Vorkommen steht.
+     Belegt ist ein Wort deshalb auch, wenn ein Vorkommen dieselben Buchstaben
+     hat und an JEDER Stelle mindestens seine Zeichen. */
+  const einheiten = w => { const u = []; for (const ch of w){ if (/[ً-ٰٟ]/.test(ch)){ if (u.length) u[u.length - 1].m.add(ch); } else u.push({ b: ch, m: new Set() }); } return u; };
+  const nachSkelett = new Map();
+  for (const b of bestand){ const s = b.replace(/[ً-ٰٟ]/g, ''); if (!nachSkelett.has(s)) nachSkelett.set(s, []); nachSkelett.get(s).push(einheiten(b)); }
+  const belegtDurchVolleres = w => {
+    const u = einheiten(w);
+    return (nachSkelett.get(w.replace(/[ً-ٰٟ]/g, '')) || [])
+      .some(v => v.length === u.length && u.every((x, i) => x.b === v[i].b && [...x.m].every(m => v[i].m.has(m))));
+  };
+  const unbelegt = [...new Set(texte.flatMap(woerter))].filter(w => !bestand.has(w) && !belegtDurchVolleres(w));
   pruefe(`jedes arabische Wort der Karten und Entwürfe ist belegt (${new Set(texte.flatMap(woerter)).size} verschiedene)`,
     !unbelegt.length, 'unbelegt: ' + unbelegt.join(' '));
 

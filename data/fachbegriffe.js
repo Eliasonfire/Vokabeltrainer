@@ -300,7 +300,7 @@ const FACHBEGRIFF_VOKABELN = [
        Zeichen auf ض ا ف) daneben, jetzt zählen alle Stellen mit.
        Beleg für die volle Form: die Musterlösung des Lehrers, ml-01. */
     belegt: 14,
-    mnemo: 'بابُ الْمَسْجِدِ — die Tür der Moschee. بَابٌ und مَسْجِدٌ hast du einzeln gelernt, die إِضَافَة setzt sie zu einem Begriff zusammen. Erstes Wort: مُضَاف. Zweites Wort: مُضَاف إِلَيْهِ, und das steht im Genitiv. Damit kannst du zusammengesetzte Wörter bauen, die es im Arabischen sonst nicht gäbe — Schreibtisch, Wörterbuch, Feuertreppe.'
+    mnemo: 'بَابُ الْمَسْجِدِ — die Tür der Moschee. بَابٌ und مَسْجِدٌ hast du einzeln gelernt, die إِضَافَة setzt sie zu einem Begriff zusammen. Erstes Wort: مُضَاف. Zweites Wort: مُضَاف إِلَيْهِ, und das steht im Genitiv. Damit kannst du zusammengesetzte Wörter bauen, die es im Arabischen sonst nicht gäbe — Schreibtisch, Wörterbuch, Feuertreppe.'
   },
   {
     id: 'gram-zarf',
@@ -329,7 +329,7 @@ const FACHBEGRIFF_VOKABELN = [
     book: 'grammar',
     regel: 'schakl-01',
     belegt: 3,
-    mnemo: 'Die kleinen Zeichen über und unter den Buchstaben. Fünf Stück: فَتْحة, كَسْرة, سُكون, ضَمّة, شَدّة. Alle zusammen heißen تَشْكيل — EINES davon ist ein شَكْل. Dieselbe Sache in Einzahl und Gesamtheit, wie Buchstabe und Alphabet.'
+    mnemo: 'Die kleinen Zeichen über und unter den Buchstaben. Fünf Stück: فَتْحَة, كَسْرَة, سُكُون, ضَمَّة, شَدَّة. Alle zusammen heißen تَشْكِيل — EINES davon ist ein شَكْل. Dieselbe Sache in Einzahl und Gesamtheit, wie Buchstabe und Alphabet.'
   },
   {
     id: 'gram-ismul-isara',
@@ -369,7 +369,7 @@ const FACHBEGRIFF_VOKABELN = [
     book: 'grammar',
     regel: 'alif-maqsura-01',
     belegt: 3,
-    mnemo: 'Ein ى am Wortende OHNE Punkte ist kein Ya, sondern ein „kleines Alif" — gesprochen wie langes ā. عَلى hast du als Vokabel: „auf". عَلِيٌّ dagegen ist der Name Ali und endet wirklich auf ein Ya. Ohne Taschkīl sehen die beiden fast gleich aus — der Unterschied sind nur die zwei Punkte.'
+    mnemo: 'Ein ى am Wortende OHNE Punkte ist kein Ya, sondern ein „kleines Alif" — gesprochen wie langes ā. عَلَى hast du als Vokabel: „auf". عَلِيٌّ dagegen ist der Name Ali und endet wirklich auf ein Ya. Ohne Taschkīl sehen die beiden fast gleich aus — der Unterschied sind nur die zwei Punkte.'
   },
 
   /* ------------------------------------------------------------------------
@@ -442,7 +442,7 @@ const FACHBEGRIFF_VOKABELN = [
     belegt: 1,
     sentAr: 'مَا اسْمُكِ يَا آمِنَةُ؟',
     sentDe: 'Wie heißt du, Āmina?',
-    mnemo: 'Derselbe Buchstabe wie bei ـكَ, nur der Vokal wechselt: Fatḥa fragt einen Mann, Kasra fragt eine Frau. Auf Seite 63 steht genau diese Frage an Āmina: اسْمُكِ „dein Name“. Ein einziges Zeichen entscheidet, wen du ansprichst.'
+    mnemo: 'Derselbe Buchstabe wie bei ـكَ, nur der Vokal wechselt: Fatḥa fragt einen Mann, Kasra fragt eine Frau. Auf Seite 63 steht genau diese Frage an Āmina: اِسْمُكِ „dein Name“. Ein einziges Zeichen entscheidet, wen du ansprichst.'
   },
   {
     id: 'gram-suffix-hu',
@@ -455,7 +455,7 @@ const FACHBEGRIFF_VOKABELN = [
     belegt: 2,
     sentAr: 'لِي أَخٌ اسْمُهُ حَامِدٌ.',
     sentDe: 'Ich habe einen Bruder, sein Name ist Ḥāmid.',
-    mnemo: 'Auf Seite 61 stehen ـهُ und ـهَا in EINEM Satz nebeneinander: اسْمُهُ أُسَامَةُ für den Bruder, اسْمُهَا سُعَادُ für die Schwester. Wer diesen einen Satz liest, hat beide Endungen auf einmal.'
+    mnemo: 'Auf Seite 61 stehen ـهُ und ـهَا in EINEM Satz nebeneinander: اِسْمُهُ أُسَامَةُ für den Bruder, اِسْمُهَا سُعَادُ für die Schwester. Wer diesen einen Satz liest, hat beide Endungen auf einmal.'
   },
   {
     id: 'gram-suffix-ha',
@@ -468,7 +468,7 @@ const FACHBEGRIFF_VOKABELN = [
     belegt: 2,
     sentAr: 'لِي أُخْتٌ اسْمُهَا آمِنَةُ.',
     sentDe: 'Ich habe eine Schwester, ihr Name ist Āmina.',
-    mnemo: 'Deinem Lehrer genügt dafür ein Wort: „Ha, mit Elif“. Genau daran erkennst du sie — dasselbe Hāʾ wie beim „sein“, aber ein Alif dahinter macht es weiblich: اسْمُهُ gegen اسْمُهَا (Seite 61).'
+    mnemo: 'Deinem Lehrer genügt dafür ein Wort: „Ha, mit Elif“. Genau daran erkennst du sie — dasselbe Hāʾ wie beim „sein“, aber ein Alif dahinter macht es weiblich: اِسْمُهُ gegen اِسْمُهَا (Seite 61).'
   },
 
   /* ---------------------------------------------------------------------
@@ -638,7 +638,7 @@ const FACHBEGRIFF_VOKABELN = [
     belegt: 1,
     sentAr: "أَنْتِ ذَهَبْتِ إِلَى الْمَسْجِدِ.",
     sentDe: "Du (Frau) gingst in die Moschee.",
-    mnemo: "Der Unterschied zu أَنْتَ ist ein einziges Zeichen: Fatḥa oben für den Mann, Kasra unten für die Frau. Beim Verb genauso — ذَهَبْتَ gegen ذَهَبْتِ. Die Kasra als weibliches Zeichen kennst du schon von der Besitzendung ـكِ (اسْمُكِ — dein Name, zu einer Frau gesagt)."
+    mnemo: "Der Unterschied zu أَنْتَ ist ein einziges Zeichen: Fatḥa oben für den Mann, Kasra unten für die Frau. Beim Verb genauso — ذَهَبْتَ gegen ذَهَبْتِ. Die Kasra als weibliches Zeichen kennst du schon von der Besitzendung ـكِ (اِسْمُكِ — dein Name, zu einer Frau gesagt)."
   },
   {
     id: "gram-pron-antunna",
