@@ -25,6 +25,15 @@
  * die sind mehrdeutig. Belegte Fehltreffer aus der ersten Runde: تَجْرِي (98:8)
  * hat die Wurzel ج ر ي und nicht ت ج ر, أَدْرَاكَ ist nicht د ي ك.
  *
+ * ⭐ SEIT v633 (30.09.2026) AUCH SEINE DUAS (data/duas.json) — zweiter
+ * Suchbereich, Ausgabe „Dua N (Titel)". Er am 29.09.2026: „die duas kannst du
+ * für vorschläge nutzen um bessere zu machen …" — „alle dua fotos kann ich
+ * 100%". Durchsucht wird nur der belegte Wortlaut (`texte`) der Duas mit
+ * alsAnker. ⛔ Eine Koranstelle, die er NUR aus einer Dua kennt (28:24), wird
+ * NICHT als ganzer Vers durchsucht: den Anfang des Verses kann er nicht, und
+ * ein Treffer dort waere ein Anker ins Leere. Das Zitat muss dann woertlich aus
+ * der Dua kommen — pruefe-eselsbruecken.js, Abschnitt 9.
+ *
  * ⚠️ Verglichen wird OHNE Vokalzeichen und mit vereinheitlichten Alif-Varianten.
  * Das ist Absicht und noetig: der Korantext kodiert die Hamzah zerlegt
  * (U+0654 / U+0655), abgeschriebene Vokabeln zusammengesetzt. Ein direkter
@@ -144,11 +153,19 @@ AUSW.suren.forEach(s => {
   liste.forEach((v, i) => nimm(s, i + 1, v));
 });
 /* ... dann die EINZELN abgehakten Verse. `schon` verhindert Doppelte, wenn
-   ein Vers zusaetzlich in einer ganz abgehakten Sure steht. */
+   ein Vers zusaetzlich in einer ganz abgehakten Sure steht.
+   ⛔ Ohne die Stellen, die er nur aus einer Dua kennt — siehe Kopf. */
 AUSW.verse.forEach(k => {
+  if (AUSW.ausDuas && AUSW.ausDuas.has(k)) return;
   const [s, nr] = String(k).split(':').map(Number);
   const v = (QURAN_TEXT[s] || [])[nr - 1];
   if (v) nimm(s, nr, v);
+});
+
+/* Der zweite Bereich: der belegte Wortlaut seiner Duas. */
+const duaTexte = [];
+(AUSW.duas || []).filter(d => d && d.alsAnker).forEach(d => {
+  (d.texte || []).forEach(t => duaTexte.push({ dua: d, ar: t.arabisch, flach: flach(t.arabisch) }));
 });
 
 let mit = 0, ohne = 0;
@@ -158,19 +175,27 @@ woerter.forEach(w => {
   if ((!g || g.length < 3) && !wz){
     ohne++; console.log(`- ${w.ar}  (${w.de}) - zu kurz und ohne Wurzel`); return;
   }
+  const trifft = x => {
+    const formTreffer = g.length >= 3 && x.flach.includes(g);
+    const wurzelTreffer = !formTreffer && wz && x.flach.split(/\s+/).some(y => wz.test(y));
+    return formTreffer ? 'Form' : (wurzelTreffer ? 'Wurzel' : null);
+  };
   const treffer = [];
-  verse.forEach(v => {
-    const formTreffer = g.length >= 3 && v.flach.includes(g);
-    const wurzelTreffer = !formTreffer && wz && v.flach.split(/\s+/).some(x => wz.test(x));
-    if (formTreffer || wurzelTreffer) treffer.push({ v, art: formTreffer ? 'Form' : 'Wurzel' });
-  });
-  if (!treffer.length){ ohne++; console.log(`- ${w.ar}  (${w.de})`); return; }
+  verse.forEach(v => { const art = trifft(v); if (art) treffer.push({ v, art }); });
+  const inDuas = [];
+  duaTexte.forEach(t => { const art = trifft(t); if (art) inDuas.push({ t, art }); });
+  if (!treffer.length && !inDuas.length){ ohne++; console.log(`- ${w.ar}  (${w.de})`); return; }
   mit++;
-  console.log(`* ${w.ar}  (${w.de})  [id ${w.id}, Kap. ${w.chapter}, Wurzel ${w.root || '-'}]  -> ${treffer.length}`);
+  console.log(`* ${w.ar}  (${w.de})  [id ${w.id}, Kap. ${w.chapter}, Wurzel ${w.root || '-'}]  -> ${treffer.length}`
+    + (inDuas.length ? ` + ${inDuas.length} in Duas` : ''));
   treffer.slice(0, 6).forEach(t => {
     console.log(`    ${t.v.sure}:${t.v.nr}  (${t.art})` + (mitText ? `  ${t.v.ar}\n        ${t.v.de}` : ''));
   });
   if (treffer.length > 6) console.log(`    ... und ${treffer.length - 6} weitere`);
+  inDuas.slice(0, 4).forEach(x => {
+    console.log(`    Dua ${x.t.dua.nr} (${x.t.dua.titel})  (${x.art})` + (mitText ? `  ${x.t.ar}` : ''));
+  });
+  if (inDuas.length > 4) console.log(`    ... und ${inDuas.length - 4} weitere Dua-Stellen`);
 });
 
 console.log(`\n${mit} Wort/Woerter mit Kandidaten, ${ohne} ohne — von ${woerter.length}.`);

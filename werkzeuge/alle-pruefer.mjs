@@ -682,7 +682,13 @@ const PRUEFER = [
   ['werkzeuge/eiche-taschkil-beleg.mjs', []],
   ['werkzeuge/eiche-fragenreihenfolge.mjs', []],
   ['werkzeuge/eiche-wortart-knopf.mjs', []],
-  ['werkzeuge/eiche-zahlplural.mjs', []]
+  ['werkzeuge/eiche-zahlplural.mjs', []],
+  /* ⭐ v633 (30.09.2026): seine Duas als Anker. Die Eichung stoert eine KOPIE des
+     echten pruefe-eselsbruecken.js (eine Zeile eingefuegt) und verlangt Rot bei
+     falschem Dua-Wortlaut, bei einem Versrest von 28:24 und ohne data/duas.json —
+     und Gruen, solange die Ausnahme in Abschnitt 7 steht. Datendateien fasst sie
+     nicht an. */
+  ['werkzeuge/eiche-dua-zitate.mjs', []]
 ];
 
 /* ⛔ pruefe-oberflaeche.js läuft NICHT unter node — es prüft die laufende App

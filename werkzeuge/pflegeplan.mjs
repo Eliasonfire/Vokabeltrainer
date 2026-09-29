@@ -201,6 +201,30 @@ export const PFLEGEPLAN = [
       wie: 'verschwindet eine Kennung aus vocab-data.js, zeigt ein Platzhalter {{ar:…}} ins Leere oder ändert sich einer der 14 Beispielsätze, '
         + 'die eine Zeichnung zeigt, wird der Prüfer rot' },
   },
+  {
+    /* ⭐ 30.09.2026 (v633) — seine Duas als Anker für Eselsbrücken. Elias am
+       29.09.2026: „die duas kannst du für vorschläge nutzen um bessere zu
+       machen …", „alle dua fotos kann ich 100%", und auf den Bauplan „klingt
+       gut". Die App lädt data/duas.json NICHT und liefert sie nicht aus; sie
+       ist Werkzeugwissen wie data/auswendig.json. Gelesen von
+       werkzeuge/auswendig.js (Koranstellen der Duas), werkzeuge/anker.mjs
+       (Suchbereich) und pruefe-eselsbruecken.js (Abschnitt 9). */
+    funktion: 'Seine Duas als Anker für Eselsbrücken',
+    /* dateien bleibt leer: der Prüfer führt hier nur, was die App LÄDT, und
+       data/duas.json lädt sie bewusst nicht. */
+    dateien: [],
+    bildschirme: [],
+    neuerInhalt: { sitzung: 'Neue Duas kommen nur von ihm (Bild oder Text). Eine Sitzung holt den Wortlaut aus einer Quelle — nie aus '
+        + 'dem Bild —, trägt ihn in data/duas.json und in die Vault-Notiz „04 - Wissen/Duas die Elias kennt.md" ein. Die Routine erfindet '
+        + 'keine Dua und legt keine an.',
+      werkzeug: 'werkzeuge/anker.mjs' },
+    eingaben: { nein: 'Er trägt in der App nichts ein: es gibt keinen Bildschirm und keinen Speicherschlüssel dafür. Die Liste stammt aus '
+        + 'seinen Bildern aus Google Keep (29.09.2026).' },
+    veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs', werkzeug: 'pruefe-eselsbruecken.js',
+      wie: 'ändert sich ein Dua-Zitat in einer Eselsbrücke, fehlt data/duas.json oder zitiert ein Text von 28:24 mehr als die Dua, wird '
+        + 'Abschnitt 9 rot; hakt er eine Sure ab, die eine Dua-Stelle enthält, fällt sie von selbst aus „nur aus einer Dua" heraus. '
+        + 'werkzeuge/eiche-dua-zitate.mjs beweist, dass der Prüfer anschlägt' },
+  },
   /* 25.09.2026 (v604–v606), innerhalb von js/kern.js, js/lernen.js und
      js/uebung.js und deshalb von Hand hier: Lerngruppe (v604), erster Tag
      eines neuen Wortes (v605), Satzmodus in zwei Teilen (v606). Pflegebedarf,

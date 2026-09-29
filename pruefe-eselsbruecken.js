@@ -23,6 +23,13 @@
  *   3. Jede Id muss zu einer echten Vokabel gehoeren, und kein Vorschlag darf
  *      den ersten (w.mnemo) wiederholen.
  *
+ *   4. ⭐ Seit v633 (30.09.2026) zaehlen auch seine DUAS als Anker
+ *      (data/duas.json): "die duas kannst du für vorschläge nutzen um bessere
+ *      zu machen. also so wie du ja auch meine auswendig gelernten suren
+ *      nutzt …" (29.09.2026). Ein Zitat daraus muss WOERTLICH so lauten, wie
+ *      es in einer belegten Quelle steht — Abschnitt 9. Abschnitt 7 nimmt ein
+ *      solches Zitat als Anker an, wie einen Vers aus seinem Bereich.
+ *
  * ⚠️ KOMMENTARE WERDEN VORHER ABGESTREIFT. Ohne das meldet die Pruefung
  * Fundstellen, die in der Begruendung stehen, warum etwas richtig ist - das ist
  * hier schon viermal passiert und kostet jedes Mal eine halbe Stunde Suche nach
@@ -88,7 +95,7 @@ try {
    ⚠️ Die Meldungen aus dem Leser gehoeren IN DIE AUSGABE. Faellt die Datei
    aus, greift der alte Stand — aber dann muss man das sehen, sonst ist die
    Pruefung nicht mehr deutbar. [[rueckfallliste_nur_ohne_hauptquelle_pruefbar]] */
-const { auswendigLesen, kannStelle, umfang } = require('./werkzeuge/auswendig.js');
+const { auswendigLesen, kannStelle, umfang, duaNorm, duaFundstelle } = require('./werkzeuge/auswendig.js');
 const BEREICH = auswendigLesen(WURZEL);
 
 /* ⭐ Der Leitner-Stand je Wort — geschrieben von werkzeuge/vorrat.mjs aus
@@ -109,6 +116,23 @@ console.log('  Leitner-Boxen: ' + (BOXEN
 console.log('  Auswendiger Bereich: ' + umfang(BEREICH)
   + ' (Quelle: ' + (BEREICH.quelle === 'datei' ? 'data/auswendig.json, Stand ' + BEREICH.stand
                                                 : 'abgeschriebener Stand ' + BEREICH.stand) + ')');
+
+/* ⭐ Seine Duas (v633): steht an Stelle i eines Textes ein Zitat aus einer
+   Dua, die er kann? Ein Zitat ist ein arabischer Lauf aus ZWEI oder mehr
+   Woertern, der woertlich unter `texte` in data/duas.json steht — ein
+   einzelnes Wort, das zufaellig auch in einer Dua vorkommt, ist keins.
+   Gebraucht in Abschnitt 7 (Anker) und 9 (Wortlaut). Die Zeichenklasse ist
+   dieselbe wie in Abschnitt 2: ein Lauf endet an jedem nicht-arabischen
+   Zeichen ausser dem Leerzeichen. */
+const ARAB_WORT = '[\\u0600-\\u06FF\\u0750-\\u077F\\uFB50-\\uFDFF\\uFE70-\\uFEFF]+';
+const arabLaeufe = text => [...String(text).matchAll(new RegExp(ARAB_WORT + '(?:[ \\u00A0]' + ARAB_WORT + ')*', 'g'))]
+  .map(m => ({ lauf: m[0], von: m.index, bis: m.index + m[0].length,
+               woerter: duaNorm(m[0]).split(' ').filter(Boolean).length }));
+function duaZitatAn(text, i){
+  const l = arabLaeufe(text).find(x => x.von <= i && i < x.bis);
+  if (!l || l.woerter < 2) return null;
+  return duaFundstelle(BEREICH.duas, l.lauf);
+}
 
 /* Zeichen und Vereinheitlichung fuer den Textvergleich weiter unten. */
 const ZEICHEN = /[ؐ-ًؚ-ٰٟۖ-ࣰۭ-ࣳ]/g;
@@ -927,6 +951,13 @@ console.log('=== 7. Anker: baut die Eselsbruecke auf etwas, das er SCHON hat? ==
                Werkzeug. */
             const stellen = [...satz.matchAll(/(\d{1,3}):(\d{1,3})/g)];
             if (stellen.some(m => kannStelle(BEREICH, Number(m[1]), Number(m[2])))) return;
+            /* ⭐ DRITTE QUELLE, seit v633 (30.09.2026): SEINE DUAS. Steht die
+               Fundstelle in einem woertlichen Zitat aus einer Dua, die er
+               kann, kennt er das Wort von dort — wie oben aus Sure 114.
+               Ob das Zitat wirklich woertlich ist, prueft Abschnitt 9; hier
+               zaehlt nur ein Lauf aus zwei oder mehr Woertern, der unter
+               `texte` in data/duas.json steht. */
+            if (duaZitatAn(String(text), stelle)) return;
             /* ⭐ Zwei Schweregrade, und sie sind nicht dasselbe:
                Steht das erklaerte Wort in einem Kapitel, das er SCHON hat, ist
                die Bruecke heute kaputt — Fehler. Ist es vorausgeschrieben,
@@ -1141,6 +1172,121 @@ console.log('=== 8. Abgelehnte Vorschlaege: steht einer noch drin? ===');
       melde('Stoertest 8b wirkungslos: auch ohne den Aufruf gilt die Erbzeile als gefiltert.');
     else console.log('  ok   Stoertest: ohne den Aufruf wuerde es gemeldet.');
   }
+}
+
+console.log('');
+console.log('=== 9. Dua-Zitate woertlich in data/duas.json ===');
+{
+  /* ⭐ Seit v633 (30.09.2026) sind seine Duas Anker wie seine Suren. Er am
+     29.09.2026 (22:52:45): „die duas kannst du für vorschläge nutzen um
+     bessere zu machen …", (22:54) „alle dua fotos kann ich 100%", und auf
+     „Kommt ein Wort in einer Dua vor … bekommt die Karte genau diese Stelle
+     als Anker, mit zwei bis vier Wörtern, nie die ganze Dua": „klingt gut".
+
+     ⛔ Ein Merkhaken aus einer Dua hilft nur, wenn er WOERTLICH so lautet,
+     wie die Dua in der Quelle steht. Eine Ḥaraka daneben, und der Haken
+     haengt an einem Satz, den es so nicht gibt — derselbe leise Bruch wie
+     ein Vers ausserhalb seines Bereichs. Zwei Regeln:
+
+       a) Ein Text, der eine Dua nennt („Dua"/„Duas" als ganzes Wort —
+          „Dual" zaehlt nicht; die sechs Texte mit „Bittgebet" meinen
+          allgemein bekannte Gebete, nicht seine Liste): jeder arabische Lauf
+          aus ZWEI oder mehr Woertern steht woertlich unter `texte` einer Dua
+          mit alsAnker. Ausnahme: direkt dahinter steht eine Koranstelle aus
+          seinem Hifz — dann ist es ein Koranzitat (Abschnitt 1 und 2).
+       b) JEDER Text: nennt ein Satz eine Stelle, die er NUR aus einer Dua
+          kennt (BEREICH.ausDuas, am 30.09.2026: 28:24), steht jeder
+          arabische Lauf dieses Satzes — auch ein einzelnes Wort — in genau
+          der Dua, die diese Stelle traegt. Den Rest des Verses kennt er
+          nicht, und Abschnitt 1 laesst die Stelle durch, weil sie im Bereich
+          steht. Ausgenommen ist ein Lauf, hinter dem eine ANDERE Stelle aus
+          seinem Hifz steht.
+
+     ⚠️ Gegenprobe in jedem Lauf: der erste belegte Duatext muss gefunden
+     werden, derselbe mit einer geaenderten Ḥaraka nicht — sonst bestuende
+     auch ein Vergleich, der immer ja sagt. [[leere_datei_besteht_jeden_test]] */
+  const DUAS = BEREICH.duas || [];
+  const stelleDahinter = /^[\s»“”"'’]*\((\d{1,3}):(\d{1,3})(?:\s*[-–]\s*(\d{1,3}))?\)/;
+  const nenntDua = /\bDuas?\b/;
+  const dahinter = (text, l) => {
+    const m = String(text).slice(l.bis, l.bis + 24).match(stelleDahinter);
+    return m ? { sure: Number(m[1]), von: Number(m[2]), bis: Number(m[3] || m[2]) } : null;
+  };
+  const nurAusDua = s => {
+    for (let v = s.von; v <= s.bis; v++) if (BEREICH.ausDuas.has(s.sure + ':' + v)) return s.sure + ':' + v;
+    return null;
+  };
+  /* Satzgrenzen wie in Abschnitt 4 und 7: „. " (dazu „! " und „? "). */
+  const satzUm = (text, i) => {
+    const t = String(text);
+    const anf = Math.max(t.lastIndexOf('. ', i), t.lastIndexOf('! ', i), t.lastIndexOf('? ', i));
+    const ende = [t.indexOf('. ', i), t.indexOf('! ', i), t.indexOf('? ', i)].filter(n => n >= 0);
+    return { von: anf < 0 ? 0 : anf + 2, bis: ende.length ? Math.min(...ende) + 1 : t.length };
+  };
+  const jeDua = {};
+  const zaehle = d => { jeDua[d.nr] = (jeDua[d.nr] || 0) + 1; };
+  let mitDua = 0, zitateA = 0, zitateB = 0;
+
+  texte.forEach(t => {
+    const text = String(t.text);
+    const laeufe = arabLaeufe(text);
+
+    /* ---- a) Texte, die eine Dua nennen ---- */
+    if (nenntDua.test(text)){
+      mitDua++;
+      if (!DUAS.length){
+        melde(`${t.wort} (${t.quelle}): nennt eine Dua, aber data/duas.json ist nicht da — der Wortlaut ist nicht pruefbar.`);
+      } else laeufe.forEach(l => {
+        if (l.woerter < 2) return;
+        const s = dahinter(text, l);
+        if (s) return;                     /* Koranzitat, oder Fall b) */
+        zitateA++;
+        const d = duaFundstelle(DUAS, l.lauf);
+        if (d) zaehle(d);
+        else melde(`${t.wort} (${t.quelle}): „${l.lauf}" steht in KEINER Dua woertlich (data/duas.json, texte) — Ḥaraka, Wortlaut oder Dua pruefen.`);
+      });
+    }
+
+    /* ---- b) Stellen, die er nur aus einer Dua kennt ---- */
+    if (!BEREICH.ausDuas.size) return;
+    const stellenMuster = /\b(\d{1,3}):(\d{1,3})(?:\s*[-–]\s*(\d{1,3}))?\b/g;
+    let m;
+    while ((m = stellenMuster.exec(text))){
+      const davor = text.slice(Math.max(0, m.index - 24), m.index);
+      if (/\b(ab|bei|Minute|min\.?|Zeitmarke)\s+$/i.test(davor)) continue;   /* Zeitmarke, siehe Abschnitt 1 */
+      const stelle = nurAusDua({ sure: Number(m[1]), von: Number(m[2]), bis: Number(m[3] || m[2]) });
+      if (!stelle) continue;
+      const satz = satzUm(text, m.index);
+      laeufe.filter(l => l.von >= satz.von && l.bis <= satz.bis).forEach(l => {
+        const s = dahinter(text, l);
+        if (s && !nurAusDua(s)) return;     /* ein Vers aus seinem Hifz, eigene Stelle */
+        zitateB++;
+        const d = duaFundstelle(DUAS, l.lauf, stelle);
+        if (d) zaehle(d);
+        else melde(`${t.wort} (${t.quelle}): „${l.lauf}" im Satz mit ${stelle} — diese Stelle kennt er NUR aus einer Dua, `
+          + 'und dort steht der Lauf nicht woertlich. Den Rest des Verses kann er nicht.');
+      });
+    }
+  });
+
+  /* ---- Gegenprobe: findet der Vergleich, und unterscheidet er? ---- */
+  const probeDua = DUAS.find(d => d && d.alsAnker && (d.texte || []).length);
+  if (probeDua){
+    const probe = duaNorm(probeDua.texte[0].arabisch).split(' ').slice(0, 2).join(' ');
+    const i = probe.search(/[َُِ]/);
+    const falsch = i < 0 ? null
+      : probe.slice(0, i) + (probe[i] === 'َ' ? 'ِ' : 'َ') + probe.slice(i + 1);
+    if (!duaFundstelle(DUAS, probe)) melde('Gegenprobe 9: der Anfang von Dua ' + probeDua.nr + ' („' + probe + '") wird NICHT gefunden — der Vergleich misst nichts.');
+    else if (!falsch) console.log('  hinw Gegenprobe 9: im Anfang von Dua ' + probeDua.nr + ' steht keine Fatḥa/Ḍamma/Kasra — nur halb geprueft.');
+    else if (duaFundstelle(DUAS, falsch)) melde('Gegenprobe 9 wirkungslos: „' + falsch + '" (eine Ḥaraka geaendert) gilt trotzdem als woertlich.');
+    else console.log('  ok   Gegenprobe: Anfang von Dua ' + probeDua.nr + ' gefunden, mit einer geaenderten Ḥaraka nicht.');
+  } else if (DUAS.length) melde('data/duas.json hat keine Dua mit alsAnker und Text — die Gegenprobe ist nicht moeglich.');
+
+  const orte = Object.keys(jeDua).sort((a, b) => a - b).map(n => 'Dua ' + n + (jeDua[n] > 1 ? ' ×' + jeDua[n] : ''));
+  console.log(`  ${mitDua} Text(e) nennen eine Dua · ${zitateA} Zitat(e) geprueft`
+    + (BEREICH.ausDuas.size ? ` · ${zitateB} Lauf/Laeufe an Stellen, die er nur aus einer Dua kennt (${[...BEREICH.ausDuas].join(', ')})` : '')
+    + (orte.length ? ' — belegt in: ' + orte.join(', ') : ''));
+  geprueft += zitateA + zitateB;
 }
 
 console.log('');

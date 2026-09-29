@@ -286,7 +286,11 @@ weiteren). **Die Rangfolge steht im Kopf von `eselsbruecken-alt.js` und stammt
 von ihm:**
 
 1. bekannter islamischer **Begriff** oder eine Wendung — das Stärkste
-2. ein Vers aus seinem **auswendigen** Bereich: Sure 1, 67, 93–114
+2. ein Vers aus seinem **auswendigen** Bereich: Sure 1, 67, 93–114 — **oder
+   eine Stelle aus einer Dua, die er kann** (`data/duas.json`, seit v633,
+   30.09.2026): zwei bis vier Wörter, wörtlich aus `texte`. Eine Koranstelle,
+   die er nur aus einer Dua kennt (28:24), wird nur mit dem Wortlaut der Dua
+   zitiert. Kandidaten zeigt `node werkzeuge/anker.mjs <Kapitel>` („Dua N …")
 3. Muster oder Wurzel — aber **mit Anhang**, also mit drei eigenen Wörtern am
    selben Muster
 

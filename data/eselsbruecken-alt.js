@@ -26,7 +26,12 @@
      1. Bekannter islamischer BEGRIFF oder eine Wendung - das Staerkste.
         بَيْتُ اللهِ, أَهْلُ الْبَيْتِ, الْفَاتِحَة, أَبْوَابُ الْجَنَّةِ.
         Ein Vers ist dafuer NICHT noetig ("ja genau" zu أَهْلُ الْبَيْتِ).
-     2. Ein Vers aus seinem AUSWENDIGEN Bereich.
+     2. Ein Vers aus seinem AUSWENDIGEN Bereich - oder eine Stelle aus einer
+        Dua, die er kann (data/duas.json, seit v633 am 30.09.2026; er:
+        "die duas kannst du für vorschläge nutzen um bessere zu machen …",
+        "alle dua fotos kann ich 100%"). Zwei bis vier Woerter, WOERTLICH aus
+        `texte` - pruefe-eselsbruecken.js, Abschnitt 9. Kandidaten:
+        node werkzeuge/anker.mjs <Kapitel>.
      3. Muster oder Wurzel - aber nur MIT ANHANG.
 
    ⭐⭐ Der Unterschied ist nicht "Wurzel gegen Begriff", sondern ob am anderen
@@ -299,7 +304,8 @@ const ESELSBRUECKEN_ALT = {
   '45784': [
     'Die فُقَرَاء stehen an erster Stelle der acht Gruppen, denen die Zakāh zusteht — den Begriff hörst du in jedem Ramadan. Nimm den Plural gleich mit: فَقِيرٌ → فُقَرَاءُ. ⚠️ Am Ende steht ein ـُ und KEIN Tanwīn — das ist kein Tippfehler, sondern eine eigene Wortsorte, die dir später als Regel begegnet.',
     'Die beiden gehören zusammen wie zwei Seiten einer Münze, und der Unterschied liegt nicht im Besitz: غَنِيّ ist der, der auf niemanden angewiesen ist, فَقِير der, der angewiesen ist. Deshalb heißt الْغَنِيّ auch ein Name Allahs, aber الْفَقِير nie.',
-    '⭐ Eine Stelle aus deinem auswendigen Bereich, und sie trifft genau das Gegenpaar: وَوَجَدَكَ عَآئِلًا فَأَغْنَىٰ — «und dich arm gefunden und dann reich gemacht» (93:8, aḍ-Ḍuḥā). Das Wort dort ist عَآئِلًا, nicht فَقِير — aber فَأَغْنَىٰ ist dieselbe Wurzel wie dein غَنِيٌّ. Wer den Vers kann, hat das Paar arm/reich schon im Ohr, und فَقِيرٌ hängt sich daran.'
+    '⭐ Eine Stelle aus deinem auswendigen Bereich, und sie trifft genau das Gegenpaar: وَوَجَدَكَ عَآئِلًا فَأَغْنَىٰ — «und dich arm gefunden und dann reich gemacht» (93:8, aḍ-Ḍuḥā). Das Wort dort ist عَآئِلًا, nicht فَقِير — aber فَأَغْنَىٰ ist dieselbe Wurzel wie dein غَنِيٌّ. Wer den Vers kann, hat das Paar arm/reich schon im Ohr, und فَقِيرٌ hängt sich daran.',
+    '⭐ Aus deiner Dua „Auch für Ehegatten“: مِنْ خَيْرٍ فَقِيرٌ (28:24) — „…was Du an Gutem zu mir herabgesandt hast, dessen bin ich bedürftig“. Mūsā sagt es im Schatten, und das letzte Wort ist genau deine Vokabel, mit Tanwīn wie im Vokabelheft.'
   ],
 
   /* طَوِيلٌ - lang / groß */
@@ -541,7 +547,8 @@ const ESELSBRUECKEN_ALT = {
   /* سَمَاءٌ - Himmel */
   '45824': [
     'In Sūrat al-Mulk, die du auswendig kannst, steht das Wort gleich mehrfach — am schönsten in 67:5: زَيَّنَّا ٱلسَّمَآءَ ٱلدُّنْيَا, „Wir haben den untersten Himmel geschmückt“, nämlich بِمَصَٰبِيحَ, mit Lampen. Und in 67:16 fragt der Vers nach مَّن فِي ٱلسَّمَآءِ. Sechs Stellen allein in dieser einen Sure.',
-    '⚠️ سَمَاءٌ ist weiblich, obwohl es keine تاء مَرْبُوطة trägt — dieselbe Sorte Wort wie بِنْتٌ, يَدٌ und عَيْنٌ, die du alle hast. Deshalb heißt es الدُّنْيَا und nicht الْأَدْنَى daneben: das Adjektiv richtet sich nach dem Geschlecht, nicht nach der Endung.'
+    '⚠️ سَمَاءٌ ist weiblich, obwohl es keine تاء مَرْبُوطة trägt — dieselbe Sorte Wort wie بِنْتٌ, يَدٌ und عَيْنٌ, die du alle hast. Deshalb heißt es الدُّنْيَا und nicht الْأَدْنَى daneben: das Adjektiv richtet sich nach dem Geschlecht, nicht nach der Endung.',
+    'Aus deiner Dua „Abend Dua 3“, die du dreimal sagst: nichts schadet „auf der Erde“ وَلاَ فِي السَّمَاءِ — „noch im Himmel“. Wer sie dreimal am Abend sagt, sagt dreimal deine Vokabel.'
   ],
 
   /* فَصْلٌ - Klassenzimmer / Kapitel */
@@ -561,7 +568,8 @@ const ESELSBRUECKEN_ALT = {
   /* رَسُولٌ - Gesandter */
   '45827': [
     'In Sūrat al-Bayyina, die du auswendig kannst, steht das Wort genau in deiner Form: رَسُولٌ مِّنَ ٱللَّهِ (98:2) — „ein Gesandter von Allah“. Mit Tanwīn, unbestimmt, wie im Vokabelheft. Und in Sūrat al-Fīl steckt dieselbe Wurzel im Verb: وَأَرْسَلَ عَلَيْهِمْ (105:3), „und Er sandte gegen sie“.',
-    'Die Wurzel ر س ل heißt senden und trägt eine ganze Familie: رَسُول der Gesandte, رِسَالَة die Botschaft, أَرْسَلَ „er sandte“. Wer eines davon erkennt, erkennt die anderen mit.'
+    'Die Wurzel ر س ل heißt senden und trägt eine ganze Familie: رَسُول der Gesandte, رِسَالَة die Botschaft, أَرْسَلَ „er sandte“. Wer eines davon erkennt, erkennt die anderen mit.',
+    '⭐ Aus deiner Dua „Mein Tashahud“, ganz am Ende: عَبْدُهُ وَرَسُولُهُ — „sein Diener und sein Gesandter“. Zweimal dieselbe Endung ـُهُ („sein“), und das zweite Wort ist deine Vokabel.'
   ],
 
   /* تَحْتَ - unter */
@@ -633,7 +641,8 @@ const ESELSBRUECKEN_ALT = {
   /* اِسْمٌ - Name */
   '45839': [
     'Der allererste Vers, der herabgesandt wurde, trägt dein Wort — und du kannst die Sure auswendig: ٱقْرَأْ بِٱسْمِ رَبِّكَ (96:1), „Lies im Namen deines Herrn“. Dasselbe بِٱسْمِ sprichst du bei jedem بِسْمِ اللهِ. ⚠️ Auch dort fällt das اِ in der Verbindung weg, weil es eine Hamzat al-waṣl ist.',
-    'اِسْم ist außerdem einer der drei Fachbegriffe für die Wortarten aus deinem Unterricht: اِسْم – فِعْل – حَرْف. Alles, was kein Verb und keine Partikel ist, ist ein اِسْم. Damit hat dein Vokabelwort „Name“ gleichzeitig eine grammatische Bedeutung — merke beide zusammen.'
+    'اِسْم ist außerdem einer der drei Fachbegriffe für die Wortarten aus deinem Unterricht: اِسْم – فِعْل – حَرْف. Alles, was kein Verb und keine Partikel ist, ist ein اِسْم. Damit hat dein Vokabelwort „Name“ gleichzeitig eine grammatische Bedeutung — merke beide zusammen.',
+    'Aus deiner Dua „Abend Dua 3“, die du dreimal sagst: „…mit dessen Namen nichts schadet“ — dort steht مَعَ اسْمِهِ, „mit Seinem Namen“. اسْمِهِ ist dein اِسْم mit ـِهِ („sein“) daran; das Alif am Anfang sprichst du dort nicht mit.'
   ],
 
   /* حَقِيبَةٌ - Tasche / Rucksack */
@@ -1066,7 +1075,8 @@ const ESELSBRUECKEN_ALT = {
   /* يَا - Rufpartikel */
   '69179bbf-faa9-4b2a-859c-9e5f3d76b98c': [
     'Du hörst es in jeder Anrede: يَا أَخِي („o mein Bruder"), يَا اللهُ, يَا مُحَمَّدُ. Das يَا macht aus einem Namen einen Anruf — im Deutschen fällt es meist weg, im Arabischen steht es fast immer da.',
-    '⚠️ Nach يَا verliert der Name sein Tanwīn: يَا مُحَمَّدُ, nicht يَا مُحَمَّدٌ. Das ist kein Zufall — die Rufform hat ihre eigene Endung. Merke fürs Erste nur: nach يَا wird es kürzer, nicht länger.'
+    '⚠️ Nach يَا verliert der Name sein Tanwīn: يَا مُحَمَّدُ, nicht يَا مُحَمَّدٌ. Das ist kein Zufall — die Rufform hat ihre eigene Endung. Merke fürs Erste nur: nach يَا wird es kürzer, nicht länger.',
+    'Deine Dua für das Herz beginnt damit: يَا مُقَلِّبَ الْقُلُوبِ — „o Du, der die Herzen wendet“. Mit يَا rufst du jemanden an, hier Allah — wie das deutsche „o …“.'
   ],
 
   /* مُضَافْ إِلَيْهِ - Besitzer */
@@ -1434,7 +1444,8 @@ const ESELSBRUECKEN_ALT = {
   /* نَبِيٌّ - Prophet */
   '45933': [
     '⭐ Du kennst den Titel als feststehenden Ausdruck: خَاتَمُ النَّبِيِّينَ — „das Siegel der Propheten". Darin steht der Plural des Wortes, und der Ausdruck sagt dir zugleich, dass nach ihm ﷺ keiner mehr kam.',
-    '⚠️ نَبِيٌّ und رَسُولٌ (Kapitel 5) sind nicht dasselbe: jeder رَسُول ist ein نَبِيّ, aber nicht jeder نَبِيّ ist ein رَسُول. Der Unterschied liegt in der Sendung mit einer eigenen Botschaft.'
+    '⚠️ نَبِيٌّ und رَسُولٌ (Kapitel 5) sind nicht dasselbe: jeder رَسُول ist ein نَبِيّ, aber nicht jeder نَبِيّ ist ein رَسُول. Der Unterschied liegt in der Sendung mit einer eigenen Botschaft.',
+    'Du sprichst es in jedem Gebet, in deiner Dua „Mein Tashahud“: السَّلاَمُ عَلَيْكَ أَيُّهَا النَّبِيُّ — „Friede sei mit dir, o Prophet“. Mit Artikel und Šadda auf dem ي: an-nabiyyu.'
   ],
 
   /* ══════ Kapitel 15 ══════ */
@@ -1792,7 +1803,8 @@ const ESELSBRUECKEN_ALT = {
   /* لَكَ - für dich (m.) (selbst angelegt) */
   'p_1787185309933': [
     'لِ + كَ, und beide Teile hast du: لِ ist der Ḥarf ǧarr des Besitzes (Folge 9), كَ die Besitzendung „dein" für einen Mann (Folge 15). ⭐ Das لِ wechselt dabei von Kasra zu Fatḥa — لَكَ, nicht لِكَ. Vor einem angehängten Pronomen ist das immer so.',
-    'Und ein zweiter Vers aus deinem Bereich: خَيْرٌ لَّكَ مِنَ الْأُولَىٰ — „Und das Jenseits ist wahrlich besser für dich als das Diesseits" (93:4, aḍ-Ḍuḥā).'
+    'Und ein zweiter Vers aus deinem Bereich: خَيْرٌ لَّكَ مِنَ الْأُولَىٰ — „Und das Jenseits ist wahrlich besser für dich als das Diesseits" (93:4, aḍ-Ḍuḥā).',
+    'Aus deiner Dua „Abend Dua 1“: أَبُوءُ لَكَ بِنِعْمَتِكَ — „ich bekenne vor Dir Deine Gnade“. لَكَ steht dort mitten in einem Satz, den du jeden Abend sprichst.'
   ],
 
   /* لَكِ - für dich (w.) (selbst angelegt) */
@@ -1904,7 +1916,8 @@ const ESELSBRUECKEN_ALT = {
 
   'gram-khayr': [
     'فَمَنْ يَعْمَلْ مِثْقَالَ ذَرَّةٍ — „wer im Gewicht eines Stäubchens" — خَيْرًا يَرَهُ — „Gutes tut, wird es sehen." Aus سُورَةُ الزَّلْزَلَة (99:7). ⭐ Achte auf die Endung: hier steht خَيْرًا mit Fatḥatān, also مَنْصُوب — es ist das, was getan wird, das Objekt von يَعْمَلْ. Dasselbe Wort, ein anderer Fall: das ist der Beweis, dass خَيْر ein اِسْم ist und keine Partikel.',
-    'جَزَاكَ اللهُ خَيْرًا — die Formel, mit der man sich auf Arabisch bedankt: „möge Allah dir Gutes vergelten." ⭐ Wieder خَيْرًا مَنْصُوب, und aus demselben Grund: es ist das, was vergolten wird. Du hörst das Wort in dieser Wendung öfter als in jedem Satz aus dem Buch — und es steht dort in genau der Form, die du dir merken sollst.'
+    'جَزَاكَ اللهُ خَيْرًا — die Formel, mit der man sich auf Arabisch bedankt: „möge Allah dir Gutes vergelten." ⭐ Wieder خَيْرًا مَنْصُوب, und aus demselben Grund: es ist das, was vergolten wird. Du hörst das Wort in dieser Wendung öfter als in jedem Satz aus dem Buch — und es steht dort in genau der Form, die du dir merken sollst.',
+    'Aus deiner Dua „Auch für Ehegatten“: أَنزَلْتَ إِلَيَّ مِنْ خَيْرٍ (28:24) — „was Du an Gutem zu mir herabgesandt hast“. Hier steht خَيْر ohne Vergleich: nicht „besser“, sondern „das Gute“ selbst.'
   ],
 
   'gram-mawsul-alladhi': [
