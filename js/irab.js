@@ -945,10 +945,10 @@ function endungUnsichtbar(w){
   const ohne = ohneVokale(rein).replace(/^[و]/, '');
   /* Die fuenf Nomen — auch mit angehaengtem Pronomen: أَبُوكَ ist أبو + كَ,
      und die Liste kennt nur die nackte Form. */
-  if (istFuenfNomen(rein)) return 'الأَسْمَاءُ الخَمْسَةُ (Endung ist ein Buchstabe)';
+  if (istFuenfNomen(rein)) return 'الْأَسْمَاءُ الْخَمْسَةُ (Endung ist ein Buchstabe)';
   for (const n of FUENF_NOMEN)
     if (ohne.startsWith(n) && ohne.length > n.length)
-      return 'الأَسْمَاءُ الخَمْسَةُ (Endung ist ein Buchstabe)';
+      return 'الْأَسْمَاءُ الْخَمْسَةُ (Endung ist ein Buchstabe)';
   /* Das Yāʾ des Sprechers. Die Ausnahmen sind Woerter, deren Yāʾ zum Wort
      gehoert — sie stehen ohnehin schon in INDEKLINABEL bzw. HURUF_JARR, aber
      eine Auskunft, die von der Reihenfolge der Pruefungen abhaengt, ist keine.

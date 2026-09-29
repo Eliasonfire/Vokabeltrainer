@@ -98,7 +98,8 @@ function renderStats(){
    Gemessen und unsichtbar ist so gut wie nicht gemessen, und seine
    Regelauswahl soll sich darauf stuetzen.
 
-   ⚠️ DREI Zahlen, die man nicht verwechseln darf:
+   ⚠️ DREI Zahlen, die man nicht verwechseln darf (Stand Ende Juli — seit v632
+   zaehlt renderRegelStand() sie selbst; am 29.09.2026: 103, davon 10 ausgeblendet):
      95  Regeln gibt es
      94  koennen im Uebungsmodus „Welche Regel?" ueberhaupt gefragt werden
       1  nicht: ta-marbuta-fem-01 ist `ausgeblendet` — Elias' Abbestellung vom
@@ -141,6 +142,12 @@ function renderRegelStand(){
   }
   const alle = regelZeilen();
   const geuebt = alle.filter(z => z.gestellt > 0);
+  /* ⛔ Seit v632 GEZÄHLT, nicht mehr fest eingetragen. Hier stand „94
+     abfragbare Regeln" und „das ist تاء مربوطة, die du am 29.07. abbestellt
+     hast" — der Stand von Ende Juli. Am 29.09.2026 gemessen: 103 Regeln, davon
+     10 ausgeblendet, und تَاء مَرْبُوطَة war wieder eingeschaltet (Helfer F). */
+  const abbestellt = alle.filter(z => z.abbestellt);
+  const abfragbar = alle.length - abbestellt.length;
   let liste;
   if (REGEL_SORT.art === 'nie'){
     liste = alle.filter(z => z.gestellt === 0);
@@ -155,7 +162,7 @@ function renderRegelStand(){
   if (!liste.length){
     kasten.innerHTML = '<div class="regel-hinweis">'
       + (REGEL_SORT.art === 'nie'
-        ? 'Keine Regel ist ungeübt — alle 94 abfragbaren waren schon dran.'
+        ? 'Keine Regel ist ungeübt — alle ' + abfragbar + ' abfragbaren waren schon dran.'
         : 'Noch keine Regel geübt. Der Übungsmodus <b>„Welche Regel?“</b> füllt diese Liste.')
       + '</div>';
     return;
@@ -210,14 +217,15 @@ function renderRegelStand(){
      lang gar nicht mit (852 Aufgaben); seit uebungRegelVon() auch `ziele`
      versteht, tun sie es wieder. Dass zwei Drittel offen bleiben, liegt am
      Material und steht als eigener Punkt in der To-Do. */
-  + '<div class="regel-hinweis">' + geuebt.length + ' von 94 abfragbaren Regeln geübt. '
+  + '<div class="regel-hinweis">' + geuebt.length + ' von ' + abfragbar + ' abfragbaren Regeln geübt. '
   + 'Gezählt wird jede Aufgabe, deren gefragte Stelle zu genau einer Regel gehört — '
   + 'nicht nur die aus <b>„Welche Regel?“</b>. Bei rund zwei Dritteln der Aufgaben '
   + 'ist die Stelle keiner einzelnen Regel zugeordnet; die zählen hier nicht mit.'
-  + (REGEL_SORT.art === 'nie'
-     ? ' ⛔ Eine Zeile trägt <b>abbestellt</b> statt <b>nie</b>: das ist '
-       + '<b>تاء مربوطة</b>, die du am 29.07. abbestellt hast. Sie kann gar nicht '
-       + 'gefragt werden — sie ist nicht ungeübt, sondern ausgeschaltet.'
+  + (REGEL_SORT.art === 'nie' && abbestellt.length
+     ? ' ⛔ ' + (abbestellt.length === 1 ? 'Eine Zeile trägt' : abbestellt.length + ' Zeilen tragen')
+       + ' <b>abbestellt</b> statt <b>nie</b>: '
+       + (abbestellt.length === 1 ? 'diese Regel hast du ausgeschaltet. Sie kann' : 'diese Regeln hast du ausgeschaltet. Sie können')
+       + ' gar nicht gefragt werden — nicht ungeübt, sondern abbestellt.'
      : '')
   + '</div>';
 }

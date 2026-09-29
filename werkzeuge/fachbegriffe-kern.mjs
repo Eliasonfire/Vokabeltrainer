@@ -40,17 +40,22 @@ export function taschkilLuecken(text){
       else if (new RegExp('[' + MARKE + ']').test(c) && b.length) b[b.length - 1].m += c;
     }
     b.forEach((x, i) => {
-      if (x.m) return;
-      if ('اىٱآ'.includes(x.z)) return;
+      /* ⛔ Eine Schadda allein ist kein Vokal (seit v632): شَدّة braucht شَدَّة, und
+         ein يّ/وّ ist ein doppelter Konsonant, kein Dehnungsbuchstabe. Ebenso ist
+         ي nach Kasra vor ا Konsonant (قِيَامَة). Dieselben Regeln wie luecke() in
+         pruefe-taschkil.js und dessen strenge Namensrunde. */
+      const nurSchadda = !!x.m && [...x.m].every(m => m === 'ّ');
+      if (x.m && !nurSchadda) return;
+      if (!nurSchadda && 'اىٱآ'.includes(x.z)) return;
       /* das lām des Artikels bleibt nur vor einem Sonnenbuchstaben ohne
          Zeichen — dann trägt der nächste Buchstabe die Shadda (التَّنْوِينُ).
          Vor einem Mondbuchstaben gehört ein Sukūn darauf (الْوَصْل). */
       if (i === 1 && b[0].z === 'ا' && x.z === 'ل' && b[2] && b[2].m.includes('ّ')) return;
       const vor = i > 0 ? b[i - 1].m : '';
-      if (x.z === 'و' && vor.includes('ُ')) return;
-      if (x.z === 'ي' && vor.includes('ِ')) return;
+      if (!nurSchadda && x.z === 'و' && vor.includes('ُ')) return;
+      if (!nurSchadda && x.z === 'ي' && vor.includes('ِ') && !(b[i + 1] && b[i + 1].z === 'ا')) return;
       if (i === b.length - 1) return;
-      luecken.push(wort + ': ' + x.z + ' (Buchstabe ' + (i + 1) + ') ohne Zeichen');
+      luecken.push(wort + ': ' + x.z + ' (Buchstabe ' + (i + 1) + ') ' + (nurSchadda ? 'Schadda ohne Vokal' : 'ohne Zeichen'));
     });
   }
   return luecken;

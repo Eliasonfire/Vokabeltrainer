@@ -69,13 +69,19 @@ const setzen = (auftrag, extra = []) => lauf(SETZEN, [schreib('auftrag-' + Math.
    Taschkīl-Prüfung lebt. Aufgedeckt hat es Störtest 1 unten. Danach كَسْرة —
    und am selben Abend DASSELBE noch einmal: seit gram-kasra aus den
    Wörterbüchern kam, war auch das eine Dublette, und wieder fand es Störtest 1.
-   Jetzt جُمْلة اسْمِيّة: unvollständig (auf dem ل fehlt das Zeichen), wörtlich
-   in der Regel, als Frage offen — weder Fachbegriff noch Vokabel. Wer hier
-   wieder tauscht: vorher `fachbegriffe-finden.mjs --alle` fragen, was noch
-   „frage" ist. [[stoertest_muss_wirkung_nachweisen]] */
-const UNVOLLSTAENDIG = { ...GUT, id: 'gram-t1', ar: 'جُمْلة اسْمِيّة', regel: 'jumla-ismiya-filiya-01' };
+   Dann جُمْلة اسْمِيّة — bis v632: seit dort stehen Namen UND Erklärtexte der
+   Regeln vollständig (0 Lücken im Wort), die unvollständige Schreibung steht in
+   keiner Regel mehr, und ohne Taschkīl-Prüfung wies das Werkzeug sie trotzdem ab
+   („nicht belegt") — Störtest 1 wurde rot. Jetzt الحُرُوفُ aus seiner
+   Regelsammlung (Folge-19-Karte f19-schams, Artikel-ل ohne Sukūn): wörtlich im
+   Bestand, weder Fachbegriff noch Vokabel. ⚠️ Gibt Elias die Änderungen an der
+   Regelsammlung frei (Vorschläge vom 29.09.2026), braucht es wieder einen neuen
+   Fall. Wer hier tauscht: vorher mit einer Suche wie im Scratchpad-Werkzeug
+   kette-fixtures.mjs messen, was noch unvollständig im Bestand steht.
+   [[stoertest_muss_wirkung_nachweisen]] */
+const UNVOLLSTAENDIG = { ...GUT, id: 'gram-t1', ar: 'الحُرُوفُ', regel: 'f19-schams' };
 const faelle = [
-  ['unvollständiges Taschkīl (جُمْلة اسْمِيّة)', UNVOLLSTAENDIG, /Taschkīl unvollständig/],
+  ['unvollständiges Taschkīl (الحُرُوفُ)', UNVOLLSTAENDIG, /Taschkīl unvollständig/],
   ['eine Schreibung, die so in keiner Regel steht (مُبْتَدِأ)', { ...GUT, id: 'gram-t2', ar: 'مُبْتَدِأ', regel: 'mubtada-khabar-01' }, /nicht belegt/],
   ['Dublette eines Fachbegriffs (مُضَاف)', { ...GUT, id: 'gram-t3', ar: 'مُضَاف', regel: 'mudaf-01' }, /schon Fachbegriff/],
   ['Dublette einer Vokabel aus vocab-data.js (حَرْفُ الْجَرِّ)', { ...GUT, id: 'gram-t4', ar: 'حَرْفُ الْجَرِّ', regel: 'harf-jarr-01' }, /vocab-data\.js/],
@@ -131,8 +137,42 @@ console.log('\n=== B3. Wörterbuch-Belege: zwei Quellen ja, eine nein ===');
     mnemo: 'Der kleine Strich unter dem Buchstaben, gesprochen »i« — so wie am Ende von فِي الْبَيْتِ.' };
   let r = lauf3({ aufnehmen: [KASRA] });
   pruefe(r.code === 0, 'كَسْرَة: zwei übereinstimmende Wörterbuch-Quellen — angenommen', r.code + ' ' + r.text);
-  r = lauf3({ aufnehmen: [{ ...KASRA, id: 'gram-qamar-test', ar: 'حُرُوف قَمَرِيَّة', de: 'Mondbuchstaben — das l wird gelesen', regel: 'schams-qamar-01' }] });
-  pruefe(r.code === 1 && /nicht belegt: „قَمَرِيَّة"/.test(r.text), 'قَمَرِيَّة: nur eine vollständige Quelle — abgewiesen', r.code + ' ' + r.text);
+  /* ⛔ Bis v632 prüfte hier قَمَرِيَّة „nur eine Quelle". Seit v632 steht das
+     Wort vollständig in den Erklärtexten von grammar-data.js, ist also im
+     eigenen Bestand belegt, und der Fall wurde rot, ohne dass die Regel „zwei
+     Quellen" kaputt war. Die Regel wird deshalb an einer KOPIE der Belege-Datei
+     mit einem erfundenen, nirgends vorkommenden Wort geprüft — in beide
+     Richtungen, unabhängig davon, was im Bestand steht. */
+  const W = 'قَمَرِيَّاتٌ';   // steht in keiner Datei des Bestands (gemessen 29.09.2026)
+  const belegeOrig = JSON.parse(fs.readFileSync(path.join(REPO, 'werkzeuge', 'fachbegriffe-belege.json'), 'utf8'));
+  const mitBelegen = (quellen) => {
+    const datei = schreib('belege-' + quellen.length + '.json', { ...belegeOrig, belege: { ...belegeOrig.belege, [W]: { bedeutung: 'Testwort der Prüfkette', quellen, am: '2026-09-29' } } });
+    const text = fs.readFileSync(SETZEN, 'utf8');
+    const alt = "const BELEGE_DATEI = path.join(REPO, 'werkzeuge', 'fachbegriffe-belege.json');";
+    if (!text.includes(alt)) return null;
+    const setzerKopie = path.join(path.dirname(SETZEN), '.stoer-b3-belege-' + quellen.length + '.mjs');
+    fs.writeFileSync(setzerKopie, text.replace(alt, () => 'const BELEGE_DATEI = ' + JSON.stringify(datei) + ';'), 'utf8');
+    return setzerKopie;
+  };
+  const eine = mitBelegen([{ quelle: 'arabdict', form: W }]);
+  const zwei = mitBelegen([{ quelle: 'arabdict', form: W }, { quelle: 'en.wiktionary', form: W }]);
+  try {
+    pruefe(!!eine && !!zwei, 'die Belege-Datei ist im Eintragwerkzeug auffindbar (für die Kopie)');
+    if (eine && zwei){
+      const auftragW = { aufnehmen: [{ ...KASRA, id: 'gram-qamar-test', ar: W, de: 'Testwort', regel: 'schams-qamar-01' }] };
+      const laufK = (k) => lauf(k, [schreib('auftrag-b3w-' + Math.random().toString(36).slice(2) + '.json', auftragW), '--ziel', ohneKasra, '--entscheidungen', path.join(tmp, 'e-b3w.json'), '--pruefen']);
+      r = laufK(eine);
+      pruefe(r.code === 1 && new RegExp('nicht belegt: „' + W + '"').test(r.text), 'erfundenes Wort mit nur EINER Wörterbuch-Quelle — abgewiesen', r.code + ' ' + r.text);
+      /* Angenommen wird das erfundene Wort trotzdem nicht — keine Regel nennt es
+         („erwähnt den Begriff nicht"). Geprüft wird deshalb genau die eine Frage:
+         mit zwei Quellen fällt der Grund „nicht belegt" weg. */
+      r = laufK(zwei);
+      pruefe(!new RegExp('nicht belegt: „' + W + '"').test(r.text) && /erwähnt den Begriff nicht/.test(r.text),
+        'dasselbe Wort mit ZWEI übereinstimmenden Quellen — gilt als belegt (abgewiesen nur, weil keine Regel es nennt)', r.code + ' ' + r.text);
+    }
+  } finally {
+    [eine, zwei].forEach(k => { if (k && fs.existsSync(k)) fs.unlinkSync(k); });
+  }
   r = lauf3({ aufnehmen: [{ ...KASRA, id: 'gram-kisra-test', ar: 'كِسْرَة', de: 'Stück, Krume' }] });
   pruefe(r.code === 1 && /nicht belegt/.test(r.text), 'كِسْرَة (das andere Wort): nicht belegt — abgewiesen', r.code + ' ' + r.text);
 }
@@ -191,7 +231,7 @@ try {
   if (s1){
     const k2 = schreib('fachbegriffe-2.js', fs.readFileSync(FACH, 'utf8'));
     const r = lauf(s1, [schreib('auftrag-stoer.json', { aufnehmen: [{ ...UNVOLLSTAENDIG, id: 'gram-stoer' }] }), '--ziel', k2, '--entscheidungen', path.join(tmp, 'e2.json'), '--pruefen']);
-    pruefe(r.code === 0, 'Störtest 1: ohne sie geht جُمْلة اسْمِيّة durch — die Abweisung in B hängt an ihr', r.code + ' ' + r.text);
+    pruefe(r.code === 0, 'Störtest 1: ohne sie geht الحُرُوفُ durch — die Abweisung in B hängt an ihr', r.code + ' ' + r.text);
   }
   const s3 = stoer(SETZEN, 'setzen-ohne-tausch', 'try { tausch = buchDublette({ id: a.id, ar, de: String(a.de), chapter: \'personal\' }); }', 'try { tausch = null; }');
   pruefe(!!s3, 'Störtest 3: die Tausch-Prüfung im Eintragwerkzeug ist auffindbar');
