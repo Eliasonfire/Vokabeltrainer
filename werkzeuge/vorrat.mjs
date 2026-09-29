@@ -311,10 +311,20 @@ function auswendigSchreiben(text){
   try { roh = JSON.parse(text); } catch (e) { return null; }
   const hol = (k) => { try { return JSON.parse((roh.daten && roh.daten[k]) || '{}'); }
                        catch (e) { return {}; } };
-  const suren = Object.keys(hol('vt_hifz')).filter(k => hol('vt_hifz')[k]).map(Number)
+  /* ⛔⛔ NUR `an === true` IST EIN HAKEN (30.09.2026). Ein Eintrag ist ein
+     Objekt {an, zeit}; nimmt er einen Haken zurueck, bleibt er mit an:false
+     stehen. Hier stand `.filter(k => hifz[k])` — ein Objekt ist immer wahr, also
+     zaehlte jeder zurueckgenommene Haken mit: 31 Suren und 14 Verse statt seiner
+     17 Suren und 2:255. Er selbst: „ich habe insgesamt 17 suren als auswendig
+     markiert und in sure 2 eine ayah (ayatul kursi) woher sind die anderen? kann
+     gar nicht sein". Dieselbe Falle wie am 15.09.2026 beim Juz-Stand in der App.
+     Ein altes `true` (vor den Zeitstempeln) zaehlt weiter. */
+  const gesetzt = v => v === true || (v && typeof v === 'object' && v.an === true);
+  const hifzRoh = hol('vt_hifz');
+  const suren = Object.keys(hifzRoh).filter(k => gesetzt(hifzRoh[k])).map(Number)
     .filter(n => n >= 1 && n <= 114).sort((a, b) => a - b);
   const verseRoh = hol('vt_hifzVerse');
-  const verse = Object.keys(verseRoh).filter(k => verseRoh[k]).sort();
+  const verse = Object.keys(verseRoh).filter(k => gesetzt(verseRoh[k])).sort();
   /* ⛔ Ein leerer Abzug wird NICHT geschrieben. Er saehe aus wie „er kann
      nichts auswendig" und liesse jede Koranstelle beanstanden — der alte
      Stand ist dann der bessere. [[leere_liste_ist_keine_messung]] */
