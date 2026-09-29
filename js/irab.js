@@ -1484,7 +1484,14 @@ function analysiereSatz(satz){
       if (zumMudaf){ rolle = 'نَعْت (zum مُضَاف davor)'; erwartet = zumMudaf.erwartet; }
     } else if (letzterKasus && letzteBestimmtheit && istBestimmt(wort) && !nachKomma
                && !(imVerbalsatz && gelesen && gelesen.kasus
-                    && gelesen.kasus !== letzterKasus)){
+                    && gelesen.kasus !== letzterKasus)
+               && !(/^و[َ]?/.test(wort) && !LEXIKON_hat(wort) && !waGehoertZumWort(wort))){
+      /* ⛔ 30.09.2026: die letzte Bedingung ist neu. Ein نَعْت traegt nie ein
+         angeschriebenes وَ — فِي الْبَيْتِ وَالْمَسْجِدِ und ذَهَبَ الْوَلَدُ وَالْبِنْتُ
+         galten als „نَعْت (richtet sich nach dem Wort davor)". Mit وَ vorn ist es
+         ein Anschluss (Zweig darunter, ohne Kasusaussage). Ein bekanntes
+         ADJEKTIV mit وَ (قَدِيمٌ وَثَقِيلٌ) faengt der Zweig darueber weiter ab.
+         Gemessen: in seinen 560 Saetzen kam der Fall nicht vor (0 Aenderungen). */
       /* ⛔ 21.08.2026: die zweite Bedingung ist neu. Ohne sie galt الْمَالَ in
          فَضَلَ الْعِلْمُ الْمَالَ als نَعْت zu الْعِلْمُ und haette raf verlangt —
          obwohl sichtbar Fatha dasteht. Ein نَعْت stimmt aber im KASUS mit
