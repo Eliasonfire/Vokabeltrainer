@@ -742,6 +742,135 @@ let regelWoerter = 0, regelAusgenommen = 0;
   });
 });
 
+/* ---------- ⭐⭐ Regelnamen streng, seit 29.09.2026 (v630) ----------
+ *
+ * Elias um 05:30:42, mit einem Bild vom Satz-Modus (Antwortknöpfe mit den
+ * Regelnamen تَقْديم · مُبْتَدَأ وخَبَر · بَدَل · جُمْلة اسْمِيّة / جُمْلة فِعْلِيّة):
+ *
+ *   „hier fehlen jede menge taschkil, die sollten hinzugefügt werden. guck wörterbuch"
+ *
+ * Die Runde darüber meldet nur Wörter GANZ ohne Zeichen — für die Erklärtexte
+ * bewusst locker (Begründung dort). Der NAME ist aber das, was er als
+ * Antwortknopf, als „Warum?" und als Kartentitel sieht, und dort fehlten
+ * Zeichen mitten im Wort, ohne dass irgendetwas rot wurde. Gemessen vor der
+ * Änderung: 59 von 153 Wörtern in 39 Regeln, 22 davon mit Lücke im Wort.
+ * Seitdem wird der Name so streng geprüft wie eine Vokabel, und eine Lücke im
+ * Wort macht den Lauf rot.
+ *
+ * ⚠️ Zwei Unterschiede zu luecke():
+ *   1. Schadda ohne Vokal ist immer eine Lücke. luecke() lässt يّ nach Kasra als
+ *      langen Vokal durch — die Schadda macht es aber zum doppelten Konsonanten
+ *      (-iyya), der einen eigenen Vokal braucht. So rutschten اسْمِيّة und
+ *      شَمْسِيّة durch. luecke() selbst bleibt, wie es ist: die Vokabelrunde ist
+ *      an ihren Zahlen geeicht (offener Punkt in der To-Do, 29.09.2026).
+ *   2. Das ل des Artikels braucht vor einem Mondbuchstaben sein Sukūn (الْجَرِّ);
+ *      vor einem Sonnenbuchstaben trägt der Buchstabe danach die Schadda (اَلشَّمْسُ).
+ *
+ * „Endung fehlt" wird GEZÄHLT, nicht gemeldet: für تَاء, أَلِف, مُزْدَوِجَة und
+ * كَسْرَة steht die Form mit Endung in keiner Quelle, sie zu setzen wäre erfunden
+ * (E.1). Gesetzt wurden Endungen nur, wo die Form mit Endung in seinem Material
+ * oder bei arabdict steht (Elias 16.09.2026: Fachbegriffe mit Endung).
+ */
+const NAME_OFFEN = new Map([
+  /* Nur EINE Quelle schreibt sie vollständig: en.wiktionary. arabdict kennt
+     اسمية gar nicht und liefert bei قمرية ein anderes Wort (قُمْرِيَّة,
+     „Turteltaube"), ar.wiktionary hat keinen Eintrag (29.09.2026). Nach
+     شَمْسِيَّة gebildet wäre selbst vokalisiert. Frage an Elias seit 11.09.2026. */
+  [String.fromCharCode(0x627, 0x633, 0x645, 0x64A, 0x629), 'nur en.wiktionary schreibt es vollständig — Frage an Elias'],
+  [String.fromCharCode(0x642, 0x645, 0x631, 0x64A, 0x629), 'nur en.wiktionary schreibt es vollständig — Frage an Elias'],
+]);
+/* Alle Klassen aus Codepoints gebaut, nicht kopiert. [[zeichenklasse_nie_sichtbar_kopieren]] */
+const zc = (...c) => String.fromCharCode(...c);
+const TRENNER_NAME = new RegExp('([\\s.' + zc(0x60C, 0x61F) + '!' + zc(0xAB, 0xBB) + ':' + zc(0x61B)
+  + '/+=()\\[\\],;"\'' + zc(0x201E, 0x201C, 0x2039, 0x203A, 0x2013, 0x2014) + '-]+)');
+const NAME_ZEICHEN = new RegExp('[' + zc(0x64B) + '-' + zc(0x652, 0x670) + ']', 'g');
+const NAME_WAW_VORNE = new RegExp('^' + zc(0x648) + '(?=...)');
+
+function nameLuecke(w, i, mitte){
+  const c = w[i];
+  if (!KONSONANT.test(c) || OHNE_HARAKA.has(c)) return null;
+  let j = i + 1, h = false, s = false;
+  while (j < w.length && (HARAKA.test(w[j]) || w[j] === SCHADDA)){ if (w[j] === SCHADDA) s = true; else h = true; j++; }
+  if (h || j >= w.length) return null;               /* die Endung zaehlt extra */
+  if (s) return 'Schadda ohne Vokal';
+  const erwartet = VOKALTRAEGER[c];
+  if (erwartet){
+    let k = i - 1;
+    while (k >= 0 && (HARAKA.test(w[k]) || w[k] === SCHADDA)) k--;
+    if (k >= 0 && w.slice(k + 1, i).includes(erwartet)) return null;
+  }
+  const alif = String.fromCharCode(0x627), lam = String.fromCharCode(0x644);
+  const al = w[0] === alif ? (w[1] === lam ? 1 : (w[1] === String.fromCharCode(0x64E) && w[2] === lam ? 2 : -1)) : -1;
+  if (i === 0 && al > 0) return null;                  /* Alif des Artikels */
+  if (i === al){
+    if (w[al + 1] === alif) return null;                /* vor Hamzat al-wasl */
+    for (let m = al + 2; m < w.length && (HARAKA.test(w[m]) || w[m] === SCHADDA); m++)
+      if (w[m] === SCHADDA) return null;                /* Sonnenbuchstabe */
+    return 'Sukun am Lam des Artikels fehlt';
+  }
+  if (i === 0 && c === alif) return mitte ? null : 'Hamzat al-wasl am Anfang ohne Kasra';
+  return 'Haraka fehlt';
+}
+
+function regelnameWoerter(text){
+  const aus = [];
+  let vorigesArabisch = false;
+  for (const teil of String(text || '').split(TRENNER_NAME)){
+    if (!teil) continue;
+    if (TRENNER_NAME.test(teil)){ if (/\S/.test(teil)) vorigesArabisch = false; continue; }
+    const arabisch = KONSONANT.test(teil);
+    if (arabisch) aus.push({ wort: teil, mitte: vorigesArabisch, zitat: teil.includes(TATWEEL) });
+    vorigesArabisch = arabisch;
+  }
+  return aus;
+}
+
+function pruefeRegelnamen(regeln){
+  const befunde = [], offen = [];
+  let woerter = 0, ohneEndung = 0;
+  for (const r of regeln || []){
+    for (const { wort, mitte, zitat } of regelnameWoerter(r.name)){
+      if (zitat || REGEL_AUSNAHMEN.some(a => a.trifft(wort, r.name))) continue;
+      woerter++;
+      const letzter = wort[wort.length - 1];
+      if (KONSONANT.test(letzter) && !OHNE_HARAKA.has(letzter) && !VOKALTRAEGER[letzter]) ohneEndung++;
+      for (let i = 0; i < wort.length; i++){
+        const grund = nameLuecke(wort, i, mitte);
+        if (!grund) continue;
+        const kern = wort.normalize('NFC').replace(NAME_ZEICHEN, '').replace(NAME_WAW_VORNE, '');
+        (NAME_OFFEN.has(kern) ? offen : befunde).push({ id: r.id, wort, stelle: i, grund, offen: NAME_OFFEN.get(kern) });
+        break;
+      }
+    }
+  }
+  return { befunde, offen, woerter, ohneEndung };
+}
+const namenStreng = pruefeRegelnamen(GRAMMAR_RULES);
+
+/* Eichung der strengen Namensrunde — beide Richtungen, Arabisch aus Codepoints. */
+function eicheRegelnamen(){
+  const z = (...c) => String.fromCharCode(...c);
+  const faelle = [
+    ['ل ohne Fatha vor ة (جُمْلة) ist Lücke', z(0x62C, 0x64F, 0x645, 0x652, 0x644, 0x629), false, true],
+    ['جُمْلَة ist vollständig', z(0x62C, 0x64F, 0x645, 0x652, 0x644, 0x64E, 0x629), false, false],
+    ['يّ ohne Vokal (شَمْسِيّة) ist Lücke', z(0x634, 0x64E, 0x645, 0x652, 0x633, 0x650, 0x64A, 0x651, 0x629), false, true],
+    ['شَمْسِيَّة ist vollständig', z(0x634, 0x64E, 0x645, 0x652, 0x633, 0x650, 0x64A, 0x64E, 0x651, 0x629), false, false],
+    ['Artikel-ل ohne Sukun vor Mondbuchstabe (الجَرِّ) ist Lücke', z(0x627, 0x644, 0x62C, 0x64E, 0x631, 0x650, 0x651), false, true],
+    ['الْجَرِّ ist vollständig', z(0x627, 0x644, 0x652, 0x62C, 0x64E, 0x631, 0x650, 0x651), false, false],
+    ['Artikel vor Sonnenbuchstabe (اَلشَّمْسُ) ist vollständig', z(0x627, 0x64E, 0x644, 0x634, 0x64E, 0x651, 0x645, 0x652, 0x633, 0x64F), false, false],
+    ['Hamzat al-wasl mitten in der Wortgruppe (اسْمِيَّة) ist vollständig', z(0x627, 0x633, 0x652, 0x645, 0x650, 0x64A, 0x64E, 0x651, 0x629), true, false],
+  ];
+  let kaputt = 0;
+  console.log('\n=== Eichung (Regelnamen streng) ===');
+  for (const [was, w, mitte, soll] of faelle){
+    let ist = false;
+    for (let i = 0; i < w.length; i++) if (nameLuecke(w, i, mitte)){ ist = true; break; }
+    if (ist !== soll){ kaputt++; console.log('  ⛔  ' + was + ' — ergab ' + ist); }
+    else console.log('  ok   ' + was);
+  }
+  return kaputt;
+}
+
 /* Aus Codepoints gebaut, nicht kopiert: gleiches Schriftbild bei anderen
    Codepoints waere hier nicht zu sehen und wuerde die Pruefung still
    verfehlen. [[zeichenklasse_nie_sichtbar_kopieren]] */
@@ -1004,6 +1133,13 @@ if (regelBefunde.length){
   console.log('     Bestand nachschlagen: vocab-data.js und lehrbuch-saetze.js');
   console.log('     kennen die meisten dieser Woerter voll vokalisiert.');
 }
+console.log(`Dazu die Regelnamen streng (seit v630): ${namenStreng.woerter} Woerter, ` +
+            `${namenStreng.befunde.length} mit Luecke im Wort, ${namenStreng.offen.length} offen (Frage an Elias), ` +
+            `${namenStreng.ohneEndung} ohne Endung (gezaehlt, kein Befund — ohne Beleg nicht zu setzen).`);
+for (const b of namenStreng.befunde)
+  console.log(`  ⛔ ${b.id}: ${b.wort}  Stelle ${b.stelle} — ${b.grund}`);
+for (const b of namenStreng.offen)
+  console.log(`  offen  ${b.id}: ${b.wort} — ${b.offen}`);
 if (!buchDateien.length){
   console.log('Die acht data/vokabeln-*.js liegen hier nicht — auf Elias\' Geraet' +
               ' kommen von dort alle Kapitel ab 10 und sieben weitere Lehrwerke.' +
@@ -1042,12 +1178,12 @@ function zeigeBuchBericht(){
               '\n   sind "Haraka fehlt" und die Hamzat-al-wasl-Gruppe.');
 }
 
-const waslEichung = eicheWaslGruppen() + eicheRegelAusnahmen();
+const waslEichung = eicheWaslGruppen() + eicheRegelAusnahmen() + eicheRegelnamen();
 if (!befunde.length){
   console.log('\nKeine Luecke in den Repo-Dateien — dort ist alles vokalisiert.' +
     (buchBefunde.length ? ` (Die Buchdateien haben ${buchBefunde.length}.)` : ''));
   zeigeBuchBericht();
-  process.exit(waslEichung ? 1 : 0);
+  process.exit(waslEichung || namenStreng.befunde.length ? 1 : 0);
 }
 
 /* Nach Gruppe zusammenfassen, damit ein systematischer Fall nicht als
@@ -1300,4 +1436,4 @@ console.log('⚠️  Nicht selbst vokalisieren: Beleg aus dem Madina-Schluessel 
 console.log('   dem Lehrbuch holen, sonst Elias vorlegen (E.1 gilt auch fuer Harakat).');
 
 zeigeBuchBericht();
-process.exit(befunde.length > ohneMangel || waslEichung ? 1 : 0);
+process.exit(befunde.length > ohneMangel || waslEichung || namenStreng.befunde.length ? 1 : 0);
