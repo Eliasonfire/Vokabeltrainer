@@ -528,6 +528,48 @@
     "f22-245": {
       "urteil": "weg",
       "grund": "Vorlesen einzelner Woerter aus dem Lesetext (julus, ghurfatu l-julus, arika) und die Aufforderung, den ganzen Text zu uebersetzen. Kein Sprachinhalt."
+    },
+
+    "f23-2745": {
+      "urteil": "weg",
+      "grund": "Anleitung zu den Uebungen am Kapitelende (26:52-28:41): Woerter unter Oberbegriffe sortieren ('Etheth heisst Moebel', dazu Orte, Verben, Fragepartikel, Zahlen; die Ordnungszahlen 'koennt ihr skippen'), in einer Vierergruppe das fremde Wort finden ('Arzt, Lehrer, Ingenieur, Vorhang'), Verben mit Saetzen verbinden, Textverstaendnis richtig oder falsch. Davor (26:19) Hausaufgabe und Zwischenpruefung. 'Verb' und 'Partikel' sind hier nur Namen von Wortgruppen in der Uebung. Keine Regel."
+    },
+    "f23-1745": {
+      "urteil": "weg",
+      "grund": "Landeskunde und Wortbedeutung: in muslimischen Laendern hat nicht jede Moschee das Freitagsgebet, 'nur wenn eine Moschee ... Meschid heisst, heisst es nicht, dass auch eine Khutba ist zur Jumu'ah'. Deshalb sage man 'ich gehe zur Jami'ah. nicht in die Uni, sondern ... ich gehe in die Moschee, in der man auch das Vatersgebet beten kann' (Whisper hoert 'Vatersgebet' fuer Freitagsgebet). Gemeint ist offenbar jami, die grosse Freitagsmoschee, im Unterschied zu jamia, der Universitaet. Danach die Wortliste zu Dialog 3 (kitab, sahifa, tilfaz, yushahidu, sabah, kabir, mubakkiran und mutaakhkhiran) und die Fragen dazu (man yastayqizu mutaakhkhiran? usw.). Wortkunde und Vokabeln, keine Regel."
+    },
+    "f23-1445": {
+      "urteil": "schon-regel",
+      "grund": "Schuelerfrage 'Inder oder Fee? ... Wann benutzt man Fee? Wann benutzt man Inder?' (13:36-13:49). Der Lehrer: ''inda' hat mehrere Bedeutungen. 'inda' kann man als Zeitangabe nutzen oder als Ortsangabe' (13:56) — fast wortgleich mit Folge 14 @ 17:15 ('inda kann sowohl Ortsangabe sein, als auch Zeitangabe'), die als Regel im Bestand steht. Dazu: ''fi' heisst nicht nur 'in'. Es gibt extra eine ganze Liste von Huruf und was ihre Bedeutungen sind' (14:05). Eine zweite Bedeutung von fi nennt er nicht; die Bedeutungsliste der Huruf al-jarr steht im Bestand und hat von dir am 26.08. ein 'das ist gut' bekommen. Danach Dialog 3 von Kapitel 4 mit Vokabeln (mubakkiran frueh, mutaakhkhiran spaet, tilfaz).",
+      "quelle": "inda-ort-und-zeit-01 · hurufu-jarr-bedeutungen-01"
+    },
+    "f23-615": {
+      "urteil": "weg",
+      "grund": "Organisation und Lehrweise. Auf die Unsicherheit eines Schuelers mit 'Ich, Du, Ihr, Sie' antwortet der Lehrer (6:09): 'Ja, ja, das kommt nicht mehr noch, sobald wir lernen, wie man in der Gegenwart konjugiert. Was man jetzt Fehler macht, ist kein Problem.' (Whisper-Wortlaut; gemeint ist: das kommt noch.) Dann der Vergleich der Buecher: Bayna Yadayk sei ein Buch, 'in dem man einfach ins Meer geworfen wird', man lerne durch Anwendung, mit dem Medina-Buch durch Verstehen. Keine Sprachregel. Der Satz zur Gegenwart ist aber der Grund, warum aus f23-1045 keine Regel wird."
+    },
+    "f23-415": {
+      "urteil": "weg",
+      "grund": "Antworten auf die Dialogfragen werden reihum vorgelesen und verbessert (Uebungsabfrage, Lehreranteil 0,21, Whisper stueckhaft). Verstaendlich sind 'Kaife yadha'buu bi'lhaafilati' mit der Uebersetzung 'er geht mit dem Bus' (bi = mit steht im Bestand als harf-jarr-bi-01) und zur Frage 'Einatussalli' (ayna tusalli, wo betest du?) der Rat 'Vielbeit kannst du einfach sagen. Weil vielbeit ist schon sozusagen zu Hause' (Whisper hoert 'Vielbeit' fuer fil-bait). Das ist ein Uebersetzungshinweis, keine Regel. Knapp vor dem Fenster (2:58-3:07) verbessert der Lehrer eine Aussprache: 'Mata, nicht Mata. Weil Mata waere er starb.' Gemeint ist vermutlich mata (wann) gegen maata (er starb); Whisper schreibt beide gleich, und es betrifft nur dieses eine Wort."
+    },
+    "f23-815": {
+      "urteil": "weg",
+      "grund": "Uebungsabfrage, wer im Lesetext was macht ('Man yagsfilu al malabisa ...'). Der Lehrer verbessert den Inhalt der Antworten, nicht die Sprache: 'Also eigentlich liest der Opa ja Qur'an. Und die Oma, al-Jadda tu, waescht das Geschirr', die Kleidung waescht Ahmad. Davor Organisatorisches (7:37-7:48): kurze oder lange Antworten, 'ich wollte nur lange Antworten haben'. Keine Regel."
+    },
+    "f23-2415": {
+      "urteil": "weg",
+      "grund": "Der Whisper-Text ist zerfallen ('Die Fuelle ist in der Naehe der Naehe. Das ist wichtig.'); erkennbar ist nur die Uebungsfrage 'madha yafalu Ahmad?', die laut Sprecherspur du beantwortest. 'wichtig' ist hier ein Stichworttreffer, kein Merksatz. Kurz vor dem Fenster (22:56-23:15) verbessert der Lehrer eine Antwort: 'ich wollte Al Jaddu haben, nicht Al Jaddu' (Whisper schreibt beide gleich), 'Al Jaddu ist der Opa ... Ich hab dich aber nach der Oma gefragt'. Die weibliche Form mit Ta marbuta steht als Regel im Bestand (ta-marbuta-fem-01). Nichts belegfaehig."
+    },
+    "f23-1045": {
+      "urteil": "weg",
+      "grund": "Uebungsabfrage, wer was tun wird, mit der Zukunft ('Man ssayagsilu atbaqa' — 'aljaddatu ssatagsilu'; 'Man ssayakwi ... balabisa'). Die Begruendung 'Weil Fatim ist eine Frau' (10:28) sagt laut Sprecherspur ein Schueler; der Lehrer erklaert an dieser Stelle nichts (Lehreranteil 0,07). Danach bist du dran ('Dann macht Inshallah Elias weiter', 10:42) und verbesserst dich laut Sprecherspur selbst von 'yagsilu' zu 'ssatagsilu' (11:02), dazu die Frage, wie es heisst, 'wenn man das weiblich machen will' (11:17). Die Gegenwartsformen hat der Lehrer um 6:09 ausdruecklich vertagt: 'das kommt nicht mehr noch, sobald wir lernen, wie man in der Gegenwart konjugiert. Was man jetzt Fehler macht, ist kein Problem.' (Whisper-Wortlaut; gemeint ist: das kommt noch.) Gedruckt steht die Gegenwart im Schluessel Band 2, Lektion 10 (PDF-S. 48: 'Im mudari wird einer dieser vier Buchstaben vor das Verb gesetzt'), das weibliche Verb bei einem weiblichen Handelnden in Lektion 17 (PDF-S. 78: 'muss das Verb feminin sein'). Im Bestand steht nur die weibliche Vergangenheit (hiya dhahabat in verb-madi-endungen-01); die Zukunft mit sa- wartet bei f22-2445 auf dein Ja. Kein Lehrsatz des Lehrers."
+    },
+    "f23-1915": {
+      "urteil": "weg",
+      "grund": "Ende der Fragen zu Dialog 3 ('Men yusallil jumu'ata fil mesjidil kabir' — wer betet das Freitagsgebet in der grossen Moschee), dann 'dies bitte als Huzakrab machen' (gemeint: Hausaufgabe) und ein Lernrat: die Zusammenfassung, die jedes Kapitel hat, 'immer wieder anschauen ... ueben, im Kopf uebersetzen, einfach mal laut lesen'. Danach wird der Lesetext zum Uebersetzen verteilt. Organisation und Lerntipp, keine Regel."
+    },
+    "f23-2045": {
+      "urteil": "weg",
+      "grund": "Schueler uebersetzen den Lesetext von Kapitel 4 (Lehreranteil 0,08): die Familie von Ahmad schlaeft am freien Tag nicht nach dem Gebet, Taha saugt das Wohnzimmer, Fatima das Schlafzimmer, Ahmad waescht die Kleidung, Latifa buegelt sie, die Oma waescht das Geschirr, der Opa liest Koran. Die Selbstkorrektur 'seine Kleidung ... Nicht seine ... Die Kleidung' ist Genauigkeit beim Uebersetzen. Keine Regel."
     }
   }
 }
