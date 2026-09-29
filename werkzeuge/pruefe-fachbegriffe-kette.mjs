@@ -59,7 +59,10 @@ console.log('\n=== B. fachbegriffe-setzen.mjs weist ab, was nie durchgehen darf 
 const kopie = schreib('fachbegriffe.js', fs.readFileSync(FACH, 'utf8'));
 const entsch = path.join(tmp, 'entscheidungen.json');
 const GUT = { id: 'gram-nakira-test', ar: 'نَكِرَة', de: 'unbestimmtes Nomen', type: 'noun', regel: 'nakira-marifa-01',
-  mnemo: 'Das Gegenteil von مَعْرِفَة: ein Wort wie بَيْتٌ ohne Artikel ist unbestimmt — mit Artikel wird daraus اَلْبَيْتُ.' };
+  mnemo: 'Das Gegenteil von مَعْرِفَةٌ: ein Wort wie بَيْتٌ ohne Artikel ist unbestimmt — mit Artikel wird daraus اَلْبَيْتُ.' };
+/* ⚠️ Seit v630 (29.09.2026) mit Endung: der Regelname nakira-marifa-01 trägt jetzt
+   „نَكِرَةٌ / مَعْرِفَةٌ", und die endungslose Form stand NUR dort. Mit ihr schlug die
+   Eselsbrücken-Prüfung an, und alle Fälle, die GUT erben, fielen aus dem falschen Grund. */
 const setzen = (auftrag, extra = []) => lauf(SETZEN, [schreib('auftrag-' + Math.random().toString(36).slice(2) + '.json', auftrag), '--ziel', kopie, '--entscheidungen', entsch, ...extra]);
 /* ⚠️ Der erste Fall hieß anfangs تَنْوين. Seit gram-tanwin in der App steht,
    wurde er AUCH als Dublette abgewiesen — der Fall war grün, egal ob die
