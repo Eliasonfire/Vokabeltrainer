@@ -542,7 +542,10 @@ let lexikonSchwer = 0;
      Lexikon geprüft: die Regel liest die Schrift, nicht den Wortschatz — sonst
      hinge die Zerlegung an seiner Buchauswahl. Zwei Gegenproben halten die
      Regeln eng. Störtest: mit der irab.js von vor dieser Änderung sind die
-     Fälle 1, 4 und 5 falsch (gemessen 25.09.2026, scratchpad eich-c-probe.mjs).
+     Fälle 4, 7 und 8 falsch (gemessen 25.09.2026, scratchpad eich-c-probe.mjs;
+     damals 1, 4 und 5 — seit dem 30.09. stehen drei Fälle davor). Die Fälle 1
+     und 2 (وَ + Artikel ist kein نَعْت) sind mit der irab.js vor dem 30.09.2026
+     beide „نَعْت" (gemessen), Fall 3 ist ihre Gegenprobe.
      Arabisch aus Codepoints. [[zeichenklasse_nie_sichtbar_kopieren]] */
   {
     const z = (...c) => String.fromCharCode(...c);
@@ -556,8 +559,24 @@ let lexikonSchwer = 0;
     const WALIDI     = z(0x0648,0x064E,0x0627,0x0644,0x0650,0x062F,0x0650,0x064A);
     const ABDA       = z(0x0639,0x064E,0x0628,0x0652,0x062F,0x064E);
     const ALLAHI     = z(0x0627,0x0644,0x0644,0x0651,0x064E,0x0647,0x0650);
+    /* 30.09.2026: وَ + Nomen mit اَلْ hinter einem bestimmten Nomen ist kein نَعْت. */
+    const ALKITABU   = z(0x0627,0x0644,0x0652,0x0643,0x0650,0x062A,0x064E,0x0627,0x0628,0x064F);
+    const FI         = z(0x0641,0x0650,0x064A);
+    const ALBAYTI    = z(0x0627,0x0644,0x0652,0x0628,0x064E,0x064A,0x0652,0x062A,0x0650);
+    const WALMASJIDI = z(0x0648,0x064E,0x0627,0x0644,0x0652,0x0645,0x064E,0x0633,0x0652,0x062C,0x0650,0x062F,0x0650);
+    const DHAHABA    = z(0x0630,0x064E,0x0647,0x064E,0x0628,0x064E);
+    const ALWALADU   = z(0x0627,0x0644,0x0652,0x0648,0x064E,0x0644,0x064E,0x062F,0x064F);
+    const WALBINTU   = z(0x0648,0x064E,0x0627,0x0644,0x0652,0x0628,0x0650,0x0646,0x0652,0x062A,0x064F);
+    const ALMADINATI = z(0x0627,0x0644,0x0652,0x0645,0x064E,0x062F,0x0650,0x064A,0x0646,0x064E,0x0629,0x0650);
+    const ALMUNAWWARATI = z(0x0627,0x0644,0x0652,0x0645,0x064F,0x0646,0x064E,0x0648,0x0651,0x064E,0x0631,0x064E,0x0629,0x0650);
     const s = (...w) => w.join(' ') + '.';
     const EICH_WAW = [
+      [s(ALKITABU, FI, ALBAYTI, WALMASJIDI), r => /^Anschluss mit/.test(r[3].rolle) && r[3].erwartet === null,
+        'fi l-bayti wa-l-masjidi — waw + Artikel hinter einem Genitiv ist Anschluss, kein نَعْت (Befund 25.09.2026)'],
+      [s(DHAHABA, ALWALADU, WALBINTU), r => /^Anschluss mit/.test(r[2].rolle),
+        'dhahaba l-waladu wa-l-bintu — auch hinter dem فَاعِل kein نَعْت'],
+      [s(FI, ALMADINATI, ALMUNAWWARATI), r => /^نَعْت/.test(r[2].rolle),
+        'Gegenprobe: al-madinati l-munawwarati bleibt نَعْت (zwei bestimmte Nomen ohne waw)'],
       [s(HADHA, WALIDUHU), r => r[1].erwartet === 'raf' && r[1].stimmt === true,
         'hadha waliduhu (BY1 Buchseite 38) — das waw gehoert zum Wort: خَبَر im Nominativ, kein Anschluss'],
       [s(HADHA, MUDARRISUN, WASMUHU, KHALIDUN), r => r[2].erwartet === null,
