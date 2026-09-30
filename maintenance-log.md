@@ -6936,3 +6936,155 @@ kann diese Routine nicht, und jede gehört unter **ihre** Adresse:
    Satzmodus-Aufgaben** (أُولَئِكَ 1, هَؤُلَاءِ 2, أَيٌّ 2, مَتَى 4 bei Deckel
    15) — dasselbe Bild bei نَحْنُ und هُمْ aus der Schwachliste. Belegte Sätze
    für die Fernzeiger und Fragewörter wären der zielgenaueste nächste Schritt.
+
+## 2026-09-30 14:46 – Neue Kapitel (bayna-yadayk-1 Kapitel 5)
+
+Auftrag der stündlichen Prüfung vom 30.09., 14:09 (Versuch 2 von 2; der erste
+Versuch um 10:09 ist ohne Abschluss geblieben). Elias hat Kapitel 5 am 30.09.
+um **01:01** in seiner App angehakt — 13 Stunden vor dem Auftrag, die
+Haltezeit von einer Stunde also weit überschritten.
+
+**Schritt 0** – `git pull` „Already up to date", Arbeitsmarke gesetzt (das Repo
+war frei), `pruefe-volles-programm.mjs` Exit 0: Quelle, Kopie `/volles-programm`
+und Wartungs-Prompt deckungsgleich, jeder der 13 Punkte hat ein Werkzeug.
+
+**Schritt 1** – `get_unlocked_chapters` geholt und unverändert nach
+`.stand-roots-byd1-k5.json` geschrieben, dann `vorrat.mjs --stand … --app auto`:
+
+- App-Auswahl (KV, Stand 30.9.2026, 01:01:27): madina-1 bis 12 | bayna-yadayk-1 bis 5
+- `FREIGESCHALTET` nachgezogen: bayna-yadayk-1 `[1,2,3,4]` → `[1,2,3,4,5]`
+- ⭐ **Lernstand automatisch mitgewachsen: bayna-yadayk-1 Angabe 4 → 5 (+1, im Rahmen)**
+- ⚠️ Nicht zugemacht (gehört in den Bericht): madina-2 Kapitel 1–24 stehen in
+  `js/kern.js`, aber weder arabicroots noch seine Auswahl nennen sie — **behalten**,
+  das Schließen wäre seine Entscheidung (`--auch-schliessen`).
+- ⛔ **Bayna Yadayk 1 Kapitel 5 ist bei arabicroots (noch) NICHT freigeschaltet**
+  — arabicroots führt 1–4, Elias hat 5 selbst angehakt. Das ist kein Fehler
+  (seine Auswahl ist maßgeblich), hat aber den Störtest S2 von
+  `pruefe-buecher-aktuell.mjs` zu Fall gebracht, siehe unten.
+
+**Schritt 2** – `vorrat.mjs --nur-kapitel bayna-yadayk-1:5 --auftrag` Exit 2:
+**17 Wörter, 0 vollständig** — 51 fehlende Eselsbrücken, 17 fehlende
+Beispielsätze, 0 fehlende Markierungen, dazu 2× `pl`, 1× `root`, 1× `femSg`.
+
+**Schritt 3 – das volle Programm**
+
+| Punkt | Ergebnis | Nenner |
+|---|---|---|
+| A6 Eselsbrücken | **51 von 51** geschrieben | alle 17 Wörter haben jetzt drei |
+| A9 Beispielsätze | **16 von 17** | كِيلُو bewusst ohne, Begründung unten |
+| A10 Markierungen | **43** an den 16 Sätzen | 2–3 je Satz |
+| A3 `pl` | **0 von 2** | لَحْمٌ und عِنَبٌ — Frage an Elias |
+| A2 `root` · A4 `femSg` | **0 von 2** | beide bei كِيلُو — Frage an Elias |
+| A1, A5, A7, A8, A11, A12, A13 | vollständig aus dem Abzug | keine Lücke gemeldet |
+
+⛔ **Kein Zeichen ist von Hand vokalisiert.** Jede arabische Form stammt aus
+`data/vokabeln-bayna-yadayk-1.js`, `data/vokabeln-madina-1.js`,
+`lehrbuch-saetze.js` (الْأُسْرَةِ) oder `data/duas.json`. Daran setzen nur die
+zwei Umformungen an, die `data/beispielsaetze.js` überall benutzt: unbestimmt →
+bestimmt und das erste Wort einer Iḍāfa.
+
+**Belegte Anker** (A11 / Rangfolge 2):
+
+- **106:4** `أَطْعَمَهُم مِّن جُوعٍ` für جَوْعَانُ — Sure 106 steht in seinen
+  Haken (`data/auswendig.json`), mit `vers.mjs` belegt.
+- **Dua 17** (beim Verlassen des Hauses) `لاَ حَوْلَ وَلاَ قُوَّةَ` für حَوَّلَ
+  und **Dua 4** (nach dem Adhān) `الْوَسِيلَةَ وَالْفَضِيلَةَ` für فَضَّلَ —
+  beide wörtlich, von `pruefe-eselsbruecken.js` Abschnitt 9 geprüft.
+- ⛔ **Verworfen:** `anker.mjs --wort لحم` meldete 1:2 — das ist الْحَمْدُ
+  (Wurzel ح م د), ein Skeletttreffer, kein Wurzeltreffer. Und
+  „لَّا يُسْمِنُ وَلَا يُغْنِي مِن جُوعٍ" (88:7) trägt beide Wurzeln des
+  Kapitels (س م ن, ج و ع), liegt aber außerhalb seines Bereichs.
+  Sure 5 (al-Māʾida) wäre für مَائِدَةٌ der naheliegende Haken gewesen und ist
+  aus demselben Grund **nicht** benutzt.
+
+**Zwei Befunde, die beim Schreiben aufgefallen sind**
+
+1. ⛔ **حَوَّلَ und حَوْلَ fallen ohne Ḥarakāt zusammen.** Der erste Satz
+   „حَوَّلَ الْمُدَرِّسُ الْجُمْلَةَ." wurde von `pruefe-saetze.js` im
+   LEXIKON-VERGLEICH als **schwere Abweichung** gemeldet: ohne den
+   quran-Wortschatz liest der Iʿrāb-Erklärer حَوَّلَ als فِعْل, mit ihm als
+   مُبْتَدَأ (مُضَاف) — weil `حَوْلَ` („um … herum", quran 49839) dasselbe
+   Gerüst hat. Elias sähe je nach Buchauswahl eine andere Zerlegung desselben
+   Satzes. Gelöst mit der Gegenwartsform aus dem Abzug: **يُحَوِّلُ** hat ein
+   anderes Gerüst und ist eindeutig. [[skelettvergleich_wirft_information_weg]]
+2. ⬜ **كِيلُو bekommt keinen Beispielsatz.** Geschrieben war
+   „وَزْنُ اللَّحْمِ كِيلُو." `pruefe-saetze.js` meldet daran: كِيلُو ist
+   خَبَر, das verlangt rafʿ, gelesen wird nichts. Das Wort ist ein Fremdwort
+   auf Wāw und unveränderlich — `endungUnsichtbar()` (`js/irab.js:943`) kennt
+   aber nur vier Fälle: die fünf Nomen, das Yāʾ des Sprechers, اِسْم مَقْصُور
+   und „endet auf Alif". Ein fünfter Fall „endet auf Wāw" fehlt.
+   ⛔ **Nicht hier repariert:** `endungUnsichtbar()` lesen auch `js/saetze.js`
+   und `js/uebung.js` — eine Änderung wirkt in der App, nicht nur im Prüfer.
+   Das ist Elias' Entscheidung. Solange bleibt كِيلُو ohne Satz; damit fehlen
+   ihm dort 10 bis 12 Übungsarten.
+
+**Schritt 4 – Prüfen.** `node --check` auf alle fünf geänderten `.js`-Dateien
+grün. `validate.js` 36 Prüfungen / 2 Hinweise (Exit 0) · `pruefe-saetze.js`
+**585 Sätze kasusrein und in jeder Buchauswahl gleich zerlegt** (Exit 0) ·
+`pruefe-markierungen.js` Exit 0 · `pruefe-funktionen.js` Exit 0 ·
+`pruefe-duplikate.js` Exit 0 · `pruefe-eselsbruecken.js` **1777
+Einzelprüfungen sauber**, 2 Hinweise · `pruefe-quran.js` Exit 0 ·
+`pruefe-taschkil.js` **Exit 0** · `taschkil-belegen.mjs` **0 Wörter** ohne
+vollständige Vokalisierung · `pruefe-wortfelder.js --fenster` **213 von 340**
+mit Bedeutungsfeld · `pruefe-eigene-vorrang.mjs` „alle vier Werkzeuge messen
+340" · `test-satzmodus-schwerer.mjs` bestanden. `pruefe-erreichbarkeit.js`
+Exit 2 — einziger Befund war „der ausgelieferte Stand ist NICHT der aktuelle",
+also Schritt 5.
+
+`vorrat.mjs --nur-kapitel bayna-yadayk-1:5 --knapp` Exit 2:
+**3 von 17 Wörtern unvollständig — 0 Eselsbrücken, 1 Beispielsatz,
+0 Markierungen, 0 Kategorien, 2× pl, 1× root, 1× femSg.**
+14 von 17 Wörtern sind damit nach allen 13 Punkten vollständig.
+
+**⛔ Drei Prüfer waren NEU ROT — alle drei durch diesen Lauf, keiner am Kapitel**
+
+Ohne sie wäre die Arbeit nach Schritt 5 nicht hinausgegangen. Deshalb behoben,
+obwohl sie außerhalb des Auftrags liegen:
+
+| Prüfer | was er meldete | was dahintersteckte |
+|---|---|---|
+| `pruefe-kreislaeufe.mjs` | `artefakte/regeln.json` älter als `grammar-data.js`, `data/beispielsaetze.js` | genau die Pflege zu diesem Lauf — `regeln-sammeln.mjs` nachgezogen, danach grün |
+| `pruefe-eselsbruecken.js` Abschnitt 8 | حَادٌّ `alt[0]`: ein von Elias abgelehnter Vorschlag stand noch da | `vorrat.mjs --app auto` hat in Schritt 1 seine **51 Ablehnungen an 25 Wörtern** frisch geholt; die zu حَادٌّ war neu. Ersetzt durch einen Text über die übertragenen Bedeutungen (scharfer Ton, spitzer Winkel, scharfer Blick) — die alte Begründung (Schadda / حَارٌّ) bewusst nicht wiederholt |
+| `eiche-fragenreihenfolge.mjs` | „die Seite nennt den Zusammenhang NICHT" | **Fehlalarm.** `class="folgt"` vergibt `vorrat.mjs` nur, wenn beim selben Wort auch `type` offen ist. Offen waren aber genau meine drei Feldfragen (pl, root, femSg) und **keine** type-Frage — die Marke konnte gar nicht existieren. Vorher war die Fragendatei leer und der Prüfer stieg früher aus. Guard ergänzt: bei `iType < 0` entfällt die Prüfung |
+| `pruefe-buecher-aktuell.mjs` | „Störtest: nur 4 von 5 erkannt" | **Fehlalarm im Störtest.** S2 legt „ein Kapitel mehr bei arabicroots" an — es nahm `max(roots)+1` und traf damit bayna-yadayk-1 Kapitel **5**, das seit heute in Elias' Auswahl steht. Dann entsteht die Frage F1 zu Recht nicht. Jetzt `max(roots, app)+1`; alle 5 Störungen wieder erkannt |
+
+**Schritt 5 – Ausliefern.** `CACHE_NAME` v636 → **v637**. `validate.js` und
+`alle-pruefer.mjs` **einzeln nacheinander**: 145 Prüfer gelaufen, 6 rot,
+**„✅ Kein Prüfer ist NEU rot"** (Exit 0). Die 6 sind bekannt: erreichbarkeit,
+ausgeliefert und gedaechtnis-zahlen hängen am Stand; themen, beispielsaetze und
+buchtausch warten auf Elias. Dann `veroeffentlichen.mjs --mit-daten`:
+109 Dateien, 9,27 MB, 6 neu hochgeladen. `pruefe-ausgeliefert.mjs` Exit 0 —
+109 Dateien deckungsgleich, hochgeladen 30.9.2026, 14:46:05.
+
+**Schritt 6** – Commit `d7625b9`, 12 Dateien, 340 Zeilen mehr / 38 weniger.
+Gepusht nach `main`.
+
+**Schritt 7** – Auftrag abgeschlossen, Arbeitsmarke abgenommen.
+
+### ⬜ Offen — drei Fragen an Elias
+
+1. **لَحْمٌ (Fleisch) hat keinen Plural eingetragen.** `VOLLES-PROGRAMM.md`
+   nennt Fleisch selbst als Stoffnamen ohne Plural — das wäre ein Eintrag in
+   `FELD_AUSNAHMEN`. ⛔ **Nicht eingetragen:** die Einzelfall-Liste dort wächst
+   laut ihrem eigenen Kopf **nur durch Elias' Entscheidung**. Frage: *„لَحْمٌ
+   hat keinen Plural eingetragen. Stoffnamen wie Zucker und Tee stehen bei dir
+   schon als „gibt es nicht". Soll Fleisch dazu?"*
+2. **عِنَبٌ (Trauben) hat keinen Plural eingetragen.** Es ist ein Sammelwort
+   wie بَقَرٌ, بَيْضٌ, دَجَاجٌ. Frage: *„Trauben ist ein Sammelwort. Soll
+   „kein Plural" dort stehen — oder kennt dein Lehrer eine Pluralform?"*
+3. **كِيلُو hat weder `root` noch `femSg` — und keinen Beispielsatz.**
+   Wurzel und weibliche Form gibt es bei einem Fremdwort nicht (der Abzug
+   führt es außerdem als `adjective`, was es nicht ist). Der fehlende Satz ist
+   die Folge von `endungUnsichtbar()` oben. Frage: *„Soll ich
+   `endungUnsichtbar()` um „endet auf Wāw" erweitern? Dann bekäme كِيلُو
+   seinen Satz — die Änderung wirkt aber auch im Satz- und Übungsmodus."*
+
+### ⬜ Zwei Beobachtungen, nicht umgesetzt
+
+- **madina-2 steht mit allen 24 Kapiteln in `FREIGESCHALTET`**, ohne Rückhalt
+  in arabicroots oder seiner Auswahl. Wirkt nur, wenn er das Buch ohne Kapitel
+  anhakt — aber es ist ein Rest, der irgendwann stört.
+- **Der erste Versuch dieses Auftrags (10:09) ist ohne Abschluss geblieben.**
+  Warum, sagt der Zustand nicht; ein dritter Versuch wäre nicht gekommen
+  (`HOECHSTENS_VERSUCHE = 2`), und das Kapitel wäre dann still als „bekannt"
+  verbucht worden.
