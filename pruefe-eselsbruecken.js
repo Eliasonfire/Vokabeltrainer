@@ -9,11 +9,19 @@
  * ihm nichts mehr:
  *
  *   1. ⛔ Koranstellen NUR aus dem Bereich, den er auswendig kann:
- *      Sure 1 · Sure 67 · Sure 93 bis 114.
- *      "wenn du mit quran sachen kommst dann am besten mit den suren die ganz
- *       am ende sind bis sura duha weil ich die bis dahin auswendig kenne oder
- *       sura mulk und fatiha natürlich auch noch."
+ *      seit dem 30.09.2026 seine Haken (data/auswendig.json: 17 Suren und
+ *      Vers 2:255) plus Sure 93 und 94 — werkzeuge/auswendig.js.
+ *      Er am 30.09.2026: "mach wirklich nur die die ich abgehackt habe und
+ *       zusaätzlich sura scharh und duha. ansonsten kenne ich wirklihc keine
+ *       weiteren außer die zwei und alle die ich abgehackt habe" — und
+ *       "alle eselsbrücken die andere suren inkludiren als die die ich kenne
+ *       müssen geändert werden".
+ *      (Bis dahin galt seine Ansage vom 17.08.2026: Sure 1 · 67 · 93 bis 114,
+ *       "… bis sura duha weil ich die bis dahin auswendig kenne …".)
  *      Ein Vers ausserhalb davon ist selbst neuer Stoff.
+ *      ⚠️ Abschnitt 1 sieht nur Sure:Vers-Angaben. Surennamen ohne Vers und
+ *      Koranwortlaut ohne Angabe fand am 30.09.2026 erst eine eigene Suche
+ *      (59 Texte statt der 38 Meldungen hier) — siehe Projektnotiz.
  *
  *   2. ⛔ Kurze Zitate. "wichtig ist mir wenn du dich auf den quran beziehst
  *      das du nicht ewig lange verse mir zeigst." Gemessen wird als

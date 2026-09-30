@@ -684,6 +684,8 @@ function baueWortKarte(w){
      stand al-Wāqiʿah 56:21 — eine Sure, die er nicht auswendig kann. Auswendig
      kann er die Fātiḥa, al-Mulk und die Suren 93–114; alles andere ist für ihn
      ein fremder Vers, der Platz einnimmt und nichts stützt.
+     (Stand 20.08.2026. Seit dem 30.09.2026 zählen nur seine Haken plus
+     Sure 93 und 94 — werkzeuge/auswendig.js.)
      [[quranbezug_nur_auswendiges]]
 
      ⚠️ NUR DIE ANZEIGE IN DER WORTKARTE ist weg. Das Feld `w.quran` bleibt in

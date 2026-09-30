@@ -129,7 +129,7 @@ const BUCH_ESELSBRUECKEN = {
 
   /* ---------- Kapitel 11 ---------- */
 
-  "45903": "⭐ In سُورَةُ الْعَادِيَات, die in deinem auswendigen Bereich liegt, steht die Wurzel als Nomen: وَإِنَّهُ لِحُبِّ الْخَيْرِ — „und er ist in seiner Liebe zum Guten\" — لَشَدِيدٌ (100:8). Das لِحُبِّ trägt genau deine Wurzel ح ب ب, und خَيْرٌ hast du seit Kurzem als eigene Karte. Ein Vers, zwei deiner Wörter.",
+  "45903": "⭐ Aus deiner Dua „Dua vergebung“: إِنَّكَ عَفُوٌّ تُحِبُّ الْعَفْوَ — „Du bist verzeihend und liebst das Verzeihen“. تُحِبُّ ist genau dieses Verb in der Gegenwart: أَحَبَّ „er liebte“, تُحِبُّ „Du liebst“. Wer die Dua spricht, hat die Vokabel.",
 
   /* ---------- Kapitel 12 ---------- */
 
@@ -203,7 +203,7 @@ const BUCH_ESELSBRUECKEN = {
 
   /* ---------- Kapitel 16 ---------- */
 
-  "45935": "Kurzes Wort mit Sukun wie نَجْمٌ (Stern). Der Plural أَنْهَارٌ steht in al-Bayyinah: تَجْرِي مِن تَحْتِهَا ٱلْأَنْهَٰرُ — „durcheilt von Bächen“ (98:8). Damit hast du ihn schon einmal gelesen.",
+  "45935": "Kurzes Wort mit Sukūn wie نَجْمٌ (Stern), das du auch hast: nah-r, naǧ-m. Der Plural أَنْهَارٌ geht wie بَابٌ → أَبْوَابٌ: vorne ein أَ, vor dem letzten Buchstaben ein langes ā.",
 
   "45936": "Paar mit نَهْرٌ (Fluss) aus demselben Kapitel, beide kurz und mit Sukun gebaut: نَهْرٌ das süße Wasser, بَحْرٌ das große salzige. Plural بِحَارٌ.",
 
@@ -456,7 +456,7 @@ const BUCH_ESELSBRUECKEN = {
   "p_1787190874749": "Du sprichst es in al-Mulk: إِنَّمَا الْعِلْمُ عِنْدَ اللَّهِ — „Nur Allah weiß darüber Bescheid\", wörtlich „das Wissen ist BEI Allah\" (67:26). Dasselbe عِنْدَ, dieselbe Bedeutung.",
 
 
-  "46401": "نَارُ اللَّهِ الْمُوقَدَةُ · ٱلَّتِي تَطَّلِعُ عَلَى ٱلْأَفْـِٔدَةِ — aus سُورَةُ الْهُمَزَة, die du auswendig kannst. Warum dort الَّتِي und nicht الَّذِي? Weil نَار (Feuer) weiblich ist. ⭐ Das ist die ganze Regel: nicht ob Person oder Sache entscheidet, sondern allein das GESCHLECHT des Wortes davor.",
+  "46401": "In aš-Šarḥ, die du auswendig kannst, steht ٱلَّذِيٓ أَنقَضَ ظَهْرَكَ (94:3) — „die deinen Rücken niederdrückte“. Gemeint ist وِزْرَكَ, deine Last. Im Deutschen ist „Last“ weiblich, im Arabischen ist وِزْر männlich — deshalb الَّذِي. Wäre das Wort davor weiblich, stünde الَّتِي. ⭐ Das ist die ganze Regel: nicht ob Person oder Sache entscheidet, sondern allein das GESCHLECHT des Wortes davor.",
 
   "45972": "Die Wurzel ن ظ ر steht zweimal in den Kapiteln 1 und 2 von Bayna Yadayk 1: نَظَرَ (anschauen) und نَظَّارَةٌ (Brille). Die Brille ist das Gerät zum نَظَرَ — wer das eine behält, hat das andere mit.",
   "45973": "اِسْتَمَعَ ist das absichtliche Zuhören — die Vorsilbe اِسْتَـ heißt „von sich aus, gezielt\". Dieselbe Vorsilbe steckt in zwei Wörtern, die du schon hast: مُسْتَشْفًى (Krankenhaus) und مُسْتَوْصَفٌ (Klinik). Wer اِسْتَمَعَ sagt, hört nicht zufällig, sondern setzt sich hin und hört zu.",
@@ -474,7 +474,7 @@ const BUCH_ESELSBRUECKEN = {
 
   "45980": "أَجَابَ (antworten) und جَوَابٌ (Antwort) stehen im selben Kapitel und haben dieselbe Wurzel ج و ب. Das eine ist die Tat, das andere das Ergebnis. Wer das Paar zusammen lernt, hat zwei Vokabeln für eine.",
 
-  "45981": "Das erste Wort, das überhaupt herabgesandt wurde: اِقْرَأْ بِاسْمِ رَبِّكَ — „Lies im Namen deines Herrn\" (96:1). Und al-Qurʾān, der Name des Buches selbst, kommt aus derselben Wurzel ق ر أ: das, was gelesen und vorgetragen wird.",
+  "45981": "Al-Qurʾān, der Name des Buches selbst, kommt aus derselben Wurzel ق ر أ: das, was gelesen und vorgetragen wird. Und wer ihn vorträgt, heißt قَارِئ — der Titel der Koranrezitatoren.",
 
   "45982": "مَرَّ hat nur zwei sichtbare Buchstaben und eine شَدَّة, weil der zweite und dritte Wurzelbuchstabe derselbe sind (م ر ر). Genau so ist حَارٌّ (heiß) aus Kapitel 3 gebaut — zwei gleiche Buchstaben verschmelzen zu einem mit شَدَّة.",
 
@@ -499,18 +499,18 @@ const BUCH_ESELSBRUECKEN = {
 
   "45993": "تَدْرِيبٌ ist eine Übung — gebaut nach dem Muster تَـ vorn, langes ī hinten. Genau so sind zwei Fachbegriffe gebaut, die du schon hast: تَشْكِيل (die Vokalzeichen) und تَقْدِيمٌ (die Voranstellung). Drei Wörter, ein Bauplan.",
 
-  "45994": "Sure al-Humaza beschreibt den, الَّذِي جَمَعَ مَالًا وَعَدَّدَهُ — „der Besitz zusammenträgt und ihn immer wieder zählt\" (104:2). Das Zählen dort ist deine Wurzel ع د د. Ein عَدَدٌ ist eine Zahl, eine Anzahl.",
+  "45994": "Aus derselben Wurzel ع د د kommt عِدَّة, die Wartezeit der Frau nach einer Scheidung oder dem Tod ihres Mannes — die Tage, die man ZÄHLT. Ein عَدَدٌ ist die Zahl selbst, eine Anzahl.",
 
   "45995": "Das Muster مِفْعَال kennst du aus deinen Werkzeugen: مِفْتَاحٌ (Schlüssel) und مِرْحَاضٌ (Toilette). مِثَالٌ ist genauso gebaut — und tut dasselbe: es ist das Werkzeug, mit dem etwas gezeigt wird, ein Beispiel.",
 
   "45996": "رَقْمٌ ist die Ziffer, die Nummer — das Zeichen, das für eine Zahl steht. Du kennst die Ziffer صِفْرٌ (Null) bereits; das arabische Wort für Null ist über das Lateinische zu unserer „Ziffer\" geworden, und رَقْمٌ ist der Oberbegriff dafür.",
 
-  "45997": "Die Wurzel ع ل م ist die Wurzel des Wissens — dieselbe wie in الَّذِي عَلَّمَ بِالْقَلَمِ, „Der mit dem Schreibrohr gelehrt hat\" (96:4). Eine عَلَامَةٌ ist das Zeichen, an dem man etwas erkennt: das, was wissen lässt.",
+  "45997": "Die Wurzel ع ل م ist die Wurzel des Wissens, und du sprichst sie in jeder Fātiḥa: رَبِّ ٱلْعَٰلَمِينَ (1:2). Eine alte Erklärung sagt: die Welt heißt عَالَم, weil sie ein Zeichen ist, an dem man ihren Schöpfer erkennt (Ibn Kaṯīr zu 1:2). Eine عَلَامَةٌ ist genau das: das Zeichen, das wissen lässt.",
 
   "45998": "سَأَلَ (fragen) und أَجَابَ (antworten) sind das Paar, aus dem der ganze Unterricht besteht. Beide stehen in Kapitel 1. Der Lehrer fragt, der Schüler antwortet — und das Ergebnis heißt جَوَابٌ.",
   "45999": "تَوَضَّأَ ist das Verb zum Wuḍūʾ, der Gebetswaschung — das Wort, das du bei jedem Gebet brauchst. Die شَدَّة auf dem ض ist hörbar: ta-waḍ-ḍaʾa.",
 
-  "46000": "Sure al-ʿAlaq spricht von عَبْدًا إِذَا صَلَّى — „einem Diener, wenn er betet\" (96:10). Dort steht genau deine Vokabel. صَلَّى ist das Verb, صَلَاةٌ das Gebet selbst.",
+  "46000": "Al-Kawṯar, die du auswendig kannst, sagt es als Befehl: فَصَلِّ لِرَبِّكَ — „so bete zu deinem Herrn“ (108:2). صَلِّ ist die Befehlsform genau dieses Verbs: صَلَّى „er betete“, صَلَاةٌ das Gebet selbst.",
 
   "46001": "Sure al-Fīl fragt, wie فَعَلَ رَبُّكَ — „wie dein Herr verfuhr\" mit den Leuten des Elefanten (105:1). Das Verb dort ist genau deine Vokabel. فَعَلَ heißt tun, machen.",
   "46002": "Eine أُسْرَةٌ ist die Familie — die Leute, die zusammengebunden sind. Die Wurzel أ س ر heißt „binden, fesseln\"; eine Familie ist das, was zusammenhält.",
@@ -520,7 +520,7 @@ const BUCH_ESELSBRUECKEN = {
 
   "46005": "ابْنَةٌ ist die Tochter — dasselbe Wort wie ابْنٌ (Sohn) aus Kapitel 5, nur mit der تَاء مَرْبُوطَة. Du hast den Sohn schon; die Tochter ist ein Zeichen mehr.",
 
-  "46006": "Die Wurzel ع ل م ist die des Wissens — dieselbe wie in الَّذِي عَلَّمَ بِالْقَلَمِ (96:4). Ein مُعَلِّمٌ ist wörtlich „einer, der wissen lässt\". Das مُـ vorn macht aus der Tätigkeit den, der sie tut.",
+  "46006": "Die Wurzel des Wissens steckt darin — du sprichst sie in deiner Dua um Wissen: رَّبِّ زِدْنِي عِلْمًا (20:114). Ein مُعَلِّمٌ ist wörtlich „einer, der wissen lässt“. Das مُـ vorn macht aus der Tätigkeit den, der sie tut.",
 
   "46007": "Das Muster مِفْعَل steht im Arabischen für Geräte und Dinge, die man benutzt. Du hast die Gruppe schon: مِفْتَاحٌ (Schlüssel), مِكْوَاةٌ (Bügeleisen), مِلْعَقَةٌ (Löffel), مِرْوَحَةٌ (Ventilator). مِعْطَفٌ, der Mantel, gehört dort hinein — das Ding, das man umlegt.",
 

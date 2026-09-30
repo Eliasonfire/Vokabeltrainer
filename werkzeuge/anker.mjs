@@ -13,12 +13,16 @@
  * Fuer die Eselsbruecken gilt: ein Koranvers hilft nur, wenn Elias die Sure
  * AUSWENDIG kann. Sonst ist der Merkhaken selbst neuer Stoff. Sein Bereich:
  *
- *     Sure 1 (al-Fatiha) · Sure 67 (al-Mulk) · Sure 93 bis 114
+ *     seit dem 30.09.2026: seine Haken (data/auswendig.json — 17 Suren und
+ *     Vers 2:255) plus Sure 93 (aḍ-Ḍuḥā) und 94 (aš-Šarḥ)
  *
- * Belegt aus `vt_hifz` (seine eigenen Haekchen im Quran-Leser, am 17.08.2026
- * aus dem KV gelesen: 14 Suren sicher) plus seiner Ansage "und ein paar mehr
- * noch bis sura duha aber die sind nicht ganz richtig gelernt aber sie kann man
- * auch inkludieren".
+ * Er am 30.09.2026: "mach wirklich nur die die ich abgehackt habe und
+ * zusaätzlich sura scharh und duha. ansonsten kenne ich wirklihc keine
+ * weiteren außer die zwei und alle die ich abgehackt habe". Gelesen wird der
+ * Bereich aus werkzeuge/auswendig.js — dieselbe Quelle wie im Pruefer.
+ * (Bis zum 30.09.2026 stand hier Sure 1 · 67 · 93 bis 114: seine Haken vom
+ * 17.08.2026 plus seine Ansage "und ein paar mehr noch bis sura duha aber die
+ * sind nicht ganz richtig gelernt aber sie kann man auch inkludieren".)
  *
  * ⚠️ Das Skript findet KANDIDATEN, es faellt kein Urteil. Jeder Treffer gehoert
  * am Original nachgeschlagen - die Suche vergleicht Konsonantengerueste, und

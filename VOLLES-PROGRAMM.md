@@ -113,7 +113,7 @@ schreibt. Spaltenzahl und Reihenfolge deshalb nicht ändern, Inhalt gern.
 | A8 | **Funktionsanzeige** — ggf. Liste in `js/irab.js` | `pruefe-funktionen.js` | Infokarte sagt nur „Wort" |
 | A9 | **Beispielsatz** — nur mit Wörtern, die er hat | `vorrat.mjs`, `pruefe-saetze.js` | **10 bis 12** Übungsarten fallen aus — der teuerste Einzelpunkt |
 | A10 | **Markierungen** am Satz | `vorrat.mjs`, `pruefe-markierungen.js`, `pruefe-erreichbarkeit.js` | Satz steht in keinem Thema, null Aufgaben |
-| A11 | **Quran-Bezug** nur aus Sure 1, 67, 93–114 | `pruefe-quran.js` | (kein Ausfall — Zusatz) |
+| A11 | **Quran-Bezug** nur aus seinem Bereich (Haken + Sure 93, 94) | `pruefe-quran.js` | (kein Ausfall — Zusatz) |
 | A12 | **Vollständiges Taschkil** | `pruefe-taschkil.js` | falsche Aussprache, kaputte Suche |
 | A13 | **Kein Duplikat** zu einer freigeschalteten Buchvokabel | `pruefe-duplikate.js` | zwei Karten für dasselbe Wort |
 
@@ -286,7 +286,7 @@ weiteren). **Die Rangfolge steht im Kopf von `eselsbruecken-alt.js` und stammt
 von ihm:**
 
 1. bekannter islamischer **Begriff** oder eine Wendung — das Stärkste
-2. ein Vers aus seinem **auswendigen** Bereich: Sure 1, 67, 93–114 — **oder
+2. ein Vers aus seinem **auswendigen** Bereich: seine Haken plus Sure 93 und 94 (seit 30.09.2026, `werkzeuge/auswendig.js`) — **oder
    eine Stelle aus einer Dua, die er kann** (`data/duas.json`, seit v633,
    30.09.2026): zwei bis vier Wörter, wörtlich aus `texte`. Eine Koranstelle,
    die er nur aus einer Dua kennt (28:24), wird nur mit dem Wortlaut der Dua
@@ -312,7 +312,7 @@ freigegeben ist. Wer A6 abarbeitete, tippte von Hand — bei 77 Wörtern
 derselbe Handgriff 77-mal, und genau dabei passieren die Fehler, die niemand
 mehr findet. [[werkzeug_ohne_aufrufer]]
 
-⛔ Ein Vers außerhalb 1 / 67 / 93–114 ist als Merkhaken wertlos — er ist selbst
+⛔ Ein Vers außerhalb seines Bereichs ist als Merkhaken wertlos — er ist selbst
 neuer Stoff. [[quranbezug_nur_auswendiges]]
 ⛔ Jedes „…wie X, das du schon hast" **nachschlagen, mit voller Schreibung**.
 Ohne Ḥarakāt treffen مُدَرِّسَةٌ/مَدْرَسَةٌ und مَلِكٌ/مَلَكَ einander.
@@ -408,7 +408,7 @@ Markierung nie — ohne Meldung. [[arabisch_vergleichen_nfc]]
 
 ## A11 · Quran-Bezug
 
-Nur, wenn die Stelle in seinem auswendigen Bereich liegt (Sure 1, 67, 93–114).
+Nur, wenn die Stelle in seinem auswendigen Bereich liegt (seine Haken plus Sure 93 und 94, seit 30.09.2026; vorher Sure 1, 67, 93–114).
 
 ```
 node pruefe-quran.js

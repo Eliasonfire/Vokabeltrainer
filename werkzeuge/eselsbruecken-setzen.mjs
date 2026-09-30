@@ -176,12 +176,18 @@ function setzeBuch(inhalt, id, text){
   const i = zeilen.findIndex(z => suche.test(z));
   if (i >= 0){
     /* Vorhandenen Eintrag ersetzen. Ein Eintrag kann über mehrere Zeilen
-       gehen — bis zur nächsten id-Zeile oder zur schließenden Klammer. */
+       gehen — er endet an der ersten Zeile, auf der seine Zeichenkette
+       schließt (Anführungszeichen, danach höchstens ein Komma).
+
+       ⛔ BIS ZUM 30.09.2026 lief die Suche bis zur nächsten id-Zeile und nahm
+       alles dazwischen mit: beim Eselsbrücken-Umbau auf seinen Surenbereich
+       verschwanden so sieben Leerzeilen und der Abschnittskommentar
+       „Kapitel 12" — gemeldet wurde „8 gesetzt", sonst nichts. Und eine id
+       wie "p_…" passt nicht auf das Muster "\d+": dort wäre alles bis zur
+       schließenden Klammer weg gewesen. Gefunden an `git diff --stat`
+       (26 Zeilen für 8 Einträge). [[leere_datei_besteht_jeden_test]] */
     let ende = i;
-    for (let j = i + 1; j < zeilen.length; j++){
-      if (/^\s*"\d+"\s*:/.test(zeilen[j]) || /^\s*\};?\s*$/.test(zeilen[j])) break;
-      ende = j;
-    }
+    while (ende < zeilen.length - 1 && !/"\s*,?\s*$/.test(zeilen[ende])) ende++;
     const einzug = zeilen[i].match(/^\s*/)[0];
     zeilen.splice(i, ende - i + 1, `${einzug}"${id}": ${JSON.stringify(text)},`);
     return { inhalt: zeilen.join(ze), meldung: null, neu: false };
