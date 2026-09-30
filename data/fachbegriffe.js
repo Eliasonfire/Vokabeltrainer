@@ -848,10 +848,14 @@ const FACHBEGRIFF_VOKABELN = [
       ar: "الَّذِي جَمَعَ مَالًا وَعَدَّدَهُ",
       de: "der Besitz zusammenträgt und ihn zählt und immer wieder zählt"
     },
-    /* ⭐⭐ Beide Formen stehen in DERSELBEN Sure, fünf Verse auseinander —
-       104:2 الَّذِي und 104:7 الَّتِي. Ein Merkhaken, den man nicht bauen
-       muss, weil er schon dasteht. Belegt mit werkzeuge/vers.mjs 104. */
-    mnemo: "سُورَةُ الْهُمَزَة, die du auswendig kannst, hat BEIDE Formen — fünf Verse auseinander. Vers 2: الَّذِي جَمَعَ مَالًا (der Besitz zusammenträgt), Vers 7: نَارُ اللَّهِ … الَّتِي تَطَّلِعُ. ⭐ Warum einmal so und einmal so? نَار (Feuer) ist weiblich, der Stichler aus Vers 1 nicht. Das Geschlecht des Wortes DAVOR entscheidet — nicht, ob es um eine Person geht oder um eine Sache."
+    /* ⛔ Der Merkhaken stand bis zum 30.09.2026 auf Sure 104 (al-Humaza):
+       104:2 الَّذِي und 104:7 الَّتِي, fünf Verse auseinander. Die Sure
+       liegt seit seiner Ansage vom 30.09.2026 NICHT mehr in seinem Bereich
+       (nur seine Haken plus Sure 93 und 94, siehe werkzeuge/auswendig.js).
+       Der Koranbeleg oben (quran, 104:2) bleibt: er zeigt, wo das Wort
+       steht, und behauptet nicht, dass Elias die Sure kann. Der neue
+       Merkhaken nimmt seine „Dua nach Aufstehen“ (data/duas.json, Dua 5). */
+    mnemo: "Deine Dua nach dem Aufstehen beginnt damit: الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا — „Lob sei Allah, der uns lebendig machte“. الَّذِي hängt einen ganzen Satz an ein männliches Wort: „der, welcher …“. ⭐ Ob Person oder Sache, entscheidet nicht — allein das Geschlecht des Wortes DAVOR."
   },
   {
     /* Eingetragen am 2026-09-11 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel mubtada-khabar-01. */

@@ -115,7 +115,7 @@ const VOCAB_DATA = [
  {
   "id": "45755",
 
-  "mnemo": "Der قَلَمٌ schreibt — und Sure 68 heißt الْقَلَم, „der Stift\". Die Wurzel ق ل م steckt auch im Beschneiden/Zuschneiden: ein Rohrstift wurde zugeschnitten.",
+  "mnemo": "Der قَلَمٌ schreibt. Die Wurzel ق ل م steckt auch im Beschneiden/Zuschneiden: ein Rohrstift wurde zugeschnitten. Und er hat denselben Rhythmus wie جَمَلٌ (Kamel) aus demselben Kapitel: qa-lam, ǧa-mal.",
   "ar": "قَلَمٌ",
   "de": "Stift",
   "type": "noun",
@@ -184,7 +184,7 @@ const VOCAB_DATA = [
  {
   "id": "45758",
 
-  "mnemo": "Wurzel س ر ر mit doppeltem ر. Im Koran stehen die Betten des Paradieses genau mit diesem Wort: عَلَىٰ سُرُرٍ مُتَقَابِلِينَ — „auf Liegen, einander gegenüber\" (Sure 15:47). Der Plural أَسِرَّةٌ ist unregelmäßig: sprich ihn laut, a-si-rra.",
+  "mnemo": "Wurzel س ر ر mit doppeltem ر. In al-Mulk, die du auswendig kannst, steht sie im Verb: وَأَسِرُّواْ قَوْلَكُمْ — „haltet eure Worte geheim“ (67:13). Ins Bett zieht man sich zurück, wo es niemand sieht. Der Plural أَسِرَّةٌ ist unregelmäßig: sprich ihn laut, a-si-rra.",
   "ar": "سَرِيرٌ",
   "de": "Bett",
   "type": "noun",
@@ -760,7 +760,7 @@ const VOCAB_DATA = [
  {
   "id": "45784",
 
-  "mnemo": "Gegenpaar zu غَنِيٌّ (reich). Wurzel ف ق ر. Die فُقَرَاء kennst du aus den acht Empfängern der Zakāh (Sure 9:60) — dort steht لِلْفُقَرَاءِ, „für die Armen\".",
+  "mnemo": "Gegenpaar zu غَنِيٌّ (reich). Wurzel ف ق ر. Das zweite Wort für „arm“ kennst du aus al-Māʿūn: طَعَامِ ٱلْمِسْكِينِ — „die Speisung des Armen“ (107:3). Zwei Wörter für „arm“: مِسْكِين aus der Sure, فَقِير auf deiner Karte.",
   "ar": "فَقِيرٌ",
   "de": "arm",
   "type": "adjective",
@@ -1062,7 +1062,7 @@ const VOCAB_DATA = [
  {
   "id": "45797",
 
-  "mnemo": "Das Wort steht in dem Bittgebet für die Eltern, das du kennst: «كَمَا رَبَّيَانِي صَغِيرًا» — „wie sie mich aufzogen, als ich klein war“. Genau diese Vokabel, an einer Stelle, die du ohnehin sprichst.",
+  "mnemo": "Gegenpaar zu كَبِيرٌ (groß), das du auch hast — und das Gegenwort steht in al-Mulk: فِي ضَلَٰلٍ كَبِيرٍ — „in großem Irrtum“ (67:9). Wer كَبِير im Ohr hat, hängt صَغِير daran: dasselbe Muster, ṣa-ġīr gegen ka-bīr.",
   "ar": "صَغِيرٌ",
   "de": "klein",
   "type": "adjective",
@@ -1665,7 +1665,7 @@ const VOCAB_DATA = [
  {
   "id": "45824",
 
-  "mnemo": "⭐ Gleiche Wurzel س م و wie اِسْمٌ (Name), das du auch hast. Beide haben mit „hoch/erhaben\" zu tun. Im Koran hörst du سَمَاوَات ständig: رَبُّ السَّمَاوَاتِ وَالْأَرْضِ.",
+  "mnemo": "⭐ Gleiche Wurzel س م و wie اِسْمٌ (Name), das du auch hast. Beide haben mit „hoch/erhaben“ zu tun. Den Plural sprichst du im Thronvers: لَّهُۥ مَا فِي ٱلسَّمَٰوَٰتِ — „Ihm gehört, was in den Himmeln ist“ (2:255).",
   "ar": "سَمَاءٌ",
   "de": "Himmel",
   "type": "noun",
@@ -2073,7 +2073,7 @@ const VOCAB_DATA = [
  {
   "id": "45842",
 
-  "mnemo": "⭐ Sure 2 heißt الْبَقَرَة, „die Kuh\" — die längste Sure des Korans. Dieses Wort kennst du also schon, du hast es nur noch nicht als Vokabel gesehen.",
+  "mnemo": "⭐ Den Thronvers kannst du auswendig — und er steht in der Sure, die nach diesem Wort heißt: سُورَةُ الْبَقَرَةِ, „die Kuh“. Jedes Mal, wenn du آيَةُ الْكُرْسِيِّ sprichst, sprichst du aus der Sure der بَقَرَة.",
   "ar": "بَقَرَةٌ",
   "de": "Kuh",
   "type": "noun",
@@ -2436,7 +2436,7 @@ const VOCAB_DATA = [
  {
   "id": "45859",
 
-  "mnemo": "Wurzel س ر ع — dieselbe wie in سَرِيع und أَسْرَعَ (sich beeilen). Im Koran: سَرِيعُ الْحِسَابِ, „schnell im Abrechnen\". Ein Wort, das du im Koran wiederfindest.",
+  "mnemo": "Wurzel س ر ع — dieselbe wie in أَسْرَعَ (sich beeilen). Der Prophet ﷺ sagte: أَسْرِعُوا بِالْجِنَازَةِ — „beeilt euch mit dem Verstorbenen“ (Buḫārī und Muslim). Wer sich beeilt, ist سَرِيع.",
   "ar": "سَرِيعٌ",
   "de": "schnell",
   "type": "adjective",
@@ -2504,7 +2504,7 @@ const VOCAB_DATA = [
  {
   "id": "45862",
 
-  "mnemo": "⭐ Die نَاقَة des Propheten Ṣāliḥ steht im Koran: نَاقَةُ اللهِ (Sure 7:73). Merke sie gegen جَمَلٌ (Kamel) ab, das du auch hast: جَمَلٌ männlich, نَاقَةٌ weiblich.",
+  "mnemo": "⭐ Die Kamelstute des Propheten ﷺ hieß al-Qaṣwāʾ — auf ihr ritt er beim Abschiedshaddsch (Muslim). Merke sie gegen جَمَلٌ (Kamel) ab, das du auch hast: جَمَلٌ männlich, نَاقَةٌ weiblich.",
   "ar": "نَاقَةٌ",
   "de": "Kamelstute",
   "type": "noun",
@@ -3247,7 +3247,7 @@ const VOCAB_DATA = [
  {
   "id": "45896",
 
-  "mnemo": "⭐ Im Koran bittet Mūsā um وَزِيرًا مِّنْ أَهْلِي — „einen Helfer aus meiner Familie“ (Sure 20:29). Ein وَزِير ist ein Lastenträger, der mitträgt.",
+  "mnemo": "⭐ Du kennst das Wort aus dem Deutschen: der „Wesir“ aus den Märchen ist ein وَزِير — über das Türkische zu uns gekommen. Die Wurzel و ز ر heißt „Last“: ein وَزِير trägt die Last des Herrschers mit.",
   "ar": "وَزِيرٌ",
   "de": "Minister",
   "type": "noun",
@@ -3268,7 +3268,7 @@ const VOCAB_DATA = [
  {
   "id": "45897",
 
-  "mnemo": "Wurzel ح د د — dieselbe wie in حَدِيد (Eisen), dem Namen von Sure 57. Was scharf ist, ist aus Eisen. Doppeltes د: ḥād-d.",
+  "mnemo": "Wurzel ح د د — dieselbe wie in حَدِيد (Eisen). Was scharf ist, ist aus Eisen. Doppeltes د: ḥād-d.",
   "ar": "حَادٌّ",
   "de": "scharf",
   "type": "adjective",

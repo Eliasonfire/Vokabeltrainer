@@ -11,7 +11,8 @@
  * Elias hat die Rangfolge fuer Eselsbruecken selbst korrigiert:
  *
  *   1. ein bekannter islamischer Begriff
- *   2. ein Vers - NUR aus Sure 1, 67, 93-114 (mehr kann er nicht auswendig)
+ *   2. ein Vers - NUR aus seinem Bereich: seine Haken plus Sure 93 und 94
+ *      (seit 30.09.2026, werkzeuge/auswendig.js; vorher Sure 1, 67, 93-114)
  *   3. Muster oder Wurzel, aber MIT seinen eigenen Woertern daran
  *
  * Und der entscheidende Satz dazu: "vorallem alles drum herum ist eher viel
@@ -93,7 +94,7 @@ woerter.forEach(w => {
   if (gleichesMuster.length)
     console.log(`    dieselbe Vorsilbe "${m}": ${gleichesMuster.map(x => x.ar + ' (' + x.de + ')').join(' · ')}`);
   if (w.sentAr) console.log(`    Beispielsatz: ${w.sentAr}  /  ${w.sentDe}`);
-  if (w.quran) console.log(`    Vers in vocab-data: ${w.quran.ayah}  (⚠️ nur brauchbar, wenn Sure 1, 67 oder 93-114)`);
+  if (w.quran) console.log(`    Vers in vocab-data: ${w.quran.ayah}  (⚠️ nur brauchbar, wenn die Sure in seinem Bereich liegt: node werkzeuge/anker.mjs --wort …)`);
 });
 
 console.log(`\n${woerter.length} Wort/Woerter.`);

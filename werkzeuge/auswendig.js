@@ -49,13 +49,30 @@
 const fs = require('fs');
 const path = require('path');
 
+/* ⛔⛔ SEIN BEREICH SEIT DEM 30.09.2026: seine Haken plus Sure 93 und 94.
+   Er, woertlich (30.09.2026, ~01:08), auf meine Frage, ob die Suren 93, 94,
+   96, 98, 100, 101 und 104 fuer Eselsbruecken weiter zaehlen sollen:
+   „mach wirklich nur die die ich abgehackt habe und zusaätzlich sura scharh
+   und duha. ansonsten kenne ich wirklihc keine weiteren außer die zwei und
+   alle die ich abgehackt habe"
+   Damit ist seine Ansage vom 17.08.2026 („und ein paar mehr noch bis sura
+   duha …") abgeloest: 96, 98, 100, 101 und 104 zaehlen NICHT mehr, auch nicht
+   als Rueckfall. ZUSATZ_SUREN sind die zwei, die er ohne Haken nennt:
+   93 aḍ-Ḍuḥā und 94 aš-Šarḥ. */
+const ZUSATZ_SUREN = [93, 94];
+const ZUSATZ_STAND = '30.09.2026';
+
 /* ⛔ DER RUECKFALL, und warum er LAUT ist.
-   Liegt keine Datei vor, gilt der Stand vom 17.08.2026 — sonst faellt die
+   Liegt keine Datei vor, gilt der abgeschriebene Stand — sonst faellt die
    Pruefung ganz aus. Aber sie sagt es dann auch: eine stille Rueckfallliste
    ist nicht pruefbar, weil sie immer gruen aussieht.
+   Stand 30.09.2026: seine 17 abgehakten Suren und Vers 2:255, so wie sie an
+   dem Tag in data/auswendig.json standen, dazu ZUSATZ_SUREN.
    [[rueckfallliste_nur_ohne_hauptquelle_pruefbar]] */
-const RUECKFALL_SUREN = [1, 67, ...Array.from({ length: 22 }, (_, i) => 93 + i)];
-const RUECKFALL_STAND = '17.08.2026';
+const RUECKFALL_SUREN = [1, 67, ...ZUSATZ_SUREN, 95, 97, 99, 102, 103,
+                         ...Array.from({ length: 10 }, (_, i) => 105 + i)];
+const RUECKFALL_VERSE = ['2:255'];
+const RUECKFALL_STAND = '30.09.2026';
 
 /* Wie alt darf der Abzug sein? Dieselben 8 Tage wie beim Kapitelstand und beim
    Geraeteabgleich — zwei verpasste Wartungslaeufe. */
@@ -91,29 +108,26 @@ function hifzLesen(wurzel){
   if (fs.existsSync(datei)){
     try {
       const d = JSON.parse(fs.readFileSync(datei, 'utf8'));
-      /* ⛔⛔ VEREINIGUNG, nicht Ersetzung — am 24.08.2026 an seinem echten
-         Stand gemessen und beinahe falsch gebaut.
+      /* ⛔⛔ VEREINIGUNG mit ZUSATZ_SUREN — und NUR mit denen.
 
-         Abgehakt hat er 14 Suren (1, 67, 102-114 ohne 104). Die
-         abgeschriebene Liste kennt 24, denn sie enthaelt zusaetzlich seine
-         ANSAGE vom 17.08.: „und ein paar mehr noch bis sura duha aber die
-         sind nicht ganz richtig gelernt aber sie kann man auch inkludieren."
+         Vom 24.08. bis zum 30.09.2026 stand hier die Vereinigung mit dem
+         GANZEN Rueckfall (1, 67, 93-114): seine Ansage vom 17.08. („und ein
+         paar mehr noch bis sura duha aber die sind nicht ganz richtig gelernt
+         aber sie kann man auch inkludieren.") zaehlte neben seinen Haken, weil
+         keine der beiden Aussagen die andere widerrief. Am 30.09.2026 hat er
+         sie selbst zurueckgenommen (sein Satz oben bei ZUSATZ_SUREN) — genau
+         so, wie es hier stand: „Zuruecknehmen ist SEINE Entscheidung, nicht
+         die einer Messung."
 
-         Beides sind Aussagen von ihm, und keine widerruft die andere. Haette
-         ich die Datei die Liste ERSETZEN lassen, waeren zehn Suren (93-101,
-         104) stillschweigend aus seinem Bereich gefallen — und Merkhaken, die
-         er kennt, waeren als „ausserhalb" gemeldet worden.
-
-         ⭐ Dasselbe Prinzip wie bei FREIGESCHALTET in js/kern.js: was er
-         einmal genannt hat, verliert er nicht, weil ein Haken fehlt.
-         Zuruecknehmen ist SEINE Entscheidung, nicht die einer Messung.
-         [[kann_ist_nicht_ist]] [[eingefrorenes_feld_ist_kein_zustand]] */
+         ⭐ Das Prinzip bleibt, nur fuer die zwei: was er nennt, verliert er
+         nicht, weil ein Haken fehlt. Sure 93 und 94 zaehlen, auch wenn er sie
+         nie abhakt. [[kann_ist_nicht_ist]] [[eingefrorenes_feld_ist_kein_zustand]] */
       const ausDatei = new Set((d.suren || []).map(Number).filter(n => n >= 1 && n <= 114));
-      const suren = new Set([...ausDatei, ...RUECKFALL_SUREN]);
-      const nurAnsage = RUECKFALL_SUREN.filter(s => !ausDatei.has(s));
+      const suren = new Set([...ausDatei, ...ZUSATZ_SUREN]);
+      const nurAnsage = ZUSATZ_SUREN.filter(s => !ausDatei.has(s));
       if (nurAnsage.length)
         meldungen.push('Sure ' + nurAnsage.join(', ') + ' stehen nicht in seinen Haken,'
-          + ' aber in seiner Ansage vom ' + RUECKFALL_STAND + ' — beide zaehlen.');
+          + ' aber in seiner Ansage vom ' + ZUSATZ_STAND + ' — beide zaehlen.');
       const verse = new Set(d.verse || []);
       const alter = tageSeit(d.geholt);
       if (alter === null)
@@ -124,8 +138,12 @@ function hifzLesen(wurzel){
           + ' Wartungslaeufe) — seither abgehakte Suren fehlen hier.');
       /* ⛔ Eine leere Datei ist KEIN gueltiger Stand: sie saehe aus wie „er kann
          nichts auswendig" und wuerde jede Koranstelle beanstanden. Dann lieber
-         der Rueckfall, und zwar mit Ansage. [[leere_liste_ist_keine_messung]] */
-      if (!suren.size && !verse.size){
+         der Rueckfall, und zwar mit Ansage. [[leere_liste_ist_keine_messung]]
+         ⚠️ Gefragt wird nach der DATEI (ausDatei), nicht nach `suren`: dort
+         stehen ZUSATZ_SUREN immer drin, und die Pruefung schlug nie an — das
+         war schon mit der alten Vereinigung so (gefunden 30.09.2026). Ohne
+         sie schrumpfte ein leerer Abzug seinen Bereich auf Sure 93 und 94. */
+      if (!ausDatei.size && !verse.size){
         meldungen.push('data/auswendig.json enthaelt WEDER Sure noch Vers —'
           + ' das ist kein Stand, sondern ein leerer Abzug. Rueckfall auf ' + RUECKFALL_STAND + '.');
         return rueckfall(meldungen);
@@ -143,7 +161,7 @@ function hifzLesen(wurzel){
 }
 
 function rueckfall(meldungen){
-  return { suren: new Set(RUECKFALL_SUREN), verse: new Set(),
+  return { suren: new Set(RUECKFALL_SUREN), verse: new Set(RUECKFALL_VERSE),
            quelle: 'rueckfall', stand: RUECKFALL_STAND, alterTage: null, meldungen };
 }
 
@@ -254,4 +272,4 @@ function umfang(bereich){
 }
 
 module.exports = { auswendigLesen, kannStelle, umfang, duasLesen, duaNorm, duaFundstelle,
-                   RUECKFALL_SUREN, RUECKFALL_STAND };
+                   ZUSATZ_SUREN, ZUSATZ_STAND, RUECKFALL_SUREN, RUECKFALL_VERSE, RUECKFALL_STAND };

@@ -48,6 +48,17 @@
 
        Sure 1 (الفاتحة)  ·  Sure 67 (الملك)  ·  Sure 93 bis 114
 
+   ⛔⛔ SEIT DEM 30.09.2026 GILT SEIN NEUER BEREICH: nur seine Haken
+   (data/auswendig.json — 17 Suren und Vers 2:255) plus Sure 93 und 94. Er:
+   "mach wirklich nur die die ich abgehackt habe und zusaätzlich sura scharh
+   und duha. ansonsten kenne ich wirklihc keine weiteren außer die zwei und
+   alle die ich abgehackt habe" — und "alle eselsbrücken die andere suren
+   inkludiren als die die ich kenne müssen geändert werden". Die Liste oben
+   ist damit Geschichte; 96, 98, 100, 101 und 104 zaehlen nicht mehr. Am
+   selben Tag umgebaut: 40 Texte in dieser Datei (plus 19 in den anderen
+   drei), dazu Surennamen und Koranwortlaut ohne Versangabe. Der Bereich
+   kommt aus werkzeuge/auswendig.js, nicht aus diesem Kommentar.
+
    Ein Vers ausserhalb davon ist als Merkhaken wertlos - er ist dann selbst
    neuer Stoff. Das hat die erste Fassung dieser Datei weitgehend entwertet:
    von 13 belegten Stellen lagen nur 96:4 und 106:3 im Bereich.
@@ -98,7 +109,7 @@ const ESELSBRUECKEN_ALT = {
   /* مَسْجِدٌ - Moschee */
   '45752': [
     'Du kennst zwei davon beim Namen: الْمَسْجِدُ الْحَرَامُ und الْمَسْجِدُ الْأَقْصَىٰ. Das Wort ist jedes Mal dasselbe, nur die Beschreibung dahinter wechselt.',
-    'Die Wurzel س ج د sprichst du am Ende von al-ʿAlaq: وَاسْجُدْ وَاقْتَرِبْ — „wirf dich nieder und sei nah" (96:19). Die مَسْجِد ist der Ort dafür; das مَـ macht aus der Handlung einen Ort, wie bei مَكْتَبٌ und مَدْرَسَةٌ.'
+    '⭐ Der Prophet ﷺ sagte: وَجُعِلَتْ لِيَ الْأَرْضُ — „und die Erde wurde mir gemacht“ — مَسْجِدًا وَطَهُورًا, „zum Ort der Niederwerfung und zur Reinigung“ (Buḫārī). Deshalb darfst du überall beten: مَسْجِد heißt wörtlich nur „Ort der سُجُود“. Das مَـ macht aus der Handlung einen Ort, wie bei مَكْتَبٌ und مَدْرَسَةٌ.'
   ],
 
   /* بَابٌ - Tür */
@@ -109,13 +120,13 @@ const ESELSBRUECKEN_ALT = {
 
   /* كِتَابٌ - Buch */
   '45754': [
-    'Aus al-Bayyina, die du auswendig kannst: مِنْ أَهْلِ الْكِتَابِ — „von den Leuten der Schrift" (98:1). Dasselbe Wort, das bei dir schlicht „Buch" heißt.',
+    'Juden und Christen heißen im Islam أَهْلُ الْكِتَابِ — „die Leute der Schrift“. Dasselbe Wort, das bei dir schlicht „Buch“ heißt: die Schrift ist das Buch, das sie bekommen haben.',
     'Muster فِعَال — dieselbe Form wie حِمَارٌ (Esel) und حِصَانٌ (Pferd) aus diesem Kapitel. Drei Wörter, ein Rhythmus: ki-tāb, ḥi-mār, ḥi-ṣān.'
   ],
 
   /* قَلَمٌ - Stift */
   '45755': [
-    'Aus al-ʿAlaq, der ersten Offenbarung: الَّذِي عَلَّمَ بِالْقَلَمِ — „Der mit dem Schreibrohr gelehrt hat“ (96:4). Das Wort steht ganz am Anfang.',
+    'Nach einem Hadith ist der قَلَم das Erste, was Allah erschuf; Er befahl ihm zu schreiben, und er schrieb, was bis zum Jüngsten Tag geschieht (Abū Dāwūd, Tirmiḏī). Der Stift steht am Anfang von allem.',
     'تَقْلِيمُ الْأَظْفَارِ, das Schneiden der Nägel, gehört zu den fünf Dingen der فِطْرَة — und es ist dieselbe Wurzel ق ل م: zuschneiden. Ein Rohr wurde zugeschnitten, damit man damit schreiben konnte; daher heißt der Stift قَلَم. (Buḫārī und Muslim.)'
   ],
 
@@ -149,7 +160,7 @@ const ESELSBRUECKEN_ALT = {
   '45760': [
     'Dein eigener Beispielsatz hängt drei Vokabeln aneinander: هَذَا نَجْمٌ بَعِيدٌ — „dies ist ein ferner Stern" — فِي السَّمَاءِ. نَجْمٌ, بَعِيدٌ und سَمَاءٌ hast du alle drei, dazu هَذَا aus Kapitel 1 und فِي mit seinem Genitiv. Ein Satz, und der Stern steht nicht mehr allein.',
     '⭐ Nimm den Plural als Bauplan mit, nicht als Extrakarte: نَجْمٌ → نُجُومٌ. Dasselbe Muster tragen بَيْتٌ → بُيُوتٌ und عَيْنٌ → عُيُونٌ, die du beide hast — kurzer Vokal vorne, langes ū hinten. Drei Wörter, ein Plural, und du musst ihn nur einmal lernen.',
-    '⭐ Das Wort steht in deiner eigenen Grammatikregel als DAS Beispiel für Sonnenbuchstaben (Kapitel 3, حُروف شَمْسِيّة): نَجْمٌ wird mit Artikel zu اَلنَّجْمُ — an-nadschmu, nicht „al-nadschmu". Das ن schluckt das لْ und bekommt dafür ein Schadda. ⭐ Und genau so siehst du es in deiner Surenliste wieder: Sure 53 heißt سُورَةُ النَّجْم — „Der Stern". Ein Wort, das dir zweimal begegnet: einmal als Regel, einmal als Surenname.'
+    '⭐ Das Wort steht in deiner eigenen Grammatikregel als DAS Beispiel für Sonnenbuchstaben (Kapitel 3, حُروف شَمْسِيّة): نَجْمٌ wird mit Artikel zu اَلنَّجْمُ — an-nadschmu, nicht „al-nadschmu". Das ن schluckt das لْ und bekommt dafür ein Schadda. ⭐ Und genau so hörst du es am Ende von at-Takāṯur, die du auswendig kannst: عَنِ ٱلنَّعِيمِ (102:8) — geschrieben mit ل, gesprochen ʿani-n-naʿīm. Dasselbe ن, derselbe Sonnenbuchstabe.'
   ],
 
   /* طَبِيبٌ - Arzt */
@@ -184,8 +195,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* كَلْبٌ - Hund */
   '45766': [
-    'Der bekannteste Hund im Islam ist der der Höhlengefährten aus Sure الْكَهْف, die viele freitags lesen — dort liegt كَلْبُهُم mit ausgestreckten Vorderbeinen am Eingang.',
-    '⚠️ Klangfalle: „kalb" klingt wie das deutsche „Kalb", heißt aber Hund. Das Rind heißt بَقَرَةٌ — auch in deinen Vokabeln, und der Name von Sure 2.'
+    'Ein Hadith erzählt von einem Mann, der einem durstigen كَلْب in seinem Schuh Wasser aus einem Brunnen holte — und Allah vergab ihm dafür (Buḫārī und Muslim). Ein Hund, und eine ganze Vergebung.',
+    '⚠️ Klangfalle: „kalb" klingt wie das deutsche „Kalb", heißt aber Hund. Das Rind heißt بَقَرَةٌ — auch in deinen Vokabeln.'
   ],
 
   /* قِطٌّ - Katze */
@@ -209,7 +220,7 @@ const ESELSBRUECKEN_ALT = {
   /* جَمَلٌ - Kamel */
   '45770': [
     'Zwei deiner Wörter teilen ج م ل: جَمَلٌ (Kamel) und جَمِيلٌ (schön). Für den Beduinen war das Kamel das schönste Tier — ob das sprachlich zusammengehört, wird nicht behauptet, als Merkhaken hält es trotzdem.',
-    'Das Bild vom Kamel und dem Nadelöhr kennst du aus dem Deutschen — es steht fast wörtlich auch im Koran: «حَتَّىٰ يَلِجَ الْجَمَلُ» — „bis das Kamel hindurchgeht“ — «فِي سَمِّ الْخِيَاطِ», „durch das Nadelöhr“. Dasselbe Tier, dasselbe Bild, zwei Sprachen.'
+    '⭐ Das deutsche „Kamel“ ist dasselbe Wort: es kam über das Griechische aus genau dieser semitischen Wurzel — ǧamal, Kamel. Wer „Kamel“ sagt, sagt schon fast جَمَلٌ.'
   ],
 
   /* دِيكٌ - Hahn */
@@ -252,7 +263,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* مَا - was */
   '45777': [
-    'Sūrat al-Qāriʿa kannst du auswendig — und sie besteht fast aus diesem einen Wort: مَا ٱلْقَارِعَةُ (101:2), gleich darauf وَمَآ أَدْرَىٰكَ مَا (101:3). Dreimal مَا in drei kurzen Versen, jedes Mal „was". Wenn dir das Wort nicht einfällt, sprich die Sure innerlich an.',
+    'Al-Qadr, die du auswendig kannst, fragt zweimal mit diesem Wort: وَمَآ أَدْرَىٰكَ — „und was lässt dich wissen“ — مَا لَيْلَةُ ٱلْقَدْرِ, „was die Nacht der Bestimmung ist“ (97:2). Und in az-Zalzala fragt der Mensch: مَا لَهَا — „was ist mit ihr?“ (99:3). Wenn dir das Wort nicht einfällt, sprich einen der beiden Verse innerlich an.',
     'Sortiere deine Fragewörter in zwei Sorten, dann verwechselst du nie wieder: مَا (was) und aus deinen Regeln مَنْ (wer), أَيْنَ (wo), لِمَنْ (wem gehört) fragen nach einer SACHE oder PERSON — die Antwort ist ein Wort. أَ und هَلْ fragen nach JA ODER NEIN. Der Unterschied liegt nicht am Wort, sondern an der Art der Antwort.'
   ],
 
@@ -358,7 +369,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* قَرِيبٌ - nah */
   '45793': [
-    'Der letzte Vers von Sūrat al-ʿAlaq, die du auswendig kannst, endet mit deiner Wurzel: وَٱسْجُدْ وَٱقْتَرِب (96:19) — „wirf dich nieder und sei nah“. اِقْتَرِب ist ein Befehl von ق ر ب. Nähe zu Allah durch die Niederwerfung — ein Bild, das das Wort trägt.',
+    'Das Opfer heißt قُرْبَان — dieselbe Wurzel ق ر ب: das, womit man sich Allah NÄHERT. Im Türkischen wurde daraus „Kurban“, daher „Kurban Bayramı“ für das Opferfest. Wer nah sein will, bringt ein قُرْبَان.',
     'Dieselbe Wurzel trägt أَقْرَب („näher“) und قَرِيب im Sinne von „Verwandter“ — wer nah ist, im Raum wie in der Familie. Im Deutschen sagt man „ein naher Angehöriger“ und meint dasselbe.'
   ],
 
@@ -400,7 +411,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* ثَقِيلٌ - schwer */
   '45800': [
-    'Sūrat al-Qāriʿa kannst du auswendig, und deine Wurzel trägt dort den entscheidenden Satz: مَن ثَقُلَتْ مَوَٰزِينُهُ (101:6) — „wessen Waagschalen schwer sind". Schwer ist im Koran das Gute, das wiegt. Ein Bild, das man nicht mehr los wird.',
+    'Az-Zalzala, die du auswendig kannst, hat deine Wurzel schon im zweiten Vers: وَأَخْرَجَتِ ٱلْأَرْضُ أَثْقَالَهَا — „und die Erde bringt ihre Lasten hervor“ (99:2). أَثْقَال sind die schweren Dinge, die sie in sich trägt — ثَقِيل ist, was so viel wiegt.',
     'Von derselben Wurzel ث ق ل kommt مِثْقَال, das Gewichtsmaß. Und das مِـ davor ist dasselbe wie in مِفْتَاحٌ (Schlüssel) und مِنْدِيلٌ (Tuch), die du hast: مِـ macht aus einer Handlung ein WERKZEUG oder ein Maß. Ein Muster, das dir immer wieder begegnet.'
   ],
 
@@ -517,7 +528,7 @@ const ESELSBRUECKEN_ALT = {
   /* جَامِعَةٌ - Universität */
   '45819': [
     'Die Wurzel ج م ع („sammeln") trägt drei Wörter, die du kennst: الْجُمُعَة ist der Tag der Versammlung, der جَامِع die Freitagsmoschee, in der sich alle versammeln — und die جَامِعَة der Ort, an dem sich alle Fächer versammeln. Ein Stamm, drei Versammlungen.',
-    'Im Koran begegnet dir die Wurzel in deinem auswendigen Bereich: ٱلَّذِي جَمَعَ مَالًا (104:2) — „der Besitz zusammenträgt", in Sūrat al-Humaza. Dasselbe جَمَعَ, das in جَامِعَة steckt. Wer den Vers spricht, hat das Wort.'
+    'Das Gebet in der Gemeinschaft heißt صَلَاةُ الْجَمَاعَةِ — dieselbe Wurzel ج م ع, „versammeln“. Die جَمَاعَة ist die versammelte Gruppe, die جَامِعَة der Ort, an dem sich die Studierenden versammeln.'
   ],
 
   /* مُدِيرٌ - Direktor */
@@ -567,14 +578,14 @@ const ESELSBRUECKEN_ALT = {
 
   /* رَسُولٌ - Gesandter */
   '45827': [
-    'In Sūrat al-Bayyina, die du auswendig kannst, steht das Wort genau in deiner Form: رَسُولٌ مِّنَ ٱللَّهِ (98:2) — „ein Gesandter von Allah“. Mit Tanwīn, unbestimmt, wie im Vokabelheft. Und in Sūrat al-Fīl steckt dieselbe Wurzel im Verb: وَأَرْسَلَ عَلَيْهِمْ (105:3), „und Er sandte gegen sie“.',
+    'In al-Fīl, die du auswendig kannst, steckt die Wurzel im Verb: وَأَرْسَلَ عَلَيْهِمْ طَيْرًا — „und Er sandte gegen sie Vögel“ (105:3). Ein رَسُول ist der Gesandte: der, den man SENDET.',
     'Die Wurzel ر س ل heißt senden und trägt eine ganze Familie: رَسُول der Gesandte, رِسَالَة die Botschaft, أَرْسَلَ „er sandte“. Wer eines davon erkennt, erkennt die anderen mit.',
     '⭐ Aus deiner Dua „Mein Tashahud“, ganz am Ende: عَبْدُهُ وَرَسُولُهُ — „sein Diener und sein Gesandter“. Zweimal dieselbe Endung ـُهُ („sein“), und das zweite Wort ist deine Vokabel.'
   ],
 
   /* تَحْتَ - unter */
   '45828': [
-    'Die berühmteste Wendung des Korans über das Paradies trägt dein Wort, und sie steht in einer Sure, die du auswendig kannst: تَجْرِي مِن تَحْتِهَا (98:8) — „durcheilt von Bächen", wörtlich „es fließt von unter ihnen". تَحْتِهَا ist dein تَحْتَ mit „ihnen" daran.',
+    '⭐ Ein Satz, den viele kennen: „Das Paradies liegt unter den Füßen der Mütter.“ Im Hadith heißt es über die Mutter: فَإِنَّ الْجَنَّةَ تَحْتَ رِجْلَيْهَا — „denn das Paradies ist unter ihren Füßen“ (Nasāʾī). Das „unter“ darin ist dein تَحْتَ.',
     '⚠️ Der Fachbegriff dazu ist ظَرْف, und dein Lehrer stellt ausdrücklich klar: تَحْتَ ist KEIN حَرْفُ الْجَرِّ, obwohl das Wort danach genauso in den Genitiv kommt — تَحْتَ الْمَكْتَبِ. Es wirkt wie eine Genitivpartikel, gehört aber in eine eigene Kategorie. Das ist der Unterschied, den man kennen muss.'
   ],
 
@@ -640,7 +651,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* اِسْمٌ - Name */
   '45839': [
-    'Der allererste Vers, der herabgesandt wurde, trägt dein Wort — und du kannst die Sure auswendig: ٱقْرَأْ بِٱسْمِ رَبِّكَ (96:1), „Lies im Namen deines Herrn“. Dasselbe بِٱسْمِ sprichst du bei jedem بِسْمِ اللهِ. ⚠️ Auch dort fällt das اِ in der Verbindung weg, weil es eine Hamzat al-waṣl ist.',
+    'Die Namen Allahs heißen أَسْمَاءُ اللَّهِ الْحُسْنَى — „die schönsten Namen Allahs“. Dort steht der Plural deines Wortes: أَسْمَاء. ⚠️ Im Plural ist das اِ verschwunden, vorne steht ein festes أَ — der Plural hat keine Hamzat al-waṣl.',
     'اِسْم ist außerdem einer der drei Fachbegriffe für die Wortarten aus deinem Unterricht: اِسْم – فِعْل – حَرْف. Alles, was kein Verb und keine Partikel ist, ist ein اِسْم. Damit hat dein Vokabelwort „Name“ gleichzeitig eine grammatische Bedeutung — merke beide zusammen.',
     'Aus deiner Dua „Abend Dua 3“, die du dreimal sagst: „…mit dessen Namen nichts schadet“ — dort steht مَعَ اسْمِهِ, „mit Seinem Namen“. اسْمِهِ ist dein اِسْم mit ـِهِ („sein“) daran; das Alif am Anfang sprichst du dort nicht mit.'
   ],
@@ -661,7 +672,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* بَقَرَةٌ - Kuh */
   '45842': [
-    'Du kennst das Wort seit Jahren, nur nie als Vokabel: Sure 2 heißt الْبَقَرَة — „die Kuh", die längste Sure des Korans. Jedes Mal, wenn du sie im Inhaltsverzeichnis siehst, siehst du deine Vokabel.',
+    'Beim Opfern darf sich eine Gruppe von sieben Personen eine بَقَرَة teilen — so steht es bei Muslim. Ein Tier, sieben Anteile.',
     '⚠️ Die تاء مَرْبُوطة macht hier nicht nur „weiblich", sondern das EINZELNE Stück: بَقَرٌ ist das Rindvieh als Gattung, بَقَرَةٌ die eine Kuh. Dasselbe Paar siehst du bei حَجَرٌ → حِجَارَةٌ mitgedacht. Merke: das ة kann auch „eine einzelne davon" heißen.'
   ],
 
@@ -763,7 +774,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* سَرِيعٌ - schnell */
   '45859': [
-    '⭐ Der Ausdruck, in dem dir das Wort am häufigsten begegnet, beschreibt Allah: سَرِيعُ الْحِسَابِ — „schnell im Abrechnen". Zwei Wörter, und das erste ist genau deine Vokabel. ⚠️ Es steht dort in einer إِضَافَة und trägt deshalb kein Tanwīn: سَرِيعُ, nicht سَرِيعٌ.',
+    'Fast Food heißt auf Arabisch الْوَجَبَاتُ السَّرِيعَةُ — „die schnellen Mahlzeiten“. Dort steht deine Vokabel in der weiblichen Form, denn ein Plural von Sachen wird wie ein weibliches Wort behandelt.',
     'Von derselben Wurzel س ر ع kommt أَسْرَعَ (sich beeilen) und سُرْعَة (die Geschwindigkeit) — das Wort, das auf Verkehrsschildern steht. Wer die Wurzel hat, liest auch das Schild.'
   ],
 
@@ -954,7 +965,7 @@ const ESELSBRUECKEN_ALT = {
   /* يَوْمٌ - Tag */
   '45887': [
     'Du sprichst es in jedem Gebet: مَٰلِكِ يَوْمِ ٱلدِّينِ (1:4) — „dem Herrscher am Tag des Gerichts“. Das ist zugleich eine إِضَافَة in einer إِضَافَة: مَالِكِ zu يَوْمِ, und يَوْمِ zu الدِّينِ. Deine Vokabel steht mitten in einem Satz, den du auswendig kannst.',
-    '⭐ In den kurzen Suren, die du auswendig kannst, hörst du يَوْمَئِذٍ ständig — „an jenem Tag“. Es steckt in 99:6 und in 100:11, und es ist nichts anderes als dein Wort mit einem Anhängsel. Wer die Suren spricht, hat die Vokabel Dutzende Male gesagt.'
+    '⭐ In den kurzen Suren, die du auswendig kannst, hörst du يَوْمَئِذٍ ständig — „an jenem Tag“. Es steckt in 99:4, 99:6 und 102:8, und es ist nichts anderes als dein Wort mit einem Anhängsel. Wer die Suren spricht, hat die Vokabel schon oft gesagt.'
   ],
 
   /* لِمَاذَا - warum */
@@ -972,7 +983,7 @@ const ESELSBRUECKEN_ALT = {
   /* مَكْتَبَةٌ - Bibliothek */
   '45890': [
     '⭐ Drei Wörter, eine Wurzel ك ت ب, und du hast alle drei: كِتَابٌ (das Buch), مَكْتَبٌ (der Schreibtisch, der Ort des Schreibens), مَكْتَبَةٌ (die Bibliothek, der Ort der Bücher). Das مَـ macht den Ort, die تاء مَرْبُوطة macht daraus die Sammlung.',
-    'Im Koran steht dieselbe Wurzel als أَهْلِ ٱلْكِتَٰبِ (98:1) — „die Leute der Schrift", in Sūrat al-Bayyina, die du auswendig kannst. Wer den Vers spricht, hat den ganzen Stamm: Buch, Schreibtisch, Bibliothek, Schrift.'
+    'مَكْتُوب — „es steht geschrieben“: so sagt man, wenn etwas kommen sollte, wie es kam. Dieselbe Wurzel ك ت ب: das Geschriebene heißt مَكْتُوب, der Ort der Bücher مَكْتَبَةٌ.'
   ],
 
   /* الْآنَ - jetzt */
@@ -1014,7 +1025,7 @@ const ESELSBRUECKEN_ALT = {
   /* حَادٌّ - scharf */
   '45897': [
     'Die شَدَّة ist der halbe Wortstamm: die Wurzel ist ح د د, zwei د auf eines zusammengezogen. Sprich es hörbar: ḥād-d. Dasselbe hast du bei حَارٌّ (heiß) — beide Adjektive, beide mit doppeltem letzten Wurzelbuchstaben, beide kurz.',
-    'Von derselben Wurzel kommt حَدِيد (Eisen) — der Name von Sure 57 — und حَدّ, die Grenze. Was scharf ist, hat eine Kante. ⚠️ Und es passt zu deinem سِكِّينٌ (Messer): سِكِّينٌ حَادٌّ, ein scharfes Messer. Zwei Vokabeln, ein Satz.'
+    'Von derselben Wurzel kommt حَدِيد (Eisen) und حَدّ, die Grenze. Was scharf ist, hat eine Kante. ⚠️ Und es passt zu deinem سِكِّينٌ (Messer): سِكِّينٌ حَادٌّ, ein scharfes Messer. Zwei Vokabeln, ein Satz.'
   ],
 
   /* إِنْدُونِيسِيَا - Indonesien */
@@ -1245,7 +1256,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* فَتًى - junger Mann */
   '45902': [
-    '⭐ Du kennst den Begriff aus der Geschichte der Höhlengefährten: die أَصْحَابُ الْكَهْف werden im Koran als فِتْيَة bezeichnet — junge Männer, die für ihren Glauben fortgingen. Dasselbe Wort, ein Plural davon. Wer die Geschichte kennt, hat die Vokabel.',
+    'Dieselben Buchstaben ف ت ي trägt die فَتْوَى, das Rechtsgutachten — ein Wort, das auch im Deutschen bekannt ist. Mit dem jungen Mann hat es inhaltlich nichts zu tun; als Klanghaken hält es: fa-tan, fat-wā.',
     '⚠️ Am Ende steht eine أَلِف مَقْصورة — das ى ohne Punkte, gesprochen wie ein kurzes a mit Tanwīn: fa-tan. Genau der Fachbegriff, den du gelernt hast, und dasselbe Wortende wie bei مُسْتَشْفًى. Die weibliche Form dazu lernst du im nächsten Kapitel — dort wird aus dem ى ein echtes ت.'
   ],
 
@@ -1278,7 +1289,7 @@ const ESELSBRUECKEN_ALT = {
   /* شَجَرَةٌ - Baum */
   '45906': [
     '⭐ Zwei Bäume kennst du beim Namen: سِدْرَةُ الْمُنْتَهَىٰ, der Lotusbaum an der äußersten Grenze, und شَجَرَةُ الزَّقُّومِ, der Baum der Höllenspeise. Beide Male steht dasselbe schlichte Wort für „Baum" davor.',
-    '⭐ Und der Treueid von al-Ḥudaybiya heißt بَيْعَةُ الرِّضْوَانِ, geleistet تَحْتَ الشَّجَرَةِ — „unter dem Baum". Auch der Baum, dem Ādam ﷺ sich nicht nähern sollte, wird im Koran nur الشَّجَرَة genannt.'
+    '⭐ Der Treueid von al-Ḥudaybiya heißt بَيْعَةُ الرِّضْوَانِ — geleistet unter einem Baum. Und in einem Hadith vergleicht der Prophet ﷺ den Muslim mit einer شَجَرَة, deren Blätter nicht abfallen: der Dattelpalme (Buḫārī).'
   ],
 
   /* سُورِيَا - Syrien */
@@ -1322,7 +1333,7 @@ const ESELSBRUECKEN_ALT = {
   /* ضَيْفٌ - Gast */
   '45913': [
     '⭐ Ein Hadith, der das Wort trägt: مَنْ كَانَ يُؤْمِنُ بِاللَّهِ — „Wer an Allah glaubt“ — وَالْيَوْمِ الْآخِرِ — „und an den Jüngsten Tag“ — فَلْيُكْرِمْ ضَيْفَهُ — „der ehre seinen Gast" (Buḫārī und Muslim). إِكْرَامُ الضَّيْفِ ist daraus ein feststehender Begriff geworden.',
-    '⭐ Und die Geschichte kennst du: die Engel, die zu Ibrāhīm ﷺ kamen und denen er das gebratene Kalb vorsetzte, heißen im Koran schlicht ضَيْفُ إِبْرَاهِيمَ. Das Wort steht mitten in einer Erzählung, die du schon hast.'
+    '⭐ Wie lange ist man Gast? Der Prophet ﷺ sagte: الضِّيَافَةُ ثَلَاثَةُ أَيَّامٍ — „die Bewirtung dauert drei Tage“ (Buḫārī). ضِيَافَة, die Bewirtung, kommt von derselben Wurzel wie ضَيْف.'
   ],
 
   /* حَقْلٌ - Feld */
@@ -1466,7 +1477,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* بَحْرٌ - Meer */
   '45936': [
-    '⭐ Ein Land trägt den Dual dieses Wortes im Namen: الْبَحْرَيْن — „die zwei Meere". Und die Begegnung von Mūsā ﷺ mit al-Ḫiḍr fand مَجْمَعَ الْبَحْرَيْنِ statt, am Zusammenfluss der beiden Meere.',
+    '⭐ Ein Land trägt den Dual dieses Wortes im Namen: الْبَحْرَيْن — „die zwei Meere“. Die Endung ـَيْن zeigt: genau zwei. Wer das Land kennt, hat die Vokabel und den Dual gleich mit.',
     'Aus Kapitel 12 kennst du schon einen Ausdruck damit: الْبَحْرُ الْأَبْيَضُ الْمُتَوَسِّطُ, das Mittelmeer. Dort steht بَحْر an erster Stelle — du hast das Wort also gelesen, bevor es als Vokabel drankam.'
   ],
 
@@ -1500,7 +1511,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* مِسْطَرَةٌ - Lineal */
   '45941': [
-    'Die Wurzel س ط ر ist die der Zeile: ein سَطْر ist eine geschriebene Zeile, und أَسَاطِيرُ الْأَوَّلِينَ — „die Schriften der Früheren" — ist ein Ausdruck, der im Koran mehrfach vorkommt. Das Lineal zieht genau das: die Zeile.',
+    'Die Wurzel س ط ر ist die der Zeile: ein سَطْر ist eine geschriebene Zeile, im Plural سُطُور. Das Lineal zieht genau das: die Zeile.',
     'Zwei Werkzeuge desselben Tisches: مِسْطَرَةٌ zieht die Linie, قَلَمٌ (Kapitel 1) schreibt darauf. Beide beginnen mit dem Werkzeug-Zeichen, das du schon von مِفْتَاحٌ kennst.'
   ],
 
@@ -1520,7 +1531,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* كُلٌّ - alle / jeder */
   '45944': [
-    '⭐ Belegt in al-Humaza, die du auswendig kannst: وَيْلٌ لِكُلِّ هُمَزَةٍ لُمَزَةٍ — „Wehe jedem Stichler und Nörgler" (104:1). Dort steht كُلّ genau in seiner häufigsten Rolle: vor einem zweiten Nomen.',
+    '⭐ Gleich im ersten Vers von al-Mulk: عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ — „Er hat zu allem die Macht“, wörtlich „über jede Sache“ (67:1). Dort steht كُلّ genau in seiner häufigsten Rolle: vor einem zweiten Nomen.',
     'Aus derselben Wurzel kommt ein Wort aus Kapitel 14: كُلِّيَّةٌ, die Fakultät — die „Gesamtheit" eines Fachs. Wer كُلّ kennt, versteht auch, warum die Fakultät so heißt.'
   ],
 
@@ -1583,7 +1594,7 @@ const ESELSBRUECKEN_ALT = {
   /* حَرْفٌ - Buchstabe */
   '45954': [
     '⭐⭐ Das Wort ist einer der drei Grundbegriffe deiner Grammatik: أَقْسَامُ الْكَلِمَةِ sind اِسْمٌ, فِعْلٌ und حَرْفٌ. Im Buchstabensinn ist ein حَرْف ein Zeichen, im Grammatiksinn das Partikelwort — dieselbe Vokabel in zwei Rollen.',
-    '⭐ Und du kennst sie aus dem Koran: die الْحُرُوفُ الْمُقَطَّعَةُ, die einzeln gesprochenen Buchstaben am Anfang mancher Suren — الم, يس, ق. Dort steht der Plural حُرُوف.'
+    '⭐ Den Plural kennst du aus deinen Regeln: الْحُرُوفُ الشَّمْسِيَّةُ und الْحُرُوفُ الْقَمَرِيَّةُ — die Sonnen- und die Mondbuchstaben. Dort steht der Plural حُرُوف.'
   ],
 
   /* دَرْسٌ - Unterricht; Lektion */
@@ -1622,7 +1633,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* أَخْضَرُ - grün */
   '45960': [
-    '⭐ Ein Name aus einer Geschichte, die du kennst: الْخَضِرُ — der Gefährte von Mūsā ﷺ, den er مَجْمَعَ الْبَحْرَيْنِ traf. Sein Name heißt „der Grüne". Dieselbe Wurzel خ ض ر.',
+    '⭐ Ein Name, der „der Grüne“ heißt: الْخَضِرُ. Nach einem Hadith setzte er sich auf kahlen Boden, und hinter ihm wurde es grün — daher der Name (Buḫārī). Dieselbe Wurzel خ ض ر.',
     'Grün ist die حَدِيقَةٌ aus Kapitel 14 und das حَقْلٌ aus Kapitel 13. ⚠️ Und achte auf den zweiten Buchstaben: أَخْضَرُ hat خ, أَحْمَرُ hat ح — im Schriftbild trennt sie nur der Punkt.'
   ],
 
@@ -1634,7 +1645,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* أَصْفَرُ - gelb */
   '45962': [
-    '⭐ Die gelbe Kuh aus Sūrat al-Baqara heißt بَقَرَةٌ صَفْرَاءُ — die Geschichte, nach der die ganze Sure benannt ist. Dort steht die weibliche Form dieser Farbe.',
+    '⭐ Die Alhambra in Granada heißt الْحَمْرَاءُ, „die Rote“. Genau so bildest du die weibliche Farbe: أَحْمَرُ → حَمْرَاءُ, und bei deinem Wort أَصْفَرُ → صَفْرَاءُ. Ein Palast, und das Muster sitzt.',
     '⚠️ Dieselben drei Buchstaben ص ف ر tragen صِفْرٌ, die Null — und genau dieses arabische Wort wurde im Deutschen zur „Ziffer". Ein Wort, das du längst benutzt, ohne es zu wissen.'
   ],
 
@@ -1715,7 +1726,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* ـهُ - die Besitzendung „sein“ */
   'gram-suffix-hu': [
-    'Im Koran in al-Qāriʿah: فَأَمَّا مَن ثَقُلَتْ مَوَٰزِينُهُۥ (101:6) — „seine Waagschalen“. Die Endung hängt am Nomen und sagt „ihm gehörend“; du sprichst sie, ohne darüber nachzudenken.',
+    'Im Koran in al-Masad: مَآ أَغْنَىٰ عَنْهُ مَالُهُۥ — „sein Besitz hat ihm nicht genützt“ (111:2). مَالُهُۥ ist „sein Besitz“: die Endung hängt am Nomen und sagt „ihm gehörend“ — und in عَنْهُ steht sie gleich noch einmal, an einer Partikel.',
     '⚠️ Eine Falle, die du auf Seite 61 selbst schon gelesen hast: nach einer Kasra wird aus ـهُ ein هِ. Deshalb heißt es dort فِيهِ und nicht die Form mit Ḍamma. Der Vokal davor zieht den Vokal danach zu sich.'
   ],
 
@@ -1771,7 +1782,7 @@ const ESELSBRUECKEN_ALT = {
   /* هُمْ - sie, Pl. m. (madina-1, Kapitel 24) */
   '50159': [
     '⭐ Aus al-Māʿūn, die du auswendig kannst: الَّذِينَ هُمْ — „die, welche“ — عَنْ صَلَاتِهِمْ سَاهُونَ, „ihr Gebet vernachlässigen“ (107:5). Dort steht هُمْ für eine Gruppe von Menschen, genau wie in deinem Satz.',
-    'In al-Bayyina steht es zweimal dicht beieinander: أُولَٰئِكَ هُمْ شَرُّ الْبَرِيَّةِ (98:6) und أُولَٰئِكَ هُمْ خَيْرُ الْبَرِيَّةِ (98:7) — dieselbe Bauform, das Gegenteil an Aussage. ⚠️ Merk dir das ـمْ mit Sukūn am Ende: es ist stumm, aber es ist da.'
+    'Als Endung hängt es an Wörtern, die du auswendig kannst: كَيْدَهُمْ — „ihre List“ (105:2) — und أَطْعَمَهُم, „Er gab ihnen zu essen“ (106:4). Dasselbe هُمْ, nur angeklebt: am Nomen heißt es „ihr“, am Verb „sie“ oder „ihnen“.'
   ],
 
   /* نَعْتٌ - Attribut / Adjektiv (madina-1, Kapitel 24) */
@@ -1796,7 +1807,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* لِمَن - (für) wem/wen (selbst angelegt) */
   'p_1787184718572': [
-    'Du sprichst es in al-Bayyinah: ذَٰلِكَ لِمَنْ خَشِيَ رَبَّهُ — „das ist für jemanden, der seinen Herrn fürchtet" (98:8, letzter Vers). Dasselbe لِمَنْ, dieselbe Bedeutung „für wen".',
+    'Die Antwort auf لِمَنْ kommt mit demselben لِـ zurück: لَكَ „für dich“, لَهُ „für ihn“. Beides sprichst du in Suren, die du auswendig kannst: أَلَمْ نَشْرَحْ لَكَ صَدْرَكَ (94:1) und وَلَمْ يَكُن لَّهُۥ (112:4).',
     '⚠️ Merk dir die Endung mit: لِمَنْ hat ein Sukūn. Trifft es auf die Hamzat al-waṣl von الْ, wird daraus ein Kasra — لِمَنِ الْكِتَابُ؟, nicht لِمَنْ الْكِتَابُ. Das ist dieselbe Regel wie bei مِنَ الْبَيْتِ, die du aus Folge 5 kennst.'
   ],
 
@@ -1815,7 +1826,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* بَعْدَ - nach / danach (selbst angelegt) */
   'p_1787188396011': [
-    'Du sprichst es in al-Bayyinah: مِنْ بَعْدِ مَا جَاءَتْهُمُ — „nachdem der klare Beweis zu ihnen gekommen ist" (98:4). Dort steht بَعْدِ mit Kasra, weil مِنْ davorsteht — dieselbe Ḥarf-ǧarr-Regel wie überall.',
+    'Du kennst es aus deiner „Dua nach Aufstehen“: Allah hat uns lebendig gemacht — بَعْدَ مَا أَمَاتَنَا, „nachdem Er uns sterben ließ“. بَعْدَ مَا heißt „nachdem“ — genau dein Wort, mit einem مَا dahinter.',
     'Und in at-Tīn, vorletzter Vers: فَمَا يُكَذِّبُكَ بَعْدُ بِالدِّينِ (95:7). ⚠️ Hier steht بَعْدُ mit Ḍamma — weil kein Wort folgt, auf das es zeigt. Mit folgendem Wort: Fatḥa. Ohne: Ḍamma.'
   ],
 
@@ -1845,7 +1856,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* عِنْدَ - bei (selbst angelegt) */
   'p_1787190874749': [
-    'Und in al-Bayyinah, letzter Vers: جَزَاؤُهُمْ عِنْدَ رَبِّهِمْ — „Ihr Lohn BEI ihrem Herrn sind die Gärten Edens" (98:8).',
+    'Und im Thronvers, mit Endung: مَنْ ذَا الَّذِي — „wer ist es, der“ — يَشْفَعُ عِنْدَهُ, „bei Ihm Fürsprache einlegt“ (2:255). عِنْدَهُ ist dein عِنْدَ mit der Endung ـهُ, „ihm“. Geschrieben wie im Vers davor in al-Mulk, ohne die Zusatzzeichen des Korantextes.',
     '⭐ Der Unterschied zu لِ, den dein Lehrer in Folge 15 ausdrücklich „eine wichtige Regel" nennt: لِ ist für Untrennbares (dein Bruder, dein Name), عِنْدَ für Trennbares (das Buch, das gerade bei dir liegt). Beide heißen auf Deutsch „ich habe" — austauschbar sind sie nicht.'
   ],
 
@@ -1860,7 +1871,7 @@ const ESELSBRUECKEN_ALT = {
   ],
 
   'gram-pron-hum': [
-    'أُولَئِكَ هُمْ خَيْرُ الْبَرِيَّةِ — aus سُورَةُ الْبَيِّنَةِ (98:7), die du auswendig kannst. Auch dort steht هُمْ als eigenes Wort mitten im Satz.',
+    'ٱلَّذِينَ هُمْ يُرَآءُونَ — der Vers direkt danach in al-Māʿūn (107:6), und wieder steht هُمْ als eigenes Wort mitten im Satz: „die, die gesehen werden wollen“. Zweimal hintereinander dieselbe Bauform — so prägt es sich ein.',
     'Das م ist im Arabischen durchgängig das Zeichen des männlichen Plurals, und du sprichst es täglich in der Fātiḥa: أَنْعَمْتَ عَلَيْهِمْ — „denen Du Gunst erwiesen hast“. Dasselbe مْ steckt in هُمْ, in أَنْتُمْ und in عَلَيْكُمْ.'
   ],
 
@@ -2222,7 +2233,7 @@ const ESELSBRUECKEN_ALT = {
   ],
 
   'gram-fil': [
-    'Das erste Wort der Offenbarung ist ein فِعْل: اقْرَأْ بِاسْمِ رَبِّكَ (96:1) — „Lies!". Ein Befehl ist immer ein فِعْل. ⭐ Und gleich der nächste Vers hat noch einen: خَلَقَ, „er erschuf".',
+    'In jeder Rakʿa sprichst du einen Befehl: ٱهْدِنَا ٱلصِّرَٰطَ ٱلْمُسْتَقِيمَ — „leite uns den geraden Weg“ (1:6). ٱهْدِنَا ist ein فِعْل — ein Befehl ist immer ein فِعْل. ⭐ Und al-Falaq hat die Vergangenheit: مِن شَرِّ مَا خَلَقَ — خَلَقَ, „er erschuf“ (113:2).',
     'In قُلْ أَعُوذُ بِرَبِّ النَّاسِ (114:1) stehen zwei فِعْل direkt nebeneinander: قُلْ ist der Befehl „sag", أَعُوذُ die Gegenwart „ich nehme Zuflucht". ⭐ Daran erkennst du ein فِعْل: es hat eine Zeit. Ein اِسْم hat keine.'
   ],
 
@@ -2257,7 +2268,7 @@ const ESELSBRUECKEN_ALT = {
   ],
 
   'gram-hamzat-wasl': [
-    'Der bekannteste Fall steht in 96:1: اقْرَأْ بِاسْمِ رَبِّكَ. Das Wort dahinter ist اِسْمٌ — deine eigene Karte —, aber nach dem بِ liest du bi-smi, nicht bi-ismi. Das Alif steht noch da, gehört wird es nicht. Das ist die هَمْزَة وَصْل.',
+    'Du sprichst sie in al-Iḫlāṣ: قُلْ هُوَ ٱللَّهُ أَحَدٌ (112:1). Geschrieben steht ٱللَّهُ mit Alif, gesprochen wird huwa-llāhu — kein a vor dem l. Das Alif steht noch da, gehört wird es nicht. Das ist die هَمْزَة وَصْل.',
     'Zwei deiner Karten fangen damit an: اِسْمٌ und اِبْنٌ. Sprichst du sie allein, hörst du das i am Anfang; steht ein Wort davor, fällt es weg. ⭐ Daran erkennst du die هَمْزَة وَصْل: sie ist eine Anlaufhilfe, kein eigener Laut.'
   ],
 
@@ -2604,7 +2615,7 @@ const ESELSBRUECKEN_ALT = {
   ],
 
   '50165': [
-    '⭐ Es steht in einer Sure, die du auswendig kannst: أُوْلَٰٓئِكَ هُمْ خَيْرُ ٱلْبَرِيَّةِ (98:7) — „das sind die besten Geschöpfe". Genau diese Arbeit macht das Wort auch auf deiner Karte: es zeigt auf eine Gruppe, die nicht hier steht, sondern dort drüben.',
+    'Das ـكَ am Ende ist das Zeichen für „du“ — dasselbe ـكَ wie in مَا وَدَّعَكَ رَبُّكَ, „dein Herr hat sich nicht von dir verabschiedet“ (93:3). In أُولَئِكَ richtet es den Hinweis an den, mit dem man spricht: „jene dort — schau!“'
   ],
 
   '50166': [
@@ -2857,7 +2868,7 @@ const ESELSBRUECKEN_ALT = {
   ],
 
   '46017': [
-    'Du sprichst die Wurzel in einer Sure, die du auswendig kannst: وَٱسْجُدْ وَٱقْتَرِب (96:19) — „wirf dich nieder und komm näher". Die سَجَّادَة ist die Unterlage genau dafür. Und صَلَّى (beten) aus Kapitel 2 dieses Buchs gehört daneben.',
+    'Auf der سَجَّادَة liegt deine Stirn in der سَجْدَة, und dort sagst du سُبْحَانَ رَبِّيَ الْأَعْلَى. Der Teppich ist nach genau dieser Handlung benannt: س ج د, sich niederwerfen. Und صَلَّى (beten) aus Kapitel 2 dieses Buchs gehört daneben.',
     '⚠️ Der Unterschied zu مَسْجِدٌ, das du seit Kapitel 1 hast, ist die Schadda: سَجَّادَةٌ verdoppelt das ج, مَسْجِدٌ nicht. Auch die Plurale gehen auseinander — مَسَاجِدُ ohne Tanwin gegen سَجَّادَاتٌ mit ـَاتٌ. Eine Wurzel, zwei ganz verschiedene Wege.'
   ],
 
@@ -2912,7 +2923,7 @@ const ESELSBRUECKEN_ALT = {
   ],
 
   '46027': [
-    'In al-ʿĀdiyāt, die du auswendig kannst, steht die Wurzel: وَإِنَّهُۥ عَلَىٰ ذَٰلِكَ لَشَهِيدٌ — „und er ist darüber wahrlich Zeuge“ (100:7). Ein Schahīd hat gesehen — شَاهَدَ ist das Sehen selbst.',
+    'Du sprichst die Wurzel in jedem Gebet, in deiner Dua „Mein Tashahud“: وَأَشْهَدُ أَنَّ مُحَمَّداً — „und ich bezeuge, dass Muḥammad …“. Wer bezeugt, hat gesehen — شَاهَدَ ist das Sehen selbst.',
     '⚠️ Nicht mit نَظَرَ aus Kapitel 1 verwechseln: نَظَرَ ist der kurze Blick, شَاهَدَ das längere Zusehen — deshalb steht es beim تِلْفَازٌ. Die Gegenwart beginnt mit يُـ: يُشَاهِدُ.'
   ],
 
@@ -2922,7 +2933,7 @@ const ESELSBRUECKEN_ALT = {
   ],
 
   '46029': [
-    'Die Wurzel steht in al-Bayyina, die du auswendig kannst: „ein Gesandter von Allah, der gereinigte Blätter verliest“ (98:2). Dort sind es die صُحُف — derselbe Plural, den dein Buch als صُحُفٌ nennt.',
+    'Der Plural steht am Ende eines bekannten Hadith über das Schicksal: رُفِعَتِ الْأَقْلَامُ — „die Stifte sind erhoben“ — وَجَفَّتِ الصُّحُفُ, „und die Blätter sind getrocknet“ (an-Nawawīs Vierzig, Nr. 19). Dort sind es die صُحُف — derselbe Plural, den dein Buch als صُحُفٌ nennt.',
     'Das Muster mit langem ī in der Mitte kennst du schon: حَقِيبَةٌ (Tasche) · مَدِينَةٌ (Stadt) · نَظِيفَةٌ (sauber). صَحِيفَةٌ ist derselbe Bau. ⚠️ Der Plural bricht ihn: صُحُفٌ, nicht صَحِيفَاتٌ.'
   ],
 
