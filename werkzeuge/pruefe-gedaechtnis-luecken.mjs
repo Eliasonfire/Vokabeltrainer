@@ -198,7 +198,12 @@ console.log('\n=== Stoertest ===');
      Jetzt wird ein Hash genommen, der nachweislich DASTEHT, und verlangt,
      dass die Suche ihn auch findet. Gibt es keinen einzigen, ist das selbst
      der Befund und die Probe faellt durch. [[pruefwerkzeug_mit_eingebauter_antwort]] */
-  const gefunden = zeilen.map(z => z.split('\t')[0]).filter(h => !fehlend.some(f => f.hash === h));
+  /* ⛔ Seit M10 gibt es eine DRITTE Menge: ein reiner Log-Commit steht weder
+     in `fehlend` noch im Gedaechtnis. Am 30.09.2026 um 14:47 war der neueste
+     Commit genau so einer (a365b62, das Protokoll der Routine „neue Kapitel"),
+     und diese Probe nahm ihn als „steht da" — rot, obwohl nichts fehlte. */
+  const gefunden = zeilen.map(z => z.split('\t')[0])
+    .filter(h => !fehlend.some(f => f.hash === h) && !nurProtokoll.some(f => f.hash === h));
   sP('ein Hash, der dasteht, wird auch gefunden',
     gefunden.length > 0 && text.includes(gefunden[0]), true);
   sP('die Notizen wurden wirklich gelesen (>= 100k Zeichen)', text.length > 100000, true);

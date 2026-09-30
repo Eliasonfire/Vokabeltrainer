@@ -780,6 +780,40 @@ function uebEndungStelle(t, glieder){
   return null;
 }
 
+/* ⭐ DIE ZEILE ZU هَذَا (30.09.2026, v638) — nur Übung 1.
+
+   Elias am 29.09.2026 an «هَذَا يَوْمُ الْعَمَلِ.» (gefragt war der مُبْتَدَأ,
+   er tippte يَوْمُ): „kann sein ich irre mich aber hadha ist doch kein
+   subjekt? das ist doch nicht das über das etwas ausgesagt wird" und
+   „generell das der begriff ,,dieser" das subjekt in dem satz sein soll macht
+   für mich einfach keinen sinn". Der Knoten war die Übersetzung: ohne اَلْ
+   danach heißt هَذَا „das", nicht „dieser". Auf meine Frage, ob die Übung
+   dafür eine Zeile zeigen soll, am 30.09.2026: „ja bau die zeile ein".
+
+   Die Zeile kommt nur, wenn der Zerleger هَذَا als مُبْتَدَأ liest und das
+   Wort danach KEIN اَلْ trägt (oder هَذَا am Ende steht). Mit اَلْ danach
+   („dieses Haus …") fragt die Übung ohnehin nur den خَبَر (v622). Gemessen
+   am 30.09.2026: 76 von 446 Sätzen.
+   Das Beispiel ist die eigene Übersetzung des Satzes, nach dem ersten Wort
+   geteilt — aber nur, wenn sie mit „Dies ist" oder „Das ist" beginnt (68 der
+   76). Bei Fragen („Was ist das?", „Ist dies …?") stimmt die Teilung nicht;
+   dort steht die Zeile ohne Beispiel.
+   ⚠️ Nur هَذَا, so wie er es bestätigt hat. هَذِهِ ist dieselbe Falle, aber
+   dazu hat er nichts gesagt — erst auf sein Wort.
+   ⛔ Die Zeile nennt die Lösung. Sie steht deshalb nur an einer Übung mit
+   `hinweisVerraet:true` und erscheint erst nach der Antwort (renderUebung).
+   Bewacht von werkzeuge/pruefe-hinweise.mjs, Zusicherung 4. */
+function uebHadhaZeile(z, satz){
+  const i = (z || []).findIndex((t, k) => uebSkelett(t.rein || t.wort) === 'هذا'
+    && /^مُبْتَدَأ/.test(String(t.rolle || ''))
+    && !(z[k + 1] && /^ال/.test(uebSkelett(z[k + 1].rein || z[k + 1].wort))));
+  if (i < 0) return '';
+  const teil = String((satz && satz.sentDe) || '').trim().match(/^(Dies|Das) (ist .+)$/);
+  return teil
+    ? `هَذَا heißt hier „${teil[1].toLowerCase()}“ und ist selbst der مُبْتَدَأٌ: „${teil[1]} | ${teil[2]}“`
+    : 'هَذَا heißt hier „das“ und ist selbst der مُبْتَدَأٌ.';
+}
+
 const UEBUNGEN = [
   {
     id:'mubtada-khabar', nr:1, name:'مُبْتَدَأٌ / خَبَرٌ — Satzteile', art:'mehrfach',
@@ -793,12 +827,14 @@ const UEBUNGEN = [
        der Aufgabe, nicht erst in der Aufloesung. */
     hinweis:'مُبْتَدَأٌ + خَبَرٌ bilden einen ganzen Satz („der Lehrer ist neu"). Ein Adjektiv, das nur beschreibt („eine große Moschee"), ist نَعْتٌ.',
     hinweisVerraet:true,
-    baue(z){
+    baue(z, satz){
       const mub = [], kha = [];
       z.forEach((t,i)=>{
         if (/^مُبْتَدَأ/.test(t.rolle)) mub.push(i);
         else if (t.rolle === 'خَبَر') kha.push(i);
       });
+      /* Die Zeile zu هَذَا (uebHadhaZeile, v638) — an beiden Fragen des Satzes. */
+      const zusatz = uebHadhaZeile(z, satz);
       return [
         /* ⛔ Die deutschen Wörter stehen IN der Frage (16.09.2026). Hier stand
            „— worüber wird etwas gesagt?", und Elias an هَذَا قَلَمُكَ.: „hier
@@ -815,7 +851,8 @@ const UEBUNGEN = [
         uebungSammel(kha, 'Tippe alle خَبَرٌ (Aussage über das Subjekt) an.')
         /* Reihum nach der Art der Frage (25.09.2026, „bei all diesen aufgaben
            bei denen es geht" — uebungSchluessel). */
-      ].map((a, k) => a && { ...a, reihum: [k ? 'khabar' : 'mubtada'] }).filter(Boolean);
+      ].map((a, k) => a && { ...a, reihum: [k ? 'khabar' : 'mubtada'], ...(zusatz ? { hinweisZusatz: zusatz } : {}) })
+        .filter(Boolean);
     }
   },
   {
@@ -2324,7 +2361,12 @@ function renderUebung(){
   const hinweis = document.getElementById('uebHinweis');
   const hinweisText = m.aufgabe || m.hinweis || '';
   const nochVerbergen = !!(m.hinweis && m.hinweisVerraet && !UEB.beantwortet);
-  hinweis.innerHTML = arabischHervor(hinweisText);
+  /* ⭐ Eine Zeile nur für DIESE Aufgabe (`a.hinweisZusatz`, seit v638 die Zeile
+     zu هَذَا, uebHadhaZeile). Sie hängt am Hinweis der Übung und wird mit ihm
+     verborgen — sie nennt die Lösung. */
+  const hinweisZusatz = (!m.aufgabe && m.hinweis && a.hinweisZusatz) || '';
+  hinweis.innerHTML = arabischHervor(hinweisText)
+    + (hinweisZusatz ? '<br>' + arabischHervor(hinweisZusatz) : '');
   hinweis.classList.toggle('hidden', !hinweisText || nochVerbergen);
 
   const wahl = document.getElementById('uebWahl');

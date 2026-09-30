@@ -105,23 +105,29 @@ pruefe('prueft trotzdem den erfundenen Hash',
 pruefe('prueft trotzdem, dass die Notizen gelesen wurden',
   a.aus.includes('die Notizen wurden wirklich gelesen'), true);
 
-/* ---- 2. Gegenprobe: die Fassung von HEAD ---- */
+/* ---- 2. Gegenprobe: die Fassung VOR der Reparatur ----
+   ⛔ Bis zum 30.09.2026 lief sie gegen HEAD. Das stimmte nur am Tag der
+   Reparatur (1876410, 15.09.): danach ist HEAD selbst repariert, und JEDE
+   spätere, noch nicht committete Änderung am Werkzeug ließ diesen Test die
+   REPARIERTE Fassung „durchfallen sehen wollen" — rot, obwohl nichts kaputt
+   war (am 30.09. nach einer Ein-Zeilen-Änderung an der Positivprobe).
+   Jetzt fest die Fassung davor, a1b656d (09.09.2026). Und die Probe muss
+   wirklich laufen: ohne Anker kam `code: null` heraus, und „endet nicht mit
+   0" wäre dann still bestanden. */
+const VOR_DER_REPARATUR = 'a1b656d';
 console.log('');
 let vorher = null;
 try {
-  vorher = execFileSync('git', ['-C', REPO, 'show', 'HEAD:' + DATEI],
+  vorher = execFileSync('git', ['-C', REPO, 'show', VOR_DER_REPARATUR + ':' + DATEI],
     { encoding: 'utf8', maxBuffer: 20e6 });
 } catch { /* kein Repo oder keine Historie — dann entfaellt die Gegenprobe */ }
 
 if (vorher === null){
-  console.log('⚠️ Gegenprobe entfaellt: `git show HEAD` nicht lesbar.');
-} else if (vorher === jetzt){
-  console.log('ⓘ  Gegenprobe entfaellt: HEAD ist schon die neue Fassung.');
-  console.log('   Das ist der Normalzustand nach dem Commit — der Test oben');
-  console.log('   bewacht die Zusicherung dann allein.');
+  console.log('⚠️ Gegenprobe entfaellt: `git show ' + VOR_DER_REPARATUR + '` nicht lesbar.');
 } else {
   const b = lauf(vorher);
-  console.log('Fassung von HEAD bei leerem git log (muss durchfallen):');
+  console.log('Fassung vor der Reparatur (' + VOR_DER_REPARATUR + ') bei leerem git log (muss durchfallen):');
+  pruefe('die Gegenprobe ist wirklich gelaufen (Anker gefunden)', b.code !== null, true);
   pruefe('endet NICHT mit 0', b.code === 0, false);
 }
 
