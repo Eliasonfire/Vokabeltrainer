@@ -86,7 +86,7 @@ function ladeSaetze() {
     const o = (new Function(fs.readFileSync(lb, 'utf8')
       + ';return typeof LEHRBUCH_SAETZE!=="undefined"?LEHRBUCH_SAETZE:[];'))();
     for (const s of o) if (s && s.sentAr)
-      aus.set(String(s.id), { ar: nfc(s.sentAr), de: s.sentDe || '', woher: 'Lehrbuch S.' + s.seite });
+      aus.set(String(s.id), { ar: String(s.sentAr), de: s.sentDe || '', woher: 'Lehrbuch S.' + s.seite });
   }
   /* ⚠️ Die arabicroots-Saetze stehen in vocab-data.js, NICHT in
      data/vokabeln-*.js. Die Dateien dort haben Kennungen, aber keinen einzigen
@@ -96,7 +96,7 @@ function ladeSaetze() {
     const o = (new Function(fs.readFileSync(vd, 'utf8')
       + ';return typeof VOCAB_DATA!=="undefined"?VOCAB_DATA:[];'))();
     for (const v of o) if (v && v.sentAr)
-      aus.set(String(v.id), { ar: nfc(v.sentAr), de: v.sentDe || '', woher: 'arabicroots' });
+      aus.set(String(v.id), { ar: String(v.sentAr), de: v.sentDe || '', woher: 'arabicroots' });
   }
   /* ⛔⛔ DRITTE QUELLE, am 19.08.2026 dazu — und ihr Fehlen war kein Schoenheits-
      fehler. Die fuenf an dem Tag verfassten Saetze liegen in
@@ -125,7 +125,7 @@ function ladeSaetze() {
     const o = (new Function(fs.readFileSync(fb, 'utf8')
       + ';return typeof FACHBEGRIFF_VOKABELN!=="undefined"?FACHBEGRIFF_VOKABELN:[];'))();
     for (const v of o) if (v && v.sentAr && !aus.has(String(v.id)))
-      aus.set(String(v.id), { ar: nfc(v.sentAr), de: v.sentDe || '', woher: 'fachbegriff' });
+      aus.set(String(v.id), { ar: String(v.sentAr), de: v.sentDe || '', woher: 'fachbegriff' });
   }
   const bs = path.join(REPO, 'data', 'beispielsaetze.js');
   if (fs.existsSync(bs)) {
@@ -133,7 +133,7 @@ function ladeSaetze() {
       + ';return typeof BEISPIELSAETZE!=="undefined"?BEISPIELSAETZE:{};'))();
     for (const [id, s] of Object.entries(o || {}))
       if (s && s.sentAr && !aus.has(String(id)))
-        aus.set(String(id), { ar: nfc(s.sentAr), de: s.sentDe || '', woher: 'verfasst' });
+        aus.set(String(id), { ar: String(s.sentAr), de: s.sentDe || '', woher: 'verfasst' });
   }
   return aus;
 }
@@ -163,10 +163,30 @@ function findeRegel(text, id) {
 
 /* Ueberlappung zweier Fundstellen im selben Satz. Zwei Markierungen duerfen
    sich nicht ueberschneiden, sonst zerlegt buildSentenceHtml den Satz falsch. */
+/* ⭐ Wo steht `text` im ROHEN Satz — auch wenn er in anderer Zeichenfolge
+   kommt (NFC sortiert Kasra und Šadda um, und آ kann zerlegt oder
+   zusammengesetzt stehen, dann aendert sich sogar die Laenge)?
+   Rueckgabe: { i, roh } mit dem Stueck, wie es im Satz steht, oder null.
+   Gesucht wird roh zuerst, dann jedes Stueck des Satzes, dessen NFC gleich
+   dem NFC von `text` ist (Laenge ±2). [[arabisch_vergleichen_nfc]] */
+function rohFundstelle(satz, text) {
+  const i0 = satz.indexOf(text);
+  if (i0 >= 0) return { i: i0, roh: text };
+  const ziel = nfc(text);
+  for (let i = 0; i < satz.length; i++)
+    for (let d = -2; d <= 2; d++) {
+      const l = text.length + d;
+      if (l <= 0 || i + l > satz.length) continue;
+      const stueck = satz.substr(i, l);
+      if (nfc(stueck) === ziel) return { i, roh: stueck };
+    }
+  return null;
+}
+
 function ueberlappt(satz, a, b) {
-  const ia = satz.indexOf(a), ib = satz.indexOf(b);
-  if (ia < 0 || ib < 0) return false;
-  return ia < ib + b.length && ib < ia + a.length;
+  const fa = rohFundstelle(satz, a), fb = rohFundstelle(satz, b);
+  if (!fa || !fb) return false;
+  return fa.i < fb.i + fb.roh.length && fb.i < fa.i + fa.roh.length;
 }
 
 function pruefe(auftrag) {
@@ -209,9 +229,20 @@ function pruefe(auftrag) {
        in der er nachher gefunden werden muss. [[arabisch_vergleichen_nfc]] */
     let text = String(m.matchText == null ? '' : m.matchText);
     if (!text) { fehler.push(wo + ': matchText ist leer'); continue; }
+    /* ⛔⛔ BIS ZUM 30.09.2026 WAR s.ar SELBST SCHON NFC (ladeSaetze() las
+       jeden Satz durch nfc()). „Gespeichert werden die Zeichen des Satzes"
+       hiess damit: die Zeichen der NFC-FASSUNG — genau der Fehler, den der
+       Absatz oben beschreibt, nur eine Ebene tiefer. Ein Satz, der nicht in
+       NFC steht, bekam einen matchText, den js/saetze.js roh nie findet.
+       Gemessen am 30.09.2026: 0 von 118 Lehrbuch- und 0 von 243
+       Beispielsaetzen stehen ausserhalb von NFC — seit dem 22.09. nur
+       UMGANGEN (sieben Satzzeilen von Hand angeglichen). Der naechste Satz
+       mit Kasra vor Šadda aus einem neuen Kapitel haette es wieder
+       getroffen. Jetzt ist s.ar der rohe Satz, und rohFundstelle() sucht
+       das passende Stueck. (Helfer F, M8.) */
     if (!s.ar.includes(text)) {
-      const i = nfc(s.ar).indexOf(nfc(text));
-      const ausSatz = i >= 0 ? s.ar.substr(i, text.length) : null;
+      const f = rohFundstelle(s.ar, text);
+      const ausSatz = f ? f.roh : null;
       /* ⚠️ Nicht darauf verlassen, dass NFC die Länge lässt — nachmessen. */
       if (ausSatz && nfc(ausSatz) === nfc(text) && s.ar.includes(ausSatz)){
         text = ausSatz;
