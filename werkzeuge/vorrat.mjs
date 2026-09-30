@@ -541,20 +541,45 @@ function freischaltungSchreiben(neu, heute){
      gemessenen abweicht. Ohne sie sieht der nächste Leser nur noch einen
      Widerspruch und keine Begründung. [[erfundene_begruendung_schliesst_den_fall]] */
   const bisher = {};
+  /* ⛔ Und die Kommentare ÜBER einer Buchzeile (eigene Zeilen mit //).
+     Bis zum 30.09.2026 rettete der Neubau nur, was HINTER der Zeile stand;
+     eine eigene Kommentarzeile darüber fiel still weg — verloren ging so die
+     Herkunft von 'bayna-yadayk-1': [1,2] vom 16.09.2026 (der Inhalt steht
+     noch in data/lernstand.json). Jetzt hängen solche Zeilen an der
+     Buchzeile unter ihnen und werden mit ihr wieder geschrieben; Zeilen
+     hinter der letzten Buchzeile bleiben am Ende. Helfer F, M11. */
+  const darueber = {}, amEnde = [];
   const mBlock = q.match(/const FREIGESCHALTET = \{([\s\S]*?)\n\};/);
   if (mBlock){
     for (const m of mBlock[1].matchAll(/'([^']+)':\s*\[[^\]]*\],?\s*(\/\/[^\n\r]*)/g)){
       /* Der erzeugte Standardkommentar wird nicht mitgeschleppt. */
       if (!/^\/\/\s*arabicroots, abgefragt am/.test(m[2].trim())) bisher[m[1]] = m[2].trim();
     }
+    let offen = [];
+    for (const zeile of mBlock[1].split(/\r?\n/)){
+      const t = zeile.trim();
+      if (t.startsWith('//')){
+        /* Der erzeugte Stand-Kommentar oben entsteht neu — nicht doppeln. */
+        if (!/^\/\/\s*Stand: arabicroots/.test(t)) offen.push(t);
+        continue;
+      }
+      const b = t.match(/^'([^']+)':/);
+      if (b){ if (offen.length) darueber[b[1]] = offen; offen = []; }
+    }
+    amEnde.push(...offen);
   }
 
   const namen = Object.keys(neu).sort();
-  const zeilen = namen.map((b, i) => {
+  const zeilen = [];
+  namen.forEach((b, i) => {
     const komma = i < namen.length - 1 ? ',' : '';
     const eigen = bisher[b] ? '   ' + bisher[b] : '';
-    return `  '${b}': [${neu[b].join(',')}]${komma}${eigen}`;
+    for (const k of darueber[b] || []) zeilen.push('  ' + k);
+    zeilen.push(`  '${b}': [${neu[b].join(',')}]${komma}${eigen}`);
   });
+  /* Kommentar über einem Buch, das es nicht mehr gibt, geht nicht verloren. */
+  for (const b of Object.keys(darueber)) if (!namen.includes(b)) amEnde.unshift(...darueber[b]);
+  for (const k of amEnde) zeilen.push('  ' + k);
   /* Der Stand-Kommentar steht jetzt ÜBER dem Block statt hinter der letzten
      Zeile — dort kollidiert er nicht mehr mit einem eigenen Kommentar. */
   const block = 'const FREIGESCHALTET = {' + nl
