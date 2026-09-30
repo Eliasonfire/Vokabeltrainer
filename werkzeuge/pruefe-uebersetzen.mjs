@@ -443,6 +443,25 @@ const STOERUNGEN = [
       if (!artikel) return null;
       return 'Das ist ' + artikel + ' ' + m[2] + 'e und ' + m[4] + 'e ' + m[6] + '.';
     }
+  },
+  {
+    /* ⭐ 30.09.2026: „weise" für „weiß" ist ein ANDERES Wort (klug, nicht die
+       Farbe). uebsStamm() machte aus beiden „weis": ß wurde zu „ss", danach
+       fiel das nackte -s weg, bei „weise" das -e. Gemessen vor v635: „Die
+       Moschee ist weise." galt als richtig für „Die Moschee ist weiß."
+       (أَبْيَضُ, der einzige Satz mit „weiß").
+       Elias' Maßstab, auf meine Frage zu „weise" und „Amerikaner" (30.09.2026):
+       „wenn die übersetzung halt richtig ist dann ist es ja nicht schlimm".
+       „weise" ist keine richtige Übersetzung von „weiß". „Amerikaner" für „aus
+       Amerika" bleibt dagegen richtig — dieselbe Bedeutung.
+       ⚠️ Kein `\b` am Ende: ß ist für `\b` kein Wortzeichen, „weiß." hätte
+       nie gepasst. */
+    art: 'weise statt weiß', erwartet: 'ausgelassen',
+    mach(s){
+      const n = s.sentDe.replace(/(^|[^A-Za-zÄÖÜäöüß])([Ww])eiß(e|en|em|er|es)?(?![A-Za-zÄÖÜäöüß])/,
+        (_, vor, w, endung) => vor + w + 'eis' + (endung || 'e'));
+      return n !== s.sentDe ? n : null;
+    }
   }
 ];
 

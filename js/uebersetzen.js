@@ -119,12 +119,25 @@ function uebsWorte(s){
    Gegenprobe an allen 633 deutschen Wörtern der Muster und Bedeutungen:
    20 Gruppen fallen neu zusammen, 0 fallen auseinander. 19 der 20 sind
    Beugungen desselben Wortes (klein/kleine/kleiner, Mädchen/Mädchens …).
-   ⚠️ Die zwanzigste ist eine bekannte Lücke: „Japan" und „Japaner" gelten
-   jetzt als dasselbe Wort, wie „Ägypten" und „Ägypter" schon vorher. Jede
-   Regel, die „kleiner" auf „klein" bringt, bringt „Japaner" auf „Japan" —
-   ohne Wörterbuch ist das nicht zu trennen. Wer „aus Japan" statt „Japaner"
-   schreibt, wird hier also nicht als „Wort fehlt" erkannt. Für eine
-   Verwechslung mit der Nisba-Endung (ـِيٌّ) wäre eine eigene Prüfung nötig.
+   Die zwanzigste: „Japan" und „Japaner" gelten als dasselbe Wort, wie
+   „Ägypten" und „Ägypter" schon vorher. Jede Regel, die „kleiner" auf
+   „klein" bringt, bringt „Japaner" auf „Japan" — ohne Wörterbuch ist das
+   nicht zu trennen. ⭐ Seit 30.09.2026 ist das gewollt, nicht nur geduldet:
+   „aus Japan" für „Japaner" (und „aus Amerika" für „Amerikaner") sagt
+   dasselbe. Elias' Maßstab, auf meine Frage genau dazu: „wenn die
+   übersetzung halt richtig ist dann ist es ja nicht schlimm" — mit dem Satz
+   seiner Englischlehrerin: „so wenig wie möglich, aber so viel wie nötig".
+
+   ⛔ Anders bei „weiß" und „weise" (v635): zwei verschiedene Wörter, die nur
+   der Stamm zusammenwarf. ß wurde zu „ss", danach fiel das nackte -s weg,
+   bei „weise" das -e — beide landeten bei „weis", und „Die Moschee ist
+   weise." galt als richtig. Seitdem bleibt ein „ss" am Ende ganz: weiß →
+   „weiss", weise → „weis". Gegenprobe an allen 714 deutschen Wörtern der
+   Muster und Bedeutungen (30.09.2026): 0 fallen neu zusammen, 0 auseinander.
+   ⚠️ Bekannte Lücke dafür: „Ergebnis" (ergebni) und „Ergebnisse"
+   (ergebniss) fallen jetzt auseinander. Kein solches Wort steht heute in den
+   Daten; bewacht vom Störfall „weise statt weiß" in
+   werkzeuge/pruefe-uebersetzen.mjs.
 
    ⚠️ Kein Stemmer von der Stange und keine Umlautzerlegung: „Häuser" bleibt
    von „Haus" verschieden. Das ist eine bewusste Lücke — sie führt höchstens zu
@@ -136,6 +149,7 @@ function uebsStamm(w){
   for (let weiter = true; weiter; ){
     weiter = false;
     for (const e of UEBS_ENDUNGEN){
+      if (e === 's' && x.endsWith('ss')) continue;   // v635: weiß ≠ weise, siehe oben
       const bleibt = (e === 'n' || e === 's') ? 4 : 3;
       if (x.length - e.length >= bleibt && x.endsWith(e)){
         x = x.slice(0, -e.length);
