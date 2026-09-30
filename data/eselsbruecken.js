@@ -583,7 +583,41 @@ const BUCH_ESELSBRUECKEN = {
 
   "46619": "Aus deiner Dua um Wissen, Sure Ṭā-Hā: „Mein Herr,“ زِدْنِي عِلْمًا (20:114) — „mehre mich an Wissen“. Das Wort steht dort mit Tanwīn-Fatḥa.",
 
-  "48010": "Aus deiner Dua nach dem Salām, die du dir mit „wichtig!!!“ notiert hast: أَعِنِّي عَلَى ذِكْرِكَ — „hilf mir, Deiner zu gedenken“. ذِكْرِكَ ist dieses Wort mit ـِكَ („Dein“)."
+  "48010": "Aus deiner Dua nach dem Salām, die du dir mit „wichtig!!!“ notiert hast: أَعِنِّي عَلَى ذِكْرِكَ — „hilf mir, Deiner zu gedenken“. ذِكْرِكَ ist dieses Wort mit ـِكَ („Dein“).",
+
+  "46034": "⭐ Die Sunna beim Essen kennst du als Satz: كُلْ بِيَمِينِكَ — „iss mit deiner Rechten“. كُلْ ist genau der Befehl dieser Vokabel, أَكَلَ die Vergangenheit dazu. Wurzel أ ك ل.",
+
+  "46035": "⭐ Das Wort steckt schon in deinem Bestand: ein طَالِبٌ (Student, madina-1 Kapitel 1) ist wörtlich einer, der verlangt — und der bekannte Ausdruck ṭalab al-ʿilm, das Streben nach Wissen, ist genau diese Wurzel ط ل ب. Wer طَالِبٌ kann, kann طَلَبَ.",
+
+  "46036": "⭐ Al-Faḍl — Allahs Huld — und afḍal („besser, vorzüglicher“) kommen aus derselben Wurzel ف ض ل. فَضَّلَ heißt: etwas vorziehen, ihm den Vorzug geben. Das masdar steht im Buch als تَفْضِيلٌ.",
+
+  "46037": "⭐ Zum Trinken gehört eine Sunna, die du kennst: im Sitzen und in drei Zügen. Das Wort dafür ist šurb — das masdar von شَرِبَ, im Buch als شُرْبٌ. Und شَرَابٌ (Getränk) aus demselben Kapitel ist dieselbe Wurzel ش ر ب.",
+
+  "46038": "⭐ Die Wendung aus deiner Dua beim Verlassen des Hauses trägt genau dieses Wort: لاَ حَوْلَ وَلاَ قُوَّةَ — „keine Kraft zur Veränderung und keine Stärke außer durch Allah“. Ḥawl ist die Veränderung selbst; حَوَّلَ heißt umwandeln, ändern.",
+
+  "46039": "⭐ Ḥalāl-Fleisch ist ein Ausdruck, den du täglich benutzt, und laḥm al-ḫinzīr — Schweinefleisch — der Begriff, mit dem das Verbot benannt wird. Beide Male steht dasselbe Wort: لَحْمٌ, Wurzel ل ح م.",
+
+  "46040": "⭐ عِنَبٌ ist ein Sammelwort, kein Plural — und genau diese Sorte hast du schon dreimal: بَقَرٌ (Rinder) neben بَقَرَةٌ (eine Kuh), بَيْضٌ neben بَيْضَةٌ (ein Ei), دَجَاجٌ neben دَجَاجَةٌ (eine Henne). عِنَبٌ sind die Trauben als Ganzes.",
+
+  "46041": "Hier trägt der Klang, und nur er: „salaṭa“ – Salat – salad. ⛔ Dahinter steckt kein arabisches Wortmuster, aus dem du etwas ableiten könntest — genauso wie bei تِلْفَازٌ aus Kapitel 4. Der Plural läuft dafür ganz regelmäßig: سَلَطَاتٌ.",
+
+  "46042": "⭐ Der Plural verrät den Bau: مَوَائِدُ steht im Buch ohne Tanwīn — ein Diptot, genau wie مَسَاجِدُ (Moscheen), مَفَاتِيحُ (Schlüssel) und مَكَاتِبُ (Schreibtische) aus madina-1 Kapitel 1. Wer diese drei kann, kann مَوَائِدُ.",
+
+  "46043": "⭐ In Quraysh, die du auswendig kannst, steht die Wurzel: أَطْعَمَهُم مِّن جُوعٍ — „Der ihnen Speise nach ihrem Hunger gegeben hat“ (106:4). Dort ist es der Hunger (ǧūʿ), bei dir der Hungrige: جَوْعَانُ.",
+
+  "46044": "⭐ Das Maß beim Essen kennst du aus der Sunna: ein Drittel für die Speise, ein Drittel für das Getränk, ein Drittel für den Atem. Das Wort dafür ist šibaʿ, die Sättigung — und wer sie erreicht hat, ist شَبْعَانُ. Wurzel ش ب ع.",
+
+  "46045": "⚠️ Zwei Wörter, die du einmal nebeneinander legen solltest: نَحِيفٌ (dünn) und نَظِيفٌ (sauber, madina-1 Kapitel 3). Sie unterscheiden sich in einem einzigen Buchstaben — ح gegen ظ. Wer sie einmal zusammen angesehen hat, verwechselt sie nie wieder.",
+
+  "46046": "⭐ Al-Mīzān — die Waage, auf der am Tag des Gerichts gewogen wird — kommt aus derselben Wurzel و ز ن. Ein وَزْنٌ ist das, was auf ihr liegt: das Gewicht.",
+
+  "46047": "⛔ Kein arabisches Muster und keine Wurzel: كِيلُو ist „Kilo“ mit arabischen Buchstaben. Merk es über den Klang — und darüber, dass es sich nie verändert, in welchem Fall es auch steht.",
+
+  "46048": "⭐ Samn — das Butterschmalz, mit dem gekocht wird — kommt aus derselben Wurzel س م ن. Wer viel davon isst, wird سَمِينٌ: fett. Ein Wort, das du beim Kochen schon gehört hast, ohne es als Vokabel zu kennen.",
+
+  "48614": "⭐ Verb und Ding stehen im selben Kapitel: شَرِبَ (trinken) und شَرَابٌ (Getränk), Wurzel ش ر ب. Und das Wort ist gewandert — der deutsche „Sirup“ und das englische „sherbet“ kommen von hier.",
+
+  "48624": "⭐ Wāǧib — die Pflicht, das Wort aus dem Fiqh — ist dieselbe Wurzel و ج ب: fällig sein, feststehen. Eine وَجْبَةٌ ist die Mahlzeit, die zu ihrer festen Zeit fällig ist. Wer wāǧib kennt, kennt die Wurzel schon."
 };
 
 /* ---------- Korrigierte Schreibweisen ----------

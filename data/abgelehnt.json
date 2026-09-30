@@ -1,6 +1,6 @@
 {
-  "stempel": 1790358133989,
-  "geholt": "27.9.2026",
+  "stempel": 1790651922880,
+  "geholt": "30.9.2026",
   "woerter": {
     "45760": [
       {
@@ -243,6 +243,23 @@
         "nr": 2,
         "text": "Muster فَاعِلَة, also die weibliche Form von فَاعِل — dasselbe wie نَافِذَةٌ (Fenster). Städtenamen sind im Arabischen oft weiblich. ⚠️ Und der Artikel gehört fest dazu: الْقَاهِرَة, nie قَاهِرَة allein.",
         "zeit": 1789158487628
+      }
+    ],
+    "45897": [
+      {
+        "nr": 0,
+        "text": "Wurzel ح د د — dieselbe wie in حَدِيد (Eisen), dem Namen von Sure 57. Was scharf ist, ist aus Eisen. Doppeltes د: ḥād-d.",
+        "zeit": 1790718035828
+      },
+      {
+        "nr": 1,
+        "text": "Die شَدَّة ist der halbe Wortstamm: die Wurzel ist ح د د, zwei د auf eines zusammengezogen. Sprich es hörbar: ḥād-d. Dasselbe hast du bei حَارٌّ (heiß) — beide Adjektive, beide mit doppeltem letzten Wurzelbuchstaben, beide kurz.",
+        "zeit": 1790718051652
+      },
+      {
+        "nr": 2,
+        "text": "Von derselben Wurzel kommt حَدِيد (Eisen) — der Name von Sure 57 — und حَدّ, die Grenze. Was scharf ist, hat eine Kante. ⚠️ Und es passt zu deinem سِكِّينٌ (Messer): سِكِّينٌ حَادٌّ, ein scharfes Messer. Zwei Vokabeln, ein Satz.",
+        "zeit": 1790718069212
       }
     ],
     "45901": [
