@@ -11,7 +11,7 @@
       "notiz": "",
       "markiert": "spätestens 2026-09-20",
       "weggenommen": "2026-09-20",
-      "zuletztGesehen": "2026-09-27"
+      "zuletztGesehen": "2026-09-30"
     },
     "67:1:2:0@ohne": {
       "sure": 67,
@@ -23,7 +23,7 @@
       "notiz": "",
       "markiert": "spätestens 2026-09-20",
       "weggenommen": "2026-09-20",
-      "zuletztGesehen": "2026-09-27"
+      "zuletztGesehen": "2026-09-30"
     },
     "67:1:2:1@ohne": {
       "sure": 67,
@@ -35,7 +35,7 @@
       "notiz": "",
       "markiert": "spätestens 2026-09-20",
       "weggenommen": "2026-09-20",
-      "zuletztGesehen": "2026-09-27"
+      "zuletztGesehen": "2026-09-30"
     },
     "67:1:7:2@ohne": {
       "sure": 67,
@@ -47,7 +47,7 @@
       "notiz": "",
       "markiert": "spätestens 2026-09-20",
       "weggenommen": "2026-09-20",
-      "zuletztGesehen": "2026-09-27"
+      "zuletztGesehen": "2026-09-30"
     },
     "99:7:4:5@1790108396660": {
       "sure": 99,
@@ -95,7 +95,7 @@
       "notiz": "",
       "markiert": "2026-09-26",
       "weggenommen": "2026-09-26",
-      "zuletztGesehen": "2026-09-27"
+      "zuletztGesehen": "2026-09-30"
     },
     "95:5:2:9@1790437087613": {
       "sure": 95,
@@ -106,8 +106,8 @@
       "farbe": "rot",
       "notiz": "Kein min",
       "markiert": "2026-09-26",
-      "weggenommen": "",
-      "zuletztGesehen": "2026-09-27"
+      "weggenommen": "2026-09-29",
+      "zuletztGesehen": "2026-09-30"
     },
     "95:5:3:7@1790437097447": {
       "sure": 95,
@@ -118,9 +118,45 @@
       "farbe": "rot",
       "notiz": "Kein alif",
       "markiert": "2026-09-26",
+      "weggenommen": "2026-09-29",
+      "zuletztGesehen": "2026-09-30"
+    },
+    "99:7:4:5@1790108583320": {
+      "sure": 99,
+      "vers": 7,
+      "wort": 4,
+      "pos": 5,
+      "zeichen": "ةٍ",
+      "farbe": "rot",
+      "notiz": "N aussprechen",
+      "markiert": "2026-09-22",
       "weggenommen": "",
-      "zuletztGesehen": "2026-09-27"
+      "zuletztGesehen": "2026-09-30"
+    },
+    "102:2:2:0@1790108583320": {
+      "sure": 102,
+      "vers": 2,
+      "wort": 2,
+      "pos": 0,
+      "zeichen": "زُ",
+      "farbe": "rot",
+      "notiz": "Zay sagen",
+      "markiert": "2026-09-22",
+      "weggenommen": "",
+      "zuletztGesehen": "2026-09-30"
+    },
+    "102:4:1:2@1790108583320": {
+      "sure": 102,
+      "vers": 4,
+      "wort": 1,
+      "pos": 2,
+      "zeichen": "مَّ",
+      "farbe": "rot",
+      "notiz": "Kurzes A und schadda halten",
+      "markiert": "2026-09-22",
+      "weggenommen": "",
+      "zuletztGesehen": "2026-09-30"
     }
   },
-  "geholtAm": "2026-09-27T12:31:01.390Z"
+  "geholtAm": "2026-09-30T20:09:38.715Z"
 }

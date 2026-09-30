@@ -43,6 +43,11 @@
       { "wort": "Zeichen / Hinweis", "id": "45997", "zuordnung": "sicher" },
       { "wort": "Jene (Pl.)", "id": "50165", "zuordnung": "sicher" },
       { "wort": "Diese (Pl.)", "id": "50164", "zuordnung": "sicher" },
-      { "wort": "Welcher / welche / welches?", "id": "50170", "zuordnung": "sicher" } ] }
+      { "wort": "Welcher / welche / welches?", "id": "50170", "zuordnung": "sicher" } ] },
+    { "datum": "2026-09-30", "notiz": "ohne-titel (4be40b)", "woerter": [
+      { "wort": "Begrüßen", "id": "gram-tahiyya", "zuordnung": "sicher" },
+      { "wort": "Fahrrad", "id": "45843", "zuordnung": "sicher" },
+      { "wort": "Scharf (z.B. Messer)", "id": "45897", "zuordnung": "sicher" },
+      { "wort": "Minister", "id": "45896", "zuordnung": "sicher" } ] }
   ]
 }
