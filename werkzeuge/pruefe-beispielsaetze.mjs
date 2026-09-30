@@ -118,8 +118,17 @@ const BSP = (() => {
     if (v && typeof v === 'object' && !Array.isArray(v) && Object.keys(v).length > 20) return v;
   return {};
 })();
-const hatSatz = w => !!(String(w.sentAr || '').trim()
-  || (BSP[String(w.id)] && String(BSP[String(w.id)].sentAr || '').trim()));
+/* ⛔ UND EIN FACHBEGRIFF MIT `buchTausch` IST AUF DEM BILDSCHIRM DIE BUCHKARTE
+   (30.09.2026). js/kern.js (fachbegriffeMitBuchkarte) hängt ihn gar nicht ein,
+   sondern gibt der Buchkarte seine Beschreibung — gezeigt wird deren Satz aus
+   `BEISPIELSAETZE[buchTausch]`. Bis heute meldete dieser Prüfer deshalb
+   gram-mudaf und gram-idafa als „ohne Beispielsatz", während im Pane die
+   Karten 50473 und 50474 ihre Sätze trugen («بَيْتُ الْمُدَرِّسِ كَبِيرٌ.»,
+   «مِفْتَاحُ الْبَابِ صَغِيرٌ.»). Eine Lücke, die es auf seinem Bildschirm
+   nicht gibt, ist keine. [[liste_zeigt_nur_eine_oberflaeche]] */
+const satzAus = id => !!(BSP[String(id)] && String(BSP[String(id)].sentAr || '').trim());
+const hatSatz = w => !!(String(w.sentAr || '').trim() || satzAus(w.id)
+  || (w.buchTausch && satzAus(w.buchTausch)));
 
 const fehler = [];
 const zeilen = [];

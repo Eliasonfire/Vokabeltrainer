@@ -133,7 +133,13 @@ function laufe(quelle, still){
       (quelle.match(/const UEB_ZEICHEN = [^\n]+/) || [''])[0],
       (quelle.match(/const UEB_PRAEP_KERNE = [^\n]+/) || [''])[0],
       schneideFunktion(quelle, 'uebPraepKern') || '',
-      schneideFunktion(quelle, 'uebGenitivGruende') || ''
+      schneideFunktion(quelle, 'uebGenitivGruende') || '',
+      /* Seit 30.09.2026 (v638) braucht Übung 1 die Zeile zu هَذَا
+         (uebHadhaZeile, dazu uebSkelett) — ohne sie starb ihr baue() hier
+         still im catch, und die Subjekt-Prüfung unten fand 0 Fragen. Genau so
+         ist es beim ersten Lauf nach dem Einbau passiert. */
+      schneideFunktion(quelle, 'uebSkelett') || '',
+      schneideFunktion(quelle, 'uebHadhaZeile') || ''
     ].join('\n');
     vm.runInContext(sammel + '\n' + (schneideFunktion(quelle, 'uebungZarfMitGenitiv') || '') + '\n' + genitivHilfen + '\n' + konst + '\n' + (fall || '') + '\n' + liste +
       '\n;globalThis.__U = UEBUNGEN; globalThis.__F = (typeof uebungUnsichtbarerFall === "function") ? uebungUnsichtbarerFall : null;' +

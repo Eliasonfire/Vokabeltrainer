@@ -45,6 +45,22 @@
  *   node werkzeuge/pruefe-hinweise.mjs --stoertest-feld
  *                                                   Übung 1 ohne Pflichtfeld
  *                                                   — MUSS rot werden
+ *   node werkzeuge/pruefe-hinweise.mjs --stoertest-zusatz
+ *                                                   Übung 1 auf false, die
+ *                                                   Zeile zu هَذَا stünde vor
+ *                                                   der Antwort — MUSS rot werden
+ *   node werkzeuge/pruefe-hinweise.mjs --stoertest-hadha
+ *                                                   uebHadhaZeile() liefert
+ *                                                   nichts — MUSS rot werden
+ *
+ * ZUSICHERUNG 4 — die Zeile je Aufgabe (`hinweisZusatz`, seit v638)
+ *   Eine Aufgabe kann eine eigene Zeile tragen, die am Hinweis ihrer Übung
+ *   hängt — bisher nur die Zeile zu هَذَا in Übung 1 (Elias, 30.09.2026:
+ *   „ja bau die zeile ein"). Geprüft wird: (a) nennt die Zeile ein Wort der
+ *   Aufgabe, muss die Übung `hinweisVerraet:true` tragen, sonst stünde die
+ *   Lösung vor der Antwort da; (b) die Eichung — «هَذَا يَوْمُ الْعَمَلِ.»
+ *   bekommt die Zeile (sein Satz vom 29.09.), «هَذَا الرَّجُلُ فَقِيرٌ.»
+ *   (mit اَلْ danach) nicht; (c) renderUebung() zeigt `a.hinweisZusatz`.
  *
  * Exitcode 0 = alles in Ordnung
  *          1 = Befund (oder Werkzeugfehler; die letzte Zeile sagt, was)
@@ -60,6 +76,8 @@ const p = (...t) => path.join(REPO, ...t);
 const knapp = process.argv.includes('--knapp');
 const stoertest = process.argv.includes('--stoertest');
 const stoertestFeld = process.argv.includes('--stoertest-feld');
+const stoertestZusatz = process.argv.includes('--stoertest-zusatz');
+const stoertestHadha = process.argv.includes('--stoertest-hadha');
 const require_ = createRequire(import.meta.url);
 
 /* ---------- Normalisieren ----------
@@ -233,6 +251,18 @@ if (stoertestFeld){
   delete eins.hinweisVerraet;
   console.log('  ⚠️ STOERTEST FELD: Uebung 1 hat kein hinweisVerraet mehr. Erwartet wird ROT.\n');
 }
+/* Zusicherung 4 bekommt zwei eigene Eichungen: eine für die Anzeige (a), eine
+   für die Bedingung selbst (b). */
+if (stoertestZusatz){
+  const eins = UEBUNGEN.find(m => m.nr === 1);
+  if (!eins){ console.error('  Uebung 1 gibt es nicht mehr — Stoertest unmoeglich.'); process.exit(1); }
+  eins.hinweisVerraet = false;
+  console.log('  ⚠️ STOERTEST ZUSATZ: Uebung 1 steht auf hinweisVerraet:false. Erwartet wird ROT.\n');
+}
+if (stoertestHadha){
+  vm.runInContext('uebHadhaZeile = function(){ return ""; };', kiste);
+  console.log('  ⚠️ STOERTEST HADHA: uebHadhaZeile() liefert nichts. Erwartet wird ROT.\n');
+}
 
 /* ---------- Sätze sammeln ---------- */
 const VOCAB = hol('VOCAB_DATA') || [];
@@ -302,6 +332,7 @@ let gebaut = 0;
 const verrat = new Map();          /* uebung.id -> Map(wort -> Anzahl Aufgaben) */
 const jeUebung = new Map();        /* uebung.id -> Anzahl Aufgaben */
 const fehler = new Map();          /* uebung.id -> erste Fehlermeldung */
+const zusaetze = [];               /* Aufgaben mit eigener Zeile (hinweisZusatz) */
 UEBUNGEN.forEach(m => { verrat.set(m.id, new Map()); jeUebung.set(m.id, 0); });
 
 for (const { satz, zeilen } of zeilenJeSatz){
@@ -323,6 +354,11 @@ for (const { satz, zeilen } of zeilenJeSatz){
       if (Array.isArray(a.optionen)) a.optionen.forEach(o => {
         kandidaten.push(o && o.text); kandidaten.push(o && o.wert); });
       if (typeof a.loesung === 'string') kandidaten.push(a.loesung);
+      /* Für Zusicherung 4 zählen auch die Zielwörter einer Sammelaufgabe
+         (`ziele`, Übungen 1–5) — Zusicherung 2 sieht sie bewusst nicht. */
+      if (a.hinweisZusatz) zusaetze.push({ m, satz, a, kandidaten: [...kandidaten,
+        ...(Array.isArray(a.ziele) ? a.ziele.map(i => zeilen[i] && (zeilen[i].rein || zeilen[i].wort)) : [])]
+        .map(brauchbar).filter(Boolean) });
       for (const k of kandidaten){
         const n = brauchbar(k);
         if (!n) continue;
@@ -405,6 +441,37 @@ if (!/m\.aufgabe\b/.test(quelle))
   befunde.push('js/uebung.js: renderUebung() liest `m.aufgabe` nicht mehr — '
     + 'Uebung 7 stuende ohne Fragestellung da.');
 
+/* ---------- Zusicherung 4: die Zeile je Aufgabe (hinweisZusatz) ----------
+   (a) Nennt sie ein Wort der Aufgabe, muss ihre Übung verborgen sein. */
+const zusatzVerrat = zusaetze.filter(({ m, a, kandidaten }) =>
+  m.hinweisVerraet !== true && kandidaten.some(k => nackt(a.hinweisZusatz).includes(k)));
+if (zusatzVerrat.length){
+  const u = [...new Set(zusatzVerrat.map(({ m }) => 'Uebung ' + m.nr + ' (' + m.id + ')'))];
+  befunde.push(zusatzVerrat.length + ' Aufgabe(n) tragen eine eigene Zeile, die ihre Loesung nennt, '
+    + 'in ' + u.join(', ') + ' — dort steht hinweisVerraet nicht auf true, die Zeile stuende vor der Antwort da.');
+}
+/* (b) Die Eichung der Zeile zu هَذَا, an festen Sätzen statt am Bestand:
+   verschwindet sein Satz vom 29.09. aus den Büchern, bleibt die Prüfung scharf. */
+{
+  const eins = UEBUNGEN.find(m => m.id === 'mubtada-khabar');
+  const zeile = (ar, de) => {
+    try { return ((eins && eins.baue(analysiere(ar), { sentAr: ar, sentDe: de })) || []).map(a => a.hinweisZusatz || ''); }
+    catch (e){ return ['FEHLER: ' + e.message]; }
+  };
+  const mit = zeile('هَذَا يَوْمُ الْعَمَلِ.', 'Das ist der Arbeitstag.');
+  const ohne = zeile('هَذَا الرَّجُلُ فَقِيرٌ.', 'Dieser Mann ist arm.');
+  if (!eins) befunde.push('Uebung 1 (mubtada-khabar) gibt es nicht mehr — die Zeile zu هَذَا ist ungeprueft.');
+  else if (!mit.length || !mit.every(t => /„Das \| ist der Arbeitstag\./.test(t)))
+    befunde.push('Die Zeile zu هَذَا fehlt an «هَذَا يَوْمُ الْعَمَلِ.» (Elias, 29.09.2026) — gebaut: '
+      + JSON.stringify(mit) + '. Elias am 30.09.2026: „ja bau die zeile ein".');
+  else if (ohne.some(Boolean))
+    befunde.push('Die Zeile zu هَذَا steht an «هَذَا الرَّجُلُ فَقِيرٌ.» — mit اَلْ danach heisst هَذَا „dieser", '
+      + 'die Zeile waere falsch.');
+}
+/* (c) Die Anzeige zieht mit. */
+if (!/a\.hinweisZusatz/.test(quelle))
+  befunde.push('js/uebung.js: renderUebung() liest `a.hinweisZusatz` nicht mehr — die Zeile zu هَذَا waere Zierde.');
+
 /* ---------- Ausgabe ---------- */
 const verraeterisch = mitHinweis.filter(m => m.hinweisVerraet === true).length;
 if (!knapp && treffer.length){
@@ -418,7 +485,8 @@ console.log('  ' + UEBUNGEN.length + ' Uebungen, ' + mitHinweis.length + ' mit H
   + verraeterisch + ' verraeterisch, ' + (mitHinweis.length - verraeterisch) + ' einordnend), '
   + mitAufgabe.length + ' mit Aufgabenstellung');
 console.log('  ' + saetze.length + ' Saetze aus ' + geladen.length + ' Dateien, '
-  + gebaut + ' Aufgaben gebaut');
+  + gebaut + ' Aufgaben gebaut, ' + zusaetze.length + ' davon mit eigener Zeile ('
+  + new Set(zusaetze.map(({ satz }) => satz)).size + ' Saetze)');
 /* ⛔ Die Ausnahme wird bei JEDEM Lauf genannt. Eine stille Ausnahme ist nach
    drei Monaten eine unsichtbare Luecke — und dann weiss niemand mehr, dass sie
    auf einem Satz von Elias beruht und nicht auf einem Versehen. */
