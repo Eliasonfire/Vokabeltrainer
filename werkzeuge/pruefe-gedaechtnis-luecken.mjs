@@ -144,12 +144,30 @@ if (!zeilen.length){
   process.exit(0);
 }
 
-const fehlend = [];
+/* ⛔ DER LOG-COMMIT DER WARTUNG (Helfer F, M10, 30.09.2026).
+   Die Wartung schreibt zuerst ihren Bericht in den Vault und committet DANACH
+   maintenance-log.md — dessen Hash kann im Vault gar nicht stehen. An jedem
+   Wartungstag stand der Pruefer deshalb NEU ROT, obwohl nichts fehlte. Ein
+   Commit, der NUR maintenance-log.md aendert, IST selbst das Protokoll; er
+   wird gezeigt, aber nicht als Luecke gezaehlt. Alles andere bleibt Pflicht. */
+const nurLog = hash => {
+  try {
+    const dateien = execFileSync('git', ['-C', REPO, 'show', '--name-only', '--format=', hash],
+      { encoding: 'utf8', maxBuffer: 20e6 }).split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+    return dateien.length === 1 && dateien[0] === 'maintenance-log.md';
+  } catch (e){ return false; }
+};
+const fehlend = [], nurProtokoll = [];
 for (const z of zeilen){
   const [hash, wann, betreff] = z.split('\t');
-  if (!text.includes(hash)) fehlend.push({ hash, wann, betreff });
+  if (text.includes(hash)) continue;
+  if (nurLog(hash)) nurProtokoll.push({ hash, wann, betreff });
+  else fehlend.push({ hash, wann, betreff });
 }
-console.log('  ' + (zeilen.length - fehlend.length) + ' davon stehen im Gedaechtnis, '
+if (nurProtokoll.length)
+  console.log('  ⓘ ' + nurProtokoll.length + ' Commit(s) aendern nur maintenance-log.md (das Protokoll selbst) — keine Luecke: '
+    + nurProtokoll.map(f => f.hash).join(', '));
+console.log('  ' + (zeilen.length - fehlend.length - nurProtokoll.length) + ' davon stehen im Gedaechtnis, '
   + fehlend.length + ' nicht.\n');
 for (const f of fehlend.slice(0, 12))
   console.log('  ⛔ ' + f.hash + '  ' + f.wann + '  ' + f.betreff.slice(0, 70));
@@ -163,6 +181,18 @@ console.log('\n=== Stoertest ===');
     + ': ' + JSON.stringify(ist)); } else console.log('  ok   ' + was); };
   /* Kann diese Suche ueberhaupt etwas NICHT finden? */
   sP('ein erfundener Hash steht nicht im Gedaechtnis', text.includes('0000000'), false);
+  /* ⭐ Die Ausnahme fuer den Log-Commit darf nur ihn treffen (M10): ein
+     echter Log-Commit aus der Geschichte gilt als Protokoll, der letzte
+     Commit an DIESEM Werkzeug nicht. */
+  {
+    const logKandidaten = execFileSync('git', ['-C', REPO, 'log', '-60', '--format=%h', '--', 'maintenance-log.md'],
+      { encoding: 'utf8' }).split(/\r?\n/).filter(Boolean);
+    const einLog = logKandidaten.find(nurLog);
+    const werkzeugCommit = execFileSync('git', ['-C', REPO, 'log', '-1', '--format=%h', '--',
+      'werkzeuge/pruefe-gedaechtnis-luecken.mjs'], { encoding: 'utf8' }).trim();
+    sP('ein reiner Log-Commit gilt als Protokoll (' + (einLog || 'keiner gefunden') + ')', !!einLog, true);
+    sP('ein Commit am Werkzeug gilt NICHT als Protokoll (' + werkzeugCommit + ')', nurLog(werkzeugCommit), false);
+  }
   /* ⛔ HIER STAND EINE PROBE, DIE IMMER BESTAND: „gefunden ODER in der
      Fehlliste" ist bei jedem Hash wahr — sie hat nichts unterschieden.
      Jetzt wird ein Hash genommen, der nachweislich DASTEHT, und verlangt,
