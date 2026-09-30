@@ -3191,6 +3191,81 @@ const SENTENCE_TAGS = {
   ],
   "gram-hayat-yawmiyya": [
     { ruleId: "mubtada-khabar-genus-01", matchText: "جَمِيلَةٌ" }
+  ],
+  "46034": [
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "أَكَلَ" },
+    { ruleId: "hamzatul-wasl-01", matchText: "الْوَلَدُ" },
+    { ruleId: "irab-drei-faelle-01", matchText: "اللَّحْمَ" }
+  ],
+  "46035": [
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "طَلَبَ" },
+    { ruleId: "schams-qamar-01", matchText: "الطَّالِبُ" },
+    { ruleId: "irab-drei-faelle-01", matchText: "الْكِتَابَ" }
+  ],
+  "46036": [
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "فَضَّلَ" },
+    { ruleId: "schams-qamar-01", matchText: "الرَّجُلُ" },
+    { ruleId: "irab-drei-faelle-01", matchText: "الشَّايَ" }
+  ],
+  "46037": [
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "شَرِبَ" },
+    { ruleId: "schams-qamar-01", matchText: "الطِّفْلُ" },
+    { ruleId: "irab-drei-faelle-01", matchText: "اللَّبَنَ" }
+  ],
+  "46038": [
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "يُحَوِّلُ" },
+    { ruleId: "hamzatul-wasl-01", matchText: "الْمُدَرِّسُ" },
+    { ruleId: "irab-drei-faelle-01", matchText: "الْجُمْلَةَ" }
+  ],
+  "46039": [
+    { ruleId: "schams-qamar-01", matchText: "اللَّحْمُ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "عَلَى الطَّبَقِ" },
+    { ruleId: "alif-maqsura-01", matchText: "عَلَى" }
+  ],
+  "46040": [
+    { ruleId: "hamzatul-wasl-01", matchText: "الْعِنَبُ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي السُّوقِ" },
+    { ruleId: "schams-qamar-01", matchText: "السُّوقِ" }
+  ],
+  "46041": [
+    { ruleId: "schams-qamar-01", matchText: "السَّلَطَةُ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "عَلَى الْمَائِدَةِ" },
+    { ruleId: "alif-maqsura-01", matchText: "عَلَى" }
+  ],
+  "46042": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "مَائِدَةُ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "الْأُسْرَةِ" },
+    { ruleId: "marfu-grundfall-01", matchText: "كَبِيرَةٌ" }
+  ],
+  "46043": [
+    { ruleId: "mubtada-khabar-01", matchText: "الْوَلَدُ" },
+    { ruleId: "adjektive-an-ohne-tanwin-01", matchText: "جَوْعَانُ" }
+  ],
+  "46044": [
+    { ruleId: "schams-qamar-01", matchText: "الرَّجُلُ" },
+    { ruleId: "adjektive-an-ohne-tanwin-01", matchText: "شَبْعَانُ" }
+  ],
+  "46045": [
+    { ruleId: "alif-maqsura-01", matchText: "الْفَتَى" },
+    { ruleId: "marfu-grundfall-01", matchText: "نَحِيفٌ" }
+  ],
+  "46046": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "وَزْنُ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "الْحَقِيبَةِ" },
+    { ruleId: "marfu-grundfall-01", matchText: "ثَقِيلٌ" }
+  ],
+  "46048": [
+    { ruleId: "mubtada-khabar-01", matchText: "الْجَمَلُ" },
+    { ruleId: "marfu-grundfall-01", matchText: "سَمِينٌ" }
+  ],
+  "48614": [
+    { ruleId: "schams-qamar-01", matchText: "الشَّرَابُ" },
+    { ruleId: "marfu-grundfall-01", matchText: "بَارِدٌ" }
+  ],
+  "48624": [
+    { ruleId: "mudaf-ohne-al-01", matchText: "وَجْبَةُ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "الطِّفْلِ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْمَطْبَخِ" }
   ]
 };
 

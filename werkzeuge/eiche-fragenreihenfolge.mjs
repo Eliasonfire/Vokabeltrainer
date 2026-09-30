@@ -141,9 +141,27 @@ for (const f of abhaengig){
   else { fehler++; console.log('  ⛔   ' + f.padEnd(8) + 'steht VOR „type" (Platz ' + (i+1) + ' vor ' + (iType+1) + ') — Elias beantwortet es womoeglich umsonst.'); }
 }
 
-/* Und: sagt die Seite den Zusammenhang auch? */
+/* Und: sagt die Seite den Zusammenhang auch?
+
+   ⛔⛔ NUR, WENN ES EINEN ZUSAMMENHANG ZU NENNEN GIBT (30.09.2026).
+   `class="folgt"` setzt werkzeuge/wartungsfragen-artefakt.mjs aus dem Feld
+   `folgt`, und vorrat.mjs vergibt das ausdruecklich nur, wenn beim SELBEN
+   Wort auch `type` offen ist (Zeile 2169: „Nur gesetzt, wenn type WIRKLICH
+   offen ist"). Steht `type` in keiner Frage, KANN die Marke nicht auf der
+   Seite stehen — der Pruefer verlangte dann etwas Unmoegliches und wurde rot,
+   obwohl nichts fehlte.
+
+   Gemessen am 30.09.2026 im Lauf „neue Kapitel" (bayna-yadayk-1 Kapitel 5):
+   offen waren genau drei Feldfragen — pl (لَحْمٌ, عِنَبٌ) und root/femSg
+   (كِيلُو). Keine type-Frage dabei, die drei Reihenfolge-Pruefungen darueber
+   meldeten folgerichtig „die type-Frage ist gar nicht offen — nichts zu
+   ordnen" — und die Zeile hier meldete trotzdem einen Befund.
+   Derselbe Fall wie die leere Fragendatei weiter oben.
+   [[vorgabewert_sieht_aus_wie_befund]] */
 const seite = path.join(REPO, 'artefakte', 'wartungsfragen.html');
-if (fs.existsSync(seite)){
+if (iType < 0){
+  console.log('  ok   kein Wort hat eine offene type-Frage — es gibt keinen Zusammenhang zu nennen.');
+} else if (fs.existsSync(seite)){
   const h = fs.readFileSync(seite, 'utf8');
   const n = (h.match(/class="folgt"/g) || []).length;
   if (n) console.log('  ok   die Seite nennt den Zusammenhang bei ' + n + ' Wort/Woertern.');

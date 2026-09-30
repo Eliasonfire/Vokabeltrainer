@@ -1927,6 +1927,64 @@ const BEISPIELSAETZE = {
   '46032': { sentAr: 'التِّلْفَازُ فِي الْغُرْفَةِ.', sentDe: 'Der Fernseher ist im Zimmer.' },
   '46033': { sentAr: 'الطَّبَقُ فِي الْمَطْبَخِ.', sentDe: 'Der Teller ist in der Küche.' },
 
+  /* ---------- Bayna Yadayk 1, Kapitel 5 (30.09.2026) ----------
+     Er hat das Kapitel am 30.09. um 01:01 angehakt; die Routine
+     „neue Kapitel" hat den Auftrag um 14:09 erteilt. Alle 17 Wörter hatten
+     keinen Satz. Das Kapitel handelt vom Essen.
+
+     ⛔ HERKUNFT: kein Zeichen ist hier von Hand vokalisiert. Jedes fremde Wort
+     im Satz steht so im Bestand (madina-1 Kapitel 1–12 oder bayna-yadayk-1
+     Kapitel 1–4), die weiblichen Adjektivformen als `femSg` im Abzug
+     (كَبِيرَةٌ = W:45798.femSg). الْأُسْرَةِ steht wörtlich so in
+     lehrbuch-saetze.js (كَمْ أَفْرَادُ الْأُسْرَةِ؟). Daran setzen nur die
+     zwei Umformungen an, die diese Datei überall benutzt: unbestimmt →
+     bestimmt und das erste Wort einer Iḍāfa. Die fünf Verben stehen in ihrer
+     Perfektform aus dem Abzug (`past`).
+
+     ⭐ جَوْعَانُ und شَبْعَانُ stehen bewusst als خَبَر eines Nominalsatzes:
+     beide sind die Adjektive auf ـانُ, die kein Tanwīn bekommen
+     (adjektive-an-ohne-tanwin-01 — der Lehrer nennt „hungrig" dort selbst).
+     كِيلُو ist unveränderlich und steht deshalb als خَبَر ohne Endung. */
+  '46034': { sentAr: 'أَكَلَ الْوَلَدُ اللَّحْمَ.', sentDe: 'Der Junge aß das Fleisch.' },
+  /* ⭐ طَلَبَ und طَالِبٌ sind dieselbe Wurzel ط ل ب — der Satz zeigt es. */
+  '46035': { sentAr: 'طَلَبَ الطَّالِبُ الْكِتَابَ.', sentDe: 'Der Student verlangte das Buch.' },
+  '46036': { sentAr: 'فَضَّلَ الرَّجُلُ الشَّايَ.', sentDe: 'Der Mann bevorzugte den Tee.' },
+  '46037': { sentAr: 'شَرِبَ الطِّفْلُ اللَّبَنَ.', sentDe: 'Das Kind trank die Milch.' },
+  /* ⛔ Bewusst die Gegenwartsform aus dem Abzug (`present`), nicht حَوَّلَ:
+     ohne Ḥarakāt fällt حَوَّلَ mit حَوْلَ („um … herum", quran-Wortschatz 49839)
+     zusammen, und der Iʿrāb-Erklärer las das Verb dann als مُبْتَدَأ (مُضَاف)
+     — je nach Buchauswahl eine andere Zerlegung desselben Satzes
+     (pruefe-saetze.js, Abschnitt LEXIKON-VERGLEICH, gemessen 30.09.2026).
+     يُحَوِّلُ hat ein anderes Gerüst und ist eindeutig.
+     [[skelettvergleich_wirft_information_weg]] */
+  '46038': { sentAr: 'يُحَوِّلُ الْمُدَرِّسُ الْجُمْلَةَ.', sentDe: 'Der Lehrer wandelt den Satz um.' },
+  '46039': { sentAr: 'اللَّحْمُ عَلَى الطَّبَقِ.', sentDe: 'Das Fleisch ist auf dem Teller.' },
+  '46040': { sentAr: 'الْعِنَبُ فِي السُّوقِ.', sentDe: 'Die Trauben sind auf dem Markt.' },
+  '46041': { sentAr: 'السَّلَطَةُ عَلَى الْمَائِدَةِ.', sentDe: 'Der Salat ist auf dem Tisch.' },
+  /* ⭐ Bewusst eine Iḍāfa: مَائِدَةُ trägt kein Tanwīn, weil ein zweites Nomen
+     folgt — dieselbe Regel mudaf-ohne-al-01 wie bei زَوْجَةُ التَّاجِرِ. */
+  '46042': { sentAr: 'مَائِدَةُ الْأُسْرَةِ كَبِيرَةٌ.', sentDe: 'Der Tisch der Familie ist groß.' },
+  '46043': { sentAr: 'الْوَلَدُ جَوْعَانُ.', sentDe: 'Der Junge ist hungrig.' },
+  '46044': { sentAr: 'الرَّجُلُ شَبْعَانُ.', sentDe: 'Der Mann ist satt.' },
+  '46045': { sentAr: 'الْفَتَى نَحِيفٌ.', sentDe: 'Der junge Mann ist dünn.' },
+  '46046': { sentAr: 'وَزْنُ الْحَقِيبَةِ ثَقِيلٌ.', sentDe: 'Das Gewicht der Tasche ist schwer.' },
+  /* ⬜ كِيلُو (46047) bekommt BEWUSST keinen Satz — und das ist kein Vergessen.
+     Geschrieben war „وَزْنُ اللَّحْمِ كِيلُو." (Iḍāfa als مُبْتَدَأ, كِيلُو als
+     خَبَر). `pruefe-saetze.js` meldet daran: „كِيلُو ist خَبَر, das verlangt
+     raf, gelesen: -". Das Wort ist ein Fremdwort auf Wāw und damit
+     unveränderlich — genau wie أَمْرِيكَا auf Alif. `endungUnsichtbar()` in
+     `js/irab.js:943` kennt aber nur vier Fälle: die fünf Nomen, das Yāʾ des
+     Sprechers, اِسْم مَقْصُور (ى) und „endet auf Alif". Ein fünfter Fall
+     „endet auf Wāw" fehlt.
+     ⛔ NICHT hier repariert: `endungUnsichtbar()` wird auch von `js/saetze.js`
+     und `js/uebung.js` gelesen — eine Änderung wirkt in der App, nicht nur im
+     Prüfer. Das ist Elias' Entscheidung, nicht die dieser Routine.
+     Solange bleibt كِيلُو ohne Satz; der Punkt steht im Bericht vom 30.09.2026.
+     [[skelettvergleich_wirft_information_weg]] */
+  '46048': { sentAr: 'الْجَمَلُ سَمِينٌ.', sentDe: 'Das Kamel ist fett.' },
+  '48614': { sentAr: 'الشَّرَابُ بَارِدٌ.', sentDe: 'Das Getränk ist kalt.' },
+  '48624': { sentAr: 'وَجْبَةُ الطِّفْلِ فِي الْمَطْبَخِ.', sentDe: 'Die Mahlzeit des Kindes ist in der Küche.' },
+
   /* ========================================================================
      BEISPIELSÄTZE FÜR DIE FACHBEGRIFFE (22.09.2026)
      ========================================================================

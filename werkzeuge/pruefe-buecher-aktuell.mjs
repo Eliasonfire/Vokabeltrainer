@@ -235,9 +235,19 @@ function stoertest(eingabe){
       const b = Object.keys(e.roots.frei)[0];
       e.roots.frei['nie-gesehen-1'] = e.roots.frei[b]; e.roots.kennung['nie-gesehen-1'] = 'nie-gesehen-1';
     }, (r) => r.befunde.some(x => x.art === 'B1')],
+    /* ⛔ Das erfundene Kapitel muss ueber BEIDE Listen hinausgehen, nicht nur
+       ueber die von arabicroots (30.09.2026). F1 heisst „bei arabicroots frei,
+       in seiner Auswahl nicht" — liegt das erfundene Kapitel zufaellig SCHON
+       in seiner Auswahl, entsteht die Frage zu Recht nicht, und der Stoertest
+       meldete „nicht erkannt", obwohl das Werkzeug richtig rechnet.
+       Genau das trat am 30.09.2026 ein: arabicroots fuehrte bayna-yadayk-1 bis
+       Kapitel 4, Elias hatte in seiner App schon Kapitel 5 angehakt — S2 legte
+       Kapitel 5 an und traf damit seine eigene Auswahl.
+       [[pruefwerkzeug_mit_eingebauter_antwort]] */
     ['S2 arabicroots schaltet ein Kapitel mehr frei', (e) => {
       const b = Object.keys(e.roots.frei).find(x => e.app.buecher[x]) || Object.keys(e.roots.frei)[0];
-      e.roots.frei[b] = [...e.roots.frei[b], Math.max(...e.roots.frei[b]) + 1];
+      const hoechstes = Math.max(...e.roots.frei[b], ...(e.app.buecher[b] || [0]));
+      e.roots.frei[b] = [...e.roots.frei[b], hoechstes + 1];
     }, (r) => r.fragen.some(x => x.art === 'F1')],
     ['S3 FREIGESCHALTET nicht nachgezogen', (e) => {
       const b = Object.keys(e.roots.frei).find(x => e.frei[x]);

@@ -1024,7 +1024,11 @@ const ESELSBRUECKEN_ALT = {
 
   /* حَادٌّ - scharf */
   '45897': [
-    'Die شَدَّة ist der halbe Wortstamm: die Wurzel ist ح د د, zwei د auf eines zusammengezogen. Sprich es hörbar: ḥād-d. Dasselbe hast du bei حَارٌّ (heiß) — beide Adjektive, beide mit doppeltem letzten Wurzelbuchstaben, beide kurz.',
+    /* ⛔ Ersetzt am 30.09.2026: Elias hat den Vorschlag davor („Die شَدَّة ist der
+       halbe Wortstamm …") in der App mit „Taugt nicht" abgelehnt — er stand in
+       data/abgelehnt.json und trotzdem noch hier. Gefunden von
+       pruefe-eselsbruecken.js, Abschnitt 8, im Lauf „neue Kapitel". */
+    'Das Wort meint nicht nur Messer: ein scharfer Ton, ein spitzer Winkel (zāwiya ḥādda) und ein scharfer Blick heißen im Arabischen alle حَادٌّ. Merk es als „spitz, schneidend" — dann passt es überall dort, wo du es später wieder triffst.',
     'Von derselben Wurzel kommt حَدِيد (Eisen) und حَدّ, die Grenze. Was scharf ist, hat eine Kante. ⚠️ Und es passt zu deinem سِكِّينٌ (Messer): سِكِّينٌ حَادٌّ, ein scharfes Messer. Zwei Vokabeln, ein Satz.'
   ],
 
@@ -2955,5 +2959,90 @@ const ESELSBRUECKEN_ALT = {
   '46033': [
     'In al-Mulk, die du auswendig kannst, steht die Wurzel: „Der sieben Himmel in Schichten übereinander erschaffen hat“ (67:3) — dort ṭibāqan, Schicht über Schicht. Dein طَبَقٌ ist so eine Schicht, nur aus Porzellan.',
     'Setz ihn in deine Küche: im مَطْبَخٌ steht der فُرْنٌ, daneben liegen der طَبَقٌ und die مِلْعَقَةٌ (Löffel). ⚠️ Der Plural bricht: أَطْبَاقٌ, Muster afʿāl — wie أَفْرَانٌ zu فُرْنٌ aus Kapitel 3.'
+  ],
+
+  '46034': [
+    'Das Kapitel gibt dir Essen und Trinken als Paar: أَكَلَ und شَرِبَ. ⚠️ Im Befehl fällt die Hamza ganz weg — كُلْ, nur drei Buchstaben. Und was du isst, steht daneben: لَحْمٌ und عِنَبٌ aus demselben Kapitel.',
+    'Die Gegenwart nimmt ein u in der Mitte: يَأْكُلُ. Dieselbe Reihe hast du schon dreimal: نَظَرَ · يَنْظُرُ (Kapitel 1) · سَكَنَ · يَسْكُنُ (Kapitel 3) · كَنَسَ · يَكْنُسُ (Kapitel 4). Das masdar steht im Buch als أَكْلٌ.'
+  ],
+
+  '46035': [
+    'Zwei Bedeutungen, eine Wurzel: verlangen (der طَالِبٌ verlangt Wissen) und bestellen (im Lokal verlangst du dein Essen). Das Kapitel meint beides — deshalb steht طَلَبَ zwischen أَكَلَ und شَرِبَ.',
+    'Merk die Reihe aus dem Buch: طَلَبَ (er verlangte) · يَطْلُبُ (er verlangt) · اُطْلُبْ (verlang!). ⚠️ Der Befehl beginnt wie اُنْظُرْ aus Kapitel 1 und اُكْنُسْ aus Kapitel 4 — drei Verben, ein und dasselbe Muster.'
+  ],
+
+  '46036': [
+    'Im Bittgebet nach dem Adhān, das du kannst, steht die Wurzel: الْوَسِيلَةَ وَالْفَضِيلَةَ — „die Wasīla und die Faḍīla“. Wer al-Faḍīla dort erkennt, erkennt فَضَّلَ. (Dua nach Adhan)',
+    'Bau faʿʿala: Schadda auf dem mittleren Buchstaben, Gegenwart mit يُـ. Drei Verben desselben Baus hast du schon: رَتَّبَ · يُرَتِّبُ (Kapitel 1) · صَلَّى · يُصَلِّي (Kapitel 2) — und حَوَّلَ · يُحَوِّلُ steht neben فَضَّلَ im selben Kapitel.'
+  ],
+
+  '46037': [
+    'Ein i in der Vergangenheit, ein a in der Gegenwart: شَرِبَ · يَشْرَبُ. Genau dieselbe Reihe hast du bei سَمِعَ · يَسْمَعُ aus Kapitel 1. ⚠️ Nicht mit dem u-Muster von يَطْلُبُ verwechseln, das im selben Kapitel steht.',
+    'Iss und trink — das Kapitel stellt أَكَلَ und شَرِبَ nebeneinander, und im Ramadan fällt beides zusammen weg. Der Befehl heißt اِشْرَبْ, gebaut wie اِغْسِلْ aus Kapitel 4.'
+  ],
+
+  '46038': [
+    'Ein Begriff, den du kennst, ist dasselbe Wort: taḥwīl al-qibla, die Wende der Gebetsrichtung nach Mekka. تَحْوِيلٌ steht als masdar im Buch, und heute heißt taḥwīl auch die Überweisung beim Geld. Wurzel ح و ل.',
+    'Bau faʿʿala mit Schadda: حَوَّلَ · يُحَوِّلُ, gleicher Bau wie رَتَّبَ (Kapitel 1) und فَضَّلَ aus diesem Kapitel. ⚠️ Hier bleibt das و der Wurzel sichtbar — bei نَامَ aus Kapitel 4 (Wurzel ن و م) verschwindet es und wird zu einem langen ا. Dieselbe Sorte Wurzel, zwei ganz verschiedene Bilder.'
+  ],
+
+  '46039': [
+    'Setz es in die Szene des Kapitels: das لَحْمٌ liegt auf dem طَبَقٌ (Teller, Kapitel 4), der auf der مَائِدَةٌ (Tisch) steht — und wer davon gegessen hat, ist شَبْعَانُ. Vier Wörter, ein Bild.',
+    'Muster faʿl, kurzer Vokal und dann Sukūn: لَحْمٌ wie بَيْتٌ (Haus, madina-1 Kapitel 1), دَوْرٌ (Stockwerk, Kapitel 3) und وَزْنٌ aus diesem Kapitel. ⚠️ Das ل ist ein Sonnenbuchstabe: mit Artikel verschmilzt es zu اللَّحْمُ, mit Schadda.'
+  ],
+
+  '46040': [
+    'Häng sie an den Ort, an dem du sie holst: الْعِنَبُ im سُوقٌ (Markt, madina-1 Kapitel 4), neben تُفَّاحٌ (Apfel) und فَاكِهَةٌ (Obst). Drei Wörter aus deinem Bestand, eines davon neu.',
+    'Drei Buchstaben ع ن ب, und kein Muster, aus dem sich etwas ableiten ließe — merk es über den Klang „ʿinab“ und über sein Gegenstück im Kapitel: لَحْمٌ ist das Herzhafte, عِنَبٌ das Süße auf derselben مَائِدَةٌ.'
+  ],
+
+  '46041': [
+    'Der Plural mit ـَات ist dir vertraut: سَاعَاتٌ (Uhren, Kapitel 4) · حَافِلَاتٌ (Busse, Kapitel 4) · سَيَّارَاتٌ (Autos, madina-1 Kapitel 5). سَلَطَاتٌ reiht sich genau dort ein.',
+    '⚠️ Das ـة macht das Wort weiblich: es heißt سَلَطَةٌ كَبِيرَةٌ und nicht كَبِيرٌ. Und ihr Platz steht im selben Kapitel: die سَلَطَةٌ gehört auf die مَائِدَةٌ, neben das لَحْمٌ.'
+  ],
+
+  '46042': [
+    'Die مَائِدَةٌ ist der gedeckte Tisch, nicht irgendein Möbelstück — darauf steht, was das Kapitel aufzählt: لَحْمٌ, سَلَطَةٌ, عِنَبٌ und شَرَابٌ. Merk das Wort über das Bild, nicht über die Buchstaben.',
+    '⚠️ Das ائ in der Mitte: ein langes ā, darauf die Hamza auf ihrem Träger — dasselbe Schriftbild wie in حَقَائِبُ (Taschen, madina-1 Kapitel 5) und سَتَائِرُ (Vorhänge, Kapitel 3) aus deinem Bestand. Die Wurzel steht im Buch als م و د.'
+  ],
+
+  '46043': [
+    '⚠️ جَوْعَانُ bekommt nie ein Tanwīn — es endet auf ـانُ und ist trotzdem unbestimmt. Dein Lehrer nennt in Folge 13 genau diese Gruppe (faul, hungrig, durstig, wütend, satt); شَبْعَانُ aus demselben Kapitel ist der zweite Fall.',
+    'Die weibliche Form bricht das gewohnte Muster: nicht mit ـَة, sondern جَوْعَى. Und der Plural ist gebrochen: جِيَاعٌ — dieselbe Gestalt wie طِوَالٌ (lang), قِصَارٌ (kurz) und صِغَارٌ (klein) aus madina-1 Kapitel 3.'
+  ],
+
+  '46044': [
+    'Das Gegensatzpaar des Kapitels: جَوْعَانُ (hungrig) und شَبْعَانُ (satt). Beide enden auf ـانُ, beide ohne Tanwīn, beide mit einer weiblichen Form auf ـَى: جَوْعَى und شَبْعَى. Lerne sie nie einzeln.',
+    'Der Plural شِبَاعٌ läuft auf demselben Muster wie drei Adjektive, die du schon hast: طِوَالٌ · قِصَارٌ · صِغَارٌ (madina-1 Kapitel 3). ⚠️ Wer شَبْعَانُ ist, hat vorher أَكَلَ — das Verb steht im selben Kapitel.'
+  ],
+
+  '46045': [
+    'Muster faʿīl, langes ī in der Mitte — das kennst du dreifach: طَوِيلٌ (lang) · نَظِيفٌ (sauber) · سَرِيعٌ (schnell, madina-1 Kapitel 6). نَحِيفٌ ist derselbe Bau, und der Plural bricht genauso: نِحَافٌ wie طِوَالٌ.',
+    'Das Gegenteil steht im selben Kapitel: نَحِيفٌ gegen سَمِينٌ (fett). Die weibliche Form ist dagegen ganz regelmäßig — نَحِيفَةٌ, mit ـَة wie نَظِيفَةٌ und صَغِيرَةٌ. Wurzel ن ح ف.'
+  ],
+
+  '46046': [
+    'Und im Grammatikunterricht ist es ein Fachwort, das du längst benutzt: das Wortmuster heißt wazn. „Auf welchem wazn steht das Wort?“ — dieselbe Wurzel, dieselbe Idee: was wiegt gleich viel, was hat dieselbe Gestalt.',
+    'Muster faʿl mit gebrochenem Plural afʿāl: وَزْنٌ · أَوْزَانٌ — genau wie بَابٌ · أَبْوَابٌ und قَلَمٌ · أَقْلَامٌ (madina-1 Kapitel 1) oder فُرْنٌ · أَفْرَانٌ (Kapitel 3). Die Einheit dazu steht im selben Kapitel: كِيلُو.'
+  ],
+
+  '46047': [
+    'Drei Wörter in deinem Bestand kommen genauso aus anderen Sprachen und haben deshalb keine Wurzel: تِلْفَازٌ (Fernseher, Kapitel 4), أَمْرِيكَا und سُويسْرَا (madina-1 Kapitel 8). كِيلُو gehört in dieselbe Gruppe.',
+    'Es gehört zu وَزْنٌ aus demselben Kapitel: وَزْنٌ ist die Größe, كِيلُو die Einheit. Wenn du im سُوقٌ (Markt) nach لَحْمٌ fragst, brauchst du beide Wörter.'
+  ],
+
+  '46048': [
+    'Das Gegensatzpaar des Kapitels: سَمِينٌ (fett) gegen نَحِيفٌ (dünn). Beide sind faʿīl, beide brechen im Plural auf fiʿāl: سِمَانٌ und نِحَافٌ — dieselbe Gestalt wie طِوَالٌ und قِصَارٌ aus madina-1 Kapitel 3.',
+    'Die weibliche Form ist regelmäßig: سَمِينَةٌ, mit ـَة angehängt wie bei كَبِيرَةٌ und نَظِيفَةٌ. ⚠️ Anders als bei جَوْعَانُ und شَبْعَانُ aus demselben Kapitel, deren weibliche Form auf ـَى endet. Zwei Bauarten in einem Kapitel.'
+  ],
+
+  '48614': [
+    'Der Plural أَشْرِبَةٌ läuft auf dem Muster afʿila, und das hast du dreimal aus madina-1 und Bayna Yadayk Kapitel 1: حِصَانٌ · أَحْصِنَةٌ (Pferd) · جَوَابٌ · أَجْوِبَةٌ (Antwort) · مِثَالٌ · أَمْثِلَةٌ (Beispiel). Drei Belege, ein Muster.',
+    'Setz es auf den Tisch des Kapitels: der شَرَابٌ steht auf der مَائِدَةٌ neben der سَلَطَةٌ und dem لَحْمٌ. ⚠️ Das ش ist ein Sonnenbuchstabe: mit Artikel verschmilzt das ل und es heißt الشَّرَابُ.'
+  ],
+
+  '48624': [
+    'Der Plural mit ـَات, ganz regelmäßig: وَجْبَاتٌ — wie سَاعَاتٌ (Uhren, Kapitel 4), حَافِلَاتٌ (Busse, Kapitel 4) und سَلَطَاتٌ aus diesem Kapitel.',
+    'Das ganze Kapitel passt in eine وَجْبَةٌ: auf der مَائِدَةٌ stehen لَحْمٌ, سَلَطَةٌ, عِنَبٌ und شَرَابٌ — davor bist du جَوْعَانُ, danach شَبْعَانُ. Ein Wort als Klammer um alles andere.'
   ],
 };
