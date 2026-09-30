@@ -984,20 +984,12 @@ posten.push({
     + 'immer wahr, aber weniger griffig.',
   seite: '', seiteText: ''
 });
-posten.push({
-  /* ⭐ Am 21.08. dreifach nachgemessen — und der Posten fängt damit früher an
-     als gedacht: es geht nicht um die BESTE Stimme, sondern erst einmal um
-     eine überhaupt. SAPI kennt 2 (Hedda de-DE, Zira en-US), OneCore 3 (alle
-     de-DE), und `speechSynthesis.getVoices()` im Browser — die Liste, die für
-     die App zählt — liefert 3 Stimmen, davon 0 arabische. */
-  titel: 'Arabische Stimme: erst installieren, dann hören',
-  zahl: 0, einheit: 'arabische Stimmen', dazu: 'im Browser gemessen', auswahl: true,
-  aufwand: 'einmal in den Windows-Einstellungen, kostenlos',
-  warum: 'Auf deinem PC ist KEINE arabische Stimme — dreifach gemessen (SAPI, OneCore, speechSynthesis im Browser). Die App kann heute gar nicht arabisch sprechen; das ist keine Frage der Qualität.',
-  wie: 'Einstellungen → Zeit und Sprache → Sprache und Region → Sprache hinzufügen → Arabisch → Optionen → Sprachausgabe. Danach sage ich dir in zehn Sekunden, ob sie deine Ḥarakāt liest: رَجُلٌ gegen رِجْلٌ. Spricht sie beide gleich, ist sie unbrauchbar — und eine kostenlose, die sie liest, schlägt jede bezahlte, die rät.',
-  seite: 'https://claude.ai/artifact/3gTMBWufBfG52T8KDRqL3m',
-  seiteText: 'Der Bericht'
-});
+/* ⛔ HIER STAND DER POSTEN „Arabische Stimme: erst installieren, dann hören"
+   (PC, Windows-Einstellungen; am 21.08.2026 dreifach gemessen: 0 arabische
+   Stimmen). Entfernt am 30.09.2026 (Helfer F, M5): er braucht die Stimme
+   nicht am PC — Elias am 22.09.2026: „ich brauche es wenn dann für mein
+   handy und tablet". Der Auftrag dazu stand seitdem unerledigt in der To-Do.
+   Der Posten „Arabisch testen — auf Handy und Tablet" darunter bleibt. */
 posten.push({
   /* ⭐ v575, 23.09.2026 (Nachtschicht). Auf Handy und Tablet IST Arabisch
      installiert, Chrome meldet es der App aber nicht (Begründung bei
