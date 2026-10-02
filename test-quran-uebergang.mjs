@@ -56,8 +56,12 @@ const pauseVon = (pfad) => {
   return m ? Number(m[1]) : NaN;
 };
 const P_AFASY = pauseVon('Alafasy/mp3/'), P_BASIT = pauseVon('AbdulBaset/Mujawwad/mp3/'), P_SHATRI = pauseVon('Shatri/mp3/');
-ok(P_AFASY === 0.42 && P_BASIT === 4.07 && P_SHATRI === 0.64,
-   'Pausen am Stück in QURAN_REZITATOREN: al-ʿAfāsī ' + P_AFASY + ' · ʿAbd al-Bāsiṭ ' + P_BASIT + ' · ash-Shāṭirī ' + P_SHATRI);
+ok(P_AFASY === 0.42 && P_SHATRI === 0.64,
+   'Pausen am Stück in QURAN_REZITATOREN: al-ʿAfāsī ' + P_AFASY + ' · ash-Shāṭirī ' + P_SHATRI);
+/* ʿAbd al-Bāsiṭ: nicht gemessen (am Stück 4,07 s), sondern Elias' Wahl vom
+   01.10.2026. Dieser Test bewacht seinen Satz. */
+ok(P_BASIT === 0.42,
+   'ʿAbd al-Bāsiṭ ' + P_BASIT + ' s — Elias, 01.10.2026: „du sollst bei ihm die zeit auch verkürzen in beiden apps", „Knapp eine halbe Sekunde"');
 
 /* ---------- 1. Erste und letzte Silbe ---------- */
 console.log('Stille messen (audioStilleAus):');
@@ -102,12 +106,15 @@ console.log('\nÜbergang (audioUebergangZeit):');
   ok(nah(pause, P_AFASY, 0.002), 'Pause zwischen den Stimmen = ' + pause.toFixed(3) + ' s = seine Pause am Stück');
   const vorher = st.hinten + L + folge.vorn;
   ok(vorher > 3 * P_AFASY, 'vorher: ' + vorher.toFixed(2) + ' s — dreimal so lang wie am Stück (das war seine Meldung)');
-  /* ʿAbd al-Bāsiṭ 67:1 → 97:2-Werte: seine vier Sekunden sind sein Stil. */
+  /* ʿAbd al-Bāsiṭ, dieselben Dateiwerte wie bisher: seit dem 02.10.2026 wie
+     al-ʿAfāsī (Elias' Wahl), nicht mehr seine vier Sekunden. */
   const b1 = { vorn: 2.04, hinten: 1.78, dauer: 20.64 }, b2 = { vorn: 2.86, hinten: 1.75, dauer: 12.83 };
-  ok(A.audioUebergangZeit(b1, b2, L, P_BASIT) === null, 'ʿAbd al-Bāsiṭ: nichts vorzuziehen — seine lange Pause bleibt');
+  const bt = A.audioUebergangZeit(b1, b2, L, P_BASIT);
+  ok(bt !== null && bt < b1.dauer - 0.5, 'ʿAbd al-Bāsiṭ: nächster Vers startet bei ' + (bt && bt.toFixed(3)) + ' s statt am Ende (20,64 s)');
   const bStart = A.audioStartPos(b2, b1, L, P_BASIT);
-  const bPause = b1.hinten + L + (b2.vorn - bStart);
-  ok(nah(bPause, P_BASIT, 0.002), 'ʿAbd al-Bāsiṭ: Pause ' + bPause.toFixed(2) + ' s = seine Pause am Stück, nicht 0,45');
+  const bPause = (bt - (b1.dauer - b1.hinten)) + L + (b2.vorn - bStart);
+  ok(nah(bPause, 0.42, 0.002), 'ʿAbd al-Bāsiṭ: Pause zwischen den Stimmen ' + bPause.toFixed(3) + ' s = knapp eine halbe Sekunde, nicht mehr vier');
+  ok(bt >= b1.dauer - b1.hinten, 'ʿAbd al-Bāsiṭ: trotzdem nie vor seiner letzten Silbe');
   /* ash-Shāṭirī 67:5: passt schon fast. */
   const s1 = { vorn: 0.10, hinten: 0.40, dauer: 17.74 }, s2 = { vorn: 0.10, hinten: 0.2, dauer: 9 };
   ok(A.audioUebergangZeit(s1, s2, L, P_SHATRI) === null && A.audioStartPos(s2, s1, L, P_SHATRI) === 0,
@@ -220,6 +227,17 @@ console.log('\nStörtests:');
   const S = rein(ohneSchutz);
   const t = S.audioUebergangZeit({ vorn: 0.1, hinten: 0.98, dauer: 10.73 }, { vorn: 0.1 }, 2.0, P_AFASY);
   ok(!nah(t, 9.75, 0.001), 'ohne sie startete der nächste Vers MITTEN in der Stimme (' + (t && t.toFixed(2)) + ' s) — der Test sieht das');
+}
+{
+  /* Elias' Wahl zurückgenommen: mit den alten 4,07 s bei ʿAbd al-Bāsiṭ muss
+     dieser Test rot werden — sonst bewacht er seinen Satz nicht. */
+  const alt = src.replace("pfad: 'AbdulBaset/Mujawwad/mp3/', pause: 0.42", "pfad: 'AbdulBaset/Mujawwad/mp3/', pause: 4.07");
+  ok(alt !== src, 'ʿAbd al-Bāsiṭ ließ sich auf die alten 4,07 s zurückstellen');
+  const m = alt.match(/pfad: 'AbdulBaset\/Mujawwad\/mp3\/', pause: ([\d.]+)/);
+  const p = m ? Number(m[1]) : NaN;
+  const b1 = { vorn: 2.04, hinten: 1.78, dauer: 20.64 }, b2 = { vorn: 2.86, hinten: 1.75, dauer: 12.83 };
+  ok(p !== 0.42 && A.audioUebergangZeit(b1, b2, 0.139, p) === null,
+     'mit 4,07 s zöge bei ihm nichts vor (' + p + ') — die Proben oben sähen das');
 }
 {
   const ohneAuslauf = TEILE.replace('if (frueh && !alt.paused) QAUDIO.auslauf = alt;\n      else { try { alt.pause(); }', 'if (false) QAUDIO.auslauf = alt;\n      else { try { alt.pause(); }');
