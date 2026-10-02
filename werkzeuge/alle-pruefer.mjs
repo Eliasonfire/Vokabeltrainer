@@ -626,6 +626,13 @@ const PRUEFER = [
      beim Wiederaufstieg kein „Sitzt!" mehr. Lädt js/feier.js ganz und prüft
      die Aufrufstelle in rate(); vier Störtests. */
   ['test-zurueckerobert-allein.mjs', []],
+  /* ⛔ Neu am 02.10.2026. Elias: „kann ich mein tagesziel wieder auf 10 stellen?
+     guck mal nach ob ich jetzt schon kann". werkzeuge/lernlast.mjs meldete dazu
+     „eine Wiederholung wartet seit 28 Tagen — Tagesziel erhöhen?" — falsch: es
+     zählte ausgeblendete Fachbegriffe und andere Einträge mit, die die App ihm
+     gar nicht vorlegt (echt: 12 Tage). Der Test baut seinen Fall als kleinen
+     Stand nach und lässt das echte Werkzeug darauf laufen; sechs Störtests. */
+  ['test-lernlast.mjs', []],
 
   /* ⛔ Neu am 06.09.2026. Der Hifz-Stand ist das Einzige in dieser App, das
      Elias sich WIRKLICH erarbeitet hat — auswendig gelernte Suren. Er lief

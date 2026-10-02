@@ -20,8 +20,13 @@
  * ⛔ Der Bestand zählt wie die App: seine Kapitel UND die einzeln
  * freigeschalteten Wörter (vt_einzeln_frei). Bis v602 fehlten die hier —
  * 25 Karten in Box 2–5 (Lernpunkt vom 25.09.2026).
+ * ⛔ Und er zählt NICHT mit, was die App ihm nicht vorlegt (02.10.2026):
+ * gelöschte Karten, Fachbegriffe außerhalb der Kartei, „kenne ich schon",
+ * übertragene Einträge — nichtVorgelegt() unten. `vt_progress` behält jeden
+ * Eintrag, auch wenn die Karte längst weg ist. Bewacht von test-lernlast.mjs.
  *
- * Liest seinen Gerätestand aus dem KV (NUR LESEN).
+ * Liest seinen Gerätestand aus dem KV (NUR LESEN). Mit `--stand <datei>` aus
+ * einer Datei derselben Form — nur für den Test.
  * Exit 2 = die Karten am Tag reichen nicht mehr (Box-7-Pflege belegt die
  * Wiederholungsplätze, oder eine Wiederholung wartet über 14 Tage) — eine
  * ZAHL FÜR IHN, keine Entscheidung: ob das Tagesziel steigt, sagt er.
@@ -41,17 +46,26 @@ if (!INTERVALS || !Number.isFinite(ANTEIL)){ console.log('⛔ INTERVALS/DECKEL_A
 const BOXEN = Object.keys(INTERVALS).map(Number).sort((a, b) => a - b);
 const OBEN = BOXEN[BOXEN.length - 1];
 
+/* --stand <datei>: ein Stand aus einer Datei statt aus dem KV, dieselbe Form
+   ({ daten: { vt_progress: …, … } }). Nur für test-lernlast.mjs — die Wartung
+   ruft das Werkzeug ohne Schalter auf und liest seinen echten Stand. */
+const STAND_DATEI = (() => { const i = process.argv.indexOf('--stand'); return i > 1 ? process.argv[i + 1] : null; })();
 let D;
 try {
-  const NS = (fs.readFileSync(path.join(REPO, 'wrangler.toml'), 'utf8').match(/id\s*=\s*"([0-9a-f]{32})"/) || [])[1];
-  const text = execFileSync('cmd', ['/c', 'npx', 'wrangler@4.138.0', 'kv', 'key', 'get', '--namespace-id=' + NS,
-    'stand:abdurahman.tunk@gmail.com', '--remote'], { cwd: REPO, encoding: 'utf8', maxBuffer: 64 << 20, stdio: ['ignore', 'pipe', 'pipe'] });
+  let text;
+  if (STAND_DATEI) text = fs.readFileSync(STAND_DATEI, 'utf8');
+  else {
+    const NS = (fs.readFileSync(path.join(REPO, 'wrangler.toml'), 'utf8').match(/id\s*=\s*"([0-9a-f]{32})"/) || [])[1];
+    text = execFileSync('cmd', ['/c', 'npx', 'wrangler@4.138.0', 'kv', 'key', 'get', '--namespace-id=' + NS,
+      'stand:abdurahman.tunk@gmail.com', '--remote'], { cwd: REPO, encoding: 'utf8', maxBuffer: 64 << 20, stdio: ['ignore', 'pipe', 'pipe'] });
+  }
   D = JSON.parse(text.slice(text.indexOf('{'))).daten || {};
 } catch (e){ console.log('⛔ Stand nicht lesbar: ' + String(e.message).slice(0, 160)); process.exit(1); }
 const p = v => { try { return typeof v === 'string' ? JSON.parse(v) : v; } catch (e){ return v; } };
 const W = k => p(D[k] && D[k].wert !== undefined ? D[k].wert : D[k]);
 const PROG = W('vt_progress') || {}, SET = W('vt_settings') || {}, FREI = W('vt_einzeln_frei') || {};
 const QT = W('vt_quoteTage') || {};
+const GEL = W('vt_geloescht') || {}, BEK = W('vt_bekannt') || {};
 const auswahl = SET.buecher || {}, ziel = Number(SET.tagesDeckel) || 10;
 const ctx = vm.createContext({ window: {} });
 for (const f of fs.readdirSync(path.join(REPO, 'data')).filter(f => /^vokabeln-.*\.js$/.test(f)))
@@ -66,6 +80,55 @@ const drin = id => {
   return (Array.isArray(k) && k.includes(x[1])) || einzelnFrei(id);
 };
 
+/* ⛔⛔ WAS DIE APP IHM NICHT VORLEGT, ZÄHLT HIER NICHT MIT (02.10.2026).
+   Anlass — Elias: „kann ich mein tagesziel wieder auf 10 stellen? guck mal
+   nach ob ich jetzt schon kann". Dieses Werkzeug meldete „eine Wiederholung
+   wartet seit 28 Tagen — Tagesziel erhöhen?". Die drei ältesten waren
+   Fachbegriffe, die seit dem 08.09. ausgeblendet sind (gram-pron-anta, -ana,
+   -huwa), die vierte gram-marfu, das seit dem 22.09. keine Karte mehr ist.
+   Echt waren es 12 Tage, der Alarm war falsch — und er war es schon bei jedem
+   Lauf seit dem 25.09. („21 Tage"). Derselbe Fehler wie am 25.09., nur in die
+   andere Richtung: `vt_progress` behält jeden Eintrag, auch wenn es die Karte
+   nicht mehr gibt. Vier Gründe, jeder an seiner Stelle in der App abgelesen:
+     · übertragen         merkeUebertragen() in js/kern.js — der Fortschritt
+                          lebt unter einer anderen Karte weiter, hier bleibt
+                          ein Eintrag in Box 1 stehen
+     · gelöscht           istGeloescht(): vt_geloescht[id].an
+     · „kenne ich schon"  kennErSchon(): vt_bekannt[id].an, in passtZurAuswahl()
+     · Fachbegriff        nur bestellte kommen in die Kartei (die Zeile
+                          „VOCAB_DATA.push(...FACHBEGRIFF_VOKABELN.filter"), und
+                          passtZurAuswahl() nimmt den heraus, dessen Regel von
+                          den Karteikarten gestrichen ist
+   Die zwei Fachbegriff-Funktionen werden aus js/kern.js GESCHNITTEN und hier
+   ausgeführt — keine zweite Fassung der Regel.
+   ⚠️ Weiter nur angenähert bleibt die Kapitelwahl in drin(): die App fragt
+   zusätzlich istBekannt() und den „Eigene"-Chip. */
+const an = (o, id) => { const e = o && o[id]; return !!(e && e.an); };
+const schneide = name => {
+  const auf = kern.indexOf('function ' + name + '(');
+  const zu = auf < 0 ? -1 : kern.indexOf('\n}', auf);
+  if (zu < 0){ console.log('⛔ ' + name + '() nicht in js/kern.js gefunden'); process.exit(1); }
+  return kern.slice(auf, zu + 2);
+};
+let FACH;   /* id → steht in der Kartei (bestellt und nicht von der Regel herausgenommen) */
+try {
+  const welt = vm.createContext({});
+  for (const f of ['grammar-data.js', path.join('data', 'fachbegriffe.js')])
+    vm.runInContext(fs.readFileSync(path.join(REPO, f), 'utf8'), welt, { filename: f });
+  vm.runInContext(schneide('fachbegriffBestellt') + '\n' + schneide('fachbegriffFolgtRegel'), welt);
+  FACH = new Map(vm.runInContext(
+    'FACHBEGRIFF_VOKABELN.map(w => [String(w.id), !!fachbegriffBestellt(w) && !fachbegriffFolgtRegel(w)])', welt));
+} catch (e){ console.log('⛔ Fachbegriffe nicht lesbar: ' + String(e.message).slice(0, 160)); process.exit(1); }
+const nichtVorgelegt = (id, x) => {
+  if (x.uebertragen != null) return 'uebertragen';
+  if (an(GEL, id)) return 'geloescht';
+  if (an(BEK, id)) return 'bekannt';
+  /* Ein Fachbegriff, den die Datei nicht (mehr) führt, ist auch keine Karte:
+     die Datei ist die einzige Tür in die App. */
+  if (FACH.has(String(id)) ? !FACH.get(String(id)) : String(id).startsWith('gram-')) return 'fachbegriff';
+  return null;
+};
+
 const heute = new Date(); heute.setHours(heute.getHours() - 8);   /* wie todayStr(): vor 8 Uhr zählt zum Vortag */
 const tag = `${heute.getFullYear()}-${String(heute.getMonth() + 1).padStart(2, '0')}-${String(heute.getDate()).padStart(2, '0')}`;
 const tageZwischen = (a, b) => Math.round((new Date(b + 'T00:00:00') - new Date(a + 'T00:00:00')) / 864e5);
@@ -75,9 +138,23 @@ let neu = 0, vorgezogeneKarten = 0;
 /* v604: die Lerngruppe (Mitglieder = Box 1 mit `gruppe`) */
 const gruppe = { alle: 0, neu: 0, frueher: 0, faellig: 0, neuInSchlange: 0 };
 const wdhFaellig = [];   // { v, b } der fälligen Wiederholungen
+const draussen = { geloescht: 0, fachbegriff: 0, bekannt: 0, uebertragen: 0 };
+const draussenFaellig = [];   // die fälligen Wiederholungen darunter, damit man SIEHT, was nicht mitzählt
 for (const [id, x] of Object.entries(PROG)){
   if (!x || !drin(id)) continue;
-  const b = Number(x.box) || 1; if (!(b in box)) box[b] = 0;
+  const b = Number(x.box) || 1;
+  const grund = nichtVorgelegt(id, x);
+  if (grund){
+    draussen[grund]++;
+    /* --draussen: jede nicht mitgezählte Karte einzeln — zum Nachsehen, ob
+       eine darunter ist, die er doch noch gelernt hat (letzte Antwort, Gruppe). */
+    if (process.argv.includes('--draussen'))
+      console.log(`  draußen: ${String(id).padEnd(38)} ${grund.padEnd(11)} Box ${b} · fällig ${x.nextReview || '–'} · letzte Antwort ${x.ts ? new Date(x.ts).toLocaleString('de-DE') : '–'}${x.gruppe ? ' · IN DER LERNGRUPPE' : ''}`);
+    if (b > 1 && String(x.nextReview) <= tag)
+      draussenFaellig.push(`${id} (Box ${b}, ${Math.max(0, tageZwischen(String(x.nextReview), tag))} T)`);
+    continue;
+  }
+  if (!(b in box)) box[b] = 0;
   box[b]++;
   if (b === 1 && !(Number(x.correct) > 0) && !(Number(x.wrong) > 0)) neu++;
   if (b === 1 && x.gruppe){
@@ -102,6 +179,12 @@ const zeile = (von, f) => BOXEN.filter(b => b >= von).map(b => `Box ${b} ${f(b)}
 
 console.log(`Tagesziel ${ziel} (mindestens ${platz1} Box 1 aus der Lerngruppe · ${wdhPlaetze} Wiederholungen; freie Plätze: Box 2/3 → andere Hälfte der Gruppe → Box 4–${OBEN})`);
 console.log(`Karten: ${zeile(1, b => box[b])}`);
+{
+  const summe = Object.values(draussen).reduce((a, n) => a + n, 0);
+  if (summe)
+    console.log(`Nicht mitgezählt, weil die App sie nicht vorlegt: ${summe} (gelöscht ${draussen.geloescht} · Fachbegriff nicht in der Kartei ${draussen.fachbegriff} · „kenne ich schon" ${draussen.bekannt} · auf eine andere Karte übertragen ${draussen.uebertragen})`
+      + (draussenFaellig.length ? ` — darunter fällige Wiederholungen: ${draussenFaellig.join(', ')}` : ''));
+}
 /* v604: Box 1 = Lerngruppe + Schlange. Gruppe = 2 × Box-1-Plätze. */
 const schlange = box[1] - gruppe.alle;
 console.log(`Lerngruppe: ${gruppe.alle} von ${2 * platz1} (neu ${gruppe.neu} · früher ${gruppe.frueher}; heute fällig ${gruppe.faellig})`);
