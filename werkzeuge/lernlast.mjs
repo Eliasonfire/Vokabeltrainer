@@ -198,9 +198,13 @@ const heuteWdh = wdhFaellig.sort((a, b) => (b.v - a.v) || (a.b - b.b)).slice(0, 
 console.log(`Die ${wdhPlaetze} Wiederholungsplätze heute: ${zeile(2, b => heuteWdh.filter(x => x.b === b).length)}`);
 
 /* ⏰ Seine Erinnerung „wieder auf 10" — Google-Aufgabe „Vokabeltrainer:
-   Tagesziel wieder auf 10 stellen", fällig 02.10.2026. Das Datum hat ER am
-   25.09.2026 gewählt („ja" auf „02.10. legen?"); ⛔ die Wartung verschiebt es
-   NICHT mehr, sie meldet nur. Das Tagesziel stellt nur er um. */
+   Tagesziel wieder auf 10 stellen". Das Datum wählt ER: am 25.09.2026 den
+   02.10. („ja" auf „02.10. legen?"), am 02.10.2026 den 11.10. („ja" auf „Soll
+   ich deine Erinnerung auf Sonntag, 11.10., legen?") — an dem Tag waren 55
+   Wiederholungen fällig, die ältesten 12 Tage spät. ⛔ Die Wartung verschiebt
+   es NICHT, sie meldet nur. Das Tagesziel stellt nur er um.
+   Das Datum steht NUR hier; der Wartungs-Prompt verweist auf diese Zeile. */
+const ERINNERUNG_FAELLIG = '11.10.2026';
 /* v604: neue Wörter kommen nur noch über freie Plätze der Lerngruppe (2/3 der
    Gruppe sind Neu-Plätze) — wie viele am Tag, hängt davon ab, wie schnell er
    Gruppenwörter mit „gut" hinausbringt. Deshalb keine Tagesrate mehr hier. */
@@ -208,7 +212,7 @@ console.log(neu > 0
   ? `Neue Wörter: ${neu} nie beantwortet (davon in der Lerngruppe ${neu - gruppe.neuInSchlange})`
   : 'Neue Wörter: alle mindestens einmal beantwortet');
 if (ziel > 10)
-  console.log(`⏰ Tagesziel steht auf ${ziel} — seine Erinnerung „wieder auf 10" ist fällig am 02.10.2026 (nur melden, nicht verschieben).`);
+  console.log(`⏰ Tagesziel steht auf ${ziel} — seine Erinnerung „wieder auf 10" ist fällig am ${ERINNERUNG_FAELLIG} (nur melden, nicht verschieben).`);
 
 /* Die versprochenen Messungen aus vt_quoteTage (seit v603). */
 const sum = (von) => {
