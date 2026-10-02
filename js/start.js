@@ -486,20 +486,36 @@ function renderQuranRinge(){ renderTagesringe(); }
    sonst schöbe der Handler in js/navigation.js zusätzlich `quranfull` in die
    Historie, und die Gerätetaste „zurück" landete zweimal hintereinander auf
    der Surenliste statt auf dem Startbildschirm. */
-document.addEventListener('click', async (e)=>{
+document.addEventListener('click', (e)=>{
   const knopf = e.target.closest('[data-surering]');
   if (!knopf) return;
   const id = Number(knopf.dataset.surering);
   if (!id) return;
+  oeffneSureVomRing(id, Number(knopf.dataset.vers) || 0);
+});
+
+/* ⭐⭐ Vom Ring in die Sure und mit EINEM „zurück" wieder auf den Start
+   (02.10.2026). Elias: „wenn ich auf zurück gehen also von meinem handy zurück
+   ziehe (wischgeste) dann lande ich wenn ich meine tägliche sure gelesen habe
+   beim koran und nicht auf dem starbildschirm … wenn ich fertig bin mit zb
+   einer sura dann will ich wieder zum startbildschirm (also wo ich davor war)
+   und direkt zur nächsten aufgabe weiter gehen und auf den ring tippen."
+
+   ⛔ Die Ursache: showScreen('quranfull') legte die SURENLISTE in die Historie
+   und openSurah() darüber die Sure — zwei Einträge für einen Tipp. Die Liste
+   hat er auf diesem Weg nie gesehen, also darf „zurück" auch nicht dort
+   landen. `ohneEbene` zeigt den Bildschirm ohne eigenen Eintrag; die Sure ist
+   dann der einzige Eintrag über dem Start. Bewacht von
+   test-quran-ring-weg.mjs. */
+async function oeffneSureVomRing(id, vers){
   /* Erst der Bildschirm, dann die Sure — so machte es auch oeffneVersImLeser()
      (js/lernen.js). openSurah() allein zeigt nichts an, solange der
      Quran-Bildschirm nicht sichtbar ist. */
-  if (typeof showScreen === 'function') showScreen('quranfull');
+  if (typeof showScreen === 'function') showScreen('quranfull', { ohneEbene: true });
   /* ⭐ Der Ring „Zufällig" trägt dazu den ersten Vers seiner Seite (18.09.2026) —
      „wenn ich auf link drücke soll es mich direkt dahinbringen". */
-  const vers = Number(knopf.dataset.vers) || 0;
   if (typeof openSurah === 'function') await openSurah(id, vers ? { vers } : undefined);
-});
+}
 
 /* ---------- ⭐⭐ Die Tagesringe IN den Modi (15.09.2026) ----------
 

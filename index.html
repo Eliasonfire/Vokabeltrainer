@@ -4273,8 +4273,14 @@ button:disabled{cursor:default;}
    immer im Markup und war in der Kaesten-Ansicht nur ausgeblendet — es
    einzublenden ist deshalb eine Zeile und kein Umbau. */
 .ayah-schluss{ display:inline-block; }
-.seiten-ende{ display:none; }
-#verseList.liste .seiten-ende{ display:flex; }
+/* ⭐ 02.10.2026: auch die Seitentrennung in BEIDEN Ansichten. Elias mit zwei
+   Bildern derselben Stelle: „ich wollte meine tägliche random seite lesen und
+   ich gucke immer wo die seite anfängt. beim kästchen modus kann ich das gar
+   nciht sehen anders als beim listen modus. beim kästchen modus will ich
+   natürlich auch sehen welche seite wo ist." Bis dahin stand hier
+   `display:none`, und nur `#verseList.liste` blendete sie ein. Bewacht von
+   test-quran-ring-weg.mjs. */
+.seiten-ende{ display:flex; }
 
 /* ⛔ Das Schlusszeichen bleibt bei `--font-ar` und folgt der Schriftwahl NICHT.
    Elias am 08.09.2026, nachdem es kurz mitgewandert war: „die punkte sehen

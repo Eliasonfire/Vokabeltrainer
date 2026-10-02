@@ -71,10 +71,50 @@ function feierBanner(text, unterzeile, stufe){
   b.className = 'feier-banner feier-' + (stufe || 'klein');
   b.innerHTML = `<div class="fb-text">${escapeHtml(text)}</div>`
     + (unterzeile ? `<div class="fb-sub">${escapeHtml(unterzeile)}</div>` : '');
-  feierBuehne().appendChild(b);
+  const buehne = feierBuehne();
+  buehne.appendChild(b);
+  feierBannerPlatz(b, buehne);
   /* Der Effekt entfernt sich selbst. Ohne das sammeln sich die Knoten an, und
      nach einer langen Sitzung liegen hundert unsichtbare Banner im Baum. */
   setTimeout(()=>b.remove(), stufe === 'gross' ? 2600 : 1700);
+}
+
+/* ---------- Zwei Banner zur selben Zeit liegen nicht aufeinander ----------
+
+   Elias am 02.10.2026, nach einer Karte, die aus Box 5 in Box 4 gefallen war
+   und wieder in Box 5 kam: „dabei haben sich zwei benachrichtigungen überlappt
+   einmal müsste es ‚sitzt' und ‚zurück' oder sowas sein. das soll jedenfalls
+   nicht so sein. fix das"
+
+   ⛔ Die Ursache: JEDES Banner sitzt per CSS auf derselben Stelle (left:50%,
+   top:38%). 'box-5' und 'wort-zurueck' feuern in derselben Antwort — und
+   genauso 'runde-fertig' mit 'alles-faellig' oder ein Tagesziel mit
+   'tag-komplett'. Die Regel gilt deshalb für JEDES Paar und steht hier, am
+   einzigen Ort, an dem ein Banner entsteht — nicht bei den zwei Anlässen, an
+   denen es aufgefallen ist. [[allgemeine_regel_statt_listeneintrag]]
+
+   Beide Meldungen bleiben, jede so lange wie bisher: steht an der Stelle des
+   neuen Banners noch eines, rückt das neue UNTER das tiefste. Ein Banner
+   allein sitzt weiter genau dort, wo es immer saß.
+
+   ⚠️ `offsetTop`/`offsetHeight`, nicht getBoundingClientRect(): das sind
+   Layoutwerte, die die laufende Animation (scale .82 → 1.04 → 1) nicht
+   verfälscht. Wegen `transform:translate(-50%,-50%)` ist `offsetTop` die
+   MITTE des Banners, nicht seine Oberkante — hängt also an der CSS-Regel
+   `.feier-banner` in index.html (bewacht von test-feier-banner.mjs). */
+const FEIER_BANNER_ABSTAND = 14;
+function feierBannerPlatz(neu, buehne){
+  const h = neu.offsetHeight;
+  if (!h) return;                         // kein Layout (Bühne verborgen): nichts zu rücken
+  const oben = neu.offsetTop - h / 2, unten = neu.offsetTop + h / 2;
+  let tiefste = null, belegt = false;
+  buehne.querySelectorAll('.feier-banner').forEach(a => {
+    if (a === neu) return;
+    const aOben = a.offsetTop - a.offsetHeight / 2, aUnten = a.offsetTop + a.offsetHeight / 2;
+    if (aOben < unten + FEIER_BANNER_ABSTAND && aUnten > oben - FEIER_BANNER_ABSTAND) belegt = true;
+    if (tiefste === null || aUnten > tiefste) tiefste = aUnten;
+  });
+  if (belegt) neu.style.top = (tiefste + FEIER_BANNER_ABSTAND + h / 2) + 'px';
 }
 
 /* Ein kleiner Chip, der aufsteigt und verblasst - fuer die Boxaenderung.

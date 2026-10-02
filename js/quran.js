@@ -2265,21 +2265,62 @@ function zeigeVers(nr){
    **Derselbe Aufruf von Hand, mit fertigem Layout, traf auf 64 px genau** -
    der Aufruf war also richtig, nur zu frueh.
 
-   ⚠️ Nachgefasst wird nur, wenn der Vers wirklich AUS DEM BILD ist. Sonst risse
-   es den Blick weg, falls Elias inzwischen selbst weitergerollt hat. Dieselbe
-   Regel wie beim Nachschlag in hebeVersHervor(). */
+   ⛔ Bis zum 02.10.2026 wurde nur EINMAL nachgefasst, nach 500 ms, und nur wenn
+   der Vers ganz aus dem Bild war. Das reichte auf seinem Handy nicht. Elias:
+   „wenn ich auf die random seite gehe möchte ich direkt am anfang der seite
+   sein bzw am anfang der ersten ayah dieser seite damit ich direkt anfangen
+   kann zu lesen." Auf seinem Bild stand der Anfang der Seite mitten im
+   Bildschirm, darüber das Ende des Verses davor: die englische Übersetzung
+   wird erst NACH dem Sprung eingesetzt (zeigeQuranEn), jeder Vers darüber wird
+   höher, und der Zielvers rutscht nach unten — er bleibt dabei im Bild, also
+   griff der Nachschlag nie. (Am PC gleicht der Browser das selbst aus, darum
+   fiel es im Prüfbrowser nicht auf.) Jetzt hält haltVersOben() den Vers an
+   der Kopfleiste, solange der Text darüber noch wächst. */
 function zeigeVersNachAufbau(nr){
   if (!zeigeVers(nr)) return false;
-  setTimeout(() => {
-    if (OFFENE_SURE === null) return;                 // schon wieder weg
-    const el = document.querySelector(`#verseList .verse-item[data-versnr="${nr}"]`);
-    const kasten = document.getElementById('main');
-    if (!el || !kasten) return;
-    const k = kasten.getBoundingClientRect();
-    const r = el.getBoundingClientRect();
-    if (r.bottom < k.top || r.top > k.bottom) zeigeVers(nr);
-  }, 500);
+  haltVersOben(nr);
   return true;
+}
+
+/* Den angesprungenen Vers oben HALTEN, bis die Sure fertig steht.
+
+   Nachgefasst wird, wenn sich die Höhe der Versliste ändert (ResizeObserver),
+   und zur Sicherheit dreimal nach der Uhr — für Browser ohne ResizeObserver.
+
+   ⛔ Sobald ER den Bildschirm anfasst, ist Schluss: sonst risse es ihm den
+   Text weg, während er selbst rollt. Das war der Grund für die alte Regel
+   „nur wenn aus dem Bild"; die Berührung beantwortet dieselbe Frage genauer.
+   Ebenso endet der Halt, wenn eine andere Sure offen ist, und spätestens nach
+   VERS_HALT_MS. Ein neuer Sprung beendet den alten Halt. */
+const VERS_HALT_MS = 6000;
+let VERS_HALT_ENDE = null;
+function haltVersOben(nr){
+  if (VERS_HALT_ENDE) VERS_HALT_ENDE();
+  const sure = OFFENE_SURE;
+  const BERUEHRUNG = ['touchstart', 'wheel', 'mousedown', 'keydown'];
+  let aus = false, beobachter = null;
+  const ende = () => {
+    if (aus) return;
+    aus = true;
+    if (beobachter) beobachter.disconnect();
+    uhren.forEach(u => clearTimeout(u));
+    BERUEHRUNG.forEach(n => document.removeEventListener(n, ende, true));
+    if (VERS_HALT_ENDE === ende) VERS_HALT_ENDE = null;
+  };
+  const nachfassen = () => {
+    if (aus) return;
+    if (OFFENE_SURE !== sure){ ende(); return; }
+    zeigeVers(nr);
+  };
+  const uhren = [300, 900, 2000].map(ms => setTimeout(nachfassen, ms));
+  uhren.push(setTimeout(ende, VERS_HALT_MS));
+  BERUEHRUNG.forEach(n => document.addEventListener(n, ende, true));
+  const liste = document.getElementById('verseList');
+  if (liste && typeof ResizeObserver === 'function'){
+    beobachter = new ResizeObserver(nachfassen);
+    beobachter.observe(liste);
+  }
+  VERS_HALT_ENDE = ende;
 }
 
 /* Eine Aenderung durchfuehren und danach dieselbe Ayah wieder zeigen. Der Vers

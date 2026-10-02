@@ -131,7 +131,12 @@ console.log('\nDer Handler:');
 
 const handler = ohneKommentare.slice(ohneKommentare.indexOf("closest('[data-surering]')") - 400);
 pruefe('es gibt einen Handler auf [data-surering]', ohneKommentare.includes("closest('[data-surering]')"));
-pruefe('er zeigt zuerst den Quran-Bildschirm', /showScreen\(['"]quranfull['"]\)/.test(handler));
+/* ⭐ Seit 02.10.2026 OHNE eigene Ebene in der Historie — Elias: „dann lande ich
+   … beim koran und nicht auf dem starbildschirm". Mit der alten Zeile
+   `showScreen('quranfull')` läge die Surenliste zwischen Start und Sure. Den
+   Weg selbst (Historie, ein „zurück" = Start) misst test-quran-ring-weg.mjs. */
+pruefe('er zeigt zuerst den Quran-Bildschirm, ohne eigene Ebene',
+  /showScreen\(['"]quranfull['"]\s*,\s*\{\s*ohneEbene:\s*true\s*\}\s*\)/.test(handler));
 pruefe('er ruft openSurah() mit der Nummer', /openSurah\(\s*id\b/.test(handler));
 /* ⭐ Seit 18.09.2026 gibt der Ring „Zufällig" den ersten Vers SEINER Seite mit —
    Elias: „wenn ich auf link drücke soll es mich direkt dahinbringen". */
