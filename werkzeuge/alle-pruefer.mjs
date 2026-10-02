@@ -606,6 +606,20 @@ const PRUEFER = [
   /* Die Pause zwischen zwei Ayat (v625, 26.09.2026): Stille messen, den
      nächsten Vers vorziehen, den alten ausklingen lassen — mit Störtests. */
   ['test-quran-uebergang.mjs', []],
+  /* ⭐ Neu am 02.10.2026, drei Sätze von Elias zur täglichen Koran-Aufgabe:
+     vom Ring in die Sure und mit EINEM „zurück" wieder auf den Start („lande
+     ich … beim koran und nicht auf dem starbildschirm"), der Sprung auf die
+     zufällige Seite hält ihren ersten Vers an der Kopfleiste („direkt am
+     anfang der seite"), und die Seitentrennung steht auch im Kästchenmodus.
+     Schneidet showScreen(), oeffneSureVomRing(), zeigeVersNachAufbau() und
+     haltVersOben() aus den echten Dateien; fünf Störtests. */
+  ['test-quran-ring-weg.mjs', []],
+  /* ⭐ Neu am 02.10.2026. Elias: „dabei haben sich zwei benachrichtigungen
+     überlappt … das soll jedenfalls nicht so sein." Zwei Banner zur selben
+     Zeit („Sitzt!" und „Zurückerobert") lagen aufeinander; feierBannerPlatz()
+     rückt das neue unter das alte. Schneidet feierBanner() aus js/feier.js
+     und prüft die CSS-Regel mit, auf der die Rechnung steht; drei Störtests. */
+  ['test-feier-banner.mjs', []],
 
   /* ⛔ Neu am 06.09.2026. Der Hifz-Stand ist das Einzige in dieser App, das
      Elias sich WIRKLICH erarbeitet hat — auswendig gelernte Suren. Er lief

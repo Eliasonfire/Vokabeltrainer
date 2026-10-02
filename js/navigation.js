@@ -160,6 +160,16 @@ function showScreen(name, opt){
   if (opt.ausHistorie) return;               // von popstate ausgeloest, nichts ablegen
   const alt = history.state || {};
   const tiefe = (typeof alt.tiefe === 'number') ? alt.tiefe : 0;
+  /* ⭐ `ohneEbene` (02.10.2026): den Bildschirm zeigen, OHNE ihm einen eigenen
+     Eintrag zu geben — für den Aufrufer, der gleich selbst eine Ebene anlegt
+     (der Quran-Ring in js/start.js: openSurah() legt die Sure ab). Sonst läge
+     zwischen Start und Sure die Surenliste, die er nie gesehen hat, und die
+     Zurück-Geste landete dort. Der verlassene Eintrag bekommt trotzdem seinen
+     Rollstand, damit „zurück" an derselben Stelle herauskommt. */
+  if (opt.ohneEbene){
+    if (!schonDa) history.replaceState(Object.assign({}, alt, { rollstand: standVorher }), '');
+    return;
+  }
   if (opt.ersetzen || schonDa){
     history.replaceState({ screen: gezeigt, tiefe }, '');
   } else {
