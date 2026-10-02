@@ -101,10 +101,16 @@
    −30 dB, Pausen ≥ 0,2 s, Median): al-ʿAfāsī 0,42 s · ʿAbd al-Bāsiṭ 4,07 s ·
    ash-Shāṭirī 0,64 s. Die Einzeldateien sollen klingen wie diese Aufnahme —
    siehe „DIE PAUSE ZWISCHEN ZWEI AYAT". Ohne `pause` bleibt alles wie bis
-   v624. */
+   v624.
+   ⛔ Bei ʿAbd al-Bāsiṭ steht seit dem 02.10.2026 NICHT mehr seine gemessene
+   Pause (4,07 s), sondern Elias' Wahl. Elias am 01.10.2026, auf meinen Satz
+   „ʿAbd al-Bāsiṭ behält seine Pausen von etwa 4 Sekunden, weil das sein Stil
+   ist": „du sollst bei ihm die zeit auch verkürzen in beiden apps" — und auf
+   die Frage, wie lang: „Knapp eine halbe Sekunde". Also 0,42 s wie bei
+   al-ʿAfāsī. Das ist eine Entscheidung, keine Messung. */
 const QURAN_REZITATOREN = [
   { id:  7, name: 'Mishārī al-ʿAfāsī',        pfad: 'Alafasy/mp3/', pause: 0.42 },
-  { id:  1, name: 'ʿAbd al-Bāsiṭ',   stil: 'Mujawwad', pfad: 'AbdulBaset/Mujawwad/mp3/', pause: 4.07 },
+  { id:  1, name: 'ʿAbd al-Bāsiṭ',   stil: 'Mujawwad', pfad: 'AbdulBaset/Mujawwad/mp3/', pause: 0.42 },
   { id:  4, name: 'Abū Bakr ash-Shāṭirī',     pfad: 'Shatri/mp3/', pause: 0.64 }
 ];
 
@@ -528,8 +534,11 @@ function audioFolgeVers(sure, vers){
    vorn 0,12 s) also rund 1,3 s statt 0,42 s — dreimal so lang wie in seiner
    eigenen Aufnahme, und am Dateiende bricht der Nachhall hart ab. Das ist
    das „abgeschnitten und neu angesetzt". Bei ʿAbd al-Bāsiṭ (Mujawwad) sind
-   die vier Sekunden dagegen SEIN Stil — auch am Stück schweigt er so lange —,
-   und bei ash-Shāṭirī passt es fast schon.
+   die vier Sekunden dagegen auch am Stück da — deshalb stand hier bis v639
+   „SEIN Stil", und seine Pause blieb. ⛔ Das war MEINE Begründung, nicht
+   Elias'. Er am 01.10.2026: „du sollst bei ihm die zeit auch verkürzen in
+   beiden apps", gewählt „Knapp eine halbe Sekunde" — seither 0,42 s.
+   Bei ash-Shāṭirī passt es fast schon.
 
    ⭐ Deshalb ist das Ziel je Rezitator seine eigene Pause am Stück
    (`pause` in QURAN_REZITATOREN), keine feste Zahl. Zwei Hälften, beide aus
