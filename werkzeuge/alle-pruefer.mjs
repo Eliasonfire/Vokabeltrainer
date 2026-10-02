@@ -620,6 +620,12 @@ const PRUEFER = [
      rückt das neue unter das alte. Schneidet feierBanner() aus js/feier.js
      und prüft die CSS-Regel mit, auf der die Rechnung steht; drei Störtests. */
   ['test-feier-banner.mjs', []],
+  /* ⭐ Neu am 02.10.2026 (v641). Auf meine Frage „Soll bei einer zurückgeholten
+     Karte nur ‚Zurückerobert' kommen? Dann fällt das Konfetti weg." sagte
+     Elias: „ja". Eine Karte, die aus Box 5 oder höher gefallen war, bekommt
+     beim Wiederaufstieg kein „Sitzt!" mehr. Lädt js/feier.js ganz und prüft
+     die Aufrufstelle in rate(); vier Störtests. */
+  ['test-zurueckerobert-allein.mjs', []],
 
   /* ⛔ Neu am 06.09.2026. Der Hifz-Stand ist das Einzige in dieser App, das
      Elias sich WIRKLICH erarbeitet hat — auswendig gelernte Suren. Er lief

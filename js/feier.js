@@ -507,6 +507,52 @@ function feiere(anlass, daten){
   feierNotiz(anlass, fehler);
 }
 
+/* ---------- Ankunft in Box 5: „Sitzt!" oder gar nichts ----------
+
+   ⭐ v641 (02.10.2026). Elias, nachts beim Üben der Karteikarten: „da war eine
+   vokabel die von der 5ten in die 4te box kam und jetzt habe ich sie wieder
+   zurück in die 5ten gepackt. dabei haben sich zwei benachrichtigungen
+   überlappt einmal müsste es ,,sitzt" und "zurück" oder sowas sein. das soll
+   jedenfalls nicht so sein." v639 stellte die zwei Meldungen untereinander.
+   Auf meine Frage danach — „Soll bei einer zurückgeholten Karte nur
+   ‚Zurückerobert' kommen? Dann fällt das Konfetti weg." — er: „ja".
+
+   Also: eine Karte, die aus Box 5 (oder höher) gefallen war, bekommt beim
+   Wiederaufstieg KEIN „Sitzt!" und kein Konfetti. Ihre Meldung ist
+   „Zurückerobert" ('wort-zurueck', ausgelöst in rate() in js/lernen.js).
+
+   Woran man sie erkennt: am Merker `rueckfall` der Karte, so wie er VOR dieser
+   Antwort stand (rate() sichert ihn, bevor er gelöscht wird). 5 oder mehr
+   heißt: sie saß schon einmal. Die Marke `box5-<id>` allein reicht dafür
+   nicht — bei seiner Karte fehlte sie, sonst hätte es „Sitzt!" gar nicht
+   gegeben.
+
+   ⚠️ MEINE Ableitung, nicht sein Satz: das gilt auch, wenn die Karte aus Box 6
+   gefallen war und erst in Box 5 ankommt. „Zurückerobert" kommt dann später,
+   bei Box 6; in Box 5 kommt nichts. Der Grund steht seit jeher bei 'box-5':
+   „fällt sie später zurück und steigt wieder auf, ist das keine Premiere
+   mehr."
+
+   ⚠️ Unverändert: eine Karte, die aus Box 3 oder 4 gefallen war und mit
+   „leicht" ZUM ERSTEN MAL in Box 5 ankommt, bekommt weiter beide Meldungen
+   (untereinander, v639). Das ist eine echte Premiere; danach hat er nicht
+   gefragt.
+
+   Die Marke wird trotzdem gesetzt (feierStill): sonst käme „Sitzt!" nach,
+   sobald der Merker einmal fehlt. Bewacht von test-zurueckerobert-allein.mjs. */
+function feierStill(anlass, daten){
+  const a = FEIER_ANLAESSE[anlass];
+  if (!a || !a.einmalig) return;
+  const marke = a.einmalig(daten || {});
+  if (!FEIERN[marke]) feierMerken(marke);
+}
+
+function feiereAnkunftBoxFuenf(wort, boxVorher, boxJetzt, rueckfallVorher){
+  if (!(boxJetzt >= 5 && boxVorher < 5)) return;
+  if (rueckfallVorher >= 5){ feierStill('box-5', { id: wort.id }); return; }
+  feiere('box-5', { id: wort.id, wort: wort.ar, box: boxJetzt });
+}
+
 /* ---------- Das Feier-Protokoll ----------
 
    ⭐ Der Anlass: „habe eben 5 wörter angehört und konfeti kam erst bei

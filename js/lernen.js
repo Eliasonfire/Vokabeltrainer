@@ -1819,6 +1819,9 @@ function answer(stufe){
 
      ⛔ Der Wert wird vor dem Loeschen gesichert, sonst steht in der Feier eine
      Zahl, die es nicht mehr gibt. [[bedingung_wird_durch_die_handlung_ungueltig]] */
+  /* v641: der Merker, wie er vor dem Löschen stand. feiereAnkunftBoxFuenf()
+     (js/feier.js) liest daran ab, ob die Karte schon einmal in Box 5 saß. */
+  const rueckfallVorher = p.rueckfall || 0;
   let zurueckerobert = 0;
   if (p.rueckfall && p.box >= p.rueckfall){
     zurueckerobert = p.rueckfall;
@@ -1911,10 +1914,15 @@ function answer(stufe){
     /* v603: „sitzt" heißt ab Box 5. Seit es Box 6 und 7 gibt, kann „leicht"
        aus Box 4 direkt in Box 6 springen — die Premiere darf das nicht
        verpassen. */
-    if (p.box >= 5 && boxVorher < 5) feiere('box-5', { id: w.id, wort: w.ar, box: p.box });
+    /* v641 (02.10.2026): eine Karte, die aus Box 5 oder höher gefallen war,
+       bekommt hier kein „Sitzt!" — ihre Meldung ist „Zurückerobert". Sein
+       Wort dazu und die Begründung stehen bei feiereAnkunftBoxFuenf() in
+       js/feier.js. */
+    feiereAnkunftBoxFuenf(w, boxVorher, p.box, rueckfallVorher);
     /* ⭐ K2: der teuerste Erfolg der App — ein Wort, das entglitten war, ist
        wieder oben. Er steht NACH 'box-5', damit die Premiere in Box 5 nicht
-       von der Rueckkehr ueberdeckt wird, wenn beides zusammenfaellt. */
+       von der Rueckkehr ueberdeckt wird, wenn beides zusammenfaellt (seit
+       v641 nur noch möglich, wenn die Karte aus Box 3 oder 4 gefallen war). */
     if (zurueckerobert) feiere('wort-zurueck', { wort: w.ar, box: zurueckerobert });
     /* ⭐ K2: der Gesamtstand. Nur zaehlen, wenn gerade eine Karte in Box 5
        angekommen ist — sonst liefe die Schleife ueber alle 331 Eintraege bei
