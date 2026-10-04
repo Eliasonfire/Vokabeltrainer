@@ -637,6 +637,73 @@
     "f24-2115": {
       "urteil": "weg",
       "grund": "Richtig-oder-falsch-Aussagen zum Lesetext ueber Ahmad (Freitagsgebet in der grossen Moschee, Zeitung oder Buch am Morgen, Fajr in der Moschee, mit dem Bus zur Schule). Der Lehrer sucht die Belegstelle im Text und entscheidet nach dem Inhalt. Leseverstehen, keine Regel."
+    },
+
+    "f25-145": {
+      "urteil": "regel",
+      "grund": "Einfuehrung in den Plural (der Lehrer: 'Auf Arabisch Al-Jam'u', 0:30). Lehrer, Folge 25 @ 0:38 bis 2:32: 'es gibt zwei Hauptarten des Plurals. Es gibt den Jam'u Salim, den kann man nennen als den gesunden Plural ... Oder den regelmaessigen ... Regelmaessig, weil er ein bestimmtes Muster folgt. Und dann gibt es Jam'u Taksir ... der gebrochene Plural oder der unregelmaessige Plural'. Der regelmaessige kommt in zwei Arten: 'Jam'u mudhakkar salim. Der gesunde, regelmaessige maennliche Plural. Und dann gibt es Jam'u mu'annath salim. Der weibliche, regelmaessige Plural.' Dazu seine Probe bei 15:53: 'Erkennst du hier eine der beiden Formen? Wenn nicht, dann ist es unregelmaessig.' ⚠️ Bei 1:55 sagt er einmal 'der unregelmaessige Plural, von diesen gibt es zwei Arten' — gemeint ist der regelmaessige; in seiner Zusammenfassung bei 8:45 steht es richtig ('Der regelmaessige hat maennlich und weiblich'). Gedruckt nennt der Schluessel zu Band 1 in Lektion 13 dieselben drei: gesunder maennlicher Plural, gesunder weiblicher Plural, gebrochene Plurale. Im Bestand steht keine Plural-Regel (in grammar-data.js nach Plural gesucht: drei Erwaehnungen, keine Regel).",
+      "quelle": "Unterricht Folge 25 @ 0:38 bis 2:32 und 15:53 · Schluessel Band 1, Lektion 13 (S. 44 bis 51), laut Vault-Notiz 04 - Wissen/Schluessel-Regeln.md; die Seiten selbst sind in dieser Sitzung nicht gerendert",
+      "frage": "Neue Regel aus Folge 25: Es gibt zwei Arten Plural — den regelmaessigen (maennlich und weiblich) und den gebrochenen. Dein Lehrer und der Schluessel sagen dasselbe. Aufnehmen?"
+    },
+    "f25-345": {
+      "urteil": "regel",
+      "grund": "Der regelmaessige maennliche Plural. Lehrer, Folge 25 @ 3:37 bis 4:13: 'man bildet den regelmaessigen maennlichen Plural durch Una. Indem man ein Una hinten an das Wort einfach dran haengt. Muslim, Muslimuna. Mudarris, Mudarrisuna. Muhandis, Muhandisuna.' In der Zusammenfassung bei 8:48: 'Beim maennlichen wird una drangehaengt.' Im Dialog fragt er es an mujtahidun ab (13:21 bis 14:20): 'Was haben wir fuer eine Pluralform?' — 'der regelmaessige, der gesunde Plural'. Gedruckt: Schluessel Band 1, Lektion 13, gesunder maennlicher Plural auf -una. Alle drei Beispiele stehen mit dieser Form auf deinen Karten (Lehrer, Ingenieur) oder im Bestand (Muslim).",
+      "quelle": "Unterricht Folge 25 @ 3:37 bis 4:13, 8:48 und 13:21 · Schluessel Band 1, Lektion 13 (S. 44 bis 51), laut Vault-Notiz 04 - Wissen/Schluessel-Regeln.md",
+      "frage": "Neue Regel aus Folge 25: Den regelmaessigen maennlichen Plural bildet man, indem man -una an das Wort haengt (Muslim, Muslimuna). Aufnehmen?"
+    },
+    "f25-545": {
+      "urteil": "regel",
+      "grund": "Der regelmaessige weibliche Plural. Lehrer, Folge 25 @ 4:17 bis 6:10: 'den weiblichen, den bildet man durch Alif und Ta. Beziehungsweise beim maennlichen wird es hinzugefuegt, hinten dran, das Una. Bei Alif und Ta wird es ersetzt ... Ta marbuta wird ersetzt durch Alif und Ta.' Drei Beispiele, jeweils 'wieder ersetzen ... Ta marbuta muss raus': die Muslimin, die Lehrerin, die Ingenieurin (Whisper schreibt Einzahl und Mehrzahl gleich, 'Muslimatun' — der Unterschied ist das lange a). In der Zusammenfassung bei 8:50: das Ta marbuta wird 'ersetzt durch ein Alif und ein offenes Ta'. Die Richtigstellung auf eine Schuelerfrage steht bei f25-715. Gedruckt: Schluessel Band 1, Lektion 13, gesunder weiblicher Plural auf -at. Die Formen stehen auf deinen Karten (Lehrer und Ingenieur fuehren die weibliche Einzahl und Mehrzahl).",
+      "quelle": "Unterricht Folge 25 @ 4:17 bis 6:10, 6:39 und 8:50 · Schluessel Band 1, Lektion 13 (S. 44 bis 51), laut Vault-Notiz 04 - Wissen/Schluessel-Regeln.md",
+      "frage": "Neue Regel aus Folge 25: Beim regelmaessigen weiblichen Plural wird das Ta marbuta durch Alif und offenes Ta ersetzt (aus der Lehrerin werden die Lehrerinnen). Aufnehmen?"
+    },
+    "f25-715": {
+      "urteil": "regel",
+      "grund": "Zwei Dinge. Erstens die Richtigstellung zum weiblichen Plural (6:28 bis 7:02): ein Schueler meint, bei der weiblichen Form werde verlaengert — 'Nein, nein, da wird Ta marbuta ersetzt durch Alif und Ta ... Aber wenn du es verlaengerst, dann hast du ja Muslimatatun. Das wollen wir nicht'. Das gehoert zur Regel bei f25-545. Zweitens der gebrochene Plural, Lehrer @ 7:06 bis 8:38: 'der gebrochene Plural, das ist ein Plural, der verschiedene Musterarten hat'. Er nennt Muster mit Beispielen: Stern und Sterne, Buecher, Berge, Lektion und Lektionen, Tasse und Tassen (fu'ul, fi'al, af'al), und schliesst: 'das ist einfach verschiedene Muster und mehr muss man nicht wissen.' Spaeter (22:38 bis 23:54) zeigt er zwei Muster an Reihen: Maenner, grosse, kleine, kurze, lange folgen fi'al; Jungen, Soehne, Onkel folgen af'al — 'die muesst ihr nicht lernen', man solle ein Gefuehl dafuer bekommen. Gedruckt: Schluessel Band 1, Lektion 13 — gebrochene Plurale 'mit ueber zwanzig Formen', und der Rat, die Pluralform 'von jedem neuen Substantiv und Adjektiv gleich mitzulernen, da es keine erkennbaren Regeln gibt'. Denselben Rat gibt dein Lehrer bei 20:10. Die Beispielwoerter stehen mit ihrer Mehrzahl auf deinen Karten.",
+      "quelle": "Unterricht Folge 25 @ 7:06 bis 8:38 und 22:38 bis 23:54 · Schluessel Band 1, Lektion 13 (S. 44 bis 51), laut Vault-Notiz 04 - Wissen/Schluessel-Regeln.md (dort woertlich der Rat zum Mitlernen)",
+      "frage": "Neue Regel aus Folge 25: Der gebrochene Plural hat keine Endung zum Anhaengen, sondern eigene Muster (aus Buch werden Buecher: kitab, kutub); die Mehrzahl lernt man mit dem Wort mit. Aufnehmen?"
+    },
+    "f25-915": {
+      "urteil": "regel",
+      "grund": "Der Plural der Hinweiswoerter. Nach seiner Zusammenfassung der drei Pluralarten (8:38 bis 9:05) sagt der Lehrer, Folge 25 @ 9:11 bis 10:06: 'wir hatten jetzt hadha und hadhihi ... Und beide sind Singular ... Maennlich und weiblich. Und beide haben einen gemeinsamen Plural. Und dieser Plural ist ha'ula'i.' Er zeigt es an zwei Saetzen (dies ist ein Haendler, diese sind Haendler; diese sind Lehrerinnen) und schliesst: das 'geht fuer maennlich als auch weiblich, das geht fuer beide'. Er sagt dazu 'wenn Leute in der Naehe sind' — seine Beispiele sind alle Personen. Gedruckt: Schluessel Band 1, Lektion 13: der Plural von hadha und hadhihi ist ha'ula'i. Im Bestand fehlt die Regel; die Regeln zu den Hinweiswoertern kennen nur die Einzahl. Das Wort selbst steht vokalisiert in zwei Saetzen des Bestands.",
+      "quelle": "Unterricht Folge 25 @ 9:11 bis 10:06 · Schluessel Band 1, Lektion 13 (S. 44 bis 51), laut Vault-Notiz 04 - Wissen/Schluessel-Regeln.md",
+      "frage": "Neue Regel aus Folge 25: hadha und hadhihi haben einen gemeinsamen Plural, ha'ula'i — er gilt fuer Maenner und Frauen. Aufnehmen?"
+    },
+    "f25-1045": {
+      "urteil": "weg",
+      "grund": "Beginn des Dialogs von Kapitel 13. Der Lehrer liest den ersten Satz und nennt zu jedem Wort die Einzahl: ha'ula'i ist Plural von hadha, al-fityatu von fata (junger Mann), at-tiwalu von tawil (lang) — 'Wer sind diese langen, jungen Maenner?'. Wortkunde am Text; die Regeln dazu stehen bei f25-145 bis f25-915."
+    },
+    "f25-1315": {
+      "urteil": "weg",
+      "grund": "Dialog: 'Sie sind in meiner Klasse', dann die Frage, ob sie fleissig sind. Der Lehrer fragt an mujtahidun ab: 'Was haben wir fuer eine Pluralform?' — Antwort der Schueler 'der regelmaessige maennliche', er bestaetigt 'der regelmaessige, der gesunde Plural'. Dann: 'Wie koennen wir dieses Wort wieder zum Singular machen?' — mujtahid, fleissig. Uebungsabfrage zur Regel bei f25-345, kein neuer Lehrsatz."
+    },
+    "f25-1445": {
+      "urteil": "weg",
+      "grund": "Der Lehrer laesst die Plurale des Dialogs einordnen (junge Maenner, lange, Studenten, neue, Kollegen): alle unregelmaessig. Seine Begruendung: 'wir haben kein Una und wir haben kein Alif-Ta, unregelmaessig' (15:04) und 'Erkennst du hier eine der beiden Formen? Wenn nicht, dann ist es unregelmaessig' (15:53). Diese Probe ist bei f25-145 mitzitiert; hier steht die Anwendung."
+    },
+    "f25-1615": {
+      "urteil": "weg",
+      "grund": "Dialog: 'Was sind ihre Namen?' — asma' von ism, unregelmaessig; die vier Namen; dann 'Wer sind diese kurzen Maenner?' — rijal von rajul, qisar von qasir. Wortkunde am Text, je Wort die Einzahl. Keine neue Regel."
+    },
+    "f25-1745": {
+      "urteil": "weg",
+      "grund": "Dialog: 'Sie sind Pilger' (hujjaj, von hajj), 'Woher sind sie?', 'Einige von ihnen sind aus China und einige aus Japan'. Zu ba'd sagt der Lehrer: 'Ba'd heisst einige. Kommt auch im Koran einige Male vor ... und macht Mudaf ilayhi normalerweise. Ba'duhum, einige von ihnen'. Das ist Wortkunde: ba'd ist das erste Glied einer Idafa, und die steht im Bestand (idafa-01 und die Regeln zum zweiten Glied). Das Wort selbst steht als Karte in den Daten (einige / ein Teil von)."
+    },
+    "f25-1915": {
+      "urteil": "weg",
+      "grund": "Geplauder ueber die Bilder im Buch, dann der Schluss des Dialogs: 'Wo ist Mustafa und seine Freunde?' (asdiqa', von sadiq) — 'Sie sind ins Restaurant gegangen', dazu das neue Wort Restaurant mit zwei Beispielsaetzen. Am Ende die Feststellung, dass man mit dem Plural 'auf einmal viele Woerter auswendig lernen' muss. Wortkunde, keine Regel."
+    },
+    "f25-2045": {
+      "urteil": "weg",
+      "grund": "Lernrat des Lehrers (20:10 bis 20:55): wer die Einzahl eines Wortes lernt, lernt die Mehrzahl gleich mit ('Immer wenn ihr Singular habt, lernt ihr den Plural auswendig'), und bei Verben Vergangenheit und Gegenwart, 'am besten noch' das Verbalsubstantiv. Danach fasst ein Schueler die Pluralregeln zusammen (laut Sprecherspur nicht der Lehrer). Der Rat ist bei f25-715 mitzitiert — der Schluessel gibt denselben; eine eigene Regel ist er nicht."
+    },
+    "f25-2215": {
+      "urteil": "weg",
+      "grund": "Ende der Schuelerzusammenfassung, dann die Ansage zu Aufgabe 1 des Buchs (aus 'dies ist ein Student' wird der Satz mit ha'ula'i und der Mehrzahl) und die Musterreihe: Maenner, grosse, kleine, kurze, lange — 'Diese ... folgen alle einem Muster. Und dieses Muster ist fi'al'; dazu Studenten und Haendler als zweite Reihe. Das gehoert zur Regel vom gebrochenen Plural und ist bei f25-715 mitzitiert."
+    },
+    "f25-2415": {
+      "urteil": "weg",
+      "grund": "Schluss der Musterreihen (Jungen, Soehne, Onkel folgen af'al — 'die muesst ihr nicht lernen', man solle ein Gefuehl dafuer bekommen; bei f25-715 mitzitiert), danach geht der Lehrer die Vokabeln von Kapitel 13 in der Einzahl durch (alter Mann oder Gelehrter, Gast, Kollege, arm, reich, Freund, Arzt, junger Mann, Bruder, neu, Lehrer, Ingenieur, Bauer, fleissig, Muslim; dann Felder, Menschen, Dorf, Restaurant, Grundschule) und gibt Aufgabe 1 auf. Vokabelarbeit und Organisation."
     }
   }
 }
