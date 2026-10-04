@@ -855,7 +855,9 @@ const HAENGT_AM_STAND  = ['werkzeuge/pruefe-ausgeliefert.mjs', 'pruefe-erreichba
    auf belegtes Material warten), NICHT ein Defekt: nur ihr Exit 2 ist bekannt.
    Ihr Exit 1 bleibt NEU ROT — dort ist die Sache selbst kaputt.
    · pruefe-satzmodus-aktuell.mjs — Kartenformen ohne Satz, neueste Wörter ohne
-     Satz, Balance 0 % (Elias: „du sollst automatisch das machen und die app
+     Satz (zählt erst seit 04.10.2026 wirklich in den Exit-Code), neue Wörter,
+     die eine Ganzsatz-Übung wie Satzbau nicht erreicht (Teil J, seit
+     04.10.2026), Balance 0 % (Elias: „du sollst automatisch das machen und die app
      immer aktuell halten"; Schritt 1b.8 der Wartung schließt die Lücken). */
 const LUECKE_FUER_WARTUNG = ['werkzeuge/pruefe-satzmodus-aktuell.mjs'];
 const gelaufenRot = rot.filter(e => e.code !== null && e.code !== -1);

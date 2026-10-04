@@ -26,15 +26,16 @@
 | 8 | **Eigener Test mit Störtest** für das, was die Übung besonders macht (z. B. „mindestens zwei Adjektive"). | Nachtschicht-Regel: ein Prüfer muss rot werden können | der Test der Übung |
 | 9 | **Pflegeplan-Vermerk** in `werkzeuge/pflegeplan.mjs` und, wenn Inhalt nachwachsen muss, ein Schritt in der Wartung. | *„weil sonst hat eine neue funktion keinen sinn wenn sie nicht gepflegt wird"* (11.09.2026) | `pruefe-pflegeplan.mjs` |
 | 10 | **Zeitmessung** läuft von selbst mit (`merkeUebZeit()`); nichts zu tun. | gleich lange Teile | `lernlast.mjs` zeigt die Zeiten |
+| 11 | **Neue Wörter kommen an.** Macht die Übung den ganzen Satz zur Aufgabe (Übersetzen, Satzbau — jede Art außer `mehrfach` und `wahl`), steht jedes Wort seiner neuesten Kapitel, das im Satzvorrat vorkommt, in mindestens einer ihrer Aufgaben; sonst ist das eine **Lücke** für die Wartung (ein belegter Satz, den die Übung nimmt — Satzbau nimmt erst Sätze ab drei Wörtern). Bei den Themenübungen nur Anzeige. | *„gibt es auch einen prüfer der guckt das die funktion auch immer aktuell bleibt auch bezüglich neuer vokabeln?"* (04.10.2026) | Teil J |
 
 ## Pflege und Instandhaltung (Wartung Mi/So)
 
-1. `node werkzeuge/pruefe-satzmodus-aktuell.mjs` — Exit 1 ist ein Fehler (Pflicht 3, 4, 6, 7 verletzt), Exit 2 sind Lücken (Pflicht 5, Formen ohne Satz, neue Wörter in keinem Satz): **belegte Sätze aus seinen Büchern suchen**, nie erfinden (Pflicht 1).
+1. `node werkzeuge/pruefe-satzmodus-aktuell.mjs` — Exit 1 ist ein Fehler (Pflicht 3, 4, 6, 7 verletzt), Exit 2 sind Lücken (Pflicht 5 und 11, Formen ohne Satz, neue Wörter in keinem Satz — die zählen erst seit 04.10.2026 wirklich in den Exit-Code, vorher wurden sie nur gedruckt): **belegte Sätze aus seinen Büchern suchen**, nie erfinden (Pflicht 1).
 2. `node werkzeuge/pruefe-satz-teile.mjs` — die zwei Teile gleich lang, fester Wechsel.
 3. `node werkzeuge/lernlast.mjs` — Zeit je Satzübung; ab 10 Antworten je Übung gleicht die App die Teile nach der Messung aus.
 
 ## Wer eine neue Übung baut
 
-Den Eintrag in `UEBUNGEN` (js/uebung.js) mit `id`, `nr` (nächste Zahl), `art` (`mehrfach` · `wahl` · `schreiben` · `bauen`) und `baue()` — dann laufen Pflicht 3 bis 7 und 10 **ohne weiteren Eintrag** mit. Selbst zu erledigen bleiben 1, 2, 8 und 9.
+Den Eintrag in `UEBUNGEN` (js/uebung.js) mit `id`, `nr` (nächste Zahl), `art` (`mehrfach` · `wahl` · `schreiben` · `bauen`) und `baue()` — dann laufen Pflicht 3 bis 7, 10 und 11 **ohne weiteren Eintrag** mit. Selbst zu erledigen bleiben 1, 2, 8 und 9.
 
 ⛔ **Vor dem Ausliefern messen, ob seine zwei Teile stehen bleiben.** Eine neue `art` braucht eine Zahl in `UEB_ZEIT_SCHAETZUNG`; liegt sie zwischen den bisherigen, würfelt `satzTeile()` die Teile neu, und er bekommt am nächsten Satz-Tag dieselben Übungen noch einmal. So gemessen bei Übung 17 (Satzbau, v642): Aufteilung ohne und mit der neuen Übung vergleichen — `test-satz-bauen.mjs`, Zusicherung „seine zwei Teile bleiben", ist die Vorlage.

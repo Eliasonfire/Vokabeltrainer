@@ -27,7 +27,22 @@
  *      Befund (Exit 2). Der Richtwert „etwa jeder fünfte Satz" ist MEIN
  *      Vorschlag, nicht seiner — deshalb nur Anzeige, keine Grenze.
  *   D  Welche Wörter der neuesten Kapitel stehen in KEINEM Satz des
- *      Satzmodus? Die Liste ist Arbeit für die Wartung (Mi/So), kein Fehler.
+ *      Satzmodus? Die Liste ist Arbeit für die Wartung (Mi/So), kein Fehler —
+ *      also Exit 2. ⛔ Bis 04.10.2026 wurde sie nur GEDRUCKT und nie gewertet
+ *      (lueckenZahl weiter unten, Störtest 22).
+ *   J  Neue Wörter kommen in den ÜBUNGEN an, nicht nur im Vorrat. Elias am
+ *      04.10.2026, nach der neuen Übung 17 „Satzbau": „gibt es auch einen
+ *      prüfer der guckt das die funktion auch immer aktuell bleibt auch
+ *      bezüglich neuer vokabeln?" Je Übung: wie viele Wörter der neuesten
+ *      Kapitel stehen in einem Satz, aus dem sie eine Aufgabe baut (Anzeige).
+ *      Eine Übung, die den GANZEN Satz zur Aufgabe macht (jede Art außer
+ *      'mehrfach' und 'wahl' — heute Übersetzen und Satzbau, eine neue Art zählt
+ *      von selbst dazu), muss jedes neue Wort erreichen, das überhaupt im
+ *      Vorrat steht; sonst Exit 2: dafür fehlt ein belegter Satz, den die Übung
+ *      nimmt (Satzbau nimmt erst Sätze ab drei Wörtern). Gemessen beim Einbau:
+ *      mit seiner Auswahl vom 30.09. (Bayna Yadayk 1 bis K5) erreichte Satzbau
+ *      20 von 25 — es fehlten „hungrig", „satt", „dünn", „fett", „Getränk"; mit
+ *      der vom 04.10. (Madina 1 bis K13, Bayna Yadayk 1 bis K4) 21 von 21.
  *   E  Jede Antwort ungefähr gleich oft, in JEDER Auswahl-Übung (Elias,
  *      25.09.2026: „es sollen bewusst ungefähr gleichviele von jeder antwort
  *      geben damit jede antwort gleich oft ungefähr drankommt" · „das sollte
@@ -356,12 +371,32 @@ function messen(app){
   ergebnis.pflicht = []; ergebnis.pflichtLuecken = [];
   const satzTeileF = hole('satzTeile');
   let teile = null; try { teile = satzTeileF ? satzTeileF() : null; } catch (e){ teile = null; }
+  ergebnis.neuJe = []; ergebnis.neuLuecken = [];
   for (const U of UEB){
-    const liste = [];
-    for (const { s, z } of zerlegt){ if (!z) continue; try { liste.push(...(U.baue(z, s) || [])); } catch (e){ /* B/F melden baue()-Fehler */ } }
+    const liste = [], mitAufgabe = [];
+    for (const { s, z } of zerlegt){
+      if (!z) continue;
+      try { const a = U.baue(z, s) || []; if (a.length){ liste.push(...a); mitAufgabe.push(s); } } catch (e){ /* B/F melden baue()-Fehler */ }
+    }
     const imTeil = teile ? [1, 2].filter(t => (teile[t] || []).includes(U.id)) : [];
     if (teile && imTeil.length !== 1) ergebnis.verstoesse.push(`${U.id}: steht in ${imTeil.length} Teilen statt in genau einem (satzTeile)`);
     if (!liste.length){ ergebnis.pflichtLuecken.push(`${U.nr} ${U.id}: keine Aufgabe in seiner Auswahl`); continue; }
+    /* J: kommen die Wörter der neuesten Kapitel in DIESER Übung an? Gezählt wird
+       jedes neue Wort, das in einem Satz steht, aus dem die Übung eine Aufgabe
+       baut. Eine Lücke ist es nur bei einer Übung, die den GANZEN Satz zur
+       Aufgabe macht (jede Art außer 'mehrfach' und 'wahl' — eine neue Art zählt
+       von selbst dazu): die Themenübungen fragen nach einer Regel, und ein
+       Verbalsatz hat z. B. keinen Satzteil für Übung 1. Die Grenze nach der ART
+       ist MEINE (04.10.2026), nicht seine — eine Schwelle „nimmt die meisten
+       Sätze" hätte Übung 1 (379 von 446) fälschlich fünf Verben vorgeworfen. */
+    {
+      const erreicht = new Set();
+      for (const s of mitAufgabe) for (const w of satzTreffer(String(s.sentAr).split(/\s+/), neuKern, praesensTreffer)) erreicht.add(String(w.id));
+      ergebnis.neuJe.push(`${U.nr}: ${erreicht.size}`);
+      if (!['mehrfach', 'wahl'].includes(U.art))
+        for (const w of neu) if (getroffen.has(String(w.id)) && !erreicht.has(String(w.id)))
+          ergebnis.neuLuecken.push(`${U.nr} ${U.id}: „${w.de}" (${w.book} K${w.chapter}, ${w.id}) steht im Vorrat, aber in keiner Aufgabe`);
+    }
     /* reihum nach der Frage (Antippen-Übungen mit einem `reihum`-Schlüssel je
        Aufgabe, z. B. مُبْتَدَأ/خَبَر): in den ersten k Aufgaben jede der k Fragen.
        Mehrere Schlüssel je Aufgabe (Präpositionen) prüft Teil F. */
@@ -392,7 +427,21 @@ function messen(app){
   ergebnis.anteil = pool.length ? Math.round(1000 * mitNeu / pool.length) / 10 : 0;
   ergebnis.mitNeu = mitNeu;
   ergebnis.ohneSatzNeu = neu.filter(w => !getroffen.has(String(w.id))).map(w => `${w.de} (${w.book} K${w.chapter}, ${w.id})`);
+  ergebnis.neuImVorrat = getroffen.size;
   return ergebnis;
+}
+
+/* Die Lücken, die Exit 2 ergeben — als Funktion, damit ein Störtest sie misst.
+   ⛔ Bis 04.10.2026 fehlten hier die neuen Wörter ohne Satz (Teil D): der Prüfer
+   druckte „Kilo" und schrieb darunter „alles aktuell", Exit 0 — seit v593, obwohl
+   der Wartungs-Prompt (1b.8, Punkt b) und alle-pruefer.mjs genau das als Exit 2
+   beschreiben. Eine Liste, die niemand werten muss, bearbeitet niemand.
+   [[ausfall_ist_unsichtbar_gebaut]] */
+function lueckenZahl(e){
+  return Object.values(e.uebungen).reduce((n, u) => n + u.ohneSatz.length, 0) + (e.anteil === 0 ? 1 : 0)
+    + (e.pflichtLuecken ? e.pflichtLuecken.length : 0)
+    + (e.ohneSatzNeu ? e.ohneSatzNeu.length : 0)
+    + (e.neuLuecken ? e.neuLuecken.length : 0);
 }
 
 function bericht(e){
@@ -411,6 +460,8 @@ function bericht(e){
     + (e.pflichtLuecken.length ? `\n   Lücken: ${e.pflichtLuecken.join(' · ')}` : ''));
   z.push(`Balance: ${e.anteil} % der Sätze (${e.mitNeu} von ${e.pool}) enthalten ein Wort aus den neuesten Kapiteln — Richtwert (MEIN Vorschlag): etwa 20 %`);
   z.push(`Neueste Kapitel: ${e.neuWoerter} Wörter, davon ${e.ohneSatzNeu.length} in keinem Satz` + (e.ohneSatzNeu.length ? ':\n   ' + e.ohneSatzNeu.slice(0, 40).join('\n   ') : ''));
+  if (e.neuJe && e.neuJe.length) z.push(`Neue Wörter je Übung (Teil J — von ${e.neuImVorrat} neuen Wörtern im Vorrat stehen so viele in einem Satz der Übung):\n   ${e.neuJe.join(' · ')}`
+    + (e.neuLuecken.length ? `\n   Lücken (Übungen, die den ganzen Satz zur Aufgabe machen):\n   ${e.neuLuecken.slice(0, 40).join('\n   ')}` : ''));
   return z.join('\n');
 }
 
@@ -572,6 +623,52 @@ if (STOER){
     const n = e.verstoesse.filter(v => v.startsWith('zweites خَبَر') && /by1-(30|38|48)-/.test(v)).length;
     ok(`Zerleger wie vor v624 (Name als zweites خَبَر) → Teil I meldet ${n} Buchsätze`, n >= 7);
   }
+  // 22. Ein Wort der neuesten Kapitel, das in KEINEM Satz steht, zählt als Lücke
+  //     (Teil D). Bis 04.10.2026 wurde es nur gedruckt — „alles aktuell", Exit 0.
+  {
+    const basis = messen(app);
+    const [buch, kapitel] = basis.neueste[0];
+    VDL.push({ id: 'stoer-neu-wort', ar: 'ققققق', de: 'Störtest-Wort', type: 'noun', book: buch, chapter: kapitel });
+    e = messen(app);
+    VDL.pop();
+    ok(`neues Wort ohne Satz zählt als Lücke (${lueckenZahl(basis)} → ${lueckenZahl(e)})`,
+      e.ohneSatzNeu.some(x => x.startsWith('Störtest-Wort')) && lueckenZahl(e) === lueckenZahl(basis) + 1);
+  }
+  // 23. Teil J: eine NEUE Übung, die den ganzen Satz zur Aufgabe macht, aber nur
+  //     einen einzigen Satz nimmt, erreicht die neuen Wörter nicht → Lücke, ohne
+  //     Liste. Dieselbe Übung als Themenübung ('wahl') ist KEINE Lücke.
+  {
+    const erster = String((app.hole('alleSaetze')()[0] || {}).sentAr || '');
+    UEBL.push({ id: 'stoer-ganz', nr: UEBL.length + 1, name: 'Störtest', art: 'stoer',
+      baue: (z, s) => String(s.sentAr) === erster ? [{ frage: 'x', art: 'stoer' }] : [] });
+    e = messen(app);
+    const n = e.neuLuecken.filter(v => v.includes('stoer-ganz')).length;
+    ok(`neue Ganzsatz-Übung erreicht ${n} neue Wörter nicht → Teil J meldet sie`, n > 0 && n >= e.neuImVorrat - 3);
+    UEBL[UEBL.length - 1].art = 'wahl';
+    e = messen(app);
+    ok('dieselbe Übung als Themenübung (wahl) ist keine Lücke', !e.neuLuecken.some(v => v.includes('stoer-ganz')));
+    UEBL.pop();
+  }
+  // 24. Die ECHTE Satzbau-Übung (Übung 17) zählt als Ganzsatz-Übung: nimmt sie
+  //     nur noch einen einzigen Satz (wie eine viel zu hoch gestellte Grenze
+  //     UEB_BAU_MIN), meldet Teil J die neuen Wörter, die ihr dann fehlen. Wer
+  //     ihre Art je zu den Themenübungen zählt, macht diesen Test rot.
+  {
+    const UB = UEBL.find(u => u.id === 'satz-bauen'), echtB = UB && UB.baue;
+    let genommen = null;
+    if (UB){
+      UB.baue = function(z, s){
+        const a = echtB.call(this, z, s) || [];
+        if (!a.length) return [];
+        if (genommen === null) genommen = String(s.sentAr);
+        return String(s.sentAr) === genommen ? a : [];
+      };
+      e = messen(app);
+      UB.baue = echtB;
+    }
+    const n = UB ? e.neuLuecken.filter(v => v.includes('satz-bauen')).length : 0;
+    ok(`Satzbau mit nur einem Satz → Teil J meldet ${n} neue Wörter ohne Aufgabe`, !!UB && n > 0 && n >= e.neuImVorrat - 3);
+  }
   console.log(rot ? `\n⛔ ${rot} von ${anzahl} Störtest(s) schlagen NICHT an` : `\n✅ alle ${anzahl} Störtests schlagen an`);
   process.exit(rot ? 1 : 0);
 }
@@ -579,7 +676,6 @@ if (STOER){
 const e = messen(app);
 console.log(bericht(e));
 if (e.verstoesse.length){ console.log('\n⛔ ' + e.verstoesse.length + ' Verstöße:\n  ' + e.verstoesse.slice(0, 20).join('\n  ')); process.exit(1); }
-const luecken = Object.values(e.uebungen).reduce((n, u) => n + u.ohneSatz.length, 0) + (e.anteil === 0 ? 1 : 0)
-  + (e.pflichtLuecken ? e.pflichtLuecken.length : 0);
+const luecken = lueckenZahl(e);
 console.log(luecken ? `\n⚠️ ${luecken} Lücke(n) — Arbeit für die Wartung (Mi/So), kein Werkzeugfehler` : '\n✅ alles aktuell');
 process.exit(luecken ? 2 : 0);
