@@ -447,6 +447,22 @@ function lueckenZahl(e){
 function bericht(e){
   const z = [];
   z.push(`Satzvorrat: ${e.pool} Sätze (seine Auswahl: ${e.neueste.map(([b, k]) => `${b} bis K${k}`).join(', ')})`);
+  /* Das ALTER des Abzugs (04.10.2026). Die Auswahl kommt aus .stand-app.json,
+     und die altert still: am 04.10.2026 meldete ich Elias „5 neue Wörter
+     fehlen im Satzbau", gemessen gegen einen vier Tage alten Stand — er hatte
+     am selben Abend ein Kapitel ab- und eines angehakt, richtig war 0. Der
+     Prüfer lief grün und nannte das Alter nicht. Bewusst kein Exitcode: ein
+     alter Abzug ist kein Verstoß, aber wer eine Zahl von hier weitergibt, muss
+     ihn kennen. */
+  try {
+    const ab = JSON.parse(fs.readFileSync(path.join(WURZEL, '.stand-app.json'), 'utf8')).abgefragt;
+    const tage = ab ? (Date.now() - new Date(ab).getTime()) / 86400000 : NaN;
+    if (Number.isFinite(tage)){
+      const wann = new Date(ab).toLocaleString('de-DE', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+      z.push(`  Auswahl abgefragt am ${wann} (vor ${tage < 1 ? Math.round(tage * 24) + ' Stunden' : tage.toFixed(1).replace('.', ',') + ' Tagen'})`
+        + (tage > 1 ? ' ⚠️ älter als ein Tag — hat er seither Kapitel an- oder abgehakt, gelten alle Zahlen hier für einen Stand, den es so nicht mehr gibt. Erst neu abfragen.' : ''));
+    } else z.push('  ⚠️ .stand-app.json nennt kein Abfragedatum — wie alt die Auswahl ist, lässt sich nicht sagen.');
+  } catch (err){ z.push('  ⚠️ Alter der Auswahl nicht lesbar: ' + err.message); }
   for (const [id, u] of Object.entries(e.uebungen)){
     z.push(`Übung ${u.nr} ${id}: ${u.aufgaben} Aufgaben · ${u.formen} Formen auf seiner Karte · ohne Satz: ${u.ohneSatz.length ? u.ohneSatz.map(x => `„${x.de}"`).join(', ') : '—'}`);
   }
