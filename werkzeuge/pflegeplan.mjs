@@ -470,7 +470,7 @@ export const PFLEGEPLAN = [
       wie: 'Jedes Satzwort seines Vorrats, dessen Karte eine eindeutige Mehrzahl trägt, wird von selbst eine Aufgabe (baue() liest Satzvorrat und Karten bei jedem Aufbau). Teil H des Prüfers zählt die Aufgaben jeder Übung in seiner Auswahl und meldet eine Lücke, wenn es zu wenige werden.' },
     eingaben: { nein: 'Er tippt nur eine der drei Antworten an; gespeichert wird richtig/falsch über dieselben Zähler wie bei den übrigen Übungen.' },
     veralten: { routine: W, schritt: '1b.8', beleg: 'node werkzeuge/alle-pruefer.mjs', werkzeug: 'werkzeuge/pruefe-satzmodus-aktuell.mjs',
-      wie: 'Teil H des Prüfers prüft die Übung wie jede andere; dazu läuft test-plural-uebung.mjs in jedem Sammellauf: jede Lösung wird unabhängig von js/uebung.js gegen die Karte nachgerechnet, eine Karte ohne saubere Einordnung darf gar nicht gefragt werden, und die Frage muss zur Form im Satz passen (sechs Störtests).' }
+      wie: 'Teil H des Prüfers prüft die Übung wie jede andere; dazu läuft test-plural-uebung.mjs in jedem Sammellauf: jede Lösung wird unabhängig von js/uebung.js gegen die Karte nachgerechnet, eine Karte ohne saubere Einordnung darf gar nicht gefragt werden, und die Frage muss zur Form im Satz passen. Seit v648 gehört dazu: Zahlwörter werden nicht gefragt (bei ihnen steht im Feld pl die Form beim weiblichen Nomen) — erkannt von istZahlwort() in js/kern.js, an EINER Stelle; der Test misst mit der echten Funktion und prüft, dass es solche Karten in seinen Sätzen überhaupt gibt (neun Störtests). Kommt ein neues Zahlwort dazu, greift dieselbe Erkennung; ändert jemand sie in js/kern.js, wird der Test rot.' }
   },
   {
     /* ⭐⭐ 22.09.2026 (v566) — EIN FACHBEGRIFF FOLGT SEINER REGEL.

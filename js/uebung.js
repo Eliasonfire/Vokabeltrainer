@@ -817,7 +817,7 @@ function uebHadhaZeile(z, satz){
     : 'هَذَا heißt hier „das“ und ist selbst der مُبْتَدَأٌ.';
 }
 
-/* ---------- Übung 18: welche Art Plural hat ein Wort? ----------
+/* ---------- Übung 16: welche Art Plural hat ein Wort? ----------
    Die Einordnung liest NUR die Karte (Einzahl und Mehrzahl, wie sie dort
    stehen) und folgt der Probe seines Lehrers aus Folge 25 (15:53): „Erkennst
    du hier eine der beiden Formen? Wenn nicht, dann ist es unregelmäßig."
@@ -836,10 +836,24 @@ function uebHadhaZeile(z, satz){
    deren Gerüst zufällig auf ون oder ات endet (عُيُونٌ, أَبْيَاتٌ: das ن und das ت
    gehören dort zum Wort). An so einem Wort wäre jede der drei Antworten
    anfechtbar, und eine falsche Auflösung lernt sich mit.
-   Gemessen an seiner Auswahl (04.10.2026): 19 Wörter 'm', 16 'f', 108 'g',
-   20 ohne Einordnung. */
+   Gemessen an seiner Auswahl (04.10.2026, nach v648): 21 Wörter 'm', 21 'f',
+   101 'g', 34 ohne Einordnung.
+
+   ⛔⛔ ZAHLWÖRTER WERDEN NICHT GEFRAGT (v648, 04.10.2026 — mein Fehler aus v646).
+   Bei eins und drei bis zehn steht im Feld `pl` keine Mehrzahl, sondern die
+   Form beim weiblichen Nomen (خَمْسَةٌ → خَمْسٌ). So steht es seit dem
+   16.09.2026 bei istZahlwort() in js/kern.js, und daran hängt dort, dass es
+   keine Karte „fünf (Plural)" gibt. Diese Übung kannte die Entscheidung nicht
+   und fragte von v646 bis v647 „fünf → …: gebrochen" — 25 Aufgaben an neun
+   Karten, mit einer Auflösung, die Falsches lehrt.
+   Die Erkennung steht NUR dort (an der Bedeutung, nicht an der Form: ein
+   Formvergleich träfe auch غُرْفَةٌ → غُرَفٌ). Fehlt die Funktion — ein Prüfer,
+   der js/kern.js nicht lädt —, wird NICHTS gefragt statt Falsches. Dass sie in
+   der App da ist und wirkt, bewacht test-plural-uebung.mjs mit der ECHTEN
+   Funktion aus js/kern.js (Punkt 9 und zwei Störtests). */
 function uebPluralArt(v){
   if (!v || !v.pl) return null;
+  if (typeof istZahlwort !== 'function' || istZahlwort(v)) return null;
   const pl = String(v.pl).trim(), sg = String(v.sg || v.ar || '').trim();
   if (!pl || !sg || /[\s\/|,،]/.test(pl)) return null;
   const p = ohneTaschkil(pl), s = ohneTaschkil(sg).replace(/^ال/, '');

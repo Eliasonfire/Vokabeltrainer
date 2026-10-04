@@ -217,6 +217,24 @@ for (const n of ['wortKern', 'regelAusgeblendet', 'shuffle']){
 const hol = (name) =>
   vm.runInContext('typeof ' + name + ' !== "undefined" ? ' + name + ' : null', kiste);
 
+/* ⚠️ istZahlwort() ist nach dem Teil-Laden von js/kern.js zwar als Funktion da
+   (Deklarationen werden vorgezogen), ihr Muster ZAHLWORT_DE aber nicht: die Datei
+   bricht vorher ab, und ein `const`, dessen Zeile nie lief, bleibt gesperrt
+   („Cannot access 'ZAHLWORT_DE' before initialization"). Uebung 16 ruft die
+   Funktion seit v648 (uebPluralArt: Zahlwoerter haben im Feld `pl` keine
+   Mehrzahl) — ohne diesen Schritt baute sie hier 0 Aufgaben. Die Funktion wird
+   deshalb aus dem ECHTEN Quelltext neu gesetzt, mit ihrem Muster in einer
+   eigenen Huelle; ein Nachbau hier pruefte nur sich selbst. */
+{
+  const kernText = fs.readFileSync(p('js', 'kern.js'), 'utf8');
+  const m = kernText.match(/(const ZAHLWORT_DE = [^\n]*)\r?\n(function istZahlwort\(w\)\{[\s\S]*?\r?\n\})/);
+  if (!m){
+    console.error('  `istZahlwort` samt ZAHLWORT_DE ist in js/kern.js nicht lesbar — Uebung 16 koennte keine Aufgabe bauen.');
+    process.exit(1);
+  }
+  vm.runInContext('istZahlwort = (function(){ ' + m[1] + '\n' + m[2] + '\nreturn istZahlwort; })();', kiste);
+}
+
 let UEBUNGEN;
 try {
   vm.runInContext(fs.readFileSync(p('js', 'uebung.js'), 'utf8'), kiste,

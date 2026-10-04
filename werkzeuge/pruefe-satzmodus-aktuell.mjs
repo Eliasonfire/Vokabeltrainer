@@ -114,6 +114,18 @@ function aufWunschAus(kernText){
   return new Set((m[1].match(/'[^']+'|"[^"]+"/g) || []).map(s => s.slice(1, -1)));
 }
 
+/* istZahlwort() samt ihrem Muster aus js/kern.js, als Stück, das die Funktion in
+   die App-Welt setzt (v648, 04.10.2026). Übung 16 fragt Zahlwörter nicht —
+   bei ihnen steht im Feld `pl` die Form beim weiblichen Nomen, keine Mehrzahl —
+   und fragt ohne die Funktion GAR NICHTS (uebPluralArt in js/uebung.js). Dieser
+   Lader lädt js/kern.js nicht; ohne das Stück stünde Übung 16 hier als „keine
+   Aufgabe in seiner Auswahl". Geschnitten wird die ECHTE Fassung, kein Nachbau.
+   null = nicht mehr lesbar — dann Ladefehler statt still ohne sie. */
+function zahlwortAus(kernText){
+  const m = String(kernText).match(/(const ZAHLWORT_DE = [^\n]*)\r?\n(function istZahlwort\(w\)\{[\s\S]*?\r?\n\})/);
+  return m ? 'istZahlwort = (function(){ ' + m[1] + '\n' + m[2] + '\nreturn istZahlwort; })();' : null;
+}
+
 function ladeApp(){
   const DOM = { getElementById: stummesElement, querySelector: stummesElement, querySelectorAll: () => [],
     createElement: stummesElement, addEventListener(){}, body: stummesElement(), documentElement: stummesElement() };
@@ -144,8 +156,12 @@ function ladeApp(){
   const hole = n => { try { return vm.runInContext(`typeof ${n} !== 'undefined' ? ${n} : undefined`, ctx); } catch (e){ return undefined; } };
   const VD = hole('VOCAB_DATA'), BS = hole('BEISPIELSAETZE') || {};
   const bekannt = new Set(VD.map(w => String(w.id)));
-  const aufWunsch = aufWunschAus(fs.readFileSync(path.join(WURZEL, 'js', 'kern.js'), 'utf8'));
+  const kernText = fs.readFileSync(path.join(WURZEL, 'js', 'kern.js'), 'utf8');
+  const aufWunsch = aufWunschAus(kernText);
   if (!aufWunsch) fehlt.push('js/kern.js: FREISCHALTEN_AUF_WUNSCH nicht lesbar — ohne die Liste meldet Übung 11 „jene" als Lücke, obwohl seine App es fragt');
+  const zahlwort = zahlwortAus(kernText);
+  if (!zahlwort) fehlt.push('js/kern.js: istZahlwort() nicht lesbar — ohne sie fragt Übung 16 nichts und stünde hier als Lücke, obwohl seine App sie fragt');
+  else { try { vm.runInContext(zahlwort, ctx); } catch (e){ fehlt.push('js/kern.js: istZahlwort() lässt sich nicht setzen — ' + e.message); } }
   for (const [buch, liste] of Object.entries(ctx.window.VOKABELN || {})){
     const kap = auswahl[buch] || [];
     for (const w of liste) if ((kap.includes(Number(w.chapter)) || (aufWunsch && aufWunsch.has(String(w.id)))) && !bekannt.has(String(w.id))){
@@ -597,6 +613,17 @@ if (STOER){
   // 12. Ist die Liste in js/kern.js nicht mehr lesbar → Ladefehler statt still ohne sie.
   ok('FREISCHALTEN_AUF_WUNSCH unlesbar → erkannt', aufWunschAus('const ANDERS = [1];') === null
     && aufWunschAus("const FREISCHALTEN_AUF_WUNSCH = ['1', '2'];").size === 2);
+  // 12b. Dasselbe für istZahlwort() (v648): unlesbar → Ladefehler. Und fehlt die
+  //      Funktion in der App-Welt, fragt Übung 16 nichts — das muss als Lücke im
+  //      Pflichtprogramm stehen, nicht still durchgehen.
+  ok('istZahlwort() unlesbar → erkannt', zahlwortAus('function anders(w){\n  return false;\n}') === null
+    && typeof zahlwortAus('const ZAHLWORT_DE = /^(eins)$/i;\nfunction istZahlwort(w){\n  return ZAHLWORT_DE.test(w.de);\n}') === 'string');
+  {
+    vm.runInContext('globalThis.__echtZahl = istZahlwort; istZahlwort = undefined;', app.ctx);
+    e = messen(app);
+    ok('ohne istZahlwort() fragt Übung 16 nichts → Pflichtprogramm meldet sie', (e.pflichtLuecken || []).some(v => v.includes('plural')));
+    vm.runInContext('istZahlwort = globalThis.__echtZahl;', app.ctx);
+  }
   // 18. „ohne schweren Satz" zählt das VORKOMMEN: fällt jede Aufgabe mit عَنْ weg,
   //     muss عَنْ gemeldet werden — und إِلَى, das nur in Aufgaben mit einem
   //     selteneren Stichwort steht, darf NICHT gemeldet werden.
