@@ -817,6 +817,49 @@ function uebHadhaZeile(z, satz){
     : 'هَذَا heißt hier „das“ und ist selbst der مُبْتَدَأٌ.';
 }
 
+/* ---------- Übung 18: welche Art Plural hat ein Wort? ----------
+   Die Einordnung liest NUR die Karte (Einzahl und Mehrzahl, wie sie dort
+   stehen) und folgt der Probe seines Lehrers aus Folge 25 (15:53): „Erkennst
+   du hier eine der beiden Formen? Wenn nicht, dann ist es unregelmäßig."
+
+   ⛔ STRENG, und das ist MEINE Entscheidung (04.10.2026), nicht seine:
+   - 'm' nur, wenn die Mehrzahl genau die Einzahl plus ـُونَ ist (مُدَرِّسٌ →
+     مُدَرِّسُونَ) — „indem man ein Una hinten an das Wort einfach dranhängt".
+   - 'f' nur, wenn die Einzahl auf ة endet und die Mehrzahl dieselbe Form mit
+     ـَات ist (سَيَّارَةٌ → سَيَّارَاتٌ) — „Tāʾ marbūṭa wird ersetzt durch Alif
+     und Tāʾ".
+   - 'g' nur, wenn KEINS der beiden Enden dasteht.
+   Alles andere gibt null und wird nicht gefragt: zwei Pluralformen auf einer
+   Karte (بَيْتٌ → بُيُوتٌ / أَبْيَاتٌ), ـَات ohne ة in der Einzahl (حَمَّامٌ →
+   حَمَّامَاتٌ), Stammwechsel (بِنْتٌ → بَنَاتٌ, أُخْتٌ → أَخَوَاتٌ — der Schlüssel
+   nennt sie unregelmäßig, das Ende sieht regelmäßig aus) und gebrochene Plurale,
+   deren Gerüst zufällig auf ون oder ات endet (عُيُونٌ, أَبْيَاتٌ: das ن und das ت
+   gehören dort zum Wort). An so einem Wort wäre jede der drei Antworten
+   anfechtbar, und eine falsche Auflösung lernt sich mit.
+   Gemessen an seiner Auswahl (04.10.2026): 19 Wörter 'm', 16 'f', 108 'g',
+   20 ohne Einordnung. */
+function uebPluralArt(v){
+  if (!v || !v.pl) return null;
+  const pl = String(v.pl).trim(), sg = String(v.sg || v.ar || '').trim();
+  if (!pl || !sg || /[\s\/|,،]/.test(pl)) return null;
+  const p = ohneTaschkil(pl), s = ohneTaschkil(sg).replace(/^ال/, '');
+  if (p === s + 'ون') return 'm';
+  if (/(ون|ين)$/.test(p)) return null;
+  if (/ات$/.test(p)) return (/ة$/.test(s) && p === s.slice(0, -1) + 'ات') ? 'f' : null;
+  return 'g';
+}
+const UEB_PLURAL_WAHL = [
+  { wert:'m', text:'regelmäßig männlich · ـُونَ' },
+  { wert:'f', text:'regelmäßig weiblich · ـَاتٌ' },
+  { wert:'g', text:'gebrochen · eigenes Muster' }
+];
+const UEB_PLURAL_GRUND = {
+  m: 'regelmäßig männlich — ـُونَ ist angehängt.',
+  f: 'regelmäßig weiblich — das ة ist durch ـَات ersetzt.',
+  g: 'gebrochen — am Ende steht weder ـُونَ noch ـَات, das Wort hat sein eigenes Muster.'
+};
+
+
 const UEBUNGEN = [
   {
     id:'mubtada-khabar', nr:1, name:'مُبْتَدَأٌ / خَبَرٌ — Satzteile', art:'mehrfach',
@@ -1581,6 +1624,66 @@ const UEBUNGEN = [
       return out;
     }
   },
+  /* ⭐⭐ PLURAL — Elias am 04.10.2026, nach Folge 25 (MB1 Kapitel 13): „wurde
+     schon neue satzmodus übung gebaut für den plural der heute gemacht wurde
+     im video?" Dazu sein Dauerauftrag vom 24.09.2026: „ich möchte das das
+     automatisch geguckt wird ob man den satzmodus mit etwas erweitern kann."
+
+     Was sein Lehrer in der Folge macht, ist die Vorlage: an jedem Plural des
+     Dialogs fragt er „Was haben wir für eine Pluralform?" (13:24), und er gibt
+     den Rat, die Mehrzahl mit jedem Wort mitzulernen (20:10) — denselben Rat
+     gibt der Schlüssel zu Band 1 in Lektion 13.
+
+     ⛔ Die Gestaltung ist MEINE (04.10.2026), er hat sie nicht gesehen:
+     - Gefragt wird am Wort IM SATZ. Gemessen an seiner Auswahl stehen nur 5
+       Satzwörter selbst in der Mehrzahl — eine Übung nur an Plural-Sätzen
+       hätte keinen Stoff. 657 Stellen in 345 von 440 Sätzen tragen aber ein
+       Wort, dessen Karte eine eindeutige Mehrzahl hat. Steht die Einzahl im
+       Satz, muss er die Mehrzahl von der Karte wissen; steht die Mehrzahl
+       selbst da, liest er ihr Ende — genau die Abfrage des Lehrers. Mit jedem
+       neuen Plural-Satz wächst der zweite Teil von selbst.
+     - Drei feste Antworten, keine Formen zur Wahl. Eine selbst gebildete
+       falsche Form kann zufällig richtig sein (طَالِبُونَ gibt es), und die
+       Mehrzahl eines ANDEREN Wortes erkennt man schon an den Buchstaben.
+     - Die Auflösung nennt immer Einzahl und Mehrzahl von der Karte: jede
+       Aufgabe zeigt die Form, die mitgelernt werden soll.
+     - Was sich nicht sauber einordnen lässt, wird nicht gefragt (uebPluralArt).
+
+     ⚠️ NUMMER 16, und Übersetzen und Satzbau rücken auf 17 und 18 — wie am
+     25.09.2026, als die Endungen dazukamen. Auf dem Bildschirm stehen die
+     Übungen nach Gruppen (UEB_GRUPPEN), und dort müssen die Nummern
+     durchlaufen: eine Auswahl-Übung mit der Nummer 18 stünde zwischen 15 und
+     16 (test-satzmodus-schwerer.mjs). `teilRang` sorgt dafür, dass sie trotz
+     der kleineren Nummer als LETZTE auf seine zwei Teile verteilt wird —
+     siehe satzTeile(). Bewacht von test-plural-uebung.mjs. */
+  {
+    id:'plural', nr:16, name:'مُدَرِّسُونَ / طُلَّابٌ — Welcher Plural?', art:'wahl',
+    teilRang:99,
+    /* Der Hinweis nennt die drei Enden NICHT: steht die Mehrzahl selbst im
+       Satz, wäre das die Lösung. Er sagt nur, wohin man sehen soll. */
+    hinweis:'Denk an die Mehrzahl des Wortes, wie sie auf deiner Karte steht — und sieh auf ihr Ende.',
+    hinweisVerraet:false,
+    baue(z){
+      return z.map((t,i)=>{
+        const v = uebungVokabel(t.wort);
+        const art = uebPluralArt(v);
+        if (!art) return null;
+        /* Nur fragen, wenn eindeutig ist, WELCHE Form dasteht: die Einzahl der
+           Karte oder ihre Mehrzahl. Die weibliche Form eines Adjektivs
+           (كَبِيرَةٌ) findet zwar die Karte, ist aber keins von beiden — ihre
+           Mehrzahl wäre eine andere als die auf der Karte. */
+        const formen = uebungKandidaten(t.wort);
+        const istMehrzahl = formen.includes(uebungOhneEndung(v.pl));
+        const istEinzahl = formen.includes(uebungOhneEndung(v.sg || v.ar)) || formen.includes(uebungOhneEndung(v.ar));
+        if (istMehrzahl === istEinzahl) return null;
+        return {
+          frage: istMehrzahl ? 'Welche Art Plural ist das hervorgehobene Wort?' : 'Welchen Plural hat das hervorgehobene Wort?',
+          wortIdx:i, loesung:art, optionen:UEB_PLURAL_WAHL,
+          aufloesung:`${v.sg || v.ar} → ${v.pl} (${v.de}): ${UEB_PLURAL_GRUND[art]}`
+        };
+      }).filter(Boolean);
+    }
+  },
   /* ⭐⭐ ÜBERSETZEN — Elias' Auftrag vom 22.09.2026, 21:15, im Wortlaut:
 
      „es sollte auch im satzmodus eine übung geben, wo mir ein satz gegeben wird
@@ -1606,7 +1709,7 @@ const UEBUNGEN = [
     /* Seit v612 Nummer 16 (vorher 15): die Endungen-Übung ist eine Auswahl-Übung
        und steht in der Liste vor „Schreiben" — Elias: „ich möchte das die liste
        liniar von 1 bis 15 geht ohne das daraus salat gemacht wird". */
-    id:'uebersetzen', nr:16, name:'Übersetzen — Arabisch ins Deutsche', art:'schreiben',
+    id:'uebersetzen', nr:17, name:'Übersetzen — Arabisch ins Deutsche', art:'schreiben',
     hinweis:'Achte auf die Bestimmtheit (اَلْ oder Tanwīn) und darauf, wer in der إِضَافَة der Besitzer ist.',
     hinweisVerraet:false,
     deVerbergen:true,
@@ -1659,7 +1762,7 @@ const UEBUNGEN = [
      schon. Ein zweites Feld daneben könnte einer davon vergessen.
      Bewacht von test-satz-bauen.mjs. */
   {
-    id:'satz-bauen', nr:17, name:'Satzbau — den Satz selbst bilden', art:'bauen',
+    id:'satz-bauen', nr:18, name:'Satzbau — den Satz selbst bilden', art:'bauen',
     hinweis:'Tippe die Wörter in der Reihenfolge an, in der sie im Satz stehen. Ein Tipp auf ein Wort in deinem Satz nimmt es wieder heraus.',
     hinweisVerraet:false,
     deAlsAufgabe:true,
@@ -1911,7 +2014,7 @@ const UEB_GRUPPEN = [
      Überschrift sagt, WAS man tun muss, bevor man den Namen liest; „Schreiben"
      ist bei dieser Übung die eigentliche Information. */
   ['Schreiben',        'schreiben'],
-  /* ⭐ Vierte Gruppe seit dem 04.10.2026 — der Satzbau (Übung 17). */
+  /* ⭐ Vierte Gruppe seit dem 04.10.2026 — der Satzbau (Übung 18). */
   ['Bauen',            'bauen']
 ];
 
@@ -2692,11 +2795,14 @@ const UEBUNG_WARUM = {
      JEDE Übung genannt ist. Genau deshalb fiel er beim Bauen auf.
      [[vorgabewert_sieht_aus_wie_befund]] */
   'uebersetzen': null,
-  /* Auch hier ist `null` die richtige Antwort: beim Satzbau (Übung 17) steht
+  /* Auch hier ist `null` die richtige Antwort: beim Satzbau (Übung 18) steht
      keine einzelne Regel hinter einer falschen Reihenfolge, und welche es im
      einzelnen Satz wäre, sagt die Aufgabe nicht. Lieber kein Knopf als die
      falsche Karte. */
-  'satz-bauen': null
+  'satz-bauen': null,
+  /* Die Plural-Übung (Nr. 16): die Regel mit der Einteilung und der Erkennungsprobe
+     des Lehrers aus Folge 25 — von dort führen die drei Einzelregeln weiter. */
+  'plural': 'jam-salim-taksir-01'
 };
 
 /* ⭐⭐ UNSICHTBARE ENDUNG → DIE KARTE, DIE GENAU DAS ERKLÄRT (16.09.2026)
@@ -2962,7 +3068,16 @@ function satzTeile(){
     quelle[m.id] = g !== null ? 'gemessen' : 'geschaetzt';
   }
   const nr = id => (UEBUNGEN.find(m => m.id === id) || {}).nr || 0;
-  const reihe = UEBUNGEN.slice().sort((a, b) => (zeit[b.id] - zeit[a.id]) || (a.nr - b.nr));
+  /* ⛔ teilRang (04.10.2026): eine Übung mit diesem Feld wird NACH allen anderen
+     gleich langen verteilt. Gebraucht von der Plural-Übung: sie steht bei den
+     Auswahl-Übungen und trägt deshalb die Nummer 16, käme nach der Nummer aber
+     VOR dem Satzbau dran und nähme dessen Platz — der Satzbau wechselte den
+     Teil. So bleibt, was er schon hat, wo es ist; die neue kommt nur dazu.
+     Der Störtest in test-plural-uebung.mjs nimmt das Feld weg und misst den
+     Wechsel. Die nächste neue Übung braucht einen GRÖSSEREN Rang als 99,
+     wenn auch sie nichts verschieben soll. */
+  const rang = m => m.teilRang || m.nr;
+  const reihe = UEBUNGEN.slice().sort((a, b) => (zeit[b.id] - zeit[a.id]) || (rang(a) - rang(b)));
   const teil = { 1: [], 2: [] }, summe = { 1: 0, 2: 0 };
   for (const m of reihe){
     const t = summe[1] < summe[2] ? 1 : summe[2] < summe[1] ? 2 : (teil[1].length <= teil[2].length ? 1 : 2);
@@ -3400,7 +3515,7 @@ document.getElementById('uebSatz').addEventListener('click', (e)=>{
   const span = e.target.closest('[data-uebidx]');
   if (span) uebungWortTipp(Number(span.dataset.uebidx));
 });
-/* Der Vorrat des Satzbaus (Übung 17). ⚠️ Mit Abfrage: eine index.html aus einem
+/* Der Vorrat des Satzbaus (Übung 18). ⚠️ Mit Abfrage: eine index.html aus einem
    älteren Vorrat hat das Element nicht, und ein Wurf hier nähme die ganze
    Verdrahtung darunter mit. */
 {

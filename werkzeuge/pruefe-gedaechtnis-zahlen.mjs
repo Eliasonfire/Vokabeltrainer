@@ -163,8 +163,11 @@ const ueb = fs.readFileSync(REPO + '/js/uebung.js', 'utf8');
 /* 04.10.2026 (v642): dazu Übung 17 „Satzbau" (nr 17, mit Hinweis, also
    16 → 17 und 14 → 15). Elias, Google Tasks: „Wörter haben und satzbau selber
    machen sodass man den Satz selbst bildet". */
-pruefe('a2: 17 Uebungsarten', 17, (ueb.match(/^\s*id\s*:\s*'[^']+',\s*nr\s*:/gm) || []).length);
-pruefe('a2: 15 mit Hinweis', 15, (ueb.match(/^\s*hinweis\s*:/gm) || []).length);
+/* 04.10.2026 (v646): dazu die Plural-Übung „Welcher Plural?" (nr 16, mit Hinweis;
+   Übersetzen ist seitdem 17, der Satzbau 18 — also
+   17 → 18 Übungsarten und 15 → 16 mit Hinweis). */
+pruefe('a2: 18 Uebungsarten', 18, (ueb.match(/^\s*id\s*:\s*'[^']+',\s*nr\s*:/gm) || []).length);
+pruefe('a2: 16 mit Hinweis', 16, (ueb.match(/^\s*hinweis\s*:/gm) || []).length);
 
 /* Fachbegriffe (Oberflaechenpruefung) */
 const fach = fs.readFileSync(REPO + '/data/fachbegriffe.js', 'utf8');

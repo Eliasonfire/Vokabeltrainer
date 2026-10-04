@@ -109,7 +109,9 @@ function pruefeAlles(app){
   // 1
   if (!E) { f(1, 'Übung endungen fehlt'); return fehler; }
   if (E.nr !== 15 || E.art !== 'wahl') f(1, `endungen: nr ${E.nr}, art ${E.art} (erwartet 15, wahl)`);
-  if (!Ue || Ue.nr !== 16) f(1, `uebersetzen: nr ${Ue && Ue.nr} (erwartet 16)`);
+  /* 04.10.2026 (v646): 16 → 17. Die Plural-Übung steht bei den Auswahl-Übungen
+     und trägt die 16; Übersetzen ist damit noch einmal eine Nummer aufgerückt. */
+  if (!Ue || Ue.nr !== 17) f(1, `uebersetzen: nr ${Ue && Ue.nr} (erwartet 17)`);
   if (typeof E.hinweisVerraet !== 'boolean') f(1, 'hinweisVerraet fehlt (Pflichtfeld)');
   // 2
   const glieder = hole('uebEndungGlieder')();

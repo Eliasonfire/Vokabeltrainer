@@ -641,6 +641,9 @@ const PRUEFER = [
      gewertet; das Deutsche steht lesbar an der Frage. Der Ablauf läuft an einem
      mitschreibenden DOM durch renderUebung(); 17 Störtests am echten Quelltext. */
   ['test-satz-bauen.mjs', []],
+  /* Übung 16 „Welcher Plural?" (04.10.2026): jede Lösung gegen die Karte
+     nachgerechnet, unklare Karten bleiben draußen; sechs Störtests. */
+  ['test-plural-uebung.mjs', []],
 
   /* ⛔ Neu am 06.09.2026. Der Hifz-Stand ist das Einzige in dieser App, das
      Elias sich WIRKLICH erarbeitet hat — auswendig gelernte Suren. Er lief
