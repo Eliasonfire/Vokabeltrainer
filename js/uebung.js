@@ -614,6 +614,50 @@ function uebGruppe(kartenId, passtKarte){
   }
   return (UEB_WORTGRUPPEN[kartenId] = glieder);
 }
+/* ⭐⭐ DAS KÜRZEL UNTER DER ANTWORT (05.10.2026, v651). Elias mit Bild der Übung 11
+   (zehn Hinweiswörter zur Wahl, er hatte هَذِهِ vor „die Mädchen" getippt):
+   „bei den antwortmöglichkeiten sollte auch geschlecht, person und singlular
+   oder plural stehen so als abkürzung".
+
+   Es steht in den drei Übungen, deren Antworten sich genau darin unterscheiden:
+   11 (Hinweiswörter), 14 (Pronomen), 15 (Besitzendungen). Immer sichtbar, auch
+   vor dem Antworten — was der Satz verlangt, muss er weiter selbst ablesen.
+
+   ⛔ MEINE Entscheidungen, nicht seine:
+   · Die Schreibweise: „3. P. m. Sg." (Person, Geschlecht, Zahl). Wo es kein
+     Geschlecht gibt (ich, wir, die Zweizahl, die Mehrzahl der Hinweiswörter),
+     steht keins. Die Zweizahl heißt „Dual" wie auf seiner Karte.
+   · Nah und fern steht NICHT dabei — er hat drei Dinge genannt, und das sagt
+     die deutsche Zeile („diese" / „jene" bleibt dort lesbar).
+   · Fragewörter (13) und die übrigen Übungen bekommen nichts: dort gibt es
+     weder Person noch Geschlecht noch Zahl zu unterscheiden.
+
+   Die Tabelle ist eine geschlossene Liste — mehr Formen gibt es in diesen drei
+   Gruppen nicht. Eine Form, die hier fehlt, bekommt KEIN Kürzel (lieber keins
+   als ein falsches); test-antwort-kuerzel.mjs meldet sie im Sammellauf.
+   Verglichen wird in NFC; weicht nur die Schreibung der Vokalzeichen ab, zählt
+   die eine Form mit demselben Gerüst, die sich verträgt (uebVertraeglich). */
+const UEB_KUERZEL = [
+  ['هَذَا', 'm. Sg.'], ['هَذِهِ', 'f. Sg.'], ['هَذَانِ', 'm. Dual'], ['هَاتَانِ', 'f. Dual'], ['هَؤُلَاءِ', 'Pl.'],
+  ['ذَلِكَ', 'm. Sg.'], ['تِلْكَ', 'f. Sg.'], ['ذَانِكَ', 'm. Dual'], ['تَانِكَ', 'f. Dual'], ['أُولَئِكَ', 'Pl.'],
+  ['هُوَ', '3. P. m. Sg.'], ['هِيَ', '3. P. f. Sg.'], ['هُمَا', '3. P. Dual'], ['هُمْ', '3. P. m. Pl.'], ['هُنَّ', '3. P. f. Pl.'],
+  ['أَنْتَ', '2. P. m. Sg.'], ['أَنْتِ', '2. P. f. Sg.'], ['أَنْتُمَا', '2. P. Dual'], ['أَنْتُمْ', '2. P. m. Pl.'], ['أَنْتُنَّ', '2. P. f. Pl.'],
+  ['أَنَا', '1. P. Sg.'], ['نَحْنُ', '1. P. Pl.'],
+  ['ـِي', '1. P. Sg.'], ['ـنَا', '1. P. Pl.'],
+  ['ـكَ', '2. P. m. Sg.'], ['ـكِ', '2. P. f. Sg.'], ['ـكُمَا', '2. P. Dual'], ['ـكُمْ', '2. P. m. Pl.'], ['ـكُنَّ', '2. P. f. Pl.'],
+  ['ـهُ', '3. P. m. Sg.'], ['ـهَا', '3. P. f. Sg.'], ['ـهُمَا', '3. P. Dual'], ['ـهُمْ', '3. P. m. Pl.'], ['ـهُنَّ', '3. P. f. Pl.']
+].map(([f, k]) => ({ form: f.normalize('NFC'), endung: f.startsWith('ـ'), skelett: uebSkelett(f), kuerzel: k }));
+function uebFormKuerzel(form){
+  const f = String(form == null ? '' : form).normalize('NFC').trim();
+  if (!f) return '';
+  const genau = UEB_KUERZEL.find(e => e.form === f);
+  if (genau) return genau.kuerzel;
+  /* Eine Endung wird nie mit einem ganzen Wort verwechselt (ـهُمْ und هُمْ haben
+     dasselbe Gerüst) — und umgekehrt. */
+  const endung = f.startsWith('ـ'), sk = uebSkelett(f);
+  const nah = UEB_KUERZEL.filter(e => e.endung === endung && e.skelett === sk && uebVertraeglich(f, e.form) >= 0);
+  return nah.length === 1 ? nah[0].kuerzel : '';
+}
 /* Steht hier eindeutig die Einzahl? Nur dann dürfen Dual und Plural als
    Ablenker stehen — bei هَذِهِ كُتُبٌ (Sachplural) wäre هَؤُلَاءِ sonst eine Falle. */
 function uebKlarEinzahl(t){
@@ -1440,7 +1484,7 @@ const UEBUNGEN = [
           frage:'Welches Hinweiswort gehört hierhin?',
           wortIdx:i, verdeckt:true,
           loesung: L.form,
-          optionen: wahl.map(g => ({ wert:g.form, text: tr.vorsatz + g.form })),
+          optionen: wahl.map(g => ({ wert:g.form, text: tr.vorsatz + g.form, kuerzel: uebFormKuerzel(g.form) })),
           aufloesung:`Es geht um ${z[i+1].rein}: ${L.form} heißt „${L.de}" (${lFern ? 'fern' : 'nah'}).`
         });
       });
@@ -1576,7 +1620,7 @@ const UEBUNGEN = [
           frage:'Welches Pronomen gehört hierhin?',
           wortIdx:i, verdeckt:true,
           loesung: L.form,
-          optionen: glieder.map(g => ({ wert:g.form, text: tr.vorsatz + g.form })),
+          optionen: glieder.map(g => ({ wert:g.form, text: tr.vorsatz + g.form, kuerzel: uebFormKuerzel(g.form) })),
           aufloesung:`${L.form} heißt „${L.de}".` + (verb ? ` Das Verb ${verb.wort} endet auf ${verb.endung}.` : '')
         });
       });
@@ -1630,7 +1674,7 @@ const UEBUNGEN = [
           frage:'Welche Endung gehört an das hervorgehobene Wort?' + zusatz,
           wortIdx:i, ohneSuffix,
           loesung: L.form,
-          optionen: glieder.map(g => ({ wert:g.form, text:g.form })),
+          optionen: glieder.map(g => ({ wert:g.form, text:g.form, kuerzel: uebFormKuerzel(g.form) })),
           aufloesung:`So heißt es: ${z[i].rein}. ${L.form} ist ${L.de}.`,
           warum: L.regel || undefined
         });
@@ -2696,7 +2740,11 @@ function renderUebung(){
       let k = 'ueb-option';
       if (UEB.beantwortet && o.wert === a.loesung) k += ' richtig';
       if (UEB.beantwortet && UEB.gewaehlt.has(o.wert) && o.wert !== a.loesung) k += ' falsch';
-      return `<button class="${k}" data-uebwahl="${escapeHtml(String(o.wert))}" lang="ar">${uebungOptionHtml(o.text)}</button>`;
+      /* Das Kürzel (Person, Geschlecht, Zahl — uebFormKuerzel) steht als zweite
+         Zeile unter der Form. `dir="ltr"`: in Übung 14 und 15 läuft das Gitter von
+         rechts nach links, und ohne die Angabe wanderte der Punkt von „Sg." nach vorn. */
+      const kuerzel = o.kuerzel ? `<span class="opt-de opt-kuerzel" lang="de" dir="ltr">${escapeHtml(String(o.kuerzel))}</span>` : '';
+      return `<button class="${k}" data-uebwahl="${escapeHtml(String(o.wert))}" lang="ar">${uebungOptionHtml(o.text)}${kuerzel}</button>`;
     }).join('');
     wahl.classList.remove('hidden');
     /* Übung 14: von rechts oben nach links (m.optionenRtl). */

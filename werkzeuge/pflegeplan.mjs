@@ -676,6 +676,16 @@ export const PFLEGEPLAN = [
          sich. Ebenso still ist eine neue Übung ohne das Pflichtfeld. */
       { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/pruefe-hinweise.mjs', werkzeug: 'werkzeuge/pruefe-hinweise.mjs',
         wie: 'verräterische Hinweise im Satzmodus bleiben verborgen, bis Elias geantwortet hat — geprüft am echten Aufgabenbestand, nicht an einer Handliste' },
+      /* ⭐ 05.10.2026 (v651): das Kürzel unter den Antworten (uebFormKuerzel in
+         js/uebung.js). Elias: „bei den antwortmöglichkeiten sollte auch
+         geschlecht, person und singlular oder plural stehen so als abkürzung".
+         Die Tabelle ist eine geschlossene Liste; veralten kann sie nur, wenn
+         eine Form zur Wahl kommt, die in ihr fehlt (eine neue Karte) — die
+         stünde dann still ohne Kürzel da. */
+      /* Ohne `werkzeug`: der Prüfer läuft IM Sammellauf (Eintrag in
+         werkzeuge/alle-pruefer.mjs), die Routine ruft ihn nicht einzeln auf. */
+      { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs',
+        wie: 'test-antwort-kuerzel.mjs im Sammellauf: jede Antwort der Übungen 11, 14 und 15 trägt ihr Kürzel (Person, Geschlecht, Zahl) — gegen den Text seiner Karten gerechnet, nicht gegen die Tabelle' },
     ],
   },
   {

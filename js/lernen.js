@@ -668,6 +668,9 @@ function renderCard(){
     document.getElementById('cardSentenceAr').innerHTML =
       buildSentenceHtml(w, { ohneLuecke:true, karteikarte:true });
     document.getElementById('cardSentenceDe').textContent = w.sentDe || '';
+    /* Jede Karte kommt mit verschwommener Übersetzung — Begründung und sein
+       Wortlaut bei kartenSatzDeVerwischen() weiter unten. */
+    kartenSatzDeVerwischen();
   } else sentBox.classList.add('hidden');
 
   const qBox = document.getElementById('cardQuranBox');
@@ -1464,11 +1467,65 @@ let __suppressCardClick = false;
    dann, ohne Annahme darueber, wie ein Browser 3D-Ebenen trifft.
    [[erledigt_heisst_nicht_wertlos]] */
 
+/* ⭐⭐ DIE DEUTSCHE ÜBERSETZUNG AM BEISPIELSATZ IST ERST VERSCHWOMMEN (05.10.2026, v651).
+   Elias, wörtlich: „auch bei den karteikarten bei vokabeln üben sollen die
+   deutschen überstzungen beim satz erstmal verschwommen sein das wie beim
+   satzmodus. also das ich erstmal den arabischen satz lesen muss und beim
+   antippen dann erst detusch sichtbar wird".
+
+   „Wie beim Satzmodus" heißt: dieselbe Funktion (deVerschwommenSetzen in
+   js/saetze.js), dieselbe Stärke (--de-unschaerfe in index.html), und ein
+   zweites Antippen verwischt wieder (sein Satz vom 25.09.2026, dort zitiert).
+
+   Jede Karte kommt verschwommen: renderCard() ruft kartenSatzDeVerwischen()
+   bei JEDEM Zeichnen. Dasselbe Wort kommt in einer Runde mehrmals (Infokarte,
+   Übung, Abfrage — ersterTagAnordnen()), und ein Aufdecken beim ersten Mal
+   wäre sonst der Freifahrtschein für die nächsten. Gemerkt wird deshalb
+   nichts außer der Klasse am Element.
+
+   ⛔ MEINE Entscheidungen, nicht seine — wer sie ändert, braucht sein Wort nicht:
+   · Die Tippfläche ist der untere Teil des Satzkastens: alles unter dem
+     arabischen Satz, in voller Kastenbreite. Die Textzeile allein ist rund
+     20 px hoch, und ein Tipp knapp daneben dreht die Karte um.
+   · Ein Tipp auf den ARABISCHEN Satz dreht die Karte um, wie bisher.
+   · Die Übersetzung im Kasten „Quran-Bezug" bleibt lesbar — er hat „beim
+     satz" gesagt.
+
+   ⚠️ Getroffen wird nach der STELLE des Tippens, nicht nur nach e.target: auf
+   dieser 3D-gedrehten Karte nannte der Browser schon einmal nicht das Element,
+   das man sieht (Befund vom 29.07.2026, im Kommentar direkt darüber).
+   Bewacht von test-karten-satz-de.mjs. */
+function kartenSatzDeVerwischen(){
+  deVerschwommenSetzen(document.getElementById('cardSentenceDe'), false);
+}
+function kartenSatzDeTreffer(e){
+  const karte = document.getElementById('flashcard');
+  const kasten = document.getElementById('cardSentenceBox');
+  const de = document.getElementById('cardSentenceDe');
+  const ar = document.getElementById('cardSentenceAr');
+  if (!karte || !kasten || !de || !ar) return false;
+  if (!karte.classList.contains('flipped')) return false;     // die Vorderseite zeigt keinen Satz
+  if (kasten.classList.contains('hidden')) return false;      // Wort ohne Beispielsatz
+  if (!String(de.textContent || '').trim()) return false;     // Satz ohne Übersetzung
+  if (e.target === de || (e.target && e.target.closest && e.target.closest('#cardSentenceDe'))) return true;
+  const k = kasten.getBoundingClientRect();
+  const a = ar.getBoundingClientRect();
+  if (!(k.width > 0 && k.height > 0)) return false;
+  return e.clientX >= k.left && e.clientX <= k.right && e.clientY > a.bottom && e.clientY <= k.bottom;
+}
+function kartenSatzDeUmschalten(){
+  const de = document.getElementById('cardSentenceDe');
+  deVerschwommenSetzen(de, de.classList.contains('de-verschwommen'));
+}
+
 document.getElementById('flashcard').addEventListener('click', (e)=>{
   if (e.target.id === 'btnSpeakWord') return;
   if (e.target.closest('#cardNoteBox')) return;   // hat einen eigenen Klick
   if (e.target.closest('#cardTippBox')) return;   // Tippen dreht die Karte nicht um
   if (__suppressCardClick){ __suppressCardClick = false; return; }
+  /* Die verschwommene Übersetzung am Beispielsatz: zeigen oder wieder
+     verwischen, ohne die Karte umzudrehen (kartenSatzDeTreffer() darüber). */
+  if (kartenSatzDeTreffer(e)){ kartenSatzDeUmschalten(); return; }
   /* ⛔ HIER STAND bis zum 26.08.2026 der Weg zur Regelerklaerung: ein Klick
      auf eine Markierung oeffnete das Popover, statt die Karte umzudrehen.
      Seit die Karte keine Markierungen mehr traegt (buildSentenceHtml in
