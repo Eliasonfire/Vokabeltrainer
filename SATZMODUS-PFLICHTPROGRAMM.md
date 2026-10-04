@@ -21,7 +21,7 @@
 | 3 | **Reihum**: in den ersten k Aufgaben kommt jede der k Antworten (oder Fragen) einmal (`uebungMischen()`). | *„das sollte auch bei den anderen aufgaben so sein mit reihum"* | Teil E (Auswählen), F (Präpositionen), H (Antippen mit einer Frage je Aufgabe) |
 | 4 | **Je Antwort gleich viele**, gedeckelt auf die seltenste, mindestens `UEB_JE_ANTWORT_MIN`. | *„wenn es ingesamt 30 sätze zu dieser übung gibt dann sollte jede antwort 10 sätze haben"* | Teil E |
 | 5 | **Genug Aufgaben**: mindestens `UEB_JE_ANTWORT_MIN` Aufgaben in seiner Auswahl; weniger ist eine **Lücke** für die Wartung (neue Sätze aus seinen Büchern), kein Fehler. | *„das es immer aktuell bleibt und passende wörter hinzufügt"* | Teil H |
-| 6 | **Genau ein Teil**: jede Übung steht in Teil 1 oder Teil 2 (`satzTeile()`); eine neue kommt von selbst in den kürzeren Teil. | *„ich möchte das beide teile ungefähr gleich zeitaufwändig sind"* | `pruefe-satz-teile.mjs`, Teil H |
+| 6 | **Genau ein Teil**: jede Übung steht in Teil 1 oder Teil 2 (`satzTeile()`); eine neue kommt von selbst in den kürzeren Teil — ⚠️ aber nur, wenn ihre Zeitschätzung (`UEB_ZEIT_SCHAETZUNG`) nicht über der kleinsten bisherigen liegt; sonst verteilt `satzTeile()` ALLE neu (gemessen am 04.10.2026 an seinem Stand: mit 30 s wechselten 13 von 16 Übungen den Teil, mit 12 s keine). | *„ich möchte das beide teile ungefähr gleich zeitaufwändig sind"* | `pruefe-satz-teile.mjs`, Teil H |
 | 7 | **Nummern linear 1 bis N**, in der Liste nach Gruppen ohne Sprünge. | *„ich möchte das die liste liniar von 1 bis 15 geht ohne das daraus salat gemacht wird"* | Teil H, `test-satzmodus-schwerer.mjs` |
 | 8 | **Eigener Test mit Störtest** für das, was die Übung besonders macht (z. B. „mindestens zwei Adjektive"). | Nachtschicht-Regel: ein Prüfer muss rot werden können | der Test der Übung |
 | 9 | **Pflegeplan-Vermerk** in `werkzeuge/pflegeplan.mjs` und, wenn Inhalt nachwachsen muss, ein Schritt in der Wartung. | *„weil sonst hat eine neue funktion keinen sinn wenn sie nicht gepflegt wird"* (11.09.2026) | `pruefe-pflegeplan.mjs` |
@@ -36,3 +36,5 @@
 ## Wer eine neue Übung baut
 
 Den Eintrag in `UEBUNGEN` (js/uebung.js) mit `id`, `nr` (nächste Zahl), `art` (`mehrfach` · `wahl` · `schreiben` · `bauen`) und `baue()` — dann laufen Pflicht 3 bis 7 und 10 **ohne weiteren Eintrag** mit. Selbst zu erledigen bleiben 1, 2, 8 und 9.
+
+⛔ **Vor dem Ausliefern messen, ob seine zwei Teile stehen bleiben.** Eine neue `art` braucht eine Zahl in `UEB_ZEIT_SCHAETZUNG`; liegt sie zwischen den bisherigen, würfelt `satzTeile()` die Teile neu, und er bekommt am nächsten Satz-Tag dieselben Übungen noch einmal. So gemessen bei Übung 17 (Satzbau, v642): Aufteilung ohne und mit der neuen Übung vergleichen — `test-satz-bauen.mjs`, Zusicherung „seine zwei Teile bleiben", ist die Vorlage.
