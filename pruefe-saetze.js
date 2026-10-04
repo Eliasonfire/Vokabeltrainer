@@ -506,6 +506,32 @@ let lexikonSchwer = 0;
         satz => EICH_SATZ.find(e => e[0] === satz)[1](analysiereSatz(satz)),
         'Satzrollen: walid und Name + wa + Name');
 
+  /* ⭐ Drei Lesefehler, die die Sätze von Kapitel 13 sichtbar machten (04.10.2026,
+     v649): das Hinweiswort der Mehrzahl ist مُبْتَدَأ wie هَذَا (vorher hieß es nur
+     „unveränderlich", und das Nomen dahinter galt als مُبْتَدَأ — Übung 1 hätte es
+     so gewertet); ein Wort auf Ḍamma ohne Verbform ist kein Verb, auch wenn ein
+     geladenes Buch ein Verb mit demselben Gerüst führt; direkt nach يَا steht der
+     Angerufene, nie ein نَعْت. Zwei Gegenproben halten die Ḍamma-Regel eng.
+     Mit der Fassung von v648 gemessen: die Fälle 1, 2, 3 und 6 werden rot.
+     [Satz, Mini-Lexikon oder null, Prüfung an analysiereSatz(), warum] */
+  const EICH_K13 = [
+    ['هَؤُلَاءِ طُلَّابٌ.', null, r => /^مُبْتَدَأ/.test(r[0].rolle) && r[1].rolle === 'خَبَر',
+      'haulai ist mubtada, das Nomen dahinter khabar — wie bei hadha'],
+    ['أُولَئِكَ رِجَالٌ.', null, r => /^مُبْتَدَأ/.test(r[0].rolle) && r[1].rolle === 'خَبَر',
+      'ulaika ebenso'],
+    ['هَذَا مُوسَى وَعَبْدُ اللهِ.', [{ ar: 'عَبَدَ', type: 'verb', de: 'anbeten' }], r => r[2].rolle !== 'فِعْل',
+      'wa-abdu auf Damma ist kein Verb, auch wenn das Lexikon abada kennt'],
+    ['ذَهَبَ الطَّالِبُ.', [{ ar: 'ذَهَبَ', type: 'verb', de: 'gehen' }], r => r[0].rolle === 'فِعْل',
+      'Gegenprobe: das echte Verb auf Fatha bleibt Verb'],
+    ['سَيَذْهَبُ الطَّالِبُ.', [{ ar: 'ذَهَبَ', type: 'verb', de: 'gehen' }], r => r[0].rolle === 'فِعْل',
+      'Gegenprobe: die Zukunft auf Damma bleibt Verb (sa + Gegenwart)'],
+    ['أَيْنَ أَبْنَاؤُكَ يَا عَلِيُّ؟', [{ ar: 'عَلِيٌّ', type: 'adjective', de: 'erhaben' }], r => r[3].rolle === 'مُنَادَى',
+      'nach ya steht der Angerufene, auch wenn das Lexikon das Wort als Adjektiv fuehrt']
+  ];
+  eiche(EICH_K13.map(([satz, , , warum]) => [satz, true, warum]),
+        satz => { const e = EICH_K13.find(x => x[0] === satz); return e[1] ? mitLexikon(e[1], () => e[2](analysiereSatz(satz))) : e[2](analysiereSatz(satz)); },
+        'Kapitel 13: Hinweiswort der Mehrzahl, Nomen auf Damma, Angerufener');
+
   /* ⭐ نَعْت des مُضَاف hinter dem مُضَاف إِلَيْه (17.09.2026, js/irab.js
      mudafFuerNat). Beleg nat-wen-beschreibt-01: „Man muss immer gucken, wer
      beschreibt wen" — die Endung entscheidet. Zwei Gegenproben halten die
