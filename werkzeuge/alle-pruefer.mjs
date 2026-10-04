@@ -633,6 +633,14 @@ const PRUEFER = [
      gar nicht vorlegt (echt: 12 Tage). Der Test baut seinen Fall als kleinen
      Stand nach und lässt das echte Werkzeug darauf laufen; sechs Störtests. */
   ['test-lernlast.mjs', []],
+  /* 04.10.2026 (v642) — Übung 17 „Satzbau". Elias, Google Tasks: „Wörter haben
+     und satzbau selber machen sodass man den Satz selbst bildet". Die Bausteine
+     sind die Wörter des belegten Satzes ohne Satzzeichen, erst ab drei Wörtern,
+     keine Zitat-Sätze, keine Aufzählungen; richtig ist die Reihenfolge des
+     Satzes, zwei gleiche Wörter sind austauschbar, ein halber Satz wird nicht
+     gewertet; das Deutsche steht lesbar an der Frage. Der Ablauf läuft an einem
+     mitschreibenden DOM durch renderUebung(); 17 Störtests am echten Quelltext. */
+  ['test-satz-bauen.mjs', []],
 
   /* ⛔ Neu am 06.09.2026. Der Hifz-Stand ist das Einzige in dieser App, das
      Elias sich WIRKLICH erarbeitet hat — auswendig gelernte Suren. Er lief

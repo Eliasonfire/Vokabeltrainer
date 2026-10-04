@@ -22,11 +22,14 @@
    stehen. Anzeige, Klick, Rueckmeldung und Zaehler macht der gemeinsame
    Ablauf darunter, EINMAL.
 
-   Drei Arten:
+   Die Arten:
      'tippen'   ein Wort im Satz antippen, sofort ausgewertet — seit 16.09.2026
                 von keiner Uebung mehr benutzt: es verriet, dass es genau eines ist
      'mehrfach' alle richtigen Woerter antippen, dann pruefen
      'wahl'     ein Wort ist hervorgehoben (oder verdeckt), Antwort auf Knoepfen
+     'schreiben' den Satz ins Deutsche schreiben, dann pruefen (seit 22.09.2026)
+     'bauen'    den Satz aus seinen Woertern selbst bilden, dann pruefen
+                (seit 04.10.2026)
 
    ===================== Woher die Wahrheit kommt =====================
    Fast alles aus `analysiereSatz()` in js/irab.js: je Wort Satzrolle,
@@ -1601,6 +1604,61 @@ const UEBUNGEN = [
         art:'schreiben'
       }];
     }
+  },
+  /* ⭐⭐ SATZBAU — Elias' Aufgabe in Google Tasks (Liste „Meine Aufgaben",
+     03.10.2026), im Wortlaut:
+
+     „Claude Wörter haben und satzbau selber machen sodass man den Satz selbst bildet Claude"
+
+     und im Chat am 04.10.2026: „bei google tasks hab ich dir eine aufgabe
+     geschrieben für die app. es geht um wörter bauen als satz übung. guck mal
+     nach und baue".
+
+     Er bekommt die Wörter eines belegten Satzes durcheinander und tippt sie in
+     der Reihenfolge an, in der sie im Satz stehen. Oben wächst sein Satz, unten
+     liegt der Vorrat; „Prüfen" wertet aus.
+
+     Das Folgende hat ER NICHT gesagt — es sind MEINE Entscheidungen, ihm am
+     04.10.2026 so berichtet:
+     · Die deutsche Übersetzung steht LESBAR über der Aufgabe (`deAlsAufgabe`).
+       Seine Regel vom 25.09.2026 („die deutsche übersetzung blurst") galt dem
+       Deutschen UNTER einem sichtbaren arabischen Satz. Hier ist der arabische
+       Satz die Lösung und steht nicht da; ohne das Deutsche wäre nicht
+       entscheidbar, welcher Satz gemeint ist (aus هَذَا كِتَابٌ وَذَلِكَ قَلَمٌ
+       lassen sich zwei richtige Sätze bauen).
+     · Erst ab UEB_BAU_MIN Wörtern: bei zwei Wörtern gibt es nur zwei
+       Reihenfolgen, das wäre Raten.
+     · Die Bausteine tragen keine Satzzeichen — ein Punkt am Wort verriete, dass
+       es das letzte ist. Die Lösung zeigt den Satz danach mit Satzzeichen.
+     · Richtig ist die Reihenfolge des belegten Satzes, nichts anderes: eine
+       zweite „auch mögliche" Wortstellung wäre meine Erfindung (Pflicht 1).
+       Zwei GLEICHE Wörter sind untereinander austauschbar.
+     · Keine Sätze, die über Grammatik sprechen und Wörter in « » zitieren, und
+       keine reinen Aufzählungen (صِفْرٌ، وَاحِدٌ، اِثْنَانِ. — jedes Wort vor dem
+       letzten endet auf Komma oder Doppelpunkt): dort gibt es keinen Satzbau.
+
+     ⚠️ Der gebaute Satz liegt in UEB.gewaehlt — ein Set merkt die Reihenfolge
+     des Einfügens, und alle Stellen, die eine Aufgabe zurücksetzen, leeren es
+     schon. Ein zweites Feld daneben könnte einer davon vergessen.
+     Bewacht von test-satz-bauen.mjs. */
+  {
+    id:'satz-bauen', nr:17, name:'Satzbau — den Satz selbst bilden', art:'bauen',
+    hinweis:'Tippe die Wörter in der Reihenfolge an, in der sie im Satz stehen. Ein Tipp auf ein Wort in deinem Satz nimmt es wieder heraus.',
+    hinweisVerraet:false,
+    deAlsAufgabe:true,
+    baue(z, satz){
+      if (!satz || !String(satz.sentDe || '').trim()) return [];
+      if (!Array.isArray(z) || z.length < UEB_BAU_MIN) return [];
+      if (UEB_ZITAT.test(String(satz.sentAr || ''))) return [];
+      const bausteine = z.map(t => String((t && t.rein) || '').normalize('NFC'));
+      if (bausteine.some(w => !w) || new Set(bausteine).size < 2) return [];
+      if (z.slice(0, -1).every(t => /[،:]$/.test(String(t.wort || '')))) return [];
+      return [{
+        frage:'Bilde diesen Satz aus den Wörtern:',
+        art:'bauen',
+        bausteine
+      }];
+    }
   }
 ];
 
@@ -1835,7 +1893,9 @@ const UEB_GRUPPEN = [
   /* ⭐ Dritte Gruppe seit dem 22.09.2026 — die Übersetzungsübung. Die
      Überschrift sagt, WAS man tun muss, bevor man den Namen liest; „Schreiben"
      ist bei dieser Übung die eigentliche Information. */
-  ['Schreiben',        'schreiben']
+  ['Schreiben',        'schreiben'],
+  /* ⭐ Vierte Gruppe seit dem 04.10.2026 — der Satzbau (Übung 17). */
+  ['Bauen',            'bauen']
 ];
 
 function renderUebungsLeiste(){
@@ -2221,6 +2281,107 @@ function uebungSatzHtml(a){
   }).join(' ');
 }
 
+/* ---------- Satzbau (Übung 17, 04.10.2026) ----------
+   Auftrag und Entscheidungen stehen am Eintrag in UEBUNGEN. Ein Baustein ist
+   die NUMMER eines Wortes im Satz (0 … n-1); `a.bausteine[t]` ist sein Text
+   ohne Satzzeichen. Die Lösung ist also 0, 1, 2 … — verglichen wird aber der
+   TEXT, damit zwei gleiche Wörter austauschbar sind. */
+const UEB_BAU_MIN = 3;
+
+/* Eine Reihenfolge für den Vorrat, die NICHT schon die Lösung ist — sonst
+   wäre die Aufgabe „von rechts nach links antippen". Fällt das Mischen
+   zufällig auf die Lösung, tauscht das erste Wort mit dem ersten, das anders
+   lautet (baue() lässt nur Sätze mit mindestens zwei verschiedenen zu). */
+function uebungBauMischen(bausteine){
+  const reihe = shuffle(bausteine.map((_, i) => i));
+  if (reihe.every((t, k) => bausteine[t] === bausteine[k])){
+    const j = reihe.findIndex(t => bausteine[t] !== bausteine[reihe[0]]);
+    if (j > 0) [reihe[0], reihe[j]] = [reihe[j], reihe[0]];
+  }
+  return reihe;
+}
+
+/* true = richtig, false = falsch, null = es sind noch nicht alle Wörter gesetzt. */
+function uebungBauRichtig(a, reihe){
+  if (!a || !Array.isArray(a.bausteine) || !Array.isArray(reihe)) return null;
+  if (reihe.length < a.bausteine.length) return null;
+  return reihe.length === a.bausteine.length
+      && reihe.every((t, k) => a.bausteine[t] === a.bausteine[k]);
+}
+
+/* Der Vorrat wird je Aufgabe EINMAL gemischt — renderUebung() läuft nach jedem
+   Tipp neu, und ein Vorrat, der dabei jedes Mal anders läge, wäre nicht zu
+   treffen. Gemerkt an der Aufgabe selbst, wie bei UEB_DE_OFFEN. */
+function uebungBauReihe(a){
+  if (UEB.bauFuer !== a || !Array.isArray(UEB.bauReihe)){
+    UEB.bauReihe = uebungBauMischen(a.bausteine);
+    UEB.bauFuer = a;
+  }
+  return UEB.bauReihe;
+}
+
+/* Sein Satz: die gesetzten Wörter in der Reihenfolge, in der er sie angetippt
+   hat (UEB.gewaehlt). Nach dem Prüfen ist jedes Wort grün, das an seiner
+   Stelle steht, und rot, das woanders hingehört.
+   ⚠️ `bau-platz` liegt unsichtbar darunter (visibility:hidden, aria-hidden)
+   und hält die Höhe frei, die der fertige Satz braucht: ohne ihn rutschte der
+   Vorrat nach unten, sobald sein Satz in die zweite Zeile umbricht — genau
+   während er das nächste Wort antippen will.
+   ⚠️ Er steht in der Reihenfolge des SATZES. Zuerst stand er in der des
+   Vorrats; gemessen am 04.10.2026 bei 412 px an einem Satz aus sieben Wörtern:
+   der Vorrat brach in drei Zeilen um, der gebaute Satz in zwei — eine leere
+   Zeile blieb stehen, und andersherum wäre der Vorrat doch gerutscht. Wie
+   viele Zeilen es werden, hängt an der Reihenfolge; die des Satzes passt
+   genau dann, wenn er richtig baut. Zu sehen ist davon nichts. */
+function uebungBauSatzHtml(a){
+  const stein = (t, k) => {
+    let klassen = 'ueb-wort bau-wort';
+    if (UEB.beantwortet) klassen += (a.bausteine[t] === a.bausteine[k]) ? ' richtig' : ' falsch';
+    return `<span class="${klassen}" data-uebidx="${t}">${escapeHtml(a.bausteine[t])}</span>`;
+  };
+  const platz = a.bausteine
+    .map(w => `<span class="ueb-wort bau-wort">${escapeHtml(w)}</span>`).join(' ');
+  return `<span class="bau-platz" aria-hidden="true">${platz}</span>`
+       + `<span class="bau-zeile">${[...UEB.gewaehlt].map(stein).join(' ')}</span>`;
+}
+
+/* Der Vorrat. Ein gesetztes Wort hinterlässt seinen leeren Platz, statt dass
+   die übrigen nachrücken — sonst läge nach jedem Tipp jedes Wort woanders. */
+function uebungBankHtml(a){
+  return uebungBauReihe(a).map(t => {
+    const weg = UEB.gewaehlt.has(t);
+    return `<button type="button" class="ueb-baustein${weg ? ' benutzt' : ''}" data-baustein="${t}"`
+         + `${weg ? ' disabled aria-hidden="true"' : ''}>${escapeHtml(a.bausteine[t])}</button>`;
+  }).join('');
+}
+
+/* Ein Wort aus dem Vorrat ans Ende seines Satzes setzen. */
+function uebungBaustein(t){
+  const a = uebungAktuell();
+  if (!a || UEB.beantwortet || uebungArtVon(a) !== 'bauen') return;
+  if (!Number.isInteger(t) || t < 0 || t >= a.bausteine.length || UEB.gewaehlt.has(t)) return;
+  UEB.gewaehlt.add(t);
+  renderUebung();
+}
+
+function uebungBauPruefen(){
+  const a = uebungAktuell();
+  if (!a || UEB.beantwortet) return;
+  const richtig = uebungBauRichtig(a, [...UEB.gewaehlt]);
+  /* Ein halber Satz ist keine falsche Antwort, sondern noch keine — dieselbe
+     Überlegung wie beim leeren Feld der Übersetzung: sonst stünde ein Fehler
+     in der Statistik, den er nie gemacht hat. */
+  if (richtig === null){
+    if (typeof toast === 'function') toast('Setz erst alle Wörter in deinen Satz.');
+    return;
+  }
+  /* Beides hängt an der Aufgabe und bliebe für die nächste Runde stehen —
+     deshalb bei JEDEM Prüfen gesetzt, auch auf leer. */
+  a.aufloesung = richtig ? '' : 'Richtig ist:';
+  a.loesungSatz = richtig ? null : a.zeilen.map(z => z.wort);
+  uebungAuswerten(richtig);
+}
+
 /* „مَرْفُوع · Nominativ" wird zu zwei Zeilen — Arabisch oben, Deutsch
    darunter, ohne Trennpunkt. Warum, steht bei .opt-ar in index.html.
 
@@ -2285,8 +2446,22 @@ function renderUebung(){
     modusRingZeichnen('satzRing', st.gesamt, satzTageszielHeute());
   if (typeof modusBalkenZeichnen === 'function')
     modusBalkenZeichnen('uebBalken', UEB.idx + 1, UEB.liste.length);
-  document.getElementById('uebFrage').innerHTML = arabischHervor(a.frage);
-  document.getElementById('uebSatz').innerHTML = uebungSatzHtml(a);
+  /* ⭐ Satzbau (Übung 17, 04.10.2026): die deutsche Übersetzung IST die Aufgabe
+     und steht lesbar an der Frage (m.deAlsAufgabe); statt des arabischen Satzes
+     steht sein eigener, darunter der Vorrat. Begründung am Eintrag in UEBUNGEN. */
+  const baut = uebungArtVon(a) === 'bauen';
+  document.getElementById('uebFrage').innerHTML = arabischHervor(a.frage)
+    + (m.deAlsAufgabe ? `<span class="ueb-frage-de">${escapeHtml(a.satz.sentDe || '')}</span>` : '');
+  const satzFeld = document.getElementById('uebSatz');
+  satzFeld.innerHTML = baut ? uebungBauSatzHtml(a) : uebungSatzHtml(a);
+  satzFeld.classList.toggle('bau', baut);
+  /* Nach dem Prüfen ist der Vorrat leer (geprüft wird erst, wenn jedes Wort
+     gesetzt ist) — dann weicht er der Rückmeldung. */
+  const bank = document.getElementById('uebBank');
+  if (bank){
+    bank.innerHTML = baut ? uebungBankHtml(a) : '';
+    bank.classList.toggle('hidden', !baut || !!UEB.beantwortet);
+  }
   /* ⛔⛔ DIE DEUTSCHE ÜBERSETZUNG IST BEI EINER ÜBUNG DIE LÖSUNG (22.09.2026).
 
      Diese Zeile setzt sie in JEDER Satzübung unter den arabischen Satz. Bei
@@ -2319,7 +2494,9 @@ function renderUebung(){
     deFeld.textContent = a.satz.sentDe || '';
     deFeld.classList.remove('de-teilweise');
   }
-  deFeld.classList.toggle('hidden', !!(m.deVerbergen && !UEB.beantwortet));
+  /* Beim Satzbau steht das Deutsche schon an der Frage — ein zweites Mal
+     darunter wäre doppelt. */
+  deFeld.classList.toggle('hidden', !!((m.deVerbergen && !UEB.beantwortet) || m.deAlsAufgabe));
   /* ⭐ Verschwommen, bis er antippt — jede neue Aufgabe wieder (Elias,
      25.09.2026; Wortlaut und Begründung bei SENT_DE_OFFEN in js/saetze.js). */
   if (UEB_DE_OFFEN !== a) UEB_DE_OFFEN = null;
@@ -2389,7 +2566,9 @@ function renderUebung(){
      und ein zweiter Knopf waere ein Umweg. */
   /* Seit dem 22.09.2026 auch bei „Übersetzen": dort ist „Prüfen" der einzige
      Weg zur Antwort — ein Textfeld hat keinen Klick, der von selbst auswertet. */
-  const brauchtPruefen = ['mehrfach', 'schreiben'].includes(uebungArtVon(a));
+  /* Seit dem 04.10.2026 auch beim Satzbau: er soll umstellen können, bevor
+     gewertet wird. */
+  const brauchtPruefen = ['mehrfach', 'schreiben', 'bauen'].includes(uebungArtVon(a));
   document.getElementById('btnUebPruefen').classList.toggle('hidden',
     !brauchtPruefen || UEB.beantwortet);
   const weiterKnopf = document.getElementById('btnUebWeiter');
@@ -2409,8 +2588,18 @@ function renderUebung(){
        Aufloesung dieselbe Behandlung bekommen wie in den Antwortknoepfen:
        groesser und antippbar. arabischHervor() maskiert selbst. */
     const warum = uebungWarum(a);
+    /* Satzbau: der richtige Satz in einer EIGENEN Zeile von rechts nach links —
+       mitten im deutschen Text stünde sein Punkt auf der falschen Seite. Jedes
+       Wort einzeln, damit der Tipp darauf die Bedeutung zeigt wie überall in
+       der Lösung (Handler an uebRueckmeldung). */
+    const loesungSatz = Array.isArray(a.loesungSatz) && a.loesungSatz.length
+      ? `<span class="ueb-rueck-satz" lang="ar" dir="rtl">`
+        + a.loesungSatz.map(w => `<span class="ar-wort" lang="ar">${escapeHtml(w)}</span>`).join(' ')
+        + '</span>'
+      : '';
     rueck.innerHTML = arabischHervor(teile.join(' '))
-      + (warum ? `<button class="ueb-warum" type="button" data-regelkarte="${escapeHtml(warum.id)}">Warum? → ${arabischHervor(warum.name)}</button>` : '');
+      + loesungSatz
+      + (warum ?`<button class="ueb-warum" type="button" data-regelkarte="${escapeHtml(warum.id)}">Warum? → ${arabischHervor(warum.name)}</button>` : '');
   }
 }
 
@@ -2485,7 +2674,12 @@ const UEBUNG_WARUM = {
      ⚠️ Der Eintrag steht trotzdem da: pruefe-regelsammlung.mjs verlangt, dass
      JEDE Übung genannt ist. Genau deshalb fiel er beim Bauen auf.
      [[vorgabewert_sieht_aus_wie_befund]] */
-  'uebersetzen': null
+  'uebersetzen': null,
+  /* Auch hier ist `null` die richtige Antwort: beim Satzbau (Übung 17) steht
+     keine einzelne Regel hinter einer falschen Reihenfolge, und welche es im
+     einzelnen Satz wäre, sagt die Aufgabe nicht. Lieber kein Knopf als die
+     falsche Karte. */
+  'satz-bauen': null
 };
 
 /* ⭐⭐ UNSICHTBARE ENDUNG → DIE KARTE, DIE GENAU DAS ERKLÄRT (16.09.2026)
@@ -2709,8 +2903,16 @@ function satzTagSpeichern(t){ try { LS.set('vt_satzTag', t); } catch (e) { /* pr
    · „Gemischt" zieht nur die Übungen des heutigen Teils reihum; das
      Tagesziel ist genau ein Teil (satzTageszielHeute()): seine Einstellung
      anteilig. Die Einstellung selbst bleibt unverändert (satzTagesziel()).
-   ⛔ Wechsel und Tagesziel sind seit v618 anders — der Block nach satzTeile(). */
-const UEB_ZEIT_SCHAETZUNG = { mehrfach: 20, wahl: 12, schreiben: 60 };
+   ⛔ Wechsel und Tagesziel sind seit v618 anders — der Block nach satzTeile().
+   ⚠️ `bauen: 12` (Satzbau, 04.10.2026) ist KEINE Schätzung der Dauer, sondern
+   die Zahl, bei der seine bisherige Aufteilung stehen bleibt. Gemessen an
+   seinem Stand (KV, 04.10.2026; keine Übung hat 10 gemessene Antworten, also
+   entscheidet die Schätzung): bei 30 hätten 13 der 16 Übungen den Teil
+   gewechselt, bei 20 drei, bei 12 keine — die neue kommt als letzte dran und
+   landet im kürzeren Teil (Teil 1, dann 8 und 9 Übungen). Wer hier eine
+   „ehrlichere" Zahl einträgt, würfelt seine zwei Teile neu. Ab 10 Antworten
+   gilt ohnehin die Messung. */
+const UEB_ZEIT_SCHAETZUNG = { mehrfach: 20, wahl: 12, schreiben: 60, bauen: 12 };
 function satzTeile(){
   /* ⭐ VERWANDTE ÜBUNGEN NIE IM SELBEN TEIL (27.09.2026)
      Elias, mit Bild (Teil 1, erst Übung 12, dann Übung 10, beide am Satz
@@ -3056,6 +3258,12 @@ function uebungWortTipp(i){
      Fenster: uebWortFensterZeigen() unten; zweiter Tipp aufs selbe Wort macht
      es zu, die Tastatur bleibt offen (mousedown am Satz). */
   if (uebungArtVon(a) === 'schreiben'){ uebWortFensterZeigen(i); return; }
+  /* Satzbau: ein Tipp auf ein Wort in SEINEM Satz legt es zurück in den Vorrat
+     (i ist dort die Nummer des Bausteins, siehe uebungBauSatzHtml). */
+  if (uebungArtVon(a) === 'bauen'){
+    if (UEB.gewaehlt.delete(i)) renderUebung();
+    return;
+  }
   if (uebungArtVon(a) === 'mehrfach'){
     if (UEB.gewaehlt.has(i)) UEB.gewaehlt.delete(i); else UEB.gewaehlt.add(i);
     renderUebung();
@@ -3073,6 +3281,7 @@ function uebungMehrfachPruefen(){
      nicht im Knopf: der Knopf hat einen Handler, und zwei Handler auf einem
      Knopf sind zwei Wahrheiten darüber, was er tut. */
   if (uebungArtVon(a) === 'schreiben'){ uebungSchreibenPruefen(); return; }
+  if (uebungArtVon(a) === 'bauen'){ uebungBauPruefen(); return; }
   const soll = new Set(a.ziele);
   const richtig = soll.size === UEB.gewaehlt.size && [...soll].every(i=>UEB.gewaehlt.has(i));
   uebungAuswerten(richtig);
@@ -3174,6 +3383,16 @@ document.getElementById('uebSatz').addEventListener('click', (e)=>{
   const span = e.target.closest('[data-uebidx]');
   if (span) uebungWortTipp(Number(span.dataset.uebidx));
 });
+/* Der Vorrat des Satzbaus (Übung 17). ⚠️ Mit Abfrage: eine index.html aus einem
+   älteren Vorrat hat das Element nicht, und ein Wurf hier nähme die ganze
+   Verdrahtung darunter mit. */
+{
+  const bankEl = document.getElementById('uebBank');
+  if (bankEl) bankEl.addEventListener('click', (e)=>{
+    const stein = e.target.closest('[data-baustein]');
+    if (stein) uebungBaustein(Number(stein.dataset.baustein));
+  });
+}
 /* Beim Übersetzen bleibt das Eingabefeld im Fokus, wenn er ein Wort antippt —
    sonst klappte die Tastatur bei jedem Nachschlagen zu. */
 document.getElementById('uebSatz').addEventListener('mousedown', (e)=>{

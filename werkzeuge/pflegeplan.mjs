@@ -429,6 +429,30 @@ export const PFLEGEPLAN = [
       wie: 'Teil B wird rot, wenn eine Aufgabe ihre Lösung nicht zur Wahl stellt; Teil C meldet 0 % neueste Wörter; drei Störtests laufen in jedem Sammellauf (--stoertest)' },
   },
   {
+    /* ⭐ 04.10.2026 (v642) — ÜBUNG 17 „SATZBAU". Elias, Google Tasks (Liste
+       „Meine Aufgaben", 03.10.2026): „Claude Wörter haben und satzbau selber
+       machen sodass man den Satz selbst bildet Claude" — und im Chat am
+       04.10.2026: „es geht um wörter bauen als satz übung. guck mal nach und
+       baue". Die Übung steht in js/uebung.js (Eintrag `satz-bauen`, dazu das
+       Element uebBank in index.html) — keine eigene Datei, deshalb von Hand hier.
+       Die drei Fragen: Neuer Inhalt wächst von selbst nach (baue() nimmt jeden
+       Satz seines Vorrats mit mindestens drei Wörtern); er trägt nichts ein;
+       veralten kann die Wertung, wenn jemand die Bausteine oder den Zerleger
+       ändert — das bewacht der eigene Test. */
+    funktion: 'Satzbau (Übung 17): aus den Wörtern den Satz selbst bilden',
+    dateien: [],
+    bildschirme: [],
+    neuerInhalt: { routine: W, schritt: '1b.8', beleg: 'node werkzeuge/pruefe-satzmodus-aktuell.mjs', werkzeug: 'werkzeuge/pruefe-satzmodus-aktuell.mjs',
+      wie: 'Jeder neue belegte Satz mit mindestens drei Wörtern wird von selbst eine Aufgabe (baue() liest den Satzvorrat bei jedem Aufbau). Teil H des Prüfers zählt die Aufgaben jeder Übung in seiner Auswahl und meldet eine Lücke unter 15 (am 04.10.2026: 386)' },
+    eingaben: { nein: 'Er tippt nur Wörter an; gespeichert wird richtig/falsch über dieselben Zähler wie bei den übrigen Übungen.' },
+    /* ⚠️ `werkzeug` nennt den Prüfer, den die Wartung beim Namen ruft (Teil H
+       prüft JEDE Übung: genau ein Teil, Nummern linear, genug Aufgaben). Der
+       eigene Test läuft im Sammellauf mit, den die Wartung ebenfalls ruft —
+       pruefe-sammellauf.mjs wird rot, wenn er dort fehlt. */
+    veralten: { routine: W, schritt: '1b.8', beleg: 'node werkzeuge/alle-pruefer.mjs', werkzeug: 'werkzeuge/pruefe-satzmodus-aktuell.mjs',
+      wie: 'Teil H des Prüfers prüft die Übung wie jede andere; dazu läuft test-satz-bauen.mjs in jedem Sammellauf: Bausteine = Wörter des Satzes ohne Satzzeichen, Wertung nach dem Wort, der ganze Ablauf an einem mitschreibenden DOM; 17 Störtests am echten Quelltext müssen rot werden' },
+  },
+  {
     /* ⭐⭐ 22.09.2026 (v566) — EIN FACHBEGRIFF FOLGT SEINER REGEL.
 
        Elias, nachdem ihm vier Karteikarten hintereinander begegnet waren, deren

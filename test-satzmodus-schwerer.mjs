@@ -189,7 +189,9 @@ function laufe(quelle, still){
      eine Übung ohne Antippen gehört nicht hinein.
      ⚠️ Der Test war deshalb zu Recht rot: eine neue Art soll auffallen. Was
      hier steht, ist die Antwort darauf — kein Stummschalten. */
-  const tippModi = U.filter(m => m.art !== 'wahl' && m.art !== 'schreiben');
+  /* 04.10.2026: der Satzbau (Übung 17, art 'bauen') ist keine Tipp-Übung im
+     Satz — er hat seine eigene Gruppe und seinen eigenen Test (test-satz-bauen.mjs). */
+  const tippModi = U.filter(m => m.art !== 'wahl' && m.art !== 'schreiben' && m.art !== 'bauen');
   pruefe('es gibt Tipp-Übungen (sonst prüft dieser Abschnitt nichts)', tippModi.length >= 5,
     tippModi.map(m => m.id).join(', '));
   const aufgaben = [];

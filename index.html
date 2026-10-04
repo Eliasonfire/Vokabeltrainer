@@ -2684,6 +2684,33 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
 .ueb-wort.richtig{background:var(--green-wash);border-color:var(--green-dim);color:var(--green);}
 .ueb-wort.falsch{background:var(--red-wash);border-color:var(--red-dim);color:var(--red-bright);}
 .ueb-de{color:var(--text-dim);font-size:var(--fs-sm);line-height:1.5;text-align:center;}
+/* ⭐ Satzbau (Übung 17, 04.10.2026): die deutsche Übersetzung ist die Aufgabe
+   und steht deshalb an der Frage; oben sein Satz, darunter der Vorrat.
+   ⚠️ .bau-platz und .bau-zeile liegen in DERSELBEN Gitterzelle: der Platzhalter
+   (unsichtbar, alle Wörter) hält die Höhe des fertigen Satzes frei, damit der
+   Vorrat nicht nach unten rutscht, sobald sein Satz in die zweite Zeile
+   umbricht. */
+.ueb-frage-de{display:block;margin-top:var(--sp-1);font-weight:700;}
+.ueb-satz.bau{display:grid;padding-bottom:var(--sp-2);border-bottom:1px dashed var(--border-strong);}
+.bau-platz,.bau-zeile{grid-area:1/1;display:flex;flex-wrap:wrap;gap:var(--sp-2);justify-content:center;align-content:flex-start;}
+.bau-platz{visibility:hidden;}
+.bau-wort{background:var(--surface-2);border-color:var(--border-strong);}
+.ueb-bank{
+  font-family:var(--font-ar);font-size:clamp(calc(var(--fs-lg) * var(--ar-faktor)),7vw,2.4rem);line-height:2.1;
+  display:flex;flex-wrap:wrap;gap:var(--sp-2);justify-content:center;
+}
+.ueb-baustein{
+  font:inherit;color:var(--text);background:var(--surface-2);
+  border:1px solid var(--border-strong);border-radius:var(--r-2);padding:2px 10px;cursor:pointer;
+  transition:transform var(--dur-1) var(--ease-out);
+}
+.ueb-baustein:active{transform:scale(.94);}
+/* Ein gesetztes Wort hinterlässt seinen Platz: die übrigen bleiben liegen. */
+.ueb-baustein.benutzt{color:transparent;background:transparent;border-style:dashed;border-color:var(--border);cursor:default;}
+/* ⚠️ 1.45em: die Wörter darin tragen .ar-wort und wären sonst rund 19 px groß
+   (gemessen bei 412 px Breite), sein Satz darüber 32 px. So sind es rund 28 px —
+   der richtige Satz ist das, was er hier lesen soll. */
+.ueb-rueck-satz{display:block;margin-top:var(--sp-2);font-family:var(--font-ar);font-size:1.45em;line-height:2;}
 /* ⭐ Das Eingabefeld der Übersetzungsübung (22.09.2026).
    ⚠️ `font-size:16px` ist kein Gestaltungswert, sondern eine Notwendigkeit:
    Safari auf dem iPhone zoomt die ganze Seite hinein, sobald ein Feld kleiner
@@ -6058,6 +6085,11 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         <textarea class="ueb-eingabe hidden" id="uebEingabe" rows="2"
                   lang="de" dir="ltr" autocomplete="off" autocorrect="off"
                   spellcheck="false" placeholder="Deine Übersetzung …"></textarea>
+        <!-- ⭐ Der Vorrat des Satzbaus (Übung 17, 04.10.2026). Elias, Google
+             Tasks: „Wörter haben und satzbau selber machen sodass man den Satz
+             selbst bildet". Sein Satz wächst oben in uebSatz, hier liegen die
+             Wörter durcheinander. -->
+        <div class="ueb-bank hidden" id="uebBank" lang="ar" dir="rtl"></div>
         <div class="ueb-wahl hidden" id="uebWahl"></div>
         <div class="ueb-rueck hidden" id="uebRueckmeldung"></div>
         <div class="ueb-hinweis" id="uebHinweis"></div>
