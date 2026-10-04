@@ -1648,7 +1648,9 @@ const UEBUNGEN = [
      den Rat, die Mehrzahl mit jedem Wort mitzulernen (20:10) — denselben Rat
      gibt der Schlüssel zu Band 1 in Lektion 13.
 
-     ⛔ Die Gestaltung ist MEINE (04.10.2026), er hat sie nicht gesehen:
+     ⛔ Die Gestaltung ist MEINE (04.10.2026). Er hat sie am 05.10.2026
+     bestätigt — auf meine offene Frage, „ob die Plural-Übung so bleiben
+     soll", kam: „ist okay". Im Einzelnen:
      - Gefragt wird am Wort IM SATZ. Gemessen an seiner Auswahl stehen nur 5
        Satzwörter selbst in der Mehrzahl — eine Übung nur an Plural-Sätzen
        hätte keinen Stoff. 657 Stellen in 345 von 440 Sätzen tragen aber ein

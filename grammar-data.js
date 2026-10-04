@@ -3386,6 +3386,33 @@ const SENTENCE_TAGS = {
   ],
   "mb1-72-9": [
     { ruleId: "ismul-isara-haulai-01", matchText: "هَؤُلَاءِ" }
+  ],
+  "mb1-74-1": [
+    { ruleId: "jam-muannath-salim-01", matchText: "الْفَتَيَاتُ" },
+    { ruleId: "ismul-isara-haulai-01", matchText: "هَؤُلَاءِ" }
+  ],
+  "mb1-74-5": [
+    { ruleId: "ismul-isara-haulai-01", matchText: "هَؤُلَاءِ" }
+  ],
+  "mb1-75-2": [
+    { ruleId: "jam-muannath-salim-01", matchText: "الْفَتَيَاتُ" }
+  ],
+  "mb1-75-3": [
+    { ruleId: "jam-muannath-salim-01", matchText: "زَمِيلَاتِي", bedeutung: 'ـِي = mein' }
+  ],
+  "mb1-75-7": [
+    { ruleId: "jam-muannath-salim-01", matchText: "طَبِيبَاتٌ" },
+    { ruleId: "jam-mudhakkar-salim-01", matchText: "مُدَرِّسُونَ" },
+    { ruleId: "jam-taksir-01", matchText: "أَزْوَاجُهُنَّ", bedeutung: 'ـهُنَّ = ihr (Mehrzahl, weiblich)' }
+  ],
+  "mb1-76-10": [
+    { ruleId: "jam-muannath-salim-01", matchText: "طَالِبَاتٌ" },
+    { ruleId: "jam-taksir-01", matchText: "كِبَارٌ" }
+  ],
+  "mb1-76-11": [
+    { ruleId: "jam-muannath-salim-01", matchText: "طَبِيبَاتٌ" },
+    { ruleId: "jam-taksir-01", matchText: "الطِّوَالُ" },
+    { ruleId: "ismul-isara-haulai-01", matchText: "هَؤُلَاءِ" }
   ]
 };
 

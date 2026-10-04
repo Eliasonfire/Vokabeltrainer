@@ -851,5 +851,94 @@ const LEHRBUCH_SAETZE = [
   { id: 'mb1-72-12', seite: 72, kapitel: 13, vokalisationErgaenzt: true,
     gedruckt: 'Übung 5, Nr. 12: ohne Zeichen',
     sentAr: 'هَؤُلَاءِ الْفِتْيَةُ إِخْوَةٌ. أَبُوهُمْ إِمَامُ هَذَا الْمَسْجِدِ.',
-    sentDe: 'Diese jungen Männer sind Brüder. Ihr Vater ist der Imam dieser Moschee.' }
+    sentDe: 'Diese jungen Männer sind Brüder. Ihr Vater ist der Imam dieser Moschee.' },
+
+  /* ⭐ Kapitel 13, Teil B — die weibliche Mehrzahl (v650, 05.10.2026). MEINE
+     Entscheidung, wieder gestützt auf seinen Dauerauftrag vom 24.09.2026.
+     Gemessen davor: eine regelmäßige WEIBLICHE Mehrzahl stand in seinem Vorrat
+     in einem einzigen Satz, „sie" für mehrere Frauen und „ihr" für mehrere
+     Frauen in je zwei.
+
+     Quelle: sein beschriftetes Buch, PDF-Seiten 96 bis 98 = Buchseiten 74 bis
+     76, gelesen bei 110 dpi. ⚠️ Teil B beginnt auf Buchseite 74 (PDF 96) —
+     auf Seite 73 (PDF 95) stehen noch die Zeilen 14 bis 16 der Übung 5 von
+     Teil A.
+
+     Genommen ist NUR, was gedruckt dasteht: das Gespräch auf Seite 74, die
+     Beispielzeile der Übung 1 und Zeilen der Übung 2 („Lies und schreib").
+     Die Zahl hinter der Seite ist bei den Seiten 75 und 76 die Nummer der
+     Übungszeile im Buch (deshalb Lücken), bei Seite 74 zählt sie die Stücke
+     des Gesprächs.
+
+     ⛔ ZURÜCKGEHALTEN, bis Elias gesagt hat, ob sie „sie gingen" im Unterricht
+     schon hatten (die Mehrzahl des Verbs, gefragt am 04.10.2026, offen):
+     Seite 73 Nr. 14 (hinausgegangen und gegangen, männlich), Seite 75 Nr. 4
+     und Seite 76 Nr. 12 (weiblich) und das Beispiel der Übung 3 auf Seite 76.
+
+     ⛔ NICHT genommen, weil ein Wort darin keine Karte in seiner Auswahl hat
+     (Stand 05.10.2026): Seite 73 Nr. 15 und Seite 75 Nr. 6 („Muslim" steht
+     nur bei den Zusatzkarten, nicht in seiner Auswahl), Seite 73 Nr. 16 und
+     Seite 75 Nr. 9 („einige"). Die weiblichen Formen zu Karten, die er hat
+     (Studentin, Ärztin, Lehrerin, Mitschülerin), zählen als bekannt.
+
+     ⛔ Von Seite 74 fehlt die Frage vor mb1-74-2 («أَأَخَوَاتٌ هُنَّ؟», „Sind
+     sie Schwestern?"): dort steht die Aussage VOR dem „sie", und der Zerleger
+     hält das erste Wort dann für das مُبْتَدَأ. Lieber die Zeile weglassen, als
+     ihm in den Übungen eine falsche Rolle beizubringen. Kann der Zerleger
+     das, gehört die Frage davor.
+
+     Nicht gedruckt und deshalb nicht hier: die Lösungen der Übungen 1 und 3
+     (dort steht nur die Einzahl) und die Lückensätze der Übung 5 auf Seite 77. */
+  { id: 'mb1-74-1', seite: 74, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'مَنْ und الفَتَيَات mit ihren Zeichen bis auf die Endung, هؤلاء ohne Zeichen, يا und مريمُ zusammengeschrieben mit Damma am Ende; هُنَّ زَمِيلَاتِي vollständig',
+    sentAr: 'مَنْ هَؤُلَاءِ الْفَتَيَاتُ يَا مَرْيَمُ؟ هُنَّ زَمِيلَاتِي.',
+    sentDe: 'Wer sind diese jungen Frauen, Maryam? Sie sind meine Mitschülerinnen.' },
+  { id: 'mb1-74-2', seite: 74, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'نعم ohne Zeichen und ohne Komma; هُنَّ أَخَوَاتٌ vollständig. Die Frage davor ist weggelassen (siehe oben)',
+    sentAr: 'نَعَمْ، هُنَّ أَخَوَاتٌ.',
+    sentDe: 'Ja, sie sind Schwestern.' },
+  { id: 'mb1-74-3', seite: 74, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'من أبو ohne Zeichen, die Endung هُنَّ jedes Mal mit ihren Zeichen; الشَّيْخُ بِلَالٌ und أُمُّهُنَّ أُسْتَاذَتِي vollständig',
+    sentAr: 'مَنْ أَبُوهُنَّ؟ أَبُوهُنَّ الشَّيْخُ بِلَالٌ. أُمُّهُنَّ أُسْتَاذَتِي.',
+    sentDe: 'Wer ist ihr Vater? Ihr Vater ist Scheich Bilal. Ihre Mutter ist meine Professorin.' },
+  { id: 'mb1-74-4', seite: 74, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'أين und من ohne Zeichen; بَيْتُهُنَّ beide Male und قَرِيبٌ vollständig; المدرسةِ nur mit der Kasra am Ende',
+    sentAr: 'أَيْنَ بَيْتُهُنَّ؟ بَيْتُهُنَّ قَرِيبٌ مِنَ الْمَدْرَسَةِ.',
+    sentDe: 'Wo ist ihr Haus? Ihr Haus ist nahe bei der Schule.' },
+  { id: 'mb1-74-5', seite: 74, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'Beispielzeile der Übung 1: هذه ohne Zeichen, بنتٌ nur mit der Endung; هَؤُلَاءِ بَنَاتٌ vollständig',
+    sentAr: 'هَذِهِ بِنْتٌ. هَؤُلَاءِ بَنَاتٌ.',
+    sentDe: 'Das ist ein Mädchen. Das sind Mädchen.' },
+  { id: 'mb1-75-1', seite: 75, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'Übung 2, Nr. 1: إِخْوَتِي und أَخَوَاتِي mit ihren Zeichen, der Rest ohne',
+    sentAr: 'هَؤُلَاءِ إِخْوَتِي وَهَؤُلَاءِ أَخَوَاتِي.',
+    sentDe: 'Das sind meine Brüder, und das sind meine Schwestern.' },
+  { id: 'mb1-75-2', seite: 75, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'Übung 2, Nr. 2: nur المدرِّسة mit Schadda und Kasra auf dem Ra (also die Lehrerin, nicht die Schule), der Rest ohne Zeichen',
+    sentAr: 'مَنْ هَؤُلَاءِ الْفَتَيَاتُ؟ هَؤُلَاءِ بَنَاتُ الْمُدَرِّسَةِ.',
+    sentDe: 'Wer sind diese jungen Frauen? Das sind die Töchter der Lehrerin.' },
+  { id: 'mb1-75-3', seite: 75, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'Übung 2, Nr. 3: أبوهنّ mit Schadda, مدرِّسة mit Schadda und Kasra auf dem Ra, der Rest ohne Zeichen',
+    sentAr: 'هَؤُلَاءِ الْفَتَيَاتُ زَمِيلَاتِي. أَبُوهُنَّ طَبِيبٌ وَأُمُّهُنَّ مُدَرِّسَةٌ.',
+    sentDe: 'Diese jungen Frauen sind meine Mitschülerinnen. Ihr Vater ist Arzt und ihre Mutter ist Lehrerin.' },
+  { id: 'mb1-75-5', seite: 75, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'Übung 2, Nr. 5: عمّتي und هنّ mit Schadda, der Rest ohne Zeichen. Die Kasra in بَنَاتُكِ ist ergänzt — angeredet ist die Tante',
+    sentAr: 'أَيْنَ بَنَاتُكِ يَا عَمَّتِي؟ هُنَّ فِي الْمَطْبَخِ.',
+    sentDe: 'Wo sind deine Töchter, meine Tante? Sie sind in der Küche.' },
+  { id: 'mb1-75-7', seite: 75, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'Übung 2, Nr. 7: ohne Zeichen',
+    sentAr: 'هَؤُلَاءِ طَبِيبَاتٌ. أَزْوَاجُهُنَّ مُدَرِّسُونَ.',
+    sentDe: 'Das sind Ärztinnen. Ihre Ehemänner sind Lehrer.' },
+  { id: 'mb1-75-8', seite: 75, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'Übung 2, Nr. 8: المَرْأَةُ und زَوْجَةُ mit ihren Zeichen, der Rest ohne. الجديد gehört zum Arzt (Genitiv), nicht zur Ehefrau — dort stünde die weibliche Form',
+    sentAr: 'مَنْ هَذِهِ الْمَرْأَةُ؟ هِيَ زَوْجَةُ الطَّبِيبِ الْجَدِيدِ.',
+    sentDe: 'Wer ist diese Frau? Sie ist die Ehefrau des neuen Arztes.' },
+  { id: 'mb1-76-10', seite: 76, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'Übung 2, Nr. 10: nur لَيْلَى mit Zeichen, mit يا zusammengeschrieben; نعم ohne Komma. Die Kasra in أَلَكِ ist ergänzt — angeredet ist Layla',
+    sentAr: 'أَلَكِ بَنَاتٌ يَا لَيْلَى؟ نَعَمْ، لِي بَنَاتٌ كِبَارٌ. وَهُنَّ طَالِبَاتٌ بِالْجَامِعَةِ.',
+    sentDe: 'Hast du Töchter, Layla? Ja, ich habe große Töchter. Und sie sind Studentinnen an der Universität.' },
+  { id: 'mb1-76-11', seite: 76, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'Übung 2, Nr. 11: النِّساءُ mit Kasra und Damma, der Rest ohne Zeichen',
+    sentAr: 'مَنْ هَؤُلَاءِ النِّسَاءُ الطِّوَالُ؟ هُنَّ طَبِيبَاتٌ مِنْ أَمْرِيكَا.',
+    sentDe: 'Wer sind diese großen Frauen? Sie sind Ärztinnen aus Amerika.' }
 ];
