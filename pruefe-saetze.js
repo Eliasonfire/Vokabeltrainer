@@ -532,6 +532,39 @@ let lexikonSchwer = 0;
         satz => { const e = EICH_K13.find(x => x[0] === satz); return e[1] ? mitLexikon(e[1], () => e[2](analysiereSatz(satz))) : e[2](analysiereSatz(satz)); },
         'Kapitel 13: Hinweiswort der Mehrzahl, Nomen auf Damma, Angerufener');
 
+  /* ⭐ Kapitel 13 Teil B (v650, 05.10.2026) — zwei Regeln in js/irab.js:
+     (1) ـكُنَّ und ـهُنَّ sind Besitzendungen, in beiden Zeichenfolgen
+         (schaddaSuffixAb); vorher wurden sie nie erkannt.
+     (2) Eine Besitzendung macht das Wort BESTIMMT: ein unbestimmtes Adjektiv
+         dahinter ist die Aussage (خَبَر), eines mit Artikel ein نَعْت.
+     Gemessen mit dem Zerleger von v649: die Fälle 1 bis 7 fallen durch, die
+     zwei Gegenproben bestehen. Das Mini-Lexikon macht die Fälle unabhängig
+     davon, welche Bücher geladen sind. */
+  const ADJ_K13B = [{ ar: 'قَرِيبٌ', type: 'adjective', de: 'nah' }, { ar: 'جَدِيدٌ', type: 'adjective', de: 'neu' }];
+  const EICH_K13B = [
+    ['بَيْتُهُنَّ قَرِيبٌ مِنَ الْمَدْرَسَةِ.', ADJ_K13B, r => /^مُبْتَدَأ/.test(r[0].rolle) && r[0].stimmt === true && r[1].rolle === 'خَبَر',
+      'baytuhunna: die Endung -hunna wird abgenommen (Damma davor = raf), nah ist die Aussage'],
+    ['بَيْتُهُنَّ قَرِيبٌ.', ADJ_K13B, r => /^مُبْتَدَأ/.test(r[0].rolle) && r[0].stimmt === true && r[1].rolle === 'خَبَر',
+      'dasselbe mit der Schadda VOR dem Fatha (nicht NFC) — beide Zeichenfolgen gelten'],
+    ['أَبُوهُنَّ الشَّيْخُ بِلَالٌ.', null, r => /^مُبْتَدَأ/.test(r[0].rolle) && r[1].rolle === 'خَبَر',
+      'hinter abuhunna steht die Aussage, kein mudaf ilayh — die Endung ist schon der Besitzer'],
+    ['هَؤُلَاءِ طَبِيبَاتٌ. أَزْوَاجُهُنَّ مُدَرِّسُونَ.', null, r => r[2].stimmt === true && r[3].rolle === 'خَبَر',
+      'azwajuhunna: Endung passt, die Lehrer sind die Aussage'],
+    ['كِتَابُكُنَّ جَدِيدٌ.', ADJ_K13B, r => /^مُبْتَدَأ/.test(r[0].rolle) && r[0].stimmt !== false && r[1].rolle === 'خَبَر',
+      'die zweite Endung mit Schadda, -kunna'],
+    ['بَيْتُهُ قَرِيبٌ.', ADJ_K13B, r => r[1].rolle === 'خَبَر',
+      'auch mit -hu: unbestimmtes Adjektiv hinter einem Wort mit Besitzendung ist die Aussage'],
+    ['بَيْتُهُ الْجَدِيدُ قَرِيبٌ.', ADJ_K13B, r => /^نَعْت/.test(r[1].rolle) && r[2].rolle === 'خَبَر',
+      'Adjektiv MIT Artikel hinter der Besitzendung ist nat, das unbestimmte danach die Aussage'],
+    ['هَذَا بَيْتٌ قَرِيبٌ.', ADJ_K13B, r => /^نَعْت/.test(r[2].rolle),
+      'Gegenprobe: unbestimmt hinter unbestimmt bleibt nat'],
+    ['الْبَيْتُ الْقَرِيبُ جَدِيدٌ.', ADJ_K13B, r => /^نَعْت/.test(r[1].rolle) && r[2].rolle === 'خَبَر',
+      'Gegenprobe: bestimmt hinter bestimmt bleibt nat']
+  ];
+  eiche(EICH_K13B.map(([satz, , , warum]) => [satz, true, warum]),
+        satz => { const e = EICH_K13B.find(x => x[0] === satz); return e[1] ? mitLexikon(e[1], () => e[2](analysiereSatz(satz))) : e[2](analysiereSatz(satz)); },
+        'Kapitel 13 Teil B: Besitzendung mit Schadda, Bestimmtheit durch Besitzendung');
+
   /* ⭐ نَعْت des مُضَاف hinter dem مُضَاف إِلَيْه (17.09.2026, js/irab.js
      mudafFuerNat). Beleg nat-wen-beschreibt-01: „Man muss immer gucken, wer
      beschreibt wen" — die Endung entscheidet. Zwei Gegenproben halten die

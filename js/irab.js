@@ -274,8 +274,30 @@ const skelett = s => ohneVokale(s).replace(/[\u0623\u0625\u0622\u0671]/g, '\u062
    hinten gehoert zum "dein". Ohne diese Abtrennung liest der Pruefer jedes
    Wort mit Suffix als Genitiv. */
 const SUFFIXE = ['كَ','كِ','كُمْ','كُنَّ','هُ','هَا','هُمْ','هُنَّ','نَا','ي'];
+/* ⛔ ـكُنَّ und ـهُنَّ — die zwei Endungen mit Schadda (v650, 05.10.2026).
+   Gefunden an den ersten Buchsätzen mit „ihr" für mehrere Frauen (Madina 1,
+   Lektion 13 Teil B, «بَيْتُهُنَّ قَرِيبٌ مِنَ الْمَدْرَسَةِ»): beide standen in der
+   Liste oben und wurden trotzdem NIE erkannt, aus zwei Gründen zugleich.
+   (1) In der Liste steht die Schadda VOR dem Fatha; ein Satz in NFC trägt sie
+       dahinter — `endsWith` traf nie.
+   (2) endung() nahm die Schadda heraus, BEVOR ohneSuffix() suchte — danach
+       gab es am Wort nichts mehr, das auf ـهُنَّ enden konnte.
+   Folge: بَيْتُهُنَّ galt als Wort ohne Besitzendung, sein Fatha am Schluss als
+   Kasus („Endung passt nicht"), und hinter أَبُوهُنَّ wurde das nächste Nomen
+   zum مُضَاف إِلَيْه statt zum خَبَر.
+   Darum hier beide Zeichenfolgen, und endung() fragt diese zwei zuerst, solange
+   die Schadda noch dasteht. Ohne Schadda zu vergleichen wäre falsch: dann
+   endete auch أَنْ يَسْكُنَ („dass er wohnt") auf eine „Besitzendung".
+   Eichfälle: EICH_K13B in pruefe-saetze.js. */
+const SCHADDA_SUFFIXE = ['كُن', 'هُن'].flatMap(s => [s + 'َّ', s + 'َّ']);
+function schaddaSuffixAb(w){
+  for (const suf of SCHADDA_SUFFIXE)
+    if (w.length > suf.length + 2 && w.endsWith(suf)) return w.slice(0, -suf.length);
+  return null;
+}
 function hatSuffix(w){
   const rein = String(w).replace(/[.،؟!«»:؛]/g, '');
+  if (schaddaSuffixAb(rein) !== null) return true;
   return SUFFIXE.some(suf => rein.length > suf.length + 2 && rein.endsWith(suf));
 }
 function ohneSuffix(w){
@@ -297,7 +319,12 @@ function endung(wort){
      findet eine Endungssuche "von hinten" bei jedem verdoppelten Konsonanten
      nichts - das hat den Pruefer bei عَمُّ und أُمُّ jedes Mal danebenliegen
      lassen. Also raus damit, bevor gelesen wird. */
-  const w = ohneSuffix((wort || '').replace(/[.،؟!«»:؛]/g, '').replace(/ّ/g, ''));
+  /* v650: erst die zwei Endungen mit Schadda (ـكُنَّ, ـهُنَّ) abnehmen, solange
+     die Schadda noch dasteht — schaddaSuffixAb() oben. Für alles andere bleibt
+     es bei der Reihenfolge von vorher: Schadda heraus, dann ohneSuffix(). */
+  const roh = (wort || '').replace(/[.،؟!«»:؛]/g, '');
+  const abSchadda = schaddaSuffixAb(roh);
+  const w = abSchadda !== null ? abSchadda.replace(/ّ/g, '') : ohneSuffix(roh.replace(/ّ/g, ''));
   if (w === null) return null;
   /* Ein Schluss-Alif gehoert nur zur Endung, wenn ein Fathatan davorsteht
      (كِتَابًا). Bei einfacher Fatha ist es ein langes aa und ueberhaupt keine
@@ -1507,7 +1534,17 @@ function analysiereSatz(satz){
       rolle = 'نَعْت (zum مَفْعُول مُطْلَق)';
       erwartet = letzterKasus;
     } else if ((istInListe(wort, ADJEKTIVE) || wortart(wort) === 'adjective') && letzterKasus && !nachKomma
-               && !nachNida && istBestimmt(wort) === letzteBestimmtheit){
+               && !nachNida && istBestimmt(wort) === (letzteBestimmtheit || hatSuffix(woerter[i - 1] || ''))){
+      /* ⛔ Die Besitzendung macht das Wort davor BESTIMMT (v650, 05.10.2026).
+         Gefunden an «بَيْتُهُنَّ قَرِيبٌ مِنَ الْمَدْرَسَةِ» (mb1-74-4, Madina 1,
+         S. 74): قَرِيبٌ galt als نَعْت zu بَيْتُهُنَّ, weil nur der Artikel als
+         „bestimmt" zählte — „ihr Haus" ist aber bestimmt, „nah" unbestimmt,
+         also ist „nah" die Aussage (خَبَر) und kein Adjektiv zum Haus. Dieselbe
+         Regel wie zwei Absätze tiefer (nat-bestimmtheit-01), nur dass sie die
+         Besitzendung bisher nicht kannte; mit ـهُ, ـهُمْ, ـكَ und ـِي war es
+         genauso falsch. Umgekehrt wird ein Adjektiv MIT Artikel hinter einem
+         Wort mit Besitzendung jetzt zum نَعْت («بَيْتُهُ الْجَدِيدُ»).
+         Eichfälle: EICH_K13B in pruefe-saetze.js. */
       /* ⛔ !nachNida (04.10.2026): direkt nach يَا steht der Angerufene, nie ein
          نَعْت. In mb1-72-10 «أَيْنَ أَبْنَاؤُكَ يَا عَلِيُّ؟» wurde der Name mit
          geladenem Quran-Wortschatz zum Adjektiv des Wortes davor (dort steht

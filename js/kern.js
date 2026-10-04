@@ -2145,15 +2145,53 @@ function vorschlaegeVerwaisteMarken(){
 }
 
 /* Nochmal derselbe Knopf nimmt die Ablehnung zurueck — ohne das kaeme er aus
-   einem Fehlgriff nicht mehr heraus. Gibt zurueck, ob es jetzt verworfen ist. */
+   einem Fehlgriff nicht mehr heraus. Gibt zurueck, ob es jetzt verworfen ist.
+
+   ⛔⛔ EIN TIPPEN, NICHT ZWEI (v650, 05.10.2026). Elias, wörtlich: „bei dem
+   knopf taugt nicht bitte ersetzten da muss ich immer zwei mal drauf drücken
+   bis er wirklicih das macht, das soll nur einmal sein".
+
+   Ursache: Die ANZEIGE des Knopfs fragt seit dem 09.09.2026 nach dem TEXT
+   (istVorschlagVerworfen() oben) — dieser Schalter schaltete aber weiter nach
+   der NUMMER. Stand an der Nummer noch die Ablehnung eines ALTEN Textes (der
+   Vorschlag ist inzwischen ersetzt worden), dann zeigte der Knopf „Taugt nicht
+   — bitte ersetzen", das erste Tippen löschte nur den alten Eintrag — auf dem
+   Bildschirm änderte sich nichts —, und erst das zweite lehnte den neuen Text
+   ab. Getroffen hat das genau die Wörter, an denen er schon einmal abgelehnt
+   hatte und deren Vorschläge danach ersetzt wurden: am 05.10.2026 waren das
+   30 Wörter mit 64 Einträgen, an ALLEN 64 Stellen stand ein neuer Text.
+   Dieselbe Sorte Fehler wie am 09.09.: eine Regel an zwei Stellen, nur an
+   einer nachgezogen. [[entscheidung_gilt_fuer_das_zweite_werkzeug]]
+
+   Jetzt entscheidet hier dieselbe Frage wie bei der Anzeige:
+     · gilt DIESER Text als abgelehnt → zurücknehmen: jeder Eintrag, der ihn
+       trägt (auch unter einer anderen Nummer — die Marke wandert mit dem
+       Text), und ein alter Eintrag ohne Text an dieser Nummer;
+     · sonst → ablehnen. Ein alter Eintrag an der Nummer wird überschrieben;
+       nach zwei Tippern war das auch bisher das Ergebnis.
+   Ohne Text gefragt (alte Aufrufer) bleibt es beim Umschalten nach Nummer.
+   Bewacht von test-taugt-nicht.mjs. */
 function schalteVorschlagWeg(id, nr, text){
   const schl = String(nr);
   const e = VORSCHLAG_WEG[id] || {};
-  if (e[schl]) { delete e[schl]; }
-  else { e[schl] = { text: String(text || '').slice(0, 400), zeit: Date.now() }; }
+  if (text === undefined || text === null){
+    if (e[schl]) delete e[schl];
+    else e[schl] = { text: '', zeit: Date.now() };
+  } else {
+    const kurz = String(text).slice(0, 400);
+    if (istVorschlagVerworfen(id, nr, text)){
+      for (const k of Object.keys(e)){
+        const x = e[k];
+        const mitText = !!(x && typeof x === 'object' && x.text);
+        if ((mitText && String(x.text).slice(0, 400) === kurz) || (k === schl && !mitText)) delete e[k];
+      }
+    } else {
+      e[schl] = { text: kurz, zeit: Date.now() };
+    }
+  }
   if (Object.keys(e).length) VORSCHLAG_WEG[id] = e; else delete VORSCHLAG_WEG[id];
   LS.set(VORSCHLAG_WEG_SCHLUESSEL, VORSCHLAG_WEG);
-  return !!(VORSCHLAG_WEG[id] && VORSCHLAG_WEG[id][schl]);
+  return istVorschlagVerworfen(id, nr, text);
 }
 
 /* ---------- Welche Woerter sind AUFGEBRAUCHT? (09.09.2026) ----------

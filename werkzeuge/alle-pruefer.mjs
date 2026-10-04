@@ -514,6 +514,7 @@ const PRUEFER = [
   ['test-p1.mjs', []],
   ['test-p6.mjs', []],
   ['test-p8.mjs', []],
+  ['test-taugt-nicht.mjs', []],
   ['test-woerterbuch-belege.mjs', []],
   ['test-langenscheidt.mjs', []],
   /* 17.09.2026: der KV-Abruf in vorrat.mjs bekommt einen zweiten Versuch. */
