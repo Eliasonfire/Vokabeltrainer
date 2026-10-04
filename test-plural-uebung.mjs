@@ -19,6 +19,12 @@
  *      Abfrage des Lehrers (Folge 25, 13:24) an seinem eigenen Satz (mb1-68-2).
  *   8  Die weibliche Form eines Wortes (كَبِيرَةٌ) wird nicht gefragt: ihre
  *      Mehrzahl wäre eine andere als die auf der Karte.
+ *   9  Zahlwörter werden nicht gefragt. Bei eins und drei bis zehn steht im Feld
+ *      `pl` die Form beim weiblichen Nomen, keine Mehrzahl (istZahlwort() in
+ *      js/kern.js, 16.09.2026). Von v646 bis v647 fragte die Übung „fünf → …:
+ *      gebrochen" — 25 Aufgaben an neun Karten. Punkt 5 konnte das nicht sehen:
+ *      er rechnet die FORM nach, und die Form sieht wie ein gebrochener Plural aus.
+ *      Gemessen wird mit der ECHTEN Funktion aus js/kern.js, nicht mit einem Nachbau.
  *
  * Gemessen wird mit seiner Kapitelauswahl aus .stand-app.json, geladen wie in
  * werkzeuge/pruefe-satzmodus-aktuell.mjs.
@@ -91,10 +97,19 @@ function ladeApp(){
   ctx.istBekannt = w => !!w && (w.chapter === 'personal' || bekannt.has(String(w.id)));
   vm.runInContext('UEB_WORTGRUPPEN = {}', ctx);
   vm.runInContext('if (typeof setzeLexikon === "function") setzeLexikon(VOCAB_DATA)', ctx);
+  /* istZahlwort() steht in js/kern.js, das dieser Lader nicht lädt — und ohne sie
+     fragt die Übung nichts (uebPluralArt). Geschnitten wird die ECHTE Fassung samt
+     ihrem Muster: ein Nachbau hier prüfte nur sich selbst. `zahlwortEcht` bleibt
+     für Punkt 9 stehen, auch wenn ein Störtest die Funktion in der App-Welt ersetzt. */
+  { const kernText = fs.readFileSync(path.join(WURZEL, 'js', 'kern.js'), 'utf8');
+    const zw = kernText.match(/const ZAHLWORT_DE = [^\n]*\r?\nfunction istZahlwort\(w\)\{[\s\S]*?\r?\n\}/);
+    if (zw) vm.runInContext(zw[0], ctx);
+    else fehlt.push('js/kern.js: ZAHLWORT_DE und istZahlwort() nicht lesbar — ohne sie fragt Übung 16 nichts'); }
+  const zahlwortEcht = hole('istZahlwort');
   const pool = (hole('alleSaetze') || (() => []))();
   const analysiere = hole('analysiereSatz');
   const zerlegt = pool.map(s => { try { return { s, z: analysiere(s.sentAr) }; } catch (e){ return { s, z: null }; } });
-  return { ctx, hole, fehlt, pool, zerlegt, auswahl };
+  return { ctx, hole, fehlt, pool, zerlegt, auswahl, zahlwortEcht };
 }
 
 const ohne = s => String(s == null ? '' : s).normalize('NFC').replace(/[\u064B-\u0652\u0670\u0640]/g, '');
@@ -174,6 +189,19 @@ function pruefe(app, zahlen){
   const g = an('mb1-68-1', 'طلاب');
   ok('7 ein gebrochener Plural im Satz wird als gebrochen gefragt (mb1-68-1)', !!g && g.a.loesung === 'g');
   ok('8 die weibliche Form eines Wortes wird nicht gefragt', !fem.length, fem.slice(0, 3).join(', '));
+  /* 9 — Zahlwörter. Erst die Gegenprobe, dass der Punkt überhaupt etwas prüft: es muss
+     in seiner Auswahl Zahlwort-Karten mit pl-Feld geben, und sie müssen in Sätzen stehen. */
+  const istZahl = app.zahlwortEcht;
+  ok('9 die Zahlwort-Erkennung aus js/kern.js ist geladen', typeof istZahl === 'function');
+  if (typeof istZahl === 'function'){
+    const zahlKarten = (hole('VOCAB_DATA') || []).filter(w => w && w.pl && istZahl(w));
+    const inSaetzen = new Set();
+    for (const { z } of zerlegt) if (z) for (const t of z){ const v = uebungVokabel(t.wort); if (v && v.pl && istZahl(v)) inSaetzen.add(String(v.id)); }
+    if (zahlen) Object.assign(zahlen, { zahlKarten: zahlKarten.length, zahlInSaetzen: inSaetzen.size });
+    ok('9 Zahlwort-Karten mit pl-Feld stehen in seinen Sätzen (sonst prüft Punkt 9 nichts)', zahlKarten.length > 0 && inSaetzen.size > 0, `${zahlKarten.length} Karten, ${inSaetzen.size} davon in Sätzen`);
+    const gefragt = alle.filter(x => { const v = uebungVokabel(x.z[x.a.wortIdx].wort); return v && istZahl(v); });
+    ok('9 kein Zahlwort wird nach seinem Plural gefragt', !gefragt.length, `${gefragt.length} Aufgaben, z. B. ` + gefragt.slice(0, 3).map(x => `${x.s.id} ${x.z[x.a.wortIdx].wort}`).join(', '));
+  }
   return rot;
 }
 
@@ -183,7 +211,8 @@ const zahlen = {};
 const echt = pruefe(app, zahlen);
 console.log(`Übung 16 „Welcher Plural?": ${zahlen.aufgaben ?? 0} Aufgaben in ${zahlen.saetze ?? 0} von ${app.pool.length} Sätzen seiner Auswahl`
   + (zahlen.je ? ` — regelmäßig männlich ${zahlen.je.m}, regelmäßig weiblich ${zahlen.je.f}, gebrochen ${zahlen.je.g}` : ''));
-if (zahlen.teile) console.log(`Teile: 1 = ${(zahlen.teile[1] || []).length} Übungen, 2 = ${(zahlen.teile[2] || []).length} Übungen; „plural" steht in Teil ${[1, 2].find(t => (zahlen.teile[t] || []).includes('plural')) || '?'}`);
+if (zahlen.zahlKarten != null) console.log(`Zahlwörter: ${zahlen.zahlKarten} Karten mit pl-Feld, ${zahlen.zahlInSaetzen} davon in seinen Sätzen — keine wird gefragt`);
+if (zahlen.teile) console.log(`Teile: 1 =${(zahlen.teile[1] || []).length} Übungen, 2 = ${(zahlen.teile[2] || []).length} Übungen; „plural" steht in Teil ${[1, 2].find(t => (zahlen.teile[t] || []).includes('plural')) || '?'}`);
 for (const r of echt) console.log('  ✘ ' + r);
 
 /* Störtests: jede Zusicherung muss rot werden können. */
@@ -209,7 +238,13 @@ const STOER = [
     () => tu('UEBUNGEN.find(u => u.id === "plural").baue = globalThis.__echtBaue;')],
   ['die Auflösung nennt die Mehrzahl nicht',
     () => tu('globalThis.__echtBaue = UEBUNGEN.find(u => u.id === "plural").baue; UEBUNGEN.find(u => u.id === "plural").baue = function(z, s){ return globalThis.__echtBaue.call(this, z, s).map(a => ({ ...a, aufloesung: "gebrochen" })); };'),
-    () => tu('UEBUNGEN.find(u => u.id === "plural").baue = globalThis.__echtBaue;')]
+    () => tu('UEBUNGEN.find(u => u.id === "plural").baue = globalThis.__echtBaue;')],
+  ['Zahlwörter kommen wieder durch (die Erkennung sagt immer nein)',
+    () => tu('globalThis.__echtZahl = istZahlwort; istZahlwort = () => false;'),
+    () => tu('istZahlwort = globalThis.__echtZahl;')],
+  ['die Zahlwort-Erkennung fehlt ganz (js/kern.js nicht geladen): dann fragt die Übung nichts',
+    () => tu('globalThis.__echtZahl = istZahlwort; istZahlwort = undefined;'),
+    () => tu('istZahlwort = globalThis.__echtZahl;')]
 ];
 let stumm = 0;
 if (!echt.length){
