@@ -747,5 +747,25 @@ const LEHRBUCH_SAETZE = [
     sentAr: 'هَذَا عَمُّهُ أَحْمَدُ، هُوَ مُهَنْدِسٌ.', sentDe: 'Das ist sein Onkel Ahmad, er ist Ingenieur.' },
   { id: 'by1-48-3', werk: 'bayna-yadayk-1', seite: 48, kapitel: 2, vokalisationErgaenzt: true,
     gedruckt: 'Bildunterschrift; هَذا ohne Fatha vor dem Alif; أخِي: Fatha auf dem Hamza nicht sicher zu lesen (gedruckt auf S. 6: أَخي)',
-    sentAr: 'هَذَا أَخِي عَمَّارٌ، هُوَ مُعَلِّمٌ.', sentDe: 'Das ist mein Bruder Ammar, er ist Lehrer.' }
+    sentAr: 'هَذَا أَخِي عَمَّارٌ، هُوَ مُعَلِّمٌ.', sentDe: 'Das ist mein Bruder Ammar, er ist Lehrer.' },
+
+  /* ===================== Madina 1 · Kapitel 13 (der Plural) ================
+     Eingetragen am 04.10.2026, nach Folge 25. Bis dahin stand im ganzen
+     Bestand kein einziger Satz mit einem regelmäßigen männlichen Plural
+     (gesucht nach ـُونَ und ـِينَ: 0 Treffer) — die Regel dazu wäre ohne
+     Beispielsatz unerreichbar geblieben. Beide Sätze sind die ersten Zeilen
+     des Lektionstextes «أ», Buchseite 68 (im beschrifteten PDF Seite 90),
+     gelesen bei 330 dpi. Der Lehrer liest sie in Folge 25 ab 10:45 vor und
+     fragt an مُجْتَهِدُونَ ab: „Was haben wir für eine Pluralform?" (13:24).
+     Ergänzt ist nur, was das Buch bei bekannten Wörtern weglässt; die neuen
+     Wörter (الفِتْيَةُ, الطِّوَالُ, طُلَّابٌ, جُدُدٌ, مُجْتَهِدُونَ) druckt es mit
+     ihren Zeichen. */
+  { id: 'mb1-68-1', seite: 68, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'مَن ohne Sukun; هَؤُلاءِ, الفِتْيَةُ und الطِّوَالُ mit ihren Zeichen, aber ohne Sukun auf dem Lam des Artikels und ohne sicher lesbares Schadda auf dem ط; يا عليّ nur mit Schadda; هُمْ طُلَّابٌ جُدُدٌ vollständig',
+    sentAr: 'مَنْ هَؤُلَاءِ الْفِتْيَةُ الطِّوَالُ يَا عَلِيُّ؟ هُمْ طُلَّابٌ جُدُدٌ.',
+    sentDe: 'Wer sind diese großen jungen Männer, Ali? Sie sind neue Studenten.' },
+  { id: 'mb1-68-2', seite: 68, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'أهُمْ مُجْتَهِدُونَ vollständig bis auf das Fatha auf dem Hamza (nicht sicher zu lesen); نعم ohne Zeichen und mit Punkt statt Komma; هُمْ مُجْتَهِدُونَ vollständig',
+    sentAr: 'أَهُمْ مُجْتَهِدُونَ؟ نَعَمْ، هُمْ مُجْتَهِدُونَ.',
+    sentDe: 'Sind sie fleißig? Ja, sie sind fleißig.' }
 ];

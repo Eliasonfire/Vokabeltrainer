@@ -1306,7 +1306,14 @@ function analysiereSatz(satz){
       vorherJarr = true; vorherMudaf = false;
       out.push({ wort, rein, rolle, erwartet:null, gelesen, stimmt:null });
       return;
-    } else if (!nachNida && !kannNurNameSein() && giltAlsVerb(wort)){
+    } else if (!nachNida && !kannNurNameSein() && !istFragePronomen(wort) && giltAlsVerb(wort)){
+      /* ⛔ !istFragePronomen (04.10.2026): أَ + Personalpronomen ist nie ein Verb.
+         Gefunden vom LEXIKON-VERGLEICH am ersten Satz mit هُمْ hinter der
+         Fragepartikel, «أَهُمْ مُجْتَهِدُونَ؟» (mb1-68-2, Madina 1, S. 68): mit
+         madina-3 galt أَهُمْ als فِعْل und مُجْتَهِدُونَ als فَاعِل — dort steht ein
+         Verb mit demselben Gerüst. Die Prüfung selbst ist streng (Fatha auf dem
+         Hamza, kein Schadda und kein Tanwīn im Rest, siehe istFragePronomen):
+         «أَهُمُّ» („ich habe vor") trägt ein Schadda und bleibt ein Verb. */
       /* ⛔ !nachNida (25.09.2026): direkt nach يَا steht der Angerufene, nie ein
          Verb. Gefunden vom LEXIKON-VERGLEICH an «وَمَاذَا سَتَفْعَلُ يَا أَحْمَدُ؟»
          (by1-84-7): mit bayna-yadayk-3 galt أَحْمَدُ als فِعْل — dort steht حَمَدَ

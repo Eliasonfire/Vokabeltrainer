@@ -1063,6 +1063,23 @@ const UEBUNGEN = [
     baue(z){
       return z.map((t,i)=>{
         if (!t.erwartet || !t.gelesen || t.stimmt === false) return null;
+        /* ⛔ DER REGELMÄSSIGE MÄNNLICHE PLURAL WIRD HIER NICHT GEFRAGT (04.10.2026).
+           Bei ـُونَ / ـِينَ zeigt ein BUCHSTABE den Fall (Wāw oder Yāʾ), nicht
+           das letzte Zeichen — das Fatha auf dem Nūn ist keine Fallendung. Der
+           Zerleger behauptet dort deshalb nichts (`stimmt` bleibt null, siehe
+           dualOderPlural in js/irab.js), und null ist nicht `false`: das Wort
+           kam trotzdem dran. Gemessen am ersten Satz mit so einem Plural
+           (mb1-68-2, «أَهُمْ مُجْتَهِدُونَ؟», Folge 25): die Übung fragte nach
+           dem Endzeichen von مُجْتَهِدُونَ und wertete „Fatha" als richtig — bei
+           einem Wort im rafʿ. Wie man den Fall am Plural erkennt, hat sein
+           Lehrer noch nicht unterrichtet.
+           ⚠️ Bewusst NICHT `stimmt !== true`: dieselbe Null trägt jedes Wort auf
+           ـَانِ, und das sind bei ihm fast nur gewöhnliche Wörter im Genitiv
+           (الْيَابَانِ), deren Kasra sehr wohl die Endung ist. Gemessen: die
+           breite Fassung nahm 12 solche Aufgaben mit weg (955 → 941). Ein echter
+           Dual (اِثْنَانِ) wird damit weiter nach seinem Kasra gefragt — offen,
+           bis der Dual unterrichtet ist. */
+        if (/(ُونَ|ِينَ)$/.test(String(t.rein || ''))) return null;
         if (t.erwartet === 'nasb' && !uebAkkusativBekannt()) return null;
         if (!HARAKA_WAHL.some(h=>h.wert === t.gelesen.zeichen)) return null;
         return {
