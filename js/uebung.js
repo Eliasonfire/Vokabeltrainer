@@ -1824,7 +1824,15 @@ const UEBUNGEN = [
    Pruefungsthema seines Lehrers), مِنَ vor اَلْ, لِلْ, لَكَ, فِيهِ.
    ⚠️ Die Regeln selbst bleiben in der App (Regelsammlung, Markierungen im
    Satz-Modus) — wie bei „Bestimmt?" am 16.09.: nur die Uebung laesst sie weg. */
-const UEBUNG_KEINE_REGEL = ['harf-jarr-name-01', 'schams-qamar-merkhilfe-01', 'istifham-uebersicht-01'];
+/* ⭐ 04.10.2026 (v649): `jam-salim-taksir-01` dazu — „es gibt zwei Hauptarten des
+   Plurals" ist ein Überblick (Fall ②). MEINE Lesart, ihm so berichtet. Der Anlass
+   war messbar: seit es den Reiter „Plural" gibt (v647), kommen die Ablenker aus
+   den übrigen Plural-Regeln — und an غُرَفٍ, wo der Überblick markiert ist, stand
+   „Der gebrochene Plural" als FALSCHE Antwort zur Wahl, obwohl das Wort einer
+   ist. An jedem einzelnen Wort trifft immer die genaue Regel mit zu. Der
+   Überblick bleibt im Satzmodus markiert und in der Regelsammlung; nur diese
+   Übung fragt und nennt ihn nicht. */
+const UEBUNG_KEINE_REGEL = ['harf-jarr-name-01', 'schams-qamar-merkhilfe-01', 'istifham-uebersicht-01', 'jam-salim-taksir-01'];
 function uebungKeineRegel(r){
   if (!r) return true;
   if (UEBUNG_KEINE_REGEL.includes(r.id)) return true;

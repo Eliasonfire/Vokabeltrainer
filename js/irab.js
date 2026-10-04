@@ -894,6 +894,20 @@ function istMudariForm(w){
   }
   return false;
 }
+/* Endet das Wort auf Ḍamma, ohne eine der zwei Verbformen zu sein, die auf Ḍamma
+   enden können? (Begründung bei giltAlsVerb.) In NFC steht das Ḍamma VOR einem
+   Schadda (عَلِيُّ = ي + ُ + ّ) — deshalb erst das Schadda am Ende abnehmen. */
+function endetAufDammaOhneVerbform(w){
+  const t = String(w || '').normalize('NFC').replace(/[^ء-ْ]+$/, '').replace(/ّ$/, '');
+  if (!t.endsWith('ُ')) return false;               // kein Ḍamma am Ende
+  if (t.endsWith('ْتُ')) return false;    // ـْتُ — „ich" der Vergangenheit
+  /* وَ / فَ vorn, danach das سَ der Zukunft (سَيَغْسِلُ) — ohne den zweiten
+     Schritt galten sieben Futur-Sätze als Nomen (pruefe-saetze.js, Eichfall
+     „Futur", sofort rot). */
+  const kern = t.replace(/^[وف]َ/, '').replace(/^سَ/, '');
+  return !/^[أنيت]/.test(kern);      // أ ن ي ت — Gegenwart
+}
+
 const giltAlsVerb = w => {
   if (traegtTanwin(w)) return false;
   /* ⛔⛔ EIN PERSONALPRONOMEN IST NIE EIN VERB (06.09.2026).
@@ -928,6 +942,19 @@ const giltAlsVerb = w => {
      scheitert sie nicht — die widerlegt artikelWiderlegt() am Kasra des Alifs.
      [[allgemeine_regel_statt_listeneintrag]] · [[nomen_wird_zum_verb_gelesen]] */
   if (istBestimmt(w)) return false;
+  /* ⛔⛔ EIN WORT AUF ḌAMMA OHNE VERBFORM IST KEIN VERB (04.10.2026).
+
+     Im Lehrbuchsatz mb1-68-5 «… وَمُوسَى وَعَبْدُ اللهِ.» stand وَعَبْدُ mit
+     madina-2 als فِعْل da und اللهِ als فَاعِل: wortart() vergleicht ohne
+     Vokalzeichen, und عبد traf das Verb عَبَدَ. Dieselbe Art Regel wie Tanwīn,
+     Pronomen und Artikel — eine allgemeine statt des nächsten Eintrags in
+     NICHT_VERB: auf Ḍamma endet ein Verb nur in zwei Formen, und beide
+     erkennt man am Wort selbst — die Gegenwart beginnt mit أ ن ي ت
+     (يَذْهَبُ), und „ich" der Vergangenheit endet auf ـْتُ (ذَهَبْتُ). Alles
+     andere auf Ḍamma ist ein Nomen im رَفْع. Bewusst NUR Ḍamma: auf Kasra
+     endet auch ein Befehl vor dem Artikel (قُلِ الْحَقَّ).
+     [[allgemeine_regel_statt_listeneintrag]] · [[nomen_wird_zum_verb_gelesen]] */
+  if (endetAufDammaOhneVerbform(w)) return false;
   const genau = wortartGenau(w);
   if (genau && genau !== 'verb') return false;
   if (istInListe(w, NICHT_VERB)) return false;
@@ -1362,7 +1389,7 @@ function analysiereSatz(satz){
          Nur dort: am Satzanfang (أَيُّ كِتَابٍ هَذَا؟) bleibt es beim Alten. */
       /* Steht ein Pronomen am Anfang, ist es das Subjekt - dann wird das
          folgende Nomen zur Aussage darueber und nicht selbst zum Subjekt. */
-      const istPronomen = istInListe(wort, PRONOMEN) || istFragePronomen(wort);
+      const istPronomen = istInListe(wort, PRONOMEN) || istInListe(wort, HINWEISWOERTER) || istFragePronomen(wort);
       if (istPronomen && !ersteRolleVergeben){
         rolle = 'مُبْتَدَأ (unveränderlich)';
         ersteRolleVergeben = true;
@@ -1480,7 +1507,13 @@ function analysiereSatz(satz){
       rolle = 'نَعْت (zum مَفْعُول مُطْلَق)';
       erwartet = letzterKasus;
     } else if ((istInListe(wort, ADJEKTIVE) || wortart(wort) === 'adjective') && letzterKasus && !nachKomma
-               && istBestimmt(wort) === letzteBestimmtheit){
+               && !nachNida && istBestimmt(wort) === letzteBestimmtheit){
+      /* ⛔ !nachNida (04.10.2026): direkt nach يَا steht der Angerufene, nie ein
+         نَعْت. In mb1-72-10 «أَيْنَ أَبْنَاؤُكَ يَا عَلِيُّ؟» wurde der Name mit
+         geladenem Quran-Wortschatz zum Adjektiv des Wortes davor (dort steht
+         عَلِيّ „erhaben" als Adjektiv) — ohne ihn war er مُنَادَى. Dieselbe
+         Stellungsregel wie beim Verb-Zweig oben und bei den zwei Zweigen
+         hinter einem Verb. */
       /* نَعْت: ein Adjektiv direkt hinter seinem مَنْعُوت stimmt in Kasus,
          Zahl, Geschlecht UND Bestimmtheit mit ihm ueberein - so unterscheidet
          der Lehrer Wortgruppe von Satz (nat-bestimmtheit-01). Stimmt die

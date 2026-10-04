@@ -767,5 +767,89 @@ const LEHRBUCH_SAETZE = [
   { id: 'mb1-68-2', seite: 68, kapitel: 13, vokalisationErgaenzt: true,
     gedruckt: 'أهُمْ مُجْتَهِدُونَ vollständig bis auf das Fatha auf dem Hamza (nicht sicher zu lesen); نعم ohne Zeichen und mit Punkt statt Komma; هُمْ مُجْتَهِدُونَ vollständig',
     sentAr: 'أَهُمْ مُجْتَهِدُونَ؟ نَعَمْ، هُمْ مُجْتَهِدُونَ.',
-    sentDe: 'Sind sie fleißig? Ja, sie sind fleißig.' }
+    sentDe: 'Sind sie fleißig? Ja, sie sind fleißig.' },
+
+  /* ⭐ Kapitel 13, weitere Sätze (v649, 04.10.2026) — MEINE Entscheidung, gestützt
+     auf seinen Dauerauftrag vom 24.09.2026 („du sollst automatisch das machen und
+     die app immer aktuell halten"). Gemessen davor: in seinem Vorrat stand eine
+     regelmäßige männliche Mehrzahl in einem einzigen Satz, eine gebrochene in
+     sieben; „sie" (Mehrzahl) in vier Sätzen, das Hinweiswort der Mehrzahl in
+     dreien. Die Plural-Regeln aus Folge 25 hatten je EINE markierte Stelle.
+
+     Quelle wie oben: PDF-Seiten 90 bis 94 = Buchseiten 68 bis 72 (91 = 69,
+     92 = 70, 93 = 71, 94 = 72), gelesen bei 120 dpi.
+
+     Genommen ist NUR, was gedruckt dasteht: der Lektionstext, die Beispielzeilen
+     der Übungen 1 und 4 und Zeilen der Übung 5 („Lies und schreib"). Die Lösungen
+     der Umformübungen stehen nicht im Buch und deshalb nicht hier.
+
+     ⛔ NICHT genommen, weil ein Wort darin keine Karte in seiner Auswahl hat
+     (Stand 04.10.2026): Seite 68 unten (Pilger; „einige von ihnen"), das Beispiel
+     der Übung 2 auf Seite 70 (Pilger), Seite 72 Nr. 3 (Pilger, Türkei), Nr. 7
+     („einige"), Nr. 11 (Sportplatz), Nr. 13 (Dorf). Kommen diese Karten in seine
+     Auswahl, gehören die Sätze nachgetragen.
+
+     Bei Seite 72 ist die Zahl hinter der Seite die Nummer der Übungszeile im Buch
+     (deshalb Lücken). ذَهَبُوا — die Mehrzahl des Verbs — steht im Lektionstext
+     und in Übung 4 des Buches. */
+  { id: 'mb1-68-3', seite: 68, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'هُمْ beide Male mit seinen Zeichen; من أين und من أمريكا ohne Zeichen',
+    sentAr: 'مِنْ أَيْنَ هُمْ؟ هُمْ مِنْ أَمْرِيكَا.',
+    sentDe: 'Woher sind sie? Sie sind aus Amerika.' },
+  { id: 'mb1-68-4', seite: 68, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'أَهُمْ زُمَلَاؤُكَ vollständig; نعم ohne Zeichen und mit Punkt statt Komma; هُمْ زُمَلائي mit Damma und Fatha am Wortanfang, ohne Kasra unter dem Hamza; in هُمْ في فصلي nur هُمْ mit Zeichen',
+    sentAr: 'أَهُمْ زُمَلَاؤُكَ؟ نَعَمْ، هُمْ زُمَلَائِي. هُمْ فِي فَصْلِي.',
+    sentDe: 'Sind sie deine Mitschüler? Ja, sie sind meine Mitschüler. Sie sind in meinem Klassenzimmer.' },
+  { id: 'mb1-68-5', seite: 68, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'ما ohne Zeichen; أسماؤُهُمْ beide Male erst ab dem Hamza mit Zeichen, danach im Buch ein Doppelpunkt; ياسِرٌ, وَزَكَرِيَّا und ومُوْسَى mit ihren Zeichen; وعبدُالله mit Damma und zusammengeschrieben',
+    sentAr: 'مَا أَسْمَاؤُهُمْ؟ أَسْمَاؤُهُمْ يَاسِرٌ وَزَكَرِيَّا وَمُوسَى وَعَبْدُ اللهِ.',
+    sentDe: 'Wie heißen sie? Ihre Namen sind Yasir, Zakariyya, Musa und Abdullah.' },
+  { id: 'mb1-69-1', seite: 69, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'الْمُصْطَفَى und وأَصْدِقَاؤُه mit ihren Zeichen (das ه am Ende ohne), ذَهَبُوا vollständig; أين und إلى المطعم ohne Zeichen',
+    sentAr: 'أَيْنَ الْمُصْطَفَى وَأَصْدِقَاؤُهُ؟ ذَهَبُوا إِلَى الْمَطْعَمِ.',
+    sentDe: 'Wo sind al-Mustafa und seine Freunde? Sie sind ins Restaurant gegangen.' },
+  { id: 'mb1-69-2', seite: 69, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'Beispielzeile der Übung 1: هذا طالب ohne Zeichen; هؤلاءِ mit Kasra, طُلَّابٌ vollständig',
+    sentAr: 'هَذَا طَالِبٌ. هَؤُلَاءِ طُلَّابٌ.',
+    sentDe: 'Das ist ein Student. Das sind Studenten.' },
+  { id: 'mb1-71-1', seite: 71, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'Beispielzeile der Übung 4: الطالبُ und الطلابُ mit Damma am Ende, ذَهَبَ und ذَهَبُوا vollständig; إلى المطعم ohne Zeichen',
+    sentAr: 'الطَّالِبُ ذَهَبَ إِلَى الْمَطْعَمِ. الطُّلَّابُ ذَهَبُوا إِلَى الْمَطْعَمِ.',
+    sentDe: 'Der Student ist ins Restaurant gegangen. Die Studenten sind ins Restaurant gegangen.' },
+  { id: 'mb1-72-1', seite: 72, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'Übung 5, Nr. 1: ohne Zeichen',
+    sentAr: 'الطُّلَّابُ فِي الْفَصْلِ.',
+    sentDe: 'Die Studenten sind im Klassenzimmer.' },
+  { id: 'mb1-72-2', seite: 72, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'Übung 5, Nr. 2: ohne Zeichen; nach لا ein Punkt statt Komma',
+    sentAr: 'مَنْ هَؤُلَاءِ الْأَوْلَادُ؟ أَهُمْ أَبْنَاؤُكَ؟ لَا، هُمْ أَبْنَاءُ أَخِي.',
+    sentDe: 'Wer sind diese Jungen? Sind sie deine Söhne? Nein, sie sind die Söhne meines Bruders.' },
+  { id: 'mb1-72-4', seite: 72, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'Übung 5, Nr. 4: ohne Zeichen, ohne Punkt am Ende',
+    sentAr: 'أَيْنَ التُّجَّارُ؟ ذَهَبُوا إِلَى السُّوقِ.',
+    sentDe: 'Wo sind die Händler? Sie sind zum Markt gegangen.' },
+  { id: 'mb1-72-5', seite: 72, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'Übung 5, Nr. 5: ohne Zeichen',
+    sentAr: 'مَنْ هَؤُلَاءِ الرِّجَالُ؟ هُمْ ضُيُوفٌ.',
+    sentDe: 'Wer sind diese Männer? Sie sind Gäste.' },
+  { id: 'mb1-72-6', seite: 72, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'Übung 5, Nr. 6: ohne Zeichen bis auf الحُقُوْل',
+    sentAr: 'الْفَلَّاحُونَ فِي الْحُقُولِ وَأَبْنَاؤُهُمْ فِي الْمَدْرَسَةِ.',
+    sentDe: 'Die Bauern sind auf den Feldern und ihre Söhne sind in der Schule.' },
+  { id: 'mb1-72-8', seite: 72, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'Übung 5, Nr. 8: ohne Zeichen, ohne Punkt am Ende',
+    sentAr: 'أَعْمَامِي تُجَّارٌ كِبَارٌ.',
+    sentDe: 'Meine Onkel sind große Händler.' },
+  { id: 'mb1-72-9', seite: 72, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'Übung 5, Nr. 9: ohne Zeichen',
+    sentAr: 'هَؤُلَاءِ إِخْوَتِي.',
+    sentDe: 'Das sind meine Brüder.' },
+  { id: 'mb1-72-10', seite: 72, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'Übung 5, Nr. 10: ohne Zeichen bis auf das Schadda in عليّ; يا und der Name zusammengeschrieben',
+    sentAr: 'أَيْنَ أَبْنَاؤُكَ يَا عَلِيُّ؟ هُمْ فِي الدُّكَّانِ.',
+    sentDe: 'Wo sind deine Söhne, Ali? Sie sind im Geschäft.' },
+  { id: 'mb1-72-12', seite: 72, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'Übung 5, Nr. 12: ohne Zeichen',
+    sentAr: 'هَؤُلَاءِ الْفِتْيَةُ إِخْوَةٌ. أَبُوهُمْ إِمَامُ هَذَا الْمَسْجِدِ.',
+    sentDe: 'Diese jungen Männer sind Brüder. Ihr Vater ist der Imam dieser Moschee.' }
 ];

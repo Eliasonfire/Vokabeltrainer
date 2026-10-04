@@ -3341,7 +3341,51 @@ const SENTENCE_TAGS = {
     { ruleId: "jam-mudhakkar-salim-01", matchText: "مُجْتَهِدُونَ" }
   ],
   "mb1-68-1": [
-    { ruleId: "jam-taksir-01", matchText: "طُلَّابٌ" }
+    { ruleId: "jam-taksir-01", matchText: "طُلَّابٌ" },
+    { ruleId: "ismul-isara-haulai-01", matchText: "هَؤُلَاءِ" }
+  ],
+  "mb1-69-2": [
+    { ruleId: "jam-taksir-01", matchText: "طُلَّابٌ" },
+    { ruleId: "ismul-isara-haulai-01", matchText: "هَؤُلَاءِ" }
+  ],
+  "mb1-72-1": [
+    { ruleId: "jam-taksir-01", matchText: "الطُّلَّابُ" }
+  ],
+  "mb1-72-4": [
+    { ruleId: "jam-taksir-01", matchText: "التُّجَّارُ" }
+  ],
+  "mb1-72-5": [
+    { ruleId: "jam-taksir-01", matchText: "ضُيُوفٌ" },
+    { ruleId: "ismul-isara-haulai-01", matchText: "هَؤُلَاءِ" }
+  ],
+  "mb1-72-8": [
+    { ruleId: "jam-taksir-01", matchText: "تُجَّارٌ" }
+  ],
+  "mb1-72-12": [
+    { ruleId: "jam-taksir-01", matchText: "إِخْوَةٌ" },
+    { ruleId: "ismul-isara-haulai-01", matchText: "هَؤُلَاءِ" }
+  ],
+  "mb1-68-5": [
+    { ruleId: "jam-taksir-01", matchText: "أَسْمَاؤُهُمْ", bedeutung: 'ـهُمْ = ihr (Mehrzahl, männlich)' }
+  ],
+  "mb1-68-4": [
+    { ruleId: "jam-taksir-01", matchText: "زُمَلَاؤُكَ", bedeutung: 'ـكَ = dein (männlich)' }
+  ],
+  "mb1-72-2": [
+    { ruleId: "jam-taksir-01", matchText: "الْأَوْلَادُ" }
+  ],
+  "by1-85-6": [
+    { ruleId: "jam-taksir-01", matchText: "الْأَطْبَاقَ" }
+  ],
+  "satz-lang-12": [
+    { ruleId: "jam-taksir-01", matchText: "مَفَاتِيحُ" }
+  ],
+  "mb1-72-6": [
+    { ruleId: "jam-mudhakkar-salim-01", matchText: "الْفَلَّاحُونَ" },
+    { ruleId: "jam-salim-taksir-01", matchText: "الْحُقُولِ" }
+  ],
+  "mb1-72-9": [
+    { ruleId: "ismul-isara-haulai-01", matchText: "هَؤُلَاءِ" }
   ]
 };
 
