@@ -117,7 +117,10 @@ function lauf(quelle){
   if (!U) return { rot, zahl: 0 };
 
   // ---- 1: Platz in der Liste
-  ok('1 Nummer 17, Art „bauen"', U.nr === 17 && U.art === 'bauen');
+  /* 04.10.2026 (v646): 17 → 18. Die Plural-Übung steht bei den Auswahl-Übungen
+     und trägt die 16; Übersetzen und Satzbau sind je eine Nummer aufgerückt,
+     damit die Nummern auf dem Bildschirm durchlaufen. */
+  ok('1 Nummer 18, Art „bauen"', U.nr === 18 && U.art === 'bauen');
   const nummern = UEBUNGEN.map(u => u.nr).sort((a, b) => a - b);
   ok('1 Nummern linear 1 bis N', nummern.every((n, i) => n === i + 1));
   ok('1 eigene Gruppe „Bauen" im Wähler', (hole('UEB_GRUPPEN') || []).some(([titel, art]) => titel === 'Bauen' && art === 'bauen'));
@@ -132,7 +135,11 @@ function lauf(quelle){
     const stelle = UEBUNGEN.indexOf(U);
     UEBUNGEN.splice(stelle, 1);
     let ohne = null; try { ohne = hole('satzTeile')(); } finally { UEBUNGEN.splice(stelle, 0, U); }
-    const gewechselt = UEBUNGEN.filter(m => m !== U && ohne[1].includes(m.id) !== mit[1].includes(m.id)).map(m => m.nr);
+    /* `!m.teilRang` (04.10.2026, v646): eine Übung mit teilRang ist NACH dem
+       Satzbau dazugekommen und wird als letzte verteilt (satzTeile()) — sie
+       landet ohne den Satzbau im anderen Teil, und das ist richtig so. Gemeint
+       sind hier die Übungen, die es vor dem Satzbau schon gab. */
+    const gewechselt = UEBUNGEN.filter(m => m !== U && !m.teilRang && ohne[1].includes(m.id) !== mit[1].includes(m.id)).map(m => m.nr);
     ok('1 seine zwei Teile bleiben, wie sie waren — die neue kommt nur dazu', gewechselt.length === 0
       && [1, 2].filter(t => mit[t].includes('satz-bauen')).length === 1);
   }

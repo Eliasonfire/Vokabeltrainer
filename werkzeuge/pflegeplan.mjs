@@ -439,7 +439,7 @@ export const PFLEGEPLAN = [
        Satz seines Vorrats mit mindestens drei Wörtern); er trägt nichts ein;
        veralten kann die Wertung, wenn jemand die Bausteine oder den Zerleger
        ändert — das bewacht der eigene Test. */
-    funktion: 'Satzbau (Übung 17): aus den Wörtern den Satz selbst bilden',
+    funktion: 'Satzbau (Übung 18, bis v645 Übung 17): aus den Wörtern den Satz selbst bilden',
     dateien: [],
     bildschirme: [],
     neuerInhalt: { routine: W, schritt: '1b.8', beleg: 'node werkzeuge/pruefe-satzmodus-aktuell.mjs', werkzeug: 'werkzeuge/pruefe-satzmodus-aktuell.mjs',
@@ -451,6 +451,26 @@ export const PFLEGEPLAN = [
        pruefe-sammellauf.mjs wird rot, wenn er dort fehlt. */
     veralten: { routine: W, schritt: '1b.8', beleg: 'node werkzeuge/alle-pruefer.mjs', werkzeug: 'werkzeuge/pruefe-satzmodus-aktuell.mjs',
       wie: 'Teil H des Prüfers prüft die Übung wie jede andere; dazu läuft test-satz-bauen.mjs in jedem Sammellauf: Bausteine = Wörter des Satzes ohne Satzzeichen, Wertung nach dem Wort, der ganze Ablauf an einem mitschreibenden DOM; 17 Störtests am echten Quelltext müssen rot werden' },
+  },
+  {
+    /* ⭐ 04.10.2026 (v646) — ÜBUNG 16 „WELCHER PLURAL?". Elias am 04.10.2026,
+       nach Folge 25 (MB1 Kapitel 13): „wurde schon neue satzmodus übung gebaut
+       für den plural der heute gemacht wurde im video?" Die Übung steht in
+       js/uebung.js (Eintrag `plural`, dazu uebPluralArt) — keine eigene Datei,
+       deshalb von Hand hier. Die drei Fragen: Neuer Inhalt wächst von selbst
+       nach (baue() fragt jedes Satzwort, dessen Karte eine eindeutige Mehrzahl
+       trägt — eine neue Karte mit Plural-Feld oder ein neuer Satz kommt ohne
+       weiteren Eintrag dazu); er trägt nichts ein; veralten kann die
+       Einordnung, wenn sich die Pluralfelder der Karten oder uebPluralArt
+       ändern — das rechnet der eigene Test an jeder Aufgabe nach. */
+    funktion: 'Welcher Plural? (Übung 16): regelmäßig männlich, regelmäßig weiblich oder gebrochen',
+    dateien: [],
+    bildschirme: [],
+    neuerInhalt: { routine: W, schritt: '1b.8', beleg: 'node werkzeuge/pruefe-satzmodus-aktuell.mjs', werkzeug: 'werkzeuge/pruefe-satzmodus-aktuell.mjs',
+      wie: 'Jedes Satzwort seines Vorrats, dessen Karte eine eindeutige Mehrzahl trägt, wird von selbst eine Aufgabe (baue() liest Satzvorrat und Karten bei jedem Aufbau). Teil H des Prüfers zählt die Aufgaben jeder Übung in seiner Auswahl und meldet eine Lücke, wenn es zu wenige werden.' },
+    eingaben: { nein: 'Er tippt nur eine der drei Antworten an; gespeichert wird richtig/falsch über dieselben Zähler wie bei den übrigen Übungen.' },
+    veralten: { routine: W, schritt: '1b.8', beleg: 'node werkzeuge/alle-pruefer.mjs', werkzeug: 'werkzeuge/pruefe-satzmodus-aktuell.mjs',
+      wie: 'Teil H des Prüfers prüft die Übung wie jede andere; dazu läuft test-plural-uebung.mjs in jedem Sammellauf: jede Lösung wird unabhängig von js/uebung.js gegen die Karte nachgerechnet, eine Karte ohne saubere Einordnung darf gar nicht gefragt werden, und die Frage muss zur Form im Satz passen (sechs Störtests).' }
   },
   {
     /* ⭐⭐ 22.09.2026 (v566) — EIN FACHBEGRIFF FOLGT SEINER REGEL.
