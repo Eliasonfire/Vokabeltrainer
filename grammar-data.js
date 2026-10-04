@@ -3464,5 +3464,12 @@ const SATZ_THEMEN = [
      alle dreizehn anderen eine anhaengen. Ein enger gefasstes Muster liess das
      neue Thema mit einer einzigen Regel „ins Leere laufen" (validate.js).
      ⚠️ Diese eine Regel steht damit in ZWEI Themen, Wortarten und Verben. */
-  { id: 'verben',      name: 'Verben',         muster: /^(verb-|madi-|mudari-)/ }
+  { id: 'verben',      name: 'Verben',         muster: /^(verb-|madi-|mudari-)/ },
+  /* ⭐ Reiter „Plural" — Elias am 04.10.2026 auf die Frage „Soll der Plural im
+     Satzmodus einen eigenen Reiter bekommen?": „ja". Hier stehen die vier
+     Regeln aus Folge 25 (zwei Arten Plural, regelmäßig männlich, regelmäßig
+     weiblich, gebrochen); bis v646 fielen sie durch jede Kategorie und waren
+     nur über „Alle" zu finden. Der gemeinsame Plural der Hinweiswörter
+     (ismul-isara-haulai-01) bleibt unter „Hinweiswörter". */
+  { id: 'plural',      name: 'Plural',         muster: /^jam-/ }
 ];
