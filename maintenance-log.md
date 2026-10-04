@@ -7884,3 +7884,68 @@ Exit 2), `f22-2445` (`rueckstand.mjs` nennt Folge 22), madina-2 1–24 in
 `FREIGESCHALTET`.
 
 Erledigt seit dem 30.09.: die `anker.mjs`-Freigabe (Wächter grün).
+
+## 2026-10-04 21:40 – Neue Kapitel (madina-1 13)
+
+Auftrag der stündlichen Prüfung vom 04.10., 21:35 (Versuch 1 von 2): Madina 1
+Kapitel 13, in der App angehakt seit 19:59. Ausgeliefert als **v645**, Commit
+`ba9dfd6`.
+
+**Schritt 0** — `git pull` ohne Änderung, Marke gesetzt,
+`pruefe-volles-programm.mjs` Exit 0.
+
+**Schritt 1** — `vorrat.mjs --stand … --app auto`, wörtlich:
+
+- „FREIGESCHALTET nachgezogen: madina-1: [1,…,12] → [1,…,13]"
+- „⭐ Lernstand automatisch mitgewachsen: madina-1: Angabe 12 → 13 (+1, im Rahmen)"
+- „⚠️ Nicht zugemacht — das gehoert in den Bericht an Elias: bayna-yadayk-1:
+  Kapitel 5 stehen in js/kern.js, aber nicht in den gemessenen Quellen —
+  BEHALTEN" und dasselbe für madina-2 Kapitel 1–24.
+
+⚠️ arabicroots (`get_unlocked_chapters`) nennt Madina 1 weiter nur bis
+Kapitel 12 und Bayna Yadayk 1 bis Kapitel 4; Kapitel 13 kommt allein aus der
+App-Auswahl.
+
+**Schritt 2/3** — 8 Wörter in Kapitel 13, **7 vollständig**. Eselsbrücken,
+Beispielsätze und Markierungen: je 0 von 8 fehlen. Offen **1× `pl`**: das Wort
+für „die Leute" (id 45915). Der Abzug führt keinen Plural, der Madina-Schlüssel
+auch nicht (Band 2: 0 Seiten, Band 3: 6 Seiten, keine mit Plural). Nichts
+eingetragen — `FELD_AUSNAHMEN` wächst nur durch seine Entscheidung.
+
+**Fehlalarm im Prüfer behoben** — mit dem Lernstand 13 wurde
+`pruefe-eselsbruecken.js` rot (Exit 1): die dritte Eselsbrücke von „Gast"
+(id 45913, der Hadith über drei Tage Bewirtung) stütze sich auf das Zahlwort
+„drei" „aus Kapitel 24". Das Zahlwort liegt aber in `vocab-data.js`, also in
+seinem Lernbestand (id 50297, `chapter: 'personal'`); der Prüfer merkte solche
+Wörter nicht, und das Kapitel aus dem Abzug gewann. Jetzt setzt ein Wort aus dem
+Lernbestand ein schon gemerktes Gerüst auf „immer bekannt". Wirkung gemessen:
+Verstöße 1 → 0, Box-1-Hinweis 622 → 627 Anker (250 → 251 Wörter), sonst keine
+Zeile anders. Die Eselsbrücke selbst ist unverändert.
+
+**Schritt 4** — `validate.js` 0 (37 Prüfungen, 3 Hinweise) · `pruefe-saetze.js`
+0 (587 Sätze) · `pruefe-markierungen.js` 0 · `pruefe-erreichbarkeit.js` 0 ·
+`pruefe-funktionen.js` 0 (348 mit Funktion, 0 nur „Wort") · `pruefe-duplikate.js`
+0 · `pruefe-eselsbruecken.js` 0 (1806 Einzelprüfungen, 1 Hinweis) ·
+`pruefe-quran.js` 0 (36 Bezüge) · `pruefe-taschkil.js` **1** (schon vor dem Lauf:
+`jam-taksir-01`, Hamzat al-waṣl ohne Kasra im Erklärtext — Wartung) ·
+`taschkil-belegen.mjs` 0 (0 Wörter) · `pruefe-wortfelder.js --fenster` 0 (218
+von 348 mit Bedeutungsfeld) · `pruefe-eigene-vorrang.mjs` 0 (alle messen 348) ·
+`test-satzmodus-schwerer.mjs` 0.
+`vorrat.mjs --nur-kapitel madina-1:13 --knapp` **Exit 2**: „Vorrat: 1 von 8
+freigeschalteten Woertern unvollstaendig — 0 Eselsbruecken, 0 Beispielsaetze,
+0 Markierungen, 0 Kategorien, 1× pl."
+
+**Schritt 5** — `alle-pruefer.mjs`: 150 gelaufen, **6 rot, keiner NEU rot**
+(erreichbarkeit, ausgeliefert, gedaechtnis-zahlen warteten auf die Auslieferung;
+taschkil, themen, buchtausch warten auf Elias). Veröffentlicht 21:39:43, 2 von
+105 Dateien neu; `pruefe-ausgeliefert.mjs` und `pruefe-erreichbarkeit.js`
+danach Exit 0.
+
+### ⬜ Offen nach diesem Lauf
+
+- **Plural bei „die Leute" (id 45915):** Sammelwort ohne Plural im Buch — als
+  „gibt es nicht" eintragen? Seine Entscheidung.
+- **Bayna Yadayk 1 Kapitel 5** steht in `FREIGESCHALTET` und als seine Angabe,
+  aber weder in der App-Auswahl (bis 4) noch bei arabicroots (bis 4).
+- Aufgefallen, nicht angefasst: `pruefe-taschkil.js` rot wegen `jam-taksir-01`
+  (Regel aus v644).
