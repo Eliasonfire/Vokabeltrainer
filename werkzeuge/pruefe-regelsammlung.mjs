@@ -309,8 +309,10 @@ console.log('\n=== 7. Stufe 2 — „so gut wie möglich in die app integriert" 
   /* 16.09.2026: 13 → 12. „Bestimmt?" ist auf Elias' Wunsch aus dem Satzmodus
      entfernt („die übung im satzmodus brauche ich nicht weil die ist viel zu
      leicht"); test-satzmodus-schwerer.mjs bewacht, dass sie draußen bleibt. */
+  /* 04.10.2026 (v642): 16 → 17, der Satzbau ist dazugekommen (`satz-bauen` →
+     null: hinter einer falschen Wortfolge steht keine einzelne Regel). */
   pruefe(`„Warum? → Regel": alle ${modi.length} Übungsmodi zugeordnet, jedes Ziel existiert`,
-    modi.length === 16 && !ohne.length && !tot.length, 'Modi: ' + modi.length + ' · ohne: ' + ohne.join(',') + ' · tot: ' + tot.join(','));
+    modi.length === 17 && !ohne.length && !tot.length, 'Modi: ' + modi.length + ' · ohne: ' + ohne.join(',') + ' · tot: ' + tot.join(','));
   /* ⚠️ 25.09.2026 (v612): 15 → 16, die Endungen-Übung ist dazugekommen
      (`endungen` → possessiv-endungen-01; Aufgaben mit ـِي bringen ihre Karte
      possessiv-ya-01 selbst mit). Elias: „wo ich die richtigen endungen

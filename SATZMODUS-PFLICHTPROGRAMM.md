@@ -35,4 +35,4 @@
 
 ## Wer eine neue Übung baut
 
-Den Eintrag in `UEBUNGEN` (js/uebung.js) mit `id`, `nr` (nächste Zahl), `art` (`mehrfach` · `wahl` · `schreiben`) und `baue()` — dann laufen Pflicht 3 bis 7 und 10 **ohne weiteren Eintrag** mit. Selbst zu erledigen bleiben 1, 2, 8 und 9.
+Den Eintrag in `UEBUNGEN` (js/uebung.js) mit `id`, `nr` (nächste Zahl), `art` (`mehrfach` · `wahl` · `schreiben` · `bauen`) und `baue()` — dann laufen Pflicht 3 bis 7 und 10 **ohne weiteren Eintrag** mit. Selbst zu erledigen bleiben 1, 2, 8 und 9.
