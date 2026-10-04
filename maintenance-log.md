@@ -7520,3 +7520,367 @@ Rückhalt in arabicroots oder deiner Auswahl. `pruefe-buecher-aktuell.mjs` stuft
 es als folgenlos ein (H1), `vorrat.mjs` meldet es als „nicht zugemacht".
 Zumachen wäre deine Entscheidung, `--auch-schliessen` bleibt ungenutzt. Derselbe
 Punkt stand schon im Lauf vom 30.09. mittags.
+
+## 2026-10-04 20:10 – Wöchentliche Wartung (So-Check) — **v643 ausgeliefert**
+
+**App schließen und neu öffnen.** Ausgeliefert wurde eine einzige Sache: 13
+Eselsbrücken an fünf Wörtern, die du abgelehnt hattest, sind ersetzt. Dazu ist
+Folge 24 ausgewertet (2 Regelvorschläge für dich) und Folge 25 im Backlog.
+
+⚠️ Der Lauf startete um **20:09 statt 13:00** — der geplante Sonntagstermin ist
+nachgeholt worden.
+
+### Schritt 0 — Arbeitsmarke, Prompt-Prüfung
+
+`git pull --ff-only`: schon aktuell. `arbeit.mjs --beginne "Wartungslauf"
+--schritte 7` gesetzt. `pruefe-volles-programm.mjs` Exit **0**, am Ende des Laufs
+noch einmal Exit **0**.
+
+### Schritt 0a — Vorige Läufe
+
+`pruefe-laeufe.mjs --tage 30` Exit **2**, 6 Lücken:
+
+| Termin | Routine | Meldung |
+|---|---|---|
+| 26.09. 03:00 | eingang-einsortieren | `Failed to authenticate: OAuth session expired` (bekannt) |
+| 30.09. 03:00 | eingang-einsortieren | `You've hit your monthly spend limit` (bekannt) |
+| **03.10. 19:00** | eingang-einsortieren | `Failed to authenticate: OAuth session expired …` — **neu** |
+| **04.10. 03:00** | eingang-einsortieren | dieselbe Meldung — **neu** |
+| **04.10. 18:00** | arabicroots-update-check | dieselbe Meldung — **neu** |
+| 04.10. 13:00 | vokabeltrainer-wartung | „out.log ist LEER" — das ist **dieser** Lauf, er lief beim Messen noch |
+
+⚠️ **Drei neue Abbrüche in zwei Tagen mit derselben Ursache: die Anmeldung der
+Routinen war abgelaufen.** Alle drei sind „abgebrochen", nicht „Rechner aus".
+Dieser Lauf selbst kam durch, die Anmeldung gilt also wieder; was an den drei
+Terminen liegen blieb (zweimal Eingang, einmal Update-Check), holt diese Routine
+nicht nach. `vokabeltrainer-wartung`: 9 Soll · 8 ok · 1 (dieser) · 0 gar nicht.
+Der Freigaben-Wächter ist grün (179 Werkzeuge, 10 ohne Aufrufer, alle bekannt) —
+die `anker.mjs`-Lücke vom 30.09. ist damit erledigt.
+
+### Schritt 0b — Samsung Notes
+
+`samsung-notes-sicherung.mjs` Exit 0: „Samsung Notes ist offen — holt selbst ab,
+nichts angefasst" · Archiv: 2 neu, 2 geändert, 1104 unverändert, 4 PDFs mit 10
+Seiten, 0 Fehler. `export-index.mjs --sicherung` Exit **0** — in
+`Arabisch\Grammatik` ist keine der 9 Notizen verändert. Die vier bewegten
+Archiv-Notizen liegen außerhalb der zwei Ordner, die für diese Routine zählen.
+**Samsung: nichts Neues.** Schritt 4 entfällt.
+
+### Schritt 1 — Neue Aufzeichnungen
+
+`get_recordings`: **25 Folgen**, eine mehr.
+
+- 🆕 **Folge 25 „MB1 Kapitel 13"**, https://youtu.be/xvZVHAo8RaI, eingestellt
+  04.10.2026 09:36 UTC. In `transcripts/backlog.md` mit Status `offen`
+  nachgetragen. Die erste Madina-Folge seit Folge 17 (23.08.). Rohmaterial holt
+  `arabicroots-backfill-retry`.
+
+### Schritt 1b — Rückstand: Folge 24 ausgewertet
+
+`rueckstand.mjs --knapp` Exit **2: „2 Folge(n) offen — 22, 24"** — am Anfang und
+am Ende. Beide Folgen sind vollständig beurteilt; offen ist bei beiden nur dein
+Ja oder Nein.
+
+`kandidaten.mjs --offen` meldete für **Folge 24 15 Fundstellen** aus 100 Fenstern
+(43 % der Folge), `abgleich.mjs` keine deutliche Ähnlichkeit (höchster Wert
+0,303). Alle 15 gelesen, dazu den Whisper-Volltext der Folge (892 Zeilen) ganz:
+
+| Ergebnis | Zahl | welche |
+|---|---|---|
+| keine Regel | 11 | Zwischenprüfung (Zuordnen, „passt nicht in die Reihe", richtig/falsch), Schülerkonjugation, Motivation, Lernrat, eine vertagte Pluralfrage |
+| schon vorhanden | 2 | 38:45 (Gewicht 5,286, der höchste je notierte Wert) und 46:45 — beides `verb-madi-endungen-01`: das Muster der Vergangenheit an raǧaʿa und die Dreierpakete der Pronomen |
+| **Vorschlag an dich** | **2** | `f24-4115` und `f24-1745` |
+
+- **`f24-4115` — Gegenwartsverb am Buchstaben vorn, Vergangenheit an der
+  Endung.** Lehrer @ **40:30–41:56**: „Bei den Verben der Vergangenheit ändert
+  sich … das Ende. Bei der Gegenwart … der Anfang" und „wenn da ein Elif ist,
+  oder ein Ja, oder ein Nun, oder ein Ta, dann wisst ihr, dieses Verb ist von der
+  Gegenwart". Zweiter Beleg: Schlüssel Band 2, Lektion 10 (PDF-S. 48) — gelesen
+  am 30.09. für `f23-1045`, **in diesem Lauf nicht noch einmal gerendert**.
+  ⚠️ Er nennt es „nur ein kleiner Cheatcode"; die Gegenwart selbst kommt erst,
+  „wenn Vergangenheit ordentlich sitzt".
+- **`f24-1745` — Alif nach der unbestimmten Akkusativ-Endung.** Lehrer @
+  **17:56–18:12**: „Wenn … ein Wort unbestimmt ist und Mansoub ist … also mit
+  Fetha oder mit Fetatain. Dann kriegt [es] ein Elif hinten dran", mit „wir
+  hatten das". Zweiter Beleg: Schlüssel Band 1, Lektion 18, laut Vault-Notiz
+  `Schluessel-Regeln.md` (Zeile 852 f.) — **die Seite selbst nicht gerendert**.
+  ⛔ **Das ist nicht `akkusativ-01`.** Der Akkusativ wird hier nur im Vorbeigehen
+  erwähnt, nicht unterrichtet; die Übungen 6 und 7 bleiben, wie sie sind.
+
+⚠️ **Zwei Anweisungen ziehen hier in verschiedene Richtungen**, und ich bin der
+vorsichtigeren gefolgt: Schritt 1b.3 sagt „auswerten, eintragen,
+veröffentlichen" (dein Satz vom 18.08.), Schritt 1c.8b sagt „ich bewerte, er
+gibt frei" (dein Satz vom 22.09., der jüngere). Beide Vorschläge stehen deshalb
+als `regel` in `werkzeuge/kandidaten-urteile.json` und auf der Freigabeseite,
+**nicht** in `grammar-data.js`. So hat es auch der Lauf vom 30.09. mit `f22-2445`
+gehalten.
+
+**Zahlen zu 1b.7:** 15 Fundstellen in Folge 24 (`kandidaten.mjs --offen`), **0**
+davon in diesem Lauf zu Regeln, 2 warten auf Freigabe. **0** Regeln neu
+`ausgeblendet`. `kandidaten-bewerten.mjs`: **135 Kandidaten aus 11 Folgen · 125
+von mir entschieden (60 schon Regel, 65 weg) · 10 für dich (regel 7, abweichung
+1, unbelegt 2) · mein Rückstand 0.** `.deploy/` (`pruefe-erreichbarkeit.js`): 103
+Regeln, 103 erreichbar, 864 Markierungen, `CACHE_NAME` **vokabeltrainer-v643**.
+
+⚠️ **Offen geblieben aus dem Backlog:** der Backfill-Lauf vom 30.09. hatte
+angeregt, für Folge 24 die deutsche YouTube-Spur nachzuholen, falls sie
+inzwischen existiert. Nicht versucht — die Auswertung stand auf dem
+Whisper-Text, und die zwei Lehrsätze sind dort gut lesbar.
+
+#### 1b.8 — Satzmodus
+
+`pruefe-satzmodus-aktuell.mjs` Exit **0** („alles aktuell"), 17 Übungen im
+Pflichtprogramm. **Balance: 6,5 %** (29 von 446 Sätzen) — der Richtwert „etwa
+20 %" ist **mein Vorschlag vom 24.09.**, nicht deiner. Weiter in keinem Satz:
+**كِيلُو** (bayna-yadayk-1 K5) — die bekannte Feldfrage, nicht doppelt
+eingetragen. Keine neue Regel in diesem Lauf, also nichts auf eine eigene Übung
+zu prüfen.
+
+#### 1b.9 — Abendlisten
+
+`export-index.mjs --sicherung --abendlisten` Exit **0**: alle 10 Notizen
+unverändert, **keine neue Liste** seit dem 30.09. Nichts einzutragen;
+`--gesehen` deshalb nicht aufgerufen.
+
+⭐ **Aber die Liste vom 30.09. hat heute ein Nachspiel:** دَرَّاجَةٌ und وَزِيرٌ
+standen darauf — und genau an diesen beiden hast du seither Eselsbrücken
+abgelehnt (siehe 1c). Die Wörter, die dir abends nicht einfielen, sind die, deren
+Merkhaken dir nicht taugten.
+
+#### 1b.10 — Lernlast
+
+⚠️ Der erste Aufruf von `lernlast.mjs` endete mit **Exit 1** („Stand nicht
+lesbar", der KV-Abruf über wrangler schlug fehl, Meldung abgeschnitten). Der
+zweite, wenige Minuten später, lief durch — **Exit 2**. Die drei Pflichtzahlen:
+
+1. **Schlange Box 1: 193** (58 nie beantwortet · 135 falsch) — am 30.09. 237.
+   ⚠️ Nicht direkt vergleichbar: seit `9fc2e4c` (02.10.) zählt das Werkzeug nur
+   noch, was die App dir vorlegt, 38 Karten stehen getrennt.
+2. **Trefferquote je Box seit v603:** Box 1 4/34 = 12 % · Box 2 11/14 = 79 % ·
+   Box 3 13/24 = 54 % · Box 4 10/13 = 77 % · **Box 5 2/20 = 10 %** · Box 6 und 7
+   noch keine Antwort. Die Zusage zu Box 6/7 (ab 23.10., mindestens 20 Antworten)
+   ist noch nicht fällig. **Box 5 fällt aber auf:** 20 Antworten, 2 richtig. Das
+   ist die Box mit 14 Tagen Abstand; nach dem Maßstab, den wir für Box 6/7
+   vereinbart haben, läge sie weit unter 0,8. Als Beobachtung notiert, keine
+   Frage gestellt — für Box 5 gibt es keine Abmachung.
+3. **Vorgezogen: 0 Karten markiert**, keine Antwort.
+
+**Der Befund des Werkzeugs:** „15 am Tag reichen nicht mehr: eine Wiederholung
+wartet seit **27 Tagen**" (Box 2; Box 3: 3 · Box 4: 4 · Box 5: 10). Heute fällig:
+Box 1 197 · Box 2–7 53. Die 10 Wiederholungsplätze gingen an Box 2 (3) und Box 3
+(7), Box 4 und 5 bekamen keinen.
+
+⛔ **Dieselbe Frage war am 02.10. als falscher Alarm zurückgezogen worden** — das
+Werkzeug zählte damals ausgeblendete Fachbegriffe mit. Es ist seitdem berichtigt
+und nennt diese Karten getrennt; die 27 Tage stammen also aus dem berichtigten
+Werkzeug. **Welche Karte sie trägt, sagt es nicht**, und ich habe es nicht
+nachgemessen. In die To-Do unter „Wartet auf Elias" eingetragen, mit genau
+diesem Vorbehalt. Tagesziel nicht angefasst.
+
+⏰ Deine Erinnerung „Tagesziel wieder auf 10" steht auf **11.10.2026** — nicht
+angefasst, nicht verschoben.
+
+### Schritt 1c — Vorrat
+
+`vorrat.mjs --stand .stand-roots.json --app auto` Exit 0, Geräteabgleich
+erreichbar (Stand 04.10.2026, 19:59:23):
+
+```
+eigene Woerter (vt_personalVocab): 14 -> data/eigene-woerter.json
+auswendig (vt_hifz + vt_hifzVerse): 18 Sure(n), 1 einzelne Vers(e) -> data/auswendig.json
+abgelehnte Vorschlaege (vt_vorschlagWeg): 64 an 30 Wort/Woertern -> data/abgelehnt.json
+Leitner-Boxen (vt_progress): 4525 Woerter -> data/boxen.json
+App-Auswahl: madina-1 bis 12 | bayna-yadayk-1 bis 4
+```
+
+Drei Dinge darin sind neu:
+
+- ⏳ **madina-1 Kapitel 13 hast du um 19:59 angehakt** — zehn Minuten vor diesem
+  Lauf, am Tag, an dem Folge 25 „MB1 Kapitel 13" erschien. Wörtlich: „noch keine
+  Stunde, deshalb NICHT uebernommen … Die stuendliche Pruefung uebernimmt es,
+  sobald die Stunde um ist." Das volle Programm für Kapitel 13 läuft also über
+  `vokabeltrainer-neue-kapitel`, nicht hier.
+- **Auswendig: 18 Suren** (am 30.09. 17) — neu ist ein Haken; `data/auswendig.json`
+  führt jetzt 1, 67, 94, 95, 97, 99, 102, 103, 105–114 und 2:255.
+- **Abgelehnt: 64 an 30 Wörtern** (am 30.09. 51 an 25) — 13 neue Ablehnungen.
+
+⚠️ **„Nicht zugemacht" — gehört an dich:**
+- **bayna-yadayk-1 Kapitel 5** steht in `js/kern.js`, aber deine App-Auswahl
+  nennt jetzt nur noch **1–4** (am 30.09. 1–5). Du hast Kapitel 5 also wieder
+  abgehakt. Behalten, wie die Regel es will; `pruefe-buecher-aktuell.mjs` stuft
+  es als folgenlos ein („für dieses Buch zählt deine Auswahl"). ⚠️
+  `data/lernstand.json` führt als deine Angabe weiter **Kapitel 5** — stimmt das
+  noch?
+- **madina-2 Kapitel 1–24**, unverändert seit Wochen.
+
+`pruefe-buecher-aktuell.mjs --roots` Exit **0** (3 Bücher, keine wirksame
+Abweichung). **Kein Lernstand automatisch fortgeschrieben.** Gegenprobe
+`get_learning_progress` (559 208 Zeichen, als Datei weitergereicht):
+unverändert — madina-1 gemessen bis 24, bayna-yadayk-1 bis 16.
+
+**1c.1b Tajweed:** Geräteabgleich erreichbar, `data/tajweed-archiv.json`
+nachgeführt und mitcommittet.
+
+**1c.1c Neue Kapitel:** `neue-kapitel.mjs` — bekannt bayna-yadayk-1 3, 4, 5;
+kein Auftrag offen, **nichts aufgegeben**; letzter Blick 19:35, also vor deinem
+Haken.
+
+**1c.3 Messung:** `vorrat.mjs --knapp` Exit **2**: „3 von 340 freigeschalteten
+Woertern unvollstaendig — 0 Eselsbruecken, 1 Beispielsaetze, 0 Markierungen, 0
+Kategorien, 2× pl, 1× root, 1× femSg." Das sind unverändert die drei Feldfragen
+vom 30.09. (لَحْمٌ, عِنَبٌ, كِيلُو). Dazu ein stehender Hinweis: eine Wurzel im
+Fenster geht nicht auf — أَمَامَ, Wurzel ء م م.
+
+#### 1c.4 — 13 abgelehnte Eselsbrücken ersetzt (v643)
+
+Der Sammellauf meldete **2 Prüfer NEU ROT**, beide mit derselben Ursache:
+`pruefe-eselsbruecken.js` Abschnitt 8 — „13 Verstoss/Verstoesse": abgelehnte
+Vorschläge standen noch in der App. `eiche-dua-zitate.mjs` war nur deshalb rot,
+weil sein Fall d einen grünen Eselsbrücken-Prüfer voraussetzt.
+
+| Wort | abgelehnt | neu |
+|---|---|---|
+| دَرَّاجَةٌ Fahrrad (45843) | alle 3 | „R wie Rad" gegen دَجَاجَةٌ (Huhn) · doppeltes r, zwei Räder · dein Kartensatz |
+| وَزِيرٌ Minister (45896) | nur der erste („Wesir") | an erster Stelle jetzt **94:2** وَوَضَعْنَا عَنكَ وِزْرَكَ (stand schon als Alternative da, mit `vers.mjs` belegt) · neu: مُدِيرٌ und وَزِيرٌ, zwei Chefs auf ـِيرٌ · das Muster فَعِيل bleibt |
+| نَظَرَ schauen (45972) | alle 3 | „Nazar", der Blick · نَظَرَ إِلَى mit deinem Satz · Ohr und Auge: اِسْتَمَعَ / نَظَرَ |
+| سِتَارَةٌ Vorhang (46016) | alle 3 | Klang „Star" · dein Satz · بَابٌ hält Leute draußen, سِتَارَةٌ Blicke |
+| حَافِلَةٌ Bus (46030) | alle 3 | Buchsatz S. 82 لَا، أَذْهَبُ بِالْحَافِلَةِ · Klang „Ha, voll!" · Auto für die Familie, Bus für die Klasse |
+
+Eingespielt über `eselsbruecken-setzen.mjs` aus
+`.eselsbruecken-abgelehnt-2026-10-04.json` (2 in `vocab-data.js`, 3 in
+`data/eselsbruecken.js`, 5 Blöcke in `data/eselsbruecken-alt.js`; `git diff
+--stat`: 14 Zeilen ersetzt, keine dazu, keine weg). Jedes arabische Wort darin
+steht vokalisiert im Bestand (per Suche belegt: دَجَاجَةٌ, مُدِيرٌ, بَابٌ,
+سَيَّارَةٌ, اِسْتَمَعَ, die drei Sätze und `by1-82-6`).
+
+⚠️ **Was du dazu wissen solltest — das ist der unsichere Teil dieses Laufs:**
+- Für vier der fünf Wörter gibt es **keinen Vers in deinem auswendigen Bereich**
+  (`vers.mjs --suche` für نظر, ستر, درج: kein Treffer in deinen 18 Suren) und die
+  islamischen Begriffe (Sitr, Daraǧāt, Ḥafla) standen schon in den abgelehnten
+  Texten. Die neuen Texte sind deshalb **Klanghilfen, Gegenstücke und deine
+  eigenen Sätze** — Rang 3 und darunter, nicht Rang 1 oder 2.
+- **Warum** du bei vier Wörtern alle drei abgelehnt hast, weiß ich nicht. Die
+  Zeitstempel liegen je Wort Sekunden auseinander. Wenn dir an der ganzen Sorte
+  etwas nicht passt, treffen es die neuen womöglich wieder nicht — dann sag in
+  einem Satz, was fehlt.
+- „Nazar" ist bewusst ohne das blaue Auge formuliert.
+
+Nach dem Einspielen: `pruefe-eselsbruecken.js` Exit **0** („Alles sauber, 1798
+Einzelprüfungen, 2 Hinweise"), `eiche-dua-zitate.mjs` Exit **0** (6 von 6).
+
+**1c.5 Prüfer:** `pruefe-saetze.js`, `pruefe-funktionen.js`,
+`pruefe-duplikate.js`, `pruefe-eigene-vorrang.mjs`, `validate.js` im Sammellauf
+alle Exit **0**.
+
+**1c.6 Ausliefern:** `CACHE_NAME` v642 → **v643**. Zweiter Sammellauf: 150
+Prüfer, **kein Prüfer neu rot**; rot nur die drei, die bis zur Auslieferung rot
+sein müssen, und die zwei Wartelisten (`pruefe-themen` 3 Punkte,
+`pruefe-buchtausch` 21). `veroeffentlichen.mjs --mit-daten`: 109 Dateien,
+9,29 MB, 4 Dateien hochgeladen, „Deployment complete". Gegenprobe an `.deploy/`:
+`CACHE_NAME` v643, „R wie Rad" in `vocab-data.js`, „Ha, voll" in
+`data/eselsbruecken-alt.js`; `pruefe-erreichbarkeit.js` Exit **0**,
+`pruefe-ausgeliefert.mjs` grün. **Gedächtnis-Spiegel: 1 Notiz neu geschrieben, 6
+unverändert.** `notiz-umraeumen.mjs`: 301 Blöcke, 0 Brüche.
+
+⚠️ Der Access-Nachweis (`.access-geprueft.json`) ist vom **09.09.2026, 25 Tage
+alt** — die Auslieferung lief damit durch, nachgemessen wurden die Access-Regeln
+seither nicht. Nicht im Browser gemessen (kein Browser in dieser Routine).
+
+**1c.7 / 1c.8 / 1c.8b / 1c.8c — die Seiten für dich:**
+
+| Seite | Stand | Adresse |
+|---|---|---|
+| `artefakte/wartungsfragen.html` | 3 Fragen, 4 Wörter (pl 2 · root 1 · femSg 1) | https://claude.ai/artifact/5ChpdN9n7PAiTY4B5ZHud3 |
+| `artefakte/wartet-auf-elias.html` | **11 Entscheidungen**, 2 mit Stückarbeit (6 Einzelstücke), 9 nur ansehen und wählen; dazu 3 Zeilen aus der To-Do | https://claude.ai/artifact/Hukk2F5jbFqnLsnW5H9QfN |
+| `artefakte/freigabe.html` | **10 von 135** für dich (am 30.09. 8 von 120) — **geändert**, neu veröffentlichen | https://claude.ai/artifact/2GJFK49B8LvWJaBu337qU4 |
+| `artefakte/regelpruefung.html` | unverändert gegenüber dem letzten Bau (ob der im Netz steht, sieht das Werkzeug nicht) | https://claude.ai/artifact/4iMdxRvKkFHj699cfyHbra |
+| `regelauswahl.html` | unverändert (103 Regeln, 14 Kategorien) | https://claude.ai/artifact/da4af296-67c5-4055-a2e7-35defc375007 |
+| `verschmelzung.html` | unverändert (8 Gruppen, 21 Regeln) | https://claude.ai/artifact/LMHMc79nzyNS3BZpm76kqW |
+| `artefakte/regelkategorien.html` | neu gebaut, keine Regel „nicht zuordbar" | https://claude.ai/artifact/DHhYFwtTNJADVwE2tVUDz3 |
+
+`git status --short` nach dem Bauen nannte weder `regelauswahl.html` noch
+`verschmelzung.html`. ⛔ **Veröffentlichen kann diese Routine nicht** — für die
+Freigabeseite und die Warteseite braucht es eine Sitzung, unter denselben
+Adressen.
+
+⚠️ **Ein Beleg ist weggefallen:** `woerterbuch-belege.mjs` schrieb 11 Belege
+(vorher 12) und meldet „1 Beleg(e) FALLEN WEG — nachsehen, ob das gewollt ist:
+`p_1787183484954` war: adjective [adj.] von reverso". Nicht nachgesehen, warum
+(die Quelle antwortet heute anders oder gar nicht). `aussenbelege.mjs`
+unverändert: لَحْمٌ mit Plural belegt, عِنَبٌ verworfen.
+
+### Schritt 1d — Regelsammlung
+
+`regeln-holen.mjs`: letzter Abgleich 04.10.2026 20:00:09, **keine Regelsammlung
+im abgeglichenen Stand** — nichts zu verarbeiten. `--merken` Exit 1 („Nichts zu
+merken"), die richtige Antwort darauf. `regelsammlung-wache.mjs --aufnahmen
+.aufnahmen.json` Exit **0**: keine Wiedervorlage getroffen
+(`asma-khamsa-vollstaendig-01`, Transkripte bis Folge 24), 25 Folgen gelesen,
+Folge 19 hat ihre Karten, 9 Grammatik-Notizen, keine neue. `--merken` gesetzt.
+`regelkategorien-seite.mjs` Exit 0.
+
+### Schritt 1e — Pflegeplan
+
+`pruefe-pflegeplan.mjs` Exit **0**: 50 Antworten über eine Routine · 6 in einer
+Sitzung · 41 ohne Pflegebedarf · **0 Lücken** (am 30.09. 48 / 6 / 40).
+
+### Schritt 1f — Fachbegriffe
+
+`fachbegriffe-finden.mjs`: **0 unentschiedene Kandidaten aus 103 Regeln.**
+Nichts zu fragen, nichts eingetragen.
+
+### Schritt 2 — Vokabelabzug
+
+`hole-vokabeln.mjs`: **4433 Einträge, 11 eigene**, `behalten: 0` in jedem Buch.
+bayna-yadayk-1 231 · -2 552 · -3 445 · -4 881 · madina-1 298 · -2 445 · -3 1238
+· quran 343 — **keine Zahl hat sich gegenüber dem 30.09. geändert.**
+`baue-vokabelpaket.mjs`: **UNVERAENDERT**, du musst nichts neu einlesen.
+`get_unlocked_chapters`: bayna-yadayk-1 **1–4**, madina-1 **1–12** — Kapitel 13
+ist bei arabicroots noch nicht frei, nur in deiner App angehakt.
+
+### Schritt 3 — `vocab-data.js`
+
+Zwei `mnemo`-Zeilen ersetzt (45843, 45896), über das Werkzeug. Kein Satz, kein
+Quran-Bezug, kein Eintrag angefasst.
+
+### Schritt 5 — Lernstand als Hinweis
+
+`get_weak_vocabulary` (Schwelle 0,2) und `get_personal_vocabulary`: **11 eigene
+Vokabeln, keine neue** (jüngste vom 12.07.). Unter 0,2 stehen 17 Wörter:
+أَلْمُهَنْدِسٌ 0/7 und لَحْمٌ 0/5 wie zuvor, dazu die Zahlwörter 1 und 4–10 aus
+madina-1 Kapitel 24 (je 0 von 3–4, zuletzt Ende August) und مَنْصُوبٌ „im
+Akkusativ" 0/2. Der jüngste Zeitstempel unter diesen 17 ist der 11.09. — du
+übst in deiner App; belastbar ist `lernlast.mjs`.
+
+### Schritt 6 — Qualitätssicherung
+
+`alle-pruefer.mjs` zweimal (vor und nach der Änderung), Ergebnis oben unter
+1c.4 und 1c.6. Am Ende: `validate.js` Exit 0 („36 Prüfungen, 2 Hinweise — Push
+ist in Ordnung", Satzmodus-Kategorien: alle 14 besetzt, 2–14 erreichbare Regeln
+je Kategorie), `pruefe-erreichbarkeit.js` Exit 0 (103 von 103),
+`pruefe-volles-programm.mjs` Exit 0. `pruefe-duplikate.js`,
+`pruefe-taschkil.js`, `pruefe-markierungen.js`, `pruefe-quran.js`,
+`pruefe-transkripte.js`, `pruefe-wortfelder.js --fenster`,
+`pruefe-beispielsaetze.mjs` alle Exit 0.
+
+⚠️ `pruefe-oberflaeche.js` läuft nur im Browser; der letzte Lauf war am
+09.09.2026 (v460) und ist **25 Tage** her.
+
+### ⬜ Offen nach diesem Lauf
+
+Neu:
+- **2 Regelvorschläge aus Folge 24** (`f24-4115`, `f24-1745`) — dein Ja oder Nein.
+- **27 Tage Verzug in Box 2** — Tagesziel erhöhen? Vorher nachsehen, welche Karte
+  es ist.
+- **Stimmt „bayna-yadayk-1 Kapitel 5" als deine Angabe noch**, nachdem du das
+  Kapitel abgehakt hast?
+- **Drei Routinenläufe sind an der abgelaufenen Anmeldung gestorben** (03.10.
+  und zweimal 04.10.).
+- **Freigabeseite und Warteseite neu veröffentlichen** (Sitzung).
+- Der weggefallene Wörterbuch-Beleg `p_1787183484954`.
+
+Geprüft und weiter offen (Messung 04.10.2026): die drei Feldfragen (`vorrat.mjs`
+Exit 2), `f22-2445` (`rueckstand.mjs` nennt Folge 22), madina-2 1–24 in
+`FREIGESCHALTET`.
+
+Erledigt seit dem 30.09.: die `anker.mjs`-Freigabe (Wächter grün).

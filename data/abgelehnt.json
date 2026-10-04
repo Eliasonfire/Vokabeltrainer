@@ -1,6 +1,6 @@
 {
-  "stempel": 1790718069212,
-  "geholt": "30.9.2026",
+  "stempel": 1790995495957,
+  "geholt": "4.10.2026",
   "woerter": {
     "45760": [
       {
@@ -159,6 +159,23 @@
         "zeit": 1788222470209
       }
     ],
+    "45843": [
+      {
+        "nr": 0,
+        "text": "Maschinen-Muster فَعَّالَة wie سَيَّارَةٌ (Auto) und ثَلَّاجَةٌ (Kühlschrank). Wurzel د ر ج = Stufe, Grad — das Rad mit den Gängen.",
+        "zeit": 1791046827495
+      },
+      {
+        "nr": 1,
+        "text": "Drei Maschinen, ein Muster فَعَّالَة, und du hast alle drei: سَيَّارَةٌ (Auto), دَرَّاجَةٌ (Fahrrad), ثَلَّاجَةٌ (Kühlschrank). Immer eine شَدَّة in der Mitte, immer eine تاء مَرْبُوطة am Ende. Wenn dir ein neues Gerät begegnet, ist die Chance groß, dass es genauso gebaut ist.",
+        "zeit": 1791046812655
+      },
+      {
+        "nr": 2,
+        "text": "Die Wurzel د ر ج heißt Stufe und Grad — daher دَرَجَة, die Stufe oder Note. Ein Fahrrad ist „das mit den Stufen\", also den Gängen. ⭐ Und im Glauben begegnet dir dieselbe Wurzel als دَرَجَات, die Rangstufen im Paradies.",
+        "zeit": 1791046825171
+      }
+    ],
     "45844": [
       {
         "nr": 0,
@@ -245,6 +262,13 @@
         "zeit": 1789158487628
       }
     ],
+    "45896": [
+      {
+        "nr": 0,
+        "text": "⭐ Du kennst das Wort aus dem Deutschen: der „Wesir“ aus den Märchen ist ein وَزِير — über das Türkische zu uns gekommen. Die Wurzel و ز ر heißt „Last“: ein وَزِير trägt die Last des Herrschers mit.",
+        "zeit": 1790901250265
+      }
+    ],
     "45897": [
       {
         "nr": 0,
@@ -283,6 +307,23 @@
         "zeit": 1787282211967
       }
     ],
+    "45972": [
+      {
+        "nr": 0,
+        "text": "Die Wurzel ن ظ ر steht zweimal in den Kapiteln 1 und 2 von Bayna Yadayk 1: نَظَرَ (anschauen) und نَظَّارَةٌ (Brille). Die Brille ist das Gerät zum نَظَرَ — wer das eine behält, hat das andere mit.",
+        "zeit": 1790995397591
+      },
+      {
+        "nr": 1,
+        "text": "Der Befehl heißt اُنْظُرْ! („schau!\") und trägt vorn dasselbe Verbindungs-Alif wie اِقْرَأْ! („lies!\") und اِسْمَعْ! („hör!\") aus demselben Kapitel. Drei Befehle, ein Bauplan: Alif voran, weil der Stamm sonst mit einem vokallosen Buchstaben anfinge.",
+        "zeit": 1790995398128
+      },
+      {
+        "nr": 2,
+        "text": "⚠️ Verwechslungsgefahr mit نَظِيفٌ (sauber) aus Kapitel 3 — die ersten beiden Buchstaben sind gleich, der dritte entscheidet: ر am Ende heißt schauen, ف am Ende heißt sauber.",
+        "zeit": 1790995396988
+      }
+    ],
     "45983": [
       {
         "nr": 0,
@@ -298,6 +339,40 @@
         "nr": 2,
         "text": "⚠️ Nicht mit نَظَرَ verwechseln: beide fangen mit ن an und haben drei Buchstaben, aber نَسَخَ hat س خ, نَظَرَ hat ظ ر. Kopieren gegen Anschauen.",
         "zeit": 1790358132811
+      }
+    ],
+    "46016": [
+      {
+        "nr": 0,
+        "text": "Die Wurzel س ت ر meint verdecken — dieselbe, die im Wort „Sitr\" steckt, dem Bedecken. Ein Vorhang ist genau das: das Stück Stoff, das den Blick verdeckt.",
+        "zeit": 1790995333695
+      },
+      {
+        "nr": 1,
+        "text": "Stell es zu den Dingen in deinem Zimmer: an der نَافِذَةٌ (Fenster) hängt die سِتَارَة. Zwei Wörter, ein Bild — und du weißt sofort, wofür der Vorhang da ist.",
+        "zeit": 1790995316157
+      },
+      {
+        "nr": 2,
+        "text": "Der Plural verrät das Muster: سَتَائِرُ ist gebaut wie حَقَائِبُ von حَقِيبَةٌ (Tasche, Madina 1 Kapitel 5), das du hast — in der Mitte ـَائِ, am Ende kein Tanwin. ⭐ Und die Wurzel س ت ر ist dieselbe, die im Fiqh das Bedecken meint: was verdeckt gehört, wird verdeckt.",
+        "zeit": 1790995313747
+      }
+    ],
+    "46030": [
+      {
+        "nr": 0,
+        "text": "Die Wurzel ح ف ل meint sich versammeln, voll werden — eine Ḥafla ist eine Feier, eine Versammlung. Die حَافِلَةٌ ist das, was sich füllt: der Bus voller Leute.",
+        "zeit": 1791045968487
+      },
+      {
+        "nr": 1,
+        "text": "Das Muster fāʿila mit langem ā nach dem ersten Buchstaben: نَافِذَةٌ (Fenster) · فَاكِهَةٌ (Obst) · جَامِعَةٌ (Universität). حَافِلَةٌ ist derselbe Bau, und der Plural läuft regelmäßig: حَافِلَاتٌ.",
+        "zeit": 1791045952808
+      },
+      {
+        "nr": 2,
+        "text": "Setz sie auf die Straße, die du hast: die حَافِلَةٌ fährt im شَارِعٌ, die سَيَّارَةٌ (Auto) und die دَرَّاجَةٌ (Fahrrad) daneben. Drei Fahrzeuge aus deinem Bestand, eines davon neu.",
+        "zeit": 1791045967772
       }
     ],
     "50357": [

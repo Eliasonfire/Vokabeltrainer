@@ -678,8 +678,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* دَرَّاجَةٌ - Fahrrad */
   '45843': [
-    'Drei Maschinen, ein Muster فَعَّالَة, und du hast alle drei: سَيَّارَةٌ (Auto), دَرَّاجَةٌ (Fahrrad), ثَلَّاجَةٌ (Kühlschrank). Immer eine شَدَّة in der Mitte, immer eine تاء مَرْبُوطة am Ende. Wenn dir ein neues Gerät begegnet, ist die Chance groß, dass es genauso gebaut ist.',
-    'Die Wurzel د ر ج heißt Stufe und Grad — daher دَرَجَة, die Stufe oder Note. Ein Fahrrad ist „das mit den Stufen", also den Gängen. ⭐ Und im Glauben begegnet dir dieselbe Wurzel als دَرَجَات, die Rangstufen im Paradies.'
+    'Sprich es langsam: dar-rā-dscha. Das ر wird doppelt gesprochen — zwei r für zwei Räder. Mehr musst du dir nicht merken: doppeltes r, zwei Räder, Fahrrad.',
+    'Dein eigener Satz hält es fest: هَذِهِ دَرَّاجَةٌ جَدِيدَةٌ وَسَرِيعَةٌ — „Dies ist ein neues und schnelles Fahrrad.“ Drei Wörter hintereinander enden auf ة: das Fahrrad ist weiblich, und „neu“ und „schnell“ ziehen mit. Wer den Satz im Ohr hat, hat Wort und Geschlecht zugleich.'
   ],
 
   /* مِلْعَقَةٌ - Löffel */
@@ -1018,7 +1018,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* وَزِيرٌ - Minister */
   '45896': [
-    '⭐ Es gibt eine Stelle aus deinem auswendigen Bereich, und sie ist besser als die bekannte: وَوَضَعْنَا عَنكَ وِزْرَكَ (94:2) — „und dir deine Last abgenommen", in Sūrat ash-Sharḥ. وِزْر ist die Last; ein وَزِير ist der, der sie mitträgt. Damit hängt die Vokabel an einer Sure, die du sprichst.',
+    'Zwei Chefs, ein Ausklang: der مُدِيرٌ (Direktor) leitet die Schule, der وَزِيرٌ ein ganzes Ministerium. Beide enden auf ـِيرٌ — den kleineren Chef hast du schon, häng den größeren daran.',
     'Muster فَعِيل wie كَبِيرٌ, قَرِيبٌ, سَرِيعٌ. ⚠️ Der Plural bricht auf zu وُزَرَاءُ — dasselbe Muster wie فَقِيرٌ → فُقَرَاءُ und غَنِيٌّ → أَغْنِيَاءُ, die du beide hast. Alle drei enden auf ـُ ohne Tanwīn.'
   ],
 
@@ -2399,8 +2399,8 @@ const ESELSBRUECKEN_ALT = {
   ],
 
   '45972': [
-    'Der Befehl heißt اُنْظُرْ! („schau!") und trägt vorn dasselbe Verbindungs-Alif wie اِقْرَأْ! („lies!") und اِسْمَعْ! („hör!") aus demselben Kapitel. Drei Befehle, ein Bauplan: Alif voran, weil der Stamm sonst mit einem vokallosen Buchstaben anfinge.',
-    '⚠️ Verwechslungsgefahr mit نَظِيفٌ (sauber) aus Kapitel 3 — die ersten beiden Buchstaben sind gleich, der dritte entscheidet: ر am Ende heißt schauen, ف am Ende heißt sauber.'
+    'Schauen hat im Arabischen eine Richtung: نَظَرَ إِلَى — „schauen zu“. Dein Satz zeigt es: نَظَرَ الطَّالِبُ إِلَى النَّجْمِ, „Der Student schaute zum Stern.“ Lern das Verb gleich mit seinem إِلَى, dann sitzen Bedeutung und Bau zusammen.',
+    'Ohr und Auge, beide aus Kapitel 1 von Bayna Yadayk: اِسْتَمَعَ ist zuhören, نَظَرَ ist hinschauen. Im Unterricht kommt erst das eine, dann das andere — hör zu, dann schau ins Buch.'
   ],
 
   '45973': [
@@ -2867,8 +2867,8 @@ const ESELSBRUECKEN_ALT = {
   ],
 
   '46016': [
-    'Stell es zu den Dingen in deinem Zimmer: an der نَافِذَةٌ (Fenster) hängt die سِتَارَة. Zwei Wörter, ein Bild — und du weißt sofort, wofür der Vorhang da ist.',
-    'Der Plural verrät das Muster: سَتَائِرُ ist gebaut wie حَقَائِبُ von حَقِيبَةٌ (Tasche, Madina 1 Kapitel 5), das du hast — in der Mitte ـَائِ, am Ende kein Tanwin. ⭐ Und die Wurzel س ت ر ist dieselbe, die im Fiqh das Bedecken meint: was verdeckt gehört, wird verdeckt.'
+    'Dein Satz: السِّتَارَةُ فِي الْغُرْفَةِ — „Der Vorhang ist im Zimmer.“ Zwei weibliche Wörter auf ة, das eine hängt im anderen. Sag den Satz einmal laut, wenn du abends deinen eigenen Vorhang zuziehst.',
+    'Zwei Dinge machen ein Zimmer zu: der بَابٌ (Tür) hält Leute draußen, die سِتَارَةٌ hält Blicke draußen. Die Tür kennst du längst — der Vorhang ist ihr leiser Bruder am Fenster.'
   ],
 
   '46017': [
@@ -2942,8 +2942,8 @@ const ESELSBRUECKEN_ALT = {
   ],
 
   '46030': [
-    'Das Muster fāʿila mit langem ā nach dem ersten Buchstaben: نَافِذَةٌ (Fenster) · فَاكِهَةٌ (Obst) · جَامِعَةٌ (Universität). حَافِلَةٌ ist derselbe Bau, und der Plural läuft regelmäßig: حَافِلَاتٌ.',
-    'Setz sie auf die Straße, die du hast: die حَافِلَةٌ fährt im شَارِعٌ, die سَيَّارَةٌ (Auto) und die دَرَّاجَةٌ (Fahrrad) daneben. Drei Fahrzeuge aus deinem Bestand, eines davon neu.'
+    'Klanghilfe: ḥā-fi-la — „Ha, voll!“ So sieht der Bus morgens aus, wenn du einsteigen willst. Nur der Klang, aber er passt zum Bild: der Bus ist das Fahrzeug, das voll wird.',
+    'Groß gegen klein: in die سَيَّارَةٌ (Auto) passt eine Familie, in die حَافِلَةٌ eine ganze Klasse. Das kleine Fahrzeug hast du seit Madina 1 — das große ist das neue Wort.'
   ],
 
   '46031': [
