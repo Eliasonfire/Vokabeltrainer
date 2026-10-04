@@ -570,6 +570,73 @@
     "f23-2045": {
       "urteil": "weg",
       "grund": "Schueler uebersetzen den Lesetext von Kapitel 4 (Lehreranteil 0,08): die Familie von Ahmad schlaeft am freien Tag nicht nach dem Gebet, Taha saugt das Wohnzimmer, Fatima das Schlafzimmer, Ahmad waescht die Kleidung, Latifa buegelt sie, die Oma waescht das Geschirr, der Opa liest Koran. Die Selbstkorrektur 'seine Kleidung ... Nicht seine ... Die Kleidung' ist Genauigkeit beim Uebersetzen. Keine Regel."
+    },
+
+    "f24-3845": {
+      "urteil": "schon-regel",
+      "grund": "Der Lehrer gibt vier neue Verben als Hausaufgabe auf (dhahaba, kharaja, tabakha, akala) und spricht an raja'a noch einmal das Muster der Vergangenheit durch: 'Bei Hua ganz normale Form. Huma raja'a. Da kommt zu normaler Form ein Elif hinten dran. Hum raja'u. Da kommt ein Wa und ein Elif ... rein. Hiya raja'at. ... hinten ein Ta mit Sukun.' Genau diese vierzehn Formen stehen schon im Bestand, dort an dhahaba aus Folge 18. Das hohe Gewicht (5,286) kommt von den Stichworten Sukun und Damma, nicht von neuem Stoff.",
+      "quelle": "verb-madi-endungen-01"
+    },
+    "f24-4115": {
+      "urteil": "regel",
+      "grund": "Woran man Vergangenheit und Gegenwart am Verb erkennt. Lehrer, Folge 24 @ 40:30 bis 41:56: 'Bei den Verben der Vergangenheit aendert sich was? Das Ende. Bei der Gegenwart aendert sich was? Aendert sich vorne ... der Anfang.' Dann drei Paare, die er abfragt (Whisper-Schreibung: 'Yes Kuno' gegen 'Sekene', 'Nefalu' gegen 'Faala', 'El-Abu' gegen 'La-Iba'), und der Merksatz: 'Wenn also vorne beim Gegenwartsverb, wenn da ein Elif ist, oder ein Ja, oder ein Nun, oder ein Ta, dann wisst ihr, dieses Verb ist von der Gegenwart. Ausser das Verb hat selbst eine[n] ... diese[r] Buchstaben.' Gedruckt steht dasselbe im Schluessel Band 2, Lektion 10 (PDF-S. 48): 'Im mudari wird einer dieser vier Buchstaben vor das Verb gesetzt' — diese Stelle ist am 30.09.2026 fuer f23-1045 gelesen worden, in diesem Lauf nicht noch einmal gerendert. Im Bestand fehlt es: verb-madi-endungen-01 sagt nur, dass in der Vergangenheit 'der Stamm gleich bleibt, nur die Endung wechselt'; ueber die Gegenwart steht dort nichts. ⚠️ Der Lehrer nennt es selbst 'nur ein kleiner Cheatcode' und vertagt das Konjugieren: 'Gegenwart werden wir erst konjugieren, wenn Vergangenheit ordentlich sitzt.' Die Regel waere also nur das Erkennen, nicht das Bilden. ⚠️ Die drei Beispielpaare sind im Whisper-Text nicht vokalisiert belegt; in einer Regel stuenden sie in Umschrift oder aus dem Bestand.",
+      "quelle": "Unterricht Folge 24 @ 40:30 bis 41:56 · Schluessel Band 2, Lektion 10 (PDF-S. 48), gelesen am 30.09.2026",
+      "frage": "Neue Regel: ein Gegenwartsverb erkennt man am Buchstaben vorn (Alif, Ya, Nun oder Ta), ein Vergangenheitsverb an der Endung. Lehrer (Folge 24) und Schluessel Band 2 sagen dasselbe. Aufnehmen als reine Erkennungsregel, obwohl die Gegenwart selbst noch nicht dran war?"
+    },
+    "f24-2515": {
+      "urteil": "weg",
+      "grund": "Lernrat zum Buch ('nur Grammatik ohne Vokabeln ist nicht so einfach'), dann die Ansage, was man fuer Bayna Yadayk braucht: verstehen, 'wann ist ein Verb ein Gegenwartsverb und wann ... ein Vergangenheitsverb und wie konjugiert man diese'. Danach wird die Hausaufgabe aufgerufen (darasa, raja'a, daraba, fa'ala) und nach dem 'Cheatcode fuer die Pronomen' gefragt. Ankuendigung und Abfrage, kein Lehrsatz. Die Erkennungsregel selbst steht bei f24-4115."
+    },
+    "f24-4245": {
+      "urteil": "weg",
+      "grund": "Schluss derselben Erklaerung wie f24-4115 ('Ende veraendert sich ... Vergangenheit. Vorne aendert sich, Gegenwart.'), danach Organisation (Verben werden immer wieder konjugiert, 'erinnert mich') und zwei Hilfsmittel: die Konjugationsseite von Reverso und das Langenscheidt-Woerterbuch. An der Seite liest er die Kopfzeilen vor (Vergangenheit, Gegenwart, Befehlsform) — einmal verspricht er sich ('Modaria ist Vergangenheit'). Die Regelfrage steht bei f24-4115."
+    },
+    "f24-4645": {
+      "urteil": "schon-regel",
+      "grund": "Auf die Frage, ob man die Pronomen 'cheaten' kann, wiederholt der Lehrer die Reihenfolge: 'dritte Person maennlich, erst Singular, dann Dual, dann Plural, erst 1, 2, 3. Hua, huma, hum', dann dritte Person weiblich, zweite maennlich, zweite weiblich, zuletzt ana und nahnu. Genau diese Dreierpakete stehen im Bestand ('Gemerkt wird in Dreierpaketen, nicht als ich-du-er-sie'). Der Rest ist Lernrat (mit der Hand aufschreiben).",
+      "quelle": "verb-madi-endungen-01 · huwa-hiya-weitere-01"
+    },
+    "f24-845": {
+      "urteil": "weg",
+      "grund": "Zwischenpruefung, Aufgabe 1: Gegenstaende ihren Raeumen zuordnen (Lehreranteil 0,43). Der Lehrer verbessert eine Antwort: 'Zimmer eines Schlafes' ginge, 'aber das Schlafzimmer wird besser' — Whisper schreibt beide Fassungen gleich ('Rolfa Tun Naumi'), der Unterschied ist also im Text nicht zu belegen. Der Sache nach ist es die Bestimmtheit des zweiten Glieds einer Idafa, und die steht im Bestand (idafa-zweitglied-01). Sonst Vokabelabfrage."
+    },
+    "f24-3415": {
+      "urteil": "weg",
+      "grund": "Schueler konjugieren darasa und fa'ala reihum (Lehreranteil 0,19); der Lehrer verbessert einzelne Formen ('Fa'alu', 'Fa'alata', 'Fa'alna', 'Fa'alta'). Uebungsabfrage zu verb-madi-endungen-01, kein neuer Lehrsatz. Der Hinweis kurz danach (ab 36:xx), dass man die Endung nur bei anta, antuma, antum, anti, antunna 'eins zu eins kopieren' kann, steht ebenfalls schon dort ('die Endung steckt schon im Pronomen')."
+    },
+    "f24-1745": {
+      "urteil": "regel",
+      "grund": "Das Alif nach der unbestimmten Akkusativ-Endung. In der Aufgabe zu kam (wie viele) begruendet der Lehrer die richtige Schreibung, Folge 24 @ 17:56 bis 18:12: 'Weil wir hatten das. Wenn ... ein Wort unbestimmt ist und Mansoub ist. Mansoub also im Akkusativ, also mit Fetha oder mit Fetatain. Dann kriegt [es] ein Elif hinten dran. Das ist das einzige, was so eine Regel hat. Die anderen haben das nicht.' Gedruckt steht es im Schluessel zu Band 1, Lektion 18 (S. 61 bis 63): kam mit Singular im Akkusativ 'und die Regel zum stummen Alif der Akkusativ-Endung (nicht nach Ta marbuta)' — so in der Vault-Notiz Schluessel-Regeln, die Seite selbst ist in diesem Lauf nicht gerendert. Im Bestand fehlt die Regel (in grammar-data.js nach Alif zusammen mit Tanwin, Fatha und Akkusativ gesucht: kein Treffer). ⚠️ Der Akkusativ als Fall ist noch nicht unterrichtet — der Lehrer erwaehnt ihn hier nur im Vorbeigehen, mit 'wir hatten das'. Das ist deshalb NICHT die Regel akkusativ-01, die die Uebungen 6 und 7 freischaltet; es ist eine Schreibregel. ⚠️ Die Einschraenkung 'nicht nach Ta marbuta' nennt nur der Schluessel, der Lehrer an dieser Stelle nicht. Davor im selben Fenster: ghuraf als Plural von ghurfa, weil von vier Zimmern die Rede ist — Wortkunde, und die Frage nach Pluralregeln vertagt er bei 23:15.",
+      "quelle": "Unterricht Folge 24 @ 17:56 bis 18:12 · Schluessel Band 1, Lektion 18 (S. 61 bis 63), laut Vault-Notiz 04 - Wissen/Schluessel-Regeln.md",
+      "frage": "Neue Regel: ein unbestimmtes Wort im Akkusativ (zwei Fatha) bekommt ein Alif hinten dran. Dein Lehrer sagt es in Folge 24 mit 'wir hatten das', der Schluessel in Lektion 18 beim Fragewort kam. Aufnehmen als Schreibregel, obwohl der Akkusativ selbst noch nicht dran war — oder warten, bis er kommt?"
+    },
+    "f24-5015": {
+      "urteil": "weg",
+      "grund": "Motivation: wer die Aufgaben nicht macht, betruegt sich selbst; der Vergleich mit dem Fitnesstrainer und dem Ernaehrungsplan; der Wert des Lernens. Kein Sprachinhalt."
+    },
+    "f24-1415": {
+      "urteil": "weg",
+      "grund": "Zwischenpruefung, 'welches Wort passt nicht in die Reihe' (Lehreranteil 0,29): drei Verben und eine Zeitung, der Bus unter den Kuechengeraeten, eine Zahl, eine Gebetszeit. Der Text ist ohne Satzzeichen und die arabischen Woerter sind nicht erkennbar. Vokabelabfrage, keine Regel."
+    },
+    "f24-2815": {
+      "urteil": "weg",
+      "grund": "Ein Schueler sagt die Bedeutungen der vierzehn Pronomen auf (Lehreranteil 0,13); der Lehrer bestaetigt nur und stellt richtig: der Plural gilt 'mehr als zwei. Also mindestens drei.' Singular, Dual und Plural ab drei stehen im Bestand (verb-madi-endungen-01: 'Dual (genau zwei) und Plural (ab drei)'). Abfrage, kein neuer Lehrsatz."
+    },
+    "f24-4845": {
+      "urteil": "weg",
+      "grund": "Motivation und Lernrat: nach jeder Stunde mit der Hand aufschreiben; warum man Arabisch lernt (das Buch Allahs verstehen, es den Kindern weitergeben). Kein Sprachinhalt."
+    },
+    "f24-2315": {
+      "urteil": "weg",
+      "grund": "Ein Schueler fragt, ob es Regeln gibt, 'wie man eine Sache, die singular ist, zu plural verwandelt'. Der Lehrer vertagt es ausdruecklich: 'Ja, ja, das gibt es, aber vorerst ... wird man jetzt nur wissen muessen', dass ghurfa eins ist und von vier die Rede ist. Danach ein Vergleich der beiden Lehrbuecher (Bayna Yadayk wirft ins Wasser, das Madina-Buch ist langsam, aber vokabelarm). Eine vertagte Frage ist keine Regel."
+    },
+    "f24-1145": {
+      "urteil": "weg",
+      "grund": "Zwischenpruefung, Aufgabe 2 (Lehreranteil 0,20): je zwei Beispiele zu einer Gruppe nennen — Moebel, Orte, Verben, Fragepartikel. Der Lehrer klaert nur die Aufgabenstellung ('Das erste Wort ist nur ein Beispiel'). Keine Regel."
+    },
+    "f24-2115": {
+      "urteil": "weg",
+      "grund": "Richtig-oder-falsch-Aussagen zum Lesetext ueber Ahmad (Freitagsgebet in der grossen Moschee, Zeitung oder Buch am Morgen, Fajr in der Moschee, mit dem Bus zur Schule). Der Lehrer sucht die Belegstelle im Text und entscheidet nach dem Inhalt. Leseverstehen, keine Regel."
     }
   }
 }

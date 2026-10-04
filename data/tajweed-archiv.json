@@ -11,7 +11,7 @@
       "notiz": "",
       "markiert": "spätestens 2026-09-20",
       "weggenommen": "2026-09-20",
-      "zuletztGesehen": "2026-09-30"
+      "zuletztGesehen": "2026-10-04"
     },
     "67:1:2:0@ohne": {
       "sure": 67,
@@ -23,7 +23,7 @@
       "notiz": "",
       "markiert": "spätestens 2026-09-20",
       "weggenommen": "2026-09-20",
-      "zuletztGesehen": "2026-09-30"
+      "zuletztGesehen": "2026-10-04"
     },
     "67:1:2:1@ohne": {
       "sure": 67,
@@ -35,7 +35,7 @@
       "notiz": "",
       "markiert": "spätestens 2026-09-20",
       "weggenommen": "2026-09-20",
-      "zuletztGesehen": "2026-09-30"
+      "zuletztGesehen": "2026-10-04"
     },
     "67:1:7:2@ohne": {
       "sure": 67,
@@ -47,7 +47,7 @@
       "notiz": "",
       "markiert": "spätestens 2026-09-20",
       "weggenommen": "2026-09-20",
-      "zuletztGesehen": "2026-09-30"
+      "zuletztGesehen": "2026-10-04"
     },
     "99:7:4:5@1790108396660": {
       "sure": 99,
@@ -59,7 +59,7 @@
       "notiz": "N aussprechen",
       "markiert": "2026-09-22",
       "weggenommen": "",
-      "zuletztGesehen": "2026-09-27"
+      "zuletztGesehen": "2026-10-04"
     },
     "102:2:2:0@1790108396660": {
       "sure": 102,
@@ -71,7 +71,7 @@
       "notiz": "Zay sagen",
       "markiert": "2026-09-22",
       "weggenommen": "",
-      "zuletztGesehen": "2026-09-27"
+      "zuletztGesehen": "2026-10-04"
     },
     "102:4:1:2@1790108396660": {
       "sure": 102,
@@ -83,7 +83,7 @@
       "notiz": "Kurzes A und schadda halten",
       "markiert": "2026-09-22",
       "weggenommen": "",
-      "zuletztGesehen": "2026-09-27"
+      "zuletztGesehen": "2026-10-04"
     },
     "95:1:2:11@1790437058261": {
       "sure": 95,
@@ -95,7 +95,7 @@
       "notiz": "",
       "markiert": "2026-09-26",
       "weggenommen": "2026-09-26",
-      "zuletztGesehen": "2026-09-30"
+      "zuletztGesehen": "2026-10-04"
     },
     "95:5:2:9@1790437087613": {
       "sure": 95,
@@ -107,7 +107,7 @@
       "notiz": "Kein min",
       "markiert": "2026-09-26",
       "weggenommen": "2026-09-29",
-      "zuletztGesehen": "2026-09-30"
+      "zuletztGesehen": "2026-10-04"
     },
     "95:5:3:7@1790437097447": {
       "sure": 95,
@@ -119,7 +119,7 @@
       "notiz": "Kein alif",
       "markiert": "2026-09-26",
       "weggenommen": "2026-09-29",
-      "zuletztGesehen": "2026-09-30"
+      "zuletztGesehen": "2026-10-04"
     },
     "99:7:4:5@1790108583320": {
       "sure": 99,
@@ -156,7 +156,31 @@
       "markiert": "2026-09-22",
       "weggenommen": "",
       "zuletztGesehen": "2026-09-30"
+    },
+    "94:8:3:3@1791043999748": {
+      "sure": 94,
+      "vers": 8,
+      "wort": 3,
+      "pos": 3,
+      "zeichen": "رْ",
+      "farbe": "rot",
+      "notiz": "Kein Qalqala machen",
+      "markiert": "2026-10-03",
+      "weggenommen": "",
+      "zuletztGesehen": "2026-10-04"
+    },
+    "94:3:3:2@1791044024280": {
+      "sure": 94,
+      "vers": 3,
+      "wort": 3,
+      "pos": 2,
+      "zeichen": "هْ",
+      "farbe": "rot",
+      "notiz": "Deutlich sprechen",
+      "markiert": "2026-10-03",
+      "weggenommen": "",
+      "zuletztGesehen": "2026-10-04"
     }
   },
-  "geholtAm": "2026-09-30T20:09:38.715Z"
+  "geholtAm": "2026-10-04T18:17:23.396Z"
 }

@@ -458,7 +458,7 @@ const BUCH_ESELSBRUECKEN = {
 
   "46401": "In aš-Šarḥ, die du auswendig kannst, steht ٱلَّذِيٓ أَنقَضَ ظَهْرَكَ (94:3) — „die deinen Rücken niederdrückte“. Gemeint ist وِزْرَكَ, deine Last. Im Deutschen ist „Last“ weiblich, im Arabischen ist وِزْر männlich — deshalb الَّذِي. Wäre das Wort davor weiblich, stünde الَّتِي. ⭐ Das ist die ganze Regel: nicht ob Person oder Sache entscheidet, sondern allein das GESCHLECHT des Wortes davor.",
 
-  "45972": "Die Wurzel ن ظ ر steht zweimal in den Kapiteln 1 und 2 von Bayna Yadayk 1: نَظَرَ (anschauen) und نَظَّارَةٌ (Brille). Die Brille ist das Gerät zum نَظَرَ — wer das eine behält, hat das andere mit.",
+  "45972": "„Nazar“ kennst du, ohne es gelernt zu haben: so nennen Türken, Bosnier und viele Araber den Blick — vor allem den bösen Blick, vor dem man Zuflucht bei Allah sucht. Das ist dieses Wort. نَظَرَ ist das Verb dazu: er hat geblickt, hingeschaut.",
   "45973": "اِسْتَمَعَ ist das absichtliche Zuhören — die Vorsilbe اِسْتَـ heißt „von sich aus, gezielt\". Dieselbe Vorsilbe steckt in zwei Wörtern, die du schon hast: مُسْتَشْفًى (Krankenhaus) und مُسْتَوْصَفٌ (Klinik). Wer اِسْتَمَعَ sagt, hört nicht zufällig, sondern setzt sich hin und hört zu.",
 
   "45974": "Das Fest ʿĪd heißt wörtlich „das Wiederkehrende\" — und kommt von genau dieser Wurzel ع و د. أَعَادَ ist also „etwas wiederkommen lassen\", auf Deutsch: wiederholen. Jedes Jahr kehrt das Fest zurück; jedes Mal, wenn du eine Vokabel wiederholst, lässt du sie zurückkehren.",
@@ -538,7 +538,7 @@ const BUCH_ESELSBRUECKEN = {
   "46013": "Das Wort zum Verb aus demselben Kapitel: سَكَنَ heißt wohnen, سَكَنٌ ist der Ort dafür. Beide von derselben Wurzel س ك ن — Ruhe. Dein Zuhause ist der Ort, an dem du zur Ruhe kommst.",
   "46014": "⭐ Bau dir die Leiter aus Wörtern, die du schon hast: مَدِينَةٌ (Stadt) · حَيٌّ (Viertel) · شَارِعٌ (Straße) · بَيْتٌ (Haus). Von groß nach klein — der حَيّ ist der Teil der Stadt, in dem deine Straße liegt.",
   "46015": "Die Wurzel ش ق ق meint teilen, abtrennen. Eine شَقَّة ist das abgeteilte Stück eines Hauses: im بَيْتٌ wohnen mehrere Familien, jede in ihrer eigenen Wohnung.",
-  "46016": "Die Wurzel س ت ر meint verdecken — dieselbe, die im Wort „Sitr\" steckt, dem Bedecken. Ein Vorhang ist genau das: das Stück Stoff, das den Blick verdeckt.",
+  "46016": "Klanghilfe: si-TĀ-ra — mittendrin hörst du „Star“. Der Star steht hinter dem Vorhang, bis er aufgeht. Nur der Klang, verwandt sind die Wörter nicht.",
   "46017": "⭐ Die Wurzel س ج د kennst du von مَسْجِدٌ (Moschee), dem Ort des Niederwerfens. Die سَجَّادَة ist das, worauf du dich niederwirfst — der Gebetsteppich. Ein Wort, das du jeden Tag benutzt, ohne es gelernt zu haben.",
   "46018": "Stell es in die Küche, die du schon hast: im مَطْبَخٌ steht der فُرْن, daneben die ثَلَّاجَةٌ (Kühlschrank) und der قِدْرٌ (Kochtopf). Drei deiner Wörter, ein Raum — und der فُرْن ist der, der backt.",
   "46019": "Die Wurzel د و ر meint drehen. Die Treppe dreht sich von einem دَوْر zum nächsten — deshalb heißt das Stockwerk so. Dasselbe Wort steht auch für eine Runde und für die Rolle, die jemand spielt.",
@@ -563,7 +563,7 @@ const BUCH_ESELSBRUECKEN = {
 
   "46029": "⭐ Der Muṣḥaf — das Buch, in dem der Quran steht — kommt von derselben Wurzel ص ح ف: Blatt, Geschriebenes. Eine صَحِيفَةٌ ist das Blatt, das jeden Morgen neu kommt: die Zeitung.",
 
-  "46030": "Die Wurzel ح ف ل meint sich versammeln, voll werden — eine Ḥafla ist eine Feier, eine Versammlung. Die حَافِلَةٌ ist das, was sich füllt: der Bus voller Leute.",
+  "46030": "Das Wort hat in deinem Buch seinen festen Satz (Bayna Yadayk 1, Seite 82): لَا، أَذْهَبُ بِالْحَافِلَةِ — „Nein, ich fahre mit dem Bus.“ Merk dir den Bus gleich als Antwort auf die Frage, womit du zur Schule fährst: بِـ davor, Kasra am Ende.",
 
   "46031": "Die Wurzel ع ط ل meint außer Betrieb sein, stillstehen. Eine عُطْلَةٌ ist der Tag, an dem die مَدْرَسَةٌ stillsteht — Ferien. Dasselbe Bild wie im deutschen „Betriebsferien“.",
 

@@ -2094,7 +2094,7 @@ const VOCAB_DATA = [
  {
   "id": "45843",
 
-  "mnemo": "Maschinen-Muster فَعَّالَة wie سَيَّارَةٌ (Auto) und ثَلَّاجَةٌ (Kühlschrank). Wurzel د ر ج = Stufe, Grad — das Rad mit den Gängen.",
+  "mnemo": "⚠️ Dein Stolperstein ist دَجَاجَةٌ (Huhn): beide Wörter klingen fast gleich und enden gleich. Der Unterschied sitzt in der Mitte — im Fahrrad steckt ein ر. R wie Rad. Hörst du ein r, rollt es; hörst du keins, gackert es.",
   "ar": "دَرَّاجَةٌ",
   "de": "Fahrrad",
   "type": "noun",
@@ -3247,7 +3247,7 @@ const VOCAB_DATA = [
  {
   "id": "45896",
 
-  "mnemo": "⭐ Du kennst das Wort aus dem Deutschen: der „Wesir“ aus den Märchen ist ein وَزِير — über das Türkische zu uns gekommen. Die Wurzel و ز ر heißt „Last“: ein وَزِير trägt die Last des Herrschers mit.",
+  "mnemo": "⭐ Das Wort hängt an einer Sure, die du auswendig sprichst: وَوَضَعْنَا عَنكَ وِزْرَكَ (94:2) — „und dir deine Last abgenommen“, in Sūrat ash-Sharḥ. وِزْر ist die Last; ein وَزِير ist der, der sie mitträgt.",
   "ar": "وَزِيرٌ",
   "de": "Minister",
   "type": "noun",
