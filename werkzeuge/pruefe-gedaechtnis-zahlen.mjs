@@ -160,8 +160,11 @@ const ueb = fs.readFileSync(REPO + '/js/uebung.js', 'utf8');
 /* 25.09.2026 (v612, `48366a4`): 15 → 16 — „Endung einsetzen" (id 'endungen',
    nr 15, mit Hinweis, also 13 → 14); Übersetzen ist seitdem 16. Elias: „wo ich
    die richtigen endungen hinzufügen muss wie zb ki für frau oder ha und hu usw.". */
-pruefe('a2: 16 Uebungsarten', 16, (ueb.match(/^\s*id\s*:\s*'[^']+',\s*nr\s*:/gm) || []).length);
-pruefe('a2: 14 mit Hinweis', 14, (ueb.match(/^\s*hinweis\s*:/gm) || []).length);
+/* 04.10.2026 (v642): dazu Übung 17 „Satzbau" (nr 17, mit Hinweis, also
+   16 → 17 und 14 → 15). Elias, Google Tasks: „Wörter haben und satzbau selber
+   machen sodass man den Satz selbst bildet". */
+pruefe('a2: 17 Uebungsarten', 17, (ueb.match(/^\s*id\s*:\s*'[^']+',\s*nr\s*:/gm) || []).length);
+pruefe('a2: 15 mit Hinweis', 15, (ueb.match(/^\s*hinweis\s*:/gm) || []).length);
 
 /* Fachbegriffe (Oberflaechenpruefung) */
 const fach = fs.readFileSync(REPO + '/data/fachbegriffe.js', 'utf8');
