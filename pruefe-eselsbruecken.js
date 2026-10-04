@@ -870,8 +870,22 @@ console.log('=== 7. Anker: baut die Eselsbruecke auf etwas, das er SCHON hat? ==
       const merke = (ar, kap) => {
         const k = geruest(ar);
         if (!k || k.length < 2) return;
+        /* 'personal'/'grammar' zaehlen als immer bekannt.
+           ⛔ 04.10.2026: bis dahin stand hier nur `return` — das Wort wurde
+           also NICHT gemerkt, und stand es zusaetzlich im Abzug, gewann dessen
+           Kapitel. ثَلَاثَةٌ liegt in vocab-data.js (sein Lernbestand, chapter
+           'personal') UND im Abzug unter Kapitel 24: der Anker in ضَيْفٌ (K13)
+           galt als „aus Kapitel 24", sobald sein Lernstand Kapitel 13
+           erreichte. Kapitel 0 heisst: gilt in jedem Kapitel als bekannt.
+           ⚠️ Nur ein SCHON gemerktes Geruest wird heruntergesetzt. Jedes
+           'personal'/'grammar'-Wort neu zu merken, zoege 88 weitere in den
+           Box-1-Hinweis (gemessen: 622 → 710), darunter die Grammatikbegriffe,
+           die oben mit Absicht draussen bleiben. */
+        if (Number.isNaN(Number(kap))){
+          if (kapitelVon.has(k)) kapitelVon.set(k, 0);
+          return;
+        }
         const n = Number(kap);
-        if (Number.isNaN(n)) return;      /* 'personal'/'grammar' zaehlen als immer bekannt */
         if (!kapitelVon.has(k) || n < kapitelVon.get(k)) kapitelVon.set(k, n);
         if (!schreibungVon.has(k)) schreibungVon.set(k, ar);
       };
