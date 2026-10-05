@@ -1370,7 +1370,18 @@ async function gleicheAb(still){
   SYNC_LAEUFT = true;
   try {
     const fern = await holeVomServer();
-    const geaendert = fuehreZusammen(fern);
+    let geaendert = fuehreZusammen(fern);
+    /* ⭐ v653 (05.10.2026): der einmalige Schritt „20 nur angetippte Karten
+       zurück auf neu" — Elias' „ja", Begründung und Regeln stehen bei
+       neuStellenEinmalig() in js/kern.js.
+       ⛔ GENAU HIER: nach dem Zusammenführen und im selben Atemzug (kein await
+       dazwischen). Davor arbeitete er auf dem alten Stand dieses Geräts und
+       überschriebe mit seinem frischen Stempel, was auf dem anderen Gerät
+       inzwischen gelernt wurde. Und nur, wenn der Server wirklich einen
+       Lernstand geliefert hat. Was er ändert, legt der Vergleich gleich
+       darunter in diesem Lauf mit ab. */
+    if (fern && fern.daten && fern.daten.vt_progress != null
+        && typeof neuStellenEinmalig === 'function' && neuStellenEinmalig()) geaendert = true;
     /* ⭐ Nur schreiben, wenn sich wirklich etwas unterscheidet (05.09.2026).
        KV erlaubt im Gratistarif 1.000 Schreibvorgaenge am Tag, aber 100.000
        Lesevorgaenge — ein Abruf ist also fast gratis, ein Ablegen nicht. Vorher

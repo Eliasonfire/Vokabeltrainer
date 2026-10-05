@@ -190,6 +190,14 @@ export const PFLEGEPLAN = [
          die Zahl, gegen die geprüft wird. */
       { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs', werkzeug: 'pruefe-eselsbruecken.js',
         wie: 'seine Lernstand-Angabe veraltet — der Prüfer hält sie gegen das gemessene Kapitel und zählt die Wörter dazwischen ohne zweite Eselsbrücke' },
+      /* ⭐ 05.10.2026 (v653): der einmalige Schritt „20 nur angetippte Karten
+         zurück auf neu" — neuStellenEinmalig() in js/kern.js, neuer
+         Speicherschlüssel `vt_neuGestellt` (Merker des Geräts, nicht
+         abgeglichen, nicht in der Sicherung). Elias' „ja" galt genau diesen 20
+         Kennungen; die Liste wird nie verlängert. */
+      { nein: 'Der Schritt pflegt sich nicht und braucht keinen Nachschub: nach einem Durchgang je Gerät steht der Merker vt_neuGestellt, danach tut er nichts mehr. '
+            + 'Was er getan hat, steht als Vermerk an den 20 Einträgen in vt_progress. Bewacht von test-neu-stellen.mjs (im Sammellauf). '
+            + 'Er darf später aus dem Quelltext heraus, muss aber nicht — veralten kann daran nichts.' },
     ],
   },
   {

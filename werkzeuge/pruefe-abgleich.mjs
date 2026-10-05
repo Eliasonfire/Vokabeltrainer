@@ -76,6 +76,9 @@ const AUSGENOMMEN = new Map([
      schöbe Elias Karten unter, die er schon gemacht hat.
      [[ausfall_ist_unsichtbar_gebaut]] */
   ['vt_offeneRunde',  'die angefangene Kartenrunde dieses Geräts — Kennungen, Zeiger, Lerntag. Sie gehört dem Gerät, auf dem sie läuft; über den Abgleich getragen käme eine beendete Runde zurück, weil ihr Ende ein FEHLENDER Eintrag ist. Fortgesetzt wird sie von offeneRundeFortsetzen() in js/lernen.js, geprüft von werkzeuge/pruefe-offene-runde.mjs'],
+  /* ⭐ 05.10.2026 (v653): der Merker zum einmaligen Schritt „20 nur angetippte
+     Karten zurück auf neu" (neuStellenEinmalig() in js/kern.js). */
+  ['vt_neuGestellt',  'sagt nur „dieses Gerät hat seinen Durchgang gehabt". Was zurückgestellt wurde, reist als Vermerk am Eintrag in vt_progress. Abgeglichen wäre der Merker falsch: functions/api/stand.js ersetzt den ganzen Stand, eine ältere App-Fassung auf dem anderen Gerät würfe ihn beim Ablegen weg — und das erste Gerät hielte den Schritt dann für nie gelaufen'],
   ['vt_geraetId',     'trennt die Zeitzweige der Geräte. Abgeglichen wäre sie auf beiden gleich und könnte nichts mehr trennen'],
   /* ⭐ Zwei Diagnoseschlüssel vom 09.09.2026. Beide sind absichtlich
      gerätegebunden — und beim zweiten wäre der Abgleich sogar widersinnig:

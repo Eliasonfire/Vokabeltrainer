@@ -136,6 +136,11 @@ const OHNE_LISTE = new Map([
   ['vt_offeneRunde', 'die angefangene Kartenrunde dieses Geraets (19.09.2026) — Geraetezustand,'
                    + 'kein Lernstand: die Bewertungen stehen in vt_progress. Sie traegt ihren '
                    + 'Lerntag und wird am naechsten Tag von selbst verworfen (js/lernen.js)'],
+  /* ⭐ 05.10.2026 (v653): der Merker zum einmaligen Schritt „20 nur angetippte
+     Karten zurueck auf neu" (neuStellenEinmalig() in js/kern.js). */
+  ['vt_neuGestellt', 'der Merker „dieses Geraet hat seinen Durchgang gehabt" — Geraetezustand, '
+                   + 'kein Lernstand: was zurueckgestellt wurde, steht als Vermerk an den '
+                   + 'Eintraegen in vt_progress, und das ist gesichert'],
   /* ⭐ 23.09.2026 (v575): gehoert bewusst NICHT in die Sicherung. Eine Datei
      wird auf einem ANDEREN Geraet eingespielt — dort hiesse ein mitgebrachtes
      Ja „dieses Geraet spricht arabisch", ohne dass dort je jemand hingehoert
