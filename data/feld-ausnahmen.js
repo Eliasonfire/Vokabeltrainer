@@ -140,6 +140,7 @@ const FELD_AUSNAHMEN = {
   '45898': { pl: 'von Elias bestätigt am 15.9.2026 — إِنْدُونِيسِيَا (Indonesien)' },
   '45907': { pl: 'von Elias bestätigt am 15.9.2026 — سُورِيَا (Syrien)' },
   '45911': { pl: 'von Elias bestätigt am 15.9.2026 — مَالِيزِيَا (Malaysia)' },
+  '45915': { pl: 'von Elias bestätigt am 5.10.2026 — النَّاسُ (die Leute)' },
   '48402': { pl: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — الْيَوْمُ (heute)' },
   '69179bbf-faa9-4b2a-859c-9e5f3d76b98c': { root: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — يَا (Rufpartikel)' },
   'd3cca272-90df-4963-a3dd-2653d009a77d': { pl: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — إِثْنَانِ (Zwei (2))', sg: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — إِثْنَانِ (Zwei (2))' },
