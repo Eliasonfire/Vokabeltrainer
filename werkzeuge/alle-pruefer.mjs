@@ -521,6 +521,9 @@ const PRUEFER = [
   /* v653 (05.10.2026): der einmalige Schritt „20 nur angetippte Karten zurück
      auf neu" — er ändert Elias' Lernstand, deshalb mit neun Störtests. */
   ['test-neu-stellen.mjs', []],
+  /* v654 (05.10.2026): neue Wörter nach der Aktualität ihres Kapitels —
+     Elias: „immer die aktuellsten und dann die zweit aktuellsten usw." */
+  ['test-kapitel-zuerst.mjs', []],
   ['test-woerterbuch-belege.mjs', []],
   ['test-langenscheidt.mjs', []],
   /* 17.09.2026: der KV-Abruf in vorrat.mjs bekommt einen zweiten Versuch. */

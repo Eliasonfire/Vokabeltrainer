@@ -1426,6 +1426,14 @@ async function gleicheAb(still){
       if (typeof ladeStandNeu === 'function') ladeStandNeu();
       if (!still && typeof toast === 'function') toast('Lernstand abgeglichen.');
     }
+    /* ⭐ v654 (05.10.2026): seit wann welches Kapitel freigeschaltet ist —
+       Elias: „immer die aktuellsten und dann die zweit aktuellsten usw."
+       (kapitelSeitNachziehen() in js/kern.js). HIER, nach dem Zusammenführen
+       und dem Neueinlesen: erst jetzt steht die Kapitelauswahl des anderen
+       Geräts im Arbeitsspeicher. Trägt er etwas nach, geht es über
+       saveSettings() denselben Weg wie jede Einstellung. */
+    if (fern && fern.daten && fern.daten.vt_settings != null
+        && typeof kapitelSeitNachziehen === 'function') kapitelSeitNachziehen();
     /* ⭐ Und danach nach arabicroots zurueckschreiben (07.09.2026). Elias:
        „meine versuche sollen sich laufend aktualisiern die prozentzahl soll
        weiter auf der bisherigen aufbauen." Hier ist die Stelle dafuer: der

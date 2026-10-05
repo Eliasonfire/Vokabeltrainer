@@ -2547,6 +2547,10 @@ function saveSettings(){
      Blockfehler nur eine Ebene tiefer wiederholt. */
   let alt = {};
   try { alt = JSON.parse(localStorage.getItem('vt_settings') || '{}'); } catch (e){ /* kaputtes JSON: dann gilt {} */ }
+  /* v654: ein Kapitel, das eben dazugekommen ist, bekommt seinen Zeitpunkt —
+     „die aktuellsten zuerst", siehe kapitelSeitMs() weiter unten. VOR dem
+     Stempeln, damit das Feld `kapitelSeit` als geändert mitgeht. */
+  if (typeof kapitelNeuAngehakt === 'function') kapitelNeuAngehakt(alt);
   const stempel = settingsFeldStempel();
   const jetzt = Date.now();
   Object.keys(SETTINGS).forEach(f => {
@@ -3299,8 +3303,140 @@ function neueZuerst(liste){
   const neu = [], rest = [];
   for (const w of liste) (nieAbgefragt(w) ? neu : rest).push(w);
   const tag = w => String((PROGRESS[w.id] && PROGRESS[w.id].nextReview) || '');
-  neu.sort((a, b) => tag(b).localeCompare(tag(a)));
+  /* v654: nach der Ankunft der Karte bei ihm, die jüngste zuerst — das ist der
+     Tag des Eintrags ODER, wenn später, der Zeitpunkt, zu dem er ihr Kapitel
+     freigeschaltet hat (ankunftMs() unten). Der typeof-Test hält Prüfstände
+     lauffähig, die nur diese Funktion aus dem Quelltext schneiden. */
+  const an = (typeof ankunftMs === 'function') ? ankunftMs : (w => Date.parse(tag(w) + 'T00:00:00') || 0);
+  /* Bei gleicher Ankunft (der Zeitpunkt des Freischaltens ist unbekannt): im
+     selben Buch das SPÄTER angehakte Kapitel zuerst — kapitelRang() unten. */
+  /* ⚠️ Erst nach dem Buch, dann nach dem Rang: ein Vergleich, der nur im
+     selben Buch entscheidet und zwischen zwei Büchern „gleich" sagt, ist
+     keine Ordnung — das Sortieren ließe dann stehen, was es umstellen soll
+     (im Prüfstand gemessen: 10, 12, 11 blieb 10, 12, 11). */
+  const mitRang = typeof kapitelRang === 'function';
+  neu.sort((a, b) => (an(b) - an(a))
+    || (mitRang ? (String(a.book).localeCompare(String(b.book)) || (kapitelRang(b) - kapitelRang(a))) : 0));
   return neu.concat(rest);
+}
+
+/* ⭐⭐ DIE AKTUELLSTEN KAPITEL ZUERST (v654, 05.10.2026)
+   ================================================================
+   Gemessen an seinem Stand am 05.10.2026: der Eintrag einer Karte entsteht,
+   sobald ihr Buch geladen ist — für ALLE Kapitel, auch die noch nicht
+   freigeschalteten. `nextReview` einer nie bewerteten Karte ist deshalb der
+   Tag der Anlage, nicht der Tag, an dem er das Kapitel freigeschaltet hat:
+   alle 88 nie bewerteten Karten von Madina 1 trugen 2026-08-11, alle 218 von
+   Bayna Yadayk 1 trugen 2026-08-29. Das am 04.10. freigeschaltete Kapitel 13
+   von Madina 1 stand damit HINTER 52 neuen Wörtern aus Bayna Yadayk — gegen
+   seine Regel vom 16.09. (oben bei nieAbgefragt()).
+   Meine Frage an ihn, mit diesem Beispiel: „Sollen die Wörter aus Kapitel 13
+   zuerst kommen?" — Elias: „zu erst die. immer die aktuellsten und dann die
+   zweit aktuellsten usw."
+
+   Also: neue Wörter in der Reihenfolge, in der er ihre Kapitel freigeschaltet
+   hat — das zuletzt freigeschaltete zuerst. Dafür wird der Zeitpunkt je
+   Kapitel festgehalten: `SETTINGS.kapitelSeit` = { Buch: { Kapitel: ms } },
+   mit `_seit` = seit wann überhaupt mitgeschrieben wird. Er steht in den
+   Einstellungen, weil die feldweise abgeglichen werden und eine ältere
+   App-Fassung auf dem anderen Gerät ein unbekanntes Feld mitträgt (ein eigener
+   Abgleich-Schlüssel ginge dort beim Ablegen verloren).
+
+   ⚠️ MEINE Bauart, nicht seine Vorgabe:
+   - Wann ein Kapitel freigeschaltet wurde, das schon VOR dem Mitschreiben
+     gewählt war, weiß die App nicht (Wert 0). Für vier davon ist es gemessen:
+     KAPITEL_SEIT_GEMESSEN — der Augenblick, in dem die Routine „neue Kapitel"
+     sein Häkchen zum ersten Mal sah (Automation/.state/neue-kapitel.json,
+     gelesen am 05.10.2026). Für alle übrigen gilt wie bisher der Tag des
+     Eintrags.
+   - Hakt er ein Kapitel ab und später wieder an, zählt das spätere Anhaken:
+     dann arbeitet er wieder damit.
+   - Eigene Vokabeln und einzeln freigeschaltete Karten haben kein Kapitel in
+     seiner Auswahl; für sie bleibt der Tag des Eintrags (bei einer eigenen
+     Vokabel ist das der Tag, an dem er sie angelegt hat).
+   Geprüft von test-kapitel-zuerst.mjs, mit Störtests. */
+const KAPITEL_SEIT_GEMESSEN = {
+  'madina-1':       { 13: 1791136763384 },                                       /* 04.10.2026, 19:59 */
+  'bayna-yadayk-1': { 3: 1790092438635, 4: 1790187420558, 5: 1790722887307 }     /* 22.09., 23.09., 30.09.2026 */
+};
+/** Seit wann das Kapitel dieser Karte freigeschaltet ist (ms), 0 = unbekannt. */
+function kapitelSeitMs(w){
+  if (!w || w.book == null || w.chapter == null) return 0;
+  const buch = String(w.book), kap = String(w.chapter);
+  const s = (typeof SETTINGS !== 'undefined' && SETTINGS && SETTINGS.kapitelSeit) ? SETTINGS.kapitelSeit[buch] : null;
+  const gemerkt = Number(s && s[kap]) || 0;
+  if (gemerkt > 0) return gemerkt;
+  const g = KAPITEL_SEIT_GEMESSEN[buch];
+  return Number(g && g[kap]) || 0;
+}
+/** An welcher Stelle seiner Auswahl das Kapitel dieser Karte steht (−1 = nicht
+    gewählt). ⚠️ MEINE Lesart, an seinem Stand abgelesen und nicht im Quelltext
+    nachgeprüft: die Liste hält die Reihenfolge des Anhakens — Madina 1 stand
+    am 05.10.2026 als [1,2,3,4,5,7,6,8,…], Kapitel 7 also vor 6. Damit gilt
+    „die aktuellsten zuerst" auch für die Kapitel, deren Zeitpunkt unbekannt
+    ist: Madina 12 vor 11 vor 10. Stünde die Liste doch nach Nummern, käme
+    dasselbe heraus. */
+function kapitelRang(w){
+  const l = (typeof SETTINGS !== 'undefined' && SETTINGS && SETTINGS.buecher && w) ? SETTINGS.buecher[String(w.book)] : null;
+  return Array.isArray(l) ? l.map(String).indexOf(String(w.chapter)) : -1;
+}
+/** Wann eine nie bewertete Karte zu ihm kam: der Tag ihres Eintrags oder, wenn
+    später, das Freischalten ihres Kapitels. */
+function ankunftMs(w){
+  const p = w && PROGRESS[w.id];
+  const eintrag = Date.parse(String((p && p.nextReview) || '') + 'T00:00:00') || 0;
+  return Math.max(eintrag, kapitelSeitMs(w));
+}
+/** Beim Speichern der Einstellungen: ein Kapitel, das HIER eben dazugekommen
+    ist, bekommt den Zeitpunkt von jetzt. `alt` = der bisher gespeicherte
+    Stand. Ohne ihn (erster Start) gibt es nichts zu vergleichen. */
+function kapitelNeuAngehakt(alt){
+  const vorher = (alt && alt.buecher && typeof alt.buecher === 'object') ? alt.buecher : null;
+  const jetztB = SETTINGS && SETTINGS.buecher;
+  if (!vorher || !jetztB || typeof jetztB !== 'object') return;
+  const jetzt = Date.now();
+  for (const buch of Object.keys(jetztB)){
+    if (!Array.isArray(jetztB[buch])) continue;
+    const war = new Set((Array.isArray(vorher[buch]) ? vorher[buch] : []).map(String));
+    for (const kap of jetztB[buch]){
+      if (war.has(String(kap))) continue;
+      const ganz = (SETTINGS.kapitelSeit && typeof SETTINGS.kapitelSeit === 'object') ? SETTINGS.kapitelSeit : {};
+      const jeBuch = Object.assign({}, ganz[buch]);
+      jeBuch[String(kap)] = jetzt;
+      SETTINGS.kapitelSeit = Object.assign({}, ganz, { [buch]: jeBuch });
+    }
+  }
+}
+/** Nach dem Abgleich (gleicheAb() in js/sync.js): gewählte Kapitel ohne
+    Zeitpunkt nachtragen. Beim ALLERERSTEN Mal sind das die Kapitel von vor dem
+    Mitschreiben — sie bekommen 0 („unbekannt"), nicht jetzt: sonst gälten alle
+    auf einmal als eben freigeschaltet. Danach heißt ein fehlender Zeitpunkt:
+    auf einem Gerät mit älterer App-Fassung angehakt — dann zählt jetzt.
+    ⛔ Erst nach dem Zusammenführen, damit die Auswahl des anderen Geräts
+    schon da ist. @returns {boolean} true, wenn etwas nachgetragen wurde. */
+function kapitelSeitNachziehen(){
+  const b = SETTINGS && SETTINGS.buecher;
+  if (!b || typeof b !== 'object') return false;
+  const alt = (SETTINGS.kapitelSeit && typeof SETTINGS.kapitelSeit === 'object') ? SETTINGS.kapitelSeit : {};
+  const erstesMal = !(Number(alt._seit) > 0);
+  const jetzt = Date.now();
+  const neu = JSON.parse(JSON.stringify(alt));
+  let geaendert = false;
+  for (const buch of Object.keys(b)){
+    if (!Array.isArray(b[buch])) continue;
+    for (const kap of b[buch]){
+      const k = String(kap);
+      if (neu[buch] && typeof neu[buch] === 'object' && Object.prototype.hasOwnProperty.call(neu[buch], k)) continue;
+      if (!neu[buch] || typeof neu[buch] !== 'object') neu[buch] = {};
+      neu[buch][k] = erstesMal ? 0 : jetzt;
+      geaendert = true;
+    }
+  }
+  if (erstesMal){ neu._seit = jetzt; geaendert = true; }
+  if (!geaendert) return false;
+  SETTINGS.kapitelSeit = neu;
+  saveSettings();
+  return true;
 }
 
 /* ⭐⭐ WIE SPÄT IST EINE WIEDERHOLUNG — gemessen an IHREM Abstand (v603)

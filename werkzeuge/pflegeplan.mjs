@@ -198,6 +198,12 @@ export const PFLEGEPLAN = [
       { nein: 'Der Schritt pflegt sich nicht und braucht keinen Nachschub: nach einem Durchgang je Gerät steht der Merker vt_neuGestellt, danach tut er nichts mehr. '
             + 'Was er getan hat, steht als Vermerk an den 20 Einträgen in vt_progress. Bewacht von test-neu-stellen.mjs (im Sammellauf). '
             + 'Er darf später aus dem Quelltext heraus, muss aber nicht — veralten kann daran nichts.' },
+      /* ⭐ 05.10.2026 (v654): neue Wörter nach der Aktualität ihres Kapitels
+         (neueZuerst(), kapitelSeitMs() in js/kern.js; neues Feld
+         `kapitelSeit` in den Einstellungen, feldweise abgeglichen). Elias:
+         „immer die aktuellsten und dann die zweit aktuellsten usw." */
+      { nein: 'Die App schreibt den Zeitpunkt selbst mit, sobald er ein Kapitel anhakt (saveSettings) oder das Häkchen vom anderen Gerät ankommt (nach dem Abgleich). '
+            + 'Die vier fest eingetragenen Zeitpunkte (KAPITEL_SEIT_GEMESSEN) sind Messwerte von vor dem Mitschreiben und ändern sich nicht mehr. Bewacht von test-kapitel-zuerst.mjs (im Sammellauf).' },
     ],
   },
   {
