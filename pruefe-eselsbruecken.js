@@ -1072,8 +1072,24 @@ console.log('=== 8. Abgelehnte Vorschlaege: steht einer noch drin? ===');
      Vergleich laeuft deshalb ueber den ANFANG, nicht auf Gleichheit — sonst
      ginge jeder laengere Text durch. */
   let dateiDa = false, geprueft8 = 0;
+  /* ⭐ 05.10.2026 — zwei Schalter für die Vorprüfung der täglichen Routine
+     (`werkzeuge/vorschlaege-holen.mjs --tor`). Elias: „es ist jetzt wichtig,
+     dass eine routine sich täglich drum kümmert das die eselsbrücken die ich
+     für untauglich gemacht habe direkt ersetzt werden".
+     Die Vorprüfung fragt DIESEN Abschnitt, statt die Rechnung nachzubauen:
+     was hier als „steht aber noch da" gilt, ist genau das, was die Routine am
+     Ende wieder grün haben muss. Zwei Stellen mit derselben Frage hatten wir
+     schon (Text gegen Nummer, 09.09.2026 und 05.10.2026).
+       ABGELEHNT_DATEI          eine andere Liste als data/abgelehnt.json
+                                (der frische Stand aus dem Geräteabgleich)
+       ABGELEHNT_BEFUNDE_NACH   dorthin die Befunde als JSON, samt allen
+                                Texten, die an dem Wort heute stehen
+     Ohne die beiden läuft alles wie bisher. */
+  const ABG_DATEI = process.env.ABGELEHNT_DATEI || path.join(WURZEL, 'data', 'abgelehnt.json');
+  const befunde8 = [];
+  let fehler8 = null;
   try {
-    const d = JSON.parse(fs.readFileSync(path.join(WURZEL, 'data', 'abgelehnt.json'), 'utf8'));
+    const d = JSON.parse(fs.readFileSync(ABG_DATEI, 'utf8'));
     dateiDa = true;
     const alter = (() => {
       const m = String(d.geholt || '').match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
@@ -1104,13 +1120,29 @@ console.log('=== 8. Abgelehnte Vorschlaege: steht einer noch drin? ===');
         geprueft8++;
         const anfang = weg.slice(0, 60);
         const treffer = texte.filter(t => t.id === id && String(t.text).trim().startsWith(anfang));
-        treffer.forEach(t => melde(`${t.wort} (${t.quelle}): Vorschlag ${e.nr} hat Elias`
-          + ' ABGELEHNT, steht aber noch da — ersetzen. „' + anfang.slice(0, 40) + '…"'));
+        treffer.forEach(t => {
+          melde(`${t.wort} (${t.quelle}): Vorschlag ${e.nr} hat Elias`
+            + ' ABGELEHNT, steht aber noch da — ersetzen. „' + anfang.slice(0, 40) + '…"');
+          befunde8.push({ id: String(id), wort: t.wort, quelle: t.quelle, nr: e.nr, zeit: e.zeit || null, text: weg });
+        });
       }
     }
   } catch (e){
+    fehler8 = String((e && e.message) || e);
     console.log('  hinw data/abgelehnt.json fehlt — seine Ablehnungen sind NICHT geprueft.');
     console.log('       Sie entsteht bei: node werkzeuge/vorrat.mjs --stand <datei> --app auto');
+  }
+  if (process.env.ABGELEHNT_BEFUNDE_NACH){
+    const wortVon = id => VOCAB_DATA.find(x => String(x.id) === id) || BUCH_WOERTER.find(x => String(x.id) === id) || null;
+    const woerter8 = {};
+    [...new Set(befunde8.map(b => b.id))].forEach(id => {
+      const w = wortVon(id);
+      woerter8[id] = { ar: w ? w.ar : null, de: w ? (w.de || null) : null,
+        texte: texte.filter(t => String(t.id) === id).map(t => ({ quelle: t.quelle, text: String(t.text) })) };
+    });
+    fs.writeFileSync(process.env.ABGELEHNT_BEFUNDE_NACH, JSON.stringify({
+      liste: ABG_DATEI, fehler: fehler8, geprueft: geprueft8, befunde: befunde8, woerter: woerter8
+    }, null, 1) + '\n', 'utf8');
   }
   if (dateiDa){
     console.log('  ' + geprueft8 + ' abgelehnte(r) Vorschlag/Vorschlaege gegen den Bestand geprueft.');
