@@ -447,7 +447,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* حُلْوٌ - süß */
   '45806': [
-    'Das Wort ist kürzer als die anderen hier und folgt einem eigenen Muster: فُعْل — حُلْو, mit Sukūn auf dem ل. Kein langer Vokal, keine drei Silben. Sprich es einmal gegen نَظِيف: ḥulw ist ein Schlag, na-ẓīf sind zwei. Kurze Adjektive gibt es, sie sind nur seltener.',
+    '⭐ Aus dem Ḥadīth stammt der Begriff „Süße des Glaubens“ — ḥalāwat al-īmān: „Drei Dinge — wer sie in sich hat, findet die Süße des Glaubens“ (Buḫārī und Muslim). ḥalāwa ist das Hauptwort, die Süße; حُلْوٌ ist das Adjektiv dazu, süß. Fällt in einem Vortrag ḥalāwat al-īmān, hörst du dein Wort schon mit: ḥ-l-w.',
     'Deine eigenen Sätze bringen es dreimal: الشَّايُ حُلْوٌ (der Tee), تُفَّاحٌ حُلْوٌ (der Apfel), لَبَنٌ حُلْوٌ (die Milch). Immer dasselbe Adjektiv an einem anderen Nomen. Sprich alle drei — dann hast du das Wort in drei Zusammenhängen statt einmal auf einer Karte.'
   ],
 
