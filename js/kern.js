@@ -3408,6 +3408,143 @@ function lerngruppeAufnehmen(worte){
   if (n) saveProgress();
   return n;
 }
+
+/* ⭐⭐ EINMALIGER SCHRITT (v653, 05.10.2026): 20 nur angetippte Karten zurück auf „neu"
+   ================================================================
+   Elias am 05.10.2026, 00:55, mit dem Bild der Karte „Gast" (Madina 1, Kapitel
+   13): „das ist aus m1 kap13 das hat keine introduction bekommen. warum? das für
+   mich komplett neues wort", und: „warum ist das in box 2? ich bin mir recht
+   sicher das ich das nicht darein gepackt habe. wie auch das ist aus kapitel 13
+   ich hatte das nie zuvor."
+   Gemessen an seinem abgeglichenen Stand: 20 Karten aus Kapitel 10 bis 13 von
+   Madina 1 trugen 1 bis 2 Antworten vom 01. bis 06.09.2026 (teils im
+   3-Sekunden-Takt) und seither keine. Wer einmal bewertet ist, gilt nie mehr
+   als neu (nieAbgefragt() oben) und bekommt keine Einführung
+   (ersterTagAnordnen() in js/lernen.js).
+   Meine Frage an ihn: „Soll ich die 20 nur angetippten Wörter (zum Beispiel
+   Gast, Feld, Restaurant) wieder auf „neu" stellen, damit sie mit Einführung
+   kommen?" — er: „ja".
+
+   ⛔ Sein Ja gilt für GENAU diese 20 Kennungen und GENAU dieses eine. Kein
+   anderer Eintrag wird hier je angefasst; die Liste wird nicht verlängert.
+
+   Was „neu" heißt — gemessen, nicht gewählt: der Eintrag, den die Karte hätte,
+   wäre sie nie bewertet worden. Box 1, 0 richtig, 0 falsch und der Tag, den am
+   05.10.2026 alle 88 nie bewerteten Karten von Madina 1 in seinem Stand trugen
+   (NEU_STELLEN_TAG). Der Eintrag wird GANZ ersetzt: `gruppe`, `gruppeArt` und
+   `zurueck` fallen weg, sonst käme das Wort als „früheres" ohne Einführung in
+   die Lerngruppe.
+
+   ⚠️ Alles Weitere ist MEINE Bauart, nicht seine Vorgabe:
+   - NACH dem Zusammenführen mit dem Server, nie vorher (der Aufruf steht in
+     gleicheAb(), js/sync.js). Ein Gerät mit altem Stand setzte sonst mit
+     seinem frischen Stempel zurück, was er auf dem anderen Gerät inzwischen
+     MIT Einführung gelernt hat. Auf dem PC (dort gibt es keinen Abgleich)
+     läuft der Schritt deshalb nie.
+   - Der Vermerk `neuGestellt` am Eintrag reist mit dem Abgleich — vt_progress
+     wird je Wort zusammengeführt, der neue `ts` gewinnt — und sagt dem zweiten
+     Gerät: schon geschehen. Bewusst KEIN eigener Abgleich-Schlüssel:
+     functions/api/stand.js ERSETZT den ganzen Stand, und eine ältere
+     App-Fassung auf dem anderen Gerät würfe einen neuen Schlüssel beim Ablegen
+     weg — das erste Gerät setzte danach ein zweites Mal zurück.
+   - `vorher` hält fest, was dastand. So bleibt der Schritt nachlesbar und
+     umkehrbar.
+   - Nur solange die Karte in Box 1 oder 2 sitzt. Steht sie beim Lauf höher,
+     hat er sie inzwischen wirklich gelernt; dann bleibt sie, wie sie ist.
+   - Eine Karte, die in einer heute offenen Runde noch kommt, wartet bis nach
+     der Runde: mitten in der Runde gäbe es für sie keine Einführung mehr, und
+     ihre nächste Antwort machte sie gleich wieder zu einer „schon bewerteten".
+   - Je Gerät EIN Durchgang. Danach steht NEU_STELLEN_MERKER, und der Schritt
+     tut nichts mehr. Ohne den Merker bliebe er scharf für jeden späteren
+     Eintrag ohne Vermerk — etwa den Stand einer eigenen Vokabel, der durch
+     einen Tausch auf eine dieser Karten wandert (uebertrageFortschritt()).
+   Geprüft von test-neu-stellen.mjs, mit Störtests. */
+const NEU_STELLEN_IDS = ['45899', '45900', '45901', '45902', '45903', '45904', '45905', '45906', '45907', '45908',
+  '45909', '45910', '45911', '45912', '45913', '45914', '45915', '45916', '45917', '45920'];
+const NEU_STELLEN_TAG = '2026-08-11';
+/* ⛔ Gehört dem Gerät und wird NICHT abgeglichen (nicht in SYNC_SCHLUESSEL):
+   er sagt nur „dieses Gerät hat seinen Durchgang gehabt". */
+const NEU_STELLEN_MERKER = 'vt_neuGestellt';
+
+/** Welche Karten in einer heute offenen Runde noch kommen — im Arbeitsspeicher
+    (SESSION, js/lernen.js) oder gesichert (vt_offeneRunde). */
+function neuStellenInOffenerRunde(){
+  const offen = new Set();
+  if (typeof SESSION !== 'undefined' && SESSION && Array.isArray(SESSION.words) && SESSION.words.length && !SESSION.fertig)
+    SESSION.words.slice(Math.max(0, Number(SESSION.idx) || 0)).forEach(w => offen.add(String(w && w.id)));
+  const g = LS.get('vt_offeneRunde', null);
+  if (g && Array.isArray(g.ids) && typeof g.idx === 'number' && g.tag === todayStr(0))
+    g.ids.slice(Math.max(0, g.idx)).forEach(id => offen.add(String(id)));
+  return offen;
+}
+
+/** Der Durchgang. Liest und schreibt den Lernstand im Speicher des Geräts —
+    genau dort hat das Zusammenführen eben den abgeglichenen Stand abgelegt —
+    und zieht PROGRESS im Arbeitsspeicher für die geänderten Karten nach.
+    @returns {boolean} true, wenn am Lernstand etwas geändert wurde. */
+function neuStellenEinmalig(){
+  let merker = null;
+  try { merker = JSON.parse(localStorage.getItem(NEU_STELLEN_MERKER) || 'null'); }
+  catch (e){ merker = null; }
+  if (merker && merker.fertig) return false;
+
+  let stand = null;
+  try { stand = JSON.parse(localStorage.getItem('vt_progress') || 'null'); }
+  catch (e){
+    if (typeof stillerFehler === 'function') stillerFehler('Neu stellen: Lernstand unlesbar', e);
+    return false;
+  }
+  if (!stand || typeof stand !== 'object' || Array.isArray(stand)) return false;
+
+  const offen = neuStellenInOffenerRunde();
+  const jetzt = Date.now();
+  const gestellt = [], wartet = [], gelassen = {};
+  for (const id of NEU_STELLEN_IDS){
+    const p = stand[id];
+    if (!p || typeof p !== 'object'){ gelassen[id] = 'kein Eintrag'; continue; }
+    /* Schon geschehen — hier oder auf dem anderen Gerät. Was danach an
+       Antworten dazukam, ist MIT Einführung gelernt und bleibt. */
+    if (p.neuGestellt) continue;
+    if (!(Number(p.correct) > 0) && !(Number(p.wrong) > 0)){ gelassen[id] = 'nie bewertet'; continue; }
+    if ((Number(p.box) || 1) > 2){ gelassen[id] = 'Box ' + p.box; continue; }
+    if (offen.has(id)){ wartet.push(id); continue; }
+    const vorher = Object.assign({}, p);
+    delete vorher.vorher;
+    stand[id] = { box: 1, nextReview: NEU_STELLEN_TAG, correct: 0, wrong: 0, ts: jetzt, neuGestellt: jetzt, vorher };
+    gestellt.push(id);
+  }
+
+  if (gestellt.length){
+    const neu = JSON.stringify(stand);
+    try { localStorage.setItem('vt_progress', neu); }
+    catch (e){
+      /* Voller oder gesperrter Speicher: nichts ist geschehen, nichts wird
+         gemerkt — der nächste Abgleich versucht es wieder. */
+      if (typeof stillerFehler === 'function') stillerFehler('Neu stellen: Speichern', e);
+      return false;
+    }
+    if (localStorage.getItem('vt_progress') !== neu) return false;
+    if (typeof PROGRESS !== 'undefined' && PROGRESS)
+      for (const id of gestellt) PROGRESS[id] = stand[id];
+    /* Dem Abgleich melden wie jede andere Änderung am Lernstand (Stempel,
+       „etwas ist offen", Takt). Bewusst nicht über LS.set(): die verschluckt
+       einen Schreibfehler, und der Merker unten stünde dann zu Unrecht. */
+    if (typeof syncGeaendert === 'function') syncGeaendert('vt_progress');
+  }
+
+  if (gestellt.length || !wartet.length){
+    const bisher = (merker && Array.isArray(merker.gestellt)) ? merker.gestellt : [];
+    LS.set(NEU_STELLEN_MERKER, {
+      fertig: wartet.length ? 0 : jetzt,
+      zeit: jetzt,
+      gestellt: bisher.concat(gestellt),
+      gelassen,
+      wartet
+    });
+  }
+  return gestellt.length > 0;
+}
+
 /* Der Box-1-Teil einer Runde mit Lerngruppe: fällige Mitglieder (die am
    längsten fälligen zuerst) und — nur wenn `beitritt` erlaubt ist, also beim
    Bau einer Runde fürs Tagesziel — neue Mitglieder bis zur Gruppengröße.
