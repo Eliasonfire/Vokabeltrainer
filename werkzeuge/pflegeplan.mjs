@@ -171,7 +171,7 @@ export const PFLEGEPLAN = [
          für untauglich gemacht habe direkt ersetzt werden". Bis dahin ersetzte
          nur die Wartung (Mi/So) — er wartete bis zu 3 Tage 15 Stunden. Die
          Wartung zieht die Liste weiter mit nach (Zeile darunter). */
-      { routine: 'vokabeltrainer-eselsbruecken', schritt: '2', beleg: 'node werkzeuge/eselsbruecken-setzen.mjs .eselsbruecken-neu.json', werkzeug: 'werkzeuge/eselsbruecken-setzen.mjs',
+      { routine: 'vokabeltrainer-eselsbruecken', schritt: '2', beleg: 'node werkzeuge/eselsbruecken-setzen.mjs .abgelehnt-neu.json', werkzeug: 'werkzeuge/eselsbruecken-setzen.mjs',
         wie: 'eine mit „Taugt nicht" abgelehnte Eselsbrücke, die noch dasteht, bekommt täglich einen neuen Text — die Vorprüfung (vorschlaege-holen.mjs --tor) startet die Routine nur dann' },
       { routine: W, schritt: '1c.1', beleg: '--app auto', werkzeug: 'werkzeuge/vorrat.mjs',
         wie: 'seine Ablehnungen („Taugt nicht") und sein Kapitelfenster kommen aus dem Abgleich' },

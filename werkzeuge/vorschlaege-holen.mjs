@@ -280,7 +280,10 @@ if (STILL) {
   for (const b of erg.befunde)
     console.log('  ✗ [' + b.id + '] ' + b.wort + ' — ' + b.quelle + ', abgelehnt ' + kurzZeit(b.zeit));
   if (!erg.befunde.length) {
-    console.log('Nichts zu tun — jeder abgelehnte Text ist ersetzt.');
+    /* ⚠️ Die Schlusszeilen dieser Betriebsart OHNE Umlaute und Gedankenstrich:
+       run-routine.ps1 (PowerShell 5.1) schreibt die letzte Zeile ins Protokoll
+       und verliert sie dabei — am 05.10.2026 stand dort „Eselsbrcke(n) … Wrtern". */
+    console.log('Nichts zu tun - jeder abgelehnte Text ist ersetzt.');
     process.exit(3);
   }
   if (AUFTRAG) {
@@ -320,8 +323,8 @@ if (STILL) {
       try { st = JSON.parse(fs.readFileSync(standDatei, 'utf8')); } catch (e) { st = {}; }
       const gleich = st.fingerabdruck === fp;
       if (gleich && st.versuche >= HOECHSTENS) {
-        console.log('KEIN AUFTRAG: für genau diese Ablehnungen wurden schon ' + st.versuche + ' Aufträge erteilt (zuletzt '
-          + kurzZeit(st.zuletzt) + ') — ein weiterer Lauf fände dasselbe. Das gehört in eine Sitzung.');
+        console.log('KEIN AUFTRAG: fuer genau diese Ablehnungen wurden schon ' + st.versuche + ' Auftraege erteilt (zuletzt '
+          + kurzZeit(st.zuletzt) + ') - ein weiterer Lauf faende dasselbe. Das gehoert in eine Sitzung.');
         process.exit(3);
       }
       fs.mkdirSync(path.dirname(standDatei), { recursive: true });
@@ -329,7 +332,7 @@ if (STILL) {
       fs.renameSync(standDatei + '.neu', standDatei);
     }
   }
-  console.log('AUFTRAG: ' + erg.befunde.length + ' abgelehnte Eselsbrücke(n) an ' + ids.length + ' Wort/Wörtern ersetzen.');
+  console.log('AUFTRAG: ' + erg.befunde.length + ' abgelehnte Eselsbruecke(n) an ' + ids.length + ' Wort/Woertern ersetzen.');
   process.exit(0);
 }
 

@@ -157,5 +157,5 @@ werkzeuge/.stoer-*
 werkzeuge/freischaltung-abfrage.json
 
 # Arbeitsdateien der Routine vokabeltrainer-eselsbruecken (05.10.2026)
-.eselsbruecken-auftrag.json
-.eselsbruecken-neu.json
+.abgelehnt-auftrag.json
+.abgelehnt-neu.json
