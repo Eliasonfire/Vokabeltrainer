@@ -155,3 +155,7 @@ werkzeuge/.stoer-*
 # jeden Nutzen. Fehlt sie, gilt der Kommentar in js/kern.js — die Messung wird
 # dann pessimistisch, aber nie falsch in die andere Richtung.
 werkzeuge/freischaltung-abfrage.json
+
+# Arbeitsdateien der Routine vokabeltrainer-eselsbruecken (05.10.2026)
+.eselsbruecken-auftrag.json
+.eselsbruecken-neu.json

@@ -166,6 +166,13 @@ export const PFLEGEPLAN = [
     neuerInhalt: { routine: W, schritt: '1c.4', beleg: 'node werkzeuge/eselsbruecken-setzen.mjs', werkzeug: 'werkzeuge/eselsbruecken-setzen.mjs',
       wie: 'jedes neu freigeschaltete Wort bekommt Eselsbrücken und einen Beispielsatz („das volle Programm")' },
     eingaben: [
+      /* ⭐ 05.10.2026: eine eigene tägliche Routine. Elias: „es ist jetzt wichtig,
+         dass eine routine sich täglich drum kümmert das die eselsbrücken die ich
+         für untauglich gemacht habe direkt ersetzt werden". Bis dahin ersetzte
+         nur die Wartung (Mi/So) — er wartete bis zu 3 Tage 15 Stunden. Die
+         Wartung zieht die Liste weiter mit nach (Zeile darunter). */
+      { routine: 'vokabeltrainer-eselsbruecken', schritt: '2', beleg: 'node werkzeuge/eselsbruecken-setzen.mjs .eselsbruecken-neu.json', werkzeug: 'werkzeuge/eselsbruecken-setzen.mjs',
+        wie: 'eine mit „Taugt nicht" abgelehnte Eselsbrücke, die noch dasteht, bekommt täglich einen neuen Text — die Vorprüfung (vorschlaege-holen.mjs --tor) startet die Routine nur dann' },
       { routine: W, schritt: '1c.1', beleg: '--app auto', werkzeug: 'werkzeuge/vorrat.mjs',
         wie: 'seine Ablehnungen („Taugt nicht") und sein Kapitelfenster kommen aus dem Abgleich' },
       { routine: W, schritt: '1c.8', beleg: 'node werkzeuge/antworten-uebernehmen.mjs', werkzeug: 'werkzeuge/antworten-uebernehmen.mjs',
