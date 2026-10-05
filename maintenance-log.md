@@ -7949,3 +7949,26 @@ danach Exit 0.
   aber weder in der App-Auswahl (bis 4) noch bei arabicroots (bis 4).
 - Aufgefallen, nicht angefasst: `pruefe-taschkil.js` rot wegen `jam-taksir-01`
   (Regel aus v644).
+
+## 2026-10-05 02:17 – Eselsbrücken ersetzt
+
+Routine „Eselsbrücken", 1 abgelehnte Stelle ersetzt, **v652** ausgeliefert
+(Commit `f5e8c20`).
+
+- **45806 حُلْوٌ (süß), Stelle `alt[0]`** (abgelehnt 05.10.2026, 01:07): statt
+  der Musterarbeit „فُعْل, ein Schlag gegen نَظِيف" jetzt der Begriff „Süße des
+  Glaubens" (ḥalāwat al-īmān) aus dem Ḥadīth „Drei Dinge …" (Buḫārī und
+  Muslim) — ḥalāwa als Hauptwort zu seinem Adjektiv. Der Begriff steht nur in
+  Umschrift, weil die arabische Form in keiner Quelle im Repo liegt und nicht
+  selbst vokalisiert wird. `mnemo` und `alt[1]` unverändert.
+
+Geprüft: `pruefe-eselsbruecken.js` Exit 0 (1808 Einzelprüfungen),
+`vorschlaege-holen.mjs --auftrag` Exit 3 („jeder abgelehnte Text ist ersetzt"),
+`pruefe-quran.js`, `pruefe-taschkil.js`, `taschkil-belegen.mjs`,
+`pruefe-duplikate.js`, `validate.js` je Exit 0; `alle-pruefer.mjs`: 155
+gelaufen, 5 rot, keiner NEU rot. Veröffentlicht 02:16:57, 2 von 105 Dateien
+neu; `pruefe-ausgeliefert.mjs` danach Exit 0.
+
+Aufgefallen, nicht angefasst: `veroeffentlichen.mjs --mit-daten` meldet, dass
+der Access-Nachweis (`.access-geprueft.json`) vom 09.09.2026 stammt, also 25
+Tage alt ist — die Access-Regeln wurden seither nicht nachgemessen.
