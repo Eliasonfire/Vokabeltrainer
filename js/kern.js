@@ -3370,12 +3370,17 @@ function kapitelSeitMs(w){
   return Number(g && g[kap]) || 0;
 }
 /** An welcher Stelle seiner Auswahl das Kapitel dieser Karte steht (−1 = nicht
-    gewählt). ⚠️ MEINE Lesart, an seinem Stand abgelesen und nicht im Quelltext
-    nachgeprüft: die Liste hält die Reihenfolge des Anhakens — Madina 1 stand
-    am 05.10.2026 als [1,2,3,4,5,7,6,8,…], Kapitel 7 also vor 6. Damit gilt
-    „die aktuellsten zuerst" auch für die Kapitel, deren Zeitpunkt unbekannt
-    ist: Madina 12 vor 11 vor 10. Stünde die Liste doch nach Nummern, käme
-    dasselbe heraus. */
+    gewählt). Die Liste hält die Reihenfolge des Anhakens — am 06.10.2026 im
+    Quelltext nachgelesen: der Klick auf einen Kapitel-Chip (js/navigation.js,
+    `data-chfilter`) hängt ein neu angehaktes Kapitel HINTEN an und nimmt ein
+    abgehaktes heraus; alle übrigen Stellen lesen die Liste nur (indexOf,
+    length), sortiert wird sie nirgends. In seinem Stand steht Madina 1 als
+    [1,2,3,4,5,7,6,8,…], Kapitel 7 also vor 6. Damit gilt „die aktuellsten
+    zuerst" auch für die Kapitel, deren Zeitpunkt unbekannt ist: Madina 12 vor
+    11 vor 10.
+    ⚠️ „Alle" leert die Liste (leer = alle Kapitel, kapitelAuswahl() in
+    js/buecher.js). Dann gibt es keine Reihenfolge des Anhakens: jede Karte
+    bekommt −1, und die Karten bleiben untereinander, wie sie ankommen. */
 function kapitelRang(w){
   const l = (typeof SETTINGS !== 'undefined' && SETTINGS && SETTINGS.buecher && w) ? SETTINGS.buecher[String(w.book)] : null;
   return Array.isArray(l) ? l.map(String).indexOf(String(w.chapter)) : -1;

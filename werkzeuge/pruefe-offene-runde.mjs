@@ -51,12 +51,17 @@ const mRunde  = lernen.match(/\nconst OFFENE_RUNDE = 'vt_offeneRunde';[\s\S]*?\n
    ohne Rolle (Infokarte/Übung eines neuen Wortes) — die zwei Helfer stehen oben
    in js/lernen.js, außerhalb des Stücks darüber. */
 const mRollen = lernen.match(/\nfunction rundenRolle\([\s\S]*?\nfunction rundeGezaehlt\([\s\S]*?\n\}\n/);
+/* v656 (06.10.2026): das Auffüllen fragt ersterTagAnordnen(), welches Wort heute
+   neu ist (auffuellenEinordnen() in js/lernen.js) — die Funktion steht oben in
+   js/lernen.js, außerhalb des Stücks `mRunde`. Die Fälle hier haben kein neues
+   Wort; was mit einem neuen geschieht, prüft test-auffuellen-einfuehrung.mjs. */
+const mErster = lernen.match(/\nfunction ersterTagAnordnen\([\s\S]*?\n\}\n/);
 const mBogen  = start.match(/\nfunction ringBogen\([\s\S]*?\n\}\n/);
 const mLeiste = start.match(/\nfunction rundenLeiste\([\s\S]*?\n\}\n/);
 const mVorschuss = start.match(/RING_VORSCHUSS\s*=\s*([0-9.]+)/);
-if (!mRunde || !mBogen || !mLeiste || !mVorschuss){
+if (!mRunde || !mErster || !mBogen || !mLeiste || !mVorschuss){
   console.log('X  Quelltext nicht gefunden: '
-    + [['offene Runde', mRunde], ['ringBogen', mBogen], ['rundenLeiste', mLeiste], ['RING_VORSCHUSS', mVorschuss]]
+    + [['offene Runde', mRunde], ['ersterTagAnordnen', mErster], ['ringBogen', mBogen], ['rundenLeiste', mLeiste], ['RING_VORSCHUSS', mVorschuss]]
       .filter(p => !p[1]).map(p => p[0]).join(', '));
   process.exit(1);
 }
@@ -103,6 +108,7 @@ const HEUTE = '2026-09-19';
 function umgebung(store, woerter, tag = HEUTE, extra = {}){
   const bildschirme = [];
   const ctx = {
+    PROGRESS: {},          /* ersterTagAnordnen() liest den Lernstand; `extra` darf ihn ersetzen */
     ...extra,
     SESSION: { words: [], idx: 0, dirs: [], fertig: true, laut: new Set() },
     VOCAB_DATA: woerter,
@@ -116,7 +122,7 @@ function umgebung(store, woerter, tag = HEUTE, extra = {}){
     showScreen: (n) => bildschirme.push(n)
   };
   vm.createContext(ctx);
-  vm.runInContext((mRollen ? mRollen[0] : '') + mRunde[0]
+  vm.runInContext((mRollen ? mRollen[0] : '') + mErster[0] + mRunde[0]
     + '\nthis.RUF = { rundeSichern, rundeVergessen, offeneRundeStand, offeneRundeFortsetzen };', ctx);
   return { ctx, bildschirme };
 }
