@@ -156,6 +156,52 @@ function nachfolgerNachTausch(id){
   return (p && p.uebertragen) ? String(p.uebertragen) : null;
 }
 
+/* ⭐⭐ v656 (06.10.2026) — AUCH BEIM AUFFÜLLEN BEKOMMT EIN NEUES WORT SEINEN ERSTEN TAG
+   Elias am 05.10.2026 zur Karte „Gast": „das ist aus m1 kap13 das hat keine
+   introduction bekommen. warum? das für mich komplett neues wort". Seine Regel
+   vom 25.09.2026 steht oben bei ersterTagAnordnen(): Infokarte ganz am Anfang,
+   Übung in der Mitte, die entscheidende Abfrage ganz am Ende.
+   Bis v655 hängte das Auffüllen einer fortgesetzten Runde JEDE Karte ohne Rolle
+   hinten an — auch ein nie bewertetes Wort, das dabei in die Lerngruppe rückte.
+   Es kam dann ein einziges Mal, als gewöhnliche Abfrage, und galt danach nie
+   mehr als neu (nieAbgefragt() in js/kern.js). Dasselbe traf ein neues Wort
+   der Lerngruppe von heute, das noch nicht beantwortet war.
+   Welches Wort „heute neu" ist, entscheidet weiter allein ersterTagAnordnen()
+   — eine Stelle, eine Regel.
+
+   ⚠️ MEINE Bauart. Seine Regel nennt Anfang, Mitte und Ende einer Runde, nicht
+   den Fall „mittendrin weiter":
+   - „Anfang" ist die Stelle, an der er weitermacht (`idx`).
+   - „Mitte" ist die Mitte dessen, was von da an noch offen ist.
+   - Die entscheidenden Abfragen bleiben zusammen das Ende der Runde: erst die
+     der Wörter, die in dieser Runde schon eingeführt sind, dahinter die der
+     neu dazugekommenen. Gewöhnliche Auffüllkarten rücken deshalb VOR diesen
+     Schluss; bis v655 standen sie dahinter, und die entscheidende Abfrage war
+     nach einem Auffüllen nicht mehr das Ende.
+   ⛔ Eine Karte mit Rolle darf nie die letzte sein — answer() rückt von ihr
+   nur weiter, wenn noch etwas folgt. Hier folgt ihr immer ihre Abfrage.
+   Geprüft von test-auffuellen-einfuehrung.mjs, mit Störtests. */
+function auffuellenEinordnen(words, rollen, idx, dazu){
+  if (!dazu.length) return;
+  const erster = ersterTagAnordnen(dazu);
+  const neu = erster.worte.filter((_, i) => erster.rollen[i] === 'info');
+  const gewoehnlich = dazu.filter(w => !neu.includes(w));
+  /* Der Schluss: die Abfragen der Wörter, die in dieser Runde schon eine
+     Infokarte oder Übung haben. */
+  const eingefuehrt = new Set(words.filter((_, i) => rollen[i]).map(w => String(w.id)));
+  let ende = words.length;
+  while (ende > idx && !rollen[ende - 1] && eingefuehrt.has(String(words[ende - 1].id))) ende--;
+  const offenW = words.slice(idx, ende).concat(gewoehnlich);
+  const offenR = rollen.slice(idx, ende).concat(gewoehnlich.map(() => null));
+  const schlussW = words.slice(ende), schlussR = rollen.slice(ende);
+  const mitte = Math.floor(offenW.length / 2);
+  words.splice(idx, words.length - idx,
+    ...neu, ...offenW.slice(0, mitte), ...neu, ...offenW.slice(mitte), ...schlussW, ...neu);
+  rollen.splice(idx, rollen.length - idx,
+    ...neu.map(() => 'info'), ...offenR.slice(0, mitte), ...neu.map(() => 'uebung'), ...offenR.slice(mitte),
+    ...schlussR, ...neu.map(() => null));
+}
+
 /* Baut die gesicherte Runde wieder auf. `true` heißt: der Lernbildschirm steht
    schon, es geht bei der Karte weiter, die noch offen war. */
 function offeneRundeFortsetzen(){
@@ -210,10 +256,9 @@ function offeneRundeFortsetzen(){
     const gruppe = (typeof lerngruppe === 'function') ? lerngruppe().filter(w => !drin.has(String(w.id))) : undefined;
     const nach = (typeof tagesAuswahl === 'function') ? tagesAuswahl(rest, ziel - gezaehlt(), vorrat, gruppe) : rest;
     if (typeof lerngruppeAufnehmen === 'function') lerngruppeAufnehmen(nach);
-    for (const w of nach){
-      if (gezaehlt() >= ziel) break;
-      words.push(w); rollen.push(null); drin.add(String(w.id));
-    }
+    /* Je Wort EINE Karte, die zählt — auch ein neues (v605). Wohin die Karten
+       kommen, entscheidet auffuellenEinordnen() oben (v656). */
+    auffuellenEinordnen(words, rollen, idx, nach.slice(0, Math.max(0, ziel - gezaehlt())));
   }
   const laut = new Set();
   words.forEach((w, i) => { if (lautIds.includes(String(w.id))) laut.add(i); });

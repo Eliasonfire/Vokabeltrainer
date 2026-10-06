@@ -524,6 +524,10 @@ const PRUEFER = [
   /* v654 (05.10.2026): neue Wörter nach der Aktualität ihres Kapitels —
      Elias: „immer die aktuellsten und dann die zweit aktuellsten usw." */
   ['test-kapitel-zuerst.mjs', []],
+  /* v656 (06.10.2026): auch beim Auffüllen einer fortgesetzten Runde bekommt
+     ein neues Wort Infokarte, Übung und Abfrage — Elias zur Karte „Gast":
+     „das hat keine introduction bekommen. warum?" */
+  ['test-auffuellen-einfuehrung.mjs', []],
   ['test-woerterbuch-belege.mjs', []],
   ['test-langenscheidt.mjs', []],
   /* 17.09.2026: der KV-Abruf in vorrat.mjs bekommt einen zweiten Versuch. */
