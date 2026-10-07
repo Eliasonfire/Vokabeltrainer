@@ -520,6 +520,31 @@
       "form": "كَ",
       "buchTausch": "49843",
       "am": "2026-09-16"
+    },
+    "ون": {
+      "entscheidung": "abgelehnt",
+      "grund": "Wortteil — die Pluralendung ـُونَ selbst, kein Begriff. Sie wird in jam-salim-taksir-01 und jam-mudhakkar-salim-01 nur zitiert.",
+      "am": "2026-10-07"
+    },
+    "ات": {
+      "entscheidung": "abgelehnt",
+      "grund": "Wortteil — die Pluralendung ـَاتٌ selbst, kein Begriff. Sie wird in jam-salim-taksir-01 und jam-muannath-salim-01 nur zitiert.",
+      "am": "2026-10-07"
+    },
+    "هؤلاء": {
+      "entscheidung": "abgelehnt",
+      "grund": "Hinweiswort — steht bereits als Buchvokabel (madina-1, id 50164, mit eigenem Beispielsatz), kein Fachbegriff. Dieselbe Entscheidung wie bei هذا, هذه, ذلك und تلك am 11.09.2026.",
+      "am": "2026-10-07"
+    },
+    "طلاب": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielwort und Plural eines vorhandenen Begriffs — طُلَّابٌ ist die Mehrzahl von طَالِبٌ und steht schon in vocab-data.js; die drei Regeln zitieren es nur.",
+      "am": "2026-10-07"
+    },
+    "مدرسات": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielwort und Plural eines vorhandenen Begriffs — مُدَرِّسَاتٌ ist die Mehrzahl von مُدَرِّسَةٌ und steht schon in vocab-data.js; die drei Plural-Regeln zitieren es nur.",
+      "am": "2026-10-07"
     }
   }
 }

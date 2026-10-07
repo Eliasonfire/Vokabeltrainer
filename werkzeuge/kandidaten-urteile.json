@@ -638,6 +638,14 @@
       "urteil": "weg",
       "grund": "Richtig-oder-falsch-Aussagen zum Lesetext ueber Ahmad (Freitagsgebet in der grossen Moschee, Zeitung oder Buch am Morgen, Fajr in der Moschee, mit dem Bus zur Schule). Der Lehrer sucht die Belegstelle im Text und entscheidet nach dem Inhalt. Leseverstehen, keine Regel."
     },
+    "f24-4915": {
+      "urteil": "weg",
+      "grund": "Beurteilt am 07.10.2026 (Wartung Mi). Reine Motivation, kein Sprachinhalt: warum man Arabisch lernt (Allah naeherkommen, sein Buch verstehen, es den Kindern weitergeben, 'stell dir vor, du bist 16 Jahre alt'), dann die Aufforderung, sich hinzusetzen und zu ueben ('der einzige, der verliert, seid ihr'). Dieselbe Ansprache wie f24-4845, nur ein Fenster weiter. Die Stichworte, die die Stelle hochgewichtet haben ('nat', 'heisst', 'beispiel', 'immer'), stammen aus der Umgangssprache, nicht aus einer Erklaerung."
+    },
+    "f24-2645": {
+      "urteil": "weg",
+      "grund": "Beurteilt am 07.10.2026 (Wartung Mi). Uebungsabfrage, und die Regel spricht der SCHUELER, nicht der Lehrer: 'Also du hast uns immer in drei Schritten quasi die Pronomen genannt ... es war hua, huma, hum. Dann hiya, huma, hunna. Dann Ente, Entuma und Entum ... und dann Enti.' Der Lehrer bestaetigt nur ('jawohl', 'sehr gut') und fragt ab, welche Form was heisst. Nach E.1 darf eine Schuelerantwort nicht als Regel in die App. Inhaltlich steht die Pronomenreihe ohnehin schon im Bestand (huwa-hiya-weitere-01 aus Folge 17, dazu die Konjugationsregeln aus Folge 18); dieselbe Abfrage liegt als f24-2515 bereits auf 'weg'. ⚠️ Der Whisper-Text schreibt die Pronomen in Umschrift ohne Vokalzeichen — eine Regel daraus waere auch nicht vokalisiert belegt."
+    },
 
     "f25-145": {
       "urteil": "schon-regel",
