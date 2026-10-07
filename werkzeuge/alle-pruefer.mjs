@@ -674,7 +674,11 @@ const PRUEFER = [
      Beschriftung „bei weiblichem Nomen" per Störtest still. */
   ['test-zahlwort-form.mjs', []],
   ['test-auswahl-einzelnfrei.mjs', []],
-  ['test-tippen-beide-richtungen.mjs', []],
+  /* v657 (07.10.2026): getippt wird nur noch, wenn die Karte auf Deutsch fragt —
+     Elias: „ich möchte ab jetzt nur noch wenn mir die deutsche seite kommt das
+     arabische hinschreiben". Der Vorgänger test-tippen-beide-richtungen.mjs
+     prüfte den Vergleich der deutschen Eingabe, den es seitdem nicht mehr gibt. */
+  ['test-tippen-nur-arabisch.mjs', []],
   /* ⭐ Neu am 11.09.2026 abends. Elias: „wenn wir die ersten zwei boxen nur auf
      arabisch anzeigen lassen und ab box 3 wieder gemischt machen" — „arbeite
      erstmal daran". Schneidet cardDirection() aus js/lernen.js, zieht je 400

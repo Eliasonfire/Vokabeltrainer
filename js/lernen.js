@@ -959,76 +959,37 @@ function quranMitTreffer(vers, w){
    Bewusst standardmaessig AUS. Arabisch auf einer Handytastatur zu tippen ist
    umstaendlich, und ob Elias eine eingerichtet hat, weiss die App nicht. Der
    Schalter steht in den Einstellungen. */
-/* ⭐⭐ BEIDE RICHTUNGEN (07.09.2026). Bis hierher stand am Ende der Bedingung
-   `&& cardDirection(SESSION.idx) === 'de-ar'` — getippt wurde also nur, wenn die
-   Karte auf Deutsch fragte. Elias im Kommentar am Vorschlag R2:
+/* ⭐⭐ NUR NOCH DEUTSCH → ARABISCH (v657, 07.10.2026). Elias:
 
-     „aber hier ist doch sinnvoll wenn ich in beide richtungen es eintippe oder?"
+     „ich möchte ab jetzt nur noch wenn mir die deutsche seite kommt das
+     arabische hinschreiben. andersherum finde ich machts keinen sinn bzw mache
+     ich sowieso nciht. aber arabisch schreiben da muss ich mir wenigsten mühe
+     machen es auch richtig zu schreiben, das bringt was"
 
-   Ja. Der Vorschlag stützte sich auf die Meta-Analyse von Webb, Yanagisawa &
-   Uchihara 2020, in der das PRODUZIEREN der Form nach Verzögerung stärker
-   abfällt (25,1 % gegen 39,4 %) — daraus wurde im Vorschlag „also Deutsch →
-   Arabisch". Das ist die Begründung für das Tippen, aber kein Grund, die andere
-   Richtung ungetippt zu lassen: dort wird die BEDEUTUNG produziert statt sie
-   unter vier Vorschlägen wiederzuerkennen, und auch das ist freier Abruf.
-   [[was_geuebt_werden_soll]] */
+   Getippt wird also nur, wenn die Karte auf Deutsch fragt: dann schreibt er
+   das arabische Wort. Fragt sie auf Arabisch, bleibt es beim Umdrehen — kein
+   Feld, kein „Überspringen".
+
+   ⚠️ Das hebt seinen eigenen Wunsch vom 07.09.2026 auf (Kommentar am Vorschlag
+   R2: „aber hier ist doch sinnvoll wenn ich in beide richtungen es eintippe
+   oder?"). Vom 07.09. bis v656 stand das Feld in beiden Richtungen da; der
+   Vergleich für die deutsche Eingabe ist mit v657 entfernt und steht in der
+   Git-Geschichte (bis Commit 99ee22c).
+   Unverändert: der Schalter in den Einstellungen, die Schwelle Box 4,
+   „Überspringen" und der Vergleich ohne Vokalzeichen.
+   Sprache und Laufrichtung des Felds (Arabisch, rtl) und sein Platzhalter
+   stehen im HTML fest.
+   Bewacht von test-tippen-nur-arabisch.mjs. */
 function renderTippfeld(w){
   const kasten = document.getElementById('cardTippBox');
   const p = PROGRESS[w.id];
-  const dran = SETTINGS.tippenAbBox4 && p && p.box >= 4;
+  const dran = SETTINGS.tippenAbBox4 && p && p.box >= 4 && cardDirection(SESSION.idx) === 'de-ar';
   if (!dran){ kasten.classList.add('hidden'); return; }
 
-  const feld = document.getElementById('cardTippEingabe');
-  const nachAr = cardDirection(SESSION.idx) === 'de-ar';
-  feld.value = '';
-  /* ⛔ Sprache und Laufrichtung stehen im HTML fest auf Arabisch/rtl — in der
-     anderen Richtung tippt er Deutsch, und ein rtl-Feld setzt den Satzzeichen
-     an die falsche Seite und ruft auf dem Handy die arabische Tastatur.
-     [[rtl_richtung_physisch]] */
-  feld.setAttribute('lang', nachAr ? 'ar' : 'de');
-  feld.setAttribute('dir',  nachAr ? 'rtl' : 'ltr');
-  feld.placeholder = nachAr ? 'Wort auf Arabisch eintippen …'
-                            : 'Bedeutung auf Deutsch eintippen …';
+  document.getElementById('cardTippEingabe').value = '';
   document.getElementById('cardTippAntwort').textContent = '';
   document.getElementById('cardTippAntwort').className = 'tipp-antwort';
   kasten.classList.remove('hidden');
-}
-
-/* ---------- Wann ist eine deutsche Eingabe richtig? ----------
-
-   ⛔ Ein strenger Vergleich wäre hier unbrauchbar, und zwar nicht als Feinheit:
-   im Bestand stehen Bedeutungen wie „der / welcher (Relativpronomen)",
-   „mit / zusammen mit" oder „(gr) Attribut / Adjektiv". Wer „welcher" eintippt,
-   hat das Wort gewusst — ein Zeichenvergleich sagte trotzdem „falsch", und
-   nach dem zweiten Mal schaltet man die Übung ab.
-
-   Deshalb: Klammern weg, an „/" und „," und „oder" trennen, jede Variante
-   zählt, und der bestimmte Artikel am Anfang ist freigestellt. Die ungekürzte
-   Fassung bleibt zusätzlich gültig — wer alles abtippt, hat auch recht. */
-function tippPutz(s){
-  return String(s || '')
-    .toLowerCase()
-    .replace(/[.,;:!?„“”"'»«]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-function tippVariantenDe(de){
-  const menge = new Set();
-  const nimm = (s) => {
-    const k = tippPutz(s);
-    if (!k) return;
-    menge.add(k);
-    menge.add(k.replace(/^(der|die|das|den|dem|des|ein|eine|einen|einem|einer)\s+/, ''));
-  };
-  const roh = String(de || '');
-  const ohneKlammer = roh.replace(/\([^)]*\)/g, ' ');
-  nimm(roh);
-  nimm(ohneKlammer);
-  for (const teil of ohneKlammer.split(/[\/,;]|\boder\b/)) nimm(teil);
-  for (const teil of roh.split(/[\/,;]|\boder\b/)) nimm(teil);
-  menge.delete('');
-  return menge;
 }
 
 function pruefeTippen(){
@@ -1037,16 +998,11 @@ function pruefeTippen(){
   const feld = document.getElementById('cardTippAntwort');
   if (!eingabe.trim()){ feld.className='tipp-antwort'; feld.textContent=''; return; }
 
-  let richtig;
-  if (cardDirection(SESSION.idx) === 'de-ar'){
-    /* Ohne Vokalzeichen vergleichen - getippt wird auf dem Handy, und die
-       Taschkil ist hier nicht der Punkt. Die richtige Schreibweise steht auf
-       der Rueckseite vollstaendig da. */
-    const roh = s => String(s||'').replace(/[ً-ْٰـ]/g,'').replace(/[.،؟!«»:؛]/g,'').trim();
-    richtig = roh(eingabe) === roh(w.ar) || (!!w.sg && roh(eingabe) === roh(w.sg));
-  } else {
-    richtig = tippVariantenDe(w.de).has(tippPutz(eingabe));
-  }
+  /* Ohne Vokalzeichen vergleichen - getippt wird auf dem Handy, und die
+     Taschkil ist hier nicht der Punkt. Die richtige Schreibweise steht auf
+     der Rueckseite vollstaendig da. */
+  const roh = s => String(s||'').replace(/[ً-ْٰـ]/g,'').replace(/[.،؟!«»:؛]/g,'').trim();
+  const richtig = roh(eingabe) === roh(w.ar) || (!!w.sg && roh(eingabe) === roh(w.sg));
   feld.className = 'tipp-antwort ' + (richtig ? 'richtig' : 'falsch');
   feld.textContent = richtig ? 'Richtig — umdrehen und einordnen.' : 'Noch nicht.';
 }
