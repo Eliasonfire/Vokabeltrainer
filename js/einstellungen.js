@@ -510,10 +510,12 @@ document.getElementById('toggleTippen').addEventListener('click', ()=>{
   renderSettings();
   /* Der Hinweis erklaert, warum nach dem Einschalten erst mal nichts passiert:
      Karten in Box 1 bis 3 bleiben unveraendert. */
-  /* ⚠️ Hier stand „— in Richtung Deutsch → Arabisch". Seit dem 07.09.2026 wird
-     in BEIDEN Richtungen getippt; der Satz hätte die Hälfte der Übung
-     verschwiegen. [[widerspruch_liegt_in_der_beschriftung]] */
-  if (SETTINGS.tippenAbBox4) toast('Ab Box 4 wird eingetippt — in beide Richtungen, mit „Überspringen".');
+  /* ⚠️ Der Satz muss sagen, was das Feld tut. Vom 07.09. bis 06.10.2026 wurde
+     in BEIDEN Richtungen getippt; seit v657 (Elias, 07.10.2026: „ich möchte ab
+     jetzt nur noch wenn mir die deutsche seite kommt das arabische
+     hinschreiben") nur noch, wenn die Karte auf Deutsch fragt — renderTippfeld()
+     in js/lernen.js. [[widerspruch_liegt_in_der_beschriftung]] */
+  if (SETTINGS.tippenAbBox4) toast('Ab Box 4: Fragt die Karte auf Deutsch, schreibst du das arabische Wort. Mit „Überspringen".');
 });
 document.getElementById('btnSettings').addEventListener('click', ()=>showScreen('settings'));
 document.getElementById('toggleShowPlural').addEventListener('click', ()=>{
