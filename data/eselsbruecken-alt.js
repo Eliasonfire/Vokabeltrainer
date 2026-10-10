@@ -1367,7 +1367,7 @@ const ESELSBRUECKEN_ALT = {
   /* أُسْتَاذَةٌ - Professorin */
   '45918': [
     '⚠️ Dieses Wort ist aus dem Persischen entlehnt und passt in kein arabisches Wurzelmuster — die Angabe أ س ت ذ ist nur eine Hilfszeile. Bei Lehnwörtern trägt der Klang, nicht die Ableitung: us-tā-ḏa.',
-    'Der Ort trennt die Titel: der مُدَرِّسٌ unterrichtet an der مَدْرَسَةٌ, die أُسْتَاذَةٌ an der جَامِعَةٌ — beide Orte hast du aus Kapitel 1 und 4. Wer sich den Ort merkt, verwechselt die Titel nicht.'
+    '⭐ Das Wort ist eine Anrede, kein bloßer Beruf: Wer bei jemandem lernt, spricht ihn mit „Ustādh“ an, eine Frau mit „Ustādha“ — und genau das ist أُسْتَاذَةٌ. Das Buch übersetzt „Professorin“; Bayna Yadayk 1 gibt die männliche Form أُسْتَاذٌ (Kapitel 11) schlicht mit „Lehrer“ wieder. Denk also an die Frau, bei der man lernt und die man so anspricht.'
   ],
 
   /* امْرَأَةٌ - Frau */

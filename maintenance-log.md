@@ -8392,3 +8392,34 @@ Erledigt seit dem 04.10. (jeweils nachgemessen, nicht übernommen):
 - **`pruefe-taschkil.js`** (`jam-taksir-01`) und **`pruefe-duplikate.js`** → grün
 - **drei Routinenläufe** an der abgelaufenen Anmeldung → quittiert, Anmeldung
   zurück
+
+## 2026-10-10 14:40 – Eselsbrücken ersetzt
+
+Routine „Eselsbrücken". Ein Wort, zwei Stellen, beide abgelehnt am 10.10.2026:
+
+- **45918 أُسْتَاذَةٌ (Professorin), Stelle `buch`** (erster Vorschlag,
+  `data/eselsbruecken.js`): statt „weibliche Form wie مُمَرِّضَةٌ / Lehrer an
+  der Schule, Professorin an der Uni" jetzt der Buchsatz von Seite 74
+  (`mb1-74-3`): Vater Scheich Bilal, Mutter „meine Professorin" — das Wort hängt
+  am شَيْخٌ aus demselben Kapitel.
+- **45918, Stelle `alt[1]`** (`data/eselsbruecken-alt.js`): statt „der Ort
+  trennt die Titel" jetzt die Anrede — „Ustādh/Ustādha" sagt man zu dem, bei dem
+  man lernt; dazu der Beleg, dass Bayna Yadayk 1 (Kapitel 11) أُسْتَاذٌ mit
+  „Lehrer" führt. `alt[0]` (Lehnwort aus dem Persischen) steht wörtlich wie
+  zuvor.
+
+Geprüft: `vorschlaege-holen.mjs --auftrag` endet mit Exit 3 (steht noch da: 0
+von 67), `pruefe-eselsbruecken.js` Exit 0 (1794 Einzelprüfungen),
+`pruefe-quran.js`, `pruefe-taschkil.js`, `taschkil-belegen.mjs`,
+`pruefe-duplikate.js`, `validate.js` je Exit 0.
+
+⛔ **Nicht ausgeliefert.** `sw.js` steht auf **v658**, im Netz liegt weiter
+v657. `alle-pruefer.mjs` meldet „NEU ROT: 1" —
+`werkzeuge/kandidaten-bewerten.mjs`, 11 Regelkandidaten aus Folge 26 ohne
+Urteil (`f26-2115`, `f26-045`, `f26-845`, `f26-3915`, `f26-2815`, `f26-215`,
+`f26-2645`, `f26-1315`, `f26-3015`, `f26-1545`, `f26-1045`). Das kommt nicht
+aus diesem Lauf: `transcripts/kandidaten/folge-26.json` trägt den Zeitstempel
+07.10.2026, 23:31, und der Prüfer liest keine der hier geänderten Dateien.
+Regelkandidaten zu bewerten liegt aber außerhalb dieser Routine, und sie
+verbietet das Ausliefern bei „NEU ROT". Die beiden neuen Texte gehen mit der
+nächsten Auslieferung hinaus, sobald Folge 26 bewertet ist.
