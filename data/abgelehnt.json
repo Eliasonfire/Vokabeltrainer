@@ -1,6 +1,6 @@
 {
-  "stempel": 1791337571351,
-  "geholt": "7.10.2026",
+  "stempel": 1791587769445,
+  "geholt": "10.10.2026",
   "woerter": {
     "45760": [
       {
@@ -303,6 +303,18 @@
         "nr": 0,
         "text": "Wurzel ح ب ب mit doppeltem ب — deshalb die Schadda auf dem بّ. Dasselbe siehst du bei قِطٌّ (Katze, ق ط ط) und حَارٌّ (heiß, ح ر ر), die du schon hast: wo zwei gleiche Buchstaben zusammenstoßen, steht ein Zeichen statt zweier.",
         "zeit": 1788222944652
+      }
+    ],
+    "45918": [
+      {
+        "nr": 0,
+        "text": "Weibliche Form auf ـة, wie مُمَرِّضَةٌ (Krankenschwester), die du hast. ⚠️ Nicht mit مُدَرِّسٌ (Lehrer) mischen: der unterrichtet in der مَدْرَسَةٌ, die أُسْتَاذَةٌ an der جَامِعَةٌ (Universität).",
+        "zeit": 1791587734986
+      },
+      {
+        "nr": 2,
+        "text": "Der Ort trennt die Titel: der مُدَرِّسٌ unterrichtet an der مَدْرَسَةٌ, die أُسْتَاذَةٌ an der جَامِعَةٌ — beide Orte hast du aus Kapitel 1 und 4. Wer sich den Ort merkt, verwechselt die Titel nicht.",
+        "zeit": 1791587769444
       }
     ],
     "45925": [

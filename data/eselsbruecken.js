@@ -163,7 +163,7 @@ const BUCH_ESELSBRUECKEN = {
 
   "45917": "Kennst du aus dem Deutschen als „Scheich“. Im Buch meint es zuerst schlicht den alten Mann — das Gegenstück zu فَتًى (junger Mann) aus Kapitel 10. Plural شُيُوخٌ.",
 
-  "45918": "Weibliche Form auf ـة, wie مُمَرِّضَةٌ (Krankenschwester), die du hast. ⚠️ Nicht mit مُدَرِّسٌ (Lehrer) mischen: der unterrichtet in der مَدْرَسَةٌ, die أُسْتَاذَةٌ an der جَامِعَةٌ (Universität).",
+  "45918": "Im Buch steht das Wort in einer kleinen Familie (Kapitel 13, Seite 74): أَبُوهُنَّ الشَّيْخُ بِلَالٌ. أُمُّهُنَّ أُسْتَاذَتِي — „Ihr Vater ist Scheich Bilal. Ihre Mutter ist meine Professorin.“ Vater Scheich, Mutter Professorin: ein Haus, in dem beide Eltern Wissen weitergeben. Häng sie an den شَيْخٌ aus demselben Kapitel — die beiden gehören als Paar zusammen.",
 
   "45919": "⚠️ Der Plural passt nicht zum Singular: امْرَأَةٌ wird zu نِسَاءٌ — ein ganz anderes Wort. Das lernst du als Paar, Ableiten hilft hier nicht. Gegenstück ist رَجُلٌ (Mann), das du schon hast.",
 
