@@ -1,7 +1,7 @@
 /* eiche-ersatz.mjs -- zeigt, dass werkzeuge/pruefe-ersatz.mjs rot werden KANN.
  *
  * Baut in einem Wegwerfordner eine winzige Ersatzdatenbank (drei Plätze, zwei belegt, einer mit Grund nicht
- * gefunden), prüft, dass sie durchgeht, und baut dann der Reihe nach je EINEN Fehler ein. Jeder muss den Prüfer
+ * gefunden, dazu das Verzeichnis), prüft, dass sie durchgeht, und baut dann der Reihe nach je EINEN Fehler ein. Jeder muss den Prüfer
  * auf Exit 1 bringen und mit dem erwarteten Satz benannt werden. Die echte data-ersatz/ wird nicht angefasst;
  * die arabischen Wörter der Probe stehen als Codepunkte hier und stammen aus keiner Datenbank.
  *
@@ -29,6 +29,7 @@ function grundstand() {
       2: { status: 'belegt', felder: { ar: { wo: 'Probe E', q: 'enwikt' }, de: { wo: 'Probe F', q: 'kette' }, type: { wo: 'Probe G', q: 'enwikt' }, past: { wo: 'Probe E', q: 'enwikt' } } },
     },
     nichtGefunden: [{ id: '3', buch: 'madina-1', kap: 2, platz: 3, grund: 'Probe: in keiner Quelle' }],
+    verzeichnis: [{ slug: 'madina-1', vokabeln: 2, kapitel: 1, datei: 'data/vokabeln-madina-1.js' }],
   };
 }
 function lauf(stand, ordnerDa = true) {
@@ -39,6 +40,7 @@ function lauf(stand, ordnerDa = true) {
     fs.writeFileSync(path.join(ordner, 'vokabeln-madina-1.js'), '(window.VOKABELN = window.VOKABELN || {})["madina-1"] = ' + JSON.stringify(stand.karten) + ';\n');
     fs.writeFileSync(path.join(ordner, 'belege-madina-1.json'), JSON.stringify(stand.belege));
     fs.writeFileSync(path.join(ordner, 'nicht-gefunden.json'), JSON.stringify(stand.nichtGefunden));
+    if (stand.verzeichnis) fs.writeFileSync(path.join(ordner, 'buecher.js'), '/* Probe */\nconst BUECHER = ' + JSON.stringify(stand.verzeichnis, null, 1) + ';\n');
   }
   const r = spawnSync(process.execPath, [PRUEFER, '--ordner', ziel], { encoding: 'utf8' });
   fs.rmSync(ordner, { recursive: true, force: true });
@@ -60,7 +62,13 @@ const FAELLE = [
   ['Karte doppelt', s => { s.karten.push({ ...s.karten[1] }); }, 1, 'doppelt'],
   ['Karte ohne Beleg-Eintrag', s => { delete s.belege[2]; }, 1, 'ohne Beleg-Eintrag'],
   ['unbekannte Wortart', s => { s.karten[0].type = 'nomen'; }, 1, 'unbekannte Wortart'],
-  ['ein Platz offen heißt nicht vollständig', s => { s.karten.pop(); }, 0, 'ERSATZ UNVOLLSTÄNDIG: 1 von 3 Plätzen belegt'],
+  ['ein Platz offen heißt nicht vollständig', s => { s.karten.pop(); s.verzeichnis[0].vokabeln = 1; }, 0, 'ERSATZ UNVOLLSTÄNDIG: 1 von 3 Plätzen belegt'],
+  ['Kapitel ohne Karte wird genannt', s => s, 0, 'Kapitel: 1 von 2 haben mindestens eine Karte — ohne Karte: madina-1 Kapitel 2'],
+  ['Verzeichnis fehlt', s => { s.verzeichnis = null; }, 1, 'das Verzeichnis fehlt'],
+  ['Verzeichnis nennt andere Kartenzahl', s => { s.verzeichnis[0].vokabeln = 3; }, 1, 'Verzeichnis nennt für madina-1 3 Karten, die Buchdatei hat 2'],
+  ['Verzeichnis nennt andere Kapitelzahl', s => { s.verzeichnis[0].kapitel = 2; }, 1, 'Verzeichnis nennt für madina-1 2 Kapitel, die Buchdatei hat 1'],
+  ['Verzeichnis zeigt auf andere Datei', s => { s.verzeichnis[0].datei = 'data-ersatz/vokabeln-madina-1.js'; }, 1, 'statt data/vokabeln-madina-1.js'],
+  ['Verzeichnis führt ein Buch ohne Datei', s => { s.verzeichnis.push({ slug: 'madina-2', vokabeln: 5, kapitel: 1, datei: 'data/vokabeln-madina-2.js' }); }, 1, 'dazu gibt es keine Buchdatei mit Karten'],
 ];
 let gut = 0;
 for (const [name, stoere, code, satz] of FAELLE) {

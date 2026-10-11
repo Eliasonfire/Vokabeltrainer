@@ -1,6 +1,7 @@
 /* ersatz-bauen.mjs -- schreibt aus den Vorschlägen (ersatz-zuordnen.mjs) und den Entscheidungen von Hand
  * die Ersatzdatenbank: je Buch data-ersatz/vokabeln-<buch>.js im selben Format wie data/vokabeln-<buch>.js,
- * dazu die Belegdatei, die Liste „nicht gefunden" und die Liste „Unterschiede".
+ * dazu das Verzeichnis data-ersatz/buecher.js (Format von data/buecher.js), die Belegdatei, die Liste
+ * „nicht gefunden" und die Liste „Unterschiede".
  *
  * Elias, 11.10.2026: „1:1 ersatzdatenbank von den vokabeln die alle nicht von mir stammen" · „genauso
  * organisiert … wie die bei arabicroots" · „für das deutsche will ich im optimalfall auch eine quelle haben".
@@ -63,7 +64,7 @@ function deutschAus(satz) {
   return { w: woerter.slice(0, 4).join(', '), wo: orte.join(' · '), q: direkt.length ? 'direkt' : 'kette' };
 }
 
-const plaetze = [], unterschiede = [], nichtGefunden = [], handFehler = [];
+const plaetze = [], unterschiede = [], nichtGefunden = [], handFehler = [], verzeichnis = [];
 const stand = { erzeugt: new Date().toISOString(), buecher: {} };
 fs.mkdirSync(path.join(ERSATZ, 'hand'), { recursive: true });
 
@@ -156,7 +157,18 @@ for (const buch of BUECHER) {
   schreibe(path.join(ERSATZ, 'vokabeln-' + buch + '.js'),
     `/* Ersatzdatenbank, Buch ${buch}: ${karten.length} von ${saetze.length} Plätzen. Erzeugt von werkzeuge/ersatz-bauen.mjs —\n   nicht von Hand ändern. Fundstellen je Angabe: belege-${buch}.json. */\n(window.VOKABELN = window.VOKABELN || {})[${JSON.stringify(buch)}] = ${JSON.stringify(karten, null, 0).replace(/\},\{/g, '},\n{')};\n`);
   schreibe(path.join(ERSATZ, 'belege-' + buch + '.json'), JSON.stringify(belege, null, 1));
+  // Kapitel: wie viele es unter den Plätzen gibt, und wie viele davon mindestens eine Karte bekommen haben
+  z.kapitelPlaetze = new Set(saetze.map(s => s.kap)).size;
+  z.kapitel = new Set(karten.map(k => k.chapter)).size;
+  if (karten.length) verzeichnis.push({ slug: buch, vokabeln: karten.length, kapitel: z.kapitel, datei: 'data/vokabeln-' + buch + '.js' });
 }
+/* Das Verzeichnis gehört zu den Buchdateien wie data/buecher.js zum Bestand: die App liest daraus, welche Bücher es
+ * gibt, und zeigt Karten- und Kapitelzahl je Buch; baue-vokabelpaket.mjs bricht ab, wenn die Zahl nicht zur Datei passt.
+ * „datei" nennt den Ort NACH einem Wechsel (data/…), denn dort sucht die App die Buchdateien. Reihenfolge wie im
+ * Bestand: nach Kürzel. Ein Buch ohne eine einzige belegte Karte steht nicht darin. */
+verzeichnis.sort((a, b) => a.slug < b.slug ? -1 : a.slug > b.slug ? 1 : 0);
+if (verzeichnis.length) schreibe(path.join(ERSATZ, 'buecher.js'),
+  `/* Verzeichnis der Ersatzdatenbank, im Format von data/buecher.js. Erzeugt von werkzeuge/ersatz-bauen.mjs —\n   nicht von Hand ändern. Die Zahlen nennen, was in den Buchdateien daneben wirklich steht. */\nconst BUECHER = ${JSON.stringify(verzeichnis, null, 1)};\n`);
 if (plaetze.length) schreibe(path.join(ERSATZ, 'plaetze.json'), JSON.stringify(plaetze));
 schreibe(path.join(ERSATZ, 'nicht-gefunden.json'), JSON.stringify(nichtGefunden, null, 1));
 schreibe(path.join(ERSATZ, 'unterschiede.json'), JSON.stringify(unterschiede, null, 1));

@@ -7,7 +7,10 @@
  *   - jede Karte hat Arabisch, Deutsch und Wortart, und zu JEDER Angabe steht eine Fundstelle
  *   - keine Fundstelle heißt arabicroots
  *   - ein Platz ist belegt ODER steht mit Grund unter „nicht gefunden" ODER ist offen — nie zwei davon
+ *   - das Verzeichnis buecher.js nennt je Buch die Karten- und Kapitelzahl, die in der Buchdatei wirklich steht
+ *     (die App zeigt diese Zahlen an, und das Vokabelpaket lässt sich nur bauen, wenn sie stimmen)
  * Von Claude stammt die Grenze: eine Karte ohne Deutsch zählt nicht als belegt.
+ * Gemeldet, aber kein Widerspruch: ein Kapitel, in dem keine einzige Karte steht (Zeile „Kapitel: …").
  *
  * Ausgabe, letzte Zeile:  ERSATZ VOLLSTÄNDIG: 4433 von 4433 Plätzen, 8 von 8 Büchern
  *                   oder  ERSATZ UNVOLLSTÄNDIG: n von 4433 Plätzen belegt …
@@ -113,12 +116,39 @@ for (const buch of BUECHER) {
     if (q === 'kette') kette++; else if (q === 'teile') teile++; else if (DIREKT.includes(q)) direkt++; else ohne++;
   }
   const ng = soll.filter(p => ngIds.has(String(p.id)) && !gesehen.has(String(p.id))).length;
-  z[buch] = { plaetze: soll.length, belegt: gesehen.size, ng, offen: soll.length - gesehen.size - ng };
+  const kapKarten = new Set(karten.map(k => k.chapter));
+  const kapPlaetze = [...new Set(soll.map(p => p.kap))];
+  z[buch] = { plaetze: soll.length, belegt: gesehen.size, ng, offen: soll.length - gesehen.size - ng,
+    karten: karten.length, kapitelKarten: kapKarten.size, kapitel: kapPlaetze.length, kapitelLeer: kapPlaetze.filter(k => !kapKarten.has(k)) };
   belegtAlle += gesehen.size; ngAlle += ng; offenAlle += z[buch].offen;
 }
 for (const id of ngIds.keys()) if (!ids.has(id)) melde(`nicht-gefunden.json: Kennung ${id} gehört zu keinem Platz`);
 
-if (!knapp) for (const buch of BUECHER) console.log(`  ${buch.padEnd(15)} ${String(z[buch].belegt).padStart(4)} von ${String(z[buch].plaetze).padStart(4)} belegt · ${z[buch].ng} nicht gefunden · ${z[buch].offen} offen`);
+// 3. Das Verzeichnis: nennt es je Buch, was in der Buchdatei wirklich steht?
+const verzeichnisDatei = path.join(ERSATZ, 'buecher.js');
+let verzeichnis = null;
+if (fs.existsSync(verzeichnisDatei)) {
+  // wie baue-vokabelpaket.mjs: die Liste hinter dem letzten „= [" lesen, ohne das Skript auszuführen
+  const m = fs.readFileSync(verzeichnisDatei, 'utf8').match(/=\s*(\[[\s\S]*\])\s*;?\s*$/);
+  try { verzeichnis = m ? JSON.parse(m[1]) : null; } catch { verzeichnis = null; }
+}
+const mitKarten = BUECHER.filter(b => z[b].karten > 0);
+if (!Array.isArray(verzeichnis)) { if (mitKarten.length) melde('buecher.js: das Verzeichnis fehlt oder ist nicht lesbar — ohne es zeigt die App die Bücher nicht („node werkzeuge/ersatz-bauen.mjs“ schreibt es)'); }
+else {
+  for (const buch of mitKarten) {
+    const e = verzeichnis.find(v => v.slug === buch);
+    if (!e) { melde(`buecher.js: das Buch ${buch} fehlt im Verzeichnis`); continue; }
+    if (e.vokabeln !== z[buch].karten) melde(`buecher.js: Verzeichnis nennt für ${buch} ${e.vokabeln} Karten, die Buchdatei hat ${z[buch].karten}`);
+    if (e.kapitel !== z[buch].kapitelKarten) melde(`buecher.js: Verzeichnis nennt für ${buch} ${e.kapitel} Kapitel, die Buchdatei hat ${z[buch].kapitelKarten}`);
+    if (e.datei !== 'data/vokabeln-' + buch + '.js') melde(`buecher.js: Verzeichnis nennt für ${buch} die Datei „${e.datei}“ statt data/vokabeln-${buch}.js`);
+  }
+  for (const e of verzeichnis) if (!mitKarten.includes(e.slug)) melde(`buecher.js: Verzeichnis führt „${e.slug}“, dazu gibt es keine Buchdatei mit Karten`);
+}
+const kapitelAlle = BUECHER.reduce((n, b) => n + z[b].kapitel, 0);
+const kapitelLeer = BUECHER.flatMap(b => z[b].kapitelLeer.map(k => `${b} Kapitel ${k}`));
+
+if (!knapp) for (const buch of BUECHER) console.log(`  ${buch.padEnd(15)} ${String(z[buch].belegt).padStart(4)} von ${String(z[buch].plaetze).padStart(4)} belegt · ${z[buch].ng} nicht gefunden · ${z[buch].offen} offen · Kapitel mit Karten ${z[buch].kapitelKarten} von ${z[buch].kapitel}`);
+console.log(`  Kapitel: ${kapitelAlle - kapitelLeer.length} von ${kapitelAlle} haben mindestens eine Karte` + (kapitelLeer.length ? ` — ohne Karte: ${kapitelLeer.slice(0, 12).join(', ')}${kapitelLeer.length > 12 ? ' …' : ''}` : ''));
 console.log(`  Deutsch: ${direkt} mit Quelle direkt · ${kette} über das Englische (zwei Schritte) · ${teile} aus belegten Teilen zusammengesetzt · ${ohne} ohne deutsche Quelle` + (bestandGeprueft ? ` · Plätze gegen den Bestand geprüft: ${bestandGeprueft} von 8 Büchern` : ' · der Bestand liegt hier nicht, Plätze nur in sich geprüft'));
 if (befunde.length) {
   console.log(`\nERSATZ WIDERSPRÜCHLICH: ${befunde.length} Befund(e)`);
