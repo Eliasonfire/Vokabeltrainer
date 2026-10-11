@@ -43,8 +43,16 @@ function ladeBestand(buch) {
 /* Deutsch aus den Kandidaten: erst die direkte Quelle (arabisches und deutsches Wort stehen beieinander),
  * sonst der Weg über das Englische. Die Reihenfolge folgt den Bedeutungen, wie die Karte sie bisher nennt. */
 function deutschAus(satz) {
-  const k = (satz.deutsch || []).filter(d => d.deckt && !d.erkl);
+  // Der Schlüssel zum Lehrbuch geht vor, wenn er das Wort als Stichwort führt (gleiche Schreibung bis auf die
+  // Schlussendung) und sein Deutsch sich mit dem Sinn der Karte deckt. Deckt es sich nicht, aber ein Wörterbuch
+  // nennt direkt ein passendes Wort, bleibt das Wörterbuch; sonst gilt die Zeile aus der Lektion des Kapitels.
+  const sch = (satz.deutsch || []).filter(d => !d.erkl && d.sch && d.sch.kopf && d.sch.streng);
+  const schDeckt = sch.find(d => d.deckt && d.sch.lektion) || sch.find(d => d.deckt);
+  if (schDeckt) return { w: schDeckt.de, wo: schDeckt.wo, q: 'schluessel' };
+  const k = (satz.deutsch || []).filter(d => d.deckt && !d.erkl && !d.sch);
   const direkt = k.filter(d => d.sicher === 'vokalisiert');
+  const schLektion = sch.find(d => d.sch.lektion);
+  if (!direkt.length && schLektion) return { w: schLektion.de, wo: schLektion.wo, q: 'schluessel' };
   const wahl = direkt.length ? direkt : k.filter(d => d.sicher === 'kette');
   if (!wahl.length) return null;
   const woerter = [], orte = [];
@@ -70,24 +78,25 @@ for (const buch of BUECHER) {
     // Stufe mit Stern: der Eintrag der Quelle hat eine ANDERE Wortart als die Karte (etwa das Verb zu einer Karte, die
     // dessen Befehlsform als Ausruf führt). Dann stimmen die Formen nicht von selbst — übernommen wird erst, wenn die
     // Hand es mit „artOk" bestätigt. Gefunden am 11.10.2026 an „tafaddal": ohne diese Sperre stünde die Vergangenheit da.
-    if (s.vorschlag && (!String(s.stufe).includes('*') || h.artOk === true)) for (const f of FELDER) if (s.vorschlag[f] && voll(s.vorschlag[f].w)) felder[f] = { w: nfc(s.vorschlag[f].w), wo: s.vorschlag[f].wo, q: 'enwikt' };
+    if (s.vorschlag && (!String(s.stufe).includes('*') || h.artOk === true)) for (const f of FELDER) if (s.vorschlag[f] && voll(s.vorschlag[f].w)) felder[f] = { w: nfc(s.vorschlag[f].w), wo: s.vorschlag[f].wo, q: s.vorschlag[f].q || 'enwikt' };
     const de = deutschAus(s);
     if (de) felder.de = de;
     // Hand: „de" nennt die deutschen Wörter, die aus den Kandidaten der Quellen gelten sollen (die Fundstellen kommen von dort);
     // „deEigen" ist ein Deutsch ohne deutsche Quelle, von Claude nach der englischen Bedeutung der Quelle geschrieben.
     if (Array.isArray(h.de) && h.de.length) {
       const orte = [], fehlend = [];
-      let direkt = false;
+      let direkt = false, nurSchluessel = true;
       for (const wort of h.de) {
         const k = (s.deutsch || []).filter(d => !d.erkl && d.de === wort);
         const beste = k.find(d => d.sicher === 'vokalisiert') || k.find(d => d.sicher === 'kette') || k[0];
         if (!beste) { fehlend.push(wort); continue; }
         if (beste.sicher !== 'kette') direkt = true;
+        if (beste.q !== 'schluessel') nurSchluessel = false;
         if (orte.length < 4) orte.push(beste.wo);
       }
       if (fehlend.length) { handFehler.push(`${buch} ${s.id}: „${fehlend.join('“, „')}“ steht nicht unter den Kandidaten der Quellen`); }
       else {
-        felder.de = { w: h.de.join(', '), wo: orte.join(' · '), q: direkt ? 'direkt' : 'kette' };
+        felder.de = { w: h.de.join(', '), wo: orte.join(' · '), q: nurSchluessel ? 'schluessel' : direkt ? 'direkt' : 'kette' };
         // „deZusatz": eine Erklärung in Klammern hinter dem belegten Wort; sie ist von Claude und steht so im Beleg
         if (voll(h.deZusatz)) { felder.de.w += ` (${nfc(h.deZusatz)})`; felder.de.wo += ' · der Zusatz in Klammern ist von Claude, ohne deutsche Quelle'; }
       }
