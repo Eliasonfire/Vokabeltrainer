@@ -480,6 +480,10 @@ const PRUEFER = [
      das praktisch, für mein handy will ich das nicht". Bewacht vor allem die
      Ausnahme: am Handy kein Tastenkasten und kein inputmode. Sechs Störtests. */
   ['test-tippen-tablet.mjs', []],
+  /* 11.10.2026 — die Eselsbrücken-Vorschläge bleiben neben seiner eigenen stehen.
+     Elias: „sie sollen da bleiben auch wenn ich eine notiz mache". Fährt
+     renderNotiz() und wkEselsbruecke() aus dem Quelltext; vier Störtests. */
+  ['test-vorschlag-bleibt.mjs', []],
   /* Ohne --schreiben misst es nur. Rot, sobald in einer Projektnotiz ein
      aelterer Abschnitt vor einem neueren steht — Elias am 22.09.2026:
      „oben, räume demtentsprechend um". */
