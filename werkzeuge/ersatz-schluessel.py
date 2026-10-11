@@ -69,6 +69,12 @@ def zeile_bauen(zeichen, rtl):
         else:
             ziel['marken'].append(z['c'])
     basen = [b for b in basen if id(b) not in kunst]
+    # ein Leerzeichen, das zur Haelfte AUF einem Buchstaben liegt, trennt keine Woerter (Rest eines Zeichen-Paares)
+    buchst = [b for b in basen if b['c'] != ' ']
+    def liegt_auf(s):
+        w = s['x1'] - s['x0']
+        return w > 0 and any(min(b['x1'], s['x1']) - max(b['x0'], s['x0']) > 0.5 * w for b in buchst)
+    basen = [b for b in basen if b['c'] != ' ' or not liegt_auf(b)]
     basen.sort(key=lambda b: (-b['ox'] if rtl else b['ox']))
     if rtl:
         # Lam-Alif ist im PDF EIN Bildzeichen: sein Vokal steht hinter dem Alif, gehoert aber zum Lam. Ein blankes Alif
