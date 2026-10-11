@@ -2425,6 +2425,25 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
 .tipp-box .select-input{font-size:var(--fs-xl);padding:var(--sp-3) var(--sp-4);
   line-height:1.9;text-align:center;height:auto;}
 .tipp-antwort{margin-top:var(--sp-2);font-size:var(--fs-sm);min-height:1.3em;text-align:center;}
+/* Arabische Tasten unter dem Tippfeld — nur am Tablet sichtbar (zeigeTippTasten() in
+   js/lernen.js; Elias, 11.10.2026: „für mein tablet wäre das praktisch, für mein handy
+   will ich das nicht"). Zwölf Tasten je Reihe: in den 420 px des Kastens wären sie rund
+   29 px breit, deshalb wird der Kasten MIT Tasten breiter. */
+/* Gemessen am 11.10.2026 im Vorschaufenster (Kasten von Hand eingeblendet): bei 1315 px
+   Fensterbreite ist die Karte 680 px breit, bei 768 px nur 486 — mit 420 px Kasten wären
+   die Tasten dort 31 px breit. Der Kasten reicht deshalb mit Tasten 20 px in den Rand
+   der Kartenseite (der hat 26 px), das bringt je Taste rund 3 px. */
+.tipp-box.mit-tasten{max-width:720px;width:calc(100% + 40px);margin-left:-20px;margin-right:-20px;}
+.tipp-tasten{margin-top:var(--sp-3);display:flex;flex-direction:column;gap:6px;direction:ltr;}
+.tipp-tasten.hidden{display:none;}
+.tipp-reihe{display:flex;gap:6px;justify-content:center;}
+.tipp-taste{flex:1 1 0;min-width:0;height:52px;padding:0;cursor:pointer;
+  font-family:var(--font-ar);font-size:var(--fs-xl);line-height:1;color:var(--text);
+  background:var(--surface-2);border:1px solid var(--border);border-radius:10px;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+.tipp-taste:active{background:var(--surface-4);}
+.tipp-taste.wort{flex:2 1 0;font-family:var(--font-ui);font-size:var(--fs-sm);}
+.tipp-taste.leer{flex:5 1 0;}
 /* Der Ausweg, wenn die Tastatur gerade zu mühsam ist. Bewusst leise gestaltet:
    er soll dastehen, ohne der bequemere Weg zu sein. */
 .tipp-ueberspringen{
@@ -5824,6 +5843,11 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
               <div class="tipp-box hidden" id="cardTippBox">
                 <input type="text" id="cardTippEingabe" class="select-input select-full" lang="ar" dir="rtl"
                        placeholder="Wort auf Arabisch eintippen …" autocomplete="off" autocapitalize="off" spellcheck="false">
+                <!-- Arabische Tasten, NUR am Tablet (11.10.2026). Elias: „für mein tablet wäre
+                     das praktisch, für mein handy will ich das nicht". Gefüllt und gezeigt von
+                     zeigeTippTasten() in js/lernen.js; am Handy bleibt der Kasten leer und
+                     verborgen, und das Feld oben bekommt dort KEIN inputmode. -->
+                <div class="tipp-tasten hidden" id="cardTippTasten" dir="ltr" aria-label="Arabische Tasten"></div>
                 <div class="tipp-antwort" id="cardTippAntwort"></div>
                 <button type="button" class="tipp-ueberspringen" id="btnTippUeberspringen">Überspringen</button>
               </div>

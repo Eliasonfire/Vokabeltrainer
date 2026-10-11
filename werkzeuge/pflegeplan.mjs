@@ -615,6 +615,22 @@ export const PFLEGEPLAN = [
     veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs',
       wie: 'test-koran-haeufig.mjs läuft im Sammellauf: hält Liste und Datendatei gegeneinander und prüft, dass jede Kennung aus der Spalte gleich in den acht Büchern steht; fährt koranKartenEinordnen() und neueZuerst() aus dem Quelltext, mit Störtests' },
   },
+  /* 11.10.2026, innerhalb von index.html und js/lernen.js und deshalb von Hand hier:
+     arabische Tasten unter dem Tippfeld der Lernkarte, NUR am Tablet. Elias: „für
+     mein tablet wäre das praktisch, für mein handy will ich das nicht". */
+  {
+    funktion: 'Arabische Tasten unter dem Tippfeld (nur am Tablet)',
+    dateien: [],
+    bildschirme: [],
+    neuerInhalt: { nein: 'Die 36 Tasten sind das arabische Alphabet mit den Hamza-Formen, Ta marbuta und Alif maqsura (TIPP_TASTEN in js/lernen.js); es kommt nichts dazu.' },
+    eingaben: { nein: 'Was er tippt, steht nur im Feld der Karte und wird sofort verglichen (pruefeTippen()); gespeichert wird nichts, kein neuer Speicherschlüssel.' },
+    /* ⛔ Still kaputtgehen kann die AUSNAHME: bekommt das Feld fest ein inputmode
+       oder zeigt jemand die Tasten ohne die Geräteabfrage, geht am Handy seine
+       Tastatur nicht mehr auf — ohne Fehlermeldung.
+       Ohne `werkzeug`: der Test läuft im Sammellauf mit (Eintrag in alle-pruefer.mjs). */
+    veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs',
+      wie: 'test-tippen-tablet.mjs läuft im Sammellauf: fährt istTablet(), zeigeTippTasten(), tippTaste() und renderTippfeld() aus dem Quelltext gegen ein Doppel der Seite (Handy, Tablet hoch und quer, PC), prüft die 36 Tasten gegen das Alphabet und die Verdrahtung in index.html; sechs Störtests' },
+  },
   /* 22.09.2026 (v569), innerhalb von functions/api/diagnose.js,
      js/einstellungen.js und werkzeuge/diagnose-holen.mjs und deshalb von Hand
      hier: die Diagnose liegt jetzt unter `diagnose:<mail>:<gerät>` statt unter

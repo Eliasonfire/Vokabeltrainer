@@ -990,6 +990,9 @@ function renderTippfeld(w){
   document.getElementById('cardTippAntwort').textContent = '';
   document.getElementById('cardTippAntwort').className = 'tipp-antwort';
   kasten.classList.remove('hidden');
+  /* Am Tablet eigene arabische Tasten, am Handy nichts (siehe zeigeTippTasten() unten).
+     Mit Abfrage, weil mehrere Prüfstände diese Funktion allein aus dem Quelltext schneiden. */
+  if (typeof zeigeTippTasten === 'function') zeigeTippTasten();
 }
 
 function pruefeTippen(){
@@ -1013,6 +1016,100 @@ document.getElementById('cardTippEingabe').addEventListener('keydown', (e)=>{
   if (e.key === 'Enter'){ e.preventDefault(); pruefeTippen(); }
 });
 document.getElementById('cardTippEingabe').addEventListener('pointerdown', (e)=>e.stopPropagation());
+
+/* ---------- Arabische Tasten unter dem Tippfeld — NUR AM TABLET (11.10.2026) ----------
+
+   Elias, 11.10.2026: „wenn ich bei karteikarten das arabische schreiben soll will ich
+   das sich bei mir automatisch die arabische tastatur öffnet". Eine Web-App kann die
+   Tastatur des Geräts nicht umschalten; mein Vorschlag waren eigene Tasten unter dem
+   Feld. Seine Antwort: „für mein tablet wäre das praktisch, für mein handy will ich das
+   nicht".
+
+   ⛔ Also: am Tablet eigene Tasten — am Handy ALLES wie bisher. Dort kein Kasten und
+   kein `inputmode`; die Tastatur des Handys geht auf wie immer.
+
+   MEINE Bauart (nicht sein Satz), jede Zeile für sich änderbar:
+   - Was ein Tablet ist: ein Gerät mit Berührung, dessen kürzere Bildschirmseite
+     mindestens 600 Punkte misst. An seinen Geräten (Pixel 10 Pro XL, Galaxy Tab S9
+     Ultra) ist das NICHT gemessen — ein PC mit Berührungsbildschirm zählt danach auch
+     als Tablet.
+   - Die Tastatur des Tablets bleibt dabei zu (`inputmode="none"`), sonst stünden zwei
+     Tastaturen übereinander. Eine angesteckte Tastatur schreibt weiter ins Feld.
+   - 36 Tasten in der Anordnung der arabischen Tastatur, dazu Löschen, Leerzeichen und
+     „Prüfen" (das Feld prüft sonst mit der Eingabetaste, und die gibt es hier nicht).
+     Keine Vokalzeichen: der Vergleich in pruefeTippen() lässt sie ohnehin weg.
+   - Die Buchstaben stehen als Codepunkte da, nicht als getippte Zeichen.
+   Bewacht von test-tippen-tablet.mjs. */
+const TIPP_TASTEN = [
+  [0x0636, 0x0635, 0x062B, 0x0642, 0x0641, 0x063A, 0x0639, 0x0647, 0x062E, 0x062D, 0x062C, 0x062F],
+  [0x0634, 0x0633, 0x064A, 0x0628, 0x0644, 0x0627, 0x062A, 0x0646, 0x0645, 0x0643, 0x0637, 0x0630],
+  [0x0626, 0x0621, 0x0624, 0x0631, 0x0649, 0x0629, 0x0648, 0x0632, 0x0638, 0x0623, 0x0625, 0x0622],
+];
+
+function istTablet(geraet, schirm){
+  const g = geraet || (typeof navigator !== 'undefined' ? navigator : {});
+  const s = schirm || (typeof screen !== 'undefined' ? screen : {});
+  return (g.maxTouchPoints || 0) > 0 && Math.min(s.width || 0, s.height || 0) >= 600;
+}
+
+function baueTippTasten(){
+  const feld = document.getElementById('cardTippTasten');
+  if (!feld || feld.dataset.gebaut) return;
+  const taste = (text, wert, klasse, name) => '<button type="button" class="tipp-taste' + (klasse ? ' ' + klasse : '')
+    + '" data-taste="' + wert + '"' + (name ? ' aria-label="' + name + '"' : '') + '>' + text + '</button>';
+  feld.innerHTML = TIPP_TASTEN.map(reihe => '<div class="tipp-reihe">'
+      + reihe.map(c => taste(String.fromCodePoint(c), 'z' + c, '', '')).join('') + '</div>').join('')
+    + '<div class="tipp-reihe">' + taste('⌫', 'weg', 'wort', 'Löschen')
+    + taste('Leerzeichen', 'leer', 'wort leer', '') + taste('Prüfen', 'pruefen', 'wort', '') + '</div>';
+  feld.dataset.gebaut = '1';
+}
+
+function zeigeTippTasten(){
+  const tasten = document.getElementById('cardTippTasten');
+  const ein = document.getElementById('cardTippEingabe');
+  if (!tasten || !ein) return;
+  const an = istTablet();
+  if (an){ baueTippTasten(); ein.setAttribute('inputmode', 'none'); }
+  else ein.removeAttribute('inputmode');
+  tasten.classList.toggle('hidden', !an);
+  document.getElementById('cardTippBox').classList.toggle('mit-tasten', an);
+}
+
+/* Schreibt an der Schreibmarke: eine Auswahl wird ersetzt, „weg" löscht das Zeichen
+   davor (oder die Auswahl), „pruefen" prüft wie die Eingabetaste. */
+function tippTaste(wert){
+  if (wert === 'pruefen'){ pruefeTippen(); return; }
+  const ein = document.getElementById('cardTippEingabe');
+  const text = ein.value;
+  const von = typeof ein.selectionStart === 'number' ? ein.selectionStart : text.length;
+  const bis = typeof ein.selectionEnd === 'number' ? ein.selectionEnd : von;
+  let neu, stelle;
+  if (wert === 'weg'){
+    if (von !== bis){ neu = text.slice(0, von) + text.slice(bis); stelle = von; }
+    else if (von > 0){ neu = text.slice(0, von - 1) + text.slice(von); stelle = von - 1; }
+    else return;
+  } else {
+    const zeichen = wert === 'leer' ? ' ' : String.fromCodePoint(Number(wert.slice(1)));
+    neu = text.slice(0, von) + zeichen + text.slice(bis);
+    stelle = von + zeichen.length;
+  }
+  ein.value = neu;
+  try { ein.setSelectionRange(stelle, stelle); }
+  catch(e){ /* Kennt das Feld keine Schreibmarke, steht der Text trotzdem richtig da — es fehlt nur die Marke. */ }
+}
+
+(function(){
+  const tasten = document.getElementById('cardTippTasten');
+  if (!tasten) return;
+  /* pointerdown: das Feld behält seine Schreibmarke (kein Fokuswechsel), und die Karte
+     dreht sich nicht um. Geschrieben wird beim Loslassen (click). */
+  tasten.addEventListener('pointerdown', (e)=>{ e.preventDefault(); e.stopPropagation(); });
+  tasten.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    const t = e.target.closest('.tipp-taste');
+    if (t) tippTaste(t.dataset.taste);
+  });
+})();
 
 /* ---------- Überspringen (Elias, 07.09.2026) ----------
 
