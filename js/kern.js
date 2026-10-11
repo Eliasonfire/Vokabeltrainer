@@ -3342,14 +3342,18 @@ function neueZuerst(liste){
      - Untereinander nach Häufigkeit, das häufigste zuerst. Das ist SEIN Satz: „und da
        sollen erstmal die wörter kommen die am häufigsten sind". `koranRang` trägt
        jede Karte der Gruppe (koranKarten() in js/buecher.js).
-     - HINTER den übrigen neuen Karten. Das ist MEINE Ableitung, nicht sein Satz:
-       hakt er die Gruppe an, bekommen bis zu 255 Karten den Tag von heute, und nach
-       der Regel darüber („jüngste Ankunft zuerst") kämen sie alle VOR den neuen
+     - HINTER den übrigen neuen Karten. Das war zuerst MEINE Ableitung: hakt er
+       die Gruppe an, bekommen bis zu 255 Karten den Tag von heute, und nach der
+       Regel darüber („jüngste Ankunft zuerst") kämen sie alle VOR den neuen
        Wörtern aus seinem Unterricht. Seine Regel vom 16.09. nennt aber ihren Grund —
        „weil das sind die mit denen ich arbeiten werde" —, und das sind die
-       Unterrichtswörter. Ob stattdessen jeden Tag ein Platz für ein Koranwort frei
-       sein soll, ist ihm am 11.10.2026 als Frage gestellt; bis er antwortet, gilt
-       diese Reihenfolge.
+       Unterrichtswörter.
+       ⭐ Seit dem 11.10.2026 ist es SEINE Entscheidung. Meine Frage an ihn, mit
+       diesem Beispiel: „Bei dir warten 75 neue Wörter aus dem Unterricht. So wie
+       es jetzt gebaut ist, kommen die zuerst, das erste Koranwort käme in rund
+       drei Wochen. Soll stattdessen jeden Tag ein Platz für ein Koranwort frei
+       sein?" — Elias: „Nein, Unterricht zuerst". ⛔ Also keinen täglichen Platz
+       für ein Koranwort einbauen, solange er es nicht anders sagt.
      ⚠️ Erst „Gruppe ja/nein", dann innerhalb: sonst wäre es keine Ordnung (siehe
      die Warnung zum Buch darüber). Der Buchname steht hier als Text, weil
      Prüfstände nur diese Funktion aus dem Quelltext schneiden (KORAN_BUCH steht

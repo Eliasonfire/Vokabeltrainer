@@ -43,6 +43,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { arabischInSeite, BIDI_CSS } from './arabisch-hervorheben.mjs';
+import { gehtAnElias, wartetAufEinbau, istEingebaut } from './kandidaten-einordnung.mjs';
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.resolve(HIER, '..');
@@ -1304,8 +1305,16 @@ try {
       seite: '', seiteText: ''
     });
   } else {
-    const fuerIhn = (bewertung.kandidaten || []).filter(k =>
-      k.urteil === 'regel' || k.urteil === 'abweichung' || k.urteil === 'unbelegt');
+    /* ⛔⛔ SEIT DEM 11.10.2026 OHNE `regel`. Elias: „wieso stehen die noch aus?" —
+       sieben belegte Regeln warteten hier als Frage „Aufnehmen?", drei davon aus
+       Folge 22 und 24. Auf meine Frage, ob die Wartung belegte Regeln künftig
+       selbst einbauen soll, statt ihn zu fragen: „ja". Wer an ihn geht,
+       entscheidet seitdem `kandidaten-einordnung.mjs` (nur `abweichung` und
+       `unbelegt`); eine belegte Regel wird eingebaut und ist dann ERLEDIGT —
+       sie steht nicht auf einer Seite, die zeigt, was wartet. */
+    const fuerIhn = (bewertung.kandidaten || []).filter(k => gehtAnElias(k.urteil));
+    const eingebautN = (bewertung.kandidaten || []).filter(istEingebaut).length;
+    const einzubauenN = (bewertung.kandidaten || []).filter(wartetAufEinbau).length;
     const zahl = (art) => fuerIhn.filter(k => k.urteil === art).length;
     /* ⚠️ Bis zum 24.09.2026 stand im Titel fest „die sieben". Mit Folge 22 kam
        eine achte Entscheidung dazu, und der Titel hätte weiter „sieben" gesagt,
@@ -1318,13 +1327,16 @@ try {
       zahl: fuerIhn.length, einheit: 'Entscheidungen',
       dazu: 'aus ' + bewertung.gesamt + ' Fundstellen · ' + bewertung.vonMir + ' habe ich selbst entschieden',
       auswahl: true,
-      aufwand: 'je Frage ein Ja oder Nein — die Belege stehen dabei',
+      aufwand: 'je Frage eine Entscheidung — die Belege stehen dabei',
       warum: 'Ich habe alle ' + bewertung.gesamt + ' Fundstellen gegen die Schlüsselbücher, den Unterricht und '
         + 'deine Unterlagen geprüft. ' + bewertung.vonMir + ' konnte ich selbst entscheiden — dort steht der '
-        + 'Inhalt schon als Regel, oder es ist gar keine drin. Übrig sind diese: '
-        + zahl('regel') + ' neue Regeln, die ich vorschlage — eintragen darf sie nur dein Ja; '
+        + 'Inhalt schon als Regel, oder es ist gar keine drin. Was dein Lehrer sagt und ein Schlüssel '
+        + 'bestätigt, baue ich selbst ein'
+        + (eingebautN ? ' (' + eingebautN + ' stehen so schon in der App, zum Ansehen auf der Freigabeseite unter „Eingebaut")' : '')
+        + '. Übrig sind diese: '
         + zahl('abweichung') + ' Stelle(n), wo Schlüssel und Lehrer sich widersprechen; '
         + zahl('unbelegt') + ', die der Lehrer sagt und kein Schlüssel bestätigt.'
+        + (einzubauenN ? ' ⚠️ ' + einzubauenN + ' belegte Regel(n) baue ich noch ein — meine Arbeit, nicht deine.' : '')
         + (bewertung.rueckstand ? ' ⚠️ ' + bewertung.rueckstand + ' habe ich noch nicht durch — mein Rückstand, nicht deiner.' : ''),
       wie: 'Auf der Freigabeseite antippen, unten den Text kopieren, in den Chat schicken.',
       zeilen: fuerIhn.map((k, i) => (i + 1) + ' · ' + (k.frage || k.grund || '').slice(0, 200)),

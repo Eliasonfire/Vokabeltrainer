@@ -1502,6 +1502,45 @@ const GRAMMAR_RULES = [
       "chapter": 13
     }
   },
+  {
+    "id": "mudari-sa-zukunft-01",
+    "name": "سَـ vor dem Gegenwartsverb: die Zukunft",
+    "shortExplanation": "Im Dialog von Kapitel 4 (Bayna Yadayk) steht vor den Verben ein kleines سَـ. Dein Lehrer (Folge 22, 24:01): „Dieses Sīn ist das Sīn der Zukunft.“ Trifft es auf ein Gegenwartsverb, „sagt es eben die nahe Zukunft aus“.\n\nSo liest er den Dialog (24:20): سَأَكْنُسُ غُرْفَةَ الْجُلُوسِ — „ich werde saugen“, und zwar das Wohnzimmer. Bei der Frage an Fatima (24:45) — وَمَاذَا سَتَفْعَلِينَ يَا فَاطِمَةُ؟ — zerlegt er das Wort: „Das heißt, tafʿalīna ist die Gegenwartsform. Die haben wir noch nicht gelernt.“ Das سَـ steht also nur davor. In deinem Buch ebenso: سَتَفْعَلُ (du wirst machen) · سَيَكْنُسُ (er wird fegen).\n\n⭐ **Erkennen reicht fürs Erste.** Er sagt dazu (24:08): „nur das, was ihr erstmal gehört habt, das kommt in der Zukunft dann, wenn wir Gegenwartsverben lernen.“ Woran du ein Gegenwartsverb erkennst, steht in mudari-erkennen-01.\n\nDer Schlüssel zu Band 2 sagt in Lektion 11 dasselbe: Dieselbe Verbform bedeutet ‚er geht‘ oder ‚er wird gehen‘; um sie „eindeutig als Futurform zu verwenden“, wird sa- „als Vorsilbe vorangestellt“. Er nennt es die Futurpartikel.\n\n⚠️ **Ein Unterschied zwischen den Quellen, für dich markiert:** Der Schlüssel setzt hinzu, sa- werde nicht in Fragen verwendet. Dein Buch und dein Lehrer benutzen es aber gerade in einer Frage: مَاذَا سَتَفْعَلُ يَا طَارِقُ؟ Diese Regel enthält deshalb nur den Kern, in dem beide einig sind.",
+    "color": "other",
+    "kapitel": 12,
+    "source": {
+      "folge": 22,
+      "video": "Folge 22",
+      "approxTimestamp": "24:01",
+      "chapter": 12
+    }
+  },
+  {
+    "id": "mudari-erkennen-01",
+    "name": "Gegenwart oder Vergangenheit? Der Buchstabe vorn am Verb",
+    "shortExplanation": "Die Vergangenheit erkennst du am Ende des Verbs, die Gegenwart am Anfang. Dein Lehrer fragt es so ab (Folge 24, 40:30): „Bei den Verben der Vergangenheit ändert sich was? Das Ende. Bei der Gegenwart ändert sich was? Ändert sich vorne … der Anfang.“\n\nDann drei Paare zum Raten (40:58 bis 41:39), hier in Umschrift: yaskunu ist Gegenwart, „Vergangenheit ist“ sakana · nafʿalu ist Gegenwart, „weil“ faʿala „ist Vergangenheit“ · alʿabu ist Gegenwart, „und“ laʿiba „ist Vergangenheit“.\n\n⭐ **Sein Merksatz** (41:44): „Wenn also vorne beim Gegenwartsverb, wenn da ein Alif ist, oder ein Yāʾ, oder ein Nūn, oder ein Tāʾ, dann wisst ihr, dieses Verb ist von der Gegenwart.“\n\nAus deinen Sätzen: ذَهَبَ (er ging) → أَذْهَبُ (ich gehe) · تَذْهَبُ (du gehst) · يَذْهَبُ (er geht). Ebenso سَكَنَ → أَسْكُنُ · غَسَلَ → يَغْسِلُ · فَعَلَ → تَفْعَلُ.\n\n⚠️ **Seine Einschränkung** (41:57): außer das Verb hat selbst einen dieser Buchstaben. Dann gehört der Buchstabe zum Wort und zeigt nichts an.\n\nDer Schlüssel zu Band 2 sagt in Lektion 10 dasselbe: „Im muḍāriʿ wird einer dieser vier Buchstaben vor das Verb gesetzt.“ Sein Beispiel: aus kataba (er schrieb) wird ya-ktubu (er schreibt).\n\n⚠️ **Nur erkennen, noch nicht bilden.** Dein Lehrer (42:07): „Das ist jetzt nur ein kleiner Cheatcode“ — und (42:20): „Gegenwart werden wir erst konjugieren, wenn Vergangenheit ordentlich sitzt.“ Die Endungen der Vergangenheit stehen in verb-madi-endungen-01; was ein سَـ vor dem Gegenwartsverb bedeutet, in mudari-sa-zukunft-01.\n\n⚠️ Die drei Paare deines Lehrers stehen in Umschrift: ihre vokalisierte Schreibung ist im vorhandenen Wortbestand nicht vollständig belegt.",
+    "color": "other",
+    "kapitel": 12,
+    "source": {
+      "folge": 24,
+      "video": "Folge 24",
+      "approxTimestamp": "40:30",
+      "chapter": 12
+    }
+  },
+  {
+    "id": "tanwin-fath-alif-01",
+    "name": "ـًا: nach den zwei Fatḥa steht ein Alif",
+    "shortExplanation": "Eine Schreibregel. Dein Lehrer begründet damit in einer Aufgabe mit كَمْ (wie viele?) die richtige Schreibung (Folge 24, 17:52): „Warum? Weil wir hatten das. Wenn … ein Wort unbestimmt ist und manṣūb ist. Manṣūb also im Akkusativ, also mit Fatḥa oder mit Fatḥatain. Dann kriegt der ein Alif hinten dran. Das ist das einzige, was so eine Regel hat. Die anderen haben das nicht.“\n\nAlso: Endet ein unbestimmtes Wort auf die zwei Fatḥa (-an), wird dahinter ein Alif geschrieben. „Die anderen“ — die zwei Ḍamma (-un) und die zwei Kasra (-in) — bekommen nichts dahinter. Zu sehen an شُكْرًا جَزِيلًا (vielen Dank): beide Wörter enden so.\n\nDer Schlüssel zu Band 1 hat die Regel in Lektion 18, beim Fragewort كَمْ: danach steht das gezählte Wort in der Einzahl und im Akkusativ. Er nennt das Alif stumm — es wird geschrieben, nicht gesprochen — und nennt eine Ausnahme, die dein Lehrer an der Stelle nicht sagt: nach einem Tāʾ marbūṭa steht kein Alif.\n\n⚠️ In deinem Satz mit أَيْضاً (auch) sitzen die zwei Fatḥa auf dem Alif statt auf dem Buchstaben davor — dieselbe Endung, nur anders gesetzt.\n\n⚠️ Den Akkusativ selbst hattet ihr als Fall noch nicht; dein Lehrer sagt es hier im Vorbeigehen („wir hatten das“). Diese Regel erklärt nur die Schreibung.",
+    "color": "other",
+    "kapitel": 12,
+    "source": {
+      "folge": 24,
+      "video": "Folge 24",
+      "approxTimestamp": "17:52",
+      "chapter": 12
+    }
+  },
 ];
 
 const SENTENCE_TAGS = {
@@ -2133,7 +2172,8 @@ const SENTENCE_TAGS = {
     { ruleId: "huwa-hiya-01", matchText: "هِيَ" }
   ],
   "0e23a52d-e2f5-4a57-9082-58eb9f362d88": [
-    { ruleId: "mubtada-khabar-01", matchText: "الْبَيْتُ" }
+    { ruleId: "mubtada-khabar-01", matchText: "الْبَيْتُ" },
+    { ruleId: "tanwin-fath-alif-01", matchText: "أَيْضاً" }
   ],
   "45882": [
     { ruleId: "taschkil-kontext-01", matchText: "الْمُدَرِّسُ" }
@@ -3413,6 +3453,12 @@ const SENTENCE_TAGS = {
     { ruleId: "jam-muannath-salim-01", matchText: "طَبِيبَاتٌ" },
     { ruleId: "jam-taksir-01", matchText: "الطِّوَالُ" },
     { ruleId: "ismul-isara-haulai-01", matchText: "هَؤُلَاءِ" }
+  ],
+  "by1-84-4": [
+    { ruleId: "mudari-sa-zukunft-01", matchText: "سَأَكْنُسُ" }
+  ],
+  "by1-85-2": [
+    { ruleId: "mudari-erkennen-01", matchText: "يَغْسِلُ" }
   ]
 };
 
