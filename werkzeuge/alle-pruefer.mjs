@@ -784,11 +784,20 @@ const PRUEFER = [
      Exit 0 auch mit offenen Plaetzen und auch OHNE den Ordner (er ist lokal und
      fehlt auf jedem anderen Rechner) — rot wird er nur bei einem Widerspruch.
      eiche-ersatz.mjs baut eine Probe in einem Wegwerfordner und verlangt Rot
-     bei vierzehn eingebauten Fehlern (Karte ohne Deutsch, Angabe ohne
+     bei jedem eingebauten Fehler (Karte ohne Deutsch, Angabe ohne
      Fundstelle, Fundstelle arabicroots, Reihenfolge, Kapitel, fremde Kennung …)
-     und Gruen beim Grundstand; die echte data-ersatz/ fasst sie nicht an. */
+     und Gruen beim Grundstand; die echte data-ersatz/ fasst sie nicht an.
+     12.10.2026: eiche-ersatz-zuordner.mjs bewacht die REGELN, nach denen ein
+     Platz von selbst als belegt gilt (ersatz-zuordnen.mjs, ersatz-bauen.mjs):
+     eine winzige Welt aus sechs Karten und sechs Woerterbucheintraegen in
+     einem Wegwerfordner, jede Karte eine Stoerung — andere Vokalzeichen, kein
+     Eintrag, zwei gleiche Eintraege, andere Wortart, Deutsch deckt sich nicht.
+     Keine davon darf belegt werden; eine Handangabe ohne Quelle haelt den Bau
+     an. Gegenprobe beim Bau des Tests: mit je einer ausgeschalteten Regel
+     (in einer Kopie der Werkzeuge) wurde er rot. */
   ['werkzeuge/pruefe-ersatz.mjs', ['--knapp']],
-  ['werkzeuge/eiche-ersatz.mjs', []]
+  ['werkzeuge/eiche-ersatz.mjs', []],
+  ['werkzeuge/eiche-ersatz-zuordner.mjs', []]
 ];
 
 /* ⛔ pruefe-oberflaeche.js läuft NICHT unter node — es prüft die laufende App
