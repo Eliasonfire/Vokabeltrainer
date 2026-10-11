@@ -545,6 +545,31 @@
       "entscheidung": "abgelehnt",
       "grund": "Beispielwort und Plural eines vorhandenen Begriffs — مُدَرِّسَاتٌ ist die Mehrzahl von مُدَرِّسَةٌ und steht schon in vocab-data.js; die drei Plural-Regeln zitieren es nur.",
       "am": "2026-10-07"
+    },
+    "بالجامعة": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielwort — بِالْجَامِعَةِ ist das Beispiel, an dem harf-jarr-bi-fi-01 die Bedeutung von bi zeigt, kein Fachbegriff. Die Regel fuehrt es nur deshalb im Namen.",
+      "am": "2026-10-11"
+    },
+    "في جامعة": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielwort — فِي الْجَامِعَةِ ist das Gegenstueck zu بِالْجَامِعَةِ im Namen von harf-jarr-bi-fi-01, kein Fachbegriff.",
+      "am": "2026-10-11"
+    },
+    "جلست طالبة": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielsatz — جَلَسَتِ الطَّالِبَةُ ist der Buchsatz (Madina 1, S. 66), an dem iltiqa-sakinain-verb-01 die Kasra zeigt, kein Fachbegriff.",
+      "am": "2026-10-11"
+    },
+    "اكبر": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielwort — أَكْبَرُ ist das Wort, an dem adjektive-steigerung-akbar-01 die Steigerungsform zeigt, kein Fachbegriff. Der Fachname dazu (Tafdil) steht in der Regel nur in Umschrift und ist damit kein Kandidat.",
+      "am": "2026-10-11"
+    },
+    "طالبة": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielwort — طَالِبَةٌ (Studentin) wird in drei Regeln nur als Beispiel benutzt (fem-bildung-01, mubtada-khabar-genus-01, iltiqa-sakinain-verb-01), kein Fachbegriff.",
+      "am": "2026-10-11"
     }
   }
 }

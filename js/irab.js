@@ -324,7 +324,14 @@ function endung(wort){
      es bei der Reihenfolge von vorher: Schadda heraus, dann ohneSuffix(). */
   const roh = (wort || '').replace(/[.،؟!«»:؛]/g, '');
   const abSchadda = schaddaSuffixAb(roh);
-  const w = abSchadda !== null ? abSchadda.replace(/ّ/g, '') : ohneSuffix(roh.replace(/ّ/g, ''));
+  /* ⛔ Der Gottesname endet auf ه, trägt aber kein angehängtes Pronomen
+     (11.10.2026, von pruefe-saetze.js am Lehrbuchsatz by1-32-1 «اللهُ أَكْبَرُ.»
+     gefunden): ohneSuffix() nahm ـهُ als „sein" ab, und die Ḍamma des
+     مُبْتَدَأ war weg — „Kasusendung fehlt". Mit Schadda geschrieben blieb
+     sogar die Fatḥa des Lam als vermeintliche Endung stehen. */
+  const gottesname = ['الله', 'والله', 'فالله'].includes(ohneVokale(roh));
+  const w = abSchadda !== null ? abSchadda.replace(/ّ/g, '')
+    : gottesname ? roh.replace(/ّ/g, '') : ohneSuffix(roh.replace(/ّ/g, ''));
   if (w === null) return null;
   /* Ein Schluss-Alif gehoert nur zur Endung, wenn ein Fathatan davorsteht
      (كِتَابًا). Bei einfacher Fatha ist es ein langes aa und ueberhaupt keine
@@ -544,7 +551,13 @@ const VERBEN = ['خرج', 'ذهب', 'قال', 'أحب',
   /* ⛔ قرأ am 25.09.2026 dazu: «أَيُّ كِتَابٍ قَرَأْتَ؟» (Musterlösung Folge 19,
      S. 13, mf19-13-1). Der LEXIKON-VERGLEICH in pruefe-saetze.js: nur mit
      bayna-yadayk-1 galt قَرَأْتَ als فِعْل, ohne Buch als مُبْتَدَأ. */
-  'قرأ'];
+  'قرأ',
+  /* ⛔ جلس am 11.10.2026 dazu: «جَلَسَتِ الطَّالِبَةُ.» (Madina 1, Buchseite 66,
+     mb1-66-1). Der LEXIKON-VERGLEICH in pruefe-saetze.js: nur mit madina-3
+     galt جَلَسَتِ als فِعْل und الطَّالِبَةُ als فَاعِل, ohne das Buch als
+     مُبْتَدَأ (مُضَاف) + مُضَاف إِلَيْه. Das Verb steht seit Kapitel 10 in
+     seinen Übungen (جَلَسَ الْمُدَرِّسُ). */
+  'جلس'];
 /* Und die Gegenrichtung: der Vokabelabzug haelt diese vier fuer Verben, weil
    ihr Konsonantengeruest mit einem Verb zusammenfaellt. Im Satz sind sie
    keines — صِفْرٌ ist die Null, عَمِّي mein Onkel, جَرٍّ der Genitiv, لِ eine
@@ -617,7 +630,15 @@ const NICHT_VERB = ['صفر', 'عمي', 'جر', 'ل', 'فوق',
      zuerst: solange بَعْدَ als فِعْل gilt, wird der ZURUF-Zweig gar nicht
      erreicht. Ich hatte es zuerst nur in ZURUF eingetragen und die Pruefung
      meldete unveraendert weiter — dieselbe Reihenfolge-Falle wie bei كُلُّ. */
-  'بعد', 'قبل'];
+  'بعد', 'قبل',
+  /* ⛔ أكبر am 11.10.2026 dazu: «اللهُ أَكْبَرُ.» (Bayna Yadayk 1, Buchseite
+     32, by1-32-1). Der LEXIKON-VERGLEICH in pruefe-saetze.js: mit
+     bayna-yadayk-3 galt أَكْبَرُ als فِعْل, ohne das Buch als خَبَر. Derselbe
+     Bau wie die Farben eine Zeile weiter oben (أَفْعَلُ) — und hier trennen
+     nicht einmal die Vokale: die Steigerungsform „größer" und „ich werde
+     alt" sind gleich geschrieben. In seinen Sätzen ist es die
+     Steigerungsform. MIT Hamza, siehe oben. */
+  'أكبر'];
 /* Adjektive, die in den Beispielsaetzen vorkommen und deren Wortart nicht
    verlaesslich aus dem Lexikon kommt: كسلان und مجرور fehlen im kleinen
    Bestand ganz, حار steht im grossen ZWEIMAL (adjective und verb حَارَ) und

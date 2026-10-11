@@ -195,7 +195,9 @@
       "grund": "Schlusswort: warum man die Endungen lernt (Koranverstaendnis), welche Aufgaben Hausaufgabe sind, was naechstes Mal drankommt. Kein Sprachinhalt."
     },
     "f15-2645": {
-      "urteil": "regel",
+      "urteil": "schon-regel",
+      "regel": "zarf-maa-inda-01",
+      "eingebaut": "2026-10-11",
       "grund": "Der Unterschied zwischen maa und inda, den der Lehrer an zwei Saetzen zeigt: 'ana maal mudir' heisst, man ist irgendwo zusammengekommen; 'ana indal mudir' heisst, man hat sich zu ihm auf den Weg gemacht und ist dort. Der Schluessel sagt dasselbe, nur mit dem Lehrer statt mit ihm selbst: bei inda ist der Lehrer zum Buero des Direktors gegangen, bei maa ist der Ort 'nicht festgelegt, er kann irgendwo mit dem Direktor zusammengekommen sein'. Zwei unabhaengige Quellen, gleiche Aussage. Im Bestand fehlt sie: li-vs-inda-01 stellt li gegen inda, maa kommt darin nicht vor.",
       "quelle": "Schluessel 1, Lektion 10 (PDF-S. 35-37), Punkt 7 · Unterricht Folge 15 @ 26:45",
       "frage": "Neue Regel: maa gegen inda — 'mit jemandem irgendwo' gegen 'zu ihm hin und dort'. Schluessel und Lehrer sagen dasselbe. Aufnehmen?"
@@ -221,7 +223,9 @@
       "frage": "Verneinung mit ma ('ma indi sayyara' = ich habe kein Auto): kommt viermal im Unterricht vor, steht aber in keinem Schluessel, den wir haben. Regel daraus machen oder warten, bis es gedruckt belegt ist?"
     },
     "f15-945": {
-      "urteil": "regel",
+      "urteil": "schon-regel",
+      "regel": "harf-jarr-bi-fi-01",
+      "eingebaut": "2026-10-11",
       "grund": "Der Lehrer trennt bi von fi an einem Beispiel, das man nicht erraten kann: 'fil jamia' heisst oertlich an der Uni sein — 'ich koennte dort Hausmeister sein' —, 'bil jamia' heisst, dort eingeschrieben zu sein. Der Schluessel belegt die Grundbedeutung: bi ist die Praeposition 'an, in', die mit dem Folgewort zusammengeschrieben wird, Beispiel bil-jamiati, 'an der Universitaet'. Die vorhandene Regel harf-jarr-bi-01 behandelt nur bi khayrin und den Tanwin danach; die Unterscheidung zu fi fehlt.",
       "quelle": "Schluessel 1, Lektion 10 (PDF-S. 35-37), Punkt 8 · Unterricht Folge 15 @ 9:45",
       "frage": "Neue Regel: bil-jamia (eingeschrieben) gegen fil-jamia (gerade dort). Der Schluessel belegt bi = 'an der Universitaet'. Aufnehmen?"
@@ -320,7 +324,9 @@
       "grund": "Vokabelarbeit an zamil/zamila und die Besitzendungen an ismuha/ismuhu — beide schon an ihren eigenen Fundstellen bewertet. Der Whisper-Text wiederholt 'Und das ist eine Klinik' 36 mal."
     },
     "f17-2645": {
-      "urteil": "regel",
+      "urteil": "schon-regel",
+      "regel": "iltiqa-sakinain-verb-01",
+      "eingebaut": "2026-10-11",
       "grund": "Ein eigener Fall des Sukun-Zusammenstosses, den die vorhandene Regel nicht abdeckt: trifft ein Verb, das auf Sukun endet, auf das folgende al-, wird das Sukun zur Kasra — 'jalasati t-talibatu' statt 'jalasat t-talibatu'. Der Schluessel hat genau diesen Fall in Lektion 12, mit eigenem Beispiel: 'In dhahabat hat der letzte Buchstabe ta ein Sukun. Wenn auf so ein Verb al- folgt, wird das Sukun in Kasra umgewandelt, z. B. dhahabati l-bintu.' Die vorhandene Regel iltiqa-sakinain-01 stammt aus Kapitel 4 und zeigt den Fall am Nomen (minal, manil), nicht am Verb.",
       "quelle": "Schluessel 1, Lektion 12 (PDF-S. 41-43) · Unterricht Folge 17 @ 26:45",
       "frage": "Neue Regel: Verb auf Sukun plus al- gibt eine Kasra — 'dhahabati l-bintu'. Der Schluessel hat sie woertlich. Aufnehmen?"
@@ -441,7 +447,9 @@
       "frage": "Zugehoerigkeitsform (Turkiya = die Tuerkei, Turki = der Tuerke): kommt in Folge 20 zweimal vor, steht in keinem unserer drei Schluessel. Regel daraus machen, oder warten?"
     },
     "f20-2015": {
-      "urteil": "regel",
+      "urteil": "schon-regel",
+      "regel": "adjektive-steigerung-akbar-01",
+      "eingebaut": "2026-10-11",
       "grund": "Die Steigerungsform: 'Akbar kommt von Kabirun … und Akbar ist mit Tafdil.' Der Schluessel zu Band 2 hat dafuer eine eigene Lektion — PDF-Seite 14 kuendigt sie an ('Komperativ und Superlativ von Adjektiven'), Seite 15 nennt die Regel, dass nach der Superlativform ein Nomen im Genitiv steht, Seite 18 uebt sie. ⚠️ Das ist Stoff aus Buch 2, also vor Elias' Stand. Als Regel taugt es, aber sie gehoert gekennzeichnet.",
       "quelle": "Schluessel Band 2, PDF-S. 14, 15 und 18 · Unterricht Folge 20 @ 20:15",
       "frage": "Neue Regel: akbar als Steigerungsform von kabir. Belegt im Schluessel zu Buch 2 (S. 14-15) — also weiter, als du im Unterricht bist. Jetzt aufnehmen und als weiterfuehrend kennzeichnen, oder spaeter?"
