@@ -97,6 +97,10 @@ for (const buch of BUECHER) {
     if (ngIds.has(id)) melde(`${wo}: belegt UND unter „nicht gefunden“`);
     for (const f of ['ar', 'de', 'type']) if (!voll(k[f])) melde(`${wo}: ${f} fehlt — eine Karte ohne ${f === 'de' ? 'Deutsch' : f === 'ar' ? 'Arabisch' : 'Wortart'} zählt nicht als belegt`);
     if (voll(k.type) && !ARTEN.includes(k.type)) melde(`${wo}: unbekannte Wortart „${k.type}“`);
+    // Zwei Dinge, an denen die App nach einem Wechsel hinge (Wechselprobe 12.10.2026): ihr Satzzerleger liest jede Form
+    // als Lexikoneintrag mit der Wortart der Karte, und ihre Suche verlangt mindestens zwei Zeichen.
+    if (voll(k.type) && k.type !== 'verb') for (const f of ['past', 'present', 'imperative', 'masdar']) if (voll(k[f])) melde(`${wo}: ${f} an einer Karte der Wortart „${k.type}“ — Verbformen stehen nur an Verben`);
+    if (voll(k.de) && String(k.de).trim().length === 1) melde(`${wo}: Deutsch ist nur ein Zeichen („${String(k.de).trim()}“) — das findet die Suche der App nicht`);
     if (voll(k.gender) && !['masculine', 'feminine'].includes(k.gender)) melde(`${wo}: unbekanntes Geschlecht „${k.gender}“`);
     const b = belege[id];
     if (!b || b.status !== 'belegt' || !b.felder) { melde(`${wo}: Karte ohne Beleg-Eintrag`); continue; }

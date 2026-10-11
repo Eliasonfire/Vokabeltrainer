@@ -66,6 +66,7 @@ function deutschAus(satz) {
 
 const plaetze = [], unterschiede = [], nichtGefunden = [], handFehler = [], verzeichnis = [];
 const stand = { erzeugt: new Date().toISOString(), buecher: {} };
+let verbformenWeg = 0;
 fs.mkdirSync(path.join(ERSATZ, 'hand'), { recursive: true });
 
 for (const buch of BUECHER) {
@@ -121,6 +122,11 @@ for (const buch of BUECHER) {
     }
     for (const [f, wert] of Object.entries(h.felder || {})) if (FELDER.includes(f) && wert && voll(wert.w)) felder[f] = { w: nfc(wert.w), wo: wert.wo, q: wert.q || 'hand' };
     for (const f of h.leer || []) delete felder[f];
+    // Verbformen stehen nur an Verben. Im Bestand trägt keine andere Karte Vergangenheit, Gegenwart, Befehlsform oder
+    // Masdar (gemessen 12.10.2026: 0 von 4433), und der Satzzerleger der App liest jede Form als Lexikoneintrag mit der
+    // Wortart der Karte: eine Fügung mit der Gegenwart „er betet" machte aus dem Verb im Satz eine Aussage
+    // (pruefe-saetze.js, Satz by1-48-1). Die Regel stammt von Claude.
+    if (felder.type && felder.type.w !== 'verb') for (const f of ['past', 'present', 'imperative', 'masdar']) if (felder[f]) { delete felder[f]; verbformenWeg++; }
     if (Object.keys(h).length) z.vonHand++;
     let status = 'offen', grund = h.grund;
     if (h.status === 'nicht-gefunden') status = 'nicht-gefunden';
@@ -180,5 +186,6 @@ for (const buch of BUECHER) {
   for (const k of Object.keys(sum)) sum[k] += z[k];
   if (!process.argv.includes('--knapp')) console.log(`${buch}: ${z.belegt} von ${z.plaetze} belegt · ${z.offen} offen · ${z.nichtGefunden} nicht gefunden · Deutsch direkt ${z.deutschDirekt}, über das Englische ${z.deutschKette}, ohne deutsche Quelle ${z.deutschOhneQuelle}`);
 }
-if (handFehler.length) { console.log(`HAND: ${handFehler.length} Entscheidung(en) passen nicht zu den Quellen:`); for (const f of handFehler.slice(0, 20)) console.log('  ✗ ' + f); process.exitCode = 1; }
+if (verbformenWeg) console.log(`Verbformen an Karten, die keine Verben sind, weggelassen: ${verbformenWeg}`);
+if (handFehler.length) { console.log(`HAND:${handFehler.length} Entscheidung(en) passen nicht zu den Quellen:`); for (const f of handFehler.slice(0, 20)) console.log('  ✗ ' + f); process.exitCode = 1; }
 console.log(`GEBAUT: ${sum.belegt} von ${sum.plaetze} Plätzen belegt · ${sum.offen} offen · ${sum.nichtGefunden} nicht gefunden · Deutsch direkt ${sum.deutschDirekt}, über das Englische ${sum.deutschKette}, aus belegten Teilen ${sum.deutschTeile}, ohne deutsche Quelle ${sum.deutschOhneQuelle} · Unterschiede zum Bestand: ${unterschiede.length}`);

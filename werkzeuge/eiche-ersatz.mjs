@@ -63,6 +63,8 @@ const FAELLE = [
   ['Karte ohne Beleg-Eintrag', s => { delete s.belege[2]; }, 1, 'ohne Beleg-Eintrag'],
   ['unbekannte Wortart', s => { s.karten[0].type = 'nomen'; }, 1, 'unbekannte Wortart'],
   ['ein Platz offen heißt nicht vollständig', s => { s.karten.pop(); s.verzeichnis[0].vokabeln = 1; }, 0, 'ERSATZ UNVOLLSTÄNDIG: 1 von 3 Plätzen belegt'],
+  ['Verbform an einem Nomen', s => { s.karten[0].past = KATABA; s.belege[1].felder.past = { wo: 'Probe H', q: 'enwikt' }; }, 1, 'Verbformen stehen nur an Verben'],
+  ['Deutsch aus einem einzigen Zeichen', s => { s.karten[0].de = 'o'; }, 1, 'Deutsch ist nur ein Zeichen'],
   ['Kapitel ohne Karte wird genannt', s => s, 0, 'Kapitel: 1 von 2 haben mindestens eine Karte — ohne Karte: madina-1 Kapitel 2'],
   ['Verzeichnis fehlt', s => { s.verzeichnis = null; }, 1, 'das Verzeichnis fehlt'],
   ['Verzeichnis nennt andere Kartenzahl', s => { s.verzeichnis[0].vokabeln = 3; }, 1, 'Verzeichnis nennt für madina-1 3 Karten, die Buchdatei hat 2'],
