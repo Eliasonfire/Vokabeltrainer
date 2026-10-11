@@ -78,6 +78,13 @@ const PRUEFER = [
   ['pruefe-markierungen.js', []],
   ['pruefe-quran.js', []],
   ['pruefe-saetze.js', []],
+  /* 12.10.2026 — derselbe Lauf noch einmal, mit den 255 Karten der Gruppe „Koran häufigste"
+     im Lexikon: so, als hätte er sie angehakt. Die Karten tragen Wortart, Mehrzahl und
+     Verbformen, und daraus baut setzeLexikon() das Lexikon, mit dem JEDER Satz zerlegt wird.
+     Gemessen am 12.10.2026: beide Läufe geben bis auf die Wortzahl dasselbe aus. Kommt ein
+     Feld dazu, das einen vorhandenen Satz anders zerlegen ließe, wird es hier rot — und nicht
+     erst an dem Tag, an dem er die Gruppe anhakt. */
+  ['pruefe-saetze.js', ['--mit-koran']],
   ['pruefe-sprecher.js', []],
   /* ⛔ Neu am 06.09.2026 — und der Anlass ist, dass es sie schon geben SOLLTE:
      ueber SUCH_ZEICHEN in js/kategorien.js stand seit Wochen „danach an

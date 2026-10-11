@@ -88,6 +88,28 @@ if (fs.existsSync(datenOrdner)){
 }
 const wortschatz = Object.values(fenster.VOKABELN || {}).flat();
 
+/* ⭐ DIE WORTGRUPPE „KORAN HÄUFIGSTE" (12.10.2026) — nur mit `--mit-koran`.
+
+   Ihre Karten liegen nicht in data/, sondern in koran-haeufig-data.js, und sie
+   tragen seit heute Wortart, Mehrzahl und Verbformen — also genau das, woraus
+   setzeLexikon() das Lexikon baut, mit dem JEDER Satz zerlegt wird.
+
+   ⛔ Bewusst ein Schalter und kein fester Teil des Laufs: in der App stehen die
+   Karten nur dann in VOCAB_DATA, wenn er die Gruppe angehakt hat — und das hat er
+   (Stand 11.10.2026) nicht. Der Lauf OHNE Schalter misst also weiter, was bei ihm
+   gilt. MIT Schalter misst er, was gälte, sobald er anhakt: so lässt sich ein Satz
+   zu einem Koranwort prüfen, und so zeigt sich vorher, ob die neuen Wörter die
+   Zerlegung eines vorhandenen Satzes ändern. */
+if (process.argv.includes('--mit-koran')){
+  const koranDatei = P + 'koran-haeufig-data.js';
+  if (fs.existsSync(koranDatei)){
+    const liste = (new Function(fs.readFileSync(koranDatei, 'utf8')
+      + '\nreturn (typeof KORAN_HAEUFIG !== "undefined" && Array.isArray(KORAN_HAEUFIG)) ? KORAN_HAEUFIG : [];'))();
+    for (const e of liste) wortschatz.push(Object.assign({}, e, { book: 'koran-haeufig', chapter: e.kap }));
+    console.log('  (mit den ' + liste.length + ' Karten der Gruppe „Koran häufigste" im Lexikon — so, als hätte er sie angehakt)');
+  }
+}
+
 /* ⛔⛔ UND SEINE SELBST ANGELEGTEN WOERTER — sonst sieht diese Pruefung
    WENIGER als die App und meldet Fehler, die es nicht gibt.
 
