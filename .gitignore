@@ -159,3 +159,10 @@ werkzeuge/freischaltung-abfrage.json
 # Arbeitsdateien der Routine vokabeltrainer-eselsbruecken (05.10.2026)
 .abgelehnt-auftrag.json
 .abgelehnt-neu.json
+
+# Ersatzdatenbank (11.10.2026): lokale Quellen, Arbeitsdateien und Ergebnis.
+# Darin liegen heruntergeladene Woerterbuch-Auszuege (mehrere GB), zwei
+# Lehrbuch-PDFs und Arbeitsdateien, die die Suchschluessel aus dem
+# arabicroots-Abzug nennen - nichts davon gehoert ins Repo. Ob die fertigen
+# Ersatzdateien einmal veroeffentlicht werden, entscheidet Elias.
+data-ersatz/
