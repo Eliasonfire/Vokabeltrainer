@@ -114,7 +114,9 @@ for (const buch of BUECHER) {
       else felder.de = { w: nfc(h.deTeile.w), wo: (ausGrundform ? 'von Claude gebildet aus den deutschen Wörtern, die die Quellen zu diesem Wort oder seiner Grundform nennen: ' : 'von Claude zusammengesetzt aus den deutschen Wörtern, die die Quellen zu den Teilen der Fügung nennen: ') + teile.map(t => `„${t}“`).join(', '), q: 'teile' };
     } else if (voll(h.deEigen)) {
       const en = ((s.vorschlag && s.vorschlag._en) || []).slice(0, 2).join(' ; ');
-      felder.de = { w: nfc(h.deEigen), wo: 'ohne deutsche Quelle — von Claude geschrieben' + (en ? ` nach der englischen Bedeutung in ${s.ref ? 'en.wiktionary „' + s.ref.split('#')[0] + '“' : 'der Quelle'}: „${en}“` : ''), q: 'claude' };
+      // Stufe „W": das Wort steht nur im französischen Wiktionary; dann ist dessen Bedeutung die Vorlage
+      const fr = ((s.vorschlag && s.vorschlag._fr) || []).slice(0, 2).join(' ; ');
+      felder.de = { w: nfc(h.deEigen), wo: 'ohne deutsche Quelle — von Claude geschrieben' + (en ? ` nach der englischen Bedeutung in ${s.ref ? 'en.wiktionary „' + s.ref.split('#')[0] + '“' : 'der Quelle'}: „${en}“` : fr ? ` nach der französischen Bedeutung im fr.wiktionary: „${fr}“` : ''), q: 'claude' };
     }
     for (const [f, wert] of Object.entries(h.felder || {})) if (FELDER.includes(f) && wert && voll(wert.w)) felder[f] = { w: nfc(wert.w), wo: wert.wo, q: wert.q || 'hand' };
     for (const f of h.leer || []) delete felder[f];

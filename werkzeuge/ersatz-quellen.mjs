@@ -6,6 +6,8 @@
  *   enwikt-arabisch/kaikki.org-dictionary-Arabic.jsonl   englisches Wiktionary, arabische Wörter (kaikki.org)
  *   dewikt/raw-wiktextract-data.jsonl.gz                  deutsches Wiktionary, alles (kaikki.org)
  *   enwikt-roh/raw-wiktextract-data.jsonl.gz              englisches Wiktionary, alles (kaikki.org)
+ *   frwikt-arabisch/kaikki.org-dictionary-Arabe.jsonl     französisches Wiktionary, arabische Wörter (kaikki.org)
+ *                                                         → Modus „frwikt", Auszug auszuege/frwikt-arabisch.jsonl
  * Wiktionary steht unter CC BY-SA; wird etwas daraus weitergegeben, muss die Quelle genannt werden.
  *
  * Aufruf (aus dem Repo-Wurzelverzeichnis):
@@ -199,11 +201,36 @@ async function zusatz() {
   console.log(`zusatz: ${saetze.length} Plätze · ${gesucht.size} verschiedene Wörter gesucht ·${gelesen} Zeilen gelesen · ${formen} Formen zu ${gefunden.size} Wörtern gefunden · ${groesse} B`);
 }
 
+/* ---------- 5. Französisches Wiktionary, arabische Wörter ---------------------------------------------- */
+// Quelle: kaikki.org, „frwiktionary/Arabe" (12,8 MB, 12.804 Einträge, geladen am 11.10.2026 nach
+// data-ersatz/quellen/frwikt-arabisch/). Die Seitentitel sind dort meist schon vokalisiert. Behalten werden Stichwort,
+// Wortart, die vokalisierten Formen und die Bedeutungen (französisch) — für die Wörter, die das englische Wiktionary
+// nicht führt. Deutsch bringt diese Quelle nicht mit.
+async function frwikt() {
+  const quelle = path.join(QUELLEN, 'frwikt-arabisch', 'kaikki.org-dictionary-Arabe.jsonl');
+  const aus = schreiber(path.join(ZIEL, 'frwikt-arabisch.jsonl'));
+  let gelesen = 0, behalten = 0;
+  for await (const z of zeilenVon(quelle)) {
+    if (!z) continue;
+    gelesen++;
+    const e = JSON.parse(z);
+    const sinn = (e.senses || []).map(s => (s.glosses || []).join(' — ').trim()).filter(Boolean).slice(0, 8);
+    if (!sinn.length || !e.word) continue;
+    // manche Form trägt ihre Umschrift in Klammern dahinter; die gehört nicht zum Wort
+    const formen = [...new Set([e.word, ...(e.forms || []).map(f => f.form)].map(f => String(f || '').replace(/\s*\(.*$/, '').trim()).filter(f => /[ً-ْ]/.test(f)))];
+    aus.zeile({ w: e.word, pos: e.pos, formen, sinn });
+    behalten++;
+  }
+  const groesse = await aus.fertig();
+  console.log(`frwikt: ${gelesen} Zeilen gelesen · ${behalten} Einträge behalten · ${groesse} B`);
+}
+
 const was = process.argv[2];
 const t0 = Date.now();
 if (was === 'arabisch') await arabisch();
 else if (was === 'deutsch') await deutsch();
 else if (was === 'tabellen') await tabellen();
 else if (was === 'zusatz') await zusatz();
-else { console.error('Aufruf: node werkzeuge/ersatz-quellen.mjs arabisch|deutsch|tabellen|zusatz'); process.exit(2); }
+else if (was === 'frwikt') await frwikt();
+else { console.error('Aufruf: node werkzeuge/ersatz-quellen.mjs arabisch|deutsch|tabellen|zusatz|frwikt'); process.exit(2); }
 console.log('Dauer: ' + Math.round((Date.now() - t0) / 1000) + ' s');

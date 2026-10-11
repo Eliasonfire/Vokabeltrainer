@@ -116,6 +116,16 @@ for (const e of ladeJsonl(path.join(AUSZUEGE, 'enwikt-tabellen.jsonl'))) {
  * wie eine Zeile der Übersetzungstabellen: als deutscher Kandidat zu GENAU der arabischen Form, die dort steht.
  * Die Wortart („pos") ist dort nur selten ausdrücklich genannt („posFest"); sonst ist sie aus der Darstellung
  * geschlossen und dient allein als Hinweis, ob das Paar zur Karte passen kann. */
+// Französisches Wiktionary (kaikki.org, Auszug frwikt-arabisch.jsonl): nennt das arabische Wort mit Vokalzeichen, dazu
+// Wortart und Bedeutung auf Französisch. Fürs Arabische und die Wortart zählt es wie eine Übersetzungstabelle — aber
+// nur, wo keine andere Stelle das Wort so nennt (Stufe „W"). Deutsch bringt es nicht mit: die Bedeutung steht als
+// Erklärung dabei („erkl"), und das Deutsch schreibt die Hand danach („deEigen", im Beleg als eigenes Deutsch genannt).
+let frwiktEintraege = 0;
+for (const e of ladeJsonl(path.join(AUSZUEGE, 'frwikt-arabisch.jsonl'))) {
+  if (!(e.formen || []).length) continue;
+  frwiktEintraege++;
+  merkeDe(e.w, { q: 'frwikt', de: e.sinn.slice(0, 3).join(' ; '), erkl: true, pos: e.pos, wo: `fr.wiktionary „${e.w}“ (${e.pos})`, vok: e.formen, fr: e.sinn.slice(0, 3) });
+}
 let arabdictPaare = 0;
 for (const p of ladeJsonl(path.join(AUSZUEGE, 'arabdict.jsonl'))) {
   arabdictPaare++;
@@ -788,7 +798,10 @@ for (const buch of BUECHER) {
     // „ohneEintrag" (Hand): der einzige Eintrag des Wörterbuchs ist ein ANDERES Wort gleicher Schreibung (das Verbalsubstantiv
     // zur Karte, die das Verb führt) — dann sollen Übersetzungstabelle oder arabdict das Wort belegen.
     // bei arabdict genügt Gleichheit bis auf die Schreibweise (k2: Hamza-Träger, Fatha vor Ta marbuta), bei den Tabellen wie bisher k1
-    const tab = d.alle.filter(f => f.sicher === 'vokalisiert' && !f.sch && f.vokForm && (f.q === 'arabdict' ? (!adHand || nfc(f.vokForm) === adHand) : (k1(f.vokForm) === k1(wortD) && !!f.pos && !mehrteilig && !adHand)));
+    const tabAlle = d.alle.filter(f => f.sicher === 'vokalisiert' && !f.sch && f.vokForm && (f.q === 'arabdict' ? (!adHand || nfc(f.vokForm) === adHand) : (k1(f.vokForm) === k1(wortD) && !!f.pos && !mehrteilig && !adHand)));
+    // das französische Wiktionary zählt nur, wo sonst keine Stelle das Wort so nennt — so ändert es keinen Platz,
+    // den eine Übersetzungstabelle oder arabdict schon belegt
+    const tab = tabAlle.some(f => f.q !== 'frwikt') ? tabAlle.filter(f => f.q !== 'frwikt') : tabAlle;
     // Eine gebeugte Form aus einer Tabelle („F") belegt die Schreibung, nicht die Deutung: „regnerisch" gleicht Buchstabe
     // für Buchstabe dem Partizip Passiv von „fliegen" (gesehen am 11.10.2026, ebenso „Lehmarbeiter" = „hungrig"). Nennt
     // eine Übersetzungstabelle oder arabdict dieselbe Form MIT einem Deutsch, das den Sinn der Karte trifft, belegt diese
@@ -816,7 +829,7 @@ for (const buch of BUECHER) {
         const arten = [...new Set(tab.map(f => f.pos).filter(Boolean))];
         const passt = tab.find(f => f.pos && (PASST[karte.type] || []).includes(f.pos));
         const fest = [...new Set(tab.filter(f => f.pos && f.posFest !== false).map(f => f.pos))];
-        const wieGenannt = f => f.q === 'arabdict' ? `Wortart des deutschen Gegenstücks „${f.de}“: ${f.pos} (${f.posWie || 'laut Seite'})` : `Wortart des übersetzten Stichworts laut Quelle: ${f.pos}`;
+        const wieGenannt = f => f.q === 'frwikt' ? `Wortart des Eintrags laut Quelle: ${f.pos}` : f.q === 'arabdict' ? `Wortart des deutschen Gegenstücks „${f.de}“: ${f.pos} (${f.posWie || 'laut Seite'})` : `Wortart des übersetzten Stichworts laut Quelle: ${f.pos}`;
         const v = { ar: { w: ganz, wo: `${beleg.wo}: das arabische Wort steht dort mit Vokalzeichen${hatEndung(form) ? '' : ' (ohne Schlussendung)'}` + (ohneZier !== form ? ' — die Dehnungsstriche, mit denen die Quelle das Wort streckt, sind weggelassen (reine Zierde)' : '') + (mitTa !== ohneZier ? ' — das Fatha vor dem Ta marbuta steht dort nicht und ist ergänzt (an dieser Stelle steht immer Fatha)' : '') + (alifErgaenzt ? ' — das Fatha vor dem Dehnungs-Alif steht dort nicht und ist ergänzt (an dieser Stelle steht immer Fatha)' : '') + (adHand ? ' — arabdict schreibt es mit anderen Vokalzeichen als die bisherige Karte; von der Hand zugelassen' : ''), q: beleg.q, ohneEndung: !hatEndung(form) || undefined }, _en: [] };
         if (passt) v.type = { w: karte.type, wo: `${passt.wo}: ${wieGenannt(passt)}`, q: passt.q };
         else if (fest.length === 1 && arten.length === 1 && ART[fest[0]]) { const f = tab.find(x => x.pos === fest[0]); v.type = { w: ART[fest[0]], wo: `${f.wo}: ${wieGenannt(f)}`, q: f.q }; }
@@ -824,7 +837,8 @@ for (const buch of BUECHER) {
         // Nomen) — dann gilt die Wortart der Stelle, wie bei einem Eintrag des Wörterbuchs; der Unterschied steht in der Liste
         else if (h.artOk === true) { const f = tab.find(x => x.pos && x.posFest !== false && ART[x.pos]) || tab.find(x => x.pos && ART[x.pos]); if (f) v.type = { w: ART[f.pos], wo: `${f.wo}: ${wieGenannt(f)} — weicht von der bisherigen Einteilung („${karte.type}“) ab; von der Hand zugelassen, es ist dasselbe Wort`, q: f.q }; }
         if (voll(karte.sg) && k1(karte.sg) === k1(wort)) v.sg = { w: v.ar.w, wo: v.ar.wo, q: beleg.q };
-        const neu = adHand ? 'DH' : tab.some(f => f.q !== 'arabdict') ? 'T' : 'D';
+        const neu = adHand ? 'DH' : tab.every(f => f.q === 'frwikt') ? 'W' : tab.some(f => f.q !== 'arabdict') ? 'T' : 'D';
+        if (neu === 'W') v._fr = beleg.fr || [];
         z.stufe[satz.stufe]--; satz.stufeWoerterbuch = satz.stufe; satz.stufe = neu; z.stufe[neu] = (z.stufe[neu] || 0) + 1;
         satz.vorschlag = v;
         satz.vergleich = {};
@@ -872,4 +886,5 @@ console.log('\nFelder bei eindeutigem Treffer (Quelle gegen Bestand):');
 for (const f of FELDER) if (summe.feld[f]) console.log(`    ${f}: ${zeig(summe.feld[f])}`);
 console.log('\nÜbersetzungstabellen des englischen Wiktionary geladen: ' + (tabellenDa ? 'ja' : 'NEIN (Auszug fehlt noch)'));
 console.log('Wortpaare von arabdict geladen: ' + arabdictPaare);
+console.log('Einträge des französischen Wiktionary geladen: ' + frwiktEintraege);
 console.log('Stufen: A eindeutig mit Vokalzeichen · A2 eindeutig, nur Schreibweise anders · B mehrere Einträge · * andere Wortart · C nur das Schriftbild passt · N kein Eintrag · M mehrere Wörter · S Schlüssel zum Lehrbuch · T Übersetzungstabelle · D arabdict · H von Hand');
