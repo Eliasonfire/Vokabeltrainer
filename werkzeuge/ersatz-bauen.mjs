@@ -46,12 +46,15 @@ function deutschAus(satz) {
   // Der Schlüssel zum Lehrbuch geht vor, wenn er das Wort als Stichwort führt (gleiche Schreibung bis auf die
   // Schlussendung) und sein Deutsch sich mit dem Sinn der Karte deckt. Deckt es sich nicht, aber ein Wörterbuch
   // nennt direkt ein passendes Wort, bleibt das Wörterbuch; sonst gilt die Zeile aus der Lektion des Kapitels.
-  const sch = (satz.deutsch || []).filter(d => !d.erkl && d.sch && d.sch.kopf && d.sch.streng);
-  const schDeckt = sch.find(d => d.deckt && d.sch.lektion) || sch.find(d => d.deckt);
+  const schAlle = (satz.deutsch || []).filter(d => !d.erkl && d.sch && d.sch.kopf);
+  const sch = schAlle.filter(d => d.sch.streng);
+  // deckt sich das Deutsch, genügt in der Lektion des Kapitels auch eine Zeile, die nur in der Schreibweise abweicht
+  const schDeckt = schAlle.find(d => d.deckt && d.sch.lektion) || sch.find(d => d.deckt);
   if (schDeckt) return { w: schDeckt.de, wo: schDeckt.wo, q: 'schluessel' };
   const k = (satz.deutsch || []).filter(d => d.deckt && !d.erkl && !d.sch);
   const direkt = k.filter(d => d.sicher === 'vokalisiert');
-  const schLektion = sch.find(d => d.sch.lektion);
+  // führt die Zeile nur das Verb, die Karte aber „Verb + Verhältniswort", gilt ihr Deutsch nicht von selbst
+  const schLektion = sch.find(d => d.sch.lektion && !d.sch.nurErstes);
   if (!direkt.length && schLektion) return { w: schLektion.de, wo: schLektion.wo, q: 'schluessel' };
   const wahl = direkt.length ? direkt : k.filter(d => d.sicher === 'kette');
   if (!wahl.length) return null;
