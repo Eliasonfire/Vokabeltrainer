@@ -177,6 +177,28 @@ const BUCH_WOERTER = [];
   });
 })();
 
+/* ⭐ DIE WORTGRUPPE „KORAN HÄUFIGSTE" (12.10.2026) — ein Buch, das NICHT in data/ liegt.
+   Ihre 255 Karten stehen in koran-haeufig-data.js (erzeugt, im Repo), ihre
+   Eselsbruecken unter den Kennungen kh-NNN in denselben zwei Dateien wie die der
+   Buchvokabeln. Ohne diesen Block hiesse jede davon "(unbekannt, id kh-…)" — man
+   saehe, DASS etwas nicht stimmt, aber nicht WORAN (derselbe Ausfall wie am
+   19.08.2026 bei den Buchwoertern, siehe unten).
+   ⚠️ Bewusst NACH den Buechern angehaengt: steht ein Wort im Lehrbuch UND in der
+   Gruppe, nennt "anderswo" weiter unten das Lehrbuchkapitel, nicht die Gruppe.
+   Zum Lernstand zaehlen die Karten nicht — LERNSTAND fuehrt die Gruppe nicht,
+   und angehakt hat er sie (Stand 11.10.2026) auch nicht. */
+(function ladeKoran(){
+  const datei = path.join(WURZEL, 'koran-haeufig-data.js');
+  if (!fs.existsSync(datei)) return;
+  try {
+    const liste = new Function(fs.readFileSync(datei, 'utf8')
+      + '\nreturn (typeof KORAN_HAEUFIG !== "undefined" && Array.isArray(KORAN_HAEUFIG)) ? KORAN_HAEUFIG : [];')();
+    liste.forEach(e => BUCH_WOERTER.push(Object.assign({}, e, { book: 'koran-haeufig', chapter: e.kap })));
+  } catch (e){
+    console.log('  hinw koran-haeufig-data.js nicht lesbar (' + e.message + ') — die Gruppe fehlt in der Pruefung.');
+  }
+})();
+
 /* ⛔ SEIN LERNSTAND — einmal geladen, fuer Abschnitt 4 UND 6 (17.09.2026).
    `angabe` ist, was Elias selbst gesagt hat; `gemessen` misst nur, womit
    abgefragt wurde. Abschnitt 6 las die Datei bisher allein, Abschnitt 4 kannte
