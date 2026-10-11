@@ -12,6 +12,7 @@
  */
 import fs from 'node:fs';
 import { arabischInSeite, BIDI_CSS } from './arabisch-hervorheben.mjs';
+import { schreibeNetzfassung, hinweisVeroeffentlichen } from './seite-teilen.mjs';
 
 /* ⛔ Das Datum stand FEST als "Stand 19.08.2026" in der Seite — derselbe
    Fehler wie in freigabe-artefakt.mjs, eine Datei daneben. Eine erzeugte
@@ -658,3 +659,12 @@ console.log(vorherHtml === null ? 'NEU — die Datei gab es vorher nicht.'
     : '⚠️ GEÄNDERT gegenüber dem letzten Bau — unter https://claude.ai/artifact/4iMdxRvKkFHj699cfyHbra neu veröffentlichen (gehört in den Bericht).');
 console.log('Regeln:', regeln.length, '| Kapitel:', kapNummern.join(', '));
 console.log('mit Beispielsatz:', regeln.filter(r => r.satz).length);
+
+/* ⭐ 11.10.2026: zusätzlich die NETZFASSUNG — eine kleine Seite und eine
+   Inhaltsdatei. Veröffentlicht wird sie, nicht die große Datei: die große
+   muss eine Sitzung vor jedem Neuveröffentlichen ganz lesen (über 200.000
+   Token), deshalb stand diese Seite am 11.10.2026 fünf Wochen alt im Netz.
+   ⛔ Adresse und Speicherschlüssel bleiben dieselben — darin liegen seine
+   Urteile. Warum und wie: werkzeuge/seite-teilen.mjs. */
+const NETZ = schreibeNetzfassung(neuHtml, S + 'netz/regelpruefung');
+for (const zeile of hinweisVeroeffentlichen(NETZ, 'regelpruefung', 'https://claude.ai/artifact/4iMdxRvKkFHj699cfyHbra')) console.log(zeile);

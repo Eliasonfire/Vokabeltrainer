@@ -48,9 +48,11 @@ import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 import { arabischInSeite, BIDI_CSS } from './arabisch-hervorheben.mjs';
+import { schreibeNetzfassung, hinweisVeroeffentlichen } from './seite-teilen.mjs';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const ZIEL = path.join(REPO, 'artefakte', 'regelkategorien.html');
+const ADRESSE = 'https://claude.ai/artifact/DHhYFwtTNJADVwE2tVUDz3';
 const SPEICHER = 'regelkategorien-v1';
 
 const STAND = new Date().toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
@@ -598,9 +600,17 @@ ${bloecke}
 </script>
 `;
 
+const fertig = arabischInSeite(html);
 fs.mkdirSync(path.dirname(ZIEL), { recursive: true });
-fs.writeFileSync(ZIEL + '.neu', arabischInSeite(html), 'utf8');
+fs.writeFileSync(ZIEL + '.neu', fertig, 'utf8');
 fs.renameSync(ZIEL + '.neu', ZIEL);
+
+/* ⭐ 11.10.2026: zusätzlich die NETZFASSUNG — eine kleine Seite und eine
+   Inhaltsdatei. Veröffentlicht wird sie, nicht die große Datei: die große
+   muss eine Sitzung vor jedem Neuveröffentlichen ganz lesen (über 200.000
+   Token), deshalb stand die Seite am 11.10.2026 drei Wochen alt im Netz.
+   Warum, wie und was dabei gleich bleiben muss: werkzeuge/seite-teilen.mjs. */
+const NETZ = schreibeNetzfassung(fertig, path.join(REPO, 'artefakte', 'netz', 'regelkategorien'));
 
 console.log('Seite gebaut: ' + path.relative(REPO, ZIEL));
 console.log('  gezählt über ' + ECHTE_SAETZE.size + ' Sätze, die er sieht (davon ' + buchSaetze + ' Buchsätze bis '
@@ -612,4 +622,4 @@ for (const [, g] of gruppen) if (g.regeln.length)
   console.log('    ' + String(g.regeln.length).padStart(3) + '  ' + g.name);
 console.log('');
 console.log('  ⛔ Speicherschlüssel: ' + SPEICHER + '  (NICHT regelpruefung-v1 — dort liegen seine 55 Urteile)');
-console.log('  ⚠️ Veröffentlichen kann die Routine nicht selbst — das braucht eine Sitzung.');
+for (const zeile of hinweisVeroeffentlichen(NETZ, 'regelkategorien', ADRESSE)) console.log(zeile);
