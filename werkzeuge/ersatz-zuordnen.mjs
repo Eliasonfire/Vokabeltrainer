@@ -39,7 +39,8 @@ function k1Wort(v) {
 export function k1(v) { return nfc(v).split(/\s+/).map(k1Wort).join(' '); }
 // k2 setzt außerdem das Dolchalif dem Fatha gleich: „hadha" steht in der Quelle mit Dolchalif, auf der Karte mit Fatha.
 export function k2(v) {
-  return ohneHamza(k1(v)).replace(/َ?ٰ/g, 'َ').replace(/َ(?=ا)/g, '').replace(/ِ(?=ي)/g, '').replace(/ُ(?=و)/g, '');
+  // Nach dem Tausch noch einmal NFC: das Dolchalif steht in der Normalform HINTER dem Schadda, das Fatha davor.
+  return ohneHamza(k1(v)).replace(/َ?ٰ/g, 'َ').normalize('NFC').replace(/َ(?=ا)/g, '').replace(/ِ(?=ي)/g, '').replace(/ُ(?=و)/g, '');
 }
 const ARTIKEL = /^الْ?/;
 const hatArtikel = v => ARTIKEL.test(nfc(v));
