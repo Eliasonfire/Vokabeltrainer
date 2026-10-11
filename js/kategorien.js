@@ -145,6 +145,9 @@ function renderChapterCats(){
     const ch = (typeof eintrag === 'object') ? eintrag.ch : eintrag;
     const words = buchVokabeln().filter(w=>w.chapter===ch && (!buch || w.book===buch));
     const name = (!buch || buch === 'madina-1') ? CHAPTER_NAMES[ch] : null;
+    /* „Koran häufigste" (11.10.2026): ein Stück heißt nach seinen Plätzen
+       („Platz 31–60"), nicht „Kap. 2" — koranStueck() in js/buecher.js. */
+    const koranStk = (buch && typeof koranStueck === 'function') ? koranStueck(buch, ch) : '';
     const eigen = eigeneOben.includes(ch);
     /* Die Unterzeile sagt, was man dort TUN kann. Ohne sie ist „Eigene
        Vokabeln" nur eine Liste, und dass das Eingabefeld dahinter liegt, steht
@@ -159,6 +162,7 @@ function renderChapterCats(){
       : '';
     const label = eigen
       ? `<span class="eigen-stern">★</span><span>${name || ch}</span>`
+      : koranStk ? `<span>Platz ${koranStk}</span>`
       : `<span>Kap. ${ch}${name ? ' — ' + name : ''}</span>`;
     return `<div class="list-row${eigen ? ' list-row-eigen' : ''}" data-openlist="chapter:${buch ? buch + ':' : ''}${ch}">
       <div class="list-row-haupt">
@@ -251,9 +255,11 @@ function openWordList(key){
        Für alle übrigen Bücher bleibt die Nummer - einen Namen zu erfinden
        verbietet E.1. */
     const kapName = (!buch || buch === 'madina-1') ? CHAPTER_NAMES[chNum] : null;
+    const koranStk = (buch && typeof koranStueck === 'function') ? koranStueck(buch, chNum) : '';
     title = (ch==='personal')
       ? (kapName || ch)
-      : buchTitel(buch) + ' · ' + (kapName ? `Kapitel ${ch} — ${kapName}` : `Kapitel ${ch}`);
+      : buchTitel(buch) + ' · ' + (koranStk ? `Platz ${koranStk}`
+          : kapName ? `Kapitel ${ch} — ${kapName}` : `Kapitel ${ch}`);
   } else if (key.startsWith('feld:')){
     /* Nicht an ':' zerlegen und das zweite Stueck nehmen - Feldnamen duerfen
        ein '&' und theoretisch auch weitere Zeichen enthalten ("Familie &
@@ -583,7 +589,6 @@ function baueWortKarte(w){
   if (w.root)  formen.push(['Wurzel',   w.root]);
   if (formen.length) t.push(`<div class="wk-formen">` + formen.map(([l,v])=>
     `<span><i class="lbl">${escapeHtml(l)}</i><span class="wf-ar">${escapeHtml(v)}</span></span>`).join('') + `</div>`);
-
   /* Eselsbruecke: seine eigene Notiz schlaegt jeden Vorschlag - dieselbe harte
      Rangfolge wie auf der Lernkarte (Punkt 8 vom 10.08.2026). */
   /* ⭐ Elias, 18.08.2026: „abgesehen davon kann ich die vorschläge nicht mehr

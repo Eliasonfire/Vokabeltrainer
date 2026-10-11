@@ -665,7 +665,11 @@ function renderChapterFilterChips(){
   const reihen = buecher.map(slug=>{
     const sel = (typeof kapitelAuswahl === 'function') ? kapitelAuswahl(slug) : [];
     const chips = [chip(slug, 'all', 'Alle', sel.length === 0)]
-      .concat(kapitelDesBuchs(slug).map(n => chip(slug, n, n, sel.indexOf(n) >= 0)))
+      /* „Koran häufigste" (11.10.2026): der Knopf zeigt die Plätze des Stücks
+         („31–60") statt seiner Nummer — koranStueck() in js/buecher.js; für jedes
+         andere Buch liefert es nichts, und es bleibt bei der Kapitelnummer. */
+      .concat(kapitelDesBuchs(slug).map(n => chip(slug, n,
+        (typeof koranStueck === 'function' && koranStueck(slug, n)) || n, sel.indexOf(n) >= 0)))
       .join('');
     if (!mehrere) return chips;
     return `<div class="chapter-book"><span class="chapter-book-name">${buchTitel(slug)}</span>`

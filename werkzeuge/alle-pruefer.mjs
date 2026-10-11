@@ -668,6 +668,12 @@ const PRUEFER = [
      und nicht wiederherstellbar. Ein Fehler hier ist kein
      Schoenheitsfehler, sondern ein Verlust. */
   ['test-dublette.mjs', []],
+  /* ⭐ Neu am 11.10.2026: die Wortgruppe „Koran häufigste". Elias: „wörter die ich
+     bereits kann sollen nicht doppelt kommen … sollen auf den selben stand gebracht
+     werden" und „da sollen erstmal die wörter kommen die am häufigsten sind". Hält
+     Liste und Datendatei gegeneinander und fährt koranKartenEinordnen() und
+     neueZuerst() aus dem Quelltext — mit Störtests. */
+  ['test-koran-haeufig.mjs', []],
   /* ⭐ Neu am 16.09.2026. Elias zu „„Plural" steht an einer Zahl, wo keiner
      ist": „das auch" (selbst mit den Wörterbüchern entscheiden). Schneidet
      plBeschriftung() und bauePluralKarte() aus js/kern.js und legt die

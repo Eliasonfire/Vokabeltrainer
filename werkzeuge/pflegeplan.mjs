@@ -592,6 +592,29 @@ export const PFLEGEPLAN = [
     veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs', werkzeug: 'werkzeuge/pruefe-buchtausch.mjs',
       wie: 'prüft die Zuordnung, den Aufruf und den Fortschritt — und führt js/kern.js wirklich aus, um danach zu messen, was in VOCAB_DATA steht. Exit 2 nennt weitere Kandidaten, über die Elias noch nicht entschieden hat' },
   },
+  {
+    /* ⭐ 11.10.2026 — DIE WORTGRUPPE „KORAN HÄUFIGSTE".
+       Elias: „du kannst koran häufigste die häufigsten 270 wörter darein machen
+       damit ich so 70% verstehen kann. und da sollen erstmal die wörter kommen
+       die am häufigsten sind. wörter die ich bereits kann sollen nicht doppelt
+       kommen also wenn sie bereits freigeschalten wurden. häufigsten wörter die
+       ich bereits kann bzw kenne als kapiteln oder so sollen auf den selben
+       stand gebracht werden". Ein Buch neben den acht aus arabicroots: die
+       Logik steht in js/buecher.js (koranKartenEinordnen) und js/kern.js
+       (neueZuerst), die Quelle ist werkzeuge/koran-haeufig-liste.txt. */
+    funktion: 'Wortgruppe „Koran häufigste" (die 270 häufigsten Wörter des Korans)',
+    dateien: ['koran-haeufig-data.js'],
+    bildschirme: [],
+    neuerInhalt: { nein: 'Die Gruppe wächst nur auf sein Wort — er hat 270 Zeilen seiner Tabelle bestellt. Dann wird werkzeuge/koran-haeufig-liste.txt von Hand erweitert und die Datendatei mit werkzeuge/koran-haeufig-bauen.mjs neu erzeugt; keine Routine schreibt hinein. Eselsbrücken und Beispielsätze für die Karten der Gruppe kommen über data/eselsbruecken.js und data/beispielsaetze.js unter den Kennungen kh-NNN (derselbe Weg wie für Buchkarten).' },
+    eingaben: { nein: 'Er trägt nichts ein: er hakt die Gruppe und ihre Stücke an (SETTINGS.buecher, wie bei jedem Buch), sein Lernstand liegt unter den Kennungen kh-NNN in vt_progress und wird wie jeder andere abgeglichen.' },
+    /* ⛔ Still veralten kann die Spalte „gleich": nummeriert arabicroots eine Karte
+       um, steht für das Wort plötzlich wieder die Karte der Gruppe — und er hätte
+       es doppelt, ohne jede Meldung. */
+    /* Ohne `werkzeug`: der Test läuft im Sammellauf mit (Eintrag in alle-pruefer.mjs)
+       und braucht keinen eigenen Aufruf im Prompt der Routine. */
+    veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs',
+      wie: 'test-koran-haeufig.mjs läuft im Sammellauf: hält Liste und Datendatei gegeneinander und prüft, dass jede Kennung aus der Spalte gleich in den acht Büchern steht; fährt koranKartenEinordnen() und neueZuerst() aus dem Quelltext, mit Störtests' },
+  },
   /* 22.09.2026 (v569), innerhalb von functions/api/diagnose.js,
      js/einstellungen.js und werkzeuge/diagnose-holen.mjs und deshalb von Hand
      hier: die Diagnose liegt jetzt unter `diagnose:<mail>:<gerät>` statt unter
