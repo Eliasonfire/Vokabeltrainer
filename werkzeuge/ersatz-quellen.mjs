@@ -150,10 +150,61 @@ async function tabellen() {
   console.log(`          ${nurDeutsch} englische Einträge mit deutscher Übersetzung (für den Weg über das Englische) · ${groesseDe} B`);
 }
 
+/* ---------- 4. Zusatzformen: gebeugte Formen zu den noch offenen Plätzen ---------------------------------
+ * Der schlanke Auszug (1) führt von jedem Verb nur die dritte Person und die Befehlsform und vom Nomen nicht die
+ * Zweizahl. Manche Karten führen aber genau solche Formen („du hast …", „ich hoffe", eine Zweizahl). Hier werden aus
+ * den VOLLSTÄNDIGEN Tabellen der Quelle nur die Formen geholt, die einem Wort der noch offenen Plätze gleichen
+ * (gleiche Buchstaben) — ob auch die Vokalzeichen passen, entscheidet der Zuordner. Die Liste der offenen Plätze
+ * kommt aus der Zuordnung; nach größeren Fortschritten also neu laufen lassen. */
+async function zusatz() {
+  const ERSATZ = path.join(REPO, 'data-ersatz');
+  const nfc = t => String(t ?? '').normalize('NFC').trim();
+  const bar = t => nfc(t).replace(/[ً-ْٰـ]/g, '').replace(/[أإآٱ]/g, 'ا').replace(/ى/g, 'ي');
+  const saetze = fs.readFileSync(path.join(ERSATZ, 'arbeit', 'zuordnung.jsonl'), 'utf8').split('\n').filter(Boolean).map(z => JSON.parse(z));
+  const belege = {};
+  const gesucht = new Set();
+  let offen = 0;
+  for (const s of saetze) {
+    const datei = path.join(ERSATZ, 'belege-' + s.buch + '.json');
+    const b = belege[s.buch] ||= (fs.existsSync(datei) ? JSON.parse(fs.readFileSync(datei, 'utf8')) : {});
+    if ((b[s.id] || {}).status === 'belegt') continue;
+    offen++;
+    for (const t of bar(s.suche.ar).split(/\s+/)) if (t.length > 1) gesucht.add(t);
+  }
+  const quelle = path.join(QUELLEN, 'enwikt-arabisch', 'kaikki.org-dictionary-Arabic.jsonl');
+  const aus = schreiber(path.join(ZIEL, 'enwikt-zusatzformen.jsonl'));
+  const gesehen = new Set(), gefunden = new Set();
+  let gelesen = 0, formen = 0;
+  for await (const zeile of zeilenVon(quelle)) {
+    if (!zeile) continue;
+    gelesen++;
+    const e = JSON.parse(zeile);
+    const kopf = (e.head_templates || [])[0] || {};
+    if (kopf.name === 'ar-verb form') continue;       // Verweis-Einträge; die Formen stehen in der Tabelle des Verbs
+    const stich = ((e.forms || []).find(f => (f.tags || []).includes('canonical')) || {}).form || null;
+    for (const f of e.forms || []) {
+      if (!f.form || !f.source) continue;
+      if ((f.tags || []).some(x => x === 'table-tags' || x === 'inflection-template')) continue;
+      const b = bar(f.form);
+      if (!gesucht.has(b)) continue;
+      const t = sauber(f.tags);
+      const schl = [e.word, e.pos, e.etymology_number || '', stich || '', f.form, t.join(',')].join('#');
+      if (gesehen.has(schl)) continue;
+      gesehen.add(schl);
+      gefunden.add(b);
+      aus.zeile({ w: e.word, pos: e.pos, n: e.etymology_number || null, k: stich, f: f.form, t, q: f.source });
+      formen++;
+    }
+  }
+  const groesse = await aus.fertig();
+  console.log(`zusatz: ${offen} offene Plätze · ${gesucht.size} verschiedene Wörter gesucht · ${gelesen} Zeilen gelesen · ${formen} Formen zu ${gefunden.size} Wörtern gefunden · ${groesse} B`);
+}
+
 const was = process.argv[2];
 const t0 = Date.now();
 if (was === 'arabisch') await arabisch();
 else if (was === 'deutsch') await deutsch();
 else if (was === 'tabellen') await tabellen();
-else { console.error('Aufruf: node werkzeuge/ersatz-quellen.mjs arabisch|deutsch|tabellen'); process.exit(2); }
+else if (was === 'zusatz') await zusatz();
+else { console.error('Aufruf: node werkzeuge/ersatz-quellen.mjs arabisch|deutsch|tabellen|zusatz'); process.exit(2); }
 console.log('Dauer: ' + Math.round((Date.now() - t0) / 1000) + ' s');

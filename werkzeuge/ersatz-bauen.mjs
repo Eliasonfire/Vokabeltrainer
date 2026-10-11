@@ -105,11 +105,13 @@ for (const buch of BUECHER) {
       }
     } else if (h.deTeile && voll(h.deTeile.w)) {
       // Fügung: das Deutsch ist von Claude aus den deutschen Wörtern gebaut, die die Quellen zu den einzelnen Teilen nennen
-      const bekannt = new Set((s.teile || []).flatMap(t => t.de || []));
+      // … oder aus dem Deutsch, das die Quellen zur GRUNDFORM nennen (die Karte führt deren Mehrzahl oder weibliche Form)
+      const bekannt = new Set([...(s.teile || []).flatMap(t => t.de || []), ...(s.deutsch || []).filter(d => !d.erkl).map(d => d.de)]);
       const teile = h.deTeile.teile || [];
       const fehlt = teile.filter(t => !bekannt.has(t));
-      if (!teile.length || fehlt.length) handFehler.push(`${buch} ${s.id}: deTeile nennt ${teile.length ? '„' + fehlt.join('“, „') + '“, das steht bei keinem Teil der Fügung' : 'keine Teile'}`);
-      else felder.de = { w: nfc(h.deTeile.w), wo: 'von Claude zusammengesetzt aus den deutschen Wörtern, die die Quellen zu den Teilen der Fügung nennen: ' + teile.map(t => `„${t}“`).join(', '), q: 'teile' };
+      const ausGrundform = teile.length && teile.every(t => (s.deutsch || []).some(d => d.de === t));
+      if (!teile.length || fehlt.length) handFehler.push(`${buch} ${s.id}: deTeile nennt ${teile.length ? '„' + fehlt.join('“, „') + '“, das steht bei keinem Teil der Fügung und unter keinem Kandidaten' : 'keine Teile'}`);
+      else felder.de = { w: nfc(h.deTeile.w), wo: (ausGrundform ? 'von Claude gebildet aus den deutschen Wörtern, die die Quellen zu diesem Wort oder seiner Grundform nennen: ' : 'von Claude zusammengesetzt aus den deutschen Wörtern, die die Quellen zu den Teilen der Fügung nennen: ') + teile.map(t => `„${t}“`).join(', '), q: 'teile' };
     } else if (voll(h.deEigen)) {
       const en = ((s.vorschlag && s.vorschlag._en) || []).slice(0, 2).join(' ; ');
       felder.de = { w: nfc(h.deEigen), wo: 'ohne deutsche Quelle — von Claude geschrieben' + (en ? ` nach der englischen Bedeutung in ${s.ref ? 'en.wiktionary „' + s.ref.split('#')[0] + '“' : 'der Quelle'}: „${en}“` : ''), q: 'claude' };

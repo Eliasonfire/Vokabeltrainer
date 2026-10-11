@@ -46,18 +46,24 @@ for (const s of liste) {
   gezeigt++;
   if (kurzForm) {
     const de = (s.deutsch || []).filter(d => !d.erkl);
-    const zeig = (l, n) => [...new Set(l.map(d => d.de + (d.deckt ? '✓' : '')))].slice(0, n).join(', ');
+    // ✓ = deckt sich mit dem Sinn der Karte · ° = Deutsch der GRUNDFORM (der Eintrag selbst verweist nur auf sie)
+    const zeig = (l, n) => [...new Set(l.map(d => d.de + (d.gf ? '°' : '') + (d.deckt ? '✓' : '')))].slice(0, n).join(', ');
     const v = s.vorschlag;
     const fehlt = v ? ['ar', 'type'].filter(f => !v[f]).map(f => 'ohne ' + f).join(' ') : '';
     console.log(`#${s.id} K${s.kap} ${s.typ} ${s.stufe} | ${s.suche.ar} „${kurz(s.suche.de, 46)}“ | ${v ? (s.ref ? '@' + s.ref.split('@')[1] : 'Fügung') + ' ' + fehlt + ' en: ' + kurz((v._en || []).join(' ; '), 120) : ''}`
       + (s.wahl || []).slice(0, 5).map(w => ` ‖ @${w.ref.split('@')[1]} ${w.ref.split('#')[1]} ${w.kopf[0] || ''}: ${kurz(w.en.join(' ; '), 60)}`).join('')
       + (s.andereVokale || []).slice(0, 4).map(w => ` ‖ anders @${w.ref.split('@')[1]} ${w.ref.split('#')[1]} ${w.kopf[0] || ''}: ${kurz(w.en.join(' ; '), 50)}`).join('')
       + (s.teile || []).map(t => ` ‖ Teil ${t.t} ${t.form ? 'belegt' : 'NICHT belegt (' + t.stufe + ')'} de: ${(t.de || []).slice(0, 5).join(', ')}`).join('')
-      + (s.schluesselNah || []).map(n => ` ‖ Schlüssel, andere Zeichen (Zeile ${n.nr}): ${n.form} = ${kurz(n.de, 50)}`).join(''));
+      + (s.schluesselNah || []).map(n => ` ‖ Schlüssel, andere Zeichen (Zeile ${n.nr}): ${n.form} = ${kurz(n.de, 50)}`).join('')
+      // nur wo das Arabische noch fehlt: sonst sind es fast immer andere Wörter mit denselben Buchstaben
+      + (v && v.ar ? [] : s.arabdictAnders || []).map(n => ` ‖ arabdict, andere Zeichen (${n.nr}): ${n.form} = ${kurz(n.de.join(', '), 70)}`).join(''));
     // S: das Deutsch aus dem Schlüssel zum Lehrbuch — die Hand nennt es in „de" als GANZE Zeile, so wie sie hier steht
     const d0 = de.filter(d => d.sch).slice(0, 3).map(d => `${d.de}${d.deckt ? '✓' : ''} [${d.sch.kopf ? '' : 'Nebenform, '}${d.sch.lektion ? 'gleiche Lektion' : 'andere Lektion'}${d.sch.streng ? '' : ', Schreibung weicht ab'}]`).join(' ‖ ');
     if (d0) console.log(`     S: ${d0}`);
-    const d1 = zeig(de.filter(d => d.sicher === 'vokalisiert' && !d.sch), 9), d2 = zeig(de.filter(d => d.sicher === 'kette'), 9);
+    // A: das Deutsch von arabdict zu genau dieser arabischen Form · D: die übrigen direkten Quellen · K: über das Englische
+    const d3 = zeig(de.filter(d => d.sicher === 'vokalisiert' && d.q === 'arabdict'), 14);
+    if (d3) console.log(`     A: ${d3}`);
+    const d1 = zeig(de.filter(d => d.sicher === 'vokalisiert' && !d.sch && d.q !== 'arabdict'), 9), d2 = zeig(de.filter(d => d.sicher === 'kette'), 9);
     if (d1 || d2) console.log(`     D: ${d1 || '—'} | K: ${d2 || '—'}`);
     continue;
   }
