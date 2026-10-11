@@ -476,6 +476,10 @@ const PRUEFER = [
      werden. Bewacht `kandidaten-einordnung.mjs` und die drei Werkzeuge, die
      daraus lesen; Störtests bei jedem Lauf. */
   ['test-regelkandidaten.mjs', []],
+  /* 11.10.2026 — arabische Tasten unter dem Tippfeld. Elias: „für mein tablet wäre
+     das praktisch, für mein handy will ich das nicht". Bewacht vor allem die
+     Ausnahme: am Handy kein Tastenkasten und kein inputmode. Sechs Störtests. */
+  ['test-tippen-tablet.mjs', []],
   /* Ohne --schreiben misst es nur. Rot, sobald in einer Projektnotiz ein
      aelterer Abschnitt vor einem neueren steht — Elias am 22.09.2026:
      „oben, räume demtentsprechend um". */
