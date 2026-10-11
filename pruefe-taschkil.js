@@ -1062,6 +1062,45 @@ buchDateien.forEach(f => {
   });
 });
 
+/* ⭐ DIE WORTGRUPPE „KORAN HÄUFIGSTE" (12.10.2026) — ein Buch, das NICHT in data/ liegt.
+
+   koran-haeufig-data.js wird aus werkzeuge/koran-haeufig-liste.txt und
+   werkzeuge/koran-haeufig-felder.txt erzeugt und liegt im Repo. Bis heute sah dieses
+   Werkzeug die 255 Karten nie: es liest data/vokabeln-*.js, und dort steht die Gruppe
+   absichtlich nicht (Begründung in js/buecher.js). Mit den Feldern des vollen
+   Programms tragen die Karten jetzt Mehrzahl und Verbformen — also genau die Zeichen,
+   für die es dieses Werkzeug gibt.
+
+   ⛔ Die Befunde zählen wie die des Lernbestands (`befunde`), nicht wie die der
+   Abzüge: es sind keine fremden Daten. Ich habe sie geschrieben, und ich kann sie
+   ändern — in der Liste und in der Felder-Datei, nie in der erzeugten Datei. */
+let koranEintraege = 0;
+{
+  const datei = path.join(DIR, 'koran-haeufig-data.js');
+  if (fs.existsSync(datei)){
+    try {
+      const ctx = {};
+      vm.createContext(ctx);
+      vm.runInContext(fs.readFileSync(datei, 'utf8') + '\nglobalThis.__K = (typeof KORAN_HAEUFIG !== "undefined") ? KORAN_HAEUFIG : null;', ctx, { filename: 'koran-haeufig-data.js' });
+      if (Array.isArray(ctx.__K)){
+        koranEintraege = ctx.__K.length;
+        ctx.__K.forEach(w => {
+          woerterGeprueft += pruefeEintrag(w, 'koran-haeufig-data.js', befunde);
+          /* Die vier Verbformen stehen nicht in FELDER (dort: ar, sg, pl, femSg, femPl, sentAr) —
+             für die Abzüge ist das eine alte Lücke, die hier nicht mit aufgemacht wird. Für die
+             Karten der Gruppe werden sie geprüft: jede Form einzeln, als wäre sie die Vorderseite. */
+          ['past', 'present', 'imperative', 'masdar'].forEach(f => {
+            if (typeof w[f] === 'string' && w[f].trim())
+              woerterGeprueft += pruefeEintrag({ id: w.id, ar: w[f], type: w.type }, 'koran-haeufig-data.js (' + f + ')', befunde);
+          });
+        });
+      } else console.error('  ! koran-haeufig-data.js: kein KORAN_HAEUFIG gefunden');
+    } catch (e) {
+      console.error(`  ! koran-haeufig-data.js nicht ausfuehrbar: ${e.message}`);
+    }
+  }
+}
+
 /* ⛔⛔ SEINE SELBST ANGELEGTEN WOERTER — der vierte Weg in den Bestand.
 
    `addPersonalVocab()` legt sie in vt_personalVocab ab, also nur im

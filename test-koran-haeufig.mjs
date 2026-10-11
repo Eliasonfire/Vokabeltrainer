@@ -23,7 +23,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
-import { leseListe, baueDatei, LISTE, ZIEL, ZEILEN_DER_TABELLE, SUMME, JE_KAPITEL } from './werkzeuge/koran-haeufig-bauen.mjs';
+import { leseListe, leseFelder, baueDatei, LISTE, FELDER, FELDER_JE_TYP, FELD_FOLGE, ZIEL, ZEILEN_DER_TABELLE, SUMME, JE_KAPITEL } from './werkzeuge/koran-haeufig-bauen.mjs';
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
 /* CRLF → LF beim Lesen: die Suchtexte unten enthalten Zeilenenden (Begründung in test-dublette.mjs). */
@@ -220,6 +220,8 @@ function fallHerkunft(code){
 console.log('=== 1. Die Liste und die Datendatei ===\n');
 const listenText = lies('werkzeuge', 'koran-haeufig-liste.txt');
 const { karten, fehler: listenFehler } = leseListe(listenText);
+const felderText = fs.existsSync(FELDER) ? fs.readFileSync(FELDER, 'utf8').replace(/\r\n/g, '\n') : '';
+const FELDER_GELESEN = leseFelder(felderText, karten);
 {
   sag(listenFehler.length === 0, 'die Liste hat keinen Fehler' + (listenFehler.length ? ' — ' + listenFehler.slice(0, 3).join(' | ') : ''));
   const zeilen = karten.flatMap(k => k.zeilen);
@@ -228,7 +230,7 @@ const { karten, fehler: listenFehler } = leseListe(listenText);
   sag(karten.reduce((s, k) => s + k.n, 0) === SUMME, `die Häufigkeiten ergeben ${SUMME}`);
   sag(karten.every((k, i) => i === 0 || k.n <= karten[i - 1].n), 'die Karten stehen nach Häufigkeit, das häufigste zuerst');
   const da = fs.existsSync(ZIEL) ? fs.readFileSync(ZIEL, 'utf8').replace(/\r\n/g, '\n') : null;
-  sag(da === baueDatei(karten), 'koran-haeufig-data.js ist genau das, was der Erzeuger aus der Liste baut');
+  sag(da === baueDatei(karten, FELDER_GELESEN.felder), 'koran-haeufig-data.js ist genau das, was der Erzeuger aus Liste und Felder-Datei baut');
   /* Störtests */
   const ersteDaten = listenText.split('\n').findIndex(l => l && !l.startsWith('#'));
   const zeilenL = listenText.split('\n');
@@ -237,7 +239,56 @@ const { karten, fehler: listenFehler } = leseListe(listenText);
   const ohne = zeilenL.slice(); ohne.splice(ersteDaten + 5, 1);
   sag(leseListe(ohne.join('\n')).fehler.some(f => f.includes('steht auf keiner Karte')), '⛔ Störtest: eine fehlende Tabellenzeile wird gemeldet');
   const geaendert = karten.map((k, i) => i === 3 ? Object.assign({}, k, { de: k.de + ' x' }) : k);
-  sag(da !== baueDatei(geaendert), '⛔ Störtest: ein geändertes Wort in der Liste passt nicht mehr zur Datendatei');
+  sag(da !== baueDatei(geaendert, FELDER_GELESEN.felder), '⛔ Störtest: ein geändertes Wort in der Liste passt nicht mehr zur Datendatei');
+}
+
+console.log('\n=== 1b. Die Felder des vollen Programms (Wurzel, Geschlecht, Einzahl, Mehrzahl, Verbformen) ===\n');
+{
+  /* Elias, 20.08.2026: „es muss halt recht klar sein was ‚das volle programm‘ ist … und einfach irgendwas machst."
+     Bewacht wird, dass kein Feld ohne Beleg, an der falschen Wortart oder an einer fremden Kennung steht — und
+     dass die App die Felder wirklich an die Karte bringt. Ein FALSCHES Feld ist schädlicher als ein leeres
+     (VOLLES-PROGRAMM.md): die Verbformen und die Mehrzahl steuern, wie jeder Satz zerlegt wird. */
+  const F = FELDER_GELESEN;
+  sag(F.fehler.length === 0, 'die Felder-Datei hat keinen Fehler' + (F.fehler.length ? ' — ' + F.fehler.slice(0, 3).join(' | ') : ''));
+  sag(F.zeilen > 0 && [...F.felder.keys()].every(id => karten.some(k => k.id === id)), `${F.zeilen} Felder an ${F.felder.size} Karten, jede Kennung steht in der Liste`);
+  sag([...F.belege.values()].every(b => Object.values(b).every(t => t && t.length > 5)), 'jedes Feld nennt seinen Beleg');
+  const typ = new Map(karten.map(k => [k.id, k.type]));
+  sag([...F.felder].every(([id, f]) => Object.keys(f).every(name => FELDER_JE_TYP[typ.get(id)].includes(name))), 'jedes Feld passt zur Wortart seiner Karte (keine Verbform an einem Nomen, keine Wurzel an einer Partikel)');
+  sag([...F.felder].every(([id, f]) => typ.get(id) !== 'verb' || !f.past || f.past === karten.find(k => k.id === id).ar), 'die Vergangenheitsform eines Verbs ist die Schreibung seiner Karte');
+  /* Störtests: je eine falsche Zeile an die echte Datei gehängt */
+  const erste = [...F.felder.keys()][0];
+  const einVerb = karten.find(k => k.type === 'verb' && F.felder.has(k.id)), einNomen = karten.find(k => k.type === 'noun' && F.felder.has(k.id) && F.felder.get(k.id).sg);
+  const einePartikel = karten.find(k => k.type === 'particle');
+  const mit = zeile => leseFelder(felderText + '\n' + zeile + '\n', karten).fehler;
+  sag(mit('kh-999|root|x y z|Probe').some(f => f.includes('steht nicht in der Liste')), '⛔ Störtest: ein Feld an einer Kennung, die es nicht gibt, wird gemeldet');
+  sag(!!einNomen && !!einVerb && mit(einNomen.id + '|present|' + F.felder.get(einVerb.id).present + '|Probe').some(f => f.includes('trägt kein Feld')), '⛔ Störtest: eine Verbform an einem Nomen wird gemeldet');
+  sag(!!einePartikel && mit(einePartikel.id + '|root|' + F.felder.get(einVerb.id).root + '|Probe').some(f => f.includes('trägt kein Feld')), '⛔ Störtest: eine Wurzel an einer Partikel wird gemeldet');
+  sag(mit(einVerb.id + '|present|' + F.felder.get(einVerb.id).present + '|Probe').some(f => f.includes('schon')), '⛔ Störtest: dasselbe Feld zweimal wird gemeldet');
+  const ohneFeld = (id, feld) => felderText.split('\n').filter(z => !z.startsWith(id + '|' + feld + '|')).join('\n');
+  const nur = (id, feld, zeile) => leseFelder(ohneFeld(id, feld) + '\n' + zeile + '\n', karten).fehler;
+  sag(nur(einVerb.id, 'present', einVerb.id + '|present|' + F.felder.get(einVerb.id).present + '|').some(f => f.includes('ohne Beleg')), '⛔ Störtest: ein Feld ohne Beleg wird gemeldet');
+  sag(nur(einVerb.id, 'past', einVerb.id + '|past|' + F.felder.get(einVerb.id).present + '|Probe').some(f => f.includes('nicht die Schreibung der Karte')), '⛔ Störtest: eine Vergangenheitsform, die nicht die Karte ist, wird gemeldet');
+  const NACKT = new RegExp('[' + String.fromCodePoint(0x64B) + '-' + String.fromCodePoint(0x652) + ']', 'g');
+  sag(nur(einVerb.id, 'present', einVerb.id + '|present|' + F.felder.get(einVerb.id).present.replace(NACKT, '') + '|Probe').some(f => f.includes('ohne Vokalzeichen')), '⛔ Störtest: eine Form ohne Vokalzeichen wird gemeldet');
+  sag(nur(einNomen.id, 'gender', einNomen.id + '|gender|männlich|Probe').some(f => f.includes('kennt nur masculine und feminine')), '⛔ Störtest: ein Geschlecht, das die App nicht kennt, wird gemeldet');
+  sag(nur(einVerb.id, 'root', einVerb.id + '|root|' + F.felder.get(einVerb.id).root.replace(/ /g, '') + '|Probe').some(f => f.includes('Wurzel')), '⛔ Störtest: eine Wurzel ohne Leerzeichen wird gemeldet');
+  const anders = new Map(F.felder); anders.set(erste, Object.assign({}, F.felder.get(erste), { root: 'x y z' }));
+  sag(fs.readFileSync(ZIEL, 'utf8').replace(/\r\n/g, '\n') !== baueDatei(karten, anders), '⛔ Störtest: ein geändertes Feld passt nicht mehr zur Datendatei');
+  /* Die App: koranKarten() reicht die Felder an die Karte durch */
+  const fallFelder = (code) => {
+    const { welt, api } = baueWelt({ code });
+    const vorher = welt.KORAN_HAEUFIG.slice();   /* die Welt teilt sich EINE Liste mit allen Fällen — danach genau so zurücklegen */
+    welt.KORAN_HAEUFIG.push({ id: 'kh-998', rang: 6, kap: 2, ar: 'V', de: 'Probe', type: 'verb', root: 'R', past: 'V', present: 'G', imperative: 'B', masdar: 'M' },
+                            { id: 'kh-997', rang: 7, kap: 2, ar: 'N', de: 'Probe', type: 'noun', gender: 'feminine', sg: 'N', pl: 'P' });
+    const k = api.koranKarten();
+    const v = k.find(x => x.id === 'kh-998'), n = k.find(x => x.id === 'kh-997'), ohne = k.find(x => x.id === 'kh-001');
+    welt.KORAN_HAEUFIG.length = 0; welt.KORAN_HAEUFIG.push(...vorher);
+    return !!v && !!n && v.root === 'R' && v.present === 'G' && v.imperative === 'B' && v.masdar === 'M' && n.gender === 'feminine' && n.pl === 'P' && n.sg === 'N'
+      && v.chapter === 2 && v.book === 'koran-haeufig' && !('root' in ohne) && !('pl' in ohne);
+  };
+  sag(fallFelder(), 'die App bringt die Felder an die Karte (koranKarten); eine Karte ohne Felder bekommt keine leeren');
+  const ohneDurchreichen = BUCH.replace('    for (const f of FELDER) if (e[f]) k[f] = e[f];\n', '');
+  sag(ohneDurchreichen !== BUCH && !fallFelder(quelltext(KERN, ohneDurchreichen)), '⛔ Störtest: ohne das Durchreichen kämen die Felder nie an der Karte an');
 }
 
 console.log('\n=== 2. Was die App lädt ===\n');
@@ -261,8 +312,9 @@ const DATEN = ctx.__K;
   sag(!html.includes('cardKoranZahl') && !html.includes('koran-zahl') && !html.includes('wk-koran')
       && !quelle.includes('function koranZeile(') && !quelle.includes('koranZeile(w)'),
       '⛔ keine Zeile „N-mal im Koran" auf der Karte (von Elias abgesagt)');
-  sag(DATEN.every(e => Object.keys(e).every(k => ['id', 'rang', 'kap', 'ar', 'de', 'type', 'gleich'].includes(k))),
-      'die Datendatei trägt nur, was die App liest (keine Häufigkeit, kein Zusatz)');
+  sag(DATEN.every(e => Object.keys(e).every(k => ['id', 'rang', 'kap', 'ar', 'de', 'type', 'gleich'].concat(FELD_FOLGE).includes(k))),
+      'die Datendatei trägt nur, was die App liest (keine Häufigkeit, kein Zusatz, kein Beleg)');
+  sag(DATEN.every(e => FELD_FOLGE.every(f => !(f in e) || FELDER_JE_TYP[e.type].includes(f))), 'in der Datendatei trägt keine Karte ein Feld, das ihre Wortart nicht hat');
   sag(/'koran-haeufig': 'Koran häufigste'/.test(BUCH) && /'koran-haeufig': 'Koran'\n/.test(BUCH), 'Titel „Koran häufigste" und Kurzname „Koran" stehen in js/buecher.js');
   sag(!lies('data', 'buecher.js').includes('koran-haeufig'), 'die Gruppe steht NICHT in data/buecher.js (das Verzeichnis gehört dem arabicroots-Abzug)');
 }
@@ -284,6 +336,46 @@ console.log('\n=== 3. Jede Kennung aus „gleich" gibt es wirklich ===\n');
     sag(fehlt.length === 0, `alle ${DATEN.flatMap(e => e.gleich || []).length} Kennungen stehen in den acht Büchern` + (fehlt.length ? ' — fehlen: ' + fehlt.slice(0, 8).join(', ') : ''));
     const verworfenFehlt = karten.flatMap(k => k.nicht.filter(id => !buchKarte.has(String(id))).map(id => k.id + '→!' + id));
     sag(verworfenFehlt.length === 0, 'auch jede verworfene Kennung (!) gibt es' + (verworfenFehlt.length ? ' — fehlen: ' + verworfenFehlt.slice(0, 8).join(', ') : ''));
+
+    /* ⛔ Was still veralten kann (12.10.2026): ein Feld der Gruppe gilt als belegt, weil die Buchkarte desselben
+       Worts dieselbe Form trägt („gleich Buchkarte N" in der Felder-Datei). Ändert arabicroots die Form dort,
+       stünde der Beleg weiter da und stimmte nicht mehr. Verglichen wird wie beim Belegen: mit allen
+       Vokalzeichen, ohne Sukun und ohne die Endung am letzten Buchstaben. */
+    const Zc = n => String.fromCodePoint(n);
+    const ENDE = new RegExp('[' + Zc(0x64B) + '-' + Zc(0x650) + ']*(' + Zc(0x651) + '?)[' + Zc(0x64B) + '-' + Zc(0x650) + ']*$');
+    const formKern = s => String(s || '').normalize('NFC').replace(new RegExp(Zc(0x640), 'g'), '').trim().split(/\s+/).map(w => w
+      .replace(new RegExp(Zc(0x64B) + Zc(0x627) + '$'), '').replace(new RegExp(Zc(0x627) + Zc(0x64B) + '$'), '').replace(new RegExp(Zc(0x652), 'g'), '').replace(ENDE, '$1')).join(' ');
+    const HAMZA = new RegExp('[' + Zc(0x623) + Zc(0x625) + Zc(0x622) + Zc(0x671) + Zc(0x621) + Zc(0x624) + Zc(0x626) + ']', 'g');
+    const wurzelKern = r => String(r || '').replace(/\s+/g, '').replace(HAMZA, Zc(0x627));
+    const feldGegenBuch = (buecher) => {
+      const anders = [];
+      for (const [id, belegeDerKarte] of FELDER_GELESEN.belege) for (const [feld, beleg] of Object.entries(belegeDerKarte)){
+        const m = /gleich Buchkarte ([\d, ]+)/.exec(beleg);
+        if (!m) continue;
+        const wert = FELDER_GELESEN.felder.get(id)[feld];
+        for (const nr of m[1].split(',').map(x => x.trim()).filter(Boolean)){
+          const b = buecher.get(nr);
+          const dort = b ? (feld === 'sg' ? (b.sg || b.ar) : b[feld]) : null;
+          let gleich;
+          if (!dort) gleich = false;
+          else if (feld === 'gender') gleich = dort === wert;
+          else if (feld === 'root') gleich = wurzelKern(dort) === wurzelKern(wert);
+          else { const formen = String(dort).split(/\s*[\/،,]\s*/).map(formKern); gleich = wert.split(' / ').every(x => formen.includes(formKern(x))); }
+          if (!gleich) anders.push(id + ' ' + feld + ' ≠ Buchkarte ' + nr);
+        }
+      }
+      return anders;
+    };
+    const anders = feldGegenBuch(buchKarte);
+    const mitBeleg = [...FELDER_GELESEN.belege.values()].flatMap(b => Object.values(b)).filter(t => /gleich Buchkarte/.test(t)).length;
+    sag(anders.length === 0, `alle ${mitBeleg} Felder mit dem Beleg „gleich Buchkarte" stimmen noch mit ihrer Buchkarte überein` + (anders.length ? ' — ' + anders.slice(0, 6).join(' · ') : ''));
+    const [probeId, probeBelege] = [...FELDER_GELESEN.belege].find(([, b]) => Object.values(b).some(t => /gleich Buchkarte/.test(t))) || [];
+    if (probeId){
+      const feld = Object.keys(probeBelege).find(f => /gleich Buchkarte/.test(probeBelege[f]) && f !== 'gender');
+      const nr = /gleich Buchkarte (\d+)/.exec(probeBelege[feld])[1];
+      const gestoert = new Map(buchKarte); gestoert.set(nr, Object.assign({}, buchKarte.get(nr), { [feld]: 'x', sg: 'x', ar: 'x' }));
+      sag(feldGegenBuch(gestoert).some(t => t.startsWith(probeId + ' ' + feld)), '⛔ Störtest: ändert sich die Form an der Buchkarte, wird das Feld gemeldet');
+    }
   }
 }
 

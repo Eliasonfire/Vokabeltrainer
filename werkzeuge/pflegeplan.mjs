@@ -619,7 +619,7 @@ export const PFLEGEPLAN = [
     funktion: 'Wortgruppe „Koran häufigste" (die 270 häufigsten Wörter des Korans)',
     dateien: ['koran-haeufig-data.js'],
     bildschirme: [],
-    neuerInhalt: { nein: 'Die Gruppe wächst nur auf sein Wort — er hat 270 Zeilen seiner Tabelle bestellt. Dann wird werkzeuge/koran-haeufig-liste.txt von Hand erweitert und die Datendatei mit werkzeuge/koran-haeufig-bauen.mjs neu erzeugt; keine Routine schreibt hinein. Eselsbrücken und Beispielsätze für die Karten der Gruppe kommen über data/eselsbruecken.js und data/beispielsaetze.js unter den Kennungen kh-NNN (derselbe Weg wie für Buchkarten).' },
+    neuerInhalt: { nein: 'Die Gruppe wächst nur auf sein Wort — er hat 270 Zeilen seiner Tabelle bestellt. Dann wird werkzeuge/koran-haeufig-liste.txt von Hand erweitert und die Datendatei mit werkzeuge/koran-haeufig-bauen.mjs neu erzeugt; keine Routine schreibt hinein. Eselsbrücken und Beispielsätze für die Karten der Gruppe kommen über data/eselsbruecken.js und data/beispielsaetze.js unter den Kennungen kh-NNN (derselbe Weg wie für Buchkarten). Wurzel, Geschlecht, Einzahl, Mehrzahl und Verbformen stehen seit dem 12.10.2026 mit Beleg in werkzeuge/koran-haeufig-felder.txt (zuerst für die Wörter, die bei ihm als Nächste neu kämen); der Erzeuger schreibt sie in die Datendatei, koranKarten() in js/buecher.js bringt sie an die Karte.' },
     eingaben: { nein: 'Er trägt nichts ein: er hakt die Gruppe und ihre Stücke an (SETTINGS.buecher, wie bei jedem Buch), sein Lernstand liegt unter den Kennungen kh-NNN in vt_progress und wird wie jeder andere abgeglichen.' },
     /* ⛔ Still veralten kann die Spalte „gleich": nummeriert arabicroots eine Karte
        um, steht für das Wort plötzlich wieder die Karte der Gruppe — und er hätte
@@ -627,7 +627,7 @@ export const PFLEGEPLAN = [
     /* Ohne `werkzeug`: der Test läuft im Sammellauf mit (Eintrag in alle-pruefer.mjs)
        und braucht keinen eigenen Aufruf im Prompt der Routine. */
     veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs',
-      wie: 'test-koran-haeufig.mjs läuft im Sammellauf: hält Liste und Datendatei gegeneinander und prüft, dass jede Kennung aus der Spalte gleich in den acht Büchern steht; fährt koranKartenEinordnen() und neueZuerst() aus dem Quelltext, mit Störtests' },
+      wie: 'test-koran-haeufig.mjs läuft im Sammellauf: hält Liste, Felder-Datei und Datendatei gegeneinander und prüft, dass jede Kennung aus der Spalte gleich in den acht Büchern steht; hält jedes Feld, dessen Beleg „gleich Buchkarte N" nennt, gegen diese Buchkarte (ändert arabicroots dort eine Form, wird es gemeldet statt still zu veralten); fährt koranKartenEinordnen(), koranKarten() und neueZuerst() aus dem Quelltext, mit Störtests' },
   },
   /* 11.10.2026, innerhalb von index.html und js/lernen.js und deshalb von Hand hier:
      arabische Tasten unter dem Tippfeld der Lernkarte, NUR am Tablet. Elias: „für

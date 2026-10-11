@@ -50,8 +50,11 @@
 #           Auch die Häufigkeit (Spalte n) steht nur hier; in der App wirkt sie über die Reihenfolge.
 #   anm     Anmerkung zu einer Zeile, in der die Tabelle eine ungewöhnliche Grundform führt.
 #
-# NOCH NICHT ENTHALTEN (das „volle Programm" für neue Wörter kommt schrittweise): Gegenwartsform und
-#   Befehlsform der Verben, Mehrzahl und Geschlecht der Nomen, Eselsbrücken, Beispielsätze, Koranstellen.
+# DAS „VOLLE PROGRAMM" KOMMT SCHRITTWEISE, zuerst für die Wörter, die bei ihm als Nächste neu kämen:
+#   Wurzel, Geschlecht, Einzahl, Mehrzahl und die Verbformen stehen NICHT hier, sondern je Feld mit Beleg in
+#   koran-haeufig-felder.txt (seit 12.10.2026); der Erzeuger schreibt beide Dateien in die Datendatei.
+#   Eselsbrücken und Beispielsätze gehören unter den Kennungen kh-NNN nach data/eselsbruecken.js,
+#   data/eselsbruecken-alt.js und data/beispielsaetze.js.
 #
 # rang|n|zeilen|ar|de|typ|gleich|dort|anm
 1|3226|1|مِنْ|von, aus|particle|45808||
