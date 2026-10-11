@@ -940,5 +940,29 @@ const LEHRBUCH_SAETZE = [
   { id: 'mb1-76-11', seite: 76, kapitel: 13, vokalisationErgaenzt: true,
     gedruckt: 'Übung 2, Nr. 11: النِّساءُ mit Kasra und Damma, der Rest ohne Zeichen',
     sentAr: 'مَنْ هَؤُلَاءِ النِّسَاءُ الطِّوَالُ؟ هُنَّ طَبِيبَاتٌ مِنْ أَمْرِيكَا.',
-    sentDe: 'Wer sind diese großen Frauen? Sie sind Ärztinnen aus Amerika.' }
+    sentDe: 'Wer sind diese großen Frauen? Sie sind Ärztinnen aus Amerika.' },
+
+  /* ===================== Zwei Belegsätze für Regeln aus Folge 17 und 20 ====
+     Eingetragen am 11.10.2026 (Wartung). Beide Regeln hätten sonst keinen
+     Satz gehabt: im ganzen Bestand stand kein Verb auf ـَتِ vor اَلْ (gesucht
+     nach جَلَسَتِ, ذَهَبَتِ, خَرَجَتِ, دَخَلَتِ: 0 Treffer) und kein أَكْبَرُ in
+     einem Satz. Beide Seiten bei 600 dpi gelesen.
+
+     mb1-66-1: Madina 1, Buchseite 66 (im beschrifteten PDF Seite 87),
+     Übung 4 «تأمّل ما يلي». Das Buch stellt dort zwei Fassungen nebeneinander,
+     links mit Sukun, rechts mit Kasra, und darunter als Schema ـْ ال ← ـِ ال.
+     Hier steht die rechte Fassung. Der Lehrer geht die Stelle in Folge 17 ab
+     26:00 durch („Deswegen kommt hier ein Kasra hin").
+
+     by1-32-1: Bayna Yadayk 1, Buchseite 32 (im PDF Seite 54), die ersten
+     zwei Zeilen von «الحوار الثالث»: die Mutter sagt den ersten Satz, der
+     Vater den zweiten. Der Lehrer liest sie in Folge 20 ab 19:55. */
+  { id: 'mb1-66-1', seite: 66, kapitel: 12, vokalisationErgaenzt: true,
+    gedruckt: 'Übung 4: links جَلَسَتْ الطَّالبةُ voll bis auf die Kasra unter dem ل von الطالبة; rechts جلستِ ٱلطَّالبة nur mit der Kasra unter dem ت, Wasla und Schadda. Der Satz hier ist die rechte Fassung mit den Zeichen der linken',
+    sentAr: 'جَلَسَتِ الطَّالِبَةُ.',
+    sentDe: 'Die Studentin setzte sich.' },
+  { id: 'by1-32-1', werk: 'bayna-yadayk-1', seite: 32, kapitel: 2, vokalisationErgaenzt: true,
+    gedruckt: 'هَذا ohne Fatha vor dem Alif, أذانُ ohne Zeichen auf Hamza und ذ, الفَجْرِ ohne Sukun am Artikel-Lam; اللَّهُ wie gedruckt mit Schadda und Fatha auf dem Lam, أكْبَرُ ohne Fatha auf dem Hamza; im Buch zweimal hintereinander (hier einmal)',
+    sentAr: 'هَذَا أَذَانُ الْفَجْرِ. اللَّهُ أَكْبَرُ.',
+    sentDe: 'Das ist der Gebetsruf zum Fajr. Allah ist der Größte.' }
 ];

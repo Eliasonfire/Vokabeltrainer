@@ -1541,6 +1541,58 @@ const GRAMMAR_RULES = [
       "chapter": 12
     }
   },
+  {
+    "id": "zarf-maa-inda-01",
+    "name": "مَعَ oder عِنْدَ: „mit“ jemandem oder „bei“ jemandem",
+    "shortExplanation": "Beide stehen vor einer Person, beide ziehen den Genitiv nach sich — und trotzdem sagen sie Verschiedenes. Dein Lehrer stellt zwei Sätze nebeneinander (Folge 15, ab 26:18): أَنَا مَعَ الْمُدِيرِ und أَنَا عِنْدَ الْمُدِيرِ.\n\nSeine Erklärung (27:16): مَعَ heißt „wir sind irgendwo gemeinsam, irgendwo, wir haben uns getroffen“ — wo, „keiner weiß“. Und (27:26): „Aber wenn ich sage ʿinda, oder ‚ich bin bei‘, dann heißt das: ich habe mich auf den Weg zu ihm gemacht.“ Noch einmal kurz (27:33): bei مَعَ „ich bin irgendwo, keine Ahnung wo“, bei عِنْدَ „ich bin den weiten Weg von mir bis zu ihm gegangen“ — und der Direktor ist normalerweise in seinem Büro.\n\n⭐ **Sein Merksatz** (28:03): „Das ist genau dasselbe wie im Deutschen. ‚Bei‘ gibt die Information, dass du dorthin gegangen bist, und ‚mit‘ ist einfach so.“ Sein Beispiel dazu: „Ich bin mit meiner Mama“ — irgendwo unterwegs. „Ich bin bei meiner Mama“ — bei ihr zu Hause.\n\nDer Schlüssel zu Band 1 sagt in Lektion 10 dasselbe, nur mit dem Lehrer statt mit „ich“: الْمُدَرِّسُ عِنْدَ الْمُدِيرِ bedeutet, dass der Lehrer zum Büro des Direktors gegangen ist und dort mit ihm zusammen ist. Bei الْمُدَرِّسُ مَعَ الْمُدِيرِ ist das „nicht festgelegt, er kann irgendwo mit dem Direktor zusammengekommen sein“. Und er setzt hinzu: das Wort nach مَعَ hat die i-Endung (Kasra).\n\nIn deinem Buch, mit angehängtem Pronomen: مَنْ خَرَجَ مَعَهُ؟ (wer ist mit ihm hinausgegangen?) · الْفَتَاةُ الَّتِي مَعَكِ (das Mädchen, das bei dir ist — im Deutschen sagt man hier „bei“, gemeint ist: mit dir zusammen).\n\nDass عِنْدَ auch eine Zeit angeben kann, steht in inda-ort-und-zeit-01; wie عِنْدَ und لِ beim Besitz auseinandergehen, in li-vs-inda-01.",
+    "color": "nasab",
+    "kapitel": 10,
+    "source": {
+      "folge": 15,
+      "video": "Folge 15",
+      "approxTimestamp": "27:16",
+      "chapter": 10
+    }
+  },
+  {
+    "id": "harf-jarr-bi-fi-01",
+    "name": "بِالْجَامِعَةِ oder فِي الْجَامِعَةِ: eingeschrieben oder gerade dort",
+    "shortExplanation": "بِـ heißt nicht immer „mit“. Dein Lehrer führt es so ein (Folge 15, 9:02): „bi heißt meistens mit, kann aber auch an heißen.“ Seine drei Beispiele für „mit“: dhahabtu bis-sayyāra (in Umschrift) — „ich ging mit dem Auto“ · „ich schrieb mit dem Stift“ · „Kaffee mit Milch“.\n\nDann der Satz aus dem Buch (9:39): أَنَا طَالِبٌ بِالْجَامِعَةِ — „also ich bin Student mit der Uni? Nein, ich bin an der Uni!“\n\n⭐ **Der Unterschied zu فِي** (9:49): فِي الْجَامِعَةِ „ist örtlich. ‚Wo bist du gerade?‘“ — und dann (10:02): „ich könnte dort Hausmeister sein, ich könnte dort Lehrer sein, ich könnte dort Schüler sein, ich könnte einfach spazieren gehen.“ Dagegen (10:08): „Wenn du sagst bil-jāmiʿa, das heißt, dass du an einer Uni eingeschrieben bist.“\n\nDer Schlüssel zu Band 1 belegt die Bedeutung in Lektion 10: بِالْجَامِعَةِ heißt „an der Universität“; بِـ ist eine Präposition, die ‚an‘, ‚in‘ bedeutet und mit dem Folgewort zusammengeschrieben wird.\n\n⚠️ **Für dich markiert:** Den Unterschied „eingeschrieben“ gegen „gerade dort“ sagt nur dein Lehrer. Der Schlüssel nennt für بِـ die Bedeutungen ‚an‘ und ‚in‘, ohne es gegen فِي abzugrenzen.\n\nDass بِـ ein حَرْفُ جَرٍّ ist und was mit dem Wort danach geschieht, steht in harf-jarr-bi-01.\n\n⚠️ Das erste Beispiel steht in Umschrift, die zwei anderen nur auf Deutsch: ihre arabische Schreibung ist im vorhandenen Wortbestand nicht vollständig belegt.",
+    "color": "nasab",
+    "kapitel": 10,
+    "source": {
+      "folge": 15,
+      "video": "Folge 15",
+      "approxTimestamp": "09:39",
+      "chapter": 10
+    }
+  },
+  {
+    "id": "iltiqa-sakinain-verb-01",
+    "name": "جَلَسَتِ الطَّالِبَةُ: aus dem Sukūn am Verb wird vor اَلْ eine Kasra",
+    "shortExplanation": "Die Verbform für „sie“ endet auf ein Tāʾ mit Sukūn: جَلَسَتْ (sie setzte sich). Folgt darauf ein Wort mit اَلْ, stoßen zwei Sukūn aufeinander — und das Tāʾ bekommt eine Kasra: جَلَسَتِ الطَّالِبَةُ.\n\nDein Lehrer an Übung 4 von Kapitel 12 (Folge 17, ab 26:02): „Welches Problem haben wir? … Was mögen die Araber gar nicht?“ — „Sukūn auf Sukūn. Warum? Weil das bricht diesen Wortfluss, den die gerne mögen. Deswegen kommt hier ein Kasra hin.“ Und (26:39): eigentlich heißt es jalasat, „aber die reden gerne flüssig.“\n\nDein Buch zeigt es an derselben Stelle (Seite 66, Übung 4) als Gegenüberstellung: links die Form mit Sukūn, rechts جَلَسَتِ mit Kasra, darunter das Schema „Sukūn vor اَلْ wird Kasra vor اَلْ“.\n\nDer Schlüssel zu Band 1 sagt in Lektion 12 dasselbe an einem anderen Verb: In ذَهَبَتْ hat der letzte Buchstabe ein Sukūn; „wenn auf so ein Verb al- folgt, wird das Sukūn in Kasra umgewandelt“. Sein Beispiel, hier in Umschrift: dhahabati l-bintu — das Mädchen ging.\n\n⭐ Es ist dieselbe Lautregel, die du von مِنْ kennst (mina-al-01) — nur dass dort eine Fatḥa hilft und hier eine Kasra. Ihr arabischer Name steht in iltiqa-sakinain-01. Die Endungen der Vergangenheit selbst stehen in verb-madi-endungen-01.\n\n⚠️ Das Beispiel des Schlüssels steht in Umschrift: die Form mit Kasra ist im vorhandenen Wortbestand nicht belegt.",
+    "color": "other",
+    "kapitel": 12,
+    "source": {
+      "folge": 17,
+      "video": "Folge 17",
+      "approxTimestamp": "26:02",
+      "chapter": 12
+    }
+  },
+  {
+    "id": "adjektive-steigerung-akbar-01",
+    "name": "أَكْبَرُ: die Steigerungsform von كَبِيرٌ",
+    "shortExplanation": "Im dritten Dialog von Kapitel 2 (Bayna Yadayk) hört die Familie den Gebetsruf: اللَّهُ أَكْبَرُ. Dein Lehrer hält an dem Wort an (Folge 20, 20:03): „Akbar kommt von kabīrun. Kabīrun heißt groß. Und akbar ist mit Tafḍīl. Das ist Superlativ. Allah ist der Größte.“\n\nAlso: كَبِيرٌ (groß) → أَكْبَرُ (größer, der Größte). Vorn kommt ein Alif mit Hamza dazu, und die Vokale ordnen sich neu.\n\nDer Schlüssel zu Band 2 hat dafür eine eigene Lektion (Lektion 3, „Komparativ und Superlativ von Adjektiven“). Drei Dinge daraus:\n\n• Eine Form für beides. Der arabische Name gilt „sowohl für den Komparativ als auch für den Superlativ“ — dieselbe Form heißt also „größer“ und „am größten“. Deshalb sagt dein Lehrer an anderer Stelle derselben Erklärung auch „Allah ist größer als alles“ (20:23).\n\n• Kein Tanwīn. Wörter dieses Schemas haben nach dem Schlüssel kein Tanwīn. Du siehst es am Wort selbst: أَكْبَرُ endet auf eine einzelne Ḍamma, obwohl es unbestimmt ist.\n\n• Eine Form für alle. Sie bleibt nach dem Schlüssel für männlich, weiblich, Einzahl und Mehrzahl gleich.\n\n⚠️ **Weiterführend, für dich markiert:** Das ist Stoff aus Band 2. Dein Lehrer sagt hier nur, woher das Wort kommt und wie die Form heißt; gebildet und geübt habt ihr sie noch nicht. Wie man damit vergleicht („größer als …“) und wie der Superlativ mit einem Genitiv dahinter gebaut wird, steht im Schlüssel, im Unterricht war es noch nicht dran — es steht deshalb nicht in dieser Regel.\n\n⚠️ Den Fachnamen (Tafḍīl) nennt dein Lehrer nur gesprochen; er steht in Umschrift, weil seine vokalisierte Schreibung im vorhandenen Wortbestand nicht belegt ist.",
+    "color": "other",
+    "kapitel": 12,
+    "source": {
+      "folge": 20,
+      "video": "Folge 20",
+      "approxTimestamp": "20:03",
+      "chapter": 12
+    }
+  },
 ];
 
 const SENTENCE_TAGS = {
@@ -1551,7 +1603,8 @@ const SENTENCE_TAGS = {
      ======================================================================== */
   "mb1-63-3": [{ ruleId: "harf-jarr-bi-01", matchText: "بِخَيْرٍ" }],
   "mb1-63-4": [{ ruleId: "ismun-mawsul-allati-01", matchText: "الَّتِي" },
-    { ruleId: "possessiv-endungen-01", matchText: "أُخْتُكِ", bedeutung: 'ـكِ = dein (weiblich)' }
+    { ruleId: "possessiv-endungen-01", matchText: "أُخْتُكِ", bedeutung: 'ـكِ = dein (weiblich)' },
+    { ruleId: "zarf-maa-inda-01", matchText: "مَعَكِ" }
   ],
   "mb1-65-2": [{ ruleId: "li-mit-suffix-01", matchText: "أَلَكَ" },
                 { ruleId: "ya-nida-01", matchText: "يَا حَامِدُ" }],
@@ -3447,7 +3500,8 @@ const SENTENCE_TAGS = {
   ],
   "mb1-76-10": [
     { ruleId: "jam-muannath-salim-01", matchText: "طَالِبَاتٌ" },
-    { ruleId: "jam-taksir-01", matchText: "كِبَارٌ" }
+    { ruleId: "jam-taksir-01", matchText: "كِبَارٌ" },
+    { ruleId: "harf-jarr-bi-fi-01", matchText: "بِالْجَامِعَةِ" }
   ],
   "mb1-76-11": [
     { ruleId: "jam-muannath-salim-01", matchText: "طَبِيبَاتٌ" },
@@ -3459,6 +3513,12 @@ const SENTENCE_TAGS = {
   ],
   "by1-85-2": [
     { ruleId: "mudari-erkennen-01", matchText: "يَغْسِلُ" }
+  ],
+  "mb1-66-1": [
+    { ruleId: "iltiqa-sakinain-verb-01", matchText: "جَلَسَتِ" }
+  ],
+  "by1-32-1": [
+    { ruleId: "adjektive-steigerung-akbar-01", matchText: "أَكْبَرُ" }
   ]
 };
 
