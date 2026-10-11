@@ -729,6 +729,13 @@ export const PFLEGEPLAN = [
     veralten: [
       { routine: W, schritt: '1c.8c', beleg: 'node werkzeuge/regelpruefung-seite.mjs', werkzeug: 'werkzeuge/regelpruefung-seite.mjs',
         wie: 'die Regelprüfungs-Seite wird mit jeder neuen Regel neu gebaut' },
+      /* ⭐ 11.10.2026: die Seite wird geteilt veröffentlicht (kleine Seite +
+         Inhaltsdatei, werkzeuge/seite-teilen.mjs), weil eine Sitzung die große
+         Datei vor jedem Neuveröffentlichen ganz lesen müsste. Der Erzeuger
+         schreibt beide Fassungen im selben Lauf; veralten könnte nur die eine
+         gegen die andere. */
+      { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs',
+        wie: 'pruefe-netzfassung.mjs im Sammellauf: die Netzfassung der Regelprüfungs-Seite ergibt zusammengesetzt genau die Seite, die die Seitenprüfer lesen' },
       /* ⭐ 22.09.2026 (v562): `hinweisVerraet` je Übung. Elias: „Bau das bitte
          so, dass die Routinen es aktuell halten." Das Feld ist ein Urteil über
          einen TEXT und veraltet still: wer einen Hinweis um ein Beispielwort
@@ -780,8 +787,14 @@ export const PFLEGEPLAN = [
       wie: 'jede neue Regel erscheint beim nächsten Bau in ihrer Kategorie — die Einteilung kommt aus SATZ_THEMEN, nicht aus einer zweiten Liste' },
     eingaben: { routine: W, schritt: "1d.3", beleg: "node werkzeuge/urteile-uebernehmen.mjs", werkzeug: 'werkzeuge/urteile-uebernehmen.mjs',
       wie: 'seine Entscheidungen kommen im Format DRIN/RAUS/AENDERN heraus, das dieses Werkzeug schon liest — deshalb kein zweites gebaut' },
-    veralten: { routine: W, schritt: '1d.3', beleg: 'werkzeuge/regelkategorien-seite.mjs',
-      wie: 'die Seite trägt ihr Baudatum und wird bei jedem Lauf neu erzeugt; eine Regel, die aus SATZ_THEMEN fällt, landet sichtbar unter „Nicht zuordbar"' },
+    veralten: [
+      { routine: W, schritt: '1d.3', beleg: 'werkzeuge/regelkategorien-seite.mjs',
+        wie: 'die Seite trägt ihr Baudatum und wird bei jedem Lauf neu erzeugt; eine Regel, die aus SATZ_THEMEN fällt, landet sichtbar unter „Nicht zuordbar"' },
+      /* ⭐ 11.10.2026: geteilt veröffentlicht wie die Regelprüfungs-Seite
+         (werkzeuge/seite-teilen.mjs) — derselbe Prüfer bewacht beide. */
+      { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs',
+        wie: 'pruefe-netzfassung.mjs im Sammellauf: die Netzfassung der Kategorien-Seite ergibt zusammengesetzt genau die Seite, die die Seitenprüfer lesen' },
+    ],
   },
   {
     /* Neu am 22.09.2026. Elias: „wir hatten ausgemacht das du das machen sollst

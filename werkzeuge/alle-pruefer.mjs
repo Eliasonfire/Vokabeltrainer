@@ -499,6 +499,13 @@ const PRUEFER = [
      von sieben waren es in der Nacht auf den 21.08.2026, zwei starben dabei
      sogar beim Laden. [[allgemeine_regel_statt_listeneintrag]] */
   ['werkzeuge/pruefe-seitenspeicher.mjs', []],
+  /* ⭐ Neu am 11.10.2026: die zwei großen Regelseiten werden geteilt
+     veröffentlicht (kleine Seite + Inhaltsdatei, werkzeuge/seite-teilen.mjs).
+     Die Seitenprüfer lesen weiter die große Datei — dieser hier stellt sicher,
+     dass die Netzfassung zusammengesetzt genau diese Datei ergibt. Sonst wäre
+     alles grün und im Netz stünde etwas anderes, als geprüft wurde.
+     [[werkzeug_misst_kleineren_bestand]] */
+  ['werkzeuge/pruefe-netzfassung.mjs', []],
   ['werkzeuge/pruefe-schreibpfade.mjs', []],
   ['werkzeuge/pruefe-volles-programm.mjs', []],
   /* ⛔ SIEBEN PRUEFSTAENDE, DIE BIS ZUM 21.08.2026 NIEMAND GESTARTET HAT.
