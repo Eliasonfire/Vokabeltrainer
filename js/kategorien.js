@@ -528,6 +528,56 @@ document.getElementById('btnAddPersonalVocab').addEventListener('click', ()=>{
    hat, er will die Rueckseite sehen. */
 let WK_WORT = null;
 
+/* ---------- Eselsbrücke auf der Wortkarte: seine eigene UND die Vorschläge ----------
+
+   ⭐⭐ Elias, 11.10.2026: „wenn ich eine notiz hinzufüge dann will ich das die
+   eselsbrücken nicht einfach verschwinden, sie sollen da bleiben auch wenn ich eine
+   notiz mache".
+
+   Bis dahin galt hier „seine eigene Notiz schlägt jeden Vorschlag" (Punkt 8 vom
+   10.08.2026, harte Rangfolge): sobald er etwas Eigenes schrieb, verschwanden die
+   Vorschläge. Von Punkt 8 bleibt der KERN: ein Vorschlag überschreibt seine eigene
+   Eselsbrücke nie und wird nie still übernommen. AUFGEHOBEN ist nur das Verdrängen —
+   beides steht jetzt untereinander, seine zuerst.
+
+   Eigene Funktion, damit test-vorschlag-bleibt.mjs sie allein fahren kann.
+   ⛔ Neben seiner eigenen ist der Vorschlagskasten KEIN Knopf (`data-wkmerk` fehlt):
+   zum Ändern tippt er auf seine eigene; die Blätterknöpfe arbeiten weiter. */
+function wkEselsbruecke(w){
+  const t = [];
+  const notiz = getNote(w.id);
+  const liste = (typeof vorschlagsListe === 'function') ? vorschlagsListe(w) : [];
+  if (notiz){
+    t.push(`<div class="wk-abschnitt wk-tippbar" data-wkmerk role="button" tabindex="0" aria-label="Eselsbrücke ändern">
+      <div class="wk-marke"><span>Deine Eselsbrücke</span>
+        <span class="wk-stift" aria-hidden="true">${icon('note')}ändern</span></div>
+      <div class="de">${arabischHervorheben(notiz)}</div>
+    </div>`);
+  }
+  if (liste.length){
+    const nr = gewaehlterVorschlag(w.id, liste.length);
+    const huelle = notiz ? 'class="wk-abschnitt" data-wkvorschlag'
+      : 'class="wk-abschnitt wk-tippbar" data-wkmerk role="button" tabindex="0" aria-label="Eigene Eselsbrücke schreiben"';
+    t.push(`<div ${huelle}>
+      <div class="wk-marke"><span>Vorschlag</span>
+        <span>${liste.length>1?`${nr+1} von ${liste.length}`:''}
+        ${notiz ? '' : `<span class="wk-stift" aria-hidden="true">${icon('note')}eigene</span>`}</span></div>
+      <div class="de">${arabischHervorheben(liste[nr])}</div>
+      ${liste.length>1?`<div class="wk-blaettern">
+        <button class="btn btn-secondary btn-klein" data-wkblatt="-1">← Vorheriger</button>
+        <button class="btn btn-secondary btn-klein" data-wkblatt="1">Anderer →</button>
+      </div>`:''}
+    </div>`);
+  } else if (!notiz){
+    t.push(`<div class="wk-abschnitt wk-tippbar" data-wkmerk role="button" tabindex="0" aria-label="Eselsbrücke schreiben">
+      <div class="wk-marke"><span>Eselsbrücke</span>
+        <span class="wk-stift" aria-hidden="true">${icon('note')}schreiben</span></div>
+      <div class="de" style="color:var(--text-faint)">Noch keine — schreib dir eine.</div>
+    </div>`);
+  }
+  return t.join('');
+}
+
 function baueWortKarte(w){
   const t = [];
   const box = PROGRESS[w.id] ? PROGRESS[w.id].box : 1;
@@ -608,35 +658,11 @@ function baueWortKarte(w){
      weiter unten im Klick-Ablauf, also muss der Kasten-Handler sie ausnehmen
      — sonst öffnete „Anderer →" das Formular, statt zu blättern. Die Ausnahme
      steht bei `data-wkmerk` im Handler. */
-  const notiz = getNote(w.id);
-  if (notiz){
-    t.push(`<div class="wk-abschnitt wk-tippbar" data-wkmerk role="button" tabindex="0" aria-label="Eselsbrücke ändern">
-      <div class="wk-marke"><span>Deine Eselsbrücke</span>
-        <span class="wk-stift" aria-hidden="true">${icon('note')}ändern</span></div>
-      <div class="de">${arabischHervorheben(notiz)}</div>
-    </div>`);
-  } else {
-    const liste = (typeof vorschlagsListe === 'function') ? vorschlagsListe(w) : [];
-    if (liste.length){
-      const nr = gewaehlterVorschlag(w.id, liste.length);
-      t.push(`<div class="wk-abschnitt wk-tippbar" data-wkmerk role="button" tabindex="0" aria-label="Eigene Eselsbrücke schreiben">
-        <div class="wk-marke"><span>Vorschlag</span>
-          <span>${liste.length>1?`${nr+1} von ${liste.length}`:''}
-          <span class="wk-stift" aria-hidden="true">${icon('note')}eigene</span></span></div>
-        <div class="de">${arabischHervorheben(liste[nr])}</div>
-        ${liste.length>1?`<div class="wk-blaettern">
-          <button class="btn btn-secondary btn-klein" data-wkblatt="-1">← Vorheriger</button>
-          <button class="btn btn-secondary btn-klein" data-wkblatt="1">Anderer →</button>
-        </div>`:''}
-      </div>`);
-    } else {
-      t.push(`<div class="wk-abschnitt wk-tippbar" data-wkmerk role="button" tabindex="0" aria-label="Eselsbrücke schreiben">
-        <div class="wk-marke"><span>Eselsbrücke</span>
-          <span class="wk-stift" aria-hidden="true">${icon('note')}schreiben</span></div>
-        <div class="de" style="color:var(--text-faint)">Noch keine — schreib dir eine.</div>
-      </div>`);
-    }
-  }
+  /* ⭐⭐ Seit dem 11.10.2026 stehen seine eigene Eselsbrücke UND die Vorschläge
+     untereinander — der Bau steht in wkEselsbruecke() direkt über dieser Funktion,
+     dort auch sein Satz dazu. Der Kommentar oben („schlaegt jeden Vorschlag") gilt
+     nur noch im Kern: ein Vorschlag überschreibt seine eigene nie. */
+  t.push(wkEselsbruecke(w));
 
   /* ⭐⭐ EIGENE NOTIZ — Elias am 20.08.2026: „ich will am besten eine notiz
      funktion haben ähnlich wie die vorschlag funktion … ich wollte eben zu

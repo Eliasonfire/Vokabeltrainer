@@ -1227,9 +1227,21 @@ function renderNotiz(w){
      ist das Nummer 0 - und die ist `w.mnemo`, das Verhalten aendert sich fuer
      alle unberuehrten Woerter also nicht. */
   const liste = vorschlagsListe(w);
-  const vorschlag = (!notiz && liste.length)
-    ? liste[gewaehlterVorschlag(w.id, liste.length)]
-    : '';
+  /* ⭐⭐ Seit dem 11.10.2026 bleibt der Vorschlag AUCH neben seiner eigenen stehen.
+     Elias: „wenn ich eine notiz hinzufüge dann will ich das die eselsbrücken nicht
+     einfach verschwinden, sie sollen da bleiben auch wenn ich eine notiz mache".
+     Von Punkt 8 bleibt der Kern (ein Vorschlag überschreibt seine eigene nie und
+     wird nie still übernommen); aufgehoben ist nur das Verdrängen. Im Kasten selbst
+     steht weiter seine eigene; der Vorschlag steht dann in der Zeile darunter
+     (`cardNoteVorschlag`), als Vorschlag beschriftet und ohne Knopf. */
+  const gewaehlt = liste.length ? liste[gewaehlterVorschlag(w.id, liste.length)] : '';
+  const vorschlag = notiz ? '' : gewaehlt;
+  const daneben = notiz ? gewaehlt : '';
+  const zusatz = document.getElementById('cardNoteVorschlag');
+  if (zusatz){
+    zusatz.innerHTML = daneben ? arabischHervorheben(daneben) : '';
+    zusatz.classList.toggle('hidden', !daneben);
+  }
   /* innerHTML statt textContent, damit die arabischen Woerter im Text gross
      gesetzt werden koennen (arabischHervorheben, js/kern.js). Die Funktion
      maskiert selbst - `notiz` ist Elias' eigener Text und darf nicht roh in
