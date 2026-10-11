@@ -150,26 +150,25 @@ async function tabellen() {
   console.log(`          ${nurDeutsch} englische Einträge mit deutscher Übersetzung (für den Weg über das Englische) · ${groesseDe} B`);
 }
 
-/* ---------- 4. Zusatzformen: gebeugte Formen zu den noch offenen Plätzen ---------------------------------
+/* ---------- 4. Zusatzformen: gebeugte Formen zu den Wörtern der Plätze -----------------------------------
  * Der schlanke Auszug (1) führt von jedem Verb nur die dritte Person und die Befehlsform und vom Nomen nicht die
  * Zweizahl. Manche Karten führen aber genau solche Formen („du hast …", „ich hoffe", eine Zweizahl). Hier werden aus
- * den VOLLSTÄNDIGEN Tabellen der Quelle nur die Formen geholt, die einem Wort der noch offenen Plätze gleichen
- * (gleiche Buchstaben) — ob auch die Vokalzeichen passen, entscheidet der Zuordner. Die Liste der offenen Plätze
- * kommt aus der Zuordnung; nach größeren Fortschritten also neu laufen lassen. */
+ * den VOLLSTÄNDIGEN Tabellen der Quelle nur die Formen geholt, die einem Wort eines Platzes gleichen (gleiche
+ * Buchstaben) — ob auch die Vokalzeichen passen, entscheidet der Zuordner. Die Wörter kommen aus der Zuordnung.
+ * ⛔ Gesucht wird zu ALLEN Plätzen, nicht nur zu den offenen: am 11.10.2026 suchte diese Stelle nur zu den offenen,
+ * und beim nächsten Lauf fehlten genau die Formen, über die inzwischen vier Plätze belegt waren — sie fielen
+ * wieder heraus. Ein Auszug darf nicht vom Stand des Baus abhängen. */
 async function zusatz() {
   const ERSATZ = path.join(REPO, 'data-ersatz');
   const nfc = t => String(t ?? '').normalize('NFC').trim();
   const bar = t => nfc(t).replace(/[ً-ْٰـ]/g, '').replace(/[أإآٱ]/g, 'ا').replace(/ى/g, 'ي');
   const saetze = fs.readFileSync(path.join(ERSATZ, 'arbeit', 'zuordnung.jsonl'), 'utf8').split('\n').filter(Boolean).map(z => JSON.parse(z));
-  const belege = {};
   const gesucht = new Set();
-  let offen = 0;
-  for (const s of saetze) {
-    const datei = path.join(ERSATZ, 'belege-' + s.buch + '.json');
-    const b = belege[s.buch] ||= (fs.existsSync(datei) ? JSON.parse(fs.readFileSync(datei, 'utf8')) : {});
-    if ((b[s.id] || {}).status === 'belegt') continue;
-    offen++;
-    for (const t of bar(s.suche.ar).split(/\s+/)) if (t.length > 1) gesucht.add(t);
+  // auch der Rest hinter einem ersten Buchstaben, der eine angehängte Vorsilbe sein kann (bi-, wa-, fa-, li-, ka-, sa-);
+  // nach „li" fällt das Alif des Artikels in der Schrift weg, darum auch „Alif + Rest"
+  for (const s of saetze) for (const t of bar(s.suche.ar).split(/\s+/)) {
+    if (t.length > 1) gesucht.add(t);
+    if (t.length > 3 && /^[فوبلكس]/.test(t)) { gesucht.add(t.slice(1)); gesucht.add('ا' + t.slice(1)); }
   }
   const quelle = path.join(QUELLEN, 'enwikt-arabisch', 'kaikki.org-dictionary-Arabic.jsonl');
   const aus = schreiber(path.join(ZIEL, 'enwikt-zusatzformen.jsonl'));
@@ -197,7 +196,7 @@ async function zusatz() {
     }
   }
   const groesse = await aus.fertig();
-  console.log(`zusatz: ${offen} offene Plätze · ${gesucht.size} verschiedene Wörter gesucht · ${gelesen} Zeilen gelesen · ${formen} Formen zu ${gefunden.size} Wörtern gefunden · ${groesse} B`);
+  console.log(`zusatz: ${saetze.length} Plätze · ${gesucht.size} verschiedene Wörter gesucht ·${gelesen} Zeilen gelesen · ${formen} Formen zu ${gefunden.size} Wörtern gefunden · ${groesse} B`);
 }
 
 const was = process.argv[2];
