@@ -315,13 +315,27 @@ export const PFLEGEPLAN = [
       { routine: 'vokabeltrainer-neue-kapitel', schritt: '0', beleg: 'node werkzeuge/neue-kapitel.mjs --auftrag', werkzeug: 'werkzeuge/neue-kapitel.mjs',
         wie: 'neu angehakte Kapitel (höchstens drei je Buch, länger als eine Stunde) bekommen stündlich das volle Programm' },
     ],
-    veralten: { routine: W, schritt: '2', beleg: 'node werkzeuge/baue-vokabelpaket.mjs', werkzeug: 'werkzeuge/baue-vokabelpaket.mjs',
-      wie: 'das Vokabelpaket wird nach dem Abzug neu gebaut; das ABFRAGEDATUM der '
-        + 'Freischaltung pflegt vorrat.mjs selbst in werkzeuge/freischaltung-abfrage.json '
-        + '(15.09.2026) — vorher stand es nur als Kommentar in der ausgelieferten '
-        + 'js/kern.js und wurde bei einem Lauf ohne Änderung nicht erneuert, worauf '
-        + 'die Warnung „die Mi/So-Abfrage hat ausgesetzt" jeden Sonntag zu Unrecht kam. '
-        + 'Bewacht von test-freischaltung-abfragemarke.mjs' },
+    veralten: [
+      { routine: W, schritt: '2', beleg: 'node werkzeuge/baue-vokabelpaket.mjs', werkzeug: 'werkzeuge/baue-vokabelpaket.mjs',
+        wie: 'das Vokabelpaket wird nach dem Abzug neu gebaut; das ABFRAGEDATUM der '
+          + 'Freischaltung pflegt vorrat.mjs selbst in werkzeuge/freischaltung-abfrage.json '
+          + '(15.09.2026) — vorher stand es nur als Kommentar in der ausgelieferten '
+          + 'js/kern.js und wurde bei einem Lauf ohne Änderung nicht erneuert, worauf '
+          + 'die Warnung „die Mi/So-Abfrage hat ausgesetzt" jeden Sonntag zu Unrecht kam. '
+          + 'Bewacht von test-freischaltung-abfragemarke.mjs' },
+      /* 12.10.2026: die Ersatzdatenbank (data-ersatz/, lokal). Elias am 11.10.2026:
+         „1:1 ersatzdatenbank von den vokabeln die alle nicht von mir stammen …
+         damit man … nahtlos wechseln kann ohne probleme". Sie ist keine Datei der
+         App, aber sie veraltet mit jedem Platz, den der Abzug dazubekommt — und
+         das fiele erst am Tag des Wechsels auf. Darum fragt die Wartung den
+         Prüfer; meldet er, dass der Bestand sich geändert hat, laufen Zuordner
+         und Bau neu, und was keine Quelle von selbst belegt, wird ein Punkt in
+         der To-Do (entscheiden muss es eine Sitzung, nicht die Routine). */
+      { routine: W, schritt: '2b', beleg: 'node werkzeuge/ersatz-zuordnen.mjs', werkzeug: 'werkzeuge/ersatz-zuordnen.mjs',
+        wie: 'die Ersatzdatenbank folgt dem Abzug: pruefe-ersatz.mjs meldet neue Plätze, dann laufen '
+          + 'ersatz-zuordnen.mjs und ersatz-bauen.mjs neu; offene Plätze kommen als Punkt in die To-Do. '
+          + 'Bewacht von pruefe-ersatz.mjs und eiche-ersatz.mjs' },
+    ],
   },
   {
     /* 16.09.2026 (v512), innerhalb von js/buecher.js und deshalb von Hand hier.
