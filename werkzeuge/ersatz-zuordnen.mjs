@@ -40,7 +40,9 @@ export function k1(v) { return nfc(v).split(/\s+/).map(k1Wort).join(' '); }
 // k2 setzt außerdem das Dolchalif dem Fatha gleich: „hadha" steht in der Quelle mit Dolchalif, auf der Karte mit Fatha.
 export function k2(v) {
   // Nach dem Tausch noch einmal NFC: das Dolchalif steht in der Normalform HINTER dem Schadda, das Fatha davor.
-  return ohneHamza(k1(v)).replace(/َ?ٰ/g, 'َ').normalize('NFC').replace(/َ(?=ا)/g, '').replace(/ِ(?=ي)/g, '').replace(/ُ(?=و)/g, '');
+  return ohneHamza(k1(v)).replace(/َ?ٰ/g, 'َ').normalize('NFC').replace(/َ(?=ا)/g, '').replace(/ِ(?=ي)/g, '').replace(/ُ(?=و)/g, '')
+    // das Tanwin des Akkusativs steht je nach Vorlage vor oder hinter dem Schluss-Alif
+    .replace(/ً(?=[اي](?: |$))/g, '');
 }
 const ARTIKEL = /^الْ?/;
 const hatArtikel = v => ARTIKEL.test(nfc(v));
@@ -98,6 +100,81 @@ for (const e of ladeJsonl(path.join(AUSZUEGE, 'enwikt-tabellen.jsonl'))) {
     if (!a.w || !d.w) continue;
     merkeDe(a.w, { q: 'enwikt-tab', de: d.w, pos: e.pos, wo: `en.wiktionary „${e.w}“ (${e.pos}), Übersetzungen „${k.sinn}“`, sinn: k.sinn, en: e.w, vok: /[ً-ْ]/.test(a.w) ? [a.w] : [], rom: a.r });
   }
+}
+
+/* Der deutsche Schlüssel zum Lehrbuch (Auszug von ersatz-schluessel.py): je Tabellenzeile die arabische Zelle
+ * (Stichwort, bei Verben Vergangenheit und Gegenwart, die Mehrzahl in Klammern hinter „ج") und die deutsche.
+ * Er ist Elias' eigenes Buch — in seiner Rangfolge der Belege an zweiter Stelle, über dem Wörterbuch — und gilt
+ * nur für das Buch, zu dem er gehört. Von Claude stammt: eine Zeile zählt nur bei GLEICHER Schreibung mit
+ * Vokalzeichen (das Auslesen aus dem PDF macht Fehler; eine Zeile, die nicht passt, bleibt der Hand). */
+const SCHLUESSEL_NAME = { 'madina-3': 'Schlüssel zu Madina Buch 3, deutsche Fassung (PDF)' };
+const DE_KORREKTUR = (() => { const d = path.join(REPO, 'data-ersatz', 'hand', 'schluessel-korrektur.json'); return fs.existsSync(d) ? JSON.parse(fs.readFileSync(d, 'utf8')) : {}; })();
+const VERBKLASSE = /\(\s*(?:[aiu]\s*-\s*[aiu]|I{1,3}|IV|VI{0,3}|IX|X)\s*\)/g;
+const schluessel = {};
+for (const buch of Object.keys(SCHLUESSEL_NAME)) {
+  const reg = schluessel[buch] = { kopf: new Map(), form: new Map(), nah: new Map(), zeilen: 0 };
+  for (const z of ladeJsonl(path.join(AUSZUEGE, 'schluessel-' + buch + '.jsonl'))) {
+    reg.zeilen++;
+    const gruppen = [];
+    const kopf = nfc(z.ar).replace(/\(([^()]*)\)/g, (_, g) => { gruppen.push(g.trim()); return ' '; }).replace(/[()]/g, ' ').replace(/\s+/g, ' ').trim();
+    if (!kopf) continue;
+    const mehrzahl = gruppen.filter(g => /^ج\s/.test(g)).flatMap(g => g.replace(/^ج\s+/, '').split(/\s*[،,]\s*/)).filter(x => /[ء-ي]/.test(x));
+    const klasse = (z.de.match(VERBKLASSE) || [])[0] || null;
+    let de = z.de.replace(VERBKLASSE, ' ').replace(/\s+/g, ' ').replace(/\s+,/g, ',').trim();
+    let berichtigt = false;
+    for (const [falsch, richtig] of Object.entries(DE_KORREKTUR)) if (de.includes(falsch)) { de = de.split(falsch).join(richtig); berichtigt = true; }
+    // „X = Y" und „X، Y" nennen zwei Stichwörter in einer Zeile
+    const stichwoerter = kopf.split(/\s*[=،]\s*/).filter(x => /[ء-ي]/.test(x));
+    const w = (stichwoerter[0] || kopf).split(' ');
+    // Verbzeile: hinter der Vergangenheit steht die Gegenwart (beginnt mit Ya) oder, ab Lektion 14, das Verbalsubstantiv im
+    // Akkusativ; meist nennt das Deutsch dazu die Vokalklasse oder den Stamm. Dazwischen kann eine Ergänzung stehen.
+    const geg = w.slice(1).find(t => /^ي[َُ]/.test(t)) || null;
+    const vergForm = /[َاى]$/.test(w[0]) || /َّ$/.test(w[0]);
+    const mitMasdar = w.length >= 2 && /ً[اى]?$|اً$/.test(w[w.length - 1]);
+    const istVerb = vergForm && (!!klasse || !!geg || mitMasdar);
+    const zeile = { lektion: z.lektion, seite: z.seite, nr: z.zeile, kopf, mehrzahl, klasse, de, berichtigt, verb: istVerb, geg: istVerb ? geg : null };
+    const merke = (karte, form) => { const s = k2(form); if (s) (karte.get(s) || karte.set(s, []).get(s)).push({ zeile, form: nfc(form) }); };
+    // „nah": dieselben Buchstaben, die Vokalzeichen können abweichen — nur für das Blatt und die Entscheidung von Hand
+    const merkeNah = form => { const s = ohneHamza(nackt(form)); if (s) (reg.nah.get(s) || reg.nah.set(s, []).get(s)).push({ zeile, form: nfc(form) }); };
+    if (istVerb) { merke(reg.kopf, w[0]); merkeNah(w[0]); }
+    for (const s of stichwoerter.slice(istVerb ? 1 : 0)) { merke(reg.kopf, s); merkeNah(s); }
+    for (const m of mehrzahl) merke(reg.form, m);
+    for (const g of gruppen.filter(g => !/^ج\s/.test(g))) if (/[ء-ي]/.test(g)) merke(reg.form, g);
+  }
+}
+function schluesselFuer(buch, wort, kap) {
+  const reg = schluessel[buch];
+  if (!reg) return [];
+  const s = k2(wort);
+  let funde = [...(reg.kopf.get(s) || []).map(x => ({ ...x, alsKopf: true })), ...(reg.form.get(s) || []).map(x => ({ ...x, alsKopf: false }))];
+  // Karte „Verb + Verhältniswort": die Zeile des Schlüssels führt das Verb; das Verhältniswort belegt das Wörterbuch
+  const teile = nfc(wort).split(/\s+/);
+  if (!funde.some(x => x.alsKopf) && teile.length > 1) funde = funde.concat((reg.kopf.get(k2(teile[0])) || []).filter(x => x.zeile.verb).map(x => ({ ...x, alsKopf: true, nurErstes: true })));
+  return funde.map(x => ({ ...x, streng: k1(x.form) === k1(x.nurErstes ? teile[0] : wort), lektionGleich: x.zeile.lektion === kap }))
+    .sort((a, b) => (b.alsKopf - a.alsKopf) || (b.lektionGleich - a.lektionGleich) || (b.streng - a.streng));
+}
+const schluesselOrt = (buch, zl) => `${SCHLUESSEL_NAME[buch]}, Lektion ${zl.lektion}, Wörterliste, S. ${zl.seite}`;
+/* Vorschlag aus einer Zeile des Schlüssels. Die Wortart nennt der Schlüssel nicht; er zeigt nur, ob es ein Verb ist
+ * (Gegenwartsform, Vokalklasse) oder ein Nomen (Mehrzahl, Tanwin). Die feinere Einteilung der App bleibt, wenn sie
+ * dazu passt — dieselbe Regel wie beim Wörterbuch. */
+function vorschlagAusSchluessel(x, wort, karte, buch) {
+  const zl = x.zeile, ort = schluesselOrt(buch, zl);
+  const v = {};
+  const setze = (feld, w, was) => { if (voll(w)) v[feld] = { w: nfc(w), wo: `${ort}: ${was}`, q: 'buch' }; };
+  setze('ar', x.form, zl.verb ? 'Vergangenheit' : 'Stichwort');
+  const nominal = zl.mehrzahl.length > 0 || /[ً-ٍ]$|ً[اى]$/.test(x.form);
+  if (zl.verb) { if (karte.type === 'verb') setze('type', 'verb', 'Verb (Gegenwartsform und Vokalklasse stehen dabei)'); }
+  else if (karte.type !== 'verb') setze('type', karte.type, nominal ? 'Nomen (mit Tanwin oder Mehrzahl genannt); die feinere Einteilung der App ist beibehalten' : 'kein Verb (keine Gegenwartsform, keine Vokalklasse); die Einteilung der App ist beibehalten');
+  if (zl.verb) { setze('past', x.form, 'Vergangenheit'); setze('present', zl.geg, 'Gegenwart'); }
+  else {
+    if (voll(karte.sg) && k1(karte.sg) === k1(wort)) setze('sg', x.form, 'Stichwort');
+    if (zl.mehrzahl.length) {
+      const bisher = teileVon(karte.pl);
+      const gw = bisher.length && zl.mehrzahl.some(p => bisher.some(b => k1(b) === k1(p))) ? zl.mehrzahl.filter(p => bisher.some(b => k1(b) === k1(p))) : zl.mehrzahl;
+      setze('pl', gw.join(trenner(karte.pl)), 'Mehrzahl' + (zl.mehrzahl.length > gw.length ? ` (der Schlüssel nennt ${zl.mehrzahl.length})` : ''));
+    }
+  }
+  return v;
 }
 
 /* ---------- Zuordnung ---------------------------------------------------------------------------------------- */
@@ -179,6 +256,23 @@ const wurzelVon = (e, tiefe = 0) => {
   return null;
 };
 
+/* Ein einzelnes Wort einer Fügung im Wörterbuch suchen, GENAU in der Form, in der es dasteht (erstes Glied ohne Tanwin,
+ * zweites im Genitiv mit Artikel) — die Beugungstabelle der Quelle nennt diese Formen. Ist der gefundene Eintrag selbst
+ * nur eine gebeugte Form (weibliche Form, Mehrzahl), steht die Tabelle beim Stichwort, auf das er verweist. */
+function teilFund(t) {
+  const r = stufeFuer(t, 'noun', {});
+  const mitStichwort = [];
+  for (const x of r.treffer) {
+    mitStichwort.push(x.e);
+    if (x.e.formVon) for (const s of x.e.sinn || []) for (const ziel of s.fo || []) for (const l of nachNackt.get(nackt(ziel)) || []) if (!l.formVon && !mitStichwort.includes(l)) mitStichwort.push(l);
+  }
+  for (const e of mitStichwort) {
+    const formen = [...(e.tab || []), ...(e.kopf || []), ...(e.hf || [])];
+    const f = formen.find(f => nfc(f.f) === t) || formen.find(f => ohneSukun(f.f) === ohneSukun(t));
+    if (f) return { r, fund: { e, f } };
+  }
+  return { r, fund: null };
+}
 const teileVon = wert => voll(wert) ? nfc(wert).split(/\s*[|\/]\s*/).filter(Boolean) : [];
 const trenner = wert => voll(wert) && String(wert).includes('/') ? ' / ' : '|';
 const ohneSukun = t => nfc(t).replace(/ْ/g, '');
@@ -362,20 +456,7 @@ for (const buch of BUECHER) {
       // Fügung aus mehreren Wörtern: jedes Wort einzeln suchen, und zwar GENAU in der Form, in der es in der Fügung steht
       // (z. B. erstes Glied ohne Tanwin, zweites im Genitiv mit Artikel) — die Beugungstabelle der Quelle nennt diese Formen.
       const teile = wort.split(/\s+/).map(t => {
-        const r = stufeFuer(t, 'noun', {});
-        let fund = null;
-        // Ist der gefundene Eintrag selbst nur eine gebeugte Form (weibliche Form, Mehrzahl), steht die Beugungstabelle
-        // beim Stichwort, auf das er verweist — dort weitersuchen.
-        const mitStichwort = [];
-        for (const x of r.treffer) {
-          mitStichwort.push(x.e);
-          if (x.e.formVon) for (const s of x.e.sinn || []) for (const ziel of s.fo || []) for (const l of nachNackt.get(nackt(ziel)) || []) if (!l.formVon && !mitStichwort.includes(l)) mitStichwort.push(l);
-        }
-        for (const e of mitStichwort) {
-          const formen = [...(e.tab || []), ...(e.kopf || []), ...(e.hf || [])];
-          const f = formen.find(f => nfc(f.f) === t) || formen.find(f => ohneSukun(f.f) === ohneSukun(t));
-          if (f) { fund = { e, f }; break; }
-        }
+        const { r, fund } = teilFund(t);
         const de = [...new Set(deutschFuer(t, { de: '' }, []).alle.filter(d => d.sicher === 'vokalisiert' && !d.erkl).map(d => d.de))].slice(0, 8);
         return { t, stufe: r.stufe, ref: r.treffer.map(x => x.e.ref), fund, de };
       });
@@ -397,7 +478,6 @@ for (const buch of BUECHER) {
         for (const f of FELDER) satz.vergleich[f] = vergleiche(f, v[f] && v[f].w, karte[f]);
       }
     } else satz.stufe = res.stufe;
-    z.stufe[satz.stufe] = (z.stufe[satz.stufe] || 0) + 1;
     if (res.treffer.length === 1) {
       const { e, artikelAb, nimmQuelle } = res.treffer[0];
       satz.ref = e.ref; satz.artikelAb = artikelAb || undefined; satz.formVon = e.formVon || undefined;
@@ -410,10 +490,52 @@ for (const buch of BUECHER) {
       for (const f of FELDER) { const erg = vergleiche(f, v[f] && v[f].w, karte[f]); satz.vergleich[f] = erg; if (erg !== 'beide-leer') { z.feld[f] ||= {}; z.feld[f][erg] = (z.feld[f][erg] || 0) + 1; } }
     } else if (res.treffer.length > 1) satz.wahl = res.treffer.map(x => ({ ref: x.e.ref, kopf: (x.e.kopf || []).map(f => f.f), en: (x.e.sinn || []).slice(0, 3).map(s => s.g) }));
     else if (res.alle.length) satz.andereVokale = res.alle.map(x => ({ ref: x.e.ref, kopf: (x.e.kopf || []).map(f => f.f), en: (x.e.sinn || []).slice(0, 2).map(s => s.g) }));
+    // Der Schlüssel zum Lehrbuch: Zeilen, deren Stichwort (oder Nebenform) diesem Wort gleicht. Fürs Arabische zählt er,
+    // wenn das Wörterbuch keinen eindeutigen Eintrag hat: die Zeile der GLEICHEN Lektion, sonst die einzige des Buches.
+    let sch = schluesselFuer(buch, wort, karte.chapter);
+    // Führt die Lektion dieselben Buchstaben mit ANDEREN Vokalzeichen, steht die Zeile nur auf dem Blatt. Die Hand kann
+    // sie mit „schluessel": true (oder der Zeilennummer) gelten lassen — dann steht die Form des Buches auf der Karte,
+    // und die Abweichung von der bisherigen Karte kommt in die Liste „Unterschiede".
+    if (schluessel[buch] && !sch.some(x => x.alsKopf)) {
+      const nah = (schluessel[buch].nah.get(ohneHamza(nackt(wort))) || []).filter(x => x.zeile.lektion === karte.chapter);
+      if (nah.length) satz.schluesselNah = nah.slice(0, 3).map(x => ({ nr: x.zeile.nr, form: x.form, de: x.zeile.de }));
+      const gewaehlt = h.schluessel ? nah.filter(x => h.schluessel === true || x.zeile.nr === h.schluessel) : [];
+      if (gewaehlt.length === 1) sch = [{ ...gewaehlt[0], alsKopf: true, streng: true, lektionGleich: true, vonHand: true }, ...sch];
+    }
+    if (sch.length) satz.schluessel = sch.slice(0, 5).map(x => ({ lektion: x.zeile.lektion, seite: x.zeile.seite, kopf: x.alsKopf, streng: x.streng, form: x.form, de: x.zeile.de, pl: x.zeile.mehrzahl, geg: x.zeile.geg, verb: x.zeile.verb }));
+    const schKopf = sch.filter(x => x.alsKopf);
+    const sWahl = schKopf.find(x => x.lektionGleich) || (schKopf.length === 1 ? schKopf[0] : null);
+    const woerterbuchGilt = satz.vorschlag && satz.vorschlag.ar && satz.vorschlag.type && !String(satz.stufe).includes('*');
+    if (sWahl && !woerterbuchGilt && !Number.isInteger(h.eintrag)) {
+      const v = vorschlagAusSchluessel(sWahl, wort, karte, buch);
+      if (sWahl.nurErstes && v.ar) {
+        // die übrigen Wörter der Karte (Verhältniswort) einzeln im Wörterbuch suchen, genau in der Form der Karte
+        const rest = wort.split(/\s+/).slice(1).map(t => ({ t, fund: teilFund(t).fund }));
+        if (rest.every(x => x.fund)) {
+          const dazu = rest.map(x => `en.wiktionary „${x.fund.e.w}“ (${x.fund.e.pos}), ${x.fund.f.t.length ? 'Form ' + x.fund.f.t.join(' ') : 'Kopfzeile'}`).join(' + ');
+          v.ar = { w: [v.ar.w, ...rest.map(x => nfc(x.fund.f.f))].join(' '), wo: `${v.ar.wo} + ${dazu}`, q: 'buch' };
+          if (v.past) v.past = { ...v.ar };
+        } else delete v.ar;
+      }
+      if (v.ar && v.type) {
+        satz.stufeWoerterbuch = satz.stufe;
+        satz.stufe = 'S' + (sWahl.vonHand ? 'H' : sWahl.streng ? '' : '2');
+        satz.vorschlag = { ...v, _en: (satz.vorschlag && satz.vorschlag._en) || [] };
+        satz.vergleich = {};
+        for (const f of FELDER) satz.vergleich[f] = vergleiche(f, v[f] && v[f].w, karte[f]);
+      }
+    }
+    z.stufe[satz.stufe] = (z.stufe[satz.stufe] || 0) + 1;
     // „auch": weitere Einträge, deren Bedeutung ebenfalls auf der Karte steht (gleichlautendes zweites Wort)
     const d = deutschFuer(wort, karte, [...res.treffer.map(x => x.e), ...(h.auch || []).map(n => eintraege[n]).filter(Boolean)]);
-    satz.deutsch = d.alle.map(f => ({ de: f.de, q: f.q, wo: f.wo, sicher: f.sicher, deckt: f.deckt || undefined, erkl: f.erkl || undefined, sinn: f.sinn, unsicher: f.unsicher }));
-    const dStufe = d.alle.some(f => f.deckt && f.sicher === 'vokalisiert') ? 'deckt-vokalisiert' : d.alle.some(f => f.deckt && f.sicher === 'kette') ? 'deckt-kette'
+    // das Deutsch des Schlüssels steht vorn; „sch" sagt, ob die Zeile das Wort als Stichwort führt, ob die Schreibung
+    // bis auf die Schlussendung gleich ist und ob es die Lektion des Kapitels ist
+    d.alle.unshift(...sch.map(x => ({ q: 'schluessel', de: x.zeile.de, sicher: 'vokalisiert',
+      wo: schluesselOrt(buch, x.zeile) + (x.zeile.berichtigt ? ' (Tippfehler der Vorlage berichtigt)' : '') + (x.alsKopf ? '' : ' — dort als Nebenform (Mehrzahl oder Variante) genannt'),
+      deckt: deTeile(x.zeile.de).some(g => decktSich(g, d.teile)), sch: { kopf: x.alsKopf, streng: x.streng, lektion: x.lektionGleich } })));
+    satz.deutsch = d.alle.map(f => ({ de: f.de, q: f.q, wo: f.wo, sicher: f.sicher, deckt: f.deckt || undefined, erkl: f.erkl || undefined, sinn: f.sinn, unsicher: f.unsicher, sch: f.sch }));
+    const dStufe = d.alle.some(f => f.sch && f.sch.kopf && f.sch.streng && (f.deckt || f.sch.lektion)) ? 'schluessel'
+      : d.alle.some(f => f.deckt && f.sicher === 'vokalisiert') ? 'deckt-vokalisiert' : d.alle.some(f => f.deckt && f.sicher === 'kette') ? 'deckt-kette'
       : d.alle.some(f => f.deckt) ? 'deckt-schriftbild' : d.alle.length ? 'nur-andere-kandidaten' : 'keine-deutsche-quelle';
     satz.deStufe = dStufe;
     z.deutsch[dStufe] = (z.deutsch[dStufe] || 0) + 1;

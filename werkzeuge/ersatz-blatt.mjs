@@ -52,8 +52,12 @@ for (const s of liste) {
     console.log(`#${s.id} K${s.kap} ${s.typ} ${s.stufe} | ${s.suche.ar} „${kurz(s.suche.de, 46)}“ | ${v ? (s.ref ? '@' + s.ref.split('@')[1] : 'Fügung') + ' ' + fehlt + ' en: ' + kurz((v._en || []).join(' ; '), 120) : ''}`
       + (s.wahl || []).slice(0, 5).map(w => ` ‖ @${w.ref.split('@')[1]} ${w.ref.split('#')[1]} ${w.kopf[0] || ''}: ${kurz(w.en.join(' ; '), 60)}`).join('')
       + (s.andereVokale || []).slice(0, 4).map(w => ` ‖ anders @${w.ref.split('@')[1]} ${w.ref.split('#')[1]} ${w.kopf[0] || ''}: ${kurz(w.en.join(' ; '), 50)}`).join('')
-      + (s.teile || []).map(t => ` ‖ Teil ${t.t} ${t.form ? 'belegt' : 'NICHT belegt (' + t.stufe + ')'} de: ${(t.de || []).slice(0, 5).join(', ')}`).join(''));
-    const d1 = zeig(de.filter(d => d.sicher === 'vokalisiert'), 9), d2 = zeig(de.filter(d => d.sicher === 'kette'), 9);
+      + (s.teile || []).map(t => ` ‖ Teil ${t.t} ${t.form ? 'belegt' : 'NICHT belegt (' + t.stufe + ')'} de: ${(t.de || []).slice(0, 5).join(', ')}`).join('')
+      + (s.schluesselNah || []).map(n => ` ‖ Schlüssel, andere Zeichen (Zeile ${n.nr}): ${n.form} = ${kurz(n.de, 50)}`).join(''));
+    // S: das Deutsch aus dem Schlüssel zum Lehrbuch — die Hand nennt es in „de" als GANZE Zeile, so wie sie hier steht
+    const d0 = de.filter(d => d.sch).slice(0, 3).map(d => `${d.de}${d.deckt ? '✓' : ''} [${d.sch.kopf ? '' : 'Nebenform, '}${d.sch.lektion ? 'gleiche Lektion' : 'andere Lektion'}${d.sch.streng ? '' : ', Schreibung weicht ab'}]`).join(' ‖ ');
+    if (d0) console.log(`     S: ${d0}`);
+    const d1 = zeig(de.filter(d => d.sicher === 'vokalisiert' && !d.sch), 9), d2 = zeig(de.filter(d => d.sicher === 'kette'), 9);
     if (d1 || d2) console.log(`     D: ${d1 || '—'} | K: ${d2 || '—'}`);
     continue;
   }
