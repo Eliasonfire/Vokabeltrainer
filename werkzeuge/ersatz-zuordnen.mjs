@@ -130,6 +130,9 @@ for (const p of ladeJsonl(path.join(AUSZUEGE, 'arabdict.jsonl'))) {
  * Vokalzeichen (das Auslesen aus dem PDF macht Fehler; eine Zeile, die nicht passt, bleibt der Hand). */
 const SCHLUESSEL_NAME = { 'madina-3': 'Schlüssel zu Madina Buch 3, deutsche Fassung (PDF)' };
 const DE_KORREKTUR = (() => { const d = path.join(REPO, 'data-ersatz', 'hand', 'schluessel-korrektur.json'); return fs.existsSync(d) ? JSON.parse(fs.readFileSync(d, 'utf8')) : {}; })();
+// Zeichen aus dem privaten Bereich (Reste der PDF-Schrift des Schlüssels); als Zahlen, damit hier nichts Unsichtbares steht
+const PUNKT_PRIVAT = new RegExp(String.fromCodePoint(0xF024), 'g'), PUNKT_UNTEN = String.fromCodePoint(0x0323);
+const PRIVAT = new RegExp('[' + String.fromCodePoint(0xE000) + '-' + String.fromCodePoint(0xF8FF) + ']', 'g');
 const VERBKLASSE = /\(\s*(?:[aiu]\s*-\s*[aiu]|I{1,3}|IV|VI{0,3}|IX|X)\s*\)/g;
 const schluessel = {};
 for (const buch of Object.keys(SCHLUESSEL_NAME)) {
@@ -141,7 +144,10 @@ for (const buch of Object.keys(SCHLUESSEL_NAME)) {
     if (!kopf) continue;
     const mehrzahl = gruppen.filter(g => /^ج\s/.test(g)).flatMap(g => g.replace(/^ج\s+/, '').split(/\s*[،,]\s*/)).filter(x => /[ء-ي]/.test(x));
     const klasse = (z.de.match(VERBKLASSE) || [])[0] || null;
-    let de = z.de.replace(VERBKLASSE, ' ').replace(/\s+/g, ' ').replace(/\s+,/g, ',').trim();
+    // Die Schrift der Vorlage setzt den Punkt unter einem Umschriftbuchstaben („ṣ", „ḥ", „ḍ") als eigenes Zeichen aus dem
+    // privaten Bereich (U+F024) HINTER den Buchstaben; auf der Karte wäre das ein leeres Kästchen. Es wird zum Punkt
+    // darunter (U+0323) und verschmilzt mit seinem Buchstaben. Andere private Zeichen sind Reste ohne Inhalt.
+    let de = z.de.replace(PUNKT_PRIVAT, PUNKT_UNTEN).replace(PRIVAT, '').normalize('NFC').replace(VERBKLASSE, ' ').replace(/\s+/g, ' ').replace(/\s+,/g, ',').trim();
     let berichtigt = false;
     for (const [falsch, richtig] of Object.entries(DE_KORREKTUR)) if (de.includes(falsch)) { de = de.split(falsch).join(richtig); berichtigt = true; }
     // „X = Y" und „X، Y" nennen zwei Stichwörter in einer Zeile
@@ -286,17 +292,28 @@ const wurzelVon = (e, tiefe = 0) => {
 /* Ein einzelnes Wort einer Fügung im Wörterbuch suchen, GENAU in der Form, in der es dasteht (erstes Glied ohne Tanwin,
  * zweites im Genitiv mit Artikel) — die Beugungstabelle der Quelle nennt diese Formen. Ist der gefundene Eintrag selbst
  * nur eine gebeugte Form (weibliche Form, Mehrzahl), steht die Tabelle beim Stichwort, auf das er verweist. */
-function teilFund(t) {
+function teilFund(t, weit = false) {
   const r = stufeFuer(t, 'noun', {});
-  const mitStichwort = [];
+  // Ein Stichwort, das GENAU so dasteht (mit allen Zeichen), geht vor, gleich welcher Wortart. stufeFuer zieht hier Nomen
+  // vor und vergleicht ohne Schlussendung: bei „ilā" gewann so das Nomen „ilan" (Wohltat), dessen Form im Status
+  // constructus gleich aussieht, vor dem Verhältniswort — die Fundstelle nannte das falsche Wort (gesehen am 11.10.2026).
+  // Unter mehreren genauen Stichwörtern bleibt die Wahl von stufeFuer vorn („dhī" in „dhī l-qurbā" ist das Nomen, nicht
+  // das gleich geschriebene Fürwort).
+  const genau = e => (e.kopf || []).some(f => nfc(f.f) === t);
+  const mitStichwort = [...r.treffer.map(x => x.e).filter(genau), ...(r.alle || []).map(x => x.e).filter(e => !e.formVon && genau(e))].filter((e, i, l) => l.indexOf(e) === i);
   for (const x of r.treffer) {
-    mitStichwort.push(x.e);
+    if (!mitStichwort.includes(x.e)) mitStichwort.push(x.e);
     if (x.e.formVon) for (const s of x.e.sinn || []) for (const ziel of s.fo || []) for (const l of nachNackt.get(nackt(ziel)) || []) if (!l.formVon && !mitStichwort.includes(l)) mitStichwort.push(l);
   }
+  // die Quelle schreibt angehängte Verhältniswörter mit Dehnungsstrich („bi" + Strich); der Strich ist kein Buchstabe
+  const ohneStrich = s => ohneSukun(s).replace(/ـ/g, '');
+  // Tanwin oder kurzer Vokal am Schluss — in NFC steht er VOR einem Schadda desselben Buchstabens („iyyu" endet auf Schadda)
+  const ENDUNG = /[ً-ِ](ّ?)$/;
+  const endeVon = s => { const m = nfc(s).match(ENDUNG); return m ? m[0][0] : null; };
+  const ohneEnde = s => nfc(s).replace(ENDUNG, '$1');
+  const FALL = ['nominative', 'accusative', 'genitive'];
   for (const e of mitStichwort) {
     const formen = [...(e.tab || []), ...(e.kopf || []), ...(e.hf || [])];
-    // die Quelle schreibt angehängte Verhältniswörter mit Dehnungsstrich („bi" + Strich); der Strich ist kein Buchstabe
-    const ohneStrich = s => ohneSukun(s).replace(/ـ/g, '');
     const f = formen.find(f => nfc(f.f) === t) || formen.find(f => ohneStrich(f.f) === ohneStrich(t));
     if (f) return { r, fund: { e, f, w: nfc(f.f) === t || t.includes('ـ') ? nfc(f.f) : nfc(f.f).replace(/ـ/g, '') } };
     // Verbindungs-Alif am Wortanfang: die Quelle schreibt es mit Vokalzeichen oder als Wasla, im Satzinnern steht es
@@ -311,6 +328,35 @@ function teilFund(t) {
     if (nfc(z.f) !== t && gleich(z.f) !== gleich(t)) continue;
     const e = eintragNach.get([z.w, z.pos, z.n || '', nfc(z.k)].join('#'));
     if (e) return { r, fund: { e, f: { f: z.f, t: z.t }, w: nfc(z.f), zusatz: true } };
+  }
+  // Erst wenn keine Form genau so dasteht: drei weitere Vergleiche, nur für die Wörter einer FÜGUNG („weit"), nicht für
+  // ein einzelnes Wort — dort wäre eine Form ohne Endung oder mit versetztem Zeichen leicht ein anderes Wort.
+  // Von Claude so festgelegt (11.10.2026); jeder dieser Fälle steht als Hinweis in der Fundstelle.
+  if (weit) for (const e of mitStichwort) {
+    const formen = [...(e.tab || []), ...(e.kopf || []), ...(e.hf || [])];
+    // (a) Artikel vor Verbindungs-Alif: die Quelle setzt das Kasra an das Lam des Artikels, manche Karte unter das Alif
+    //     — dieselbe Form, nur das Zeichen sitzt einen Buchstaben weiter. Auf die Karte kommt die Schreibung der Quelle.
+    if (/^الاِ/.test(t)) {
+      const artWasl = s => ohneStrich(s).replace(/^الِ?اِ?/, 'الا');
+      const fa = formen.find(f => /^الِا/.test(ohneStrich(f.f)) && artWasl(f.f) === artWasl(t));
+      if (fa) return { r, fund: { e, f: fa, w: nfc(fa.f), hinweis: 'die bisherige Karte setzt das Kasra unter das Verbindungs-Alif, die Quelle an das Lam des Artikels' } };
+    }
+    // (b) ohne Schlussendung: führt die Karte ein Nomen der Fügung in der Pausalform, die Tabelle aber nur die Formen
+    //     mit Kasusendung, gilt die Form der Tabelle bis auf ihr letztes Zeichen. Nur Formen mit Kasusangabe (kein Verb:
+    //     dessen Schlussvokal gehört zur Nennform). Auf die Karte kommt die Schreibung der Karte.
+    if (!endeVon(t)) {
+      const mitFall = formen.filter(f => (f.t || []).some(x => FALL.includes(x)) && endeVon(f.f) && ohneStrich(ohneEnde(f.f)) === ohneStrich(t));
+      const fp = mitFall.find(f => f.t.includes('nominative')) || mitFall[0];
+      if (fp) return { r, fund: { e, f: fp, w: t, hinweis: 'die Karte führt das Wort ohne die Schlussendung dieser Form' } };
+    }
+    // (c) Schreibung des Stichworts + Endung der Tabelle: die Tabelle schreibt manche Wörter ohne die Zeichen des
+    //     Stichworts (beim Gottesnamen fehlen dort Schadda und Dolchalif). Dann gilt die Form, wenn das Wort ohne seine
+    //     Schlussendung GENAU das Stichwort ist und die Tabelle zu denselben Buchstaben eine Form mit dieser Endung führt.
+    const ende = endeVon(t);
+    if (ende && (e.kopf || []).some(f => nfc(f.f) === ohneEnde(t))) {
+      const fe = (e.tab || []).find(f => (f.t || []).some(x => FALL.includes(x)) && ohneHamza(nackt(f.f)) === ohneHamza(nackt(t)) && endeVon(f.f) === ende);
+      if (fe) return { r, fund: { e, f: fe, w: t, hinweis: 'die Tabelle schreibt das Wort dort ohne die Zeichen des Stichworts; Schreibung nach dem Stichwort, Endung nach der Tabelle' } };
+    }
   }
   return { r, fund: null };
 }
@@ -585,10 +631,18 @@ for (const buch of BUECHER) {
         if (Array.isArray(h.vorsilbe) && h.vorsilbe[0] === nr) { const [vor, rest] = trenneNach(t, [h.vorsilbe[1]]).split(' '); stuecke.push({ t: vor, kleber: '' }, { t: rest || '', kleber: ' ' }); }
         else stuecke.push({ t, kleber: ' ' });
       });
+      let teilNr = -1;
       const alleTeile = stuecke.map(({ t, kleber }) => {
         if (/^(?:[|\/]|\.{3})$/.test(t)) return { t, trenner: true, kleber };
-        const { r, fund } = handForm && !mehrteilig ? { r: { stufe: 'H', treffer: [] }, fund: handForm } : teilFund(t);
-        let de = [...new Set(deutschFuer(t, { de: '' }, []).alle.filter(d => d.sicher === 'vokalisiert' && !d.erkl).map(d => d.de))].slice(0, 8);
+        teilNr++;
+        // „teilEintrag": {Wort ab 0: Eintragsnummer} (Hand): dieses Wort der Fügung schreibt die bisherige Karte mit anderen
+        // Vokalzeichen, als ihr eigener Sinn verlangt („Baumeister" statt „Gebäude") — dann gilt die Stichwortform des
+        // genannten Eintrags; sie kommt auf die Karte, und der Unterschied steht in der Liste.
+        const eHand = h.teilEintrag && Number.isInteger(h.teilEintrag[teilNr]) ? eintraege[h.teilEintrag[teilNr]] : null;
+        const kopfHand = eHand && (eHand.kopf || [])[0];
+        const { r, fund } = kopfHand ? { r: { stufe: 'H', treffer: [{ e: eHand }] }, fund: { e: eHand, f: kopfHand, w: nfc(kopfHand.f), hinweis: 'die bisherige Karte schreibt dieses Wort mit anderen Vokalzeichen; die Hand hat diesen Eintrag gewählt' } }
+          : handForm && !mehrteilig ? { r: { stufe: 'H', treffer: [] }, fund: handForm } : teilFund(t, mehrteilig);
+        let de = kopfHand ? [] : [...new Set(deutschFuer(t, { de: '' }, []).alle.filter(d => d.sicher === 'vokalisiert' && !d.erkl).map(d => d.de))].slice(0, 8);
         // nennt keine Quelle Deutsch zu genau dieser Form, dann das Deutsch des Stichworts (Weg über das Englische)
         if (!de.length && fund) de = [...new Set(ketteFuer(fund.e).map(f => f.de))].slice(0, 8);
         return { t, kleber, stufe: r.stufe, ref: r.treffer.map(x => x.e.ref), fund, de };
@@ -598,7 +652,7 @@ for (const buch of BUECHER) {
       satz.teile = teile.map(t => ({ t: t.t, stufe: t.stufe, ref: t.ref, form: t.fund ? t.fund.f.t.join('+') : null, de: t.de, en: t.fund ? (t.fund.e.sinn || []).filter(s => s.g).slice(0, 2).map(s => s.g) : [] }));
       if (teile.every(t => t.fund)) {
         const kopfE = teile[0].fund.e, kopfPos = wortartVon(kopfE);
-        const beleg = (paar ? 'zwei belegte Formen nebeneinander: ' : mehrteilig ? 'aus belegten Formen gefügt: ' : 'gebeugte Form laut der vollständigen Tabelle der Quelle: ') + teile.map(t => `en.wiktionary „${t.fund.e.w}“ (${t.fund.e.pos}), ${t.fund.f.t.length ? 'Form ' + t.fund.f.t.join(' ') : 'Kopfzeile'}`).join(' + ');
+        const beleg = (paar ? 'zwei belegte Formen nebeneinander: ' : mehrteilig ? 'aus belegten Formen gefügt: ' : 'gebeugte Form laut der vollständigen Tabelle der Quelle: ') + teile.map(t => `en.wiktionary „${t.fund.e.w}“ (${t.fund.e.pos}), ${t.fund.f.t.length ? 'Form ' + t.fund.f.t.join(' ') : 'Kopfzeile'}${t.fund.hinweis ? ' [' + t.fund.hinweis + ']' : ''}`).join(' + ');
         const v = satz.vorschlag = { ar: { w: alleTeile.map((t, nr) => (t.trenner ? t.t : t.fund.w) + (nr < alleTeile.length - 1 ? t.kleber : '')).join(''), wo: beleg + (Array.isArray(h.trenne) ? ' — die bisherige Karte schreibt die Wörter ohne Leerzeichen zusammen; von der Hand getrennt' : '') + (Array.isArray(h.vorsilbe) ? ' — das erste dieser Stücke ist eine angehängte Vorsilbe; von der Hand so gelesen' : '') } };
         // ein Partizip oder Verbalsubstantiv aus der Tabelle eines Verbs ist ein Nomen: passt zu einer Karte „noun" oder „adjective"
         const nominalform = !mehrteilig && kopfPos === 'verb' && ['noun', 'adjective'].includes(karte.type) && (einzelTags.includes('participle') || einzelTags.includes('noun-from-verb'));
@@ -640,8 +694,10 @@ for (const buch of BUECHER) {
     // Führt die Lektion dieselben Buchstaben mit ANDEREN Vokalzeichen, steht die Zeile nur auf dem Blatt. Die Hand kann
     // sie mit „schluessel": true (oder der Zeilennummer) gelten lassen — dann steht die Form des Buches auf der Karte,
     // und die Abweichung von der bisherigen Karte kommt in die Liste „Unterschiede".
+    let schNah = [];
     if (schluessel[buch] && !sch.some(x => x.alsKopf)) {
       const nah = (schluessel[buch].nah.get(ohneHamza(nackt(wort))) || []).filter(x => x.zeile.lektion === karte.chapter);
+      schNah = nah.slice(0, 3);
       if (nah.length) satz.schluesselNah = nah.slice(0, 3).map(x => ({ nr: x.zeile.nr, form: x.form, de: x.zeile.de }));
       const gewaehlt = h.schluessel ? nah.filter(x => h.schluessel === true || x.zeile.nr === h.schluessel) : [];
       if (gewaehlt.length === 1) sch = [{ ...gewaehlt[0], alsKopf: true, streng: true, lektionGleich: true, vonHand: true }, ...sch];
@@ -659,13 +715,20 @@ for (const buch of BUECHER) {
     const woerterbuchGilt = satz.vorschlag && satz.vorschlag.ar && satz.vorschlag.type && (!String(satz.stufe).includes('*') || h.artOk === true) && satz.stufe !== 'F';
     // fürs Arabische zählt die Zeile nur bei gleicher Schreibung (bis auf die Schlussendung) oder auf das Wort der Hand:
     // wo der Schlüssel knapper vokalisiert als die Karte, soll seine Form nicht von selbst auf die Karte kommen
+    // Zu einer Fügung „Verb + Verhältniswort", die ganz aus dem Wörterbuch belegt ist („M"): führt die Zeile des Schlüssels
+    // ihr Verb, bleibt das Arabische beim Wörterbuch (dort mit allen Zeichen, auch dem Sukun, das der Schlüssel oft
+    // weglässt), und die Gegenwartsform des Verbs kommt aus der Zeile dazu — die Fügung allein brächte sie nicht mit.
+    if (sWahl && sWahl.streng && sWahl.nurErstes && karte.type === 'verb' && satz.stufe === 'M' && woerterbuchGilt && !satz.vorschlag.present) {
+      const vS = vorschlagAusSchluessel(sWahl, wort, karte, buch);
+      if (vS.present) { satz.vorschlag.present = vS.present; satz.vergleich.present = vergleiche('present', vS.present.w, karte.present); }
+    }
     if (sWahl && ((sWahl.streng && !woerterbuchGilt) || sWahl.vonHand) && !Number.isInteger(h.eintrag)) {
       const v = vorschlagAusSchluessel(sWahl, wort, karte, buch);
       if (sWahl.nurErstes && v.ar) {
         // die übrigen Wörter der Karte (Verhältniswort) einzeln im Wörterbuch suchen, genau in der Form der Karte
-        const rest = wort.split(/\s+/).slice(1).map(t => ({ t, fund: teilFund(t).fund }));
+        const rest = wort.split(/\s+/).slice(1).map(t => ({ t, fund: teilFund(t, true).fund }));
         if (rest.every(x => x.fund)) {
-          const dazu = rest.map(x => `en.wiktionary „${x.fund.e.w}“ (${x.fund.e.pos}), ${x.fund.f.t.length ? 'Form ' + x.fund.f.t.join(' ') : 'Kopfzeile'}`).join(' + ');
+          const dazu = rest.map(x => `en.wiktionary „${x.fund.e.w}“ (${x.fund.e.pos}), ${x.fund.f.t.length ? 'Form ' + x.fund.f.t.join(' ') : 'Kopfzeile'}${x.fund.hinweis ? ' [' + x.fund.hinweis + ']' : ''}`).join(' + ');
           v.ar = { w: [v.ar.w, ...rest.map(x => x.fund.w)].join(' '), wo: `${v.ar.wo} + ${dazu}`, q: 'buch' };
           if (v.past) v.past = { ...v.ar };
         } else delete v.ar;
@@ -691,11 +754,29 @@ for (const buch of BUECHER) {
     const wortD = adHand || wortS;
     // „auch": weitere Einträge, deren Bedeutung ebenfalls auf der Karte steht (gleichlautendes zweites Wort)
     const d = deutschFuer(wortD, karte, [...res.treffer.map(x => x.e), ...(h.auch || []).map(n => eintraege[n]).filter(Boolean)]);
+    // Stufe „F": das Wort ist eine gebeugte Form. Das Deutsch des Stichworts, in dessen Tabelle sie steht, ist ein Kandidat
+    // (auf dem Blatt mit „°", wie bei einem Eintrag, der nur auf seine Grundform verweist) — bis zum 11.10.2026 stand es
+    // nur beim Teil und dort auf acht Wörter gekürzt, sodass die Hand ein passendes neuntes nicht nennen konnte.
+    if (satz.stufe === 'F' && einzelFund) {
+      const dazu = ketteFuer(einzelFund.e).filter(f => !d.alle.some(x => x.de === f.de)).map(f => ({ ...f, gf: true, deckt: decktSich(f.de, d.teile) }));
+      d.alle.push(...dazu.filter(f => f.deckt), ...dazu.filter(f => !f.deckt).slice(0, 14));
+    }
+    // arabdict-Zeilen mit denselben Buchstaben, aber ANDEREN (oder weniger) Vokalzeichen: ihr Deutsch ist ein Kandidat
+    // „nur zum Schriftbild". Fürs Arabische zählen sie nicht, und von selbst gilt ihr Deutsch nie (oft ist es ein anderes
+    // Wort); die Hand kann es nennen, wenn das Arabische anderswo belegt ist und der Sinn derselbe ist.
+    for (const f of adAlle.filter(f => adAnders.includes(nfc(f.vok[0])))) if (!d.alle.some(x => x.de === f.de && x.q === 'arabdict'))
+      d.alle.push({ q: 'arabdict', de: f.de, sicher: 'nur-schriftbild', wo: `${f.wo} — dort mit anderen Vokalzeichen geschrieben als auf der Karte`, deckt: decktSich(f.de, d.teile) || undefined });
     // das Deutsch des Schlüssels steht vorn; „sch" sagt, ob die Zeile das Wort als Stichwort führt, ob die Schreibung
     // bis auf die Schlussendung gleich ist und ob es die Lektion des Kapitels ist
     d.alle.unshift(...sch.map(x => ({ q: 'schluessel', de: x.zeile.de, sicher: 'vokalisiert',
       wo: schluesselOrt(buch, x.zeile) + (x.zeile.berichtigt ? ' (Schreibfehler oder englischer Rest der Vorlage berichtigt)' : '') + (x.alsKopf ? '' : ' — dort als Nebenform (Mehrzahl oder Variante) genannt'),
       deckt: deTeile(x.zeile.de).some(g => decktSich(g, d.teile)), sch: { kopf: x.alsKopf, streng: x.streng, lektion: x.lektionGleich, nurErstes: x.nurErstes || undefined } })));
+    // Zeilen derselben Lektion mit denselben Buchstaben, aber ANDEREN Vokalzeichen (meist schreibt der Schlüssel knapper
+    // als die Karte): ihr Deutsch ist ein Kandidat „nur zum Schriftbild". Fürs Arabische zählt die Zeile nicht; ist es
+    // anderswo belegt, kann die Hand dieses Deutsch nennen — es stammt aus seinem Buch (Rang 2 seiner Belege).
+    d.alle.push(...schNah.filter(x => !sch.some(y => y.zeile === x.zeile)).map(x => ({ q: 'schluessel', de: x.zeile.de, sicher: 'nur-schriftbild',
+      wo: schluesselOrt(buch, x.zeile) + ` — dort mit anderen Vokalzeichen geschrieben als auf der Karte: ${x.form}`,
+      deckt: deTeile(x.zeile.de).some(g => decktSich(g, d.teile)) })));
     // Hat das Wörterbuch keinen eigenen Eintrag, nennt aber eine Übersetzungstabelle das arabische Wort MIT Vokalzeichen in
     // genau dieser Schreibung, ist das ein Beleg fürs Arabische (ohne Schlussendung, wie eine Kopfzeile) — Stufe „T".
     // Dasselbe gilt für ein Wortpaar von arabdict — Stufe „D", wenn nur arabdict das Wort so nennt („DH": von der Hand
@@ -723,7 +804,9 @@ for (const buch of BUECHER) {
       if (form) {
         const beleg = tab.find(f => nfc(f.vokForm) === form);
         // vor dem Ta marbuta steht immer ein Fatha; schreibt die Quelle es nicht, wird es ergänzt (steht dann im Beleg)
-        const mitTa = form.replace(/(.)([ً-ْٰ]*)ة/gu, (m, b, marken) => (b === 'ا' || marken.includes('َ')) ? m : b + marken + 'َة').normalize('NFC');
+        // ein Dehnungsstrich MITTEN im Wort ist Zierde der Quelle (arabdict streckt manche Wörter) und kein Buchstabe
+        const ohneZier = form.replace(/(?<=[ء-ْ])ـ+(?=[ء-ي])/g, '');
+        const mitTa = ohneZier.replace(/(.)([ً-ْٰ]*)ة/gu, (m, b, marken) => (b === 'ا' || marken.includes('َ')) ? m : b + marken + 'َة').normalize('NFC');
         // vor einem Dehnungs-Alif im Wortinnern steht immer ein Fatha; schreibt die Quelle es nicht, wird es ergänzt —
         // aber nur, wenn die Form danach der bisherigen Schreibung gleicht (bis auf die Schlussendung). Nicht am Lam des
         // Artikels und nicht vor einem Alif am Wortende (dort kann es das stumme Alif der Mehrzahl sein).
@@ -734,7 +817,7 @@ for (const buch of BUECHER) {
         const passt = tab.find(f => f.pos && (PASST[karte.type] || []).includes(f.pos));
         const fest = [...new Set(tab.filter(f => f.pos && f.posFest !== false).map(f => f.pos))];
         const wieGenannt = f => f.q === 'arabdict' ? `Wortart des deutschen Gegenstücks „${f.de}“: ${f.pos} (${f.posWie || 'laut Seite'})` : `Wortart des übersetzten Stichworts laut Quelle: ${f.pos}`;
-        const v = { ar: { w: ganz, wo: `${beleg.wo}: das arabische Wort steht dort mit Vokalzeichen${hatEndung(form) ? '' : ' (ohne Schlussendung)'}` + (mitTa !== form ? ' — das Fatha vor dem Ta marbuta steht dort nicht und ist ergänzt (an dieser Stelle steht immer Fatha)' : '') + (alifErgaenzt ? ' — das Fatha vor dem Dehnungs-Alif steht dort nicht und ist ergänzt (an dieser Stelle steht immer Fatha)' : '') + (adHand ? ' — arabdict schreibt es mit anderen Vokalzeichen als die bisherige Karte; von der Hand zugelassen' : ''), q: beleg.q, ohneEndung: !hatEndung(form) || undefined }, _en: [] };
+        const v = { ar: { w: ganz, wo: `${beleg.wo}: das arabische Wort steht dort mit Vokalzeichen${hatEndung(form) ? '' : ' (ohne Schlussendung)'}` + (ohneZier !== form ? ' — die Dehnungsstriche, mit denen die Quelle das Wort streckt, sind weggelassen (reine Zierde)' : '') + (mitTa !== ohneZier ? ' — das Fatha vor dem Ta marbuta steht dort nicht und ist ergänzt (an dieser Stelle steht immer Fatha)' : '') + (alifErgaenzt ? ' — das Fatha vor dem Dehnungs-Alif steht dort nicht und ist ergänzt (an dieser Stelle steht immer Fatha)' : '') + (adHand ? ' — arabdict schreibt es mit anderen Vokalzeichen als die bisherige Karte; von der Hand zugelassen' : ''), q: beleg.q, ohneEndung: !hatEndung(form) || undefined }, _en: [] };
         if (passt) v.type = { w: karte.type, wo: `${passt.wo}: ${wieGenannt(passt)}`, q: passt.q };
         else if (fest.length === 1 && arten.length === 1 && ART[fest[0]]) { const f = tab.find(x => x.pos === fest[0]); v.type = { w: ART[fest[0]], wo: `${f.wo}: ${wieGenannt(f)}`, q: f.q }; }
         // „artOk" (Hand): dasselbe Wort, die Stelle nennt nur eine andere Wortart als die bisherige Karte (Adjektiv statt
