@@ -219,8 +219,17 @@ function koranBuchInfo(){
 /* Die Karten der Gruppe, so wie ein Buch sie liefert. `koranRang` trägt den Platz
    nach Häufigkeit auf die Karte — danach ordnet neueZuerst() in js/kern.js. */
 function koranKarten(){
-  return koranListe().map(e => ({ id: e.id, ar: e.ar, de: e.de, type: e.type,
-                                  chapter: e.kap, book: KORAN_BUCH, koranRang: e.rang }));
+  /* Die Felder des vollen Programms (12.10.2026): Wurzel, Geschlecht, Einzahl, Mehrzahl,
+     weibliche Form, Verbformen — soweit die Datendatei sie trägt. Belegt sind sie in
+     werkzeuge/koran-haeufig-felder.txt; ein Feld ohne Beleg fehlt dort und bleibt hier
+     leer. Die Liste steht IN der Funktion: die Prüfstände schneiden sie einzeln heraus. */
+  const FELDER = ['root', 'gender', 'sg', 'pl', 'femSg', 'femPl', 'past', 'present', 'imperative', 'masdar'];
+  return koranListe().map(e => {
+    const k = { id: e.id, ar: e.ar, de: e.de, type: e.type,
+                chapter: e.kap, book: KORAN_BUCH, koranRang: e.rang };
+    for (const f of FELDER) if (e[f]) k[f] = e[f];
+    return k;
+  });
 }
 /* Ein Stück der Gruppe heißt nach seinen Plätzen: „1–30", „31–60" …, das letzte
    „241–255". Für jedes andere Buch leer — dann bleibt es beim Aufrufer bei „Kap. N".

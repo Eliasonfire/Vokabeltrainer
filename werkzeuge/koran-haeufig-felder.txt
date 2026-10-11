@@ -1,0 +1,126 @@
+# koran-haeufig-felder.txt — die Felder des vollen Programms für die Karten der Gruppe „Koran häufigste"
+#
+# WOZU (Elias, 20.08.2026, zu dem, was er „das volle Programm" nennt): „es muss halt recht klar sein was
+#   ‚das volle programm‘ ist weil ich glaube wenn man das nicht aufschreibt, dass du dann nicht das machst
+#   was ich möchte und einfach irgendwas machst." — VOLLES-PROGRAMM.md, Teil A: jedes Wort bekommt seine
+#   Wurzel, ein Nomen Geschlecht, Einzahl und Mehrzahl, ein Verb Vergangenheit, Gegenwart, Befehl und
+#   Verbalsubstantiv. Die Liste daneben (koran-haeufig-liste.txt) sagt, WELCHE Wörter es sind; hier steht,
+#   was zu jedem Wort gehört. Aus beiden baut werkzeuge/koran-haeufig-bauen.mjs die Datei
+#   koran-haeufig-data.js, die die App lädt. Nie die erzeugte Datei ändern.
+#
+# REIHENFOLGE DER ARBEIT: zuerst die Wörter, die bei ihm als Nächste neu kämen (gemessen an seinem
+#   abgeglichenen Gerätestand, 12.10.2026). Karten ohne Zeile hier sind noch nicht bearbeitet.
+#
+# SPALTEN (getrennt durch |):
+#   kennung  kh-NNN, wie in der Liste
+#   feld     root · gender · sg · pl · femSg · femPl · past · present · imperative · masdar
+#            (welche Wortart welches Feld tragen darf, prüft der Erzeuger: FELDER_JE_TYP)
+#   wert     Wurzel: Buchstaben mit je einem Leerzeichen, geschrieben wie der Schlüssel in
+#            quran-frequency-data.js (Hamza am Anfang auf Alif) — sonst findet die App die Vorkommen im
+#            Koran nicht. Geschlecht: masculine oder feminine. Alles andere: Arabisch mit allen
+#            Vokalzeichen, Nomen mit der Nennform-Endung, mehrere Formen getrennt durch „ / ".
+#   beleg    woher der Wert stammt.
+#
+# QUELLEN UND REGEL (MEINE Regel, nicht seine Vorgabe):
+#   Die ZEICHEN jedes arabischen Werts stammen aus dem englischen Wiktionary (Abzug über kaikki.org,
+#   lokal unter data-ersatz/quellen/, Stand Oktober 2026), per Skript übernommen — nichts ist getippt.
+#   „enwikt „…"" nennt die Seite. Ein Wert steht nur, wenn ein zweiter Zeuge ihn bestätigt:
+#     „gleich Buchkarte N"  die Karte desselben Worts in seinen Lehrbüchern (Kennung N; Spalte gleich
+#                           der Liste) trägt in diesem Feld dieselbe Form mit denselben Vokalzeichen
+#                           (verglichen am Abzug vom 11.10.2026; Endungen und Sukun zählen nicht). Hier
+#                           steht nur die Kennung — kein Inhalt aus arabicroots.
+#     „Wurzel steht im Verzeichnis …"  nur bei der Wurzel, wo die Buchkarte keine trägt: das
+#                           Wurzelverzeichnis der App (gezählt aus dem Quranic Arabic Corpus) führt sie.
+#   Nennt Wiktionary mehrere Formen (zwei Mehrzahlen, drei Verbalsubstantive), steht hier die, die auch
+#   die Buchkarte trägt. Stimmen die Zeugen nicht überein oder gibt es keinen zweiten, bleibt das Feld
+#   LEER. Sein PDF („80 % der qur'aanischen Wörter", Verbseiten 15 bis 32) ist hierfür NICHT ausgewertet:
+#   seine Textebene gibt die Vokalzeichen nicht verlässlich her.
+#
+# BEWUSST LEER (Stand dieser Datei): kh-002 gender · kh-002 sg · kh-002 pl · kh-025 root · kh-028 root · kh-028 pl · kh-035 pl — kein zweiter Zeuge oder keine Form in der Quelle.
+#   Partikeln tragen keine Felder (eine Partikel hat keine Wurzel).
+#
+# kennung|feld|wert|beleg
+kh-002|root|أ ل ه|enwikt „الله" (Wurzelkasten) · Wurzel steht im Verzeichnis quran-frequency-data.js
+kh-005|root|ق و ل|enwikt „قال" (Wurzelkasten) · gleich Buchkarte 45968
+kh-005|past|قَالَ|enwikt „قال" · gleich Buchkarte 45968
+kh-005|present|يَقُولُ|enwikt „قال" · gleich Buchkarte 45968
+kh-005|imperative|قُلْ|enwikt „قال" · gleich Buchkarte 45968
+kh-005|masdar|قَوْلٌ|enwikt „قال" · gleich Buchkarte 45968
+kh-009|root|ك و ن|enwikt „كان" (Wurzelkasten) · gleich Buchkarte 46061
+kh-009|past|كَانَ|enwikt „كان" · gleich Buchkarte 46061
+kh-009|present|يَكُونُ|enwikt „كان" · gleich Buchkarte 46061
+kh-009|imperative|كُنْ|enwikt „كان" · gleich Buchkarte 46061
+kh-009|masdar|كَوْنٌ|enwikt „كان" · gleich Buchkarte 46061
+kh-011|root|ر ب ب|enwikt „رب" (Wurzelkasten) · Wurzel steht im Verzeichnis quran-frequency-data.js
+kh-011|gender|masculine|enwikt „رب" · gleich Buchkarte 49891
+kh-011|sg|رَبٌّ|enwikt „رب" · gleich Buchkarte 49891
+kh-011|pl|أَرْبَابٌ|enwikt „رب" · gleich Buchkarte 49891
+kh-018|root|أ م ن|enwikt „آمن" (Wurzelkasten) · gleich Buchkarte 48444
+kh-018|past|آمَنَ|enwikt „آمن" · gleich Buchkarte 48444
+kh-018|present|يُؤْمِنُ|enwikt „آمن" · gleich Buchkarte 48444
+kh-018|imperative|آمِنْ|enwikt „آمن" · gleich Buchkarte 48444
+kh-018|masdar|إِيمَانٌ|enwikt „آمن" · gleich Buchkarte 48444
+kh-021|root|أ ر ض|enwikt „أرض" (Wurzelkasten) · gleich Buchkarte 46975
+kh-021|gender|feminine|enwikt „أرض" · gleich Buchkarte 46975, 49971
+kh-021|sg|أَرْضٌ|enwikt „أرض" · gleich Buchkarte 46975, 49971
+kh-021|pl|أَرَاضٍ|enwikt „أرض" · gleich Buchkarte 46975
+kh-024|root|ق و م|enwikt „قوم" (Wurzelkasten) · gleich Buchkarte 46462
+kh-024|gender|masculine|enwikt „قوم" · gleich Buchkarte 46462, 50085
+kh-024|sg|قَوْمٌ|enwikt „قوم" · gleich Buchkarte 46462, 50085
+kh-024|pl|أَقْوَامٌ|enwikt „قوم" · gleich Buchkarte 50085
+kh-025|gender|feminine|enwikt „آية" · gleich Buchkarte 46131, 49956
+kh-025|sg|آيَةٌ|enwikt „آية" · gleich Buchkarte 46131
+kh-025|pl|آيَاتٌ|enwikt „آية" · gleich Buchkarte 46131, 49956
+kh-026|root|ع ل م|enwikt „علم" (Wurzelkasten) · gleich Buchkarte 46318
+kh-026|past|عَلِمَ|enwikt „علم" · gleich Buchkarte 46318
+kh-026|present|يَعْلَمُ|enwikt „علم" · gleich Buchkarte 46318
+kh-026|imperative|اِعْلَمْ|enwikt „علم" · gleich Buchkarte 46318
+kh-026|masdar|عِلْمٌ|enwikt „علم" · gleich Buchkarte 46318
+kh-028|gender|masculine|enwikt „كل" · gleich Buchkarte 45944, 49870
+kh-028|sg|كُلٌّ|enwikt „كل" · gleich Buchkarte 45944
+kh-030|root|ج ع ل|enwikt „جعل" (Wurzelkasten) · gleich Buchkarte 46777
+kh-030|past|جَعَلَ|enwikt „جعل" · gleich Buchkarte 46777
+kh-030|present|يَجْعَلُ|enwikt „جعل" · gleich Buchkarte 46777
+kh-030|imperative|اِجْعَلْ|enwikt „جعل" · gleich Buchkarte 46777
+kh-030|masdar|جَعْلٌ|enwikt „جعل" · gleich Buchkarte 46777
+kh-035|root|ع ذ ب|enwikt „عذاب" (Wurzelkasten) · Wurzel steht im Verzeichnis quran-frequency-data.js
+kh-035|gender|masculine|enwikt „عذاب" · gleich Buchkarte 50040
+kh-035|sg|عَذَابٌ|enwikt „عذاب" · gleich Buchkarte 50040
+kh-038|root|ن ف س|enwikt „نفس" (Wurzelkasten) · gleich Buchkarte 46552
+kh-038|gender|feminine|enwikt „نفس" · gleich Buchkarte 46552, 50081
+kh-038|sg|نَفْسٌ|enwikt „نفس" · gleich Buchkarte 46552, 50081
+kh-038|pl|نُفُوسٌ|enwikt „نفس" · gleich Buchkarte 46552, 50081
+kh-039|root|ك ف ر|enwikt „كفر" (Wurzelkasten) · gleich Buchkarte 48481
+kh-039|past|كَفَرَ|enwikt „كفر" · gleich Buchkarte 48481
+kh-039|present|يَكْفُرُ|enwikt „كفر" · gleich Buchkarte 48481
+kh-039|imperative|اُكْفُرْ|enwikt „كفر" · gleich Buchkarte 48481
+kh-039|masdar|كُفْرٌ|enwikt „كفر" · gleich Buchkarte 48481
+kh-040|root|ش ي ء|enwikt „شيء" (Wurzelkasten) · gleich Buchkarte 46331
+kh-040|gender|masculine|enwikt „شيء" · gleich Buchkarte 46331
+kh-040|sg|شَيْءٌ|enwikt „شيء" · gleich Buchkarte 46331
+kh-040|pl|أَشْيَاءُ|enwikt „شيء" · gleich Buchkarte 46331
+kh-042|root|ج ي ء|enwikt „جاء" (Wurzelkasten) · gleich Buchkarte 46233
+kh-042|past|جَاءَ|enwikt „جاء" · gleich Buchkarte 46233, 50150
+kh-042|present|يَجِيءُ|enwikt „جاء" · gleich Buchkarte 46233, 50150
+kh-042|imperative|جِئْ|enwikt „جاء" · gleich Buchkarte 46233, 50150
+kh-042|masdar|مَجِيءٌ|enwikt „جاء" · gleich Buchkarte 46233, 50150
+kh-043|root|ع م ل|enwikt „عمل" (Wurzelkasten) · gleich Buchkarte 46050
+kh-043|past|عَمِلَ|enwikt „عمل" · gleich Buchkarte 46050
+kh-043|present|يَعْمَلُ|enwikt „عمل" · gleich Buchkarte 46050
+kh-043|imperative|اِعْمَلْ|enwikt „عمل" · gleich Buchkarte 46050
+kh-043|masdar|عَمَلٌ|enwikt „عمل" · gleich Buchkarte 46050
+kh-044|root|أ ت ي|enwikt „آتى" (Wurzelkasten) · gleich Buchkarte 48420
+kh-044|past|آتَى|enwikt „آتى" · gleich Buchkarte 48420
+kh-044|present|يُؤْتِي|enwikt „آتى" · gleich Buchkarte 48420
+kh-044|imperative|آتِ|enwikt „آتى" · gleich Buchkarte 48420
+kh-044|masdar|إِيتَاءٌ|enwikt „آتى" · gleich Buchkarte 48420
+kh-045|root|ر أ ي|enwikt „رأى" (Wurzelkasten) · gleich Buchkarte 46182
+kh-045|past|رَأَى|enwikt „رأى" · gleich Buchkarte 46182
+kh-045|present|يَرَى|enwikt „رأى" · gleich Buchkarte 46182
+kh-045|imperative|رَ|enwikt „رأى" · gleich Buchkarte 46182
+kh-045|masdar|رُؤْيَةٌ|enwikt „رأى" · gleich Buchkarte 46182
+kh-046|root|أ ت ي|enwikt „أتى" (Wurzelkasten) · gleich Buchkarte 46838
+kh-046|past|أَتَى|enwikt „أتى" · gleich Buchkarte 46838
+kh-046|present|يَأْتِي|enwikt „أتى" · gleich Buchkarte 46838
+kh-046|imperative|اِئْتِ|enwikt „أتى" · gleich Buchkarte 46838
+kh-046|masdar|إِتْيَانٌ|enwikt „أتى" · gleich Buchkarte 46838
