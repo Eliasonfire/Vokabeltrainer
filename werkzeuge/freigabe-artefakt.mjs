@@ -18,13 +18,20 @@
  * ⭐ Seither kommt der Inhalt aus `transcripts/kandidaten/bewertung.json`, und
  * darin steht **mein Urteil zu jedem einzelnen Kandidaten**, gefällt gegen die
  * Schlüssel, den Unterricht und seine Unterlagen. Auf die Seite kommen nur noch
- * die drei Sorten, die ohne ihn nicht zu entscheiden sind:
+ * die Sorten, die ohne ihn nicht zu entscheiden sind:
  *
- *   `regel`      mein Vorschlag mit Beleg — er gibt jede Regel selbst frei
  *   `abweichung` Schlüssel und Lehrer widersprechen sich
  *   `unbelegt`   sieht wie eine Regel aus, keine gedruckte Quelle stützt sie
  *
  * Gemessen beim Umbau: **95 Fundstellen → 7 Entscheidungen.**
+ *
+ * ⭐⭐ SEIT DEM 11.10.2026 OHNE `regel`. Bis dahin stand hier eine dritte Sorte:
+ * „mein Vorschlag mit Beleg — er gibt jede Regel selbst frei", mit der Frage
+ * „Aufnehmen?". Elias am 11.10.2026: „wieso stehen die noch aus?" — und auf
+ * meine Frage, ob die Wartung belegte Regeln künftig selbst einbauen soll,
+ * statt ihn zu fragen: „ja". Eine belegte Regel baue ich deshalb ein; hier
+ * steht sie danach unter „Eingebaut" — zum Ansehen, ohne Knopf. Wer an Elias
+ * geht, entscheidet `kandidaten-einordnung.mjs`, nicht diese Datei.
  *
  * ⛔ Die Seite wird NICHT mehr aus den Rohdaten gebaut. Fehlt die
  * `bewertung.json`, bricht dieses Werkzeug ab statt auf die alte Bauform
@@ -66,6 +73,7 @@
  */
 import fs from 'node:fs';
 import { arabischInSeite, BIDI_CSS } from './arabisch-hervorheben.mjs';
+import { gehtAnElias, wartetAufEinbau, istEingebaut } from './kandidaten-einordnung.mjs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -96,18 +104,14 @@ const esc = s => String(s == null ? '' : s)
 const STAND_HEUTE = new Date().toLocaleDateString('de-DE',
   { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-/* Die drei Sorten, die an Elias gehen — je mit ihren eigenen Knöpfen.
+/* Die Sorten, die an Elias gehen — je mit ihren eigenen Knöpfen.
    ⛔ Die Knopfbeschriftung ist nicht Kosmetik: bei einer Abweichung ist
    „verwerfen" sinnlos, er muss zwischen ZWEI Fassungen wählen. Eine Seite mit
    immer denselben drei Knöpfen hätte ihn zwingen müssen, sich die eigentliche
-   Frage selbst zu übersetzen. */
+   Frage selbst zu übersetzen.
+   ⛔ KEINE Sorte `regel` mehr (seit 11.10.2026, sein „ja"): eine belegte Regel
+   wird eingebaut und steht unten unter „Eingebaut". */
 const SORTEN = {
-  regel: {
-    titel: 'Neue Regel — dein Ja fehlt',
-    farbe: 'gruen',
-    vorspann: 'Schlüssel und Unterricht sagen dasselbe. Ich habe den Beleg gesucht und schlage die Regel vor. Aufnehmen darf sie nur dein Ja.',
-    knoepfe: [['ja', 'Ja, aufnehmen'], ['nein', 'Nein'], ['spaeter', 'später']],
-  },
   abweichung: {
     titel: 'Schlüssel gegen Lehrer',
     farbe: 'gelb',
@@ -122,13 +126,32 @@ const SORTEN = {
   },
 };
 
-const fuerElias = (B.kandidaten || []).filter(k => SORTEN[k.urteil]);
+const fuerElias = (B.kandidaten || []).filter(k => gehtAnElias(k.urteil) && SORTEN[k.urteil]);
 const vonMir = (B.kandidaten || []).filter(k => k.urteil === 'schon-regel' || k.urteil === 'weg');
+/* Belegte Regeln: schon in der App (er liest „eingebaut") oder noch nicht
+   (mein Rückstand beim Einbauen — steht als Zahl im Kopf, nie als Frage). */
+const eingebaut = (B.kandidaten || []).filter(istEingebaut)
+  .sort((a, b) => String(b.eingebaut).localeCompare(String(a.eingebaut)));
+const einzubauen = (B.kandidaten || []).filter(wartetAufEinbau);
+
+const datumDe = iso => {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso || ''));
+  return m ? m[3] + '.' + m[2] + '.' + m[1] : String(iso || '');
+};
+
+/* ====================== Eingebaut — zum Ansehen ==========================
+   Elias liest hier „eingebaut" statt „Aufnehmen?". Kein Knopf: es gibt nichts
+   zu entscheiden. Passt ihm eine Regel nicht, sagt er es im Chat. */
+const eingebautZeilen = eingebaut.map(k =>
+  `<li><span class="nid">F${k.folge} ${esc(k.zeitmarke)}</span>`
+  + `<span class="nurteil da">eingebaut ${esc(datumDe(k.eingebaut))}</span>`
+  + `<span class="ngrund"><b>${esc(k.regelName || k.regel || '')}</b>`
+  + (k.quelle ? ` <code>${esc(k.quelle)}</code>` : '') + '</span></li>').join('');
 
 /* ====================== Die Entscheidungen ============================== */
 
 let bloecke = '';
-for (const sorte of ['regel', 'abweichung', 'unbelegt']) {
+for (const sorte of ['abweichung', 'unbelegt']) {
   const liste = fuerElias.filter(k => k.urteil === sorte);
   if (!liste.length) continue;
   const S = SORTEN[sorte];
@@ -160,7 +183,9 @@ for (const sorte of ['regel', 'abweichung', 'unbelegt']) {
    anderen zu Recht wegfallen — und „vertrau mir" ist bei rund hundert Stück
    keine Grundlage (22.09.: 88, 24.09. nach Folge 22: 102). Zugeklappt, damit
    sie die Entscheidungen nicht zudeckt. */
-const nachleseZeilen = vonMir.map(k =>
+/* Was unter „Eingebaut" steht, steht hier nicht noch einmal. */
+const nachlese = vonMir.filter(k => !istEingebaut(k));
+const nachleseZeilen = nachlese.map(k =>
   `<li><span class="nid">F${k.folge} ${esc(k.zeitmarke)}</span>`
   + `<span class="nurteil ${k.urteil === 'weg' ? 'aus' : 'da'}">`
   + (k.urteil === 'weg' ? 'keine Regel' : 'steht schon') + '</span>'
@@ -298,12 +323,16 @@ Weitergabe.</p>
 <p class="vorspann"><strong>Ich habe die ${B.gesamt} Fundstellen durchgesehen</strong>
 und jede gegen die Schlüsselbücher, den Unterricht und deine Unterlagen
 geprüft. Übrig sind <strong>${fuerElias.length}</strong>, die ich nicht allein
-entscheiden kann. Was ich mit den anderen gemacht habe, steht unten zum
-Nachlesen — mit Begründung und Regelnamen, nicht als „vertrau mir".</p>
+entscheiden kann. Was der Lehrer sagt und ein Schlüssel bestätigt, baue ich
+selbst ein — das steht unten unter „Eingebaut". Was ich mit den anderen gemacht
+habe, steht darunter zum Nachlesen — mit Begründung und Regelnamen, nicht als
+„vertrau mir".</p>
 
 <div class="bilanz"><table>
 <tr class="stark"><td>${fuerElias.length}</td><td>warten auf dich</td></tr>
-<tr><td>${vonMir.filter(k => k.urteil === 'schon-regel').length}</td><td>Inhalt steht schon als Regel</td></tr>
+${eingebaut.length ? `<tr><td>${eingebaut.length}</td><td>belegte Regeln eingebaut — zum Ansehen, kein Ja nötig</td></tr>` : ''}
+${einzubauen.length ? `<tr><td>${einzubauen.length}</td><td>belegte Regeln baue ich noch ein — meine Arbeit, nicht deine</td></tr>` : ''}
+<tr><td>${vonMir.filter(k => k.urteil === 'schon-regel').length - eingebaut.length}</td><td>Inhalt stand schon als Regel</td></tr>
 <tr><td>${vonMir.filter(k => k.urteil === 'weg').length}</td><td>keine Regel darin (Vokabeln, Organisation, kaputte Abschrift)</td></tr>
 ${RUECKSTAND ? `<tr><td>${RUECKSTAND}</td><td>habe ich noch nicht durch — mein Rückstand, nicht deiner</td></tr>` : ''}
 </table></div>
@@ -318,8 +347,14 @@ ${RUECKSTAND ? `<tr><td>${RUECKSTAND}</td><td>habe ich noch nicht durch — mein
 
 ${bloecke || '<p class="vorspann">✓ Nichts offen. Aus den ausgewerteten Folgen wartet keine Fundstelle mehr auf dich.</p>'}
 
+${eingebaut.length ? `<details class="nachlese" id="s-eingebaut" open>
+  <summary>Eingebaut: ${eingebaut.length} belegte Regeln — zum Ansehen</summary>
+  <p class="vorspann">Dein Lehrer sagt es im Unterricht, und ein Schlüssel sagt dasselbe. Diese Regeln stehen schon in der App. Passt dir eine nicht, schreib es mir.</p>
+  <ul>${eingebautZeilen}</ul>
+</details>` : ''}
+
 <details class="nachlese">
-  <summary>Was ich mit den anderen ${vonMir.length} gemacht habe</summary>
+  <summary>Was ich mit den anderen ${nachlese.length} gemacht habe</summary>
   <ul>${nachleseZeilen}</ul>
 </details>
 
@@ -454,8 +489,10 @@ const ziel = path.join(AUS, 'freigabe.html');
 fs.writeFileSync(ziel, arabischInSeite(html), 'utf8');
 console.log('geschrieben: ' + path.relative(REPO, ziel));
 console.log('Fuer Elias: ' + fuerElias.length + ' von ' + B.gesamt
-  + '  (' + ['regel', 'abweichung', 'unbelegt']
+  + '  (' + ['abweichung', 'unbelegt']
       .map(s => s + ' ' + fuerElias.filter(k => k.urteil === s).length).join(', ') + ')');
+console.log('Belegte Regeln: ' + eingebaut.length + ' eingebaut (er liest „eingebaut"), '
+  + einzubauen.length + ' noch einzubauen (meine Arbeit).');
 console.log('Von mir entschieden: ' + vonMir.length
   + '  (schon-regel ' + vonMir.filter(k => k.urteil === 'schon-regel').length
   + ', weg ' + vonMir.filter(k => k.urteil === 'weg').length + ')');

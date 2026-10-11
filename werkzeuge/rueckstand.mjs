@@ -10,21 +10,41 @@
  * Die Kette hat drei Glieder, und nur die ersten beiden waren automatisiert:
  *   1. `arabicroots-update-check`   merkt, dass es eine neue Folge gibt   ✅
  *   2. `arabicroots-backfill-retry` holt Untertitel + Ton, läuft Whisper   ✅
- *   3. Regelauswertung                                                    ❌
+ *   3. Regelauswertung                 ❌ am 18.08.2026 morgens — ✅ seither
  *
- * Glied 3 gehört nach Goal-Prompt E.1 in eine echte Sitzung — eine Regel ohne
- * gelesene Fundstelle darf nicht entstehen. Das ist richtig so. Der Fehler war
- * ein anderer: **es gab kein Signal, dass etwas wartet.** Der Backlog unter
- * `transcripts/backlog.md` hat es sauber notiert, aber eine Notiz, die niemand
- * aufschlägt, ist keine Meldung.
+ * ⚠️ DIESER ABSATZ WAR BIS ZUM 11.10.2026 VERALTET, und ich habe ihn Elias als
+ * Auskunft weitergegeben („Die Regeln schreibt keine Routine, das passiert in
+ * einer Sitzung" — seine Antwort: „wieso??"). Hier stand, Glied 3 gehöre „in
+ * eine echte Sitzung". Das galt am 18.08.2026 morgens. Seit demselben Tag
+ * wertet die Wartung selbst aus (`Automation/prompts/vokabeltrainer-wartung.md`,
+ * Schritt 1b: „auswerten, eintragen, veröffentlichen"), auf seinen Satz hin:
+ * „du sollst sie selber auswerten … allgemein gilt das so." Glied 3 ist also
+ * ✅ — und was davon bleibt, ist die Belegpflicht: eine Regel ohne gelesene
+ * Fundstelle darf nicht entstehen (Goal-Prompt E.1).
  *
- * Dieses Skript macht daraus eine Zahl, die jede Wartungsroutine ausgeben und
- * jede Nachtschicht abfragen kann.
+ * Der ursprüngliche Fehler war ein anderer: **es gab kein Signal, dass etwas
+ * wartet.** Der Backlog unter `transcripts/backlog.md` hat es sauber notiert,
+ * aber eine Notiz, die niemand aufschlägt, ist keine Meldung. Dieses Skript
+ * macht daraus eine Zahl, die jede Wartungsroutine ausgeben und jede
+ * Nachtschicht abfragen kann.
  *
- * ⚠️ GEMESSEN WIRD AN DEN REGELN, NICHT AM BACKLOG.
+ * ⚠️ GEMESSEN WIRD AN DEN REGELN UND AN MEINEN URTEILEN, NICHT AM BACKLOG.
  * Der Backlog ist von Hand gepflegt und kann veralten — genau das ist hier
- * schon passiert. Die Wahrheit steht in `grammar-data.js`: welche Folgen dort
- * als `source.folge` vorkommen, sind ausgewertet. Alles andere ist offen.
+ * schon passiert. Zwei Messungen (die zweite seit dem 11.10.2026):
+ *   1. `grammar-data.js`: welche Folgen dort als `source.folge` vorkommen.
+ *   2. `werkzeuge/kandidaten-urteile.json` gegen `transcripts/kandidaten/`:
+ *      ist jede Fundstelle der Folge beurteilt, und steht jede BELEGTE Regel
+ *      (Urteil `regel`) schon in der App?
+ * Eine Folge ist OFFEN, solange dort noch MEINE Arbeit liegt: eine Fundstelle
+ * ohne Urteil, eine belegte Regel, die noch nicht eingebaut ist, oder eine
+ * Folge, die noch niemand angesehen hat. Eine Frage an Elias (`abweichung`,
+ * `unbelegt`) hält eine Folge NICHT offen — sie steht auf seiner Warteseite.
+ *
+ * ⭐ Anlass der zweiten Messung: Folge 26 war am 10.10.2026 vollständig
+ * beurteilt (zehnmal keine Regel, eine Frage an ihn) und stand hier trotzdem
+ * als OFFEN, weil sie keine Regel hervorgebracht hat. Umgekehrt galten Folge
+ * 15, 17 und 20 als ausgewertet, obwohl dort vier belegte Regeln seit dem
+ * 22.09. darauf warteten, eingebaut zu werden.
  *
  * Aufruf:
  *   node werkzeuge/rueckstand.mjs            Übersicht
@@ -34,6 +54,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { gehtAnElias, wartetAufEinbau } from './kandidaten-einordnung.mjs';
 
 /* fileURLToPath, nicht von Hand zerlegen: der Ordner heisst "1. Workspace"
    mit Leerzeichen, das steht in import.meta.url als %20. */
@@ -76,6 +97,32 @@ function folgenMitRegeln(){
   return nachFolge;
 }
 
+/* ---------- 2b. Was sagen MEINE Urteile über die Fundstellen? (seit 11.10.2026) ----------
+   Die Kennung wird gebildet wie in kandidaten-bewerten.mjs: f<Folge>-<Zeitmarke
+   ohne Doppelpunkt>. Fehlt die Urteilsdatei oder der Ordner, bleibt die Karte
+   LEER — dann zählt wie früher nur die Regelzahl, und das steht in der Ausgabe. */
+function urteileJeFolge(){
+  const aus = new Map();
+  const kand = path.join(WURZEL, 'transcripts/kandidaten');
+  const up = path.join(WURZEL, 'werkzeuge/kandidaten-urteile.json');
+  if (!fs.existsSync(kand) || !fs.existsSync(up)) return aus;
+  const urteile = JSON.parse(fs.readFileSync(up, 'utf8')).urteile || {};
+  for (const d of fs.readdirSync(kand)){
+    if (!d.startsWith('folge-') || !d.endsWith('.json')) continue;
+    const o = JSON.parse(fs.readFileSync(path.join(kand, d), 'utf8'));
+    const liste = o.kandidaten || [];
+    let ohne = 0, einbau = 0, fragen = 0;
+    for (const k of liste){
+      const u = urteile['f' + o.folge + '-' + String(k.zeitmarke).split(':').join('')];
+      if (!u || !u.urteil) ohne++;
+      else if (wartetAufEinbau(u)) einbau++;
+      else if (gehtAnElias(u.urteil)) fragen++;
+    }
+    aus.set(Number(o.folge), { gesamt: liste.length, ohne, einbau, fragen });
+  }
+  return aus;
+}
+
 /* ---------- 3. Was sagt der Backlog? Nur zum Vergleich. ---------- */
 function backlogSagt(){
   const p = path.join(WURZEL, 'transcripts/backlog.md');
@@ -113,17 +160,47 @@ const bl     = backlogSagt();
 const ohneRegeln = bl ? bl.erledigtOhneRegeln : new Set();
 const ausser     = bl ? bl.ausserWertung      : new Set();
 
+const urteile = urteileJeFolge();
+
 const alle = [...roh.keys()].sort((a, b) => a - b);
-/* Ausgewertet ist eine Folge, wenn sie Regeln geliefert hat ODER im Backlog
-   ausdruecklich als "ausgewertet, keine neuen Regeln" steht.
-   Offen ist sie nur, wenn sie ueberdies nicht ausser Wertung steht. */
-const offen = alle.filter(n => !regeln.has(n) && !ohneRegeln.has(n) && !ausser.has(n));
+/* Bei mir liegt noch Arbeit: eine Fundstelle ohne Urteil oder eine belegte
+   Regel, die noch nicht in der App steht. */
+const meineArbeit = n => {
+  const u = urteile.get(n);
+  return !!u && (u.ohne > 0 || u.einbau > 0);
+};
+/* Durchgesehen: es GIBT Fundstellen, jede ist beurteilt, nichts wartet aufs
+   Einbauen. Eine Folge mit 0 Fundstellen ist damit NICHT durchgesehen. */
+const durchgesehen = n => {
+  const u = urteile.get(n);
+  return !!u && u.gesamt > 0 && u.ohne === 0 && u.einbau === 0;
+};
+/* Ausgewertet ist eine Folge, wenn sie Regeln geliefert hat, ODER im Backlog
+   ausdruecklich als "ausgewertet, keine neuen Regeln" steht, ODER jede ihrer
+   Fundstellen beurteilt ist. Offen ist sie, wenn nichts davon zutrifft ODER
+   bei mir noch Arbeit liegt — und sie nicht ausser Wertung steht. */
+const offen = alle.filter(n => !ausser.has(n)
+  && (meineArbeit(n) || (!regeln.has(n) && !ohneRegeln.has(n) && !durchgesehen(n))));
+
+const standVon = n => {
+  const u = urteile.get(n);
+  if (ausser.has(n)) return '⛔ AUSSER WERTUNG — nicht auswerten';
+  if (u && u.ohne > 0) return 'OFFEN — ' + u.ohne + ' Fundstelle(n) ohne Urteil';
+  if (u && u.einbau > 0) return 'OFFEN — ' + u.einbau + ' belegte Regel(n) einzubauen';
+  const frage = u && u.fragen ? ', ' + u.fragen + ' Frage(n) an Elias' : '';
+  if (regeln.get(n)) return 'ausgewertet' + (frage ? ' (' + frage.slice(2) + ')' : '');
+  if (ohneRegeln.has(n)) return 'ausgewertet (0 Regeln, gewollt' + frage + ')';
+  if (durchgesehen(n)) return 'ausgewertet (0 Regeln; alle ' + u.gesamt + ' Fundstellen beurteilt' + frage + ')';
+  return 'OFFEN';
+};
 
 if (knapp){
   const zusatz = ausser.size ? ` (${ausser.size} ausser Wertung: ${[...ausser].join(', ')})` : '';
   console.log(offen.length === 0
     ? 'Regelauswertung: kein Rueckstand.' + zusatz
-    : `Regelauswertung: ${offen.length} Folge(n) offen — ${offen.join(', ')}.` + zusatz);
+    : `Regelauswertung: ${offen.length} Folge(n) offen — `
+      + offen.map(n => n + ' (' + standVon(n).replace('OFFEN — ', '').replace('OFFEN', 'noch nicht angesehen') + ')').join(', ')
+      + '.' + zusatz);
   process.exit(offen.length ? 2 : 0);
 }
 
@@ -132,18 +209,18 @@ console.log('Folge  Rohmaterial                      Regeln  Stand');
 for (const n of alle){
   const q = [...roh.get(n)].join(' + ');
   const anz = regeln.get(n);
-  const stand = ausser.has(n) ? '⛔ AUSSER WERTUNG — nicht auswerten'
-              : anz           ? 'ausgewertet'
-              : ohneRegeln.has(n) ? 'ausgewertet (0 Regeln, gewollt)'
-              : 'OFFEN';
   console.log('  ' + String(n).padStart(2) + '   ' + q.padEnd(32)
-            + String(anz || 0).padStart(4) + '    ' + stand);
+            + String(anz || 0).padStart(4) + '    ' + standVon(n));
 }
 
 console.log('\nFolgen mit Rohmaterial: ' + alle.length
-          + ' | ausgewertet: ' + alle.filter(n => regeln.has(n)).length
+          + ' | ausgewertet: ' + alle.filter(n => !ausser.has(n) && !offen.includes(n)).length
           + ' | offen: ' + offen.length
           + ' | ausser Wertung: ' + alle.filter(n => ausser.has(n)).length);
+if (!urteile.size){
+  console.log('⚠️ Keine Urteile gelesen (werkzeuge/kandidaten-urteile.json oder transcripts/kandidaten fehlt) —'
+            + '\n   gemessen ist dann nur die Regelzahl je Folge, nicht der Stand der Fundstellen.');
+}
 
 /* ⛔ Der Grund steht hier und nicht nur im Backlog, weil dieses Skript der Ort
    ist, an dem jemand nach der naechsten Aufgabe sucht. */
@@ -173,10 +250,10 @@ if (bl){
    muessen im Backlog stehen, sonst meldet dieses Skript sie ewig als offen.
    Genau dafuer ist der Abgleich oben da. */
 if (offen.length){
-  console.log('\nNaechster Schritt je offener Folge:');
-  console.log('  1. node pruefe-transkripte.js <folge>   Fundstellen im Volltext');
-  console.log('  2. Regelkandidaten lesen, gegen die vorhandenen abgleichen');
-  console.log('  3. Uebernommene Regeln mit source.folge eintragen');
+  console.log('\nNaechster Schritt je offener Folge (Wartung, Schritt 1b):');
+  console.log('  1. node werkzeuge/kandidaten-bewerten.mjs --offen   Fundstellen ohne Urteil lesen und beurteilen');
+  console.log('  2. Belegte Regeln (Urteil regel) EINBAUEN: node werkzeuge/uebernehmen.mjs — nicht Elias fragen');
+  console.log('  3. Urteil danach auf schon-regel setzen, mit `regel` (Kennung) und `eingebaut` (Datum)');
   console.log('  4. backlog.md nachziehen');
 }
 process.exit(offen.length ? 2 : 0);

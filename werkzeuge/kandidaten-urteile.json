@@ -1,9 +1,9 @@
 {
   "_": "MEINE Bewertung der 95 Regelkandidaten. Gelesen und entschieden am 22.09.2026 von Claude Opus 5, gegen: Schluessel 1 (Vault 04 - Wissen/Schluessel-Regeln.md, 23 Lektionen), Schluessel Band 2+3 (Textebene), die 103 vorhandenen Regeln in grammar-data.js und Elias' Unterlagen. Anlass: Elias am 22.09.2026 — 'wir hatten ausgemacht das du das machen sollst bzw bewerten sollst'.",
   "_urteilsarten": {
-    "schon-regel": "Der Inhalt steht bereits als Regel. quelle nennt sie. Geht NICHT an Elias.",
+    "schon-regel": "Der Inhalt steht bereits als Regel. quelle nennt sie. Geht NICHT an Elias. Ist die Regel aus DIESER Fundstelle entstanden, stehen dabei: regel (ihre Kennung in grammar-data.js) und eingebaut (Datum JJJJ-MM-TT) — Elias liest dann 'eingebaut'.",
     "weg": "Keine Regel darin: Vokabelarbeit, Organisation, Motivation, Uebungsabfrage oder unbrauchbarer Whisper-Text. Geht NICHT an Elias.",
-    "regel": "Mein VORSCHLAG fuer eine neue Regel, mit Beleg. Geht an Elias — er gibt jede Regel selbst frei (Lehrwerk-Begleitmaterial, 29.07.2026).",
+    "regel": "BELEGTE Regel (der Lehrer sagt sie UND eine gedruckte Quelle sagt dasselbe), aber noch NICHT in der App. Geht NICHT an Elias (bis 11.10.2026 ging sie als Frage 'Aufnehmen?' an ihn; sein 'ja' vom 11.10.2026: belegte Regeln werden ohne Rueckfrage eingebaut). Zwischenstand: einbauen, dann auf schon-regel setzen mit regel und eingebaut. Die alte frage bleibt als Verlauf stehen.",
     "abweichung": "Schluessel und Unterricht widersprechen sich. Geht an Elias — 'du sollst das einfach markieren'.",
     "unbelegt": "Sieht wie eine Regel aus, aber keine gedruckte Quelle in unserem Bestand bestaetigt sie. Geht an Elias."
   },
@@ -465,7 +465,9 @@
     },
 
     "f22-2445": {
-      "urteil": "regel",
+      "urteil": "schon-regel",
+      "regel": "mudari-sa-zukunft-01",
+      "eingebaut": "2026-10-11",
       "grund": "Die Zukunft mit sa-: 'Dieses Scene ist das Scene der Zukunft. Wenn das Scene der Zukunft auf ein Gegenwartsverb betrifft, sagt es eben die nahe Zukunft aus' (Whisper hoert 'Scene' fuer den Buchstaben Sin). Beispiel aus dem Dialog von Kapitel 4: sa-aknusu ghurfata l-julus, 'ich werde das Wohnzimmer saugen'; bei 'madha sa-tafalina, ya Fatima?' zerlegt der Lehrer selbst: 'Das heisst, Tafayna ist die Gegenwartsform' (gemeint: tafalina). Der Schluessel sagt dasselbe in Band 2, Lektion 11, Punkt 2: 'Um nun den mudari eindeutig als Futurform zu verwenden, wird die Partikel sa- als Vorsilbe vorangestellt' — sie heisst harf al-istiqbal, die Futurpartikel. Zwei unabhaengige Quellen, gleiche Aussage. Im Bestand fehlt sie: verb-madi-endungen-01 sagt nur, dass 'die Zukunft aus der Gegenwart gebildet' wird, nicht wie. ⚠️ Ein Unterschied, markiert nach deiner Regel vom 29.07.: der Schluessel setzt hinzu 'Beachte, dass sa- nicht in Fragen verwendet wird' (Beispiel: 'Wann wirst du nach Indien gehen?' ohne sa-). Dein Buch und der Lehrer benutzen sa- aber gerade in einer Frage ('madha sa-tafalina?'). Der Vorschlag enthaelt deshalb nur den Kern, in dem beide Quellen einig sind. ⚠️ Und: das Gegenwartsverb selbst kommt erst spaeter dran ('nur das, was ihr erstmal gehoert habt … wenn wir Gegenwartsverben lernen') — die Regel ist ein Vorgriff, steht aber schon in deinem Kapitel-4-Text.",
       "quelle": "Schluessel Band 2, Lektion 11 (PDF-S. 54, gedruckte S. 50), Punkt 2 — Seite gerendert und gelesen · Unterricht Folge 22 @ 24:45 (Dialog 2 auch @ 22:15)",
       "frage": "Neue Regel: sa- vor einem Gegenwartsverb = Zukunft (sa-aknusu = ich werde fegen). Lehrer und Schluessel Band 2 sind sich einig. Aufnehmen, ohne den Schluessel-Zusatz 'nicht in Fragen'?"
@@ -578,7 +580,9 @@
       "quelle": "verb-madi-endungen-01"
     },
     "f24-4115": {
-      "urteil": "regel",
+      "urteil": "schon-regel",
+      "regel": "mudari-erkennen-01",
+      "eingebaut": "2026-10-11",
       "grund": "Woran man Vergangenheit und Gegenwart am Verb erkennt. Lehrer, Folge 24 @ 40:30 bis 41:56: 'Bei den Verben der Vergangenheit aendert sich was? Das Ende. Bei der Gegenwart aendert sich was? Aendert sich vorne ... der Anfang.' Dann drei Paare, die er abfragt (Whisper-Schreibung: 'Yes Kuno' gegen 'Sekene', 'Nefalu' gegen 'Faala', 'El-Abu' gegen 'La-Iba'), und der Merksatz: 'Wenn also vorne beim Gegenwartsverb, wenn da ein Elif ist, oder ein Ja, oder ein Nun, oder ein Ta, dann wisst ihr, dieses Verb ist von der Gegenwart. Ausser das Verb hat selbst eine[n] ... diese[r] Buchstaben.' Gedruckt steht dasselbe im Schluessel Band 2, Lektion 10 (PDF-S. 48): 'Im mudari wird einer dieser vier Buchstaben vor das Verb gesetzt' — diese Stelle ist am 30.09.2026 fuer f23-1045 gelesen worden, in diesem Lauf nicht noch einmal gerendert. Im Bestand fehlt es: verb-madi-endungen-01 sagt nur, dass in der Vergangenheit 'der Stamm gleich bleibt, nur die Endung wechselt'; ueber die Gegenwart steht dort nichts. ⚠️ Der Lehrer nennt es selbst 'nur ein kleiner Cheatcode' und vertagt das Konjugieren: 'Gegenwart werden wir erst konjugieren, wenn Vergangenheit ordentlich sitzt.' Die Regel waere also nur das Erkennen, nicht das Bilden. ⚠️ Die drei Beispielpaare sind im Whisper-Text nicht vokalisiert belegt; in einer Regel stuenden sie in Umschrift oder aus dem Bestand.",
       "quelle": "Unterricht Folge 24 @ 40:30 bis 41:56 · Schluessel Band 2, Lektion 10 (PDF-S. 48), gelesen am 30.09.2026",
       "frage": "Neue Regel: ein Gegenwartsverb erkennt man am Buchstaben vorn (Alif, Ya, Nun oder Ta), ein Vergangenheitsverb an der Endung. Lehrer (Folge 24) und Schluessel Band 2 sagen dasselbe. Aufnehmen als reine Erkennungsregel, obwohl die Gegenwart selbst noch nicht dran war?"
@@ -605,7 +609,9 @@
       "grund": "Schueler konjugieren darasa und fa'ala reihum (Lehreranteil 0,19); der Lehrer verbessert einzelne Formen ('Fa'alu', 'Fa'alata', 'Fa'alna', 'Fa'alta'). Uebungsabfrage zu verb-madi-endungen-01, kein neuer Lehrsatz. Der Hinweis kurz danach (ab 36:xx), dass man die Endung nur bei anta, antuma, antum, anti, antunna 'eins zu eins kopieren' kann, steht ebenfalls schon dort ('die Endung steckt schon im Pronomen')."
     },
     "f24-1745": {
-      "urteil": "regel",
+      "urteil": "schon-regel",
+      "regel": "tanwin-fath-alif-01",
+      "eingebaut": "2026-10-11",
       "grund": "Das Alif nach der unbestimmten Akkusativ-Endung. In der Aufgabe zu kam (wie viele) begruendet der Lehrer die richtige Schreibung, Folge 24 @ 17:56 bis 18:12: 'Weil wir hatten das. Wenn ... ein Wort unbestimmt ist und Mansoub ist. Mansoub also im Akkusativ, also mit Fetha oder mit Fetatain. Dann kriegt [es] ein Elif hinten dran. Das ist das einzige, was so eine Regel hat. Die anderen haben das nicht.' Gedruckt steht es im Schluessel zu Band 1, Lektion 18 (S. 61 bis 63): kam mit Singular im Akkusativ 'und die Regel zum stummen Alif der Akkusativ-Endung (nicht nach Ta marbuta)' — so in der Vault-Notiz Schluessel-Regeln, die Seite selbst ist in diesem Lauf nicht gerendert. Im Bestand fehlt die Regel (in grammar-data.js nach Alif zusammen mit Tanwin, Fatha und Akkusativ gesucht: kein Treffer). ⚠️ Der Akkusativ als Fall ist noch nicht unterrichtet — der Lehrer erwaehnt ihn hier nur im Vorbeigehen, mit 'wir hatten das'. Das ist deshalb NICHT die Regel akkusativ-01, die die Uebungen 6 und 7 freischaltet; es ist eine Schreibregel. ⚠️ Die Einschraenkung 'nicht nach Ta marbuta' nennt nur der Schluessel, der Lehrer an dieser Stelle nicht. Davor im selben Fenster: ghuraf als Plural von ghurfa, weil von vier Zimmern die Rede ist — Wortkunde, und die Frage nach Pluralregeln vertagt er bei 23:15.",
       "quelle": "Unterricht Folge 24 @ 17:56 bis 18:12 · Schluessel Band 1, Lektion 18 (S. 61 bis 63), laut Vault-Notiz 04 - Wissen/Schluessel-Regeln.md",
       "frage": "Neue Regel: ein unbestimmtes Wort im Akkusativ (zwei Fatha) bekommt ein Alif hinten dran. Dein Lehrer sagt es in Folge 24 mit 'wir hatten das', der Schluessel in Lektion 18 beim Fragewort kam. Aufnehmen als Schreibregel, obwohl der Akkusativ selbst noch nicht dran war — oder warten, bis er kommt?"
@@ -707,6 +713,52 @@
     "f25-2415": {
       "urteil": "weg",
       "grund": "Schluss der Musterreihen (Jungen, Soehne, Onkel folgen af'al — 'die muesst ihr nicht lernen', man solle ein Gefuehl dafuer bekommen; bei f25-715 mitzitiert), danach geht der Lehrer die Vokabeln von Kapitel 13 in der Einzahl durch (alter Mann oder Gelehrter, Gast, Kollege, arm, reich, Freund, Arzt, junger Mann, Bruder, neu, Lehrer, Ingenieur, Bauer, fleissig, Muslim; dann Felder, Menschen, Dorf, Restaurant, Grundschule) und gibt Aufgabe 1 auf. Vokabelarbeit und Organisation."
+    },
+    "f26-045": {
+      "urteil": "weg",
+      "grund": "Beginn von Folge 26: ein Schueler (nicht der Lehrer) fasst die Vorstunde zusammen — regelmaessiger und gebrochener Plural, der regelmaessige maennlich und weiblich, beim maennlichen wird -una angehaengt. Der Lehrer bestaetigt nur ('genau', 'sehr gut'). Reine Wiederholung; alle Aussagen stehen seit dem 04.10.2026 als Regeln im Bestand (jam-salim-taksir-01, jam-mudhakkar-salim-01), bewertet bei f25-145 und f25-345."
+    },
+    "f26-215": {
+      "urteil": "weg",
+      "grund": "Fortsetzung der Schuelerzusammenfassung: beim weiblichen Plural wird das Ta marbuta durch Alif und Ta ersetzt, der gebrochene Plural folgt Mustern, und hadha und hadhihi haben den gemeinsamen Plural ha'ula'i. Danach beginnt das Vorlesen der Hausaufgabe (diese Haendler, diese Pilger). Wiederholung ohne neuen Lehrsatz; die drei Aussagen stehen als jam-muannath-salim-01, jam-taksir-01 und ismul-isara-haulai-01 im Bestand (f25-545, f25-715, f25-915)."
+    },
+    "f26-845": {
+      "urteil": "weg",
+      "grund": "Hausaufgabe 1 wird reihum vorgelesen (wer ist dran, wessen Mikrofon geht nicht), dann die Ansage zu Aufgabe 2: einen Satz in den Plural setzen. Organisation und Uebungsabfrage, kein Lehrsatz."
+    },
+    "f26-1045": {
+      "urteil": "weg",
+      "grund": "Der Lehrer rechnet Aufgabe 2 am ersten Satz vor: 'min aina' bleibt, aus dem Studenten werden Studenten mit ha'ula'i, und aus 'huwa min al-hind' wird 'hum min al-hind'. Danach Arbeitsauftraege (Aufgabe jetzt machen, Elias schon Aufgabe 6). Er wendet hum als Mehrzahl von huwa an, erklaert es in dieser Folge aber an keiner Stelle als Regel — auch spaeter nur 'hum is huwa' beim Zerlegen eines Satzes (f26-3015). Gedruckt nennt der Schluessel zu Band 1 in Lektion 13 hum und hunna; ein Lehrsatz aus dem Unterricht, den man zitieren koennte, fehlt in Folge 26. Uebungsabfrage."
+    },
+    "f26-1315": {
+      "urteil": "weg",
+      "grund": "Aufgabe 2 reihum: aus 'wo ist der grosse Haendler' wird 'wo sind die grossen Haendler' (tujjar, kibar), dazu hum. Der Whisper-Text ist ueber weite Strecken zerrissen ('ok in 1 1 1 1 1 tuggerul cabiru kibaru'). Die Schueler setzen Nomen und Eigenschaftswort beide in die Mehrzahl, der Lehrer sagt dazu keinen Regelsatz. Uebungsabfrage."
+    },
+    "f26-1545": {
+      "urteil": "weg",
+      "grund": "Aufgabe 2 weiter: der Lehrer korrigiert einzelne Formen ('Jetzt musst du hadha auch Plural machen', 'die sind bestimmt, kein Tanwin'), nennt die Mehrzahl von reich und arm und verweist auf den Kasten oben im Buch, in dem alle Formen stehen. Dass ein bestimmtes Wort kein Tanwin traegt, steht laengst im Bestand (Regeln zu al- aus Kapitel 3); die Mehrzahlformen sind Wortkunde. Kurz davor (ausserhalb dieses Ausschnitts) zwei Hinweise zur Aufgabe selbst, keine Grammatik: ha'ula'i nur setzen, wenn im Ausgangssatz hadha steht, und nur in die Mehrzahl setzen, 'was auch Sinn macht' (man geht in eine Bibliothek, nicht in mehrere)."
+    },
+    "f26-2115": {
+      "urteil": "unbelegt",
+      "grund": "Aufgabe 3: Mehrzahlwoerter als erstes Glied einer Besitzverbindung (die Soehne von Muhammad, die Namen der Studenten, die Kollegen von Hamid, die Freunde des Lehrers). Dass das erste Glied dabei sein Tanwin verliert ('von Tanwin zu' ohne), steht im Bestand als mudaf-01. Neu ist ein einzelner Satz des Lehrers zur Schreibung, als an 'abna'u' (Soehne) ein Fuerwort angehaengt wird ('abna'uhu', seine Soehne): 'Wenn man danach ein Damir ranmacht, wird das Hamza auf ein Waw geschrieben' (Whisper: 'ein Damien reinmacht ... Hemse auf ein Wow'). Er zeigt es nur an Formen mit u-Endung (abna'uhu, asma'uhum, zumala'uka) und sagt nichts zu den anderen Faellen. Gesucht nach 'Hamza' in der Vault-Notiz Schluessel-Regeln (Band 1, 23 Lektionen: nur Treffer zu Hamzatu l-wasl und li + al-) und in der Textebene der Schluessel zu Band 2 und 3 (drei Treffer, keiner zur Schreibung des Hamza vor einem angehaengten Fuerwort). Im Bestand (grammar-data.js) steht keine Regel dazu. Der Schlusssatz des Ausschnitts ('das Buch weiss nicht, dass wir bereits konjugieren koennen', Whisper: 'negieren') leitet nur zu Aufgabe 4 ueber.",
+      "quelle": "Unterricht Folge 26 @ 21:15 (ein Satz, an drei Beispielen gezeigt) — keine gedruckte Quelle in unserem Bestand; mudaf-01 fuer den Tanwin-Teil",
+      "frage": "Dein Lehrer sagt in Folge 26 einmal: haengt man an ein Wort wie abna'u (Soehne) ein Fuerwort an (abna'uhu, seine Soehne), wird das Hamza auf ein Waw geschrieben. Das steht in keinem unserer drei Schluessel, und er zeigt es nur an Formen mit u-Endung. Regel daraus machen, oder warten, bis es gedruckt belegt ist?"
+    },
+    "f26-2645": {
+      "urteil": "weg",
+      "grund": "Aufgabe 6: die Schueler nennen zu einer Wortreihe die Mehrzahl (Gast, junger Mann, Pilger, Bruder), der Lehrer bestaetigt oder verbessert. Danach die Hausaufgabe: Aufgabe 5, sechzehn Saetze lesen, vokalisieren, uebersetzen und zu jedem Mehrzahlwort die Einzahl nennen. Wortkunde und Organisation."
+    },
+    "f26-2815": {
+      "urteil": "weg",
+      "grund": "Der Lehrer macht die Hausaufgabe 5 an den ersten Saetzen vor: 'Die Studenten sind im Klassenzimmer' — welches Wort steht in der Mehrzahl, was ist die Einzahl; dann 'Wer sind diese Jungen?'. Der Whisper-Text ist in der Mitte unbrauchbar ('so er wird welt welt heisst im im leben'). Uebungsabfrage, kein Lehrsatz."
+    },
+    "f26-3015": {
+      "urteil": "weg",
+      "grund": "Dritter Beispielsatz zur Hausaufgabe ('Wer sind diese Menschen? Sie sind Pilger aus der Tuerkei'), den der Lehrer Wort fuer Wort auf die Einzahl zurueckfuehrt: ha'ula'i ist hadha, Menschen bleibt, Pilger ist hajj, 'und hum is huwa'. Danach Organisation: Kapitel 13 hat mehrere Teile, Hausaufgaben machen, Vokabeltest spaeter. Anwendung der Regeln aus Folge 25 (ismul-isara-haulai-01, jam-taksir-01), kein neuer Lehrsatz; zu hum siehe f26-1045."
+    },
+    "f26-3915": {
+      "urteil": "weg",
+      "grund": "Nach dem Konjugieren von vier bekannten Verben in der Vergangenheit gibt der Lehrer fuenf neue Verben zum Ueben auf: helfen, schreiben, suchen (er nennt auch wollen und bestellen und legt sich auf suchen fest), sich niederwerfen, danken — 'fuehrt eine Liste wegen den Verben'. Dazu Ermutigung: wer das Muster kann, kann alles konjugieren und hat einen groesseren Wortschatz. Vokabelarbeit und Motivation, keine Regel; die Vergangenheitsformen selbst wurden in frueheren Folgen eingefuehrt."
     }
   }
 }

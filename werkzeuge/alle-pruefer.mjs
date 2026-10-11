@@ -466,8 +466,16 @@ const PRUEFER = [
   /* ⭐ Mit --pruefen, weil der blanke Lauf bewertung.json SCHREIBT und ein
      Sammellauf nichts verändern darf. Rot wird er, sobald eine Fundstelle ohne
      mein Urteil dasteht — das ist MEIN Rückstand, und er gehört genau hierhin
-     sichtbar gemacht, nicht auf Elias' Warteseite. */
+     sichtbar gemacht, nicht auf Elias' Warteseite.
+     ⭐ Seit 11.10.2026 kennt er drei Exitcodes: 1 = etwas ist kaputt (bleibt
+     NEU ROT), 2 = eine BELEGTE Regel ist noch nicht in der App (Arbeit für die
+     Wartung, steht unten in LUECKE_FUER_WARTUNG). */
   ['werkzeuge/kandidaten-bewerten.mjs', ['--pruefen']],
+  /* 11.10.2026 — wer bekommt einen Regelkandidaten? Elias: „wieso stehen die
+     noch aus?" und sein „ja" dazu, dass belegte Regeln ohne Rückfrage eingebaut
+     werden. Bewacht `kandidaten-einordnung.mjs` und die drei Werkzeuge, die
+     daraus lesen; Störtests bei jedem Lauf. */
+  ['test-regelkandidaten.mjs', []],
   /* Ohne --schreiben misst es nur. Rot, sobald in einer Projektnotiz ein
      aelterer Abschnitt vor einem neueren steht — Elias am 22.09.2026:
      „oben, räume demtentsprechend um". */
@@ -885,8 +893,15 @@ const HAENGT_AM_STAND  = ['werkzeuge/pruefe-ausgeliefert.mjs', 'pruefe-erreichba
      Satz (zählt erst seit 04.10.2026 wirklich in den Exit-Code), neue Wörter,
      die eine Ganzsatz-Übung wie Satzbau nicht erreicht (Teil J, seit
      04.10.2026), Balance 0 % (Elias: „du sollst automatisch das machen und die app
-     immer aktuell halten"; Schritt 1b.8 der Wartung schließt die Lücken). */
-const LUECKE_FUER_WARTUNG = ['werkzeuge/pruefe-satzmodus-aktuell.mjs'];
+     immer aktuell halten"; Schritt 1b.8 der Wartung schließt die Lücken).
+   · kandidaten-bewerten.mjs (seit 11.10.2026) — sein Exit 2 heißt: eine BELEGTE
+     Regel (Lehrer und Schlüssel sagen dasselbe) steht noch nicht in der App.
+     Elias: „wieso stehen die noch aus?" — und sein „ja" dazu, dass sie ohne
+     Rückfrage eingebaut werden. Schritt 1b.3 der Wartung baut sie ein. Stünde
+     das Werkzeug hier nicht, sperrte eine frisch beurteilte Fundstelle jede
+     Auslieferung der anderen Routinen (so geschehen am 10.10.2026 mit elf
+     unbeurteilten Fundstellen — DAS bleibt Exit 1 und NEU ROT). */
+const LUECKE_FUER_WARTUNG = ['werkzeuge/pruefe-satzmodus-aktuell.mjs', 'werkzeuge/kandidaten-bewerten.mjs'];
 const gelaufenRot = rot.filter(e => e.code !== null && e.code !== -1);
 const neuRot = gelaufenRot.filter(e => !WARTET_AUF_ELIAS.includes(e.rel) && !HAENGT_AM_STAND.includes(e.rel)
   && !(LUECKE_FUER_WARTUNG.includes(e.rel) && e.code === 2));

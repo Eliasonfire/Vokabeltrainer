@@ -85,10 +85,25 @@
  *   node werkzeuge/kandidaten-bewerten.mjs --offen     nur, was noch auf MEIN Urteil wartet
  *   node werkzeuge/kandidaten-bewerten.mjs --pruefen   schreibt nichts, nur Zahlen und Exitcode
  *   node werkzeuge/kandidaten-bewerten.mjs --stoertest Urteil wird ignoriert -> muss rot werden
+ *
+ * ========================= DIE DREI EXITCODES (seit 11.10.2026) ===========
+ *
+ *   0  alles beurteilt, jede belegte Regel steht in der App
+ *   1  etwas ist KAPUTT: ein Kandidat ohne Urteil, ein Urteil ohne Begründung,
+ *      eine Frage an Elias ohne Fundstelle, „eingebaut" ohne vorhandene Regel
+ *   2  nichts kaputt, aber eine BELEGTE Regel (Urteil `regel`) ist noch nicht
+ *      in der App. Das ist Arbeit für die Wartung (Schritt 1b.3), kein Defekt —
+ *      im Sammellauf steht das Werkzeug deshalb unter LUECKE_FUER_WARTUNG.
+ *
+ * ⛔ Wer wohin geht, entscheidet NICHT mehr diese Datei, sondern
+ * `kandidaten-einordnung.mjs` — dort stehen Elias' drei Sätze dazu (18.08.,
+ * 05.10. und 11.10.2026). Kurz: eine belegte Regel baue ich ein, er liest
+ * „eingebaut"; an ihn gehen nur `abweichung` und `unbelegt`.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { URTEILSARTEN, einordnen } from './kandidaten-einordnung.mjs';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const KAND = path.join(REPO, 'transcripts', 'kandidaten');
@@ -336,27 +351,23 @@ function belegeFuer(kand, folge) {
 
 /* ====================== Durchlauf ======================================= */
 
-/* ⛔⛔ WARUM `regel` AN ELIAS GEHT UND NICHT AN MICH.
-   Im selben Gedächtnisabschnitt, der mir das Bewerten aufträgt, steht auch
-   Punkt 3 von „Wie damit weitergearbeitet wird" (29.07.2026):
-   „Band 2 und 3 liefern Kandidaten für neue Regeln, aber sie werden GESAMMELT,
-   NICHT EINGEBAUT: **Elias will alle Regeln selbst freigeben**."
-   Beides gilt zugleich, und das ist kein Widerspruch: ich nehme ihm das
-   Aussortieren ab, nicht das Freigeben. Aus 95 Fundstellen wird eine Handvoll
-   fertiger Vorschläge mit Beleg und Empfehlung — ein Ja oder Nein statt einer
-   Abendarbeit. [[antwort_auf_meine_frage_ist_keine_freigabe]] */
-const URTEILSARTEN = {
-  'schon-regel': { an: 'claude', text: 'Der Inhalt steht bereits als Regel' },
-  'weg':         { an: 'claude', text: 'Keine Regel darin' },
-  'regel':       { an: 'elias',  text: 'Mein Vorschlag, mit Beleg — dein Ja fehlt' },
-  'abweichung':  { an: 'elias',  text: 'Schlüssel und Unterricht widersprechen sich' },
-  'unbelegt':    { an: 'elias',  text: 'Keine gedruckte Quelle bestätigt es' },
-};
+/* ⛔⛔ BIS ZUM 11.10.2026 GING AUCH `regel` AN ELIAS („dein Ja fehlt").
+   Hier stand die Begründung dafür, gestützt auf einen Gedächtnissatz vom
+   29.07.2026 über Buchregeln aus Band 2 und 3. Sie war MEINE Lesart und hat
+   ihm drei Wochen lang Fragen vorgelegt, die er am 18.08. („allgemein gilt
+   das so") und am 05.10. („ist okay") schon beantwortet hatte. Am 11.10.2026
+   hat er es ein drittes Mal gesagt („ja"). Die Urteilsarten und wer sie
+   bekommt stehen seitdem in `kandidaten-einordnung.mjs`. */
 
-/* Ein Kandidat, der zu Elias geht, braucht eine FRAGE an ihn. Ohne sie steht
-   er vor einem Textblock und soll raten, was von ihm erwartet wird — genau
-   der Zustand, den er am 22.09. abgeräumt hat. */
-const BRAUCHT_FRAGE = new Set(['regel', 'abweichung', 'unbelegt']);
+/* Die vorhandenen Regeln — Kennung und Name. Nennt ein Urteil eine Regel
+   (Feld `regel`), muss es sie geben; ihren Namen liest Elias auf seiner Seite
+   unter „Eingebaut". */
+const REGEL_NAMEN = (() => {
+  const gdp = path.join(REPO, 'grammar-data.js');
+  if (!fs.existsSync(gdp)) return new Map();
+  const G = new Function(fs.readFileSync(gdp, 'utf8') + ';return {GRAMMAR_RULES};')().GRAMMAR_RULES;
+  return new Map(G.map(r => [r.id, r.name]));
+})();
 
 const dateien = fs.readdirSync(KAND).filter(f => /^folge-\d+\.json$/.test(f))
   .sort((a, b) => parseInt(a.match(/\d+/)[0]) - parseInt(b.match(/\d+/)[0]));
@@ -376,25 +387,20 @@ for (const datei of dateien) {
       grund: u ? u.grund : null,
       quelle: u ? (u.quelle || null) : null,
       frage: u ? (u.frage || null) : null,
+      /* Seit 11.10.2026: aus dieser Fundstelle ist eine Regel geworden. */
+      regel: u ? (u.regel || null) : null,
+      regelName: u && u.regel ? (REGEL_NAMEN.get(u.regel) || null) : null,
+      eingebaut: u ? (u.eingebaut || null) : null,
     });
   }
 }
 
-const ohneUrteil = alle.filter(a => !a.urteil);
-const unbekannteArt = alle.filter(a => a.urteil && !URTEILSARTEN[a.urteil]);
-const anElias = alle.filter(a => a.urteil && URTEILSARTEN[a.urteil]
-  && URTEILSARTEN[a.urteil].an === 'elias');
-const vonMir = alle.filter(a => a.urteil && URTEILSARTEN[a.urteil]
-  && URTEILSARTEN[a.urteil].an === 'claude');
-
-/* ⛔ Ein Urteil ohne Begründung ist keins. Genau so entsteht der Zustand, in
-   dem eine Liste grün aussieht und niemand mehr weiß, warum. */
-const ohneGrund = alle.filter(a => a.urteil && (!a.grund || a.grund.trim().length < 15));
-const ohneFrage = alle.filter(a => a.urteil && BRAUCHT_FRAGE.has(a.urteil)
-  && (!a.frage || a.frage.trim().length < 15));
-/* ⛔ Und eine Fundstelle. „Mein Vorschlag" ohne Beleg ist eine Behauptung. */
-const ohneQuelle = alle.filter(a => a.urteil && BRAUCHT_FRAGE.has(a.urteil)
-  && (!a.quelle || a.quelle.trim().length < 10));
+/* ⛔ Ein Urteil ohne Begründung ist keins, eine Frage an Elias ohne Fundstelle
+   eine Behauptung — die Prüfungen selbst stehen in `kandidaten-einordnung.mjs`,
+   damit die drei Werkzeuge nicht auseinanderlaufen. */
+const { ohneUrteil, unbekannteArt, anElias, vonMir, einzubauen, eingebaut,
+        eingebautOhneRegel, eingebautFalscheArt, ohneGrund, ohneFrage, ohneQuelle }
+  = einordnen(alle, new Set(REGEL_NAMEN.keys()));
 
 /* ====================== Ausgabe ========================================= */
 
@@ -431,6 +437,8 @@ console.log('Regelkandidaten: ' + alle.length + ' aus ' + dateien.length + ' Fol
 console.log('  von mir entschieden: ' + vonMir.length
   + '  (' + Object.entries(zahlen).filter(([k]) => URTEILSARTEN[k].an === 'claude')
       .map(([k, v]) => k + ' ' + v).join(', ') + ')');
+console.log('    davon eingebaut (er liest „eingebaut"): ' + eingebaut.length);
+console.log('    davon belegt, noch EINZUBAUEN:         ' + einzubauen.length);
 console.log('  fuer Elias:          ' + anElias.length
   + '  (' + Object.entries(zahlen).filter(([k]) => URTEILSARTEN[k].an === 'elias')
       .map(([k, v]) => k + ' ' + v).join(', ') + ')');
@@ -471,9 +479,25 @@ if (ohneFrage.length) {
   fehler++;
 }
 if (ohneQuelle.length) {
-  console.error('\n⛔ ' + ohneQuelle.length + ' Kandidat(en) fuer Elias ohne Fundstelle: '
+  console.error('\n⛔ ' + ohneQuelle.length + ' Kandidat(en) ohne Fundstelle: '
     + ohneQuelle.map(a => a.id).join(', '));
-  console.error('   „Mein Vorschlag" ohne Beleg ist eine Behauptung.');
+  console.error('   Eine „belegte Regel" ohne genannten Beleg ist eine Behauptung — und sie');
+  console.error('   wuerde jetzt ohne sein Ja eingebaut.');
+  fehler++;
+}
+if (!REGEL_NAMEN.size) {
+  console.error('\n⛔ grammar-data.js nicht gelesen — ob „eingebaut" stimmt, ist nicht pruefbar.');
+  fehler++;
+}
+if (eingebautOhneRegel.length) {
+  console.error('\n⛔ ' + eingebautOhneRegel.length + ' Urteil(e) nennen eine Regel, die es nicht gibt: '
+    + eingebautOhneRegel.map(a => a.id + ' -> ' + (a.regel || '(keine Kennung)')).join(', '));
+  console.error('   Elias laese „eingebaut" ueber etwas, das in der App fehlt.');
+  fehler++;
+}
+if (eingebautFalscheArt.length) {
+  console.error('\n⛔ „eingebaut" steht an einem Urteil, das nicht schon-regel ist: '
+    + eingebautFalscheArt.map(a => a.id + '=' + a.urteil).join(', '));
   fehler++;
 }
 if (ohneUrteil.length) {
@@ -492,6 +516,8 @@ if (!nurPruefen && !stoertest) {
     vonMir: vonMir.length,
     fuerElias: anElias.length,
     rueckstand: ohneUrteil.length,
+    einzubauen: einzubauen.length,
+    eingebaut: eingebaut.length,
     quellen: {
       schluesselBaende: Object.keys(SCHLUESSEL).map(Number),
       schluesselSeiten: Object.fromEntries(Object.entries(SCHLUESSEL).map(([b, s]) => [b, s.length])),
@@ -508,4 +534,12 @@ if (stoertest) {
   console.error('\n⛔ Stoertest GRUEN — der Pruefer merkt nicht, wenn die Urteile fehlen.');
   process.exit(1);
 }
-process.exit(fehler ? 1 : 0);
+/* ⭐ Belegt, aber noch nicht in der App: das ist kein Defekt, sondern Arbeit —
+   deshalb Exit 2 und nicht 1. Elias, 11.10.2026: „wieso stehen die noch aus?" */
+if (!fehler && einzubauen.length) {
+  console.log('\n⏳ ' + einzubauen.length + ' belegte Regel(n) stehen noch NICHT in der App: '
+    + einzubauen.map(a => a.id).join(', '));
+  console.log('   Einbauen (Wartung, Schritt 1b.3): node werkzeuge/uebernehmen.mjs, danach das Urteil auf');
+  console.log('   schon-regel setzen, mit `regel` (Kennung) und `eingebaut` (Datum). NICHT Elias fragen.');
+}
+process.exit(fehler ? 1 : einzubauen.length ? 2 : 0);
