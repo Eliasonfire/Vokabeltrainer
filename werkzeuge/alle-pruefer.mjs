@@ -773,7 +773,22 @@ const PRUEFER = [
      falschem Dua-Wortlaut, bei einem Versrest von 28:24 und ohne data/duas.json —
      und Gruen, solange die Ausnahme in Abschnitt 7 steht. Datendateien fasst sie
      nicht an. */
-  ['werkzeuge/eiche-dua-zitate.mjs', []]
+  ['werkzeuge/eiche-dua-zitate.mjs', []],
+  /* 11.10.2026 — die Ersatzdatenbank. Elias: „1:1 ersatzdatenbank von den
+     vokabeln die alle nicht von mir stammen … genauso organisiert … wie die bei
+     arabicroots damit man … nahtlos wechseln kann ohne probleme", und zum
+     Deutsch: „für das deutsche will ich im optimalfall auch eine quelle haben".
+     pruefe-ersatz.mjs bewacht den lokalen Ordner data-ersatz/: dieselben
+     Kennungen, Kapitel und dieselbe Reihenfolge wie im Bestand (daran haengt
+     sein Lernstand), zu jeder Angabe eine Fundstelle, keine davon arabicroots.
+     Exit 0 auch mit offenen Plaetzen und auch OHNE den Ordner (er ist lokal und
+     fehlt auf jedem anderen Rechner) — rot wird er nur bei einem Widerspruch.
+     eiche-ersatz.mjs baut eine Probe in einem Wegwerfordner und verlangt Rot
+     bei vierzehn eingebauten Fehlern (Karte ohne Deutsch, Angabe ohne
+     Fundstelle, Fundstelle arabicroots, Reihenfolge, Kapitel, fremde Kennung …)
+     und Gruen beim Grundstand; die echte data-ersatz/ fasst sie nicht an. */
+  ['werkzeuge/pruefe-ersatz.mjs', ['--knapp']],
+  ['werkzeuge/eiche-ersatz.mjs', []]
 ];
 
 /* ⛔ pruefe-oberflaeche.js läuft NICHT unter node — es prüft die laufende App
