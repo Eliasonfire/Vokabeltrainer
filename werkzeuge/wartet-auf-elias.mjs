@@ -73,6 +73,20 @@ const TODO_ZEILEN = (() => {
   catch (e) { return 0; }
 })();
 
+/* ⛔ Derselbe Fehler noch einmal, gefunden am 11.10.2026: in den Seitenlisten unten stand
+   „alle 103 Regeln nach Kategorien" und „welche der 95 Regeln" als fester Text — gezählt waren
+   es an dem Tag 115. Die Zahl kommt deshalb aus grammar-data.js; lässt sie sich nicht lesen,
+   steht „alle Regeln" da statt einer falschen Zahl. */
+const REGEL_ZAHL = (() => {
+  try {
+    const ktx = vm.createContext({});
+    vm.runInContext(fs.readFileSync(path.join(REPO, 'grammar-data.js'), 'utf8')
+      + '\nglobalThis.N = GRAMMAR_RULES.length;', ktx);
+    return Number(ktx.N) || 0;
+  } catch (e) { return 0; }
+})();
+const REGELN_TEXT = REGEL_ZAHL ? REGEL_ZAHL + ' Regeln' : 'Regeln';
+
 const posten = [];
 
 /* A) Die offenen Feldangaben — dieselbe Quelle wie die Fragenseite. */
@@ -1339,13 +1353,23 @@ try {
         + (einzubauenN ? ' ⚠️ ' + einzubauenN + ' belegte Regel(n) baue ich noch ein — meine Arbeit, nicht deine.' : '')
         + (bewertung.rueckstand ? ' ⚠️ ' + bewertung.rueckstand + ' habe ich noch nicht durch — mein Rückstand, nicht deiner.' : ''),
       wie: 'Auf der Freigabeseite antippen, unten den Text kopieren, in den Chat schicken.',
-      zeilen: fuerIhn.map((k, i) => (i + 1) + ' · ' + (k.frage || k.grund || '').slice(0, 200)),
+      zeilen: fuerIhn.map((k, i) => (i + 1) + ' · ' + kuerzeAnWortgrenze(k.frage || k.grund || '', 200)),
       seite: 'https://claude.ai/artifact/2GJFK49B8LvWJaBu337qU4',
       seiteText: 'Die Freigabeseite'
     });
   }
 } catch (e) {
   console.log('  ⚠️ Regelkandidaten nicht lesbar: ' + e.message);
+}
+
+// Eine lange Frage wird an einer Wortgrenze gekürzt, und das Kürzen ist zu sehen. Vorher schnitt
+// slice(0, 200) mitten im Wort ab („steht in keinem unserer drei Schlu") — das las sich wie ein
+// Fehler der Seite. Die ganze Frage steht auf der Freigabeseite. (11.10.2026)
+function kuerzeAnWortgrenze(text, max) {
+  if (text.length <= max) return text;
+  const stueck = text.slice(0, max);
+  const grenze = stueck.lastIndexOf(' ');
+  return (grenze > max * 0.6 ? stueck.slice(0, grenze) : stueck).replace(/[\s,;:—-]+$/, '') + ' …';
 }
 
 /* ---------- Bücher und Kapitel (seit 24.09.2026) ----------
@@ -1499,7 +1523,7 @@ const ARTEFAKTE = [
      in DATEI_ZU_URL und stand auf keiner Liste, die Elias sieht. Ausgerechnet
      die, zu der er am selben Tag sagte: „mach sie ganz nach oben und hebe sie
      hervor und schreib in to do von mir diese unbedingt zu machen." */
-  ['Die Regelkategorien',   'DHhYFwtTNJADVwE2tVUDz3', 'alle 103 Regeln nach Kategorien — gehört diese Regel in die App?'],
+  ['Die Regelkategorien',   'DHhYFwtTNJADVwE2tVUDz3', 'alle ' + REGELN_TEXT + ' nach Kategorien — gehört diese Regel in die App?'],
   ['Der Wartungskreislauf', '9ec136ba-019d-438b-98af-e57939eb4a99', 'wie das System läuft — vier Phasen, dreizehn Prüfungen'],
   /* ⭐ Am 21.08. vom eigenen Wächter gemeldet: „1 Seite hat eine URL, steht
      aber auf KEINER Liste, die Elias sieht." Genau der Fall, für den er
@@ -1526,7 +1550,7 @@ const ARTEFAKTE = [
    ändern. */
 const LAUFEND = [
   ['Regelauswahl Satzmodus', 'da4af296-67c5-4055-a2e7-35defc375007',
-   'welche der 95 Regeln im Satzmodus bleiben — Schlüssel satzmodus-auswahl-v1'],
+   'welche der ' + REGELN_TEXT + ' im Satzmodus bleiben — Schlüssel satzmodus-auswahl-v1'],
   ['Regelprüfung Madina 1', '4iMdxRvKkFHj699cfyHbra',
    'deine Beurteilung der Regeln — Schlüssel regelpruefung-v1, deine Antworten liegen darin'],
   /* ⚠️ 22.09.2026 zum DRITTEN Mal neu veröffentlicht. Vorgänger:
