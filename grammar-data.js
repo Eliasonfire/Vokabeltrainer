@@ -2980,7 +2980,8 @@ const SENTENCE_TAGS = {
     { ruleId: "istifham-madha-01", matchText: "مَاذَا" }
   ],
   "gram-frage-kam": [
-    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْفَصْلِ" }
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْفَصْلِ" },
+    { ruleId: "tanwin-fath-alif-01", matchText: "طَالِبًا" }
   ],
   "gram-frage-min-ayna": [
     { ruleId: "min-ayna-01", matchText: "مِنْ أَيْنَ" }
@@ -3428,7 +3429,8 @@ const SENTENCE_TAGS = {
     { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْمَطْبَخِ" }
   ],
   "by1-58-1": [
-    { ruleId: "jam-salim-taksir-01", matchText: "غُرَفٍ" }
+    { ruleId: "jam-salim-taksir-01", matchText: "غُرَفٍ" },
+    { ruleId: "tanwin-fath-alif-01", matchText: "غُرْفَةً", bedeutung: 'Ausnahme: nach einem Tāʾ marbūṭa steht kein Alif' }
   ],
   "mb1-68-2": [
     { ruleId: "jam-mudhakkar-salim-01", matchText: "مُجْتَهِدُونَ" }
