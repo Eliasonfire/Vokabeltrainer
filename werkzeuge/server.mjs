@@ -7,7 +7,18 @@
  * den Breakpoints braucht es aber genau das - eine Adresse, die man oeffnen
  * UND in der Breite verstellen kann.
  *
- * Aufruf:  node werkzeuge/server.mjs [port]
+ * Aufruf:  node werkzeuge/server.mjs [port] [--daten <ordner>]
+ *
+ * --daten <ordner> (12.10.2026, fuer die Ersatzdatenbank): Anfragen nach
+ * data/buecher.js und data/vokabeln-<buch>.js beantwortet der Server aus
+ * diesem Ordner, wenn die Datei dort liegt - sonst wie immer aus data/. So
+ * laesst sich die App mit den Karten aus data-ersatz/ ansehen, ohne eine Datei
+ * in data/ anzufassen. Seine eigenen Woerter (data/vokabeln-eigene.js) gibt es
+ * dort nicht, sie kommen weiter aus data/.
+ * ⚠️ Dafuer eine EIGENE Adresse nehmen (eigener Port, in launch.json
+ * "vokabeltrainer-ersatzprobe"): Speicher und Service Worker haengen an der
+ * Adresse, und der Service Worker legt die Buchdateien in seinen Vorrat - auf
+ * der Adresse der normalen Vorschau stuenden danach die falschen Karten.
  *
  * ⚠️ Nur zum Ansehen. Der Abgleich ueber Cloudflare KV funktioniert hier
  * nicht (kein Access-Login) - sync.js meldet das sichtbar als "nicht
@@ -27,6 +38,10 @@ import { fileURLToPath } from 'node:url';
    "1. Workspace" mit Leerzeichen und steht in import.meta.url als %20. */
 const WURZEL = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PORT = Number(process.argv[2]) || 8124;
+const iDaten = process.argv.indexOf('--daten');
+const DATEN_STATT = iDaten > 1 && process.argv[iDaten + 1] ? path.resolve(WURZEL, process.argv[iDaten + 1]) : null;
+/* Nur das Verzeichnis und die Buchdateien - nichts anderes aus data/ wird umgelenkt. */
+const BUCHDATEI = /^\/data\/(buecher\.js|vokabeln-[a-z0-9-]+\.js)$/;
 
 const TYPEN = {
   '.html': 'text/html; charset=utf-8',
@@ -54,6 +69,12 @@ http.createServer(async (anfrage, antwort) => {
       return;
     }
 
+    const buchdatei = DATEN_STATT && pfad.match(BUCHDATEI);
+    if (buchdatei) {
+      const statt = path.join(DATEN_STATT, buchdatei[1]);
+      if (await stat(statt).catch(() => null)) ziel = statt;
+    }
+
     const s = await stat(ziel).catch(() => null);
     if (s && s.isDirectory()) ziel = path.join(ziel, 'index.html');
 
@@ -73,4 +94,5 @@ http.createServer(async (anfrage, antwort) => {
 }).listen(PORT, () => {
   console.log(`Vokabeltrainer laeuft auf http://localhost:${PORT}`);
   console.log(`Ordner: ${WURZEL}`);
+  if (DATEN_STATT) console.log(`Buchdateien und Verzeichnis aus: ${DATEN_STATT}`);
 });
