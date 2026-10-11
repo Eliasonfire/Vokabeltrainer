@@ -178,6 +178,10 @@ if (verzeichnis.length) schreibe(path.join(ERSATZ, 'buecher.js'),
 if (plaetze.length) schreibe(path.join(ERSATZ, 'plaetze.json'), JSON.stringify(plaetze));
 schreibe(path.join(ERSATZ, 'nicht-gefunden.json'), JSON.stringify(nichtGefunden, null, 1));
 schreibe(path.join(ERSATZ, 'unterschiede.json'), JSON.stringify(unterschiede, null, 1));
+// Die Unterschiede nach Feld und Art gezählt (die Liste selbst bleibt in der Reihenfolge der Plätze): so sieht man,
+// wo die Arbeit liegt — z. B. wie viele Karten im Arabischen selbst abweichen und wie viele nur in der Schlussendung.
+stand.unterschiede = { gesamt: unterschiede.length, jeFeld: {} };
+for (const u of unterschiede) { const f = stand.unterschiede.jeFeld[u.feld] = stand.unterschiede.jeFeld[u.feld] || {}; f[u.art] = (f[u.art] || 0) + 1; }
 schreibe(path.join(ERSATZ, 'stand.json'), JSON.stringify(stand, null, 1));
 
 const sum = { plaetze: 0, belegt: 0, nichtGefunden: 0, offen: 0, deutschDirekt: 0, deutschKette: 0, deutschTeile: 0, deutschOhneQuelle: 0 };
@@ -185,6 +189,10 @@ for (const buch of BUECHER) {
   const z = stand.buecher[buch];
   for (const k of Object.keys(sum)) sum[k] += z[k];
   if (!process.argv.includes('--knapp')) console.log(`${buch}: ${z.belegt} von ${z.plaetze} belegt · ${z.offen} offen · ${z.nichtGefunden} nicht gefunden · Deutsch direkt ${z.deutschDirekt}, über das Englische ${z.deutschKette}, ohne deutsche Quelle ${z.deutschOhneQuelle}`);
+}
+if (!process.argv.includes('--knapp')) for (const f of FELDER) {
+  const arten = stand.unterschiede.jeFeld[f];
+  if (arten) console.log(`Unterschiede ${f}: ${Object.values(arten).reduce((a, b) => a + b, 0)} (${Object.entries(arten).sort((a, b) => b[1] - a[1]).map(([art, n]) => art + ' ' + n).join(' · ')})`);
 }
 if (verbformenWeg) console.log(`Verbformen an Karten, die keine Verben sind, weggelassen: ${verbformenWeg}`);
 if (handFehler.length) { console.log(`HAND:${handFehler.length} Entscheidung(en) passen nicht zu den Quellen:`); for (const f of handFehler.slice(0, 20)) console.log('  ✗ ' + f); process.exitCode = 1; }

@@ -306,6 +306,12 @@ if (!fs.existsSync(PROMPT)){
          selbst gemeldet — beim ersten Sammellauf nach Schritt 1e. */
       "werkzeuge/pruefe-pflegeplan.mjs":
         "prueft, ob jede FUNKTION der App eine Pflege hat (Elias, 11.09.2026) - eine Frage an Routinen und Plan, nicht an eine Vokabel",
+      /* 12.10.2026: die Wartung fragt in Schritt 2b, ob die Ersatzdatenbank
+         (data-ersatz/, lokal) dem Abzug noch folgt. Das ist ein ZWEITER
+         Datenbestand neben der App - ob eine Vokabel der App ihr volles
+         Programm hat, haengt daran nicht. */
+      "werkzeuge/pruefe-ersatz.mjs":
+        "prueft die Ersatzdatenbank (data-ersatz/, lokal) gegen den Abzug - eine Frage an einen zweiten Datenbestand neben der App, nicht an eine Vokabel der App",
     };
     const pruefend = gefordert.filter(w =>
       (w.includes("pruefe-") || w === "validate.js" || w === "werkzeuge/vorrat.mjs")
