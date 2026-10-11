@@ -65,6 +65,11 @@ for (const s of liste) {
     if (d3) console.log(`     A: ${d3}`);
     const d1 = zeig(de.filter(d => d.sicher === 'vokalisiert' && !d.sch && d.q !== 'arabdict'), 9), d2 = zeig(de.filter(d => d.sicher === 'kette'), 9);
     if (d1 || d2) console.log(`     D: ${d1 || '—'} | K: ${d2 || '—'}`);
+    // B: Deutsch nur zum SCHRIFTBILD — die Quelle nennt das arabische Wort ohne Vokalzeichen, es kann also ein anderes
+    // Wort gleicher Buchstaben sein. Die Zeile fehlte in der Kurzform bis zum 11.10.2026; dadurch blieben Plätze offen,
+    // deren Arabisch belegt war und deren Deutsch hier stand.
+    const d4 = zeig(de.filter(d => d.sicher === 'nur-schriftbild'), 9);
+    if (d4) console.log(`     B: ${d4}`);
     continue;
   }
   console.log(`\n#${s.id} ${s.typ} · Stufe ${s.stufe} · ${b.status}${b.grund ? ' (' + b.grund + ')' : ''}`);
