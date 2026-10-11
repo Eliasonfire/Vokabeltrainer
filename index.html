@@ -1390,7 +1390,6 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
   font-size:var(--fs-sm);color:var(--text-faint);text-align:center;
   margin:calc(var(--sp-2) * -1) 0 var(--sp-3);
 }
-
 /* Geschlecht auf der Kartenrueckseite (arabicroots-Paritaet D).
    Bewusst dieselben zwei Farben wie die Grammatik-Unterstreichungen: ROSA
    steht in der App fuer "weiblich" (--gram-fem), Blau fuer die Grundform
@@ -2150,8 +2149,7 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
 .wk-abschnitt .de{color:var(--text-dim);font-size:var(--fs-sm);line-height:1.55;}
 .wk-blaettern{display:flex;gap:var(--sp-2);}
 .wk-blaettern .btn{flex:1;min-width:0;}
-.wk-formen{display:flex;flex-wrap:wrap;gap:var(--sp-2);justify-content:center;}
-.wk-formen span{
+.wk-formen{display:flex;flex-wrap:wrap;gap:var(--sp-2);justify-content:center;}.wk-formen span{
   display:inline-flex;align-items:center;gap:6px;
   background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-full);
   padding:2px var(--sp-2);font-size:var(--fs-xs);
@@ -7486,6 +7484,9 @@ Teil 2</span>
 <script src="wortfelder-data.js"></script>
 <script src="lehrbuch-saetze.js"></script>
 <script src="quran-frequency-data.js"></script>
+<!-- Die Gruppe „Koran häufigste" (11.10.2026): 255 Karten, erzeugt aus
+     werkzeuge/koran-haeufig-liste.txt. Vor js/buecher.js, das sie als Buch anbietet. -->
+<script src="koran-haeufig-data.js"></script>
 
 <!-- App-Logik, thematisch getrennt (E.7). Die Reihenfolge ist bindend:
      kern.js legt Speicher und Lernfortschritt an, darstellung.js und

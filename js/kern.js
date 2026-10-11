@@ -93,6 +93,9 @@ function kapitelBeschriftung(w){
      man im Quelltext nicht, und was man nicht sieht, prueft man auch nicht. */
   if (w.istPlural && w.sgAr) return `Plural von ${w.sgAr}`;
   if (w.chapter === 'personal') return 'Eigene Vokabel';
+  /* „Koran häufigste" (11.10.2026): der Platz nach Häufigkeit statt der Nummer des
+     Stücks — „Kap. 2" hieße hier nur „irgendwo zwischen Platz 31 und 60". */
+  if (w.book === 'koran-haeufig' && Number(w.koranRang) > 0) return `Koran · Platz ${w.koranRang}`;
   /* ⭐ Mit dem Buch, in Kurzform („BY1 · Kap. 1"). Elias am 24.09.2026: „hier
      steht kapitel 1 aber von was? von welchem buch? … sollte das auch immer
      dabei stehen aber halt in kurzform". buchKurz() steht in js/buecher.js. */
@@ -181,6 +184,13 @@ function istBekannt(w){
      Wort aus Kapitel 24 fällt sonst genau durch die Grenze, die es
      überspringen soll. Der Speicher liegt weiter unten bei BEKANNT. */
   if (typeof istEinzelnFrei === 'function' && istEinzelnFrei(w)) return true;
+  /* ⭐ EINE BUCHKARTE, DIE FÜR EIN WORT DER GRUPPE „KORAN HÄUFIGSTE" STEHT (11.10.2026).
+     Elias: „wörter die ich bereits kann sollen nicht doppelt kommen … sollen auf den
+     selben stand gebracht werden". Für ein Wort, das er schon als Buchkarte hat,
+     steht in der Gruppe diese Buchkarte (koranKartenEinordnen() in js/buecher.js).
+     Hat sie Fortschritt, liegt ihr Kapitel aber nicht in seiner Auswahl, fiele sie
+     hier durch die Kapitelgrenze — und der Gruppe fehlte das Wort. */
+  if (typeof koranVertritt === 'function' && koranVertritt(w)) return true;
 
   /* ⭐⭐ SEINE EIGENE AUSWAHL GEHT VOR — am 19.08.2026 dazu.
      Elias: „die neuen vokabeln müssen auch automatisch in den satzmodus und in
@@ -1341,6 +1351,14 @@ function dubletteImBuch(eigen){
   if (!eigen || !eigen.ar) return null;
   return VOCAB_DATA.find(w => {
     if (w === eigen || w.chapter === 'personal') return false;
+    /* ⛔ Die Gruppe „Koran häufigste" ist KEIN Tauschziel (11.10.2026, MEINE Bauart).
+       Gemessen an seinem Stand: fünf seiner eigenen Karten sind zugleich Wörter der
+       Gruppe (ba'da, kayfa, 'inda und zwei Fachbegriffe), alle mit Fortschritt. Der
+       Tausch hätte sie beim nächsten Start gelöscht und durch die kahle Karte der
+       Gruppe ersetzt — und hakt er die Gruppe später ab, wären die fünf Wörter weg.
+       Stattdessen steht SEINE Karte für das Wort, und die der Gruppe fällt aus:
+       koranKartenEinordnen() in js/buecher.js. Nichts wird gelöscht. */
+    if (w.book === 'koran-haeufig') return false;
     const endung = w.type === 'particle' || eigen.type === 'particle';
     const artikel = !endung && w.type !== 'verb' && eigen.type !== 'verb';
     return dubGleich(w.ar, eigen.ar, endung, artikel) && dubBedeutungGleich(eigen, w);
@@ -3159,6 +3177,11 @@ function passtZurAuswahl(w){
      16.09.2026) — sonst steht es doppelt. werkzeuge/pruefe-fachbegriff-auftrag.mjs
      meldet jeden bestellten Begriff, den sie aus der Kartei nimmt. */
   if (typeof fachbegriffFolgtRegel === 'function' && fachbegriffFolgtRegel(w)) return false;
+  /* ⭐ Steht die Karte für ein Wort der Gruppe „Koran häufigste", das er dort gewählt
+     hat, gehört sie in seine Auswahl — auch wenn ihr eigenes Kapitel nicht angehakt
+     ist (11.10.2026, Begründung bei koranVertritt() in js/buecher.js). Nach „Kenne ich
+     schon" und nach der Fachbegriff-Regel: beide sind seine Absagen und gehen vor. */
+  if (typeof koranVertritt === 'function' && koranVertritt(w)) return true;
   /* ⛔⛔ HIER STAND EIN BEDINGUNGSLOSES `return true` FUER EINZELN
      FREIGESCHALTETE WOERTER — und das war zu viel. (07.09.2026)
 
@@ -3315,8 +3338,30 @@ function neueZuerst(liste){
      keine Ordnung — das Sortieren ließe dann stehen, was es umstellen soll
      (im Prüfstand gemessen: 10, 12, 11 blieb 10, 12, 11). */
   const mitRang = typeof kapitelRang === 'function';
-  neu.sort((a, b) => (an(b) - an(a))
-    || (mitRang ? (String(a.book).localeCompare(String(b.book)) || (kapitelRang(b) - kapitelRang(a))) : 0));
+  /* ⭐ DIE GRUPPE „KORAN HÄUFIGSTE" (11.10.2026) — zwei Regeln, von zwei Leuten:
+     - Untereinander nach Häufigkeit, das häufigste zuerst. Das ist SEIN Satz: „und da
+       sollen erstmal die wörter kommen die am häufigsten sind". `koranRang` trägt
+       jede Karte der Gruppe (koranKarten() in js/buecher.js).
+     - HINTER den übrigen neuen Karten. Das ist MEINE Ableitung, nicht sein Satz:
+       hakt er die Gruppe an, bekommen bis zu 255 Karten den Tag von heute, und nach
+       der Regel darüber („jüngste Ankunft zuerst") kämen sie alle VOR den neuen
+       Wörtern aus seinem Unterricht. Seine Regel vom 16.09. nennt aber ihren Grund —
+       „weil das sind die mit denen ich arbeiten werde" —, und das sind die
+       Unterrichtswörter. Ob stattdessen jeden Tag ein Platz für ein Koranwort frei
+       sein soll, ist ihm am 11.10.2026 als Frage gestellt; bis er antwortet, gilt
+       diese Reihenfolge.
+     ⚠️ Erst „Gruppe ja/nein", dann innerhalb: sonst wäre es keine Ordnung (siehe
+     die Warnung zum Buch darüber). Der Buchname steht hier als Text, weil
+     Prüfstände nur diese Funktion aus dem Quelltext schneiden (KORAN_BUCH steht
+     in js/buecher.js). */
+  const koran = w => !!w && w.book === 'koran-haeufig';
+  neu.sort((a, b) => {
+    const ka = koran(a), kb = koran(b);
+    if (ka !== kb) return ka ? 1 : -1;
+    if (ka) return (Number(a.koranRang) || 0) - (Number(b.koranRang) || 0);
+    return (an(b) - an(a))
+      || (mitRang ? (String(a.book).localeCompare(String(b.book)) || (kapitelRang(b) - kapitelRang(a))) : 0);
+  });
   return neu.concat(rest);
 }
 

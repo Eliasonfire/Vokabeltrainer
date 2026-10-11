@@ -1,0 +1,311 @@
+# koran-haeufig-liste.txt — die Wortgruppe „Koran häufigste": die 270 häufigsten Wörter des Korans
+#
+# AUFTRAG (Elias, 11.10.2026):
+#   „ja bau die ersten 100 wörter ein" · „kürze den namen auf Koran häufigste" ·
+#   „du kannst koran häufigste die häufigsten 270 wörter darein machen damit ich so 70% verstehen kann.
+#    und da sollen erstmal die wörter kommen die am häufigsten sind. wörter die ich bereits kann sollen
+#    nicht doppelt kommen also wenn sie bereits freigeschalten wurden. häufigsten wörter die ich bereits
+#    kann bzw kenne als kapiteln oder so sollen auf den selben stand gebracht werden"
+#
+# QUELLE DER REIHENFOLGE UND DER ZAHLEN: seine Tabelle „Quran-All-Words.xlsx" (Ordner „Quran Vokabeln
+#   (meinsten)", liegt NICHT im Repo), Blatt „Consolidated", Zeilen 2–271 — dort heißt es, sie sei aus dem
+#   Quranic Arabic Corpus (corpus.quran.com) zusammengestellt. 270 Zeilen = 51 934 von 74 122 Vorkommen
+#   = 70,07 %. Die Häufigkeit (Spalte n) ist die Zahl aus Spalte B der Tabelle.
+#
+# DIESE DATEI IST DIE QUELLE, VON HAND GEPRÜFT. Aus ihr baut `werkzeuge/koran-haeufig-bauen.mjs` die
+#   Datei `koran-haeufig-data.js`, die die App lädt. Nie die erzeugte Datei ändern.
+#
+# SPALTEN (getrennt durch |):
+#   rang    Platz nach Häufigkeit, 1 = am häufigsten
+#   n       so oft steht das Wort im Koran
+#   zeilen  die Zeilen der Tabelle (ab 1 gezählt), die auf dieser Karte liegen. MEINE Bauart: führt die
+#           Tabelle dasselbe geschriebene Wort mehrfach (ma viermal: was · nicht · Fragewort · dass), ist
+#           es EINE Karte mit der Summe — zwei Karten mit derselben Vorderseite wären nicht zu lernen.
+#           Aus 270 Zeilen werden so 255 Karten.
+#   ar      Arabisch in der üblichen Schreibung mit allen Vokalzeichen. Grundlage ist die Grundform der
+#           Tabelle; geändert ist nur die Schreibweise: Dolch-Alif als Alif (kitab), außer in den Wörtern,
+#           die man ohne schreibt (hadha, dhalika, ula'ika, ilah, lakin, ar-Rahman, Allah); Verbindungs-Alif
+#           als Alif mit Kasra (ittaqa, ibn); Hamza und Madda in der üblichen Form (amana, ra'a, sama');
+#           Nomen mit der Nennform-Endung wie in seinen Lehrbuchkarten; Wörter, die der Koran nur mit
+#           Artikel führt, mit Artikel (an-nas, ad-dunya, as-salihat, al-alamin, ar-Rahman).
+#           Geprüft am 11.10.2026: 232 der 255 Formen stimmen Zeichen für Zeichen mit der Grundform der
+#           Tabelle überein (Endung und Artikel abgezogen), 23 weichen nur wie beschrieben ab; wo die
+#           Tabelle eine ungewöhnliche Grundform führt (sieben Zeilen), steht es in der Spalte anm.
+#           235 Formen stehen mit denselben
+#           Vokalzeichen im Korantext der App (quran-text.js), die übrigen 20 unterscheiden sich dort nur
+#           in der koranischen Schreibung.
+#   de      Deutsch — von mir geschrieben, nicht aus arabicroots-Karten übernommen.
+#   typ     Wortart: aus der Tabelle (Noun/Proper noun → noun, Verb → verb, Adjective → adjective, alles
+#           andere → particle) ODER die Wortart, die die Karte desselben Wortes in seinen Büchern trägt.
+#   gleich  Kennungen der Karten in den acht Büchern der App, die DASSELBE Wort sind — von Hand geprüft
+#           (gleiche Schreibung, gleiche Bedeutung). Ein ! davor heißt: geprüft und verworfen (gleich
+#           geschrieben, anderes Wort — malak „Engel" gegen malaka „besitzen"). Nur Kennungen, kein Inhalt
+#           aus arabicroots. Die App braucht die Liste für seine Regel „nicht doppelt": kennt er eine
+#           dieser Karten, erscheint die Koran-Karte nicht.
+#   dort    Notiz: was die Karte in seinem Buch von der Bedeutung im Koran NICHT abdeckt („la" heißt auf
+#           seiner Karte „nein", im Koran meist „nicht; kein"). Die App zeigt das NICHT: gedacht war es
+#           als Zusatz hinter der Zeile „N-mal im Koran", und die hat Elias am 11.10.2026 abgesagt („das
+#           sollst du nicht bauen, ist glaube unnötig"). Die 14 Notizen bleiben als Vorarbeit — ob und
+#           wie seine Buchkarte die Koranbedeutung zeigen soll, ist eine offene Frage an ihn.
+#           Auch die Häufigkeit (Spalte n) steht nur hier; in der App wirkt sie über die Reihenfolge.
+#   anm     Anmerkung zu einer Zeile, in der die Tabelle eine ungewöhnliche Grundform führt.
+#
+# NOCH NICHT ENTHALTEN (das „volle Programm" für neue Wörter kommt schrittweise): Gegenwartsform und
+#   Befehlsform der Verben, Mehrzahl und Geschlecht der Nomen, Eselsbrücken, Beispielsätze, Koranstellen.
+#
+# rang|n|zeilen|ar|de|typ|gleich|dort|anm
+1|3226|1|مِنْ|von, aus|particle|45808||
+2|2699|2|اللَّهُ|Allah|noun|||
+3|2141|10+13+113+134|مَا|was; das, was · nicht (Verneinung)|particle|45777|dort auch: nicht (Verneinung)|
+4|1701|3|فِي|in|particle|45812||
+5|1691|8+33|لَا|nicht; kein · (Verbot) … nicht!|particle|45775|dort: nicht; kein|
+6|1682|4|إِنَّ|gewiss, wahrlich|particle|49846||
+7|1618|5|قَالَ|sagen|verb|45968||
+8|1445|6|عَلَى|auf, über|particle|45811||
+9|1442|7|الَّذِي|der, welcher (Relativwort)|particle|50166||
+10|1358|9|كَانَ|sein|verb|46061||
+11|975|11|رَبٌّ|Herr|noun|49891||
+12|790|14+57|مَنْ|wer; derjenige, der|particle|50168||
+13|742|12|إِلَى|zu, nach|particle|45809||
+14|692|15+93|إِنْ|wenn, falls · nicht (Verneinung)|particle|49847||
+15|660|17+104|إِلَّا|außer; nur|particle|49819||
+16|625|16+237|أَنْ|dass|particle|49849||
+17|537|18|آمَنَ|glauben|verb|48444||
+18|520|19|ذَلِكَ|jener; das|particle|50162,49813||
+19|465|20|عَنْ|von, über|particle|49842||
+20|461|21|أَرْضٌ|Erde, Land|noun|46975,49971||
+21|406|22|قَدْ|schon, gewiss (vor dem Verb)|particle|||
+22|405|23|إِذَا|wenn, sobald|particle|47793||
+23|405|34+133|يَوْمٌ|Tag|noun|45887,50027,!48402||
+24|383|24|قَوْمٌ|Volk, Leute|noun|46462,50085||
+25|382|25|آيَةٌ|Zeichen; Vers|noun|46131,49956||
+26|382|26|عَلِمَ|wissen|verb|46318||
+27|362|27|أَنَّ|dass|particle|!50441||
+28|358|28|كُلٌّ|jeder; alle|noun|45944,49870||
+29|353|29|لَمْ|nicht (Vergangenheit)|particle|49823||
+30|340|30|جَعَلَ|machen; einsetzen|verb|46777||
+31|338|31|ثُمَّ|dann, danach|particle|47277||
+32|332|32|رَسُولٌ|Gesandter|noun|45827,49930||
+33|322|35|عَذَابٌ|Strafe, Qual|noun|50040||
+34|317|36|هَذَا|dieser; das|particle|50160||
+35|310|37|سَمَاءٌ|Himmel|noun|45824,49972||
+36|295|38|نَفْسٌ|Seele; selbst|noun|46552,50081||
+37|289|39|كَفَرَ|nicht glauben, leugnen; undankbar sein|verb|48481||
+38|283|40|شَيْءٌ|Sache, Ding; etwas|noun|46331||
+39|280|41|أَوْ|oder|particle|50506,49867||
+40|278|42|جَاءَ|kommen|verb|46233,50150||
+41|276|43|عَمِلَ|tun, handeln|verb|46050|dort: tun, handeln|
+42|271|44|آتَى|geben|verb|48420||
+43|271|45|رَأَى|sehen|verb|46182||
+44|264|46|أَتَى|kommen|verb|46838||
+45|260|47|كِتَابٌ|Buch, Schrift|noun|45754,50002||
+46|243|48|بَيْنَ|zwischen|particle|46270||
+47|242|49|حَقٌّ|Wahrheit; Recht|noun|49982,47664||
+48|242|54+249|قَبْلَ|vor; zuvor|particle|49853||
+49|241|50|النَّاسُ|die Menschen|noun|45915,50084||
+50|239|51|إِذْ|als (damals)|particle|47786||
+51|236|52|شَاءَ|wollen|verb|46420,50148||
+52|204|53|أُولَئِكَ|jene (Mehrzahl)|particle|50165,49814||
+53|199|81+170|بَعْدَ|nach|particle|49855||
+54|195|55|مُؤْمِنٌ|gläubig; Gläubiger|noun|||
+55|184|56|لَوْ|wenn (nur gedacht)|particle|47261||
+56|184|58|خَلَقَ|erschaffen|verb|46251||
+57|183|59|أَنْزَلَ|herabsenden|verb|46731||
+58|176|60|سَبِيلٌ|Weg|noun|46592,50053||
+59|176|61|كَذَّبَ|für Lüge erklären, leugnen|verb|47440||
+60|170|62|دَعَا|rufen; anrufen, bitten|verb|46456|dort: rufen; anrufen (im Gebet)|
+61|166|63|أَمْرٌ|Befehl; Angelegenheit|noun|46547,49978||
+62|166|64|اِتَّقَى|sich hüten; (Allah) fürchten|verb|47655||
+63|163|105+185|عَلِيمٌ|wissend, allwissend|adjective|49900||
+64|160|65|عِنْدَ|bei|particle|48524,49873||
+65|159|66|مَعَ|mit|particle|50171||
+66|157|67|بَعْضٌ|einige; ein Teil|noun|50285,49869||
+67|156|68|لَمَّا|als; nachdem|particle|49852||
+68|153|69|أَيُّهَا|o (ihr) …! (Anrede)|noun|||
+69|148|70|خَيْرٌ|gut; besser; Gutes|noun|50014,!48008||
+70|147|71|إِلَهٌ|Gott, Gottheit|noun|47223||
+71|147|107+218|جَنَّةٌ|Garten; Paradies|noun|47215||
+72|145|72|نَارٌ|Feuer|noun|46256,50037||
+73|144|73|غَيْرُ|anderer als; nicht; außer|particle|49824||
+74|144|74|هَدَى|rechtleiten, führen|verb|46455||
+75|142|108+238|حَتَّى|bis; sodass|particle|49845||
+76|139|75|أَرَادَ|wollen|verb|46012||
+77|137|76|أَمْ|oder (in Fragen)|particle|50505,49868||
+78|136|77|مُوسَى|Mose (Musa)|noun|!46311||
+79|136|78|اِتَّبَعَ|folgen|verb|46521||
+80|135|79|دُونَ|außer, anstelle von; unterhalb|particle|49826||
+81|133|80|آخِرٌ|letzter · (weibliche Form mit Artikel) das Jenseits|adjective|49911||
+82|132|82|قَلْبٌ|Herz|noun|46537,50079||
+83|131|83|عَبْدٌ|Diener, Knecht|noun|46855,50090||
+84|130|84|أَرْسَلَ|senden|verb|46772||
+85|127|85|أَهْلٌ|Leute, Angehörige|noun|46351,49861||
+86|127|86|أَخَذَ|nehmen; ergreifen|verb|46240||
+87|124|87|اِتَّخَذَ|sich nehmen, annehmen (als)|verb|47682||
+88|123|88|لَعَلَّ|vielleicht; auf dass|particle|49871||
+89|122|89|بَلْ|vielmehr, sondern|particle|||
+90|122|90|عَبَدَ|anbeten, dienen|verb|46317||
+91|120|91|يَدٌ|Hand|noun|45857||
+92|119|92|كَافِرُونَ|Ungläubige (Mehrzahl)|noun|||
+93|119|156+240|مُبِينٌ|deutlich, klar|adjective|49989,!47607||
+94|114|94|رَحْمَةٌ|Barmherzigkeit|noun|48455||
+95|112|95|رَحِيمٌ|barmherzig|adjective|49893,47658||
+96|110|96|ظَلَمَ|Unrecht tun|verb|47433||
+97|106|97|سَأَلَ|fragen; bitten|verb|45998||
+98|106|98|وَجَدَ|finden|verb|46248||
+99|105|99|أَجْرٌ|Lohn|noun|46656,50025||
+100|105|100|ظَالِمٌ|ungerecht; Frevler|noun|||
+101|105|101|عِلْمٌ|Wissen|noun|46619||
+102|104|102|عَظِيمٌ|gewaltig, groß|adjective|47344,49898||
+103|104|103|لَنْ|nicht (Zukunft)|particle|49811||
+104|99|106|أَخْرَجَ|herausbringen, vertreiben|verb|48410||
+105|93|109|هَلْ|(Fragewort für Ja-Nein-Fragen)|particle|50167||
+106|93|110|أَكَلَ|essen; verzehren|verb|46034||
+107|92|111|دِينٌ|Religion; Gericht|noun|46591,49977||
+108|92|112|قَوْلٌ|Wort, Rede|noun|48062||
+109|90|114|ذُو|Besitzer von, mit|noun|48518||
+110|89|115|لَيْسَ|nicht sein|verb|50202||
+111|88|116|مَلَكٌ|Engel|noun|50385,50004,!46782||
+112|88|117|فَعَلَ|tun|verb|46001||
+113|87|118|مَثَلٌ|Gleichnis, Beispiel|noun|48235,49866||
+114|87|119|نَظَرَ|schauen|verb|45972||
+115|86|120|مَالٌ|Besitz, Vermögen|noun|46590,!47119||
+116|86|121|وَلِيٌّ|Schutzherr, Beistand; Freund|noun|47937,50071||
+117|85|122|هُدًى|Rechtleitung|noun|47319||
+118|84|123|حَكِيمٌ|weise, allweise|adjective|48585,49895||
+119|84|124|فَضْلٌ|Huld, Gunst|noun|47626,49975||
+120|84|125|ذَكَرَ|gedenken; erwähnen|verb|46970,!46429,!50073||
+121|83|126|صَلَاةٌ|Gebet|noun|49980||
+122|83|127|خَافَ|fürchten|verb|46642||
+123|83|128|قَتَلَ|töten|verb|46218||
+124|82|129|لَيْلٌ|Nacht|noun|46055,49969||
+125|80|130|بَنُونَ|Söhne, Kinder (Mehrzahl)|noun|||Die Tabelle führt die Mehrzahlformen (bani, banin, banun) unter der Grundform bunayy; im Korantext der App nachgezählt. Die Einzahl steht in Zeile 180.
+126|80|131|شَيْطَانٌ|Satan, Teufel|noun|50009||
+127|80|132|كَيْفَ|wie|particle|49829||
+128|79|135|رَجَعَ|zurückkehren|verb|46647||
+129|78|136|أَصْحَابٌ|Gefährten; Bewohner (Mehrzahl)|noun|46466,50101||
+130|78|137|أَكْثَرُ|mehr; die meisten|adjective|49920||
+131|78|138|سَمِعَ|hören|verb|45977||
+132|78|139|تَوَلَّى|sich abwenden|verb|50430||
+133|77|140|جَهَنَّمُ|Hölle|noun|50036||
+134|77|141|أَمَرَ|befehlen|verb|46510||
+135|76|142|حَيَاةٌ|Leben|noun|46554||
+136|76|143|ذِكْرٌ|Gedenken; Ermahnung|noun|48010||
+137|76|144|زَوْجٌ|Gatte, Gattin; Paar|noun|45920,50062|dort: Gatte oder Gattin; Paar|
+138|76|145|دَخَلَ|eintreten|verb|46217||
+139|75|146|أَخٌ|Bruder|noun|madina1-l6-ach,45984||
+140|75|147|مِثْلٌ|Gleiches; gleich wie|noun|49865||
+141|75|148|نَبِيٌّ|Prophet|noun|45933,49931||
+142|74|149|أَحَدٌ|einer; jemand|noun|46381,49997||
+143|74|150|خَالِدٌ|ewig bleibend|noun|||
+144|74|151|الدُّنْيَا|das Diesseits|noun|46377||
+145|74|152|فِرْعَوْنُ|Pharao|noun|49938||
+146|73|153|الْعَالَمِينَ|die Welten, alle Geschöpfe (Mehrzahl)|noun|50043||
+147|73|154|جَزَى|vergelten, belohnen|verb|48262||
+148|72|155|أَلِيمٌ|schmerzhaft|adjective|47508,50041||
+149|72|157|أَطَاعَ|gehorchen|verb|46615||
+150|72|158|أَوْحَى|offenbaren, eingeben|verb|50133||
+151|71|159|إِنْسَانٌ|Mensch|noun|50088||
+152|71|160|عَمَلٌ|Tat, Werk|noun|46299,49979|dort: Tat, Werk|
+153|71|161|وَجْهٌ|Gesicht, Angesicht|noun|46818,50075||
+154|71|162|أَشْرَكَ|beigesellen (Allah Partner zur Seite stellen)|verb|47307||
+155|71|163|أَلْقَى|werfen|verb|46964||
+156|70|164|قِيَامَةٌ|Auferstehung|noun|50029||
+157|70|165|يَوْمَئِذٍ|an jenem Tag|particle|50028||
+158|70|166|وَعَدَ|versprechen; androhen|verb|46434||
+159|69|167|إِبْرَاهِيمُ|Abraham (Ibrahim)|noun|||
+160|68|168|قُرْآنٌ|Koran; Lesung|noun|49958||
+161|68|169|أَنْفَقَ|ausgeben, spenden|verb|46804||
+162|65|171|بَيْتٌ|Haus|noun|45751,50045,!50046||
+163|65|172|لَكِنْ|aber, jedoch|particle|49851||
+164|65|173|يَمِينٌ|rechte Hand, Rechte; Eid|noun|46470,49833||
+165|65|174|غَفَرَ|vergeben|verb|48234||
+166|64|175|آبَاءٌ|Väter, Vorväter (Mehrzahl)|noun|50061||
+167|64|176|أُمَّةٌ|Gemeinschaft, Volk|noun|46624,50086||
+168|64|177|أَحَبَّ|lieben|verb|45903||Die Tabelle schreibt die Grundform als ahbab; üblich ist ahabba.
+169|64|178|أَصَابَ|treffen (als Unglück oder Gutes)|verb|46163||
+170|64|179|أَضَلَّ|irreführen|verb|47445||
+171|63|180|اِبْنٌ|Sohn|noun|45830,50068||
+172|63|181|عَزِيزٌ|mächtig, allmächtig|adjective|49894||
+173|63|182|مَاءٌ|Wasser|noun|45802,49976||
+174|63|183|تَابَ|bereuen, umkehren|verb|46443||
+175|62|184|الصَّالِحَاتُ|die guten Taten (Mehrzahl)|noun|||
+176|62|186|غَفُورٌ|vergebend, allvergebend|adjective|49896||
+177|62|187|كَسَبَ|erwerben, verdienen|verb|47085||
+178|62|188|نَزَّلَ|herabsenden (nach und nach)|verb|47426||
+179|61|189|أَوَّلُ|erster|adjective|50305,49910,!47737||
+180|61|190|تَلَا|vortragen, verlesen|verb|46458||Die Tabelle schreibt koranisch mit Alif maqsura; üblich ist die Schreibung mit Alif.
+181|61|191|رَزَقَ|versorgen|verb|47851||
+182|60|192|صَالِحٌ|rechtschaffen, gut|adjective|46862,!49951||
+183|59|193|صَادِقٌ|wahrhaftig|adjective|48162||
+184|59|194|نِسَاءٌ|Frauen (Mehrzahl)|noun|50065||
+185|59|195|قَضَى|entscheiden, bestimmen|verb|46105|dort: entscheiden, bestimmen|
+186|59|196|نَصَرَ|helfen, beistehen|verb|50141||
+187|58|197|نَذِيرٌ|Warner|noun|49936||
+188|58|198|صَبَرَ|geduldig sein|verb|46382||
+189|57|199|عَيْنٌ|Auge; Quelle|noun|45856|dort auch: Quelle|
+190|57|200|قَرْيَةٌ|Stadt, Ortschaft|noun|46120,50050|dort: Stadt, Ortschaft|
+191|57|201|لَكِنَّ|aber, jedoch (vor einem Nomen)|particle|50201||
+192|57|202|جَرَى|fließen, laufen|verb|46453|dort: fließen|Die Tabelle schreibt die Grundform als jaray; üblich ist jara.
+193|56|203|نَهَارٌ|Tag (die helle Zeit)|noun|46469,49970||
+194|56|204|وَلَدٌ|Kind, Sohn|noun|45762,50066,!47751|dort: Kind, Sohn|
+195|56|205|مَسَّ|berühren; treffen|verb|46480||
+196|55|206|بَيِّنَةٌ|klarer Beweis|noun|||
+197|55|207|رِزْقٌ|Versorgung|noun|||
+198|55|208|ضَرَبَ|schlagen; (ein Gleichnis) prägen|verb|46216||
+199|54|209|نَهَرٌ|Fluss|noun|49965,45935,!47082||
+200|54|210|قَاتَلَ|kämpfen (gegen)|verb|50125||
+201|54|211|أَقَامَ|verrichten (das Gebet); aufrichten|verb|46133|dort: verrichten (das Gebet); aufrichten|
+202|53|212|جَمِيعٌ|alle, allesamt|noun|50096||
+203|53|213|خَرَجَ|hinausgehen|verb|48409||
+204|53|214|ضَلَّ|irregehen|verb|47098||
+205|52|215|أَجَلٌ|Frist|noun|47359,50031||
+206|52|216|خَلْقٌ|Schöpfung|noun|||
+207|52|217|بَعَثَ|schicken; auferwecken|verb|46774|dort auch: auferwecken|
+208|51|219|أَحْيَا|lebendig machen|verb|47441||
+209|51|220|تَذَكَّرَ|sich besinnen, bedenken|verb|47534||
+210|51|221|أَهْلَكَ|vernichten|verb|47458||
+211|50|222|سُوءٌ|Böses, Übel|noun|47434||
+212|50|223|مَوْتٌ|Tod|noun|||
+213|50|224|نِعْمَةٌ|Gnade, Gunst|noun|46682,49974||
+214|50|225|اِفْتَرَى|erdichten, erlügen|verb|||
+215|49|226|عَدُوٌّ|Feind|noun|47517,50092||
+216|49|227|غَيْبٌ|das Verborgene|noun|49084||
+217|49|228|مُتَّقِينَ|Gottesfürchtige (Mehrzahl)|noun|||
+218|49|229|وَعْدٌ|Versprechen|noun|||
+219|49|230|زَادَ|mehren, zunehmen|verb|46231||
+220|49|231|عَقَلَ|begreifen, verstehen|verb|47073||Die Tabelle schreibt aqalu; die Grundform ist aqala.
+221|49|232|كَتَبَ|schreiben; vorschreiben|verb|50311||
+222|48|233|بَصَرٌ|Blick, Sehkraft|noun|48016||
+223|48|234|تَحْتَ|unter|particle|45828||
+224|48|235|دَارٌ|Wohnstätte, Heim|noun|48034,50047,!46442||
+225|48|236|مُلْكٌ|Herrschaft|noun|49992||
+226|47|239|سَاعَةٌ|Stunde; die Stunde (des Gerichts)|noun|46028,50030|dort: die Stunde (des Gerichts)|
+227|47|241|ظَنَّ|meinen, vermuten|verb|46473,!47076||
+228|46|242|أَبٌ|Vater|noun|45847||
+229|46|243|شَكَرَ|danken|verb|46283||
+230|46|244|نَبَّأَ|kundtun, berichten|verb|50124||
+231|45|245|أُولِي|Besitzer von, Leute mit (Mehrzahl)|noun|49860||
+232|45|246|إِيمَانٌ|Glaube|noun|||
+233|45|247|الرَّحْمَنُ|der Allerbarmer|noun|47659||
+234|45|248|صِرَاطٌ|Weg, Pfad|noun|50054||
+235|45|250|حَكَمَ|richten, urteilen|verb|50145||
+236|45|251|يَذَرُ|lassen, zurücklassen (nur in der Gegenwartsform)|verb|||Die Tabelle schreibt yadhara; das Verb kommt im Koran nur in der Gegenwartsform vor.
+237|44|252|آخَرُ|ein anderer|adjective|46332,!46501||
+238|44|253|أَمَّا|was … betrifft|particle|49889||
+239|44|254|صَدْرٌ|Brust|noun|46173,50078||
+240|44|255|قَدِيرٌ|mächtig, zu allem fähig|adjective|49905||
+241|44|256|مُجْرِمٌ|Übeltäter, Schuldiger|noun|46954||
+242|44|257|مُشْرِكٌ|Götzendiener (einer, der Allah Partner beigesellt)|noun|47243||
+243|44|258|حَسِبَ|meinen, halten für|verb|50433||
+244|44|259|شَهِدَ|bezeugen|verb|46301||
+245|44|260|مَلَكَ|besitzen, verfügen über|verb|46782,!50004,!50385||Die Tabelle schreibt malakat (weibliche Form); die Grundform ist malaka.
+246|44|261|نَادَى|rufen, zurufen|verb|46576||
+247|44|262|أَنْذَرَ|warnen|verb|47495||
+248|43|263|إِسْرَائِيلُ|Israel (Beiname Jakobs)|noun|||
+249|43|264|حَمْدٌ|Lob|noun|49984||
+250|43|265|قَلِيلٌ|wenig|adjective|50313,49923||
+251|43|266|نُوحٌ|Noah (Nuh)|noun|49941||
+252|43|267|نُورٌ|Licht|noun|48478,49990||
+253|42|268|جَزَاءٌ|Vergeltung, Lohn|noun|47093||
+254|42|269|سَوْفَ|(zeigt die Zukunft an) wird|particle|||
+255|42|270|كَثِيرٌ|viel|adjective|49919||

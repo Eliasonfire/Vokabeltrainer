@@ -165,12 +165,82 @@ const BUCH_FEHLT = new Set();
    data/ scheitern alle versuchten, und die untersuchten Buecher werden
    weiterhin gar nicht erst angeboten. */
 function fehltDerGanzeOrdner(versucht){
-  if (!Array.isArray(versucht) || !versucht.length) return false;
-  return versucht.every(s => BUCH_FEHLT.has(s));
+  if (!Array.isArray(versucht)) return false;
+  /* ⚠️ Ohne die Gruppe „Koran häufigste" (11.10.2026): sie liegt nicht in data/ und
+     lädt immer. Mit ihr in der Liste gälte der Ordner als vorhanden, auch wenn jedes
+     Buch daraus fehlt. Der Name steht als Text, weil Prüfstände nur diese Funktion
+     aus dem Quelltext schneiden (KORAN_BUCH weiter unten). */
+  const ausOrdner = versucht.filter(s => s !== 'koran-haeufig');
+  if (!ausOrdner.length) return false;
+  return ausOrdner.every(s => BUCH_FEHLT.has(s));
+}
+
+/* ---------- „Koran häufigste" — die häufigsten Wörter des Korans als eigenes Buch (11.10.2026) ----------
+
+   Elias am 11.10.2026, drei Sätze:
+     „ja bau die ersten 100 wörter ein" — auf meine Frage: „Soll ich die ersten 100
+        Wörter jetzt als eigene Wortgruppe ‚Koran – häufigste Wörter' in die App bauen,
+        nach Häufigkeit sortiert? Auf der Karte stünde dann zum Beispiel ‚qala – er
+        sagte' und darunter ‚1618-mal im Koran'." (Die Zeile mit der Zahl hat er am
+        selben Tag abgesagt — sein Satz steht weiter unten vor schalteBuch().)
+     „kürze den namen auf Koran häufigste"
+     „du kannst koran häufigste die häufigsten 270 wörter darein machen damit ich so 70%
+      verstehen kann. und da sollen erstmal die wörter kommen die am häufigsten sind.
+      wörter die ich bereits kann sollen nicht doppelt kommen also wenn sie bereits
+      freigeschalten wurden. häufigsten wörter die ich bereits kann bzw kenne als
+      kapiteln oder so sollen auf den selben stand gebracht werden"
+
+   Alles Weitere ist MEINE Bauart, nicht seine Vorgabe:
+   - Die Gruppe ist ein BUCH (`koran-haeufig`). Damit hat sie, was jedes Buch hat —
+     einen Knopf in der Buchzeile, den ER anhakt, eine Kapitelauswahl (je 30 Plätze ein
+     Stück), Karteikarten, Kategorien, Statistik —, ohne dass eine dieser Stellen sie
+     eigens kennen muss.
+   - Sie steht NICHT in BUECHER (data/buecher.js). Das Verzeichnis erzeugt
+     hole-vokabeln.mjs aus seinem arabicroots-Abzug, und zwei Leser deuten jeden
+     Eintrag als Datei im Ordner data/: „Bücher offline" in js/einstellungen.js und
+     „der ganze Ordner fehlt" beim Start weiter unten. alleBuecher() hängt die Gruppe
+     für die beiden Stellen an, die ein Buch nur ANBIETEN (buchInfo, renderBuchChips).
+   - Die Wörter sind EIGENE Karten (koran-haeufig-data.js, erzeugt aus
+     werkzeuge/koran-haeufig-liste.txt), keine Verweise auf seine Buchkarten: dafür
+     müssten bis zu sechs fremde Bücher geladen sein, und der Inhalt hinge an Daten,
+     die nicht im Repo liegen dürfen. Das Deutsch ist von mir geschrieben.
+   - Sein „nicht doppelt" und „auf den selben stand": koranKartenEinordnen() unten. */
+const KORAN_BUCH = 'koran-haeufig';
+function koranListe(){
+  return (typeof KORAN_HAEUFIG !== 'undefined' && Array.isArray(KORAN_HAEUFIG)) ? KORAN_HAEUFIG : [];
+}
+function koranBuchInfo(){
+  const l = koranListe();
+  if (!l.length) return null;
+  return { slug: KORAN_BUCH, vokabeln: l.length,
+           kapitel: l.reduce((m, e) => Math.max(m, Number(e.kap) || 0), 0),
+           datei: 'koran-haeufig-data.js' };
+}
+/* Die Karten der Gruppe, so wie ein Buch sie liefert. `koranRang` trägt den Platz
+   nach Häufigkeit auf die Karte — danach ordnet neueZuerst() in js/kern.js. */
+function koranKarten(){
+  return koranListe().map(e => ({ id: e.id, ar: e.ar, de: e.de, type: e.type,
+                                  chapter: e.kap, book: KORAN_BUCH, koranRang: e.rang }));
+}
+/* Ein Stück der Gruppe heißt nach seinen Plätzen: „1–30", „31–60" …, das letzte
+   „241–255". Für jedes andere Buch leer — dann bleibt es beim Aufrufer bei „Kap. N".
+   Aus der LISTE gelesen, nicht aus VOCAB_DATA: die Namen bleiben stehen, auch wenn
+   für einzelne Wörter eine Kapitelkarte steht. */
+function koranStueck(buch, kap){
+  if (buch !== KORAN_BUCH) return '';
+  const plaetze = koranListe().filter(e => Number(e.kap) === Number(kap)).map(e => Number(e.rang));
+  return plaetze.length ? Math.min(...plaetze) + '–' + Math.max(...plaetze) : '';
+}
+/* Alle Bücher, die die App anbietet: das Verzeichnis aus data/ plus die Gruppe. */
+function alleBuecher(){
+  const liste = (typeof BUECHER !== 'undefined' && Array.isArray(BUECHER)) ? BUECHER.slice() : [];
+  const koran = koranBuchInfo();
+  if (koran && !liste.some(b => b.slug === KORAN_BUCH)) liste.push(koran);
+  return liste;
 }
 
 function buchInfo(slug){
-  return (typeof BUECHER !== 'undefined' ? BUECHER : []).find(b=>b.slug===slug);
+  return alleBuecher().find(b=>b.slug===slug);
 }
 
 /* Eine Buchdatei per <script> nachladen. Bewusst kein fetch/JSON: die Dateien
@@ -180,6 +250,8 @@ function ladeBuchDatei(slug){
   return new Promise((fertig, fehler)=>{
     const info = buchInfo(slug);
     if (!info) return fehler(new Error(`Unbekanntes Buch: ${slug}`));
+    /* „Koran häufigste" liegt nicht in data/ — die Liste hat index.html schon geladen. */
+    if (slug === KORAN_BUCH) return fertig(koranKarten());
     if (window.VOKABELN && window.VOKABELN[slug]) return fertig(window.VOKABELN[slug]);
     const s = document.createElement('script');
     s.src = info.datei;
@@ -433,6 +505,132 @@ function eselsbrueckenNachtragen(liste){
   return n;
 }
 
+/* ---------- „Koran häufigste": nicht doppelt, und auf demselben Stand (11.10.2026) ----------
+
+   Sein Satz: „wörter die ich bereits kann sollen nicht doppelt kommen also wenn sie
+   bereits freigeschalten wurden. häufigsten wörter die ich bereits kann bzw kenne als
+   kapiteln oder so sollen auf den selben stand gebracht werden"
+
+   Zu jedem Wort der Gruppe nennt die Liste die Karten seiner Bücher, die DASSELBE Wort
+   sind (`gleich` — von Hand geprüft, nur Kennungen). Daraus wird je Wort EINE Karte,
+   die für es steht:
+
+   1. Eine dieser Buchkarten hat Fortschritt → sie steht für das Wort. Das ist Satz 1
+      seiner Grundregel vom 16.09.2026 (bei hatFortschritt() in js/kern.js): „wenn zwei
+      identisch sind und eines davon aber fortschritt hat dann sollte man immer das
+      behalten was fortschritt hat".
+   2. Sonst: eine dieser Buchkarten kennt er (istBekannt(): Kapitel freigeschaltet,
+      einzeln frei, Lernbestand) → sie steht für das Wort. Sein „wenn sie bereits
+      freigeschalten wurden".
+   3. Sonst: eine seiner EIGENEN Karten ist dasselbe Wort → sie steht für das Wort
+      (im Code als 4. Stufe; MEINE Bauart — sein „kenne als kapiteln oder so").
+   4. Sonst steht die Karte der Gruppe selbst.
+
+   Steht eine Buchkarte für das Wort, fällt die Karte der Gruppe aus VOCAB_DATA: so
+   kommt nichts doppelt, und die Gruppe zeigt für dieses Wort seinen Stand aus dem
+   Kapitel — dieselbe Karte, dieselbe Box („auf den selben stand").
+   Hat er ein Wort ZUERST in der Gruppe gelernt und schaltet sein Kapitel später frei,
+   wandert der Stand der Gruppenkarte einmal auf die Kapitelkarte (die höhere Box
+   gewinnt — sein „ja" vom 22.09.2026, bei uebertrageFortschritt()), und die
+   Gruppenkarte fällt weg. Das ist Satz 3 der Grundregel, dort für seine eigenen
+   Wörter gesagt: „das was im kapitel ist bevorzugen und auf den gleichen stand
+   bringen". Dass er auch für die Gruppe gilt, ist MEINE Lesart seines Satzes von heute.
+
+   ⚠️ Nur über GELADENE Karten. Steht dasselbe Wort in einem Buch, das er nicht gewählt
+      hat, ist dessen Karte nicht da — dann steht die Karte der Gruppe, bis er das Buch
+      wählt.
+   ⚠️ Der Lauf stellt den Bestand in BEIDE Richtungen her: kennt er eine Buchkarte nicht
+      mehr (Kapitel abgehakt, kein Fortschritt), kommt die Karte der Gruppe zurück.
+   ⚠️ VOR blendeKapitelDublettenAus(): die entscheidet nach Schreibung und Bedeutung
+      und behielte eine Gruppenkarte mit Fortschritt statt der Kapitelkarte, die er
+      eben freigeschaltet hat.
+   ⛔ Seine Auswahl und „einzeln frei" fasst der Lauf nicht an. Eine Buchkarte mit
+      Fortschritt aus einem nicht angehakten Kapitel wird über koranVertritt() erreichbar,
+      solange er die Gruppe gewählt hat — nicht über einen Eintrag in seinen Daten.
+   Geprüft von test-koran-haeufig.mjs, mit Störtests. */
+const KORAN_KARTE = new Map();   /* Kennung der Karte, die für ein Wort der Gruppe steht → Eintrag der Liste */
+
+function koranKartenEinordnen(){
+  /* Leer heißt auch: koranVertritt() redet während des Laufs nicht mit — sonst gälte
+     eine Karte als bekannt, nur weil sie beim letzten Lauf für ein Wort stand. */
+  KORAN_KARTE.clear();
+  const bericht = { vertreten: 0, eigene: 0, uebertragen: [] };
+  const liste = koranListe();
+  if (!liste.length) return bericht;
+  const nachId = new Map(VOCAB_DATA.map(w => [String(w.id), w]));
+  const geladen = GELADENE_BUECHER.has(KORAN_BUCH);
+  const steht = new Map(), weg = new Set(), zurueck = [];
+  const seine = VOCAB_DATA.filter(w => w && w.chapter === 'personal' && w.ar);
+  for (const e of liste){
+    const kand = (e.gleich || []).map(id => nachId.get(String(id))).filter(Boolean);
+    const ziel = kand.find(w => hatFortschritt(w.id)) || kand.find(w => istBekannt(w))
+      /* 4. Sonst: eine SEINER eigenen Karten ist dasselbe Wort (dieselbe Schreibung und
+         Bedeutung, gemessen wie beim Tausch — dubletteImBuch() in js/kern.js). Dann
+         steht sie für das Wort. Sie wird NICHT gegen die Karte der Gruppe getauscht:
+         an ihr hängen sein Stand, seine Notiz, seine Eselsbrücke. */
+      || seine.find(w => {
+        const endung = w.type === 'particle' || e.type === 'particle';
+        const artikel = !endung && w.type !== 'verb' && e.type !== 'verb';
+        return dubGleich(e.ar, w.ar, endung, artikel) && dubBedeutungGleich(w, e);
+      });
+    const eigene = nachId.get(String(e.id));
+    if (ziel){
+      steht.set(String(ziel.id), e);
+      bericht.vertreten++;
+      if (!eigene) continue;
+      if (hatFortschritt(e.id)){
+        const alt = Object.assign({}, PROGRESS[String(e.id)]);
+        const was = uebertrageFortschritt(e.id, ziel.id, true);
+        /* Auch wenn nichts wanderte (die Kapitelkarte steht höher): der Stand der
+           Gruppenkarte ist damit erledigt. Ohne den Vermerk käme er bei jedem Start
+           wieder — die Begründung steht bei merkeUebertragen() in js/kern.js. */
+        merkeUebertragen(e.id, ziel.id, alt);
+        bericht.uebertragen.push({ von: String(e.id), nach: String(ziel.id), wort: ziel.ar, was });
+      }
+      weg.add(String(e.id));
+    } else if (eigene){
+      steht.set(String(e.id), e);
+      bericht.eigene++;
+    } else if (geladen){
+      zurueck.push(e);
+    }
+  }
+  if (weg.size) for (let i = VOCAB_DATA.length - 1; i >= 0; i--) if (weg.has(String(VOCAB_DATA[i].id))) VOCAB_DATA.splice(i, 1);
+  if (zurueck.length){
+    const ids = new Set(zurueck.map(e => String(e.id)));
+    einhaengen(koranKarten().filter(k => ids.has(String(k.id))));
+    let neu = false;
+    for (const e of zurueck){
+      steht.set(String(e.id), e);
+      bericht.eigene++;
+      if (!PROGRESS[e.id]){ PROGRESS[e.id] = { box: 1, nextReview: todayStr(0), correct: 0, wrong: 0 }; neu = true; }
+    }
+    if (neu) saveProgress();
+  }
+  for (const [id, e] of steht) KORAN_KARTE.set(id, e);
+  return bericht;
+}
+
+/* Steht diese BUCHKARTE gerade für ein Wort der Gruppe, das er dort gewählt hat? Dann
+   gehört sie in seine Auswahl, auch wenn ihr eigenes Kapitel nicht angehakt ist — sonst
+   fehlte der Gruppe genau das Wort, das er schon kann. Gelesen von istBekannt() und
+   passtZurAuswahl() in js/kern.js. */
+function koranVertritt(w){
+  if (!w || w.book === KORAN_BUCH || !KORAN_KARTE.size || !buchGewaehlt(KORAN_BUCH)) return false;
+  const e = KORAN_KARTE.get(String(w.id));
+  if (!e) return false;
+  const stuecke = kapitelAuswahl(KORAN_BUCH);
+  return !stuecke.length || stuecke.map(Number).indexOf(Number(e.kap)) >= 0;
+}
+
+/* ⛔ KEINE ZEILE „N-MAL IM KORAN" AUF DER KARTE (11.10.2026). Sie stand in meinem
+   Beispiel, zu dem er Ja gesagt hatte, und war schon gebaut (klein, auf der Rückseite).
+   Elias, als ich meldete, dass ich sie gerade baue: „das sollst du nicht bauen, ist
+   glaube unnötig". Dasselbe hatte er am 21.08.2026 zur Häufigkeit der Wurzel gesagt
+   (der Satz steht in js/lernen.js). Wer sie wieder einbauen will, fragt ihn vorher.
+   Die Häufigkeit steht weiter in werkzeuge/koran-haeufig-liste.txt — aus ihr kommt
+   die Reihenfolge. */
+
 /* Ein Buch in die Auswahl aufnehmen oder herausnehmen. Das ist der Weg, den
    die Knoepfe auf der Startseite gehen.
 
@@ -460,6 +658,10 @@ async function schalteBuch(slug){
    Kapitelfilter fehlte dabei einmal das Mitziehen der laufenden Runde, was
    Elias am 30.07.2026 gemeldet hat. */
 function nachAuswahlwechsel(){
+  /* ⭐ Zuerst die Gruppe „Koran häufigste" neu einordnen (11.10.2026): mit der Auswahl
+     ändert sich, welche Wörter er schon kennt — und davon hängt ab, ob für ein Wort
+     die Karte der Gruppe steht oder seine Kapitelkarte (koranKartenEinordnen() oben). */
+  koranKartenEinordnen();
   renderHome();
   if (typeof passeRundeAnAuswahlAn === 'function') passeRundeAnAuswahlAn();
   if (typeof renderCategories === 'function') renderCategories();
@@ -487,6 +689,11 @@ async function setzeBuch(slug, still){
       const liste = await ladeBuchDatei(slug);
       const { neu } = einhaengen(liste);
       GELADENE_BUECHER.add(slug);
+      /* ⭐ „Koran häufigste" gleich einordnen (11.10.2026), VOR den Einträgen darunter:
+         ein Wort, das er aus einem Kapitel kennt, bekommt so gar nicht erst eine
+         zweite Karte samt Eintrag. Nur beim Antippen — beim Start (`still`) sind noch
+         nicht alle Bücher da; dort läuft es einmal, wenn der Bestand steht. */
+      const koran = still ? null : koranKartenEinordnen();
       /* Neue Vokabeln brauchen einen Fortschrittseintrag, sonst tauchen sie
          in "Jetzt lernen" nie auf - derselbe Fehler wie frueher beim
          Kapitel-Backfill. */
@@ -494,7 +701,11 @@ async function setzeBuch(slug, still){
         if (!PROGRESS[w.id]) PROGRESS[w.id] = { box: w.box || 1, nextReview: todayStr(0), correct:0, wrong:0 };
       });
       saveProgress();
-      if (!still) toast(`${buchTitel(slug)}: ${neu} neue Vokabeln.`);
+      if (!still && slug === KORAN_BUCH){
+        /* Die Zahl, die stimmt: was er aus seinen Kapiteln kennt, kommt nicht neu dazu. */
+        toast(`${buchTitel(slug)}: ${koran.eigene} neue Wörter`
+          + (koran.vertreten ? `, ${koran.vertreten} kennst du schon.` : '.'));
+      } else if (!still) toast(`${buchTitel(slug)}: ${neu} neue Vokabeln.`);
     } catch (e){
       /* Nicht nur melden, sondern merken: ein Buch, dessen Datei fehlt, hat
          in der Auswahl nichts verloren. Sonst steht dort ein Knopf, der bei
@@ -523,7 +734,9 @@ const BUCH_TITEL = {
   'madina-1': 'Madina 1', 'madina-2': 'Madina 2', 'madina-3': 'Madina 3',
   'bayna-yadayk-1': 'Bayna Yadayk 1', 'bayna-yadayk-2': 'Bayna Yadayk 2',
   'bayna-yadayk-3': 'Bayna Yadayk 3', 'bayna-yadayk-4': 'Bayna Yadayk 4',
-  'quran': 'Quran'
+  'quran': 'Quran',
+  /* Sein Name für die Gruppe (11.10.2026): „kürze den namen auf Koran häufigste". */
+  'koran-haeufig': 'Koran häufigste'
 };
 function buchTitel(slug){ return BUCH_TITEL[slug] || slug; }
 
@@ -539,7 +752,8 @@ const BUCH_KURZ = {
   'madina-1': 'M1', 'madina-2': 'M2', 'madina-3': 'M3',
   'bayna-yadayk-1': 'BY1', 'bayna-yadayk-2': 'BY2',
   'bayna-yadayk-3': 'BY3', 'bayna-yadayk-4': 'BY4',
-  'quran': 'Quran'
+  'quran': 'Quran',
+  'koran-haeufig': 'Koran'
 };
 function buchKurz(slug){ return BUCH_KURZ[slug] || buchTitel(slug); }
 
@@ -584,6 +798,13 @@ function kapitelDesBuchs(slug){
      FREIGESCHALTET (js/kern.js) gilt weiterhin - aber nur fuer die Frage, welche
      WOERTER in den Wortfeldern und im Vorrat der eigenen Kategorien stehen. Das
      ist eine andere Frage als die, welche Kapitel er lernen darf. */
+  /* ⚠️ „Koran häufigste" (11.10.2026): die Stücke kommen aus der Liste, nicht aus
+     VOCAB_DATA. Dort fehlen die Karten, für die eine Kapitelkarte steht
+     (koranKartenEinordnen()) — kennt er einmal alle Wörter eines Stücks, verschwände
+     sonst dessen Knopf, und mit ihm der Weg, das Stück an- oder abzuhaken.
+     Der Name steht als Text, weil Prüfstände nur diese Funktion aus dem Quelltext
+     schneiden (pruefe-vokabeln-seite.mjs wurde sonst rot: „KORAN_BUCH is not defined"). */
+  if (s === 'koran-haeufig') return info ? Array.from({length: info.kapitel}, (_,i)=>i+1) : [];
   const vorhanden = [...new Set(VOCAB_DATA.filter(w=>w.book===s && typeof w.chapter==='number')
     .map(w=>w.chapter))].sort((a,b)=>a-b);
   /* Was tatsaechlich geladen ist, gilt. Die Zahl aus dem Verzeichnis ist nur
@@ -596,12 +817,14 @@ function kapitelDesBuchs(slug){
 
 function renderBuchChips(){
   const ziel = document.getElementById('bookFilterChips');
+  /* ⚠️ Weiter NUR mit Verzeichnis: ohne BUECHER (kein data/, kein Paket) blieb die
+     Zeile bisher unberührt — die Gruppe „Koran häufigste" allein ändert daran nichts. */
   if (!ziel || typeof BUECHER === 'undefined') return;
   /* Die Ueberschrift steht fest in index.html und muss mitverschwinden. Sonst
      bleibt sie ueber einer leeren Zeile stehen und die Startseite sieht kaputt
      aus - genau so war es live, solange data/ nicht ausgeliefert wird. */
   const beschriftung = document.getElementById('bookFilterLabel');
-  const sichtbar = BUECHER.filter(b => !BUCH_FEHLT.has(b.slug));
+  const sichtbar = alleBuecher().filter(b => !BUCH_FEHLT.has(b.slug));
   /* Bleibt nur ein Buch uebrig, ist die Auswahlzeile ueberfluessig. */
   if (sichtbar.length < 2){
     ziel.innerHTML = '';
@@ -844,6 +1067,12 @@ document.addEventListener('DOMContentLoaded', async ()=>{
      geht die beide in kapiteln vorkommen". Begründung bei der Funktion in js/kern.js.
      ⚠️ NACH dem Tausch: der gibt einer Kapitelkarte vielleicht gerade erst den
      Fortschritt der eigenen — und der entscheidet hier, welche bleibt. */
+  /* ⭐ DAVOR die Gruppe „Koran häufigste" (11.10.2026): welche Karte für ein Wort der
+     Gruppe steht, sagt die von Hand geprüfte Liste — die Regel darunter vergliche
+     nur Schreibung und Bedeutung. Begründung bei koranKartenEinordnen() oben.
+     ⚠️ Nach dem Tausch und den Fachbegriffen, aus demselben Grund wie die Regel
+     darunter: erst dann steht fest, welche Karte Fortschritt hat. */
+  koranKartenEinordnen();
   if (typeof blendeKapitelDublettenAus === 'function') blendeKapitelDublettenAus();
 
   renderBuchChips();

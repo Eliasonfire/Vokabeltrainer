@@ -371,6 +371,12 @@ document.addEventListener('click', (e)=>{
       SETTINGS.buecher[slug] = sel;
     }
     saveSettings();
+    /* ⭐ Mit den Kapiteln ändert sich, welche Wörter er kennt — und damit, ob für ein
+       Wort der Gruppe „Koran häufigste" ihre eigene Karte steht oder seine
+       Kapitelkarte (11.10.2026, koranKartenEinordnen() in js/buecher.js). Ohne den
+       Aufruf käme ein Wort aus einem eben angehakten Kapitel bis zum nächsten
+       Start doppelt. */
+    if (typeof koranKartenEinordnen === 'function') koranKartenEinordnen();
     renderHome();
     /* Eine laufende Runde mitziehen, sonst laeuft sie mit der ALTEN Auswahl
        weiter - genau der Fehler, den Elias am 30.07.2026 gemeldet hat. */
