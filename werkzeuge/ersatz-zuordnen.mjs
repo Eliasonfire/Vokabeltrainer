@@ -29,14 +29,17 @@ const ZEICHEN = /[ً-ْٰـ]/g;
 export const nfc = t => String(t ?? '').normalize('NFC').trim();
 export const nackt = t => nfc(t).replace(ZEICHEN, '').replace(/ٱ/g, 'ا');
 const ohneHamza = t => t.replace(/[أإآٱ]/g, 'ا').replace(/ى/g, 'ي');
-export function k1(v) {
-  let s = nfc(v).replace(/ـ/g, '').replace(/ٱ/g, 'ا').replace(/ْ/g, '');
+function k1Wort(v) {
+  let s = v.replace(/ـ/g, '').replace(/ٱ/g, 'ا').replace(/ْ/g, '');
   const m = s.match(/^([\s\S]*?)([ً-ّٰ]*)$/);
   s = m[1] + m[2].replace(/[ً-ِ]/g, '');
   return s.replace(/^ا[َ-ِ]/, 'ا');
 }
+// Bei einer Fügung fällt die Schlussendung JEDES Wortes weg, nicht nur die des letzten.
+export function k1(v) { return nfc(v).split(/\s+/).map(k1Wort).join(' '); }
+// k2 setzt außerdem das Dolchalif dem Fatha gleich: „hadha" steht in der Quelle mit Dolchalif, auf der Karte mit Fatha.
 export function k2(v) {
-  return ohneHamza(k1(v)).replace(/ٰ/g, '').replace(/َ(?=ا)/g, '').replace(/ِ(?=ي)/g, '').replace(/ُ(?=و)/g, '');
+  return ohneHamza(k1(v)).replace(/َ?ٰ/g, 'َ').replace(/َ(?=ا)/g, '').replace(/ِ(?=ي)/g, '').replace(/ُ(?=و)/g, '');
 }
 const ARTIKEL = /^الْ?/;
 const hatArtikel = v => ARTIKEL.test(nfc(v));
@@ -360,10 +363,17 @@ for (const buch of BUECHER) {
       const teile = wort.split(/\s+/).map(t => {
         const r = stufeFuer(t, 'noun', {});
         let fund = null;
+        // Ist der gefundene Eintrag selbst nur eine gebeugte Form (weibliche Form, Mehrzahl), steht die Beugungstabelle
+        // beim Stichwort, auf das er verweist — dort weitersuchen.
+        const mitStichwort = [];
         for (const x of r.treffer) {
-          const formen = [...(x.e.tab || []), ...(x.e.kopf || []), ...(x.e.hf || [])];
+          mitStichwort.push(x.e);
+          if (x.e.formVon) for (const s of x.e.sinn || []) for (const ziel of s.fo || []) for (const l of nachNackt.get(nackt(ziel)) || []) if (!l.formVon && !mitStichwort.includes(l)) mitStichwort.push(l);
+        }
+        for (const e of mitStichwort) {
+          const formen = [...(e.tab || []), ...(e.kopf || []), ...(e.hf || [])];
           const f = formen.find(f => nfc(f.f) === t) || formen.find(f => ohneSukun(f.f) === ohneSukun(t));
-          if (f) { fund = { e: x.e, f }; break; }
+          if (f) { fund = { e, f }; break; }
         }
         const de = [...new Set(deutschFuer(t, { de: '' }, []).alle.filter(d => d.sicher === 'vokalisiert' && !d.erkl).map(d => d.de))].slice(0, 8);
         return { t, stufe: r.stufe, ref: r.treffer.map(x => x.e.ref), fund, de };
@@ -399,7 +409,8 @@ for (const buch of BUECHER) {
       for (const f of FELDER) { const erg = vergleiche(f, v[f] && v[f].w, karte[f]); satz.vergleich[f] = erg; if (erg !== 'beide-leer') { z.feld[f] ||= {}; z.feld[f][erg] = (z.feld[f][erg] || 0) + 1; } }
     } else if (res.treffer.length > 1) satz.wahl = res.treffer.map(x => ({ ref: x.e.ref, kopf: (x.e.kopf || []).map(f => f.f), en: (x.e.sinn || []).slice(0, 3).map(s => s.g) }));
     else if (res.alle.length) satz.andereVokale = res.alle.map(x => ({ ref: x.e.ref, kopf: (x.e.kopf || []).map(f => f.f), en: (x.e.sinn || []).slice(0, 2).map(s => s.g) }));
-    const d = deutschFuer(wort, karte, res.treffer.map(x => x.e));
+    // „auch": weitere Einträge, deren Bedeutung ebenfalls auf der Karte steht (gleichlautendes zweites Wort)
+    const d = deutschFuer(wort, karte, [...res.treffer.map(x => x.e), ...(h.auch || []).map(n => eintraege[n]).filter(Boolean)]);
     satz.deutsch = d.alle.map(f => ({ de: f.de, q: f.q, wo: f.wo, sicher: f.sicher, deckt: f.deckt || undefined, erkl: f.erkl || undefined, sinn: f.sinn, unsicher: f.unsicher }));
     const dStufe = d.alle.some(f => f.deckt && f.sicher === 'vokalisiert') ? 'deckt-vokalisiert' : d.alle.some(f => f.deckt && f.sicher === 'kette') ? 'deckt-kette'
       : d.alle.some(f => f.deckt) ? 'deckt-schriftbild' : d.alle.length ? 'nur-andere-kandidaten' : 'keine-deutsche-quelle';

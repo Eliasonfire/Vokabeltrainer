@@ -35,12 +35,28 @@ if (args[0] === '--offen') {
 const [buch, kapRoh] = args;
 const alle = args.includes('--alle');
 const belege = belegeVon(buch);
-const liste = saetze.filter(s => s.buch === buch && s.kap === Number(kapRoh));
+// Kapitel als Zahl oder als Spanne „1-23"; --kurz druckt je Platz zwei Zeilen statt eines Blocks
+const [kapVon, kapBis] = String(kapRoh).includes('-') ? String(kapRoh).split('-').map(Number) : [Number(kapRoh), Number(kapRoh)];
+const liste = saetze.filter(s => s.buch === buch && s.kap >= kapVon && s.kap <= kapBis);
+const kurzForm = args.includes('--kurz');
 let gezeigt = 0;
 for (const s of liste) {
   const b = belege[s.id] || { status: 'offen' };
   if (b.status === 'belegt' && !alle) continue;
   gezeigt++;
+  if (kurzForm) {
+    const de = (s.deutsch || []).filter(d => !d.erkl);
+    const zeig = (l, n) => [...new Set(l.map(d => d.de + (d.deckt ? '✓' : '')))].slice(0, n).join(', ');
+    const v = s.vorschlag;
+    const fehlt = v ? ['ar', 'type'].filter(f => !v[f]).map(f => 'ohne ' + f).join(' ') : '';
+    console.log(`#${s.id} K${s.kap} ${s.typ} ${s.stufe} | ${s.suche.ar} „${kurz(s.suche.de, 46)}“ | ${v ? (s.ref ? '@' + s.ref.split('@')[1] : 'Fügung') + ' ' + fehlt + ' en: ' + kurz((v._en || []).join(' ; '), 120) : ''}`
+      + (s.wahl || []).slice(0, 5).map(w => ` ‖ @${w.ref.split('@')[1]} ${w.ref.split('#')[1]} ${w.kopf[0] || ''}: ${kurz(w.en.join(' ; '), 60)}`).join('')
+      + (s.andereVokale || []).slice(0, 4).map(w => ` ‖ anders @${w.ref.split('@')[1]} ${w.ref.split('#')[1]} ${w.kopf[0] || ''}: ${kurz(w.en.join(' ; '), 50)}`).join('')
+      + (s.teile || []).map(t => ` ‖ Teil ${t.t} ${t.form ? 'belegt' : 'NICHT belegt (' + t.stufe + ')'} de: ${(t.de || []).slice(0, 5).join(', ')}`).join(''));
+    const d1 = zeig(de.filter(d => d.sicher === 'vokalisiert'), 9), d2 = zeig(de.filter(d => d.sicher === 'kette'), 9);
+    if (d1 || d2) console.log(`     D: ${d1 || '—'} | K: ${d2 || '—'}`);
+    continue;
+  }
   console.log(`\n#${s.id} ${s.typ} · Stufe ${s.stufe} · ${b.status}${b.grund ? ' (' + b.grund + ')' : ''}`);
   console.log(`  gesucht: ${s.suche.ar}  =  „${kurz(s.suche.de, 70)}“`);
   if (s.vorschlag) {
