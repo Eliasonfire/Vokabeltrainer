@@ -67,7 +67,10 @@ for (const buch of BUECHER) {
     plaetze.push({ id: s.id, buch, kap: s.kap, platz: s.platz });
     const h = hand[s.id] || {};
     const felder = {};
-    if (s.vorschlag) for (const f of FELDER) if (s.vorschlag[f] && voll(s.vorschlag[f].w)) felder[f] = { w: nfc(s.vorschlag[f].w), wo: s.vorschlag[f].wo, q: 'enwikt' };
+    // Stufe mit Stern: der Eintrag der Quelle hat eine ANDERE Wortart als die Karte (etwa das Verb zu einer Karte, die
+    // dessen Befehlsform als Ausruf führt). Dann stimmen die Formen nicht von selbst — übernommen wird erst, wenn die
+    // Hand es mit „artOk" bestätigt. Gefunden am 11.10.2026 an „tafaddal": ohne diese Sperre stünde die Vergangenheit da.
+    if (s.vorschlag && (!String(s.stufe).includes('*') || h.artOk === true)) for (const f of FELDER) if (s.vorschlag[f] && voll(s.vorschlag[f].w)) felder[f] = { w: nfc(s.vorschlag[f].w), wo: s.vorschlag[f].wo, q: 'enwikt' };
     const de = deutschAus(s);
     if (de) felder.de = de;
     // Hand: „de" nennt die deutschen Wörter, die aus den Kandidaten der Quellen gelten sollen (die Fundstellen kommen von dort);
