@@ -1,0 +1,668 @@
+{
+ "quelle": "en.wiktionary.org (action=parse), Konjugationstabelle Form I, Zeile „past indicative (perfect)\", Aktiv",
+ "verben": {
+  "ذَهَبَ": {
+   "titel": "ذهب",
+   "revid": 92393079,
+   "geholt": "2026-10-12T23:39:43.900Z",
+   "ueberschrift": "Conjugation of ذَهَبَ (I, sound, a ~ a, impersonal passive, verbal nouns ذَهَاب, مَذْهَب)",
+   "tabellenMitDieserGrundform": 1,
+   "aktivVorPassiv": true,
+   "zellenM": 9,
+   "zellenF": 5,
+   "formen": {
+    "huwa": [
+     "ذَهَبَ"
+    ],
+    "huma-m": [
+     "ذَهَبَا"
+    ],
+    "hum": [
+     "ذَهَبُوا"
+    ],
+    "hiya": [
+     "ذَهَبَتْ"
+    ],
+    "huma-f": [
+     "ذَهَبَتَا"
+    ],
+    "hunna": [
+     "ذَهَبْنَ"
+    ],
+    "anta": [
+     "ذَهَبْتَ"
+    ],
+    "antuma": [
+     "ذَهَبْتُمَا"
+    ],
+    "antum": [
+     "ذَهَبْتُمْ"
+    ],
+    "anti": [
+     "ذَهَبْتِ"
+    ],
+    "antunna": [
+     "ذَهَبْتُنَّ"
+    ],
+    "ana": [
+     "ذَهَبْتُ"
+    ],
+    "nahnu": [
+     "ذَهَبْنَا"
+    ]
+   }
+  },
+  "خَرَجَ": {
+   "titel": "خرج",
+   "revid": 92020632,
+   "geholt": "2026-10-12T23:39:47.067Z",
+   "ueberschrift": "Conjugation of خَرَجَ (I, sound, a ~ u, impersonal passive (?), verbal noun خُرُوج)",
+   "tabellenMitDieserGrundform": 1,
+   "aktivVorPassiv": true,
+   "zellenM": 9,
+   "zellenF": 5,
+   "formen": {
+    "huwa": [
+     "خَرَجَ"
+    ],
+    "huma-m": [
+     "خَرَجَا"
+    ],
+    "hum": [
+     "خَرَجُوا"
+    ],
+    "hiya": [
+     "خَرَجَتْ"
+    ],
+    "huma-f": [
+     "خَرَجَتَا"
+    ],
+    "hunna": [
+     "خَرَجْنَ"
+    ],
+    "anta": [
+     "خَرَجْتَ"
+    ],
+    "antuma": [
+     "خَرَجْتُمَا"
+    ],
+    "antum": [
+     "خَرَجْتُمْ"
+    ],
+    "anti": [
+     "خَرَجْتِ"
+    ],
+    "antunna": [
+     "خَرَجْتُنَّ"
+    ],
+    "ana": [
+     "خَرَجْتُ"
+    ],
+    "nahnu": [
+     "خَرَجْنَا"
+    ]
+   }
+  },
+  "كَتَبَ": {
+   "titel": "كتب",
+   "revid": 92727926,
+   "geholt": "2026-10-12T23:39:50.183Z",
+   "ueberschrift": "Conjugation of كَتَبَ (I, sound, a ~ u, full passive, verbal nouns كِتَابَة, كَتْب, كِتَاب)",
+   "tabellenMitDieserGrundform": 1,
+   "aktivVorPassiv": true,
+   "zellenM": 9,
+   "zellenF": 5,
+   "formen": {
+    "huwa": [
+     "كَتَبَ"
+    ],
+    "huma-m": [
+     "كَتَبَا"
+    ],
+    "hum": [
+     "كَتَبُوا"
+    ],
+    "hiya": [
+     "كَتَبَتْ"
+    ],
+    "huma-f": [
+     "كَتَبَتَا"
+    ],
+    "hunna": [
+     "كَتَبْنَ"
+    ],
+    "anta": [
+     "كَتَبْتَ"
+    ],
+    "antuma": [
+     "كَتَبْتُمَا"
+    ],
+    "antum": [
+     "كَتَبْتُمْ"
+    ],
+    "anti": [
+     "كَتَبْتِ"
+    ],
+    "antunna": [
+     "كَتَبْتُنَّ"
+    ],
+    "ana": [
+     "كَتَبْتُ"
+    ],
+    "nahnu": [
+     "كَتَبْنَا"
+    ]
+   }
+  },
+  "دَرَسَ": {
+   "titel": "درس",
+   "revid": 93363735,
+   "geholt": "2026-10-12T23:39:53.219Z",
+   "ueberschrift": "Conjugation of دَرَسَ (I, sound, a ~ u, full passive (?), verbal nouns دَرْس, دِرَاس, دِرَاسَة)",
+   "tabellenMitDieserGrundform": 2,
+   "aktivVorPassiv": true,
+   "zellenM": 9,
+   "zellenF": 5,
+   "formen": {
+    "huwa": [
+     "دَرَسَ"
+    ],
+    "huma-m": [
+     "دَرَسَا"
+    ],
+    "hum": [
+     "دَرَسُوا"
+    ],
+    "hiya": [
+     "دَرَسَتْ"
+    ],
+    "huma-f": [
+     "دَرَسَتَا"
+    ],
+    "hunna": [
+     "دَرَسْنَ"
+    ],
+    "anta": [
+     "دَرَسْتَ"
+    ],
+    "antuma": [
+     "دَرَسْتُمَا"
+    ],
+    "antum": [
+     "دَرَسْتُمْ"
+    ],
+    "anti": [
+     "دَرَسْتِ"
+    ],
+    "antunna": [
+     "دَرَسْتُنَّ"
+    ],
+    "ana": [
+     "دَرَسْتُ"
+    ],
+    "nahnu": [
+     "دَرَسْنَا"
+    ]
+   }
+  },
+  "رَجَعَ": {
+   "titel": "رجع",
+   "revid": 92739327,
+   "geholt": "2026-10-12T23:39:56.348Z",
+   "ueberschrift": "Conjugation of رَجَعَ (I, sound, a ~ i, impersonal passive, verbal noun رُجُوع)",
+   "tabellenMitDieserGrundform": 2,
+   "aktivVorPassiv": true,
+   "zellenM": 9,
+   "zellenF": 5,
+   "formen": {
+    "huwa": [
+     "رَجَعَ"
+    ],
+    "huma-m": [
+     "رَجَعَا"
+    ],
+    "hum": [
+     "رَجَعُوا"
+    ],
+    "hiya": [
+     "رَجَعَتْ"
+    ],
+    "huma-f": [
+     "رَجَعَتَا"
+    ],
+    "hunna": [
+     "رَجَعْنَ"
+    ],
+    "anta": [
+     "رَجَعْتَ"
+    ],
+    "antuma": [
+     "رَجَعْتُمَا"
+    ],
+    "antum": [
+     "رَجَعْتُمْ"
+    ],
+    "anti": [
+     "رَجَعْتِ"
+    ],
+    "antunna": [
+     "رَجَعْتُنَّ"
+    ],
+    "ana": [
+     "رَجَعْتُ"
+    ],
+    "nahnu": [
+     "رَجَعْنَا"
+    ]
+   }
+  },
+  "ضَرَبَ": {
+   "titel": "ضرب",
+   "revid": 92980630,
+   "geholt": "2026-10-12T23:39:59.563Z",
+   "ueberschrift": "Conjugation of ضَرَبَ (I, sound, a ~ i, full passive, verbal noun ضَرْب)",
+   "tabellenMitDieserGrundform": 4,
+   "aktivVorPassiv": true,
+   "zellenM": 9,
+   "zellenF": 5,
+   "formen": {
+    "huwa": [
+     "ضَرَبَ"
+    ],
+    "huma-m": [
+     "ضَرَبَا"
+    ],
+    "hum": [
+     "ضَرَبُوا"
+    ],
+    "hiya": [
+     "ضَرَبَتْ"
+    ],
+    "huma-f": [
+     "ضَرَبَتَا"
+    ],
+    "hunna": [
+     "ضَرَبْنَ"
+    ],
+    "anta": [
+     "ضَرَبْتَ"
+    ],
+    "antuma": [
+     "ضَرَبْتُمَا"
+    ],
+    "antum": [
+     "ضَرَبْتُمْ"
+    ],
+    "anti": [
+     "ضَرَبْتِ"
+    ],
+    "antunna": [
+     "ضَرَبْتُنَّ"
+    ],
+    "ana": [
+     "ضَرَبْتُ"
+    ],
+    "nahnu": [
+     "ضَرَبْنَا"
+    ]
+   }
+  },
+  "فَعَلَ": {
+   "titel": "فعل",
+   "revid": 93470011,
+   "geholt": "2026-10-12T23:40:02.696Z",
+   "ueberschrift": "Conjugation of فَعَلَ (I, sound, a ~ a, full passive, verbal nouns فَعْل, فِعْل, فَعَال, فَعْلَة, فِعْلَة)",
+   "tabellenMitDieserGrundform": 1,
+   "aktivVorPassiv": true,
+   "zellenM": 9,
+   "zellenF": 5,
+   "formen": {
+    "huwa": [
+     "فَعَلَ"
+    ],
+    "huma-m": [
+     "فَعَلَا"
+    ],
+    "hum": [
+     "فَعَلُوا"
+    ],
+    "hiya": [
+     "فَعَلَتْ"
+    ],
+    "huma-f": [
+     "فَعَلَتَا"
+    ],
+    "hunna": [
+     "فَعَلْنَ"
+    ],
+    "anta": [
+     "فَعَلْتَ"
+    ],
+    "antuma": [
+     "فَعَلْتُمَا"
+    ],
+    "antum": [
+     "فَعَلْتُمْ"
+    ],
+    "anti": [
+     "فَعَلْتِ"
+    ],
+    "antunna": [
+     "فَعَلْتُنَّ"
+    ],
+    "ana": [
+     "فَعَلْتُ"
+    ],
+    "nahnu": [
+     "فَعَلْنَا"
+    ]
+   }
+  },
+  "أَكَلَ": {
+   "titel": "أكل",
+   "revid": 92969028,
+   "geholt": "2026-10-12T23:40:05.775Z",
+   "ueberschrift": "Conjugation of أَكَلَ (I, sound, a ~ u, full passive (?), irregular, verbal nouns أَكْل, مَأْكَل)",
+   "tabellenMitDieserGrundform": 1,
+   "aktivVorPassiv": true,
+   "zellenM": 9,
+   "zellenF": 5,
+   "formen": {
+    "huwa": [
+     "أَكَلَ"
+    ],
+    "huma-m": [
+     "أَكَلَا"
+    ],
+    "hum": [
+     "أَكَلُوا"
+    ],
+    "hiya": [
+     "أَكَلَتْ"
+    ],
+    "huma-f": [
+     "أَكَلَتَا"
+    ],
+    "hunna": [
+     "أَكَلْنَ"
+    ],
+    "anta": [
+     "أَكَلْتَ"
+    ],
+    "antuma": [
+     "أَكَلْتُمَا"
+    ],
+    "antum": [
+     "أَكَلْتُمْ"
+    ],
+    "anti": [
+     "أَكَلْتِ"
+    ],
+    "antunna": [
+     "أَكَلْتُنَّ"
+    ],
+    "ana": [
+     "أَكَلْتُ"
+    ],
+    "nahnu": [
+     "أَكَلْنَا"
+    ]
+   }
+  },
+  "طَبَخَ": {
+   "titel": "طبخ",
+   "revid": 91536966,
+   "geholt": "2026-10-12T23:40:08.749Z",
+   "ueberschrift": "Conjugation of طَبَخَ (I, sound, a ~ u, full passive, verbal noun طَبْخ)",
+   "tabellenMitDieserGrundform": 1,
+   "aktivVorPassiv": true,
+   "zellenM": 9,
+   "zellenF": 5,
+   "formen": {
+    "huwa": [
+     "طَبَخَ"
+    ],
+    "huma-m": [
+     "طَبَخَا"
+    ],
+    "hum": [
+     "طَبَخُوا"
+    ],
+    "hiya": [
+     "طَبَخَتْ"
+    ],
+    "huma-f": [
+     "طَبَخَتَا"
+    ],
+    "hunna": [
+     "طَبَخْنَ"
+    ],
+    "anta": [
+     "طَبَخْتَ"
+    ],
+    "antuma": [
+     "طَبَخْتُمَا"
+    ],
+    "antum": [
+     "طَبَخْتُمْ"
+    ],
+    "anti": [
+     "طَبَخْتِ"
+    ],
+    "antunna": [
+     "طَبَخْتُنَّ"
+    ],
+    "ana": [
+     "طَبَخْتُ"
+    ],
+    "nahnu": [
+     "طَبَخْنَا"
+    ]
+   }
+  },
+  "نَصَرَ": {
+   "titel": "نصر",
+   "revid": 93351470,
+   "geholt": "2026-10-12T23:40:11.793Z",
+   "ueberschrift": "Conjugation of نَصَرَ (I, sound, a ~ u, full passive, verbal nouns نَصْر, نُصُور)",
+   "tabellenMitDieserGrundform": 1,
+   "aktivVorPassiv": true,
+   "zellenM": 9,
+   "zellenF": 5,
+   "formen": {
+    "huwa": [
+     "نَصَرَ"
+    ],
+    "huma-m": [
+     "نَصَرَا"
+    ],
+    "hum": [
+     "نَصَرُوا"
+    ],
+    "hiya": [
+     "نَصَرَتْ"
+    ],
+    "huma-f": [
+     "نَصَرَتَا"
+    ],
+    "hunna": [
+     "نَصَرْنَ"
+    ],
+    "anta": [
+     "نَصَرْتَ"
+    ],
+    "antuma": [
+     "نَصَرْتُمَا"
+    ],
+    "antum": [
+     "نَصَرْتُمْ"
+    ],
+    "anti": [
+     "نَصَرْتِ"
+    ],
+    "antunna": [
+     "نَصَرْتُنَّ"
+    ],
+    "ana": [
+     "نَصَرْتُ"
+    ],
+    "nahnu": [
+     "نَصَرْنَا"
+    ]
+   }
+  },
+  "طَلَبَ": {
+   "titel": "طلب",
+   "revid": 93353487,
+   "geholt": "2026-10-12T23:40:14.808Z",
+   "ueberschrift": "Conjugation of طَلَبَ (I, sound, a ~ u, full passive, verbal nouns طَلَب, مَطْلَب)",
+   "tabellenMitDieserGrundform": 1,
+   "aktivVorPassiv": true,
+   "zellenM": 9,
+   "zellenF": 5,
+   "formen": {
+    "huwa": [
+     "طَلَبَ"
+    ],
+    "huma-m": [
+     "طَلَبَا"
+    ],
+    "hum": [
+     "طَلَبُوا"
+    ],
+    "hiya": [
+     "طَلَبَتْ"
+    ],
+    "huma-f": [
+     "طَلَبَتَا"
+    ],
+    "hunna": [
+     "طَلَبْنَ"
+    ],
+    "anta": [
+     "طَلَبْتَ"
+    ],
+    "antuma": [
+     "طَلَبْتُمَا"
+    ],
+    "antum": [
+     "طَلَبْتُمْ"
+    ],
+    "anti": [
+     "طَلَبْتِ"
+    ],
+    "antunna": [
+     "طَلَبْتُنَّ"
+    ],
+    "ana": [
+     "طَلَبْتُ"
+    ],
+    "nahnu": [
+     "طَلَبْنَا"
+    ]
+   }
+  },
+  "سَجَدَ": {
+   "titel": "سجد",
+   "revid": 88562583,
+   "geholt": "2026-10-12T23:40:17.692Z",
+   "ueberschrift": "Conjugation of سَجَدَ (I, sound, a ~ u, full passive, verbal noun سُجُود)",
+   "tabellenMitDieserGrundform": 1,
+   "aktivVorPassiv": true,
+   "zellenM": 9,
+   "zellenF": 5,
+   "formen": {
+    "huwa": [
+     "سَجَدَ"
+    ],
+    "huma-m": [
+     "سَجَدَا"
+    ],
+    "hum": [
+     "سَجَدُوا"
+    ],
+    "hiya": [
+     "سَجَدَتْ"
+    ],
+    "huma-f": [
+     "سَجَدَتَا"
+    ],
+    "hunna": [
+     "سَجَدْنَ"
+    ],
+    "anta": [
+     "سَجَدْتَ"
+    ],
+    "antuma": [
+     "سَجَدْتُمَا"
+    ],
+    "antum": [
+     "سَجَدْتُمْ"
+    ],
+    "anti": [
+     "سَجَدْتِ"
+    ],
+    "antunna": [
+     "سَجَدْتُنَّ"
+    ],
+    "ana": [
+     "سَجَدْتُ"
+    ],
+    "nahnu": [
+     "سَجَدْنَا"
+    ]
+   }
+  },
+  "شَكَرَ": {
+   "titel": "شكر",
+   "revid": 93008913,
+   "geholt": "2026-10-12T23:40:20.727Z",
+   "ueberschrift": "Conjugation of شَكَرَ (I, sound, a ~ u, full passive, verbal nouns شُكْر, شُكْرَان)",
+   "tabellenMitDieserGrundform": 1,
+   "aktivVorPassiv": true,
+   "zellenM": 9,
+   "zellenF": 5,
+   "formen": {
+    "huwa": [
+     "شَكَرَ"
+    ],
+    "huma-m": [
+     "شَكَرَا"
+    ],
+    "hum": [
+     "شَكَرُوا"
+    ],
+    "hiya": [
+     "شَكَرَتْ"
+    ],
+    "huma-f": [
+     "شَكَرَتَا"
+    ],
+    "hunna": [
+     "شَكَرْنَ"
+    ],
+    "anta": [
+     "شَكَرْتَ"
+    ],
+    "antuma": [
+     "شَكَرْتُمَا"
+    ],
+    "antum": [
+     "شَكَرْتُمْ"
+    ],
+    "anti": [
+     "شَكَرْتِ"
+    ],
+    "antunna": [
+     "شَكَرْتُنَّ"
+    ],
+    "ana": [
+     "شَكَرْتُ"
+    ],
+    "nahnu": [
+     "شَكَرْنَا"
+    ]
+   }
+  }
+ }
+}

@@ -546,6 +546,43 @@ export const PFLEGEPLAN = [
       wie: 'Teil H des Prüfers prüft die Übung wie jede andere; dazu läuft test-plural-uebung.mjs in jedem Sammellauf: jede Lösung wird unabhängig von js/uebung.js gegen die Karte nachgerechnet, eine Karte ohne saubere Einordnung darf gar nicht gefragt werden, und die Frage muss zur Form im Satz passen. Seit v648 gehört dazu: Zahlwörter werden nicht gefragt (bei ihnen steht im Feld pl die Form beim weiblichen Nomen) — erkannt von istZahlwort() in js/kern.js, an EINER Stelle; der Test misst mit der echten Funktion und prüft, dass es solche Karten in seinen Sätzen überhaupt gibt (neun Störtests). Kommt ein neues Zahlwort dazu, greift dieselbe Erkennung; ändert jemand sie in js/kern.js, wird der Test rot.' }
   },
   {
+    /* ⭐ 13.10.2026 (v672) — ÜBUNG 17 „VERB EINSETZEN" (Stufe 1). Elias am
+       12.10.2026: „ich brauche auch eine sätze übung fürs konjugieren, tüftle
+       eine sehr gute übung dafür aus"; am 13.10.2026 auf „zuerst nur Stufe 1,
+       und sie dir zeigen": „passt so arbeite weiter". Die Übung steht in
+       js/uebung.js (Eintrag `verb-einsetzen`, dazu UEB_VERBEN und
+       uebVerbTreffer) — keine eigene App-Datei, deshalb von Hand hier.
+       Die drei Fragen:
+       · Neuer Inhalt, zwei Sorten. SÄTZE wachsen von selbst nach: baue() liest
+         bei jedem Aufbau den Satzvorrat, jeder neue belegte Satz mit einer
+         Vergangenheitsform eines Listenverbs wird eine Aufgabe. VERBEN wachsen
+         NICHT von selbst — und sollen es nicht: es gilt nur, was sein Lehrer in
+         einer Folge konjugiert oder aufgegeben hat, jede Form ausgeschrieben
+         und belegt (werkzeuge/verbformen-belegen.mjs). Die Wartung sieht nach
+         (Schritt 1b.8, Absatz „Übung 17") und trägt ein neues Verb als Punkt in
+         die To-Do ein; eingetragen wird es in einer Sitzung.
+       · Er trägt nichts ein; gespeichert wird richtig/falsch über dieselben
+         Zähler wie bei den übrigen Übungen. Die Wiederholung einer falschen
+         Aufgabe lebt nur in der laufenden Runde (kein Speicherschlüssel).
+       · Veralten kann die Formenliste nicht von selbst; der Abzug der
+         Nachschlagetabellen ist ein fester Stand (mit Seitenstand und Datum).
+         Was veralten kann, ist die Erkennung im Satz, wenn der Zerleger seine
+         Rollennamen ändert (فِعْل, فَاعِل, مُبْتَدَأ) — das rechnet der eigene
+         Test an seinem ganzen Satzvorrat nach. */
+    funktion: 'Verb einsetzen (Übung 17): die passende Vergangenheitsform in die Lücke, vier Formen desselben Verbs zur Wahl',
+    /* Leer wie bei Übung 16: hier stehen nur Dateien, die die APP lädt. Das
+       Werkzeug werkzeuge/verbformen-belegen.mjs, sein Abzug
+       werkzeuge/verbformen-belege.json und test-verb-einsetzen.mjs gehören
+       zur Werkstatt und sind oben im Text genannt. */
+    dateien: [],
+    bildschirme: [],
+    neuerInhalt: { routine: W, schritt: '1b.8', beleg: 'node werkzeuge/pruefe-satzmodus-aktuell.mjs', werkzeug: 'werkzeuge/pruefe-satzmodus-aktuell.mjs',
+      wie: 'Jeder Satz seines Vorrats mit einer Vergangenheitsform eines der dreizehn Verben seines Lehrers wird von selbst eine Aufgabe (baue() liest den Satzvorrat bei jedem Aufbau). Teil H des Prüfers zählt die Aufgaben jeder Übung in seiner Auswahl und meldet eine Lücke, wenn es zu wenige werden; der eigene Test nennt jede Person ohne Satz. Ein neues Verb kommt nur aus einer Folge: Schritt 1b.8 (Absatz „Übung 17") lässt die Wartung danach sehen und es als To-Do-Punkt melden — eingetragen wird es mit werkzeuge/verbformen-belegen.mjs (holt den Beleg) und einer Zeile in UEB_VERBEN.' },
+    eingaben: { nein: 'Er tippt nur eine der vier Formen an; gespeichert wird richtig/falsch über dieselben Zähler wie bei den übrigen Übungen. Eine falsch beantwortete Aufgabe kommt in derselben Runde noch einmal — das steht nur in der laufenden Liste, nicht im Speicher.' },
+    veralten: { routine: W, schritt: '1b.8', beleg: 'node werkzeuge/alle-pruefer.mjs', werkzeug: 'werkzeuge/pruefe-satzmodus-aktuell.mjs',
+      wie: 'Teil H des Prüfers prüft die Übung wie jede andere; dazu läuft test-verb-einsetzen.mjs in jedem Sammellauf: jede der 169 Formen gegen den Abzug der Nachschlagetabellen (werkzeuge/verbformen-belege.json) und gegen Stamm + Endung des Lehrers, die dreizehn Formen von ذَهَبَ wörtlich gegen die Regel verb-madi-endungen-01; an seinem ganzen Satzvorrat: die Lösung ist die Form im Buch, nichts ist geraten, seine zwei Teile bleiben stehen. Fünfzehn Störtests am echten Quelltext.' }
+  },
+  {
     /* ⭐⭐ 22.09.2026 (v566) — EIN FACHBEGRIFF FOLGT SEINER REGEL.
 
        Elias, nachdem ihm vier Karteikarten hintereinander begegnet waren, deren

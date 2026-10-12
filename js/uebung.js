@@ -695,6 +695,153 @@ function uebMadiPronomen(wort){
   }
   return best && !gleichLang ? best : null;
 }
+/* ⭐⭐ VERB EINSETZEN (Übung 17, 13.10.2026) — die feste Formenliste
+
+   Elias am 12.10.2026: „ich brauche auch eine sätze übung fürs konjugieren,
+   tüftle eine sehr gute übung dafür aus". Gezeigt habe ich ihm am selben Abend
+   eine Aufgabe (der Satz mit Lücke, darunter vier Formen desselben Verbs) und
+   drei Stufen; auf „Übung „Verb einsetzen" bauen wie oben gezeigt, zuerst nur
+   Stufe 1, und sie dir zeigen" kam am 13.10.2026: „passt so arbeite weiter".
+   Hier steht Stufe 1. Die Übung selbst steht in UEBUNGEN (verb-einsetzen).
+
+   ⛔ KEINE SELBST KONJUGIERTE FORM. js/lernen.js nennt eine selbst gebildete
+   Verbform erfundene Grammatik (Goal-Prompt E.1). Deshalb steht hier jede Form
+   ausgeschrieben, und jede ist zweimal belegt:
+   1. durch die Regel seines Lehrers (verb-madi-endungen-01, Folge 18,
+      10:14–24:22): der Stamm bleibt, nur die Endung wechselt. Die dreizehn
+      Formen von ذَهَبَ stehen dort wörtlich, wie er sie vorgesagt hat;
+   2. durch die Konjugationstabelle des Verbs bei en.wiktionary.org (Form I,
+      Zeile „past indicative (perfect)", Aktiv), gelesen am 13.10.2026. Die
+      Reihenfolge der Zellen ist an ذَهَبَ gegen die Regel geeicht; danach
+      stimmen alle 169 Formen der dreizehn Verben mit „Stamm + Endung" überein.
+      Seitenstände: ذَهَبَ 92393079 · خَرَجَ 92020632 · كَتَبَ 92727926 · دَرَسَ 93363735 · رَجَعَ 92739327 · ضَرَبَ 92980630 · فَعَلَ 93470011 · أَكَلَ 92969028 · طَبَخَ 91536966 · نَصَرَ 93351470 · طَلَبَ 93353487 · سَجَدَ 88562583 · شَكَرَ 93008913.
+   test-verb-einsetzen.mjs rechnet beides bei jedem Sammellauf nach (die
+   Tabellen liegen als Abzug in werkzeuge/verbformen-belege.json).
+
+   ⭐ DIE LISTE = DIE VERBEN SEINES LEHRERS, sonst keine. Folge 18: ذَهَبَ,
+   خَرَجَ, كَتَبَ vorkonjugiert, دَرَسَ, رَجَعَ, ضَرَبَ, فَعَلَ als Hausaufgabe.
+   Folge 26: أَكَلَ und طَبَخَ, dazu neu نَصَرَ, طَلَبَ, سَجَدَ, شَكَرَ. Alle
+   dreizehn sind regelmäßig. Ein neues Verb kommt nur dazu, wenn eine Folge es
+   bringt (sein Lehrer, Folge 26: eine Verbliste führen) — mit seinen dreizehn
+   Formen und dem Beleg im Abzug. جَلَسَ steht in seinem Buch (Kapitel 13),
+   aber nicht auf der Liste des Lehrers, und wird deshalb nicht gefragt.
+
+   ⛔ MEINE Entscheidungen, nicht seine:
+   · Die deutschen Namen der Personen folgen seinen Pronomen-Karteikarten
+     („sie (ab drei, männlich)"); nur bei „sie beide" steht „zwei Männer" /
+     „zwei Frauen" statt „zwei Personen", weil das Verb dort verschieden ist.
+   · Die Viererfelder (UEB_VERB_FELDER): welche vier Formen zusammen zur Wahl
+     stehen. Im Entwurf stand „die richtige, ihr Gegenstück im Geschlecht, zwei
+     aus demselben Dreierpaket" — dann wäre die Lösung immer die eine Form,
+     deren Gegenstück danebensteht, und er könnte sie ablesen, ohne die Endung
+     zu kennen. Jedes Feld hier dient vier Lösungen, und jede Person steht in
+     mindestens zwei Feldern. Das Feld seiner Beispielaufgabe ist das erste.
+   · Unter den Knöpfen steht KEIN Kürzel („3. P. m. Pl."), anders als in
+     Übung 11, 14 und 15: hier ist genau diese Zuordnung die Frage. */
+const UEB_VERB_PERSONEN = [
+  ['huwa',    'هُوَ',      'er',                         '3m'],
+  ['huma-m',  'هُمَا',     'sie beide (zwei Männer)',    '3m'],
+  ['hum',     'هُمْ',      'sie (ab drei, männlich)',    '3m'],
+  ['hiya',    'هِيَ',      'sie (eine)',                 '3f'],
+  ['huma-f',  'هُمَا',     'sie beide (zwei Frauen)',    '3f'],
+  ['hunna',   'هُنَّ',     'sie (ab drei, weiblich)',    '3f'],
+  ['anta',    'أَنْتَ',    'du (männlich)',              '2m'],
+  ['antuma',  'أَنْتُمَا', 'ihr beide (zwei Personen)',  '2m'],
+  ['antum',   'أَنْتُمْ',  'ihr (ab drei, männlich)',    '2m'],
+  ['anti',    'أَنْتِ',    'du (weiblich)',              '2f'],
+  ['antunna', 'أَنْتُنَّ', 'ihr (ab drei, weiblich)',    '2f'],
+  ['ana',     'أَنَا',     'ich',                        '1'],
+  ['nahnu',   'نَحْنُ',    'wir',                        '1']
+].map(([id, pron, de, paket], i) => ({ id, pron: pron.normalize('NFC'), de, paket, i }));
+/* Die Dreierpakete seines Lehrers, mit seinen Namen (verb-madi-endungen-01:
+   „Gemerkt wird in Dreierpaketen, nicht als ich-du-er-sie"). أَنْتُمَا steht in
+   beiden Paketen der 2. Person — die Form ist für Männer und Frauen dieselbe. */
+const UEB_VERB_PAKETE = {
+  '3m': { name: '3. Person männlich', glieder: ['huwa', 'huma-m', 'hum'] },
+  '3f': { name: '3. Person weiblich', glieder: ['hiya', 'huma-f', 'hunna'] },
+  '2m': { name: '2. Person männlich', glieder: ['anta', 'antuma', 'antum'] },
+  '2f': { name: '2. Person weiblich', glieder: ['anti', 'antuma', 'antunna'] },
+  '1':  { name: '1. Person', glieder: ['ana', 'nahnu'] }
+};
+/* Je Verb die dreizehn Formen in der Reihenfolge von UEB_VERB_PERSONEN. */
+const UEB_VERBEN = [
+  { de:'gehen', folge:'Folge 18, vorkonjugiert', formen:'ذَهَبَ ذَهَبَا ذَهَبُوا ذَهَبَتْ ذَهَبَتَا ذَهَبْنَ ذَهَبْتَ ذَهَبْتُمَا ذَهَبْتُمْ ذَهَبْتِ ذَهَبْتُنَّ ذَهَبْتُ ذَهَبْنَا' },
+  { de:'hinausgehen', folge:'Folge 18, vorkonjugiert', formen:'خَرَجَ خَرَجَا خَرَجُوا خَرَجَتْ خَرَجَتَا خَرَجْنَ خَرَجْتَ خَرَجْتُمَا خَرَجْتُمْ خَرَجْتِ خَرَجْتُنَّ خَرَجْتُ خَرَجْنَا' },
+  { de:'schreiben', folge:'Folge 18, vorkonjugiert', formen:'كَتَبَ كَتَبَا كَتَبُوا كَتَبَتْ كَتَبَتَا كَتَبْنَ كَتَبْتَ كَتَبْتُمَا كَتَبْتُمْ كَتَبْتِ كَتَبْتُنَّ كَتَبْتُ كَتَبْنَا' },
+  { de:'lernen', folge:'Folge 18, Hausaufgabe', formen:'دَرَسَ دَرَسَا دَرَسُوا دَرَسَتْ دَرَسَتَا دَرَسْنَ دَرَسْتَ دَرَسْتُمَا دَرَسْتُمْ دَرَسْتِ دَرَسْتُنَّ دَرَسْتُ دَرَسْنَا' },
+  { de:'zurückkehren', folge:'Folge 18, Hausaufgabe', formen:'رَجَعَ رَجَعَا رَجَعُوا رَجَعَتْ رَجَعَتَا رَجَعْنَ رَجَعْتَ رَجَعْتُمَا رَجَعْتُمْ رَجَعْتِ رَجَعْتُنَّ رَجَعْتُ رَجَعْنَا' },
+  { de:'schlagen', folge:'Folge 18, Hausaufgabe', formen:'ضَرَبَ ضَرَبَا ضَرَبُوا ضَرَبَتْ ضَرَبَتَا ضَرَبْنَ ضَرَبْتَ ضَرَبْتُمَا ضَرَبْتُمْ ضَرَبْتِ ضَرَبْتُنَّ ضَرَبْتُ ضَرَبْنَا' },
+  { de:'tun', folge:'Folge 18, Hausaufgabe', formen:'فَعَلَ فَعَلَا فَعَلُوا فَعَلَتْ فَعَلَتَا فَعَلْنَ فَعَلْتَ فَعَلْتُمَا فَعَلْتُمْ فَعَلْتِ فَعَلْتُنَّ فَعَلْتُ فَعَلْنَا' },
+  { de:'essen', folge:'Folge 26', formen:'أَكَلَ أَكَلَا أَكَلُوا أَكَلَتْ أَكَلَتَا أَكَلْنَ أَكَلْتَ أَكَلْتُمَا أَكَلْتُمْ أَكَلْتِ أَكَلْتُنَّ أَكَلْتُ أَكَلْنَا' },
+  { de:'kochen', folge:'Folge 26', formen:'طَبَخَ طَبَخَا طَبَخُوا طَبَخَتْ طَبَخَتَا طَبَخْنَ طَبَخْتَ طَبَخْتُمَا طَبَخْتُمْ طَبَخْتِ طَبَخْتُنَّ طَبَخْتُ طَبَخْنَا' },
+  { de:'helfen', folge:'Folge 26, neu', formen:'نَصَرَ نَصَرَا نَصَرُوا نَصَرَتْ نَصَرَتَا نَصَرْنَ نَصَرْتَ نَصَرْتُمَا نَصَرْتُمْ نَصَرْتِ نَصَرْتُنَّ نَصَرْتُ نَصَرْنَا' },
+  { de:'verlangen', folge:'Folge 26, neu', formen:'طَلَبَ طَلَبَا طَلَبُوا طَلَبَتْ طَلَبَتَا طَلَبْنَ طَلَبْتَ طَلَبْتُمَا طَلَبْتُمْ طَلَبْتِ طَلَبْتُنَّ طَلَبْتُ طَلَبْنَا' },
+  { de:'sich niederwerfen', folge:'Folge 26, neu', formen:'سَجَدَ سَجَدَا سَجَدُوا سَجَدَتْ سَجَدَتَا سَجَدْنَ سَجَدْتَ سَجَدْتُمَا سَجَدْتُمْ سَجَدْتِ سَجَدْتُنَّ سَجَدْتُ سَجَدْنَا' },
+  { de:'danken', folge:'Folge 26, neu', formen:'شَكَرَ شَكَرَا شَكَرُوا شَكَرَتْ شَكَرَتَا شَكَرْنَ شَكَرْتَ شَكَرْتُمَا شَكَرْتُمْ شَكَرْتِ شَكَرْتُنَّ شَكَرْتُ شَكَرْنَا' }
+].map(v => {
+  const formen = v.formen.normalize('NFC').split(' ');
+  return { de: v.de, folge: v.folge, formen, gerippe: formen.map(f => uebSkelett(f)) };
+});
+/* Welche vier Formen zusammen zur Wahl stehen — Begründung im Kopf oben. Das
+   letzte Feld sind die vier, die ohne Vokalzeichen gleich aussehen (ذهبت). */
+const UEB_VERB_FELDER = [
+  ['huwa', 'hiya', 'hum', 'hunna'],
+  ['huma-m', 'huma-f', 'hum', 'hunna'],
+  ['huwa', 'hiya', 'huma-m', 'huma-f'],
+  ['anta', 'anti', 'antum', 'antunna'],
+  ['anta', 'antuma', 'antum', 'antunna'],
+  ['anti', 'antuma', 'antum', 'antunna'],
+  ['ana', 'nahnu', 'anta', 'anti'],
+  ['ana', 'nahnu', 'hunna', 'huma-m'],
+  ['ana', 'anta', 'anti', 'hiya']
+];
+/* Die vier Personen eines Feldes, in der Reihenfolge der Dreierpakete. Welches
+   der passenden Felder, wird je Aufbau gewürfelt — so steht derselbe Satz in
+   der nächsten Runde mit anderen Nachbarn da. */
+function uebVerbFeld(personId){
+  const passend = UEB_VERB_FELDER.filter(f => f.includes(personId));
+  const feld = passend.length ? passend[Math.floor(Math.random() * passend.length)] : [personId];
+  return UEB_VERB_PERSONEN.filter(p => feld.includes(p.id));
+}
+/* Steht hier eine Form der Liste? → { verb, person, form, vorsatz, satzzeichen }.
+   `null`, wenn keine — oder wenn die Vokalzeichen im Satz nicht entscheiden,
+   welche (ذهبت ohne Zeichen kann vier Formen sein): dann wäre die Lösung
+   geraten. Vorn darf وَ, فَ oder die Frage-Hamza hängen (وَذَهَبَ, أَذَهَبْتَ);
+   أَذْهَبُ („ich gehe") fällt an seinen Vokalen heraus. */
+function uebVerbTreffer(wort){
+  const roh = String(wort || '').normalize('NFC');
+  const satzzeichen = (roh.match(/[.،؟?!:؛]+$/) || [''])[0];
+  const w = roh.slice(0, roh.length - satzzeichen.length);
+  const sk = uebSkelett(w);
+  const versuche = [{ vorsatz: '', rest: w, sk }];
+  if (sk.length > 3 && /^[وفا]/.test(sk)){
+    const v = uebVorsatz(w);
+    versuche.push({ vorsatz: v, rest: w.slice(v.length), sk: sk.slice(1) });
+  }
+  for (const v of versuche){
+    const kand = [];
+    for (const verb of UEB_VERBEN) verb.gerippe.forEach((g, k) => { if (g === v.sk) kand.push({ verb, k }); });
+    if (!kand.length) continue;
+    const passt = kand.filter(x => uebVertraeglich(v.rest, x.verb.formen[x.k]) >= 1);
+    return passt.length === 1
+      ? { verb: passt[0].verb, person: UEB_VERB_PERSONEN[passt[0].k], form: passt[0].verb.formen[passt[0].k], vorsatz: v.vorsatz, satzzeichen }
+      : null;
+  }
+  return null;
+}
+/* Steht das Wort hinter dem Verb in der Mehrzahl oder Zweizahl? Dann bleibt
+   das Verb im Arabischen trotzdem in der Einzahl (ذَهَبَ الطُّلَّابُ) — das hat
+   sein Unterricht noch nicht gebracht, und ذَهَبُوا stünde als Falle daneben. */
+function uebVerbMehrzahlDanach(t){
+  if (!t) return false;
+  const wort = String(t.rein || t.wort || '').normalize('NFC');
+  if (/(ُونَ|ِينَ|َانِ|َيْنِ|َاتٌ|َاتُ)$/.test(wort)) return true;
+  const v = (typeof uebungVokabel === 'function') ? uebungVokabel(t.wort) : null;
+  if (!v || !v.pl) return false;
+  const formen = uebungKandidaten(t.wort);
+  return formen.includes(uebungOhneEndung(v.pl)) && !formen.includes(uebungOhneEndung(v.sg || v.ar));
+}
+
 const uebBedeutung = de => String(de || '').toLowerCase().replace(/[?„"“”]/g, '').trim();
 const UEB_FRAGE_DE = /^(wer|was|wo|woher|wohin|wie|wie viele?|wann|warum|welche[rsnm]?)\s*\??$/i;
 
@@ -1744,6 +1891,85 @@ const UEBUNGEN = [
       }).filter(Boolean);
     }
   },
+  /* ⭐⭐ VERB EINSETZEN — Elias am 12.10.2026: „ich brauche auch eine sätze
+     übung fürs konjugieren, tüftle eine sehr gute übung dafür aus". Auftrag,
+     Belege und was davon MEINE Entscheidung ist, stehen bei UEB_VERB_PERSONEN
+     oben. Dies ist Stufe 1 („Auswählen"); die Stufen 2 („Umformen" wie im Buch,
+     Kapitel 13, Aufgabe 4) und 3 („Selbst bilden") sind ihm gezeigt, aber noch
+     nicht gebaut — er wollte zuerst diese sehen.
+
+     Das Gegenstück zu Übung 14: dort fehlt das Pronomen und das Verb steht da,
+     hier fehlt das Verb. Zur Wahl stehen vier Formen DESSELBEN Verbs.
+     ⛔ Vier Fallen, alle hier abgefangen:
+     - Wer handelt, muss im Satz stehen: ein Pronomen oder ein Nomen (beim
+       Zerleger مُبْتَدَأ oder فَاعِل). Steht keins da (مَتَى ذَهَبْتَ؟), sagt
+       es die Frage dazu („Gemeint ist: du (männlich)") — sonst wäre zwischen
+       ـْتَ und ـْتِ geraten.
+     - Steht dieselbe Form zweimal im Satz (مَنْ خَرَجَ مَعَهُ؟ خَرَجَ مَعَهُ
+       عَمِّي), verriete die zweite die Lösung: beide sind Lücke, und aus dem
+       Paar wird EINE Aufgabe (wie in Übung 15).
+     - Ein Nomen in der Mehrzahl HINTER dem Verb: das Verb bleibt dort in der
+       Einzahl. Das hat der Unterricht noch nicht gebracht — keine Aufgabe.
+     - Lösung und Auswahl tragen die PERSON als Wert ('hum'), nicht die Form:
+       so zählt „je Antwort gleich viele" je Endung und nicht je Verb, und
+       ذَهَبُوا und خَرَجُوا sind dieselbe Antwort.
+
+     ⭐ Nach der Antwort steht das Dreierpaket seines Lehrers da, die gefragte
+     Form umrandet (a.paket, gezeichnet in renderUebung). Bei einer falschen
+     Wahl sagt ein Satz zuerst, wozu die GEWÄHLTE Form gehört (o.falsch).
+     ⭐ `falschNochmal`: was falsch war, kommt in derselben Runde nach drei
+     anderen Aufgaben noch einmal, höchstens zweimal (uebungAuswerten). Über
+     mehrere Tage merkt sich die Übung es NOCH NICHT — das ist ihm so gesagt.
+
+     ⚠️ NUMMER 17, Übersetzen und Satzbau rücken auf 18 und 19 — wie bei der
+     Plural-Übung (04.10.2026), und aus demselben Grund: die Nummern laufen auf
+     dem Bildschirm nach Gruppen durch. `teilRang:100` (größer als die 99 der
+     Plural-Übung): sie wird als LETZTE auf seine zwei Teile verteilt, damit
+     keine andere den Teil wechselt. Und sie steht nie im selben Teil wie
+     Übung 14 (VERWANDT in satzTeile()) — beide fragen an denselben Sätzen
+     seiner Pronomen-Karten. Bewacht von test-verb-einsetzen.mjs. */
+  {
+    id:'verb-einsetzen', nr:17, name:'ذَهَبَ / ذَهَبَتْ / ذَهَبُوا … — Verb einsetzen', art:'wahl',
+    teilRang:100,
+    /* Wie Übung 14 und 15: die Knöpfe von rechts nach links, in der Reihenfolge
+       der Dreierpakete (هُوَ, هُمَا, هُمْ …). */
+    optionenRtl: true,
+    falschNochmal: 3,
+    hinweis:'Wer handelt? Das zeigt ein Wort im Satz — ein Pronomen wie هُمْ oder ein Nomen wie الطُّلَّابُ — oder die Frage darüber.',
+    deKlar: /^(ich|du|er|sie|es|wir|ihr)[.,;:!?]*$/i,
+    hinweisVerraet:false,
+    baue(z){
+      const stellen = z.map(t => (/^فِعْل/.test(String((t && t.rolle) || '')) ? uebVerbTreffer(t.wort) : null));
+      if (!stellen.some(Boolean)) return [];
+      const hatAnker = z.some((t, j) => !stellen[j] && /^(فَاعِل|مُبْتَدَأ)/.test(String((t && t.rolle) || '')));
+      const erledigt = new Set(), out = [];
+      stellen.forEach((st, i) => {
+        if (!st || erledigt.has(i)) return;
+        const zwillinge = stellen.map((x, j) => (j !== i && x && x.verb === st.verb && x.person === st.person) ? j : -1).filter(j => j >= 0);
+        zwillinge.forEach(j => erledigt.add(j));
+        const danach = z[i + 1];
+        if (danach && /^فَاعِل/.test(String(danach.rolle || '')) && uebVerbMehrzahlDanach(danach)) return;
+        const P = st.person, formen = st.verb.formen;
+        const luecke = {};
+        [i, ...zwillinge].forEach(j => { luecke[j] = stellen[j].vorsatz + '____' + stellen[j].satzzeichen; });
+        const pk = UEB_VERB_PAKETE[P.paket];
+        out.push({
+          frage: 'Welche Form des Verbs gehört in die Lücke?' + (hatAnker ? '' : ` Gemeint ist: ${P.de}.`),
+          wortIdx:i, ohneSuffix: luecke,
+          loesung: P.id,
+          optionen: uebVerbFeld(P.id).map(p => ({ wert: p.id, text: st.vorsatz + formen[p.i],
+            falsch: `${formen[p.i]} gehört zu ${p.pron} — ${p.de}.` })),
+          aufloesung: `In die Lücke gehört ${formen[P.i]} — die Form zu ${P.pron}, ${P.de}. Dein Lehrer merkt es so (${pk.name}):`,
+          paket: pk.glieder.map(id => {
+            const p = UEB_VERB_PERSONEN.find(x => x.id === id);
+            return { ar: p.pron + ' ' + formen[p.i], gefragt: id === P.id };
+          })
+        });
+      });
+      return out;
+    }
+  },
+
   /* ⭐⭐ ÜBERSETZEN — Elias' Auftrag vom 22.09.2026, 21:15, im Wortlaut:
 
      „es sollte auch im satzmodus eine übung geben, wo mir ein satz gegeben wird
@@ -1769,7 +1995,7 @@ const UEBUNGEN = [
     /* Seit v612 Nummer 16 (vorher 15): die Endungen-Übung ist eine Auswahl-Übung
        und steht in der Liste vor „Schreiben" — Elias: „ich möchte das die liste
        liniar von 1 bis 15 geht ohne das daraus salat gemacht wird". */
-    id:'uebersetzen', nr:17, name:'Übersetzen — Arabisch ins Deutsche', art:'schreiben',
+    id:'uebersetzen', nr:18, name:'Übersetzen — Arabisch ins Deutsche', art:'schreiben',
     hinweis:'Achte auf die Bestimmtheit (اَلْ oder Tanwīn) und darauf, wer in der إِضَافَة der Besitzer ist.',
     hinweisVerraet:false,
     deVerbergen:true,
@@ -1822,7 +2048,7 @@ const UEBUNGEN = [
      schon. Ein zweites Feld daneben könnte einer davon vergessen.
      Bewacht von test-satz-bauen.mjs. */
   {
-    id:'satz-bauen', nr:18, name:'Satzbau — den Satz selbst bilden', art:'bauen',
+    id:'satz-bauen', nr:19, name:'Satzbau — den Satz selbst bilden', art:'bauen',
     hinweis:'Tippe die Wörter in der Reihenfolge an, in der sie im Satz stehen. Ein Tipp auf ein Wort in deinem Satz nimmt es wieder heraus.',
     hinweisVerraet:false,
     deAlsAufgabe:true,
@@ -2775,6 +3001,13 @@ function renderUebung(){
   rueck.className = 'ueb-rueck' + (UEB.beantwortet ? (UEB.zuletztRichtig ? ' gut' : ' schlecht') : ' hidden');
   if (UEB.beantwortet){
     const teile = [UEB.zuletztRichtig ? 'Richtig.' : 'Nicht ganz.'];
+    /* Verb einsetzen (Übung 17): bei einer falschen Wahl zuerst, wozu die
+       GEWÄHLTE Form gehört — ein Feld der Antwort (`falsch`), keine Liste hier. */
+    if (!UEB.zuletztRichtig && Array.isArray(a.optionen)){
+      const gewaehlt = a.optionen.find(o => o && o.falsch && o.wert !== a.loesung
+        && (UEB.gewaehlt.has(o.wert) || UEB.gewaehlt.has(String(o.wert))));
+      if (gewaehlt) teile.push(gewaehlt.falsch);
+    }
     if (a.aufloesung) teile.push(a.aufloesung);
     /* ⭐ innerHTML statt textContent, damit die arabischen Woerter in der
        Aufloesung dieselbe Behandlung bekommen wie in den Antwortknoepfen:
@@ -2789,8 +3022,20 @@ function renderUebung(){
         + a.loesungSatz.map(w => `<span class="ar-wort" lang="ar">${escapeHtml(w)}</span>`).join(' ')
         + '</span>'
       : '';
+    /* Verb einsetzen (Übung 17): das Dreierpaket seines Lehrers in einer eigenen
+       Zeile von rechts nach links, die gefragte Form umrandet (.gefragt). Jedes
+       Wort einzeln, damit der Tipp darauf die Bedeutung zeigt wie in der Zeile
+       des Satzbaus darüber. */
+    const paket = Array.isArray(a.paket) && a.paket.length
+      ? `<span class="ueb-rueck-paket" lang="ar" dir="rtl">`
+        + a.paket.map(g => `<span class="ueb-paket-glied${g.gefragt ? ' gefragt' : ''}">`
+            + String(g.ar).split(/\s+/).map(w => `<span class="ar-wort" lang="ar">${escapeHtml(w)}</span>`).join(' ')
+            + '</span>').join('')
+        + '</span>'
+      : '';
     rueck.innerHTML = arabischHervor(teile.join(' '))
       + loesungSatz
+      + paket
       + (warum ?`<button class="ueb-warum" type="button" data-regelkarte="${escapeHtml(warum.id)}">Warum? → ${arabischHervor(warum.name)}</button>` : '');
   }
 }
@@ -2874,7 +3119,10 @@ const UEBUNG_WARUM = {
   'satz-bauen': null,
   /* Die Plural-Übung (Nr. 16): die Regel mit der Einteilung und der Erkennungsprobe
      des Lehrers aus Folge 25 — von dort führen die drei Einzelregeln weiter. */
-  'plural': 'jam-salim-taksir-01'
+  'plural': 'jam-salim-taksir-01',
+  /* Verb einsetzen (Nr. 17, 13.10.2026): die Regel mit den Endungen der
+     Vergangenheit und den Dreierpaketen seines Lehrers aus Folge 18. */
+  'verb-einsetzen': 'verb-madi-endungen-01'
 };
 
 /* ⭐⭐ UNSICHTBARE ENDUNG → DIE KARTE, DIE GENAU DAS ERKLÄRT (16.09.2026)
@@ -3131,7 +3379,11 @@ function satzTeile(){
      ⚠️ Hier drinnen und nicht als Konstante daneben: mehrere Prüfer schneiden
      satzTeile() allein aus dem Quelltext, eine Konstante draußen fehlte ihnen.
      Bewacht von werkzeuge/pruefe-satz-teile.mjs (Abschnitt 6). */
-  const VERWANDT = [['genus', 'fem-form'], ['kasus', 'haraka'], ['jarr-paar', 'alle-majrur'], ['isara', 'pronomen']];
+  /* ['pronomen', 'verb-einsetzen'] (13.10.2026) ist MEINE Ergänzung nach seiner
+     allgemeinen Regel: Übung 14 nimmt aus «هُمْ ذَهَبُوا» das Pronomen heraus,
+     Übung 17 aus demselben Satz das Verb — am selben Tag verriete die eine die
+     andere. */
+  const VERWANDT = [['genus', 'fem-form'], ['kasus', 'haraka'], ['jarr-paar', 'alle-majrur'], ['isara', 'pronomen'], ['pronomen', 'verb-einsetzen']];
   const partner = id => VERWANDT.filter(p => p.includes(id)).flat().filter(x => x !== id);
   const zeit = {}, quelle = {};
   for (const m of UEBUNGEN){
@@ -3331,6 +3583,21 @@ function uebungAuswerten(richtig){
     : Date.now() + (typeof Q8_SPERRE_MS === 'number' ? Q8_SPERRE_MS : 2500);
   UEB.gestellt++;
   if (richtig) UEB.richtig++;
+  /* ⭐ WAS FALSCH WAR, KOMMT NOCH EINMAL (13.10.2026, Übung 17 „Verb einsetzen").
+     Ihm so gezeigt: „Was du falsch hattest, kommt öfter." Eine Übung mit
+     `falschNochmal: n` bekommt ihre falsch beantwortete Aufgabe nach n anderen
+     Aufgaben derselben Runde noch einmal vorgelegt — höchstens zweimal, sonst
+     hinge er an einer Aufgabe fest. Am Ende der Liste kommt sie als letzte.
+     ⚠️ Nur in dieser Runde: gespeichert wird nichts. Wechselt „Gemischt"
+     danach den Teil (uebungWeiter), fällt eine noch ausstehende Wiederholung
+     mit dem Rest der alten Liste weg. */
+  if (!richtig){
+    const aF = uebungAktuell(), mF = uebungModusVon(aF);
+    if (aF && mF && mF.falschNochmal > 0 && (aF.nochmal || 0) < 2){
+      const stelle = Math.min(UEB.idx + 1 + mF.falschNochmal, UEB.liste.length);
+      UEB.liste.splice(stelle, 0, { ...aF, nochmal: (aF.nochmal || 0) + 1 });
+    }
+  }
   /* Fortschritt je Regel. Bewusst HIER und nicht in den drei Auswertern
      darueber — derselbe Grund, aus dem UEB.gestellt hier steht: kein Modus
      kann es vergessen. Aufgaben ohne regelId (zwoelf der dreizehn Modi)

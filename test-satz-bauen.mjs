@@ -120,7 +120,9 @@ function lauf(quelle){
   /* 04.10.2026 (v646): 17 → 18. Die Plural-Übung steht bei den Auswahl-Übungen
      und trägt die 16; Übersetzen und Satzbau sind je eine Nummer aufgerückt,
      damit die Nummern auf dem Bildschirm durchlaufen. */
-  ok('1 Nummer 18, Art „bauen"', U.nr === 18 && U.art === 'bauen');
+  /* 13.10.2026 (v672): 18 → 19. „Verb einsetzen" steht bei den Auswahl-Übungen
+     und trägt die 17; Übersetzen und Satzbau sind je eine Nummer aufgerückt. */
+  ok('1 Nummer 19, Art „bauen"', U.nr === 19 && U.art === 'bauen');
   const nummern = UEBUNGEN.map(u => u.nr).sort((a, b) => a - b);
   ok('1 Nummern linear 1 bis N', nummern.every((n, i) => n === i + 1));
   ok('1 eigene Gruppe „Bauen" im Wähler', (hole('UEB_GRUPPEN') || []).some(([titel, art]) => titel === 'Bauen' && art === 'bauen'));
