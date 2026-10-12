@@ -14,6 +14,12 @@
  * Alles andere entscheidet die Hand: data-ersatz/hand/<buch>.json, je Kennung
  *   { "felder": { "de": { "w": "…", "wo": "…", "q": "…" } }, "leer": ["root"], "ref": "…", "status": "nicht-gefunden", "grund": "…" }
  *
+ * Für Plätze, die keine Quelle des Zuordners belegt, gibt es seit dem 12.10.2026 zwei weitere Abgleiche, deren
+ * Funde eine Sitzung von Hand einträgt (Elias: „guck nach weiteren möglichkeiten sie zu besorgen"):
+ * ersatz-bama-abgleich.mjs (Buckwalters Stammliste, Quelle „bama") und ersatz-lane.mjs (Lanes Lexikon, Quelle
+ * „lane"). Beide nennen die Bedeutung nur auf Englisch -- das Deutsch solcher Plätze ist von Claude danach
+ * geschrieben, trägt die Quelle „claude" und zählt als „ohne deutsche Quelle".
+ *
  * Aufruf (aus dem Repo-Wurzelverzeichnis):  node werkzeuge/ersatz-bauen.mjs [--knapp]
  */
 import fs from 'node:fs';

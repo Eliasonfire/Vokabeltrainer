@@ -801,10 +801,18 @@ const PRUEFER = [
      Eintrag, zwei gleiche Eintraege, andere Wortart, Deutsch deckt sich nicht.
      Keine davon darf belegt werden; eine Handangabe ohne Quelle haelt den Bau
      an. Gegenprobe beim Bau des Tests: mit je einer ausgeschalteten Regel
-     (in einer Kopie der Werkzeuge) wurde er rot. */
+     (in einer Kopie der Werkzeuge) wurde er rot.
+     12.10.2026, spaeter: eiche-ersatz-bama.mjs eicht den Abgleich gegen
+     Buckwalters Stammliste (ersatz-bama-lib.mjs, ersatz-bama-abgleich.mjs) und
+     die Wurzelformen fuer Lanes Lexikon (ersatz-lane.mjs) — Elias zu den
+     Plaetzen ohne Quelle: „guck nach weiteren möglichkeiten sie zu besorgen".
+     Feste Faelle laufen immer; ob der Abgleich an einem ganzen Buch die
+     gewoehnlichen Woerter trifft (und ein erfundenes nicht), nur mit der lokal
+     abgelegten Liste — fehlt sie, steht „ÜBERSPRUNGEN" da, kein stilles Gruen. */
   ['werkzeuge/pruefe-ersatz.mjs', ['--knapp']],
   ['werkzeuge/eiche-ersatz.mjs', []],
-  ['werkzeuge/eiche-ersatz-zuordner.mjs', []]
+  ['werkzeuge/eiche-ersatz-zuordner.mjs', []],
+  ['werkzeuge/eiche-ersatz-bama.mjs', []]
 ];
 
 /* ⛔ pruefe-oberflaeche.js läuft NICHT unter node — es prüft die laufende App

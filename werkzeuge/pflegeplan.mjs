@@ -334,7 +334,11 @@ export const PFLEGEPLAN = [
       { routine: W, schritt: '2b', beleg: 'node werkzeuge/ersatz-zuordnen.mjs', werkzeug: 'werkzeuge/ersatz-zuordnen.mjs',
         wie: 'die Ersatzdatenbank folgt dem Abzug: pruefe-ersatz.mjs meldet neue Plätze, dann laufen '
           + 'ersatz-zuordnen.mjs und ersatz-bauen.mjs neu; offene Plätze kommen als Punkt in die To-Do. '
-          + 'Bewacht von pruefe-ersatz.mjs und eiche-ersatz.mjs' },
+          + 'Für Plätze, die keine Quelle des Zuordners belegt, hat die Sitzung zwei weitere Abgleiche '
+          + '(Elias, 12.10.2026: „guck nach weiteren möglichkeiten sie zu besorgen"): '
+          + 'ersatz-bama-abgleich.mjs (Buckwalters Stammliste) und ersatz-lane.mjs (Lanes Lexikon, holt '
+          + 'nur mit --holen); eingetragen wird von Hand. '
+          + 'Bewacht von pruefe-ersatz.mjs, eiche-ersatz.mjs und eiche-ersatz-bama.mjs' },
     ],
   },
   {
