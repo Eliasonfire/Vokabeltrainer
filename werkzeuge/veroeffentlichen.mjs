@@ -69,6 +69,7 @@ const mitDaten   = process.argv.includes('--mit-daten');
 /* ---------- Was NIEMALS hochgeht, egal was die Ableitung sagt ---------- */
 const VERBOTEN = [
   /^transcripts[\\/]/i,
+  /^data-abzug[\\/]/i,
   /^\.git[\\/]/i,
   /^\.claude[\\/]/i,
   /^werkzeuge[\\/]/i,

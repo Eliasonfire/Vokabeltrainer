@@ -15,10 +15,19 @@
  * Ergebnis: data/vokabeln-<buch>.js, jede Datei setzt
  *   window.VOKABELN['<buch>'] = [ ... ]
  * damit der Nachlader in js/vokabelquellen.js sie einhaengen kann.
+ *
+ * Seit dem 12.10.2026: ist auf die Ersatzdatenbank umgeschaltet
+ * (werkzeuge/ersatz-wechsel.mjs --hin), liegen in data/ die Ersatzkarten und
+ * der Abzug steht in data-abzug/. Dann schreibt dieses Skript die Buchdateien
+ * und das Verzeichnis DORTHIN - sonst ueberschriebe der naechste Lauf die
+ * Ersatzkarten still. Den Ort nennt werkzeuge/datenquelle.mjs. Nur
+ * vokabeln-eigene.js bleibt immer in data/: das sind Elias' eigene Woerter,
+ * kein Buch.
  */
 import path from 'node:path';
 import fs from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { abzugOrdner, abzugGeparkt, istErsatzkarte } from './datenquelle.mjs';
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.join(HIER, '..');
@@ -66,6 +75,10 @@ for (const v of alle) (nachBuch[v.book_slug] ||= []).push(schlank(v));
 
 const DATA = path.join(REPO, 'data');
 fs.mkdirSync(DATA, { recursive: true });
+/* Wohin Buchdateien und Verzeichnis gehoeren (12.10.2026): nach data/ - oder
+   nach data-abzug/, solange auf die Ersatzdatenbank umgeschaltet ist. Ohne den
+   Ordner data-abzug/ ist ABZUG dasselbe wie DATA. */
+const ABZUG = abzugOrdner(REPO);
 
 /* ---------- Weniger wird es nie (27.09.2026) ------------------------------
 
@@ -102,12 +115,26 @@ function liesListe(datei){
    seiner Datei. Was in data/ liegt, aber nicht im Verzeichnis steht, zaehlt
    nicht - ein alter Rest soll nicht als Buch zurueckkommen. */
 const bisher = {};
-const verzeichnisDatei = path.join(DATA, 'buecher.js');
+const verzeichnisDatei = path.join(ABZUG, 'buecher.js');
 if (fs.existsSync(verzeichnisDatei)) {
   for (const b of liesListe(verzeichnisDatei)) {
-    const datei = path.join(REPO, b.datei);
+    /* Das Verzeichnis nennt den Pfad, unter dem die APP die Datei laedt
+       (data/...). Hier zaehlt nur der Dateiname - der Ordner ist der, in dem
+       der Abzug gerade liegt. */
+    const datei = path.join(ABZUG, path.basename(b.datei));
     if (fs.existsSync(datei)) bisher[b.slug] = liesListe(datei);
   }
+}
+/* Zweite Sicherung, unabhaengig vom Ordner: jede Ersatzkarte traegt
+   source "ersatz". Stehen solche Karten dort, wo der Abzug hin soll, dann fehlt
+   data-abzug/ (geloescht? verschoben?), obwohl umgeschaltet ist - und dieser
+   Lauf wuerde die Ersatzkarten mit arabicroots-Karten ueberschreiben. Also
+   Abbruch, BEVOR etwas geschrieben ist. */
+const ersatzImWeg = Object.entries(bisher).filter(([, liste]) => liste.some(istErsatzkarte)).map(([slug]) => slug);
+if (ersatzImWeg.length) {
+  console.error(`In ${ABZUG} liegen Karten der Ersatzdatenbank (${ersatzImWeg.join(', ')}), nicht der Abzug - nichts geschrieben.`);
+  console.error('Die Lage zeigt: node werkzeuge/ersatz-wechsel.mjs --stand');
+  process.exit(1);
 }
 const eigenDatei = path.join(DATA, 'vokabeln-eigene.js');
 const eigenBisher = fs.existsSync(eigenDatei) ? liesListe(eigenDatei) : [];
@@ -131,7 +158,7 @@ for (const buch of reihenfolge) {
 const uebersicht = [];
 for (const buch of reihenfolge) {
   const liste = zusammen[buch];
-  const datei = path.join(DATA, `vokabeln-${buch}.js`);
+  const datei = path.join(ABZUG, `vokabeln-${buch}.js`);
   const kapitel = [...new Set(liste.map(v => v.chapter))].sort((a,b)=>a-b);
   const kopf =
 `/* Automatisch erzeugt von werkzeuge/hole-vokabeln.mjs - nicht von Hand aendern.
@@ -230,8 +257,11 @@ window.EIGENE_VOKABELN = ${JSON.stringify(eigenSchlank, null, 1)};
   console.log(`  Geschrieben: data/vokabeln-eigene.js`);
 }
 
-/* Ein kleines Verzeichnis, damit die App weiss, was es gibt, ohne alles zu laden. */
-fs.writeFileSync(path.join(DATA, 'buecher.js'),
+/* Ein kleines Verzeichnis, damit die App weiss, was es gibt, ohne alles zu laden.
+   `datei` bleibt der Pfad, unter dem die App laedt (data/...) - auch wenn der
+   Abzug gerade in data-abzug/ steht; beim Zurueckschalten kommt alles wieder
+   nach data/. */
+fs.writeFileSync(path.join(ABZUG, 'buecher.js'),
 `/* Automatisch erzeugt von werkzeuge/hole-vokabeln.mjs.
    Verzeichnis der verfuegbaren Buecher. Die App laedt daraus zuerst nur das
    Buch, in dem gelernt wird; die uebrigen kommen beim Umschalten dazu. */
@@ -242,7 +272,11 @@ const BUECHER = ${JSON.stringify(uebersicht.map(u => ({
 `, 'utf8');
 
 console.table(uebersicht);
-console.log('Geschrieben nach', DATA);
+console.log('Geschrieben nach', ABZUG);
+if (abzugGeparkt(REPO)) {
+  console.log('ⓘ Die Ersatzdatenbank ist eingeschaltet: der Abzug steht in data-abzug/, die Buchdateien in data/');
+  console.log('  sind nicht angefasst. Neue Kapitel kommen erst nach einem Neubau der Ersatzdatenbank in die App.');
+}
 
 /* Sichtbar melden, was nur noch aus dem bisherigen Stand kommt - sonst saehe
    ein Lauf nach dem Ende des Zugangs aus wie jeder andere. */

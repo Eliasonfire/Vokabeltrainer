@@ -812,7 +812,21 @@ const PRUEFER = [
   ['werkzeuge/pruefe-ersatz.mjs', ['--knapp']],
   ['werkzeuge/eiche-ersatz.mjs', []],
   ['werkzeuge/eiche-ersatz-zuordner.mjs', []],
-  ['werkzeuge/eiche-ersatz-bama.mjs', []]
+  ['werkzeuge/eiche-ersatz-bama.mjs', []],
+  /* 12.10.2026, abends — der Wechsel auf die Ersatzdatenbank als EIN Befehl mit
+     Rueckweg (ersatz-wechsel.mjs; umgeschaltet wird nur auf Elias' Wort). Elias:
+     „und könnten wir diese jederzeit nahtlos verwenden? also auch in bücher und
+     kapiteln und so aufgeteilt usw.. und auch einsatzbereit". Der Test laeuft in
+     Wegwerfordnern mit den echten Skripten: hin und zurueck, danach steht data/
+     Byte fuer Byte da wie vorher; nach dem Wechsel schreibt der Abzug nach
+     data-abzug/ statt ueber die Ersatzkarten; das Paket darf nur um die
+     benannten Plaetze kleiner werden (WEGGELASSEN in datenquelle.mjs) und nur,
+     wenn umgeschaltet ist. Drei Stoertests im Test selbst; beim Bau dazu 14
+     Verfaelschungen der Werkzeuge in einer Kopie, jede machte ihn rot. Am echten
+     Ordner prueft er nur lesend, dass data/, data-abzug/ und die Karten
+     zusammenpassen und dass data/ nach einem Wechsel auf dem Stand von
+     data-ersatz/ ist. */
+  ['werkzeuge/test-ersatz-wechsel.mjs', []]
 ];
 
 /* ⛔ pruefe-oberflaeche.js läuft NICHT unter node — es prüft die laufende App

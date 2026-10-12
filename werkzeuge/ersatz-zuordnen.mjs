@@ -16,6 +16,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
+import { abzugOrdner, istErsatzkarte } from './datenquelle.mjs';
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
 const REPO = process.env.ERSATZ_REPO || path.join(HIER, '..');
@@ -62,11 +63,15 @@ function ohneArtikel(v) {
 const voll = v => v !== null && v !== undefined && String(v).trim() !== '';
 
 /* ---------- Laden ------------------------------------------------------------------------------------------ */
+/* Der Bestand ist der Abzug von arabicroots. Er liegt in data/ -- oder in data-abzug/, solange auf die
+ * Ersatzdatenbank umgeschaltet ist (datenquelle.mjs); in data/ stehen dann die Ersatzkarten selbst. */
 export function ladeBuch(buch) {
-  const datei = path.join(REPO, 'data', 'vokabeln-' + buch + '.js');
+  const datei = path.join(abzugOrdner(REPO), 'vokabeln-' + buch + '.js');
   const fenster = {};
   vm.runInContext(fs.readFileSync(datei, 'utf8'), vm.createContext({ window: fenster }), { filename: datei });
-  return fenster.VOKABELN[buch];
+  const karten = fenster.VOKABELN[buch];
+  if (karten.some(istErsatzkarte)) throw new Error(datei + ': das sind Karten der Ersatzdatenbank, nicht der Abzug von arabicroots — der Zuordner hielte sie gegen sich selbst („node werkzeuge/ersatz-wechsel.mjs --stand“ zeigt die Lage)');
+  return karten;
 }
 function ladeJsonl(datei) {
   if (!fs.existsSync(datei)) return [];
