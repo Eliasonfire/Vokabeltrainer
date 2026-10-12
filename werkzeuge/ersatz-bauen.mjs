@@ -34,6 +34,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 import { abzugOrdner, istErsatzkarte } from './datenquelle.mjs';
+import { vergleich as wortform } from './ersatz-bama-lib.mjs';
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
 const REPO = process.env.ERSATZ_REPO || path.join(HIER, '..');
@@ -195,6 +196,17 @@ function wieDieKarte(alt, s, jetzt) {
 const plaetze = [], unterschiede = [], nichtGefunden = [], handFehler = [], verzeichnis = [];
 const stand = { erzeugt: new Date().toISOString(), buecher: {} };
 let verbformenWeg = 0;
+/* EINZAHL UND VERGANGENHEIT SIND OFT DAS WORT SELBST (12.10.2026, Regel von Claude). Ein Nomen steht im Wörterbuch in
+ * der Einzahl, ein Verb in der Vergangenheit (3. Person m. Einzahl) — die Karte führt im Feld dann dasselbe Wort noch
+ * einmal. Wo ein Platz nicht aus einem Wörterbucheintrag belegt ist (Übersetzungstabelle, arabdict, Buckwalters
+ * Liste, Lane), setzte bisher niemand das Feld: gemessen fehlte so die Einzahl an 52 Nomen und die Vergangenheit an
+ * 73 Verben, die die bisherige Karte hat. OB das Wort der Karte selbst die Einzahl oder die Vergangenheit ist, sagt
+ * die bisherige Karte (ihr Feld nennt ihr eigenes Wort) — sie ist dabei nur die Probe; der WERT ist das Arabisch der
+ * Ersatzkarte mit dessen Fundstelle. Führt die bisherige Karte dort ein ANDERES Wort (die Karte trägt eine Mehrzahl
+ * oder eine Befehlsform), bleibt das Feld offen. Verglichen wird mit Vokalzeichen, ohne die Schlussendung. */
+const gleichesWort = (a, b) => wortform(nfc(a), { artikelWeg: false }) === wortform(nfc(b), { artikelWeg: false });
+const SELBST = [['noun', 'sg', 'die Einzahl'], ['verb', 'past', 'die Vergangenheit (3. Person m. Einzahl)']];
+const selbst = { sg: 0, past: 0 };
 /* Wurzeln aus Lanes Lexikon für Karten, denen keine andere Quelle eine nennt (ersatz-lane.mjs --wurzeln schreibt
  * die Datei; fehlt sie, ändert sich nichts). */
 const laneWurzeln = liesJson(path.join(ERSATZ, 'arbeit', 'lane-wurzeln.json'), {}).eintraege || {};
@@ -265,6 +277,16 @@ for (const buch of BUECHER) {
         if (felder.root && felder.root.q !== 'enwikt-grundform') lane.hatSchon++;
         else if (!felder.ar || nfc(felder.ar.w) !== nfc(lw.ar)) lane.anderesWort++;
         else { felder.root = { w: nfc(lw.w), wo: lw.wo, q: 'lane' }; lane.gesetzt++; }
+      }
+    }
+    // Einzahl und Vergangenheit als das Wort selbst (SELBST, oben): füllt nur eine Lücke; „leer" von Hand nimmt es wieder heraus
+    {
+      const altK = nachId.get(s.id);
+      if (altK && felder.ar && felder.type) for (const [typ, f, was] of SELBST) {
+        if (felder.type.w !== typ || felder[f] || !voll(altK[f]) || (h.leer || []).includes(f)) continue;
+        if (!gleichesWort(altK[f], altK.ar) || !gleichesWort(felder.ar.w, altK[f])) continue;
+        felder[f] = { w: felder.ar.w, wo: `${felder.ar.wo} — ${was} ist das Wort selbst`, q: felder.ar.q };
+        selbst[f]++;
       }
     }
     for (const f of h.leer || []) delete felder[f];
@@ -351,6 +373,7 @@ if (!process.argv.includes('--knapp')) for (const f of FELDER) {
   if (arten) console.log(`Unterschiede ${f}: ${Object.values(arten).reduce((a, b) => a + b, 0)} (${Object.entries(arten).sort((a, b) => b[1] - a[1]).map(([art, n]) => art + ' ' + n).join(' · ')})`);
 }
 if (verbformenWeg) console.log(`Verbformen an Karten, die keine Verben sind, weggelassen: ${verbformenWeg}`);
+if (selbst.sg || selbst.past) console.log(`Das Wort selbst: Einzahl an ${selbst.sg} Nomen und Vergangenheit an ${selbst.past} Verben gesetzt (die bisherige Karte nennt dort ihr eigenes Wort)`);
 if (lane.eintraege) console.log(`Wurzeln aus Lanes Lexikon: ${lane.gesetzt} eingetragen · ${lane.hatSchon} übergangen, weil eine andere Quelle die Wurzel nennt · ${lane.anderesWort} übergangen, weil das Arabisch der Karte nicht mehr das Stichwort ist (von ${lane.eintraege} Einträgen in data-ersatz/arbeit/lane-wurzeln.json)`);
 if (handFehler.length) { console.log(`HAND:${handFehler.length} Entscheidung(en) passen nicht zu den Quellen:`); for (const f of handFehler.slice(0, 20)) console.log('  ✗ ' + f); process.exitCode = 1; }
 console.log(`GEBAUT: ${sum.belegt} von ${sum.plaetze} Plätzen belegt · ${sum.offen} offen · ${sum.nichtGefunden} nicht gefunden · Deutsch direkt ${sum.deutschDirekt}, über das Englische ${sum.deutschKette}, aus belegten Teilen ${sum.deutschTeile}, ohne deutsche Quelle ${sum.deutschOhneQuelle} · Unterschiede zum Bestand: ${unterschiede.length}`);
