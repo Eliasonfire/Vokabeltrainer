@@ -314,7 +314,9 @@ console.log('\n=== 7. Stufe 2 — „so gut wie möglich in die app integriert" 
   pruefe(`„Warum? → Regel": alle ${modi.length} Übungsmodi zugeordnet, jedes Ziel existiert`,
     /* 04.10.2026 (v646): 17 → 18, die Plural-Übung ist dazugekommen (`plural` →
        jam-salim-taksir-01, die Regel mit der Einteilung aus Folge 25). */
-    modi.length === 18 && !ohne.length && !tot.length, 'Modi: ' + modi.length + ' · ohne: ' + ohne.join(',') + ' · tot: ' + tot.join(','));
+    /* 13.10.2026 (v672): 18 → 19, „Verb einsetzen" ist dazugekommen
+       (`verb-einsetzen` → verb-madi-endungen-01, die Endungen aus Folge 18). */
+    modi.length === 19 && !ohne.length && !tot.length, 'Modi: ' + modi.length + ' · ohne: ' + ohne.join(',') + ' · tot: ' + tot.join(','));
   /* ⚠️ 25.09.2026 (v612): 15 → 16, die Endungen-Übung ist dazugekommen
      (`endungen` → possessiv-endungen-01; Aufgaben mit ـِي bringen ihre Karte
      possessiv-ya-01 selbst mit). Elias: „wo ich die richtigen endungen

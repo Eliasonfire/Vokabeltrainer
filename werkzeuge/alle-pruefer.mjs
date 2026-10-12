@@ -688,6 +688,11 @@ const PRUEFER = [
   /* Übung 16 „Welcher Plural?" (04.10.2026): jede Lösung gegen die Karte
      nachgerechnet, unklare Karten bleiben draußen; sechs Störtests. */
   ['test-plural-uebung.mjs', []],
+  /* Übung 17 „Verb einsetzen" (13.10.2026): keine selbst konjugierte Form (jede
+     der 169 gegen den Abzug der Nachschlagetabellen UND gegen Stamm + Endung des
+     Lehrers), nichts geraten, das Dreierpaket in der Rückmeldung, Falsches kommt
+     noch einmal; fünfzehn Störtests. */
+  ['test-verb-einsetzen.mjs', []],
 
   /* ⛔ Neu am 06.09.2026. Der Hifz-Stand ist das Einzige in dieser App, das
      Elias sich WIRKLICH erarbeitet hat — auswendig gelernte Suren. Er lief

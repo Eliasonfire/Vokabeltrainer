@@ -111,7 +111,9 @@ function pruefeAlles(app){
   if (E.nr !== 15 || E.art !== 'wahl') f(1, `endungen: nr ${E.nr}, art ${E.art} (erwartet 15, wahl)`);
   /* 04.10.2026 (v646): 16 → 17. Die Plural-Übung steht bei den Auswahl-Übungen
      und trägt die 16; Übersetzen ist damit noch einmal eine Nummer aufgerückt. */
-  if (!Ue || Ue.nr !== 17) f(1, `uebersetzen: nr ${Ue && Ue.nr} (erwartet 17)`);
+  /* 13.10.2026 (v672): 17 → 18. „Verb einsetzen" steht bei den Auswahl-Übungen
+     und trägt die 17; Übersetzen ist damit noch einmal eine Nummer aufgerückt. */
+  if (!Ue || Ue.nr !== 18) f(1, `uebersetzen: nr ${Ue && Ue.nr} (erwartet 18)`);
   if (typeof E.hinweisVerraet !== 'boolean') f(1, 'hinweisVerraet fehlt (Pflichtfeld)');
   // 2
   const glieder = hole('uebEndungGlieder')();

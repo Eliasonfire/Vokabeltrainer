@@ -2728,6 +2728,12 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
    (gemessen bei 412 px Breite), sein Satz darüber 32 px. So sind es rund 28 px —
    der richtige Satz ist das, was er hier lesen soll. */
 .ueb-rueck-satz{display:block;margin-top:var(--sp-2);font-family:var(--font-ar);font-size:1.45em;line-height:2;}
+/* Verb einsetzen (Übung 17, 13.10.2026): das Dreierpaket des Lehrers unter der
+   Rückmeldung. Die gefragte Form trägt einen Rahmen in der Farbe der Meldung
+   (grün oder rot) — eine eigene Farbe stünde auf beiden Hintergründen anders. */
+.ueb-rueck-paket{display:flex;flex-wrap:wrap;gap:var(--sp-2);margin-top:var(--sp-2);font-family:var(--font-ar);font-size:1.3em;line-height:1.9;}
+.ueb-paket-glied{padding:0 var(--sp-2);border:1.5px solid transparent;border-radius:var(--r-2);white-space:nowrap;}
+.ueb-paket-glied.gefragt{border-color:currentColor;font-weight:700;}
 /* ⭐ Das Eingabefeld der Übersetzungsübung (22.09.2026).
    ⚠️ `font-size:16px` ist kein Gestaltungswert, sondern eine Notwendigkeit:
    Safari auf dem iPhone zoomt die ganze Seite hinein, sobald ein Feld kleiner
