@@ -788,6 +788,10 @@ const LEHRBUCH_SAETZE = [
      der Übung 2 auf Seite 70 (Pilger), Seite 72 Nr. 3 (Pilger, Türkei), Nr. 7
      („einige"), Nr. 11 (Sportplatz), Nr. 13 (Dorf). Kommen diese Karten in seine
      Auswahl, gehören die Sätze nachgetragen.
+     ⭐ 13.10.2026: „einige" (بَعْضٌ, 50285) ist jetzt in seiner Auswahl. Von
+     Seite 68 unten ist die Zeile mit „einige von ihnen" nachgetragen (mb1-68-6).
+     ⚠️ Seite 72 Nr. 7 ist NOCH OFFEN — die Zeile muss erst von der Buchseite
+     (PDF-Seite 94) abgelesen werden.
 
      Bei Seite 72 ist die Zahl hinter der Seite die Nummer der Übungszeile im Buch
      (deshalb Lücken). ذَهَبُوا — die Mehrzahl des Verbs — steht im Lektionstext
@@ -804,6 +808,17 @@ const LEHRBUCH_SAETZE = [
     gedruckt: 'ما ohne Zeichen; أسماؤُهُمْ beide Male erst ab dem Hamza mit Zeichen, danach im Buch ein Doppelpunkt; ياسِرٌ, وَزَكَرِيَّا und ومُوْسَى mit ihren Zeichen; وعبدُالله mit Damma und zusammengeschrieben',
     sentAr: 'مَا أَسْمَاؤُهُمْ؟ أَسْمَاؤُهُمْ يَاسِرٌ وَزَكَرِيَّا وَمُوسَى وَعَبْدُ اللهِ.',
     sentDe: 'Wie heißen sie? Ihre Namen sind Yasir, Zakariyya, Musa und Abdullah.' },
+  /* 13.10.2026: die letzte Zeile der Seite — nachgetragen, weil بَعْضٌ (Karte
+     50285) seit heute in seiner Auswahl ist: Elias am 12.10.2026 mit einem Bild
+     genau dieser Zeile, an die er „Einige“ geschrieben hat, „baad (einige) brauche
+     ich auch als karteikarte …“, dann „schalte frei“. Im Buch ist sie die Antwort
+     auf „من أين هم؟“ über die Pilger; die Zeilen davor (هم حُجَّاجٌ) bleiben
+     draußen, weil „Pilger“ weiter keine Karte in seiner Auswahl hat. الصِّينِ
+     und الْيَابَانِ stehen so in mb1-24-1 und mb1-25-1. */
+  { id: 'mb1-68-6', seite: 68, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'بَعْضُهم beide Male mit Fatha, Sukun und Damma, das هم dahinter ohne Zeichen; الصِّيْنِ mit seinen Zeichen (Sukun auf dem ي); من beide Male und اليابان ohne Zeichen',
+    sentAr: 'بَعْضُهُمْ مِنَ الصِّينِ وَبَعْضُهُمْ مِنَ الْيَابَانِ.',
+    sentDe: 'Einige von ihnen sind aus China, und einige von ihnen sind aus Japan.' },
   { id: 'mb1-69-1', seite: 69, kapitel: 13, vokalisationErgaenzt: true,
     gedruckt: 'الْمُصْطَفَى und وأَصْدِقَاؤُه mit ihren Zeichen (das ه am Ende ohne), ذَهَبُوا vollständig; أين und إلى المطعم ohne Zeichen',
     sentAr: 'أَيْنَ الْمُصْطَفَى وَأَصْدِقَاؤُهُ؟ ذَهَبُوا إِلَى الْمَطْعَمِ.',

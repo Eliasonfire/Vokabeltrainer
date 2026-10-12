@@ -1438,9 +1438,39 @@ const GRAMMAR_RULES = [
     source: { folge: 17, video: "Folge 17", approxTimestamp: "02:57", chapter: 12 }
   },
   {
+    /* ⭐ DIE ARABISCHEN NAMEN DER PLURALE (13.10.2026). Bis heute standen sie in
+       dieser und den drei folgenden Regeln nur in Umschrift („nicht belegt“).
+       Anlass: Elias am 12.10.2026: „den begriff für regelmässig männlicher und
+       weiblicher und unregelmässig auf arabisch brauche ich als karteikarte zum
+       lernen im vokabeltrainer“.
+       WORTLAUT von der Tafel seines Lehrers, im Video der Folge 25
+       (https://youtu.be/xvZVHAo8RaI) am 13.10.2026 abgelesen: bei 1:58 jamʿ sālim
+       und jamʿ taksīr (über dem t ein Fatha, über dem k ein Sukūn), bei 2:30
+       jamʿ muḏakkar sālim, bei 3:25 und 3:52 jamʿ muʾannaṯ sālim (muʾannaṯ mit
+       Ḍamma, Fatha und Schadda). Alle vier ohne Artikel und ohne Endung.
+       VOKALZEICHEN je Wort aus seinem Bestand, nichts selbst gesetzt: جَمْعٌ
+       (Madina 2, Masdar an Karte 46315) · الْمُذَكَّرِ (Regeln, aus Sharḥ Madīnah
+       S. 3) · مُؤَنَّثٌ (Karte 50476) · سَالِمٌ (Karte 46690) · تَكْسِيرٌ (Madina 3).
+       Gegenprobe en.wiktionary (13.10.2026): eigene Einträge für jamʿ sālim
+       („sound plural“) und jamʿ taksīr („broken plural“), dazu muḏakkar
+       „(grammar) masculine“ — mit denselben Vokalzeichen. arabdict führt die
+       beiden dreiteiligen Namen als Wortgruppen, ohne Vokalzeichen.
+       ⛔ MIT ENDUNGEN, wie Elias es am 16.09.2026 für Fachbegriffe entschieden
+       hat: „ja“ auf „Sollen Fachbegriffe mit Endung stehen, also حَرْفُ جَرٍّ
+       statt … so wie auf deiner Regelkarte?“ (pruefe-taschkil.js, Gruppe
+       „Fachbegriff noch ohne Endung“). Keine Endung ist selbst gesetzt, jede
+       Form steht so in einer Quelle (13.10.2026): جَمْعُ تَكْسِيرٍ und جَمْعٌ
+       سَالِمٌ in den Beugungstabellen von en.wiktionary — dort auch die Zeile
+       mit eingeschobenem zweitem Wort, in der sich das Adjektiv nach jamʿ
+       richtet (Nominativ) —, مُذَكَّرٍ und مُؤَنَّثٍ in den Tabellen von muḏakkar
+       und muʾannaṯ; مُؤَنَّثٌ und سَالِمٌ tragen ihre Endung auch auf seinen
+       Karten.
+       ⚠️ Die beiden dreiteiligen Namen sind aus diesen belegten Formen nach dem
+       Wortlaut der Tafel ZUSAMMENGESETZT (von mir): als ganze Wortgruppe mit
+       Endungen stehen sie in keiner seiner Quellen. */
     "id": "jam-salim-taksir-01",
     "name": "Der Plural: regelmäßig oder gebrochen",
-    "shortExplanation": "Mit Kapitel 13 kommt der Plural — dein Lehrer nennt ihn auf Arabisch al-jamʿ. Er beginnt mit der Einteilung (Folge 25, ab 0:38): „es gibt zwei Hauptarten des Plurals. Es gibt den Jamʿ Sālim, den kann man nennen als den gesunden Plural … oder den regelmäßigen … Regelmäßig, weil er ein bestimmtes Muster folgt. Und dann gibt es Jamʿ Taksīr … der gebrochene Plural oder der unregelmäßige Plural.“\n\nDer regelmäßige kommt in zwei Arten. Seine Zusammenfassung (8:45): „Der regelmäßige hat männlich und weiblich. Beim männlichen wird una drangehängt. Beim weiblichen wird das Tāʾ marbūṭa ersetzt durch ein Alif und ein offenes Tāʾ. Und der gebrochene Plural, oder auch der unregelmäßige, der hat verschiedene Muster.“\n\n⭐ **So erkennst du, welcher es ist** — seine Probe im Dialog (15:53): „Erkennst du hier eine der beiden Formen? Wenn nicht, dann ist es unregelmäßig.“ Also: Endet das Wort auf ـُونَ, ist es regelmäßig männlich (مُجْتَهِدُونَ). Endet es auf ـَاتٌ, regelmäßig weiblich (مُدَرِّسَاتٌ). Steht keins von beiden da, ist es gebrochen (طُلَّابٌ, جُدُدٌ).\n\nDer Schlüssel zu Band 1 nennt in Lektion 13 dieselben drei: den gesunden männlichen Plural, den gesunden weiblichen Plural und die gebrochenen Plurale. Die Einzelheiten stehen in jam-mudhakkar-salim-01, jam-muannath-salim-01 und jam-taksir-01.\n\n⚠️ Die arabischen Fachnamen stehen in Umschrift: ihre vokalisierte Schreibung ist im vorhandenen Wortbestand nicht belegt.",
+    "shortExplanation": "Mit Kapitel 13 kommt der Plural — dein Lehrer nennt ihn auf Arabisch al-jamʿ. Er beginnt mit der Einteilung (Folge 25, ab 0:38): „es gibt zwei Hauptarten des Plurals. Es gibt den Jamʿ Sālim, den kann man nennen als den gesunden Plural … oder den regelmäßigen … Regelmäßig, weil er ein bestimmtes Muster folgt. Und dann gibt es Jamʿ Taksīr … der gebrochene Plural oder der unregelmäßige Plural.“\n\nDer regelmäßige kommt in zwei Arten. Seine Zusammenfassung (8:45): „Der regelmäßige hat männlich und weiblich. Beim männlichen wird una drangehängt. Beim weiblichen wird das Tāʾ marbūṭa ersetzt durch ein Alif und ein offenes Tāʾ. Und der gebrochene Plural, oder auch der unregelmäßige, der hat verschiedene Muster.“\n\n⭐ **So erkennst du, welcher es ist** — seine Probe im Dialog (15:53): „Erkennst du hier eine der beiden Formen? Wenn nicht, dann ist es unregelmäßig.“ Also: Endet das Wort auf ـُونَ, ist es regelmäßig männlich (مُجْتَهِدُونَ). Endet es auf ـَاتٌ, regelmäßig weiblich (مُدَرِّسَاتٌ). Steht keins von beiden da, ist es gebrochen (طُلَّابٌ, جُدُدٌ).\n\nDer Schlüssel zu Band 1 nennt in Lektion 13 dieselben drei: den gesunden männlichen Plural, den gesunden weiblichen Plural und die gebrochenen Plurale. Die Einzelheiten stehen in jam-mudhakkar-salim-01, jam-muannath-salim-01 und jam-taksir-01.\n\n⭐ **Die Namen auf Arabisch.** An die Tafel schreibt er sie ohne Artikel und ohne Endung (Folge 25, ab 1:58). Mit ihren Endungen: جَمْعٌ سَالِمٌ für den regelmäßigen und جَمْعُ تَكْسِيرٍ für den gebrochenen. Den regelmäßigen teilt er darunter auf in جَمْعُ مُذَكَّرٍ سَالِمٌ (männlich) und جَمْعُ مُؤَنَّثٍ سَالِمٌ (weiblich).",
     "color": "other",
     "kapitel": 13,
     "source": {
@@ -1453,7 +1483,7 @@ const GRAMMAR_RULES = [
   {
     "id": "jam-mudhakkar-salim-01",
     "name": "Regelmäßiger männlicher Plural: ـُونَ wird angehängt",
-    "shortExplanation": "Der einfachste der drei Plurale. Dein Lehrer (Folge 25, 3:37): „man bildet den regelmäßigen männlichen Plural durch una. Indem man ein una hinten an das Wort einfach dranhängt.“ Seine drei Beispiele:\nمُسْلِمٌ → مُسْلِمُونَ · مُدَرِّسٌ → مُدَرِّسُونَ · مُهَنْدِسٌ → مُهَنْدِسُونَ\n\nIm Dialog von Kapitel 13 steht so ein Plural, und daran fragt er ab (13:21): أَهُمْ مُجْتَهِدُونَ؟ — „Was haben wir für eine Pluralform?“ Die Antwort: der regelmäßige männliche, „der gesunde Plural“. Und der Weg zurück (14:02): „Wie können wir dieses Wort wieder zum Singular machen?“ — مُجْتَهِدٌ, fleißig.\n\n⭐ Sein voller Name setzt sich aus drei Wörtern zusammen: jamʿ (Plural) muḏakkar (männlich) sālim (gesund, also regelmäßig). Der Schlüssel zu Band 1 nennt ihn in Lektion 13 den gesunden männlichen Plural auf ـُونَ.\n\n⚠️ Der Fachname steht in Umschrift: seine vokalisierte Schreibung ist im vorhandenen Wortbestand nicht belegt.",
+    "shortExplanation": "Der einfachste der drei Plurale. Dein Lehrer (Folge 25, 3:37): „man bildet den regelmäßigen männlichen Plural durch una. Indem man ein una hinten an das Wort einfach dranhängt.“ Seine drei Beispiele:\nمُسْلِمٌ → مُسْلِمُونَ · مُدَرِّسٌ → مُدَرِّسُونَ · مُهَنْدِسٌ → مُهَنْدِسُونَ\n\nIm Dialog von Kapitel 13 steht so ein Plural, und daran fragt er ab (13:21): أَهُمْ مُجْتَهِدُونَ؟ — „Was haben wir für eine Pluralform?“ Die Antwort: der regelmäßige männliche, „der gesunde Plural“. Und der Weg zurück (14:02): „Wie können wir dieses Wort wieder zum Singular machen?“ — مُجْتَهِدٌ, fleißig.\n\n⭐ Sein voller Name setzt sich aus drei Wörtern zusammen: jamʿ (Plural) muḏakkar (männlich) sālim (gesund, also regelmäßig). An der Tafel steht er ohne Artikel und ohne Endung (Folge 25, 2:30); mit den Endungen heißt er جَمْعُ مُذَكَّرٍ سَالِمٌ — vorn gebaut wie eine Genitivverbindung. Der Schlüssel zu Band 1 nennt ihn in Lektion 13 den gesunden männlichen Plural auf ـُونَ.",
     "color": "other",
     "kapitel": 13,
     "source": {
@@ -1466,7 +1496,7 @@ const GRAMMAR_RULES = [
   {
     "id": "jam-muannath-salim-01",
     "name": "Regelmäßiger weiblicher Plural: ة wird zu ـَات",
-    "shortExplanation": "Beim männlichen Plural wird etwas angehängt, beim weiblichen wird etwas **ersetzt**. Dein Lehrer (Folge 25, 4:17): „den weiblichen, den bildet man durch Alif und Tāʾ. Beziehungsweise beim männlichen wird es hinzugefügt, hinten dran, das una. Bei Alif und Tāʾ wird es ersetzt … Tāʾ marbūṭa wird ersetzt durch Alif und Tāʾ.“ In der Zusammenfassung (8:50) sagt er es genauer: ersetzt „durch ein Alif und ein offenes Tāʾ“.\n\nSeine drei Beispiele, jedes Mal mit „Tāʾ marbūṭa muss raus“: die Muslimin, die Lehrerin, die Ingenieurin.\nمُدَرِّسَةٌ → مُدَرِّسَاتٌ · مُهَنْدِسَةٌ → مُهَنْدِسَاتٌ · und von مُسْلِمَةٌ steht die Mehrzahl in einem deiner Sätze: الْمُسْلِمَاتُ\n\n⚠️ **Ersetzen, nicht verlängern.** Ein Mitschüler fasst zusammen, bei der weiblichen Form werde verlängert. Dein Lehrer (6:39): „Nein, nein, da wird Tāʾ marbūṭa ersetzt durch Alif und Tāʾ … Aber wenn du es verlängerst, dann hast du ja Muslimatatun. Das wollen wir nicht.“ Das ة bleibt also nicht stehen — an seine Stelle tritt ـَات.\n\n⭐ Sein voller Name: jamʿ muʾannaṯ sālim, der regelmäßige weibliche Plural. Der Schlüssel zu Band 1 nennt ihn in Lektion 13 den gesunden weiblichen Plural auf ـَاتٌ.\n\n⚠️ Der Fachname steht in Umschrift: seine vokalisierte Schreibung ist im vorhandenen Wortbestand nicht belegt.",
+    "shortExplanation": "Beim männlichen Plural wird etwas angehängt, beim weiblichen wird etwas **ersetzt**. Dein Lehrer (Folge 25, 4:17): „den weiblichen, den bildet man durch Alif und Tāʾ. Beziehungsweise beim männlichen wird es hinzugefügt, hinten dran, das una. Bei Alif und Tāʾ wird es ersetzt … Tāʾ marbūṭa wird ersetzt durch Alif und Tāʾ.“ In der Zusammenfassung (8:50) sagt er es genauer: ersetzt „durch ein Alif und ein offenes Tāʾ“.\n\nSeine drei Beispiele, jedes Mal mit „Tāʾ marbūṭa muss raus“: die Muslimin, die Lehrerin, die Ingenieurin.\nمُدَرِّسَةٌ → مُدَرِّسَاتٌ · مُهَنْدِسَةٌ → مُهَنْدِسَاتٌ · und von مُسْلِمَةٌ steht die Mehrzahl in einem deiner Sätze: الْمُسْلِمَاتُ\n\n⚠️ **Ersetzen, nicht verlängern.** Ein Mitschüler fasst zusammen, bei der weiblichen Form werde verlängert. Dein Lehrer (6:39): „Nein, nein, da wird Tāʾ marbūṭa ersetzt durch Alif und Tāʾ … Aber wenn du es verlängerst, dann hast du ja Muslimatatun. Das wollen wir nicht.“ Das ة bleibt also nicht stehen — an seine Stelle tritt ـَات.\n\n⭐ Sein voller Name: jamʿ muʾannaṯ sālim, der regelmäßige weibliche Plural. An der Tafel steht er ohne Artikel und ohne Endung (Folge 25, 3:52); mit den Endungen heißt er جَمْعُ مُؤَنَّثٍ سَالِمٌ — vorn gebaut wie eine Genitivverbindung. Der Schlüssel zu Band 1 nennt ihn in Lektion 13 den gesunden weiblichen Plural auf ـَاتٌ.",
     "color": "fem",
     "kapitel": 13,
     "source": {
@@ -1479,7 +1509,7 @@ const GRAMMAR_RULES = [
   {
     "id": "jam-taksir-01",
     "name": "Der gebrochene Plural: ein eigenes Muster statt einer Endung",
-    "shortExplanation": "Der dritte Plural hat keine Endung zum Anhängen — das Wort selbst wird umgebaut. Dein Lehrer (Folge 25, 7:06): „der gebrochene Plural, das ist ein Plural, der verschiedene Musterarten hat.“ Seine Beispiele: نَجْمٌ → نُجُومٌ (Stern, Sterne) · كُتُبٌ (Bücher, von كِتَابٌ) · جِبَالٌ (Berge) · كُوبٌ → أَكْوَابٌ (Tasse, Tassen). Und dann: „das ist einfach verschiedene Muster und mehr muss man nicht wissen.“\n\n⭐ **Zwei Muster zeigt er an ganzen Reihen** (ab 22:38). Die erste: رِجَالٌ, كِبَارٌ, صِغَارٌ, قِصَارٌ, طِوَالٌ — „Und dieses Muster ist fiʿāl.“ Das sind die Mehrzahlen von رَجُلٌ, كَبِيرٌ, صَغِيرٌ, قَصِيرٌ und طَوِيلٌ. Die zweite (23:19): أَوْلَادٌ, أَبْنَاءٌ, أَعْمَامٌ folgen dem Muster afʿāl, wie أَكْوَابٌ oben. Auswendig lernen sollt ihr die Muster nicht — es geht ihm darum, dass man ein Gefühl dafür bekommt. Gleich zu Beginn nennt er den gebrochenen Plural deshalb „eigentlich auch ziemlich regelmäßig“.\n\nIm Dialog von Kapitel 13 sind fast alle Plurale gebrochen: طُلَّابٌ (von طَالِبٌ), جُدُدٌ (von جَدِيدٌ), زُمَلَاءُ (von زَمِيلٌ), أَسْمَاءٌ (von اِسْمٌ), حُجَّاجٌ (von حَاجٌّ). Woran man sie erkennt, sagt er dort (15:04): „wir haben kein una und wir haben kein Alif-Tāʾ, unregelmäßig.“\n\n⭐ **Die Mehrzahl lernst du mit dem Wort mit.** Dein Lehrer (20:10): „wenn ihr die Singularform eines Wortes auswendig lernt, dass ihr automatisch den Plural des Wortes auswendig lernt.“ Der Schlüssel zu Band 1 gibt in Lektion 13 denselben Rat — die Pluralform „von jedem neuen Substantiv und Adjektiv gleich mitzulernen, da es keine erkennbaren Regeln gibt“. Auf deinen Karten steht sie bei jedem Wort dabei.\n\n⚠️ Sein Name jamʿ taksīr und die Musternamen fiʿāl und afʿāl stehen in Umschrift: ihre vokalisierte Schreibung ist im vorhandenen Wortbestand nicht belegt. Er nennt außerdem dars (Lektion) mit der Mehrzahl durūs; auch sie steht in Umschrift, weil sie im Bestand nur ohne Endung belegt ist.",
+    "shortExplanation": "Der dritte Plural hat keine Endung zum Anhängen — das Wort selbst wird umgebaut. Dein Lehrer (Folge 25, 7:06): „der gebrochene Plural, das ist ein Plural, der verschiedene Musterarten hat.“ Seine Beispiele: نَجْمٌ → نُجُومٌ (Stern, Sterne) · كُتُبٌ (Bücher, von كِتَابٌ) · جِبَالٌ (Berge) · كُوبٌ → أَكْوَابٌ (Tasse, Tassen). Und dann: „das ist einfach verschiedene Muster und mehr muss man nicht wissen.“\n\n⭐ **Zwei Muster zeigt er an ganzen Reihen** (ab 22:38). Die erste: رِجَالٌ, كِبَارٌ, صِغَارٌ, قِصَارٌ, طِوَالٌ — „Und dieses Muster ist fiʿāl.“ Das sind die Mehrzahlen von رَجُلٌ, كَبِيرٌ, صَغِيرٌ, قَصِيرٌ und طَوِيلٌ. Die zweite (23:19): أَوْلَادٌ, أَبْنَاءٌ, أَعْمَامٌ folgen dem Muster afʿāl, wie أَكْوَابٌ oben. Auswendig lernen sollt ihr die Muster nicht — es geht ihm darum, dass man ein Gefühl dafür bekommt. Gleich zu Beginn nennt er den gebrochenen Plural deshalb „eigentlich auch ziemlich regelmäßig“.\n\nIm Dialog von Kapitel 13 sind fast alle Plurale gebrochen: طُلَّابٌ (von طَالِبٌ), جُدُدٌ (von جَدِيدٌ), زُمَلَاءُ (von زَمِيلٌ), أَسْمَاءٌ (von اِسْمٌ), حُجَّاجٌ (von حَاجٌّ). Woran man sie erkennt, sagt er dort (15:04): „wir haben kein una und wir haben kein Alif-Tāʾ, unregelmäßig.“\n\n⭐ **Die Mehrzahl lernst du mit dem Wort mit.** Dein Lehrer (20:10): „wenn ihr die Singularform eines Wortes auswendig lernt, dass ihr automatisch den Plural des Wortes auswendig lernt.“ Der Schlüssel zu Band 1 gibt in Lektion 13 denselben Rat — die Pluralform „von jedem neuen Substantiv und Adjektiv gleich mitzulernen, da es keine erkennbaren Regeln gibt“. Auf deinen Karten steht sie bei jedem Wort dabei.\n\n⭐ Sein Name steht an der Tafel ohne Artikel und ohne Endung (Folge 25, 1:58); mit den Endungen heißt er جَمْعُ تَكْسِيرٍ — eine Genitivverbindung. taksīr heißt Brechen: das Wort wird aufgebrochen und neu gebaut.\n\n⚠️ Die Musternamen fiʿāl und afʿāl stehen in Umschrift: ihre vokalisierte Schreibung ist im vorhandenen Wortbestand nicht belegt. Er nennt außerdem dars (Lektion) mit der Mehrzahl durūs; auch sie steht in Umschrift, weil sie im Bestand nur ohne Endung belegt ist.",
     "color": "other",
     "kapitel": 13,
     "source": {
@@ -2610,6 +2640,17 @@ const SENTENCE_TAGS = {
   "gram-zarf": [
     { ruleId: "zarf-01", matchText: "تَحْتَ الْبَابِ" }
   ],
+  "gram-jam-mudhakkar-salim": [
+    { ruleId: "jam-mudhakkar-salim-01", matchText: "مُجْتَهِدُونَ" }
+  ],
+  "gram-jam-muannath-salim": [
+    { ruleId: "jam-muannath-salim-01", matchText: "طَبِيبَاتٌ" },
+    { ruleId: "jam-mudhakkar-salim-01", matchText: "مُدَرِّسُونَ" }
+  ],
+  "gram-jam-taksir": [
+    { ruleId: "jam-taksir-01", matchText: "طُلَّابٌ" },
+    { ruleId: "ismul-isara-haulai-01", matchText: "هَؤُلَاءِ" }
+  ],
   "50154": [
     { ruleId: "mubtada-khabar-01", matchText: "أَنَا مُدَرِّسٌ" },
     { ruleId: "nominalsatz-ohne-kopula-01", matchText: "أَنَا مُدَرِّسٌ" }
@@ -3462,6 +3503,10 @@ const SENTENCE_TAGS = {
   ],
   "mb1-68-5": [
     { ruleId: "jam-taksir-01", matchText: "أَسْمَاؤُهُمْ", bedeutung: 'ـهُمْ = ihr (Mehrzahl, männlich)' }
+  ],
+  "mb1-68-6": [
+    { ruleId: "possessiv-ist-idafa-01", matchText: "بَعْضُهُمْ", bedeutung: 'ـهُمْ = von ihnen (Mehrzahl, männlich)' },
+    { ruleId: "mina-al-01", matchText: "مِنَ الصِّينِ" }
   ],
   "mb1-68-4": [
     { ruleId: "jam-taksir-01", matchText: "زُمَلَاؤُكَ", bedeutung: 'ـكَ = dein (männlich)' }

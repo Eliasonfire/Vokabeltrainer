@@ -2026,6 +2026,21 @@ const BEISPIELSAETZE = {
   'gram-mubtada': { sentAr: 'الْبَيْتُ مُبْتَدَأٌ.',           sentDe: '‚Das Haus‘ ist ein Mubtadaʾ.' },                  /* = 50467 */
   'gram-mansub':  { sentAr: 'هَذَا الْاِسْمُ مَنْصُوبٌ.',      sentDe: 'Dieses Nomen steht im Akkusativ.' },             /* = 50471 */
 
+  /* ------------------------------------------------------------------------
+     DIE DREI PLURAL-NAMEN (13.10.2026) — Karten vom 12.10.2026, sein Auftrag
+     steht in FACHBEGRIFF_AUFTRAG (data/fachbegriffe.js). Der Satz zeigt das
+     PHÄNOMEN, nicht das Wort: in Kurssätzen kommt der Fachname nicht vor.
+     Alle drei sind Buchsätze aus Madina 1, Kapitel 13, von einem Skript
+     wörtlich aus lehrbuch-saetze.js kopiert — kein Wort geändert, keine
+     Ḥaraka gesetzt:
+       gram-jam-mudhakkar-salim ← mb1-68-2 (an diesem Satz fragt sein Lehrer in
+                                  Folge 25 bei 13:21 nach der Pluralform)
+       gram-jam-muannath-salim  ← mb1-75-7
+       gram-jam-taksir          ← mb1-69-2 (Beispielzeile der Übung 1) */
+  'gram-jam-mudhakkar-salim': { sentAr: 'أَهُمْ مُجْتَهِدُونَ؟ نَعَمْ، هُمْ مُجْتَهِدُونَ.', sentDe: 'Sind sie fleißig? Ja, sie sind fleißig.' },
+  'gram-jam-muannath-salim': { sentAr: 'هَؤُلَاءِ طَبِيبَاتٌ. أَزْوَاجُهُنَّ مُدَرِّسُونَ.', sentDe: 'Das sind Ärztinnen. Ihre Ehemänner sind Lehrer.' },
+  'gram-jam-taksir': { sentAr: 'هَذَا طَالِبٌ. هَؤُلَاءِ طُلَّابٌ.', sentDe: 'Das ist ein Student. Das sind Studenten.' },
+
   /* >>> KORAN-HAEUFIGSTE-ANFANG (erzeugt, nicht von Hand ändern — siehe den Kopf des Abschnitts) */
   /* ------------------------------------------------------------------------
      „KORAN HÄUFIGSTE" — DIE ERSTEN 30 KARTEN (12.10.2026)

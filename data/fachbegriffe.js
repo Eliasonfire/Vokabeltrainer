@@ -191,6 +191,17 @@ const FACHBEGRIFF_AUFTRAG = {
      (`buchTausch` am Eintrag, Begründung dort). */
   'gram-idafa': '24.09.2026 — „die sollen wieder da sein und bleiben“ · „als karteikarten“',
   'gram-zarf':  '24.09.2026 — „die sollen wieder da sein und bleiben“ · „als karteikarten“',
+
+  /* Die drei Namen der Plural-Arten aus Folge 25 und 26 (Madina 1, Kapitel 13).
+     Sein Auftrag steht rechts. Auf meine Zeile vom selben Abend „Die drei
+     Plural-Namen: Dafür müssen drei neue Karten gebaut werden.“ antwortete er:
+     „mach das dannn“. Wortlaut von der Tafel seines Lehrers (Folge 25, 1:58
+     bis 3:52, dort ohne Artikel und ohne Endung); die Endungen nach seiner
+     Entscheidung vom 16.09.2026, jede Form belegt — der Beleg steht im
+     Kommentar über der Regel jam-salim-taksir-01 in grammar-data.js. */
+  'gram-jam-mudhakkar-salim': '12.10.2026 — „den begriff für regelmässig männlicher und weiblicher und unregelmässig auf arabisch brauche ich als karteikarte zum lernen im vokabeltrainer“',
+  'gram-jam-muannath-salim':  '12.10.2026 — „den begriff für regelmässig männlicher und weiblicher und unregelmässig auf arabisch brauche ich als karteikarte zum lernen im vokabeltrainer“',
+  'gram-jam-taksir':          '12.10.2026 — „den begriff für regelmässig männlicher und weiblicher und unregelmässig auf arabisch brauche ich als karteikarte zum lernen im vokabeltrainer“',
 };
 
 /* ⛔ AUSDRÜCKLICH ABBESTELLT — diese fragt auch die Warteseite nicht mehr.
@@ -1415,5 +1426,41 @@ const FACHBEGRIFF_VOKABELN = [
     sentAr: "الْحَيَاةُ الْيَوْمِيَّةُ جَمِيلَةٌ.",
     sentDe: "Der Alltag ist schön.",
     mnemo: "الْحَيَاةُ الْيَوْمِيَّةُ – Der Alltag. So heißt die vierte Einheit in deinem Buch, und genau das zeigen ihre Bilder: der Wecker, die Tasse Kaffee, das Gebet – und im ersten Dialog Aufstehen zum Fajr, Quran lesen und mit dem Bus zur Schule."
+  },
+  {
+    /* Eingetragen am 2026-10-13 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel jam-mudhakkar-salim-01. */
+    id: "gram-jam-mudhakkar-salim",
+    ar: "جَمْعُ مُذَكَّرٍ سَالِمٌ",
+    de: "regelmäßiger männlicher Plural — hinten wird -ūna angehängt",
+    type: "noun",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "jam-mudhakkar-salim-01",
+    belegt: 2,
+    mnemo: "Drei Wörter, drei Haken. جَمْعٌ heißt Sammlung — wie die Jumuʿa, der Tag, an dem sich alle versammeln. سَالِمٌ heißt heil, wie in Salām und Muslim: das Wort bleibt heil, hinten kommt nur ـُونَ dran (مُسْلِمٌ → مُسْلِمُونَ). Das mittlere Wort heißt männlich und ist gebaut wie مُحَمَّدٌ — ein Männername."
+  },
+  {
+    /* Eingetragen am 2026-10-13 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel jam-muannath-salim-01. */
+    id: "gram-jam-muannath-salim",
+    ar: "جَمْعُ مُؤَنَّثٍ سَالِمٌ",
+    de: "regelmäßiger weiblicher Plural — das Tāʾ marbūṭa wird durch -āt ersetzt",
+    type: "noun",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "jam-muannath-salim-01",
+    belegt: 2,
+    mnemo: "Im Taschahhud sagst du ihn viermal hintereinander: التَّحِيَّاتُ الْمُبَارَكَاتُ الصَّلَوَاتُ الطَّيِّبَاتُ — lauter Wörter auf ـَات. Das ist جَمْعُ مُؤَنَّثٍ سَالِمٌ: das mittlere Wort heißt weiblich, سَالِمٌ heißt heil. Das Wort bleibt heil, nur das ة wird zu ـَات."
+  },
+  {
+    /* Eingetragen am 2026-10-13 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel jam-taksir-01. */
+    id: "gram-jam-taksir",
+    ar: "جَمْعُ تَكْسِيرٍ",
+    de: "gebrochener Plural (unregelmäßig) — das Wort selbst wird umgebaut",
+    type: "noun",
+    chapter: 'personal',
+    book: 'grammar',
+    regel: "jam-taksir-01",
+    belegt: 3,
+    mnemo: "تَكْسِيرٌ heißt Brechen — dieselbe Wurzel wie die Kasra, der Strich unter dem Buchstaben. Hier wird das Wort aufgebrochen und neu gebaut: aus رَجُلٌ wird رِجَالٌ, aus طَالِبٌ wird طُلَّابٌ. Keine Endung zum Anhängen — diesen Plural lernst du bei jedem Wort mit."
   }
 ];

@@ -570,6 +570,66 @@
       "entscheidung": "abgelehnt",
       "grund": "Beispielwort — طَالِبَةٌ (Studentin) wird in drei Regeln nur als Beispiel benutzt (fem-bildung-01, mubtada-khabar-genus-01, iltiqa-sakinain-verb-01), kein Fachbegriff.",
       "am": "2026-10-11"
+    },
+    "جمع مذكر سالم": {
+      "entscheidung": "aufgenommen",
+      "id": "gram-jam-mudhakkar-salim",
+      "form": "جَمْعُ مُذَكَّرٍ سَالِمٌ",
+      "am": "2026-10-13"
+    },
+    "جمع مؤنث سالم": {
+      "entscheidung": "aufgenommen",
+      "id": "gram-jam-muannath-salim",
+      "form": "جَمْعُ مُؤَنَّثٍ سَالِمٌ",
+      "am": "2026-10-13"
+    },
+    "جمع تكسير": {
+      "entscheidung": "aufgenommen",
+      "id": "gram-jam-taksir",
+      "form": "جَمْعُ تَكْسِيرٍ",
+      "am": "2026-10-13"
+    },
+    "جمع": {
+      "entscheidung": "zurueckgestellt",
+      "grund": "Nicht einzeln bestellt: Elias hat am 12.10.2026 die drei zusammengesetzten Plural-Namen als Karten bestellt („den begriff für regelmässig männlicher und weiblicher und unregelmässig“). Das Einzelwort ist Teil dieser Namen. Als eigene Karte nur auf sein Wort.",
+      "regeln": [
+        "jam-salim-taksir-01",
+        "jam-mudhakkar-salim-01",
+        "jam-muannath-salim-01",
+        "jam-taksir-01"
+      ],
+      "am": "2026-10-13"
+    },
+    "مذكر": {
+      "entscheidung": "zurueckgestellt",
+      "grund": "Nicht einzeln bestellt: Elias hat am 12.10.2026 die drei zusammengesetzten Plural-Namen als Karten bestellt („den begriff für regelmässig männlicher und weiblicher und unregelmässig“). Das Einzelwort ist Teil dieser Namen. Als eigene Karte nur auf sein Wort.",
+      "regeln": [
+        "ismul-isara-hadha-01",
+        "ismun-mawsul-alladhi-01",
+        "jam-salim-taksir-01",
+        "jam-mudhakkar-salim-01"
+      ],
+      "am": "2026-10-13"
+    },
+    "مؤنث": {
+      "entscheidung": "zurueckgestellt",
+      "grund": "Nicht einzeln bestellt: Elias hat am 12.10.2026 die drei zusammengesetzten Plural-Namen als Karten bestellt („den begriff für regelmässig männlicher und weiblicher und unregelmässig“). Das Einzelwort ist Teil dieser Namen; als Buchvokabel steht es in Madina 2, Kapitel 32 (Karte 50476). Als eigene Karte nur auf sein Wort.",
+      "regeln": [
+        "fem-ohne-ta-marbuta-01",
+        "jam-salim-taksir-01",
+        "jam-muannath-salim-01"
+      ],
+      "am": "2026-10-13"
+    },
+    "سالم": {
+      "entscheidung": "zurueckgestellt",
+      "grund": "Nicht einzeln bestellt: Elias hat am 12.10.2026 die drei zusammengesetzten Plural-Namen als Karten bestellt („den begriff für regelmässig männlicher und weiblicher und unregelmässig“). Das Einzelwort ist Teil dieser Namen. Als eigene Karte nur auf sein Wort.",
+      "regeln": [
+        "jam-salim-taksir-01",
+        "jam-mudhakkar-salim-01",
+        "jam-muannath-salim-01"
+      ],
+      "am": "2026-10-13"
     }
   }
 }
