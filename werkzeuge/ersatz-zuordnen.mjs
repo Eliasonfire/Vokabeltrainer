@@ -112,12 +112,39 @@ for (const e of ladeJsonl(path.join(AUSZUEGE, 'dewikt-arabisch.jsonl'))) {
   }
 }
 let tabellenDa = false;
+/* Die Übersetzungstabelle nennt am arabischen Wort oft sein Geschlecht („m", „f"). Es zählt nicht bei einer Form der
+ * Mundart, nicht bei einer Mehrzahl oder Zweizahl (dort ist es das Geschlecht der Form, nicht des Worts), und nicht,
+ * wenn die Stelle beide nennt. */
+const tabGeschlecht = t => {
+  const s = new Set(t || []);
+  if ([...s].some(x => /-Arabic$/.test(x)) || s.has('plural') || s.has('dual')) return undefined;
+  return s.has('masculine') && !s.has('feminine') ? 'masculine' : s.has('feminine') && !s.has('masculine') ? 'feminine' : undefined;
+};
+/* GESCHLECHT_TAB: arabische Form (nackt) → die Stellen, die an ihr ein Geschlecht nennen. Eigene Liste, weil merkeDe
+ * nur Paare mit einem Deutsch führt — das Geschlecht steht aber auch da, wo die Tabelle kein Deutsch hat. */
+const GESCHLECHT_TAB = new Map();
 for (const e of ladeJsonl(path.join(AUSZUEGE, 'enwikt-tabellen.jsonl'))) {
   tabellenDa = true;
-  for (const k of e.k) for (const a of k.ar) for (const d of k.de) {
-    if (!a.w || !d.w) continue;
-    merkeDe(a.w, { q: 'enwikt-tab', de: d.w, pos: e.pos, wo: `en.wiktionary „${e.w}“ (${e.pos}), Übersetzungen „${k.sinn}“`, sinn: k.sinn, en: e.w, vok: /[ً-ْ]/.test(a.w) ? [a.w] : [], rom: a.r });
+  for (const k of e.k) for (const a of k.ar) {
+    const g = a.w && (e.pos === 'noun' || e.pos === 'name') && /[ً-ْ]/.test(a.w) && !/\s/.test(a.w.trim()) ? tabGeschlecht(a.t) : undefined;
+    if (g) { const s = ohneHamza(nackt(a.w)); (GESCHLECHT_TAB.get(s) || GESCHLECHT_TAB.set(s, []).get(s)).push({ form: nfc(a.w), g, wo: `en.wiktionary „${e.w}“ (${e.pos}), Übersetzungen „${k.sinn}“` }); }
+    for (const d of k.de) {
+      if (!a.w || !d.w) continue;
+      merkeDe(a.w, { q: 'enwikt-tab', de: d.w, pos: e.pos, wo: `en.wiktionary „${e.w}“ (${e.pos}), Übersetzungen „${k.sinn}“`, sinn: k.sinn, en: e.w, vok: /[ً-ْ]/.test(a.w) ? [a.w] : [], rom: a.r });
+    }
   }
+}
+/* Das Geschlecht eines Nomens aus den Übersetzungstabellen: nur Tabellen eines englischen Nomens oder Namens (in der
+ * Tabelle eines Adjektivs hieße „f" nur: das ist die weibliche Form), nur GENAU die Form der Karte (gleiche
+ * Vokalzeichen), und nur, wenn alle Stellen dasselbe nennen. Gemessen am 12.10.2026: von 199 Nomen ohne Geschlecht
+ * nennt es eine Tabelle bei 59; wo schon die Kopfzeile eines gab, sagt die Tabelle in 1417 von 1436 Fällen dasselbe. */
+function geschlechtAusTabelle(form) {
+  if (!voll(form) || /\s/.test(nfc(form).trim())) return null;
+  const schl = new Set([ohneHamza(nackt(form))]);
+  if (hatArtikel(form)) schl.add(ohneHamza(nackt(ohneArtikel(form))));
+  const stellen = [...schl].flatMap(s => GESCHLECHT_TAB.get(s) || []).filter(x => k1(x.form) === k1(form));
+  const eins = [...new Set(stellen.map(x => x.g))];
+  return eins.length === 1 ? { w: eins[0], wo: `${stellen[0].wo}: Geschlecht des arabischen Worts laut Quelle` } : null;
 }
 /* (3) arabdict.com (Auszug von ersatz-arabdict.mjs): deutsch-arabische Wortpaare zu den Wörtern, die nach den
  * Wiktionary-Auszügen offen blieben. In Elias' Rangfolge der Belege steht arabdict an vierter Stelle. Ein Paar zählt
@@ -286,18 +313,23 @@ function stufeFuer(wort, typ, karte) {
 /* Die Wurzel steht im Auszug nur bei jedem fünften Stichwort. Verlässlicher ist die Seite selbst
  * (ersatz-seiten.mjs): dort steht die Wurzelangabe je Herkunftsabschnitt. */
 const WURZELSEITEN = fs.existsSync(path.join(AUSZUEGE, 'enwikt-wurzeln.json')) ? JSON.parse(fs.readFileSync(path.join(AUSZUEGE, 'enwikt-wurzeln.json'), 'utf8')) : {};
-function wurzelAusSeite(e) {
-  const seite = WURZELSEITEN[e.w];
-  if (!seite) return null;
+/* Der Herkunftsabschnitt der Seite, zu dem ein Eintrag gehört: der mit seiner Herkunftsnummer, sonst der einzige.
+ * Trägt der Eintrag keine Nummer, die Seite aber mehrere Abschnitte: der EINE Abschnitt, dessen Kopfvorlage eine
+ * Kopfform dieses Eintrags nennt (gleiche Vokalzeichen). Nennen zwei Abschnitte sie, bleibt es offen. */
+function einheitFuer(e, seite) {
   const nr = e.n ? Number(e.n) : null;
   let einheit = seite.einheiten.find(x => x.nr === nr) || (seite.einheiten.length === 1 ? seite.einheiten[0] : null);
-  // Trägt der Eintrag keine Herkunftsnummer, die Seite aber mehrere Abschnitte: der EINE Abschnitt, dessen Kopfvorlage
-  // eine Kopfform dieses Eintrags nennt (gleiche Vokalzeichen). Nennen zwei Abschnitte sie, bleibt es offen.
   if (!einheit && seite.einheiten.length > 1) {
     const meine = new Set((e.kopf || []).map(f => k1(f.f)));
     const mit = seite.einheiten.filter(x => (x.koepfe || []).some(k => meine.has(k1(k))));
     if (mit.length === 1) einheit = mit[0];
   }
+  return einheit;
+}
+function wurzelAusSeite(e) {
+  const seite = WURZELSEITEN[e.w];
+  if (!seite) return null;
+  const einheit = einheitFuer(e, seite);
   // Eine Vorlage mit nocat ist eine Erwähnung im Herkunftstext, nie die Wurzel des Worts (ersatz-seiten.mjs).
   const eine = liste => { const echt = liste.filter(x => !x.nocat); const k = [...new Set(echt.filter(x => x.art === 'ar-rootbox').map(x => x.w))], a = [...new Set(echt.map(x => x.w))]; return k.length === 1 ? k[0] : a.length === 1 ? a[0] : null; };
   let w = einheit ? eine(einheit.w) : null, ort = einheit && einheit.nr ? ', Herkunft ' + einheit.nr : '';
@@ -329,6 +361,26 @@ const wurzelVon = (e, tiefe = 0) => {
   if (tiefe === 0) { const nb = (nachNackt.get(nackt(e.w)) || []).filter(x => x !== e && x.wurzel && !nurErwaehnt(x) && (x.n || 1) === (e.n || 1)); if (nb.length) return { w: nb[0].wurzel, wo: `en.wiktionary „${e.w}“, Wurzelangabe am Eintrag (${nb[0].pos}) derselben Herkunft` }; }
   return null;
 };
+/* Die Wurzel über die GRUNDFORM: endet das Wort der Karte auf Ta marbuta und nennt keine Stelle seine Wurzel, steht
+ * sie oft beim Wort ohne Ta marbuta (Krankenschwester → Krankenpfleger, eine Nisba auf -iyya → die auf -iyy). Das Ta
+ * marbuta ist immer eine Endung, nie ein Wurzelbuchstabe. Es gilt nur, wenn das Wörterbuch die Grundform mit GENAU
+ * denselben Vokalzeichen als Kopfform führt (sonst wäre es ein anderes Wort gleicher Buchstaben) und alle solchen
+ * Einträge dieselbe Wurzel nennen. Die Bauart stammt von Claude; im Beleg steht, dass es die Grundform ist.
+ * Gemessen am 12.10.2026: 107 Karten ohne Wurzel enden auf Ta marbuta, bei 47 führt der Auszug die Grundform so. */
+const TA_MARBUTA = String.fromCodePoint(0x629), FATHA_Z = String.fromCodePoint(0x64E);
+const SCHLUSSZEICHEN = new RegExp('[' + String.fromCodePoint(0x64B) + '-' + String.fromCodePoint(0x652) + ']+$');
+function wurzelAusGrundform(form) {
+  if (!voll(form)) return null;
+  const f = nfc(form).trim().replace(SCHLUSSZEICHEN, '');
+  if (/\s/.test(f) || !f.endsWith(TA_MARBUTA) || nackt(f).length < 4) return null;
+  let grund = f.slice(0, -1);
+  if (grund.endsWith(FATHA_Z)) grund = grund.slice(0, -1);
+  const lemmata = (nachNackt.get(nackt(grund)) || []).filter(l => !l.formVon && (l.kopf || []).some(k => k1(k.f) === k1(grund)));
+  const funde = lemmata.map(l => ({ l, r: wurzelVon(l, 1) })).filter(x => x.r);
+  const werte = [...new Set(funde.map(x => wurzelKern(x.r.w)))];
+  if (werte.length !== 1) return null;
+  return { w: funde[0].r.w, wo: `en.wiktionary „${funde[0].l.w}“ (${funde[0].l.pos}) ist die Grundform, die Karte führt ihre Form mit Ta marbuta; ${funde[0].r.wo}` };
+}
 
 /* Ein einzelnes Wort einer Fügung im Wörterbuch suchen, GENAU in der Form, in der es dasteht (erstes Glied ohne Tanwin,
  * zweites im Genitiv mit Artikel) — die Beugungstabelle der Quelle nennt diese Formen. Ist der gefundene Eintrag selbst
@@ -513,8 +565,29 @@ function vorschlag(e, wort, artikelAb, karte) {
     // Mehrzahl stand sie dort (Stuhl, Name, Hand …). Die Kopfzeile geht vor, wenn sie eine nennt.
     const plKopf = [...new Set(hf.filter(f => f.t.includes('plural') && !f.t.includes('feminine') && !f.t.includes('dual')).map(f => f.f))];
     const plTabelle = plKopf.length ? [] : [...new Set(nomi.filter(f => hat(f, 'indefinite', 'plural') && !f.t.includes('feminine') && !f.t.includes('dual')).map(f => f.f))];
-    feld('pl', plKopf.length ? plKopf : plTabelle, 'plural', plKopf.length ? 'Mehrzahl' : 'Beugungstabelle: Mehrzahl, Nominativ');
-    feld('femSg', [...new Set(hf.filter(f => f.t.includes('feminine') && !f.t.includes('plural') && !f.t.includes('dual')).map(f => f.f))], 'singular', 'weibliche Form');
+    // SAMMELWÖRTER (Ente, Henne, Apfel): die Quelle führt statt einer Mehrzahl die Sammelform („collective") und die
+    // Mehrzahl der kleinen Zahl („paucal", auf -at). Ist das Wort der Karte das Einzelstück, nennt die Karte beide; ist
+    // es das Sammelwort selbst, die kleine Mehrzahl. Gemessen am 12.10.2026: 23 Karten ohne Mehrzahl sind solche.
+    const einzelstueck = arFormen.some(f => f.t.includes('singulative')) || hf.some(f => f.t.includes('collective'));
+    const sammelwort = !einzelstueck && (arFormen.some(f => f.t.includes('collective')) || hf.some(f => f.t.includes('singulative')));
+    const mitMarke = marke => { const t = [...new Set(nomi.filter(f => hat(f, 'indefinite', marke)).map(f => f.f))]; return t.length ? t : [...new Set(hf.filter(f => f.t.includes(marke)).map(f => f.f))]; };
+    const plSammel = plKopf.length || plTabelle.length ? [] : einzelstueck ? [...mitMarke('collective'), ...mitMarke('paucal')] : sammelwort ? mitMarke('paucal') : [];
+    // Nennt weder Kopfzeile noch Tabelle des Auszugs eine Mehrzahl, steht sie manchmal ausgeschrieben in der Kopfvorlage
+    // der abgelegten Seite (ersatz-seiten.mjs; der Auszug liest die neueren Vorlagen mit Pluszeichen schlecht) — sie
+    // gilt, wenn die Vorlage GENAU diese Kopfform nennt, und nur im Herkunftsabschnitt DIESES Eintrags: zwei Wörter
+    // gleicher Schreibung und gleicher Vokalzeichen stehen auf derselben Seite in zwei Abschnitten (gesehen am
+    // 12.10.2026: „Altern" bekam die Mehrzahl von „Pyramide").
+    const seitePl = WURZELSEITEN[e.w];
+    const einheitPl = seitePl ? einheitFuer(e, seitePl) : null;
+    const zeilenPl = !seitePl ? [] : einheitPl ? (einheitPl.mehrzahl || []) : seitePl.einheiten.length ? [] : (seitePl.mehrzahl || []);
+    const plSeite = plKopf.length || plTabelle.length || plSammel.length || !kopf ? []
+      : [...new Set(zeilenPl.filter(z => z.f.some(f => k1(f) === k1(kopf.f))).flatMap(z => z.pl))];
+    if (plKopf.length) feld('pl', plKopf, 'plural', 'Mehrzahl');
+    else if (plTabelle.length) feld('pl', plTabelle, 'plural', 'Beugungstabelle: Mehrzahl, Nominativ');
+    else if (plSammel.length) feld('pl', plSammel, 'paucal', einzelstueck ? 'Beugungstabelle: Sammelform und Mehrzahl der kleinen Zahl (die Quelle führt das Wort als Einzelstück eines Sammelworts)' : 'Beugungstabelle: Mehrzahl der kleinen Zahl (die Quelle führt das Wort als Sammelwort)');
+    else if (plSeite.length) feld('pl', plSeite, 'plural', `Kopfvorlage der Seite: Mehrzahl (Fassung vom ${String(seitePl.zeit).slice(0, 10)})`);
+    // das Einzelstück eines Sammelworts („singulative") ist keine weibliche Form, auch wenn es auf Ta marbuta endet
+    feld('femSg', [...new Set(hf.filter(f => f.t.includes('feminine') && !f.t.includes('plural') && !f.t.includes('dual') && !f.t.includes('singulative')).map(f => f.f))], 'singular', 'weibliche Form');
     feld('femPl', [...new Set(hf.filter(f => f.t.includes('feminine') && f.t.includes('plural')).map(f => f.f))], 'plural', 'weibliche Mehrzahl');
   }
   const r = wurzelVon(e);
@@ -888,6 +961,18 @@ for (const buch of BUECHER) {
         satz.vergleich = {};
         for (const f of FELDER) satz.vergleich[f] = vergleiche(f, v[f] && v[f].w, karte[f]);
       }
+    }
+    // Zwei Angaben, die die Quelle an ANDERER Stelle nennt als im Eintrag des Worts (12.10.2026) — sie füllen nur eine
+    // Lücke, nie überschreiben sie, was der Eintrag selbst sagt:
+    //   Geschlecht eines Nomens: aus den Übersetzungstabellen (geschlechtAusTabelle)
+    //   Wurzel: von der Grundform, wenn das Wort auf Ta marbuta endet (wurzelAusGrundform); die Quelle heißt dann
+    //           „enwikt-grundform", und ersatz-bauen.mjs lässt ihr ein Stichwort aus Lanes Lexikon vorgehen
+    if (satz.vorschlag && satz.vorschlag.ar && voll(satz.vorschlag.ar.w)) {
+      const v = satz.vorschlag;
+      let dazu = false;
+      if (!v.gender && v.type && v.type.w === 'noun') { const g = geschlechtAusTabelle(v.ar.w); if (g) { v.gender = { w: g.w, wo: g.wo, q: 'enwikt-tab' }; dazu = true; } }
+      if (!v.root) { const r = wurzelAusGrundform(v.ar.w); if (r) { v.root = { w: r.w.replace(new RegExp(String.fromCodePoint(0x621), 'g'), String.fromCodePoint(0x623)), wo: r.wo, q: 'enwikt-grundform' }; dazu = true; } }
+      if (dazu) { satz.vergleich = {}; for (const f of FELDER) satz.vergleich[f] = vergleiche(f, v[f] && v[f].w, karte[f]); }
     }
     // Vor dem Ta marbuta steht immer ein Fatha (außer nach Alif). Schreibt eine Quelle es nicht (gesehen am 11.10.2026 an
     // einer Kopfzeile des Wörterbuchs), wird es ergänzt und im Beleg genannt — sonst stünde das Wort unvollständig auf der Karte.
