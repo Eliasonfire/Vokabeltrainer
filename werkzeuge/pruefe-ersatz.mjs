@@ -157,6 +157,15 @@ const kapitelLeer = BUECHER.flatMap(b => z[b].kapitelLeer.map(k => `${b} Kapitel
 if (!knapp) for (const buch of BUECHER) console.log(`  ${buch.padEnd(15)} ${String(z[buch].belegt).padStart(4)} von ${String(z[buch].plaetze).padStart(4)} belegt · ${z[buch].ng} nicht gefunden · ${z[buch].offen} offen · Kapitel mit Karten ${z[buch].kapitelKarten} von ${z[buch].kapitel}`);
 console.log(`  Kapitel: ${kapitelAlle - kapitelLeer.length} von ${kapitelAlle} haben mindestens eine Karte` + (kapitelLeer.length ? ` — ohne Karte: ${kapitelLeer.slice(0, 12).join(', ')}${kapitelLeer.length > 12 ? ' …' : ''}` : ''));
 console.log(`  Deutsch: ${direkt} mit Quelle direkt · ${kette} über das Englische (zwei Schritte) · ${teile} aus belegten Teilen zusammengesetzt · ${ohne} ohne deutsche Quelle` + (bestandGeprueft ? ` · Plätze gegen den Bestand geprüft: ${bestandGeprueft} von 8 Büchern` : ' · der Bestand liegt hier nicht, Plätze nur in sich geprüft'));
+// Wurzel aus Buckwalters Stammliste (ersatz-bauen.mjs, wurzelAusStammliste): wartet eine Karte auf eine Wurzelseite von
+// Lane, nach der noch nie gefragt wurde, steht es hier. Kein Befund — der Bau trägt dort nichts ein —, aber sonst
+// erführe nur, wer den Bau selbst laufen sieht, dass ein Abruf aussteht.
+{
+  const standDatei = path.join(ERSATZ, 'stand.json');
+  let wartet = 0;
+  try { wartet = ((JSON.parse(fs.readFileSync(standDatei, 'utf8')).stammliste || {}).warten) || 0; } catch { wartet = 0; }
+  if (wartet) console.log(`  ⚠ Wurzel offen an ${wartet} Karten: nach Lanes Seite zu ihrer Wurzel wurde noch nie gefragt — „node werkzeuge/ersatz-lane.mjs --seiten --holen“, danach „node werkzeuge/ersatz-bauen.mjs“`);
+}
 if (befunde.length) {
   console.log(`\nERSATZ WIDERSPRÜCHLICH: ${befunde.length} Befund(e)`);
   for (const b of befunde.slice(0, knapp ? 8 : 60)) console.log('  ✗ ' + b);

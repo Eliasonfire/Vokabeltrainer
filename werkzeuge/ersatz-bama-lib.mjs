@@ -121,6 +121,20 @@ export function wurzelnAus(feld) {
  * dahin abgelegten Seiten sind umbenannt. Zeichen, die keine Buchstaben sind, stehen als Unterstrich mit Zeichennummer. */
 export const laneDateiname = bw => String(bw).replace(/[^A-Za-z]/g, c => '_' + c.charCodeAt(0)).replace(/[A-Z]/g, c => c + '-') + '.html';
 
+/* Die Stichwörter, die eine abgelegte Wurzelseite von Lanes Lexikon nennt: jedes ist ein Verweis auf die Seite des
+ * Stichworts. Gemessen am 12.10.2026 an den 612 abgelegten Seiten -- es gibt drei Arten von Kennung:
+ *   · „n123"    das gewöhnliche Stichwort (9048 Verweise)
+ *   · „n123-2"  ein weiteres Stichwort DESSELBEN Artikels (562 Verweise). Bis zu diesem Tag las das Werkzeug nur die
+ *               erste Art; diese Stichwörter sah es nicht, und ein Wort, das Lane so führt, galt als „nicht genannt".
+ *   · „j12"     kein Stichwort, sondern die blanke Wurzel als Verweis auf eine andere Schreibung (9 Seiten, jede mit
+ *               genau diesem einen Verweis und ohne Vokalzeichen). Die zählt nicht mit.
+ * laneFuehrtWurzel sagt, ob eine Seite eine Wurzel wirklich FÜHRT: sie nennt wenigstens ein Stichwort mit
+ * Vokalzeichen. Eine Seite, die nur auf die andere Schreibung verweist, führt sie nicht. */
+const ohneMarken = t => String(t).replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&[a-z#0-9]+;/gi, ' ').replace(/\s+/g, ' ').trim();
+export const laneVerweise = html => [...String(html).matchAll(/<a href="(\/word\/[^"]+\/(n\d+(?:-\d+)?))" class="root-word-link">([^]*?)<\/a>/g)]
+  .map(m => ({ pfad: m[1], nr: m[2], wort: ohneMarken(m[3]) }));
+export const laneFuehrtWurzel = html => laneVerweise(html).some(v => v.wort.split(' ').some(hatVokalzeichen));
+
 /* Dieselben Suchschlüssel, erweitert um die zwei Schreibungen, unter denen Lanes Seiten eine Wurzel sonst noch führen
  * (gemessen am 12.10.2026 an den abgelegten Seiten und an den Fehlabrufen: „An" ist da, „>nf" und „'nf" nicht;
  * „H*w" ist da, „bny", „vny" und „fty" nicht):
