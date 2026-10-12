@@ -51,7 +51,18 @@
  * geprüfter bleibt. Wurzelseiten, die es nicht gibt (Antwort 404), merkt sich data-ersatz/quellen/lane/
  * ohne-seite.json, damit sie nicht bei jedem Lauf neu gefragt werden; wer eine Zeile dort löscht, lässt neu fragen.
  *
+ * Vierter Gebrauch (--seiten, seit dem 12.10.2026): Wurzelseiten holen, nach denen noch NIE gefragt wurde. Der dritte
+ * Gebrauch fragt nur mit der Wurzel der bisherigen Karte. ersatz-bauen.mjs kennt aber einen zweiten Weg zu einer Wurzel
+ * (die Wurzelzeile aus Buckwalters Stammliste) und verlangt dafür, dass Lane die Wurzel führt — für gut hundert Karten
+ * lag diese Seite nie in der Ablage, weil die bisherige Karte keine oder eine andere Wurzel nennt. Der Bau schreibt die
+ * Schlüssel solcher Seiten nach data-ersatz/arbeit/lane-fehlende-seiten.json ({ schluessel: { "<Buckwalter>":
+ * ["<Kennung>", …] } }); dieser Lauf holt jede davon einmal (mit --holen) und legt sie ab oder merkt „gibt es nicht".
+ * Er trägt nichts ein und entscheidet nichts: danach baut man neu, und der Bau liest die Ablage. Die Bauart stammt von
+ * Claude.
+ *
  * Aufruf (aus dem Repo-Wurzelverzeichnis):
+ *   node werkzeuge/ersatz-lane.mjs --seiten [--holen] [--max N] [--aus <datei>]
+ *   ohne --aus: data-ersatz/arbeit/lane-seiten.txt
  *   node werkzeuge/ersatz-lane.mjs [--ids 123,456] [--formen] [--holen] [--max N] [--ohne-tabelle] [--aus <datei>]
  *   ohne --ids: die Plätze aus data-ersatz/nicht-gefunden.json · ohne --aus: data-ersatz/arbeit/lane.txt
  *   node werkzeuge/ersatz-lane.mjs --wurzeln [--ids 123,456] [--holen] [--max N] [--aus <datei>]
@@ -61,7 +72,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ladeBuch, BUECHER, vergleich, geruest, ausBW, hatVokalzeichen, wurzelnAus, wurzelSchluessel, wurzelWert, laneDateiname } from './ersatz-bama-lib.mjs';
+import { ladeBuch, BUECHER, vergleich, geruest, ausBW, hatVokalzeichen, wurzelnAus, wurzelSchluessel, wurzelWert, laneDateiname, laneVerweise, laneFuehrtWurzel } from './ersatz-bama-lib.mjs';
 import { liesListe } from './datenquelle.mjs';
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
@@ -76,11 +87,12 @@ const KOPF = { 'User-Agent': 'Mozilla/5.0 (privates Lernprojekt; einzelne Seiten
 const args = process.argv.slice(2);
 const wert = name => { const i = args.indexOf(name); return i >= 0 ? args[i + 1] : undefined; };
 const HOLEN = args.includes('--holen'), FORMEN = args.includes('--formen'), OHNE_TABELLE = args.includes('--ohne-tabelle');
-const WURZELN = args.includes('--wurzeln');
+const WURZELN = args.includes('--wurzeln'), SEITENLAUF = args.includes('--seiten');
 const MAX = Number(wert('--max') || 45);
 const MAX_ABRUFE = Number(wert('--max') || 400);
-const ZIEL = wert('--aus') || path.join(ERSATZ, 'arbeit', WURZELN ? 'lane-wurzeln.txt' : 'lane.txt');
+const ZIEL = wert('--aus') || path.join(ERSATZ, 'arbeit', WURZELN ? 'lane-wurzeln.txt' : SEITENLAUF ? 'lane-seiten.txt' : 'lane.txt');
 const WURZELDATEI = path.join(ERSATZ, 'arbeit', 'lane-wurzeln.json');
+const FEHLENDE_SEITEN = path.join(ERSATZ, 'arbeit', 'lane-fehlende-seiten.json');
 const OHNE_SEITE = path.join(ERSATZ, 'quellen', 'lane', 'ohne-seite.json');
 const schreibe = (datei, text) => { fs.mkdirSync(path.dirname(datei), { recursive: true }); fs.writeFileSync(datei + '.neu', text, 'utf8'); fs.renameSync(datei + '.neu', datei); };
 const liesJson = (datei, sonst) => fs.existsSync(datei) ? JSON.parse(fs.readFileSync(datei, 'utf8')) : sonst;
@@ -121,7 +133,7 @@ async function hole(url, datei, merkName) {
   if (fs.existsSync(datei)) return { text: fs.readFileSync(datei, 'utf8'), woher: 'Ablage', bekannt: true, datei };
   if (merkName && ohneSeite[merkName]) return { text: '', woher: 'keine Seite (gemerkt ' + ohneSeite[merkName] + ')', bekannt: true };
   if (!HOLEN || abbruch) return { text: '', woher: 'nicht geholt', bekannt: false };
-  if (WURZELN && abrufe >= MAX_ABRUFE) { grenze = true; return { text: '', woher: 'nicht geholt (Grenze --max)', bekannt: false }; }
+  if ((WURZELN || SEITENLAUF) && abrufe >= MAX_ABRUFE) { grenze = true; return { text: '', woher: 'nicht geholt (Grenze --max)', bekannt: false }; }
   if (!robotsGeprueft) {
     robotsGeprueft = true;
     try {
@@ -144,8 +156,9 @@ async function hole(url, datei, merkName) {
 }
 const wurzelseite = bw => hole(BASIS + '/root/' + encodeURIComponent(ausBW(bw)), path.join(SEITEN, dateiname(bw)), bw);
 const wortseite = v => hole(BASIS + encodeURI(decodeURI(v.pfad)), path.join(WOERTER, v.nr + '.html'));
-const verweiseVon = html => [...html.matchAll(/<a href="(\/word\/[^"]+\/(n\d+))" class="root-word-link">([^]*?)<\/a>/g)]
-  .map(m => ({ pfad: m[1], nr: m[2], wort: ohneTags(m[3]) }));
+// Die Stichwörter einer Wurzelseite: laneVerweise in ersatz-bama-lib.mjs (dort steht auch, welche Arten von Kennung es gibt
+// — seit dem 12.10.2026 zählen die Stichwörter mit Unternummer mit, „n123-2").
+const verweiseVon = laneVerweise;
 
 /* ---------- die zwei Durchgänge ---------- */
 async function stichwort(k, wurzeln) {
@@ -297,9 +310,23 @@ async function wurzelLauf() {
   return 'Einträge ' + Object.keys(eintraege).length + ' (vorher ' + vorher + ', neu ' + neu + ', herausgefallen ' + weg + ')';
 }
 
+/* ---------- vierter Gebrauch (--seiten): Wurzelseiten, nach denen noch nie gefragt wurde ---------- */
+async function seitenLauf() {
+  if (!fs.existsSync(FEHLENDE_SEITEN)) { console.log('⛔ data-ersatz/arbeit/lane-fehlende-seiten.json fehlt (erst ersatz-bauen.mjs; data-ersatz/ liegt nur lokal).'); process.exit(1); }
+  const text = { fuehrtWurzel: 'Lane führt die Wurzel', nurVerweis: 'nur ein Verweis auf die andere Schreibung', gibtEsNicht: 'keine Seite', nichtBekannt: 'nicht bekannt' };
+  for (const [bw, ids] of Object.entries(liesJson(FEHLENDE_SEITEN, {}).schluessel || {})) {
+    const s = await wurzelseite(bw);
+    const art = !s.bekannt ? 'nichtBekannt' : !s.text ? 'gibtEsNicht' : laneFuehrtWurzel(s.text) ? 'fuehrtWurzel' : 'nurVerweis';
+    zaehle(art);
+    aus.push(bw + ' | ' + text[art] + ' | ' + s.woher + (s.text ? '/' + verweiseVon(s.text).length : '') + ' | Karten: ' + (ids || []).join(','));
+    if (abbruch) break;
+  }
+}
+
 /* ---------- Lauf ---------- */
 let wurzelBilanz = '';
 if (WURZELN) wurzelBilanz = await wurzelLauf();
+else if (SEITENLAUF) await seitenLauf();
 else for (const p of plaetze()) {
   const k = p.buch ? (ladeBuch(REPO, p.buch) || new Map()).get(p.id) : null;
   const kopf = p.id + ' ' + String(p.buch || '?').replace('bayna-yadayk-', 'by').replace('madina-', 'm') + ' ' + String((k && k.type) || '?').slice(0, 4);
@@ -319,10 +346,10 @@ else for (const p of plaetze()) {
   if (abbruch) break;
 }
 if (ohneSeiteNeu) schreibe(OHNE_SEITE, JSON.stringify(ohneSeite, null, 1));
-const kopfzeile = 'LANE (' + (WURZELN ? 'Wurzeln' : FORMEN ? 'Erklärungen' : 'Stichwörter') + '): ' + JSON.stringify(zahl) + (WURZELN ? ' · ' + wurzelBilanz : '')
+const kopfzeile = 'LANE (' + (WURZELN ? 'Wurzeln' : SEITENLAUF ? 'Wurzelseiten' : FORMEN ? 'Erklärungen' : 'Stichwörter') + '): ' + JSON.stringify(zahl) + (WURZELN ? ' · ' + wurzelBilanz : '')
   + ' · neu geholte Seiten: ' + geholt + (ohneSeiteNeu ? ' · als „gibt es nicht“ gemerkt: ' + ohneSeiteNeu : '')
   + (HOLEN ? '' : ' (ohne --holen: nur die Ablage)') + (grenze ? ' · GRENZE --max ' + MAX_ABRUFE + ' erreicht — noch einmal laufen lassen' : '') + (abbruch ? ' · ABBRUCH: ' + abbruch : '');
 fs.mkdirSync(path.dirname(ZIEL), { recursive: true });
-fs.writeFileSync(ZIEL, kopfzeile + '\n\n' + aus.join(WURZELN ? '\n' : '\n\n') + '\n', 'utf8');
+fs.writeFileSync(ZIEL, kopfzeile + '\n\n' + aus.join(WURZELN || SEITENLAUF ? '\n' : '\n\n') + '\n', 'utf8');
 console.log(kopfzeile);
 console.log('geschrieben: ' + path.relative(REPO, ZIEL));

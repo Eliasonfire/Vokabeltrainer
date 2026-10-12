@@ -34,7 +34,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 import { abzugOrdner, istErsatzkarte } from './datenquelle.mjs';
-import { vergleich as wortform, ladeBama, standardDatei, geruest, nachBW, ausBW, wurzelSchluessel, wurzelWert, laneDateiname } from './ersatz-bama-lib.mjs';
+import { vergleich as wortform, ladeBama, standardDatei, geruest, nachBW, ausBW, wurzelSchluessel, wurzelWert, laneDateiname, laneFuehrtWurzel } from './ersatz-bama-lib.mjs';
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
 const REPO = process.env.ERSATZ_REPO || path.join(HIER, '..');
@@ -215,9 +215,22 @@ const selbst = { sg: 0, past: 0 };
  *   (I)   die Zeile ist (ohne ihre Zählnummer) eine Wurzel aus drei oder vier Radikalen; eine zweilautige zählt nur
  *         als verdoppelte, wenn das Wort den zweiten Radikal sichtbar doppelt führt (zweimal oder mit Schadda)
  *   (II)  ihre Radikale stehen in dieser Reihenfolge in den Buchstaben des Worts (schwache dürfen fehlen)
- *   (III) Lanes Lexikon führt eine Seite dieser Wurzel (abgelegt von ersatz-lane.mjs); steht sie dort nur unter der
- *         anderen Schreibung des schwachen Radikals, gilt Lanes Schreibung; führt Lane BEIDE Schreibungen, gilt keine
- * Nie für einen Eigennamen (Kategorie der Stammliste) und nie für ein Wort auf Kasratan (schwacher Schluss).
+ *   (III) Lanes Lexikon führt eine Seite dieser Wurzel IN DIESER SCHREIBUNG (abgelegt von ersatz-lane.mjs).
+ *         „Führt" heißt: die Seite nennt wenigstens ein Stichwort mit Vokalzeichen (laneFuehrtWurzel). Neun abgelegte
+ *         Seiten nennen nur die blanke Wurzel als Verweis auf die andere Schreibung — die zählen nicht.
+ *         „In dieser Schreibung" betrifft den schwachen letzten Radikal: Waw und Ya sind bei Lane zwei Seiten. Der WERT
+ *         ist immer die Zeile der Stammliste; Lane bestätigt sie nur. Führt Lane die Wurzel allein unter der ANDEREN
+ *         Schreibung, widersprechen sich die zwei Quellen, und es gilt keine. (Bis zum 12.10.2026 abends galt dann
+ *         Lanes Schreibung, und bei beiden Schreibungen keine. Nachgemessen an 106 Karten, deren Wurzel eine andere
+ *         Quelle nennt: so 58 gleich, 7 anders, 41 ohne Entscheidung; mit der Regel hier 95 gleich, 4 anders, 7 ohne.
+ *         Der Seitenname sagt beim Alif maqsura nichts über Waw oder Ya — die Seite „nbY" führt ein Verb mit Waw.)
+ *         Wurde nach der Seite dieser Schreibung noch NIE gefragt (weder abgelegt noch als „gibt es nicht" gemerkt,
+ *         quellen/lane/ohne-seite.json), bleibt die Karte offen und der Schlüssel kommt nach
+ *         arbeit/lane-fehlende-seiten.json; „ersatz-lane.mjs --seiten --holen" holt diese Seiten, danach wird neu
+ *         gebaut. (Bis dahin fragte dort nur die Wurzel der BISHERIGEN Karte nach Seiten — eine Karte, deren Wurzel
+ *         allein die Stammliste nennt, fand nie eine.)
+ * Nie für einen Eigennamen (Kategorie der Stammliste, oder die Quelle der Karte führt das Wort als Namen — „Khartum"
+ * steht in der Stammliste ohne Artikel als gewöhnliches Nomen) und nie für ein Wort auf Kasratan (schwacher Schluss).
  * Das Lemma muss der Karte gleichen (mit Vokalzeichen, ohne Schlussendung) und zur Wortart passen (Verb zu Verb), und
  * alle solchen Lemmata müssen unter DERSELBEN Zeile stehen. Gemessen mit (I) und (II): 2692 gleich der bekannten
  * Wurzel, 32 gleich bis auf Waw/Ya, 42 anders; mit (III) an den Karten ohne Wurzel: 181 wie der Bestand, 1 anders. */
@@ -227,8 +240,19 @@ if (fs.existsSync(BAMA_DATEI)) for (const l of ladeBama(BAMA_DATEI)) { const s =
 const RADIKALE = new Set([...">btvjHxd*rzs$SDTZEgfqklmnhwy"]);
 const KASRATAN = String.fromCodePoint(0x64D);
 const SCHADDA = String.fromCodePoint(0x651), KURZZEICHEN = '[' + String.fromCodePoint(0x64B) + '-' + String.fromCodePoint(0x650) + ']*';
-const stammliste = { gesetzt: 0 };
-function wurzelAusStammliste(ar, typ) {
+const stammliste = { gesetzt: 0, warten: 0, fehlend: {} };
+// Was über Lanes Seite zu einem Schlüssel bekannt ist: „fuehrt" (abgelegt, mit Stichwörtern), „verweist" (abgelegt, nur
+// die blanke Wurzel als Verweis), „keine" (der Abruf ergab: gibt es nicht), „unbekannt" (nie danach gefragt)
+const laneOhneSeite = liesJson(path.join(ERSATZ, 'quellen', 'lane', 'ohne-seite.json'), {});
+const _laneLage = new Map();
+function laneSeite(k) {
+  if (!_laneLage.has(k)) {
+    const datei = path.join(LANE_SEITEN, laneDateiname(k));
+    _laneLage.set(k, fs.existsSync(datei) ? (laneFuehrtWurzel(fs.readFileSync(datei, 'utf8')) ? 'fuehrt' : 'verweist') : laneOhneSeite[k] ? 'keine' : 'unbekannt');
+  }
+  return _laneLage.get(k);
+}
+function wurzelAusStammliste(ar, typ, id) {
   const wort = nfc(ar);
   // Ein Wort auf Kasratan ist ein Nomen mit schwachem Schluss („ein Feindlicher"): ohne die Endung gliche es einem
   // ANDEREN Lemma (gesehen am 12.10.2026: es bekam die Wurzel von „wiederholt"). Dann gilt die Stammliste nicht.
@@ -240,7 +264,12 @@ function wurzelAusStammliste(ar, typ) {
   // — erkannt an der Kategorie der Stammliste oder daran, dass ihre englische Bedeutung groß geschrieben ist („Kuwait"
   // steht dort als gewöhnliches Nomen)
   const eigenname = l => l.staemme.some(s => /prop/i.test(s.kat) || /PROP/.test(s.pos)) || (l.glossen.length > 0 && l.glossen.every(g => /^[A-Z]/.test(g)));
-  if (passend.some(eigenname)) return null;
+  // Ein Funktionswort (Kategorie „FW…" der Stammliste: Fragewort, Partikel, Präposition) steht dort auch unter einer
+  // Wurzelzeile, hat aber keine Wurzel — gesehen am 12.10.2026 an „warum nicht …?" (Karte der Wortart „expression").
+  // Gesperrt ist nur, wo JEDES passende Lemma ein Funktionswort ist: steht daneben ein Nomen gleicher Schreibung
+  // unter derselben Zeile („Seite" neben „neben"), ist es dessen Wurzel.
+  const funktionswort = l => l.staemme.some(s => /^FW/.test(s.kat));
+  if (passend.some(eigenname) || (passend.length > 0 && passend.every(funktionswort))) return null;
   const zeilen = [...new Set(passend.map(l => l.wurzel).filter(Boolean))];
   if (zeilen.length !== 1) return null;
   const roh = zeilen[0].replace(/\(\d+\)$/, '');
@@ -264,14 +293,21 @@ function wurzelAusStammliste(ar, typ) {
     davor = r;
   }
   const eigen = ausBW(rad.join(' '));
-  const seiten = wurzelSchluessel(eigen).filter(k => fs.existsSync(path.join(LANE_SEITEN, laneDateiname(k))));
-  const werte = [...new Set(seiten.map(k => wurzelWert(k, eigen)).filter(Boolean))];
-  // Führt Lane die Wurzel unter BEIDEN Schreibungen des schwachen Radikals (Waw und Ya), sagt seine Seite nicht,
-  // welche gilt — die Stammliste allein entscheidet das nicht (gemessen: 8 von 185 anders als der Bestand, alle so)
-  const wert = werte.length === 1 ? werte[0] : null;
-  if (!wert) return null;
-  const seite = seiten.find(k => wurzelWert(k, eigen) === wert);
-  return { w: wert, wo: `Buckwalter Arabic Morphological Analyzer 1.0, Stammliste: das Lemma „${passend[0].id}“ steht unter der Wurzelzeile „${zeilen[0]}“, und deren Radikale stehen in dieser Reihenfolge im Wort; Lanes Lexikon führt diese Wurzel (Seite „${seite}“), nennt das Wort aber nicht als Stichwort. Die Zuordnung über die Stammliste stammt von Claude` };
+  // (III) Es zählen nur die Seiten, deren Name GENAU diese Wurzel ergibt (beim schwachen letzten Radikal also nicht
+  // die Seite der anderen Schreibung); der Wert ist die Zeile der Stammliste, Lane bestätigt sie
+  const eigene = wurzelSchluessel(eigen).filter(k => wurzelWert(k, eigen) === eigen);
+  const seite = eigene.find(k => laneSeite(k) === 'fuehrt');
+  if (!seite) {
+    // Nach einer Seite dieser Schreibung wurde noch nie gefragt: offen, und der Schlüssel kommt auf die Liste
+    const fehlt = eigene.filter(k => laneSeite(k) === 'unbekannt');
+    for (const k of fehlt) (stammliste.fehlend[k] = stammliste.fehlend[k] || []).push(String(id));
+    if (fehlt.length) stammliste.warten++;
+    return null;
+  }
+  // Führt Lane daneben auch die Wurzel mit dem ANDEREN schwachen Radikal, steht das im Beleg: dort ist die Zeile der
+  // Stammliste etwas öfter anders als die Wurzel aus einer dritten Quelle (gemessen 3 von 41, sonst 1 von 58)
+  const andere = wurzelSchluessel(eigen).find(k => wurzelWert(k, eigen) && wurzelWert(k, eigen) !== eigen && laneSeite(k) === 'fuehrt');
+  return { w: eigen, wo: `Buckwalter Arabic Morphological Analyzer 1.0, Stammliste: das Lemma „${(passend.find(l => !funktionswort(l)) || passend[0]).id}“ steht unter der Wurzelzeile „${zeilen[0]}“, und deren Radikale stehen in dieser Reihenfolge im Wort; Lanes Lexikon führt diese Wurzel (Seite „${seite}“)${andere ? ` — daneben auch die mit dem anderen schwachen Radikal (Seite „${andere}“), hier steht die der Stammliste —` : ''}, nennt das Wort aber nicht als Stichwort. Die Zuordnung über die Stammliste stammt von Claude` };
 }
 /* Wurzeln aus Lanes Lexikon für Karten, denen keine andere Quelle eine nennt (ersatz-lane.mjs --wurzeln schreibt
  * die Datei; fehlt sie, ändert sich nichts). */
@@ -346,8 +382,13 @@ for (const buch of BUECHER) {
       }
     }
     // Wurzel aus Buckwalters Stammliste (wurzelAusStammliste, oben): nur als Lücke, nur für ein einzelnes Wort, nie für ein Partikel
-    if (!felder.root && felder.ar && felder.type && felder.type.w !== 'particle') {
-      const b = wurzelAusStammliste(felder.ar.w, felder.type.w);
+    // — und nie für einen NAMEN: führt die Quelle der Karte das Wort als Namen (Wortart „name" des Wiktionary-Eintrags),
+    // hat es keine Wurzel, die man lernen könnte (Elias, 12.10.2026, zu Ländernamen: „ja wenns keine wurzel gibt dann
+    // leer lassen"). Gesehen am selben Abend: „Khartum" — die Stammliste führt ohne Artikel ein gewöhnliches Nomen
+    // gleicher Schreibung, und Lane führt dessen Wurzel.
+    const quelleIstName = String(s.ref || '').split('#')[1] === 'name';
+    if (!felder.root && felder.ar && felder.type && felder.type.w !== 'particle' && !quelleIstName && !(h.leer || []).includes('root')) {
+      const b = wurzelAusStammliste(felder.ar.w, felder.type.w, s.id);
       if (b) { felder.root = { w: b.w, wo: b.wo, q: 'bama-wurzel' }; stammliste.gesetzt++; }
     }
     // Einzahl und Vergangenheit als das Wort selbst (SELBST, oben): füllt nur eine Lücke; „leer" von Hand nimmt es wieder heraus
@@ -426,7 +467,15 @@ schreibe(path.join(ERSATZ, 'unterschiede.json'), JSON.stringify(unterschiede, nu
 // Die Unterschiede nach Feld und Art gezählt (die Liste selbst bleibt in der Reihenfolge der Plätze): so sieht man,
 // wo die Arbeit liegt — z. B. wie viele Karten im Arabischen selbst abweichen und wie viele nur in der Schlussendung.
 stand.laneWurzeln = lane;
-stand.unterschiede = { gesamt: unterschiede.length, jeFeld: {} };
+stand.stammliste = { gesetzt: stammliste.gesetzt, warten: stammliste.warten, fehlendeSeiten: Object.keys(stammliste.fehlend).length };
+// Die Schlüssel der Wurzelseiten, nach denen bei Lane noch nie gefragt wurde (wurzelAusStammliste, oben) — immer
+// geschrieben, auch leer: sonst holte „ersatz-lane.mjs --seiten" nach einem späteren Bau die Liste von gestern.
+schreibe(path.join(ERSATZ, 'arbeit', 'lane-fehlende-seiten.json'), JSON.stringify({
+  erzeugt: stand.erzeugt,
+  hinweis: 'Wurzelseiten von Lanes Lexikon, nach denen noch nie gefragt wurde, je Schlüssel (Buckwalter-Umschrift) die Karten, die darauf warten. Erzeugt von werkzeuge/ersatz-bauen.mjs, gelesen von werkzeuge/ersatz-lane.mjs --seiten. Nicht von Hand ändern.',
+  schluessel: stammliste.fehlend,
+}, null, 1));
+stand.unterschiede ={ gesamt: unterschiede.length, jeFeld: {} };
 for (const u of unterschiede) { const f = stand.unterschiede.jeFeld[u.feld] = stand.unterschiede.jeFeld[u.feld] || {}; f[u.art] = (f[u.art] || 0) + 1; }
 schreibe(path.join(ERSATZ, 'stand.json'), JSON.stringify(stand, null, 1));
 // lokal, zum Nachlesen: an welchen Plätzen „wie die Karte" das Deutsch bestimmt hat, und was vorher dastand
@@ -445,6 +494,7 @@ if (!process.argv.includes('--knapp')) for (const f of FELDER) {
 }
 if (verbformenWeg) console.log(`Verbformen an Karten, die keine Verben sind, weggelassen: ${verbformenWeg}`);
 if (stammliste.gesetzt) console.log(`Wurzel aus Buckwalters Stammliste (Lane führt die Wurzel, nennt das Wort aber nicht): ${stammliste.gesetzt} eingetragen`);
+if (stammliste.warten) console.log(`Wurzel aus der Stammliste OFFEN an ${stammliste.warten} Karten: nach ${Object.keys(stammliste.fehlend).length} Wurzelseiten von Lane wurde noch nie gefragt — „node werkzeuge/ersatz-lane.mjs --seiten --holen“, danach neu bauen (Liste: data-ersatz/arbeit/lane-fehlende-seiten.json)`);
 if (selbst.sg || selbst.past) console.log(`Das Wort selbst: Einzahl an ${selbst.sg} Nomen und Vergangenheit an ${selbst.past} Verben gesetzt (die bisherige Karte nennt dort ihr eigenes Wort)`);
 if (lane.eintraege) console.log(`Wurzeln aus Lanes Lexikon: ${lane.gesetzt} eingetragen · ${lane.hatSchon} übergangen, weil eine andere Quelle die Wurzel nennt · ${lane.anderesWort} übergangen, weil das Arabisch der Karte nicht mehr das Stichwort ist (von ${lane.eintraege} Einträgen in data-ersatz/arbeit/lane-wurzeln.json)`);
 if (handFehler.length) { console.log(`HAND:${handFehler.length} Entscheidung(en) passen nicht zu den Quellen:`); for (const f of handFehler.slice(0, 20)) console.log('  ✗ ' + f); process.exitCode = 1; }
