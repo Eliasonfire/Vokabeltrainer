@@ -1231,24 +1231,35 @@ function renderNotiz(w){
      Elias: „wenn ich eine notiz hinzufüge dann will ich das die eselsbrücken nicht
      einfach verschwinden, sie sollen da bleiben auch wenn ich eine notiz mache".
      Von Punkt 8 bleibt der Kern (ein Vorschlag überschreibt seine eigene nie und
-     wird nie still übernommen); aufgehoben ist nur das Verdrängen. Im Kasten selbst
-     steht weiter seine eigene; der Vorschlag steht dann in der Zeile darunter
-     (`cardNoteVorschlag`), als Vorschlag beschriftet und ohne Knopf. */
+     wird nie still übernommen); aufgehoben ist nur das Verdrängen. (Vom 11.10. bis
+     zum 12.10.2026 stand dabei seine eigene im Kasten und der Vorschlag als Zeile
+     darunter, ohne Knopf — seit dem 12.10. ist es umgekehrt, siehe unten.) */
   const gewaehlt = liste.length ? liste[gewaehlterVorschlag(w.id, liste.length)] : '';
-  const vorschlag = notiz ? '' : gewaehlt;
-  const daneben = notiz ? gewaehlt : '';
-  const zusatz = document.getElementById('cardNoteVorschlag');
-  if (zusatz){
-    zusatz.innerHTML = daneben ? arabischHervorheben(daneben) : '';
-    zusatz.classList.toggle('hidden', !daneben);
+  /* ⭐⭐ Seit dem 12.10.2026 steht der VORSCHLAG oben im Kasten und seine eigene
+     DARUNTER. Elias: „wenn ich eine notiz bei karteikarten habe beim lernen dann
+     will ich das die unter dem vorschlag steht und das ich trotzdem noch die
+     vorschläge aufrufen kann und da weiter normal das menü bedienen kann".
+     Am 11.10. war es andersherum gebaut (seine im Kasten, der Vorschlag als
+     Zeile darunter, ohne Knopf) — die Reihenfolge stammte von mir, sein Satz
+     vom 11.10. nannte keine. Jetzt: der Kasten oben ist immer der Vorschlag,
+     sobald es einen gibt, und öffnet wie gewohnt das Fenster mit den
+     Vorschlägen; seine eigene steht in `cardNoteEigene` darunter und öffnet
+     dasselbe Fenster. Ohne Vorschlag steht seine eigene wie bisher im Kasten. */
+  const vorschlag = gewaehlt;
+  const darunter = (notiz && gewaehlt) ? notiz : '';
+  const eigene = document.getElementById('cardNoteEigene');
+  if (eigene){
+    const eigeneText = document.getElementById('cardNoteEigeneText');
+    if (eigeneText) eigeneText.innerHTML = darunter ? arabischHervorheben(darunter) : '';
+    eigene.classList.toggle('hidden', !darunter);
   }
   /* innerHTML statt textContent, damit die arabischen Woerter im Text gross
      gesetzt werden koennen (arabischHervorheben, js/kern.js). Die Funktion
      maskiert selbst - `notiz` ist Elias' eigener Text und darf nicht roh in
      den Zusammenhang. Gilt fuer den Vorschlag UND seine eigene Notiz: das
      Leseproblem ist in beiden Faellen dasselbe. */
-  text.innerHTML = arabischHervorheben(notiz || vorschlag || 'Eselsbrücke hinzufügen');
-  kasten.classList.toggle('hat-notiz', !!notiz);
+  text.innerHTML = arabischHervorheben(vorschlag || notiz || 'Eselsbrücke hinzufügen');
+  kasten.classList.toggle('hat-notiz', !!notiz && !vorschlag);
   kasten.classList.toggle('ist-vorschlag', !!vorschlag);
   /* Der Punkt sitzt auf der VORDERSEITE. Er verraet die Loesung nicht, sagt
      aber "zu diesem Wort hast du dir schon etwas notiert" - genau der Hinweis,
@@ -1480,7 +1491,13 @@ function oeffneNotizEditor(){
      er soll den Vorschlag lesen und dann entscheiden. */
   feld.value = getNote(w.id);
   const vorschlagKasten = document.getElementById('neVorschlag');
-  VORSCHLAEGE = getNote(w.id) ? [] : vorschlagsListe(w);
+  /* ⭐⭐ Seit dem 12.10.2026 bleiben die Vorschläge im Fenster, auch wenn er
+     etwas Eigenes geschrieben hat (Elias: „… das ich trotzdem noch die
+     vorschläge aufrufen kann und da weiter normal das menü bedienen kann").
+     Bis dahin stand hier `getNote(w.id) ? [] : vorschlagsListe(w)` — mit einer
+     eigenen Eselsbrücke war die Liste leer, und Blättern, „Taugt nicht" und
+     „Übernehmen" waren nicht mehr zu erreichen. */
+  VORSCHLAEGE = vorschlagsListe(w);
   /* Dort weitermachen, wo er stehengeblieben ist - sonst faengt das Blaettern
      bei jedem Oeffnen wieder bei Nummer 1 an, waehrend die Karte dahinter
      laengst Nummer 3 zeigt. */
@@ -1517,17 +1534,38 @@ document.getElementById('cardNoteBox').addEventListener('click', (e)=>{
   e.stopPropagation();          // sonst dreht sich die Karte gleich mit um
   oeffneNotizEditor();
 });
+/* Seine eigene Eselsbrücke unter dem Vorschlag (12.10.2026) öffnet dasselbe
+   Fenster: dort steht sie im Feld, und die Vorschläge stehen daneben. */
+{
+  const eigeneKnopf = document.getElementById('cardNoteEigene');
+  if (eigeneKnopf) eigeneKnopf.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    oeffneNotizEditor();
+  });
+}
 /* „Übernehmen" fuellt nur das Feld. Gespeichert wird weiterhin ausschliesslich
    ueber „Speichern" - der Vorschlag wird also erst dann zu seiner Notiz, wenn
-   er das zweimal bestaetigt und dazwischen aendern kann. */
-document.getElementById('btnVorschlagUebernehmen').addEventListener('click', ()=>{
+   er das zweimal bestaetigt und dazwischen aendern kann.
+
+   ⛔ Steht schon etwas Eigenes im Feld, wird der Vorschlag DARUNTER angehängt
+   und nicht darübergeschrieben (12.10.2026). Seit die Vorschläge auch neben
+   seiner eigenen Eselsbrücke im Fenster stehen, läge sonst zwischen seinem
+   Text und dessen Verlust nur „Übernehmen" und „Speichern" — und der Kern von
+   Punkt 8 (10.08.2026) ist, dass ein Vorschlag seine eigene nie überschreibt.
+   Das Anhängen ist MEINE Auslegung dieses Kerns, nicht sein Wortlaut.
+   Eigene Funktion, damit test-vorschlag-bleibt.mjs sie allein fahren kann. */
+function uebernimmVorschlag(){
   const feld = document.getElementById('neText');
-  feld.value = document.getElementById('neVorschlagText').textContent;
+  const vorschlag = String(document.getElementById('neVorschlagText').textContent || '');
+  const eigenes = String(feld.value || '').trim();
+  if (!eigenes) feld.value = vorschlag;
+  else if (eigenes.indexOf(vorschlag.trim()) < 0) feld.value = eigenes + '\n\n' + vorschlag;
   document.getElementById('neVorschlag').classList.add('hidden');
   /* ⚠️ Auch hier kein `focus()` — aus demselben Grund wie oben. „Uebernehmen"
      heisst oft: so passt es, jetzt nur noch speichern. Wer doch aendern will,
      tippt ins Feld. */
-});
+}
+document.getElementById('btnVorschlagUebernehmen').addEventListener('click', uebernimmVorschlag);
 /* „Taugt nicht": merkt den Vorschlag als abgelehnt und blaettert weiter, wenn
    es noch einen gibt. Das Weiterblaettern ist Absicht — er hat gesagt, der
    Vorschlag solle „ausgetauscht werden durch einen besseren", also soll gleich
