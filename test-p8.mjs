@@ -258,14 +258,25 @@ ok('er gilt NICHT als eigene Notiz', !kasten.classList.contains('hat-notiz'));
 ok('der Punkt auf der Vorderseite bleibt aus', !punkt.classList.contains('hidden') === false,
    'ein Vorschlag ist kein "das weisst du schon"');
 
-/* ---------- 2. Eigene Notiz schlaegt den Vorschlag ---------- */
+/* ---------- 2. Eigene Notiz UND Vorschlag: beide stehen da, der Vorschlag oben ----------
+   Bis zum 11.10.2026 hiess dieser Abschnitt „Eigene Notiz schlaegt den Vorschlag":
+   seine eigene stand allein im Kasten. Elias am 11.10.2026: „wenn ich eine notiz
+   hinzufüge dann will ich das die eselsbrücken nicht einfach verschwinden, sie sollen
+   da bleiben auch wenn ich eine notiz mache" — und am 12.10.2026: „wenn ich eine notiz
+   bei karteikarten habe beim lernen dann will ich das die unter dem vorschlag steht
+   und das ich trotzdem noch die vorschläge aufrufen kann und da weiter normal das menü
+   bedienen kann". Der KERN von Punkt 8 gilt weiter und wird in Abschnitt 3 geprueft:
+   das Feld wird nie mit einem Vorschlag vorgefuellt, und nichts wandert still in
+   vt_notes. Die Einzelheiten bewacht test-vorschlag-bleibt.mjs. */
 console.log('\n— Eigene Notiz vorhanden —');
 ctx.setNote('t1', 'MEINE EIGENE BRUECKE');
 vm.runInContext('renderNotiz(SESSION.words[0])', ctx);
-ok('die eigene Notiz steht da, nicht der Vorschlag',
-   text.textContent === 'MEINE EIGENE BRUECKE', `"${text.textContent}"`);
-ok('die Vorschlagsmarkierung ist weg', !kasten.classList.contains('ist-vorschlag'));
-ok('sie gilt als eigene Notiz', kasten.classList.contains('hat-notiz'));
+const eigeneKasten = hole('cardNoteEigene'), eigeneText = hole('cardNoteEigeneText');
+ok('oben steht weiter der Vorschlag', text.textContent === 'MERKSATZ-AUS-DEN-DATEN', `"${text.textContent}"`);
+ok('und er ist als Vorschlag markiert, nicht als seine eigene',
+   kasten.classList.contains('ist-vorschlag') && !kasten.classList.contains('hat-notiz'));
+ok('seine eigene Notiz steht darunter',
+   eigeneText.textContent === 'MEINE EIGENE BRUECKE' && !eigeneKasten.classList.contains('hidden'), `"${eigeneText.textContent}"`);
 ok('der Punkt auf der Vorderseite geht an', !punkt.classList.contains('hidden'));
 
 /* ---------- 3. Der Editor fuellt nie vor ---------- */
@@ -281,7 +292,12 @@ ok('vt_notes ist unveraendert leer', Object.keys(NOTIZEN).length === 0,
 ctx.setNote('t1', 'MEINE EIGENE BRUECKE');
 vm.runInContext('oeffneNotizEditor()', ctx);
 ok('mit eigener Notiz steht sie im Feld', feld.value === 'MEINE EIGENE BRUECKE');
-ok('und der Vorschlag ist ausgeblendet', vKasten.classList.contains('hidden'));
+/* ⭐ Seit dem 12.10.2026 bleibt der Vorschlag daneben stehen (sein Satz steht ueber
+   Abschnitt 2). Bis dahin hiess diese Pruefung „und der Vorschlag ist ausgeblendet". */
+ok('und der Vorschlag steht weiter daneben, mit seinem Text',
+   !vKasten.classList.contains('hidden') && vText.textContent === 'MERKSATZ-AUS-DEN-DATEN', `"${vText.textContent}"`);
+ok('vt_notes traegt weiter nur seinen eigenen Text', JSON.stringify(Object.values(NOTIZEN)) === JSON.stringify(['MEINE EIGENE BRUECKE']),
+   JSON.stringify(NOTIZEN));
 
 /* ---------- 4. Wort ohne Vorschlag ---------- */
 console.log('\n— Wort ganz ohne Vorschlag —');

@@ -3098,16 +3098,15 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
    steht davor. Er darf nicht wie eigene Arbeit aussehen — und auch nicht wie
    ein leeres Feld, sonst uebersieht man ihn. */
 .note-box.ist-vorschlag{ color:var(--text-dim); border-color:var(--border-strong); }
-/* Der Vorschlag UNTER seiner eigenen Eselsbrücke (11.10.2026): bleibt stehen, wenn er
-   selbst etwas geschrieben hat. Der Kasten darüber hat unten var(--sp-4) Abstand; die
-   Zeile rückt deshalb heran und trägt den Abstand selbst. */
-.note-vorschlag{
-  width:100%;text-align:left;margin:calc(var(--sp-2) - var(--sp-4)) 0 var(--sp-4);
-  padding:var(--sp-2) var(--sp-3);border:1px dashed var(--border-strong);border-radius:var(--r-2);
-  color:var(--text-dim);font-size:var(--fs-sm);line-height:1.75;
+/* Seine eigene Eselsbrücke UNTER dem Vorschlag (12.10.2026). Der Kasten darüber hat
+   unten var(--sp-4) Abstand; dieser rückt deshalb heran, damit beide als ein Paar
+   lesbar sind. Das Aussehen (durchgezogene Kante, voller Textton) kommt von
+   `.note-box.hat-notiz` weiter unten — die Klasse steht fest im HTML. Der Vorsatz
+   sagt, wessen Text das ist; der Kasten darüber trägt „Vorschlag: ". */
+.note-eigene{margin-top:calc(var(--sp-2) - var(--sp-4));}
+.note-eigene #cardNoteEigeneText::before{
+  content:"Deine Eselsbrücke: ";color:var(--red-soft);font-weight:700;
 }
-.note-vorschlag.hidden{display:none;}
-.note-vorschlag::before{content:"Vorschlag: ";color:var(--red-soft);font-weight:700;}
 .note-box.ist-vorschlag #cardNoteText::before{
   content:"Vorschlag: ";color:var(--red-soft);font-weight:700;
 }
@@ -5891,11 +5890,20 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
                 <svg class="ic"><use href="#ic-note"/></svg>
                 <span id="cardNoteText">Eselsbrücke hinzufügen</span>
               </button>
-              <!-- ⭐ Der Vorschlag bleibt AUCH neben seiner eigenen Eselsbrücke stehen
-                   (11.10.2026, Elias: „sie sollen da bleiben auch wenn ich eine notiz
-                   mache"). Nur Anzeige, kein Knopf; gefüllt von renderNotiz() und nur
-                   sichtbar, wenn er selbst etwas geschrieben hat UND es einen Vorschlag gibt. -->
-              <div class="note-vorschlag hidden" id="cardNoteVorschlag"></div>
+              <!-- ⭐ Seine eigene Eselsbrücke steht UNTER dem Vorschlag (12.10.2026, Elias:
+                   „wenn ich eine notiz bei karteikarten habe beim lernen dann will ich das
+                   die unter dem vorschlag steht und das ich trotzdem noch die vorschläge
+                   aufrufen kann und da weiter normal das menü bedienen kann"). Der Kasten
+                   darüber zeigt dann den Vorschlag und öffnet das Fenster mit den
+                   Vorschlägen; dieser hier öffnet dasselbe Fenster. Gefüllt von
+                   renderNotiz() und nur sichtbar, wenn er selbst etwas geschrieben hat UND
+                   es einen Vorschlag gibt — ohne Vorschlag steht seine eigene wie bisher
+                   im Kasten darüber. (Vom 11.10. bis zum 12.10.2026 stand hier umgekehrt
+                   der Vorschlag unter seiner eigenen, als Zeile ohne Knopf.) -->
+              <button class="note-box note-eigene hat-notiz hidden" id="cardNoteEigene" aria-label="Deine Eselsbrücke ändern">
+                <svg class="ic"><use href="#ic-note"/></svg>
+                <span id="cardNoteEigeneText"></span>
+              </button>
               <!-- ⭐ Die eigene Notiz auch auf der Lernkarte (20.08.2026, Elias:
                    „notizfeld soll auch erstmal bei den karteikarten angezeigt
                    werden"). Sie steht auf der RÜCKSEITE unter der Eselsbrücke,

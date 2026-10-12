@@ -538,7 +538,15 @@ let WK_WORT = null;
    10.08.2026, harte Rangfolge): sobald er etwas Eigenes schrieb, verschwanden die
    Vorschläge. Von Punkt 8 bleibt der KERN: ein Vorschlag überschreibt seine eigene
    Eselsbrücke nie und wird nie still übernommen. AUFGEHOBEN ist nur das Verdrängen —
-   beides steht jetzt untereinander, seine zuerst.
+   beides steht jetzt untereinander.
+
+   ⭐⭐ DIE REIHENFOLGE — seit dem 12.10.2026 steht der VORSCHLAG zuerst und seine
+   eigene DARUNTER. (Vom 11.10. bis zum 12.10.2026 stand seine zuerst; das war mein
+   Bau, sein Satz vom 11.10. nannte keine Reihenfolge.) Für die Lernkarte sagte er am
+   12.10.2026: „wenn ich eine notiz bei karteikarten habe beim lernen dann will ich
+   das die unter dem vorschlag steht …". Auf meine Frage „Soll die Notiz auch auf
+   der Infokarte unter die Eselsbrücke?" antwortete er am selben Tag: „ja".
+   („Notiz" ist in seinen Wörtern sein eigener Text, „Eselsbrücke" der Vorschlag.)
 
    Eigene Funktion, damit test-vorschlag-bleibt.mjs sie allein fahren kann.
    ⛔ Neben seiner eigenen ist der Vorschlagskasten KEIN Knopf (`data-wkmerk` fehlt):
@@ -547,13 +555,6 @@ function wkEselsbruecke(w){
   const t = [];
   const notiz = getNote(w.id);
   const liste = (typeof vorschlagsListe === 'function') ? vorschlagsListe(w) : [];
-  if (notiz){
-    t.push(`<div class="wk-abschnitt wk-tippbar" data-wkmerk role="button" tabindex="0" aria-label="Eselsbrücke ändern">
-      <div class="wk-marke"><span>Deine Eselsbrücke</span>
-        <span class="wk-stift" aria-hidden="true">${icon('note')}ändern</span></div>
-      <div class="de">${arabischHervorheben(notiz)}</div>
-    </div>`);
-  }
   if (liste.length){
     const nr = gewaehlterVorschlag(w.id, liste.length);
     const huelle = notiz ? 'class="wk-abschnitt" data-wkvorschlag'
@@ -568,7 +569,14 @@ function wkEselsbruecke(w){
         <button class="btn btn-secondary btn-klein" data-wkblatt="1">Anderer →</button>
       </div>`:''}
     </div>`);
-  } else if (!notiz){
+  }
+  if (notiz){
+    t.push(`<div class="wk-abschnitt wk-tippbar" data-wkmerk role="button" tabindex="0" aria-label="Eselsbrücke ändern">
+      <div class="wk-marke"><span>Deine Eselsbrücke</span>
+        <span class="wk-stift" aria-hidden="true">${icon('note')}ändern</span></div>
+      <div class="de">${arabischHervorheben(notiz)}</div>
+    </div>`);
+  } else if (!liste.length){
     t.push(`<div class="wk-abschnitt wk-tippbar" data-wkmerk role="button" tabindex="0" aria-label="Eselsbrücke schreiben">
       <div class="wk-marke"><span>Eselsbrücke</span>
         <span class="wk-stift" aria-hidden="true">${icon('note')}schreiben</span></div>

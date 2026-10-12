@@ -162,13 +162,13 @@ console.log('  ' + alle + ' Stellen haengen an dieser einen CSS-Eigenschaft.');
 const ORTE = {
   'ESELSBRUECKEN_ALT[][]': {
     wo: 'js/lernen.js — der Merkhaken auf der Lernkarte',
-    datei: 'js/lernen.js', ausdruecke: ['arabischHervorheben(notiz || vorschlag'] },
+    datei: 'js/lernen.js', ausdruecke: ['arabischHervorheben(vorschlag || notiz'] },
   'VOCAB_DATA[].mnemo': {
     wo: 'js/lernen.js — derselbe Weg, `mnemo` ist Vorschlag Nr. 0',
-    datei: 'js/lernen.js', ausdruecke: ['arabischHervorheben(notiz || vorschlag'] },
+    datei: 'js/lernen.js', ausdruecke: ['arabischHervorheben(vorschlag || notiz'] },
   'FACHBEGRIFF_VOKABELN[].mnemo': {
     wo: 'js/lernen.js — Fachbegriffe sind Karteikarten mit demselben Feld',
-    datei: 'js/lernen.js', ausdruecke: ['arabischHervorheben(notiz || vorschlag'] },
+    datei: 'js/lernen.js', ausdruecke: ['arabischHervorheben(vorschlag || notiz'] },
   'GRAMMAR_RULES[].name': {
     wo: 'js/saetze.js — Titel des Aufklappers UND der Knopf „Hier gilt auch:"',
     datei: 'js/saetze.js', ausdruecke: ['mitAr(rule.name)', 'mitAr(r.name)'],
