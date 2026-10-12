@@ -1962,8 +1962,16 @@ if (!EINZELN || typeof EINZELN !== 'object' || Array.isArray(EINZELN)) EINZELN =
    25.09.2026: تَعَارُفٌ 50172 „Kennenlernen" dazu — er hat es in Bayna Yadayk 1A
    rot unter den Titel der ersten Einheit geschrieben (neben „Begrüßen",
    gram-tahiyya). Meine Frage: „Die Karte gibt es schon … Soll ich sie
-   freischalten?" — er: „ja". In seinem abgeglichenen Stand ohne Eintrag. */
-const FREISCHALTEN_AUF_WUNSCH = ['50164', '50165', '50169', '50170', '50172'];
+   freischalten?" — er: „ja". In seinem abgeglichenen Stand ohne Eintrag.
+   13.10.2026: بَعْضٌ 50285 „einige / ein Teil von" dazu. Das Wort steht im Buch
+   in Kapitel 13 (S. 68 unten: بَعْضُهُمْ), als Vokabel aber erst im Zusatzkapitel
+   24. Elias am 12.10.2026 mit einem Bild der Stelle, an die er „Einige"
+   geschrieben hat: „baad (einige) brauche ich auch als karteikarte aber guck
+   erstmal wie es geschrieben und übersetzt wird". Auf meine Zeile „Die Karte
+   gibt es schon im Buch, aber im Zusatzkapitel 24 … Sie muss nur freigeschaltet
+   werden": „schalte frei". In seinem abgeglichenen Stand ohne Eintrag (gemessen
+   13.10.2026, 00:27). */
+const FREISCHALTEN_AUF_WUNSCH = ['50164', '50165', '50169', '50170', '50172', '50285'];
 {
   let neu = false;
   for (const id of FREISCHALTEN_AUF_WUNSCH)

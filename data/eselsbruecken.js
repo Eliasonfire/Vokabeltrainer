@@ -333,7 +333,7 @@ const BUCH_ESELSBRUECKEN = {
 
   "50201": "Der Gegensatz-Anschluss: „…, aber …“. ⚠️ Erkennungszeichen ist die Schadda auf dem نّ. Dieselbe Schadda trägt كَأَنَّ (als ob), das du in diesem Kapitel ebenfalls lernst — merk die beiden zusammen.",
 
-  "50285": "„Ein Teil von“ — das Gegenstück zu كُلٌّ (alle) aus Kapitel 19. Merk sie als Paar: كُلٌّ ganz, بَعْضٌ teilweise. ⚠️ Nicht mit بَعِيدٌ (fern) verwechseln, das du schon hast.",
+  "50285": "Du kennst es aus dem Dialog von Kapitel 13 — dort hast du „Einige“ danebengeschrieben: بَعْضُهُمْ, einige von ihnen. Es steht immer vor dem, wovon es ein Teil ist: بَعْضُ الطُّلَّابِ, einige der Studenten. Gebaut wie eine Genitivverbindung: vorn ohne Tanwīn, das Wort dahinter im Genitiv.",
 
   "50287": "Zusammengesetzt aus كَـ („wie“) und أَنَّ — daher „als ob“. Trägt dieselbe Schadda wie لَكِنَّ (aber) aus demselben Kapitel. Beide schließen einen ganzen Satz an, kein einzelnes Wort.",
 

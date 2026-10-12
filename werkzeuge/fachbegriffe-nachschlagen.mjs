@@ -377,7 +377,13 @@ function offeneWoerter(){
   const i = ARG.indexOf('--datei');
   if (i >= 0){
     const d = JSON.parse(fs.readFileSync(ARG[i + 1], 'utf8'));
-    return (Array.isArray(d) ? d : d.woerter || []).map(String);
+    /* ⛔ 13.10.2026: Hier stand `.map(String)` — die Schleife unten liest aber
+       `eintrag.wort`, und der erste Aufruf mit --datei starb an `undefined.padEnd`.
+       Der Schalter war seit seinem Bau nie gelaufen. Jetzt dieselbe Form wie aus
+       dem Prüfer; ein Eintrag darf ein Wort oder { wort, feld, id } sein. */
+    return (Array.isArray(d) ? d : d.woerter || []).map(x => (x && typeof x === 'object')
+      ? { wort: String(x.wort), feld: String(x.feld || ''), id: String(x.id || ''), zitat: /^mb\d/.test(String(x.id || '')) }
+      : { wort: String(x), feld: '', id: '', zitat: false });
   }
   let aus = '';
   try {

@@ -2755,7 +2755,8 @@ const ESELSBRUECKEN_ALT = {
   ],
 
   '50285': [
-    '⚠️ Es steht nie allein, sondern immer VOR einem zweiten Wort, und das zieht es in den Genitiv: بَعْضُ الطُّلَّابِ, „einige der Studenten". Damit ist es eine إِضَافَةٌ — die Verbindung, die du in diesem Kapitel gerade lernst. Zwei neue Wörter, ein Beispiel.',
+    '⚠️ Nicht mit بَعِيدٌ (fern) verwechseln, das du schon hast — beide fangen gleich an. بَعِيدٌ hat ein langes ī und endet auf د: weit weg. بَعْضٌ ist kurz und endet auf ض: nur ein Teil.',
+    'Die Endung dahinter kennst du aus demselben Dialog: أَسْمَاؤُهُمْ, ihre Namen — und genauso بَعْضُهُمْ, wörtlich „ihr Teil“, also einige von ihnen. Dein Buch: بَعْضُهُمْ مِنَ الصِّينِ, einige von ihnen sind aus China.'
   ],
 
   '50287': [
@@ -3194,5 +3195,20 @@ const ESELSBRUECKEN_ALT = {
   'kh-046': [
     'Der letzte Vers von al-Mulk: فَمَن يَأْتِيكُم بِمَآءٍ (67:30) — „wer bringt euch dann Wasser?“, wörtlich „wer kommt zu euch mit Wasser“. أَتَى mit bi- heißt: mit etwas kommen, also bringen. Dein مَاءٌ (Wasser) steht gleich dahinter.',
     'Zwei Verben für „kommen“, und al-Mulk benutzt beide: gefragt wird mit أَتَى (67:8), geantwortet mit جَاءَ — قَدْ جَآءَنَا نَذِيرٌ (67:9), „zu uns kam bereits ein Warner“. Beide heißen dasselbe.'
+  ],
+
+  'gram-jam-mudhakkar-salim': [
+    'Nach dem Gebet sagst du أَنْتَ السَّلاَمُ — „Du bist der Friede“, das Heil. Dieselbe Wurzel steckt in سَالِمٌ: heil geblieben. Der regelmäßige Plural lässt das Wort heil und hängt nur etwas an. Ist es ـُونَ, ist er männlich.',
+    'Am Ende erkennst du ihn: مُسْلِمُونَ, مُدَرِّسُونَ, مُهَنْدِسُونَ — dreimal dasselbe ـُونَ, und davor steht das Wort unverändert. Sieht ein Plural so aus, ist es جَمْعُ مُذَكَّرٍ سَالِمٌ.'
+  ],
+
+  'gram-jam-muannath-salim': [
+    'Derselbe Name wie beim männlichen, nur das mittlere Wort ist getauscht: مُؤَنَّثٌ, weiblich. Hör das „Anna“ darin — mu-anna-th, ein Frauenname. جَمْعٌ ist die Sammlung, سَالِمٌ heißt heil.',
+    'Am Ende erkennst du ihn: مُدَرِّسَاتٌ, مُهَنْدِسَاتٌ, الْمُسْلِمَاتُ — dreimal ـَات an der Stelle, wo vorher das ة stand. Ersetzen, nicht anhängen: مُدَرِّسَةٌ → مُدَرِّسَاتٌ.'
+  ],
+
+  'gram-jam-taksir': [
+    'Dein Lehrer zeigt es an einer Reihe: رِجَالٌ, كِبَارٌ, صِغَارٌ — drei Plurale, alle gleich gebaut. Gebrochen heißt also nicht regellos: das Wort wird innen umgebaut, und viele Wörter gehen denselben Weg. Sein Rat: den Plural bei jedem neuen Wort gleich mitlernen.',
+    'So erkennst du ihn: am Ende steht weder ـُونَ noch ـَات. Dein Lehrer: „Erkennst du hier eine der beiden Formen? Wenn nicht, dann ist es unregelmäßig.“ طُلَّابٌ, أَوْلَادٌ, كُتُبٌ — keine Endung, also جَمْعُ تَكْسِيرٍ.'
   ],
 };

@@ -89,7 +89,20 @@ try { KARTEN = (new Function(kartenText + ';return (typeof FOLGE19_KARTEN !== "u
 catch (e) { KARTEN = []; }
 const karteNach = new Map(KARTEN.map(k => [k.id, k]));
 const karteText = (k) => { const out = []; const lauf = x => { if (typeof x === 'string') out.push(x); else if (Array.isArray(x)) x.forEach(lauf); else if (x && typeof x === 'object') Object.values(x).forEach(lauf); }; lauf(k); return out.join(' '); };
-const belegText = [grammarText, kartenText, lies(ZIEL), lies('vocab-data.js')].join('\n');
+/* ⭐ SEINE DUAS ZÄHLEN MIT (13.10.2026). Seit dem 30.09.2026 sind sie Anker für
+   Eselsbrücken — Elias am 29.09.2026: „die duas kannst du für vorschläge nutzen
+   um bessere zu machen …“ und „alle dua fotos kann ich 100%“. Dieses Werkzeug
+   ist vom 11.09. und kannte sie nicht: der Anfang seines Taschahhud (vier
+   Wörter auf ـَات, der Merkhaken für den regelmäßigen weiblichen Plural) wurde
+   als „steht so nirgends“ abgewiesen. Gelesen wird nur das Feld `texte` der
+   Duas, die als Anker gelten — derselbe belegte Wortlaut, den
+   pruefe-eselsbruecken.js in Abschnitt 9 verlangt. */
+let duaText = '';
+try {
+  duaText = (JSON.parse(lies('data/duas.json')).duas || []).filter(d => d.alsAnker === true)
+    .flatMap(d => (d.texte || []).map(t => String(t.arabisch || ''))).join('\n');
+} catch (e) { /* ohne die Datei gelten nur Regeln, Vokabeln und Fachbegriffe */ }
+const belegText = [grammarText, kartenText, lies(ZIEL), lies('vocab-data.js'), duaText].join('\n');
 const WORT = new RegExp('[' + BUCHSTABE + '][\\u0610-\\u061A\\u064B-\\u065F\\u0670\\u0640' + BUCHSTABE + ']*', 'g');
 
 /* ⭐⭐ WÖRTERBUCH-BELEGE — Elias am 11.09.2026, 21:20:26, auf meine Zeile, er
