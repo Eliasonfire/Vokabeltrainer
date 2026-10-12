@@ -2025,4 +2025,236 @@ const BEISPIELSAETZE = {
   'gram-nat':     { sentAr: 'الْجَدِيدُ نَعْتٌ لِلْكِتَابِ.',  sentDe: '‚Neu‘ ist ein Attribut zum Buch.' },              /* = 50428 */
   'gram-mubtada': { sentAr: 'الْبَيْتُ مُبْتَدَأٌ.',           sentDe: '‚Das Haus‘ ist ein Mubtadaʾ.' },                  /* = 50467 */
   'gram-mansub':  { sentAr: 'هَذَا الْاِسْمُ مَنْصُوبٌ.',      sentDe: 'Dieses Nomen steht im Akkusativ.' },             /* = 50471 */
+
+  /* >>> KORAN-HAEUFIGSTE-ANFANG (erzeugt, nicht von Hand ändern — siehe den Kopf des Abschnitts) */
+  /* ------------------------------------------------------------------------
+     „KORAN HÄUFIGSTE" — DIE ERSTEN 30 KARTEN (12.10.2026)
+
+     Die Gruppe (Elias, 11.10.2026: „ja bau die ersten 100 wörter ein")
+     bekommt wie jede neue Vokabel das volle Programm (VOLLES-PROGRAMM.md,
+     Punkt A9). Gemeint sind die 30 Wörter, die als EIGENE Karte der Gruppe
+     stehen, weil er noch keine Buchkarte desselben Wortes hat.
+
+     15 davon haben einen Satz. Die anderen 15 bleiben MIT ABSICHT leer, und
+     der Grund steht bei jeder einzelnen — meist: die Bauform, in der das Wort
+     lebt (Bedingungssatz, Nebensatz, Akkusativ nach der Partikel, zwei
+     Objekte), hat er im Unterricht noch nicht. A9: „Lieber kein Satz als ein
+     gestellter." Die Eselsbrücken zeigen diese Wörter an Versen, die er
+     auswendig kann.
+
+     ⛔ HERKUNFT: kein Zeichen ist hier von Hand vokalisiert.
+     Jede Wortform stammt von der Karte, aus einem vorhandenen Satz (Lehrbuch
+     oder diese Datei) oder aus einer von vier Umformungen, die vorher am
+     vorhandenen Satzbestand (580 Sätze) geeicht wurden:
+       unbestimmt -> bestimmt                 75 Wörter gleich
+       bestimmtes Nomen -> Genitiv/Akkusativ  34 und 11 gleich
+       erstes Wort einer Genitivverbindung    40 gleich
+       bi- vor bestimmtem Genitiv             2 gleich
+     Die wenigen Abweichungen der Eichung (2, 1, 2) waren keine Fehler der
+     Umformung, sondern andere Wörter mit denselben Buchstaben (Mann/Bein,
+     Frau/Spiegel) und eine andere Schreibung des Verbindungs-Alif.
+
+     Zwei Sätze (kh-005, kh-028) sind wörtlich die der Buchkarten 45968 und
+     45944: das ist dasselbe Wort, und schaltet er ihr Kapitel frei, steht die
+     Buchkarte für das Wort und bringt denselben Satz mit.
+
+     Erzeugt aus einer Vorlage mit Verweisen (satz-vorlage-30.json) durch
+     satz-aufloesen.mjs; beides liegt noch lokal unter
+     data-ersatz/arbeit/koran-zwischenordner/.
+     ------------------------------------------------------------------------ */
+
+  /* اللَّهُ — Allah („Koran häufigste", Rang 2)
+     Genitivverbindung als Aussage, gebaut wie der Satz aus seinem Buch (Madina
+     1, S. 28: das Buch Allahs). Das erste Wort der Verbindung trägt kein
+     Tanwin, der Gottesname steht im Genitiv. */
+  'kh-002': {
+    sentAr: 'الْمَسْجِدُ بَيْتُ اللَّهِ.',
+    sentDe: 'Die Moschee ist das Haus Allahs.'
+  },
+
+  /* kh-004 · إِنَّ — gewiss, wahrlich („Koran häufigste", Rang 6)
+     KEIN SATZ, mit Absicht. Nach dieser Partikel steht das Subjekt im Akkusativ. Diese Regel hat er im
+     Unterricht noch nicht; ein Satz ohne sie ließe sich nicht erklären und
+     bekäme keine Markierung. Die Eselsbrücken zeigen das Wort an Versen, die
+     er auswendig kann. */
+
+  /* قَالَ — sagen („Koran häufigste", Rang 7)
+     Derselbe Satz wie bei der Buchkarte 45968, die dasselbe Wort ist: schaltet
+     er ihr Kapitel frei, steht sie für das Wort und bringt genau diesen Satz
+     mit. */
+  'kh-005': {
+    sentAr: 'قَالَ الْمُدَرِّسُ.',
+    sentDe: 'Der Lehrer sagte.'
+  },
+
+  /* kh-009 · كَانَ — sein („Koran häufigste", Rang 10)
+     KEIN SATZ, mit Absicht. Dieses Verb setzt die Aussage in den Akkusativ (kana und seine
+     Schwestern). Die Regel hat er noch nicht; der Satz bekäme eine falsche
+     oder keine Erklärung. */
+
+  /* رَبٌّ — Herr („Koran häufigste", Rang 11)
+     Genitivverbindung als Aussage. Die zwei letzten Wörter kennt er aus an-Nas
+     (114:1), dort im Genitiv; hier steht das erste im Nominativ, weil es die
+     Aussage des Satzes ist. */
+  'kh-011': {
+    sentAr: 'اللَّهُ رَبُّ النَّاسِ.',
+    sentDe: 'Allah ist der Herr der Menschen.'
+  },
+
+  /* kh-015 · إِنْ — wenn, falls · nicht (Verneinung) („Koran häufigste", Rang 14)
+     KEIN SATZ, mit Absicht. Bedingungssatz: zwei Teilsätze, das Verb in einer Form, die er noch nicht
+     hat. Kein Satz mit seinen Bauformen möglich. */
+
+  /* kh-016 · أَنْ — dass („Koran häufigste", Rang 16)
+     KEIN SATZ, mit Absicht. Leitet einen Nebensatz ein und verlangt die Gegenwartsform auf Fatha.
+     Nebensätze und diese Form hat er noch nicht. */
+
+  /* kh-017 · إِلَّا — außer; nur („Koran häufigste", Rang 15)
+     KEIN SATZ, mit Absicht. Ausnahmesatz (nichts … außer): die Regel dazu hat er noch nicht. Die
+     Eselsbrücke nutzt das Glaubensbekenntnis, das er kennt. */
+
+  /* آمَنَ — glauben („Koran häufigste", Rang 17)
+     Einfacher Verbalsatz. Das Verb verbindet sich mit bi-: glauben AN heißt
+     arabisch glauben MIT. Nach dem Kasra des bi- wird der Gottesname hell
+     gesprochen. */
+  'kh-018': {
+    sentAr: 'آمَنَ الرَّجُلُ بِاللَّهِ.',
+    sentDe: 'Der Mann glaubte an Allah.'
+  },
+
+  /* أَرْضٌ — Erde, Land („Koran häufigste", Rang 20)
+     Das Wort ist weiblich, obwohl es kein Ta marbuta trägt: darum das
+     weibliche Hinweiswort und das weibliche Adjektiv. */
+  'kh-021': {
+    sentAr: 'هَذِهِ أَرْضٌ جَمِيلَةٌ.',
+    sentDe: 'Das ist ein schönes Land.'
+  },
+
+  /* kh-022 · قَدْ — schon, gewiss (vor dem Verb) („Koran häufigste", Rang 21)
+     KEIN SATZ, mit Absicht. Steht nur vor einem Verb und färbt dessen Bedeutung (schon, gewiss). Dafür
+     gibt es noch keine Regel aus seinem Unterricht; ein Satz ließe sich nicht
+     markieren. */
+
+  /* kh-023 · إِذَا — wenn, sobald („Koran häufigste", Rang 22)
+     KEIN SATZ, mit Absicht. Zeit- und Bedingungssatz mit zwei Teilsätzen. Diese Bauform hat er noch
+     nicht. */
+
+  /* قَوْمٌ — Volk, Leute („Koran häufigste", Rang 24)
+     Nominalsatz mit Ortsangabe. Mit dem Artikel fällt das Tanwin, nach der
+     Genitivpartikel steht der Genitiv. */
+  'kh-024': {
+    sentAr: 'الْقَوْمُ فِي الْمَسْجِدِ.',
+    sentDe: 'Die Leute sind in der Moschee.'
+  },
+
+  /* آيَةٌ — Zeichen; Vers („Koran häufigste", Rang 25)
+     Weibliches Hinweiswort, weil das Wort auf Ta marbuta endet. Vor dem
+     Artikel bekommt min ein Fatha: mina l-. */
+  'kh-025': {
+    sentAr: 'هَذِهِ آيَةٌ مِنَ الْكِتَابِ.',
+    sentDe: 'Das ist ein Vers aus dem Buch.'
+  },
+
+  /* kh-026 · عَلِمَ — wissen („Koran häufigste", Rang 26)
+     KEIN SATZ, mit Absicht. Das Verb braucht ein Objekt (etwas wissen). In seinem Bestand steht kein
+     Wort, das dazu natürlich passt; lieber kein Satz als ein gestellter. */
+
+  /* kh-027 · أَنَّ — dass („Koran häufigste", Rang 27)
+     KEIN SATZ, mit Absicht. Leitet einen Nebensatz ein, dessen Subjekt im Akkusativ steht. Nebensätze
+     und diese Regel hat er noch nicht. */
+
+  /* كُلٌّ — jeder; alle („Koran häufigste", Rang 28)
+     Derselbe Satz wie bei der Buchkarte 45944, die dasselbe Wort ist. Das Wort
+     steht als erstes einer Genitivverbindung; das zweite ist unbestimmt und
+     trägt darum Tanwin im Genitiv. */
+  'kh-028': {
+    sentAr: 'كُلُّ طَالِبٍ فِي الْمَدْرَسَةِ.',
+    sentDe: 'Jeder Student ist in der Schule.'
+  },
+
+  /* kh-029 · لَمْ — nicht (Vergangenheit) („Koran häufigste", Rang 29)
+     KEIN SATZ, mit Absicht. Verneint die Vergangenheit, verlangt aber die Gegenwartsform mit Sukun am
+     Ende. Diese Form hat er noch nicht. Die Eselsbrücke nutzt al-Ikhlas
+     (112:3). */
+
+  /* kh-030 · جَعَلَ — machen; einsetzen („Koran häufigste", Rang 30)
+     KEIN SATZ, mit Absicht. Das Verb nimmt zwei Objekte (jemanden zu etwas machen). Diese Bauform hat
+     er noch nicht. */
+
+  /* ثُمَّ — dann, danach („Koran häufigste", Rang 31)
+     Der Satz aus seinem Buch (Madina 1, S. 25), nur mit diesem Wort an der
+     Stelle von wa-: erst das eine, DANN das andere. Im zweiten Verb steckt das
+     er. */
+  'kh-031': {
+    sentAr: 'خَرَجَ الْمُدَرِّسُ مِنَ الْفَصْلِ ثُمَّ ذَهَبَ إِلَى الْمُدِيرِ.',
+    sentDe: 'Der Lehrer verließ das Klassenzimmer, dann ging er zum Direktor.'
+  },
+
+  /* kh-035 · عَذَابٌ — Strafe, Qual („Koran häufigste", Rang 33)
+     KEIN SATZ, mit Absicht. Abstraktes Wort; ein natürlicher Satz bräuchte Wörter wie Feuer oder
+     schwer, die nicht in seinem Bestand stehen. Die Eselsbrücken zeigen es an
+     Versen aus al-Mulk. */
+
+  /* kh-038 · نَفْسٌ — Seele; selbst („Koran häufigste", Rang 36)
+     KEIN SATZ, mit Absicht. Abstraktes Wort mit zwei Bedeutungen (Seele; selbst). Ein Satz mit seinen
+     Wörtern wäre gestellt. */
+
+  /* كَفَرَ — nicht glauben, leugnen; undankbar sein („Koran häufigste", Rang 37)
+     Das Gegenstück zum Satz von glauben, mit derselben Bauform: auch dieses
+     Verb verbindet sich mit bi-. */
+  'kh-039': {
+    sentAr: 'كَفَرَ الرَّجُلُ بِاللَّهِ.',
+    sentDe: 'Der Mann glaubte nicht an Allah.'
+  },
+
+  /* شَيْءٌ — Sache, Ding; etwas („Koran häufigste", Rang 38)
+     Hinweiswort, unbestimmtes Nomen, Adjektiv: das Adjektiv folgt dem Nomen in
+     allem, auch im Tanwin. */
+  'kh-040': {
+    sentAr: 'هَذَا شَيْءٌ جَدِيدٌ.',
+    sentDe: 'Das ist eine neue Sache.'
+  },
+
+  /* أَوْ — oder („Koran häufigste", Rang 39)
+     Das Wort steht zwischen zwei gleich gebauten Ortsangaben. Beide
+     Genitivpartikeln verlangen den Genitiv. */
+  'kh-041': {
+    sentAr: 'الْكِتَابُ عَلَى الْمَكْتَبِ أَوْ فِي الْحَقِيبَةِ.',
+    sentDe: 'Das Buch ist auf dem Schreibtisch oder in der Tasche.'
+  },
+
+  /* جَاءَ — kommen („Koran häufigste", Rang 40)
+     Einfacher Verbalsatz: Verb, Handelnder im Nominativ, Ziel mit ila und
+     Genitiv. */
+  'kh-042': {
+    sentAr: 'جَاءَ الضَّيْفُ إِلَى الْبَيْتِ.',
+    sentDe: 'Der Gast kam zum Haus.'
+  },
+
+  /* kh-043 · عَمِلَ — tun, handeln („Koran häufigste", Rang 41)
+     KEIN SATZ, mit Absicht. Auf der Karte heißt es tun, handeln; im Alltag meist arbeiten. Ein
+     Alltagssatz zeigte die andere Bedeutung, ein Satz im Sinn des Korans
+     bräuchte ein Objekt, das er noch nicht bilden kann. */
+
+  /* kh-044 · آتَى — geben („Koran häufigste", Rang 42)
+     KEIN SATZ, mit Absicht. Das Verb nimmt zwei Objekte (jemandem etwas geben). Diese Bauform hat er
+     noch nicht. */
+
+  /* رَأَى — sehen („Koran häufigste", Rang 43)
+     Verbalsatz mit Objekt: der Handelnde im Nominativ, das Objekt im
+     Akkusativ. Das Verb endet auf Alif maqsura. */
+  'kh-045': {
+    sentAr: 'رَأَى الطَّالِبُ الْمُدَرِّسَ فِي السُّوقِ.',
+    sentDe: 'Der Student sah den Lehrer auf dem Markt.'
+  },
+
+  /* أَتَى — kommen („Koran häufigste", Rang 44)
+     Einfacher Verbalsatz mit Ziel. Das Verb endet auf Alif maqsura, wie das
+     Verb für sehen. */
+  'kh-046': {
+    sentAr: 'أَتَى الرَّجُلُ إِلَى الْمَسْجِدِ.',
+    sentDe: 'Der Mann kam zur Moschee.'
+  },
+
+  /* <<< KORAN-HAEUFIGSTE-ENDE */
 };

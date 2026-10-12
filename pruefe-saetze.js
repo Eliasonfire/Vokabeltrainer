@@ -350,9 +350,29 @@ for (const q of quellen){
 console.log(String.fromCharCode(10) + '=== LEXIKON-VERGLEICH: sieht Elias in jeder Buchauswahl dieselbe Zerlegung? ===');
 let lexikonSchwer = 0;
 {
-  const BUECHER = Object.keys(fenster.VOKABELN || {});
+  /* ⭐ 12.10.2026: DIE WORTGRUPPE „KORAN HÄUFIGSTE" IST HIER EIN BUCH WIE DIE ANDEREN.
+     Seit heute tragen 15 ihrer Karten einen Satz (data/beispielsaetze.js, kh-…).
+     Ohne diesen Eintrag meldete der Vergleich sie als „Id, die in keinem Buch
+     steht — sie erscheinen nie": das stimmte nicht (sie erscheinen, sobald er die
+     Gruppe anhakt, js/buecher.js haengt ihre Karten wie ein Buch ein), und vor
+     allem fielen sie damit aus dem Vergleich heraus. Jetzt gilt fuer sie dasselbe
+     wie fuer jeden Buchsatz: Heimat = die Gruppe, verglichen gegen „Gruppe + je
+     ein weiteres Buch". Und jeder ANDERE Satz wird zusaetzlich mit der Gruppe im
+     Lexikon zerlegt — so faellt auf, wenn ein Koranwort die Zerlegung eines
+     vorhandenen Satzes aendert, bevor er die Gruppe anhakt. */
+  const KORAN_GRUPPE = 'koran-haeufig';
+  const buchKarten = Object.assign({}, fenster.VOKABELN || {});
+  {
+    const koranDatei = P + 'koran-haeufig-data.js';
+    if (fs.existsSync(koranDatei)){
+      const liste = (new Function(fs.readFileSync(koranDatei, 'utf8')
+        + '\nreturn (typeof KORAN_HAEUFIG !== "undefined" && Array.isArray(KORAN_HAEUFIG)) ? KORAN_HAEUFIG : [];'))();
+      if (liste.length) buchKarten[KORAN_GRUPPE] = liste.map(e => Object.assign({}, e, { book: KORAN_GRUPPE, chapter: e.kap }));
+    }
+  }
+  const BUECHER = Object.keys(buchKarten);
   const buchVon = new Map();
-  for (const b of BUECHER) for (const w of fenster.VOKABELN[b])
+  for (const b of BUECHER) for (const w of buchKarten[b])
     if (!buchVon.has(String(w.id))) buchVon.set(String(w.id), b);
   const immerIds = new Set(VOCAB_DATA.map(w => String(w.id)));
   for (const w of FACHBEGRIFF_VOKABELN) if (w) immerIds.add(String(w.id));
@@ -369,7 +389,7 @@ let lexikonSchwer = 0;
     const ids = new Set(lex.map(w => String(w.id)));
     const dazu = w => { if (w && !ids.has(String(w.id))){ ids.add(String(w.id)); lex.push(w); } };
     FACHBEGRIFF_VOKABELN.forEach(dazu);
-    for (const b of buecher) (fenster.VOKABELN[b] || []).forEach(dazu);
+    for (const b of buecher) (buchKarten[b] || []).forEach(dazu);
     return lex;
   };
   /* فِعْل als Zeichenfolge aus Codepoints — nie sichtbar kopiert, siehe js/irab.js */

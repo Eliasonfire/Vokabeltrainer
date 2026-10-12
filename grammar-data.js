@@ -3521,6 +3521,70 @@ const SENTENCE_TAGS = {
   ],
   "by1-32-1": [
     { ruleId: "adjektive-steigerung-akbar-01", matchText: "أَكْبَرُ" }
+  ],
+  "kh-002": [
+    { ruleId: "mudaf-01", matchText: "بَيْتُ" },
+    { ruleId: "lafz-al-jalala-01", matchText: "اللَّهِ" }
+  ],
+  "kh-005": [
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "قَالَ الْمُدَرِّسُ" }
+  ],
+  "kh-011": [
+    { ruleId: "mudaf-01", matchText: "رَبُّ" },
+    { ruleId: "mudaf-ilayh-01", matchText: "النَّاسِ" }
+  ],
+  "kh-018": [
+    { ruleId: "verb-madi-endungen-01", matchText: "آمَنَ" },
+    { ruleId: "marfu-grundfall-01", matchText: "الرَّجُلُ" },
+    { ruleId: "harf-jarr-bi-01", matchText: "بِاللَّهِ" }
+  ],
+  "kh-021": [
+    { ruleId: "isara-genus-kongruenz-01", matchText: "هَذِهِ أَرْضٌ" },
+    { ruleId: "fem-ohne-ta-marbuta-01", matchText: "أَرْضٌ" },
+    { ruleId: "nat-fem-01", matchText: "أَرْضٌ جَمِيلَةٌ" }
+  ],
+  "kh-024": [
+    { ruleId: "marfu-grundfall-01", matchText: "الْقَوْمُ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْمَسْجِدِ" }
+  ],
+  "kh-025": [
+    { ruleId: "isara-genus-kongruenz-01", matchText: "هَذِهِ آيَةٌ" },
+    { ruleId: "mina-al-01", matchText: "مِنَ الْكِتَابِ" }
+  ],
+  "kh-028": [
+    { ruleId: "idafa-zweitglied-01", matchText: "كُلُّ طَالِبٍ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْمَدْرَسَةِ" }
+  ],
+  "kh-031": [
+    { ruleId: "mina-al-01", matchText: "مِنَ الْفَصْلِ" },
+    { ruleId: "verb-enthaelt-pronomen-01", matchText: "ذَهَبَ" },
+    { ruleId: "harf-jarr-min-ila-01", matchText: "إِلَى الْمُدِيرِ" }
+  ],
+  "kh-039": [
+    { ruleId: "verb-madi-endungen-01", matchText: "كَفَرَ" },
+    { ruleId: "harf-jarr-bi-01", matchText: "بِاللَّهِ" }
+  ],
+  "kh-040": [
+    { ruleId: "ismul-isara-hadha-01", matchText: "هَذَا" },
+    { ruleId: "nat-wen-beschreibt-01", matchText: "جَدِيدٌ" }
+  ],
+  "kh-041": [
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "عَلَى الْمَكْتَبِ" },
+    { ruleId: "hurufu-jarr-bedeutungen-01", matchText: "فِي الْحَقِيبَةِ" }
+  ],
+  "kh-042": [
+    { ruleId: "jumla-ismiya-filiya-01", matchText: "جَاءَ" },
+    { ruleId: "schams-qamar-01", matchText: "الضَّيْفُ" },
+    { ruleId: "harf-jarr-min-ila-01", matchText: "إِلَى الْبَيْتِ" }
+  ],
+  "kh-045": [
+    { ruleId: "alif-maqsura-01", matchText: "رَأَى" },
+    { ruleId: "marfu-grundfall-01", matchText: "الطَّالِبُ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي السُّوقِ" }
+  ],
+  "kh-046": [
+    { ruleId: "alif-maqsura-01", matchText: "أَتَى" },
+    { ruleId: "harf-jarr-min-ila-01", matchText: "إِلَى الْمَسْجِدِ" }
   ]
 };
 
