@@ -338,7 +338,12 @@ export const PFLEGEPLAN = [
           + '(Elias, 12.10.2026: „guck nach weiteren möglichkeiten sie zu besorgen"): '
           + 'ersatz-bama-abgleich.mjs (Buckwalters Stammliste) und ersatz-lane.mjs (Lanes Lexikon, holt '
           + 'nur mit --holen); eingetragen wird von Hand. '
-          + 'Bewacht von pruefe-ersatz.mjs, eiche-ersatz.mjs und eiche-ersatz-bama.mjs' },
+          + 'Seit dem 12.10.2026 schreibt der Bau das Deutsch im Wortlaut der bisherigen Karte, wo die '
+          + 'Quellen deren Wörter nennen (Elias: „das ist sehr wenig, guck mal nach damit wir mehr '
+          + 'identische bekommen"; Regel wieDieKarte in ersatz-bauen.mjs). Sie läuft bei jedem Bau mit: '
+          + 'ändert der Abzug das Deutsch einer Karte, folgt der Wortlaut von selbst. Mehr Karten treffen '
+          + 'kann sie nur mit mehr Fundstellen — die holt eine Sitzung mit ersatz-arabdict.mjs --holen --ids. '
+          + 'Bewacht von pruefe-ersatz.mjs, eiche-ersatz.mjs, eiche-ersatz-zuordner.mjs und eiche-ersatz-bama.mjs' },
     ],
   },
   {
