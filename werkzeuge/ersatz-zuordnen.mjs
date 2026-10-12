@@ -157,7 +157,11 @@ for (const buch of Object.keys(SCHLUESSEL_NAME)) {
     // Die Schrift der Vorlage setzt den Punkt unter einem Umschriftbuchstaben („ṣ", „ḥ", „ḍ") als eigenes Zeichen aus dem
     // privaten Bereich (U+F024) HINTER den Buchstaben; auf der Karte wäre das ein leeres Kästchen. Es wird zum Punkt
     // darunter (U+0323) und verschmilzt mit seinem Buchstaben. Andere private Zeichen sind Reste ohne Inhalt.
-    let de = z.de.replace(PUNKT_PRIVAT, PUNKT_UNTEN).replace(PRIVAT, '').normalize('NFC').replace(VERBKLASSE, ' ').replace(/\s+/g, ' ').replace(/\s+,/g, ',').trim();
+    // Reste des Auslesens (gefunden am 12.10.2026 bei der Durchsicht der Karten): wo im deutschen Feld des Schlüssels
+    // ARABISCHE Schrift stand, fehlt sie im Auszug. Übrig bleibt eine leere Klammer („einäugig (fem. )" — dahinter stand die
+    // weibliche Form) oder ein Komma am Zeilenende („entkommen, (a-u)" nach dem Abziehen der Verbklasse). Beides trägt
+    // keinen Inhalt und stünde sonst genau so auf der Karte.
+    let de = z.de.replace(PUNKT_PRIVAT, PUNKT_UNTEN).replace(PRIVAT, '').normalize('NFC').replace(VERBKLASSE, ' ').replace(/\(\s*(?:fem\.?|feminine?)\s*\)/gi, ' ').replace(/\s+/g, ' ').replace(/\s+,/g, ',').replace(/[,;]\s*$/, '').trim();
     let berichtigt = false;
     for (const [falsch, richtig] of Object.entries(DE_KORREKTUR)) if (de.includes(falsch)) { de = de.split(falsch).join(richtig); berichtigt = true; }
     // „X = Y" und „X، Y" nennen zwei Stichwörter in einer Zeile
