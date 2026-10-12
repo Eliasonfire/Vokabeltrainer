@@ -186,7 +186,7 @@ vm.runInContext(fach + '\nthis.F = (typeof FACHBEGRIFF_VOKABELN !== "undefined")
    60 → 61 — هَيَّا بِنَا „Los geht's" von derselben Seite (Schadda von Elias nachgehört);
    25.09.2026 (v621): 61 → 63 — تَحِيَّةٌ „Begrüßen" und الْحَيَاةُ الْيَوْمِيَّةُ „Der Alltag",
    rot in Bayna Yadayk 1A („ja mach außer zusammenfassung und vokabeln"). */
-pruefe('Oberflaeche: 63 Fachbegriffe', 63, ktxF.F ? ktxF.F.length : 'FACHBEGRIFF_VOKABELN fehlt');
+pruefe('Oberflaeche: 66 Fachbegriffe', 66, ktxF.F ? ktxF.F.length : 'FACHBEGRIFF_VOKABELN fehlt');
 
 /* Die neuen Ausnahmen in den Pruefern
    ⛔⛔ OHNE KOMMENTARE. Diese vier Zeilen behaupten „steht im Code" — und ein
