@@ -34,7 +34,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 import { abzugOrdner, istErsatzkarte } from './datenquelle.mjs';
-import { vergleich as wortform, ladeBama, standardDatei, geruest, nachBW, ausBW, wurzelSchluessel, wurzelWert, laneDateiname, laneFuehrtWurzel } from './ersatz-bama-lib.mjs';
+import { vergleich as wortform, ladeBama, standardDatei, geruest, nachBW, ausBW, wurzelSchluessel, wurzelWert, laneDateiname, laneFuehrtWurzel, bamaMehrzahlZurKarte } from './ersatz-bama-lib.mjs';
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
 const REPO = process.env.ERSATZ_REPO || path.join(HIER, '..');
@@ -205,8 +205,10 @@ let verbformenWeg = 0;
  * Ersatzkarte mit dessen Fundstelle. Führt die bisherige Karte dort ein ANDERES Wort (die Karte trägt eine Mehrzahl
  * oder eine Befehlsform), bleibt das Feld offen. Verglichen wird mit Vokalzeichen, ohne die Schlussendung. */
 const gleichesWort = (a, b) => wortform(nfc(a), { artikelWeg: false }) === wortform(nfc(b), { artikelWeg: false });
-const SELBST = [['noun', 'sg', 'die Einzahl'], ['verb', 'past', 'die Vergangenheit (3. Person m. Einzahl)']];
-const selbst = { sg: 0, past: 0 };
+/* Seit dem 13.10.2026 auch die MEHRZAHL: zehn Karten tragen als Wort selbst eine Mehrzahl oder ein Sammelwort
+ * („Hausaufgaben", „Gefährten", „Tomate"), und die bisherige Karte nennt im Feld Mehrzahl ihr eigenes Wort. */
+const SELBST = [['noun', 'sg', 'die Einzahl'], ['verb', 'past', 'die Vergangenheit (3. Person m. Einzahl)'], ['noun', 'pl', 'die Mehrzahl']];
+const selbst = { sg: 0, past: 0, pl: 0 };
 /* GESCHLECHT AUS DER ENDUNG (13.10.2026, Regel von Claude). An 148 Ersatzkarten fehlte das Geschlecht, das die bisherige
  * Karte hat: arabdict, der Buchschlüssel und Buckwalters Liste nennen keines. Ein Nomen, das in der EINZAHL auf Ta marbuta
  * endet, ist weiblich — das ist die Regel der Grammatik, keine Angabe einer Quelle, und so steht es im Beleg.
@@ -219,6 +221,31 @@ const TA_MARBUTA = String.fromCodePoint(0x629);
 const ZEICHEN_WEG = new RegExp('[' + String.fromCodePoint(0x64B) + '-' + String.fromCodePoint(0x652) + String.fromCodePoint(0x670) + String.fromCodePoint(0x640) + ']', 'g');
 const ENDUNG_WEIBLICH = 'Endung Ta marbuta am Wort in der Einzahl: weiblich. Das ist die Regel der Grammatik, keine Angabe einer Quelle — nachgemessen an 565 Nomen dieser Art, deren Geschlecht eine Quelle nennt: 562 weiblich; die drei anderen führt auch die bisherige Karte als männlich, und dann bleibt das Feld offen. Die Zuordnung stammt von Claude';
 const endung = { gesetzt: 0 };
+/* MEHRZAHL aus Buckwalters Stammliste (bamaMehrzahlZurKarte in ersatz-bama-lib.mjs, dort stehen die Bedingungen und die
+ * Messung; Regel von Claude, 13.10.2026). Anlass: nach der Pflicht der App fehlte die Mehrzahl an 167 Ersatzkarten,
+ * die sie im Bestand haben — der Eintrag des Wiktionary nennt dort keine, arabdict und der Schlüssel nennen nie eine.
+ * Die Stammliste liegt schon da und nennt sie: als weitere Zeile unter dem Lemma oder über die Kategorie der Einzahl.
+ * Nur als LÜCKE, nur für ein Nomen aus einem Wort, dessen Einzahl das Wort selbst ist; nie für ein Wort auf Kasratan
+ * (ohne die Endung gliche es einem anderen Lemma: „Ober" dem „Bein"), nie für einen Namen oder ein Zahlwort der Quelle.
+ * Die bisherige Karte spielt keine Rolle — nur ihr Trennzeichen zwischen mehreren Formen wird übernommen. */
+const mehrzahlListe = { gesetzt: 0, unklar: 0 };
+function mehrzahlAusStammliste(ar, s, altPl) {
+  const wort = nfc(ar);
+  if (wort.endsWith(KASRATAN) || /\s/.test(wort) || !bamaNach.size) return null;
+  const alle = bamaNach.get(wortform(wort)) || bamaNach.get(wortform(wort, { artikelWeg: false })) || [];
+  const m = bamaMehrzahlZurKarte(alle, wort, (s.vorschlag && s.vorschlag._en) || []);
+  if (!m) return null;
+  if (m.unklar) { mehrzahlListe.unklar++; return null; }
+  if (!m.formen.length) return null;
+  const woher = f => f.art === 'kategorie' ? `die Zeile der Einzahl „${f.stamm}“ trägt die Kategorie ${f.kat} — nach dem Begleittext der Liste nimmt ein solches Nomen die Mehrzahlendung -At`
+    : f.art === 'zeile-at' ? `Zeile „${f.stamm}“ der Kategorie ${f.kat} (Stamm mit der Mehrzahlendung -At, englisch „${f.glosse}“)`
+      : `Zeile „${f.stamm}“ (Kategorie ${f.kat}, englisch „${f.glosse}“)`;
+  const wahl = m.wahl === 'sinn' ? ` — unter ${m.von} gleich geschriebenen Lemmata das, dessen englische Bedeutung ein Wort mit der Bedeutung der Karte teilt` : m.wahl === 'einig' ? ` — ${m.von} gleich geschriebene Lemmata nennen dieselbe Mehrzahl` : '';
+  return {
+    w: m.formen.map(f => f.ar).join(voll(altPl) && String(altPl).includes('/') ? ' / ' : '|'),
+    wo: `Buckwalter Arabic Morphological Analyzer 1.0, Stammliste, Lemma „${m.lemma.id}“ (englisch „${m.einzahl[0].glosse}“)${wahl}: ${m.formen.map(woher).join('; ')}. Geschrieben wie im übrigen Ersatz (Fatha vor dem Dehnungs-Alif, Verbindungs-Alif mit Kasra), ohne Schlussendung. Dass diese Zeile die Mehrzahl des Worts der Karte ist, hat Claude aus der Liste abgelesen`,
+  };
+}
 /* WURZEL AUS BUCKWALTERS STAMMLISTE (12.10.2026, Regel von Claude). Die Stammliste (BAMA 1.0, liegt nur lokal) führt
  * ihre Lemmata unter Wurzelzeilen („;--- Wurzel"). Roh taugen die nicht als Quelle — gemessen: an 582 von 2893 Karten
  * mit bekannter Wurzel nennt die Zeile eine andere (sie steht nicht vor jedem Lemma, manche Lemmata hängen unter der
@@ -420,6 +447,14 @@ for (const buch of BUECHER) {
         felder.gender = { w: 'feminine', wo: ENDUNG_WEIBLICH, q: 'endung' };
         endung.gesetzt++;
       }
+      // Mehrzahl aus Buckwalters Stammliste (mehrzahlAusStammliste, oben): nur als Lücke, nur am Wort in der Einzahl,
+      // nie für einen Namen oder ein Zahlwort der Quelle; „leer" von Hand nimmt das Feld wieder heraus
+      const wortartQuelle = String(s.ref || '').split('#')[1] || '';
+      if (felder.type && felder.type.w === 'noun' && !felder.pl && felder.ar && felder.sg && !(h.leer || []).includes('pl')
+        && !/\s/.test(nfc(felder.ar.w).trim()) && gleichesWort(felder.sg.w, felder.ar.w) && wortartQuelle !== 'name' && wortartQuelle !== 'num') {
+        const b = mehrzahlAusStammliste(felder.ar.w, s, altK && altK.pl);
+        if (b) { felder.pl = { w: b.w, wo: b.wo, q: 'bama-mehrzahl' }; mehrzahlListe.gesetzt++; }
+      }
     }
     for (const f of h.leer || []) delete felder[f];
     // „Wie die Karte" (siehe wieDieKarte oben): gilt für jeden Platz, auch nach einer Entscheidung von Hand — nennen die
@@ -488,6 +523,7 @@ schreibe(path.join(ERSATZ, 'unterschiede.json'), JSON.stringify(unterschiede, nu
 // wo die Arbeit liegt — z. B. wie viele Karten im Arabischen selbst abweichen und wie viele nur in der Schlussendung.
 stand.laneWurzeln = lane;
 stand.stammliste = { gesetzt: stammliste.gesetzt, warten: stammliste.warten, fehlendeSeiten: Object.keys(stammliste.fehlend).length };
+stand.mehrzahlListe = { gesetzt: mehrzahlListe.gesetzt, unklar: mehrzahlListe.unklar };
 // Die Schlüssel der Wurzelseiten, nach denen bei Lane noch nie gefragt wurde (wurzelAusStammliste, oben) — immer
 // geschrieben, auch leer: sonst holte „ersatz-lane.mjs --seiten" nach einem späteren Bau die Liste von gestern.
 schreibe(path.join(ERSATZ, 'arbeit', 'lane-fehlende-seiten.json'), JSON.stringify({
@@ -516,7 +552,8 @@ if (verbformenWeg) console.log(`Verbformen an Karten, die keine Verben sind, weg
 if (stammliste.gesetzt) console.log(`Wurzel aus Buckwalters Stammliste (Lane führt die Wurzel, nennt das Wort aber nicht): ${stammliste.gesetzt} eingetragen`);
 if (stammliste.warten) console.log(`Wurzel aus der Stammliste OFFEN an ${stammliste.warten} Karten: nach ${Object.keys(stammliste.fehlend).length} Wurzelseiten von Lane wurde noch nie gefragt — „node werkzeuge/ersatz-lane.mjs --seiten --holen“, danach neu bauen (Liste: data-ersatz/arbeit/lane-fehlende-seiten.json)`);
 if (endung.gesetzt) console.log(`Geschlecht aus der Endung (Ta marbuta am Wort in der Einzahl, keine Quelle nennt es): ${endung.gesetzt} Nomen weiblich`);
-if (selbst.sg || selbst.past) console.log(`Das Wort selbst: Einzahl an ${selbst.sg} Nomen und Vergangenheit an ${selbst.past} Verben gesetzt (die bisherige Karte nennt dort ihr eigenes Wort)`);
+if (mehrzahlListe.gesetzt || mehrzahlListe.unklar) console.log(`Mehrzahl aus Buckwalters Stammliste (keine andere Quelle nennt eine): ${mehrzahlListe.gesetzt} Nomen` + (mehrzahlListe.unklar ? ` · offen gelassen an ${mehrzahlListe.unklar}: gleich geschriebene Lemmata nennen verschiedene Mehrzahlen, und die Bedeutung entscheidet nicht` : ''));
+if (selbst.sg || selbst.past || selbst.pl) console.log(`Das Wort selbst: Einzahl an ${selbst.sg} Nomen, Mehrzahl an ${selbst.pl} Nomen und Vergangenheit an ${selbst.past} Verben gesetzt (die bisherige Karte nennt dort ihr eigenes Wort)`);
 if (lane.eintraege) console.log(`Wurzeln aus Lanes Lexikon: ${lane.gesetzt} eingetragen · ${lane.hatSchon} übergangen, weil eine andere Quelle die Wurzel nennt · ${lane.anderesWort} übergangen, weil das Arabisch der Karte nicht mehr das Stichwort ist (von ${lane.eintraege} Einträgen in data-ersatz/arbeit/lane-wurzeln.json)`);
 if (handFehler.length) { console.log(`HAND:${handFehler.length} Entscheidung(en) passen nicht zu den Quellen:`); for (const f of handFehler.slice(0, 20)) console.log('  ✗ ' + f); process.exitCode = 1; }
 console.log(`GEBAUT: ${sum.belegt} von ${sum.plaetze} Plätzen belegt · ${sum.offen} offen · ${sum.nichtGefunden} nicht gefunden · Deutsch direkt ${sum.deutschDirekt}, über das Englische ${sum.deutschKette}, aus belegten Teilen ${sum.deutschTeile}, ohne deutsche Quelle ${sum.deutschOhneQuelle} · Unterschiede zum Bestand: ${unterschiede.length}`);
