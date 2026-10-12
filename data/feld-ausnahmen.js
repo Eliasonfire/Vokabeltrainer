@@ -115,32 +115,51 @@ const FELD_REGELN = {
  * als „Preposition" ohne Geschlecht und Plural (أَبْعَاد gehört zu بُعْد
  * „Entfernung"), arabdict ohne Pluralform. Kein Plural bei غَرْب/شَرْق/عَرَبِيَّة/
  * إِنْجِلِيزِيَّة: Himmelsrichtung bzw. Sprachname — keine der Quellen führt einen.
+ *
+ * ⭐ GRUPPE MIT SEINEM WORT (12.10.2026): LÄNDERNAMEN UND LEHNWÖRTER OHNE WURZEL.
+ * Anlass: die Ersatzdatenbank (data-ersatz/, lokal) nennt für diese Wörter
+ * keine Wurzel, und das mit Recht — keine ihrer Quellen führt eine. Auf die
+ * Frage „Darf das Feld Wurzel bei solchen Wörtern leer bleiben?" (gezeigt an
+ * Japan) schrieb Elias: „ja wenns keine wurzel gibt dann leer lassen".
+ * SEIN Satz deckt die Gruppe. WELCHES Wort dazugehört, ist die Zuordnung von
+ * Claude, je Wort mit dem Beleg im Grund: ein Ländername oder ein Wort, das
+ * en.wiktionary als entlehnt führt. Er hat die Liste am selben Abend gesehen.
+ * ⛔ Nicht hierher gehört ein Wort, bei dem nur keine Wurzel GEFUNDEN wurde —
+ * seine Bedingung heißt „wenns keine wurzel gibt". Gegenprobe am selben Tag:
+ * „Tuch" (45773) ist entlehnt, steht bei Lane aber in den Erklärungen der
+ * Wurzel n-d-l; es bekam in der Ersatzdatenbank die Wurzel, keine Ausnahme.
+ * ⚠️ Solange die App die bisherigen Karten lädt, ändert ein solcher Eintrag
+ * nichts: dort ist das Feld gefüllt, und feldAusnahme() wird nur bei leerem
+ * Feld gefragt. Er wirkt erst, wenn die Karte ohne Wurzel kommt.
+ * Die neuen Gründe nennen nur das deutsche Wort, nicht das Arabisch der Karte.
  */
 
 const FELD_AUSNAHMEN = {
   '0f311405-7349-450c-885e-e3abefb6fbf3': { root: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — لِ (für / gehört)' },
   '45781': { pl: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — سُكَّرٌ (Zucker)' },
-  '45813': { pl: 'von Elias bestätigt am 15.9.2026 — الفِلِيبِّينُ (Philippinen)' },
-  '45814': { pl: 'von Elias bestätigt am 15.9.2026 — اليَابَانُ (Japan)' },
-  '45815': { pl: 'von Elias bestätigt am 15.9.2026 — الصِّينُ (China)' },
+  '45813': { pl: 'von Elias bestätigt am 15.9.2026 — الفِلِيبِّينُ (Philippinen)', root: 'Elias am 12.10.2026 zu Ländernamen und Lehnwörtern: „ja wenns keine wurzel gibt dann leer lassen“ — Philippinen: Ländername (kein Wörterbuchtext abgelegt; als Name eines Landes zugeordnet von Claude)' },
+  '45814': { pl: 'von Elias bestätigt am 15.9.2026 — اليَابَانُ (Japan)', root: 'Elias am 12.10.2026 zu Ländernamen und Lehnwörtern: „ja wenns keine wurzel gibt dann leer lassen“ — Japan: Ländername, entlehnt aus dem Niederländischen (en.wiktionary, Fassung vom 8.9.2026)' },
+  '45815': { pl: 'von Elias bestätigt am 15.9.2026 — الصِّينُ (China)', root: 'Elias am 12.10.2026 zu Ländernamen und Lehnwörtern: „ja wenns keine wurzel gibt dann leer lassen“ — China: Ländername, aus dem Mittelpersischen (en.wiktionary, Fassung vom 13.8.2026)' },
   '45816': { pl: 'von Elias bestätigt am 15.9.2026 — الهِنْدُ (Indien)' },
   '45833': { pl: 'von Elias bestätigt am 15.9.2026 — كَعْبَةٌ (Kaaba)' },
-  '45849': { pl: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — شَايٌ (Tee)' },
+  '45849': { pl: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — شَايٌ (Tee)', root: 'Elias am 12.10.2026 zu Ländernamen und Lehnwörtern: „ja wenns keine wurzel gibt dann leer lassen“ — Tee: Lehnwort aus dem Persischen, letztlich aus dem Chinesischen (en.wiktionary, Fassung vom 13.8.2026)' },
   '45850': { pl: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — غَرْبٌ (Westen)' },
   '45861': { pl: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — شَرْقٌ (Osten)' },
-  '45868': { pl: 'von Elias bestätigt am 15.9.2026 — أَمْرِيكَا (Amerika)' },
-  '45870': { pl: 'von Elias bestätigt am 15.9.2026 — أَلْمَانِيَا (Deutschland)' },
-  '45871': { pl: 'von Elias bestätigt am 15.9.2026 — إِنْجِلْتَرَا (England)' },
+  '45868': { pl: 'von Elias bestätigt am 15.9.2026 — أَمْرِيكَا (Amerika)', root: 'Elias am 12.10.2026 zu Ländernamen und Lehnwörtern: „ja wenns keine wurzel gibt dann leer lassen“ — Amerika: Ländername, wohl entlehnt aus dem Neulateinischen (en.wiktionary, Fassung vom 2.9.2026)' },
+  '45870': { pl: 'von Elias bestätigt am 15.9.2026 — أَلْمَانِيَا (Deutschland)', root: 'Elias am 12.10.2026 zu Ländernamen und Lehnwörtern: „ja wenns keine wurzel gibt dann leer lassen“ — Deutschland: Ländername, entlehnt aus dem Spanischen (en.wiktionary, Fassung vom 20.8.2026)' },
+  '45871': { pl: 'von Elias bestätigt am 15.9.2026 — إِنْجِلْتَرَا (England)', root: 'Elias am 12.10.2026 zu Ländernamen und Lehnwörtern: „ja wenns keine wurzel gibt dann leer lassen“ — England: Ländername, entlehnt aus dem Italienischen (en.wiktionary, Fassung vom 8.7.2026)' },
   '45872': { pl: 'von Elias bestätigt am 15.9.2026 — العِرَاقُ (Irak)' },
-  '45873': { pl: 'von Elias bestätigt am 15.9.2026 — سُويسْرَا (Schweiz)' },
+  '45873': { pl: 'von Elias bestätigt am 15.9.2026 — سُويسْرَا (Schweiz)', root: 'Elias am 12.10.2026 zu Ländernamen und Lehnwörtern: „ja wenns keine wurzel gibt dann leer lassen“ — Schweiz: Ländername, entlehnt aus dem Italienischen (en.wiktionary, Fassung vom 10.6.2026)' },
   '45878': { pl: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — عَرَبِيَّةٌ (Arabisch)' },
-  '45883': { pl: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — إِنْجِلِيزِيَّةٌ (Englisch)' },
+  '45883': { pl: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — إِنْجِلِيزِيَّةٌ (Englisch)', root: 'Elias am 12.10.2026 zu Ländernamen und Lehnwörtern: „ja wenns keine wurzel gibt dann leer lassen“ — Englisch: Sprachname, vom Namen des Volkes gebildet; die Quelle nennt keine Wurzel (en.wiktionary, Fassung vom 27.10.2025; zugeordnet von Claude)' },
   '45886': { pl: 'von Elias bestätigt am 15.9.2026 — القَاهِرَةُ (Kairo)' },
-  '45894': { pl: 'von Elias bestätigt am 15.9.2026 — الكُوَيْتُ (Kuwait)' },
-  '45898': { pl: 'von Elias bestätigt am 15.9.2026 — إِنْدُونِيسِيَا (Indonesien)' },
-  '45907': { pl: 'von Elias bestätigt am 15.9.2026 — سُورِيَا (Syrien)' },
-  '45911': { pl: 'von Elias bestätigt am 15.9.2026 — مَالِيزِيَا (Malaysia)' },
+  '45894': { pl: 'von Elias bestätigt am 15.9.2026 — الكُوَيْتُ (Kuwait)', root: 'Elias am 12.10.2026 zu Ländernamen und Lehnwörtern: „ja wenns keine wurzel gibt dann leer lassen“ — Kuwait: Ländername; die Quelle nennt die Herkunft ungeklärt (en.wiktionary, Fassung vom 1.10.2026)' },
+  '45898': { pl: 'von Elias bestätigt am 15.9.2026 — إِنْدُونِيسِيَا (Indonesien)', root: 'Elias am 12.10.2026 zu Ländernamen und Lehnwörtern: „ja wenns keine wurzel gibt dann leer lassen“ — Indonesien: Ländername (die Quelle führt die Seite ohne Herkunftstext, en.wiktionary, Fassung vom 1.10.2026; zugeordnet von Claude)' },
+  '45907': { pl: 'von Elias bestätigt am 15.9.2026 — سُورِيَا (Syrien)', root: 'Elias am 12.10.2026 zu Ländernamen und Lehnwörtern: „ja wenns keine wurzel gibt dann leer lassen“ — Syrien: Ländername, aus dem Griechischen (en.wiktionary, Fassung vom 1.10.2026)' },
+  '45911': { pl: 'von Elias bestätigt am 15.9.2026 — مَالِيزِيَا (Malaysia)', root: 'Elias am 12.10.2026 zu Ländernamen und Lehnwörtern: „ja wenns keine wurzel gibt dann leer lassen“ — Malaysia: Ländername (die Quelle führt die Seite ohne Herkunftstext, en.wiktionary, Fassung vom 1.10.2026; zugeordnet von Claude)' },
   '45915': { pl: 'von Elias bestätigt am 5.10.2026 — النَّاسُ (die Leute)' },
+  '45918': { root: 'Elias am 12.10.2026 zu Ländernamen und Lehnwörtern: „ja wenns keine wurzel gibt dann leer lassen“ — Professorin: Lehnwort; die Quelle nennt die Grundform entlehnt aus dem klassischen Persischen (en.wiktionary, Fassung vom 4.10.2026)' },
+  '46032': { root: 'Elias am 12.10.2026 zu Ländernamen und Lehnwörtern: „ja wenns keine wurzel gibt dann leer lassen“ — Fernseher: Lehnwort, über das Französische und Englische (en.wiktionary, Fassung vom 1.10.2026)' },
   '48402': { pl: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — الْيَوْمُ (heute)' },
   '69179bbf-faa9-4b2a-859c-9e5f3d76b98c': { root: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — يَا (Rufpartikel)' },
   'd3cca272-90df-4963-a3dd-2653d009a77d': { pl: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — إِثْنَانِ (Zwei (2))', sg: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — إِثْنَانِ (Zwei (2))' },
