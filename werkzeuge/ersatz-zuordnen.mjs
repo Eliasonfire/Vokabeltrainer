@@ -837,7 +837,14 @@ for (const buch of BUECHER) {
         if (karte.type === 'noun' || karte.type === 'adjective') {
           const kf = (kopfE.kopf || [])[0];
           const gk = geschlechtAusKopf(kf, karte);
-          if (gk.g) v.gender = { w: gk.g, wo: `en.wiktionary „${kopfE.w}“ (${kopfE.pos}), ${gk.beide ? gk.was + ' — Angabe zum ersten Wort' : 'Kopfzeile: Geschlecht des ersten Wortes'}` };
+          // DAS GESCHLECHT DER FORM geht dem des Stichworts vor (13.10.2026, Regel von Claude). Die Karte trägt hier eine
+          // FORM aus dem Eintrag eines anderen Stichworts; führt die Quelle genau diese Form als weiblich oder als
+          // männlich, ist das ihr Geschlecht. Bis dahin stand immer das Geschlecht des Stichworts da — gesehen an
+          // „Dienerin": die Form steht im Eintrag „Diener" als dessen weibliche, die Karte trug „männlich".
+          const tForm = (teile[0].fund.f && teile[0].fund.f.t) || [];
+          const gForm = tForm.includes('feminine') !== tForm.includes('masculine') ? (tForm.includes('feminine') ? 'feminine' : 'masculine') : null;
+          if (gForm && gForm !== gk.g) v.gender = { w: gForm, wo: `en.wiktionary „${kopfE.w}“ (${kopfE.pos}), die Quelle führt diese Form als ${gForm === 'feminine' ? 'weibliche' : 'männliche'} (Form ${tForm.join(' ')})${mehrteilig ? ' — Angabe zum ersten Wort' : ''}; das Stichwort selbst ${gk.g ? 'ist ' + (gk.g === 'feminine' ? 'weiblich' : 'männlich') : 'nennt kein Geschlecht'}` };
+          else if (gk.g) v.gender = { w: gk.g, wo: `en.wiktionary „${kopfE.w}“ (${kopfE.pos}), ${gk.beide ? gk.was + ' — Angabe zum ersten Wort' : 'Kopfzeile: Geschlecht des ersten Wortes'}` };
           if (voll(karte.sg) && nfc(karte.sg) === wort) v.sg = { ...v.ar };
         }
         // FÜGUNG MIT VERB: steht das erste Wort in der Form, unter der ein Verb im Wörterbuch steht (Vergangenheit,

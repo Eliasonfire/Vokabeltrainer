@@ -207,6 +207,18 @@ let verbformenWeg = 0;
 const gleichesWort = (a, b) => wortform(nfc(a), { artikelWeg: false }) === wortform(nfc(b), { artikelWeg: false });
 const SELBST = [['noun', 'sg', 'die Einzahl'], ['verb', 'past', 'die Vergangenheit (3. Person m. Einzahl)']];
 const selbst = { sg: 0, past: 0 };
+/* GESCHLECHT AUS DER ENDUNG (13.10.2026, Regel von Claude). An 148 Ersatzkarten fehlte das Geschlecht, das die bisherige
+ * Karte hat: arabdict, der Buchschlüssel und Buckwalters Liste nennen keines. Ein Nomen, das in der EINZAHL auf Ta marbuta
+ * endet, ist weiblich — das ist die Regel der Grammatik, keine Angabe einer Quelle, und so steht es im Beleg.
+ * Nachgemessen an den Ersatzkarten dieser Art, deren Geschlecht eine Quelle nennt (ein Wort, die Einzahl der Karte ist
+ * das Wort selbst): 562 weiblich, 3 männlich („Kalif", „Rufer", und eine Mehrzahl, die als ihre eigene Einzahl geführt
+ * ist). Alle drei führt auch die bisherige Karte als männlich — nennt sie „männlich", bleibt das Feld deshalb offen;
+ * sie ist dabei nur der Einspruch, nie die Quelle des Werts. Gilt nur als LÜCKE, nie für eine Fügung, nie für eine
+ * Karte ohne Einzahl oder mit einer anderen Einzahl (dann trägt sie eine Mehrzahl). */
+const TA_MARBUTA = String.fromCodePoint(0x629);
+const ZEICHEN_WEG = new RegExp('[' + String.fromCodePoint(0x64B) + '-' + String.fromCodePoint(0x652) + String.fromCodePoint(0x670) + String.fromCodePoint(0x640) + ']', 'g');
+const ENDUNG_WEIBLICH = 'Endung Ta marbuta am Wort in der Einzahl: weiblich. Das ist die Regel der Grammatik, keine Angabe einer Quelle — nachgemessen an 565 Nomen dieser Art, deren Geschlecht eine Quelle nennt: 562 weiblich; die drei anderen führt auch die bisherige Karte als männlich, und dann bleibt das Feld offen. Die Zuordnung stammt von Claude';
+const endung = { gesetzt: 0 };
 /* WURZEL AUS BUCKWALTERS STAMMLISTE (12.10.2026, Regel von Claude). Die Stammliste (BAMA 1.0, liegt nur lokal) führt
  * ihre Lemmata unter Wurzelzeilen („;--- Wurzel"). Roh taugen die nicht als Quelle — gemessen: an 582 von 2893 Karten
  * mit bekannter Wurzel nennt die Zeile eine andere (sie steht nicht vor jedem Lemma, manche Lemmata hängen unter der
@@ -400,6 +412,14 @@ for (const buch of BUECHER) {
         felder[f] = { w: felder.ar.w, wo: `${felder.ar.wo} — ${was} ist das Wort selbst`, q: felder.ar.q };
         selbst[f]++;
       }
+      // Geschlecht aus der Endung (ENDUNG_WEIBLICH, oben): nur als Lücke, nur am Wort in der Einzahl, nie gegen ein
+      // „männlich" der bisherigen Karte
+      if (felder.type && felder.type.w === 'noun' && !felder.gender && felder.ar && felder.sg && !(h.leer || []).includes('gender')
+        && !/\s/.test(nfc(felder.ar.w).trim()) && gleichesWort(felder.sg.w, felder.ar.w)
+        && nfc(felder.ar.w).replace(ZEICHEN_WEG, '').trim().endsWith(TA_MARBUTA) && !(altK && altK.gender === 'masculine')) {
+        felder.gender = { w: 'feminine', wo: ENDUNG_WEIBLICH, q: 'endung' };
+        endung.gesetzt++;
+      }
     }
     for (const f of h.leer || []) delete felder[f];
     // „Wie die Karte" (siehe wieDieKarte oben): gilt für jeden Platz, auch nach einer Entscheidung von Hand — nennen die
@@ -495,6 +515,7 @@ if (!process.argv.includes('--knapp')) for (const f of FELDER) {
 if (verbformenWeg) console.log(`Verbformen an Karten, die keine Verben sind, weggelassen: ${verbformenWeg}`);
 if (stammliste.gesetzt) console.log(`Wurzel aus Buckwalters Stammliste (Lane führt die Wurzel, nennt das Wort aber nicht): ${stammliste.gesetzt} eingetragen`);
 if (stammliste.warten) console.log(`Wurzel aus der Stammliste OFFEN an ${stammliste.warten} Karten: nach ${Object.keys(stammliste.fehlend).length} Wurzelseiten von Lane wurde noch nie gefragt — „node werkzeuge/ersatz-lane.mjs --seiten --holen“, danach neu bauen (Liste: data-ersatz/arbeit/lane-fehlende-seiten.json)`);
+if (endung.gesetzt) console.log(`Geschlecht aus der Endung (Ta marbuta am Wort in der Einzahl, keine Quelle nennt es): ${endung.gesetzt} Nomen weiblich`);
 if (selbst.sg || selbst.past) console.log(`Das Wort selbst: Einzahl an ${selbst.sg} Nomen und Vergangenheit an ${selbst.past} Verben gesetzt (die bisherige Karte nennt dort ihr eigenes Wort)`);
 if (lane.eintraege) console.log(`Wurzeln aus Lanes Lexikon: ${lane.gesetzt} eingetragen · ${lane.hatSchon} übergangen, weil eine andere Quelle die Wurzel nennt · ${lane.anderesWort} übergangen, weil das Arabisch der Karte nicht mehr das Stichwort ist (von ${lane.eintraege} Einträgen in data-ersatz/arbeit/lane-wurzeln.json)`);
 if (handFehler.length) { console.log(`HAND:${handFehler.length} Entscheidung(en) passen nicht zu den Quellen:`); for (const f of handFehler.slice(0, 20)) console.log('  ✗ ' + f); process.exitCode = 1; }
