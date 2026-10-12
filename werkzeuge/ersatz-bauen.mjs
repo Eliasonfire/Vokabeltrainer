@@ -20,6 +20,13 @@
  * „lane"). Beide nennen die Bedeutung nur auf Englisch -- das Deutsch solcher Plätze ist von Claude danach
  * geschrieben, trägt die Quelle „claude" und zählt als „ohne deutsche Quelle".
  *
+ * Die WURZEL kommt seit dem 12.10.2026 auch von selbst aus Lanes Lexikon, wo keine andere Quelle eine nennt:
+ * „ersatz-lane.mjs --wurzeln" sieht nach und schreibt data-ersatz/arbeit/lane-wurzeln.json, der Bau hier trägt ein
+ * (Quelle „lane", Fundstelle mit Stichwort und Nummer). Anlass: der Probelauf des Wechsels zeigte, dass von den 331
+ * Wörtern aus Elias' freigeschalteten Kapiteln nach einem Wechsel 58 unvollständig wären, 53 davon ohne Wurzel.
+ * Die Regeln dazu stammen von Claude: nur eine Lücke wird gefüllt, und nur, solange das Arabisch der Karte noch
+ * das Stichwort ist. Bewacht von eiche-ersatz-zuordner.mjs, Abschnitt 7.
+ *
  * Aufruf (aus dem Repo-Wurzelverzeichnis):  node werkzeuge/ersatz-bauen.mjs [--knapp]
  */
 import fs from 'node:fs';
@@ -188,6 +195,10 @@ function wieDieKarte(alt, s, jetzt) {
 const plaetze = [], unterschiede = [], nichtGefunden = [], handFehler = [], verzeichnis = [];
 const stand = { erzeugt: new Date().toISOString(), buecher: {} };
 let verbformenWeg = 0;
+/* Wurzeln aus Lanes Lexikon für Karten, denen keine andere Quelle eine nennt (ersatz-lane.mjs --wurzeln schreibt
+ * die Datei; fehlt sie, ändert sich nichts). */
+const laneWurzeln = liesJson(path.join(ERSATZ, 'arbeit', 'lane-wurzeln.json'), {}).eintraege || {};
+const lane = { eintraege: Object.keys(laneWurzeln).length, gesetzt: 0, hatSchon: 0, anderesWort: 0 };
 fs.mkdirSync(path.join(ERSATZ, 'hand'), { recursive: true });
 
 for (const buch of BUECHER) {
@@ -242,6 +253,18 @@ for (const buch of BUECHER) {
       felder.de = { w: nfc(h.deEigen), wo: 'ohne deutsche Quelle — von Claude geschrieben' + (en ? ` nach der englischen Bedeutung in ${s.ref ? 'en.wiktionary „' + s.ref.split('#')[0] + '“' : 'der Quelle'}: „${en}“` : fr ? ` nach der französischen Bedeutung im fr.wiktionary: „${fr}“` : ''), q: 'claude' };
     }
     for (const [f, wert] of Object.entries(h.felder || {})) if (FELDER.includes(f) && wert && voll(wert.w)) felder[f] = { w: nfc(wert.w), wo: wert.wo, q: wert.q || 'hand' };
+    // Die Wurzel aus Lanes Lexikon (ersatz-lane.mjs --wurzeln) füllt nur eine LÜCKE: nennt eine andere Quelle oder die
+    // Hand eine Wurzel, bleibt die. Und sie gilt nur, solange das Arabisch der Karte noch das Wort ist, das dort als
+    // Stichwort gefunden wurde -- ändert sich die Karte, fehlt die Wurzel wieder, bis neu nachgesehen ist.
+    // „leer" von Hand (nächste Zeile) nimmt auch sie wieder heraus.
+    {
+      const lw = laneWurzeln[s.id];
+      if (lw && voll(lw.w)) {
+        if (felder.root) lane.hatSchon++;
+        else if (!felder.ar || nfc(felder.ar.w) !== nfc(lw.ar)) lane.anderesWort++;
+        else { felder.root = { w: nfc(lw.w), wo: lw.wo, q: 'lane' }; lane.gesetzt++; }
+      }
+    }
     for (const f of h.leer || []) delete felder[f];
     // „Wie die Karte" (siehe wieDieKarte oben): gilt für jeden Platz, auch nach einer Entscheidung von Hand — nennen die
     // Quellen genau die Wörter der Karte, ist deren Wortlaut das Ziel.
@@ -307,6 +330,7 @@ schreibe(path.join(ERSATZ, 'nicht-gefunden.json'), JSON.stringify(nichtGefunden,
 schreibe(path.join(ERSATZ, 'unterschiede.json'), JSON.stringify(unterschiede, null, 1));
 // Die Unterschiede nach Feld und Art gezählt (die Liste selbst bleibt in der Reihenfolge der Plätze): so sieht man,
 // wo die Arbeit liegt — z. B. wie viele Karten im Arabischen selbst abweichen und wie viele nur in der Schlussendung.
+stand.laneWurzeln = lane;
 stand.unterschiede = { gesamt: unterschiede.length, jeFeld: {} };
 for (const u of unterschiede) { const f = stand.unterschiede.jeFeld[u.feld] = stand.unterschiede.jeFeld[u.feld] || {}; f[u.art] = (f[u.art] || 0) + 1; }
 schreibe(path.join(ERSATZ, 'stand.json'), JSON.stringify(stand, null, 1));
@@ -325,5 +349,6 @@ if (!process.argv.includes('--knapp')) for (const f of FELDER) {
   if (arten) console.log(`Unterschiede ${f}: ${Object.values(arten).reduce((a, b) => a + b, 0)} (${Object.entries(arten).sort((a, b) => b[1] - a[1]).map(([art, n]) => art + ' ' + n).join(' · ')})`);
 }
 if (verbformenWeg) console.log(`Verbformen an Karten, die keine Verben sind, weggelassen: ${verbformenWeg}`);
+if (lane.eintraege) console.log(`Wurzeln aus Lanes Lexikon: ${lane.gesetzt} eingetragen · ${lane.hatSchon} übergangen, weil eine andere Quelle die Wurzel nennt · ${lane.anderesWort} übergangen, weil das Arabisch der Karte nicht mehr das Stichwort ist (von ${lane.eintraege} Einträgen in data-ersatz/arbeit/lane-wurzeln.json)`);
 if (handFehler.length) { console.log(`HAND:${handFehler.length} Entscheidung(en) passen nicht zu den Quellen:`); for (const f of handFehler.slice(0, 20)) console.log('  ✗ ' + f); process.exitCode = 1; }
 console.log(`GEBAUT: ${sum.belegt} von ${sum.plaetze} Plätzen belegt · ${sum.offen} offen · ${sum.nichtGefunden} nicht gefunden · Deutsch direkt ${sum.deutschDirekt}, über das Englische ${sum.deutschKette}, aus belegten Teilen ${sum.deutschTeile}, ohne deutsche Quelle ${sum.deutschOhneQuelle} · Unterschiede zum Bestand: ${unterschiede.length}`);
