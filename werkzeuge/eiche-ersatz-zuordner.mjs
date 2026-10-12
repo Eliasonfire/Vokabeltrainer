@@ -565,6 +565,25 @@ pruefe('Gleiche Verben: nennt keine Stelle die Gegenwart, bleibt alles offen', [
 pruefe('Gleiche Verben: nennen die passenden Einträge verschiedene Verbalsubstantive, bleibt das offen — der gleich genannte Befehl kommt', feldAuf(wg, '103', 'imperative') === IFTAH && feldAuf(wg, '103', 'masdar') === null && /2 Einträge nennen dasselbe/.test(feldBeleg(wg, '103', 'imperative').wo || ''), 'Karte 103: ' + formen(wg, '103') + ' · ' + JSON.stringify(feldBeleg(wg, '103', 'imperative')).slice(0, 220));
 pruefe('Gleiche Verben: nennt die bisherige Karte ein Verbalsubstantiv, gilt der Eintrag, der es führt', feldAuf(wg, '104', 'masdar') === G.sukun && feldAuf(wg, '104', 'imperative') === G.uskun, 'Karte 104: ' + formen(wg, '104'));
 
+// 12. Kopfzeile mit BEIDEN Geschlechtern („m oder f", 12.10.2026): die Karte hat nur ein Feld — dort steht das der
+//     bisherigen Karte (als Schlüssel unter den zwei Angaben der Quelle), ohne ihre Angabe das männliche, und der
+//     Beleg sagt, dass die Quelle beide nennt. Eine klare Kopfzeile überstimmt die bisherige Karte weiterhin.
+const beideG = (w, kopf, sinn) => ({ ...nomen(w, kopf, sinn), kopf: [{ f: kopf, t: ['canonical', 'feminine', 'masculine'] }] });
+const WELT9 = {
+  karten: [
+    { id: '111', ar: V.nahr + UN, de: 'Fluss', type: 'noun', chapter: 1, ...leer, gender: 'feminine' },    // Quelle: beide; bisherige Karte: weiblich
+    { id: '112', ar: V.qalam + UN, de: 'Stift', type: 'noun', chapter: 1, ...leer },                       // Quelle: beide; bisherige Karte nennt keines
+    { id: '113', ar: V.najm + UN, de: 'Stern', type: 'noun', chapter: 1, ...leer, gender: 'masculine' },   // Quelle: nur weiblich; bisherige Karte: männlich
+  ],
+  woerterbuch: [beideG(V.nahrNackt, V.nahr, 'river'), beideG(V.qalamNackt, V.qalam, 'pen'), { ...nomen(V.najmNackt, V.najm, 'star'), kopf: [{ f: V.najm, t: ['canonical', 'feminine'] }] }],
+  englischDeutsch: [['river', 'Fluss'], ['pen', 'Stift'], ['star', 'Stern']].map(([w, de]) => ({ w, pos: 'noun', k: [{ sinn: 'Probe', de: [de] }] })),
+};
+const wb = probe({}, WELT9);
+pruefe('Beide Geschlechter: die Probe läuft durch, alle drei Plätze sind belegt', wb.codeZ === 0 && wb.codeB === 0 && wb.karten.length === 3, 'Exit ' + wb.codeZ + ' / ' + wb.codeB + ', Karten ' + wb.karten.map(k => k.id).join(',') + ': ' + wb.text.trim().split('\n').slice(-2).join(' | ').slice(0, 300));
+pruefe('Beide Geschlechter: nennt die Kopfzeile beide Geschlechter, steht das der bisherigen Karte da — und der Beleg sagt, dass die Quelle beide nennt', geschlechtAuf(wb, '111') === 'feminine' && /die Quelle nennt beide Geschlechter .*das der bisherigen Karte/.test(feldBeleg(wb, '111', 'gender').wo || ''), 'Karte 111: ' + JSON.stringify(geschlechtAuf(wb, '111')) + ' · ' + JSON.stringify(feldBeleg(wb, '111', 'gender')).slice(0, 220));
+pruefe('Beide Geschlechter: nennt die bisherige Karte keines, steht das männliche da — mit dem Hinweis im Beleg', geschlechtAuf(wb, '112') === 'masculine' && /die Quelle nennt beide Geschlechter .*das männliche/.test(feldBeleg(wb, '112', 'gender').wo || ''), 'Karte 112: ' + JSON.stringify(geschlechtAuf(wb, '112')) + ' · ' + JSON.stringify(feldBeleg(wb, '112', 'gender')).slice(0, 220));
+pruefe('Beide Geschlechter: eine klare Kopfzeile gilt weiter gegen die bisherige Karte', geschlechtAuf(wb, '113') === 'feminine' && /Kopfzeile: Geschlecht$/.test(feldBeleg(wb, '113', 'gender').wo || ''), 'Karte 113: ' + JSON.stringify(geschlechtAuf(wb, '113')) + ' · ' + JSON.stringify(feldBeleg(wb, '113', 'gender')).slice(0, 220));
+
 const gut = faelle.filter(f => f.ok).length;
 for (const f of faelle) if (!f.ok) console.log(`  ✗ ${f.name}\n      bekommen: ${f.was}`);
 console.log(`Eichung Zuordner und Bau: ${gut} von ${faelle.length} Fällen wie erwartet`);

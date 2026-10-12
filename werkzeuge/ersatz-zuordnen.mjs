@@ -514,6 +514,21 @@ function nimmWie(formen, bisher, standard) {
   if (voll(bisher)) { const b = nfc(bisher); const g = liste.find(f => f === b) || liste.find(f => ohneSukun(f) === ohneSukun(b)); if (g) return g; }
   return standard ?? liste[0];
 }
+/* Nennt die Kopfzeile BEIDE Geschlechter („m oder f": Weg, Markt, Zustand …), ist das Wort beides. Die Karte hat dafür
+ * nur ein Feld: dort steht dann das der bisherigen Karte (als Schlüssel unter den zwei Angaben der Quelle, wie bei zwei
+ * Schreibweisen derselben Form), und der Beleg sagt, dass die Quelle beide nennt. Nennt die bisherige Karte keines,
+ * steht das männliche da. Bis zum 12.10.2026 stand in diesem Fall still „masculine" — gemessen an 35 Nomen, acht davon
+ * führt die bisherige Karte weiblich. Die Regel stammt von Claude; sie gilt an beiden Stellen, die ein Geschlecht aus
+ * einer Kopfzeile lesen (Eintrag des Worts, erstes Wort einer Fügung). */
+function geschlechtAusKopf(kopf, karte) {
+  const t = (kopf && kopf.t) || [];
+  const m = t.includes('masculine'), f = t.includes('feminine');
+  if (m && f) {
+    const wieKarte = !!karte && ['masculine', 'feminine'].includes(karte.gender);
+    return { g: wieKarte ? karte.gender : 'masculine', beide: true, was: `Kopfzeile: die Quelle nennt beide Geschlechter (männlich und weiblich); hier steht ${wieKarte ? 'das der bisherigen Karte' : 'das männliche'}` };
+  }
+  return { g: m ? 'masculine' : f ? 'feminine' : null, beide: false, was: 'Kopfzeile: Geschlecht' };
+}
 function vorschlag(e, wort, artikelAb, karte) {
   const wo = was => `en.wiktionary „${e.w}“ (${e.pos}${e.n ? ', Herkunft ' + e.n : ''}), ${was}`;
   const v = {};
@@ -573,8 +588,8 @@ function vorschlag(e, wort, artikelAb, karte) {
     if (!v.ar || (voll(karte.sg) && k1(karte.sg) !== k1(wort))) {
       // die Karte nennt eine andere Einzahl als das Stichwort (das Stichwort ist dann selbst eine Mehrzahl oder Steigerung): Sache der Hand
     } else setze('sg', voll(karte.sg) ? nimmWie([...arFormen.map(f => f.f), ...(kopf ? [kopf.f] : [])], karte.sg, arWahl) : arWahl, v.ar && v.ar.wo);
-    const g = kopf && (kopf.t.includes('masculine') ? 'masculine' : kopf.t.includes('feminine') ? 'feminine' : null);
-    setze('gender', g, wo('Kopfzeile: Geschlecht'));
+    const gk = geschlechtAusKopf(kopf, karte), g = gk.g;
+    setze('gender', g, wo(gk.was));
     // Trägt der Auszug kein Geschlecht, nennt es oft die Kopfvorlage der abgelegten Seite (ersatz-seiten.mjs) — es gilt,
     // wenn sie es an GENAU dieser Kopfform nennt und die Seite sich dabei nicht widerspricht.
     if (!g && kopf && pos !== 'adj') {
@@ -821,8 +836,8 @@ for (const buch of BUECHER) {
         else if (!mehrteilig && h.artOk === true && ART[kopfPos]) v.type = { w: ART[kopfPos], wo: `gebeugte Form; Wortart des Stichworts laut Quelle: ${kopfPos} — weicht von der bisherigen Einteilung („${karte.type}“) ab; von der Hand zugelassen, es ist dasselbe Wort` };
         if (karte.type === 'noun' || karte.type === 'adjective') {
           const kf = (kopfE.kopf || [])[0];
-          const g = kf && (kf.t.includes('masculine') ? 'masculine' : kf.t.includes('feminine') ? 'feminine' : null);
-          if (g) v.gender = { w: g, wo: `en.wiktionary „${kopfE.w}“ (${kopfE.pos}), Kopfzeile: Geschlecht des ersten Wortes` };
+          const gk = geschlechtAusKopf(kf, karte);
+          if (gk.g) v.gender = { w: gk.g, wo: `en.wiktionary „${kopfE.w}“ (${kopfE.pos}), ${gk.beide ? gk.was + ' — Angabe zum ersten Wort' : 'Kopfzeile: Geschlecht des ersten Wortes'}` };
           if (voll(karte.sg) && nfc(karte.sg) === wort) v.sg = { ...v.ar };
         }
         // FÜGUNG MIT VERB: steht das erste Wort in der Form, unter der ein Verb im Wörterbuch steht (Vergangenheit,
