@@ -260,7 +260,9 @@ for (const buch of BUECHER) {
     {
       const lw = laneWurzeln[s.id];
       if (lw && voll(lw.w)) {
-        if (felder.root) lane.hatSchon++;
+        // Eine Wurzel, die nur über die Grundform gefunden ist („enwikt-grundform", ersatz-zuordnen.mjs), ist ein
+        // Schluss; das Stichwort bei Lane nennt das Wort selbst und geht ihr vor.
+        if (felder.root && felder.root.q !== 'enwikt-grundform') lane.hatSchon++;
         else if (!felder.ar || nfc(felder.ar.w) !== nfc(lw.ar)) lane.anderesWort++;
         else { felder.root = { w: nfc(lw.w), wo: lw.wo, q: 'lane' }; lane.gesetzt++; }
       }

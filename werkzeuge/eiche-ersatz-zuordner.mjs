@@ -76,6 +76,8 @@ function probe(hand = {}, welt = null) {
   if (welt && welt.schluessel) fs.writeFileSync(path.join(auszuege, 'schluessel-' + ziel + '.jsonl'), welt.schluessel.map(e => JSON.stringify(e)).join('\n') + '\n');
   // Abschnitt 8: was ersatz-seiten.mjs aus den abgelegten Seiten des Wiktionary liest (Wurzelvorlagen und Kopfformen je Herkunftsabschnitt)
   if (welt && welt.wurzelSeiten) fs.writeFileSync(path.join(auszuege, 'enwikt-wurzeln.json'), JSON.stringify(welt.wurzelSeiten));
+  // Abschnitt 9: die Übersetzungstabellen des englischen Wiktionary (am arabischen Wort steht dort oft das Geschlecht)
+  if (welt && welt.tabellen) fs.writeFileSync(path.join(auszuege, 'enwikt-tabellen.jsonl'), welt.tabellen.map(e => JSON.stringify(e)).join('\n') + '\n');
   // Abschnitt 7: Einträge aus einem früheren Lauf von ersatz-lane.mjs --wurzeln, und abgelegte Wurzelseiten von Lanes
   // Lexikon (nur die Verweise auf die Stichwörter, wie die echte Seite sie trägt). Geholt wird in der Probe nie etwas.
   if (welt && welt.laneWurzeln) fs.writeFileSync(path.join(repo, 'data-ersatz', 'arbeit', 'lane-wurzeln.json'), JSON.stringify({ eintraege: welt.laneWurzeln }));
@@ -359,6 +361,108 @@ pruefe('Wiktionary: eine Wurzel, die die Seite nur zum Vergleich erwähnt (nocat
 pruefe('Wiktionary: nennt die Seite die Wurzel und erwähnt daneben eine fremde, gilt die genannte', wurzelAuf(ws, '62') === wz(QAF, LAM, MIM), zeig(ws, '62'));
 pruefe('Wiktionary: Eintrag ohne Herkunftsnummer, Seite mit zwei Abschnitten — es gilt die Wurzel des Abschnitts, dessen Kopfvorlage das Wort nennt', wurzelAuf(ws, '63') === wz(DAL, RA, SIN), zeig(ws, '63'));
 pruefe('Wiktionary: nennen zwei Abschnitte das Wort, bleibt die Wurzel offen', wurzelAuf(ws, '64') === null, zeig(ws, '64'));
+
+// 9. Vier Angaben, die die Quelle nennt, die der Zuordner aber nicht mitnahm (alle von Claude, 12.10.2026, gemessen am
+//    Probelauf des Wechsels: 12 von Elias' 331 Wörtern wären unvollständig gewesen):
+//    · Geschlecht: die Übersetzungstabelle nennt es am arabischen Wort. Nur Tabellen eines Nomens, nur genau die Form
+//      der Karte, nicht bei Mundart, nicht bei Widerspruch — und nie gegen das, was der Eintrag selbst sagt.
+//    · Mehrzahl bei Sammelwörtern: die Quelle führt Sammelform und Mehrzahl der kleinen Zahl; das Einzelstück eines
+//      Sammelworts ist keine weibliche Form.
+//    · Mehrzahl aus der Kopfvorlage der abgelegten Seite (auch Vorlagen mit Pluszeichen), an genau dieser Kopfform.
+//    · Wurzel über die Grundform (das Wort ohne Ta marbuta, mit denselben Vokalzeichen); Lane geht ihr im Bau vor.
+const TA_M = 0x0629;
+const X = {
+  tamr: cp(TA, FATHA, MIM, SUKUN, RA), tamrNackt: cp(TA, MIM, RA),
+  tamra: cp(TA, FATHA, MIM, SUKUN, RA, FATHA, TA_M), tamraNackt: cp(TA, MIM, RA, TA_M),
+  tamarat: cp(TA, FATHA, MIM, FATHA, RA, FATHA, ALIF, TA),
+  judur: cp(JIM, DAMMA, DAL, DAMMA, RA), kawakib: cp(KAF, FATHA, WAW, FATHA, ALIF, KAF, KASRA, BA), kawkub: cp(KAF, FATHA, WAW, SUKUN, KAF, DAMMA, BA),
+  qalama: V.qalam + cp(FATHA, TA_M), kitaba: W.kitab + cp(FATHA, TA_M), nahra: V.nahr + cp(FATHA, TA_M),
+};
+const ohneG = (w, kopf, sinn) => ({ ...nomen(w, kopf, sinn), kopf: [{ f: kopf, t: ['canonical'] }] });
+const tabelle = (w, pos, ar, de) => ({ w, pos, n: null, k: [{ sinn: 'Probe', ar, de: [{ w: de }] }] });
+const WELT6 = {
+  karten: [
+    { id: '71', ar: V.nahr + UN, de: 'Fluss', type: 'noun', chapter: 1, ...leer },        // Tabelle eines Nomens nennt die Form mit einem Geschlecht
+    { id: '72', ar: V.qalam + UN, de: 'Stift', type: 'noun', chapter: 1, ...leer },       // zwei Tabellen, zwei Geschlechter
+    { id: '73', ar: V.najm + UN, de: 'Stern', type: 'noun', chapter: 1, ...leer },        // nur die Tabelle eines Adjektivs und eine Mundartform
+    { id: '74', ar: V.sur + UN, de: 'Mauer', type: 'noun', chapter: 1, ...leer },         // der Eintrag nennt selbst ein Geschlecht, die Tabelle ein anderes
+    { id: '75', ar: X.tamra + UN, de: 'Dattel', type: 'noun', chapter: 2, ...leer },      // Einzelstück eines Sammelworts
+    { id: '76', ar: X.tamr + UN, de: 'Datteln', type: 'noun', chapter: 2, ...leer },      // das Sammelwort selbst
+    { id: '77', ar: V.jidar + UN, de: 'Wand', type: 'noun', chapter: 2, ...leer },        // Mehrzahl nur in der Kopfvorlage der Seite
+    { id: '78', ar: V.kawkab + UN, de: 'Planet', type: 'noun', chapter: 2, ...leer },     // die Seite nennt die Mehrzahl an einer ANDEREN Kopfform
+    { id: '79', ar: X.qalama + UN, de: 'Feder', type: 'noun', chapter: 3, ...leer },      // Grundform mit denselben Vokalzeichen, ihre Seite nennt die Wurzel
+    { id: '80', ar: X.kitaba + UN, de: 'Schrift', type: 'noun', chapter: 3, ...leer },    // Grundform nur mit ANDEREN Vokalzeichen im Wörterbuch
+    { id: '81', ar: X.nahra + UN, de: 'Bach', type: 'noun', chapter: 3, ...leer },        // Grundform nennt eine Wurzel — und Lane nennt eine fürs Wort selbst
+    { id: '82', ar: W.bab + UN, de: 'Tor', type: 'noun', chapter: 3, ...leer },           // die Mehrzahl steht nur im ANDEREN Herkunftsabschnitt derselben Schreibung
+  ],
+  woerterbuch: [
+    { ...ohneG(V.nahrNackt, V.nahr, 'river'), wurzel: wz(NUN, HA, RA) }, ohneG(V.qalamNackt, V.qalam, 'pen'), ohneG(V.najmNackt, V.najm, 'star'),
+    { ...nomen(V.surNackt, V.sur, 'wall'), kopf: [{ f: V.sur, t: ['canonical', 'feminine'] }] },
+    { ...nomen(X.tamraNackt, X.tamra, 'date fruit'), kopf: [{ f: X.tamra, t: ['canonical', 'feminine'] }], hf: [{ f: X.tamr, t: ['collective', 'masculine'] }], tab: [
+      { f: X.tamra + UN, t: ['indefinite', 'nominative', 'singulative', 'triptote'] }, { f: X.tamr + UN, t: ['collective', 'indefinite', 'nominative', 'triptote'] }, { f: X.tamarat + UN, t: ['indefinite', 'nominative', 'paucal', 'triptote'] } ] },
+    { ...nomen(X.tamrNackt, X.tamr, 'dates'), hf: [{ f: X.tamra, t: ['feminine', 'singulative'] }], tab: [
+      { f: X.tamr + UN, t: ['collective', 'indefinite', 'nominative', 'triptote'] }, { f: X.tamra + UN, t: ['indefinite', 'nominative', 'singulative', 'triptote'] }, { f: X.tamarat + UN, t: ['indefinite', 'nominative', 'paucal', 'triptote'] } ] },
+    nomen(V.jidarNackt, V.jidar, 'partition'), nomen(V.kawkabNackt, V.kawkab, 'planet'),
+    { ...nomen(V.qalamNackt + cp(TA_M), X.qalama, 'quill'), kopf: [{ f: X.qalama, t: ['canonical', 'feminine'] }] },
+    { ...nomen(W.ktbNackt + cp(TA_M), X.kitaba, 'script'), kopf: [{ f: X.kitaba, t: ['canonical', 'feminine'] }] },
+    { ...nomen(W.ktbNackt, W.kutub, 'books'), wurzel: wz(KAF, TA, BA) },
+    { ...nomen(V.nahrNackt + cp(TA_M), X.nahra, 'stream'), kopf: [{ f: X.nahra, t: ['canonical', 'feminine'] }] },
+    nomen(W.babNackt, W.bab, 'gate', '2'),
+  ],
+  englischDeutsch: [['gate', 'Tor'], ['river', 'Fluss'], ['pen', 'Stift'], ['star', 'Stern'], ['wall', 'Mauer'], ['date fruit', 'Dattel'], ['dates', 'Datteln'], ['partition', 'Wand'], ['planet', 'Planet'], ['quill', 'Feder'], ['script', 'Schrift'], ['books', 'Bücher'], ['stream', 'Bach']]
+    .map(([w, de]) => ({ w, pos: 'noun', k: [{ sinn: 'Probe', de: [de] }] })),
+  tabellen: [
+    tabelle('river', 'noun', [{ w: V.nahr, r: 'nahr', t: ['masculine'] }], 'Fluss'),
+    tabelle('pen', 'noun', [{ w: V.qalam, r: 'qalam', t: ['masculine'] }], 'Stift'), tabelle('quill pen', 'noun', [{ w: V.qalam, r: 'qalam', t: ['feminine'] }], 'Stift'),
+    tabelle('stellar', 'adj', [{ w: V.najm, r: 'najm', t: ['feminine'] }], 'Stern'), tabelle('star', 'noun', [{ w: V.najm, r: 'nagm', t: ['Egyptian-Arabic', 'masculine'] }], 'Stern'),
+    tabelle('wall', 'noun', [{ w: V.sur, r: 'sur', t: ['masculine'] }], 'Mauer'),
+  ],
+  wurzelSeiten: {
+    [V.qalamNackt]: seite(V.qalamNackt, [{ nr: null, w: [{ art: 'ar-rootbox', w: wz(QAF, LAM, MIM) }], koepfe: [V.qalam] }]),
+    [V.jidarNackt]: seite(V.jidarNackt, [{ nr: null, w: [], koepfe: [V.jidar], mehrzahl: [{ f: [V.jidar], pl: [X.judur] }] }]),
+    [V.kawkabNackt]: seite(V.kawkabNackt, [{ nr: null, w: [], koepfe: [X.kawkub], mehrzahl: [{ f: [X.kawkub], pl: [X.kawakib] }] }]),
+    [W.babNackt]: seite(W.babNackt, [{ nr: 1, w: [], koepfe: [W.bab], mehrzahl: [{ f: [W.bab], pl: [cp(HAMZA_ALIF, FATHA, BA, SUKUN, WAW, FATHA, ALIF, BA)] }] }, { nr: 2, w: [], koepfe: [W.bab] }]),
+  },
+};
+const wn = probe({}, WELT6);
+const feldBeleg = (p, id, feld) => (((p.belege[id] || {}).felder || {})[feld] || {});
+const weiblAuf = (p, id) => { const k = p.karten.find(x => x.id === id); return k ? k.femSg : undefined; };
+pruefe('Kopfvorlage der Seite: nennt nur ein ANDERER Herkunftsabschnitt derselben Schreibung die Mehrzahl, bleibt sie offen', mehrzahlAuf(wn, '82') === null, 'Karte 82: ' + JSON.stringify(mehrzahlAuf(wn, '82')));
+pruefe('Nebenangaben: die Probe läuft durch, alle zwölf Plätze sind belegt', wn.codeZ === 0 && wn.codeB === 0 && wn.karten.length === 12, 'Exit ' + wn.codeZ + ' / ' + wn.codeB + ', Karten ' + wn.karten.map(k => k.id).join(',') + ': ' + wn.text.trim().split('\n').slice(-2).join(' | ').slice(0, 300));
+pruefe('Geschlecht: nennt die Tabelle eines Nomens genau diese Form mit einem Geschlecht, kommt es auf die Karte — mit der Tabelle als Fundstelle', geschlechtAuf(wn, '71') === 'masculine' && /Übersetzungen .*Geschlecht des arabischen Worts/.test(feldBeleg(wn, '71', 'gender').wo || '') && feldBeleg(wn, '71', 'gender').q === 'enwikt-tab', 'Karte 71: ' + JSON.stringify(geschlechtAuf(wn, '71')) + ' · ' + JSON.stringify(feldBeleg(wn, '71', 'gender')).slice(0, 200));
+pruefe('Geschlecht: nennen zwei Tabellen verschiedene Geschlechter, bleibt es offen', geschlechtAuf(wn, '72') === null, 'Karte 72: ' + JSON.stringify(geschlechtAuf(wn, '72')));
+pruefe('Geschlecht: die Tabelle eines Adjektivs und eine Form der Mundart zählen nicht', geschlechtAuf(wn, '73') === null, 'Karte 73: ' + JSON.stringify(geschlechtAuf(wn, '73')));
+pruefe('Geschlecht: nennt der Eintrag selbst eines, überschreibt die Tabelle es nicht', geschlechtAuf(wn, '74') === 'feminine' && /Kopfzeile: Geschlecht/.test(feldBeleg(wn, '74', 'gender').wo || ''), 'Karte 74: ' + JSON.stringify(geschlechtAuf(wn, '74')) + ' · ' + JSON.stringify(feldBeleg(wn, '74', 'gender')).slice(0, 160));
+pruefe('Sammelwort: das Einzelstück nennt Sammelform und Mehrzahl der kleinen Zahl', mehrzahlAuf(wn, '75') === X.tamr + UN + '|' + X.tamarat + UN && /Sammelform und Mehrzahl der kleinen Zahl/.test(feldBeleg(wn, '75', 'pl').wo || ''), 'Karte 75: ' + JSON.stringify(mehrzahlAuf(wn, '75')) + ' · ' + JSON.stringify(feldBeleg(wn, '75', 'pl')).slice(0, 160));
+pruefe('Sammelwort: das Sammelwort selbst nennt die Mehrzahl der kleinen Zahl', mehrzahlAuf(wn, '76') === X.tamarat + UN && /Mehrzahl der kleinen Zahl \(die Quelle führt das Wort als Sammelwort\)/.test(feldBeleg(wn, '76', 'pl').wo || ''), 'Karte 76: ' + JSON.stringify(mehrzahlAuf(wn, '76')) + ' · ' + JSON.stringify(feldBeleg(wn, '76', 'pl')).slice(0, 160));
+pruefe('Sammelwort: das Einzelstück steht nicht im Feld der weiblichen Form', weiblAuf(wn, '76') === null, 'Karte 76: femSg ' + JSON.stringify(weiblAuf(wn, '76')));
+pruefe('Kopfvorlage der Seite: nennt sie an genau dieser Kopfform eine Mehrzahl, kommt die auf die Karte', mehrzahlAuf(wn, '77') === X.judur && /Kopfvorlage der Seite: Mehrzahl/.test(feldBeleg(wn, '77', 'pl').wo || ''), 'Karte 77: ' + JSON.stringify(mehrzahlAuf(wn, '77')) + ' · ' + JSON.stringify(feldBeleg(wn, '77', 'pl')).slice(0, 160));
+pruefe('Kopfvorlage der Seite: nennt sie die Mehrzahl an einer anderen Kopfform, bleibt sie offen', mehrzahlAuf(wn, '78') === null, 'Karte 78: ' + JSON.stringify(mehrzahlAuf(wn, '78')));
+pruefe('Grundform: führt das Wörterbuch das Wort ohne Ta marbuta mit denselben Vokalzeichen, gilt dessen Wurzel — und der Beleg sagt, dass es die Grundform ist', wurzelAuf(wn, '79') === wz(QAF, LAM, MIM) && /ist die Grundform/.test(belegWurzel(wn, '79').wo || '') && belegWurzel(wn, '79').q === 'enwikt-grundform', zeig(wn, '79'));
+pruefe('Grundform: steht sie nur mit anderen Vokalzeichen im Wörterbuch, bleibt die Wurzel offen', wurzelAuf(wn, '80') === null, zeig(wn, '80'));
+pruefe('Grundform: ohne Eintrag aus Lane gilt die Wurzel der Grundform', wurzelAuf(wn, '81') === wz(NUN, HA, RA), zeig(wn, '81'));
+// Lane nennt das Wort selbst: sein Stichwort geht der Wurzel vor, die nur über die Grundform gefunden ist
+const ar81 = (wn.karten.find(k => k.id === '81') || {}).ar;
+const wl = probe({}, { ...WELT6, laneWurzeln: { 81: { ar: ar81, w: wz(NUN, HA, WAW), wo: 'Lane, Arabic-English Lexicon: Probe', bw: 'nhw', nr: 'n1', stichwort: 'x' } } });
+pruefe('Grundform: nennt Lane das Wort selbst, geht sein Stichwort vor — und der Bau zählt es als eingetragen', wurzelAuf(wl, '81') === wz(NUN, HA, WAW) && belegWurzel(wl, '81').q === 'lane' && /1 eingetragen/.test(wl.text), zeig(wl, '81') + ' · ' + (wl.text.split('\n').find(z => z.startsWith('Wurzeln aus Lanes')) || '').slice(0, 160));
+// ersatz-seiten.mjs selbst: liest es die Kopfvorlage mit Pluszeichen, ihr Geschlecht und ihre ausgeschriebene Mehrzahl?
+{
+  const repo = fs.mkdtempSync(path.join(os.tmpdir(), 'eiche-seiten-'));
+  fs.mkdirSync(path.join(repo, 'data-ersatz', 'quellen', 'enwikt-seiten'), { recursive: true });
+  fs.mkdirSync(path.join(repo, 'data-ersatz', 'quellen', 'auszuege'), { recursive: true });
+  const blatt = (titel, text) => JSON.stringify({ gefragt: titel, titel, revid: 1, zeit: '2026-10-12T00:00:00Z', arabisch: text });
+  fs.writeFileSync(path.join(repo, 'data-ersatz', 'quellen', 'enwikt-seiten', 'seiten.jsonl'), [
+    blatt(V.jidarNackt, '===Noun===\n{{ar-noun+|' + V.jidar + '|f|pl=' + X.judur + '}}\n'),
+    blatt(V.kawkabNackt, '===Noun===\n{{ar-noun|' + V.kawkab + '|m|pl=+}}\n'),
+  ].join('\n') + '\n');
+  const lauf = spawnSync(process.execPath, [path.join(HIER, 'ersatz-seiten.mjs'), 'wurzeln'], { encoding: 'utf8', env: { ...process.env, ERSATZ_REPO: repo } });
+  let aus = {};
+  try { aus = JSON.parse(fs.readFileSync(path.join(repo, 'data-ersatz', 'quellen', 'auszuege', 'enwikt-wurzeln.json'), 'utf8')); } catch { /* bleibt leer, die Fälle unten werden rot */ }
+  const a = aus[V.jidarNackt] || {}, b = aus[V.kawkabNackt] || {};
+  pruefe('Seiten: eine Kopfvorlage mit Pluszeichen wird gelesen — Form, Geschlecht und ausgeschriebene Mehrzahl', lauf.status === 0 && JSON.stringify(a.geschlecht) === JSON.stringify([{ f: [V.jidar], g: 'feminine' }]) && JSON.stringify(a.mehrzahl) === JSON.stringify([{ f: [V.jidar], pl: [X.judur] }]), 'Exit ' + lauf.status + ' · ' + JSON.stringify({ g: a.geschlecht, pl: a.mehrzahl }).slice(0, 200));
+  pruefe('Seiten: „pl=+" ist keine ausgeschriebene Mehrzahl', JSON.stringify(b.mehrzahl) === '[]' && JSON.stringify(b.geschlecht) === JSON.stringify([{ f: [V.kawkab], g: 'masculine' }]), JSON.stringify({ g: b.geschlecht, pl: b.mehrzahl }).slice(0, 200));
+  fs.rmSync(repo, { recursive: true, force: true });
+}
 
 const gut = faelle.filter(f => f.ok).length;
 for (const f of faelle) if (!f.ok) console.log(`  ✗ ${f.name}\n      bekommen: ${f.was}`);
