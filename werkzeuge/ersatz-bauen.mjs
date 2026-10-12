@@ -34,7 +34,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 import { abzugOrdner, istErsatzkarte } from './datenquelle.mjs';
-import { vergleich as wortform } from './ersatz-bama-lib.mjs';
+import { vergleich as wortform, ladeBama, standardDatei, geruest, nachBW, ausBW, wurzelSchluessel, wurzelWert, laneDateiname } from './ersatz-bama-lib.mjs';
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
 const REPO = process.env.ERSATZ_REPO || path.join(HIER, '..');
@@ -207,6 +207,72 @@ let verbformenWeg = 0;
 const gleichesWort = (a, b) => wortform(nfc(a), { artikelWeg: false }) === wortform(nfc(b), { artikelWeg: false });
 const SELBST = [['noun', 'sg', 'die Einzahl'], ['verb', 'past', 'die Vergangenheit (3. Person m. Einzahl)']];
 const selbst = { sg: 0, past: 0 };
+/* WURZEL AUS BUCKWALTERS STAMMLISTE (12.10.2026, Regel von Claude). Die Stammliste (BAMA 1.0, liegt nur lokal) führt
+ * ihre Lemmata unter Wurzelzeilen („;--- Wurzel"). Roh taugen die nicht als Quelle — gemessen: an 582 von 2893 Karten
+ * mit bekannter Wurzel nennt die Zeile eine andere (sie steht nicht vor jedem Lemma, manche Lemmata hängen unter der
+ * Zeile davor; zweilautige Zeilen meinen bald eine verdoppelte, bald eine schwache Wurzel; „w/y" legt sich nicht
+ * fest). Sie gilt deshalb nur unter drei Bedingungen, und nur als LÜCKE (nach Wiktionary, Lanes Stichwort, Grundform):
+ *   (I)   die Zeile ist (ohne ihre Zählnummer) eine Wurzel aus drei oder vier Radikalen; eine zweilautige zählt nur
+ *         als verdoppelte, wenn das Wort den zweiten Radikal sichtbar doppelt führt (zweimal oder mit Schadda)
+ *   (II)  ihre Radikale stehen in dieser Reihenfolge in den Buchstaben des Worts (schwache dürfen fehlen)
+ *   (III) Lanes Lexikon führt eine Seite dieser Wurzel (abgelegt von ersatz-lane.mjs); steht sie dort nur unter der
+ *         anderen Schreibung des schwachen Radikals, gilt Lanes Schreibung; führt Lane BEIDE Schreibungen, gilt keine
+ * Nie für einen Eigennamen (Kategorie der Stammliste) und nie für ein Wort auf Kasratan (schwacher Schluss).
+ * Das Lemma muss der Karte gleichen (mit Vokalzeichen, ohne Schlussendung) und zur Wortart passen (Verb zu Verb), und
+ * alle solchen Lemmata müssen unter DERSELBEN Zeile stehen. Gemessen mit (I) und (II): 2692 gleich der bekannten
+ * Wurzel, 32 gleich bis auf Waw/Ya, 42 anders; mit (III) an den Karten ohne Wurzel: 181 wie der Bestand, 1 anders. */
+const BAMA_DATEI = standardDatei(REPO), LANE_SEITEN = path.join(ERSATZ, 'quellen', 'lane', 'seiten');
+const bamaNach = new Map();
+if (fs.existsSync(BAMA_DATEI)) for (const l of ladeBama(BAMA_DATEI)) { const s = wortform(l.ar, { artikelWeg: false }); (bamaNach.get(s) || bamaNach.set(s, []).get(s)).push(l); }
+const RADIKALE = new Set([...">btvjHxd*rzs$SDTZEgfqklmnhwy"]);
+const KASRATAN = String.fromCodePoint(0x64D);
+const SCHADDA = String.fromCodePoint(0x651), KURZZEICHEN = '[' + String.fromCodePoint(0x64B) + '-' + String.fromCodePoint(0x650) + ']*';
+const stammliste = { gesetzt: 0 };
+function wurzelAusStammliste(ar, typ) {
+  const wort = nfc(ar);
+  // Ein Wort auf Kasratan ist ein Nomen mit schwachem Schluss („ein Feindlicher"): ohne die Endung gliche es einem
+  // ANDEREN Lemma (gesehen am 12.10.2026: es bekam die Wurzel von „wiederholt"). Dann gilt die Stammliste nicht.
+  if (!bamaNach.size || /\s/.test(wort) || wort.endsWith(KASRATAN)) return null;
+  const alle = bamaNach.get(wortform(wort)) || bamaNach.get(wortform(wort, { artikelWeg: false })) || [];
+  const passend = alle.filter(l => (typ === 'verb') === !!l.verb);
+  // Eigennamen (Länder, Städte) führt die Stammliste auch unter Wurzelzeilen — ein Name hat aber keine Wurzel, die
+  // man lernen könnte (Elias, 12.10.2026, zu Ländernamen: „ja wenns keine wurzel gibt dann leer lassen")
+  // — erkannt an der Kategorie der Stammliste oder daran, dass ihre englische Bedeutung groß geschrieben ist („Kuwait"
+  // steht dort als gewöhnliches Nomen)
+  const eigenname = l => l.staemme.some(s => /prop/i.test(s.kat) || /PROP/.test(s.pos)) || (l.glossen.length > 0 && l.glossen.every(g => /^[A-Z]/.test(g)));
+  if (passend.some(eigenname)) return null;
+  const zeilen = [...new Set(passend.map(l => l.wurzel).filter(Boolean))];
+  if (zeilen.length !== 1) return null;
+  const roh = zeilen[0].replace(/\(\d+\)$/, '');
+  if (roh.includes('/')) return null;
+  let rad = [...roh].map(c => ("'><&}|".includes(c) ? '>' : c));
+  const buchstaben = [...nachBW(geruest(wort))];
+  if (rad.length === 2) {
+    const doppelt = buchstaben.filter(c => c === rad[1]).length >= 2 || new RegExp(ausBW(rad[1]) + KURZZEICHEN + SCHADDA).test(wort);
+    if (!doppelt) return null;
+    rad = [rad[0], rad[1], rad[1]];
+  }
+  if (rad.length < 3 || rad.length > 4 || rad.some(c => !RADIKALE.has(c))) return null;
+  let i = 0, davor = null;
+  for (const r of rad) {
+    const schwach = 'wy'.includes(r), hamza = r === '>';
+    const trifft = c => c === r || (schwach && 'wyAY'.includes(c)) || (hamza && "'>&}<|A".includes(c));
+    let j = i;
+    while (j < buchstaben.length && !trifft(buchstaben[j])) j++;
+    if (j < buchstaben.length) i = j + 1;
+    else if (!(schwach || r === davor)) return null;
+    davor = r;
+  }
+  const eigen = ausBW(rad.join(' '));
+  const seiten = wurzelSchluessel(eigen).filter(k => fs.existsSync(path.join(LANE_SEITEN, laneDateiname(k))));
+  const werte = [...new Set(seiten.map(k => wurzelWert(k, eigen)).filter(Boolean))];
+  // Führt Lane die Wurzel unter BEIDEN Schreibungen des schwachen Radikals (Waw und Ya), sagt seine Seite nicht,
+  // welche gilt — die Stammliste allein entscheidet das nicht (gemessen: 8 von 185 anders als der Bestand, alle so)
+  const wert = werte.length === 1 ? werte[0] : null;
+  if (!wert) return null;
+  const seite = seiten.find(k => wurzelWert(k, eigen) === wert);
+  return { w: wert, wo: `Buckwalter Arabic Morphological Analyzer 1.0, Stammliste: das Lemma „${passend[0].id}“ steht unter der Wurzelzeile „${zeilen[0]}“, und deren Radikale stehen in dieser Reihenfolge im Wort; Lanes Lexikon führt diese Wurzel (Seite „${seite}“), nennt das Wort aber nicht als Stichwort. Die Zuordnung über die Stammliste stammt von Claude` };
+}
 /* Wurzeln aus Lanes Lexikon für Karten, denen keine andere Quelle eine nennt (ersatz-lane.mjs --wurzeln schreibt
  * die Datei; fehlt sie, ändert sich nichts). */
 const laneWurzeln = liesJson(path.join(ERSATZ, 'arbeit', 'lane-wurzeln.json'), {}).eintraege || {};
@@ -278,6 +344,11 @@ for (const buch of BUECHER) {
         else if (!felder.ar || nfc(felder.ar.w) !== nfc(lw.ar)) lane.anderesWort++;
         else { felder.root = { w: nfc(lw.w), wo: lw.wo, q: 'lane' }; lane.gesetzt++; }
       }
+    }
+    // Wurzel aus Buckwalters Stammliste (wurzelAusStammliste, oben): nur als Lücke, nur für ein einzelnes Wort, nie für ein Partikel
+    if (!felder.root && felder.ar && felder.type && felder.type.w !== 'particle') {
+      const b = wurzelAusStammliste(felder.ar.w, felder.type.w);
+      if (b) { felder.root = { w: b.w, wo: b.wo, q: 'bama-wurzel' }; stammliste.gesetzt++; }
     }
     // Einzahl und Vergangenheit als das Wort selbst (SELBST, oben): füllt nur eine Lücke; „leer" von Hand nimmt es wieder heraus
     {
@@ -373,6 +444,7 @@ if (!process.argv.includes('--knapp')) for (const f of FELDER) {
   if (arten) console.log(`Unterschiede ${f}: ${Object.values(arten).reduce((a, b) => a + b, 0)} (${Object.entries(arten).sort((a, b) => b[1] - a[1]).map(([art, n]) => art + ' ' + n).join(' · ')})`);
 }
 if (verbformenWeg) console.log(`Verbformen an Karten, die keine Verben sind, weggelassen: ${verbformenWeg}`);
+if (stammliste.gesetzt) console.log(`Wurzel aus Buckwalters Stammliste (Lane führt die Wurzel, nennt das Wort aber nicht): ${stammliste.gesetzt} eingetragen`);
 if (selbst.sg || selbst.past) console.log(`Das Wort selbst: Einzahl an ${selbst.sg} Nomen und Vergangenheit an ${selbst.past} Verben gesetzt (die bisherige Karte nennt dort ihr eigenes Wort)`);
 if (lane.eintraege) console.log(`Wurzeln aus Lanes Lexikon: ${lane.gesetzt} eingetragen · ${lane.hatSchon} übergangen, weil eine andere Quelle die Wurzel nennt · ${lane.anderesWort} übergangen, weil das Arabisch der Karte nicht mehr das Stichwort ist (von ${lane.eintraege} Einträgen in data-ersatz/arbeit/lane-wurzeln.json)`);
 if (handFehler.length) { console.log(`HAND:${handFehler.length} Entscheidung(en) passen nicht zu den Quellen:`); for (const f of handFehler.slice(0, 20)) console.log('  ✗ ' + f); process.exitCode = 1; }
