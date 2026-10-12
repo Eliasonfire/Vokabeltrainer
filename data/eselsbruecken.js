@@ -617,7 +617,67 @@ const BUCH_ESELSBRUECKEN = {
 
   "48614": "⭐ Verb und Ding stehen im selben Kapitel: شَرِبَ (trinken) und شَرَابٌ (Getränk), Wurzel ش ر ب. Und das Wort ist gewandert — der deutsche „Sirup“ und das englische „sherbet“ kommen von hier.",
 
-  "48624": "⭐ Wāǧib — die Pflicht, das Wort aus dem Fiqh — ist dieselbe Wurzel و ج ب: fällig sein, feststehen. Eine وَجْبَةٌ ist die Mahlzeit, die zu ihrer festen Zeit fällig ist. Wer wāǧib kennt, kennt die Wurzel schon."
+  "48624": "⭐ Wāǧib — die Pflicht, das Wort aus dem Fiqh — ist dieselbe Wurzel و ج ب: fällig sein, feststehen. Eine وَجْبَةٌ ist die Mahlzeit, die zu ihrer festen Zeit fällig ist. Wer wāǧib kennt, kennt die Wurzel schon.",
+
+  "kh-002": "⭐ Der Name steckt in den Wendungen, die du täglich sagst: al-ḥamdu lillāh (Alhamdulillah), in šāʾa llāh (Inschallah), subḥāna llāh, Allāhu akbar. ⚠️ Mit „li“ davor fällt das Alif weg: ٱلْحَمْدُ لِلَّهِ (1:2) — „das Lob gehört Allah“. Daran erkennst du den Namen auch ohne sein Alif.",
+
+  "kh-004": "⭐ In aš-Šarḥ sprichst du es zweimal hintereinander: إِنَّ مَعَ ٱلْعُسْرِ يُسْرًا (94:6) — „gewiss, mit der Erschwernis ist Erleichterung“. Das erste Wort ist deine Vokabel: sie stellt sich vor den Satz und sagt, dass er sicher gilt.",
+
+  "kh-005": "⭐⭐ Vier Suren aus deinem auswendigen Bereich fangen mit dem Befehl dieses Verbs an: قُلْ هُوَ ٱللَّهُ أَحَدٌ (112:1), قُلْ يَٰٓأَيُّهَا ٱلْكَٰفِرُونَ (109:1), قُلْ أَعُوذُ بِرَبِّ ٱلْفَلَقِ (113:1) und قُلْ أَعُوذُ بِرَبِّ ٱلنَّاسِ (114:1). قُلْ heißt „sag!“ — du sprichst es jeden Tag mehrfach.",
+
+  "kh-009": "⭐ Der Schluss von an-Naṣr: إِنَّهُۥ كَانَ تَوَّابَۢا (110:3) — „gewiss, Er ist Reue-Annehmend“. كَانَ steht dort für ein „ist“, das schon immer galt. Sonst heißt es schlicht „er war“.",
+
+  "kh-011": "⭐ Der zweite Vers der Fātiḥa: ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ (1:2) — „das Lob gehört Allah, dem Herrn der Welten“. رَبٌّ ist dort das dritte Wort — ohne Tanwīn, weil „der Welten“ daran hängt.",
+
+  "kh-015": "⭐ Du sagst es jeden Tag: in šāʾa llāh (Inschallah) — „wenn Allah will“. Das erste Wort ist deine Vokabel: إِنْ heißt „wenn, falls“.",
+
+  "kh-017": "⭐ Das Wort steht mitten im Glaubensbekenntnis. Aus deiner Dua „Mein Tashahud“: لاَ إِلَهَ إِلاَّ اللَّهُ — „kein Gott außer Allah“. إِلَّا ist genau dieses „außer“.",
+
+  "kh-016": "⭐ Aus deiner Dua „Mein Tashahud“: أَشْهَدُ أَنْ لاَ إِلَهَ — „ich bezeuge, dass kein Gott …“. Das kleine Wort nach „ich bezeuge“ ist deine Vokabel: أَنْ heißt „dass“.",
+
+  "kh-018": "⭐ Du kennst die Familie längst: Īmān (der Glaube) und Muʾmin (der Gläubige). إِيمَانٌ ist das Verbalnomen von آمَنَ — glauben heißt wörtlich: für sicher halten.",
+
+  "kh-021": "⭐ Gleich der erste Vers von az-Zalzala nennt sie: إِذَا زُلْزِلَتِ ٱلْأَرْضُ زِلْزَالَهَا (99:1) — „wenn die Erde erschüttert wird durch ihr heftiges Beben“. ⚠️ Das Verb davor endet auf ت: أَرْضٌ ist weiblich, obwohl das Wort kein ة trägt.",
+
+  "kh-022": "⭐ Du hörst es vor jedem Gemeinschaftsgebet, in der Iqāma: „qad qāmati ṣ-ṣalāh“ — das Gebet hat begonnen. قَدْ vor einem Verb der Vergangenheit heißt: es ist wirklich schon geschehen.",
+
+  "kh-023": "⭐ An-Naṣr beginnt damit: إِذَا جَآءَ نَصْرُ ٱللَّهِ (110:1) — „wenn Allahs Hilfe kommt“. Az-Zalzala auch: إِذَا زُلْزِلَتِ ٱلْأَرْضُ (99:1). إِذَا ist das „wenn“, das sicher eintritt — „sobald“.",
+
+  "kh-024": "⭐ Du kennst das Wort aus den Geschichten der Propheten: qawm Nūḥ, qawm Lūṭ, qawm ʿĀd — das Volk Nūḥs, das Volk Lūṭs, das Volk ʿĀd. Ein قَوْمٌ sind die Leute, die zusammengehören.",
+
+  "kh-025": "⭐ Āyat al-Kursī — den „Vers des Thrones“ kannst du auswendig, und sein Name beginnt mit deiner Vokabel. Eine آيَةٌ ist ein Vers des Korans.",
+
+  "kh-026": "⭐ Du kennst die Familie: ʿilm (Wissen), ʿālim (Gelehrter) und den Satz „Allāhu aʿlam“ — Allah weiß es am besten. عَلِمَ ist das Verb dazu, عِلْمٌ sein Verbalnomen.",
+
+  "kh-027": "⭐ Aus deiner Dua „Mein Tashahud“: وَأَشْهَدُ أَنَّ مُحَمَّداً عَبْدُهُ — „und ich bezeuge, dass Muḥammad Sein Diener … ist“. Nach „ich bezeuge“ kommt deine Vokabel: أَنَّ heißt „dass“.",
+
+  "kh-028": "⭐ Gleich im ersten Vers von al-Mulk: عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ (67:1) — „Er hat zu allem die Macht“, wörtlich „über jede Sache“. Dort steht كُلٌّ vor einem zweiten Nomen — so begegnet es dir am häufigsten.",
+
+  "kh-029": "⭐ Al-Iḫlāṣ: لَمْ يَلِدْ وَلَمْ يُولَدْ (112:3) — „Er hat nicht gezeugt und ist nicht gezeugt worden“. Zweimal لَمْ, zweimal „nicht“ für etwas, das nie geschehen ist.",
+
+  "kh-030": "⭐ Al-Fīl, zweimal: أَلَمْ يَجْعَلْ كَيْدَهُمْ (105:2) — „machte Er nicht ihre List zunichte?“ — und am Ende فَجَعَلَهُمْ كَعَصْفٍ مَّأْكُولِۭ (105:5) — „und Er machte sie wie abgefressene Halme“. جَعَلَ heißt: etwas zu etwas machen.",
+
+  "kh-031": "⭐ At-Takāṯur: كَلَّا سَوْفَ تَعْلَمُونَ (102:3) — „Keineswegs! Ihr werdet es erfahren“ — und gleich darauf ثُمَّ كَلَّا سَوْفَ تَعْلَمُونَ (102:4): dasselbe noch einmal, mit deiner Vokabel davor — „dann“, „abermals“.",
+
+  "kh-035": "⭐ In al-Mulk zweimal hintereinander: عَذَابَ ٱلسَّعِيرِ (67:5) — „die Strafe der Feuerglut“ — und عَذَابُ جَهَنَّمَ (67:6) — „die Strafe der Hölle“. Beide Male hängt an عَذَابٌ das, womit gestraft wird.",
+
+  "kh-038": "⭐ Du benutzt das Wort längst auf Deutsch: „die Nafs“ — das eigene Ich mit seinen Wünschen, gegen das man ankämpft. نَفْسٌ ist die Seele, das Selbst.",
+
+  "kh-039": "⭐ Sūrat al-Kāfirūn trägt das Wort im Namen und im ersten Vers: قُلْ يَٰٓأَيُّهَا ٱلْكَٰفِرُونَ (109:1) — „Sag: O ihr Ungläubigen“. Ein Kāfir ist, wer كَفَرَ tut: wer leugnet.",
+
+  "kh-040": "⭐ Al-Mulk, erster Vers: عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ (67:1) — „Er hat zu allem die Macht“, wörtlich „über jede Sache mächtig“. Das dritte Wort ist deine Vokabel.",
+
+  "kh-041": "⭐ Al-Mulk, die Klage der Leute des Feuers: نَسْمَعُ أَوْ نَعْقِلُ (67:10) — „(hätten wir nur) gehört oder begriffen“. Zwischen den zwei Verben steht deine Vokabel; das erste kennst du — سَمِعَ (hören).",
+
+  "kh-042": "⭐ An-Naṣr, erster Vers: إِذَا جَآءَ نَصْرُ ٱللَّهِ (110:1) — „wenn Allahs Hilfe kommt“. Das zweite Wort ist deine Vokabel.",
+
+  "kh-043": "⭐ Al-ʿAṣr: ٱلَّذِينَ ءَامَنُواْ وَعَمِلُواْ ٱلصَّٰلِحَٰتِ (103:3) — „diejenigen, die glauben und rechtschaffene Werke tun“. Glauben und Tun stehen dort nebeneinander; das zweite Verb ist deine Vokabel.",
+
+  "kh-044": "⭐ Aus deiner „Dua nach Adhan“: آتِ مُحَمَّدًا الْوَسِيلَةَ — „gib Muḥammad die Wasīla“. Das erste Wort ist der Befehl deiner Vokabel: آتِ, „gib!“.",
+
+  "kh-045": "⭐ Al-Fīl beginnt damit: أَلَمْ تَرَ كَيْفَ (105:1) — „hast du nicht gesehen, wie …“. tara ist die Gegenwart von رَأَى, nach لَمْ um den letzten Buchstaben gekürzt.",
+
+  "kh-046": "⭐ Al-Mulk, die Frage der Wächter: أَلَمْ يَأْتِكُمْ نَذِيرٌ (67:8) — „kam nicht ein Warner zu euch?“. Darin steckt die Gegenwart يَأْتِي, nach لَمْ gekürzt und mit „zu euch“ als Endung.",
 };
 
 /* ---------- Korrigierte Schreibweisen ----------

@@ -3045,4 +3045,154 @@ const ESELSBRUECKEN_ALT = {
     'Der Plural mit ـَات, ganz regelmäßig: وَجْبَاتٌ — wie سَاعَاتٌ (Uhren, Kapitel 4), حَافِلَاتٌ (Busse, Kapitel 4) und سَلَطَاتٌ aus diesem Kapitel.',
     'Das ganze Kapitel passt in eine وَجْبَةٌ: auf der مَائِدَةٌ stehen لَحْمٌ, سَلَطَةٌ, عِنَبٌ und شَرَابٌ — davor bist du جَوْعَانُ, danach شَبْعَانُ. Ein Wort als Klammer um alles andere.'
   ],
+
+  'kh-002': [
+    'Du sprichst den Namen am Anfang deiner Suren: بِسْمِ ٱللَّهِ (1:1) — „im Namen Allahs“. Und in al-Iḫlāṣ: قُلْ هُوَ ٱللَّهُ أَحَدٌ (112:1) — „Sag: Er ist Allah, Einer“. Einmal endet er auf Kasra, einmal auf Ḍamma: auch dieser Name wird gebeugt wie jedes Nomen.',
+    'Āyat al-Kursī beginnt mit dem Namen und erklärt ihn sofort: لَآ إِلَٰهَ إِلَّا هُوَ (2:255) — „es gibt keinen Gott außer Ihm“. Das Wort für „Gott“ darin trägt dieselben Buchstaben أ ل ه wie der Name; nach der bekanntesten Erklärung ist „Allāh“ aus „al-ilāh“ zusammengezogen — der Gott.'
+  ],
+
+  'kh-004': [
+    'Mit „wir“ daran wird daraus innā — so beginnen zwei Suren, die du kannst: إِنَّآ أَعْطَيْنَٰكَ ٱلْكَوْثَرَ (108:1) — „Wir haben dir ja al-Kauṯar gegeben“ — und إِنَّآ أَنزَلْنَٰهُ (97:1). Hörst du am Anfang eines Verses inna oder innā, folgt eine Aussage mit Nachdruck.',
+    '⚠️ Achte auf das Wort danach: إِنَّ ٱلْإِنسَٰنَ (103:2) — „der Mensch“ trägt dort Fatḥa (al-insāna), nicht Ḍamma. Das macht إِنَّ mit dem Nomen, das ihm folgt: es setzt es in den Akkusativ. Die Šadda gehört fest zum Wort — ohne sie ist es ein anderes.'
+  ],
+
+  'kh-005': [
+    '⚠️ Ein hohles Verb: in der Wurzel ق و ل sitzt ein و, das in قَالَ zum langen ā wird und im Befehl قُلْ ganz verschwindet. Dasselbe kennst du von drei Verben, die du hast: نَامَ (schlafen), أَرَادَ (wollen), أَعَادَ (wiederholen).',
+    'Dasselbe Verb in drei Gestalten, alle aus al-Mulk: قَالُواْ بَلَىٰ (67:9) — „sie sagten: Ja doch“; وَيَقُولُونَ مَتَىٰ (67:25) — „und sie sagen: Wann …?“; قُلْ (67:26) — „sag!“. Vergangenheit, Gegenwart, Befehl. In der Gegenwart taucht das و der Wurzel wieder auf: ya-qūl-ūna.'
+  ],
+
+  'kh-009': [
+    'In al-Iḫlāṣ steht dasselbe Verb verneint: وَلَمْ يَكُن (112:4) — „und nicht ist …“. Nach لَمْ wird aus يَكُونُ das kurze yakun: das lange ū fällt weg, genau wie im Befehl كُنْ — „sei!“.',
+    'Hohles Verb wie drei, die du hast: نَامَ (schlafen), أَرَادَ (wollen), أَجَابَ (antworten) — in der Wurzel ك و ن sitzt ein و, das in كَانَ zum langen ā wird. ⚠️ „Wir waren“ heißt kunnā, mit kurzem u: لَوْ كُنَّا نَسْمَعُ (67:10) — „hätten wir doch gehört“.'
+  ],
+
+  'kh-011': [
+    'Aus deiner Dua „Dua Wissen“: رَّبِّ زِدْنِي عِلْمًا — „mein Herr, mehre mich an Wissen“. So beginnen viele Bittgebete: rabbi („mein Herr“) oder rabbanā („unser Herr“) — deine Vokabel mit einer Besitzendung daran.',
+    'In den beiden Schutzsuren und in al-Kauṯar hängt jedes Mal etwas anderes daran: بِرَبِّ ٱلْفَلَقِ (113:1) — „beim Herrn des Tagesanbruchs“; بِرَبِّ ٱلنَّاسِ (114:1) — „beim Herrn der Menschen“; لِرَبِّكَ (108:2) — „für deinen Herrn“. ⚠️ Die Šadda auf dem ب bleibt immer — an ihr erkennst du das Wort.'
+  ],
+
+  'kh-015': [
+    'In al-Mulk fragt Allah damit: إِنْ أَصْبَحَ مَآؤُكُمْ غَوْرًا (67:30) — „wenn euer Wasser versickert sein sollte …“. إِنْ steht vor etwas, das eintreten kann, aber nicht muss.',
+    '⚠️ Zwei Bedeutungen. Folgt später im Satz إِلَّا — „außer“ —, heißt إِنْ nicht „wenn“, sondern „nicht“: إِنِ ٱلْكَٰفِرُونَ إِلَّا (67:20) — wörtlich „nicht sind die Ungläubigen außer (in Täuschung)“. Und verwechsle es nicht mit إِنَّ: ohne Šadda „wenn“, mit Šadda „gewiss“.'
+  ],
+
+  'kh-017': [
+    'Āyat al-Kursī, gleich am Anfang: لَآ إِلَٰهَ إِلَّا هُوَ (2:255) — „es gibt keinen Gott außer Ihm“. Und später im selben Vers noch einmal: إِلَّا بِإِذْنِهِۦ (2:255) — „außer mit Seiner Erlaubnis“.',
+    'Nach einer Verneinung wird aus „außer“ ein „nur“. In al-Mulk: مَا يُمْسِكُهُنَّ إِلَّا ٱلرَّحْمَٰنُ (67:19) — „nichts hält sie außer dem Allerbarmer“, also: nur Er hält sie. Und in al-ʿAṣr nimmt es eine Gruppe aus: إِلَّا ٱلَّذِينَ ءَامَنُواْ (103:3) — „außer denjenigen, die glauben“.'
+  ],
+
+  'kh-016': [
+    'In al-Mulk steht es vor einem Verb: أَن يَخْسِفَ بِكُمُ ٱلْأَرْضَ (67:16) — „dass Er die Erde mit euch versinken lässt“. ⚠️ Nach أَنْ trägt das Verb am Ende Fatḥa (yaḫsifa), nicht Ḍamma.',
+    'Drei Wörter, die sich fast gleichen: أَنْ — „dass“, vor einem Verb —, أَنَّ — „dass“, vor einem Nomen — und إِنْ — „wenn“. Merk dir das Hamza: oben mit Fatḥa heißt „dass“, unten mit Kasra heißt „wenn“ — wie in in šāʾa llāh (Inschallah).'
+  ],
+
+  'kh-018': [
+    'Der letzte Vers von al-ʿAṣr: إِلَّا ٱلَّذِينَ ءَامَنُواْ (103:3) — „außer denjenigen, die glauben“. Dasselbe steht in at-Tīn (95:6). Das dritte Wort ist deine Vokabel in der Mehrzahl: āmanū, „sie glauben“.',
+    'Die Wurzel أ م ن bedeutet Sicherheit. Sie steht in at-Tīn: وَهَٰذَا ٱلْبَلَدِ ٱلْأَمِينِ (95:3) — „und diese sichere Stadt“. Sicher sein, vertrauen, glauben — eine Familie. In al-Mulk sagst du die Wir-Form: ءَامَنَّا بِهِۦ (67:29) — „wir glauben an Ihn“.'
+  ],
+
+  'kh-021': [
+    'Dein Wort سَمَاءٌ (Himmel) und أَرْضٌ treten im Koran oft als Paar auf. In Āyat al-Kursī: وَمَا فِي ٱلْأَرْضِ (2:255) — „und was auf der Erde ist“, direkt nach den Himmeln. Lerne die beiden zusammen.',
+    'Aus deiner Dua „Abend Dua 3“, die du dreimal sagst: nichts schadet فِي الأَرْضِ — „auf der Erde“ —, und gleich danach kommt der Himmel. Wer sie dreimal am Abend sagt, sagt dreimal deine Vokabel.'
+  ],
+
+  'kh-022': [
+    'In at-Tīn hängt ein la- davor: لَقَدْ خَلَقْنَا ٱلْإِنسَٰنَ (95:4) — „Wir haben den Menschen ja erschaffen“. In al-Mulk steht es allein: قَدْ جَآءَنَا نَذِيرٌ (67:9) — „zu uns kam bereits ein Warner“. Beide Male: schon, wirklich.',
+    '⚠️ قَدْ steht nie allein und nie vor einem Nomen — immer direkt vor einem Verb. Mit deinem فَعَلَ (tun / machen) gedacht: qad faʿala — „er hat es schon getan“. Für sich übersetzt man es oft gar nicht; es macht die Aussage nur fest.'
+  ],
+
+  'kh-023': [
+    'In al-Falaq steht es zweimal vor dem letzten Wort: غَاسِقٍ إِذَا وَقَبَ (113:3) — „der Dunkelheit, wenn sie zunimmt“ — und حَاسِدٍ إِذَا حَسَدَ (113:5) — „eines Neiders, wenn er neidet“. Jedes Mal folgt ein Verb in der Vergangenheit.',
+    '⚠️ Zwei Wörter für „wenn“: إِنْ ist das unsichere „falls“ — wie in in šāʾa llāh (Inschallah) —, إِذَا das sichere „sobald“. In aš-Šarḥ: فَإِذَا فَرَغْتَ (94:7) — „wenn du fertig bist“. Das Verb steht in der Vergangenheit und meint doch, was noch kommt.'
+  ],
+
+  'kh-024': [
+    'Die Wurzel ق و م bedeutet stehen, aufstehen. Du sprichst sie in Āyat al-Kursī: ٱلْحَيُّ ٱلْقَيُّومُ (2:255) — „der Lebendige, der Beständige“ — und in der Fātiḥa: ٱلصِّرَٰطَ ٱلْمُسْتَقِيمَ (1:6) — „den geraden Weg“; gerade ist, was aufrecht steht. Ein قَوْمٌ sind wörtlich die, die zusammen aufstehen.',
+    'Gebaut wie drei Wörter, die du hast: يَوْمٌ (Tag), دَوْرٌ (Stockwerk), زَوْجٌ (Ehemann) — Fatḥa, dann ein و mit Sukūn. Auch die Mehrzahl أَقْوَامٌ geht wie أَدْوَارٌ (Stockwerke) und أَزْوَاجٌ (Ehemänner).'
+  ],
+
+  'kh-025': [
+    'Zuerst heißt das Wort „Zeichen“: jeder Vers ist ein Zeichen Allahs, darum trägt er diesen Namen. Auf Deutsch sagst du längst „Aya“ und meinst genau das. Die Mehrzahl ist آيَاتٌ — die Āyāt einer Sure.',
+    'Du hast schon ein Wort für „Zeichen“: عَلَامَةٌ (Zeichen / Hinweis) — das Zeichen im Alltag. آيَةٌ ist das Zeichen Allahs: ein Beweis, ein Wunder, ein Vers. Die Mehrzahl geht wie bei drei Wörtern, die du hast: سَاعَاتٌ (Stunden), لُغَاتٌ (Sprachen), سَيَّارَاتٌ (Autos).'
+  ],
+
+  'kh-026': [
+    'Aus deiner Dua „Dua Wissen“: رَّبِّ زِدْنِي عِلْمًا — „mein Herr, mehre mich an Wissen“. Das letzte Wort ist das Verbalnomen deiner Vokabel: wer weiß, hat ʿilm.',
+    'In at-Takāṯur dreimal: كَلَّا سَوْفَ تَعْلَمُونَ (102:3) — „Keineswegs! Ihr werdet es erfahren“. Und in Āyat al-Kursī: يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ (2:255) — „Er weiß, was vor ihnen liegt“. يَعْلَمُ ist die Gegenwart: „er weiß“.'
+  ],
+
+  'kh-027': [
+    '⚠️ Sieh im Taschahhud auf den Namen danach: Muḥammadan — mit Fatḥa-Tanwīn. أَنَّ setzt das Nomen, das ihm folgt, in den Akkusativ, genau wie seine Schwester إِنَّ. Der Unterschied: إِنَّ beginnt einen Satz („gewiss“), أَنَّ hängt einen an („dass“).',
+    'Im Taschahhud stehen beide „dass“ direkt hintereinander: erst أَنْ vor lā ilāha illā llāh, dann أَنَّ vor dem Namen Muḥammad. Vor einem Nomen steht immer die Form mit Šadda.'
+  ],
+
+  'kh-028': [
+    'Der Gruß zum Fest: „kullu ʿām wa-antum bi-ḫayr“ — jedes Jahr möge es euch gut gehen. Das erste Wort ist deine Vokabel: كُلٌّ vor einem Nomen in der Einzahl heißt „jeder“.',
+    'In al-Qadr: مِّن كُلِّ أَمْرٍ (97:4) — „mit jeder Angelegenheit“. Und in al-Mulk mit bi- davor: بِكُلِّ شَيْءِۭ بَصِيرٌ (67:19) — „Er sieht alle Dinge“. ⚠️ Die Šadda zeigt ein doppeltes ل; mit nur einem — kul — hieße es „iss!“.'
+  ],
+
+  'kh-029': [
+    'Mit dem Frage-أَ davor beginnen zwei Suren, die du kannst: أَلَمْ نَشْرَحْ (94:1) — „haben Wir nicht geweitet …?“ — und أَلَمْ تَرَ (105:1) — „hast du nicht gesehen …?“. Und mitten in aḍ-Ḍuḥā: أَلَمْ يَجِدْكَ (93:6) — „hat Er dich nicht gefunden …?“.',
+    '⚠️ Nach لَمْ steht das Verb in der Gegenwartsform, gemeint ist aber die Vergangenheit — und sein Ende wird stumm: لَمْ يَلِدْ (112:3), yalid mit Sukūn statt yalidu. Zum Vergleich dein لَا (nein): لَآ أَعْبُدُ (109:2) — „ich diene nicht“ —, dort bleibt die Ḍamma.'
+  ],
+
+  'kh-030': [
+    'In al-Mulk: ٱلَّذِي جَعَلَ لَكُمُ ٱلْأَرْضَ (67:15) — „Der euch die Erde (fügsam) gemacht hat“. So wird das Verb gebaut: jemand macht etwas zu etwas — hier Allah die Erde für euch.',
+    'Du hast schon ein Verb für „machen“: فَعَلَ (tun / machen). Das ist das Tun überhaupt; جَعَلَ macht etwas ZU etwas oder setzt jemanden ein. In al-Fīl stehen beide nacheinander: كَيْفَ فَعَلَ رَبُّكَ (105:1) — „wie dein Herr verfuhr“ — und im nächsten Vers يَجْعَلْ (105:2).'
+  ],
+
+  'kh-031': [
+    'At-Tīn erzählt in zwei Schritten: erst لَقَدْ خَلَقْنَا ٱلْإِنسَٰنَ (95:4) — „Wir haben den Menschen erschaffen“ —, dann ثُمَّ رَدَدْنَٰهُ (95:5) — „dann haben Wir ihn zurückgebracht“. ثُمَّ legt einen Abstand zwischen zwei Dinge: erst das eine, später das andere.',
+    'Dein وَ (und) verbindet nur. ثُمَّ ordnet: zuerst, danach. So endet at-Takāṯur: ثُمَّ لَتُسْـَٔلُنَّ (102:8) — „dann werdet ihr ganz gewiss gefragt“. ⚠️ Mit Ḍamma am Anfang; mit Fatḥa — ṯamma — ist es ein anderes Wort: „dort“.'
+  ],
+
+  'kh-035': [
+    'Zwei Wendungen, die du kennst: ʿaḏāb al-qabr — die Strafe im Grab, vor der man Zuflucht sucht — und ʿaḏāb an-nār, die Strafe des Feuers. Das erste Wort ist jedes Mal deine Vokabel.',
+    'Gegen Ende von al-Mulk: مِنْ عَذَابٍ أَلِيمٍ (67:28) — „vor schmerzhafter Strafe“. Dort trägt das Wort Tanwīn und hat ein Adjektiv hinter sich, das ihm im Fall folgt — Nomen und Beschreibung, wie du es aus dem Unterricht kennst.'
+  ],
+
+  'kh-038': [
+    'Die zweite Bedeutung ist „selbst“: nafsī heißt „ich selbst“, wörtlich „meine Seele“ — mit der Endung ـِي („mein“), die du kennst. Genauso nafsuhu: „er selbst“.',
+    '⚠️ Weiblich ohne ة, wie drei Wörter, die du hast: عَيْنٌ (Auge), يَدٌ (Hand), أُذُنٌ (Ohr). Die Mehrzahl نُفُوسٌ geht wie نُجُومٌ (Sterne) und ضُيُوفٌ (Gäste).'
+  ],
+
+  'kh-039': [
+    'In al-Mulk steht das Verb selbst: وَلِلَّذِينَ كَفَرُواْ بِرَبِّهِمْ (67:6) — „und für diejenigen, die ihren Herrn verleugnen …“. Was jemand leugnet, steht mit bi- dahinter — dein بِ (mit, durch).',
+    'Das Gegenstück zum Glauben: Īmān gegen Kufr — كُفْرٌ ist das Verbalnomen. Wörtlich heißt das Verb „zudecken“; daher die zweite Bedeutung „undankbar sein“: wer eine Gabe zudeckt, als hätte er sie nie bekommen.'
+  ],
+
+  'kh-040': [
+    'Aus deiner Dua „Abend Dua 3“, die du dreimal sagst: يَضُرُّ مَعَ اسْمِهِ شَيْءٌ — wörtlich „(nicht) schadet mit Seinem Namen irgendetwas“. Das letzte Wort ist deine Vokabel: ein Ding, etwas.',
+    'In Āyat al-Kursī heißt es „etwas“: وَلَا يُحِيطُونَ بِشَيْءٍ (2:255) — „sie aber umfassen nichts (von Seinem Wissen)“, wörtlich „und nicht umfassen sie irgendetwas“. Das letzte Wort ist deine Vokabel, mit bi- davor. ⚠️ Am Wortende steht ein Hamza ohne Träger. Die Mehrzahl ist أَشْيَاءُ — ohne Tanwīn.'
+  ],
+
+  'kh-041': [
+    'Ein Paar mit deinem وَ (und): das eine nimmt beides, أَوْ lässt die Wahl. Beide stehen zwischen zwei gleichen Dingen — zwei Nomen, zwei Verben, zwei Sätzen.',
+    'Noch einmal al-Mulk: وَأَسِرُّواْ قَوْلَكُمْ أَوِ ٱجْهَرُواْ (67:13) — „haltet eure Worte geheim oder äußert sie laut“. ⚠️ Dort heißt es awi statt aw: stößt das Sukūn auf ein Verbindungs-Alif, bekommt es eine Kasra zum Aussprechen. Das Wort bleibt dasselbe.'
+  ],
+
+  'kh-042': [
+    'In al-Mulk mit einer Endung: قَدْ جَآءَنَا نَذِيرٌ (67:9) — „zu uns kam bereits ein Warner“. jāʾa-nā heißt „er kam zu uns“: zu wem, hängt als Endung am Verb; wer kommt, steht danach.',
+    '⚠️ Hohl und mit Hamza am Ende: in der Wurzel ج ي ء sitzt ein ي, das in جَاءَ zum langen ā wird — wie das و in deinem نَامَ (schlafen). In der Gegenwart kommt es zurück: يَجِيءُ.'
+  ],
+
+  'kh-043': [
+    'Az-Zalzala: فَمَن يَعْمَلْ مِثْقَالَ ذَرَّةٍ (99:7) — „wer im Gewicht eines Stäubchens (Gutes) tut …“. يَعْمَلُ ist die Gegenwart; dort steht sie verkürzt, yaʿmal.',
+    'Das Verbalnomen kennst du als Begriff: عَمَلٌ — die Tat, das Werk. In al-Mulk: أَحْسَنُ عَمَلًا (67:2) — „(wer) am besten handelt“. Zum Vergleich dein فَعَلَ (tun / machen): das ist jedes Tun; عَمِلَ ist das Handeln, das am Ende gewogen wird.'
+  ],
+
+  'kh-044': [
+    '⚠️ Ein Paar, das nur ein Zeichen trennt: أَتَى mit kurzem a heißt „kommen“, آتَى mit langem ā heißt „geben“ — wörtlich „kommen lassen“. Wer gibt, lässt etwas zu jemandem kommen. Am Alif mit Madda erkennst du das Geben.',
+    'Gebaut wie deine Verben mit a- am Anfang: أَحَبَّ (lieben), أَرَادَ (wollen), أَجَابَ (antworten). Auch آتَى trägt dieses a- — nur beginnt seine Wurzel أ ت ي selbst mit Hamza, und zwei Hamza hintereinander verschmelzen zum langen ā mit Madda.'
+  ],
+
+  'kh-045': [
+    'Zwei weitere Suren, die du kannst: al-Māʿūn beginnt mit أَرَءَيْتَ ٱلَّذِي (107:1) — „hast du den gesehen, der …“ —, und in an-Naṣr steht وَرَأَيْتَ ٱلنَّاسَ (110:2) — „und du siehst die Menschen“. raʾayta: „du hast gesehen“.',
+    '⚠️ In der Gegenwart verliert das Verb sein Hamza: يَرَى — „er sieht“. Darum steht in az-Zalzala nur ein kurzes Wort: يَرَهُۥ (99:7) — „er wird es sehen“. Zum Vergleich deine zwei Verben fürs Schauen: نَظَرَ (anschauen), شَاهَدَ (beobachten) — رَأَى ist das Sehen selbst.'
+  ],
+
+  'kh-046': [
+    'Der letzte Vers von al-Mulk: فَمَن يَأْتِيكُم بِمَآءٍ (67:30) — „wer bringt euch dann Wasser?“, wörtlich „wer kommt zu euch mit Wasser“. أَتَى mit bi- heißt: mit etwas kommen, also bringen. Dein مَاءٌ (Wasser) steht gleich dahinter.',
+    'Zwei Verben für „kommen“, und al-Mulk benutzt beide: gefragt wird mit أَتَى (67:8), geantwortet mit جَاءَ — قَدْ جَآءَنَا نَذِيرٌ (67:9), „zu uns kam bereits ein Warner“. Beide heißen dasselbe.'
+  ],
 };
