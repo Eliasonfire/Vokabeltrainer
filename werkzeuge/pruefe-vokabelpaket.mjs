@@ -32,11 +32,11 @@ const pruefe = (name, ist, soll) => {
   if (!ok) { fehler++; console.log('  ⛔  ' + name + '\n        ist:  ' + JSON.stringify(ist) + '\n        soll: ' + JSON.stringify(soll)); }
   else console.log('  ok  ' + name);
 };
-const schneide = (name, art = 'function') => {
+const schneide = (name, art = 'function', quelle = V) => {
   const re = art === 'async'
     ? new RegExp('async function\\s+' + name + '\\s*\\([^)]*\\)\\s*\\{[\\s\\S]*?\\n\\}')
     : new RegExp('function\\s+' + name + '\\s*\\([^)]*\\)\\s*\\{[\\s\\S]*?\\n\\}');
-  const m = V.match(re);
+  const m = quelle.match(re);
   if (!m) { console.log('⛔ ' + name + '() nicht auffindbar — hat js/vokabelpaket.js einen neuen Aufbau?'); process.exit(1); }
   return m[0];
 };
@@ -44,7 +44,7 @@ const schneide = (name, art = 'function') => {
 /* ---------- Buehne ---------- */
 function bauen(vorhandene) {
   const w = { VOKABELN: vorhandene ? JSON.parse(JSON.stringify(vorhandene)) : undefined };
-  const quelle = 'let PAKET_STAND = null;\n'
+  const quelle = 'let PAKET_STAND = null; const PAKET_SLUGS = new Set();\n'
     + schneide('paketEinhaengen') + '\n'
     + 'return { paketEinhaengen, stand: () => PAKET_STAND, fenster: window };';
   /* `BUECHER` bewusst NICHT definiert — genau der Live-Fall, in dem die
@@ -75,6 +75,65 @@ console.log('\n=== ⛔ Gewinnen die ausgelieferten Dateien? ===\n');
     b.fenster.VOKABELN['madina-1'][0].id, 'AUSGELIEFERT');
   pruefe('ein Buch, das noch fehlte, kommt aus dem Paket',
     b.fenster.VOKABELN['madina-2'][0].id, 'neu');
+}
+
+console.log('\n=== ⛔ Reihenfolge des App-Starts: erst das Paket, dann das Buch ===\n');
+{
+  /* ⛔ DER ABSCHNITT DARUEBER HAT DAS NICHT GEMESSEN (12.10.2026). Er stellt
+     ein Buch auf die Buehne, das „schon ausgeliefert" ist, und haengt dann das
+     Paket ein. In der App ist es umgekehrt: PAKET_BEREIT haengt das Paket ein,
+     BEVOR setzeBuch() irgendein Buch laedt - und ladeBuchDatei() nahm bis v668,
+     was schon dastand. Gemessen mit genau dieser Buehne: mit eingelesenem Paket
+     0 Dateianfragen, die App zeigte das Paket. Auf einem solchen Geraet waere
+     kein neues Kapitel und kein Wechsel auf die Ersatzdatenbank angekommen.
+     [[gruener_pruefer_beweist_nur_geprueftes]]
+
+     Hier laufen beide echten Funktionen in der Reihenfolge des Starts. Die
+     „ausgelieferte Datei" ist ein Skript-Element; `datei` sagt, was beim
+     Anhaengen passiert:
+       'kommt'  die Datei setzt window.VOKABELN[slug] und meldet load
+       'fehlt'  error (kein Netz und nichts im Vorrat, oder nicht ausgeliefert)
+       'leer'   load, aber nichts gesetzt (etwa eine Anmeldeseite statt der Datei)
+     Ergebnis je Lauf: was die App zeigt · Dateianfragen beim ersten Laden ·
+     Dateianfragen beim zweiten. */
+  const B = fs.readFileSync(path.join(REPO, 'js', 'buecher.js'), 'utf8');
+  const echt = schneide('ladeBuchDatei', 'function', B);
+  const start = async (mitPaket, datei, ladeQuelle = echt) => {
+    const fenster = {};
+    let anfragen = 0;
+    const dokument = { createElement: () => ({}), head: { appendChild: (s) => {
+      anfragen++;
+      if (datei === 'fehlt') return s.onerror();
+      if (datei === 'kommt') { fenster.VOKABELN = fenster.VOKABELN || {}; fenster.VOKABELN['madina-1'] = [{ id: 'AUSGELIEFERT' }]; }
+      s.onload();
+    } } };
+    const f = new Function('window', 'document',
+      'let PAKET_STAND = null; const PAKET_SLUGS = new Set(); const KORAN_BUCH = "koran-haeufig";\n'
+      + 'const buchInfo = slug => ({ slug, datei: "data/vokabeln-" + slug + ".js" }); const koranKarten = () => [];\n'
+      + schneide('paketEinhaengen') + '\n' + ladeQuelle + '\n'
+      + 'return { paketEinhaengen, ladeBuchDatei };')(fenster, dokument);
+    if (mitPaket) f.paketEinhaengen({ art: 'vokabelpaket', buecher: { 'madina-1': [{ id: 'AUS DEM PAKET' }] } });
+    let zeigt;
+    try { zeigt = (await f.ladeBuchDatei('madina-1'))[0].id; } catch { return ['FEHLER', anfragen, 0]; }
+    const erste = anfragen;
+    await f.ladeBuchDatei('madina-1');
+    return [zeigt, erste, anfragen - erste];
+  };
+  pruefe('Paket eingelesen UND Datei ausgeliefert: die Datei gewinnt, danach keine Anfrage mehr',
+    await start(true, 'kommt'), ['AUSGELIEFERT', 1, 0]);
+  pruefe('Paket eingelesen, die Datei kommt nicht: das Paket traegt',
+    await start(true, 'fehlt'), ['AUS DEM PAKET', 1, 1]);
+  pruefe('Paket eingelesen, statt der Datei kommt etwas Leeres: das Paket traegt',
+    await start(true, 'leer'), ['AUS DEM PAKET', 1, 1]);
+  pruefe('kein Paket, Datei ausgeliefert: wie bisher eine Anfrage, dann keine',
+    await start(false, 'kommt'), ['AUSGELIEFERT', 1, 0]);
+  pruefe('kein Paket, keine Datei: das Buch fehlt (Fehler, kein leeres Buch)',
+    await start(false, 'fehlt'), ['FEHLER', 1, 0]);
+  /* Stoertest: die Fassung bis v668 - „steht schon etwas da, nimm es". */
+  const VORRANG = 'if (vorhanden && !ausPaket) return fertig(vorhanden);';
+  if (!echt.includes(VORRANG)) { console.log('⛔ Stoertest: die Zeile mit dem Vorrang steht nicht mehr so in ladeBuchDatei() — Pruefer anpassen.'); process.exit(1); }
+  pruefe('Stoertest: ohne den Vorrang der Datei zeigte die App das Paket, ohne je anzufragen',
+    await start(true, 'kommt', echt.replace(VORRANG, 'if (vorhanden) return fertig(vorhanden);')), ['AUS DEM PAKET', 0, 0]);
 }
 
 console.log('\n=== Zaehlt der Stand, was wirklich drin ist? ===\n');
