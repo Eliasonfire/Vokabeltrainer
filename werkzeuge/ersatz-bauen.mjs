@@ -74,34 +74,107 @@ function deutschAus(satz) {
  * Wortlaut der Karte da — dann ändert sich bei einem Wechsel für Elias an dieser Karte nichts.
  * Elias, 12.10.2026, als von 4414 Karten 1601 wortgleich waren: „das ist sehr wenig, guck mal nach damit wir mehr
  * identische bekommen". Und schon am 11.10.2026: „wo anders suchst nach den selben begriffen".
- * Von Claude stammt die Grenze: JEDES Glied der Karte (getrennt an / ; , außerhalb von Klammern, die Zählung „(1)"
- * beiseite) muss als Wort eines Kandidaten der Quellen dastehen. Jeder Kandidat zählt, auch einer, dessen Seite nur
- * dieselben BUCHSTABEN trägt: dieselben Buchstaben und dasselbe deutsche Wort wie auf der Karte — das ist das Wort der
- * Karte. Nicht zählen Erklärungen, und eine Zeile des Schlüssels nur bei strenger Übereinstimmung des Stichworts (sonst
- * käme das Deutsch eines Nachbarworts herein; so geschehen bei 47793, „idhan“ statt „idha“). Fehlt ein einziges
- * Glied, bleibt alles, wie es ist — eine halb übernommene Karte gibt es nicht. Von der Karte stammen damit nur
- * Reihenfolge, Trennzeichen, Zählung und Groß-/Kleinschreibung; belegt ist jedes Wort für sich. */
+ *
+ * Alles Weitere stammt von Claude — die Grenze, und was als „dieselben Wörter" gilt:
+ *   JEDES Glied der Karte (getrennt an / ; , außerhalb von Klammern; die Zählung „(1)" trennt ebenfalls) muss als Wort
+ *   eines Kandidaten dastehen. Jeder Kandidat der Quellen zählt, auch einer, dessen Seite nur dieselben BUCHSTABEN
+ *   trägt: dieselben Buchstaben und dasselbe deutsche Wort wie auf der Karte — das ist das Wort der Karte. Nicht zählen
+ *   Erklärungen, und eine Zeile des Schlüssels nur bei strenger Übereinstimmung des Stichworts (sonst käme das Deutsch
+ *   eines Nachbarworts herein; so geschehen bei 47793, „idhan“ statt „idha“). Als Kandidat zählt zuletzt auch das
+ *   Deutsch, das ohne diese Regel auf der Ersatzkarte stünde: dann ändern sich nur Trennzeichen und Reihenfolge, und
+ *   seine Fundstelle und die Sorte des Belegs bleiben (auch „ohne deutsche Quelle").
+ *   Fehlt ein einziges Glied, bleibt alles, wie es ist — eine halb übernommene Karte gibt es nicht.
+ * „Dasselbe Wort" ist es auch, wenn nur etwas OHNE INHALT anders ist (zweite Fassung, 12.10.2026):
+ *   · der Artikel vorn, auf EINER Seite: „die Leute" = „Leute". Nicht „einen Nomen" = „ein Nomen" — zwei verschiedene
+ *     Artikel sind ein Unterschied, und einen Schreibfehler der Karte soll die Regel nicht hereinholen.
+ *   · Satzzeichen: „danke!" = „danke", „so ... wie" = „so wie"
+ *   · die Kürzel „etw.", „jdn.", „jdm." für „etwas", „jemanden", „jemandem"
+ *   · bei Verben die Platzhalter „etwas", „jemanden", „jemandem" selbst: „verweigern" = „etwas verweigern".
+ *     NIE „sich": „verbreiten" und „sich verbreiten" sind zwei Bedeutungen.
+ *   · ein Zusatz in Klammern, den nur die QUELLE führt: „ursprüngliche Form (eines Wortes)" = „ursprüngliche Form".
+ *     Ein Zusatz, den nur die KARTE führt („Stern (Himmelskörper)"), zählt NICHT: er steht in keiner Quelle. Ob er
+ *     von der Karte kommen darf, entscheidet Elias (offene Frage, Stand 12.10.2026).
+ *   · dieselben Wörter in derselben Reihenfolge, nur anders getrennt: der Karte fehlt ein Komma, das die Quelle setzt.
+ * Von der Karte stammen damit Reihenfolge, Trennzeichen, Zählung, Schreibung, Artikel und Satzzeichen; belegt ist
+ * jedes Wort für sich, die Fundstellen stehen im Beleg. */
 const wieKarte = [];
-function wieDieKarte(alt, s) {
-  if (!alt || !voll(alt.de)) return null;
-  const norm = t => nfc(t).toLowerCase().replace(/\s+/g, ' ').trim();
-  const glieder = [];
+const wkNorm = t => nfc(t).toLowerCase().replace(/\s+/g, ' ').trim();
+const WK_ARTIKEL = /^(?:der|die|das|den|dem|des|ein|eine|einen|einem|einer|eines)\s+/;
+const WK_KUERZEL = [[/(^|\s)etw\.?(?=\s|$)/g, '$1etwas'], [/(^|\s)j(?:md|d)n\.?(?=\s|$)/g, '$1jemanden'], [/(^|\s)j(?:md|d)m\.?(?=\s|$)/g, '$1jemandem'], [/(^|\s)j(?:md|d)s\.?(?=\s|$)/g, '$1jemandes'], [/(^|\s)j(?:md|d)\.?(?=\s|$)/g, '$1jemand']];
+// Kürzel ausgeschrieben, Satzzeichen weg; Klammern, Schrägstrich, Komma und der Bindestrich im Wort bleiben
+const wkGrund = t => { let x = wkNorm(t); for (const [re, lang] of WK_KUERZEL) x = x.replace(re, lang); return x.replace(/[!?.…"„“”‚‘’':]/g, ' ').replace(/\s+/g, ' ').replace(/(^| )-(?= |$)/g, '$1').replace(/\s+/g, ' ').trim(); };
+// nur FREI stehende Klammern: „(Ess)tisch" und „der (all-)Weise" bleiben, wie sie sind
+const wkOhneKlammern = t => t.replace(/(^|\s)\([^()]*\)(?=[\s,;\/]|$)/g, '$1').replace(/\s+/g, ' ').trim();
+const wkOhnePlatzhalter = t => t.replace(/(^|\s)(?:etwas|jemanden|jemandem|jemandes|jemand)(?=\s|$)/g, '$1').replace(/\s+/g, ' ').trim();
+const wkGlieder = text => {
+  const aus = [];
   let tiefe = 0, akt = '';
-  for (const c of nfc(alt.de).replace(/\(\s*\d+\s*\)/g, ' ')) {
+  for (const c of nfc(text).replace(/\(\s*\d+\s*\)/g, ';')) {
     if (c === '(') tiefe++;
     else if (c === ')') tiefe = Math.max(0, tiefe - 1);
-    if (tiefe === 0 && (c === '/' || c === ';' || c === ',')) { glieder.push(akt); akt = ''; } else akt += c;
+    if (tiefe === 0 && (c === '/' || c === ';' || c === ',')) { aus.push(akt); akt = ''; } else akt += c;
   }
-  glieder.push(akt);
-  const g = glieder.map(norm).filter(Boolean);
+  aus.push(akt);
+  return aus.map(wkNorm).filter(Boolean);
+};
+const wkFlach = (text, ohneKlammern) => { let x = wkGrund(nfc(text).replace(/\(\s*\d+\s*\)/g, ' ')); if (ohneKlammern) x = wkOhneKlammern(x); return x.replace(/[,;\/]/g, ' ').replace(/\s+/g, ' ').trim(); };
+function wieDieKarte(alt, s, jetzt) {
+  if (!alt || !voll(alt.de)) return null;
+  const g = wkGlieder(alt.de);
   if (!g.length) return null;
+  const verb = alt.type === 'verb';
   const taugt = d => !d.erkl && (!d.sch || d.sch.streng === true);
-  const woerter = new Map();
-  for (const d of (s.deutsch || []).filter(taugt)) for (const teil of [d.de, ...String(d.de).split(/\s*[,;\/]\s*/)]) { const k = norm(teil); if (k && !woerter.has(k)) woerter.set(k, d); }
-  const treffer = g.map(x => woerter.get(x));
-  if (treffer.some(t => !t)) return null;
-  const orte = [...new Set(treffer.map(t => t.wo))].slice(0, 4);
-  return { w: nfc(alt.de), wo: orte.join(' · ') + ' · Wortlaut wie die bisherige Karte: jedes ihrer Wörter nennt die Quelle zu diesem Wort', q: treffer.every(t => t.q === 'schluessel') ? 'schluessel' : treffer.some(t => t.sicher !== 'kette') ? 'direkt' : 'kette' };
+  // erst die Quellen, zuletzt das Deutsch, das ohnehin dastünde: nennt eine Quelle dasselbe Wort, gewinnt die Quelle
+  const kandidaten = (s.deutsch || []).filter(taugt);
+  if (jetzt && voll(jetzt.w)) kandidaten.push({ de: jetzt.w, wo: jetzt.wo, q: jetzt.q, ohnehin: true });
+  const genau = new Map(), mitArtikel = new Map(), ohneArtikel = new Map(), flach = new Map();
+  const merke = (karte, k, d) => { if (k && !karte.has(k)) karte.set(k, d); };
+  for (const d of kandidaten) {
+    const roh = String(d.de);
+    // Beim Deutsch, das ohnehin dastünde, zählt nur, was AUSSERHALB von Klammern steht: in der Klammer steht dort oft ein
+    // Zusatz von Claude ohne deutsche Quelle, und der soll nicht mit der Fundstelle des Worts davor zur Karte werden
+    // (gesehen an 46830: „willfahren (sich fügen, sich unterwerfen, gehorchen)" wäre als „sich unterwerfen" mit der
+    // Fundstelle von „willfahren" dagestanden).
+    for (const teil of new Set(d.ohnehin ? [roh, ...wkGlieder(roh)] : [roh, ...roh.split(/\s*[,;\/]\s*/), ...wkGlieder(roh)])) {
+      merke(genau, wkNorm(teil), d);
+      const g0 = wkGrund(teil);
+      for (const k of new Set([g0, wkOhneKlammern(g0)])) for (const k2 of verb ? [k, wkOhnePlatzhalter(k)] : [k]) {
+        merke(mitArtikel, k2, d);
+        if (WK_ARTIKEL.test(k2)) merke(ohneArtikel, k2.replace(WK_ARTIKEL, ''), d);
+      }
+    }
+    merke(flach, wkFlach(roh, false), d);
+    merke(flach, wkFlach(roh, true), d);
+  }
+  let alleGenau = true;
+  const finde = x => {
+    if (genau.has(x)) return genau.get(x);
+    alleGenau = false;
+    const c0 = wkGrund(x);
+    for (const c of verb ? [c0, wkOhnePlatzhalter(c0)] : [c0]) {
+      if (!c) continue;
+      if (mitArtikel.has(c)) return mitArtikel.get(c);
+      if (ohneArtikel.has(c)) return ohneArtikel.get(c);
+      // Artikel nur auf der Seite der Karte: dann muss die Quelle das Wort OHNE Artikel führen
+      if (WK_ARTIKEL.test(c)) { const c1 = c.replace(WK_ARTIKEL, ''); if (c1 && mitArtikel.has(c1)) return mitArtikel.get(c1); }
+    }
+    return null;
+  };
+  let treffer = g.map(finde);
+  if (treffer.some(t => !t)) {
+    const d = flach.get(wkFlach(alt.de, false));
+    if (!d) return null;
+    treffer = [d]; alleGenau = false;
+  }
+  const ohnehin = treffer.some(t => t.ohnehin);
+  // der Vermerk über einen Zusatz von Claude gilt nur, solange die Karte überhaupt eine Klammer trägt
+  const ort = t => t.ohnehin && !nfc(alt.de).includes('(') ? String(t.wo || '').replace(' · der Zusatz in Klammern ist von Claude, ohne deutsche Quelle', '') : t.wo;
+  const orte = [...new Set(treffer.map(ort))].slice(0, 4);
+  const wie = ohnehin ? 'Wortlaut wie die bisherige Karte: ihre Wörter standen hier schon — anders gesetzt, oder es standen weitere Wörter oder ein Zusatz in Klammern daneben'
+    : alleGenau ? 'Wortlaut wie die bisherige Karte: jedes ihrer Wörter nennt die Quelle zu diesem Wort'
+      : 'Wortlaut wie die bisherige Karte: die Quelle nennt dieselben Wörter zu diesem Wort — anders sind nur Artikel, Satzzeichen, Platzhalter („etwas“, „jemanden“) oder ein Zusatz der Quelle in Klammern';
+  const q = ohnehin ? jetzt.q : treffer.every(t => t.q === 'schluessel') ? 'schluessel' : treffer.some(t => t.sicher !== 'kette') ? 'direkt' : 'kette';
+  return { w: nfc(alt.de), wo: orte.join(' · ') + ' · ' + wie, q };
 }
 
 const plaetze = [], unterschiede = [], nichtGefunden = [], handFehler = [], verzeichnis = [];
@@ -165,7 +238,7 @@ for (const buch of BUECHER) {
     // „Wie die Karte" (siehe wieDieKarte oben): gilt für jeden Platz, auch nach einer Entscheidung von Hand — nennen die
     // Quellen genau die Wörter der Karte, ist deren Wortlaut das Ziel.
     {
-      const wk = wieDieKarte(nachId.get(s.id), s);
+      const wk = wieDieKarte(nachId.get(s.id), s, felder.de);
       if (wk && (!felder.de || nfc(felder.de.w) !== wk.w)) { wieKarte.push({ id: s.id, buch, vorher: felder.de ? felder.de.w : null, jetzt: wk.w }); felder.de = wk; }
     }
     // Verbformen stehen nur an Verben. Im Bestand trägt keine andere Karte Vergangenheit, Gegenwart, Befehlsform oder
