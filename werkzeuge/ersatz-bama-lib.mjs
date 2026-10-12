@@ -114,6 +114,54 @@ export function wurzelnAus(feld) {
   return [...new Set(formen)].map(nachBW);
 }
 
+/* Dateiname einer abgelegten Wurzelseite von Lanes Lexikon (data-ersatz/quellen/lane/seiten/). Die Umschrift
+ * unterscheidet Groß und klein (H/h, S/s, D/d, T/t, Y/y …), Windows bei Dateinamen nicht: „Drb.html" und „drb.html"
+ * wären dort EINE Datei, und die Seite der einen Wurzel würde als die der anderen gelesen (so geschehen am 12.10.2026:
+ * der Schlüssel „bny" las die Seite von „bnY"). Darum trägt jeder Großbuchstabe einen Strich hinter sich; die bis
+ * dahin abgelegten Seiten sind umbenannt. Zeichen, die keine Buchstaben sind, stehen als Unterstrich mit Zeichennummer. */
+export const laneDateiname = bw => String(bw).replace(/[^A-Za-z]/g, c => '_' + c.charCodeAt(0)).replace(/[A-Z]/g, c => c + '-') + '.html';
+
+/* Dieselben Suchschlüssel, erweitert um die zwei Schreibungen, unter denen Lanes Seiten eine Wurzel sonst noch führen
+ * (gemessen am 12.10.2026 an den abgelegten Seiten und an den Fehlabrufen: „An" ist da, „>nf" und „'nf" nicht;
+ * „H*w" ist da, „bny", „vny" und „fty" nicht):
+ *   · Hamza am Anfang steht dort als bloßes Alif
+ *   · der schwache letzte Radikal: Waw und Ya sind bei Lane zwei Seiten, das Ya steht als Alif maqsura
+ * Das ist nur der Weg zur Seite. Welche Wurzel gilt, sagt die Seite, auf der das Wort als Stichwort steht (wurzelWert). */
+export function wurzelSchluessel(feld) {
+  const erst = wurzelnAus(feld);
+  const mitAlif = [...erst];
+  for (const f of erst) if ("'><".includes(f[0])) mitAlif.push('A' + f.slice(1));
+  const alle = [...mitAlif];
+  for (const f of mitAlif) {
+    const letzter = f.slice(-1);
+    if (f.length >= 3 && 'wyY'.includes(letzter)) for (const x of ['Y', 'y', 'w']) if (x !== letzter) alle.push(f.slice(0, -1) + x);
+  }
+  return [...new Set(alle)];
+}
+
+/* Der WERT einer Wurzel aus dem Namen der Seite, auf der Lane das Wort führt (Buckwalter-Umschrift), in der Schreibweise
+ * der App: Buchstaben mit Leerzeichen, das Hamza auf dem Alif (wie ersatz-zuordnen.mjs es bei den Wurzeln des
+ * Wiktionary hält), das Ya am Ende als Ya.
+ *   · Eine zweilautige Seite wird nur dann verdoppelt, wenn auch der Suchschlüssel drei Buchstaben mit gleichem zweiten
+ *     und dritten hatte -- sonst ist es die Seite einer Partikel („mn"), und die hat keine Wurzel.
+ *   · Es gelten drei oder vier Radikale. Ein bloßes Alif, das dann noch dasteht, ist kein Radikal (Lane führt manche
+ *     Lehnwörter unter ihren Buchstaben); dann gibt es keinen Wert.
+ * null heißt: aus dieser Seite lässt sich keine Wurzel ablesen. */
+const RADIKAL = new Set([...">btvjHxd*rzs$SDTZEgfqklmnhwy"]);
+export function wurzelWert(bw, schluesselFeld) {
+  let b = [...String(bw || '')];
+  if (b.length === 2) {
+    const k = [...String(schluesselFeld || '')].filter(c => BUCHSTABE.test(c));
+    if (!(k.length === 3 && k[1] === k[2] && nachBW(k[1]) === b[1])) return null;
+    b = [b[0], b[1], b[1]];
+  }
+  if (b[0] === 'A') b[0] = '>';
+  if (b[b.length - 1] === 'Y') b[b.length - 1] = 'y';
+  b = b.map(c => ("'&}<".includes(c) ? '>' : c));
+  if (b.length < 3 || b.length > 4 || b.some(c => !RADIKAL.has(c))) return null;
+  return ausBW(b.join(' '));
+}
+
 /* Der Bestand eines Buches (vokabeln-<buch>.js, liegt nur lokal) als Karte Kennung -> Vokabel. Der Bestand ist
  * der Abzug von arabicroots: in data/ -- oder in data-abzug/, solange auf die Ersatzdatenbank umgeschaltet ist
  * (datenquelle.mjs). */

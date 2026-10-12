@@ -87,15 +87,41 @@ async function holen() {
   console.log(`geholt mit arabischem Abschnitt: ${geholt} · Seite fehlt: ${fehlend} · Seite ohne arabischen Abschnitt: ${ohneArabisch}`);
 }
 
+/* Eine Wurzelvorlage mit „nocat=1" ist eine ERWÄHNUNG: so schreibt das Wiktionary eine Wurzel, die im Herkunftstext nur
+ * zum Vergleich genannt wird. Sie bekommt das Kennzeichen nocat, und ersatz-zuordnen.mjs nimmt sie nie als Wurzel des
+ * Worts. Gemessen am 12.10.2026: vier Karten trugen so eine fremde Wurzel (an „junger Mann" stand m-n-y), weil der
+ * Auszug von kaikki.org die erste Vorlage der Seite als Wurzel führt. */
 const wurzelnIn = text => {
   const funde = [];
   for (const m of text.matchAll(/\{\{\s*(ar-rootbox|ar-root)\s*\|([^{}]*)\}\}/g)) {
-    const teile = m[2].split('|').map(t => t.trim()).filter(t => t && !t.includes('='));
+    const roh = m[2].split('|').map(t => t.trim());
+    const teile = roh.filter(t => t && !t.includes('='));
     const buchstaben = teile.join(' ').split(/\s+/).filter(t => /^[ء-ي]$/.test(t));
-    if (buchstaben.length >= 2) funde.push({ art: m[1], w: buchstaben.join(' ') });
+    if (buchstaben.length < 2) continue;
+    const fund = { art: m[1], w: buchstaben.join(' ') };
+    if (roh.some(t => /^nocat\s*=\s*(1|y|yes|true)$/i.test(t))) fund.nocat = true;
+    funde.push(fund);
   }
   return funde;
 };
+/* Die Kopfformen eines Herkunftsabschnitts: das Wort mit Vokalzeichen, wie es in der Kopfvorlage steht ({{ar-noun|…}},
+ * {{ar-verb|…}} …). Daran findet ersatz-zuordnen.mjs den Abschnitt eines Eintrags, dem der Auszug keine
+ * Herkunftsnummer mitgibt, obwohl die Seite mehrere Abschnitte hat. Vorlagen ohne ausgeschriebene Form (neuere
+ * Verbvorlagen nennen nur Stamm und Vokale) liefern nichts — dann bleibt es beim bisherigen Weg. */
+const Z = n => String.fromCodePoint(n);
+const KOPFVORLAGE = /\{\{\s*ar-(?:noun|adj|verb|proper noun|adv|prep|particle|pron|con|interj|num|coll-noun|sing-noun|noun-pl|adj-pl|nisba|noun-nisba|adj-fem|noun-dual|verbal noun|phrase|det|adj-sound|adj-in|adj-an)\s*\|([^{}]*)\}\}/g;
+const BUCHSTABE = new RegExp('[' + Z(0x621) + '-' + Z(0x64A) + ']'), VOKALZEICHEN = new RegExp('[' + Z(0x64B) + '-' + Z(0x652) + ']');
+/* Je Kopfvorlage: die Formen (der erste Platz nennt mehrere mit Komma; ein Zusatz in spitzen Klammern wie <tr:…>
+ * gehört nicht zum Wort) und das Geschlecht, wenn die Vorlage es als eigenen Platz nennt (m, f, m-p, f-p …).
+ * „p" allein (nur Mehrzahl) und „mf" sind kein Geschlecht der Karte. Der Auszug von kaikki.org trägt das Geschlecht
+ * nicht immer (gemessen 12.10.2026: „Ohr" mit zwei Kopfformen, Ländernamen als Eigennamen) — die Seite schon. */
+const kopfzeilenIn = text => [...text.matchAll(KOPFVORLAGE)].map(m => {
+  const plaetze = m[1].split('|').map(p => p.trim()).filter(p => p && !p.includes('='));
+  const f = [...new Set(plaetze.filter(p => BUCHSTABE.test(p)).flatMap(p => p.split(/[,،]/)).map(p => p.replace(/<[^<>]*>/g, '').trim()).filter(p => BUCHSTABE.test(p) && VOKALZEICHEN.test(p)))];
+  const code = plaetze.find(p => /^(m|f)(-[pd])?$/.test(p));
+  return { f, g: code ? (code[0] === 'm' ? 'masculine' : 'feminine') : null };
+}).filter(z => z.f.length);
+const koepfeIn = text => [...new Set(kopfzeilenIn(text).flatMap(z => z.f))];
 function wurzeln() {
   const aus = {};
   let seiten = 0, mitWurzel = 0;
@@ -104,8 +130,9 @@ function wurzeln() {
     seiten++;
     const teile = s.arabisch.split(/^===\s*Etymology(?:\s+(\d+))?\s*===\s*$/m);
     // teile: [Vorspann, nr1, text1, nr2, text2, …]
-    const eintrag = { titel: s.titel, revid: s.revid, zeit: s.zeit, vorspann: wurzelnIn(teile[0]), einheiten: [] };
-    for (let i = 1; i < teile.length; i += 2) eintrag.einheiten.push({ nr: teile[i] ? Number(teile[i]) : null, w: wurzelnIn(teile[i + 1] || '') });
+    const geschlechter = t => kopfzeilenIn(t).filter(z => z.g);
+    const eintrag = { titel: s.titel, revid: s.revid, zeit: s.zeit, vorspann: wurzelnIn(teile[0]), geschlecht: geschlechter(teile[0]), einheiten: [] };
+    for (let i = 1; i < teile.length; i += 2) eintrag.einheiten.push({ nr: teile[i] ? Number(teile[i]) : null, w: wurzelnIn(teile[i + 1] || ''), koepfe: koepfeIn(teile[i + 1] || ''), geschlecht: geschlechter(teile[i + 1] || '') });
     if (eintrag.vorspann.length || eintrag.einheiten.some(e => e.w.length)) mitWurzel++;
     aus[s.gefragt] = eintrag;
     if (s.titel !== s.gefragt && !aus[s.titel]) aus[s.titel] = eintrag;

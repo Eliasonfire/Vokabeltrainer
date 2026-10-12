@@ -10,8 +10,10 @@
  * Einträgen, jede Karte eine Störung der Regel. Die echten Werkzeuge laufen darauf (über ERSATZ_REPO); die echte
  * data-ersatz/ und die echte data/ werden nicht angefasst. Die arabischen Wörter der Probe sind aus Codepunkten
  * zusammengesetzt und stammen aus keiner Datenbank.
- * Dazu kommen zwei weitere kleine Welten: neun Karten zur Regel „wie die Karte“ (Abschnitt 5) und drei Karten eines
- * Buches mit Schlüssel (Abschnitt 6: die Säuberung der Schlüsselzeilen und die Grenze der Regel am Schlüssel).
+ * Dazu kommen drei weitere kleine Welten: neun Karten zur Regel „wie die Karte“ (Abschnitt 5), drei Karten eines
+ * Buches mit Schlüssel (Abschnitt 6: die Säuberung der Schlüsselzeilen und die Grenze der Regel am Schlüssel) und
+ * zehn Karten zur Wurzel aus Lanes Lexikon (Abschnitt 7: hier läuft zwischen zwei Bauten auch ersatz-lane.mjs
+ * --wurzeln, auf abgelegten Seiten der Probe — geholt wird nie etwas).
  *
  * Aufruf:  node werkzeuge/eiche-ersatz-zuordner.mjs      Exit 0 = jede Regel hält, Exit 1 = mindestens eine nicht
  */
@@ -20,6 +22,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { laneDateiname as laneDatei, wurzelSchluessel, wurzelWert } from './ersatz-bama-lib.mjs';
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
 const cp = (...n) => String.fromCodePoint(...n);
@@ -71,14 +74,32 @@ function probe(hand = {}, welt = null) {
   fs.writeFileSync(path.join(auszuege, 'enwikt-deutsch.jsonl'), (welt ? welt.englischDeutsch : ENGLISCH_DEUTSCH).map(e => JSON.stringify(e)).join('\n') + '\n');
   fs.writeFileSync(path.join(repo, 'data-ersatz', 'hand', ziel + '.json'), JSON.stringify(hand));
   if (welt && welt.schluessel) fs.writeFileSync(path.join(auszuege, 'schluessel-' + ziel + '.jsonl'), welt.schluessel.map(e => JSON.stringify(e)).join('\n') + '\n');
+  // Abschnitt 8: was ersatz-seiten.mjs aus den abgelegten Seiten des Wiktionary liest (Wurzelvorlagen und Kopfformen je Herkunftsabschnitt)
+  if (welt && welt.wurzelSeiten) fs.writeFileSync(path.join(auszuege, 'enwikt-wurzeln.json'), JSON.stringify(welt.wurzelSeiten));
+  // Abschnitt 7: Einträge aus einem früheren Lauf von ersatz-lane.mjs --wurzeln, und abgelegte Wurzelseiten von Lanes
+  // Lexikon (nur die Verweise auf die Stichwörter, wie die echte Seite sie trägt). Geholt wird in der Probe nie etwas.
+  if (welt && welt.laneWurzeln) fs.writeFileSync(path.join(repo, 'data-ersatz', 'arbeit', 'lane-wurzeln.json'), JSON.stringify({ eintraege: welt.laneWurzeln }));
+  if (welt && welt.laneSeiten) {
+    const lane = path.join(repo, 'data-ersatz', 'quellen', 'lane');
+    fs.mkdirSync(path.join(lane, 'seiten'), { recursive: true });
+    for (const [bw, woerter] of Object.entries(welt.laneSeiten)) fs.writeFileSync(path.join(lane, 'seiten', laneDatei(bw)), '<html><body>\n' + woerter.map(([nr, wort]) => `<a href="/word/x/${nr}" class="root-word-link">${wort}</a>`).join('\n') + '\n</body></html>\n');
+    fs.writeFileSync(path.join(lane, 'ohne-seite.json'), JSON.stringify(Object.fromEntries((welt.laneOhneSeite || []).map(k => [k, '2026-10-12']))));
+  }
   const umgebung = { ...process.env, ERSATZ_REPO: repo };
+  const bau = () => spawnSync(process.execPath, [path.join(HIER, 'ersatz-bauen.mjs'), '--knapp'], { encoding: 'utf8', env: umgebung });
   const z = spawnSync(process.execPath, [path.join(HIER, 'ersatz-zuordnen.mjs')], { encoding: 'utf8', env: umgebung });
-  const b = z.status === 0 ? spawnSync(process.execPath, [path.join(HIER, 'ersatz-bauen.mjs'), '--knapp'], { encoding: 'utf8', env: umgebung }) : { status: null, stdout: '', stderr: '' };
+  let b = z.status === 0 ? bau() : { status: null, stdout: '', stderr: '' };
+  // die Reihenfolge des echten Laufs: Zuordner, Bau, Wurzeln bei Lane nachsehen, Bau noch einmal
+  let l = { status: null, stdout: '', stderr: '' };
+  if (welt && welt.laneSeiten && b.status === 0) {
+    l = spawnSync(process.execPath, [path.join(HIER, 'ersatz-lane.mjs'), '--wurzeln', ...(welt.laneAlle ? ['--ids', welt.karten.map(k => k.id).join(',')] : [])], { encoding: 'utf8', env: umgebung });
+    if (l.status === 0) b = bau();
+  }
   const lies = (name, sonst) => { const d = path.join(repo, 'data-ersatz', name); try { return fs.existsSync(d) ? JSON.parse(fs.readFileSync(d, 'utf8')) : sonst; } catch { return sonst; } };
   const kartenDatei = path.join(repo, 'data-ersatz', 'vokabeln-' + ziel + '.js');
   let karten = [];
   if (fs.existsSync(kartenDatei)) { const m = fs.readFileSync(kartenDatei, 'utf8').match(/=\s*(\[[\s\S]*\])\s*;?\s*$/); if (m) karten = JSON.parse(m[1]); }
-  const aus = { codeZ: z.status, codeB: b.status, text: (z.stdout || '') + (z.stderr || '') + (b.stdout || '') + (b.stderr || ''), belege: lies('belege-' + ziel + '.json', {}), nichtGefunden: lies('nicht-gefunden.json', []), karten };
+  const aus = { codeZ: z.status, codeB: b.status, codeL: l.status, text: (z.stdout || '') + (z.stderr || '') + (l.stdout || '') + (l.stderr || '') + (b.stdout || '') + (b.stderr || ''), belege: lies('belege-' + ziel + '.json', {}), nichtGefunden: lies('nicht-gefunden.json', []), karten, lane: lies(path.join('arbeit', 'lane-wurzeln.json'), {}).eintraege || {} };
   fs.rmSync(repo, { recursive: true, force: true });
   return aus;
 }
@@ -200,6 +221,144 @@ pruefe('Schlüssel: die Probe läuft durch, alle drei Plätze sind belegt', s3.c
 pruefe('wie die Karte: eine Schlüsselzeile, deren Stichwort nur bis auf die Schreibweise passt, macht nicht den Wortlaut der Karte', deVon(s3, '31') === 'Band', 'Karte 31: ' + deVon(s3, '31'));
 pruefe('Schlüssel: die leere Klammer „(fem. )" aus dem Auslesen steht nicht auf der Karte', deVon(s3, '32') === 'Pfad', 'Karte 32: ' + deVon(s3, '32'));
 pruefe('Schlüssel: nach der Verbklasse bleibt kein Komma am Zeilenende', deVon(s3, '33') === 'schreiben', 'Karte 33: ' + deVon(s3, '33'));
+
+// 7. Die Wurzel aus Lanes Lexikon (ersatz-lane.mjs --wurzeln sieht nach, ersatz-bauen.mjs trägt ein). Anlass: der
+// Probelauf des Wechsels zeigte am 12.10.2026, dass von den 331 Wörtern aus Elias' freigeschalteten Kapiteln nach einem
+// Wechsel 58 unvollständig wären, 53 davon ohne Wurzel — und er will „nahtlos wechseln … ohne probleme" (11.10.2026).
+// Die Bauart stammt von Claude. Bewacht wird ihr Versprechen: die Wurzel der bisherigen Karte ist nur der WEG zur Seite;
+// auf die Ersatzkarte kommt eine Wurzel allein dann, wenn Lane das Wort mit denselben Vokalzeichen unter ihr führt —
+// und nie über eine andere Quelle oder die Hand hinweg. Die Seiten der Probe tragen nur, was das Werkzeug an der
+// echten Seite liest: die Verweise auf die Stichwörter.
+const HAMZA_ALIF = 0x0623, YA_OHNE_PUNKTE = 0x0649, SHADDA = 0x0651;
+const wz = (...n) => n.map(c => cp(c)).join(' ');
+const L = {
+  sarw: cp(SIN, FATHA, RA, SUKUN, WAW), sarwNackt: cp(SIN, RA, WAW),
+  jadid: cp(JIM, FATHA, DAL, KASRA, YA, DAL), jadidNackt: cp(JIM, DAL, YA, DAL),
+  anf: cp(HAMZA_ALIF, FATHA, NUN, SUKUN, FA), anfNackt: cp(HAMZA_ALIF, NUN, FA),
+  fam: cp(FA, FATHA, MIM), famNackt: cp(FA, MIM),
+  qulum: cp(QAF, DAMMA, LAM, DAMMA, MIM),
+  kursi: cp(KAF, DAMMA, RA, SUKUN, SIN, KASRA, YA, SHADDA), kursiLane: cp(KAF, DAMMA, RA, SUKUN, SIN, KASRA, YA_OHNE_PUNKTE, SHADDA), kursiNackt: cp(KAF, RA, SIN, YA),
+};
+const WELT4 = {
+  karten: [
+    { id: '41', ar: W.bayt + UN, de: 'Haus', type: 'noun', chapter: 1, ...leer, root: wz(BA, YA, TA) },           // Lane führt das Wort unter der Wurzel
+    { id: '42', ar: V.qalam + UN, de: 'Stift', type: 'noun', chapter: 1, ...leer, root: wz(QAF, LAM, MIM) },       // Lane führt dort nur ANDERE Vokalzeichen
+    { id: '43', ar: V.nahr + UN, de: 'Fluss', type: 'noun', chapter: 1, ...leer, root: wz(NUN, HA, RA) },          // das Wörterbuch nennt selbst eine Wurzel
+    { id: '44', ar: V.najm + UN, de: 'Stern', type: 'noun', chapter: 1, ...leer, root: wz(NUN, JIM, MIM) },        // die Hand sagt „leer"
+    { id: '45', ar: L.sarw + UN, de: 'Zypresse', type: 'noun', chapter: 2, ...leer, root: wz(SIN, RA, WAW) },      // steht bei Lane unter ZWEI Wurzeln
+    { id: '46', ar: L.jadid + UN, de: 'Neuheit', type: 'noun', chapter: 2, ...leer, root: wz(JIM, DAL, DAL) },     // Seite aus zwei Buchstaben, Schlüssel verdoppelt
+    { id: '47', ar: L.anf + UN, de: 'Nase', type: 'noun', chapter: 2, ...leer, root: wz(HAMZA_ALIF, NUN, FA) },    // Hamza am Anfang: die Seite steht unter bloßem Alif
+    { id: '48', ar: V.sur + UN, de: 'Mauer', type: 'noun', chapter: 2, ...leer, root: wz(SIN, WAW, RA) },          // die Seite ist nicht abgelegt
+    { id: '49', ar: L.fam + UN, de: 'Mund', type: 'noun', chapter: 2, ...leer, root: wz(FA, MIM) },                // Seite aus zwei Buchstaben, Schlüssel NICHT verdoppelt
+    { id: '50', ar: L.kursi + UN, de: 'Stuhl', type: 'noun', chapter: 2, ...leer, root: wz(KAF, RA, SIN) },        // Lane druckt das Ya am Ende ohne Punkte
+  ],
+  woerterbuch: [
+    nomen(W.baytNackt, W.bayt, 'house'), nomen(V.qalamNackt, V.qalam, 'pen'), { ...nomen(V.nahrNackt, V.nahr, 'river'), wurzel: wz(NUN, HA, RA) },
+    nomen(V.najmNackt, V.najm, 'star'), nomen(L.sarwNackt, L.sarw, 'cypress'), nomen(L.jadidNackt, L.jadid, 'novelty'), nomen(L.anfNackt, L.anf, 'nose'),
+    nomen(V.surNackt, V.sur, 'wall'), nomen(L.famNackt, L.fam, 'mouth'), nomen(L.kursiNackt, L.kursi + UN, 'chair'),
+  ],
+  englischDeutsch: [['house', 'Haus'], ['pen', 'Stift'], ['river', 'Fluss'], ['star', 'Stern'], ['cypress', 'Zypresse'], ['novelty', 'Neuheit'], ['nose', 'Nase'], ['wall', 'Mauer'], ['mouth', 'Mund'], ['chair', 'Stuhl']]
+    .map(([w, de]) => ({ w, pos: 'noun', k: [{ sinn: 'Probe', de: [de] }] })),
+  laneSeiten: {
+    byt: [['n101', W.bayt + UN]], qlm: [['n201', L.qulum + UN]], nhr: [['n251', V.nahr + UN]], njm: [['n301', V.najm + UN]],
+    srw: [['n401', L.sarw + UN]], srY: [['n402', L.sarw + UN]], jd: [['n501', L.jadid + UN]], Anf: [['n601', L.anf + UN]],
+    fm: [['n701', L.fam + UN]], krs: [['n801', L.kursiLane + UN]],
+  },
+  laneOhneSeite: ['sry', 'jdd', '>nf', "'nf"],
+};
+const wurzelAuf = (p, id) => { const k = p.karten.find(x => x.id === id); return k ? k.root : undefined; };
+const belegWurzel = (p, id) => ((p.belege[id] || {}).felder || {}).root || {};
+const zeig = (p, id) => 'Karte ' + id + ': Wurzel ' + JSON.stringify(wurzelAuf(p, id)) + ' · Beleg ' + JSON.stringify(belegWurzel(p, id)).slice(0, 160) + ' · Eintrag ' + JSON.stringify(p.lane[id] || null).slice(0, 120);
+const la = probe({ 44: { leer: ['root'] } }, WELT4);
+pruefe('Lane: die Probe läuft durch (Zuordner, Bau, Nachsehen, Bau), alle zehn Plätze sind belegt', la.codeZ === 0 && la.codeL === 0 && la.codeB === 0 && la.karten.length === 10, 'Exit ' + la.codeZ + ' / ' + la.codeL + ' / ' + la.codeB + ', Karten ' + la.karten.map(k => k.id).join(',') + ': ' + la.text.trim().split('\n').slice(-3).join(' | ').slice(0, 400));
+pruefe('Lane: führt Lane das Wort mit denselben Vokalzeichen unter der Wurzel, steht sie auf der Karte — im Beleg Lane und die Nummer des Stichworts', wurzelAuf(la, '41') === wz(BA, YA, TA) && belegWurzel(la, '41').q === 'lane' && /Lane/.test(belegWurzel(la, '41').wo || '') && /n101/.test(belegWurzel(la, '41').wo || ''), zeig(la, '41'));
+pruefe('Lane: führt Lane unter der Wurzel nur ein Wort mit ANDEREN Vokalzeichen, bleibt die Wurzel leer', wurzelAuf(la, '42') === null && !la.lane['42'], zeig(la, '42'));
+pruefe('Lane: nennt das Wörterbuch selbst eine Wurzel, bleibt die — bei Lane wird dafür nicht nachgesehen', wurzelAuf(la, '43') === wz(NUN, HA, RA) && belegWurzel(la, '43').q !== 'lane' && !la.lane['43'], zeig(la, '43'));
+pruefe('Lane: „leer" von Hand nimmt auch die Wurzel aus Lane wieder heraus', !!la.lane['44'] && wurzelAuf(la, '44') === null, zeig(la, '44'));
+pruefe('Lane: steht das Wort unter zwei Wurzeln, gilt keine', wurzelAuf(la, '45') === null && !la.lane['45'], zeig(la, '45'));
+pruefe('Lane: eine Seite aus zwei Buchstaben wird zur Wurzel mit verdoppeltem Buchstaben, wenn es der Suchschlüssel auch war', wurzelAuf(la, '46') === wz(JIM, DAL, DAL), zeig(la, '46'));
+pruefe('Lane: Hamza am Anfang — gefunden unter dem bloßen Alif, auf der Karte steht das Hamza auf dem Alif', wurzelAuf(la, '47') === wz(HAMZA_ALIF, NUN, FA), zeig(la, '47'));
+pruefe('Lane: ist eine Seite der Suchschlüssel nicht bekannt, wird der Platz nicht entschieden', wurzelAuf(la, '48') === null && !la.lane['48'] && /nichtGeprueft/.test(la.text), zeig(la, '48') + ' · ' + (la.text.split('\n').find(z => z.startsWith('LANE')) || '').slice(0, 200));
+pruefe('Lane: eine Seite aus zwei Buchstaben, deren Suchschlüssel nicht verdoppelt war, ist keine Wurzel', wurzelAuf(la, '49') === null && !la.lane['49'], zeig(la, '49'));
+pruefe('Lane: das Ya am Wortende ohne Punkte (Lanes Druck) zählt wie das Ya der Karte', wurzelAuf(la, '50') === wz(KAF, RA, SIN), zeig(la, '50'));
+// Einträge aus einem früheren Lauf, alle Plätze noch einmal nachgesehen (--ids). Ein Eintrag nennt das Arabisch der
+// ERSATZkarte, wie sie beim Nachsehen dastand — hier aus dem Lauf davor genommen.
+const arVon = id => (la.karten.find(k => k.id === id) || {}).ar;
+const lb = probe({}, { ...WELT4, laneAlle: true, laneWurzeln: {
+  42: { ar: arVon('42'), w: wz(QAF, LAM, MIM), wo: 'Probe: Eintrag aus einem früheren Lauf' },
+  48: { ar: arVon('48'), w: wz(SIN, WAW, RA), wo: 'Probe: Eintrag aus einem früheren Lauf' },
+} });
+pruefe('Lane: ein früherer Eintrag, dessen Seite jetzt nicht bekannt ist, bleibt stehen und gilt weiter', lb.codeL === 0 && lb.codeB === 0 && !!lb.lane['48'] && wurzelAuf(lb, '48') === wz(SIN, WAW, RA), 'Exit ' + lb.codeL + ' / ' + lb.codeB + ' · ' + zeig(lb, '48'));
+pruefe('Lane: ein früherer Eintrag fällt heraus, wenn die Seite das Wort nicht als Stichwort führt', !lb.lane['42'] && wurzelAuf(lb, '42') === null, zeig(lb, '42'));
+// nur der Bau, ohne Nachsehen: was er mit Einträgen macht, die nicht passen
+const { laneSeiten: _s, laneOhneSeite: _o, ...WELT4_OHNE_SEITEN } = WELT4;
+const lc = probe({}, { ...WELT4_OHNE_SEITEN, laneWurzeln: {
+  41: { ar: arVon('41'), w: wz(BA, YA, TA), wo: 'Probe: Lane, Stichwort n101' },
+  43: { ar: arVon('43'), w: wz(NUN, HA, HA), wo: 'Probe: eine ANDERE Wurzel als die des Wörterbuchs' },
+  46: { ar: W.bab + UN, w: wz(JIM, DAL, DAL), wo: 'Probe: der Eintrag gehört zu einem anderen Wort' },
+} });
+pruefe('Bau: ein Eintrag aus Lane füllt die Lücke und steht mit seiner Fundstelle im Beleg', lc.codeB === 0 && wurzelAuf(lc, '41') === wz(BA, YA, TA) && belegWurzel(lc, '41').q === 'lane', 'Exit ' + lc.codeB + ' · ' + zeig(lc, '41'));
+pruefe('Bau: nennt das Wörterbuch eine Wurzel, überschreibt ein Eintrag aus Lane sie nicht', wurzelAuf(lc, '43') === wz(NUN, HA, RA) && belegWurzel(lc, '43').q !== 'lane', zeig(lc, '43'));
+pruefe('Bau: ein Eintrag, dessen Arabisch nicht mehr das der Karte ist, wird übergangen — und der Bau sagt es', wurzelAuf(lc, '46') === null && /1 übergangen, weil das Arabisch/.test(lc.text), zeig(lc, '46') + ' · ' + (lc.text.split('\n').find(z => z.startsWith('Wurzeln aus Lanes')) || '').slice(0, 200));
+// die drei Bausteine für sich
+pruefe('Suchschlüssel: schwacher letzter Radikal → auch die Seite mit Waw und die mit Alif maqsura', ['bny', 'bnY', 'bnw'].every(k => wurzelSchluessel(wz(BA, NUN, YA)).includes(k)), wurzelSchluessel(wz(BA, NUN, YA)).join(' '));
+pruefe('Suchschlüssel: Hamza am Anfang → auch das bloße Alif; verdoppelt → auch die zwei Buchstaben', wurzelSchluessel(wz(HAMZA_ALIF, NUN, FA)).includes('Anf') && wurzelSchluessel(wz(JIM, DAL, DAL)).includes('jd'), wurzelSchluessel(wz(HAMZA_ALIF, NUN, FA)).join(' ') + ' · ' + wurzelSchluessel(wz(JIM, DAL, DAL)).join(' '));
+pruefe('Wert der Wurzel: Alif maqsura am Ende wird Ya, Alif am Anfang wird Hamza auf Alif', wurzelWert('bnY', '') === wz(BA, NUN, YA) && wurzelWert('Anf', '') === wz(HAMZA_ALIF, NUN, FA), JSON.stringify([wurzelWert('bnY', ''), wurzelWert('Anf', '')]));
+pruefe('Wert der Wurzel: ein bloßes Alif in der Mitte ist kein Radikal, zwei Buchstaben sind keine Wurzel → kein Wert', wurzelWert('$Ay', '') === null && wurzelWert('mn', wz(MIM, NUN)) === null && wurzelWert('tlfzn', '') === null, JSON.stringify([wurzelWert('$Ay', ''), wurzelWert('mn', wz(MIM, NUN)), wurzelWert('tlfzn', '')]));
+pruefe('Dateiname der abgelegten Seite: Groß und klein der Umschrift ergeben verschiedene Dateien, auch wo das Dateisystem sie nicht unterscheidet', laneDatei('Drb').toLowerCase() !== laneDatei('drb').toLowerCase() && laneDatei('bnY').toLowerCase() !== laneDatei('bny').toLowerCase(), laneDatei('Drb') + ' / ' + laneDatei('drb') + ' · ' + laneDatei('bnY') + ' / ' + laneDatei('bny'));
+
+// 8. Die Wurzel aus dem Wiktionary: was als Wurzel des WORTS gilt. Zwei Regeln von Claude, beide nach einem Fehler:
+//    · Am 12.10.2026 trug die Ersatzkarte „junger Mann" die Wurzel m-n-y. Die Seite nennt sie nur zum Vergleich im
+//      Herkunftstext (Vorlage mit nocat=1), der Auszug führt sie trotzdem als Wurzel des Eintrags. Gemessen: 4 Karten.
+//    · Trägt ein Eintrag keine Herkunftsnummer, die Seite aber mehrere Abschnitte, fand der Zuordner den Abschnitt nicht
+//      und ließ die Wurzel weg, obwohl sie dasteht. Jetzt zählt der EINE Abschnitt, dessen Kopfvorlage das Wort nennt.
+const seite = (titel, einheiten) => ({ titel, revid: 1, zeit: '2026-10-12T00:00:00Z', vorspann: [], einheiten });
+const WELT5 = {
+  karten: [
+    { id: '61', ar: W.bayt + UN, de: 'Haus', type: 'noun', chapter: 1, ...leer },        // der Auszug nennt eine Wurzel, die Seite kennt sie nur als Erwähnung
+    { id: '62', ar: V.qalam + UN, de: 'Stift', type: 'noun', chapter: 1, ...leer },       // die Seite nennt die Wurzel UND erwähnt eine fremde
+    { id: '63', ar: W.dars + UN, de: 'Unterricht', type: 'noun', chapter: 1, ...leer },   // zwei Abschnitte, nur einer führt das Wort
+    { id: '64', ar: W.bab + UN, de: 'Tor', type: 'noun', chapter: 1, ...leer },           // zwei Abschnitte, BEIDE führen das Wort
+    { id: '65', ar: V.najm + UN, de: 'Stern', type: 'noun', chapter: 2, ...leer },        // Mehrzahl nur in der Beugungstabelle
+    { id: '66', ar: V.nahr + UN, de: 'Fluss', type: 'noun', chapter: 2, ...leer },        // Mehrzahl in der Kopfzeile UND eine andere in der Tabelle
+    { id: '67', ar: V.sur + UN, de: 'Mauer', type: 'noun', chapter: 2, ...leer },         // Geschlecht nur in der Kopfvorlage der Seite
+    { id: '68', ar: V.jidar + UN, de: 'Wand', type: 'noun', chapter: 2, ...leer },        // die Seite nennt an derselben Form BEIDE Geschlechter
+  ],
+  woerterbuch: [
+    { ...nomen(W.baytNackt, W.bayt, 'house'), wurzel: wz(MIM, NUN, YA) }, nomen(V.qalamNackt, V.qalam, 'pen'),
+    nomen(W.drsNackt, W.dars, 'lesson'), nomen(W.babNackt, W.bab, 'gate'),
+    { ...nomen(V.najmNackt, V.najm, 'star'), hf: [{ f: cp(NUN, DAMMA, JIM, DAMMA, WAW, MIM), t: ['construct'] }], tab: [
+      { f: V.najm + UN, t: ['indefinite', 'nominative', 'singular', 'triptote'] },
+      { f: cp(NUN, FATHA, JIM, SUKUN, MIM, FATHA, ALIF, NUN, KASRA), t: ['dual', 'indefinite', 'nominative'] },
+      { f: cp(NUN, DAMMA, JIM, DAMMA, WAW, MIM) + UN, t: ['indefinite', 'nominative', 'plural', 'triptote'] } ] },
+    { ...nomen(V.nahrNackt, V.nahr, 'river'), hf: [{ f: cp(HAMZA_ALIF, FATHA, NUN, SUKUN, HA, FATHA, ALIF, RA), t: ['plural'] }], tab: [
+      { f: V.nahr + UN, t: ['indefinite', 'nominative', 'singular', 'triptote'] },
+      { f: cp(HAMZA_ALIF, FATHA, NUN, SUKUN, HA, DAMMA, RA) + UN, t: ['indefinite', 'nominative', 'plural', 'triptote'] } ] },
+    { ...nomen(V.surNackt, V.sur, 'wall'), kopf: [{ f: V.sur, t: ['canonical'] }] },
+    { ...nomen(V.jidarNackt, V.jidar, 'partition'), kopf: [{ f: V.jidar, t: ['canonical'] }] },
+  ],
+  englischDeutsch: [['house', 'Haus'], ['pen', 'Stift'], ['lesson', 'Unterricht'], ['gate', 'Tor'], ['star', 'Stern'], ['river', 'Fluss'], ['wall', 'Mauer'], ['partition', 'Wand']].map(([w, de]) => ({ w, pos: 'noun', k: [{ sinn: 'Probe', de: [de] }] })),
+  wurzelSeiten: {
+    [W.baytNackt]: seite(W.baytNackt, [{ nr: null, w: [{ art: 'ar-root', w: wz(MIM, NUN, YA), nocat: true }], koepfe: [W.bayt] }]),
+    [V.qalamNackt]: seite(V.qalamNackt, [{ nr: null, w: [{ art: 'ar-root', w: wz(QAF, LAM, MIM) }, { art: 'ar-root', w: wz(MIM, NUN, YA), nocat: true }], koepfe: [V.qalam] }]),
+    [W.drsNackt]: seite(W.drsNackt, [{ nr: 1, w: [{ art: 'ar-rootbox', w: wz(KAF, TA, BA) }], koepfe: [W.kutub] }, { nr: 2, w: [{ art: 'ar-rootbox', w: wz(DAL, RA, SIN) }], koepfe: [W.dars] }]),
+    [W.babNackt]: seite(W.babNackt, [{ nr: 1, w: [{ art: 'ar-rootbox', w: wz(BA, YA, TA) }], koepfe: [W.bab] }, { nr: 2, w: [{ art: 'ar-rootbox', w: wz(KAF, TA, BA) }], koepfe: [W.bab] }]),
+    [V.surNackt]: seite(V.surNackt, [{ nr: null, w: [], koepfe: [V.sur], geschlecht: [{ f: [V.sur], g: 'feminine' }] }]),
+    [V.jidarNackt]: seite(V.jidarNackt, [{ nr: 1, w: [], koepfe: [V.jidar], geschlecht: [{ f: [V.jidar], g: 'feminine' }] }, { nr: 2, w: [], koepfe: [V.jidar], geschlecht: [{ f: [V.jidar], g: 'masculine' }] }]),
+  },
+};
+const ws = probe({}, WELT5);
+const mehrzahlAuf = (p, id) => { const k = p.karten.find(x => x.id === id); return k ? k.pl : undefined; };
+pruefe('Wiktionary: nennt die Kopfzeile keine Mehrzahl, kommt sie aus der Beugungstabelle (Nominativ, unbestimmt) — die Zweizahl nicht', mehrzahlAuf(ws, '65') === cp(NUN, DAMMA, JIM, DAMMA, WAW, MIM) + UN && /Beugungstabelle: Mehrzahl/.test((((ws.belege['65'] || {}).felder || {}).pl || {}).wo || ''), 'Karte 65: Mehrzahl ' + JSON.stringify(mehrzahlAuf(ws, '65')) + ' · Beleg ' + JSON.stringify(((ws.belege['65'] || {}).felder || {}).pl || null).slice(0, 160));
+pruefe('Wiktionary: nennt die Kopfzeile eine Mehrzahl, gilt die — nicht die andere aus der Tabelle', mehrzahlAuf(ws, '66') === cp(HAMZA_ALIF, FATHA, NUN, SUKUN, HA, FATHA, ALIF, RA), 'Karte 66: Mehrzahl ' + JSON.stringify(mehrzahlAuf(ws, '66')));
+const geschlechtAuf = (p, id) => { const k = p.karten.find(x => x.id === id); return k ? k.gender : undefined; };
+pruefe('Wiktionary: trägt der Auszug kein Geschlecht, gilt das der Kopfvorlage der Seite an genau dieser Form', geschlechtAuf(ws, '67') === 'feminine' && /Kopfvorlage der Seite/.test((((ws.belege['67'] || {}).felder || {}).gender || {}).wo || ''), 'Karte 67: Geschlecht ' + JSON.stringify(geschlechtAuf(ws, '67')) + ' · Beleg ' + JSON.stringify(((ws.belege['67'] || {}).felder || {}).gender || null).slice(0, 160));
+pruefe('Wiktionary: nennt die Seite an derselben Form beide Geschlechter, bleibt es offen', geschlechtAuf(ws, '68') === null, 'Karte 68: Geschlecht ' + JSON.stringify(geschlechtAuf(ws, '68')));
+pruefe('Wiktionary: die Probe läuft durch, alle acht Plätze sind belegt', ws.codeZ === 0 && ws.codeB === 0 && ws.karten.length === 8, 'Exit ' + ws.codeZ + ' / ' + ws.codeB + ', Karten ' + ws.karten.map(k => k.id).join(',') + ': ' + ws.text.trim().split('\n').slice(-2).join(' | ').slice(0, 300));
+pruefe('Wiktionary: eine Wurzel, die die Seite nur zum Vergleich erwähnt (nocat), ist nicht die Wurzel des Worts — auch wenn der Auszug sie so führt', wurzelAuf(ws, '61') === null, zeig(ws, '61'));
+pruefe('Wiktionary: nennt die Seite die Wurzel und erwähnt daneben eine fremde, gilt die genannte', wurzelAuf(ws, '62') === wz(QAF, LAM, MIM), zeig(ws, '62'));
+pruefe('Wiktionary: Eintrag ohne Herkunftsnummer, Seite mit zwei Abschnitten — es gilt die Wurzel des Abschnitts, dessen Kopfvorlage das Wort nennt', wurzelAuf(ws, '63') === wz(DAL, RA, SIN), zeig(ws, '63'));
+pruefe('Wiktionary: nennen zwei Abschnitte das Wort, bleibt die Wurzel offen', wurzelAuf(ws, '64') === null, zeig(ws, '64'));
 
 const gut = faelle.filter(f => f.ok).length;
 for (const f of faelle) if (!f.ok) console.log(`  ✗ ${f.name}\n      bekommen: ${f.was}`);

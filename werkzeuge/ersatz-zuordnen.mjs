@@ -290,16 +290,35 @@ function wurzelAusSeite(e) {
   const seite = WURZELSEITEN[e.w];
   if (!seite) return null;
   const nr = e.n ? Number(e.n) : null;
-  const einheit = seite.einheiten.find(x => x.nr === nr) || (seite.einheiten.length === 1 ? seite.einheiten[0] : null);
-  const eine = liste => { const k = [...new Set(liste.filter(x => x.art === 'ar-rootbox').map(x => x.w))], a = [...new Set(liste.map(x => x.w))]; return k.length === 1 ? k[0] : a.length === 1 ? a[0] : null; };
+  let einheit = seite.einheiten.find(x => x.nr === nr) || (seite.einheiten.length === 1 ? seite.einheiten[0] : null);
+  // Trägt der Eintrag keine Herkunftsnummer, die Seite aber mehrere Abschnitte: der EINE Abschnitt, dessen Kopfvorlage
+  // eine Kopfform dieses Eintrags nennt (gleiche Vokalzeichen). Nennen zwei Abschnitte sie, bleibt es offen.
+  if (!einheit && seite.einheiten.length > 1) {
+    const meine = new Set((e.kopf || []).map(f => k1(f.f)));
+    const mit = seite.einheiten.filter(x => (x.koepfe || []).some(k => meine.has(k1(k))));
+    if (mit.length === 1) einheit = mit[0];
+  }
+  // Eine Vorlage mit nocat ist eine Erwähnung im Herkunftstext, nie die Wurzel des Worts (ersatz-seiten.mjs).
+  const eine = liste => { const echt = liste.filter(x => !x.nocat); const k = [...new Set(echt.filter(x => x.art === 'ar-rootbox').map(x => x.w))], a = [...new Set(echt.map(x => x.w))]; return k.length === 1 ? k[0] : a.length === 1 ? a[0] : null; };
   let w = einheit ? eine(einheit.w) : null, ort = einheit && einheit.nr ? ', Herkunft ' + einheit.nr : '';
   if (!w && (!einheit || !einheit.w.length)) { w = eine(seite.vorspann); ort = ', Seitenanfang'; }
   return w ? { w, wo: `en.wiktionary „${e.w}“${ort}: Wurzelangabe (Fassung vom ${String(seite.zeit).slice(0, 10)})` } : null;
 }
+/* Der Auszug führt als Wurzel eines Eintrags die erste Wurzelvorlage der Seite — auch eine, die dort nur zum Vergleich
+ * steht (nocat=1). Kennt die abgelegte Seite die Wurzel des Auszugs NUR als Erwähnung, gilt sie nicht. */
+const HAMZA_TRAEGER = new RegExp('[' + [0x623, 0x624, 0x625, 0x626].map(n => String.fromCodePoint(n)).join('') + ']', 'g');
+const wurzelKern = w => String(w || '').replace(HAMZA_TRAEGER, String.fromCodePoint(0x621)).replace(/\s+/g, '');
+const wurzelGleich = (a, b) => wurzelKern(a) === wurzelKern(b);
+const nurErwaehnt = e => {
+  const seite = WURZELSEITEN[e.w];
+  if (!seite || !e.wurzel) return false;
+  const meine = [...(seite.vorspann || []), ...seite.einheiten.flatMap(x => x.w)].filter(x => wurzelGleich(x.w, e.wurzel));
+  return meine.length > 0 && meine.every(x => x.nocat);
+};
 const wurzelVon = (e, tiefe = 0) => {
   const ausSeite = wurzelAusSeite(e);
   if (ausSeite) return ausSeite;
-  if (e.wurzel) return { w: e.wurzel, wo: `en.wiktionary „${e.w}“ (${e.pos}), Wurzelangabe` };
+  if (e.wurzel && !nurErwaehnt(e)) return { w: e.wurzel, wo: `en.wiktionary „${e.w}“ (${e.pos}), Wurzelangabe` };
   for (const k of e.wk || []) { const m = String(k).match(/root\s+([ء-ي](?:\s+[ء-ي])+)/); if (m) return { w: m[1].replace(/\s+/g, ' '), wo: `en.wiktionary „${e.w}“ (${e.pos}), Kategorie` }; }
   if (tiefe < 2) for (const a of e.abl || []) {
     if (!a.a) continue;
@@ -307,7 +326,7 @@ const wurzelVon = (e, tiefe = 0) => {
     for (const z of ziel) { const r = wurzelVon(z, tiefe + 1); if (r) return { w: r.w, wo: `en.wiktionary „${e.w}“ (${e.pos}): ${a.n.replace(/^ar-/, '')} von „${z.w}“; ${r.wo}` }; }
   }
   // dieselbe Seite: steht die Wurzel bei einem anderen Eintrag derselben Schreibung mit derselben Herkunftsnummer?
-  if (tiefe === 0) { const nb = (nachNackt.get(nackt(e.w)) || []).filter(x => x !== e && x.wurzel && (x.n || 1) === (e.n || 1)); if (nb.length) return { w: nb[0].wurzel, wo: `en.wiktionary „${e.w}“, Wurzelangabe am Eintrag (${nb[0].pos}) derselben Herkunft` }; }
+  if (tiefe === 0) { const nb = (nachNackt.get(nackt(e.w)) || []).filter(x => x !== e && x.wurzel && !nurErwaehnt(x) && (x.n || 1) === (e.n || 1)); if (nb.length) return { w: nb[0].wurzel, wo: `en.wiktionary „${e.w}“, Wurzelangabe am Eintrag (${nb[0].pos}) derselben Herkunft` }; }
   return null;
 };
 
@@ -474,6 +493,14 @@ function vorschlag(e, wort, artikelAb, karte) {
     } else setze('sg', voll(karte.sg) ? nimmWie([...arFormen.map(f => f.f), ...(kopf ? [kopf.f] : [])], karte.sg, arWahl) : arWahl, v.ar && v.ar.wo);
     const g = kopf && (kopf.t.includes('masculine') ? 'masculine' : kopf.t.includes('feminine') ? 'feminine' : null);
     setze('gender', g, wo('Kopfzeile: Geschlecht'));
+    // Trägt der Auszug kein Geschlecht, nennt es oft die Kopfvorlage der abgelegten Seite (ersatz-seiten.mjs) — es gilt,
+    // wenn sie es an GENAU dieser Kopfform nennt und die Seite sich dabei nicht widerspricht.
+    if (!g && kopf && pos !== 'adj') {
+      const seite = WURZELSEITEN[e.w];
+      const zeilen = seite ? [...(seite.geschlecht || []), ...seite.einheiten.flatMap(x => x.geschlecht || [])].filter(z => z.f.some(f => k1(f) === k1(kopf.f))) : [];
+      const eins = [...new Set(zeilen.map(z => z.g))];
+      if (eins.length === 1) setze('gender', eins[0], `en.wiktionary „${e.w}“, Kopfvorlage der Seite: Geschlecht (Fassung vom ${String(seite.zeit).slice(0, 10)})`);
+    }
     const feld = (name, alle, zahl, was) => {
       if (!alle.length) return;
       const bisher = teileVon(karte[name]);
@@ -481,7 +508,12 @@ function vorschlag(e, wort, artikelAb, karte) {
       const fertig = gw.map(p => { const formen = nomi.filter(f => hat(f, 'indefinite', zahl) && k1(f.f) === k1(p)).map(f => f.f); return nimmWie([...formen, p], bisher.find(b => k1(b) === k1(p)), formen[0] || p); });
       setze(name, fertig.join(trenner(karte[name])), wo(was + (alle.length > gw.length ? ` (die Quelle nennt ${alle.length})` : '')));
     };
-    feld('pl', [...new Set(hf.filter(f => f.t.includes('plural') && !f.t.includes('feminine') && !f.t.includes('dual')).map(f => f.f))], 'plural', 'Mehrzahl');
+    // Nennt die Kopfzeile keine Mehrzahl, steht sie oft trotzdem in der Beugungstabelle: eine Mehrzahl, die auf langes i
+    // endet, führt die Kopfzeile nur als Verbindungsform („construct"). Gemessen am 12.10.2026: bei 66 von 287 Karten ohne
+    // Mehrzahl stand sie dort (Stuhl, Name, Hand …). Die Kopfzeile geht vor, wenn sie eine nennt.
+    const plKopf = [...new Set(hf.filter(f => f.t.includes('plural') && !f.t.includes('feminine') && !f.t.includes('dual')).map(f => f.f))];
+    const plTabelle = plKopf.length ? [] : [...new Set(nomi.filter(f => hat(f, 'indefinite', 'plural') && !f.t.includes('feminine') && !f.t.includes('dual')).map(f => f.f))];
+    feld('pl', plKopf.length ? plKopf : plTabelle, 'plural', plKopf.length ? 'Mehrzahl' : 'Beugungstabelle: Mehrzahl, Nominativ');
     feld('femSg', [...new Set(hf.filter(f => f.t.includes('feminine') && !f.t.includes('plural') && !f.t.includes('dual')).map(f => f.f))], 'singular', 'weibliche Form');
     feld('femPl', [...new Set(hf.filter(f => f.t.includes('feminine') && f.t.includes('plural')).map(f => f.f))], 'plural', 'weibliche Mehrzahl');
   }
