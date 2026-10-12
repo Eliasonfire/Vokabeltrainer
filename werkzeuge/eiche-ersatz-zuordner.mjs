@@ -692,6 +692,67 @@ pruefe('Stammliste: führt die Quelle der Karte das Wort als Namen, bekommt es k
 pruefe('Stammliste: ist das einzige passende Lemma ein Funktionswort, bekommt die Karte keine Wurzel', wurzelAuf(ws13, '136') === null, zeig(ws13, '136'));
 pruefe('Stammliste: steht neben dem Funktionswort ein Nomen gleicher Schreibung unter derselben Zeile, gilt dessen Wurzel — im Beleg das Nomen', wurzelAuf(ws13, '137') === wz(TA, HAA, TA) && /das Lemma „taHot_1“/.test(belegWurzel(ws13, '137').wo || ''), zeig(ws13, '137'));
 
+// 14. Das Geschlecht der FORM geht dem des Stichworts vor (13.10.2026, ersatz-zuordnen.mjs, Regel von Claude). Anlass: die
+//     Ersatzkarte „Dienerin" trug „männlich" — ihr Wort steht im Eintrag „Diener" als dessen weibliche Form, und der
+//     Zuordner nahm bei jeder gebeugten Form das Geschlecht des Stichworts.
+//     141  die Quelle führt die Form der Karte als WEIBLICHE Form eines männlichen Stichworts → weiblich, der Beleg sagt beides
+//     142  die Form trägt kein Geschlecht (eine Mehrzahl) → weiter das des Stichworts
+const NAJMA = cp(NUN, FATHA, JIM, SUKUN, MIM, FATHA, TA_M), NUJUM = cp(NUN, DAMMA, JIM, DAMMA, WAW, MIM);
+const WELT11 = {
+  karten: [
+    { id: '141', ar: NAJMA + UN, de: 'Stern', type: 'noun', chapter: 1, ...leer },
+    { id: '142', ar: NUJUM + UN, de: 'Stern', type: 'noun', chapter: 1, ...leer },
+  ],
+  woerterbuch: [nomen(V.najmNackt, V.najm, 'star')],
+  englischDeutsch: [['star', 'Stern']].map(([w, de]) => ({ w, pos: 'noun', k: [{ sinn: 'Probe', de: [de] }] })),
+  zusatz: [
+    { f: NAJMA + UN, t: ['feminine', 'indefinite', 'nominative', 'singular'], w: V.najmNackt, pos: 'noun', n: null, k: V.najm },
+    { f: NUJUM + UN, t: ['indefinite', 'nominative', 'plural'], w: V.najmNackt, pos: 'noun', n: null, k: V.najm },
+  ],
+};
+const wgf = probe({}, WELT11);
+const zeigG = id => 'Karte ' + id + ': ' + JSON.stringify(feldAuf(wgf, id, 'gender')) + ' · ' + JSON.stringify(feldBeleg(wgf, id, 'gender')).slice(0, 260) + ' · Stufe ' + ((wgf.belege[id] || {}).stufe);
+pruefe('Geschlecht der Form: die Probe läuft durch, beide Plätze sind als gebeugte Form belegt', wgf.codeZ === 0 && wgf.codeB === 0 && wgf.karten.length === 2 && ['141', '142'].every(id => (wgf.belege[id] || {}).stufe === 'F'), 'Exit ' + wgf.codeZ + ' / ' + wgf.codeB + ', Karten ' + wgf.karten.map(k => k.id).join(',') + ' · ' + zeigG('141') + ' · ' + wgf.text.trim().split('\n').slice(-2).join(' | ').slice(0, 300));
+pruefe('Geschlecht der Form: führt die Quelle die Form als weibliche, steht „weiblich" auf der Karte, auch wenn das Stichwort männlich ist — der Beleg nennt beides', feldAuf(wgf, '141', 'gender') === 'feminine' && /führt diese Form als weibliche .*das Stichwort selbst ist männlich/.test(feldBeleg(wgf, '141', 'gender').wo || ''), zeigG('141'));
+pruefe('Geschlecht der Form: trägt die Form kein Geschlecht (eine Mehrzahl), gilt weiter das des Stichworts', feldAuf(wgf, '142', 'gender') === 'masculine' && /Geschlecht des ersten Wortes/.test(feldBeleg(wgf, '142', 'gender').wo || ''), zeigG('142'));
+
+// 15. Geschlecht aus der Endung (13.10.2026, ersatz-bauen.mjs, Regel von Claude): ein Nomen, das in der Einzahl auf Ta
+//     marbuta endet, ist weiblich — Regel der Grammatik, keine Quelle; nur als Lücke, und nie gegen ein „männlich" der
+//     bisherigen Karte (dort ist sie der Einspruch, nicht die Quelle).
+//     151  Einzahl auf Ta marbuta, keine Quelle nennt das Geschlecht → weiblich, der Beleg sagt, dass es die Regel ist
+//     152  wie 151, aber die bisherige Karte sagt „männlich" → offen
+//     153  das Wort endet auf Ta marbuta, die Einzahl der Karte ist aber ein ANDERES Wort (sie trägt eine Mehrzahl) → offen
+//     154  die Einzahl endet nicht auf Ta marbuta → offen
+//     155  wie 151, aber die Hand nimmt das Feld mit „leer" heraus → offen, und nicht mitgezählt
+//     156  die Quelle nennt selbst ein Geschlecht (männlich) → das bleibt
+const MADRASA = cp(MIM, FATHA, DAL, SUKUN, RA, FATHA, SIN, FATHA, TA_M), DARISA = cp(DAL, FATHA, ALIF, RA, KASRA, SIN, FATHA, TA_M);
+const KATABA_T = cp(KAF, FATHA, TA, FATHA, BA, FATHA, TA_M), SAFINA = cp(SIN, FATHA, FA, KASRA, YA, NUN, FATHA, TA_M), FATINA = cp(FA, FATHA, ALIF, TA, KASRA, NUN, FATHA, TA_M);
+const WELT12 = {
+  karten: [
+    { id: '151', ar: MADRASA + UN, de: 'Schule', type: 'noun', chapter: 1, ...leer, sg: MADRASA + UN, gender: 'feminine' },
+    { id: '152', ar: DARISA + UN, de: 'Gelehrter', type: 'noun', chapter: 1, ...leer, sg: DARISA + UN, gender: 'masculine' },
+    { id: '153', ar: KATABA_T + UN, de: 'Schreiber', type: 'noun', chapter: 1, ...leer, sg: W.kitab + UN, gender: 'feminine' },
+    { id: '154', ar: W.qamar + UN, de: 'Mond', type: 'noun', chapter: 2, ...leer, sg: W.qamar + UN, gender: 'feminine' },
+    { id: '155', ar: SAFINA + UN, de: 'Schiff', type: 'noun', chapter: 2, ...leer, sg: SAFINA + UN, gender: 'feminine' },
+    { id: '156', ar: FATINA + UN, de: 'Zauber', type: 'noun', chapter: 2, ...leer, sg: FATINA + UN, gender: 'feminine' },
+  ],
+  woerterbuch: [nomen(cp(FA, ALIF, TA, NUN, TA_M), FATINA, 'charm')],
+  englischDeutsch: [['charm', 'Zauber']].map(([w, de]) => ({ w, pos: 'noun', k: [{ sinn: 'Probe', de: [de] }] })),
+};
+const we = probe({
+  151: vonHand(MADRASA + UN, 'noun', 'Schule'), 152: vonHand(DARISA + UN, 'noun', 'Gelehrter'),
+  153: { ...vonHand(KATABA_T + UN, 'noun', 'Schreiber'), felder: { ...vonHand(KATABA_T + UN, 'noun', 'Schreiber').felder, sg: { w: W.kitab + UN, wo: 'Probe: Stammliste', q: 'bama' } } },
+  154: vonHand(W.qamar + UN, 'noun', 'Mond'), 155: { ...vonHand(SAFINA + UN, 'noun', 'Schiff'), leer: ['gender'] },
+}, WELT12);
+const zeigE = id => 'Karte ' + id + ': Geschlecht ' + JSON.stringify(feldAuf(we, id, 'gender')) + ' · Einzahl ' + (feldAuf(we, id, 'sg') ? 'da' : 'leer') + ' · ' + JSON.stringify(feldBeleg(we, id, 'gender')).slice(0, 200);
+pruefe('Geschlecht aus der Endung: die Probe läuft durch, alle sechs Plätze sind belegt', we.codeZ === 0 && we.codeB === 0 && we.karten.length === 6, 'Exit ' + we.codeZ + ' / ' + we.codeB + ', Karten ' + we.karten.map(k => k.id).join(',') + ': ' + we.text.trim().split('\n').slice(-3).join(' | ').slice(0, 400));
+pruefe('Geschlecht aus der Endung: ein Nomen, das in der Einzahl auf Ta marbuta endet, ist weiblich — der Beleg sagt, dass es die Regel der Grammatik ist und keine Quelle', feldAuf(we, '151', 'gender') === 'feminine' && feldBeleg(we, '151', 'gender').q === 'endung' && /Regel der Grammatik, keine Angabe einer Quelle/.test(feldBeleg(we, '151', 'gender').wo || ''), zeigE('151'));
+pruefe('Geschlecht aus der Endung: sagt die bisherige Karte „männlich", bleibt das Feld offen', feldAuf(we, '152', 'gender') === null && !!feldAuf(we, '152', 'sg'), zeigE('152'));
+pruefe('Geschlecht aus der Endung: ist die Einzahl der Karte ein anderes Wort (sie trägt eine Mehrzahl), bleibt das Feld offen', feldAuf(we, '153', 'gender') === null && !!feldAuf(we, '153', 'sg'), zeigE('153'));
+pruefe('Geschlecht aus der Endung: endet die Einzahl nicht auf Ta marbuta, bleibt das Feld offen', feldAuf(we, '154', 'gender') === null && !!feldAuf(we, '154', 'sg'), zeigE('154'));
+pruefe('Geschlecht aus der Endung: „leer" von Hand nimmt das Feld heraus, und der Bau nennt die Zahl ohne diese Karte', feldAuf(we, '155', 'gender') === null && /Geschlecht aus der Endung [^\n]*: 1 Nomen weiblich/.test(we.text), zeigE('155') + ' · ' + (we.text.split('\n').find(z => /Geschlecht aus der Endung/.test(z)) || '(keine Zeile)').slice(0, 160));
+pruefe('Geschlecht aus der Endung: nennt die Quelle selbst ein Geschlecht, bleibt das — die Regel füllt nur eine Lücke', feldAuf(we, '156', 'gender') === 'masculine' && feldBeleg(we, '156', 'gender').q !== 'endung', zeigE('156'));
+
 const gut = faelle.filter(f => f.ok).length;
 for (const f of faelle) if (!f.ok) console.log(`  ✗ ${f.name}\n      bekommen: ${f.was}`);
 console.log(`Eichung Zuordner und Bau: ${gut} von ${faelle.length} Fällen wie erwartet`);
