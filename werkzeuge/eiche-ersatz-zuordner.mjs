@@ -78,6 +78,8 @@ function probe(hand = {}, welt = null) {
   if (welt && welt.wurzelSeiten) fs.writeFileSync(path.join(auszuege, 'enwikt-wurzeln.json'), JSON.stringify(welt.wurzelSeiten));
   // Abschnitt 9: die Übersetzungstabellen des englischen Wiktionary (am arabischen Wort steht dort oft das Geschlecht)
   if (welt && welt.tabellen) fs.writeFileSync(path.join(auszuege, 'enwikt-tabellen.jsonl'), welt.tabellen.map(e => JSON.stringify(e)).join('\n') + '\n');
+  // Abschnitt 13: Buckwalters Stammliste (Zeilen „;--- Wurzel", „;; Lemma", dann „ohne Vokale<Tab>mit Vokalen<Tab>Kategorie<Tab>Bedeutung")
+  if (welt && welt.bama) { fs.mkdirSync(path.join(repo, 'data-ersatz', 'quellen', 'bama'), { recursive: true }); fs.writeFileSync(path.join(repo, 'data-ersatz', 'quellen', 'bama', 'dictStems'), welt.bama.join('\n') + '\n', 'latin1'); }
   // Abschnitt 10: gebeugte Formen aus den vollständigen Tabellen der Quelle (ersatz-quellen.mjs zusatz), hier die Gegenwart eines Verbs
   if (welt && welt.zusatz) fs.writeFileSync(path.join(auszuege, 'enwikt-zusatzformen.jsonl'), welt.zusatz.map(e => JSON.stringify(e)).join('\n') + '\n');
   // Abschnitt 7: Einträge aus einem früheren Lauf von ersatz-lane.mjs --wurzeln, und abgelegte Wurzelseiten von Lanes
@@ -583,6 +585,56 @@ pruefe('Beide Geschlechter: die Probe läuft durch, alle drei Plätze sind beleg
 pruefe('Beide Geschlechter: nennt die Kopfzeile beide Geschlechter, steht das der bisherigen Karte da — und der Beleg sagt, dass die Quelle beide nennt', geschlechtAuf(wb, '111') === 'feminine' && /die Quelle nennt beide Geschlechter .*das der bisherigen Karte/.test(feldBeleg(wb, '111', 'gender').wo || ''), 'Karte 111: ' + JSON.stringify(geschlechtAuf(wb, '111')) + ' · ' + JSON.stringify(feldBeleg(wb, '111', 'gender')).slice(0, 220));
 pruefe('Beide Geschlechter: nennt die bisherige Karte keines, steht das männliche da — mit dem Hinweis im Beleg', geschlechtAuf(wb, '112') === 'masculine' && /die Quelle nennt beide Geschlechter .*das männliche/.test(feldBeleg(wb, '112', 'gender').wo || ''), 'Karte 112: ' + JSON.stringify(geschlechtAuf(wb, '112')) + ' · ' + JSON.stringify(feldBeleg(wb, '112', 'gender')).slice(0, 220));
 pruefe('Beide Geschlechter: eine klare Kopfzeile gilt weiter gegen die bisherige Karte', geschlechtAuf(wb, '113') === 'feminine' && /Kopfzeile: Geschlecht$/.test(feldBeleg(wb, '113', 'gender').wo || ''), 'Karte 113: ' + JSON.stringify(geschlechtAuf(wb, '113')) + ' · ' + JSON.stringify(feldBeleg(wb, '113', 'gender')).slice(0, 220));
+
+// 13. Wurzel aus Buckwalters Stammliste (12.10.2026, ersatz-bauen.mjs): nur unter drei Bedingungen, nur als Lücke.
+//     121  Lemma unter einer Wurzelzeile, deren Radikale im Wort stehen, und Lane führt die Seite der Wurzel → Wurzel
+//     122  wie 121, aber Lane führt keine Seite dieser Wurzel → nichts
+//     123  das Lemma hängt unter einer FREMDEN Wurzelzeile (ihre Radikale stehen nicht im Wort) → nichts
+//     124  zweilautige Zeile, das Wort führt den zweiten Radikal nicht doppelt → nichts
+//     125  zweilautige Zeile, das Wort führt den zweiten Radikal mit Schadda → verdoppelte Wurzel
+const SIRR = cp(SIN, KASRA, RA, SHADDA), NAJW = cp(NUN, FATHA, JIM, SUKUN, WAW), DALW = cp(DAL, FATHA, LAM, SUKUN, WAW), BANIN = cp(BA, FATHA, ALIF, NUN, 0x064D);
+const WELT10 = {
+  karten: [
+    { id: '121', ar: W.dars + UN, de: 'Unterricht', type: 'noun', chapter: 1, ...leer },
+    { id: '122', ar: V.qalam + UN, de: 'Stift', type: 'noun', chapter: 1, ...leer },
+    { id: '123', ar: V.najm + UN, de: 'Stern', type: 'noun', chapter: 1, ...leer },
+    { id: '124', ar: V.nahr + UN, de: 'Fluss', type: 'noun', chapter: 1, ...leer },
+    { id: '125', ar: SIRR + UN, de: 'Geheimnis', type: 'noun', chapter: 1, ...leer },
+    { id: '126', ar: W.qamar + UN, de: 'Mond', type: 'noun', chapter: 2, ...leer },        // die Stammliste führt das Lemma als EIGENNAMEN
+    { id: '127', ar: NAJW + UN, de: 'Flüstern', type: 'noun', chapter: 2, ...leer },       // schwacher Radikal; Lane führt die Wurzel unter BEIDEN Schreibungen
+    { id: '128', ar: DALW + UN, de: 'Eimer', type: 'noun', chapter: 2, ...leer },          // schwacher Radikal; Lane führt nur die ANDERE Schreibung
+    { id: '129', ar: BANIN, de: 'Erbauer', type: 'noun', chapter: 2, ...leer },            // Wort auf Kasratan; ohne die Endung gliche es einem anderen Lemma
+    { id: '130', ar: V.kawkab + UN, de: 'Planet', type: 'noun', chapter: 2, ...leer },     // Eigenname, den die Stammliste als gewöhnliches Nomen führt (Bedeutung groß geschrieben)
+  ],
+  woerterbuch: [nomen(W.drsNackt, W.dars, 'lesson'), nomen(V.qalamNackt, V.qalam, 'pen'), nomen(V.najmNackt, V.najm, 'star'), nomen(V.nahrNackt, V.nahr, 'river'), nomen(cp(SIN, RA), SIRR, 'secret'),
+    nomen(cp(QAF, MIM, RA), W.qamar, 'moon'), nomen(cp(NUN, JIM, WAW), NAJW, 'whisper'), nomen(cp(DAL, LAM, WAW), DALW, 'bucket'), nomen(cp(BA, ALIF, NUN), BANIN, 'builder'), nomen(V.kawkabNackt, V.kawkab, 'planet')],
+  englischDeutsch: [['lesson', 'Unterricht'], ['pen', 'Stift'], ['star', 'Stern'], ['river', 'Fluss'], ['secret', 'Geheimnis'], ['moon', 'Mond'], ['whisper', 'Flüstern'], ['bucket', 'Eimer'], ['builder', 'Erbauer'], ['planet', 'Planet']].map(([w, de]) => ({ w, pos: 'noun', k: [{ sinn: 'Probe', de: [de] }] })),
+  bama: [
+    ';--- kwkb', ';; kawokab_1', 'kwkb\tkawokab\tN0\tJupiter',
+    ';--- qmr', ';; qamar_1', 'qmr\tqamar\tNprop\tmoon',
+    ';--- njw', ';; najow_1', 'njw\tnajow\tN\twhisper',
+    ';--- dlw', ';; dalow_1', 'dlw\tdalow\tN\tbucket',
+    ';--- byn', ';; bAn_1', 'bAn\tbAn\tN\tevident',
+    ';--- drs', ';; daros_1', 'drs\tdaros\tN\tlesson',
+    ';--- qlm', ';; qalam_1', 'qlm\tqalam\tN\tpen',
+    ';--- sr', ';; sir~_1', 'sr\tsir~\tN\tsecret',
+    ';--- nh', ';; nahor_1', 'nhr\tnahor\tN\triver',
+    ';--- drs(2)', ';; najom_1', 'njm\tnajom\tN\tstar',
+  ],
+  laneSeiten: { drs: [], sr: [], nh: [], qmr: [], njw: [], njY: [], dlY: [], byn: [], kwkb: [] }, laneOhneSeite: ['qlm'],
+};
+const ws13 = probe({}, WELT10);
+pruefe('Stammliste: ein Eigenname, den die Stammliste als gewöhnliches Nomen führt (englische Bedeutung groß geschrieben), bekommt keine Wurzel', wurzelAuf(ws13, '130') === null, zeig(ws13, '130'));
+pruefe('Stammliste: ein Eigenname der Stammliste bekommt keine Wurzel', wurzelAuf(ws13, '126') === null, zeig(ws13, '126'));
+pruefe('Stammliste: führt Lane die Wurzel unter beiden Schreibungen des schwachen Radikals, bleibt sie offen', wurzelAuf(ws13, '127') === null, zeig(ws13, '127'));
+pruefe('Stammliste: führt Lane die Wurzel nur unter der anderen Schreibung des schwachen Radikals, gilt Lanes Schreibung', wurzelAuf(ws13, '128') === wz(DAL, LAM, YA), zeig(ws13, '128'));
+pruefe('Stammliste: ein Wort auf Kasratan bekommt keine Wurzel aus der Stammliste', wurzelAuf(ws13, '129') === null, zeig(ws13, '129'));
+pruefe('Stammliste: die Probe läuft durch, alle zehn Plätze sind belegt', ws13.codeZ === 0 && ws13.codeB === 0 && ws13.karten.length === 10, 'Exit ' + ws13.codeZ + ' / ' + ws13.codeB + ' / ' + ws13.codeL + ', Karten ' + ws13.karten.map(k => k.id).join(',') + ': ' + ws13.text.trim().split('\n').slice(-3).join(' | ').slice(0, 400));
+pruefe('Stammliste: stehen die Radikale der Wurzelzeile im Wort und führt Lane die Seite dieser Wurzel, kommt sie auf die Karte — mit beiden Quellen im Beleg', wurzelAuf(ws13, '121') === wz(DAL, RA, SIN) && belegWurzel(ws13, '121').q === 'bama-wurzel' && /Stammliste: das Lemma .*Lanes Lexikon führt diese Wurzel/.test(belegWurzel(ws13, '121').wo || ''), zeig(ws13, '121'));
+pruefe('Stammliste: führt Lane keine Seite dieser Wurzel, bleibt sie offen', wurzelAuf(ws13, '122') === null, zeig(ws13, '122'));
+pruefe('Stammliste: hängt das Lemma unter einer fremden Wurzelzeile (ihre Radikale stehen nicht im Wort), bleibt die Wurzel offen', wurzelAuf(ws13, '123') === null, zeig(ws13, '123'));
+pruefe('Stammliste: eine zweilautige Zeile zählt nicht, wenn das Wort den zweiten Radikal nicht doppelt führt', wurzelAuf(ws13, '124') === null, zeig(ws13, '124'));
+pruefe('Stammliste: eine zweilautige Zeile gilt als verdoppelte Wurzel, wenn das Wort den zweiten Radikal mit Schadda führt', wurzelAuf(ws13, '125') === wz(SIN, RA, RA), zeig(ws13, '125'));
 
 const gut = faelle.filter(f => f.ok).length;
 for (const f of faelle) if (!f.ok) console.log(`  ✗ ${f.name}\n      bekommen: ${f.was}`);
