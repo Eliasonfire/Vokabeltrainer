@@ -21,6 +21,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import { abzugGeparkt, WEGGELASSEN } from './datenquelle.mjs';
 
 const WURZEL = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DATEN  = path.join(WURZEL, 'data');
@@ -94,11 +95,46 @@ if (vorher && vorher.buecher){
     .filter(([slug, n]) => (buecher[slug] ? buecher[slug].length : 0) < n)
     .map(([slug, n]) => `  ${slug.padEnd(16)} ${n} -> ${buecher[slug] ? buecher[slug].length : 0}`);
   if (weniger.length){
-    console.error('\nWENIGER als im letzten Paket - nichts geschrieben:');
-    console.error(weniger.join('\n'));
-    console.error('Elias, 27.09.2026: „weniger soll nicht werden aber kann mehr werden". Die Buchdateien in data/ pruefen.');
-    process.exit(1);
+    const ausnahme = benannteAusnahme();
+    if (!ausnahme){
+      console.error('\nWENIGER als im letzten Paket - nichts geschrieben:');
+      console.error(weniger.join('\n'));
+      console.error('Elias, 27.09.2026: „weniger soll nicht werden aber kann mehr werden". Die Buchdateien in data/ pruefen.');
+      process.exit(1);
+    }
+    console.log(`\nWENIGER als im letzten Paket, aber nur um die ${ausnahme.length} benannten Plaetze der Ersatzdatenbank:`);
+    console.log(weniger.join('\n'));
+    console.log('Elias, 12.10.2026: „du kannst nochmals gucken, ansonsten kannst du weg lassen." Kennungen: ' + ausnahme.join(', '));
   }
+}
+
+/* ---------- Die benannte Ausnahme (12.10.2026) ----------
+   Elias, zu den 19 Woertern, die fuer die Ersatzdatenbank in keiner Quelle zu
+   finden waren: „du kannst nochmals gucken, ansonsten kannst du weg lassen."
+
+   Laeuft die App auf der Ersatzdatenbank (der Abzug steht dann geparkt in
+   data-abzug/, siehe werkzeuge/datenquelle.mjs), darf das Paket deshalb um
+   GENAU diese Kennungen kleiner sein als das letzte - und um keine andere.
+   Sein Satz vom 27.09.2026 bleibt fuer alles Uebrige die Sperre.
+
+   Geprueft wird Kennung fuer Kennung gegen das letzte Paket, nicht nur die
+   Anzahl: jede Karte, die in ihrem Buch nicht mehr steht, muss in WEGGELASSEN
+   stehen. Laesst sich das letzte Paket nicht lesen oder passt es nicht zum
+   gemerkten Stand, gibt es keine Ausnahme - dann ist nicht pruefbar, WAS
+   fehlt. Bewacht von werkzeuge/test-ersatz-wechsel.mjs. */
+function benannteAusnahme(){
+  if (!abzugGeparkt(WURZEL)) return null;
+  let letztes;
+  try { letztes = JSON.parse(fs.readFileSync(ZIEL, 'utf8')); } catch { return null; }
+  if (!letztes || !letztes.buecher) return null;
+  const fehlt = [];
+  for (const [slug, n] of Object.entries(vorher.buecher)){
+    const alt = letztes.buecher[slug];
+    if (!Array.isArray(alt) || alt.length !== n) return null;
+    const jetzt = new Set((buecher[slug] || []).map(v => String(v.id)));
+    fehlt.push(...alt.map(v => String(v.id)).filter(id => !jetzt.has(id)));
+  }
+  return fehlt.length && fehlt.every(id => WEGGELASSEN.includes(id)) ? fehlt : null;
 }
 
 const paket = {

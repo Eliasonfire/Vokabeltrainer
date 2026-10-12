@@ -95,7 +95,8 @@ const sperrt = (p) => istVerboten(p) || istVerboten(p.replace(/\//g, path.sep));
 for (const p of ['transcripts/beispiel.txt', 'transcripts/kandidaten/freigabe.html',
                  'vokabelpaket.json', 'CLAUDE.md', '.gitignore',
                  'werkzeuge/veroeffentlichen.mjs', '.git/config', 'validate.js',
-                 'pruefe-taschkil.js', 'test-sync.mjs', 'maintenance-log.md'])
+                 'pruefe-taschkil.js', 'test-sync.mjs', 'maintenance-log.md',
+                 'data-abzug/buecher.js', 'data-abzug/vokabeln-madina-1.js'])
   pruefe('gesperrt: ' + p, sperrt(p), true);
 
 /* ---------- 2. Was mit MUSS ---------- */
@@ -123,6 +124,11 @@ for (const p of ['index.html', 'sw.js', 'manifest.json', 'js/kern.js', 'vocab-da
 const NUR_ZEITWEISE = {
   '/^\\.arbeit\\.json$/i': 'Marke fuer eine abgebrochene Aenderung — sie existiert nur, '
     + 'solange etwas offen ist (werkzeuge/arbeit.mjs), und genau dann darf sie nicht mit.',
+  /* 12.10.2026: der geparkte Abzug. Der Ordner entsteht erst, wenn auf die
+     Ersatzdatenbank umgeschaltet wird (nur auf Elias' Wort) — heute gibt es ihn
+     nicht, und die Sperre muss trotzdem schon stehen. */
+  '/^data-abzug[\\\\/]/i': 'Der geparkte Abzug von arabicroots — den Ordner gibt es nur, solange auf die '
+    + 'Ersatzdatenbank umgeschaltet ist (werkzeuge/ersatz-wechsel.mjs), und genau dann duerfen seine Karten nicht mit.',
 };
 console.log('');
 for (const r of VERBOTEN){

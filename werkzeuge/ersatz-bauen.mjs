@@ -26,6 +26,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
+import { abzugOrdner, istErsatzkarte } from './datenquelle.mjs';
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
 const REPO = process.env.ERSATZ_REPO || path.join(HIER, '..');
@@ -39,12 +40,17 @@ const schreibe = (datei, text) => { fs.writeFileSync(datei + '.neu', text, 'utf8
 const liesJson = (datei, sonst) => fs.existsSync(datei) ? JSON.parse(fs.readFileSync(datei, 'utf8')) : sonst;
 
 const zuordnung = fs.readFileSync(path.join(ERSATZ, 'arbeit', 'zuordnung.jsonl'), 'utf8').split('\n').filter(Boolean).map(z => JSON.parse(z));
+/* Der Bestand ist der Abzug von arabicroots: in data/ -- oder in data-abzug/, solange auf die Ersatzdatenbank
+ * umgeschaltet ist (datenquelle.mjs). Die Regel „wie die Karte" und die Liste der Unterschiede messen gegen ihn;
+ * läge an seiner Stelle die Ersatzdatenbank selbst, wäre jede Karte mit sich selbst „wortgleich". */
 function ladeBestand(buch) {
-  const datei = path.join(REPO, 'data', 'vokabeln-' + buch + '.js');
+  const datei = path.join(abzugOrdner(REPO), 'vokabeln-' + buch + '.js');
   if (!fs.existsSync(datei)) return null;
   const fenster = {};
   vm.runInContext(fs.readFileSync(datei, 'utf8'), vm.createContext({ window: fenster }), { filename: datei });
-  return fenster.VOKABELN[buch];
+  const karten = fenster.VOKABELN[buch];
+  if (karten.some(istErsatzkarte)) throw new Error(datei + ': das sind Karten der Ersatzdatenbank, nicht der Abzug von arabicroots — nichts gebaut („node werkzeuge/ersatz-wechsel.mjs --stand“ zeigt die Lage)');
+  return karten;
 }
 
 /* Deutsch aus den Kandidaten: erst die direkte Quelle (arabisches und deutsches Wort stehen beieinander),

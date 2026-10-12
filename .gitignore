@@ -166,3 +166,8 @@ werkzeuge/freischaltung-abfrage.json
 # arabicroots-Abzug nennen - nichts davon gehoert ins Repo. Ob die fertigen
 # Ersatzdateien einmal veroeffentlicht werden, entscheidet Elias.
 data-ersatz/
+
+# Der geparkte Abzug (12.10.2026): solange auf die Ersatzdatenbank umgeschaltet
+# ist (werkzeuge/ersatz-wechsel.mjs --hin), stehen die Buchdateien von
+# arabicroots hier statt in data/. Dieselbe Sperre wie data/vokabeln-*.js.
+data-abzug/

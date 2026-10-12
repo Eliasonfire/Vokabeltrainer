@@ -12,6 +12,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
+import { abzugOrdner, istErsatzkarte } from './datenquelle.mjs';
 
 const Z = n => String.fromCodePoint(n);
 /* Buckwalter-Umschrift -> Unicode */
@@ -113,16 +114,19 @@ export function wurzelnAus(feld) {
   return [...new Set(formen)].map(nachBW);
 }
 
-/* Der Bestand eines Buches (data/vokabeln-<buch>.js, liegt nur lokal) als Karte Kennung -> Vokabel. */
+/* Der Bestand eines Buches (vokabeln-<buch>.js, liegt nur lokal) als Karte Kennung -> Vokabel. Der Bestand ist
+ * der Abzug von arabicroots: in data/ -- oder in data-abzug/, solange auf die Ersatzdatenbank umgeschaltet ist
+ * (datenquelle.mjs). */
 const _bestand = new Map();
 export function ladeBuch(repo, buch) {
   const schluessel = repo + '|' + buch;
   if (_bestand.has(schluessel)) return _bestand.get(schluessel);
-  const datei = path.join(repo, 'data', 'vokabeln-' + buch + '.js');
+  const datei = path.join(abzugOrdner(repo), 'vokabeln-' + buch + '.js');
   let karte = null;
   if (fs.existsSync(datei)) {
     const fenster = {};
     vm.runInContext(fs.readFileSync(datei, 'utf8'), vm.createContext({ window: fenster }), { filename: datei });
+    if (fenster.VOKABELN[buch].some(istErsatzkarte)) throw new Error(datei + ': das sind Karten der Ersatzdatenbank, nicht der Abzug von arabicroots („node werkzeuge/ersatz-wechsel.mjs --stand“ zeigt die Lage)');
     karte = new Map(fenster.VOKABELN[buch].map(k => [String(k.id), k]));
   }
   _bestand.set(schluessel, karte);

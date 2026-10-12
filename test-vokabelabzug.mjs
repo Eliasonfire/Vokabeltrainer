@@ -60,6 +60,10 @@ function ordner(st = {}){
     baue = baue.replace(SPERRE, 'if (false){');
   }
   fs.writeFileSync(path.join(d, 'werkzeuge', 'baue-vokabelpaket.mjs'), baue);
+  /* Beide Skripte fragen werkzeuge/datenquelle.mjs, wo der Abzug liegt und was
+     weggelassen werden darf (12.10.2026) - die Kopie braucht sie daneben. Der
+     Wechsel selbst hat seinen eigenen Test: werkzeuge/test-ersatz-wechsel.mjs. */
+  fs.copyFileSync(path.join(REPO, 'werkzeuge', 'datenquelle.mjs'), path.join(d, 'werkzeuge', 'datenquelle.mjs'));
   fs.writeFileSync(path.join(d, 'mcp', 'dist', 'loadEnv.js'), "export function loadEnvFile(){ process.env.SUPABASE_URL = 'sim'; process.env.SUPABASE_ANON_KEY = 'sim'; }\n");
   fs.writeFileSync(path.join(d, 'mcp', 'dist', 'auth.js'), 'export class SupabaseAuth { constructor(){} }\n');
   fs.writeFileSync(path.join(d, 'mcp', 'dist', 'supabaseClient.js'), ATTRAPPE);

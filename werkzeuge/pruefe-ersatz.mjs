@@ -23,6 +23,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
+import { abzugOrdner, istErsatzkarte } from './datenquelle.mjs';
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
 const REPO = process.env.ERSATZ_REPO || path.join(HIER, '..');
@@ -64,8 +65,10 @@ for (const p of plaetze) { if (ids.has(String(p.id))) melde(`plaetze.json: Kennu
 let bestandGeprueft = 0;
 const hinweise = [];
 if (!args.includes('--ordner')) for (const buch of BUECHER) {
-  const bestand = ladeKarten(path.join(REPO, 'data', 'vokabeln-' + buch + '.js'), buch);
+  // der Bestand ist der Abzug von arabicroots: in data/ -- oder in data-abzug/, solange umgeschaltet ist (datenquelle.mjs)
+  const bestand = ladeKarten(path.join(abzugOrdner(REPO), 'vokabeln-' + buch + '.js'), buch);
   if (!bestand) continue;
+  if (bestand.some(istErsatzkarte)) { melde(`${buch}: als Bestand liegen Karten der Ersatzdatenbank da, nicht der Abzug von arabicroots („node werkzeuge/ersatz-wechsel.mjs --stand“ zeigt die Lage)`); continue; }
   bestandGeprueft++;
   const soll = plaetze.filter(p => p.buch === buch);
   if (soll.length !== bestand.length) { hinweise.push(`${buch}: der Bestand hat ${bestand.length} Plätze, plaetze.json nennt ${soll.length}`); continue; }

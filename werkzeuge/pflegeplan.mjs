@@ -343,7 +343,17 @@ export const PFLEGEPLAN = [
           + 'identische bekommen"; Regel wieDieKarte in ersatz-bauen.mjs). Sie läuft bei jedem Bau mit: '
           + 'ändert der Abzug das Deutsch einer Karte, folgt der Wortlaut von selbst. Mehr Karten treffen '
           + 'kann sie nur mit mehr Fundstellen — die holt eine Sitzung mit ersatz-arabdict.mjs --holen --ids. '
-          + 'Bewacht von pruefe-ersatz.mjs, eiche-ersatz.mjs, eiche-ersatz-zuordner.mjs und eiche-ersatz-bama.mjs' },
+          + 'Seit dem 12.10.2026 abends gibt es den Wechsel als EINEN Befehl mit Rückweg (ersatz-wechsel.mjs '
+          + '--hin "<sein Satz>" / --zurueck; umgeschaltet wird nur auf Elias\' Wort in einer Sitzung): data/ '
+          + 'trägt dann die Ersatzkarten, der Abzug steht in data-abzug/, und hole-vokabeln.mjs schreibt von '
+          + 'selbst dorthin (datenquelle.mjs) — die Wartung ruft den Abzug unverändert auf. Ist umgeschaltet, '
+          + 'fragt Schritt 2b „ersatz-wechsel.mjs --stand" und zieht nach einem Neubau mit „--hin" OHNE Angabe '
+          + 'die Karten in data/ nach, danach baut sie das Paket neu; mit einem Satz oder mit --zurueck ruft '
+          + 'die Routine den Befehl nie auf (so sind auch ihre Freigaben geschnitten). Das Paket darf dabei um '
+          + 'genau die Plätze kleiner werden, die in WEGGELASSEN stehen (datenquelle.mjs; Elias: „du kannst '
+          + 'nochmals gucken, ansonsten kannst du weg lassen."). '
+          + 'Bewacht von pruefe-ersatz.mjs, eiche-ersatz.mjs, eiche-ersatz-zuordner.mjs, eiche-ersatz-bama.mjs '
+          + 'und test-ersatz-wechsel.mjs' },
     ],
   },
   {
