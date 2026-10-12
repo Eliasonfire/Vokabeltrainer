@@ -2,6 +2,9 @@
  * schreibt einen VORSCHLAG je Platz: jede Angabe aus der Quelle, mit Fundstelle, und daneben der Vergleich
  * mit dem Bestand. Der Bestand (data/vokabeln-<buch>.js) dient nur als SUCHLISTE und zum Vergleich —
  * kein Feld wird von dort abgeschrieben (Elias, 11.10.2026: „wo anders suchst nach den selben begriffen").
+ * Eine Ausnahme seit dem 12.10.2026, auf seinen Satz „guck mal nach damit wir mehr identische bekommen": nennen die
+ * Quellen zu einem Wort GENAU die deutschen Wörter der Karte, schreibt ersatz-bauen.mjs das Deutsch im Wortlaut der
+ * Karte (wieDieKarte dort) — belegt bleibt jedes Wort für sich, von der Karte stammen Reihenfolge und Trennzeichen.
  *
  * Die Ausgabe enthält die Suchschlüssel aus dem Bestand und bleibt deshalb lokal (data-ersatz/arbeit/).
  *

@@ -70,6 +70,40 @@ function deutschAus(satz) {
   return { w: woerter.slice(0, 4).join(', '), wo: orte.join(' · '), q: direkt.length ? 'direkt' : 'kette' };
 }
 
+/* „Wie die Karte": nennen die Quellen zu einem Wort GENAU die deutschen Wörter der bisherigen Karte, steht das Deutsch im
+ * Wortlaut der Karte da — dann ändert sich bei einem Wechsel für Elias an dieser Karte nichts.
+ * Elias, 12.10.2026, als von 4414 Karten 1601 wortgleich waren: „das ist sehr wenig, guck mal nach damit wir mehr
+ * identische bekommen". Und schon am 11.10.2026: „wo anders suchst nach den selben begriffen".
+ * Von Claude stammt die Grenze: JEDES Glied der Karte (getrennt an / ; , außerhalb von Klammern, die Zählung „(1)"
+ * beiseite) muss als Wort eines Kandidaten der Quellen dastehen. Jeder Kandidat zählt, auch einer, dessen Seite nur
+ * dieselben BUCHSTABEN trägt: dieselben Buchstaben und dasselbe deutsche Wort wie auf der Karte — das ist das Wort der
+ * Karte. Nicht zählen Erklärungen, und eine Zeile des Schlüssels nur bei strenger Übereinstimmung des Stichworts (sonst
+ * käme das Deutsch eines Nachbarworts herein; so geschehen bei 47793, „idhan“ statt „idha“). Fehlt ein einziges
+ * Glied, bleibt alles, wie es ist — eine halb übernommene Karte gibt es nicht. Von der Karte stammen damit nur
+ * Reihenfolge, Trennzeichen, Zählung und Groß-/Kleinschreibung; belegt ist jedes Wort für sich. */
+const wieKarte = [];
+function wieDieKarte(alt, s) {
+  if (!alt || !voll(alt.de)) return null;
+  const norm = t => nfc(t).toLowerCase().replace(/\s+/g, ' ').trim();
+  const glieder = [];
+  let tiefe = 0, akt = '';
+  for (const c of nfc(alt.de).replace(/\(\s*\d+\s*\)/g, ' ')) {
+    if (c === '(') tiefe++;
+    else if (c === ')') tiefe = Math.max(0, tiefe - 1);
+    if (tiefe === 0 && (c === '/' || c === ';' || c === ',')) { glieder.push(akt); akt = ''; } else akt += c;
+  }
+  glieder.push(akt);
+  const g = glieder.map(norm).filter(Boolean);
+  if (!g.length) return null;
+  const taugt = d => !d.erkl && (!d.sch || d.sch.streng === true);
+  const woerter = new Map();
+  for (const d of (s.deutsch || []).filter(taugt)) for (const teil of [d.de, ...String(d.de).split(/\s*[,;\/]\s*/)]) { const k = norm(teil); if (k && !woerter.has(k)) woerter.set(k, d); }
+  const treffer = g.map(x => woerter.get(x));
+  if (treffer.some(t => !t)) return null;
+  const orte = [...new Set(treffer.map(t => t.wo))].slice(0, 4);
+  return { w: nfc(alt.de), wo: orte.join(' · ') + ' · Wortlaut wie die bisherige Karte: jedes ihrer Wörter nennt die Quelle zu diesem Wort', q: treffer.every(t => t.q === 'schluessel') ? 'schluessel' : treffer.some(t => t.sicher !== 'kette') ? 'direkt' : 'kette' };
+}
+
 const plaetze = [], unterschiede = [], nichtGefunden = [], handFehler = [], verzeichnis = [];
 const stand = { erzeugt: new Date().toISOString(), buecher: {} };
 let verbformenWeg = 0;
@@ -128,6 +162,12 @@ for (const buch of BUECHER) {
     }
     for (const [f, wert] of Object.entries(h.felder || {})) if (FELDER.includes(f) && wert && voll(wert.w)) felder[f] = { w: nfc(wert.w), wo: wert.wo, q: wert.q || 'hand' };
     for (const f of h.leer || []) delete felder[f];
+    // „Wie die Karte" (siehe wieDieKarte oben): gilt für jeden Platz, auch nach einer Entscheidung von Hand — nennen die
+    // Quellen genau die Wörter der Karte, ist deren Wortlaut das Ziel.
+    {
+      const wk = wieDieKarte(nachId.get(s.id), s);
+      if (wk && (!felder.de || nfc(felder.de.w) !== wk.w)) { wieKarte.push({ id: s.id, buch, vorher: felder.de ? felder.de.w : null, jetzt: wk.w }); felder.de = wk; }
+    }
     // Verbformen stehen nur an Verben. Im Bestand trägt keine andere Karte Vergangenheit, Gegenwart, Befehlsform oder
     // Masdar (gemessen 12.10.2026: 0 von 4433), und der Satzzerleger der App liest jede Form als Lexikoneintrag mit der
     // Wortart der Karte: eine Fügung mit der Gegenwart „er betet" machte aus dem Verb im Satz eine Aussage
@@ -189,6 +229,9 @@ schreibe(path.join(ERSATZ, 'unterschiede.json'), JSON.stringify(unterschiede, nu
 stand.unterschiede = { gesamt: unterschiede.length, jeFeld: {} };
 for (const u of unterschiede) { const f = stand.unterschiede.jeFeld[u.feld] = stand.unterschiede.jeFeld[u.feld] || {}; f[u.art] = (f[u.art] || 0) + 1; }
 schreibe(path.join(ERSATZ, 'stand.json'), JSON.stringify(stand, null, 1));
+// lokal, zum Nachlesen: an welchen Plätzen „wie die Karte" das Deutsch bestimmt hat, und was vorher dastand
+schreibe(path.join(ERSATZ, 'arbeit', 'wie-karte.json'), JSON.stringify(wieKarte, null, 1));
+console.log('Deutsch im Wortlaut der bisherigen Karte, weil die Quellen genau diese Wörter nennen: ' + wieKarte.length + ' Plätze geändert (Liste: data-ersatz/arbeit/wie-karte.json)');
 
 const sum = { plaetze: 0, belegt: 0, nichtGefunden: 0, offen: 0, deutschDirekt: 0, deutschKette: 0, deutschTeile: 0, deutschOhneQuelle: 0 };
 for (const buch of BUECHER) {
