@@ -382,6 +382,36 @@ function wurzelAusGrundform(form) {
   return { w: funde[0].r.w, wo: `en.wiktionary „${funde[0].l.w}“ (${funde[0].l.pos}) ist die Grundform, die Karte führt ihre Form mit Ta marbuta; ${funde[0].r.wo}` };
 }
 
+/* GLEICH GESCHRIEBENE VERBEN (12.10.2026, Regel von Claude). Führt das Wörterbuch zwei oder mehr Verben in derselben
+ * Schreibung mit denselben Vokalzeichen (zwei Bedeutungen in zwei Einträgen, oft mit verschiedener Gegenwart), wählt
+ * der Zuordner keinen — die Karte bekommt Wort und Deutsch dann aus dem Schlüssel des Lehrbuchs, einer
+ * Übersetzungstabelle oder von arabdict, aber keine Formen. Ein Verb erkennt man an seinen Stammformen: es zählen die
+ * Einträge, deren Gegenwart die der Karte ist — die, die schon auf der Ersatzkarte steht (aus dem Schlüssel), sonst
+ * die der bisherigen Karte (als Suchschlüssel, wie ihr Arabisch). Nennt die bisherige Karte ein Verbalsubstantiv und
+ * führt es einer dieser Einträge, zählen nur die. Eine Angabe kommt dazu, wenn alle so gefundenen Einträge, die sie
+ * nennen, sie GLEICH nennen; ohne Gegenwartsform als Schlüssel kommt nichts. Gemessen am 12.10.2026: bei 21 Verbkarten
+ * sah der Zuordner zwei bis vier solche Einträge, ihnen fehlten Befehl, Verbalsubstantiv und meist die Gegenwart. */
+function verbUnterGleichen(form, gegenwart, karte) {
+  if (!voll(form) || /\s/.test(nfc(form))) return null;
+  const kandidaten = (nachNackt.get(nackt(form)) || []).filter(e => e.pos === 'verb' && !e.formVon && (e.kopf || []).some(k => k1(k.f) === k1(form))).map(e => ({ e, v: vorschlag(e, form, false, karte) }));
+  if (!kandidaten.length) return null;
+  const schluessel = teileVon(voll(gegenwart) ? gegenwart : karte.present).map(k1);
+  const passend = schluessel.length ? kandidaten.filter(x => x.v.present && teileVon(x.v.present.w).some(p => schluessel.includes(k1(p)))) : [];
+  if (!passend.length) return null;
+  const masK = teileVon(karte.masdar).map(k1);
+  const mitMasdar = masK.length ? passend.filter(x => x.v.masdar && teileVon(x.v.masdar.w).some(m => masK.includes(k1(m)))) : [];
+  const gilt = mitMasdar.length ? mitMasdar : passend;
+  const wie = kandidaten.length > 1 ? `unter ${kandidaten.length} gleich geschriebenen Verben des Wörterbuchs an der Gegenwartsform erkannt` : 'der eine Eintrag des Wörterbuchs in dieser Schreibung, an der Gegenwartsform geprüft';
+  const aus = {};
+  for (const f of ['present', 'imperative', 'masdar', 'root']) {
+    const nennen = gilt.filter(x => x.v[f]);
+    const werte = new Set(nennen.map(x => f === 'root' ? wurzelKern(x.v[f].w) : teileVon(x.v[f].w).map(k1).sort().join('|')));
+    if (werte.size !== 1) continue;
+    aus[f] = { w: nennen[0].v[f].w, wo: `${nennen[0].v[f].wo} — ${wie}${nennen.length > 1 ? ` (${nennen.length} Einträge nennen dasselbe)` : ''}` };
+  }
+  return aus;
+}
+
 /* Ein einzelnes Wort einer Fügung im Wörterbuch suchen, GENAU in der Form, in der es dasteht (erstes Glied ohne Tanwin,
  * zweites im Genitiv mit Artikel) — die Beugungstabelle der Quelle nennt diese Formen. Ist der gefundene Eintrag selbst
  * nur eine gebeugte Form (weibliche Form, Mehrzahl), steht die Tabelle beim Stichwort, auf das er verweist. */
@@ -749,6 +779,8 @@ for (const buch of BUECHER) {
     // „ashbaha" (Stamm IV, ähneln) ist buchstabengleich mit der 1. Person Konjunktiv von Stamm I.
     const finit = einzelTags.some(x => /-person$/.test(x)) && !einzelTags.includes('participle');
     const einzelOk = !!einzelFund && (!finit || ['expression', 'phrase', 'particle'].includes(karte.type));
+    // gemerkt für den Nachschritt unten: das Verb einer Fügung „Verb + Verhältniswort" (Eintrag und Form)
+    let fuegungsVerb = null;
     if (res.stufe === 'N' && (mehrteilig || einzelOk)) {
       // Fügung aus mehreren Wörtern: jedes Wort einzeln suchen, und zwar GENAU in der Form, in der es in der Fügung steht
       // (z. B. erstes Glied ohne Tanwin, zweites im Genitiv mit Artikel) — die Beugungstabelle der Quelle nennt diese Formen.
@@ -792,6 +824,12 @@ for (const buch of BUECHER) {
           const g = kf && (kf.t.includes('masculine') ? 'masculine' : kf.t.includes('feminine') ? 'feminine' : null);
           if (g) v.gender = { w: g, wo: `en.wiktionary „${kopfE.w}“ (${kopfE.pos}), Kopfzeile: Geschlecht des ersten Wortes` };
           if (voll(karte.sg) && nfc(karte.sg) === wort) v.sg = { ...v.ar };
+        }
+        // FÜGUNG MIT VERB: steht das erste Wort in der Form, unter der ein Verb im Wörterbuch steht (Vergangenheit,
+        // 3. Person m. Einzahl), bringt dessen Eintrag die Formen des Verbs mit — sie kommen im Nachschritt dazu.
+        if (mehrteilig && !paar && kopfPos === 'verb' && v.type && v.type.w === 'verb') {
+          const f0 = teile[0].fund.f, t0 = f0.t || [];
+          if (!t0.length || t0.includes('canonical') || (hat(f0, 'active', 'third-person', 'singular', 'masculine', ['past', 'perfective']) && !t0.includes('non-past'))) fuegungsVerb = { e: kopfE, w: teile[0].fund.w };
         }
         v._en = teile.map(t => (t.fund.e.sinn || []).filter(s => s.g).slice(0, 2).map(s => s.g).join(' ; '));
         satz.vergleich = {};
@@ -967,9 +1005,22 @@ for (const buch of BUECHER) {
     //   Geschlecht eines Nomens: aus den Übersetzungstabellen (geschlechtAusTabelle)
     //   Wurzel: von der Grundform, wenn das Wort auf Ta marbuta endet (wurzelAusGrundform); die Quelle heißt dann
     //           „enwikt-grundform", und ersatz-bauen.mjs lässt ihr ein Stichwort aus Lanes Lexikon vorgehen
+    //   Formen und Wurzel des VERBS EINER FÜGUNG („Verb + Verhältniswort", Stufe „M"): aus dem Eintrag des Verbs —
+    //           Vergangenheit, Gegenwart, Befehl, Verbalsubstantiv und Wurzel gelten dem Verb ohne die übrigen Wörter
+    //           (so führt sie auch die bisherige Karte). Gemessen am 12.10.2026: 23 solchen Karten fehlten die Formen;
+    //           die Gegenwart aus dem Schlüssel des Lehrbuchs (oben) bleibt, wo er sie nennt. Die Regel stammt von Claude.
     if (satz.vorschlag && satz.vorschlag.ar && voll(satz.vorschlag.ar.w)) {
       const v = satz.vorschlag;
       let dazu = false;
+      if (fuegungsVerb && satz.stufe === 'M' && v.type && v.type.w === 'verb') {
+        const vV = vorschlag(fuegungsVerb.e, fuegungsVerb.w, false, karte);
+        for (const f of ['past', 'present', 'imperative', 'masdar', 'root']) if (vV[f] && !v[f]) { v[f] = { w: vV[f].w, wo: `${vV[f].wo} — Angabe zum Verb der Fügung (ihrem ersten Wort), ohne die übrigen Wörter` }; dazu = true; }
+      }
+      // Formen eines Verbs, das das Wörterbuch unter zwei oder mehr gleich geschriebenen führt (verbUnterGleichen, oben)
+      if (v.type && v.type.w === 'verb' && ['present', 'imperative', 'masdar', 'root'].some(f => !v[f])) {
+        const gv = verbUnterGleichen(v.ar.w, v.present && v.present.w, karte);
+        if (gv) for (const f of ['present', 'imperative', 'masdar', 'root']) if (gv[f] && !v[f]) { v[f] = gv[f]; dazu = true; }
+      }
       if (!v.gender && v.type && v.type.w === 'noun') { const g = geschlechtAusTabelle(v.ar.w); if (g) { v.gender = { w: g.w, wo: g.wo, q: 'enwikt-tab' }; dazu = true; } }
       if (!v.root) { const r = wurzelAusGrundform(v.ar.w); if (r) { v.root = { w: r.w.replace(new RegExp(String.fromCodePoint(0x621), 'g'), String.fromCodePoint(0x623)), wo: r.wo, q: 'enwikt-grundform' }; dazu = true; } }
       if (dazu) { satz.vergleich = {}; for (const f of FELDER) satz.vergleich[f] = vergleiche(f, v[f] && v[f].w, karte[f]); }

@@ -78,6 +78,8 @@ function probe(hand = {}, welt = null) {
   if (welt && welt.wurzelSeiten) fs.writeFileSync(path.join(auszuege, 'enwikt-wurzeln.json'), JSON.stringify(welt.wurzelSeiten));
   // Abschnitt 9: die Übersetzungstabellen des englischen Wiktionary (am arabischen Wort steht dort oft das Geschlecht)
   if (welt && welt.tabellen) fs.writeFileSync(path.join(auszuege, 'enwikt-tabellen.jsonl'), welt.tabellen.map(e => JSON.stringify(e)).join('\n') + '\n');
+  // Abschnitt 10: gebeugte Formen aus den vollständigen Tabellen der Quelle (ersatz-quellen.mjs zusatz), hier die Gegenwart eines Verbs
+  if (welt && welt.zusatz) fs.writeFileSync(path.join(auszuege, 'enwikt-zusatzformen.jsonl'), welt.zusatz.map(e => JSON.stringify(e)).join('\n') + '\n');
   // Abschnitt 7: Einträge aus einem früheren Lauf von ersatz-lane.mjs --wurzeln, und abgelegte Wurzelseiten von Lanes
   // Lexikon (nur die Verweise auf die Stichwörter, wie die echte Seite sie trägt). Geholt wird in der Probe nie etwas.
   if (welt && welt.laneWurzeln) fs.writeFileSync(path.join(repo, 'data-ersatz', 'arbeit', 'lane-wurzeln.json'), JSON.stringify({ eintraege: welt.laneWurzeln }));
@@ -463,6 +465,105 @@ pruefe('Grundform: nennt Lane das Wort selbst, geht sein Stichwort vor — und d
   pruefe('Seiten: „pl=+" ist keine ausgeschriebene Mehrzahl', JSON.stringify(b.mehrzahl) === '[]' && JSON.stringify(b.geschlecht) === JSON.stringify([{ f: [V.kawkab], g: 'masculine' }]), JSON.stringify({ g: b.geschlecht, pl: b.mehrzahl }).slice(0, 200));
   fs.rmSync(repo, { recursive: true, force: true });
 }
+
+// 10. Verbformen an einer Fügung mit Verb, und „das Wort selbst" (12.10.2026). Gemessen über alle Bücher mit der Pflicht
+//     der App (vorrat.mjs: ein Verb braucht Vergangenheit, Gegenwart, Befehl, Verbalsubstantiv; ein Nomen die Einzahl):
+//     73 Verben fehlte die Vergangenheit, 52 Nomen die Einzahl, 23 Fügungen „Verb + Verhältniswort" alle Formen.
+//     · Fügung: ist ihr erstes Wort die Vergangenheit (die Form, unter der das Verb im Wörterbuch steht), bringt der
+//       Eintrag des Verbs Formen und Wurzel mit — sie gelten dem Verb allein. Steht dort eine andere Form, nichts.
+//     · Das Wort selbst (ersatz-bauen.mjs): nennt die bisherige Karte als Einzahl oder Vergangenheit ihr eigenes Wort,
+//       steht im Feld das Arabisch der Ersatzkarte. Nennt sie dort ein anderes Wort, bleibt das Feld offen.
+const FI = cp(FA, KASRA, YA), FI_NACKT = cp(FA, YA);
+const YAJLISU = cp(YA, FATHA, JIM, SUKUN, LAM, KASRA, SIN, DAMMA), IJLIS = cp(ALIF, KASRA, JIM, SUKUN, LAM, KASRA, SIN, SUKUN), JULUS = cp(JIM, DAMMA, LAM, DAMMA, WAW, SIN);
+const IFTAH = cp(ALIF, KASRA, FA, SUKUN, TA, FATHA, HAA, SUKUN);
+const VERBTAFEL = [
+  { f: V.jalasa, t: ['active', 'indicative', 'masculine', 'past', 'perfective', 'singular', 'third-person'] },
+  { f: YAJLISU, t: ['active', 'indicative', 'masculine', 'non-past', 'imperfective', 'singular', 'third-person'] },
+  { f: IJLIS, t: ['active', 'imperative', 'masculine', 'second-person', 'singular'] },
+];
+const WELT7 = {
+  karten: [
+    { id: '91', ar: V.jalasa + ' ' + FI, de: 'setzen in', type: 'verb', chapter: 1, ...leer, past: V.jalasa, present: YAJLISU },   // Verb in der Vergangenheit + Verhältniswort
+    { id: '92', ar: YAJLISU + ' ' + FI, de: 'setzen in', type: 'verb', chapter: 1, ...leer },                                     // das erste Wort steht in der GEGENWART
+    { id: '93', ar: V.fataha, de: 'öffnen', type: 'verb', chapter: 2, ...leer, past: V.fataha },                                  // Verb ohne Eintrag (von Hand belegt); die Karte nennt als Vergangenheit ihr eigenes Wort
+    { id: '94', ar: IFTAH, de: 'öffne!', type: 'verb', chapter: 2, ...leer, past: V.fataha },                                     // die Karte führt eine Befehlsform; ihre Vergangenheit ist ein ANDERES Wort
+    { id: '95', ar: W.qamar + UN, de: 'Mond', type: 'noun', chapter: 2, ...leer, sg: W.qamar + UN },                              // Nomen ohne Eintrag; die Karte nennt als Einzahl ihr eigenes Wort
+    { id: '96', ar: W.kutub + UN, de: 'Bücher', type: 'noun', chapter: 2, ...leer, sg: W.kitab + UN },                            // die Karte führt eine Mehrzahl; ihre Einzahl ist ein ANDERES Wort
+    { id: '97', ar: V.najm + UN, de: 'Stern', type: 'noun', chapter: 2, ...leer, sg: V.najm + UN },                               // wie 95, aber die Hand nimmt das Feld mit „leer" heraus
+    { id: '98', ar: V.qalam + UN, de: 'Stift', type: 'noun', chapter: 2, ...leer, sg: V.qalam + UN },                             // wie 95, aber die Ersatzkarte schreibt das Wort mit ANDEREN Vokalzeichen
+  ],
+  woerterbuch: [
+    { ...verb(V.jalasaNackt, V.jalasa, 'to sit'), tab: VERBTAFEL, hf: [{ f: JULUS, t: ['noun-from-verb'] }], wurzel: wz(JIM, LAM, SIN) },
+    { w: FI_NACKT, pos: 'prep', n: null, kopf: [{ f: FI, t: ['canonical'] }], hf: [], tab: [], sinn: [{ g: 'in' }] },
+  ],
+  englischDeutsch: [['sit', 'verb', 'setzen'], ['in', 'prep', 'in']].map(([w, pos, de]) => ({ w, pos, k: [{ sinn: 'Probe', de: [de] }] })),
+  // die Gegenwart steht (wie im echten Auszug) nur in der vollständigen Tabelle des Verbs
+  zusatz: [{ f: YAJLISU, t: VERBTAFEL[1].t, w: V.jalasaNackt, pos: 'verb', n: null, k: V.jalasa }],
+};
+const vonHand = (w, art, de) => ({ felder: { ar: { w, wo: 'Probe: Stammliste', q: 'bama' }, type: { w: art, wo: 'Probe: Stammliste', q: 'bama' } }, deEigen: de });
+const wv = probe({
+  91: { deTeile: { w: 'setzen in', teile: ['setzen', 'in'] } }, 92: { deTeile: { w: 'setzen in', teile: ['setzen', 'in'] } },
+  93: vonHand(V.fataha, 'verb', 'öffnen'), 94: vonHand(IFTAH, 'verb', 'öffne!'),
+  95: vonHand(W.qamar + UN, 'noun', 'Mond'), 96: vonHand(W.kutub + UN, 'noun', 'Bücher'), 97: { ...vonHand(V.najm + UN, 'noun', 'Stern'), leer: ['sg'] },
+  98: vonHand(cp(QAF, KASRA, LAM, SUKUN, MIM) + UN, 'noun', 'Stift'),
+}, WELT7);
+const feldAuf = (p, id, feld) => { const k = p.karten.find(x => x.id === id); return k ? k[feld] : undefined; };
+const formen = (p, id) => ['past', 'present', 'imperative', 'masdar', 'root'].map(f => JSON.stringify(feldAuf(p, id, f))).join(' · ');
+pruefe('Das Wort selbst: schreibt die Ersatzkarte das Wort mit anderen Vokalzeichen als die bisherige, bleibt die Einzahl offen', feldAuf(wv, '98', 'sg') === null, 'Karte 98: ' + JSON.stringify(feldAuf(wv, '98', 'sg')));
+pruefe('Verbformen: die Probe läuft durch, alle acht Plätze sind belegt', wv.codeZ === 0 && wv.codeB === 0 && wv.karten.length === 8, 'Exit ' + wv.codeZ + ' / ' + wv.codeB + ', Karten ' + wv.karten.map(k => k.id).join(',') + ': ' + wv.text.trim().split('\n').slice(-3).join(' | ').slice(0, 400));
+pruefe('Fügung mit Verb: steht ihr erstes Wort in der Vergangenheit, kommen Vergangenheit, Gegenwart, Befehl, Verbalsubstantiv und Wurzel aus dem Eintrag des Verbs — ohne das Verhältniswort', feldAuf(wv, '91', 'past') === V.jalasa && feldAuf(wv, '91', 'present') === YAJLISU && feldAuf(wv, '91', 'imperative') === IJLIS && feldAuf(wv, '91', 'masdar') === JULUS && feldAuf(wv, '91', 'root') === wz(JIM, LAM, SIN), 'Karte 91: ' + formen(wv, '91'));
+pruefe('Fügung mit Verb: der Beleg sagt, dass die Angabe dem Verb der Fügung gilt', ['past', 'imperative', 'masdar', 'root'].every(f => /Verb der Fügung/.test(feldBeleg(wv, '91', f).wo || '')), 'Karte 91: ' + JSON.stringify(feldBeleg(wv, '91', 'imperative')).slice(0, 220));
+pruefe('Fügung mit Verb: steht ihr erstes Wort in der Gegenwart, kommen keine Formen dazu', ['past', 'present', 'imperative', 'masdar'].every(f => feldAuf(wv, '92', f) === null), 'Karte 92: ' + formen(wv, '92'));
+pruefe('Das Wort selbst: nennt die bisherige Karte als Vergangenheit ihr eigenes Wort, steht dort das Arabisch der Ersatzkarte — mit dessen Fundstelle', feldAuf(wv, '93', 'past') === V.fataha && /Stammliste — die Vergangenheit .* ist das Wort selbst/.test(feldBeleg(wv, '93', 'past').wo || '') && feldBeleg(wv, '93', 'past').q === 'bama', 'Karte 93: ' + JSON.stringify(feldAuf(wv, '93', 'past')) + ' · ' + JSON.stringify(feldBeleg(wv, '93', 'past')).slice(0, 200));
+pruefe('Das Wort selbst: führt die Karte eine Befehlsform (ihre Vergangenheit ist ein anderes Wort), bleibt die Vergangenheit offen', feldAuf(wv, '94', 'past') === null, 'Karte 94: ' + JSON.stringify(feldAuf(wv, '94', 'past')));
+pruefe('Das Wort selbst: nennt die bisherige Karte als Einzahl ihr eigenes Wort, steht dort das Arabisch der Ersatzkarte', feldAuf(wv, '95', 'sg') === W.qamar + UN && /die Einzahl ist das Wort selbst/.test(feldBeleg(wv, '95', 'sg').wo || ''), 'Karte 95: ' + JSON.stringify(feldAuf(wv, '95', 'sg')) + ' · ' + JSON.stringify(feldBeleg(wv, '95', 'sg')).slice(0, 200));
+pruefe('Das Wort selbst: führt die Karte eine Mehrzahl (ihre Einzahl ist ein anderes Wort), bleibt die Einzahl offen', feldAuf(wv, '96', 'sg') === null, 'Karte 96: ' + JSON.stringify(feldAuf(wv, '96', 'sg')));
+pruefe('Das Wort selbst: „leer" von Hand nimmt das Feld wieder heraus', feldAuf(wv, '97', 'sg') === null, 'Karte 97: ' + JSON.stringify(feldAuf(wv, '97', 'sg')));
+pruefe('Das Wort selbst: der Bau nennt die Zahl der gesetzten Felder', /Das Wort selbst: Einzahl an 1 Nomen und Vergangenheit an 1 Verben gesetzt/.test(wv.text), (wv.text.split('\n').find(z => z.startsWith('Das Wort selbst')) || 'keine Zeile').slice(0, 200));
+
+// 11. Gleich geschriebene Verben (12.10.2026): führt das Wörterbuch zwei Verben in derselben Schreibung, wählt der
+//     Zuordner keinen Eintrag — Wort und Deutsch kommen dann aus einer Übersetzungstabelle (wie hier), dem Schlüssel
+//     oder von arabdict, aber ohne Formen. Erkannt wird das Verb an seiner Gegenwartsform (verbUnterGleichen):
+//     101  drei Einträge, zwei davon mit der Gegenwart der bisherigen Karte (bei nur EINEM solchen wählt schon stufeFuer
+//          den Eintrag) → die Formen dieser zwei, die Wurzel von dem, der sie nennt
+//     102  zwei Einträge, keine Stelle nennt eine Gegenwart → nichts
+//     103  zwei Einträge mit GLEICHER Gegenwart, aber verschiedenem Verbalsubstantiv → der Befehl kommt, das Verbalsubstantiv nicht
+//     104  wie 103, aber die bisherige Karte nennt ein Verbalsubstantiv → es gilt der Eintrag, der es führt
+const NONPAST = VERBTAFEL[1].t, BEFEHL = VERBTAFEL[2].t, VERGANGEN = VERBTAFEL[0].t;
+const G = {
+  uktub: cp(ALIF, DAMMA, KAF, SUKUN, TA, DAMMA, BA, SUKUN), katb: cp(KAF, FATHA, TA, SUKUN, BA),
+  yaktibu: cp(YA, FATHA, KAF, SUKUN, TA, KASRA, BA, DAMMA), iktib: cp(ALIF, KASRA, KAF, SUKUN, TA, KASRA, BA, SUKUN), kitba: cp(KAF, KASRA, TA, SUKUN, BA, FATHA, TA_M),
+  yajlusu: cp(YA, FATHA, JIM, SUKUN, LAM, DAMMA, SIN, DAMMA), ujlus: cp(ALIF, DAMMA, JIM, SUKUN, LAM, DAMMA, SIN, SUKUN),
+  yaftahu: cp(YA, FATHA, FA, SUKUN, TA, FATHA, HAA, DAMMA), fath: cp(FA, FATHA, TA, SUKUN, HAA), futuh: cp(FA, DAMMA, TA, DAMMA, WAW, HAA),
+  yaskunu: cp(YA, FATHA, SIN, SUKUN, KAF, DAMMA, NUN, DAMMA), uskun: cp(ALIF, DAMMA, SIN, SUKUN, KAF, DAMMA, NUN, SUKUN), sakan: cp(SIN, FATHA, KAF, FATHA, NUN), sukun: cp(SIN, DAMMA, KAF, DAMMA, WAW, NUN),
+};
+const verbMit = (nacktW, kopf, sinn, n, geg, bef, mas, wurzel) => ({ ...verb(nacktW, kopf, sinn), n, tab: [{ f: kopf, t: VERGANGEN }, { f: geg, t: NONPAST }, { f: bef, t: BEFEHL }], hf: [{ f: mas, t: ['noun-from-verb'] }], ...(wurzel ? { wurzel } : {}) });
+const WELT8 = {
+  karten: [
+    { id: '101', ar: S3.kataba, de: 'schreiben', type: 'verb', chapter: 1, ...leer, past: S3.kataba, present: YAKTUBU },
+    { id: '102', ar: V.jalasa, de: 'setzen', type: 'verb', chapter: 1, ...leer, past: V.jalasa },
+    { id: '103', ar: V.fataha, de: 'öffnen', type: 'verb', chapter: 1, ...leer, past: V.fataha, present: G.yaftahu },
+    { id: '104', ar: W.sakana, de: 'wohnen', type: 'verb', chapter: 1, ...leer, past: W.sakana, present: G.yaskunu, masdar: G.sukun },
+  ],
+  woerterbuch: [
+    verbMit(W.ktbNackt, S3.kataba, 'to write', '1', YAKTUBU, G.uktub, G.katb, wz(KAF, TA, BA)), verbMit(W.ktbNackt, S3.kataba, 'to write', '2', G.yaktibu, G.iktib, G.kitba, wz(KAF, TA, BA)),
+    verbMit(W.ktbNackt, S3.kataba, 'to write', '3', YAKTUBU, G.uktub, G.katb),
+    verbMit(V.jalasaNackt, V.jalasa, 'to sit', '1', YAJLISU, IJLIS, JULUS), verbMit(V.jalasaNackt, V.jalasa, 'to sit', '2', G.yajlusu, G.ujlus, JULUS),
+    verbMit(V.fatahaNackt, V.fataha, 'to open', '1', G.yaftahu, IFTAH, G.fath), verbMit(V.fatahaNackt, V.fataha, 'to open', '2', G.yaftahu, IFTAH, G.futuh),
+    verbMit(W.sknNackt, W.sakana, 'to dwell', '1', G.yaskunu, G.uskun, G.sakan), verbMit(W.sknNackt, W.sakana, 'to dwell', '2', G.yaskunu, G.uskun, G.sukun),
+  ],
+  englischDeutsch: [['write', 'verb', 'schreiben'], ['sit', 'verb', 'setzen'], ['open', 'verb', 'öffnen'], ['dwell', 'verb', 'wohnen']].map(([w, pos, de]) => ({ w, pos, k: [{ sinn: 'Probe', de: [de] }] })),
+  tabellen: [
+    tabelle('write', 'verb', [{ w: S3.kataba, r: 'kataba', t: [] }], 'schreiben'), tabelle('sit', 'verb', [{ w: V.jalasa, r: 'jalasa', t: [] }], 'setzen'),
+    tabelle('open', 'verb', [{ w: V.fataha, r: 'fataha', t: [] }], 'öffnen'), tabelle('dwell', 'verb', [{ w: W.sakana, r: 'sakana', t: [] }], 'wohnen'),
+  ],
+};
+const wg = probe({}, WELT8);
+pruefe('Gleiche Verben: die Probe läuft durch, alle vier Plätze sind belegt (Wort und Deutsch aus der Übersetzungstabelle)', wg.codeZ === 0 && wg.codeB === 0 && wg.karten.length === 4, 'Exit ' + wg.codeZ + ' / ' + wg.codeB + ', Karten ' + wg.karten.map(k => k.id).join(',') + ': ' + wg.text.trim().split('\n').slice(-3).join(' | ').slice(0, 400));
+pruefe('Gleiche Verben: nennt die bisherige Karte die Gegenwart, wird das Verb unter drei gleich geschriebenen an der Gegenwartsform erkannt — Gegenwart, Befehl, Verbalsubstantiv und Wurzel kommen von den Einträgen mit dieser Gegenwart', feldAuf(wg, '101', 'present') === YAKTUBU && feldAuf(wg, '101', 'imperative') === G.uktub && feldAuf(wg, '101', 'masdar') === G.katb && feldAuf(wg, '101', 'root') === wz(KAF, TA, BA) && /unter 3 gleich geschriebenen Verben des Wörterbuchs an der Gegenwartsform erkannt \(2 Einträge nennen dasselbe\)/.test(feldBeleg(wg, '101', 'imperative').wo || ''), 'Karte 101: ' + formen(wg, '101') + ' · ' + JSON.stringify(feldBeleg(wg, '101', 'imperative')).slice(0, 220));
+pruefe('Gleiche Verben: nennt keine Stelle die Gegenwart, bleibt alles offen', ['present', 'imperative', 'masdar'].every(f => feldAuf(wg, '102', f) === null), 'Karte 102: ' + formen(wg, '102'));
+pruefe('Gleiche Verben: nennen die passenden Einträge verschiedene Verbalsubstantive, bleibt das offen — der gleich genannte Befehl kommt', feldAuf(wg, '103', 'imperative') === IFTAH && feldAuf(wg, '103', 'masdar') === null && /2 Einträge nennen dasselbe/.test(feldBeleg(wg, '103', 'imperative').wo || ''), 'Karte 103: ' + formen(wg, '103') + ' · ' + JSON.stringify(feldBeleg(wg, '103', 'imperative')).slice(0, 220));
+pruefe('Gleiche Verben: nennt die bisherige Karte ein Verbalsubstantiv, gilt der Eintrag, der es führt', feldAuf(wg, '104', 'masdar') === G.sukun && feldAuf(wg, '104', 'imperative') === G.uskun, 'Karte 104: ' + formen(wg, '104'));
 
 const gut = faelle.filter(f => f.ok).length;
 for (const f of faelle) if (!f.ok) console.log(`  ✗ ${f.name}\n      bekommen: ${f.was}`);
