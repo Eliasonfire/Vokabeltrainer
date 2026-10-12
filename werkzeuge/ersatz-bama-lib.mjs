@@ -176,6 +176,130 @@ export function wurzelWert(bw, schluesselFeld) {
   return ausBW(b.join(' '));
 }
 
+/* ── MEHRZAHL eines Nomens aus der Stammliste ────────────────────────────────────────────────────────────────────
+ * Die Liste nennt die Mehrzahl auf zwei Wegen (Begleittext readme-original.txt, Abschnitt 4, „A review of stem
+ * morphological categories"):
+ *   über die KATEGORIE der Einzahl-Zeile: NapAt, NduAt, N/At heißt, das Nomen nimmt die Mehrzahlendung -At
+ *   („NAt means that it takes the plural suffix -At"); Ndu und Napdu dagegen „take broken plurals";
+ *   über eine WEITERE ZEILE unter demselben Lemma: die gebrochene Mehrzahl („kitAb Ndu book" / „kutub N books")
+ *   oder ein Stamm der Kategorie NAt, der mit der Endung -At die Mehrzahl ist und deren Lautwechsel schon trägt
+ *   („$urof Napdu balcony" / „$uraf NAt balconies"). Eine Mehrzahl mit schwachem Schluss steht doppelt da; die
+ *   Zitierform ist die der Kategorie NK (Stamm mit Kasratan), die auf -iy daneben fällt weg.
+ * WELCHE Zeile eine Mehrzahl ist, sagt die Liste nicht eigens. Das liest die Regel hier ab (von Claude, 13.10.2026);
+ * jede Bedingung stammt aus einem Fehler beim Nachmessen an 1416 Karten, deren Mehrzahl das Wiktionary nennt:
+ *   (a) eine Zeile mit DEMSELBEN Stamm wie die Einzahl ist keine Mehrzahl — das Einzelstück zum Sammelwort („Apfel"),
+ *       die weibliche Form („Mutter" unter „Vater");
+ *   (b) eine Form mit Artikel ist ein Name („Al-Jazeera" unter „Insel");
+ *   (c) eine gebrochene Mehrzahl trägt eine Kategorie, die der Begleittext für Mehrzahlen nennt (N, Nap, Ndip, N0…,
+ *       NK, N/At) — Ndu, Nall, Napdu, NapAt beugen selbst nach Zahl, sind also Einzahlen („Göttin" unter „Gott");
+ *   (d) ihre englische Bedeutung ist die Mehrzahl eines Wortes der Einzahl-Zeile — sonst gehört sie zu einer anderen
+ *       Bedeutung des Worts („Riemen" unter „Verbindung"); ein Zusatz in Klammern, den die Einzahl nicht hat, sperrt
+ *       („partners (female)");
+ *   (e) eine NAt-Zeile gilt nur, wenn das Wort der Karte die Form auf Ta marbuta ist oder das Lemma keine solche Form
+ *       führt — sonst ist es die Mehrzahl des Einzelstücks, nicht des Sammelworts („Haar").
+ * NICHT gebaut: die gesunde männliche Mehrzahl aus der Kategorie Nall. Die Kategorie ERLAUBT die Endung -uwna nur, sie
+ * nennt sie nicht (gemessen 42 gleich, 8 anders, darunter die -uwna-Mehrzahl von „Band eines Buches").
+ * Gemessen mit allen Bedingungen: 900 Karten bekommen eine Form, 856 gleich dem Wiktionary, 9 gleich bis auf einen
+ * Vokal der -At-Mehrzahl, 35 anders — alle 35 einzeln gelesen: eine andere Mehrzahl desselben Worts im selben Sinn. */
+const katOhneL = k => String(k).replace(/_L$/, '');
+const KAT_AP = ['Nap', 'Napdu', 'NapAt'], KAT_NIMMT_AT = ['NapAt', 'NduAt', 'N/At'];
+const KAT_MEHRZAHL = ['N', 'Nap', 'Ndip', 'N0', 'N0_Nh', 'N0_Nhy', 'NK', 'N/At', 'N0F', 'N0F_Nh'];
+const KAT_ZITIERBAR = ['N', 'Ndu', 'NduAt', 'N/At', 'Nall', 'N/ap', 'N-ap', 'Ndip', 'Nel', 'N0', 'N0_Nh', 'N0_Nhy', 'N0F', 'N0F_Nh'];
+/* die selbständige Form eines Stamms nach seiner Kategorie; null = der Stamm steht nie ohne Endung */
+function bamaZitierform(s) {
+  const k = katOhneL(s.kat);
+  if (KAT_AP.includes(k)) return s.mit + 'ap';
+  if (k === 'NAt') return s.mit + 'At';
+  if (k === 'NK') return s.mit + 'K';
+  return KAT_ZITIERBAR.includes(k) ? s.mit : null;
+}
+/* Schreibweise wie im übrigen Ersatz: Verbindungs-Alif als Alif mit Kasra, Fatha vor dem Dehnungs-Alif ausgeschrieben
+ * (die Liste schreibt „kitAb"); eine Schlussendung nennt die Liste nicht, es kommt auch keine dazu */
+const BW_VOKAL = new Set(['a', 'u', 'i', 'o', 'F', 'N', 'K']);
+export function bamaSchreibweise(bw) {
+  const t = String(bw).replace(/^\{i/, 'Ai').replace(/\{/g, 'A');
+  let aus = '';
+  for (let i = 0; i < t.length; i++) {
+    if (t[i] === 'A' && i > 0 && !BW_VOKAL.has(aus[aus.length - 1])) aus += 'a';
+    aus += t[i];
+  }
+  return aus;
+}
+/* Englisch: die Wörter einer Bedeutung (ohne Klammerzusätze) und die Klammerzusätze für sich */
+const enWoerter = g => String(g).toLowerCase().replace(/\([^)]*\)/g, ' ').split(/[^a-z]+/).filter(x => x.length > 1);
+const enStamm = w => w.replace(/ies$/, 'y').replace(/(es|s)$/, '');
+const enKlammern = g => [...String(g).toLowerCase().matchAll(/\(([^)]*)\)/g)].map(m => m[1].split(/[^a-z]+/).filter(Boolean).map(enStamm).join(' '));
+const EN_UNREGELMAESSIG = { man: 'men', woman: 'women', child: 'children', foot: 'feet', tooth: 'teeth', person: 'people', mouse: 'mice', goose: 'geese', ox: 'oxen' };
+/* die möglichen Einzahlen eines englischen Wortes, das eine Mehrzahl sein kann */
+function enEinzahlen(pw) {
+  const r = [];
+  for (const [e, m] of Object.entries(EN_UNREGELMAESSIG)) if (pw === m || (pw.endsWith(m) && pw.length > m.length)) r.push(pw.slice(0, pw.length - m.length) + e);
+  if (pw.endsWith('ies')) r.push(pw.slice(0, -3) + 'y');
+  if (pw.endsWith('ves')) r.push(pw.slice(0, -3) + 'f', pw.slice(0, -3) + 'fe');
+  if (pw.endsWith('es')) r.push(pw.slice(0, -2), pw.slice(0, -2) + 'is');
+  if (pw.endsWith('s') && !pw.endsWith('ss')) r.push(pw.slice(0, -1));
+  return r.filter(x => x.length > 1);
+}
+/* Ist die englische Bedeutung glPl die Mehrzahl einer der Bedeutungen glossenSg? („maids" zu „housemaid" gilt auch.) */
+export function englischIstMehrzahl(glPl, glossenSg) {
+  const kSg = glossenSg.flatMap(enKlammern);
+  if (enKlammern(glPl).some(k => !kSg.includes(k))) return false;
+  const sg = glossenSg.flatMap(enWoerter);
+  return enWoerter(glPl).some(pw => enEinzahlen(pw).some(x => sg.some(sw => sw === x || (x.length >= 4 && sw.endsWith(x)))));
+}
+/* Die Mehrzahlen, die EIN Lemma der Stammliste zum Wort nennt, in der Reihenfolge seiner Zeilen.
+ * einzahl: die Zeilen, deren Form das Wort ist (leer = das Lemma führt das Wort nicht als Einzahl);
+ * formen: { ar, bw, art: 'kategorie' | 'zeile-at' | 'zeile', stamm, kat, glosse } */
+export function bamaMehrzahl(lemma, wort) {
+  const w = vergleich(wort, { artikelWeg: false }), wOhne = vergleich(wort);
+  const gleich = f => { const a = vergleich(ausBW(f), { artikelWeg: false }); return a === w || a === wOhne; };
+  const st = lemma.staemme.map(s => ({ ...s, zf: bamaZitierform(s), k: katOhneL(s.kat) }));
+  const einzahl = st.filter(s => s.zf && gleich(s.zf) && s.k !== 'NAt' && s.k !== 'NK');
+  if (!einzahl.length) return { einzahl, formen: [] };
+  const glossenSg = [...new Set(einzahl.map(s => s.glosse))], mitSg = new Set(einzahl.map(s => s.mit));
+  const hatAp = st.some(s => KAT_AP.includes(s.k)), wortIstAp = einzahl.some(s => KAT_AP.includes(s.k));
+  const nkGeruest = new Set(st.filter(s => s.k === 'NK').map(s => geruest(ausBW(s.mit))));
+  const formen = [], gesehen = new Set();
+  const dazu = (bw, art, s) => {
+    const ar = ausBW(bamaSchreibweise(bw)), v = vergleich(ar);
+    if (!gesehen.has(v)) { gesehen.add(v); formen.push({ ar, bw, art, stamm: s.mit, kat: s.kat, glosse: s.glosse }); }
+  };
+  for (const s of st) {
+    if (einzahl.includes(s)) { if (KAT_NIMMT_AT.includes(s.k)) dazu(s.mit + 'At', 'kategorie', s); continue; }
+    if (glossenSg.includes(s.glosse) || !englischIstMehrzahl(s.glosse, glossenSg)) continue;              // (d)
+    if (s.k === 'NAt') { if (wortIstAp || !hatAp) dazu(s.mit + 'At', 'zeile-at', s); continue; }           // (e)
+    if (!s.zf || gleich(s.zf) || mitSg.has(s.mit) || /^Al/.test(s.mit)) continue;                         // (a), (b)
+    if (!KAT_MEHRZAHL.includes(s.k)) continue;                                                            // (c)
+    if (s.k !== 'NK' && s.mit.endsWith('iy') && nkGeruest.has(geruest(ausBW(s.mit.slice(0, -2))))) continue; // die Form auf Kasratan steht daneben
+    dazu(s.zf, 'zeile', s);
+  }
+  return { einzahl, formen };
+}
+/* Ein Eigenname: Kategorie oder Wortart der Liste — oder jede englische Bedeutung ist groß geschrieben („Kuwait"
+ * führt die Liste als gewöhnliches Nomen) */
+export const bamaIstName = l => l.staemme.some(s => /prop/i.test(s.kat) || /PROP/.test(s.pos)) || (l.glossen.length > 0 && l.glossen.every(g => /^[A-Z]/.test(g)));
+/* Teilt das Lemma ein englisches Wort mit der Bedeutung der Karte? — um unter gleich geschriebenen Lemmata das der
+ * Karte zu finden. englischeStaemme macht aus Bedeutungen die Menge ihrer Wortstämme (ohne Füllwörter). */
+const EN_FUELLWORT = new Set(['the', 'and', 'for', 'with', 'that', 'this', 'from', 'one', 'who', 'which', 'something', 'someone', 'of', 'to', 'in', 'on', 'or', 'an', 'as', 'by', 'at', 'is', 'be', 'it', 'its', 'etc', 'esp', 'especially', 'used', 'also', 'not', 'any', 'kind', 'type', 'form', 'part', 'act', 'being', 'person', 'thing', 'place', 'time']);
+export const englischeStaemme = texte => new Set((texte || []).flatMap(enWoerter).filter(x => x.length > 2 && !EN_FUELLWORT.has(x)).map(enStamm));
+export const bamaTeiltSinn = (l, staemme) => l.staemme.some(s => [...englischeStaemme([s.glosse])].some(x => staemme.has(x)));
+/* Die Mehrzahl zur KARTE: unter den Lemmata gleicher Schreibung (lemmata; Verben und Namen zählen nicht) das der Karte.
+ * Genau eines führt das Wort als Einzahl → das gilt. Mehrere → die, deren englische Bedeutung ein Wort mit der
+ * englischen Bedeutung der Karte teilt (englisch: die Bedeutungen aus der Quelle der Karte); teilt keines eines, alle.
+ * Nennen die so Gewählten nicht DIESELBEN Formen, gibt es keine Mehrzahl (gemessen: „Gruppe" bekam die Mehrzahl von
+ * „Generalleutnant", „Bargeld" die von „Kritik").
+ * Ergebnis: null (kein Lemma führt das Wort) · { unklar: n } · { lemma, einzahl, formen, wahl: 'eins'|'sinn'|'einig', von: n } */
+export function bamaMehrzahlZurKarte(lemmata, wort, englisch) {
+  const je = (lemmata || []).filter(l => !l.verb && !bamaIstName(l)).map(l => ({ lemma: l, ...bamaMehrzahl(l, wort) })).filter(x => x.einzahl.length);
+  if (!je.length) return null;
+  if (je.length === 1) return { ...je[0], wahl: 'eins', von: 1 };
+  const en = englischeStaemme(englisch), sig = x => x.formen.map(f => f.bw).join(',');
+  const mit = je.filter(x => bamaTeiltSinn(x.lemma, en));
+  const kreis = mit.length ? mit : je;
+  if (new Set(kreis.map(sig)).size !== 1) return { unklar: je.length };
+  return { ...kreis[0], wahl: mit.length ? 'sinn' : 'einig', von: je.length };
+}
+
 /* Der Bestand eines Buches (vokabeln-<buch>.js, liegt nur lokal) als Karte Kennung -> Vokabel. Der Bestand ist
  * der Abzug von arabicroots: in data/ -- oder in data-abzug/, solange auf die Ersatzdatenbank umgeschaltet ist
  * (datenquelle.mjs). */

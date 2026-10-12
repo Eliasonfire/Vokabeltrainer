@@ -631,6 +631,17 @@ function vorschlag(e, wort, artikelAb, karte) {
     else if (plTabelle.length) feld('pl', plTabelle, 'plural', 'Beugungstabelle: Mehrzahl, Nominativ');
     else if (plSammel.length) feld('pl', plSammel, 'paucal', einzelstueck ? 'Beugungstabelle: Sammelform und Mehrzahl der kleinen Zahl (die Quelle führt das Wort als Einzelstück eines Sammelworts)' : 'Beugungstabelle: Mehrzahl der kleinen Zahl (die Quelle führt das Wort als Sammelwort)');
     else if (plSeite.length) feld('pl', plSeite, 'plural', `Kopfvorlage der Seite: Mehrzahl (Fassung vom ${String(seitePl.zeit).slice(0, 10)})`);
+    // ZAHLWORT (Wortart „num" der Quelle; Regel von Claude, 13.10.2026): die App führt bei den Zahlen im Feld Mehrzahl
+    // keine Mehrzahl, sondern die GEGENFORM — die Form, die bei einem weiblichen Nomen steht (js/kern.js,
+    // plBeschriftung: „bei weiblichem Nomen"; Elias, 16.09.2026: „das mach selber mit den wörterbüchern."). Die Quelle
+    // nennt sie in der Kopfzeile als männliche Form des weiblichen Stichworts („f (masculine …)" — die Zahlen drei bis
+    // zehn stehen im anderen Geschlecht als das gezählte Nomen). Nur wenn die Kopfzeile das Stichwort als weiblich und
+    // GENAU EINE männliche Form führt, und nur, wo die Quelle sonst keine Mehrzahl nennt. Anlass: an den sieben Karten
+    // „drei" bis „neun" fehlte das Feld, das die bisherige Karte hat.
+    else if (e.pos === 'num' && kopf && kopf.t.includes('feminine')) {
+      const gegen = [...new Set(hf.filter(f => f.t.includes('masculine') && !f.t.includes('plural') && !f.t.includes('dual')).map(f => f.f))];
+      if (gegen.length === 1) feld('pl', gegen, 'singular', 'Kopfzeile: die männliche Form des Zahlworts — sie steht bei einem weiblichen Nomen, und die App führt sie bei Zahlwörtern im Feld Mehrzahl („bei weiblichem Nomen")');
+    }
     // das Einzelstück eines Sammelworts („singulative") ist keine weibliche Form, auch wenn es auf Ta marbuta endet
     feld('femSg', [...new Set(hf.filter(f => f.t.includes('feminine') && !f.t.includes('plural') && !f.t.includes('dual') && !f.t.includes('singulative')).map(f => f.f))], 'singular', 'weibliche Form');
     feld('femPl', [...new Set(hf.filter(f => f.t.includes('feminine') && f.t.includes('plural')).map(f => f.f))], 'plural', 'weibliche Mehrzahl');

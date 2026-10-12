@@ -531,7 +531,7 @@ pruefe('Das Wort selbst: führt die Karte eine Befehlsform (ihre Vergangenheit i
 pruefe('Das Wort selbst: nennt die bisherige Karte als Einzahl ihr eigenes Wort, steht dort das Arabisch der Ersatzkarte', feldAuf(wv, '95', 'sg') === W.qamar + UN && /die Einzahl ist das Wort selbst/.test(feldBeleg(wv, '95', 'sg').wo || ''), 'Karte 95: ' + JSON.stringify(feldAuf(wv, '95', 'sg')) + ' · ' + JSON.stringify(feldBeleg(wv, '95', 'sg')).slice(0, 200));
 pruefe('Das Wort selbst: führt die Karte eine Mehrzahl (ihre Einzahl ist ein anderes Wort), bleibt die Einzahl offen', feldAuf(wv, '96', 'sg') === null, 'Karte 96: ' + JSON.stringify(feldAuf(wv, '96', 'sg')));
 pruefe('Das Wort selbst: „leer" von Hand nimmt das Feld wieder heraus', feldAuf(wv, '97', 'sg') === null, 'Karte 97: ' + JSON.stringify(feldAuf(wv, '97', 'sg')));
-pruefe('Das Wort selbst: der Bau nennt die Zahl der gesetzten Felder', /Das Wort selbst: Einzahl an 1 Nomen und Vergangenheit an 1 Verben gesetzt/.test(wv.text), (wv.text.split('\n').find(z => z.startsWith('Das Wort selbst')) || 'keine Zeile').slice(0, 200));
+pruefe('Das Wort selbst: der Bau nennt die Zahl der gesetzten Felder', /Das Wort selbst: Einzahl an 1 Nomen, Mehrzahl an 0 Nomen und Vergangenheit an 1 Verben gesetzt/.test(wv.text), (wv.text.split('\n').find(z => z.startsWith('Das Wort selbst')) || 'keine Zeile').slice(0, 200));
 
 // 11. Gleich geschriebene Verben (12.10.2026): führt das Wörterbuch zwei Verben in derselben Schreibung, wählt der
 //     Zuordner keinen Eintrag — Wort und Deutsch kommen dann aus einer Übersetzungstabelle (wie hier), dem Schlüssel
@@ -752,6 +752,120 @@ pruefe('Geschlecht aus der Endung: ist die Einzahl der Karte ein anderes Wort (s
 pruefe('Geschlecht aus der Endung: endet die Einzahl nicht auf Ta marbuta, bleibt das Feld offen', feldAuf(we, '154', 'gender') === null && !!feldAuf(we, '154', 'sg'), zeigE('154'));
 pruefe('Geschlecht aus der Endung: „leer" von Hand nimmt das Feld heraus, und der Bau nennt die Zahl ohne diese Karte', feldAuf(we, '155', 'gender') === null && /Geschlecht aus der Endung [^\n]*: 1 Nomen weiblich/.test(we.text), zeigE('155') + ' · ' + (we.text.split('\n').find(z => /Geschlecht aus der Endung/.test(z)) || '(keine Zeile)').slice(0, 160));
 pruefe('Geschlecht aus der Endung: nennt die Quelle selbst ein Geschlecht, bleibt das — die Regel füllt nur eine Lücke', feldAuf(we, '156', 'gender') === 'masculine' && feldBeleg(we, '156', 'gender').q !== 'endung', zeigE('156'));
+
+// 16. Mehrzahl aus Buckwalters Stammliste (13.10.2026, bamaMehrzahlZurKarte in ersatz-bama-lib.mjs und ersatz-bauen.mjs,
+//     Regel von Claude): die Liste nennt die Mehrzahl als weitere Zeile unter dem Lemma oder über die Kategorie der
+//     Einzahl-Zeile. Nur als Lücke, nur für ein Nomen aus einem Wort, dessen Einzahl das Wort selbst ist.
+//     161  weitere Zeile mit anderem Stamm, englisch die Mehrzahl → gebrochene Mehrzahl, Fatha vor dem Dehnungs-Alif
+//     162  die Einzahl-Zeile trägt die Kategorie NapAt → Stamm + At
+//     163  eine Zeile der Kategorie NAt (mit dem Lautwechsel der Mehrzahl) → dieser Stamm + At
+//     164  eine Zeile mit DEMSELBEN Stamm wie die Einzahl (Einzelstück, weibliche Form) → keine Mehrzahl
+//     165  die weitere Zeile gehört zu einer anderen Bedeutung (englisch nicht die Mehrzahl der Einzahl) → keine
+//     166  die weitere Zeile trägt eine Kategorie, die selbst nach Zahl beugt (Ndu) → keine
+//     167  Wort auf Kasratan; ohne die Endung gliche es einem anderen Lemma → keine
+//     168  zwei Lemmata gleicher Schreibung: das, dessen englische Bedeutung zur Karte passt → dessen Mehrzahl
+//     169  zwei Lemmata, die Bedeutung der Karte passt zu keinem, und sie nennen verschiedene Mehrzahlen → offen, gezählt
+//     170  die Quelle der Karte nennt selbst eine Mehrzahl → die bleibt
+//     171  wie 161, aber die Hand nimmt das Feld mit „leer" heraus → offen, und nicht mitgezählt
+//     172  schwache Mehrzahl: die Liste führt sie auf -iy und mit Kasratan (Kategorie NK) → nur die mit Kasratan
+//     173  NAt-Zeile unter einem Lemma, das auch die Form auf Ta marbuta führt; die Karte trägt das Sammelwort → keine
+//     174  die Quelle der Karte führt das Wort als NAMEN → keine
+//     175  die weitere Zeile trägt den Artikel (ein Name) → keine
+//     176  ein Eigenname, den die Stammliste als gewöhnliches Nomen führt (englische Bedeutung groß geschrieben) → keine
+//          (ein Lemma der Kategorie Nprop hat ohnehin keine selbständige Form; der Störtest zeigte, dass die Probe
+//          damit aus dem falschen Grund grün war)
+//     177  Kategorie NduAt an einem Wort mit Verbindungs-Alif → Stamm + At, Alif mit Kasra geschrieben
+//     178  zwei Mehrzahl-Zeilen → beide, in der Reihenfolge der Liste; das TRENNZEICHEN ist das der bisherigen Karte,
+//          ihr Wert nicht (sie nennt in der Probe ganz andere Wörter)
+//     Dazu zwei kleine Regeln zum selben Feld (beide von Claude, 13.10.2026):
+//     179  ZAHLWORT (Wortart „num", ersatz-zuordnen.mjs): die App führt im Feld Mehrzahl die Form, die bei einem
+//          weiblichen Nomen steht — die Quelle nennt sie als männliche Form des weiblichen Stichworts → diese Form
+//     180  dieselbe Kopfzeile an einem gewöhnlichen Nomen → keine Mehrzahl (die Regel gilt nur dem Zahlwort)
+//     181  DAS WORT SELBST (ersatz-bauen.mjs): die bisherige Karte nennt als Mehrzahl ihr eigenes Wort (die Karte
+//          trägt eine Mehrzahl) → das Arabisch der Ersatzkarte, mit dessen Fundstelle
+//     182  die bisherige Karte nennt als Mehrzahl ein ANDERES Wort, und keine Quelle nennt eine → offen
+const THA = 0x062B, SHIN = 0x0634, AYN = 0x0639, KHA = 0x062E, ZAY = 0x0632, KASRATAN_Z = 0x064D;
+const THANIYA = cp(THA, FATHA, ALIF, NUN, KASRA, YA, FATHA, TA_M), SHAAR = cp(SHIN, FATHA, AYN, SUKUN, RA), JAZIRA = cp(JIM, FATHA, ZAY, KASRA, YA, RA, FATHA, TA_M);
+const IKHTIBAR = cp(ALIF, KASRA, KHA, SUKUN, TA, KASRA, BA, FATHA, ALIF, RA), BUYUT = cp(BA, DAMMA, YA, DAMMA, WAW, TA);
+const THALATH = cp(THA, FATHA, LAM, FATHA, ALIF, THA), THALATHA = THALATH + cp(FATHA, TA_M);
+const PL = {
+  aqlam: cp(HAMZA_ALIF, FATHA, QAF, SUKUN, LAM, FATHA, ALIF, MIM), safinat: cp(SIN, FATHA, FA, KASRA, YA, NUN, FATHA, ALIF, TA),
+  madarasat: cp(MIM, FATHA, DAL, FATHA, RA, FATHA, SIN, FATHA, ALIF, TA), durus: cp(DAL, DAMMA, RA, DAMMA, WAW, SIN),
+  thawanin: cp(THA, FATHA, WAW, FATHA, ALIF, NUN, KASRATAN_Z), ikhtibarat: cp(ALIF, KASRA, KHA, SUKUN, TA, KASRA, BA, FATHA, ALIF, RA, FATHA, ALIF, TA),
+  judur: cp(JIM, DAMMA, DAL, DAMMA, RA), judran: cp(JIM, DAMMA, DAL, SUKUN, RA, FATHA, ALIF, NUN),
+};
+const nomenKarte = (id, ar, de, mehr = {}) => ({ id, ar: ar + UN, de, type: 'noun', chapter: 1, ...leer, sg: ar + UN, ...mehr });
+const WELT13 = {
+  karten: [
+    nomenKarte('161', V.qalam, 'Stift'), nomenKarte('162', SAFINA, 'Schiff'), nomenKarte('163', MADRASA, 'Schule'), nomenKarte('164', W.qamar, 'Mond'),
+    nomenKarte('165', V.najm, 'Stern'), nomenKarte('166', V.nahr, 'Fluss'), { ...nomenKarte('167', '', 'Erbauer'), ar: BANIN, sg: BANIN },
+    nomenKarte('168', W.dars, 'Unterricht'), nomenKarte('169', W.bab, 'Tür'), nomenKarte('170', W.bayt, 'Haus'), nomenKarte('171', SIRR, 'Geheimnis'),
+    nomenKarte('172', THANIYA, 'Sekunde'), nomenKarte('173', SHAAR, 'Haar'), nomenKarte('174', W.kitab, 'Buchstadt'), nomenKarte('175', JAZIRA, 'Insel'),
+    nomenKarte('176', V.kawkab, 'Planet'), nomenKarte('177', IKHTIBAR, 'Test'), nomenKarte('178', V.jidar, 'Wand', { pl: W.kutub + ' / ' + W.bayt }),
+    nomenKarte('179', THALATHA, 'drei'), nomenKarte('180', NAJMA, 'Sternchen'),
+    { ...nomenKarte('181', W.kutub, 'Bücher'), sg: W.kitab + UN, pl: W.kutub + UN }, nomenKarte('182', DARISA, 'Gelehrter', { pl: W.kutub + UN }),
+  ],
+  woerterbuch: [nomen(W.drsNackt, W.dars, 'lesson'), nomen(W.babNackt, W.bab, 'gate'), { ...nomen(W.baytNackt, W.bayt, 'house'), hf: [{ f: BUYUT, t: ['plural'] }] },
+    { ...nomen(W.ktbNackt, W.kitab, 'Booktown'), pos: 'name' },
+    { w: cp(THA, LAM, ALIF, THA, TA_M), pos: 'num', n: null, kopf: [{ f: THALATHA, t: ['canonical', 'feminine'] }], hf: [{ f: THALATH, t: ['masculine'] }], tab: [{ f: THALATH + UN, t: ['indefinite', 'masculine', 'nominative', 'singular'] }], sinn: [{ g: 'three' }] },
+    { ...nomen(cp(NUN, JIM, MIM, TA_M), NAJMA, 'starlet'), kopf: [{ f: NAJMA, t: ['canonical', 'feminine'] }], hf: [{ f: V.najm, t: ['masculine'] }], tab: [{ f: V.najm + UN, t: ['indefinite', 'masculine', 'nominative', 'singular'] }] }],
+  englischDeutsch: [...[['lesson', 'Unterricht'], ['gate', 'Tür'], ['house', 'Haus'], ['Booktown', 'Buchstadt'], ['starlet', 'Sternchen'], ['three', 'drei']].map(([w, de]) => ({ w, pos: 'noun', k: [{ sinn: 'Probe', de: [de] }] })),
+    { w: 'three', pos: 'num', k: [{ sinn: 'Probe', de: ['drei'] }] }],
+  bama: [
+    ';; qalam_1', 'qlm\tqalam\tNdu\tpen', '>qlAm\t>aqolAm\tN\tpens',
+    ';; safiynap_1', 'sfyn\tsafiyn\tNapAt\tship',
+    ';; madorasap_1', 'mdrs\tmadoras\tNapdu\tschool', 'mdrs\tmadaras\tNAt\tschools',
+    ';; qamar_1', 'qmr\tqamar\tNdu\tmoon', 'qmr\tqamar\tNap\tmoons',
+    ';; najom_1', 'njm\tnajom\tNdu\tstar', 'njwm\tnujuwm\tN\therbs',
+    ';; nahor_1', 'nhr\tnahor\tNdu\triver', '>nhr\t>anohur\tNdu\trivers',
+    ';; bAn_1', 'bAn\tbAn\tNdu\tbuilder', 'bnAp\tbunAp\tN\tbuilders',
+    ';; daros_1', 'drs\tdaros\tNdu\tlesson', 'drws\tduruws\tN\tlessons', ';; daros_2', 'drs\tdaros\tNdu\tthreshing', '>drAs\t>adorAs\tN\tthreshings',
+    ';; bAb_1', 'bAb\tbAb\tNdu\tdoor', '>bwAb\t>abowAb\tN\tdoors', ';; bAb_2', 'bAb\tbAb\tNdu\tchapter', 'bybAn\tbiybAn\tN\tchapters',
+    ';; bayot_1', 'byt\tbayot\tNdu\thouse', '>byAt\t>aboyAt\tN\thouses',
+    ';; sir~_1', 'sr\tsir~\tNdu\tsecret', '>srAr\t>asorAr\tN\tsecrets',
+    ';; vAniyap_1', 'vAny\tvAniy\tNapdu\tsecond', 'vwAny\tvawAniy\tN0_Nh\tseconds', 'vwAn\tvawAn\tNK\tseconds',
+    ';; $aEor_1', '$Er\t$aEor\tN\thair', '$Er\t$aEor\tNapdu\thair', '$Er\t$aEar\tNAt\thairs',
+    ';; kitab_1', 'ktb\tkitab\tNdu\tbook', 'ktb\tkutub\tN\tbooks',
+    ';; jaziyrap_1', 'jzyr\tjaziyr\tNapdu\tisland', 'Aljzr\tAlojuzur\tN\tislands',
+    ';; kawokab_1', 'kwkb\tkawokab\tNdu\tJupiter', 'kwAkb\tkawAkib\tNdip\tJupiters',
+    ';; {ixotibAr_1', 'AxtbAr\t{ixotibAr\tNduAt\ttest',
+    ';; jidAr_1', 'jdAr\tjidAr\tNdu\twall', 'jdr\tjudur\tN\twalls', 'jdrAn\tjudorAn\tN\twalls',
+  ],
+};
+const wpl = probe({
+  161: vonHand(V.qalam + UN, 'noun', 'Stift'), 162: vonHand(SAFINA + UN, 'noun', 'Schiff'), 163: vonHand(MADRASA + UN, 'noun', 'Schule'), 164: vonHand(W.qamar + UN, 'noun', 'Mond'),
+  165: vonHand(V.najm + UN, 'noun', 'Stern'), 166: vonHand(V.nahr + UN, 'noun', 'Fluss'), 167: vonHand(BANIN, 'noun', 'Erbauer'),
+  171: { ...vonHand(SIRR + UN, 'noun', 'Geheimnis'), leer: ['pl'] }, 172: vonHand(THANIYA + UN, 'noun', 'Sekunde'), 173: vonHand(SHAAR + UN, 'noun', 'Haar'),
+  175: vonHand(JAZIRA + UN, 'noun', 'Insel'), 176: vonHand(V.kawkab + UN, 'noun', 'Planet'), 177: vonHand(IKHTIBAR + UN, 'noun', 'Test'), 178: vonHand(V.jidar + UN, 'noun', 'Wand'),
+  181: vonHand(W.kutub + UN, 'noun', 'Bücher'), 182: vonHand(DARISA + UN, 'noun', 'Gelehrter'),
+}, WELT13);
+const zeigP = id => 'Karte ' + id + ': Mehrzahl ' + JSON.stringify(feldAuf(wpl, id, 'pl')) + ' · Einzahl ' + (feldAuf(wpl, id, 'sg') ? 'da' : 'leer') + ' · ' + JSON.stringify(feldBeleg(wpl, id, 'pl')).slice(0, 330);
+const plZeile = () => (wpl.text.split('\n').find(z => /Mehrzahl aus Buckwalters Stammliste/.test(z)) || '(keine Zeile)').slice(0, 240);
+const plAus = (id, wert) => feldAuf(wpl, id, 'pl') === wert && feldBeleg(wpl, id, 'pl').q === 'bama-mehrzahl';
+const plOffen = id => feldAuf(wpl, id, 'pl') === null && !!feldAuf(wpl, id, 'sg');
+pruefe('Mehrzahl aus der Stammliste: die Probe läuft durch, alle zweiundzwanzig Plätze sind belegt', wpl.codeZ === 0 && wpl.codeB === 0 && wpl.karten.length === 22, 'Exit ' + wpl.codeZ + ' / ' + wpl.codeB + ', Karten ' + wpl.karten.map(k => k.id).join(',') + ': ' + wpl.text.trim().split('\n').slice(-3).join(' | ').slice(0, 400));
+pruefe('Mehrzahl aus der Stammliste: eine weitere Zeile des Lemmas mit anderem Stamm, deren englische Bedeutung die Mehrzahl ist, kommt auf die Karte — Fatha vor dem Dehnungs-Alif, im Beleg Lemma und Zeile, und dass Claude es abgelesen hat', plAus('161', PL.aqlam) && /Lemma „qalam_1“ \(englisch „pen“\): Zeile „>aqolAm“ \(Kategorie N, englisch „pens“\)/.test(feldBeleg(wpl, '161', 'pl').wo || '') && /hat Claude aus der Liste abgelesen/.test(feldBeleg(wpl, '161', 'pl').wo || ''), zeigP('161'));
+pruefe('Mehrzahl aus der Stammliste: trägt die Zeile der Einzahl die Kategorie NapAt, ist die Mehrzahl Stamm + At — der Beleg nennt die Kategorie und den Begleittext', plAus('162', PL.safinat) && /Zeile der Einzahl „safiyn“ trägt die Kategorie NapAt — nach dem Begleittext/.test(feldBeleg(wpl, '162', 'pl').wo || ''), zeigP('162'));
+pruefe('Mehrzahl aus der Stammliste: eine Zeile der Kategorie NAt trägt den Lautwechsel der Mehrzahl — ihr Stamm + At gilt, nicht der Stamm der Einzahl', plAus('163', PL.madarasat) && /Zeile „madaras“ der Kategorie NAt/.test(feldBeleg(wpl, '163', 'pl').wo || ''), zeigP('163'));
+pruefe('Mehrzahl aus der Stammliste: eine Zeile mit demselben Stamm wie die Einzahl ist keine Mehrzahl (Einzelstück, weibliche Form)', plOffen('164'), zeigP('164'));
+pruefe('Mehrzahl aus der Stammliste: ist die englische Bedeutung der weiteren Zeile nicht die Mehrzahl der Einzahl, gehört sie zu einer anderen Bedeutung — keine Mehrzahl', plOffen('165'), zeigP('165'));
+pruefe('Mehrzahl aus der Stammliste: eine weitere Zeile mit einer Kategorie, die selbst nach Zahl beugt, ist eine Einzahl — keine Mehrzahl', plOffen('166'), zeigP('166'));
+pruefe('Mehrzahl aus der Stammliste: ein Wort auf Kasratan bekommt keine (ohne die Endung gliche es einem anderen Lemma)', plOffen('167'), zeigP('167'));
+pruefe('Mehrzahl aus der Stammliste: unter zwei gleich geschriebenen Lemmata gilt das, dessen englische Bedeutung zur Karte passt — der Beleg sagt es', plAus('168', PL.durus) && /Lemma „daros_1“ .*unter 2 gleich geschriebenen Lemmata das, dessen englische Bedeutung/.test(feldBeleg(wpl, '168', 'pl').wo || ''), zeigP('168'));
+pruefe('Mehrzahl aus der Stammliste: passt die Bedeutung der Karte zu keinem von zwei Lemmata und nennen sie verschiedene Mehrzahlen, bleibt das Feld offen — und der Bau zählt es', plOffen('169') && /offen gelassen an 1: gleich geschriebene Lemmata/.test(wpl.text), zeigP('169') + ' · ' + plZeile());
+pruefe('Mehrzahl aus der Stammliste: nennt die Quelle der Karte selbst eine Mehrzahl, bleibt die — die Regel füllt nur eine Lücke', feldAuf(wpl, '170', 'pl') === BUYUT && feldBeleg(wpl, '170', 'pl').q !== 'bama-mehrzahl', zeigP('170'));
+pruefe('Mehrzahl aus der Stammliste: „leer" von Hand nimmt das Feld heraus, und der Bau nennt die Zahl ohne diese Karte', plOffen('171') && /Mehrzahl aus Buckwalters Stammliste [^\n]*: 7 Nomen/.test(wpl.text), zeigP('171') + ' · ' + plZeile());
+pruefe('Mehrzahl aus der Stammliste: eine schwache Mehrzahl steht in der Form mit Kasratan da, nicht daneben noch auf -iy', plAus('172', PL.thawanin), zeigP('172'));
+pruefe('Mehrzahl aus der Stammliste: führt das Lemma auch die Form auf Ta marbuta und trägt die Karte das Sammelwort, gehört die NAt-Zeile zum Einzelstück — keine Mehrzahl', plOffen('173'), zeigP('173'));
+pruefe('Mehrzahl aus der Stammliste: führt die Quelle der Karte das Wort als Namen, bekommt es keine', feldAuf(wpl, '174', 'pl') === null && /name/.test(((wpl.belege['174'] || {}).eintrag) || ''), zeigP('174') + ' · Eintrag ' + JSON.stringify((wpl.belege['174'] || {}).eintrag));
+pruefe('Mehrzahl aus der Stammliste: eine weitere Zeile mit Artikel ist ein Name — keine Mehrzahl', plOffen('175'), zeigP('175'));
+pruefe('Mehrzahl aus der Stammliste: ein Eigenname der Stammliste bekommt keine — auch wenn sie ihn als gewöhnliches Nomen führt (englische Bedeutung groß geschrieben)', plOffen('176'), zeigP('176'));
+pruefe('Mehrzahl aus der Stammliste: Kategorie NduAt an einem Wort mit Verbindungs-Alif — Stamm + At, das Alif mit Kasra geschrieben wie im übrigen Ersatz', plAus('177', PL.ikhtibarat) && /trägt die Kategorie NduAt/.test(feldBeleg(wpl, '177', 'pl').wo || ''), zeigP('177'));
+pruefe('Mehrzahl aus der Stammliste: zwei Mehrzahl-Zeilen stehen beide da, in der Reihenfolge der Liste — von der bisherigen Karte stammt nur das Trennzeichen, nicht der Wert', plAus('178', PL.judur + ' / ' + PL.judran), zeigP('178'));
+pruefe('Zahlwort: die männliche Form der Kopfzeile steht im Feld Mehrzahl — die Form bei einem weiblichen Nomen, so sagt es der Beleg', feldAuf(wpl, '179', 'pl') === THALATH + UN && /männliche Form des Zahlworts — sie steht bei einem weiblichen Nomen/.test(feldBeleg(wpl, '179', 'pl').wo || ''), zeigP('179') + ' · Stufe ' + ((wpl.belege['179'] || {}).stufe));
+pruefe('Zahlwort: dieselbe Kopfzeile an einem gewöhnlichen Nomen gibt keine Mehrzahl — nur ein Zahlwort führt dort die Gegenform', feldAuf(wpl, '180', 'pl') === null && (wpl.belege['180'] || {}).stufe === 'A', zeigP('180') + ' · Stufe ' + ((wpl.belege['180'] || {}).stufe));
+pruefe('Das Wort selbst: nennt die bisherige Karte als Mehrzahl ihr eigenes Wort, steht dort das Arabisch der Ersatzkarte — mit dessen Fundstelle', feldAuf(wpl, '181', 'pl') === W.kutub + UN && /die Mehrzahl ist das Wort selbst/.test(feldBeleg(wpl, '181', 'pl').wo || '') && /Das Wort selbst: Einzahl an \d+ Nomen, Mehrzahl an 1 Nomen/.test(wpl.text), zeigP('181') + ' · ' + (wpl.text.split('\n').find(z => z.startsWith('Das Wort selbst')) || 'keine Zeile').slice(0, 160));
+pruefe('Das Wort selbst: nennt die bisherige Karte als Mehrzahl ein anderes Wort und keine Quelle eine, bleibt die Mehrzahl offen', plOffen('182'), zeigP('182'));
 
 const gut = faelle.filter(f => f.ok).length;
 for (const f of faelle) if (!f.ok) console.log(`  ✗ ${f.name}\n      bekommen: ${f.was}`);
