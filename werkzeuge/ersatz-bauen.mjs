@@ -92,8 +92,10 @@ function deutschAus(satz) {
  *   · bei Verben die Platzhalter „etwas", „jemanden", „jemandem" selbst: „verweigern" = „etwas verweigern".
  *     NIE „sich": „verbreiten" und „sich verbreiten" sind zwei Bedeutungen.
  *   · ein Zusatz in Klammern, den nur die QUELLE führt: „ursprüngliche Form (eines Wortes)" = „ursprüngliche Form".
- *     Ein Zusatz, den nur die KARTE führt („Stern (Himmelskörper)"), zählt NICHT: er steht in keiner Quelle. Ob er
- *     von der Karte kommen darf, entscheidet Elias (offene Frage, Stand 12.10.2026).
+ *     Ein Zusatz, den nur die KARTE führt („Stern (Himmelskörper)"), zählt NICHT: er steht in keiner Quelle. Elias am
+ *     12.10.2026 auf die Frage, ob solche Zusätze von seiner bisherigen Karte abgeschrieben werden sollen (Beispiel
+ *     „(1) Haus; (2) Vers (Poesie)" gegen „Haus, Vers"; es ging um 124 Karten): „dann nicht übernehmen".
+ *     Das ist SEINE Entscheidung, keine Grenze von Claude — sie wird nur auf sein Wort geändert.
  *   · dieselben Wörter in derselben Reihenfolge, nur anders getrennt: der Karte fehlt ein Komma, das die Quelle setzt.
  * Von der Karte stammen damit Reihenfolge, Trennzeichen, Zählung, Schreibung, Artikel und Satzzeichen; belegt ist
  * jedes Wort für sich, die Fundstellen stehen im Beleg. */
