@@ -24,6 +24,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 import { leseListe, leseFelder, baueDatei, LISTE, FELDER, FELDER_JE_TYP, FELD_FOLGE, ZIEL, ZEILEN_DER_TABELLE, SUMME, JE_KAPITEL } from './werkzeuge/koran-haeufig-bauen.mjs';
+import { abzugOrdner, abzugGeparkt } from './werkzeuge/datenquelle.mjs';
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
 /* CRLF → LF beim Lesen: die Suchtexte unten enthalten Zeilenenden (Begründung in test-dublette.mjs). */
@@ -366,14 +367,36 @@ console.log('\n=== 3. Jede Kennung aus „gleich" gibt es wirklich ===\n');
       }
       return anders;
     };
-    const anders = feldGegenBuch(buchKarte);
+    /* ⛔ DER ZEUGE IST DER ABZUG, nicht „was gerade in data/ liegt" (12.10.2026). Die Felder-Datei sagt es
+       selbst: „verglichen am Abzug". Ist auf die Ersatzdatenbank umgeschaltet, liegen in data/ deren Karten
+       und der Abzug steht in data-abzug/ (werkzeuge/datenquelle.mjs). Im Probelauf des Wechsels wurde diese
+       Prüfung rot, weil sie die Felder der Gruppe gegen die Ersatzkarten hielt — denen fehlten sechs Angaben
+       (eine Mehrzahl, zwei Wurzeln, drei Verbformen); widersprochen hat keine. Das ist ein Mangel der
+       Ersatzkarten und steht unten als Hinweis, kein Grund, den Beleg der Gruppe anzuzweifeln. */
+    let zeugen = buchKarte, zeugenOrt = '';
+    if (abzugGeparkt(HIER)){
+      zeugen = new Map();
+      for (const w of ctx.__V) if (w.chapter !== 'personal') zeugen.set(String(w.id), w);
+      for (const f of fs.readdirSync(abzugOrdner(HIER)).filter(f => /^vokabeln-.*\.js$/.test(f) && f !== 'vokabeln-eigene.js')){
+        const fenster = {};
+        vm.runInNewContext(fs.readFileSync(path.join(abzugOrdner(HIER), f), 'utf8'), { window: fenster });
+        for (const w of (fenster.VOKABELN[f.slice('vokabeln-'.length, -3)] || [])) if (!zeugen.has(String(w.id))) zeugen.set(String(w.id), w);
+      }
+      zeugenOrt = ' (geprüft am geparkten Abzug in data-abzug/)';
+    }
+    sag(![...zeugen.values()].some(w => w && w.source === 'ersatz'), 'der Zeuge für „gleich Buchkarte" ist der Abzug von arabicroots, nicht die Ersatzdatenbank');
+    const anders = feldGegenBuch(zeugen);
     const mitBeleg = [...FELDER_GELESEN.belege.values()].flatMap(b => Object.values(b)).filter(t => /gleich Buchkarte/.test(t)).length;
-    sag(anders.length === 0, `alle ${mitBeleg} Felder mit dem Beleg „gleich Buchkarte" stimmen noch mit ihrer Buchkarte überein` + (anders.length ? ' — ' + anders.slice(0, 6).join(' · ') : ''));
+    sag(anders.length === 0, `alle ${mitBeleg} Felder mit dem Beleg „gleich Buchkarte" stimmen noch mit ihrer Buchkarte überein${zeugenOrt}` + (anders.length ? ' — ' + anders.slice(0, 6).join(' · ') : ''));
+    if (zeugen !== buchKarte){
+      const e = feldGegenBuch(buchKarte);
+      console.log('  ⓘ gegen die Karten in data/ (Ersatzdatenbank) gehalten: ' + (e.length ? e.length + ' Abweichung(en) — ' + e.join(' · ') : 'keine Abweichung'));
+    }
     const [probeId, probeBelege] = [...FELDER_GELESEN.belege].find(([, b]) => Object.values(b).some(t => /gleich Buchkarte/.test(t))) || [];
     if (probeId){
       const feld = Object.keys(probeBelege).find(f => /gleich Buchkarte/.test(probeBelege[f]) && f !== 'gender');
       const nr = /gleich Buchkarte (\d+)/.exec(probeBelege[feld])[1];
-      const gestoert = new Map(buchKarte); gestoert.set(nr, Object.assign({}, buchKarte.get(nr), { [feld]: 'x', sg: 'x', ar: 'x' }));
+      const gestoert = new Map(zeugen); gestoert.set(nr, Object.assign({}, zeugen.get(nr), { [feld]: 'x', sg: 'x', ar: 'x' }));
       sag(feldGegenBuch(gestoert).some(t => t.startsWith(probeId + ' ' + feld)), '⛔ Störtest: ändert sich die Form an der Buchkarte, wird das Feld gemeldet');
     }
   }

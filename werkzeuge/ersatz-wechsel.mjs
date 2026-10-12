@@ -8,8 +8,9 @@
  * geparkten Abzug (data-abzug/wechsel.json). Alles Weitere in diesem Kopf ist Claudes Ableitung.
  *
  *   node werkzeuge/ersatz-wechsel.mjs --stand              was liegt in data/, wo liegt der Abzug, passt es zusammen?
- *   node werkzeuge/ersatz-wechsel.mjs --probe              der Wechsel in einer Wegwerfkopie: Sammellauf und Paketbau
- *                                                          vorher und nachher, dann der Rückweg (dauert einige Minuten)
+ *   node werkzeuge/ersatz-wechsel.mjs --probe              der Wechsel in einer Wegwerfkopie: Sammellauf, Paketbau und
+ *                                                          Vollständigkeit seiner Kapitel vorher und nachher, die vollen
+ *                                                          Ausgaben aller Prüfer verglichen, dann der Rückweg (rund 4 Minuten)
  *   node werkzeuge/ersatz-wechsel.mjs --hin "<sein Satz>"  umschalten
  *   node werkzeuge/ersatz-wechsel.mjs --hin                wenn schon umgeschaltet ist: die Karten in data/ nachziehen
  *                                                          (nach jedem Neubau der Ersatzdatenbank)
@@ -277,6 +278,50 @@ export function unterschied(vorher, nachher) {
   }
   return { pruefer: a.size, aus };
 }
+/* Die VOLLEN Ausgaben vor und nach dem Wechsel (alle-pruefer.mjs legt sie ab, wenn PRUEFER_AUSGABEN gesetzt ist).
+ * Am 12.10.2026 gemessen: nach Exit und Schlusszeile verhielten sich 5 von 169 Prüfern anders, in der vollen
+ * Ausgabe 22 — darunter der Tausch eigener Karten beim App-Start, die Wurzelfamilien und die Zahl der Wörter, die
+ * in Elias' eigenen Kapiteln noch vollständig wären. Was sich von Lauf zu Lauf ohnehin ändert (Namen von
+ * Wegwerfordnern, Uhrzeiten, Dauern), zählt nicht. „nurZahlen" heißt: ersetzt man jede Ziffernfolge durch #, sind
+ * beide Ausgaben gleich. Das kann harmlos sein (4414 statt 4433 Karten) oder nicht (189 statt 270 Karten mit
+ * Wurzel) — gelesen werden muss beides, deshalb steht es nur getrennt da und wird nicht ausgeblendet. */
+const GLATT = [
+  [/[A-Za-z0-9_]+(?:-[A-Za-z0-9_]+)*-[A-Za-z0-9]{6}(?=[\\/]|$|\s)/g, t => t.replace(/-[A-Za-z0-9]{6}$/, '-…')],
+  [/\d{1,2}\.\d{1,2}\.\d{4},? \d{1,2}:[0-5]\d(?::[0-5]\d)?/g, '<zeit>'],
+  [/\b\d{1,2}:[0-5]\d(?::[0-5]\d)?\b/g, '<uhr>'],
+  [/\b\d+(?:[.,]\d+)? ?(?:ms|s|Sek\.?|Sekunden|Minuten|min)\b/g, '<dauer>'],
+];
+const glatt = zeile => GLATT.reduce((z, [muster, ersatz]) => z.replace(muster, ersatz), zeile).replace(/\s+$/, '');
+export function unterschiedVoll(vorher, nachher) {
+  const zeilen = t => String(t).split(/\r?\n/).map(glatt).filter(z => z.trim());
+  const zaehle = liste => { const m = new Map(); for (const z of liste) m.set(z, (m.get(z) || 0) + 1); return m; };
+  const diff = (a, b) => { const A = zaehle(a), B = zaehle(b); return { weg: [...A].filter(([z, n]) => (B.get(z) || 0) < n).map(([z]) => z), neu: [...B].filter(([z, n]) => (A.get(z) || 0) < n).map(([z]) => z) }; };
+  const aus = [];
+  for (const name of [...new Set([...Object.keys(vorher), ...Object.keys(nachher)])].sort()) {
+    if (!(name in vorher) || !(name in nachher)) { aus.push({ name, art: name in vorher ? 'nur vorher' : 'nur nachher', weg: [], neu: [], nurZahlen: false }); continue; }
+    const a = zeilen(vorher[name]), b = zeilen(nachher[name]);
+    const d = diff(a, b);
+    if (!d.weg.length && !d.neu.length) continue;
+    const ohneZahlen = diff(a.map(z => z.replace(/\d+/g, '#')), b.map(z => z.replace(/\d+/g, '#')));
+    aus.push({ name, art: 'andere Ausgabe', weg: d.weg, neu: d.neu, nurZahlen: !ohneZahlen.weg.length && !ohneZahlen.neu.length });
+  }
+  return aus;
+}
+export function ausgabenLesen(ordner) {
+  const aus = {};
+  if (fs.existsSync(ordner)) for (const name of fs.readdirSync(ordner).sort()) aus[name.replace(/\.txt$/, '')] = fs.readFileSync(path.join(ordner, name), 'utf8');
+  return aus;
+}
+/* Was vorrat.mjs über die Wörter seiner freigeschalteten Kapitel sagt: wie viele geprüft, wie viele vollständig,
+ * und welche Felder des vollen Programms fehlen. Werden es durch den Wechsel weniger vollständige, stünden die
+ * fehlenden Angaben danach als offene Fragen auf seiner Seite — das ist ein Hindernis, kein Hinweis. */
+export function vollstaendigAus(text) {
+  const zahl = muster => { const m = String(text).match(muster); return m ? Number(m[1]) : null; };
+  const felder = {};
+  const block = String(text).split('Felder des vollen Programms, die fehlen')[1] || '';
+  for (const m of block.matchAll(/^ {4}([A-Za-z]+): +(\d+) /gm)) felder[m[1]] = Number(m[2]);
+  return { geprueft: zahl(/geprueft: +(\d+)/), vollstaendig: zahl(/(?:^|\n) *vollstaendig: +(\d+)/), unvollstaendig: zahl(/unvollstaendig: +(\d+)/), felder };
+}
 function abdruckVon(ordner) {
   const aus = {};
   for (const name of fs.readdirSync(ordner).sort()) {
@@ -286,36 +331,48 @@ function abdruckVon(ordner) {
   return JSON.stringify(aus);
 }
 /* Der Probelauf vom 12.10.2026 als Befehl: eine Wegwerfkopie des Projekts (ohne .git, transcripts, data-ersatz,
- * .deploy), darin Sammellauf und Paketbau mit dem Abzug, dann der echte Wechsel, dann beides noch einmal, dann
- * der Rückweg. Der UNTERSCHIED ist der Befund. Der echte Ordner wird nur gelesen; das Paket der Probe geht in
- * die Kopie, nie in den Downloads-Ordner. */
+ * .deploy), darin Sammellauf, Paketbau und vorrat.mjs mit dem Abzug, dann der echte Wechsel, dann alles noch
+ * einmal, dann der Rückweg. Der UNTERSCHIED ist der Befund — je Prüfer nach Exit und Schlusszeile, dazu die vollen
+ * Ausgaben Zeile für Zeile und die Zahl der vollständigen Wörter seiner Kapitel. Der echte Ordner wird nur
+ * gelesen (den Bericht der vollen Ausgaben schreibt erst der Aufruf --probe nach data-ersatz/arbeit/); das Paket
+ * der Probe geht in die Kopie, nie in den Downloads-Ordner. */
 export function probe(repo, { melde = () => {} } = {}) {
   const ersatzOrdner = path.join(repo, 'data-ersatz');
   if (abzugGeparkt(repo)) return { ok: false, hindernisse: ['es ist schon umgeschaltet — die Probe misst den Wechsel HIN und braucht dafür den Stand davor'] };
   if (!fs.existsSync(path.join(ersatzOrdner, VERZEICHNIS))) return { ok: false, hindernisse: [`data-ersatz/${VERZEICHNIS} fehlt — es gibt keine Ersatzdatenbank, auf die umgeschaltet werden könnte`] };
   const ziel = fs.mkdtempSync(path.join(os.tmpdir(), 'vt-wechselprobe-'));
+  // die vollen Ausgaben liegen NEBEN der Kopie: in ihr zählten Prüfer, die den Ordner durchsehen, sie mit
+  const ausgaben = fs.mkdtempSync(path.join(os.tmpdir(), 'vt-wechselprobe-aus-'));
   try {
     const AUSGELASSEN = new Set(['.git', 'transcripts', 'data-ersatz', '.deploy', 'node_modules']);
     melde('Kopie anlegen …');
     fs.cpSync(repo, ziel, { recursive: true, dereference: true, filter: von => !AUSGELASSEN.has(path.relative(repo, von).split(path.sep)[0]) });
     const env = { ...process.env, VOKABELPAKET_ABLAGE: path.join(ziel, '.ablage-probe') };
-    delete env.ERSATZ_REPO;
-    const lauf = (skript, args = []) => {
-      const r = spawnSync(process.execPath, [path.join(ziel, skript), ...args], { cwd: ziel, env, encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 });
+    delete env.ERSATZ_REPO; delete env.PRUEFER_AUSGABEN;
+    const lauf = (skript, args = [], mehr = {}) => {
+      const r = spawnSync(process.execPath, [path.join(ziel, skript), ...args], { cwd: ziel, env: { ...env, ...mehr }, encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 });
       return { code: r.status, text: (r.stdout || '') + (r.stderr || '') };
     };
+    const laeufe = name => ({
+      sammel: lauf('werkzeuge/alle-pruefer.mjs', ['--knapp'], { PRUEFER_AUSGABEN: path.join(ausgaben, name) }),
+      paket: lauf('werkzeuge/baue-vokabelpaket.mjs'),
+      vorrat: lauf('werkzeuge/vorrat.mjs'),
+    });
     const datenVorher = abdruckVon(path.join(ziel, 'data'));
-    melde('Sammellauf und Paketbau mit dem Abzug …');
-    const vorher = { sammel: lauf('werkzeuge/alle-pruefer.mjs', ['--knapp']), paket: lauf('werkzeuge/baue-vokabelpaket.mjs') };
+    melde('Sammellauf, Paketbau und Vollständigkeit mit dem Abzug …');
+    const vorher = laeufe('vorher');
     const wechsel = hin(ziel, { satz: 'Probe in einer Wegwerfkopie — kein Satz von Elias', ersatzOrdner });
     if (!wechsel.ok) return { ok: false, hindernisse: wechsel.hindernisse.map(t => 'der Wechsel in der Kopie: ' + t) };
-    melde('Sammellauf und Paketbau mit der Ersatzdatenbank …');
-    const nachher = { sammel: lauf('werkzeuge/alle-pruefer.mjs', ['--knapp']), paket: lauf('werkzeuge/baue-vokabelpaket.mjs') };
+    melde('Sammellauf, Paketbau und Vollständigkeit mit der Ersatzdatenbank …');
+    const nachher = laeufe('nachher');
     const rueck = zurueck(ziel);
     const rueckwegGleich = rueck.ok && abdruckVon(path.join(ziel, 'data')) === datenVorher && !fs.existsSync(path.join(ziel, ABZUG_GEPARKT));
-    return { ok: true, wechsel, vorher, nachher, ...unterschied(vorher.sammel.text, nachher.sammel.text), rueckwegGleich };
+    const voll = unterschiedVoll(ausgabenLesen(path.join(ausgaben, 'vorher')), ausgabenLesen(path.join(ausgaben, 'nachher')));
+    const vorrat = { vorher: vollstaendigAus(vorher.vorrat.text), nachher: vollstaendigAus(nachher.vorrat.text) };
+    return { ok: true, wechsel, vorher, nachher, ...unterschied(vorher.sammel.text, nachher.sammel.text), voll, vorrat, rueckwegGleich };
   } finally {
     fs.rmSync(ziel, { recursive: true, force: true });
+    fs.rmSync(ausgaben, { recursive: true, force: true });
   }
 }
 
@@ -386,10 +443,32 @@ function haupt() {
     console.log(`\nPaketbau vorher:  Exit ${r.vorher.paket.code}\n${ende(r.vorher.paket.text)}`);
     console.log(`Paketbau nachher: Exit ${r.nachher.paket.code}\n${ende(r.nachher.paket.text)}`);
     console.log(`\nRückweg in der Kopie: ${r.rueckwegGleich ? '✅ data/ steht danach Byte für Byte da wie vorher' : '⛔ data/ steht danach NICHT da wie vorher'}`);
-    console.log('⚠️ Grenze der Messung: verglichen sind Exit und Schlusszeile je Prüfer. Ein Prüfer, der mit Ersatzkarten andere');
-    console.log('   Einzelheiten, aber dieselbe Schlusszeile meldet, fällt so nicht auf.');
+    // seine eigenen Kapitel: werden durch den Wechsel Wörter unvollständig, ist das ein Hindernis (offene Fragen an ihn)
+    const v = r.vorrat, vz = x => x.vollstaendig === null ? 'nicht lesbar' : `${x.vollstaendig} von ${x.geprueft} vollständig`;
+    const fehlen = Object.entries(v.nachher.felder).filter(([f, n]) => n > (v.vorher.felder[f] || 0)).map(([f, n]) => `${f} ${n - (v.vorher.felder[f] || 0)}`);
+    const wenigerVollstaendig = v.vorher.vollstaendig === null || v.nachher.vollstaendig === null || v.nachher.vollstaendig < v.vorher.vollstaendig;
+    console.log(`\nWörter seiner freigeschalteten Kapitel (vorrat.mjs): vorher ${vz(v.vorher)}, nachher ${vz(v.nachher)}` + (wenigerVollstaendig ? '  ⛔ HINDERNIS' + (fehlen.length ? ' — es fehlen mehr als vorher: ' + fehlen.join(', ') : '') : '  ✅'));
+    // die vollen Ausgaben: was nach Exit und Schlusszeile gleich aussieht und es nicht ist
+    const mitText = r.voll.filter(u => !u.nurZahlen), nurZahlen = r.voll.filter(u => u.nurZahlen);
+    console.log(`\nVolle Ausgaben: ${r.voll.length} von ${r.pruefer} Prüfern geben mit den Ersatzkarten etwas anderes aus — bei ${nurZahlen.length} sind nur Zahlen anders.`);
+    for (const u of mitText) console.log(`   ${u.name}   (${u.art === 'andere Ausgabe' ? '−' + u.weg.length + ' +' + u.neu.length + ' Zeilen' : u.art})`);
+    if (nurZahlen.length) console.log('   nur Zahlen: ' + nurZahlen.map(u => u.name.replace(/^\d+-/, '')).join(', '));
+    const bericht = path.join(REPO, 'data-ersatz', 'arbeit', 'probe-unterschiede.txt');
+    const zeilen = [`Probelauf ${new Date().toISOString()} — volle Ausgaben vor (−) und nach (+) dem Wechsel, je Prüfer nur die Zeilen, die sich unterscheiden.`,
+      'Die Ausgaben nennen Wörter aus den Buchdateien: diese Datei bleibt lokal (data-ersatz/ ist nicht im Repo).', ''];
+    for (const u of r.voll) {
+      zeilen.push(`### ${u.name}   (${u.art}${u.nurZahlen ? ', nur Zahlen anders' : ''} · −${u.weg.length} +${u.neu.length})`);
+      for (const z of u.weg) zeilen.push('  − ' + z);
+      for (const z of u.neu) zeilen.push('  + ' + z);
+      zeilen.push('');
+    }
+    fs.mkdirSync(path.dirname(bericht), { recursive: true });
+    fs.writeFileSync(bericht, zeilen.join('\n'), 'utf8');
+    console.log('   Zeile für Zeile: data-ersatz/arbeit/probe-unterschiede.txt');
+    console.log('⚠️ Grenze der Messung: verglichen ist, was die Prüfer AUSGEBEN. Was kein Prüfer misst, fällt auch hier nicht auf;');
+    console.log('   und „andere Ausgabe" ist ein Lesezeichen, kein Urteil — Hindernis sind nur die Zeilen mit ⛔ und ROT oben.');
     const rot = r.aus.filter(u => u.art === 'NEU ROT' || u.art.startsWith('ROT GEBLIEBEN') || u.art === 'anderer Exit' || u.art === 'nur vorher').length;
-    process.exit(rot || r.nachher.paket.code !== 0 || !r.rueckwegGleich ? 2 : 0);
+    process.exit(rot || wenigerVollstaendig || r.nachher.paket.code !== 0 || !r.rueckwegGleich ? 2 : 0);
   }
 
   if (!args.length || args.includes('--stand')) {

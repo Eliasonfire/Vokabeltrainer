@@ -204,12 +204,50 @@ console.log('\n=== D. Jede „aufgenommen"-Entscheidung hat ihren Eintrag ===');
      tauschen würde, trägt diesen Tausch AUSDRÜCKLICH in seiner Entscheidung —
      mit genau dieser Buch-id. Ein unbestätigter Tausch ist der Fehler von v470. */
   const { buchDublette } = await import('./fachbegriffe-kern.mjs');
-  const ohneBestaetigung = auf.map(([k, x]) => {
-    const f = F.find(y => y.id === x.id);
-    const b = f ? buchDublette({ id: f.id, ar: f.ar, de: f.de, chapter: 'personal' }) : null;
-    return b && String(x.buchTausch || '') !== String(b.id) ? k + ' (' + x.id + ') ← Buch ' + b.id + ' ' + b.ar + ' „' + b.de + '"' : null;
-  }).filter(Boolean);
-  pruefe(ohneBestaetigung.length === 0, 'kein aufgenommener Begriff wird beim Start unbestätigt gegen eine Buchvokabel getauscht', ohneBestaetigung.join(' · '));
+  /* ⛔ NUR EIN BESTELLTER BEGRIFF KANN BEIM START GETAUSCHT WERDEN (12.10.2026).
+     Seit dem 23.09.2026 hängt js/kern.js nur ein, was in FACHBEGRIFF_AUFTRAG
+     steht (Elias: „irgendjemand fügt sich dauerhaft hinzu und das will ich
+     nicht"). Ein ruhender Begriff steht beim Start gar nicht in VOCAB_DATA —
+     tauscheDubletten() sieht ihn nie. Bis heute meldete diese Prüfung auch
+     ruhende; aufgefallen ist es am Probelauf mit der Ersatzdatenbank: dort heißt
+     die Buchkarte 50467 „Subjekt", und der ruhende gram-mubtada galt als
+     „unbestätigt getauscht", obwohl an seinem Gerät nichts geschähe.
+     Der Schutz bleibt: wer eine Zeile in FACHBEGRIFF_AUFTRAG ergänzt, macht den
+     Begriff zu einem bestellten — und diese Prüfung wird im selben Sammellauf
+     rot, bevor etwas ausgeliefert ist. Ein ruhender mit Buch-Zwilling steht
+     als Hinweis da, damit die Frage am Tag der Bestellung nicht neu gefunden
+     werden muss. Die Unterscheidung ist von Claude; „bestellt" liest die echte
+     Funktion der App. [[regel_gilt_nur_mit_begruendung]] */
+  const KERN = fs.readFileSync(path.join(REPO, 'js', 'kern.js'), 'utf8').replace(/\r\n/g, '\n');
+  const A = new Function(fs.readFileSync(FACH, 'utf8') + '; return typeof FACHBEGRIFF_AUFTRAG !== "undefined" ? FACHBEGRIFF_AUFTRAG : null;')();
+  const bestelltQuelle = (() => { const auf = KERN.indexOf('function fachbegriffBestellt('), zu = auf < 0 ? -1 : KERN.indexOf('\n}', auf); return zu < 0 ? '' : KERN.slice(auf, zu + 2); })();
+  pruefe(!!bestelltQuelle && !!A && Object.keys(A).length > 0, 'fachbegriffBestellt() und die Liste der bestellten Fachbegriffe sind auffindbar', (A ? Object.keys(A).length : 'keine') + ' Zeilen');
+  pruefe(KERN.includes('VOCAB_DATA.push(...FACHBEGRIFF_VOKABELN.filter(w => fachbegriffBestellt(w) &&'), 'js/kern.js hängt nur bestellte Fachbegriffe ein — nur die kann der Start tauschen');
+  const tauschBefund = (entscheidungen, auftrag) => {
+    const bestellt = bestelltQuelle ? new Function('FACHBEGRIFF_AUFTRAG', bestelltQuelle + '; return fachbegriffBestellt;')(auftrag) : () => true;
+    const offen = Object.entries(entscheidungen).filter(([, x]) => x.entscheidung === 'aufgenommen').map(([k, x]) => {
+      const f = F.find(y => y.id === x.id);
+      const b = f ? buchDublette({ id: f.id, ar: f.ar, de: f.de, chapter: 'personal' }) : null;
+      return b && String(x.buchTausch || '') !== String(b.id) ? { id: x.id, bestellt: bestellt({ id: x.id }), text: k + ' (' + x.id + ') ← Buch ' + b.id + ' ' + b.ar + ' „' + b.de + '"' } : null;
+    }).filter(Boolean);
+    return { unbestaetigt: offen.filter(o => o.bestellt), ruht: offen.filter(o => !o.bestellt) };
+  };
+  const befund = tauschBefund(E, A);
+  pruefe(befund.unbestaetigt.length === 0, 'kein bestellter aufgenommener Begriff wird beim Start unbestätigt gegen eine Buchvokabel getauscht', befund.unbestaetigt.map(o => o.text).join(' · '));
+  if (befund.ruht.length) console.log('  ⓘ ruht, käme aber bei einer Bestellung unbestätigt zum Tausch (dann zuerst `buchTausch` klären): ' + befund.ruht.map(o => o.text).join(' · '));
+  /* Störtest an einer bekannten Antwort: gram-mansub ist bestellt und trägt den
+     bestätigten Tausch 50471. Ohne die Bestätigung muss er als Befund kommen;
+     nimmt man ihm zusätzlich die Bestellung, ist er nur noch Hinweis. */
+  {
+    const [schluessel, eintrag] = Object.entries(E).find(([, x]) => x.id === 'gram-mansub' && x.buchTausch) || [];
+    if (!schluessel) pruefe(false, 'Störtest D: gram-mansub mit bestätigtem Buchtausch steht in den Entscheidungen', 'nicht gefunden — den Störtest auf einen anderen bestätigten Tausch umstellen');
+    else {
+      const ohne = { ...E, [schluessel]: { ...eintrag, buchTausch: undefined } };
+      const mit = tauschBefund(ohne, A), ruhend = tauschBefund(ohne, Object.fromEntries(Object.entries(A || {}).filter(([id]) => id !== 'gram-mansub')));
+      pruefe(mit.unbestaetigt.some(o => o.id === 'gram-mansub'), 'Störtest D: ohne die Bestätigung in der Entscheidung wird der bestellte gram-mansub gemeldet', JSON.stringify(mit));
+      pruefe(!ruhend.unbestaetigt.some(o => o.id === 'gram-mansub') && ruhend.ruht.some(o => o.id === 'gram-mansub'), 'Störtest D: derselbe Begriff ohne Bestellung ist Hinweis, kein Befund', JSON.stringify(ruhend));
+    }
+  }
   const unbekannt = Object.values(E).filter(x => !['aufgenommen', 'abgelehnt', 'frage', 'zurueckgestellt'].includes(x.entscheidung));
   pruefe(unbekannt.length === 0, 'nur die vier bekannten Entscheidungsarten', JSON.stringify(unbekannt.slice(0, 2)));
 }

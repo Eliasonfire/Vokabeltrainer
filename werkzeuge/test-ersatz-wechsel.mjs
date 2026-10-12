@@ -20,7 +20,7 @@ import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { ABZUG_GEPARKT, abzugGeparkt, abzugOrdner, liesListe, WEGGELASSEN } from './datenquelle.mjs';
-import { stand, vorbedingungen, unterschied } from './ersatz-wechsel.mjs';
+import { stand, vorbedingungen, unterschied, unterschiedVoll, ausgabenLesen, vollstaendigAus } from './ersatz-wechsel.mjs';
 import { ladeBuch } from './ersatz-bama-lib.mjs';
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
@@ -313,6 +313,50 @@ try {
     pruefe('einer NEU ROT, einer mit anderer Schlusszeile, zwei gleich', u.aus.length === 3 && u.aus.find(x => x.name === 'pruefe-a.js').art === 'NEU ROT' && u.aus.find(x => x.name === 'pruefe-b.js').art === 'andere Schlusszeile', JSON.stringify(u.aus));
     // so zeigte sich am 12.10.2026 das Hindernis im Fachbegriff-Prüfer: in der Kopie vorher schon rot, nachher ein Befund mehr
     pruefe('ein Prüfer, der rot bleibt und einen Befund dazubekommt, fällt eigens auf', u.aus.find(x => x.name === 'pruefe-d.js').art === 'ROT GEBLIEBEN, andere Schlusszeile', JSON.stringify(u.aus));
+  }
+
+  console.log('\n11. Die Probe liest auch, was hinter gleicher Schlusszeile anders ist');
+  {
+    // Die Formen stammen aus dem Lauf vom 12.10.2026: dort sah der Vergleich nach Schlusszeile 5 von 22 Prüfern.
+    const vorher = {
+      '001-pruefe-duplikate.js': 'exit 0\nVerglichen gegen 456 von 4433 Buchvokabeln\nfertig',
+      '002-test-wurzel.mjs': 'exit 0\n  ok   Buchdatei bringt 298 Einträge, davon 270 mit Wurzel',
+      '003-pruefe-buchtausch.mjs': 'exit 2\n  gram-x: kein Tausch\n  (jetzt 19:41, Kopie C:\\Temp\\vt-wechselprobe-AbC123\\data, 106 s)\n21 offen',
+      '004-gleich.mjs': 'exit 0\ngleich',
+      '005-nur-vorher.mjs': 'exit 0',
+    };
+    const nachher = {
+      '001-pruefe-duplikate.js': 'exit 0\nVerglichen gegen 456 von 4414 Buchvokabeln\nfertig',
+      '002-test-wurzel.mjs': 'exit 0\n  ok   Buchdatei bringt 298 Einträge, davon 189 mit Wurzel',
+      '003-pruefe-buchtausch.mjs': 'exit 2\n  gram-x ← Buch 50467\n  (jetzt 19:43, Kopie C:\\Temp\\vt-wechselprobe-xYz789\\data, 105 s)\n21 offen',
+      '004-gleich.mjs': 'exit 0\ngleich',
+      '006-nur-nachher.mjs': 'exit 0',
+    };
+    const v = unterschiedVoll(vorher, nachher), nach = n => v.find(x => x.name === n);
+    pruefe('fünf von sechs Namen unterscheiden sich, der gleiche fehlt in der Liste', v.length === 5 && !nach('004-gleich.mjs'), JSON.stringify(v.map(x => x.name)));
+    pruefe('andere Kartenzahl: als „nur Zahlen" erkannt — und trotzdem gezeigt', nach('001-pruefe-duplikate.js').nurZahlen === true && nach('001-pruefe-duplikate.js').weg.length === 1, JSON.stringify(nach('001-pruefe-duplikate.js')));
+    pruefe('weniger Karten mit Wurzel: auch „nur Zahlen" — deshalb wird diese Sorte nie ausgeblendet', nach('002-test-wurzel.mjs').nurZahlen === true && /189/.test(nach('002-test-wurzel.mjs').neu[0]), JSON.stringify(nach('002-test-wurzel.mjs')));
+    const t = nach('003-pruefe-buchtausch.mjs');
+    pruefe('gleiche Schlusszeile, anderer Inhalt: eine Zeile weg, eine neu, keine „nur Zahlen"', t.nurZahlen === false && t.weg.length === 1 && t.neu.length === 1 && /50467/.test(t.neu[0]), JSON.stringify(t));
+    pruefe('Uhrzeit, Dauer und der Name des Wegwerfordners zählen nicht als Unterschied', !t.weg.some(z => /jetzt/.test(z)) && !t.neu.some(z => /jetzt/.test(z)), JSON.stringify(t));
+    pruefe('ein Prüfer, der nur auf einer Seite lief, steht eigens da', nach('005-nur-vorher.mjs').art === 'nur vorher' && nach('006-nur-nachher.mjs').art === 'nur nachher', JSON.stringify(v));
+    // vorrat.mjs: die zwei Formen seiner Ausgabe (alles vollständig · mit fehlenden Feldern)
+    const alles = '  geprueft:                 331 Woerter aus freigeschalteten Kapiteln\n  vollstaendig:             331\n  unvollstaendig:           0\n    Felder (13 Punkte):     alle vollstaendig\n';
+    const luecken = '  geprueft:                 331 Woerter aus freigeschalteten Kapiteln\n  vollstaendig:             273\n  unvollstaendig:           58\n\n  Felder des vollen Programms, die fehlen (ohne die erklaerten Faelle\n  aus data/feld-ausnahmen.js):\n    root:       53   Wurzelansicht und Wortfamilie\n    pl:         11   Pluralanzeige auf der Karte\n    gender:      9   Uebung 11\n    sg:          1   Hoermodus ueberspringt das Wort\n\n  je Kapitel:\n    madina-1 K1     7 Woerter, 0 Eselsbruecken, 0 Saetze\n';
+    const a = vollstaendigAus(alles), l = vollstaendigAus(luecken);
+    pruefe('vorrat.mjs ohne Lücken: 331 von 331, kein Feld fehlt', a.geprueft === 331 && a.vollstaendig === 331 && a.unvollstaendig === 0 && Object.keys(a.felder).length === 0, JSON.stringify(a));
+    pruefe('vorrat.mjs mit Lücken: 273 vollständig (nicht die 58 aus „unvollstaendig"), vier Felder mit ihrer Zahl', l.vollstaendig === 273 && l.unvollstaendig === 58 && JSON.stringify(l.felder) === JSON.stringify({ root: 53, pl: 11, gender: 9, sg: 1 }), JSON.stringify(l));
+    pruefe('eine Ausgabe ohne die Zeilen gilt als nicht lesbar, nicht als null Wörter', vollstaendigAus('Fehler: Datei fehlt').vollstaendig === null);
+    // die Ablage der vollen Ausgaben: der Sammellauf schreibt sie nur auf Wunsch, und die Probe liest sie zurück
+    const sammel = fs.readFileSync(path.join(HIER, 'alle-pruefer.mjs'), 'utf8');
+    pruefe('alle-pruefer.mjs legt volle Ausgaben nur ab, wenn PRUEFER_AUSGABEN gesetzt ist', /if \(process\.env\.PRUEFER_AUSGABEN\)\{/.test(sammel) && sammel.split('process.env.PRUEFER_AUSGABEN').length === 4, String(sammel.split('process.env.PRUEFER_AUSGABEN').length - 1) + ' Stellen');
+    const ablage = fs.mkdtempSync(path.join(os.tmpdir(), 'vt-wechseltest-aus-'));
+    try {
+      fs.writeFileSync(path.join(ablage, '002-b.mjs.txt'), 'exit 0\nb', 'utf8');
+      fs.writeFileSync(path.join(ablage, '001-a.js.txt'), 'exit 1\na', 'utf8');
+      const gelesen = ausgabenLesen(ablage);
+      pruefe('abgelegte Ausgaben kommen mit ihrem Namen zurück; ein fehlender Ordner ist leer, kein Absturz', JSON.stringify(Object.keys(gelesen)) === '["001-a.js","002-b.mjs"]' && gelesen['001-a.js'] === 'exit 1\na' && Object.keys(ausgabenLesen(path.join(ablage, 'gibt-es-nicht'))).length === 0, JSON.stringify(gelesen));
+    } finally { fs.rmSync(ablage, { recursive: true, force: true }); }
   }
 
   console.log('\nStörtest 1: ohne die Kartensperre überschreibt der Abzug die Ersatzkarten');

@@ -892,6 +892,15 @@ for (const [rel, args] of PRUEFER){
   let code = 0, aus = '';
   try { aus = execFileSync('node', [rel, ...args], { cwd: REPO, encoding: 'utf8' }); }
   catch (e){ code = typeof e.status === 'number' ? e.status : -1; aus = (e.stdout || '') + (e.stderr || ''); }
+  /* Die VOLLE Ausgabe jedes Pruefers in einen Ordner legen, wenn die Umgebung
+     PRUEFER_AUSGABEN nennt. Gebraucht vom Probelauf des Wechsels auf die
+     Ersatzdatenbank (ersatz-wechsel.mjs --probe): Exit und Schlusszeile
+     allein zeigten am 12.10.2026 nur 5 von 22 Pruefern, die mit den
+     Ersatzkarten etwas anderes ausgaben. Ohne die Angabe aendert sich nichts. */
+  if (process.env.PRUEFER_AUSGABEN){
+    fs.mkdirSync(process.env.PRUEFER_AUSGABEN, { recursive: true });
+    fs.writeFileSync(path.join(process.env.PRUEFER_AUSGABEN, String(ergebnisse.length + 1).padStart(3, '0') + '-' + rel.replace(/[\\/]/g, '_') + '.txt'), 'exit ' + code + '\n' + aus, 'utf8');
+  }
   const zeilen = aus.split(/\r?\n/).filter(l => l.trim());
   /* ⛔ NICHT einfach die letzte Zeile: bei drei Pruefern ist das die
      Fortsetzung eines mehrzeiligen Urteils, und die liest sich ohne die
