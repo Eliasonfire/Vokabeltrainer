@@ -254,20 +254,41 @@ function buchInfo(slug){
 
 /* Eine Buchdatei per <script> nachladen. Bewusst kein fetch/JSON: die Dateien
    sind ausfuehrbares JS und haengen sich selbst in window.VOKABELN ein - so
-   greift auch der Offline-Cache des Service Workers ohne Sonderbehandlung. */
+   greift auch der Offline-Cache des Service Workers ohne Sonderbehandlung.
+
+   ⛔ Die ausgelieferte Datei geht dem eingelesenen Vokabelpaket VOR (12.10.2026).
+   Bis v668 stand hier nur „liegt das Buch schon in window.VOKABELN, nimm es".
+   js/vokabelpaket.js haengt das Paket aber beim Start ein, BEVOR irgendein Buch
+   geladen ist - auf einem Geraet mit eingelesenem Paket gewann deshalb immer
+   das Paket. Gemessen (Claude, mit den ausgeschnittenen Funktionen in der
+   Reihenfolge des App-Starts): 0 Dateianfragen, die App zeigte die Karten vom
+   Tag des Einlesens; ein neues Kapitel oder eine berichtigte Karte waere dort
+   nie angekommen. Jetzt wird fuer ein Buch, das nur aus dem Paket dasteht
+   (PAKET_SLUGS), zuerst die Datei versucht; sie ersetzt den Eintrag beim Laden
+   selbst. Kommt sie nicht (kein Netz und nichts im Vorrat, oder die Daten sind
+   gar nicht ausgeliefert), bleibt das Paket - dafuer ist es da.
+   Bewacht von werkzeuge/pruefe-vokabelpaket.mjs (Abschnitt „Reihenfolge des
+   App-Starts"). */
 function ladeBuchDatei(slug){
   return new Promise((fertig, fehler)=>{
     const info = buchInfo(slug);
     if (!info) return fehler(new Error(`Unbekanntes Buch: ${slug}`));
     /* „Koran häufigste" liegt nicht in data/ — die Liste hat index.html schon geladen. */
     if (slug === KORAN_BUCH) return fertig(koranKarten());
-    if (window.VOKABELN && window.VOKABELN[slug]) return fertig(window.VOKABELN[slug]);
+    const ausPaket = typeof PAKET_SLUGS !== 'undefined' && PAKET_SLUGS.has(slug);
+    const vorhanden = (window.VOKABELN && window.VOKABELN[slug]) || null;
+    if (vorhanden && !ausPaket) return fertig(vorhanden);
     const s = document.createElement('script');
     s.src = info.datei;
-    s.onload = ()=> (window.VOKABELN && window.VOKABELN[slug])
-      ? fertig(window.VOKABELN[slug])
-      : fehler(new Error(`${info.datei} geladen, enthielt aber keine Vokabeln.`));
-    s.onerror = ()=> fehler(new Error(`${info.datei} nicht erreichbar.`));
+    s.onload = ()=>{
+      const jetzt = (window.VOKABELN && window.VOKABELN[slug]) || null;
+      /* Hat die Datei den Eintrag ersetzt, steht das Buch ab jetzt aus der
+         Auslieferung da - beim naechsten Aufruf braucht es keine Anfrage mehr. */
+      if (ausPaket && jetzt && jetzt !== vorhanden) PAKET_SLUGS.delete(slug);
+      if (jetzt) fertig(jetzt);
+      else fehler(new Error(`${info.datei} geladen, enthielt aber keine Vokabeln.`));
+    };
+    s.onerror = ()=> vorhanden ? fertig(vorhanden) : fehler(new Error(`${info.datei} nicht erreichbar.`));
     document.head.appendChild(s);
   });
 }

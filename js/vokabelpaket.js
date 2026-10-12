@@ -25,7 +25,12 @@
    `window.VOKABELN` ein - genau dort, wo `ladeBuchDatei()` ohnehin zuerst
    nachsieht. Dadurch braucht der Ladeweg keine Sonderbehandlung: liegt das
    Paket vor, findet er die Daten schon vorbereitet; liegt es nicht vor, holt
-   er wie bisher `data/...js` vom Server. */
+   er wie bisher `data/...js` vom Server.
+
+   ⚠️ Seit dem 12.10.2026 mit einer Ausnahme, und die ist der Normalfall: seit
+   die Buchdateien ausgeliefert werden (v515, hinter dem Login), sind SIE der
+   aktuelle Stand und das Paket nur noch der Rueckhalt. ladeBuchDatei() holt
+   deshalb auch bei eingelesenem Paket zuerst die Datei - siehe PAKET_SLUGS. */
 
 const PAKET_DB    = 'vokabeltrainer';
 const PAKET_STORE = 'pakete';
@@ -73,6 +78,11 @@ function paketLoeschen(){
 /* Was gerade im Geraet liegt - fuer die Anzeige in den Einstellungen. */
 let PAKET_STAND = null;
 
+/* Welche Buecher in window.VOKABELN NUR aus dem Paket stammen. Fuer sie holt
+   ladeBuchDatei() (js/buecher.js) zuerst die ausgelieferte Datei und nimmt das
+   Paket nur, wenn sie nicht kommt. */
+const PAKET_SLUGS = new Set();
+
 /* Ein gelesenes Paket in die laufende App einhaengen.
 
    `BUECHER` ist in data/buecher.js ein `const` auf oberster Ebene. Fehlt die
@@ -87,8 +97,13 @@ function paketEinhaengen(paket){
   Object.entries(paket.buecher).forEach(([slug, liste])=>{
     if (!Array.isArray(liste) || !liste.length) return;
     /* Bereits ausgelieferte Dateien gewinnen - sie sind die Quelle, an der
-       validate.js und die Pruefskripte haengen. */
-    if (!window.VOKABELN[slug]) window.VOKABELN[slug] = liste;
+       validate.js und die Pruefskripte haengen.
+       ⚠️ Diese Zeile allein leistet das NICHT (12.10.2026): beim Start laeuft
+       sie, bevor irgendeine Buchdatei geladen ist - dann ist nichts „bereits
+       da", und das Paket stuende vorn. Deshalb merkt sich PAKET_SLUGS, welche
+       Buecher nur aus dem Paket dastehen; ladeBuchDatei() in js/buecher.js
+       versucht fuer genau diese zuerst die ausgelieferte Datei. */
+    if (!window.VOKABELN[slug]) { window.VOKABELN[slug] = liste; PAKET_SLUGS.add(slug); }
     buecher++; vokabeln += liste.length;
   });
   if (Array.isArray(paket.verzeichnis) && typeof BUECHER === 'undefined'){

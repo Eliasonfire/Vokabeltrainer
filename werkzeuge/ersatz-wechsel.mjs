@@ -350,8 +350,8 @@ function haupt() {
     console.log('   1. node werkzeuge/alle-pruefer.mjs --knapp   (misst jetzt die Ersatzkarten)');
     console.log('   2. data/buecher.js committen — die einzige verfolgte Datei, die sich geändert hat');
     console.log('   3. CACHE_NAME in sw.js erhöhen, dann node werkzeuge/veroeffentlichen.mjs --mit-daten');
-    console.log('   4. node werkzeuge/baue-vokabelpaket.mjs — und das neue Paket auf jedem Gerät einlesen, auf dem schon');
-    console.log('      eines eingelesen ist: dort geht das eingelesene Paket den ausgelieferten Buchdateien vor.');
+    console.log('   4. node werkzeuge/baue-vokabelpaket.mjs — das Paket ist nur der Rückhalt für ein Gerät ohne Netz und ohne Vorrat:');
+    console.log('      seit v669 geht die ausgelieferte Buchdatei einem eingelesenen Paket vor (ladeBuchDatei in js/buecher.js).');
     console.log('   Zurück: node werkzeuge/ersatz-wechsel.mjs --zurueck');
     return;
   }
