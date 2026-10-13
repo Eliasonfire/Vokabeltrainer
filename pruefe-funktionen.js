@@ -37,8 +37,14 @@
    Aufruf:   node pruefe-funktionen.js
              node pruefe-funktionen.js --alle       jedes Wort einzeln
              node pruefe-funktionen.js --alles      ohne Fensterfilter
-   Rueckgabe: 0 = jedes Wort im Fenster hat eine Funktion
-              2 = mindestens eines zeigt nur „Wort"
+   Rueckgabe: 0 = jedes Wort im Fenster hat eine Funktion, keine Karte eine falsche Zeile
+              2 = mindestens eines zeigt nur „Wort" — oder (seit 13.10.2026) eine Karte
+                  IRGENDEINES geladenen Buchs zeigt die Zeile eines anderen Wortes
+                  (das zweite Urteil, siehe urteilFalscheZeile weiter unten)
+              1 = der Pruefer selbst misst nicht (Stoertest, fehlende Datei)
+
+   ⭐ Seit dem 13.10.2026 gehoert die Gruppe „Koran häufigste" zum Gemessenen
+      (alle 255 Karten) — vorher sah der Fensterfilter keine einzige von ihnen.
    =========================================================================== */
 
 const fs = require('fs');
@@ -217,6 +223,61 @@ if (!OHNE_FENSTER){
        .forEach(w => woerter.push({ ...w, quelle: 'vocab-data' }));
 }
 
+/* ⛔ DER SECHSTE WEG (13.10.2026): die Gruppe „Koran häufigste".
+
+   Ihre 255 Karten liegen in koran-haeufig-data.js (im Repo), nicht in data/. Sie
+   stehen nicht in BUECHER und haben keine `angabe` in data/lernstand.json — der
+   Fensterfilter oben sah deshalb KEINE EINZIGE von ihnen (gemessen: 334 Woerter im
+   Fenster, 262 mit --alles, keine kh-Karte). „Jede Infokarte im Fenster nennt eine
+   Funktion" galt also nur fuer seine Buecher.
+
+   Gemessen werden ALLE Karten der Gruppe, kein Fenster: er hakt die Gruppe selbst
+   an, und ohne Stueckauswahl sind dann alle da. (Entscheidung von Claude.)
+
+   ⚠️ Dieselbe Funktion wie die App — koranKarten() aus js/buecher.js, im Wortlaut
+      herausgeschnitten. Fehlt sie oder die Datendatei, wird das GESAGT und nicht
+      gemessen: eine Gruppe, die still fehlt, saehe aus wie ein gruener Lauf.
+      [[ausfall_ist_unsichtbar_gebaut]] */
+/* ⛔ EIGENE LISTE, nicht in `woerter` (13.10.2026, beim ersten Sammellauf gemerkt):
+   die Zeile „gemessen: N Woerter" liest werkzeuge/pruefe-eigene-vorrang.mjs und
+   haelt sie gegen werkzeuge/vorrat.mjs — beide muessen DASSELBE Fenster zaehlen.
+   Mit den 255 Koran-Karten darin standen 589 gegen 334, und der Waechter wurde
+   zu Recht rot. Die Gruppe wird deshalb daneben gemessen und eigens genannt.
+   [[dieselbe_frage_zwei_antworten]] */
+const koranWoerter = [];
+let koranAnzahl = 0;
+{
+  const q = fs.readFileSync(path.join(DIR, 'js', 'buecher.js'), 'utf8');
+  const m = q.match(/function koranKarten\(\)\{[\s\S]*?\n\}\n/);
+  if (!m || !laden('koran-haeufig-data.js', false)){
+    console.log('  FEHLER Die Gruppe „Koran häufigste" ist nicht messbar: '
+      + (m ? 'koran-haeufig-data.js fehlt oder laeuft nicht.' : 'koranKarten() steht nicht mehr in js/buecher.js.'));
+    process.exit(1);
+  }
+  vm.runInContext("const KORAN_BUCH = 'koran-haeufig';\n"
+    + "function koranListe(){ return (typeof KORAN_HAEUFIG !== 'undefined' && Array.isArray(KORAN_HAEUFIG)) ? KORAN_HAEUFIG : []; }\n"
+    + m[0], ctx);
+  (vm.runInContext('koranKarten()', ctx) || []).forEach(w => { koranWoerter.push({ ...w, quelle: 'koran' }); koranAnzahl++; });
+  if (koranAnzahl < 200){
+    console.log('  FEHLER Die Gruppe „Koran häufigste" hat nur ' + koranAnzahl + ' Karten geliefert (erwartet ueber 200).');
+    process.exit(1);
+  }
+}
+
+/* ---------- ALLE geladenen Karten, ohne Fenster (13.10.2026) ----------
+   Fuer das zweite Urteil unten („falsche Zeile"). Eine falsche Zeile ist falsch,
+   gleich in welchem Kapitel die Karte liegt — und die 22 Faelle, an denen die Regel
+   gefunden wurde, lagen ALLE ausserhalb seines Fensters (Madina 2 und 3, Bayna
+   Yadayk 2 bis 4). Ein Urteil nur ueber das Fenster haette keinen gesehen. */
+const alleKarten = [];
+{
+  const da = new Set();
+  const nimm = (w, quelle) => { const s = quelle + '|' + String(w.id); if (da.has(s) || !w || !w.ar) return; da.add(s); alleKarten.push({ ...w, quelle }); };
+  for (const [slug, liste] of Object.entries((ctx.window && ctx.window.VOKABELN) || {})) (liste || []).forEach(w => nimm(w, slug));
+  woerter.forEach(w => nimm(w, w.quelle));
+  koranWoerter.forEach(w => nimm(w, w.quelle));
+}
+
 if (setzeLexikon) { try { setzeLexikon(woerter); } catch (e){ /* optional */ } }
 
 if (!woerter.length){
@@ -241,6 +302,33 @@ function nurWortKarte(w){
   const f = funktionen(w);
   return !f.length || (f.length === 1 && String(f[0]).trim() === 'Wort');
 }
+
+/* ---------- Das ZWEITE Urteil (13.10.2026): eine FALSCHE Zeile ----------
+
+   „Nur Wort" ist eine fehlende Auskunft. Schlimmer ist eine falsche: die Listen in
+   js/irab.js fuehren nur Buchstaben ohne Vokalzeichen, und 22 Karten zeigten deshalb
+   die Zeile eines ANDEREN Wortes — „verstehen" hiess „Personalpronomen" (fa + hum),
+   „akzeptieren" eine „Zeit- oder Ortsangabe" (qabla), „Ärmel" ein „Fragewort" (kam),
+   „Leute" hatte „die Endung ändert sich nie" (a + hal). Dieser Pruefer sah keine
+   davon: jede nannte ja „eine Funktion".
+
+   Gemessen wird am ERGEBNIS, nicht an der Regel:
+     - eine Verbkarte zeigt genau „Verb";
+     - eine Nomen- oder Adjektivkarte mit Tanwin un / in zeigt keine Zeile aus den
+       Listen (ein Wort mit diesem Zeichen ist beugbar und keines der Listenwoerter).
+   Die Regeln selbst und ihre Stoertests: test-funktionsanzeige.mjs.
+   Die Zeichen stehen als Zeichencode da, nicht als sichtbare Zeichenklasse. */
+const TANWIN_UN = String.fromCharCode(0x64C), TANWIN_IN = String.fromCharCode(0x64D);
+const LISTENZEILE = ['die Endung ändert sich nie', 'Personalpronomen', 'Fragewort', 'Hinweiswort',
+                     'Genitivpräposition', 'Zeit- oder Ortsangabe', 'Das Wort danach steht im Genitiv', 'Rufpartikel'];
+function urteilFalscheZeile(w, f){
+  if (w.type === 'verb') return !(f.length === 1 && String(f[0]).trim() === 'Verb');
+  const ar = String(w.ar || '');
+  if ((w.type === 'noun' || w.type === 'adjective') && (ar.includes(TANWIN_UN) || ar.includes(TANWIN_IN)))
+    return f.some(z => LISTENZEILE.some(l => String(z).includes(l)));
+  return false;
+}
+const falscheZeile = w => urteilFalscheZeile(w, funktionen(w));
 
 /* ---------- ⛔ STOERTEST (09.09.2026) ----------
 
@@ -294,6 +382,26 @@ const sProbe = (was, ist, soll) => {
   sProbe('لَحْمٌ (type vocab) sagt „Nomen", nicht „Wort"',
     zeile({ ar: 'لَحْمٌ', type: 'vocab' }), 'Nomen');
 
+  /* 5. (13.10.2026) Das zweite Urteil. Erst der rote Weg an einer gestellten
+     Ausgabe — ohne ihn koennte auch dieser Zaehler festgeschraubt sein —, dann
+     zwei Karten, deren Buchstaben mit einem Listenwort zusammenfallen. Die
+     Probewoerter stehen als Codepunkte da (fahima „verstehen" = fa + hum;
+     kumm „Ärmel" = kam; aw „oder"), nichts ist getippt. */
+  const cp = (...n) => String.fromCodePoint(...n).normalize('NFC');
+  sProbe('eine Verbkarte mit zweiter Zeile gilt als falsch',
+    urteilFalscheZeile({ ar: 'x', type: 'verb' }, ['x — Personalpronomen', 'Verb']), true);
+  sProbe('eine Nomenkarte mit Tanwin und Listenzeile gilt als falsch',
+    urteilFalscheZeile({ ar: 'x' + TANWIN_UN, type: 'noun' }, ['x — Fragewort', 'Nomen']), true);
+  sProbe('eine Nomenkarte mit Tanwin, die nur „Nomen" zeigt, gilt als richtig',
+    urteilFalscheZeile({ ar: 'x' + TANWIN_UN, type: 'noun' }, ['Nomen']), false);
+  sProbe('fahima („verstehen") zeigt nur „Verb"',
+    zeile({ ar: cp(0x641, 0x64E, 0x647, 0x650, 0x645, 0x64E), type: 'verb' }), 'Verb');
+  sProbe('kumm („Ärmel") zeigt nur „Nomen"',
+    zeile({ ar: cp(0x643, 0x64F, 0x645, 0x651, 0x64C), type: 'noun' }), 'Nomen');
+  sProbe('aw („oder") behaelt „die Endung ändert sich nie"',
+    /die Endung ändert sich nie/.test(zeile({ ar: cp(0x623, 0x64E, 0x648, 0x652), type: 'particle' })), true);
+  sProbe('die Gruppe „Koran häufigste" ist dabei (>= 200 Karten)', koranAnzahl >= 200, true);
+
   /* ⚠️ Und die Probe auf die Probe: bei einem fast leeren Bestand waeren
      „0 nur Wort" ebenfalls null Befunde. Am 09.09.2026 waren es 230. */
   sProbe('es steht ueberhaupt ein Bestand da (>= 50)', woerter.length >= 50, true);
@@ -316,16 +424,35 @@ console.log('');
 /* ---------- Messen ---------- */
 const ohne = [];
 let gemessen = 0;
-for (const w of woerter){
+for (const w of woerter.concat(koranWoerter)){
   gemessen++;
   if (nurWortKarte(w)) ohne.push(w);
 }
 
-console.log('  gemessen:        ' + gemessen + ' Woerter'
+console.log('  gemessen:        ' + (gemessen - koranAnzahl) + ' Woerter'
   + (OHNE_FENSTER ? ' (ohne Fensterfilter)' : ' im Fenster'));
+console.log('  dazu:            ' + koranAnzahl + ' Karten „Koran häufigste" (alle, kein Fenster)');
 console.log('  mit Funktion:    ' + (gemessen - ohne.length));
 console.log('  nur „Wort":      ' + ohne.length
   + (ohne.length ? '   ⛔ diese Infokarten sagen nichts ueber das Wort' : ''));
+
+/* Das zweite Urteil — ueber ALLE geladenen Karten, nicht nur das Fenster. */
+const falsch = alleKarten.filter(falscheZeile);
+const ohneAussen = alleKarten.filter(nurWortKarte).length - ohne.length;
+console.log('  falsche Zeile:   ' + falsch.length + ' von ' + alleKarten.length + ' Karten aller geladenen Buecher'
+  + (falsch.length ? '   ⛔ Verbkarte mit zweiter Zeile, oder Nomen mit Tanwin und Listenzeile' : ''));
+if (ohneAussen > 0)
+  console.log('  (nur gemeldet: ' + ohneAussen + ' Karten AUSSERHALB des Fensters zeigen nichts oder nur „Wort")');
+if (falsch.length){
+  console.log('');
+  (ALLE ? falsch : falsch.slice(0, 8)).forEach(w => console.log('    ' + String(w.quelle).padEnd(16) + String(w.id).padEnd(8)
+    + String(w.ar).padEnd(14) + '[' + (w.type || 'kein type') + ']  ' + funktionen(w).join(' | ')));
+  if (!ALLE && falsch.length > 8) console.log('    … ' + (falsch.length - 8) + ' weitere (mit --alle vollstaendig)');
+  console.log('');
+  console.log('  ⭐ Die Regeln stehen in funktionenVon() in js/irab.js (K1 bis K3),');
+  console.log('     bewacht von test-funktionsanzeige.mjs.');
+  if (!ohne.length) process.exit(2);
+}
 
 if (ohne.length){
   const jeQuelle = {};
