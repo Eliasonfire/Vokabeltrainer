@@ -34,7 +34,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 import { abzugOrdner, istErsatzkarte } from './datenquelle.mjs';
-import { vergleich as wortform, ladeBama, standardDatei, geruest, nachBW, ausBW, wurzelSchluessel, wurzelWert, laneDateiname, laneFuehrtWurzel, bamaMehrzahlZurKarte } from './ersatz-bama-lib.mjs';
+import { vergleich as wortform, ladeBama, standardDatei, geruest, nachBW, ausBW, wurzelSchluessel, wurzelWert, laneDateiname, laneFuehrtWurzel, bamaMehrzahlZurKarte, bamaSchreibweise, bamaVerbformenZurKarte, bamaMasdarZurKarte } from './ersatz-bama-lib.mjs';
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
 const REPO = process.env.ERSATZ_REPO || path.join(HIER, '..');
@@ -246,6 +246,89 @@ function mehrzahlAusStammliste(ar, s, altPl) {
     wo: `Buckwalter Arabic Morphological Analyzer 1.0, Stammliste, Lemma „${m.lemma.id}“ (englisch „${m.einzahl[0].glosse}“)${wahl}: ${m.formen.map(woher).join('; ')}. Geschrieben wie im übrigen Ersatz (Fatha vor dem Dehnungs-Alif, Verbindungs-Alif mit Kasra), ohne Schlussendung. Dass diese Zeile die Mehrzahl des Worts der Karte ist, hat Claude aus der Liste abgelesen`,
   };
 }
+/* VERBFORMEN AUS BUCKWALTERS STAMMLISTE (13.10.2026, Regel von Claude; die Bedingungen und das Eichmaß stehen in
+ * ersatz-bama-lib.mjs über bamaVerbformen). Gut hundert Verbkarten haben in keiner anderen Quelle einen Verb-Eintrag.
+ * Nur als LÜCKE, nur für ein Verb aus einem Wort, dessen Vergangenheit ein Verb-Lemma der Liste ist:
+ *   GEGENWART — aus der Liste abgelesen und zusammengesetzt. Führt die bisherige Karte eine Gegenwart, ist sie
+ *     Schlüssel und Einspruch (nie Quelle): es zählt nur die Zeile der Liste, die genau diese Gegenwart ergibt; passt
+ *     keine, bleibt das Feld offen und wird gezählt.
+ *   BEFEHL — nach der Regel der Grammatik aus dem Stamm der Zeile gebildet, deren Gegenwart der Karte gleicht (die
+ *     Gegenwart der Karte ist der Schlüssel, gleich aus welcher Quelle sie stammt). Führt die bisherige Karte eine
+ *     Gegenwart, aber keinen Befehl, bleibt das Feld offen: Hilfsverben wie „beinahe" haben keinen gebräuchlichen
+ *     Befehl, und die Liste kann das nicht wissen.
+ *   VERBALSUBSTANTIV — das Nomen der Liste, das unter derselben Wurzel das Muster der Bauform trägt; führt die Liste
+ *     mehrere (Form II und III kennen zwei Muster), gilt das, das der bisherigen Karte gleicht, sonst alle. Führt die
+ *     Liste das Nomen NICHT, steht das Muster allein nur da, wo die bisherige Karte dasselbe Wort führt (Einspruch,
+ *     nie Quelle; Quelle „muster", der Beleg sagt, dass es eine Regel ist).
+ * „leer" von Hand nimmt jedes der drei Felder wieder heraus. */
+const verbListe = { gegenwart: 0, befehl: 0, masdar: 0, muster: 0, einspruch: 0, unklar: 0, ohneBefehlImBestand: 0 };
+const FORMEN_TRENNER = new RegExp('\\s*[,' + String.fromCodePoint(0x60C) + ';/|]\\s*');
+const stuecke = t => String(t ?? '').split(FORMEN_TRENNER).map(x => x.trim()).filter(Boolean);
+function verbformenAusStammliste(felder, s, altK, h) {
+  if (!bamaNach.size || !felder.ar) return;
+  const wort = nfc((felder.past && felder.past.w) || felder.ar.w);
+  if (/\s/.test(wort)) return;
+  const lemmata = (bamaNach.get(wortform(wort, { artikelWeg: false })) || []).filter(l => l.verb);
+  if (!lemmata.length) return;
+  const englisch = (s.vorschlag && s.vorschlag._en) || [];
+  const leerVonHand = f => (h.leer || []).includes(f);
+  const trenner = alt => (voll(alt) && String(alt).includes('/') ? ' / ' : '|');
+  const LISTE = 'Buckwalter Arabic Morphological Analyzer 1.0, Stammliste';
+  const wahlText = r => r.wahl === 'schluessel' ? ' Unter den Zeilen der Liste gilt die, deren Gegenwart der schon feststehenden gleicht (die bisherige Karte ist dabei Schlüssel und Einspruch, nie Quelle).'
+    : r.wahl === 'sinn' ? ` Unter ${r.von} gleich geschriebenen Lemmata das, dessen englische Bedeutung ein Wort mit der Bedeutung der Karte teilt.`
+      : r.wahl === 'einig' ? ` ${r.von} gleich geschriebene Lemmata nennen dieselben Formen.` : '';
+  if (!felder.present && !leerVonHand('present')) {
+    const r = bamaVerbformenZurKarte(lemmata, { englisch, schluessel: altK ? stuecke(altK.present) : [] });
+    if (r && r.gegenwart) {
+      felder.present = {
+        w: r.gegenwart.join(trenner(altK && altK.present)),
+        wo: `${LISTE}, Lemma „${r.lemma.id}“ (englisch „${r.lemma.glossen[0] || ''}“): ${r.paare.map(p => `Zeile „${p.stamm}“ der Kategorie ${p.kat} — der Stamm der Gegenwart; Vorsilbe ${/_yu/.test(p.kat) ? 'yu' : 'ya'}- nach der Kategorie, ${/^IV_0/.test(p.kat) ? 'keine Endung (schwacher Schluss)' : 'Endung -u'} nach dem Begleittext der Liste`).join('; ')}.${wahlText(r)} Geschrieben wie im übrigen Ersatz. Zusammengesetzt hat es Claude`,
+        q: 'bama-gegenwart',
+      };
+      verbListe.gegenwart++;
+    } else if (r && r.widerspruch) verbListe.einspruch++;
+    else if (r && r.unklar) verbListe.unklar++;
+  }
+  if (!felder.imperative && felder.present && !leerVonHand('imperative')) {
+    if (altK && voll(altK.present) && !voll(altK.imperative)) verbListe.ohneBefehlImBestand++;
+    else {
+      const r = bamaVerbformenZurKarte(lemmata, { englisch, schluessel: stuecke(felder.present.w) });
+      if (r && r.befehl && r.befehl.length) {
+        felder.imperative = {
+          w: r.befehl.join(trenner(altK && altK.imperative)),
+          wo: r.paare.every(p => p.ausZeile) ? `${LISTE}, Lemma „${r.lemma.id}“: die Befehlszeile der Liste (Kategorie CV). Geschrieben wie im übrigen Ersatz`
+            : `Nach der Regel der Grammatik aus dem Stamm der Gegenwart gebildet — eine Regel von Claude, keine Angabe einer Quelle (die Stammliste führt Befehlsformen nur für wenige Verben). Der Stamm: ${LISTE}, Lemma „${r.lemma.id}“, ${r.paare.map(p => `Zeile „${p.stamm}“ der Kategorie ${p.kat}`).join('; ')} — die Zeile, deren Gegenwart der Karte gleicht`,
+          q: 'bama-befehl',
+        };
+        verbListe.befehl++;
+      }
+    }
+  }
+  if (!felder.masdar && !leerVonHand('masdar')) {
+    const r = bamaMasdarZurKarte(lemmata, bamaNach);
+    const will = altK ? stuecke(altK.masdar) : [];
+    const gleichDemBestand = ar => will.some(p => wortform(ar, { artikelWeg: false }) === wortform(nfc(p), { artikelWeg: false }));
+    if (r.lage === 'gesetzt') {
+      const gleich = r.formen.filter(f => gleichDemBestand(f.ar)), nimm = gleich.length ? gleich : r.formen;
+      felder.masdar = {
+        w: nimm.map(f => f.ar).join(trenner(altK && altK.masdar)),
+        wo: `${LISTE}: ${nimm.map(f => `Nomen „${f.lemma}“ (Kategorie ${f.kat}, englisch „${f.glosse}“)`).join('; ')} unter derselben Wurzel wie das Verb „${nimm[0].verb}“ — es trägt das Muster des Verbalsubstantivs dieser Bauform (${r.bau}). Die Liste verknüpft Verb und Verbalsubstantiv nicht selbst; dass es dieses ist, folgt aus dem Muster (Regel der Grammatik, abgelesen von Claude). Geschrieben wie im übrigen Ersatz, ohne Schlussendung`,
+        q: 'bama-verbalsubstantiv',
+      };
+      verbListe.masdar++;
+    } else if (r.lage === 'nichtInListe') {
+      const gleich = r.muster.map(m => ausBW(bamaSchreibweise(m))).filter(gleichDemBestand);
+      if (gleich.length) {
+        felder.masdar = {
+          w: gleich[0],
+          wo: `Nach dem Muster der Bauform (${r.bau}) aus der Vergangenheit gebildet — Regel der Grammatik, keine Angabe einer Quelle (${LISTE} führt das Verb als Lemma „${r.verb}“, das Nomen aber nicht). Gesetzt nur, weil die bisherige Karte nicht widerspricht (sie ist Einspruch, nie Quelle). Ohne Schlussendung`,
+          q: 'muster',
+        };
+        verbListe.muster++;
+      }
+    }
+  }
+}
 /* WURZEL AUS BUCKWALTERS STAMMLISTE (12.10.2026, Regel von Claude). Die Stammliste (BAMA 1.0, liegt nur lokal) führt
  * ihre Lemmata unter Wurzelzeilen („;--- Wurzel"). Roh taugen die nicht als Quelle — gemessen: an 582 von 2893 Karten
  * mit bekannter Wurzel nennt die Zeile eine andere (sie steht nicht vor jedem Lemma, manche Lemmata hängen unter der
@@ -455,6 +538,8 @@ for (const buch of BUECHER) {
         const b = mehrzahlAusStammliste(felder.ar.w, s, altK && altK.pl);
         if (b) { felder.pl = { w: b.w, wo: b.wo, q: 'bama-mehrzahl' }; mehrzahlListe.gesetzt++; }
       }
+      // Verbformen aus der Stammliste (verbformenAusStammliste, oben): Gegenwart, Befehl, Verbalsubstantiv — nur als Lücke
+      if (felder.type && felder.type.w === 'verb') verbformenAusStammliste(felder, s, altK, h);
     }
     for (const f of h.leer || []) delete felder[f];
     // „Wie die Karte" (siehe wieDieKarte oben): gilt für jeden Platz, auch nach einer Entscheidung von Hand — nennen die
@@ -524,6 +609,7 @@ schreibe(path.join(ERSATZ, 'unterschiede.json'), JSON.stringify(unterschiede, nu
 stand.laneWurzeln = lane;
 stand.stammliste = { gesetzt: stammliste.gesetzt, warten: stammliste.warten, fehlendeSeiten: Object.keys(stammliste.fehlend).length };
 stand.mehrzahlListe = { gesetzt: mehrzahlListe.gesetzt, unklar: mehrzahlListe.unklar };
+stand.verbListe = { ...verbListe };
 // Die Schlüssel der Wurzelseiten, nach denen bei Lane noch nie gefragt wurde (wurzelAusStammliste, oben) — immer
 // geschrieben, auch leer: sonst holte „ersatz-lane.mjs --seiten" nach einem späteren Bau die Liste von gestern.
 schreibe(path.join(ERSATZ, 'arbeit', 'lane-fehlende-seiten.json'), JSON.stringify({
@@ -552,6 +638,8 @@ if (verbformenWeg) console.log(`Verbformen an Karten, die keine Verben sind, weg
 if (stammliste.gesetzt) console.log(`Wurzel aus Buckwalters Stammliste (Lane führt die Wurzel, nennt das Wort aber nicht): ${stammliste.gesetzt} eingetragen`);
 if (stammliste.warten) console.log(`Wurzel aus der Stammliste OFFEN an ${stammliste.warten} Karten: nach ${Object.keys(stammliste.fehlend).length} Wurzelseiten von Lane wurde noch nie gefragt — „node werkzeuge/ersatz-lane.mjs --seiten --holen“, danach neu bauen (Liste: data-ersatz/arbeit/lane-fehlende-seiten.json)`);
 if (endung.gesetzt) console.log(`Geschlecht aus der Endung (Ta marbuta am Wort in der Einzahl, keine Quelle nennt es): ${endung.gesetzt} Nomen weiblich`);
+if (Object.values(verbListe).some(Boolean)) console.log(`Verbformen aus Buckwalters Stammliste (keine andere Quelle nennt sie): Gegenwart an ${verbListe.gegenwart} Verben, Befehl nach der Regel an ${verbListe.befehl}, Verbalsubstantiv an ${verbListe.masdar} (dazu nur nach dem Muster, wo die bisherige Karte dasselbe führt: ${verbListe.muster})`
+  + ` · offen gelassen: ${verbListe.einspruch} Gegenwart (keine Zeile der Liste gleicht der bisherigen Karte), ${verbListe.unklar} Gegenwart (gleich geschriebene Lemmata nennen Verschiedenes), ${verbListe.ohneBefehlImBestand} Befehl (die bisherige Karte führt eine Gegenwart, aber keinen Befehl)`);
 if (mehrzahlListe.gesetzt || mehrzahlListe.unklar) console.log(`Mehrzahl aus Buckwalters Stammliste (keine andere Quelle nennt eine): ${mehrzahlListe.gesetzt} Nomen` + (mehrzahlListe.unklar ? ` · offen gelassen an ${mehrzahlListe.unklar}: gleich geschriebene Lemmata nennen verschiedene Mehrzahlen, und die Bedeutung entscheidet nicht` : ''));
 if (selbst.sg || selbst.past || selbst.pl) console.log(`Das Wort selbst: Einzahl an ${selbst.sg} Nomen, Mehrzahl an ${selbst.pl} Nomen und Vergangenheit an ${selbst.past} Verben gesetzt (die bisherige Karte nennt dort ihr eigenes Wort)`);
 if (lane.eintraege) console.log(`Wurzeln aus Lanes Lexikon: ${lane.gesetzt} eingetragen · ${lane.hatSchon} übergangen, weil eine andere Quelle die Wurzel nennt · ${lane.anderesWort} übergangen, weil das Arabisch der Karte nicht mehr das Stichwort ist (von ${lane.eintraege} Einträgen in data-ersatz/arbeit/lane-wurzeln.json)`);

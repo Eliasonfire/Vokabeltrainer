@@ -303,6 +303,181 @@ export function bamaMehrzahlZurKarte(lemmata, wort, englisch) {
 /* Der Bestand eines Buches (vokabeln-<buch>.js, liegt nur lokal) als Karte Kennung -> Vokabel. Der Bestand ist
  * der Abzug von arabicroots: in data/ -- oder in data-abzug/, solange auf die Ersatzdatenbank umgeschaltet ist
  * (datenquelle.mjs). */
+/* ---------- VERBFORMEN aus der Stammliste (13.10.2026, Regel von Claude) ----------
+ * Gut hundert Verbkarten haben in keiner anderen Quelle einen Verb-Eintrag. Die Stammliste führt je Verb den Stamm
+ * der Gegenwart mit Vokalen (Zeilen der Kategorien IV…).
+ *   GEGENWART (3. Person m. Einzahl) = Vorsilbe + Stamm + Endung: Vorsilbe yu- bei Kategorie …_yu, sonst ya-; Endung -u,
+ *     bei schwachem Schluss (Kategorien IV_0hAnn, IV_0) keine — so beschreibt es der Begleittext der Liste (Abschnitt
+ *     „VERB STEMS“). Das ist abgelesen und zusammengesetzt, nicht gebildet.
+ *   BEFEHL: die Liste führt Befehlsformen nur für wenige Verben (und schreibt einige davon mit Hamza statt
+ *     Verbindungs-Alif). Er wird nach der Regel der Grammatik aus dem Stamm der Gegenwart gebildet — eine Regel von
+ *     Claude, KEINE Angabe der Liste; der Beleg sagt es.
+ *   VERBALSUBSTANTIV: die Liste verknüpft es nicht mit dem Verb. Bei den abgeleiteten Bauformen folgt es einem festen
+ *     Muster; genommen wird es, wenn die Liste genau dieses Nomen (mit Vokalen) unter DERSELBEN Wurzel führt. Die
+ *     Grundform hat kein festes Muster — dort bleibt das Feld offen.
+ * Jede Bedingung stammt aus einem Fehler beim Messen gegen die Formen, die das Wiktionary nennt (Eichmaß, mit diesem
+ * Code gemessen am 13.10.2026: Gegenwart 1399 Karten mit Form — 1381 gleich, 18 mit anderem Vokal der Grundform, 0
+ * anders; Befehl bei feststehender Gegenwart 1366 — 1364 gleich, 2 anders, beide an verdoppelten Verben (einmal nennt
+ * das Wiktionary die nicht zusammengezogene Form, einmal passt sein Befehl nicht zu seiner eigenen Gegenwart);
+ * Verbalsubstantiv 643 — 641 gleich, 2 ein anderes richtiges):
+ *   - Grundform: Liste und Wiktionary nennen bei etwa jedem vierzigsten Verb einen anderen Vokal der Gegenwart, und
+ *     nicht immer hat die Liste den üblichen. Darum der SCHLÜSSEL: steht eine Gegenwart schon fest (auf der Karte
+ *     selbst, sonst auf der bisherigen Karte), zählt nur die Zeile, die genau diese Gegenwart ergibt — die bisherige
+ *     Karte ist Schlüssel und Einspruch, nie Quelle. Passt keine Zeile, bleibt das Feld offen.
+ *   - vier Zeilen der Liste tragen eine Kategorie, deren Vorsilbe nicht zur Bauform passt (>aEorab und >ayoqan ohne
+ *     _yu, Zalam-ia und lAn-i mit _yu) — solche Zeilen werden übergangen.
+ *   - schwacher Schluss: führt ein Lemma eine Zeile auf -iy/-uw UND eine auf -aY, gilt die der Bauform.
+ *   - ein Ya vor dem Schluss-Alif (leben): die Liste schreibt Alif maqsura, das Verb schreibt man mit Alif — keine Form.
+ *   - Befehl: Hamza am Wortanfang sitzt auf Alif; ein Stamm, der mit zwei Konsonanten oder einem verdoppelten beginnt,
+ *     bekommt das Verbindungs-Alif (mit u, wenn der Stammvokal u ist, sonst i); Form IV bekommt ihr >a- zurück, und ein
+ *     erster Wurzelbuchstabe w/y steht wieder da; verdoppelte Verben in der zusammengezogenen Form; bei Hamza vorn nur
+ *     die Befehlszeile der Liste (iss, nimm); Hamza unmittelbar vor der Endung: keine Regel. */
+export const verbStreng = t => String(t ?? '').normalize('NFC').trim().replaceAll(TATWEEL, '').replaceAll(WASLA, ALIF).replaceAll(SUKUN, '').replaceAll(DOLCH, '').replaceAll(FATHA + ALIF, ALIF);
+export const verbStrengOhneEndung = t => verbStreng(t).replace(new RegExp('[' + KURZ.join('') + ']$'), '');
+const verbAktiv = s => !/_Pass/.test(s.kat);
+const verbBasis = k => String(k).replace('_intr', '').replace('_yu', '');
+const BW_KURZ = new Set(['a', 'i', 'u']);
+const BW_HAMZA = new Set(['>', '<', '&', '}', "'", '|']);
+const bwLetzterVokal = st => { for (let i = st.length - 1; i >= 0; i--) if (BW_KURZ.has(st[i])) return st[i]; return ''; };
+function verbVorsilbeDerBauform(lemma) {
+  const f = String(lemma.form || '');
+  if (lemma.praesensVokal) return 'ya';       // Grundform: der Name des Lemmas trägt den Vokal der Gegenwart
+  if (/^\{i/.test(f)) return 'ya';            // Formen VII bis X
+  if (/^[>|]/.test(f)) return 'yu';           // Form IV, und Form II/III einer Wurzel mit Hamza vorn
+  return null;                                // sonst gilt die Kategorie
+}
+/* je Gegenwartszeile ein Paar { gw, bf[], stamm, kat, ausZeile } in Buckwalter-Umschrift */
+export function bamaVerbformen(lemma) {
+  const f = String(lemma.form || '');
+  const iv = lemma.staemme.filter(s => /^IV/.test(s.kat) && verbAktiv(s));
+  const cv = lemma.staemme.filter(s => /^CV/.test(s.kat));
+  if (!iv.length) return { paare: [] };
+  const soll = verbVorsilbeDerBauform(lemma);
+  const vorsilbe = s => (/_yu/.test(s.kat) ? 'yu' : 'ya');
+  const passt = s => !soll || vorsilbe(s) === soll;
+  const zeilen = iv.filter(passt);
+  const mitU = zeilen.filter(s => ['IV', 'IV-n', 'IV_no-Pref-A', 'IV_V'].includes(verbBasis(s.kat)));
+  let ohne = zeilen.filter(s => ['IV_0hAnn', 'IV_0'].includes(verbBasis(s.kat)));
+  if (ohne.length > 1 && new Set(ohne.map(s => s.mit.slice(-2))).size > 1) {
+    const will = lemma.praesensVokal
+      ? s => [...lemma.praesensVokal].some(v => ({ i: /iy$/, u: /uw$/, a: /aY$/ })[v].test(s.mit))
+      : /^\{i/.test(f) ? s => /iy$/.test(s.mit)
+        : /^ta/.test(f) ? s => (vorsilbe(s) === 'yu' ? /iy$/ : /aY$/).test(s.mit)
+          : ohne.every(s => vorsilbe(s) === 'yu') ? s => /iy$/.test(s.mit) : null;
+    if (will) ohne = ohne.filter(will);
+  }
+  ohne = ohne.filter(s => !/yaY$/.test(s.mit));
+  const formIV = /^>a/.test(f) && !lemma.praesensVokal && !mitU.concat(ohne).some(s => /^[>&]/.test(s.mit));
+  const befehl = (j, s, e) => {
+    if (!j) return null;
+    if (j[0] === '&') {
+      if (j[1] === 'A') j = '|' + j.slice(2);
+      else if (j[1] === 'a' || j[1] === 'u') j = '>' + j.slice(1);
+      else if (j[1] === 'i') j = '<' + j.slice(1);
+      else return null;
+    }
+    if (vorsilbe(s) === 'yu') {
+      if (/^\|/.test(f)) return null;
+      if (formIV) return (/^w[^aiuo~AY]/.test(j) ? '>a' + f[2] + 'o' + j.slice(1) : '>a' + j) + e;
+      return j + e;
+    }
+    if (j[1] === 'o' || j[1] === '~') return '{' + (bwLetzterVokal(j) === 'u' ? 'u' : 'i') + j + e;
+    return j + e;
+  };
+  const paare = new Map();
+  const dazu = (gw, bf, s, ausZeile = false) => {
+    const v = paare.get(gw), neu = bf.filter(Boolean);
+    if (v) v.bf = [...new Set([...v.bf, ...neu])]; else paare.set(gw, { gw, bf: [...new Set(neu)], stamm: s.mit, kat: s.kat, ausZeile });
+  };
+  for (const s of mitU) {
+    const b = verbBasis(s.kat), gw = vorsilbe(s) + s.mit + 'u';
+    if (b === 'IV' || b === 'IV-n') dazu(gw, [befehl(s.mit, s, 'o')], s);
+    else if (b === 'IV_V') dazu(gw, s.mit.endsWith('~') ? [befehl(s.mit, s, 'a')] : iv.filter(x => passt(x) && verbBasis(x.kat) === 'IV_C' && vorsilbe(x) === vorsilbe(s)).map(x => befehl(x.mit, x, 'o')), s);
+    else dazu(gw, cv.filter(x => verbBasis(x.kat) === 'CV' && !BW_HAMZA.has(x.mit[0]) && x.mit[0] !== '{').map(x => x.mit + 'o'), s, true);
+  }
+  for (const s of ohne) {
+    let j = /(iy|uw|aY)$/.test(s.mit) ? s.mit.slice(0, -1) : null;
+    if (j && BW_HAMZA.has(j[j.length - 2])) j = null;
+    dazu(vorsilbe(s) + s.mit, [befehl(j, s, '')], s);
+  }
+  return { paare: [...paare.values()] };
+}
+/* Zur Karte: lemmata = die Verb-Lemmata, deren Vergangenheit der Karte gleicht. schluessel = Gegenwartsformen, die
+ * schon feststehen: dann zählen nur Paare mit genau dieser Gegenwart. Ergebnis: { lemma, paare, gegenwart[], befehl[],
+ * wahl, von } · { widerspruch } (kein Paar gleicht dem Schlüssel) · { unklar } (gleich geschriebene Lemmata nennen
+ * Verschiedenes, und die Bedeutung entscheidet nicht) · { ohneForm } · null (kein Lemma) */
+export function bamaVerbformenZurKarte(lemmata, { englisch = [], schluessel = [] } = {}) {
+  const arab = bw => ausBW(bamaSchreibweise(bw));
+  let je = (lemmata || []).filter(l => l.verb).map(l => ({ lemma: l, paare: bamaVerbformen(l).paare.map(p => ({ ...p, gwAr: arab(p.gw), bfAr: p.bf.map(arab) })) }));
+  if (!je.length) return null;
+  if (!je.some(x => x.paare.length)) return { ohneForm: true };
+  if (schluessel.length) {
+    const will = new Set(schluessel.map(verbStrengOhneEndung));
+    je = je.map(x => ({ ...x, paare: x.paare.filter(p => will.has(verbStrengOhneEndung(p.gwAr))) })).filter(x => x.paare.length);
+    if (!je.length) return { widerspruch: true };
+  } else je = je.filter(x => x.paare.length);
+  const von = je.length;
+  const fertig = (x, wahl) => ({ lemma: x.lemma, paare: x.paare, gegenwart: x.paare.map(p => p.gwAr), befehl: [...new Set(x.paare.flatMap(p => p.bfAr))], wahl, von });
+  if (je.length === 1) return fertig(je[0], schluessel.length ? 'schluessel' : 'eins');
+  const en = englischeStaemme(englisch), sig = x => x.paare.map(p => p.gw + '=' + p.bf.join('+')).join(',');
+  const mit = je.filter(x => bamaTeiltSinn(x.lemma, en));
+  const kreis = mit.length ? mit : je;
+  if (new Set(kreis.map(sig)).size !== 1) return { unklar: von };
+  return fertig(kreis[0], mit.length ? 'sinn' : 'einig');
+}
+/* Verbalsubstantiv: das Muster der Bauform aus der Vergangenheit (Buckwalter-Umschrift), mit dem Hamza-Sitz der
+ * Zielform */
+const VERB_K = '([^aiuo~AYFNK{])';
+const hamzaSitz = bw => String(bw).replace(/A>$/, "A'").replace(/u>$/, 'u&').replace(/A'u/, 'A&u').replace(/^\{isoti>o/, '{isoti}o').replace(/i>ap$/, 'i}ap');
+const MASDAR_MUSTER = [
+  ['IV', `^>a${VERB_K}o${VERB_K}a${VERB_K}$`, m => [m[1] === 'w' ? '<iy' + m[2] + 'A' + m[3] : '<i' + m[1] + 'o' + m[2] + 'A' + m[3]]],
+  ['IV hohl', `^>a${VERB_K}A${VERB_K}$`, m => ['<i' + m[1] + 'A' + m[2] + 'ap']],
+  ['IV schwach', `^>a${VERB_K}o${VERB_K}aY$`, m => [m[1] === 'w' ? '<iy' + m[2] + "A'" : '<i' + m[1] + 'o' + m[2] + "A'"]],
+  ['IV doppelt', `^>a${VERB_K}a${VERB_K}~$`, m => ['<i' + m[1] + 'o' + m[2] + 'A' + m[2]]],
+  ['II', `^${VERB_K}a${VERB_K}~a${VERB_K}$`, m => ['ta' + m[1] + 'o' + m[2] + 'iy' + m[3], 'ta' + m[1] + 'o' + m[2] + 'i' + m[3] + 'ap']],
+  ['II schwach', `^${VERB_K}a${VERB_K}~aY$`, m => ['ta' + m[1] + 'o' + m[2] + 'iyap']],
+  ['III', `^${VERB_K}A${VERB_K}a${VERB_K}$`, m => ['mu' + m[1] + 'A' + m[2] + 'a' + m[3] + 'ap', m[1] + 'i' + m[2] + 'A' + m[3]]],
+  ['III schwach', `^${VERB_K}A${VERB_K}aY$`, m => ['mu' + m[1] + 'A' + m[2] + 'Ap']],
+  ['V', `^ta${VERB_K}a${VERB_K}~a${VERB_K}$`, m => ['ta' + m[1] + 'a' + m[2] + '~u' + m[3]]],
+  ['VI', `^ta${VERB_K}A${VERB_K}a${VERB_K}$`, m => ['ta' + m[1] + 'A' + m[2] + 'u' + m[3]]],
+  ['VII', `^\\{ino${VERB_K}a${VERB_K}a${VERB_K}$`, m => ['{ino' + m[1] + 'i' + m[2] + 'A' + m[3]]],
+  ['X', `^\\{isota${VERB_K}o${VERB_K}a${VERB_K}$`, m => ['{isoti' + m[1] + 'o' + m[2] + 'A' + m[3]]],
+  ['X hohl', `^\\{isota${VERB_K}A${VERB_K}$`, m => ['{isoti' + m[1] + 'A' + m[2] + 'ap']],
+  ['X doppelt', `^\\{isota${VERB_K}a${VERB_K}~$`, m => ['{isoti' + m[1] + 'o' + m[2] + 'A' + m[2]]],
+  ['VIII', `^\\{i${VERB_K}(o[tdT]|~)a${VERB_K}a${VERB_K}$`, m => ['{i' + m[1] + m[2] + 'i' + m[3] + 'A' + m[4]]],
+  ['VIII hohl', `^\\{i${VERB_K}otA${VERB_K}$`, m => ['{i' + m[1] + 'otiyA' + m[2]]],
+  ['VIII schwach', `^\\{i${VERB_K}(o[tdT]|~)a${VERB_K}aY$`, m => ['{i' + m[1] + m[2] + 'i' + m[3] + "A'"]],
+  ['Vierer', `^${VERB_K}a${VERB_K}o${VERB_K}a${VERB_K}$`, m => [m[1] + 'a' + m[2] + 'o' + m[3] + 'a' + m[4] + 'ap']],
+].map(([name, re, bilde]) => [name, new RegExp(re), bilde]);
+export function bamaMasdarMuster(lemma) {
+  if (lemma.praesensVokal) return { bau: 'Grundform', muster: [] };
+  const f = String(lemma.form || '');
+  for (const [name, re, bilde] of MASDAR_MUSTER) { const m = f.match(re); if (m) return { bau: name, muster: bilde(m).map(hamzaSitz) }; }
+  return { bau: 'unbekannt', muster: [] };
+}
+/* nach = alle Lemmata der Liste, nach vergleich(l.ar, { artikelWeg: false }) geordnet. Ergebnis { lage, bau, muster[],
+ * formen[] } mit lage: ohneLemma · grundform · ohneMuster · nichtInListe (das Muster steht da, die Liste führt das Nomen
+ * nicht) · gesetzt */
+export function bamaMasdarZurKarte(lemmata, nach) {
+  const verben = (lemmata || []).filter(l => l.verb);
+  if (!verben.length) return { lage: 'ohneLemma' };
+  const je = verben.map(l => ({ lemma: l, ...bamaMasdarMuster(l) }));
+  if (je.every(x => x.bau === 'Grundform')) return { lage: 'grundform', bau: 'Grundform' };
+  const mit = je.filter(x => x.muster.length);
+  if (!mit.length) return { lage: 'ohneMuster', bau: je[0].bau };
+  const wurzeln = new Set(mit.map(x => x.lemma.wurzel)), muster = [...new Set(mit.flatMap(x => x.muster))];
+  const formen = [], gesehen = new Set();
+  for (const mu of muster) for (const n of (nach.get(vergleich(ausBW(mu), { artikelWeg: false })) || [])) {
+    if (n.verb || !wurzeln.has(n.wurzel) || bamaIstName(n)) continue;
+    const ar = ausBW(bamaSchreibweise(n.form)), v = vergleich(ar, { artikelWeg: false });
+    if (gesehen.has(v)) continue;
+    gesehen.add(v);
+    formen.push({ ar, bw: n.form, lemma: n.id, kat: [...new Set(n.staemme.map(s => s.kat))].join('/'), glosse: n.glossen[0] || '', verb: mit[0].lemma.id });
+  }
+  if (!formen.length) return { lage: 'nichtInListe', bau: mit[0].bau, muster, verb: mit[0].lemma.id };
+  return { lage: 'gesetzt', bau: mit[0].bau, muster, formen };
+}
+
 const _bestand = new Map();
 export function ladeBuch(repo, buch) {
   const schluessel = repo + '|' + buch;
