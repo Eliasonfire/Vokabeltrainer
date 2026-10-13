@@ -2112,6 +2112,8 @@ const UEBUNGEN = [
           frage: 'Welche Form des Verbs gehört in die Lücke?' + (hatAnker ? '' : ` Gemeint ist: ${P.de}.`),
           wortIdx:i, ohneSuffix: luecke,
           loesung: P.id,
+          /* Welches Verb der Liste: daran erkennt ohneSatz() unten, welche Form schon einen Satz hat. */
+          verbNr: UEB_VERBEN.indexOf(st.verb),
           optionen: uebVerbFeld(P.id).map(p => ({ wert: p.id, text: st.vorsatz + formen[p.i],
             falsch: `${formen[p.i]} gehört zu ${p.pron} — ${p.de}.` })),
           aufloesung: `In die Lücke gehört ${formen[P.i]} — die Form zu ${P.pron}, ${P.de}. Dein Lehrer merkt es so (${pk.name}):`,
@@ -2122,6 +2124,63 @@ const UEBUNGEN = [
         });
       });
       return out;
+    },
+    /* ⭐ KURZE ZEILEN FÜR FORMEN OHNE SATZ (13.10.2026, Paket B der Nachtschicht)
+
+       Lage: in seinen Sätzen kommen bisher nur drei der dreizehn Verben seines
+       Lehrers vor, und „sie beide" (zwei Frauen) hat gar keinen Satz. Der
+       Vorschlag an ihn (andere Sitzung, 13.10.2026, ca. 03:55): ganze Sätze
+       bleiben der Hauptteil; kurze Zeilen aus Pronomen und Lücke, das Verb in
+       Klammern dahinter, füllen nur die Formen, zu denen es keinen Satz gibt;
+       kommt ein Satz dazu, fällt die Zeile für diese Form weg. Seine Antwort war
+       eine Rückfrage zu etwas anderem — kein Ja, kein Nein.
+       ⛔ Deshalb hinter einem Schalter, der AUS ist (SETTINGS.verbKurzzeilen,
+       Einstellungen: „Verb einsetzen: kurze Zeilen"). Ohne ihn ändert sich an
+       Übung 17 nichts. Kein Code schaltet ihn ein.
+
+       ⛔ NICHTS ERFUNDEN: das Pronomen ist das seiner Pronomen-Karte, die Form
+       eine der 169 belegten (UEB_VERBEN), das Verb in Klammern ist die erste
+       Form derselben Reihe. Die Zeile ist KEIN Buchsatz und gibt sich nicht als
+       einer aus: als Herkunft steht „Formenreihe deines Lehrers" mit der Folge
+       (herkunft() in js/saetze.js), und die deutsche Zeile nennt Person und
+       Verb statt einer Übersetzung.
+
+       Aufgerufen von uebungenAufbauen() NACH dem Durchgang durch die Sätze, mit
+       den Aufgaben, die baue() geliefert hat (`vorhanden`). Nur im Thema „alle":
+       in einem einzelnen Thema fehlten sonst Formen nur deshalb, weil ihr Satz
+       zu einem anderen Thema gehört.
+       ⭐ Sätze zuerst: in einer Runde nur dieser Übung stehen die Satzaufgaben
+       je Person vor den kurzen Zeilen (uebungReihum), und die gemischte Runde
+       zieht aus dieser Übung erst die Sätze (uebungGemischteListe). */
+    ohneSatz(vorhanden){
+      if (!(typeof SETTINGS === 'object' && SETTINGS && SETTINGS.verbKurzzeilen)) return [];
+      if (typeof SATZ_THEMA !== 'undefined' && SATZ_THEMA !== 'alle') return [];
+      const mitSatz = new Set((vorhanden || []).map(a => a.verbNr + '|' + a.loesung));
+      const zeilenAufgaben = [];
+      UEB_VERBEN.forEach((verb, nr) => UEB_VERB_PERSONEN.forEach(person => {
+        if (mitSatz.has(nr + '|' + person.id)) return;
+        const reihe = verb.formen, gesucht = reihe[person.i], dreier = UEB_VERB_PAKETE[person.paket];
+        zeilenAufgaben.push({
+          /* Die Frage nennt die Person immer in Worten: bei „sie beide" und „ihr beide"
+             unterscheidet das Pronomen allein nichts. */
+          frage: `Welche Form des Verbs gehört in die Lücke? Gemeint ist: ${person.de}.`,
+          wortIdx: 1, ohneSuffix: { 1: '____' },
+          loesung: person.id, verbNr: nr, ohneSatz: true,
+          optionen: uebVerbFeld(person.id).map(p => ({ wert: p.id, text: reihe[p.i],
+            falsch: `${reihe[p.i]} gehört zu ${p.pron} — ${p.de}.` })),
+          aufloesung: `In die Lücke gehört ${gesucht} — die Form zu ${person.pron}, ${person.de}. Dein Lehrer merkt es so (${dreier.name}):`,
+          paket: dreier.glieder.map(id => {
+            const p = UEB_VERB_PERSONEN.find(x => x.id === id);
+            return { ar: p.pron + ' ' + reihe[p.i], gefragt: id === person.id };
+          }),
+          /* Die deutsche Zeile ist hier keine Übersetzung, die etwas verriete — sie bleibt ganz lesbar. */
+          deKlar: { test: () => true },
+          satz: { id: 'verbzeile-' + nr + '-' + person.id, sentAr: person.pron + ' ' + gesucht,
+            sentDe: `${person.de} · ${verb.de} (Vergangenheit)`, verbZeile: verb.folge },
+          zeilen: [{ wort: person.pron, rein: person.pron }, { wort: gesucht, rein: gesucht }, { wort: '(' + reihe[0] + ')', rein: reihe[0] }]
+        });
+      }));
+      return zeilenAufgaben;
     }
   },
 
@@ -2490,7 +2549,9 @@ function uebungVerraetDeutsch(a, satz){
 
 function uebungenAufbauen(){
   const abdruck = uebListenAbdruck();
-  if (UEB_CACHE.thema === SATZ_THEMA && UEB_CACHE.liste === abdruck && UEB_CACHE.nachModus)
+  /* Der Schalter „Verb einsetzen: kurze Zeilen" gehört zum Abdruck: legt er ihn um, wird neu gebaut. */
+  const kurz = !!(typeof SETTINGS === 'object' && SETTINGS && SETTINGS.verbKurzzeilen);
+  if (UEB_CACHE.thema === SATZ_THEMA && UEB_CACHE.liste === abdruck && UEB_CACHE.kurz === kurz && UEB_CACHE.nachModus)
     return UEB_CACHE.nachModus;
   if (typeof setzeLexikon === 'function') setzeLexikon(VOCAB_DATA);
   /* Die Wortgruppen der Übungen 11, 14, 15 je Aufbau neu lesen: eine Karte,
@@ -2514,7 +2575,18 @@ function uebungenAufbauen(){
       });
     });
   });
-  UEB_CACHE = { thema:SATZ_THEMA, liste:abdruck, nachModus };
+  /* ⭐ AUFGABEN OHNE SATZ (13.10.2026, Übung 17 „kurze Zeilen"). Eine Übung kann nach dem
+     Durchgang durch die Sätze eigene Aufgaben anhängen (`ohneSatz(vorhanden)`); sie bringen
+     ihren Satz-Ersatz (`satz`, `zeilen`) selbst mit. Heute tut das nur Übung 17, und nur mit
+     seinem Schalter — Begründung dort. Ein Fehler darin nimmt die Satzaufgaben nicht mit. */
+  UEBUNGEN.forEach(m=>{
+    if (typeof m.ohneSatz !== 'function') return;
+    let dazu = [];
+    try { dazu = m.ohneSatz(nachModus[m.id]) || []; }
+    catch(e){ dazu = []; }
+    dazu.forEach(a=>nachModus[m.id].push({ ...a, modus:m }));
+  });
+  UEB_CACHE = { thema:SATZ_THEMA, liste:abdruck, nachModus, kurz };
   return nachModus;
 }
 
@@ -2672,7 +2744,10 @@ function uebungReihum(liste, schluessel, zweiter){
     koerbe.get(k).push(a);
   }
   let runde = shuffle([...koerbe.values()])
-    .map(k => (zweiter && k.some(a => zweiter(a) != null)) ? uebungReihum(k, zweiter, null) : shuffle(k));
+    /* ⭐ Aufgaben ohne Satz (a.ohneSatz, Übung 17) stehen in ihrem Korb HINTER den Satzaufgaben:
+       die Sätze bleiben der Hauptteil. Das Sortieren ist stabil — unter Gleichen bleibt das Gemischte. */
+    .map(k => (zweiter && k.some(a => zweiter(a) != null)) ? uebungReihum(k, zweiter, null)
+      : shuffle(k).sort((x, y) => (x.ohneSatz ? 1 : 0) - (y.ohneSatz ? 1 : 0)));
   const raus = [];
   while (runde.length){
     /* Die Naht: die erste Antwort einer Runde soll nicht die letzte der
@@ -2731,7 +2806,10 @@ function uebungDeckelJeAntwort(liste, schluessel){
 }
 function uebungGleichViele(liste, schluessel){
   const deckel = uebungDeckelJeAntwort(liste, schluessel), zaehl = new Map();
-  return shuffle(liste.slice()).filter(a => {
+  /* ⭐ Aufgaben ohne Satz (a.ohneSatz, Übung 17 „kurze Zeilen") zählen ZULETZT: der Deckel streicht
+     dann eine kurze Zeile und nie einen Satz. Gemessen am 13.10.2026: mit den Zeilen hatte eine Person
+     mehr als 15 Aufgaben, und vier ihrer Satzaufgaben fielen heraus. Das Sortieren ist stabil. */
+  return shuffle(liste.slice()).sort((x, y) => (x.ohneSatz ? 1 : 0) - (y.ohneSatz ? 1 : 0)).filter(a => {
     const k = schluessel(a), z = zaehl.get(k) || 0;
     if (z >= deckel) return false;
     zaehl.set(k, z + 1);
@@ -2847,7 +2925,10 @@ function uebungGemischteListe(nachModus){
      begannen alle drei Probelaeufe im Browser mit exakt „1,2,3,…,13" — die
      Umsortierung griff erst ab Runde zwei, und die ersten dreizehn Fragen
      sahen bei jedem Start gleich aus. Genau die sieht Elias zuerst. */
-  let koerbe = shuffle(UEBUNGEN.map(m => uebungMischen(m, nachModus[m.id] || []))
+  /* ⭐ uebungZiehen() nimmt vom ENDE eines Korbs. Aufgaben ohne Satz (Übung 17, kurze Zeilen)
+     wandern deshalb an den ANFANG: in der gemischten Runde kommen erst die Sätze dran. */
+  let koerbe = shuffle(UEBUNGEN.map(m => uebungMischen(m, nachModus[m.id] || [])
+                                           .sort((x, y) => (y.ohneSatz ? 1 : 0) - (x.ohneSatz ? 1 : 0)))
                                .filter(k => k.length));
   const raus = [];
   let i = 0;

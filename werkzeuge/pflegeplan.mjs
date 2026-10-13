@@ -595,6 +595,12 @@ export const PFLEGEPLAN = [
          Was veralten kann, ist die Erkennung im Satz, wenn der Zerleger seine
          Rollennamen ändert (فِعْل, فَاعِل, مُبْتَدَأ) — das rechnet der eigene
          Test an seinem ganzen Satzvorrat nach. */
+    /* ⭐ 13.10.2026 (Paket B der Nachtschicht) — KURZE ZEILEN für Formen ohne Satz, hinter dem
+       Schalter „Verb einsetzen: kurze Zeilen" (SETTINGS.verbKurzzeilen, AUS; sein Ja dazu steht
+       aus). Kein neuer Speicherschlüssel außer dem Schalter in den Einstellungen (er wandert mit
+       ihnen mit). Pflege: keine eigene — die Zeilen entstehen bei jedem Aufbau aus UEB_VERBEN und
+       fallen von selbst weg, sobald ein belegter Satz die Form trägt (ohneSatz() am Eintrag).
+       Bewacht von test-verb-einsetzen.mjs, Zusicherungen 11 bis 14, zehn eigene Störtests. */
     funktion: 'Verb einsetzen (Übung 17): die passende Vergangenheitsform in die Lücke, vier Formen desselben Verbs zur Wahl',
     /* Leer wie bei Übung 16: hier stehen nur Dateien, die die APP lädt. Das
        Werkzeug werkzeuge/verbformen-belegen.mjs, sein Abzug
