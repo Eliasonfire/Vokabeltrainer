@@ -221,6 +221,36 @@ const TA_MARBUTA = String.fromCodePoint(0x629);
 const ZEICHEN_WEG = new RegExp('[' + String.fromCodePoint(0x64B) + '-' + String.fromCodePoint(0x652) + String.fromCodePoint(0x670) + String.fromCodePoint(0x640) + ']', 'g');
 const ENDUNG_WEIBLICH = 'Endung Ta marbuta am Wort in der Einzahl: weiblich. Das ist die Regel der Grammatik, keine Angabe einer Quelle — nachgemessen an 565 Nomen dieser Art, deren Geschlecht eine Quelle nennt: 562 weiblich; die drei anderen führt auch die bisherige Karte als männlich, und dann bleibt das Feld offen. Die Zuordnung stammt von Claude';
 const endung = { gesetzt: 0 };
+/* SCHLUSSVOKAL DER VERGANGENHEIT (Regel von Claude, 13.10.2026). arabdict druckt ein Verb „ohne Schlussendung": dem
+ * Wort der Karte und seiner Vergangenheit fehlt dann das Fatha am Ende. Gemessen am 13.10.2026: 6 von 1607 Verben des
+ * Ersatzes, alle von arabdict, und alle sechs führt die bisherige Karte mit Fatha. Die Vergangenheit („er hat …") endet
+ * immer auf Fatha — das ist die Regel der Grammatik, keine Angabe einer Quelle, und so steht es im Beleg.
+ * NICHT ergänzt wird: nach Alif oder Alif maqsura (dort trägt das Wort keinen Schlussvokal), an einer Fügung aus
+ * mehreren Wörtern, an einem Feld, das „leer" von Hand sperrt, und wenn die bisherige Karte an dieser Stelle einen
+ * ANDEREN Vokal trägt (sie ist dabei nur der Einspruch, nie die Quelle des Werts). */
+const FATHA_Z = String.fromCodePoint(0x64E), SCHADDA_Z = String.fromCodePoint(0x651), DOLCH_Z = String.fromCodePoint(0x670);
+const ALIF_Z = String.fromCodePoint(0x627), MAQSURA_Z = String.fromCodePoint(0x649);
+const KURZVOKAL = new RegExp('[' + String.fromCodePoint(0x64B) + '-' + String.fromCodePoint(0x650) + String.fromCodePoint(0x652) + ']');
+const SCHLUSS_FATHA = ' Das Fatha am Ende ist ergänzt: die Quelle druckt das Verb ohne Schlussendung, und die Vergangenheit („er hat …“) endet immer auf Fatha — Regel der Grammatik, keine Angabe der Quelle.';
+const schluss = { gesetzt: 0, einspruch: 0 };
+function schlussEnde(wort) {   // letzter Buchstabe und sein kurzer Vokal; Schadda und Dolch-Alif sind kein Vokal
+  const z = [...nfc(wort)];
+  let i = z.length - 1, vokal = '';
+  while (i >= 0 && (KURZVOKAL.test(z[i]) || z[i] === SCHADDA_Z || z[i] === DOLCH_Z)) { if (KURZVOKAL.test(z[i])) vokal = z[i]; i--; }
+  return { buchstabe: i >= 0 ? z[i] : '', vokal };
+}
+function schlussFatha(felder, altK, h) {
+  for (const f of ['ar', 'past']) {
+    const x = felder[f];
+    if (!x || !voll(x.w) || /\s/.test(nfc(x.w)) || (h.leer || []).includes(f)) continue;
+    const e = schlussEnde(x.w);
+    if (e.vokal || !e.buchstabe || e.buchstabe === ALIF_Z || e.buchstabe === MAQSURA_Z) continue;
+    const alt = altK ? schlussEnde(f === 'ar' ? altK.ar : (altK.past || altK.ar)) : null;
+    if (alt && alt.vokal && alt.vokal !== FATHA_Z) { schluss.einspruch++; continue; }
+    felder[f] = { ...x, w: (nfc(x.w) + FATHA_Z).normalize('NFC'), wo: String(x.wo || '') + SCHLUSS_FATHA };
+    schluss.gesetzt++;
+  }
+}
 /* MEHRZAHL aus Buckwalters Stammliste (bamaMehrzahlZurKarte in ersatz-bama-lib.mjs, dort stehen die Bedingungen und die
  * Messung; Regel von Claude, 13.10.2026). Anlass: nach der Pflicht der App fehlte die Mehrzahl an 167 Ersatzkarten,
  * die sie im Bestand haben — der Eintrag des Wiktionary nennt dort keine, arabdict und der Schlüssel nennen nie eine.
@@ -583,6 +613,10 @@ for (const buch of BUECHER) {
       // Verbformen aus der Stammliste (verbformenAusStammliste, oben): Gegenwart, Befehl, Verbalsubstantiv — nur als Lücke
       if (felder.type && felder.type.w === 'verb') verbformenAusStammliste(felder, s, altK, h);
       // Verbalsubstantiv aus Lanes Lexikon (verbalsubstantivAusLane, oben) — nach der Stammliste, nur als Lücke
+      // Schlussvokal der Vergangenheit (schlussFatha, oben): VOR dem Verbalsubstantiv aus Lane. Dessen Schlüssel ist das
+      // Arabisch der fertigen Ersatzkarte (so sucht ersatz-lane.mjs) — beide müssen dieselbe Form meinen. Nach einer
+      // Änderung hier deshalb: bauen, `ersatz-lane.mjs --verben` (ohne Abruf), bauen.
+      if (felder.type && felder.type.w === 'verb') schlussFatha(felder, altK, h);
       if (felder.type && felder.type.w === 'verb') verbalsubstantivAusLane(felder, s, altK, h);
     }
     for (const f of h.leer || []) delete felder[f];
@@ -683,6 +717,7 @@ if (verbformenWeg) console.log(`Verbformen an Karten, die keine Verben sind, weg
 if (stammliste.gesetzt) console.log(`Wurzel aus Buckwalters Stammliste (Lane führt die Wurzel, nennt das Wort aber nicht): ${stammliste.gesetzt} eingetragen`);
 if (stammliste.warten) console.log(`Wurzel aus der Stammliste OFFEN an ${stammliste.warten} Karten: nach ${Object.keys(stammliste.fehlend).length} Wurzelseiten von Lane wurde noch nie gefragt — „node werkzeuge/ersatz-lane.mjs --seiten --holen“, danach neu bauen (Liste: data-ersatz/arbeit/lane-fehlende-seiten.json)`);
 if (endung.gesetzt) console.log(`Geschlecht aus der Endung (Ta marbuta am Wort in der Einzahl, keine Quelle nennt es): ${endung.gesetzt} Nomen weiblich`);
+if (schluss.gesetzt || schluss.einspruch) console.log(`Schlussvokal der Vergangenheit (die Quelle druckt das Verb ohne Schlussendung): Fatha ergänzt an ${schluss.gesetzt} Feldern · ${schluss.einspruch} offen gelassen, weil die bisherige Karte dort einen anderen Vokal trägt`);
 if (Object.values(verbListe).some(Boolean)) console.log(`Verbformen aus Buckwalters Stammliste (keine andere Quelle nennt sie): Gegenwart an ${verbListe.gegenwart} Verben, Befehl nach der Regel an ${verbListe.befehl}, Verbalsubstantiv an ${verbListe.masdar} (dazu nur nach dem Muster, wo die bisherige Karte dasselbe führt: ${verbListe.muster})`
   + ` · offen gelassen: ${verbListe.einspruch} Gegenwart (keine Zeile der Liste gleicht der bisherigen Karte), ${verbListe.unklar} Gegenwart (gleich geschriebene Lemmata nennen Verschiedenes), ${verbListe.ohneBefehlImBestand} Befehl (die bisherige Karte führt eine Gegenwart, aber keinen Befehl)`);
 if (laneVerb.eintraege) console.log(`Verbalsubstantiv aus Lanes Lexikon (inf. n. im Artikel des Verbstamms): ${laneVerb.gesetzt} eingetragen (davon ${laneVerb.fortsetzung} aus der Fortsetzung der Aufzählung hinter einer Zwischenbemerkung) · offen gelassen: ${laneVerb.leerVonHand}, weil das Feld von Hand leer gesetzt ist, ${laneVerb.einspruch}, weil Lane keines der Wörter der bisherigen Karte nennt, ${laneVerb.ohneSchluessel}, weil die bisherige Karte keines führt, ${laneVerb.anderesWort}, weil die Vergangenheit der Karte nicht mehr das Wort des Eintrags ist · ${laneVerb.hatSchon} übergangen, weil eine andere Quelle es nennt (von ${laneVerb.eintraege} Einträgen in data-ersatz/arbeit/lane-verben.json)`);

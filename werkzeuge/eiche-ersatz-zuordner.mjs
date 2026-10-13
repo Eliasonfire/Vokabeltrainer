@@ -1084,6 +1084,45 @@ pruefe('Verbalsubstantiv aus Lane: die Gegenwart hinter „aor." ist nicht das V
 pruefe('Verbalsubstantiv aus Lane: hat das Stichwort einen anderen Vokal, gilt der Artikel nur, wenn er die Vergangenheit der Karte selbst nennt — der Beleg sagt es', m18('231') === L18.rukub && /das Stichwort hat andere oder keine Vokalzeichen, der Artikel nennt die Vergangenheit der Karte selbst/.test(b18('231').wo || '') && m18('232') === null && !w18.laneVerben['232'] && /"andereVokale":1/.test(w18.verbenText), zeig18('231') + ' · ' + zeig18('232') + ' · ' + w18.verbenText.trim().split('\n')[0].slice(0, 200));
 pruefe('Verbalsubstantiv aus Lane: ein Feld, das von Hand leer gesetzt ist, bleibt leer — und der Bau nennt alle Zahlen', m18('233') === null && /4 eingetragen \(davon 1 aus der Fortsetzung der Aufzählung hinter einer Zwischenbemerkung\) · offen gelassen: 1, weil das Feld von Hand leer gesetzt ist, 5, weil Lane keines der Wörter der bisherigen Karte nennt, 1, weil die bisherige Karte keines führt, 1, weil die Vergangenheit der Karte nicht mehr das Wort des Eintrags ist · 0 übergangen, weil eine andere Quelle es nennt \(von 12 Einträgen/.test(w18.text), zeig18('233') + ' · ' + zeile18());
 
+// 19. Schlussvokal der Vergangenheit (13.10.2026, schlussFatha in ersatz-bauen.mjs, Regel von Claude): druckt die Quelle
+//     ein Verb ohne Schlussendung (so arabdict), wird das Fatha am Ende ergänzt und im Beleg genannt — an `ar` und `past`.
+//     241  Verb ohne Schlussvokal, die bisherige Karte endet auf Fatha → ergänzt, der Beleg sagt es
+//     242  das Wort endet auf Alif → bleibt
+//     243  die bisherige Karte trägt dort einen ANDEREN Vokal → Einspruch, das Wort der Quelle bleibt
+//     244  das Wort hat seinen Schlussvokal schon → bleibt, der Beleg nennt nichts
+//     245  verdoppelter Schlussbuchstabe (Schadda) ohne Vokal → Fatha, in der Reihenfolge von NFC
+//     246  ein Nomen ohne Schlussvokal → bleibt, die Regel gilt nur für Verben
+const KATAB19 = cp(KAF, FATHA, TA, FATHA, BA), DANA19 = cp(DAL, FATHA, NUN, FATHA, ALIF), DARAS19 = cp(DAL, FATHA, RA, FATHA, SIN);
+const SADD19 = cp(SIN, FATHA, DAL, SHADDA), SADDA19 = cp(SIN, FATHA, DAL, FATHA, SHADDA);
+const mitPast19 = (w, de) => { const h = vonHand(w, 'verb', de); return { ...h, felder: { ...h.felder, past: { w, wo: 'Probe: Wörterbuch ohne Schlussendung', q: 'arabdict' } } }; };
+const WELT19 = {
+  karten: [
+    { id: '241', ar: KATAB19 + cp(FATHA), de: 'schreiben', type: 'verb', chapter: 1, ...leer, past: KATAB19 + cp(FATHA) },
+    { id: '242', ar: DANA19, de: 'sich nähern', type: 'verb', chapter: 1, ...leer, past: DANA19 },
+    { id: '243', ar: DARAS19 + cp(DAMMA), de: 'lernen', type: 'verb', chapter: 1, ...leer, past: DARAS19 + cp(DAMMA) },
+    { id: '244', ar: W.sakana, de: 'wohnen', type: 'verb', chapter: 2, ...leer, past: W.sakana },
+    { id: '245', ar: SADDA19, de: 'verschließen', type: 'verb', chapter: 2, ...leer, past: SADDA19 },
+    { id: '246', ar: KATAB19, de: 'Schrift', type: 'noun', chapter: 2, ...leer, sg: KATAB19 },
+  ],
+  woerterbuch: [], englischDeutsch: [],
+};
+const w19 = probe({ 241: mitPast19(KATAB19, 'schreiben'), 242: mitPast19(DANA19, 'sich nähern'), 243: mitPast19(DARAS19, 'lernen'),
+  244: mitPast19(W.sakana, 'wohnen'), 245: mitPast19(SADD19, 'verschließen'), 246: vonHand(KATAB19, 'noun', 'Schrift') }, WELT19);
+const nf19 = t => String(t ?? '').normalize('NFC');
+const hex19 = t => [...nf19(t)].map(c => c.codePointAt(0).toString(16)).join(' ');
+const zeig19 = id => 'Karte ' + id + ': ar [' + hex19(feldAuf(w19, id, 'ar')) + '] · past [' + hex19(feldAuf(w19, id, 'past')) + '] · Beleg ar: …' + String(feldBeleg(w19, id, 'ar').wo || '').slice(-90);
+const zeile19 = (w19.text.split('\n').find(z => /Schlussvokal der Vergangenheit/.test(z)) || '(keine Zeile)').slice(0, 220);
+pruefe('Schlussvokal: die Probe läuft durch, alle sechs Plätze sind belegt', w19.codeZ === 0 && w19.codeB === 0 && w19.karten.length === 6, 'Exit ' + w19.codeZ + ' / ' + w19.codeB + ', Karten ' + w19.karten.map(k => k.id).join(',') + ': ' + w19.text.trim().split('\n').slice(-3).join(' | ').slice(0, 400));
+pruefe('Schlussvokal: fehlt dem Verb der Quelle der Schlussvokal, steht an `ar` und an `past` ein Fatha — der Beleg sagt, dass es ergänzt ist und die Regel der Grammatik, keine Angabe der Quelle',
+  nf19(feldAuf(w19, '241', 'ar')) === nf19(KATAB19 + cp(FATHA)) && nf19(feldAuf(w19, '241', 'past')) === nf19(KATAB19 + cp(FATHA))
+  && /Das Fatha am Ende ist ergänzt.*Regel der Grammatik, keine Angabe der Quelle/.test(feldBeleg(w19, '241', 'ar').wo || '') && /Das Fatha am Ende ist ergänzt/.test(feldBeleg(w19, '241', 'past').wo || ''), zeig19('241'));
+pruefe('Schlussvokal: endet das Wort auf Alif, bleibt es, wie die Quelle es druckt', nf19(feldAuf(w19, '242', 'ar')) === nf19(DANA19) && nf19(feldAuf(w19, '242', 'past')) === nf19(DANA19) && !/ergänzt/.test(feldBeleg(w19, '242', 'ar').wo || ''), zeig19('242'));
+pruefe('Schlussvokal: trägt die bisherige Karte dort einen anderen Vokal, bleibt das Wort der Quelle — sie ist der Einspruch, nicht die Quelle', nf19(feldAuf(w19, '243', 'ar')) === nf19(DARAS19) && nf19(feldAuf(w19, '243', 'past')) === nf19(DARAS19) && !/ergänzt/.test(feldBeleg(w19, '243', 'ar').wo || ''), zeig19('243'));
+pruefe('Schlussvokal: hat das Wort seinen Schlussvokal, bleibt es, und der Beleg nennt keine Ergänzung', nf19(feldAuf(w19, '244', 'ar')) === nf19(W.sakana) && !/ergänzt/.test(feldBeleg(w19, '244', 'ar').wo || ''), zeig19('244'));
+pruefe('Schlussvokal: nach einem verdoppelten Buchstaben steht das Fatha dort, wo NFC es hinstellt (vor dem Schadda)', nf19(feldAuf(w19, '245', 'ar')) === nf19(SADDA19) && nf19(feldAuf(w19, '245', 'past')) === nf19(SADDA19), zeig19('245'));
+pruefe('Schlussvokal: ein Nomen ohne Schlussvokal bekommt keinen — die Regel gilt nur für Verben', nf19(feldAuf(w19, '246', 'ar')) === nf19(KATAB19) && !/ergänzt/.test(feldBeleg(w19, '246', 'ar').wo || ''), zeig19('246'));
+pruefe('Schlussvokal: der Bau nennt beide Zahlen (4 Felder ergänzt, 2 wegen der bisherigen Karte offen gelassen)', /Fatha ergänzt an 4 Feldern · 2 offen gelassen/.test(zeile19), zeile19);
+
 const gut = faelle.filter(f => f.ok).length;
 for (const f of faelle) if (!f.ok) console.log(`  ✗ ${f.name}\n      bekommen: ${f.was}`);
 console.log(`Eichung Zuordner und Bau: ${gut} von ${faelle.length} Fällen wie erwartet`);
