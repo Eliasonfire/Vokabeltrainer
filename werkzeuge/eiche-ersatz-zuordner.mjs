@@ -23,7 +23,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { laneDateiname as laneDatei, wurzelSchluessel, wurzelWert } from './ersatz-bama-lib.mjs';
+import { laneDateiname as laneDatei, wurzelSchluessel, wurzelWert, ausBW } from './ersatz-bama-lib.mjs';
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
 const cp = (...n) => String.fromCodePoint(...n);
@@ -91,6 +91,10 @@ function probe(hand = {}, welt = null) {
     fs.mkdirSync(path.join(lane, 'seiten'), { recursive: true });
     for (const [bw, woerter] of Object.entries(welt.laneSeiten)) fs.writeFileSync(path.join(lane, 'seiten', laneDatei(bw)), '<html><body>\n' + woerter.map(([nr, wort]) => `<a href="/word/x/${nr}" class="root-word-link">${wort}</a>`).join('\n') + '\n</body></html>\n');
     fs.writeFileSync(path.join(lane, 'ohne-seite.json'), JSON.stringify(Object.fromEntries((welt.laneOhneSeite || []).map(k => [k, '2026-10-12']))));
+    // Abschnitt 18: abgelegte ARTIKEL von Verbstämmen (quellen/lane/woerter/<Kennung>.html) und Einträge aus einem
+    // früheren Lauf von ersatz-lane.mjs --verben
+    if (welt.laneArtikel) { fs.mkdirSync(path.join(lane, 'woerter'), { recursive: true }); for (const [nr, html] of Object.entries(welt.laneArtikel)) fs.writeFileSync(path.join(lane, 'woerter', nr + '.html'), html); }
+    if (welt.laneVerben) fs.writeFileSync(path.join(repo, 'data-ersatz', 'arbeit', 'lane-verben.json'), JSON.stringify({ eintraege: welt.laneVerben }));
   }
   const umgebung = { ...process.env, ERSATZ_REPO: repo };
   const bau = () => spawnSync(process.execPath, [path.join(HIER, 'ersatz-bauen.mjs'), '--knapp'], { encoding: 'utf8', env: umgebung });
@@ -102,6 +106,12 @@ function probe(hand = {}, welt = null) {
     l = spawnSync(process.execPath, [path.join(HIER, 'ersatz-lane.mjs'), '--wurzeln', ...(welt.laneAlle ? ['--ids', welt.karten.map(k => k.id).join(',')] : [])], { encoding: 'utf8', env: umgebung });
     if (l.status === 0) b = bau();
   }
+  // Abschnitt 18: der Lauf, der bei Lane das Verbalsubstantiv nachsieht (auf abgelegten Artikeln der Probe), dann der Bau
+  let lv = { status: null, stdout: '', stderr: '' };
+  if (welt && welt.laneVerbenlauf && b.status === 0) {
+    lv = spawnSync(process.execPath, [path.join(HIER, 'ersatz-lane.mjs'), '--verben'], { encoding: 'utf8', env: umgebung });
+    if (lv.status === 0) b = bau();
+  }
   // Abschnitt 13: der Lauf, der die fehlenden Wurzelseiten holen würde — hier OHNE --holen, er liest nur die Liste des Baus
   const sl = welt && welt.laneSeitenlauf && b.status === 0 ? spawnSync(process.execPath, [path.join(HIER, 'ersatz-lane.mjs'), '--seiten'], { encoding: 'utf8', env: umgebung }) : { status: null, stdout: '', stderr: '' };
   const lies = (name, sonst) => { const d = path.join(repo, 'data-ersatz', name); try { return fs.existsSync(d) ? JSON.parse(fs.readFileSync(d, 'utf8')) : sonst; } catch { return sonst; } };
@@ -109,7 +119,7 @@ function probe(hand = {}, welt = null) {
   let karten = [];
   if (fs.existsSync(kartenDatei)) { const m = fs.readFileSync(kartenDatei, 'utf8').match(/=\s*(\[[\s\S]*\])\s*;?\s*$/); if (m) karten = JSON.parse(m[1]); }
   const aus = { codeZ: z.status, codeB: b.status, codeL: l.status, text: (z.stdout || '') + (z.stderr || '') + (l.stdout || '') + (l.stderr || '') + (b.stdout || '') + (b.stderr || ''), belege: lies('belege-' + ziel + '.json', {}), nichtGefunden: lies('nicht-gefunden.json', []), karten, lane: lies(path.join('arbeit', 'lane-wurzeln.json'), {}).eintraege || {},
-    fehlend: lies(path.join('arbeit', 'lane-fehlende-seiten.json'), {}).schluessel || null, codeS: sl.status, seitenText: (sl.stdout || '') + (sl.stderr || '') };
+    fehlend: lies(path.join('arbeit', 'lane-fehlende-seiten.json'), {}).schluessel || null, codeS: sl.status, seitenText: (sl.stdout || '') + (sl.stderr || ''), codeV: lv.status, verbenText: (lv.stdout || '') + (lv.stderr || ''), laneVerben: lies(path.join('arbeit', 'lane-verben.json'), {}).eintraege || {} };
   fs.rmSync(repo, { recursive: true, force: true });
   return aus;
 }
@@ -898,6 +908,9 @@ pruefe('Das Wort selbst: nennt die bisherige Karte als Mehrzahl ein anderes Wort
 //          dieselbe wie die Liste) → die Gegenwart der Quelle bleibt (nur Lücken werden gefüllt), und es gibt keinen Befehl
 //     214  zwei gleich geschriebene Lemmata mit verschiedener Gegenwart, kein Schlüssel → offen, gezählt
 //     215  verdoppeltes Verb → Befehl in der zusammengezogenen Form
+//     216  zwei gleich geschriebene Lemmata mit verschiedener Gegenwart, kein Schlüssel — aber die Karte hat einen
+//          Eintrag im Wörterbuch mit englischer Bedeutung → es gilt das Lemma, dessen englische Bedeutung ein Wort
+//          damit teilt (in der Liste steht es an ZWEITER Stelle; „das erste" wäre falsch)
 const HAMZA_U = 0x0625;
 const VF = {
   yajlisuAnders: G.yajlusu,
@@ -912,6 +925,7 @@ const VF = {
   rakiba: cp(RA, FATHA, KAF, KASRA, BA, FATHA), yarkubu: cp(YA, FATHA, RA, SUKUN, KAF, DAMMA, BA, DAMMA), yarkabu: cp(YA, FATHA, RA, SUKUN, KAF, FATHA, BA, DAMMA),
   malaka: cp(MIM, FATHA, LAM, FATHA, KAF, FATHA),
   madda: cp(MIM, FATHA, DAL, FATHA, SHADDA), yamuddu: cp(YA, FATHA, MIM, DAMMA, DAL, DAMMA, SHADDA), mudda: cp(MIM, DAMMA, DAL, FATHA, SHADDA),
+  hamala: cp(HAA, FATHA, MIM, FATHA, LAM, FATHA), hamalaNackt: cp(HAA, MIM, LAM), yahmilu: cp(YA, FATHA, HAA, SUKUN, MIM, KASRA, LAM, DAMMA), ihmil: cp(ALIF, KASRA, HAA, SUKUN, MIM, KASRA, LAM, SUKUN),
 };
 const verbKarte = (id, ar, de, mehr = {}) => ({ id, ar, de, type: 'verb', chapter: 1, ...leer, past: ar, ...mehr });
 const WELT14 = {
@@ -923,9 +937,10 @@ const WELT14 = {
     verbKarte('209', VF.ajlasa, 'setzen lassen'), verbKarte('210', VF.bana, 'bauen', { present: VF.yabni, imperative: IJLIS }),
     verbKarte('211', VF.qala, 'sagen', { present: VF.yaqulu, imperative: IJLIS }), verbKarte('212', VF.darasa, 'lernen', { present: VF.yadrusu, imperative: IJLIS }),
     verbKarte('213', VF.rakiba, 'reiten', { present: VF.yarkabu, imperative: IJLIS }), verbKarte('214', VF.malaka, 'besitzen'),
-    verbKarte('215', VF.madda, 'ausstrecken', { present: VF.yamuddu, imperative: IJLIS }),
+    verbKarte('215', VF.madda, 'ausstrecken', { present: VF.yamuddu, imperative: IJLIS }), verbKarte('216', VF.hamala, 'tragen'),
   ],
-  woerterbuch: [], englischDeutsch: [],
+  // nur Karte 216 hat einen Eintrag im Wörterbuch (ohne Gegenwart): von dort kommt ihre englische Bedeutung
+  woerterbuch: [verb(VF.hamalaNackt, VF.hamala, 'carry')], englischDeutsch: [{ w: 'carry', pos: 'verb', k: [{ sinn: 'Probe', de: ['tragen'] }] }],
   bama: [
     ';--- ktb', ';; katab-u_1', 'ktb\tkatab\tPV\twrite', 'ktb\tkotub\tIV\twrite', 'ktb\tkotab\tIV_Pass_yu\tbe written',
     ';--- jls', ';; jalas-i_1', 'jls\tjalas\tPV\tsit', 'jls\tjolis\tIV\tsit', ';; >ajolas_1', '>jls\t>ajolas\tPV\tseat', 'jls\tjolis\tIV\tseat',
@@ -940,6 +955,7 @@ const WELT14 = {
     ';--- qwl', ';; qAl-u_1', 'qAl\tqAl\tPV_V\tsay', 'ql\tqul\tPV_C\tsay', 'qwl\tquwl\tIV_V\tsay', 'ql\tqul\tIV_C\tsay',
     ';--- rkb', ';; rakib-a_1', 'rkb\trakib\tPV\tride', 'rkb\trokab\tIV\tride',
     ';--- mlk', ';; malak-i_1', 'mlk\tmalak\tPV\town', 'mlk\tmolik\tIV\town', ';; malak-u_1', 'mlk\tmalak\tPV\trule', 'mlk\tmoluk\tIV\trule',
+    ';--- Hml', ';; Hamal-u_1', 'Hml\tHamal\tPV\tattack', 'Hml\tHomul\tIV\tattack', ';; Hamal-i_1', 'Hml\tHamal\tPV\tcarry', 'Hml\tHomil\tIV\tcarry',
     ';--- mdd', ';; mad~-u_1', 'md\tmad~\tPV_V\textend', 'mdd\tmadad\tPV_C\textend', 'md\tmud~\tIV_V\textend', 'mdd\tmodud\tIV_C\textend',
   ],
 };
@@ -955,7 +971,7 @@ const vfB = (id, f) => feldBeleg(wvf, id, f);
 const zeigV = id => 'Karte ' + id + ': Gegenwart ' + JSON.stringify(feldAuf(wvf, id, 'present')) + ' · Befehl ' + JSON.stringify(feldAuf(wvf, id, 'imperative')) + ' · Verbalsubstantiv ' + JSON.stringify(feldAuf(wvf, id, 'masdar')) + ' · ' + JSON.stringify([vfB(id, 'present').q, vfB(id, 'imperative').q, vfB(id, 'masdar').q]) + ' · ' + String(vfB(id, 'present').wo || vfB(id, 'masdar').wo || '').slice(0, 260);
 const vfZeile = () => (wvf.text.split('\n').find(z => /Verbformen aus Buckwalters Stammliste/.test(z)) || '(keine Zeile)').slice(0, 520);
 const vfIst = (id, f, wert, q) => feldAuf(wvf, id, f) === wert && vfB(id, f).q === q;
-pruefe('Verbformen aus der Stammliste: die Probe läuft durch, alle fünfzehn Plätze sind belegt', wvf.codeZ === 0 && wvf.codeB === 0 && wvf.karten.length === 15, 'Exit ' + wvf.codeZ + ' / ' + wvf.codeB + ', Karten ' + wvf.karten.map(k => k.id).join(',') + ': ' + wvf.text.trim().split('\n').slice(-3).join(' | ').slice(0, 400));
+pruefe('Verbformen aus der Stammliste: die Probe läuft durch, alle sechzehn Plätze sind belegt', wvf.codeZ === 0 && wvf.codeB === 0 && wvf.karten.length === 16, 'Exit ' + wvf.codeZ + ' / ' + wvf.codeB + ', Karten ' + wvf.karten.map(k => k.id).join(',') + ': ' + wvf.text.trim().split('\n').slice(-3).join(' | ').slice(0, 400));
 pruefe('Verbformen: die Gegenwart ist Vorsilbe + Stamm der Liste + Endung — im Beleg Lemma, Zeile, Kategorie, und dass Claude es zusammengesetzt hat', vfIst('201', 'present', YAKTUBU, 'bama-gegenwart') && /Lemma „katab-u_1“ \(englisch „write“\): Zeile „kotub“ der Kategorie IV — der Stamm der Gegenwart; Vorsilbe ya- nach der Kategorie, Endung -u/.test(vfB('201', 'present').wo || '') && /Zusammengesetzt hat es Claude/.test(vfB('201', 'present').wo || ''), zeigV('201'));
 pruefe('Verbformen: der Befehl ist nach der Regel gebildet (Verbindungs-Alif mit u, weil der Stammvokal u ist) — der Beleg sagt, dass es eine Regel ist und keine Quelle; das fremde Wort der bisherigen Karte steht nicht da', vfIst('201', 'imperative', G.uktub, 'bama-befehl') && /Nach der Regel der Grammatik aus dem Stamm der Gegenwart gebildet — eine Regel von Claude, keine Angabe einer Quelle/.test(vfB('201', 'imperative').wo || ''), zeigV('201'));
 pruefe('Verbformen: die Grundform hat kein Muster für das Verbalsubstantiv — das Feld bleibt offen', feldAuf(wvf, '201', 'masdar') === null && feldAuf(wvf, '211', 'masdar') === null, zeigV('201'));
@@ -972,10 +988,101 @@ pruefe('Verbalsubstantiv: steht das Nomen mit dem Muster unter einer ANDEREN Wur
 pruefe('Verbformen: trägt die Zeile der Liste eine Kategorie, deren Vorsilbe nicht zur Bauform passt (Form IV ohne _yu), gibt es keine Gegenwart', feldAuf(wvf, '209', 'present') === null && feldAuf(wvf, '209', 'imperative') === null, zeigV('209'));
 pruefe('Verbformen: schwacher Schluss — die Gegenwart steht ohne Endung da (der Beleg sagt es), der Befehl mit kurzem Vokal und Verbindungs-Alif', vfIst('210', 'present', VF.yabni, 'bama-gegenwart') && /keine Endung \(schwacher Schluss\)/.test(vfB('210', 'present').wo || '') && vfIst('210', 'imperative', VF.ibni, 'bama-befehl'), zeigV('210'));
 pruefe('Verbformen: hohles Verb — die Gegenwart aus dem langen Stamm, der Befehl aus dem kurzen', vfIst('211', 'present', VF.yaqulu, 'bama-gegenwart') && vfIst('211', 'imperative', VF.qul, 'bama-befehl'), zeigV('211'));
-pruefe('Verbformen: „leer" von Hand nimmt die Gegenwart heraus, und ohne Gegenwart gibt es keinen Befehl — der Bau nennt die Zahlen ohne diese Karte', feldAuf(wvf, '212', 'present') === null && feldAuf(wvf, '212', 'imperative') === null && /Gegenwart an 10 Verben, Befehl nach der Regel an 9, Verbalsubstantiv an 1 \(dazu nur nach dem Muster, wo die bisherige Karte dasselbe führt: 1\)/.test(wvf.text), zeigV('212') + ' · ' + vfZeile());
+pruefe('Verbformen: „leer" von Hand nimmt die Gegenwart heraus, und ohne Gegenwart gibt es keinen Befehl — der Bau nennt die Zahlen ohne diese Karte', feldAuf(wvf, '212', 'present') === null && feldAuf(wvf, '212', 'imperative') === null && /Gegenwart an 11 Verben, Befehl nach der Regel an 10, Verbalsubstantiv an 1 \(dazu nur nach dem Muster, wo die bisherige Karte dasselbe führt: 1\)/.test(wvf.text), zeigV('212') + ' · ' + vfZeile());
 pruefe('Verbformen: hat die Karte schon eine Gegenwart aus ihrer Quelle und nennt die Liste eine andere, bleibt die Gegenwart der Quelle und es gibt keinen Befehl', feldAuf(wvf, '213', 'present') === VF.yarkubu && vfB('213', 'present').q === 'bama' && feldAuf(wvf, '213', 'imperative') === null, zeigV('213'));
 pruefe('Verbformen: zwei gleich geschriebene Lemmata mit verschiedener Gegenwart und kein Schlüssel — das Feld bleibt offen, und der Bau zählt es', feldAuf(wvf, '214', 'present') === null && /1 Gegenwart \(gleich geschriebene Lemmata nennen Verschiedenes\)/.test(wvf.text), zeigV('214') + ' · ' + vfZeile());
 pruefe('Verbformen: ein verdoppeltes Verb bekommt den Befehl in der zusammengezogenen Form', vfIst('215', 'present', VF.yamuddu, 'bama-gegenwart') && vfIst('215', 'imperative', VF.mudda, 'bama-befehl'), zeigV('215'));
+pruefe('Verbformen: zwei gleich geschriebene Lemmata, kein Schlüssel, aber die Karte hat eine englische Bedeutung aus dem Wörterbuch — es gilt das Lemma, dessen Bedeutung ein Wort damit teilt (nicht das erste der Liste), und der Beleg sagt es', vfIst('216', 'present', VF.yahmilu, 'bama-gegenwart') && vfIst('216', 'imperative', VF.ihmil, 'bama-befehl') && /Lemma „Hamal-i_1“ \(englisch „carry“\)/.test(vfB('216', 'present').wo || '') && /Unter 2 gleich geschriebenen Lemmata das, dessen englische Bedeutung ein Wort mit der Bedeutung der Karte teilt/.test(vfB('216', 'present').wo || ''), zeigV('216') + ' · ' + String(vfB('216', 'present').wo || '').slice(0, 300));
+
+// 18. Verbalsubstantiv aus Lanes Lexikon (13.10.2026, ersatz-lane.mjs --verben, laneVerbalsubstantive in
+//     ersatz-bama-lib.mjs, verbalsubstantivAusLane in ersatz-bauen.mjs; Leser und Regel von Claude). Die bisherige Karte
+//     ist Schlüssel und Einspruch, nie Quelle. Die Probe legt Wurzelseiten und Artikel ab, wie die echte Seite sie
+//     druckt („aor." als Marke Present.T, „inf. n." als Marke Verbal.Noun); geholt wird nie etwas.
+//     221  Lane nennt zwei Verbalsubstantive, die bisherige Karte führt das ZWEITE → genau das steht da
+//     222  die bisherige Karte führt ein Wort, das Lane nicht nennt → Einspruch: offen, gezählt
+//     223  die bisherige Karte führt keines → offen, gezählt („das erste, das Lane nennt" wäre geraten)
+//     224  Stichwort mit angehängtem Fürwort; das Wort der Karte steht erst hinter einer Zwischenbemerkung, die auf
+//          „and" endet → Fortsetzung der Aufzählung, der Beleg sagt es
+//     225  das Wort der Karte steht hinter „instead of" → keine Fortsetzung: offen
+//     226  das Wort der Karte steht nur hinter „quasi" → offen
+//     227  das Wort der Karte gehört zu einem ANDEREN Stamm, der im Artikel genannt ist („; and <Stamm II>, inf. n. …") → offen
+//     228  hinter „and" steht im Lauf das VERB selbst; es gliche in der Vergleichsform dem Wort der Karte → zählt nicht: offen
+//     229  ein Eintrag aus einem früheren Lauf, aber die Vergangenheit der Karte ist nicht mehr sein Wort (die
+//          Wurzelseite liegt nicht da, der Lauf kann nicht neu prüfen) → nicht eingetragen, gezählt
+//     230  schwaches Verb: hinter „aor." steht die Gegenwart als Wort (sie ist nicht das Verb, dem die Angabe gilt);
+//          Lane druckt Alif mit Madda vor Hamza und das Ya ohne Punkte → die Karte bekommt beide Wörter in heutiger
+//          Rechtschreibung, mit dem Trennzeichen der bisherigen Karte
+//     231  das Stichwort hat einen anderen Vokal, der Artikel nennt die Vergangenheit der Karte selbst → gilt, der Beleg sagt es
+//     232  das Stichwort hat einen anderen Vokal, und der Artikel nennt die Vergangenheit der Karte nicht → kein Eintrag
+//     233  das Feld ist von Hand leer gesetzt → bleibt leer, gezählt
+const B = ausBW;
+const wz18 = t => [...t].map(c => B(c)).join(' ');
+const LW = w => `<span class="arabic-text arabic-font">${w}</span>`;
+const AOR = v => '<span class="arabic-text-tense arabic-font">Present.T</span> ' + cp(0x0640) + B(v), INF = '<span class="arabic-text-tense arabic-font">Verbal.Noun</span>';
+const FETT = t => `<span class="bold-black">${t}</span>`;
+const laneArtikel = (stichwort, rumpf) => `<html><body><h2>Full Definition</h2>\n<div class="definition-content">\n<span class="display-word">${stichwort}</span><span class="itype circle-verb">I</span><entryFree id="x" key="x" type="main"> ${rumpf} </entryFree>\n</div>\n<h3>Related Words from the Same Root</h3></body></html>\n`;
+const L18 = {
+  jalasa: B('jalasa'), julus: B('juluwsN'), jals: B('jalosN'), fataha: B('fataHa'), fath: B('fatoHN'), kataba: B('kataba'), kitaba: B('kitaAbapN'),
+  sakana: B('sakana'), sakanahu: B('sakanahu'), sukun: B('sukuwnN'), sakan: B('sakanN'), darasa: B('darasa'), dars: B('darosN'), dirasa: B('diraAsapN'),
+  rasama: B('rasama'), rusum: B('rusuwmN'), rasm: B('rasomN'), kafara: B('kafara'), kaffarahu: B('kaf~arahu'), kufr: B('kuforN'), takfir: B('takofiyrN'),
+  malaka: B('malaka'), mulk: B('mulokN'), malak: B('malakN'), nazala: B('nazala'), nazila: B('nazila'), nuzul: B('nuzuwlN'),
+  bana: B('banaY'), yabni: B('yaboniY'), binaLane: B("bina|'N"), banyLane: B('banoYN'), bina: B("binaA'N"), bany: B('banoyN'),
+  rakiba: B('rakiba'), rakaba: B('rakaba'), rukub: B('rukuwbN'), xaraja: B('xaraja'), xarija: B('xarija'), xuruj: B('xuruwjN'), dhahaba: B('*ahaba'), dhahab: B('*ahaAbN'),
+};
+const WELT15 = {
+  karten: [
+    verbKarte('221', L18.jalasa, 'sitzen', { root: wz18('jls'), masdar: L18.julus }), verbKarte('222', L18.fataha, 'öffnen', { root: wz18('ftH'), masdar: W.kitab + UN }),
+    verbKarte('223', L18.kataba, 'schreiben', { root: wz18('ktb') }), verbKarte('224', L18.sakana, 'wohnen', { root: wz18('skn'), masdar: L18.sakan }),
+    verbKarte('225', L18.darasa, 'lernen', { root: wz18('drs'), masdar: L18.dirasa }), verbKarte('226', L18.rasama, 'zeichnen', { root: wz18('rsm'), masdar: L18.rasm }),
+    verbKarte('227', L18.kafara, 'leugnen', { root: wz18('kfr'), masdar: L18.takfir }), verbKarte('228', L18.malaka, 'besitzen', { root: wz18('mlk'), masdar: L18.malak }),
+    verbKarte('229', L18.nazala, 'absteigen', { root: wz18('nzl'), masdar: L18.nuzul }), verbKarte('230', L18.bana, 'bauen', { root: wz18('bny'), masdar: L18.bina + ' / ' + L18.bany }),
+    verbKarte('231', L18.rakiba, 'reiten', { root: wz18('rkb'), masdar: L18.rukub }), verbKarte('232', L18.xaraja, 'hinausgehen', { root: wz18('xrj'), masdar: L18.xuruj }),
+    verbKarte('233', L18.dhahaba, 'gehen', { root: wz18('*hb'), masdar: L18.dhahab }),
+  ],
+  woerterbuch: [], englischDeutsch: [],
+  laneSeiten: {
+    jls: [['n221', L18.jalasa + ' Form 1']], ftH: [['n222', L18.fataha + ' Form 1']], ktb: [['n223', L18.kataba + ' Form 1']], skn: [['n224', L18.sakanahu + ' Form 1']],
+    drs: [['n225', L18.darasa + ' Form 1']], rsm: [['n226', L18.rasama + ' Form 1']], kfr: [['n227', L18.kafara + ' Form 1']], mlk: [['n228', L18.malaka + ' Form 1']],
+    bnY: [['n230', L18.bana + ' Form 1']], rkb: [['n231', L18.rakaba + ' Form 1']], xrj: [['n232', L18.xarija + ' Form 1']], '*hb': [['n233', L18.dhahaba + ' Form 1']],
+  },
+  laneArtikel: {
+    n221: laneArtikel(L18.jalasa, `, ${AOR('i')} ${INF} ${LW(L18.jals)} and ${LW(L18.julus)}, ${FETT('He sat.')}`),
+    n222: laneArtikel(L18.fataha, `, ${AOR('a')} ${INF} ${LW(L18.fath)}, ${FETT('He opened it.')}`),
+    n223: laneArtikel(L18.kataba, `, ${AOR('u')} ${INF} ${LW(L18.kitaba)}, ${FETT('He wrote.')}`),
+    n224: laneArtikel(L18.sakanahu, `, ${AOR('u')} ${INF} ${LW(L18.sukun)}, or this is a simple subst., and ${LW(L18.sakan)}, ${FETT('He dwelt in it.')}`),
+    n225: laneArtikel(L18.darasa, `, ${AOR('u')} ${INF} ${LW(L18.dars)}, instead of ${LW(L18.dirasa)}, ${FETT('He studied.')}`),
+    n226: laneArtikel(L18.rasama, `, ${AOR('u')} ${INF} ${LW(L18.rusum)}, and quasi ${INF} ${LW(L18.rasm)}, ${FETT('He drew.')}`),
+    n227: laneArtikel(L18.kafara, `, ${AOR('u')} ${INF} ${LW(L18.kufr)}; and ${LW(L18.kaffarahu)}, ${INF} ${LW(L18.takfir)}, ${FETT('He covered it.')}`),
+    n228: laneArtikel(L18.malaka, `, ${AOR('i')} ${INF} ${LW(L18.mulk)} and ${LW(L18.malaka)}, ${FETT('He possessed it.')}`),
+    n230: laneArtikel(L18.bana, `, <span class="arabic-text-tense arabic-font">Present.T</span> ${LW(L18.yabni)}, ${INF} ${LW(L18.binaLane)} and ${LW(L18.banyLane)}, ${FETT('He built.')}`),
+    n231: laneArtikel(L18.rakaba, `, and ${LW(L18.rakiba)}, ${AOR('a')} ${INF} ${LW(L18.rukub)}, ${FETT('He rode.')}`),
+    n232: laneArtikel(L18.xarija, `, ${AOR('a')} ${INF} ${LW(L18.xuruj)}, ${FETT('He went out.')}`),
+    n233: laneArtikel(L18.dhahaba, `, ${AOR('a')} ${INF} ${LW(L18.dhahab)}, ${FETT('He went.')}`),
+  },
+  laneVerben: { 229: { ar: L18.nazila, bw: 'nzl', nr: 'n229', form: 1, stichwort: L18.nazila, wie: 'gleich', verbalsubstantive: [L18.nuzul], fortsetzung: [], abgelegt: '2026-10-13' } },
+  laneVerbenlauf: true,
+};
+const w18 = probe({
+  221: vH(L18.jalasa, 'sitzen'), 222: vH(L18.fataha, 'öffnen'), 223: vH(L18.kataba, 'schreiben'), 224: vH(L18.sakana, 'wohnen'), 225: vH(L18.darasa, 'lernen'), 226: vH(L18.rasama, 'zeichnen'),
+  227: vH(L18.kafara, 'leugnen'), 228: vH(L18.malaka, 'besitzen'), 229: vH(L18.nazala, 'absteigen'), 230: vH(L18.bana, 'bauen'), 231: vH(L18.rakiba, 'reiten'), 232: vH(L18.xaraja, 'hinausgehen'),
+  233: { ...vH(L18.dhahaba, 'gehen'), leer: ['masdar'] },
+}, WELT15);
+const m18 = id => feldAuf(w18, id, 'masdar'), b18 = id => feldBeleg(w18, id, 'masdar');
+const zeig18 = id => 'Karte ' + id + ': Verbalsubstantiv ' + JSON.stringify(m18(id)) + ' (' + (b18(id).q || '—') + ') · Eintrag ' + JSON.stringify(w18.laneVerben[id] || null).slice(0, 260);
+const zeile18 = () => (w18.text.split('\n').find(z => /Verbalsubstantiv aus Lanes Lexikon/.test(z)) || '(keine Zeile)').slice(0, 640);
+pruefe('Verbalsubstantiv aus Lane: die Probe läuft durch (Zuordner, Bau, Lauf --verben, Bau), alle dreizehn Plätze sind belegt, geholt wird nichts', w18.codeZ === 0 && w18.codeB === 0 && w18.codeV === 0 && w18.karten.length === 13 && /neu geholte Seiten: 0 \(ohne --holen/.test(w18.verbenText), 'Exit ' + w18.codeZ + ' / ' + w18.codeB + ' / ' + w18.codeV + ', Karten ' + w18.karten.length + ' · ' + w18.verbenText.trim().split('\n')[0].slice(0, 300) + ' · ' + w18.text.trim().split('\n').slice(-2).join(' | ').slice(0, 300));
+pruefe('Verbalsubstantiv aus Lane: nennt Lane zwei, steht das da, das die bisherige Karte führt (nicht das erste) — Quelle „lane", der Beleg nennt Artikel, Stamm, Wurzel, „unmittelbar hinter inf. n." und dass die bisherige Karte nur Schlüssel und Einspruch ist', m18('221') === L18.julus && b18('221').q === 'lane' && /im Artikel des Verbstamms „.+“ \(n221, Stamm 1\) unter der Wurzel/.test(b18('221').wo || '') && /unmittelbar hinter „inf\. n\.“/.test(b18('221').wo) && /Lane nennt dort 2 Verbalsubstantive; genommen ist, was auch die bisherige Karte führt \(sie ist nur Schlüssel und Einspruch\)/.test(b18('221').wo), zeig18('221') + ' · ' + String(b18('221').wo || '').slice(0, 300));
+pruefe('Verbalsubstantiv aus Lane: führt die bisherige Karte ein Wort, das Lane nicht nennt, bleibt das Feld offen (Einspruch)', m18('222') === null && !!w18.laneVerben['222'], zeig18('222'));
+pruefe('Verbalsubstantiv aus Lane: führt die bisherige Karte keines, bleibt das Feld offen — „das erste, das Lane nennt" wird nicht genommen', m18('223') === null && !!w18.laneVerben['223'], zeig18('223'));
+pruefe('Verbalsubstantiv aus Lane: das Wort hinter einer Zwischenbemerkung, die auf „and" endet, ist die Fortsetzung der Aufzählung — es gilt, und der Beleg sagt „nach einer Zwischenbemerkung"; das Stichwort mit angehängtem Fürwort ist derselbe Stamm', m18('224') === L18.sakan && b18('224').q === 'lane' && /in der Aufzählung hinter „inf\. n\.“ \(Verbalsubstantiv\), nach einer Zwischenbemerkung Lanes/.test(b18('224').wo || '') && /Lane druckt das Stichwort mit angehängtem Fürwort/.test(b18('224').wo), zeig18('224') + ' · ' + String(b18('224').wo || '').slice(0, 300));
+pruefe('Verbalsubstantiv aus Lane: ein Wort hinter „instead of" ist keine Fortsetzung der Aufzählung — das Feld bleibt offen', m18('225') === null && JSON.stringify((w18.laneVerben['225'] || {}).fortsetzung) === '[]' && ((w18.laneVerben['225'] || {}).verbalsubstantive || []).length === 1, zeig18('225'));
+pruefe('Verbalsubstantiv aus Lane: ein Wort hinter „quasi" (Lanes quasi-inf. n.) zählt nicht — das Feld bleibt offen', m18('226') === null && ((w18.laneVerben['226'] || {}).verbalsubstantive || []).length === 1, zeig18('226'));
+pruefe('Verbalsubstantiv aus Lane: eine Angabe, die einem ANDEREN Stamm im selben Artikel gilt, zählt nicht — das Feld bleibt offen', m18('227') === null && ((w18.laneVerben['227'] || {}).verbalsubstantive || []).length === 1, zeig18('227'));
+pruefe('Verbalsubstantiv aus Lane: ein VERB im Lauf zählt nicht, auch wenn es in der Vergleichsform dem Wort der bisherigen Karte gleicht — das Feld bleibt offen', m18('228') === null && ((w18.laneVerben['228'] || {}).verbalsubstantive || []).length === 1, zeig18('228'));
+pruefe('Verbalsubstantiv aus Lane: ein Eintrag, dessen Wort nicht mehr die Vergangenheit der Karte ist, wird nicht eingetragen (der Lauf konnte nicht neu prüfen und lässt ihn stehen)', m18('229') === null && !!w18.laneVerben['229'] && /"nichtGeprueft":1/.test(w18.verbenText), zeig18('229') + ' · ' + w18.verbenText.trim().split('\n')[0].slice(0, 200));
+pruefe('Verbalsubstantiv aus Lane: die Gegenwart hinter „aor." ist nicht das Verb, dem die Angabe gilt; Alif mit Madda vor Hamza und das Ya ohne Punkte stehen auf der Karte in heutiger Rechtschreibung, beide Wörter mit dem Trennzeichen der bisherigen Karte', m18('230') === L18.bina + ' / ' + L18.bany && b18('230').q === 'lane' && /jedes dieser Wörter unmittelbar hinter „inf\. n\.“/.test(b18('230').wo || '') && /Geschrieben in heutiger Rechtschreibung/.test(b18('230').wo), zeig18('230'));
+pruefe('Verbalsubstantiv aus Lane: hat das Stichwort einen anderen Vokal, gilt der Artikel nur, wenn er die Vergangenheit der Karte selbst nennt — der Beleg sagt es', m18('231') === L18.rukub && /das Stichwort hat andere oder keine Vokalzeichen, der Artikel nennt die Vergangenheit der Karte selbst/.test(b18('231').wo || '') && m18('232') === null && !w18.laneVerben['232'] && /"andereVokale":1/.test(w18.verbenText), zeig18('231') + ' · ' + zeig18('232') + ' · ' + w18.verbenText.trim().split('\n')[0].slice(0, 200));
+pruefe('Verbalsubstantiv aus Lane: ein Feld, das von Hand leer gesetzt ist, bleibt leer — und der Bau nennt alle Zahlen', m18('233') === null && /4 eingetragen \(davon 1 aus der Fortsetzung der Aufzählung hinter einer Zwischenbemerkung\) · offen gelassen: 1, weil das Feld von Hand leer gesetzt ist, 5, weil Lane keines der Wörter der bisherigen Karte nennt, 1, weil die bisherige Karte keines führt, 1, weil die Vergangenheit der Karte nicht mehr das Wort des Eintrags ist · 0 übergangen, weil eine andere Quelle es nennt \(von 12 Einträgen/.test(w18.text), zeig18('233') + ' · ' + zeile18());
 
 const gut = faelle.filter(f => f.ok).length;
 for (const f of faelle) if (!f.ok) console.log(`  ✗ ${f.name}\n      bekommen: ${f.was}`);

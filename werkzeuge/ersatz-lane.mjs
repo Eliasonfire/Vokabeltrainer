@@ -60,6 +60,29 @@
  * Er trägt nichts ein und entscheidet nichts: danach baut man neu, und der Bau liest die Ablage. Die Bauart stammt von
  * Claude.
  *
+ * Fünfter Gebrauch (--verben, seit dem 13.10.2026): was Lane im Artikel eines VERBSTAMMS als Verbalsubstantiv nennt
+ * (sein „inf. n."). Anlass: 65 Verbkarten der Ersatzdatenbank trugen kein Verbalsubstantiv, 58 davon hat der Bestand;
+ * die Grundform hat dafür kein festes Muster, und weder die Stammliste noch arabdict nennen es. Die Bauart stammt von
+ * Claude:
+ *   · Suchwort ist die Vergangenheit der ERSATZkarte. Der Weg zur Wurzelseite sind die Schlüssel aus der Wurzel der
+ *     Ersatzkarte, der Wurzel der bisherigen Karte (nur als Weg) und der Wurzelzeile gleich geschriebener Verben der
+ *     Stammliste.
+ *   · Der Verbstamm gilt als gefunden, wenn die Wurzelseite ihn als „… Form N" mit denselben Vokalzeichen nennt (auch
+ *     mit angehängtem Fürwort oder in der weiblichen Form, so druckt Lane manche Verben). Hat das Stichwort dieselben
+ *     Buchstaben, aber andere oder keine Vokalzeichen, zählt der Artikel nur, wenn er die Vergangenheit der Karte mit
+ *     ihren Vokalzeichen selbst nennt („im Artikel").
+ *   · Gelesen wird der Artikel mit laneVerbalsubstantive (ersatz-bama-lib.mjs): je „inf. n." die Wörter, die
+ *     unmittelbar folgen. Läufe hinter „quasi" zählen nicht.
+ * Das Ergebnis steht in data-ersatz/arbeit/lane-verben.json ({ eintraege: { <Kennung>: { ar, bw, nr, form, stichwort,
+ * wie, verbalsubstantive: [...], abgelegt } } }). Dieser Lauf entscheidet NICHT, welches der Wörter auf die Karte kommt:
+ * das tut ersatz-bauen.mjs, und dort ist die bisherige Karte Schlüssel und Einspruch (Lane beginnt einen Artikel oft
+ * mit einer anderen Bedeutung des Verbs, als die Karte meint — gemessen an „wohnen": Lane nennt zuerst das
+ * Verbalsubstantiv von „ruhig sein"). Je Lauf wird zusammengeführt wie bei --wurzeln.
+ * Mit --eichen N sieht der Lauf zusätzlich bei N Verben nach, deren Verbalsubstantiv das Wiktionary nennt und deren
+ * erster Verbstamm auf einer schon abgelegten Wurzelseite steht (gleichmäßig über alle solchen Karten verteilt), und
+ * die Ausgabe zählt, wie oft und an welcher Stelle Lane dasselbe Wort nennt — das Eichmaß des Lesers. Für diese
+ * Karten entsteht kein Eintrag.
+ *
  * Aufruf (aus dem Repo-Wurzelverzeichnis):
  *   node werkzeuge/ersatz-lane.mjs --seiten [--holen] [--max N] [--aus <datei>]
  *   ohne --aus: data-ersatz/arbeit/lane-seiten.txt
@@ -68,11 +91,13 @@
  *   node werkzeuge/ersatz-lane.mjs --wurzeln [--ids 123,456] [--holen] [--max N] [--aus <datei>]
  *   ohne --ids: die Plätze, denen laut data-ersatz/unterschiede.json die Wurzel fehlt · --max: höchstens so viele
  *   Abrufe in diesem Lauf (Vorgabe 400) · ohne --aus: data-ersatz/arbeit/lane-wurzeln.txt
+ *   node werkzeuge/ersatz-lane.mjs --verben [--ids 123,456] [--eichen N] [--holen] [--max N] [--aus <datei>]
+ *   ohne --ids: die Verbkarten der Ersatzdatenbank ohne Verbalsubstantiv · ohne --aus: data-ersatz/arbeit/lane-verben.txt
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ladeBuch, BUECHER, vergleich, geruest, ausBW, hatVokalzeichen, wurzelnAus, wurzelSchluessel, wurzelWert, laneDateiname, laneVerweise, laneFuehrtWurzel } from './ersatz-bama-lib.mjs';
+import { ladeBuch, BUECHER, vergleich, geruest, ausBW, nachBW, hatVokalzeichen, wurzelnAus, wurzelSchluessel, wurzelWert, laneDateiname, laneVerweise, laneFuehrtWurzel, laneArtikelStuecke, laneVerbalsubstantive, laneVergleich, ladeBama, standardDatei } from './ersatz-bama-lib.mjs';
 import { liesListe } from './datenquelle.mjs';
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
@@ -87,11 +112,13 @@ const KOPF = { 'User-Agent': 'Mozilla/5.0 (privates Lernprojekt; einzelne Seiten
 const args = process.argv.slice(2);
 const wert = name => { const i = args.indexOf(name); return i >= 0 ? args[i + 1] : undefined; };
 const HOLEN = args.includes('--holen'), FORMEN = args.includes('--formen'), OHNE_TABELLE = args.includes('--ohne-tabelle');
-const WURZELN = args.includes('--wurzeln'), SEITENLAUF = args.includes('--seiten');
+const WURZELN = args.includes('--wurzeln'), SEITENLAUF = args.includes('--seiten'), VERBEN = args.includes('--verben');
+const EICHEN = Number(wert('--eichen') || 0);
 const MAX = Number(wert('--max') || 45);
 const MAX_ABRUFE = Number(wert('--max') || 400);
-const ZIEL = wert('--aus') || path.join(ERSATZ, 'arbeit', WURZELN ? 'lane-wurzeln.txt' : SEITENLAUF ? 'lane-seiten.txt' : 'lane.txt');
+const ZIEL = wert('--aus') || path.join(ERSATZ, 'arbeit', WURZELN ? 'lane-wurzeln.txt' : SEITENLAUF ? 'lane-seiten.txt' : VERBEN ? 'lane-verben.txt' : 'lane.txt');
 const WURZELDATEI = path.join(ERSATZ, 'arbeit', 'lane-wurzeln.json');
+const VERBDATEI = path.join(ERSATZ, 'arbeit', 'lane-verben.json');
 const FEHLENDE_SEITEN = path.join(ERSATZ, 'arbeit', 'lane-fehlende-seiten.json');
 const OHNE_SEITE = path.join(ERSATZ, 'quellen', 'lane', 'ohne-seite.json');
 const schreibe = (datei, text) => { fs.mkdirSync(path.dirname(datei), { recursive: true }); fs.writeFileSync(datei + '.neu', text, 'utf8'); fs.renameSync(datei + '.neu', datei); };
@@ -133,7 +160,7 @@ async function hole(url, datei, merkName) {
   if (fs.existsSync(datei)) return { text: fs.readFileSync(datei, 'utf8'), woher: 'Ablage', bekannt: true, datei };
   if (merkName && ohneSeite[merkName]) return { text: '', woher: 'keine Seite (gemerkt ' + ohneSeite[merkName] + ')', bekannt: true };
   if (!HOLEN || abbruch) return { text: '', woher: 'nicht geholt', bekannt: false };
-  if ((WURZELN || SEITENLAUF) && abrufe >= MAX_ABRUFE) { grenze = true; return { text: '', woher: 'nicht geholt (Grenze --max)', bekannt: false }; }
+  if ((WURZELN || SEITENLAUF || VERBEN) && abrufe >= MAX_ABRUFE) { grenze = true; return { text: '', woher: 'nicht geholt (Grenze --max)', bekannt: false }; }
   if (!robotsGeprueft) {
     robotsGeprueft = true;
     try {
@@ -323,9 +350,173 @@ async function seitenLauf() {
   }
 }
 
+/* ---------- fünfter Gebrauch (--verben): was Lane als Verbalsubstantiv eines Verbstamms nennt ---------- */
+/* Die Vergleichsform für Verben: wie laneForm, aber ohne den Artikel abzuschneiden (ein Verb trägt keinen), und das
+ * Hamza unter dem Alif am Wortanfang zählt wie das Verbindungs-Alif — so druckt die Seite die Stämme VII bis X
+ * mitunter (gemessen am 13.10.2026: „Form 7" und „Form 10" der Wurzeln $dh und wSf). */
+const HAMZA_UNTEN_VORN = new RegExp('^' + Z(0x625) + Z(0x650) + '?');
+const verbForm = w => nachBW(vergleich(String(w).normalize('NFC').replace(HAMZA_UNTEN_VORN, Z(0x627)).replace(MADDA_VOR_HAMZA, Z(0x627)), { artikelWeg: false }).replaceAll(Z(0x649), Z(0x64A)))
+  .replace(/([aiu])~/g, '~$1');   // NFC stellt den Vokal vor das Verdopplungszeichen; hier steht es wieder am Buchstaben
+/* Das Stichwort eines Verbstamms (oder ein Wort im Artikel) gegen die Vergangenheit der Karte, beide in der Umschrift
+ * von verbForm (ohne den Schlussvokal). Lane druckt ein Verb mit Objekt MIT angehängtem Fürwort, ein wechselseitiges
+ * in der Zweizahl, manche in der weiblichen Form:
+ *   gleich · mit Fürwort (auch hinter langem a: Alif oder Alif maqsura der Karte) · Zweizahl · weiblich
+ * „nur Buchstaben": dieselben Buchstaben (auch mit angehängtem h), aber andere oder keine Vokalzeichen — kein Beleg. */
+const FUERWORT = /^(h|hA|hum|humA|k|niy)$/;
+function stammPasst(stichwort, past) {
+  const a = verbForm(stichwort), b = verbForm(past);
+  if (hatVokalzeichen(stichwort)) {
+    if (a === b) return 'gleich';
+    const stamm = b.endsWith('ay') ? b.slice(0, -2) + 'A' : b.endsWith('A') ? b : b + 'a';
+    if (a.startsWith(stamm) && FUERWORT.test(a.slice(stamm.length))) return 'mit Fürwort';
+    if (a === b + 'A') return 'Zweizahl';
+    if (a === b + 'at') return 'weiblich';
+  }
+  const ga = geruest(stichwort), gb = geruest(past);
+  return ga === gb || ga === gb + Z(0x647) ? 'nur Buchstaben' : '';
+}
+const RANG = { gleich: 0, 'mit Fürwort': 1, Zweizahl: 2, weiblich: 3, 'nur Buchstaben': 4 };
+let _verbenDerListe = null;
+/* Suchschlüssel aus der Stammliste: die Wurzelzeile der Verben, die wie die Karte geschrieben sind (nur als Weg) */
+function stammlisteSchluessel(past) {
+  if (_verbenDerListe === null) {
+    _verbenDerListe = new Map();
+    const datei = standardDatei(REPO);
+    if (fs.existsSync(datei)) for (const l of ladeBama(datei)) if (l.verb) { const s = vergleich(l.ar, { artikelWeg: false }); (_verbenDerListe.get(s) || _verbenDerListe.set(s, []).get(s)).push(l); }
+  }
+  const aus = [];
+  for (const l of _verbenDerListe.get(vergleich(past, { artikelWeg: false })) || []) {
+    const roh = String(l.wurzel || '').replace(/\(\d+\)$/, '');
+    if (!roh || roh.includes('/')) continue;
+    let rad = [...roh].map(c => ("'><&}|".includes(c) ? '>' : c));
+    if (rad.length === 2) rad = [rad[0], rad[1], rad[1]];
+    if (rad.length < 3 || rad.length > 4) continue;
+    aus.push(...wurzelSchluessel(ausBW(rad.join(' '))));
+  }
+  return aus;
+}
+const _belege = new Map();
+const quelleVon = (p, feld) => {
+  if (!_belege.has(p.buch)) _belege.set(p.buch, liesJson(path.join(ERSATZ, 'belege-' + p.buch + '.json'), {}));
+  return ((((_belege.get(p.buch) || {})[p.id] || {}).felder || {})[feld] || {}).q || '';
+};
+const FORMEN_TRENNER = new RegExp('\\s*[,' + Z(0x60C) + ';/|]\\s*');
+function verbPlaetze(eintraege) {
+  const alle = [];
+  for (const buch of BUECHER) for (const [id, k] of ersatzBuch(buch)) if (k.type === 'verb') alle.push({ id, buch, k, eichen: false });
+  const ids = wert('--ids');
+  if (ids) { const will = new Set(ids.split(',').map(s => s.trim()).filter(Boolean)); return alle.filter(p => will.has(p.id)); }
+  // ohne Verbalsubstantiv — oder mit einem, das aus einem Eintrag von hier stammt: der Platz wird dann neu geprüft
+  const offen = alle.filter(p => !voll(p.k.masdar) || (eintraege[p.id] && quelleVon(p, 'masdar') === 'lane'));
+  if (!EICHEN) return offen;
+  // Zum Eichen: Verben, deren Verbalsubstantiv das Wiktionary nennt und deren ERSTER Verbstamm auf einer schon
+  // abgelegten Wurzelseite steht (fürs Eichen wird keine Wurzelseite geholt, nur der Artikel) — gleichmäßig über alle
+  // verteilt, nicht die ersten N
+  const ersterStammAbgelegt = k => {
+    const past = String(voll(k.past) ? k.past : k.ar || '').normalize('NFC').trim();
+    if (!past || /\s/.test(past)) return false;
+    for (const bw of wurzelSchluessel(k.root)) {
+      const datei = path.join(SEITEN, dateiname(bw));
+      if (!fs.existsSync(datei)) continue;
+      for (const v of verweiseVon(fs.readFileSync(datei, 'utf8'))) {
+        const m = v.wort.match(/^(.*?)\s+Form\s+1$/);
+        if (m && !['', 'nur Buchstaben'].includes(stammPasst(m[1].split(' ')[0], past))) return true;
+      }
+    }
+    return false;
+  };
+  const mit = alle.filter(p => voll(p.k.masdar) && quelleVon(p, 'masdar') === 'enwikt' && ersterStammAbgelegt(p.k));
+  const schritt = Math.max(1, Math.floor(mit.length / EICHEN)), wahl = [];
+  for (let i = 0; i < mit.length && wahl.length < EICHEN; i += schritt) wahl.push({ ...mit[i], eichen: true });
+  return [...offen, ...wahl];
+}
+async function verbLauf() {
+  const eintraege = { ...(liesJson(VERBDATEI, {}).eintraege || {}) };
+  const vorher = Object.keys(eintraege).length;
+  let neu = 0, weg = 0;
+  const raus = id => { if (eintraege[id]) { delete eintraege[id]; weg++; } };
+  for (const p of verbPlaetze(eintraege)) {
+    const e = p.k, past = String(voll(e.past) ? e.past : e.ar || '').normalize('NFC').trim();
+    const kopf = (p.eichen ? 'EICHEN ' : '') + p.id + ' ' + String(p.buch).replace('bayna-yadayk-', 'by').replace('madina-', 'm') + ' K' + e.chapter + ' ' + past;
+    const fertig = (art, text, bleibt) => { aus.push(kopf + ' | ' + text); zaehle((p.eichen ? 'eichen: ' : '') + art); if (!p.eichen && !bleibt) raus(p.id); };
+    if (!past || /\s/.test(past)) { fertig('mehrwort', '(mehrere Wörter — nicht nachgesehen)'); continue; }
+    const bisher = (ladeBuch(REPO, p.buch) || new Map()).get(p.id);
+    // Letzter Weg: besteht das Wort aus genau drei Buchstaben, sind sie selbst ein Suchschlüssel (bei einem Verb der
+    // Grundform mit drei festen Radikalen ist das die Wurzel). Auch das ist nur der WEG zur Seite; Beleg bleibt, was
+    // die Seite druckt.
+    const genannt = [...new Set([...wurzelSchluessel(e.root), ...wurzelSchluessel(bisher && bisher.root), ...stammlisteSchluessel(past)])];
+    const schluessel = genannt.length ? genannt : [...geruest(past)].length === 3 ? wurzelSchluessel([...geruest(past)].join(' ')) : [];
+    if (!schluessel.length) { fertig('ohneSchluessel', '(kein Suchschlüssel: keine Wurzel auf der Karte, auf der bisherigen Karte oder in der Stammliste, und das Wort hat nicht drei Buchstaben)'); continue; }
+    let kandidat = null, unbekannt = 0;
+    const info = [];
+    for (const bw of schluessel) {
+      const s = await wurzelseite(bw);
+      if (!s.bekannt) { unbekannt++; info.push(bw + ':' + s.woher); continue; }
+      const verweise = verweiseVon(s.text);
+      info.push(bw + ':' + s.woher + '/' + verweise.length);
+      for (const v of verweise) {
+        const m = v.wort.match(/^(.*?)\s+Form\s+(\d+)$/);
+        if (!m) continue;
+        const wie = stammPasst(m[1].split(' ')[0], past);
+        if (wie && (!kandidat || RANG[wie] < RANG[kandidat.wie])) kandidat = { bw, v, form: Number(m[2]), stichwort: m[1], wie };
+      }
+      if (kandidat && kandidat.wie !== 'nur Buchstaben') break;
+    }
+    if (!kandidat) {
+      if (unbekannt) { fertig('nichtGeprueft', 'nicht geprüft — ' + unbekannt + ' Wurzelseite(n) noch nicht bekannt | ' + info.join(' '), true); if (abbruch) break; continue; }
+      fertig('ohneStamm', '— Lane führt den Verbstamm nicht unter diesen Wurzeln | ' + info.join(' '));
+      continue;
+    }
+    const w = await wortseite(kandidat.v);
+    if (!w.bekannt) { fertig('nichtGeprueft', 'nicht geprüft — der Artikel ' + kandidat.v.nr + ' ist nicht abgelegt (' + w.woher + ') | ' + info.join(' '), true); if (abbruch) break; continue; }
+    let wie = kandidat.wie;
+    if (wie === 'nur Buchstaben') {
+      const steht = laneArtikelStuecke(w.text).some(x => x.art === 'wort' && x.t.split(' ').some(t => hatVokalzeichen(t) && ['gleich', 'mit Fürwort', 'Zweizahl'].includes(stammPasst(t, past))));
+      if (!steht) { fertig('andereVokale', '— Stichwort „' + kandidat.stichwort + '“ (' + kandidat.v.nr + ', Form ' + kandidat.form + ') hat andere oder keine Vokalzeichen, und der Artikel nennt die Vergangenheit der Karte nicht | ' + info.join(' ')); continue; }
+      wie = 'im Artikel';
+    }
+    const laeufe = laneVerbalsubstantive(w.text);
+    // Ein Lauf zählt, wenn er nicht hinter „quasi" steht und dem Verb der Karte gilt: unmittelbar davor steht kein
+    // arabisches Wort, oder eines, das der Vergangenheit der Karte mit ihren Vokalzeichen gleicht
+    const gilt = l => !l.quasi && (l.zu === '' || l.zu.split(' ').some(t => hatVokalzeichen(t) && !['', 'nur Buchstaben'].includes(stammPasst(t, past))));
+    const echte = laeufe.filter(gilt);
+    const woerter = [...new Set(echte.flatMap(l => l.woerter))];
+    const fortsetzung = [...new Set(echte.flatMap(l => l.fortsetzung))].filter(t => !woerter.includes(t));
+    const stamm = 'Form ' + kandidat.form + ' „' + kandidat.stichwort + '“ (' + kandidat.v.nr + ', ' + wie + ') unter ' + kandidat.bw;
+    const laufText = laeufe.map(l => (gilt(l) ? '' : l.quasi ? 'quasi' : 'zu „' + l.zu + '“') + '[' + l.woerter.join(' · ') + (l.fortsetzung.length ? ' | ' + l.fortsetzung.join(' · ') : '') + ']').join(' ');
+    if (p.eichen) {
+      // das Eichmaß: nennt Lane das Verbalsubstantiv, das die andere Quelle nennt — und wo?
+      const karte = String(e.masdar).split(FORMEN_TRENNER).map(x => x.trim()).filter(Boolean).map(laneVergleich);
+      const inW = l => l.woerter.some(t => karte.includes(laneVergleich(t))), inS = l => l.fortsetzung.some(t => karte.includes(laneVergleich(t)));
+      const mitWort = echte.filter(l => l.woerter.length);
+      const art = !woerter.length && !fortsetzung.length ? 'kein Verbalsubstantiv im Artikel'
+        : mitWort.length && karte.includes(laneVergleich(mitWort[0].woerter[0])) ? 'das erste Wort des ersten Laufs'
+          : mitWort.length && inW(mitWort[0]) ? 'im ersten Lauf'
+            : echte.some(inW) ? 'in einem späteren Lauf'
+              : echte.some(inS) ? 'nur in der Fortsetzung der Aufzählung (hinter einer Zwischenbemerkung)'
+                : laeufe.some(l => !gilt(l) && (inW(l) || inS(l))) ? 'nur in einem Lauf, der nicht zählt' : 'Lane nennt es NICHT';
+      aus.push(kopf + ' | ' + stamm + ' | Karte (' + quelleVon(p, 'masdar') + '): ' + e.masdar + ' | Lane: ' + (laufText || '—') + ' → ' + art);
+      zaehle('eichen: ' + art);
+      continue;
+    }
+    if (!woerter.length && !fortsetzung.length) { fertig('ohneVerbalsubstantiv', '— ' + stamm + ': der Artikel nennt kein Verbalsubstantiv | Lane: ' + (laufText || '—')); continue; }
+    if (!eintraege[p.id]) neu++;
+    eintraege[p.id] = { ar: past, bw: kandidat.bw, nr: kandidat.v.nr, form: kandidat.form, stichwort: kandidat.stichwort, wie, verbalsubstantive: woerter, fortsetzung, abgelegt: tag(fs.statSync(w.datei).mtime) };
+    aus.push(kopf + ' | ' + stamm + ' | Lane: ' + laufText + (bisher && voll(bisher.masdar) ? ' | bisherige Karte: ' + bisher.masdar : ' | bisherige Karte ohne Verbalsubstantiv'));
+    zaehle('GELESEN');
+  }
+  schreibe(VERBDATEI, JSON.stringify({
+    erzeugt: new Date().toISOString(),
+    hinweis: 'Was Lanes Lexikon im Artikel eines Verbstamms als Verbalsubstantiv nennt, für Ersatzkarten ohne Verbalsubstantiv. Erzeugt von werkzeuge/ersatz-lane.mjs --verben, gelesen von werkzeuge/ersatz-bauen.mjs (dort ist die bisherige Karte Schlüssel und Einspruch). Nicht von Hand ändern.',
+    eintraege,
+  }, null, 1));
+  return 'Einträge ' + Object.keys(eintraege).length + ' (vorher ' + vorher + ', neu ' + neu + ', herausgefallen ' + weg + ')';
+}
+
 /* ---------- Lauf ---------- */
 let wurzelBilanz = '';
 if (WURZELN) wurzelBilanz = await wurzelLauf();
+else if (VERBEN) wurzelBilanz = await verbLauf();
 else if (SEITENLAUF) await seitenLauf();
 else for (const p of plaetze()) {
   const k = p.buch ? (ladeBuch(REPO, p.buch) || new Map()).get(p.id) : null;
@@ -346,10 +537,10 @@ else for (const p of plaetze()) {
   if (abbruch) break;
 }
 if (ohneSeiteNeu) schreibe(OHNE_SEITE, JSON.stringify(ohneSeite, null, 1));
-const kopfzeile = 'LANE (' + (WURZELN ? 'Wurzeln' : SEITENLAUF ? 'Wurzelseiten' : FORMEN ? 'Erklärungen' : 'Stichwörter') + '): ' + JSON.stringify(zahl) + (WURZELN ? ' · ' + wurzelBilanz : '')
+const kopfzeile = 'LANE (' + (WURZELN ? 'Wurzeln' : VERBEN ? 'Verben' : SEITENLAUF ? 'Wurzelseiten' : FORMEN ? 'Erklärungen' : 'Stichwörter') + '): ' + JSON.stringify(zahl) + (WURZELN || VERBEN ? ' · ' + wurzelBilanz : '')
   + ' · neu geholte Seiten: ' + geholt + (ohneSeiteNeu ? ' · als „gibt es nicht“ gemerkt: ' + ohneSeiteNeu : '')
   + (HOLEN ? '' : ' (ohne --holen: nur die Ablage)') + (grenze ? ' · GRENZE --max ' + MAX_ABRUFE + ' erreicht — noch einmal laufen lassen' : '') + (abbruch ? ' · ABBRUCH: ' + abbruch : '');
 fs.mkdirSync(path.dirname(ZIEL), { recursive: true });
-fs.writeFileSync(ZIEL, kopfzeile + '\n\n' + aus.join(WURZELN || SEITENLAUF ? '\n' : '\n\n') + '\n', 'utf8');
+fs.writeFileSync(ZIEL, kopfzeile + '\n\n' + aus.join(WURZELN || SEITENLAUF || VERBEN ? '\n' : '\n\n') + '\n', 'utf8');
 console.log(kopfzeile);
 console.log('geschrieben: ' + path.relative(REPO, ZIEL));
