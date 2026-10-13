@@ -1168,6 +1168,41 @@ pruefe('Muster der Bauform: „leer" von Hand sperrt die Gegenwart, der Befehl s
 pruefe('Muster der Bauform: ein Verb der Grundform bekommt nichts — die Regel gilt nur für abgeleitete Verben', f20('266', 'present') === null && f20('266', 'imperative') === null, zeig20('266'));
 pruefe('Muster der Bauform: der Bau nennt alle vier Zahlen (Gegenwart 1, Befehl 3, 1 Einspruch, 2 ohne Schlüssel)', /Gegenwart an 1, Befehl an 3 Verben · 1 offen gelassen[^·]*· 2 ohne Schlüssel/.test(zeile20), zeile20);
 
+// 21. Zahlwort: die Gegenform geht VOR die Mehrzahl (13.10.2026, zahlVor in ersatz-zuordnen.mjs, Regel von Claude) — nur
+//     wenn die bisherige Karte genau diese Form im Feld Mehrzahl führt (sie ist Schlüssel, nie die Quelle).
+//     271  die Kopfzeile nennt Mehrzahl UND männliche Form, die bisherige Karte führt die männliche → die Gegenform steht
+//     272  wie 271, die bisherige Karte führt nichts → es bleibt bei der Mehrzahl der Quelle
+//     273  die Kopfzeile nennt keine männliche Form, die Beugungstabelle genau eine; die bisherige Karte führt sie → sie steht
+//     274  männliches Stichwort, eine weibliche Form; die bisherige Karte führt die weibliche → sie steht im Feld Mehrzahl
+//     275  wie 274, die bisherige Karte führt nichts → das Feld bleibt leer
+const Z21 = { thalathat: cp(THA, FATHA, LAM, FATHA, ALIF, THA, FATHA, ALIF, TA), khams: cp(KHA, FATHA, MIM, SUKUN, SIN), khamsa: cp(KHA, FATHA, MIM, SUKUN, SIN, FATHA, TA_M),
+  wahid: cp(WAW, FATHA, ALIF, HAA, KASRA, DAL), wahida: cp(WAW, FATHA, ALIF, HAA, KASRA, DAL, FATHA, TA_M) };
+const tab21 = (f, ...t) => ({ f: f + UN, t: ['indefinite', 'nominative', ...t] });
+const WELT21 = {
+  karten: [
+    nomenKarte('271', THALATHA, 'drei', { pl: THALATH + UN }), nomenKarte('272', THALATHA, 'drei Stück'),
+    nomenKarte('273', Z21.khamsa, 'fünf', { pl: Z21.khams + UN }),
+    nomenKarte('274', Z21.wahid, 'eins', { pl: Z21.wahida + UN }), nomenKarte('275', Z21.wahid, 'ein einziger'),
+  ],
+  woerterbuch: [
+    { w: cp(THA, LAM, ALIF, THA, TA_M), pos: 'num', n: null, kopf: [{ f: THALATHA, t: ['canonical', 'feminine'] }], hf: [{ f: Z21.thalathat, t: ['plural'] }, { f: THALATH, t: ['masculine'] }],
+      tab: [tab21(THALATH, 'masculine', 'singular'), tab21(THALATHA, 'feminine', 'singular'), tab21(Z21.thalathat, 'plural')], sinn: [{ g: 'three' }] },
+    { w: cp(KHA, MIM, SIN, TA_M), pos: 'num', n: null, kopf: [{ f: Z21.khamsa, t: ['canonical', 'feminine'] }], hf: [{ f: Z21.khams, t: ['construct'] }],
+      tab: [tab21(Z21.khams, 'masculine', 'singular'), tab21(Z21.khamsa, 'feminine', 'singular')], sinn: [{ g: 'five' }] },
+    { w: cp(WAW, ALIF, HAA, DAL), pos: 'num', n: null, kopf: [{ f: Z21.wahid, t: ['canonical', 'masculine'] }], hf: [{ f: Z21.wahida, t: ['feminine'] }],
+      tab: [tab21(Z21.wahid, 'masculine', 'singular'), tab21(Z21.wahida, 'feminine', 'singular')], sinn: [{ g: 'one' }] },
+  ],
+  englischDeutsch: [['three', 'drei'], ['three', 'drei Stück'], ['five', 'fünf'], ['one', 'eins'], ['one', 'ein einziger']].flatMap(([w, de]) => [{ w, pos: 'num', k: [{ sinn: 'Probe', de: [de] }] }, { w, pos: 'noun', k: [{ sinn: 'Probe', de: [de] }] }]),
+};
+const w21 = probe({}, WELT21);
+const zeig21 = id => 'Karte ' + id + ': Mehrzahl [' + hex19(feldAuf(w21, id, 'pl')) + '] · Stufe ' + ((w21.belege[id] || {}).stufe) + ' · Beleg: …' + String(feldBeleg(w21, id, 'pl').wo || '').slice(-150);
+pruefe('Zahlwort, Gegenform vor Mehrzahl: die Probe läuft durch, alle fünf Plätze sind belegt', w21.codeZ === 0 && w21.codeB === 0 && w21.karten.length === 5, 'Exit ' + w21.codeZ + ' / ' + w21.codeB + ', Karten ' + w21.karten.map(k => k.id).join(',') + ': ' + w21.text.trim().split('\n').slice(-3).join(' | ').slice(0, 400));
+pruefe('Zahlwort, Gegenform vor Mehrzahl: nennt die Kopfzeile Mehrzahl und männliche Form und führt die bisherige Karte die männliche, steht die Gegenform im Feld — der Beleg sagt, dass die Quelle daneben eine Mehrzahl nennt', nf19(feldAuf(w21, '271', 'pl')) === nf19(THALATH + UN) && /männliche Form des Zahlworts.*die Quelle nennt daneben eine Mehrzahl/.test(feldBeleg(w21, '271', 'pl').wo || ''), zeig21('271'));
+pruefe('Zahlwort, Gegenform vor Mehrzahl: führt die bisherige Karte die Gegenform nicht, bleibt es bei der Mehrzahl der Quelle', nf19(feldAuf(w21, '272', 'pl')) === nf19(Z21.thalathat + UN), zeig21('272'));
+pruefe('Zahlwort, Gegenform vor Mehrzahl: nennt die Kopfzeile keine männliche Form, die Beugungstabelle aber genau eine, und führt die bisherige Karte sie, steht sie im Feld — der Beleg nennt die Beugungstabelle', nf19(feldAuf(w21, '273', 'pl')) === nf19(Z21.khams + UN) && /Beugungstabelle: die männliche Form des Zahlworts/.test(feldBeleg(w21, '273', 'pl').wo || ''), zeig21('273'));
+pruefe('Zahlwort, Gegenform vor Mehrzahl: bei männlichem Stichwort ist die weibliche Form die Gegenform — sie steht, wenn die bisherige Karte sie führt', nf19(feldAuf(w21, '274', 'pl')) === nf19(Z21.wahida + UN) && /weibliche Form des Zahlworts/.test(feldBeleg(w21, '274', 'pl').wo || ''), zeig21('274'));
+pruefe('Zahlwort, Gegenform vor Mehrzahl: führt die bisherige Karte die weibliche Form nicht, bleibt das Feld leer', feldAuf(w21, '275', 'pl') === null, zeig21('275'));
+
 const gut = faelle.filter(f => f.ok).length;
 for (const f of faelle) if (!f.ok) console.log(`  ✗ ${f.name}\n      bekommen: ${f.was}`);
 console.log(`Eichung Zuordner und Bau: ${gut} von ${faelle.length} Fällen wie erwartet`);
