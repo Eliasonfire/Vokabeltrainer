@@ -3527,6 +3527,11 @@ const SENTENCE_TAGS = {
   "mb1-72-9": [
     { ruleId: "ismul-isara-haulai-01", matchText: "هَؤُلَاءِ" }
   ],
+  "mb1-72-7": [
+    { ruleId: "jam-taksir-01", matchText: "الْجُدُدُ" },
+    { ruleId: "possessiv-ist-idafa-01", matchText: "بَعْضُهُمْ", bedeutung: 'ـهُمْ = von ihnen (Mehrzahl, männlich)' },
+    { ruleId: "zarf-maa-inda-01", matchText: "عِنْدَ الْمُدِيرِ" }
+  ],
   "mb1-74-1": [
     { ruleId: "jam-muannath-salim-01", matchText: "الْفَتَيَاتُ" },
     { ruleId: "ismul-isara-haulai-01", matchText: "هَؤُلَاءِ" }

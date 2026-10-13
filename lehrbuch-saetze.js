@@ -790,8 +790,8 @@ const LEHRBUCH_SAETZE = [
      Auswahl, gehören die Sätze nachgetragen.
      ⭐ 13.10.2026: „einige" (بَعْضٌ, 50285) ist jetzt in seiner Auswahl. Von
      Seite 68 unten ist die Zeile mit „einige von ihnen" nachgetragen (mb1-68-6).
-     ⚠️ Seite 72 Nr. 7 ist NOCH OFFEN — die Zeile muss erst von der Buchseite
-     (PDF-Seite 94) abgelesen werden.
+     Seite 72 Nr. 7 — „einige von ihnen" ein zweites Mal — ist als mb1-72-7
+     nachgetragen, von der Buchseite abgelesen (PDF-Seite 94 bei 300 dpi).
 
      Bei Seite 72 ist die Zahl hinter der Seite die Nummer der Übungszeile im Buch
      (deshalb Lücken). ذَهَبُوا — die Mehrzahl des Verbs — steht im Lektionstext
@@ -851,6 +851,16 @@ const LEHRBUCH_SAETZE = [
     gedruckt: 'Übung 5, Nr. 6: ohne Zeichen bis auf الحُقُوْل',
     sentAr: 'الْفَلَّاحُونَ فِي الْحُقُولِ وَأَبْنَاؤُهُمْ فِي الْمَدْرَسَةِ.',
     sentDe: 'Die Bauern sind auf den Feldern und ihre Söhne sind in der Schule.' },
+  /* 13.10.2026: Übung 5, Nr. 7 — die zweite Buchzeile mit بَعْضُهُمْ, nachgetragen
+     wie mb1-68-6 (Karte 50285 ist seit v671 in seiner Auswahl; sein Auftrag steht
+     dort). الْجُدُدُ ist die Mehrzahl seiner Karte جَدِيدٌ mit Artikel; عِنْدَ
+     الْمُدِيرِ steht so in der Regel zarf-maa-inda-01 (Folge 15; Schlüssel,
+     Lektion 10). Alle übrigen Wörter sind aus mb1-72-1, mb1-72-4 und mb1-68-6
+     übernommen. */
+  { id: 'mb1-72-7', seite: 72, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'Übung 5, Nr. 7: ohne Zeichen bis auf das Damma im ersten بعضُهم',
+    sentAr: 'أَيْنَ الطُّلَّابُ الْجُدُدُ؟ بَعْضُهُمْ فِي الْفَصْلِ وَبَعْضُهُمْ عِنْدَ الْمُدِيرِ.',
+    sentDe: 'Wo sind die neuen Studenten? Einige von ihnen sind im Klassenzimmer, und einige von ihnen sind beim Direktor.' },
   { id: 'mb1-72-8', seite: 72, kapitel: 13, vokalisationErgaenzt: true,
     gedruckt: 'Übung 5, Nr. 8: ohne Zeichen, ohne Punkt am Ende',
     sentAr: 'أَعْمَامِي تُجَّارٌ كِبَارٌ.',
