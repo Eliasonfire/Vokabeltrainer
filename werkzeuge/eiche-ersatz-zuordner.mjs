@@ -874,6 +874,109 @@ pruefe('Zahlwort: dieselbe Kopfzeile an einem gewöhnlichen Nomen gibt keine Meh
 pruefe('Das Wort selbst: nennt die bisherige Karte als Mehrzahl ihr eigenes Wort, steht dort das Arabisch der Ersatzkarte — mit dessen Fundstelle', feldAuf(wpl, '181', 'pl') === W.kutub + UN && /die Mehrzahl ist das Wort selbst/.test(feldBeleg(wpl, '181', 'pl').wo || '') && /Das Wort selbst: Einzahl an \d+ Nomen, Mehrzahl an 1 Nomen/.test(wpl.text), zeigP('181') + ' · ' + (wpl.text.split('\n').find(z => z.startsWith('Das Wort selbst')) || 'keine Zeile').slice(0, 160));
 pruefe('Das Wort selbst: nennt die bisherige Karte als Mehrzahl ein anderes Wort und keine Quelle eine, bleibt die Mehrzahl offen', plOffen('182'), zeigP('182'));
 
+// 17. Verbformen aus Buckwalters Stammliste (13.10.2026, bamaVerbformenZurKarte und bamaMasdarZurKarte in
+//     ersatz-bama-lib.mjs, verbformenAusStammliste in ersatz-bauen.mjs; Regeln von Claude). Nur als Lücke, nur für ein
+//     Verb aus einem Wort. Die bisherige Karte ist Schlüssel und Einspruch, nie Quelle — in der Probe führt sie im
+//     Feld Befehl überall ein FREMDES Wort.
+//     201  gesundes Verb der Grundform → Gegenwart aus Vorsilbe, Stamm und Endung; Befehl nach der Regel mit
+//          Verbindungs-Alif und u; Verbalsubstantiv bleibt offen (die Grundform hat kein Muster)
+//     202  die bisherige Karte nennt eine Gegenwart mit anderem Vokal als die Liste → Einspruch: offen, gezählt
+//     203  das Lemma führt ZWEI Gegenwartszeilen → nur die, die der bisherigen Karte gleicht; der Befehl aus dieser Zeile
+//     204  die bisherige Karte führt eine Gegenwart, aber keinen Befehl → Befehl bleibt offen, gezählt
+//     205  Form II → Vorsilbe yu-; Verbalsubstantiv: das Nomen der Liste mit dem Muster unter DERSELBEN Wurzel
+//     206  Form IV → der Befehl bekommt sein >a- zurück; die Liste führt das Nomen nicht, die bisherige Karte führt
+//          genau das Muster → Verbalsubstantiv nach dem Muster, der Beleg sagt, dass es eine Regel ist
+//     207  wie 206, aber die bisherige Karte führt ein ANDERES Verbalsubstantiv → offen
+//     208  Form VII (Verbindungs-Alif im Befehl); das Nomen mit dem Muster steht unter einer ANDEREN Wurzel → offen
+//     209  Form IV, die Zeile der Liste trägt die Kategorie ohne _yu (Vorsilbe passt nicht zur Bauform) → keine Gegenwart
+//     210  schwacher Schluss → Gegenwart ohne Endung, Befehl mit kurzem Vokal
+//     211  hohles Verb → Gegenwart aus dem langen Stamm, Befehl aus dem kurzen
+//     212  „leer" von Hand an der Gegenwart → offen, und ohne Gegenwart auch kein Befehl (die bisherige Karte nennt
+//          dieselbe Gegenwart wie die Liste — sonst hielte schon ihr Einspruch das Feld offen, und die Probe wäre aus
+//          dem falschen Grund grün; so zeigte es der Störtest)
+//     213  die Karte hat schon eine Gegenwart aus ihrer Quelle; die Liste nennt eine andere (und die bisherige Karte
+//          dieselbe wie die Liste) → die Gegenwart der Quelle bleibt (nur Lücken werden gefüllt), und es gibt keinen Befehl
+//     214  zwei gleich geschriebene Lemmata mit verschiedener Gegenwart, kein Schlüssel → offen, gezählt
+//     215  verdoppeltes Verb → Befehl in der zusammengezogenen Form
+const HAMZA_U = 0x0625;
+const VF = {
+  yajlisuAnders: G.yajlusu,
+  darrasa: cp(DAL, FATHA, RA, FATHA, SHADDA, SIN, FATHA), yudarrisu: cp(YA, DAMMA, DAL, FATHA, RA, KASRA, SHADDA, SIN, DAMMA), darris: cp(DAL, FATHA, RA, KASRA, SHADDA, SIN, SUKUN), tadris: cp(TA, FATHA, DAL, SUKUN, RA, KASRA, YA, SIN),
+  akrama: cp(HAMZA_ALIF, FATHA, KAF, SUKUN, RA, FATHA, MIM, FATHA), yukrimu: cp(YA, DAMMA, KAF, SUKUN, RA, KASRA, MIM, DAMMA), akrim: cp(HAMZA_ALIF, FATHA, KAF, SUKUN, RA, KASRA, MIM, SUKUN), ikram: cp(HAMZA_U, KASRA, KAF, SUKUN, RA, FATHA, ALIF, MIM),
+  arsala: cp(HAMZA_ALIF, FATHA, RA, SUKUN, SIN, FATHA, LAM, FATHA), yursilu: cp(YA, DAMMA, RA, SUKUN, SIN, KASRA, LAM, DAMMA), arsil: cp(HAMZA_ALIF, FATHA, RA, SUKUN, SIN, KASRA, LAM, SUKUN), risala: cp(RA, KASRA, SIN, FATHA, ALIF, LAM, FATHA, TA_M),
+  inkasara: cp(ALIF, KASRA, NUN, SUKUN, KAF, FATHA, SIN, FATHA, RA, FATHA), yankasiru: cp(YA, FATHA, NUN, SUKUN, KAF, FATHA, SIN, KASRA, RA, DAMMA), inkasir: cp(ALIF, KASRA, NUN, SUKUN, KAF, FATHA, SIN, KASRA, RA, SUKUN),
+  ajlasa: cp(HAMZA_ALIF, FATHA, JIM, SUKUN, LAM, FATHA, SIN, FATHA),
+  bana: cp(BA, FATHA, NUN, FATHA, YA_OHNE_PUNKTE), yabni: cp(YA, FATHA, BA, SUKUN, NUN, KASRA, YA), ibni: cp(ALIF, KASRA, BA, SUKUN, NUN, KASRA),
+  qala: cp(QAF, FATHA, ALIF, LAM, FATHA), yaqulu: cp(YA, FATHA, QAF, DAMMA, WAW, LAM, DAMMA), qul: cp(QAF, DAMMA, LAM, SUKUN),
+  darasa: cp(DAL, FATHA, RA, FATHA, SIN, FATHA), yadrusu: cp(YA, FATHA, DAL, SUKUN, RA, DAMMA, SIN, DAMMA),
+  rakiba: cp(RA, FATHA, KAF, KASRA, BA, FATHA), yarkubu: cp(YA, FATHA, RA, SUKUN, KAF, DAMMA, BA, DAMMA), yarkabu: cp(YA, FATHA, RA, SUKUN, KAF, FATHA, BA, DAMMA),
+  malaka: cp(MIM, FATHA, LAM, FATHA, KAF, FATHA),
+  madda: cp(MIM, FATHA, DAL, FATHA, SHADDA), yamuddu: cp(YA, FATHA, MIM, DAMMA, DAL, DAMMA, SHADDA), mudda: cp(MIM, DAMMA, DAL, FATHA, SHADDA),
+};
+const verbKarte = (id, ar, de, mehr = {}) => ({ id, ar, de, type: 'verb', chapter: 1, ...leer, past: ar, ...mehr });
+const WELT14 = {
+  karten: [
+    verbKarte('201', S3.kataba, 'schreiben', { present: YAKTUBU, imperative: IJLIS }), verbKarte('202', V.jalasa, 'sitzen', { present: VF.yajlisuAnders, imperative: IJLIS }),
+    verbKarte('203', V.fataha, 'öffnen', { present: G.yaftahu, imperative: IJLIS }), verbKarte('204', W.sakana, 'wohnen', { present: G.yaskunu }),
+    verbKarte('205', VF.darrasa, 'lehren', { present: VF.yudarrisu, imperative: IJLIS }), verbKarte('206', VF.akrama, 'ehren', { present: VF.yukrimu, imperative: IJLIS, masdar: VF.ikram + UN }),
+    verbKarte('207', VF.arsala, 'senden', { masdar: VF.risala + UN }), verbKarte('208', VF.inkasara, 'zerbrechen', { present: VF.yankasiru, imperative: IJLIS }),
+    verbKarte('209', VF.ajlasa, 'setzen lassen'), verbKarte('210', VF.bana, 'bauen', { present: VF.yabni, imperative: IJLIS }),
+    verbKarte('211', VF.qala, 'sagen', { present: VF.yaqulu, imperative: IJLIS }), verbKarte('212', VF.darasa, 'lernen', { present: VF.yadrusu, imperative: IJLIS }),
+    verbKarte('213', VF.rakiba, 'reiten', { present: VF.yarkabu, imperative: IJLIS }), verbKarte('214', VF.malaka, 'besitzen'),
+    verbKarte('215', VF.madda, 'ausstrecken', { present: VF.yamuddu, imperative: IJLIS }),
+  ],
+  woerterbuch: [], englischDeutsch: [],
+  bama: [
+    ';--- ktb', ';; katab-u_1', 'ktb\tkatab\tPV\twrite', 'ktb\tkotub\tIV\twrite', 'ktb\tkotab\tIV_Pass_yu\tbe written',
+    ';--- jls', ';; jalas-i_1', 'jls\tjalas\tPV\tsit', 'jls\tjolis\tIV\tsit', ';; >ajolas_1', '>jls\t>ajolas\tPV\tseat', 'jls\tjolis\tIV\tseat',
+    ';--- ftH', ';; fataH-au_1', 'ftH\tfataH\tPV\topen', 'ftH\tfotuH\tIV\topen', 'ftH\tfotaH\tIV\topen',
+    ';--- skn', ';; sakan-u_1', 'skn\tsakan\tPV\tdwell', 'skn\tsokun\tIV\tdwell',
+    ';--- drs', ';; dar~as_1', 'drs\tdar~as\tPV\tteach', 'drs\tdar~is\tIV_yu\tteach', ';; tadoriys_1', 'tdrys\ttadoriys\tNduAt\tteaching', ';; daras-u_1', 'drs\tdaras\tPV\tstudy', 'drs\tdorus\tIV\tstudy',
+    ';--- krm', ';; >akoram_1', '>krm\t>akoram\tPV\thonor', 'krm\tkorim\tIV_yu\thonor',
+    ';--- rsl', ';; >arosal_1', '>rsl\t>arosal\tPV\tsend', 'rsl\trosil\tIV_yu\tsend',
+    ';--- ksr', ';; {inokasar_1', '<nksr\t{inokasar\tPV_intr\tbe broken', 'nksr\tnokasir\tIV_intr\tbe broken',
+    ';--- nks', ';; {inokisAr_1', 'AnksAr\t{inokisAr\tN/At\tbreaking',
+    ';--- bny', ';; banaY-i_1', 'bnY\tbanaY\tPV_0\tbuild', 'bny\tboniy\tIV_0hAnn\tbuild', 'bn\tbon\tIV_0hwnyn\tbuild',
+    ';--- qwl', ';; qAl-u_1', 'qAl\tqAl\tPV_V\tsay', 'ql\tqul\tPV_C\tsay', 'qwl\tquwl\tIV_V\tsay', 'ql\tqul\tIV_C\tsay',
+    ';--- rkb', ';; rakib-a_1', 'rkb\trakib\tPV\tride', 'rkb\trokab\tIV\tride',
+    ';--- mlk', ';; malak-i_1', 'mlk\tmalak\tPV\town', 'mlk\tmolik\tIV\town', ';; malak-u_1', 'mlk\tmalak\tPV\trule', 'mlk\tmoluk\tIV\trule',
+    ';--- mdd', ';; mad~-u_1', 'md\tmad~\tPV_V\textend', 'mdd\tmadad\tPV_C\textend', 'md\tmud~\tIV_V\textend', 'mdd\tmodud\tIV_C\textend',
+  ],
+};
+const vH = (w, de) => vonHand(w, 'verb', de);
+const wvf = probe({
+  201: vH(S3.kataba, 'schreiben'), 202: vH(V.jalasa, 'sitzen'), 203: vH(V.fataha, 'öffnen'), 204: vH(W.sakana, 'wohnen'), 205: vH(VF.darrasa, 'lehren'), 206: vH(VF.akrama, 'ehren'),
+  207: vH(VF.arsala, 'senden'), 208: vH(VF.inkasara, 'zerbrechen'), 209: vH(VF.ajlasa, 'setzen lassen'), 210: vH(VF.bana, 'bauen'), 211: vH(VF.qala, 'sagen'),
+  212: { ...vH(VF.darasa, 'lernen'), leer: ['present'] },
+  213: { ...vH(VF.rakiba, 'reiten'), felder: { ...vH(VF.rakiba, 'reiten').felder, present: { w: VF.yarkubu, wo: 'Probe: Stammliste', q: 'bama' } } },
+  214: vH(VF.malaka, 'besitzen'), 215: vH(VF.madda, 'ausstrecken'),
+}, WELT14);
+const vfB = (id, f) => feldBeleg(wvf, id, f);
+const zeigV = id => 'Karte ' + id + ': Gegenwart ' + JSON.stringify(feldAuf(wvf, id, 'present')) + ' · Befehl ' + JSON.stringify(feldAuf(wvf, id, 'imperative')) + ' · Verbalsubstantiv ' + JSON.stringify(feldAuf(wvf, id, 'masdar')) + ' · ' + JSON.stringify([vfB(id, 'present').q, vfB(id, 'imperative').q, vfB(id, 'masdar').q]) + ' · ' + String(vfB(id, 'present').wo || vfB(id, 'masdar').wo || '').slice(0, 260);
+const vfZeile = () => (wvf.text.split('\n').find(z => /Verbformen aus Buckwalters Stammliste/.test(z)) || '(keine Zeile)').slice(0, 520);
+const vfIst = (id, f, wert, q) => feldAuf(wvf, id, f) === wert && vfB(id, f).q === q;
+pruefe('Verbformen aus der Stammliste: die Probe läuft durch, alle fünfzehn Plätze sind belegt', wvf.codeZ === 0 && wvf.codeB === 0 && wvf.karten.length === 15, 'Exit ' + wvf.codeZ + ' / ' + wvf.codeB + ', Karten ' + wvf.karten.map(k => k.id).join(',') + ': ' + wvf.text.trim().split('\n').slice(-3).join(' | ').slice(0, 400));
+pruefe('Verbformen: die Gegenwart ist Vorsilbe + Stamm der Liste + Endung — im Beleg Lemma, Zeile, Kategorie, und dass Claude es zusammengesetzt hat', vfIst('201', 'present', YAKTUBU, 'bama-gegenwart') && /Lemma „katab-u_1“ \(englisch „write“\): Zeile „kotub“ der Kategorie IV — der Stamm der Gegenwart; Vorsilbe ya- nach der Kategorie, Endung -u/.test(vfB('201', 'present').wo || '') && /Zusammengesetzt hat es Claude/.test(vfB('201', 'present').wo || ''), zeigV('201'));
+pruefe('Verbformen: der Befehl ist nach der Regel gebildet (Verbindungs-Alif mit u, weil der Stammvokal u ist) — der Beleg sagt, dass es eine Regel ist und keine Quelle; das fremde Wort der bisherigen Karte steht nicht da', vfIst('201', 'imperative', G.uktub, 'bama-befehl') && /Nach der Regel der Grammatik aus dem Stamm der Gegenwart gebildet — eine Regel von Claude, keine Angabe einer Quelle/.test(vfB('201', 'imperative').wo || ''), zeigV('201'));
+pruefe('Verbformen: die Grundform hat kein Muster für das Verbalsubstantiv — das Feld bleibt offen', feldAuf(wvf, '201', 'masdar') === null && feldAuf(wvf, '211', 'masdar') === null, zeigV('201'));
+pruefe('Verbformen: nennt die bisherige Karte eine Gegenwart mit anderem Vokal als die Liste, bleibt das Feld offen (Einspruch) — und der Bau zählt es', feldAuf(wvf, '202', 'present') === null && feldAuf(wvf, '202', 'imperative') === null && /offen gelassen: 1 Gegenwart \(keine Zeile der Liste gleicht der bisherigen Karte\)/.test(wvf.text), zeigV('202') + ' · ' + vfZeile());
+pruefe('Verbformen: führt das Lemma zwei Gegenwartszeilen, gilt nur die, die der bisherigen Karte gleicht — der Beleg nennt den Schlüssel, und der Befehl stammt aus derselben Zeile', vfIst('203', 'present', G.yaftahu, 'bama-gegenwart') && /Zeile „fotaH“/.test(vfB('203', 'present').wo || '') && !/fotuH/.test(vfB('203', 'present').wo || '') && /Schlüssel und Einspruch, nie Quelle/.test(vfB('203', 'present').wo || '') && vfIst('203', 'imperative', IFTAH, 'bama-befehl'), zeigV('203'));
+pruefe('Verbformen: führt die bisherige Karte eine Gegenwart, aber keinen Befehl, bleibt der Befehl offen — und der Bau zählt es', vfIst('204', 'present', G.yaskunu, 'bama-gegenwart') && feldAuf(wvf, '204', 'imperative') === null && /1 Befehl \(die bisherige Karte führt eine Gegenwart, aber keinen Befehl\)/.test(wvf.text), zeigV('204') + ' · ' + vfZeile());
+pruefe('Verbformen: Kategorie …_yu gibt die Vorsilbe yu-, der Befehl einer Form II steht ohne Vorsatz', vfIst('205', 'present', VF.yudarrisu, 'bama-gegenwart') && /Vorsilbe yu- nach der Kategorie/.test(vfB('205', 'present').wo || '') && vfIst('205', 'imperative', VF.darris, 'bama-befehl'), zeigV('205'));
+pruefe('Verbalsubstantiv: führt die Liste unter derselben Wurzel das Nomen mit dem Muster der Bauform, steht es da — der Beleg nennt Nomen, Verb und Muster, und dass die Liste beide nicht selbst verknüpft', vfIst('205', 'masdar', VF.tadris, 'bama-verbalsubstantiv') && /Nomen „tadoriys_1“ \(Kategorie NduAt, englisch „teaching“\) unter derselben Wurzel wie das Verb „dar~as_1“/.test(vfB('205', 'masdar').wo || '') && /Bauform \(II\)/.test(vfB('205', 'masdar').wo || '') && /verknüpft Verb und Verbalsubstantiv nicht selbst/.test(vfB('205', 'masdar').wo || ''), zeigV('205') + ' · ' + String(vfB('205', 'masdar').wo || '').slice(0, 300));
+pruefe('Verbformen: der Befehl einer Form IV bekommt sein Hamza mit Fatha zurück', vfIst('206', 'present', VF.yukrimu, 'bama-gegenwart') && vfIst('206', 'imperative', VF.akrim, 'bama-befehl'), zeigV('206'));
+pruefe('Verbalsubstantiv: führt die Liste das Nomen nicht, steht das Muster nur da, wo die bisherige Karte dasselbe Wort führt — Quelle „muster", der Beleg sagt, dass es eine Regel ist; ohne Schlussendung', vfIst('206', 'masdar', VF.ikram, 'muster') && /Nach dem Muster der Bauform \(IV\) aus der Vergangenheit gebildet — Regel der Grammatik, keine Angabe einer Quelle/.test(vfB('206', 'masdar').wo || '') && /Einspruch, nie Quelle/.test(vfB('206', 'masdar').wo || ''), zeigV('206') + ' · ' + String(vfB('206', 'masdar').wo || '').slice(0, 300));
+pruefe('Verbalsubstantiv: führt die bisherige Karte ein anderes Wort als das Muster und die Liste das Nomen nicht, bleibt das Feld offen', feldAuf(wvf, '207', 'masdar') === null && vfIst('207', 'present', VF.yursilu, 'bama-gegenwart') && vfIst('207', 'imperative', VF.arsil, 'bama-befehl'), zeigV('207'));
+pruefe('Verbformen: ein Stamm, der mit zwei Konsonanten beginnt, bekommt im Befehl das Verbindungs-Alif mit Kasra (Form VII)', vfIst('208', 'present', VF.yankasiru, 'bama-gegenwart') && vfIst('208', 'imperative', VF.inkasir, 'bama-befehl'), zeigV('208'));
+pruefe('Verbalsubstantiv: steht das Nomen mit dem Muster unter einer ANDEREN Wurzel der Liste, gilt es nicht — das Feld bleibt offen', feldAuf(wvf, '208', 'masdar') === null, zeigV('208'));
+pruefe('Verbformen: trägt die Zeile der Liste eine Kategorie, deren Vorsilbe nicht zur Bauform passt (Form IV ohne _yu), gibt es keine Gegenwart', feldAuf(wvf, '209', 'present') === null && feldAuf(wvf, '209', 'imperative') === null, zeigV('209'));
+pruefe('Verbformen: schwacher Schluss — die Gegenwart steht ohne Endung da (der Beleg sagt es), der Befehl mit kurzem Vokal und Verbindungs-Alif', vfIst('210', 'present', VF.yabni, 'bama-gegenwart') && /keine Endung \(schwacher Schluss\)/.test(vfB('210', 'present').wo || '') && vfIst('210', 'imperative', VF.ibni, 'bama-befehl'), zeigV('210'));
+pruefe('Verbformen: hohles Verb — die Gegenwart aus dem langen Stamm, der Befehl aus dem kurzen', vfIst('211', 'present', VF.yaqulu, 'bama-gegenwart') && vfIst('211', 'imperative', VF.qul, 'bama-befehl'), zeigV('211'));
+pruefe('Verbformen: „leer" von Hand nimmt die Gegenwart heraus, und ohne Gegenwart gibt es keinen Befehl — der Bau nennt die Zahlen ohne diese Karte', feldAuf(wvf, '212', 'present') === null && feldAuf(wvf, '212', 'imperative') === null && /Gegenwart an 10 Verben, Befehl nach der Regel an 9, Verbalsubstantiv an 1 \(dazu nur nach dem Muster, wo die bisherige Karte dasselbe führt: 1\)/.test(wvf.text), zeigV('212') + ' · ' + vfZeile());
+pruefe('Verbformen: hat die Karte schon eine Gegenwart aus ihrer Quelle und nennt die Liste eine andere, bleibt die Gegenwart der Quelle und es gibt keinen Befehl', feldAuf(wvf, '213', 'present') === VF.yarkubu && vfB('213', 'present').q === 'bama' && feldAuf(wvf, '213', 'imperative') === null, zeigV('213'));
+pruefe('Verbformen: zwei gleich geschriebene Lemmata mit verschiedener Gegenwart und kein Schlüssel — das Feld bleibt offen, und der Bau zählt es', feldAuf(wvf, '214', 'present') === null && /1 Gegenwart \(gleich geschriebene Lemmata nennen Verschiedenes\)/.test(wvf.text), zeigV('214') + ' · ' + vfZeile());
+pruefe('Verbformen: ein verdoppeltes Verb bekommt den Befehl in der zusammengezogenen Form', vfIst('215', 'present', VF.yamuddu, 'bama-gegenwart') && vfIst('215', 'imperative', VF.mudda, 'bama-befehl'), zeigV('215'));
+
 const gut = faelle.filter(f => f.ok).length;
 for (const f of faelle) if (!f.ok) console.log(`  ✗ ${f.name}\n      bekommen: ${f.was}`);
 console.log(`Eichung Zuordner und Bau: ${gut} von ${faelle.length} Fällen wie erwartet`);
