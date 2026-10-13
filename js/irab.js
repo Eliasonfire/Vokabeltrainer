@@ -177,6 +177,18 @@ const INDEKLINABEL = ['هذا','هذه','ذلك','تلك','هو','هي','أنا'
                       /* لِمَنْ ist ein festes Fragewort (istifham-liman-01), kein
                          angeschriebenes لِ vor einem Nomen - sonst landet es in der
                          Unklar-Schublade. */
+                      /* aw „oder", ammā / amā „was … betrifft", allā / alā „dass nicht"
+                         (13.10.2026). Sie galten bis heute nur deshalb als unveraenderlich,
+                         weil ihr Hamza-Alif als Fragepartikel abgeschnitten wurde und der
+                         Rest zufaellig in dieser Liste steht (wa, mā, lā). Seit die
+                         Fragepartikel nicht mehr vor Sukun oder Schadda abgetrennt wird
+                         (vorsilbeAbtrennbar), stehen sie selbst hier — sonst verloeren
+                         ihre Karten die Zeile, die sie heute zeigen. Als \u-Folgen
+                         geschrieben, nicht getippt: Hamza-Alif + Waw · + Mim + Alif ·
+                         + Lam + Alif. ⚠️ Das Verb alā („unterlassen", Bayna Yadayk 4)
+                         hat dieselben Buchstaben; auf seiner Karte entscheidet die
+                         Wortart (funktionenVon), im Satz die Verbpruefung davor. */
+                      '\u0623\u0648', '\u0623\u0645\u0627', '\u0623\u0644\u0627',
                       'لمن'];
 
 /* Dieselbe Zeile steht in saetze.js als `ohneTaschkil`, und das bleibt mit
@@ -416,6 +428,14 @@ function istInListe(w, liste){
   const roh = ohneVokale(w).replace(/[.،؟!«»:؛]/g, '');
   return liste.includes(roh) || liste.includes(roh.replace(/^[وف]/, ''));
 }
+/* Nur die Form SELBST — ohne wa / fa abzutrennen. Fuer Karteikarten
+   (funktionenVon, 13.10.2026): eine Karte ist ein Stichwort, an ihr haengt
+   weder „und" noch die Fragepartikel. istInListe() oben ist fuer Woerter im
+   SATZ gebaut (wa-hādhā ist dasselbe Wort wie hādhā) und machte aus der Karte
+   wafiyy („worttreu") ein wa + fī mit der Zeile „Genitivpräposition". */
+function istGenauInListe(w, liste){
+  return liste.includes(ohneVokale(w).replace(/[.،؟!«»:؛]/g, ''));
+}
 /* ⭐⭐ PERSONALPRONOMEN kommt bewusst als eigene Bedingung dazu, statt seine
    Eintraege in INDEKLINABEL zu kopieren. Am 24.08.2026 war das die DRITTE
    Liste in dieser Datei, der dieselben sechs von vierzehn Pronomen fehlten —
@@ -426,10 +446,23 @@ function istInListe(w, liste){
    [[allgemeine_regel_statt_listeneintrag]] · [[entscheidung_gilt_fuer_das_zweite_werkzeug]]
    ⚠️ PERSONALPRONOMEN steht weiter unten in der Datei. Das geht, weil dies
    eine Pfeilfunktion ist: ausgewertet wird erst beim Aufruf. */
-const istIndeklinabel = w => INDEKLINABEL.includes(ohneFragepartikel(w))
+const istIndeklinabelMitVorsilbe = w => INDEKLINABEL.includes(ohneFragepartikel(w))
                          || INDEKLINABEL.includes(ohneFragepartikel(w).replace(/^[وف]/, ""))
                          || istInListe(w, INDEKLINABEL)
                          || istInListe(w, PERSONALPRONOMEN);
+/* ⛔ 13.10.2026: die vier Wege oben trennen eine Vorsilbe ab (Fragepartikel,
+   wa, fa). Wo das nicht geht — der zweite Buchstabe traegt Sukun oder Schadda,
+   siehe vorsilbeAbtrennbar() —, zaehlt nur die Form selbst. Sonst gilt wahm
+   („Einbildung") als wa + hum und fahm („Verstehen") als fa + hum.
+   ⚠️ Deshalb stehen aw, ammā und allā seit heute SELBST in INDEKLINABEL: bis
+   dahin galten sie nur ueber das abgeschnittene Hamza-Alif als unveraenderlich
+   (aw wurde zu wa, ammā zu mā, allā zu lā) — richtig aus Zufall. */
+const istIndeklinabelGenau = w => {
+  const roh = ohneVokale(w).replace(/[.،؟!«»:؛]/g, '');
+  return INDEKLINABEL.includes(roh) || PERSONALPRONOMEN.includes(roh);
+};
+const istIndeklinabel = w => vorsilbeAbtrennbar(w) ? istIndeklinabelMitVorsilbe(w)
+                                                   : istIndeklinabelGenau(w);
 
 /* Ein angeschriebenes لِلْ / بِالْ / كَالْ ist selbst ein حَرْف جَرّ - لِلطَّبِيبِ
    ist nicht "zufaellig Genitiv", sondern لِ + الطبيب.
@@ -697,6 +730,33 @@ function funktionenVon(w){
   const aus = [];
   const nenn = t => { if (aus.indexOf(t) < 0) aus.push(t); };
   const wort = String(w.ar).trim();
+
+  /* ⛔⛔ DIE LISTEN FUEHREN NUR BUCHSTABEN — DIE KARTE WEISS MEHR (13.10.2026).
+
+     Drei Regeln von Claude, nicht von Elias bestellt. Gefunden beim Nachmessen
+     der Gruppe „Koran häufigste": 22 Karten aller Buecher zeigten eine Zeile,
+     die zu einem ANDEREN Wort mit denselben Buchstaben gehoert —
+       fahima („verstehen")    zeigte „Personalpronomen"        (fa + hum)
+       qabila („akzeptieren")  zeigte „Zeit- oder Ortsangabe"   (qabla)
+       kumm („Ärmel")          zeigte „Fragewort"               (kam)
+       ahl („Leute")           zeigte „die Endung ändert sich nie" (a + hal)
+       wafiyy („worttreu")     zeigte „Genitivpräposition"      (wa + fī)
+     Auf einer Lernkarte ist das eine falsche Lehre.
+
+     (K1) Eine Verbkarte zeigt nur „Verb" (weiter unten, hinter WORTART). Keine
+          der Sonderrollen kann ein Verb sein, und „die Endung ändert sich nie"
+          meint die Fallendung eines Nomens.
+     (K2) Es zaehlt die Form der Karte selbst — istGenauInListe(), nicht
+          istInListe(): an einem Stichwort haengt kein „und".
+     (K3) Eine Nomen- oder Adjektivkarte mit Tanwin un / in ist beugbar. Sie
+          bekommt aus den Listen nichts. (Tanwin an bleibt frei: ghadan,
+          aydan … stehen als Adverbien in der Liste. Und ayy mit seinem Tanwin
+          ist als Partikel gefuehrt — die Regel beruehrt es nicht.)
+
+     ⚠️ Nur fuer die ANZEIGE auf der Karte. Die Satzzerlegung liest weiter mit
+        istInListe() / istIndeklinabel(): dort steht wa-hum wirklich da.
+     Bewacht von test-funktionsanzeige.mjs und pruefe-funktionen.js. */
+  const beugbar = (w.type === 'noun' || w.type === 'adjective') && /[\u064C\u064D]/.test(wort);
   /* ⛔ `false` heisst hier „steht nicht in der Liste" — und genau das behauptete
      diese Zeile bis zum 09.09.2026 auch dann, wenn istInListe() gar nicht
      antworten konnte. Die Karte verliert dann still ihre Sonderrolle und faellt
@@ -707,7 +767,7 @@ function funktionenVon(w){
      ⚠️ stillerFehler() fasst gleiche Meldungen zusammen und zaehlt sie, es
      wird hier also nichts geflutet, obwohl die Zeile je Wort mehrfach laeuft. */
   const drin = liste => {
-    try { return istInListe(wort, liste); }
+    try { return !beugbar && istGenauInListe(wort, liste); }
     catch(e){ stillerFehler('irab.funktionenVon: Listenabgleich', e); return false; }
   };
 
@@ -722,7 +782,13 @@ function funktionenVon(w){
   /* 1. Die Wortart — sie steht an jedem Datensatz und ist immer da. */
   const WORTART = { noun:'Nomen', verb:'Verb', adjective:'Adjektiv',
                     particle:'Partikel', adverb:'Adverb', expression:'Wendung',
+                    /* 'phrase' (13.10.2026, von Claude): so heissen neun Wendungen im
+                       Abzug von Madina 3 (Kapitel 21 bis 30). Ohne diesen Eintrag
+                       stand auf ihrer Karte GAR KEINE Zeile — nicht einmal „Wort". */
+                    phrase:'Wendung',
                     grammar:'Fachbegriff', vocab:'Wort' };
+  /* (K1) — siehe oben. */
+  if (w.type === 'verb') return [WORTART.verb];
 
   /* 2. Die Sonderrollen. Sie kommen VOR die Wortart, wenn sie genauer sind:
      „Genitivpräposition“ sagt mehr als „Partikel“. */
@@ -752,7 +818,11 @@ function funktionenVon(w){
      nicht in der Anzeige. Am 24.08.2026 stand bei هُمَا, هُنَّ, أَنْتُمَا,
      أَنْتُمْ und أَنْتُنَّ deshalb keine Zeile — bei den sechs alten schon.
      [[dieselbe_frage_zwei_antworten]] */
-  if (istIndeklinabel(wort)) nenn('مَبْنِيّ — die Endung ändert sich nie');
+  /* ⚠️ Seit dem 13.10.2026 ueber die Form der Karte selbst (K2): beide Listen
+     mit drin(), also ohne abgetrennte Vorsilbe. Die Regel „ein
+     Personalpronomen ist immer unveraenderlich" bleibt dadurch erhalten. */
+  const karteUnveraenderlich = drin(INDEKLINABEL) || drin(PERSONALPRONOMEN);
+  if (karteUnveraenderlich) nenn('مَبْنِيّ — die Endung ändert sich nie');
 
   /* 5. مَمْنُوع مِنَ الصَّرْف: unbestimmt und trotzdem ohne Tanwin.
      ⚠️ Gemessen statt gelistet — die Farben, die Städtenamen und غَضْبَانُ
@@ -760,7 +830,7 @@ function funktionenVon(w){
   const ohneAl = !/^(اَ?ل|ال)/.test(wort);
   const endetAufDamma = /ُ\s*$/.test(wort);
   const hatTanwin = /[ًٌٍ]/.test(wort);
-  if (ohneAl && endetAufDamma && !hatTanwin && !istIndeklinabel(wort)
+  if (ohneAl && endetAufDamma && !hatTanwin && !karteUnveraenderlich
       && (w.type === 'noun' || w.type === 'adjective'))
     nenn('مَمْنُوع مِنَ الصَّرْف — nie Tanwin, nie Kasra');
 
@@ -1043,8 +1113,60 @@ function endungUnsichtbar(w){
 /* Ein vorangestelltes Fragepartikel-أ gehoert nicht zum Wort: أَهَذَا ist
    أ + هَذَا und damit genauso unveraenderlich wie هَذَا allein. */
 function ohneFragepartikel(w){
+  /* Kann das Hamza-Alif gar nicht die Fragepartikel sein (13.10.2026, siehe
+     fragepartikelMoeglich() direkt darunter), bleibt die Form ganz. */
+  if (!fragepartikelMoeglich(w))
+    return ohneVokale(w).replace(/[.،؟!«»:؛]/g, '');
   const roh = ohneVokale(w).replace(/[.،؟!«»:؛]/g, '');
   return /^أ./.test(roh) ? roh.slice(1) : roh;
+}
+
+/* ⛔ KEIN ARABISCHES WORT BEGINNT MIT SUKUN ODER SCHADDA (13.10.2026).
+
+   Das ist eine Regel von Claude, nicht von Elias bestellt — gefunden beim
+   Nachmessen der Funktionsanzeige fuer die Gruppe „Koran häufigste".
+
+   Vor einem Wort kann ein einzelner Buchstabe stehen, der nicht zu ihm
+   gehoert: die Fragepartikel (Hamza-Alif mit Fatha) oder der Anschluss wa / fa.
+   Dahinter beginnt dann ein eigenes Wort. Traegt der ZWEITE Buchstabe ein Sukun
+   oder ein Schadda, kann dort kein Wort beginnen — der erste Buchstabe gehoert
+   also zum Wort selbst.
+
+   Anlass: ahl („Leute", Hamza-Alif, dann Ha mit Sukun) wurde als Fragepartikel
+   + hal gelesen und galt als unveraenderlich. Auf der Infokarte stand deshalb
+   „die Endung ändert sich nie" — bei einem Nomen mit Tanwin. Dasselbe bei wahm
+   („Einbildung": wa + hum) und fahm („Verstehen": fa + hum).
+
+   ⚠️ Ohne Vokalzeichen ist nichts zu lesen: dann bleibt es beim Abtrennen wie
+   bisher. Die Regel sperrt nur, wo das Zeichen wirklich dasteht.
+   ⚠️ NFC: dort steht der Vokal VOR dem Schadda (Fatha, dann Schadda), deshalb
+   werden alle Zeichen des zweiten Buchstabens gelesen, nicht nur das erste.
+   Zeichen als \u-Folgen. */
+function vorsilbeAbtrennbar(w){
+  const rein = String(w == null ? '' : w).normalize('NFC')
+    .replace(/[.،؟!«»:؛]/g, '');
+  const m = rein.match(
+    /^[^\u064B-\u0652\u0670\u0640][\u064B-\u0652\u0670\u0640]*[^\u064B-\u0652\u0670\u0640]([\u064B-\u0652\u0670]*)/);
+  return !(m && /[\u0651\u0652]/.test(m[1]));
+}
+/* Kann das fuehrende Hamza-Alif die Fragepartikel sein? Drei Gruende dagegen,
+   jeder am Schriftbild zu lesen (13.10.2026, Regel von Claude):
+     (a) das Hamza traegt Damma, Kasra oder Sukun — die Fragepartikel hat Fatha;
+     (b) der Buchstabe danach traegt Sukun oder Schadda — siehe oben;
+     (c) das Wort traegt Tanwin un oder in — das ist ein beugbares Nomen, und
+         kein Wort der Liste INDEKLINABEL steht hinter der Fragepartikel mit
+         diesem Zeichen da. (Tanwin an bleibt erlaubt: ghadan, aydan … stehen
+         in der Liste.)
+   ⚠️ Was das NICHT faengt: ahamm („wichtiger") gegen a + hum, amina („sicher
+      sein") gegen a + mina. Dort stehen dieselben Buchstaben mit anderen
+      Vokalen, und die Liste fuehrt keine Vokale. Fuer die Karte loest es die
+      Wortart (funktionenVon), fuer den Satz das Lexikon. */
+function fragepartikelMoeglich(w){
+  const rein = String(w == null ? '' : w).normalize('NFC')
+    .replace(/[.،؟!«»:؛]/g, '');
+  if (/^\u0623[\u064F\u0650\u0652]/.test(rein)) return false;
+  if (/[\u064C\u064D]/.test(rein)) return false;
+  return vorsilbeAbtrennbar(rein);
 }
 
 /* ---------- Wortart aus dem Wortschatz ----------

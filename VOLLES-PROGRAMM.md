@@ -362,6 +362,19 @@ zusammenfällt, gehört es in die passende Liste in `js/irab.js`
 ⭐ Seit dem 20.08.2026 gilt: **ein Verb trägt nie Tanwīn**, und die voll
 vokalisierte Lexikonform schlägt den Skelettvergleich. Viele Fälle, die früher
 einen Listeneintrag brauchten, lösen sich dadurch von selbst.
+⭐ Seit dem 13.10.2026 gilt für die **Karte** (nicht für den Satz): die Listen führen
+nur Buchstaben, die Karte weiß mehr. Eine Verbkarte zeigt nur „Verb"; verglichen wird
+die Buchstabenfolge der Karte selbst (kein abgetrenntes wa / fa, keine Fragepartikel);
+eine Nomen- oder Adjektivkarte mit Tanwin un / in bekommt aus den Listen nichts. Anlass:
+22 Karten zeigten die Zeile eines anderen Wortes („verstehen" hieß „Personalpronomen").
+Ein neuer Listeneintrag wird deshalb **vor** dem Eintragen gegen alle Bücher gemessen —
+fällt er mit einem Nomen oder Verb zusammen, steht das im Kommentar dabei.
+
+```
+node pruefe-funktionen.js          # Fenster + alle 255 Karten „Koran häufigste"; dazu
+                                   # „falsche Zeile" über ALLE geladenen Bücher
+node test-funktionsanzeige.mjs     # die Regeln, mit Störtests
+```
 
 ## A9 · Beispielsatz
 

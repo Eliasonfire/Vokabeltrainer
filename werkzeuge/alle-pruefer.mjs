@@ -703,6 +703,12 @@ const PRUEFER = [
      Knopf-Form steht so auf einer seiner Karten), keine Zahlwörter, die Lösung ist
      das Wort im Buchsatz, derselbe Klang zuerst; neunzehn Störtests. */
   ['test-mehrzahl-einsetzen.mjs', []],
+  /* Funktionsanzeige der Infokarte (13.10.2026): keine Zeile eines ANDEREN Wortes mit
+     denselben Buchstaben — eine Verbkarte zeigt nur „Verb", die Karte trennt keine
+     Vorsilbe ab, ein Nomen mit Tanwin bekommt nichts aus den Listen; im Satz wird eine
+     Vorsilbe nicht vor Sukun oder Schadda abgetrennt. Misst die 255 Karten der
+     Koran-Gruppe und alle Buchkarten; achtzehn Störtests. */
+  ['test-funktionsanzeige.mjs', []],
 
   /* ⛔ Neu am 06.09.2026. Der Hifz-Stand ist das Einzige in dieser App, das
      Elias sich WIRKLICH erarbeitet hat — auswendig gelernte Suren. Er lief
