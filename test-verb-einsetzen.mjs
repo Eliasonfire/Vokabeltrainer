@@ -29,6 +29,15 @@
  *      Form (der gefragten); bei falscher Wahl der Satz zur gewählten Form.
  *  10. Was falsch war, kommt nach drei anderen Aufgaben noch einmal, höchstens
  *      zweimal; eine richtige Antwort verlängert die Runde nicht.
+ *  11. Kurze Zeilen für Formen ohne Satz (Paket B, 13.10.2026) gibt es NUR mit
+ *      seinem Schalter (SETTINGS.verbKurzzeilen, Voreinstellung aus).
+ *  12. Mit dem Schalter hat jede der 13 × 13 Formen genau eine Art Aufgabe: einen
+ *      Satz oder eine Zeile aus Pronomen, Lücke und (Verb) — nie beides; die Zeile
+ *      fällt weg, sobald ein Satz die Form trägt; die Frage nennt die Person in
+ *      Worten; nur im Thema „alle"; als Herkunft steht die Formenreihe des Lehrers.
+ *  13. Sätze zuerst: in der Runde der Übung je Person, in der gemischten Runde
+ *      überhaupt, und der Deckel „je Antwort gleich viele" streicht nie einen Satz.
+ *  14. uebungenAufbauen() hängt die Zeilen an und baut neu, wenn er umschaltet.
  * Jede Zusicherung hat einen Störtest am ECHTEN Quelltext (js/uebung.js, im
  * Speicher verändert), der sie rot werden lassen muss.
  *
@@ -257,6 +266,74 @@ function pruefe(quelle){
     run(`uebungWahl(__w)`);
     if (run(`UEB.liste.length`) !== L2) f.push('10: mehr als zwei Wiederholungen derselben Aufgabe');
   } catch (e){ f.push('9/10: der Ablauf wirft — ' + e.message); }
+  /* 11 bis 14 — die kurzen Zeilen für Formen ohne Satz (Paket B, 13.10.2026) */
+  try {
+    const pool = (hole('alleSaetze') || (() => []))();
+    const vorhanden = [];
+    for (const s of pool){ let z; try { z = an(N(s.sentAr)); } catch (e){ continue; } for (const a of (U.baue(z, s) || [])) vorhanden.push({ ...a, satz: s, zeilen: z, modus: U }); }
+    const paar = a => a.verbNr + '|' + a.loesung;
+    if (vorhanden.some(a => !(a.verbNr >= 0))) f.push('12: eine Satzaufgabe kennt ihr Verb nicht (verbNr)');
+    /* 11 — ohne seinen Schalter nichts */
+    app.ctx.SETTINGS.verbKurzzeilen = false;
+    if (typeof U.ohneSatz !== 'function') f.push('11: ohneSatz() fehlt am Eintrag');
+    else {
+      if (U.ohneSatz(vorhanden).length) f.push('11: ohne seinen Schalter entstehen kurze Zeilen');
+      /* 12 — mit dem Schalter: jede der 13 × 13 Formen hat GENAU eine Art Aufgabe */
+      app.ctx.SETTINGS.verbKurzzeilen = true;
+      const kurz = U.ohneSatz(vorhanden);
+      const mitSatz = new Set(vorhanden.map(paar)), mitZeile = new Set(kurz.map(paar));
+      const alle = VERBEN.length * PERS.length;
+      if (alle !== 169 || mitSatz.size + mitZeile.size !== alle || kurz.length !== mitZeile.size) f.push(`12: ${mitSatz.size} Formen mit Satz + ${mitZeile.size} mit Zeile (${kurz.length} Zeilen) ergeben nicht ${alle}`);
+      if ([...mitZeile].some(k => mitSatz.has(k))) f.push('12: eine Form hat einen Satz UND eine kurze Zeile');
+      for (const a of kurz){
+        const verb = VERBEN[a.verbNr], P = PERS.find(p => p.id === a.loesung), wo = `12 (${verb && verb.de}, ${a.loesung})`;
+        if (!verb || !P){ f.push(wo + ': Verb oder Person unbekannt'); continue; }
+        if (!a.ohneSatz || a.wortIdx !== 1 || a.ohneSuffix[1] !== '____') f.push(wo + ': keine Lücke an der Stelle der Form');
+        if (N(a.zeilen[0].wort) !== N(P.pron) || N(a.zeilen[1].wort) !== N(verb.formen[P.i]) || N(a.zeilen[2].wort) !== '(' + N(verb.formen[0]) + ')') f.push(wo + ': die Zeile ist nicht Pronomen, Form, (Verb)');
+        const texte = a.optionen.map(o => N(o.text));
+        if (a.optionen.length !== 4 || new Set(texte).size !== 4 || texte.some(t => !verb.formen.map(N).includes(t))) f.push(wo + ': keine vier verschiedenen Formen DESSELBEN Verbs');
+        const lo = a.optionen.find(o => o.wert === a.loesung);
+        if (!lo || N(lo.text) !== N(verb.formen[P.i])) f.push(wo + ': die Lösung ist nicht die belegte Form der Person');
+        if (!String(a.frage).includes('Gemeint ist: ' + P.de + '.')) f.push('12f: die Frage nennt die Person nicht in Worten (' + a.loesung + ')');
+        if ((a.paket || []).filter(g => g.gefragt).length !== 1) f.push(wo + ': das Dreierpaket hat nicht genau eine gefragte Form');
+        if (!a.satz || a.satz.verbZeile !== verb.folge || !a.deKlar || !a.deKlar.test('irgendwas')) f.push(wo + ': Herkunft (Folge) oder lesbare deutsche Zeile fehlt');
+      }
+      const herkunftFn = hole('herkunft');
+      if (kurz[0] && (typeof herkunftFn !== 'function' || !/^Formenreihe deines Lehrers/.test(herkunftFn(kurz[0].satz)))) f.push('12h: als Herkunft steht nicht „Formenreihe deines Lehrers"');
+      /* 12w — kommt ein Satz dazu, fällt die Zeile weg */
+      if (kurz[0]){
+        const danach = U.ohneSatz([...vorhanden, { verbNr: kurz[0].verbNr, loesung: kurz[0].loesung }]);
+        if (danach.length !== kurz.length - 1 || danach.some(a => paar(a) === paar(kurz[0]))) f.push('12w: die Zeile bleibt, obwohl ein Satz die Form jetzt trägt');
+      }
+      /* 12t — nur im Thema „alle" */
+      try { run(`SATZ_THEMA = 'ein-einzelnes-thema'`); if (U.ohneSatz(vorhanden).length) f.push('12t: kurze Zeilen auch in einem einzelnen Thema'); }
+      finally { run(`SATZ_THEMA = 'alle'`); }
+      /* 13 — Sätze zuerst (die Zeilen stehen in der Eingabe absichtlich VORN) */
+      const gemeinsam = [...kurz.map(a => ({ ...a, modus: U })), ...vorhanden];
+      /* Hier mit einem „Mischen", das wirklich umstellt (umdrehen): mit dem stillen Mischen des Prüfstands
+         käme die Reihenfolge schon aus dem Deckel, und die Regel in uebungReihum() bliebe ungeprüft. */
+      const stillesMischen = app.ctx.shuffle;
+      let runde;
+      app.ctx.shuffle = a => a.slice().reverse();
+      try { runde = hole('uebungMischen')(U, gemeinsam); } finally { app.ctx.shuffle = stillesMischen; }
+      const jeP = new Map();
+      runde.forEach((a, i) => { const e = jeP.get(a.loesung) || { letzterSatz: -1, ersteZeile: Infinity }; if (a.ohneSatz) e.ersteZeile = Math.min(e.ersteZeile, i); else e.letzterSatz = i; jeP.set(a.loesung, e); });
+      if ([...jeP.values()].some(e => e.ersteZeile < e.letzterSatz)) f.push('13a: in der Runde der Übung steht bei einer Person eine kurze Zeile vor einem Satz');
+      const gemischt = hole('uebungGemischteListe')({ 'verb-einsetzen': gemeinsam });
+      const ersteZeile = gemischt.findIndex(a => a.ohneSatz);
+      /* Der Deckel „je Antwort gleich viele" darf kurze Zeilen streichen, aber keinen Satz (uebungGleichViele). */
+      /* Mit dem stillen Mischen gemessen: die Zeilen stehen in der Eingabe vorn, ohne die Regel zählte der Deckel sie zuerst. */
+      const saetzeNachDeckel = hole('uebungMischen')(U, gemeinsam).filter(a => !a.ohneSatz).length;
+      if (saetzeNachDeckel !== vorhanden.length) f.push(`13d: der Deckel streicht Satzaufgaben zugunsten kurzer Zeilen (${saetzeNachDeckel} von ${vorhanden.length} bleiben)`);
+      if (ersteZeile !== vorhanden.length) f.push(`13g: die gemischte Runde zieht eine kurze Zeile an Stelle ${ersteZeile + 1}, obwohl es ${vorhanden.length} Satzaufgaben gibt`);
+      /* 14 — der Aufbau hängt die Zeilen an, und der Schalter baut neu */
+      const zaehle = an => run(`SETTINGS.verbKurzzeilen = ${an}; uebungenAufbauen()['verb-einsetzen'].filter(a => a.ohneSatz).length`);
+      run(`SENT.list = alleSaetze(); UEB_CACHE = {};`);
+      const aus1 = zaehle(false), an1 = zaehle(true), aus2 = zaehle(false);
+      if (aus1 !== 0 || an1 !== kurz.length || aus2 !== 0) f.push(`14: uebungenAufbauen() hängt die Zeilen nicht an oder baut beim Umschalten nicht neu (aus ${aus1}, an ${an1}, wieder aus ${aus2}; erwartet 0, ${kurz.length}, 0)`);
+    }
+  } catch (e){ f.push('11–14: die Prüfung der kurzen Zeilen wirft — ' + e.message); }
+  finally { app.ctx.SETTINGS.verbKurzzeilen = false; }
   return { f, zahl, jePerson };
 }
 
@@ -282,7 +359,18 @@ const STOER = [
   ['Falsches kommt endlos wieder', '(aF.nochmal || 0) < 2', 'true', /^10:/],
   ['die Lösung ist die Form statt der Person', 'loesung: P.id,', 'loesung: formen[P.i],', /^3:/],
   ['teilRang fehlt', 'teilRang:100,', '', /^1t:/],
-  ['Übung 14 und 17 dürfen in denselben Teil', ", ['pronomen', 'verb-einsetzen']];", '];', /^1v:/]
+  ['Übung 14 und 17 dürfen in denselben Teil', ", ['pronomen', 'verb-einsetzen']];", '];', /^1v:/],
+  /* Paket B (13.10.2026): die kurzen Zeilen für Formen ohne Satz */
+  ['kurze Zeilen ohne seinen Schalter', "if (!(typeof SETTINGS === 'object' && SETTINGS && SETTINGS.verbKurzzeilen)) return [];", '', /^11:|^14:/],
+  ['eine Zeile bleibt, obwohl ein Satz die Form trägt', "if (mitSatz.has(nr + '|' + person.id)) return;", '', /^12:|^12w:/],
+  ['die Satzaufgabe merkt sich ihr Verb nicht', '          verbNr: UEB_VERBEN.indexOf(st.verb),\n', '', /^12:/],
+  ['die Frage der kurzen Zeile nennt die Person nicht', 'frage: `Welche Form des Verbs gehört in die Lücke? Gemeint ist: ${person.de}.`,', "frage: 'Welche Form des Verbs gehört in die Lücke?',", /^12f:/],
+  ['kurze Zeilen auch in einem einzelnen Thema', "if (typeof SATZ_THEMA !== 'undefined' && SATZ_THEMA !== 'alle') return [];", '', /^12t:/],
+  ['kurze Zeilen stehen vor den Sätzen (Runde der Übung)', ': shuffle(k).sort((x, y) => (x.ohneSatz ? 1 : 0) - (y.ohneSatz ? 1 : 0)));', ': shuffle(k));', /^13a:/],
+  ['die gemischte Runde zieht kurze Zeilen zuerst', '.sort((x, y) => (y.ohneSatz ? 1 : 0) - (x.ohneSatz ? 1 : 0)))', ')', /^13g:/],
+  ['der Deckel streicht Sätze statt kurzer Zeilen', 'return shuffle(liste.slice()).sort((x, y) => (x.ohneSatz ? 1 : 0) - (y.ohneSatz ? 1 : 0)).filter(a => {', 'return shuffle(liste.slice()).filter(a => {', /^13d:/],
+  ['der Aufbau hängt die kurzen Zeilen nicht an', '    dazu.forEach(a=>nachModus[m.id].push({ ...a, modus:m }));', '', /^14:/],
+  ['der Schalter baut die Liste nicht neu', ' && UEB_CACHE.kurz === kurz', '', /^14:/]
 ];
 for (const [name, alt, neu, muster] of STOER){
   if (!QUELLE.includes(alt)){ console.log(`❌ Störtest „${name}": Stelle nicht gefunden`); rot = 1; continue; }

@@ -17,6 +17,7 @@ function renderSettings(){
   /* Das zweite Tippfeld für die Mehrzahl (13.10.2026). Mit Abfrage: ein Prüfstand mit einem
      älteren Doppel der Seite kennt den Schalter nicht. */
   { const t = document.getElementById('toggleTippenPlural'); if (t) t.classList.toggle('on', !!SETTINGS.tippenPlural); }
+  { const t = document.getElementById('toggleVerbKurzzeilen'); if (t) t.classList.toggle('on', !!SETTINGS.verbKurzzeilen); }
   /* Wurzelmodus. Die Ausrichtung ist standardmaessig AN, deshalb wird auf
      `!== false` geprueft und nicht auf Wahrheit - ein fehlender Eintrag ist
      hier "an", nicht "aus". */
@@ -532,6 +533,15 @@ document.getElementById('toggleTippenPlural').addEventListener('click', ()=>{
   if (SETTINGS.tippenPlural) toast(SETTINGS.tippenAbBox4
     ? 'Mehrzahl: Bei regelmäßiger Mehrzahl steht ab Box 4 ein zweites Feld unter dem Wort.'
     : 'Mehrzahl: wirkt erst, wenn auch „Ab Box 4 eintippen" an ist.');
+});
+/* Satzübung 17: kurze Zeilen für Formen ohne Satz (13.10.2026). Voreinstellung AUS — er
+   schaltet selbst ein. uebungenAufbauen() in js/uebung.js liest den Schalter bei jedem Aufbau
+   und baut die Liste neu, wenn er sich geändert hat. */
+document.getElementById('toggleVerbKurzzeilen').addEventListener('click', ()=>{
+  SETTINGS.verbKurzzeilen = !SETTINGS.verbKurzzeilen;
+  saveSettings();
+  renderSettings();
+  if (SETTINGS.verbKurzzeilen) toast('Verb einsetzen: Für Formen ohne Satz kommen jetzt kurze Zeilen dazu.');
 });
 document.getElementById('btnSettings').addEventListener('click', ()=>showScreen('settings'));
 document.getElementById('toggleShowPlural').addEventListener('click', ()=>{

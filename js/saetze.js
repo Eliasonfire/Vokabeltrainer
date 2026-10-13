@@ -410,6 +410,8 @@ function herkunft(w){
   if (w.seite) return `${HERKUNFT_WERK[w.werk] || 'Madina Buch 1'}, S. ${w.seite}`;
   /* Ohne diese Zeile stünde „Kap. undefined" über dem Satz: er hat kein Kapitel. */
   if (w.laengerSatz) return 'Längerer Satz aus deinen Wörtern';
+  /* Übung 17, kurze Zeilen (13.10.2026): kein Buchsatz — das steht hier, damit es niemand dafür hält. */
+  if (w.verbZeile) return 'Formenreihe deines Lehrers — ' + w.verbZeile;
   return kapitelBeschriftung(w);
 }
 
