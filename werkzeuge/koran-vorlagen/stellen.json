@@ -1,34 +1,287 @@
 {
  "_": "Vorlage der Koranstellen (VOLLES-PROGRAMM.md, A11) für die Karten von „Koran häufigste“. Kein arabisches Wort ist getippt: wo = Sure:Vers · von/bis = Wörter des Verses (fehlen sie: der ganze Vers) · wort = an welcher Stelle des Verses das Wort der Karte steht (am Wort nachgelesen mit werkzeuge/koran-stellen-zeigen.mjs) · de = „*“ für die Übersetzung des ganzen Verses aus quran-text.js, sonst ein Stück, das WÖRTLICH darin steht. ohne = der Grund, warum die Karte keine Stelle hat. Nur Verse aus seinem auswendigen Bereich; aufgelöst und geprüft von werkzeuge/koran-haeufig-bauen.mjs (leseStellen).",
-
- "kh-002": { "wo": "112:1", "wort": 3, "de": "*" },
- "kh-004": { "wo": "94:6", "wort": 1, "de": "*" },
- "kh-005": { "wo": "109:1", "wort": 1, "de": "*" },
- "kh-009": { "wo": "110:3", "wort": 6, "de": "*" },
- "kh-011": { "wo": "1:2", "wort": 3, "de": "*" },
- "kh-015": { "wo": "67:25", "wort": 5, "de": "*" },
- "kh-016": { "wo": "67:16", "wort": 5, "de": "*" },
- "kh-017": { "wo": "2:255", "von": 2, "bis": 5, "wort": 4, "de": "es gibt keinen Gott außer Ihm" },
- "kh-018": { "wo": "103:3", "wort": 3, "de": "*" },
- "kh-021": { "wo": "99:1", "wort": 3, "de": "*" },
- "kh-022": { "wo": "67:9", "von": 2, "bis": 5, "wort": 3, "de": "Ja doch, zu uns kam bereits ein Warner" },
- "kh-023": { "wo": "93:2", "wort": 2, "de": "*" },
- "kh-024": { "ohne": "Das Wort steht in keinem Vers seines auswendigen Bereichs (die Trefferliste nennt nur andere Wörter derselben Wurzel)." },
- "kh-025": { "ohne": "Das Wort steht in keinem Vers seines auswendigen Bereichs (der eine Treffer der Liste ist ein anderes Wort mit denselben Buchstaben)." },
- "kh-026": { "wo": "102:3", "wort": 3, "de": "*" },
- "kh-027": { "ohne": "Das Wort steht in keinem Vers seines auswendigen Bereichs — nur in seinem Tashahhud, und eine Dua ist keine Koranstelle." },
- "kh-028": { "wo": "97:4", "wort": 8, "de": "*" },
- "kh-029": { "wo": "112:3", "wort": 1, "de": "*" },
- "kh-030": { "wo": "105:2", "wort": 2, "de": "*" },
- "kh-031": { "wo": "102:4", "wort": 1, "de": "*" },
- "kh-035": { "wo": "67:6", "wort": 4, "de": "*" },
- "kh-038": { "ohne": "Das Wort steht in keinem Vers seines auswendigen Bereichs." },
- "kh-039": { "wo": "67:6", "wort": 2, "de": "*" },
- "kh-040": { "wo": "67:1", "wort": 8, "de": "*" },
- "kh-041": { "wo": "67:10", "wort": 5, "de": "*" },
- "kh-042": { "wo": "110:1", "wort": 2, "de": "*" },
- "kh-043": { "wo": "99:7", "wort": 2, "de": "*" },
- "kh-044": { "ohne": "Das Wort steht in keinem Vers seines auswendigen Bereichs — nur in seiner Dua nach dem Gebetsruf, und eine Dua ist keine Koranstelle." },
- "kh-045": { "wo": "110:2", "wort": 1, "de": "*" },
- "kh-046": { "wo": "67:30", "wort": 9, "de": "*" }
+ "kh-002": {
+  "wo": "112:1",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-004": {
+  "wo": "94:6",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-005": {
+  "wo": "109:1",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-009": {
+  "wo": "110:3",
+  "wort": 6,
+  "de": "*"
+ },
+ "kh-011": {
+  "wo": "1:2",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-015": {
+  "wo": "67:25",
+  "wort": 5,
+  "de": "*"
+ },
+ "kh-016": {
+  "wo": "67:16",
+  "wort": 5,
+  "de": "*"
+ },
+ "kh-017": {
+  "wo": "2:255",
+  "von": 2,
+  "bis": 5,
+  "wort": 4,
+  "de": "es gibt keinen Gott außer Ihm"
+ },
+ "kh-018": {
+  "wo": "103:3",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-021": {
+  "wo": "99:1",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-022": {
+  "wo": "67:9",
+  "von": 2,
+  "bis": 5,
+  "wort": 3,
+  "de": "Ja doch, zu uns kam bereits ein Warner"
+ },
+ "kh-023": {
+  "wo": "93:2",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-024": {
+  "ohne": "Das Wort steht in keinem Vers seines auswendigen Bereichs (die Trefferliste nennt nur andere Wörter derselben Wurzel)."
+ },
+ "kh-025": {
+  "ohne": "Das Wort steht in keinem Vers seines auswendigen Bereichs (der eine Treffer der Liste ist ein anderes Wort mit denselben Buchstaben)."
+ },
+ "kh-026": {
+  "wo": "102:3",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-027": {
+  "ohne": "Das Wort steht in keinem Vers seines auswendigen Bereichs — nur in seinem Tashahhud, und eine Dua ist keine Koranstelle."
+ },
+ "kh-028": {
+  "wo": "97:4",
+  "wort": 8,
+  "de": "*"
+ },
+ "kh-029": {
+  "wo": "112:3",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-030": {
+  "wo": "105:2",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-031": {
+  "wo": "102:4",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-035": {
+  "wo": "67:6",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-038": {
+  "ohne": "Das Wort steht in keinem Vers seines auswendigen Bereichs."
+ },
+ "kh-039": {
+  "wo": "67:6",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-040": {
+  "wo": "67:1",
+  "wort": 8,
+  "de": "*"
+ },
+ "kh-041": {
+  "wo": "67:10",
+  "wort": 5,
+  "de": "*"
+ },
+ "kh-042": {
+  "wo": "110:1",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-043": {
+  "wo": "99:7",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-044": {
+  "ohne": "Das Wort steht in keinem Vers seines auswendigen Bereichs — nur in seiner Dua nach dem Gebetsruf, und eine Dua ist keine Koranstelle."
+ },
+ "kh-045": {
+  "wo": "110:2",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-046": {
+  "wo": "67:30",
+  "wort": 9,
+  "de": "*"
+ },
+ "kh-048": {
+  "wo": "2:255",
+  "von": 27,
+  "bis": 32,
+  "wort": 29,
+  "de": "Er weiß, was vor ihnen und was hinter ihnen liegt"
+ },
+ "kh-049": {
+  "wo": "103:3",
+  "wort": 7,
+  "de": "*"
+ },
+ "kh-054": {
+  "wo": "67:18",
+  "wort": 5,
+  "de": "*"
+ },
+ "kh-051": {
+  "ohne": "Als eigenes Wort steht es in keinem Vers seines auswendigen Bereichs — nur als Teil eines anderen Wortes (99:4, „an jenem Tag“), das die Eselsbrücke zeigt."
+ },
+ "kh-052": {
+  "wo": "2:255",
+  "von": 38,
+  "bis": 40,
+  "wort": 40,
+  "de": "außer, was Er will"
+ },
+ "kh-055": {
+  "ohne": "Das Wort steht in keinem Vers seines auswendigen Bereichs (dort steht nur das Verb dazu: 103:3)."
+ },
+ "kh-056": {
+  "wo": "102:5",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-058": {
+  "wo": "113:2",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-059": {
+  "wo": "97:1",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-060": {
+  "ohne": "Das Wort steht in keinem Vers seines auswendigen Bereichs."
+ },
+ "kh-061": {
+  "wo": "107:1",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-062": {
+  "ohne": "Das Verb selbst steht in keinem Vers seines auswendigen Bereichs — nur eine abgeleitete Form (67:27) und das Nomen in seiner Dua nach dem Gebetsruf."
+ },
+ "kh-063": {
+  "wo": "97:4",
+  "wort": 9,
+  "de": "*"
+ },
+ "kh-064": {
+  "ohne": "Das Wort steht in keinem Vers seines auswendigen Bereichs."
+ },
+ "kh-105": {
+  "wo": "67:13",
+  "von": 6,
+  "bis": 9,
+  "wort": 7,
+  "de": "gewiß, Er weiß über das Innerste der Brüste Bescheid"
+ },
+ "kh-067": {
+  "ohne": "Das Wort steht in keinem Vers seines auswendigen Bereichs."
+ },
+ "kh-068": {
+  "wo": "67:27",
+  "von": 1,
+  "bis": 3,
+  "wort": 1,
+  "de": "Wenn sie es aber nahe (bei sich) sehen"
+ },
+ "kh-069": {
+  "wo": "109:1",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-071": {
+  "wo": "114:3",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-107": {
+  "ohne": "Das Wort steht in keinem Vers seines auswendigen Bereichs — der eine Treffer (114:6) ist ein anderes Wort mit denselben Buchstaben: die Dschinn."
+ },
+ "kh-072": {
+  "wo": "111:3",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-073": {
+  "wo": "1:7",
+  "wort": 5,
+  "de": "*"
+ },
+ "kh-074": {
+  "wo": "1:6",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-108": {
+  "wo": "97:5",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-076": {
+  "wo": "67:17",
+  "von": 1,
+  "bis": 2,
+  "wort": 1,
+  "de": "Oder glaubt ihr euch in Sicherheit davor"
+ },
+ "kh-077": {
+  "ohne": "Der Name steht in keinem Vers seines auswendigen Bereichs."
+ },
+ "kh-078": {
+  "ohne": "Das Wort steht in keinem Vers seines auswendigen Bereichs."
+ },
+ "kh-079": {
+  "wo": "67:20",
+  "von": 8,
+  "bis": 10,
+  "wort": 9,
+  "de": "außer dem Allerbarmer"
+ },
+ "kh-080": {
+  "ohne": "In seinem Bereich steht nur die weibliche Form mit Artikel und zwei Vorsilben (93:4, „das Jenseits“); die Eselsbrücke zeigt sie. Die Form der Karte selbst steht dort nicht."
+ },
+ "kh-082": {
+  "ohne": "Das Wort steht in keinem Vers seines auswendigen Bereichs — nur in seiner Dua, die die Eselsbrücke zeigt; eine Dua ist keine Koranstelle."
+ }
 }

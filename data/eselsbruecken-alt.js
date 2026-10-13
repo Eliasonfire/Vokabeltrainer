@@ -3211,4 +3211,154 @@ const ESELSBRUECKEN_ALT = {
     'Dein Lehrer zeigt es an einer Reihe: رِجَالٌ, كِبَارٌ, صِغَارٌ — drei Plurale, alle gleich gebaut. Gebrochen heißt also nicht regellos: das Wort wird innen umgebaut, und viele Wörter gehen denselben Weg. Sein Rat: den Plural bei jedem neuen Wort gleich mitlernen.',
     'So erkennst du ihn: am Ende steht weder ـُونَ noch ـَات. Dein Lehrer: „Erkennst du hier eine der beiden Formen? Wenn nicht, dann ist es unregelmäßig.“ طُلَّابٌ, أَوْلَادٌ, كُتُبٌ — keine Endung, also جَمْعُ تَكْسِيرٍ.'
   ],
+
+  'kh-048': [
+    'Derselbe Vers geht weiter und nennt gleich das Gegenstück: بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ (2:255) — „zwischen ihren Händen und was hinter ihnen ist“. Vorn بَيْنَ, hinten khalfa (hinter).',
+    '⚠️ Eine Ortsangabe wie dein تَحْتَ (unter) und أَمَامَ (vor): alle drei enden auf Fatḥa, und das Wort danach steht im Genitiv.'
+  ],
+
+  'kh-049': [
+    'In al-ʿAṣr: وَتَوَاصَوْاْ بِٱلْحَقِّ (103:3) — „und einander die Wahrheit eindringlich empfehlen“. Mit bi- davor und dem Artikel steht es im Genitiv: bi-l-ḥaqqi.',
+    '⚠️ Die Wurzel ح ق ق hat zweimal denselben Buchstaben; im Wort verschmelzen die beiden zu einem mit Schadda. Die Mehrzahl حُقُوقٌ heißt „Rechte“ — ḥuqūq al-insān sind die Menschenrechte.'
+  ],
+
+  'kh-054': [
+    'Das Gegenstück kennst du aus deiner Dua nach dem Aufstehen: بَعْدَ مَا أَمَاتَنَا — „nachdem Er uns hat sterben lassen“. Dort „nach“, hier „vor“: die beiden gehören zusammen.',
+    '⚠️ Wie dein تَحْتَ (unter) steht قَبْلَ vor einem Genitiv. Nach min bekommt es selbst Kasra, und ein Pronomen hängt direkt am Wort: مِن قَبْلِهِمْ (67:18) — „vor ihnen“.'
+  ],
+
+  'kh-051': [
+    'Sein Gegenstück steht am Anfang von an-Naṣr: إِذَا جَآءَ (110:1) — „wenn kommt …“. Das erste Wort dort blickt nach vorn (wenn, sobald); إِذْ blickt zurück: „als (damals) …“. Das kürzere Wort für das, was schon vorbei ist.',
+    'Im Koran beginnt so oft eine Erzählung von früher: wa-idh qāla … — „und als … sagte“. Wo du wa-idh hörst, fängt eine Geschichte an.'
+  ],
+
+  'kh-052': [
+    'In Āyat al-Kursī: إِلَّا بِمَا شَآءَ (2:255) — „außer was Er will“.',
+    '⚠️ Du hast schon ein Wort für „wollen“: أَرَادَ. شَاءَ steht im Koran fast immer für das, was Allah will. Aus derselben Wurzel ش ي ء kommt das Wort für „Sache, Ding“, das im selben Vers kurz davor steht: بِشَيْءٍ (2:255) — dort mit bi- davor.'
+  ],
+
+  'kh-055': [
+    'Es kommt vom Verb für „glauben“, das du in al-ʿAṣr sprichst: إِلَّا ٱلَّذِينَ ءَامَنُواْ (103:3) — „außer denjenigen, die glauben“. مُؤْمِنٌ ist der, der glaubt. Dieselben Wurzelbuchstaben stecken in īmān, dem Glauben.',
+    '⚠️ Das mu- am Anfang macht aus einem Verb den, der es tut: dein مُدَرِّسٌ ist der, der lehrt, ein Muslim der, der sich ergibt, ein Muʾadhdhin der, der zum Gebet ruft — und مُؤْمِنٌ der, der glaubt.'
+  ],
+
+  'kh-056': [
+    'In al-Mulk bereuen die Bewohner des Feuers: لَوْ كُنَّا نَسْمَعُ (67:10) — „hätten wir nur gehört …“. Zu spät. لَوْ steht für das, was hätte sein können.',
+    'Drei Wörter für „wenn“ in deinen Suren: إِذَا (110:1) — wenn, sobald: es wird geschehen —, إِن كُنتُمْ (67:25) — falls: „wenn ihr wahrhaftig seid“ —, und لَوْ: wenn doch — es ist nicht geschehen.'
+  ],
+
+  'kh-058': [
+    'Aus deiner Abend-Dua: خَلَقْتَنِي وَأَنَا عَبْدُكَ، — „Du hast mich erschaffen, und ich bin Dein Diener“. Dasselbe Verb mit -ta (du) und -nī (mich) daran.',
+    'Zweimal in deinen Suren mit dem, was erschaffen wurde: لَقَدْ خَلَقْنَا ٱلْإِنسَٰنَ (95:4) — „Wir haben den Menschen erschaffen“ — und ٱلَّذِي خَلَقَ ٱلْمَوْتَ (67:2) — „der den Tod erschaffen hat“. Al-Ḫāliq, der Schöpfer, ist einer der Namen Allahs.'
+  ],
+
+  'kh-059': [
+    'Aus deiner Dua, dem Gebet von Mūsā am Brunnen: لِمَآ أَنزَلْتَ إِلَيَّ — „für das, was Du zu mir herabsendest“. Dasselbe Verb mit -ta: Du.',
+    '⚠️ In derselben Sure steht das Geschwisterwort ohne a- davor: تَنَزَّلُ ٱلْمَلَٰٓئِكَةُ (97:4) — „die Engel kommen herab“. Die Engel kommen selbst herab; mit dem a- vorn (أَنْزَلَ) lässt man etwas herabkommen: man sendet es.'
+  ],
+
+  'kh-060': [
+    'In al-Fātiḥa bittest du mit einem anderen Wort um den Weg: ٱهْدِنَا ٱلصِّرَٰطَ ٱلْمُسْتَقِيمَ (1:6) — „leite uns den geraden Weg“. Im Koran stehen beide nebeneinander; dein شَارِعٌ ist dagegen die Straße in der Stadt.',
+    '⚠️ Die Mehrzahl سُبُلٌ geht wie bei deinem رَسُولٌ (Gesandter): رُسُلٌ. Zwei kurze u, das lange ī der Einzahl fällt weg.'
+  ],
+
+  'kh-061': [
+    'Genau in der Form deiner Karte in al-Mulk: وَلَقَدْ كَذَّبَ (67:18) — „und bereits haben … für Lüge erklärt“.',
+    '⚠️ Die Schadda macht den Unterschied: kadhaba (ohne) heißt „lügen“, كَذَّبَ (mit doppeltem Mittelbuchstaben) heißt „jemanden zum Lügner erklären“. Aus der Sīra kennst du Musaylima al-Kadhdhāb — den Erzlügner.'
+  ],
+
+  'kh-062': [
+    'Auch Daʿwa, der Ruf zum Islam, kommt daher. In deiner Dua nach dem Adhān nennst du den Gebetsruf so: هَذِهِ الدَّعْوَةِ التَّامَّةِ — „dieses vollkommenen Rufes“.',
+    '⚠️ Der letzte Wurzelbuchstabe ist ein و (د ع و). In der Vergangenheit sieht man nur ein langes ā, in der Gegenwart kommt es heraus: يَدْعُو.'
+  ],
+
+  'kh-063': [
+    'In al-Qadr: مِّن كُلِّ أَمْرٍ (97:4) — „mit jeder Angelegenheit“.',
+    'Die zweite Bedeutung ist „Befehl“: der Amīr (Emir) ist der, der befiehlt. Amīr al-Muʾminīn — der Befehlshaber der Gläubigen.'
+  ],
+
+  'kh-064': [
+    'Als Befehl kennst du es als Mahnung: ittaqi llāh — „fürchte Allah!“. Das ist اِتَّقِ mit dem Namen Allahs dahinter.',
+    '⚠️ Die Wurzel ist و ق ي — „schützen“. Wer das tut, stellt einen Schutz zwischen sich und die Strafe. Die es tun, heißen al-muttaqūn, die Gottesfürchtigen.'
+  ],
+
+  'kh-105': [
+    'Vom Verb für „wissen“, das du in at-Takāthur sprichst: كَلَّا سَوْفَ تَعْلَمُونَ (102:3) — „keineswegs! Ihr werdet es erfahren“. Vom selben Stamm ist ʿilm, das Wissen — aus deiner Dua: رَّبِّ زِدْنِي عِلْمًا, „mein Herr, mehre mich an Wissen“.',
+    '⚠️ Das Muster mit langem ī steht für eine dauernde Eigenschaft. Du kennst es aus der Basmala: ٱلرَّحْمَٰنِ ٱلرَّحِيمِ (1:1) — „des Allerbarmers, des Barmherzigen“ — und von deinen Wörtern قَدِيمٌ (alt) und جَدِيدٌ (neu).'
+  ],
+
+  'kh-067': [
+    '⚠️ Kurz gebaut wie drei Wörter, die du hast: بَيْتٌ (Haus), يَوْمٌ (Tag), شَيْخٌ (alter Mann) — ein a, dann ein stummer Buchstabe: baʿḍ.',
+    'بَعْضٌ ist ein Nomen und bleibt in der Einzahl, auch wenn „einige“ gemeint sind. Das Wort danach steht im Genitiv, oder ein Pronomen hängt direkt daran: baʿḍuhum — „einige von ihnen“.'
+  ],
+
+  'kh-068': [
+    'Nach لَمَّا steht ein Verb in der Vergangenheit — hier eine Form von „sehen“: فَلَمَّا رَأَوْهُ (67:27). Zwei Dinge geschahen nacheinander: als das eine eintrat, folgte das andere.',
+    '⚠️ Nicht verwechseln mit dem kurzen Wort aus al-Iḫlāṣ: لَمْ يَلِدْ (112:3) — „Er hat nicht gezeugt“. Das verneint. لَمَّا hat ein Schadda und ein langes ā am Ende und erzählt, wann etwas geschah.'
+  ],
+
+  'kh-069': [
+    'Mit yā davor in al-Kāfirūn: قُلْ يَٰٓأَيُّهَا ٱلْكَٰفِرُونَ (109:1) — „sag: o ihr Ungläubigen“. yā ayyuhā ist die feierliche Anrede; so spricht der Koran die Menschen an: yā ayyuhā n-nās — „o ihr Menschen“.',
+    '⚠️ Danach steht immer ein Wort mit Artikel und Ḍamma: an-nabiyyu, al-kāfirūna, an-nāsu. Bei einem Namen reicht yā allein (yā Muḥammad); vor einem Wort mit Artikel braucht es أَيُّهَا.'
+  ],
+
+  'kh-071': [
+    'In an-Nās: إِلَٰهِ ٱلنَّاسِ (114:3) — „dem Gott der Menschen“. Und in Āyat al-Kursī: لَآ إِلَٰهَ إِلَّا هُوَ (2:255) — „es gibt keinen Gott außer Ihm“. Dieselben Wurzelbuchstaben أ ل ه trägt der Name Allah.',
+    'Aus deiner Abend-Dua: لَا إِلَهَ إِلاَّ أَنْتَ، — „es gibt keinen Gott außer Dir“.'
+  ],
+
+  'kh-107': [
+    '⚠️ In an-Nās steht ein Wort, das fast gleich aussieht: مِنَ ٱلْجِنَّةِ وَٱلنَّاسِ (114:6) — „von den Dschinn und den Menschen“. Mit Kasra (al-jinna) sind es die Dschinn, mit Fatḥa (جَنَّةٌ) ist es der Garten.',
+    'Beide teilen die Wurzel ج ن ن — „verdecken“: der Garten ist von Bäumen verdeckt, die Dschinn sind den Augen verborgen. Die Mehrzahl ist regelmäßig weiblich: جَنَّاتٌ.'
+  ],
+
+  'kh-072': [
+    '⚠️ Weiblich, obwohl das Wort kein ة trägt — der Vers zeigt es: danach steht dhāta (weiblich). Genauso bei deinem سَمَاءٌ (Himmel) — und bei „Erde“ in az-Zalzala: زُلْزِلَتِ ٱلْأَرْضُ (99:1), wo das Verb davor ebenfalls weiblich ist.',
+    'Die Wurzel ن و ر teilt es mit nūr, dem Licht: Feuer und Licht aus denselben Buchstaben. Mit Artikel, an-Nār, ist im Koran meist das Höllenfeuer gemeint.'
+  ],
+
+  'kh-073': [
+    'In at-Tīn: أَجْرٌ غَيْرُ مَمْنُونٍ (95:6) — „ein Lohn, der nicht aufhört“, wörtlich: ein anderer als ein unterbrochener. So macht غَيْرُ aus einem Wort sein Gegenteil.',
+    '⚠️ غَيْرُ wird gebeugt wie ein Nomen: in al-Fātiḥa steht es mit Kasra (ghayri), in at-Tīn mit Ḍamma (ghayru). Das Wort danach steht immer im Genitiv.'
+  ],
+
+  'kh-074': [
+    'In aḍ-Ḍuḥā in der Form deiner Karte: وَوَجَدَكَ ضَآلًّا فَهَدَىٰ (93:7) — „und dich irregehend gefunden und dann rechtgeleitet“.',
+    'Das Nomen dazu benutzt du auf Deutsch: Hidāya — die Rechtleitung. Und wem man Gutes wünscht, dem sagt man: hadāka llāh — „Allah leite dich recht“.'
+  ],
+
+  'kh-108': [
+    'In at-Takāthur: حَتَّىٰ زُرْتُمُ ٱلْمَقَابِرَ (102:2) — „bis ihr die Friedhöfe besucht“. Dort steht nach حَتَّى ein Verb, in al-Qadr ein Nomen im Genitiv — beides geht.',
+    '⚠️ Geschrieben mit ى am Ende, gesprochen als langes ā — wie bei deinem إِلَى (nach, zu) und bei عَلَى (auf).'
+  ],
+
+  'kh-076': [
+    'Zwei Wörter für „oder“: das eine kennst du aus al-Mulk — نَسْمَعُ أَوْ نَعْقِلُ (67:10), „gehört oder begriffen“ — und steht in einfachen Sätzen; أَمْ steht nur in Fragen: „dies oder das?“.',
+    'Al-Mulk fragt damit weiter: أَمَّنْ هَٰذَا ٱلَّذِي (67:20) — „oder wer ist dieser, der …?“. Das erste Wort ist أَمْ und مَنْ (wer), zu einem verschmolzen.'
+  ],
+
+  'kh-077': [
+    'Eine deiner Duas ist seine: رَبِّ إِنِّي لِمَآ أَنزَلْتَ — so beginnt das Gebet, das Mūsā im Schatten sprach, nachdem er den beiden Frauen die Tiere getränkt hatte.',
+    '⚠️ Der Name endet auf ى und ändert sich nie: Mūsā bleibt Mūsā, in jedem Fall — wie ʿĪsā und Yaḥyā.'
+  ],
+
+  'kh-078': [
+    'Das Nomen heißt اِتِّبَاعٌ, ittibāʿ: das Befolgen der Sunna — im Gegensatz zur Neuerung.',
+    '⚠️ Gebaut wie اِتَّقَى (sich hüten), das du gerade lernst: vorn ein i-, dann ein doppeltes t. Vergangenheit اِتَّبَعَ, Gegenwart يَتَّبِعُ, Befehl اِتَّبِعْ.'
+  ],
+
+  'kh-079': [
+    '⚠️ Wie dein تَحْتَ (unter) und عِنْدَ (bei) steht دُونَ vor einem Genitiv; nach min bekommt es selbst Kasra.',
+    'Drei Wörter für „außer“ in Versen, die du kannst: إِلَٰهَ إِلَّا هُوَ (2:255) — „keinen Gott außer Ihm“ —, غَيْرِ ٱلْمَغْضُوبِ (1:7) — „nicht die, die Zorn erregt haben“, wörtlich: anders als sie —, und دُونَ: an jemandes Stelle, unter ihm.'
+  ],
+
+  'kh-080': [
+    'In aḍ-Ḍuḥā: وَلَلْأٓخِرَةُ خَيْرٌ لَّكَ (93:4) — „und das Jenseits ist wahrlich besser für dich“ — und gleich dahinter ihr Gegenstück: مِنَ ٱلْأُولَىٰ (93:4), „als das Diesseits“, wörtlich: als die Erste.',
+    'Der Glaube an Allah und den Jüngsten Tag: al-yawm al-āḫir — „der letzte Tag“, mit deinem Wort يَوْمٌ (Tag) davor. ⚠️ Nicht verwechseln mit āḫar (ein anderer): ein kurzes i macht den „letzten“, ein a den „anderen“.'
+  ],
+
+  'kh-082': [
+    'Dieselbe Dua beginnt mit der Mehrzahl: يَا مُقَلِّبَ الْقُلُوبِ — „o Wender der Herzen“. Einzahl kurz, Mehrzahl mit langem ū: قُلُوبٌ — wie بُيُوتٌ (Häuser) und شُيُوخٌ (Gelehrte).',
+    '⚠️ Die Wurzel ق ل ب heißt „wenden“: das Herz ist das, was sich ständig wendet. Darum bittest du den Wender der Herzen, es festzuhalten.'
+  ],
 };

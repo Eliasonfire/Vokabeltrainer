@@ -3635,6 +3635,21 @@ const SENTENCE_TAGS = {
   "kh-046": [
     { ruleId: "alif-maqsura-01", matchText: "أَتَى" },
     { ruleId: "harf-jarr-min-ila-01", matchText: "إِلَى الْمَسْجِدِ" }
+  ],
+  "kh-054": [
+    { ruleId: "zarf-als-mudaf-01", matchText: "قَبْلَ الِامْتِحَانِ" }
+  ],
+  "kh-063": [
+    { ruleId: "harf-jarr-li-01", matchText: "لِأَمْرِ" },
+    { ruleId: "lafz-al-jalala-01", matchText: "اللَّهِ" }
+  ],
+  "kh-067": [
+    { ruleId: "mudaf-01", matchText: "بَعْضُ" },
+    { ruleId: "harf-jarr-fi-ala-01", matchText: "فِي الْمَدْرَسَةِ" }
+  ],
+  "kh-077": [
+    { ruleId: "li-eigenname-01", matchText: "لِمُوسَى" },
+    { ruleId: "li-eigenname-01", matchText: "لِعِيسَى" }
   ]
 };
 

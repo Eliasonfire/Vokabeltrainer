@@ -2271,5 +2271,161 @@ const BEISPIELSAETZE = {
     sentDe: 'Der Mann kam zur Moschee.'
   },
 
+  /* kh-048 · بَيْنَ — zwischen („Koran häufigste", Rang 46)
+     KEIN SATZ, mit Absicht. In seinem Satzbestand steht kein Satz mit diesem Wort. Es braucht zwei
+     Dinge, zwischen denen etwas liegt; ein dafür neu gebauter Satz wäre
+     gestellt. Die Eselsbrücken zeigen das Wort in Āyat al-Kursī. */
+
+  /* kh-049 · حَقٌّ — Wahrheit; Recht („Koran häufigste", Rang 47)
+     KEIN SATZ, mit Absicht. In seinem Satzbestand steht kein Satz mit diesem Wort; ein neu gebauter
+     wäre gestellt. Die Eselsbrücken zeigen es an einem Vers, den er auswendig
+     kann. */
+
+  /* قَبْلَ — vor; zuvor („Koran häufigste", Rang 48)
+     Ein vorhandener Satz (bei der Karte 50196), in dem das Wort schon steht —
+     wörtlich übernommen. Nach der Zeitangabe steht das Nomen im Genitiv. */
+  'kh-054': {
+    sentAr: 'اِسْتَذْكَرَ الطَّالِبُ دُرُوسَهُ قَبْلَ الِامْتِحَانِ.',
+    sentDe: 'Der Student wiederholte seine Lektionen vor der Prüfung.'
+  },
+
+  /* kh-051 · إِذْ — als (damals) („Koran häufigste", Rang 50)
+     KEIN SATZ, mit Absicht. Leitet eine Erzählung von früher ein („als … geschah“). Diese Bauform hat
+     er im Unterricht noch nicht, und in seinem Satzbestand steht kein Satz
+     damit. */
+
+  /* kh-052 · شَاءَ — wollen („Koran häufigste", Rang 51)
+     KEIN SATZ, mit Absicht. Im Koran steht das Verb fast immer mit Allah als Handelndem; in seinem
+     Satzbestand steht kein Satz damit, und ein neu gebauter wäre gestellt. Die
+     Eselsbrücken zeigen es an Wendungen, die er täglich sagt. */
+
+  /* kh-055 · مُؤْمِنٌ — gläubig; Gläubiger („Koran häufigste", Rang 54)
+     KEIN SATZ, mit Absicht. In seinem Satzbestand steht kein Satz mit diesem Wort; ein neu gebauter
+     wäre gestellt. Die Eselsbrücken zeigen es an Titeln, die er kennt. */
+
+  /* kh-056 · لَوْ — wenn (nur gedacht) („Koran häufigste", Rang 55)
+     KEIN SATZ, mit Absicht. Leitet einen Bedingungssatz ein, der nicht eingetreten ist.
+     Bedingungssätze hat er im Unterricht noch nicht; ein Satz ohne sie ließe
+     sich nicht erklären. */
+
+  /* kh-058 · خَلَقَ — erschaffen („Koran häufigste", Rang 56)
+     KEIN SATZ, mit Absicht. Im Koran steht das Verb mit Allah als Handelndem; in seinem Satzbestand
+     steht kein Satz damit, und ein neu gebauter wäre gestellt. Die
+     Eselsbrücken zeigen es an Versen und einer Dua, die er kann. */
+
+  /* kh-059 · أَنْزَلَ — herabsenden („Koran häufigste", Rang 57)
+     KEIN SATZ, mit Absicht. Im Koran steht das Verb mit Allah als Handelndem; in seinem Satzbestand
+     steht kein Satz damit, und ein neu gebauter wäre gestellt. Die
+     Eselsbrücken zeigen es an einem Vers und einer Dua, die er kann. */
+
+  /* kh-060 · سَبِيلٌ — Weg („Koran häufigste", Rang 58)
+     KEIN SATZ, mit Absicht. In seinem Satzbestand steht kein Satz mit diesem Wort; ein neu gebauter
+     wäre gestellt. Die Eselsbrücken zeigen es an einer Wendung, die er kennt. */
+
+  /* kh-061 · كَذَّبَ — für Lüge erklären, leugnen („Koran häufigste", Rang 59)
+     KEIN SATZ, mit Absicht. In seinem Satzbestand steht kein Satz mit diesem Verb; ein neu gebauter
+     wäre gestellt. Die Eselsbrücken zeigen es an Versen, die er auswendig
+     kann. */
+
+  /* kh-062 · دَعَا — rufen; anrufen, bitten („Koran häufigste", Rang 60)
+     KEIN SATZ, mit Absicht. In seinem Satzbestand steht kein Satz mit diesem Verb; ein neu gebauter
+     wäre gestellt. Die Eselsbrücken zeigen es an Wörtern, die er täglich
+     benutzt. */
+
+  /* أَمْرٌ — Befehl; Angelegenheit („Koran häufigste", Rang 61)
+     Ein vorhandener Satz (bei der Karte 50192), in dem das Wort schon steht —
+     wörtlich übernommen. Mit li- davor steht es im Genitiv; zugleich ist es
+     das erste Wort einer Genitivverbindung und trägt darum kein Tanwin. */
+  'kh-063': {
+    sentAr: 'الِامْتِثَالُ لِأَمْرِ اللَّهِ وَاجِبٌ.',
+    sentDe: 'Die Befolgung des Befehls Allahs ist Pflicht.'
+  },
+
+  /* kh-064 · اِتَّقَى — sich hüten; (Allah) fürchten („Koran häufigste", Rang 62)
+     KEIN SATZ, mit Absicht. In seinem Satzbestand steht kein Satz mit diesem Verb; ein neu gebauter
+     wäre gestellt. Die Eselsbrücken zeigen es an Begriffen, die er kennt. */
+
+  /* kh-105 · عَلِيمٌ — wissend, allwissend („Koran häufigste", Rang 63)
+     KEIN SATZ, mit Absicht. Im Koran steht das Wort als Eigenschaft Allahs; in seinem Satzbestand
+     steht kein Satz damit, und ein neu gebauter wäre gestellt. Die
+     Eselsbrücken zeigen es an einem Vers, den er auswendig kann. */
+
+  /* بَعْضٌ — einige; ein Teil („Koran häufigste", Rang 66)
+     Derselbe Satz wie bei der Buchkarte 50285, die dasselbe Wort ist. Das Wort
+     steht als erstes einer Genitivverbindung, ohne Tanwin; das Wort danach
+     steht im Genitiv. */
+  'kh-067': {
+    sentAr: 'بَعْضُ الطُّلَّابِ فِي الْمَدْرَسَةِ.',
+    sentDe: 'Einige der Studenten sind in der Schule.'
+  },
+
+  /* kh-068 · لَمَّا — als; nachdem („Koran häufigste", Rang 67)
+     KEIN SATZ, mit Absicht. Leitet einen Nebensatz der Zeit ein („als … geschah, da …“). Diese Bauform
+     hat er im Unterricht noch nicht. */
+
+  /* kh-069 · أَيُّهَا — o (ihr) …! (Anrede) („Koran häufigste", Rang 68)
+     KEIN SATZ, mit Absicht. Steht nur in der Anrede vor einem Wort mit Artikel. In seinem Satzbestand
+     steht kein Satz damit; die Eselsbrücken zeigen es am Tashahhud und an
+     al-Kāfirūn. */
+
+  /* kh-071 · إِلَهٌ — Gott, Gottheit („Koran häufigste", Rang 70)
+     KEIN SATZ, mit Absicht. In seinem Satzbestand steht kein Satz mit diesem Wort. Der Satz, in dem es
+     lebt, ist die Schahāda — und deren Bauform (die Verneinung der ganzen
+     Gattung) hat er im Unterricht noch nicht. */
+
+  /* kh-107 · جَنَّةٌ — Garten; Paradies („Koran häufigste", Rang 71)
+     KEIN SATZ, mit Absicht. In seinem Satzbestand steht kein Satz mit diesem Wort; ein neu gebauter
+     wäre gestellt. Die Eselsbrücken zeigen es an einem Begriff, den er kennt. */
+
+  /* kh-072 · نَارٌ — Feuer („Koran häufigste", Rang 72)
+     KEIN SATZ, mit Absicht. In seinem Satzbestand steht kein Satz mit diesem Wort; ein neu gebauter
+     wäre gestellt. Die Eselsbrücken zeigen es an einem Vers, den er auswendig
+     kann. */
+
+  /* kh-073 · غَيْرُ — anderer als; nicht; außer („Koran häufigste", Rang 73)
+     KEIN SATZ, mit Absicht. Macht aus dem Wort danach sein Gegenteil und wird selbst gebeugt. Diese
+     Bauform hat er im Unterricht noch nicht; die Eselsbrücken zeigen sie an
+     al-Fātiḥa. */
+
+  /* kh-074 · هَدَى — rechtleiten, führen („Koran häufigste", Rang 74)
+     KEIN SATZ, mit Absicht. Im Koran steht das Verb mit Allah als Handelndem; in seinem Satzbestand
+     steht kein Satz damit, und ein neu gebauter wäre gestellt. Die
+     Eselsbrücken zeigen es an al-Fātiḥa. */
+
+  /* kh-108 · حَتَّى — bis; sodass („Koran häufigste", Rang 75)
+     KEIN SATZ, mit Absicht. Steht vor einem Nomen im Genitiv oder vor einem Verb. Beide Bauformen hat
+     er im Unterricht noch nicht; die Eselsbrücken zeigen sie an zwei Versen,
+     die er auswendig kann. */
+
+  /* kh-076 · أَمْ — oder (in Fragen) („Koran häufigste", Rang 77)
+     KEIN SATZ, mit Absicht. Steht nur in Fragen mit zwei Möglichkeiten. In seinem Satzbestand steht
+     keine solche Frage; die Eselsbrücken zeigen das Wort an al-Mulk. */
+
+  /* مُوسَى — Mose (Musa) („Koran häufigste", Rang 78)
+     Ein Satz aus seinem Buch (Madina 1, S. 46), in dem der Name schon steht —
+     wörtlich übernommen. Mit li- davor heißt es „gehört Musa“; der Name selbst
+     ändert sich dabei nicht. */
+  'kh-077': {
+    sentAr: 'هَذَا الْكِتَابُ لِعِيسَى وَذَلِكَ الْكِتَابُ لِمُوسَى.',
+    sentDe: 'Dieses Buch gehört Isa und jenes Buch gehört Musa.'
+  },
+
+  /* kh-078 · اِتَّبَعَ — folgen („Koran häufigste", Rang 79)
+     KEIN SATZ, mit Absicht. In seinem Satzbestand steht kein Satz mit diesem Verb; ein neu gebauter
+     wäre gestellt. Die Eselsbrücken zeigen es an Begriffen, die er kennt. */
+
+  /* kh-079 · دُونَ — außer, anstelle von; unterhalb („Koran häufigste", Rang 80)
+     KEIN SATZ, mit Absicht. Steht meist nach min vor einem Genitiv („anstelle von“). In seinem
+     Satzbestand steht kein Satz damit; die Eselsbrücken zeigen es an al-Mulk. */
+
+  /* kh-080 · آخِرٌ — letzter · (weibliche Form mit Artikel) das Jenseits („Koran häufigste", Rang 81)
+     KEIN SATZ, mit Absicht. In seinem Satzbestand steht kein Satz mit diesem Wort; ein neu gebauter
+     wäre gestellt. Die Eselsbrücken zeigen die weibliche Form an einem Vers,
+     den er auswendig kann. */
+
+  /* kh-082 · قَلْبٌ — Herz („Koran häufigste", Rang 82)
+     KEIN SATZ, mit Absicht. In seinem Satzbestand steht kein Satz mit diesem Wort; ein neu gebauter
+     wäre gestellt. Die Eselsbrücken zeigen es an seiner Dua. */
+
   /* <<< KORAN-HAEUFIGSTE-ENDE */
 };

@@ -186,6 +186,10 @@ const buchstaben = t => nurAr(t).replace(NUR_MARKEN, '').replace(HAMZA_FORMEN, Z
 const MARKE_Q = new RegExp('[' + Z(0x64B) + '-' + Z(0x65F) + Z(0x670) + ']');
 const TRAEGT_Q = new RegExp('[' + Z(0x620) + '-' + Z(0x64A) + Z(0x64B) + '-' + Z(0x65F) + Z(0x670) + Z(0x66E) + '-' + Z(0x6D3) + ']');
 const ohneTraeger = t => { let n = 0; for (let i = 0; i < t.length; i++) if (MARKE_Q.test(t[i]) && !(i > 0 && TRAEGT_Q.test(t[i - 1]))) n++; return n; };
+const VORSILBEN = [0x648, 0x641, 0x628, 0x644, 0x643, 0x64A].map(Z);                      /* wa fa bi li ka · yā */
+const ARTIKEL_B = Z(0x627) + Z(0x644);
+const BESITZENDUNGEN = [[0x647, 0x645, 0x627], [0x643, 0x645, 0x627], [0x647, 0x645], [0x647, 0x646], [0x643, 0x645], [0x643, 0x646],
+  [0x646, 0x627], [0x647, 0x627], [0x647], [0x643], [0x64A]].map(c => c.map(Z).join(''));  /* -humā -kumā -hum -hunna -kum -kunna -nā -hā -hu -ka -ī */
 /** Steht an dieser Stelle das Wort der Karte? Gibt den Grund zurück, wenn nicht — sonst null. */
 export function wortPasst(karte, wort, wurzel){
   if (karte.type === 'verb'){
@@ -195,7 +199,18 @@ export function wortPasst(karte, wort, wurzel){
     for (const b of buchstaben(wort)) if (i < noetig.length && b === noetig[i]) i++;
     return (noetig.length && i === noetig.length) ? null : 'die Wurzelbuchstaben der Karte stehen nicht in dieser Reihenfolge im Wort';
   }
-  return stamm(wort) === stamm(String(karte.ar).split(' / ')[0]) ? null : 'das Wort an dieser Stelle ist nicht das Wort der Karte';
+  if (stamm(wort) === stamm(String(karte.ar).split(' / ')[0])) return null;
+  /* Seit dem zweiten Stück (13.10.2026): im Vers steht das Wort oft mit einer Vorsilbe (wa, fa, bi, li, ka — und
+     das zusammengeschriebene yā der Anrede), mit Artikel oder mit einer Besitzendung: bi-l-ḥaqqi, min qablihim,
+     fa-lammā. Verglichen werden nur die Buchstaben; jede Stelle ist vorher am Wort gelesen. */
+  const ziel = buchstaben(String(karte.ar).split(' / ')[0]), w = buchstaben(wort);
+  const moeglich = new Set();
+  for (const roh of [w].concat(VORSILBEN.filter(v => w.startsWith(v) && w.length > 2).map(() => w.slice(1))))
+    for (const o of [roh, roh.startsWith(ARTIKEL_B) ? roh.slice(2) : roh]){
+      moeglich.add(o);
+      for (const e of BESITZENDUNGEN) if (o.endsWith(e) && o.length > e.length + 1) moeglich.add(o.slice(0, -e.length));
+    }
+  return (moeglich.has(ziel) || moeglich.has(ziel.startsWith(ARTIKEL_B) ? ziel.slice(2) : ziel)) ? null : 'das Wort an dieser Stelle ist nicht das Wort der Karte';
 }
 /** Löst die Vorlage auf. `felder` aus leseFelder() (für die Wurzel der Verben). Gibt je Kennung die Stelle und alle Fehler zurück. */
 export function leseStellen(text, karten, felder = new Map()){
