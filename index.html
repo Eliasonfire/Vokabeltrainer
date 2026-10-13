@@ -1445,6 +1445,13 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
   color:var(--text-dim);font-size:var(--fs-xs);font-weight:700;
   letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;
 }
+/* „Klingt wie" (13.10.2026): EIN Kasten mit bis zu zwei Partnerkarten, kleiner gesetzt als die
+   Formen der Karte selbst — es ist ein Hinweis, nicht die Antwort. Jedes Paar (Mehrzahl und
+   Bedeutung) bleibt beisammen; passen nicht beide in die Zeile, bricht der Kasten zwischen
+   den Paaren um. Die Bedeutung steht als gewöhnliches Wort da, nicht in Großbuchstaben. */
+.word-forms > span.wf-klang{font-size:1.2rem;line-height:1.6;flex-wrap:wrap;justify-content:center;gap:2px 12px;padding:5px var(--sp-3);}
+.word-forms .wf-paar{display:inline-flex;align-items:baseline;gap:6px;white-space:nowrap;}
+.word-forms > span .lbl.wf-bed{text-transform:none;letter-spacing:0;font-weight:400;font-size:var(--fs-sm);}
 
 /* Verbformen (Elias' Wunsch vom 29.07.2026: "Was ich brauche ist fuer Verben
    die Zeitformen - Vergangenheit, Gegenwart, Befehlsform, Verbalsubstantiv").
@@ -2425,6 +2432,8 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
 .tipp-box .select-input{font-size:var(--fs-xl);padding:var(--sp-3) var(--sp-4);
   line-height:1.9;text-align:center;height:auto;}
 .tipp-antwort{margin-top:var(--sp-2);font-size:var(--fs-sm);min-height:1.3em;text-align:center;}
+/* Das zweite Feld (Mehrzahl) sitzt mit etwas Abstand unter dem ersten. */
+.tipp-box .tipp-plural{margin-top:var(--sp-2);}
 /* Arabische Tasten unter dem Tippfeld — nur am Tablet sichtbar (zeigeTippTasten() in
    js/lernen.js; Elias, 11.10.2026: „für mein tablet wäre das praktisch, für mein handy
    will ich das nicht"). Zwölf Tasten je Reihe: in den 420 px des Kastens wären sie rund
@@ -5858,6 +5867,18 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
               <div class="tipp-box hidden" id="cardTippBox">
                 <input type="text" id="cardTippEingabe" class="select-input select-full" lang="ar" dir="rtl"
                        placeholder="Wort auf Arabisch eintippen …" autocomplete="off" autocapitalize="off" spellcheck="false">
+                <!-- Zweites Feld für die Mehrzahl (13.10.2026). Elias, 12.10.2026: „man könnte auch
+                     ab box 4 den plural verlangen aber auch nur da wo es regelmässig ist". Von Anfang
+                     an verborgen; renderTippfeld() in js/lernen.js zeigt es nur bei regelmäßiger
+                     Mehrzahl und nur mit dem Schalter „Mehrzahl mit eintippen" (tippPluralDran()).
+                     Wie das Feld darüber trägt es KEIN inputmode — das setzt am Tablet zeigeTippTasten().
+                     ⚠️ Der Hinweistext bleibt KURZ. Gemessen am 13.10.2026 in der Seitenprobe (Fenster
+                     375 px breit, Feld 261 px, innen 227 px, Schrift 20 px): „Mehrzahl auf Arabisch
+                     eintippen …" braucht 329 px und wurde links abgeschnitten — übrig blieb „… auf
+                     Arabisch eintippen", wortgleich mit dem Rest des Felds darüber (dessen Text braucht
+                     286 px). Beide Felder sahen gleich aus. „Mehrzahl eintippen …" braucht 204 px. -->
+                <input type="text" id="cardTippPlural" class="select-input select-full tipp-plural hidden" lang="ar" dir="rtl"
+                       placeholder="Mehrzahl eintippen …" autocomplete="off" autocapitalize="off" spellcheck="false">
                 <!-- Arabische Tasten, NUR am Tablet (11.10.2026). Elias: „für mein tablet wäre
                      das praktisch, für mein handy will ich das nicht". Gefüllt und gezeigt von
                      zeigeTippTasten() in js/lernen.js; am Handy bleibt der Kasten leer und
@@ -6919,7 +6940,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
       <div class="setting-row">
         <div>
           <div class="setting-title">Pluralformen anzeigen</div>
-          <div class="setting-sub">Plural &amp; Femininum-Formen auf der Karte zeigen</div>
+          <div class="setting-sub">Plural &amp; Femininum-Formen auf der Karte zeigen — beim Plural mit „regelmäßig" oder mit bis zu zwei Karten, die gleich klingen</div>
         </div>
         <button class="switch" id="toggleShowPlural" aria-label="Pluralformen umschalten"><span class="knob"></span></button>
       </div>
@@ -7120,6 +7141,18 @@ Teil 2</span>
           <div class="setting-sub">Statt nur umdrehen: Fragt die Karte auf Deutsch, schreibst du das arabische Wort selbst. Fragt sie auf Arabisch, bleibt es beim Umdrehen. „Überspringen" steht darunter. Du brauchst dafür eine arabische Tastatur.</div>
         </div>
         <button class="switch" id="toggleTippen" aria-label="Tippen ab Box 4 umschalten"><span class="knob"></span></button>
+      </div>
+      <!-- 13.10.2026: das zweite Tippfeld für die Mehrzahl. Elias, 12.10.2026: „man könnte auch
+           ab box 4 den plural verlangen aber auch nur da wo es regelmässig ist". Voreinstellung
+           AUS — MEINE Entscheidung (Claude): auf die Skizze kam kein ausdrückliches Ja, er
+           schaltet es selbst ein. Wirkt nur zusammen mit „Ab Box 4 eintippen"
+           (tippPluralDran() in js/lernen.js). -->
+      <div class="setting-row">
+        <div>
+          <div class="setting-title">Mehrzahl mit eintippen</div>
+          <div class="setting-sub">Nur bei regelmäßiger Mehrzahl (Endung -ūna oder -āt): unter dem Wort steht ein zweites Feld für die Mehrzahl. Wirkt nur, wenn „Ab Box 4 eintippen" an ist.</div>
+        </div>
+        <button class="switch" id="toggleTippenPlural" aria-label="Mehrzahl mit eintippen umschalten"><span class="knob"></span></button>
       </div>
 
       <!-- Elias' Vorgabe war "nur neue wörter … die sich mit meinem aktuellen

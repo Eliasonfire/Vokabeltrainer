@@ -14,6 +14,9 @@ function renderSettings(){
   document.getElementById('directionSelect').value = SETTINGS.direction || 'ar-de';
   zeigeRichtungHinweis();
   document.getElementById('toggleTippen').classList.toggle('on', !!SETTINGS.tippenAbBox4);
+  /* Das zweite Tippfeld für die Mehrzahl (13.10.2026). Mit Abfrage: ein Prüfstand mit einem
+     älteren Doppel der Seite kennt den Schalter nicht. */
+  { const t = document.getElementById('toggleTippenPlural'); if (t) t.classList.toggle('on', !!SETTINGS.tippenPlural); }
   /* Wurzelmodus. Die Ausrichtung ist standardmaessig AN, deshalb wird auf
      `!== false` geprueft und nicht auf Wahrheit - ein fehlender Eintrag ist
      hier "an", nicht "aus". */
@@ -516,6 +519,19 @@ document.getElementById('toggleTippen').addEventListener('click', ()=>{
      hinschreiben") nur noch, wenn die Karte auf Deutsch fragt — renderTippfeld()
      in js/lernen.js. [[widerspruch_liegt_in_der_beschriftung]] */
   if (SETTINGS.tippenAbBox4) toast('Ab Box 4: Fragt die Karte auf Deutsch, schreibst du das arabische Wort. Mit „Überspringen".');
+});
+/* ---------- „Mehrzahl mit eintippen" (13.10.2026) ----------
+   Elias, 12.10.2026: „man könnte auch ab box 4 den plural verlangen aber auch nur da wo
+   es regelmässig ist". Der Schalter allein tut nichts: das zweite Feld erscheint nur, wo
+   das erste dasteht (tippPluralDran() und renderTippfeld() in js/lernen.js). Deshalb sagt
+   die Meldung beim Einschalten, ob „Ab Box 4 eintippen" schon an ist. */
+document.getElementById('toggleTippenPlural').addEventListener('click', ()=>{
+  SETTINGS.tippenPlural = !SETTINGS.tippenPlural;
+  saveSettings();
+  renderSettings();
+  if (SETTINGS.tippenPlural) toast(SETTINGS.tippenAbBox4
+    ? 'Mehrzahl: Bei regelmäßiger Mehrzahl steht ab Box 4 ein zweites Feld unter dem Wort.'
+    : 'Mehrzahl: wirkt erst, wenn auch „Ab Box 4 eintippen" an ist.');
 });
 document.getElementById('btnSettings').addEventListener('click', ()=>showScreen('settings'));
 document.getElementById('toggleShowPlural').addEventListener('click', ()=>{

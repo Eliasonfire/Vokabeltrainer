@@ -674,12 +674,18 @@ function renderCard(){
   // Plural-/Femininum-Formen nur zeigen, wenn in den Einstellungen aktiviert.
   // Label und arabische Form getrennt ausgeben: das Label bleibt klein und
   // lateinisch, die Form selbst wird gross und arabisch gesetzt.
-  let forms = [];
+  let forms = [], klang = [];
   if (SETTINGS.showPlural){
     /* formenAnzeige vereinheitlicht das Trennzeichen: der naechste
        arabicroots-Abzug bringt "|" mit, angezeigt wird immer " / ". */
     /* Bei Zahlwörtern ist `pl` die Form beim weiblichen Nomen, kein Plural — plBeschriftung() in js/kern.js. */
-    if (w.pl) forms.push({label:(typeof plBeschriftung === 'function' ? plBeschriftung(w) : 'Plural'), value:formenAnzeige(w.pl)});
+    /* ⭐ Seit dem 13.10.2026 sagt die Zeile bei einer regelmäßigen Mehrzahl „regelmäßig", und bei
+       jeder anderen folgen bis zu zwei „Klingt wie"-Karten von ihm — Begründung, sein Wortlaut und
+       die Bauart bei pluralRegelmaessig() und pluralKlangPartner() in js/kern.js. Mit Abfrage,
+       weil Prüfstände diese Datei ohne den Kern laden. */
+    const plRegel = !!w.pl && typeof pluralRegelmaessig === 'function' && pluralRegelmaessig(w);
+    if (w.pl) forms.push({label:(typeof plBeschriftung === 'function' ? plBeschriftung(w) : 'Plural') + (plRegel ? ' · regelmäßig' : ''), value:formenAnzeige(w.pl)});
+    if (w.pl && !plRegel && typeof pluralKlangPartner === 'function') klang = pluralKlangPartner(w, 2);
     if (w.femSg) forms.push({label:'Fem.', value:formenAnzeige(w.femSg)});
     if (w.femPl) forms.push({label:'Fem. Pl.', value:formenAnzeige(w.femPl)});
   }
@@ -694,7 +700,13 @@ function renderCard(){
      Textfluss, dort ist das Einfaerben gefahrlos. */
   document.getElementById('cardForms').innerHTML = forms.map(f=>
     `<span><i class="lbl">${escapeHtml(f.label)}</i><span class="wf-ar">${escapeHtml(f.value)}</span></span>`
-  ).join('');
+  ).join('') + (klang.length
+    /* EIN kleinerer Kasten für beide Partner, nicht je einer: zwei volle Zeilen schoben Bild und
+       Eselsbrücke 130 px nach unten (gemessen 13.10.2026 an „Haus", 375 px breit). */
+    ? `<span class="wf-klang"><i class="lbl">Klingt wie</i>` + klang.map(k=>
+        `<span class="wf-paar"><span class="wf-ar">${escapeHtml(k.form)}</span><i class="lbl wf-bed">${escapeHtml(k.de)}</i></span>`
+      ).join('') + `</span>`
+    : '');
 
   renderVerbFormen(w);
 
@@ -980,32 +992,144 @@ function quranMitTreffer(vers, w){
    Sprache und Laufrichtung des Felds (Arabisch, rtl) und sein Platzhalter
    stehen im HTML fest.
    Bewacht von test-tippen-nur-arabisch.mjs. */
+/* ---------- Zweites Feld: die Mehrzahl mit eintippen (13.10.2026) ----------
+
+   Elias, 12.10.2026: „man könnte auch ab box 4 den plural verlangen aber auch nur da
+   wo es regelmässig ist".
+
+   Unter dem Feld für das Wort steht dann ein zweites für die Mehrzahl — nur wenn das
+   erste Feld dasteht (Schalter „Ab Box 4 eintippen", Kasten 4, die Karte fragt auf
+   Deutsch), nur bei regelmäßiger Mehrzahl (pluralRegelmaessig() in js/kern.js, das
+   fragt uebPluralArt()) und nur mit dem eigenen Schalter „Mehrzahl mit eintippen"
+   (SETTINGS.tippenPlural). Der steht auf AUS, bis er ihn selbst einschaltet — MEINE
+   Entscheidung (Claude): auf die Skizze kam kein ausdrückliches Ja.
+   Verglichen wird wie beim Wort ohne Vokalzeichen, gegen das Feld `pl` der Karte.
+   Er bewertet sich weiter selbst; das Feld sagt nur „richtig" oder „noch nicht".
+   Bewacht von test-plural-karte.mjs. */
+function tippPluralDran(w){
+  return !!(SETTINGS.tippenPlural && w && w.pl && typeof pluralRegelmaessig === 'function' && pluralRegelmaessig(w));
+}
+
+/* ---------- Die Karte wächst mit dem Tippkasten (13.10.2026) ----------
+
+   Die beiden Kartenseiten liegen übereinander (`position:absolute`, sonst ließe sich die
+   Karte nicht umdrehen). Die Karte kann deshalb nicht von selbst mit ihrem Inhalt wachsen:
+   ihre Höhe kommt allein aus `min-height` (index.html, `.flashcard`). Der Inhalt der
+   Vorderseite sitzt mittig — ist er zu hoch, quillt er oben UND unten heraus.
+
+   Gemessen am 13.10.2026 in der Seitenprobe an der Karte „Lehrer", die Tablet-Tasten von
+   Hand eingeschaltet (Zahlen: Abstand vom oberen Fensterrand in px):
+
+   | Fenster  | Felder | Karte   | Inhalt  | Befund                                            |
+   | 800×1249 | eins   | 150…610 | 114…646 | Wort 36 px über der Karte; „Überspringen" 14 px   |
+   |          |        |         |         | in den Bewertungsknöpfen (die beginnen bei 632)   |
+   | 800×1249 | zwei   | 150…610 | 66…694  | Wort im Fortschrittsbalken; „Überspringen" mitten |
+   |          |        |         |         | in den Knöpfen                                    |
+   | 1280×800 | eins   | 157…749 | 178…728 | passt; „Überspringen" (695…728) liegt auf         |
+   |          |        |         |         | „Antippen zum Umdrehen" (707…722)                 |
+   | 1280×800 | zwei   | 157…749 | 124…782 | Wort 33 px über der Karte, „Überspringen" darunter|
+
+   Am Handy (375×812, ohne Tasten, zwei Felder) passt alles: Kasten 337…568, Karte 151…611.
+
+   Deshalb EINE Regel statt vier Zahlen: reicht die Vorderseite nicht, bekommt die Karte die
+   fehlende Höhe. Gebraucht wird der Inhalt plus oben und unten ein Rand — der größte aus
+   dem Polster der Seite, dem Platz der Marken (oben) und dem Platz von „Antippen zum
+   Umdrehen" (unten); beide Male derselbe, weil der Inhalt mittig sitzt. Passt alles,
+   ändert sich nichts.
+
+   ⛔ Zuerst wird die Höhe ZURÜCKGESETZT, bei jeder Karte: eine Karte ohne Tippkasten darf
+   die Höhe ihrer Vorgängerin nicht erben. Darum ruft renderTippfeld() das hier in BEIDEN
+   Zweigen auf, und „Überspringen" ebenso.
+   ⚠️ Gemessen wird beim Zeichnen der Karte, nicht beim Drehen des Geräts: wer mitten in
+   einer Tippkarte das Tablet dreht, behält deren Höhe bis zur nächsten Karte.
+   Die Regel ist MEINE (Claude) und nicht von Elias bestellt: sie behebt den gemessenen
+   Überlauf, den das zweite Feld vergrößert hätte. Bewacht von test-plural-karte.mjs (H). */
+function tippKarteHoehe(){
+  const karte = document.getElementById('flashcard');
+  if (!karte || !karte.style || typeof karte.querySelector !== 'function') return;
+  const innen = karte.querySelector('.flashcard-inner'), vorn = karte.querySelector('.flashcard-front');
+  const setze = h => { karte.style.minHeight = h; if (innen && innen.style) innen.style.minHeight = h; };
+  setze('');
+  const kasten = document.getElementById('cardTippBox');
+  if (!vorn || !kasten || kasten.classList.contains('hidden') || typeof getComputedStyle !== 'function') return;
+  const hoehe = vorn.clientHeight;
+  const sichtbar = [...vorn.children].filter(k => k.offsetHeight);
+  const fest = sichtbar.filter(k => getComputedStyle(k).position === 'absolute');
+  const fluss = sichtbar.filter(k => !fest.includes(k));
+  /* ⚠️ Gemessen wird die UNGEQUETSCHTE Höhe. In einer zu kleinen Karte drückt das Flex-Layout
+     die Teile zusammen: der Lautsprecher-Knopf war 24 statt 54 px hoch (gemessen 13.10.2026,
+     800×1249, zwei Felder). Wer das Gequetschte misst, gibt der Karte 30 px zu wenig — der
+     Inhalt stand danach 29 px unter dem Kartenrand statt 44, mitten in der Zeile der Marken.
+     Darum dürfen die Teile für die Dauer der Messung nicht schrumpfen. */
+  const geschrumpft = fluss.map(k => k.style.flexShrink);
+  for (const k of fluss) k.style.flexShrink = '0';
+  let oben = Infinity, unten = -Infinity, rand = 0;
+  for (const k of fluss){ oben = Math.min(oben, k.offsetTop); unten = Math.max(unten, k.offsetTop + k.offsetHeight); }
+  for (const k of fest){                                    /* Marken oben, Hinweis unten: ihr Platz ist Rand */
+    const o = k.offsetTop, u = o + k.offsetHeight;
+    if (u <= hoehe / 2) rand = Math.max(rand, u);
+    else if (o >= hoehe / 2) rand = Math.max(rand, hoehe - o);
+  }
+  fluss.forEach((k, i) => { k.style.flexShrink = geschrumpft[i]; });
+  if (!(unten > oben)) return;
+  const stil = getComputedStyle(vorn);
+  rand = Math.max(rand, parseFloat(stil.paddingTop) || 0, parseFloat(stil.paddingBottom) || 0);
+  const gebraucht = Math.ceil(unten - oben + 2 * rand);
+  if (gebraucht > hoehe) setze((gebraucht + (vorn.offsetHeight - hoehe)) + 'px');
+}
+
 function renderTippfeld(w){
   const kasten = document.getElementById('cardTippBox');
   const p = PROGRESS[w.id];
   const dran = SETTINGS.tippenAbBox4 && p && p.box >= 4 && cardDirection(SESSION.idx) === 'de-ar';
-  if (!dran){ kasten.classList.add('hidden'); return; }
+  if (!dran){ kasten.classList.add('hidden'); if (typeof tippKarteHoehe === 'function') tippKarteHoehe(); return; }
 
   document.getElementById('cardTippEingabe').value = '';
+  /* Das zweite Feld (Mehrzahl) — tippPluralDran() oben. Mit Abfragen, weil Prüfstände diese
+     Funktion allein aus dem Quelltext schneiden und ihr Doppel das Feld nicht immer kennt. */
+  const plFeld = document.getElementById('cardTippPlural');
+  if (plFeld){
+    plFeld.value = '';
+    if (typeof tippPluralDran === 'function' && tippPluralDran(w)) plFeld.classList.remove('hidden');
+    else plFeld.classList.add('hidden');
+  }
+  /* Die Tablet-Tasten schreiben wieder ins erste Feld, bis er das zweite antippt (tippTaste()). */
+  if (kasten.dataset) kasten.dataset.ziel = 'cardTippEingabe';
   document.getElementById('cardTippAntwort').textContent = '';
   document.getElementById('cardTippAntwort').className = 'tipp-antwort';
   kasten.classList.remove('hidden');
   /* Am Tablet eigene arabische Tasten, am Handy nichts (siehe zeigeTippTasten() unten).
      Mit Abfrage, weil mehrere Prüfstände diese Funktion allein aus dem Quelltext schneiden. */
   if (typeof zeigeTippTasten === 'function') zeigeTippTasten();
+  /* Erst NACH den Tasten: sie machen den Kasten höher (tippKarteHoehe() oben). */
+  if (typeof tippKarteHoehe === 'function') tippKarteHoehe();
 }
 
 function pruefeTippen(){
   const w = SESSION.words[SESSION.idx];
   const eingabe = document.getElementById('cardTippEingabe').value;
   const feld = document.getElementById('cardTippAntwort');
-  if (!eingabe.trim()){ feld.className='tipp-antwort'; feld.textContent=''; return; }
+  /* Das zweite Feld (Mehrzahl) zählt nur, wenn es für DIESE Karte dran ist. Gefragt wird die
+     Regel (tippPluralDran()), nicht die Seite: ein verborgenes Feld sagt nichts. */
+  const plFeld = (typeof tippPluralDran === 'function' && tippPluralDran(w)) ? document.getElementById('cardTippPlural') : null;
+  const plEingabe = plFeld ? String(plFeld.value || '') : '';
+  if (!eingabe.trim() && !plEingabe.trim()){ feld.className='tipp-antwort'; feld.textContent=''; return; }
 
   /* Ohne Vokalzeichen vergleichen - getippt wird auf dem Handy, und die
      Taschkil ist hier nicht der Punkt. Die richtige Schreibweise steht auf
      der Rueckseite vollstaendig da. */
   const roh = s => String(s||'').replace(/[ً-ْٰـ]/g,'').replace(/[.،؟!«»:؛]/g,'').trim();
   const richtig = roh(eingabe) === roh(w.ar) || (!!w.sg && roh(eingabe) === roh(w.sg));
+  if (plFeld){
+    /* Beide Felder zusammen: „richtig" erst, wenn Wort UND Mehrzahl stimmen — sonst sagt die
+       Zeile, welches von beiden noch fehlt. */
+    const plRichtig = roh(plEingabe) === roh(w.pl);
+    feld.className = 'tipp-antwort ' + (richtig && plRichtig ? 'richtig' : 'falsch');
+    feld.textContent = richtig && plRichtig ? 'Richtig — umdrehen und einordnen.'
+      : richtig ? 'Das Wort stimmt — die Mehrzahl noch nicht.'
+      : plRichtig ? 'Die Mehrzahl stimmt — das Wort noch nicht.' : 'Noch nicht.';
+    return;
+  }
   feld.className = 'tipp-antwort ' + (richtig ? 'richtig' : 'falsch');
   feld.textContent = richtig ? 'Richtig — umdrehen und einordnen.' : 'Noch nicht.';
 }
@@ -1016,6 +1140,26 @@ document.getElementById('cardTippEingabe').addEventListener('keydown', (e)=>{
   if (e.key === 'Enter'){ e.preventDefault(); pruefeTippen(); }
 });
 document.getElementById('cardTippEingabe').addEventListener('pointerdown', (e)=>e.stopPropagation());
+/* Das zweite Feld (Mehrzahl) verhält sich wie das erste. Dazu merkt sich der Kasten, welches
+   Feld zuletzt angetippt war — dorthin schreiben die Tablet-Tasten (tippTaste()). */
+(function(){
+  const kasten = document.getElementById('cardTippBox');
+  for (const id of ['cardTippEingabe', 'cardTippPlural']){
+    const f = document.getElementById(id);
+    if (!f) continue;
+    const merke = () => { if (kasten && kasten.dataset) kasten.dataset.ziel = id; };
+    f.addEventListener('focus', merke);
+    f.addEventListener('pointerdown', merke);
+  }
+  const pl = document.getElementById('cardTippPlural');
+  if (!pl) return;
+  pl.addEventListener('click', (e)=>e.stopPropagation());
+  pl.addEventListener('keydown', (e)=>{
+    e.stopPropagation();
+    if (e.key === 'Enter'){ e.preventDefault(); pruefeTippen(); }
+  });
+  pl.addEventListener('pointerdown', (e)=>e.stopPropagation());
+})();
 
 /* ---------- Arabische Tasten unter dem Tippfeld — NUR AM TABLET (11.10.2026) ----------
 
@@ -1071,6 +1215,10 @@ function zeigeTippTasten(){
   const an = istTablet();
   if (an){ baueTippTasten(); ein.setAttribute('inputmode', 'none'); }
   else ein.removeAttribute('inputmode');
+  /* Das zweite Feld (Mehrzahl) bekommt dasselbe — sonst ginge am Tablet beim Antippen die
+     Tastatur des Geräts über den eigenen Tasten auf. */
+  const pl = document.getElementById('cardTippPlural');
+  if (pl){ if (an) pl.setAttribute('inputmode', 'none'); else pl.removeAttribute('inputmode'); }
   tasten.classList.toggle('hidden', !an);
   document.getElementById('cardTippBox').classList.toggle('mit-tasten', an);
 }
@@ -1079,7 +1227,12 @@ function zeigeTippTasten(){
    davor (oder die Auswahl), „pruefen" prüft wie die Eingabetaste. */
 function tippTaste(wert){
   if (wert === 'pruefen'){ pruefeTippen(); return; }
-  const ein = document.getElementById('cardTippEingabe');
+  /* Geschrieben wird in das Feld, das zuletzt angetippt war (Wort oder Mehrzahl) — der Kasten
+     merkt es sich in data-ziel. Ohne Merker, oder ist das gemerkte Feld verborgen: das Wort. */
+  const kasten = document.getElementById('cardTippBox');
+  const ziel = kasten && kasten.dataset && kasten.dataset.ziel;
+  const gemerkt = ziel ? document.getElementById(ziel) : null;
+  const ein = (gemerkt && !gemerkt.classList.contains('hidden')) ? gemerkt : document.getElementById('cardTippEingabe');
   const text = ein.value;
   const von = typeof ein.selectionStart === 'number' ? ein.selectionStart : text.length;
   const bis = typeof ein.selectionEnd === 'number' ? ein.selectionEnd : von;
@@ -1130,6 +1283,8 @@ document.getElementById('btnTippUeberspringen').addEventListener('pointerdown', 
 document.getElementById('btnTippUeberspringen').addEventListener('click', (e)=>{
   e.stopPropagation();
   document.getElementById('cardTippBox').classList.add('hidden');
+  /* Ohne Kasten braucht die Karte ihre Mehrhöhe nicht mehr (tippKarteHoehe() setzt sie zurück). */
+  if (typeof tippKarteHoehe === 'function') tippKarteHoehe();
 });
 
 /* ---------- Quran-Vorkommen (Wurzel-Häufigkeit, aus dem Quranic Arabic Corpus) ---------- */

@@ -730,6 +730,32 @@ export const PFLEGEPLAN = [
     veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs',
       wie: 'test-koran-haeufig.mjs läuft im Sammellauf: hält Liste, Felder-Datei und Datendatei gegeneinander und prüft, dass jede Kennung aus der Spalte gleich in den acht Büchern steht; hält jedes Feld, dessen Beleg „gleich Buchkarte N" nennt, gegen diese Buchkarte (ändert arabicroots dort eine Form, wird es gemeldet statt still zu veralten); fährt koranKartenEinordnen(), koranKarten() und neueZuerst() aus dem Quelltext, mit Störtests' },
   },
+  /* 13.10.2026, innerhalb von js/kern.js, js/lernen.js, js/einstellungen.js und
+     index.html und deshalb von Hand hier: die Mehrzahl auf der Lernkarte. Elias,
+     12.10.2026: „irgendwie brauche ich da eine lösung langfristig" (zu den
+     Pluralformen) — auf den Vorschlag in drei Stufen: „hört sich gut an" — und:
+     „man könnte auch ab box 4 den plural verlangen aber auch nur da wo es
+     regelmässig ist". Stufe 1 und 2: die Rückseite sagt „regelmäßig" oder nennt
+     bis zu zwei Karten, die gleich klingen (hinter „Pluralformen anzeigen");
+     das zweite Tippfeld für die regelmäßige Mehrzahl (hinter dem neuen Schalter
+     „Mehrzahl mit eintippen"). Beide Schalter stehen bei ihm auf AUS. */
+  {
+    funktion: 'Mehrzahl auf der Lernkarte: „regelmäßig", „Klingt wie" und das zweite Tippfeld',
+    dateien: [],
+    bildschirme: [],
+    neuerInhalt: { nein: 'Die Zeilen werden bei jedem Zeigen der Karte aus seinen Karten gerechnet (pluralRegelmaessig(), pluralMuster() und pluralKlangPartner() in js/kern.js; die Partner kommen aus bekannteVokabeln()). Schaltet er ein Kapitel frei, sind dessen Karten sofort mögliche Partner — es gibt keine Liste, die jemand nachtragen müsste.' },
+    eingaben: { nein: 'Was er ins zweite Feld tippt, wird sofort gegen das Feld pl der Karte verglichen (pruefeTippen() in js/lernen.js) und nicht gespeichert. Neu ist nur die Einstellung tippenPlural in vt_settings; sie wird wie jede Einstellung abgeglichen.' },
+    /* ⛔ Still kaputtgehen kann die Ausnahme: zeigt jemand das zweite Feld ohne
+       seinen Schalter oder bei gebrochener Mehrzahl, oder rechnet die Lernkarte
+       „regelmäßig" an uebPluralArt() vorbei, merkt es niemand — die Karte sieht
+       nur anders aus. Still veralten kann die Bauart „derselbe Klang": ändert
+       arabicroots die Schreibung des Felds root (heute Buchstaben mit
+       Leerzeichen), finden die Karten keine Partner mehr — der Test misst
+       deshalb an seinen echten Karten, dass mindestens 60 einen haben.
+       Ohne `werkzeug`: der Test läuft im Sammellauf mit (Eintrag in alle-pruefer.mjs). */
+    veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs',
+      wie: 'test-plural-karte.mjs läuft im Sammellauf: fährt pluralMuster(), pluralKlangPartner(), den Formen-Block der Lernkarte, renderTippfeld(), pruefeTippen() und tippTaste() aus dem Quelltext gegen Probekarten und ein Doppel der Seite, prüft die Verdrahtung der zwei Schalter und misst an seinen echten Karten (Auswahl aus .stand-app.json), dass die Zeile „Klingt wie" dort Stoff hat und kein Partner regelmäßig, ein Zahlwort oder dasselbe Wort ist; 20 Störtests' },
+  },
   /* 11.10.2026, innerhalb von index.html und js/lernen.js und deshalb von Hand hier:
      arabische Tasten unter dem Tippfeld der Lernkarte, NUR am Tablet. Elias: „für
      mein tablet wäre das praktisch, für mein handy will ich das nicht". */
