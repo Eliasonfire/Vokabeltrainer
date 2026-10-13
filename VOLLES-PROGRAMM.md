@@ -714,6 +714,44 @@ einfach die Farbe, und niemand merkt, woran es liegt.
 lassen, und zwar **bevor** man weiterarbeitet. Der Fehler ist trivial zu
 beheben, solange man weiß, woher er kommt.
 
+## ⭐ Gruppe „Koran häufigste": A6 und A9 kommen aus Vorlagen
+
+Die Karten `kh-NNN` (`koran-haeufig-data.js`) bekommen dasselbe volle Programm wie
+jede Vokabel. Ihre Eselsbrücken (A6) und Beispielsätze (A9, A10) werden aber **nicht
+getippt**: sie stehen als Vorlage mit Verweisen in `werkzeuge/koran-vorlagen/` und
+werden aufgelöst. Das nächste Stück der Gruppe wird in **diese Vorlagen** geschrieben,
+nicht in `data/eselsbruecken.js` oder `data/beispielsaetze.js`.
+
+```
+# 1. Eine Stelle ansehen (sagt, ob sie in seinem auswendigen Bereich liegt)
+node werkzeuge/koran-stellen-zeigen.mjs 112:1 2:255@1-6 D1.1
+
+# 2. Eselsbrücken: in werkzeuge/koran-vorlagen/eselsbruecken.json schreiben —
+#    Arabisch NUR als Verweis: {v:S:V:a-b} {d:N.T:a-b} {k:kh-NNN[:feld]} {b:ID[:feld]} {u:XXXX}
+node werkzeuge/koran-eb-aufloesen.mjs --nur kh-032,kh-035
+node werkzeuge/eselsbruecken-setzen.mjs data-ersatz/arbeit/koran-zwischenordner/eb.json --pruefen
+
+# 3. Sätze: in werkzeuge/koran-vorlagen/saetze.json (teile / de / kommentar / marken —
+#    oder "ohne" mit dem Grund); Vorbilder ansehen, auflösen, einbauen, markieren
+node werkzeuge/koran-satz-blick.mjs data-ersatz/arbeit/koran-zwischenordner/blick.txt mb1-28-1 B45968
+node werkzeuge/koran-satz-aufloesen.mjs
+node werkzeuge/koran-satz-einbauen.mjs --pruefen
+node werkzeuge/markierung-setzen.mjs data-ersatz/arbeit/koran-zwischenordner/satz-marken.json --pruefen
+
+# 4. Gleichstand und Eichung
+node werkzeuge/pruefe-koran-vorlagen.mjs
+node werkzeuge/eiche-koran-satz.mjs
+```
+
+⛔ Alles Aufgelöste (`eb.json`, `satz*.json`, `*-lesen.txt`, `blick.txt`) liegt im
+Zwischenordner `data-ersatz/arbeit/koran-zwischenordner/` und **bleibt lokal**: dort
+stehen Wörter seiner Buchkarten. Im Repo stehen nur die Vorlagen — ohne ein einziges
+arabisches Zeichen, das prüft `pruefe-koran-vorlagen.mjs`.
+⛔ Ein Satz wird nur aus Formen gebaut, die es gibt: von einer Karte, aus einem
+vorhandenen Satz, oder aus einer der vier Umformungen, die `eiche-koran-satz.mjs` am
+Satzbestand nachmisst (bestimmt, Fall, erstes Wort der Genitivverbindung, bi-).
+„Lieber kein Satz als ein gestellter" — dann steht der Grund unter `ohne`.
+
 ## ⛔ Zitierform ist nicht Satzkontext — Hamzat al-Waṣl
 
 Derselbe Versuch hat einen zweiten, tieferen Befund erzeugt, und deshalb wurde

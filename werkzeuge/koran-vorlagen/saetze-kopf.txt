@@ -1,0 +1,35 @@
+  /* ------------------------------------------------------------------------
+     „KORAN HÄUFIGSTE" — DIE ERSTEN 30 KARTEN (12.10.2026)
+
+     Die Gruppe (Elias, 11.10.2026: „ja bau die ersten 100 wörter ein")
+     bekommt wie jede neue Vokabel das volle Programm (VOLLES-PROGRAMM.md,
+     Punkt A9). Gemeint sind die 30 Wörter, die als EIGENE Karte der Gruppe
+     stehen, weil er noch keine Buchkarte desselben Wortes hat.
+
+     15 davon haben einen Satz. Die anderen 15 bleiben MIT ABSICHT leer, und
+     der Grund steht bei jeder einzelnen — meist: die Bauform, in der das Wort
+     lebt (Bedingungssatz, Nebensatz, Akkusativ nach der Partikel, zwei
+     Objekte), hat er im Unterricht noch nicht. A9: „Lieber kein Satz als ein
+     gestellter." Die Eselsbrücken zeigen diese Wörter an Versen, die er
+     auswendig kann.
+
+     ⛔ HERKUNFT: kein Zeichen ist hier von Hand vokalisiert.
+     Jede Wortform stammt von der Karte, aus einem vorhandenen Satz (Lehrbuch
+     oder diese Datei) oder aus einer von vier Umformungen, die vorher am
+     vorhandenen Satzbestand (580 Sätze) geeicht wurden:
+       unbestimmt -> bestimmt                 75 Wörter gleich
+       bestimmtes Nomen -> Genitiv/Akkusativ  34 und 11 gleich
+       erstes Wort einer Genitivverbindung    40 gleich
+       bi- vor bestimmtem Genitiv             2 gleich
+     Die wenigen Abweichungen der Eichung (2, 1, 2) waren keine Fehler der
+     Umformung, sondern andere Wörter mit denselben Buchstaben (Mann/Bein,
+     Frau/Spiegel) und eine andere Schreibung des Verbindungs-Alif.
+
+     Zwei Sätze (kh-005, kh-028) sind wörtlich die der Buchkarten 45968 und
+     45944: das ist dasselbe Wort, und schaltet er ihr Kapitel frei, steht die
+     Buchkarte für das Wort und bringt denselben Satz mit.
+
+     Erzeugt aus einer Vorlage mit Verweisen (satz-vorlage-30.json) durch
+     satz-aufloesen.mjs; beides liegt noch lokal unter
+     data-ersatz/arbeit/koran-zwischenordner/.
+     ------------------------------------------------------------------------ */
