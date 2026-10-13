@@ -283,5 +283,75 @@
  },
  "kh-082": {
   "ohne": "Das Wort steht in keinem Vers seines auswendigen Bereichs — nur in seiner Dua, die die Eselsbrücke zeigt; eine Dua ist keine Koranstelle."
+ },
+ "kh-083": {
+  "ohne": "Das Wort steht in keinem Vers seines auswendigen Bereichs — nur in zwei seiner Duas, die die Eselsbrücken zeigen; eine Dua ist keine Koranstelle."
+ },
+ "kh-084": {
+  "wo": "105:3",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-085": {
+  "ohne": "Das Wort steht in keinem Vers seines auswendigen Bereichs."
+ },
+ "kh-086": {
+  "wo": "2:255",
+  "von": 8,
+  "bis": 12,
+  "wort": 9,
+  "de": "Ihn überkommt weder Schlummer noch Schlaf"
+ },
+ "kh-087": {
+  "ohne": "Das Wort steht in keinem Vers seines auswendigen Bereichs (dort steht nur das einfache Verb dazu: 2:255)."
+ },
+ "kh-088": {
+  "ohne": "Das Wort steht in keinem Vers seines auswendigen Bereichs."
+ },
+ "kh-089": {
+  "wo": "67:21",
+  "wort": 8,
+  "de": "*"
+ },
+ "kh-090": {
+  "wo": "1:5",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-092": {
+  "wo": "109:1",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-156": {
+  "wo": "67:26",
+  "von": 8,
+  "bis": 9,
+  "wort": 9,
+  "de": "ein deutlicher Warner"
+ },
+ "kh-094": {
+  "ohne": "Das Wort steht in keinem Vers seines auswendigen Bereichs — nur im Tashahhud, und eine Dua ist keine Koranstelle."
+ },
+ "kh-095": {
+  "wo": "1:1",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-096": {
+  "ohne": "Das Wort steht in keinem Vers seines auswendigen Bereichs."
+ },
+ "kh-098": {
+  "wo": "93:7",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-099": {
+  "wo": "95:6",
+  "wort": 7,
+  "de": "*"
+ },
+ "kh-100": {
+  "ohne": "Das Wort steht in keinem Vers seines auswendigen Bereichs."
  }
 }

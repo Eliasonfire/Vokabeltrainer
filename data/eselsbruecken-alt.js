@@ -3361,4 +3361,84 @@ const ESELSBRUECKEN_ALT = {
     'Dieselbe Dua beginnt mit der Mehrzahl: يَا مُقَلِّبَ الْقُلُوبِ — „o Wender der Herzen“. Einzahl kurz, Mehrzahl mit langem ū: قُلُوبٌ — wie بُيُوتٌ (Häuser) und شُيُوخٌ (Gelehrte).',
     '⚠️ Die Wurzel ق ل ب heißt „wenden“: das Herz ist das, was sich ständig wendet. Darum bittest du den Wender der Herzen, es festzuhalten.'
   ],
+
+  'kh-083': [
+    'Aus deiner Abend-Dua: وَأَنَا عَبْدُكَ، — „und ich bin Dein Diener“.',
+    'Im Tashahhud bezeugst du es vom Propheten: مُحَمَّداً عَبْدُهُ وَرَسُولُهُ — „(dass) Muḥammad Sein Diener und Sein Gesandter ist“. Erst Diener, dann Gesandter.'
+  ],
+
+  'kh-084': [
+    'Der, den man sendet, ist der Gesandte: dein رَسُولٌ kommt von diesem Verb — dieselbe Wurzel ر س ل.',
+    '⚠️ Gebaut mit a- vorn wie das Wort für „herabsenden“ aus al-Qadr: أَنزَلْنَٰهُ (97:1). Vergangenheit أَرْسَلَ, Gegenwart يُرْسِلُ.'
+  ],
+
+  'kh-085': [
+    'Im Gruß ahlan wa-sahlan steckt es auch: „(du bist bei) Angehörigen (angekommen)“ — willkommen.',
+    '⚠️ Nicht dasselbe wie dein أُسْرَةٌ (Familie): das ist die Familie im Haus. أَهْلٌ ist weiter — die Angehörigen, die Bewohner, die Leute von … Danach steht ein Genitiv.'
+  ],
+
+  'kh-086': [
+    '⚠️ Die Wurzel beginnt mit Hamza (أ خ ذ). In der Gegenwart sitzt es stumm auf einem Alif: يَأْخُذُ; im Befehl fällt es ganz weg: خُذْ.',
+    'Im Koran „ergreift“ Allah die Frevler mit Seiner Strafe — dasselbe Verb. Sein Nomen heißt أَخْذٌ: das Nehmen, das Ergreifen.'
+  ],
+
+  'kh-087': [
+    'Es kommt vom Verb für „nehmen“: nehmen → sich etwas nehmen. Vorn ein i-, dann ein doppeltes t — das Hamza der Wurzel أ خ ذ ist darin aufgegangen.',
+    '⚠️ Danach stehen oft zwei Dinge: wen oder was man nimmt — und als was. Vergangenheit اِتَّخَذَ, Gegenwart يَتَّخِذُ, Befehl اِتَّخِذْ.'
+  ],
+
+  'kh-088': [
+    'Zwei Bedeutungen, eine Hoffnung: vom Menschen gesagt heißt es „vielleicht“, von Allah gesagt „auf dass, damit“.',
+    '⚠️ Ein Pronomen hängt direkt daran: laʿalla-kum (ihr), laʿalla-hum (sie), laʿallī (ich). Allein steht لَعَلَّ fast nie.'
+  ],
+
+  'kh-089': [
+    'Kurz wie dein لَا (nein), aber stärker: لَا verneint nur; بَلْ sagt „nein — vielmehr …“ und bringt gleich die Berichtigung.',
+    '⚠️ Nicht verwechseln mit balā (doch!) aus derselben Sure: قَالُواْ بَلَىٰ (67:9) — „sie sagen: Ja doch!“. بَلْ endet auf Sukūn, balā auf langes ā.'
+  ],
+
+  'kh-090': [
+    'Al-Kāfirūn dreht sich nur um dieses Verb: لَآ أَعْبُدُ مَا تَعْبُدُونَ (109:2) — „ich diene nicht dem, dem ihr dient“.',
+    'Davon kommen zwei Wörter, die du auf Deutsch benutzt: ʿIbāda, der Gottesdienst — das ist عِبَادَةٌ —, und ʿAbd, der Diener, wie in ʿAbdullāh.'
+  ],
+
+  'kh-092': [
+    '⚠️ Die Endung -ūna ist die regelmäßige männliche Mehrzahl: ein kāfir, viele kāfirūn. Dieselbe Endung haben die Muslimūn und die Muʾminūn.',
+    'Das Wort kommt vom Verb für „leugnen, undankbar sein“: der Kāfir ist der, der die Wahrheit zudeckt. In al-Mulk steht das Verb: وَلِلَّذِينَ كَفَرُواْ (67:6) — „und für diejenigen, die leugnen …“.'
+  ],
+
+  'kh-156': [
+    'Der Koran nennt sich selbst so: al-Kitāb al-Mubīn — „das deutliche Buch“.',
+    '⚠️ Die Wurzel ب ي ن heißt „klar sein, trennen“ — dieselbe wie im Wort für „zwischen“ aus Āyat al-Kursī: بَيْنَ (2:255). Was einen Abstand dazwischen hat, ist klar zu unterscheiden.'
+  ],
+
+  'kh-094': [
+    'Im Tashahhud: وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ — „und die Barmherzigkeit Allahs und Seine Segnungen“.',
+    'Dieselbe Wurzel ر ح م wie die beiden Namen aus der Basmala: ٱلرَّحْمَٰنِ ٱلرَّحِيمِ (1:1) — „des Allerbarmers, des Barmherzigen“.'
+  ],
+
+  'kh-095': [
+    'In al-Fātiḥa gleich noch einmal: ٱلرَّحْمَٰنِ ٱلرَّحِيمِ (1:3). Ar-Raḥmān und ar-Raḥīm kommen beide von raḥma, der Barmherzigkeit.',
+    '⚠️ Das Muster mit langem ī steht für eine dauernde Eigenschaft — wie bei deinen Wörtern قَدِيمٌ (alt) und جَدِيدٌ (neu) und beim Namen al-ʿAlīm, der Allwissende.'
+  ],
+
+  'kh-096': [
+    'Aus einem bekannten Hadith: aẓ-ẓulmu ẓulumātun yawma l-qiyāma — „das Unrecht wird Finsternisse sein am Tag der Auferstehung“. Unrecht und Finsternis teilen im Arabischen die Wurzel ظ ل م.',
+    '⚠️ Im Koran steht es oft mit „sich selbst“: ẓalamū anfusahum — „sie taten sich selbst Unrecht“. Wer sündigt, schadet zuerst sich.'
+  ],
+
+  'kh-098': [
+    'Die Reihe beginnt eine Zeile davor mit der Gegenwartsform: أَلَمْ يَجِدْكَ (93:6) — „hat Er dich nicht gefunden …?“. Nach dem verneinenden Wort davor ist das Ende des Verbs stumm.',
+    '⚠️ Die Wurzel beginnt mit و (و ج د). In der Gegenwart fällt es weg: يَجِدُ — genau so steht es in dem Vers.'
+  ],
+
+  'kh-099': [
+    'In al-Mulk: لَهُم مَّغْفِرَةٌ وَأَجْرٌ كَبِيرٌ (67:12) — „für sie wird es Vergebung und großen Lohn geben“.',
+    'Du benutzt es auf Deutsch: „Möge Allah dir Adschr geben“ — den Lohn bei Allah.'
+  ],
+
+  'kh-100': [
+    'Es ist der Täter zum Verb für „Unrecht tun“: mit langem ā nach dem ersten Buchstaben, wie kāfir (der leugnet) und ʿālim (der weiß).',
+    '⚠️ Die Mehrzahl ist regelmäßig: ẓālimūn, im Koran meist aẓ-ẓālimīn — „die Ungerechten“. Viele Verse enden damit, dass Allah das ungerechte Volk nicht rechtleitet.'
+  ],
 };

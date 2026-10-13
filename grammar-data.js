@@ -3650,6 +3650,10 @@ const SENTENCE_TAGS = {
   "kh-077": [
     { ruleId: "li-eigenname-01", matchText: "لِمُوسَى" },
     { ruleId: "li-eigenname-01", matchText: "لِعِيسَى" }
+  ],
+  "kh-083": [
+    { ruleId: "mudaf-01", matchText: "عَبْدُ" },
+    { ruleId: "lafz-al-jalala-01", matchText: "اللهِ" }
   ]
 };
 
