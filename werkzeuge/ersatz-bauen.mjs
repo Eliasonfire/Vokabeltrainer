@@ -251,6 +251,54 @@ function schlussFatha(felder, altK, h) {
     schluss.gesetzt++;
   }
 }
+/* GEGENWART UND BEFEHL EINES ABGELEITETEN VERBS NACH DEM MUSTER SEINER BAUFORM (Regel von Claude, 13.10.2026).
+ * Für Verben, zu denen keine Quelle die Formen nennt und die Buckwalters Stammliste nicht führt: bei einem abgeleiteten
+ * Verb (Bauform II bis X, vierbuchstabige) steht die Gegenwart und der Befehl mit der Vergangenheit fest — der Stamm
+ * bleibt, Vorsilbe und ein Vokal wechseln. Das ist die Regel der Grammatik, keine Angabe einer Quelle.
+ * GEEICHT am 13.10.2026 an den Ersatzkarten, deren Gegenwart und Befehl eine Quelle nennt (Wiktionary, Stammliste,
+ * Buch; gebildet aus der Vergangenheit, verglichen mit der Quelle; richtig / falsch, je Gegenwart und Befehl):
+ *   II 110/0 · III 60/0 · IV 107/0 · V 80/0 · VI 20/0 · VII 21/0 · VIII 77/0 · X 35/0 · X hohl 11/0 · X schwach 9/0 ·
+ *   Vierer II 4/0 · Vierer III 1/0 (die zwei letzten sind dünn geeicht).
+ * ⛔ Nur bei STARKEN Wurzelbuchstaben: mit Hamza, Waw, Ya, Alif oder Alif maqsura als Wurzelbuchstabe griff das Muster
+ *   daneben (Hamza-Sitz, Dehnung, Wegfall — 21 von 98 bei VIII, 38 von 146 bei IV), dort entsteht nichts. „X hohl" und
+ *   „X schwach" sind eigene Muster, die den schwachen Buchstaben an fester Stelle erwarten.
+ * ⛔ Eingetragen wird nur als LÜCKE und nur, wenn die bisherige Karte DIESELBE Form führt: sie ist dabei Schlüssel und
+ *   Einspruch, nie die Quelle des Werts. Führt sie eine andere, bleibt das Feld offen und wird gezählt.
+ * Das Verbalsubstantiv dieser Verben ist NICHT dabei (eigene Muster, eigene Eichung nötig). */
+const MUSTER_K = '[btvjHxd*rzs$SDTZEgfqklmnh]';
+const mk = n => `(?<c${n}>${MUSTER_K})`;
+const VERB_MUSTER = [
+  ['X', `^Aisota${mk(1)}o${mk(2)}a${mk(3)}$`, c => `yasota${c.c1}o${c.c2}i${c.c3}u`, c => `Aisota${c.c1}o${c.c2}i${c.c3}o`],
+  ['X hohl', `^Aisota${mk(1)}aA${mk(3)}$`, c => `yasota${c.c1}iy${c.c3}u`, c => `Aisota${c.c1}i${c.c3}o`],
+  ['X schwach', `^Aisota${mk(1)}o${mk(2)}aY$`, c => `yasota${c.c1}o${c.c2}iy`, c => `Aisota${c.c1}o${c.c2}i`],
+  ['VIII', `^Ai${mk(1)}ota${mk(2)}a${mk(3)}$`, c => `ya${c.c1}ota${c.c2}i${c.c3}u`, c => `Ai${c.c1}ota${c.c2}i${c.c3}o`],
+  ['VII', `^Aino${mk(1)}a${mk(2)}a${mk(3)}$`, c => `yano${c.c1}a${c.c2}i${c.c3}u`, c => `Aino${c.c1}a${c.c2}i${c.c3}o`],
+  ['V', `^ta${mk(1)}a${mk(2)}a~${mk(3)}$`, c => `yata${c.c1}a${c.c2}a~${c.c3}u`, c => `ta${c.c1}a${c.c2}a~${c.c3}o`],
+  ['VI', `^ta${mk(1)}aA${mk(2)}a${mk(3)}$`, c => `yata${c.c1}aA${c.c2}a${c.c3}u`, c => `ta${c.c1}aA${c.c2}a${c.c3}o`],
+  ['Vierer II', `^ta${mk(1)}a${mk(2)}o${mk(3)}a${mk(4)}$`, c => `yata${c.c1}a${c.c2}o${c.c3}a${c.c4}u`, c => `ta${c.c1}a${c.c2}o${c.c3}a${c.c4}o`],
+  ['Vierer III', `^Ai${mk(1)}o${mk(2)}ano${mk(3)}a${mk(4)}$`, c => `ya${c.c1}o${c.c2}ano${c.c3}i${c.c4}u`, c => `Ai${c.c1}o${c.c2}ano${c.c3}i${c.c4}o`],
+  ['II', `^${mk(1)}a${mk(2)}a~${mk(3)}$`, c => `yu${c.c1}a${c.c2}i~${c.c3}u`, c => `${c.c1}a${c.c2}i~${c.c3}o`],
+  ['III', `^${mk(1)}aA${mk(2)}a${mk(3)}$`, c => `yu${c.c1}aA${c.c2}i${c.c3}u`, c => `${c.c1}aA${c.c2}i${c.c3}o`],
+  ['IV', `^>a${mk(1)}o${mk(2)}a${mk(3)}$`, c => `yu${c.c1}o${c.c2}i${c.c3}u`, c => `>a${c.c1}o${c.c2}i${c.c3}o`],
+].map(([name, re, gegenwart, befehl]) => [name, new RegExp(re), gegenwart, befehl]);
+const musterFormen = { gegenwart: 0, befehl: 0, einspruch: 0, ohneSchluessel: 0 };
+const MUSTER_BELEG = bau => `Nach dem Muster der Bauform (${bau}) aus der Vergangenheit gebildet — Regel der Grammatik, keine Angabe einer Quelle (Regel von Claude; geeicht am 13.10.2026 an den Ersatzkarten, deren Form eine Quelle nennt: kein Fehlgriff bei starken Wurzelbuchstaben). Eingetragen nur, weil die bisherige Karte dieselbe Form führt — sie ist dabei Schlüssel und Einspruch, nicht die Quelle.`;
+function formenNachMuster(felder, altK, h) {
+  if ((felder.present && felder.imperative) || !felder.past || !voll(felder.past.w) || /\s/.test(nfc(felder.past.w))) return;
+  const p = nachBW(nfc(felder.past.w)).replace(/a$/, '');
+  let treffer = null;
+  for (const [name, re, gegenwart, befehl] of VERB_MUSTER) { const m = p.match(re); if (m) { treffer = { name, present: gegenwart(m.groups), imperative: befehl(m.groups) }; break; } }
+  if (!treffer) return;
+  for (const [f, zaehler] of [['present', 'gegenwart'], ['imperative', 'befehl']]) {
+    if (felder[f] || (h.leer || []).includes(f)) continue;
+    const wort = ausBW(treffer[f]).normalize('NFC');
+    const will = altK ? stuecke(altK[f]).map(nfc) : [];
+    if (!will.length) { musterFormen.ohneSchluessel++; continue; }
+    if (!will.includes(wort)) { musterFormen.einspruch++; continue; }
+    felder[f] = { w: wort, q: 'muster', wo: MUSTER_BELEG(treffer.name) };
+    musterFormen[zaehler]++;
+  }
+}
 /* MEHRZAHL aus Buckwalters Stammliste (bamaMehrzahlZurKarte in ersatz-bama-lib.mjs, dort stehen die Bedingungen und die
  * Messung; Regel von Claude, 13.10.2026). Anlass: nach der Pflicht der App fehlte die Mehrzahl an 167 Ersatzkarten,
  * die sie im Bestand haben — der Eintrag des Wiktionary nennt dort keine, arabdict und der Schlüssel nennen nie eine.
@@ -617,6 +665,9 @@ for (const buch of BUECHER) {
       // Arabisch der fertigen Ersatzkarte (so sucht ersatz-lane.mjs) — beide müssen dieselbe Form meinen. Nach einer
       // Änderung hier deshalb: bauen, `ersatz-lane.mjs --verben` (ohne Abruf), bauen.
       if (felder.type && felder.type.w === 'verb') schlussFatha(felder, altK, h);
+      // Gegenwart und Befehl nach dem Muster der Bauform (formenNachMuster, oben): nur als Lücke, nur bei starken
+      // Wurzelbuchstaben, nur wenn die bisherige Karte dieselbe Form führt
+      if (felder.type && felder.type.w === 'verb') formenNachMuster(felder, altK, h);
       if (felder.type && felder.type.w === 'verb') verbalsubstantivAusLane(felder, s, altK, h);
     }
     for (const f of h.leer || []) delete felder[f];
@@ -717,6 +768,7 @@ if (verbformenWeg) console.log(`Verbformen an Karten, die keine Verben sind, weg
 if (stammliste.gesetzt) console.log(`Wurzel aus Buckwalters Stammliste (Lane führt die Wurzel, nennt das Wort aber nicht): ${stammliste.gesetzt} eingetragen`);
 if (stammliste.warten) console.log(`Wurzel aus der Stammliste OFFEN an ${stammliste.warten} Karten: nach ${Object.keys(stammliste.fehlend).length} Wurzelseiten von Lane wurde noch nie gefragt — „node werkzeuge/ersatz-lane.mjs --seiten --holen“, danach neu bauen (Liste: data-ersatz/arbeit/lane-fehlende-seiten.json)`);
 if (endung.gesetzt) console.log(`Geschlecht aus der Endung (Ta marbuta am Wort in der Einzahl, keine Quelle nennt es): ${endung.gesetzt} Nomen weiblich`);
+if (musterFormen.gegenwart || musterFormen.befehl || musterFormen.einspruch || musterFormen.ohneSchluessel) console.log(`Formen nach dem Muster der Bauform (abgeleitete Verben, keine Quelle nennt sie): Gegenwart an ${musterFormen.gegenwart}, Befehl an ${musterFormen.befehl} Verben · ${musterFormen.einspruch} offen gelassen, weil die bisherige Karte eine andere Form führt · ${musterFormen.ohneSchluessel} ohne Schlüssel`);
 if (schluss.gesetzt || schluss.einspruch) console.log(`Schlussvokal der Vergangenheit (die Quelle druckt das Verb ohne Schlussendung): Fatha ergänzt an ${schluss.gesetzt} Feldern · ${schluss.einspruch} offen gelassen, weil die bisherige Karte dort einen anderen Vokal trägt`);
 if (Object.values(verbListe).some(Boolean)) console.log(`Verbformen aus Buckwalters Stammliste (keine andere Quelle nennt sie): Gegenwart an ${verbListe.gegenwart} Verben, Befehl nach der Regel an ${verbListe.befehl}, Verbalsubstantiv an ${verbListe.masdar} (dazu nur nach dem Muster, wo die bisherige Karte dasselbe führt: ${verbListe.muster})`
   + ` · offen gelassen: ${verbListe.einspruch} Gegenwart (keine Zeile der Liste gleicht der bisherigen Karte), ${verbListe.unklar} Gegenwart (gleich geschriebene Lemmata nennen Verschiedenes), ${verbListe.ohneBefehlImBestand} Befehl (die bisherige Karte führt eine Gegenwart, aber keinen Befehl)`);

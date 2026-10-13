@@ -1123,6 +1123,51 @@ pruefe('Schlussvokal: nach einem verdoppelten Buchstaben steht das Fatha dort, w
 pruefe('Schlussvokal: ein Nomen ohne Schlussvokal bekommt keinen — die Regel gilt nur für Verben', nf19(feldAuf(w19, '246', 'ar')) === nf19(KATAB19) && !/ergänzt/.test(feldBeleg(w19, '246', 'ar').wo || ''), zeig19('246'));
 pruefe('Schlussvokal: der Bau nennt beide Zahlen (4 Felder ergänzt, 2 wegen der bisherigen Karte offen gelassen)', /Fatha ergänzt an 4 Feldern · 2 offen gelassen/.test(zeile19), zeile19);
 
+// 20. Gegenwart und Befehl nach dem Muster der Bauform (13.10.2026, formenNachMuster in ersatz-bauen.mjs, Regel von
+//     Claude): bei einem abgeleiteten Verb mit starken Wurzelbuchstaben stehen beide mit der Vergangenheit fest — nur als
+//     Lücke, und nur, wenn die bisherige Karte dieselbe Form führt (Schlüssel und Einspruch, nie die Quelle).
+//     261  Bauform X, die bisherige Karte führt beide Formen so → beide eingetragen, der Beleg nennt Bauform und Regel
+//     262  Bauform V, die bisherige Karte führt eine ANDERE Gegenwart → Gegenwart offen (Einspruch), der Befehl steht
+//     263  ein Wurzelbuchstabe ist schwach (Waw) → kein Muster, nichts eingetragen
+//     264  die bisherige Karte führt keine der Formen → nichts eingetragen, als „ohne Schlüssel" gezählt
+//     265  „leer" von Hand sperrt die Gegenwart → nur der Befehl
+//     266  Grundform (kein abgeleitetes Verb) → nichts
+const P20 = {
+  x: cp(ALIF, KASRA, SIN, SUKUN, TA, FATHA, QAF, SUKUN, DAL, FATHA, MIM, FATHA),
+  xGw: cp(YA, FATHA, SIN, SUKUN, TA, FATHA, QAF, SUKUN, DAL, KASRA, MIM, DAMMA), xBf: cp(ALIF, KASRA, SIN, SUKUN, TA, FATHA, QAF, SUKUN, DAL, KASRA, MIM, SUKUN),
+  v: cp(TA, FATHA, KAF, FATHA, LAM, FATHA, SHADDA, MIM, FATHA),
+  vGwFalsch: cp(YA, FATHA, TA, FATHA, KAF, FATHA, LAM, KASRA, SHADDA, MIM, DAMMA), vBf: cp(TA, FATHA, KAF, FATHA, LAM, FATHA, SHADDA, MIM, SUKUN),
+  w: cp(ALIF, KASRA, SIN, SUKUN, TA, FATHA, WAW, SUKUN, RA, FATHA, DAL, FATHA),
+  wGw: cp(YA, FATHA, SIN, SUKUN, TA, FATHA, WAW, SUKUN, RA, KASRA, DAL, DAMMA), wBf: cp(ALIF, KASRA, SIN, SUKUN, TA, FATHA, WAW, SUKUN, RA, KASRA, DAL, SUKUN),
+  uktub: cp(ALIF, DAMMA, KAF, SUKUN, TA, DAMMA, BA, SUKUN),
+};
+const WELT20 = {
+  karten: [
+    { id: '261', ar: P20.x, de: 'vorladen', type: 'verb', chapter: 1, ...leer, past: P20.x, present: P20.xGw, imperative: P20.xBf },
+    { id: '262', ar: P20.v, de: 'sprechen', type: 'verb', chapter: 1, ...leer, past: P20.v, present: P20.vGwFalsch, imperative: P20.vBf },
+    { id: '263', ar: P20.w, de: 'einführen', type: 'verb', chapter: 1, ...leer, past: P20.w, present: P20.wGw, imperative: P20.wBf },
+    { id: '264', ar: P20.x, de: 'herbeirufen', type: 'verb', chapter: 2, ...leer, past: P20.x },
+    { id: '265', ar: P20.x, de: 'kommen lassen', type: 'verb', chapter: 2, ...leer, past: P20.x, present: P20.xGw, imperative: P20.xBf },
+    { id: '266', ar: KATAB19 + cp(FATHA), de: 'schreiben', type: 'verb', chapter: 2, ...leer, past: KATAB19 + cp(FATHA), present: YAKTUBU, imperative: P20.uktub },
+  ],
+  woerterbuch: [], englischDeutsch: [],
+};
+const w20 = probe({ 261: mitPast19(P20.x, 'vorladen'), 262: mitPast19(P20.v, 'sprechen'), 263: mitPast19(P20.w, 'einführen'), 264: mitPast19(P20.x, 'herbeirufen'),
+  265: { ...mitPast19(P20.x, 'kommen lassen'), leer: ['present'] }, 266: mitPast19(KATAB19 + cp(FATHA), 'schreiben') }, WELT20);
+const f20 = (id, feld) => feldAuf(w20, id, feld) == null ? null : nf19(feldAuf(w20, id, feld));
+const zeig20 = id => 'Karte ' + id + ': Gegenwart [' + hex19(feldAuf(w20, id, 'present')) + '] (' + (feldBeleg(w20, id, 'present').q || '—') + ') · Befehl [' + hex19(feldAuf(w20, id, 'imperative')) + '] (' + (feldBeleg(w20, id, 'imperative').q || '—') + ')';
+const zeile20 = (w20.text.split('\n').find(z => /Formen nach dem Muster der Bauform/.test(z)) || '(keine Zeile)').slice(0, 260);
+pruefe('Muster der Bauform: die Probe läuft durch, alle sechs Plätze sind belegt', w20.codeZ === 0 && w20.codeB === 0 && w20.karten.length === 6, 'Exit ' + w20.codeZ + ' / ' + w20.codeB + ', Karten ' + w20.karten.map(k => k.id).join(',') + ': ' + w20.text.trim().split('\n').slice(-3).join(' | ').slice(0, 400));
+pruefe('Muster der Bauform: führt die bisherige Karte beide Formen so, stehen Gegenwart und Befehl da — der Beleg nennt die Bauform und sagt, dass es die Regel der Grammatik ist und die bisherige Karte nur Schlüssel',
+  f20('261', 'present') === nf19(P20.xGw) && f20('261', 'imperative') === nf19(P20.xBf) && feldBeleg(w20, '261', 'present').q === 'muster'
+  && /Muster der Bauform \(X\).*Regel der Grammatik, keine Angabe einer Quelle.*Schlüssel und Einspruch, nicht die Quelle/.test(feldBeleg(w20, '261', 'present').wo || ''), zeig20('261') + ' · ' + String(feldBeleg(w20, '261', 'present').wo || '').slice(0, 120));
+pruefe('Muster der Bauform: führt die bisherige Karte eine andere Gegenwart, bleibt die Gegenwart offen — der Befehl, den sie gleich führt, steht da', f20('262', 'present') === null && f20('262', 'imperative') === nf19(P20.vBf) && feldBeleg(w20, '262', 'imperative').q === 'muster', zeig20('262'));
+pruefe('Muster der Bauform: ist ein Wurzelbuchstabe schwach (Waw), entsteht nichts — auch wenn die bisherige Karte die Formen führt', f20('263', 'present') === null && f20('263', 'imperative') === null, zeig20('263'));
+pruefe('Muster der Bauform: führt die bisherige Karte keine der Formen, entsteht nichts', f20('264', 'present') === null && f20('264', 'imperative') === null, zeig20('264'));
+pruefe('Muster der Bauform: „leer" von Hand sperrt die Gegenwart, der Befehl steht trotzdem da', f20('265', 'present') === null && f20('265', 'imperative') === nf19(P20.xBf), zeig20('265'));
+pruefe('Muster der Bauform: ein Verb der Grundform bekommt nichts — die Regel gilt nur für abgeleitete Verben', f20('266', 'present') === null && f20('266', 'imperative') === null, zeig20('266'));
+pruefe('Muster der Bauform: der Bau nennt alle vier Zahlen (Gegenwart 1, Befehl 3, 1 Einspruch, 2 ohne Schlüssel)', /Gegenwart an 1, Befehl an 3 Verben · 1 offen gelassen[^·]*· 2 ohne Schlüssel/.test(zeile20), zeile20);
+
 const gut = faelle.filter(f => f.ok).length;
 for (const f of faelle) if (!f.ok) console.log(`  ✗ ${f.name}\n      bekommen: ${f.was}`);
 console.log(`Eichung Zuordner und Bau: ${gut} von ${faelle.length} Fällen wie erwartet`);
