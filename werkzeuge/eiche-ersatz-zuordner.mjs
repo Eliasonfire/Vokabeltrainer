@@ -1140,14 +1140,16 @@ const P20 = {
   w: cp(ALIF, KASRA, SIN, SUKUN, TA, FATHA, WAW, SUKUN, RA, FATHA, DAL, FATHA),
   wGw: cp(YA, FATHA, SIN, SUKUN, TA, FATHA, WAW, SUKUN, RA, KASRA, DAL, DAMMA), wBf: cp(ALIF, KASRA, SIN, SUKUN, TA, FATHA, WAW, SUKUN, RA, KASRA, DAL, SUKUN),
   uktub: cp(ALIF, DAMMA, KAF, SUKUN, TA, DAMMA, BA, SUKUN),
+  // Verbalsubstantiv (Teil 2 der Regel): das nach dem Muster der Bauform X, und ein ANDERES Wort als Einspruch
+  xMasdar: cp(ALIF, KASRA, SIN, SUKUN, TA, KASRA, QAF, SUKUN, DAL, FATHA, ALIF, MIM), kalam: cp(KAF, FATHA, LAM, FATHA, ALIF, MIM),
 };
 const WELT20 = {
   karten: [
-    { id: '261', ar: P20.x, de: 'vorladen', type: 'verb', chapter: 1, ...leer, past: P20.x, present: P20.xGw, imperative: P20.xBf },
-    { id: '262', ar: P20.v, de: 'sprechen', type: 'verb', chapter: 1, ...leer, past: P20.v, present: P20.vGwFalsch, imperative: P20.vBf },
+    { id: '261', ar: P20.x, de: 'vorladen', type: 'verb', chapter: 1, ...leer, past: P20.x, present: P20.xGw, imperative: P20.xBf, masdar: P20.xMasdar + UN },
+    { id: '262', ar: P20.v, de: 'sprechen', type: 'verb', chapter: 1, ...leer, past: P20.v, present: P20.vGwFalsch, imperative: P20.vBf, masdar: P20.kalam + UN },
     { id: '263', ar: P20.w, de: 'einführen', type: 'verb', chapter: 1, ...leer, past: P20.w, present: P20.wGw, imperative: P20.wBf },
     { id: '264', ar: P20.x, de: 'herbeirufen', type: 'verb', chapter: 2, ...leer, past: P20.x },
-    { id: '265', ar: P20.x, de: 'kommen lassen', type: 'verb', chapter: 2, ...leer, past: P20.x, present: P20.xGw, imperative: P20.xBf },
+    { id: '265', ar: P20.x, de: 'kommen lassen', type: 'verb', chapter: 2, ...leer, past: P20.x, present: P20.xGw, imperative: P20.xBf, masdar: P20.xMasdar },   // ohne Schlussendung
     { id: '266', ar: KATAB19 + cp(FATHA), de: 'schreiben', type: 'verb', chapter: 2, ...leer, past: KATAB19 + cp(FATHA), present: YAKTUBU, imperative: P20.uktub },
   ],
   woerterbuch: [], englischDeutsch: [],
@@ -1166,7 +1168,10 @@ pruefe('Muster der Bauform: ist ein Wurzelbuchstabe schwach (Waw), entsteht nich
 pruefe('Muster der Bauform: führt die bisherige Karte keine der Formen, entsteht nichts', f20('264', 'present') === null && f20('264', 'imperative') === null, zeig20('264'));
 pruefe('Muster der Bauform: „leer" von Hand sperrt die Gegenwart, der Befehl steht trotzdem da', f20('265', 'present') === null && f20('265', 'imperative') === nf19(P20.xBf), zeig20('265'));
 pruefe('Muster der Bauform: ein Verb der Grundform bekommt nichts — die Regel gilt nur für abgeleitete Verben', f20('266', 'present') === null && f20('266', 'imperative') === null, zeig20('266'));
-pruefe('Muster der Bauform: der Bau nennt alle vier Zahlen (Gegenwart 1, Befehl 3, 1 Einspruch, 2 ohne Schlüssel)', /Gegenwart an 1, Befehl an 3 Verben · 1 offen gelassen[^·]*· 2 ohne Schlüssel/.test(zeile20), zeile20);
+pruefe('Muster der Bauform: das Verbalsubstantiv steht da, wenn die bisherige Karte dasselbe führt — der Beleg nennt die eigene Eichung (497 von 502)', f20('261', 'masdar') === nf19(P20.xMasdar + UN) && feldBeleg(w20, '261', 'masdar').q === 'muster' && /497 von 502/.test(feldBeleg(w20, '261', 'masdar').wo || ''), 'Karte 261: Verbalsubstantiv [' + hex19(feldAuf(w20, '261', 'masdar')) + '] (' + (feldBeleg(w20, '261', 'masdar').q || '—') + ')');
+pruefe('Muster der Bauform: führt die bisherige Karte ein anderes Verbalsubstantiv, bleibt das Feld offen', f20('262', 'masdar') === null, 'Karte 262: Verbalsubstantiv [' + hex19(feldAuf(w20, '262', 'masdar')) + ']');
+pruefe('Muster der Bauform: beim Verbalsubstantiv zählt die Schlussendung der bisherigen Karte nicht — geschrieben wird die Form des Musters', f20('265', 'masdar') === nf19(P20.xMasdar + UN), 'Karte 265: Verbalsubstantiv [' + hex19(feldAuf(w20, '265', 'masdar')) + ']');
+pruefe('Muster der Bauform: der Bau nennt alle vier Zahlen und das Verbalsubstantiv (Gegenwart 1, Befehl 3, Verbalsubstantiv 2, 2 Einsprüche, 3 ohne Schlüssel)', /Gegenwart an 1, Befehl an 3, Verbalsubstantiv an 2 Verben · 2 offen gelassen[^·]*· 3 ohne Schlüssel/.test(zeile20), zeile20);
 
 // 21. Zahlwort: die Gegenform geht VOR die Mehrzahl (13.10.2026, zahlVor in ersatz-zuordnen.mjs, Regel von Claude) — nur
 //     wenn die bisherige Karte genau diese Form im Feld Mehrzahl führt (sie ist Schlüssel, nie die Quelle).
