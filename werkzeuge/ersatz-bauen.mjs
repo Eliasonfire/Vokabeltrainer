@@ -281,22 +281,39 @@ const VERB_MUSTER = [
   ['III', `^${mk(1)}aA${mk(2)}a${mk(3)}$`, c => `yu${c.c1}aA${c.c2}i${c.c3}u`, c => `${c.c1}aA${c.c2}i${c.c3}o`],
   ['IV', `^>a${mk(1)}o${mk(2)}a${mk(3)}$`, c => `yu${c.c1}o${c.c2}i${c.c3}u`, c => `>a${c.c1}o${c.c2}i${c.c3}o`],
 ].map(([name, re, gegenwart, befehl]) => [name, new RegExp(re), gegenwart, befehl]);
-const musterFormen = { gegenwart: 0, befehl: 0, einspruch: 0, ohneSchluessel: 0 };
+/* DAS VERBALSUBSTANTIV DERSELBEN VERBEN (13.10.2026, Regel von Claude). Eigene Eichung, weil ein Verb mehrere haben
+ * kann: an den Ersatzkarten mit starken Wurzelbuchstaben, deren Verbalsubstantiv eine Quelle nennt, steht die nach dem
+ * Muster gebildete Form unter den Formen der Quelle (ja / nein): II 107/1 · III 56/3 · IV 99/0 · V 74/0 · VI 20/0 ·
+ * VII 20/0 · VIII 73/1 · X 32/0 · X hohl 11/0 · Vierer II 4/0 · Vierer III 1/0 — 497 von 502. Die fünf anderen
+ * nennen ein Verbalsubstantiv nach einem zweiten Muster (bei III die Form wie „Kampf", bei II die auf Ta marbuta).
+ * Darum auch hier nur, wenn die bisherige Karte dieselbe Form führt; verglichen ohne die Schlussendung (die Quellen
+ * schreiben sie verschieden). Für „X schwach" gibt es kein Muster (nicht geeicht). Läuft NACH dem Verbalsubstantiv aus
+ * Lane: wo eine Quelle es nennt, steht die Quelle auf der Karte, nicht die Regel. */
+const MASDAR_NACH_BAU = {
+  'X': c => `Aisoti${c.c1}o${c.c2}aA${c.c3}N`, 'X hohl': c => `Aisoti${c.c1}aA${c.c3}apN`, 'VIII': c => `Ai${c.c1}oti${c.c2}aA${c.c3}N`,
+  'VII': c => `Aino${c.c1}i${c.c2}aA${c.c3}N`, 'V': c => `ta${c.c1}a${c.c2}u~${c.c3}N`, 'VI': c => `ta${c.c1}aA${c.c2}u${c.c3}N`,
+  'Vierer II': c => `ta${c.c1}a${c.c2}o${c.c3}u${c.c4}N`, 'Vierer III': c => `Ai${c.c1}o${c.c2}ino${c.c3}aA${c.c4}N`,
+  'II': c => `ta${c.c1}o${c.c2}iy${c.c3}N`, 'III': c => `mu${c.c1}aA${c.c2}a${c.c3}apN`, 'IV': c => `<i${c.c1}o${c.c2}aA${c.c3}N`,
+};
+const musterFormen = { gegenwart: 0, befehl: 0, masdar: 0, einspruch: 0, ohneSchluessel: 0 };
 const MUSTER_BELEG = bau => `Nach dem Muster der Bauform (${bau}) aus der Vergangenheit gebildet — Regel der Grammatik, keine Angabe einer Quelle (Regel von Claude; geeicht am 13.10.2026 an den Ersatzkarten, deren Form eine Quelle nennt: kein Fehlgriff bei starken Wurzelbuchstaben). Eingetragen nur, weil die bisherige Karte dieselbe Form führt — sie ist dabei Schlüssel und Einspruch, nicht die Quelle.`;
-function formenNachMuster(felder, altK, h) {
-  if ((felder.present && felder.imperative) || !felder.past || !voll(felder.past.w) || /\s/.test(nfc(felder.past.w))) return;
+const MUSTER_BELEG_MASDAR = bau => `Nach dem Muster der Bauform (${bau}) aus der Vergangenheit gebildet — Regel der Grammatik, keine Angabe einer Quelle (Regel von Claude; geeicht am 13.10.2026: bei 497 von 502 Ersatzkarten mit starken Wurzelbuchstaben nennt die Quelle genau diese Form, bei fünf eine nach einem zweiten Muster). Eingetragen nur, weil die bisherige Karte dieselbe Form führt — sie ist dabei Schlüssel und Einspruch, nicht die Quelle.`;
+const ohneSchluss = t => { const z = [...nfc(t)]; while (z.length && KURZVOKAL.test(z[z.length - 1])) z.pop(); return z.join(''); };
+function formenNachMuster(felder, altK, h, welche) {
+  if (welche.every(f => felder[f]) || !felder.past || !voll(felder.past.w) || /\s/.test(nfc(felder.past.w))) return;
   const p = nachBW(nfc(felder.past.w)).replace(/a$/, '');
   let treffer = null;
-  for (const [name, re, gegenwart, befehl] of VERB_MUSTER) { const m = p.match(re); if (m) { treffer = { name, present: gegenwart(m.groups), imperative: befehl(m.groups) }; break; } }
+  for (const [name, re, gegenwart, befehl] of VERB_MUSTER) { const m = p.match(re); if (m) { treffer = { name, present: gegenwart(m.groups), imperative: befehl(m.groups), masdar: MASDAR_NACH_BAU[name] ? MASDAR_NACH_BAU[name](m.groups) : null }; break; } }
   if (!treffer) return;
-  for (const [f, zaehler] of [['present', 'gegenwart'], ['imperative', 'befehl']]) {
-    if (felder[f] || (h.leer || []).includes(f)) continue;
+  for (const f of welche) {
+    if (felder[f] || (h.leer || []).includes(f) || !treffer[f]) continue;
     const wort = ausBW(treffer[f]).normalize('NFC');
     const will = altK ? stuecke(altK[f]).map(nfc) : [];
     if (!will.length) { musterFormen.ohneSchluessel++; continue; }
-    if (!will.includes(wort)) { musterFormen.einspruch++; continue; }
-    felder[f] = { w: wort, q: 'muster', wo: MUSTER_BELEG(treffer.name) };
-    musterFormen[zaehler]++;
+    // Gegenwart und Befehl zeichengleich; das Verbalsubstantiv ohne die Schlussendung (ohneSchluss)
+    if (!(f === 'masdar' ? will.some(x => ohneSchluss(x) === ohneSchluss(wort)) : will.includes(wort))) { musterFormen.einspruch++; continue; }
+    felder[f] = { w: wort, q: 'muster', wo: f === 'masdar' ? MUSTER_BELEG_MASDAR(treffer.name) : MUSTER_BELEG(treffer.name) };
+    musterFormen[f === 'present' ? 'gegenwart' : f === 'imperative' ? 'befehl' : 'masdar']++;
   }
 }
 /* MEHRZAHL aus Buckwalters Stammliste (bamaMehrzahlZurKarte in ersatz-bama-lib.mjs, dort stehen die Bedingungen und die
@@ -667,8 +684,10 @@ for (const buch of BUECHER) {
       if (felder.type && felder.type.w === 'verb') schlussFatha(felder, altK, h);
       // Gegenwart und Befehl nach dem Muster der Bauform (formenNachMuster, oben): nur als Lücke, nur bei starken
       // Wurzelbuchstaben, nur wenn die bisherige Karte dieselbe Form führt
-      if (felder.type && felder.type.w === 'verb') formenNachMuster(felder, altK, h);
+      if (felder.type && felder.type.w === 'verb') formenNachMuster(felder, altK, h, ['present', 'imperative']);
       if (felder.type && felder.type.w === 'verb') verbalsubstantivAusLane(felder, s, altK, h);
+      // das Verbalsubstantiv nach dem Muster erst NACH Lane: nennt eine Quelle es, steht die Quelle auf der Karte
+      if (felder.type && felder.type.w === 'verb') formenNachMuster(felder, altK, h, ['masdar']);
     }
     for (const f of h.leer || []) delete felder[f];
     // „Wie die Karte" (siehe wieDieKarte oben): gilt für jeden Platz, auch nach einer Entscheidung von Hand — nennen die
@@ -768,7 +787,7 @@ if (verbformenWeg) console.log(`Verbformen an Karten, die keine Verben sind, weg
 if (stammliste.gesetzt) console.log(`Wurzel aus Buckwalters Stammliste (Lane führt die Wurzel, nennt das Wort aber nicht): ${stammliste.gesetzt} eingetragen`);
 if (stammliste.warten) console.log(`Wurzel aus der Stammliste OFFEN an ${stammliste.warten} Karten: nach ${Object.keys(stammliste.fehlend).length} Wurzelseiten von Lane wurde noch nie gefragt — „node werkzeuge/ersatz-lane.mjs --seiten --holen“, danach neu bauen (Liste: data-ersatz/arbeit/lane-fehlende-seiten.json)`);
 if (endung.gesetzt) console.log(`Geschlecht aus der Endung (Ta marbuta am Wort in der Einzahl, keine Quelle nennt es): ${endung.gesetzt} Nomen weiblich`);
-if (musterFormen.gegenwart || musterFormen.befehl || musterFormen.einspruch || musterFormen.ohneSchluessel) console.log(`Formen nach dem Muster der Bauform (abgeleitete Verben, keine Quelle nennt sie): Gegenwart an ${musterFormen.gegenwart}, Befehl an ${musterFormen.befehl} Verben · ${musterFormen.einspruch} offen gelassen, weil die bisherige Karte eine andere Form führt · ${musterFormen.ohneSchluessel} ohne Schlüssel`);
+if (musterFormen.gegenwart || musterFormen.befehl || musterFormen.masdar || musterFormen.einspruch || musterFormen.ohneSchluessel) console.log(`Formen nach dem Muster der Bauform (abgeleitete Verben, keine Quelle nennt sie): Gegenwart an ${musterFormen.gegenwart}, Befehl an ${musterFormen.befehl}, Verbalsubstantiv an ${musterFormen.masdar} Verben · ${musterFormen.einspruch} offen gelassen, weil die bisherige Karte eine andere Form führt · ${musterFormen.ohneSchluessel} ohne Schlüssel`);
 if (schluss.gesetzt || schluss.einspruch) console.log(`Schlussvokal der Vergangenheit (die Quelle druckt das Verb ohne Schlussendung): Fatha ergänzt an ${schluss.gesetzt} Feldern · ${schluss.einspruch} offen gelassen, weil die bisherige Karte dort einen anderen Vokal trägt`);
 if (Object.values(verbListe).some(Boolean)) console.log(`Verbformen aus Buckwalters Stammliste (keine andere Quelle nennt sie): Gegenwart an ${verbListe.gegenwart} Verben, Befehl nach der Regel an ${verbListe.befehl}, Verbalsubstantiv an ${verbListe.masdar} (dazu nur nach dem Muster, wo die bisherige Karte dasselbe führt: ${verbListe.muster})`
   + ` · offen gelassen: ${verbListe.einspruch} Gegenwart (keine Zeile der Liste gleicht der bisherigen Karte), ${verbListe.unklar} Gegenwart (gleich geschriebene Lemmata nennen Verschiedenes), ${verbListe.ohneBefehlImBestand} Befehl (die bisherige Karte führt eine Gegenwart, aber keinen Befehl)`);
