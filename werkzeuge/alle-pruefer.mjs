@@ -709,6 +709,13 @@ const PRUEFER = [
      Vorsilbe nicht vor Sukun oder Schadda abgetrennt. Misst die 255 Karten der
      Koran-Gruppe und alle Buchkarten; achtzehn Störtests. */
   ['test-funktionsanzeige.mjs', []],
+  /* Gruppe „Koran häufigste" (13.10.2026, Punkt 2f): Eselsbrücken und Sätze entstehen aus
+     Vorlagen mit Verweisen (werkzeuge/koran-vorlagen/). Der erste hält die Vorlagen frei von
+     Arabisch und gegen das Ausgelieferte (wortgleich, zeichengleich, jede Markierung); der
+     zweite eicht die vier Umformungen der Sätze am Satzbestand und wird bei einer NEUEN
+     Abweichung rot. Ohne seine Buchabzüge laufen beide nur so weit, wie es ohne geht. */
+  ['werkzeuge/pruefe-koran-vorlagen.mjs', []],
+  ['werkzeuge/eiche-koran-satz.mjs', []],
 
   /* ⛔ Neu am 06.09.2026. Der Hifz-Stand ist das Einzige in dieser App, das
      Elias sich WIRKLICH erarbeitet hat — auswendig gelernte Suren. Er lief

@@ -1,0 +1,109 @@
+{
+ "_": "Vorlage der Beispielsätze für die ersten 30 Karten von „Koran häufigste“. Kein arabisches Wort ist getippt: teile verweisen auf Daten. k:<Karte> · b:<Bestandskarte>[:feld] · s:<Satz>:<a>[-<b>] Wörter eines vorhandenen Satzes · best: bestimmt · gen:/akk: Fall · mud: erstes Wort einer Genitivverbindung · bi: mit bi- davor. marken: [Regel, von, bis, warum] zählt die Wörter des fertigen Satzes.",
+
+ "kh-002": {
+  "teile": ["s:B45963:1", "s:mb1-42-3:1", "s:B50192:3"],
+  "de": "Die Moschee ist das Haus Allahs.",
+  "kommentar": "Genitivverbindung als Aussage, gebaut wie der Satz aus seinem Buch (Madina 1, S. 28: das Buch Allahs). Das erste Wort der Verbindung trägt kein Tanwin, der Gottesname steht im Genitiv.",
+  "marken": [["mudaf-01", 2, 2, "erstes Wort der Genitivverbindung, ohne Tanwin"], ["lafz-al-jalala-01", 3, 3, "der Gottesname nach einem Damma: dunkel gesprochen"]]
+ },
+ "kh-004": { "ohne": "Nach dieser Partikel steht das Subjekt im Akkusativ. Diese Regel hat er im Unterricht noch nicht; ein Satz ohne sie ließe sich nicht erklären und bekäme keine Markierung. Die Eselsbrücken zeigen das Wort an Versen, die er auswendig kann." },
+ "kh-005": {
+  "teile": ["s:B45968:1-2"],
+  "de": "Der Lehrer sagte.",
+  "kommentar": "Derselbe Satz wie bei der Buchkarte 45968, die dasselbe Wort ist: schaltet er ihr Kapitel frei, steht sie für das Wort und bringt genau diesen Satz mit.",
+  "marken": [["jumla-ismiya-filiya-01", 1, 2, "Verbalsatz: das Verb steht vorn"]]
+ },
+ "kh-009": { "ohne": "Dieses Verb setzt die Aussage in den Akkusativ (kana und seine Schwestern). Die Regel hat er noch nicht; der Satz bekäme eine falsche oder keine Erklärung." },
+ "kh-011": {
+  "teile": ["k:kh-002", "mud:k:kh-011", "gen:s:B45915:1"],
+  "de": "Allah ist der Herr der Menschen.",
+  "kommentar": "Genitivverbindung als Aussage. Die zwei letzten Wörter kennt er aus an-Nas (114:1), dort im Genitiv; hier steht das erste im Nominativ, weil es die Aussage des Satzes ist.",
+  "marken": [["mudaf-01", 2, 2, "erstes Wort der Genitivverbindung, ohne Tanwin"], ["mudaf-ilayh-01", 3, 3, "zweites Wort, im Genitiv"]]
+ },
+ "kh-015": { "ohne": "Bedingungssatz: zwei Teilsätze, das Verb in einer Form, die er noch nicht hat. Kein Satz mit seinen Bauformen möglich." },
+ "kh-016": { "ohne": "Leitet einen Nebensatz ein und verlangt die Gegenwartsform auf Fatha. Nebensätze und diese Form hat er noch nicht." },
+ "kh-017": { "ohne": "Ausnahmesatz (nichts … außer): die Regel dazu hat er noch nicht. Die Eselsbrücke nutzt das Glaubensbekenntnis, das er kennt." },
+ "kh-018": {
+  "teile": ["k:kh-018", "s:B45977:2", "bi:s:B50192:3"],
+  "de": "Der Mann glaubte an Allah.",
+  "kommentar": "Einfacher Verbalsatz. Das Verb verbindet sich mit bi-: glauben AN heißt arabisch glauben MIT. Nach dem Kasra des bi- wird der Gottesname hell gesprochen.",
+  "marken": [["verb-madi-endungen-01", 1, 1, "Vergangenheit, er-Form"], ["marfu-grundfall-01", 2, 2, "der Handelnde im Nominativ"], ["harf-jarr-bi-01", 3, 3, "bi- mit Genitiv"]]
+ },
+ "kh-021": {
+  "teile": ["s:B45943:1", "k:kh-021", "b:45805:femSg"],
+  "de": "Das ist ein schönes Land.",
+  "kommentar": "Das Wort ist weiblich, obwohl es kein Ta marbuta trägt: darum das weibliche Hinweiswort und das weibliche Adjektiv.",
+  "marken": [["isara-genus-kongruenz-01", 1, 2, "das Hinweiswort richtet sich nach dem Geschlecht"], ["fem-ohne-ta-marbuta-01", 2, 2, "weiblich ohne Ta marbuta"], ["nat-fem-01", 2, 3, "das Adjektiv folgt im Geschlecht"]]
+ },
+ "kh-022": { "ohne": "Steht nur vor einem Verb und färbt dessen Bedeutung (schon, gewiss). Dafür gibt es noch keine Regel aus seinem Unterricht; ein Satz ließe sich nicht markieren." },
+ "kh-023": { "ohne": "Zeit- und Bedingungssatz mit zwei Teilsätzen. Diese Bauform hat er noch nicht." },
+ "kh-024": {
+  "teile": ["best:k:kh-024", "s:B45913:2", "s:mb1-42-3:4"],
+  "de": "Die Leute sind in der Moschee.",
+  "kommentar": "Nominalsatz mit Ortsangabe. Mit dem Artikel fällt das Tanwin, nach der Genitivpartikel steht der Genitiv.",
+  "marken": [["marfu-grundfall-01", 1, 1, "Subjekt im Nominativ"], ["harf-jarr-fi-ala-01", 2, 3, "fi mit Genitiv"]]
+ },
+ "kh-025": {
+  "teile": ["s:B45943:1", "k:kh-025", "s:mb1-24-1:5", "s:B45948:3"],
+  "de": "Das ist ein Vers aus dem Buch.",
+  "kommentar": "Weibliches Hinweiswort, weil das Wort auf Ta marbuta endet. Vor dem Artikel bekommt min ein Fatha: mina l-.",
+  "marken": [["isara-genus-kongruenz-01", 1, 2, "das Hinweiswort richtet sich nach dem Geschlecht"], ["mina-al-01", 3, 4, "min vor dem Artikel"]]
+ },
+ "kh-026": { "ohne": "Das Verb braucht ein Objekt (etwas wissen). In seinem Bestand steht kein Wort, das dazu natürlich passt; lieber kein Satz als ein gestellter." },
+ "kh-027": { "ohne": "Leitet einen Nebensatz ein, dessen Subjekt im Akkusativ steht. Nebensätze und diese Regel hat er noch nicht." },
+ "kh-028": {
+  "teile": ["s:B45944:1-4"],
+  "de": "Jeder Student ist in der Schule.",
+  "kommentar": "Derselbe Satz wie bei der Buchkarte 45944, die dasselbe Wort ist. Das Wort steht als erstes einer Genitivverbindung; das zweite ist unbestimmt und trägt darum Tanwin im Genitiv.",
+  "marken": [["idafa-zweitglied-01", 1, 2, "zweites Wort unbestimmt"], ["harf-jarr-fi-ala-01", 3, 4, "fi mit Genitiv"]]
+ },
+ "kh-029": { "ohne": "Verneint die Vergangenheit, verlangt aber die Gegenwartsform mit Sukun am Ende. Diese Form hat er noch nicht. Die Eselsbrücke nutzt al-Ikhlas (112:3)." },
+ "kh-030": { "ohne": "Das Verb nimmt zwei Objekte (jemanden zu etwas machen). Diese Bauform hat er noch nicht." },
+ "kh-031": {
+  "teile": ["s:mb1-25-2:1-4", "k:kh-031", "b:46023", "s:mb1-25-2:6-7"],
+  "de": "Der Lehrer verließ das Klassenzimmer, dann ging er zum Direktor.",
+  "kommentar": "Der Satz aus seinem Buch (Madina 1, S. 25), nur mit diesem Wort an der Stelle von wa-: erst das eine, DANN das andere. Im zweiten Verb steckt das er.",
+  "marken": [["mina-al-01", 3, 4, "min vor dem Artikel"], ["verb-enthaelt-pronomen-01", 6, 6, "das er steckt im Verb"], ["harf-jarr-min-ila-01", 7, 8, "ila mit Genitiv"]]
+ },
+ "kh-035": { "ohne": "Abstraktes Wort; ein natürlicher Satz bräuchte Wörter wie Feuer oder schwer, die nicht in seinem Bestand stehen. Die Eselsbrücken zeigen es an Versen aus al-Mulk." },
+ "kh-038": { "ohne": "Abstraktes Wort mit zwei Bedeutungen (Seele; selbst). Ein Satz mit seinen Wörtern wäre gestellt." },
+ "kh-039": {
+  "teile": ["k:kh-039", "s:B45977:2", "bi:s:B50192:3"],
+  "de": "Der Mann glaubte nicht an Allah.",
+  "kommentar": "Das Gegenstück zum Satz von glauben, mit derselben Bauform: auch dieses Verb verbindet sich mit bi-.",
+  "marken": [["verb-madi-endungen-01", 1, 1, "Vergangenheit, er-Form"], ["harf-jarr-bi-01", 3, 3, "bi- mit Genitiv"]]
+ },
+ "kh-040": {
+  "teile": ["s:B45934:1", "k:kh-040", "b:45791"],
+  "de": "Das ist eine neue Sache.",
+  "kommentar": "Hinweiswort, unbestimmtes Nomen, Adjektiv: das Adjektiv folgt dem Nomen in allem, auch im Tanwin.",
+  "marken": [["ismul-isara-hadha-01", 1, 1, "Hinweiswort"], ["nat-wen-beschreibt-01", 3, 3, "das Adjektiv beschreibt das Wort davor"]]
+ },
+ "kh-041": {
+  "teile": ["s:mb1-43-1:3", "s:mb1-27-2:5", "s:mb1-27-3:6", "k:kh-041", "s:B45913:2", "s:mb1-61-4:3"],
+  "de": "Das Buch ist auf dem Schreibtisch oder in der Tasche.",
+  "kommentar": "Das Wort steht zwischen zwei gleich gebauten Ortsangaben. Beide Genitivpartikeln verlangen den Genitiv.",
+  "marken": [["harf-jarr-fi-ala-01", 2, 3, "ala mit Genitiv"], ["hurufu-jarr-bedeutungen-01", 5, 6, "fi: in etwas"]]
+ },
+ "kh-042": {
+  "teile": ["k:kh-042", "s:B45913:1", "s:mb1-25-2:6", "s:B45913:3"],
+  "de": "Der Gast kam zum Haus.",
+  "kommentar": "Einfacher Verbalsatz: Verb, Handelnder im Nominativ, Ziel mit ila und Genitiv.",
+  "marken": [["jumla-ismiya-filiya-01", 1, 1, "Verbalsatz: das Verb steht vorn"], ["schams-qamar-01", 2, 2, "Sonnenbuchstabe nach dem Artikel"], ["harf-jarr-min-ila-01", 3, 4, "ila mit Genitiv"]]
+ },
+ "kh-043": { "ohne": "Auf der Karte heißt es tun, handeln; im Alltag meist arbeiten. Ein Alltagssatz zeigte die andere Bedeutung, ein Satz im Sinn des Korans bräuchte ein Objekt, das er noch nicht bilden kann." },
+ "kh-044": { "ohne": "Das Verb nimmt zwei Objekte (jemandem etwas geben). Diese Bauform hat er noch nicht." },
+ "kh-045": {
+  "teile": ["k:kh-045", "s:mb1-17-1:1", "s:B45980:3", "s:B45913:2", "s:B45915:3"],
+  "de": "Der Student sah den Lehrer auf dem Markt.",
+  "kommentar": "Verbalsatz mit Objekt: der Handelnde im Nominativ, das Objekt im Akkusativ. Das Verb endet auf Alif maqsura.",
+  "marken": [["alif-maqsura-01", 1, 1, "Alif maqsura am Wortende"], ["marfu-grundfall-01", 2, 2, "der Handelnde im Nominativ"], ["harf-jarr-fi-ala-01", 4, 5, "fi mit Genitiv"]]
+ },
+ "kh-046": {
+  "teile": ["k:kh-046", "s:B45977:2", "s:mb1-25-2:6", "s:mb1-42-3:4"],
+  "de": "Der Mann kam zur Moschee.",
+  "kommentar": "Einfacher Verbalsatz mit Ziel. Das Verb endet auf Alif maqsura, wie das Verb für sehen.",
+  "marken": [["alif-maqsura-01", 1, 1, "Alif maqsura am Wortende"], ["harf-jarr-min-ila-01", 3, 4, "ila mit Genitiv"]]
+ }
+}
