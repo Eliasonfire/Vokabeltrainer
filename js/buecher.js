@@ -228,6 +228,11 @@ function koranKarten(){
     const k = { id: e.id, ar: e.ar, de: e.de, type: e.type,
                 chapter: e.kap, book: KORAN_BUCH, koranRang: e.rang };
     for (const f of FELDER) if (e[f]) k[f] = e[f];
+    /* Die Koranstelle (A11, 13.10.2026): nur aus seinem auswendigen Bereich, erzeugt aus
+       werkzeuge/koran-vorlagen/stellen.json. Dieselbe Form wie an den Karten aus vocab-data.js —
+       die Lernkarte zeigt sie hinter „Quran-Bezug anzeigen", die Kategorie „Wörter mit
+       Quran-Bezug" zählt sie mit. */
+    if (e.quran) k.quran = e.quran;
     return k;
   });
 }

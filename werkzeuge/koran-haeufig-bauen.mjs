@@ -20,6 +20,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { stelle, zitat, bereich, kannStelle, lade, VORLAGEN } from './koran-stellen-lib.mjs';
+import { stamm, nurAr } from './koran-satz-lib.mjs';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const LISTE = path.join(REPO, 'werkzeuge', 'koran-haeufig-liste.txt');
@@ -159,7 +161,82 @@ export function leseListe(text){
 }
 
 /** Der Text der Datendatei. Je Karte eine Zeile, damit ein Diff lesbar bleibt. `felder`: je Kennung die Felder aus leseFelder(). */
-export function baueDatei(karten, felder = new Map()){
+/* ---------- Die Koranstelle (VOLLES-PROGRAMM.md, A11 — 13.10.2026) ----------
+ *
+ * „Nur, wenn die Stelle in seinem auswendigen Bereich liegt." Die Stellen stehen als Vorlage mit Verweisen in
+ * werkzeuge/koran-vorlagen/stellen.json (Sure:Vers, Wörter von–bis, die Nummer des Wortes der Karte) und werden
+ * HIER aufgelöst — kein arabisches Wort ist getippt, der Wortlaut kommt aus quran-text.js. Geprüft wird je Stelle:
+ *   1. ein Vers, keine Dua, und er liegt HEUTE in seinem Bereich (werkzeuge/auswendig.js liest seine Haken);
+ *   2. an der genannten Wortnummer steht das Wort der Karte — bei Nomen, Adjektiven und Partikeln dieselben
+ *      Buchstaben (ohne Artikel), bei einem Verb die Wurzelbuchstaben in ihrer Reihenfolge (Waw und Ya dürfen
+ *      fehlen: qul gehört zu qāla). Das fängt eine falsch gezählte Stelle, nicht jede denkbare Verwechslung —
+ *      deshalb ist jede Stelle vorher am Wort gelesen (werkzeuge/koran-stellen-zeigen.mjs);
+ *   3. das Deutsch steht WÖRTLICH in der Übersetzung, die quran-text.js zu diesem Vers führt („*" = die ganze);
+ *   4. im Zitat steht keine Marke ohne Träger (dieselbe Regel wie werkzeuge/pruefe-marken.mjs).
+ * Weil der Sammellauf test-koran-haeufig.mjs fährt und der diese Funktion ruft, wird eine Stelle auch dann
+ * gemeldet, wenn er eine Sure später wieder abhakt.
+ * Die Form an der Karte ist die der 36 Bezüge in vocab-data.js: { surah, ayah, ar, de }. Bauart von Claude. */
+export const STELLEN = path.join(VORLAGEN, 'stellen.json');
+const SCHWACH = new Set([Z(0x648), Z(0x64A), Z(0x627), Z(0x649)]);
+const HAMZA_FORMEN = new RegExp('[' + Z(0x622) + Z(0x623) + Z(0x624) + Z(0x625) + Z(0x626) + ']', 'g');
+const NUR_MARKEN = new RegExp('[' + Z(0x64B) + '-' + Z(0x652) + Z(0x670) + ']', 'g');
+const WASLA = new RegExp(Z(0x671), 'g');
+/* nur die Buchstaben, jedes Hamza gleich geschrieben, das Verbindungs-Alif als Alif */
+const buchstaben = t => nurAr(t).replace(NUR_MARKEN, '').replace(HAMZA_FORMEN, Z(0x621)).replace(WASLA, Z(0x627));
+const MARKE_Q = new RegExp('[' + Z(0x64B) + '-' + Z(0x65F) + Z(0x670) + ']');
+const TRAEGT_Q = new RegExp('[' + Z(0x620) + '-' + Z(0x64A) + Z(0x64B) + '-' + Z(0x65F) + Z(0x670) + Z(0x66E) + '-' + Z(0x6D3) + ']');
+const ohneTraeger = t => { let n = 0; for (let i = 0; i < t.length; i++) if (MARKE_Q.test(t[i]) && !(i > 0 && TRAEGT_Q.test(t[i - 1]))) n++; return n; };
+/** Steht an dieser Stelle das Wort der Karte? Gibt den Grund zurück, wenn nicht — sonst null. */
+export function wortPasst(karte, wort, wurzel){
+  if (karte.type === 'verb'){
+    if (!wurzel) return 'ohne Wurzel in der Felder-Datei ist ein Verb nicht prüfbar';
+    const noetig = [...buchstaben(wurzel)].filter(b => !SCHWACH.has(b));
+    let i = 0;
+    for (const b of buchstaben(wort)) if (i < noetig.length && b === noetig[i]) i++;
+    return (noetig.length && i === noetig.length) ? null : 'die Wurzelbuchstaben der Karte stehen nicht in dieser Reihenfolge im Wort';
+  }
+  return stamm(wort) === stamm(String(karte.ar).split(' / ')[0]) ? null : 'das Wort an dieser Stelle ist nicht das Wort der Karte';
+}
+/** Löst die Vorlage auf. `felder` aus leseFelder() (für die Wurzel der Verben). Gibt je Kennung die Stelle und alle Fehler zurück. */
+export function leseStellen(text, karten, felder = new Map()){
+  const fehler = [], stellen = new Map();
+  let ohne = 0, v;
+  try { v = JSON.parse(text); } catch (e){ return { stellen, ohne, fehler: ['stellen.json ist kein lesbares JSON: ' + e.message] }; }
+  const nachId = new Map(karten.map(k => [k.id, k]));
+  const A = bereich(), SUREN = lade('surah-data.js', 'SURAH_DATA') || [];
+  for (const [id, e] of Object.entries(v)){
+    if (id === '_') continue;
+    const k = nachId.get(id);
+    if (!k){ fehler.push(`${id}: keine Karte mit dieser Kennung`); continue; }
+    if (e.ohne !== undefined){
+      if (e.wo) fehler.push(`${id}: „ohne" und „wo" zugleich`);
+      else if (String(e.ohne).trim().length < 10) fehler.push(`${id}: der Grund unter „ohne" fehlt`);
+      else ohne++;
+      continue;
+    }
+    try {
+      const st = stelle(String(e.wo));
+      if (st.art !== 'vers') throw new Error('keine Koranstelle — eine Dua ist kein Vers');
+      if (!kannStelle(A, st.sure, st.vers)) throw new Error(`${e.wo} liegt nicht in seinem auswendigen Bereich`);
+      const von = e.von || 1, bis = e.bis || st.w.length;
+      const ar = zitat(String(e.wo), von, bis).normalize('NFC');
+      if (!(Number.isInteger(e.wort) && e.wort >= von && e.wort <= bis)) throw new Error('„wort" fehlt oder liegt nicht im Ausschnitt');
+      const grund = wortPasst(k, st.w[e.wort - 1], (felder.get(id) || {}).root);
+      if (grund) throw new Error(`Wort ${e.wort} von ${e.wo}: ${grund}`);
+      const ganz = String(st.de).replace(/\s+/g, ' ').trim();
+      if (e.de === '*' && (von !== 1 || bis !== st.w.length)) throw new Error('„*" gilt nur für den ganzen Vers');
+      const de = e.de === '*' ? ganz : String(e.de || '').trim();
+      if (!de || !ganz.includes(de)) throw new Error('das Deutsch steht nicht wörtlich in der Übersetzung, die quran-text.js zu diesem Vers führt');
+      if (ohneTraeger(ar)) throw new Error('im Zitat steht eine Marke ohne Träger — anders schneiden');
+      const sure = SUREN.find(s => Number(s.id) === st.sure);
+      if (!sure || !sure.name) throw new Error(`der Name der Sure ${st.sure} steht nicht in surah-data.js`);
+      stellen.set(id, { surah: sure.name, ayah: st.sure + ':' + st.vers, ar, de });
+    } catch (f){ fehler.push(`${id}: ${f.message}`); }
+  }
+  return { stellen, ohne, fehler };
+}
+
+export function baueDatei(karten, felder = new Map(), stellen = new Map()){
   /* ⛔ Nur, was die App LIEST. Die Häufigkeit (`n`) und der Zusatz `dort` bleiben in der Liste:
      die Zeile „N-mal im Koran", die beide gezeigt hätte, hat Elias am 11.10.2026 abgesagt („das
      sollst du nicht bauen, ist glaube unnötig"). In der App wirkt die Häufigkeit über `rang`.
@@ -169,6 +246,8 @@ export function baueDatei(karten, felder = new Map()){
     if (k.gleich.length) e.gleich = k.gleich;
     const f = felder.get(k.id);
     if (f) for (const name of FELD_FOLGE) if (f[name]) e[name] = f[name];
+    const q = stellen.get(k.id);
+    if (q) e.quran = { surah: q.surah, ayah: q.ayah, ar: q.ar, de: q.de };
     return ' ' + JSON.stringify(e);
   };
   return [
@@ -182,6 +261,8 @@ export function baueDatei(karten, felder = new Map()){
     '   Büchern, die dasselbe Wort sind — kennt er eine davon, steht sie für das Wort und nicht diese Karte.',
     '   Wurzel, Geschlecht, Einzahl, Mehrzahl und die Verbformen (root, gender, sg, pl, past, present, imperative,',
     '   masdar) kommen aus werkzeuge/koran-haeufig-felder.txt; dort steht zu jedem Feld der Beleg.',
+    '   `quran` = eine Stelle aus seinem auswendigen Bereich, in der das Wort steht (Vorlage:',
+    '   werkzeuge/koran-vorlagen/stellen.json; Wortlaut und Übersetzung aus quran-text.js).',
     '   Was die App damit tut, steht in js/buecher.js beim Abschnitt „Koran häufigste". */',
     'const KORAN_HAEUFIG = [',
     karten.map(zeile).join(',\n'),
@@ -198,7 +279,11 @@ if (direkt){
   const F = leseFelder(fs.existsSync(FELDER) ? fs.readFileSync(FELDER, 'utf8') : '', karten);
   for (const f of F.fehler) console.log('FEHLER  ' + f);
   if (F.fehler.length){ console.log(F.fehler.length + ' Fehler in der Felder-Datei — nichts geschrieben.'); process.exit(1); }
-  const text = baueDatei(karten, F.felder);
+  const S = leseStellen(fs.existsSync(STELLEN) ? fs.readFileSync(STELLEN, 'utf8') : '{}', karten, F.felder);
+  for (const f of S.fehler) console.log('FEHLER  ' + f);
+  if (S.fehler.length){ console.log(S.fehler.length + ' Fehler in den Koranstellen — nichts geschrieben.'); process.exit(1); }
+  console.log('Koranstellen: ' + S.stellen.size + ' Karten mit Stelle, ' + S.ohne + ' bewusst ohne.');
+  const text = baueDatei(karten, F.felder, S.stellen);
   if (process.argv.includes('--pruefen')){
     const da = fs.existsSync(ZIEL) ? fs.readFileSync(ZIEL, 'utf8').replace(/\r\n/g, '\n') : null;
     if (da !== text){ console.log('koran-haeufig-data.js passt nicht zur Liste — den Erzeuger ohne --pruefen laufen lassen.'); process.exit(1); }

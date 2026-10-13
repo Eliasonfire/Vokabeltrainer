@@ -23,7 +23,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
-import { leseListe, leseFelder, baueDatei, LISTE, FELDER, FELDER_JE_TYP, FELD_FOLGE, ZIEL, ZEILEN_DER_TABELLE, SUMME, JE_KAPITEL } from './werkzeuge/koran-haeufig-bauen.mjs';
+import { leseListe, leseFelder, leseStellen, baueDatei, STELLEN, LISTE, FELDER, FELDER_JE_TYP, FELD_FOLGE, ZIEL, ZEILEN_DER_TABELLE, SUMME, JE_KAPITEL } from './werkzeuge/koran-haeufig-bauen.mjs';
 import { abzugOrdner, abzugGeparkt } from './werkzeuge/datenquelle.mjs';
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
@@ -223,6 +223,8 @@ const listenText = lies('werkzeuge', 'koran-haeufig-liste.txt');
 const { karten, fehler: listenFehler } = leseListe(listenText);
 const felderText = fs.existsSync(FELDER) ? fs.readFileSync(FELDER, 'utf8').replace(/\r\n/g, '\n') : '';
 const FELDER_GELESEN = leseFelder(felderText, karten);
+const stellenText = fs.existsSync(STELLEN) ? fs.readFileSync(STELLEN, 'utf8') : '{}';
+const STELLEN_GELESEN = leseStellen(stellenText, karten, FELDER_GELESEN.felder);
 {
   sag(listenFehler.length === 0, 'die Liste hat keinen Fehler' + (listenFehler.length ? ' — ' + listenFehler.slice(0, 3).join(' | ') : ''));
   const zeilen = karten.flatMap(k => k.zeilen);
@@ -231,7 +233,7 @@ const FELDER_GELESEN = leseFelder(felderText, karten);
   sag(karten.reduce((s, k) => s + k.n, 0) === SUMME, `die Häufigkeiten ergeben ${SUMME}`);
   sag(karten.every((k, i) => i === 0 || k.n <= karten[i - 1].n), 'die Karten stehen nach Häufigkeit, das häufigste zuerst');
   const da = fs.existsSync(ZIEL) ? fs.readFileSync(ZIEL, 'utf8').replace(/\r\n/g, '\n') : null;
-  sag(da === baueDatei(karten, FELDER_GELESEN.felder), 'koran-haeufig-data.js ist genau das, was der Erzeuger aus Liste und Felder-Datei baut');
+  sag(da === baueDatei(karten, FELDER_GELESEN.felder, STELLEN_GELESEN.stellen), 'koran-haeufig-data.js ist genau das, was der Erzeuger aus Liste, Felder-Datei und Koranstellen baut');
   /* Störtests */
   const ersteDaten = listenText.split('\n').findIndex(l => l && !l.startsWith('#'));
   const zeilenL = listenText.split('\n');
@@ -240,7 +242,7 @@ const FELDER_GELESEN = leseFelder(felderText, karten);
   const ohne = zeilenL.slice(); ohne.splice(ersteDaten + 5, 1);
   sag(leseListe(ohne.join('\n')).fehler.some(f => f.includes('steht auf keiner Karte')), '⛔ Störtest: eine fehlende Tabellenzeile wird gemeldet');
   const geaendert = karten.map((k, i) => i === 3 ? Object.assign({}, k, { de: k.de + ' x' }) : k);
-  sag(da !== baueDatei(geaendert, FELDER_GELESEN.felder), '⛔ Störtest: ein geändertes Wort in der Liste passt nicht mehr zur Datendatei');
+  sag(da !== baueDatei(geaendert, FELDER_GELESEN.felder, STELLEN_GELESEN.stellen), '⛔ Störtest: ein geändertes Wort in der Liste passt nicht mehr zur Datendatei');
 }
 
 console.log('\n=== 1b. Die Felder des vollen Programms (Wurzel, Geschlecht, Einzahl, Mehrzahl, Verbformen) ===\n');
@@ -274,7 +276,7 @@ console.log('\n=== 1b. Die Felder des vollen Programms (Wurzel, Geschlecht, Einz
   sag(nur(einNomen.id, 'gender', einNomen.id + '|gender|männlich|Probe').some(f => f.includes('kennt nur masculine und feminine')), '⛔ Störtest: ein Geschlecht, das die App nicht kennt, wird gemeldet');
   sag(nur(einVerb.id, 'root', einVerb.id + '|root|' + F.felder.get(einVerb.id).root.replace(/ /g, '') + '|Probe').some(f => f.includes('Wurzel')), '⛔ Störtest: eine Wurzel ohne Leerzeichen wird gemeldet');
   const anders = new Map(F.felder); anders.set(erste, Object.assign({}, F.felder.get(erste), { root: 'x y z' }));
-  sag(fs.readFileSync(ZIEL, 'utf8').replace(/\r\n/g, '\n') !== baueDatei(karten, anders), '⛔ Störtest: ein geändertes Feld passt nicht mehr zur Datendatei');
+  sag(fs.readFileSync(ZIEL, 'utf8').replace(/\r\n/g, '\n') !== baueDatei(karten, anders, STELLEN_GELESEN.stellen), '⛔ Störtest: ein geändertes Feld passt nicht mehr zur Datendatei');
   /* Die App: koranKarten() reicht die Felder an die Karte durch */
   const fallFelder = (code) => {
     const { welt, api } = baueWelt({ code });
@@ -290,6 +292,38 @@ console.log('\n=== 1b. Die Felder des vollen Programms (Wurzel, Geschlecht, Einz
   sag(fallFelder(), 'die App bringt die Felder an die Karte (koranKarten); eine Karte ohne Felder bekommt keine leeren');
   const ohneDurchreichen = BUCH.replace('    for (const f of FELDER) if (e[f]) k[f] = e[f];\n', '');
   sag(ohneDurchreichen !== BUCH && !fallFelder(quelltext(KERN, ohneDurchreichen)), '⛔ Störtest: ohne das Durchreichen kämen die Felder nie an der Karte an');
+  /* ---------- Die Koranstellen (A11, 13.10.2026) ---------- */
+  {
+    const S = STELLEN_GELESEN;
+    sag(S.fehler.length === 0, 'die Koranstellen lösen sich ohne Fehler auf' + (S.fehler.length ? ' — ' + S.fehler.slice(0, 3).join(' | ') : ''));
+    sag(S.stellen.size >= 25 && S.ohne >= 5, `${S.stellen.size} Karten tragen eine Stelle aus seinem auswendigen Bereich, ${S.ohne} bewusst keine (mit Grund)`);
+    sag([...S.stellen.values()].every(q => q.surah && /^\d+:\d+$/.test(q.ayah) && q.ar && q.de), 'jede Stelle hat Surenname, Sure:Vers, Wortlaut und Deutsch');
+    const vorlage = JSON.parse(stellenText);
+    const mit = (id, aenderung) => { const v = JSON.parse(stellenText); v[id] = Object.assign({}, v[id], aenderung); return leseStellen(JSON.stringify(v), karten, FELDER_GELESEN.felder).fehler; };
+    const probe = Object.keys(vorlage).find(id => id !== '_' && vorlage[id].wo && vorlage[id].de === '*');
+    sag(mit(probe, { wo: '2:2', wort: 1 }).some(f => f.includes('nicht in seinem auswendigen Bereich')), '⛔ Störtest: ein Vers außerhalb seines Bereichs wird gemeldet');
+    sag(mit(probe, { wo: 'D1.1' }).some(f => f.includes('keine Koranstelle')), '⛔ Störtest: eine Dua als Koranstelle wird gemeldet');
+    sag(mit(probe, { de: 'Das habe ich mir ausgedacht' }).some(f => f.includes('nicht wörtlich')), '⛔ Störtest: ein Deutsch, das nicht in der Übersetzung der Datei steht, wird gemeldet');
+    sag(mit(probe, { wort: vorlage[probe].wort === 1 ? 2 : 1 }).some(f => f.includes('Wort ')), '⛔ Störtest: eine falsch gezählte Wortnummer wird gemeldet');
+    sag(mit(probe, { ohne: 'ein Grund, der lang genug ist' }).some(f => f.includes('zugleich')), '⛔ Störtest: Stelle und „ohne" zugleich wird gemeldet');
+    const fremd = JSON.parse(stellenText); fremd['kh-999'] = { wo: '112:1', wort: 3, de: '*' };
+    sag(leseStellen(JSON.stringify(fremd), karten, FELDER_GELESEN.felder).fehler.some(f => f.includes('keine Karte')), '⛔ Störtest: eine Stelle an einer Kennung, die es nicht gibt, wird gemeldet');
+    const ohneEine = new Map(S.stellen); ohneEine.delete(probe);
+    sag(fs.readFileSync(ZIEL, 'utf8').replace(/\r\n/g, '\n') !== baueDatei(karten, FELDER_GELESEN.felder, ohneEine), '⛔ Störtest: eine fehlende Stelle passt nicht mehr zur Datendatei');
+    /* Die App: koranKarten() reicht die Stelle an die Karte durch */
+    const fallStelle = (code) => {
+      const { welt, api } = baueWelt({ code });
+      const vorher = welt.KORAN_HAEUFIG.slice();
+      welt.KORAN_HAEUFIG.push({ id: 'kh-996', rang: 8, kap: 2, ar: 'Q', de: 'Probe', type: 'noun', quran: { surah: 'S', ayah: '1:1', ar: 'Q', de: 'D' } });
+      const k = api.koranKarten();
+      const q = k.find(x => x.id === 'kh-996'), ohne = k.find(x => x.id === 'kh-001');
+      welt.KORAN_HAEUFIG.length = 0; welt.KORAN_HAEUFIG.push(...vorher);
+      return !!q && !!q.quran && q.quran.ayah === '1:1' && q.quran.de === 'D' && !!ohne && !('quran' in ohne);
+    };
+    sag(fallStelle(), 'die App bringt die Koranstelle an die Karte (koranKarten); eine Karte ohne Stelle bekommt keine');
+    const ohneQ = BUCH.replace('    if (e.quran) k.quran = e.quran;\n', '');
+    sag(ohneQ !== BUCH && !fallStelle(quelltext(KERN, ohneQ)), '⛔ Störtest: ohne das Durchreichen käme die Koranstelle nie an der Karte an');
+  }
 }
 
 console.log('\n=== 2. Was die App lädt ===\n');
@@ -313,8 +347,11 @@ const DATEN = ctx.__K;
   sag(!html.includes('cardKoranZahl') && !html.includes('koran-zahl') && !html.includes('wk-koran')
       && !quelle.includes('function koranZeile(') && !quelle.includes('koranZeile(w)'),
       '⛔ keine Zeile „N-mal im Koran" auf der Karte (von Elias abgesagt)');
-  sag(DATEN.every(e => Object.keys(e).every(k => ['id', 'rang', 'kap', 'ar', 'de', 'type', 'gleich'].concat(FELD_FOLGE).includes(k))),
+  /* `quran` seit dem 13.10.2026 (A11): gelesen von koranKarten() in js/buecher.js, gezeigt von der Lernkarte. */
+  sag(DATEN.every(e => Object.keys(e).every(k => ['id', 'rang', 'kap', 'ar', 'de', 'type', 'gleich', 'quran'].concat(FELD_FOLGE).includes(k))),
       'die Datendatei trägt nur, was die App liest (keine Häufigkeit, kein Zusatz, kein Beleg)');
+  sag(DATEN.filter(e => e.quran).every(e => JSON.stringify(Object.keys(e.quran)) === JSON.stringify(['surah', 'ayah', 'ar', 'de'])),
+      'eine Koranstelle trägt genau Surenname, Sure:Vers, Wortlaut und Deutsch (wie die Bezüge in vocab-data.js)');
   sag(DATEN.every(e => FELD_FOLGE.every(f => !(f in e) || FELDER_JE_TYP[e.type].includes(f))), 'in der Datendatei trägt keine Karte ein Feld, das ihre Wortart nicht hat');
   sag(/'koran-haeufig': 'Koran häufigste'/.test(BUCH) && /'koran-haeufig': 'Koran'\n/.test(BUCH), 'Titel „Koran häufigste" und Kurzname „Koran" stehen in js/buecher.js');
   sag(!lies('data', 'buecher.js').includes('koran-haeufig'), 'die Gruppe steht NICHT in data/buecher.js (das Verzeichnis gehört dem arabicroots-Abzug)');

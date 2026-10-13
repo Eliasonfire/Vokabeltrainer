@@ -40,7 +40,7 @@ console.log('--- Vorlagen der Gruppe „Koran häufigste" ---');
 /* Arabisch, Arabisch-Ergänzung, Arabisch-Erweitert-A und die zwei Blöcke der Darstellungsformen. */
 const ARABISCH = /[؀-ۿݐ-ݿࢠ-ࣿﭐ-﷿ﹰ-﻿]/g;
 const arabischeZeichen = text => (String(text).match(ARABISCH) || []).length;
-const DATEIEN = ['eselsbruecken.json', 'saetze.json', 'saetze-kopf.txt'];
+const DATEIEN = ['eselsbruecken.json', 'saetze.json', 'saetze-kopf.txt', 'stellen.json'];
 const texte = {};
 for (const d of DATEIEN){
   const p = path.join(VORLAGEN, d);
@@ -54,6 +54,14 @@ catch (e){ sag(false, 'eine Vorlage ist kein lesbares JSON: ' + e.message); }
 const ebIds = Object.keys(ebVorlage).filter(k => k !== '_'), satzIds = Object.keys(satzVorlage).filter(k => k !== '_');
 sag(ebIds.length >= 30 && satzIds.length >= 30, 'die Vorlagen führen ' + ebIds.length + ' Karten mit Eselsbrücken und ' + satzIds.length + ' mit Satz oder Grund (je mindestens 30)');
 sag(ebIds.every(id => satzVorlage[id]) && satzIds.every(id => ebVorlage[id]), 'beide Vorlagen führen dieselben Karten');
+/* Die dritte Vorlage (13.10.2026): die Koranstellen. Aufgelöst und geprüft werden sie vom Erzeuger der Datendatei
+   (werkzeuge/koran-haeufig-bauen.mjs, leseStellen) und von test-koran-haeufig.mjs — hier nur: dieselben Karten. */
+{
+  let st = {};
+  try { st = JSON.parse(texte['stellen.json'] || '{}'); } catch (e){ sag(false, 'stellen.json ist kein lesbares JSON: ' + e.message); }
+  const ids = Object.keys(st).filter(k => k !== '_');
+  sag(ids.length === ebIds.length && ids.every(id => ebVorlage[id]), 'die Vorlage der Koranstellen führt dieselben ' + ebIds.length + ' Karten (je eine Stelle oder einen Grund)');
+}
 
 /* ---------- die drei Vergleiche als Funktionen (die Störtests rufen sie mit verdorbener Eingabe) ---------- */
 function vergleicheEselsbruecken(soll, erste, andere){
