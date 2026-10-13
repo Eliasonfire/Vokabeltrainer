@@ -627,7 +627,37 @@ function vorschlag(e, wort, artikelAb, karte) {
     const zeilenPl = !seitePl ? [] : einheitPl ? (einheitPl.mehrzahl || []) : seitePl.einheiten.length ? [] : (seitePl.mehrzahl || []);
     const plSeite = plKopf.length || plTabelle.length || plSammel.length || !kopf ? []
       : [...new Set(zeilenPl.filter(z => z.f.some(f => k1(f) === k1(kopf.f))).flatMap(z => z.pl))];
-    if (plKopf.length) feld('pl', plKopf, 'plural', 'Mehrzahl');
+    // ZAHLWORT, DIE GEGENFORM GEHT VOR (Regel von Claude, 13.10.2026). Gemessen an Madina 1, Kapitel 24: bei „drei" bis
+    // „sieben" und „neun" stand im Feld Mehrzahl die Gegenform (unten, der letzte Zweig) — aber „zehn" trug die echte
+    // Mehrzahl (die Kopfzeile nennt beide, und die Mehrzahl ging vor), „eins" ebenso (dort ist das Stichwort männlich und
+    // die Gegenform die WEIBLICHE), und „acht" blieb leer (die Kopfzeile nennt die Gegenform nur als Verbindungsform,
+    // sie steht aber in der Beugungstabelle). Die App beschriftet das Feld bei diesen Karten mit „bei weiblichem Nomen" —
+    // eine echte Mehrzahl stünde dort unter falschem Namen.
+    // Ob eine Karte in der App als Zahlwort gilt, weiß dieses Werkzeug nicht. Deshalb geht die Gegenform nur dann VOR,
+    // wenn die bisherige Karte genau sie im Feld Mehrzahl führt — sie ist dabei Schlüssel, nie die Quelle des Werts.
+    const zahlVor = (() => {
+      if (e.pos !== 'num' || !kopf) return null;
+      const ohneZahl = f => !f.t.includes('plural') && !f.t.includes('dual');
+      const fuehrt = formen => { const b = teileVon(karte.pl); return b.length > 0 && formen.every(p => b.some(x => k1(x) === k1(p))); };
+      const app = 'sie steht bei einem weiblichen Nomen, und die App führt sie bei Zahlwörtern im Feld Mehrzahl („bei weiblichem Nomen"); die bisherige Karte führt dort dieselbe Form';
+      if (kopf.t.includes('feminine')) {
+        const m = [...new Set(hf.filter(f => f.t.includes('masculine') && ohneZahl(f)).map(f => f.f))];
+        // genau eine männliche Form in der Kopfzeile: nur der Fall, dass die Quelle DANEBEN eine Mehrzahl nennt — ohne
+        // Mehrzahl entscheidet weiter der letzte Zweig unten, auch ohne Schlüssel
+        if (m.length === 1) return (plKopf.length || plTabelle.length || plSammel.length || plSeite.length) && fuehrt(m)
+          ? { formen: m, was: `Kopfzeile: die männliche Form des Zahlworts — ${app} (die Quelle nennt daneben eine Mehrzahl)` } : null;
+        if (m.length) return null;
+        const t = [...new Set(nomi.filter(f => hat(f, 'indefinite', 'singular') && f.t.includes('masculine')).map(f => f.f))];
+        return t.length === 1 && fuehrt(t) ? { formen: t, was: `Beugungstabelle: die männliche Form des Zahlworts (unbestimmt, Nominativ; die Kopfzeile nennt sie nicht) — ${app}` } : null;
+      }
+      if (kopf.t.includes('masculine')) {
+        const w = [...new Set(hf.filter(f => f.t.includes('feminine') && ohneZahl(f)).map(f => f.f))];
+        return w.length === 1 && fuehrt(w) ? { formen: w, was: `Kopfzeile: die weibliche Form des Zahlworts (das Stichwort ist männlich) — ${app}` } : null;
+      }
+      return null;
+    })();
+    if (zahlVor) feld('pl', zahlVor.formen, 'singular', zahlVor.was);
+    else if (plKopf.length) feld('pl', plKopf, 'plural', 'Mehrzahl');
     else if (plTabelle.length) feld('pl', plTabelle, 'plural', 'Beugungstabelle: Mehrzahl, Nominativ');
     else if (plSammel.length) feld('pl', plSammel, 'paucal', einzelstueck ? 'Beugungstabelle: Sammelform und Mehrzahl der kleinen Zahl (die Quelle führt das Wort als Einzelstück eines Sammelworts)' : 'Beugungstabelle: Mehrzahl der kleinen Zahl (die Quelle führt das Wort als Sammelwort)');
     else if (plSeite.length) feld('pl', plSeite, 'plural', `Kopfvorlage der Seite: Mehrzahl (Fassung vom ${String(seitePl.zeit).slice(0, 10)})`);
