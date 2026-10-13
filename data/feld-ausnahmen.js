@@ -200,6 +200,7 @@ const FELD_ERGAENZUNGEN = {
   '45802': { pl: 'مِيَاه / أَمْوَاه / أَمْوَاء' },
   '45841': { pl: 'مَكَاوٍ' },
   '45851': { pl: 'قَهَوَات / قَهَاوٍ' },
+  '45902': { pl: 'فِتْيَةٌ / فِتْيَانٌ' },
   '45908': { pl: 'مَدَارِسُ مُتَوَسِّطَةٌ' },
   '48402': { type: 'noun' },
   '50297': { gender: 'feminine' },
@@ -254,9 +255,21 @@ const FELD_ERGAENZUNGEN = {
  *
  * ⛔ Auch hier gilt Ebene 2: NUR was er selbst bestritten hat. Ein Verdacht
  * von mir gehört ihm vorgelegt, nicht hier eingetragen.
+ *
+ * ⭐ 13.10.2026 — der erste Eintrag für `pl`: Karte 45902, „junger Mann".
+ * Der Abzug nennt als Mehrzahl فِتْيَانٌ, sein Buch (Madina 1, S. 68 und
+ * S. 72 Nr. 12) und sein Lehrer (Folge 26) nehmen فِتْيَةٌ. Ihm am 12. und
+ * 13.10.2026 vorgelegt; Elias: „das was richtig ist soll stehen".
+ * Richtig sind BEIDE: der Koran hat die eine Form in 18:13 und die andere in
+ * 12:62, en.wiktionary („فتى", gelesen 13.10.2026) nennt beide an erster
+ * Stelle. Deshalb stehen in FELD_ERGAENZUNGEN beide, die Form seines Buchs
+ * zuerst — wie beim Bruder, dessen Karte ebenfalls zwei Formen trägt.
+ * ⚠️ Der Zweifel hier muss BLEIBEN: nur ein bestrittener Wert darf ein
+ * gefülltes Feld ersetzen (wendeFeldErgaenzungenAn).
  */
 
 const FELD_ZWEIFEL = {
+  '45902': { pl: 'auf Elias’ Auftrag nachgeschlagen am 13.10.2026 — فَتًى (junger Mann)' },
   '48402': { type: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — الْيَوْمُ (heute)' },
   'p_1787183484954': { type: 'von Elias bestritten am 15.9.2026 — مَكْسُورٌ (Kaputt)' },
   'p_1787184718572': { type: 'auf Elias’ Auftrag nachgeschlagen am 16.9.2026 — لِمَن ((für) wem/wen)' },
