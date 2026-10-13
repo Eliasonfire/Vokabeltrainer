@@ -738,6 +738,11 @@ node werkzeuge/koran-satz-aufloesen.mjs
 node werkzeuge/koran-satz-einbauen.mjs --pruefen
 node werkzeuge/markierung-setzen.mjs data-ersatz/arbeit/koran-zwischenordner/satz-marken.json --pruefen
 
+# 3b. Koranstelle (A11): in werkzeuge/koran-vorlagen/stellen.json — wo / [von, bis] / wort / de
+#     (de "*" = Übersetzung des ganzen Verses; sonst wörtlich daraus) oder "ohne" mit Grund.
+#     Der Erzeuger löst auf und prüft: im Bereich? Wort der Karte an der Stelle? Deutsch wörtlich?
+node werkzeuge/koran-haeufig-bauen.mjs
+
 # 4. Gleichstand und Eichung
 node werkzeuge/pruefe-koran-vorlagen.mjs
 node werkzeuge/eiche-koran-satz.mjs
