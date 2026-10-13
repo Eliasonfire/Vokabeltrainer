@@ -688,6 +688,12 @@ const PRUEFER = [
   /* Übung 16 „Welcher Plural?" (04.10.2026): jede Lösung gegen die Karte
      nachgerechnet, unklare Karten bleiben draußen; sechs Störtests. */
   ['test-plural-uebung.mjs', []],
+  /* 13.10.2026 — die Mehrzahl auf der Lernkarte. Elias: „irgendwie brauche ich da eine
+     lösung langfristig" · „man könnte auch ab box 4 den plural verlangen aber auch nur da
+     wo es regelmässig ist". Bewacht vor allem die Ausnahmen: ohne seine Schalter ändert
+     sich nichts, das zweite Tippfeld steht nur bei regelmäßiger Mehrzahl, und die
+     Einordnung bleibt an einer Stelle. 25 Fälle, 20 Störtests, dazu seine echten Karten. */
+  ['test-plural-karte.mjs', []],
   /* Übung 17 „Verb einsetzen" (13.10.2026): keine selbst konjugierte Form (jede
      der 169 gegen den Abzug der Nachschlagetabellen UND gegen Stamm + Endung des
      Lehrers), nichts geraten, das Dreierpaket in der Rückmeldung, Falsches kommt

@@ -1015,6 +1015,125 @@ function plBeschriftung(w){
   return istZahlwort(w) ? 'bei weiblichem Nomen' : 'Plural';
 }
 
+/* ---------- Mehrzahl auf der Lernkarte: „regelmäßig" und „Klingt wie" (13.10.2026) ----------
+
+   Elias, 12.10.2026: „lass uns auch überlegen wie ich in zukunft diese pluralformen mir
+   einprägen kann weil teilweise sind sie sehr ähnlich zu den singularformen … oder sie
+   sind wirklich nicht so nah und dann sind sie gefühlt wie neue wörter. also irgendwie
+   brauche ich da eine lösung langfristig" — und auf den Vorschlag in drei Stufen: „hört
+   sich gut an". Dazu: „man könnte auch ab box 4 den plural verlangen aber auch nur da
+   wo es regelmässig ist" (das zweite Tippfeld, tippPluralDran() in js/lernen.js).
+
+   Stufe 1: Die Rückseite der Lernkarte sagt bei einer regelmäßigen Mehrzahl
+   „regelmäßig" und nennt bei jeder anderen bis zu zwei ANDERE Karten von ihm, deren
+   Mehrzahl gleich klingt (rijāl wie kibār und kilāb). Beides hängt an seinem Schalter
+   „Pluralformen anzeigen" (renderCard in js/lernen.js) und liest nur die Karten.
+
+   ⛔ Was regelmäßig ist, steht an EINER Stelle: uebPluralArt() in js/uebung.js
+   (Übung 16, dort begründet — streng, Zahlwörter ausgenommen). Hier wird nur gefragt.
+   Fehlt die Funktion, gilt nichts als regelmäßig, und nichts bekommt einen Partner:
+   lieber keine Zeile als eine zweite Regel für dieselbe Frage.
+
+   „Derselbe Klang" ist MEINE Bauart (Claude, 13.10.2026), nicht sein Satz:
+   Die Mehrzahl wird von links gelesen, die Vokalzeichen bleiben stehen, und jeder
+   Buchstabe, der der nächste Wurzelbuchstabe ist (Feld `root`, mindestens drei), wird
+   durch dessen Nummer ersetzt. Als derselbe Buchstabe gilt auch: beide sind
+   Hamza-Formen; oder der Wurzelbuchstabe ist schwach (Waw, Ya, Alif, Alif maqsura),
+   an seiner Stelle steht ein schwacher Buchstabe oder eine Hamza-Form, und die
+   übrigen Wurzelbuchstaben folgen noch in ihrer Reihenfolge (aʿyād aus ʿ-w-d) — außer
+   der Wurzelbuchstabe selbst steht später noch da (awlād aus w-l-d). Trägt
+   der Buchstabe ein Schadda und der nächste Wurzelbuchstabe ist derselbe, zählen
+   beide (asirra aus s-r-r). Alles andere bleibt, wie es dasteht. Sind am Ende nicht
+   alle Wurzelbuchstaben verbraucht, gibt es kein Muster. Die Kasusendung am Schluss
+   fällt weg. Gleiches Muster heißt gleiche Familie; eine Karte mit zwei Formen
+   gehört zu beiden; dasselbe Wort auf zwei Karten ist kein Partner; regelmäßige
+   Mehrzahlen und Zahlwörter sind nie Partner.
+   Die Zeichen stehen als Codepunkte da, nicht als getippte Zeichen.
+   Bewacht von test-plural-karte.mjs. */
+const PL_Z = c => String.fromCodePoint(c);
+const PL_ZEICHEN = new RegExp('[' + PL_Z(0x64B) + '-' + PL_Z(0x652) + PL_Z(0x670) + ']');
+const PL_ZEICHEN_ALLE = new RegExp('[' + PL_Z(0x64B) + '-' + PL_Z(0x652) + PL_Z(0x670) + PL_Z(0x640) + ']', 'g');
+const PL_ENDUNG = new RegExp('[' + PL_Z(0x64B) + '-' + PL_Z(0x650) + PL_Z(0x652) + ']+$');
+const PL_HAMZA = [0x621, 0x622, 0x623, 0x624, 0x625, 0x626].map(PL_Z).join('');
+const PL_SCHWACH = [0x648, 0x64A, 0x649, 0x627].map(PL_Z).join('');
+const PL_SCHADDA = PL_Z(0x651);
+const PL_ARTIKEL = new RegExp('^' + PL_Z(0x627) + PL_Z(0x644));
+const plNackt = s => String(s || '').normalize('NFC').replace(PL_ZEICHEN_ALLE, '');
+
+function pluralRegelmaessig(w){
+  const art = (typeof uebPluralArt === 'function') ? uebPluralArt(w) : null;
+  return art === 'm' || art === 'f';
+}
+
+function pluralMuster(form, root){
+  const r = String(root || '').split(/\s+/).map(plNackt).filter(Boolean);
+  if (r.length < 3) return null;
+  const z = [...String(form || '').normalize('NFC')];
+  const gleich = (c, w) => c === w || (PL_HAMZA.includes(c) && PL_HAMZA.includes(w));
+  const restFolgt = (ab, ri) => {
+    let j = ri;
+    for (let i = ab; i < z.length && j < r.length; i++){
+      if (PL_ZEICHEN.test(z[i])) continue;
+      if (gleich(z[i], r[j])) j++;
+    }
+    return j === r.length;
+  };
+  /* Steht der schwache Wurzelbuchstabe SELBST später noch da (und der Rest folgt ihm), dann
+     ist der Buchstabe hier nicht sein Stellvertreter, sondern eine Vorsilbe: in awlād aus
+     w-l-d ist das Alif mit Hamza vorn die Vorsilbe, das Waw dahinter die Wurzel. Ohne diese
+     Zeile bekäme awlād ein eigenes Muster statt des Musters von aqlām. */
+  const stehtSpaeter = (ab, w, ri) => {
+    for (let j = ab; j < z.length; j++) if (z[j] === w && restFolgt(j + 1, ri + 1)) return true;
+    return false;
+  };
+  let ri = 0, aus = '';
+  for (let i = 0; i < z.length; i++){
+    const c = z[i];
+    if (PL_ZEICHEN.test(c)){ aus += c; continue; }
+    const w = ri < r.length ? r[ri] : null;
+    if (w !== null && (gleich(c, w)
+        || (PL_SCHWACH.includes(w) && (PL_SCHWACH.includes(c) || PL_HAMZA.includes(c))
+            && !stehtSpaeter(i + 1, w, ri) && restFolgt(i + 1, ri + 1)))){
+      let k = i + 1, schadda = false;
+      while (k < z.length && PL_ZEICHEN.test(z[k])){ if (z[k] === PL_SCHADDA) schadda = true; k++; }
+      if (schadda && ri + 1 < r.length && r[ri + 1] === w){ aus += String(ri + 1) + String(ri + 2); ri += 2; }
+      else { aus += String(ri + 1); ri++; }
+      continue;
+    }
+    aus += c;
+  }
+  return ri === r.length ? aus.replace(PL_ENDUNG, '') : null;
+}
+
+/* Bis zu `hoechstens` andere Karten von ihm mit demselben Klang, die mit dem höchsten
+   Kasten zuerst (was er am besten kann, hilft am meisten); bei gleichem Kasten in der
+   Reihenfolge des Bestands. → [{ karte, form, de, box }] */
+function pluralKlangPartner(w, hoechstens){
+  if (typeof uebPluralArt !== 'function') return [];
+  if (!w || !w.pl || istZahlwort(w) || istPluralKarte(w.id) || pluralRegelmaessig(w)) return [];
+  const eigene = formen(w.pl).map(f => pluralMuster(f, w.root)).filter(Boolean);
+  if (!eigene.length) return [];
+  const wort = k => plNackt(k.sg || k.ar).replace(PL_ARTIKEL, '');
+  const stand = (typeof PROGRESS !== 'undefined' && PROGRESS) || {};
+  const alle = (typeof bekannteVokabeln === 'function') ? bekannteVokabeln() : [];
+  const treffer = [];
+  for (const k of alle){
+    if (!k || !k.pl || String(k.id) === String(w.id) || istZahlwort(k) || istPluralKarte(k.id) || pluralRegelmaessig(k)) continue;
+    const form = formen(k.pl).find(f => eigene.includes(pluralMuster(f, k.root)));
+    if (!form) continue;
+    treffer.push({ karte: k, form, de: String(k.de || '').split('/')[0].trim(), box: (stand[k.id] && stand[k.id].box) || 0 });
+  }
+  treffer.sort((a, b) => b.box - a.box);
+  const gesehen = new Set([wort(w)]), aus = [];
+  for (const t of treffer){
+    const g = wort(t.karte);
+    if (gesehen.has(g)) continue;
+    gesehen.add(g); aus.push(t);
+    if (aus.length >= (hoechstens || 2)) break;
+  }
+  return aus;
+}
+
 function bauePluralKarte(w){
   if (!w || !w.pl || istPluralKarte(w.id) || istZahlwort(w)) return null;
   return {
