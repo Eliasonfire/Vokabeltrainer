@@ -122,7 +122,9 @@ function lauf(quelle){
      damit die Nummern auf dem Bildschirm durchlaufen. */
   /* 13.10.2026 (v672): 18 → 19. „Verb einsetzen" steht bei den Auswahl-Übungen
      und trägt die 17; Übersetzen und Satzbau sind je eine Nummer aufgerückt. */
-  ok('1 Nummer 19, Art „bauen"', U.nr === 19 && U.art === 'bauen');
+  /* 13.10.2026 (v677): 19 → 20. „Mehrzahl einsetzen" steht bei den Auswahl-Übungen
+     und trägt die 18; Übersetzen und Satzbau sind je eine Nummer aufgerückt. */
+  ok('1 Nummer 20, Art „bauen"', U.nr === 20 && U.art === 'bauen');
   const nummern = UEBUNGEN.map(u => u.nr).sort((a, b) => a - b);
   ok('1 Nummern linear 1 bis N', nummern.every((n, i) => n === i + 1));
   ok('1 eigene Gruppe „Bauen" im Wähler', (hole('UEB_GRUPPEN') || []).some(([titel, art]) => titel === 'Bauen' && art === 'bauen'));

@@ -113,7 +113,9 @@ function pruefeAlles(app){
      und trägt die 16; Übersetzen ist damit noch einmal eine Nummer aufgerückt. */
   /* 13.10.2026 (v672): 17 → 18. „Verb einsetzen" steht bei den Auswahl-Übungen
      und trägt die 17; Übersetzen ist damit noch einmal eine Nummer aufgerückt. */
-  if (!Ue || Ue.nr !== 18) f(1, `uebersetzen: nr ${Ue && Ue.nr} (erwartet 18)`);
+  /* 13.10.2026 (v677): 18 → 19. „Mehrzahl einsetzen" steht bei den Auswahl-Übungen
+     und trägt die 18; Übersetzen ist damit noch einmal eine Nummer aufgerückt. */
+  if (!Ue || Ue.nr !== 19) f(1, `uebersetzen: nr ${Ue && Ue.nr} (erwartet 19)`);
   if (typeof E.hinweisVerraet !== 'boolean') f(1, 'hinweisVerraet fehlt (Pflichtfeld)');
   // 2
   const glieder = hole('uebEndungGlieder')();

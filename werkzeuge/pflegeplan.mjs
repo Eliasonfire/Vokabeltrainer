@@ -609,6 +609,36 @@ export const PFLEGEPLAN = [
       wie: 'Teil H des Prüfers prüft die Übung wie jede andere; dazu läuft test-verb-einsetzen.mjs in jedem Sammellauf: jede der 169 Formen gegen den Abzug der Nachschlagetabellen (werkzeuge/verbformen-belege.json) und gegen Stamm + Endung des Lehrers, die dreizehn Formen von ذَهَبَ wörtlich gegen die Regel verb-madi-endungen-01; an seinem ganzen Satzvorrat: die Lösung ist die Form im Buch, nichts ist geraten, seine zwei Teile bleiben stehen. Fünfzehn Störtests am echten Quelltext.' }
   },
   {
+    /* ⭐ 13.10.2026 — ÜBUNG 18 „MEHRZAHL EINSETZEN" (Stufe 1). Elias am 13.10.2026:
+       „ich meinte auch andere wörter wie mann hat ja auch mehrzahl, ob man solche
+       übungen auch machen sollte also dann männer." Ein ausdrückliches Ja zu genau
+       dieser Übung gibt es nicht — gebaut in der Nachtschicht, nur Stufe 1. Die
+       Übung steht in js/uebung.js (Eintrag `mehrzahl-einsetzen`, dazu
+       uebMehrzahlKarten und uebMehrzahlFalsche) — keine eigene App-Datei, deshalb
+       von Hand hier. Die drei Fragen:
+       · Neuer Inhalt wächst von selbst nach, an zwei Stellen: SÄTZE (baue() liest
+         bei jedem Aufbau den Satzvorrat — jeder neue belegte Satz mit einem Wort
+         in der Mehrzahl wird eine Aufgabe) und KARTEN (uebMehrzahlKarten() liest
+         bei jedem Aufbau seine Karten — eine neue Karte mit Mehrzahl steht ab
+         dann zur Wahl). Es gibt keine Liste, die jemand pflegen müsste.
+       · Er trägt nichts ein; gespeichert wird richtig/falsch über dieselben
+         Zähler wie bei den übrigen Übungen. Die Wiederholung einer falschen
+         Aufgabe lebt nur in der laufenden Runde (kein Speicherschlüssel).
+       · Veralten kann die Erkennung, wenn sich die Schreibweise des Feldes `pl`
+         ändert (Trenner zwischen zwei Formen) oder istZahlwort() in js/kern.js —
+         beides rechnet der eigene Test an Probekarten und an seinem ganzen
+         Satzvorrat nach. */
+    funktion: 'Mehrzahl einsetzen (Übung 18): das fehlende Wort in der Mehrzahl, vier Mehrzahlformen seiner Karten zur Wahl',
+    /* Leer wie bei Übung 16 und 17: hier stehen nur Dateien, die die APP lädt. */
+    dateien: [],
+    bildschirme: [],
+    neuerInhalt: { routine: W, schritt: '1b.8', beleg: 'node werkzeuge/pruefe-satzmodus-aktuell.mjs', werkzeug: 'werkzeuge/pruefe-satzmodus-aktuell.mjs',
+      wie: 'Jeder Satz seines Vorrats, in dem die Mehrzahl einer seiner Karten steht, wird von selbst eine Aufgabe; jede Karte mit Mehrzahl steht von selbst zur Wahl (beides liest baue() bei jedem Aufbau). Teil H des Prüfers zählt die Aufgaben jeder Übung in seiner Auswahl und meldet eine Lücke, wenn es weniger als 15 werden — dann fehlen belegte Sätze mit Mehrzahl aus seinen Büchern (Schritt 1b.8, Absatz „Übung 18").' },
+    eingaben: { nein: 'Er tippt nur eine der vier Formen an; gespeichert wird richtig/falsch über dieselben Zähler wie bei den übrigen Übungen. Eine falsch beantwortete Aufgabe kommt in derselben Runde noch einmal — das steht nur in der laufenden Liste, nicht im Speicher.' },
+    veralten: { routine: W, schritt: '1b.8', beleg: 'node werkzeuge/alle-pruefer.mjs', werkzeug: 'werkzeuge/pruefe-satzmodus-aktuell.mjs',
+      wie: 'Teil H des Prüfers prüft die Übung wie jede andere; dazu läuft test-mehrzahl-einsetzen.mjs in jedem Sammellauf: an Probekarten jede Regel einzeln (Erkennung, Lücke, derselbe Klang zuerst, die Sperren, zwei Formen, dasselbe Wort zweimal, Auflösung, lesbares deutsches Wort) und an seinem ganzen Satzvorrat: jede Knopf-Form steht so auf einer seiner Karten, jede Lösung ist das Wort im Buchsatz, kein Zahlwort, seine zwei Teile bleiben stehen. Neunzehn Störtests am echten Quelltext.' }
+  },
+  {
     /* ⭐⭐ 22.09.2026 (v566) — EIN FACHBEGRIFF FOLGT SEINER REGEL.
 
        Elias, nachdem ihm vier Karteikarten hintereinander begegnet waren, deren

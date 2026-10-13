@@ -169,8 +169,11 @@ const ueb = fs.readFileSync(REPO + '/js/uebung.js', 'utf8');
 /* 13.10.2026 (v672): dazu Übung 17 „Verb einsetzen" (mit Hinweis; Übersetzen ist
    seitdem 18, der Satzbau 19 — also 18 → 19 Übungsarten und 16 → 17 mit
    Hinweis). Elias: „ich brauche auch eine sätze übung fürs konjugieren". */
-pruefe('a2: 19 Uebungsarten', 19, (ueb.match(/^\s*id\s*:\s*'[^']+',\s*nr\s*:/gm) || []).length);
-pruefe('a2: 17 mit Hinweis', 17, (ueb.match(/^\s*hinweis\s*:/gm) || []).length);
+/* 13.10.2026 (v677): dazu Übung 18 „Mehrzahl einsetzen" (mit Hinweis; Übersetzen ist
+   seitdem 19, der Satzbau 20 — also 19 → 20 Übungsarten und 17 → 18 mit Hinweis).
+   Elias: „ich meinte auch andere wörter wie mann hat ja auch mehrzahl". */
+pruefe('a2: 20 Uebungsarten', 20, (ueb.match(/^\s*id\s*:\s*'[^']+',\s*nr\s*:/gm) || []).length);
+pruefe('a2: 18 mit Hinweis', 18, (ueb.match(/^\s*hinweis\s*:/gm) || []).length);
 
 /* Fachbegriffe (Oberflaechenpruefung) */
 const fach = fs.readFileSync(REPO + '/data/fachbegriffe.js', 'utf8');

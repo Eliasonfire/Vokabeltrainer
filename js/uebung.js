@@ -1065,6 +1065,161 @@ const UEB_PLURAL_GRUND = {
 };
 
 
+/* ⭐⭐ MEHRZAHL EINSETZEN (Übung 18, 13.10.2026) — die Karten mit einer Mehrzahl
+
+   Elias am 13.10.2026, als ihm Übung 17 gezeigt war: „denkst du mehr als nur
+   verben macht sinn ?" und dazu: „ich meinte auch andere wörter wie mann hat ja
+   auch mehrzahl, ob man solche übungen auch machen sollte also dann männer."
+   Gezeigt wurde ihm danach eine Beispielaufgabe (Stufe 1 „Auswählen"). Ein
+   ausdrückliches Ja zu genau dieser Übung gibt es nicht — er hat die
+   Nachtschicht bauen lassen, was besprochen war. Gebaut ist deshalb nur
+   Stufe 1; Stufe 2 („Selbst schreiben": die Einzahl steht in Klammern, er tippt
+   die Mehrzahl) ist ihm nur beschrieben. Die Übung selbst steht in UEBUNGEN
+   (mehrzahl-einsetzen).
+
+   ⛔ KEINE SELBST GEBILDETE FORM. Jede Form auf einem Knopf steht so im Feld
+   `pl` einer seiner Karten, und die Lücke ist ein Wort aus einem belegten
+   Satz. Darum steht auf den Knöpfen die Form der KARTE (unbestimmt, im
+   Nominativ) und nicht die gebeugte Form des Satzes: den Artikel oder eine
+   Kasusendung an die Mehrzahl einer ANDEREN Karte zu setzen, wäre selbst
+   gebildet. Die Lücke nimmt deshalb das ganze Wort mit seinem Artikel weg;
+   wie es im Satz wirklich steht, sagt die Auflösung.
+
+   Die Erkennung „dieses Satzwort ist die Mehrzahl einer Karte" ist die der
+   Übung 16 (uebungVokabel, uebungKandidaten, uebungOhneEndung). Zahlwörter
+   fragt auch diese Übung nicht: bei ihnen steht in `pl` die Form beim
+   weiblichen Nomen (istZahlwort() in js/kern.js, die eine Stelle dafür) —
+   fehlt die Funktion, wird nichts gefragt statt Falsches.
+
+   ⛔ MEINE Entscheidungen (Claude), nicht seine:
+   · Auch Karten mit zwei Formen und Karten ohne saubere Einordnung (Übung 16
+     fragt sie nicht) werden hier gefragt: welches WORT fehlt, ist auch bei
+     ihnen eindeutig. Als Lösung steht die Form da, die im Satz vorkommt.
+   · Die drei falschen Antworten: zuerst Karten, deren Mehrzahl dasselbe
+     Klangmuster hat (pluralMuster() in js/kern.js — so entscheiden die
+     Buchstaben und nicht das Muster), dann Karten derselben Art (regelmäßig
+     männlich, regelmäßig weiblich, gebrochen), dann der Rest. Innerhalb einer
+     Stufe wird je Aufbau gewürfelt.
+   · Nie zur Wahl steht eine Karte, deren deutsche Bedeutung sich mit der
+     gesuchten überschneidet (zwei Wörter für „Lehrer"): die Übersetzung unter
+     dem Satz könnte dann beide meinen. Ebenso wenig dasselbe Wort auf einer
+     zweiten Karte.
+   · Von der Übersetzung bleibt das deutsche Wort lesbar, das zur Bedeutung der
+     Karte passt (uebMehrzahlDeKlar) — sein allgemeiner Satz zu den Lücken:
+     „wenn da zb ein bestimmtes wort gesucht wird und ich muss es anhand der
+     übersetzung einsetzen". Verglichen wird ohne Umlaute, weil die deutsche
+     Mehrzahl sie oft erst bekommt (Mann → Männer, Buch → Bücher).
+
+   Je Aufbau einmal gelesen (UEB_WORTGRUPPEN, wie die Gruppen der Übungen 11,
+   14 und 15): eine Karte, die heute dazukommt, steht ab dem nächsten Aufbau
+   zur Wahl. Bewacht von test-mehrzahl-einsetzen.mjs. */
+const UEB_MZ_STOPP = new Set(['der', 'die', 'das', 'den', 'dem', 'des', 'ein', 'eine', 'einer', 'einen', 'einem', 'und', 'oder',
+  'sich', 'etwas', 'jemand', 'jemanden', 'jemandem', 'von', 'vom', 'zum', 'zur', 'mit', 'für', 'fuer', 'auf', 'aus', 'bei',
+  'nicht', 'sehr', 'sein', 'haben', 'werden', 'als', 'wie']);
+const uebMzFalten = s => String(s || '').toLowerCase().replace(/ä/g, 'a').replace(/ö/g, 'o').replace(/ü/g, 'u')
+  .replace(/ß/g, 'ss').replace(/[^a-z]/g, '');
+const uebMzGleich = (p, q) => { let n = 0; while (n < p.length && n < q.length && p[n] === q[n]) n++; return n; };
+/* Die Bedeutungswörter einer Karte: ohne Klammerzusätze, ohne Artikel und Füllwörter, ohne Umlaute. */
+function uebMehrzahlBedeutungen(de){
+  return [...new Set(String(de || '').replace(/\([^)]*\)/g, ' ').split(/[^A-Za-zÄÖÜäöüß]+/)
+    .filter(x => x.length >= 3 && !UEB_MZ_STOPP.has(x.toLowerCase())).map(uebMzFalten).filter(x => x.length >= 3))];
+}
+/* Welche Wörter der Übersetzung lesbar bleiben: die, die mit einem Bedeutungswort der Karte beginnen
+   (mindestens vier gleiche Buchstaben, bei kürzeren Wörtern das ganze Wort). */
+function uebMehrzahlDeKlar(bedeutungen){
+  if (!bedeutungen || !bedeutungen.length) return null;
+  return { test: w => { const k = uebMzFalten(w); return k.length > 1 && bedeutungen.some(x => uebMzGleich(k, x) >= Math.min(x.length, 4)); } };
+}
+/* ⚠️ Drei Aufrufe gehen in js/kern.js (istPluralKarte, pluralMuster, pluralKlangPartner). In der App
+   sind sie immer da. Mehrere Prüfer laden js/kern.js aber nur ZUM TEIL: die Funktionen stehen dann
+   schon im Kontext, ihre Konstanten (PLURAL_MARKE, PL_ZEICHEN …) noch nicht, und der Aufruf wirft
+   („Cannot access 'PLURAL_MARKE' before initialization" — so stand die Übung am 13.10.2026 in
+   werkzeuge/pruefe-hinweise.mjs mit 0 Aufgaben da). Dort gilt dann: keine Angabe zum Klang, die
+   Aufgaben selbst bleiben richtig. Dass die drei in der App wirken, misst
+   test-mehrzahl-einsetzen.mjs mit den echten Funktionen (Zusicherungen 4k und 9k). */
+function uebMzKern(aufruf, ersatz){ try { return aufruf(); } catch (e){ return ersatz; } }
+function uebMehrzahlFormen(pl){
+  return String(pl || '').normalize('NFC').split(/\s*[\/|]\s*/).map(f => f.trim()).filter(f => f && !/\s/.test(f));
+}
+function uebMehrzahlKarten(){
+  if (UEB_WORTGRUPPEN.mehrzahl) return UEB_WORTGRUPPEN.mehrzahl;
+  const out = [];
+  const bekannt = (typeof istBekannt === 'function') ? istBekannt : null;
+  const muster = (typeof pluralMuster === 'function') ? pluralMuster : null;
+  if (typeof VOCAB_DATA !== 'undefined' && Array.isArray(VOCAB_DATA) && typeof istZahlwort === 'function') for (const w of VOCAB_DATA){
+    if (!w || !w.pl || (bekannt && !bekannt(w)) || istZahlwort(w)) continue;
+    if (uebMzKern(() => typeof istPluralKarte === 'function' && istPluralKarte(w.id), false)) continue;
+    const formen = uebMehrzahlFormen(w.pl);
+    if (!formen.length) continue;
+    out.push({ karte: w, formen,
+      kern: formen.map(f => uebungOhneEndung(f)),
+      gerippe: formen.map(f => uebSkelett(f)),
+      muster: formen.map(f => uebMzKern(() => (muster ? muster(f, w.root) : null), null)),
+      einzahl: uebSkelett(String(w.sg || w.ar || '')).replace(/^ال/, ''),
+      art: uebPluralArt(w),
+      bedeutungen: uebMehrzahlBedeutungen(w.de) });
+  }
+  return (UEB_WORTGRUPPEN.mehrzahl = out);
+}
+/* Ist dieses Satzwort die Mehrzahl einer seiner Karten? → { eintrag, k, davor, danach, imSatz }.
+   `k` ist die Nummer der Form auf der Karte (bei zwei Formen die, die im Satz steht); `davor` und
+   `danach` sind die Satzzeichen am Wort — sie bleiben an der Lücke stehen. `null`, wenn die Form
+   auch die Einzahl der Karte sein könnte (dieselbe Vorsicht wie in Übung 16). */
+function uebMehrzahlTreffer(t, karten){
+  const wort = String((t && t.wort) || '').normalize('NFC');
+  const m = wort.match(/^([«(„"]*)([\s\S]*?)([.،؟?!:؛»)“"]*)$/);
+  if (!m || !m[2]) return null;
+  let v = null;
+  try { v = uebungVokabel(wort); } catch (e){ v = null; }
+  if (!v || !v.pl) return null;
+  const eintrag = karten.find(e => e.karte === v || String(e.karte.id) === String(v.id));
+  if (!eintrag) return null;
+  const formen = uebungKandidaten(wort);
+  const k = eintrag.kern.findIndex(f => formen.includes(f));
+  const istEinzahl = formen.includes(uebungOhneEndung(v.sg || v.ar)) || formen.includes(uebungOhneEndung(v.ar));
+  if (k < 0 || istEinzahl) return null;
+  return { eintrag, k, davor: m[1], danach: m[3], imSatz: m[2] };
+}
+/* Bis zu n falsche Antworten für eine Stelle — Stufen und Sperren stehen im Kopf oben. */
+function uebMehrzahlFalsche(st, n){
+  const ziel = st.eintrag, muster = ziel.muster[st.k];
+  const ueberlappt = (a, b) => a.some(x => b.some(y => uebMzGleich(x, y) >= Math.min(x.length, y.length, 4)));
+  const stufen = [[], [], []];
+  for (const e of uebMehrzahlKarten()){
+    if (e === ziel || e.einzahl === ziel.einzahl) continue;             /* dasselbe Wort auf einer zweiten Karte */
+    if (ueberlappt(e.bedeutungen, ziel.bedeutungen)) continue;         /* die Übersetzung könnte beide meinen */
+    const klang = muster ? e.muster.indexOf(muster) : -1;
+    if (klang >= 0) stufen[0].push({ eintrag: e, k: klang });
+    else stufen[(e.art || null) === (ziel.art || null) ? 1 : 2].push({ eintrag: e, k: 0 });
+  }
+  const aus = [], gesehen = new Set(ziel.gerippe);
+  for (const stufe of stufen) for (const f of shuffle(stufe)){
+    const g = f.eintrag.gerippe[f.k];
+    if (gesehen.has(g)) continue;
+    gesehen.add(g);
+    const karte = f.eintrag.karte;
+    aus.push({ eintrag: f.eintrag, form: f.eintrag.formen[f.k], einzahl: String(karte.sg || karte.ar || '').split('/')[0].trim(),
+      de: String(karte.de || '').split('/')[0].trim(), stufe: stufen.indexOf(stufe) });
+    if (aus.length >= n) return aus;
+  }
+  return aus;
+}
+/* Die Auflösung: wie das Wort im Satz steht, Einzahl → Mehrzahl mit Bedeutung, die Art, „klingt wie". */
+function uebMehrzahlAufloesung(st){
+  const e = st.eintrag, v = e.karte, form = e.formen[st.k];
+  const teile = [`In die Lücke gehört ${st.imSatz}: ${String(v.sg || v.ar || '').split('/')[0].trim()} → ${form} (${String(v.de || '').split('/')[0].trim()}).`];
+  if (e.formen.length > 1) teile.push(`Auf deiner Karte stehen ${e.formen.length === 2 ? 'zwei' : e.formen.length} Formen: ${e.formen.join(' / ')}.`);
+  else {
+    /* Die Art in den Worten der Knöpfe von Übung 16 — kurz (Elias, 13.10.2026, zu den Plural-Karten:
+       „das zu lang … es gibt da kürzere begriffe"). Ohne saubere Einordnung steht nichts da. */
+    const art = e.art ? UEB_PLURAL_WAHL.find(x => x.wert === e.art) : null;
+    if (art) teile.push(`Art: ${art.text}.`);
+  }
+  const klang = uebMzKern(() => ((typeof pluralKlangPartner === 'function') ? pluralKlangPartner(v, 2) : []), []);
+  if (klang.length) teile.push('Klingt wie ' + klang.map(p => `${p.form} (${p.de})`).join(' und ') + '.');
+  return teile.join(' ');
+}
+
 const UEBUNGEN = [
   {
     id:'mubtada-khabar', nr:1, name:'مُبْتَدَأٌ / خَبَرٌ — Satzteile', art:'mehrfach',
@@ -1970,6 +2125,78 @@ const UEBUNGEN = [
     }
   },
 
+  /* ⭐⭐ MEHRZAHL EINSETZEN — Elias am 13.10.2026: „ich meinte auch andere wörter
+     wie mann hat ja auch mehrzahl, ob man solche übungen auch machen sollte also
+     dann männer." Auftrag, Belege und was davon MEINE Entscheidung ist, stehen
+     bei uebMehrzahlKarten() oben. Dies ist Stufe 1 („Auswählen"); Stufe 2
+     („Selbst schreiben") ist ihm nur beschrieben und nicht gebaut.
+
+     Das Gegenstück zu Übung 16: dort steht das Wort da und er nennt die ART
+     seiner Mehrzahl, hier fehlt das Wort in der Mehrzahl und er wählt es unter
+     vier Mehrzahlformen seiner Karten. Welches Wort gemeint ist, sagt die
+     Übersetzung unter dem Satz (das passende deutsche Wort bleibt lesbar).
+     ⛔ Drei Fallen, alle hier abgefangen:
+     - Steht dieselbe Mehrzahl zweimal im Satz (Frage und Antwort), verriete die
+       zweite die Lösung: beide sind Lücke, und aus dem Paar wird EINE Aufgabe
+       (wie in Übung 15 und 17).
+     - Lösung und Auswahl tragen die KARTE als Wert ('k' + id), nicht die Form:
+       so zählt „je Antwort gleich viele" je Wort, und eine Karte mit zwei
+       Formen ist eine Antwort.
+     - Gibt es keine einzige falsche Antwort (weniger als zwei Karten mit
+       Mehrzahl), entsteht keine Aufgabe.
+
+     ⭐ Nach der Antwort: wie das Wort im Satz steht, Einzahl → Mehrzahl mit
+     Bedeutung, die Art und „Klingt wie" (dieselben Partner wie auf der
+     Rückseite der Lernkarte, pluralKlangPartner() in js/kern.js). Bei einer
+     falschen Wahl sagt ein Satz zuerst, wessen Mehrzahl die GEWÄHLTE Form ist
+     (o.falsch). `falschNochmal`: was falsch war, kommt in derselben Runde nach
+     drei anderen Aufgaben noch einmal, höchstens zweimal (uebungAuswerten).
+
+     ⚠️ NUMMER 18, Übersetzen und Satzbau rücken auf 19 und 20 — wie bei den
+     Übungen 16 und 17, und aus demselben Grund: die Nummern laufen auf dem
+     Bildschirm nach Gruppen durch. `teilRang:101` (größer als die 100 von
+     Übung 17): sie wird als LETZTE auf seine zwei Teile verteilt, damit keine
+     andere den Teil wechselt. Und sie steht nie im selben Teil wie Übung 16
+     (VERWANDT in satzTeile()) — beide fragen an denselben Wörtern nach der
+     Mehrzahl. Bewacht von test-mehrzahl-einsetzen.mjs. */
+  {
+    id:'mehrzahl-einsetzen', nr:18, name:'طُلَّابٌ / بُيُوتٌ … — Mehrzahl einsetzen', art:'wahl',
+    teilRang:101,
+    /* Wie Übung 14, 15 und 17: die Knöpfe von rechts nach links. */
+    optionenRtl: true,
+    falschNochmal: 3,
+    hinweis:'Welches Wort fehlt, sagt die Übersetzung unter dem Satz. Gesucht ist seine Mehrzahl, so wie sie auf deiner Karte steht.',
+    hinweisVerraet:false,
+    baue(z){
+      const karten = uebMehrzahlKarten();
+      if (karten.length < 2) return [];
+      const stellen = z.map(t => uebMehrzahlTreffer(t, karten));
+      if (!stellen.some(Boolean)) return [];
+      const erledigt = new Set(), out = [];
+      stellen.forEach((st, i) => {
+        if (!st || erledigt.has(i)) return;
+        const zwillinge = stellen.map((x, j) => (j !== i && x && x.eintrag === st.eintrag) ? j : -1).filter(j => j >= 0);
+        zwillinge.forEach(j => erledigt.add(j));
+        const falsche = uebMehrzahlFalsche(st, 3);
+        if (!falsche.length) return;
+        const luecke = {};
+        [i, ...zwillinge].forEach(j => { luecke[j] = stellen[j].davor + '____' + stellen[j].danach; });
+        const v = st.eintrag.karte;
+        out.push({
+          frage: 'Welches Wort in der Mehrzahl gehört in die Lücke?',
+          wortIdx:i, ohneSuffix: luecke,
+          loesung: 'k' + v.id,
+          optionen: shuffle([{ wert: 'k' + v.id, text: st.eintrag.formen[st.k] },
+            ...falsche.map(f => ({ wert: 'k' + f.eintrag.karte.id, text: f.form,
+              falsch: `${f.form} ist die Mehrzahl von ${f.einzahl} — ${f.de}.` }))]),
+          deKlar: uebMehrzahlDeKlar(st.eintrag.bedeutungen),
+          aufloesung: uebMehrzahlAufloesung(st)
+        });
+      });
+      return out;
+    }
+  },
+
   /* ⭐⭐ ÜBERSETZEN — Elias' Auftrag vom 22.09.2026, 21:15, im Wortlaut:
 
      „es sollte auch im satzmodus eine übung geben, wo mir ein satz gegeben wird
@@ -1995,7 +2222,7 @@ const UEBUNGEN = [
     /* Seit v612 Nummer 16 (vorher 15): die Endungen-Übung ist eine Auswahl-Übung
        und steht in der Liste vor „Schreiben" — Elias: „ich möchte das die liste
        liniar von 1 bis 15 geht ohne das daraus salat gemacht wird". */
-    id:'uebersetzen', nr:18, name:'Übersetzen — Arabisch ins Deutsche', art:'schreiben',
+    id:'uebersetzen', nr:19, name:'Übersetzen — Arabisch ins Deutsche', art:'schreiben',
     hinweis:'Achte auf die Bestimmtheit (اَلْ oder Tanwīn) und darauf, wer in der إِضَافَة der Besitzer ist.',
     hinweisVerraet:false,
     deVerbergen:true,
@@ -2048,7 +2275,7 @@ const UEBUNGEN = [
      schon. Ein zweites Feld daneben könnte einer davon vergessen.
      Bewacht von test-satz-bauen.mjs. */
   {
-    id:'satz-bauen', nr:19, name:'Satzbau — den Satz selbst bilden', art:'bauen',
+    id:'satz-bauen', nr:20, name:'Satzbau — den Satz selbst bilden', art:'bauen',
     hinweis:'Tippe die Wörter in der Reihenfolge an, in der sie im Satz stehen. Ein Tipp auf ein Wort in deinem Satz nimmt es wieder heraus.',
     hinweisVerraet:false,
     deAlsAufgabe:true,
@@ -2899,7 +3126,9 @@ function renderUebung(){
      die anderen übungen wenn da zb ein bestimmtes wort gesucht wird und ich
      muss es anhand der übersetzung einsetzen"): dann bleibt das deutsche Wort
      lesbar, das die Bedeutung des verdeckten Wortes trägt (uebDeKlarAusWort). */
-  const klar = m.deKlar || (a.verdeckt ? uebDeKlarAusWort(a) : null);
+  /* ⭐ Übung 18 (Mehrzahl einsetzen, 13.10.2026) bringt je AUFGABE mit, welches deutsche Wort lesbar
+     bleibt (a.deKlar): es hängt an der Karte des fehlenden Wortes, nicht an der Übung. */
+  const klar = a.deKlar || m.deKlar || (a.verdeckt ? uebDeKlarAusWort(a) : null);
   if (klar){
     deFeld.innerHTML = String(a.satz.sentDe || '').split(/(\s+)/).map(t => (!t || /^\s+$/.test(t)) ? escapeHtml(t)
       : `<span class="${klar.test(t) ? 'de-klar' : 'de-wort'}">${escapeHtml(t)}</span>`).join('');
@@ -3122,7 +3351,10 @@ const UEBUNG_WARUM = {
   'plural': 'jam-salim-taksir-01',
   /* Verb einsetzen (Nr. 17, 13.10.2026): die Regel mit den Endungen der
      Vergangenheit und den Dreierpaketen seines Lehrers aus Folge 18. */
-  'verb-einsetzen': 'verb-madi-endungen-01'
+  'verb-einsetzen': 'verb-madi-endungen-01',
+  /* Mehrzahl einsetzen (Nr. 18, 13.10.2026): dieselbe Regel wie bei Übung 16 — die Einteilung der
+     Mehrzahl und die Erkennungsprobe seines Lehrers aus Folge 25. */
+  'mehrzahl-einsetzen': 'jam-salim-taksir-01'
 };
 
 /* ⭐⭐ UNSICHTBARE ENDUNG → DIE KARTE, DIE GENAU DAS ERKLÄRT (16.09.2026)
@@ -3383,7 +3615,11 @@ function satzTeile(){
      allgemeinen Regel: Übung 14 nimmt aus «هُمْ ذَهَبُوا» das Pronomen heraus,
      Übung 17 aus demselben Satz das Verb — am selben Tag verriete die eine die
      andere. */
-  const VERWANDT = [['genus', 'fem-form'], ['kasus', 'haraka'], ['jarr-paar', 'alle-majrur'], ['isara', 'pronomen'], ['pronomen', 'verb-einsetzen']];
+  /* ['plural', 'mehrzahl-einsetzen'] (13.10.2026) ist ebenfalls MEINE Ergänzung nach seiner
+     allgemeinen Regel: Übung 16 zeigt das Wort und fragt nach der Art seiner Mehrzahl, Übung 18
+     nimmt an denselben Sätzen das Wort in der Mehrzahl heraus — am selben Tag verriete die eine
+     die andere. */
+  const VERWANDT = [['genus', 'fem-form'], ['kasus', 'haraka'], ['jarr-paar', 'alle-majrur'], ['isara', 'pronomen'], ['plural', 'mehrzahl-einsetzen'], ['pronomen', 'verb-einsetzen']];
   const partner = id => VERWANDT.filter(p => p.includes(id)).flat().filter(x => x !== id);
   const zeit = {}, quelle = {};
   for (const m of UEBUNGEN){
