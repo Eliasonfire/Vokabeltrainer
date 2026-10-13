@@ -678,6 +678,66 @@ const BUCH_ESELSBRUECKEN = {
   "kh-045": "⭐ Al-Fīl beginnt damit: أَلَمْ تَرَ كَيْفَ (105:1) — „hast du nicht gesehen, wie …“. tara ist die Gegenwart von رَأَى, nach لَمْ um den letzten Buchstaben gekürzt.",
 
   "kh-046": "⭐ Al-Mulk, die Frage der Wächter: أَلَمْ يَأْتِكُمْ نَذِيرٌ (67:8) — „kam nicht ein Warner zu euch?“. Darin steckt die Gegenwart يَأْتِي, nach لَمْ gekürzt und mit „zu euch“ als Endung.",
+
+  "kh-048": "⭐ In Āyat al-Kursī: يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ (2:255) — „Er weiß, was vor ihnen liegt“, wörtlich: was zwischen ihren Händen ist. بَيْنَ heißt „zwischen“.",
+
+  "kh-049": "⭐ Du kennst das Wort aus dem Alltag: „Das ist Haqq“ — das ist wahr, das steht jemandem zu. حَقٌّ heißt beides: Wahrheit und Recht. Al-Ḥaqq, der Wahre, ist auch einer der Namen Allahs.",
+
+  "kh-054": "⭐ In al-Mulk: ٱلَّذِينَ مِن قَبْلِهِمْ (67:18) — „diejenigen, die vor ihnen waren“. قَبْلَ ist „vor“ in der Zeit.",
+
+  "kh-051": "⭐ Es steckt in einem Wort, das du in az-Zalzala sprichst: يَوْمَئِذٍ تُحَدِّثُ أَخْبَارَهَا (99:4) — „an jenem Tag wird sie ihre Nachrichten erzählen“. Das erste Wort ist dein يَوْمٌ (Tag) und إِذْ in einem: der Tag, als …",
+
+  "kh-052": "⭐⭐ Du sagst es jeden Tag: in šāʾa llāh (Inschallah) — „wenn Allah will“ — und mā šāʾa llāh (Maschallah) — „was Allah gewollt hat“. Das Verb in der Mitte ist شَاءَ.",
+
+  "kh-055": "⭐ Ein Wort, das du auf Deutsch benutzt: der Muʾmin, die Muʾminūn — die Gläubigen. Du kennst es aus zwei Titeln: Amīr al-Muʾminīn (Fürst der Gläubigen) und Ummahāt al-Muʾminīn (Mütter der Gläubigen).",
+
+  "kh-056": "⭐ In at-Takāthur: لَوْ تَعْلَمُونَ عِلْمَ ٱلْيَقِينِ (102:5) — „wenn ihr es nur mit dem Wissen der Gewißheit wüßtet“. لَوْ ist das „wenn“ für das, was nicht so ist: sie wissen es eben nicht.",
+
+  "kh-058": "⭐ In al-Falaq: مِن شَرِّ مَا خَلَقَ (113:2) — „vor dem Übel dessen, was Er erschaffen hat“. Das letzte Wort ist deine Vokabel.",
+
+  "kh-059": "⭐ Der erste Vers von al-Qadr: أَنزَلْنَٰهُ فِي لَيْلَةِ ٱلْقَدْرِ (97:1) — „Wir haben ihn in der Nacht der Bestimmung hinabgesandt“ — den Koran.",
+
+  "kh-060": "⭐ Du kennst die Wendung: fī sabīli llāh — „auf dem Weg Allahs“. سَبِيلٌ ist der Weg.",
+
+  "kh-061": "⭐ Al-Māʿūn beginnt damit: أَرَءَيْتَ ٱلَّذِي يُكَذِّبُ بِٱلدِّينِ (107:1) — „siehst du den, der das Gericht für Lüge erklärt?“ Das dritte Wort ist die Gegenwart deiner Vokabel.",
+
+  "kh-062": "⭐⭐ Du machst es jeden Tag: Duʿāʾ. Das Bittgebet ist das Nomen zu diesem Verb — دَعَا heißt „rufen, anrufen, bitten“.",
+
+  "kh-063": "⭐ Aus deiner Dua: وَيَسِّرْ لِيٓ أَمْرِي — „und mache mir meine Angelegenheit leicht“. Das letzte Wort ist deine Vokabel mit „mein“ daran.",
+
+  "kh-064": "⭐ Du kennst das Nomen dazu: Taqwā — die Gottesfurcht, das Sich-Hüten vor dem, was Allah missfällt. اِتَّقَى ist das Verb.",
+
+  "kh-105": "⭐ Einer der Namen Allahs: al-ʿAlīm, der Allwissende. In al-Mulk: إِنَّهُۥ عَلِيمُۢ بِذَاتِ ٱلصُّدُورِ (67:13) — „gewiß, Er weiß über das Innerste der Brüste Bescheid“.",
+
+  "kh-067": "⭐ Im Koran steht es oft doppelt: baʿḍuhum … baʿḍ — „die einen … die anderen“, wörtlich: ein Teil von ihnen … ein Teil. بَعْضٌ heißt „einige; ein Teil“; wo du es zweimal kurz hintereinander hörst, heißt es „einander“.",
+
+  "kh-068": "⭐ In al-Mulk: فَلَمَّا رَأَوْهُ زُلْفَةً (67:27) — „als sie es aber nahe sehen“. Mit fa- davor: fa-lammā — „und als …“.",
+
+  "kh-069": "⭐⭐ Du sagst es in jedem Gebet im Tashahhud: السَّلاَمُ عَلَيْكَ أَيُّهَا النَّبِيُّ — „der Friede sei auf dir, o Prophet“.",
+
+  "kh-071": "⭐⭐ Die Schahāda: lā ilāha illā llāh — „es gibt keinen Gott außer Allah“. Das zweite Wort ist deine Vokabel.",
+
+  "kh-107": "⭐ Du benutzt das Wort auf Deutsch: die Dschanna — das Paradies. Wörtlich ist جَنَّةٌ ein Garten.",
+
+  "kh-072": "⭐ In al-Masad: سَيَصْلَىٰ نَارًا ذَاتَ لَهَبٍ (111:3) — „er wird einem Feuer voller Flammen ausgesetzt sein“.",
+
+  "kh-073": "⭐⭐ Du sprichst es in jeder Rakʿa: غَيْرِ ٱلْمَغْضُوبِ عَلَيْهِمْ (1:7) — „nicht (den Weg) derer, die Zorn erregt haben“. غَيْرُ heißt wörtlich „anders als“.",
+
+  "kh-074": "⭐⭐ Die Bitte in jeder Rakʿa: ٱهْدِنَا ٱلصِّرَٰطَ ٱلْمُسْتَقِيمَ (1:6) — „leite uns den geraden Weg“. Das erste Wort ist der Befehl deiner Vokabel mit „uns“ daran.",
+
+  "kh-108": "⭐ Das Ende von al-Qadr: حَتَّىٰ مَطْلَعِ ٱلْفَجْرِ (97:5) — „bis zum Anbruch der Morgendämmerung“.",
+
+  "kh-076": "⭐ In al-Mulk folgen zwei Fragen aufeinander: ءَأَمِنتُم (67:16) — „glaubt ihr euch sicher …?“ — und gleich danach أَمْ أَمِنتُم (67:17) — „oder glaubt ihr euch sicher …?“. Die zweite Frage beginnt mit أَمْ.",
+
+  "kh-077": "⭐ Du kennst den Namen: Mūsā (Mose), ʿalayhi s-salām — der Prophet, der im Koran am häufigsten mit Namen genannt wird.",
+
+  "kh-078": "⭐ Du kennst die Tābiʿūn — die Generation, die den Prophetengefährten folgte. اِتَّبَعَ ist das Verb dazu: folgen.",
+
+  "kh-079": "⭐ In al-Mulk: مِّن دُونِ ٱلرَّحْمَٰنِ (67:20) — „außer dem Allerbarmer“, wörtlich: unterhalb des Allerbarmers. min dūni llāh — „anstelle Allahs“ — ist eine der häufigsten Wendungen im Koran.",
+
+  "kh-080": "⭐ Du sagst es auf Deutsch: die Āḫira — das Jenseits, wörtlich „die Letzte“. Das ist die weibliche Form deiner Vokabel mit Artikel.",
+
+  "kh-082": "⭐⭐ Aus deiner Dua: ثَبِّتْ قَلْبِي عَلَى دِينِكَ — „festige mein Herz auf Deiner Religion“. Das zweite Wort ist deine Vokabel mit „mein“ daran."
 };
 
 /* ---------- Korrigierte Schreibweisen ----------
