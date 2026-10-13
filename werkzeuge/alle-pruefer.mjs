@@ -699,6 +699,10 @@ const PRUEFER = [
      Lehrers), nichts geraten, das Dreierpaket in der Rückmeldung, Falsches kommt
      noch einmal; fünfzehn Störtests. */
   ['test-verb-einsetzen.mjs', []],
+  /* Übung 18 „Mehrzahl einsetzen" (13.10.2026): keine selbst gebildete Form (jede
+     Knopf-Form steht so auf einer seiner Karten), keine Zahlwörter, die Lösung ist
+     das Wort im Buchsatz, derselbe Klang zuerst; neunzehn Störtests. */
+  ['test-mehrzahl-einsetzen.mjs', []],
 
   /* ⛔ Neu am 06.09.2026. Der Hifz-Stand ist das Einzige in dieser App, das
      Elias sich WIRKLICH erarbeitet hat — auswendig gelernte Suren. Er lief

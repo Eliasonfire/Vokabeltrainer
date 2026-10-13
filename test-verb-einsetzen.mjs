@@ -7,7 +7,8 @@
  *
  * Bewacht:
  *   1. Platz in der Liste: Nummer 17, Art „wahl", Nummern linear 1 bis N,
- *      Übersetzen 18, Satzbau 19; seine zwei Teile bleiben, wie sie waren, und
+ *      Übersetzen 19, Satzbau 20 (seit Übung 18 „Mehrzahl einsetzen", v677);
+ *      seine zwei Teile bleiben, wie sie waren, und
  *      die neue steht nie im selben Teil wie Übung 14 (dieselben Sätze).
  *   2. KEINE SELBST KONJUGIERTE FORM: jede der 13 × 13 Formen steht im Abzug
  *      der Nachschlagetabellen (werkzeuge/verbformen-belege.json) UND ist
@@ -116,7 +117,8 @@ function pruefe(quelle){
   const nummern = UEBUNGEN.map(u => u.nr).sort((a, b) => a - b);
   if (!nummern.every((n, i) => n === i + 1)) f.push('1: Nummern nicht linear 1 bis N: ' + nummern.join(','));
   const nrVon = id => (UEBUNGEN.find(u => u.id === id) || {}).nr;
-  if (nrVon('uebersetzen') !== 18 || nrVon('satz-bauen') !== 19) f.push(`1: Übersetzen ${nrVon('uebersetzen')}, Satzbau ${nrVon('satz-bauen')} (erwartet 18 und 19)`);
+  /* 13.10.2026 (v677): 18/19 → 19/20, seit „Mehrzahl einsetzen" die 18 trägt. */
+  if (nrVon('uebersetzen') !== 19 || nrVon('satz-bauen') !== 20) f.push(`1: Übersetzen ${nrVon('uebersetzen')}, Satzbau ${nrVon('satz-bauen')} (erwartet 19 und 20)`);
   if (hole('UEBUNG_WARUM')['verb-einsetzen'] !== 'verb-madi-endungen-01') f.push('1: „Warum?" zeigt nicht auf verb-madi-endungen-01');
   { const mit = hole('satzTeile')();
     const stelle = UEBUNGEN.indexOf(U);
