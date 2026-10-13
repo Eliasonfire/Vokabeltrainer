@@ -737,7 +737,39 @@ const BUCH_ESELSBRUECKEN = {
 
   "kh-080": "⭐ Du sagst es auf Deutsch: die Āḫira — das Jenseits, wörtlich „die Letzte“. Das ist die weibliche Form deiner Vokabel mit Artikel.",
 
-  "kh-082": "⭐⭐ Aus deiner Dua: ثَبِّتْ قَلْبِي عَلَى دِينِكَ — „festige mein Herz auf Deiner Religion“. Das zweite Wort ist deine Vokabel mit „mein“ daran."
+  "kh-082": "⭐⭐ Aus deiner Dua: ثَبِّتْ قَلْبِي عَلَى دِينِكَ — „festige mein Herz auf Deiner Religion“. Das zweite Wort ist deine Vokabel mit „mein“ daran.",
+
+  "kh-083": "⭐⭐ Du kennst es aus Namen: ʿAbdullāh — „Diener Allahs“ —, ʿAbd ar-Raḥmān — „Diener des Allerbarmers“. Das erste Wort ist deine Vokabel.",
+
+  "kh-084": "⭐ In al-Fīl: وَأَرْسَلَ عَلَيْهِمْ طَيْرًا أَبَابِيلَ (105:3) — „und sandte gegen sie Vögel in aufeinanderfolgenden Schwärmen“. Das erste Wort ist deine Vokabel mit wa- davor.",
+
+  "kh-085": "⭐ Du kennst es aus drei Wendungen: Ahl al-Bayt — die Angehörigen des Hauses (des Propheten) —, Ahl as-Sunna und Ahl al-Kitāb, die Leute der Schrift. أَهْلٌ sind die Leute, die zu etwas gehören.",
+
+  "kh-086": "⭐ In Āyat al-Kursī: لَا تَأْخُذُهُۥ سِنَةٌ (2:255) — „Ihn überkommt kein Schlummer“, wörtlich: Schlummer nimmt Ihn nicht. Das mittlere Wort ist die Gegenwart deiner Vokabel.",
+
+  "kh-087": "⭐ Ibrāhīm heißt Ḫalīlu llāh — der Freund Allahs —, weil Allah ihn sich zum Freund nahm: ittaḫadha. اِتَّخَذَ heißt „sich jemanden oder etwas nehmen, annehmen als …“.",
+
+  "kh-088": "⭐ Du kennst den Schluss des Fastenverses: laʿallakum tattaqūn — „auf dass ihr gottesfürchtig werdet“. So enden viele Verse, etwa: laʿallakum tashkurūn — „auf dass ihr dankbar seid“.",
+
+  "kh-089": "⭐ In al-Mulk: بَل لَّجُّواْ فِي عُتُوٍّ (67:21) — „aber nein! …“, und dann folgt, wie es wirklich ist. بَلْ wischt das Vorige weg und setzt das Richtige dagegen.",
+
+  "kh-090": "⭐⭐ In jeder Rakʿa: إِيَّاكَ نَعْبُدُ (1:5) — „Dir allein dienen wir“. Das zweite Wort ist die Gegenwart deiner Vokabel: wir dienen.",
+
+  "kh-092": "⭐⭐ Der Name einer Sure, die du auswendig kannst: al-Kāfirūn. قُلْ يَٰٓأَيُّهَا ٱلْكَٰفِرُونَ (109:1) — „sag: o ihr Ungläubigen“.",
+
+  "kh-156": "⭐ In al-Mulk: نَذِيرٌ مُّبِينٌ (67:26) — „ein deutlicher Warner“.",
+
+  "kh-094": "⭐⭐ Du sagst es bei jedem Gruß: as-salāmu ʿalaykum wa-raḥmatu llāh — „der Friede sei auf euch und die Barmherzigkeit Allahs“.",
+
+  "kh-095": "⭐⭐ Das letzte Wort der Basmala: بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ (1:1) — „im Namen Allahs, des Allerbarmers, des Barmherzigen“.",
+
+  "kh-096": "⭐ Du kennst das Nomen dazu: Ẓulm — Unrecht, Unterdrückung. Wer es tut, ist ein Ẓālim. ظَلَمَ ist das Verb: Unrecht tun.",
+
+  "kh-098": "⭐ Dreimal hintereinander in aḍ-Ḍuḥā: وَوَجَدَكَ ضَآلًّا فَهَدَىٰ (93:7) — „und dich irregehend gefunden und dann rechtgeleitet“.",
+
+  "kh-099": "⭐ In at-Tīn: فَلَهُمْ أَجْرٌ غَيْرُ مَمْنُونٍ (95:6) — „für sie wird es einen Lohn geben, der nicht aufhört“.",
+
+  "kh-100": "⭐ Du kennst das Wort: ein Ẓālim ist einer, der Unrecht tut — ein Unterdrücker, ein Frevler."
 };
 
 /* ---------- Korrigierte Schreibweisen ----------

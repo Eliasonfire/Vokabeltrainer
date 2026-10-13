@@ -574,5 +574,71 @@
  },
  "kh-082": {
   "ohne": "In seinem Satzbestand steht kein Satz mit diesem Wort; ein neu gebauter wäre gestellt. Die Eselsbrücken zeigen es an seiner Dua."
+ },
+ "kh-083": {
+  "teile": [
+   "s:by1-30-1:1-4"
+  ],
+  "de": "Und das ist sein Sohn Abdullah.",
+  "kommentar": "Ein Satz aus seinem Buch (Bayna Yadayk 1, S. 30), in dem das Wort schon steht — als erster Teil des Namens Abdullah, „Diener Allahs“. Erstes Wort einer Genitivverbindung, darum ohne Tanwin.",
+  "marken": [
+   [
+    "mudaf-01",
+    3,
+    3,
+    "erstes Wort der Genitivverbindung, ohne Tanwin"
+   ],
+   [
+    "lafz-al-jalala-01",
+    4,
+    4,
+    "der Gottesname nach einem Damma: dunkel gesprochen"
+   ]
+  ]
+ },
+ "kh-084": {
+  "ohne": "Im Koran steht das Verb mit Allah als Handelndem; in seinem Satzbestand steht kein Satz damit, und ein neu gebauter wäre gestellt. Die Eselsbrücken zeigen es an al-Fīl."
+ },
+ "kh-085": {
+  "ohne": "In seinem Satzbestand steht kein Satz mit diesem Wort; ein neu gebauter wäre gestellt. Die Eselsbrücken zeigen es an Wendungen, die er kennt."
+ },
+ "kh-086": {
+  "ohne": "In seinem Satzbestand steht kein Satz mit diesem Verb; ein neu gebauter wäre gestellt. Die Eselsbrücken zeigen es an Āyat al-Kursī."
+ },
+ "kh-087": {
+  "ohne": "Verlangt zwei Objekte („jemanden als etwas nehmen“). Diese Bauform hat er im Unterricht noch nicht, und in seinem Satzbestand steht kein Satz damit."
+ },
+ "kh-088": {
+  "ohne": "Nach dieser Partikel steht das Subjekt im Akkusativ, meist als angehängtes Pronomen. Diese Regel hat er im Unterricht noch nicht."
+ },
+ "kh-089": {
+  "ohne": "Berichtigt einen vorangehenden Satz („nicht dies, sondern das“). In seinem Satzbestand steht kein solches Satzpaar; die Eselsbrücken zeigen das Wort an al-Mulk."
+ },
+ "kh-090": {
+  "ohne": "In seinem Satzbestand steht kein Satz mit diesem Verb; ein neu gebauter wäre gestellt. Die Eselsbrücken zeigen es an al-Fātiḥa und al-Kāfirūn."
+ },
+ "kh-092": {
+  "ohne": "Die regelmäßige männliche Mehrzahl hat er im Unterricht noch nicht als Satzglied geübt; in seinem Satzbestand steht kein Satz mit diesem Wort. Die Eselsbrücken zeigen es an al-Kāfirūn."
+ },
+ "kh-156": {
+  "ohne": "In seinem Satzbestand steht kein Satz mit diesem Wort; ein neu gebauter wäre gestellt. Die Eselsbrücken zeigen es an al-Mulk."
+ },
+ "kh-094": {
+  "ohne": "In seinem Satzbestand steht kein Satz mit diesem Wort; ein neu gebauter wäre gestellt. Die Eselsbrücken zeigen es am Gruß und am Tashahhud."
+ },
+ "kh-095": {
+  "ohne": "Im Koran steht das Wort als Eigenschaft Allahs; in seinem Satzbestand steht kein Satz damit, und ein neu gebauter wäre gestellt. Die Eselsbrücken zeigen es an der Basmala."
+ },
+ "kh-096": {
+  "ohne": "In seinem Satzbestand steht kein Satz mit diesem Verb; ein neu gebauter wäre gestellt. Die Eselsbrücken zeigen es an Begriffen, die er kennt."
+ },
+ "kh-098": {
+  "ohne": "In seinem Satzbestand steht kein Satz mit diesem Verb; ein neu gebauter wäre gestellt. Die Eselsbrücken zeigen es an aḍ-Ḍuḥā."
+ },
+ "kh-099": {
+  "ohne": "In seinem Satzbestand steht kein Satz mit diesem Wort; ein neu gebauter wäre gestellt. Die Eselsbrücken zeigen es an at-Tīn und al-Mulk."
+ },
+ "kh-100": {
+  "ohne": "In seinem Satzbestand steht kein Satz mit diesem Wort; ein neu gebauter wäre gestellt. Die Eselsbrücken zeigen es an einem Begriff, den er kennt."
  }
 }

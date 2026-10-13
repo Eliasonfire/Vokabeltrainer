@@ -36,7 +36,7 @@
 #   LEER. Sein PDF („80 % der qur'aanischen Wörter", Verbseiten 15 bis 32) ist hierfür NICHT ausgewertet:
 #   seine Textebene gibt die Vokalzeichen nicht verlässlich her.
 #
-# BEWUSST LEER (Stand dieser Datei): kh-055 root · kh-055 gender · kh-055 sg · kh-055 pl · kh-105 pl · kh-067 pl · kh-069 root · kh-069 gender · kh-069 sg · kh-069 pl · kh-071 gender · kh-071 sg · kh-071 pl · kh-080 pl — kein zweiter Zeuge oder keine Form in der Quelle.
+# BEWUSST LEER (Stand dieser Datei): kh-085 pl · kh-092 root · kh-092 gender · kh-092 sg · kh-092 pl · kh-156 pl · kh-094 pl · kh-095 sg · kh-095 pl · kh-100 root · kh-100 gender · kh-100 sg · kh-100 pl — kein zweiter Zeuge oder keine Form in der Quelle.
 #   Partikeln tragen keine Felder (eine Partikel hat keine Wurzel).
 #
 # kennung|feld|wert|beleg
@@ -195,3 +195,50 @@ kh-082|root|ق ل ب|enwikt „قلب" (Wurzelkasten) · gleich Buchkarte 46537
 kh-082|gender|masculine|enwikt „قلب" · gleich Buchkarte 46537, 50079
 kh-082|sg|قَلْبٌ|enwikt „قلب" · gleich Buchkarte 46537, 50079
 kh-082|pl|قُلُوبٌ|enwikt „قلب" · gleich Buchkarte 46537, 50079
+kh-083|root|ع ب د|enwikt „عبد" (Wurzelkasten) · gleich Buchkarte 46855
+kh-083|gender|masculine|enwikt „عبد" · gleich Buchkarte 46855, 50090
+kh-083|sg|عَبْدٌ|enwikt „عبد" · gleich Buchkarte 46855, 50090
+kh-083|pl|عِبَادٌ|enwikt „عبد" · gleich Buchkarte 46855, 50090
+kh-084|root|ر س ل|enwikt „أرسل" (Wurzelkasten) · gleich Buchkarte 46772
+kh-084|past|أَرْسَلَ|enwikt „أرسل" · gleich Buchkarte 46772
+kh-084|present|يُرْسِلُ|enwikt „أرسل" · gleich Buchkarte 46772
+kh-084|imperative|أَرْسِلْ|enwikt „أرسل" · gleich Buchkarte 46772
+kh-084|masdar|إِرْسَالٌ|enwikt „أرسل" · gleich Buchkarte 46772
+kh-085|root|أ ه ل|enwikt „أهل" (Wurzelkasten) · gleich Buchkarte 46351
+kh-085|gender|masculine|enwikt „أهل" · gleich Buchkarte 46351, 49861
+kh-085|sg|أَهْلٌ|enwikt „أهل" · gleich Buchkarte 46351, 49861
+kh-086|root|أ خ ذ|enwikt „أخذ" (Wurzelkasten) · gleich Buchkarte 46240
+kh-086|past|أَخَذَ|enwikt „أخذ" · gleich Buchkarte 46240
+kh-086|present|يَأْخُذُ|enwikt „أخذ" · gleich Buchkarte 46240
+kh-086|imperative|خُذْ|enwikt „أخذ" · gleich Buchkarte 46240
+kh-086|masdar|أَخْذٌ|enwikt „أخذ" · gleich Buchkarte 46240
+kh-087|root|أ خ ذ|enwikt „اتخذ" (Wurzelkasten) · Wurzel steht im Verzeichnis quran-frequency-data.js
+kh-087|past|اِتَّخَذَ|enwikt „اتخذ" · gleich Buchkarte 47682
+kh-087|present|يَتَّخِذُ|enwikt „اتخذ" · gleich Buchkarte 47682
+kh-087|imperative|اِتَّخِذْ|enwikt „اتخذ" · gleich Buchkarte 47682
+kh-087|masdar|اِتِّخَاذٌ|enwikt „اتخذ" · gleich Buchkarte 47682
+kh-090|root|ع ب د|enwikt „عبد" (Wurzelkasten) · gleich Buchkarte 46317
+kh-090|past|عَبَدَ|enwikt „عبد" · gleich Buchkarte 46317
+kh-090|present|يَعْبُدُ|enwikt „عبد" · gleich Buchkarte 46317
+kh-090|imperative|اُعْبُدْ|enwikt „عبد" · gleich Buchkarte 46317
+kh-090|masdar|عِبَادَةٌ|enwikt „عبد" · gleich Buchkarte 46317
+kh-156|root|ب ي ن|enwikt „مبين" (Wurzelkasten) · Wurzel steht im Verzeichnis quran-frequency-data.js
+kh-156|sg|مُبِينٌ|enwikt „مبين" · gleich Buchkarte 49989
+kh-094|root|ر ح م|enwikt „رحمة" (Wurzelkasten) · gleich Buchkarte 48455
+kh-094|gender|feminine|enwikt „رحمة" · gleich Buchkarte 48455
+kh-094|sg|رَحْمَةٌ|enwikt „رحمة" · gleich Buchkarte 48455
+kh-095|root|ر ح م|enwikt „رحيم" (Wurzelkasten) · Wurzel steht im Verzeichnis quran-frequency-data.js
+kh-096|root|ظ ل م|enwikt „ظلم" (Wurzelkasten) · gleich Buchkarte 47433
+kh-096|past|ظَلَمَ|enwikt „ظلم" · gleich Buchkarte 47433
+kh-096|present|يَظْلِمُ|enwikt „ظلم" · gleich Buchkarte 47433
+kh-096|imperative|اِظْلِمْ|enwikt „ظلم" · gleich Buchkarte 47433
+kh-096|masdar|ظُلْمٌ|enwikt „ظلم" · gleich Buchkarte 47433
+kh-098|root|و ج د|enwikt „وجد" (Wurzelkasten) · gleich Buchkarte 46248
+kh-098|past|وَجَدَ|enwikt „وجد" · gleich Buchkarte 46248
+kh-098|present|يَجِدُ|enwikt „وجد" · gleich Buchkarte 46248
+kh-098|imperative|جِدْ|enwikt „وجد" · gleich Buchkarte 46248
+kh-098|masdar|وُجُودٌ|enwikt „وجد" · gleich Buchkarte 46248
+kh-099|root|أ ج ر|enwikt „أجر" (Wurzelkasten) · gleich Buchkarte 46656
+kh-099|gender|masculine|enwikt „أجر" · gleich Buchkarte 46656, 50025
+kh-099|sg|أَجْرٌ|enwikt „أجر" · gleich Buchkarte 46656, 50025
+kh-099|pl|أُجُورٌ|enwikt „أجر" · gleich Buchkarte 46656, 50025

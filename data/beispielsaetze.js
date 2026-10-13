@@ -2427,5 +2427,78 @@ const BEISPIELSAETZE = {
      KEIN SATZ, mit Absicht. In seinem Satzbestand steht kein Satz mit diesem Wort; ein neu gebauter
      wäre gestellt. Die Eselsbrücken zeigen es an seiner Dua. */
 
+  /* عَبْدٌ — Diener, Knecht („Koran häufigste", Rang 83)
+     Ein Satz aus seinem Buch (Bayna Yadayk 1, S. 30), in dem das Wort schon
+     steht — als erster Teil des Namens Abdullah, „Diener Allahs“. Erstes Wort
+     einer Genitivverbindung, darum ohne Tanwin. */
+  'kh-083': {
+    sentAr: 'وَهَذَا ابْنُهُ عَبْدُ اللهِ.',
+    sentDe: 'Und das ist sein Sohn Abdullah.'
+  },
+
+  /* kh-084 · أَرْسَلَ — senden („Koran häufigste", Rang 84)
+     KEIN SATZ, mit Absicht. Im Koran steht das Verb mit Allah als Handelndem; in seinem Satzbestand
+     steht kein Satz damit, und ein neu gebauter wäre gestellt. Die
+     Eselsbrücken zeigen es an al-Fīl. */
+
+  /* kh-085 · أَهْلٌ — Leute, Angehörige („Koran häufigste", Rang 85)
+     KEIN SATZ, mit Absicht. In seinem Satzbestand steht kein Satz mit diesem Wort; ein neu gebauter
+     wäre gestellt. Die Eselsbrücken zeigen es an Wendungen, die er kennt. */
+
+  /* kh-086 · أَخَذَ — nehmen; ergreifen („Koran häufigste", Rang 86)
+     KEIN SATZ, mit Absicht. In seinem Satzbestand steht kein Satz mit diesem Verb; ein neu gebauter
+     wäre gestellt. Die Eselsbrücken zeigen es an Āyat al-Kursī. */
+
+  /* kh-087 · اِتَّخَذَ — sich nehmen, annehmen (als) („Koran häufigste", Rang 87)
+     KEIN SATZ, mit Absicht. Verlangt zwei Objekte („jemanden als etwas nehmen“). Diese Bauform hat er
+     im Unterricht noch nicht, und in seinem Satzbestand steht kein Satz damit. */
+
+  /* kh-088 · لَعَلَّ — vielleicht; auf dass („Koran häufigste", Rang 88)
+     KEIN SATZ, mit Absicht. Nach dieser Partikel steht das Subjekt im Akkusativ, meist als angehängtes
+     Pronomen. Diese Regel hat er im Unterricht noch nicht. */
+
+  /* kh-089 · بَلْ — vielmehr, sondern („Koran häufigste", Rang 89)
+     KEIN SATZ, mit Absicht. Berichtigt einen vorangehenden Satz („nicht dies, sondern das“). In seinem
+     Satzbestand steht kein solches Satzpaar; die Eselsbrücken zeigen das Wort
+     an al-Mulk. */
+
+  /* kh-090 · عَبَدَ — anbeten, dienen („Koran häufigste", Rang 90)
+     KEIN SATZ, mit Absicht. In seinem Satzbestand steht kein Satz mit diesem Verb; ein neu gebauter
+     wäre gestellt. Die Eselsbrücken zeigen es an al-Fātiḥa und al-Kāfirūn. */
+
+  /* kh-092 · كَافِرُونَ — Ungläubige (Mehrzahl) („Koran häufigste", Rang 92)
+     KEIN SATZ, mit Absicht. Die regelmäßige männliche Mehrzahl hat er im Unterricht noch nicht als
+     Satzglied geübt; in seinem Satzbestand steht kein Satz mit diesem Wort.
+     Die Eselsbrücken zeigen es an al-Kāfirūn. */
+
+  /* kh-156 · مُبِينٌ — deutlich, klar („Koran häufigste", Rang 93)
+     KEIN SATZ, mit Absicht. In seinem Satzbestand steht kein Satz mit diesem Wort; ein neu gebauter
+     wäre gestellt. Die Eselsbrücken zeigen es an al-Mulk. */
+
+  /* kh-094 · رَحْمَةٌ — Barmherzigkeit („Koran häufigste", Rang 94)
+     KEIN SATZ, mit Absicht. In seinem Satzbestand steht kein Satz mit diesem Wort; ein neu gebauter
+     wäre gestellt. Die Eselsbrücken zeigen es am Gruß und am Tashahhud. */
+
+  /* kh-095 · رَحِيمٌ — barmherzig („Koran häufigste", Rang 95)
+     KEIN SATZ, mit Absicht. Im Koran steht das Wort als Eigenschaft Allahs; in seinem Satzbestand
+     steht kein Satz damit, und ein neu gebauter wäre gestellt. Die
+     Eselsbrücken zeigen es an der Basmala. */
+
+  /* kh-096 · ظَلَمَ — Unrecht tun („Koran häufigste", Rang 96)
+     KEIN SATZ, mit Absicht. In seinem Satzbestand steht kein Satz mit diesem Verb; ein neu gebauter
+     wäre gestellt. Die Eselsbrücken zeigen es an Begriffen, die er kennt. */
+
+  /* kh-098 · وَجَدَ — finden („Koran häufigste", Rang 98)
+     KEIN SATZ, mit Absicht. In seinem Satzbestand steht kein Satz mit diesem Verb; ein neu gebauter
+     wäre gestellt. Die Eselsbrücken zeigen es an aḍ-Ḍuḥā. */
+
+  /* kh-099 · أَجْرٌ — Lohn („Koran häufigste", Rang 99)
+     KEIN SATZ, mit Absicht. In seinem Satzbestand steht kein Satz mit diesem Wort; ein neu gebauter
+     wäre gestellt. Die Eselsbrücken zeigen es an at-Tīn und al-Mulk. */
+
+  /* kh-100 · ظَالِمٌ — ungerecht; Frevler („Koran häufigste", Rang 100)
+     KEIN SATZ, mit Absicht. In seinem Satzbestand steht kein Satz mit diesem Wort; ein neu gebauter
+     wäre gestellt. Die Eselsbrücken zeigen es an einem Begriff, den er kennt. */
+
   /* <<< KORAN-HAEUFIGSTE-ENDE */
 };
