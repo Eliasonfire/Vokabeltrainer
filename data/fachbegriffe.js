@@ -1431,7 +1431,14 @@ const FACHBEGRIFF_VOKABELN = [
     /* Eingetragen am 2026-10-13 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel jam-mudhakkar-salim-01. */
     id: "gram-jam-mudhakkar-salim",
     ar: "جَمْعُ مُذَكَّرٍ سَالِمٌ",
-    de: "regelmäßiger männlicher Plural — hinten wird -ūna angehängt",
+    /* Nur der Name, kein Erklärsatz dahinter. Elias, 13.10.2026, mit Bild der
+       Karte „regelmäßiger weiblicher Plural — das Tāʾ marbūṭa wird durch -āt
+       ersetzt“: „das zu lang, auch für männlich. es gibt da kürzere begriffe.
+       gibts da keine kürzere form? auch für die anderen neuen die ich meinte“.
+       Der Name ist der seines Lehrers (Folge 25, 3:37: „den regelmäßigen
+       männlichen Plural“); wie der Plural gebildet wird, steht in der Regel
+       und in der Eselsbrücke. Gilt für alle drei Plural-Karten. */
+    de: "regelmäßiger männlicher Plural",
     type: "noun",
     chapter: 'personal',
     book: 'grammar',
@@ -1443,7 +1450,7 @@ const FACHBEGRIFF_VOKABELN = [
     /* Eingetragen am 2026-10-13 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel jam-muannath-salim-01. */
     id: "gram-jam-muannath-salim",
     ar: "جَمْعُ مُؤَنَّثٍ سَالِمٌ",
-    de: "regelmäßiger weiblicher Plural — das Tāʾ marbūṭa wird durch -āt ersetzt",
+    de: "regelmäßiger weiblicher Plural",
     type: "noun",
     chapter: 'personal',
     book: 'grammar',
@@ -1455,7 +1462,7 @@ const FACHBEGRIFF_VOKABELN = [
     /* Eingetragen am 2026-10-13 von fachbegriffe-setzen.mjs — Schreibung wörtlich aus Regel jam-taksir-01. */
     id: "gram-jam-taksir",
     ar: "جَمْعُ تَكْسِيرٍ",
-    de: "gebrochener Plural (unregelmäßig) — das Wort selbst wird umgebaut",
+    de: "gebrochener Plural (unregelmäßig)",
     type: "noun",
     chapter: 'personal',
     book: 'grammar',
